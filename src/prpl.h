@@ -207,7 +207,6 @@ struct prpl
 	/* user_opts is a GList* of g_malloc'd struct proto_user_opts */
 	GList *user_opts;
 	GList *(* buddy_menu)(struct gaim_connection *, char *);
-	GList *(* edit_buddy_menu)(struct gaim_connection *, char *);
 	GList *(* chat_info)(struct gaim_connection *);
 
 	/* All the server-related functions */

@@ -1282,21 +1282,30 @@ static const char *toc_list_icon(struct gaim_account *a, struct buddy *b)
 {
 	return "aim";
 }
-/*
-	if (uc & UC_UNAVAILABLE)
-		return (char **)away_icon_xpm;
-	if (uc & UC_AOL)
-		return (char **)aol_icon_xpm;
-	if (uc & UC_NORMAL)
-		return (char **)free_icon_xpm;
-	if (uc & UC_ADMIN)
-		return (char **)admin_icon_xpm;
-	if (uc & UC_UNCONFIRMED)
-		return (char **)dt_icon_xpm;
-	if (uc & UC_WIRELESS)
-		return (char **)wireless_icon_xpm;
-	return NULL;
-	}*/
+
+static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+{
+	char *emblems[4] = {NULL,NULL,NULL,NULL};
+	int i = 0;
+
+	if (b->present == 0) {
+		*se = "offline";
+		return;
+	} else {
+		if (b->uc & UC_UNAVAILABLE)
+			emblems[i++] = "away";
+		if (b->uc & UC_AOL)
+			emblems[i++] = "aol";
+		if (b->uc & UC_ADMIN)
+			emblems[i++] = "admin";
+		if (b->uc & UC_WIRELESS)
+			emblems[i++] = "wireless";
+	}
+	*se = emblems[0];
+	*sw = emblems[1];
+	*nw = emblems[2];
+	*ne = emblems[3];
+}
 
 static GList *toc_buddy_menu(struct gaim_connection *gc, char *who)
 {

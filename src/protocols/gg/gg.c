@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5113 2003-03-16 00:01:49Z faceprint $
+ * $Id: gg.c 5250 2003-03-31 07:19:46Z seanegan $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1247,22 +1247,25 @@ static const char *agg_list_icon(struct gaim_account *a, struct buddy *b)
 {
 	return "gadu-gadu";
 }
-#if 0
-	guint status;
-	if (uc == UC_UNAVAILABLE)
-		return (char **)gg_sunred_xpm;
-	status = uc >> 5;
-	/* Drop all masks */
-	status &= ~(GG_STATUS_FRIENDS_MASK);
-	if (status == GG_STATUS_AVAIL)
-		return (char **)gg_sunyellow_xpm;
-	if (status == GG_STATUS_BUSY)
-		return (char **)gg_suncloud_xpm;
-	if (status == GG_STATUS_INVISIBLE)
-		return (char **)gg_sunwhitered_xpm;
-	return (char **)gg_sunyellow_xpm;
+
+static void agg_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+{
+	int status;
+	if (b->present == 0)
+		*se = "offline";
+	else if (b->uc == UC_UNAVAILABLE)
+		*se = "away";
+	else {
+		status = b->uc >> 5;
+		/* Drop all masks */
+		status &= ~(GG_STATUS_FRIENDS_MASK);
+		if (status == GG_STATUS_BUSY)
+			*se = "busy";
+		else if (status == GG_STATUS_INVISIBLE)
+			*se = "invisiible";
+	}
 }
-#endif
+
 
 static void agg_set_permit_deny_dummy(struct gaim_connection *gc)
 {
@@ -1283,6 +1286,7 @@ G_MODULE_EXPORT void gg_init(struct prpl *ret)
 	ret->options = 0;
 	ret->name = g_strdup("Gadu-Gadu");
 	ret->list_icon = agg_list_icon;
+	ret->list_emblems = agg_list_emblems;
 	ret->away_states = agg_away_states;
 	ret->actions = agg_actions;
 	ret->buddy_menu = agg_buddy_menu;

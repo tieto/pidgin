@@ -2648,6 +2648,7 @@ static void jabber_remove_buddy(struct gaim_connection *gc, char *name, char *gr
 	xmlnode_free(x);
 }
 
+#if 0  /* Faceprint!  Look here! */
 /*
  * Remove a buddy item from the roster entirely
  */
@@ -2666,6 +2667,7 @@ static void jabber_remove_buddy_roster_item(struct gaim_connection *gc, char *na
 		xmlnode_free(x);
 	}
 }
+#endif
 
 /*
  * Unsubscribe a buddy from our presence
@@ -2776,22 +2778,31 @@ static const char *jabber_list_icon(struct gaim_account *a, struct buddy *b)
 {
 	return "jabber";
 }
-/*
-	switch (uc) {
-	case UC_AWAY:
-		return available_away_xpm;
-	case UC_CHAT:
-		return available_chat_xpm;
-	case UC_XA:
-		return available_xa_xpm;
-	case UC_DND:
-		return available_dnd_xpm;
-	case UC_ERROR:
-		return available_error_xpm;
-	default:
-		return available_xpm;
+
+static void jabber_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+{
+	if (b->present == 0) {
+		*se = "offline";
+	} else {
+		switch (b->uc) {
+		case UC_AWAY:
+			*se = "away";
+			break;
+		case UC_CHAT:
+			*se = "chat";
+			break;
+		case UC_XA:
+			*se = "extendedaway";
+			break;
+		case UC_DND:
+			*se = "dnd";
+			break;
+		case UC_ERROR:
+			*se = "error";
+			break;
+		}
 	}
-	}*/
+}
 
 static GList *jabber_chat_info(struct gaim_connection *gc)
 {
@@ -3284,35 +3295,15 @@ static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 			pbm->label = _("Temporarily Hide From");
 			pbm->callback = jabber_invisible_to_buddy;
 		}
+
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Cancel Presence Notification");
+		pbm->callback = jabber_unsubscribe_buddy_from_us;
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
 	}
-
-	return m;
-}
-
-/*
- * Jabber protocol-specific "edit buddy menu" item(s)
- */
-static GList *jabber_edit_buddy_menu(struct gaim_connection *gc, char *who) {
-	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Info");
-	pbm->callback = jabber_get_info;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Remove From Roster");
-	pbm->callback = jabber_remove_buddy_roster_item;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Cancel Presence Notification");
-	pbm->callback = jabber_unsubscribe_buddy_from_us;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
 
 	return m;
 }
@@ -4219,12 +4210,12 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 	ret->options = OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_CHAT_TOPIC;
 	ret->name = g_strdup("Jabber");
 	ret->list_icon = jabber_list_icon;
+	ret->list_emblems = jabber_list_emblems;
 	ret->status_text = jabber_status_text;
 	ret->tooltip_text = jabber_tooltip_text;
 	ret->away_states = jabber_away_states;
 	ret->actions = jabber_actions;
 	ret->buddy_menu = jabber_buddy_menu;
-	ret->edit_buddy_menu = jabber_edit_buddy_menu;
 	ret->login = jabber_login;
 	ret->close = jabber_close;
 	ret->send_im = jabber_send_im;

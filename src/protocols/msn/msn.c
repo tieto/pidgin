@@ -1590,18 +1590,15 @@ static const char *msn_list_icon(struct gaim_account *a, struct buddy *b)
 {
 	return "msn";
 }
-/*
-	if (uc == 0)
-		return msn_online_xpm;
-	
-	uc >>= 1;
-	
-	if (uc == 2 || uc == 6)
-		return msn_occ_xpm;
-	
-	return msn_away_xpm;
+
+static void msn_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+{
+	if (b->present == 0)
+		*se = "offline";
+	else if (b->uc >> 1 == 2 || b->uc >> 1 == 6)
+		*se = "occupied";
 }
-*/
+
 static char *msn_get_away_text(int s)
 {
 	switch (s) {
@@ -2004,6 +2001,7 @@ G_MODULE_EXPORT void msn_init(struct prpl *ret)
 	ret->options = OPT_PROTO_MAIL_CHECK;
 	ret->name = g_strdup("MSN");
 	ret->list_icon = msn_list_icon;
+	ret->list_emblems = msn_list_emblems;
 	ret->buddy_menu = msn_buddy_menu;
 	ret->login = msn_login;
 	ret->close = msn_close;

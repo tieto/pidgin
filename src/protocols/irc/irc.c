@@ -2433,6 +2433,12 @@ irc_list_icon(struct gaim_account *a, struct buddy *b)
 	return "irc";
 }
 
+static void irc_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+{
+	if (b->present == 0)
+		*se = "offline";
+}
+
 static int 
 getlocalip(char *ip) /* Thanks, libfaim */
 {
@@ -2812,6 +2818,7 @@ irc_init(struct prpl *ret)
 	ret->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL;
 	ret->name = g_strdup("IRC");
 	ret->list_icon = irc_list_icon;
+	ret->list_emblems = irc_list_emblems;
 	ret->login = irc_login;
 	ret->close = irc_close;
 	ret->send_im = irc_send_im;

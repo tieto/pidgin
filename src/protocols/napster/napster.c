@@ -557,6 +557,12 @@ static const char* nap_list_icon(struct gaim_account *a, struct buddy *b)
 	return "napster";
 }
 
+static void nap_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+{
+	if (b->present == 0)
+		*se = "offline";
+}
+
 static struct prpl *my_protocol = NULL;
 
 G_MODULE_EXPORT void napster_init(struct prpl *ret)
@@ -579,6 +585,7 @@ G_MODULE_EXPORT void napster_init(struct prpl *ret)
 	ret->protocol = PROTO_NAPSTER;
 	ret->name = g_strdup("Napster");
 	ret->list_icon = nap_list_icon;
+	ret->list_emblems = nap_list_emblems;
 	ret->login = nap_login;
 	ret->close = nap_close;
 	ret->send_im = nap_send_im;

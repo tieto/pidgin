@@ -1015,15 +1015,27 @@ static const char *yahoo_list_icon(struct gaim_account *a, struct buddy *b)
 {
 	return "yahoo";
 }
-/*
-  if ((uc >> 2) == YAHOO_STATUS_IDLE)
-  return status_idle_xpm;
-  else if (uc & UC_UNAVAILABLE)
-  return status_away_xpm;
-  else if (uc & YAHOO_STATUS_GAME)
-  return status_game_xpm;
-  return status_here_xpm;
-  }*/
+
+static void yahoo_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+{
+	int i = 0;
+	char *emblems[4] = {NULL,NULL,NULL,NULL};
+	if (b->present == 0) {
+		*se = "offline";
+		return;
+	} else {
+		if ((b->uc >> 2) == YAHOO_STATUS_IDLE)
+			emblems[i++] = "idle";
+		if (b->uc & UC_UNAVAILABLE)
+			emblems[i++] = "away";
+		if (b->uc & YAHOO_STATUS_GAME)
+			emblems[i++] = "game";
+	}
+	*se = emblems[0];
+	*sw = emblems[1];
+	*nw = emblems[2];
+	*ne = emblems[3];
+}
 
 static char *yahoo_get_status_string(enum yahoo_status a)
 {
@@ -1380,6 +1392,7 @@ G_MODULE_EXPORT void yahoo_init(struct prpl *ret) {
 	ret->close = yahoo_close;
 	ret->buddy_menu = yahoo_buddy_menu;
 	ret->list_icon = yahoo_list_icon;
+	ret->list_emblems = yahoo_list_emblems;
 	ret->status_text = yahoo_status_text;
 	ret->tooltip_text = yahoo_tooltip_text;
 	ret->actions = yahoo_actions;

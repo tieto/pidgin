@@ -441,6 +441,18 @@ void do_remove_buddy(struct buddy *b)
 	g_free(name);
 }
 
+void do_remove_group(struct group *g)
+{
+	GaimBlistNode *b = ((GaimBlistNode*)g)->child;
+	while (b) {
+		struct buddy *bd = (struct buddy *)b;
+		serv_remove_buddy(bd->account->gc, bd->name, g->name);
+		b = b->next;
+	}
+	gaim_blist_remove_group(g);
+	gaim_blist_save();
+}
+
 void show_confirm_del(struct gaim_connection *gc, gchar *name)
 {
 	struct buddy *bd = gaim_find_buddy(gc->account, name);
@@ -453,7 +465,13 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 	g_free(text);
 }
 
-
+void show_confirm_del_group(struct group *g)
+{
+     	char *text = g_strdup_printf(_("You are about to remove he group %s and all its members from your buddy list.  Do you want to continue?"), 
+			       g->name);
+	do_ask_dialog(_("Remove Group"), text, g, _("Remove Buddy"), do_remove_group, _("Cancel"), NULL, NULL, FALSE);
+	g_free(text);
+}
 
 /*------------------------------------------------------------------------*/
 /*  The dialog for getting an error                                       */
@@ -3922,8 +3940,7 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 					serv_rename_group(account->gc, g, new_name);
 					accts = g_slist_remove(accts, accts->data);
 				}
-				g_snprintf(g->name, sizeof(g->name), "%s", new_name);
-				gaim_blist_rename_group(g, prevname);
+				gaim_blist_rename_group(g, new_name);
 				g_free(prevname);
 			}
 			gaim_blist_save();

@@ -52,6 +52,8 @@ struct gaim_gtk_buddy_list {
 	GtkWidget *treeview;            /**< It's a treeview... d'uh. */
 	GtkTreeStore *treemodel;        /**< This is the treemodel.  */
 		
+	gboolean *editmode;             /**< TRUE if offline buddies are to be shown in the list. */ 
+
 	GtkTreeViewColumn *idle_column, 
 		*warning_column, 
 		*buddy_icon_column;

@@ -3015,7 +3015,7 @@ static char *oscar_tooltip_text(struct buddy *b) {
 	struct gaim_connection *gc = b->account->gc;
 	struct oscar_data *od = gc->proto_data;
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
-
+       
 	if (bi) {
 		gchar *yay;
 		char *caps = caps_string(bi->caps);
@@ -5147,6 +5147,9 @@ static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
 
+	if (b->present == 0)
+		emblems[i++] = "offline";
+
 	if (b->name && (b->uc & 0xffff0000) && isdigit(b->name[0])) {
 /*		int uc = b->uc >> 16;
 		if (uc & AIM_ICQ_STATE_INVISIBLE)
@@ -5545,7 +5548,7 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			m = g_list_append(m, pbm);
 		}
 
-		if (aim_sncmp(gc->username, who)) {
+		if ((aim_sncmp(gc->username, who)) && b->present) {
 			pbm = g_new0(struct proto_buddy_menu, 1);
 			pbm->label = _("Direct IM");
 			pbm->callback = oscar_ask_direct_im;
@@ -5557,7 +5560,6 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			pbm->callback = oscar_ask_sendfile;
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
-
 #if 0
 			pbm = g_new0(struct proto_buddy_menu, 1);
 			pbm->label = _("Get File");
@@ -5566,36 +5568,20 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			m = g_list_append(m, pbm);
 #endif
 		}
-	}
-
-	return m;
-}
-
-static GList *oscar_edit_buddy_menu(struct gaim_connection *gc, char *who)
-{
-	struct oscar_data *od = gc->proto_data;
-	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-
-	if (od->icq) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Get Info");
-		pbm->callback = oscar_get_info;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
-	}
-
-	if (od->sess->ssi.received_data) {
-		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
-		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Re-request Authorization");
-			pbm->callback = gaim_auth_sendrequest;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
+		
+		if (od->sess->ssi.received_data) {
+			char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
+			if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
+				pbm = g_new0(struct proto_buddy_menu, 1);
+				pbm->label = _("Re-request Authorization");
+				pbm->callback = gaim_auth_sendrequest;
+				pbm->gc = gc;
+				m = g_list_append(m, pbm);
+			}
 		}
+		
 	}
-
+	
 	return m;
 }
 
@@ -5903,7 +5889,6 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	ret->away_states = oscar_away_states;
 	ret->actions = oscar_actions;
 	ret->buddy_menu = oscar_buddy_menu;
-	ret->edit_buddy_menu = oscar_edit_buddy_menu;
 	ret->login = oscar_login;
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;
