@@ -3133,7 +3133,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	/* Set up window */
 	ca->window = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_widget_set_usize(ca->window, 330, 250);
+	gtk_widget_set_usize(ca->window, -1, 250);
 	gtk_container_border_width(GTK_CONTAINER(ca->window), 5);
 	gtk_window_set_wmclass(GTK_WINDOW(ca->window), "away_mess", "Gaim");
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("Gaim - New away message"));
