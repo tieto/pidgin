@@ -160,6 +160,9 @@ extern void unload_protocol(struct prpl *);
 extern struct prpl *find_prpl(int);
 extern void do_proto_menu();
 
+extern void show_got_added(struct gaim_connection *, const char *,
+			   const char *, const char *, const char *);
+
 extern void do_ask_dialog(const char *, void *, void *, void *);
 extern void do_prompt_dialog(const char *, const char *, void *, void *, void *);
 

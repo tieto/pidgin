@@ -547,7 +547,7 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 		update_convo_add_button(c);
 	} else {
 		if (c->gc)
-			show_add_buddy(c->gc, c->name, NULL);
+			show_add_buddy(c->gc, c->name, NULL, NULL);
 	}
 
 	gtk_widget_grab_focus(c->entry);

@@ -595,6 +595,8 @@ static void msn_accept_add(gpointer w, struct msn_add_permit *map)
 		signoff(map->gc);
 		return;
 	}
+
+	show_got_added(map->gc, NULL, map->user, map->friend, NULL);
 }
 
 static void msn_cancel_add(gpointer w, struct msn_add_permit *map)

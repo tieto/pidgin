@@ -174,7 +174,6 @@ static int yahoo_buddyadded(struct yahoo_session *sess, ...) {
 	char *id;
 	char *who;
 	char *msg;
-	char buf[2048];
 
 	va_start(ap, sess);
 	id = va_arg(ap, char *);
@@ -182,9 +181,7 @@ static int yahoo_buddyadded(struct yahoo_session *sess, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	g_snprintf(buf, sizeof(buf), _("%s has made %s their buddy%s%s"), who, id,
-			msg ? ": " : "", msg ? msg : "");
-	do_error_dialog(buf, _("Gaim - Buddy"));
+	show_got_added(sess->user_data, id, who, NULL, msg);
 
 	return 1;
 }

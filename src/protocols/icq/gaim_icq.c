@@ -245,19 +245,52 @@ static void icq_req_not(icq_Link *link, unsigned long id, int type, int arg, voi
 	return;
 }
 
+static void icq_recv_add(icq_Link *link, unsigned long id, unsigned char hour, unsigned char minute,
+		unsigned char day, unsigned char month, unsigned short year, const char *nick,
+		const char *first, const char *last, const char *email)
+{
+	char uin[16];
+	g_snprintf(uin, sizeof(uin), "%ld", id);
+	show_got_added(link->icq_UserData, NULL, uin, nick, NULL);
+}
+
 struct icq_auth {
 	icq_Link *link;
+	char *nick;
 	unsigned long uin;
+	struct gaim_connection *gc;
 };
 
 static void icq_den_auth(gpointer x, struct icq_auth *iq)
 {
+	g_free(iq->nick);
 	g_free(iq);
+}
+
+static void icq_add_after_auth(gpointer x, struct icq_auth *iq)
+{
+	char uin[16];
+	g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
+	show_add_buddy(iq->gc, uin, NULL, iq->nick);
 }
 
 static void icq_acc_auth(gpointer x, struct icq_auth *iq)
 {
+	char msg[1024];
+	char uin[16];
+	struct icq_auth *iqnew;
+	
 	icq_SendAuthMsg(iq->link, iq->uin);
+
+	g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
+	if (find_buddy(iq->gc, uin))
+		return;
+
+	iqnew = g_memdup(iq, sizeof(struct icq_auth));
+	iqnew->nick = g_strdup(iq->nick);
+
+	g_snprintf(msg, sizeof(msg), "Add %ld to your buddy list?", iq->uin);
+	do_ask_dialog(msg, iqnew, icq_add_after_auth, icq_den_auth);
 }
 
 static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, unsigned char minute,
@@ -267,7 +300,9 @@ static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, 
 	char msg[8192];
 	struct icq_auth *iq = g_new0(struct icq_auth, 1);
 	iq->link = link;
+	iq->nick = g_strdup(nick);
 	iq->uin = uin;
+	iq->gc = link->icq_UserData;
 
 	g_snprintf(msg, sizeof(msg), "The user %s (%s%s%s%s%s) wants you to authorize them.",
 			nick, first ? first : "", first && last ? " " : "", last ? last : "",
@@ -295,6 +330,7 @@ static void icq_login(struct aim_user *user) {
 	link->icq_RecvURL = icq_url_incoming;
 	link->icq_RecvWebPager = icq_web_pager;
 	link->icq_RecvMailExpress = icq_mail_express;
+	link->icq_RecvAdded = icq_recv_add;
 	link->icq_RecvAuthReq = icq_auth_req;
 	link->icq_UserOnline = icq_user_online;
 	link->icq_UserOffline = icq_user_offline;

@@ -18,6 +18,8 @@ version 0.47:
 	  dequeued.
 	* You can choose which sound player you use at run-time
 	  (thanks Ben Miller)
+	* When someone adds you to their buddy list, it asks if you want
+	  to add them as well (Yahoo, ICQ, and MSN) (thanks Nathan Walp)
 
 version 0.46 (10/18/2001):
 	* New applet icons (courtesy David Raeman)

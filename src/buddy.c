@@ -1310,7 +1310,7 @@ void add_buddy_callback(GtkWidget *widget, void *dummy)
 			gc = (struct gaim_connection *)type;
 		}
 	}
-	show_add_buddy(gc, NULL, grp);
+	show_add_buddy(gc, NULL, grp, NULL);
 
 }
 

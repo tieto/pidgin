@@ -869,7 +869,7 @@ static void create_online_user_names(struct addbuddy *b)
 
 }
 
-void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
+void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *alias)
 {
 	GtkWidget *mainbox;
 	GtkWidget *frame;
@@ -922,6 +922,8 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 
 	a->entry_for_alias = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), a->entry_for_alias, 1, 2, 1, 2);
+	if (alias != NULL)
+		gtk_entry_set_text(GTK_ENTRY(a->entry_for_alias), alias);
 
 	label = gtk_label_new(_("Group"));
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);

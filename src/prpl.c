@@ -529,3 +529,47 @@ void *get_icon_data(struct gaim_connection *gc, char *who, int *len)
 	*len = 0;
 	return NULL;
 }
+
+struct got_add {
+	struct gaim_connection *gc;
+	char *who;
+	char *alias;
+};
+
+static void dont_add(gpointer x, struct got_add *ga)
+{
+	g_free(ga->who);
+	if (ga->alias)
+		g_free(ga->alias);
+	g_free(ga);
+}
+
+static void do_add(gpointer x, struct got_add *ga)
+{
+	show_add_buddy(ga->gc, ga->who, NULL, ga->alias);
+}
+
+void show_got_added(struct gaim_connection *gc, const char *id,
+		    const char *who, const char *alias, const char *msg)
+{
+	char buf[BUF_LONG];
+	struct got_add *ga = g_new0(struct got_add, 1);
+
+	ga->gc = gc;
+	ga->who = g_strdup(who);
+	ga->alias = alias ? g_strdup(alias) : NULL;
+
+	g_snprintf(buf, sizeof(buf), _("%s%s%s%s has made %s their buddy%s%s%s"),
+		   who,
+		   alias ? " (" : "",
+		   alias ? alias : "",
+		   alias ? ")" : "",
+		   id ? id : gc->displayname[0] ? gc->displayname : gc->username,
+		   msg ? ": " : ".",
+		   msg ? msg : "",
+		   find_buddy(gc, ga->who) ? "" : _("\n\nDo you wish to add them to your buddy list?"));
+	if (find_buddy(gc, ga->who))
+		do_error_dialog(buf, "Added to List");
+	else
+		do_ask_dialog(buf, ga, do_add, dont_add);
+}
