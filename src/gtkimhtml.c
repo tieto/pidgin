@@ -549,9 +549,11 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 	GtkIMHtmlBit *bit;
 	GtkAdjustment *vadj;
 	gfloat oldvalue;
+	gint oldy;
 
 	vadj = GTK_LAYOUT (imhtml)->vadjustment;
 	oldvalue = vadj->value / vadj->upper;
+	oldy = imhtml->y;
 
 	gtk_layout_freeze (GTK_LAYOUT (imhtml));
 
@@ -582,11 +584,26 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 		gtk_imhtml_draw_bit (imhtml, bit);
 	}
 
-	if (GTK_LAYOUT (imhtml)->bin_window && (imhtml->y < GTK_WIDGET (imhtml)->allocation.y))
-		gdk_window_clear (GTK_LAYOUT (imhtml)->bin_window);
-
 	gtk_widget_set_usize (GTK_WIDGET (imhtml), -1, imhtml->y + 5);
 	gtk_adjustment_set_value (vadj, vadj->upper * oldvalue);
+
+	if (GTK_LAYOUT (imhtml)->bin_window && (imhtml->y < oldy)) {
+		GdkGC *gc;
+		GdkColormap *cmap;
+
+		gc = gdk_gc_new (GTK_LAYOUT (imhtml)->bin_window);
+		cmap = gtk_widget_get_colormap (GTK_WIDGET (imhtml));
+
+		gdk_color_alloc (cmap, imhtml->default_bg_color);
+		gdk_gc_set_foreground (gc, imhtml->default_bg_color);
+
+		gdk_draw_rectangle (GTK_LAYOUT (imhtml)->bin_window, gc, TRUE,
+				    0, imhtml->y - GTK_LAYOUT (imhtml)->vadjustment->value,
+				    GTK_WIDGET (imhtml)->allocation.width,
+				    oldy - imhtml->y);
+
+		gdk_gc_unref (gc);
+	}
 
 	gtk_layout_thaw (GTK_LAYOUT (imhtml));
 }
