@@ -109,41 +109,6 @@ gaim_gtk_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog)
 									  (*text != '\0'));
 }
 
-int
-gaim_gtk_get_dispstyle(GaimConversationType type)
-{
-	int dispstyle = 2;
-	int value;
-
-	value = gaim_prefs_get_int("/gaim/gtk/conversations/button_type");
-
-	switch (value) {
-	case GAIM_BUTTON_TEXT:  dispstyle = 1; break;
-	case GAIM_BUTTON_IMAGE: dispstyle = 0; break;
-	default:                dispstyle = 2; break; /* both/neither */
-	}
-
-	return dispstyle;
-}
-
-GtkWidget *
-gaim_gtk_change_text(const char *text, GtkWidget *button,
-					 const char *stock, GaimConversationType type)
-{
-	int dispstyle = gaim_gtk_get_dispstyle(type);
-
-	if (button != NULL)
-		gtk_widget_destroy(button);
-
-	button = gaim_pixbuf_button_from_stock((dispstyle == 0 ? NULL : text),
-										   (dispstyle == 1 ? NULL : stock),
-										   GAIM_BUTTON_VERTICAL);
-
-	gtk_widget_show(button);
-
-	return button;
-}
-
 void
 gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
 {

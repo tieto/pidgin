@@ -3179,6 +3179,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/**************************** Button Box **************************************/
 	/* add this afterwards so it doesn't force up the width of the window         */
+	/* What?  Won't GTK dynamically resize the width to accomodate the widgets?   */
 
 	gtkblist->tooltips = gtk_tooltips_new();
 

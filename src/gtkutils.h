@@ -67,33 +67,6 @@ extern guint accels_save_timer;
 void gaim_setup_imhtml(GtkWidget *imhtml);
 
 /**
- * Returns the display style for buttons for the specified conversation
- * type.
- *
- * @param type The conversation type.
- *
- * @return The display style.
- */
-int gaim_gtk_get_dispstyle(GaimConversationType type);
-
-/**
- * Changes a button to be either text or image, depending on
- * preferences.
- *
- * This function destroys the old button pointed to by @a button and
- * returns the new replacement button.
- *
- * @param text   The text for the button.
- * @param button The button widget.
- * @param stock  The stock image.
- * @param type   The conversation type the button belongs to.
- *
- * @return The new button widget to replace the old one.
- */
-GtkWidget *gaim_gtk_change_text(const char *text, GtkWidget *button,
-								const char *stock, GaimConversationType type);
-
-/**
  * Toggles the sensitivity of a widget.
  *
  * @param widget    @c NULL. Used for signal handlers.

@@ -292,6 +292,8 @@ version 0.76 (04/01/2004):
 	* Moved translation news to po/ChangeLog
 
 	Bug Fixes:
+	* Changes in AIM/ICQ server-side buddy lists take
+	  precedence over the local buddy list
 	* Significant work on the Zephyr plugin (Arun A. Tharuvai)
 	* You can now use :/ as a smiley safely (Nathan Owens)
 	* Various buffer overflow fixes (Stefan Esser)
