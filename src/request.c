@@ -22,6 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "notify.h"
 #include "request.h"
 #include "debug.h"
 
@@ -1278,63 +1279,10 @@ gaim_request_fields(void *handle, const char *title, const char *primary,
 	return NULL;
 }
 
-void
-gaim_request_close(GaimRequestType type, void *ui_handle)
-{
-	GList *l;
-	GaimRequestUiOps *ops;
-
-	g_return_if_fail(ui_handle != NULL);
-
-	ops = gaim_request_get_ui_ops();
-
-	for (l = handles; l != NULL; l = l->next) {
-		GaimRequestInfo *info = l->data;
-
-		if (info->ui_handle == ui_handle) {
-			handles = g_list_remove(handles, info);
-
-			if (ops != NULL && ops->close_request != NULL)
-				ops->close_request(info->type, ui_handle);
-
-			g_free(info);
-
-			break;
-		}
-	}
-}
-
-void
-gaim_request_close_with_handle(void *handle)
-{
-	GList *l, *l_next;
-	GaimRequestUiOps *ops;
-
-	g_return_if_fail(handle != NULL);
-
-	ops = gaim_request_get_ui_ops();
-
-	for (l = handles; l != NULL; l = l_next) {
-		GaimRequestInfo *info = l->data;
-
-		l_next = l->next;
-
-		if (info->handle == handle) {
-			handles = g_list_remove(handles, info);
-
-			if (ops != NULL && ops->close_request != NULL)
-				ops->close_request(info->type, info->ui_handle);
-
-			g_free(info);
-		}
-	}
-}
-
 void *
-gaim_request_file(void *handle,
-		  const char *title, const char *filename,
-		  GCallback ok_cb, GCallback cancel_cb,
-		  void *user_data)
+gaim_request_file(void *handle, const char *title, const char *filename,
+				  gboolean savedialog,
+				  GCallback ok_cb, GCallback cancel_cb, void *user_data)
 {
 	GaimRequestUiOps *ops;
 
@@ -1344,15 +1292,68 @@ gaim_request_file(void *handle,
 		GaimRequestInfo *info;
 
 		info            = g_new0(GaimRequestInfo, 1);
-		info->type      = GAIM_REQUEST_INPUT;
+		info->type      = GAIM_REQUEST_FILE;
 		info->handle    = handle;
-		info->ui_handle = ops->request_file(title, filename,
-						    ok_cb, cancel_cb, user_data);
+		info->ui_handle = ops->request_file(title, filename, savedialog,
+											ok_cb, cancel_cb, user_data);
 		handles = g_list_append(handles, info);
 		return info->ui_handle;
 	}
 
 	return NULL;
+}
+
+static void
+gaim_request_close_info(GaimRequestInfo *info)
+{
+	GaimRequestUiOps *ops;
+
+	ops = gaim_request_get_ui_ops();
+
+	gaim_notify_close_with_handle(info->ui_handle);
+	gaim_request_close_with_handle(info->ui_handle);
+
+	if (ops != NULL && ops->close_request != NULL)
+		ops->close_request(info->type, info->ui_handle);
+
+	g_free(info);
+}
+
+void
+gaim_request_close(GaimRequestType type, void *ui_handle)
+{
+	GList *l;
+
+	g_return_if_fail(ui_handle != NULL);
+
+	for (l = handles; l != NULL; l = l->next) {
+		GaimRequestInfo *info = l->data;
+
+		if (info->ui_handle == ui_handle) {
+			handles = g_list_remove(handles, info);
+			gaim_request_close_info(info);
+			break;
+		}
+	}
+}
+
+void
+gaim_request_close_with_handle(void *handle)
+{
+	GList *l, *l_next;
+
+	g_return_if_fail(handle != NULL);
+
+	for (l = handles; l != NULL; l = l_next) {
+		GaimRequestInfo *info = l->data;
+
+		l_next = l->next;
+
+		if (info->handle == handle) {
+			handles = g_list_remove(handles, info);
+			gaim_request_close_info(info);
+		}
+	}
 }
 
 void

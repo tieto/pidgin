@@ -273,7 +273,7 @@ silcgaim_chat_chpk_cb(SilcGaimChauth sgc, GaimRequestFields *fields)
 	f = gaim_request_fields_get_field(fields, "list");
 	if (!gaim_request_field_list_get_selected(f)) {
 		/* Add new public key */
-		gaim_request_file(NULL, _("Open Public Key..."), "",
+		gaim_request_file(NULL, _("Open Public Key..."), NULL, FALSE,
 				  G_CALLBACK(silcgaim_chat_chpk_add),
 				  G_CALLBACK(silcgaim_chat_chpk_cancel), sgc);
 		return;

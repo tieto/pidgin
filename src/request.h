@@ -36,10 +36,11 @@
  */
 typedef enum
 {
-	GAIM_REQUEST_INPUT = 0,  /**< Text input request.      */
-	GAIM_REQUEST_CHOICE,     /**< Multiple-choice request. */
-	GAIM_REQUEST_ACTION,     /**< Action request.          */
-	GAIM_REQUEST_FIELDS      /**< Multiple fields request. */
+	GAIM_REQUEST_INPUT = 0,  /**< Text input request.        */
+	GAIM_REQUEST_CHOICE,     /**< Multiple-choice request.   */
+	GAIM_REQUEST_ACTION,     /**< Action request.            */
+	GAIM_REQUEST_FIELDS,     /**< Multiple fields request.   */
+	GAIM_REQUEST_FILE        /**< File open or save request. */
 
 } GaimRequestType;
 
@@ -190,16 +191,16 @@ typedef struct
 							const char *ok_text, GCallback ok_cb,
 							const char *cancel_text, GCallback cancel_cb,
 							void *user_data);
-
 	void *(*request_file)(const char *title, const char *filename,
-			      GCallback ok_cb, GCallback cancel_cb,
-			      void *user_data);
+						  gboolean savedialog, GCallback ok_cb,
+						  GCallback cancel_cb, void *user_data);
 	void (*close_request)(GaimRequestType type, void *ui_handle);
 } GaimRequestUiOps;
 
 typedef void (*GaimRequestInputCb)(void *, const char *);
 typedef void (*GaimRequestActionCb)(void *, int);
 typedef void (*GaimRequestFieldsCb)(void *, GaimRequestFields *fields);
+typedef void (*GaimRequestFileCb)(void *, const char *filename);
 
 #ifdef __cplusplus
 extern "C" {
@@ -1251,15 +1252,15 @@ void gaim_request_close_with_handle(void *handle);
 						(default_action), (user_data), 2, \
 						_("Accept"), (accept_cb), _("Cancel"), (cancel_cb))
 
-/*@}*/
-
 /**
- * Displays file selector request dialog.  Returns the selected filename into
- * the callback.
+ * Displays a file selector request dialog.  Returns the selected filename into
+ * the callback.  Can be used for either opening a file or saving a file.
  *
  * @param handle      The plugin or connection handle.
  * @param title       The title for the dialog (may be NULL)
  * @param filename    The default filename (may be NULL)
+ * @param savedialog  True if this dialog is being used to save a file.
+ *                    False if it is being used to open a file.
  * @param ok_cb       The callback for the OK button.
  * @param cancel_cb   The callback for the cancel button.
  * @param user_data   The data to pass to the callback.
@@ -1267,9 +1268,11 @@ void gaim_request_close_with_handle(void *handle);
  * @return A UI-specific handle.
  */
 void *gaim_request_file(void *handle, const char *title, const char *filename,
-			GCallback ok_cb, GCallback cancel_cb,
-			void *user_data);
+						gboolean savedialog,
+						GCallback ok_cb, GCallback cancel_cb,
+						void *user_data);
 
+/*@}*/
 
 /**************************************************************************/
 /** @name UI Operations API                                               */
