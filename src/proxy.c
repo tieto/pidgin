@@ -421,8 +421,10 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 {
 	pending_dns_request_t *req = NULL;
 	dns_params_t dns_params;
-
-	strncpy(dns_params.hostname, hostname, sizeof(dns_params.hostname)-1);
+        
+        char *host_temp = g_strdup(hostname);
+	strncpy(dns_params.hostname, g_strstrip(host_temp), sizeof(dns_params.hostname)-1);
+        g_free(host_temp);
 	dns_params.hostname[sizeof(dns_params.hostname)-1] = '\0';
 	dns_params.port = port;
 
