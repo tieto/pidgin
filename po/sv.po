@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim\n"
-"POT-Creation-Date: 2003-08-30 18:49+0200\n"
-"PO-Revision-Date: 2003-09-01 01:35+0200\n"
+"POT-Creation-Date: 2003-09-03 00:09+0200\n"
+"PO-Revision-Date: 2003-09-02 00:20+0200\n"
 "Last-Translator: Tore Lundqvist <tlt@mima.x.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -219,7 +219,8 @@ msgid ""
 "Gives Gaim the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
 msgstr ""
-"Ger möjlighet att fjärrstyrd Gaim med tredjepartsaplikation eller Gaim-fjärrverktyg."
+"Ger möjlighet att fjärrstyrd Gaim med tredjepartsaplikation eller Gaim-"
+"fjärrverktyg."
 
 #. *< api_version
 #. *< type
@@ -1226,7 +1227,8 @@ msgid ""
 msgstr ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
 "\n"
-"Detta kommer att öka %ss varningsnivå och hon/han kommer få en hårdare bandbreddsbegränsning.\n"
+"Detta kommer att öka %ss varningsnivå och hon/han kommer få en hårdare "
+"bandbreddsbegränsning.\n"
 
 #: src/dialogs.c:363
 msgid "Warn _anonymously?"
@@ -1514,6 +1516,8 @@ msgid ""
 "Please enter the URL and description of the link that you want to insert.  "
 "The description is optional.\n"
 msgstr ""
+"Ange en URL för länken du vill infoga, om du vill kan du även ange en "
+"beskrivning av länken.\n"
 
 #: src/dialogs.c:2261 src/protocols/jabber/jabber.c:3631
 msgid "URL"
@@ -1544,6 +1548,8 @@ msgstr "Du kan inte skapa ett frånvaromeddelande med en tom titel"
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr ""
+"Ange en titel på meddelandet eller välj \"Använd\" för att använda utan att "
+"spara."
 
 #: src/dialogs.c:2676
 msgid "You cannot create an empty away message"
@@ -1674,25 +1680,25 @@ msgstr "%s är inte ett giltigt filnamn.\n"
 #: src/ft.c:137
 #, c-format
 msgid "%s was not found.\n"
-msgstr ""
+msgstr "%s kunde inte hittas.\n"
 
 #: src/ft.c:693
 #, c-format
 msgid "File transfer to %s aborted.\n"
-msgstr ""
+msgstr "Filöverföring till %s avbröts.\n"
 
 #: src/ft.c:695
 #, c-format
 msgid "File transfer from %s aborted.\n"
-msgstr ""
+msgstr "Filöverföring från %s avbröts.\n"
 
 #: src/gaim-disclosure.c:253
 msgid "Expander Size"
-msgstr ""
+msgstr "Expander storlek"
 
 #: src/gaim-disclosure.c:254
 msgid "Size of the expander arrow"
-msgstr ""
+msgstr "Expanderpilens storlek"
 
 #: src/gaim-remote.c:33
 #, c-format
@@ -1706,10 +1712,18 @@ msgid ""
 "    OPTIONS:\n"
 "       -h, --help [commmand]    Show help for command\n"
 msgstr ""
+"Användning: %s kommando [VAL] [URI]\n"
+"\n"
+"    KOMMANDON:\n"
+"       uri                      Hantera AIM: URI\n"
+"       quit                     Stäng den körande kopian av Gaim\n"
+"\n"
+"    VAL:\n"
+"       -h, --help [kommando]    Visa hjälp för kommandon\n"
 
 #: src/gaim-remote.c:139 src/gaim-remote.c:155
 msgid "Gaim not running (on session 0)\n"
-msgstr ""
+msgstr "Gaim körs inte (på session 0)\n"
 
 #: src/gaim-remote.c:167
 msgid ""
@@ -1739,6 +1753,8 @@ msgid ""
 "\n"
 "Close running copy of Gaim\n"
 msgstr ""
+"\n"
+"Stäng den körande kopian av Gaim\n"
 
 #. for people like myself, who are too lazy to add an away msg :)
 #: src/gaimrc.c:44
@@ -1862,11 +1878,11 @@ msgstr "Använd miljöinställningar"
 
 #: src/gtkaccount.c:773
 msgid "you can see the butterflies mating"
-msgstr ""
+msgstr "kan du se fjärilarna para sig"
 
 #: src/gtkaccount.c:777
 msgid "If you look real closely"
-msgstr ""
+msgstr "Om du tittar riktigt nära"
 
 #: src/gtkaccount.c:793
 msgid "Proxy Options"
@@ -2095,7 +2111,7 @@ msgstr "<b>Status:</b> Ej ansluten"
 #: src/gtkblist.c:912
 #, c-format
 msgid "%d%%"
-msgstr ""
+msgstr "%d%%"
 
 #: src/gtkblist.c:926
 msgid ""
@@ -2126,18 +2142,24 @@ msgid ""
 "\n"
 "<b>Idle:</b>"
 msgstr ""
+"\n"
+"<b>Inaktiv:</b>"
 
 #: src/gtkblist.c:930
 msgid ""
 "\n"
 "<b>Warned:</b>"
 msgstr ""
+"\n"
+"<b>Varnad:</b>"
 
 #: src/gtkblist.c:932
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
 msgstr ""
+"\n"
+"<b>Beskrivning:</b> Kusligt"
 
 #: src/gtkblist.c:933
 msgid ""
@@ -2158,12 +2180,12 @@ msgstr ""
 #: src/gtkblist.c:1232
 #, c-format
 msgid "Idle (%dh%02dm) "
-msgstr ""
+msgstr "Inaktiv (%dh%02dm) "
 
 #: src/gtkblist.c:1234
 #, c-format
 msgid "Idle (%dm) "
-msgstr ""
+msgstr "Inaktiv (%dm) "
 
 #: src/gtkblist.c:1238
 #, c-format
@@ -2568,7 +2590,7 @@ msgstr "Ignorera användaren"
 #: src/gtkconv.c:3899 src/server.c:1370
 #, c-format
 msgid "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"
-msgstr ""
+msgstr "<HR><BR><H3 Align=Center> ---- Ny konversation @ %s ----</H3><BR>\n"
 
 #: src/gtkconv.c:3903 src/server.c:1373
 #, c-format
@@ -2621,15 +2643,15 @@ msgstr "Tidsstämplar"
 #: src/gtkft.c:126
 #, c-format
 msgid "%.2f KB/s"
-msgstr ""
+msgstr "%.2f KB/s"
 
 #: src/gtkft.c:200
 msgid "<b>Receiving From:</b>"
-msgstr ""
+msgstr "<b>Tar emot från:</b>"
 
 #: src/gtkft.c:203
 msgid "<b>Sending To:</b>"
-msgstr ""
+msgstr "<b>Skickar till:</b>"
 
 #: src/gtkft.c:436
 msgid "Progress"
@@ -2757,12 +2779,12 @@ msgstr[1] "%s har %d nya meddelanden."
 #: src/gtknotify.c:211
 #, c-format
 msgid "<span weight=\"bold\">From:</span> %s\n"
-msgstr ""
+msgstr "<span weight=\"bold\">Från:</span> %s\n"
 
 #: src/gtknotify.c:216
 #, c-format
 msgid "<span weight=\"bold\">Subject:</span> %s\n"
-msgstr ""
+msgstr "<span weight=\"bold\">Ämne:</span> %s\n"
 
 #: src/gtknotify.c:220
 #, c-format
@@ -2771,6 +2793,9 @@ msgid ""
 "\n"
 "%s%s%s%s"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">Du har fått e-post!</span>\n"
+"\n"
+"%s%s%s%s"
 
 #: src/gtknotify.c:235
 #, c-format
@@ -2779,6 +2804,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">Du har fått e-post!</span>\n"
+"\n"
+"%s"
 
 #: src/gtkpounce.c:140
 msgid "Select a file"
@@ -2920,6 +2948,7 @@ msgstr "%s har blivit inaktiv"
 #: src/gtkpounce.c:844
 msgid "Unknown pounce event. Please report this!"
 msgstr ""
+"Okänd övervakningshändelse (pounce event), var snäll och rapportera detta!"
 
 #: src/gtkprefs.c:381
 msgid "Interface Options"
@@ -3298,6 +3327,8 @@ msgid ""
 "_Manual:\n"
 "(%s for URL)"
 msgstr ""
+"_Manuell:\n"
+"(%s för URL)"
 
 #: src/gtkprefs.c:1348
 msgid "Browser Options"
@@ -3611,7 +3642,7 @@ msgstr "Tillåt användare"
 
 #: src/gtkprivacy.c:563
 msgid "Type a user you permit to contact you."
-msgstr ""
+msgstr "Ange en användare du tillåter att kontakta dig."
 
 #: src/gtkprivacy.c:564
 msgid "Please enter the name of the user you wish to be able to contact you."
@@ -3637,7 +3668,7 @@ msgstr "Blockera användare"
 
 #: src/gtkprivacy.c:602
 msgid "Type a user to block."
-msgstr ""
+msgstr "Ange en användare som ska blockeras."
 
 #: src/gtkprivacy.c:603
 msgid "Please enter the name of the user you wish to block."
@@ -3711,13 +3742,15 @@ msgstr "Någon säger ditt namn i chatt"
 #: src/gtksound.c:153
 #, c-format
 msgid "Unable to play sound because the chosen file (%s) does not exist."
-msgstr ""
+msgstr "Kunde inte spela upp ljudet eftersom den valda filen (%s) inte finns."
 
 #: src/gtksound.c:169
 msgid ""
 "Unable to play sound because the 'Command' sound method has been chosen, but "
 "no command has been set."
 msgstr ""
+"Kunde inte spela upp ljudet eftersom \"kommando\"-metoden valts och inget "
+"kommando angivits."
 
 #: src/gtksound.c:178
 #, c-format
@@ -3725,10 +3758,11 @@ msgid ""
 "Unable to play sound because the configured sound command could not be "
 "launched: %s"
 msgstr ""
+"Kunde inte spela upp ljudet eftersom det valda kommandot inte kunde köras: %s"
 
 #: src/gtkutils.c:290
 msgid "Can't save icon file to disk."
-msgstr ""
+msgstr "Kan inte spara ikonfil på disken."
 
 #: src/gtkutils.c:325
 msgid "Gaim - Save Icon"
@@ -3766,7 +3800,7 @@ msgstr "g003: Fel vid öppnande av anslutning.\n"
 
 #: src/log.c:30
 msgid "Error in specifying buddy conversation."
-msgstr ""
+msgstr "Fel vid specificering av konversation."
 
 #: src/log.c:36
 msgid "Unable to find conversation log"
@@ -3780,17 +3814,17 @@ msgstr "Kan inte skapa katalogen %s för loggning"
 #: src/log.c:207 src/log.c:223
 #, c-format
 msgid "IM Sessions with %s\n"
-msgstr ""
+msgstr "Snabbmeddelande session med %s\n"
 
 #: src/log.c:210 src/log.c:226
 #, c-format
 msgid "IM Sessions with %s"
-msgstr ""
+msgstr "Snabbmeddelande session med %s"
 
 #: src/log.c:270
 #, c-format
 msgid "+++ %s (%s) signed on @ %s"
-msgstr ""
+msgstr "+++ %s (%s) loggade in @ %s"
 
 #: src/log.c:275
 #, c-format
@@ -3912,7 +3946,7 @@ msgstr "Gaim kunde inte ladda din insticksmodul."
 #: src/plugin.c:286
 #, c-format
 msgid "The required plugin %s was unable to load."
-msgstr ""
+msgstr "Den begärda insticksmodulen %s kunde inte laddas."
 
 #: src/prefs.c:113 src/status.c:270
 msgid "Slightly less boring default"
@@ -5144,12 +5178,6 @@ msgstr ""
 msgid "<html><body><b>Error retrieving profile</b></body></html>"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1214 src/protocols/msn/msn.c:1218
-#: src/protocols/msn/msn.c:1222 src/protocols/msn/msn.c:1226
-#: src/protocols/msn/msn.c:1230 src/protocols/msn/msn.c:1234
-msgid "Undisclosed"
-msgstr ""
-
 #. Age
 #: src/protocols/msn/msn.c:1218 src/protocols/oscar/oscar.c:3991
 #: src/protocols/trepia/trepia.c:317 src/protocols/trepia/trepia.c:445
@@ -5180,22 +5208,22 @@ msgstr "Sysselsättning"
 #: src/protocols/msn/msn.c:1248 src/protocols/msn/msn.c:1250
 #: src/protocols/msn/msn.c:1252
 msgid "A Little About Me"
-msgstr ""
+msgstr "Lite om mig"
 
 #: src/protocols/msn/msn.c:1256 src/protocols/msn/msn.c:1260
 #: src/protocols/msn/msn.c:1262
 msgid "Favorite Things"
-msgstr ""
+msgstr "Favoritsaker"
 
 #: src/protocols/msn/msn.c:1266 src/protocols/msn/msn.c:1268
 #: src/protocols/msn/msn.c:1270
 msgid "Hobbies and Interests"
-msgstr ""
+msgstr "Hobbies och intressen"
 
 #: src/protocols/msn/msn.c:1274 src/protocols/msn/msn.c:1276
 #: src/protocols/yahoo/yahoo.c:1522
 msgid "Favorite Quote"
-msgstr ""
+msgstr "Favoritcitat"
 
 #: src/protocols/msn/msn.c:1280 src/protocols/yahoo/yahoo.c:1551
 msgid "Last Updated"
@@ -5886,8 +5914,7 @@ msgid ""
 "<i>Unable to display information because it was sent in an unknown encoding."
 "</i>"
 msgstr ""
-"<i>Kan inte visa information eftersom den var skickad i en okänd kodning."
-"</i>"
+"<i>Kan inte visa information eftersom den var skickad i en okänd kodning.</i>"
 
 #: src/protocols/oscar/oscar.c:3184
 #, c-format
@@ -6135,7 +6162,7 @@ msgstr[1] ""
 
 #: src/protocols/oscar/oscar.c:4489
 msgid "Profile too long."
-msgstr ""
+msgstr "Profilen är för lång."
 
 #: src/protocols/oscar/oscar.c:4508
 msgid "Unable to set AIM away message."
@@ -6192,7 +6219,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:5034 src/protocols/oscar/oscar.c:5047
 msgid "(no name)"
-msgstr ""
+msgstr "(inget namn)"
 
 #: src/protocols/oscar/oscar.c:5035 src/protocols/oscar/oscar.c:5048
 msgid "Unable To Add"
@@ -6770,14 +6797,6 @@ msgstr ""
 msgid "Yahoo! ID"
 msgstr "Yahoo!-ID"
 
-#: src/protocols/yahoo/yahoo.c:1474
-msgid "Private"
-msgstr "Privat"
-
-#: src/protocols/yahoo/yahoo.c:1494 src/protocols/yahoo/yahoo.c:1498
-msgid "No Answer"
-msgstr "Inget svar"
-
 #: src/protocols/yahoo/yahoo.c:1512 src/protocols/yahoo/yahoo.c:1514
 #: src/protocols/yahoo/yahoo.c:1516
 msgid "Hobbies"
@@ -7037,1133 +7056,3 @@ msgstr "Kalkylerar..."
 #: src/util.c:937
 msgid "Unknown."
 msgstr "Okänd."
-
-#~ msgid "Event Test"
-#~ msgstr "Händelsetest"
-
-#~ msgid ""
-#~ "GAIM::register not called with proper arguments.  Consult PERL-HOWTO."
-#~ msgstr ""
-#~ "GAIM::registret anropas inte med rätt argument. Konsultera perl-howto."
-
-#~ msgid "has gone away."
-#~ msgstr "har gått."
-
-#~ msgid "has become idle."
-#~ msgstr "har blivit inaktiv."
-
-#~ msgid "Second Name"
-#~ msgstr "Efternamn"
-
-#~ msgid "Unable to change password"
-#~ msgstr "Kan inte ändra lösenord"
-
-#~ msgid "Unable to request INF\n"
-#~ msgstr "Kan inte begära INF\n"
-
-#~ msgid "Unable to send USR\n"
-#~ msgstr "Kan inte skicka USR\n"
-
-#~ msgid "Got invalid XFR\n"
-#~ msgstr "Har felaktig XFR\n"
-
-#~ msgid "Authentication Failed"
-#~ msgstr "Autentisering misslyckades"
-
-#~ msgid "UIN:"
-#~ msgstr "UIN:"
-
-#~ msgid "First Name:"
-#~ msgstr "Förnamn:"
-
-#~ msgid "Last Name:"
-#~ msgstr "Efternamn:"
-
-#~ msgid "Gender:"
-#~ msgstr "Kön:"
-
-#~ msgid "Birthday:"
-#~ msgstr "Födelsedag:"
-
-#~ msgid "Age:"
-#~ msgstr "Ålder:"
-
-#~ msgid "City:"
-#~ msgstr "Ort:"
-
-#~ msgid "State:"
-#~ msgstr "Delstat:"
-
-#~ msgid "Re-request Authorization"
-#~ msgstr "Begär auktorisering igen"
-
-#~ msgid "<FONT SIZE=\"3\">Active Developers:</FONT><BR>"
-#~ msgstr "<FONT SIZE=\"3\">Aktiva utvecklare:</FONT><BR>"
-
-#~ msgid ""
-#~ "  Rob Flynn (maintainer) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko."
-#~ "net</A>&gt;<BR>  Sean Egan (lead developer) &lt;<A HREF=\"mailto:"
-#~ "bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian "
-#~ "'ChipX86' Hammond (developer & webmaster)<BR>  Herman Bloggs (win32 port) "
-#~ "&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">hermanator12002@yahoo."
-#~ "com</A>&gt;<BR>  Nathan 'faceprint' Walp (developer)<BR>  Mark 'KingAnt' "
-#~ "Doliner (developer)<BR>  Luke 'LSchiere' Schierer (support)<BR><BR>"
-#~ msgstr ""
-#~ "  Rob Flynn (maintainer) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko."
-#~ "net</A>&gt;<BR>  Sean Egan (lead developer) &lt;<A HREF=\"mailto:"
-#~ "bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian "
-#~ "'ChipX86' Hammond (developer & webmaster)<BR>  Herman Bloggs (win32 port) "
-#~ "&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">hermanator12002@yahoo."
-#~ "com</A>&gt;<BR>  Nathan 'faceprint' Walp (developer)<BR>  Mark 'KingAnt' "
-#~ "Doliner (developer)<BR>  Luke 'LSchiere' Schierer (support)<BR><BR>"
-
-#~ msgid "<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"
-#~ msgstr "<FONT SIZE=\"3\">\"Galna patchar\"-programerare:</FONT><BR>"
-
-#~ msgid "<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"
-#~ msgstr "<FONT SIZE=\"3\">Före detta utvecklare:</FONT><BR>"
-
-#~ msgid ""
-#~ "  Adam Fritzler (former libfaim maintainer)<BR>  Eric Warmenhoven (former "
-#~ "lead developer)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
-#~ "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (former maintainer)<BR>  "
-#~ "Jim Seymour (former Jabber developer)<BR>  Mark Spencer (original author) "
-#~ "&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
-#~ "Syd Logan (hacker and designated driver [lazy bum])<BR><BR>"
-#~ msgstr ""
-#~ "  Adam Fritzler (former libfaim maintainer)<BR>  Eric Warmenhoven (former "
-#~ "lead developer)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
-#~ "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (former maintainer)<BR>  "
-#~ "Jim Seymour (former Jabber developer)<BR>  Mark Spencer (original author) "
-#~ "&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
-#~ "Syd Logan (hacker and designated driver [lazy bum])<BR><BR>"
-
-#~ msgid "Couldn't open log file %s"
-#~ msgstr "Kunde inte öppna loggfil %s."
-
-#~ msgid "Screenname"
-#~ msgstr "Användar-ID"
-
-#~ msgid "_Raise windows on events"
-#~ msgstr "_Visa upp fönster vid händelser"
-
-#~ msgid "Sign On"
-#~ msgstr "Logga in"
-
-#~ msgid "Unable to write to config file"
-#~ msgstr "Kan inte skriva till konfigurationsfilen"
-
-#~ msgid "DCC Chat with %s closed"
-#~ msgstr "DCC-chatt med %s stängd"
-
-#~ msgid "DCC Chat with %s established"
-#~ msgstr "DCC-chatt med %s etablerad"
-
-#~ msgid "User"
-#~ msgstr "Användare"
-
-#~ msgid "IRC Operator"
-#~ msgstr "IRC-operatör"
-
-#~ msgid "IRC Error"
-#~ msgstr "IRC-fel"
-
-#~ msgid "No such server"
-#~ msgstr "Ingen sådan server"
-
-#~ msgid "No nickname given"
-#~ msgstr "Inget nick är angivet"
-
-#~ msgid "CTCP UserInfo"
-#~ msgstr "CTCP användarinformation"
-
-#~ msgid "You have left %s"
-#~ msgstr "Du har lämnat %s"
-
-#~ msgid "IRC Part"
-#~ msgstr "IRC-lämnande"
-
-#~ msgid "DCC Chat"
-#~ msgstr "DCC-chatt"
-
-#~ msgid "User Identity"
-#~ msgstr "Användar-IDentitet"
-
-#~ msgid "_Group:"
-#~ msgstr "_Grupp:"
-
-#~ msgid "Deny all users"
-#~ msgstr "Neka alla användare"
-
-#, fuzzy
-#~ msgid "_Alias:"
-#~ msgstr "_Alias:"
-
-#~ msgid "File Transfers..."
-#~ msgstr "Filöverföringar"
-
-#~ msgid "Accounts..."
-#~ msgstr "Konton"
-
-#~ msgid "Preferences..."
-#~ msgstr "Inställningar"
-
-#~ msgid "Gaim Chat"
-#~ msgstr "Gaim-chatt"
-
-#~ msgid "Chat Rooms"
-#~ msgstr "Chattrum"
-
-#~ msgid "Refresh"
-#~ msgstr "Uppdatera"
-
-#~ msgid "List of available chats"
-#~ msgstr "Lista med tillgängliga chattar"
-
-#~ msgid "List of subscribed chats"
-#~ msgstr "Lista med prenumererade chattar"
-
-#~ msgid "Chat List"
-#~ msgstr "Chattlista"
-
-#~ msgid "Allows you to add chat rooms to your buddy list."
-#~ msgstr "Tillåter dig att lägga till chattrum till din kompislista."
-
-#~ msgid ""
-#~ "Allows you to add chat rooms to your buddy list. Click the configure "
-#~ "button to choose which rooms."
-#~ msgstr ""
-#~ "Tillåter dig att lägga till chattrum till din kompislista. Klicka "
-#~ "påinställningsknappen för att välja vilka rum."
-
-#~ msgid "User unverified"
-#~ msgstr "Användare ej verifierad"
-
-#~ msgid "Error transferring"
-#~ msgstr "Felaktig överföring"
-
-#~ msgid "Unable to connect to Notification Server"
-#~ msgstr "Kan inte ansluta till notifieringsservern"
-
-#~ msgid "Set Friendly Name:"
-#~ msgstr "Ange alias:"
-
-#~ msgid "Gaim was unable to send an MSN message"
-#~ msgstr "Gaim kunde inte skicka ett MSN-meddelande"
-
-#~ msgid ""
-#~ "Gaim encountered an error communicating with the MSN switchboard server.  "
-#~ "Please try again later."
-#~ msgstr ""
-#~ "Gaim påträffade ett kommunikationsfel med \"MSN switchboard\"-servern.  "
-#~ "Försök igen senare."
-
-#~ msgid ""
-#~ "The maximum number of buddies allowed in your buddy list is %d, and you "
-#~ "have %d.  Until you are below the limit, some buddies will not show up as "
-#~ "online."
-#~ msgstr ""
-#~ "Det maximala antalet kompisar som tillåts i din kompislista är %d, och du "
-#~ "har %d. Till dess att du är under gränsen kommer en del av dina kompisar "
-#~ "inte att visas som online."
-
-#~ msgid "Could not add the buddy %s for an unknown reason."
-#~ msgstr "Kunde inte lägga till kompis %s av okänd anledning."
-
-#~ msgid "Conversation"
-#~ msgstr "Konversation"
-
-#~ msgid "Rename Buddy"
-#~ msgstr "Byt namn på kompis"
-
-#, fuzzy
-#~ msgid "Unable to Save Preferences"
-#~ msgstr "Gaim - Egenskaper"
-
-#~ msgid "/Buddies/_Show Offline Buddies"
-#~ msgstr "/Kompisar/_Visa inaktiva kompisar"
-
-#~ msgid "Gaim - Save Image"
-#~ msgstr "Gaim - Spara bild"
-
-#~ msgid "Load Buddy Icon"
-#~ msgstr "Läs in kompisikon"
-
-#~ msgid "Auto-Login"
-#~ msgstr "Logga in automatiskt"
-
-#~ msgid "Register with server"
-#~ msgstr "Registrera med server"
-
-#~ msgid "Proxy _Type"
-#~ msgstr "Proxy_typ"
-
-#~ msgid "_Login"
-#~ msgstr "_Inloggning"
-
-#~ msgid ""
-#~ "Please enter your password for %s.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Ange ditt lösenord för %s.\n"
-#~ "\n"
-
-#~ msgid "_Password"
-#~ msgstr "_Lösenord"
-
-#~ msgid "Protocol not found."
-#~ msgstr "Protokollet hittades inte."
-
-#~ msgid ""
-#~ "You cannot log this account in; you do not have the protocol it uses "
-#~ "loaded, or the protocol does not have a login function."
-#~ msgstr ""
-#~ "Du kan inte logga in med detta konto. Protokoll som kontot använder är "
-#~ "inte laddat eller har inte någon inloggningsfunktion."
-
-#~ msgid "Account Editor"
-#~ msgstr "Redigera konton"
-
-#~ msgid ""
-#~ "%s\n"
-#~ "%s: %s"
-#~ msgstr ""
-#~ "%s\n"
-#~ "%s: %s"
-
-#~ msgid "%s was unable to sign on"
-#~ msgstr "%s kunde inte logga in"
-
-#~ msgid "Signon Error"
-#~ msgstr "Inloggningsfel"
-
-#~ msgid "Notice"
-#~ msgstr "Meddelande"
-
-#~ msgid "Control-_W closes window"
-#~ msgstr "Control-_W stänger fönster"
-
-#~ msgid "Hide buddy _icons"
-#~ msgstr "Dölj kompis_ikoner"
-
-#~ msgid "IM Tabs"
-#~ msgstr "Snabbmeddelandeflikar"
-
-#~ msgid "Tab _placement:"
-#~ msgstr "Flik_placering:"
-
-#~ msgid ""
-#~ "Show all _instant messages in one tabbed\n"
-#~ "window"
-#~ msgstr "Visa alla snabbmeddelanden i ett fönster med flikar"
-
-#~ msgid "Chat Tabs"
-#~ msgstr "Chattflikar"
-
-#~ msgid "Show all c_hats in one tabbed window"
-#~ msgstr "Visa alla chattar i ett fönster med flikar"
-
-#~ msgid "_Manual: "
-#~ msgstr "_Manuell: "
-
-#~ msgid "Tabs"
-#~ msgstr "Flikar"
-
-#, fuzzy
-#~ msgid "%s has mail from %s: %s"
-#~ msgstr "Du har sparkats ut från %s: %s"
-
-#~ msgid "Gaim - New Mail"
-#~ msgstr "Gaim - Nytt brev"
-
-#, fuzzy
-#~ msgid "Gaim - Confirm"
-#~ msgstr "Gaim - Fel"
-
-#~ msgid ""
-#~ "You do not currently have any protocols available that are able to "
-#~ "register new accounts."
-#~ msgstr ""
-#~ "Du har för tillfället inga tillgängliga protokoll som klarar av att "
-#~ "registrera nya konton."
-
-#~ msgid "Gaim - Registration"
-#~ msgstr "Gaim - Registrering"
-
-#~ msgid "Registration Information"
-#~ msgstr "Registreringsinformation"
-
-#, fuzzy
-#~ msgid "Buddy Chat Invite"
-#~ msgstr "Kompischatt"
-
-#, fuzzy
-#~ msgid "Gaim Instant Messenger - Away"
-#~ msgstr "Skicka snabbmeddelande"
-
-#, fuzzy
-#~ msgid "I'm Back"
-#~ msgstr "Jag är tillbaka!"
-
-#, fuzzy
-#~ msgid "Exit"
-#~ msgstr "Redigera"
-
-#, fuzzy
-#~ msgid "Autoreconnect"
-#~ msgstr "Kan inte ansluta"
-
-#~ msgid "Gadu-Gadu User"
-#~ msgstr "Gadu-Gadu-användare"
-
-#, fuzzy
-#~ msgid "<b>Status:</b> %s%s%s"
-#~ msgstr "<B>Status:</B> %s<BR><HR><BR>%s<BR>"
-
-#, fuzzy
-#~ msgid "<b>Away Message:</b><br>"
-#~ msgstr "Frånvaromeddelanden"
-
-#~ msgid "Removing '%s' from buddy list.\n"
-#~ msgstr "Ta bort \"%s\" från kompislistan.\n"
-
-#~ msgid "Received: '%s'\n"
-#~ msgstr "Mottog: \"%s\"\n"
-
-#, fuzzy
-#~ msgid "About Gaim..."
-#~ msgstr "Om Gaim..."
-
-#~ msgid "yes"
-#~ msgstr "ja"
-
-#~ msgid "no"
-#~ msgstr "nej"
-
-#~ msgid "connection error (rend)\n"
-#~ msgstr "anslutningssfel (rend)\n"
-
-#~ msgid "major connection error\n"
-#~ msgstr "stort anslutningsfel\n"
-
-#~ msgid "Password sent, waiting for response\n"
-#~ msgstr "Lösenord skickat, väntar på svar\n"
-
-#~ msgid "internal connection error\n"
-#~ msgstr "internt anslutningsfel\n"
-
-#, fuzzy
-#~ msgid "Couldn't open listener to send file"
-#~ msgstr "Kunde inte öppna konfigurationsfilen %s."
-
-#, fuzzy
-#~ msgid "You missed %hu messages from %s because they were invalid."
-#~ msgstr "Du missade %d meddelanden från %s eftersom de var ogiltiga."
-
-#, fuzzy
-#~ msgid "You missed %hu messages from %s because they were too large."
-#~ msgstr "Du missade %d meddelanden från %s eftersom de var för stora."
-
-#, fuzzy
-#~ msgid ""
-#~ "You missed %hu messages from %s because the rate limit has been exceeded."
-#~ msgstr ""
-#~ "Du missade %d meddelanden från %s eftersom frekvensgränsen har "
-#~ "överskridits."
-
-#, fuzzy
-#~ msgid "You missed %hu messages from %s because he/she was too evil."
-#~ msgstr "Du missade %d meddelande från %s eftersom det var för hemskt."
-
-#, fuzzy
-#~ msgid "You missed %hu messages from %s because you are too evil."
-#~ msgstr "Du missade %d meddelanden från %s eftersom du är för hemsk."
-
-#, fuzzy
-#~ msgid "You missed %hu messages from %s for an unknown reason."
-#~ msgstr "Du missade %d meddelanden från %s på grund av okända orsaker."
-
-#, fuzzy
-#~ msgid "No reason was given."
-#~ msgstr "Ingen motivering angiven."
-
-#~ msgid "IM Image"
-#~ msgstr "Snabbmeddelandebild"
-
-#~ msgid "Stocks"
-#~ msgstr "Aktier"
-
-#, fuzzy
-#~ msgid ""
-#~ "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>Remote client does not "
-#~ "support sending status messages.</I><BR>"
-#~ msgstr ""
-#~ "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Fjärrklienten stöder "
-#~ "inte skickande av statusmeddelanden.</I><BR>"
-
-#, fuzzy
-#~ msgid ""
-#~ "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>User has no status message."
-#~ "</I><BR>"
-#~ msgstr ""
-#~ "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Användaren har inga "
-#~ "statusmeddelanden.</I><BR>"
-
-#~ msgid "Get Capabilities"
-#~ msgstr "Hämta kapabiliteter"
-
-#~ msgid "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-#~ msgstr "%s ber %s att acceptera %d filer: %s (%.2f %s)%s%s"
-
-#~ msgid "Gaim - Login"
-#~ msgstr "Gaim - Inloggning"
-
-#~ msgid "Un-Alias"
-#~ msgstr "Avaliasera"
-
-#~ msgid "[Click to edit]"
-#~ msgstr "[Klicka för att redigera]"
-
-#~ msgid ""
-#~ "Alias: %s               \n"
-#~ "Screen Name: %s\n"
-#~ "%s%s%s%s%s%s"
-#~ msgstr ""
-#~ "Alias: %s               \n"
-#~ "Användar-ID: %s\n"
-#~ "%s%s%s%s%s%s"
-
-#~ msgid "Idle: "
-#~ msgstr "Inaktivitet: "
-
-#~ msgid "Start/join a Buddy Chat"
-#~ msgstr "Starta/gå in i en kompischatt"
-
-#~ msgid "Activate Away Message"
-#~ msgstr "Aktivera frånvaromeddelande"
-
-#~ msgid "Gaim - Buddy List"
-#~ msgstr "Gaim - Kompislista"
-
-#~ msgid "File"
-#~ msgstr "Arkiv"
-
-#, fuzzy
-#~ msgid "_Accounts..."
-#~ msgstr "Konton"
-
-#, fuzzy
-#~ msgid "_Preferences..."
-#~ msgstr "Inställningar"
-
-#~ msgid "About Gaim"
-#~ msgstr "Om Gaim"
-
-#~ msgid "Add a new Buddy"
-#~ msgstr "Lägg till en ny kompis"
-
-#~ msgid "Remove selected Buddy/Group"
-#~ msgstr "Ta bort vald kompis/grupp"
-
-#~ msgid "Edit Buddies"
-#~ msgstr "Redigera kompisar"
-
-#~ msgid "Gaim - Group Chats"
-#~ msgstr "Gaim - Gruppchattar"
-
-#, fuzzy
-#~ msgid "_Save Conversation"
-#~ msgstr "Spara konversation"
-
-#, fuzzy
-#~ msgid "_Close"
-#~ msgstr "Stäng"
-
-#~ msgid "Gaim - Conversations"
-#~ msgstr "Gaim - Konversationer"
-
-#~ msgid "Send message as: "
-#~ msgstr "Skicka meddelande som: "
-
-#~ msgid "Gaim - Add Group"
-#~ msgstr "Gaim - Lägg till grupp"
-
-#~ msgid "Gaim - Add Buddy"
-#~ msgstr "Gaim - Lägg till kompis"
-
-#, fuzzy
-#~ msgid "Gaim - Privacy"
-#~ msgstr "Gaim - Frånvarande!"
-
-#~ msgid "Gaim - New Buddy Pounce"
-#~ msgstr "Gaim - Nytt kompisanfall"
-
-#~ msgid "Pounce on sign on"
-#~ msgstr "Anfall vid inloggning"
-
-#~ msgid "Pounce when buddy is typing to you"
-#~ msgstr "Anfall då kompis skriver till dig"
-
-#, fuzzy
-#~ msgid "C_ancel"
-#~ msgstr "Avbryt"
-
-#~ msgid "Gaim - Set Dir Info"
-#~ msgstr "Gaim - Ställ in kataloginformation"
-
-#~ msgid "Gaim - Password Change"
-#~ msgstr "Gaim - Lösenordsändring"
-
-#~ msgid "Gaim - Set User Info"
-#~ msgstr "Gaim - Ställ in användarinformation"
-
-#~ msgid "Gaim - Add Permit"
-#~ msgstr "Gaim - Lägg till tillåtelse"
-
-#~ msgid "Gaim - Log Conversation"
-#~ msgstr "Gaim - Logga konversation"
-
-#~ msgid "Gaim - Add URL"
-#~ msgstr "Gaim - Lägg till URL"
-
-#~ msgid "Import to:"
-#~ msgstr "Importera till:"
-
-#~ msgid "Gaim - Import Buddy List"
-#~ msgstr "Gaim - Importera kompislista"
-
-#~ msgid "Gaim - New away message"
-#~ msgstr "Gaim - Nytt frånvaromeddelande"
-
-#~ msgid "Gaim - Alias Buddy"
-#~ msgstr "Gaim - Aliaskompis"
-
-#~ msgid "Okay"
-#~ msgstr "Okej"
-
-#~ msgid "Gaim - Rename Group"
-#~ msgstr "Gaim - Byt namn på gruppen"
-
-#~ msgid "Gaim - Rename Buddy"
-#~ msgstr "Gaim - Byt namn på kompis"
-
-#~ msgid "Gaim - Select Perl Script"
-#~ msgstr "Gaim - Välj Perlskript"
-
-#~ msgid "Enter Password"
-#~ msgstr "Ange lösenord"
-
-#, fuzzy
-#~ msgid "Gaim Account Signon"
-#~ msgstr "Gaim - Kontoredigerare"
-
-#, fuzzy
-#~ msgid "Show _debug window"
-#~ msgstr "Visa felsökningsfönster"
-
-#, fuzzy
-#~ msgid "Buttons"
-#~ msgstr "Nederst"
-
-#, fuzzy
-#~ msgid "_Hide IM/Info/Chat buttons"
-#~ msgstr "Dölj snabbmeddelande-/info-/chattknappar"
-
-#, fuzzy
-#~ msgid "Show _pictures on buttons"
-#~ msgstr "Visa bilder på knappar"
-
-#, fuzzy
-#~ msgid "_Save window size/position"
-#~ msgstr "Spara fönsterstorlek/position"
-
-#, fuzzy
-#~ msgid "Hide _groups with no online buddies"
-#~ msgstr "Dölj grupper med inga anslutna kompisar"
-
-#, fuzzy
-#~ msgid "Internal"
-#~ msgstr "Internt fel"
-
-#, fuzzy
-#~ msgid "_Ignore new conversations when away"
-#~ msgstr "Ignorera nya konversationer vid frånvaro"
-
-#~ msgid "Gaim - Sound Configuration"
-#~ msgstr "Gaim - Ljudkonfiguration"
-
-#~ msgid "IM Window"
-#~ msgstr "Snabbmeddelandefönster"
-
-#, fuzzy
-#~ msgid "Chat Window"
-#~ msgstr "Gruppchatfönster"
-
-#, fuzzy
-#~ msgid "Gaim - Debug Window"
-#~ msgstr "Felsökningsfönster"
-
-#~ msgid ""
-#~ "%s has requested a DCC chat.  Would you like to establish the direct "
-#~ "connection?"
-#~ msgstr "%s har begärt en DCC-chatt. Vill du etablera direktanslutningen?"
-
-#~ msgid "You missed %d messages from %s because they are too evil."
-#~ msgstr "Du missade %d meddelanden från %s eftersom de är för hemska."
-
-#~ msgid ""
-#~ "<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif"
-#~ "\"> : Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL User <br><IMG "
-#~ "SRC=\"dt_icon.gif\"> : Trial AIM User <br><IMG SRC=\"admin_icon.gif\"> : "
-#~ "Administrator <br><IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive "
-#~ "Agent<br><IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"
-#~ msgstr ""
-#~ "<br><BODY BGCOLOR=WHITE><hr><I>Förklaring:</I><br><br><IMG SRC="
-#~ "\"free_icon.gif\"> : Vanlig AIM-användare<br><IMG SRC=\"aol_icon.gif\"> : "
-#~ "AOL-användare <br><IMG SRC=\"dt_icon.gif\"> : AIM-försöksanvändare "
-#~ "<br><IMG SRC=\"admin_icon.gif\"> : Administratör <br><IMG SRC=\"ab_icon."
-#~ "gif\"> : Interaktiv ActiveBuddy-agent<br><IMG SRC=\"wireless_icon.gif"
-#~ "\"> : Användare av trådlös enhet<br>"
-
-#~ msgid ""
-#~ "You have selected to open a Direct IM connection with %s. Doing this will "
-#~ "let them see your IP address, and may be a security risk. Do you wish to "
-#~ "continue?"
-#~ msgstr ""
-#~ "Du har valt att öppna en direktmeddelandeanslutning med %s. Att göra "
-#~ "detta kommer att låta dem se din IP-adress, och kan vara en "
-#~ "säkerhetsrisk. Vill du fortsätta?"
-
-#~ msgid ""
-#~ "Active Developers\n"
-#~ "====================\n"
-#~ "Rob Flynn (maintainer) [ rob@marko.net ]\n"
-#~ "Sean Egan (coder)      [ bj91704@binghamton.edu ]\n"
-#~ "\n"
-#~ "Crazy Patch Writers\n"
-#~ "===================\n"
-#~ "Benjamin Miller\n"
-#~ "Decklin Foster\n"
-#~ "Nathan Walp\n"
-#~ "Mark Doliner\n"
-#~ "\n"
-#~ "Retired Developers\n"
-#~ "===================\n"
-#~ "Jim Duchek\n"
-#~ "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
-#~ "Mark Spencer (original author)   [ markster@marko.net ]"
-#~ msgstr ""
-#~ "Aktiva utvecklare\n"
-#~ "=======================\n"
-#~ "Rob Flynn (ansvarig) [ rob@marko.net ]\n"
-#~ "Sean Egan (kodare)   [ bj91704@binghamton.edu ]\n"
-#~ "\n"
-#~ "Galna förbättrare\n"
-#~ "=======================\n"
-#~ "Benjamin Miller\n"
-#~ "Decklin Foster\n"
-#~ "Nathan Walp\n"
-#~ "Mark Doliner\n"
-#~ "\n"
-#~ "Pensionerade utvecklare\n"
-#~ "=======================\n"
-#~ "Jim Duchek\n"
-#~ "Eric Warmenhoven                      [ warmenhoven@yahoo.com ]\n"
-#~ "Mark Spencer (ursprunglig författare) [ markster@marko.net ]"
-
-#~ msgid "Password: "
-#~ msgstr "Lösenord: "
-
-#~ msgid "About"
-#~ msgstr "Om"
-
-#~ msgid "Perl"
-#~ msgstr "Perl"
-
-#~ msgid "Load Script"
-#~ msgstr "Läs in skript"
-
-#~ msgid "Unload All Scripts"
-#~ msgstr "Glöm alla skript"
-
-#~ msgid "List Scripts"
-#~ msgstr "Lista skript"
-
-#~ msgid "Whisper"
-#~ msgstr "Viska"
-
-#~ msgid "Setting position to %d\n"
-#~ msgstr "Ställer in positionen till %d\n"
-
-#~ msgid "Bold Text"
-#~ msgstr "Gör texten fet"
-
-#~ msgid "Italics Text"
-#~ msgstr "Gör texten kursiv"
-
-#~ msgid "Underline Text"
-#~ msgstr "Stryk under text"
-
-#~ msgid "Strike through Text"
-#~ msgstr "Genomstryk text"
-
-#~ msgid "Strike"
-#~ msgstr "Genomstrykning"
-
-#~ msgid "Decrease font size"
-#~ msgstr "Minska typsnittsstorleken"
-
-#~ msgid "Small"
-#~ msgstr "Liten"
-
-#~ msgid "Normal"
-#~ msgstr "Normal"
-
-#~ msgid "Increase font size"
-#~ msgstr "Öka typsnittsstorleken"
-
-#~ msgid "Big"
-#~ msgstr "Stor"
-
-#~ msgid "Font"
-#~ msgstr "Typsnitt"
-
-#~ msgid "Text Color"
-#~ msgstr "Textfärg"
-
-#~ msgid "Background Color"
-#~ msgstr "Bakgrundsfärg"
-
-#~ msgid "Link"
-#~ msgstr "Länk"
-
-#~ msgid "Do you really want to warn %s?"
-#~ msgstr "Vill du verkligen varna %s?"
-
-#~ msgid "Gaim - Remove %s?"
-#~ msgstr "Gaim - Ta bort %s?"
-
-#~ msgid "Gaim - IM user"
-#~ msgstr "Gaim - Snabbmeddelandeanvändare"
-
-#~ msgid "IM who:"
-#~ msgstr "Snabbmeddelande till vem:"
-
-#~ msgid "Gaim - Get User Info"
-#~ msgstr "Gaim - Hämta användarinformation"
-
-#~ msgid "Contact"
-#~ msgstr "Kontakt"
-
-#~ msgid "Select Autos"
-#~ msgstr "Markera automatiskt"
-
-#~ msgid "Select None"
-#~ msgstr "Markera inga"
-
-#~ msgid "Gaim - Plugin List"
-#~ msgstr "Gaim - Lista över insticksmoduler"
-
-#~ msgid "Gaim - Plugins"
-#~ msgstr "Gaim - Insticksmoduler"
-
-#~ msgid "Loaded Plugins"
-#~ msgstr "Inlästa insticksmoduler"
-
-#~ msgid "Load a plugin from a file"
-#~ msgstr "Läs in en insticksmodul från en fil"
-
-#~ msgid "Configure"
-#~ msgstr "Konfigurera"
-
-#~ msgid "Configure settings of the selected plugin"
-#~ msgstr "Konfigurera inställningar för den valda insticksmodulen"
-
-#~ msgid "Reload"
-#~ msgstr "Läs om"
-
-#~ msgid "Reload the selected plugin"
-#~ msgstr "Läs om den markerade insticksmodulen"
-
-#~ msgid "Unload"
-#~ msgstr "Glöm"
-
-#~ msgid "Unload the selected plugin"
-#~ msgstr "Glöm den valda insticksmodulen"
-
-#~ msgid "Close this window"
-#~ msgstr "Stäng detta fönster"
-
-#, fuzzy
-#~ msgid "Use _borderless buttons"
-#~ msgstr "Använd ramlösa knappar"
-
-#, fuzzy
-#~ msgid "Ignore Ti_K Automated Messages"
-#~ msgstr "Ignorera automatiserade TiK-meddelanden"
-
-#, fuzzy
-#~ msgid "_Raise Window on Events"
-#~ msgstr "Höj fönster vid händelser"
-
-#~ msgid "Gaim debug output window"
-#~ msgstr "Gaim-felsökningsutdatafönster"
-
-#~ msgid ""
-#~ "You have attempted to load a protocol which was not compiled from the "
-#~ "same version of the source as this application was. Unfortunately, "
-#~ "because it is not the same version I cannot safely tell you which one it "
-#~ "was. Needless to say, it was not successfully loaded."
-#~ msgstr ""
-#~ "Du har försökt att läsa in ett protokoll som inte kompilerades från samma "
-#~ "version av källkoden som detta program var. Tyvärr betyder detta att jag "
-#~ "inte kan säga vilken version det var eftersom det inte är samma version. "
-#~ "Det behövs kanske inte sägas, men det lästes inte in."
-
-#~ msgid "%s was using %s, which got removed. %s is now offline."
-#~ msgstr "%s använde %s, som togs bort. %s är nu frånkopplad."
-
-#~ msgid "Accept?"
-#~ msgstr "Acceptera?"
-
-#~ msgid "Gadu-Gadu Error"
-#~ msgstr "Gadu-Gadu-fel"
-
-#~ msgid "Couldn't send http request"
-#~ msgstr "Kunde inte skicka http-begäran"
-
-#~ msgid "Buddies List import from Server failed (%s)"
-#~ msgstr "Import av kompislista från server misslyckades (%s)"
-
-#~ msgid "Buddies List export to Server failed (%s)"
-#~ msgstr "Export av kompislista till server misslyckades (%s)"
-
-#~ msgid "Deletion of Buddies List from Server failed (%s)"
-#~ msgstr "Borttagning av kompislista från server misslyckades (%s)"
-
-#~ msgid "Connect to search service failed (%s)"
-#~ msgstr "Anslutning till söktjänsten misslyckades (%s)"
-
-#~ msgid "Incorrect current password! Password NOT Changed!"
-#~ msgstr "Ogiltigt aktuellt lösenord! Lösenordet ändrades INTE!"
-
-#~ msgid "Password Change Error!"
-#~ msgstr "Fel vid lösenordsändring!"
-
-#~ msgid "New password same as old password! Password NOT Changed!"
-#~ msgstr "Nya lösenordet samma som det gamla! Lösenordet ändrades INTE!"
-
-#~ msgid "Password Change"
-#~ msgstr "Lösenordsändring"
-
-#~ msgid "Invalid Jabber I.D."
-#~ msgstr "Ogiltigt Jabber-id."
-
-#~ msgid "Chat Error!"
-#~ msgstr "Chattfel!"
-
-#~ msgid "Gaim - Chat"
-#~ msgstr "Gaim - Chatt"
-
-#~ msgid "Gaim - Oscar SNAC Error"
-#~ msgstr "Gaim - Oscar SNAC-fel"
-
-#~ msgid "Gaim - Warning"
-#~ msgstr "Gaim - Varning"
-
-#~ msgid "Chat Error"
-#~ msgstr "Chattfel"
-
-#~ msgid "Could not write file header!"
-#~ msgstr "Kunde inte skriva filhuvud!"
-
-#~ msgid "Attempting to sign on...."
-#~ msgstr "Försöker att logga in..."
-
-#~ msgid "Offline. Click to bring up login box."
-#~ msgstr "Frånkopplad. Klicka för att ta fram inloggningsrutan."
-
-#~ msgid "Away: %d pending."
-#~ msgstr "Frånvarande: %d väntar."
-
-#~ msgid "Away."
-#~ msgstr "Frånvarande."
-
-#~ msgid "Can't create Gaim applet!"
-#~ msgstr "Kan inte skapa Gaim-panelprogram!"
-
-#~ msgid "Message Error"
-#~ msgstr "Meddelandefel"
-
-#~ msgid "Unable to send message: Unknown reason"
-#~ msgstr "Kan inte skicka meddelande: Okänd orsak"
-
-#~ msgid "Buddy Pounce Error"
-#~ msgstr "Kompisanfallsfel"
-
-#~ msgid "Gaim - Change Password Error"
-#~ msgstr "Gaim - Fel vid lösenordsbyte"
-
-#~ msgid "Unable to remove file %s - %s"
-#~ msgstr "Kan inte ta bort filen %s - %s"
-
-#~ msgid "Preferences Error"
-#~ msgstr "Inställningsfel"
-
-#~ msgid "Login Error"
-#~ msgstr "Inloggningsfel"
-
-#~ msgid "Perl Scripts"
-#~ msgstr "Perlskript"
-
-#~ msgid "Automatically show buddy list on sign on"
-#~ msgstr "Visa automatiskt kompislista vid inloggning"
-
-#~ msgid "Display Buddy List near applet"
-#~ msgstr "Visa kompislista nära panelprogrammet"
-
-#~ msgid "Protocol Error"
-#~ msgstr "Protokollfel"
-
-#~ msgid "Disconnect"
-#~ msgstr "Koppla från"
-
-#~ msgid "All options take effect immediately unless otherwise noted."
-#~ msgstr "Alla ändringar börjar gälla omedelbart såvida inte annat anges."
-
-# src/prefs.c:111
-#~ msgid "Miscellaneous"
-#~ msgstr "Diverse"
-
-#~ msgid "GNOME URL Handler"
-#~ msgstr "GNOME:s URL-hanterare"
-
-#~ msgid ""
-#~ "Not all protocols can use these proxy options. Please see the README file "
-#~ "for details."
-#~ msgstr ""
-#~ "Inte alla protokoll kan använda dessa proxyalternativ. Se filen README "
-#~ "för detaljer."
-
-#~ msgid "Raise Buddy List on Signons and Signoffs"
-#~ msgstr "Höj kompislista vid inloggningar och utloggningar"
-
-#~ msgid "Keyboard Options"
-#~ msgstr "Tangentbordsalternativ"
-
-#~ msgid "F2 toggles timestamp display"
-#~ msgstr "F2 slår på/av tidsstämpelvisningen"
-
-#~ msgid "Display and General Options"
-#~ msgstr "Visnings- och allmänna inställningar"
-
-#~ msgid "IM Options"
-#~ msgstr "Snabbmeddelandealternativ"
-
-#~ msgid "Window Sizes"
-#~ msgstr "Fönsterstorlekar"
-
-#~ msgid "Show conversations in the same tabbed window"
-#~ msgstr "Visa konversationer i samma flikfönster"
-
-#~ msgid "Italic Text"
-#~ msgstr "Kursiv text"
-
-#~ msgid "Font Size for Text"
-#~ msgstr "Typsnittsstorlek för text"
-
-#~ msgid "Sound played when:"
-#~ msgstr "Ljud spelas då:"
-
-#~ msgid "Time between sending auto-responses (in seconds):"
-#~ msgstr "Tid mellan skickande av automatiskt svar (i sekunder):"
-
-#~ msgid "Auto Away after"
-#~ msgstr "Automatiskt frånvarande efter"
-
-#~ msgid "Make Away"
-#~ msgstr "Gör frånvarande"
-
-#~ msgid "KFM"
-#~ msgstr "KFM"
-
-#~ msgid "Error while writting to socket."
-#~ msgstr "Fel vid skrivning till uttag (socket)."
-
-#~ msgid "Handshake"
-#~ msgstr "Handskakning"
-
-#~ msgid "Sending key"
-#~ msgstr "Skickar nyckel"
-
-#~ msgid "Send offline message"
-#~ msgstr "Skickar frånkopplat meddelande"
-
-#~ msgid ""
-#~ "Rob Flynn (maintainer)               rob@marko.net\n"
-#~ "Eric Warmenhoven (lead coder)  warmenhoven@yahoo.com\n"
-#~ "\n"
-#~ "Benjamin Miller\n"
-#~ "Decklin Foster\n"
-#~ "Sean Egan\n"
-#~ "Jim Duchek\n"
-#~ "Mark Spencer (original author)   markster@marko.net"
-#~ msgstr ""
-#~ "Rob Flynn (ansvarig)                  rob@marko.net\n"
-#~ "Eric Warmenhoven (huvudprogrammerare) warmenhoven@yahoo.com\n"
-#~ "\n"
-#~ "Benjamin Miller\n"
-#~ "Decklin Foster\n"
-#~ "Sean Egan\n"
-#~ "Jim Duchek\n"
-#~ "Mark Spencer (ursprunglig författare) markster@marko.net"
-
-#~ msgid ""
-#~ "Relax, help is just around the corner. The first thing you'll need to do "
-#~ "is get an AIM account; you can get one from http://aim.aol.com/. Just "
-#~ "click the button that says \"New Users\" and you can create an account "
-#~ "that way. Once you have your account, enter the username and password "
-#~ "into the login window that comes up when you start Gaim, and click the "
-#~ "Signon button. Once you're online, you can talk to one of the Gaim "
-#~ "developers for more assistance; their contact information is in the "
-#~ "AUTHORS file in the Gaim source, or at "
-#~ msgstr ""
-#~ "Slappna av, hjälp finns runt hörnet. Det första som du måste göra är att "
-#~ "skaffa ett AIM-konto. Du kan skaffa ett från http://aim.aol.com/. Klicka "
-#~ "bara på knappen som säger \"Nya användare\" så kan du skapa ett konto på "
-#~ "det sättet. När du väl har ett konto anger du användarnamnet och "
-#~ "lösenordet i inloggningsfönstret som kommer upp när du startar Gaim, och "
-#~ "klickar på inloggningsknappen. När du väl är ansluten kan du prata med en "
-#~ "av Gaim-utvecklarna för mer hjälp. Deras kontaktinformation finns i filen "
-#~ "AUTHORS i Gaim-källkoden, eller på "
-
-#~ msgid ""
-#~ "contactinfo.php. If you can't get online and still need more assistance, "
-#~ "feel free to email us at gaim@marko.net. Thanks for using Gaim!"
-#~ msgstr ""
-#~ "contactinfo.php. Om du inte kan ansluta och behöver mer hjälp, kan du "
-#~ "skicka e-post till oss på gaim@marko.net. Tack för att du använder Gaim!"
-
-#~ msgid "Help!"
-#~ msgstr "Hjälp!"
-
-#~ msgid "Sound when buddy logs in"
-#~ msgstr "Ljud då kompis loggar in"
-
-#~ msgid "Sound when buddy logs out"
-#~ msgstr "Ljud då kompis loggar ut"
-
-#~ msgid "Sound when message is sent"
-#~ msgstr "Ljud då meddelande skickas"
-
-#~ msgid "Sound in chat rooms when people enter"
-#~ msgstr "Ljud i chattrum då personer kommer in"
-
-#~ msgid "Sound in chat rooms when people leave"
-#~ msgstr "Ljud i chattrum då personer lämnar"
-
-#~ msgid "Sound in chat rooms when you talk"
-#~ msgstr "Ljud i chattrum då du pratar"
-
-#~ msgid "Sound in chat rooms when others talk"
-#~ msgstr "Ljud i chattrum då andra pratar"

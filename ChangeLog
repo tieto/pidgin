@@ -5,6 +5,7 @@ version 0.69
 	* Updated MSN support to the MSN Protocol version 9.
 	* Yahoo now shows people using the java chat client (Tim Ringenbach)
 	* Korean translation updated (Kyung-uk Son)
+	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.68 (09/01/2003):
 	* Removed the old event system and replaced it with a much better
