@@ -426,6 +426,7 @@ void update_chat_list(struct conversation *b)
 void add_chat_buddy(struct conversation *b, char *buddy)
 {
         char *name = g_strdup(buddy);
+	char tmp[BUF_LONG];
 
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
@@ -440,13 +441,17 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 		c = c->next;
 	}
 #endif
-
         b->in_room = g_list_append(b->in_room, name);
 
         update_chat_list(b);
 
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
 		play_sound(BUDDY_ARRIVE);
+
+	if (display_options & OPT_DISP_CHAT_LOGON) {
+		g_snprintf(tmp, sizeof(tmp), _("<B>%s entered the room.</B>"), name);
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL);
+	}
 }
 
 
@@ -455,6 +460,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 void remove_chat_buddy(struct conversation *b, char *buddy)
 {	
         GList *names = b->in_room;
+	char tmp[BUF_LONG];
 
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
@@ -481,6 +487,11 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
 		play_sound(BUDDY_LEAVE);
+
+	if (display_options & OPT_DISP_CHAT_LOGON) {
+		g_snprintf(tmp, sizeof(tmp), _("<B>%s left the room.</B>"), buddy);
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL);
+	}
 }
 
 
