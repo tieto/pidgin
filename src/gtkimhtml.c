@@ -346,6 +346,45 @@ draw_img (GtkIMHtml        *imhtml,
 	return TRUE;
 }
 
+static gint
+draw_line (GtkIMHtml        *imhtml,
+	   struct line_info *line)
+{
+	GtkIMHtmlBit *bit;
+	GdkDrawable *drawable;
+	GdkColormap *cmap;
+	GdkGC *gc;
+	guint line_height;
+	gfloat xoff, yoff;
+
+	xoff = GTK_LAYOUT (imhtml)->hadjustment->value;
+	yoff = GTK_LAYOUT (imhtml)->vadjustment->value;
+	bit = line->bit;
+	drawable = GTK_LAYOUT (imhtml)->bin_window;
+	cmap = gdk_colormap_new (gdk_visual_get_best (), FALSE);
+	gc = gdk_gc_new (drawable);
+
+	if (bit->bg != NULL) {
+		gdk_color_alloc (cmap, bit->bg);
+		gdk_gc_set_foreground (gc, bit->bg);
+
+		gdk_draw_rectangle (drawable, gc, TRUE, line->x - xoff, line->y - yoff,
+				    line->width, line->height);
+	}
+
+	gdk_gc_copy (gc, GTK_WIDGET (imhtml)->style->black_gc);
+
+	line_height = line->height / 2;
+
+	gdk_draw_rectangle (drawable, gc, TRUE, line->x - xoff, line->y - yoff + line_height / 2,
+			    line->width, line_height);
+
+	gdk_colormap_unref (cmap);
+	gdk_gc_unref (gc);
+
+	return TRUE;
+}
+
 static void
 gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 {
@@ -353,12 +392,13 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 	GtkIMHtmlBit *bit;
 	GList *chunks;
 	struct line_info *line;
-	GdkRectangle area;
+	gfloat x, y;
+	guint32 width, height;
 
-	area.x = GTK_LAYOUT (imhtml)->hadjustment->value;
-	area.y = GTK_LAYOUT (imhtml)->vadjustment->value;
-	area.width = GTK_WIDGET (imhtml)->allocation.width;
-	area.height = GTK_WIDGET (imhtml)->allocation.height;
+	x = GTK_LAYOUT (imhtml)->hadjustment->value;
+	y = GTK_LAYOUT (imhtml)->vadjustment->value;
+	width = GTK_WIDGET (imhtml)->allocation.width;
+	height = GTK_WIDGET (imhtml)->allocation.height;
 
 	bits = imhtml->bits;
 
@@ -367,18 +407,32 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 		chunks = bit->chunks;
 		if (DRAW_IMG (bit)) {
 			line = chunks->data;
-			if ((line->x <= area.x + area.width) &&
-			    (line->y <= area.y + area.height) &&
-			    (area.x <= line->x + line->width) &&
-			    (area.y <= line->y + line->height))
-			draw_img (imhtml, line);
+			if ((line->x <= x + width) &&
+			    (line->y <= y + height) &&
+			    (x <= line->x + line->width) &&
+			    (y <= line->y + line->height))
+				draw_img (imhtml, line);
+		} else if (bit->type == TYPE_SEP) {
+			line = chunks->data;
+			if ((line->x <= x + width) &&
+			    (line->y <= y + height) &&
+			    (x <= line->x + line->width) &&
+			    (y <= line->y + line->height))
+				draw_line (imhtml, line);
+
+			line = chunks->next->data;
+			if ((line->x <= x + width) &&
+			    (line->y <= y + height) &&
+			    (x <= line->x + line->width) &&
+			    (y <= line->y + line->height))
+				draw_text (imhtml, line);
 		} else {
 			while (chunks) {
 				line = chunks->data;
-				if ((line->x <= area.x + area.width) &&
-				    (line->y <= area.y + area.height) &&
-				    (area.x <= line->x + line->width) &&
-				    (area.y <= line->y + line->height))
+				if ((line->x <= x + width) &&
+				    (line->y <= y + height) &&
+				    (x <= line->x + line->width) &&
+				    (y <= line->y + line->height))
 					draw_text (imhtml, line);
 				chunks = g_list_next (chunks);
 			}
@@ -533,6 +587,8 @@ gtk_imhtml_select_none (GtkIMHtml *imhtml)
 				chunk->sel_end = NULL;
 				if (DRAW_IMG (bit))
 					draw_img (imhtml, chunk);
+				else if ((bit->type == TYPE_SEP) && (bit->chunks->data == chunk))
+					draw_line (imhtml, chunk);
 				else
 					draw_text (imhtml, chunk);
 			}
@@ -773,6 +829,8 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 			if (redraw) {
 				if (DRAW_IMG (bit))
 					draw_img (imhtml, chunk);
+				else if ((bit->type == TYPE_SEP) && (bit->chunks->data == chunk))
+					draw_line (imhtml, chunk);
 				else
 					draw_text (imhtml, chunk);
 				redraw = FALSE;
@@ -1310,50 +1368,6 @@ gtk_imhtml_associate_smiley (GtkIMHtml  *imhtml,
 		g_hash_table_insert (imhtml->smiley_hash, text, xpm);
 }
 
-/*
-static gint
-draw_line (GtkWidget *widget,
-	   GdkEvent  *event,
-	   gpointer   data)
-{
-	GtkIMHtmlBit *bit;
-	GdkDrawable *drawable;
-	GdkColormap *cmap;
-	GdkGC *gc;
-	guint max_width;
-	guint max_height;
-
-	bit = data;
-	drawable = widget->window;
-	cmap = gdk_colormap_new (gdk_visual_get_best (), FALSE);
-	gc = gdk_gc_new (drawable);
-
-	if (bit->bg != NULL) {
-		gdk_color_alloc (cmap, bit->bg);
-		gdk_gc_set_foreground (gc, bit->bg);
-
-		gdk_draw_rectangle (widget->window, gc, TRUE, 0, 0,
-				    widget->allocation.width,
-				    widget->allocation.height);
-	}
-
-	gdk_gc_copy (gc, widget->style->black_gc);
-
-	max_width = widget->allocation.width;
-	max_height = widget->allocation.height / 2;
-
-	gdk_draw_rectangle (drawable, gc,
-			    TRUE,
-			    0, max_height / 2,
-			    max_width, max_height);
-
-	gdk_colormap_unref (cmap);
-	gdk_gc_unref (gc);
-
-	return TRUE;
-}
-*/
-
 static void
 new_line (GtkIMHtml *imhtml)
 {
@@ -1430,10 +1444,6 @@ backwards_update (GtkIMHtml    *imhtml,
 	}
 }
 
-/*
-static GtkTooltips *tips = NULL;
-*/
-
 static void
 add_text_renderer (GtkIMHtml    *imhtml,
 		   GtkIMHtmlBit *bit,
@@ -1461,16 +1471,6 @@ add_text_renderer (GtkIMHtml    *imhtml,
 	li->bit = bit;
 
 	if (bit->url) {
-		/* FIXME
-		eventbox = gtk_event_box_new ();
-		gtk_layout_put (GTK_LAYOUT (imhtml), eventbox, imhtml->x, imhtml->y);
-		gtk_signal_connect (GTK_OBJECT (eventbox), "button_press_event",
-				    GTK_SIGNAL_FUNC (click_event_box), imhtml);
-		gtk_widget_show (eventbox);
-
-		gtk_container_add (GTK_CONTAINER (eventbox), darea);
-		*/
-
 		uw = g_new0 (struct url_widget, 1);
 		uw->x = imhtml->x;
 		uw->y = imhtml->y;
@@ -1478,12 +1478,6 @@ add_text_renderer (GtkIMHtml    *imhtml,
 		uw->height = imhtml->llheight;
 		uw->url = bit->url;
 		imhtml->urls = g_list_append (imhtml->urls, uw);
-
-		/*
-		if (!tips)
-			tips = gtk_tooltips_new ();
-		gtk_tooltips_set_tip (tips, eventbox, bit->url, "");
-		*/
 	}
 
 	bit->chunks = g_list_append (bit->chunks, li);
@@ -1509,16 +1503,6 @@ add_img_renderer (GtkIMHtml    *imhtml,
 	li->bit = bit;
 
 	if (bit->url) {
-		/* FIXME
-		eventbox = gtk_event_box_new ();
-		gtk_layout_put (GTK_LAYOUT (imhtml), eventbox, imhtml->x, imhtml->y);
-		gtk_signal_connect (GTK_OBJECT (eventbox), "button_press_event",
-				    GTK_SIGNAL_FUNC (click_event_box), imhtml);
-		gtk_widget_show (eventbox);
-
-		gtk_container_add (GTK_CONTAINER (eventbox), darea);
-		*/
-
 		uw = g_new0 (struct url_widget, 1);
 		uw->x = imhtml->x;
 		uw->y = imhtml->y;
@@ -1526,12 +1510,6 @@ add_img_renderer (GtkIMHtml    *imhtml,
 		uw->height = imhtml->llheight;
 		uw->url = bit->url;
 		imhtml->urls = g_list_append (imhtml->urls, uw);
-
-		/*
-		if (!tips)
-			tips = gtk_tooltips_new ();
-		gtk_tooltips_set_tip (tips, eventbox, bit->url, "");
-		*/
 	}
 
 	bit->chunks = g_list_append (bit->chunks, li);
@@ -1636,7 +1614,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 			imhtml->llheight = 0;
 			imhtml->llascent = 0;
 		} else
-			backwards_update (imhtml, bit, height, height * 3 / 4);
+			backwards_update (imhtml, bit, height, 0);
 
 		add_img_renderer (imhtml, bit);
 	} else if (bit->type == TYPE_BR) {
@@ -1645,19 +1623,24 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		imhtml->llascent = 0;
 		add_text_renderer (imhtml, bit, NULL);
 	} else if (bit->type == TYPE_SEP) {
+		struct line_info *li;
 		if (imhtml->llheight) {
 			new_line (imhtml);
 			imhtml->llheight = 0;
 			imhtml->llascent = 0;
 		}
-		/* FIXME
-		darea = gtk_drawing_area_new ();
-		gtk_widget_set_usize (darea, imhtml->xsize - (BORDER_SIZE * 2), HR_HEIGHT * 2);
-		gtk_layout_put (GTK_LAYOUT (imhtml), darea, imhtml->x, imhtml->y);
-		gtk_signal_connect (GTK_OBJECT (darea), "expose_event",
-				    GTK_SIGNAL_FUNC (draw_line), bit);
-		gtk_widget_show (darea);
-		*/
+
+		li = g_new0 (struct line_info, 1);
+		li->x = imhtml->x;
+		li->y = imhtml->y;
+		li->width = imhtml->xsize - BORDER_SIZE - BORDER_SIZE;
+		li->height = HR_HEIGHT * 2;
+		li->ascent = 0;
+		li->text = NULL;
+		li->bit = bit;
+
+		bit->chunks = g_list_append (bit->chunks, li);
+
 		imhtml->llheight = HR_HEIGHT * 2;
 		new_line (imhtml);
 		imhtml->llheight = 0;
