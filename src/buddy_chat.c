@@ -812,8 +812,10 @@ static void chat_press_info(GtkObject *obj, struct conversation *b)
 static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conversation *b)
 {
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
-		if (!find_conversation(gtk_object_get_user_data(obj)))
-			new_conversation(gtk_object_get_user_data(obj));
+		struct conversation *c;
+		if ((c = find_conversation(gtk_object_get_user_data(obj))) == NULL)
+			c = new_conversation(gtk_object_get_user_data(obj));
+		set_convo_gc(c, b->gc);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GtkWidget *menu;
 		GtkWidget *button;
