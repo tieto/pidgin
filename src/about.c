@@ -30,6 +30,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "pixmaps/logo.xpm"
+#include "pixmaps/cancel.xpm"
 
 static GtkWidget *about=NULL;
 
@@ -52,74 +53,141 @@ static void about_click(GtkWidget *w, gpointer m)
 	open_url_nw(NULL, "http://www.marko.net/gaim/");
 }
 
-
 void show_about(GtkWidget *w, void *null)
 {
-	GtkWidget *button;
 	GtkWidget *vbox;
-	GtkWidget *pixmap;
+	GtkWidget *table;
+	GtkWidget *a_table;
 	GtkWidget *label;
-	GtkWidget *eventbox;
-	GtkWidget *label2;
+	GtkWidget *pixmap;
 	GtkStyle *style;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
-	char abouttitle[45]; 
+	GtkWidget *hbox;
+	GtkWidget *eventbox;
+	GtkWidget *button;
 
+	char abouttitle[45];
+	
 	if (!about) {
+	
 		about = gtk_window_new(GTK_WINDOW_DIALOG);
-	             
+
 		g_snprintf(abouttitle, sizeof(abouttitle), _("About GAIM v%s"), VERSION);
 		gtk_window_set_title(GTK_WINDOW(about), abouttitle);
                 gtk_window_set_wmclass(GTK_WINDOW(about), "about", "Gaim" );
 		gtk_container_border_width(GTK_CONTAINER(about), 2);
-		gtk_widget_set_usize(about, 535, 430);
+		gtk_widget_set_usize(about, 535, 250);
+		gtk_window_set_policy(GTK_WINDOW(about), FALSE, FALSE, TRUE);
 
 		gtk_widget_show(about);
         	aol_icon(about->window);
 
+
+		vbox = gtk_vbox_new(FALSE, 5);
 		
-		vbox = gtk_vbox_new(FALSE, 0);
-		gtk_container_add(GTK_CONTAINER(about), vbox);
-		gtk_widget_show(vbox);
-		
+		table = gtk_table_new(3, 2, FALSE);
+
+		/* Left side, TOP */
 		style = gtk_widget_get_style(about);
 		pm = gdk_pixmap_create_from_xpm_d(about->window, &bm, 
 			&style->bg[GTK_STATE_NORMAL], (gchar **)aol_logo);
 		pixmap = gtk_pixmap_new(pm, bm);
-		gtk_box_pack_start(GTK_BOX(vbox), pixmap, TRUE, TRUE, 0);
-		gtk_widget_show(pixmap);
+
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
+
+		gtk_table_attach(GTK_TABLE(table), pixmap, 0, 1, 0, 1, 0, 0, 5, 5);
+		gtk_widget_show(pixmap);
+
 		
-		label = gtk_label_new(
-"GAIM is a client that supports AOL's Instant Messenger protocol\nwritten under the GTK\n" 
-"It is developed by:\n"
-"Rob Flynn <rflynn@blueridge.net> <IM: RobFlynn> (Maintainer)\n"
-"Eric Warmenhoven <warmenhoven@yahoo.com> <IM: EWarmenhoven> (Second in Command)\n"
-"Syd Logan (Designated Driver and Super Hacker *OoOoO*)\n"
-"Todd Kulesza <fflewddur@linuxfreak.com> <IM: semblanceofself> (Caffeine Consumer)\n"
-"Jim Duchek <jimduchek@ou.edu> <IM:Zilding> (Former Maintainer)\n" 
-"Mark Spencer <markster@marko.net> <IM: Markster97> (Original Author)\n" 
-"\n"
-"Gaim is brought to you by a team of penguin pimps, the letter G, and beer.\n");
+		/* Right side, TOP*/
+		hbox = gtk_vbox_new(FALSE, 5);
 
-		gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+		label = gtk_label_new(_("GAIM is a client that supports AOL's Instant Messanger protocol.  It is " 
+				"written using Gtk+ and is licensed under the GPL."));
 		gtk_widget_show(label);
+		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, GTK_EXPAND, FALSE, 0);
 
+		/* Set up the author table */
+		a_table = gtk_table_new(2, 5, FALSE);
+		
+		/* Rob */
+		label = gtk_label_new("Rob Flynn (Maintainer)");
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach(GTK_TABLE(a_table), label, 0, 1, 1, 2, GTK_FILL, 0, 5, 5);
+		
+		label = gtk_label_new("rob@tgflinux.com");
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach(GTK_TABLE(a_table), label, 1, 2, 1, 2, GTK_FILL, 0, 5, 5);
+
+		/* Eric */
+		label = gtk_label_new("Eric Warmenhoven");
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach(GTK_TABLE(a_table), label, 0, 1, 2, 3, GTK_FILL, 0, 5, 5);
+		
+		label = gtk_label_new("warmenhoven@yahoo.com");
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach(GTK_TABLE(a_table), label, 1, 2, 2, 3, GTK_FILL, 0, 5, 5);
+		
+		/* Jim */
+		label = gtk_label_new("Jim Duchek");
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach(GTK_TABLE(a_table), label, 0, 1, 3, 4, GTK_FILL, 0, 5, 5);
+		
+		/* Mark */
+		label = gtk_label_new("Mark Spencer");
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach(GTK_TABLE(a_table), label, 0, 1, 4, 5, GTK_FILL, 0, 5, 5);
+		
+		label = gtk_label_new("markster@marko.net");
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach(GTK_TABLE(a_table), label, 1, 2, 4, 5, GTK_FILL, 0, 5, 5);
+		
+		gtk_box_pack_start(GTK_BOX(hbox), a_table, TRUE, FALSE, 0);	
+
+		gtk_widget_show_all(a_table);
+
+		/* End Author List */
+
+		gtk_table_attach(GTK_TABLE(table), hbox, 1, 3, 0, 1, 0, 0, 5, 5);
+		gtk_widget_show(hbox);
+
+		/* Clickable URL */
 		eventbox = gtk_event_box_new();
-		gtk_box_pack_start(GTK_BOX(vbox), eventbox, TRUE, TRUE, 0);
+		gtk_table_attach(GTK_TABLE(table), eventbox, 0, 3, 1, 2, GTK_FILL, FALSE, 5, 5);
 		gtk_widget_show(eventbox);
-
-		label2 = gtk_label_new("Gaim " VERSION " - http://www.marko.net/gaim/\n");
-		gtk_container_add(GTK_CONTAINER(eventbox), label2);
-		gtk_widget_show(label2);
+		
+		label = gtk_label_new("Gaim " VERSION " - http://www.marko.net/gaim/\n");
+		gtk_container_add(GTK_CONTAINER(eventbox), label);
 
 		gtk_signal_connect(GTK_OBJECT(eventbox), "button_press_event",
 				   GTK_SIGNAL_FUNC(about_click), NULL);
 		gdk_window_set_cursor(eventbox->window, gdk_cursor_new(GDK_HAND2));
-	
-		button = gtk_button_new_with_label("Close");
+		gtk_widget_show(label);
+
+		/* End Clickable URL */
+
+		/* Close Button */
+
+		button = picture_button(about, _("Close"), cancel_xpm);
+
+		hbox = gtk_hbox_new(FALSE, 5);
+		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		gtk_widget_show(hbox);
+
+		/* End Button */
+
+		gtk_widget_show(vbox);
+		gtk_widget_show(table);
+
+
+		gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
+		gtk_box_pack_end(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+
+		gtk_container_add(GTK_CONTAINER(about), vbox);
 
 		if (null != (void *)2) {
 			/* 2 can be as sad as 1, it's the loneliest number since the number 1 */ 
@@ -138,11 +206,13 @@ void show_about(GtkWidget *w, void *null)
  			gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
  			
 		GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
-		gtk_box_pack_start(GTK_BOX(vbox), button, TRUE, FALSE, 0);
 		gtk_widget_grab_default(button);
-		gtk_widget_show(button);
-	
-	} else
-                gtk_widget_show(about);
 
+
+	}
+	else
+		/* Let's give'em something to talk about -- woah woah woah */
+		gtk_widget_show(about);
+	
 }
+
