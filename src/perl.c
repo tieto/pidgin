@@ -20,6 +20,7 @@
  * This was taken almost exactly from X-Chat. The power of the GPL.
  * Translated from X-Chat to Gaim by Eric Warmenhoven.
  * Originally by Erik Scrafford <eriks@chilisoft.com>.
+ * X-Chat Copyright (C) 1998 Peter Zelezny.
  *
  */
 
@@ -61,7 +62,7 @@ struct _perl_timeout_handlers {
 	gint iotag;
 };
 
-static GList *perl_list = NULL;
+static GList *perl_list = NULL; /* should probably extern this at some point */
 static GList *perl_timeout_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
 
@@ -78,14 +79,12 @@ XS(XS_AIM_deny_list); /* also returns permit list */
 /* server stuff */
 XS(XS_AIM_command); /* send command to server */
 XS(XS_AIM_user_info); /* given name, return struct buddy members */
+XS(XS_AIM_print_to_conv); /* send message to someone */
 
 /* handler commands */
 XS(XS_AIM_add_message_handler); /* when people talk */
 XS(XS_AIM_add_command_handler); /* when servers talk */
 XS(XS_AIM_add_timeout_handler); /* figure it out */
-
-/* cool stuff */
-XS(XS_AIM_print_to_conv); /* send message to someone */
 
 void xs_init()
 {
@@ -169,6 +168,7 @@ void perl_init()
 
 	newXS ("AIM::command", XS_AIM_command, "AIM");
 	newXS ("AIM::user_info", XS_AIM_user_info, "AIM");
+	newXS ("AIM::print_to_conv", XS_AIM_print_to_conv, "AIM");
 
 	newXS ("AIM::add_message_handler", XS_AIM_add_message_handler, "AIM");
 	newXS ("AIM::add_command_handler", XS_AIM_add_command_handler, "AIM");
@@ -360,7 +360,24 @@ XS (XS_AIM_user_info)
 	XST_mIV(4, buddy->idle);
 	XST_mIV(5, buddy->uc);
 	XST_mIV(6, buddy->caps);
-	XSRETURN(6);
+	XSRETURN(7);
+}
+
+XS (XS_AIM_print_to_conv)
+{
+	char *nick, *what;
+	struct conversation *c;
+	int junk;
+	dXSARGS;
+	items = 0;
+
+	nick = SvPV(ST(0), junk);
+	what = SvPV(ST(1), junk);
+	c = find_conversation(nick);
+	if (!c)
+		c = new_conversation(nick);
+	write_to_conv(c, what, WFLAG_SEND, NULL);
+	serv_send_im(nick, what, 0);
 }
 
 XS (XS_AIM_add_message_handler)
@@ -397,11 +414,6 @@ XS (XS_AIM_add_timeout_handler)
 	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
 	handler->iotag = gtk_timeout_add(timeout, (GtkFunction)perl_timeout, handler);
 	XSRETURN_EMPTY;
-}
-
-XS (XS_AIM_print_to_conv)
-{
-	/* FIXME */
 }
 
 #endif /* USE_PERL */
