@@ -30,7 +30,8 @@ typedef enum {
 	JABBER_X_DATA_TEXT_MULTI,
 	JABBER_X_DATA_LIST_SINGLE,
 	JABBER_X_DATA_LIST_MULTI,
-	JABBER_X_DATA_BOOLEAN
+	JABBER_X_DATA_BOOLEAN,
+	JABBER_X_DATA_JID_SINGLE
 } jabber_x_data_field_type;
 
 struct jabber_x_data_data {
@@ -60,6 +61,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, GaimRequestFiel
 
 			switch(type) {
 				case JABBER_X_DATA_TEXT_SINGLE:
+				case JABBER_X_DATA_JID_SINGLE:
 					{
 					const char *value = gaim_request_field_string_get_value(field);
 					fieldnode = xmlnode_new_child(result, "field");
@@ -312,7 +314,12 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 					value ? value : "", FALSE);
 			gaim_request_field_group_add_field(group, field);
 
-			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
+			if(!strcmp(type, "jid-single")) {
+				gaim_request_field_set_type_hint(field, "screenname");
+				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_JID_SINGLE));
+			} else {
+				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
+			}
 
 			if(value)
 				g_free(value);
