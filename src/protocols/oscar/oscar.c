@@ -375,7 +375,8 @@ gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textle
 	if ((encoding == NULL) || encoding[0] == '\0') {
 		gaim_debug_info("oscar", "Empty encoding, assuming UTF-8\n");
 
-	} else if (!strcmp(encoding, "iso-8859-1")) {
+	} else if (!strcmp(encoding, "iso-8859-1")
+                   || !strcmp(encoding, "ISO-8859-1-Windows-3.1-Latin-1")) {
 		utf8 = g_convert(text, textlen, "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
 
 	} else if (!strcmp(encoding, "unicode-2-0")) {
