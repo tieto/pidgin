@@ -4875,7 +4875,7 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (fr->conn->type == AIM_CONN_TYPE_BOS) {
 		if (code == 0x0001) {
 			gc->wants_to_die = TRUE;
-			gaim_connection_error(gc, _("You have been disconnected because you have signed on with this screen name at another location."));
+			gaim_connection_error(gc, _("You have signed on from another location."));
 		} else {
 			gaim_connection_error(gc, _("You have been signed off for an unknown reason."));
 		}
