@@ -173,7 +173,7 @@ gboolean
 gaim_account_option_get_default_bool(const GaimAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, FALSE);
-	g_return_val_if_fail(option->type != GAIM_PREF_BOOLEAN, FALSE);
+	g_return_val_if_fail(option->type == GAIM_PREF_BOOLEAN, FALSE);
 
 	return option->default_value.boolean;
 }
@@ -182,7 +182,7 @@ int
 gaim_account_option_get_default_int(const GaimAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, -1);
-	g_return_val_if_fail(option->type != GAIM_PREF_INT, -1);
+	g_return_val_if_fail(option->type == GAIM_PREF_INT, -1);
 
 	return option->default_value.integer;
 }
@@ -191,7 +191,7 @@ const char *
 gaim_account_option_get_default_string(const GaimAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, NULL);
-	g_return_val_if_fail(option->type != GAIM_PREF_STRING, NULL);
+	g_return_val_if_fail(option->type == GAIM_PREF_STRING, NULL);
 
 	return option->default_value.string;
 }

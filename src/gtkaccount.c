@@ -452,7 +452,9 @@ __add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 					gaim_account_option_get_default_string(option));
 
 				entry = gtk_entry_new();
-				gtk_entry_set_text(GTK_ENTRY(entry), str_value);
+
+				if (str_value != NULL)
+					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
 
 				title = g_strdup_printf("%s:",
 						gaim_account_option_get_text(option));
