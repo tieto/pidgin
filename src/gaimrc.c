@@ -1056,8 +1056,15 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\treport_idle { %d }\n", report_idle);
 	fprintf(f, "\tweb_browser { %d }\n", web_browser);
 	fprintf(f, "\tweb_command { %s }\n", web_command);
-	if (current_smiley_theme)
+	if (current_smiley_theme) {
+#ifndef _WIN32
 		fprintf(f, "\tsmiley_theme { %s }\n", current_smiley_theme->path);
+#else
+		char* tmp=wgaim_escape_dirsep(current_smiley_theme->path);
+		fprintf(f, "\tsmiley_theme { %s }\n", tmp);
+		g_free(tmp);
+#endif
+	}
 	fprintf(f, "\tblist_pos { %d } { %d } { %d } { %d }\n",
 		blist_pos.x, blist_pos.y, blist_pos.width, blist_pos.height);
 	fprintf(f, "\tconv_size { %d } { %d } { %d }\n",
