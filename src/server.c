@@ -183,8 +183,10 @@ void serv_set_away_all(char *message)
 
 void serv_set_info(struct gaim_connection *g, char *info)
 {
-	if (g->prpl && g->prpl->set_info)
+	if (g->prpl && g->prpl->set_info) {
+		plugin_event(event_set_info, g, info, 0, 0);
 		(*g->prpl->set_info)(g, info);
+	}
 }
 
 void serv_change_passwd(struct gaim_connection *g, char *orig, char *new)

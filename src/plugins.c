@@ -622,6 +622,9 @@ char *event_name(enum gaim_event event)
 	case event_new_conversation:
 		sprintf(buf, "event_new_conversation");
 		break;
+	case event_set_info:
+		sprintf(buf, "event_set_info");
+		break;
 	default:
 		sprintf(buf, "event_unknown");
 		break;
@@ -691,6 +694,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_buddy_back:
 			case event_buddy_idle:
 			case event_buddy_unidle:
+			case event_set_info:
 				{
 					void (*function)(struct gaim_connection *, char *, void *) =
 					    g->function;
@@ -782,6 +786,9 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 		break;
 	case event_buddy_signoff:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
+		break;
+	case event_set_info:
 		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 		break;
 	case event_buddy_away:

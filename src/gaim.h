@@ -190,6 +190,7 @@ enum gaim_event {
 	event_error,
 	event_quit,
 	event_new_conversation,
+	event_set_info,
 	/* any others? it's easy to add... */
 };
 

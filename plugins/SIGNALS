@@ -22,7 +22,8 @@ enum gaim_event {
 	event_warned,
 	event_error,
 	event_quit,
-	event_new_conversation
+	event_new_conversation,
+	event_set_info
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -249,3 +250,9 @@ event_new_conversation:
 	'who' is who the conversation is with. This gets called when a new
 	conversation window is created. You can use find_conversation(char *)
 	to then find the struct conversation * and modify those values.
+
+event_set_info:
+        struct gaim_connection *gc, char *info
+
+        Called when the user sends his profile to the server.  'info' is the
+        profile being sent. 
