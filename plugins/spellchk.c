@@ -305,7 +305,7 @@ static void save_list()
 	char tempfilename[BUF_LONG];
 	int fd;
 
-	name = g_build_filename(gaim_home_dir(), ".gaim", "dict", NULL);
+	name = g_build_filename(gaim_user_dir(), "dict", NULL);
 	strcpy(tempfilename, name);
 	strcat(tempfilename,".XXXXXX");
 	fd = g_mkstemp(tempfilename);

@@ -26,8 +26,6 @@
 #include "debug.h"
 #include "eventloop.h"
 
-extern char *opt_rcfile_arg;
-
 #ifdef USE_SM
 
 #include <X11/ICE/ICElib.h>
@@ -145,7 +143,7 @@ static gchar **session_make_command(gchar *client_id) {
 	gchar **ret;
 
 	if (client_id) i += 2;
-	if (opt_rcfile_arg) i += 2;
+	i += 2; /* we will specify gaim's user dir */
 
 	ret = g_new(gchar *, i);
 	ret[j++] = g_strdup(myself);
@@ -155,10 +153,8 @@ static gchar **session_make_command(gchar *client_id) {
 		ret[j++] = g_strdup(client_id);
 	}
 
-	if (opt_rcfile_arg) {
-		ret[j++] = g_strdup("--file");
-		ret[j++] = g_strdup(opt_rcfile_arg);
-	}
+	ret[j++] = g_strdup("--config");
+	ret[j++] = g_strdup(gaim_user_dir());
 
 	ret[j++] = NULL;
 

@@ -87,7 +87,6 @@ GtkWidget *mainwindow = NULL;
 int opt_away = 0;
 int docklet_count = 0;
 char *opt_away_arg = NULL;
-char *opt_rcfile_arg = NULL;
 int opt_debug = 0;
 
 #if HAVE_SIGNAL_H
@@ -530,7 +529,7 @@ show_usage(int mode, const char *name)
 		       "                      account(s) to use, seperated by commas)\n"
 		       "  -n, --loginwin      don't automatically login; show login window\n"
 		       "  -u, --user=NAME     use account NAME\n"
-		       "  -f, --file=FILE     use FILE as config\n"
+		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
 		       "  -v, --version       display the current version and exit\n"
 		       "  -h, --help          display this help and exit\n"), VERSION, name);
@@ -623,7 +622,7 @@ int main(int argc, char *argv[])
 		/*{"login", optional_argument, NULL, 'l'}, */
 		{"loginwin", no_argument, NULL, 'n'},
 		{"user", required_argument, NULL, 'u'},
-		{"file", required_argument, NULL, 'f'},
+		{"config", required_argument, NULL, 'c'},
 		{"debug", no_argument, NULL, 'd'},
 		{"version", no_argument, NULL, 'v'},
 		{"session", required_argument, NULL, 's'},
@@ -758,9 +757,9 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "adhu:f:vns:", 
+				  "adhu:c:vns:", 
 #else
-				  "adhu:f:vn", 
+				  "adhu:c:vn", 
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
@@ -774,8 +773,8 @@ int main(int argc, char *argv[])
 		case 'd':	/* debug */
 			opt_debug = 1;
 			break;
-		case 'f':
-			opt_rcfile_arg = g_strdup(optarg);
+		case 'c':	/* use specified config dir */
+			set_gaim_user_dir(optarg);
 			break;
 		case 's':	/* use existing session ID */
 			opt_session_arg = g_strdup(optarg);

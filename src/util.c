@@ -61,9 +61,8 @@ typedef struct
 
 } GaimFetchUrlData;
 
-
+static char custom_home_dir[MAXPATHLEN];
 static char home_dir[MAXPATHLEN];
-
 
 /**************************************************************************
  * Base16 Functions
@@ -1528,17 +1527,25 @@ gaim_home_dir(void)
 char *
 gaim_user_dir(void)
 {
-	const gchar *hd = gaim_home_dir();
+	if (custom_home_dir != NULL && strlen(custom_home_dir) > 0) {
+		strcpy ((char*) &home_dir, (char*) &custom_home_dir);
+	} else {
+		const gchar *hd = gaim_home_dir();
 
-	if(hd)
-	{
-		strcpy( (char*)&home_dir, hd );
-		strcat( (char*)&home_dir, G_DIR_SEPARATOR_S ".gaim" );
-
-		return (gchar*)&home_dir;
+		if (hd) {
+			strcpy((char*) &home_dir, hd);
+			strcat((char*) &home_dir, G_DIR_SEPARATOR_S ".gaim");
+		}
 	}
 
-	return NULL;
+	return home_dir;
+}
+
+void set_gaim_user_dir(const char *dir)
+{
+	if (dir != NULL && strlen(dir) > 0) {
+		strcpy((char*) &custom_home_dir, dir);
+	}
 }
 
 int gaim_build_dir (const char *path, int mode)

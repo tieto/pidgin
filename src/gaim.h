@@ -31,7 +31,6 @@
 /* Globals in main.c */
 extern int opt_away;
 extern char *opt_away_arg;
-extern char *opt_rcfile_arg;
 extern int opt_debug;
 
 extern GSList *message_queue;

@@ -1483,9 +1483,7 @@ void load_prefs()
 		return;
 	}
 
-	if (opt_rcfile_arg)
-		g_snprintf(buf, sizeof(buf), "%s", opt_rcfile_arg);
-	else if (gaim_home_dir())
+	if (gaim_home_dir())
 		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaimrc", gaim_home_dir());
 	else {
 		set_defaults();
@@ -1545,10 +1543,6 @@ void load_prefs()
 					   "Saving preferences on request\n");
 			request_save_prefs = 0;
 		}
-	} else if (opt_rcfile_arg) {
-		g_snprintf(buf, sizeof(buf), _("Could not open config file %s."), opt_rcfile_arg);
-		gaim_notify_error(NULL, NULL, buf, NULL);
-		set_defaults();
 	} else {
 		set_defaults();
 	}
