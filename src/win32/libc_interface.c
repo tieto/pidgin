@@ -6,10 +6,28 @@
  *  Description: Commonly used libc routines.
  */
 #include <winsock.h>
+#include <io.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <errno.h>
+#include <sys/timeb.h>
+#include <time.h>
+#include "libc_internal.h"
+
+/*
+ *  PROTOS
+ */
+extern void debug_printf(char * fmt, ...);
+
+/*
+ *  LOCALS
+ */
 
 static char errbuf[1024];
+
+/*
+ *  CODE
+ */
 
 /* helpers */
 static int wgaim_is_socket( int fd ) {
@@ -69,8 +87,6 @@ int wgaim_getsockopt(int socket, int level, int optname, void *optval, unsigned 
 
 /* fcntl.h */
 /* This is not a full implementation of fcntl. Update as needed.. */
-#define O_NONBLOCK 1
-#define F_SETFL 1
 int wgaim_fcntl(int socket, int command, int val) {
 	switch( command ) {
 	case F_SETFL:
@@ -212,4 +228,25 @@ int wgaim_close(int fd) {
 	}
 	else
 		return close(fd);
+}
+
+/* sys/time.h */
+
+int wgaim_gettimeofday(struct timeval *p, struct timezone *z) {
+	int res = 0;
+	struct _timeb timebuffer;
+
+	if (z != 0) {
+		_tzset();
+		z->tz_minuteswest = _timezone/60;
+		z->tz_dsttime = _daylight;
+	}
+	
+	if (p != 0) {
+		_ftime(&timebuffer);
+	   	p->tv_sec = timebuffer.time;			/* seconds since 1-1-1970 */
+		p->tv_usec = timebuffer.millitm*1000; 	/* microseconds */
+	}
+
+	return res;
 }
