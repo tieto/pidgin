@@ -28,9 +28,10 @@ static HHOOK mouseHook = NULL;
 static HINSTANCE g_hInstance = NULL;
 static POINT g_point;
 
-// GetLastInputInfo address and module - if g_GetLastInputInfo == NULL then
-// we fall back on the old "hook the world" method. GetLastInputInfo was brought
-// in with Windows 2000 so Windows 9x will still hook everything.
+/* GetLastInputInfo address and module - if g_GetLastInputInfo == NULL then
+ * we fall back on the old "hook the world" method. GetLastInputInfo was brought
+ * in with Windows 2000 so Windows 9x will still hook everything.
+ */
 typedef BOOL (WINAPI *GETLASTINPUTINFO)(LASTINPUTINFO *);
 static HMODULE g_user32 = NULL;
 static GETLASTINPUTINFO g_GetLastInputInfo = NULL;
@@ -38,32 +39,45 @@ static GETLASTINPUTINFO g_GetLastInputInfo = NULL;
 static DWORD* setup_shared_mem() {
 	BOOL fInit;
 
-	// Set up the shared memory.
-	hMapObject = CreateFileMapping((HANDLE) 0xFFFFFFFF, // use paging file
+	/* Set up the shared memory. */
+	/*hMapObject = CreateFileMapping((HANDLE) 0xFFFFFFFF,  //use paging file
 				       NULL,                // no security attributes
 				       PAGE_READWRITE,      // read/write access
 				       0,                   // size: high 32-bits
 				       sizeof(DWORD),       // size: low 32-bits
 				       "timermem");         // name of map object
-	
+	*/
+	hMapObject = CreateFileMapping((HANDLE) 0xFFFFFFFF,
+								   NULL,
+								   PAGE_READWRITE,
+								   0,
+								   sizeof(DWORD),
+								   "timermem");
+
 	if (hMapObject == NULL)
 		return NULL;
-	
-	// The first process to attach initializes memory.
+
+	/* The first process to attach initializes memory. */
 	fInit = (GetLastError() != ERROR_ALREADY_EXISTS);
-	
-	// Get a pointer to the file-mapped shared memory.
-	lastTime = (DWORD*) MapViewOfFile(hMapObject,     // object to map view of
-					  FILE_MAP_WRITE, // read/write access
-					  0,              // high offset:  map from
-					  0,              // low offset:   beginning
-					  0);             // default: map entire file
-	
+
+	/* Get a pointer to the file-mapped shared memory. */
+	/*lastTime = (DWORD*) MapViewOfFile(hMapObject,     // object to map view of
+	 *				  FILE_MAP_WRITE, // read/write access
+	 *				  0,              // high offset:  map from
+	 *				  0,              // low offset:   beginning
+	 *				  0);             // default: map entire file
+	 */
+	lastTime = (DWORD*) MapViewOfFile(hMapObject,
+									  FILE_MAP_WRITE,
+									  0,
+									  0,
+									  0);
+
 	if (lastTime == NULL)
 		return NULL;
-	
+
 	*lastTime = GetTickCount();
-	
+
 	return lastTime;
 }
 
@@ -72,7 +86,7 @@ LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (!(code < 0)) {
                 if (lastTime == NULL)
                         lastTime = setup_shared_mem();
-	
+
                 if (lastTime)
                         *lastTime = GetTickCount();
         }
@@ -87,10 +101,10 @@ LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam) {
              (g_point.y == ((MOUSEHOOKSTRUCT*)lParam)->pt.y))) {
                 g_point.x = ((MOUSEHOOKSTRUCT*)lParam)->pt.x;
                 g_point.y = ((MOUSEHOOKSTRUCT*)lParam)->pt.y;
-	
+
                 if (lastTime == NULL)
                         lastTime = setup_shared_mem();
-	
+
                 if (lastTime)
                         *lastTime = GetTickCount();
 	}
@@ -100,8 +114,8 @@ LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam) {
 
 EXPORT DWORD wgaim_get_lastactive() {
         DWORD result = 0;
-        
-        // If we have GetLastInputInfo then use it, otherwise use the hooks
+
+        /* If we have GetLastInputInfo then use it, otherwise use the hooks*/
         if (g_GetLastInputInfo != NULL) {
                 LASTINPUTINFO lii;
                 memset(&lii, 0, sizeof(lii));
@@ -112,39 +126,39 @@ EXPORT DWORD wgaim_get_lastactive() {
         } else {
 	        if (lastTime == NULL)
 		        lastTime = setup_shared_mem();
-                
+
 	        if (lastTime)
 		        result = *lastTime;
         }
-        	
+
 	return result;
 }
 
 
 EXPORT BOOL wgaim_set_idlehooks() {
-        // Is GetLastInputInfo available?
+        /* Is GetLastInputInfo available?*/
         g_user32 = LoadLibrary("user32.dll");
         if (g_user32) {
                 g_GetLastInputInfo = (GETLASTINPUTINFO)GetProcAddress(g_user32, "GetLastInputInfo");
         }
 
-        // If we couldn't find GetLastInputInfo then fall back onto the hooking scheme
+        /* If we couldn't find GetLastInputInfo then fall back onto the hooking scheme*/
         if (g_GetLastInputInfo == NULL) {
-	        // Set up the shared memory.
+	        /* Set up the shared memory.*/
 	        lastTime = setup_shared_mem();
 	        if (lastTime == NULL)
 		        return FALSE;
 	        *lastTime = GetTickCount();
-              
-	        // Set up the keyboard hook.
+
+	        /* Set up the keyboard hook.*/
 	        keyHook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, g_hInstance, 0);
 	        if (keyHook == NULL) {
 		        UnmapViewOfFile(lastTime);
 		        CloseHandle(hMapObject);
 		        return FALSE;
 	        }
-              
-	        // Set up the mouse hook.
+
+	        /* Set up the mouse hook.*/
 	        mouseHook = SetWindowsHookEx(WH_MOUSE, MouseProc, g_hInstance, 0);
 	        if (mouseHook == NULL) {
 		        UnhookWindowsHookEx(keyHook);
@@ -153,7 +167,7 @@ EXPORT BOOL wgaim_set_idlehooks() {
 		        return FALSE;
 	        }
 	}
-	
+
 	return TRUE;
 }
 
