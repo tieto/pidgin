@@ -29,6 +29,12 @@
 	there.  Everyone remember to give some love to the developers
 	who actually did something of note this release (i.e. not me)!
 
+	Nathan: Jabber got a ton better this release, as I fixed most of the
+	bugs introduced in the last release.  Registration works again, and
+	the next person to break it is going to suffer.  I also fixed a
+	handfull of other little things that I can't remember.  This should
+	be a good release.
+
 0.71 (10/09/2003):
 	Rob: It's been a while since I've commited some news.  I've had a
 	very hectic few weeks/months.  Thing are finally coming together
