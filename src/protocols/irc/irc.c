@@ -953,8 +953,8 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 	char buf[IRC_BUF_LEN];
 
 	if (!g_strncasecmp(msg, "VERSION", 7)) {
-		g_snprintf(buf, sizeof(buf), "NOTICE %s :\001VERSION Gaim " VERSION ": The Pimpin "
-					     "Linux Messaging Client: " WEBSITE "\001\r\n", nick);
+		g_snprintf(buf, sizeof(buf), "NOTICE %s :\001VERSION Gaim " VERSION ": The Penguin Pimpin' "
+					     "Multi-protocol Messaging Client: " WEBSITE "\001\r\n", nick);
 		irc_write(id->fd, buf, strlen(buf));
 	}
 	if (!g_strncasecmp(msg, "ACTION", 6)) {
