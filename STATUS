@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-04-13 06:50:33 -0400 (Fri, 13 Apr 2001) $ by
+STATUS of GAIM CVS tree. Last modified $Date: 2001-04-21 08:24:45 -0400 (Sat, 21 Apr 2001) $ by
 $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
@@ -79,10 +79,6 @@ being worked on.
 Oscar (Eric)
 =====
 
-Oscar is currently being blocked, off and on, by AOL. CVS may or may not work.
-Releases most likely do not. Hopefully this will stop soon. AOL seems to have
-the upper hand in this one though.
-
 Oscar can get people's away messages, so you should use it if that's what's
 important to you. Oscar also supports requesting and accepting Direct IM
 connections, but doesn't yet let you send/receive files through this or through
@@ -122,11 +118,11 @@ and removing people to your permit/deny list and going away / idle.
 ICQ (Eric)
 ===
 
-ICQ currently supports signing on/off, changing status (icq-away == aim-idle,
-icq-n/a == aim-away), checking other people's status (but not status message),
-sending/receiving messages, and receiving URLs. Keepalives are sent regardless
-of whether or not you want them; it's necessary since it's a UDP protocol.
-Chat and file transfer are planned but not yet implemented.
+ICQ currently supports signing on/off, changing status, checking other people's
+status (but not status message), sending/receiving messages, and receiving URLs.
+Keepalives are sent regardless of whether or not you want them; it's necessary
+since it's a UDP protocol.  Chat and file transfer are planned but not yet
+implemented.
 
 
 Jabber (Eric)

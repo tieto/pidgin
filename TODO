@@ -1,11 +1,26 @@
 --- STUFF FOR 0.11.0 RELEASE ---
 
 THE CORE:
-	Rename for groups/buddies (in the Edit Buddies Pane)
-	Status labels in buddy list (mostly just for yahoo)
+	Status labels in buddy list (mostly just for yahoo/msn)
 	Border for GtkIMHtml
 	GPG Encryption of messages
 	Better way of showing away state - and possibly in main window
+	OPT_PROTO_PASSWORD (mainly for IRC/Zephyr) - should hide password dialog
+		in account editor
+	Remove OPT_USR_KEEPALIVE (or whatever it's called) - keepalives shouldn't
+		be optional
+	OPT_PROTO_MAILCHECK (mainly for Yahoo/MSN) - with appropriate toggle on
+		account editor modify thing for whether or not to display it (and
+		also move Yahoo/MSN dialog to prpl.c and have both of them use it)
+	Ha. Maybe we should also add OPT_GEN_MAILCHECK to check $MAIL (or
+		/var/spool/mail/$USER if that fails). If we did that I could get rid
+		of one more applet on my gnome panel and make it almost completely
+		for the sole purpose of gaim_applet.
+	OPT_PROTO_OFFLINE to allow sending offline messages... checkbox on the
+		convo window? need to decide UI for switching between offline/
+		normal message. uh... maybe this isn't the best idea, but we need
+		something that gives us this functionality....
+		prpl->send_im_offline?
 
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies
@@ -55,7 +70,7 @@ Zephyr:
 	God help us.
 
 Future Plugins? :
-	ICQ through Oscar plugin (requires hacking libfaim :-/)
+	ICQ through Oscar plugin (ICQ2000) (requires hacking libfaim :-/)
 	Hotline (Or is this a waste of time?.  Ill decide soon enough, heh)
 
 

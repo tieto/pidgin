@@ -548,6 +548,25 @@ void handle_click_group(GtkWidget *widget, GdkEventButton *event, struct group *
 	}
 }
 
+void pressed_im_bud(GtkWidget *widget, struct buddy *b)
+{
+	struct conversation *c;
+
+	c = find_conversation(b->name);
+
+	if (c != NULL) {
+		gdk_window_show(c->window->window);
+	} else {
+		c = new_conversation(b->name);
+
+		c->gc = b->gc;
+		
+		gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu), g_slist_index(connections, b->gc));
+
+		update_buttons_by_protocol(c);
+	}
+}
+
 void pressed_im(GtkWidget *widget, struct buddy_show *b)
 {
 	struct conversation *c;
@@ -742,6 +761,12 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	} else if (*type == EDIT_BUDDY) {
 		struct buddy *b = (struct buddy *)type;
 		menu = gtk_menu_new();
+
+		button = gtk_menu_item_new_with_label(_("IM"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(pressed_im_bud), b);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
 
 		button = gtk_menu_item_new_with_label(_("Alias"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
