@@ -242,7 +242,7 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 {
 	int new_type = menu_entries[gtk_option_menu_get_history(optmenu)].num;
 
-	dialog->account->perm_deny = menu_entries[new_type].num;
+	dialog->account->perm_deny = new_type;
 	serv_set_permit_deny(gaim_account_get_connection(dialog->account));
 	gaim_blist_save();
 
