@@ -952,7 +952,7 @@ void show_add_group(struct gaim_connection *gc)
 	struct addbuddy *a = g_new0(struct addbuddy, 1);
 	a->gc = gc;
 
-	a->window =  gtk_dialog_new_with_buttons("", blist, GTK_DIALOG_MODAL, 
+	a->window =  gtk_dialog_new_with_buttons("", GTK_WINDOW(blist), GTK_DIALOG_MODAL, 
 						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(a->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(a->window), 6);
