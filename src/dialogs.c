@@ -695,7 +695,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	GtkWidget *label;
 	GtkWidget *sw;
 	GtkWidget *button;
-
+	GList *focus_chain = NULL;
 	struct create_away *ca = g_new0(struct create_away, 1);
 
 	/* Set up window */
@@ -730,6 +730,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	ca->entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), ca->entry, TRUE, TRUE, 0);
 	gaim_set_accessible_label (ca->entry, label);
+	focus_chain = g_list_append(focus_chain, hbox);
 
 	/* Toolbar */
 	ca->toolbar = gtk_imhtmltoolbar_new();
@@ -758,6 +759,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gaim_setup_imhtml(ca->text);
 
 	gtk_container_add(GTK_CONTAINER(sw), ca->text);
+	focus_chain = g_list_append(focus_chain, sw);
 
 	if (dummy) {
 		struct away_message *amt;
@@ -793,9 +795,10 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	button = gaim_pixbuf_button_from_stock(_("_Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(away_mess_destroy), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	focus_chain = g_list_prepend(focus_chain, hbox);
 
 	gtk_widget_show_all(ca->window);
-	gtk_widget_grab_focus(ca->text);
+	gtk_container_set_focus_chain(GTK_CONTAINER(vbox), focus_chain);
 }
 
 static void
