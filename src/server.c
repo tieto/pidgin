@@ -860,7 +860,8 @@ void serv_got_typing(struct gaim_connection *gc, char *name, int timeout, int st
 	struct conversation *cnv = find_conversation(name);
 	 if (cnv) {
 		 set_convo_gc(cnv, gc);
-		 update_convo_status(cnv, state);
+		 cnv->typing_state = state;
+		 update_convo_status(cnv);
 	} else return;
 	 plugin_event(event_got_typing, gc, name);
 	 do_pounce(gc, name, OPT_POUNCE_TYPING);
@@ -874,10 +875,13 @@ void serv_got_typing(struct gaim_connection *gc, char *name, int timeout, int st
 
 void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
 	struct conversation *c = find_conversation(name);
-	if (c && c->typing_timeout) {
+	if(!c)
+		return;
+	if (c->typing_timeout) {
 		gtk_timeout_remove (c->typing_timeout);
 	}
-	update_convo_status(c, NOT_TYPING);
+	c->typing_state = NOT_TYPING;
+	update_convo_status(c);
 }
 
 static void close_invite(GtkWidget *w, GtkWidget *w2)

@@ -2077,6 +2077,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	if ((c->unseen == 2) || ((c->unseen == 1) && !(flags & WFLAG_NICK)))
 		return;
 
+	if (flags & WFLAG_RECV)
+		c->typing_state = NOT_TYPING;
+
 
 	if (c->is_chat) {
 		int offs;
@@ -2100,7 +2103,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	} else {
 		c->unseen = 0;
 	}
-	update_convo_status(c, FALSE);
+	update_convo_status(c);
 }
 
 void update_progress(struct conversation *c, float percent) {
@@ -2622,7 +2625,6 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
 	if (!GTK_WIDGET_REALIZED(label))
 		return;
-	if (c->unseen == -1) return;
 	style = gtk_style_new();
 	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 	gtk_widget_set_style(label, style);
@@ -2635,7 +2637,7 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 			GtkWidget *parent = convo_notebook->parent;
 
 			gtk_widget_freeze_child_notify(GTK_WIDGET(c->window));
-	
+
 			if (convo_menubar != NULL)
 					gtk_widget_destroy(convo_menubar);
 
@@ -2650,10 +2652,12 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 		convo_menubar = NULL;
 	}
 
+	update_convo_status(c);
+
 	gtk_imhtml_to_bottom(c->text);
 }
 
-void update_convo_status(struct conversation *c, int typing_state) {
+void update_convo_status(struct conversation *c) {
 	if(!c)
 		return;
 	debug_printf("update_convo_status called for %s\n", c->name);
@@ -2671,11 +2675,11 @@ void update_convo_status(struct conversation *c, int typing_state) {
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
 		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
-		if(typing_state == TYPING) {
+		if(c->typing_state == TYPING) {
 			style->fg[0].red = 0x0000;
 			style->fg[0].green = 0x9999;
 			style->fg[0].blue = 0x0000;
-		} else if(typing_state == TYPED) {
+		} else if(c->typing_state == TYPED) {
 			style->fg[0].red = 0xfffff;
 			style->fg[0].green = 0xbbbb;
 			style->fg[0].blue = 0x2222;
@@ -2707,11 +2711,11 @@ void update_convo_status(struct conversation *c, int typing_state) {
 		}
 		buf = g_malloc(len+1);
 		g_snprintf(buf, len+1, win->title);
-		if(typing_state == TYPING) {
+		if(c->typing_state == TYPING) {
 			buf2 = g_strconcat(buf,_(" [TYPING]"), NULL);
 			g_free(buf);
 			buf = buf2;
-		} else if(typing_state == TYPED) {
+		} else if(c->typing_state == TYPED) {
 			buf2 = g_strconcat(buf,_(" [TYPED]"), NULL);
 			g_free(buf);
 			buf = buf2;
@@ -2730,7 +2734,8 @@ gboolean reset_typing(char *name) {
 	}
 
 	/* Reset the title (if necessary) */
-	update_convo_status(c, FALSE);
+	c->typing_state = NOT_TYPING;
+	update_convo_status(c);
 
 	g_free(name);
 	c->typing_timeout = 0;

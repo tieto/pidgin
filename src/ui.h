@@ -155,6 +155,7 @@ struct conversation {
 	GtkWidget *progress;
 	GSList    *images;  /* A list of filenames to embed */
 	gint unseen;
+	int typing_state;
 	guint typing_timeout;
 	time_t type_again;
 	guint type_again_timeout;
@@ -419,7 +420,7 @@ extern void update_convo_font();
 extern void set_hide_icons();
 extern void set_convo_titles();
 extern void update_progress(struct conversation *, float);
-extern void update_convo_status(struct conversation *, int);
+extern void update_convo_status(struct conversation *);
 extern gboolean reset_typing(char *);
 extern void set_anim();
 
