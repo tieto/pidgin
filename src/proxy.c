@@ -59,6 +59,18 @@ typedef struct _GaimIOClosure {
 
 } GaimIOClosure;
 
+const char* socks5errors[] = {
+	"succeeded\n",
+	"general SOCKS server failure\n",
+	"connection not allowed by ruleset\n",
+	"Network unreachable\n",
+	"Host unreachable\n",
+	"Connection refused\n",
+	"TTL expired\n",
+	"Command not supported\n",
+	"Address type not supported\n"
+};
+
 /**************************************************************************
  * Proxy structure API
  **************************************************************************/
@@ -1316,7 +1328,10 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", "Bad data.\n");
+		if ((buf[0] == 0x05) && (buf[1] < 0x09))
+			gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", socks5errors[buf[1]]);
+		else
+			gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", "Bad data.\n");
 		close(source);
 
 		if (phb->account == NULL ||
