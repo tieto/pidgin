@@ -544,6 +544,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			b->gc = NULL;
 			g_snprintf(error_buf, sizeof error_buf, _("You have been disconnected"
 								  " from chat room %s."), b->name);
+			do_error_dialog(error_buf, _("Chat Error"));
 		} else
 			serv_got_chat_left(gc, id);
 	} else if (!strcasecmp(c, "GOTO_URL")) {
