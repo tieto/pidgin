@@ -18,6 +18,7 @@ version 0.44:
 	* event_im_recv and event_im_display_rcvd passed whether
 	  the message received was auto-response (see SIGNALS)
 	* IRC fixes (largly copied from X-Chat)
+	* Internal change to how preferences are stored
 
 version 0.43 (09/06/2001):
 	* Updated German Translation (thanks Daniel Seifert)

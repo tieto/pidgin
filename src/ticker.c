@@ -56,8 +56,6 @@ int BuddyTickerMessageRemove( gpointer data );
 extern void pressed_ticker(char *);
 void BuddyTickerShow();
 
-extern int display_options;
-
 void
 BuddyTickerDestroyWindow( GtkWidget *window )
 {
@@ -278,9 +276,9 @@ void BuddyTickerShow()
 	GSList *gcons, *grps, *buds;
 	char **xpm;
 	
-	if( !(display_options & OPT_DISP_SHOW_BUDDYTICKER) ) {
+	if( !(misc_options & OPT_MISC_BUDDY_TICKER) ) {
 		BuddyTickerSignoff();
-		display_options &= ~OPT_DISP_SHOW_BUDDYTICKER;
+		misc_options &= ~OPT_MISC_BUDDY_TICKER;
 		return;
 	}
 

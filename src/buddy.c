@@ -305,7 +305,7 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
         GtkWidget *label;
 
 		/*if the user had opted to put pictures on the buttons*/
-        if (display_options & OPT_DISP_SHOW_BUTTON_XPM && xpm) {
+        if (blist_options & OPT_BLIST_SHOW_BUTTON_XPM && xpm) {
 		pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
 		pic = gtk_pixmap_new(pm, bm);
 		gtk_widget_show(pic);
@@ -326,7 +326,7 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
 
 
 void toggle_show_empty_groups() {
-	if (display_options & OPT_DISP_NO_MT_GRP) {
+	if (blist_options & OPT_BLIST_NO_MT_GRP) {
 		/* remove any group_shows with empty members */
 		GSList *s = shows;
 		struct group_show *g;
@@ -376,7 +376,7 @@ void toggle_buddy_pixmaps() {
 		m = g->members;
 		while (m) {
 			b = m->data;
-			if (display_options & OPT_DISP_SHOW_PIXMAPS)
+			if (blist_options & OPT_BLIST_SHOW_PIXMAPS)
 				gtk_widget_show(b->pix);
 			else
 				gtk_widget_hide(b->pix);
@@ -415,7 +415,7 @@ static void update_num_group(struct group_show *gs) {
 		c = g_slist_next(c);
 	}
 
-	if (display_options & OPT_DISP_SHOW_GRPNUM)
+	if (blist_options & OPT_BLIST_SHOW_GRPNUM)
 		g_snprintf(buf, sizeof buf, "%s (%d/%d)", gs->name, on, total);
 	else
 		g_snprintf(buf, sizeof buf, "%s", gs->name);
@@ -441,7 +441,7 @@ void update_button_pix()
 	adjust_pic(groupbutton, _("Group"), (gchar **)group_xpm);
 	adjust_pic(rembutton, _("Remove"), (gchar **)gnome_remove_xpm);
 
-	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
+	if (!(blist_options & OPT_BLIST_NO_BUTTONS)) {
 		adjust_pic(awaybutton, _("Away"), (gchar **)away_big_xpm);
 		adjust_pic(chatbutton, _("Chat"), (gchar **)join_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)tmp_send_xpm);
@@ -449,7 +449,7 @@ void update_button_pix()
 	}
 	gtk_widget_hide(addbutton->parent);
 	gtk_widget_show(addbutton->parent);
-	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
+	if (!(blist_options & OPT_BLIST_NO_BUTTONS)) {
 		gtk_widget_hide(chatbutton->parent);
 		gtk_widget_show(chatbutton->parent);
 	}
@@ -541,7 +541,7 @@ void signoff(struct gaim_connection *gc)
 #else
         show_login();
 #endif /* USE_APPLET */
-	if ( display_options & OPT_DISP_SHOW_BUDDYTICKER )
+	if ( misc_options & OPT_MISC_BUDDY_TICKER )
 		BuddyTickerSignoff();
 }
 
@@ -644,7 +644,7 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
                         c = new_conversation(b->name);
 
 		set_convo_gc(c, b->connlist->data);
-		if (display_options & OPT_DISP_ONE_WINDOW)
+		if (im_options & OPT_IM_ONE_WINDOW)
 			raise_convo_tab(c);
 	} else if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
 		GtkWidget *menu;
@@ -887,7 +887,7 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 					g_free(bs->name);
 					g_free(bs);
 					if (!g_slist_length(gs->members) &&
-							(display_options & OPT_DISP_NO_MT_GRP)) {
+							(blist_options & OPT_BLIST_NO_MT_GRP)) {
 						shows = g_slist_remove(shows, gs);
 						gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
 						g_free(gs->name);
@@ -1032,7 +1032,7 @@ static void redo_buddy_list() {
 			g = (struct group *)gr->data;
 			gr = gr->next;
 			gs = find_group_show(g->name);
-			if (!gs && !(display_options & OPT_DISP_NO_MT_GRP))
+			if (!gs && !(blist_options & OPT_BLIST_NO_MT_GRP))
 				gs = new_group_show(g->name);
 			m = g->members;
 			while (m) {
@@ -1361,7 +1361,7 @@ struct group *add_group(struct gaim_connection *gc, char *group)
 				  NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(edittree), p, g);
 	
-	if (!(display_options & OPT_DISP_NO_MT_GRP) && !find_group_show(group))
+	if (!(blist_options & OPT_BLIST_NO_MT_GRP) && !find_group_show(group))
 		new_group_show(group);
 
 	return g;
@@ -2035,7 +2035,7 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	b->pix = gtk_pixmap_new(pm, bm);
 	gtk_box_pack_start(GTK_BOX(box), b->pix, FALSE, FALSE, 1);
 	gtk_widget_show(b->pix);
-	if (!(display_options & OPT_DISP_SHOW_PIXMAPS))
+	if (!(blist_options & OPT_BLIST_SHOW_PIXMAPS))
 		gtk_widget_hide(b->pix);
 	gdk_pixmap_unref(pm);
 	gdk_bitmap_unref(bm);
@@ -2114,7 +2114,7 @@ static gint log_timeout(struct buddy_show *b) {
 			remove_buddy_show(g, b);
 		else
 			debug_printf("log_timeout but buddy list not available\n");
-		if ((g->members == NULL) && (display_options & OPT_DISP_NO_MT_GRP)) {
+		if ((g->members == NULL) && (blist_options & OPT_BLIST_NO_MT_GRP)) {
 			shows = g_slist_remove(shows, g);
 			if (blist)
 				gtk_tree_remove_item(GTK_TREE(buddies), g->item);
@@ -2140,9 +2140,9 @@ static gint log_timeout(struct buddy_show *b) {
 		gtk_widget_hide(b->pix);
 		gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
 		gtk_widget_show(b->pix);
-		if (!(display_options & OPT_DISP_SHOW_PIXMAPS))
+		if (!(blist_options & OPT_BLIST_SHOW_PIXMAPS))
 			gtk_widget_hide(b->pix);
-		if (display_options & OPT_DISP_SHOW_BUDDYTICKER)
+		if (misc_options & OPT_MISC_BUDDY_TICKER)
 			BuddyTickerSetPixmap(b->name, pm, bm);
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
@@ -2228,7 +2228,7 @@ static void update_idle_time(struct buddy_show *bs) {
 		gtk_label_set(GTK_LABEL(bs->idle), idlet);
 	else
 		gtk_label_set(GTK_LABEL(bs->idle), "");
-	if (display_options & OPT_DISP_SHOW_IDLETIME)
+	if (blist_options & OPT_BLIST_SHOW_IDLETIME)
 		gtk_widget_show(bs->idle);
 
 	/* now we do the tooltip */
@@ -2254,7 +2254,7 @@ static void update_idle_time(struct buddy_show *bs) {
 	}
 	gtk_widget_hide(bs->warn);
 	gtk_label_set(GTK_LABEL(bs->warn), warnl);
-	if (display_options & OPT_DISP_SHOW_WARN)
+	if (blist_options & OPT_BLIST_SHOW_WARN)
 		gtk_widget_show(bs->warn);
 
 	if (b->caps)
@@ -2320,7 +2320,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gtk_widget_hide(bs->pix);
 			gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 			gtk_widget_show(bs->pix);
-			if (display_options & OPT_DISP_SHOW_BUDDYTICKER) {
+			if (misc_options & OPT_MISC_BUDDY_TICKER) {
 				BuddyTickerAddUser(b->name, pm, bm);
 				gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogonTimeout, b->name);
 			}
@@ -2331,7 +2331,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				gtk_timeout_remove(bs->log_timer);
 			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
 			update_num_group(gs);
-			if ((bs->sound != 2) && (display_options & OPT_DISP_SHOW_LOGON)) {
+			if ((bs->sound != 2) && (im_options & OPT_IM_LOGON)) {
 				struct conversation *c = find_conversation(b->name);
 				if (c) {
 					char tmp[1024];
@@ -2349,9 +2349,9 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gtk_widget_hide(bs->pix);
 			gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 			gtk_widget_show(bs->pix);
-			if (!(display_options & OPT_DISP_SHOW_PIXMAPS))
+			if (!(blist_options & OPT_BLIST_SHOW_PIXMAPS))
 				gtk_widget_hide(bs->pix);
-			if (display_options & OPT_DISP_SHOW_BUDDYTICKER)
+			if (misc_options & OPT_MISC_BUDDY_TICKER)
 				BuddyTickerSetPixmap(b->name, pm, bm);
 			gdk_pixmap_unref(pm);
 			gdk_bitmap_unref(bm);
@@ -2377,13 +2377,13 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		gtk_widget_hide(bs->pix);
 		gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 		gtk_widget_show(bs->pix);
-		if (display_options & OPT_DISP_SHOW_BUDDYTICKER) {
+		if (misc_options & OPT_MISC_BUDDY_TICKER) {
 			BuddyTickerSetPixmap(b->name, pm, bm);
 			gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogoutTimeout, b->name);
 		}
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
-		if ((bs->sound != 1) && (display_options & OPT_DISP_SHOW_LOGON)) {
+		if ((bs->sound != 1) && (im_options & OPT_IM_LOGON)) {
 			struct conversation *c = find_conversation(b->name);
 			if (c) {
 				char tmp[1024];
@@ -2531,7 +2531,7 @@ void build_imchat_box(gboolean on)
 
 		imchatbox  = gtk_hbox_new(TRUE, 10);
 
-		if (display_options & OPT_DISP_COOL_LOOK)
+		if (misc_options & OPT_MISC_COOL_LOOK)
 		{
 			gtk_button_set_relief(GTK_BUTTON(imbutton), GTK_RELIEF_NONE);
 			gtk_button_set_relief(GTK_BUTTON(infobutton), GTK_RELIEF_NONE);
@@ -2781,7 +2781,7 @@ void show_buddy_list()
         gtk_box_pack_start(GTK_BOX(buddypane), sw, TRUE, TRUE, 0);
         gtk_widget_show(buddypane);
 
-	if (!(display_options & OPT_DISP_NO_BUTTONS))
+	if (!(blist_options & OPT_BLIST_NO_BUTTONS))
 		build_imchat_box(TRUE);
 
 
@@ -2792,8 +2792,7 @@ void show_buddy_list()
        	groupbutton = gtk_button_new_with_label(_("Group"));
        	rembutton = gtk_button_new_with_label(_("Remove"));
 	
-	if (display_options & OPT_DISP_COOL_LOOK)
-	{
+	if (misc_options & OPT_MISC_COOL_LOOK) {
 		gtk_button_set_relief(GTK_BUTTON(addbutton), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(groupbutton), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(rembutton), GTK_RELIEF_NONE);
@@ -2890,7 +2889,7 @@ void show_buddy_list()
 
         gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
 
-        if (general_options & OPT_GEN_SAVED_WINDOWS) {
+        if (blist_options & OPT_BLIST_SAVED_WINDOWS) {
                 if (blist_pos.width != 0) { /* Sanity check! */
                         gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff,
 						 blist_pos.y - blist_pos.yoff);

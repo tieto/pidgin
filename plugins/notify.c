@@ -20,7 +20,7 @@ void received_im(struct gaim_connection *gc, char **who, char **what, void *m) {
 
 	if (cnv == NULL)
 	{
-		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY)
+		if (away_options & OPT_AWAY_QUEUE)
 			return;
 
 		cnv = new_conversation(*who);

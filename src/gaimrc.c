@@ -41,11 +41,15 @@
 #define MAX_VALUES 10
 
 GList *aim_users = NULL;
-int general_options;
-int display_options;
-int sound_options;
-int font_options;
-int logging_options;
+guint misc_options;
+guint logging_options;
+guint blist_options;
+guint convo_options;
+guint im_options;
+guint chat_options;
+guint font_options;
+guint sound_options;
+guint away_options;
 
 int report_idle, web_browser;
 struct save_pos blist_pos;
@@ -567,14 +571,77 @@ static void gaimrc_write_users(FILE *f)
 	fprintf(f, "}\n");
 }
 
+struct replace {
+	int old;
+	guint *val;
+	int new;
+};
 
+static struct replace gen_replace[] = {
+{ /* OPT_GEN_ENTER_SENDS */		0x00000001, &convo_options, OPT_CONVO_ENTER_SENDS },
+{ /* OPT_GEN_APP_BUDDY_SHOW */		0x00000010, &blist_options, OPT_BLIST_APP_BUDDY_SHOW },
+{ /* OPT_GEN_POPUP_WINDOWS */		0x00000020,    &im_options, OPT_IM_POPUP },
+{ /* OPT_GEN_SEND_LINKS */		0x00000040, &convo_options, OPT_CONVO_SEND_LINKS },
+{ /* OPT_GEN_DEBUG */			0x00000100,  &misc_options, OPT_MISC_DEBUG },
+{ /* OPT_GEN_BROWSER_POPUP */		0x00000800,  &misc_options, OPT_MISC_BROWSER_POPUP },
+{ /* OPT_GEN_SAVED_WINDOWS */		0x00001000, &blist_options, OPT_BLIST_SAVED_WINDOWS },
+{ /* OPT_GEN_DISCARD_WHEN_AWAY */	0x00002000,  &away_options, OPT_AWAY_DISCARD },
+{ /* OPT_GEN_NEAR_APPLET */		0x00004000, &blist_options, OPT_BLIST_NEAR_APPLET },
+{ /* OPT_GEN_CHECK_SPELLING */		0x00008000, &convo_options, OPT_CONVO_CHECK_SPELLING },
+{ /* OPT_GEN_POPUP_CHAT */		0x00010000,  &chat_options, OPT_CHAT_POPUP },
+{ /* OPT_GEN_BACK_ON_IM */		0x00020000,  &away_options, OPT_AWAY_BACK_ON_IM },
+{ /* OPT_GEN_CTL_CHARS */		0x00080000, &convo_options, OPT_CONVO_CTL_CHARS },
+{ /* OPT_GEN_TIK_HACK */		0x00100000,  &away_options, OPT_AWAY_TIK_HACK },
+{ /* OPT_GEN_CTL_SMILEYS */		0x00200000, &convo_options, OPT_CONVO_CTL_SMILEYS },
+{ /* OPT_GEN_AUTO_AWAY */		0x00800000,  &away_options, OPT_AWAY_AUTO },
+{ /* OPT_GEN_ESC_CAN_CLOSE */		0x01000000, &convo_options, OPT_CONVO_ESC_CAN_CLOSE },
+{ /* OPT_GEN_CTL_ENTER */		0x02000000, &convo_options, OPT_CONVO_CTL_ENTER },
+{ /* OPT_GEN_F2_TOGGLES */		0x04000000, &convo_options, OPT_CONVO_F2_TOGGLES },
+{ /* OPT_GEN_NO_AUTO_RESP */		0x08000000,  &away_options, OPT_AWAY_NO_AUTO_RESP },
+{ /* OPT_GEN_QUEUE_WHEN_AWAY */		0x10000000,  &away_options, OPT_AWAY_QUEUE },
+{ 0,NULL,0 }
+};
 
+#define OPT_GEN_LOG_ALL		0x00000004
+#define OPT_GEN_STRIP_HTML	0x00000008
+
+static struct replace disp_replace[] = {
+{ /* OPT_DISP_SHOW_TIME */		0x00000001, &convo_options, OPT_CONVO_SHOW_TIME },
+{ /* OPT_DISP_SHOW_GRPNUM */		0x00000002, &blist_options, OPT_BLIST_SHOW_GRPNUM },
+{ /* OPT_DISP_SHOW_PIXMAPS */		0x00000004, &blist_options, OPT_BLIST_SHOW_PIXMAPS },
+{ /* OPT_DISP_SHOW_IDLETIME */		0x00000008, &blist_options, OPT_BLIST_SHOW_IDLETIME },
+{ /* OPT_DISP_SHOW_BUTTON_XPM */	0x00000010, &blist_options, OPT_BLIST_SHOW_BUTTON_XPM },
+{ /* OPT_DISP_IGNORE_COLOUR */		0x00000020, &convo_options, OPT_CONVO_IGNORE_COLOUR },
+{ /* OPT_DISP_SHOW_LOGON */		0x00000040,    &im_options, OPT_IM_LOGON },
+{ /* OPT_DISP_SHOW_SMILEY */		0x00000100, &convo_options, OPT_CONVO_SHOW_SMILEY },
+{ /* OPT_DISP_SHOW_BUDDYTICKER */	0x00000200,  &misc_options, OPT_MISC_BUDDY_TICKER },
+{ /* OPT_DISP_COOL_LOOK */		0x00000400,  &misc_options, OPT_MISC_COOL_LOOK },
+{ /* OPT_DISP_CHAT_LOGON */		0x00000800,  &chat_options, OPT_CHAT_LOGON },
+{ /* OPT_DISP_NO_BUTTONS */		0x00002000, &blist_options, OPT_BLIST_NO_BUTTONS },
+{ /* OPT_DISP_CONV_BUTTON_TEXT */	0x00004000,    &im_options, OPT_IM_BUTTON_TEXT },
+{ /* OPT_DISP_CHAT_BUTTON_TEXT */	0x00008000,  &chat_options, OPT_CHAT_BUTTON_TEXT },
+{ /* OPT_DISP_NO_MT_GRP */		0x00040000, &blist_options, OPT_BLIST_NO_MT_GRP },
+{ /* OPT_DISP_CONV_BUTTON_XPM */	0x00080000,    &im_options, OPT_IM_BUTTON_XPM },
+{ /* OPT_DISP_CHAT_BUTTON_XPM */	0x00100000,  &chat_options, OPT_CHAT_BUTTON_XPM },
+{ /* OPT_DISP_SHOW_WARN */		0x00200000, &blist_options, OPT_BLIST_SHOW_WARN },
+{ /* OPT_DISP_IGNORE_FONTS */		0x00400000, &convo_options, OPT_CONVO_IGNORE_FONTS },
+{ /* OPT_DISP_IGNORE_SIZES */		0x00800000, &convo_options, OPT_CONVO_IGNORE_SIZES },
+{ /* OPT_DISP_ONE_WINDOW */		0x01000000,    &im_options, OPT_IM_ONE_WINDOW },
+{ /* OPT_DISP_ONE_CHAT_WINDOW */	0x02000000,  &chat_options, OPT_CHAT_ONE_WINDOW },
+{ /* OPT_DISP_CONV_SIDE_TAB */		0x04000000,    &im_options, OPT_IM_SIDE_TAB },
+{ /* OPT_DISP_CONV_BR_TAB */		0x08000000,    &im_options, OPT_IM_BR_TAB },
+{ /* OPT_DISP_CHAT_SIDE_TAB */		0x10000000,  &chat_options, OPT_CHAT_SIDE_TAB },
+{ /* OPT_DISP_CHAT_BR_TAB */		0x20000000,  &chat_options, OPT_CHAT_BR_TAB },
+{ 0,NULL,0 }
+};
 
 static void gaimrc_read_options(FILE *f)
 {
 	char buf[2048];
 	struct parse *p;
-	gboolean read_logging = FALSE;
+	gboolean read_logging = FALSE, read_general = FALSE, read_display = FALSE;
+	int general_options = 0, display_options = 0;
+	int i;
 
 	buf[0] = 0;
 
@@ -589,15 +656,29 @@ static void gaimrc_read_options(FILE *f)
 
 		if (!strcmp(p->option, "general_options")) {
 			general_options = atoi(p->value[0]);
+			read_general = TRUE;
 		} else if (!strcmp(p->option, "display_options")) {
 			display_options = atoi(p->value[0]);
-		} else if (!strcmp(p->option, "sound_options")) {
-			sound_options = atoi(p->value[0]);
-		} else if (!strcmp(p->option, "font_options")) {
-			font_options = atoi(p->value[0]);
+			read_display = TRUE;
+		} else if (!strcmp(p->option, "misc_options")) {
+			misc_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "logging_options")) {
 			logging_options = atoi(p->value[0]);
 			read_logging = TRUE;
+		} else if (!strcmp(p->option, "blist_options")) {
+			blist_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "convo_options")) {
+			convo_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "im_options")) {
+			im_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "chat_options")) {
+			chat_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "font_options")) {
+			font_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "sound_options")) {
+			sound_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "away_options")) {
+			away_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "font_face")) {
 			if (p->value[0] != NULL)
 				g_snprintf(fontface, sizeof(fontface), "%s", p->value[0]);
@@ -636,25 +717,40 @@ static void gaimrc_read_options(FILE *f)
 
 	}
 
-	if (!read_logging) {
-		logging_options = 0;
-		if (general_options & OPT_GEN_LOG_ALL)
-			logging_options |= OPT_LOG_ALL;
-		if (general_options & OPT_GEN_STRIP_HTML)
-			logging_options |= OPT_LOG_STRIP_HTML;
+	if (read_general) {
+		if (!read_logging) {
+			logging_options = 0;
+			if (general_options & OPT_GEN_LOG_ALL)
+				logging_options |= OPT_LOG_ALL;
+			if (general_options & OPT_GEN_STRIP_HTML)
+				logging_options |= OPT_LOG_STRIP_HTML;
+		}
+		for (i = 0; gen_replace[i].val; i++)
+			if (general_options & gen_replace[i].old)
+				*gen_replace[i].val |= gen_replace[i].new;
 	}
 
+	if (read_display)
+		for (i = 0; disp_replace[i].val; i++)
+			if (display_options & disp_replace[i].old)
+				*disp_replace[i].val |= disp_replace[i].new;
 }
 
 static void gaimrc_write_options(FILE *f)
 {
 
 	fprintf(f, "options {\n");
-	fprintf(f, "\tgeneral_options { %d }\n", general_options);
-	fprintf(f, "\tdisplay_options { %d }\n", display_options);
-	fprintf(f, "\tsound_options { %d }\n", sound_options);
-	fprintf(f, "\tfont_options { %d }\n", font_options);
-	fprintf(f, "\tlogging_options { %d }\n", logging_options);
+
+	fprintf(f, "\tmisc_options { %u }\n", misc_options);
+	fprintf(f, "\tlogging_options { %u }\n", logging_options);
+	fprintf(f, "\tblist_options { %u }\n", blist_options);
+	fprintf(f, "\tconvo_options { %u }\n", convo_options);
+	fprintf(f, "\tim_options { %u }\n", im_options);
+	fprintf(f, "\tchat_options { %u }\n", chat_options);
+	fprintf(f, "\tfont_options { %u }\n", font_options);
+	fprintf(f, "\tsound_options { %u }\n", sound_options);
+	fprintf(f, "\taway_options { %u }\n", away_options);
+
 	if (fontface)
 		fprintf(f, "\tfont_face { %s }\n", fontface);
 	fprintf(f, "\tfont_size { %d }\n", fontsize);
@@ -670,6 +766,7 @@ static void gaimrc_write_options(FILE *f)
 		conv_size.width, conv_size.height, conv_size.entry_height);
 	fprintf(f, "\tbuddy_chat_size { %d } { %d } { %d }\n",
 		buddy_chat_size.width, buddy_chat_size.height, buddy_chat_size.entry_height);
+
 	fprintf(f, "}\n");
 }
 
@@ -794,73 +891,86 @@ static void gaimrc_write_proxy(FILE *f)
 }
 
 
-void set_defaults(int saveinfo)
+static void set_defaults()
 {
-	if (!saveinfo) {
-		if (aim_users) {
-			g_list_free(aim_users);
-			aim_users = NULL;
-		}
-		if (away_messages) {
-			g_slist_free(away_messages);
-			away_messages = NULL;
-		}
+	int i;
+
+	if (aim_users) {
+		g_list_free(aim_users);
+		aim_users = NULL;
+	}
+	if (away_messages) {
+		g_slist_free(away_messages);
+		away_messages = NULL;
 	}
 
-	general_options =
-	    OPT_GEN_SEND_LINKS |
-	    OPT_GEN_ENTER_SENDS |
-	    OPT_GEN_SAVED_WINDOWS |
-	    /* OPT_GEN_REMEMBER_PASS | */
-	    OPT_GEN_REGISTERED |
-	    OPT_GEN_NEAR_APPLET |
-	    OPT_GEN_CTL_SMILEYS |
-	    OPT_GEN_CTL_CHARS;
+	misc_options =
+		OPT_MISC_BUDDY_TICKER |
+		OPT_MISC_COOL_LOOK;
 
-	display_options =
-	    OPT_DISP_SHOW_IDLETIME |
-	    OPT_DISP_SHOW_TIME |
-	    OPT_DISP_SHOW_PIXMAPS |
-	    OPT_DISP_SHOW_BUDDYTICKER |
-	    OPT_DISP_SHOW_BUTTON_XPM |
-	    OPT_DISP_SHOW_SMILEY |
-	    OPT_DISP_COOL_LOOK |
-	    OPT_DISP_CONV_BUTTON_XPM |
-	    OPT_DISP_CHAT_BUTTON_TEXT;
+	logging_options = 0;
 
-	if (!saveinfo) {
-		int i;
-		for (i = 0; i < 7; i++)
-			sound_file[i] = NULL;
-		font_options = 0;
-		sound_options =
-		    OPT_SOUND_LOGIN |
-		    OPT_SOUND_LOGOUT |
-		    OPT_SOUND_RECV |
-		    OPT_SOUND_SEND |
-		    OPT_SOUND_SILENT_SIGNON;
-		report_idle = IDLE_SCREENSAVER;
-		web_browser = BROWSER_NETSCAPE;
-		auto_away = 10;
-		default_away = NULL;
+	blist_options =
+		OPT_BLIST_APP_BUDDY_SHOW |
+		OPT_BLIST_SAVED_WINDOWS |
+		OPT_BLIST_NEAR_APPLET |
+		OPT_BLIST_SHOW_GRPNUM |
+		OPT_BLIST_SHOW_PIXMAPS |
+		OPT_BLIST_SHOW_IDLETIME |
+		OPT_BLIST_SHOW_BUTTON_XPM;
 
-		g_snprintf(web_command, sizeof(web_command), "xterm -e lynx %%s");
+	convo_options =
+		OPT_CONVO_ENTER_SENDS |
+		OPT_CONVO_SEND_LINKS |
+		OPT_CONVO_CTL_CHARS |
+		OPT_CONVO_CTL_SMILEYS |
+		OPT_CONVO_SHOW_TIME |
+		OPT_CONVO_SHOW_SMILEY;
 
-		blist_pos.width = 0;
-		blist_pos.height = 0;
-		blist_pos.x = 0;
-		blist_pos.y = 0;
+	im_options =
+		OPT_IM_POPUP |
+		OPT_IM_LOGON |
+		OPT_IM_BUTTON_XPM;
 
-		conv_size.width = 320;
-		conv_size.height = 175;
-		conv_size.entry_height = 50;
+	chat_options =
+		OPT_CHAT_LOGON |
+		OPT_CHAT_POPUP |
+		OPT_CHAT_BUTTON_XPM;
 
-		buddy_chat_size.width = 320;
-		buddy_chat_size.height = 160;
-		buddy_chat_size.entry_height = 50;
-	}
+	font_options = 0;
+
+	away_options =
+		OPT_AWAY_BACK_ON_IM;
+
+	for (i = 0; i < 7; i++)
+		sound_file[i] = NULL;
+	font_options = 0;
+	sound_options =
+	    OPT_SOUND_LOGIN |
+	    OPT_SOUND_LOGOUT |
+	    OPT_SOUND_RECV |
+	    OPT_SOUND_SEND |
+	    OPT_SOUND_SILENT_SIGNON;
+	report_idle = IDLE_SCREENSAVER;
+	web_browser = BROWSER_NETSCAPE;
+	auto_away = 10;
+	default_away = NULL;
+
+	g_snprintf(web_command, sizeof(web_command), "xterm -e lynx %%s");
+
+	blist_pos.width = 0;
+	blist_pos.height = 0;
+	blist_pos.x = 0;
+	blist_pos.y = 0;
+
+	conv_size.width = 320;
+	conv_size.height = 175;
+	conv_size.entry_height = 50;
+
+	buddy_chat_size.width = 320;
+	buddy_chat_size.height = 160;
+	buddy_chat_size.entry_height = 50;
 }
-
 
 void load_prefs()
 {
@@ -873,18 +983,17 @@ void load_prefs()
 	else if (getenv("HOME"))
 		g_snprintf(buf, sizeof(buf), "%s/.gaimrc", getenv("HOME"));
 	else {
-		set_defaults(TRUE);
+		set_defaults();
 		return;
 	}
 
 	if ((f = fopen(buf, "r"))) {
 		fgets(buf, sizeof(buf), f);
 		sscanf(buf, "# .gaimrc v%d", &ver);
-		if ((ver <= 1) || (buf[0] != '#')) {
+		if ((ver <= 3) || (buf[0] != '#')) {
 			fclose(f);
-			set_defaults(FALSE);
+			set_defaults();
 			save_prefs();
-			load_prefs();
 			return;
 		}
 
@@ -925,10 +1034,6 @@ void load_prefs()
 	} else if (opt_rcfile_arg) {
 		g_snprintf(buf, sizeof(buf), _("Could not open config file %s."), opt_rcfile_arg);
 		do_error_dialog(buf, _("Preferences Error"));
-	}
-
-	if ((ver == 2) || (buf[0] != '#')) {
-		set_defaults(TRUE);
 	}
 }
 

@@ -90,7 +90,7 @@ void toggle_away_queue()
 	if (!clistqueue || !clistqueuesw)
 		return;
 	
-	if (general_options & OPT_GEN_QUEUE_WHEN_AWAY) {
+	if (away_options & OPT_AWAY_QUEUE) {
 		gtk_widget_show(clistqueue);
 		gtk_widget_show(clistqueuesw);
 	} else {
@@ -188,7 +188,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_widget_set_usize(GTK_WIDGET(clistqueue), -1, 50);
 		gtk_container_add(GTK_CONTAINER(clistqueuesw), clistqueue);
 
-		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY) {
+		if (away_options & OPT_AWAY_QUEUE) {
 			gtk_widget_show(clistqueuesw);
 			gtk_widget_show(clistqueue);
 		}

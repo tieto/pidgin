@@ -439,9 +439,6 @@ do_error_dialog(char *message, char *title)
 		
 	close = picture_button(d, _("Close"), cancel_xpm);
 
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
-	
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), 
 		close, FALSE, FALSE, 5);
 
@@ -610,13 +607,10 @@ void show_ee_dialog(int ee)
 	GtkWidget *eedialog;
 
 	eedialog = gtk_window_new(GTK_WINDOW_DIALOG);
-	ok = gtk_button_new_with_label(_("OK"));
+	gtk_widget_realize(eedialog);
+	ok = picture_button(eedialog, _("OK"), ok_xpm);
 	box = gtk_vbox_new(FALSE, 10);
 
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(ok), GTK_RELIEF_NONE);
-	
 	if (ee == 0)
 		label = gtk_label_new("Amazing!  Simply Amazing!");
 	else if (ee == 1)
@@ -1741,9 +1735,6 @@ void g_show_info_text(char *info, ...)
         gtk_signal_connect(GTK_OBJECT(ok), "clicked",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(ok), GTK_RELIEF_NONE);
-
         label = gtk_label_new(_("Below are the results of your search: "));
 
 	sw = gtk_scrolled_window_new (NULL, NULL);
@@ -1767,11 +1758,11 @@ void g_show_info_text(char *info, ...)
 	aol_icon(b->window->window);
 	gtk_widget_show_all(b->window);
 
-	if (display_options & OPT_DISP_IGNORE_COLOUR)
+	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
 		options ^= GTK_IMHTML_NO_COLOURS;
-	if (display_options & OPT_DISP_IGNORE_FONTS)
+	if (convo_options & OPT_CONVO_IGNORE_FONTS)
 		options ^= GTK_IMHTML_NO_FONTS;
-	if (display_options & OPT_DISP_IGNORE_SIZES)
+	if (convo_options & OPT_CONVO_IGNORE_SIZES)
 		options ^= GTK_IMHTML_NO_SIZES;
 	options ^= GTK_IMHTML_NO_COMMENTS;
 	options ^= GTK_IMHTML_NO_TITLE;
@@ -3626,16 +3617,12 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	gtk_widget_show(hbox);
 
 	button = picture_button(window, _("Cancel"), cancel_xpm);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", 
 			   GTK_SIGNAL_FUNC(destroy_dialog), window);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
 
 	button = picture_button(window, _("Okay"), ok_xpm);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_object_set_user_data(GTK_OBJECT(button), 
 				 gtk_object_get_user_data(GTK_OBJECT(w)));
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", 
@@ -3686,11 +3673,11 @@ show_log (char *name)
 	}
 
 	options = GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL;
-	if (display_options & OPT_DISP_IGNORE_COLOUR)
+	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
 		options ^= GTK_IMHTML_NO_COLOURS;
-	if (display_options & OPT_DISP_IGNORE_FONTS)
+	if (convo_options & OPT_CONVO_IGNORE_FONTS)
 		options ^= GTK_IMHTML_NO_FONTS;
-	if (display_options & OPT_DISP_IGNORE_SIZES)
+	if (convo_options & OPT_CONVO_IGNORE_SIZES)
 		options ^= GTK_IMHTML_NO_SIZES;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);

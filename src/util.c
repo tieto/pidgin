@@ -856,7 +856,7 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	GtkWidget *pixmap;
 
 	button = gtk_button_new();
-	if (display_options & OPT_DISP_COOL_LOOK)
+	if (misc_options & OPT_MISC_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
 	button_box = gtk_hbox_new(FALSE, 5);
@@ -903,7 +903,7 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 	if (!button_tips)
 		button_tips = gtk_tooltips_new();
 	button = gtk_button_new();
-	if (display_options & OPT_DISP_COOL_LOOK)
+	if (misc_options & OPT_MISC_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
 	button_box = gtk_hbox_new(FALSE, 0);
@@ -1123,11 +1123,11 @@ int set_dispstyle(int chat)
 	int dispstyle;
 
 	if (chat) {
-		switch (display_options & (OPT_DISP_CHAT_BUTTON_TEXT | OPT_DISP_CHAT_BUTTON_XPM)) {
-		case OPT_DISP_CHAT_BUTTON_TEXT:
+		switch (chat_options & (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM)) {
+		case OPT_CHAT_BUTTON_TEXT:
 			dispstyle = 1;
 			break;
-		case OPT_DISP_CHAT_BUTTON_XPM:
+		case OPT_CHAT_BUTTON_XPM:
 			dispstyle = 0;
 			break;
 		default:	/* both or neither */
@@ -1135,11 +1135,11 @@ int set_dispstyle(int chat)
 			break;
 		}
 	} else {
-		switch (display_options & (OPT_DISP_CONV_BUTTON_TEXT | OPT_DISP_CONV_BUTTON_XPM)) {
-		case OPT_DISP_CONV_BUTTON_TEXT:
+		switch (im_options & (OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM)) {
+		case OPT_IM_BUTTON_TEXT:
 			dispstyle = 1;
 			break;
-		case OPT_DISP_CONV_BUTTON_XPM:
+		case OPT_IM_BUTTON_XPM:
 			dispstyle = 0;
 			break;
 		default:	/* both or neither */

@@ -90,7 +90,7 @@ void gaim_setup_imhtml(GtkWidget *imhtml)
 {
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	if (!(display_options & OPT_DISP_SHOW_SMILEY))
+	if (!(convo_options & OPT_CONVO_SHOW_SMILEY))
 		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
 	gtk_signal_connect(GTK_OBJECT(imhtml), "url_clicked", GTK_SIGNAL_FUNC(open_url_nw), NULL);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:)", luke03_xpm);
@@ -206,7 +206,7 @@ void rm_log(struct log_conversation *a)
 			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, cnv->name);
 		else
 			g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, cnv->name);
-		if (!(display_options & OPT_DISP_ONE_WINDOW))
+		if (!(im_options & OPT_IM_ONE_WINDOW))
 			gtk_window_set_title(GTK_WINDOW(cnv->window), buf);
 	}
 }
@@ -401,7 +401,7 @@ void insert_smiley(GtkWidget *smiley, struct conversation *c)
 
 int close_callback(GtkWidget *widget, struct conversation *c)
 {
-	if (c->is_chat && (widget == c->close) && !(display_options & OPT_DISP_ONE_CHAT_WINDOW)) {
+	if (c->is_chat && (widget == c->close) && !(chat_options & OPT_CHAT_ONE_WINDOW)) {
 		GtkWidget *tmp = c->window;
 		debug_printf("chat clicked close button\n");
 		c->window = NULL;
@@ -411,7 +411,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 
 	debug_printf("conversation close callback\n");
 
-	if (general_options & OPT_GEN_CHECK_SPELLING)
+	if (convo_options & OPT_CONVO_CHECK_SPELLING)
 		gtkspell_detach(GTK_TEXT(c->entry));
 
 	if (!c->is_chat) {
@@ -424,7 +424,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		}
 		remove_icon(c);
 		remove_checkbox(c);
-		if (display_options & OPT_DISP_ONE_WINDOW) {
+		if (im_options & OPT_IM_ONE_WINDOW) {
 			if (g_list_length(conversations) > 1) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(convo_notebook),
 						g_list_index(conversations, c));
@@ -441,7 +441,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 			c->window = NULL;
 		}
 	} else {
-		if (display_options & OPT_DISP_ONE_CHAT_WINDOW) {
+		if (chat_options & OPT_CHAT_ONE_WINDOW) {
 			if (g_list_length(chats) > 1) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
 						g_list_index(chats, c));
@@ -580,17 +580,17 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 {
 	int pos;
 	if (event->keyval == GDK_Escape) {
-		if (general_options & OPT_GEN_ESC_CAN_CLOSE) {
+		if (convo_options & OPT_CONVO_ESC_CAN_CLOSE) {
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			close_callback(c->close, c);
 		}
-	} else if ((event->keyval == GDK_F2) && (general_options & OPT_GEN_F2_TOGGLES)) {
+	} else if ((event->keyval == GDK_F2) && (convo_options & OPT_CONVO_F2_TOGGLES)) {
 		gtk_imhtml_show_comments(GTK_IMHTML(c->text), !GTK_IMHTML(c->text)->comments);
 	} else if ((event->keyval == GDK_Return) || (event->keyval == GDK_KP_Enter)) {
-		if ((event->state & GDK_CONTROL_MASK) && (general_options & OPT_GEN_CTL_ENTER)) {
+		if ((event->state & GDK_CONTROL_MASK) && (convo_options & OPT_CONVO_CTL_ENTER)) {
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-		} else if (!(event->state & GDK_SHIFT_MASK) && (general_options & OPT_GEN_ENTER_SENDS)) {
+		} else if (!(event->state & GDK_SHIFT_MASK) && (convo_options & OPT_CONVO_ENTER_SENDS)) {
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 		} else {
@@ -599,7 +599,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
 		}
 	} else if (event->state & GDK_CONTROL_MASK) {
-		if (general_options & OPT_GEN_CTL_CHARS) {
+		if (convo_options & OPT_CONVO_CTL_CHARS) {
 			switch (event->keyval) {
 			case 'i':
 			case 'I':
@@ -632,7 +632,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				break;
 			}
 		}
-		if (general_options & OPT_GEN_CTL_SMILEYS) {
+		if (convo_options & OPT_CONVO_CTL_SMILEYS) {
 			char buf[7];
 			buf[0] = '\0';
 			switch (event->keyval) {
@@ -698,8 +698,8 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
-		if ((!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW)) ||
-		    ( c->is_chat && (display_options & OPT_DISP_ONE_CHAT_WINDOW))) {
+		if ((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW)) ||
+		    ( c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) {
 			GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
 			if (event->keyval == '[') {
 				gtk_notebook_prev_page(GTK_NOTEBOOK(notebook));
@@ -749,8 +749,8 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
-	} else if (((!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW)) ||
-		    ( c->is_chat && (display_options & OPT_DISP_ONE_CHAT_WINDOW))) &&
+	} else if (((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW)) ||
+		    ( c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) &&
 			(event->state & GDK_MOD1_MASK) && isdigit(event->keyval) &&
 			(event->keyval > '0')) {
 		GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
@@ -784,7 +784,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	buf2 = g_malloc(limit);
 
 	if (c->gc->prpl->options & OPT_PROTO_HTML) {
-		if (general_options & OPT_GEN_SEND_LINKS)
+		if (convo_options & OPT_CONVO_SEND_LINKS)
 			linkify_text(buf);
 
 		if (font_options & OPT_FONT_BOLD) {
@@ -897,7 +897,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	} else {
 		gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
 
-		if (general_options & OPT_GEN_BACK_ON_IM) {
+		if (away_options & OPT_AWAY_BACK_ON_IM) {
 			if (awaymessage != NULL) {
 				do_im_back();
 			} else if (c->gc->away) {
@@ -1063,7 +1063,7 @@ void surround(GtkWidget *entry, char *pre, char *post)
 	int dummy;
 	int start, finish;
 
-	if (general_options & OPT_GEN_CHECK_SPELLING) {
+	if (convo_options & OPT_CONVO_CHECK_SPELLING) {
 		gtkspell_detach(GTK_TEXT(entry));
 	}
 
@@ -1097,7 +1097,7 @@ void surround(GtkWidget *entry, char *pre, char *post)
 		}
 	}
 
-	if (general_options & OPT_GEN_CHECK_SPELLING) {
+	if (convo_options & OPT_CONVO_CHECK_SPELLING) {
 		gtkspell_attach(GTK_TEXT(entry));
 	}
 
@@ -1332,13 +1332,13 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 
 	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
 
-	if (display_options & OPT_DISP_IGNORE_COLOUR)
+	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
 		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COLOURS;
 
-	if (display_options & OPT_DISP_IGNORE_FONTS)
+	if (convo_options & OPT_CONVO_IGNORE_FONTS)
 		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_FONTS;
 
-	if (display_options & OPT_DISP_IGNORE_SIZES)
+	if (convo_options & OPT_CONVO_IGNORE_SIZES)
 		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_SIZES;
 
 	if (!(logging_options & OPT_LOG_STRIP_HTML))
@@ -1370,7 +1370,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 
 	
 	if (flags & WFLAG_SYSTEM) {
-		if (general_options & OPT_DISP_SHOW_TIME)
+		if (convo_options & OPT_CONVO_SHOW_TIME)
 			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s) </FONT><B>%s</B>", mdate, what);
 		else
 			g_snprintf(buf, BUF_LONG, "<B>%s</B>", what);
@@ -1449,7 +1449,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			}
 		}
 
-		if (general_options & OPT_DISP_SHOW_TIME)
+		if (convo_options & OPT_CONVO_SHOW_TIME)
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"2\">(%s) </FONT>"
 					"<B>%s</B></FONT> ", colour, mdate, str);
 		else
@@ -1527,15 +1527,15 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	}
 */
 
-	if ((c->is_chat && (general_options & OPT_GEN_POPUP_CHAT)) ||
-	    (!c->is_chat && (general_options & OPT_GEN_POPUP_WINDOWS)))
+	if ((c->is_chat && (chat_options & OPT_CHAT_POPUP)) ||
+	    (!c->is_chat && (im_options & OPT_IM_POPUP)))
 		    gdk_window_show(c->window->window);
 
 	if (((flags & WFLAG_RECV) || (flags & WFLAG_SYSTEM)) &&
-	    ((!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW) &&
+	    ((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW) &&
 	      (gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook))
 			!= g_list_index(conversations, c))) ||
-	     ( c->is_chat && (display_options & OPT_DISP_ONE_CHAT_WINDOW) &&
+	     ( c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW) &&
 	      (gtk_notebook_get_current_page(GTK_NOTEBOOK(chat_notebook))
 			!= g_list_index(chats, c))))) {
 		GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
@@ -1735,7 +1735,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(speaker), TRUE);
 
 	/* use a slicker look if the user wants to */
-	if (display_options & OPT_DISP_COOL_LOOK) {
+	if (misc_options & OPT_MISC_COOL_LOOK) {
 		gtk_button_set_relief(GTK_BUTTON(bold), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(italic), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(underline), GTK_RELIEF_NONE);
@@ -2050,7 +2050,7 @@ void show_conv(struct conversation *c)
 	c->fgcol = fgcolor;
 	c->hasfg = 0;
 
-	if (display_options & OPT_DISP_ONE_WINDOW) {
+	if (im_options & OPT_IM_ONE_WINDOW) {
 		if (!all_convos) {
 			win = all_convos = c->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
@@ -2063,8 +2063,8 @@ void show_conv(struct conversation *c)
 					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
 
 			convo_notebook = gtk_notebook_new();
-			if (display_options & OPT_DISP_CONV_SIDE_TAB) {
-				if (display_options & OPT_DISP_CONV_BR_TAB) {
+			if (im_options & OPT_IM_SIDE_TAB) {
+				if (im_options & OPT_IM_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
 							GTK_POS_RIGHT);
 				} else {
@@ -2072,7 +2072,7 @@ void show_conv(struct conversation *c)
 							GTK_POS_LEFT);
 				}
 			} else  {
-				if (display_options & OPT_DISP_CONV_BR_TAB) {
+				if (im_options & OPT_IM_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
 							GTK_POS_BOTTOM);
 				} else {
@@ -2132,7 +2132,7 @@ void show_conv(struct conversation *c)
 	gtk_container_add(GTK_CONTAINER(sw), text);
 	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
 	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
-	if (display_options & OPT_DISP_SHOW_TIME)
+	if (convo_options & OPT_CONVO_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
 	gaim_setup_imhtml(text);
 	gtk_widget_show(text);
@@ -2161,7 +2161,7 @@ void show_conv(struct conversation *c)
 
 	entry = gtk_text_new(NULL, NULL);
 	c->entry = entry;
-	if (!(display_options & OPT_DISP_ONE_WINDOW))
+	if (!(im_options & OPT_IM_ONE_WINDOW))
 		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
 
 	toolbar = build_conv_toolbar(c);
@@ -2176,7 +2176,7 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed),
 			   entry);
-	if (general_options & OPT_GEN_CHECK_SPELLING)
+	if (convo_options & OPT_CONVO_CHECK_SPELLING)
 		gtkspell_attach(GTK_TEXT(c->entry));
 	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 0);
 	gtk_widget_show(entry);
@@ -2255,7 +2255,7 @@ void toggle_spellchk()
 
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
-		if (general_options & OPT_GEN_CHECK_SPELLING)
+		if (convo_options & OPT_CONVO_CHECK_SPELLING)
 			gtkspell_attach(GTK_TEXT(c->entry));
 		else
 			gtkspell_detach(GTK_TEXT(c->entry));
@@ -2267,7 +2267,7 @@ void toggle_spellchk()
 		cht = gc->buddy_chats;
 		while (cht) {
 			c = (struct conversation *)cht->data;
-			if (general_options & OPT_GEN_CHECK_SPELLING)
+			if (convo_options & OPT_CONVO_CHECK_SPELLING)
 				gtkspell_attach(GTK_TEXT(c->entry));
 			else
 				gtkspell_detach(GTK_TEXT(c->entry));
@@ -2287,7 +2287,7 @@ void toggle_timestamps()
 
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
-		if (display_options & OPT_DISP_SHOW_TIME)
+		if (convo_options & OPT_CONVO_SHOW_TIME)
 			gtk_imhtml_show_comments(GTK_IMHTML(c->text), TRUE);
 		else
 			gtk_imhtml_show_comments(GTK_IMHTML(c->text), FALSE);
@@ -2299,7 +2299,7 @@ void toggle_timestamps()
 		cht = gc->buddy_chats;
 		while (cht) {
 			c = (struct conversation *)cht->data;
-			if (display_options & OPT_DISP_SHOW_TIME)
+			if (convo_options & OPT_CONVO_SHOW_TIME)
 				gtk_imhtml_show_comments(GTK_IMHTML(c->text), TRUE);
 			else
 				gtk_imhtml_show_comments(GTK_IMHTML(c->text), FALSE);
@@ -2319,7 +2319,7 @@ void toggle_smileys()
 
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
-		if (display_options & OPT_DISP_SHOW_SMILEY)
+		if (convo_options & OPT_CONVO_SHOW_SMILEY)
 			gtk_imhtml_show_smileys(GTK_IMHTML(c->text), TRUE);
 		else
 			gtk_imhtml_show_smileys(GTK_IMHTML(c->text), FALSE);
@@ -2331,7 +2331,7 @@ void toggle_smileys()
 		cht = gc->buddy_chats;
 		while (cht) {
 			c = (struct conversation *)cht->data;
-			if (display_options & OPT_DISP_SHOW_SMILEY)
+			if (convo_options & OPT_CONVO_SHOW_SMILEY)
 				gtk_imhtml_show_smileys(GTK_IMHTML(c->text), TRUE);
 			else
 				gtk_imhtml_show_smileys(GTK_IMHTML(c->text), FALSE);
@@ -2344,7 +2344,7 @@ void toggle_smileys()
 void tabize()
 {
 	/* evil, evil i tell you! evil! */
-	if (display_options & OPT_DISP_ONE_WINDOW) {
+	if (im_options & OPT_IM_ONE_WINDOW) {
 		GList *x = conversations;
 		while (x) {
 			struct conversation *c = x->data;
@@ -2408,8 +2408,8 @@ void raise_convo_tab(struct conversation *c)
 void update_im_tabs() {
 	if (!convo_notebook || !all_convos)
 		return;
-	if (display_options & OPT_DISP_CONV_SIDE_TAB) {
-		if (display_options & OPT_DISP_CONV_BR_TAB) {
+	if (im_options & OPT_IM_SIDE_TAB) {
+		if (im_options & OPT_IM_BR_TAB) {
 			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
 					GTK_POS_RIGHT);
 		} else {
@@ -2417,7 +2417,7 @@ void update_im_tabs() {
 					GTK_POS_LEFT);
 		}
 	} else  {
-		if (display_options & OPT_DISP_CONV_BR_TAB) {
+		if (im_options & OPT_IM_BR_TAB) {
 			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(convo_notebook),
 					GTK_POS_BOTTOM);
 		} else {
@@ -2430,8 +2430,8 @@ void update_im_tabs() {
 void update_chat_tabs() {
 	if (!chat_notebook || !all_chats)
 		return;
-	if (display_options & OPT_DISP_CHAT_SIDE_TAB) {
-		if (display_options & OPT_DISP_CHAT_BR_TAB) {
+	if (chat_options & OPT_CHAT_SIDE_TAB) {
+		if (chat_options & OPT_CHAT_BR_TAB) {
 			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
 					GTK_POS_RIGHT);
 		} else {
@@ -2439,7 +2439,7 @@ void update_chat_tabs() {
 					GTK_POS_LEFT);
 		}
 	} else {
-		if (display_options & OPT_DISP_CHAT_BR_TAB) {
+		if (chat_options & OPT_CHAT_BR_TAB) {
 			gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook), 
 					GTK_POS_BOTTOM);
 		} else {

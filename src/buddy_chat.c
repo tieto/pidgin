@@ -383,11 +383,6 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 		/* Now we should fill out all of the names */ 
 		gtk_combo_set_popdown_strings(GTK_COMBO(inviteentry), generate_invite_user_names(b->gc));
 
-		if (display_options & OPT_DISP_COOL_LOOK) {
-			gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-			gtk_button_set_relief(GTK_BUTTON(invite_btn), GTK_RELIEF_NONE);
-		}
-
 		vbox = gtk_vbox_new(FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 		gtk_container_add(GTK_CONTAINER(frame), table);
@@ -667,7 +662,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
 		play_sound(CHAT_JOIN);
 
-	if (display_options & OPT_DISP_CHAT_LOGON) {
+	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), name);
 		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 	}
@@ -730,7 +725,7 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
 	gtk_widget_show(list_item);
 
-	if (display_options & OPT_DISP_CHAT_LOGON) {
+	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s is now known as %s"), old, new);
 		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 	}
@@ -773,7 +768,7 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_PART))
 		play_sound(CHAT_LEAVE);
 
-	if (display_options & OPT_DISP_CHAT_LOGON) {
+	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s left the room."), buddy);
 		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time((time_t)NULL));
 	}
@@ -893,7 +888,7 @@ void show_new_buddy_chat(struct conversation *b)
 
 	int dispstyle = set_dispstyle(1);
 
-	if (display_options & OPT_DISP_ONE_CHAT_WINDOW) {
+	if (chat_options & OPT_CHAT_ONE_WINDOW) {
 		if (!all_chats) {
 			win = all_chats = b->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
@@ -906,8 +901,8 @@ void show_new_buddy_chat(struct conversation *b)
 					   GTK_SIGNAL_FUNC(delete_all_chats), NULL);
 
 			chat_notebook = gtk_notebook_new();
-			if (display_options & OPT_DISP_CHAT_SIDE_TAB) {
-				if (display_options & OPT_DISP_CHAT_BR_TAB) {
+			if (chat_options & OPT_CHAT_SIDE_TAB) {
+				if (chat_options & OPT_CHAT_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
 							GTK_POS_RIGHT);
 				} else {
@@ -915,7 +910,7 @@ void show_new_buddy_chat(struct conversation *b)
 							GTK_POS_LEFT);
 				}
 			} else {
-				if (display_options & OPT_DISP_CHAT_BR_TAB) {
+				if (chat_options & OPT_CHAT_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
 							GTK_POS_BOTTOM);
 				} else {
@@ -994,7 +989,7 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_container_add(GTK_CONTAINER(sw), text);
 	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
 	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
-	if (display_options & OPT_DISP_SHOW_TIME)
+	if (convo_options & OPT_CONVO_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
 	gaim_setup_imhtml(text);
 	gtk_widget_show(text);
@@ -1041,7 +1036,7 @@ void show_new_buddy_chat(struct conversation *b)
 
 	chatentry = gtk_text_new(NULL, NULL);
 	b->entry = chatentry;
-	if (!(display_options & OPT_DISP_ONE_CHAT_WINDOW))
+	if (!(chat_options & OPT_CHAT_ONE_WINDOW))
 		gtk_window_set_focus(GTK_WINDOW(b->window), b->entry);
 
 	toolbar = build_conv_toolbar(b);
@@ -1055,7 +1050,7 @@ void show_new_buddy_chat(struct conversation *b)
 			   b);
 	gtk_signal_connect(GTK_OBJECT(chatentry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed),
 			   chatentry);
-	if (general_options & OPT_GEN_CHECK_SPELLING)
+	if (convo_options & OPT_CONVO_CHECK_SPELLING)
 		gtkspell_attach(GTK_TEXT(chatentry));
 	gtk_box_pack_start(GTK_BOX(vbox), chatentry, TRUE, TRUE, 0);
 	gtk_widget_set_usize(chatentry, buddy_chat_size.width, buddy_chat_size.entry_height);
@@ -1220,7 +1215,7 @@ void update_im_button_pix()
 void chat_tabize()
 {
 	/* evil, evil i tell you! evil! */
-	if (display_options & OPT_DISP_ONE_CHAT_WINDOW) {
+	if (chat_options & OPT_CHAT_ONE_WINDOW) {
 		GList *x = chats;
 		while (x) {
 			struct conversation *c = x->data;

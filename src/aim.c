@@ -297,7 +297,7 @@ void show_login()
 #endif
 	signon = gtk_button_new_with_label(_("Signon"));
 
-	if (display_options & OPT_DISP_COOL_LOOK) {
+	if (misc_options & OPT_MISC_COOL_LOOK) {
 		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
 #ifndef NO_MULTI
 		gtk_button_set_relief(GTK_BUTTON(accts), GTK_RELIEF_NONE);
@@ -332,7 +332,7 @@ void show_login()
 #ifdef GAIM_PLUGINS
 	plugs = gtk_button_new_with_label(_("Plugins"));
 #endif
-	if (display_options & OPT_DISP_COOL_LOOK) {
+	if (misc_options & OPT_MISC_COOL_LOOK) {
 		gtk_button_set_relief(GTK_BUTTON(help), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(options), GTK_RELIEF_NONE);
 #ifdef GAIM_PLUGINS
@@ -372,8 +372,6 @@ void show_login()
 
 	gtk_widget_show(mainwindow);
 }
-
-extern void show_debug(GtkObject *);
 
 #if HAVE_SIGNAL_H
 void sighandler(int sig)
@@ -596,7 +594,6 @@ int main(int argc, char *argv[])
 	/* show version window */
 	if (opt_version) {
 		gtk_init(&argc, &argv);
-		set_defaults(FALSE);	/* needed for open_url_nw */
 		load_prefs();
 		show_about(0, (void *)2);
 		gtk_main();
@@ -604,7 +601,6 @@ int main(int argc, char *argv[])
 	}
 
 
-	set_defaults(FALSE);
 	load_prefs();
 
 	/* set the default username */
@@ -616,8 +612,8 @@ int main(int argc, char *argv[])
 #endif /* USE_GNOME */
 	}
 
-	if (general_options & OPT_GEN_DEBUG)
-		show_debug(NULL);
+	if (misc_options & OPT_MISC_DEBUG)
+		show_debug();
 
 	gtkspell_start(NULL, ispell_cmd);
 #ifdef USE_PERL

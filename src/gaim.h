@@ -38,20 +38,19 @@
 #include "multi.h"
 
 
-/*
-	1.  gethostbyname();
-	2.  connect();
-	3.  toc_signon();
-	4.  toc_wait_signon();
-	5.  toc_wait_config();
-	6.  actually done..
-*/
-
 #define BROWSER_NETSCAPE              0
 #define BROWSER_KFM                   1
 #define BROWSER_MANUAL                2
 /*#define BROWSER_INTERNAL              3*/
 #define BROWSER_GNOME                 4
+
+#define IM_FLAG_AWAY     0x01
+#define IM_FLAG_CHECKBOX 0x02
+#define IM_FLAG_GAIMUSER 0x04
+
+#define IDLE_NONE        0
+#define IDLE_GAIM        1
+#define IDLE_SCREENSAVER 2
 
 #define PERMIT_ALL	1
 #define PERMIT_NONE	2
@@ -63,10 +62,6 @@
 #define UC_UNCONFIRMED	4
 #define UC_NORMAL	8
 #define UC_UNAVAILABLE  16
-
-#define IDLE_NONE        0
-#define IDLE_GAIM        1
-#define IDLE_SCREENSAVER 2
 
 #define WFLAG_SEND 1
 #define WFLAG_RECV 2
@@ -152,6 +147,13 @@ struct aim_user {
 	/* when you get kicked offline, only show one dialog */
 	GtkWidget *kick_dlg;
 };
+
+#define OPT_USR_AUTO		0x00000001
+/*#define OPT_USR_KEEPALV	0x00000002 this shouldn't be optional */
+#define OPT_USR_REM_PASS	0x00000004
+#define OPT_USR_MAIL_CHECK      0x00000008
+
+#define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
 
 struct save_pos {
         int x;
@@ -417,19 +419,6 @@ struct conversation {
 #define BUF_LONG BUF_LEN * 2
 
 
-#define BUDDY_ARRIVE 0
-#define BUDDY_LEAVE 1
-#define RECEIVE 2
-#define FIRST_RECEIVE 3
-#define SEND 4
-#define CHAT_JOIN 5
-#define CHAT_LEAVE 6
-#define CHAT_YOU_SAY 7
-#define CHAT_SAY 8
-#define POUNCE_DEFAULT 9
-#define NUM_SOUNDS 10
-
-
 #ifdef USE_APPLET
 extern GtkWidget *applet;
 #endif /* USE_APPLET */
@@ -476,113 +465,111 @@ extern GtkWidget *buddies;
 extern GtkWidget *bpmenu;
 extern GtkWidget *blist;
 
-extern int general_options;
-#define OPT_GEN_ENTER_SENDS       0x00000001
-/* #define OPT_GEN_AUTO_LOGIN        0x00000002 now OPT_USR_AUTO */
-#define OPT_GEN_LOG_ALL           0x00000004 /* now OPT_LOG_ALL */
-#define OPT_GEN_STRIP_HTML        0x00000008 /* now OPT_LOG_STRIP_HTML */
-#define OPT_GEN_APP_BUDDY_SHOW    0x00000010
-#define OPT_GEN_POPUP_WINDOWS     0x00000020
-#define OPT_GEN_SEND_LINKS        0x00000040
-#define OPT_GEN_DEBUG             0x00000100
-/* #define OPT_GEN_REMEMBER_PASS     0x00000200 now OPT_USR_REM_PASS */
-#define OPT_GEN_REGISTERED        0x00000400
-#define OPT_GEN_BROWSER_POPUP     0x00000800
-#define OPT_GEN_SAVED_WINDOWS     0x00001000
-#define OPT_GEN_DISCARD_WHEN_AWAY 0x00002000
-#define OPT_GEN_NEAR_APPLET       0x00004000
-#define OPT_GEN_CHECK_SPELLING    0x00008000
-#define OPT_GEN_POPUP_CHAT        0x00010000
-#define OPT_GEN_BACK_ON_IM        0x00020000
-/* #define OPT_GEN_USE_OSCAR         0x00040000 now PROTO_OSCAR */
-#define OPT_GEN_CTL_CHARS         0x00080000
-#define OPT_GEN_TIK_HACK          0x00100000
-#define OPT_GEN_CTL_SMILEYS       0x00200000
-/* #define OPT_GEN_KEEPALIVE         0x00400000 now OPT_USR_KEEPALV */
-#define OPT_GEN_AUTO_AWAY         0x00800000
-#define OPT_GEN_ESC_CAN_CLOSE     0x01000000
-#define OPT_GEN_CTL_ENTER         0x02000000
-#define OPT_GEN_F2_TOGGLES        0x04000000
-#define OPT_GEN_NO_AUTO_RESP      0x08000000
-#define OPT_GEN_QUEUE_WHEN_AWAY   0x10000000
+extern guint misc_options;
+#define OPT_MISC_DEBUG			0x00000001
+#define OPT_MISC_BROWSER_POPUP		0x00000002
+#define OPT_MISC_BUDDY_TICKER		0x00000004
+#define OPT_MISC_COOL_LOOK		0x00000008
 
-extern int display_options;
-#define OPT_DISP_SHOW_TIME        0x00000001
-#define OPT_DISP_SHOW_GRPNUM      0x00000002
-#define OPT_DISP_SHOW_PIXMAPS     0x00000004
-#define OPT_DISP_SHOW_IDLETIME    0x00000008
-#define OPT_DISP_SHOW_BUTTON_XPM  0x00000010
-#define OPT_DISP_IGNORE_COLOUR    0x00000020
-#define OPT_DISP_SHOW_LOGON       0x00000040
-#define OPT_DISP_DEVIL_PIXMAPS    0x00000080
-#define OPT_DISP_SHOW_SMILEY	  0x00000100
-#define OPT_DISP_SHOW_BUDDYTICKER 0x00000200
-#define OPT_DISP_COOL_LOOK        0x00000400
-#define OPT_DISP_CHAT_LOGON       0x00000800
-#define OPT_DISP_IGN_WHITE        0x00001000
-#define OPT_DISP_NO_BUTTONS       0x00002000
-#define OPT_DISP_CONV_BUTTON_TEXT 0x00004000 
-#define OPT_DISP_CHAT_BUTTON_TEXT 0x00008000 
-/* #define OPT_DISP_CONV_BIG_ENTRY   0x00010000 -- no longer used */
-/* #define OPT_DISP_CHAT_BIG_ENTRY   0x00020000 -- no longer used */
-#define OPT_DISP_NO_MT_GRP        0x00040000
-#define OPT_DISP_CONV_BUTTON_XPM  0x00080000
-#define OPT_DISP_CHAT_BUTTON_XPM  0x00100000
-#define OPT_DISP_SHOW_WARN        0x00200000
-#define OPT_DISP_IGNORE_FONTS     0x00400000
-#define OPT_DISP_IGNORE_SIZES     0x00800000
-#define OPT_DISP_ONE_WINDOW       0x01000000
-#define OPT_DISP_ONE_CHAT_WINDOW  0x02000000
-#define OPT_DISP_CONV_SIDE_TAB    0x04000000
-#define OPT_DISP_CONV_BR_TAB      0x08000000
-#define OPT_DISP_CHAT_SIDE_TAB    0x10000000
-#define OPT_DISP_CHAT_BR_TAB      0x20000000
+extern guint logging_options;
+#define OPT_LOG_ALL			0x00000001
+#define OPT_LOG_STRIP_HTML		0x00000002
+#define OPT_LOG_BUDDY_SIGNON		0x00000004
+#define OPT_LOG_BUDDY_IDLE		0x00000008
+#define OPT_LOG_BUDDY_AWAY		0x00000010
+#define OPT_LOG_MY_SIGNON		0x00000020
+#define OPT_LOG_INDIVIDUAL		0x00000040
 
-extern int sound_options;
-#define OPT_SOUND_LOGIN          0x00000001
-#define OPT_SOUND_LOGOUT         0x00000002
-#define OPT_SOUND_RECV           0x00000004
-#define OPT_SOUND_SEND           0x00000008
-#define OPT_SOUND_FIRST_RCV      0x00000010
-#define OPT_SOUND_WHEN_AWAY      0x00000020
-#define OPT_SOUND_SILENT_SIGNON  0x00000040
-#define OPT_SOUND_THROUGH_GNOME  0x00000080
-#define OPT_SOUND_CHAT_JOIN	 0x00000100
-#define OPT_SOUND_CHAT_SAY	 0x00000200
-#define OPT_SOUND_BEEP		 0x00000400
-#define OPT_SOUND_CHAT_PART      0x00000800
-#define OPT_SOUND_CHAT_YOU_SAY   0x00001000
+extern guint blist_options;
+#define OPT_BLIST_APP_BUDDY_SHOW	0x00000001
+#define OPT_BLIST_SAVED_WINDOWS		0x00000002
+#define OPT_BLIST_NEAR_APPLET		0x00000004
+#define OPT_BLIST_SHOW_GRPNUM		0x00000008
+#define OPT_BLIST_SHOW_PIXMAPS		0x00000010
+#define OPT_BLIST_SHOW_IDLETIME		0x00000020
+#define OPT_BLIST_SHOW_BUTTON_XPM	0x00000040
+#define OPT_BLIST_NO_BUTTONS		0x00000080
+#define OPT_BLIST_NO_MT_GRP		0x00000100
+#define OPT_BLIST_SHOW_WARN		0x00000200
+
+extern guint convo_options;
+#define OPT_CONVO_ENTER_SENDS		0x00000001
+#define OPT_CONVO_SEND_LINKS		0x00000002
+#define OPT_CONVO_CHECK_SPELLING	0x00000004
+#define OPT_CONVO_CTL_CHARS		0x00000008
+#define OPT_CONVO_CTL_SMILEYS		0x00000010
+#define OPT_CONVO_ESC_CAN_CLOSE		0x00000020
+#define OPT_CONVO_CTL_ENTER		0x00000040
+#define OPT_CONVO_F2_TOGGLES		0x00000080
+#define OPT_CONVO_SHOW_TIME		0x00000100
+#define OPT_CONVO_IGNORE_COLOUR		0x00000200
+#define OPT_CONVO_SHOW_SMILEY		0x00000400
+#define OPT_CONVO_IGNORE_FONTS		0x00000800
+#define OPT_CONVO_IGNORE_SIZES		0x00001000
+
+extern guint im_options;
+#define OPT_IM_POPUP			0x00000001
+#define OPT_IM_LOGON			0x00000002
+#define OPT_IM_BUTTON_TEXT		0x00000004
+#define OPT_IM_BUTTON_XPM		0x00000008
+#define OPT_IM_ONE_WINDOW		0x00000010
+#define OPT_IM_SIDE_TAB			0x00000020
+#define OPT_IM_BR_TAB			0x00000040
+
+extern guint chat_options;
+#define OPT_CHAT_ONE_WINDOW		0x00000001
+#define OPT_CHAT_BUTTON_TEXT		0x00000002
+#define OPT_CHAT_BUTTON_XPM		0x00000004
+#define OPT_CHAT_LOGON			0x00000008
+#define OPT_CHAT_POPUP			0x00000010
+#define OPT_CHAT_SIDE_TAB		0x00000020
+#define OPT_CHAT_BR_TAB			0x00000040
+
+extern guint font_options;
+#define OPT_FONT_BOLD			0x00000001
+#define OPT_FONT_ITALIC			0x00000002
+#define OPT_FONT_UNDERLINE		0x00000008
+#define OPT_FONT_STRIKE			0x00000010
+#define OPT_FONT_FACE			0x00000020
+#define OPT_FONT_FGCOL			0x00000040
+#define OPT_FONT_BGCOL			0x00000080
+#define OPT_FONT_SIZE			0x00000100
+
+extern guint sound_options;
+#define OPT_SOUND_LOGIN			0x00000001
+#define OPT_SOUND_LOGOUT		0x00000002
+#define OPT_SOUND_RECV			0x00000004
+#define OPT_SOUND_SEND			0x00000008
+#define OPT_SOUND_FIRST_RCV		0x00000010
+#define OPT_SOUND_WHEN_AWAY		0x00000020
+#define OPT_SOUND_SILENT_SIGNON		0x00000040
+#define OPT_SOUND_THROUGH_GNOME		0x00000080
+#define OPT_SOUND_CHAT_JOIN		0x00000100
+#define OPT_SOUND_CHAT_SAY		0x00000200
+#define OPT_SOUND_BEEP			0x00000400
+#define OPT_SOUND_CHAT_PART		0x00000800
+#define OPT_SOUND_CHAT_YOU_SAY		0x00001000
+
+#define BUDDY_ARRIVE 0
+#define BUDDY_LEAVE 1
+#define RECEIVE 2
+#define FIRST_RECEIVE 3
+#define SEND 4
+#define CHAT_JOIN 5
+#define CHAT_LEAVE 6
+#define CHAT_YOU_SAY 7
+#define CHAT_SAY 8
+#define POUNCE_DEFAULT 9
+#define NUM_SOUNDS 10
 extern char *sound_file[NUM_SOUNDS];
 
-extern int font_options;
-#define OPT_FONT_BOLD		 0x00000001
-#define OPT_FONT_ITALIC          0x00000002
-#define OPT_FONT_UNDERLINE       0x00000008
-#define OPT_FONT_STRIKE          0x00000010
-#define OPT_FONT_FACE            0x00000020
-#define OPT_FONT_FGCOL           0x00000040
-#define OPT_FONT_BGCOL           0x00000080
-#define OPT_FONT_SIZE            0x00000100
-
-extern int logging_options;
-#define OPT_LOG_ALL              0x00000001
-#define OPT_LOG_STRIP_HTML       0x00000002
-#define OPT_LOG_BUDDY_SIGNON     0x00000004
-#define OPT_LOG_BUDDY_IDLE       0x00000008
-#define OPT_LOG_BUDDY_AWAY       0x00000010
-#define OPT_LOG_MY_SIGNON        0x00000020
-#define OPT_LOG_INDIVIDUAL       0x00000040
-
-#define OPT_USR_AUTO		0x00000001
-/*#define OPT_USR_KEEPALV	0x00000002 this shouldn't be optional */
-#define OPT_USR_REM_PASS	0x00000004
-#define OPT_USR_MAIL_CHECK      0x00000008
-
-#define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
-
-#define IM_FLAG_AWAY     0x01
-#define IM_FLAG_CHECKBOX 0x02
-#define IM_FLAG_GAIMUSER 0x04
+extern guint away_options;
+#define OPT_AWAY_DISCARD		0x00000001
+#define OPT_AWAY_BACK_ON_IM		0x00000002
+#define OPT_AWAY_TIK_HACK		0x00000004
+#define OPT_AWAY_AUTO			0x00000008
+#define OPT_AWAY_NO_AUTO_RESP		0x00000010
+#define OPT_AWAY_QUEUE			0x00000020
 
 extern int report_idle;
 extern int web_browser;
@@ -593,12 +580,10 @@ extern char sound_cmd[2048];
 extern char web_command[2048];
 extern struct save_pos blist_pos;
 extern struct window_size conv_size, buddy_chat_size;
-extern char latest_ver[25];
 
 /* Functions in about.c */
 extern void show_about(GtkWidget *, void *);
 extern void gaim_help(GtkWidget *, void *);
-
 
 /* Functions in buddy_chat.c */
 extern void join_chat();
@@ -830,10 +815,9 @@ extern void remove_all_plugins();
 /* Functions in prefs.c */
 extern void debug_printf( char * fmt, ... );
 #define debug_print(x) debug_printf(x);
-extern void set_general_option(GtkWidget *, int *);
 extern void set_option(GtkWidget *, int *);
 extern void show_prefs();
-extern void show_debug(GtkObject *);
+extern void show_debug();
 extern void update_color(GtkWidget *, GtkWidget *);
 extern void set_default_away(GtkWidget *, gpointer);
 extern void default_away_menu_init(GtkWidget *);
@@ -847,7 +831,6 @@ extern GtkWidget *pref_bg_picture;
 
 
 /* Functions in gaimrc.c */
-extern void set_defaults(int);
 extern void load_prefs();
 extern void save_prefs();
 extern gint sort_awaymsg_list(gconstpointer, gconstpointer);

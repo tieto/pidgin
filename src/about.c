@@ -168,7 +168,7 @@ void show_about(GtkWidget *w, void *null)
 		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(about_click), NULL);
 
-		if (display_options & OPT_DISP_COOL_LOOK)
+		if (misc_options & OPT_MISC_COOL_LOOK)
 			gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	}
 

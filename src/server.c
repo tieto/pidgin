@@ -424,7 +424,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 	/* TiK, using TOC, sends an automated message in order to get your away message. Now,
 	 * this is one of the biggest hacks I think I've seen. But, in order to be nice to
 	 * TiK, we're going to give users the option to ignore it. */
-	if ((general_options & OPT_GEN_TIK_HACK) && gc->away && strlen(gc->away) &&
+	if ((away_options & OPT_AWAY_TIK_HACK) && gc->away && strlen(gc->away) &&
 	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<")) {
 		char *tmpmsg = stylize(awaymessage->message, MSG_LEN);
 		serv_send_im(gc, name, tmpmsg, IM_FLAG_AWAY);
@@ -436,7 +436,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 
 	/* if you can't figure this out, stop reading right now.
 	 * "we're not worthy! we're not worthy!" */
-	if (general_options & OPT_GEN_SEND_LINKS)
+	if (convo_options & OPT_CONVO_SEND_LINKS)
 		linkify_text(message);
 
 	/* um. when we call write_to_conv with the message we received, it's nice to pass whether
@@ -463,7 +463,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		 * imaway dialog being shown. in fact, it's possible for *all* the accounts to be
 		 * away without the imaway dialog being shown. so in order for this to be queued
 		 * properly, we have to make sure that the imaway dialog actually exists, first. */
-		if (!cnv && clistqueue && (general_options & OPT_GEN_QUEUE_WHEN_AWAY)) {
+		if (!cnv && clistqueue && (away_options & OPT_AWAY_QUEUE)) {
 			/* alright, so we're going to queue it. neat, eh? :) so first we create
 			 * something to store the message, and add it to our queue. Then we update
 			 * the away dialog to indicate that we've queued something. */
@@ -497,7 +497,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			/* ok, so we're not queuing it. well then, we'll try to handle it normally.
 			 * Some people think that ignoring it is a perfectly acceptible way to handle
 			 * it. i think they're on crack, but hey, that's why it's optional. */
-			if (general_options & OPT_GEN_DISCARD_WHEN_AWAY) {
+			if (away_options & OPT_AWAY_DISCARD) {
 				g_free(name);
 				g_free(message);
 				return;
@@ -521,7 +521,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 
 		/* regardless of whether we queue it or not, we should send an auto-response. That is,
 		 * of course, unless the horse.... no wait. */
-		if ((general_options & OPT_GEN_NO_AUTO_RESP) || !strlen(gc->away)) {
+		if ((away_options & OPT_AWAY_NO_AUTO_RESP) || !strlen(gc->away)) {
 			g_free(name);
 			g_free(message);
 			return;
@@ -549,7 +549,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
 		serv_send_im(gc, name, away_subs(tmpmsg, alias), IM_FLAG_AWAY);
-		if (!cnv && clistqueue && (general_options & OPT_GEN_QUEUE_WHEN_AWAY)) {
+		if (!cnv && clistqueue && (away_options & OPT_AWAY_QUEUE)) {
 			struct queued_message *qm;
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
@@ -617,7 +617,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 		while (cnv) {
 			cv = (struct conversation *)cnv->data;
 			if (!g_strcasecmp(who, normalize(cv->name))) {
-				if (display_options & OPT_DISP_ONE_WINDOW) {
+				if (im_options & OPT_IM_ONE_WINDOW) {
 					set_convo_tab_label(cv, b->name);
 				} else {
 					g_snprintf(cv->name, sizeof(cv->name), "%s", name);
@@ -721,9 +721,7 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 
 	label = gtk_label_new(buf2);
 	gtk_widget_show(label);
-	close = gtk_button_new_with_label("Close");
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
+	close = picture_button(d, _("Close"), cancel_xpm);
 	gtk_widget_show(close);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->vbox), label, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), close, FALSE, FALSE, 5);
@@ -915,9 +913,8 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	buf = g_malloc(MAX(strlen(message) * 2, 8192));
 	strcpy(buf, message);
 
-	if (general_options & OPT_GEN_SEND_LINKS) {
+	if (convo_options & OPT_CONVO_SEND_LINKS)
 		linkify_text(buf);
-	}
 
 	if (whisper)
 		w = WFLAG_WHISPER;
