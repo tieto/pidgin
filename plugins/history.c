@@ -30,6 +30,7 @@ static void historize(GaimConversation *c)
 	char *tmp, *tmp2;
 	int size;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
+	GtkTextIter end;
 
 	if (stat(path, &st) || S_ISDIR(st.st_mode) || st.st_size == 0 ||
 	    !(fd = fopen(path, "r"))) {
@@ -61,6 +62,13 @@ static void historize(GaimConversation *c)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), tmp2, strlen(tmp2), options);
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<br>", -1, options);
+	gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->imhtml)->text_buffer, &
+end);
+	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(gtkconv->imhtml), &end, 0, 0,
+ 0, 0);
+	gtk_text_buffer_move_mark_by_name(GTK_IMHTML(gtkconv->imhtml)->text_buffer,
+									  "insert", &end);
 
 	g_free(tmp2);
 	g_free(userdir);
