@@ -383,31 +383,31 @@ static int oscar_sendfile_request(aim_session_t *sess,
 static int oscar_sendfile_timeout(aim_session_t *sess, aim_frame_t *fr, ...);
 
 static char *msgerrreason[] = {
-	"Invalid error",
-	"Invalid SNAC",
-	"Rate to host",
-	"Rate to client",
-	"Not logged in",
-	"Service unavailable",
-	"Service not defined",
-	"Obsolete SNAC",
-	"Not supported by host",
-	"Not supported by client",
-	"Refused by client",
-	"Reply too big",
-	"Responses lost",
-	"Request denied",
-	"Busted SNAC payload",
-	"Insufficient rights",
-	"In local permit/deny",
-	"Too evil (sender)",
-	"Too evil (receiver)",
-	"User temporarily unavailable",
-	"No match",
-	"List overflow",
-	"Request ambiguous",
-	"Queue full",
-	"Not while on AOL"
+	N_("Invalid error"),
+	N_("Invalid SNAC"),
+	N_("Rate to host"),
+	N_("Rate to client"),
+	N_("Not logged in"),
+	N_("Service unavailable"),
+	N_("Service not defined"),
+	N_("Obsolete SNAC"),
+	N_("Not supported by host"),
+	N_("Not supported by client"),
+	N_("Refused by client"),
+	N_("Reply too big"),
+	N_("Responses lost"),
+	N_("Request denied"),
+	N_("Busted SNAC payload"),
+	N_("Insufficient rights"),
+	N_("In local permit/deny"),
+	N_("Too evil (sender)"),
+	N_("Too evil (receiver)"),
+	N_("User temporarily unavailable"),
+	N_("No match"),
+	N_("List overflow"),
+	N_("Request ambiguous"),
+	N_("Queue full"),
+	N_("Not while on AOL")
 };
 static int msgerrreasonlen = 25;
 
@@ -794,6 +794,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("inside auth_resp (Screen name: %s)\n", info->sn);
 
 	if (info->errorcode || !info->bosip || !info->cookie) {
+		char buf[256];
 		switch (info->errorcode) {
 		case 0x05:
 			/* Incorrect nick/password */
@@ -815,7 +816,8 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 			break;
 		case 0x1c:
 			/* client too old */
-			hide_login_progress(gc, _("The client version you are using is too old. Please upgrade at " WEBSITE));
+			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), WEBSITE);
+			hide_login_progress(gc, buf);
 			plugin_event(event_error, (void *)989, 0, 0, 0);
 			break;
 		default:
@@ -932,9 +934,11 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 		in = '\0';
 	}
 	if (in != '\n') {
+		char buf[256];
+		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
+			"this is fixed.  Check %s for updates."), WEBSITE);
 		do_error_dialog(_("Gaim was Unable to get a valid AIM login hash."),
-				_("You may be disconnected shortly.  You may want to use TOC until "
-				  "this is fixed.  Check " WEBSITE " for updates."), GAIM_WARNING);
+				buf, GAIM_WARNING);
 		gaim_input_remove(pos->inpa);
 		close(pos->fd);
 		g_free(pos);
@@ -957,9 +961,11 @@ static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond
 	char buf[BUF_LONG];
 
 	if (source < 0) {
+		char buf[256];
+		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
+			"this is fixed.  Check %s for updates."), WEBSITE);
 		do_error_dialog(_("Gaim was Unable to get a valid AIM login hash."),
-				_("You may be disconnected shortly.  You may want to use TOC until "
-				  "this is fixed.  Check " WEBSITE " for updates."), GAIM_WARNING);
+				buf, GAIM_WARNING);
 		if (pos->modname)
 			g_free(pos->modname);
 		g_free(pos);
@@ -1036,12 +1042,14 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	fd = proxy_connect("gaim.sourceforge.net", 80, straight_to_hell, pos);
 	if (fd < 0) {
+		char buf[256];
 		if (pos->modname)
 			g_free(pos->modname);
 		g_free(pos);
+		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
+			"this is fixed.  Check %s for updates."), WEBSITE);
 		do_error_dialog(_("Gaim was Unable to get valid login hash."),
-				_("You may be disconnected shortly.  You may want to use TOC until "
-				  "this is fixed.  Check " WEBSITE " for updates."), GAIM_WARNING);
+				 buf, GAIM_WARNING);
 	}
 	pos->fd = fd;
 
@@ -2358,7 +2366,7 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 			(reason < msgerrreasonlen) ? msgerrreason[reason] : "unknown");
 
 	m = g_strdup_printf(_("SNAC threw error: %s\n"),
-			reason < msgerrreasonlen ? msgerrreason[reason] : "Unknown error");
+			reason < msgerrreasonlen ? gettext(msgerrreason[reason]) : _("Unknown error"));
 	do_error_dialog(m, NULL, GAIM_ERROR);
 	g_free(m);
 
@@ -2381,7 +2389,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* If this was a file transfer request, data is a cookie. */
 	if ((oft = find_oft_by_cookie(gc, data))) {
 		transfer_abort(oft->xfer,
-				(reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."));
+				(reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason was given."));
 
 		oscar_file_transfer_disconnect(sess, oft->conn);
 		return 1;
@@ -2389,7 +2397,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* Data is assumed to be the destination sn. */
 	snprintf(buf, sizeof(buf), _("Your message to %s did not get sent:"), data);
-	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
+	do_error_dialog(buf, (reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason was given."), GAIM_ERROR);
 
 	return 1;
 }
@@ -2441,7 +2449,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	snprintf(buf, sizeof(buf), _("User information for %s unavailable:"), destn);
-	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
+	do_error_dialog(buf, (reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason was given."), GAIM_ERROR);
 
 	return 1;
 }
@@ -3312,7 +3320,7 @@ static int gaim_account_confirm(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (!status) {
 		g_snprintf(msg, sizeof(msg), "You should receive an email asking to confirm %s.",
 				gc->username);
-		do_error_dialog("Account Confirmation Requested", msg, GAIM_INFO);
+		do_error_dialog(_("Account Confirmation Requested"), msg, GAIM_INFO);
 	}
 
 	return 1;
@@ -3371,13 +3379,13 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (sn) {
 		char *dialog_msg = g_strdup_printf(_("Your screen name is currently formated as follows:\n%s"), sn);
-		do_error_dialog("Account Info", dialog_msg, GAIM_INFO);
+		do_error_dialog(_("Account Info"), dialog_msg, GAIM_INFO);
 		g_free(dialog_msg);
 	}
 
 	if (email) {
 		char *dialog_msg = g_strdup_printf(_("The email address for %s is %s"), gc->username, email);
-		do_error_dialog("Account Info", dialog_msg, GAIM_INFO);
+		do_error_dialog(_("Account Info"), dialog_msg, GAIM_INFO);
 		g_free(dialog_msg);
 	}
 

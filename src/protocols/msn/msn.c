@@ -794,7 +794,7 @@ static void msn_accept_add(struct msn_add_permit *map)
 	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
 	
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(map->gc, "Write error");
+		hide_login_progress(map->gc, _("Write error"));
 		signoff(map->gc);
 		return;
 	}
@@ -813,7 +813,7 @@ static void msn_cancel_add(struct msn_add_permit *map)
 
 	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(map->gc, "Write error");
+		hide_login_progress(map->gc, _("Write error"));
 		signoff(map->gc);
 		return;
 	}
@@ -912,7 +912,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		}
 
 		if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
-			hide_login_progress(gc, "Unable to write to server");
+			hide_login_progress(gc, _("Unable to write to server"));
 			signoff(gc);
 		}
 
@@ -1029,7 +1029,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 
 			g_snprintf(sendbuf, sizeof(sendbuf), "CHG %d NLN\r\n", ++md->trId);
 			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
-				hide_login_progress(gc, "Unable to write");
+				hide_login_progress(gc, _("Unable to write"));
 				signoff(gc);
 				return 0;
 			}
@@ -1045,7 +1045,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			else {
 				g_snprintf(sendbuf, sizeof(sendbuf), "BLP %d AL\r\n", ++md->trId);
 				if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
-					hide_login_progress(gc, "Unable to write");
+					hide_login_progress(gc, _("Unable to write"));
 					signoff(gc);
 					return 0;
 				}
@@ -1255,7 +1255,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		if (!host) {
 			host = strstr(buf, "NS");
 			if (!host) {
-				hide_login_progress(gc, "Got invalid XFR\n");
+				hide_login_progress(gc, _("Got invalid XFR\n"));
 				signoff(gc);
 				return 0;
 			}
@@ -1295,7 +1295,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			md->inpa = 0;
 			md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
 			if (md->fd < 0) {
-				hide_login_progress(gc, "Error transfering");
+				hide_login_progress(gc, _("Error transfering"));
 				signoff(gc);
 				return 0;
 			}
@@ -1463,14 +1463,14 @@ static void msn_login_xfr_connect(gpointer data, gint source, GaimInputCondition
 		md->fd = source;
 
 	if (md->fd == -1) {
-		hide_login_progress(gc, "Unable to connect to Notification Server");
+		hide_login_progress(gc, _("Unable to connect to Notification Server"));
 		signoff(gc);
 		return;
 	}
 
 	g_snprintf(buf, sizeof(buf), "VER %d MSNP5\r\n", ++md->trId);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Unable to talk to Notification Server");
+		hide_login_progress(gc, _("Unable to talk to Notification Server"));
 		signoff(gc);
 		return;
 	}
@@ -1486,28 +1486,28 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 	if (!g_strncasecmp(buf, "VER", 3)) {
 		/* we got VER, check to see that MSNP5 is in the list, then send INF */
 		if (!strstr(buf, "MSNP5")) {
-			hide_login_progress(gc, "Protocol not supported");
+			hide_login_progress(gc, _("Protocol not supported"));
 			signoff(gc);
 			return 0;
 		}
 
 		g_snprintf(sendbuf, sizeof(sendbuf), "INF %d\r\n", ++md->trId);
 		if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
-			hide_login_progress(gc, "Unable to request INF\n");
+			hide_login_progress(gc, _("Unable to request INF\n"));
 			signoff(gc);
 			return 0;
 		}
 	} else if (!g_strncasecmp(buf, "INF", 3)) {
 		/* check to make sure we can use md5 */
 		if (!strstr(buf, "MD5")) {
-			hide_login_progress(gc, "Unable to login using MD5");
+			hide_login_progress(gc, _("Unable to login using MD5"));
 			signoff(gc);
 			return 0;
 		}
 
 		g_snprintf(sendbuf, sizeof(sendbuf), "USR %d MD5 I %s\r\n", ++md->trId, gc->username);
 		if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
-			hide_login_progress(gc, "Unable to send USR\n");
+			hide_login_progress(gc, _("Unable to send USR\n"));
 			signoff(gc);
 			return 0;
 		}
@@ -1530,7 +1530,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 
 			g_snprintf(sendbuf, sizeof(sendbuf), "SYN %d 0\r\n", ++md->trId);
 			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
-				hide_login_progress(gc, "Unable to write");
+				hide_login_progress(gc, _("Unable to write"));
 				signoff(gc);
 				return 0;
 			}
@@ -1571,7 +1571,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		int i = 0;
 
 		if (!host) {
-			hide_login_progress(gc, "Got invalid XFR\n");
+			hide_login_progress(gc, _("Got invalid XFR\n"));
 			signoff(gc);
 			return 0;
 		}
@@ -1592,7 +1592,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
 		md->sl = time(NULL);
 		if (md->fd < 0) {
-			hide_login_progress(gc, "Unable to transfer");
+			hide_login_progress(gc, _("Unable to transfer"));
 			signoff(gc);
 		}
 		return 0;
@@ -1600,7 +1600,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		if (isdigit(*buf))
 			hide_login_progress(gc, handle_errcode(buf, FALSE));
 		else
-			hide_login_progress(gc, "Unable to parse message");
+			hide_login_progress(gc, _("Unable to parse message"));
 		signoff(gc);
 		return 0;
 	}
@@ -1784,7 +1784,7 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 	} else if (strcmp(who, gc->username)) {
 		g_snprintf(buf, MSN_BUF_LEN, "XFR %d SB\r\n", ++md->trId);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-			hide_login_progress(gc, "Write error");
+			hide_login_progress(gc, _("Write error"));
 			signoff(gc);
 			return 1;
 		}
@@ -1902,7 +1902,7 @@ static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 
 	g_snprintf(buf, sizeof(buf), "CHG %d %s\r\n", ++md->trId, away);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -1920,7 +1920,7 @@ static void msn_set_idle(struct gaim_connection *gc, int idle)
 	else
 		g_snprintf(buf, sizeof(buf), "CHG %d NLN\r\n", ++md->trId);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -1943,19 +1943,19 @@ static char *msn_get_away_text(int s)
 {
 	switch (s) {
 		case MSN_BUSY :
-			return "Busy";
+			return _("Busy");
 		case MSN_BRB :
-			return "Be right back";
+			return _("Be right back");
 		case MSN_AWAY :
-			return "Away from the computer";
+			return _("Away from the computer");
 		case MSN_PHONE :
-			return "On the phone";
+			return _("On the phone");
 		case MSN_LUNCH :
-			return "Out to lunch";
+			return _("Out to lunch");
 		case MSN_IDLE :
-			return "Idle";
+			return _("Idle");
 		default:
-			return "Available";
+			return _("Available");
 	}
 }
 
@@ -2020,7 +2020,7 @@ static void msn_add_buddy(struct gaim_connection *gc, const char *name)
 
 	g_snprintf(buf, sizeof(buf), "ADD %d FL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2033,7 +2033,7 @@ static void msn_rem_buddy(struct gaim_connection *gc, char *who, char *group)
 
 	g_snprintf(buf, sizeof(buf), "REM %d FL %s\r\n", ++md->trId, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2059,7 +2059,7 @@ static void msn_act_id(gpointer data, char *entry)
 	g_snprintf(buf, sizeof(buf), "REA %d %s %s\r\n", ++md->trId, gc->username, url_encode(alias));
 	g_free(alias);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2089,7 +2089,7 @@ static GList *msn_actions()
 	GList *m = NULL;
 
 	m = g_list_append(m, _("Set Friendly Name"));
-	m = g_list_append(m, "Reset All Friendly Names");
+	m = g_list_append(m, _("Reset All Friendly Names"));
 
 	return m;
 }
@@ -2109,7 +2109,7 @@ static void msn_keepalive(struct gaim_connection *gc)
 
 	g_snprintf(buf, sizeof(buf), "PNG\r\n");
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2127,7 +2127,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 		g_snprintf(buf, sizeof(buf), "BLP %d BL\r\n", ++md->trId);
 
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2162,7 +2162,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 			}
 			g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
 			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-				hide_login_progress(gc, "Write error");
+				hide_login_progress(gc, _("Write error"));
 				signoff(gc);
 				return;
 			}
@@ -2196,7 +2196,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 			}
 			g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
 			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-				hide_login_progress(gc, "Write error");
+				hide_login_progress(gc, _("Write error"));
 				signoff(gc);
 				return;
 			}
@@ -2237,14 +2237,14 @@ static void msn_add_permit(struct gaim_connection *gc, char *who)
 		gc->deny = g_slist_remove(gc->deny, dupl);
 		g_snprintf(buf, sizeof(buf), "REM %d BL %s\r\n", ++md->trId, who);
 			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-				hide_login_progress(gc, "Write error");
+				hide_login_progress(gc, _("Write error"));
 				signoff(gc);
 				return;
 			}
 	}
 	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2257,7 +2257,7 @@ static void msn_rem_permit(struct gaim_connection *gc, char *who)
 
 	g_snprintf(buf, sizeof(buf), "REM %d AL %s\r\n", ++md->trId, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2265,7 +2265,7 @@ static void msn_rem_permit(struct gaim_connection *gc, char *who)
 	g_slist_append(gc->deny, who);
 	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2294,7 +2294,7 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 		gc->permit = g_slist_remove(gc->permit, dupl);
 		g_snprintf(buf, sizeof(buf), "REM %d AL %s\r\n", ++md->trId, who);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-			hide_login_progress(gc, "Write error");
+			hide_login_progress(gc, _("Write error"));
 			signoff(gc);
 			return;
 		}
@@ -2303,7 +2303,7 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 
 	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2316,7 +2316,7 @@ static void msn_rem_deny(struct gaim_connection *gc, char *who)
 
 	g_snprintf(buf, sizeof(buf), "REM %d BL %s\r\n", ++md->trId, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
@@ -2324,7 +2324,7 @@ static void msn_rem_deny(struct gaim_connection *gc, char *who)
 	g_slist_append(gc->permit, who);
 	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
+		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
 		return;
 	}
