@@ -357,6 +357,13 @@ jabber_login(GaimAccount *account)
 			g_free, NULL);
 	js->user = jabber_id_new(gaim_account_get_username(account));
 
+	if(!js->user->node) {
+		js->user->node = js->user->domain;
+		js->user->domain = g_strdup("jabber.org");
+	}
+	if(!js->user->resource)
+		js->user->resource = g_strdup("Gaim");
+
 	server = connect_server[0] ? connect_server : js->user->domain;
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);

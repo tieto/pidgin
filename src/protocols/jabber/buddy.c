@@ -557,28 +557,33 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet)
 	if(resource_name) {
 		jbr = jabber_buddy_find_resource(jb, resource_name);
 		if(jbr) {
-			char *purdy = gaim_strdup_withhtml(jbr->status);
+			char *purdy = NULL;
+			if(jbr->status)
+				purdy = gaim_strdup_withhtml(jbr->status);
 			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/>\n",
 					_("Status"), jabber_get_state_string(jbr->state),
 					purdy ? ": " : "",
 					purdy ? purdy : "");
-			g_free(purdy);
+			if(purdy)
+				g_free(purdy);
 		} else {
 			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
 					_("Status"), _("Unknown"));
 		}
 	} else {
 		for(resources = jb->resources; resources; resources = resources->next) {
-			char *purdy;
+			char *purdy = NULL;
 			jbr = resources->data;
-			purdy = gaim_strdup_withhtml(jbr->status);
+			if(jbr->status)
+				purdy = gaim_strdup_withhtml(jbr->status);
 			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
 					_("Resource"), jbr->name);
 			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/><br/>\n",
 					_("Status"), jabber_get_state_string(jbr->state),
 					purdy ? ": " : "",
 					purdy ? purdy : "");
-			g_free(purdy);
+			if(purdy)
+				g_free(purdy);
 		}
 	}
 

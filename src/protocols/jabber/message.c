@@ -46,11 +46,13 @@ void jabber_message_free(JabberMessage *jm)
 		g_free(jm->xhtml);
 	if(jm->password)
 		g_free(jm->password);
+	if(jm->etc)
+		g_list_free(jm->etc);
 
 	g_free(jm);
 }
 
-void handle_chat(JabberMessage *jm)
+static void handle_chat(JabberMessage *jm)
 {
 	JabberID *jid = jabber_id_new(jm->from);
 	char *from;
@@ -84,7 +86,56 @@ void handle_chat(JabberMessage *jm)
 	jabber_id_free(jid);
 }
 
-void handle_groupchat(JabberMessage *jm)
+static void handle_headline(JabberMessage *jm)
+{
+	char *title;
+	GString *body = g_string_new("");
+	GList *etc;
+
+	title = g_strdup_printf(_("Message from %s"), jm->from);
+
+	if(jm->xhtml)
+		g_string_append(body, jm->xhtml);
+	else if(jm->body)
+		g_string_append(body, jm->body);
+
+	for(etc = jm->etc; etc; etc = etc->next) {
+		xmlnode *x = etc->data;
+		const char *xmlns = xmlnode_get_attrib(x, "xmlns");
+		if(xmlns && !strcmp(xmlns, "jabber:x:oob")) {
+			xmlnode *url, *desc;
+			char *urltxt, *desctxt;
+
+			url = xmlnode_get_child(x, "url");
+			desc = xmlnode_get_child(x, "desc");
+
+			if(!url || !desc)
+				continue;
+
+			urltxt = xmlnode_get_data(url);
+			desctxt = xmlnode_get_data(desc);
+
+			/* I'm all about ugly hacks */
+			if(body->len && !strcmp(body->str, jm->body))
+				g_string_printf(body, "<a href='%s'>%s</a>",
+						urltxt, desctxt);
+			else
+				g_string_append_printf(body, "<br/><a href='%s'>%s</a>",
+						urltxt, desctxt);
+
+			g_free(urltxt);
+			g_free(desctxt);
+		}
+	}
+
+	gaim_notify_formatted(jm->js->gc, title, jm->subject ? jm->subject : title,
+			NULL, body->str, NULL, NULL);
+
+	g_free(title);
+	g_string_free(body, TRUE);
+}
+
+static void handle_groupchat(JabberMessage *jm)
 {
 	JabberID *jid = jabber_id_new(jm->from);
 	JabberChat *chat = jabber_chat_find(jm->js, jid->node, jid->domain);
@@ -100,7 +151,7 @@ void handle_groupchat(JabberMessage *jm)
 	jabber_id_free(jid);
 }
 
-void handle_groupchat_invite(JabberMessage *jm)
+static void handle_groupchat_invite(JabberMessage *jm)
 {
 	GHashTable *components = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
@@ -115,7 +166,7 @@ void handle_groupchat_invite(JabberMessage *jm)
 	serv_got_chat_invite(jm->js->gc, jm->to, jm->from, jm->body, components);
 }
 
-void handle_error(JabberMessage *jm)
+static void handle_error(JabberMessage *jm)
 {
 	char *buf;
 
@@ -231,6 +282,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 					jm->type = JABBER_MESSAGE_GROUPCHAT_INVITE;
 				}
+			} else {
+				jm->etc = g_list_append(jm->etc, child);
 			}
 		}
 	}
@@ -238,8 +291,10 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	switch(jm->type) {
 		case JABBER_MESSAGE_NORMAL:
 		case JABBER_MESSAGE_CHAT:
-		case JABBER_MESSAGE_HEADLINE:
 			handle_chat(jm);
+			break;
+		case JABBER_MESSAGE_HEADLINE:
+			handle_headline(jm);
 			break;
 		case JABBER_MESSAGE_GROUPCHAT:
 			handle_groupchat(jm);

@@ -47,6 +47,7 @@ typedef struct _JabberMessage {
 	enum {
 		JABBER_MESSAGE_EVENT_COMPOSING = 1 << 1
 	} events;
+	GList *etc;
 } JabberMessage;
 
 

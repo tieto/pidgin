@@ -179,6 +179,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				_("Authorize"), G_CALLBACK(authorize_add_cb),
 				_("Deny"), G_CALLBACK(deny_add_cb));
 		g_free(msg);
+		return;
 	} else if(type && (!strcmp(type, "subscribed") ||
 				!strcmp(type, "unsubscribed"))) {
 		/* we've been allowed to see their presence, but we don't care */
