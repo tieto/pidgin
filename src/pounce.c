@@ -604,6 +604,9 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		g_free(data->pouncee);
 		data->pouncee = NULL;
 	}
+	else if (!strcmp(element_name, "save")) {
+		gaim_pounce_set_save(data->pounce, TRUE);
+	}
 	else if (!strcmp(element_name, "pounce")) {
 		data->pounce = NULL;
 		data->events = 0;
@@ -792,6 +795,10 @@ gaim_pounces_write(FILE *fp, GaimPounce *pounce)
 	g_hash_table_foreach(pounce->actions, write_action_parameter_list, fp);
 
 	fprintf(fp, "  </actions>\n");
+
+	if (gaim_pounce_get_save(pounce))
+		fprintf(fp, "  <save/>\n");
+
 	fprintf(fp, " </pounce>\n");
 
 	g_free(pouncer_name);
