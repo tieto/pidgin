@@ -612,7 +612,6 @@ static void irc_change_name(struct gaim_connection *gc, char *old, char *new)
 {
 	GSList *bcs = gc->buddy_chats;
 	char buf[IRC_BUF_LEN];
-	int n = 0;
 
 	while (bcs) {
 		struct conversation *b = bcs->data;
@@ -620,6 +619,7 @@ static void irc_change_name(struct gaim_connection *gc, char *old, char *new)
 		GList *r = b->in_room;
 		while (r) {
 			char *who = r->data;
+			int n = 0;
 			if (*who == '@')
 				buf[n++] = *who++;
 			if (*who == '+')
