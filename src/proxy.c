@@ -547,7 +547,7 @@ static void s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	if ((buf[0] != 0x01) || (buf[1] == 0x00)) {
+	if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
 		close(source);
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
