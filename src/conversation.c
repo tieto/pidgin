@@ -2581,9 +2581,10 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 		c = g_list_nth_data(conversations, page_num);
 	else
 		c = g_list_nth_data(chats, page_num);
+
 	if (c && c->window && c->entry)
-		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
-	
+		gtk_widget_grab_focus(c->entry);
+
 	label = c->tab_label;
 
 	if (!label)
@@ -2888,8 +2889,6 @@ void show_conv(struct conversation *c)
 	g_object_set_data(G_OBJECT(c->entry_buffer), "user_data", c);
 	entry = gtk_text_view_new_with_buffer(c->entry_buffer);
 	c->entry = entry;
-	if (!(im_options & OPT_IM_ONE_WINDOW))
-		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
 
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(c->entry), GTK_WRAP_WORD);
 
@@ -2995,13 +2994,15 @@ void show_conv(struct conversation *c)
 	gtk_box_reorder_child(GTK_BOX(bbox), c->block, 2);
 	gtk_box_reorder_child(GTK_BOX(bbox), c->add, 3);
 	gtk_box_reorder_child(GTK_BOX(bbox), c->info, 4);
-	
+
 
 	update_buttons_by_protocol(c);
 
-	if (!(im_options & OPT_IM_ONE_WINDOW))
-		gtk_widget_grab_focus(c->entry);
 	gtk_widget_show(win);
+
+	if (!(im_options & OPT_IM_ONE_WINDOW)
+			|| gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook)) == 0)
+		gtk_widget_grab_focus(c->entry);
 }
 
 
@@ -3166,7 +3167,7 @@ void im_tabize()
 					m = m->next;
 				}
 				c = chats->data;
-				gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
+				gtk_widget_grab_focus(c->entry);
 			} else {
 				if (all_convos)
 					gtk_widget_destroy(all_convos);
