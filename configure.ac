@@ -128,6 +128,9 @@ fi
 if test "x$STATIC_PRPLS" = "xall" ; then
 	STATIC_PRPLS="gg irc jabber msn napster novell oscar silc yahoo zephyr"
 fi
+if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | sed 's/silc//'`
+fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
 extern_init=
@@ -174,6 +177,9 @@ AC_ARG_WITH(dynamic_prpls,   [  --with-dynamic-prpls    specify which protocols 
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
 	DYNAMIC_PRPLS="gg irc jabber msn napster novell oscar silc yahoo zephyr"
 fi
+if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | sed 's/silc//'`
+fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
 	case $i in
@@ -201,7 +207,7 @@ AM_CONDITIONAL(DYNAMIC_NAPSTER, test "x$dynamic_napster" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
 AM_CONDITIONAL(DYNAMIC_RENDEZVOUS, test "x$dynamic_rendezvous" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TREPIA, test "x$dynamic_trepia" = "xyes")
 AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
