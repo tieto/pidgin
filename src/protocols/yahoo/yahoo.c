@@ -1954,6 +1954,28 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 		if (yd->rxlen < YAHOO_PACKET_HDRLEN)
 			return;
 
+		if (strncmp(yd->rxqueue, "YMSG", MIN(4, yd->rxlen)) != 0) {
+			/* HEY! This isn't even a YMSG packet. What
+			 * are you trying to pull? */
+			guchar *start;
+
+			gaim_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!");
+			
+			start = memchr(yd->rxqueue, 'Y', yd->rxlen);
+			if (start) {
+				g_memmove(yd->rxqueue, start, yd->rxlen - (start - yd->rxqueue));
+				yd->rxlen -= start - yd->rxqueue;
+				continue;
+			} else {
+				/* hmm this could screw up with just the Y, YM, or YMS is at the very
+				   end of the packet */
+				g_free(yd->rxqueue);
+				yd->rxqueue = NULL;
+				yd->rxlen = 0;
+				return;
+			}
+		}
+
 		pos += 4; /* YMSG */
 		pos += 2;
 		pos += 2;
