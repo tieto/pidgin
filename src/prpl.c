@@ -165,6 +165,10 @@ static void do_ask_callback(GtkDialog *d, gint resp, struct doaskstruct *doask)
 	gtk_widget_destroy(GTK_WIDGET(d));
 }
 
+#define STOCK_ITEMIZE(r, l)       if (!strcmp(r,yestext))  \
+                                           yestext = l;    \
+                                   if (!strcmp(r,notext))  \
+                                           notext = l;     
 
 void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext, void *doit, char *notext, void *dont)
 {
@@ -182,6 +186,18 @@ void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext,
 
 	g_free(filename);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+
+	/* This is ugly.  GTK Stock items will take a button with a label "gtk-cancel" and turn it into a 
+	 * Cancel button with a Cancel icon and whatnot.  We want to avoid using anything gtk in the prpls
+	 * so we replace "Cancel" with "gtk-cancel" right here. */
+	STOCK_ITEMIZE("Add", GTK_STOCK_ADD);
+	STOCK_ITEMIZE("Apply", GTK_STOCK_APPLY);
+	STOCK_ITEMIZE("Cancel", GTK_STOCK_CANCEL);
+	STOCK_ITEMIZE("Close", GTK_STOCK_CLOSE);
+	STOCK_ITEMIZE("Delete", GTK_STOCK_DELETE);
+	STOCK_ITEMIZE("Remove", GTK_STOCK_REMOVE);
+	STOCK_ITEMIZE("Yes", GTK_STOCK_YES);
+	STOCK_ITEMIZE("No", GTK_STOCK_NO);
 
 	window = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_MODAL, notext, GTK_RESPONSE_NO, yestext, GTK_RESPONSE_YES, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_YES);
