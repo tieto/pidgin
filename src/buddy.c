@@ -2821,12 +2821,14 @@ void make_buddy_list()
 	/* Register newly created window with systray module */
 	wgaim_created_blistwin(GTK_WIDGET(blist));
 #endif
+
+	/* Houston, we are go for launch. */
+	unhide_buddy_list();
 }
 
 void show_buddy_list()
 {
 	make_buddy_list();
-	unhide_buddy_list();
 	build_edit_tree();
 	update_button_pix();
 }
