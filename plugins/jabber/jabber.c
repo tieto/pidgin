@@ -59,6 +59,8 @@
 /* The priv member of gjconn's is a gaim_connection for now. */
 #define GJ_GC(x) ((struct gaim_connection *)(x)->priv)
 
+#define IQID_AUTH "__AUTH__"
+
 #define IQ_NONE -1
 #define IQ_AUTH 0
 #define IQ_ROSTER 1
@@ -110,7 +112,7 @@ static char *gjab_getid(gjconn j);
 static void gjab_send(gjconn j, xmlnode x);
 static void gjab_send_raw(gjconn j, const char *str);
 static void gjab_recv(gjconn j);
-static char *gjab_auth(gjconn j);
+static void gjab_auth(gjconn j);
 
 struct jabber_data {
 	gjconn jc;
@@ -275,27 +277,24 @@ static void gjab_send_raw(gjconn j, const char *str)
 static void gjab_reqroster(gjconn j)
 {
 	xmlnode x;
-	char *id;
 
 	x = jutil_iqnew(JPACKET__GET, NS_ROSTER);
-	id = gjab_getid(j);
-	xmlnode_put_attrib(x, "id", id);
+	xmlnode_put_attrib(x, "id", gjab_getid(j));
 
 	gjab_send(j, x);
 	xmlnode_free(x);
 }
 
-static char *gjab_auth(gjconn j)
+static void gjab_auth(gjconn j)
 {
 	xmlnode x, y, z;
-	char *hash, *user, *id;
+	char *hash, *user;
 
 	if (!j)
-		return NULL;
+		return;
 
 	x = jutil_iqnew(JPACKET__SET, NS_AUTH);
-	id = gjab_getid(j);
-	xmlnode_put_attrib(x, "id", id);
+	xmlnode_put_attrib(x, "id", IQID_AUTH);
 	y = xmlnode_get_tag(x, "query");
 
 	user = j->user->user;
@@ -323,7 +322,7 @@ static char *gjab_auth(gjconn j)
 	gjab_send(j, x);
 	xmlnode_free(x);
 
-	return id;
+	return;
 }
 
 static void gjab_recv(gjconn j)
@@ -931,6 +930,44 @@ static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 	g_free(buddy);
 }
 
+static void jabber_handleauthresp(gjconn j, jpacket p)
+{
+	if (jpacket_subtype(p) == JPACKET__RESULT) {
+		debug_printf("auth success\n");
+
+		account_online(GJ_GC(j));
+		serv_finish_login(GJ_GC(j));
+
+		if (bud_list_cache_exists(GJ_GC(j)))
+			do_import(NULL, GJ_GC(j));
+
+		((struct jabber_data *)GJ_GC(j)->proto_data)->did_import = TRUE;
+
+		gjab_reqroster(j);
+	} else {
+		xmlnode xerr;
+		char *errmsg = NULL, *tmp;
+		int errcode = 0;
+
+		debug_printf("auth failed\n");
+		xerr = xmlnode_get_tag(p->x, "error");
+		if (xerr) {
+			char msg[BUF_LONG];
+			errmsg = xmlnode_get_data(xerr);
+			if (xmlnode_get_attrib(xerr, "code")) {
+				errcode = atoi(xmlnode_get_attrib(xerr, "code"));
+				g_snprintf(msg, sizeof(msg), "Error %d: %s", errcode, errmsg);
+			} else
+				g_snprintf(msg, sizeof(msg), "%s", errmsg);
+			hide_login_progress(GJ_GC(j), msg);
+		} else {
+			hide_login_progress(GJ_GC(j), "Unknown login error");
+		}
+
+		signoff(GJ_GC(j));
+	}
+}
+
 static void jabber_handleversion(gjconn j, xmlnode iqnode) {
 	xmlnode querynode, x;
 	char *id, *from;
@@ -1021,6 +1058,11 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 	case JPACKET_IQ:
 		debug_printf("jpacket_subtype: %d\n", jpacket_subtype(p));
 
+		if (xmlnode_get_attrib(p->x, "id") && (strcmp(xmlnode_get_attrib(p->x, "id"), IQID_AUTH) == 0)) {
+			jabber_handleauthresp(j, p);
+			break; /* I'm not sure if you like this style, Eric. */
+		}
+
 		if (jpacket_subtype(p) == JPACKET__SET) {
 		} else if (jpacket_subtype(p) == JPACKET__GET) {
 		   	xmlnode querynode;
@@ -1042,20 +1084,7 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 			xmlns = xmlnode_get_attrib(querynode, "xmlns");
 			vcard = xmlnode_get_tag(p->x, "vCard");
 
-			if ((!xmlns && !from) || NSCHECK(querynode, NS_AUTH)) {
-				debug_printf("auth success\n");
-
-				account_online(GJ_GC(j));
-				serv_finish_login(GJ_GC(j));
-
-				if (bud_list_cache_exists(GJ_GC(j)))
-					do_import(NULL, GJ_GC(j));
-
-				((struct jabber_data *)GJ_GC(j)->proto_data)->did_import = TRUE;
-
-				gjab_reqroster(j);
-
-			} else if (NSCHECK(querynode, NS_ROSTER)) {
+			if (NSCHECK(querynode, NS_ROSTER)) {
 				jabber_handleroster(j, querynode);
 			} else if (NSCHECK(querynode, NS_VCARD)) {
 			   	jabber_handlevcard(j, querynode, from);
@@ -1064,23 +1093,28 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 			} else {
 				/* debug_printf("jabber:iq:query: %s\n", xmlns); */
 			}
-		} else {
-			xmlnode x;
 
-			debug_printf("auth failed\n");
-			x = xmlnode_get_tag(p->x, "error");
-			if (x) {
-				debug_printf("error %d: %s\n\n",
-					     atoi(xmlnode_get_attrib(x, "code")),
-					     xmlnode_get_data(xmlnode_get_firstchild(x)));
+		} else if (jpacket_subtype(p) == JPACKET__ERROR) {
+			xmlnode xerr;
+			char *from, *errmsg = NULL;
+			int errcode = 0;
 
+			from = xmlnode_get_attrib(p->x, "from");
+			xerr = xmlnode_get_tag(p->x, "error");
+			if (xerr) {
+				errmsg = xmlnode_get_data(xerr);
+				if (xmlnode_get_attrib(xerr, "code"))
+					errcode = atoi(xmlnode_get_attrib(xerr, "code"));
 			}
 
-			xmlnode_free(p->x);
-			gjab_send_raw(j, "</stream:stream>");
-			return;
+			from = g_strdup_printf("Error %d (%s)", errcode, from);
+			do_error_dialog(errmsg, from);
+			g_free(from);
+
 		}
+
 		break;
+
 	case JPACKET_S10N:
 		jabber_handles10n(j, p);
 		break;
