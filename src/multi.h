@@ -77,6 +77,9 @@ struct gaim_connection {
 	/* email notification (MSN and Yahoo) */
 	GtkWidget *email_win;
 	GtkWidget *email_label;
+
+	/* buddy icon file */
+	char *iconfile;
 };
 
 struct proto_user_opt {

@@ -457,14 +457,12 @@ static void oscar_close(struct gaim_connection *gc) {
 		odata->direct_ims = g_slist_remove(odata->direct_ims, n);
 		g_free(n);
 	}
-#if USE_PIXBUF
 	while (odata->hasicons) {
 		struct icon_req *n = odata->hasicons->data;
 		g_free(n->user);
 		odata->hasicons = g_slist_remove(odata->hasicons, n);
 		g_free(n);
 	}
-#endif
 	if (gc->inpa > 0)
 		gaim_input_remove(gc->inpa);
 	if (odata->cnpa > 0)
@@ -1284,6 +1282,23 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			ir->timestamp = args->iconstamp;
 		}
 
+		if (gc->iconfile && (args->icbmflags & AIM_IMFLAGS_BUDDYREQ)) {
+			FILE *file;
+			struct stat st;
+
+			if (!stat(gc->iconfile, &st)) {
+				char *buf = g_malloc(st.st_size);
+				file = fopen(gc->iconfile, "r");
+				if (file) {
+					fread(buf, 1, st.st_size, file);
+					aim_send_icon(sess, command->conn, userinfo->sn, buf, st.st_size,
+						      st.st_mtime, aim_iconsum(buf, st.st_size));
+					fclose(file);
+				}
+				g_free(buf);
+			}
+		}
+
 		/*
 		 * Quickly convert it to eight bit format, replacing 
 		 * non-ASCII UNICODE characters with their equivelent 
@@ -2041,11 +2056,16 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		if (away)
 			return aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
 		else {
+			struct aim_sendimext_args args;
+
 			int flags = AIM_IMFLAGS_ACK;
-#if USE_PIXBUF
+
 			GSList *h = odata->hasicons;
 			struct icon_req *ir = NULL;
 			char *who = normalize(name);
+
+			struct stat st;
+
 			while (h) {
 				ir = h->data;
 				if (ir->request && !strcmp(who, ir->user))
@@ -2057,8 +2077,30 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				flags |= AIM_IMFLAGS_BUDDYREQ;
 				debug_printf("sending buddy icon request with message\n");
 			}
-#endif
-			return aim_send_im(odata->sess, odata->conn, name, flags, message);
+
+			if (gc->iconfile && !stat(gc->iconfile, &st)) {
+				FILE *file = fopen(gc->iconfile, "r");
+				if (file) {
+					char *buf = g_malloc(st.st_size);
+					fread(buf, 1, st.st_size, file);
+
+					args.iconlen   = st.st_size;
+					args.iconsum   = aim_iconsum(buf, st.st_size);
+					args.iconstamp = st.st_mtime;
+
+					flags |= AIM_IMFLAGS_HASICON;
+
+					fclose(file);
+					g_free(buf);
+				}
+			}
+
+			args.destsn = name;
+			args.msg    = message;
+			args.msglen = strlen(message);
+			args.flags  = flags;
+
+			return aim_send_im_ext(odata->sess, odata->conn, &args);
 		}
 	}
 }
