@@ -75,21 +75,21 @@ gaim_request_choice(void *handle, const char *title, const char *primary,
 					const char *secondary, unsigned int default_value,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
-					void *user_data, const char *choice, ...)
+					void *user_data, size_t choice_count, ...)
 {
 	void *ui_handle;
 	va_list args;
 
-	g_return_val_if_fail(primary != NULL, NULL);
-	g_return_val_if_fail(ok_text != NULL, NULL);
-	g_return_val_if_fail(ok_cb   != NULL, NULL);
-	g_return_val_if_fail(choice  != NULL, NULL);
+	g_return_val_if_fail(primary != NULL,  NULL);
+	g_return_val_if_fail(ok_text != NULL,  NULL);
+	g_return_val_if_fail(ok_cb   != NULL,  NULL);
+	g_return_val_if_fail(choice_count > 0, NULL);
 
-	va_start(args, choice);
+	va_start(args, choice_count);
 	ui_handle = gaim_request_choice_varg(handle, title, primary, secondary,
 										 default_value, ok_text, ok_cb,
 										 cancel_text, cancel_cb, user_data,
-										 args);
+										 choice_count, args);
 	va_end(args);
 
 	return ui_handle;
@@ -101,17 +101,19 @@ gaim_request_choice_varg(void *handle, const char *title,
 						 unsigned int default_value,
 						 const char *ok_text, GCallback ok_cb,
 						 const char *cancel_text, GCallback cancel_cb,
-						 void *user_data, va_list choices)
+						 void *user_data, size_t choice_count,
+						 va_list choices)
 {
 	GaimRequestUiOps *ops;
 
-	g_return_val_if_fail(primary != NULL, NULL);
-	g_return_val_if_fail(ok_text != NULL, NULL);
-	g_return_val_if_fail(ok_cb   != NULL, NULL);
+	g_return_val_if_fail(primary != NULL,  NULL);
+	g_return_val_if_fail(ok_text != NULL,  NULL);
+	g_return_val_if_fail(ok_cb   != NULL,  NULL);
+	g_return_val_if_fail(choice_count > 0, NULL);
 
 	ops = gaim_get_request_ui_ops();
 
-	if (ops != NULL && ops->request_input != NULL) {
+	if (ops != NULL && ops->request_choice != NULL) {
 		GaimRequestInfo *info;
 
 		info            = g_new0(GaimRequestInfo, 1);
@@ -121,7 +123,8 @@ gaim_request_choice_varg(void *handle, const char *title,
 											  default_value,
 											  ok_text, ok_cb,
 											  cancel_text, cancel_cb,
-											  user_data, choices);
+											  user_data, choice_count,
+											  choices);
 
 		handles = g_list_append(handles, info);
 
@@ -134,17 +137,18 @@ gaim_request_choice_varg(void *handle, const char *title,
 void *
 gaim_request_action(void *handle, const char *title, const char *primary,
 					const char *secondary, unsigned int default_action,
-					void *user_data, const char *action, ...)
+					void *user_data, size_t action_count, ...)
 {
 	void *ui_handle;
 	va_list args;
 
-	g_return_val_if_fail(primary   != NULL, NULL);
-	g_return_val_if_fail(action    != NULL, NULL);
+	g_return_val_if_fail(primary != NULL,  NULL);
+	g_return_val_if_fail(action_count > 0, NULL);
 
-	va_start(args, action);
+	va_start(args, action_count);
 	ui_handle = gaim_request_action_varg(handle, title, primary, secondary,
-										 default_action, user_data, args);
+										 default_action, user_data,
+										 action_count, args);
 	va_end(args);
 
 	return ui_handle;
@@ -154,15 +158,16 @@ void *
 gaim_request_action_varg(void *handle, const char *title,
 						 const char *primary, const char *secondary,
 						 unsigned int default_action, void *user_data,
-						 va_list actions)
+						 size_t action_count, va_list actions)
 {
 	GaimRequestUiOps *ops;
 
-	g_return_val_if_fail(primary != NULL, NULL);
+	g_return_val_if_fail(primary != NULL,  NULL);
+	g_return_val_if_fail(action_count > 0, NULL);
 
 	ops = gaim_get_request_ui_ops();
 
-	if (ops != NULL && ops->request_input != NULL) {
+	if (ops != NULL && ops->request_action != NULL) {
 		GaimRequestInfo *info;
 
 		info            = g_new0(GaimRequestInfo, 1);
@@ -170,7 +175,7 @@ gaim_request_action_varg(void *handle, const char *title,
 		info->handle    = handle;
 		info->ui_handle = ops->request_action(title, primary, secondary,
 											  default_action, user_data,
-											  actions);
+											  action_count, actions);
 
 		handles = g_list_append(handles, info);
 

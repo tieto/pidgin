@@ -53,16 +53,19 @@ typedef struct
 							const char *secondary, unsigned int default_value,
 							const char *ok_text, GCallback ok_cb,
 							const char *cancel_text, GCallback cancel_cb,
-							void *user_data, va_list args);
+							void *user_data, size_t choice_count,
+							va_list choices);
 	void *(*request_action)(const char *title, const char *primary,
 							const char *secondary, unsigned int default_action,
-							void *user_data, va_list actions);
+							void *user_data, size_t action_count,
+							va_list actions);
 
 	void (*close_request)(GaimRequestType type, void *ui_handle);
 
 } GaimRequestUiOps;
 
 typedef void (*GaimRequestInputCb)(const char *, void *);
+typedef void (*GaimRequestActionCb)(int, void *);
 
 /**************************************************************************/
 /** @name Request API                                                     */
@@ -106,6 +109,7 @@ void *gaim_request_input(void *handle, const char *title,
  * @param cancel_text   The text for the cancel button.
  * @param cancel_cb     The callback for the cancel button.
  * @param user_data     The data to pass to the callback.
+ * @param choice_count  The number of choices.
  * @param choice        The choices.
  *
  * @return A UI-specific handle.
@@ -115,8 +119,7 @@ void *gaim_request_choice(void *handle, const char *title,
 						  unsigned int default_value,
 						  const char *ok_text, GCallback ok_cb,
 						  const char *cancel_text, GCallback cancel_cb,
-						  void *user_data,
-						  const char *choice, ...);
+						  void *user_data, size_t choice_count, ...);
 
 /**
  * Prompts the user for multiple-choice input.
@@ -131,6 +134,7 @@ void *gaim_request_choice(void *handle, const char *title,
  * @param cancel_text   The text for the cancel button.
  * @param cancel_cb     The callback for the cancel button.
  * @param user_data     The data to pass to the callback.
+ * @param choice_count  The number of choices.
  * @param choices       The choices.
  *
  * @return A UI-specific handle.
@@ -140,7 +144,8 @@ void *gaim_request_choice_varg(void *handle, const char *title,
 							   unsigned int default_value,
 							   const char *ok_text, GCallback ok_cb,
 							   const char *cancel_text, GCallback cancel_cb,
-							   void *user_data, va_list choices);
+							   void *user_data, size_t choice_count,
+							   va_list choices);
 
 /**
  * Prompts the user for an action.
@@ -153,6 +158,7 @@ void *gaim_request_choice_varg(void *handle, const char *title,
  * @param secondary      The secondary information.
  * @param default_action The default value.
  * @param user_data      The data to pass to the callback.
+ * @param action_count   The number of actions.
  * @param action         The first action.
  *
  * @return A UI-specific handle.
@@ -160,7 +166,7 @@ void *gaim_request_choice_varg(void *handle, const char *title,
 void *gaim_request_action(void *handle, const char *title,
 						  const char *primary, const char *secondary,
 						  unsigned int default_action,
-						  void *user_data, const char *action, ...);
+						  void *user_data, size_t action_count, ...);
 
 /**
  * Prompts the user for an action.
@@ -173,6 +179,7 @@ void *gaim_request_action(void *handle, const char *title,
  * @param secondary      The secondary information.
  * @param default_action The default value.
  * @param user_data      The data to pass to the callback.
+ * @param action_count   The number of actions.
  * @param actions        A list of actions and callbacks.
  *
  * @return A UI-specific handle.
@@ -180,7 +187,8 @@ void *gaim_request_action(void *handle, const char *title,
 void *gaim_request_action_varg(void *handle, const char *title,
 							   const char *primary, const char *secondary,
 							   unsigned int default_action,
-							   void *user_data, va_list actions);
+							   void *user_data, size_t action_count,
+							   va_list actions);
 
 /**
  * Closes a request.

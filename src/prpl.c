@@ -66,11 +66,6 @@ gaim_find_prpl(GaimProtocol type)
 	return NULL;
 }
 
-static void des_win(GtkWidget *a, GtkWidget *b)
-{
-	gtk_widget_destroy(b);
-}
-
 static GSList *do_ask_dialogs = NULL;
 
 struct doaskstruct {
