@@ -99,6 +99,15 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Dec 13 2001 Rob Flynn <rob@marko.net> (0.50 release)
+- Updated polish translation (Thanks Przemyslaw Sulek)
+- Able to import GnomeICU contact lists
+- Galeon as browser option (Thanks Rob McQueen)
+- IRC /list, /invite (Thanks Sean Egan)
+- Added swedish translation (Thanks Christian Rose)
+- Option to have IMs and Chats tabbed in same window
+- Finally put the lagmeter plugin out of its misery and removed it. (/me dances on its grave.)
+
 * Thu Nov 29 2001 Rob Flynn <rob@marko.net> (0.49 release)
 - Can compile against GTK+ 2.0 (version 1.3.10/1.3.11)
 - Confirm before removing buddies
