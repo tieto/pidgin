@@ -44,10 +44,6 @@
 #include <esd.h>
 #endif
 
-#ifdef NAS_SOUND
-#include <audio/audiolib.h>
-#endif
-
 #include "gaim.h"
 
 gboolean mute_sounds = 0;
@@ -154,62 +150,6 @@ static int can_play_esd()
 }
 
 #endif
-
-#ifdef NAS_SOUND
-
-char nas_server[] = "localhost";
-AuServer *nas_serv = NULL;
-
-static AuBool NasEventHandler(AuServer * aud, AuEvent * ev, AuEventHandlerRec * handler)
-{
-	AuElementNotifyEvent *event = (AuElementNotifyEvent *) ev;
-
-	if (ev->type == AuEventTypeElementNotify) {
-		switch (event->kind) {
-		case AuElementNotifyKindState:
-			switch (event->cur_state) {
-			case AuStateStop:
-				_exit(0);
-			}
-			break;
-		}
-	}
-	return AuTrue;
-}
-
-static int can_play_nas()
-{
-	if ((nas_serv = AuOpenServer(NULL, 0, NULL, 0, NULL, NULL)))
-		return 1;
-	return 0;
-}
-
-static int play_nas_file(char *file)
-{
-	struct stat stat_buf;
-	char *buf;
-	int ret;
-	int fd = open(file, O_RDONLY);
-	if (fd <= 0)
-		return 0;
-
-	if (!can_play_nas())
-		return 0;
-
-	if (stat(file, &stat_buf))
-		return 0;
-
-	if (!stat_buf.st_size)
-		return 0;
-
-	buf = malloc(stat_buf.st_size);
-	read(fd, buf, stat_buf.st_size);
-	ret = play_nas(buf, stat_buf.st_size);
-	free(buf);
-	return ret;
-}
-
-#endif
 #endif /* !_WIN32 */
 
 void play_file(char *filename)
@@ -265,13 +205,14 @@ void play_file(char *filename)
 			_exit(0);
 		}
 
-#ifdef NAS_SOUND
 		else if (sound_options & OPT_SOUND_NAS) {
-			if (play_nas_file(filename))
-				_exit(0);
+			char *args[3];
+			args[0] = "auplay";
+			args[1] = filename;
+			args[2] = NULL;
+			execvp(args[0], args);
 		}
-#endif
-		else if ((sound_options & OPT_SOUND_NORMAL) && 
+		else if ((sound_options & OPT_SOUND_NORMAL) &&
 			 can_play_audio()) {
 			play_audio_file(filename);
 			_exit(0);

@@ -671,9 +671,7 @@ GtkWidget *sound_page() {
 		      "ESD", OPT_SOUND_ESD,
 #endif /* ESD_SOUND */
 		      "ArtsC", OPT_SOUND_ARTSC,
-#ifdef NAS_SOUND
 		      "NAS", OPT_SOUND_NAS,
-#endif /* NAS_SOUND */
 		      "Internal", OPT_SOUND_NORMAL,
 		      "Command", OPT_SOUND_CMD, NULL);
 	gtk_size_group_add_widget(sg, dd);
