@@ -1,5 +1,6 @@
 #define GAIM_PLUGINS
 #include "gaim.h"
+#include "prpl.h"
 
 #include <time.h>
 #include <sys/types.h>
@@ -84,7 +85,19 @@ static gint send_lag() {
 	gettimeofday(&my_lag_tv, NULL);
 	if (g_slist_find(connections, my_gc)) {
 		char *m = g_strdup(MY_LAG_STRING);
-		serv_send_im(my_gc, my_gc->username, m, 1);
+		if (my_gc->protocol == PROTO_JABBER) {
+			if (!strchr(my_gc->username, '@')) {
+				char buf = g_strconcat(my_gc->username, "@jabber.org/GAIM", NULL);
+				serv_send_im(my_gc, buf, m, 1);
+				g_free(buf);
+			} else if (!strchr(my_gc->username, '/')) {
+				char buf = g_strconcat(my_gc->username, "@jabber.org/GAIM", NULL);
+				serv_send_im(my_gc, buf, m, 1);
+				g_free(buf);
+			} else
+				serv_send_im(my_gc, my_gc->username, m, 1);
+		} else
+			serv_send_im(my_gc, my_gc->username, m, 1);
 		g_free(m);
 		return TRUE;
 	} else {
