@@ -906,6 +906,9 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 
 			if (c->makesound && (sound_options & OPT_SOUND_SEND))
 				play_sound(SEND);
+
+			if (im_options & OPT_IM_POPDOWN)
+				gtk_widget_hide(c->window);
 		}
 	} else {
 		err = serv_chat_send(c->gc, c->id, buf);
@@ -1354,6 +1357,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 
 	if (!c->is_chat && !g_list_find(conversations, c))
 		return;
+
+	gtk_widget_show(c->window);
 
 	if (!c->is_chat || !(c->gc->prpl->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		if (!who) {
