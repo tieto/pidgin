@@ -476,9 +476,13 @@ int load_font_with_cache(const char *name, const char *weight, char slant,
 {
 	gchar font_spec[1024];
 
-	g_snprintf(font_spec, sizeof font_spec,
-		"-*-%s-%s-%c-*-*-*-%d-*-*-*-*-*-*",
-		name, weight, slant, size);
+	if (size > 0)
+		g_snprintf(font_spec, sizeof font_spec,
+			"-*-%s-%s-%c-*-*-*-%d-*-*-*-*-*-*",
+			name, weight, slant, size);
+	else
+		g_snprintf(font_spec, sizeof font_spec,
+			"-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
 
 	if((*font_return = g_datalist_id_get_data(&font_cache,
 				g_quark_from_string(font_spec)))) {
@@ -577,9 +581,10 @@ GdkFont *getfont(const char *font, int bold, int italic, int fixed, int size)
 	 * in gdk? that would be incredibly useful here. there's gotta be a
 	 * better way to do this. */
 	
-	/* well, if they can't do any of the fonts above, they're screwed, might
-	 * as well segfault. */
-	return NULL;
+	/* well, if they can't do any of the fonts above, they'll take whatever
+	 * they can get, and be happy about it, damn it. :) */
+	load_font_with_cache("*", "*", '*', -1, &my_font);
+	return my_font;
 }
 
 
