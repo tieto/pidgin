@@ -80,36 +80,6 @@ static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCon
 	return;
 }
 
-static int yahoo_send_packet_special(int fd, struct yahoo_packet *pkt, int pad)
-{
-	int pktlen = yahoo_packet_length(pkt);
-	int len = YAHOO_PACKET_HDRLEN + pktlen;
-	int ret;
-
-	guchar *data;
-	int pos = 0;
-
-	if (fd < 0)
-		return -1;
-
-	data = g_malloc0(len + 1);
-
-	memcpy(data + pos, "YMSG", 4); pos += 4;
-	pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
-	pos += yahoo_put16(data + pos, 0x0000);
-	pos += yahoo_put16(data + pos, pktlen + pad);
-	pos += yahoo_put16(data + pos, pkt->service);
-	pos += yahoo_put32(data + pos, pkt->status);
-	pos += yahoo_put32(data + pos, pkt->id);
-
-	yahoo_packet_write(pkt, data + pos);
-
-	ret = write(fd, data, len);
-	g_free(data);
-
-	return ret;
-}
-
 static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondition condition)
 {
 	GaimXfer *xfer;

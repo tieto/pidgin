@@ -45,6 +45,11 @@
 
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
 
+#define YAHOO_ICON_CHECKSUM_KEY "icon_checksum"
+#define YAHOO_PICURL_SETTING "picture_url"
+#define YAHOO_PICCKSUM_SETTING "picture_checksum"
+#define YAHOO_PICEXPIRE_SETTING "picture_expire"
+
 enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_LOGON = 1,
 	YAHOO_SERVICE_LOGOFF,
@@ -66,6 +71,7 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_PING,
 	YAHOO_SERVICE_GOTGROUPRENAME,
 	YAHOO_SERVICE_SYSMESSAGE = 0x14,
+	YAHOO_SERVICE_SKINNAME = 0x15,
 	YAHOO_SERVICE_PASSTHROUGH2 = 0x16,
 	YAHOO_SERVICE_CONFINVITE = 0x18,
 	YAHOO_SERVICE_CONFLOGON,
@@ -108,6 +114,7 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_PICTURE_CHECKSUM = 0xbd,
 	YAHOO_SERVICE_PICTURE = 0xbe,
 	YAHOO_SERVICE_PICTURE_UPDATE = 0xc1,
+	YAHOO_SERVICE_PICTURE_UPLOAD = 0xc2,
 	YAHOO_SERVICE_AVATAR_UPDATE = 0xc7,
 	YAHOO_SERVICE_WEBLOGIN = 0x0226
 };
@@ -131,6 +138,15 @@ enum yahoo_status {
 	YAHOO_STATUS_TYPING = 0x16
 };
 
+struct yahoo_buddy_icon_upload_data {
+	GaimConnection *gc;
+	GString *str;
+	char *filename;
+	int pos;
+	int fd;
+	guint watcher;
+};
+
 struct yahoo_data {
 	int fd;
 	guchar *rxqueue;
@@ -149,6 +165,13 @@ struct yahoo_data {
 	char *cookie_t;
 	int session_id;
 	gboolean jp;
+	/* picture aka buddy icon stuff */
+	char *picture_url;
+	int picture_checksum;
+
+	/* ew. we have to check the icon before we connect,
+	 * but can't upload it til we're connected. */
+	struct yahoo_buddy_icon_upload_data *picture_upload_todo;
 };
 
 struct yahoo_pair {
@@ -196,6 +219,7 @@ struct yahoo_packet {
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id);
 void yahoo_packet_hash(struct yahoo_packet *pkt, int key, const char *value);
 int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt);
+int yahoo_send_packet_special(int fd, struct yahoo_packet *pkt, int pad);
 void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data);
 int yahoo_packet_length(struct yahoo_packet *pkt);
 void yahoo_packet_free(struct yahoo_packet *pkt);

@@ -40,15 +40,15 @@
 #include "yahoochat.h"
 #include "yahoo_auth.h"
 #include "yahoo_filexfer.h"
+#include "yahoo_picture.h"
 #include "md5.h"
 
 extern char *yahoo_crypt(const char *, const char *);
 
-#define YAHOO_ICON_CHECKSUM_KEY "icon_checksum"
 /* #define YAHOO_DEBUG */
 
 static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *, GaimGroup *);
-static void yahoo_send_buddy_icon_request(GaimConnection *gc, const char *who);
+
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
 {
@@ -246,6 +246,36 @@ int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt)
 	return ret;
 }
 
+int yahoo_send_packet_special(int fd, struct yahoo_packet *pkt, int pad)
+{
+	int pktlen = yahoo_packet_length(pkt);
+	int len = YAHOO_PACKET_HDRLEN + pktlen;
+	int ret;
+
+	guchar *data;
+	int pos = 0;
+
+	if (fd < 0)
+		return -1;
+
+	data = g_malloc0(len + 1);
+
+	memcpy(data + pos, "YMSG", 4); pos += 4;
+	pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
+	pos += yahoo_put16(data + pos, 0x0000);
+	pos += yahoo_put16(data + pos, pktlen + pad);
+	pos += yahoo_put16(data + pos, pkt->service);
+	pos += yahoo_put32(data + pos, pkt->status);
+	pos += yahoo_put32(data + pos, pkt->id);
+
+	yahoo_packet_write(pkt, data + pos);
+
+	ret = write(fd, data, len);
+	g_free(data);
+
+	return ret;
+}
+
 void yahoo_packet_free(struct yahoo_packet *pkt)
 {
 	while (pkt->hash) {
@@ -295,6 +325,10 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				gaim_connection_set_state(gc, GAIM_CONNECTED);
 				serv_finish_login(gc);
 				yd->logged_in = TRUE;
+				if (yd->picture_upload_todo) {
+					yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
+					yd->picture_upload_todo = NULL;
+				}
 
 				/* this requests the list. i have a feeling that this is very evil
 				 *
@@ -743,9 +777,9 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	for (l = list; l; l = l->next) {
+		YahooFriend *f;
 		char *m, *m2;
 		im = l->data;
-		YahooFriend *f;
 
 		if (!im->from || !im->msg) {
 			g_free(im);
@@ -1588,6 +1622,11 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	yahoo_packet_hash(pack, 6, resp_6);
 	yahoo_packet_hash(pack, 96, resp_96);
 	yahoo_packet_hash(pack, 1, name);
+	if (yd->picture_checksum) {
+		char *cksum = g_strdup_printf("%d", yd->picture_checksum);
+		yahoo_packet_hash(pack, 192, cksum);
+		g_free(cksum);
+	}
 	yahoo_send_packet(yd, pack);
 	yahoo_packet_free(pack);
 
@@ -1871,146 +1910,6 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-struct yahoo_fetch_picture_data {
-	GaimConnection *gc;
-	char *who;
-	int checksum;
-};
-
-void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t len)
-{
-	struct yahoo_fetch_picture_data *d = user_data;
-	GaimBuddy *b;
-
-	if (GAIM_CONNECTION_IS_VALID(d->gc) && len) {
-		gaim_buddy_icons_set_for_user(gaim_connection_get_account(d->gc), d->who, (void *)pic_data, len);
-		b = gaim_find_buddy(gaim_connection_get_account(d->gc), d->who);
-		if (b)
-			gaim_blist_node_set_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY, d->checksum);
-	}
-
-	g_free(d->who);
-	g_free(d);
-}
-
-static void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
-{
-	GSList *l = pkt->hash;
-	char *who = NULL, *us = NULL;
-	gboolean got_icon_info = FALSE;
-	char *url = NULL;
-	int checksum = 0;
-
-	while (l) {
-		struct yahoo_pair *pair = l->data;
-
-		switch (pair->key) {
-		case 1:
-		case 4:
-			who = pair->value;
-			break;
-		case 5:
-			us = pair->value;
-			break;
-		case 13: {
-				int tmp;
-				tmp = strtol(pair->value, NULL, 10);
-				if (tmp == 1) {
-					/* send them info about our buddy icon */
-				} else if (tmp == 2) {
-					got_icon_info = TRUE;
-				}
-				break;
-			}
-		case 20:
-			url = pair->value;
-			break;
-		case 192:
-			checksum = strtol(pair->value, NULL, 10); /* just a guess for now */
-			break;
-		}
-
-		l = l->next;
-	}
-
-	if (who && got_icon_info && url) {
-		/* TODO: make this work p2p, try p2p before the url */
-		struct yahoo_fetch_picture_data *data;
-		GaimBuddy *b = gaim_find_buddy(gc->account, who);
-		if (b && (checksum == gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
-			return;
-
-		data = g_new0(struct yahoo_fetch_picture_data, 1);
-		data->gc = gc;
-		data->who = g_strdup(who);
-		data->checksum = checksum;
-		gaim_url_fetch(url, FALSE, "Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
-		               yahoo_fetch_picture_cb, data);
-	}
-
-}
-
-static void yahoo_process_picture_update(GaimConnection *gc, struct yahoo_packet *pkt)
-{
-	GSList *l = pkt->hash;
-	char *who = NULL;
-	int icon = 0;
-
-	while (l) {
-		struct yahoo_pair *pair = l->data;
-
-		switch (pair->key) {
-		case 4:
-			who = pair->value;
-			break;
-		case 5:
-			/* us */
-			break;
-		case 206:
-			icon = strtol(pair->value, NULL, 10);
-			break;
-		}
-		l = l->next;
-	}
-
-	if (who) {
-		if (icon == 2)
-			yahoo_send_buddy_icon_request(gc, who);
-		else if (icon == 0)
-			gaim_buddy_icons_set_for_user(gc->account, who, NULL, 0);
-	}
-}
-
-static void yahoo_process_picture_checksum(GaimConnection *gc, struct yahoo_packet *pkt)
-{
-	GSList *l = pkt->hash;
-	char *who = NULL;
-	int checksum = 0;
-
-	while (l) {
-		struct yahoo_pair *pair = l->data;
-
-		switch (pair->key) {
-		case 4:
-			who = pair->value;
-			break;
-		case 5:
-			/* us */
-			break;
-		case 192:
-			checksum = strtol(pair->value, NULL, 10);
-			break;
-		}
-		l = l->next;
-	}
-
-	if (who) {
-		GaimBuddy *b = gaim_find_buddy(gc->account, who);
-		if (b && (checksum != gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
-			yahoo_send_buddy_icon_request(gc, who);
-	}
-}
-
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	switch (pkt->service) {
@@ -2110,6 +2009,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_PICTURE_CHECKSUM:
 		yahoo_process_picture_checksum(gc, pkt);
+		break;
+	case YAHOO_SERVICE_PICTURE_UPLOAD:
+		yahoo_process_picture_upload(gc, pkt);
 		break;
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
@@ -2408,6 +2310,16 @@ static void yahoo_server_check(GaimAccount *account)
 	if (strcmp(server, "scs.yahoo.com") == 0)
 		gaim_account_set_string(account, "server", YAHOO_PAGER_HOST);
 }
+
+static void yahoo_picture_check(GaimAccount *account)
+{
+	GaimConnection *gc = gaim_account_get_connection(account);
+	const char *buddyicon;
+
+	buddyicon = gaim_account_get_buddy_icon(account);
+	yahoo_set_buddy_icon(gc, buddyicon);
+}
+
 #endif
 
 static void yahoo_login(GaimAccount *account) {
@@ -2428,6 +2340,7 @@ static void yahoo_login(GaimAccount *account) {
 #ifndef YAHOO_WEBMESSENGER
 
 	yahoo_server_check(account);
+	yahoo_picture_check(account);
 
 	if (gaim_account_get_bool(account, "yahoojp", FALSE)) {
 		yd->jp = TRUE;
@@ -2476,6 +2389,10 @@ static void yahoo_close(GaimConnection *gc) {
 	if (yd->rxqueue)
 		g_free(yd->rxqueue);
 	yd->rxlen = 0;
+	if (yd->picture_url)
+		g_free(yd->picture_url);
+	if (yd->picture_upload_todo)
+		yahoo_buddy_icon_upload_data_free(yd->picture_upload_todo);
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
 	g_free(yd);
@@ -2850,7 +2767,10 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	yahoo_packet_hash(pkt,   63, ";0"); /* IMvironment */
 	yahoo_packet_hash(pkt,   64, "0"); /* no idea */
 	yahoo_packet_hash(pkt, 1002, "1"); /* no idea, Yahoo 6 or later only it seems */
-	yahoo_packet_hash(pkt,  206, "0"); /* 0 = no picture, 2 = picture, maybe 1 = avatar? */
+	if (!yd->picture_url)
+		yahoo_packet_hash(pkt, 206, "0"); /* 0 = no picture, 2 = picture, maybe 1 = avatar? */
+	else
+		yahoo_packet_hash(pkt, 206, "2");
 
 	yahoo_send_packet(yd, pkt);
 
@@ -3255,19 +3175,6 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_name,
 	g_free(gpo);
 }
 
-static void yahoo_send_buddy_icon_request(GaimConnection *gc, const char *who)
-{
-	struct yahoo_data *yd = gc->proto_data;
-	struct yahoo_packet *pkt;
-
-	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 4, gaim_connection_get_display_name(gc)); /* me */
-	yahoo_packet_hash(pkt, 5, who); /* the other guy */
-	yahoo_packet_hash(pkt, 13, "1"); /* 1 = request, 2 = reply */
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
-}
-
 #if 0
 static gboolean yahoo_has_send_file(GaimConnection *gc, const char *who)
 {
@@ -3280,7 +3187,7 @@ static GaimPlugin *my_protocol = NULL;
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PRPL_API_VERSION,
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC | OPT_PROTO_BUDDY_ICON,
 	NULL, /* user_splits */
 	NULL, /* protocol_options */
 	yahoo_list_icon,
@@ -3325,7 +3232,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* buddy_free */
 	NULL, /* convo_closed */
 	NULL, /* normalize */
-	NULL, /* set_buddy_icon */
+	yahoo_set_buddy_icon,
 	NULL, /* void (*remove_group)(GaimConnection *gc, const char *group);*/
 	NULL, /* char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who); */
 #if 0
