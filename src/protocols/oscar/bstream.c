@@ -49,10 +49,15 @@ faim_internal void aim_bstream_rewind(aim_bstream_t *bs)
 	return;
 }
 
+/*
+ * N can be negative, which can be used for going backwards
+ * in a bstream.  I'm not sure if libfaim actually does
+ * this anywhere...
+ */
 faim_internal int aim_bstream_advance(aim_bstream_t *bs, int n)
 {
 
-	if (aim_bstream_empty(bs) < n)
+	if ((aim_bstream_curpos(bs) + n < 0) || (aim_bstream_empty(bs) < n))
 		return 0; /* XXX throw an exception */
 
 	bs->offset += n;

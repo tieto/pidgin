@@ -248,7 +248,7 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 		return -EINVAL;
 
 	if (args->flags & AIM_IMFLAGS_MULTIPART) {
-		if (args->mpmsg->numparts <= 0)
+		if (args->mpmsg->numparts == 0)
 			return -EINVAL;
 	} else {
 		if (!args->msg || (args->msglen <= 0))
@@ -1332,6 +1332,11 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, s
 
 		/* Message string length, including character set info. */
 		msglen = aimbs_get16(&mbs);
+		if (msglen > aim_bstream_empty(&mbs))
+		{
+			faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.");
+			break;
+		}
 
 		/* Character set info */
 		flag1 = aimbs_get16(&mbs);
@@ -1411,7 +1416,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	aim_rxcallback_t userfunc;
 	int ret = 0;
 	struct aim_incomingim_ch1_args args;
-	int endpos;
+	unsigned int endpos;
 
 	memset(&args, 0, sizeof(args));
 
@@ -1422,10 +1427,16 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	 * I've changed it to process the TLVs in-place.  This avoids lots
 	 * of per-IM memory allocations.
 	 */
-	while (aim_bstream_empty(bs)) {
-
+	while (aim_bstream_empty(bs))
+	{
 		type = aimbs_get16(bs);
 		length = aimbs_get16(bs);
+
+		if (length > aim_bstream_empty(bs))
+		{
+			faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+			break;
+		}
 
 		endpos = aim_bstream_curpos(bs) + length;
 
@@ -1444,10 +1455,20 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 			aimbs_get8(bs); /* 01 */
 
 			args.featureslen = aimbs_get16(bs);
-			/* XXX XXX this is all evil! */
-			args.features = bs->data + bs->offset;
-			aim_bstream_advance(bs, args.featureslen);
-			args.icbmflags |= AIM_IMFLAGS_CUSTOMFEATURES;
+			if (args.featureslen > aim_bstream_empty(bs))
+			{
+				faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				break;
+			}
+			if (args.featureslen == 0)
+			{
+				args.features = NULL;
+			}
+			else
+			{
+				args.features = aimbs_getraw(bs, args.featureslen);
+				args.icbmflags |= AIM_IMFLAGS_CUSTOMFEATURES;
+			}
 
 			/*
 			 * The rest of the TLV contains one or more message
@@ -1498,8 +1519,17 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 		} else if (type == 0x0017) {
 
+			free(args.extdata);
 			args.extdatalen = length;
-			args.extdata = aimbs_getraw(bs, args.extdatalen);
+			if (args.extdatalen > aim_bstream_empty(bs))
+			{
+				faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				break;
+			}
+			if (args.extdatalen == 0)
+				args.extdata = NULL;
+			else
+				args.extdata = aimbs_getraw(bs, args.extdatalen);
 
 		} else {
 			faimdprintf(sess, 0, "incomingim_ch1: unknown TLV 0x%04x (len %d)\n", type, length);
@@ -1521,6 +1551,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 		ret = userfunc(sess, rx, channel, userinfo, &args);
 
 	aim_mpmsg_free(sess, &args.mpmsg);
+	free(args.features);
 	free(args.extdata);
 
 	return ret;

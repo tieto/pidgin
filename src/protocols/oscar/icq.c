@@ -117,8 +117,8 @@ faim_export int aim_icq_setsecurity(aim_session_t *sess, const int auth, const i
 }
 
 /**
- * I don't know why we have this function and the one above...
- * Maybe one of them is wrong?  Maybe they both really DO exist?
+ * I'm not really sure what the difference is between this function
+ * and the one above.  They both definitely exist.
  */
 faim_export int aim_icq_setauthsetting(aim_session_t *sess, int auth_required)
 {
@@ -152,7 +152,7 @@ faim_export int aim_icq_setauthsetting(aim_session_t *sess, int auth_required)
 	aimbs_putle8(&fr->data, auth_required);
 	aimbs_putle8(&fr->data, 0x0c);
 	aimbs_putle16(&fr->data, 0x0103);
-	aimbs_putle16(&fr->data, 0x0000);
+	aimbs_putle16(&fr->data, 0x0000); /* web enabled or not! */
 
 	aim_tx_enqueue(sess, fr);
 

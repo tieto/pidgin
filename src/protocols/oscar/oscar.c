@@ -3332,6 +3332,9 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	gaim_debug_misc("oscar", "Received IM from %s with %d parts\n",
 					userinfo->sn, args->mpmsg.numparts);
 
+	if (args->mpmsg.numparts == 0)
+		return 1;
+
 	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
 	if (!bi) {
 		bi = g_new0(struct buddyinfo, 1);
