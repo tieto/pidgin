@@ -179,33 +179,35 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	}
 
 	info = g_string_new("");
-	g_string_append_printf(info, "<b>%s:</b> %s%s%s<br>", _("Nick"), args[1],
+	g_string_append_printf(info, _("<b>%s:</b> %s"), _("Nick"), args[1]);
+	g_string_append_printf(info, "%s%s<br>",
 			       irc->whois.ircop ? _(" <i>(ircop)</i>") : "",
 			       irc->whois.identified ? _(" <i>(identified)</i>") : "");
 	if (irc->whois.away) {
-		g_string_append_printf(info, "<b>%s:</b> %s<br>", _("Away"), irc->whois.away);
+		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Away"), irc->whois.away);
 		g_free(irc->whois.away);
 	}
 	if (irc->whois.userhost) {
-		g_string_append_printf(info, "<b>%s:</b> %s<br>", _("Username"), irc->whois.userhost);
-		g_string_append_printf(info, "<b>%s:</b> %s<br>", _("Realname"), irc->whois.name);
+		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Username"), irc->whois.userhost);
+		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Realname"), irc->whois.name);
 		g_free(irc->whois.userhost);
 		g_free(irc->whois.name);
 	}
 	if (irc->whois.server) {
-		g_string_append_printf(info, "<b>%s:</b> %s (%s)<br>", _("Server"), irc->whois.server, irc->whois.serverinfo);
+		g_string_append_printf(info, _("<b>%s:</b> %s"), _("Server"), irc->whois.server);
+		g_string_append_printf(info, " (%s)<br>", irc->whois.serverinfo);
 		g_free(irc->whois.server);
 		g_free(irc->whois.serverinfo);
 	}
 	if (irc->whois.channels) {
-		g_string_append_printf(info, "<b>%s:</b> %s<br>", _("Currently on"), irc->whois.channels);
+		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Currently on"), irc->whois.channels);
 		g_free(irc->whois.channels);
 	}
 	if (irc->whois.idle) {
 		gchar *timex = gaim_str_seconds_to_string(irc->whois.idle);
 		g_string_append_printf(info, _("<b>Idle for:</b> %s<br>"), timex);
 		g_free(timex);
-		g_string_append_printf(info, "<b>%s:</b> %s", _("Online since"), ctime(&irc->whois.signon));
+		g_string_append_printf(info, _("<b>%s:</b> %s"), _("Online since"), ctime(&irc->whois.signon));
 	}
 	if (!strcmp(irc->whois.nick, "Paco-Paco")) {
 		g_string_append_printf(info, _("<br><b>Defining adjective:</b> Glorious<br>"));
