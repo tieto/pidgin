@@ -6,3 +6,4 @@ gg.lo
 libgg.la
 libgg.lo
 iconv_string.lo
+common.lo

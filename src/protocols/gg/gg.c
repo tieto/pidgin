@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2848 2001-12-02 20:42:30Z warmenhoven $
+ * $Id: gg.c 2859 2001-12-05 09:48:56Z warmenhoven $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -65,6 +65,7 @@
 #define AGG_PUBDIR_USERLIST_EXPORT_FORM "/appsvc/fmcontactsput.asp"
 #define AGG_PUBDIR_USERLIST_IMPORT_FORM "/appsvc/fmcontactsget.asp"
 #define AGG_PUBDIR_SEARCH_FORM "/appsvc/fmpubquery2.asp"
+#define AGG_REGISTER_DATA_FORM "/appsvc/fmregister.asp"
 #define AGG_PUBDIR_MAX_ENTRIES 200
 
 #define AGG_STATUS_AVAIL              _("Available")
@@ -80,11 +81,13 @@
 #define AGG_HTTP_USERLIST_IMPORT	2
 #define AGG_HTTP_USERLIST_EXPORT	3
 #define AGG_HTTP_USERLIST_DELETE	4
+#define AGG_HTTP_PASSWORD_CHANGE	5
 
 #define UC_NORMAL 2
 
 struct agg_data {
 	struct gg_session *sess;
+	int own_status;
 };
 
 struct agg_http {
@@ -170,7 +173,7 @@ static gchar *find_local_charset(void)
 	return gg_localenc;
 }
 
-static char *handle_errcode(int errcode, gboolean show)
+static char *handle_errcode(struct gaim_connection *gc, int errcode)
 {
 	static char msg[AGG_BUF_LEN];
 
@@ -198,73 +201,51 @@ static char *handle_errcode(int errcode, gboolean show)
 		break;
 	}
 
-	if (show)
-		do_error_dialog(msg, _("Gadu-Gadu Error"));
+	hide_login_progress(gc, msg);
 
 	return msg;
-}
-
-static gchar *encode_postdata(const gchar *data)
-{
-	gchar *p = NULL;
-	int i, j = 0;
-	for (i = 0; i < strlen(data); i++) {
-		/* locale insensitive, doesn't reflect RFC (1738 section 2.2, 1866 section 8.2.1) */
-		if ((data[i] >= 'a' && data[i] <= 'z')
-		    || (data[i] >= 'A' && data[i] <= 'Z')
-		    || (data[i] >= '0' && data[i] <= '9')
-		    || data[i] == '=' || data[i] == '&') {
-			p = g_realloc(p, j + 1);
-			p[j] = data[i];
-			j++;
-		} else {
-			p = g_realloc(p, j + 4);	/* remember, sprintf appends a '\0' */
-			sprintf(p + j, "%%%02x", (unsigned char)data[i]);
-			j += 3;
-		}
-	}
-	p = g_realloc(p, j + 1);
-	p[j] = '\0';
-
-	if (p && strlen(p))
-		return p;
-	else
-		return g_strdup(data);
 }
 
 static void agg_set_away(struct gaim_connection *gc, char *state, char *msg)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
+	int status = gd->own_status;
 
 	if (gc->away)
 		gc->away = NULL;
 
 	if (!g_strcasecmp(state, AGG_STATUS_AVAIL))
-		gg_change_status(gd->sess, GG_STATUS_AVAIL);
+		status = GG_STATUS_AVAIL;
 	else if (!g_strcasecmp(state, AGG_STATUS_AVAIL_FRIENDS))
-		gg_change_status(gd->sess, GG_STATUS_AVAIL | GG_STATUS_FRIENDS_MASK);
+		status = GG_STATUS_AVAIL | GG_STATUS_FRIENDS_MASK;
 	else if (!g_strcasecmp(state, AGG_STATUS_BUSY)) {
-		gg_change_status(gd->sess, GG_STATUS_BUSY);
+		status = GG_STATUS_BUSY;
 		gc->away = "";
 	} else if (!g_strcasecmp(state, AGG_STATUS_BUSY_FRIENDS)) {
-		gg_change_status(gd->sess, GG_STATUS_BUSY | GG_STATUS_FRIENDS_MASK);
+		status =  GG_STATUS_BUSY | GG_STATUS_FRIENDS_MASK;
 		gc->away = "";
 	} else if (!g_strcasecmp(state, AGG_STATUS_INVISIBLE)) {
-		gg_change_status(gd->sess, GG_STATUS_INVISIBLE);
+		status = GG_STATUS_INVISIBLE;
 		gc->away = "";
 	} else if (!g_strcasecmp(state, AGG_STATUS_INVISIBLE_FRIENDS)) {
-		gg_change_status(gd->sess, GG_STATUS_INVISIBLE | GG_STATUS_FRIENDS_MASK);
+		status = GG_STATUS_INVISIBLE | GG_STATUS_FRIENDS_MASK;
 		gc->away = "";
 	} else if (!g_strcasecmp(state, AGG_STATUS_NOT_AVAIL)) {
-		gg_change_status(gd->sess, GG_STATUS_NOT_AVAIL);
+		status = GG_STATUS_NOT_AVAIL;
 		gc->away = "";
 	} else if (!g_strcasecmp(state, GAIM_AWAY_CUSTOM)) {
 		if (msg) {
-			gg_change_status(gd->sess, GG_STATUS_BUSY);
+			status = GG_STATUS_BUSY;
 			gc->away = "";
 		} else
-			gg_change_status(gd->sess, GG_STATUS_AVAIL);
+			status = GG_STATUS_AVAIL;
+
+		if (gd->own_status & GG_STATUS_FRIENDS_MASK)
+			status |= GG_STATUS_FRIENDS_MASK;
 	}
+
+	gd->own_status = status;
+	gg_change_status(gd->sess, status);
 }
 
 static gchar *get_away_text(int uc)
@@ -359,6 +340,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 
 	if (!(e = gg_watch_fd(gd->sess))) {
 		debug_printf("main_callback: gg_watch_fd failed - CRITICAL!\n");
+		hide_login_progress(gc, _("Unable to read socket"));
 		signoff(gc);
 		return;
 	}
@@ -373,7 +355,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	case GG_EVENT_CONN_FAILED:
 		if (gc->inpa)
 			gaim_input_remove(gc->inpa);
-		handle_errcode(e->event.failure, TRUE);
+		handle_errcode(gc, e->event.failure);
 		signoff(gc);
 		break;
 	case GG_EVENT_MSG:
@@ -385,6 +367,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			if (!allowed_uin(gc, user))
 				break;
 			imsg = charset_convert(e->event.msg.message, "CP1250", find_local_charset());
+			strip_linefeed(imsg);
 			/* e->event.msg.time - we don't know what this time is for */
 			serv_got_im(gc, user, imsg, 0, time((time_t) NULL));
 			g_free(imsg);
@@ -404,8 +387,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 				case GG_STATUS_AVAIL:
 				case GG_STATUS_BUSY:
 				case GG_STATUS_INVISIBLE:
-				case GG_STATUS_FRIENDS_MASK:
-					status = UC_NORMAL | (e->event.status.status << 5);
+					status = UC_NORMAL | (n->status << 5);
 					break;
 				default:
 					status = UC_NORMAL;
@@ -431,7 +413,6 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			case GG_STATUS_AVAIL:
 			case GG_STATUS_BUSY:
 			case GG_STATUS_INVISIBLE:
-			case GG_STATUS_FRIENDS_MASK:
 				status = UC_NORMAL | (e->event.status.status << 5);
 				break;
 			default:
@@ -440,8 +421,8 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			}
 
 			g_snprintf(user, sizeof(user), "%lu", e->event.status.uin);
-			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0, status,
-					0);
+			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
+					status, 0);
 		}
 		break;
 	case GG_EVENT_ACK:
@@ -479,18 +460,17 @@ static void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		gc->inpa = gaim_input_add(gd->sess->fd, GAIM_INPUT_READ, login_callback, gc);
 
 	switch (gd->sess->state) {
-	case GG_STATE_CONNECTING_HTTP:
-	case GG_STATE_WRITING_HTTP:
-		set_login_progress(gc, 2, _("Handshake"));
+	case GG_STATE_READING_DATA:
+		set_login_progress(gc, 2, _("Reading data"));
 		break;
 	case GG_STATE_CONNECTING_GG:
-		set_login_progress(gc, 3, _("Connecting to GG server"));
+		set_login_progress(gc, 3, _("Balancer handshake"));
 		break;
-	case GG_STATE_WAITING_FOR_KEY:
-		set_login_progress(gc, 4, _("Waiting for server key"));
+	case GG_STATE_READING_KEY:
+		set_login_progress(gc, 4, _("Reading server key"));
 		break;
-	case GG_STATE_SENDING_KEY:
-		set_login_progress(gc, 5, _("Sending key"));
+	case GG_STATE_READING_REPLY:
+		set_login_progress(gc, 5, _("Exchanging key hash"));
 		break;
 	default:
 		break;
@@ -498,6 +478,7 @@ static void login_callback(gpointer data, gint source, GaimInputCondition cond)
 
 	if (!(e = gg_watch_fd(gd->sess))) {
 		debug_printf("login_callback: gg_watch_fd failed - CRITICAL!\n");
+		hide_login_progress(gc, _("Critical error in GG library\n"));
 		signoff(gc);
 		return;
 	}
@@ -522,7 +503,7 @@ static void login_callback(gpointer data, gint source, GaimInputCondition cond)
 	case GG_EVENT_CONN_FAILED:
 		gaim_input_remove(gc->inpa);
 		gc->inpa = 0;
-		handle_errcode(e->event.failure, TRUE);
+		handle_errcode(gc, e->event.failure);
 		signoff(gc);
 		break;
 	default:
@@ -536,6 +517,7 @@ static void agg_keepalive(struct gaim_connection *gc)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (gg_ping(gd->sess) < 0) {
+		hide_login_progress(gc, _("Unable to ping server"));
 		signoff(gc);
 		return;
 	}
@@ -578,7 +560,7 @@ static void agg_login(struct aim_user *user)
 
 	gd->sess->uin = (uin_t) strtol(user->username, (char **)NULL, 10);
 	gd->sess->password = g_strdup(user->password);
-	gd->sess->state = GG_STATE_CONNECTING_HTTP;
+	gd->sess->state = GG_STATE_CONNECTING;
 	gd->sess->check = GG_CHECK_WRITE;
 	gd->sess->async = 1;
 	gd->sess->fd = proxy_connect(GG_APPMSG_HOST, GG_APPMSG_PORT, login_callback, gc);
@@ -599,6 +581,7 @@ static void agg_close(struct gaim_connection *gc)
 	gg_logoff(gd->sess);
 	gg_free_session(gd->sess);
 	g_free(gc->proto_data);
+	gd->own_status = GG_STATUS_NOT_AVAIL;
 }
 
 static int agg_send_im(struct gaim_connection *gc, char *who, char *msg, int flags)
@@ -614,7 +597,8 @@ static int agg_send_im(struct gaim_connection *gc, char *who, char *msg, int fla
 
 	if (strlen(msg) > 0) {
 		imsg = charset_convert(msg, find_local_charset(), "CP1250");
-		if (gg_send_message(gd->sess, (flags & IM_FLAG_CHECKBOX) ? GG_CLASS_MSG : GG_CLASS_CHAT,
+		if (gg_send_message(gd->sess, (flags & IM_FLAG_CHECKBOX)
+				    ? GG_CLASS_MSG : GG_CLASS_CHAT,
 				    strtol(who, (char **)NULL, 10), imsg) < 0)
 			return -1;
 		g_free(imsg);
@@ -848,6 +832,18 @@ static void delete_buddies_server_results(struct gaim_connection *gc, gchar *web
 	do_error_dialog(_("Couldn't delete Buddies List from Server"), _("Gadu-Gadu Error"));
 }
 
+static void password_change_server_results(struct gaim_connection *gc, gchar *webdata)
+{
+	if (strstr(webdata, "reg_success:")) {
+		do_error_dialog(_("Password changed sucessfully"),
+				_("Gadu-Gadu Information"));
+		return;
+	}
+
+	debug_printf("delete_buddies_server_results: webdata [%s]\n", webdata);
+	do_error_dialog(_("Password couldn't be changed"), _("Gadu-Gadu Error"));
+}
+
 static void http_results(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct agg_http *hdata = data;
@@ -904,6 +900,9 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 	case AGG_HTTP_USERLIST_DELETE:
 	        delete_buddies_server_results(gc, webdata);
 		break;
+	case AGG_HTTP_PASSWORD_CHANGE:
+		password_change_server_results(gc, webdata);
+		break;
 	case AGG_HTTP_NONE:
 	default:
 		debug_printf("http_results: unsupported type %d\n", hdata->type);
@@ -920,7 +919,6 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 	struct gaim_connection *gc = hdata->gc;
 	gchar *request = hdata->request;
 	gchar *buf;
-	char *ptr;
 
 	debug_printf("http_req_callback: begin\n");
 
@@ -938,10 +936,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
-	ptr = encode_postdata(request);
-	g_free(request);
-
-	debug_printf("http_req_callback: http request [%s]\n", ptr);
+	debug_printf("http_req_callback: http request [%s]\n", request);
 
 	buf = g_strdup_printf("POST %s HTTP/1.0\r\n"
 			      "Host: %s\r\n"
@@ -949,9 +944,9 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 			      "User-Agent: " GG_HTTP_USERAGENT "\r\n"
 			      "Content-Length: %d\r\n"
 			      "Pragma: no-cache\r\n" "\r\n" "%s\r\n",
-			      hdata->form, hdata->host, strlen(ptr), ptr);
+			      hdata->form, hdata->host, strlen(request), request);
 
-	g_free(ptr);
+	g_free(request);
 
 	if (write(source, buf, strlen(buf)) < strlen(buf)) {
 		g_free(buf);
@@ -970,12 +965,17 @@ static void import_buddies_server(struct gaim_connection *gc)
 {
 	struct agg_http *hi = g_new0(struct agg_http, 1);
 	static char msg[AGG_BUF_LEN];
+	gchar *u = gg_urlencode(gc->username);
+	gchar *p = gg_urlencode(gc->password);
 
 	hi->gc = gc;
 	hi->type = AGG_HTTP_USERLIST_IMPORT;
 	hi->form = AGG_PUBDIR_USERLIST_IMPORT_FORM;
 	hi->host = GG_PUBDIR_HOST;
-	hi->request = g_strdup_printf("FmNum=%s&Pass=%s", gc->username, gc->password);
+	hi->request = g_strdup_printf("FmNum=%s&Pass=%s", u, p);
+
+	g_free(u);
+	g_free(p);
 
 	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, hi) < 0) {
 		g_snprintf(msg, sizeof(msg), _("Buddies List import from Server failed (%s)"),
@@ -992,13 +992,19 @@ static void export_buddies_server(struct gaim_connection *gc)
 	struct agg_http *he = g_new0(struct agg_http, 1);
 	static char msg[AGG_BUF_LEN];
 	gchar *ptr;
+	gchar *u = gg_urlencode(gc->username);
+	gchar *p = gg_urlencode(gc->password);
+
 	GSList *gr = gc->groups;
 
 	he->gc = gc;
 	he->type = AGG_HTTP_USERLIST_EXPORT;
 	he->form = AGG_PUBDIR_USERLIST_EXPORT_FORM;
 	he->host = GG_PUBDIR_HOST;
-	he->request = g_strdup_printf("FmNum=%s&Pass=%s&Contacts=", gc->username, gc->password);
+	he->request = g_strdup_printf("FmNum=%s&Pass=%s&Contacts=", u, p);
+
+	g_free(u);
+	g_free(p);
 
 	while (gr) {
 		struct group *g = gr->data;
@@ -1007,16 +1013,23 @@ static void export_buddies_server(struct gaim_connection *gc)
 			struct buddy *b = m->data;
 			gchar *newdata;
 			/* GG Number */
-			gchar *name = b->name;
+			gchar *name = gg_urlencode(b->name);
 			/* GG Pseudo */
-			gchar *show = strlen(b->show) ? b->show : b->name;
+			gchar *show = gg_urlencode(strlen(b->show) ? b->show : b->name);
+			/* Group Name */
+			gchar *gname = gg_urlencode(g->name);
 
 			ptr = he->request;
 			newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s\r\n",
-						  show, show, show, show, "", g->name, name);
+						  show, show, show, show, "", gname, name);
 			he->request = g_strconcat(ptr, newdata, NULL);
+
 			g_free(newdata);
 			g_free(ptr);
+
+			g_free(gname);
+			g_free(show);
+			g_free(name);
 
 			m = g_slist_next(m);
 		}
@@ -1037,12 +1050,14 @@ static void delete_buddies_server(struct gaim_connection *gc)
 {
 	struct agg_http *he = g_new0(struct agg_http, 1);
 	static char msg[AGG_BUF_LEN];
+	gchar *u = gg_urlencode(gc->username);
+	gchar *p = gg_urlencode(gc->password);
 
 	he->gc = gc;
 	he->type = AGG_HTTP_USERLIST_DELETE;
 	he->form = AGG_PUBDIR_USERLIST_EXPORT_FORM;
 	he->host = GG_PUBDIR_HOST;
-	he->request = g_strdup_printf("FmNum=%s&Pass=%s&Delete=1", gc->username, gc->password);
+	he->request = g_strdup_printf("FmNum=%s&Pass=%s&Delete=1", u, p);
 
 	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
 		g_snprintf(msg, sizeof(msg), _("Deletion of Buddies List from Server failed (%s)"),
@@ -1055,7 +1070,8 @@ static void delete_buddies_server(struct gaim_connection *gc)
 }
 
 static void agg_dir_search(struct gaim_connection *gc, char *first, char *middle,
-			   char *last, char *maiden, char *city, char *state, char *country, char *email)
+			   char *last, char *maiden, char *city, char *state,
+			   char *country, char *email)
 {
 	struct agg_http *srch = g_new0(struct agg_http, 1);
 	static char msg[AGG_BUF_LEN];
@@ -1066,25 +1082,36 @@ static void agg_dir_search(struct gaim_connection *gc, char *first, char *middle
 	srch->host = GG_PUBDIR_HOST;
 
 	if (email && strlen(email)) {
-		srch->request = g_strdup_printf("Mode=1&Email=%s", email);
+		gchar *eemail = gg_urlencode(email);
+		srch->request = g_strdup_printf("Mode=1&Email=%s", eemail);
+		g_free(eemail);
 	} else {
 		gchar *new_first = charset_convert(first, find_local_charset(), "CP1250");
 		gchar *new_last = charset_convert(last, find_local_charset(), "CP1250");
 		gchar *new_city = charset_convert(city, find_local_charset(), "CP1250");
 
-		/* For active only add &ActiveOnly= */
-		srch->request = g_strdup_printf("Mode=0&FirstName=%s&LastName=%s&Gender=%d"
-						"&NickName=%s&City=%s&MinBirth=%d&MaxBirth=%d",
-						new_first, new_last, AGG_GENDER_NONE,
-						"", new_city, 0, 0);
+		gchar *enew_first = gg_urlencode(new_first);
+		gchar *enew_last = gg_urlencode(new_last);
+		gchar *enew_city = gg_urlencode(new_city);
 
 		g_free(new_first);
 		g_free(new_last);
 		g_free(new_city);
+
+		/* For active only add &ActiveOnly= */
+		srch->request = g_strdup_printf("Mode=0&FirstName=%s&LastName=%s&Gender=%d"
+						"&NickName=%s&City=%s&MinBirth=%d&MaxBirth=%d",
+						enew_first, enew_last, AGG_GENDER_NONE,
+						"", enew_city, 0, 0);
+
+		g_free(enew_first);
+		g_free(enew_last);
+		g_free(enew_city);
 	}
 
 	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
-		g_snprintf(msg, sizeof(msg), _("Connect to search service failed (%s)"), GG_PUBDIR_HOST);
+		g_snprintf(msg, sizeof(msg), _("Connect to search service failed (%s)"),
+			   GG_PUBDIR_HOST);
 		do_error_dialog(msg, _("Gadu-Gadu Error"));
 		g_free(srch->request);
 		g_free(srch);
@@ -1092,10 +1119,45 @@ static void agg_dir_search(struct gaim_connection *gc, char *first, char *middle
 	}
 }
 
+static void agg_change_passwd(struct gaim_connection *gc, char *old, char *new)
+{
+	struct agg_http *hpass = g_new0(struct agg_http, 1);
+	static char msg[AGG_BUF_LEN];
+	gchar *u = gg_urlencode(gc->username);
+	gchar *p = gg_urlencode(gc->password);
+	gchar *enew = gg_urlencode(new);
+	gchar *eold = gg_urlencode(old);
+
+	hpass->gc = gc;
+	hpass->type = AGG_HTTP_PASSWORD_CHANGE;
+	hpass->form = AGG_REGISTER_DATA_FORM;
+	hpass->host = GG_REGISTER_HOST;
+
+	/* We are using old password as place for email - it's ugly */
+	hpass->request = g_strdup_printf("fmnumber=%s&fmpwd=%s&pwd=%s&email=%s&code=%u",
+					 u, p, enew, eold, gg_http_hash(old, new));
+
+	g_free(u);
+	g_free(p);
+	g_free(enew);
+	g_free(eold);
+
+	if (proxy_connect(GG_REGISTER_HOST, GG_REGISTER_PORT, http_req_callback, hpass) < 0) {
+		g_snprintf(msg, sizeof(msg), _("Changing Password failed (%s)"),
+			   GG_REGISTER_HOST);
+		do_error_dialog(msg, _("Gadu-Gadu Error"));
+		g_free(hpass->request);
+		g_free(hpass);
+		return;
+	}                                        
+}
+
 static void agg_do_action(struct gaim_connection *gc, char *action)
 {
 	if (!strcmp(action, _("Directory Search"))) {
 		show_find_info(gc);
+	} else if (!strcmp(action, _("Change Password"))) {
+		show_change_passwd(gc);
 	} else if (!strcmp(action, _("Import Buddies List from Server"))) {
 		import_buddies_server(gc);
 	} else if (!strcmp(action, _("Export Buddies List to Server"))) {
@@ -1110,6 +1172,9 @@ static GList *agg_actions()
 	GList *m = NULL;
 
 	m = g_list_append(m, _("Directory Search"));
+	m = g_list_append(m, NULL);
+	m = g_list_append(m, _("Change Password"));
+	m = g_list_append(m, NULL);
 	m = g_list_append(m, _("Import Buddies List from Server"));
 	m = g_list_append(m, _("Export Buddies List to Server"));
 	m = g_list_append(m, _("Delete Buddies List from Server"));
@@ -1130,17 +1195,21 @@ static void agg_get_info(struct gaim_connection *gc, char *who)
 	/* If it's invalid uin then maybe it's nickname? */
 	if (invalid_uin(who)) {
 		gchar *new_who = charset_convert(who, find_local_charset(), "CP1250");
+		gchar *enew_who = gg_urlencode(new_who);
+		
+		g_free(new_who);
 
 		srch->request = g_strdup_printf("Mode=0&FirstName=%s&LastName=%s&Gender=%d"
 						"&NickName=%s&City=%s&MinBirth=%d&MaxBirth=%d",
-						"", "", AGG_GENDER_NONE, new_who, "", 0, 0);
+						"", "", AGG_GENDER_NONE, enew_who, "", 0, 0);
 
-		g_free(new_who);
+		g_free(enew_who);
 	} else
 		srch->request = g_strdup_printf("Mode=3&UserId=%s", who);
 
 	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
-		g_snprintf(msg, sizeof(msg), _("Connect to search service failed (%s)"), GG_PUBDIR_HOST);
+		g_snprintf(msg, sizeof(msg), _("Connect to search service failed (%s)"),
+			   GG_PUBDIR_HOST);
 		do_error_dialog(msg, _("Gadu-Gadu Error"));
 		g_free(srch->request);
 		g_free(srch);
@@ -1199,7 +1268,7 @@ void gg_init(struct prpl *ret)
 	ret->get_dir = agg_get_info;
 	ret->dir_search = agg_dir_search;
 	ret->set_idle = NULL;
-	ret->change_passwd = NULL;
+	ret->change_passwd = agg_change_passwd;
 	ret->add_buddy = agg_add_buddy;
 	ret->add_buddies = agg_add_buddies;
 	ret->remove_buddy = agg_rem_buddy;
@@ -1245,3 +1314,13 @@ char *description()
 }
 
 #endif
+
+/*
+ * Local variables:
+ * c-indentation-style: k&r
+ * c-basic-offset: 8
+ * indent-tabs-mode: notnil
+ * End:
+ *
+ * vim: shiftwidth=8:
+ */

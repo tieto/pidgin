@@ -13,6 +13,7 @@ noinst_LIBRARIES = libgg.a
 
 libgg_a_SOURCES = libgg.c \
 		  libgg.h \
+		  common.c \
 		  iconv_string.c \
 		  iconv_string.h \
 		  gg.c
@@ -25,6 +26,7 @@ noinst_LIBRARIES =
 
 libgg_la_SOURCES = libgg.c \
 		   libgg.h \
+		   common.c \
 		   iconv_string.c \
 		   iconv_string.h \
 		   gg.c
