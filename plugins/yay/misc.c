@@ -53,12 +53,12 @@ char *yahoo_urlencode(const char *str)
 	return ret;
 }
 
-int yahoo_makeint(char *buf)
+int yahoo_makeint(guchar *buf)
 {
 	return ((buf[3] << 24) + (buf[2] << 16) + (buf[1] << 8) + buf[0]);
 }
 
-void yahoo_storeint(char *buf, guint data)
+void yahoo_storeint(guchar *buf, guint data)
 {
 	int i;
 	for (i = 0; i < 4; i++) {

@@ -439,22 +439,22 @@ static void yahoo_keepalive(struct gaim_connection *gc) {
 }
 
 static void gyahoo_add_buddy(struct gaim_connection *gc, char *name) {
-	/*
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	struct yahoo_buddy *tmpbuddy;
+	struct yahoo_group *tmpgroup;
 	struct group *g = find_group_by_buddy(gc, name);
 	char *group = NULL;
 
 	if (g) {
 		group = g->name;
-	} else if (yd->sess && yd->sess->buddies[0]) {
-		tmpbuddy = yd->sess->buddies[0];
-		group = tmpbuddy->group;
+	} else if (yd->sess && yd->sess->groups) {
+		tmpgroup = yd->sess->groups->data;
+		group = tmpgroup->name;
+	} else {
+		group = "Buddies";
 	}
 
 	if (group)
-		yahoo_add_buddy(yd->ctxt, name, yd->active_id, group, "");
-	*/
+		yahoo_add_buddy(yd->sess, yd->active_id, name, group, "");
 }
 
 static void yahoo_add_buddies(struct gaim_connection *gc, GList *buddies) {
@@ -465,22 +465,22 @@ static void yahoo_add_buddies(struct gaim_connection *gc, GList *buddies) {
 }
 
 static void gyahoo_remove_buddy(struct gaim_connection *gc, char *name) {
-	/*
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	struct yahoo_buddy *tmpbuddy;
+	struct yahoo_group *tmpgroup;
 	struct group *g = find_group_by_buddy(gc, name);
 	char *group = NULL;
 
 	if (g) {
 		group = g->name;
-	} else if (yd->ctxt && yd->ctxt->buddies[0]) {
-		tmpbuddy = yd->ctxt->buddies[0];
-		group = tmpbuddy->group;
+	} else if (yd->sess && yd->sess->groups) {
+		tmpgroup = yd->sess->groups->data;
+		group = tmpgroup->name;
+	} else {
+		group = "Buddies";
 	}
 
 	if (group)
-		yahoo_remove_buddy(yd->ctxt, name, yd->active_id, group, "");
-	*/
+		yahoo_remove_buddy(yd->sess, yd->active_id, name, group, "");
 }
 
 static char **yahoo_list_icon(int uc) {

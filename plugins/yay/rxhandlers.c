@@ -268,6 +268,7 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 		g_free(buf);
 	} else if (conn->type == YAHOO_CONN_TYPE_MAIN) {
 		struct yahoo_packet pkt;
+		guchar temp;
 		int len;
 
 		if ((read(socket, &pkt, 8) != 8) || strcmp(pkt.version, "YHOO1.0")) {
@@ -282,7 +283,6 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 			return;
 		}
 		len = yahoo_makeint(pkt.len);
-		len = ntohs(len) >> 8;
 
 		if (read(socket, &pkt.service, len - 12) != len - 12) {
 			yahoo_close(session, conn);

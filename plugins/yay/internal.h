@@ -65,8 +65,8 @@ void yahoo_close(struct yahoo_session *, struct yahoo_conn *);
 
 #define YAHOO_MESSAGE_NORMAL  1
 
-void yahoo_storeint(char *, guint);
-int yahoo_makeint(char *);
+void yahoo_storeint(guchar *, guint);
+int yahoo_makeint(guchar *);
 
 struct yahoo_packet {
 	char version[8];
