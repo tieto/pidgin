@@ -1955,7 +1955,6 @@ update_send_as_selection(struct gaim_window *win)
 	struct gaim_account *account;
 	struct gaim_conversation *conv;
 	struct gaim_gtk_window *gtkwin;
-	const char *username;
 	GtkWidget *menu;
 	GList *child;
 
@@ -1972,8 +1971,6 @@ update_send_as_selection(struct gaim_window *win)
 
 	if (gtkwin->menu.send_as == NULL)
 		return;
-
-	username = (account->gc == NULL ? account->username : account->gc->username);
 
 	gtk_widget_show(gtkwin->menu.send_as);
 
@@ -2188,6 +2185,7 @@ generate_send_as_items(struct gaim_window *win,
 			gtk_widget_show(box);
 
 			gtk_widget_set_sensitive(menuitem, FALSE);
+			g_object_set_data(G_OBJECT(menuitem), "gaim_account", account);
 
 			gtk_widget_show(menuitem);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -4879,6 +4877,7 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 		}
 	}
 	else {
+		gtk_widget_set_sensitive(gtkconv->send, TRUE);
 		if (win != NULL) {
 			gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
 		}
