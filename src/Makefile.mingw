@@ -32,7 +32,7 @@ CFLAGS =
 
 DEFINES =
 
-LDFLAGS = -mwindows
+LDFLAGS = -mconsole -mwindows
 
 #-mconsole
 #-mwindows
@@ -90,6 +90,7 @@ DLL_C_SRC =		aim.c \
 			html.c \
 			idle.c \
 			list.c \
+			log.c \
 			md5.c \
 			module.c \
 			multi.c \
