@@ -503,17 +503,18 @@ static GaimLogLogger xml_logger =  {
 static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		const char *from, time_t time, const char *message)
 {
-	GaimConnection *gc = gaim_account_get_connection(log->account);
 	char date[64];
 	char *msg_fixed;
 	struct generic_logger_data *data = log->logger_data;
+	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
+	const char *prpl_name = plugin->info->name;
+
 	if(!data) {
 		/* This log is new */
 		char *ud = gaim_user_dir();
 		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
 		char *chat;
-		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
-			(gaim_find_prpl(gaim_account_get_protocol_id(log->account)))->list_icon(log->account, NULL);
+		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
 		char *dir;
 		char *filename;
 
@@ -577,17 +578,17 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		} else if (type & GAIM_MESSAGE_RECV) {
 			if(gaim_message_meify(msg_fixed, -1))
 				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
-						date, from, gc->prpl->info->name, msg_fixed);
+						date, from, prpl_name, msg_fixed);
 			else
 				fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
-						date, from, gc->prpl->info->name, msg_fixed);
+						date, from, prpl_name, msg_fixed);
 		} else if (type & GAIM_MESSAGE_SEND) {
 			if(gaim_message_meify(msg_fixed, -1))
 				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
-						date, from, gc->prpl->info->name, msg_fixed);
+						date, from, prpl_name, msg_fixed);
 			else
 				fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
-						date, from, gc->prpl->info->name, msg_fixed);
+						date, from, prpl_name, msg_fixed);
 		}
 	}
 

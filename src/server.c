@@ -1208,7 +1208,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			GaimLog *log = gaim_account_get_log(account);
 			char *tmp = g_strdup_printf(_("%s signed on"), alias);
 
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name),
 						   current_time, tmp);
 			g_free(tmp);
 		}
@@ -1226,7 +1226,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			tmp = g_strdup_printf(_("%s went away"), alias);
 
 		if(tmp){
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name),
 						   current_time, tmp);
 			g_free(tmp);
 		}
@@ -1239,7 +1239,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			GaimLog *log = gaim_account_get_log(account);
 			char *tmp = g_strdup_printf(_("%s became idle"), alias);
 
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name),
 						   current_time, tmp);
 			g_free(tmp);
 		}
@@ -1250,7 +1250,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			GaimLog *log = gaim_account_get_log(account);
 			char *tmp = g_strdup_printf(_("%s became unidle"), alias);
 
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name),
 						   current_time, tmp);
 			g_free(tmp);
 		}
@@ -1280,7 +1280,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			GaimLog *log = gaim_account_get_log(account);
 			char *tmp = g_strdup_printf(_("%s signed off"), alias);
 
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name),
 						   current_time, tmp);
 			g_free(tmp);
 		}

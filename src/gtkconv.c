@@ -5073,7 +5073,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	}
 	else {
 		char *new_message = g_memdup(message, length);
-		char *who_escaped = g_markup_escape_text(who, strlen(who));
+		char *who_escaped = (who ? g_markup_escape_text(who, strlen(who)) : g_strdup(""));
 
 		if (flags & GAIM_MESSAGE_WHISPER) {
 			str = g_malloc(1024);

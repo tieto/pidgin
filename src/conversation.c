@@ -1376,8 +1376,8 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		!g_list_find(gaim_get_conversations(), conv))
 		return;
 
-	if (gc != NULL) {
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (account != NULL) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol_id(account)));
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM ||
 			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
