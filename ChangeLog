@@ -14,6 +14,8 @@ version 0.47:
 	* Add Opera to the available browsers (thanks Brian Enigma)
 	* The applet no longer crashes when you remove it while signed on
 	* Improved log viewer (thanks to Ben Miller)
+	* Double clicking a name unqueue's away messages for that buddy
+	  (thanks to Sean Egan)
 
 version 0.46 (10/18/2001):
 	* New applet icons (courtesy David Raeman)

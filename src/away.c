@@ -85,6 +85,51 @@ void purge_away_queue()
 	gtk_clist_thaw(GTK_CLIST(clistqueue));
 }
 
+void dequeue_by_buddy(GtkWidget *clist, gint row, gint column, GdkEventButton *event, gpointer data) {
+	char *temp;
+	char *name;
+	GSList *templist;
+	struct conversation *cnv;
+	
+	if(!(event->type == GDK_2BUTTON_PRESS && event->button == 1))
+		return; /* Double clicking on the clist will unqueue that users messages. */
+	
+	gtk_clist_get_text(GTK_CLIST(clist), row, 0, &temp);
+	name = g_strdup(temp);
+
+	if (!name)
+		return;
+	debug_printf("Unqueueing messages from %s.\n", name);
+	templist = message_queue;
+	while (templist) {
+		struct queued_message *qm = templist->data;
+		if (templist->data) {
+			if (!g_strcasecmp(qm->name, name)) {
+				cnv = find_conversation(name);
+				if (!cnv)
+					cnv = new_conversation(qm->name);
+				if (g_slist_index(connections, qm->gc) >= 0)
+					set_convo_gc(cnv, qm->gc);
+				
+				write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm);
+				g_free(qm->message);
+				g_free(qm);
+				templist = message_queue = g_slist_remove(message_queue, qm);
+				
+			} else {
+				templist = templist->next;
+			}
+		}
+	}
+	g_free(name);
+	gtk_clist_remove(GTK_CLIST(clist), row);
+
+
+}
+	
+	
+
+
 void toggle_away_queue()
 {
 	if (!clistqueue || !clistqueuesw)
@@ -187,6 +232,9 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_clist_set_column_width(GTK_CLIST(clistqueue), 0, 100);
 		gtk_widget_set_usize(GTK_WIDGET(clistqueue), -1, 50);
 		gtk_container_add(GTK_CONTAINER(clistqueuesw), clistqueue);
+		gtk_signal_connect(GTK_OBJECT(clistqueue), "select_row", GTK_SIGNAL_FUNC(dequeue_by_buddy), NULL);
+
+
 
 		if (away_options & OPT_AWAY_QUEUE) {
 			gtk_widget_show(clistqueuesw);
