@@ -2,6 +2,7 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.76cvs:
 	* WYSIWYG text input
+	* Ability to be "Invisible" on AIM
 	* Chatroom list support (Tim Ringenbach)
 	* Improved accessibility support for screen readers and other
 	  accessibility tools (Marc Mulcahy)
