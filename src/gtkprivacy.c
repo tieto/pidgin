@@ -239,6 +239,10 @@ select_account_cb(GtkWidget *dropdown, GaimAccount *account,
 	rebuild_block_list(dialog);
 }
 
+/*
+ * TODO: Setting the permit/deny setting needs to go through privacy.c
+ *       Even better: the privacy API needs to not suck.
+ */
 static void
 type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 {
@@ -262,7 +266,7 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 		dialog->in_allow_list = FALSE;
 	}
 
-	gaim_blist_sync();
+	gaim_blist_schedule_save();
 }
 
 static void

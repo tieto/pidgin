@@ -58,6 +58,8 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who,
 	if (privacy_ops != NULL && privacy_ops->permit_added != NULL)
 		privacy_ops->permit_added(account, who);
 
+	gaim_blist_schedule_save();
+
 	return TRUE;
 }
 
@@ -92,6 +94,8 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 	if (privacy_ops != NULL && privacy_ops->permit_removed != NULL)
 		privacy_ops->permit_removed(account, who);
 
+	gaim_blist_schedule_save();
+
 	return TRUE;
 }
 
@@ -124,6 +128,8 @@ gaim_privacy_deny_add(GaimAccount *account, const char *who,
 
 	if (privacy_ops != NULL && privacy_ops->deny_added != NULL)
 		privacy_ops->deny_added(account, who);
+
+	gaim_blist_schedule_save();
 
 	return TRUE;
 }
@@ -158,6 +164,8 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 
 	if (privacy_ops != NULL && privacy_ops->deny_removed != NULL)
 		privacy_ops->deny_removed(account, who);
+
+	gaim_blist_schedule_save();
 
 	return TRUE;
 }
