@@ -2407,7 +2407,7 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
 	if (!who || !message)
 		return 0;
 
-	if((realwho = get_realwho(gjc, who, FALSE, NULL)) == NULL)
+	if((realwho = get_realwho(gjc, who, TRUE, NULL)) == NULL)
 		return 0;
 
 	x = xmlnode_new_tag("message");
