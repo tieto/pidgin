@@ -2255,11 +2255,12 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 
 	/* Set up dnd */
-	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview), GDK_BUTTON1_MASK, gte,
-					       2, GDK_ACTION_COPY);
-
-        gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview), gte, 2,
-					     GDK_ACTION_COPY | GDK_ACTION_MOVE);
+	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview),
+										   GDK_BUTTON1_MASK, gte, 2, 
+										   GDK_ACTION_COPY);
+	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview),
+										 gte, 2,
+										 GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
   	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);

@@ -1025,57 +1025,6 @@ static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 	gaim_xfer_request(xfer);
 }
 
-static void oscar_sendfile(GaimConnection *gc, const char *destsn, const char *file) {
-	OscarData *od = (OscarData *)gc->proto_data;
-	GaimXfer *xfer;
-	struct aim_oft_info *oft_info;
-
-	/* You want to send a file to someone else, you're so generous */
-
-	/* Build the file transfer handle */
-	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, destsn);
-	xfer->local_port = 5190;
-
-	/* Create the oscar-specific data */
-	oft_info = aim_oft_createinfo(od->sess, NULL, destsn, xfer->local_ip, xfer->local_port, 0, 0, NULL);
-	xfer->data = oft_info;
-
-	 /* Setup our I/O op functions */
-	gaim_xfer_set_init_fnc(xfer, oscar_xfer_init);
-	gaim_xfer_set_start_fnc(xfer, oscar_xfer_start);
-	gaim_xfer_set_end_fnc(xfer, oscar_xfer_end);
-	gaim_xfer_set_cancel_send_fnc(xfer, oscar_xfer_cancel_send);
-	gaim_xfer_set_cancel_recv_fnc(xfer, oscar_xfer_cancel_recv);
-	gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack);
-
-	/* Keep track of this transfer for later */
-	od->file_transfers = g_slist_append(od->file_transfers, xfer);
-
-	/* We don't need to request, since it has already been accepted */
-	gaim_xfer_request_accepted (xfer, g_strdup(file));
-}
-
-static gboolean oscar_has_sendfile (GaimConnection *gc, const char *who)
-{
-	GaimBuddy *b = NULL;
-	aim_userinfo_t *userinfo;
-        OscarData *od = gc->proto_data;
-	
-	if(who)
-		b = gaim_find_buddy(gc->account, who);
-	
-	if (b)
-		userinfo = aim_locate_finduserinfo(od->sess, b->name);
-
-	if(userinfo) {
-		/* True if we can send files to this dude, false if we can't */
-		return userinfo->capabilities & AIM_CAPS_SENDFILE;
-	}
-	else
-		return FALSE;
-
-}
-
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
@@ -6278,6 +6227,14 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 				pbm->gc = gc;
 				m = g_list_append(m, pbm);
 			}
+
+			if (userinfo->capabilities & AIM_CAPS_SENDFILE) {
+				pbm = g_new0(struct proto_buddy_menu, 1);
+				pbm->label = _("Send File");
+				pbm->callback = oscar_ask_sendfile;
+				pbm->gc = gc;
+				m = g_list_append(m, pbm);
+			}
 #if 0
 			if (userinfo->capabilities & AIM_CAPS_GETFILE) {
 				pbm = g_new0(struct proto_buddy_menu, 1);
@@ -6704,12 +6661,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	oscar_convo_closed,
 	NULL,
-	oscar_set_icon,
-	NULL,
-	NULL,
-	oscar_ask_sendfile,
-	oscar_sendfile,
-	oscar_has_sendfile
+	oscar_set_icon
 };
 
 static GaimPluginInfo info =
