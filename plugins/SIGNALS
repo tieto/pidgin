@@ -303,7 +303,7 @@ event_im_displayed_rcvd:
 	'flags' is flags on the message.
 
 event_chat_send_invite:
-	struct gaim_connection *gc, int id, char *who, char *msg
+	struct gaim_connection *gc, int id, char *who, char **msg
 
 	This is called just before you're about to invite someone. It's
 	useful for if you want to pass someone a key so that they can
@@ -312,4 +312,5 @@ event_chat_send_invite:
 	'gc' is the connection the invite is sent on.
 	'id' is the id of the room you're inviting them to.
 	'who' is who you're inviting.
-	'msg' is the message they'll receive when they're invited.
+	'msg' is the message they'll receive when they're invited. It may be
+	NULL. Setting this to NULL won't stop the invitation from going thru.

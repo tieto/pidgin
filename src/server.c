@@ -302,9 +302,12 @@ void serv_join_chat(struct gaim_connection *g, GList *data)
 
 void serv_chat_invite(struct gaim_connection *g, int id, char *message, char *name)
 {
-	plugin_event(event_chat_send_invite, g, (void *)id, name, message);
+	char *buffy = message && *message ? g_strdup(message) : NULL;
+	plugin_event(event_chat_send_invite, g, (void *)id, name, &buffy);
 	if (g->prpl && g->prpl->chat_invite)
-		(*g->prpl->chat_invite)(g, id, message, name);
+		(*g->prpl->chat_invite)(g, id, buffy, name);
+	if (buffy)
+		g_free(buffy);
 }
 
 void serv_chat_leave(struct gaim_connection *g, int id)

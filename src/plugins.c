@@ -867,7 +867,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 	case event_chat_recv:
 	case event_chat_send_invite:
 		g_snprintf(buf, sizeof buf, "%lu %d \"%s\" %s", (unsigned long)arg1,
-				(int)arg2, (char *)arg3, (char *)arg4);
+				(int)arg2, (char *)arg3, *(char **)arg4 ? *(char **)arg4 : "(null)");
 		break;
 	case event_chat_send:
 		g_snprintf(buf, sizeof buf, "%lu %d %s", (unsigned long)arg1, (int)arg2,
