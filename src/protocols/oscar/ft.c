@@ -613,6 +613,91 @@ faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, con
 }
 
 /**
+ * Sometimes you just don't know with these kinds of people.
+ *
+ * @param sess The session.
+ * @param conn The ODC connection of the incoming data.
+ * @param frr The frame allocated for the incoming data.
+ * @param bs It stands for "bologna sandwich."
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr, aim_bstream_t *bs)
+{
+	aim_frame_t fr;
+	aim_rxcallback_t userfunc;
+	fu32_t payloadlength;
+	fu16_t flags, encoding;
+	char *snptr = NULL;
+
+	fr.conn = conn;
+
+	/* AAA - ugly */
+	aim_bstream_setpos(bs, 20);
+	payloadlength = aimbs_get32(bs);
+
+	aim_bstream_setpos(bs, 24);
+	encoding = aimbs_get16(bs);
+
+	aim_bstream_setpos(bs, 30);
+	flags = aimbs_get16(bs);
+
+	aim_bstream_setpos(bs, 36);
+	/* XXX - create an aimbs_getnullstr function? */
+	snptr = aimbs_getstr(bs, MAXSNLEN);
+
+	faimdprintf(sess, 2, "faim: OFT frame: handlehdr_odc: %04x / %04x / %s\n", payloadlength, flags, snptr);
+
+	if (flags & 0x0002) {
+		int ret = 0;
+
+		if (flags & 0x000c) {
+			if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
+				ret = userfunc(sess, &fr, snptr, 1);
+			return ret;
+		}
+
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
+			ret = userfunc(sess, &fr, snptr, 0);
+
+		return ret;
+
+	} else if (((flags & 0x000f) == 0x0000) && payloadlength) {
+		char *msg, *msg2;
+		int ret = 0;
+		int recvd = 0;
+		int i;
+
+		if (!(msg = calloc(1, payloadlength+1)))
+			return -1;
+		msg2 = msg;
+		
+		while (payloadlength - recvd) {
+			if (payloadlength - recvd >= 1024)
+				i = aim_recv(conn->fd, msg2, 1024);
+			else 
+				i = aim_recv(conn->fd, msg2, payloadlength - recvd);
+			if (i <= 0) {
+				free(msg);
+				return -1;
+			}
+			recvd = recvd + i;
+			msg2 = msg2 + i;
+			if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER)))
+				userfunc(sess, &fr, snptr, (double)recvd / payloadlength);
+		}
+		
+		if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING)) )
+			ret = userfunc(sess, &fr, snptr, msg, payloadlength, encoding);
+
+		free(msg);
+
+		return ret;
+	}
+
+	return 0;
+}
+
+/**
  * Creates a listener socket so the other dude can connect to us.
  *
  * You'll want to set up some kind of watcher on this socket.  
@@ -793,6 +878,7 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t
 
 	/* apparently 0 is ASCII, 2 is UCS-2 */
 	/* it is likely that 3 is ISO 8859-1 */
+	/* I think "nlanguage" might be the same thing as "subenc" in im.c */
 	fh->nencode = 0x0000;
 	fh->nlanguage = 0x0000;
 
@@ -821,91 +907,6 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, aim_conn_t *conn, fu16_t
 }
 
 /**
- * Sometimes you just don't know with these kinds of people.
- *
- * @param sess The session.
- * @param conn The ODC connection of the incoming data.
- * @param frr The frame allocated for the incoming data.
- * @param bs It stands for "bologna sandwich."
- * @return Return 0 if no errors, otherwise return the error number.
- */
-static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr, aim_bstream_t *bs)
-{
-	aim_frame_t fr;
-	aim_rxcallback_t userfunc;
-	fu32_t payloadlength;
-	fu16_t flags, encoding;
-	char *snptr = NULL;
-
-	fr.conn = conn;
-
-	/* AAA - ugly */
-	aim_bstream_setpos(bs, 20);
-	payloadlength = aimbs_get32(bs);
-
-	aim_bstream_setpos(bs, 24);
-	encoding = aimbs_get16(bs);
-
-	aim_bstream_setpos(bs, 30);
-	flags = aimbs_get16(bs);
-
-	aim_bstream_setpos(bs, 36);
-	/* XXX - create an aimbs_getnullstr function? */
-	snptr = aimbs_getstr(bs, MAXSNLEN);
-
-	faimdprintf(sess, 2, "faim: OFT frame: handlehdr_odc: %04x / %04x / %s\n", payloadlength, flags, snptr);
-
-	if (flags & 0x0002) {
-		int ret = 0;
-
-		if (flags & 0x000c) {
-			if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
-				ret = userfunc(sess, &fr, snptr, 1);
-			return ret;
-		}
-
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
-			ret = userfunc(sess, &fr, snptr, 0);
-
-		return ret;
-
-	} else if (((flags & 0x000f) == 0x0000) && payloadlength) {
-		char *msg, *msg2;
-		int ret = 0;
-		int recvd = 0;
-		int i;
-
-		if (!(msg = calloc(1, payloadlength+1)))
-			return -1;
-		msg2 = msg;
-		
-		while (payloadlength - recvd) {
-			if (payloadlength - recvd >= 1024)
-				i = aim_recv(conn->fd, msg2, 1024);
-			else 
-				i = aim_recv(conn->fd, msg2, payloadlength - recvd);
-			if (i <= 0) {
-				free(msg);
-				return -1;
-			}
-			recvd = recvd + i;
-			msg2 = msg2 + i;
-			if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER)))
-				userfunc(sess, &fr, snptr, (double)recvd / payloadlength);
-		}
-		
-		if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING)) )
-			ret = userfunc(sess, &fr, snptr, msg, payloadlength, encoding);
-
-		free(msg);
-
-		return ret;
-	}
-
-	return 0;
-}
-
-/**
  * Handle incoming data on a rendezvous connection.  This is analogous to the 
  * consumesnac function in rxhandlers.c, and I really think this should probably 
  * be in rxhandlers.c as well, but I haven't finished cleaning everything up yet.
@@ -926,28 +927,7 @@ faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr
 		else
 			faimdprintf(sess, 0, "faim: ODC directim frame unknown, type is %04x\n", fr->hdr.rend.type);
 
-	} else if (conn->subtype == AIM_CONN_SUBTYPE_OFT_GETFILE) {
-		switch (fr->hdr.rend.type) {
-			case 0x1108: /* getfile listing.txt incoming tx->rx */
-				break;
-			case 0x1209: /* get file listing ack rx->tx */
-				break;
-			case 0x120b: /* get file listing rx confirm */
-				break;
-			case 0x120c: /* getfile request */
-				break;
-			case 0x0101: /* getfile sending data */
-				break;
-			case 0x0202: /* getfile recv data */
-				break;
-			case 0x0204: /* getfile finished */
-				break;
-			default:
-				faimdprintf(sess, 2, "faim: OFT getfile frame uknown, type is %04x\n", fr->hdr.rend.type);
-				break;
-		}
-
-	} else if (conn->subtype == AIM_CONN_SUBTYPE_OFT_SENDFILE) {
+	} else {
 		aim_rxcallback_t userfunc;
 		struct aim_fileheader_t *header = aim_oft_getheader(&fr->data);
 		aim_oft_dirconvert_fromstupid(header->name); /* XXX - This should be client-side */

@@ -432,6 +432,7 @@ typedef struct aim_session_s {
 
 	aim_msgcookie_t *msgcookies;
 	struct aim_icq_info *icq_info;
+	struct aim_oft_info *oft_info;
 
 	void *modlistv;
 } aim_session_t;
@@ -992,11 +993,11 @@ struct aim_fileheader_t {
 				/* 256 */
 };
 
-struct aim_filetransfer_priv {
+struct aim_oft_info {
 	char cookie[8];
 	char ip[30];
-	int state;
-	struct aim_fileheader_t fh;
+	struct aim_fileheader_t *fh;
+	struct aim_oft_info *next;
 };
 
 faim_export fu32_t aim_oft_checksum_chunk(const fu8_t *buffer, int bufferlen, fu32_t prevcheck);

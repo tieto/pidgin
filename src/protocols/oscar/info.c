@@ -633,16 +633,31 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 * about the buddy icon that the user has stored on 
 			 * the server.
 			 */
-			outinfo->iconstrlen = length-4;
-			outinfo->iconstrlen -= aim_bstream_advance(bs, aimbs_get16(bs));
-			outinfo->iconstrlen -= aim_bstream_advance(bs, aimbs_get16(bs));
-			if (aim_bstream_empty(bs) >= outinfo->iconstrlen) {
-				char *iconstr = aimbs_getraw(bs, outinfo->iconstrlen);
-				memcpy(outinfo->iconstr, iconstr, outinfo->iconstrlen);
-				free(iconstr);
-			} else {
-				outinfo->iconstrlen = 0;
-				outinfo->iconstr[0] = '\0';
+			int type, subtype, len;
+			char *iconstr;
+/*
+int i;
+debug_printf("iconstr: 0x");
+for (i=0; i<length; i++)
+	debug_printf("%02hhx ", bs->data[bs->offset+i]);
+debug_printf("\n");
+*/
+			while (aim_bstream_curpos(bs) < endpos) {
+				type = aimbs_get16(bs);
+				subtype = aimbs_get8(bs);
+				if ((type != 0x0001) || (subtype != 0x01)) {
+					aim_bstream_advance(bs, aimbs_get8(bs));
+				} else {
+					len = aimbs_get8(bs);
+					if (len < 30) {
+						iconstr = aimbs_getraw(bs, len);
+						memcpy(outinfo->iconstr, iconstr, len);
+						outinfo->iconstrlen = len;
+						free(iconstr);
+					} else {
+						aim_bstream_advance(bs, len);
+					}
+				}
 			}
 
 		} else if (type == 0x001e) {

@@ -25,7 +25,7 @@ faim_export int aim_icon_requesticon(aim_session_t *sess, const char *sn, const 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !sn || !strlen(sn) || !iconstr || !iconstrlen)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 1+strlen(sn) + 1 + iconstrlen)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 1+strlen(sn) + 4 + 1+iconstrlen)))
 		return -ENOMEM;
 	snacid = aim_cachesnac(sess, 0x0010, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0010, 0x0004, 0x0000, snacid);
@@ -34,10 +34,13 @@ faim_export int aim_icon_requesticon(aim_session_t *sess, const char *sn, const 
 	aimbs_put8(&fr->data, strlen(sn));
 	aimbs_putraw(&fr->data, sn, strlen(sn));
 
-	/* The number "1" */
+	/* Some numbers.  You like numbers, right? */
+	aimbs_put8(&fr->data, 0x01);
+	aimbs_put16(&fr->data, 0x0001);
 	aimbs_put8(&fr->data, 0x01);
 
 	/* Icon string */
+	aimbs_put8(&fr->data, iconstrlen);
 	aimbs_putraw(&fr->data, iconstr, iconstrlen);
 
 	aim_tx_enqueue(sess, fr);

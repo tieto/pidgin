@@ -291,7 +291,9 @@
 
 #define AIM_CB_OFT_GETFILE_REQUESTLISTING 0x1108 /* request a listing.txt file from the remote user */
 #define AIM_CB_OFT_GETFILE_SENDLISTING 0x1208	/* we're going to send a listing.txt file */
-#define AIM_CB_OFT_GETFILE_ACKLISTING 0x120b	/* we received the listing.txt file, yay */
+#define AIM_CB_OFT_GETFILE_RECEIVELISTING 0x1209 /* the other dude sent us a listing.txt file */
+#define AIM_CB_OFT_GETFILE_RECEIVEDLISTING 0x120a /* we received a listing.txt file, thanks */ /* I'm just guessting about this one... */
+#define AIM_CB_OFT_GETFILE_ACKLISTING 0x120b	/* other user received the listing.txt file, yay */
 #define AIM_CB_OFT_GETFILE_REQUESTFILE 0x120c	/* request a specific file from the remote user */
 
 #define AIM_CB_OFT_ESTABLISHED 0xFFFF		/* connection to buddy initiated */

@@ -1760,8 +1760,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_source_remove(od->icontimer);
 		od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
 		memcpy(bi->iconstr, info->iconstr, info->iconstrlen);
+		bi->iconstrlen = info->iconstrlen;
 	}
-	bi->iconstrlen = info->iconstrlen;
 
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon,
 			time_idle, type);
@@ -5504,6 +5504,14 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			pbm->callback = oscar_ask_sendfile;
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
+
+#if 0
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label = _("Get File");
+			pbm->callback = oscar_ask_getfile;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
+#endif
 		}
 	}
 
