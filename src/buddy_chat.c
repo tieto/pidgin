@@ -1496,16 +1496,24 @@ void delete_chat(struct conversation *b)
 	g_free(b);
 }
 
-static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, char **xpm, int chat)
+static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, char *stock, int chat)
 {
 	int dispstyle = set_dispstyle(chat);
 	GtkWidget *parent = button->parent;
 	gtk_widget_destroy(button);
-	button = picture_button2(win, text, xpm, dispstyle);
+	/* XXX button = picture_button2(win, text, xpm, dispstyle); */
+	button = gaim_pixbuf_button_from_stock((dispstyle == 0 ? NULL : text),
+										   (dispstyle == 1 ? NULL : stock),
+										   GAIM_BUTTON_VERTICAL);
+#if 0
 	if (chat == 1)
 		gtk_box_pack_start(GTK_BOX(parent), button, dispstyle, dispstyle, 5);
 	else
 		gtk_box_pack_end(GTK_BOX(parent), button, dispstyle, dispstyle, 0);
+
+	gtk_box_pack_start(GTK_BOX(parent), button, dispstyle, dispstyle, 0);
+#endif
+
 	gtk_widget_show(button);
 	return button;
 }
@@ -1514,6 +1522,7 @@ void update_chat_button_pix()
 {
 	GSList *C = connections;
 	struct gaim_connection *g;
+	GtkWidget *parent;
 
 	while (C) {
 		GSList *bcs;
@@ -1524,18 +1533,20 @@ void update_chat_button_pix()
 
 		while (bcs) {
 			c = (struct conversation *)bcs->data;
-			c->send = change_text(c->window, _("Send"), c->send, tmp_send_xpm, opt);
-			c->invite = change_text(c->window, _("Invite"), c->invite, join_xpm, opt);
-			/*
-			c->close = change_text(c->window, _("Close"), c->close, cancel_xpm, opt);
-			gtk_object_set_user_data(GTK_OBJECT(c->close), c);
-			gtk_signal_connect(GTK_OBJECT(c->close), "clicked",
-					   GTK_SIGNAL_FUNC(close_callback), c);
-					   */
+			parent = c->send->parent;
+
+			c->send = change_text(c->window, _("Send"), c->send, "gtk-convert", opt);
+			c->invite = change_text(c->window, _("Invite"), c->invite, "gtk-jump-to", opt);
+			gtk_box_pack_end(GTK_BOX(parent), c->send, FALSE, FALSE, 0);
+			gtk_box_pack_end(GTK_BOX(parent), c->invite, FALSE, FALSE, 0);
+
 			gtk_signal_connect(GTK_OBJECT(c->send), "clicked",
 					   GTK_SIGNAL_FUNC(send_callback), c);
 			gtk_signal_connect(GTK_OBJECT(c->invite), "clicked",
 					   GTK_SIGNAL_FUNC(invite_callback), c);
+
+			gtk_button_set_relief(GTK_BUTTON(c->send), GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(c->invite), GTK_RELIEF_NONE);
 
 			update_buttons_by_protocol(c);
 
@@ -1556,28 +1567,45 @@ void update_im_button_pix()
 	while (bcs) {
 		c = (struct conversation *)bcs->data;
 		parent = c->send->parent;
-/*		c->close = change_text(c->window, _("Close"), c->close, cancel_xpm, opt);
-		gtk_box_reorder_child(GTK_BOX(parent), c->close, 0);
-		gtk_box_set_child_packing(GTK_BOX(parent), c->sep1, dispstyle, dispstyle, 0,
-					  GTK_PACK_END);
-					  */
+
+		c->send = change_text(c->window, _("Send"), c->send, "gtk-convert", opt);
+		gtk_box_pack_end(GTK_BOX(parent), c->send, FALSE, FALSE, 0);
+
+		c->warn = change_text(c->window, _("Warn"), c->warn, "gtk-dialog-warning", opt);
+		gtk_box_pack_start(GTK_BOX(parent), c->warn, FALSE, FALSE, 0);
+		c->block = change_text(c->window, _("Block"), c->block, "gtk-stop", opt);
+		gtk_box_pack_start(GTK_BOX(parent), c->block, FALSE, FALSE, 0);
+
 		if (find_buddy(c->gc, c->name) == NULL)
-			 c->add = change_text(c->window, _("Add"), c->add, gnome_add_xpm, opt);
+			 c->add = change_text(c->window, _("Add"), c->add, "gtk-add", opt);
 		else
-			c->add = change_text(c->window, _("Remove"), c->add, gnome_remove_xpm, opt);
-		gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
-		c->block = change_text(c->window, _("Block"), c->block, block_xpm, opt);
-		gtk_box_reorder_child(GTK_BOX(parent), c->block, 3);
-		c->warn = change_text(c->window, _("Warn"), c->warn, warn_xpm, opt);
-		gtk_box_reorder_child(GTK_BOX(parent), c->warn, 4);
-		c->info = change_text(c->window, _("Info"), c->info, tb_search_xpm, opt);
-		gtk_box_reorder_child(GTK_BOX(parent), c->info, 5);
-		c->send = change_text(c->window, _("Send"), c->send, tmp_send_xpm, opt);
-		gtk_box_set_child_packing(GTK_BOX(parent), c->sep2, dispstyle, dispstyle, 0,
-					  GTK_PACK_END);
-		gtk_box_reorder_child(GTK_BOX(parent), c->send, 7);
-		gtk_object_set_user_data(GTK_OBJECT(c->close), c);
-		gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
+			c->add = change_text(c->window, _("Remove"), c->add, "gtk-remove", opt);
+		gtk_box_pack_start(GTK_BOX(parent), c->add, FALSE, FALSE, 0);
+		c->info = change_text(c->window, _("Info"), c->info, "gtk-find", opt);
+		gtk_box_pack_start(GTK_BOX(parent), c->info, FALSE, FALSE, 0);
+
+		gtk_button_set_relief(GTK_BUTTON(c->info), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(c->add), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(c->warn), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(c->send), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(c->block), GTK_RELIEF_NONE);
+
+		gtk_size_group_add_widget(c->sg, c->info);
+		gtk_size_group_add_widget(c->sg, c->add);
+		gtk_size_group_add_widget(c->sg, c->warn);
+		gtk_size_group_add_widget(c->sg, c->send);
+		gtk_size_group_add_widget(c->sg, c->block);
+
+		gtk_box_reorder_child(GTK_BOX(parent), c->warn, 1);
+		gtk_box_reorder_child(GTK_BOX(parent), c->block, 2);
+		gtk_box_reorder_child(GTK_BOX(parent), c->add, 3);
+		gtk_box_reorder_child(GTK_BOX(parent), c->info, 4);
+		gtk_box_reorder_child(GTK_BOX(parent), c->sep2, 5);
+
+
+		update_buttons_by_protocol(c);
+
+		/* XXX gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback), c); */
 		gtk_signal_connect(GTK_OBJECT(c->send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
 		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
 		gtk_signal_connect(GTK_OBJECT(c->info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);

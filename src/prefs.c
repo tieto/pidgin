@@ -1954,9 +1954,9 @@ void dropdown_set(GtkObject *w, int *option)
 			update_im_button_pix();
 	} else if (option == (int*)&chat_options) {
 		if (clear == (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB))
-			update_im_tabs();
+			update_chat_tabs();
 		else if (clear == (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM))
-			update_im_button_pix();
+			update_chat_button_pix();
 	} else if (option == (int*)&blist_options) {
 		set_blist_tab();
 	}
