@@ -29,8 +29,10 @@
 }
 
 # Thanks decklin
-if $(! test -f configure.in) && autoconf --version | grep '2\.[01]' > /dev/null 2>&1 ; then
-	ln -sf configure.ac configure.in
+if test ! -e configure.in ; then
+	if autoconf --version | grep '2\.[01]' > /dev/null 2>&1 ; then
+		ln -sf configure.ac configure.in
+	fi
 fi
 
 echo "Generating configuration files for Gaim, please wait...."
