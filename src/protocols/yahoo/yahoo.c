@@ -2451,7 +2451,6 @@ static char *yahoo_status_text(GaimBuddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
 	struct yahoo_friend *f = NULL;
-	char *stripped = NULL;
 
 	f = g_hash_table_lookup(yd->friends, b->name);
 	if (!f)
@@ -2467,13 +2466,8 @@ static char *yahoo_status_text(GaimBuddy *b)
 	case YAHOO_STATUS_CUSTOM:
 		if (!f->msg)
 			return NULL;
-		stripped = gaim_markup_strip_html(f->msg);
-		if (stripped) {
- 			char *ret = g_markup_escape_text(stripped, strlen(stripped));
- 			g_free(stripped);
- 			return ret;
- 		}
-		return NULL;
+		return g_markup_escape_text(f->msg, strlen(f->msg));
+
 	default:
 		return g_strdup(yahoo_get_status_string(f->status));
  	}
@@ -2499,7 +2493,7 @@ char *yahoo_tooltip_text(GaimBuddy *b)
 		case YAHOO_STATUS_CUSTOM:
 			if (!f->msg)
 				return NULL;
-			status = gaim_markup_strip_html(f->msg);
+			status = g_strdup(f->msg);
 			break;
 		default:
 			status = g_strdup(yahoo_get_status_string(f->status));
