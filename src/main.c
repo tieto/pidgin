@@ -55,6 +55,7 @@
 #include "gtkblist.h"
 #include "gtkdebug.h"
 #include "gtknotify.h"
+#include "gtkrequest.h"
 #if HAVE_SIGNAL_H
 #include <signal.h>
 #endif
