@@ -590,6 +590,16 @@ int gaim_utf8_strcasecmp(const char *a, const char *b);
  */
 gboolean gaim_message_meify(char *message, size_t len);
 
+/**
+ * Removes the underscore characters from a string used identify the mnemonic
+ * character.
+ *
+ * @param in  The string to strip
+ *
+ * @return The stripped string
+ */
+char * gaim_text_strip_mnemonic(const char *in);
+
 /*@}*/
 
 #ifdef __cplusplus

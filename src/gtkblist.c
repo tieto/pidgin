@@ -1758,13 +1758,15 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			g_free(account);
 		}
 		for(tmp = parts; tmp; tmp = tmp->next) {
-			char *label, *value;
+			char *label, *tmp2, *value;
 			pce = tmp->data;
 
 			if(pce->secret)
 				continue;
 
-			label = g_markup_escape_text(pce->label, -1);
+			tmp2 = g_markup_escape_text(pce->label, -1);
+			label = gaim_text_strip_mnemonic(tmp2);
+			g_free(tmp2);
 
 			value = g_markup_escape_text(g_hash_table_lookup(chat->components,
 						pce->identifier), -1);
@@ -3446,7 +3448,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 		rowbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(data->entries_box), rowbox, FALSE, FALSE, 0);
 
-		label = gtk_label_new(pce->label);
+		label = gtk_label_new_with_mnemonic(pce->label);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_size_group_add_widget(data->sg, label);
 		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
@@ -3463,6 +3465,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 			data->entries = g_list_append(data->entries, spin);
 			gtk_widget_set_size_request(spin, 50, -1);
 			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
+			gtk_label_set_mnemonic_widget(label, spin);
 		}
 		else
 		{
@@ -3487,6 +3490,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 
 			g_signal_connect(G_OBJECT(entry), "activate",
 							 G_CALLBACK(add_chat_cb), data);
+			gtk_label_set_mnemonic_widget(label, entry);
 		}
 
 		g_free(pce);

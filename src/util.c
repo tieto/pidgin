@@ -2434,3 +2434,32 @@ gboolean gaim_message_meify(char *message, size_t len)
 	return FALSE;
 }
 
+char *gaim_text_strip_mnemonic(const char *in)
+{
+	char *out;
+	char *a;
+	const char *b;
+
+	g_return_val_if_fail(in != NULL, NULL);
+
+	out = g_malloc(strlen(in)+1);
+	a = out;
+	b = in;
+
+	while(*b) {
+		if(*b == '_') {
+			if(*(b+1) == '_') {
+				*(a++) = '_';
+				b += 2;
+			} else {
+				b++;
+			}
+		} else {
+			*(a++) = *(b++);
+		}
+	}
+	*a = '\0';
+
+	return out;
+}
+
