@@ -1013,9 +1013,9 @@ void parse_toc_buddy_list(GaimAccount *account, char *config)
 					bud = g_list_append(bud, g_strdup(nm));
 				}
 			} else if (*c == 'p') {
-				gaim_privacy_permit_add(account, c + 2);
+				gaim_privacy_permit_add(account, c + 2, TRUE);
 			} else if (*c == 'd') {
-				gaim_privacy_deny_add(account, c + 2);
+				gaim_privacy_deny_add(account, c + 2, TRUE);
 			} else if (!strncmp("toc", c, 3)) {
 				sscanf(c + strlen(c) - 1, "%d", &account->perm_deny);
 				gaim_debug(GAIM_DEBUG_MISC, "toc blist",
@@ -1603,7 +1603,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
-			gaim_privacy_permit_add(account, blist_parser_buddy_name);
+			gaim_privacy_permit_add(account, blist_parser_buddy_name, TRUE);
 		}
 		g_free(blist_parser_buddy_name);
 		blist_parser_buddy_name = NULL;
@@ -1612,7 +1612,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
-			gaim_privacy_deny_add(account, blist_parser_buddy_name);
+			gaim_privacy_deny_add(account, blist_parser_buddy_name, TRUE);
 		}
 		g_free(blist_parser_buddy_name);
 		blist_parser_buddy_name = NULL;

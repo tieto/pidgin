@@ -699,14 +699,14 @@ msn_add_permit(GaimConnection *gc, const char *who)
 				 "to your allow list."), who);
 
 		gaim_notify_error(gc, NULL, _("Invalid MSN screenname"), buf);
-		gaim_privacy_permit_remove(gc->account, who);
+		gaim_privacy_permit_remove(gc->account, who, TRUE);
 
 		return;
 	}
 
 	if (g_slist_find_custom(gc->account->deny, who, (GCompareFunc)strcmp)) {
 		gaim_debug(GAIM_DEBUG_INFO, "msn", "Moving %s from BL to AL\n", who);
-		gaim_privacy_deny_remove(gc->account, who);
+		gaim_privacy_deny_remove(gc->account, who, TRUE);
 
 		g_snprintf(buf, sizeof(buf), "BL %s", who);
 
@@ -740,14 +740,14 @@ msn_add_deny(GaimConnection *gc, const char *who)
 
 		gaim_notify_error(gc, NULL, _("Invalid MSN screenname"), buf);
 
-		gaim_privacy_deny_remove(gc->account, who);
+		gaim_privacy_deny_remove(gc->account, who, TRUE);
 
 		return;
 	}
 
 	if (g_slist_find_custom(gc->account->permit, who, (GCompareFunc)strcmp)) {
 		gaim_debug(GAIM_DEBUG_INFO, "msn", "Moving %s from AL to BL\n", who);
-		gaim_privacy_permit_remove(gc->account, who);
+		gaim_privacy_permit_remove(gc->account, who, TRUE);
 
 		g_snprintf(buf, sizeof(buf), "AL %s", who);
 
@@ -780,7 +780,7 @@ msn_rem_permit(GaimConnection *gc, const char *who)
 		return;
 	}
 
-	gaim_privacy_deny_add(gc->account, who);
+	gaim_privacy_deny_add(gc->account, who, TRUE);
 
 	g_snprintf(buf, sizeof(buf), "BL %s %s", who, who);
 
@@ -803,14 +803,7 @@ msn_rem_deny(GaimConnection *gc, const char *who)
 		return;
 	}
 
-	gaim_privacy_permit_add(gc->account, who);
-
-	g_snprintf(buf, sizeof(buf), "AL %s %s", who, who);
-
-	if (!msn_servconn_send_command(session->notification_conn, "ADD", buf)) {
-		gaim_connection_error(gc, _("Write error"));
-		return;
-	}
+	gaim_privacy_permit_add(gc->account, who, TRUE);
 }
 
 static void
@@ -886,7 +879,7 @@ msn_set_permit_deny(GaimConnection *gc)
 		}
 
 		for (; t != NULL; t = t->next)
-			gaim_privacy_permit_remove(gc->account, t->data);
+			gaim_privacy_permit_remove(gc->account, t->data, TRUE);
 
 		if (t != NULL)
 			g_slist_free(t);
@@ -924,7 +917,7 @@ msn_set_permit_deny(GaimConnection *gc)
 		}
 
 		for (; t != NULL; t = t->next)
-			gaim_privacy_deny_remove(gc->account, t->data);
+			gaim_privacy_deny_remove(gc->account, t->data, TRUE);
 
 		if (t != NULL)
 			g_slist_free(t);
@@ -1030,8 +1023,6 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 
 	old_group = msn_groups_find_with_name(session->groups, old_group_name);
 	new_group = msn_groups_find_with_name(session->groups, new_group_name);
-
-	gaim_debug(GAIM_DEBUG_MISC, "msn", "new_group = %p\n", new_group);
 
 	if (new_group == NULL) {
 		g_snprintf(outparams, sizeof(outparams), "%s 0",

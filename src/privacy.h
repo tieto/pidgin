@@ -44,42 +44,54 @@ typedef struct
 /**
  * Adds a user to the account's permit list.
  *
- * @param account The account.
- * @Param name    The name of the user to add to the list.
+ * @param account    The account.
+ * @Param name       The name of the user to add to the list.
+ * @param local_only If TRUE, only the local list is updated, and not
+ *                   the server.
  *
  * @return TRUE if the user was added successfully, or @c FALSE otherwise.
  */
-gboolean gaim_privacy_permit_add(GaimAccount *account, const char *name);
+gboolean gaim_privacy_permit_add(GaimAccount *account, const char *name,
+								 gboolean local_only);
 
 /**
  * Removes a user from the account's permit list.
  *
- * @param account The account.
- * @Param name    The name of the user to add to the list.
+ * @param account    The account.
+ * @Param name       The name of the user to add to the list.
+ * @param local_only If TRUE, only the local list is updated, and not
+ *                   the server.
  *
  * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
  */
-gboolean gaim_privacy_permit_remove(GaimAccount *account, const char *name);
+gboolean gaim_privacy_permit_remove(GaimAccount *account, const char *name,
+								 gboolean local_only);
 
 /**
  * Adds a user to the account's deny list.
  *
- * @param account The account.
- * @Param name    The name of the user to add to the list.
+ * @param account    The account.
+ * @Param name       The name of the user to add to the list.
+ * @param local_only If TRUE, only the local list is updated, and not
+ *                   the server.
  *
  * @return TRUE if the user was added successfully, or @c FALSE otherwise.
  */
-gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name);
+gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name,
+								 gboolean local_only);
 
 /**
  * Removes a user from the account's deny list.
  *
- * @param account The account.
- * @Param name    The name of the user to add to the list.
+ * @param account    The account.
+ * @Param name       The name of the user to add to the list.
+ * @param local_only If TRUE, only the local list is updated, and not
+ *                   the server.
  *
  * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
  */
-gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name);
+gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name,
+								 gboolean local_only);
 
 /**
  * Sets the UI operations structure for the privacy subsystem.

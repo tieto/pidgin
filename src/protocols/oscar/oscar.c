@@ -4887,7 +4887,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					if (!list) {
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
 								   "ssi: adding permit buddy %s to local list\n", curitem->name);
-						gaim_privacy_permit_add(account, curitem->name);
+						gaim_privacy_permit_add(account, curitem->name, FALSE);
 						export = TRUE;
 					}
 				}
@@ -4900,7 +4900,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					if (!list) {
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
 								   "ssi: adding deny buddy %s to local list\n", curitem->name);
-						gaim_privacy_deny_add(account, curitem->name);
+						gaim_privacy_deny_add(account, curitem->name, FALSE);
 						export = TRUE;
 					}
 				}

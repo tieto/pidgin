@@ -28,7 +28,8 @@
 static GaimPrivacyUiOps *privacy_ops = NULL;
 
 gboolean
-gaim_privacy_permit_add(GaimAccount *account, const char *who)
+gaim_privacy_permit_add(GaimAccount *account, const char *who,
+						gboolean local_only)
 {
 	GSList *l;
 	char *name;
@@ -50,7 +51,7 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who)
 
 	account->permit = g_slist_append(account->permit, g_strdup(who));
 
-	if (gaim_account_is_connected(account))
+	if (!local_only && gaim_account_is_connected(account))
 		serv_add_permit(gaim_account_get_connection(account), who);
 
 	gaim_blist_save();
@@ -62,7 +63,8 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who)
 }
 
 gboolean
-gaim_privacy_permit_remove(GaimAccount *account, const char *who)
+gaim_privacy_permit_remove(GaimAccount *account, const char *who,
+						   gboolean local_only)
 {
 	GSList *l;
 	char *name;
@@ -85,7 +87,7 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who)
 	account->permit = g_slist_remove(account->permit, l->data);
 	g_free(l->data);
 
-	if (gaim_account_is_connected(account))
+	if (!local_only && gaim_account_is_connected(account))
 		serv_rem_deny(gaim_account_get_connection(account), who);
 
 	gaim_blist_save();
@@ -97,7 +99,8 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who)
 }
 
 gboolean
-gaim_privacy_deny_add(GaimAccount *account, const char *who)
+gaim_privacy_deny_add(GaimAccount *account, const char *who,
+					  gboolean local_only)
 {
 	GSList *l;
 	char *name;
@@ -119,7 +122,7 @@ gaim_privacy_deny_add(GaimAccount *account, const char *who)
 
 	account->deny = g_slist_append(account->deny, g_strdup(who));
 
-	if (gaim_account_is_connected(account))
+	if (!local_only && gaim_account_is_connected(account))
 		serv_add_deny(gaim_account_get_connection(account), who);
 
 	gaim_blist_save();
@@ -131,7 +134,8 @@ gaim_privacy_deny_add(GaimAccount *account, const char *who)
 }
 
 gboolean
-gaim_privacy_deny_remove(GaimAccount *account, const char *who)
+gaim_privacy_deny_remove(GaimAccount *account, const char *who,
+						 gboolean local_only)
 {
 	GSList *l;
 	char *name;
@@ -154,7 +158,7 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who)
 	account->deny = g_slist_remove(account->deny, l->data);
 	g_free(l->data);
 
-	if (gaim_account_is_connected(account)) {
+	if (!local_only && gaim_account_is_connected(account)) {
 		gaim_debug(GAIM_DEBUG_INFO, "privacy",
 				   "Removing %s from server-side deny list\n", who);
 		serv_rem_deny(gaim_account_get_connection(account), who);

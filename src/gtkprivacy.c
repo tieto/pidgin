@@ -311,11 +311,11 @@ remove_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 
 	if (dialog->in_allow_list) {
 		if (find_permit_block_by_name(dialog->account->permit, name))
-			gaim_privacy_permit_remove(dialog->account, name);
+			gaim_privacy_permit_remove(dialog->account, name, FALSE);
 	}
 	else {
 		if (find_permit_block_by_name(dialog->account->deny, name))
-			gaim_privacy_deny_remove(dialog->account, name);
+			gaim_privacy_deny_remove(dialog->account, name, FALSE);
 	}
 }
 
@@ -520,9 +520,9 @@ static void
 confirm_permit_block_cb(GaimGtkPrivacyRequestData *data, int option)
 {
 	if (data->block)
-		gaim_privacy_deny_add(data->account, data->name);
+		gaim_privacy_deny_add(data->account, data->name, FALSE);
 	else
-		gaim_privacy_permit_add(data->account, data->name);
+		gaim_privacy_permit_add(data->account, data->name, FALSE);
 
 	destroy_request_data(data);
 }
