@@ -80,6 +80,7 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "debug.h"
 #include "plugin.h"
 
+#include "perl-common.h"
 #include "perl-handlers.h"
 
 #define PERL_PLUGIN_ID "core-perl"
@@ -315,7 +316,7 @@ load_perl_plugin(GaimPlugin *plugin)
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(SP);
-	XPUSHs(gaim_perl_ref_object(plugin));
+	XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
 	PUTBACK;
 
 	perl_call_pv(gps->load_sub, G_NOARGS | G_EVAL | G_SCALAR);
@@ -350,7 +351,7 @@ unload_perl_plugin(GaimPlugin *plugin)
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(SP);
-	XPUSHs(gaim_perl_ref_object(plugin));
+	XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
 	PUTBACK;
 
 	perl_call_pv(gps->unload_sub, G_NOARGS | G_EVAL | G_SCALAR);
