@@ -4792,7 +4792,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 			} break;
 
 			case 0x000e: { /* contact requires authorization */
-				if (retval->action == AIM_CB_SSI_ADD)
+				if ((retval->action == AIM_CB_SSI_ADD) && (retval->name))
 					gaim_auth_sendrequest(gc, retval->name);
 			} break;
 
