@@ -89,7 +89,6 @@ static void strncpy_nohtml(gchar *dest, const gchar *src, size_t destsize)
 	}
 }
 
-
 void do_away_message(GtkWidget *w, struct away_message *a)
 {
 	GtkWidget *back;
@@ -178,7 +177,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 
         buf2 = g_malloc(strlen(awaymessage->message)*4 + 1);
-	strcpy(buf2, awaymessage->message);
+	strncpy_withhtml(buf2, awaymessage->message, strlen(awaymessage->message)*4 + 1);
         serv_set_away(buf2);
         g_free(buf2);
 	gtk_widget_show(imaway);

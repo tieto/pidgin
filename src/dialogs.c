@@ -1297,7 +1297,8 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 				buf = g_malloc(1);
 				buf[0] = 0;
 			}
-			g_snprintf(buf, MIN(strlen(junk) * 2, 4096), "%s", junk);
+			//g_snprintf(buf, MIN(strlen(junk) * 2, 4096), "%s", junk);
+                        strncpy_withhtml(buf, junk, MIN(strlen(junk) * 2, 4096));
 			serv_set_info(gc, buf);
 			g_free(buf);
 		}

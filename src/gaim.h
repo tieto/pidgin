@@ -550,6 +550,7 @@ extern void show_usage (int, char *);
 extern void set_first_user (char *);
 extern int do_auto_login (char *);
 extern int file_is_dir (char *, GtkWidget *);
+extern void strncpy_withhtml(gchar *, const gchar *, size_t);
 
 /* Functions in server.c */
 /* input to serv */

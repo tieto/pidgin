@@ -97,7 +97,7 @@ void serv_finish_login(struct gaim_connection *gc)
 
 	if (strlen(gc->user->user_info)) {
 		buf = g_malloc(strlen(gc->user->user_info) * 4);
-		strcpy(buf, gc->user->user_info);
+		strncpy_withhtml(buf, gc->user->user_info, strlen(gc->user->user_info) * 4);
 		serv_set_info(gc, buf);
 		g_free(buf);
 	}

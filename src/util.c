@@ -1232,3 +1232,16 @@ GSList *message_split(char *message, int limit) {
 		}
 	}
 }
+
+void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
+{
+	gchar *sp = src, *dp = dest;
+
+	while (dp < dest+destsize) {
+                if (*sp == '\n' && dp < dest+destsize-4) {
+                    strcpy(dp, "<BR>");
+                    sp++; dp += 4;
+                }
+                else *dp++ = *sp++;
+	}
+}
