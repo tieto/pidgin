@@ -2502,6 +2502,7 @@ static void gaim_blist_node_setting_free(struct gaim_blist_node_setting *setting
 			g_free(setting->value.string);
 			break;
 	}
+	g_free(setting);
 }
 
 static void gaim_blist_node_initialize_settings(GaimBlistNode* node)

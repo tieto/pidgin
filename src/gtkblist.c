@@ -1773,19 +1773,19 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			char *label, *tmp2, *value;
 			pce = tmp->data;
 
-			if(pce->secret)
-				continue;
+			if(!pce->secret) {
 
-			tmp2 = g_markup_escape_text(pce->label, -1);
-			label = gaim_text_strip_mnemonic(tmp2);
-			g_free(tmp2);
+				tmp2 = g_markup_escape_text(pce->label, -1);
+				label = gaim_text_strip_mnemonic(tmp2);
+				g_free(tmp2);
 
-			value = g_markup_escape_text(g_hash_table_lookup(chat->components,
-						pce->identifier), -1);
+				value = g_markup_escape_text(g_hash_table_lookup(chat->components,
+							pce->identifier), -1);
 
-			g_string_append_printf(parts_text, "\n<b>%s</b> %s", label, value);
-			g_free(label);
-			g_free(value);
+				g_string_append_printf(parts_text, "\n<b>%s</b> %s", label, value);
+				g_free(label);
+				g_free(value);
+			}
 			g_free(pce);
 		}
 		g_list_free(parts);
