@@ -710,7 +710,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 
 		close(md->fd);
 		
-		set_login_progress(gc, 1, "Connecting");
+		set_login_progress(gc, 3, "Connecting to Auth");
 
 		/* Now we have the host and port */
 		if (!(md->fd = msn_connect(res[0], atoi(res[1]))))
