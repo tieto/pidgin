@@ -405,7 +405,6 @@ void play_file(char *filename)
 		if (sound_cmd[0]) {
 			char *args[4];
 			char command[4096];
-			char *ms;
 
 			g_snprintf(command, sizeof(command), sound_cmd, filename);
 

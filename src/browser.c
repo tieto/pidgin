@@ -620,8 +620,6 @@ void open_url(GtkWidget *w, char *url)
 
 			char command[1024];
 
-			char *ms;
-
 			g_snprintf(command, sizeof(command), web_command, url);
 
 			args[0] = "sh";
