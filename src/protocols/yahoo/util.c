@@ -592,6 +592,19 @@ char *yahoo_html_to_codes(const char *src)
 							i = t - src;
 							break;
 						}
+					} else if (!g_ascii_strncasecmp(&src[i+1], "A", j - i - 1)) {
+					    while (1) {
+						    if (++j >= len) {
+							    g_string_append(dest, &src[i]);
+								i = len;
+								break;
+							}
+							if (src[j] == '>') {
+							    g_string_append(dest, "\033[lm");
+							    i = j;
+								break;
+							}
+						}
 					} else if (g_ascii_strncasecmp(&src[i+1], "FONT", j - i - 1)) { /* not interested! */
 						while (1) {
 							if (++j >= len) {
@@ -632,6 +645,8 @@ char *yahoo_html_to_codes(const char *src)
 							g_string_append(dest, "\033[4m");
 						} else if (!g_ascii_strncasecmp(&src[i+1], "/U", sublen)) {
 							g_string_append(dest, "\033[x4m");
+						} else if (!g_ascii_strncasecmp(&src[i+1], "/A", sublen)) {
+							g_string_append(dest, "\033[xlm");
 						} else if (!g_ascii_strncasecmp(&src[i+1], "BR", sublen)) {
 							g_string_append_c(dest, '\n');
 						} else if (!g_ascii_strncasecmp(&src[i+1], "/BODY", sublen)) {
