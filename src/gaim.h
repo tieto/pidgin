@@ -135,6 +135,7 @@ enum gaim_event {
 	event_im_send,
 	event_buddy_signon,
 	event_buddy_signoff,
+	event_blist_update,
 	/* any others? it's easy to add... */
 };
 
@@ -290,7 +291,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 119 $"
+#define REVISION "gaim:$Revision: 125 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
