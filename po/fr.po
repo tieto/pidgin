@@ -471,7 +471,7 @@ msgstr "Forum"
 #: src/conversation.c:364
 #, c-format
 msgid "Removing '%s' from buddylist.\n"
-msgstr "Suppression de '%s' de la Liste"
+msgstr "Suppression de '%s' de la Liste\n"
 
 #: src/conversation.c:500
 msgid "Message too long, some data truncated."
@@ -502,11 +502,11 @@ msgstr "Bloquer"
 
 #: src/dialogs.c:197
 msgid "Error Resolving Mail Server.\n"
-msgstr "Erreur à la résolution du serveur de mail"
+msgstr "Erreur à la résolution du serveur de mail\n"
 
 #: src/dialogs.c:203
 msgid "Error Connecting to Socket.\n"
-msgstr "Erreur à la connection socket"
+msgstr "Erreur à la connection socket\n"
 
 #: src/dialogs.c:381
 #, c-format
@@ -908,7 +908,7 @@ msgstr "Ajouter l'URL aux favoris/bookmarks"
 
 #: src/html.c:120
 msgid "g001: Error resolving host\n"
-msgstr "g001: Erreur à la résolution de l'adresse"
+msgstr "g001: Erreur à la résolution de l'adresse\n"
 
 #: src/html.c:122
 msgid "g003: Error opening connection.\n"
@@ -926,7 +926,7 @@ msgstr "Recuperation de donnée"
 #: src/html.c:200
 #, c-format
 msgid "Receieved: '%s'\n"
-msgstr "Reçu: '%s'"
+msgstr "Reçu: '%s'\n"
 
 #: src/oscar.c:94 src/oscar.c:104
 msgid "Disconnected."
