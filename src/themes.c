@@ -184,6 +184,14 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 			smiley_themeize(c->text);
 			cnv=cnv->next;
 		}
+
+		cnv = chats;
+		while (cnv) {
+			struct conversation *c = cnv->data;
+			smiley_themeize(c->text);
+			cnv=cnv->next;
+		}
+
 	}
 
 	g_free(dirname);
