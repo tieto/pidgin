@@ -55,6 +55,7 @@ gaim_SOURCES =	about.c \
 		session.c \
 		socket.c \
 		sound.c \
+		sound.h \
 		stock.c \
 		stock.h \
 		themes.c \

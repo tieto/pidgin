@@ -45,6 +45,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include "prpl.h"
+#include "sound.h"
 #include "gaim.h"
 
 #ifdef _WIN32
@@ -1459,9 +1460,9 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 			}
 			if (b->options & OPT_POUNCE_SOUND) {
 				if (strlen(b->sound))
-					play_file(b->sound);
+					gaim_sound_play_file(b->sound);
 				else
-					play_sound(SND_POUNCE_DEFAULT);
+					gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
 			}
 
 			if (!(b->options & OPT_POUNCE_SAVE))
@@ -2214,7 +2215,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		}
 		if (b->present == 1) {
 			if (bs->sound != 2)
-				play_sound(SND_BUDDY_ARRIVE);
+				gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
 			if (blist_options & OPT_BLIST_POPUP)
 				gdk_window_show(blist->window);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
@@ -2276,7 +2277,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				   buddies that have already signed
 				   off */
 		if (bs->sound != 1)
-			play_sound(SND_BUDDY_LEAVE);
+			gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
 		if (blist_options & OPT_BLIST_POPUP)
 			gdk_window_show(blist->window);
 		bs->connlist = g_slist_remove(bs->connlist, gc);

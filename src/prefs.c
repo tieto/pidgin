@@ -38,6 +38,7 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "proxy.h"
+#include "sound.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -957,7 +958,7 @@ static GtkWidget *sndcmd = NULL;
 #ifndef _WIN32
 static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
-	g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", gtk_entry_get_text(GTK_ENTRY(sndcmd)));
+	gaim_sound_set_command(gtk_entry_get_text(GTK_ENTRY(sndcmd)));
 	return TRUE;
 }
 #endif
@@ -970,6 +971,7 @@ GtkWidget *sound_page() {
 	GtkWidget *dd;
 	GtkWidget *hbox;
 	GtkWidget *label;
+	char *cmd;
 #endif
 
 	ret = gtk_vbox_new(FALSE, 18);
@@ -984,19 +986,12 @@ GtkWidget *sound_page() {
 #ifndef _WIN32
 	vbox = make_frame (ret, _("Sound Method"));
 	dd = gaim_dropdown(vbox, _("_Method"), &sound_options, OPT_SOUND_BEEP |
-		      OPT_SOUND_ESD | OPT_SOUND_ARTSC | OPT_SOUND_NAS | OPT_SOUND_NORMAL |
+		      OPT_SOUND_NORMAL |
 		      OPT_SOUND_CMD,
 		      _("Console beep"), OPT_SOUND_BEEP,
-#ifdef ESD_SOUND
-		      "ESD", OPT_SOUND_ESD,
+#ifdef USE_AO
+		      _("Automatic"), OPT_SOUND_NORMAL,
 #endif
-#ifdef ARTSC_SOUND
-		      "ArtsC", OPT_SOUND_ARTSC,
-#endif
-#ifdef NAS_SOUND
-		      "NAS", OPT_SOUND_NAS,
-#endif
-		      _("Internal"), OPT_SOUND_NORMAL,
 		      _("Command"), OPT_SOUND_CMD, NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
@@ -1015,7 +1010,9 @@ GtkWidget *sound_page() {
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), sndcmd);
 
 	gtk_entry_set_editable(GTK_ENTRY(sndcmd), TRUE);
-	gtk_entry_set_text(GTK_ENTRY(sndcmd), sound_cmd);
+	cmd = gaim_sound_get_command();
+	if(cmd)
+		gtk_entry_set_text(GTK_ENTRY(sndcmd), cmd);
 	gtk_widget_set_size_request(sndcmd, 75, -1);
 
 	gtk_widget_set_sensitive(sndcmd, (sound_options & OPT_SOUND_CMD));
@@ -1343,8 +1340,8 @@ static void event_toggled (GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter, 2, &soundnum, -1);
 
-	sound_options ^= sounds[soundnum].opt;
-	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, sound_options & sounds[soundnum].opt, -1);
+	sound_options ^= gaim_sound_get_event_option(soundnum);
+	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, sound_options & gaim_sound_get_event_option(soundnum), -1);
 
 	gtk_tree_path_free(path);
 }
@@ -1354,9 +1351,9 @@ static void test_sound(GtkWidget *button, gpointer i_am_NULL)
 	guint32 tmp_sound = sound_options;
 	if (!(sound_options & OPT_SOUND_WHEN_AWAY))
 		sound_options ^= OPT_SOUND_WHEN_AWAY;
-	if (!(sound_options & sounds[sound_row_sel].opt))
-		sound_options ^= sounds[sound_row_sel].opt;
-	play_sound(sound_row_sel);
+	if (!(sound_options & gaim_sound_get_event_option(sound_row_sel)))
+		sound_options ^= gaim_sound_get_event_option(sound_row_sel);
+	gaim_sound_play_event(sound_row_sel);
 
 	sound_options = tmp_sound;
 }
@@ -1364,10 +1361,7 @@ static void test_sound(GtkWidget *button, gpointer i_am_NULL)
 static void reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 {
 	/* This just resets a sound file back to default */
-	if (sound_file[sound_row_sel]) {
-		g_free(sound_file[sound_row_sel]);
-		sound_file[sound_row_sel] = NULL;
-	}
+	gaim_sound_set_event_file(sound_row_sel, NULL);
 
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
 }
@@ -1397,22 +1391,18 @@ void do_select_sound(GtkWidget *w, int snd)
 	if (file_is_dir(file, sounddialog))
 		return;
 
-	/* Let's just be safe */
-	if (sound_file[snd])
-		g_free(sound_file[snd]);
-
 	/* Set it -- and forget it */
-	sound_file[snd] = g_strdup(file);
+	gaim_sound_set_event_file(snd, file);
 
 	/* Set our text entry */
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file[snd]);
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), file);
 
 	/* Close the window! It's getting cold in here! */
 	close_sounddialog(NULL, sounddialog);
 
 	if (last_sound_dir)
 		g_free(last_sound_dir);
-	last_sound_dir = g_dirname(sound_file[snd]);
+	last_sound_dir = g_dirname(file);
 }
 
 static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
@@ -1447,13 +1437,15 @@ static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
 	GValue val = { 0, };
+	char *file;
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	sound_row_sel = g_value_get_uint(&val);
+	file = gaim_sound_get_event_file(sound_row_sel);
 	if (sound_entry)
-		gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file[sound_row_sel] ? sound_file[sound_row_sel] : "(default)");
+		gtk_entry_set_text(GTK_ENTRY(sound_entry), file ? file : "(default)");
 	g_value_unset (&val);
 	if (sounddialog)
 		gtk_widget_destroy(sounddialog);
@@ -1472,6 +1464,7 @@ GtkWidget *sound_events_page() {
 	GtkTreeSelection *sel;
 	GtkTreePath *path;
 	int j;
+	char *file;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
@@ -1483,14 +1476,15 @@ GtkWidget *sound_events_page() {
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 	event_store = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_UINT);
 
-	for (j=0; j < NUM_SOUNDS; j++) {
-		if (sounds[j].opt == 0)
+	for (j=0; j < GAIM_NUM_SOUNDS; j++) {
+		guint opt = gaim_sound_get_event_option(j);
+		if (opt == 0)
 			continue;
 
 		gtk_list_store_append (event_store, &iter);
 		gtk_list_store_set(event_store, &iter,
-				   0, sound_options & sounds[j].opt,
-				   1, gettext(sounds[j].label),
+				   0, sound_options & opt,
+				   1, gettext(gaim_sound_get_event_label(j)),
 				   2, j, -1);
 	}
 
@@ -1525,7 +1519,8 @@ GtkWidget *sound_events_page() {
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(ret), hbox, FALSE, FALSE, 0);
 	sound_entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), sound_file[0] ? sound_file[0] : "(default)");
+	file = gaim_sound_get_event_file(0);
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), file ? file : "(default)");
 	gtk_entry_set_editable(GTK_ENTRY(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
 

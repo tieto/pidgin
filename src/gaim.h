@@ -312,30 +312,6 @@ extern guint sound_options;
 #define OPT_SOUND_ESD			0x00010000
 #define OPT_SOUND_CMD			0x00020000
 #define OPT_SOUND_CHAT_NICK             0x00040000
-/* remember to also change the struct in sound.c */
-
-#define SND_BUDDY_ARRIVE 0
-#define SND_BUDDY_LEAVE 1
-#define SND_RECEIVE 2
-#define SND_FIRST_RECEIVE 3
-#define SND_SEND 4
-#define SND_CHAT_JOIN 5
-#define SND_CHAT_LEAVE 6
-#define SND_CHAT_YOU_SAY 7
-#define SND_CHAT_SAY 8
-#define SND_POUNCE_DEFAULT 9
-#define SND_CHAT_NICK 10
-#define NUM_SOUNDS 11
-
-extern char *sound_file[NUM_SOUNDS];
-
-/* global sound struct */
-struct sound_struct {
-	char *label;
-	guint opt;
-	char *def;
-};
-extern struct sound_struct sounds[];
 
 extern guint away_options;
 #define OPT_AWAY_DISCARD		0x00000001
@@ -355,7 +331,6 @@ extern GSList *gaim_accounts;
 extern GSList *message_queue;
 extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
-extern char sound_cmd[2048];
 extern char web_command[2048];
 extern struct save_pos blist_pos;
 extern struct window_size conv_size, buddy_chat_size;

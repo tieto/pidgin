@@ -306,9 +306,6 @@ extern GtkWidget *protomenu;
 /* Globals in session.c */
 extern gboolean session_managed;
 
-/* Globals in sound.c */
-extern gboolean mute_sounds;
-
 /* Globals in themes.c */
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
@@ -503,10 +500,6 @@ extern int find_queue_total_by_name(char *);
 /* Functions in session.c */
 extern void session_init(gchar *, gchar *);
 extern void session_end();
-
-/* Functions in sound.c */
-extern void play_sound(int);
-extern void play_file(char *);
 
 /* Functions in themes.c */
 extern void smiley_themeize(GtkWidget *);

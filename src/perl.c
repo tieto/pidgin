@@ -81,6 +81,7 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #endif
 #include "gaim.h"
 #include "prpl.h"
+#include "sound.h"
 
 struct perlscript {
 	char *name;
@@ -1183,7 +1184,7 @@ XS (XS_GAIM_play_sound)
 
 	id = SvIV(ST(0));
 
-	play_sound(id);
+	gaim_sound_play_event(id);
 
 	XSRETURN_EMPTY;
 }

@@ -38,6 +38,7 @@
 #include "gaim.h"
 #include "prpl.h"
 #include "proxy.h"
+#include "sound.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -72,10 +73,6 @@ int web_browser;
 struct save_pos blist_pos;
 struct window_size conv_size, buddy_chat_size;
 char web_command[2048] = "";
-char *sound_file[NUM_SOUNDS];
-#ifndef _WIN32
-char sound_cmd[2048];
-#endif
 
 struct parse {
 	char option[256];
@@ -802,8 +799,8 @@ static void gaimrc_read_options(FILE *f)
 	}
 
 	/* this is where we do bugs and compatibility stuff */
-	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_ESD | OPT_SOUND_NORMAL | OPT_SOUND_NAS | OPT_SOUND_ARTSC | OPT_SOUND_CMD)))
-		sound_options |= OPT_SOUND_ESD | OPT_SOUND_NORMAL | OPT_SOUND_NAS | OPT_SOUND_ARTSC;
+	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_NORMAL | OPT_SOUND_CMD)))
+		sound_options |= OPT_SOUND_NORMAL;
 
 	if (conv_size.width == 0 &&
 	    conv_size.height == 0 &&
@@ -904,11 +901,9 @@ static void gaimrc_read_sounds(FILE *f)
 
 	buf[0] = 0;
 
-	for (i = 0; i < NUM_SOUNDS; i++)
-		sound_file[i] = NULL;
-#ifndef _WIN32
-	sound_cmd[0] = 0;
-#endif
+	for(i=0; i<GAIM_NUM_SOUNDS; i++)
+		gaim_sound_set_event_file(i, NULL);
+
 	while (buf[0] != '}') {
 		if (buf[0] == '#')
 			continue;
@@ -919,14 +914,14 @@ static void gaimrc_read_sounds(FILE *f)
 		p = parse_line(buf, &parse_buffer);
 #ifndef _WIN32
 		if (!strcmp(p->option, "sound_cmd")) {
-			g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", p->value[0]);
-		} else 
+			gaim_sound_set_command(p->value[0]);
+		} else
 #endif
 		if (!strncmp(p->option, "sound", strlen("sound"))) {
 			i = p->option[strlen("sound")] - 'A';
 
 			if (p->value[0][0])
-				sound_file[i] = g_strdup(p->value[0]);
+				gaim_sound_set_event_file(i, p->value[0]);
 		}
 	}
 }
@@ -934,23 +929,30 @@ static void gaimrc_read_sounds(FILE *f)
 static void gaimrc_write_sounds(FILE *f)
 {
 	int i;
+	char *cmd;
 	fprintf(f, "sound_files {\n");
-	for (i = 0; i < NUM_SOUNDS; i++)
-		if (sound_file[i]) {
+	for (i = 0; i < GAIM_NUM_SOUNDS; i++) {
+		char *file = gaim_sound_get_event_file(i);
+		if (file) {
 #ifndef _WIN32
-			fprintf(f, "\tsound%c { %s }\n", i + 'A', sound_file[i]);
+			fprintf(f, "\tsound%c { %s }\n", i + 'A', file);
 #else
 			/* Make sure windows dir speparators arn't swallowed up when
 			   path is read back in from resource file */
-			char* tmp=wgaim_escape_dirsep(sound_file[i]);
+			char* tmp=wgaim_escape_dirsep(file);
 			fprintf(f, "\tsound%c { %s }\n", i + 'A', tmp);
 			g_free(tmp);
 #endif
 		}
 		else
 			fprintf(f, "\tsound%c {  }\n", i + 'A');
+	}
 #ifndef _WIN32
-	fprintf(f, "\tsound_cmd { %s }\n", sound_cmd);
+	cmd = gaim_sound_get_command();
+	if(cmd)
+		fprintf(f, "\tsound_cmd { %s }\n", cmd);
+	else
+		fprintf(f, "\tsound_cmd {  }\n");
 #endif
 	fprintf(f, "}\n");
 }
@@ -1218,8 +1220,9 @@ static void set_defaults()
 	away_options =
 		OPT_AWAY_BACK_ON_IM;
 
-	for (i = 0; i < NUM_SOUNDS; i++)
-		sound_file[i] = NULL;
+	for (i = 0; i < GAIM_NUM_SOUNDS; i++)
+		gaim_sound_set_event_file(i, NULL);
+
 	font_options = 0;
 	/* Enable all of the sound players that might be available.  The first
 	   available one will be used. */
@@ -1229,10 +1232,7 @@ static void set_defaults()
 	    OPT_SOUND_RECV |
 	    OPT_SOUND_SEND |
 	    OPT_SOUND_SILENT_SIGNON |
-	    OPT_SOUND_NORMAL |
-	    OPT_SOUND_NAS |
-	    OPT_SOUND_ARTSC |
-	    OPT_SOUND_ESD;
+	    OPT_SOUND_NORMAL;
 
 #ifdef USE_SCREENSAVER
 	report_idle = IDLE_SCREENSAVER;

@@ -43,6 +43,7 @@
 #include "prpl.h"
 #include "gtkimhtml.h"
 #include "dnd-hints.h"
+#include "sound.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -3619,13 +3620,13 @@ gaim_gtkconv_write_im(struct gaim_conversation *conv, const char *who,
 			if (gtkconv->u.im->a_virgin &&
 				(sound_options & OPT_SOUND_FIRST_RCV)) {
 
-				play_sound(SND_FIRST_RECEIVE);
+				gaim_sound_play_event(GAIM_SOUND_FIRST_RECEIVE);
 			}
 			else
-				play_sound(SND_RECEIVE);
+				gaim_sound_play_event(GAIM_SOUND_RECEIVE);
 		}
 		else {
-			play_sound(SND_SEND);
+			gaim_sound_play_event(GAIM_SOUND_SEND);
 		}
 	}
 
@@ -3645,12 +3646,12 @@ gaim_gtkconv_write_chat(struct gaim_conversation *conv, const char *who,
 	/* Play a sound, if specified in prefs. */
 	if (gtkconv->make_sound) {
 		if (!(flags & WFLAG_WHISPER) && (flags & WFLAG_SEND))
-			play_sound(SND_CHAT_YOU_SAY);
+			gaim_sound_play_event(GAIM_SOUND_CHAT_YOU_SAY);
 		else if (flags & WFLAG_RECV) {
 			if ((flags & WFLAG_NICK) && (sound_options & OPT_SOUND_CHAT_NICK))
-				play_sound(SND_CHAT_NICK);
+				gaim_sound_play_event(GAIM_SOUND_CHAT_NICK);
 			else
-				play_sound(SND_CHAT_SAY);
+				gaim_sound_play_event(GAIM_SOUND_CHAT_SAY);
 		}
 	}
 
@@ -3944,7 +3945,7 @@ gaim_gtkconv_chat_add_user(struct gaim_conversation *conv, const char *user)
 	gtk_label_set_text(GTK_LABEL(gtkchat->count), tmp);
 
 	if (gtkconv->make_sound)
-		play_sound(SND_CHAT_JOIN);
+		gaim_sound_play_event(GAIM_SOUND_CHAT_JOIN);
 
 	pos = g_list_index(gaim_chat_get_users(chat), user);
 
@@ -4063,7 +4064,7 @@ gaim_gtkconv_chat_remove_user(struct gaim_conversation *conv, const char *user)
 	gtk_label_set_text(GTK_LABEL(gtkchat->count), tmp);
 
 	if (gtkconv->make_sound)
-		play_sound(SND_CHAT_LEAVE);
+		gaim_sound_play_event(GAIM_SOUND_CHAT_LEAVE);
 }
 
 static void

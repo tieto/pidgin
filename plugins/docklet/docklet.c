@@ -30,6 +30,7 @@
 /* includes */
 #include <gtk/gtk.h>
 #include "gaim.h"
+#include "sound.h"
 #include "eggtrayicon.h"
 
 #ifndef GAIM_PLUGINS
@@ -60,7 +61,7 @@ static enum docklet_status status;
 static enum docklet_status icon;
 
 static void docklet_toggle_mute(GtkWidget *toggle, void *data) {
-	mute_sounds = GTK_CHECK_MENU_ITEM(toggle)->active;
+	gaim_sound_set_mute(GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 static void docklet_toggle_queue(GtkWidget *widget, void *data) {
@@ -149,7 +150,7 @@ static void docklet_menu(GdkEventButton *event) {
 	gaim_separator(menu);
 
 	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), mute_sounds);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_sound_get_mute());
 	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_append(GTK_MENU(menu), entry);
 

@@ -47,6 +47,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "prpl.h"
+#include "sound.h"
 #include "gaim.h"
 #include "gaim-socket.h"
 #if HAVE_SIGNAL_H
@@ -70,6 +71,7 @@ GSList *unread_message_queue = NULL;
 GSList *away_time_queue = NULL;
 
 GtkWidget *mainwindow = NULL;
+
 
 int opt_away = 0;
 char *opt_away_arg = NULL;
@@ -133,12 +135,11 @@ void do_quit()
 	gtk_main_quit();
 }
 
-static int snd_tmout;
-int logins_not_muted = 1;
+static guint snd_tmout = 0;
 static gboolean sound_timeout(gpointer data)
 {
-	logins_not_muted = 1;
-	g_source_remove(snd_tmout);
+	gaim_sound_set_login_mute(FALSE);
+	snd_tmout = 0;
 	return FALSE;
 }
 
@@ -148,7 +149,10 @@ static gboolean sound_timeout(gpointer data)
 void gaim_setup(struct gaim_connection *gc)
 {
 	if ((sound_options & OPT_SOUND_LOGIN) && (sound_options & OPT_SOUND_SILENT_SIGNON)) {
-		logins_not_muted = 0;
+		if(snd_tmout) {
+			g_source_remove(snd_tmout);
+		}
+		gaim_sound_set_login_mute(TRUE);
 		snd_tmout = g_timeout_add(10000, sound_timeout, NULL);
 	}
 }
@@ -526,6 +530,8 @@ static int ui_main()
 
 	setup_stock();
 
+	gaim_sound_init();
+
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
 	icon_path = g_build_filename(DATADIR, "pixmaps", "gaim.png", NULL);
@@ -899,7 +905,7 @@ int main(int argc, char *argv[])
 
 	gtk_main();
 	core_quit();
-	/* don't need ui_quit here because ui doesn't create anything */
+	gaim_sound_quit();
 #ifdef _WIN32
 	wgaim_cleanup();
 #endif
