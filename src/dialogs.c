@@ -2056,7 +2056,7 @@ void do_export(GtkWidget *w, void *dummy)
 			return;
 	}
         if ((f = fopen(path,"w"))) {
-                toc_build_config(buf, 1024 - 1);
+                toc_build_config(buf, 8192 - 1);
                 fprintf(f, "%s\n", buf);
                 fclose(f);
                 chmod(buf, S_IRUSR | S_IWUSR);
@@ -2155,8 +2155,8 @@ void do_import(GtkWidget *w, void *dummy)
                 return;
         } else if (buf[0] == 'm') {
                 buf2 = buf;
-                buf = g_malloc(1025);
-                g_snprintf(buf, 1024, "toc_set_config {%s}\n", buf2);
+                buf = g_malloc(8193);
+                g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
                 g_free(buf2);
         }
 
