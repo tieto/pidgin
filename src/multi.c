@@ -144,24 +144,26 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 		gtk_widget_show(mainwindow);
 }
 
-static void delete_acctedit(GtkWidget *w, gpointer d)
+static void quit_acctedit(gpointer d)
 {
 	if (acctedit) {
 		save_prefs();
 		gtk_widget_destroy(acctedit);
+		acctedit = NULL;
 	}
-	acctedit = NULL;
 	treeview = NULL;
 	if (!d && !blist && !mainwindow && !connections)
 		do_quit();
 }
 
-static gint acctedit_close(GtkWidget *w, gpointer d)
+static void on_delete_acctedit(GtkWidget *w, GdkEvent *ev, gpointer d)
 {
-	gtk_widget_destroy(acctedit);
-	if (!d && !blist && !mainwindow && !connections)
-		do_quit();
-	return FALSE;
+	quit_acctedit(d);
+}
+
+static void on_close_acctedit(GtkButton *button, gpointer d)
+{
+	quit_acctedit(d);
 }
 
 static char *proto_name(int proto)
@@ -1189,7 +1191,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_widget_realize(acctedit);
 	gtk_widget_set_usize(acctedit, -1, 250);
 	gtk_window_set_default_size(GTK_WINDOW(acctedit), 550, 250);
-	g_signal_connect(GTK_OBJECT(acctedit), "destroy", G_CALLBACK(delete_acctedit), W);
+	g_signal_connect(GTK_OBJECT(acctedit), "delete_event", G_CALLBACK(on_delete_acctedit), W);
 
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 6);
@@ -1247,7 +1249,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(acctedit_close), W);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(on_close_acctedit), W);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_size_group_add_widget(sg, button);
@@ -1303,7 +1305,7 @@ static struct signon_meter *find_signon_meter(struct gaim_connection *gc)
 
 void kill_meter(struct signon_meter *meter) {
 	gtk_widget_set_sensitive (meter->button, FALSE);
-	gtk_progress_bar_update(GTK_PROGRESS_BAR(meter->progress), 1);
+	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(meter->progress), 1);
 	gtk_statusbar_pop(GTK_STATUSBAR(meter->status), 1);
 	gtk_statusbar_push(GTK_STATUSBAR(meter->status), 1, _("Done."));
 	meter_win->active_count--;
@@ -1532,7 +1534,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		g_snprintf(buf, sizeof(buf), "%s Signing On (using %s)", gc->username, gc->prpl->name);
 	}
 
-	gtk_progress_bar_update(GTK_PROGRESS_BAR(meter->progress), howfar / LOGIN_STEPS);
+	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(meter->progress), howfar / LOGIN_STEPS);
 	gtk_statusbar_pop(GTK_STATUSBAR(meter->status), 1);
 	gtk_statusbar_push(GTK_STATUSBAR(meter->status), 1, message);
 }
