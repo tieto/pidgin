@@ -330,7 +330,7 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
 	gtk_widget_show(hbox);
 
-	reg = gtk_button_new_with_label(_("Help"));
+	reg = gtk_button_new_with_label(_("About"));
 	options = gtk_button_new_with_label(_("Options"));
 #ifdef GAIM_PLUGINS
 	plugs = gtk_button_new_with_label(_("Plugins"));
@@ -343,7 +343,7 @@ void show_login()
 #endif
 	}
 
-	gtk_signal_connect(GTK_OBJECT(reg), "clicked", GTK_SIGNAL_FUNC(gaim_help), NULL);
+	gtk_signal_connect(GTK_OBJECT(reg), "clicked", GTK_SIGNAL_FUNC(show_about), NULL);
 	gtk_signal_connect(GTK_OBJECT(options), "clicked", GTK_SIGNAL_FUNC(show_prefs), NULL);
 #ifdef GAIM_PLUGINS
 	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_plugins), NULL);
