@@ -28,10 +28,12 @@
 /**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  *
- * @param buddy      The optional buddy to pounce on.
+ * @param account    The optional account to use.
+ * @param name       The optional name to pounce on.
  * @param cur_pounce The current buddy pounce, if editting an existing one.
  */
-void gaim_gtkpounce_dialog_show(struct buddy *buddy, GaimPounce *cur_pounce);
+void gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
+								GaimPounce *cur_pounce);
 
 /**
  * Displays all registered buddy pounces in a menu.

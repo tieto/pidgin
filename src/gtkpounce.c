@@ -336,7 +336,7 @@ buddy_changed_cb(GtkEntry *entry, GaimGtkPounceDialog *dialog)
 }
 
 void
-gaim_gtkpounce_dialog_show(struct buddy *buddy,
+gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 						   GaimPounce *cur_pounce)
 {
 	GaimGtkPounceDialog *dialog;
@@ -359,9 +359,9 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 		dialog->pounce  = cur_pounce;
 		dialog->account = gaim_pounce_get_pouncer(cur_pounce);
 	}
-	else if (buddy != NULL) {
+	else if (account != NULL) {
 		dialog->pounce  = NULL;
-		dialog->account = buddy->account;
+		dialog->account = account;
 	}
 	else {
 		dialog->pounce  = NULL;
@@ -437,8 +437,8 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry),
 						   gaim_pounce_get_pouncee(cur_pounce));
 	}
-	else if (buddy != NULL) {
-		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), buddy->name);
+	else if (name != NULL) {
+		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), name);
 	}
 
 	/* Create the "Pounce When" frame. */
@@ -708,7 +708,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 static void
 new_pounce_cb(GtkWidget *w, struct buddy *b)
 {
-	gaim_gtkpounce_dialog_show(b, NULL);
+	gaim_gtkpounce_dialog_show(b->account, b->name, NULL);
 }
 
 static void
@@ -720,12 +720,7 @@ delete_pounce_cb(GtkWidget *w, GaimPounce *pounce)
 static void
 edit_pounce_cb(GtkWidget *w, GaimPounce *pounce)
 {
-	struct buddy *buddy;
-
-	buddy = gaim_find_buddy(gaim_pounce_get_pouncer(pounce),
-							gaim_pounce_get_pouncee(pounce));
-
-	gaim_gtkpounce_dialog_show(buddy, pounce);
+	gaim_gtkpounce_dialog_show(NULL, NULL, pounce);
 }
 
 static void

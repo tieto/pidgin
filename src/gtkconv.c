@@ -44,6 +44,7 @@
 #include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkimhtml.h"
+#include "gtkpounce.h"
 #include "gtkutils.h"
 #include "stock.h"
 
@@ -296,6 +297,19 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv_show_log(NULL, (char *)gaim_conversation_get_name(conv));
 }
+
+static void
+menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	GaimWindow *win = (GaimWindow *)data;
+	GaimConversation *conv;
+
+	conv = gaim_window_get_active_conversation(win);
+
+	gaim_gtkpounce_dialog_show(gaim_conversation_get_account(conv),
+							   gaim_conversation_get_name(conv), NULL);
+}
+
 static void
 menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 {
@@ -2554,11 +2568,14 @@ static GtkItemFactoryEntry menu_items[] =
 	  "<StockItem>", GTK_STOCK_SAVE_AS },
 	{ N_("/Conversation/View _Log..."), NULL, menu_view_log_cb, 0, NULL },
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
+		0, NULL },
+	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Conversation/Insert _URL..."), NULL, menu_insert_link_cb, 0,
 	  "<StockItem>", GAIM_STOCK_LINK },
 	{ N_("/Conversation/Insert _Image..."), NULL, menu_insert_image_cb, 0,
 	  "<StockItem>", GAIM_STOCK_IMAGE },
-	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>" },
+	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
 	  "<StockItem>", GTK_STOCK_CLOSE },
 
