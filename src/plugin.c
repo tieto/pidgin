@@ -209,16 +209,6 @@ gaim_plugin_probe(const char *filename)
 	plugin->error = NULL;
 
 	if (!gaim_init_plugin(plugin) || plugin->info == NULL) {
-		char buf[BUFSIZ];
-
-		g_snprintf(buf, sizeof(buf),
-				   _("The plugin %s did not return any valid plugin "
-					 "information"),
-				   plugin->path);
-
-		gaim_notify_error(NULL, NULL,
-						  _("Gaim was unable to load your plugin."), buf);
-
 		gaim_plugin_destroy(plugin);
 
 		return NULL;
