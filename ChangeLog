@@ -49,6 +49,8 @@ version 0.79cvs:
 	  account was modified. Now they're only removed when the protocol type
 	  changes, as it should be.
 	* Zepher bug fixes and memory leak plugs (Arun A Tharuvai)
+	* Rewrite of MSN buddylist support, which fixed a known syncronization bug
+	  and some others(Felipe Contreras)
 
 version 0.78 (05/30/2004):
 	New Features:
