@@ -612,6 +612,75 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		return;
 	}
 
+	if ((strstr(buf, " NICK ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+
+		gchar old[128];
+		gchar new[128];
+
+		GList *templist;
+
+		struct irc_channel *channel;
+		int id;
+		int j;
+
+		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+			old[j] = buf[i];
+		}
+
+		old[j] = '\0';
+		i++;
+
+		for (j = 0; buf[i] != ':'; j++, i++) {
+		}
+
+		i++;
+		strcpy(new, buf + i);
+
+		g_strchomp(new);
+
+		templist = ((struct irc_data *)gc->proto_data)->channels;
+
+		while (templist) {
+			struct conversation *convo = NULL;
+			channel = templist->data;
+
+			convo = find_conversation_by_id(gc, channel->id);
+
+			rename_chat_buddy(convo, old, new);
+
+			templist = templist->next;
+		}
+	}
+
+	if ((strstr(buf, "QUIT ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+
+		gchar u_nick[128];
+
+		GList *templist;
+
+		struct irc_channel *channel;
+		int j;
+
+		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+			u_nick[j] = buf[i];
+		}
+
+		u_nick[j] = '\0';
+
+		templist = ((struct irc_data *)gc->proto_data)->channels;
+
+		while (templist) {
+			struct conversation *convo = NULL;
+			channel = templist->data;
+
+			convo = find_conversation_by_id(gc, channel->id);
+
+			remove_chat_buddy(convo, u_nick);
+
+			templist = templist->next;
+		}
+	}
+
 	if ((strstr(buf, " PART ")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_channel[128];

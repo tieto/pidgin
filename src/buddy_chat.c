@@ -542,6 +542,66 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 }
 
 
+void rename_chat_buddy(struct conversation *b, char *old, char *new)
+{
+	GList *names = b->in_room;
+	GList *items = GTK_LIST(b->list)->children;
+
+	char *name = g_strdup(new);
+	GtkWidget *list_item;
+	int pos;
+	GList *ignored = b->ignored;
+
+	char tmp[BUF_LONG];
+
+	while (names) {
+		if (!strcasecmp((char *)names->data, old)) {
+			char *tmp2 = names->data;
+			b->in_room = g_list_remove(b->in_room, names->data);
+			while (items) {
+				if (tmp2 == gtk_object_get_user_data(items->data)) {
+					gtk_list_remove_items(GTK_LIST(b->list),
+							      g_list_append(NULL, items->data));
+					break;
+				}
+				items = items->next;
+			}
+			g_free(tmp2);
+			break;
+		}
+		names = names->next;
+	}
+
+	if (!names)
+		return;
+
+	b->in_room = g_list_insert_sorted(b->in_room, name, insertname);
+
+	while (ignored) {
+		if (!strcasecmp(old, ignored->data))
+			break;
+		ignored = ignored->next;
+	}
+
+	if (ignored) {
+		b->ignored = g_list_remove(b->ignored, ignored->data);
+		b->ignored = g_list_append(b->ignored, name);
+		g_snprintf(tmp, sizeof(tmp), "X %s", name);
+		list_item = gtk_list_item_new_with_label(tmp);
+	} else
+		list_item = gtk_list_item_new_with_label(name);
+
+	gtk_object_set_user_data(GTK_OBJECT(list_item), name);
+	gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
+			   GTK_SIGNAL_FUNC(right_click_chat), b);
+	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
+	gtk_widget_show(list_item);
+
+	if (display_options & OPT_DISP_CHAT_LOGON) {
+		g_snprintf(tmp, sizeof(tmp), _("<B>%s is now known as %s</B>"), old, new);
+		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL);
+	}
+}
 
 
 void remove_chat_buddy(struct conversation *b, char *buddy)
@@ -570,6 +630,9 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 		}
 		names = names->next;
 	}
+
+	if (!names)
+		return;
 
 	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room), g_list_length(b->in_room) == 1 ? "person" : "people");
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
