@@ -83,7 +83,7 @@ struct smiley_theme {
 	struct smiley_list *list;
 };
 
-/* Globals in maim.c */
+/* Globals in main.c */
 extern GtkWidget *mainwindow;
 extern int docklet_count;
 
