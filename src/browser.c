@@ -568,7 +568,8 @@ void open_url(GtkWidget *w, char *url)
 				return;
 			}
 
-			space_free_url = g_strdelimit(url, " ", '+');
+			space_free_url = g_strdup(url);
+			g_strdelimit(space_free_url, " ", '+');
 			command = g_strdup_printf("%s %s", web_command, space_free_url);
  			g_free(space_free_url);
  			} break;

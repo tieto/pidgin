@@ -664,7 +664,8 @@ void remove_all_plugins()
 			if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
 				gaim_plugin_remove();
 		}
-		g_free(p);
+		if(p)
+			g_free(p);
 		c = c->next;
 	}
 }
