@@ -247,6 +247,8 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 
 	a->options = u->options;
 	a->protocol = u->protocol;
+	txt = gtk_entry_get_text(GTK_ENTRY(u->name));
+	g_snprintf(a->username, sizeof(a->username), "%s", txt);
 	txt = gtk_entry_get_text(GTK_ENTRY(u->pass));
 	if (a->options & OPT_USR_REM_PASS)
 		g_snprintf(a->password, sizeof(a->password), "%s", txt);
@@ -254,6 +256,7 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 		a->password[0] = '\0';
 
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), a);
+	gtk_clist_set_text(GTK_CLIST(list), i, 0, a->username);
 	gtk_clist_set_text(GTK_CLIST(list), i, 2,
 			   (a->options & OPT_USR_AUTO) ? "True" : "False");
 	gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(a->protocol));
