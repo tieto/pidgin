@@ -2,9 +2,6 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.82:
 	Bug Fixes:
-	* Double screen names should no longer appear in text from
-	  Windows AIM users that was copy and pasted from another 
-	  conversation (Jon Oberheide)
 	* Selecting a buddy icon for a brand new account no longer
 	  causes a crash
 	* Delayed messages and system messages no longer cause
