@@ -95,7 +95,7 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
-* Fri May 31 2002 Rob Flynn <rob@marko.net> (0.59 release)
+* Mon Jun 24 2002 Rob Flynn <rob@marko.net> (0.59 release)
 - Hungarian translation added (Thanks, Sutto Zoltan)
 - Swedish translation updated (Thanks, Christian Rose)
 - Spanish translation updated (Thanks, Alex)
@@ -112,8 +112,22 @@ rm -r $RPM_BUILD_ROOT
 - Perl scripts can play Gaim sounds (thanks Andrew Rodland)
 - Internal sounds can be played by commands (thanks Lex Spoon)
 - Auto-login item in applet menu (thanks Chris Boyle)
-- Fixed MSN "Unkown Error Code", "Already there", and "Already in opposite list" errors
+- Fixed MSN "Unkown Error Code", "Already there", and Already in opposite list" errors
 - Changed "Play sound" button to "Mute" button
+- You can now have "reserved" chars in IM and proxy passwords
+- Jabber now has typing notification  (Thanks, Nathan Walp)
+- Improved support for Jabber resources  (Thanks, Nathan Walp)
+- Fixed problem with Gaim crashing on non-ASCII Jabber buddy aliases (Jabber "name" attribute) chars  (Thanks, Ho-seok Lee)
+- Plugged memory leaks in Jabber plug-in
+- Fixed problem with Jabber away status not being propagated to conference rooms for jabberd (server) v1.4.2 and above
+- Chat room buddy lists are now sorted independent of case
+- Added capability for protocol-specific edit buddy menu entries
+- Can now remove a Jabber buddy roster item from the server entirely
+- Gaim can now handle messages from Mac ICQ and Miranda ICQ (Thanks, Mark Doliner)
+- Added Mozilla to browser options and changed KFM to  Konqueror.
+- Can now set the server and port for MSN and Napster
+- MSN Internationalization (Thanks Felipe Contreras and countless, countless others)
+- E-mail addresses are no longer truncated when there is a '.' at the end.
 
 * Mon May 13 2002 Rob Flynn <rob@marko.net> (0.58 release)
 - Bulgarian translation added (Thanks, Igel Itzo)
