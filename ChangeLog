@@ -4,11 +4,12 @@ version 0.69
 	* Contact (aka Person, aka Meta-Contact, aka Buddy Merging, etc) Support
 	* Updated MSN support to the MSN Protocol version 9.
 	* Added MSN 6 smileys.
+	* Added animated smiley support (Ka-Hing Cheung)
 	* Jabber now supports SSL
 	* Yahoo now shows people using the java chat client (Tim Ringenbach)
-	* Yahoo chat and conference (Tim Rigenbach)
+	* Yahoo chat and conference (Tim Ringenbach)
 	* Yahoo ignore support (Jesse Farmer (farmerje))
-	* Yahoo idle times displayed, long buddy lists work, sms users, 
+	* Yahoo idle times displayed, long buddy lists work, sms users,
 	  and other improvements (Tim Ringenbach)
 	* The accounts window now shows offline accounts as greyed out, and
 	  online accounts as colored.
