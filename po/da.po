@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GAIM 0.55\n"
-"POT-Creation-Date: 2002-08-08 02:18-0700\n"
+"POT-Creation-Date: 2002-08-18 10:33-0700\n"
 "PO-Revision-Date: 2002-04-01 23:04+0200\n"
 "Last-Translator: Lars Sarauw Hansen <sarauw@dk.ibm.com>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -26,11 +26,11 @@ msgstr "Venne-chat"
 msgid "Gaim Chat"
 msgstr "Gaim - Chat"
 
-#: plugins/chatlist.c:339 src/about.c:165 src/aim.c:320 src/buddy.c:2720
+#: plugins/chatlist.c:339 src/about.c:165 src/aim.c:317 src/buddy.c:2690
 #: src/buddy_chat.c:1325 src/buddy_chat.c:1422 src/buddy_chat.c:1452
 #: src/conversation.c:2889 src/dialogs.c:592 src/dialogs.c:1527
-#: src/dialogs.c:4277 src/multi.c:1076 src/plugins.c:347 src/prefs.c:1853
-#: src/prpl.c:446 src/prpl.c:693 src/server.c:1097
+#: src/dialogs.c:4277 src/multi.c:1076 src/plugins.c:347 src/prefs.c:1854
+#: src/prpl.c:448 src/prpl.c:695 src/server.c:1097
 msgid "Close"
 msgstr "Luk"
 
@@ -43,16 +43,16 @@ msgstr "Indstillinger for chat"
 msgid "Refresh"
 msgstr ""
 
-#: plugins/chatlist.c:364 src/buddy.c:494 src/buddy.c:2833
+#: plugins/chatlist.c:364 src/buddy.c:489 src/buddy.c:2802
 #: src/buddy_chat.c:1457 src/conversation.c:2406 src/conversation.c:2904
 #: src/dialogs.c:957 src/dialogs.c:1139 src/dialogs.c:1478 src/dialogs.c:1512
-#: src/dialogs.c:2507 src/multi.c:1060 src/prefs.c:1565
+#: src/dialogs.c:2507 src/multi.c:1060 src/prefs.c:1566
 msgid "Add"
 msgstr "Tilføj"
 
-#: plugins/chatlist.c:365 src/buddy.c:496 src/buddy.c:2835
+#: plugins/chatlist.c:365 src/buddy.c:491 src/buddy.c:2804
 #: src/buddy_chat.c:1459 src/conversation.c:2392 src/conversation.c:2901
-#: src/dialogs.c:1482 src/dialogs.c:1516 src/prefs.c:1577
+#: src/dialogs.c:1482 src/dialogs.c:1516 src/prefs.c:1578
 msgid "Remove"
 msgstr "Slet"
 
@@ -104,7 +104,7 @@ msgid "Available for friends only"
 msgstr ""
 
 #: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1141
-#: src/applet.c:197 src/buddy.c:499 src/buddy.c:2586 src/buddy.c:2731
+#: src/applet.c:197 src/buddy.c:494 src/buddy.c:2556 src/buddy.c:2701
 msgid "Away"
 msgstr "Fraværende"
 
@@ -467,7 +467,7 @@ msgid "Unknown"
 msgstr "Ukendt"
 
 #: src/protocols/jabber/jabber.c:1143 src/protocols/jabber/jabber.c:1161
-#: src/buddy.c:2893
+#: src/buddy.c:2862
 msgid "Online"
 msgstr "Logget ind"
 
@@ -1221,68 +1221,68 @@ msgstr "Ukendt årsag"
 msgid "User information for %s unavailable: %s"
 msgstr "Oplysninger om %s ikke tilgængelige: %s"
 
-#: src/protocols/oscar/oscar.c:1802 src/buddy.c:2133
+#: src/protocols/oscar/oscar.c:1802 src/buddy.c:2113
 msgid "Buddy Icon"
 msgstr "Venne-ikon"
 
-#: src/protocols/oscar/oscar.c:1805 src/buddy.c:2136
+#: src/protocols/oscar/oscar.c:1805 src/buddy.c:2116
 msgid "Voice"
 msgstr "Tale"
 
-#: src/protocols/oscar/oscar.c:1808 src/buddy.c:2139
+#: src/protocols/oscar/oscar.c:1808 src/buddy.c:2119
 msgid "IM Image"
 msgstr "Billede"
 
-#: src/protocols/oscar/oscar.c:1811 src/buddy.c:500 src/buddy.c:2142
-#: src/buddy.c:2585
+#: src/protocols/oscar/oscar.c:1811 src/buddy.c:495 src/buddy.c:2122
+#: src/buddy.c:2555
 msgid "Chat"
 msgstr "Chat"
 
-#: src/protocols/oscar/oscar.c:1814 src/buddy.c:2145
+#: src/protocols/oscar/oscar.c:1814 src/buddy.c:2125
 msgid "Get File"
 msgstr "Modtag fil"
 
-#: src/protocols/oscar/oscar.c:1817 src/buddy.c:2148
+#: src/protocols/oscar/oscar.c:1817 src/buddy.c:2128
 msgid "Send File"
 msgstr "Send fil"
 
-#: src/protocols/oscar/oscar.c:1821 src/buddy.c:2152
+#: src/protocols/oscar/oscar.c:1821 src/buddy.c:2132
 msgid "Games"
 msgstr "Spil"
 
-#: src/protocols/oscar/oscar.c:1824 src/buddy.c:2155
+#: src/protocols/oscar/oscar.c:1824 src/buddy.c:2135
 msgid "Stocks"
 msgstr "Aktier"
 
-#: src/protocols/oscar/oscar.c:1827 src/buddy.c:2158
+#: src/protocols/oscar/oscar.c:1827 src/buddy.c:2138
 msgid "Send Buddy List"
 msgstr "Send venne-liste"
 
-#: src/protocols/oscar/oscar.c:1830 src/buddy.c:2161
+#: src/protocols/oscar/oscar.c:1830 src/buddy.c:2141
 msgid "EveryBuddy Bug"
 msgstr "EveryBuddy Bug"
 
-#: src/protocols/oscar/oscar.c:1833 src/buddy.c:2164
+#: src/protocols/oscar/oscar.c:1833 src/buddy.c:2144
 msgid "AP User"
 msgstr "AP Bruger"
 
-#: src/protocols/oscar/oscar.c:1836 src/buddy.c:2167
+#: src/protocols/oscar/oscar.c:1836 src/buddy.c:2147
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/protocols/oscar/oscar.c:1839 src/buddy.c:2170
+#: src/protocols/oscar/oscar.c:1839 src/buddy.c:2150
 msgid "Nihilist"
 msgstr "Nihilist"
 
-#: src/protocols/oscar/oscar.c:1842 src/buddy.c:2173
+#: src/protocols/oscar/oscar.c:1842 src/buddy.c:2153
 msgid "ICQ Server Relay"
 msgstr "ICQ Send gennem server"
 
-#: src/protocols/oscar/oscar.c:1845 src/buddy.c:2176
+#: src/protocols/oscar/oscar.c:1845 src/buddy.c:2156
 msgid "ICQ Unknown"
 msgstr "ICQ Ukendt"
 
-#: src/protocols/oscar/oscar.c:1848 src/buddy.c:2179
+#: src/protocols/oscar/oscar.c:1848 src/buddy.c:2159
 msgid "Trillian Encryption"
 msgstr "Trillian Kryptering"
 
@@ -1690,59 +1690,59 @@ msgstr ""
 msgid "Web Site"
 msgstr "Hjemmeside"
 
-#: src/aim.c:153 src/buddy.c:2713
+#: src/aim.c:150 src/buddy.c:2683
 msgid "Signoff"
 msgstr "Log af"
 
-#: src/aim.c:165
+#: src/aim.c:162
 msgid "Please enter your logon"
 msgstr "Indtast dit brugernavn"
 
-#: src/aim.c:165 src/multi.c:1407 src/server.c:55
+#: src/aim.c:162 src/multi.c:1407 src/server.c:55
 msgid "Signon Error"
 msgstr "Logind-fejl"
 
-#: src/aim.c:263
+#: src/aim.c:260
 msgid "Gaim - Login"
 msgstr "Gaim - Logind"
 
-#: src/aim.c:281
+#: src/aim.c:278
 msgid "Screen Name: "
 msgstr "Brugernavn:"
 
-#: src/aim.c:297
+#: src/aim.c:294
 msgid "Password: "
 msgstr "Adgangskode:"
 
-#: src/aim.c:318 src/buddy.c:2717
+#: src/aim.c:315 src/buddy.c:2687
 msgid "Quit"
 msgstr "Luk"
 
-#: src/aim.c:323 src/aim.c:837 src/buddy.c:2743
+#: src/aim.c:320 src/aim.c:834 src/buddy.c:2713
 msgid "Accounts"
 msgstr "Konti"
 
-#: src/aim.c:325 src/multi.c:915
+#: src/aim.c:322 src/multi.c:915
 msgid "Signon"
 msgstr "Log på"
 
-#: src/aim.c:357
+#: src/aim.c:354
 msgid "About"
 msgstr "Om"
 
-#: src/aim.c:358
+#: src/aim.c:355
 msgid "Options"
 msgstr "Valgmuligheder"
 
-#: src/aim.c:360 src/aim.c:840 src/buddy.c:2763
+#: src/aim.c:357 src/aim.c:837 src/buddy.c:2733
 msgid "Plugins"
 msgstr "Udvidelsesmoduler"
 
-#: src/aim.c:834 src/buddy.c:2755
+#: src/aim.c:831 src/buddy.c:2725
 msgid "Preferences"
 msgstr "Indstillinger"
 
-#: src/aim.c:844 src/multi.c:1479
+#: src/aim.c:841 src/multi.c:1479
 #, fuzzy
 msgid "Auto-login"
 msgstr "Auto-logind"
@@ -1796,73 +1796,73 @@ msgstr "Slet fraværsbesked"
 msgid "Set All Away"
 msgstr "Sæt alle fraværende"
 
-#: src/buddy.c:495 src/buddy.c:2834 src/dialogs.c:967 src/dialogs.c:1114
+#: src/buddy.c:490 src/buddy.c:2803 src/dialogs.c:967 src/dialogs.c:1114
 msgid "Group"
 msgstr "Gruppe"
 
-#: src/buddy.c:501 src/buddy.c:666 src/buddy.c:836 src/buddy.c:2583
+#: src/buddy.c:496 src/buddy.c:648 src/buddy.c:818 src/buddy.c:2553
 #: src/buddy_chat.c:864 src/buddy_chat.c:1281
 msgid "IM"
 msgstr "Besked"
 
-#: src/buddy.c:502 src/buddy.c:2584 src/buddy_chat.c:880 src/buddy_chat.c:1289
+#: src/buddy.c:497 src/buddy.c:2554 src/buddy_chat.c:880 src/buddy_chat.c:1289
 #: src/buddy_chat.c:1465 src/conversation.c:2922
 msgid "Info"
 msgstr "Information"
 
-#: src/buddy.c:671 src/buddy.c:841 src/dialogs.c:1106 src/dialogs.c:3836
+#: src/buddy.c:653 src/buddy.c:823 src/dialogs.c:1106 src/dialogs.c:3836
 #: src/dialogs.c:3851
 msgid "Alias"
 msgstr "Alias"
 
-#: src/buddy.c:676 src/buddy.c:860
+#: src/buddy.c:658 src/buddy.c:842
 msgid "Add Buddy Pounce"
 msgstr "Tilføj handling"
 
-#: src/buddy.c:683 src/buddy.c:866
+#: src/buddy.c:665 src/buddy.c:848
 msgid "View Log"
 msgstr "Læs log"
 
-#: src/buddy.c:823 src/buddy.c:854
+#: src/buddy.c:805 src/buddy.c:836
 msgid "Rename"
 msgstr "Omdøb"
 
-#: src/buddy.c:848
+#: src/buddy.c:830
 msgid "Un-Alias"
 msgstr "Slet alias"
 
-#: src/buddy.c:1647 src/buddy.c:2736
+#: src/buddy.c:1629 src/buddy.c:2706
 msgid "Buddy Pounce"
 msgstr "Handling"
 
-#: src/buddy.c:1727
+#: src/buddy.c:1709
 msgid "New Buddy Pounce"
 msgstr "Opret handling"
 
-#: src/buddy.c:1745
+#: src/buddy.c:1727
 msgid "Remove Buddy Pounce"
 msgstr "Slet handling"
 
-#: src/buddy.c:1773
+#: src/buddy.c:1755
 msgid "[Click to edit]"
 msgstr "[Klik for at ændre]"
 
-#: src/buddy.c:2258
+#: src/buddy.c:2238
 #, c-format
 msgid "Logged in: %s\n"
 msgstr "Logget ind: %s\n"
 
-#: src/buddy.c:2270
+#: src/buddy.c:2250
 #, c-format
 msgid "Warnings: %d%%\n"
 msgstr "Advarsler: %d%%\n"
 
-#: src/buddy.c:2282
+#: src/buddy.c:2262
 #, c-format
 msgid "Capabilities: %s\n"
 msgstr "Understøtter: %s\n"
 
-#: src/buddy.c:2286
+#: src/buddy.c:2266
 #, c-format
 msgid ""
 "Alias: %s               \n"
@@ -1873,131 +1873,131 @@ msgstr ""
 "Brugernavn: %s\n"
 "%s%s%s%s%s%s"
 
-#: src/buddy.c:2290
+#: src/buddy.c:2270
 msgid "Idle: "
 msgstr "Inaktiv:"
 
-#: src/buddy.c:2363 src/buddy.c:2368
+#: src/buddy.c:2339 src/buddy.c:2344
 #, c-format
 msgid "%s logged in."
 msgstr "%s loggede ind."
 
-#: src/buddy.c:2428 src/buddy.c:2433
+#: src/buddy.c:2398 src/buddy.c:2403
 #, c-format
 msgid "%s logged out."
 msgstr "%s loggede ud."
 
-#: src/buddy.c:2618
+#: src/buddy.c:2588
 msgid "Information on selected Buddy"
 msgstr "Information om markeret ven"
 
-#: src/buddy.c:2619 src/dialogs.c:722
+#: src/buddy.c:2589 src/dialogs.c:722
 msgid "Send Instant Message"
 msgstr "Send besked"
 
-#: src/buddy.c:2620
+#: src/buddy.c:2590
 msgid "Start/join a Buddy Chat"
 msgstr "Start/deltag i chat"
 
-#: src/buddy.c:2621
+#: src/buddy.c:2591
 msgid "Activate Away Message"
 msgstr "Jeg er fraværende"
 
-#: src/buddy.c:2693
+#: src/buddy.c:2663
 msgid "File"
 msgstr "Handlinger"
 
-#: src/buddy.c:2697
+#: src/buddy.c:2667
 msgid "Add A Buddy"
 msgstr "Tilføj en ven"
 
-#: src/buddy.c:2699
+#: src/buddy.c:2669
 msgid "Join A Chat"
 msgstr "Deltag i chat"
 
-#: src/buddy.c:2701
+#: src/buddy.c:2671
 msgid "New Instant Message"
 msgstr "Ny besked"
 
-#: src/buddy.c:2703 src/dialogs.c:784
+#: src/buddy.c:2673 src/dialogs.c:784
 msgid "Get User Info"
 msgstr "Se brugeroplysninger"
 
-#: src/buddy.c:2708
+#: src/buddy.c:2678
 msgid "Import Buddy List"
 msgstr "Importér venne-liste"
 
-#: src/buddy.c:2726
+#: src/buddy.c:2696
 msgid "Tools"
 msgstr "Værktøjer"
 
-#: src/buddy.c:2749
+#: src/buddy.c:2719
 msgid "Protocol Actions"
 msgstr "Protokolhandlinger"
 
-#: src/buddy.c:2753
+#: src/buddy.c:2723
 msgid "Privacy"
 msgstr "Privatliv"
 
-#: src/buddy.c:2757
+#: src/buddy.c:2727
 msgid "View System Log"
 msgstr "Se systemlog"
 
-#: src/buddy.c:2769
+#: src/buddy.c:2739
 msgid "Perl"
 msgstr "Perl"
 
-#: src/buddy.c:2772
+#: src/buddy.c:2742
 msgid "Load Script"
 msgstr "Åbn skript"
 
-#: src/buddy.c:2776
+#: src/buddy.c:2746
 msgid "Unload All Scripts"
 msgstr "Luk alle skripts"
 
-#: src/buddy.c:2780
+#: src/buddy.c:2750
 msgid "List Scripts"
 msgstr "Vis skripts"
 
-#: src/buddy.c:2788
+#: src/buddy.c:2758
 msgid "Help"
 msgstr "Hjælp"
 
-#: src/buddy.c:2793
+#: src/buddy.c:2762
 #, fuzzy
 msgid "Online Help"
 msgstr "Logget ind"
 
-#: src/buddy.c:2794
+#: src/buddy.c:2763
 #, fuzzy
 msgid "Debug Window"
 msgstr "Vis fejlsøgningsvindue"
 
-#: src/buddy.c:2795
+#: src/buddy.c:2764
 msgid "About Gaim"
 msgstr "Om Gaim"
 
-#: src/buddy.c:2813 src/prefs.c:1659
+#: src/buddy.c:2782 src/prefs.c:1660
 msgid "Buddy List"
 msgstr "Venne-liste"
 
-#: src/buddy.c:2866
+#: src/buddy.c:2835
 msgid "Add a new Buddy"
 msgstr "Tilføj en ven"
 
-#: src/buddy.c:2867
+#: src/buddy.c:2836
 msgid "Add a new Group"
 msgstr "Tilføj en gruppe"
 
-#: src/buddy.c:2868
+#: src/buddy.c:2837
 msgid "Remove selected Buddy/Group"
 msgstr "Slet markeret ven/gruppe"
 
-#: src/buddy.c:2895
+#: src/buddy.c:2864
 msgid "Edit Buddies"
 msgstr "Redigér liste"
 
-#: src/buddy.c:2938
+#: src/buddy.c:2907
 msgid "Gaim - Buddy List"
 msgstr "Gaim - Mine venner"
 
@@ -2015,7 +2015,7 @@ msgstr "Deltag i chat som:"
 #: src/dialogs.c:2274 src/dialogs.c:2496 src/dialogs.c:2678 src/dialogs.c:2853
 #: src/dialogs.c:2924 src/dialogs.c:3586 src/dialogs.c:3838 src/dialogs.c:4019
 #: src/dialogs.c:4394 src/dialogs.c:4500 src/dialogs.c:5185 src/multi.c:781
-#: src/multi.c:911 src/prpl.c:158 src/prpl.c:232
+#: src/multi.c:911 src/prpl.c:160 src/prpl.c:234
 msgid "Cancel"
 msgstr "Annullér"
 
@@ -2138,7 +2138,7 @@ msgstr "Flytter position til %d\n"
 msgid "Bold Text"
 msgstr "Fed tekst"
 
-#: src/conversation.c:2187 src/prefs.c:312
+#: src/conversation.c:2187 src/prefs.c:308
 msgid "Bold"
 msgstr "Fed"
 
@@ -2146,7 +2146,7 @@ msgstr "Fed"
 msgid "Italics Text"
 msgstr "Kursiv tekst"
 
-#: src/conversation.c:2192 src/prefs.c:313
+#: src/conversation.c:2192 src/prefs.c:309
 msgid "Italics"
 msgstr "Kursiv"
 
@@ -2154,7 +2154,7 @@ msgstr "Kursiv"
 msgid "Underline Text"
 msgstr "Understreget tekst"
 
-#: src/conversation.c:2196 src/prefs.c:314
+#: src/conversation.c:2196 src/prefs.c:310
 msgid "Underline"
 msgstr "Understregning"
 
@@ -2238,7 +2238,7 @@ msgstr "Billede"
 msgid "Enable logging"
 msgstr "Registrér i logfil"
 
-#: src/conversation.c:2250 src/prefs.c:1666
+#: src/conversation.c:2250 src/prefs.c:1667
 msgid "Logging"
 msgstr "Logger"
 
@@ -2251,7 +2251,11 @@ msgstr "Gem samtale"
 msgid "Save"
 msgstr "Gem"
 
-#: src/conversation.c:2264 src/conversation.c:2265
+#: src/conversation.c:2264
+msgid "Toggle Sound"
+msgstr ""
+
+#: src/conversation.c:2265
 msgid "Sound"
 msgstr "Lyd"
 
@@ -2323,14 +2327,14 @@ msgstr ""
 "Du er ved at slette %s fra din\n"
 "venneliste. Vil du fortsætte?"
 
-#: src/dialogs.c:531 src/prpl.c:162 src/prpl.c:236
+#: src/dialogs.c:531 src/prpl.c:164 src/prpl.c:238
 msgid "Accept"
 msgstr "Acceptér"
 
 #: src/dialogs.c:660 src/dialogs.c:745 src/dialogs.c:846 src/dialogs.c:1889
 #: src/dialogs.c:2218 src/dialogs.c:2369 src/dialogs.c:2677 src/dialogs.c:2857
 #: src/dialogs.c:2923 src/dialogs.c:4399 src/dialogs.c:4505 src/multi.c:786
-#: src/prefs.c:1830
+#: src/prefs.c:1831
 msgid "OK"
 msgstr "O.k."
 
@@ -2693,12 +2697,12 @@ msgstr "Omdøb ven"
 msgid "Gaim - Select Perl Script"
 msgstr "Gaim - Vælg Perl-skript"
 
-#: src/gaimrc.c:1137
+#: src/gaimrc.c:1141
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Kunne ikke åbne konfigurationsfilen %s."
 
-#: src/gaimrc.c:1138
+#: src/gaimrc.c:1142
 msgid "Preferences Error"
 msgstr "Fejl i indstillinger"
 
@@ -2728,7 +2732,7 @@ msgstr "Ikonfil:"
 msgid "Browse"
 msgstr "Gennemse"
 
-#: src/multi.c:513 src/prefs.c:1343
+#: src/multi.c:513 src/prefs.c:1344
 msgid "Reset"
 msgstr "Nulstil"
 
@@ -2848,7 +2852,7 @@ msgstr "%s er logget ud"
 msgid "Connection Error"
 msgstr "Forbindelsesfejl"
 
-#: src/perl.c:875
+#: src/perl.c:879
 msgid "Perl Scripts"
 msgstr "Perl-skripter"
 
@@ -2909,426 +2913,422 @@ msgstr "Udlæs det valgte udvidelsesmodul"
 msgid "Close this window"
 msgstr "Luk dette vindue"
 
-#: src/prefs.c:269
+#: src/prefs.c:266
 #, fuzzy
 msgid "Windows"
 msgstr "Besked-vindue"
 
-#: src/prefs.c:279
-msgid "Show Buddy Ticker"
-msgstr "Vis status løbende i separat vindue"
-
-#: src/prefs.c:280
+#: src/prefs.c:276
 msgid "Show Debug Window"
 msgstr "Vis fejlsøgningsvindue"
 
-#: src/prefs.c:284 src/prefs.c:306
+#: src/prefs.c:280 src/prefs.c:302
 #, fuzzy
 msgid "Style"
 msgstr "Landsdel"
 
-#: src/prefs.c:290
+#: src/prefs.c:286
 msgid "Use borderless buttons"
 msgstr "Ingen kant på knapper"
 
-#: src/prefs.c:315
+#: src/prefs.c:311
 #, fuzzy
 msgid "Strikethough"
 msgstr "Gennemstreget tekst"
 
-#: src/prefs.c:319
+#: src/prefs.c:315
 #, fuzzy
 msgid "Face"
 msgstr "Annullér"
 
-#: src/prefs.c:327
+#: src/prefs.c:323
 #, fuzzy
 msgid "Use custom face"
 msgstr "Indsæt humør-ansigt"
 
-#: src/prefs.c:331 src/prefs.c:370 src/prefs.c:391
+#: src/prefs.c:327 src/prefs.c:366 src/prefs.c:387
 msgid "Select"
 msgstr "Vælg"
 
-#: src/prefs.c:345
+#: src/prefs.c:341
 msgid "Use custom size"
 msgstr ""
 
-#: src/prefs.c:363
+#: src/prefs.c:359
 #, fuzzy
 msgid "Text color"
 msgstr "Tekstfarve"
 
-#: src/prefs.c:385
+#: src/prefs.c:381
 #, fuzzy
 msgid "Background color"
 msgstr "Baggrundsfarve"
 
-#: src/prefs.c:423
+#: src/prefs.c:419
 msgid "Show graphical smileys"
 msgstr "Vis grafiske humøransigter"
 
-#: src/prefs.c:424
+#: src/prefs.c:420
 msgid "Show timestamp on messages"
 msgstr "Vis tidspunkt i beskeder"
 
-#: src/prefs.c:425
+#: src/prefs.c:421
 msgid "Show URLs as links"
 msgstr "Vis URLer som henvisninger"
 
-#: src/prefs.c:426
+#: src/prefs.c:422
 msgid "Highlight misspelled words"
 msgstr "Fremhæv forkert stavede ord"
 
-#: src/prefs.c:436
+#: src/prefs.c:432
 msgid "Ignore colors"
 msgstr "Ignorér farver"
 
-#: src/prefs.c:437
+#: src/prefs.c:433
 msgid "Ignore font faces"
 msgstr "Ignórer skrifttyper"
 
-#: src/prefs.c:438
+#: src/prefs.c:434
 msgid "Ignore font sizes"
 msgstr "Ignórer skriftstørrelser"
 
-#: src/prefs.c:439
+#: src/prefs.c:435
 msgid "Ignore TiK Automated Messages"
 msgstr "Ignórer TiK's automatiske beskeder"
 
-#: src/prefs.c:459
+#: src/prefs.c:455
 msgid "Enter sends message"
 msgstr "ENTER sender besked"
 
-#: src/prefs.c:460
+#: src/prefs.c:456
 msgid "Control-Enter sends message"
 msgstr "CTRL+ENTER sender besked"
 
-#: src/prefs.c:469
+#: src/prefs.c:465
 msgid "Escape closes window"
 msgstr "ESC lukker vindue"
 
-#: src/prefs.c:470
+#: src/prefs.c:466
 #, fuzzy
 msgid "Control-W closes window"
 msgstr "ESC lukker vindue"
 
-#: src/prefs.c:480
+#: src/prefs.c:476
 msgid "Control-{B/I/U/S} inserts HTML tags"
 msgstr "CTRL+{B/I/U/S} indsætter HTML-koder"
 
-#: src/prefs.c:481
+#: src/prefs.c:477
 msgid "Control-(number) inserts smileys"
 msgstr "CTRL+nummer indsætter humøransigt"
 
-#: src/prefs.c:500
+#: src/prefs.c:496
 msgid "Hide IM/Info/Chat buttons"
 msgstr "Skjul besked/info/chat-knapperne"
 
-#: src/prefs.c:501
+#: src/prefs.c:497
 msgid "Show pictures on buttons"
 msgstr "Brug billeder på knapper"
 
-#: src/prefs.c:511
+#: src/prefs.c:507
 msgid "Automatically show buddy list on sign on"
 msgstr "Vis automatisk venne-listen efter logind"
 
-#: src/prefs.c:513
+#: src/prefs.c:509
 msgid "Display Buddy List near applet"
 msgstr "Vis venne-listen tæt ved panelet"
 
-#: src/prefs.c:516
+#: src/prefs.c:512
 msgid "Save Window Size/Position"
 msgstr "Husk vinduets størrelse og placering"
 
-#: src/prefs.c:517
+#: src/prefs.c:513
 #, fuzzy
 msgid "Raise Window on Events"
 msgstr "Send vindue i forgrunden ved aktivitet"
 
-#: src/prefs.c:526
+#: src/prefs.c:522
 msgid "Hide groups with no online buddies"
 msgstr "Vis ikke gruppe, hvis ingen er logget ind"
 
-#: src/prefs.c:527
+#: src/prefs.c:523
 msgid "Show numbers in groups"
 msgstr "Vis tal for hver gruppe"
 
-#: src/prefs.c:536
+#: src/prefs.c:532
 msgid "Show buddy type icons"
 msgstr "Brug status-ikoner"
 
-#: src/prefs.c:537
+#: src/prefs.c:533
 msgid "Show warning levels"
 msgstr "Vis advarselsniveau"
 
-#: src/prefs.c:538
+#: src/prefs.c:534
 msgid "Show idle times"
 msgstr "Vis inaktiv tid"
 
-#: src/prefs.c:539
+#: src/prefs.c:535
 msgid "Grey idle buddies"
 msgstr "Vis inaktive venner med grå farve"
 
-#: src/prefs.c:568 src/prefs.c:630
+#: src/prefs.c:564 src/prefs.c:626
 msgid "New window width:"
 msgstr "Bredde i punkter:"
 
-#: src/prefs.c:569 src/prefs.c:631
+#: src/prefs.c:565 src/prefs.c:627
 msgid "New window height:"
 msgstr "Højde i punkter:"
 
-#: src/prefs.c:570 src/prefs.c:632
+#: src/prefs.c:566 src/prefs.c:628
 msgid "Entry widget height:"
 msgstr "Højde på skrivefeltet:"
 
-#: src/prefs.c:571 src/prefs.c:633
+#: src/prefs.c:567 src/prefs.c:629
 msgid "Raise windows on events"
 msgstr "Send vindue i forgrunden ved aktivitet"
 
-#: src/prefs.c:572
+#: src/prefs.c:568
 msgid "Hide window on send"
 msgstr "Luk vindue når besked er sendt"
 
-#: src/prefs.c:581
+#: src/prefs.c:577
 msgid "Hide Buddy Icons"
 msgstr "Skjul knapper"
 
-#: src/prefs.c:582
+#: src/prefs.c:578
 msgid "Disable Buddy Icon Animation"
 msgstr "Animér ikke venne-ikoner"
 
-#: src/prefs.c:591
+#: src/prefs.c:587
 msgid "Show logins in window"
 msgstr "Besked når venner logger ind/ud"
 
-#: src/prefs.c:600
+#: src/prefs.c:596
 msgid "Notify buddies that you are typing to them"
 msgstr "Vis venner at du er ved at skrive til dem"
 
-#: src/prefs.c:642
+#: src/prefs.c:638
 msgid "Tab-Complete Nicks"
 msgstr "Autofuldfør navne ved tryk på TAB"
 
-#: src/prefs.c:643
+#: src/prefs.c:639
 msgid "Old-Style Tab Completion"
 msgstr "TAB som i gamle Gaim-versioner"
 
-#: src/prefs.c:652
+#: src/prefs.c:648
 msgid "Show people joining/leaving in window"
 msgstr "Vis når nogen logger ind eller ud "
 
-#: src/prefs.c:653
+#: src/prefs.c:649
 msgid "Colorize screennames"
 msgstr ""
 
-#: src/prefs.c:678
+#: src/prefs.c:674
 #, fuzzy
 msgid ""
 "Show all Instant Messages in one tabbed\n"
 "window"
 msgstr "Vis hver chat som faneblad i et vindue"
 
-#: src/prefs.c:679
+#: src/prefs.c:675
 #, fuzzy
 msgid "Show aliases in tabs/titles"
 msgstr "Vis aliaser i faneblade/titler"
 
-#: src/prefs.c:694
+#: src/prefs.c:690
 msgid "Show all chats in one tabbed window"
 msgstr "Vis hver chat som faneblad i et vindue"
 
-#: src/prefs.c:704
+#: src/prefs.c:700
 #, fuzzy
 msgid ""
 "Show IMs and chats in same tabbed\n"
 "window."
 msgstr "Vis hver chat som et faneblad i samme vindue"
 
-#: src/prefs.c:751
+#: src/prefs.c:747
 msgid "Proxy Server"
 msgstr "Mellemvært"
 
-#: src/prefs.c:768
+#: src/prefs.c:764
 msgid "Host"
 msgstr "Værtsnavn"
 
-#: src/prefs.c:784
+#: src/prefs.c:780
 msgid "Port"
 msgstr "Port"
 
-#: src/prefs.c:801
+#: src/prefs.c:797
 msgid "User"
 msgstr "Brugernavn"
 
-#: src/prefs.c:817
+#: src/prefs.c:813
 msgid "Password"
 msgstr "Adgangskode"
 
-#: src/prefs.c:877
+#: src/prefs.c:873
 #, fuzzy
 msgid "Open new window by default"
 msgstr "Start altid program i nyt vindue"
 
-#: src/prefs.c:896
+#: src/prefs.c:892
 msgid "Log all conversations"
 msgstr "Gem alle samtaler"
 
-#: src/prefs.c:897
+#: src/prefs.c:893
 msgid "Strip HTML from logs"
 msgstr "Ingen HTML-koder i logfilen"
 
-#: src/prefs.c:906
+#: src/prefs.c:902
 msgid "Log when buddies sign on/sign off"
 msgstr "Registrér at venner logger ind/ud"
 
-#: src/prefs.c:908
+#: src/prefs.c:904
 msgid "Log when buddies become idle/un-idle"
 msgstr "Registrér at venner bliver aktive/inaktive"
 
-#: src/prefs.c:910
+#: src/prefs.c:906
 msgid "Log when buddies go away/come back"
 msgstr "Registrér venners fravær/genkomst"
 
-#: src/prefs.c:911
+#: src/prefs.c:907
 msgid "Log your own signons/idleness/awayness"
 msgstr "Registrér eget logind/inaktivitet/fravær"
 
-#: src/prefs.c:913
+#: src/prefs.c:909
 msgid "Individual log file for each buddy's signons"
 msgstr "Separat logfil for hver ven"
 
-#: src/prefs.c:956
+#: src/prefs.c:952
 msgid "No sounds when you log in"
 msgstr "Ingen lyde, når du logger ind"
 
-#: src/prefs.c:957
+#: src/prefs.c:953
 msgid "Sounds while away"
 msgstr "Afspil lyde under fravær"
 
-#: src/prefs.c:994
+#: src/prefs.c:990
 #, c-format
 msgid ""
 "Sound command\n"
 "(%s for filename)"
 msgstr "Kommando (brug %s istedet for filnavn):"
 
-#: src/prefs.c:1036
+#: src/prefs.c:1032
 msgid "Sending messages removes away status"
 msgstr "Beskedafsendelse ophæver fraværsstatus"
 
-#: src/prefs.c:1037
+#: src/prefs.c:1033
 msgid "Queue new messages when away"
 msgstr "Sæt nye beskeder i kø under fravær"
 
-#: src/prefs.c:1038
+#: src/prefs.c:1034
 msgid "Ignore new conversations when away"
 msgstr "Ignórer nye samtaler under fravær"
 
-#: src/prefs.c:1050
+#: src/prefs.c:1046
 msgid "Seconds before resending:"
 msgstr ""
 
-#: src/prefs.c:1053
+#: src/prefs.c:1049
 msgid "Don't send auto-response"
 msgstr "Send ikke automatisk svar"
 
-#: src/prefs.c:1054
+#: src/prefs.c:1050
 msgid "Only send auto-response when idle"
 msgstr "Send kun automatisk svar, når fraværende"
 
-#: src/prefs.c:1081
+#: src/prefs.c:1077
 msgid "Set away when idle"
 msgstr ""
 
-#: src/prefs.c:1190
+#: src/prefs.c:1191
 msgid "Gaim - Sound Configuration"
 msgstr "Gaim - Opsætning af lyd"
 
-#: src/prefs.c:1338
+#: src/prefs.c:1339
 msgid "Test"
 msgstr "Test"
 
-#: src/prefs.c:1348
+#: src/prefs.c:1349
 msgid "Choose..."
 msgstr "Vælg..."
 
-#: src/prefs.c:1586
+#: src/prefs.c:1587
 #, fuzzy
 msgid "_Edit"
 msgstr "Ret"
 
-#: src/prefs.c:1589
+#: src/prefs.c:1590
 msgid "Edit"
 msgstr "Ret"
 
-#: src/prefs.c:1655
+#: src/prefs.c:1656
 #, fuzzy
 msgid "Interface"
 msgstr "Instans:"
 
-#: src/prefs.c:1656
+#: src/prefs.c:1657
 #, fuzzy
 msgid "Fonts"
 msgstr "Skrifttype"
 
-#: src/prefs.c:1657
+#: src/prefs.c:1658
 #, fuzzy
 msgid "Message Text"
 msgstr "Beskeder"
 
-#: src/prefs.c:1658
+#: src/prefs.c:1659
 msgid "Shortcuts"
 msgstr ""
 
-#: src/prefs.c:1660
+#: src/prefs.c:1661
 msgid "IM Window"
 msgstr "Besked-vindue"
 
-#: src/prefs.c:1661
+#: src/prefs.c:1662
 #, fuzzy
 msgid "Chat Window"
 msgstr "Gruppechat-vindue"
 
-#: src/prefs.c:1662
+#: src/prefs.c:1663
 msgid "Tabs"
 msgstr ""
 
-#: src/prefs.c:1663
+#: src/prefs.c:1664
 msgid "Proxy"
 msgstr "Mellemvært"
 
-#: src/prefs.c:1664
+#: src/prefs.c:1665
 msgid "Browser"
 msgstr "Netlæser/browser"
 
-#: src/prefs.c:1667
-msgid "Sounds"
-msgstr "Lydeffekter"
-
 #: src/prefs.c:1668
-#, fuzzy
-msgid "Sound Events"
+msgid "Sounds"
 msgstr "Lydeffekter"
 
 #: src/prefs.c:1669
 #, fuzzy
+msgid "Sound Events"
+msgstr "Lydeffekter"
+
+#: src/prefs.c:1670
+#, fuzzy
 msgid "Away / Idle"
 msgstr "Titel:"
 
-#: src/prefs.c:1670
+#: src/prefs.c:1671
 msgid "Away Messages"
 msgstr "Fraværsbeskeder"
 
-#: src/prefs.c:1731
+#: src/prefs.c:1732
 msgid "Gaim - Preferences"
 msgstr "Gaim - Indstillinger"
 
-#: src/prefs.c:1841
+#: src/prefs.c:1842
 msgid "Apply"
 msgstr ""
 
-#: src/prefs.c:1890
+#: src/prefs.c:1891
 msgid "Gaim debug output window"
 msgstr "Gaim fejlsøgningsvindue"
 
@@ -3348,7 +3348,7 @@ msgstr ""
 msgid "Protocol Error"
 msgstr "Protokol-fejl"
 
-#: src/prpl.c:79
+#: src/prpl.c:84
 msgid ""
 "Gaim has loaded the ICQ plugin.  This plugin has been deprecated. As such, "
 "it was probably not compiled from the same version of the source as this "
@@ -3356,42 +3356,42 @@ msgid ""
 "you use the AIM/ICQ protocol to connect to ICQ"
 msgstr ""
 
-#: src/prpl.c:83
+#: src/prpl.c:88
 #, fuzzy
 msgid "Protocol Warning"
 msgstr "Protokolhandlinger"
 
-#: src/prpl.c:101
+#: src/prpl.c:103
 #, c-format
 msgid "%s was using %s, which got removed. %s is now offline."
 msgstr "%s brugte %s, som blev udlæst. %s kan ikke længere kontaktes."
 
-#: src/prpl.c:104
+#: src/prpl.c:106
 msgid "Disconnect"
 msgstr "Afbryd forbindelse"
 
-#: src/prpl.c:141
+#: src/prpl.c:143
 msgid "Accept?"
 msgstr "Acceptér?"
 
-#: src/prpl.c:207
+#: src/prpl.c:209
 msgid "Gaim - Prompt"
 msgstr "Gaim - Spørgsmål"
 
-#: src/prpl.c:427
+#: src/prpl.c:429
 msgid "Gaim - New Mail"
 msgstr "Gaim - Ny post"
 
-#: src/prpl.c:453
+#: src/prpl.c:455
 msgid "Open Mail"
 msgstr "Åbn post"
 
-#: src/prpl.c:578
+#: src/prpl.c:580
 #, fuzzy, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s har gjort %s til en ven%s%s%s"
 
-#: src/prpl.c:586
+#: src/prpl.c:588
 #, fuzzy
 msgid ""
 "\n"
@@ -3402,7 +3402,7 @@ msgstr ""
 "\n"
 "Vil du tilføje vedkommende til din venne-liste?"
 
-#: src/prpl.c:629
+#: src/prpl.c:631
 msgid ""
 "You do not currently have any protocols available that are able to register "
 "new accounts."
@@ -3410,15 +3410,15 @@ msgstr ""
 "Du har ikke nogen protokoller indlæst, som understøtter oprettelsen af nye "
 "konti."
 
-#: src/prpl.c:666
+#: src/prpl.c:668
 msgid "Gaim - Registration"
 msgstr "Gaim - Registrering"
 
-#: src/prpl.c:681
+#: src/prpl.c:683
 msgid "Registration Information"
 msgstr "Registreringsinformation"
 
-#: src/prpl.c:698
+#: src/prpl.c:700
 msgid "Register"
 msgstr "Registrér"
 
@@ -3494,6 +3494,9 @@ msgstr ""
 #: src/sound.c:74
 msgid "Someone says your name in chat"
 msgstr ""
+
+#~ msgid "Show Buddy Ticker"
+#~ msgstr "Vis status løbende i separat vindue"
 
 #~ msgid "General Options"
 #~ msgstr "Generelle indstillinger"
