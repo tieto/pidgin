@@ -332,6 +332,7 @@ gboolean gtk_key_pressed_cb(GtkWidget *imhtml, GdkEventKey *event, gpointer data
 	return FALSE;
 }
 
+#if GTK_CHECK_VERSION(2,2,0)
 static GtkIMHtmlCopyable *gtk_imhtml_copyable_new(GtkIMHtml *imhtml, GtkTextMark *mark, const gchar *text) 
 {
 	GtkIMHtmlCopyable *copy = g_malloc(sizeof(GtkIMHtmlCopyable));
@@ -390,6 +391,7 @@ static gboolean button_release_cb(GtkIMHtml *imhtml, GdkEventButton event, gpoin
 	copy_clipboard_cb(imhtml, gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY));
 	return FALSE;
 }
+#endif
 
 
 static GtkTextViewClass *parent_class = NULL;
@@ -406,7 +408,9 @@ gtk_imhtml_finalize (GObject *object)
 {
 	GtkIMHtml *imhtml = GTK_IMHTML(object);
 	GList *scalables;
+#if GTK_CHECK_VERSION(2,2,0)
 	GSList *copyables;
+#endif
 	
 	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
@@ -423,12 +427,13 @@ gtk_imhtml_finalize (GObject *object)
 		scale->free(scale);
 	}
 	
+#if GTK_CHECK_VERSION(2,2,0)
 	for (copyables = imhtml->copyables; copyables; copyables = copyables->next) {
 		GtkIMHtmlCopyable *copy = GTK_IMHTML_COPYABLE(copyables->data);
 		g_free(copy->text);
 		g_free(copy);
 	}
-	
+#endif
 	g_list_free(imhtml->scalables);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
@@ -492,8 +497,10 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "key_press_event", G_CALLBACK(gtk_key_pressed_cb), NULL);
+#if GTK_CHECK_VERSION(2,2,0)
 	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "button-release-event", G_CALLBACK(button_release_cb), imhtml);
+#endif
 	gtk_widget_add_events(GTK_WIDGET(imhtml), GDK_LEAVE_NOTIFY_MASK);
 
 	imhtml->tip = NULL;
@@ -501,7 +508,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->tip_window = NULL;
 
 	imhtml->scalables = NULL;
+#if GTK_CHECK_VERSION(2,2,0)
 	imhtml->copyables = NULL;
+#endif
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
@@ -1464,9 +1473,11 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 			if (icon) {
 				gtk_widget_show(icon);
 				gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
+#if GTK_CHECK_VERSION(2,2,0)
 				gtk_imhtml_copyable_new(imhtml, 
 							gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE), 
 							ws);
+#endif
 			}
 			
 			copy = iter;
