@@ -498,6 +498,8 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 						break;
 					}
 
+				} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+					gaim_blist_add_group(g, node->parent);
 				}
 
 			}

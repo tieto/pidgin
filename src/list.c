@@ -287,6 +287,7 @@ struct group *gaim_group_new(const char *name)
 void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
 {
 	struct gaim_blist_ui_ops *ops;
+	GaimBlistNode *gnode = (GaimBlistNode*)group;
 	gboolean save = FALSE;
 
 	if (!gaimbuddylist)
@@ -294,7 +295,7 @@ void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
 	ops = gaimbuddylist->ui_ops;
 
 	if (!gaimbuddylist->root) {
-		gaimbuddylist->root = (GaimBlistNode*)group;
+		gaimbuddylist->root = gnode;
 		return;
 	}
 
@@ -302,29 +303,35 @@ void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
 		node = gaim_blist_get_last_sibling(gaimbuddylist->root);
 
 	/* if we're moving to overtop of ourselves, do nothing */
-	if((GaimBlistNode*)group == node)
+	if(gnode == node)
 		return;
 
 	if (gaim_find_group(group->name)) {
 		/* This is just being moved */
-		GaimBlistNode *node2 = ((GaimBlistNode*)group)->next;
-		GaimBlistNode *node3 = ((GaimBlistNode*)group)->prev;
 
 		ops->remove(gaimbuddylist, (GaimBlistNode*)group);
 
-		if (node2)
-			node2->prev = node3;
-		if (node3)
-			node3->next = node2;
+		if(gnode == gaimbuddylist->root)
+			gaimbuddylist->root = gnode->next;
+		if(gnode->prev)
+			gnode->prev->next = gnode->next;
+		if(gnode->next)
+			gnode->next->prev = gnode->prev;
+
 		save = TRUE;
 	}
 
-	((GaimBlistNode*)group)->next = node ? node->next : NULL;
-	((GaimBlistNode*)group)->prev = node;
-	node->next = (GaimBlistNode*)group;
+	gnode->next = node->next;
+	gnode->prev = node;
+	if(node->next)
+		node->next->prev = gnode;
+	node->next = gnode;
 
-	if (ops)
-		ops->update(gaimbuddylist, (GaimBlistNode*)group);
+	if (ops) {
+		ops->update(gaimbuddylist, gnode);
+		for(node = gnode->child; node; node = node->next)
+			ops->update(gaimbuddylist, node);
+	}
 	if (save)
 		gaim_blist_save();
 }
