@@ -22,14 +22,14 @@
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
 #endif
-#ifdef USE_GNOME
-#include <gnome.h>
-#else
 #ifdef USE_APPLET
 #include "gnome_applet_mgr.h"
 #include <gnome.h>
-#endif /* USE_APPLET */
+#else
+#ifdef USE_GNOME
+#include <gnome.h>
 #endif /* USE_GNOME */
+#endif /* USE_APPLET */
 #ifdef GAIM_PLUGINS
 #include <dlfcn.h>
 #endif /* GAIM_PLUGINS */
