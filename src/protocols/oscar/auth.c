@@ -476,12 +476,10 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 
 	aim_tlvlist_add_raw(&tl, 0x0001, strlen(sn), sn);
 
-	/*
-	 * These are sent in logins for recent WinAIM clients.  Maybe tells
-	 * the server we're able to handle SecurID requests?  That's a complete
-	 * guess.
-	 */
+	/* Tell the server we support SecurID logins. */
 	aim_tlvlist_add_noval(&tl, 0x004b);
+
+	/* Unknown.  Sent in recent WinAIM clients.*/
 	aim_tlvlist_add_noval(&tl, 0x005a);
 
 	aim_tlvlist_write(&fr->data, &tl);

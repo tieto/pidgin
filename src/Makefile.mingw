@@ -114,6 +114,7 @@ DLL_C_SRC =	\
 			gtksavedstatuses.c \
 			gtksound.c \
 			gtksourceiter.c \
+			gtkstatusbox.c \
 			gtkstatusselector.c \
 			gtkstock.c \
 			gtkthemes.c \
