@@ -12,7 +12,9 @@ version 0.73cvs:
 	* The border on the close buttons on inactive tabs are no longer shown,
 	  thanks to a fix used by Galeon.
 	* Compatible with autoconf 2.58.
+	* Chinese (Simplified) translation updated (Funda Wang)
 	* German translation updated (Bjoern Voigt)
+	* Italian translation updated (Claudio Satriano)
 
 version 0.72 (10/31/2003):
 	* Added a search feature to conversations.
