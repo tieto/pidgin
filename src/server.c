@@ -388,15 +388,27 @@ struct queued_away_response *find_queued_away_response_by_name(char *name)
 /* woo. i'm actually going to comment this function. isn't that fun. make sure to follow along, kids */
 void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away, time_t mtime)
 {
+	char *buffy;
+	char *angel;
+	int plugin_return;
+
 	struct conversation *cnv;
 	int new_conv = 0;
+
+	/* we should update the conversation window buttons and menu, if it exists. */
+	cnv = find_conversation(name);
+	if (cnv)
+		set_convo_gc(cnv, gc);
+	/* we do the new_conv check here in case any plugins decide to create it */
+	else
+		new_conv = 1;
 
 	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
 	 * by the prpls. so we create temp holders and pass those instead. it's basically
 	 * just to avoid segfaults. */
-	char *buffy = g_strdup(message);
-	char *angel = g_strdup(name);
-	int plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, 0);
+	buffy = g_strdup(message);
+	angel = g_strdup(name);
+	plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, 0);
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
@@ -420,11 +432,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		g_free(tmpmsg);
 		return;
 	}
-
-	/* we should update the conversation window buttons and menu, if it exists. */
-	cnv = find_conversation(name);
-	if (cnv)
-		set_convo_gc(cnv, gc);
 
 	/* if you can't figure this out, stop reading right now.
 	 * "we're not worthy! we're not worthy!" */
@@ -497,7 +504,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			 * will take care of not playing while away), and then write it to the
 			 * convo window. */
 			if (cnv == NULL) {
-				new_conv = 1;
 				cnv = new_conversation(name);
 				set_convo_gc(cnv, gc);
 			}
@@ -550,7 +556,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		 * it (if it does exist it was updated earlier), then play a sound indicating we've
 		 * received it and then display it. easy. */
 		if (cnv == NULL) {
-			new_conv = 1;
 			cnv = new_conversation(name);
 			set_convo_gc(cnv, gc);
 		}
