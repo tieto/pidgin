@@ -11,7 +11,8 @@ version 0.71
 	* Multiple copies of gaim installed at different locations no
 	  longer attempt to load the same, possibly incompatible plugins
 	  (Robert McQueen)
-	* Zepher formatting fixes (Arun A Tharuvai)
+	* Zephyr formatting fixes (Arun A Tharuvai)
+	* Zephyr can connect to chats (Karsten Huneycutt)
 	* Get User Info in MSN and Yahoo now return an error indicating that
 	  the information doesn't exist if the profile is empty (parts by
 	  Nathan Poznick)

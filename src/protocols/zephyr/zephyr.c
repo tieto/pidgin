@@ -835,6 +835,10 @@ static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, G
 static char *zephyr_normalize(const char *orig)
 {
 	static char buf[80];
+	if (!g_ascii_strcasecmp(orig, "")) {
+		buf[0] = '\0';
+		return buf;
+	}
 	if (strchr(orig, '@')) {
 		g_snprintf(buf, 80, "%s", orig);
 	} else {
