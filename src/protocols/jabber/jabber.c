@@ -226,7 +226,7 @@ typedef struct gaim_jid_struct *gaim_jid;
 struct jabber_chat {
 	gaim_jid gjid;
 	GaimConnection *gc;
-	struct gaim_conversation *b;
+	GaimConversation *b;
 	int id;
 	int state;
 };
@@ -838,10 +838,10 @@ static void gjab_start(gjconn gjc)
 /*
  * Find chat by chat group name
  */
-static struct gaim_conversation *find_chat(GaimConnection *gc, char *name)
+static GaimConversation *find_chat(GaimConnection *gc, char *name)
 {
 	GSList *bcs = gc->buddy_chats;
-	struct gaim_conversation *b = NULL;
+	GaimConversation *b = NULL;
 	char *chat = g_strdup(normalize(name));
 
 	while (bcs) {
@@ -871,7 +871,7 @@ static struct gaim_conversation *find_chat(GaimConnection *gc, char *name)
 static int jabber_find_chat_by_convo_id(GaimConnection *gc, int id, struct jabber_chat **jc)
 {
 	GSList *bcs = gc->buddy_chats;
-	struct gaim_conversation *b = NULL;
+	GaimConversation *b = NULL;
 	struct jabber_data *jd = gc->proto_data;
 
 	*jc = NULL;
@@ -954,7 +954,7 @@ static struct jabber_chat *find_pending_chat(GaimConnection *gc, jid chat)
 	return jc;
 }
 
-static gboolean find_chat_buddy(struct gaim_conversation *b, char *name)
+static gboolean find_chat_buddy(GaimConversation *b, char *name)
 {
 	GList *m = gaim_chat_get_users(GAIM_CHAT(b));
 
@@ -1504,7 +1504,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	xmlnode y;
 	char *show;
 	int state = 0;
-	struct gaim_conversation *cnv = NULL;
+	GaimConversation *cnv = NULL;
 	struct jabber_chat *jc = NULL;
 	int priority = 0;
 	struct jabber_buddy_data *jbd;

@@ -39,7 +39,7 @@ struct _MsnSwitchBoard
 
 	gboolean invited;
 
-	struct gaim_conversation *chat;
+	GaimConversation *chat;
 
 	gboolean in_use;
 

@@ -790,8 +790,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		int id;
 		char *in, *buddy;
 		GSList *bcs = gc->buddy_chats;
-		struct gaim_conversation *b = NULL;
-		struct gaim_chat *chat;
+		GaimConversation *b = NULL;
+		GaimChat *chat;
 
 		sscanf(strtok(NULL, ":"), "%d", &id);
 		in = strtok(NULL, ":");
@@ -799,7 +799,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		chat = GAIM_CHAT(b);
 
 		while (bcs) {
-			b = (struct gaim_conversation *)bcs->data;
+			b = (GaimConversation *)bcs->data;
 			if (id == gaim_chat_get_id(chat))
 				break;
 			bcs = bcs->next;
@@ -831,13 +831,13 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		serv_got_chat_invite(gc, name, who, message, components);
 	} else if (!g_ascii_strcasecmp(c, "CHAT_LEFT")) {
 		GSList *bcs = gc->buddy_chats;
-		struct gaim_conversation *b = NULL;
+		GaimConversation *b = NULL;
 		int id;
 
 		sscanf(strtok(NULL, ":"), "%d", &id);
 
 		while (bcs) {
-			b = (struct gaim_conversation *)bcs->data;
+			b = (GaimConversation *)bcs->data;
 			if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 				break;
 			b = NULL;
@@ -1234,11 +1234,11 @@ static void toc_chat_invite(GaimConnection *g, int id, const char *message, cons
 static void toc_chat_leave(GaimConnection *g, int id)
 {
 	GSList *bcs = g->buddy_chats;
-	struct gaim_conversation *b = NULL;
+	GaimConversation *b = NULL;
 	char buf[BUF_LEN * 2];
 
 	while (bcs) {
-		b = (struct gaim_conversation *)bcs->data;
+		b = (GaimConversation *)bcs->data;
 		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 			break;
 		b = NULL;

@@ -60,12 +60,12 @@ struct nap_data {
 	gchar *email;
 };
 
-static struct gaim_conversation *nap_find_chat(GaimConnection *gc, const char *name)
+static GaimConversation *nap_find_chat(GaimConnection *gc, const char *name)
 {
 	GSList *bcs = gc->buddy_chats;
 
 	while (bcs) {
-		struct gaim_conversation *b = bcs->data;
+		GaimConversation *b = bcs->data;
 		if (!gaim_utf8_strcasecmp(b->name, name))
 			return b;
 		bcs = bcs->next;
@@ -199,7 +199,7 @@ static void nap_join_chat(GaimConnection *gc, GHashTable *data)
 /* 401 - MSG_CLIENT_PART */
 static void nap_chat_leave(GaimConnection *gc, int id)
 {
-	struct gaim_conversation *c = gaim_find_chat(gc, id);
+	GaimConversation *c = gaim_find_chat(gc, id);
 
 	if (!c)
 		return;
@@ -210,7 +210,7 @@ static void nap_chat_leave(GaimConnection *gc, int id)
 /* 402 - MSG_CLIENT_PUBLIC */
 static int nap_chat_send(GaimConnection *gc, int id, char *message)
 {
-	struct gaim_conversation *c = gaim_find_chat(gc, id);
+	GaimConversation *c = gaim_find_chat(gc, id);
 
 	if (!c)
 		return -EINVAL;
@@ -236,7 +236,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 {
 	GaimConnection *gc = data;
 	struct nap_data *ndata = gc->proto_data;
-	struct gaim_conversation *c;
+	GaimConversation *c;
 	gchar *buf, *buf2, *buf3, **res;
 	unsigned short header[2];
 	int len;

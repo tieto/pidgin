@@ -109,7 +109,7 @@ __bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		gaim_chat_remove_user(GAIM_CHAT(swboard->chat), user, NULL);
 	else {
 		const char *username;
-		struct gaim_conversation *conv;
+		GaimConversation *conv;
 		struct buddy *b;
 		char buf[MSN_BUF_LEN];
 

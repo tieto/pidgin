@@ -134,7 +134,7 @@ struct chat_connection {
 	int inpa;
 	int id;
 	GaimConnection *gc; /* i hate this. */
-	struct gaim_conversation *cnv; /* bah. */
+	GaimConversation *cnv; /* bah. */
 	int maxlen;
 	int maxvis;
 };
@@ -454,7 +454,7 @@ static struct chat_connection *find_oscar_chat_by_conn(GaimConnection *gc,
 static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct gaim_conversation *cnv;
+	GaimConversation *cnv;
 	struct direct_im *dim;
 	char *sn;
 	char buf[256];
@@ -1859,7 +1859,7 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 	struct direct_im *dim = data;
 	GaimConnection *gc = dim->gc;
 	struct oscar_data *od = gc->proto_data;
-	struct gaim_conversation *cnv;
+	GaimConversation *cnv;
 	char buf[256];
 	struct sockaddr name;
 	socklen_t name_len = 1;
@@ -5164,13 +5164,13 @@ static void oscar_chat_invite(GaimConnection *g, int id, const char *message, co
 static void oscar_chat_leave(GaimConnection *g, int id) {
 	struct oscar_data *od = g ? (struct oscar_data *)g->proto_data : NULL;
 	GSList *bcs = g->buddy_chats;
-	struct gaim_conversation *b = NULL;
+	GaimConversation *b = NULL;
 	struct chat_connection *c = NULL;
 	int count = 0;
 
 	while (bcs) {
 		count++;
-		b = (struct gaim_conversation *)bcs->data;
+		b = (GaimConversation *)bcs->data;
 		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 			break;
 		bcs = bcs->next;
@@ -5202,13 +5202,13 @@ static void oscar_chat_leave(GaimConnection *g, int id) {
 static int oscar_chat_send(GaimConnection *g, int id, char *message) {
 	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	GSList *bcs = g->buddy_chats;
-	struct gaim_conversation *b = NULL;
+	GaimConversation *b = NULL;
 	struct chat_connection *c = NULL;
 	char *buf, *buf2;
 	int i, j;
 
 	while (bcs) {
-		b = (struct gaim_conversation *)bcs->data;
+		b = (GaimConversation *)bcs->data;
 		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 			break;
 		bcs = bcs->next;
@@ -5400,7 +5400,7 @@ static char *oscar_status_text(struct buddy *b) {
 static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct gaim_conversation *cnv;
+	GaimConversation *cnv;
 	struct direct_im *dim;
 	char buf[256];
 	char *sn;
@@ -5444,7 +5444,7 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	double percent;
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct gaim_conversation *c;
+	GaimConversation *c;
 	struct direct_im *dim;
 
 	va_start(ap, fr);
