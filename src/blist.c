@@ -104,6 +104,43 @@ static void blist_pref_cb(const char *name, GaimPrefType typ, gpointer value, gp
 	}
 }
 
+static GaimContact *gaim_buddy_get_contact(GaimBuddy *buddy)
+{
+	return (GaimContact*)((GaimBlistNode*)buddy)->parent;
+}
+
+static void gaim_contact_compute_priority_buddy(GaimContact *contact) {
+	GaimBlistNode *bnode;
+
+	for(bnode = ((GaimBlistNode*)contact)->child; bnode; bnode = bnode->next) {
+		GaimBuddy *buddy;
+		if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+			continue;
+		buddy = (GaimBuddy*)bnode;
+		if(!gaim_account_is_connected(buddy->account))
+			continue;
+
+		if(!contact->priority) {
+			contact->priority = buddy;
+		} else if(GAIM_BUDDY_IS_ONLINE(buddy)) {
+			if(!GAIM_BUDDY_IS_ONLINE(contact->priority)) {
+				contact->priority = buddy;
+			} else if(!(buddy->uc & UC_UNAVAILABLE) && !buddy->idle &&
+					(contact->priority->uc & UC_UNAVAILABLE ||
+					 contact->priority->idle)) {
+				contact->priority = buddy;
+			} else if(!buddy->idle && contact->priority->idle) {
+				contact->priority = buddy;
+			} else if(contact->priority->uc & UC_UNAVAILABLE &&
+					contact->priority->idle && (!(buddy->uc & UC_UNAVAILABLE) ||
+						!buddy->idle)) {
+				contact->priority = buddy;
+			}
+		}
+	}
+}
+
+
 /*****************************************************************************
  * Public API functions                                                      *
  *****************************************************************************/
@@ -178,6 +215,7 @@ void  gaim_blist_update_buddy_status (GaimBuddy *buddy, int status)
 	}
 
 	buddy->uc = status;
+	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
@@ -195,6 +233,7 @@ static gboolean presence_update_timeout_cb(GaimBuddy *buddy) {
 	}
 
 	buddy->timer = 0;
+	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
@@ -235,6 +274,7 @@ void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
 		buddy->timer = g_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
 	}
 
+	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
@@ -244,6 +284,7 @@ void  gaim_blist_update_buddy_idle (GaimBuddy *buddy, int idle)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	buddy->idle = idle;
+	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
@@ -650,6 +691,7 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 
 	g_hash_table_replace(gaimbuddylist->buddies, hb, buddy);
 
+	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 	if (save)
@@ -1015,32 +1057,7 @@ void  gaim_blist_remove_group (GaimGroup *group)
 }
 
 GaimBuddy *gaim_contact_get_priority_buddy(GaimContact *contact) {
-	GaimBuddy *top = NULL;
-	GaimBlistNode *bnode;
-
-	for(bnode = ((GaimBlistNode*)contact)->child; bnode; bnode = bnode->next) {
-		GaimBuddy *buddy;
-		if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-			continue;
-		buddy = (GaimBuddy*)bnode;
-		if(!top && gaim_account_is_connected(buddy->account)) {
-			top = buddy;
-		} else if(GAIM_BUDDY_IS_ONLINE(buddy)) {
-			if(!GAIM_BUDDY_IS_ONLINE(top)) {
-				top = buddy;
-			} else if(!(buddy->uc & UC_UNAVAILABLE) && !buddy->idle &&
-					(top->uc & UC_UNAVAILABLE || top->idle)) {
-				top = buddy;
-			} else if(!buddy->idle && top->idle) {
-				top = buddy;
-			} else if(top->uc & UC_UNAVAILABLE && top->idle &&
-					(!(buddy->uc & UC_UNAVAILABLE) || !buddy->idle)) {
-				top = buddy;
-			}
-		}
-	}
-
-	return top;
+	return contact->priority;
 }
 
 const char *gaim_get_buddy_alias_only(GaimBuddy *b) {
@@ -1275,6 +1292,7 @@ void gaim_blist_add_account(GaimAccount *account)
 							ops->update(gaimbuddylist, bnode);
 						}
 					}
+					gaim_contact_compute_priority_buddy((GaimContact*)cnode);
 					ops->update(gaimbuddylist, cnode);
 			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode) &&
 					((GaimBlistChat*)cnode)->account == account) {
@@ -1324,6 +1342,7 @@ void gaim_blist_remove_account(GaimAccount *account)
 							ops->remove(gaimbuddylist, bnode);
 					}
 				}
+				gaim_contact_compute_priority_buddy((GaimContact*)cnode);
 			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode) &&
 					((GaimBlistChat*)cnode)->account == account) {
 				((GaimGroup*)gnode)->currentsize--;
