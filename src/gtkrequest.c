@@ -812,6 +812,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		else
 			rows = field_count;
 
+		col_num=0;
 		for (fl = field_list; fl != NULL; fl = fl->next)
 		{
 			GaimRequestFieldType type;
@@ -820,11 +821,19 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 			type = gaim_request_field_get_type(field);
 
-			if (type == GAIM_REQUEST_FIELD_STRING &&
-				gaim_request_field_string_is_multiline(field))
-			{
+			if (type == GAIM_REQUEST_FIELD_LABEL) {
+				if(col_num > 0)
+					rows++;
+				rows++;
+			} else if(type == GAIM_REQUEST_FIELD_STRING && gaim_request_field_string_is_multiline(field)){
+				if(col_num > 0)
+					rows++;
 				rows += 2;
 			}
+
+			col_num++;
+			if(col_num >= cols)
+				col_num=0;
 		}
 
 		table = gtk_table_new(rows, 2 * cols, FALSE);
@@ -872,11 +881,15 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 						(type == GAIM_REQUEST_FIELD_STRING &&
 						 gaim_request_field_string_is_multiline(field)))
 					{
+						if(col_num > 0)
+							row_num++;
+
 						gtk_table_attach_defaults(GTK_TABLE(table), label,
 												  0, 2 * cols,
 												  row_num, row_num + 1);
 
 						row_num++;
+						col_num=cols;
 					}
 					else
 					{
