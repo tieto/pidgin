@@ -1,6 +1,16 @@
 -=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
-0.11.0-pre6 (03/16/2001):
+0.11.0-pre8 (03/23/2001):
+	Eric: Oo wow :) So I guess the big news is that this release should
+	help you avoid the battle between Jabber and AOL. Most protocols
+	got a few good bugfixes; thanks to people who pointed them out :).
+	Hopefully for the next release I'll make it so you can register a
+	jabber.org account, and then you can support Jabber using Gaim.
+	I think (I *think*) Oscar blocking is working now. Haha, get it?
+	Oscar blocking? It took me a while to get it, too. But no, really,
+	I think that the permit/deny list in Oscar might be working.
+
+0.11.0-pre7 (03/16/2001):
 	Rob: Hey! I finally rewrote the MSN plugin.  Sorry, I'm just 
 	a lazy code whore sometimes, heheh.  It pretty much has the same
 	functionality as before with the exception of instability.  I
