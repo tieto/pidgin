@@ -121,6 +121,11 @@ void irc_request_buddy_update ( struct gaim_connection *gc ) {
 	idata->recblocks = 0;
 	idata->totalblocks = 1;
 
+	/* First, let's check to see if we have anyone on our buddylist */
+	if (!grp) {
+		return;
+	}
+
 	/* Send the first part of our request */	
 	write(idata->fd, "ISON", 4);
 
@@ -358,7 +363,7 @@ void irc_callback ( struct gaim_connection * gc ) {
 
 		if (!status)
 		{
-			exit(1);
+			return;
 		}
 		buf[i] = c;
 		i++;
@@ -374,6 +379,26 @@ void irc_callback ( struct gaim_connection * gc ) {
 	printf("IRC:'%'s\n", buf);
 
 
+
+	/* Check for errors */
+
+	if (((strstr(buf, "ERROR :") && (!strstr(buf, "PRIVMSG ")) &&
+		(!strstr(buf, "NOTICE ")) && (strlen(buf) > 7)))) {
+
+		gchar *u_errormsg;
+
+		/* Let's get our error message */
+		u_errormsg = strdup(buf + 7);
+
+		/* We got our error message.  Now, let's reaise an
+		 * error dialog */
+
+		do_error_dialog(u_errormsg, "Gaim: IRC Error");
+
+		/* And our necessary garbage collection */
+		free(u_errormsg);
+	}
+	
 	/* Parse the list of names that we receive when we first sign on to
 	 * a channel */
 
@@ -866,9 +891,10 @@ void irc_login(struct aim_user *user) {
 	
 	/* FIXME: This should be their servername, not their username. im just lazy right now */
 
-	g_snprintf(buf, 4096, "NICK %s\nUSER %s localhost %s :GAIM (www.marko.net/gaim)\n", gc->username, gc->username, gc->username);
-	write(idata->fd, buf, strlen(buf));
+	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (www.marko.net/gaim)\n", gc->username, getenv("USER"), user->proto_opt[0]);
 
+	printf("Sending: %s\n", buf);
+	write(idata->fd, buf, strlen(buf));
 
 	/* Now lets sign ourselves on */
         account_online(gc);
