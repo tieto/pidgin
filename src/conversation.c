@@ -2084,7 +2084,7 @@ conv_placement_by_group(struct gaim_conversation *conv)
 			struct gaim_window *win2;
 			struct gaim_conversation *conv2;
 			struct buddy *b2;
-			struct group *grp2 = NULL;
+			struct group *g2 = NULL;
 
 			win2 = (struct gaim_window *)wins->data;
 
@@ -2098,9 +2098,9 @@ conv_placement_by_group(struct gaim_conversation *conv)
 								gaim_conversation_get_name(conv2));
 
 				if (b2 != NULL)
-					grp2 = find_group_by_buddy(b2);
+					g2 = find_group_by_buddy(b2);
 
-				if (grp == grp2) {
+				if (grp == g2) {
 					gaim_window_add_conversation(win2, conv);
 
 					return;

@@ -4508,7 +4508,7 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 			   "%s" G_DIR_SEPARATOR_S "gaimicon-%s.%d",
 			   g_get_tmp_dir(), gaim_conversation_get_name(conv), getpid());
 
-	if (!(file = fopen(filename, "w")))
+	if (!(file = fopen(filename, "wb")))
 		return;
 
 	fwrite(data, 1, len, file);
