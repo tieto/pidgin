@@ -8,13 +8,14 @@ SUBDIRS = docklet gestures $(PERL_DIR) ticker
 
 plugindir = $(libdir)/gaim
 
-autorecon_la_LDFLAGS = -module -avoid-version
-iconaway_la_LDFLAGS  = -module -avoid-version
-notify_la_LDFLAGS    = -module -avoid-version
-spellchk_la_LDFLAGS  = -module -avoid-version
-history_la_LDFLAGS   = -module -avoid-version
-timestamp_la_LDFLAGS = -module -avoid-version
-idle_la_LDFLAGS      = -module -avoid-version
+autorecon_la_LDFLAGS   = -module -avoid-version
+iconaway_la_LDFLAGS    = -module -avoid-version
+notify_la_LDFLAGS      = -module -avoid-version
+spellchk_la_LDFLAGS    = -module -avoid-version
+history_la_LDFLAGS     = -module -avoid-version
+timestamp_la_LDFLAGS   = -module -avoid-version
+idle_la_LDFLAGS        = -module -avoid-version
+statenotify_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
@@ -25,15 +26,17 @@ plugin_LTLIBRARIES = \
 	spellchk.la    \
 	history.la     \
 	timestamp.la   \
-	idle.la
+	idle.la        \
+	statenotify.la
 
-autorecon_la_SOURCES = autorecon.c
-iconaway_la_SOURCES  = iconaway.c
-notify_la_SOURCES    = notify.c
-spellchk_la_SOURCES  = spellchk.c
-history_la_SOURCES   = history.c
-timestamp_la_SOURCES = timestamp.c
-idle_la_SOURCES      = idle.c
+autorecon_la_SOURCES   = autorecon.c
+iconaway_la_SOURCES    = iconaway.c
+notify_la_SOURCES      = notify.c
+spellchk_la_SOURCES    = spellchk.c
+history_la_SOURCES     = history.c
+timestamp_la_SOURCES   = timestamp.c
+idle_la_SOURCES        = idle.c
+statenotify_la_SOURCES = statenotify.c
 
 endif # PLUGINS
 
