@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
+#include <errno.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
 
@@ -266,12 +266,19 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 			ft->user, ft->size);
 	debug_print(debug_buff);
 
+	fcntl(ft->fd, F_SETFL, O_NONBLOCK);
+
 	while (rcv != ft->size && cont) {
 		int i;
 		float pcnt = ((float)rcv)/((float)ft->size);
 		int remain = ft->size - rcv > 1024 ? 1024 : ft->size - rcv;
-		read_rv = recv(ft->fd, buf, remain, O_NONBLOCK);
+		read_rv = read(ft->fd, buf, remain);
 		if(read_rv < 0) {
+			if (errno == EWOULDBLOCK) {
+				while(gtk_events_pending())
+					gtk_main_iteration();
+				continue;
+			}
 			fclose(ft->f);
 			close(ft->fd);
 			g_free(buf);
