@@ -12,15 +12,15 @@ version 0.9.20:
 	but int.  If it returns 1, gaim interprets this as there being no
 	error, and continues with loading as normal. (This should be backwards-
 	compatible: returning 1 is the equivalent of returning void.) If it
-	returns a non-zero number, there was an error loading detected by the
-	plugin. At that point, gaim will try to clean things up by removing any
-	callbacks that have been added by the plugin. It will then try to call
-	the plugin's gaim_plugin_error function, if there is one. The function
-	should take an int (the int returned by gaim_plugin_init) and return a
-	char*. If the char* is not NULL, it is displayed by gaim as an error
-	message.  The plugin is then unloaded and closed and life goes back to
-	normal. If any of that was confusing, it was confusing to me, too. I
-	added a plugin, error.c, which should help clear things up.
+	returns a number other than 1, there was an error loading detected by
+	the plugin. At that point, gaim will try to clean things up by removing
+	any callbacks that have been added by the plugin. It will then try to
+	call the plugin's gaim_plugin_error function, if there is one. The
+	function should take an int (the int returned by gaim_plugin_init) and
+	return a char*. If the char* is not NULL, it is displayed by gaim as an
+	error message.  The plugin is then unloaded and closed and life goes
+	back to normal. If any of that was confusing, it was confusing to me,
+	too. I added a plugin, error.c, which should help clear things up.
 
 	There is a new event, event_quit, which signifies that gaim has exited
 	correctly (i.e. didn't segfault). Also, after this event is called, all
