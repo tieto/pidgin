@@ -476,6 +476,18 @@ gchar *gaim_strreplace(const char *string, const char *delimiter,
 					   const char *replacement);
 
 /**
+ * Given a string, this replaces any numerical character references
+ * in that string with the corresponding actual utf-8 substrings,
+ * and returns a newly allocated string.
+ *
+ * @param in The string which might contain numerical character references.
+ *
+ * @return A new string, with numerical character references
+ *         replaced with actual utf-8, free this with g_free().
+ */
+char *gaim_utf8_ncr_decode(const char *in);
+
+/**
  * Given a string, this replaces one substring with another
  * ignoring case and returns a newly allocated string.
  *
