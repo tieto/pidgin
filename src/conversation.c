@@ -105,7 +105,7 @@ void gaim_setup_imhtml_smileys(GtkWidget *imhtml)
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ";)", NULL, filename);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ";-)", NULL, filename);	
 	
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "tounge.png", NULL);
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "tongue.png", NULL);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-p", NULL, filename);
 	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ":-P", NULL, filename);	
 
