@@ -10,6 +10,7 @@ version 0.76cvs:
 	* TCL Plugin API changed
 	* Tabs now stay green when they are supposed to (Etan Reisner)
 	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
+	* Gadu-Gadu might actually connect again (Ignacy Gawedzki)
 	* Catalan translation updated (Xan (DXpublica))
 	* English (British) translation updated (Luke Ross (lukeross))
 	* Hebrew translation had 1 character removed (Ambrose C. LI)

@@ -1,4 +1,4 @@
-/* $Id: libgg.h 6513 2003-07-08 06:11:49Z faceprint $ */
+/* $Id: libgg.h 8872 2004-01-21 05:34:32Z lschiere $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -378,15 +378,15 @@ void gg_chomp(char *line);
 char *gg_urlencode(const char *str);
 int gg_http_hash(const unsigned char *email, const unsigned char *password);
 
-#define GG_APPMSG_HOST "appmsg.gadu-gadu.pl"
+#define GG_APPMSG_HOST "appmsg.gadugadu.pl"
 #define GG_APPMSG_PORT 80
-#define GG_PUBDIR_HOST "pubdir.gadu-gadu.pl"
+#define GG_PUBDIR_HOST "pubdir.gadugadu.pl"
 #define GG_PUBDIR_PORT 80
-#define GG_REGISTER_HOST "register.gadu-gadu.pl"
+#define GG_REGISTER_HOST "register.gadugadu.pl"
 #define GG_REGISTER_PORT 80
 #define GG_DEFAULT_PORT 8074
 #define GG_HTTPS_PORT 443
-#define GG_HTTP_USERAGENT "Mozilla/4.7 [en] (Win98; I)"
+#define GG_HTTP_USERAGENT "Mozilla/4.0 (compatible MSIE 5.0; Windows 98; I)"
 
 struct gg_header {
 	unsigned long type;		/* typ pakietu */
