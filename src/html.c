@@ -178,7 +178,6 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 static size_t
 parse_content_len(const char *data, size_t data_len)
 {
-	gchar *s;
 	size_t content_len = 0;
 
 	sscanf(data, "Content-Length: %d", &content_len);
