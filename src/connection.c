@@ -401,13 +401,13 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
 						   gaim_account_get_username(account), time(NULL),
 						   msg);
-			g_free(msg);						   
+			g_free(msg);
 		}
 
 		gaim_account_destroy_log(account);
 
 		if (ops != NULL && ops->disconnected != NULL)
-			ops->disconnected(gc);		
+			ops->disconnected(gc);
 	}
 }
 
@@ -503,9 +503,6 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 	if (ops != NULL) {
 		if (ops->report_disconnect != NULL)
 			ops->report_disconnect(gc, text);
-
-		if (ops->disconnected != NULL)
-			ops->disconnected(gc);
 	}
 
 	gc->disconnect_timeout = gaim_timeout_add(0, gaim_connection_disconnect_cb,

@@ -20,6 +20,8 @@ version 0.79cvs:
 	  the buddy list (Pekka Riikonen)
 	* Parallel compiles of the perl plugin should work better
 	  (Stu Tomlinson)
+	* The disconnected UI op was called twice on connection errors. Now
+	  it is only called once. (Evan Schoenberg).
 
 version 0.78 (05/30/2004):
 	New Features:
