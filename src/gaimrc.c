@@ -883,9 +883,11 @@ static void gaimrc_read_options(FILE *f)
 					general_options & OPT_GEN_SEND_LINKS);
 			gaim_prefs_set_bool("/gaim/gtk/debug/enabled",
 					general_options & OPT_GEN_DEBUG);
+#ifndef _WIN32
 			gaim_prefs_set_int("/gaim/gtk/browsers/place",
 					(general_options & OPT_GEN_BROWSER_POPUP) ? 
 					GAIM_BROWSER_NEW_WINDOW : GAIM_BROWSER_DEFAULT );
+#endif
 			gaim_prefs_set_bool("/gaim/gtk/conversations/spellecheck",
 					general_options & OPT_GEN_CHECK_SPELLING);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/raise_on_events",

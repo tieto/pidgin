@@ -443,7 +443,7 @@ static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	fu16_t channel;
 	aim_tlvlist_t *otl;
 	char *msg = NULL;
-	int len;
+	int len = 0;
 	char *encoding = NULL, *language = NULL;
 	aim_msgcookie_t *ck;
 

@@ -2928,11 +2928,13 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_none("/gaim/gtk/away");
 	gaim_prefs_add_bool("/gaim/gtk/away/queue_messages", FALSE);
 
+#ifndef _WIN32
 	/* Browsers */
 	gaim_prefs_add_none("/gaim/gtk/browsers");
 	gaim_prefs_add_int("/gaim/gtk/browsers/place", GAIM_BROWSER_DEFAULT);
 	gaim_prefs_add_string("/gaim/gtk/browsers/command", "");
 	gaim_prefs_add_string("/gaim/gtk/browsers/browser", "mozilla");
+#endif
 
 	/* Idle */
 	gaim_prefs_add_none("/gaim/gtk/idle");

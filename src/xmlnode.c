@@ -433,7 +433,7 @@ xmlnode *xmlnode_get_next_twin(xmlnode *node) {
 	g_return_val_if_fail(node->type == XMLNODE_TYPE_TAG, NULL);
 
 	for(sibling = node->next; sibling; sibling = sibling->next) {
-		const char *xmlns;
+		const char *xmlns = NULL;
 		if(ns)
 			xmlns = xmlnode_get_attrib(sibling, "xmlns");
 
