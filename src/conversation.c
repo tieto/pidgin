@@ -1904,10 +1904,17 @@ void update_buttons_by_protocol(struct conversation *c)
 	else if (c->info)
 		gtk_widget_set_sensitive(c->info, TRUE);
 
-	if (c->gc->prpl->send_im == NULL && c->send)
-		gtk_widget_set_sensitive(c->send, FALSE);
-	else
-		gtk_widget_set_sensitive(c->send, TRUE);
+	if (c->is_chat) {
+		if (c->gc->prpl->chat_send == NULL && c->send)
+			gtk_widget_set_sensitive(c->send, FALSE);
+		else
+			gtk_widget_set_sensitive(c->send, TRUE);
+	} else {
+		if (c->gc->prpl->send_im == NULL && c->send)
+			gtk_widget_set_sensitive(c->send, FALSE);
+		else
+			gtk_widget_set_sensitive(c->send, TRUE);
+	}
 
 	if (c->gc->prpl->warn == NULL && c->warn)
 		gtk_widget_set_sensitive(c->warn, FALSE);
