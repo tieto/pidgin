@@ -737,22 +737,24 @@ fill_menu(GtkWidget *menu, GCallback cb)
 		pounce = (struct gaim_pounce *)bp->data;
 		buddy = gaim_pounce_get_pouncee(pounce);
 
-		/* Create a pixmap for the protocol icon. */
-		pixbuf = create_prpl_icon(gaim_pounce_get_pouncer(pounce));
-		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-
-		/* Now convert it to GtkImage */
-		if (pixbuf == NULL)
-			image = gtk_image_new();
-		else
-			image = gtk_image_new_from_pixbuf(scale);
-
-		g_object_unref(G_OBJECT(scale));
-		g_object_unref(G_OBJECT(pixbuf));
-
 		/* Build the menu item */
 		item = gtk_image_menu_item_new_with_label(buddy);
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+
+		/* Create a pixmap for the protocol icon. */
+		pixbuf = create_prpl_icon(gaim_pounce_get_pouncer(pounce));
+		if(pixbuf) {
+			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+					GDK_INTERP_BILINEAR);
+
+			/* Now convert it to GtkImage */
+			image = gtk_image_new_from_pixbuf(scale);
+			g_object_unref(G_OBJECT(scale));
+			g_object_unref(G_OBJECT(pixbuf));
+			gtk_widget_show(image);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+		}
+
+		/* Put the item in the menu */
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
 

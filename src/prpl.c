@@ -408,6 +408,9 @@ void do_proto_menu()
 				continue;
 			}
 
+			g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, gc->prpl->name);
+			menuitem = gtk_image_menu_item_new_with_label(buf);
+
 			pixbuf = create_prpl_icon(gc->account);
 			if(pixbuf) {
 				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
@@ -415,15 +418,10 @@ void do_proto_menu()
 				image = gtk_image_new_from_pixbuf(scale);
 				g_object_unref(G_OBJECT(pixbuf));
 				g_object_unref(G_OBJECT(scale));
-			} else {
-				image = gtk_image_new();
+				gtk_widget_show(image);
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 			}
 
-			gtk_widget_show(image);
-
-			g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, gc->prpl->name);
-			menuitem = gtk_image_menu_item_new_with_label(buf);
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 			gtk_menu_shell_append(GTK_MENU_SHELL(protomenu), menuitem);
 			gtk_widget_show(menuitem);
 
