@@ -750,6 +750,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 		struct jabber_data *jd = GJ_GC(j)->proto_data;
 		if ((jc = find_pending_chat(GJ_GC(j), who)) != NULL) {
 			jc->b = cnv = serv_got_joined_chat(GJ_GC(j), i++, who->user);
+			jc->id = jc->b->id;
 			jd->existing_chats = g_slist_append(jd->existing_chats, jc);
 			jd->pending_chats = g_slist_remove(jd->pending_chats, jc);
 		} else if (!(b = find_buddy(GJ_GC(j), buddy))) {
