@@ -148,7 +148,7 @@ void       gtk_html_append_text      (GtkHtml      *html,
 void       gtk_html_freeze           (GtkHtml      *html);
 void       gtk_html_thaw             (GtkHtml      *html);
 
-void	gtk_html_add_pixmap	(GtkHtml * html, GdkPixmap *pm, gint fint);
+void	gtk_html_add_pixmap	(GtkHtml * html, GdkPixmap *pm, gint fint, gint newline);
 
 
 #ifdef __cplusplus

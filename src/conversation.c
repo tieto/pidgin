@@ -1067,7 +1067,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 				if ((face = is_smiley(c, &what[i], &len)) != NULL) {
 					buf2[y] = 0;
 					gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
-					gtk_html_add_pixmap(GTK_HTML(c->text), face, 0);
+					gtk_html_add_pixmap(GTK_HTML(c->text), face, 0, 0);
 					y = 0;
 					i += len - 1;
 					add_space = TRUE;

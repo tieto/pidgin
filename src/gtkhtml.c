@@ -2326,7 +2326,7 @@ static void resize_html(GtkHtml * html)
 		if (hb->type == HTML_BIT_PIXMAP)
 		{
 
-			gtk_html_add_pixmap(html, hb->pm, hb->fit);
+			gtk_html_add_pixmap(html, hb->pm, hb->fit, hb->newline);
 
 			g_free(hb);
 
@@ -2687,17 +2687,25 @@ static void gtk_html_unrealize(GtkWidget * widget)
 }
 
 
-void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit)
+void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit, int newline)
 {
 	GtkHtmlBit *last_hb;
 	GtkHtmlBit *hb = g_new0(GtkHtmlBit, 1);
 	GdkWindowPrivate *private = (GdkWindowPrivate *) pm;
+	int width, height;
 
 	last_hb = (GtkHtmlBit *) g_list_last(html->html_bits)->data;
 
 	/* make sure pixmaps drop down a line after a <BR> */
 	if (last_hb->newline)
 		html->current_y += private->height + 2;
+
+	/* wrap pixmaps */
+	gdk_window_get_size(html->html_area, &width, &height);
+	if ((html->current_x + private->width) >= width) {
+		html->current_y += private->height + 2;
+		html->current_x = 0;
+	}
 			
 	hb->fit = fit;
 	hb->x = html->current_x;
@@ -2716,7 +2724,7 @@ void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit)
 	hb->uline = 0;
 	hb->strike = 0;
 	hb->was_selected = 0;
-	hb->newline = 0;
+	hb->newline = newline;
 	hb->pm = pm;
 
 	if (html->current_x == BORDER_WIDTH)
@@ -2729,6 +2737,9 @@ void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit)
 	html->current_x += hb->width;
 
 	gtk_html_draw_bit(html, hb, 1);
+
+	if (hb->newline)
+		html->current_x = 0;
 
 	html->html_bits = g_list_append(html->html_bits, hb);
 
