@@ -424,13 +424,13 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 	jd = gc->proto_data;
 	j = jd->jc;
 
+	if (j->fd != source)
+		j->fd = source;
+
 	if (source == -1) {
 		STATE_EVT(JCONN_STATE_OFF)
 		return;
 	}
-
-	if (j->fd != source)
-		j->fd = source;
 
 	j->state = JCONN_STATE_CONNECTED;
 	STATE_EVT(JCONN_STATE_CONNECTED)
@@ -1216,7 +1216,8 @@ static void jabber_close(struct gaim_connection *gc)
 	struct jabber_data *jd = gc->proto_data;
 	g_hash_table_foreach_remove(jd->hash, jabber_destroy_hash, NULL);
 	g_hash_table_destroy(jd->hash);
-	gaim_input_remove(gc->inpa);
+	if (gc->inpa)
+		gaim_input_remove(gc->inpa);
 	close(jd->jc->fd);
 	g_timeout_add(50, jabber_free, jd->jc);
 	jd->jc = NULL;

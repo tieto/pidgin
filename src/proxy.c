@@ -58,6 +58,7 @@ struct PHB {
 
 typedef struct _GaimIOClosure {
 	GaimInputFunction function;
+	guint result;
 	gpointer data;
 } GaimIOClosure;
 
@@ -76,6 +77,9 @@ static gboolean gaim_io_invoke(GIOChannel *source, GIOCondition condition, gpoin
 	if (condition & GAIM_READ_COND)
 		gaim_cond |= GAIM_INPUT_WRITE;
 
+	debug_printf("CLOSURE: callback for %d, fd is %d\n",
+			closure->result, g_io_channel_unix_get_fd(source));
+
 	closure->function(closure->data, g_io_channel_unix_get_fd(source), gaim_cond);
 
 	return TRUE;
@@ -84,7 +88,6 @@ static gboolean gaim_io_invoke(GIOChannel *source, GIOCondition condition, gpoin
 gint gaim_input_add(gint source, GaimInputCondition condition,
 		GaimInputFunction function, gpointer data)
 {
-	guint result;
 	GaimIOClosure *closure = g_new0(GaimIOClosure, 1);
 	GIOChannel *channel;
 	GIOCondition cond = 0;
@@ -98,14 +101,18 @@ gint gaim_input_add(gint source, GaimInputCondition condition,
 		cond |= GAIM_WRITE_COND;
 
 	channel = g_io_channel_unix_new(source);
-	result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
+	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 				     gaim_io_invoke, closure, gaim_io_destroy);
+
+	debug_printf("CLOSURE: adding input watcher %d for fd %d\n", closure->result, source);
+
 	g_io_channel_unref(channel);
-	return result;
+	return closure->result;
 }
 
 void gaim_input_remove(gint tag)
 {
+	debug_printf("CLOSURE: removing input watcher %d\n", tag);
 	g_source_remove(tag);
 }
 
