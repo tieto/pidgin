@@ -381,7 +381,7 @@ void sighandler(int sig)
 			"If you are already using CVS, or can reproduce the crash\n"
 			"using the CVS version, please notify the gaim maintainers\n"
 			"by reporting a bug at\n"
-			WEBSITE "bug.php3\n\n"
+			WEBSITE "bug.php\n\n"
 			"Please make sure to specify what you were doing at the time,\n"
 			"and post the backtrace from the core file. If you do not know\n"
 			"how to get the backtrace, please get instructions at\n"

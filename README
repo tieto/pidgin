@@ -80,7 +80,7 @@ If you manually set a command for your browser or sound player options,
 make sure to put double-quotes around the "%s", otherwise bad things may
 happen.
 
-If you come across a bug, please report it to http://gaim.sf.net/bug.php3.
+If you come across a bug, please report it to http://gaim.sf.net/bug.php.
 
 There always seems to be some iffy-ness by a lot of people about
 whether to use the CVS version or stick with a stable release. Use the
