@@ -181,7 +181,7 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 	if (load) {
 		GList *cnv;
 		
-		for (cnv = conversations; cnv != NULL; cnv = cnv->next) {
+		for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 			struct gaim_conversation *conv = cnv->data;
 			
 			if (gaim_conversation_get_ops(conv) ==
@@ -229,7 +229,4 @@ void smiley_theme_probe()
 		}	
 		g_free(probedirs[l]);
 	}
-	
- 
-       
 }
