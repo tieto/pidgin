@@ -142,6 +142,7 @@ static void load_winver_specific_procs(void) {
 	MyFlashWindowEx = (LPFNFLASHWINDOWEX)wgaim_find_and_loadproc("user32.dll", "FlashWindowEx" );
 }
 
+#if 0
 static char* base_name(char* path) {
         char *tmp = path;
         char *prev = NULL;
@@ -155,6 +156,7 @@ static char* base_name(char* path) {
         else
                 return NULL;
 }
+#endif
 
 BOOL folder_exists(char *folder) {
         BOOL ret = FALSE;
