@@ -52,6 +52,9 @@
 #include "sounds/Receive.h"
 #include "sounds/RedAlert.h"
 
+
+gboolean mute_sounds = 0;
+
 /* label and opt are null for the buddy pounce because it's configured *
  * per pounce. NULL option means it doesn't get displayed in the sound *
  * preferences box */
@@ -551,6 +554,10 @@ extern int logins_not_muted;
 
 void play_sound(int sound)
 {
+
+	if (mute_sounds)
+		return;
+	
 	if (awaymessage && !(sound_options & OPT_SOUND_WHEN_AWAY))
 		return;
 

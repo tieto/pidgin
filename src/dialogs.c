@@ -4285,9 +4285,9 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 	button_box = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(button), button_box);
 
-	button_box_2 = gtk_vbox_new(FALSE, 0);
+	button_box_2 = gtk_vbox_new(TRUE, 0);
 
-	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, FALSE, FALSE, 0);
 	gtk_widget_show(button_box_2);
 	gtk_widget_show(button_box);
 	if (dispstyle == 2 || dispstyle == 0) {

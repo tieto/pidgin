@@ -309,6 +309,9 @@ extern struct debug_window *dw;
 /* Globals in prpl.c */
 extern GtkWidget *protomenu;
 
+/* Globals in sound.c */
+extern gboolean mute_sounds;
+
 /* Functions in about.c */
 extern void show_about(GtkWidget *, void *);
 extern void gaim_help(GtkWidget *, void *);
