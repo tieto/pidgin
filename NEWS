@@ -14,6 +14,13 @@
 	some cool things "soon" though, both with Gaim and Gaim-vv.
 	Bleeter sent me some nice dumps I need to implement yet.
 
+	Luke: We have a nice timely release, with a Changelog that seems
+	small, but remember, this is summer, and people have lives. SILC
+	and Zephyr are making good progress from our Crazy Patch Writters,
+	and everyone begging to send files to people not on their buddy
+	list will be happy. good stuff. No, the msn buddy icon scalling
+	problem isn't fixed yet, maybe next release
+
 0.79 (06/24/2004):
 	Sean: We've moved to a three-week release cycle which we'll
 	hopefully be able to keep up more realistically than a two-week
@@ -21,7 +28,7 @@
 	to a quick fix sent in by Cerulean Studios this morning. Reports say
 	they'll continue to try to break us, though, so don't be surprised
 	if your Yahoo cuts out again.
-	
+
 	Luke: I was really distracted this cycle, I want to thank my co-
 	developers and our crazy patch writers for keeping things going.
 	We have a fairly long changelog for you this release, including some
