@@ -86,7 +86,7 @@ msn_parse_format(const char *mime)
 	char *cur;
 	GString *ret = g_string_new(NULL);
 	guint colorbuf;
-	char *colors = (char *)(&colorbuf);
+	unsigned char *colors = (unsigned char *)(&colorbuf);
 
 	cur = strstr(mime, "FN=");
 
