@@ -2082,7 +2082,7 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	proto_vers[0] = '\0';
 
-	for (i = session->protocol_ver; i >= 7; i--)
+	for (i = 7; i <= session->protocol_ver; i++)
 	{
 		char old_buf[256];
 
