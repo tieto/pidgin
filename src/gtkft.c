@@ -515,18 +515,20 @@ gaim_gtkxfer_update_progress(struct gaim_xfer *xfer, double percent)
 	int secs_remaining;
 
 	data = (struct gaim_gtkxfer_ui_data *)xfer->ui_data;
+	
+	now     = time(NULL);
+	kb_sent = gaim_xfer_get_bytes_sent(xfer) / 1024.0;
+	elapsed = (now - data->start_time);
+	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
+
+	g_snprintf(speed_buf, sizeof(speed_buf),
+			   _("%.2f KB/s"), kbps);
 
 	if (gaim_xfer_get_size(xfer) == 0) {
-		*speed_buf = '\0';
 		strncpy(estimate_buf, _("Unknown"), sizeof(estimate_buf));
 	}
 	else {
-		now     = time(NULL);
-		kb_rem  = gaim_xfer_get_bytes_remaining(xfer) / 1024.0;
-		kb_sent = gaim_xfer_get_bytes_sent(xfer) / 1024.0;
-		elapsed = (now - data->start_time);
-		kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
-
+		kb_rem = gaim_xfer_get_bytes_remaining(xfer) / 1024.0;
 		secs_remaining = (int)(kb_rem / kbps);
 
 		if (secs_remaining <= 0) {
@@ -552,8 +554,6 @@ gaim_gtkxfer_update_progress(struct gaim_xfer *xfer, double percent)
 
 			g_snprintf(estimate_buf, sizeof(estimate_buf),
 					   _("%d:%02d:%02d"), h, m, s);
-			g_snprintf(speed_buf, sizeof(speed_buf),
-					   _("%.2f KB/s"), kbps);
 		}
 	}
 
@@ -562,6 +562,7 @@ gaim_gtkxfer_update_progress(struct gaim_xfer *xfer, double percent)
 					   COLUMN_PROGRESS, percent,
 					   COLUMN_ESTIMATE, estimate_buf,
 					   COLUMN_SPEED, speed_buf,
+					   COLUMN_SIZE, gaim_xfer_get_size(xfer),
 					   -1);
 }
 
