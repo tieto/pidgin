@@ -29,9 +29,6 @@
 
 #include <gtk/gtk.h>
 #include "gaim.h"
-#include "pixmaps/logo.xpm"
-#include "pixmaps/cancel.xpm"
-#include "pixmaps/about_small.xpm"
 
 static GtkWidget *about = NULL;
 
@@ -74,11 +71,7 @@ void show_about(GtkWidget *w, void *null)
 	GtkWidget *vbox;
 	GtkWidget *frame;
 	GtkWidget *fbox;
-	GtkWidget *label;
-	GtkWidget *pixmap;
 	GtkStyle *style;
-	GdkPixmap *pm;
-	GdkBitmap *bm;
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *view;
@@ -86,6 +79,7 @@ void show_about(GtkWidget *w, void *null)
 	GtkTextIter iter;
 	GtkTextTag *tag;
 	GtkWidget *sw;
+	GtkWidget *logo;
 
 	char abouttitle[45];
 
@@ -115,13 +109,10 @@ void show_about(GtkWidget *w, void *null)
 
 		/* Left side, TOP */
 		style = gtk_widget_get_style(about);
-		pm = gdk_pixmap_create_from_xpm_d(about->window, &bm,
-						  &style->bg[GTK_STATE_NORMAL], (gchar **)gaim_logo_xpm);
-		pixmap = gtk_pixmap_new(pm, bm);
-		gdk_pixmap_unref(pm);
-		gdk_bitmap_unref(bm);
-		gtk_box_pack_start(GTK_BOX(fbox), pixmap, FALSE, FALSE, 0);
-		gtk_widget_show(pixmap);
+
+		logo = gaim_pixmap(NULL, "logo.png");
+		gtk_box_pack_start(GTK_BOX(fbox), logo, FALSE, FALSE, 0);
+		gtk_widget_show(logo);
 
 		view = gtk_text_view_new ();
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
