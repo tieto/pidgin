@@ -464,7 +464,7 @@ static void update_num_group(struct group_show *gs)
 	gtk_label_set_text(GTK_LABEL(gs->label), buf);
 }
 
-void update_num_groups()
+void update_num_groups(void)
 {
 	GSList *s = shows;
 	struct group_show *g;
@@ -1732,7 +1732,7 @@ static struct group_show *new_group_show(char *group)
 	gtk_widget_show(g->label);
 
 	shows = g_slist_insert(shows, g, pos);
-	update_num_groups(g);
+	update_num_group(g);
 	return g;
 }
 

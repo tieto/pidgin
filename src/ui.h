@@ -305,7 +305,7 @@ extern void destroy_buddy();
 extern void update_button_pix();
 extern void toggle_show_empty_groups();
 extern void update_all_buddies();
-extern void update_num_groups();
+extern void update_num_groups(void);
 extern void show_buddy_list();
 extern void refresh_buddy_window();
 extern void signoff_all();
