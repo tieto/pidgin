@@ -895,10 +895,12 @@ static void acct_signin(GtkWidget *w, gpointer d)
 	GList *l = GTK_CLIST(list)->selection;
 	int row = -1;
 	struct aim_user *u;
+	struct prpl *p = find_prpl(u->protocol);
 	while (l) {
 		row = (int)l->data;
 		u = g_slist_nth_data(aim_users, row);
-		if (!u->gc) {
+		serv_login(u);
+		if (!u->gc && p && p->login) {
 			struct prpl *p = find_prpl(u->protocol);
 			if (p && !(p->options & OPT_PROTO_NO_PASSWORD) && !u->password[0]) {
 				do_pass_dlg(u);
@@ -907,9 +909,8 @@ static void acct_signin(GtkWidget *w, gpointer d)
 				set_user_state(signing_on);
 #endif /* USE_APPLET */
 				gtk_clist_set_text(GTK_CLIST(list), row, 1, "Attempting");
-				serv_login(u);
 			}
-		} else {
+		} else if (u->gc) {
 			u->gc->wants_to_die = TRUE;
 			signoff(u->gc);
 		}
