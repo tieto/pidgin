@@ -63,13 +63,13 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-gnome
 make
 if [ -d $RPM_BUILD_ROOT ]; then rm -r $RPM_BUILD_ROOT; fi;
 mkdir -p $RPM_BUILD_ROOT%{prefix}
-make prefix=$RPM_BUILD_ROOT%{prefix} install-strip
+make prefix=$RPM_BUILD_ROOT%{prefix} install
 make distclean
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=${prefix} --sysconfdir=${sysconfdir} --enable-distrib
 make
 
 %install
-make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install-strip
+make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 
 %files
 %defattr(-,root,root)
