@@ -112,6 +112,7 @@ static void rendezvous_addtolocal(GaimConnection *gc, const char *name, const ch
 		return;
 
 	b = gaim_buddy_new(account, name, NULL);
+	/* gaim_blist_node_set_flag(b, GAIM_BLIST_NODE_FLAG_NO_SAVE); */
 	gaim_blist_add_buddy(b, NULL, g, NULL);
 	serv_got_update(gc, b->name, 1, 0, 0, 0, 0);
 

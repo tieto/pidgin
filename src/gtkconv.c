@@ -3776,7 +3776,7 @@ setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
 
 	/* Invite */
 	gtkchat->invite = gaim_gtkconv_button_new(GAIM_STOCK_INVITE, _("Invite"),
-									_("Invite a usuer"),
+									_("Invite a user"),
 									gtkconv->tooltips, invite_cb, conv);
 	gtk_box_pack_start(GTK_BOX(parent), gtkchat->invite, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(gtkconv->sg, gtkchat->invite);
