@@ -3209,69 +3209,7 @@ void insert_smiley_text(GtkWidget *widget, struct conversation *c)
 	char *smiley_text;
 	int i;
 
-	if (c->gc->prpl->smiley_list) {
-		smiley_text = strdup(current_smiley);
-	} else {
-
-		for (i = 0; i < FACE_TOTAL; i++)
-			if (smiley_array[i] == 1)
-				break;
-
-		switch (i) {
-		case (FACE_ANGEL):
-			smiley_text = g_strndup("O:-)", strlen("O:-)"));
-			break;
-		case (FACE_BIGSMILE):
-			smiley_text = g_strndup(":-D", strlen(":-D"));
-			break;
-		case (FACE_BURP):
-			smiley_text = g_strndup(":-!", strlen(":-!"));
-			break;
-		case (FACE_CROSSEDLIPS):
-			smiley_text = g_strndup(":-X", strlen(":-X"));
-			break;
-		case (FACE_CRY):
-			smiley_text = g_strndup(":'(", strlen(":'("));
-			break;
-		case (FACE_EMBARRASSED):
-			smiley_text = g_strndup(":-[", strlen(":-["));
-			break;
-		case (FACE_KISS):
-			smiley_text = g_strndup(":-*", strlen(":-*"));
-			break;
-		case (FACE_MONEYMOUTH):
-			smiley_text = g_strndup(":-$", strlen(":-$"));
-			break;
-		case (FACE_SAD):
-			smiley_text = g_strndup(":-(", strlen(":-("));
-			break;
-		case (FACE_SCREAM):
-			smiley_text = g_strndup("=-O", strlen("=-O"));
-			break;
-		case (FACE_SMILE):
-			smiley_text = g_strndup(":-)", strlen(":-)"));
-			break;
-		case (FACE_SMILE8):
-			smiley_text = g_strndup("8-)", strlen("8-)"));
-			break;
-		case (FACE_THINK):
-			smiley_text = g_strndup(":-/", strlen(":-/"));
-			break;
-		case (FACE_TONGUE):
-			smiley_text = g_strndup(":-P", strlen(":-p"));
-			break;
-		case (FACE_WINK):
-			smiley_text = g_strndup(";-)", strlen(";-)"));
-			break;
-		case (FACE_YELL):
-			smiley_text = g_strndup(">:o", strlen(">:o"));
-			break;
-		default:
-			smiley_text = g_strndup(":-)", strlen(":-)"));
-			break;
-		}
-	}
-
+	smiley_text = strdup(current_smiley);
 
 	/* surround(c->entry, smiley_text, ""); */
 
