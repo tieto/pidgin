@@ -353,14 +353,6 @@ void gtk_imhtml_page_up(GtkIMHtml *imhtml);
 void gtk_imhtml_page_down(GtkIMHtml *imhtml);
 
 /**
- * Scales the font sizes in a GTK IM/HTML by a given factor.
- *
- * @param imhtml  The GTK IM/HTML.
- * @param zoom    The factor by which to scale the font sizes.
- */
-void gtk_imhtml_font_zoom(GtkIMHtml *imhtml, double zoom);
-
-/**
  * Creates and returns an new GTK IM/HTML scalable object.
  *
  * @return A new IM/HTML Scalable object.

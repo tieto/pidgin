@@ -3170,26 +3170,6 @@ static void _recalculate_font_sizes(GtkTextTag *tag, gpointer imhtml)
 
 }
 
-void gtk_imhtml_font_zoom(GtkIMHtml *imhtml, double zoom)
-{
-	GtkRcStyle *s;
-	PangoFontDescription *font_desc = pango_font_description_new();
-
-	imhtml->zoom = zoom;
-
-	if (!imhtml->original_fsize)
-		_init_original_fsize(imhtml);
-
-	gtk_text_tag_table_foreach(gtk_text_buffer_get_tag_table(imhtml->text_buffer),
-	                           _recalculate_font_sizes, imhtml);
-
-	pango_font_description_set_size(font_desc, (gint)((double) imhtml->original_fsize * zoom));
-
-	s = gtk_widget_get_modifier_style(GTK_WIDGET(imhtml));
-	s->font_desc = font_desc;
-	gtk_widget_modify_style(GTK_WIDGET(imhtml), s);
-}
-
 static GtkTextTag *find_font_size_tag(GtkIMHtml *imhtml, int size)
 {
 	gchar str[24];
