@@ -32,7 +32,7 @@ gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = @LDADD@ @LIBOBJS@
 
-gaim_LDADD = @LDADD@ @LIBOBJS@
+gaim_remote_LDADD = @LDADD@ @LIBOBJS@
 gaim_remote_SOURCES = gaim-remote.c socket.c
 
 CFLAGS += $(PERL_CFLAGS)
