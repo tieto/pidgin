@@ -61,7 +61,8 @@ static void
 do_small(GtkWidget *smalltb, GtkIMHtmlToolbar *toolbar)
 {
 	g_return_if_fail(toolbar);
-	gtk_imhtml_font_shrink(GTK_IMHTML(toolbar->imhtml));
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->smaller_size)))
+		gtk_imhtml_font_shrink(GTK_IMHTML(toolbar->imhtml));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smaller_size), FALSE);
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
@@ -70,7 +71,8 @@ static void
 do_big(GtkWidget *large, GtkIMHtmlToolbar *toolbar)
 {
 	g_return_if_fail(toolbar);
-	gtk_imhtml_font_grow(GTK_IMHTML(toolbar->imhtml));
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->larger_size)))
+		gtk_imhtml_font_grow(GTK_IMHTML(toolbar->imhtml));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->larger_size), FALSE);
 	gtk_widget_grab_focus(toolbar->imhtml);
 }

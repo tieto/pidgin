@@ -4413,13 +4413,13 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	if (flags & GAIM_MESSAGE_SYSTEM) {
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
-			g_snprintf(buf, BUF_LONG, "(%s) <B>%s</B>",
+			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s)</FONT> <B>%s</B>",
 				   mdate, message);
 		else
 			g_snprintf(buf, BUF_LONG, "<B>%s</B>", message);
 
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT %s><!--(%s) --><B>%s</B></FONT><BR>",
+			   "<FONT %s><FONT SIZE=\2\"><!--(%s) --></FONT><B>%s</B></FONT><BR>",
 			   sml_attrib, mdate, message);
 
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml), buf2, 0, images);
@@ -4495,7 +4495,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
 			g_snprintf(buf, BUF_LONG,
-				   "<FONT COLOR=\"%s\" %s>(%s) "
+				   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\">(%s)</FONT> "
 				   "<B>%s</B></FONT> ", color,
 				   sml_attrib ? sml_attrib : "", mdate, str);
 		else
@@ -4504,7 +4504,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				   sml_attrib ? sml_attrib : "", str);
 
 		g_snprintf(buf2, BUF_LONG,
-			   "<FONT COLOR=\"%s\" %s><!--(%s) -->"
+			   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
 			   "<B>%s</B></FONT> ",
 			   color, sml_attrib ? sml_attrib : "", mdate, str);
 
