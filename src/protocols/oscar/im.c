@@ -1906,7 +1906,6 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	else if (args.reqclass & AIM_CAPS_SENDFILE)
 		incomingim_ch2_sendfile(sess, mod, rx, snac, userinfo, &args, sdbsptr);
 
-
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, channel, userinfo, &args);
 

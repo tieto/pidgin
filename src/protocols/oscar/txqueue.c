@@ -238,7 +238,11 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 			aim_rxcallback_t userfunc;
 
 			while (count - wrote > 1024) {
-				wrote = wrote + aim_send(conn->fd, bs->data + bs->offset + wrote, 1024);
+				int ret;
+
+				ret = aim_send(conn->fd, bs->data + bs->offset + wrote, 1024);
+				if (ret > 0)
+					wrote += ret;
 				if ((userfunc=aim_callhandler(conn->sessv, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER)))
 					userfunc(conn->sessv, NULL, sn, count-wrote>1024 ? ((double)wrote / count) : 1);
 			}
