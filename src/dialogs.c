@@ -1134,7 +1134,6 @@ static struct away_message *save_away_message(struct create_away *ca)
 		am = ca->mess;
 	}
 
-
 	g_snprintf(am->name, sizeof(am->name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
 	away_message = gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE);
 

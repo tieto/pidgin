@@ -568,11 +568,13 @@ GtkWidget *theme_page() {
 	gtk_widget_show(label);
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 	smiley_theme_store = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(smiley_theme_store),
+										 1, GTK_SORT_ASCENDING);
 
 	path = theme_refresh_theme_list();
 	
@@ -1734,9 +1736,6 @@ update_plugin_list(void *data)
 				   1, plug->info->name ? _(plug->info->name) : plug->path,
 				   2, plug, -1);
 	}
-
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
-		                                   1, GTK_SORT_ASCENDING);
 }
 
 static GtkWidget *plugin_page ()
@@ -1761,6 +1760,8 @@ static GtkWidget *plugin_page ()
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
 	ls = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
+										 1, GTK_SORT_ASCENDING);
 
 	update_plugin_list(ls);
 
@@ -2176,6 +2177,8 @@ GtkWidget *away_message_page() {
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
 	prefs_away_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(prefs_away_store),
+										 0, GTK_SORT_ASCENDING);
 	while (awy) {
 		a = (struct away_message *)awy->data;
 		gtk_list_store_append (prefs_away_store, &iter);
@@ -2184,7 +2187,7 @@ GtkWidget *away_message_page() {
 				   1, a, -1);
 		awy = awy->next;
 	}
-	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(prefs_away_store));
+	event_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(prefs_away_store));
 
 	rend = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes ("NULL",
