@@ -114,6 +114,7 @@ src/protocols/jabber/win32/posix.uname.c
 src/protocols/msn/dispatch.c
 src/protocols/msn/error.c
 src/protocols/msn/ft.c
+src/protocols/msn/httpmethod.c
 src/protocols/msn/msg.c
 src/protocols/msn/msn.c
 src/protocols/msn/notification.c
