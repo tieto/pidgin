@@ -1180,6 +1180,7 @@ static void send_msg(struct gaim_connection *gc, char *who, char *what)
 			what = cr + 1;
 			if (!*what)
 				break;
+			*cr = '\n';
 			cr = strchr(what, '\n');
 		}
 	} else
