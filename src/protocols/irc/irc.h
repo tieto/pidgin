@@ -105,6 +105,7 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, char **args);
+void irc_msg_nochan(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_nochangenick(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_nosend(struct irc_conn *irc, const char *name, const char *from, char **args);

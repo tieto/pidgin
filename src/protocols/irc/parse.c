@@ -69,6 +69,7 @@ static struct _irc_msg {
 	{ "375", "n:", irc_msg_motd },		/* Start MOTD			*/
 	{ "376", "n:", irc_msg_endmotd },	/* End of MOTD			*/
 	{ "401", "nt:", irc_msg_nonick },	/* No such nick/chan		*/
+	{ "403", "nc:", irc_msg_nochan },	/* No such channel		*/
 	{ "404", "nt:", irc_msg_nosend },	/* Cannot send to chan		*/
 	{ "421", "nv:", irc_msg_unknown },	/* Unknown command		*/
 	{ "422", "nv:", irc_msg_endmotd },	/* No MOTD available		*/

@@ -360,6 +360,16 @@ void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, c
 	irc->timer = g_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 }
 
+void irc_msg_nochan(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	GaimConnection *gc = gaim_account_get_connection(irc->account);
+
+	if (gc == NULL || args == NULL || args[1] == NULL)
+		return;
+
+	gaim_notify_error(gc, NULL, _("No such channel"), args[1]);
+}
+
 void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc;
