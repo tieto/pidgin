@@ -2199,56 +2199,69 @@ void gaim_blist_remove_account(GaimAccount *account)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimBuddy *buddy;
+	GaimChat *chat;
+	GaimContact *contact;
+	GaimGroup *group;
 
 	g_return_if_fail(gaimbuddylist != NULL);
 
 	for (gnode = gaimbuddylist->root; gnode; gnode = gnode->next) {
 		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
+
+		group = (GaimGroup *)gnode;
+
 		for (cnode = gnode->child; cnode; cnode = cnode->next) {
 			if (GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+				contact = (GaimContact *)cnode;
 				gboolean recompute = FALSE;
+
 				for (bnode = cnode->child; bnode; bnode = bnode->next) {
 					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 						continue;
-					if (account == ((GaimBuddy *)bnode)->account) {
+
+					buddy = (GaimBuddy *)bnode;
+					if (account == buddy->account) {
 						GaimPresence *presence;
 						recompute = TRUE;
-						if (((GaimBuddy*)bnode)->present == GAIM_BUDDY_ONLINE ||
-								((GaimBuddy*)bnode)->present == GAIM_BUDDY_SIGNING_ON) {
-							((GaimContact*)cnode)->online--;
-							if (((GaimContact*)cnode)->online == 0)
-								((GaimGroup*)gnode)->online--;
-							gaim_blist_node_set_int(&((GaimBuddy *)bnode)->node,
+
+						presence = gaim_buddy_get_presence(buddy);
+
+						if(!gaim_presence_is_online(presence)) {
+							contact->online--;
+							if (contact->online == 0)
+								group->online--;
+
+							gaim_blist_node_set_int(&buddy->node,
 													"last_seen", time(NULL));
 						}
-						((GaimContact*)cnode)->currentsize--;
-						if (((GaimContact*)cnode)->currentsize == 0)
-							((GaimGroup*)gnode)->currentsize--;
 
-						((GaimBuddy*)bnode)->present = GAIM_BUDDY_OFFLINE;
+						contact->online--;
+						if (contact->online == 0)
+							group->online--;
 
-						presence = gaim_buddy_get_presence((GaimBuddy*)bnode);
 						gaim_presence_set_status_active(presence, "offline", TRUE);
-
-						((GaimBuddy*)bnode)->uc = 0;
-						/* TODO: ((GaimBuddy*)bnode)->idle = 0; */
 
 						if (ops && ops->remove)
 							ops->remove(gaimbuddylist, bnode);
 					}
 				}
 				if (recompute) {
-					gaim_contact_invalidate_priority_buddy((GaimContact*)cnode);
+					gaim_contact_invalidate_priority_buddy(contact);
 					if (ops && ops->update)
 						ops->update(gaimbuddylist, cnode);
 				}
-			} else if (GAIM_BLIST_NODE_IS_CHAT(cnode) &&
-					((GaimChat*)cnode)->account == account) {
-				((GaimGroup*)gnode)->currentsize--;
-				((GaimGroup*)gnode)->online--;
-				if (ops && ops->remove)
-					ops->remove(gaimbuddylist, cnode);
+			} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+				chat = (GaimChat *)cnode;
+
+				if(chat->account == account) {
+					group->currentsize--;
+					group->online--;
+
+					if (ops && ops->remove)
+						ops->remove(gaimbuddylist, cnode);
+				}
 			}
 		}
 	}
