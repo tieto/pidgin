@@ -104,7 +104,7 @@ void set_wintrans_off(GtkWidget *window) {
 	if(MySetLayeredWindowAttributes) {
 		HWND hWnd = GDK_WINDOW_HWND(window->window);
 		SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) & ~WS_EX_LAYERED);
-		
+
 		/* Ask the window and its children to repaint */
 		RedrawWindow(hWnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 	}
@@ -165,7 +165,7 @@ static slider_win* find_slidwin( GtkWidget *win ) {
 gboolean win_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
 	slider_win *slidwin=NULL;
 	/* Remove window from the window list */
-	gaim_debug(GAIM_DEBUG_INFO, WINTRANS_PLUGIN_ID, "Conv window destoyed.. removing from list\n");
+	gaim_debug_info(WINTRANS_PLUGIN_ID, "Conv window destoyed.. removing from list\n");
 
 	if((slidwin=find_slidwin(widget))) {
 		window_list = g_list_remove(window_list, (gpointer)slidwin);
@@ -174,58 +174,114 @@ gboolean win_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data) 
 	return FALSE;
 }
 
-static void gaim_new_conversation(GaimConversation *c) {
+static void set_trans_option(GtkWidget *w, const char *pref) {
+        gaim_prefs_set_bool(pref, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
+	if(pref == OPT_WINTRANS_BL_ENABLED) {
+		if(blist) {
+			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+				set_wintrans(blist, blalpha);
+			else
+				set_wintrans_off(blist);
+		}
+	}
+}
+
+static void add_slider(GtkWidget *win) {
 	GList *wl, *wl1;
 	GtkWidget *vbox=NULL;
-	GtkWidget *win=NULL;
-	GaimGtkConversation *gtkconv;
-	GaimGtkWindow *gtkwin;
 
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+	/* Look up this window to see if it already has a slider */
+	if(!find_slidwin(win)) {
+		GtkWidget *slider_box=NULL;
+		slider_win *slidwin=NULL;
 
-	win = gtkwin->window;
+		/* Get top vbox */
+		for ( wl1 = wl = gtk_container_get_children(GTK_CONTAINER(win));
+			  wl != NULL;
+			  wl = wl->next ) {
+			if ( GTK_IS_VBOX(GTK_OBJECT(wl->data)) )
+				vbox = GTK_WIDGET(wl->data);
+			else {
+				gaim_debug_error(WINTRANS_PLUGIN_ID, "no vbox found\n");
+				return;
+			}
+		}
+		g_list_free(wl1);
+
+		slider_box = wintrans_slider(win);
+		gtk_box_pack_start(GTK_BOX(vbox),
+						   slider_box,
+						   FALSE, FALSE, 0);
+		/* Add window to list, to track that it has a slider */
+		slidwin = g_new0( slider_win, 1 );
+		slidwin->win = win;
+		slidwin->slider = slider_box;
+		window_list = g_list_append(window_list, (gpointer)slidwin);
+		/* Set callback to remove window from the list, if the window is destroyed */
+		g_signal_connect(GTK_OBJECT(win), "destroy_event", G_CALLBACK(win_destroy_cb), NULL);
+	}
+}
+
+static void remove_sliders() {
+	if(window_list) {
+		GList *tmp=window_list;
+		while(tmp) {
+			slider_win *slidwin = (slider_win*)tmp->data;
+			gtk_widget_destroy(slidwin->slider);
+			g_free(slidwin);
+			tmp=tmp->next;
+		}
+		g_list_free(window_list);
+		window_list = NULL;
+	}
+}
+
+static void remove_convs_wintrans() {
+	GList *conv;
+
+	for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next)
+		set_wintrans_off(GAIM_GTK_WINDOW(gaim_conversation_get_window(conv->data))->window);
+}
+
+static void update_convs_wintrans(GtkWidget *w, const char *pref) {
+	GList *conv;
+
+	if (w != NULL)
+		set_trans_option(w, pref);
+
+	if(gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED)) {
+		for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next)
+			set_wintrans(GAIM_GTK_WINDOW(gaim_conversation_get_window(conv->data))->window, gaim_prefs_get_int(OPT_WINTRANS_IM_ALPHA));
+	}
+	else
+		remove_convs_wintrans();
+
+	if(gaim_prefs_get_bool(OPT_WINTRANS_IM_SLIDER)
+	   && gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED)) {
+		for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next)
+			add_slider(GAIM_GTK_WINDOW(gaim_conversation_get_window(conv->data))->window);
+	}
+	else
+		remove_sliders();
+}
+
+static void set_window_trans(GaimConvWindow *oldwin, GaimConvWindow *newwin) {
+	GtkWidget *win = GAIM_GTK_WINDOW(newwin)->window;
 
 	/* check prefs to see if we want trans */
 	if (gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED) && gaim_prefs_get_bool(OPT_WINTRANS_IM_SLIDER)) {
-		/* Look up this window to see if it already has a slider */
-		if(!find_slidwin(win)) {
-			GtkWidget *slider_box=NULL;
-			slider_win *slidwin=NULL;
-		
-			/* Get top vbox */
-			for ( wl1 = wl = gtk_container_get_children(GTK_CONTAINER(win));
-			      wl != NULL;
-			      wl = wl->next ) {
-				if ( GTK_IS_VBOX(GTK_OBJECT(wl->data)) )
-					vbox = GTK_WIDGET(wl->data);
-				else {
-					gaim_debug(GAIM_DEBUG_ERROR, WINTRANS_PLUGIN_ID, "no vbox found\n");
-					return;
-				}
-			}
-			g_list_free(wl1);
-
-			slider_box = wintrans_slider(win);
-			gtk_box_pack_start(GTK_BOX(vbox),
-					   slider_box,
-					   FALSE, FALSE, 0);
-			/* Add window to list, to track that it has a slider */
-			slidwin = g_new0( slider_win, 1 );
-			slidwin->win = win;
-			slidwin->slider = slider_box;
-			window_list = g_list_append(window_list, (gpointer)slidwin);
-			/* Set callback to remove window from the list, if the window is destroyed */
-			g_signal_connect(GTK_OBJECT(win), "destroy_event", G_CALLBACK(win_destroy_cb), NULL);
-		}
-		else
-			return;
+		add_slider(win);
 	}
-	
+
 	if(gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED) &&
 	   !gaim_prefs_get_bool(OPT_WINTRANS_IM_SLIDER)) {
 		set_wintrans(win, imalpha);
 	}
+}
+
+static void gaim_new_conversation(GaimConversation *c) {
+	GaimConvWindow *win = gaim_conversation_get_window(c);
+	set_window_trans(NULL, win);
 }
 
 static void blist_created() {
@@ -239,7 +295,11 @@ static void blist_created() {
 
 static void alpha_change(GtkWidget *w, gpointer data) {
 	int *alpha = (int*)data;
+	GList *conv;
 	*alpha = gtk_range_get_value(GTK_RANGE(w));
+
+	for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next)
+		set_wintrans(GAIM_GTK_WINDOW(gaim_conversation_get_window(conv->data))->window, *alpha);
 }
 
 static void alpha_pref_set_int(GtkWidget *w, GdkEventFocus *e, const char *pref) {
@@ -258,18 +318,6 @@ static void bl_alpha_change(GtkWidget *w, gpointer data) {
 		change_alpha(w, blist);
 }
 
-static void set_trans_option(GtkWidget *w, const char *pref) {
-        gaim_prefs_set_bool(pref, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
-	if(pref == OPT_WINTRANS_BL_ENABLED) {
-		if(blist) {
-			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
-				set_wintrans(blist, blalpha);
-			else
-				set_wintrans_off(blist);
-		}
-	}
-}
-
 /*
  *  EXPORTED FUNCTIONS
  */
@@ -285,6 +333,10 @@ G_MODULE_EXPORT gboolean plugin_load(GaimPlugin *plugin) {
 	gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin, GAIM_CALLBACK(blist_created), NULL);
 	MySetLayeredWindowAttributes = (void*)wgaim_find_and_loadproc("user32.dll", "SetLayeredWindowAttributes" );
 
+	gaim_signal_connect((void*)gaim_gtk_conversations_get_handle(), "conversation-drag-ended", plugin, GAIM_CALLBACK(set_window_trans), NULL);
+
+	update_convs_wintrans(NULL, NULL);
+
 	if(blist) {
 	        blist_created();
 	}
@@ -293,21 +345,10 @@ G_MODULE_EXPORT gboolean plugin_load(GaimPlugin *plugin) {
 }
 
 G_MODULE_EXPORT gboolean plugin_unload(GaimPlugin *plugin) {
-	gaim_debug(GAIM_DEBUG_INFO, WINTRANS_PLUGIN_ID, "Removing win2ktrans.dll plugin\n");
+	gaim_debug_info(WINTRANS_PLUGIN_ID, "Removing win2ktrans.dll plugin\n");
 
-	/* Remove slider bars */
-	if(window_list) {
-		GList *tmp=window_list;
-		while(tmp) {
-			slider_win *slidwin = (slider_win*)tmp->data;
-			gtk_widget_destroy(slidwin->slider);
-			set_wintrans_off(slidwin->win);
-			g_free(slidwin);
-			tmp=tmp->next;
-		}
-		g_list_free(window_list);
-		window_list = NULL;
-	}
+	remove_convs_wintrans();
+
 	if(blist) {
 		set_wintrans_off(blist);
 	}
@@ -328,7 +369,7 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 	/* IM Convo trans options */
 	imtransbox = gaim_gtk_make_frame (ret, _("IM Conversation Windows"));
 	button = wgaim_button(_("_IM window transparency"), OPT_WINTRANS_IM_ENABLED, imtransbox);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (void *)OPT_WINTRANS_IM_ENABLED);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_convs_wintrans), (void *)OPT_WINTRANS_IM_ENABLED);
 
 	trans_box =  gtk_vbox_new(FALSE, 18);
 	if (!gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED))
@@ -338,7 +379,7 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gaim_gtk_toggle_sensitive),  trans_box);
 	
 	button = wgaim_button(_("_Show slider bar in IM window"), OPT_WINTRANS_IM_SLIDER, trans_box);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (void *)OPT_WINTRANS_IM_SLIDER);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_convs_wintrans), (void *)OPT_WINTRANS_IM_SLIDER);
 
 	gtk_box_pack_start(GTK_BOX(imtransbox), trans_box, FALSE, FALSE, 5);
 
@@ -394,7 +435,7 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 
 	/* If this version of Windows dosn't support Transparency, grey out options */
 	if(!has_transparency()) {
-		gaim_debug(GAIM_DEBUG_WARNING, WINTRANS_PLUGIN_ID, "This version of windows dosn't support transparency\n");
+		gaim_debug_warning(WINTRANS_PLUGIN_ID, "This version of windows dosn't support transparency\n");
 		gtk_widget_set_sensitive(GTK_WIDGET(imtransbox), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
