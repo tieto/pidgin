@@ -220,7 +220,7 @@ nm_tcp_read(NMConn * conn, void *buff, int len)
 	if (!conn->use_ssl)
 		return (read(conn->fd, buff, len));
 	else if (conn->ssl_conn && conn->ssl_conn->read)
-		return (conn->ssl_conn->read(conn->ssl_conn->data, buff, len));
+		return ((conn->ssl_conn->read)(conn->ssl_conn->data, buff, len));
 	else
 		return -1;
 }
