@@ -365,22 +365,28 @@ gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 	GaimPounce *pounce;
 	GaimPounceHandler *handler;
 	GList *l, *l_next;
+	char *norm_pouncee;
 
 	g_return_if_fail(pouncer != NULL);
 	g_return_if_fail(pouncee != NULL);
 	g_return_if_fail(events  != GAIM_POUNCE_NONE);
 
-	for (l = gaim_pounces_get_all(); l != NULL; l = l_next) {
+	norm_pouncee = g_strdup(normalize(pouncee));
+
+	for (l = gaim_pounces_get_all(); l != NULL; l = l_next)
+	{
 		pounce = (GaimPounce *)l->data;
 		l_next = l->next;
 
 		if ((gaim_pounce_get_events(pounce) & events) &&
 			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
-			!gaim_utf8_strcasecmp(gaim_pounce_get_pouncee(pounce), pouncee)) {
-
+			!gaim_utf8_strcasecmp(normalize(gaim_pounce_get_pouncee(pounce)),
+								  norm_pouncee))
+		{
 			handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
 
-			if (handler != NULL && handler->cb != NULL) {
+			if (handler != NULL && handler->cb != NULL)
+			{
 				handler->cb(pounce, events, gaim_pounce_get_data(pounce));
 
 				if (!gaim_pounce_get_save(pounce))
@@ -388,31 +394,42 @@ gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 			}
 		}
 	}
+
+	g_free(norm_pouncee);
 }
 
 GaimPounce *
 gaim_find_pounce(const GaimAccount *pouncer, const char *pouncee,
 				 GaimPounceEvent events)
 {
-	GaimPounce *pounce;
+	GaimPounce *pounce = NULL;
 	GList *l;
+	char *norm_pouncee;
 
 	g_return_val_if_fail(pouncer != NULL, NULL);
 	g_return_val_if_fail(pouncee != NULL, NULL);
 	g_return_val_if_fail(events  != GAIM_POUNCE_NONE, NULL);
 
-	for (l = gaim_pounces_get_all(); l != NULL; l = l->next) {
+	norm_pouncee = g_strdup(pouncee);
+
+	for (l = gaim_pounces_get_all(); l != NULL; l = l->next)
+	{
 		pounce = (GaimPounce *)l->data;
 
 		if ((gaim_pounce_get_events(pounce) & events) &&
 			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
-			!gaim_utf8_strcasecmp(gaim_pounce_get_pouncee(pounce), pouncee)) {
-
-			return pounce;
+			!gaim_utf8_strcasecmp(normalize(gaim_pounce_get_pouncee(pounce)),
+								  norm_pouncee))
+		{
+			break;
 		}
+
+		pounce = NULL;
 	}
 
-	return NULL;
+	g_free(norm_pouncee);
+
+	return pounce;
 }
 
 /* XML Stuff */
