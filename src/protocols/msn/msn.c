@@ -188,6 +188,9 @@ static char *handle_errcode(char *buf, gboolean show)
 		case 216:
 			g_snprintf(msg, sizeof(msg), "Not on list");
 			break;
+		case 217:
+			g_snprintf(msg, sizeof(msg), "User is offline");
+			break;
 		case 218:
 			g_snprintf(msg, sizeof(msg), "Already in the mode");
 			break;
