@@ -898,7 +898,7 @@ static void toc_join_chat(struct gaim_connection *g, int exchange, char *name)
 			return;
 		nm = gtk_entry_get_text(GTK_ENTRY(join_chat_entry));
 		exchange = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(join_chat_spin));
-		if (!name || !strlen(name))
+		if (!nm || !strlen(nm))
 			return;
 		g_snprintf(buf, sizeof(buf) / 2, "toc_chat_join %d \"%s\"", exchange, nm);
 	} else
