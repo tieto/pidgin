@@ -1640,7 +1640,12 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
 	GaimGtkConversation *gtkconv = data;
 
+	/* If we have a valid key for the conversation display, then exit */
 	if ((event->state & GDK_CONTROL_MASK) ||
+		(event->keyval == GDK_F10) ||
+		(event->keyval == GDK_Shift_L) ||
+		(event->keyval == GDK_Shift_R) ||
+		(event->keyval == GDK_Escape) ||
 		(event->keyval == GDK_Up) ||
 		(event->keyval == GDK_Down) ||
 		(event->keyval == GDK_Left) ||
