@@ -290,7 +290,7 @@ static void irc_dccsend_send_init(GaimXfer *xfer) {
 	                         xfer->filename, ntohl(addr.s_addr),
 	                         port, xfer->size);
 
-	irc_cmd_privmsg(xfer->account->gc->proto_data, "msg", NULL, arg);
+	irc_cmd_privmsg(gc->proto_data, "msg", NULL, arg);
 	g_free(tmp);
 }
 

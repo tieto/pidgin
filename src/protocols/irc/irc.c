@@ -274,7 +274,7 @@ static void irc_login(GaimAccount *account, GaimStatus *status)
 				 gaim_account_get_int(account, "port", IRC_DEFAULT_PORT),
 				 irc_login_cb, gc);
 
-		if (err || !account->gc) {
+		if (err || !gaim_account_get_connection(account)) {
 			gaim_connection_error(gc, _("Couldn't create socket"));
 			return;
 		}
@@ -286,9 +286,10 @@ static gboolean do_login(GaimConnection *gc) {
 	char hostname[256];
 	const char *username, *realname;
 	struct irc_conn *irc = gc->proto_data;
+	const char *pass = gaim_account_get_password(gc->account);
 
-	if (gc->account->password && *gc->account->password) {
-		buf = irc_format(irc, "vv", "PASS", gc->account->password);
+	if (pass && *pass) {
+		buf = irc_format(irc, "vv", "PASS", pass);
 		if (irc_send(irc, buf) < 0) {
 			gaim_connection_error(gc, "Error sending password");
 			return FALSE;
