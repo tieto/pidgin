@@ -911,10 +911,29 @@ static char *yahoo_decode(const char *text)
 
 	for (p = text; p < end; p++, n++) {
 		if (*p == '\\') {
-			k = 0;
-			sscanf(p + 1, "%3o%n\n", &i, &k);
-			*n = i;
-			p += k;
+			if (p[1] >= '0' && p[1] <= '7') {
+				p += 1;
+				for (i = 0, k = 0; k < 3; k += 1) {
+					char c = p[k];
+				if (c < '0' || c > '7') break;
+					i *= 8;
+					i += c - '0';
+				}
+				*n = i;
+				p += k - 1;
+			} else { /* bug 959248 */
+				/* If we see a \ not followed by an octal number,
+				 * it means that it is actually a \\ with one \
+				 * already eaten by some unknown function.
+				 * This is arguably broken.
+				 *
+				 * I think wing is wrong here, there is no function
+				 * called that I see that could have done it. I guess
+				 * it is just really sending single \'s. That's yahoo
+				 * for you.
+				 */
+				*n = *p;
+			}
 		}
 		else
 			*n = *p;
