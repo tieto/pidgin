@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1124 $"
+#define REVISION "gaim:$Revision: 1128 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -99,7 +99,6 @@ struct signon {
 
 static void toc_callback(gpointer, gint, GdkInputCondition);
 static unsigned char *roast_password(char *);
-int sflap_send(struct gaim_connection *, char *, int, int);
 
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
@@ -153,15 +152,7 @@ static void toc_login(struct aim_user *user) {
 	set_login_progress(gc, 2, buf);
 }
 
-static void toc_set_config(struct gaim_connection *gc) {
-	char buf[MSG_LEN], snd[MSG_LEN];
-	toc_build_config(gc, buf, MSG_LEN, FALSE);
-	g_snprintf(snd, MSG_LEN, "toc_set_config \"%s\"", buf);
-	sflap_send(gc, snd, -1, TYPE_DATA);
-}
-
 static void toc_close(struct gaim_connection *gc) {
-	toc_set_config(gc);
 	if (gc->inpa > 0)
 		gdk_input_remove(gc->inpa);
 	gc->inpa = -1;
@@ -759,6 +750,13 @@ static void toc_send_im(struct gaim_connection *gc, char *name, char *message, i
 	g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
 			message, ((away) ? " auto" : ""));
 	sflap_send(gc, buf, -1, TYPE_DATA);
+}
+
+static void toc_set_config(struct gaim_connection *gc) {
+	char buf[MSG_LEN], snd[MSG_LEN];
+	toc_build_config(gc, buf, MSG_LEN, FALSE);
+	g_snprintf(snd, MSG_LEN, "toc_set_config \"%s\"", buf);
+	sflap_send(gc, snd, -1, TYPE_DATA);
 }
 
 static void toc_get_info(struct gaim_connection *g, char *name) {
