@@ -298,6 +298,16 @@ gaim_account_set_check_mail(GaimAccount *account, gboolean value)
 }
 
 void
+gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info)
+{
+	g_return_if_fail(account != NULL);
+
+	account->proxy_info = info;
+
+	schedule_accounts_save();
+}
+
+void
 gaim_account_set_int(GaimAccount *account, const char *name, int value)
 {
 	GaimAccountSetting *setting;
@@ -431,6 +441,14 @@ gaim_account_get_check_mail(const GaimAccount *account)
 	g_return_val_if_fail(account != NULL, FALSE);
 
 	return account->check_mail;
+}
+
+GaimProxyInfo *
+gaim_account_get_proxy_info(const GaimAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	return account->proxy_info;
 }
 
 int

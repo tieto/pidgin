@@ -393,16 +393,19 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 static void proxy_print_option(GtkEntry *entry, int entrynum)
 {
+	GaimProxyInfo *info = gaim_global_proxy_get_info();
+
 	if (entrynum == PROXYHOST)
-		g_snprintf(global_proxy_info.proxyhost, sizeof(global_proxy_info.proxyhost), "%s", gtk_entry_get_text(entry));
+		gaim_proxy_info_set_host(info, gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPORT)
-		global_proxy_info.proxyport = atoi(gtk_entry_get_text(entry));
+		gaim_proxy_info_set_port(info, atoi(gtk_entry_get_text(entry)));
 	else if (entrynum == PROXYUSER)
-		g_snprintf(global_proxy_info.proxyuser, sizeof(global_proxy_info.proxyuser), "%s", gtk_entry_get_text(entry));
+		gaim_proxy_info_set_username(info, gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPASS)
-		g_snprintf(global_proxy_info.proxypass, sizeof(global_proxy_info.proxypass), "%s", gtk_entry_get_text(entry));
-	proxy_info_is_from_gaimrc = 1; /* If the user specifies it, we want
-					  to save it */
+		gaim_proxy_info_set_password(info, gtk_entry_get_text(entry));
+
+	/* If the user specifies it, we want to save it. */
+	gaim_global_proxy_set_from_prefs(TRUE);
 }
 
 /* OK, Apply and Cancel */
@@ -1127,6 +1130,7 @@ GtkWidget *proxy_page() {
 	GtkWidget *label;
 	GtkWidget *hbox;
 	GtkWidget *table;
+	GaimProxyInfo *proxy_info;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
@@ -1143,8 +1147,13 @@ GtkWidget *proxy_page() {
 	vbox = gaim_gtk_make_frame(ret, _("Proxy Server"));
 	prefs_proxy_frame = vbox;
 
-	if (global_proxy_info.proxytype == PROXY_NONE)
+	proxy_info = gaim_global_proxy_get_info();
+
+	if (proxy_info == NULL ||
+		gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_NONE) {
+
 		gtk_widget_set_sensitive(GTK_WIDGET(vbox), FALSE);
+	}
 
 	table = gtk_table_new(2, 4, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
@@ -1162,7 +1171,10 @@ GtkWidget *proxy_page() {
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(proxy_print_option), (void *)PROXYHOST);
-	gtk_entry_set_text(GTK_ENTRY(entry), global_proxy_info.proxyhost);
+
+	if (proxy_info != NULL && gaim_proxy_info_get_host(proxy_info))
+		gtk_entry_set_text(GTK_ENTRY(entry),
+						   gaim_proxy_info_get_host(proxy_info));
 
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -1177,9 +1189,11 @@ GtkWidget *proxy_page() {
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
 
-	if (global_proxy_info.proxyport) {
+	if (proxy_info != NULL && gaim_proxy_info_get_port(proxy_info) != 0) {
 		char buf[128];
-		g_snprintf(buf, sizeof(buf), "%d", global_proxy_info.proxyport);
+		g_snprintf(buf, sizeof(buf), "%d",
+				   gaim_proxy_info_get_port(proxy_info));
+
 		gtk_entry_set_text(GTK_ENTRY(entry), buf);
 	}
 
@@ -1192,7 +1206,10 @@ GtkWidget *proxy_page() {
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 2, 3, GTK_FILL, 0, 0, 0);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
-	gtk_entry_set_text(GTK_ENTRY(entry), global_proxy_info.proxyuser);
+
+	if (proxy_info != NULL && gaim_proxy_info_get_username(proxy_info) != NULL)
+		gtk_entry_set_text(GTK_ENTRY(entry),
+						   gaim_proxy_info_get_username(proxy_info));
 
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -1207,7 +1224,10 @@ GtkWidget *proxy_page() {
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
-	gtk_entry_set_text(GTK_ENTRY(entry), global_proxy_info.proxypass);
+
+	if (proxy_info != NULL && gaim_proxy_info_get_password(proxy_info) != NULL)
+		gtk_entry_set_text(GTK_ENTRY(entry),
+						   gaim_proxy_info_get_password(proxy_info));
 
 	gtk_widget_show_all(ret);
 	return ret;

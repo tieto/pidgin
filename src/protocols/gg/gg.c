@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6059 2003-06-01 23:31:46Z chipx86 $
+ * $Id: gg.c 6100 2003-06-03 02:00:33Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -450,7 +450,7 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	/* If we are GG_STATE_CONNECTING_GG then we still need to connect, as
-	   we could not use proxy_connect in libgg.c */
+	   we could not use gaim_proxy_connect in libgg.c */
 	switch( gd->sess->state ) {
 	case GG_STATE_CONNECTING_GG:
 		{
@@ -462,7 +462,7 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 
 			ip.s_addr = gd->sess->server_ip;
 
-			if (proxy_connect(gc->account, inet_ntoa(ip), gd->sess->port, login_callback, gc) < 0) {
+			if (gaim_proxy_connect(gc->account, inet_ntoa(ip), gd->sess->port, login_callback, gc) < 0) {
 				g_snprintf(buf, sizeof(buf), _("Connect to %s failed"), inet_ntoa(ip));
 				gaim_connection_error(gc, buf);
 				return;
@@ -544,7 +544,7 @@ static void agg_login(GaimAccount *account)
 	   return;
 	   }
 
-	   gg_login() sucks for me, so I'm using proxy_connect()
+	   gg_login() sucks for me, so I'm using gaim_proxy_connect()
 	 */
 
 	gd->sess->uin = (uin_t) strtol(account->username, (char **)NULL, 10);
@@ -552,7 +552,7 @@ static void agg_login(GaimAccount *account)
 	gd->sess->state = GG_STATE_CONNECTING;
 	gd->sess->check = GG_CHECK_WRITE;
 	gd->sess->async = 1;
-	if (proxy_connect(account, GG_APPMSG_HOST, GG_APPMSG_PORT, login_callback, gc) < 0) {
+	if (gaim_proxy_connect(account, GG_APPMSG_HOST, GG_APPMSG_PORT, login_callback, gc) < 0) {
 		g_snprintf(buf, sizeof(buf), _("Connect to %s failed"), GG_APPMSG_HOST);
 		gaim_connection_error(gc, buf);
 		return;
@@ -989,7 +989,7 @@ static void import_buddies_server(GaimConnection *gc)
 	g_free(u);
 	g_free(p);
 
-	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, hi) < 0) {
+	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, hi) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Unable to import Gadu-Gadu buddy list"),
 						  _("Gaim was unable to connect to the Gadu-Gadu "
@@ -1059,7 +1059,7 @@ static void export_buddies_server(GaimConnection *gc)
 		}
 	}
 
-	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
+	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Couldn't export buddy list"),
 						  _("Gaim was unable to connect to the buddy "
@@ -1082,7 +1082,7 @@ static void delete_buddies_server(GaimConnection *gc)
 	he->host = GG_PUBDIR_HOST;
 	he->request = g_strdup_printf("FmNum=%s&Pass=%s&Delete=1", u, p);
 
-	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
+	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Unable to delete Gadu-Gadu buddy list"),
 						  _("Gaim was unable to connect to the buddy "
@@ -1131,7 +1131,7 @@ static void agg_dir_search(GaimConnection *gc, const char *first, const char *mi
 		g_free(enew_city);
 	}
 
-	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
+	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Unable to access directory"),
 						  _("Gaim was unable to search the Directory "
@@ -1165,7 +1165,7 @@ static void agg_change_passwd(GaimConnection *gc, const char *old, const char *n
 	g_free(enew);
 	g_free(eold);
 
-	if (proxy_connect(gc->account, GG_REGISTER_HOST, GG_REGISTER_PORT, http_req_callback, hpass) < 0) {
+	if (gaim_proxy_connect(gc->account, GG_REGISTER_HOST, GG_REGISTER_PORT, http_req_callback, hpass) < 0) {
 	       	gaim_notify_error(gc, NULL,
 							  _("Unable to change Gadu-Gadu password"),
 							  _("Gaim was unable to change your password "
@@ -1243,7 +1243,7 @@ static void agg_get_info(GaimConnection *gc, const char *who)
 	} else
 		srch->request = g_strdup_printf("Mode=3&UserId=%s", who);
 
-	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
+	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Unable to access user profile."),
 						  _("Gaim was unable to access this user's "

@@ -5297,7 +5297,7 @@ show_buddy_icons_pref_cb(const char *name, GaimPrefType type, gpointer value,
 	gaim_conversation_foreach(gaim_gtkconv_update_buddy_icon);
 }
 
-void
+static void
 chat_button_type_pref_cb(const char *name, GaimPrefType type, gpointer value,
 						 gpointer data)
 {

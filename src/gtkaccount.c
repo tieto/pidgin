@@ -99,6 +99,9 @@ typedef struct
 	GtkWidget *protocol_frame;
 	GtkWidget *register_check;
 
+	/* Proxy Options */
+	GtkWidget *proxy_frame;
+
 	GtkSizeGroup *sg;
 
 } AccountPrefsDialog;
@@ -487,6 +490,14 @@ __add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 						   FALSE, FALSE, 0);
 		gtk_widget_show(dialog->register_check);
 	}
+}
+
+static void
+__add_proxy_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
+{
+	if (dialog->proxy_frame != NULL)
+		gtk_widget_destroy(dialog->proxy_frame);
+
 }
 
 static void

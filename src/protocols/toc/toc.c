@@ -192,7 +192,7 @@ static void toc_login(GaimAccount *account)
 	gaim_connection_update_progress(gc, buf, 1, TOC_CONNECT_STEPS);
 
 	debug_printf("* Client connects to TOC\n");
-	if (proxy_connect(account,
+	if (gaim_proxy_connect(account,
 				gaim_account_get_string(account, "server", TOC_HOST),
 				gaim_account_get_int(account, "port", TOC_PORT),
 				toc_login_callback, gc) != 0 || !account->gc) {
@@ -1683,7 +1683,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	g_snprintf(buf, sizeof(buf), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
 	sflap_send(ft->gc, buf, -1, TYPE_DATA);
 
-	if (proxy_connect(account, ft->ip, ft->port, toc_send_file_connect, ft) != 0) {
+	if (gaim_proxy_connect(account, ft->ip, ft->port, toc_send_file_connect, ft) != 0) {
 		gaim_notify_error(ft->gc, NULL,
 						  _("Could not connect for transfer."), NULL);
 		g_free(ft->filename);
@@ -1895,7 +1895,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	g_snprintf(buf2, sizeof(buf2), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
 	sflap_send(ft->gc, buf2, -1, TYPE_DATA);
 
-	if (proxy_connect(account, ft->ip, ft->port, toc_get_file_connect, ft) < 0) {
+	if (gaim_proxy_connect(account, ft->ip, ft->port, toc_get_file_connect, ft) < 0) {
 		gaim_notify_error(ft->gc, NULL,
 						  _("Could not connect for transfer."), NULL);
 		fclose(ft->file);

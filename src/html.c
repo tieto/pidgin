@@ -314,8 +314,9 @@ void grab_url(char *url, gboolean full, void callback(gpointer, char *, unsigned
 	gunk->website = parse_url(url);
 	gunk->full = full;
 
-	if ((sock = proxy_connect(NULL, gunk->website->address, gunk->website->port,
-				  grab_url_callback, gunk)) < 0) {
+	if ((sock = gaim_proxy_connect(NULL, gunk->website->address,
+								   gunk->website->port, grab_url_callback,
+								   gunk)) < 0) {
 		g_free(gunk->website);
 		g_free(gunk->url);
 		g_free(gunk);

@@ -1,4 +1,4 @@
-/* $Id: libgg.c 4552 2003-01-11 19:59:27Z seanegan $ */
+/* $Id: libgg.c 6100 2003-06-03 02:00:33Z chipx86 $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -72,7 +72,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 4552 2003-01-11 19:59:27Z seanegan $";
+= "$Id: libgg.c 6100 2003-06-03 02:00:33Z chipx86 $";
 
 #endif 
 
@@ -861,7 +861,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 	switch (sess->state) {
 #ifndef _WIN32
 		/* Apparantly we will never be in this state as long as we are
-		   using proxy_connect instead of gg_login - Herman */
+		   using gaim_proxy_connect instead of gg_login - Herman */
 		case GG_STATE_RESOLVING:
 		{
 			struct in_addr a;
@@ -1048,7 +1048,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			a.s_addr = inet_addr(host);
 			sess->server_ip = a.s_addr;
 #if 0
-			/* We need to watch this non-blocking socket so lets use proxy_connect 
+			/* We need to watch this non-blocking socket so lets use gaim_proxy_connect 
 			   in gg.c - Herman */
 			if((sess->fd = gg_connect(&a, port, sess->assync)) == -1) {
 				gg_debug(GG_DEBUG_MISC, "-- connection failed, trying https connection\n");

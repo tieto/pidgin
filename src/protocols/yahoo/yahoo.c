@@ -997,7 +997,7 @@ static void yahoo_login(GaimAccount *account) {
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
 	yd->games = g_hash_table_new(g_str_hash, g_str_equal);
 
-	if (proxy_connect(account, gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
+	if (gaim_proxy_connect(account, gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
 			  gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
 			  yahoo_got_connected, gc) != 0) {
 		gaim_connection_error(gc, "Connection problem");

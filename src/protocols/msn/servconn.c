@@ -198,7 +198,7 @@ msn_servconn_connect(MsnServConn *servconn)
 	g_return_val_if_fail(servconn->server != NULL, FALSE);
 	g_return_val_if_fail(!servconn->connected, TRUE);
 
-	i = proxy_connect(servconn->session->account, servconn->server,
+	i = gaim_proxy_connect(servconn->session->account, servconn->server,
 					  servconn->port, __connect_cb, servconn);
 
 	if (i == 0)

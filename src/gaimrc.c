@@ -660,16 +660,15 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "proxy_opts"))
 		return account;
 
-	if(atoi(p->value[0]) != PROXY_USE_GLOBAL) {
-		account->gpi = g_new0(struct gaim_proxy_info, 1);
-		account->gpi->proxytype = atoi(p->value[0]);
-		g_snprintf(account->gpi->proxyhost, sizeof(account->gpi->proxyhost),
-				"%s", p->value[1]);
-		account->gpi->proxyport = atoi(p->value[2]);
-		g_snprintf(account->gpi->proxyuser, sizeof(account->gpi->proxyuser),
-				"%s", p->value[3]);
-		g_snprintf(account->gpi->proxypass, sizeof(account->gpi->proxypass),
-				"%s", p->value[4]);
+	if(atoi(p->value[0]) != GAIM_PROXY_USE_GLOBAL) {
+		GaimProxyInfo *info;
+
+		info = gaim_proxy_info_new();
+		gaim_proxy_info_set_type(info, atoi(p->value[0]));
+		gaim_proxy_info_set_host(info, p->value[1]);
+		gaim_proxy_info_set_port(info, atoi(p->value[2]));
+		gaim_proxy_info_set_username(info, p->value[3]);
+		gaim_proxy_info_set_password(info, p->value[4]);
 	}
 
 	return account;
@@ -1143,6 +1142,8 @@ static void gaimrc_read_sounds(FILE *f)
 
 static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 {
+	GaimProxyInfo *info;
+
 	char *c, *d;
 	char buffer[2048];
 
@@ -1221,27 +1222,20 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 	}
 
 	/* NOTE: HTTP_PROXY takes precendence. */
-	if (host[0])
-		strcpy(global_proxy_info.proxyhost, host);
-	else
-		*global_proxy_info.proxyhost = '\0';
+	info = gaim_global_proxy_get_info();
 
-	if (user[0])
-		strcpy(global_proxy_info.proxyuser, user);
-	else
-		*global_proxy_info.proxyuser = '\0';
+	if (*host) gaim_proxy_info_set_host(info, host);
+	if (*user) gaim_proxy_info_set_username(info, user);
+	if (*pass) gaim_proxy_info_set_password(info, pass);
 
-	if (pass[0])
-		strcpy(global_proxy_info.proxypass, pass);
-	else
-		*global_proxy_info.proxypass = '\0';
-
-	global_proxy_info.proxyport = port;
+	gaim_proxy_info_set_port(info, port);
 
 	gaim_debug(GAIM_DEBUG_MISC, "gaimrc",
 			   "Host: '%s', User: '%s', Password: '%s', Port: %d\n",
-			   global_proxy_info.proxyhost, global_proxy_info.proxyuser,
-			   global_proxy_info.proxypass, global_proxy_info.proxyport);
+			   gaim_proxy_info_get_host(info),
+			   gaim_proxy_info_get_username(info),
+			   gaim_proxy_info_get_password(info),
+			   gaim_proxy_info_get_port(info));
 
 	return TRUE;
 }
@@ -1251,9 +1245,11 @@ static void gaimrc_read_proxy(FILE *f)
 	char buf[2048];
 	struct parse parse_buffer;
 	struct parse *p;
+	GaimProxyInfo *info;
+
+	info = gaim_global_proxy_get_info();
 
 	buf[0] = 0;
-	global_proxy_info.proxyhost[0] = 0;
 	gaim_debug(GAIM_DEBUG_MISC, "gaimrc", "gaimrc_read_proxy\n");
 
 	while (buf[0] != '}') {
@@ -1266,78 +1262,60 @@ static void gaimrc_read_proxy(FILE *f)
 		p = parse_line(buf, &parse_buffer);
 
 		if (!strcmp(p->option, "host")) {
-			g_snprintf(global_proxy_info.proxyhost,
-					sizeof(global_proxy_info.proxyhost), "%s", p->value[0]);
+			gaim_proxy_info_set_host(info, p->value[0]);
 			gaim_debug(GAIM_DEBUG_MISC, "gaimrc",
-					   "Set proxyhost %s\n", global_proxy_info.proxyhost);
+					   "Set proxyhost %s\n", p->value[0]);
 		} else if (!strcmp(p->option, "port")) {
-			global_proxy_info.proxyport = atoi(p->value[0]);
+			gaim_proxy_info_set_port(info, atoi(p->value[0]));
 		} else if (!strcmp(p->option, "type")) {
-			global_proxy_info.proxytype = atoi(p->value[0]);
+			gaim_proxy_info_set_type(info, atoi(p->value[0]));
 		} else if (!strcmp(p->option, "user")) {
-			g_snprintf(global_proxy_info.proxyuser,
-					sizeof(global_proxy_info.proxyuser), "%s", p->value[0]);
+			gaim_proxy_info_set_username(info, p->value[0]);
 		} else if (!strcmp(p->option, "pass")) {
-			g_snprintf(global_proxy_info.proxypass,
-					sizeof(global_proxy_info.proxypass), "%s", p->value[0]);
+			gaim_proxy_info_set_password(info, p->value[0]);
 		}
 	}
-	if (global_proxy_info.proxyhost[0])
-		proxy_info_is_from_gaimrc = 1;
+
+	if (gaim_proxy_info_get_host(info) != NULL)
+		gaim_global_proxy_set_from_prefs(TRUE);
 	else {
+		const char *host;
 		gboolean getVars = TRUE;
-		proxy_info_is_from_gaimrc = 0;
 
-		if (g_getenv("HTTP_PROXY"))
-			g_snprintf(global_proxy_info.proxyhost,
-					sizeof(global_proxy_info.proxyhost), "%s",
-					g_getenv("HTTP_PROXY"));
-		else if (g_getenv("http_proxy"))
-			g_snprintf(global_proxy_info.proxyhost,
-					sizeof(global_proxy_info.proxyhost), "%s",
-					g_getenv("http_proxy"));
-		else if (g_getenv("HTTPPROXY"))
-			g_snprintf(global_proxy_info.proxyhost,
-					sizeof(global_proxy_info.proxyhost), "%s",
-					g_getenv("HTTPPROXY"));
+		if ((host = g_getenv("HTTP_PROXY")) != NULL ||
+			(host = g_getenv("http_proxy")) != NULL ||
+			(host = g_getenv("HTTPPROXY")) != NULL) {
 
-		if (*global_proxy_info.proxyhost != '\0')
-			getVars = !gaimrc_parse_proxy_uri(global_proxy_info.proxyhost);
+			gaim_proxy_info_set_host(info, host);
+		}
+
+		if (gaim_proxy_info_get_host(info) != NULL)
+			getVars = !gaimrc_parse_proxy_uri(gaim_proxy_info_get_host(info));
 
 		if (getVars)
 		{
-			if (g_getenv("HTTP_PROXY_PORT"))
-				global_proxy_info.proxyport = atoi(g_getenv("HTTP_PROXY_PORT"));
-			else if (g_getenv("http_proxy_port"))
-				global_proxy_info.proxyport = atoi(g_getenv("http_proxy_port"));
-			else if (g_getenv("HTTPPROXYPORT"))
-				global_proxy_info.proxyport = atoi(g_getenv("HTTPPROXYPORT"));
+			const char *port_str, *user, *pass;
 
-			if (g_getenv("HTTP_PROXY_USER"))
-				g_snprintf(global_proxy_info.proxyuser,
-						sizeof(global_proxy_info.proxyuser), "%s",
-						g_getenv("HTTP_PROXY_USER"));
-			else if (g_getenv("http_proxy_user"))
-				g_snprintf(global_proxy_info.proxyuser,
-						sizeof(global_proxy_info.proxyuser), "%s",
-						g_getenv("http_proxy_user"));
-			else if (g_getenv("HTTPPROXYUSER"))
-				g_snprintf(global_proxy_info.proxyuser,
-						sizeof(global_proxy_info.proxyuser), "%s",
-						g_getenv("HTTPPROXYUSER"));
+			if ((port_str = g_getenv("HTTP_PROXY_PORT")) != NULL ||
+				(port_str = g_getenv("http_proxy_port")) != NULL ||
+				(port_str = g_getenv("HTTPPROXYPORT")) != NULL) {
 
-			if (g_getenv("HTTP_PROXY_PASS"))
-				g_snprintf(global_proxy_info.proxypass,
-						sizeof(global_proxy_info.proxypass), "%s",
-						g_getenv("HTTP_PROXY_PASS"));
-			else if (g_getenv("http_proxy_pass"))
-				g_snprintf(global_proxy_info.proxypass,
-						sizeof(global_proxy_info.proxypass), "%s",
-						g_getenv("http_proxy_pass"));
-			else if (g_getenv("HTTPPROXYPASS"))
-				g_snprintf(global_proxy_info.proxypass,
-						sizeof(global_proxy_info.proxypass), "%s",
-						g_getenv("HTTPPROXYPASS"));
+				gaim_proxy_info_set_port(info, atoi(port_str));
+			}
+
+			if ((user = g_getenv("HTTP_PROXY_USER")) != NULL ||
+				(user = g_getenv("http_proxy_user")) != NULL ||
+				(user = g_getenv("HTTPPROXYUSER")) != NULL) {
+
+				gaim_proxy_info_set_username(info, user);
+			}
+
+			if ((pass = g_getenv("HTTP_PROXY_PASS")) != NULL ||
+				(pass = g_getenv("http_proxy_pass")) != NULL ||
+				(pass = g_getenv("HTTPPROXYPASS")) != NULL) {
+
+				gaim_proxy_info_set_password(info, pass);
+			}
 		}
 	}
 }

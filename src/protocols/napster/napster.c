@@ -504,7 +504,7 @@ static void nap_login(GaimAccount *account)
 	gaim_connection_update_progress(gc, _("Connecting"), 1, NAPSTER_CONNECT_STEPS);
 
 	gc->proto_data = g_new0(struct nap_data, 1);
-	if (proxy_connect(account,
+	if (gaim_proxy_connect(account,
 				gaim_account_get_string(account, "server", NAP_SERVER),
 				gaim_account_get_int(account, "port", NAP_PORT),
 				nap_login_connect, gc) != 0) {

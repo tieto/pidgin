@@ -26,6 +26,7 @@
 typedef struct _GaimAccount GaimAccount;
 
 #include "connection.h"
+#include "proxy.h"
 #include "prpl.h"
 
 struct _GaimAccount
@@ -47,7 +48,7 @@ struct _GaimAccount
 
 	GHashTable *settings;       /**< Protocol-specific settings. */
 
-	struct gaim_proxy_info *gpi; /**< Proxy information.         */
+	GaimProxyInfo *proxy_info;  /**< Proxy information.          */
 
 	GSList *permit;             /**< Permit list.                */
 	GSList *deny;               /**< Deny list.                  */
@@ -158,6 +159,14 @@ void gaim_account_set_remember_password(GaimAccount *account, gboolean value);
  * @param value   @c TRUE if it should check for mail.
  */
 void gaim_account_set_check_mail(GaimAccount *account, gboolean value);
+
+/**
+ * Sets the account's proxy information.
+ * 
+ * @param account The account.
+ * @param info    The proxy information.
+ */
+void gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info);
 
 /**
  * Sets a protocol-specific integer setting for an account.
@@ -278,6 +287,15 @@ gboolean gaim_account_get_remember_password(const GaimAccount *account);
  * @return @c TRUE if it should check for mail.
  */
 gboolean gaim_account_get_check_mail(const GaimAccount *account);
+
+/**
+ * Returns the account's proxy information.
+ *
+ * @param account The account.
+ *
+ * @return The proxy information.
+ */
+GaimProxyInfo *gaim_account_get_proxy_info(const GaimAccount *account);
 
 /**
  * Returns a protocol-specific integer setting for an account.

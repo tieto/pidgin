@@ -137,10 +137,6 @@ void gaim_prefs_init() {
 	gaim_prefs_add_bool("/core/conversations/im/show_login", TRUE);
 	gaim_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
 
-	/* Proxy */
-	gaim_prefs_add_none("/core/proxy");
-	gaim_prefs_add_string("/core/proxy/type", "none");
-
 	/* Sound */
 	gaim_prefs_add_none("/core/sound");
 	gaim_prefs_add_bool("/core/sound/use_sys_default", TRUE);
@@ -150,6 +146,8 @@ void gaim_prefs_init() {
 	gaim_prefs_add_bool("/core/sound/use_custom", FALSE);
 	gaim_prefs_add_string("/core/sound/command", "");
 	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
+
+	gaim_proxy_init();
 }
 
 static char *pref_full_name(struct gaim_pref *pref) {

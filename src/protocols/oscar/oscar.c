@@ -683,7 +683,7 @@ static void oscar_login(GaimAccount *account) {
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
 
 	conn->status |= AIM_CONN_STATUS_INPROGRESS;
-	if (proxy_connect(account, gaim_account_get_string(account, "server", FAIM_LOGIN_SERVER),
+	if (gaim_proxy_connect(account, gaim_account_get_string(account, "server", FAIM_LOGIN_SERVER),
 			  gaim_account_get_int(account, "port", FAIM_LOGIN_PORT),
 			  oscar_login_connect, gc) < 0) {
 		gaim_connection_error(gc, _("Couldn't connect to host"));
@@ -862,7 +862,7 @@ static void oscar_xfer_init(struct gaim_xfer *xfer)
 		if (oft_info->conn) {
 			oft_info->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
 			aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
-			oft_info->conn->fd = xfer->fd = proxy_connect(gaim_connection_get_account(gc), xfer->remote_ip, xfer->remote_port, 
+			oft_info->conn->fd = xfer->fd = gaim_proxy_connect(gaim_connection_get_account(gc), xfer->remote_ip, xfer->remote_port, 
 								      oscar_sendfile_connected, xfer);
 			if (xfer->fd == -1) {
 				gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
@@ -1161,7 +1161,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 	host = g_strndup(info->bosip, i);
 	bosconn->status |= AIM_CONN_STATUS_INPROGRESS;
-	rc = proxy_connect(gc->account, host, port, oscar_bos_connect, gc);
+	rc = gaim_proxy_connect(gc->account, host, port, oscar_bos_connect, gc);
 	g_free(host);
 	if (rc < 0) {
 		gaim_connection_error(gc, _("Could Not Connect"));
@@ -1316,7 +1316,7 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	pos->len = len;
 	pos->modname = modname ? g_strdup(modname) : NULL;
 
-	if (proxy_connect(pos->gc->account, "gaim.sourceforge.net", 80, straight_to_hell, pos) != 0) {
+	if (gaim_proxy_connect(pos->gc->account, "gaim.sourceforge.net", 80, straight_to_hell, pos) != 0) {
 		char buf[256];
 		if (pos->modname)
 			g_free(pos->modname);
@@ -1613,7 +1613,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		if (proxy_connect(account, host, port, oscar_auth_connect, gc) != 0) {
+		if (gaim_proxy_connect(account, host, port, oscar_auth_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 					   "unable to reconnect with authorizer\n");
@@ -1635,7 +1635,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_chatnav, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		if (proxy_connect(account, host, port, oscar_chatnav_connect, gc) != 0) {
+		if (gaim_proxy_connect(account, host, port, oscar_chatnav_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 					   "unable to connect to chatnav server\n");
@@ -1669,7 +1669,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		ccon->show = extract_name(redir->chat.room);
 
 		ccon->conn->status |= AIM_CONN_STATUS_INPROGRESS;
-		if (proxy_connect(account, host, port, oscar_chat_connect, ccon) != 0) {
+		if (gaim_proxy_connect(account, host, port, oscar_chat_connect, ccon) != 0) {
 			aim_conn_kill(sess, &tstconn);
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 					   "unable to connect to chat server\n");
@@ -1696,7 +1696,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_icon, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		if (proxy_connect(account, host, port, oscar_icon_connect, gc) != 0) {
+		if (gaim_proxy_connect(account, host, port, oscar_icon_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 					   "unable to connect to icon server\n");
@@ -1717,7 +1717,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_email, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		if (proxy_connect(account, host, port, oscar_email_connect, gc) != 0) {
+		if (gaim_proxy_connect(account, host, port, oscar_email_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 					   "unable to connect to email server\n");
@@ -1935,7 +1935,7 @@ static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 /*
- * This is the gaim callback passed to proxy_connect when connecting to another AIM 
+ * This is the gaim callback passed to gaim_proxy_connect when connecting to another AIM 
  * user in order to transfer a file.
  */
 static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition) {
@@ -2116,7 +2116,7 @@ static void accept_direct_im(struct ask_direct *d) {
 	}
 	host = g_strndup(d->ip, i);
 	dim->conn->status |= AIM_CONN_STATUS_INPROGRESS;
-	rc = proxy_connect(gc->account, host, port, oscar_odc_callback, dim);
+	rc = gaim_proxy_connect(gc->account, host, port, oscar_odc_callback, dim);
 	g_free(host);
 	if (rc < 0) {
 		aim_conn_kill(od->sess, &dim->conn);

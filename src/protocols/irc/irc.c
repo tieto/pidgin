@@ -1242,7 +1242,7 @@ handle_privmsg(GaimConnection *gc, char *to, char *nick, char *msg)
 static void 
 dcc_chat_init(struct dcc_chat *data) {
 	if (g_list_find(gaim_connections_get_all(), data->gc)) {
-		proxy_connect(data->gc->account, data->ip_address, data->port, dcc_chat_callback, data);
+		gaim_proxy_connect(data->gc->account, data->ip_address, data->port, dcc_chat_callback, data);
 	} else {
 		g_free(data);
 	}
@@ -1960,7 +1960,7 @@ irc_login(GaimAccount *account)
 	idata->str = g_string_new("");
 	idata->fd = -1;
 
-	rc = proxy_connect(account, idata->server,
+	rc = gaim_proxy_connect(account, idata->server,
 			   gaim_account_get_int(account, "port", 6667),
 			   irc_login_callback, gc);
 	
@@ -2755,7 +2755,7 @@ irc_file_transfer_in(GaimConnection *gc,
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
 
 	ift->xfer = xfer;
-	proxy_connect(gc->account, ift->ip, ift->port, dcc_recv_callback, ift);
+	gaim_proxy_connect(gc->account, ift->ip, ift->port, dcc_recv_callback, ift);
 }
 #endif
 
