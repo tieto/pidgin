@@ -129,7 +129,8 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 	gchar *s;
 
 	if ((s = g_strstr_len(data, data_len, "Location: ")) != NULL) {
-		gchar *new_url, *end;
+		gchar *new_url, *temp_url, *end;
+		gboolean full;
 		int len;
 
 		s += strlen("Location: ");
@@ -145,13 +146,28 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 		strncpy(new_url, s, len);
 		new_url[len] = '\0';
 
+		full = gunk->full;
+
+		if (*new_url == '/' || g_strstr_len(new_url, len, "://") == NULL) {
+			temp_url = new_url;
+
+			new_url = g_strdup_printf("%s:%d%s", gunk->website->address,
+									  gunk->website->port, temp_url);
+
+			g_free(temp_url);
+
+			full = FALSE;
+		}
+
 		/* Close the existing stuff. */
 		gaim_input_remove(gunk->inpa);
 		close(sock);
 
+		gaim_debug(GAIM_DEBUG_INFO, "grab_url",
+				   "Redirecting to %s\n", new_url);
+
 		/* Try again, with this new location. */
-		grab_url(new_url, gunk->full, gunk->callback,
-				 gunk->data);
+		grab_url(new_url, full, gunk->callback, gunk->data);
 
 		/* Free up. */
 		g_free(new_url);
