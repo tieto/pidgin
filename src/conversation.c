@@ -251,6 +251,8 @@ void delete_conversation(struct conversation *c)
 		gtk_widget_destroy(c->link_dialog);
 	if (c->log_dialog)
 		gtk_widget_destroy(c->log_dialog);
+	if (c->save_icon)
+		gtk_widget_destroy(c->save_icon);
 	g_string_free(c->history, TRUE);
 	g_free(c);
 }
@@ -2658,13 +2660,113 @@ static gboolean redraw_icon(gpointer data)
 
 	return FALSE;
 }
+
+static void stop_anim(GtkObject *obj, struct conversation *c)
+{
+	if (c->icon_timer)
+		gtk_timeout_remove(c->icon_timer);
+	c->icon_timer = 0;
+}
+
+static int des_save_icon(GtkObject *obj, GdkEvent *e, struct conversation *c)
+{
+	gtk_widget_destroy(c->save_icon);
+	c->save_icon = NULL;
+	return TRUE;
+}
+
+static void do_save_icon(GtkObject *obj, struct conversation *c)
+{
+	FILE *file;
+	char *f = gtk_file_selection_get_filename(GTK_FILE_SELECTION(c->save_icon));
+	if (file_is_dir(f, c->save_icon))
+		return;
+
+	file = fopen(f, "w");
+	if (file) {
+		int len;
+		void *data = get_icon_data(c->gc, normalize(c->name), &len);
+		if (data)
+			fwrite(data, 1, len, file);
+		fclose(file);
+	} else {
+		do_error_dialog("Can't open file for writing", "Error");
+	}
+
+	gtk_widget_destroy(c->save_icon);
+	c->save_icon = NULL;
+}
+
+static void cancel_save_icon(GtkObject *obj, struct conversation *c)
+{
+	gtk_widget_destroy(c->save_icon);
+	c->save_icon = NULL;
+}
+
+static void save_icon(GtkObject *obj, struct conversation *c)
+{
+	char buf[BUF_LEN];
+
+	if (c->save_icon) {
+		gdk_window_raise(c->save_icon->window);
+		return;
+	}
+
+	c->save_icon = gtk_file_selection_new(_("Gaim - Save Icon"));
+	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(c->save_icon));
+	g_snprintf(buf, BUF_LEN - 1, "%s/%s.icon", g_get_home_dir(), c->name);
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(c->save_icon), buf);
+	gtk_signal_connect(GTK_OBJECT(c->save_icon), "delete_event",
+			   GTK_SIGNAL_FUNC(des_save_icon), c);
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->save_icon)->ok_button), "clicked",
+			   GTK_SIGNAL_FUNC(do_save_icon), c);
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(c->save_icon)->cancel_button), "clicked",
+			   GTK_SIGNAL_FUNC(cancel_save_icon), c);
+
+	gtk_widget_show(c->save_icon);
+}
+
+static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation *c)
+{
+	GtkWidget *menu;
+	GtkWidget *button;
+
+	if (e->button != 3)
+		return FALSE;
+	if (e->type != GDK_BUTTON_PRESS)
+		return FALSE;
+
+	menu = gtk_menu_new();
+
+	if (c->icon_timer) {
+		button = gtk_menu_item_new_with_label(_("Disable Animation"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(stop_anim), c);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+	}
+
+	button = gtk_menu_item_new_with_label(_("Hide Icon"));
+	gtk_signal_connect_object(GTK_OBJECT(button), "activate",
+				  GTK_SIGNAL_FUNC(remove_icon), (void *)c);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+
+	button = gtk_menu_item_new_with_label(_("Save Icon As..."));
+	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(save_icon), c);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
+
+	return TRUE;
+}
 #endif
 
 void remove_icon(struct conversation *c)
 {
 #if USE_PIXBUF
 	if (c->icon)
-		gtk_container_remove(GTK_CONTAINER(c->bbox), c->icon);
+		gtk_container_remove(GTK_CONTAINER(c->bbox), c->icon->parent);
 	c->icon = NULL;
 	if (c->anim)
 		gdk_pixbuf_animation_unref(c->anim);
@@ -2685,6 +2787,7 @@ void update_icon(struct conversation *c)
 	void *data;
 	int len;
 
+	GtkWidget *event;
 	GdkPixbufLoader *load;
 	GdkPixbuf *scale;
 	GdkPixmap *pm;
@@ -2739,9 +2842,14 @@ void update_icon(struct conversation *c)
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
 	gdk_pixbuf_unref(scale);
 
+	event = gtk_event_box_new();
+	gtk_box_pack_start(GTK_BOX(c->bbox), event, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(event), "button-press-event", GTK_SIGNAL_FUNC(icon_menu), c);
+	gtk_widget_show(event);
+
 	c->icon = gtk_pixmap_new(pm, bm);
 	gtk_widget_set_usize(c->icon, sf, sf);
-	gtk_box_pack_start(GTK_BOX(c->bbox), c->icon, FALSE, FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(event), c->icon);
 	gtk_widget_show(c->icon);
 	gdk_pixmap_unref(pm);
 	if (bm)

@@ -144,6 +144,7 @@ struct conversation {
 	GdkPixbufAnimation *anim;
 	guint32 icon_timer;
 	int frame;
+	GtkWidget *save_icon;
 #endif
 
 	/* stuff used just for chat */

@@ -7,6 +7,9 @@ version 0.46:
 	* Better applet icon drawing (thanks to Ari Pollak)
 	* An extraordinary number of bug fixes
 	* Updated Korean translation
+	* Ability to stop animation on buddy icons, hide certain
+	  buddy icons, and save people's buddy icons, all through
+	  a right-click menu
 
 version 0.45 (10/04/2001):
 	* New plugin event: event_chat_send_invite
