@@ -13,6 +13,8 @@ noinst_LIBRARIES = libtoc.a
 
 libtoc_a_SOURCES = toc.c
 
+libtoc_a_CFLAGS = $(AM_CFLAGS)
+
 else
 
 st =

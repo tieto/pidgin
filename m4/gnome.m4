@@ -43,6 +43,8 @@ AC_DEFUN([GNOME_INIT_HOOK],[
 	    		fi
   		fi,
 		want_gnome=yes)
+	        
+	GNOME_GNORBA_HOOK([],$2)
 
 	if test "x$want_gnome" = xyes; then
 
@@ -53,7 +55,6 @@ AC_DEFUN([GNOME_INIT_HOOK],[
 	      AC_MSG_CHECKING(if $GNOME_CONFIG works)
 	      if $GNOME_CONFIG --libs-only-l gnome >/dev/null 2>&1; then
 	        AC_MSG_RESULT(yes)
-	        GNOME_GNORBA_HOOK([],$2)
 	        GNOME_LIBS="`$GNOME_CONFIG --libs-only-l gnome`"
 	        GNOMEUI_LIBS="`$GNOME_CONFIG --libs-only-l gnomeui`"
 	        GNOMEGNORBA_LIBS="`$GNOME_CONFIG --libs-only-l gnorba gnomeui`"
@@ -98,7 +99,7 @@ AC_DEFUN([GNOME_INIT_HOOK],[
 	if test -n "$3"; then
 	  n="$3"
 	  for i in $n; do
-	    AC_MSG_CHECKING(extra library $i)
+	    AC_MSG_CHECKING(extra library \"$i\")
 	    case $i in 
 	      applets)
 		AC_SUBST(GNOME_APPLETS_LIBS)

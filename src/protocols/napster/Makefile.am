@@ -11,6 +11,8 @@ noinst_LIBRARIES = libnapster.a
 
 libnapster_a_SOURCES = napster.c
 
+libnapster_a_CFLAGS = $(AM_CFLAGS)
+
 else
 
 st =

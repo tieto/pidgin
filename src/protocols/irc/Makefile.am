@@ -13,6 +13,8 @@ noinst_LIBRARIES = libirc.a
 
 libirc_a_SOURCES = irc.c
 
+libirc_a_CFLAGS = $(AM_CFLAGS)
+
 else
 
 st =

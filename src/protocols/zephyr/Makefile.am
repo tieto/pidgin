@@ -76,6 +76,8 @@ libzephyr_a_SOURCES = \
 			\
 			zephyr.c
 
+libzephyr_a_CFLAGS = $(AM_CFLAGS)
+
 else
 
 st =

@@ -13,6 +13,8 @@ noinst_LIBRARIES = libmsn.a
 
 libmsn_a_SOURCES = msn.c
 
+libmsn_a_CFLAGS = $(AM_CFLAGS)
+
 else
 
 st =

@@ -42,6 +42,7 @@ liboscar_a_SOURCES = 	admin.c		\
 			util.c		\
 			oscar.c
 
+liboscar_a_CFLAGS = $(AM_CFLAGS)
 
 else
 

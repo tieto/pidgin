@@ -150,10 +150,11 @@ if test "x$enable_gtk2" = "xyes" ; then
 		fi
 	fi
 fi
+		
+GNOME_INIT_HOOK([], nofail, applets)
 
 if test "x$enable_gnome" = "xyes" ; then
 	if test "x$enable_panel" = "xyes" ; then
-		GNOME_INIT(applets)
 		GNOME_X_CHECKS
 		CFLAGS="$CFLAGS $GNOME_INCLUDEDIR"
 		AC_DEFINE(USE_APPLET)
@@ -358,6 +359,7 @@ if test "x$enable_plugins" = "xyes" ; then
 	AC_DEFINE(GAIM_PLUGINS)
 	AM_CONDITIONAL(PLUGINS, test "x$enable_plugins" = "xyes")
 else
+	AM_CONDITIONAL(PLUGINS, false)
 	enable_plugins=no
 	enable_prpls=no
 fi
@@ -365,6 +367,7 @@ fi
 if test "x$enable_prpls" = "xyes" ; then
 	AM_CONDITIONAL(PRPLS, test "x$enable_plugins" = "xyes")
 else
+	AM_CONDITIONAL(PRPLS, false)
 	enable_prpls=no
 fi
 

@@ -13,6 +13,8 @@ noinst_LIBRARIES = libyahoo.a
 
 libyahoo_a_SOURCES = crypt.c yahoo.c
 
+libyahoo_a_CFLAGS = $(AM_CFLAGS)
+
 else
 
 st =

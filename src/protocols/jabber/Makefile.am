@@ -53,6 +53,8 @@ libjabber_a_SOURCES = \
 			\
 			jabber.c
 
+libjabber_a_CFLAGS = $(AM_CFLAGS)
+
 else
 
 st =

@@ -18,6 +18,8 @@ libgg_a_SOURCES = libgg.c \
 		  iconv_string.h \
 		  gg.c
 
+libgg_a_CFLAGS = $(AM_CFLAGS)
+
 else
 
 st =

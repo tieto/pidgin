@@ -33,6 +33,7 @@ version 0.60:
 	* TOC no longer compiles statically by default--use OSCAR
 	* ICQ plugin no longer gets built--use OSCAR
 	* Added support for gettext 0.11.x.
+	* Added support for automake 1.6.
 	* Buddy Ticker made a plugin.
 
 version 0.59 (06/24/2002):
