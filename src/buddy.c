@@ -352,7 +352,7 @@ void pressed_im(GtkWidget *widget, struct buddy *b)
 	c = find_conversation(b->name);
 
 	if (c != NULL) {
-		gdk_window_raise(c->window->window);
+		gdk_window_show(c->window->window);
 	} else {
 		c = new_conversation(b->name);
 	}
@@ -378,7 +378,7 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
                 c = find_conversation(b->name);
 
                 if (c != NULL) {
-                        gdk_window_raise(c->window->window);
+                        gdk_window_show(c->window->window);
                 } else {
                         c = new_conversation(b->name);
                 }
