@@ -2335,29 +2335,32 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
 
 	/* Remove some no-longer-used prefs */
+	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
 	gaim_prefs_remove("/gaim/gtk/blist/button_style");
 	gaim_prefs_remove("/gaim/gtk/blist/grey_idle_buddies");
 	gaim_prefs_remove("/gaim/gtk/blist/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
-	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
 	gaim_prefs_remove("/gaim/gtk/blist/show_idle_time");
 	gaim_prefs_remove("/gaim/gtk/blist/show_warning_level");
 	gaim_prefs_remove("/gaim/gtk/conversations/button_type");
+	gaim_prefs_remove("/gaim/gtk/conversations/ctrl_enter_sends");
+	gaim_prefs_remove("/gaim/gtk/conversations/enter_sends");
 	gaim_prefs_remove("/gaim/gtk/conversations/html_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
-	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
-	gaim_prefs_remove("/gaim/gtk/conversations/smiley_shortcuts");
-	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");
-	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
-	gaim_prefs_remove("/gaim/gtk/conversations/im/raise_on_events");
-	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_timestamps");
-	gaim_prefs_remove("/gaim/gtk/sound/signon");
-	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
-	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
+	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
+	gaim_prefs_remove("/gaim/gtk/conversations/smiley_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_bgcolor");
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_fgcolor");
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_size");
+	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
+	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");
 	gaim_prefs_remove("/gaim/gtk/conversations/im/hide_on_send");
+	gaim_prefs_remove("/gaim/gtk/conversations/im/raise_on_events");
+	gaim_prefs_remove("/gaim/gtk/conversations/chat/color_nicks");
+	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
+	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
+	gaim_prefs_remove("/gaim/gtk/sound/signon");
+	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
 }

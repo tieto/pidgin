@@ -4656,8 +4656,7 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 		}
 	}
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/chat/color_nicks"))
-		flags |= GAIM_MESSAGE_COLORIZE;
+	flags |= GAIM_MESSAGE_COLORIZE;
 
 	gaim_conversation_write(conv, who, message, flags, mtime);
 }
