@@ -904,7 +904,9 @@ gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 	 * Create a window if one does not exist. If it does, use the last
 	 * created window.
 	 */
-	if (windows == NULL) {
+	if (windows == NULL ||
+			(type == GAIM_CONV_IM && !(im_options & OPT_IM_ONE_WINDOW)) ||
+			(type == GAIM_CONV_CHAT && !(chat_options & OPT_CHAT_ONE_WINDOW))) {
 		struct gaim_window *win;
 
 		win = gaim_window_new();

@@ -3326,6 +3326,8 @@ gaim_gtk_new_window(struct gaim_window *win)
 	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(gtkwin->notebook), pos);
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(gtkwin->notebook), TRUE);
 	gtk_notebook_popup_enable(GTK_NOTEBOOK(gtkwin->notebook));
+	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook), FALSE);
+
 	gtk_widget_show(gtkwin->notebook);
 
 	g_signal_connect_after(G_OBJECT(gtkwin->notebook), "switch_page",
@@ -3583,9 +3585,15 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 
 	gtk_widget_show(tab_cont);
 
-	/* Er, bug in notebooks? Switch to the page manually. */
-	if (gaim_window_get_conversation_count(win) == 1)
+	if (gaim_window_get_conversation_count(win) == 1) {
+		/* Er, bug in notebooks? Switch to the page manually. */
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), 0);
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook),
+				((conv_type == GAIM_CONV_IM && im_options & OPT_IM_ONE_WINDOW) ||
+				(conv_type == GAIM_CONV_CHAT && im_options & OPT_CHAT_ONE_WINDOW)));
+	} else {
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook), TRUE);
+	}
 
 	if ((gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook)) == 0) ||
 		(conv == g_list_nth_data(gaim_window_get_conversations(win), 0))) {
@@ -3609,7 +3617,9 @@ gaim_gtk_remove_conversation(struct gaim_window *win,
 	struct gaim_gtk_window *gtkwin;
 	struct gaim_gtk_conversation *gtkconv;
 	unsigned int index;
+	GaimConversationType conv_type;
 
+	conv_type = gaim_conversation_get_type(conv);
 	index = gaim_conversation_get_index(conv);
 
 	gtkwin  = GAIM_GTK_WINDOW(win);
@@ -3620,8 +3630,16 @@ gaim_gtk_remove_conversation(struct gaim_window *win,
 
 	gtk_notebook_remove_page(GTK_NOTEBOOK(gtkwin->notebook), index);
 
+	/* go back to tabless if need be */
+	if (gaim_window_get_conversation_count(win) <= 2) {
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook),
+				((conv_type == GAIM_CONV_IM && im_options & OPT_IM_ONE_WINDOW) ||
+				(conv_type == GAIM_CONV_CHAT && im_options & OPT_CHAT_ONE_WINDOW)));
+	}
+
+
 	/* If this window is setup with an inactive gc, regenerate the menu. */
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
+	if (conv_type == GAIM_CONV_IM &&
 		gaim_conversation_get_gc(conv) == NULL) {
 
 		generate_send_as_items(win, conv);
