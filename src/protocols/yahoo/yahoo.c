@@ -1729,13 +1729,14 @@ static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_friend *f;
+        struct yahoo_packet *pkt;
 
 	if (!(f = g_hash_table_lookup(yd->friends, who)))
 		return;
 
 	g_hash_table_remove(yd->friends, who);
 
-	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
 	yahoo_packet_hash(pkt, 65, group);

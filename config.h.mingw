@@ -372,6 +372,10 @@
 /* Define if you have the external 'daylight' variable. */
 #define HAVE_DAYLIGHT 1
 
+#define HAVE_SSL 1
+#define HAVE_NSS 1
+/*#define HAVE_GNUTLS 1*/
+
 /*
  * Following are added for Win32 version of Gaim
  */

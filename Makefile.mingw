@@ -13,6 +13,8 @@ GAIM_SOUNDS = ./sounds
 GAIM_INSTALL_DIR = ./win32-install-dir
 PERL_TOP = ../win32-dev/perl56
 GTKSPELL_TOP = ../win32-dev/gtkspell-2.0.4/gtkspell
+NSS_TOP = ../win32-dev/nss-3.8
+NSPR_TOP = ../win32-dev/nspr-4.3
 IDLETRACK_TOP = $(GAIM_SRC)/win32/IdleTracker
 GTKRC_TOP = ../win32-dev/gtkrc
 OSCAR = $(GAIM_PROTOS)/oscar
@@ -30,7 +32,14 @@ VERSION := $(shell cat ./VERSION)
 
 NEEDED_DLLS =		$(PERL_TOP)/perl56.dll \
 			$(GTKSPELL_TOP)/libgtkspell.dll \
-			$(IDLETRACK_TOP)/idletrack.dll
+			$(IDLETRACK_TOP)/idletrack.dll \
+			$(NSS_TOP)/lib/nss3.dll \
+			$(NSS_TOP)/lib/nssckbi.dll \
+			$(NSS_TOP)/lib/softokn3.dll \
+			$(NSS_TOP)/lib/ssl3.dll \
+			$(NSPR_TOP)/lib/nspr4.dll \
+			$(NSPR_TOP)/lib/plc4.dll \
+			$(NSPR_TOP)/lib/plds4.dll
 
 
 SOUNDS =		$(GAIM_SOUNDS)/leave.wav \

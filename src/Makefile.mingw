@@ -17,6 +17,8 @@ GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.4
 IDLETRACK_TOP :=	$(GAIM_TOP)/src/win32/IdleTracker
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 MINGW_PLUS_DIR :=	$(GAIM_SRC)/win32/mingw_plus
+NSS_DIR :=		../../win32-dev/nss-3.8
+NSPR_DIR :=		../../win32-dev/nspr-4.3
 
 ##
 ## VARIABLE DEFINITIONS
@@ -58,13 +60,17 @@ INCLUDE_PATHS =		-I$(INCLUDE_DIR) \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(ASPELL_TOP)/include \
-			-I$(GTKSPELL_TOP)
+			-I$(GTKSPELL_TOP) \
+			-I$(NSS_DIR)/include \
+			-I$(NSPR_DIR)/include
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(GAIM_SRC) \
 			-L$(IDLETRACK_TOP) \
-			-L$(ASPELL_TOP)/lib
+			-L$(ASPELL_TOP)/lib \
+			-L$(NSS_DIR)/lib \
+			-L$(NSPR_DIR)/lib
 
 ##
 ##  SOURCES, OBJECTS
@@ -119,6 +125,7 @@ DLL_C_SRC =		about.c \
 			signals.c \
 			sound.c \
 			sslconn.c \
+			ssl-nss.c \
 			status.c \
 			stock.c \
 			themes.c \
@@ -154,7 +161,10 @@ DLL_LIBS =		-lgtk-win32-2.0 \
 			-liberty \
 			-lwinmm \
 			-llibz \
-			-lidletrack
+			-lidletrack \
+			-lnss3 \
+			-lnspr4 \
+			-lssl3
 			
 
 EXE_LIBS =		-lgaim \

@@ -125,7 +125,13 @@ ssl_nss_init(void)
 	NSS_NoDB_Init(NULL);
 
 	/* TODO: Fix this so autoconf does the work trying to find this lib. */
-	SECMOD_AddNewModule("Builtins", LIBDIR "/libnssckbi.so", 0, 0);
+	SECMOD_AddNewModule("Builtins",
+#ifndef _WIN32
+                            LIBDIR "/libnssckbi.so",
+#else
+                            "nssckbi.dll",
+#endif
+                            0, 0);
 	NSS_SetDomesticPolicy();
 
 	_identity = PR_GetUniqueIdentity("Gaim");

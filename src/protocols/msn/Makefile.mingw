@@ -74,6 +74,8 @@ C_SRC =			buddyicon.c \
 			group.c \
 			msg.c \
 			msn.c \
+			msnobject.c \
+			msnslp.c \
 			notification.c \
 			page.c \
 			servconn.c \
