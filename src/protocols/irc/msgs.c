@@ -260,10 +260,10 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 
 	if (!strcmp(name, "topic")) {
 		chan = args[0];
-		topic = args[1];
+		topic = irc_mirc2txt (args[1]);
 	} else {
 		chan = args[1];
-		topic = args[2];
+		topic = irc_mirc2txt (args[2]);
 	}
 
 	convo = gaim_find_conversation_with_account(chan, irc->account);
@@ -285,6 +285,7 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 		g_free(msg);
 	}
 	g_free(tmp);
+	g_free(topic);
 }
 
 void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, char **args)

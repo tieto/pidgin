@@ -35,8 +35,6 @@
 static char *irc_send_convert(struct irc_conn *irc, const char *string);
 static char *irc_recv_convert(struct irc_conn *irc, const char *string);
 
-char *irc_mirc2html(const char *string);
-
 static void irc_parse_error_cb(struct irc_conn *irc, char *input);
 
 static char *irc_mirc_colors[16] = {
@@ -267,6 +265,28 @@ char *irc_mirc2html(const char *string)
 	} while (*cur);
 
 	return g_string_free(decoded, FALSE);
+}
+
+char *irc_mirc2txt (const char *string)
+{
+	char *result = g_strdup (string);
+	int i, j;
+
+	for (i = 0, j = 0; result[i]; i++) {
+		switch (result[i]) {
+		case '\002':
+		case '\003':
+		case '\007':
+		case '\017':
+		case '\026':
+		case '\037':
+			continue;
+		default:
+			result[j++] = result[i];
+		}
+	}
+	result[i] = '\0';
+        return result;
 }
 
 char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, const char *msg, int notice)
