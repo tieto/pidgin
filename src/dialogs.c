@@ -3278,6 +3278,7 @@ void alias_dialog(struct buddy_show *b)
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
         gtk_box_pack_start(GTK_BOX(topbox), aliasentry, FALSE, FALSE, 5);
+	gtk_entry_set_editable(GTK_ENTRY(aliasentry), FALSE);
 	label = gtk_label_new(_("Alias"));
 	gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);

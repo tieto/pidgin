@@ -44,11 +44,28 @@ struct prpl *find_prpl(int prot)
 void load_protocol(proto_init pi)
 {
 	struct prpl *p = g_new0(struct prpl, 1);
+	struct prpl *old;
 	pi(p);
-	if (find_prpl(p->protocol))
-		g_free(p);
-	else
-		protocols = g_slist_append(protocols, p);
+	if (old = find_prpl(p->protocol)) {
+		GSList *c = connections;
+		struct gaim_connection *g;
+		while (c) {
+			g = (struct gaim_connection *)c->data;
+			if (g->prpl == old) {
+				char buf[256];
+				g_snprintf(buf, sizeof buf, _("%s was using %s, which got replaced."
+								" %s is now offline."), g->username,
+								(*p->name)(), g->username);
+				do_error_dialog(buf, _("Disconnect"));
+				signoff(g);
+				c = connections;
+			} else
+				c = c->next;
+		}
+		protocols = g_slist_remove(protocols, old);
+		g_free(old);
+	}
+	protocols = g_slist_append(protocols, p);
 }
 
 void static_proto_init()
