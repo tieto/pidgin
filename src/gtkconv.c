@@ -2763,6 +2763,14 @@ gray_stuff_out(GaimConversation *conv)
 			gtk_widget_set_sensitive(gtkwin->menu.alias,
 					(gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) != NULL));
 		}
+
+		/* Deal with chat userlist buttons */
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+		{
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_im, TRUE);
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_ignore, TRUE);
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_info, (prpl_info->get_info != NULL));
+		}
 	} else {
 		/* Account is offline */
 		/* Or it's a chat that we've left. */
@@ -2780,6 +2788,14 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_set_sensitive(gtkwin->menu.remove, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE);
+
+		/* Deal with chat userlist buttons */
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+		{
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_im, FALSE);
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_ignore, FALSE);
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_info, FALSE);
+		}
 	}
 
 	/*
@@ -3876,6 +3892,7 @@ setup_chat_pane(GaimConversation *conv)
 	/* IM */
 	button = gaim_pixbuf_button_from_stock(NULL, GAIM_STOCK_IM,
 										   GAIM_BUTTON_VERTICAL);
+	gtkchat->userlist_im = button;
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("IM the user"), NULL);
@@ -3887,6 +3904,7 @@ setup_chat_pane(GaimConversation *conv)
 	/* Ignore */
 	button = gaim_pixbuf_button_from_stock(NULL, GAIM_STOCK_IGNORE,
 										   GAIM_BUTTON_VERTICAL);
+	gtkchat->userlist_ignore = button;
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, button,
@@ -3898,6 +3916,7 @@ setup_chat_pane(GaimConversation *conv)
 	/* Info */
 	button = gaim_pixbuf_button_from_stock(NULL, GAIM_STOCK_INFO,
 										   GAIM_BUTTON_VERTICAL);
+	gtkchat->userlist_info = button;
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, button,
