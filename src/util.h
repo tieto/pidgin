@@ -570,9 +570,9 @@ char *gaim_str_seconds_to_string(guint sec);
 /**
  * Converts a binary string into a NUL terminated ascii string,
  * replacing nonascii characters and characters below SPACE (including
- * NUL) into \xyy, where yy are two hex digits. Also backslashes are
- * changed into two backslashes (\\). The returned, newly allocated
- * can be outputted to the console, and must be g_free()d.
+ * NUL) into \\xyy, where yy are two hex digits. Also backslashes are
+ * changed into two backslashes (\\\\). The returned, newly allocated
+ * string can be outputted to the console, and must be g_free()d.
  *
  * @param binary A string of random data, possibly with embedded NULs
  *               and such.

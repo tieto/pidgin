@@ -289,8 +289,8 @@ void gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, const gchar *protocol_name)
  * @param text    The formatted text to append.
  * @param options A GtkIMHtmlOptions object indicating insert behavior.
  */
-#define gtk_imhtml_append_text(x, y, z) \
- gtk_imhtml_append_text_with_images(x, y, z, NULL)
+#define gtk_imhtml_append_text(imhtml, text, options) \
+ gtk_imhtml_append_text_with_images(imhtml, text, options, NULL)
 
 /**
  * Appends HTML formatted text to a GTK IM/HTML.
@@ -428,7 +428,7 @@ void gtk_imhtml_hr_scale(GtkIMHtmlScalable *scale, int width, int height);
  * @param imhtml The GTK IM/HTML.
  * @param iter   The GtkTextIter at which to add the scalable.
  */
-void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *, GtkTextIter *);
+void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter);
 
 /**
  * Finds and highlights a given string in a GTK IM/HTML.

@@ -1888,9 +1888,13 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	plug = g_value_get_pointer(&val);
 
 	pname = g_markup_escape_text(_(plug->info->name), -1);
-	pdesc = g_markup_escape_text(_(plug->info->description), -1);
-	pauth = g_markup_escape_text(_(plug->info->author), -1);
-	pweb = g_markup_escape_text(_(plug->info->homepage), -1);
+	pdesc = (plug->info->description) ? 
+			g_markup_escape_text(_(plug->info->description), -1) : NULL;
+	pauth = (plug->info->author) ?
+			g_markup_escape_text(_(plug->info->author), -1) : NULL;
+	pweb = (plug->info->homepage) ? 
+		   g_markup_escape_text(_(plug->info->homepage), -1) : NULL;
+
 	if (plug->error != NULL) {
 		perr = g_markup_escape_text(_(plug->error), -1);
 		buf = g_strdup_printf(
