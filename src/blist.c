@@ -1956,43 +1956,40 @@ static gboolean gaim_blist_read(const char *filename)
 	gsize length;
 	xmlnode *gaim, *blist, *privacy;
 
-	gaim_debug(GAIM_DEBUG_INFO, "blist import",
-			   "Reading %s\n", filename);
+	gaim_debug_info("blist", "Reading %s\n", filename);
+
 	if (!g_file_get_contents(filename, &contents, &length, &error)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "blist import",
-				   "Error reading blist: %s\n", error->message);
+		gaim_debug_error("blist", "Error reading blist.xml: %s\n",
+						 error->message);
 		g_error_free(error);
 		return FALSE;
 	}
 
 	gaim = xmlnode_from_str(contents, length);
-	
-	if (!gaim) {
+
+	if (gaim == NULL) {
 		FILE *backup;
 		char *name;
-		gaim_debug(GAIM_DEBUG_ERROR, "blist import", "Error parsing %s\n",
-				filename);
+		gaim_debug_error("blist", "Error parsing blist.xml\n");
 		name = g_build_filename(gaim_user_dir(), "blist.xml~", NULL);
-
 		if ((backup = fopen(name, "w"))) {
 			fwrite(contents, length, 1, backup);
 			fclose(backup);
 			chmod(name, S_IRUSR | S_IWUSR);
 		} else {
-			gaim_debug(GAIM_DEBUG_ERROR, "blist load", "Unable to write backup %s\n",
-				   name);
+			gaim_debug_error("blist", "Unable to write backup %s\n", name);
 		}
 		g_free(name);
 		g_free(contents);
 		return FALSE;
 	}
-	
+
 	g_free(contents);
-	
+
 	blist = xmlnode_get_child(gaim, "blist");
 	if (blist) {
 		xmlnode *groupnode;
-		for (groupnode = xmlnode_get_child(blist, "group"); groupnode;
+		for (groupnode = xmlnode_get_child(blist, "group"); groupnode != NULL;
 				groupnode = xmlnode_get_next_twin(groupnode)) {
 			parse_group(groupnode);
 		}
@@ -2039,31 +2036,32 @@ static gboolean gaim_blist_read(const char *filename)
 		}
 	}
 
-	gaim_debug(GAIM_DEBUG_INFO, "blist import", "Finished reading %s\n",
-			   filename);
+	gaim_debug_info("blist", "Finished reading blist.xml\n");
 
 	xmlnode_free(gaim);
+
 	return TRUE;
 }
 
 void gaim_blist_load()
 {
 	const char *user_dir = gaim_user_dir();
-	char *filename;
-	char *msg;
+	gchar *filename;
+	gchar *msg;
 
 	blist_safe_to_write = TRUE;
 
-	if (!user_dir)
+	if (user_dir == NULL)
 		return;
 
 	filename = g_build_filename(user_dir, "blist.xml", NULL);
 
 	if (g_file_test(filename, G_FILE_TEST_EXISTS)) {
 		if (!gaim_blist_read(filename)) {
-			msg = g_strdup_printf(_("An error was encountered parsing your "
-						"buddy list.  It has not been loaded, "
-						"and the old file has moved to blist.xml~."));
+			msg = g_strdup_printf(_("An error was encountered parsing the "
+						"file containing your buddy list (%s).  It has not "
+						"been loaded, and the old file has been renamed "
+						"to blist.xml~."), filename);
 			gaim_notify_error(NULL, NULL, _("Buddy List Error"), msg);
 			g_free(msg);
 		}

@@ -173,7 +173,9 @@ char *xmlnode_to_str(xmlnode *node, int *len);
 char *xmlnode_to_formatted_str(xmlnode *node, int *len);
 
 /**
- * Creates a node from a string of xml.
+ * Creates a node from a string of XML.  Calling this on the
+ * root node of an XML document will parse the entire document
+ * into a tree of nodes, and return the xmlnode of the root.
  *
  * @param str  The string of xml.
  * @param size The size of the string.

@@ -26,9 +26,11 @@
 
 #include "blist.h"
 #include "debug.h"
+#include "notify.h"
 #include "prefs.h"
 #include "status.h"
 #include "util.h"
+#include "xmlnode.h"
 
 /**
  * A type of status.
@@ -120,30 +122,32 @@ typedef struct
 	char *name;
 } GaimStatusBuddyKey;
 
-
-#if 0
-static GList *stored_statuses = NULL;
-
-/*
- * XXX This stuff should be removed in a few versions. It stores the
- *     old v1 status stuff so we can write it later. We don't write out
- *     the new status stuff, though. These should all die soon, as the
- *     old status.xml was created before the new status system's design
- *     was created.
+/**
+ * The information of a snap-shot of the statuses of all
+ * your accounts.  Basically these are your saved away messages.
+ * There is an overall status and message that applies to
+ * all your accounts, and then each individual account can
+ * optionally have a different custom status and message.
  *
- *       -- ChipX86
+ * The changes to status.xml caused by the new status API
+ * are fully backward compatible.  The new status API just
+ * adds the optional sub-statuses to the XML file.
  */
-typedef struct
+struct _GaimStatusSaved
 {
 	char *name;
-	char *state;
+	GaimStatusType *type;
 	char *message;
 
-} GaimStatusV1Info;
+	GList *individual;      /**< A list of GaimStatusSavedSub's. */
+};
 
-static GList *v1_statuses = NULL;
-#endif
-
+struct _GaimStatusSavedSub
+{
+	GaimAccount *account;
+	GaimStatusType *type;
+	char *message;
+};
 
 static int primitive_scores[] =
 {
@@ -160,6 +164,7 @@ static int primitive_scores[] =
 };
 
 static GHashTable *buddy_presences = NULL;
+static GList *saved_statuses = NULL;
 
 #define SCORE_IDLE      5
 #define SCORE_IDLE_TIME 6
@@ -1645,15 +1650,21 @@ gaim_buddy_presences_equal(gconstpointer a, gconstpointer b)
 }
 
 const GList *
-gaim_statuses_get_stored(void)
+gaim_statuses_get_saved(void)
+{
+	return saved_statuses;
+}
+
+GaimStatusSaved *
+gaim_statuses_find_saved(const GaimStatusType *status_type, const char *id)
 {
 	return NULL;
 }
 
-GaimStatus *
-gaim_statuses_find_stored(const GaimStatusType *status_type, const char *id)
+const char *
+gaim_statuses_saved_get_name(const GaimStatusSaved *saved_status)
 {
-	return NULL;
+	return saved_status->name;
 }
 
 void *
@@ -1723,7 +1734,132 @@ gaim_statuses_sync(void)
 {
 }
 
+/**
+ * Parse a saved status and add it to the saved_statuses linked list.
+ *
+ * Here's an example of the XML for a saved status:
+ *   <status name="Girls">
+ *       <state>away</state>
+ *       <message>I like the way that they walk
+ *   And it's chill to hear them talk
+ *   And I can always make them smile
+ *   From White Castle to the Nile</message>
+ *   </status>
+ *
+ * I know.  Moving, huh?
+ *
+ * TODO: Make sure the name is unique before adding it to the linked list.
+ */
+static void
+gaim_statuses_read_parse_status(xmlnode *status)
+{
+	xmlnode *node;
+	const char *name, *state, *message;
+	GaimStatusSaved *new;
+
+	name = xmlnode_get_attrib(status, "name");
+	if (name == NULL)
+		name = "TODO: Make up something unique";
+
+	node = xmlnode_get_child(status, "state");
+	if (node != NULL) {
+		state = xmlnode_get_data(node);
+	}
+
+	node = xmlnode_get_child(status, "message");
+	if (node != NULL) {
+		message = xmlnode_get_data(node);
+	}
+
+	/* TODO: Need to read in substatuses here */
+
+	new = g_new0(GaimStatusSaved, 1);
+
+	new->name = g_strdup(name);
+	/* TODO: Need to set type based on "state" */
+	new->type = NULL;
+	if (message != NULL)
+		new->message = g_strdup(message);
+
+	saved_statuses = g_list_append(saved_statuses, new);
+}
+
+/**
+ * @return TRUE on success, FALSE on failure (if the file can not
+ *         be opened, or if it contains invalid XML).
+ */
+gboolean
+gaim_statuses_read(const char *filename)
+{
+	GError *error;
+	gchar *contents = NULL;
+	gsize length;
+	xmlnode *statuses, *status;
+
+	gaim_debug_info("status", "Reading %s\n", filename);
+
+	if (!g_file_get_contents(filename, &contents, &length, &error)) {
+		gaim_debug_error("status", "Error reading status.xml: %s\n",
+						 error->message);
+		g_error_free(error);
+		return FALSE;
+	}
+
+	statuses = xmlnode_from_str(contents, length);
+
+	if (statuses == NULL) {
+		FILE *backup;
+		gchar *name;
+		gaim_debug_error("status", "Error parsing status.xml\n");
+		name = g_build_filename(gaim_user_dir(), "status.xml~", NULL);
+		if ((backup = fopen(name, "w"))) {
+			fwrite(contents, length, 1, backup);
+			fclose(backup);
+			chmod(name, S_IRUSR | S_IWUSR);
+		} else {
+			gaim_debug_error("status", "Unable to write backup %s\n", name);
+		}
+		g_free(name);
+		g_free(contents);
+		return FALSE;
+	}
+
+	g_free(contents);
+
+	for (status = xmlnode_get_child(statuses, "status"); status != NULL;
+			status = xmlnode_get_next_twin(status)) {
+		gaim_statuses_read_parse_status(status);
+	}
+
+	gaim_debug_info("status", "Finished reading status.xml\n");
+
+	xmlnode_free(statuses);
+
+	return TRUE;
+}
+
 void
 gaim_statuses_load(void)
 {
+	const char *user_dir = gaim_user_dir();
+	gchar *filename;
+	gchar *msg;
+
+	if (user_dir == NULL)
+		return;
+
+	filename = g_build_filename(user_dir, "status.xml", NULL);
+
+	if (g_file_test(filename, G_FILE_TEST_EXISTS)) {
+		if (!gaim_statuses_read(filename)) {
+			msg = g_strdup_printf(_("An error was encountered parsing the "
+						"file containing your saved statuses (%s).  They "
+						"have not been loaded, and the old file has been "
+						"renamed to status.xml~."), filename);
+			gaim_notify_error(NULL, NULL, _("Saved Statuses Error"), msg);
+			g_free(msg);
+		}
+	}
+
+	g_free(filename);
 }

@@ -25,10 +25,12 @@
 #ifndef _GAIM_STATUS_H_
 #define _GAIM_STATUS_H_
 
-typedef struct _GaimStatusType   GaimStatusType;
-typedef struct _GaimStatusAttr   GaimStatusAttr;
-typedef struct _GaimPresence     GaimPresence;
-typedef struct _GaimStatus       GaimStatus;
+typedef struct _GaimStatusType      GaimStatusType;
+typedef struct _GaimStatusAttr      GaimStatusAttr;
+typedef struct _GaimPresence        GaimPresence;
+typedef struct _GaimStatus          GaimStatus;
+typedef struct _GaimStatusSavedSub  GaimStatusSavedSub;
+typedef struct _GaimStatusSaved     GaimStatusSaved;
 
 /**
  * A context for a presence.
@@ -879,29 +881,37 @@ gint gaim_presence_compare(const GaimPresence *presence1,
 
 /*@}*/
 
-
 /**************************************************************************/
 /** @name Status subsystem                                                */
 /**************************************************************************/
 /*@{*/
 
 /**
- * Returns all stored statuses.
+ * Returns all saved statuses.
  *
- * @return A list of stored statuses.
+ * @return A list of saved statuses.
  */
-const GList *gaim_statuses_get_stored(void);
+const GList *gaim_statuses_get_saved(void);
 
 /**
- * Finds a stored status with the specified status type and primary ID.
+ * Finds a saved status with the specified status type and primary ID.
  *
  * @param status_type The status type of the status.
  * @param id          The primary attribute ID.
  *
- * @return The stored status if found, or NULL.
+ * @return The saved status if found, or NULL.
  */
-GaimStatus *gaim_statuses_find_stored(const GaimStatusType *status_type,
-									  const char *id);
+GaimStatusSaved *gaim_statuses_find_saved(const GaimStatusType *status_type,
+										  const char *id);
+
+/**
+ * Return the name of a given saved status.
+ *
+ * @param saved_status The saved status.
+ *
+ * @return The name.
+ */
+const char *gaim_statuses_saved_get_name(const GaimStatusSaved *saved_status);
 
 /**
  * Get the handle for the status subsystem.

@@ -421,20 +421,19 @@ static void
 populate_saved_status_list(StatusWindow *dialog)
 {
 	GtkTreeIter iter;
+	const GList *saved_statuses;
+	GaimStatusSaved *saved_status;
 
 	gtk_list_store_clear(dialog->model);
 
-	gtk_list_store_append(dialog->model, &iter);
-	gtk_list_store_set(dialog->model, &iter, 0, "Dinner time!", -1);
-
-	gtk_list_store_append(dialog->model, &iter);
-	gtk_list_store_set(dialog->model, &iter, 0, "I am not here because I am cow tipping with Jimmy.", -1);
-
-	gtk_list_store_append(dialog->model, &iter);
-	gtk_list_store_set(dialog->model, &iter, 0, "Picking up the kids from the zoo.", -1);
-
-	gtk_list_store_append(dialog->model, &iter);
-	gtk_list_store_set(dialog->model, &iter, 0, "In a meeting discussing what to do when King Kong gets here.", -1);
+	for (saved_statuses = gaim_statuses_get_saved(); saved_statuses != NULL;
+			saved_statuses = g_list_next(saved_statuses))
+	{
+		saved_status = (GaimStatusSaved *)saved_statuses->data;
+		gtk_list_store_append(dialog->model, &iter);
+		gtk_list_store_set(dialog->model, &iter, 0,
+						   gaim_statuses_saved_get_name(saved_status), -1);
+	}
 }
 
 static GtkWidget *
