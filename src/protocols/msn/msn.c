@@ -1255,6 +1255,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 
 			gaim_input_remove(md->inpa);
 			md->inpa = gaim_input_add(md->fd, GAIM_INPUT_READ, msn_callback, gc);
+			return 0;
 		} else if (!g_strcasecmp(resp, "MD5")) {
 			char buf2[MSN_BUF_LEN];
 			md5_state_t st;
