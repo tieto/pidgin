@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -38,7 +38,7 @@ Code_t ZSendPacket(packet, len, waitforack)
 	return (ZERR_PKTLEN);
     
     if (ZGetFD() < 0)
-	if ((retval = ZOpenPort((u_short *)0)) != ZERR_NONE)
+	if ((retval = ZOpenPort((unsigned short *)0)) != ZERR_NONE)
 	    return (retval);
 
     dest = ZGetDestAddr();

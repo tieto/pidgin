@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: faceprint $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology.
@@ -20,7 +20,7 @@
 
 #ifndef lint
 static const char rcsid_Zinternal_c[] =
-  "$Id: Zinternal.c 5500 2003-04-15 04:18:00Z faceprint $";
+  "$Id: Zinternal.c 8088 2003-11-11 07:08:13Z thekingant $";
 static const char copyright[] =
   "Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.";
 #endif
@@ -594,7 +594,7 @@ Code_t Z_FormatHeader(notice, buffer, buffer_len, len, cert_routine)
 
     if (notice->z_port == 0) {
 	if (ZGetFD() < 0) {
-	    retval = ZOpenPort((u_short *)0);
+	    retval = ZOpenPort((unsigned short *)0);
 	    if (retval != ZERR_NONE)
 		return (retval);
 	}
@@ -607,8 +607,8 @@ Code_t Z_FormatHeader(notice, buffer, buffer_len, len, cert_routine)
     notice->z_multinotice = "";
     
     (void) gettimeofday(&notice->z_uid.tv, (struct timezone *)0);
-    notice->z_uid.tv.tv_sec = htonl((u_long) notice->z_uid.tv.tv_sec);
-    notice->z_uid.tv.tv_usec = htonl((u_long) notice->z_uid.tv.tv_usec);
+    notice->z_uid.tv.tv_sec = htonl((unsigned long) notice->z_uid.tv.tv_sec);
+    notice->z_uid.tv.tv_usec = htonl((unsigned long) notice->z_uid.tv.tv_usec);
     
     (void) memcpy(&notice->z_uid.zuid_addr, &__My_addr, sizeof(__My_addr));
 
@@ -877,9 +877,9 @@ Code_t Z_SendFragmentedNotice(notice, len, cert_func, send_func)
 	    (void) gettimeofday(&partnotice.z_uid.tv,
 				(struct timezone *)0);
 	    partnotice.z_uid.tv.tv_sec =
-		htonl((u_long) partnotice.z_uid.tv.tv_sec);
+		htonl((unsigned long) partnotice.z_uid.tv.tv_sec);
 	    partnotice.z_uid.tv.tv_usec =
-		htonl((u_long) partnotice.z_uid.tv.tv_usec);
+		htonl((unsigned long) partnotice.z_uid.tv.tv_usec);
 	    (void) memcpy((char *)&partnotice.z_uid.zuid_addr, &__My_addr, 
 			  sizeof(__My_addr));
 	}

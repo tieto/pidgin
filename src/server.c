@@ -1158,7 +1158,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 				}
 			}
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
-			// LOG system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
+			/* LOG system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON); */
 		}
 	} else {
 		if (GAIM_BUDDY_IS_ONLINE(b)) {
@@ -1184,7 +1184,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			}
 			serv_got_typing_stopped(gc, name); /* obviously not typing */
 			gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
-			// LOG system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
+			/* LOG system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON); */
 		}
 	}
 

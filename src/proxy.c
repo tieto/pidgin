@@ -384,7 +384,7 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 	if((rc==4) && (err!=0)) {
 		char message[1024];
 		g_snprintf(message, sizeof(message), "DNS error: %s (pid=%d)",
-#ifdef HAVE_GETADDRINFO
+#if HAVE_GETADDRINFO
 			gai_strerror(err),
 #else
 			hstrerror(err),
@@ -535,7 +535,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 			const int zero = 0;
 			int rc;
 
-#ifdef HAVE_GETADDRINFO
+#if HAVE_GETADDRINFO
 			struct addrinfo hints, *res, *tmp;
 			char servname[20];
 #else
@@ -585,7 +585,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 					write(child_out[1], &Y, 1);
 				}
 
-#ifdef HAVE_GETADDRINFO
+#if HAVE_GETADDRINFO
 				g_snprintf(servname, sizeof(servname), "%d", dns_params.port);
 				memset(&hints,0,sizeof(hints));
 				

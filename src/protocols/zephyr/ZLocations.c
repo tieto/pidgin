@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -65,7 +65,7 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 
     (void) memset((char *)&notice, 0, sizeof(notice));
     notice.z_kind = ACKED;
-    notice.z_port = (u_short) ((wg_port == -1) ? 0 : wg_port);
+    notice.z_port = (unsigned short) ((wg_port == -1) ? 0 : wg_port);
     notice.z_class = class;
     notice.z_class_inst = ZGetSender();
     notice.z_opcode = opcode;

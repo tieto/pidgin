@@ -366,7 +366,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		char *realmptr;
 		char *sendertmp;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
-		int len = notice.z_message_len - (ptr - notice.z_message);
+		int len = notice.z_message_len - ((int)ptr - (int)notice.z_message);
 		GaimConvImFlags flags = 0;
 		if (len > 0) {
 			buf = g_malloc(len + 1);

@@ -89,7 +89,7 @@ ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnSwitchBoard *swboard = servconn->data;
 	MsnSession *session = servconn->session;
 
-	//send_clientcaps(swboard);
+	/*send_clientcaps(swboard);*/
 
 	if (0 && session->protocol_ver >= 9)
 	{

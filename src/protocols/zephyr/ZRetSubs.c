@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -17,7 +17,7 @@
 
 #ifndef lint
 static const char rcsid_ZRetrieveSubscriptions_c[] =
-    "$Id: ZRetSubs.c 2096 2001-07-31 01:00:39Z warmenhoven $";
+    "$Id: ZRetSubs.c 8088 2003-11-11 07:08:13Z thekingant $";
 #endif
 
 static Code_t Z_RetSubs ();
@@ -80,7 +80,7 @@ static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 		return (retval);
 
 	if (ZGetFD() < 0)
-		if ((retval = ZOpenPort((u_short *)0)) != ZERR_NONE)
+		if ((retval = ZOpenPort((unsigned short *)0)) != ZERR_NONE)
 			return (retval);
 
 	notice->z_kind = ACKED;

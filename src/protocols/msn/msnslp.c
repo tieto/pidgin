@@ -143,7 +143,7 @@ msn_slp_session_send_msg(MsnSlpSession *slpsession, MsnMessage *msg)
 		slpsession->prev_msg_id = ++slpsession->base_id;
 
 	msg->msnslp_header.id = slpsession->prev_msg_id;
-//	msg->msnslp_header.ack_session_id = rand() % 0xFFFFFF00;
+	/*msg->msnslp_header.ack_session_id = rand() % 0xFFFFFF00;*/
 	msg->msnslp_header.ack_session_id = 0x1407C7DE;
 
 	msn_message_set_charset(msg, NULL);

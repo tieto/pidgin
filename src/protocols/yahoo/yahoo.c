@@ -131,15 +131,15 @@ static int yahoo_packet_length(struct yahoo_packet *pkt)
 /* sometimes i wish prpls could #include things from other prpls. then i could just
  * use the routines from libfaim and not have to admit to knowing how they work. */
 #define yahoo_put16(buf, data) ( \
-		(*(buf) = (u_char)((data)>>8)&0xff), \
-		(*((buf)+1) = (u_char)(data)&0xff),  \
+		(*(buf) = (unsigned char)((data)>>8)&0xff), \
+		(*((buf)+1) = (unsigned char)(data)&0xff),  \
 		2)
 #define yahoo_get16(buf) ((((*(buf))<<8)&0xff00) + ((*((buf)+1)) & 0xff))
 #define yahoo_put32(buf, data) ( \
-		(*((buf)) = (u_char)((data)>>24)&0xff), \
-		(*((buf)+1) = (u_char)((data)>>16)&0xff), \
-		(*((buf)+2) = (u_char)((data)>>8)&0xff), \
-		(*((buf)+3) = (u_char)(data)&0xff), \
+		(*((buf)) = (unsigned char)((data)>>24)&0xff), \
+		(*((buf)+1) = (unsigned char)((data)>>16)&0xff), \
+		(*((buf)+2) = (unsigned char)((data)>>8)&0xff), \
+		(*((buf)+3) = (unsigned char)(data)&0xff), \
 		4)
 #define yahoo_get32(buf) ((((*(buf))<<24)&0xff000000) + \
 		(((*((buf)+1))<<16)&0x00ff0000) + \

@@ -4,8 +4,8 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: faceprint $
- *	$Id: zephyr.h 7838 2003-10-14 05:07:39Z faceprint $
+ *	$Author: thekingant $
+ *	$Id: zephyr.h 8088 2003-11-11 07:08:13Z thekingant $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology. For copying and distribution information, see the
@@ -99,7 +99,7 @@ typedef struct _ZNotice_t {
     ZChecksum_t		z_checksum;
     int			z_num_other_fields;
     char		*z_other_fields[Z_MAXOTHERFIELDS];
-    caddr_t		z_message;
+    void		*z_message;
     int			z_message_len;
 } ZNotice_t;
 

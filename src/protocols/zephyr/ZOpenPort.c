@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -20,7 +20,7 @@ static char rcsid_ZOpenPort_c[] = "$Header$";
 #include <sys/socket.h>
 
 Code_t ZOpenPort(port)
-    u_short *port;
+    unsigned short *port;
 {
     struct sockaddr_in bindin;
     int len;

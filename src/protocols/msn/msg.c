@@ -38,15 +38,15 @@
 
 
 #define msn_put16(buf, data) ( \
-		(*(buf) = (u_char)((data)>>8)&0xff), \
-		(*((buf)+1) = (u_char)(data)&0xff),  \
+		(*(buf) = (unsigned char)((data)>>8)&0xff), \
+		(*((buf)+1) = (unsigned char)(data)&0xff),  \
 		2)
 #define msn_get16(buf) ((((*(buf))<<8)&0xff00) + ((*((buf)+1)) & 0xff))
 #define msn_put32(buf, data) ( \
-		(*((buf)) = (u_char)((data)>>24)&0xff), \
-		(*((buf)+1) = (u_char)((data)>>16)&0xff), \
-		(*((buf)+2) = (u_char)((data)>>8)&0xff), \
-		(*((buf)+3) = (u_char)(data)&0xff), \
+		(*((buf)) = (unsigned char)((data)>>24)&0xff), \
+		(*((buf)+1) = (unsigned char)((data)>>16)&0xff), \
+		(*((buf)+2) = (unsigned char)((data)>>8)&0xff), \
+		(*((buf)+3) = (unsigned char)(data)&0xff), \
 		4)
 #define msn_get32(buf) ((((*(buf))<<24)&0xff000000) + \
 		(((*((buf)+1))<<16)&0x00ff0000) + \

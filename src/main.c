@@ -517,7 +517,7 @@ gaim_gtk_quit(void)
 	/* XXX? */
 
 	/* captain's log, stardate... */
-	//LOG system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
+	/* LOG system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
 
 #ifdef USE_SM
 	/* unplug */

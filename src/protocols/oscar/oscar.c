@@ -1846,7 +1846,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			while (cur && aim_sncmp((char *)cur->data, info->sn))
 				cur = cur->next;
 			if (!cur) {
-				od->requesticon = g_slist_append(od->requesticon, strdup(gaim_normalize(gc->account, info->sn)));
+				od->requesticon = g_slist_append(od->requesticon, g_strdup(gaim_normalize(gc->account, info->sn)));
 				if (od->icontimer)
 					g_source_remove(od->icontimer);
 				od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
@@ -2161,7 +2161,7 @@ static void accept_direct_im(struct ask_direct *d) {
 static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
-	char *tmp;
+	gchar *tmp;
 	GaimConvImFlags flags = 0;
 	gsize convlen;
 	GError *err = NULL;
@@ -2238,7 +2238,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		if (err) {
 			gaim_debug(GAIM_DEBUG_INFO, "oscar",
 					   "Unicode IM conversion: %s\n", err->message);
-			tmp = strdup(_("(There was an error receiving this message)"));
+			tmp = g_strdup(_("(There was an error receiving this message)"));
 			g_error_free(err);
 		}
 	} else {
@@ -2260,7 +2260,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		if (err) {
 			gaim_debug(GAIM_DEBUG_INFO, "oscar",
 					   "ISO-8859-1 IM conversion: %s\n", err->message);
-			tmp = strdup(_("(There was an error receiving this message)"));
+			tmp = g_strdup(_("(There was an error receiving this message)"));
 			g_error_free(err);
 		}
 	}

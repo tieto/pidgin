@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -155,8 +155,8 @@ Code_t ZParseNotice(buffer, len, notice)
 	if (ZReadAscii(ptr, end-ptr, (unsigned char *)&notice->z_uid,
 		       sizeof(ZUnique_Id_t)) == ZERR_BADFIELD)
 	    BAD_PACKET;
-	notice->z_time.tv_sec = ntohl((u_long) notice->z_uid.tv.tv_sec);
-	notice->z_time.tv_usec = ntohl((u_long) notice->z_uid.tv.tv_usec);
+	notice->z_time.tv_sec = ntohl((unsigned long) notice->z_uid.tv.tv_sec);
+	notice->z_time.tv_usec = ntohl((unsigned long) notice->z_uid.tv.tv_usec);
 	numfields--;
 	next_field (ptr);
     }
@@ -269,8 +269,8 @@ Code_t ZParseNotice(buffer, len, notice)
 	if (ZReadAscii(ptr, end-ptr, (unsigned char *)&notice->z_multiuid,
 		       sizeof(ZUnique_Id_t)) == ZERR_BADFIELD)
 	    BAD_PACKET;
-	notice->z_time.tv_sec = ntohl((u_long) notice->z_multiuid.tv.tv_sec);
-	notice->z_time.tv_usec = ntohl((u_long) notice->z_multiuid.tv.tv_usec);
+	notice->z_time.tv_sec = ntohl((unsigned long) notice->z_multiuid.tv.tv_sec);
+	notice->z_time.tv_usec = ntohl((unsigned long) notice->z_multiuid.tv.tv_usec);
 	numfields--;
 	next_field (ptr);
     }
@@ -286,7 +286,7 @@ Code_t ZParseNotice(buffer, len, notice)
     for (i=0;i<numfields;i++)
 	next_field (ptr);
 	
-    notice->z_message = (caddr_t) ptr;
+    notice->z_message = (void *)ptr;
     notice->z_message_len = len-(ptr-buffer);
 
     return (ZERR_NONE);
