@@ -180,15 +180,18 @@ void perl_autoload()
 
 void perl_init()
 {
-	char *perl_args[] = {"", "-e", "0"};
+	char *perl_args[] = {"", "-e", "0", "-w"};
 	char load_file[] =
 "sub load_file()\n"
 "{\n"
 "	(my $file_name) = @_;\n"
 "	open FH, $file_name or return 2;\n"
+"	my $is = $/;\n"
 "	local($/) = undef;\n"
 "	$file = <FH>;\n"
 "	close FH;\n"
+"	$/ = $is;\n"
+"	$file = \"\\@ISA = qw(Exporter DynaLoader);\\n\" . $file;\n"
 "	eval $file;\n"
 "	eval $file if $@;\n"
 "	return 1 if $@;\n"
