@@ -84,6 +84,8 @@ static void setup_buddy_chats()
 				   GTK_SIGNAL_FUNC(handle_click_chat), cr);
 		crs = crs->next;
 	}
+
+	gtk_tree_item_expand(GTK_TREE_ITEM(item));
 }
 
 static void save_chat_prefs()
@@ -176,7 +178,7 @@ static void ref_list_callback(gpointer data, char *text)
 		if (!g_strncasecmp(AOL_SRCHSTR, c, strlen(AOL_SRCHSTR))) {
 			char *t;
 			int len = 0;
-			int exchange;
+			int exchange = 4;
 			char *name = NULL;
 
 			c += strlen(AOL_SRCHSTR);
@@ -188,8 +190,8 @@ static void ref_list_callback(gpointer data, char *text)
 					name[len - 1] = ' ';
 				else if (*t == '&') {
 					name[len - 1] = 0;
-					sscanf(t, "&Exchange=%d", &exchange);
-					c = t + strlen("&Exchange=x");
+					sscanf(t, "&amp;Exchange=%d", &exchange);
+					c = t + strlen("&amp;Exchange=x");
 					break;
 				} else
 					name[len - 1] = *t;
