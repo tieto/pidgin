@@ -354,12 +354,11 @@ static gboolean get_word_from_pos(GtkText* gtktext, int pos, char** buf,
 		if (iswordsep(GTK_TEXT_INDEX(gtktext, end))) break;
 	}
 
-	if (buf) {
-		char *tmp = g_malloc(end - start + 1);
+	if (buf && (end - start + 1 > 0)) {
+		*buf = g_malloc(end - start + 1);
 		for (pos = start; pos < end; pos++) 
-			tmp[pos-start] = GTK_TEXT_INDEX(gtktext, pos);
-		tmp[pos-start] = 0;
-		*buf = tmp;
+			(*buf)[pos-start] = GTK_TEXT_INDEX(gtktext, pos);
+		(*buf)[pos-start] = 0;
 	}
 
 	if (pstart) *pstart = start;
