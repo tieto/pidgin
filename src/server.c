@@ -577,6 +577,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		message = g_memdup(message, len);
 	}
 
+#if 0
 	/* TiK, using TOC, sends an automated message in order to get your away message. Now,
 	 * this is one of the biggest hacks I think I've seen. But, in order to be nice to
 	 * TiK, we're going to give users the option to ignore it. */
@@ -589,6 +590,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		g_free(message);
 		return;
 	}
+#endif
 
 	/* if you can't figure this out, stop reading right now.
 	 * "we're not worthy! we're not worthy!" */

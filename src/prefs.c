@@ -369,7 +369,7 @@ GtkWidget *messages_page() {
 	gaim_button(_("Ignore c_olors"), &convo_options_new, OPT_CONVO_IGNORE_COLOUR, vbox);
 	gaim_button(_("Ignore font _faces"), &convo_options_new, OPT_CONVO_IGNORE_FONTS, vbox);
 	gaim_button(_("Ignore font si_zes"), &convo_options_new, OPT_CONVO_IGNORE_SIZES, vbox);
-	gaim_button(_("Ignore Ti_K Automated Messages"), &away_options_new, OPT_AWAY_TIK_HACK, vbox);
+/*	gaim_button(_("Ignore Ti_K Automated Messages"), &away_options_new, OPT_AWAY_TIK_HACK, vbox); */
 
 	gtk_widget_show_all(ret);
 	return ret;

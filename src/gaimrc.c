@@ -674,7 +674,9 @@ static struct replace gen_replace[] = {
 { /* OPT_GEN_POPUP_CHAT */		0x00010000,  &chat_options, OPT_CHAT_POPUP },
 { /* OPT_GEN_BACK_ON_IM */		0x00020000,  &away_options, OPT_AWAY_BACK_ON_IM },
 { /* OPT_GEN_CTL_CHARS */		0x00080000, &convo_options, OPT_CONVO_CTL_CHARS },
+#if 0
 { /* OPT_GEN_TIK_HACK */		0x00100000,  &away_options, OPT_AWAY_TIK_HACK },
+#endif
 { /* OPT_GEN_CTL_SMILEYS */		0x00200000, &convo_options, OPT_CONVO_CTL_SMILEYS },
 { /* OPT_GEN_AUTO_AWAY */		0x00800000,  &away_options, OPT_AWAY_AUTO },
 { /* OPT_GEN_ESC_CAN_CLOSE */		0x01000000, &convo_options, OPT_CONVO_ESC_CAN_CLOSE },

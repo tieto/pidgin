@@ -334,7 +334,7 @@ extern struct sound_struct sounds[];
 extern guint away_options;
 #define OPT_AWAY_DISCARD		0x00000001
 #define OPT_AWAY_BACK_ON_IM		0x00000002
-#define OPT_AWAY_TIK_HACK		0x00000004
+/* #define OPT_AWAY_TIK_HACK		0x00000004 */
 #define OPT_AWAY_AUTO			0x00000008
 #define OPT_AWAY_NO_AUTO_RESP		0x00000010
 #define OPT_AWAY_QUEUE			0x00000020
