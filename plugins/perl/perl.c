@@ -23,6 +23,11 @@
  * X-Chat Copyright (C) 1998 Peter Zelezny.
  *
  */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #ifdef DEBUG
 # undef DEBUG
 #endif
