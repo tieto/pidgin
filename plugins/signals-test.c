@@ -77,42 +77,42 @@ account_warned_cb(GaimAccount *account, const char *warner, int level,
  * Buddy List subsystem signal callbacks
  **************************************************************************/
 static void
-buddy_away_cb(struct buddy *buddy, void *data)
+buddy_away_cb(GaimBuddy *buddy, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
 			   "buddy-away (%s)\n", buddy->name);
 }
 
 static void
-buddy_back_cb(struct buddy *buddy, void *data)
+buddy_back_cb(GaimBuddy *buddy, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
 			   "buddy-back (%s)\n", buddy->name);
 }
 
 static void
-buddy_idle_cb(struct buddy *buddy, void *data)
+buddy_idle_cb(GaimBuddy *buddy, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
 			   "buddy-idle (%s)\n", buddy->name);
 }
 
 static void
-buddy_unidle_cb(struct buddy *buddy, void *data)
+buddy_unidle_cb(GaimBuddy *buddy, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
 			   "buddy-unidle (%s)\n", buddy->name);
 }
 
 static void
-buddy_signed_on_cb(struct buddy *buddy, void *data)
+buddy_signed_on_cb(GaimBuddy *buddy, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
 			   "buddy-signed-on (%s)\n", buddy->name);
 }
 
 static void
-buddy_signed_off_cb(struct buddy *buddy, void *data)
+buddy_signed_off_cb(GaimBuddy *buddy, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
 			   "buddy-signed-off (%s)\n", buddy->name);
