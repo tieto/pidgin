@@ -1166,10 +1166,12 @@ char *str_to_utf8(unsigned char *in)
 			n += 2;
 			continue;
 		}
+		/* why are we removing newlines and carriage returns?
 		if ((c == 0x0D) || (c == 0x0A)) {
 			n++;
 			continue;
 		}
+		*/
 		if (c < 128)
 			result[i++] = (char)c;
 		else {
@@ -1181,6 +1183,51 @@ char *str_to_utf8(unsigned char *in)
 	result[i] = '\0';
 
 	return result;
+}
+
+void strip_linefeed(gchar *text)
+{
+	int i, j;
+	gchar *text2 = g_malloc(strlen(text) + 1);
+
+	for (i = 0, j = 0; text[i]; i++)
+		if (text[i] != '\r')
+			text2[j++] = text[i];
+	text2[j] = '\0';
+
+	strcpy(text, text2);
+	g_free(text2);
+}
+
+char *add_cr(char *text)
+{
+	char *ret = NULL;
+	int count = 0, i, j;
+
+	if (text[0] == '\n')
+		count++;
+	for (i = 1; i < strlen(text); i++)
+		if (text[i] == '\n' && text[i - 1] != '\r')
+			count++;
+
+	if (count == 0)
+		return g_strdup(text);
+
+	ret = g_malloc0(strlen(text) + count + 1);
+
+	i = 0; j = 0;
+	if (text[i] == '\n')
+		ret[j++] = '\r';
+	ret[j++] = text[i++];
+	for (; i < strlen(text); i++) {
+		if (text[i] == '\n' && text[i - 1] != '\r')
+			ret[j++] = '\r';
+		ret[j++] = text[i];
+	}
+
+	debug_printf("got: %s, leaving with %s\n", text, ret);
+
+	return ret;
 }
 
 time_t get_time(int year, int month, int day, int hour, int min, int sec)

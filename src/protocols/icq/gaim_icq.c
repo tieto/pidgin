@@ -107,20 +107,6 @@ static void icq_logged_off(icq_Link *link) {
 	icq_Login(link, id->cur_status);
 }
 
-void strip_linefeed(gchar *text)
-{
-	int i, j;
-	gchar *text2 = g_malloc(strlen(text) + 1);
-
-	for (i = 0, j = 0; text[i]; i++)
-		if (text[i] != '\r')
-			text2[j++] = text[i];
-	text2[j] = '\0';
-
-	strcpy(text, text2);
-	g_free(text2);
-}
-
 static void icq_msg_incoming(icq_Link *link, unsigned long uin, unsigned char hour, unsigned char minute,
 			unsigned char day, unsigned char month, unsigned short year, const char *data) {
 	struct gaim_connection *gc = link->icq_UserData;
