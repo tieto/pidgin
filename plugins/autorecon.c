@@ -18,8 +18,6 @@ typedef struct {
 static GHashTable *hash = NULL;
 
 static gboolean do_signon(gpointer data) {
-	g_return_val_if_fail(hash != NULL, FALSE);
-       	
 	GaimAccount *account = data;
 	GaimAutoRecon *info;
 

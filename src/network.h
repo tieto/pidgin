@@ -88,7 +88,9 @@ const char *gaim_network_get_local_system_ip(int fd);
 const char *gaim_network_get_ip_for_account(const GaimAccount *account, int fd);
 
 /**
- * Opens a listening port.
+ * Attempts to open a listening port ONLY on the specified port number.  
+ * Can be used if MUST be listening on a certain port.  You probably 
+ * want to use gaim_network_listen_range() instead of this.
  *
  * This opens a listening port. The caller will want to set up a watcher
  * of type GAIM_INPUT_READ on the returned fd. It will probably call
@@ -96,15 +98,35 @@ const char *gaim_network_get_ip_for_account(const GaimAccount *account, int fd);
  * the listening socket, and add a new watcher on the new socket accept
  * returned.
  *
- * @param start The port number to bind to, or 0 to let the core decide.
- *              By default, the core will let the kernel pick one at random,
- *              but users are allowed to specify a range.
- * @param end The highest possible port in the range of ports to listen on,
- *            or 0 to let the core decide.
- * @return The file descriptor of the listening socket, or -1 if 
+ * @param port The port number to bind to.
+ *
+ * @return The file descriptor of the listening socket, or -1 if
  *         no socket could be established.
  */
-int gaim_network_listen(short start, short end);
+int gaim_network_listen(short port);
+
+/**
+ * Opens a listening port selected from a range of ports.
+ *
+ * This opens a listening port. The caller will want to set up a watcher
+ * of type GAIM_INPUT_READ on the returned fd. It will probably call
+ * accept in the callback, and then possibly remove the watcher and close
+ * the listening socket, and add a new watcher on the new socket accept
+ * returned.
+ *
+ * @note This function always lets the core override its args with the
+ *       value of the user preferences.
+ *
+ * @param start The port number to bind to, or 0 to let the core decide.
+ *              By default, the core will let the kernel pick one at random.
+ *              Users are allowed to override this arg in prefs.
+ * @param end The highest possible port in the range of ports to listen on,
+ *            or 0 to let the core decide Users are allowed to override this
+ *            arg in prefs.
+ * @return The file descriptor of the listening socket, or -1 if
+ *         no socket could be established.
+ */
+int gaim_network_listen_range(short start, short end);
 
 /**
  * Gets a port number from a file descriptor.

@@ -189,7 +189,12 @@ static int gaim_network_do_listen(short portnum)
 	return listenfd;
 }
 
-int gaim_network_listen(short start, short end)
+int gaim_network_listen(short port)
+{
+	return gaim_network_do_listen(port);
+}
+
+int gaim_network_listen_range(short start, short end)
 {
 	int ret = -1;
 

@@ -871,7 +871,7 @@ static void oscar_xfer_init(GaimXfer *xfer)
 		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
 
 		/* Create a listening socket and an associated libfaim conn */
-		if ((listenfd = gaim_network_listen(5190, 5199)) < 0)
+		if ((listenfd = gaim_network_listen_range(5190, 5199)) < 0)
 			return;
 		xfer->local_port = gaim_network_get_port_from_fd(listenfd);
 		oft_info->port = xfer->local_port;
@@ -6149,7 +6149,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 	dim->gc = gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", data->who);
 
-	listenfd = gaim_network_listen(5190, 5199);
+	listenfd = gaim_network_listen_range(5190, 5199);
 	dim->conn = aim_odc_initiate(od->sess, data->who, listenfd, gaim_network_get_port_from_fd(listenfd));
 	if (dim->conn != NULL) {
 		od->direct_ims = g_slist_append(od->direct_ims, dim);
