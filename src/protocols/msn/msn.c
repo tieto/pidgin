@@ -771,7 +771,7 @@ msn_group_buddy(struct gaim_connection *gc, const char *who,
 
 		/* I hate this. So much. */
 		session->moving_buddy = TRUE;
-		session->dest_group_id = *new_group_id;
+		session->dest_group_name = g_strdup(new_group);
 	}
 	else {
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",

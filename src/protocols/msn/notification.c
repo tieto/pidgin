@@ -749,12 +749,24 @@ __rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 		struct gaim_connection *gc = session->account->gc;
 		const char *passport = params[3];
 		char outparams[MSN_BUF_LEN];
+		int *group_id;
+
+		group_id = g_hash_table_lookup(session->group_ids,
+									   session->dest_group_name);
+
+		g_free(session->dest_group_name);
+		session->dest_group_name = NULL;
+		session->moving_buddy = FALSE;
+
+		if (group_id == NULL) {
+			gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					   "Still don't have a group ID for %s while moving %s!\n",
+					   session->dest_group_name, passport);
+			return TRUE;
+		}
 
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
-				   passport, passport, session->dest_group_id);
-
-		session->moving_buddy = FALSE;
-		session->dest_group_id = 0;
+				   passport, passport, *group_id);
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADD", outparams)) {

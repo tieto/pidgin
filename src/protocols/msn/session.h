@@ -72,7 +72,7 @@ struct _MsnSession
 
 	/* For moving buddies from one group to another. Ugh. */
 	gboolean moving_buddy;
-	gint dest_group_id;
+	char *dest_group_name;
 };
 
 /**
