@@ -882,7 +882,12 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	int i;
 	char *smiley = g_malloc(7);
 
-	if (!who) who = c->name;
+	if (!who) {
+		if (flags & WFLAG_SEND)
+			who = current_user->username;
+		else
+			who = c->name;
+	}
 	
         if (flags & WFLAG_SYSTEM) {
 
