@@ -3,4 +3,4 @@ Makefile
 .deps
 .libs
 gaim  
-gaim_applet
+

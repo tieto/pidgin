@@ -1,33 +1,5 @@
-
-EXTRA_DIST = config.rpath gaim.spec.in gaim_applet.gnorba gaim.desktop gaim_applet.desktop \
+EXTRA_DIST = config.rpath gaim.spec.in gaim.desktop \
 	HACKING gaim2blt.pl licq2gaim.pl setup-gettext
-
-if DISTRIB
-
-distribgnorbadir = $(sysconfdir)/CORBA/servers
-distribgnorba_DATA = gaim_applet.gnorba
-
-distribdesktopdir = $(datadir)/applets/Network
-distribdesktop_DATA = gaim_applet.desktop
-
-else
-
-if GNOMEAPPLET
-
-gnomesysconf = `@GNOME_CONFIG@ --sysconfdir`
-gnomedata    = `@GNOME_CONFIG@ --datadir`
-
-gaim_GNORBA = gaim_applet.gnorba
-gaimgnorbadir  = $(gnomesysconf)/CORBA/servers
-gaimgnorba_DATA = $(gaim_GNORBA)
-
-gaim_DESKTOP = gaim_applet.desktop
-gaimdesktopdir = $(gnomedata)/applets/Network
-gaimdesktop_DATA = $(gaim_DESKTOP)
-
-endif
-
-endif
 
 pixmapdir = $(datadir)/gnome/apps/Internet
 pixmap_DATA = gaim.desktop

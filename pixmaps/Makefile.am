@@ -127,31 +127,10 @@ EXTRA_DIST =	ab.xpm				\
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
 gaimbuttonpix_DATA = edit.png
 
-if DISTRIB
+gaimdistpixdir = $(datadir)/pixmaps/gaim
+gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png
 
-	gaimdistpixdir = $(datadir)/pixmaps/gaim
-	gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png
+distpixmapdir = $(datadir)/pixmaps
+distpixmap_DATA = gaim.png
 
-	distpixmapdir = $(datadir)/pixmaps
-	distpixmap_DATA = gaim.png
 
-else
-
-if GNOMEAPPLET
-
-gnomedata    = `@GNOME_CONFIG@ --datadir`
-
-gaimdistpmdir = $(gnomedata)/pixmaps/gaim
-gaimdistpm_DATA = away.png connect.png msgpend.png offline.png online.png
-
-gaimpixmapdir = $(gnomedata)/pixmaps
-gaimpixmap_DATA = gaim.png
-
-else
-
-pixmapdir = $(datadir)/pixmaps
-pixmap_DATA = gaim.png
-
-endif
-
-endif

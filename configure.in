@@ -103,12 +103,6 @@ AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto })
 
-AC_ARG_ENABLE(gtk2,    [  --enable-gtk2           compile using GTK 2 (BROKEN)],,enable_gtk2=no)
-AC_ARG_ENABLE(gnome,   [  --disable-gnome         compile without Gnome bits],,enable_gnome=yes)
-AC_ARG_ENABLE(pixbuf,  [  --disable-pixbuf        compile without GdkPixbuf],,enable_pixbuf=yes)
-AC_ARG_ENABLE(panel,   [  --enable-panel          compile as a GNOME applet],,enable_panel=$enable_distrib)
-
-AM_CONDITIONAL(GNOMEAPPLET, test "x$enable_panel" = "xyes")
 AC_ARG_ENABLE(esd,     [  --disable-esd           Turn off ESD (default=auto)],,enable_esd=yes)
 AC_ARG_ENABLE(nas,     [  --enable-nas            Enable NAS (Network Audio System) support],,enable_nas=no)
 AC_ARG_ENABLE(artsc,   [  --disable-artsc         Turn off ArtsC (default=auto)],,enable_artsc=yes)
@@ -125,118 +119,26 @@ if test "$enable_debug" = yes ; then
 	AC_DEFINE(DEBUG)
 fi
 
-if test "x$enable_gtk2" = "xyes" ; then
-	dnl AM_PATH_GTK_2_0(1.3.10,[
-	dnl		enable_gnome=no
-	dnl		enable_pixbuf=no
-	dnl		CFLAGS="$CFLAGS -DGTK_ENABLE_BROKEN"
-	dnl		UI_LIBS="$UI_LIBS $GTK_LIBS"
-	dnl		],enable_gtk2=no)
 
-	AC_PATH_PROG(pkgcfg, pkg-config)
-	if test "x$pkgcfg" = "x" ; then
-		enable_gtk2=no
-	else
-		GTK_VER=`$pkgcfg gtk+-2.0 --modversion 2>/dev/null`
-		if test "x$GTK_VER" = "x" ; then
-			enable_gtk2=no
-		else
-			GTK_CFLAGS=`$pkgcfg gtk+-2.0 --cflags`
-			CFLAGS="$CFLAGS -DGTK_ENABLE_BROKEN"
-			GTK_LIBS=`$pkgcfg gtk+-2.0 --libs`
-			UI_LIBS="$UI_LIBS $GTK_LIBS"
-			enable_gnome=no
-			enable_pixbuf=no
-		fi
-	fi
-fi
-		
-GNOME_INIT_HOOK([], nofail, applets)
+AM_PATH_GLIB_2_0(1.3.0,AC_MSG_ERROR([
+*** Glib 2.0 is required to build Gaim 0.60 and above.  Please make sure
+*** you have the Glib 2.0 development headers installed, or use our 0.59
+*** stable branch, if you'd prefer to use Glib 1.2.  Glib can be found at
+*** http://www.gtk.org]))
+AM_PATH_GTK_2_0(1.3.0,AC_MSG_ERROR([
+*** GTK+ 2.0 is required to build Gaim 0.60 and above.  Please make sure
+*** you have the GTK+ 2.0 development headers installed, or use our 0.59
+*** stable branch, if you'd prefer to use GTK+ 2.0.  GTK can be found at
+*** http://www.gtk.org]))
+AC_PATH_PROG(gaimpath, gaim)
+CFLAGS="$CFLAGS $GTK_CFLAGS -DGTK_ENABLE_BROKEN"
 
-if test "x$enable_gnome" = "xyes" ; then
-	if test "x$enable_panel" = "xyes" ; then
-		GNOME_X_CHECKS
-		CFLAGS="$CFLAGS $GNOME_INCLUDEDIR"
-		AC_DEFINE(USE_APPLET)
-		AC_DEFINE(USE_GNOME)
-		UI_LIBS="$UI_LIBS $GTK_LIBS $GNOME_LIBDIR $GNOME_APPLETS_LIBS $GNOMEUI_LIBS"
-		AC_PATH_PROG(gaimpath, gaim_applet)
-	else
-		AC_PATH_PROG(gnomepath, gnome-config)
-		AC_MSG_CHECKING(for Gnome compile flags)
-		GNOME_CFLAGS=`$gnomepath gnomeui --cflags 2>/dev/null`
-		if test "x$GNOME_CFLAGS" = "x" ; then
-			enable_gnome=no
-			AC_MSG_RESULT([Gnome not found, building without it.])
-		else
-			GNOME_VER=`$gnomepath --version |$sedpath 's/gnome-libs //' 2>/dev/null`
-			GNOME_MAJOR=`echo $GNOME_VER |$sedpath 's/\([[0-9]*]*\).\([[0-9]*]*\).\([[0-9]*]*\)/\1/' 2>/dev/null`
-			if test "x$GNOME_MAJOR" = "x0" ; then
-				enable_gnome = no
-				AC_MSG_RESULT([old Gnome found, building without it.])
-			else
-				AC_MSG_RESULT(ok)
-				CFLAGS="$CFLAGS $GNOME_CFLAGS"
-				UI_LIBS="$UI_LIBS `$gnomepath gnomeui --libs 2>/dev/null`"
-				AC_DEFINE(USE_GNOME)
-				GNOME_CONFIG="$gnomepath"
-				AC_SUBST(GNOME_CONFIG)
-				AC_PATH_PROG(gaimpath, gaim)
-			fi
-		fi
-	fi
-fi
-
-if test "x$enable_gnome" != "xyes" -a "x$enable_gtk2" != "xyes" ; then
-	AM_PATH_GLIB(1.2.5,,AC_MSG_ERROR([
-*** GLib is required to build Gaim; please make sure you have the GLib
-*** development headers installed. The latest version of GLib is
-*** always available at http://www.gtk.org/.]))
-	AM_PATH_GTK(1.2.5,,AC_MSG_ERROR([
-*** GTK+ is required to build Gaim; please make sure you have the GTK+
-*** development headers installed. The latest version of GTK+ is
-*** always available at http://www.gtk.org/.]))
-	UI_LIBS="$UI_LIBS $GTK_LIBS"
-	AC_PATH_PROG(gaimpath, gaim)
-fi
-CFLAGS="$CFLAGS $GTK_CFLAGS"
-
-dnl if test "x$enable_panel" = "xyes" ; then
-	dnl Things moved with the new versoin of Orbit. Thanks for
-	dnl telling me, Dan.  This should fix them.
-	dnl
-	dnl The gnome-config script should pick this up and affect GNOME_ variables
-	dnl correctly. Thus, this check is not needed; if it fails, it is because of
-	dnl a broken installation or that your appletsConf.sh file is not updated
-	dnl for the new orbit installation. Gaim shouldn't need to do this.
-	dnl
-	dnl CFLAGS="$CFLAGS $ORBIT_CFLAGS"
-dnl fi
-
-use_pixbuf=no
-if test "x$enable_pixbuf" = "xyes" ; then
-	AC_PATH_PROG(pixbufcfg, gdk-pixbuf-config)
-	if test "x$pixbufcfg" != "x" ; then
-		GDK_PIXBUF_CFLAGS=`$pixbufcfg --cflags`
-		GDK_PIXBUF_LIBS=`$pixbufcfg --libs`
-		GDK_PIXBUF_CONFIG="$pixbufcfg"
-		AC_SUBST(GDK_PIXBUF_CONFIG)
-		AC_SUBST(GDK_PIXBUF_CFLAGS)
-		AC_SUBST(GDK_PIXBUF_LIBS)
-		CFLAGS="$CFLAGS $GDK_PIXBUF_CFLAGS"
-		UI_LIBS="$UI_LIBS $GDK_PIXBUF_LIBS"
-		dnl We should be doing checks to see that the header files and functions exist. eh.
-		AC_DEFINE(USE_PIXBUF)
-		use_pixbuf=yes
-	fi
-fi
-AC_SUBST(UI_LIBS)
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
 	AC_PATH_X
 	old_LIBS="$LIBS"
-	LIBS="$LIBS $UI_LIBS -L$x_libraries"
+	LIBS="$LIBS $GTK_LIBS -L$x_libraries"
 	XSS_LIBS="no"
 	XSS_HEADERS="no"
 	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])
@@ -459,20 +361,7 @@ echo Allow Multiple Connections.... : $enable_multi
 echo Build Protocol Plugins........ : $enable_prpls
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
-if test "x$enable_panel" = "xyes" ; then
-	echo UI Library.................... : GNOME Panel
-elif test "x$enable_gnome" = "xyes" ; then
-	echo UI Library.................... : GNOME App
-elif test "x$enable_gtk2" = "xyes" ; then
-	echo UI Library.................... : GTK+ 2.0
-else
-	echo UI Library.................... : GTK+ 1.2
-fi
-if test "x$enable_gtk2" = "xyes" ; then
-	echo Use GdkPixbuf................. : yes
-else
-	echo Use GdkPixbuf................. : $use_pixbuf
-fi
+echo UI Library.................... : GTK 2.0
 echo
 echo Build with Plugin support..... : $enable_plugins
 echo Build with Perl support....... : $enable_perl
