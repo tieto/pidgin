@@ -1411,8 +1411,6 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	GtkIMHtmlScalable *scalable = NULL;
 	int y, height;
 
-	printf("Appending: %s\n", text);
-
 	g_return_val_if_fail (imhtml != NULL, NULL);
 	g_return_val_if_fail (GTK_IS_IMHTML (imhtml), NULL);
 	g_return_val_if_fail (text != NULL, NULL);
@@ -2558,8 +2556,6 @@ void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gint offset,
 	GSList *tags;
 	gint position, length, adjusted;
 	
-	printf("get_current_format\n");
-	
 	/* grab the current cursor position compensate for the way that the
 	 * direction that the cursor was moved so that we get all the tags
 	 * for that current location
@@ -2580,9 +2576,6 @@ void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gint offset,
 			adjusted = length - 1;
 	}
 	
-	printf("position: %d, offset: %d, length: %d, adjusted: %d\n",
-		   position, offset, length, adjusted);
-	
 	gtk_text_buffer_get_iter_at_offset(imhtml->text_buffer, &adj_iter, adjusted);
 
 	/* grab the tags that apply to the cursor location */
@@ -2591,7 +2584,6 @@ void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gint offset,
 	{
 		GtkTextTag *tag = GTK_TEXT_TAG(tags->data);
 		if(tag->name) {
-			printf("tag: %s\n", tag->name);
 			if(g_ascii_strcasecmp(tag->name, "BOLD") == 0)
 				(*bold) = TRUE;
 			if(g_ascii_strcasecmp(tag->name, "ITALICS") == 0)
@@ -3097,7 +3089,6 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		closers = g_list_remove(closers, span);
 
 	}
-	printf("gotten: %s\n", str->str);
 	return g_string_free(str, FALSE);
 }
 

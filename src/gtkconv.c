@@ -5105,7 +5105,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 			}
 			else
 				gtkconv->u.im->anim =
-					gdk_pixbuf_animation_new_from_file(iconfile, &err);
+					gdk_pixbuf_animation_new_from_file(iconfile, &err); /* LEAK */
 		}
 	}
 	else
@@ -5151,7 +5151,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
 	} else {
 		gtkconv->u.im->iter =
-			gdk_pixbuf_animation_get_iter(gtkconv->u.im->anim, NULL);
+			gdk_pixbuf_animation_get_iter(gtkconv->u.im->anim, NULL); /* LEAK */
 		buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 		if (gtkconv->u.im->animate)
 			start_anim(NULL, conv);
