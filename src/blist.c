@@ -2214,8 +2214,8 @@ void gaim_blist_remove_account(GaimAccount *account)
 
 		for (cnode = gnode->child; cnode; cnode = cnode->next) {
 			if (GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
-				contact = (GaimContact *)cnode;
 				gboolean recompute = FALSE;
+				contact = (GaimContact *)cnode;
 
 				for (bnode = cnode->child; bnode; bnode = bnode->next) {
 					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
