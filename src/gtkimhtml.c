@@ -727,7 +727,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			pre--;
 		}
 	}
-	//g_free (ws);
+	g_free(ws);
 	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (imhtml), mark,
 				      0, TRUE, 0.0, 1.0);
 	gtk_text_buffer_delete_mark (imhtml->text_buffer, mark);
