@@ -130,7 +130,7 @@ int perl_load_file(char *script_name)
 	return SvNV (return_val);
 }
 
-void perl_init(int autoload)
+void perl_init()
 {
 	char *perl_args[] = {"", "-e", "0"};
 	char load_file[] =
@@ -170,11 +170,6 @@ void perl_init(int autoload)
 	newXS ("AIM::add_message_handler", XS_AIM_add_message_handler, "AIM");
 	newXS ("AIM::add_command_handler", XS_AIM_add_command_handler, "AIM");
 	newXS ("AIM::add_timeout_handler", XS_AIM_add_timeout_handler, "AIM");
-
-	/* FIXME */
-	if (autoload) {
-		/* for each *.pl in ~/.gaim/scripts (whatever), autoload file */
-	}
 }
 
 void perl_end()
@@ -259,12 +254,48 @@ XS (XS_AIM_print)
 
 XS (XS_AIM_buddy_list)
 {
-	/* FIXME */
+	struct buddy *buddy;
+	struct group *g;
+	GList *list = groups;
+	GList *mem;
+	int i = 0;
+	dXSARGS;
+	items = 0;
+
+	while (list) {
+		g = (struct group *)list->data;
+		mem = g->members;
+		while (mem) {
+			buddy = (struct buddy *)mem->data;
+			XST_mPV(i++, buddy->name);
+			mem = mem->next;
+		}
+		list = list->next;
+	}
+	XSRETURN(i);
 }
 
 XS (XS_AIM_online_list)
 {
-	/* FIXME */
+	struct buddy *b;
+	struct group *g;
+	GList *list = groups;
+	GList *mem;
+	int i = 0;
+	dXSARGS;
+	items = 0;
+
+	while (list) {
+		g = (struct group *)list->data;
+		mem = g->members;
+		while (mem) {
+			b = (struct buddy *)mem->data;
+			if (b->present) XST_mPV(i++, b->name);
+			mem = mem->next;
+		}
+		list = list->next;
+	}
+	XSRETURN(i);
 }
 
 XS (XS_AIM_deny_list)
