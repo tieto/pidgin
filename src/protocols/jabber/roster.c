@@ -193,10 +193,13 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			GSList *groups = NULL;
 
 			for(group = item->child; group; group = group->next) {
+				char *group_name;
 				if(group->type != NODE_TYPE_TAG || strcmp(group->name, "group"))
 					continue;
-				groups = g_slist_append(groups,
-						xmlnode_get_data(group));
+
+				if(!(group_name = xmlnode_get_data(group)))
+					group_name = g_strdup("");
+				groups = g_slist_append(groups, group_name);
 			}
 			add_gaim_buddies_in_groups(js, jid, name, groups);
 		}
