@@ -27,4 +27,13 @@ typedef struct {
     DWORD dwTimeout;
 } FLASHWINFO, *PFLASHWINFO;
 
+/* These defines aren't found in the current version of mingw */
+#ifndef LWA_ALPHA
+#define LWA_ALPHA               0x00000002
+#endif
+
+#ifndef WS_EX_LAYERED
+#define WS_EX_LAYERED           0x00080000
+#endif
+
 #endif /* _WINUSER_EXTRA_H_ */

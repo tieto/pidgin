@@ -39,6 +39,10 @@
 #include "prpl.h"
 #include "proxy.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 char fontface[128];
 
 GtkWidget *tree_v = NULL;
@@ -59,7 +63,7 @@ static GtkWidget *away_text = NULL;
 GtkCTreeNode *general_node = NULL;
 GtkCTreeNode *deny_node = NULL;
 GtkWidget *prefs_proxy_frame = NULL;
-static GtkWidget *gaim_button(const char *, guint *, int, GtkWidget *);
+GtkWidget *gaim_button(const char *, guint *, int, GtkWidget *);
 GtkWidget *gaim_labeled_spin_button(GtkWidget *, const gchar *, int*, int, int, GtkSizeGroup *);
 static GtkWidget *gaim_dropdown(GtkWidget *, const gchar *, int *, int, ...);
 static GtkWidget *show_color_pref(GtkWidget *, gboolean);
@@ -1394,6 +1398,9 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, notebook_page++);
+#ifdef _WIN32
+	prefs_notebook_add_page(_("Windows Only"), NULL, wgaim_winprefs_page(), &p, NULL, notebook_page++);
+#endif
 #if USE_PLUGINS
 	prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
 	while (l) {
@@ -1741,6 +1748,14 @@ static void set_away_option(GtkWidget *w, int option)
 	save_prefs();
 }
 
+#ifdef _WIN32
+static void set_wgaim_option(GtkWidget *w, int option)
+{
+	wgaim_options ^= option;
+	save_prefs();
+}
+#endif
+
 GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *page)
 {
 	GtkWidget *button;
@@ -1749,7 +1764,7 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(button), options);
 
-       if (options == &misc_options)
+	if (options == &misc_options)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_misc_option),
 				   (int *)option);
 	if (options == &logging_options)
@@ -1773,10 +1788,11 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 	if (options == &sound_options)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_sound_option),
 				   (int *)option);
-	if (options == &away_options)
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_away_option),
+#ifdef _WIN32
+	if (options == &wgaim_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_wgaim_option),
 				   (int *)option);
-
+#endif
 	gtk_widget_show(button);
 
 	return button;

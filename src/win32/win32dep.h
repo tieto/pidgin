@@ -10,6 +10,7 @@
 #include "winerror.h"
 #include "libc_interface.h"
 #include "systray.h"
+#include "winprefs.h"
 
 /*
  *  PROTOS
@@ -21,6 +22,11 @@
 /* Misc */
 HINSTANCE wgaim_hinstance(void);
 extern void wgaim_im_blink(GtkWidget*);
+extern GtkWidget *wgaim_wintrans_slider(GtkWidget*);
+extern void wgaim_set_wintrans(GtkWidget*, int);
+extern void wgaim_set_imalpha(int);
+extern int wgaim_get_imalpha();
+extern int wgaim_has_transparency();
 
 /* Determine Gaim paths */
 extern char* wgaim_install_dir(void);

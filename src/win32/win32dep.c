@@ -40,7 +40,7 @@ static char install_dir[MAXPATHLEN];
 static char lib_dir[MAXPATHLEN];
 static char locale_dir[MAXPATHLEN];
 static int bhide_icon;
-
+static int imalpha = 255;
 
 /*
  *  GLOBALS
@@ -52,7 +52,8 @@ HINSTANCE gaimdll_hInstance = 0;
  *  PROTOS
  */
 BOOL (*MyFlashWindowEx)(PFLASHWINFO pfwi)=NULL;
- 
+BOOL (*MySetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags)=NULL;
+void wgaim_set_wintrans(GtkWidget *window, int trans);
 
 /*
  *  STATIC CODE
@@ -104,12 +105,17 @@ static FARPROC find_and_loadproc( char* dllname, char* procedure ) {
 	}
 }
 
-
-void load_winver_specific_procs(void) {
+static void load_winver_specific_procs(void) {
 	/* Used for Win98+ and WinNT5+ */
 	MyFlashWindowEx = (void*)find_and_loadproc("user32.dll", "FlashWindowEx" );
+	/* Used for Win2k+ */
+	MySetLayeredWindowAttributes = (void*)find_and_loadproc("user32.dll", "SetLayeredWindowAttributes" );
 }
 
+/* Transparency slider callbacks */
+static void change_im_alpha(GtkWidget *w, gpointer data) {
+	wgaim_set_wintrans(GTK_WIDGET(data), gtk_range_get_value(GTK_RANGE(w)));
+}
 
 /*
  *  PUBLIC CODE
@@ -179,6 +185,52 @@ void wgaim_im_blink(GtkWidget *window) {
 		finfo->t_handle = gtk_timeout_add(1000, flash_window_cb, GDK_WINDOW_HWND(window->window));
 		finfo->sig_handler = g_signal_connect(G_OBJECT(window), "focus-in-event", G_CALLBACK(halt_flash_filter), finfo);
 	}
+}
+
+/* Set window transparency level */
+void wgaim_set_wintrans(GtkWidget *window, int trans) {
+	if(MySetLayeredWindowAttributes) {
+		HWND hWnd = GDK_WINDOW_HWND(window->window);
+		SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE) | WS_EX_LAYERED);
+		MySetLayeredWindowAttributes(hWnd,0,trans,LWA_ALPHA);
+	}
+}
+
+void wgaim_set_imalpha(int val) {
+	imalpha = val;
+}
+
+int wgaim_get_imalpha(int val) {
+	return imalpha;
+}
+
+int wgaim_has_transparency() {
+	return MySetLayeredWindowAttributes ? TRUE : FALSE;
+}
+
+GtkWidget *wgaim_wintrans_slider(GtkWidget *win) {
+	GtkWidget *hbox;
+	GtkWidget *label, *slider;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+
+	label = gtk_label_new(_("Opacity:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+
+	slider = gtk_hscale_new_with_range(50,255,1);
+	gtk_range_set_value(GTK_RANGE(slider), imalpha);
+	gtk_widget_set_usize(GTK_WIDGET(slider), 200, -1);
+	
+	/* On slider val change, update window's transparency level */
+	gtk_signal_connect(GTK_OBJECT(slider), "value-changed", GTK_SIGNAL_FUNC(change_im_alpha), win);
+	gtk_box_pack_start(GTK_BOX(hbox), slider, FALSE, TRUE, 5);
+
+	/* Set the initial transparency level */
+	wgaim_set_wintrans(win, imalpha);
+
+	gtk_widget_show_all(hbox);
+
+	return hbox;
 }
 
 /* Windows Initializations */
