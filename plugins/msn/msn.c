@@ -1151,7 +1151,8 @@ static void msn_send_im(struct gaim_connection *gc, char *who, char *message, in
 		ms->gc = gc;
 		ms->fd = -1;
 	} else
-		do_error_dialog("MSN: You can't send a message to yourself", "MSN Error");
+		/* in msn you can't send messages to yourself, so we'll fake like we received it ;) */
+		serv_got_im(gc, who, message, away, time(NULL));
 }
 
 static void msn_chat_send(struct gaim_connection *gc, int id, char *message)
