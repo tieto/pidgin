@@ -335,19 +335,34 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	data->u.input.hint = (hint == NULL ? NULL : g_strdup(hint));
 
 	if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html"))) {
+		GtkWidget *frame;
+		GtkWidget *vbox2;
+		GtkWidget *sep;
 		GtkWidget *sw;
+
+		/* Thin frame surrounding the toolbar and imhtml */
+		frame = gtk_frame_new(NULL);
+		gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+		gtk_widget_show(frame);
+
+		vbox2 = gtk_vbox_new(FALSE, 0);
+		gtk_container_add(GTK_CONTAINER(frame), vbox2);
+		gtk_widget_show(vbox2);
 
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 									   GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-											GTK_SHADOW_IN);
-
 		gtk_widget_set_size_request(sw, 320, 130);
 
 		/* Toolbar */
 		toolbar = gtk_imhtmltoolbar_new();
-		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 0);
+
+		/* Separator */
+		sep = gtk_hseparator_new();
+		gtk_box_pack_start(GTK_BOX(vbox2), sep, FALSE, FALSE, 0);
+		gtk_widget_show(sep);
 
 		/* GtkIMHtml */
 		entry = gtk_imhtml_new(NULL, NULL);
@@ -363,7 +378,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(entry), GTK_WRAP_WORD_CHAR);
 
-		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 			gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(entry));
