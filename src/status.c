@@ -575,7 +575,7 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 
 static void
 notify_status_update(GaimPresence *presence, GaimStatus *old_status,
-		GaimStatus *new_status)
+					 GaimStatus *new_status)
 {
 	GaimPresenceContext context = gaim_presence_get_context(presence);
 
@@ -583,12 +583,28 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 
 	if (context == GAIM_PRESENCE_CONTEXT_ACCOUNT)
 	{
+		GaimAccount *account = gaim_presence_get_account(presence);
 		GaimAccountUiOps *ops = gaim_accounts_get_ui_ops();
+
+		if (gaim_account_is_connected(account))
+		{
+			GaimPluginProtocolInfo *prpl_info = NULL;
+			GaimPlugin *prpl;
+
+			prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+
+			if (prpl != NULL)
+			{
+				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+				if (prpl_info != NULL && prpl_info->set_status != NULL)
+					prpl_info->set_status(account, new_status);
+			}
+		}
 
 		if (ops != NULL && ops->status_changed != NULL)
 		{
-			ops->status_changed(gaim_presence_get_account(presence),
-					new_status);
+			ops->status_changed(account, new_status);
 		}
 	}
 	else if (context == GAIM_PRESENCE_CONTEXT_CONV)
@@ -1566,6 +1582,18 @@ gaim_buddy_presences_equal(gconstpointer a, gconstpointer b)
 		return FALSE;
 }
 
+const GList *
+gaim_statuses_get_stored(void)
+{
+	return NULL;
+}
+
+GaimStatus *
+gaim_statuses_find_stored(const GaimStatusType *status_type, const char *id)
+{
+	return NULL;
+}
+
 void *
 gaim_statuses_get_handle() {
 	static int handle;
@@ -1620,9 +1648,12 @@ gaim_statuses_init(void)
 void
 gaim_statuses_uninit(void)
 {
-	if(buddy_presences != NULL)
+	if (buddy_presences != NULL)
+	{
 		g_hash_table_destroy(buddy_presences);
-	buddy_presences = NULL;
+
+		buddy_presences = NULL;
+	}
 }
 
 void
