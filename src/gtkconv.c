@@ -2229,6 +2229,9 @@ start_anim(GtkObject *obj, GaimConversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
+	if (gtkconv->u.im->anim == NULL)
+		return;
+
 	if (gtkconv->u.im->icon_timer != 0)
 		return;
 
