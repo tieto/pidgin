@@ -1712,49 +1712,63 @@ void show_conv(struct conversation *c)
 	GtkWidget *toolbar;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	int dispstyle;
+	int dispstyle = set_dispstyle(0);
 	
+	c->font_dialog = NULL;
+	c->fg_color_dialog = NULL;	
+	c->bg_color_dialog = NULL;	
+	c->smiley_dialog = NULL;
+	c->link_dialog = NULL;
+	c->log_dialog = NULL;
+	sprintf(c->fontface, "%s", fontface);
+	c->hasfont = 0;
+	c->bgcol = bgcolor;
+	c->hasbg = 0;
+	c->fgcol = fgcolor;
+	c->hasfg = 0;
+
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	c->window = win;
+	gtk_object_set_user_data(GTK_OBJECT(win), c);
         gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
-
+	gtk_container_border_width(GTK_CONTAINER(win), 10);
 	gtk_widget_realize(win);
 	aol_icon(win->window);
-        
-	c->window = win;
-
-	dispstyle = set_dispstyle(0);
-
-	send = picture_button2(win, _("Send"), tmp_send_xpm, dispstyle);
-	info = picture_button2(win, _("Info"), tb_search_xpm, dispstyle);
-	warn = picture_button2(win, _("Warn"), warn_xpm, dispstyle);
-	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
-	if (c->gc && find_buddy(c->gc, c->name) != NULL)
-		add = picture_button2(win, _("Remove"), gnome_remove_xpm, dispstyle);
+	if ((find_log_info(c->name)) || ((general_options & OPT_GEN_LOG_ALL)))
+		g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, c->name);
 	else
-		add = picture_button2(win, _("Add"), gnome_add_xpm, dispstyle);
-	block = picture_button2(win, _("Block"), block_xpm, dispstyle);
+		g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, c->name);
+	gtk_window_set_title(GTK_WINDOW(win), buf);
+	gtk_signal_connect(GTK_OBJECT(win), "delete_event", GTK_SIGNAL_FUNC(delete_event_convo), c);
 
-	/* use a slicker look if the user wants to */
-	if (display_options & OPT_DISP_COOL_LOOK)
-	{
-		gtk_button_set_relief(GTK_BUTTON(send), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(info), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(warn), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(block), GTK_RELIEF_NONE);
-	}
-	
-	bbox = gtk_hbox_new(FALSE, 5);
-	vbox = gtk_vbox_new(FALSE, 0);
-	vbox2 = gtk_vbox_new(FALSE, 0);
 	paned = gtk_vpaned_new();
+	gtk_container_add(GTK_CONTAINER(win), paned);
+	gtk_widget_show(paned);
 
+	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_paned_pack1(GTK_PANED(paned), vbox, FALSE, TRUE);
+	gtk_widget_show(vbox);
+
+	sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), 
+			GTK_POLICY_NEVER, 
+			GTK_POLICY_ALWAYS);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+	gtk_widget_set_usize(sw, 320, 150);
+	gtk_widget_show(sw);
+
+	text = gtk_html_new(NULL, NULL);
+	c->text = text;
+	gtk_html_set_editable(GTK_HTML(text), FALSE);
+	gtk_container_add(GTK_CONTAINER(sw), text);
+	GTK_HTML (text)->hadj->step_increment = 10.0;
+	GTK_HTML (text)->vadj->step_increment = 10.0;
+	gtk_widget_show(text);
+
+	vbox2 = gtk_vbox_new(FALSE, 0);
 	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, FALSE);
 	gtk_widget_show(vbox2);
-	gtk_widget_show(paned);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
@@ -1769,118 +1783,79 @@ void show_conv(struct conversation *c)
 	gtk_widget_show(c->menu);
 
 	create_convo_menu(c);
-	
+
+	toolbar = build_conv_toolbar(c);
+	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 5);
+
 	entry = gtk_text_new(NULL, NULL);
+	c->entry = entry;
+	gtk_object_set_user_data(GTK_OBJECT(entry), c);
 	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
 	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);
-	gtk_object_set_user_data(GTK_OBJECT(entry), c);
-	c->entry = entry;
-	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback),c);
-		
-	/* Toolbar */
-	toolbar = build_conv_toolbar(c);
-
-	/* Text box */
-	text = gtk_html_new(NULL, NULL);
-	gtk_html_set_editable(GTK_HTML(text), FALSE);
-	/*
-	gtk_html_set_transparent(GTK_HTML(text), (transparent) ? TRUE : FALSE);
-	*/
-
-	c->text = text;
-
-	sw = gtk_scrolled_window_new (NULL, NULL);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw), 
-			GTK_POLICY_NEVER, 
-			GTK_POLICY_ALWAYS);
-	gtk_widget_show(sw);
-	gtk_container_add(GTK_CONTAINER(sw), text);
-	gtk_widget_show(text);
-	
-	GTK_HTML (text)->hadj->step_increment = 10.0;
-	GTK_HTML (text)->vadj->step_increment = 10.0;
-	gtk_widget_set_usize(sw, 320, 150);
-
-	/* Ready and pack buttons */
-	gtk_object_set_user_data(GTK_OBJECT(win), c);
-	gtk_object_set_user_data(GTK_OBJECT(close), c);
-	c->close = close;
-	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
-	c->send = send;
-	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
-	c->add = add;
-	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-	c->info = info;
-	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
-	c->warn = warn;
-	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
-	c->block = block;
-	gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
-       
-	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
-
 	if (display_options & OPT_DISP_CONV_BIG_ENTRY)
 		gtk_widget_set_usize(entry, 300, 50);
 	else
 		gtk_widget_set_usize(entry, 300, 25);
-
-	gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 0);
-	c->sep1 = gtk_vseparator_new();
-	gtk_widget_show(c->sep1);
-	gtk_box_pack_end(GTK_BOX(bbox), c->sep1, dispstyle, dispstyle, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), add, dispstyle, dispstyle, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), block, dispstyle, dispstyle, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), warn, dispstyle, dispstyle, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), info, dispstyle, dispstyle, 0);
-	c->sep2 = gtk_vseparator_new();
-	gtk_widget_show(c->sep2);
-	gtk_box_pack_end(GTK_BOX(bbox), c->sep2, dispstyle, dispstyle, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 0);
-	
-	/* pack and fill the rest */
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 5);
-
-	gtk_widget_show(send);
-	gtk_widget_show(info);
-	gtk_widget_show(warn);
-	gtk_widget_show(close);	
-	gtk_widget_show(add);
-	gtk_widget_show(block);
-	gtk_widget_show(bbox);
-	gtk_widget_show(vbox);
-	gtk_widget_show(entry);
-	gtk_widget_show(text);
-
-	c->font_dialog = NULL;
-	c->fg_color_dialog = NULL;	
-	c->bg_color_dialog = NULL;	
-	c->smiley_dialog = NULL;
-	c->link_dialog = NULL;
-	c->log_dialog = NULL;
-	sprintf(c->fontface, "%s", fontface);
-	c->hasfont = 0;
-	c->bgcol = bgcolor;
-	c->hasbg = 0;
-	c->fgcol = fgcolor;
-	c->hasfg = 0;
-	
-	gtk_container_add(GTK_CONTAINER(win), paned);
-        gtk_container_border_width(GTK_CONTAINER(win), 10);
-
-	if ((find_log_info(c->name)) || ((general_options & OPT_GEN_LOG_ALL)))
-		g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, c->name);
-	else
-		g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, c->name);
-	gtk_window_set_title(GTK_WINDOW(win), buf);
 	gtk_window_set_focus(GTK_WINDOW(win),entry);
-
-	gtk_signal_connect(GTK_OBJECT(win), "delete_event", GTK_SIGNAL_FUNC(delete_event_convo), c);
+	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback),c);
+	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), entry);
 	if (general_options & OPT_GEN_CHECK_SPELLING)
 		gtkspell_attach(GTK_TEXT(c->entry));
+	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 5);
+	gtk_widget_show(entry);
+
+	bbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 5);
+	gtk_widget_show(bbox);
+
+	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
+	c->close = close;
+	gtk_object_set_user_data(GTK_OBJECT(close), c);
+	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
+	gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 0);
+	gtk_widget_show(close);	
+
+	c->sep1 = gtk_vseparator_new();
+	gtk_box_pack_end(GTK_BOX(bbox), c->sep1, dispstyle, dispstyle, 0);
+	gtk_widget_show(c->sep1);
+
+	if (c->gc && find_buddy(c->gc, c->name) != NULL)
+		add = picture_button2(win, _("Remove"), gnome_remove_xpm, dispstyle);
+	else
+		add = picture_button2(win, _("Add"), gnome_add_xpm, dispstyle);
+	c->add = add;
+	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+	gtk_box_pack_end(GTK_BOX(bbox), add, dispstyle, dispstyle, 0);
+	gtk_widget_show(add);
+
+	block = picture_button2(win, _("Block"), block_xpm, dispstyle);
+	c->block = block;
+	gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
+	gtk_box_pack_end(GTK_BOX(bbox), block, dispstyle, dispstyle, 0);
+	gtk_widget_show(block);
+
+	warn = picture_button2(win, _("Warn"), warn_xpm, dispstyle);
+	c->warn = warn;
+	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
+	gtk_box_pack_end(GTK_BOX(bbox), warn, dispstyle, dispstyle, 0);
+	gtk_widget_show(warn);
+
+	info = picture_button2(win, _("Info"), tb_search_xpm, dispstyle);
+	c->info = info;
+	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
+	gtk_box_pack_end(GTK_BOX(bbox), info, dispstyle, dispstyle, 0);
+	gtk_widget_show(info);
+
+	c->sep2 = gtk_vseparator_new();
+	gtk_box_pack_end(GTK_BOX(bbox), c->sep2, dispstyle, dispstyle, 0);
+	gtk_widget_show(c->sep2);
+
+	send = picture_button2(win, _("Send"), tmp_send_xpm, dispstyle);
+	c->send = send;
+	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
+	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 0);
+	gtk_widget_show(send);
 
 	gtk_widget_show(win);
 }
