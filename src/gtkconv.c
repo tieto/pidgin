@@ -429,6 +429,21 @@ help_arg_command_cb(GaimConversation *conv,
 }
 
 static void
+send_history_add(GaimConversation *conv, const char *message)
+{
+	GList *first;
+
+	first = g_list_first(conv->send_history);
+
+	if (first->data)
+		g_free(first->data);
+
+	first->data = g_strdup(message);
+
+	conv->send_history = g_list_prepend(first, NULL);
+}
+
+static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
@@ -446,8 +461,12 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 		cmd = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
 		if(cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)) {
 			GaimCmdStatus status;
-			char *error, *cmdline, *markup;
+			char *error, *cmdline, *markup, *send_history;
 			GtkTextIter start, end;
+
+			send_history = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
+			send_history_add(conv, send_history);
+			g_free(send_history);
 
 			cmdline = cmd + strlen(prefix);
 			gtk_text_buffer_get_start_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &start);
@@ -524,6 +543,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 
 		bufs = gtk_imhtml_get_markup_lines(GTK_IMHTML(gtkconv->entry));
 		for (i = 0; bufs[i]; i++) {
+			send_history_add(conv, bufs[i]);
 			if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 				gaim_conv_im_send(GAIM_CONV_IM(conv), bufs[i]);
 			else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
@@ -533,6 +553,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 		g_strfreev(bufs);
 
 	} else {
+		send_history_add(conv, buf);
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 			gaim_conv_im_send(GAIM_CONV_IM(conv), buf);
 		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)

@@ -32,6 +32,8 @@ version 0.79cvs:
 	  gaim-include/.
 
 	Bug Fixes:
+	* Switched Yahoo! (not Japan) over to using Web Messenger auth
+	  again, like 0.75, due to last minute protocol changes
 	* Non-looping animated icons no longer cause Gaim to freeze
 	* Flashing windows should work again for unix in window managers that
 	  support the URGENT hint (Etan Reisner)
