@@ -1180,7 +1180,7 @@ static GaimXferUiOps ops =
  * GTK+ File Transfer API
  **************************************************************************/
 void
-gaim_gtk_xfer_init(void)
+gaim_gtk_xfers_init(void)
 {
 	gaim_prefs_add_none("/gaim/gtk/filetransfer");
 	gaim_prefs_add_bool("/gaim/gtk/filetransfer/clear_finished", TRUE);
