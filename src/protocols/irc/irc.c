@@ -599,19 +599,39 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 	if (((strstr(buf, "ERROR :") && (!strstr(buf, "PRIVMSG ")) &&
 	      (!strstr(buf, "NOTICE ")) && (strlen(buf) > 7)))) {
 
+		/*
+		 * The ERROR command is for use by servers when reporting a serious or
+		 * fatal error to its operators.  It may also be sent from one server to
+		 * another but must not be accepted from any normal unknown clients.
+		 *
+		 * An ERROR message is for use for reporting errors which occur with a
+		 * server-to-server link only.  An ERROR message is sent to the server
+		 * at the other end (which sends it to all of its connected operators)
+		 * and to all operators currently connected.  It is not to be passed
+		 * onto any other servers by a server if it is received from a server.
+		 *
+		 * When a server sends a received ERROR message to its operators, the
+		 * message should be encapsulated inside a NOTICE message, indicating
+		 * that the client was not responsible for the error.
+		 *
+		 *
+		 * Basically, ignore this.
+		 *
 		gchar *u_errormsg;
 
-		/* Let's get our error message */
+		* Let's get our error message *
 		u_errormsg = g_strdup(buf + 7);
 
-		/* We got our error message.  Now, let's reaise an
-		 * error dialog */
+		* We got our error message.  Now, let's reaise an
+		 * error dialog *
 
 		do_error_dialog(u_errormsg, "Gaim: IRC Error");
 
-		/* And our necessary garbage collection */
+		* And our necessary garbage collection *
 		g_free(u_errormsg);
 		return;
+
+		*/
 	}
 
 	/* This should be a whois response. I only care about the first (311) one.  I might do
