@@ -349,10 +349,13 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 	if ((s = gaim_ssl_write(gsc, request_str, strlen(request_str))) <= 0)
 	{
+		g_free(request_str);
 		gaim_connection_error(gc, _("Unable to write to MSN Nexus server."));
 
 		return;
 	}
+
+	g_free(request_str);
 
 	if ((s = msn_ssl_read(gsc, &buffer)) <= 0)
 	{
@@ -507,10 +510,12 @@ nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 	if ((s = gaim_ssl_write(gsc, request_str, strlen(request_str))) <= 0)
 	{
+		g_free(request_str);
 		gaim_connection_error(gc, _("Unable to write to MSN Nexus server."));
 		return;
 	}
 
+	g_free(request_str);
 	g_free(session->ssl_url);
 	session->ssl_url = NULL;
 
@@ -635,6 +640,8 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 				key = c + 1;
 			}
 		}
+
+		g_free(challenge_data);
 
 #if 0
 		passport_str = g_strdup(msn_url_decode(params[3]));

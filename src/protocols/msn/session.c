@@ -59,6 +59,12 @@ msn_session_destroy(MsnSession *session)
 	if (session->dispatch_server != NULL)
 		g_free(session->dispatch_server);
 
+	if (session->ssl_login_path != NULL)
+		g_free(session->ssl_login_path);
+
+	if (session->ssl_login_host != NULL)
+		g_free(session->ssl_login_host);
+
 	while (session->switches != NULL)
 		msn_switchboard_destroy(session->switches->data);
 
