@@ -4,16 +4,19 @@ EXTRA_DIST = gaim_applet.gnorba gaim_applet.desktop gaim_applet.soundlist \
 
 if GNOMEAPPLET
 
+gnomesysconf = `@GNOME_CONFIG@ --sysconfdir`
+gnomedata    = `@GNOME_CONFIG@ --datadir`
+
 gaim_GNORBA = gaim_applet.gnorba
-gaimgnorbadir  = $(sysconfdir)/CORBA/servers
+gaimgnorbadir  = $(gnomesysconf)/CORBA/servers
 gaimgnorba_DATA = $(gaim_GNORBA)
 
 gaim_DESKTOP = gaim_applet.desktop
-gaimdesktopdir = $(datadir)/applets/Network
+gaimdesktopdir = $(gnomedata)/applets/Network
 gaimdesktop_DATA = $(gaim_DESKTOP)
 
 gaim_SOUND = gaim_applet.soundlist
-gaimsounddir = $(sysconfdir)/sound/events
+gaimsounddir = $(gnomesysconf)/sound/events
 gaimsound_DATA = $(gaim_SOUND)
 
 endif

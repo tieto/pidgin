@@ -19,6 +19,7 @@ Receive.h: au2h Receive.au
 	./au2h Receive.au Receive.h                  
 
 if GNOMEAPPLET
-gaimsoundsdir = $(datadir)/sounds/gaim
+gnomedata = `@GNOME_CONFIG@ --datadir`
+gaimsoundsdir = $(gnomedata)/sounds/gaim
 gaimsounds_DATA = $(EXTRA_DIST)
 endif

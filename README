@@ -33,9 +33,7 @@ The resulting executable is standalone, so you can put it in /usr/bin or
 whatever.
 
 The panel (if you made an applet) requires certain things to be in certain
-places, I recommend running:
-./configure --enable-gnome --sysconfdir=`gnome-config --sysconfdir` \
---datadir=`gnome-config --datadir`
+places, but the Makefile/configure script should figure things out for you.
 
 Send me bug reports.  The web page is http://www.marko.net/gaim and the ftp
 site is ftp://ftp.marko.net/pub/gaim
