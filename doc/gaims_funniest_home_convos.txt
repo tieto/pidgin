@@ -223,3 +223,12 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 (22:48:42) Paco-Paco: yes
 (22:48:47) Paco-Paco: it's hard to use
 (22:48:47) KingAnt: Cool
+
+---
+
+(22:33:31) CopyMe: ok, how do I copy a file and paste into another directory
+(22:33:47) Zilding: cp <filename> <other filename>
+(22:34:04) CopyMe: what does that do
+(22:34:06) CopyMe: copy?
+(22:36:05) Zilding: yeah
+(22:37:27) CopyMe: then how do you paste it?
