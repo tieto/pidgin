@@ -2516,7 +2516,7 @@ msgstr "L'utilisateur est en train d'écrire..."
 
 #: src/gtkconv.c:2461
 msgid "User has typed something and paused"
-msgstr "L'utilisateur a éit quelque chose et s'est arrêté"
+msgstr "L'utilisateur a écrit quelque chose et s'est arrêté"
 
 #. Build the Send As menu
 #: src/gtkconv.c:2564
