@@ -4,7 +4,5 @@ LIBS = $(GTK_LIBS)
 pkgdir = $(libdir)/gaim
 pkg_LTLIBRARIES = libyahoo.la
 
-libyahoo_la_SOURCES = libyahoo.c memtok.c yay.c
-
-EXTRA_DIST = libyahoo-proto.h libyahoo.h memtok.h \
-		AUTHORS COPYING ChangeLog INSTALL NEWS NOTES README
+libyahoo_la_SOURCES = \
+	buddy.c conn.c internal.h login.c misc.c outgoing.c rxhandlers.c yay.c yay.h

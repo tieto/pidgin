@@ -2,7 +2,11 @@ Makefile
 Makefile.in
 .deps
 .libs
-libyahoo.lo
-memtok.lo
-yay.lo
 libyahoo.la
+buddy.lo
+conn.lo
+login.lo
+misc.lo
+outgoing.lo
+rxhandlers.lo
+yay.lo
