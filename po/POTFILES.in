@@ -15,6 +15,7 @@ plugins/raw.c
 plugins/simple.c
 plugins/spellchk.c
 plugins/timestamp.c
+plugins/gaim-remote/remote.c
 plugins/gestures/gestures.c
 plugins/gestures/stroke-draw.c
 plugins/gestures/stroke.c

@@ -3,10 +3,13 @@ Makefile.in
 Makefile.in.in
 ChangeLog
 POTFILES
+POTFILES.in.missing
 Rules-quot
 cat-id-tbl.c
 stamp-cat-id
 *.gmo
+*.mo
+*.pot
 Makevars
 *.sed
 *.header
