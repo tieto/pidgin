@@ -1794,6 +1794,7 @@ void gaim_blist_load() {
 	} else if(g_list_length(gaim_accounts_get_all())) {
 		GMainContext *ctx;
 
+#if 0
 		/* rob wants to inform the user that their buddy lists are
 		 * being converted */
 		msg = g_strdup_printf(_("Gaim is converting your old buddy lists "
@@ -1807,6 +1808,7 @@ void gaim_blist_load() {
 
 		while(g_main_context_pending(ctx))
 			g_main_context_iteration(ctx, FALSE);
+#endif
 
 		/* read in the old lists, then save to the new format */
 		for(accts = gaim_accounts_get_all(); accts; accts = accts->next) {
