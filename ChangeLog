@@ -74,7 +74,6 @@ version 0.76cvs:
 	* --enable-debug no longer breaks compilation when using gtk 2.4,
 	  which also broke garnome.
 	* Tooltips shouldn't crash now (Daniel Atallah)
-	* You can now copy smileys (Gary Kramlich)
 
 version 0.75 (01/09/2004):
 	* New Yahoo! auth method
