@@ -2194,8 +2194,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 
-	gaim_debug_misc("oscar",
-			   "Reg status: %hu\n", info->regstatus);
+	gaim_debug_misc("oscar", "Reg status: %hu\n", info->regstatus);
 
 	if (info->email) {
 		gaim_debug_misc("oscar", "Email: %s\n", info->email);
@@ -5535,7 +5534,7 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	OscarData *od = (OscarData *)gc->proto_data;
-	GaimStatusType *statusType;
+	GaimStatusType *status_type;
 	GaimStatusPrimitive primitive;
 	GaimPresence *presence;
 	const gchar *status_id;
@@ -5544,8 +5543,8 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 	char *msg = NULL;
 	gsize msglen = 0;
 
-	statusType = gaim_status_get_type(status);
-	primitive = gaim_status_type_get_primitive(statusType);
+	status_type = gaim_status_get_type(status);
+	primitive = gaim_status_type_get_primitive(status_type);
 	status_id = gaim_status_get_id(status);
 	presence = gaim_account_get_presence(account);
 
@@ -5566,11 +5565,18 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 							  "fully connected."));
 
 	status_id = gaim_status_get_name(status);
-	if (status_id == NULL) {
+
+	if (primitive == GAIM_STATUS_AVAILABLE) {
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
 		return;
 	}
 	text_html = gaim_strdup_withhtml(status_id);
+
+#if 0
+	/* Set an available message */
+	aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
+	aim_srv_setavailmsg(od->sess, text);
+#endif
 
 	charset = oscar_charset_check(text_html);
 	if (charset == AIM_CHARSET_UNICODE) {
@@ -7143,24 +7149,6 @@ static void oscar_show_find_email(GaimPluginAction *action)
 					   _("Cancel"), NULL, gc);
 }
 
-static void oscar_setavailmsg(GaimConnection *gc, char *text) {
-	OscarData *od = (OscarData *)gc->proto_data;
-
-	aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
-	aim_srv_setavailmsg(od->sess, text);
-}
-
-static void oscar_show_setavailmsg(GaimPluginAction *action)
-{
-	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_request_input(gc, NULL, _("Available Message:"), NULL,
-					   _("I'm doing work and hoping for a distraction--IM me!"), 
-					   TRUE, FALSE, NULL,
-					   _("OK"), G_CALLBACK(oscar_setavailmsg),
-					   _("Cancel"), NULL,
-					   gc);
-}
-
 static void oscar_show_set_info(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
@@ -7242,12 +7230,6 @@ static GList *oscar_actions(GaimPlugin *plugin, gpointer context)
 	if (od->icq) {
 		act = gaim_plugin_action_new(_("Set User Info (URL)..."),
 				oscar_show_set_info_icqurl);
-		m = g_list_append(m, act);
-	}
-
-	if (!od->icq) {
-		act = gaim_plugin_action_new(_("Set Available Message..."),
-				oscar_show_setavailmsg);
 		m = g_list_append(m, act);
 	}
 
@@ -7348,11 +7330,13 @@ recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer 
 	presence = aim_ssi_getpresence(sess->ssi.local);
 
 	if (value) {
-//		presence |= 0x00400000;
+		/* Based on the packet capture I thought it was the first one */
+		/* Stu thinks it's the second one. */
+		/* presence |= 0x00400000; */
 		presence &= ~0x00020000;
 		aim_ssi_setpresence(sess, presence);
 	} else {
-//		presence &= ~0x00400000;
+		/* presence &= ~0x00400000; */
 		presence |= 0x00020000;
 		aim_ssi_setpresence(sess, presence);
 	}
