@@ -320,8 +320,8 @@ static int userlistchange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
  *
  * XXX convert this to use tlvchains 
  */
-faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t flags, const char *msg, int msglen, char *charset)
-{   
+faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t flags, const char *msg, int msglen, const char *encoding, const char *language)
+{
 	int i;
 	aim_frame_t *fr;
 	aim_msgcookie_t *cookie;
@@ -378,10 +378,17 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
 	 */
 	aim_tlvlist_add_raw(&itl, 0x0001, msglen, msg);
 
-        /*
-         * SubTLV: Type 2: Encoding
-         */
-        aim_tlvlist_add_raw(&itl, 0x0002, strlen(charset), charset);
+	/*
+	 * SubTLV: Type 2: Encoding
+	 */
+	if (encoding != NULL)
+		aim_tlvlist_add_raw(&itl, 0x0002, strlen(encoding), encoding);
+
+	/*
+	 * SubTLV: Type 3: Language
+	 */
+	if (language != NULL)
+		aim_tlvlist_add_raw(&itl, 0x0003, strlen(language), language);
 
 	/*
 	 * Type 5: Message block.  Contains more TLVs.
@@ -437,7 +444,7 @@ static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	aim_tlvlist_t *otl;
 	char *msg = NULL;
 	int len;
-	char *charset = NULL;
+	char *encoding = NULL, *language = NULL;
 	aim_msgcookie_t *ck;
 
 	memset(&userinfo, 0, sizeof(aim_userinfo_t));
@@ -511,17 +518,23 @@ static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 			len = aim_tlv_gettlv(itl, 0x0001, 1)->length;
 		}
 
-		/* 
-		 * Type 0x0002: Charset.
+		/*
+		 * Type 0x0002: Encoding.
 		 */	
 		if (aim_tlv_gettlv(itl, 0x0002, 1))
-			charset = aim_tlv_getstr(itl, 0x0002, 1);
+			encoding = aim_tlv_getstr(itl, 0x0002, 1);
+
+		/*
+		 * Type 0x0003: Language.
+		 */	
+		if (aim_tlv_gettlv(itl, 0x0003, 1))
+			language = aim_tlv_getstr(itl, 0x0003, 1);
 
 		aim_tlvlist_free(&itl); 
 	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, &userinfo, len, msg, charset);
+		ret = userfunc(sess, rx, &userinfo, len, msg, encoding, language);
 
 	aim_info_free(&userinfo);
 	free(msg);

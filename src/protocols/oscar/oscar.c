@@ -380,7 +380,7 @@ static fu32_t oscar_encoding_parse(const char *encoding)
 	}
 }
 
-gchar *oscar_encoding_to_utf8(const char *encoding, char *text, int textlen)
+gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 {
 	gchar *utf8 = NULL;
 	int flags = oscar_encoding_parse(encoding);
@@ -5448,7 +5448,7 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 	len = strlen(buf);
 
 	encoding = oscar_encoding_check(buf);
-	if (encoding == AIM_IMFLAGS_UNICODE) {
+	if (encoding & AIM_IMFLAGS_UNICODE) {
 		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sending Unicode Chat\n");
 		charset = "unicode-2-0";
 		buf2 = g_convert(buf, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
@@ -5497,7 +5497,7 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 		return -E2BIG;
 	}
 
-	aim_chat_send_im(od->sess, c->conn, 0, buf, len, charset);
+	aim_chat_send_im(od->sess, c->conn, 0, buf, len, charset, "en");
 	g_free(buf);
 	return 0;
 }
@@ -5878,6 +5878,7 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GaimConvImFlags imflags = 0;
+	gchar *utf8;
 	GString *newmsg = g_string_new("");
 	GSList *images = NULL;
 	va_list ap;
@@ -5934,10 +5935,18 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			if (data + (size = atoi(datasize)) <= msgend)
 				imgid = gaim_imgstore_add(data, size, src);
 
+			/*
+			 * XXX - The code below contains some calls to oscar_encoding_to_utf8
+			 * The hardcoded "us-ascii" value REALLY needs to be removed.
+			 */
 			/* if we have a stored image... */
 			if (imgid) {
 				/* append the message up to the tag */
-				newmsg = g_string_append_len(newmsg, tmp, start - tmp);
+				utf8 = oscar_encoding_to_utf8("us-ascii", tmp, start - tmp);
+				if (utf8 != NULL) {
+					newmsg = g_string_append(newmsg, utf8);
+					g_free(utf8);
+				}
 
 				/* write the new image tag */
 				g_string_append_printf(newmsg, "<IMG ID=\"%d\">", imgid);
@@ -5946,7 +5955,11 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 				images = g_slist_append(images, GINT_TO_POINTER(imgid));
 			} else {
 				/* otherwise, copy up to the end of the tag */
-				newmsg = g_string_append_len(newmsg, tmp, (end + 1) - tmp);
+				utf8 = oscar_encoding_to_utf8("us-ascii", tmp, (end + 1) - tmp);
+				if (utf8 != NULL) {
+					newmsg = g_string_append(newmsg, utf8);
+					g_free(utf8);
+				}
 			}
 
 			/* clear the attribute list */

@@ -1091,7 +1091,8 @@ faim_export int aim_ssi_delicon(aim_session_t *sess)
 }
 
 /**
- * Stores your setting for whether you should show up as idle or not.
+ * Stores your setting for various SSI settings.  Whether you 
+ * should show up as idle or not, etc.
  *
  * @param sess The oscar session.
  * @param presence I think it's a bitmask, but I only know what one of the bits is:
