@@ -24,6 +24,11 @@
 #include "stock.h"
 #include <gtk/gtk.h>
 
+static void *gaim_gtk_notify_emails(size_t count, const char **subjects,
+									const char **froms, const char **tos,
+									const char **urls, GCallback cb,
+									void *user_data);
+
 static void *
 gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 						const char *primary, const char *secondary,
@@ -98,7 +103,7 @@ gaim_gtk_notify_email(const char *subject, const char *from,
 					  const char *to, const char *url,
 					  GCallback cb, void *user_data)
 {
-	return NULL;
+	return gaim_gtk_notify_emails(1, &subject, &from, &to, &url, cb, user_data);
 }
 
 static void *

@@ -65,7 +65,7 @@ typedef struct
 						   const char **urls, GCallback cb,
 						   void *user_data);
 
-	void (*close_notify)(GaimNotifyType type, void *uihandle);
+	void (*close_notify)(GaimNotifyType type, void *ui_handle);
 
 } GaimNotifyUiOps;
 
@@ -138,10 +138,10 @@ void *gaim_notify_emails(void *handle, size_t count,
  * This should be used only by the UI operation functions and part of the
  * core.
  *
- * @param type     The notification type.
- * @param uihandle The notification UI handle.
+ * @param type      The notification type.
+ * @param ui_handle The notification UI handle.
  */
-void gaim_notify_close(GaimNotifyType type, void *uihandle);
+void gaim_notify_close(GaimNotifyType type, void *ui_handle);
 
 /**
  * Closes all notifications registered with the specified handle.

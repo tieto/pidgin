@@ -29,7 +29,7 @@ typedef struct
 {
 	GaimNotifyType type;
 	void *handle;
-	void *ptr;
+	void *ui_handle;
 
 } GaimNotifyInfo;
 
@@ -47,15 +47,15 @@ gaim_notify_message(void *handle, GaimNotifyType type,
 	if (ops != NULL && ops->notify_message != NULL) {
 		GaimNotifyInfo *info;
 
-		info         = g_new0(GaimNotifyInfo, 1);
-		info->type   = GAIM_NOTIFY_MESSAGE;
-		info->handle = handle;
-		info->ptr    = ops->notify_message(type, title, primary, secondary,
-										   cb, user_data);
+		info            = g_new0(GaimNotifyInfo, 1);
+		info->type      = GAIM_NOTIFY_MESSAGE;
+		info->handle    = handle;
+		info->ui_handle = ops->notify_message(type, title, primary,
+											  secondary, cb, user_data);
 
 		handles = g_list_append(handles, info);
 
-		return info->ptr;
+		return info->ui_handle;
 	}
 
 	return NULL;
@@ -73,15 +73,15 @@ gaim_notify_email(void *handle, const char *subject, const char *from,
 	if (ops != NULL && ops->notify_email != NULL) {
 		GaimNotifyInfo *info;
 
-		info         = g_new0(GaimNotifyInfo, 1);
-		info->type   = GAIM_NOTIFY_EMAIL;
-		info->handle = handle;
-		info->ptr    = ops->notify_email(subject, from, to, url, cb,
-										 user_data);
+		info            = g_new0(GaimNotifyInfo, 1);
+		info->type      = GAIM_NOTIFY_EMAIL;
+		info->handle    = handle;
+		info->ui_handle = ops->notify_email(subject, from, to, url, cb,
+											user_data);
 
 		handles = g_list_append(handles, info);
 
-		return info->ptr;
+		return info->ui_handle;
 	}
 
 	return NULL;
@@ -101,38 +101,38 @@ gaim_notify_emails(void *handle, size_t count, const char **subjects,
 	if (ops != NULL && ops->notify_emails != NULL) {
 		GaimNotifyInfo *info;
 
-		info         = g_new0(GaimNotifyInfo, 1);
-		info->type   = GAIM_NOTIFY_EMAILS;
-		info->handle = handle;
-		info->ptr    = ops->notify_emails(count, subjects, froms, tos, urls,
-										  cb, user_data);
+		info            = g_new0(GaimNotifyInfo, 1);
+		info->type      = GAIM_NOTIFY_EMAILS;
+		info->handle    = handle;
+		info->ui_handle = ops->notify_emails(count, subjects, froms, tos,
+											 urls, cb, user_data);
 
 		handles = g_list_append(handles, info);
 
-		return info->ptr;
+		return info->ui_handle;
 	}
 
 	return NULL;
 }
 
 void
-gaim_notify_close(GaimNotifyType type, void *ptr)
+gaim_notify_close(GaimNotifyType type, void *ui_handle)
 {
 	GList *l;
 	GaimNotifyUiOps *ops;
 
-	g_return_if_fail(ptr != NULL);
+	g_return_if_fail(ui_handle != NULL);
 
 	ops = gaim_get_notify_ui_ops();
 
 	for (l = handles; l != NULL; l = l->next) {
 		GaimNotifyInfo *info = l->data;
 
-		if (info->ptr == ptr) {
+		if (info->ui_handle == ui_handle) {
 			handles = g_list_remove(handles, info);
 
 			if (ops != NULL && ops->close_notify != NULL)
-				ops->close_notify(info->type, ptr);
+				ops->close_notify(info->type, ui_handle);
 
 			g_free(info);
 
@@ -160,7 +160,7 @@ gaim_notify_close_with_handle(void *handle)
 			handles = g_list_remove(handles, info);
 
 			if (ops != NULL && ops->close_notify != NULL)
-				ops->close_notify(info->type, info->ptr);
+				ops->close_notify(info->type, info->ui_handle);
 
 			g_free(info);
 		}
