@@ -63,12 +63,13 @@ static struct StockIcon
 	{ GAIM_STOCK_LINK,            "buttons", "insert-link-small.png"    },
 	{ GAIM_STOCK_LOGO,            "gaim",    "logo.png"                 },
 	{ GAIM_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
+	{ GAIM_STOCK_PAUSE,           "buttons", "pause.png"                },
 	{ GAIM_STOCK_PRIVACY,         NULL,      GTK_STOCK_PROPERTIES       },
+	{ GAIM_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_SEND,            "buttons", "send-im.png"              },
 	{ GAIM_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },
 	{ GAIM_STOCK_SIGN_OFF,        NULL,      GTK_STOCK_CLOSE            },
 	{ GAIM_STOCK_SMILEY,          "buttons", "insert-smiley-small.png"  },
-	{ GAIM_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_TEXT_BIGGER,     "buttons", "text_bigger.png"          },
 	{ GAIM_STOCK_TEXT_NORMAL,     "buttons", "text_normal.png"          },
 	{ GAIM_STOCK_TEXT_SMALLER,    "buttons", "text_smaller.png"         },
@@ -81,11 +82,14 @@ static struct StockIcon
 const GtkStockItem stock_items[] =
 {
 	{ GAIM_STOCK_MODIFY,    N_("_Modify"),    0, 0, NULL },
-	{ GAIM_STOCK_OPEN_MAIL, N_("_Open Mail"), 0, 0, NULL }
+	{ GAIM_STOCK_OPEN_MAIL, N_("_Open Mail"), 0, 0, NULL },
+	{ GAIM_STOCK_PAUSE,     N_("_Pause"),     0, 0, NULL }
 };
 
 static gint stock_icon_count = sizeof(stock_icons) / sizeof(*stock_icons);
 static gint stock_item_count = sizeof(stock_items) / sizeof(*stock_items);
+
+static gboolean stock_inited = FALSE;
 
 static gchar *
 find_file(const char *dir, const char *base)
@@ -112,11 +116,14 @@ find_file(const char *dir, const char *base)
 }
 
 void
-setup_stock()
+gaim_gtk_stock_init(void)
 {
 	GtkIconFactory *icon_factory;
 	int i;
 	GtkWidget *win;
+
+	if (stock_inited)
+		return;
 
 	/* Setup the icon factory. */
 	icon_factory = gtk_icon_factory_new();
@@ -165,4 +172,6 @@ setup_stock()
 
 	/* Register the stock items. */
 	gtk_stock_add_static(stock_items, stock_item_count);
+
+	stock_inited = TRUE;
 }

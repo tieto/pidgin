@@ -23,6 +23,7 @@ EXTRA_DIST = \
 		msgunread.png			\
 		offline.png			\
 		online.png			\
+		pause.png                   \
 		send-im.png			\
 		tb_drag_arrow_down.xpm		\
 		tb_drag_arrow_left.xpm		\
@@ -35,7 +36,7 @@ EXTRA_DIST = \
 		typing.png
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
-gaimbuttonpix_DATA = about_menu.png accounts.png change-bgcolor-small.png change-fgcolor-small.png edit.png insert-image-small.png insert-link-small.png insert-smiley-small.png text_bigger.png text_normal.png text_smaller.png send-im.png
+gaimbuttonpix_DATA = about_menu.png accounts.png change-bgcolor-small.png change-fgcolor-small.png edit.png insert-image-small.png insert-link-small.png insert-smiley-small.png pause.png text_bigger.png text_normal.png text_smaller.png send-im.png
 
 gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
 gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png gaim_cool.png gaim_auth.png

@@ -59,12 +59,13 @@
 #define GAIM_STOCK_LINK            "gaim-link"
 #define GAIM_STOCK_LOGO            "gaim-logo"
 #define GAIM_STOCK_MODIFY          "gaim-modify"
+#define GAIM_STOCK_OPEN_MAIL       "gaim-stock-open-mail"
+#define GAIM_STOCK_PAUSE           "gaim-pause"
 #define GAIM_STOCK_PRIVACY         "gaim-privacy"
 #define GAIM_STOCK_SEND            "gaim-send"
 #define GAIM_STOCK_SIGN_OFF        "gaim-sign-off"
 #define GAIM_STOCK_SIGN_ON         "gaim-sign-on"
 #define GAIM_STOCK_SMILEY          "gaim-smiley"
-#define GAIM_STOCK_OPEN_MAIL       "gaim-stock-open-mail"
 #define GAIM_STOCK_TEXT_BIGGER     "gaim-text-bigger"
 #define GAIM_STOCK_TEXT_NORMAL     "gaim-text-normal"
 #define GAIM_STOCK_TEXT_SMALLER    "gaim-text-smaller"
@@ -82,6 +83,6 @@
 /**
  * Sets up the gaim stock repository.
  */
-void setup_stock(void);
+void gaim_gtk_stock_init(void);
 
 #endif /* _STOCK_H_ */

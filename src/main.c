@@ -524,7 +524,6 @@ static int ui_main()
 	}
 
 	gaim_gtk_blist_setup_sort_methods();
-	setup_stock();
 
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
@@ -836,6 +835,9 @@ int main(int argc, char *argv[])
 		printf("Gaim %s\n",VERSION);
 		return 0;
 	}
+
+	/* This has to be done before the debug stuff. */
+	gaim_gtk_stock_init();
 
 	gaim_prefs_init();
 	gaim_gtk_prefs_init();
