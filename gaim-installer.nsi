@@ -79,7 +79,7 @@ Section "" ; (default section)
   StrCmp $R0 "" no_gtk have_gtk
   no_gtk:
     ; Instruct user to install GTK+ runtime first.
-    MessageBox MB_OK "Could not find GTK+ runtime environment. Visit http://www.dropline.net/gtk/ to download and install GTK+ v2.2.1" IDOK
+    MessageBox MB_OK "Could not find GTK+ runtime environment. Visit http://www.dropline.net/gtk/ to download and install GTK+ v2.2.1.1" IDOK
     Quit
   have_gtk:
     ; Check GTK+ version
