@@ -3608,7 +3608,7 @@ static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	serv_got_eviled(gc, (userinfo && userinfo->sn[0]) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
+	serv_got_eviled(gc, (userinfo && userinfo->sn) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
 
 	return 1;
 }
