@@ -353,10 +353,6 @@ extern void rename_chat_buddy(struct gaim_conversation *, char *, char *);
 extern void remove_chat_buddy(struct gaim_conversation *, char *, char *);
 #endif
 
-/* Functions in conversation.c */
-extern void set_anim();
-extern void set_blist_tab();
-
 /* Functions in dialogs.c */
 extern void g_show_info_text(struct gaim_connection *, char *, int, char *, ...);
 extern GtkWidget *do_error_dialog(const char *, const char *, int type);

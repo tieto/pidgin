@@ -101,103 +101,6 @@ struct window_size {
 	int entry_height;
 };
 
-/* struct buddy_chat went away and got merged with this. */
-#if 0
-struct gaim_conversation {
-	struct gaim_connection *gc;
-
-	/* stuff used for both IM and chat */
-	GtkWidget *window;
-	char name[80];
-	GtkWidget *toolbar;
-	GtkWidget *text;
-/*	GtkWidget *entry; */
-	GtkWidget *italic;
-	GtkWidget *bold;
-	GtkWidget *underline;
-	GtkWidget *fgcolorbtn;
-	GtkWidget *bgcolorbtn;
-	GtkWidget *link;
-/*	GtkWidget *sendfile_btn; */
-	GtkWidget *wood;
-	GtkWidget *viewer_button;
-	GtkWidget *log_button;
-	GtkWidget *strike;
-	GtkWidget *font;
-	GtkWidget *smiley;
-	GtkWidget *imagebtn;
-	GtkWidget *image_menubtn;
-	GtkWidget *speaker;
-	GtkWidget *speaker_p;
-	GtkWidget *fg_color_dialog;
-	GtkWidget *bg_color_dialog;
-	GtkWidget *font_dialog;
-	GtkWidget *smiley_dialog;
-	GtkWidget *link_dialog;
-	GtkWidget *log_dialog;
-	GtkSizeGroup *sg;
-	int makesound;
-	char fontface[128];
-	int hasfont;
-	GdkColor bgcol;
-	int hasbg;
-	GdkColor fgcol;
-	int hasfg;
-
-	GList *send_history;
-	GString *history;
-
-	GtkWidget *send;
-
-	/* stuff used just for IM */
-	GtkWidget *lbox;
-	GtkWidget *bbox;
-	GtkWidget *sw;
-	GtkWidget *info;
-	GtkWidget *warn;
-	GtkWidget *block;
-	GtkWidget *add;
-	GtkWidget *sep1;
-	GtkWidget *sep2;
-	GtkWidget *menu;
-	GtkWidget *check;
-	GtkWidget *progress;
-	GSList    *images;  /* A list of filenames to embed */
-	gint unseen;
-	int typing_state;
-	guint typing_timeout;
-	time_t type_again;
-	guint type_again_timeout;
-
-	/* stuff used just for chat */
-        GList *in_room;
-        GList *ignored;
-	char *topic;
-        int id;
-	GtkWidget *count;
-	GtkWidget *list;
-	GtkWidget *whisper; 
-	GtkWidget *invite;
-	GtkWidget *close; 
-	GtkWidget *topic_text;
-
-	/* something to distinguish */
-	gboolean is_chat;
-
-	/* buddy icon stuff. sigh. */
-	GtkWidget *icon;
-	GdkPixbufAnimation *anim;
-	guint32 icon_timer;
-	GdkPixbufAnimationIter *iter;
-	GtkWidget *save_icon;
-
-	GtkTextBuffer *entry_buffer;
-	GtkWidget     *entry;
-
-	GtkWidget *tab_label;
-};
-#endif
-
 struct log_conversation {
 	char name[80];
 	char filename[512];
@@ -254,18 +157,6 @@ extern int auto_away;
 extern GtkWidget *awaymenu;
 extern GtkWidget *awayqueue;
 extern GtkListStore *awayqueuestore;
-
-/* Globals in buddy_chat.c */
-#if 0
-extern GList *chats;	/* list of all chats (only use for tabbing!) */
-extern GtkWidget *all_chats;
-extern GtkWidget *joinchat;
-#endif
-
-/* Globals in conversation.c */
-#if 0
-extern GtkWidget *all_convos;
-#endif
 
 /* Globals in dialog.c */
 extern char fontface[128];
@@ -348,56 +239,6 @@ extern GtkWidget *gaim_new_item(GtkWidget *, const char *);
 extern void update_idle_times();
 extern void build_imchat_box(gboolean);
 extern void show_xfer_dialog();
-
-/* Functions in buddy_chat.c */
-#if 0
-extern void chat_write(struct gaim_conversation *, char *, int, char *, time_t);
-extern void delete_chat(struct gaim_conversation *);
-extern void update_chat_button_pix();
-extern void update_im_button_pix();
-extern void update_chat_tabs();
-extern void update_im_tabs();
-extern void do_join_chat();
-#endif
-
-/* Functions in conversation.c */
-#if 0
-extern void update_convo_add_button(struct gaim_conversation *);
-extern void raise_convo_tab(struct gaim_conversation *);
-extern void set_convo_title(struct gaim_conversation *);
-extern void show_conv(struct gaim_conversation *);
-void set_convo_name(struct gaim_conversation *c, const char *nname);
-extern struct gaim_conversation *new_conversation(char *);
-extern void delete_conversation(struct gaim_conversation *);
-extern void surround(struct gaim_conversation *, char *, char *);
-extern int is_logging(char *);
-extern void set_state_lock(int);
-extern void remove_tags(struct gaim_conversation *, char *);
-extern void update_transparency();
-extern void update_font_buttons();
-extern void set_font_face(char *, struct gaim_conversation *);
-extern void redo_convo_menus();
-extern void convo_menu_remove(struct gaim_connection *);
-extern void remove_icon_data(struct gaim_connection *);
-extern void got_new_icon(struct gaim_connection *, char *);
-extern void toggle_spellchk();
-extern void set_convo_gc(struct gaim_conversation *, struct gaim_connection *);
-extern void update_buttons_by_protocol(struct gaim_conversation *);
-extern void toggle_fg_color(GtkWidget *, struct gaim_conversation *);
-extern void toggle_smileys();
-extern void toggle_timestamps();
-extern void update_pixmaps();
-extern void im_tabize();
-extern void chat_tabize();
-extern void convo_tabize();
-extern void update_convo_color();
-extern void update_convo_font();
-extern void set_hide_icons();
-extern void set_convo_titles();
-extern void update_progress(struct gaim_conversation *, float);
-extern void update_convo_status(struct gaim_conversation *);
-extern void set_anim();
-#endif
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);
