@@ -347,10 +347,10 @@ GtkWidget *im_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = make_frame (ret, _("Window"));
-	widge = gaim_dropdown(vbox, "Show _buttons as:", &im_options, OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM,
-		      "Pictures", OPT_IM_BUTTON_XPM,
-		      "Text", OPT_IM_BUTTON_TEXT,
-		      "Pictures and text", OPT_IM_BUTTON_XPM | OPT_IM_BUTTON_TEXT, NULL);
+	widge = gaim_dropdown(vbox, _("Show _buttons as:"), &im_options, OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM,
+		      _("Pictures"), OPT_IM_BUTTON_XPM,
+		      _("Text"), OPT_IM_BUTTON_TEXT,
+		      _("Pictures and text"), OPT_IM_BUTTON_XPM | OPT_IM_BUTTON_TEXT, NULL);
 	gtk_size_group_add_widget(sg, widge);
 	gtk_misc_set_alignment(GTK_MISC(widge), 0, 0);
 	gaim_labeled_spin_button(vbox, _("New window _width:"), &conv_size.width, 25, 9999, sg);
@@ -389,10 +389,10 @@ GtkWidget *chat_page() {
 	sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = make_frame (ret, _("Window"));
-	dd = gaim_dropdown(vbox, "Show _buttons as:", &chat_options, OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM,
-			   "Pictures", OPT_CHAT_BUTTON_XPM,
-			   "Text", OPT_CHAT_BUTTON_TEXT,
-			   "Pictures and text", OPT_CHAT_BUTTON_XPM | OPT_CHAT_BUTTON_TEXT, NULL);
+	dd = gaim_dropdown(vbox, _("Show _buttons as:"), &chat_options, OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM,
+			   _("Pictures"), OPT_CHAT_BUTTON_XPM,
+			   _("Text"), OPT_CHAT_BUTTON_TEXT,
+			   _("Pictures and text"), OPT_CHAT_BUTTON_XPM | OPT_CHAT_BUTTON_TEXT, NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
 	gaim_labeled_spin_button(vbox, _("New window _width:"), &buddy_chat_size.width, 25, 9999, sg);
@@ -423,21 +423,21 @@ GtkWidget *tab_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = make_frame (ret, _("IM Tabs"));
-	dd = gaim_dropdown(vbox, "Tab _placement:", &im_options, OPT_IM_SIDE_TAB | OPT_IM_BR_TAB,
-		      "Top", 0,
-		      "Bottom", OPT_IM_BR_TAB,
-		      "Left", OPT_IM_SIDE_TAB,
-		      "Right", OPT_IM_BR_TAB | OPT_IM_SIDE_TAB, NULL);
+	dd = gaim_dropdown(vbox, _("Tab _placement:"), &im_options, OPT_IM_SIDE_TAB | OPT_IM_BR_TAB,
+		      _("Top"), 0,
+		      _("Bottom"), OPT_IM_BR_TAB,
+		      _("Left"), OPT_IM_SIDE_TAB,
+		      _("Right"), OPT_IM_BR_TAB | OPT_IM_SIDE_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gaim_button(_("Show all _instant messages in one tabbed\nwindow"), &im_options, OPT_IM_ONE_WINDOW, vbox);
 	gaim_button(_("Show a_liases in tabs/titles"), &im_options, OPT_IM_ALIAS_TAB, vbox);
 
 	vbox = make_frame (ret, _("Chat Tabs"));
-	dd = gaim_dropdown(vbox, "Tab _placement:", &chat_options, OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB,
-			   "Top", 0,
-			   "Bottom", OPT_CHAT_BR_TAB,
-			   "Left", OPT_CHAT_SIDE_TAB,
-			   "Right", OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB, NULL);
+	dd = gaim_dropdown(vbox, _("Tab _placement:"), &chat_options, OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB,
+			   _("Top"), 0,
+			   _("Bottom"), OPT_CHAT_BR_TAB,
+			   _("Left"), OPT_CHAT_SIDE_TAB,
+			   _("Right"), OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gaim_button(_("Show all c_hats in one tabbed window"), &chat_options, OPT_CHAT_ONE_WINDOW,
 		    vbox);
@@ -446,9 +446,9 @@ GtkWidget *tab_page() {
 	gaim_button(_("Show IMs and chats in _same tabbed\nwindow."), &convo_options, OPT_CONVO_COMBINE, vbox);
 
 	vbox = make_frame (ret, _("Buddy List Tabs"));
-	dd = gaim_dropdown(vbox, "Tab _placement:", &blist_options, OPT_BLIST_BOTTOM_TAB,
-		      "Top", 0,
-		      "Bottom", OPT_BLIST_BOTTOM_TAB, NULL);
+	dd = gaim_dropdown(vbox, _("Tab _placement:"), &blist_options, OPT_BLIST_BOTTOM_TAB,
+		      _("Top"), 0,
+		      _("Bottom"), OPT_BLIST_BOTTOM_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
 
 	gtk_widget_show_all(ret);
@@ -467,8 +467,8 @@ GtkWidget *proxy_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Proxy Type"));
-	gaim_dropdown(vbox, "Proxy _type:", &proxytype, -1,
-		      "No proxy", PROXY_NONE,
+	gaim_dropdown(vbox, _("Proxy _type:"), &proxytype, -1,
+		      _("No proxy"), PROXY_NONE,
 		      "SOCKS 4", PROXY_SOCKS4,
 		      "SOCKS 5", PROXY_SOCKS5,
 		      "HTTP", PROXY_HTTP, NULL);
@@ -573,13 +573,13 @@ GtkWidget *browser_page() {
 #ifndef _WIN32
 	/* Registered default browser is used by Windows */
 	vbox = make_frame (ret, _("Browser Selection"));
-	label = gaim_dropdown(vbox, "_Browser", &web_browser, -1,
+	label = gaim_dropdown(vbox, _("_Browser"), &web_browser, -1,
 			      "Netscape", BROWSER_NETSCAPE,
 			      "Konqueror", BROWSER_KONQ,
 			      "Mozilla", BROWSER_MOZILLA,
-			      "Manual", BROWSER_MANUAL,
+			      _("Manual"), BROWSER_MANUAL,
 /* fixme: GNOME binary helper
-			      "GNOME URL Handler", BROWSER_GNOME, */
+			      _("GNOME URL Handler"), BROWSER_GNOME, */
 			      "Galeon", BROWSER_GALEON,
 			      "Opera", BROWSER_OPERA, NULL);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
@@ -668,10 +668,10 @@ GtkWidget *sound_page() {
 
 #ifndef _WIN32
 	vbox = make_frame (ret, _("Sound Method"));
-	dd = gaim_dropdown(vbox, "_Method", &sound_options, OPT_SOUND_BEEP |
+	dd = gaim_dropdown(vbox, _("_Method"), &sound_options, OPT_SOUND_BEEP |
 		      OPT_SOUND_ESD | OPT_SOUND_ARTSC | OPT_SOUND_NAS | OPT_SOUND_NORMAL |
 		      OPT_SOUND_CMD,
-		      "Console beep", OPT_SOUND_BEEP,
+		      _("Console beep"), OPT_SOUND_BEEP,
 #ifdef ESD_SOUND
 		      "ESD", OPT_SOUND_ESD,
 #endif
@@ -681,8 +681,8 @@ GtkWidget *sound_page() {
 #ifdef NAS_SOUND
 		      "NAS", OPT_SOUND_NAS,
 #endif
-		      "Internal", OPT_SOUND_NORMAL,
-		      "Command", OPT_SOUND_CMD, NULL);
+		      _("Internal"), OPT_SOUND_NORMAL,
+		      _("Command"), OPT_SOUND_CMD, NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
 
@@ -1173,7 +1173,7 @@ GtkWidget *sound_events_page() {
 		gtk_list_store_append (event_store, &iter);
 		gtk_list_store_set(event_store, &iter,
 				   0, sound_options & sounds[j].opt,
-				   1, sounds[j].label,
+				   1, gettext(sounds[j].label),
 				   2, j, -1);
 	}
 

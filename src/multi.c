@@ -1254,7 +1254,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(del_acct), NULL);
 
-	button = gaim_pixbuf_button_from_stock("_Modify", GTK_STOCK_PREFERENCES,
+	button = gaim_pixbuf_button_from_stock(_("_Modify"), GTK_STOCK_PREFERENCES,
 										   GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
@@ -1454,7 +1454,7 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 	
 	meter->progress = gtk_progress_bar_new ();
 	
-	meter->button = gtk_button_new_with_label ("Cancel");
+	meter->button = gtk_button_new_with_label (_("Cancel"));
 	gtk_signal_connect (GTK_OBJECT (meter->button), "clicked", GTK_SIGNAL_FUNC (cancel_signon), meter);
 		
 	gtk_table_attach (GTK_TABLE (table), graphic, 0, 1, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -1514,8 +1514,8 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		gtk_table_set_row_spacings (GTK_TABLE (meter_win->table), 5);
 		gtk_table_set_col_spacings (GTK_TABLE (meter_win->table), 10);
 	
-		cancel_button = gtk_button_new_with_label ("Cancel All");
-    	gtk_signal_connect_object (GTK_OBJECT (cancel_button), "clicked", GTK_SIGNAL_FUNC (loop_cancel), NULL);
+		cancel_button = gtk_button_new_with_label (_("Cancel All"));
+		gtk_signal_connect_object (GTK_OBJECT (cancel_button), "clicked", GTK_SIGNAL_FUNC (loop_cancel), NULL);
 		gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (cancel_button), FALSE, FALSE, 0);
 	
 		gtk_signal_connect (GTK_OBJECT (meter_win->window), "delete_event", GTK_SIGNAL_FUNC (meter_destroy), NULL);
