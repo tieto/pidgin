@@ -6,6 +6,7 @@ version 0.55:
 	* Various sound cleanups (Thanks Robert McQueen)
 	* Login process shown in single window (Thanks Michael 
 	  Golden)
+	* Server side buddy lists for ICQ again  
 	
 version 0.54 (03/14/2002):
 	* Compiles without GdkPixbuf again

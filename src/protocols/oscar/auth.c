@@ -304,8 +304,8 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
-	if (0)
-		aim_addtlvtochain8(&tl, 0x004a, 0x01);
+	
+	aim_addtlvtochain8(&tl, 0x004a, 0x01);
 
 	aim_writetlvchain(&fr->data, &tl);
 
