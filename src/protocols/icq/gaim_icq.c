@@ -15,6 +15,8 @@
 
 #define USEROPT_NICK 0
 
+static struct prpl *my_protocol = NULL;
+
 struct icq_data {
 	icq_Link *link;
 	int cur_status;
@@ -254,29 +256,34 @@ static void icq_den_auth(struct icq_auth *iq)
 
 static void icq_add_after_auth(struct icq_auth *iq)
 {
-	char uin[16];
-	g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
-	show_add_buddy(iq->gc, uin, NULL, iq->nick);
+	if (g_slist_find(connections, iq->gc)) {
+		char uin[16];
+		g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
+		show_add_buddy(iq->gc, uin, NULL, iq->nick);
+	}
 	icq_den_auth(iq);
 }
 
 static void icq_acc_auth(struct icq_auth *iq)
 {
-	char msg[1024];
-	char uin[16];
-	struct icq_auth *iqnew;
-	
-	icq_SendAuthMsg(iq->link, iq->uin);
+	if (g_slist_find(connections, iq->gc)) {
+		char msg[1024];
+		char uin[16];
+		struct icq_auth *iqnew;
 
-	g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
-	if (find_buddy(iq->gc, uin))
-		return;
+		icq_SendAuthMsg(iq->link, iq->uin);
 
-	iqnew = g_memdup(iq, sizeof(struct icq_auth));
-	iqnew->nick = g_strdup(iq->nick);
+		g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
+		if (find_buddy(iq->gc, uin))
+			return;
 
-	g_snprintf(msg, sizeof(msg), "Add %ld to your buddy list?", iq->uin);
-	do_ask_dialog(msg, NULL, iqnew, _("Add"), icq_add_after_auth, _("Cancel"), icq_den_auth, FALSE);
+		iqnew = g_memdup(iq, sizeof(struct icq_auth));
+		iqnew->nick = g_strdup(iq->nick);
+
+		g_snprintf(msg, sizeof(msg), "Add %ld to your buddy list?", iq->uin);
+		do_ask_dialog(msg, NULL, iqnew, _("Add"), icq_add_after_auth, _("Cancel"), icq_den_auth, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+	}
+
 	icq_den_auth(iq);
 }
 
@@ -294,7 +301,7 @@ static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, 
 	g_snprintf(msg, sizeof(msg), "The user %s (%s%s%s%s%s) wants you to authorize them.",
 			nick, first ? first : "", first && last ? " " : "", last ? last : "",
 			(first || last) && email ? ", " : "", email ? email : "");
-	do_ask_dialog(msg, NULL, iq, _("Authorize"), icq_acc_auth, _("Deny"), icq_den_auth, FALSE);
+	do_ask_dialog(msg, NULL, iq, _("Authorize"), icq_acc_auth, _("Deny"), icq_den_auth, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 }
 
 static void icq_login(struct aim_user *user) {
@@ -487,8 +494,6 @@ static GList *icq_away_states(struct gaim_connection *gc) {
 
 	return m;
 }
-
-static struct prpl *my_protocol = NULL;
 
 void icq_init(struct prpl *ret) {
 	struct proto_user_opt *puo;

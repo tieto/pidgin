@@ -58,6 +58,8 @@
 #define USEROPT_PORT      1
 #define USEROPT_CHARSET   2
 
+static struct prpl *my_protocol = NULL;
+
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
@@ -1181,12 +1183,16 @@ handle_privmsg(struct gaim_connection *gc, char *to, char *nick, char *msg)
 
 static void 
 dcc_chat_init(struct dcc_chat *data) {
-	proxy_connect(data->ip_address, data->port, dcc_chat_callback, data);
+	if (g_slist_find(connections, data->gc)) {
+		proxy_connect(data->ip_address, data->port, dcc_chat_callback, data);
+	} else {
+		g_free(data);
+	}
 }
 
 static void 
 dcc_chat_cancel(struct dcc_chat *data){
-	if (find_dcc_chat(data->gc, data->nick)) {
+	if (g_slist_find(connections, data->gc) && find_dcc_chat(data->gc, data->nick)) {
 		dcc_chat_list = g_slist_remove(dcc_chat_list, data); 
 		gaim_input_remove (data->inpa);
 		close (data->fd);
@@ -1255,7 +1261,7 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		dccchat->port=atoi(chat_args[4]);		
 		g_snprintf(dccchat->nick, sizeof(dccchat->nick), nick);	
 		g_snprintf(ask, sizeof(ask), _("%s would like to establish a DCC chat"), nick);
-		do_ask_dialog(ask, _("This requires a direct connection to be established between the two computers.  Messages sent will not pass through the IRC server"), dccchat, _("Connect"), dcc_chat_init, _("Cancel"), dcc_chat_cancel, FALSE);
+		do_ask_dialog(ask, _("This requires a direct connection to be established between the two computers.  Messages sent will not pass through the IRC server"), dccchat, _("Connect"), dcc_chat_init, _("Cancel"), dcc_chat_cancel, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 	}
 
 
@@ -2657,8 +2663,6 @@ irc_buddy_menu(struct gaim_connection *gc, char *who)
 
 	return m;
 }
-
-static struct prpl *my_protocol = NULL;
 
 G_MODULE_EXPORT void 
 irc_init(struct prpl *ret)

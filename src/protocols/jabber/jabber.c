@@ -67,11 +67,15 @@
 #include "pixmaps/protocols/jabber/available-dnd.xpm"
 #include "pixmaps/protocols/jabber/available-error.xpm"
 
+static struct prpl *my_protocol = NULL;
+
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
 /* The priv member of gjconn's is a gaim_connection for now. */
 #define GJ_GC(x) ((struct gaim_connection *)(x)->priv)
+/* Confused? That makes three of us. -Robot101 */
+#define GC_GJ(x) ((gjconn)((struct jabber_data *)(x)->proto_data)->gjc)
 
 #define IQID_AUTH "__AUTH__"
 
@@ -1580,7 +1584,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
  * Used only by Jabber accept/deny add stuff just below
  */
 struct jabber_add_permit {
-	gjconn gjc;
+	struct gaim_connection *gc;
 	gchar *user;
 };
 
@@ -1595,7 +1599,7 @@ static void jabber_accept_deny_add(struct jabber_add_permit *jap, const char *ty
 
 	xmlnode_put_attrib(g, "to", jap->user);
 	xmlnode_put_attrib(g, "type", type);
-	gjab_send(jap->gjc, g);
+	gjab_send(GC_GJ(jap->gc), g);
 
 	xmlnode_free(g);
 }
@@ -1605,14 +1609,17 @@ static void jabber_accept_deny_add(struct jabber_add_permit *jap, const char *ty
  */
 static void jabber_accept_add(struct jabber_add_permit *jap)
 {
-	jabber_accept_deny_add(jap, "subscribed");
-	/*
-	 * If we don't already have the buddy on *our* buddylist,
-	 * ask if we want him or her added.
-	 */
-	if(find_buddy(GJ_GC(jap->gjc), jap->user) == NULL) {
-		show_got_added(GJ_GC(jap->gjc), NULL, jap->user, NULL, NULL);
+	if(g_slist_find(connections, jap->gc)) {
+		jabber_accept_deny_add(jap, "subscribed");
+		/*
+		 * If we don't already have the buddy on *our* buddylist,
+		 * ask if we want him or her added.
+		 */
+		if(find_buddy(jap->gc, jap->user) == NULL) {
+			show_got_added(jap->gc, NULL, jap->user, NULL, NULL);
+		}
 	}
+
 	g_free(jap->user);
 	g_free(jap);
 }
@@ -1622,7 +1629,10 @@ static void jabber_accept_add(struct jabber_add_permit *jap)
  */
 static void jabber_deny_add(struct jabber_add_permit *jap)
 {
-	jabber_accept_deny_add(jap, "unsubscribed");
+	if(g_slist_find(connections, jap->gc)) {
+		jabber_accept_deny_add(jap, "unsubscribed");
+	}
+
 	g_free(jap->user);
 	g_free(jap);
 }
@@ -1647,9 +1657,9 @@ static void jabber_handles10n(gjconn gjc, jpacket p)
 		gchar *msg = g_strdup_printf(_("The user %s wants to add you to their buddy list."),
 				Jid);
 
-		jap->gjc = gjc;
+		jap->gc = GJ_GC(gjc);
 		jap->user = g_strdup(Jid);
-		do_ask_dialog(msg, NULL, jap, _("Authorize"), jabber_accept_add, _("Deny"), jabber_deny_add, FALSE);
+		do_ask_dialog(msg, NULL, jap, _("Authorize"), jabber_accept_add, _("Deny"), jabber_deny_add, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 
 		g_free(msg);
 		xmlnode_free(g);	/* Never needed it here anyway */
@@ -4161,8 +4171,6 @@ static GList *jabber_actions()
 
 	return m;
 }
-
-static struct prpl *my_protocol = NULL;
 
 G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 {

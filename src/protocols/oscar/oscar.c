@@ -83,6 +83,8 @@
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
+static struct prpl *my_protocol = NULL;
+
 /* For win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 G_MODULE_IMPORT int report_idle;
@@ -2049,7 +2051,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		memcpy(d->cookie, args->cookie, 8);
 		g_snprintf(buf, sizeof buf, "%s has just asked to directly connect to %s.",
 				userinfo->sn, gc->username);
-		do_ask_dialog(buf, _("This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."), d, _("Connect"), accept_direct_im, _("Cancel"), cancel_direct_im, FALSE);
+		do_ask_dialog(buf, _("This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."), d, _("Connect"), accept_direct_im, _("Cancel"), cancel_direct_im, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 	} else {
 		debug_printf("Unknown reqclass %hu\n", args->reqclass);
 	}
@@ -2118,8 +2120,8 @@ static void gaim_auth_dontgrant(struct name_data *data) {
 	if (g_slist_find(connections, gc)) {
 		struct oscar_data *od = gc->proto_data;
 		gchar *message;
-#ifdef NOSSI
 		message = g_strdup_printf(_("No reason given."));
+#ifdef NOSSI
 		aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, message);
 #else
 		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x00, message);
@@ -2195,7 +2197,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				data->gc = gc;
 				data->name = g_strdup_printf("%lu", args->uin);
 				data->nick = NULL;
-				do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant, FALSE);
+				do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 				g_free(dialog_msg);
 			}
 		} break;
@@ -2249,7 +2251,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					data->gc = gc;
 					data->name = g_strdup(text[i*2+2]);
 					data->nick = g_strdup(text[i*2+1]);
-					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Decline"), gaim_free_name_data, FALSE);
+					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Decline"), gaim_free_name_data, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 					g_free(message);
 				}
 				g_strfreev(text);
@@ -4253,7 +4255,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 					data->gc = gc;
 					data->name = g_strdup(retval->name);
 					data->nick = NULL;
-					do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request, _("Cancel"), gaim_auth_dontrequest, FALSE);
+					do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request, _("Cancel"), gaim_auth_dontrequest, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 
 					g_free(dialog_msg);
 					g_free(nombre);
@@ -4298,7 +4300,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->gc = gc;
 	data->name = g_strdup(sn);
 	data->nick = NULL;
-	do_ask_dialog(_("Authorization Given"), dialog_msg, data, _("Yes"), gaim_icq_contactadd, _("No"), gaim_free_name_data, FALSE);
+	do_ask_dialog(_("Authorization Given"), dialog_msg, data, _("Yes"), gaim_icq_contactadd, _("No"), gaim_free_name_data, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -4332,7 +4334,7 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->gc = gc;
 	data->name = g_strdup(sn);
 	data->nick = NULL;
-	do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant, FALSE);
+	do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -4845,7 +4847,7 @@ static void oscar_ask_direct_im(struct gaim_connection *gc, gchar *who) {
 	data->who = who;
 	data->gc = gc;
 	g_snprintf(buf, sizeof(buf),  _("You have selected to open a Direct IM connection with %s."), who);
-	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im, FALSE);
+	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 }
 
 static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
@@ -5230,8 +5232,6 @@ static fu32_t parse_encoding(const char *enc)
 		return 0;
 	}
 }
-
-static struct prpl *my_protocol = NULL;
 
 G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	struct proto_user_opt *puo;

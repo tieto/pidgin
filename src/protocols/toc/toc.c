@@ -59,6 +59,8 @@
 #include "pixmaps/protocols/oscar/free_icon.xpm"
 #include "pixmaps/protocols/oscar/wireless_icon.xpm"
 
+static struct prpl *my_protocol = NULL;
+
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
@@ -1399,8 +1401,6 @@ static GList *toc_actions()
 	return m;
 }
 
-static struct prpl *my_protocol = NULL;
-
 G_MODULE_EXPORT void toc_init(struct prpl *ret)
 {	
 	struct proto_user_opt *puo;
@@ -1933,33 +1933,36 @@ static void toc_reject_ft(struct ft_request *ft) {
 
 
 static void toc_accept_ft(struct ft_request *fr) {
-	GtkWidget *window;
-	char buf[BUF_LEN];
+	if(g_slist_find(connections, fr->gc)) {
+		GtkWidget *window;
+		char buf[BUF_LEN];
 
-	struct file_transfer *ft = g_new0(struct file_transfer, 1);
-	ft->gc = fr->gc;
-	ft->user = g_strdup(fr->user);
-	ft->cookie = g_strdup(fr->cookie);
-	ft->ip = g_strdup(fr->ip);
-	ft->port = fr->port;
-	ft->files = fr->files;
+		struct file_transfer *ft = g_new0(struct file_transfer, 1);
+		ft->gc = fr->gc;
+		ft->user = g_strdup(fr->user);
+		ft->cookie = g_strdup(fr->cookie);
+		ft->ip = g_strdup(fr->ip);
+		ft->port = fr->port;
+		ft->files = fr->files;
 
-	ft->window = window = gtk_file_selection_new(_("Gaim - Save As..."));
-	g_snprintf(buf, sizeof(buf), "%s/%s", gaim_home_dir(), fr->filename ? fr->filename : "");
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
-	gtk_signal_connect(GTK_OBJECT(window), "destroy",
-			   GTK_SIGNAL_FUNC(cancel_callback), ft);
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(ft->window)->cancel_button), "clicked",
-			   GTK_SIGNAL_FUNC(cancel_callback), ft);
+		ft->window = window = gtk_file_selection_new(_("Gaim - Save As..."));
+		g_snprintf(buf, sizeof(buf), "%s/%s", gaim_home_dir(), fr->filename ? fr->filename : "");
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
+		gtk_signal_connect(GTK_OBJECT(window), "destroy",
+				   GTK_SIGNAL_FUNC(cancel_callback), ft);
+		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(ft->window)->cancel_button), "clicked",
+				   GTK_SIGNAL_FUNC(cancel_callback), ft);
 
-	if (!strcmp(fr->UID, FILE_SEND_UID))
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), "clicked",
-				   GTK_SIGNAL_FUNC(toc_send_file), ft);
-	else
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), "clicked",
-				   GTK_SIGNAL_FUNC(toc_get_file), ft);
+		if (!strcmp(fr->UID, FILE_SEND_UID))
+			gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), "clicked",
+					   GTK_SIGNAL_FUNC(toc_send_file), ft);
+		else
+			gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), "clicked",
+					   GTK_SIGNAL_FUNC(toc_get_file), ft);
 
-	gtk_widget_show(window);
+		gtk_widget_show(window);
+	}
+
 	toc_reject_ft(fr);
 }
 
@@ -1984,5 +1987,5 @@ static void accept_file_dialog(struct ft_request *ft) {
 	} else {
 		g_snprintf(buf, sizeof(buf), _("%s requests you to send them a file"), ft->user);
 	}
-	do_ask_dialog(buf, NULL, ft, _("Accept"), toc_accept_ft, _("Cancel"), toc_reject_ft, FALSE);
+	do_ask_dialog(buf, NULL, ft, _("Accept"), toc_accept_ft, _("Cancel"), toc_reject_ft, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 }

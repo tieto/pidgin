@@ -284,6 +284,9 @@ static void unload_gaim_plugin(struct gaim_plugin *p)
 
 	debug_printf("Unloading %s\n", g_module_name(p->handle));
 
+	/* cancel any pending dialogs the plugin has */
+	do_ask_cancel_by_handle(p->handle);
+
 	/* Attempt to call the plugin's remove function (if there) */
 	if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
 		gaim_plugin_remove();
@@ -324,6 +327,9 @@ void gaim_plugin_unload(GModule *handle)
 		return;
 
 	debug_printf("Unloading %s\n", g_module_name(p->handle));
+
+	/* cancel any pending dialogs the plugin has */
+	do_ask_cancel_by_handle(p->handle);
 
 	if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
 		gaim_plugin_remove();

@@ -475,7 +475,7 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 		return;
 
 	text = g_strdup_printf("You are about to remove %s from your buddy list.  Do you want to continue?", name);
-	do_ask_dialog("Remove Buddy", text, bd, "Remove Buddy", do_remove_buddy, "Cancel", NULL, FALSE);
+	do_ask_dialog("Remove Buddy", text, bd, "Remove Buddy", do_remove_buddy, "Cancel", NULL, NULL, FALSE);
 	g_free(text);
 }
 

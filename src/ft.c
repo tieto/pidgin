@@ -147,7 +147,7 @@ struct file_transfer *transfer_in_add(struct gaim_connection *gc,
 		buf = newmsg;
 	}
 
-	do_ask_dialog(buf, NULL, xfer, _("Accept"), ft_choose_file, _("Cancel"), ft_cancel, FALSE);
+	do_ask_dialog(buf, NULL, xfer, _("Accept"), ft_choose_file, _("Cancel"), ft_cancel, NULL, FALSE);
 	g_free(buf);
 
 	return xfer;

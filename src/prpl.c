@@ -134,11 +134,34 @@ static void des_win(GtkWidget *a, GtkWidget *b)
 	gtk_widget_destroy(b);
 }
 
+static GSList *do_ask_dialogs = NULL;
+
 struct doaskstruct {
+	GtkWidget *dialog;
+	GModule *handle;
 	void (*yesfunc)(gpointer);
 	void (*nofunc)(gpointer);
 	gpointer data;
 };
+
+void do_ask_cancel_by_handle(GModule *handle)
+{
+	GSList *d = do_ask_dialogs;
+
+	debug_printf("%d dialogs to search\n", g_slist_length(d));
+
+	while (d) {
+		GSList *cur = d;
+		struct doaskstruct *doask = d->data;
+
+		d = d->next;
+
+		if (doask->handle == handle) {
+			debug_printf("removing dialog, %d remain\n", g_slist_length(d));
+			gtk_dialog_response(GTK_DIALOG(doask->dialog), GTK_RESPONSE_NONE);
+		}
+	}
+}
 
 static void do_ask_callback(GtkDialog *d, gint resp, struct doaskstruct *doask)
 {
@@ -148,12 +171,12 @@ static void do_ask_callback(GtkDialog *d, gint resp, struct doaskstruct *doask)
 			if (doask->yesfunc)
 				doask->yesfunc(doask->data);
 			break;
-		case GTK_RESPONSE_NO:
-		case GTK_RESPONSE_DELETE_EVENT:
+		default:
 			if (doask->nofunc)
 				doask->nofunc(doask->data);
 			break;
 		}
+	do_ask_dialogs = g_slist_remove(do_ask_dialogs, doask);
 	g_free(doask);
 	gtk_widget_destroy(GTK_WIDGET(d));
 }
@@ -163,7 +186,7 @@ static void do_ask_callback(GtkDialog *d, gint resp, struct doaskstruct *doask)
                                    if (!strcmp(r,notext))  \
                                            notext = l;     
 
-void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext, void *doit, char *notext, void *dont, int modal)
+void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext, void *doit, char *notext, void *dont, GModule *handle, gboolean modal)
 {
 	GtkWidget *window;
 	GtkWidget *hbox;
@@ -172,10 +195,6 @@ void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext,
 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
 	struct doaskstruct *doask = g_new0(struct doaskstruct, 1);
-
-	doask->yesfunc = doit;
-	doask->nofunc  = dont;
-	doask->data    = data;
 
 	g_free(filename);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
@@ -200,7 +219,7 @@ void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext,
 
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_YES);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_ask_callback), doask);
-	
+
 	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
@@ -217,7 +236,14 @@ void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext,
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	
+
+	doask->dialog  = window;
+	doask->handle  = handle;
+	doask->yesfunc = doit;
+	doask->nofunc  = dont;
+	doask->data    = data;
+	do_ask_dialogs = g_slist_append(do_ask_dialogs, doask);
+
 	gtk_widget_show_all(window);
 }
 
@@ -641,7 +667,7 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 	if (find_buddy(gc, ga->who))
 		do_error_dialog(buf, NULL, GAIM_INFO);
 	else
-		do_ask_dialog(buf, NULL, ga, _("Add"), do_add, _("Cancel"), dont_add, FALSE);
+		do_ask_dialog(buf, NULL, ga, _("Add"), do_add, _("Cancel"), dont_add, NULL, FALSE);
 }
 
 static GtkWidget *regdlg = NULL;
@@ -785,6 +811,7 @@ void unref_protocol(struct prpl *p) {
 		debug_printf("Protocol %s now in use by %d connections.\n", p->name, prpl_accounts[p->protocol]);
 		if(prpl_accounts[p->protocol] == 0) { /* No longer needed */
 			debug_printf("Throwing out %s protocol plugin\n", p->name);
+			do_ask_cancel_by_handle(p->plug->handle);
 			g_timeout_add(0, delayed_unload, p->plug->handle);
 			p->plug->handle = NULL;
 		}

@@ -27,6 +27,8 @@
 #include "pixmaps/protocols/msn/msn_away.xpm"
 #include "pixmaps/protocols/msn/msn_occ.xpm"
 
+static struct prpl *my_protocol = NULL;
+
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
@@ -1066,19 +1068,22 @@ struct msn_add_permit {
 
 static void msn_accept_add(struct msn_add_permit *map)
 {
-	struct msn_data *md = map->gc->proto_data;
-	char buf[MSN_BUF_LEN];
-	
-	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
-	
-	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(map->gc, _("Write error"));
-		signoff(map->gc);
-		return;
+	if(g_slist_find(connections, map->gc)) {
+		struct msn_data *md = map->gc->proto_data;
+		char buf[MSN_BUF_LEN];
+
+		g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
+
+		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			hide_login_progress(map->gc, _("Write error"));
+			signoff(map->gc);
+			return;
+		}
+		map->gc->permit = g_slist_append(map->gc->permit, map->user);
+		build_allow_list(); /* er. right. we'll need to have a thing for this in CUI too */
+		show_got_added(map->gc, NULL, map->user, map->friend, NULL);
 	}
-	map->gc->permit = g_slist_append(map->gc->permit, map->user);
-	build_allow_list(); /* er. right. we'll need to have a thing for this in CUI too */
-	show_got_added(map->gc, NULL, map->user, map->friend, NULL);
+
 	g_free(map->user);
 	g_free(map->friend);
 	g_free(map);
@@ -1086,19 +1091,20 @@ static void msn_accept_add(struct msn_add_permit *map)
 
 static void msn_cancel_add(struct msn_add_permit *map)
 {
-	struct msn_data *md = map->gc->proto_data;
-	char buf[MSN_BUF_LEN];
+	if(g_slist_find(connections, map->gc)) {
+		struct msn_data *md = map->gc->proto_data;
+		char buf[MSN_BUF_LEN];
 
-	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
-	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(map->gc, _("Write error"));
-		signoff(map->gc);
-		return;
+		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
+		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			hide_login_progress(map->gc, _("Write error"));
+			signoff(map->gc);
+			return;
+		}
+		map->gc->deny = g_slist_append(map->gc->deny, map->user);
+		build_block_list();
 	}
-	map->gc->deny = g_slist_append(map->gc->deny, map->user);
-	build_block_list();
-	
-	
+
 	g_free(map->user);
 	g_free(map->friend);
 	g_free(map);
@@ -1143,7 +1149,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add %s to his or her buddy list."),
 				ap->user, ap->friend, ap->gc->username);
 
-		do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, FALSE);
+		do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 	} else if (!g_strncasecmp(buf, "BLP", 3)) {
 		char *type, *tmp = buf;
 
@@ -1292,8 +1298,8 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				ap->friend = g_strdup(friend);
 				ap->gc = gc;
                          
-		                g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list"),ap->user, ap->friend);
-				do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, FALSE);
+				g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list"),ap->user, ap->friend);
+				do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 			}
 		    }
 			
@@ -2801,8 +2807,6 @@ static void msn_buddy_free(struct buddy *b)
 	if (b->proto_data)
 		g_free(b->proto_data);
 }
-
-static struct prpl *my_protocol = NULL;
 
 G_MODULE_EXPORT void msn_init(struct prpl *ret)
 {
