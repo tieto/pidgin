@@ -8,6 +8,9 @@
 
 #define FAIM_INTERNAL
 #include <aim.h>
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
 
 struct aim_priv_inforeq {
 	char sn[MAXSNLEN+1];
