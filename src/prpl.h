@@ -42,8 +42,10 @@
 #define PROTO_ZEPHYR   10
 #define PROTO_GADUGADU 11
 #define PROTO_SAMETIME 12
-#define PROTO_TLEN	   13
-#define PROTO_UNTAKEN  14
+#define PROTO_TLEN     13
+#define PROTO_RVP      14
+#define PROTO_BACKRUB  15
+#define PROTO_UNTAKEN  16
 
 /* DON'T TAKE AN UNASSIGNED NUMBER! Talk to Rob or Sean if you'd like
  * to create a new PRPL. */
