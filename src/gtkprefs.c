@@ -912,16 +912,6 @@ GtkWidget *conv_page() {
 
 	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
 
-	names = NULL;
-	names = g_list_append(names, _("Top"));
-	names = g_list_append(names, GINT_TO_POINTER(GTK_POS_TOP));
-	names = g_list_append(names, _("Bottom"));
-	names = g_list_append(names, GINT_TO_POINTER(GTK_POS_BOTTOM));
-	names = g_list_append(names, _("Left"));
-	names = g_list_append(names, GINT_TO_POINTER(GTK_POS_LEFT));
-	names = g_list_append(names, _("Right"));
-	names = g_list_append(names, GINT_TO_POINTER(GTK_POS_RIGHT));
-
 	label = prefs_dropdown(vbox, _("_Tab Placement:"), GAIM_PREF_INT,
 									 "/gaim/gtk/conversations/tab_side",
 									 _("Top"), GTK_POS_TOP,
