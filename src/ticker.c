@@ -66,7 +66,7 @@ BuddyTickerDestroyWindow( GtkWidget *window )
 	userclose = TRUE;
 }
 
-static char *msg = "Welcome to GAIM " VERSION ", brought to you by Rob Flynn (maintainer), Eric Warmenhoven, Mark Spencer, Jeramey Crawford, Jim Duchek, and Syd Logan"; 
+static char *msg = "Welcome to Gaim " VERSION ", brought to you by Rob Flynn (maintainer), Eric Warmenhoven, Mark Spencer, Jeramey Crawford, Jim Duchek, and Syd Logan"; 
 
 void
 BuddyTickerCreateWindow()
@@ -76,7 +76,7 @@ BuddyTickerCreateWindow()
         tickerwindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
         gtk_signal_connect (GTK_OBJECT(tickerwindow), "destroy",
                 GTK_SIGNAL_FUNC (BuddyTickerDestroyWindow), "WM destroy");
-        gtk_window_set_title (GTK_WINDOW(tickerwindow), "GAIM - Buddy Ticker");
+        gtk_window_set_title (GTK_WINDOW(tickerwindow), "Gaim - Buddy Ticker");
         gtk_window_set_wmclass (GTK_WINDOW(tickerwindow), 
                                 "ticker", "Gaim");
 

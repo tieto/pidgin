@@ -324,11 +324,11 @@ gint init_applet_mgr(int argc, char *argv[])
 {
 	GdkPixmap *pm;
 
-	applet_widget_init("GAIM", VERSION, argc, argv, NULL, 0, NULL);
+	applet_widget_init("Gaim", VERSION, argc, argv, NULL, 0, NULL);
 
 	applet = applet_widget_new("gaim_applet");
 	if (!applet)
-		g_error(_("Can't create GAIM applet!"));
+		g_error(_("Can't create Gaim applet!"));
 	gtk_widget_set_events(applet, gtk_widget_get_events(applet) | GDK_BUTTON_PRESS_MASK);
 	gtk_widget_realize(applet);
 

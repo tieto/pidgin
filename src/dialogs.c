@@ -2284,7 +2284,7 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 
 		gtk_container_add(GTK_CONTAINER(c->link_dialog), fbox);
 		gtk_container_border_width(GTK_CONTAINER(c->link_dialog), 10);
-		gtk_window_set_title(GTK_WINDOW(c->link_dialog), _("GAIM - Add URL"));
+		gtk_window_set_title(GTK_WINDOW(c->link_dialog), _("Gaim - Add URL"));
 		gtk_window_set_focus(GTK_WINDOW(c->link_dialog), b->url);
 		b->window = c->link_dialog;
 		b->toggle = linky;
