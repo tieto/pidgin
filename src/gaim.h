@@ -333,12 +333,14 @@ extern guint away_options;
 #define OPT_AWAY_NO_AUTO_RESP		0x00000010
 #define OPT_AWAY_QUEUE			0x00000020
 #define OPT_AWAY_IDLE_RESP		0x00000040
+#define OPT_AWAY_QUEUE_UNREAD           0x00000060
 
 extern guint away_resend;
 extern int report_idle;
 extern int web_browser;
 extern GSList *aim_users;
 extern GSList *message_queue;
+extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
 extern char sound_cmd[2048];
 extern char web_command[2048];
@@ -351,6 +353,7 @@ extern void signoff(struct gaim_connection *);
 extern void do_pounce(struct gaim_connection *, char *, int);
 void create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,
 					  GdkPixmap **pixmap, GdkBitmap **mask);
+void docklet_toggle();
 
 /* Functions in buddy_chat.c */
 extern void show_new_buddy_chat(struct conversation *);

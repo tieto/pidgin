@@ -63,6 +63,7 @@ GList *buddy_pounces = NULL;
 GSList *away_messages = NULL;
 GList *conversations = NULL;
 GSList *message_queue = NULL;
+GSList *unread_message_queue = NULL;
 GSList *away_time_queue = NULL;
 
 GtkWidget *mainwindow = NULL;
@@ -98,7 +99,7 @@ void cancel_logon(void)
 {
 #ifdef GAIM_PLUGINS
 	/* first we tell those who have requested it we're quitting */
-	plugin_event(event_quit, 0, 0, 0, 0);
+	plugin_event(event_quit);
 
 	/* then we remove everyone in a mass suicide */
 	remove_all_plugins();

@@ -50,7 +50,7 @@ gint check_idle(gpointer data)
 	/* Not idle, really...  :) */
 	update_idle_times();
 
-	plugin_event(event_blist_update, 0, 0, 0, 0);
+	plugin_event(event_blist_update);
 
 	time(&t);
 

@@ -98,6 +98,9 @@ struct proto_chat_entry {
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */
 extern GSList *connections;
 
+/* number of accounts that are currently in the process of connecting */
+extern int connecting_count;
+
 struct aim_user *new_user(const char *, int, int);
 struct gaim_connection *new_gaim_conn(struct aim_user *);
 void destroy_gaim_conn(struct gaim_connection *);

@@ -1,6 +1,5 @@
 THE CORE:
 	GPG Encryption of messages
-	Have plugin_event use varargs instead of void*
 	Separate core functions from UI stuff.
 		about.c, applet.[ch], away.c, browser.c, buddy.c, conversation.c,
 		convo.h, dialogs.c, gtk*, plugins.c, prefs.c, prpl.c, sound.c,

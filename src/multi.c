@@ -40,6 +40,7 @@
 #define LOGIN_STEPS 5
 
 GSList *connections;
+int connecting_count = 0;
 
 static GtkWidget *acctedit = NULL;
 static GtkWidget *list = NULL;	/* the clist of names in the accteditor */
@@ -1156,7 +1157,9 @@ void account_online(struct gaim_connection *gc)
 	gaim_setup(gc);
 
 	gc->user->connecting = FALSE;
-	plugin_event(event_signon, gc, 0, 0, 0);
+	connecting_count--;
+		
+	plugin_event(event_signon, gc);
 	system_log(log_signon, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
 	/* away option given? */
@@ -1445,12 +1448,15 @@ void signoff(struct gaim_connection *gc)
 	/* remove this here so plugins get a sensible count of connections */
 	connections = g_slist_remove(connections, gc);
 	debug_printf("date: %s\n", full_date());
-	plugin_event(event_signoff, gc, 0, 0, 0);
+	plugin_event(event_signoff, gc);
 	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 	/* set this in case the plugin died before really connecting.
 	   do it after calling the plugins so they can determine if
 	   this user was ever on-line or not */
-	gc->user->connecting = FALSE;
+	if (gc->user->connecting) {
+		gc->user->connecting = FALSE;
+		connecting_count--;
+	}
 	serv_close(gc);
 
 	/* more UI stuff */

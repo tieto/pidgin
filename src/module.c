@@ -376,144 +376,35 @@ char *event_name(enum gaim_event event)
 	return buf;
 }
 
-static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4)
-{
-	if (!opt_debug && !(misc_options & OPT_MISC_DEBUG))
-		return;
-
-	switch (event) {
-		case event_blist_update:
-			/* this happens *really* often */
-			if (opt_debug) {
-				debug_printf("%s\n", event_name(event));
-			}
-			break;
-	        case event_quit:
-			debug_printf("%s\n", event_name(event));
-			break;
-		case event_signon:
-		case event_signoff:
-			debug_printf("%s: %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username);
-			break;
-		case event_new_conversation:
-			debug_printf("%s: %s\n", event_name(event), (char *)arg1);
-			break;
-		case event_error:
-			debug_printf("%s: %d\n", event_name(event), (int)arg1);
-			break;
-		case event_buddy_signon:
-		case event_buddy_signoff:
-		case event_buddy_away:
-		case event_buddy_back:
-		case event_buddy_idle:
-	        case event_buddy_unidle:
-	        case event_set_info:
-	        case event_got_typing:
-			debug_printf("%s: %s %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username, (char *)arg2);
-			break;
-		case event_chat_leave:
-			debug_printf("%s: %s %d\n", event_name(event),
-					((struct gaim_connection *)arg1)->username, (int)arg2);
-			break;
-		case event_im_send:
-		case event_im_displayed_sent:
-			debug_printf("%s: %s %s %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					(char *)arg2, *(char **)arg3 ? *(char **)arg3 : "");
-			break;
-		case event_chat_join:
-		case event_chat_buddy_join:
-		case event_chat_buddy_leave:
-			debug_printf("%s: %s %d %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					(int)arg2, (char *)arg3);
-			break;
-		case event_chat_send:
-			debug_printf("%s: %s %d %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					(int)arg2, *(char **)arg3 ? *(char **)arg3 : "");
-			break;
-		case event_away:
-			debug_printf("%s: %s %s %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					(char *)arg2, (char *)arg3 ? (char *)arg3 : "");
-			break;
-		case event_warned:
-			debug_printf("%s: %s %s %d\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					(char *)arg2 ? (char *)arg2 : "", (int)arg3);
-			break;
-		case event_im_recv:
-			debug_printf("%s: %s %s %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					*(char **)arg2 ? *(char **)arg2 : "",
-					*(char **)arg3 ? *(char **)arg3 : "");
-			break;
-		case event_im_displayed_rcvd:
-			debug_printf("%s: %s %s %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					(char *)arg2 ? (char *)arg2 : "",
-					(char *)arg3 ? (char *)arg3 : "");
-			break;
-		case event_chat_recv:
-			debug_printf("%s: %s %d %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					(int)arg2,
-					*(char **)arg3 ? *(char **)arg3 : "",
-					*(char **)arg4 ? *(char **)arg4 : "");
-			break;
-		case event_chat_send_invite:
-			debug_printf("%s: %s %d %s %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					(int)arg2, (char *)arg3,
-					*(char **)arg4 ? *(char **)arg4 : "");
-			break;
-		case event_chat_invited:
-			debug_printf("%s: %s %s %s %s\n", event_name(event),
-					((struct gaim_connection *)arg1)->username,
-					(char *)arg2, (char *)arg3,
-					(char *)arg4 ? (char *)arg4 : "");
-			break;
-		case event_del_conversation:
-			debug_printf("%s: %s\n", event_name(event), (char *)arg1);
-			break;
-		case event_connecting:
-			debug_printf("%s: %s\n", event_name(event), ((struct aim_user *)arg1)->username);
-			break;
-		default:
-			debug_printf("%s: um, right. yeah.\n", event_name(event));
-			break;
-	}
-}
-
-int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4)
+int plugin_event(enum gaim_event event, ...)
 {
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
 	struct gaim_callback *g;
+	va_list arrg;
+	void    *arg1 = NULL, 
+		*arg2 = NULL,
+		*arg3 = NULL, 
+		*arg4 = NULL,
+		*arg5 = NULL;
 #endif
 
-	debug_event(event, arg1, arg2, arg3, arg4);
+	debug_printf("%s\n", event_name(event));
 
 #ifdef GAIM_PLUGINS
 	while (c) {
-		void (*zero)(void *);
-		void (*one)(void *, void *);
-		void (*two)(void *, void *, void *);
-		void (*three)(void *, void *, void *, void *);
-		void (*four)(void *, void *, void *, void *, void *);
-
+		void (*cbfunc)(void *, ...);
+		
 		g = (struct gaim_callback *)c->data;
 		if (g->event == event && g->function != NULL) {
+			cbfunc=g->function;
+			va_start(arrg, event);
 			switch (event) {
 
 				/* no args */
 			case event_blist_update:
 			case event_quit:
-				zero = g->function;
-				zero(g->data);
+				cbfunc(g->data);
 				break;
 
 				/* one arg */
@@ -523,8 +414,8 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_del_conversation:
 			case event_error:
 			case event_connecting:
-				one = g->function;
-				one(arg1, g->data);
+				arg1 = va_arg(arrg, void *);
+				cbfunc(arg1, g->data);
 				break;
 
 				/* two args */
@@ -534,48 +425,101 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_buddy_back:
 			case event_buddy_idle:
 			case event_buddy_unidle:
-			case event_chat_leave:
 			case event_set_info:
 			case event_draw_menu:
 			case event_got_typing:
-				two = g->function;
-				two(arg1, arg2, g->data);
+				arg1 = va_arg(arrg, void *);
+				arg2 = va_arg(arrg, void *);
+				cbfunc(arg1, arg2, g->data);
 				break;
-
+			case event_chat_leave:
+				{
+					int id;
+					arg1 = va_arg(arrg, void*);
+					id = va_arg(arrg, int);
+					cbfunc(arg1, id, g->data);
+				}
+				break;
 				/* three args */
 			case event_im_send:
 			case event_im_displayed_sent:
-			case event_chat_join:
+			case event_away:
+				arg1 = va_arg(arrg, void *);
+				arg2 = va_arg(arrg, void *);
+				arg3 = va_arg(arrg, void *);
+				cbfunc(arg1, arg2, arg3, g->data);
+				break;
 			case event_chat_buddy_join:
 			case event_chat_buddy_leave:
 			case event_chat_send:
-			case event_away:
-			case event_back:
-			case event_warned:
-				three = g->function;
-				three(arg1, arg2, arg3, g->data);
+			case event_chat_join:
+				{
+					int id;
+					arg1 = va_arg(arrg, void*);
+					id = va_arg(arrg, int);
+					arg3 = va_arg(arrg, void*);
+					cbfunc(arg1, id, arg3, g->data);
+				}
 				break;
-
+			case event_warned:
+				{
+					int id;
+					arg1 = va_arg(arrg, void*);
+					arg2 = va_arg(arrg, void*);
+					id = va_arg(arrg, int);
+					cbfunc(arg1, arg2, id, g->data);
+				}
+				break;
 				/* four args */
 			case event_im_recv:
-			case event_chat_recv:
-			case event_im_displayed_rcvd:
-			case event_chat_send_invite:
 			case event_chat_invited:
-				four = g->function;
-				four(arg1, arg2, arg3, arg4, g->data);
+				arg1 = va_arg(arrg, void *);
+				arg2 = va_arg(arrg, void *);
+				arg3 = va_arg(arrg, void *);
+				arg4 = va_arg(arrg, void *);
+				cbfunc(arg1, arg2, arg3, arg4, g->data);
 				break;
+			case event_chat_recv:
+			case event_chat_send_invite:
+				{
+					int id;
+					arg1 = va_arg(arrg, void *);
+					id = va_arg(arrg, int);
 
-			default:
+					arg3 = va_arg(arrg, void *);
+					arg4 = va_arg(arrg, void *);
+					cbfunc(arg1, id, arg3, arg4, g->data);
+				}
+				break;
+				/* five args */
+			case event_im_displayed_rcvd:
+				{
+					time_t time;
+					arg1 = va_arg(arrg, void *);
+					arg2 = va_arg(arrg, void *);
+					arg3 = va_arg(arrg, void *);
+					arg4 = va_arg(arrg, void *);
+					time = va_arg(arrg, time_t);
+					cbfunc(arg1, arg2, arg3, arg4, time, g->data);
+				}
+				break;
+				default:
 				debug_printf("unknown event %d\n", event);
 				break;
 			}
+			va_end(arrg);
 		}
 		c = c->next;
 	}
 #endif /* GAIM_PLUGINS */
 #ifdef USE_PERL
-	return perl_event(event, arg1, arg2, arg3, arg4);
+	va_start(arrg, event);
+	arg1 = va_arg(arrg, void *);
+	arg2 = va_arg(arrg, void *);
+	arg3 = va_arg(arrg, void *);
+	arg4 = va_arg(arrg, void *);
+	arg5 = va_arg(arrg, void *);
+	return perl_event(event, arg1, arg2, arg3, arg4, arg5);
 #else
 	return 0;
 #endif

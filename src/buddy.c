@@ -110,8 +110,7 @@ struct group_show {
 };
 static GSList *shows = NULL;
 
-static gboolean blist_hidden;
-static int docklet_refcount = 0;
+static int docklet_count = 0;
 
 /* Predefine some functions */
 static void new_bp_callback(GtkWidget *w, struct buddy *bs);
@@ -703,7 +702,7 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 		}
 
 		/* we send the menu widget so we can add menuitems within a plugin */
-		plugin_event(event_draw_menu, menu, b->name, 0, 0);
+		plugin_event(event_draw_menu, menu, b->name);
 
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
 
@@ -1400,7 +1399,7 @@ void import_callback(GtkWidget *widget, void *null)
 void do_quit()
 {
 	/* first we tell those who have requested it we're quitting */
-	plugin_event(event_quit, 0, 0, 0, 0);
+	plugin_event(event_quit);
 
 	signoff_all();
 #ifdef GAIM_PLUGINS
@@ -1993,10 +1992,39 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 	return g;
 }
 
+
+void docklet_toggle() {
+	/* Useful for the docklet plugin and also for the win32 tray icon*/
+	/* This is called when one of those is clicked--it will show/hide the 
+	   buddy list/login window--depending on which is active */
+	if (connections) {
+		if (GTK_WIDGET_VISIBLE(blist)) {
+			if (DOCKLET_WINDOW_ICONIFIED(blist)) {
+				unhide_buddy_list();
+			} else {
+				hide_buddy_list();
+			}
+		} else {
+			unhide_buddy_list();
+		}
+	} else {
+		if (GTK_WIDGET_VISIBLE(mainwindow)) {
+			if (DOCKLET_WINDOW_ICONIFIED(mainwindow)) {
+				gtk_window_present(GTK_WINDOW(mainwindow));
+			} else {
+				gtk_widget_hide(mainwindow);
+			}
+		} else {
+			gtk_window_present(GTK_WINDOW(mainwindow));
+		}
+	}
+}
+
+
 /* used by this file, and by iconaway.so */
 void hide_buddy_list() {
 	if (blist) {
-		if (!connections || docklet_refcount) {
+		if (!connections || docklet_count) {
 			gtk_widget_hide(blist);
 		} else {
 			gtk_window_iconify(GTK_WINDOW(blist));
@@ -2020,7 +2048,7 @@ void unhide_buddy_list() {
 
 /* for the delete_event handler */
 static void close_buddy_list() {
-	if (docklet_refcount) {
+	if (docklet_count) {
 		hide_buddy_list();
 	} else {
 		do_quit();
@@ -2028,16 +2056,16 @@ static void close_buddy_list() {
 }
 
 void docklet_add() {
-	docklet_refcount++;
-	printf("docklet_refcount: %d\n",docklet_refcount);
+	docklet_count++;
+	printf("docklet_count: %d\n",docklet_count);
 }
 
 void docklet_remove() {
-	if (docklet_refcount) {
-		docklet_refcount--;
+	if (docklet_count) {
+		docklet_count--;
 	}
-	printf("docklet_refcount: %d\n",docklet_refcount);
-	if (!docklet_refcount) {
+	printf("docklet_count: %d\n",docklet_count);
+	if (!docklet_count) {
 		if (connections) {
 			unhide_buddy_list();
 		} else {

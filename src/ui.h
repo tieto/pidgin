@@ -36,6 +36,8 @@
 #define gtk_accel_group_attach(x, y) _gtk_accel_group_attach(x, y)
 #define gtk_widget_lock_accelerators(x)
 
+#define DOCKLET_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
+
 #define DEFAULT_FONT_FACE "Helvetica"
 
 #define BROWSER_NETSCAPE              0
@@ -318,7 +320,7 @@ extern void do_away_menu();
 extern void away_list_unclicked(GtkWidget *, struct away_message *);
 extern void away_list_clicked(GtkWidget *, struct away_message *);
 extern void toggle_away_queue();
-extern void purge_away_queue();
+extern void purge_away_queue(GSList*);
 
 /* Functions in browser.c */
 extern void open_url(GtkWidget *, char *);

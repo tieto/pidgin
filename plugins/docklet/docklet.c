@@ -23,9 +23,7 @@
     - don't crash when the plugin gets unloaded (it seems to crash after
        the plugin has gone, when gtk updates the button in the plugins
        dialog. backtrace is always useless. weird)
-    - have a toggle on the menu to mute all Gaim sounds
     - handle and update tooltips to show your current accounts
-    - connecting status support (needs more fruxing with the core)
     - dernyi's account status menu in the right click
     - store icons in gtk2 stock icon thing (needs doing for the whole prog)
     - pop up notices when GNOME2's system-tray-applet supports it, with a
@@ -34,17 +32,16 @@
 /* includes */
 #define GAIM_PLUGINS
 #include <gtk/gtk.h>
+#include <fcntl.h>
 #include "gaim.h"
 #include "eggtrayicon.h"
-
-/* macros */
-#define DOCKLET_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
 
 /* types */
 enum docklet_status {
 	online,
 	away,
 	away_pending,
+	unread_pending,
 	connecting,
 	offline
 };
@@ -56,6 +53,7 @@ static void docklet_create();
 static EggTrayIcon *docklet = NULL;
 static GtkWidget *icon;
 static enum docklet_status status;
+static GtkWidget *configwin = NULL;
 
 static void docklet_embedded(GtkWidget *widget, void *data) {
 	debug_printf("Docklet: embedded\n");
@@ -68,34 +66,16 @@ static void docklet_destroyed(GtkWidget *widget, void *data) {
 	docklet_create();
 }
 
-static void docklet_toggle() {
-	/* this looks bad, but we need to use (un)hide_buddy_list to allow buddy.c to
-	   correctly hide/iconify depending on the docklet refcount, and to reposition
-	   the blist for us when we unhide. no such constraint for the login window
-	   because nothing else needs a unified way to hide/iconify it. otherwise I'd
-	   make a function and use it for both. */
-	if (connections) {
-		if (GTK_WIDGET_VISIBLE(blist)) {
-			if (DOCKLET_WINDOW_ICONIFIED(blist)) {
-				unhide_buddy_list();
-			} else {
-				hide_buddy_list();
-			}
-		} else {
-			unhide_buddy_list();
-		}
-	} else {
-		if (GTK_WIDGET_VISIBLE(mainwindow)) {
-			if (DOCKLET_WINDOW_ICONIFIED(mainwindow)) {
-				gtk_window_present(GTK_WINDOW(mainwindow));
-			} else {
-				gtk_widget_hide(mainwindow);
-			}
-		} else {
-			gtk_window_present(GTK_WINDOW(mainwindow));
-		}
-	}
+ 
+static void docklet_mute(GtkWidget *toggle, void *data) {
+       mute_sounds = GTK_CHECK_MENU_ITEM(toggle)->active;
+       if (mute_sounds) {
+	       debug_printf("Docklet: sounds muted\n");
+       } else {
+               debug_printf("Docklet: sounds unmuted\n");
+       }
 }
+
 
 static void docklet_menu(GdkEventButton *event) {
 	static GtkWidget *menu = NULL;
@@ -154,6 +134,11 @@ static void docklet_menu(GdkEventButton *event) {
 	entry = gtk_separator_menu_item_new();
 	gtk_menu_append(GTK_MENU(menu), entry);
 
+	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), mute_sounds);
+	g_signal_connect(GTK_WIDGET(entry), "toggled", G_CALLBACK(docklet_mute), NULL);
+	gtk_menu_append(GTK_MENU(menu), entry);
+
 	entry = gtk_menu_item_new_with_label(_("Accounts"));
 	g_signal_connect(GTK_WIDGET(entry), "activate", G_CALLBACK(account_editor), NULL);
 	gtk_menu_append(GTK_MENU(menu), entry);
@@ -184,7 +169,13 @@ static void docklet_menu(GdkEventButton *event) {
 static void docklet_clicked(GtkWidget *button, GdkEventButton *event, void *data) {
 	switch (event->button) {
 		case 1:
-			docklet_toggle();
+			if (unread_message_queue) {
+ 				purge_away_queue(unread_message_queue);
+				unread_message_queue=NULL;
+				docklet_update_status();
+			}
+			else
+				docklet_toggle();
 			break;
 		case 2:
 			break;
@@ -208,8 +199,12 @@ static void docklet_update_icon() {
 		case away_pending:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "msgpend.png", NULL);
 			break;
+	        case unread_pending:
+			/* XXX MAKE ME BLINK! */
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "msgunread.png", NULL);
+			break;
 		case connecting:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "connecting.png", NULL);
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "connect.png", NULL);
 			break;
 		case offline:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "offline.png", NULL);
@@ -239,7 +234,9 @@ static void docklet_update_status() {
 	oldstatus = status;
 
 	if (connections) {
-		if (awaymessage) {
+		if (unread_message_queue) {
+			status = unread_pending;
+		} else if (awaymessage) {
 			if (message_queue) {
 				status = away_pending;
 			} else {
@@ -249,7 +246,11 @@ static void docklet_update_status() {
 			status = online;
 		}
 	} else {
-		status = offline;
+		if (connecting_count) {
+			status = connecting;
+		} else {
+			status = offline;
+		}
 	}
 
 	if (status != oldstatus) {
@@ -339,6 +340,33 @@ char *gaim_plugin_init(GModule *handle) {
 
 	return NULL;
 }
+
+static void toggle_queue (GtkWidget *w, void *null) {
+	away_options ^= OPT_AWAY_QUEUE_UNREAD;
+	save_prefs();
+}
+	
+void gaim_plugin_config() {
+	/* This is the sorriest dialog ever written ever */
+	/* It's a good thing I plan on rewriting it later tonight */
+	GtkWidget *button;
+	GtkWidget *vbox;
+
+	if (configwin) return;
+	GAIM_DIALOG(configwin);
+
+	vbox = gtk_vbox_new(0, 6);
+	gtk_container_add(GTK_CONTAINER(configwin), vbox);
+	gtk_window_set_title(GTK_WINDOW(configwin), "Docklet Configuration");
+	
+	button = gtk_check_button_new_with_mnemonic("_Hide new messages until docklet is clicked");
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), away_options & OPT_AWAY_QUEUE_UNREAD);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_queue), NULL);
+	gtk_box_pack_end(GTK_BOX(vbox), button, 0, 0, 0);
+
+	gtk_widget_show_all(configwin);
+}
+
 
 void gaim_plugin_remove() {
 	if (GTK_WIDGET_VISIBLE(docklet)) {

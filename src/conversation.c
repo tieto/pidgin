@@ -194,7 +194,7 @@ struct conversation *new_conversation(char *name)
 	update_icon(c);
 	update_checkbox(c);
 	update_smilies(c);
-	plugin_event(event_new_conversation, name, 0, 0, 0);
+	plugin_event(event_new_conversation, name);
 	return c;
 }
 
@@ -259,7 +259,7 @@ struct log_conversation *find_log_info(char *name)
 
 void delete_conversation(struct conversation *c)
 {
-	plugin_event(event_del_conversation, c, 0, 0, 0);
+	plugin_event(event_del_conversation, c);
 	conversations = g_list_remove(conversations, c);
 	if (c->fg_color_dialog)
 		gtk_widget_destroy(c->fg_color_dialog);
@@ -949,13 +949,6 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				toggle_font(c->font, c);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
-			case 'k':
-			case 'K':
-				quiet_set(c->fgcolorbtn,
-					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->fgcolorbtn)));
-				toggle_fg_color(c->fgcolorbtn, c);
-				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-				break;
 			}
 		}
 		if (convo_options & OPT_CONVO_CTL_SMILEYS) {
@@ -1188,7 +1181,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		enum gaim_event evnt = c->is_chat ? event_chat_send : event_im_send;
 		int plugin_return = plugin_event(evnt, c->gc,
 						 c->is_chat ? (void *)c->id : c->name,
-						 &buffy, 0);
+						 &buffy);
 		if (!buffy) {
 			g_free(buf2);
 			g_free(buf);
@@ -1210,7 +1203,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		gboolean binary = FALSE;
 
 		buffy = g_strdup(buf);
-		plugin_event(event_im_displayed_sent, c->gc, c->name, &buffy, 0);
+		plugin_event(event_im_displayed_sent, c->gc, c->name, &buffy);
 		if (buffy) {
 			int imflags = 0;
 			if (c->check && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->check)))

@@ -55,7 +55,8 @@ void serv_login(struct aim_user *user)
 
 		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", user->username, p->name());
 		user->connecting = TRUE;
-		plugin_event(event_connecting, user, 0, 0, 0);
+		connecting_count++;
+		plugin_event(event_connecting, user);
 		p->login(user);
 	}
 }
@@ -207,7 +208,7 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 
 		gc->prpl->set_away(gc, state, buf);
 
-		plugin_event(event_away, gc, state, buf, 0);
+		plugin_event(event_away, gc, state, buf);
 
 		if (buf)
 			g_free(buf);
@@ -231,7 +232,7 @@ void serv_set_away_all(char *message)
 void serv_set_info(struct gaim_connection *g, char *info)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_info) {
-		if (plugin_event(event_set_info, g, info, 0, 0))
+		if (plugin_event(event_set_info, g, info))
 			return;
 		g->prpl->set_info(g, info);
 	}
@@ -523,7 +524,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
 		strcpy(buffy, message);
 		angel = g_strdup(name);
-		plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, (void *)&flags);
+		plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, &flags);
 
 		if (!buffy || !angel || plugin_return) {
 			if (buffy)
@@ -687,21 +688,34 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		/* we're not away. this is easy. if the convo window doesn't exist, create and update
 		 * it (if it does exist it was updated earlier), then play a sound indicating we've
 		 * received it and then display it. easy. */
-		if (cnv == NULL) {
-			cnv = new_conversation(name);
-			set_convo_gc(cnv, gc);
+		if (away_options & OPT_AWAY_QUEUE_UNREAD && !find_conversation(name)) {
+			/* We're gonna queue it up and wait for the user to ask for it... probably
+			 * by clicking the docklet or windows tray icon. */
+			struct queued_message *qm;
+			qm = g_new0(struct queued_message, 1);
+			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
+			qm->message = g_strdup(message);
+			qm->gc = gc;
+			qm->tm = mtime;
+			qm->flags = away | WFLAG_RECV;
+			qm->len = len;
+			unread_message_queue = g_slist_append(unread_message_queue, qm);
+		} else {
+			if (cnv == NULL) {
+				cnv = new_conversation(name);
+				set_convo_gc(cnv, gc);
+			}
+			if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
+				play_sound(SND_FIRST_RECEIVE);
+			else if (cnv->makesound)
+				play_sound(SND_RECEIVE);
+			
+			set_convo_name(cnv, name);
+			
+			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
 		}
-		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
-			play_sound(SND_FIRST_RECEIVE);
-		else if (cnv->makesound)
-			play_sound(SND_RECEIVE);
-
-		set_convo_name(cnv, name);
-
-		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
 	}
-
-	plugin_event(event_im_displayed_rcvd, gc, name, message, (void *)flags);
+	plugin_event(event_im_displayed_rcvd, gc, name, message, flags, mtime);
 	g_free(name);
 	g_free(message);
 }
@@ -739,12 +753,12 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 	}
 
 	if (!b->idle && idle) {
-		plugin_event(event_buddy_idle, gc, b->name, 0, 0);
+		plugin_event(event_buddy_idle, gc, b->name);
 		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 	if (b->idle && !idle) {
 		do_pounce(gc, b->name, OPT_POUNCE_UNIDLE);
-		plugin_event(event_buddy_unidle, gc, b->name, 0, 0);
+		plugin_event(event_buddy_unidle, gc, b->name);
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 
@@ -753,10 +767,10 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
 		do_pounce(gc, b->name, OPT_POUNCE_UNAWAY);
-		plugin_event(event_buddy_back, gc, b->name, 0, 0);
+		plugin_event(event_buddy_back, gc, b->name);
 		system_log(log_back, gc, b, OPT_LOG_BUDDY_AWAY);
 	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
-		plugin_event(event_buddy_away, gc, b->name, 0, 0);
+		plugin_event(event_buddy_away, gc, b->name);
 		system_log(log_away, gc, b, OPT_LOG_BUDDY_AWAY);
 	}
 
@@ -770,12 +784,12 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 		if (!b->present) {
 			b->present = 1;
 			do_pounce(gc, b->name, OPT_POUNCE_SIGNON);
-			plugin_event(event_buddy_signon, gc, b->name, 0, 0);
+			plugin_event(event_buddy_signon, gc, b->name);
 			system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 	} else {
 		if (b->present) {
-			plugin_event(event_buddy_signoff, gc, b->name, 0, 0);
+			plugin_event(event_buddy_signoff, gc, b->name);
 			system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
 		b->present = 0;
@@ -789,7 +803,7 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 {
 	char buf2[1024];
 
-	plugin_event(event_warned, gc, name, (void *)lev, 0);
+	plugin_event(event_warned, gc, name, lev);
 
 	if (gc->evil >= lev) {
 		gc->evil = lev;
@@ -810,7 +824,7 @@ void serv_got_typing(struct gaim_connection *gc, char *name, int timeout) {
 		 set_convo_gc(cnv, gc);
 		 show_typing(cnv);
 	} else return;
-	 plugin_event(event_got_typing, gc, name, 0, 0);
+	 plugin_event(event_got_typing, gc, name);
 	 do_pounce(gc, name, OPT_POUNCE_TYPING);
 	 if (timeout > 0) {
 		 if (cnv->typing_timeout)
@@ -916,7 +930,7 @@ struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, ch
 {
 	struct conversation *b;
 
-	plugin_event(event_chat_join, gc, (void *)id, name, 0);
+	plugin_event(event_chat_join, gc, id, name);
 
 	b = (struct conversation *)g_new0(struct conversation, 1);
 	gc->buddy_chats = g_slist_append(gc->buddy_chats, b);
@@ -975,7 +989,7 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 	if (!b)
 		return;
 
-	plugin_event(event_chat_leave, g, (void *)b->id, 0, 0);
+	plugin_event(event_chat_leave, g, b->id);
 
 	debug_printf("Leaving room %s.\n", b->name);
 
@@ -1014,7 +1028,7 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
 	strcpy(buffy, message);
 	angel = g_strdup(who);
-	plugin_return = plugin_event(event_chat_recv, g, (void *)b->id, &angel, &buffy);
+	plugin_return = plugin_event(event_chat_recv, g, b->id, &angel, &buffy);
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)

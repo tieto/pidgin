@@ -53,15 +53,15 @@ static void destroy_im_away()
 	imaway = NULL;
 }
 
-void purge_away_queue()
+void purge_away_queue(GSList *queue)
 {
 	struct conversation *cnv;
 
 	gtk_clist_freeze(GTK_CLIST(clistqueue));
 	gtk_clist_clear(GTK_CLIST(clistqueue));
 
-	while (message_queue) {
-		struct queued_message *qm = message_queue->data;
+	while (queue) {
+		struct queued_message *qm = queue->data;
 
 		cnv = find_conversation(qm->name);
 		if (!cnv)
@@ -70,7 +70,7 @@ void purge_away_queue()
 			set_convo_gc(cnv, qm->gc);
 		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm, qm->len);
 
-		message_queue = g_slist_remove(message_queue, qm);
+		queue = g_slist_remove(queue, qm);
 
 		g_free(qm->message);
 		g_free(qm);
@@ -134,7 +134,7 @@ void toggle_away_queue()
 	} else {
 		gtk_widget_hide(clistqueue);
 		gtk_widget_hide(clistqueuesw);
-		purge_away_queue();
+		purge_away_queue(message_queue);
 	}
 }
 
@@ -143,7 +143,7 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 	if (imaway) {
 		GtkWidget *tmp = imaway;
 
-		purge_away_queue();
+		purge_away_queue(message_queue);
 
 		imaway = NULL;
 		gtk_widget_destroy(tmp);

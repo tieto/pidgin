@@ -662,7 +662,7 @@ XS (XS_GAIM_print_to_chat)
 	XSRETURN(0);
 }
 
-int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4)
+int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4, void *arg5)
 {
 	char *buf = NULL;
 	GList *handler;
@@ -754,6 +754,7 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 				arg2 ? escape_quotes(arg2) : "", (int)arg3);
 		break;
 	case event_quit:
+	case event_blist_update:
 		buf = g_malloc0(1);
 		break;
 	case event_new_conversation:
@@ -780,6 +781,9 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		g_free(tmp3);
 		}
 		break;
+	case event_draw_menu:
+		/* we can't handle this usefully without gtk/perl bindings */
+		return 0;
 	default:
 		debug_printf("someone forgot to handle %s in the perl binding\n", event_name(event));
 		return 0;

@@ -1,3 +1,4 @@
+plugins/docklet/docklet.c
 plugins/chatlist.c
 plugins/gtik.c
 src/protocols/gg/gg.c

@@ -29,6 +29,7 @@ enum gaim_event {
 	event_chat_send_invite,
 	event_got_typing,
 	event_del_conversation,
+	event_connecting,
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -295,7 +296,7 @@ event_im_displayed_sent:
 	won't be displayed at all.
 
 event_im_displayed_rcvd:
-	struct gaim_connection *gc, char *who, char *what, guint32 flags
+	struct gaim_connection *gc, char *who, char *what, guint32 flags, time_t time
 
 	This is called after what you receive is displayed. This is useful
 	for displaying an autoresponse after the message that triggered it.
@@ -306,6 +307,8 @@ event_im_displayed_rcvd:
 	'who' is who sent the message.
 	'what' is what was sent.
 	'flags' is flags on the message.
+	'time' is the time the message was received--it may be very different from the
+	 time this signal gets called
 
 event_chat_send_invite:
 	struct gaim_connection *gc, int id, char *who, char **msg
@@ -332,6 +335,7 @@ event_got_typing:
 
 	'gc' 	is the connection the typing is sent to.
 	'who' 	is the person typing to you.
+
 event_del_conversation:
 	struct conversation *c
 
@@ -341,3 +345,15 @@ event_del_conversation:
 	anything.
 
 	'c'	is he conversation being closed.
+	
+event_connecting
+	struct aim_user *u
+
+	This is called when Gaim attempts to bring a user on-line. The
+	boolean u->connecting is set to true, and a global counter
+	incremented. The attempt can end with event_signon or event_signoff
+	being called, depending upon whether the attempt was a sucess or
+	a failure. In both cases, u->connecting is set to false and the
+	counter decremented.
+	
+	'u'	is the account being connected
