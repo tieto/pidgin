@@ -771,6 +771,7 @@ void show_usage(int mode, char *name)
 		       "                      account(s) to use)\n"
 		       "  -u, --user=NAME     use account NAME\n"
 		       "  -f, --file=FILE     use FILE as config\n"
+		       "  -d, --debug         print debugging messages to stdout\n"
 		       "  -v, --version       display version information window\n"
 		       "  -h, --help          display this help and exit\n", name);
 		break;

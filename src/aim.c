@@ -80,6 +80,7 @@ GtkWidget *mainwindow = NULL;
 int opt_away = 0;
 char *opt_away_arg = NULL;
 char *opt_rcfile_arg = NULL;
+int opt_debug = 0;
 
 void BuddyTickerCreateWindow(void);
 
@@ -540,6 +541,8 @@ int main(int argc, char *argv[])
 		 "Use account NAME", "NAME"},
 		{"file", 'f', POPT_ARG_STRING, &opt_rcfile_arg, 'f',
 		 "Use FILE as config", "FILE"},
+		{"debug", 'd', POPT_ARG_NONE, &opt_debug, 'd',
+		 "Print debugging messages to stdout", NULL},
 		{0, 0, 0, 0, 0, 0, 0}
 	};
 #endif /* USE_GNOME */
@@ -550,11 +553,15 @@ int main(int argc, char *argv[])
 		/*{"login", optional_argument, NULL, 'l'}, */
 		{"user", required_argument, NULL, 'u'},
 		{"file", required_argument, NULL, 'f'},
+		{"debug", no_argument, NULL, 'd'},
 		{"version", no_argument, NULL, 'v'},
 		{0, 0, 0, 0}
 	};
 #endif
 
+#ifdef DEBUG
+	opt_debug = 1;
+#endif
 
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -660,7 +667,7 @@ int main(int argc, char *argv[])
 #else
 	opterr = 1;
 #endif
-	while ((opt = getopt_long(argc, argv, "ahu:f:v", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "adhu:f:v", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'u':	/* set user */
 			opt_user = 1;
@@ -668,6 +675,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'a':	/* account editor */
 			opt_acct = 1;
+			break;
+		case 'd':	/* debug */
+			opt_debug = 1;
 			break;
 		case 'f':
 			opt_rcfile_arg = g_strdup(optarg);

@@ -2516,9 +2516,8 @@ void debug_printf(char *fmt, ...)
 		if (scroll)
 			gtk_adjustment_set_value(adj, adj->upper - adj->lower - adj->page_size);
 	}
-#ifdef DEBUG
-	g_print("%s", s);
-#endif
+	if (opt_debug)
+		g_print("%s", s);
 	g_free(s);
 }
 

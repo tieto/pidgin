@@ -189,6 +189,7 @@ extern GList *conversations;
 extern int opt_away;
 extern char *opt_away_arg;
 extern char *opt_rcfile_arg;
+extern int opt_debug;
 
 extern guint misc_options;
 #define OPT_MISC_DEBUG			0x00000001

@@ -369,10 +369,9 @@ char *event_name(enum gaim_event event)
 
 static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4)
 {
-#ifndef DEBUG
-	if (!(misc_options & OPT_MISC_DEBUG))
+	if (!opt_debug && !(misc_options & OPT_MISC_DEBUG))
 		return;
-#endif
+
 	switch (event) {
 		case event_quit:
 			debug_printf("%s\n", event_name(event));
