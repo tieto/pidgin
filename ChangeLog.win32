@@ -1,5 +1,6 @@
 version 0.73:
 	* Fix the close button on the first tab in each window.
+	* Fix for carriage return pileups in userinfo.
 
 version 0.72 (10/31/2003):
 	* Fix for bug #808562 - LANG needs to be set before gtk_init, when 
