@@ -416,8 +416,8 @@ static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg
 		case event_im_displayed_rcvd:
 			debug_printf("%s: %s %s %s\n", event_name(event),
 					((struct gaim_connection *)arg1)->username,
-					*(char **)arg2 ? *(char **)arg2 : "",
-					*(char **)arg3 ? *(char **)arg3 : "");
+					(char *)arg2 ? (char *)arg2 : "",
+					(char *)arg3 ? (char *)arg3 : "");
 			break;
 		case event_chat_recv:
 			debug_printf("%s: %s %s %s\n", event_name(event),
