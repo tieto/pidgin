@@ -608,7 +608,7 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 			hb->name = normalize(buddy->name);
 			hb->account = buddy->account;
 			hb->group = bnode->parent->parent;
-			g_hash_table_remove(gaimbuddylist->buddies, &hb);
+			g_hash_table_remove(gaimbuddylist->buddies, hb);
 			g_free(hb);
 		}
 	}
@@ -772,6 +772,7 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 		}
 	}
 
+
 	if(node && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
 				GAIM_BLIST_NODE_IS_CHAT(node))) {
 		if(node->next)
@@ -797,6 +798,10 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 
 	if(ops && cnode->child)
 		ops->update(gaimbuddylist, cnode);
+
+	for(bnode = cnode->child; bnode; bnode = bnode->next)
+		ops->update(gaimbuddylist, bnode);
+
 	if (save)
 		gaim_blist_save();
 }
