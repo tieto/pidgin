@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # setup-gettext - Provides compatibility with versions of gettext
-#                 from the 0.10.x series and 0.11.x.
+#                 from the 0.10.x, 0.11.x, and 0.12.x series.
 #
 # Copyright (C) 2002 Christian Hammond.
 #
@@ -21,7 +21,7 @@
 # MA  02111-1307  USA
 #
 
-VERSION=0.1.4
+VERSION=0.1.5
 
 VERBOSE=0
 
@@ -34,7 +34,7 @@ parse_gettext_version() {
 
 find_gettext() {
 	GETTEXT_TOOL=autopoint
-	
+
 	(autopoint --version) < /dev/null > /dev/null 2>&1 || {
 		GETTEXT_TOOL=gettextize
 
@@ -99,7 +99,7 @@ abort() {
 find_gettext
 
 # See if a version of gettext and its tools are installed.
-if [ x$GETTEXT_TOOL = x ]; then
+if test x$GETTEXT_TOOL = x; then
 	echo
 	echo "You do not have a version of gettext installed."
 	echo "Please download one from your local package repository or"
@@ -112,16 +112,16 @@ parse_gettext_version
 
 NUMVAR=$#
 
-if [ $NUMVAR -gt 0 ]; then
-	if [ $NUMVAR -gt 1 ]; then
+if test $NUMVAR -gt 0; then
+	if test $NUMVAR -gt 1; then
 		echo "Only one option at a time!"
 		exit 1
 
-	elif [ $1 = "--gettext-tool" ]; then
+	elif test $1 = "--gettext-tool"; then
 		echo $GETTEXT_TOOL
 		exit 0
 
-	elif [ $1 = "--help" ]; then
+	elif test $1 = "--help"; then
 		echo "setup-gettext v$VERSION"
 		echo "Usage:"
 		echo "   --gettext-tool           Returns gettextize or autopoint, depending"
@@ -134,36 +134,36 @@ if [ $NUMVAR -gt 0 ]; then
 		echo
 		exit 0
 
-	elif [ $1 = "--version" ]; then
+	elif test $1 = "--version"; then
 		echo $VERSION
 		exit 0
 
-	elif [ $1 = "--gettext-version" ]; then
+	elif test $1 = "--gettext-version"; then
 		echo $GETTEXT_VERSION
 		exit 0
 
-	elif [ $1 = "--gettext-major-version" ]; then
+	elif test $1 = "--gettext-major-version"; then
 		echo $GETTEXT_MAJOR_VERSION
 		exit 0
 
-	elif [ $1 = "--gettext-minor-version" ]; then
+	elif test $1 = "--gettext-minor-version"; then
 		echo $GETTEXT_MINOR_VERSION
 		exit 0
 
-	elif [ $1 = "--gettext-micro-version" ]; then
+	elif test $1 = "--gettext-micro-version"; then
 		echo $GETTEXT_MICRO_VERSION
 		exit 0
-	
-	elif [ $1 = "--install" ]; then
+
+	elif test $1 = "--install"; then
 		install
 		echo "setup-gettext installed."
 		exit 0
 
-	elif [ $1 = "--happy-url" ]; then
+	elif test $1 = "--happy-url"; then
 		echo http://gaim.sf.net/forkgettext.jpg
 		exit 0
-	
-	elif [ $1 = "--verbose" ]; then
+
+	elif test $1 = "--verbose"; then
 		VERBOSE=1
 
 	else
@@ -173,13 +173,19 @@ if [ $NUMVAR -gt 0 ]; then
 fi
 
 # Okay, run the main stuff
-if [ "$GETTEXT_TOOL" = "autopoint" ]; then
+if test "$GETTEXT_TOOL" = "autopoint"; then
 	backup_m4
 	[ $VERBOSE -eq 1 ] && echo "  autopoint --force"
 	echo n | autopoint --force || abort
 	restore_m4
+
+	if test $GETTEXT_MINOR_VERSION -eq 12; then
+		cp po/Makefile.in.in po/.tmp-Makefile.in.in
+		sed -e 's#echo "\$(top_builddir)/\$(MKINSTALLDIRS)" ;; esac#echo "\$(MKINSTALLDIRS)" ;; esac#1' < po/.tmp-Makefile.in.in > po/Makefile.in.in
+		rm po/.tmp-Makefile.in.in
+	fi
 else
-	if [ $GETTEXT_MINOR_VERSION -eq 11 ]; then
+	if test $GETTEXT_MINOR_VERSION -eq 11; then
 		backup_m4
 
 		# Gettext is pure evil. It DEMANDS that we press Return no matter
