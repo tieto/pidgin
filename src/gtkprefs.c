@@ -84,6 +84,7 @@ static guint browser_pref2_id = 0;
 static guint proxy_pref_id = 0;
 static guint sound_pref_id = 0;
 static guint auto_resp_pref_id = 0;
+static guint placement_pref_id = 0;
 
 /*
  * PROTOTYPES
@@ -346,6 +347,7 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	gaim_prefs_disconnect_callback(proxy_pref_id);
 	gaim_prefs_disconnect_callback(sound_pref_id);
 	gaim_prefs_disconnect_callback(auto_resp_pref_id);
+	gaim_prefs_disconnect_callback(placement_pref_id);
 
 	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
 		plug = l->data;
@@ -881,6 +883,18 @@ GtkWidget *list_page() {
 	return ret;
 }
 
+static void
+conversation_placement_cb(const char *name, GaimPrefType type, gpointer value,
+                          gpointer data)
+{
+	const char *placement = value;
+
+	if (strcmp(placement, "number"))
+		gtk_widget_set_sensitive(GTK_WIDGET(data), FALSE);
+	else
+		gtk_widget_set_sensitive(GTK_WIDGET(data), TRUE);
+}
+
 GtkWidget *conv_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -904,6 +918,15 @@ GtkWidget *conv_page() {
 
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
+
+	label = gaim_gtk_prefs_labeled_spin_button(vbox, "Number of conversations per window",
+	                                           "/gaim/gtk/conversations/placement_number",
+	                                           1, 50, sg);
+
+	placement_pref_id = gaim_prefs_connect_callback("/gaim/gtk/conversations/placement",
+	                                                conversation_placement_cb,
+	                                                label);
+	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);

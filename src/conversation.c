@@ -2414,6 +2414,47 @@ conv_placement_by_account(GaimConversation *conv)
 	conv_placement_new_window(conv);
 }
 
+static void
+conv_placement_by_number(GaimConversation *conv)
+{
+	GaimConvWindow *win = NULL;
+
+	if (gaim_prefs_get_bool("/core/conversations/combine_chat_im"))
+		win = g_list_last(gaim_get_windows())->data;
+	else
+		win = gaim_get_last_window_with_type(gaim_conversation_get_type(conv));
+
+	if (win == NULL) {
+		win = gaim_conv_window_new();
+
+		gaim_conv_window_add_conversation(win, conv);
+		gaim_conv_window_show(win);
+	} else {
+		int max_count = gaim_prefs_get_int("/gaim/gtk/conversations/placement_number");
+		int count = gaim_conv_window_get_conversation_count(win);
+
+		if (count < max_count)
+			gaim_conv_window_add_conversation(win, conv);
+		else {
+			GList *l = NULL;
+
+			for (l = gaim_get_windows(); l != NULL; l = l->next) {
+				win = (GaimConvWindow *)l->data;
+
+				count = gaim_conv_window_get_conversation_count(win);
+				if (count < max_count) {
+					gaim_conv_window_add_conversation(win, conv);
+					return;
+				}
+			}
+			win = gaim_conv_window_new();
+
+			gaim_conv_window_add_conversation(win, conv);
+			gaim_conv_window_show(win);
+		}
+	}
+}
+
 static ConvPlacementData *
 get_conv_placement_data(const char *id)
 {
@@ -2457,6 +2498,8 @@ ensure_default_funcs(void)
 							   conv_placement_by_group);
 		add_conv_placement_fnc("account", _("By account"),
 							   conv_placement_by_account);
+		add_conv_placement_fnc("number", _("By conversation count"),
+		                       conv_placement_by_number);
 	}
 }
 
