@@ -3341,7 +3341,7 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 					   buddy->name, group->name);
 			aim_ssi_sendauthrequest(od->sess, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
 			if (!aim_ssi_itemlist_finditem(od->sess->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))
-				aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 1);
+				aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_buddy_get_alias_only(buddy), NULL, NULL, 1);
 		}
 	}
 }
@@ -3373,8 +3373,8 @@ static void gaim_auth_sendrequest(GaimConnection *gc, char *name) {
 	gchar *dialog_msg, *nombre;
 
 	buddy = gaim_find_buddy(gc->account, name);
-	if (buddy && (gaim_get_buddy_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", name, gaim_get_buddy_alias_only(buddy));
+	if (buddy && (gaim_buddy_get_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", name, gaim_buddy_get_alias_only(buddy));
 	else
 		nombre = NULL;
 
@@ -3417,7 +3417,7 @@ static void gaim_auth_grant(struct name_data *data) {
 		message = 0;
 		buddy = gaim_find_buddy(gc->account, data->name);
 		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
-		gaim_account_notify_added(gc->account, NULL, data->name, (buddy ? gaim_get_buddy_alias_only(buddy) : NULL), NULL);
+		gaim_account_notify_added(gc->account, NULL, data->name, (buddy ? gaim_buddy_get_alias_only(buddy) : NULL), NULL);
 #else
 		aim_ssi_sendauthreply(od->sess, data->name, 0x01, NULL);
 #endif
@@ -4906,7 +4906,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		g_string_append_printf(str, "\n<hr>\n");
 	}
 
-	primary = g_strdup_printf(_("ICQ Info for %s"), gaim_get_buddy_alias(buddy));
+	primary = g_strdup_printf(_("ICQ Info for %s"), gaim_buddy_get_alias(buddy));
 	gaim_notify_formatted(gc, NULL, primary, NULL, str->str, NULL, NULL);
 	g_free(primary);
 	g_string_free(str, TRUE);
@@ -5532,7 +5532,7 @@ static void oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gro
 		if (buddy && group) {
 			gaim_debug_info("oscar",
 					   "ssi: adding buddy %s to group %s\n", buddy->name, group->name);
-			aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+			aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_buddy_get_alias_only(buddy), NULL, NULL, 0);
 		}
 	}
 #endif
@@ -6053,8 +6053,8 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "ssi: %s has given you permission to add him to your buddy list\n", sn);
 
 	buddy = gaim_find_buddy(gc->account, sn);
-	if (buddy && (gaim_get_buddy_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", sn, gaim_get_buddy_alias_only(buddy));
+	if (buddy && (gaim_buddy_get_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", sn, gaim_buddy_get_alias_only(buddy));
 	else
 		nombre = g_strdup(sn);
 
@@ -6092,8 +6092,8 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "ssi: received authorization request from %s\n", sn);
 
 	buddy = gaim_find_buddy(gc->account, sn);
-	if (buddy && (gaim_get_buddy_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", sn, gaim_get_buddy_alias_only(buddy));
+	if (buddy && (gaim_buddy_get_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", sn, gaim_buddy_get_alias_only(buddy));
 	else
 		nombre = g_strdup(sn);
 
@@ -6132,8 +6132,8 @@ static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "ssi: received authorization reply from %s.  Reply is 0x%04hhx\n", sn, reply);
 
 	buddy = gaim_find_buddy(gc->account, sn);
-	if (buddy && (gaim_get_buddy_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", sn, gaim_get_buddy_alias_only(buddy));
+	if (buddy && (gaim_buddy_get_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", sn, gaim_buddy_get_alias_only(buddy));
 	else
 		nombre = g_strdup(sn);
 
@@ -6165,7 +6165,7 @@ static int gaim_ssi_gotadded(aim_session_t *sess, aim_frame_t *fr, ...) {
 	buddy = gaim_find_buddy(gc->account, sn);
 	gaim_debug_info("oscar",
 			   "ssi: %s added you to their buddy list\n", sn);
-	gaim_account_notify_added(gc->account, NULL, sn, (buddy ? gaim_get_buddy_alias_only(buddy) : NULL), NULL);
+	gaim_account_notify_added(gc->account, NULL, sn, (buddy ? gaim_buddy_get_alias_only(buddy) : NULL), NULL);
 
 	return 1;
 }
@@ -6912,8 +6912,8 @@ static void oscar_show_awaitingauth(GaimPluginAction *action)
 				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				if (buddy->account == gc->account && aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
-					if (gaim_get_buddy_alias_only(buddy))
-						nombre = g_strdup_printf(" %s (%s)", buddy->name, gaim_get_buddy_alias_only(buddy));
+					if (gaim_buddy_get_alias_only(buddy))
+						nombre = g_strdup_printf(" %s (%s)", buddy->name, gaim_buddy_get_alias_only(buddy));
 					else
 						nombre = g_strdup_printf(" %s", buddy->name);
 					tmp = g_strdup_printf("%s%s<br>", text, nombre);

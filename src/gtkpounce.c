@@ -932,7 +932,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 	buddy = gaim_find_buddy(account, pouncee);
 
-	alias = gaim_get_buddy_alias(buddy);
+	alias = gaim_buddy_get_alias(buddy);
 
 	/* Find the protocol id for the window title and/or message */
 	proto = gaim_find_prpl(gaim_account_get_protocol_id(account));

@@ -2727,7 +2727,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	if(gtkcontactnode && !gtkcontactnode->contact_expanded && contact->alias)
 		name = contact->alias;
 	else
-		name = gaim_get_buddy_alias(b);
+		name = gaim_buddy_get_alias(b);
 	esc = g_markup_escape_text(name, strlen(name));
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(b->account));

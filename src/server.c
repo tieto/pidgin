@@ -900,7 +900,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		time_t t = time(NULL);
 		char *tmpmsg;
 		GaimBuddy *b = gaim_find_buddy(gc->account, name);
-		const char *alias = b ? gaim_get_buddy_alias(b) : name;
+		const char *alias = b ? gaim_buddy_get_alias(b) : name;
 		int row;
 		struct last_auto_response *lar;
 		const gchar *auto_reply_pref;
@@ -1170,7 +1170,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		gaim_blist_rename_buddy(b, name);
 	}
 
-	alias = gaim_escape_html(gaim_get_buddy_alias(b));
+	alias = gaim_escape_html(gaim_buddy_get_alias(b));
 
 	old_idle = b->idle;
 

@@ -180,7 +180,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		char *str = NULL;
 
 		if ((b = gaim_find_buddy(account, user)) != NULL)
-			username = gaim_escape_html(gaim_get_buddy_alias(b));
+			username = gaim_escape_html(gaim_buddy_get_alias(b));
 		else
 			username = gaim_escape_html(user);
 

@@ -266,7 +266,7 @@ _get_details_resp_setup_buddy(NMUser * user, NMERR_T ret_code,
 		gaim_blist_rename_buddy(buddy,
 								nm_user_record_get_display_id(user_record));
 
-		alias = gaim_get_buddy_alias(buddy);
+		alias = gaim_buddy_get_alias(buddy);
 		if (alias == NULL || (strcmp(alias, buddy->name) == 0)) {
 			gaim_blist_alias_buddy(buddy,
 								   nm_user_record_get_full_name(user_record));
@@ -2456,7 +2456,7 @@ novell_add_buddy(GaimConnection * gc, GaimBuddy *buddy, GaimGroup * group)
 	/* Remove the GaimBuddy (we will add it back after adding it
 	 * to the server side list). Save the alias if there is one.
 	 */
-	alias = gaim_get_buddy_alias(buddy);
+	alias = gaim_buddy_get_alias(buddy);
 	if (alias && strcmp(alias, buddy->name))
 		nm_contact_set_display_name(contact, alias);
 

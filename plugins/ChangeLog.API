@@ -3,6 +3,11 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 0.81cvs
 	Commands API:
 	* Most functions now have a void *data argument.
+
+	Blist API:
+	* Added gaim_buddy_get_contact_alias
+	* Renamed gaim_get_buddy_alias to gaim_buddy_get_alias
+	* Renamed gaim_get_buddy_alias_only to gaim_buddy_get_alias_only
 	
 	Conversation API:
 	* Changed: gaim_conv_chat_add_user() (added flags parameter)

@@ -23,7 +23,7 @@ write_status(GaimBuddy *buddy, const char *message)
 	if (conv == NULL)
 		return;
 
-	who = gaim_get_buddy_alias(buddy);
+	who = gaim_buddy_get_alias(buddy);
 
 	g_snprintf(buf, sizeof(buf), message, who);
 

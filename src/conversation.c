@@ -1100,7 +1100,7 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 	if (gaim_prefs_get_bool("/core/conversations/use_alias_for_title")) {
 		if(gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			if(account && ((b = gaim_find_buddy(account, name)) != NULL))
-				text = gaim_get_buddy_alias(b);
+				text = gaim_buddy_get_contact_alias(b);
 		} else if(gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			if(account && ((chat = gaim_blist_find_chat(account, name)) != NULL))
 				text = chat->alias;
@@ -1389,8 +1389,8 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 
 					if (gaim_account_get_alias(account) != NULL)
 						who = account->alias;
-					else if (b != NULL && strcmp(b->name, gaim_get_buddy_alias(b)))
-						who = gaim_get_buddy_alias(b);
+					else if (b != NULL && strcmp(b->name, gaim_buddy_get_contact_alias(b)))
+						who = gaim_buddy_get_contact_alias(b);
 					else if (gaim_connection_get_display_name(gc) != NULL)
 						who = gaim_connection_get_display_name(gc);
 					else
@@ -1401,7 +1401,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 							    gaim_conversation_get_name(conv));
 
 					if (b != NULL)
-						who = gaim_get_buddy_alias(b);
+						who = gaim_buddy_get_contact_alias(b);
 					else
 						who = gaim_conversation_get_name(conv);
 				}
@@ -1410,7 +1410,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 				b = gaim_find_buddy(account, who);
 
 				if (b != NULL)
-					who = gaim_get_buddy_alias(b);
+					who = gaim_buddy_get_contact_alias(b);
 			}
 		}
 	}

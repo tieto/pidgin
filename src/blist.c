@@ -916,7 +916,7 @@ const char *gaim_contact_get_alias(GaimContact* contact)
 	if (contact->alias)
 		return contact->alias;
 
-	return gaim_get_buddy_alias(contact->priority);
+	return gaim_buddy_get_alias(contact->priority);
 }
 
 GaimGroup *gaim_group_new(const char *name)
@@ -1100,9 +1100,6 @@ void gaim_blist_add_group(GaimGroup *group, GaimBlistNode *node)
 	g_return_if_fail(group != NULL);
 	g_return_if_fail(GAIM_BLIST_NODE_IS_GROUP((GaimBlistNode *)group));
 
-	/* XXX - Wha?  Why does this exist here? */
-	//if (!gaimbuddylist)
-		//gaimbuddylist = gaim_blist_new();
 	ops = gaimbuddylist->ui_ops;
 
 	if (!gaimbuddylist->root) {
@@ -1367,7 +1364,7 @@ GaimBuddy *gaim_contact_get_priority_buddy(GaimContact *contact)
 	return contact->priority;
 }
 
-const char *gaim_get_buddy_alias_only(GaimBuddy *buddy)
+const char *gaim_buddy_get_alias_only(GaimBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);
 
@@ -1383,19 +1380,51 @@ const char *gaim_get_buddy_alias_only(GaimBuddy *buddy)
 	return NULL;
 }
 
-const char *gaim_get_buddy_alias(GaimBuddy *buddy)
+
+const char *gaim_buddy_get_contact_alias(GaimBuddy *buddy)
 {
-	const char *ret;
+	GaimContact *c;
 
-	/* Are there ever times when we WANT to return "Unknown"? */
-	/* g_return_val_if_fail(buddy != NULL, NULL); */
-	if (!buddy)
-		return _("Unknown");
+	g_return_val_if_fail(buddy != NULL, NULL);
 
-	ret = gaim_get_buddy_alias_only(buddy);
+	/* Search for an alias for the buddy. In order of precedence: */
+	/* The buddy alias */
+	if (buddy->alias != NULL)
+		return buddy->alias;
 
-	return ret ? ret : buddy->name;
+	/* The contact alias */
+	c = gaim_buddy_get_contact(buddy);
+	if ((c != NULL) && (c->alias != NULL))
+		return c->alias;
+
+	/* The server alias, if preferences say so */
+	if ((buddy->server_alias) && (*buddy->server_alias) &&
+			(gaim_prefs_get_bool("/core/buddies/use_server_alias")))
+		return buddy->server_alias;
+
+	/* The buddy's user name (i.e. no alias) */
+	return buddy->name;
 }
+
+
+const char *gaim_buddy_get_alias(GaimBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	/* Search for an alias for the buddy. In order of precedence: */
+	/* The buddy alias */
+	if (buddy->alias != NULL)
+		return buddy->alias;
+
+	/* The server alias, if preferences say so */
+	if ((buddy->server_alias) && (*buddy->server_alias) &&
+			(gaim_prefs_get_bool("/core/buddies/use_server_alias")))
+		return buddy->server_alias;
+
+	/* The buddy's user name (i.e. no alias) */
+	return buddy->name;
+}
+
 
 const char *gaim_chat_get_name(GaimChat *chat)
 {

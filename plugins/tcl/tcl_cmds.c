@@ -275,7 +275,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		if (node->type == GAIM_BLIST_CHAT_NODE)
 			Tcl_SetStringObj(result, ((GaimChat *)node)->alias, -1);
 		else if (node->type == GAIM_BLIST_BUDDY_NODE)
-			Tcl_SetStringObj(result, (char *)gaim_get_buddy_alias((GaimBuddy *)node), -1);
+			Tcl_SetStringObj(result, (char *)gaim_buddy_get_alias((GaimBuddy *)node), -1);
 		return TCL_OK;
 		break;
 	case CMD_BUDDY_HANDLE:

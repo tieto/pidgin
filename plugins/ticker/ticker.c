@@ -154,7 +154,7 @@ static void buddy_ticker_add_buddy(GaimBuddy *b) {
 	g_signal_connect(G_OBJECT(td->ebox), "button-press-event",
 		G_CALLBACK(buddy_click_cb), b);
 
-	td->label = gtk_label_new(gaim_get_buddy_alias(b));
+	td->label = gtk_label_new(gaim_buddy_get_alias(b));
 	gtk_box_pack_start(GTK_BOX(hbox), td->label, FALSE, FALSE, 5);
 
 	gtk_widget_show_all(td->ebox);
