@@ -335,10 +335,9 @@ int find_queue_total_by_name(char *name)
 
 	templist = message_queue;
 
-	while (templist)
-	{
+	while (templist) {
 		struct queued_message *qm = (struct queued_message *)templist->data;
-		if (!strcmp(name, qm->name))
+		if ((qm->flags & WFLAG_RECV) && !strcmp(name, qm->name))
 			i++;
 	
 		templist = templist->next;
@@ -354,8 +353,7 @@ struct queued_away_response *find_queued_away_response_by_name(char *name)
 
 	templist = away_time_queue;
 
-	while (templist)
-	{
+	while (templist) {
 		qar = (struct queued_away_response *)templist->data;
 		
 		if (!strcmp(name, qar->name))
@@ -367,12 +365,16 @@ struct queued_away_response *find_queued_away_response_by_name(char *name)
 	return NULL;
 }
 
+/* woo. i'm actually going to comment this function. isn't that fun. make sure to follow along, kids */
 void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away, time_t mtime)
 {
 	struct conversation *cnv;
 	int new_conv = 0;
 	int hehe = away;
 
+	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
+	 * by the prpls. so we create temp holders and pass those instead. it's basically
+	 * just to avoid segfaults. */
 	char *buffy = g_strdup(message);
 	char *angel = g_strdup(name);
 	int plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, 0);
@@ -389,7 +391,10 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	g_snprintf(name, strlen(name) + 1, "%s", angel);
 	g_free(angel);
 
-	if ((general_options & OPT_GEN_TIK_HACK) && awaymessage &&
+	/* TiK, using TOC, sends an automated message in order to get your away message. Now,
+	 * this is one of the biggest hacks I think I've seen. But, in order to be nice to
+	 * TiK, we're going to give users the option to ignore it. */
+	if ((general_options & OPT_GEN_TIK_HACK) && gc->away && strlen(gc->away) &&
 	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<")) {
 		char *tmpmsg = stylize(awaymessage->message, MSG_LEN);
 		serv_send_im(gc, name, tmpmsg, 1);
@@ -397,6 +402,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		return;
 	}
 
+	/* we should update the conversation window buttons and menu, if it exists. */
 	cnv = find_conversation(name);
 	if (cnv) {
 		cnv->gc = gc;
@@ -404,80 +410,132 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		update_buttons_by_protocol(cnv);
 	}
 
-	if (general_options & OPT_GEN_SEND_LINKS) {
+	/* if you can't figure this out, stop reading right now.
+	 * "we're not worthy! we're not worthy!" */
+	if (general_options & OPT_GEN_SEND_LINKS)
 		linkify_text(message);
-	}
 
+	/* um. when we call write_to_conv with the message we received, it's nice to pass whether
+	 * or not it was an auto-response. so if it was an auto-response, we set the appropriate
+	 * flag. this is just so prpls don't have to know about WFLAG_* (though some do anyway) */
 	if (away)
 		away = WFLAG_AUTO;
 
+	/* alright. two cases for how to handle this. either we're away or we're not. if we're not,
+	 * then it's easy. if we are, then there are three or four different ways of handling it
+	 * and different things we have to do for each. */
 	if (gc->away) {
-		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY)
-		{
-			struct queued_message *qm;
-			struct queued_away_response *qar;
-			int row;
+		time_t t;
+		char *tmpmsg;
+		struct buddy *b = find_buddy(gc, name);
+		char *alias = b ? b->show : name;
+		int row;
+		struct queued_away_response *qar;
 
-			qm = (struct queued_message *)g_new0(struct queued_message, 1);
+		time(&t);
+
+		/* either we're going to queue it or not. Because of the way awayness currently
+		 * works, this is fucked up. it's possible for an account to be away without the
+		 * imaway dialog being shown. in fact, it's possible for *all* the accounts to be
+		 * away without the imaway dialog being shown. so in order for this to be queued
+		 * properly, we have to make sure that the imaway dialog actually exists, first. */
+		if (!cnv && clistqueue && (general_options & OPT_GEN_QUEUE_WHEN_AWAY)) {
+			/* alright, so we're going to queue it. neat, eh? :) so first we create
+			 * something to store the message, and add it to our queue. Then we update
+			 * the away dialog to indicate that we've queued something. */
+			struct queued_message *qm;
+
+			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
-			qm->message = strdup(message);
+			qm->message = g_strdup(message);
 			qm->gc = gc;
 			qm->tm = mtime;
+			qm->flags = WFLAG_RECV | away;
+			message_queue = g_slist_append(message_queue, qm);
 
 			row = find_queue_row_by_name(qm->name);
 
-			if (row >= 0)
-			{
+			if (row >= 0) {
 				char number[32];
 				int qtotal;
 
 				qtotal = find_queue_total_by_name(qm->name);
-
-				g_snprintf(number, 32, _("(%d messages)"), ++qtotal);
-
+				g_snprintf(number, 32, _("(%d messages)"), qtotal);
 				gtk_clist_set_text(GTK_CLIST(clistqueue), row, 1, number);
-			}
-			else
-			{
-
-				gchar *heh[2];
-				int tmp = 0;
-
-				heh[0] = g_strdup(qm->name);
-				heh[1] = g_strdup(_("(1 message)"));
-				gtk_clist_append(GTK_CLIST(clistqueue), heh);
-
-				row = find_queue_row_by_name(qm->name);
-
-				g_free(heh[0]);
-				g_free(heh[1]);
-			}
-
-			message_queue = g_slist_append(message_queue, qm);
-		}
-		else
-		{
-			if (!(general_options & OPT_GEN_DISCARD_WHEN_AWAY)) {
-				if (cnv == NULL) {
-					new_conv = 1;
-					cnv = new_conversation(name);
-					cnv->gc = gc;
-					gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
-								    g_slist_index(connections, gc));
-					update_buttons_by_protocol(cnv);
-				}
 			} else {
+				gchar *heh[2];
+
+				heh[0] = qm->name;
+				heh[1] = _("(1 message)");
+				gtk_clist_append(GTK_CLIST(clistqueue), heh);
+			}
+		} else {
+			/* ok, so we're not queuing it. well then, we'll try to handle it normally.
+			 * Some people think that ignoring it is a perfectly acceptible way to handle
+			 * it. i think they're on crack, but hey, that's why it's optional. */
+			if (general_options & OPT_GEN_DISCARD_WHEN_AWAY)
 				return;
+
+			/* ok, so we're not ignoring it. make sure the conversation exists and is
+			 * updated (partly handled above already), play the receive sound (sound.c
+			 * will take care of not playing while away), and then write it to the
+			 * convo window. */
+			if (cnv == NULL) {
+				new_conv = 1;
+				cnv = new_conversation(name);
+				cnv->gc = gc;
+				gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
+							    g_slist_index(connections, gc));
+				update_buttons_by_protocol(cnv);
 			}
-			if (cnv != NULL) {
-				if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
-					play_sound(RECEIVE);
-				
-				write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
-			}
+			if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
+				play_sound(FIRST_RECEIVE);
+			else if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
+				play_sound(RECEIVE);
+			
+			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
 		}
 
+		/* regardless of whether we queue it or not, we should send an auto-response. That is,
+		 * of course, unless the horse.... no wait. */
+		if ((general_options & OPT_GEN_NO_AUTO_RESP) || !strlen(gc->away))
+			return;
+
+		/* this used to be based on the conversation window. but um, if you went away, and
+		 * someone sent you a message and got your auto-response, and then you closed the
+		 * window, and then the sent you another one, they'd get the auto-response back
+		 * too soon. besides that, we need to keep track of this even if we've got a queue.
+		 * so the rest of this block is just the auto-response, if necessary */
+		qar = find_queued_away_response_by_name(name);
+		if (!qar) {
+			qar = (struct queued_away_response *)g_new0(struct queued_away_response, 1);
+			g_snprintf(qar->name, sizeof(qar->name), "%s", name);
+			qar->sent_away = 0;
+			away_time_queue = g_slist_append(away_time_queue, qar);
+		}
+		if ((t - qar->sent_away) < 120)
+			return;
+		qar->sent_away = t;
+
+		/* apply default fonts and colors */
+		tmpmsg = stylize(gc->away, MSG_LEN);
+		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
+		if (!cnv && clistqueue && (general_options & OPT_GEN_QUEUE_WHEN_AWAY)) {
+			struct queued_message *qm;
+			qm = g_new0(struct queued_message, 1);
+			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
+			qm->message = g_strdup(message);
+			qm->gc = gc;
+			qm->tm = mtime;
+			qm->flags = WFLAG_SEND | WFLAG_AUTO;
+			message_queue = g_slist_append(message_queue, qm);
+		} else if (cnv != NULL)
+			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL, mtime);
+		g_free(tmpmsg);
 	} else {
+		/* we're not away. this is easy. if the convo window doesn't exist, create and update
+		 * it (if it does exist it was updated earlier), then play a sound indicating we've
+		 * received it and then display it. easy. */
 		if (cnv == NULL) {
 			new_conv = 1;
 			cnv = new_conversation(name);
@@ -486,66 +544,12 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 						    g_slist_index(connections, gc));
 			update_buttons_by_protocol(cnv);
 		}
-		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV)) {
+		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
 			play_sound(FIRST_RECEIVE);
-		} else 
-		{
-			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
-				play_sound(RECEIVE);
-		}
+		else if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
+			play_sound(RECEIVE);
 
 		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
-	}
-
-
-
-
-	if (!(general_options & OPT_GEN_NO_AUTO_RESP) && gc->away && strlen(gc->away)) {
-		time_t t;
-		char *tmpmsg;
-		struct buddy *b = find_buddy(gc, name);
-		char *alias = b ? b->show : name;
-		int sawy;
-		int row;
-		struct queued_away_response *qar = NULL;
-
-		time(&t);
-
-		if (cnv)
-			sawy = cnv->sent_away;
-		else
-		{
-			qar = find_queued_away_response_by_name(name);
-
-			if (!qar)
-			{
-				qar = (struct queued_away_response *)g_new0(struct queued_away_response, 1);
-
-				g_snprintf(qar->name, sizeof(qar->name), "%s", name);
-				qar->sent_away = 0;
-
-				away_time_queue = g_slist_append(away_time_queue, qar);
-			}
-
-			sawy = qar->sent_away;
-		}
-
-		if ((t - sawy) < 120)
-			return;
-
-		/* apply default fonts and colors */
-		tmpmsg = stylize(gc->away, MSG_LEN);
-		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
-
-		if (cnv)
-			cnv->sent_away = t;
-		else if (qar)
-			qar->sent_away = t;
-
-		if (cnv != NULL)
-			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL, mtime);
-
-		g_free(tmpmsg);
 	}
 }
 

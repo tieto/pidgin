@@ -273,7 +273,7 @@ struct queued_message {
 	char *message;
 	time_t tm;
 	struct gaim_connection *gc;
-	time_t sent_away;
+	int flags;
 };
 
 struct queued_away_response {
@@ -351,7 +351,6 @@ struct conversation {
 	GtkWidget *add;
 	GtkWidget *sep1;
 	GtkWidget *sep2;
- 	time_t sent_away;
 	GtkWidget *menu;
 	gboolean unseen;
 

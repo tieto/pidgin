@@ -60,45 +60,32 @@ static void destroy_im_away()
 void purge_away_queue()
 {
 	struct conversation *cnv;
-	GSList *templist = message_queue;
 
 	gtk_clist_freeze(GTK_CLIST(clistqueue));
 	gtk_clist_clear(GTK_CLIST(clistqueue));
 
-	while (templist)
-	{
-		struct queued_message *qm = (struct queued_message *)templist->data;
+	while (message_queue) {
+		struct queued_message *qm = message_queue->data;
 
 		cnv = find_conversation(qm->name);
-
 		if (!cnv)
 			cnv = new_conversation(qm->name);
+		if (g_slist_index(connections, qm->gc) >= 0) {
+			cnv->gc = qm->gc;
+			gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
+					g_slist_index(connections, qm->gc)); 
+			update_buttons_by_protocol(cnv);
+		}
 
-		cnv->gc = qm->gc;
+		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm);
 
-		write_to_conv(cnv, qm->message, WFLAG_RECV, NULL, qm->tm);
+		message_queue = g_slist_remove(message_queue, qm);
 
-		free(qm->message);
-
-		templist = g_slist_remove(templist, qm);
-
+		g_free(qm->message);
 		g_free(qm);
 	}
 
-	templist = away_time_queue;
-	
-	while (templist)
-	{
-		struct queued_away_response *qar = (struct queued_away_response *)templist->data;
-		
-		templist = g_slist_remove(templist, qar);
-		g_free(qar);
-	}
-
 	gtk_clist_thaw(GTK_CLIST(clistqueue));
-	
-	message_queue = NULL;
-	away_time_queue = NULL;
 }
 
 void toggle_away_queue()
@@ -106,18 +93,14 @@ void toggle_away_queue()
 	if (!clistqueue || !clistqueuesw)
 		return;
 	
-	if (general_options & OPT_GEN_QUEUE_WHEN_AWAY)
-	{
+	if (general_options & OPT_GEN_QUEUE_WHEN_AWAY) {
 		gtk_widget_show(clistqueue);
 		gtk_widget_show(clistqueuesw);
-	}
-	else
-	{
+	} else {
 		gtk_widget_hide(clistqueue);
 		gtk_widget_hide(clistqueuesw);
 		purge_away_queue();
 	}
-	
 }
 
 void do_im_back(GtkWidget *w, GtkWidget *x)
@@ -131,6 +114,12 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 		gtk_widget_destroy(tmp);
 		if (w != tmp)
 			return;
+	}
+
+	while (away_time_queue) {
+		struct queued_away_response *qar = away_time_queue->data;
+		away_time_queue = g_slist_remove(away_time_queue, qar);
+		g_free(qar);
 	}
 
 	serv_set_away_all(NULL);
@@ -208,8 +197,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_signal_connect(GTK_OBJECT(back), "clicked", GTK_SIGNAL_FUNC(do_im_back), imaway);
 
 		/* Finish up */
-		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY)
-		{
+		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY) {
 			gtk_widget_show(clistqueuesw);
 			gtk_widget_show(clistqueue);
 		}
@@ -238,12 +226,11 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 #endif
 
 	/* New away message... Clear out the old sent_aways */
-	while (cnv) {
-		c = (struct conversation *)cnv->data;
-		c->sent_away = 0;
-		cnv = cnv->next;
+	while (away_time_queue) {
+		struct queued_away_response *qar = away_time_queue->data;
+		away_time_queue = g_slist_remove(away_time_queue, qar);
+		g_free(qar);
 	}
-
 
 	buf2 = g_malloc(strlen(awaymessage->message) * 4 + 1);
 	strncpy_withhtml(buf2, awaymessage->message, strlen(awaymessage->message) * 4 + 1);
