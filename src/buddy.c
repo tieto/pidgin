@@ -1045,7 +1045,6 @@ static void gaim_gtk_blist_restore_position()
 	/* if the window exists, is hidden, we're saving positions, and the position is sane... */
 	if(gtkblist && gtkblist->window &&
 	   !GTK_WIDGET_VISIBLE(gtkblist->window) &&
-	   blist_options & OPT_BLIST_SAVED_WINDOWS &&
 	   blist_pos.width != 0) {
 		/* ...check position is on screen... */
 		if (blist_pos.x >= gdk_screen_width())

@@ -722,19 +722,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			}
 		} else {
 			/*
-			 * Ok, so we're not queuing it. Well then, we'll try to handle
-			 * it normally. Some people think that ignoring it is a perfectly
-			 * acceptible way to handle it. I think they're on crack, but
-			 * hey, that's why it's optional.
-			 */
-			if (away_options & OPT_AWAY_DISCARD) {
-				g_free(name);
-				g_free(message);
-				return;
-			}
-
-			/*
-			 * Ok, so we're not ignoring it. Make sure the conversation
+			 * Make sure the conversation
 			 * exists and is updated (partly handled above already), play
 			 * the receive sound (sound.c will take care of not playing
 			 * while away), and then write it to the convo window.

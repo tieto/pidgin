@@ -313,7 +313,6 @@ extern guint sound_options;
 #define OPT_SOUND_CHAT_NICK             0x00040000
 
 extern guint away_options;
-#define OPT_AWAY_DISCARD		0x00000001
 #define OPT_AWAY_BACK_ON_IM		0x00000002
 /* #define OPT_AWAY_TIK_HACK		0x00000004 */
 #define OPT_AWAY_AUTO			0x00000008

@@ -537,6 +537,7 @@ GtkWidget *hotkeys_page() {
 GtkWidget *list_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
+	GtkWidget *button, *b2;
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
@@ -548,7 +549,6 @@ GtkWidget *list_page() {
 		      _("None"), OPT_BLIST_NO_BUTTON_TEXT, NULL);
 
 	vbox = make_frame (ret, _("Buddy List Window"));
-	gaim_button(_("_Save window size/position"), &blist_options, OPT_BLIST_SAVED_WINDOWS, vbox);
 	gaim_button(_("_Raise window on events"), &blist_options, OPT_BLIST_POPUP, vbox);
 
 	vbox = make_frame (ret, _("Group Display"));
@@ -556,10 +556,17 @@ GtkWidget *list_page() {
 	gaim_button(_("Show _numbers in groups"), &blist_options, OPT_BLIST_SHOW_GRPNUM, vbox);
 
 	vbox = make_frame (ret, _("Buddy Display"));
-	gaim_button(_("Show buddy _icons"), &blist_options, OPT_BLIST_SHOW_ICONS, vbox);
-	/* gaim_button(_("Show buddy t_ype icons"), &blist_options, OPT_BLIST_SHOW_PIXMAPS, vbox); */
-	gaim_button(_("Show _warning levels"), &blist_options, OPT_BLIST_SHOW_WARN, vbox);
-	gaim_button(_("Show idle _times"), &blist_options, OPT_BLIST_SHOW_IDLETIME, vbox);
+	button = gaim_button(_("Show buddy _icons"), &blist_options, OPT_BLIST_SHOW_ICONS, vbox);
+	b2 = gaim_button(_("Show _warning levels"), &blist_options, OPT_BLIST_SHOW_WARN, vbox);
+	if (blist_options & OPT_BLIST_SHOW_ICONS)
+		gtk_widget_set_sensitive(GTK_WIDGET(b2), FALSE);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+			 G_CALLBACK(gaim_gtk_toggle_sensitive), b2);
+	b2 = gaim_button(_("Show idle _times"), &blist_options, OPT_BLIST_SHOW_IDLETIME, vbox);
+	if (blist_options & OPT_BLIST_SHOW_ICONS)
+		gtk_widget_set_sensitive(GTK_WIDGET(b2), FALSE);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+			 G_CALLBACK(gaim_gtk_toggle_sensitive), b2);
 	gaim_button(_("Dim i_dle buddies"), &blist_options, OPT_BLIST_GREY_IDLERS, vbox);
 
 	gtk_widget_show_all(ret);
@@ -1028,7 +1035,6 @@ GtkWidget *away_page() {
 	vbox = make_frame (ret, _("Away"));
 	gaim_button(_("_Sending messages removes away status"), &away_options, OPT_AWAY_BACK_ON_IM, vbox);
 	gaim_button(_("_Queue new messages when away"), &away_options, OPT_AWAY_QUEUE, vbox);
-	gaim_button(_("_Ignore new conversations when away"), &away_options, OPT_AWAY_DISCARD, vbox);
 
 	vbox = make_frame (ret, _("Auto-response"));
 	hbox = gtk_hbox_new(FALSE, 0);

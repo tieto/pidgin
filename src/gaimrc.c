@@ -696,7 +696,6 @@ static struct replace gen_replace[] = {
 { /* OPT_GEN_DEBUG */			0x00000100,  &misc_options, OPT_MISC_DEBUG },
 { /* OPT_GEN_BROWSER_POPUP */		0x00000800,  &misc_options, OPT_MISC_BROWSER_POPUP },
 { /* OPT_GEN_SAVED_WINDOWS */		0x00001000, &blist_options, OPT_BLIST_SAVED_WINDOWS },
-{ /* OPT_GEN_DISCARD_WHEN_AWAY */	0x00002000,  &away_options, OPT_AWAY_DISCARD },
 { /* OPT_GEN_NEAR_APPLET */		0x00004000, &blist_options, OPT_BLIST_NEAR_APPLET },
 { /* OPT_GEN_CHECK_SPELLING */		0x00008000, &convo_options, OPT_CONVO_CHECK_SPELLING },
 { /* OPT_GEN_POPUP_CHAT */		0x00010000,  &chat_options, OPT_CHAT_POPUP },
