@@ -118,7 +118,8 @@ int oscar_login(char *username, char *password)
 
         aim_conn_getnext()->fd = STDIN_FILENO;
 
-        set_login_progress(1, "Looking up " login_host);
+	spintf(buf, "Looking up %s", login_host);
+        set_login_progress(1, buf);
 
         gaim_conn = aim_newconn(AIM_CONN_TYPE_AUTH, login_host);
 
@@ -136,9 +137,11 @@ int oscar_login(char *username, char *password)
                 set_state(STATE_OFFLINE);
                 
                 if (gaim_conn->status & AIM_CONN_STATUS_RESOLVERR) {
-                        hide_login_progress("Unable to lookup " login_host);
+			sprintf(buf, "Unable to lookup %s", login_host);
+                        hide_login_progress(buf);
                 } else if (gaim_conn->status & AIM_CONN_STATUS_CONNERR) {
-                        hide_login_progress("Unable to connect to " login_host);
+			sprintf(buf, "Unable to connect to %s", login_host);
+                        hide_login_progress(buf);
                 }
                 return -1;
         }
@@ -309,7 +312,7 @@ int gaim_redirect_handle(struct command_rx_struct *command, ...)
 
 		set_login_progress(5, "Logged in.\n");
 #ifdef USE_APPLET
-		if (general_options & OPT_GEN_APP_BUDDY_SOW) {
+		if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
 			show_buddy_list();
 			refresh_buddy_window();
 		} else {
