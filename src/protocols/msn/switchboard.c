@@ -488,7 +488,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg)
 				str_reason = _("Message could not be sent because a connection error occured");
 				break;
 			default:
-				str_reason = _("Message could not be sent for an unkwnown reason");
+				str_reason = _("Message could not be sent for an unknown reason");
 				break;
 		}
 
