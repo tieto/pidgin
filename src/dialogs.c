@@ -3323,14 +3323,14 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 /*  The dialog for import/export                                          */
 /*------------------------------------------------------------------------*/
 
-static void do_import_dialog(GtkWidget *w, struct gaim_connection *gc)
+static void do_import_dialog(GtkWidget *w, gpointer data)
 {
 	const char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
 	if (file_is_dir(file, importdialog)) {
 		return;
 	}
 	if (g_slist_find(connections, importgc)) {
-		do_import(gc->user, file);
+		do_import(importgc->user, file);
 		gaim_blist_save();
 	}
 	destroy_dialog(NULL, importdialog);
