@@ -158,7 +158,7 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 	gtk_dialog_add_button(GTK_DIALOG(dialog), GTK_STOCK_CLOSE, 1);
 
 	if (urls != NULL)
-		gtk_dialog_add_button(GTK_DIALOG(dialog), GAIM_STOCK_OPEN_MAIL, 1);
+		gtk_dialog_add_button(GTK_DIALOG(dialog), GAIM_STOCK_OPEN_MAIL, 0);
 
 	g_signal_connect(G_OBJECT(dialog), "response",
 					 G_CALLBACK(__email_response_cb), data);
