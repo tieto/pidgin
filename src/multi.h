@@ -61,7 +61,7 @@ struct gaim_connection {
 	time_t login_time;
 	time_t lastsent;
 	int is_idle;
-	int correction_time;
+	time_t correction_time;
 
 	/* stuff for a signin progress meter */
 	GtkWidget *meter;

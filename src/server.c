@@ -114,6 +114,9 @@ void serv_finish_login(struct gaim_connection *gc)
 
 	time(&gc->login_time);
 
+	if (gc->prpl->options & OPT_PROTO_CORRECT_TIME)
+		serv_add_buddy(gc, gc->username);
+
 	update_keepalive(gc, TRUE);
 }
 
@@ -577,8 +580,10 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 
 	if (gc->prpl->options & OPT_PROTO_CORRECT_TIME) {
 		char *tmp = g_strdup(normalize(name));
-		if (!strcasecmp(tmp, normalize(gc->username)))
-			gc->correction_time = (int)(signon - gc->login_time);
+		if (!g_strcasecmp(tmp, normalize(gc->username))) {
+			gc->correction_time = (signon - gc->login_time);
+			update_idle_times();
+		}
 		g_free(tmp);
 	}
 
