@@ -3065,6 +3065,7 @@ static struct away_message *save_away_message(struct create_away *ca)
 		am = g_new0(struct away_message, 1);
 	else
 		am = ca->mess;
+
 	g_snprintf(am->name, sizeof(am->name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
 	text_len = gtk_text_get_length(GTK_TEXT(ca->text));
 	away_message = gtk_editable_get_chars(GTK_EDITABLE(ca->text), 0, text_len);
@@ -3084,8 +3085,30 @@ static struct away_message *save_away_message(struct create_away *ca)
 	return am;
 }
 
+int check_away_mess(struct create_away *ca, int type)
+{
+	if ((strlen(gtk_entry_get_text(GTK_ENTRY(ca->entry))) == 0) && (type == 1))
+	{
+		/* We shouldn't allow a blank title */
+		do_error_dialog(_("You cannot create an away message with a blank title"), _("Gaim - Error"));
+		return 0;
+	}
+
+	if ((gtk_text_get_length(GTK_TEXT(ca->text)) == 0) && (type <= 1))
+	{
+		/* We shouldn't allow a blank message */
+		do_error_dialog(_("You cannot create an empty away message"), _("Gaim - Error"));
+		return 0;
+	}
+
+	return 1;
+}
+
 void save_away_mess(GtkWidget *widget, struct create_away *ca)
 {
+	if (!check_away_mess(ca, 1))
+		return;
+
 	save_away_message(ca);
 	destroy_dialog(NULL, ca->window);
 	g_free(ca);
@@ -3096,6 +3119,9 @@ void use_away_mess(GtkWidget *widget, struct create_away *ca)
 	static struct away_message am;
 	guint text_len;
 	gchar *away_message;
+	
+	if (!check_away_mess(ca, 0))
+		return;
 
 	g_snprintf(am.name, sizeof(am.name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
 	text_len = gtk_text_get_length(GTK_TEXT(ca->text));
@@ -3113,6 +3139,8 @@ void use_away_mess(GtkWidget *widget, struct create_away *ca)
 
 void su_away_mess(GtkWidget *widget, struct create_away *ca)
 {
+	if (!check_away_mess(ca, 1))
+		return;
 	do_away_message(NULL, save_away_message(ca));
 	destroy_dialog(NULL, ca->window);
 	g_free(ca);
