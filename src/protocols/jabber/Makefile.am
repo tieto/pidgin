@@ -22,9 +22,7 @@ JABBERSOURCES = auth.c \
 			  presence.c \
 			  presence.h \
 			  roster.c \
-			  roster.h \
-			  xmlnode.c \
-			  xmlnode.h 
+			  roster.h
 
 AM_CFLAGS = $(st)
 
