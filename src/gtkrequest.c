@@ -951,16 +951,20 @@ create_choice_field(GaimRequestField *field)
 
 		menu = gtk_menu_new();
 
-		gtk_option_menu_set_menu(GTK_OPTION_MENU(widget), menu);
-
 		for (l = labels; l != NULL; l = l->next)
 		{
 			const char *text = l->data;
 
 			item = gtk_menu_item_new_with_label(text);
+			gtk_widget_show(item);
 
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		}
+
+		gtk_widget_show(menu);
+		gtk_option_menu_set_menu(GTK_OPTION_MENU(widget), menu);
+		gtk_option_menu_set_history(GTK_OPTION_MENU(widget),
+						gaim_request_field_choice_get_default_value(field));
 
 		g_signal_connect(G_OBJECT(widget), "changed",
 						 G_CALLBACK(field_choice_menu_cb), field);
