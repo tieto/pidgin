@@ -131,15 +131,14 @@ faim_internal aim_msgcookie_t *aim_checkcookie(aim_session_t *sess, const fu8_t 
 }
 
 #if 0 /* debugging feature */
-faim_internal int aim_dumpcookie(aim_msgcookie_t *cookie) 
+faim_internal int aim_dumpcookie(aim_session_t *sess, aim_msgcookie_t *cookie) 
 {
 
 	if (!cookie)
 		return -EINVAL;
 
-	printf("\tCookie at %p: %d/%s with %p, next %p\n", 
-			cookie, cookie->type, cookie->cookie, 
-			cookie->data, cookie->next);
+	faimdprintf(sess, 0, "\tCookie at %p: %d/%s with %p, next %p\n", cookie, 
+			cookie->type, cookie->cookie, cookie->data, cookie->next);
 
 	return 0;
 }

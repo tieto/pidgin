@@ -2644,7 +2644,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 		flags = parse_encoding (text_enc);
 		switch (flags) {
 		case 0:
-			utf8 = g_strdup(text);
+			utf8 = g_strndup(text, text_len);
 			break;
 		case AIM_IMFLAGS_UNICODE:
 			utf8 = g_convert(text, text_len, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
