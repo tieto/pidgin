@@ -1974,22 +1974,18 @@ static void set_blist_option(GtkWidget *w, int option)
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
 	blist_options ^= option;
-
+	
 	if (!gtkblist)
 		return;
-
-	if (option == OPT_BLIST_SHOW_WARN)
+	
+	if (option == OPT_BLIST_SHOW_WARN ||
+		 option == OPT_BLIST_SHOW_IDLETIME)
 		gaim_gtk_blist_update_columns();
-	else if (option == OPT_BLIST_SHOW_IDLETIME) {
-		gaim_gtk_blist_update_refresh_timeout();
-		gaim_gtk_blist_update_columns();
-	}
 	else if (option == OPT_BLIST_SHOW_ICONS) {
 		gaim_gtk_blist_refresh(gaim_get_blist());
 		gaim_gtk_blist_update_columns();
 	} else
 		gaim_gtk_blist_refresh(gaim_get_blist());
-
 }
 
 static void set_convo_option(GtkWidget *w, int option)
