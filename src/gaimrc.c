@@ -777,6 +777,7 @@ static void gaimrc_read_proxy(FILE *f)
 	struct parse *p;
 
 	buf[0] = 0;
+	proxyhost[0] = 0;
 
 	while (buf[0] != '}') {
 		if (buf[0] == '#')
@@ -798,6 +799,30 @@ static void gaimrc_read_proxy(FILE *f)
 		} else if (!strcmp(p->option, "pass")) {
 			g_snprintf(proxypass, sizeof(proxypass), "%s", p->value[0]);
 		}
+	}
+	if (!proxyhost[0]) {
+		if (g_getenv("HTTP_PROXY"))
+			g_snprintf(proxyhost, sizeof(proxyhost), "%s", g_getenv("HTTP_PROXY"));
+		else if (g_getenv("HTTPPROXY"))
+			g_snprintf(proxyhost, sizeof(proxyhost), "%s", g_getenv("HTTPPROXY"));
+
+		if (g_getenv("HTTP_PROXY_PORT"))
+			proxyport = atoi(g_getenv("HTTP_PROXY_PORT"));
+		else if (g_getenv("HTTPPROXYPORT"))
+			proxyport = atoi(g_getenv("HTTPPROXYPORT"));
+
+		if (g_getenv("HTTP_PROXY_USER"))
+			g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("HTTP_PROXY_USER"));
+		else if (g_getenv("HTTPPROXYUSER"))
+			g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("HTTPPROXYUSER"));
+
+		if (g_getenv("HTTP_PROXY_PASS"))
+			g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("HTTP_PROXY_PASS"));
+		else if (g_getenv("HTTPPROXYPASS"))
+			g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("HTTPPROXYPASS"));
+
+		if (proxyhost[0])
+			proxytype = PROXY_HTTP;
 	}
 }
 
