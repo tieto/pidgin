@@ -206,8 +206,8 @@ struct _GaimPluginProtocolInfo
 	 * Fills the four char**'s with string identifiers for "emblems"
 	 * that the UI will interpret and display as relevant
 	 */
-	void (*list_emblems)(GaimBuddy *buddy, char **se, char **sw,
-						  char **nw, char **ne);
+	void (*list_emblems)(GaimBuddy *buddy, const char **se, const char **sw,
+						  const char **nw, const char **ne);
 
 	/**
 	 * Gets a short string representing this buddy's status.  This will
