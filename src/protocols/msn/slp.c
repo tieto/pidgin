@@ -92,7 +92,6 @@ msn_xfer_init(GaimXfer *xfer)
 			content);
 
 	g_free(content);
-	gaim_xfer_add(xfer);
 	msn_slplink_unleash(slpcall->slplink);
 }
 
@@ -101,6 +100,9 @@ msn_xfer_cancel(GaimXfer *xfer)
 {
 	MsnSlpCall *slpcall;
 	char *content;
+
+	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(xfer->data != NULL);
 
 	slpcall = xfer->data;
 

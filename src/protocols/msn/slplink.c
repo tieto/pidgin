@@ -405,7 +405,6 @@ send_file_cb(MsnSlpSession *slpsession)
 	slpmsg->slpcall = slpcall;
 	msn_slpmsg_open_file(slpmsg, gaim_xfer_get_local_filename(slpcall->xfer));
 
-	gaim_xfer_add(slpcall->xfer);
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
 }
 

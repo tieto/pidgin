@@ -77,10 +77,14 @@ gaim_xfer_destroy(GaimXfer *xfer)
 	if (ui_ops != NULL && ui_ops->destroy != NULL)
 		ui_ops->destroy(xfer);
 
-	g_free(xfer->who);
-	g_free(xfer->filename);
+	if( xfer->who != NULL )
+		g_free(xfer->who);
 
-	if (xfer->remote_ip != NULL) g_free(xfer->remote_ip);
+	if( xfer->filename != NULL )
+		g_free(xfer->filename);
+
+	if (xfer->remote_ip != NULL) 
+		g_free(xfer->remote_ip);
 
 	if (xfer->local_filename != NULL)
 		g_free(xfer->local_filename);
@@ -106,6 +110,15 @@ gaim_xfer_unref(GaimXfer *xfer)
 	if (xfer->ref == 0)
 		gaim_xfer_destroy(xfer);
 }
+
+static void
+gaim_xfer_set_status(GaimXfer *xfer, GaimXferStatusType status)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->status = status;
+}
+
 
 static void gaim_xfer_show_file_error(const char *filename)
 {
@@ -216,6 +229,7 @@ gaim_xfer_choose_file_cancel_cb(void *user_data, const char *filename)
 {
 	GaimXfer *xfer = (GaimXfer *)user_data;
 
+  	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_LOCAL);
 	gaim_xfer_request_denied(xfer);
 }
 
@@ -233,6 +247,7 @@ gaim_xfer_choose_file(GaimXfer *xfer)
 static int
 cancel_recv_cb(GaimXfer *xfer)
 {
+  	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_LOCAL);
 	gaim_xfer_request_denied(xfer);
 	gaim_xfer_unref(xfer);
 
@@ -498,14 +513,6 @@ gaim_xfer_get_remote_port(const GaimXfer *xfer)
 	g_return_val_if_fail(xfer != NULL, -1);
 
 	return xfer->remote_port;
-}
-
-static void
-gaim_xfer_set_status(GaimXfer *xfer, GaimXferStatusType status)
-{
-	g_return_if_fail(xfer != NULL);
-
-	xfer->status = status;
 }
 
 void
@@ -925,7 +932,7 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 	gaim_request_close_with_handle(xfer);
 
 	msg = g_strdup_printf(_("%s canceled the transfer of %s"),
-	xfer->who, gaim_xfer_get_filename(xfer));
+					xfer->who, gaim_xfer_get_filename(xfer));
 	gaim_xfer_error(gaim_xfer_get_type(xfer), xfer->who, msg);
 	g_free(msg);
 

@@ -192,7 +192,6 @@ silcgaim_ftp_request_result(GaimXfer *x)
 		return;
 
 	/* Start the file transfer */
-	gaim_xfer_add(xfer->xfer);
 	status = silc_client_file_receive(xfer->sg->client, xfer->sg->conn,
 					  silcgaim_ftp_monitor, xfer,
 					  NULL, xfer->session_id,
@@ -315,7 +314,6 @@ silcgaim_ftp_send(GaimXfer *x)
 		local_ip = silc_net_localip();
 
 	/* Send the file */
-	gaim_xfer_add(xfer->xfer);
 	silc_client_file_send(xfer->sg->client, xfer->sg->conn,
 			      silcgaim_ftp_monitor, xfer,
 			      local_ip, 0, !local, xfer->client_entry,
