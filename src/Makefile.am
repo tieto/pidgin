@@ -16,7 +16,6 @@ CORESOURCES = \
 	connection.h \
 	conversation.c \
 	conversation.h \
-	core.c \
 	core.h \
 	debug.c \
 	debug.h \
@@ -55,7 +54,6 @@ gaim_SOURCES = \
 	dnd-hints.c \
 	dnd-hints.h \
 	gaim.h \
-	gaim-socket.h \
 	gaim-disclosure.c \
 	gaim-disclosure.h \
 	gaimrc.c \
@@ -97,7 +95,6 @@ gaim_SOURCES = \
 	md5.h \
 	privacy.h \
 	session.c \
-	socket.c \
 	stock.c \
 	stock.h \
 	themes.c \
@@ -115,7 +112,10 @@ gaim_LDADD = \
 	$(INTLLIBS) \
 	$(GTKSPELL_LIBS)
 
-gaim_remote_SOURCES = gaim-remote.c socket.c
+gaim_remote_SOURCES = \
+	gaim-remote.c \
+	$(top_srcdir)/plugins/gaim-remote/remote-socket.c
+
 gaim_remote_DEPENDENCIES = @LIBOBJS@
 gaim_remote_LDADD = @LIBOBJS@ $(GLIB_LIBS) $(INTLLIBS)
 
@@ -126,4 +126,5 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DDATADIR=\"$(datadir)\" \
-	$(DEBUG_CFLAGS)
+	$(DEBUG_CFLAGS) \
+	-I$(top_srcdir)/plugins

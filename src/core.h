@@ -96,25 +96,6 @@ GaimAccount {
 #define GAIM_ACCOUNT_CHECK_MAIL(account) \
 	((account)->options & OPT_ACCT_MAIL_CHECK)
 
-struct UI {
-	GIOChannel *channel;
-	guint inpa;
-};
-
-/* Globals in core.c */
-extern GSList *uis;
-extern int gaim_session;
-
-/* Functions in core.c */
-extern gint UI_write(struct UI *, guchar *, int);
-extern void UI_build_write(struct UI *, guchar, guchar, ...);
-extern void UI_broadcast(guchar *data, int);
-extern void UI_build_broadcast(guchar, guchar, ...);
-/* Don't ever use these; when gaim-core is done these will be
- * merged into the core's main() and won't be called directly */
-extern int core_main();
-extern void core_quit();
-
 /* Functions in gaimrc.c */
 extern void load_prefs();
 extern void load_pounces();

@@ -50,7 +50,6 @@
 #include "sound.h"
 #include "gtksound.h"
 #include "gaim.h"
-#include "gaim-socket.h"
 #include "account.h"
 #include "prefs.h"
 #include "notify.h"
@@ -426,7 +425,6 @@ void sighandler(int sig)
 		gaim_connections_disconnect_all();
 		break;
 	case SIGSEGV:
-		core_quit();
 #ifndef DEBUG
 		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
@@ -463,84 +461,14 @@ void sighandler(int sig)
 
 		if (gtk_main_level())
 			gtk_main_quit();
-		core_quit();
 		exit(0);
 	}
 }
 #endif
 
-#ifndef _WIN32
-static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer ud)
-{
-	guchar type;
-	guchar subtype;
-	guint32 len;
-	guchar *data;
-	guint32 x;
-	GError *error;
-
-	gaim_debug(GAIM_DEBUG_INFO, "core socket", "Core says: ");
-	g_io_channel_read_chars(source, &type, sizeof(type), &x, &error);
-	if(error)
-		g_error_free(error);
-	if (x == 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, NULL, "CORE IS GONE!\n");
-		g_io_channel_shutdown(source, TRUE, &error);
-		if(error)
-			g_free(error);
-		return FALSE;
-	}
-	gaim_debug(GAIM_DEBUG_INFO, NULL, "%d ", type);
-	g_io_channel_read_chars(source, &subtype, sizeof(subtype), &x, &error);
-	if(error)
-		g_error_free(error);
-	if (x == 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, NULL, "CORE IS GONE!\n");
-		g_io_channel_shutdown(source, TRUE, &error);
-		if(error)
-			g_error_free(error);
-		return FALSE;
-	}
-
-	gaim_debug(GAIM_DEBUG_INFO, NULL, "%d ", subtype);
-	g_io_channel_read_chars(source, (guchar *)&len, sizeof(len), &x, &error);
-	if(error)
-		g_error_free(error);
-	if (x == 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, NULL, "CORE IS GONE!\n");
-		g_io_channel_shutdown(source, TRUE, &error);
-		if(error)
-			g_error_free(error);
-		return FALSE;
-	}
-	
-	gaim_debug(GAIM_DEBUG_INFO, NULL, "(%d bytes)\n", len);
-
-	data = g_malloc(len);
-	g_io_channel_read_chars(source, data, len, &x, &error);
-	if(error)
-		g_error_free(error);
-	if (x != len) {
-		gaim_debug(GAIM_DEBUG_ERROR, "core socket",
-				   "CORE IS GONE! (read %d/%d bytes)\n", x, len);
-		g_free(data);
-		g_io_channel_shutdown(source, TRUE, &error);
-		if(error)
-			g_error_free(error);
-		return FALSE;
-	}
-
-	g_free(data);
-	return TRUE;
-}
-#endif /* _WIN32 */
-
 static int ui_main()
 {
 #ifndef _WIN32
-	GIOChannel *channel;
-	int UI_fd;
-	char name[256];
 	GList *icons = NULL;
 	GdkPixbuf *icon = NULL;
 	char *icon_path;
@@ -571,14 +499,6 @@ static int ui_main()
 		gaim_debug(GAIM_DEBUG_ERROR, "ui_main",
 				   "Failed to load the default window icon!\n");
 	}
-
-	g_snprintf(name, sizeof(name), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
-	UI_fd = gaim_connect_to_session(0);
-	if (UI_fd < 0)
-		return 1;
-
-	channel = g_io_channel_unix_new(UI_fd);
-	g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR, socket_readable, NULL);
 #endif
 
 	return 0;
@@ -925,7 +845,9 @@ int main(int argc, char *argv[])
 	wgaim_init();
 #endif
 
-	core_main();
+	gaim_set_blist(gaim_blist_new());
+	gaim_blist_load();
+
 	load_pounces();
 	ui_main();
 
@@ -958,7 +880,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!opt_acct && !opt_nologin && gaim_session == 0)
+	if (!opt_acct && !opt_nologin)
 		gaim_accounts_auto_login(GAIM_GTK_UI);
 
 	if (opt_acct) {
@@ -967,7 +889,6 @@ int main(int argc, char *argv[])
 		show_login();
 
 	gtk_main();
-	core_quit();
 	gaim_sound_shutdown();
 #ifdef _WIN32
 	wgaim_cleanup();

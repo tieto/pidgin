@@ -414,6 +414,7 @@ AC_OUTPUT([Makefile
 	   pixmaps/status/default/Makefile
 	   plugins/Makefile
 	   plugins/docklet/Makefile
+	   plugins/gaim-remote/Makefile
 	   plugins/gestures/Makefile
 	   plugins/perl/Makefile
 	   plugins/ticker/Makefile

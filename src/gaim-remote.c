@@ -26,7 +26,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <locale.h>
-#include "gaim-socket.h"
+
+#include <gaim-remote/remote.h>
 
 void show_remote_usage(char *name)
 {
@@ -130,32 +131,32 @@ int get_options(int argc, char *argv[])
 
 int command_uri() {
 	int fd = 0;
-	struct gaim_cui_packet *p = NULL;
-	fd = gaim_connect_to_session(0);
+	GaimRemotePacket *p = NULL;
+	fd = gaim_remote_session_connect(0);
 	if (!fd) {
 		fprintf(stderr, _("Gaim not running (on session 0)\n"));
 		return 1;
 	}
-	p = cui_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_URI);
-	cui_packet_append_string(p, opts.uri);
-	cui_send_packet (fd, p);
+	p = gaim_remote_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_URI);
+	gaim_remote_packet_append_string(p, opts.uri);
+	gaim_remote_session_send_packet(fd, p);
 	close(fd);
-	cui_packet_free(p);
+	gaim_remote_packet_free(p);
 	return 0;
 }
 
 int command_quit() {
 	int fd = 0;
-	struct gaim_cui_packet *p = NULL;
-	fd = gaim_connect_to_session(0);
+	GaimRemotePacket *p = NULL;
+	fd = gaim_remote_session_connect(0);
 	if (!fd) {
 		fprintf(stderr, _("Gaim not running (on session 0)\n"));
 		return 1;
 	}
-	p = cui_packet_new(CUI_TYPE_META, CUI_META_QUIT);
-	cui_send_packet (fd, p);
+	p = gaim_remote_packet_new(CUI_TYPE_META, CUI_META_QUIT);
+	gaim_remote_session_send_packet(fd, p);
 	close(fd);
-	cui_packet_free(p);
+	gaim_remote_packet_free(p);
 	return 0;
 }
 

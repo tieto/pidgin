@@ -123,9 +123,9 @@ gaim_connection_disconnect(GaimConnection *gc)
 
 		serv_close(gc);
 
-		gaim_connection_set_state(gc, GAIM_DISCONNECTED);
-
 		connections = g_list_remove(connections, gc);
+
+		gaim_connection_set_state(gc, GAIM_DISCONNECTED);
 
 		gaim_event_broadcast(event_signoff, gc);
 		system_log(log_signoff, gc, NULL,

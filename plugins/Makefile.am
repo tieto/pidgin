@@ -1,4 +1,4 @@
-DIST_SUBDIRS = docklet gestures perl ticker
+DIST_SUBDIRS = docklet gaim-remote gestures perl ticker
 
 if USE_PERL
 PERL_DIR = perl
