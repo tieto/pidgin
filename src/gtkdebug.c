@@ -184,7 +184,7 @@ static void
 debug_enabled_cb(const char *name, GaimPrefType type, gpointer value,
 				 gpointer data)
 {
-	if (debug_win == NULL)
+	if (value)
 		gaim_gtk_debug_window_show();
 	else
 		gaim_gtk_debug_window_hide();
