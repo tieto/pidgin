@@ -127,6 +127,7 @@ struct _GtkIMHtmlFontDetail {
 	gchar *fore;
 	gchar *back;
 	gchar *sml;
+    gint *underline;
 };
 
 struct _GtkSmileyTree {

@@ -978,10 +978,32 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							if(*q == '\'' || *q == '\"')
 								q++;
 							sz = atoi(q);
-							if(sz < 3)
-								size = "smaller";
-							else if(sz > 3)
-								size = "larger";
+							switch (sz)
+							{
+							case 1:
+							  size = "xx-small";
+							  break;
+							case 2:
+							  size = "x-small";
+							  break;
+							case 3:
+							  size = "small";
+							  break;
+							case 4:
+							  size = "medium";
+							  break;
+							case 5:
+							  size = "large";
+							  break;
+							case 6:
+							  size = "x-large";
+							  break;
+							case 7:
+							  size = "xx-large";
+							  break;
+							default:
+							  break;
+							}
 							g_string_append_printf(style, "font-size: %s; ", size);
 							p = q;
 						}

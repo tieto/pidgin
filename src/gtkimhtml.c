@@ -1943,22 +1943,27 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 					/* Inline CSS Support - Douglas Thrift
 					 *
 					 * color
+					 * background
 					 * font-family
 					 * font-size
+					 * text-decoration: underline
 					 */
 					{
-						gchar *style, *color, *family, *size;
+						gchar *style, *color, *background, *family, *size;
+						gchar *textdec;
 						GtkIMHtmlFontDetail *font, *oldfont = NULL;
 						style = gtk_imhtml_get_html_opt (tag, "style=");
 
 						if (!style) break;
 
 						color = gtk_imhtml_get_css_opt (style, "color: ");
+						background = gtk_imhtml_get_css_opt (style, "background: ");
 						family = gtk_imhtml_get_css_opt (style,
 							"font-family: ");
 						size = gtk_imhtml_get_css_opt (style, "font-size: ");
+						textdec = gtk_imhtml_get_css_opt (style, "text-decoration: ");
 
-						if (!(color || family || size)) {
+						if (!(color || family || size || background || textdec)) {
 							g_free(style);
 							break;
 						}
@@ -1973,15 +1978,26 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							oldfont = fonts->data;
 
 						if (color && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_FORECOLOR))
+						{
 							font->fore = color;
+							gtk_imhtml_toggle_forecolor(imhtml, font->fore);
+						}
 						else if (oldfont && oldfont->fore)
 							font->fore = g_strdup(oldfont->fore);
 
-						if (oldfont && oldfont->back && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR))
+						if (background && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR))
+						{
+							font->back = background;
+							gtk_imhtml_toggle_backcolor(imhtml, font->back);
+						}
+						else if (oldfont && oldfont->back)
 							font->back = g_strdup(oldfont->back);
 
 						if (family && !(options & GTK_IMHTML_NO_FONTS) && (imhtml->format_functions & GTK_IMHTML_FACE))
+						{
 							font->face = family;
+							gtk_imhtml_toggle_fontface(imhtml, font->face);
+						}
 						else if (oldfont && oldfont->face)
 							font->face = g_strdup(oldfont->face);
 						if (font->face && (atoi(font->face) > 100)) {
@@ -1994,20 +2010,40 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							font->sml = g_strdup(oldfont->sml);
 
 						if (size && !(options & GTK_IMHTML_NO_SIZES) && (imhtml->format_functions & (GTK_IMHTML_SHRINK|GTK_IMHTML_GROW))) {
-							if (g_ascii_strcasecmp(size, "smaller") == 0)
-							{
+							if (g_ascii_strcasecmp(size, "xx-small") == 0)
+								font->size = 1;
+							else if (g_ascii_strcasecmp(size, "smaller") == 0
+								  || g_ascii_strcasecmp(size, "x-small") == 0)
 								font->size = 2;
-							}
-							else if (g_ascii_strcasecmp(size, "larger") == 0)
-							{
+							else if (g_ascii_strcasecmp(size, "larger") == 0
+								  || g_ascii_strcasecmp(size, "medium") == 0)
 								font->size = 4;
-							}
+							else if (g_ascii_strcasecmp(size, "large") == 0)
+								font->size = 5;
+							else if (g_ascii_strcasecmp(size, "x-large") == 0)
+								font->size = 6;
+							else if (g_ascii_strcasecmp(size, "xx-large") == 0)
+								font->size = 7;
 							else
-							{
 								font->size = 3;
-							}
-						} else if (oldfont)
-							font->size = oldfont->size;
+						    gtk_imhtml_font_set_size(imhtml, font->size);
+						}
+						else if (oldfont)
+						{
+						    font->size = oldfont->size;
+						}
+
+						if (oldfont)
+						{
+						    font->underline = oldfont->underline;
+						}
+						if (textdec && font->underline != 1
+							&& g_ascii_strcasecmp(size, "underline") == 0
+							&& (imhtml->format_functions & GTK_IMHTML_UNDERLINE))
+						{
+						    gtk_imhtml_toggle_underline(imhtml);
+						    font->underline = 1;
+						}
 
 						g_free(style);
 						g_free(size);
@@ -2017,17 +2053,33 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 57:	/* /SPAN */
 					/* Inline CSS Support - Douglas Thrift */
 					if (fonts && !imhtml->wbfo) {
+						GtkIMHtmlFontDetail *oldfont = NULL;
 						GtkIMHtmlFontDetail *font = fonts->data;
 						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 						ws[0] = '\0'; wpos = 0;
 						/* NEW_BIT (NEW_TEXT_BIT); */
 						fonts = g_slist_remove (fonts, font);
-						if (font->face)
+						oldfont = fonts->data;
+
+						if (font->size != oldfont->size)
+						    gtk_imhtml_font_set_size(imhtml, oldfont->size);
+						if (font->underline != oldfont->underline)
+						    gtk_imhtml_toggle_underline(imhtml);
+						if (oldfont->face == NULL || strcmp(font->face, oldfont->face) != 0)
+						{
 							g_free (font->face);
-						if (font->fore)
+						    gtk_imhtml_toggle_fontface(imhtml, oldfont->face);
+						}
+						if (oldfont->fore == NULL || strcmp(font->fore, oldfont->fore) != 0)
+						{
 							g_free (font->fore);
-						if (font->back)
+						    gtk_imhtml_toggle_forecolor(imhtml, oldfont->fore);
+						}
+						if (oldfont->back == NULL || strcmp(font->back, oldfont->back) != 0)
+						{
 							g_free (font->back);
+						    gtk_imhtml_toggle_backcolor(imhtml, oldfont->back);
+						}
 						if (font->sml)
 							g_free (font->sml);
 						g_free (font);
