@@ -16,6 +16,11 @@ libfaim source on sourceforge) with the Gaim GTK front-end. I'll put any changes
 I make into a file, but so far, I haven't made any changes other than moving the
 .h files down a directory.
 
+And finally, a word of warning. Gaim/Faim is VERY buggy. It'll screw with your
+.gaimrc file. It won't always sign on right. It uses all your CPU. Please, don't
+use this for anything other than laughs right now. Hopefully we'll get it
+working better soon (please help!).
+
 CURRENTLY SUPPORTED FEATURES
 ============================
 Signing on
@@ -26,8 +31,8 @@ Being idle
 Setting your info
 Getting users' info
 Getting users' away messages (PLEASE do not use oscar/libfaim just because of
-	this, gaim with libfaim still really buggy, none of you will listen to
-	me anyway)
+	this, gaim with libfaim is still really buggy, none of you will listen
+	to me anyway)
 Telling the server who's on your permit/deny lists (buggy)
 Chat:
  - joining rooms
@@ -47,21 +52,26 @@ File transfer/IM images/voice chat/etc.
 
 KNOWN ISSUES
 ============
-- libfaim apparently has a problem with receiving messages to fast (sort of). If
-someone sends you a message "too fast", the server says "slow down" basically,
-and lets you know that a message was dropped. The time interval between messages
-seems to be much longer with libfaim than with TOC (i.e. you can receive more
-messages in less time with TOC than with libfaim). The outgoing limit seems to
-be about the same. So if all your friends are slow typists, this shouldn't be a
-problem.
+- libfaim apparently has a problem with receiving messages too fast (sort of).
+You can receive more messages in less time with TOC than with libfaim. It's not
+completely libfaim's fault though.
 
 - Signing on every once in a while acts really bizarrely for me. Maybe it's just
-me.
+me. I think it has something to do with the horrible lack of error checking and
+recovery on gaim's part.
 
 - Adding or removing people to your permit/deny lists causes the server to tell
 you everyone on your buddy list signed off and then immediately signed in again.
 While you won't ever see that it happens (other than everyone will suddenly have
-the guy-in-the-door icon), you'll hear it. Be warned.
+the guy-in-the-door icon), you'll hear it. Be warned. (This also happens at
+sign-on, because the list gets built, even if you don't have a list.)
+
+- It doesn't set the current_user in .gaimrc correctly, so the users listed in
+there will get really warped. Don't worry, it's just a problem with the .gaimrc,
+but it's an annoying one.
+
+- Oh, yeah, by the way, it'll eat up all your CPU. (Someone please fix this,
+there's a nice FIXME near the top of oscar.c that says what the problem is.)
 
 HOW TO HELP
 ===========
@@ -116,4 +126,9 @@ void oscar_send_im(char *name, char *msg, int away) {
 		aim_send_im(gaim_sess, gaim_conn, name, 0, msg);
 }
 
-That should be all that's needed. And that's that. Happy hacking.
+That should be all that's needed.
+
+There are also FIXME's scattered about oscar.c. Grep around for those, figure
+out what needs to be fixed, do that sort of thing. :) (Fixing the things listed
+in KNOWN ISSUES above, or any other bugs you happen to find, is a very good use
+of your time.) (You didn't hear that from me.)

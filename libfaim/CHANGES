@@ -1,6 +1,17 @@
 
 No release numbers
 ------------------
+ - Sun May 21 14:59:20 GMT 2000
+   - Added infotype parameter to aim_getinfo() for requesting
+       different types of messages.  AIM_GETINFO_GENERALINFO
+       will get you the normal stuff, AIM_GETINFO_AWAYMESSAGE
+       will get the normal stuff, with the profile replaced with
+       the user's away message.  Also, the callback adds an 
+       unsigned short to the end to give you the value that
+       was originally passed to the request.
+   - There were a few server-pertinent changes that didn't get 
+       documented from last month.  I have no idea what they were.
+
  - Sun Apr  2 07:29:11 UTC 2000
    - Redid much of the tx path to remove the superfluous copy.  But
        it touches every function that transmits.  Its been a long 

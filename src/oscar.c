@@ -58,6 +58,8 @@ static int gaim_chat_leave       (struct aim_session_t *, struct command_rx_stru
 static int gaim_chat_info_update (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_struct *, ...);
 
+/* FIXME ! This uses 100% of the CPU, guaranteed. We shouldn't be using
+ * aim_select at all. we should be using the gtk/gdk watcher functions */
 static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
 	struct aim_session_t *sess = (struct aim_session_t *)data;
@@ -468,6 +470,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 
 		serv_got_im(userinfo->sn, msg, icbmflags & AIM_IMFLAGS_AWAY);
 	}
+	/* FIXME : channel == 2 is RVOUS requests, including chat invitations */
 
 	return 1;
 }
