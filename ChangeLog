@@ -6,6 +6,7 @@ version 0.9.20:
 	* Spanish translation added (es)
 	* Simplified Chinese translation added (zh_CN)
 	* Korean translation added (kr)
+	* Run-time OSCAR support
 
 version 0.9.19 (06/09/2000):
 	* Graphical Smiley Faces
