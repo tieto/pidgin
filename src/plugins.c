@@ -767,11 +767,14 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 		break;
 	case event_im_recv:
 		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s",
-			   ((struct gaim_connection *)arg1)->username, *(char **)arg2, *(char **)arg3);
+			   ((struct gaim_connection *)arg1)->username,
+			   *(char **)arg2 ? *(char **)arg2 : "(null)",
+			   *(char **)arg3 ? *(char **)arg3 : "(null)");
 		break;
 	case event_im_send:
 		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s",
-			   ((struct gaim_connection *)arg1)->username, (char *)arg2, *(char **)arg3);
+			   ((struct gaim_connection *)arg1)->username, (char *)arg2,
+			   *(char **)arg3 ? *(char **)arg3 : "(null)");
 		break;
 	case event_buddy_signon:
 		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
@@ -815,7 +818,8 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			   (char *)arg4);
 		break;
 	case event_chat_send:
-		g_snprintf(buf, sizeof buf, "\"%s\" %s", (char *)arg2, *(char **)arg3);
+		g_snprintf(buf, sizeof buf, "\"%s\" %s", (char *)arg2,
+				*(char **)arg3 ? *(char **)arg3 : "(null)");
 		break;
 	case event_warned:
 		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %d",
