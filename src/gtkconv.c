@@ -4960,6 +4960,7 @@ update_tab_icon(GaimConversation *conv)
 	GaimAccount *account;
 	const char *name;
 	GaimBuddy *b;
+	GdkPixbuf *status = NULL;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	name = gaim_conversation_get_name(conv);
@@ -4968,46 +4969,27 @@ update_tab_icon(GaimConversation *conv)
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		b = gaim_find_buddy(account, name);
 		if (b != NULL) {
-			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon),
-					gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
-						GAIM_STATUS_ICON_SMALL));
-			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon),
-					gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
-						GAIM_STATUS_ICON_SMALL));
-		} else {
-			GdkPixbuf *pixbuf, *scale;
-			pixbuf = create_prpl_icon(account);
-
-			if (pixbuf) {
-				scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
-
-				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), scale);
-				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), scale);
-
-				g_object_unref(pixbuf);
-				g_object_unref(scale);
-			} else {
-				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), NULL);
-				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), NULL);
-			}
+			status = gaim_gtk_blist_get_status_icon((GaimBlistNode*)b,
+					GAIM_STATUS_ICON_SMALL);
 		}
-	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
-		GdkPixbuf *pixbuf, *scale;
+	}
+
+	if (!status) {
+		GdkPixbuf *pixbuf;
 		pixbuf = create_prpl_icon(account);
 
 		if (pixbuf) {
-			scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
-
-			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), scale);
-			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), scale);
-
+			status = gdk_pixbuf_scale_simple(pixbuf, 15, 15,
+					GDK_INTERP_BILINEAR);
 			g_object_unref(pixbuf);
-			g_object_unref(scale);
-		} else {
-			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), NULL);
-			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), NULL);
 		}
 	}
+
+	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
+
+	if(status)
+		g_object_unref(status);
 }
 
 static void
