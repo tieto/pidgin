@@ -44,7 +44,8 @@ enum _GaimConversationType
 {
 	GAIM_CONV_UNKNOWN = 0, /**< Unknown conversation type. */
 	GAIM_CONV_IM,          /**< Instant Message.           */
-	GAIM_CONV_CHAT         /**< Chat room.                 */
+	GAIM_CONV_CHAT,        /**< Chat room.                 */
+	GAIM_CONV_MISC         /**< A misc. conversation.      */
 };
 
 /**
@@ -77,8 +78,9 @@ enum _GaimConvUpdateType
 	 * XXX These need to go when we implement a more generic core/UI event
 	 * system.
 	 */
-	GAIM_CONV_ACCOUNT_ONLINE, /**< One of the user's accounts went online.  */
-	GAIM_CONV_ACCOUNT_OFFLINE /**< One of the user's accounts went offline. */
+	GAIM_CONV_ACCOUNT_ONLINE,  /**< One of the user's accounts went online.  */
+	GAIM_CONV_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
+	GAIM_CONV_UPDATE_AWAY      /**< The other user went away.                */
 };
 
 /* Yeah, this has to be included here. Ugh. */
@@ -220,6 +222,7 @@ struct gaim_conversation
 	{
 		struct gaim_im   *im;   /**< IM-specific data.                  */
 		struct gaim_chat *chat; /**< Chat-specific data.                */
+		void *misc;             /**< Misc. data.                        */
 
 	} u;
 };

@@ -750,9 +750,6 @@ gaim_window_get_active_conversation(const struct gaim_window *win)
 	ops = gaim_window_get_ops(win);
 
 	if (ops != NULL && ops->get_active_index != NULL)
-		debug_printf("Active index = %d\n", ops->get_active_index(win));
-
-	if (ops != NULL && ops->get_active_index != NULL)
 		return gaim_window_get_conversation_at(win, ops->get_active_index(win));
 
 	return NULL;

@@ -101,10 +101,6 @@ char fontface[128] = { 0 };
 int fontsize = 3;
 
 static GtkWidget *invite_dialog = NULL;
-#if 0
-static GtkWidget *invite_entry;
-static GtkWidget *invite_mess;
-#endif
 
 static volatile gboolean state_lock = FALSE;
 
@@ -1497,13 +1493,11 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 	GList *l;
 	int tab_clicked;
 
-	debug_printf("notebook_press_cb\n");
 	if (e->button != 1 || e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
-	debug_printf("notebook_press_cb: 1\n");
 	if (gtkwin->in_drag) {
 		debug_printf("Already in the middle of a window "
 					 "drag at tab_press_cb\n");
@@ -1515,8 +1509,6 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 	 * mess things up.
 	 */
 	tab_clicked = gaim_gtkconv_get_tab_at_xy(win, e->x_root, e->y_root);
-
-	printf("tab_clicked == %d\n", tab_clicked);
 
 	if (tab_clicked == -1)
 		return FALSE;
@@ -1541,11 +1533,9 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 		struct gaim_conversation *conv = l->data;
 		GtkWidget *tab = GAIM_GTK_CONVERSATION(conv)->tabby;
 
-		debug_printf("Tab: %d\n", gaim_conversation_get_index(conv));
 		if (!GTK_WIDGET_VISIBLE(tab))
 			continue;
 
-		debug_printf("Tab Visible.\n");
 		if (tab->allocation.x > x_rel || tab->allocation.y > y_rel)
 			break;
 
@@ -1556,19 +1546,15 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 		gtkwin->drag_max_y = tab->allocation.height + gtkwin->drag_min_y;
 	}
 
-	debug_printf("notebook_press_cb: 3\n");
-
 	/* Make sure the click occurred in the tab. */
 	if (e->x_root <  gtkwin->drag_min_x ||
 		e->x_root >= gtkwin->drag_max_x ||
 		e->y_root <  gtkwin->drag_min_y ||
 		e->y_root >= gtkwin->drag_max_y) {
 
-		debug_printf("Passing this down.\n");
 		return FALSE;
 	}
 
-	debug_printf("notebook_press_cb: 4\n");
 	gtkwin->in_predrag = TRUE;
 
 	/* Connect the new motion signals. */
@@ -1580,7 +1566,6 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 		g_signal_connect(G_OBJECT(widget), "leave_notify_event",
 						 G_CALLBACK(notebook_leave_cb), win);
 
-	debug_printf("notebook_press_cb: 5\n");
 	return FALSE;
 }
 
@@ -1611,7 +1596,6 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 	gtkwin = GAIM_GTK_WINDOW(win);
 
 	if (!gtkwin->in_predrag && !gtkwin->in_drag) {
-		printf("Not in predrag.\n");
 		return TRUE;
 	}
 
@@ -1641,7 +1625,6 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 	/* If we're not in drag...        */
 	/* We're perfectly normal people! */
 	if (!gtkwin->in_drag) {
-		debug_printf("Not in drag.\n");
 		return FALSE;
 	}
 
@@ -1699,7 +1682,6 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 
-	debug_printf("release cb returning.\n");
 	return TRUE;
 }
 
@@ -1715,8 +1697,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	if (gaim_gtk_is_state_locked())
 		return;
-
-	debug_printf("Switching conversation\n");
 
 	win = (struct gaim_window *)user_data;
 
@@ -3390,9 +3370,6 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 	if (gaim_window_get_conversation_count(win) == 1)
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), 0);
 
-	debug_printf("*** Current page = %d\n",
-				 gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook)));
-
 	if ((gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook)) == 0) ||
 		(conv == g_list_nth_data(gaim_window_get_conversations(win), 0))) {
 
@@ -3592,8 +3569,6 @@ gaim_gtkconv_write_im(struct gaim_conversation *conv, const char *who,
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	debug_printf("Write IM\n");
-
 	if (gtkconv->make_sound) {
 		if (flags & WFLAG_RECV) {
 			if (gtkconv->u.im->a_virgin &&
@@ -3605,7 +3580,6 @@ gaim_gtkconv_write_im(struct gaim_conversation *conv, const char *who,
 				play_sound(SND_RECEIVE);
 		}
 		else {
-			debug_printf("Playing SND_SEND\n");
 			play_sound(SND_SEND);
 		}
 	}
