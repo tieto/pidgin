@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(gaim, 0.76cvs, gaim-devel@lists.sourceforge.net)
+AC_INIT([gaim], [0.76cvs], [gaim-devel@lists.sourceforge.net])
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE([gaim], [0.76cvs])
+AM_INIT_AUTOMAKE
 
 AC_PREREQ([2.50])
 
