@@ -550,7 +550,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		case 0x00dc: { /* personal information */
 			info->age = aimbs_getle8(&qbs);
 			info->unknown = aimbs_getle8(&qbs);
-			info->gender = aimbs_getle8(&qbs);
+			info->gender = aimbs_getle8(&qbs); /* Not specified=0x00, Female=0x01, Male=0x02 */
 			info->personalwebpage = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->birthyear = aimbs_getle16(&qbs);
 			info->birthmonth = aimbs_getle8(&qbs);
