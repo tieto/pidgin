@@ -2426,9 +2426,11 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	GdkPixbuf *pixbuf = NULL;
 	GdkPixbufAnimation *annipixbuf = NULL;
 	GtkWidget *icon = NULL;
+	GtkTextChildAnchor *anchor;
+
 	printf("%s %s\n", sml, smiley);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
-	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
+	anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
 	g_object_set_data(G_OBJECT(anchor), "text_tag", g_strdup(smiley));
 
 	annipixbuf = gtk_smiley_tree_image(imhtml, sml, smiley);
