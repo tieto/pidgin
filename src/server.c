@@ -272,7 +272,7 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	if (prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, len, imflags);
 
-	if (!(imflags & GAIM_MESSAGE_AUTO_RESP))
+	if (!(imflags & GAIM_IM_AUTO_RESP))
 		serv_touch_idle(gc);
 
 	if (gc->away &&
