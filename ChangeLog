@@ -15,7 +15,7 @@ version 0.11.0-pre12:
 	* More IRC improvements [colors, etc] (Thanks Sean Egan)
 	* Improved proxy options
 	* Fixed a small issue with HTML not being stripped from
-	  log files properly (Thanks, faceprint)
+	  log files properly (Thanks, faceprint and David Stoddard)
 
 version 0.11.0-pre11 (04/30/2001):
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
