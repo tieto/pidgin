@@ -87,8 +87,6 @@ static void
 docklet_x11_update_icon(enum docklet_status icon)
 {
 	const gchar *icon_name = NULL;
-	GdkPixbuf *p;
-	GdkBitmap *mask = NULL;
 
 	g_return_if_fail(image != NULL);
 
@@ -114,6 +112,10 @@ docklet_x11_update_icon(enum docklet_status icon)
 			break;
 	}
 
+#if 0
+	GdkPixbuf *p;
+	GdkBitmap *mask = NULL;
+
 	gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
 	p = gtk_widget_render_icon(GTK_WIDGET(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
 
@@ -125,7 +127,7 @@ docklet_x11_update_icon(enum docklet_status icon)
 		int i;
 
 		for (i = 0; i < len; i++)
-			if ((data[i*4] != 0) || (data[i*4 + 1] != 0) || (data[i*4 + 2] != 0) || (data[i*4 + 3] != 0))
+			if (data[i*4 + 3] > 55)
 				bitmap[i/8] |= 1 << i % 8;
 			else
 				bitmap[i/8] &= ~(1 << i % 8);
@@ -138,6 +140,7 @@ docklet_x11_update_icon(enum docklet_status icon)
 		gdk_window_shape_combine_mask(image->window, mask, 0, 0);
 
 	g_object_unref(G_OBJECT(p));
+#endif
 }
 
 static void
