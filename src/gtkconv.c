@@ -1891,6 +1891,9 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
 
+	if (gtk_check_menu_item_get_active((GtkCheckMenuItem*) m) == FALSE)
+		return;
+
 	conv = gaim_conv_window_get_active_conversation(win);
 
 	gaim_conversation_set_account(conv, account);
