@@ -977,7 +977,9 @@ typedef struct {
 	fu32_t present;
 	fu16_t iconcsumlen;
 	fu8_t *iconcsum;
-	char *availablemsg;
+	char *availmsg_encoding;
+	char *availmsg;
+	int availmsg_len;
 } aim_userinfo_t;
 
 faim_export const char *aim_userinfo_sn(aim_userinfo_t *ui);

@@ -450,7 +450,8 @@ static void dumptlv(aim_session_t *sess, fu16_t type, aim_bstream_t *bs, fu8_t l
 faim_internal void aim_info_free(aim_userinfo_t *info)
 {
 	free(info->iconcsum);
-	free(info->availablemsg);
+	free(info->availmsg_encoding);
+	free(info->availmsg);
 }
 
 /*
@@ -675,7 +676,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 
 				switch (type2) {
 					case 0x0000: { /* This is an official buddy icon? */
-						/* This is always 5 bytes? */
+						/* This is always 5 bytes of "0x02 01 d2 04 72"? */
 						aim_bstream_advance(bs, length2);
 					} break;
 
@@ -690,8 +691,16 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 
 					case 0x0002: { /* An available message */
 						if (length2 > 4) {
-							free(outinfo->availablemsg);
-							outinfo->availablemsg = aimbs_getstr(bs, aimbs_get16(bs));
+							free(outinfo->availmsg);
+							outinfo->availmsg_len = aimbs_get16(bs);
+							outinfo->availmsg = aimbs_getraw(bs, outinfo->availmsg_len);
+							if (aimbs_get16(bs) == 0x0001) { /* We have an encoding */
+								aimbs_get16(bs);
+								outinfo->availmsg_encoding = aimbs_getstr(bs, aimbs_get16(bs));
+							} else {
+								/* No explicit encoding, client should use UTF-8 */
+								outinfo->availmsg_encoding = NULL;
+							}
 						} else
 							aim_bstream_advance(bs, length2);
 					} break;

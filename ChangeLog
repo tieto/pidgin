@@ -4,15 +4,15 @@ version 0.67
 	* Various bug fixes (larne from irc, Tim Ringenbach, Bjoern 
 	  Voigt, Paul A (darkrain))
 	* British English "translation" updated (Sam Halliday)
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* German translation updated (Bjoern Voigt)
-	* Italian translation updated (Luca Beltrame, Claudio Satriano)
-	* Serbian translation updated (Danilo Segan)
-	* Dutch translation updated (Vincent van Adrighem)
-	* Hungarian translation updated (Zoltan Sutto)
-	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
 	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Dutch translation updated (Vincent van Adrighem)
+	* German translation updated (Bjoern Voigt)
+	* Hungarian translation updated (Zoltan Sutto)
+	* Italian translation updated (Luca Beltrame, Claudio Satriano)
 	* Portuguese (Brazilian) translation added (Mauricio de Lemos Rodrigues Collares Neto)
+	* Serbian translation updated (Danilo Segan)
+	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
 
 version 0.66 (07/18/2003):
 	* Freebsd compile fix (Matthew Luckie)

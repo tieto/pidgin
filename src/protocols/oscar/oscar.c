@@ -148,7 +148,7 @@ struct buddyinfo {
 	time_t signon;
 	int caps;
 	gboolean typingnot;
-	gchar *availablemsg;
+	gchar *availmsg;
 
 	unsigned long ico_me_len;
 	unsigned long ico_me_csum;
@@ -285,7 +285,7 @@ static void oscar_free_name_data(struct name_data *data) {
 
 static void oscar_free_buddyinfo(void *data) {
 	struct buddyinfo *bi = data;
-	g_free(bi->availablemsg);
+	g_free(bi->availmsg);
 	g_free(bi->iconcsum);
 	g_free(bi);
 }
@@ -1804,11 +1804,18 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		bi->caps = caps;
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
-	free(bi->availablemsg);
-	if (info->availablemsg)
-		bi->availablemsg = g_strdup(info->availablemsg);
+	free(bi->availmsg);
+	if (info->availmsg)
+		if (info->availmsg_encoding) {
+			gchar *enc = g_strdup_printf("charset=\"%s\"", info->availmsg_encoding);
+			bi->availmsg = oscar_encoding_to_utf8(enc, info->availmsg, info->availmsg_len);
+			g_free(enc);
+		} else {
+			/* No explicit encoding means utf8.  Yay. */
+			bi->availmsg = g_strdup(info->availmsg);
+		}
 	else
-		bi->availablemsg = NULL;
+		bi->availmsg = NULL;
 
 	/* Server stored icon stuff */
 	if (info->iconcsumlen) {
@@ -5407,8 +5414,8 @@ static char *oscar_tooltip_text(struct buddy *b) {
 				free(tmp);
 			}
 
-			if (bi->availablemsg && !(b->uc & UC_UNAVAILABLE)) {
-				gchar *escaped = g_markup_escape_text(bi->availablemsg, strlen(bi->availablemsg));
+			if (bi->availmsg && !(b->uc & UC_UNAVAILABLE)) {
+				gchar *escaped = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
 				tmp = yay;
 				yay = g_strconcat(tmp, _("<b>Available:</b> "), escaped, "\n", NULL);
 				free(tmp);
@@ -5446,8 +5453,8 @@ static char *oscar_status_text(struct buddy *b) {
 			ret = g_strdup(_("Away"));
 	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
 		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
-		if (bi->availablemsg)
-			ret = g_markup_escape_text(bi->availablemsg, strlen(bi->availablemsg));
+		if (bi->availmsg)
+			ret = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
 	} else {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
 		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))
