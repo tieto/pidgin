@@ -1,0 +1,271 @@
+/** @page c-howto C Plugin HOWTO
+
+ @section Introduction
+  C plugins are native plugins.  They have complete access to all of the api,
+  and can do basically whatever they want.  All of the protocol plugins, as
+  well as the perl and tcl loader plugins are written in C.
+
+ @section getting_started Getting Started
+  To develop a plugin you need to have the gaim source code.  It is generally a
+  good idea to compile against the same version of gaim that you are running.
+  You may also want to develop against CVS.  While we do NOT recomend this for
+  normal users, but there is an exception for developers.  A lot tends to
+  change between versions and it's much easier to fix your plugin as things
+  change rather than waiting until the release.  But please do not abuse CVS.
+  Gaim puts a lot of strain on Source Forge's servers, and we do not need to
+  add anymore to it.
+
+  If you choose not to head my warnings and develop against a version of gaim
+  that is different from what you're running, then you're gaim source must at
+  the very least be configured.  Note that just running configure will
+  generally set the prefix to /usr/local.  This shouldn't be a problem, except
+  that most packages compile and install gaim with /usr as the prefix.
+
+  All plugins must have @c GAIM_PLUGINS defined.  You can choose to include
+  @c internal.h to do this, but if you choose to do it this way it must be
+  included before any other gaim files.  Likewise, if you choose to manually
+  define @c GAIM_PLUGINS, the definition must be before including any gaim
+  files.  Failure to do so will produce the 'plugin foo could not be loaded for
+  an unknown reason'.  This is one of the hardest unknown reasons to track
+  down, so let's try to avoid it at all costs ;)
+
+ @section hello_world Hello World!
+  I know every tutorial has a hello world, so why should gaim be any different?
+
+  @code
+#define GAIM_PLUGINS
+
+#include <glib.h>
+
+#include "notify.h"
+#include "plugin.h"
+#include "version.h"
+
+static gboolean
+plugin_load(GaimPlugin *plugin) {
+	gaim_notify_message(plugin, GAIM_NOTIFY_MSG_INFO, "Hello World!",
+						"This is the Hello World! plugin :)", NULL, NULL, NULL);
+
+	return TRUE;
+}
+
+static GaimPluginInfo info = {
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
+	GAIM_PLUGIN_STANDARD,
+	NULL,
+	0,
+	NULL,
+	GAIM_PRIORITY_DEFAULT,
+
+	"core-hello_world",
+	"Hello World!",
+	VERSION,
+
+	"Hello World Plugin",
+	"Hello World Plugin",
+	NULL,
+	GAIM_WEBSITE,
+
+	plugin_load,
+	NULL,
+	NULL,
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+static void
+init_plugin(GaimPlugin *plugin) {
+}
+
+GAIM_INIT_PLUGIN(hello_world, init_plugin, info);
+
+  @endcode
+
+  Okay, so what does all this mean?  We start off by defining @c GAIM_PLUGINS
+  like described before.  Next we include glib.h, mainly for gboolean and the
+  glib wrappers of the standard c types.  We could just use stdio and use
+  an int for the gboolean but since gaim uses  glib internally, we might as
+  well do the same.
+
+  Next, we include plugin.h which has all the plugin specific stuff that we
+  need.  For example @c GaimPlugin, @c GaimPluginInfo, @c GAIM_PLUGIN_MAGIC,
+  and @c GAIM_INIT_PLUGIN().
+
+  Our last include is version.h which defines @c GAIM_MAJOR_VERSION, and
+  @c GAIM_MINOR_VERSION.  Theres not much you need to know about these, except
+  that they are required and will stop your plugin from crashing Gaim when
+  something has changed that you plugin does not know about yet.
+
+  plugin_load is not required.  It is called when the plugin is loaded, so you
+  can initialize any variables and so on.  But in this plugin we'll just use it
+  to display a message.
+
+  Next we have the @c GaimPluginInfo structure.  Every plugin MUST have one of
+  these.  Below is a code snipet of the same struct used in @c hello_world with
+  comments describing what each is.
+
+  @code
+static GaimPluginInfo info = {
+	GAIM_PLUGIN_MAGIC,          /* Plugin magic, this should always be
+                                   GAIM_PLUGIN_MAGIC.  This value gets
+                                   incremented inside of gaim so that plugins
+                                   that haven't been updated yet, will fail to
+                                   load and avoid potential crashes while
+                                   loading old plugins.
+                                  */
+	GAIM_MAJOR_VERSION,          /* This is also define in gaim.  It helps
+                                    Gaim's plugin system tell what version of
+                                    this plugin was compiled for, and whether
+                                    or not loading it will cause problems
+                                  */
+	GAIM_MINOR_VERSION,          /* See previous */
+	GAIM_PLUGIN_STANDARD,        /* GaimPluginType, there are 4 different values
+                                    for this field.  The first is
+                                    GAIM_PLUGIN_UNKNOWN,  which should not be
+                                    used.  The second is GAIM_PLUGIN_STANDARD,
+                                    this is the value most plugins will use.
+                                    Next we have GAIM_PLUGIN_LOADER,  this is
+                                    the type you want to load if you're plugin
+                                    is going to make it possible to load non
+                                    native plugins.  For example, perl and tcl.
+                                    Last, we have GAIM_PLUGIN_PROTOCOL.  If
+                                    your plugin is going to allow the user to
+                                    connect to another network, this is the
+                                    type you'd want to use.
+                                  */
+	NULL,                         /* This field is the ui requirement.  This
+                                     value should be a string.  If you're
+                                     writing a core plugin, this should be NULL
+                                     and the plugin should not contain any ui
+                                     specific code.  If you're writing a gtk
+                                     plugin, you can use the
+                                     GAIM_GTK_PLUGIN_TYPE macro.  All other ui
+                                     plugins are dependent on their ui
+                                     implementation, and is outside the scope of
+                                     this howto.
+                                   */
+	0,                            /* This field is for plugin flags.  Currently,
+                                     the only flag available to plugins is
+                                     invisible (GAIM_PLUGIN_FLAG_INVISIBLE).
+                                     The only plugins that current use this flag,
+                                     is the ssl plugin.
+                                   */
+	NULL,                         /* This is a glist of plugin dependencies.  In
+                                     other words, a glist of plugin id's that
+                                     your plugin depends on.  If your plugin
+                                     does not have any dependencies, set this
+                                     value to NULL
+                                   */
+	GAIM_PRIORITY_DEFAULT,        /* This is the priority gaim with give your
+                                     plugin.  There are three possible values
+                                     for this field, GAIM_PRIORITY_DEFAULT,
+                                     GAIM_PRIORITY_HIGHEST, and
+                                     GAIM_PRIORITY_LOWEST
+                                   */
+
+	"core-hello_world",           /* This is your plugin's id.  There is a whole
+                                     page dedicated to this in the
+                                     'related-pages' section of the doxygen api.
+                                   */
+	"Hello World!",               /* This is your plugin name.  This is what
+                                     will be displayed for your plugin in the ui.
+                                   */
+	VERSION,                      /* This is the version of your plugin.  For
+                                     the sake of simplicity, I'm using the gaim
+                                     version.
+                                   */
+
+	"Hello World Plugin",         /* This is the summary of your plugin.  It
+                                     should be a short little blurb.  The ui
+                                     determines where, if at all, to display
+                                     this.
+                                   */
+	"Hello World Plugin",         /* This is the description of your plugin. It
+                                     can be as long and as descriptive as you
+                                     like.  And like the summary, it's up to the
+                                     ui where, if at all, to display this.
+                                   */
+	NULL,                         /* This is where you can put your name and
+                                     email address.  (You are the author right?)
+                                   */
+	GAIM_WEBSITE,                 /* This is the website for the plugin.  This
+                                     is helpful if users find bugs in your
+                                     plugin so they can help to bring them to
+                                     your attention
+                                   */
+
+	plugin_load,                  /* This is a pointer to a function for gaim to
+                                     call when it is loading your plugin.  It
+                                     should be in the form of:
+
+                                     gboolean function_name(GaimPlugin *plugin)
+
+                                     Returning TRUE will tell gaim to continue
+                                     loading your plugin, while FALSE will tell
+                                     gaim to stop trying to load it.
+                                   */
+	NULL,                         /* Same as above except it is called when
+                                     gaim tries to unload your plugin.  It
+                                     should be in the form of:
+
+                                     gboolean function_name(GaimPlugin *plugin)
+
+                                     Where returning TRUE will tell gaim to
+                                     continue unloading and false to not continue
+                                     unloading your plugin.
+                                   */
+	NULL,                         /* Similar to the two above members, except
+                                     this is called when gaim tries to destory
+                                     the plugin.  This is generally only called
+                                     when for some reason or another the plugin
+                                     fails to probe correctly.  It should be in
+                                     the form of:
+
+                                     void function_name(GaimPlugin *plugin)
+                                   */
+
+	NULL,                         /* This is a pointer to a ui specific struct.
+                                     For a gtk plugin it will be a pointer to a
+                                     GaimGtkPluginUiInfo struct.
+                                   */
+	NULL,                         /* This is a pointer to either a 
+                                     GaimPluginLoaderInfo struct or a
+                                     GaimPluginProtocolInfo struct, and is
+                                     beyond the scope of this document.
+                                   */
+	NULL,                         /* This is a pointer to a GaimPluginUiInfo
+                                     struct.  It is a core/ui split way for
+                                     core plugins to have a ui configuration
+                                     frame.  You can find an example of this
+                                     code in plugins/pluginpref_example.c
+                                   */
+	NULL                          /* Finally the last member of the structure,
+                                     is a function pointer where you can define
+                                     menu entries for 'Tools->Plugin Actions'.
+                                     It should be in the form of:
+
+                                     GList *function_name(GaimPlugin *plugin, 
+                                                          gpointer context)
+
+                                     It should return a GList of
+                                     GaimPluginActions.
+                                   */
+};
+  @endcode
+
+  Finally we have @c init_plugin and @c GAIM_INIT_PLUGIN.  @c init_plugin is a
+  function that gets called when Gaim probes the plugin.  Most plugins will
+  add their preferences to the pref tree here, more about that later.
+  @GAIM_INIT_PLUGIN is a macro that EVERY plugin MUST have.  @GAIM_INIT_PLUGIN
+  tells gaim some very basic things about your plugin, like what name to use
+  if the plugin is compiled staticly, the @c init_plugin function, and
+  the name of the @c GaimPluginInfo structure.  As you may have guess this
+  also gets read when Gaim is probing your plugin.  If this is missing you
+  will get the infamous "plugin unloadable for unknown reasons", so do not
+  forget it.
+ */
