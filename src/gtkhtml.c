@@ -477,7 +477,7 @@ int load_font_with_cache(const char *name, const char *weight, char slant,
 	gchar font_spec[1024];
 
 	g_snprintf(font_spec, sizeof font_spec,
-		"-*-%s-%s-%c-normal-*-*-%d-*-*-*-*-iso8859-1",
+		"-*-%s-%s-%c-*-*-*-%d-*-*-*-*-*-*",
 		name, weight, slant, size);
 
 	if((*font_return = g_datalist_id_get_data(&font_cache,
@@ -509,7 +509,7 @@ GdkFont *getfont(const char *font, int bold, int italic, int fixed, int size)
 	/* try both 'i'talic and 'o'blique for italic fonts, and keep
 	 * increasing the size until we get one that works. */	
 
-	while (size < 720) {
+	while (size <= 720) {
 		if (load_font_with_cache(font, weight, slant, size, &my_font))
 			return my_font;
 		if (italic && load_font_with_cache(font, weight, 'o', size, &my_font))
@@ -521,13 +521,65 @@ GdkFont *getfont(const char *font, int bold, int italic, int fixed, int size)
 	 * default fonts. */
 
 	font = fixed ? "courier" : "helvetica";
-
-	if (load_font_with_cache(font, weight, slant, 120, &my_font))
-		return my_font;
-	else {
-		fprintf(stderr, "gaim: can't load default font\n");
-		exit(1);
+	size = 120;
+	while (size <= 720) {
+		if (load_font_with_cache(font, weight, slant, size, &my_font))
+			return my_font;
+		size += 10;
 	}
+	
+	font = fixed ? "helvetica" : "courier";
+	size = 120;
+	while (size <= 720) {
+		if (load_font_with_cache(font, weight, slant, size, &my_font))
+			return my_font;
+		size += 10;
+	}
+
+	/* whoops, couldn't do any of those. maybe they have a default outgoing
+	 * font? maybe we can use that. */
+	if (font_options & OPT_FONT_FACE) {
+		if (fontname != NULL) {
+			/* woohoo! */
+			size = 120;
+			while (size <= 720) {
+				if (load_font_with_cache(fontname, "medium", 'r', size, &my_font))
+					return my_font;
+				size += 10;
+			}
+		}
+	}
+
+	/* ok, now we're in a pickle. if we can't do any of the above, let's
+	 * try doing the most boring font we can find. */
+	size = 120;
+	while (size <= 720) {
+		if (load_font_with_cache("courier", "medium", 'r', size, &my_font))
+			return my_font;
+		size += 10;
+	}
+
+	size = 120;
+	while (size <= 720) {
+		if (load_font_with_cache("helvetica", "medium", 'r', size, &my_font))
+			return my_font;
+		size += 10;
+	}
+
+	size = 120;
+	while (size <= 720) {
+		if (load_font_with_cache("times", "medium", 'r', size, &my_font))
+			return my_font;
+		size += 10;
+	}
+
+	/* my god, how did we end up here. is there a 'generic font' function
+	 * in gdk? that would be incredibly useful here. there's gotta be a
+	 * better way to do this. */
+	
+	/* well, if they can't do any of the fonts above, they're screwed, might
+	 * as well segfault. */
+	return NULL;
 }
 
 
