@@ -2708,6 +2708,7 @@ void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit, int newline)
 	}
 			
 	hb->fit = fit;
+	html->current_x += 2;
 	hb->x = html->current_x;
 	hb->y = html->current_y;
 	if (fit)
@@ -2734,7 +2735,7 @@ void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit, int newline)
 	}
 
 
-	html->current_x += hb->width;
+	html->current_x += hb->width + 1;
 
 	gtk_html_draw_bit(html, hb, 1);
 
