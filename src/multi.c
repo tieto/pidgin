@@ -47,8 +47,8 @@ static GtkWidget *list = NULL;	/* the clist of names in the accteditor */
 static GtkWidget *newmod = NULL;	/* the dialog for creating a new account */
 static GtkWidget *newmain = NULL;	/* the notebook that holds options */
 static struct aim_user tmpusr = { "", "", "", OPT_USR_REM_PASS, DEFAULT_PROTO,
-	{"", "", "", "", "", "", ""}, "", NULL, NULL, NULL, NULL, NULL,
-	NULL, NULL, OPT_USR_REM_PASS, DEFAULT_PROTO, NULL, NULL, NULL
+	{"", "", "", "", "", "", ""}, "", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+	OPT_USR_REM_PASS, DEFAULT_PROTO, NULL, NULL, NULL, "", NULL, NULL, NULL, NULL, NULL
 };
 
 static void generate_prpl_options(struct aim_user *, GtkWidget *);
@@ -256,6 +256,11 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 			g_list_free(u->opt_entries);
 		u->opt_entries = NULL;
 
+		g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", u->tmp_iconfile);
+		if (u->icondlg)
+			gtk_widget_destroy(u->icondlg);
+		u->icondlg = NULL;
+
 		gtk_widget_destroy(u->mod);
 	} else {
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.name));
@@ -276,6 +281,11 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 			g_list_free(tmpusr.opt_entries);
 		tmpusr.opt_entries = NULL;
 
+		g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", tmpusr.tmp_iconfile);
+		if (tmpusr.icondlg)
+			gtk_widget_destroy(tmpusr.icondlg);
+		tmpusr.icondlg = NULL;
+
 		gtk_widget_destroy(newmod);
 	}
 	save_prefs();
@@ -288,11 +298,17 @@ static void cancel_mod(GtkWidget *w, struct aim_user *u)
 			g_list_free(u->opt_entries);
 		u->opt_entries = NULL;
 		gtk_widget_destroy(u->mod);
+		if (u->icondlg)
+			gtk_widget_destroy(u->icondlg);
+		u->icondlg = NULL;
 	} else {
 		if (tmpusr.opt_entries)
 			g_list_free(tmpusr.opt_entries);
 		tmpusr.opt_entries = NULL;
 		gtk_widget_destroy(newmod);
+		if (tmpusr.icondlg)
+			gtk_widget_destroy(tmpusr.icondlg);
+		tmpusr.icondlg = NULL;
 	}
 }
 
@@ -318,6 +334,11 @@ static void set_prot(GtkWidget *opt, int proto)
 		} else if ((p->options & OPT_PROTO_MAIL_CHECK) && !(q->options & OPT_PROTO_MAIL_CHECK)) {
 			gtk_widget_hide(u->checkmail);
 		}
+		if (!(p->options & OPT_PROTO_BUDDY_ICON) && (q->options & OPT_PROTO_BUDDY_ICON)) {
+			gtk_widget_show(u->iconsel);
+		} else if ((p->options & OPT_PROTO_BUDDY_ICON) && !(q->options & OPT_PROTO_BUDDY_ICON)) {
+			gtk_widget_hide(u->iconsel);
+		}
 		u->tmp_protocol = proto;
 		generate_prpl_options(u, u->main);
 	} else if (!u && (tmpusr.tmp_protocol != proto)) {
@@ -336,6 +357,11 @@ static void set_prot(GtkWidget *opt, int proto)
 			gtk_widget_show(tmpusr.checkmail);
 		} else if ((p->options & OPT_PROTO_MAIL_CHECK) && !(q->options & OPT_PROTO_MAIL_CHECK)) {
 			gtk_widget_hide(tmpusr.checkmail);
+		}
+		if (!(p->options & OPT_PROTO_BUDDY_ICON) && (q->options & OPT_PROTO_BUDDY_ICON)) {
+			gtk_widget_show(tmpusr.iconsel);
+		} else if ((p->options & OPT_PROTO_BUDDY_ICON) && !(q->options & OPT_PROTO_BUDDY_ICON)) {
+			gtk_widget_hide(tmpusr.iconsel);
 		}
 		tmpusr.tmp_protocol = tmpusr.protocol = proto;
 		generate_prpl_options(NULL, newmain);
@@ -389,6 +415,121 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u)
 	return optmenu;
 }
 
+static void des_icon_sel(GtkWidget *w, struct aim_user *u)
+{
+	w = u->icondlg;
+	if (u->icondlg)
+		u->icondlg = NULL;
+	if (w)
+		gtk_widget_destroy(w);
+}
+
+static void set_icon(GtkWidget *w, struct aim_user *u)
+{
+	GtkWidget *sel = u ? u->icondlg : tmpusr.icondlg;
+	char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sel));
+
+	if (file_is_dir(file, sel))
+		return;
+
+	if (u) {
+		gtk_entry_set_text(GTK_ENTRY(u->iconentry), file);
+		g_snprintf(u->tmp_iconfile, sizeof(u->tmp_iconfile), "%s", file);
+		u->icondlg = NULL;
+	} else {
+		gtk_entry_set_text(GTK_ENTRY(tmpusr.iconentry), file);
+		g_snprintf(tmpusr.tmp_iconfile, sizeof(tmpusr.tmp_iconfile), "%s", file);
+		tmpusr.icondlg = NULL;
+	}
+
+	gtk_widget_destroy(sel);
+}
+
+static void sel_icon_dlg(GtkWidget *w, struct aim_user *u)
+{
+	GtkWidget *dlg;
+	char buf[256];
+
+	if ((u && u->icondlg) || (!u && tmpusr.icondlg)) {
+		if (u)
+			gtk_widget_show(u->icondlg);
+		else
+			gtk_widget_show(tmpusr.icondlg);
+		return;
+	}
+
+	dlg = gtk_file_selection_new(_("Gaim - Load Buddy Icon"));
+	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(dlg));
+	g_snprintf(buf, sizeof(buf), "%s/", g_get_home_dir());
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(dlg), buf);
+
+	gtk_signal_connect(GTK_OBJECT(dlg), "destroy", GTK_SIGNAL_FUNC(des_icon_sel), u);
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(dlg)->cancel_button), "clicked",
+			   GTK_SIGNAL_FUNC(des_icon_sel), u);
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(dlg)->ok_button), "clicked",
+			   GTK_SIGNAL_FUNC(set_icon), u);
+
+	if (u)
+		u->icondlg = dlg;
+	else
+		tmpusr.icondlg = dlg;
+
+	gtk_widget_show(dlg);
+}
+
+static void reset_icon(GtkWidget *w, struct aim_user *u)
+{
+	if (u) {
+		u->tmp_iconfile[0] = 0;
+		gtk_entry_set_text(GTK_ENTRY(u->iconentry), u->iconfile);
+	} else {
+		tmpusr.tmp_iconfile[0] = 0;
+		gtk_entry_set_text(GTK_ENTRY(tmpusr.iconentry), "");
+	}
+}
+
+static GtkWidget *build_icon_selection(struct aim_user *u, GtkWidget *box)
+{
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *name;
+	GtkWidget *browse;
+	GtkWidget *reset;
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Buddy Icon File:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	name = gtk_entry_new();
+	if (u)
+		gtk_entry_set_text(GTK_ENTRY(name), u->iconfile);
+	else
+		gtk_entry_set_text(GTK_ENTRY(name), tmpusr.iconfile);
+	gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
+	gtk_box_pack_start(GTK_BOX(hbox), name, TRUE, TRUE, 5);
+	gtk_widget_show(name);
+	if (u)
+		u->iconentry = name;
+	else
+		tmpusr.iconentry = name;
+
+	browse = gtk_button_new_with_label(_("Browse"));
+	gtk_signal_connect(GTK_OBJECT(browse), "clicked", GTK_SIGNAL_FUNC(sel_icon_dlg), u);
+	gtk_box_pack_start(GTK_BOX(hbox), browse, FALSE, FALSE, 0);
+	gtk_widget_show(browse);
+
+	reset = gtk_button_new_with_label(_("Reset"));
+	gtk_signal_connect(GTK_OBJECT(reset), "clicked", GTK_SIGNAL_FUNC(reset_icon), u);
+	gtk_box_pack_start(GTK_BOX(hbox), reset, FALSE, FALSE, 0);
+	gtk_widget_show(reset);
+
+	return hbox;
+}
+
 static void generate_general_options(struct aim_user *u, GtkWidget *book)
 {
 	GtkWidget *vbox;
@@ -399,6 +540,7 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 	GtkWidget *pass;
 	GtkWidget *rempass;
 	GtkWidget *checkmail;
+	GtkWidget *iconsel;
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -437,6 +579,8 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 	/*acct_button(_("Send KeepAlive packet (6 bytes/second)"), u, OPT_USR_KEEPALV, vbox); */
 	checkmail = acct_button(_("New Mail Notifications"), u, OPT_USR_MAIL_CHECK, vbox);
 
+	iconsel = build_icon_selection(u, vbox);
+
 	gtk_widget_show_all(vbox);
 
 	if (u) {
@@ -445,6 +589,7 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 		u->pass = pass;
 		u->rempass = rempass;
 		u->checkmail = checkmail;
+		u->iconsel = iconsel;
 		gtk_entry_set_text(GTK_ENTRY(name), u->username);
 		gtk_entry_set_text(GTK_ENTRY(pass), u->password);
 		gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
@@ -454,6 +599,7 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 		tmpusr.pass = pass;
 		tmpusr.rempass = rempass;
 		tmpusr.checkmail = checkmail;
+		tmpusr.iconsel = iconsel;
 	}
 }
 
@@ -569,9 +715,11 @@ static void show_acct_mod(struct aim_user *u)
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_border_width(GTK_CONTAINER(mod), 5);
 	gtk_container_add(GTK_CONTAINER(mod), box);
+	gtk_widget_show(box);
 
 	book = gtk_notebook_new();
 	gtk_box_pack_start(GTK_BOX(box), book, FALSE, FALSE, 0);
+	gtk_widget_show(book);
 
 	if (u) {
 		if (find_prpl(u->protocol))
@@ -593,14 +741,17 @@ static void show_acct_mod(struct aim_user *u)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
 
 	button = picture_button(mod, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_mod), u);
+	gtk_widget_show(button);
 
 	button = picture_button(mod, _("OK"), ok_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_mod), u);
+	gtk_widget_show(button);
 
 	if (u) {
 		u->mod = mod;
@@ -611,8 +762,6 @@ static void show_acct_mod(struct aim_user *u)
 		newmain = book;
 	}
 
-	gtk_widget_show_all(mod);
-
 	if (u) {
 		p = find_prpl(u->tmp_protocol);
 		if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
@@ -621,6 +770,8 @@ static void show_acct_mod(struct aim_user *u)
 		}
 		if (p && (!(p->options & OPT_PROTO_MAIL_CHECK)))
 			gtk_widget_hide(u->checkmail);
+		if (p && (!(p->options & OPT_PROTO_BUDDY_ICON)))
+			gtk_widget_hide(u->iconsel);
 	} else {
 		p = find_prpl(tmpusr.tmp_protocol);
 		if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
@@ -629,7 +780,11 @@ static void show_acct_mod(struct aim_user *u)
 		}
 		if (p && (!(p->options & OPT_PROTO_MAIL_CHECK)))
 			gtk_widget_hide(tmpusr.checkmail);
+		if (p && (!(p->options & OPT_PROTO_BUDDY_ICON)))
+			gtk_widget_hide(tmpusr.iconsel);
 	}
+
+	gtk_widget_show(mod);
 }
 
 static void add_acct(GtkWidget *w, gpointer d)

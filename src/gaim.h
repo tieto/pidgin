@@ -127,6 +127,8 @@ struct aim_user {
 	char iconfile[256];
 
 	struct gaim_connection *gc;
+	
+	/* CUI: everything below here should be in struct mod_aim_user */
 
 	/* stuff for modify window */
 	GtkWidget *mod;
@@ -142,6 +144,12 @@ struct aim_user {
 	/* stuff for password prompt */
 	GtkWidget *passprmt;
 	GtkWidget *passentry;
+
+	/* stuff for icon selection */
+	char tmp_iconfile[256];
+	GtkWidget *iconsel;
+	GtkWidget *iconentry;
+	GtkWidget *icondlg;
 
 	/* stuff for mail check prompt */
 	GtkWidget *checkmail;

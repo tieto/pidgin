@@ -64,6 +64,8 @@
 #define OPT_PROTO_NO_PASSWORD     0x00000010
 /* MSN and Yahoo notify you when you have new mail */
 #define OPT_PROTO_MAIL_CHECK      0x00000020
+/* Oscar and Jabber have buddy icons */
+#define OPT_PROTO_BUDDY_ICON      0x00000040
 
 #define GAIM_AWAY_CUSTOM "Custom"
 

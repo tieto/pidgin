@@ -2703,7 +2703,7 @@ static struct prpl *my_protocol = NULL;
 
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
-	ret->options = OPT_PROTO_HTML | OPT_PROTO_CORRECT_TIME;
+	ret->options = OPT_PROTO_HTML | OPT_PROTO_CORRECT_TIME | OPT_PROTO_BUDDY_ICON;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;
