@@ -1760,6 +1760,10 @@ void show_set_info(GaimConnection *gc)
 
 	b->text = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(b->text), GTK_WRAP_WORD_CHAR);
+#ifdef USE_GTKSPELL
+ 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+		gtkspell_new_attach(GTK_TEXT_VIEW(b->text), NULL, NULL);
+#endif
 	gtk_widget_set_size_request(b->text, 300, 200);
 
 	if ((user_info = gaim_account_get_user_info(account)) != NULL) {
@@ -2823,6 +2827,11 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	ca->text = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD_CHAR);
+
+#ifdef USE_GTKSPELL
+ 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+		gtkspell_new_attach(GTK_TEXT_VIEW(ca->text), NULL, NULL);
+#endif
 
 	gtk_container_add(GTK_CONTAINER(frame), ca->text);
 
