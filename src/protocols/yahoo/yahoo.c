@@ -642,6 +642,7 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 		yahoo_process_logon(gc, pkt);
 		break;
 	case YAHOO_SERVICE_ISAWAY:
+	case YAHOO_SERVICE_ISBACK:
 		yahoo_process_status(gc, pkt);
 		break;
 	case YAHOO_SERVICE_MESSAGE:
