@@ -342,10 +342,23 @@ dnl # SSL support
 dnl #
 dnl # Thanks go to Evolution for the checks.
 dnl #######################################################################
+
+dnl These two are inverses of each other <-- stolen from evolution!
+
 AC_ARG_ENABLE(ssl,
-	[  --enable-ssl=[yes,no,static]    Turn on Secure Sockets Layer support [default=yes]],
+	[  --enable-nss=[yes,no,static]    Attempt to use Mozilla libnss for SSL support [default=yes]],
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
+
+AC_ARG_ENABLE(gnutls,
+	[  --enable-gnutls=[yes,no,static]    Attempt to use GNUTLS for SSL support [default=no]],
+	[enable_gnutls="$enableval"],
+	[enable_gnutls="no"])
+
+if test "x$enable_gnutls" = "xyes"; then
+	enable_nss="no"
+	AC_MSG_WARN([GNUTLS enabled. Disabling NSS.])
+fi
 
 AC_ARG_WITH(nspr-includes,
 	[  --with-nspr-includes=PREFIX     Specify location of Mozilla nspr4 includes.],
@@ -383,8 +396,9 @@ if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
 			mozilla_nss="mozilla-nss"
 
 			AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
+			AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
 
-			msg_ssl="yes"
+			msg_ssl="yes (Mozilla NSS)"
 		else
 			nss_manual_check="yes"
 		fi
@@ -549,13 +563,14 @@ if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
 
 			if test "x$moz_nss_libs" != "xno"; then
 				AC_DEFINE(HAVE_NSS)
+				AC_DEFINE(HAVE_SSL)
 
 				NSS_LIBS="-L$with_nss_libs $nsslibs"
 
 				if test "$enable_nss" = "static"; then
-					msg_ssl="yes (static)"
+					msg_ssl="yes (Mozilla NSS, static)"
 				else
-					msg_ssl="yes"
+					msg_ssl="yes (Mozilla NSS)"
 				fi
 			else
 				NSS_CFLAGS=""
@@ -574,6 +589,83 @@ if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
 	AC_SUBST(NSS_CFLAGS)
 	AC_SUBST(NSS_LIBS)
 fi
+
+dnl #
+dnl # Check for GNUTLS if it's specified or if NSS failed.
+dnl #
+if test "x$msg_ssl" = "xno" -o "x$enable_gnutls" != "xno"; then
+	prefix=`eval echo $prefix`
+	AC_ARG_WITH(gnutls-includes,
+		[  --with-gnutls-includes=PREFIX   Location of GNUTLS includes.],
+		[ with_gnutls_includes="$withval" ],
+		[ with_gnutls_includes="$prefix/include" ])
+
+	have_gnutls_includes="no"
+
+	if test "x$with_gnutls_includes" != "xno"; then
+		CPPFLAGS_save="$CPPFLAGS"
+
+		AC_MSG_CHECKING(for GNUTLS includes)
+		AC_MSG_RESULT("")
+
+		CPPFLAGS="$CPPFLAGS -I$with_gnutls_includes"
+		AC_CHECK_HEADERS(gnutls/gnutls.h, [ gnutls_includes="yes" ])
+		CPPFLAGS="$CPPFLAGS_save"
+
+		if test "x$gnutls_includes" != "xno" -a \
+		        "x$gnutls_includes" != "x"; then
+			have_gnutls_includes="yes"
+
+			GNUTLS_CFLAGS="-I$with_gnutls_includes"
+		else
+			GNUTLS_CFLAGS=""
+		fi
+	else
+		AC_MSG_CHECKING(for GNUTLS includes)
+		AC_MSG_RESULT(no)
+	fi
+
+	AC_ARG_WITH(gnutls-libs,
+		[  --with-gnutls-libs=PREFIX       Location of GNUTLS libraries.],
+		[ with_gnutls_libs="$withval" ])
+
+	if test "x$with_gnutls_libs"     != "xno" -a \
+	        "x$have_gnutls_includes" != "xno"; then
+
+		LDFLAGS_save="$LDFLAGS"
+
+		case $with_gnutls_libs in
+			""|-L*) ;;
+			*) with_gnutls_libs="-L$with_gnutls_libs" ;;
+		esac
+
+		AC_CACHE_CHECK([for GNUTLS libraries], gnutls_libs,
+		[
+			LDFLAGS="$LDFLAGS $with_gnutls_libs -lgnutls -lgcrypt"
+			AC_TRY_LINK_FUNC(gnutls_init, gnutls_libs="yes", gnutls_libs="no")
+			LDFLAGS="$LDFLAGS_save"
+		])
+
+		if test "x$gnutls_libs" != "xno"; then
+			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GNUTLS])
+			AC_DEFINE(HAVE_SSL)
+			msg_ssl="yes (GNUTLS)"
+			GNUTLS_LIBS="$with_gnutls_libs -lgnutls -lgcrypt"
+		else
+			GNUTLS_CFLAGS=""
+			GNUTLS_LIBS=""
+		fi
+	else
+		AC_MSG_CHECKING(for GNUTLS libraries)
+		AC_MSG_RESULT(no)
+	fi
+else
+	GNUTLS_CFLAGS=""
+	GNUTLS_LIBS=""
+fi
+
+AC_SUBST(GNUTLS_CFLAGS)
+AC_SUBST(GNUTLS_LIBS)
 
 dnl Check for Tcl
 if test "$enable_tcl" = yes; then
@@ -609,8 +701,8 @@ if test "$enable_tcl" = yes; then
 			LIBS="$LIBS $TCL_LIB_SPEC"
 			AC_TRY_LINK([#include <tcl.h>],
 				    [Tcl_Interp *interp; Tcl_Init(interp)],
-		 		    [AC_MSG_RESULT([yes]);enable_tcl=yes],
-		 		    [AC_MSG_RESULT([no]);enable_tcl=no])
+				    [AC_MSG_RESULT([yes]);enable_tcl=yes],
+				    [AC_MSG_RESULT([no]);enable_tcl=no])
 			CPPFLAGS="$oldCPPFLAGS"
 			LIBS="$oldLIBS"
 		fi
@@ -681,7 +773,7 @@ if test "$enable_gtkspell" = yes ; then
 	if test "$enable_gtkspell" = "yes" ; then
 		AC_SUBST(GTKSPELL_CFLAGS)
 		AC_SUBST(GTKSPELL_LIBS)
-        	AC_DEFINE(USE_GTKSPELL,,[do we have gtkspell?])
+		AC_DEFINE(USE_GTKSPELL,,[do we have gtkspell?])
 	fi
 fi
 
@@ -842,7 +934,7 @@ echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
 echo Build with NAS support........ : $enable_nas
 echo Build with GtkSpell support... : $enable_gtkspell
-echo Build with Mozilla NSS support : $msg_ssl
+echo Build with SSL support........ : $msg_ssl
 echo
 echo Use XScreenSaver Extension.... : $enable_xss
 echo Use X Session Management...... : $enable_sm
