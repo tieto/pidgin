@@ -60,7 +60,7 @@ src/gtkprivacy.c
 src/gtkrequest.c
 src/gtkroomlist.c
 src/gtksound.c
-src/gtkstatus.c
+src/gtksavedstatuses.c
 src/gtkstatusselector.c
 src/gtkstock.c
 src/gtkutils.c
