@@ -54,7 +54,7 @@ extern void gtkspell_stop();
 extern int gtkspell_running();
 /* Is gtkspell running?
  *
- * Returns:
+ * Return:
  * 	nonzero if it running
  * 	zero if is not running
  *

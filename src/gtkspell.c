@@ -111,8 +111,7 @@ static int readresponse(char *buf) {
 
 void gtkspell_stop() {
 	if (gtkspell_running()) {
-		kill(spell_pid, SIGHUP); /* FIXME: is this the correct signal? */
-		/* note by EWarmenhoven: no. (was SIGQUIT, is now SIGHUP) */
+		kill(spell_pid, SIGHUP); 
 	}
 }
 
@@ -326,6 +325,7 @@ static void change_color(GtkText *gtktext,
 	gtk_signal_handler_unblock_by_func(GTK_OBJECT(gtktext), 
 			GTK_SIGNAL_FUNC(entry_insert_cb), NULL);
 	gtk_text_thaw(gtktext);
+	g_free(newtext);
 }
 
 static gboolean check_at(GtkText *gtktext, int from_pos) {

@@ -387,8 +387,25 @@ extern void show_debug(GtkObject *);
 #if HAVE_SIGNAL_H
 void sighandler(int sig)
 {
-	fprintf(stderr, "God damn, I tripped.\n");
-	exit(11);		/* signal 11 */
+	debug_printf("caught signal %d\n", sig);
+	gtkspell_stop();
+	switch (sig) {
+	case SIGSEGV:
+		g_print("Gaim has segfaulted and attempted to dump a core file.\n"
+			"Please notify the gaim maintainers by reporting a bug at\n"
+			"http://sourceforge.net/projects/gaim/\n\n"
+			"Please make sure to specify what you were doing at the time,\n"
+			"and post the backtrace from the core file (if you do not know\n"
+			"how to get the backtrace, please IM either EWarmenhoven or\n"
+			"RobFlynn and they can instruct you).\n");
+		abort();
+		break;
+	case SIGPIPE:
+		/* should we do something here? */
+	default:
+		gtk_main_quit();
+		exit(0);
+	}
 }
 #endif
 
@@ -433,7 +450,10 @@ int main(int argc, char *argv[])
 
 #if HAVE_SIGNAL_H
 	/* Let's not violate any PLA's!!!! */
-	/* signal(SIGSEGV, sighandler); */
+	signal(SIGSEGV, sighandler);
+	signal(SIGHUP, sighandler);
+	signal(SIGINT, sighandler);
+	signal(SIGPIPE, sighandler);
 #endif
 
 
