@@ -5237,3 +5237,4 @@ gaim_gtkconv_get_dest_tab_at_xy(struct gaim_window *win, int x, int y)
 
 	return page_num;
 }
+
