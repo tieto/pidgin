@@ -7,13 +7,13 @@ to do the same.  If you have any suggestions for them, let us know.
 
 If you do not wish to enable the plugin support within GAIM, run the
 ./configure script with the --disable-plugins option and recompile your
-source code.  This will stop any plugins from loading.
+source code.  This will prevent the ability to load plugins.
 
-If you wish to make use of the gaim plugins, enter the directory where you
-untarred gaim/plugins and type: 'make'.  Copy the resulting .so files to
-a safe location ($HOME/.gaim/plugins) and load them from within gaim. Note
-that plugins do not have to have a .so extension, but that is what is built
-by default, and that is what gaim looks for by default.
+'make install' puts the plugins in $PREFIX/lib/gaim (PREFIX being what you
+specified when you ./configure'd - it defaults to /usr/local). Gaim looks
+for the plugins in $HOME/.gaim/plugins/ by default, but they do not have
+to be there to use them. Also, plugins have a .so extension by default,
+though they do not have to.
 
 Enjoy and Happy Hacking!
 
