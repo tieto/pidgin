@@ -2904,7 +2904,6 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-/* CCC */
 static char *images(int flags) {
 	static char buf[1024];
 	g_snprintf(buf, sizeof(buf), "%s%s%s%s%s%s%s",
@@ -3078,7 +3077,6 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} else {
 			g_show_info_text(gc, info->sn, 0,
 					 header,
-					 (utf8 && *utf8) ? _("<b>Away Message:</b><br>") : NULL,
 					 (utf8 && *utf8) ? away_subs(utf8, gc->username) : NULL,
 					 (utf8 && *utf8) ? "<hr>" : NULL,
 					 NULL);
@@ -3092,8 +3090,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 				NULL);
 	} else {
 		g_show_info_text(gc, info->sn, 1,
-				 (utf8 && *utf8) ? _("<b>Profile:</b><br>") : _("<i>No Information Provided</i>"),
-				 (utf8 && *utf8) ? away_subs(utf8, gc->username) : NULL,
+				 (utf8 && *utf8) ? away_subs(utf8, gc->username) : _("<i>No Information Provided</i>"),
 				 NULL);
 	}
 
@@ -4792,7 +4789,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x000c: { /* you are over the limit, the cheat is to the limit, come on fhqwhgads */
 				gchar *buf;
 				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
-				/* do_error_dialog(_("Unable To Add"), buf, GAIM_ERROR); */
+				do_error_dialog(_("Unable To Add"), buf, GAIM_ERROR);
 				g_free(buf);
 			}
 
@@ -4802,8 +4799,12 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 			} break;
 
 			default: { /* La la la */
+				gchar *buf;
 				debug_printf("ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
-				/* Should remove buddy from local list and give an error message? */
+				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason."), (retval->name ? retval->name : _("(no name)")));
+				do_error_dialog(_("Unable To Add"), buf, GAIM_ERROR);
+				g_free(buf);
+				/* Should remove buddy from local list? */
 			} break;
 		}
 
@@ -5576,7 +5577,7 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, const char *who) {
 #endif
 		}
 	}
-		
+
 	if (od->sess->ssi.received_data) {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
 		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
