@@ -32,7 +32,8 @@ typedef enum _GaimPrefType
 	GAIM_PREF_NONE,
 	GAIM_PREF_BOOLEAN,
 	GAIM_PREF_INT,
-	GAIM_PREF_STRING
+	GAIM_PREF_STRING,
+	GAIM_PREF_STRING_LIST
 } GaimPrefType;
 
 /**
@@ -84,6 +85,14 @@ void gaim_prefs_add_int(const char *name, int value);
 void gaim_prefs_add_string(const char *name, const char *value);
 
 /**
+ * Add a new string list pref.
+ *
+ * @param name  The name of the pref
+ * @param value The initial value to set
+ */
+void gaim_prefs_add_string_list(const char *name, GList *value);
+
+/**
  * Remove a pref.
  *
  * @param name The name of the pref
@@ -128,6 +137,14 @@ void gaim_prefs_set_int(const char *name, int value);
 void gaim_prefs_set_string(const char *name, const char *value);
 
 /**
+ * Set string pref value
+ *
+ * @param name  The name of the pref
+ * @param value The value to set
+ */
+void gaim_prefs_set_string_list(const char *name, GList *value);
+
+/**
  * Get boolean pref value
  *
  * @param name The name of the pref
@@ -150,6 +167,14 @@ int gaim_prefs_get_int(const char *name);
  * @return The value of the pref
  */
 const char *gaim_prefs_get_string(const char *name);
+
+/**
+ * Get string pref value
+ *
+ * @param name The name of the pref
+ * @return The value of the pref
+ */
+GList *gaim_prefs_get_string_list(const char *name);
 
 /**
  * Add a callback to a pref (and its children)

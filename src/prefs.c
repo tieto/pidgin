@@ -51,6 +51,7 @@ struct gaim_pref {
 		gboolean boolean;
 		int integer;
 		char *string;
+		GList *stringlist;
 	} value;
 	GSList *callbacks;
 	struct gaim_pref *parent;
@@ -201,6 +202,14 @@ static void free_pref_value(struct gaim_pref *pref) {
 			g_free(pref->value.string);
 			pref->value.string = NULL;
 			break;
+		case GAIM_PREF_STRING_LIST:
+			{
+				GList *tmp;
+				for(tmp = pref->value.stringlist; tmp; tmp = tmp->next)
+					g_free(tmp->data);
+
+				g_list_free(pref->value.stringlist);
+			} break;
 		case GAIM_PREF_NONE:
 			break;
 	}
@@ -274,6 +283,18 @@ void gaim_prefs_add_string(const char *name, const char *value) {
 		return;
 
 	pref->value.string = g_strdup(value);
+}
+
+void gaim_prefs_add_string_list(const char *name, GList *value) {
+	struct gaim_pref *pref = add_pref(GAIM_PREF_STRING_LIST, name);
+	GList *tmp;
+
+	if(!pref)
+		return;
+
+	for(tmp = value; tmp; tmp = tmp->next)
+		pref->value.stringlist = g_list_append(pref->value.stringlist,
+				g_strdup(tmp->data));
 }
 
 void remove_pref(struct gaim_pref *pref) {
@@ -389,6 +410,25 @@ void gaim_prefs_set_string(const char *name, const char *value) {
 	}
 }
 
+void gaim_prefs_set_string_list(const char *name, GList *value) {
+	struct gaim_pref *pref = find_pref(name);
+	if(pref) {
+		GList *tmp;
+		for(tmp = pref->value.stringlist; tmp; tmp = tmp->next)
+			g_free(tmp->data);
+
+		g_list_free(pref->value.stringlist);
+		pref->value.stringlist = NULL;
+
+		for(tmp = value; tmp; tmp = tmp->next)
+			pref->value.stringlist = g_list_append(pref->value.stringlist,
+					g_strdup(tmp->data));
+
+	} else {
+		gaim_prefs_add_string_list(name, value);
+	}
+}
+
 gpointer gaim_prefs_get_generic(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 
@@ -422,6 +462,19 @@ const char *gaim_prefs_get_string(const char *name) {
 	g_return_val_if_fail(pref->type == GAIM_PREF_STRING, NULL);
 
 	return pref->value.string;
+}
+
+GList *gaim_prefs_get_string_list(const char *name) {
+	struct gaim_pref *pref = find_pref(name);
+	GList *ret = NULL, *tmp;
+
+	g_return_val_if_fail(pref != NULL, NULL);
+	g_return_val_if_fail(pref->type == GAIM_PREF_STRING_LIST, NULL);
+
+	for(tmp = pref->value.stringlist; tmp; tmp = tmp->next)
+		ret = g_list_append(ret, g_strdup(tmp->data));
+
+	return ret;
 }
 
 guint gaim_prefs_connect_callback(const char *name, GaimPrefCallback func, gpointer data)
@@ -504,13 +557,28 @@ static void gaim_prefs_write(FILE *f, struct gaim_pref *pref, int depth) {
 			fprintf(f, " type='string' value='%s'", esc);
 			g_free(esc);
 			break;
+		case GAIM_PREF_STRING_LIST:
+			fprintf(f, " type='stringlist'");
+			break;
 	}
 
-	if(pref->first_child) {
+	if(pref->first_child || pref->type == GAIM_PREF_STRING_LIST) {
 		fprintf(f, ">\n");
 
 		for(tmp = pref->first_child; tmp; tmp = tmp->sibling)
 			gaim_prefs_write(f, tmp, depth+1);
+
+		if(pref->type == GAIM_PREF_STRING_LIST) {
+			GList *tmp2;
+			for(tmp2 = pref->value.stringlist; tmp2; tmp2 = tmp2->next) {
+				for(i=0; i<depth+1; i++)
+					fprintf(f, "\t");
+				esc = g_markup_escape_text(tmp2->data, -1);
+				fprintf(f, "<item value='%s' />\n", esc);
+				g_free(esc);
+			}
+		}
+
 		for(i=0; i<depth; i++)
 			fprintf(f, "\t");
 		fprintf(f, "</pref>\n");
@@ -576,7 +644,7 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 	GString *pref_name_full;
 	GList *tmp;
 
-	if(strcmp(element_name, "pref"))
+	if(strcmp(element_name, "pref") && strcmp(element_name, "item"))
 		return;
 
 	for(i = 0; attribute_names[i]; i++) {
@@ -589,6 +657,8 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 				pref_type = GAIM_PREF_INT;
 			else if(!strcmp(attribute_values[i], "string"))
 				pref_type = GAIM_PREF_STRING;
+			else if(!strcmp(attribute_values[i], "stringlist"))
+				pref_type = GAIM_PREF_STRING_LIST;
 			else
 				return;
 		} else if(!strcmp(attribute_names[i], "value")) {
@@ -596,8 +666,16 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 		}
 	}
 
-	if(!pref_name || !strcmp(pref_name, "/"))
+	if(!strcmp(element_name, "item")) {
+		struct gaim_pref *pref = find_pref(prefs_stack->data);
+		if(pref) {
+			pref->value.stringlist = g_list_append(pref->value.stringlist,
+					g_strdup(pref_value));
+		}
 		return;
+	} else if(!pref_name || !strcmp(pref_name, "/")) {
+		return;
+	}
 
 	pref_name_full = g_string_new(pref_name);
 
@@ -619,6 +697,8 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 			break;
 		case GAIM_PREF_STRING:
 			gaim_prefs_set_string(pref_name_full->str, pref_value);
+			break;
+		case GAIM_PREF_STRING_LIST:
 			break;
 	}
 
