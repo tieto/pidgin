@@ -105,7 +105,8 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	}
 	sound_entry = NULL;
 	browser_entry = NULL;
-	debugbutton=NULL;
+	debugbutton = NULL;
+	prefs_away_menu = NULL;
 	if(sounddialog)
 		gtk_widget_destroy(sounddialog);
 	g_object_unref(G_OBJECT(prefs_away_store));
