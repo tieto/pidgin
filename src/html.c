@@ -32,6 +32,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <fcntl.h>
+#include <errno.h>
 
 gchar * strip_html(gchar * text)
 {
@@ -127,6 +129,7 @@ char *grab_url(char *url)
 	g_snprintf(debug_buff, sizeof(debug_buff), "Request: %s\n", buf);
 	debug_print(debug_buff);
 	write(sock, buf, strlen(buf));
+	fcntl(sock, F_SETFL, O_NONBLOCK);
 
         webdata = NULL;
         len = 0;
@@ -136,7 +139,12 @@ char *grab_url(char *url)
 	while ((data = fgetc(sockfile)) != EOF) {
 	*/
 	/* read_rv will be 0 on EOF and < 0 on error, so this should be fine */
-	while ((read_rv = read(sock, &data, 1)) > 0) {
+	while ((read_rv = read(sock, &data, 1)) > 0 || errno == EWOULDBLOCK) {
+		if (errno == EWOULDBLOCK) {
+			errno = 0;
+			continue;
+		}
+
 		if (!data)
 			continue;
 		

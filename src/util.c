@@ -727,22 +727,21 @@ void check_gaim_versions()
 	char *cur_ver;
 	char *tmp;
 
-	cur_ver = (char *)malloc(BUF_LONG);
 	tmp = (char *)malloc(BUF_LONG);
 
 	cur_ver = (char *)grab_url("http://www.marko.net/gaim/latest-gaim");
 
 	if (!strncasecmp(cur_ver, "g00", 3))
 	{
-		free(cur_ver);
-		free(tmp);
+		g_free(cur_ver);
+		g_free(tmp);
 		return;
 	}
 
 	g_snprintf(tmp, BUF_LONG, "%s", strstr(cur_ver, "plain")+9);
 	g_strchomp(tmp);
 
-	if (strcasecmp(tmp, latest_ver))
+	if (strcmp(tmp, latest_ver))
 	{
 		g_snprintf(cur_ver, BUF_LONG, "GAIM v%s is now available.\n\nDownload it at http://www.marko.net/gaim\n", tmp);
 	
