@@ -4,10 +4,16 @@ EXTRA_DIST = \
 pkgdir = $(libdir)/gaim
 
 MSNSOURCES = \
+	cmdproc.c \
+	cmdproc.h \
+	command.c \
+	command.h \
 	error.c \
 	error.h \
 	group.c \
 	group.h \
+	history.c \
+	history.h \
 	httpmethod.c \
 	httpmethod.h \
 	msg.c \
@@ -32,6 +38,10 @@ MSNSOURCES = \
 	state.h \
 	switchboard.c \
 	switchboard.h \
+	table.c \
+	table.h \
+	transaction.c \
+	transaction.h \
 	user.c \
 	user.h \
 	utils.c \

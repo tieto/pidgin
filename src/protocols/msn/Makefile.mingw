@@ -68,8 +68,11 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			error.c \
+C_SRC =			cmdproc.c \
+			command.c \
+			error.c \
 			group.c \
+			history.c \
 			httpmethod.c \
 			msg.c \
 			msn.c \
@@ -82,6 +85,8 @@ C_SRC =			error.c \
 			session.c \
 			state.c \
 			switchboard.c \
+			table.c \
+			transaction.c \
 			user.c \
 			utils.c
 

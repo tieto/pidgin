@@ -53,12 +53,12 @@ MsnPage *msn_page_new(void);
 void msn_page_destroy(MsnPage *page);
 
 /**
- * Converts a page to a payload string.
+ * Generates the payload data of a page.
  *
  * @param page     The page.
  * @param ret_size The returned size of the payload.
  *
- * @return The payload string of a page.
+ * @return The payload data of a page.
  */
 char *msn_page_gen_payload(const MsnPage *page, size_t *ret_size);
 

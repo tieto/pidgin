@@ -158,13 +158,16 @@ MsnSwitchBoard *
 msn_session_open_switchboard(MsnSession *session)
 {
 	MsnSwitchBoard *swboard;
+	MsnCmdProc *cmdproc;
 
 	g_return_val_if_fail(session != NULL, NULL);
 
-	if (msn_servconn_send_command(session->notification_conn, "XFR", "SB") < 0)
-	{
+	cmdproc = session->notification_conn->cmdproc;
+
+	msn_cmdproc_send(cmdproc, "XFR", "%s", "SB");
+
+	if (cmdproc->error)
 		return NULL;
-	}
 
 	swboard = msn_switchboard_new(session);
 
@@ -174,13 +177,14 @@ msn_session_open_switchboard(MsnSession *session)
 gboolean
 msn_session_change_status(MsnSession *session, const char *state)
 {
-	MsnUser *user = session->user;
+	MsnCmdProc *cmdproc;
+	MsnUser *user;
 	MsnObject *msnobj;
-	char buf[MSN_BUF_LEN];
 
 	g_return_val_if_fail(session != NULL, FALSE);
 	g_return_val_if_fail(state   != NULL, FALSE);
 
+	user = session->user;
 	msnobj = msn_user_get_object(user);
 
 	if (state != session->away_state)
@@ -191,24 +195,20 @@ msn_session_change_status(MsnSession *session, const char *state)
 		session->away_state = g_strdup(state);
 	}
 
+	cmdproc = session->notification_conn->cmdproc;
+
 	if (msnobj == NULL)
-		g_snprintf(buf, sizeof(buf), "%s %d", state, MSN_CLIENT_ID);
+	{
+		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state, MSN_CLIENT_ID);
+	}
 	else
 	{
 		char *msnobj_str = msn_object_to_string(msnobj);
 
-		g_snprintf(buf, sizeof(buf), "%s %d %s", state, MSN_CLIENT_ID,
-				   gaim_url_encode(msnobj_str));
+		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state, MSN_CLIENT_ID,
+						 gaim_url_encode(msnobj_str));
 
 		g_free(msnobj_str);
-	}
-
-	if (!msn_servconn_send_command(session->notification_conn, "CHG", buf))
-	{
-		gaim_connection_error(gaim_account_get_connection(session->account),
-							  _("Write error"));
-
-		return FALSE;
 	}
 
 	return TRUE;

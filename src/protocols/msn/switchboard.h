@@ -29,11 +29,13 @@ typedef struct _MsnSwitchBoard MsnSwitchBoard;
 #include "msg.h"
 #include "msnslp.h"
 #include "servconn.h"
+#include "cmdproc.h"
 #include "user.h"
 
 struct _MsnSwitchBoard
 {
 	MsnServConn *servconn;
+	MsnCmdProc *cmdproc;
 	MsnUser *user;
 
 	char *auth_key;
@@ -45,6 +47,7 @@ struct _MsnSwitchBoard
 	GaimConversation *chat;
 
 	gboolean in_use;
+	gboolean joined;
 
 	int total_users;
 
@@ -52,12 +55,21 @@ struct _MsnSwitchBoard
 	int msglen;
 
 	int chat_id;
-	int trId;
 
 	gboolean hidden;
 
 	MsnSlpSession *slp_session;
 };
+
+/**
+ * Initialize the variables for switchboard creation.
+ */
+void msn_switchboard_init(void);
+
+/**
+ * Destroy the variables for switchboard creation.
+ */
+void msn_switchboard_end(void);
 
 /**
  * Creates a new switchboard.
@@ -167,23 +179,8 @@ void msn_switchboard_disconnect(MsnSwitchBoard *swboard);
  *
  * @param swboard The switchboard.
  * @param msg     The message to send.
- *
- * @return @c TRUE if successful, or @c FALSE otherwise.
  */
-gboolean msn_switchboard_send_msg(MsnSwitchBoard *swboard,
-								  MsnMessage *msg);
-
-/**
- * Sends a command to the switchboard.
- *
- * @param swboard The switchboard.
- * @param command The command.
- * @param params  The parameters.
- *
- * @return @c TRUE if successful, or @c FALSE otherwise.
- */
-gboolean msn_switchboard_send_command(MsnSwitchBoard *swboard,
-									  const char *command,
-									  const char *params);
+void msn_switchboard_send_msg(MsnSwitchBoard *swboard,
+							  MsnMessage *msg);
 
 #endif /* _MSN_SWITCHBOARD_H_ */

@@ -49,14 +49,13 @@ struct _MsnSession
 
 	MsnNexus *nexus;
 
-	unsigned int trId;
-
 	gboolean http_method;
 	gint http_poll_timer;
 
 	MsnUsers *users;
 	MsnGroups *groups;
 
+	int servconns_count;
 	GList *servconns;
 	GList *switches;
 

@@ -209,7 +209,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	}
 	else if (strstr(buffer, "HTTP/1.1 200 OK"))
 	{
-		char outparams[MSN_BUF_LEN];
+		MsnCmdProc *cmdproc;
 		char *base, *c;
 		char *login_params;
 
@@ -230,9 +230,10 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		}
 #endif
 
+		cmdproc = session->notification_conn->cmdproc;
 		base  = strstr(buffer, "Authentication-Info: ");
 
-		if(base == NULL)
+		if (base == NULL)
 		{
 			gaim_debug(GAIM_DEBUG_ERROR, "msn",
 					   "Authentication information was not found. This did "
@@ -248,11 +249,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 		login_params = g_strndup(base, c - base);
 
-		g_snprintf(outparams, sizeof(outparams),
-			"TWN S %s", login_params);
-
-		msn_servconn_send_command(session->notification_conn, "USR",
-								  outparams);
+		msn_cmdproc_send(cmdproc, "USR", "TWN S %s", login_params);
 
 		g_free(login_params);
 

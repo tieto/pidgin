@@ -6,6 +6,8 @@ version 0.78cvs
 	  the autoreconnect plugin (Christopher (siege) O'Brien)
 	* Added support for dragging buddies from the buddy list into the
 	  Add Buddy Pounce dialog.
+	* Massive rewrite of MSN support, which should fix a number of issues
+	  and make errors easier to interpret. (Felipe Contreras)
 
 	Bug Fixes:
 	* Gadu-Gadu updates (Andrew Wellington)

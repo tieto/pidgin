@@ -25,6 +25,16 @@
 #include "session.h"
 #include "servconn.h"
 
+/**
+ * Initialize the variables for notifiaction server creation.
+ */
+void msn_notification_init(void);
+
+/**
+ * Destroy the variables for notification server creation.
+ */
+void msn_notification_end(void);
+
 MsnServConn *msn_notification_new(MsnSession *session);
 gboolean msn_notification_connect(MsnServConn *notification,
 							  const char *host, int port);
