@@ -1368,6 +1368,7 @@ static gint
 accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsWindow *dialog)
 {
 	gaim_gtk_accounts_window_hide();
+	return 0;
 }
 
 static gboolean
