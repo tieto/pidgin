@@ -102,7 +102,8 @@ void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
-	if (who && got_icon_info && url) {
+	/* Yahoo IM 6 spits out 0.png as the URL if the buddy icon is not set */
+	if (who && got_icon_info && url && !strncasecmp(url, "http://", 7)) {
 		/* TODO: make this work p2p, try p2p before the url */
 		struct yahoo_fetch_picture_data *data;
 		GaimBuddy *b = gaim_find_buddy(gc->account, who);
