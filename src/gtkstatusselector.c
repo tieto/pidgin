@@ -469,6 +469,10 @@ rebuild_list(GaimGtkStatusSelector *selector)
 			if (!gaim_status_type_is_user_settable(status_type))
 				continue;
 
+			/*
+			 * TODO Find a way to fallback to the GaimStatusPrimitive
+			 * if an icon for this id does not exist.
+			 */
 			g_snprintf(filename, sizeof(filename), "%s.png",
 					   gaim_status_type_get_id(status_type));
 

@@ -28,12 +28,6 @@
 
 #include "prefs.h"
 
-/* XXX These should go. */
-extern GtkListStore *prefs_away_store;
-extern GtkWidget *prefs_away_menu;
-extern GtkWidget *pref_fg_picture;
-extern GtkWidget *pref_bg_picture;
-
 /**
  * Initializes all UI-specific preferences.
  */
@@ -43,17 +37,6 @@ void gaim_gtk_prefs_init(void);
  * Shows the preferences dialog.
  */
 void gaim_gtk_prefs_show(void);
-
-/**
- * Initializes the default away menu.
- *
- * @todo This should be moved or renamed or something?
- */
-void default_away_menu_init(GtkWidget *);
-
-void apply_font_dlg(GtkWidget *, GtkWidget *);
-void apply_color_dlg(GtkWidget *, gpointer);
-void destroy_colorsel(GtkWidget *, gpointer);
 
 /**
  * Add a new checkbox for a boolean preference

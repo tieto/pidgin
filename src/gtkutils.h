@@ -279,8 +279,6 @@ void gaim_gtk_setup_gtkspell(GtkTextView *textview);
  *
  * @return A newly allocated string of length @a len, containing the
  *         stylized version of @a text.
- *
- * @todo Move this to a UI-specific file.
  */
 char *stylize(const gchar *text, int len);
 
