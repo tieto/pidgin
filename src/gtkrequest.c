@@ -93,7 +93,8 @@ action_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 }
 
 static gboolean
-field_string_focus_out_cb(GtkEntry *entry, GaimRequestField *field)
+field_string_focus_out_cb(GtkEntry *entry, GdkEventFocus *event,
+						  GaimRequestField *field)
 {
 	const char *value = gtk_entry_get_text(entry);
 
@@ -104,7 +105,8 @@ field_string_focus_out_cb(GtkEntry *entry, GaimRequestField *field)
 }
 
 static gboolean
-field_int_focus_out_cb(GtkEntry *entry, GaimRequestField *field)
+field_int_focus_out_cb(GtkEntry *entry, GdkEventFocus *event,
+					   GaimRequestField *field)
 {
 	gaim_request_field_int_set_value(field,
 			atoi(gtk_entry_get_text(entry)));
@@ -506,6 +508,10 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 				field = fl->data;
 
 				type = gaim_request_field_get_type(field);
+
+				gaim_debug(GAIM_DEBUG_MISC, "gtkrequest",
+						   "type = %d (%d)\n",
+						   type, field->type);
 
 				if (type != GAIM_REQUEST_FIELD_BOOLEAN) {
 					text = g_strdup_printf("%s:",
