@@ -1485,24 +1485,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		}
 	}
 
-	/* XXX CUI: this is really bad and should be moved somewhere else later. */
-	if (!c->is_chat && c->gc) {
-		int index = g_slist_index(connections, c->gc);
-		int sconv = strlen(c->name);
-		int sname = strlen(who);
-		int swhat = length == -1 ? strlen(what) : length;
-		UI_build_broadcast(CUI_TYPE_MESSAGE, CUI_MESSAGE_RECV,
-				sizeof(index), &index,
-				sizeof(sconv), &sconv,
-				sconv, c->name,
-				sizeof(sname), &sname,
-				sname, who,
-				sizeof(flags), &flags,
-				sizeof(swhat), &swhat,
-				swhat, what,
-				sizeof(mtime), &mtime, -1);
-	}
-
 	strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
 
 	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
@@ -1622,6 +1604,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", -1, 0);
 
+		/* XXX this needs to be updated for the new length argument */
 		if (logging_options & OPT_LOG_STRIP_HTML) {
 			char *t1, *t2;
 			t1 = strip_html(buf);
@@ -1644,6 +1627,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			g_free(t2);
 		}
 
+		/* XXX this needs to be updated for the new length argument */
 		if ((logging_options & OPT_LOG_ALL) || find_log_info(c->name)) {
 			char *t1, *t2;
 			char *nm = g_malloc(256);
@@ -1674,15 +1658,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			g_free(nm);
 		}
 	}
-
-/*        if (!GTK_WIDGET_MAPPED(c->window)) {
-                
-                if (dark_icon_pm == NULL)
-                        dark_icon_pm = gdk_pixmap_create_from_xpm_d(c->window->window, &dark_icon_bm,
-                                                                    NULL, (gchar **)aimicon2_xpm);
-                gdk_window_set_icon(c->window->window, NULL, dark_icon_pm, dark_icon_bm);
-	}
-*/
 
 	if ((c->is_chat && (chat_options & OPT_CHAT_POPUP)) ||
 	    (!c->is_chat && (im_options & OPT_IM_POPUP)))
