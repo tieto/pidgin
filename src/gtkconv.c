@@ -3254,7 +3254,7 @@ gaim_gtk_raise(struct gaim_window *win)
 {
 	struct gaim_gtk_window *gtkwin = GAIM_GTK_WINDOW(win);
 
-	gtk_window_present(GTK_WINDOW(gtkwin->window));
+	gdk_window_raise(gtkwin->window->window);
 }
 
 static void
