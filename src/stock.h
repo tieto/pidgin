@@ -45,7 +45,6 @@
 #define GAIM_STOCK_FILE_CANCELED   "gaim-file-canceled"
 #define GAIM_STOCK_FILE_DONE       "gaim-file-done"
 #define GAIM_STOCK_FILE_TRANSFER   "gaim-file-transfer"
-#define GAIM_STOCK_GROUP           "gaim-group"
 #define GAIM_STOCK_ICON_AWAY       "gaim-icon-away"
 #define GAIM_STOCK_ICON_AWAY_MSG   "gaim-icon-away-msg"
 #define GAIM_STOCK_ICON_CONNECT    "gaim-icon-away-connect"

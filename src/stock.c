@@ -54,7 +54,6 @@ static struct StockIcon
 	{ GAIM_STOCK_FILE_CANCELED,   NULL,      GTK_STOCK_CANCEL           },
 	{ GAIM_STOCK_FILE_DONE,       NULL,      GTK_STOCK_APPLY            },
 	{ GAIM_STOCK_FILE_TRANSFER,   NULL,      GTK_STOCK_REVERT_TO_SAVED  },
-	{ GAIM_STOCK_GROUP,           NULL,      GTK_STOCK_OPEN             },
 	{ GAIM_STOCK_ICON_AWAY,       "icons",   "away.png"                 },
 	{ GAIM_STOCK_ICON_AWAY_MSG,   "icons",   "msgpend.png"              },
 	{ GAIM_STOCK_ICON_CONNECT,    "icons",   "connect.png"              },
