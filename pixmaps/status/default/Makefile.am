@@ -36,7 +36,9 @@ EXTRA_DIST = \
 	voice.png \
 	wireless.png \
 	yahoo.png \
-	zephyr.png
+	zephyr.png \
+	blocked.png \
+	nr.png
 
 gaimstatuspixdir = $(datadir)/pixmaps/gaim/status/default
 

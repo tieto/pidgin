@@ -394,26 +394,36 @@ msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 	MsnUser *user;
 	GaimPresence *presence;
 	const char *emblems[4] = { NULL, NULL, NULL, NULL };
-	int i = 0;
+	int i = 1;
 
 	user = b->proto_data;
 	presence = gaim_buddy_get_presence(b);
 
+	if (user == NULL)
+	{
+		emblems[0] = "offline";
+	}
+	else
+	{
+		if (!(user->list_op & (1 << MSN_LIST_RL)))
+			emblems[0] = "nr";
+		if (user->list_op & (1 << MSN_LIST_BL))
+			emblems[i++] = "blocked";
+		if (user->mobile)
+			emblems[i++] = "wireless";
+	}
+
 	if (!gaim_presence_is_online(presence))
-		emblems[i++] = "offline";
+	{
+		if (emblems[0] == NULL)
+			emblems[0] = "offline";
+	}
 	else if (gaim_presence_is_status_active(presence, "busy") ||
 			 gaim_presence_is_status_active(presence, "phone"))
 		emblems[i++] = "occupied";
 	else if (gaim_presence_is_status_active(presence, "away") ||
 			 gaim_presence_is_idle(presence))
 		emblems[i++] = "away";
-
-	if (user == NULL)
-	{
-		emblems[0] = "offline";
-	}
-	else if (user->mobile)
-		emblems[i++] = "wireless";
 
 	*se = emblems[0];
 	*sw = emblems[1];
@@ -456,9 +466,17 @@ msn_tooltip_text(GaimBuddy *buddy)
 							   _("Idle") : gaim_status_get_name(status));
 	}
 
-	g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
-						   (user->list_op & (1 << MSN_LIST_RL)) ?
-						   _("Yes") : _("No"));
+	if (user)
+	{
+		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
+							   (user->list_op & (1 << MSN_LIST_RL)) ?
+							   _("Yes") : _("No"));
+
+		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Blocked"),
+							   (user->list_op & (1 << MSN_LIST_BL)) ?
+							   _("Yes") : _("No"));
+	}
+
 
 	return g_string_free(s, FALSE);
 }
