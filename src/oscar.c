@@ -3148,24 +3148,25 @@ static GList *oscar_away_states()
 static void oscar_do_action(struct gaim_connection *gc, char *act)
 {
 	struct oscar_data *od = gc->proto_data;
+	struct aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
 
 	if (!strcmp(act, "Set User Info")) {
 		show_set_info(gc);
 	} else if (!strcmp(act, "Change Password")) {
 		show_change_passwd(gc);
 	} else if (!strcmp(act, "Confirm Account")) {
-		if (od->paspa == 0) {
+		if (!conn) {
 			od->conf = TRUE;
 			aim_bos_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
 		} else
-			aim_auth_reqconfirm(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH));
+			aim_auth_reqconfirm(od->sess, conn);
 	} else if (!strcmp(act, "Change Email")) {
 	} else if (!strcmp(act, "Display Current Registered Address")) {
-		if (od->paspa == 0) {
+		if (!conn) {
 			od->reqemail = TRUE;
 			aim_bos_reqservice(od->sess, od->conn, AIM_CONN_TYPE_AUTH);
 		} else
-			aim_auth_getinfo(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH), 0x11);
+			aim_auth_getinfo(od->sess, conn, 0x11);
 	} else if (!strcmp(act, "Search for Buddy by Email")) {
 		show_find_email(gc);
 	}
@@ -3192,7 +3193,7 @@ static GList *oscar_actions()
 static void oscar_change_passwd(struct gaim_connection *gc, char *old, char *new)
 {
 	struct oscar_data *od = gc->proto_data;
-	if (od->paspa == 0) {
+	if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH)) {
 		od->chpass = TRUE;
 		od->oldp = g_strdup(old);
 		od->newp = g_strdup(new);

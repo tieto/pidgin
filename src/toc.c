@@ -165,8 +165,15 @@ static void toc_login(struct aim_user *user)
 static void toc_login_callback(gpointer data, gint source, GdkInputCondition cond)
 {
 	struct gaim_connection *gc = data;
-	struct toc_data *tdt = gc->proto_data;
+	struct toc_data *tdt;
 	char buf[80];
+
+	if (!g_slist_find(connections, data)) {
+		close(source);
+		return;
+	}
+
+	tdt = gc->proto_data;
 
 	if (source == -1) {
 		/* we didn't successfully connect. tdt->toc_fd is valid here */
