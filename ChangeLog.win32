@@ -1,5 +1,6 @@
 version 0.75:
 	* TCL plugin loader now working. Thanks Daniel Atallah.
+	* Installer translations for: Danish.
 
 version 0.74 (11/25/2003):
 	* Installer translations for: Czech.
