@@ -63,6 +63,7 @@ static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpoint
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node);
 static char *gaim_get_tooltip_text(struct buddy *b);
 static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize size);
+static char *item_factory_translate_func (const char *path, gpointer func_data);
 
 /***************************************************
  *              Callbacks                          *
@@ -534,10 +535,10 @@ static GtkItemFactoryEntry blist_menu[] =
 	  "<StockItem>", GAIM_STOCK_IM },
 	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", join_chat, 0, 
 	  "<StockItem>", GAIM_STOCK_CHAT },
-	{ N_("/Buddies/sep1"), NULL, NULL, 0, "<Separator>" },
+	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/Get _User Info..."), "<CTL>J", show_info_dialog, 0,
 	  "<StockItem>", GAIM_STOCK_INFO },
-	{ N_("/Buddies/sep2"), NULL, NULL, 0, "<Separator>" },
+	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Signoff"), "<CTL>D", signoff_all, 0, NULL },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", do_quit, 0,
 	  "<StockItem>", GTK_STOCK_QUIT },
@@ -546,13 +547,13 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/_Away"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Buddy _Pounce"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Tools/sep1"), NULL, NULL, 0, "<Separator>" },
+	{ "/Tools/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/A_ccounts"), "<CTL>A", account_editor, 0, NULL },
 	{ N_("/Tools/Preferences"), "<CTL>P", show_prefs, 0,
 	  "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/_File Transfers"), NULL, gaim_show_xfer_dialog, 0,
 	  "<StockItem>", GTK_STOCK_REVERT_TO_SAVED },
-	{ N_("/Tools/sep2"), NULL, NULL, 0, "<Separator>" },
+	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/P_rotocol Actions"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Pr_ivacy"), NULL, show_privacy_options, 0, NULL },
 	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
@@ -912,6 +913,12 @@ void gaim_gtk_blist_update_columns()
 
 enum {DRAG_BUDDY, DRAG_ROW};
 
+static char *
+item_factory_translate_func (const char *path, gpointer func_data)
+{
+	return _(path);
+}
+
 static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 {
 	GtkItemFactory *ift;
@@ -941,17 +948,20 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 
 	/******************************* Menu bar *************************************/
 	ift = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<GaimMain>", NULL);
+	gtk_item_factory_set_translate_func (ift,
+					     item_factory_translate_func,
+					     NULL, NULL);
 	gtk_item_factory_create_items(ift, sizeof(blist_menu) / sizeof(*blist_menu),
 				      blist_menu, NULL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtk_item_factory_get_widget(ift, "<GaimMain>"), FALSE, FALSE, 0);
 
-	awaymenu = gtk_item_factory_get_widget(ift, "/Tools/Away");
+	awaymenu = gtk_item_factory_get_widget(ift, N_("/Tools/Away"));
 	do_away_menu();
 
-	bpmenu = gtk_item_factory_get_widget(ift, "/Tools/Buddy Pounce");
+	bpmenu = gtk_item_factory_get_widget(ift, N_("/Tools/Buddy Pounce"));
 	do_bp_menu();
 
-	protomenu = gtk_item_factory_get_widget(ift, "/Tools/Protocol Actions");
+	protomenu = gtk_item_factory_get_widget(ift, N_("/Tools/Protocol Actions"));
 	do_proto_menu();
 
 	/****************************** GtkTreeView **********************************/

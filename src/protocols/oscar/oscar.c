@@ -3049,21 +3049,21 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
-		onlinesince = g_strdup_printf("Online Since : <b>%s</b><br>\n",
+		onlinesince = g_strdup_printf(_("Online Since : <b>%s</b><br>\n"),
 					asctime(localtime(&info->onlinesince)));
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
-		membersince = g_strdup_printf("Member Since : <b>%s</b><br>\n",
+		membersince = g_strdup_printf(_("Member Since : <b>%s</b><br>\n"),
 					asctime(localtime(&info->membersince)));
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
 		gchar *itime = sec_to_text(info->idletime*60);
-		idle = g_strdup_printf("Idle : <b>%s</b>", itime);
+		idle = g_strdup_printf(_("Idle : <b>%s</b>"), itime);
 		g_free(itime);
 	} else
-		idle = g_strdup("Idle: <b>Active</b>");
+		idle = g_strdup(_("Idle: <b>Active</b>"));
 
 	g_snprintf(header, sizeof header,
 			_("Username : <b>%s</b>  %s <br>\n"

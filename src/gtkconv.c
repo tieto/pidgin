@@ -2546,15 +2546,15 @@ setup_menubar(struct gaim_window *win)
 	gtkwin->menu.menubar = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 			"<main>");
 	gtkwin->menu.view_history = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-			"/Conversation/View History...");
+			N_("/Conversation/View History..."));
 	gtkwin->menu.insert_link = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-			"/Conversation/Insert URL...");
+			N_("/Conversation/Insert URL..."));
 	gtkwin->menu.insert_image = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-			"/Conversation/Insert Image...");
+			N_("/Conversation/Insert Image..."));
 	gtkwin->menu.logging = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-			"/Options/Enable Logging");
+			N_("/Options/Enable Logging"));
 	gtkwin->menu.sounds = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-			"/Options/Enable Sounds");
+			N_("/Options/Enable Sounds"));
 
 	generate_send_as_items(win, NULL);
 

@@ -906,7 +906,7 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 	dropdown = gtk_option_menu_new();
 	menu = gtk_menu_new();
 
-	opt = gtk_menu_item_new_with_label("Use Global Proxy Settings");
+	opt = gtk_menu_item_new_with_label(_("Use Global Proxy Settings"));
 	g_object_set_data(G_OBJECT(opt), "proxytype", GINT_TO_POINTER(PROXY_USE_GLOBAL));
 	g_signal_connect(G_OBJECT(opt), "activate",
 			G_CALLBACK(proxy_dropdown_set), ma);
@@ -915,7 +915,7 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 	if(!gpi)
 		gtk_menu_set_active(GTK_MENU(menu), 0);
 
-	opt = gtk_menu_item_new_with_label("No Proxy");
+	opt = gtk_menu_item_new_with_label(_("No Proxy"));
 	g_object_set_data(G_OBJECT(opt), "proxytype", GINT_TO_POINTER(PROXY_NONE));
 	g_signal_connect(G_OBJECT(opt), "activate",
 			G_CALLBACK(proxy_dropdown_set), ma);

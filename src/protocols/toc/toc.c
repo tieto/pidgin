@@ -187,7 +187,7 @@ static void toc_login(struct gaim_account *account)
 	gc->flags |= OPT_CONN_HTML;
 	gc->flags |= OPT_CONN_AUTO_RESP;
 
-	g_snprintf(buf, sizeof buf, "Looking up %s",
+	g_snprintf(buf, sizeof buf, _("Looking up %s"),
 		   account->proto_opt[USEROPT_AUTH][0] ? account->proto_opt[USEROPT_AUTH] : TOC_HOST);
 	set_login_progress(gc, 1, buf);
 
@@ -252,7 +252,7 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 	 * toc_fd file descriptor, toc_callback is called, with gc passed as its data arg. */
 	gc->inpa = gaim_input_add(tdt->toc_fd, GAIM_INPUT_READ, toc_callback, gc);
 
-	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
+	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gc->username);
 	set_login_progress(gc, 2, buf);
 }
 

@@ -960,7 +960,7 @@ static void yahoo_login(struct gaim_account *account) {
 	struct gaim_connection *gc = new_gaim_conn(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 
-	set_login_progress(gc, 1, "Connecting");
+	set_login_progress(gc, 1, _("Connecting"));
 
 	yd->fd = -1;
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);

@@ -1821,7 +1821,7 @@ irc_login(struct gaim_account *account)
 
 	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", gc->username);
 
-	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
+	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gc->username);
 	set_login_progress(gc, 2, buf);
 
 	idata->chantypes = g_strdup("#&!+");

@@ -291,7 +291,7 @@ static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, 
 	iq->uin = uin;
 	iq->gc = link->icq_UserData;
 
-	g_snprintf(msg, sizeof(msg), "The user %s (%s%s%s%s%s) wants you to authorize them.",
+	g_snprintf(msg, sizeof(msg), _("The user %s (%s%s%s%s%s) wants you to authorize them."),
 			nick, first ? first : "", first && last ? " " : "", last ? last : "",
 			(first || last) && email ? ", " : "", email ? email : "");
 	do_ask_dialog(msg, NULL, iq, _("Authorize"), icq_acc_auth, _("Deny"), icq_den_auth, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
@@ -341,7 +341,7 @@ static void icq_login(struct gaim_account *account) {
 	icq_ContactClear(id->link);
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
-		hide_login_progress(gc, "Unable to connect");
+		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 		return;
 	}
@@ -349,7 +349,7 @@ static void icq_login(struct gaim_account *account) {
 	id->cur_status = STATUS_ONLINE;
 	icq_Login(link, STATUS_ONLINE);
 
-	set_login_progress(gc, 0, "Connecting...");
+	set_login_progress(gc, 0, _("Connecting..."));
 }
 
 static void icq_close(struct gaim_connection *gc) {
