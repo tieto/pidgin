@@ -889,16 +889,17 @@ GtkWidget *browser_page() {
 	g_signal_connect(GTK_OBJECT(label), "clicked", 
 					   G_CALLBACK(manual_browser_reset), browser_entry);
 
-#endif /* end !_WIN32 */
 	if (browsers != NULL) {
 	vbox = make_frame (ret, _("Browser Options"));
 
 	label = gaim_button(_("Open new _window by default"), &misc_options, OPT_MISC_BROWSER_POPUP, vbox);
 	}
-#ifdef _WIN32
-	/* Until I figure out how to implement this on windows */
-	gtk_widget_set_sensitive(label, FALSE);
-#endif
+#else
+	/* For windows, we need to implement the ability for URLs to be opened 
+	 * in new windows. Currently, existing open windows are being used.
+	 */
+#endif /*_WIN32*/
+
 	gtk_widget_show_all(ret);
 	return ret;
 }
