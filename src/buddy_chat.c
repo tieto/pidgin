@@ -607,12 +607,17 @@ void handle_click_chat(GtkWidget *widget, GdkEventButton *event, struct chat_roo
 
 void setup_buddy_chats()
 {
-        GList *list = GTK_TREE(buddies)->children;
+        GList *list;
         struct chat_room *cr;
         GList *crs = chat_rooms;
         GtkWidget *w;
         GtkWidget *item;
         GtkWidget *tree;
+
+	if (buddies == NULL)
+		return;
+
+	list = GTK_TREE(buddies)->children;
 
         while(list) {
                 w = (GtkWidget *)list->data;
