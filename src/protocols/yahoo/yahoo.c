@@ -695,7 +695,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *sn   = NULL;
 	GSList *l = pkt->hash;
 	struct yahoo_data *yd = gc->proto_data;
-	
+
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 		if (pair->key == 94)
@@ -899,6 +899,35 @@ static void yahoo_process_ignore(GaimConnection *gc, struct yahoo_packet *pkt) {
 	}
 }
 
+static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	GSList *l = pkt->hash;
+	int err = 0;
+	char *msg;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		if (pair->key == 66)
+			err = strtol(pair->value, NULL, 10);
+
+		l = l->next;
+	}
+
+	switch (err) {
+	case 3:
+		msg = _("Invalid username.");
+		break;
+	case 13:
+		msg = _("Incorrect password.");
+		break;
+	default:
+		msg = _("Unknown error.");
+	}
+
+	gaim_connection_error(gc, msg);
+}
+
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	switch (pkt->service) {
@@ -934,6 +963,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_IGNORECONTACT:
 		yahoo_process_ignore(gc, pkt);
+		break;
+	case YAHOO_SERVICE_AUTHRESP:
+		yahoo_process_authresp(gc, pkt);
 		break;
 	case YAHOO_SERVICE_CONFINVITE:
 	case YAHOO_SERVICE_CONFADDINVITE:
