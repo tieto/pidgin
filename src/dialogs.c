@@ -1413,6 +1413,9 @@ void show_add_chat(GaimAccount *account, struct group *group) {
 /*------------------------------------------------------------------------*
  *  Privacy Settings                                                      *
  *------------------------------------------------------------------------*/
+static GtkWidget *privacy_win;
+static GtkWidget *privacy_sensbox;
+
 static GtkWidget *deny_type = NULL;
 static GtkWidget *deny_conn_hbox = NULL;
 static GtkWidget *deny_opt_menu = NULL;
@@ -1671,8 +1674,6 @@ static void pref_deny_rem(GtkWidget *button, gboolean permit)
 	gaim_blist_save();
 }
 
-static GtkWidget *privacy_win;
-
 void update_privacy_connections() { /* This is a slightly better name */
 	gboolean needdeny = FALSE;
 	GList *c = gaim_connections_get_all();
@@ -1692,22 +1693,24 @@ void update_privacy_connections() { /* This is a slightly better name */
 	
 
 	if (needdeny) {
-		gtk_widget_set_sensitive(privacy_win, TRUE);
+		gtk_widget_set_sensitive(privacy_sensbox, TRUE);
 		build_deny_menu();
 		build_allow_list();
 		build_block_list();
 	} else {
-		gtk_widget_set_sensitive(privacy_win, FALSE);
+		gtk_widget_set_sensitive(privacy_sensbox, FALSE);
 	}
 }
 static void destroy_privacy() {
 	current_deny_gc = NULL;
 	privacy_win = NULL;
+	privacy_sensbox = NULL;
 }
 
 void show_privacy_options() {
 	GtkWidget *pwin;
 	GtkWidget *box;
+	GtkWidget *box2;
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *sw;
@@ -1720,6 +1723,12 @@ void show_privacy_options() {
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkWidget *table;
+
+	if (privacy_win != NULL) {
+		gtk_widget_show(privacy_win);
+		gdk_window_raise(privacy_win->window);
+		return;
+	}
 
 	current_deny_gc = gaim_connections_get_all()->data;	/* this is safe because this screen will only be
 						   available when there are gaim_connections_get_all() */
@@ -1739,13 +1748,18 @@ void show_privacy_options() {
 	gtk_container_add(GTK_CONTAINER(pwin), box);
 	gtk_widget_show(box);
 
+	privacy_sensbox = box2 = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box2), 5);
+	gtk_box_pack_start(GTK_BOX(box), box2, TRUE, TRUE, 0);
+	gtk_widget_show(box2);
+
 	label = gtk_label_new(_("Changes to privacy settings take effect immediately."));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box2), label, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_widget_show(label);
 
 	deny_conn_hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), deny_conn_hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box2), deny_conn_hbox, FALSE, FALSE, 5);
 	gtk_widget_show(deny_conn_hbox);
 
 	label = gtk_label_new(_("Set privacy for:"));
@@ -1760,7 +1774,7 @@ void show_privacy_options() {
 	build_deny_menu();
 
 	table = gtk_table_new(5, 2, FALSE);
-	gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box2), table, TRUE, TRUE, 0);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 7);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 	gtk_widget_show(table);
@@ -1867,7 +1881,6 @@ void show_privacy_options() {
 	gtk_widget_show(close_button);
 
 	gtk_widget_show(pwin);
-	
 }
 
 

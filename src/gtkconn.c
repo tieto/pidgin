@@ -230,6 +230,7 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 
 	gaim_setup(gc);
 
+	update_privacy_connections();
 	do_away_menu();
 	gaim_gtk_blist_update_protocol_actions();
 
