@@ -3,6 +3,7 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.11.0-pre12:
 	* Fixed a funny bug with auto responses when queued messages
 	  are enabled.
+	* Redesigned the Font Options preference page
 	* Improved Jabber chat support (it whispers now, too)
 
 version 0.11.0-pre11 (04/30/2001):

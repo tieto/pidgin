@@ -1128,6 +1128,8 @@ static void font_page()
 	GtkWidget *select;
 	GtkWidget *spin;
 	GtkObject *adjust;
+	GtkWidget *frame;
+	GtkWidget *fbox;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -1144,17 +1146,37 @@ static void font_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	gaim_button(_("Bold Text"), &font_options, OPT_FONT_BOLD, box);
-	gaim_button(_("Italics Text"), &font_options, OPT_FONT_ITALIC, box);
-	gaim_button(_("Underlined Text"), &font_options, OPT_FONT_UNDERLINE, box);
-	gaim_button(_("Strike Text"), &font_options, OPT_FONT_STRIKE, box);
+	frame = gtk_frame_new("Font Style");
+	fbox = gtk_vbox_new(FALSE, 5);
 
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
+	gaim_button(_("Bold Text"), &font_options, OPT_FONT_BOLD, fbox);
+	gaim_button(_("Italics Text"), &font_options, OPT_FONT_ITALIC, fbox);
+	gaim_button(_("Underlined Text"), &font_options, OPT_FONT_UNDERLINE, fbox);
+	gaim_button(_("Strike Text"), &font_options, OPT_FONT_STRIKE, fbox);
 
+	gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
+	gtk_container_add(GTK_CONTAINER(frame), fbox);
+
+	gtk_widget_show(fbox);
+	gtk_widget_show(frame);
+
+	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
+
+	/* ----------- */
+
+	frame = gtk_frame_new("Font Color");
+	fbox = gtk_vbox_new(FALSE, 5);
+
+	gtk_container_add(GTK_CONTAINER(frame), fbox);
+	gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
+
+	gtk_widget_show(fbox);
+	gtk_widget_show(frame);
+
+	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
+	
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
 	pref_fg_picture = show_color_pref(hbox, TRUE);
@@ -1172,7 +1194,7 @@ static void font_page()
 			   pref_fg_picture);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
 	pref_bg_picture = show_color_pref(hbox, FALSE);
@@ -1189,14 +1211,15 @@ static void font_page()
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color),
 			   pref_bg_picture);
 
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
+	/* ----------- */
+
+	frame = gtk_frame_new("Font Face");
+	fbox = gtk_vbox_new(FALSE, 5);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
-
+	
 	button = gaim_button(_("Font Face for Text"), &font_options, OPT_FONT_FACE, hbox);
 
 	select = picture_button(prefs, _("Select"), fontface2_xpm);
@@ -1209,7 +1232,7 @@ static void font_page()
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
 	button = gaim_button(_("Font Size for Text"), &font_options, OPT_FONT_SIZE, hbox);
@@ -1224,6 +1247,12 @@ static void font_page()
 	gtk_signal_connect(GTK_OBJECT(adjust), "value-changed", GTK_SIGNAL_FUNC(set_font_size),
 			   GTK_WIDGET(spin));
 	gtk_widget_show(spin);
+
+	gtk_container_add(GTK_CONTAINER(frame), fbox);
+	gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
+	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
+	gtk_widget_show(fbox);
+	gtk_widget_show(frame);
 
 	gtk_widget_show(prefdialog);
 }
