@@ -613,7 +613,7 @@ void toc_callback( gpointer          data,
                 
                 tmp = frombase64(strtok(NULL, ":"));
 
-		if (!strcmp(uuid, FILE_GET_UID)) {
+		if (!strcmp(uuid, FILE_SEND_UID)) {
 			/* we're getting a file */
 	                subtype = tmp[1];
 	                files = tmp[3]; /* These are fine */
@@ -645,7 +645,7 @@ void toc_callback( gpointer          data,
 	                        g_free(messages[i]);
                 
 	                accept_file_dialog(ft);
-		} else if (!strcmp(uuid, FILE_SEND_UID)) {
+		} else if (!strcmp(uuid, FILE_GET_UID)) {
 			/* we're sending a file */
 			/* FIXME */
 			/* here's what needs to happen:

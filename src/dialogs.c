@@ -2207,7 +2207,7 @@ static void cancel_callback(GtkWidget *widget, struct file_transfer *ft)
 		return;
 	}
 	
-	g_snprintf(send, 255, "toc_rvous_cancel %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
+	g_snprintf(send, 255, "toc_rvous_cancel %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
 	sflap_send(send, strlen(send), TYPE_DATA);
 	g_free(send);
 	destroy_dialog(NULL, ft->window);
@@ -2296,7 +2296,7 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	ft->accepted = 1;
 	
 	destroy_dialog(NULL, ft->window);
-	g_snprintf(send, 255, "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
+	g_snprintf(send, 255, "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
 	sflap_send(send, strlen(send), TYPE_DATA);
 	g_free(send);
 
