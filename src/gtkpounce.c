@@ -291,6 +291,68 @@ buddy_changed_cb(GtkEntry *entry, GaimGtkPounceDialog *dialog)
 			*gtk_entry_get_text(entry) != '\0');
 }
 
+static void
+pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
+				GtkSelectionData *sd, guint info, guint t, gpointer data)
+{
+	GaimGtkPounceDialog *dialog;
+
+	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE))
+	{
+		GaimBlistNode *node = NULL;
+		GaimBuddy *buddy;
+
+		memcpy(&node, sd->data, sizeof(node));
+
+		if (GAIM_BLIST_NODE_IS_CONTACT(node))
+			buddy = gaim_contact_get_priority_buddy((GaimContact *)node);
+		else if (GAIM_BLIST_NODE_IS_BUDDY(node))
+			buddy = (GaimBuddy *)node;
+		else
+			return;
+
+		dialog = (GaimGtkPounceDialog *)data;
+
+		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), buddy->name);
+
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+	}
+	else if (sd->target == gdk_atom_intern("application/x-im-contact", FALSE))
+	{
+		char *protocol = NULL;
+		char *username = NULL;
+		GaimAccount *account;
+
+		if (gaim_gtk_parse_x_im_contact(sd->data, FALSE, &account,
+										&protocol, &username, NULL))
+		{
+			if (account == NULL)
+			{
+				gaim_notify_error(NULL, NULL,
+					_("You are not currently signed on with an account that "
+					  "can add that buddy."), NULL);
+			}
+			else
+			{
+				dialog = (GaimGtkPounceDialog *)data;
+
+				gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), username);
+			}
+		}
+
+		if (username != NULL) g_free(username);
+		if (protocol != NULL) g_free(protocol);
+
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+	}
+}
+
+static const GtkTargetEntry dnd_targets[] =
+{
+	{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, 0},
+	{"application/x-im-contact", 0, 1}
+};
+
 void
 gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 						   GaimPounce *cur_pounce)
@@ -311,17 +373,24 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 
 	dialog = g_new0(GaimGtkPounceDialog, 1);
 
-	if (cur_pounce != NULL) {
+	if (cur_pounce != NULL)
+	{
 		dialog->pounce  = cur_pounce;
 		dialog->account = gaim_pounce_get_pouncer(cur_pounce);
 	}
-	else if (account != NULL) {
+	else if (account != NULL)
+	{
 		dialog->pounce  = NULL;
 		dialog->account = account;
 	}
-	else {
+	else
+	{
+		GaimConnection *gc;
+
+		gc = (GaimConnection *)gaim_connections_get_all()->data;
+
 		dialog->pounce  = NULL;
-		dialog->account = gaim_connection_get_account((GaimConnection *)gaim_connections_get_all()->data);
+		dialog->account = gaim_connection_get_account(gc);
 	}
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -378,13 +447,14 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new_with_mnemonic(_("_Buddy Name:"));
+	label = gtk_label_new_with_mnemonic(_("_Buddy name:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
 
 	dialog->buddy_entry = gtk_entry_new();
+
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_entry, TRUE, TRUE, 0);
 	gtk_widget_show(dialog->buddy_entry);
 
@@ -595,6 +665,25 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 
 	if (*gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry)) == '\0')
 		gtk_widget_set_sensitive(button, FALSE);
+
+	/* Setup drag-and-drop */
+	gtk_drag_dest_set(window,
+					  GTK_DEST_DEFAULT_MOTION |
+					  GTK_DEST_DEFAULT_DROP,
+					  dnd_targets,
+					  sizeof(dnd_targets) / sizeof(GtkTargetEntry),
+					  GDK_ACTION_COPY);
+	gtk_drag_dest_set(dialog->buddy_entry,
+					  GTK_DEST_DEFAULT_MOTION |
+					  GTK_DEST_DEFAULT_DROP,
+					  dnd_targets,
+					  sizeof(dnd_targets) / sizeof(GtkTargetEntry),
+					  GDK_ACTION_COPY);
+
+	g_signal_connect(G_OBJECT(window), "drag_data_received",
+					 G_CALLBACK(pounce_dnd_recv), dialog);
+	g_signal_connect(G_OBJECT(dialog->buddy_entry), "drag_data_received",
+					 G_CALLBACK(pounce_dnd_recv), dialog);
 
 	/* Set the values of stuff. */
 	if (cur_pounce != NULL) {

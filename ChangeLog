@@ -4,6 +4,8 @@ version 0.78cvs
 	New Features:
 	* Option to suppress the disconnect notification when using
 	  the autoreconnect plugin (Christopher (siege) O'Brien)
+	* Added support for dragging buddies from the buddy list into the
+	  Add Buddy Pounce dialog.
 
 	Bug Fixes:
 	* Gadu-Gadu updates (Andrew Wellington)
