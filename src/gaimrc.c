@@ -845,7 +845,7 @@ static void gaimrc_read_options(FILE *f)
 			gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
 								(convo_options & OPT_CONVO_SHOW_TIME));
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_colors",
-								(convo_options & OPT_CONVO_IGNORE_COLOR));
+								(convo_options & OPT_CONVO_IGNORE_COLOUR));
 			gaim_prefs_set_bool("/gaim/gtk/conversations/show_smileys",
 								(convo_options & OPT_CONVO_SHOW_SMILEY));
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_fonts",
