@@ -52,6 +52,9 @@ struct irc_data {
 	gboolean online;
 	guint32 timer;
 
+	char *rxqueue;
+	int rxlen;
+
 	GString *str;
 	int bc;
 
@@ -775,42 +778,14 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 	/* XXX should probably write_to_conv or something here */
 }
 
-static void irc_callback(gpointer data, gint source, GaimInputCondition condition)
+static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 {
-	struct gaim_connection *gc = data;
 	struct irc_data *idata = gc->proto_data;
-	int i = 0;
-	gchar d[IRC_BUF_LEN], *buf = d;
 	gchar outbuf[IRC_BUF_LEN];
 	char *word[PDIWORDS], *word_eol[PDIWORDS];
 	char pdibuf[522];
 	char *ex, ip[128], nick[128];
 	char *cmd;
-
-	if (!idata->online) {
-		/* Now lets sign ourselves on */
-		account_online(gc);
-		serv_finish_login(gc);
-
-		if (bud_list_cache_exists(gc))
-			do_import(gc, NULL);
-
-		/* we don't call this now because otherwise some IRC servers might not like us */
-		idata->timer = g_timeout_add(20000, irc_request_buddy_update, gc);
-		idata->online = TRUE;
-	}
-
-	do {
-		if (read(idata->fd, buf + i, 1) <= 0) {
-			hide_login_progress(gc, "Read error");
-			signoff(gc);
-			return;
-		}
-	} while (buf[i++] != '\n');
-
-	buf[--i] = '\0';
-	g_strchomp(buf);
-	debug_printf("IRC S: %s\n", buf);
 
 	/* Check for errors */
 
@@ -818,15 +793,17 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		if (!strncmp(buf, "NOTICE ", 7))
 			buf += 7;
 		if (!strncmp(buf, "PING ", 5)) {
+			int r = FALSE;
 			g_snprintf(outbuf, sizeof(outbuf), "PONG %s\r\n", buf + 5);
 			if (irc_write(idata->fd, outbuf, strlen(outbuf)) < 0) {
 				hide_login_progress(gc, _("Unable to write"));
 				signoff(gc);
+				r = TRUE;
 			}
-			return;
+			return r;
 		}
 		/* XXX doesn't handle ERROR */
-		return;
+		return FALSE;
 	}
 
 	buf++;
@@ -836,7 +813,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 	if (atoi(word[2])) {
 		if (*word_eol[3])
 			process_numeric(gc, word, word_eol);
-		return;
+		return FALSE;
 	}
 
 	cmd = word[2];
@@ -856,7 +833,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 			nick[ex - pdibuf] = 0; /* cut the buffer at the '!' */
 	}
 
-	       if (!strcmp(cmd, "INVITE")) { /* */
+	if (!strcmp(cmd, "INVITE")) { /* */
 	} else if (!strcmp(cmd, "JOIN")) {
 		char *chan = *word[3] == ':' ? word[3] + 1 : word[3];
 		if (!g_strcasecmp(gc->displayname, nick)) {
@@ -871,7 +848,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		if (!strcmp(gc->displayname, word[4])) {
 			struct conversation *c = irc_find_chat(gc, word[3]);
 			if (!c)
-				return;
+				return FALSE;
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
 			c->gc = NULL;
 			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s: %s"),
@@ -898,10 +875,10 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		if (*chan == ':')
 			chan++;
 		if (!(c = irc_find_chat(gc, chan)))
-			return;
+			return FALSE;
 		if (!strcmp(nick, gc->displayname)) {
 			serv_got_chat_left(gc, c->id);
-			return;
+			return FALSE;
 		}
 		r = c->in_room;
 		while (r) {
@@ -921,7 +898,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 	} else if (!strcmp(cmd, "PRIVMSG")) {
 		char *to, *msg;
 		if (!*word[3])
-			return;
+			return FALSE;
 		to = word[3];
 		msg = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
 		if (msg[0] == 1 && msg[strlen (msg) - 1] == 1) { /* ctcp */
@@ -945,6 +922,72 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 			write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL));
 		}
 	} else if (!strcmp(cmd, "WALLOPS")) { /* */
+	}
+
+	return FALSE;
+}
+
+static void irc_callback(gpointer data, gint source, GaimInputCondition condition)
+{
+	struct gaim_connection *gc = data;
+	struct irc_data *idata = gc->proto_data;
+	int i = 0;
+	gchar buf[1024];
+	gboolean off;
+
+	if (!idata->online) {
+		/* Now lets sign ourselves on */
+		account_online(gc);
+		serv_finish_login(gc);
+
+		if (bud_list_cache_exists(gc))
+			do_import(gc, NULL);
+
+		/* we don't call this now because otherwise some IRC servers might not like us */
+		idata->timer = g_timeout_add(20000, irc_request_buddy_update, gc);
+		idata->online = TRUE;
+	}
+
+	i = read(idata->fd, buf, 1024);
+	if (i <= 0) {
+		hide_login_progress(gc, "Read error");
+		signoff(gc);
+		return;
+	}
+
+	idata->rxqueue = g_realloc(idata->rxqueue, i + idata->rxlen + 1);
+	memcpy(idata->rxqueue + idata->rxlen, buf, i);
+	idata->rxlen += i;
+	idata->rxqueue[idata->rxlen] = 0;
+
+	while (1) {
+		char *d, *e;
+		int len;
+
+		if (!idata->rxqueue || ((e = strchr(idata->rxqueue, '\n')) == NULL))
+			return;
+
+		len = e - idata->rxqueue + 1;
+		d = g_strndup(idata->rxqueue, len);
+		g_strchomp(d);
+		debug_printf("IRC S: %s\n", d);
+
+		idata->rxlen -= len;
+		if (idata->rxlen) {
+			char *tmp = g_strdup(e + 1);
+			g_free(idata->rxqueue);
+			idata->rxqueue = tmp;
+		} else {
+			g_free(idata->rxqueue);
+			idata->rxqueue = NULL;
+		}
+
+		off = irc_parse(gc, d);
+
+		g_free(d);
+
+		if (off)
+			return;
 	}
 }
 
@@ -1028,6 +1071,11 @@ static void irc_close(struct gaim_connection *gc)
 
 	g_snprintf(buf, sizeof(buf), "QUIT :Download Gaim [%s]\r\n", WEBSITE);
 	irc_write(idata->fd, buf, strlen(buf));
+
+	if (idata->rxqueue)
+		g_free(idata->rxqueue);
+	idata->rxqueue = NULL;
+	idata->rxlen = 0;
 
 	g_free(idata->chantypes);
 	g_free(idata->chanmodes);

@@ -767,6 +767,7 @@ static void yahoo_close(struct gaim_connection *gc) {
 		close(yd->fd);
 	if (yd->rxqueue)
 		g_free(yd->rxqueue);
+	yd->rxlen = 0;
 	while (yd->login) {
 		struct yahoo_buddy *buddy = yd->login->data;
 		yd->login = g_slist_remove(yd->login, buddy);
