@@ -771,7 +771,7 @@ gtk_imhtml_select_none (GtkIMHtml *imhtml)
 					draw_img (imhtml, chunk);
 				else if ((bit->type == TYPE_SEP) && (bit->chunks->data == chunk))
 					draw_line (imhtml, chunk);
-				else
+				else if (chunk->width)
 					draw_text (imhtml, chunk);
 			}
 
@@ -1017,7 +1017,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 					draw_img (imhtml, chunk);
 				else if ((bit->type == TYPE_SEP) && (bit->chunks->data == chunk))
 					draw_line (imhtml, chunk);
-				else
+				else if (chunk->width)
 					draw_text (imhtml, chunk);
 				redraw = FALSE;
 			}
@@ -1059,7 +1059,7 @@ gtk_imhtml_select_in_chunk (GtkIMHtml *imhtml,
 		else if ((bit->type == TYPE_SEP) && 
 			 (bit->chunks->data == chunk))
 			draw_line (imhtml, chunk);
-		else
+		else if (chunk->width)
 			draw_text (imhtml, chunk);
 	}
 }
