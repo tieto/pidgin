@@ -627,7 +627,7 @@ static void do_load(GtkWidget *m, gpointer n) {
 
 void load_perl_script(GtkWidget *w, gpointer d)
 {
-	char *buf;
+	char *buf, *temp;
 
 	if (config) {
 		gtk_widget_show(config);
