@@ -339,7 +339,7 @@ void remove_pref(struct gaim_pref *pref) {
 
 	name = pref_full_name(pref);
 
-	gaim_debug(GAIM_DEBUG_INFO, "prefs", "removing pref %s\n", name);
+	gaim_debug(GAIM_DEBUG_INFO, "prefs", "removing pref /%s\n", name);
 
 	g_hash_table_remove(prefs_hash, name);
 	g_free(name);
@@ -580,6 +580,8 @@ GList *gaim_prefs_get_string_list(const char *name) {
 
 void gaim_prefs_rename(const char *oldname, const char *newname) {
 	struct gaim_pref *oldpref, *newpref;
+
+	gaim_debug_info("prefs", "Attempting to rename %s to %s\n", oldname, newname);
 
 	oldpref = find_pref(oldname);
 	newpref = find_pref(newname);
@@ -839,6 +841,7 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 
 		switch(pref_type) {
 			case GAIM_PREF_NONE:
+				gaim_prefs_add_none(pref_name_full->str);
 				break;
 			case GAIM_PREF_BOOLEAN:
 				gaim_prefs_set_bool(pref_name_full->str, atoi(pref_value));
