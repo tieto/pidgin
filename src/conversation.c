@@ -531,9 +531,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	buf = g_malloc(limit);
 	
 	buf2 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
-	if (!strlen(buf2)) return;
 	g_snprintf(buf, limit, "%s", buf2);
+	g_free(buf2);
 	gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
+	if (!strlen(buf)) return;
 
 	if (general_options & OPT_GEN_SEND_LINKS)
 		linkify_text(buf);
