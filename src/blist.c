@@ -1343,11 +1343,17 @@ gaim_blist_find_chat(GaimAccount *account, const char *name)
 	g_return_val_if_fail(gaim_get_blist() != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
+	if(!gaim_account_is_connected(account))
+		return NULL;
+
 	for (group = gaimbuddylist->root; group != NULL; group = group->next) {
 		for (node = group->child; node != NULL; node = node->next) {
 			if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 
 				chat = (GaimChat*)node;
+
+				if(!gaim_account_is_connected(chat->account))
+					continue;
 
 				prpl = gaim_find_prpl(gaim_account_get_protocol_id(chat->account));
 				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
