@@ -1851,6 +1851,9 @@ gtk_imhtml_get_css_opt (gchar       *style,
 
 	if (!g_ascii_strncasecmp (t, opt, strlen (opt))) {
 		t += strlen (opt);
+		while (*t && (*t == ' ')) t++;
+		if (!*t)
+			return NULL;
 	} else {
 		return NULL;
 	}
@@ -2383,12 +2386,12 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 						if (!style) break;
 
-						color = gtk_imhtml_get_css_opt (style, "color: ");
-						background = gtk_imhtml_get_css_opt (style, "background: ");
+						color = gtk_imhtml_get_css_opt (style, "color:");
+						background = gtk_imhtml_get_css_opt (style, "background:");
 						family = gtk_imhtml_get_css_opt (style,
-							"font-family: ");
-						size = gtk_imhtml_get_css_opt (style, "font-size: ");
-						textdec = gtk_imhtml_get_css_opt (style, "text-decoration: ");
+							"font-family:");
+						size = gtk_imhtml_get_css_opt (style, "font-size:");
+						textdec = gtk_imhtml_get_css_opt (style, "text-decoration:");
 
 						if (!(color || family || size || background || textdec)) {
 							g_free(style);
