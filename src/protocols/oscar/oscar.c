@@ -3401,9 +3401,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	tmp = g_string_free(message, FALSE);
 
 	/*
-	 * If the message is being received by an ICQ user then escape any HTML,
+	 * If the message is from an ICQ user and to an ICQ user then escape any HTML,
 	 * because HTML is not sent over ICQ as a means to format a message.
-	 * so any HTML we receive is intended to be displayed
+	 * So any HTML we receive is intended to be displayed.  Also, \r\n must be
+	 * replaced with <br>
 	 *
 	 * Note: There *may* be some clients which send messages as HTML formatted -
 	 *       they need to be special-cased somehow.
@@ -3411,6 +3412,9 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	if (aim_sn_is_icq(gaim_account_get_username(account)) && aim_sn_is_icq(userinfo->sn)) {
 		/* being recevied by ICQ from ICQ - escape HTML so it is displayed as sent */
 		gchar *tmp2 = g_markup_escape_text(tmp, -1);
+		g_free(tmp);
+		tmp = tmp2;
+		gaim_strreplace(tmp, "\r\n", "<br>");
 		g_free(tmp);
 		tmp = tmp2;
 	}
@@ -5512,7 +5516,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	struct oscar_direct_im *dim = oscar_direct_im_find(od, name);
 	int ret = 0;
 	const char *iconfile = gaim_account_get_buddy_icon(account);
-	char *tmpmsg = NULL, *tmpmsg2 = NULL;
+	char *tmpmsg = NULL;
 
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
@@ -5592,27 +5596,20 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		args.destsn = name;
 
 		/*
-		 * If we're IMing an ICQ user then send newlines as CR/LF and
-		 * strip all HTML
+		 * If we're IMing an ICQ user from an ICQ account, then strip HTML
+		 * and use \r\n as the newline character.
 		 */
-		if (aim_sn_is_icq(name) ) {
-			/* being sent to an ICQ user */
-			if (!aim_sn_is_icq(gaim_account_get_username(account))) {
-				/* from an AIM user - ICQ receiving from AIM *expects the messsage to be HTML formatted* */
-				tmpmsg = gaim_str_add_cr(message);
-			} else {
-				/* from an ICQ user - do nothing */
+		if (aim_sn_is_icq(gaim_account_get_username(account))) {
+			if (aim_sn_is_icq(name))
+				/* From ICQ to ICQ */
 				tmpmsg = g_strdup(message);
-			}
+			else
+				/* From ICQ to AIM */
+				tmpmsg = g_markup_escape_text(message, -1);
 		} else {
-			/* being sent to an AIM user */
-			if (aim_sn_is_icq(gaim_account_get_username(account))) {
-				/* from an ICQ user */
-				tmpmsg2 = gaim_strdup_withhtml(message);
-				tmpmsg = g_markup_escape_text(tmpmsg2, -1);
-				g_free(tmpmsg2);
-			} else
-				tmpmsg = gaim_strdup_withhtml(message);
+			if (aim_sn_is_icq(name))
+				/* From AIM to AIM and AIM to ICQ */
+				tmpmsg = g_strdup(message);
 		}
 		len = strlen(tmpmsg);
 
