@@ -275,7 +275,7 @@ static void destroy_buddies(struct gaim_connection *gc) {
 			if ((g_slist_length(b->connlist) == 1) && (b->connlist->data == gc)) {
 				if (b->log_timer > 0)
 					gtk_timeout_remove(b->log_timer);
-				b->log_timer = -1;
+				b->log_timer = 0;
 				b->connlist = g_slist_remove(b->connlist, gc);
 				gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
 				m = g->members = g_slist_remove(g->members, b);
@@ -342,7 +342,7 @@ void signoff(struct gaim_connection *gc)
 				m = g_slist_remove(m, b);
 				if (b->log_timer > 0)
 					gtk_timeout_remove(b->log_timer);
-				b->log_timer = -1;
+				b->log_timer = 0;
 				gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
 				g_free(b->show);
 				g_free(b->name);
@@ -528,7 +528,7 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
 						gtk_timeout_remove(bs->log_timer);
-					bs->log_timer = -1;
+					bs->log_timer = 0;
 					gtk_container_remove(GTK_CONTAINER(gs->tree), bs->item);
 					g_free(bs->show);
 					g_free(bs->name);
@@ -1405,14 +1405,16 @@ static struct group_show *find_group_show(char *group) {
 static struct buddy_show *find_buddy_show(struct group_show *gs, char *name) {
 	GSList *m = gs->members;
 	struct buddy_show *b = NULL;
+	char *who = g_strdup(normalize(name));
 
 	while (m) {
 		b = (struct buddy_show *)m->data;
-		if (!strcmp(b->name, name))
+		if (!strcmp(normalize(b->name), who))
 			break;
 		b = NULL;
 		m = m->next;
 	}
+	g_free(who);
 
 	return b;
 }
@@ -1606,7 +1608,7 @@ static gint log_timeout(struct buddy_show *b) {
 		gdk_bitmap_unref(bm);
 	}
 	gtk_timeout_remove(b->log_timer);
-	b->log_timer = -1;
+	b->log_timer = 0;
 	return 0;
 }
 
@@ -1765,7 +1767,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			b->present = 2;
 			if (bs->log_timer > 0)
 				gtk_timeout_remove(bs->log_timer);
-			bs->log_timer = -1;
+			bs->log_timer = 0;
 			if (!g_slist_find(bs->connlist, gc))
 				bs->connlist = g_slist_append(bs->connlist, gc);
 			else
@@ -1782,7 +1784,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
 				}
 			}
-		} else if (bs->log_timer <= 0) {
+		} else if (bs->log_timer == 0) {
 			if (gc->prpl->list_icon)
 				xpm = (*gc->prpl->list_icon)(b->uc);
 			if (xpm == NULL)
