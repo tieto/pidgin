@@ -22,6 +22,10 @@
  */
 #include "msn.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 G_MODULE_IMPORT GSList *connections;
 
 static struct gaim_xfer *

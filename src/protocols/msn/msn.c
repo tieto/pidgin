@@ -22,6 +22,10 @@
  */
 #include "msn.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 #include "pixmaps/protocols/msn/msn_online.xpm"
 #include "pixmaps/protocols/msn/msn_away.xpm"
 #include "pixmaps/protocols/msn/msn_occ.xpm"
@@ -36,10 +40,8 @@ static void msn_login_callback(gpointer, gint, GaimInputCondition);
 static void msn_login_xfr_connect(gpointer, gint, GaimInputCondition);
 
 #if 0
-static struct msn_file_transfer *find_mft_by_cookie(struct gaim_connection *gc,
-													unsigned long cookie);
-static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc,
-												  struct file_transfer *xfer);
+static struct msn_file_transfer *find_mft_by_cookie(struct gaim_connection *gc,	unsigned long cookie);
+static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc, struct file_transfer *xfer);
 #endif
 
 static char *msn_normalize(const char *s)

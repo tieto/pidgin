@@ -22,6 +22,12 @@
  */
 #include "msn.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
+G_MODULE_IMPORT GSList *connections;
+
 static char *
 msn_parse_format(char *mime)
 {

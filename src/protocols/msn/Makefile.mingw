@@ -68,7 +68,10 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =		msn.c
+C_SRC =			ft.c \
+			msg.c \
+			msn.c \
+			switchboard.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
