@@ -660,6 +660,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 {
 	GaimConnection *gc;
 	GList *list, *tmp;
+	GHashTable *defaults = NULL;
 	struct proto_chat_entry *pce;
 	gboolean focus = TRUE;
 
@@ -677,6 +678,9 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 	data->entries = NULL;
 
 	list = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
+
+	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+		defaults = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, NULL);
 
 	for (tmp = list; tmp; tmp = tmp->next)
 	{
@@ -712,13 +716,15 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 		else
 		{
 			GtkWidget *entry = gtk_entry_new();
+			char *value;
 
 			gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 			g_object_set_data(G_OBJECT(entry), "identifier", pce->identifier);
 			data->entries = g_list_append(data->entries, entry);
 
-			if (pce->def)
-				gtk_entry_set_text(GTK_ENTRY(entry), pce->def);
+			value = g_hash_table_lookup(defaults, pce->identifier);
+			if (value != NULL)
+				gtk_entry_set_text(GTK_ENTRY(entry), value);
 
 			if (focus)
 			{
@@ -4208,8 +4214,6 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 			value = g_hash_table_lookup(defaults, pce->identifier);
 			if (value != NULL)
 				gtk_entry_set_text(GTK_ENTRY(entry), value);
-			else if (pce->def)
-				gtk_entry_set_text(GTK_ENTRY(entry), pce->def);
 
 			if (focus)
 			{

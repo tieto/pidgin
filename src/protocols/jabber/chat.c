@@ -36,7 +36,6 @@ GList *jabber_chat_info(GaimConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
-	JabberStream *js = gc->proto_data;
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Room:");
@@ -46,13 +45,11 @@ GList *jabber_chat_info(GaimConnection *gc)
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Server:");
 	pce->identifier = "server";
-	pce->def = js->chat_servers ? js->chat_servers->data : "conference.jabber.org";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Handle:");
 	pce->identifier = "handle";
-	pce->def = js->user->node;
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
@@ -67,15 +64,23 @@ GList *jabber_chat_info(GaimConnection *gc)
 GHashTable *jabber_chat_info_defaults(GaimConnection *gc, const char *chat_name)
 {
 	GHashTable *defaults;
+	JabberStream *js = gc->proto_data;
 
 	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	g_hash_table_insert(defaults, "handle", g_strdup(js->user->node));
+
+	if (js->chat_servers)
+		g_hash_table_insert(defaults, "server", g_strdup(js->chat_servers->data));
+	else
+		g_hash_table_insert(defaults, "server", g_strdup("conference.jabber.org"));
 
 	if (chat_name != NULL) {
 		JabberID *jid = jabber_id_new(chat_name);
 		if(jid) {
 			g_hash_table_insert(defaults, "room", g_strdup(jid->node));
 			if(jid->domain)
-				g_hash_table_insert(defaults, "server", g_strdup(jid->domain));
+				g_hash_table_replace(defaults, "server", g_strdup(jid->domain));
 			jabber_id_free(jid);
 		}
 	}
