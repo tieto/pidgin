@@ -3464,6 +3464,9 @@ gaim_gtk_move_conversation(struct gaim_window *win,
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
+	if (new_index > gaim_conversation_get_index(conv))
+		new_index--;
+
 	gtk_notebook_reorder_child(GTK_NOTEBOOK(gtkwin->notebook),
 							   gtkconv->tab_cont, new_index);
 }

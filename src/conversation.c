@@ -689,14 +689,14 @@ gaim_window_move_conversation(struct gaim_window *win, unsigned int index,
 	if (ops != NULL && ops->move_conversation != NULL)
 		ops->move_conversation(win, conv, new_index);
 
-	/* Insert it where it should go. */
-	win->conversations = g_list_insert(win->conversations, conv,
-		(new_index > index ? new_index + 1 : new_index));
+	if (new_index > index)
+		new_index--;
 
 	/* Remove the old one. */
-	l->data = NULL;
-	win->conversations = g_list_remove_link(win->conversations, l);
-	g_list_free_1(l);
+	win->conversations = g_list_delete_link(win->conversations, l);
+
+	/* Insert it where it should go. */
+	win->conversations = g_list_insert(win->conversations, conv, new_index);
 
 	update_conv_indexes(win);
 }
