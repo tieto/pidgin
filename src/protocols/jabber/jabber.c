@@ -1513,6 +1513,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,							/* warn */
 	jabber_chat_join,				/* join_chat */
 	NULL,							/* reject_chat */
+	jabber_get_chat_name,			/* get_chat_name */
 	jabber_chat_invite,				/* chat_invite */
 	jabber_chat_leave,				/* chat_leave */
 	NULL,							/* chat_whisper */

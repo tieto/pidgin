@@ -1673,6 +1673,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* warn */
 	NULL,					/* join_chat */
 	NULL,					/* reject chat invite */
+	NULL,				/* get_chat_name */
 	msn_chat_invite,		/* chat_invite */
 	msn_chat_leave,			/* chat_leave */
 	NULL,					/* chat_whisper */

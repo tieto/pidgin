@@ -935,10 +935,18 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
 	GaimConversation *conv;
+	GaimLogType type;
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
-	gaim_gtk_log_show((char *)gaim_conversation_get_name(conv),
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		type = GAIM_LOG_IM;
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+		type = GAIM_LOG_CHAT;
+	else
+		return;
+
+	gaim_gtk_log_show(type, gaim_conversation_get_name(conv),
 					  gaim_conversation_get_account(conv));
 }
 
@@ -2752,7 +2760,7 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkconv->u.chat->invite);
 
 		/* Deal with menu items */
-		gtk_widget_hide(gtkwin->menu.view_log);
+		gtk_widget_show(gtkwin->menu.view_log);
 		gtk_widget_hide(gtkwin->menu.send_file);
 		gtk_widget_hide(gtkwin->menu.add_pounce);
 		gtk_widget_hide(gtkwin->menu.get_info);

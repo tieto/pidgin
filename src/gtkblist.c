@@ -530,9 +530,32 @@ static void gtk_blist_menu_bp_cb(GtkWidget *w, GaimBuddy *b)
 	gaim_gtkpounce_dialog_show(b->account, b->name, NULL);
 }
 
-static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBuddy *b)
+static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
 {
-	gaim_gtk_log_show(b->name, b->account);
+	GaimLogType type;
+	GaimAccount *account;
+	char *name = NULL;
+	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		GaimBuddy *b = (GaimBuddy*) node;
+		type = GAIM_LOG_IM;
+		name = g_strdup(b->name);
+		account = b->account;
+	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
+		GaimChat *c = (GaimChat*) node;
+		GaimPluginProtocolInfo *prpl_info = NULL;
+		type = GAIM_LOG_CHAT;
+		account = c->account;
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol_id(account)));
+		if (prpl_info && prpl_info->get_chat_name) {
+			name = prpl_info->get_chat_name(c->components);
+		}
+	} else
+		return;
+
+	if (name && account) {
+		gaim_gtk_log_show(type, name, account);
+		g_free(name);
+	}
 }
 
 static void gtk_blist_show_systemlog_cb()
@@ -1217,6 +1240,8 @@ create_chat_menu(GaimBlistNode *node, GaimChat *c) {
 			G_CALLBACK(gtk_blist_menu_join_cb), node, 0, 0, NULL);
 	gaim_new_check_item(menu, _("Auto-Join"),
 			G_CALLBACK(gtk_blist_menu_autojoin_cb), node, autojoin);
+	gaim_new_item_from_stock(menu, _("View _Log"), NULL,
+			G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
 	gaim_gtk_append_blist_node_proto_menu(menu, c->account->gc, node);
 	gaim_gtk_append_blist_node_extended_menu(menu, node);

@@ -1019,6 +1019,11 @@ GHashTable *yahoo_c_info_defaults(GaimConnection *gc, const char *chat_name)
 	return defaults;
 }
 
+char *yahoo_get_chat_name(GHashTable *data)
+{
+	return g_strdup(g_hash_table_lookup(data, "room"));
+}
+
 void yahoo_c_join(GaimConnection *gc, GHashTable *data)
 {
 	struct yahoo_data *yd;

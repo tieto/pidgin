@@ -6324,6 +6324,10 @@ GHashTable *oscar_chat_info_defaults(GaimConnection *gc, const char *chat_name)
 	return defaults;
 }
 
+static char *oscar_get_chat_name(GHashTable *data) {
+	return g_strdup(g_hash_table_lookup(data, "room"));
+}
+
 static void oscar_join_chat(GaimConnection *gc, GHashTable *data) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	aim_conn_t *cur;
@@ -7287,6 +7291,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_warn,				/* warn */
 	oscar_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
+	oscar_get_chat_name,		/* get_chat_name */
 	oscar_chat_invite,		/* chat_invite */
 	oscar_chat_leave,		/* chat_leave */
 	NULL,					/* chat_whisper */

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10742 2004-08-25 03:09:08Z thekingant $
+ * $Id: gg.c 10809 2004-08-31 01:45:12Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1645,6 +1645,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,						/* warn */
 	NULL,						/* join_chat */
 	NULL,						/* reject_chat */
+	NULL,						/* get_chat_name */
 	NULL,						/* chat_invite */
 	NULL,						/* chat_leave */
 	NULL,						/* chat_whisper */

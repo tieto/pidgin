@@ -161,6 +161,18 @@ static void nap_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gr
 	nap_write_packet(gc, 303, "%s", buddy->name);
 }
 
+static char *nap_get_chat_name(GHashTable *data) {
+	char *name = g_hash_table_lookup(data, "group");
+	
+	/* Make sure the name has a # preceding it */
+	if (name[0] != '#') {
+		return g_strdup_printf("#%s", name);
+	}
+
+	return g_strdup(name);
+	
+}
+
 /* 400 - MSG_CLIENT_JOIN */
 static void nap_join_chat(GaimConnection *gc, GHashTable *data)
 {
@@ -169,13 +181,12 @@ static void nap_join_chat(GaimConnection *gc, GHashTable *data)
 	if (!data)
 		return;
 
-	name = g_hash_table_lookup(data, "group");
+	name = nap_get_chat_name(data);
 
-	/* Make sure the name has a # preceding it */
-	if (name[0] != '#')
-		nap_write_packet(gc, 400, "#%s", name);
-	else
+	if (name) {
 		nap_write_packet(gc, 400, "%s", name);
+		g_free(name);
+	}
 }
 
 /* 401 - MSG_CLIENT_PART */
@@ -594,6 +605,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* warn */
 	nap_join_chat,			/* join_chat */
 	NULL,					/* reject chat invite */
+	nap_get_chat_name,		/* get_chat_name */
 	NULL,					/* chat_invite */
 	nap_chat_leave,			/* chat_leave */
 	NULL,					/* chat_whisper */

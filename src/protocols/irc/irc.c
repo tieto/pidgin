@@ -429,6 +429,10 @@ static void irc_chat_join (GaimConnection *gc, GHashTable *data)
 	irc_cmd_join(irc, "join", NULL, args);
 }
 
+static char *irc_get_chat_name(GHashTable *data) {
+	return g_strdup(g_hash_table_lookup(data, "channel"));
+}
+
 static void irc_chat_invite(GaimConnection *gc, int id, const char *message, const char *name) 
 {
 	struct irc_conn *irc = gc->proto_data;
@@ -613,6 +617,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* warn */
 	irc_chat_join,			/* join_chat */
 	NULL,					/* reject_chat */
+	irc_get_chat_name,		/* get_chat_name */
 	irc_chat_invite,		/* chat_invite */
 	irc_chat_leave,			/* chat_leave */
 	NULL,					/* chat_whisper */

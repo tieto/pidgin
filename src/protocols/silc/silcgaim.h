@@ -117,6 +117,7 @@ GList *silcgaim_chat_info(GaimConnection *gc);
 GHashTable *silcgaim_chat_info_defaults(GaimConnection *gc, const char *chat_name);
 GList *silcgaim_chat_menu(GaimChat *);
 void silcgaim_chat_join(GaimConnection *gc, GHashTable *data);
+char *silcgaim_get_chat_name(GHashTable *data);
 void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
 			  const char *name);
 void silcgaim_chat_leave(GaimConnection *gc, int id);

@@ -540,12 +540,13 @@ gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
 	username = g_strdup(gaim_normalize(account,
 		gaim_request_fields_get_string(fields,  "screenname")));
 
-	if( username != NULL && *username != '\0' && account != NULL )
-		gaim_gtk_log_show( username, account );
+	if(username != NULL && *username != '\0' && account != NULL )
+		gaim_gtk_log_show(GAIM_LOG_IM, username, account);
 
 	g_free(username);
 }
 
+/* XXX this needs to deal with logs of all types, not just IM logs */
 void
 gaim_gtkdialogs_log(void)
 {

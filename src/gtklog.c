@@ -248,7 +248,7 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
 	}
 }
 
-void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
+void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *account) {
 	/* if (log_viewers && g_hash_table */
 	GtkWidget *hbox, *vbox;
 	GdkPixbuf *pixbuf, *scale;
@@ -272,7 +272,7 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 	}
 
 	lv = g_new0(GaimGtkLogViewer, 1);
-	lv->logs = logs = gaim_log_get_logs(GAIM_LOG_IM, screenname, account);
+	lv->logs = logs = gaim_log_get_logs(type, screenname, account);
 	g_hash_table_insert(log_viewers, ht, lv);
 
 	/* Window ***********/

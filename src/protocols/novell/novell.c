@@ -3424,6 +3424,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,						/* warn */
 	NULL,						/* join_chat */
 	NULL,						/* reject_chat */
+	NULL,					/* get_chat_name */
 	novell_chat_invite,			/* chat_invite */
 	novell_chat_leave,			/* chat_leave */
 	NULL,						/* chat_whisper */

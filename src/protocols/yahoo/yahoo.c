@@ -3314,6 +3314,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* warn */
 	yahoo_c_join,
 	NULL, /* reject chat invite */
+	yahoo_get_chat_name,
 	yahoo_c_invite,
 	yahoo_c_leave,
 	NULL, /* chat whisper */

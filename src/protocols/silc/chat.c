@@ -1016,6 +1016,11 @@ void silcgaim_chat_join_done(SilcClient client,
 	gaim_conv_chat_set_nick(GAIM_CONV_CHAT(convo), conn->local_entry->nickname);
 }
 
+char *silcgaim_get_chat_name(GHashTable *data)
+{
+	return g_strdup(g_hash_table_lookup(data, "channel"));
+}	
+
 void silcgaim_chat_join(GaimConnection *gc, GHashTable *data)
 {
 	SilcGaim sg = gc->proto_data;

@@ -3,6 +3,7 @@ version 0.83:
 	New Features:
 	* Drag-and-drop buddy support for the Invite dialog (Stu Tomlinson)
 	* Drag-and-drop buddy support for the Pounce dialog (Stu Tomlinson)
+	* View Chat log available from the interface (Daniel Atallah)
 
 	Bug Fixes:
 	* Compile with gtk 2.5.x (Gary Kramlich)

@@ -2180,6 +2180,11 @@ static void zephyr_subscribe_failed(GaimConnection *gc,char * z_class, char *z_i
 	g_free(subscribe_failed);
 }
 
+static char *zephyr_get_chat_name(GaimConnection *gc, GHashTable *data) {
+	/** XXX someone who uses zephyr should verify this */
+	return g_strdup(g_hash_table_lookup(data, "recipient"));
+}
+
 static void zephyr_join_chat(GaimConnection * gc, GHashTable * data)
 {
 	/*	ZSubscription_t sub; */
@@ -2666,6 +2671,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,					/* warn	 -- not supported in zephyr */
 	zephyr_join_chat,			/* join_chat */
 	NULL,					/* reject_chat -- No chat invites*/
+	zephyr_get_chat_name,			/* get_chat_name */
 	NULL,					/* chat_invite -- No chat invites*/
 	zephyr_chat_leave,			/* chat_leave */
 	NULL,					/* chat_whisper -- No "whispering"*/

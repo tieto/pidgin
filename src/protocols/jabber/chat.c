@@ -177,6 +177,18 @@ void jabber_chat_invite(GaimConnection *gc, int id, const char *msg,
 
 void jabber_chat_member_free(JabberChatMember *jcm);
 
+char *jabber_get_chat_name(GHashTable *data) {
+	char *room, *server, *chat_name = NULL;
+
+	room = g_hash_table_lookup(data, "room");
+	server = g_hash_table_lookup(data, "server");
+
+	if (room && server) {
+		chat_name = g_strdup_printf("%s@%s", room, server);
+	}
+	return chat_name;
+}
+
 void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 {
 	JabberChat *chat;

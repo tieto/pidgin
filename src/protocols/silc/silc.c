@@ -1515,6 +1515,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,						/* warn */
 	silcgaim_chat_join,			/* join_chat */
 	NULL,						/* reject_chat */
+	silcgaim_get_chat_name,		/* get_chat_name */
 	silcgaim_chat_invite,		/* chat_invite */
 	silcgaim_chat_leave,		/* chat_leave */
 	NULL,						/* chat_whisper */

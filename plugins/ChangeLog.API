@@ -1,6 +1,10 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 0.82cvs:
+version 0.83:
+	Protocol Plugin API: v8
+	* Added: get_chat_name to the GaimPluginProtocolInfo struct
+
+version 0.82 (08/26/2004):
 	Gaim API:
 	* Removed: gaim_gtk_get_dispstyle(), gaim_gtk_change_text()
 	* Removed: multi.h
