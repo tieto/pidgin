@@ -277,11 +277,13 @@ __online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
 	GaimAccount *account;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
+	gboolean online;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
-	gtk_tree_model_get(model, &iter, COLUMN_DATA, &account, -1);
+	gtk_tree_model_get(model, &iter, COLUMN_DATA, &account,
+			COLUMN_ONLINE, &online, -1);
 
-	if (gaim_account_is_connected(account))
+	if (online)
 		gaim_account_disconnect(account);
 	else
 		gaim_account_connect(account);
