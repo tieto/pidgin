@@ -1940,7 +1940,8 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *gtkwin;
 	GaimConnection *gc;
-
+	GdkPixbuf *window_icon;
+	
 	win = (GaimConvWindow *)user_data;
 
 	conv = gaim_conv_window_get_conversation_at(win, page_num);
@@ -1960,7 +1961,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	/* Update the menubar */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-		GdkPixbuf *pixbuf;
 		gtk_widget_show(gtkwin->menu.view_log);
 
 		if (gc && prpl_info->options & OPT_PROTO_IM_IMAGE) {
@@ -2000,12 +2000,10 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 		
 		if (gtkconv->u.im->anim) {
-			pixbuf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
-			gtk_window_set_icon(GTK_WINDOW(gtkwin->window), pixbuf);
+			window_icon = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+			g_object_ref(window_icon);
 		} else {
-			pixbuf = get_tab_icon(conv);
-			gtk_window_set_icon(GTK_WINDOW(gtkwin->window), pixbuf);
-			g_object_unref(G_OBJECT(pixbuf));
+			window_icon = get_tab_icon(conv);
 		}
 	}
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
@@ -2038,10 +2036,11 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		
 		if (gtkwin->menu.send_as != NULL)
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
+		window_icon = get_tab_icon(conv);
 	}
 	
 	update_typing_icon(conv);
-
+	
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.logging),
 				       gaim_conversation_is_logging(conv));
 	
@@ -2050,6 +2049,8 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	
 	gtk_widget_grab_focus(gtkconv->entry);
 
+	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), window_icon);
+	g_object_unref(G_OBJECT(window_icon));
 	gtk_window_set_title(GTK_WINDOW(gtkwin->window),
 			     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 }

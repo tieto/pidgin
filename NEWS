@@ -1,5 +1,9 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 0.71 (10/09/2003):
+	Rob: It's been a while since I've commited some news.  I've had a
+      	very hectic few weeks/months.  Thing are finally coming together
+	again for me.  This release features much copying and pasting. Yeah.
+
 	Sean: I can't wait for everything to be core/ui split!
 
 	Christian: This is a good release, and I don't think people will have
@@ -14,10 +18,6 @@
 	If you don't have SSL, you now need it for MSN. MSN won't even load
 	without it. Starting October 15th, the old protocol won't be supported
 	anymore, so there's no reason to support the old one anymore.
-
-	Rob: It's been a while since I've commited some news.  I've had a
-	very hectic few weeks/months.  Thing are finally coming together
-	again for me.  This release features much copying and pasting. Yeah.
 
 	Herman: I bet some plugin authors have resorted to making voodoo dolls
 	of Christian.  Nothing new for Win Gaim users other than a fix for
