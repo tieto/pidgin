@@ -1,6 +1,39 @@
 
 No release numbers
 ------------------
+ - Fri Nov 10 08:24:34 UTC 2000
+  - Add sess->flags (replaces sess->snaclogin)
+  - Remove odd setstatus call in chat parser
+  - Remove aim_tx_enqueue macro, replace with a smarter one
+    - If a connection is in progress, enqueue instead of calling
+      the client-specified queuer
+  - Add support for nonblocking connects through the 
+     AIM_SESS_FLAG_NONBLOCKCONNECT flag to aim_session_init()
+  - Add AIM_CB_SPECIAL_CONNCOMPLETE callback. Not real useful.
+  - Add AIM_CB_SPECIAL_FLAPVER callback. Can be used as an alternate
+     way of starting the login process, or just to look like you 
+     know what you're doing. Fixed associated inconsistencies
+     in aim_rxhandlers too.
+  - Fix some connection status stupidities in faimtest.
+
+ - Wed Nov  8 13:11:18 UTC 2000
+  - Reenable/reimplement older login, but only use for ICQ UINs
+    - This is a fairly ugly hack.  But...eh.  It works.
+    - You'll need to remove the aim_sendconnack() before the
+      call to aim_request_login.  It will now do it automatically
+      if its needed.  (hint: ***CLIENT CHANGE***)
+
+ - Wed Nov  8 02:23:25 UTC 2000
+  - I'm trying out using a modified version of the kernel-doc scripts
+     to help document the libfaim code a bit.  See aim_conn.c and 
+     aim_tlv.c, as well as the scripts in utils/docs.
+
+ - Wed Oct 25 17:52:20 UTC 2000
+  - Cleanup warnings from newer gcc's (RH7.0)
+    - Aparently newer gcc's don't let you do as strong of integer types
+      on va_arg as older ones... So, let me know if this breaks on your
+      compiler
+
  - Tue Oct 17 02:10:13 UTC 2000
   - Rearrange a few things
 

@@ -60,6 +60,9 @@ faim_export int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *c
   if (conn->fd < 3)  /* can happen when people abuse the interface */
     return 0;
 
+  if (conn->status & AIM_CONN_STATUS_INPROGRESS)
+    return aim_conn_completeconnect(sess, conn);
+
   /*
    * Rendezvous (client-client) connections do not speak
    * FLAP, so this function will break on them.

@@ -343,16 +343,17 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	workingPtr->handled = 1;
 	break;
       case AIM_CONN_TYPE_AUTH: {
-	u_long head;
+	unsigned long head;
 	
 	head = aimutil_get32(workingPtr->data);
-	if (head == 0x00000001) {
+	if ((head == 0x00000001) && (workingPtr->commandlen == 4)) {
 	  faimdprintf(1, "got connection ack on auth line\n");
-	  workingPtr->handled = 1;
-	} else if (workingPtr->hdr.oscar.type == 0x0004) {
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
+	} else if (workingPtr->hdr.oscar.type == 0x04) {
+	  /* Used only by the older login protocol */
 	  workingPtr->handled = aim_authparse(sess, workingPtr);
         } else {
-	  u_short family,subtype;
+	  unsigned short family,subtype;
 	  
 	  family = aimutil_get16(workingPtr->data);
 	  subtype = aimutil_get16(workingPtr->data+2);
@@ -404,7 +405,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	switch (family) {
 	case 0x0000: /* not really a family, but it works */
 	  if (subtype == 0x0001)
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0000, 0x0001, workingPtr);
+	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
 	  else
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, workingPtr);
 	  break;
@@ -540,10 +541,9 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	u_short subtype;
 	family = aimutil_get16(workingPtr->data);
 	subtype= aimutil_get16(workingPtr->data+2);
-	
-	if ((family == 0x0002) && (subtype == 0x0006)) {
-	  workingPtr->handled = 1;
-	  aim_conn_setstatus(workingPtr->conn, AIM_CONN_STATUS_READY);
+
+	if ((family == 0x0000) && (subtype == 0x00001)) {
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
 	} else if ((family == 0x000d) && (subtype == 0x0009)) {
 	  workingPtr->handled = aim_chatnav_parse_info(sess, workingPtr);
 	} else {
@@ -557,9 +557,9 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	family = aimutil_get16(workingPtr->data);
 	subtype= aimutil_get16(workingPtr->data+2);
 	
-	if ((family == 0x0000) && (subtype == 0x00001))
-	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0000, 0x0001, workingPtr);
-	else if (family == 0x0001) {
+	if ((family == 0x0000) && (subtype == 0x00001)) {
+	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
+	} else if (family == 0x0001) {
 	  if (subtype == 0x0001)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0001, workingPtr);
 	  else if (subtype == 0x0003)
@@ -802,6 +802,9 @@ faim_internal int aim_parse_unknown(struct aim_session_t *sess,
 					  struct command_rx_struct *command, ...)
 {
   u_int i = 0;
+
+  if (!sess || !command)
+    return 1;
 
   faimdprintf(1, "\nRecieved unknown packet:");
 

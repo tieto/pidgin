@@ -151,6 +151,19 @@ faim_internal int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct c
   return 0;
 }
 
+faim_internal int aim_tx_enqueue(struct aim_session_t *sess, struct command_tx_struct *command)
+{
+  /*
+   * If we want to send a connection thats inprogress, we have to force
+   * them to use the queue based version. Otherwise, use whatever they
+   * want.
+   */
+  if (command && command->conn && (command->conn->status & AIM_CONN_STATUS_INPROGRESS)) {
+    return aim_tx_enqueue__queuebased(sess, command);
+  }
+  return (*sess->tx_enqueue)(sess, command);
+}
+
 /* 
  *  aim_get_next_txseqnum()
  *
@@ -346,6 +359,9 @@ faim_export int aim_tx_flushqueue(struct aim_session_t *sess)
   for (cur = sess->queue_outgoing; cur; cur = cur->next) {
     /* only process if its unlocked and unsent */
     if (!cur->lock && !cur->sent) {
+
+      if (cur->conn && (cur->conn->status & AIM_CONN_STATUS_INPROGRESS))
+	continue;
 
       /*
        * And now for the meager attempt to force transmit

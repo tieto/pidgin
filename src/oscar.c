@@ -311,7 +311,7 @@ void oscar_login(struct aim_user *user) {
 	debug_print(debug_buff);
 
 	sess = g_new0(struct aim_session_t, 1);
-	aim_session_init(sess);
+	aim_session_init(sess, AIM_SESS_FLAGS_NONBLOCKCONNECT);
 	/* we need an immediate queue because we don't use a while-loop to
 	 * see if things need to be sent. */
 	sess->tx_enqueue = &aim_tx_enqueue__immediate;
@@ -347,7 +347,6 @@ void oscar_login(struct aim_user *user) {
 
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
-	aim_sendconnack(sess, conn);
 	aim_request_login(sess, conn, gc->username);
 
 	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
@@ -446,7 +445,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		hide_login_progress(gc, _("Internal Error"));
 		destroy_gaim_conn(gc);
 		return -1;
-	} else if (bosconn->status != 0) {
+	} else if (bosconn->status & AIM_CONN_STATUS_CONNERR) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
@@ -558,7 +557,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		debug_print("Reconnecting with authorizor...\n");
 		{
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, ip);
-		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR)
+		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR)
 			debug_print("unable to reconnect with authorizer\n");
 		else {
 			odata->paspa = gdk_input_add(tstconn->fd,
@@ -571,7 +570,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	case 0xd: /* ChatNav */
 		{
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, ip);
-		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR) {
+		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR) {
 			debug_print("unable to connect to chatnav server\n");
 			return 1;
 		}

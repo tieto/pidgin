@@ -262,9 +262,10 @@ static void destroy_buddies(struct gaim_connection *gc) {
 	struct group_show *g;
 	GSList *m;
 	struct buddy_show *b;
+	gboolean remove_group;
 
 	while (s) {
-		gboolean remove_group = FALSE;
+		remove_group = FALSE;
 		g = (struct group_show *)s->data;
 		m = g->members;
 		while (m) {
@@ -287,10 +288,11 @@ static void destroy_buddies(struct gaim_connection *gc) {
 				g_free(b->name);
 				g_free(b->show);
 				g_free(b);
-			} else {
+			} else if (g_slist_find(b->connlist, gc)) {
 				b->connlist = g_slist_remove(b->connlist, gc);
 				m = g_slist_next(m);
-			}
+			} else
+				m = g_slist_next(m);
 		}
 		if (remove_group)
 			s = shows;
@@ -316,13 +318,13 @@ void signoff(struct gaim_connection *gc)
 {
 	destroy_buddies(gc);
 	plugin_event(event_signoff, gc, 0, 0, 0);
+	update_keepalive(gc, FALSE);
 	serv_close(gc);
 
 	if (connections) return;
 
 	sprintf(debug_buff, "date: %s\n", full_date());
 	debug_print(debug_buff);
-	update_keepalive(gc, FALSE);
         destroy_all_dialogs();
         destroy_buddy();
 #ifdef USE_APPLET

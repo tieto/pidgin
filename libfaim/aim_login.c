@@ -10,6 +10,7 @@
 #include "md5.h"
 
 static int aim_encode_password_md5(const char *password, const char *key, md5_byte_t *digest);
+static int aim_encode_password(const char *password, unsigned char *encoded);
 
 /*
  * FIXME: Reimplement the TIS stuff.
@@ -49,19 +50,76 @@ faim_export int aim_request_login(struct aim_session_t *sess,
 				  struct aim_conn_t *conn, 
 				  char *sn)
 {
-  int curbyte=0;
-  
+  int curbyte;
   struct command_tx_struct *newpacket;
+
+  if (!sess || !conn || !sn)
+    return -1;
+
+  /*
+   * For ICQ, we enable the ancient horrible login and stuff
+   * a key packet into the queue to make it look like we got
+   * a reply back. This is so the client doesn't know we're
+   * really not doing MD5 login.
+   *
+   * This may sound stupid, but I'm not in the best of moods and 
+   * I don't plan to keep support for this crap around much longer.
+   * Its all AOL's fault anyway, really. I hate AOL.  Really.  They
+   * always seem to be able to piss me off by doing the dumbest little
+   * things.  Like disabling MD5 logins for ICQ UINs, or adding purposefully
+   * wrong TLV lengths, or adding superfluous information to host strings,
+   * or... I'll stop.
+   *
+   */
+  if ((sn[0] >= '0') && (sn[0] <= '9')) {
+    struct command_rx_struct *newrx;
+    int i;
+
+    if (!(newrx = (struct command_rx_struct *)malloc(sizeof(struct command_rx_struct))))
+      return -1;
+    memset(newrx, 0x00, sizeof(struct command_rx_struct));
+    newrx->lock = 1; 
+    newrx->hdrtype = AIM_FRAMETYPE_OSCAR;
+    newrx->hdr.oscar.type = 0x02;
+    newrx->hdr.oscar.seqnum = 0;
+    newrx->commandlen = 10+2+1;
+    newrx->nofree = 0; 
+    if (!(newrx->data = malloc(newrx->commandlen))) {
+      free(newrx);
+      return -1;
+    }
+
+    i = aim_putsnac(newrx->data, 0x0017, 0x0007, 0x0000, 0x0000);
+    i += aimutil_put16(newrx->data+i, 0x01);
+    i += aimutil_putstr(newrx->data+i, "0", 1);
+
+    newrx->conn = conn;
+
+    newrx->next = sess->queue_incoming;
+    sess->queue_incoming = newrx;
+
+    newrx->lock = 0;
+
+    sess->flags &= ~AIM_SESS_FLAGS_SNACLOGIN;
+
+    return 0;
+  } 
+
+  sess->flags |= AIM_SESS_FLAGS_SNACLOGIN;
+
+  aim_sendconnack(sess, conn);
 
   if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 10+2+2+strlen(sn))))
     return -1;
 
   newpacket->lock = 1;
   
-  curbyte += aim_putsnac(newpacket->data+curbyte, 0x0017, 0x0006, 0x0000, 0x00010000);
+  curbyte  = aim_putsnac(newpacket->data, 0x0017, 0x0006, 0x0000, 0x00010000);
   curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(sn), sn);
 
+  newpacket->commandlen = curbyte;
   newpacket->lock = 0;
+
   return aim_tx_enqueue(sess, newpacket);
 }
 
@@ -82,8 +140,6 @@ faim_export int aim_send_login (struct aim_session_t *sess,
 				char *key)
 {
   int curbyte=0;
-  md5_byte_t digest[16];
-  
   struct command_tx_struct *newpacket;
 
   if (!clientinfo || !sn || !password)
@@ -94,27 +150,52 @@ faim_export int aim_send_login (struct aim_session_t *sess,
 
   newpacket->lock = 1;
 
-  newpacket->hdr.oscar.type = 0x02;
+  newpacket->hdr.oscar.type = (sess->flags & AIM_SESS_FLAGS_SNACLOGIN)?0x02:0x01;
   
-  curbyte = aim_putsnac(newpacket->data+curbyte, 0x0017, 0x0002, 0x0000, 0x00010000);
+  if (sess->flags & AIM_SESS_FLAGS_SNACLOGIN)
+    curbyte = aim_putsnac(newpacket->data, 0x0017, 0x0002, 0x0000, 0x00010000);
+  else {
+    curbyte  = aimutil_put16(newpacket->data, 0x0000);
+    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
+  }
 
-  curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(sn), sn);
+  curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(sn), sn);
   
-  aim_encode_password_md5(password, key, digest);
-  curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0025, 16, (char *)digest);
-  
+  if (sess->flags & AIM_SESS_FLAGS_SNACLOGIN) {
+    md5_byte_t digest[16];
+
+    aim_encode_password_md5(password, key, digest);
+    curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0025, 16, (char *)digest);
+  } else { 
+    char *password_encoded;
+
+    password_encoded = (char *) malloc(strlen(password));
+    aim_encode_password(password, password_encoded);
+    curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0002, strlen(password), password_encoded);
+    free(password_encoded);
+  }
+
   /* XXX is clientstring required by oscar? */
   if (strlen(clientinfo->clientstring))
     curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0003, strlen(clientinfo->clientstring), clientinfo->clientstring);
 
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, (unsigned short)clientinfo->major2);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, (unsigned short)clientinfo->major);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, (unsigned short)clientinfo->minor);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, (unsigned short)clientinfo->minor2);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, (unsigned short)clientinfo->build);
+  if (sess->flags & AIM_SESS_FLAGS_SNACLOGIN) {
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, (unsigned short)clientinfo->major2);
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, (unsigned short)clientinfo->major);
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, (unsigned short)clientinfo->minor);
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, (unsigned short)clientinfo->minor2);
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, (unsigned short)clientinfo->build);
   
-  curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, clientinfo->unknown);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
+    curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, clientinfo->unknown);
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
+  } else {
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, 0x010a);
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, 0x0004);
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, 0x003c);
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, 0x0001);
+    curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, 0x0cce);
+    curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, 0x00000055);
+  }
 
   if (strlen(clientinfo->country))
     curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000e, strlen(clientinfo->country), clientinfo->country);
@@ -145,25 +226,23 @@ static int aim_encode_password_md5(const char *password, const char *key, md5_by
   return 0;
 }
 
-/*
- *  int encode_password(
- *                      const char *password,
- *	                char *encoded
- *	                ); 
+/**
+ * aim_encode_password - Encode a password using old XOR method
+ * @password: incoming password
+ * @encoded: buffer to put encoded password
  *
  * This takes a const pointer to a (null terminated) string
  * containing the unencoded password.  It also gets passed
  * an already allocated buffer to store the encoded password.
  * This buffer should be the exact length of the password without
- * the null.  The encoded password buffer IS NOT NULL TERMINATED.
+ * the null.  The encoded password buffer /is not %NULL terminated/.
  *
  * The encoding_table seems to be a fixed set of values.  We'll
  * hope it doesn't change over time!  
  *
- * NOTE: This is no longer used. Its here for historical reference.
+ * This is only used for the XOR method, not the better MD5 method.
  *
  */
-#if 0
 static int aim_encode_password(const char *password, unsigned char *encoded)
 {
   u_char encoding_table[] = {
@@ -187,7 +266,6 @@ static int aim_encode_password(const char *password, unsigned char *encoded)
 
   return 0;
 }
-#endif
 
 /*
  * This is sent back as a general response to the login command.
@@ -215,7 +293,10 @@ faim_internal int aim_authparse(struct aim_session_t *sess,
    * For SNAC login, there's a 17/3 SNAC header in front.
    *
    */
-  tlvlist = aim_readtlvchain(command->data+10, command->commandlen-10);
+  if (sess->flags & AIM_SESS_FLAGS_SNACLOGIN)
+    tlvlist = aim_readtlvchain(command->data+10, command->commandlen-10);
+  else
+    tlvlist = aim_readtlvchain(command->data, command->commandlen);
 
   /*
    * No matter what, we should have a screen name.

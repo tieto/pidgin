@@ -208,8 +208,9 @@ struct client_info_s {
  */
 #define AIM_CONN_STATUS_READY       0x0001
 #define AIM_CONN_STATUS_INTERNALERR 0x0002
-#define AIM_CONN_STATUS_RESOLVERR   0x0080
-#define AIM_CONN_STATUS_CONNERR     0x0040
+#define AIM_CONN_STATUS_RESOLVERR   0x0040
+#define AIM_CONN_STATUS_CONNERR     0x0080
+#define AIM_CONN_STATUS_INPROGRESS  0x0100
 
 #define AIM_FRAMETYPE_OSCAR 0x0000
 #define AIM_FRAMETYPE_OFT 0x0001
@@ -350,9 +351,15 @@ struct aim_session_t {
     char password[128];
   } socksproxy;
 
+  unsigned long flags;
+
   struct aim_msgcookie_t *msgcookies;
 };
 
+/* Values for sess->flags */
+#define AIM_SESS_FLAGS_SNACLOGIN       0x00000001
+#define AIM_SESS_FLAGS_XORLOGIN        0x00000002
+#define AIM_SESS_FLAGS_NONBLOCKCONNECT 0x00000004
 
 /*
  * AIM User Info, Standard Form.
@@ -466,7 +473,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
 faim_internal struct command_tx_struct *aim_tx_new(unsigned char framing, int chan, struct aim_conn_t *conn, int datalen);
 faim_internal int aim_tx_enqueue__queuebased(struct aim_session_t *, struct command_tx_struct *);
 faim_internal int aim_tx_enqueue__immediate(struct aim_session_t *, struct command_tx_struct *);
-#define aim_tx_enqueue(x, y) ((*(x->tx_enqueue))(x, y))
+faim_internal int aim_tx_enqueue(struct aim_session_t *, struct command_tx_struct *);
 faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx_struct *cur);
 faim_internal unsigned int aim_get_next_txseqnum(struct aim_conn_t *);
 faim_export int aim_tx_flushqueue(struct aim_session_t *);
@@ -515,7 +522,9 @@ faim_export int aim_conngetmaxfd(struct aim_session_t *);
 faim_export struct aim_conn_t *aim_select(struct aim_session_t *, struct timeval *, int *);
 faim_export int aim_conn_isready(struct aim_conn_t *);
 faim_export int aim_conn_setstatus(struct aim_conn_t *, int);
-faim_export void aim_session_init(struct aim_session_t *);
+faim_export int aim_conn_completeconnect(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export int aim_conn_isconnecting(struct aim_conn_t *conn);
+faim_export void aim_session_init(struct aim_session_t *, unsigned long flags);
 faim_export void aim_setupproxy(struct aim_session_t *sess, char *server, char *username, char *password);
 
 /* aim_misc.c */

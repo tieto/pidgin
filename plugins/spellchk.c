@@ -26,12 +26,12 @@ struct replace_words {
 
 GList *words = NULL;
 
-int num_words(char *);
-int get_word(char *, int);
-char *have_word(char *, int);
-void substitute(char **, int, int, char *);
+static int num_words(char *);
+static int get_word(char *, int);
+static char *have_word(char *, int);
+static void substitute(char **, int, int, char *);
 
-void substitute_words(struct gaim_connection *gc, char *who, char **message, void *m) {
+static void substitute_words(struct gaim_connection *gc, char *who, char **message, void *m) {
 	int i, l;
 	int word;
 	GList *w;
@@ -60,7 +60,7 @@ void substitute_words(struct gaim_connection *gc, char *who, char **message, voi
 	}
 }
 
-int buf_get_line(char *ibuf, char **buf, int *position, int len) {
+static int buf_get_line(char *ibuf, char **buf, int *position, int len) {
 	int pos = *position, spos = pos;
 
 	if (pos == len)
@@ -78,7 +78,7 @@ int buf_get_line(char *ibuf, char **buf, int *position, int len) {
 	return 1;
 }
 
-void load_conf() {
+static void load_conf() {
 	char *defaultconf = "BAD r\nGOOD are\n\n"
 			"BAD u\nGOOD you\n\n"
 			"BAD teh\nGOOD the\n\n";
@@ -155,7 +155,7 @@ char *description() {
 	return "Watches outgoing IM text and corrects common spelling errors.";
 }
 
-int num_words(char *m) {
+static int num_words(char *m) {
 	int count = 0;
 	int pos;
 	int state = 0;
@@ -184,7 +184,7 @@ int num_words(char *m) {
 	return count;
 }
 
-int get_word(char *m, int word) {
+static int get_word(char *m, int word) {
 	int count = 0;
 	int pos = 0;
 	int state = 0;
@@ -213,7 +213,7 @@ int get_word(char *m, int word) {
 	return pos - 1;
 }
 
-char *have_word(char *m, int pos) {
+static char *have_word(char *m, int pos) {
 	char *tmp = strpbrk(&m[pos], "' \t\f\r\n\".?!-,");
 	int len = (int)(tmp - &m[pos]);
 
@@ -229,7 +229,7 @@ char *have_word(char *m, int pos) {
 	return tmp;
 }
 
-void substitute(char **mes, int pos, int m, char *text) {
+static void substitute(char **mes, int pos, int m, char *text) {
 	char *new = g_malloc(strlen(*mes) + strlen(text) + 1);
 	char *tmp;
 	new[0] = 0;
@@ -243,17 +243,17 @@ void substitute(char **mes, int pos, int m, char *text) {
 	g_free(tmp);
 }
 
-GtkWidget *configwin = NULL;
-GtkWidget *list;
-GtkWidget *bad_entry;
-GtkWidget *good_entry;
+static GtkWidget *configwin = NULL;
+static GtkWidget *list;
+static GtkWidget *bad_entry;
+static GtkWidget *good_entry;
 
-void row_unselect() {
+static void row_unselect() {
 	gtk_entry_set_text(GTK_ENTRY(bad_entry), "");
 	gtk_entry_set_text(GTK_ENTRY(good_entry), "");
 }
 
-void row_select() {
+static void row_select() {
 	char *badwrd, *goodwrd;
 	int row;
 
@@ -271,7 +271,7 @@ void row_select() {
 	}
 }
 
-void list_add_new() {
+static void list_add_new() {
 	int i;
 	gchar *item[2] = {"*NEW*", "EDIT ME"};
 
@@ -280,7 +280,7 @@ void list_add_new() {
 	gtk_clist_moveto(GTK_CLIST(list), i, 0, 0.5, 0);
 }
 
-void list_delete() {
+static void list_delete() {
 	int row;
 
 	if (GTK_CLIST(list)->selection)
@@ -293,13 +293,13 @@ void list_delete() {
 	}
 }
 
-void close_config() {
+static void close_config() {
 	if (configwin)
 		gtk_widget_destroy(configwin);
 	configwin = NULL;
 }
 
-void save_list() {
+static void save_list() {
 	int fh, i = 0;
 	char buf[512];
 	char *a, *b;
@@ -319,7 +319,7 @@ void save_list() {
 	load_conf();
 }
 
-void bad_changed() {
+static void bad_changed() {
 	int row;
 	char *m;
 
@@ -333,7 +333,7 @@ void bad_changed() {
 	}
 }
 
-void good_changed() {
+static void good_changed() {
 	int row;
 	char *m;
 
