@@ -560,6 +560,7 @@ int main(int argc, char *argv[])
 
 #ifdef USE_PERL
 	perl_init();
+	perl_autoload();
 #endif
 
 #ifdef USE_APPLET

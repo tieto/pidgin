@@ -43,6 +43,7 @@
 #include <fcntl.h>
 #undef PACKAGE
 #include <stdio.h>
+#include <dirent.h>
 #include <gtk/gtk.h>
 #include "pixmaps/add.xpm"
 #include "pixmaps/cancel.xpm"
@@ -140,6 +141,40 @@ int perl_load_file(char *script_name)
 	SV *return_val;
 	return_val = execute_perl("load_file", script_name);
 	return SvNV (return_val);
+}
+
+static int is_pl_file(char *filename)
+{
+	int len;
+	if (!filename) return 0;
+	if (!filename[0]) return 0;
+	len = strlen(filename);
+	len -= 3;
+	return (!strncmp(filename + len, ".pl", 3));
+}
+
+void perl_autoload()
+{
+	DIR *dir;
+	struct dirent *ent;
+	char *buf;
+	char path[BUF_LONG];
+
+	g_snprintf(path, sizeof(path), "%s/.gaim", getenv("HOME"));
+	dir = opendir(path);
+	if (dir) {
+		while ((ent = readdir(dir))) {
+			if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")) {
+				if (is_pl_file(ent->d_name)) {
+					buf = g_malloc(strlen(path) + strlen(ent->d_name) + 2);
+					sprintf(buf, "%s/%s", path, ent->d_name);
+					perl_load_file(buf);
+					g_free(buf);
+				}
+			}
+		}
+		closedir(dir);
+	}
 }
 
 void perl_init()

@@ -401,7 +401,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 808 $"
+#define REVISION "gaim:$Revision: 810 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -735,6 +735,7 @@ extern void play_sound(int);
 /* Functions in perl.c */
 #ifdef USE_PERL
 extern void perl_init();
+extern void perl_autoload();
 extern int perl_load_file(char *);
 extern void perl_end();
 extern int perl_event(enum gaim_event, char *);
