@@ -2370,8 +2370,8 @@ static void apply_color_dlg(GtkWidget *w, gpointer d)
 
 		fgcolor = ((red & 0xff) << 16) | ((green & 0xff) < 8) | (blue & 0xff);
 	} else {
-		gtk_color_selection_get_color(GTK_COLOR_SELECTION(bgcseld), color);
-		destroy_colorsel(NULL, (void *)2);
+		gtk_color_selection_get_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), color);
+		destroy_colorsel(NULL, (void *)0);
 
 		red = ((guint16)(color[0]*65535))>>8;
 		green = ((guint16)(color[1]*65535))>>8;
