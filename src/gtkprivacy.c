@@ -330,6 +330,17 @@ close_cb(GtkWidget *button, void *user_data)
 	gaim_gtk_privacy_dialog_hide();
 }
 
+static gboolean
+check_account_func(GaimAccount *account)
+{
+	GaimConnection *gc = gaim_account_get_connection(account);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	return (prpl_info->set_permit_deny != NULL);
+}
+
 static GaimGtkPrivacyDialog *
 privacy_dialog_new(void)
 {
@@ -388,7 +399,7 @@ privacy_dialog_new(void)
 	/* Accounts drop-down */
 	dropdown = gaim_gtk_account_option_menu_new(dialog->account, FALSE,
 												G_CALLBACK(select_account_cb),
-												dialog);
+												check_account_func, dialog);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
 	gtk_widget_show(dropdown);
 

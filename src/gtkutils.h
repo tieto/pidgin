@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -42,6 +42,8 @@ typedef enum
 	GAIM_BUTTON_TEXT_IMAGE
 
 } GaimButtonStyle;
+
+typedef gboolean (*GaimCheckAccountFunc)(GaimAccount *account);
 
 /**
  * Sets up a gtkimhtml widget, loads it with smileys, and sets the
@@ -230,20 +232,22 @@ GtkWidget *gaim_gtk_protocol_option_menu_new(GaimProtocol protocol,
 /**
  * Creates a drop-down option menu filled with accounts.
  *
- * @param default_account The account to select by default.
- * @param show_all        Whether or not to show all accounts, or just active
- *                        accounts.
- * @param cb              The callback to call when an account is selected.
- * @param user_data       Data to pass to the callback function.
+ * @param default_account    The account to select by default.
+ * @param show_all           Whether or not to show all accounts, or just
+ *                           active accounts.
+ * @param cb                 The callback to call when an account is selected.
+ * @param check_account_func A function for checking if an account should
+ *                           be shown. This can be NULL.
+ * @param user_data          Data to pass to the callback function.
  *
  * @return The drop-down option menu.
  */
 GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
-											gboolean show_all, GCallback cb,
-											gpointer user_data);
+		gboolean show_all, GCallback cb,
+		GaimCheckAccountFunc check_account_func, gpointer user_data);
 
 /**
- * Check if the given path is a directory or not.  If it is, then modify 
+ * Check if the given path is a directory or not.  If it is, then modify
  * the given GtkFileSelection dialog so that it displays the given path.
  * If the given path is not a directory, then do nothing.
  *
@@ -273,7 +277,7 @@ char *stylize(const gchar *text, int len);
  *
  * @param mode @c 0 for full options, or @c 1 for a short summary.
  * @param name The name of the binary.
- * 
+ *
  * @todo Move this to the binary, when a library is formed.
  */
 void show_usage(int mode, const char *name);

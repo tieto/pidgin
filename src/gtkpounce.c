@@ -412,8 +412,9 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	gtk_size_group_add_widget(sg, label);
 
 	dialog->account_menu =
-		gaim_gtk_account_option_menu_new(dialog->account, TRUE,
-										 G_CALLBACK(pounce_choose_cb), dialog);
+		gaim_gtk_account_option_menu_new(dialog->account, FALSE,
+										 G_CALLBACK(pounce_choose_cb),
+										 NULL, dialog);
 
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->account_menu, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->account_menu);

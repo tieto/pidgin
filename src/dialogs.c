@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 #include "gtkinternal.h"
 
@@ -39,7 +38,7 @@
 
 #include "ui.h"
 
-/* XXX For the soon-to-be-deprecated MultiEntryDlg stuff */
+/* XXX */
 #include "gaim.h"
 
 static GtkWidget *imdialog = NULL;	/*I only want ONE of these :) */
@@ -675,7 +674,7 @@ void show_im_dialog()
 			gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 			info->account = gaim_gtk_account_option_menu_new(NULL, FALSE,
-					G_CALLBACK(show_info_select_account), info);
+					G_CALLBACK(show_info_select_account), NULL, info);
 
 			gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
 			gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->account));
@@ -753,7 +752,7 @@ void show_info_dialog()
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 		info->account = gaim_gtk_account_option_menu_new(NULL, FALSE,
-				G_CALLBACK(show_info_select_account), info);
+				G_CALLBACK(show_info_select_account), NULL, info);
 
 		gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->account));
@@ -964,7 +963,7 @@ void show_add_buddy(GaimConnection *gc, char *buddy, char *group, char *alias)
 
 	a->account = gaim_gtk_account_option_menu_new(
 			gaim_connection_get_account(gc), FALSE,
-			G_CALLBACK(addbuddy_select_account), a);
+			G_CALLBACK(addbuddy_select_account), NULL, a);
 
 	gtk_table_attach_defaults(GTK_TABLE(table), a->account, 1, 2, 3, 4);
 

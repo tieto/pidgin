@@ -752,7 +752,7 @@ account_menu_cb(GtkWidget *optmenu, GCallback cb)
 
 static void
 create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
-					gboolean show_all)
+					GaimCheckAccountFunc check_account_func, gboolean show_all)
 {
 	GaimAccount *account;
 	GtkWidget *menu;
@@ -791,6 +791,9 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 
 			account = gaim_connection_get_account(gc);
 		}
+
+		if (check_account_func == NULL || !check_account_func(account))
+			continue;
 
 		plugin = gaim_find_prpl(gaim_account_get_protocol(account));
 
@@ -871,6 +874,7 @@ account_menu_sign_on_off_cb(GaimConnection *gc, GtkWidget *optmenu)
 	GtkWidget *item;
 	gboolean show_all;
 	GaimAccount *account;
+	GaimCheckAccountFunc check_account_func;
 
 	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
 	item = gtk_menu_get_active(GTK_MENU(menu));
@@ -879,9 +883,12 @@ account_menu_sign_on_off_cb(GaimConnection *gc, GtkWidget *optmenu)
 	show_all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(optmenu),
 												 "show_all"));
 
+	check_account_func = g_object_get_data(G_OBJECT(item),
+										   "check_account_func");
+
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
 
-	create_account_menu(optmenu, account, show_all);
+	create_account_menu(optmenu, account, check_account_func, show_all);
 }
 
 static gboolean
@@ -896,6 +903,7 @@ account_menu_destroyed_cb(GtkWidget *optmenu, GdkEvent *event,
 GtkWidget *
 gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 								 gboolean show_all, GCallback cb,
+								 GaimCheckAccountFunc check_account_func,
 								 gpointer user_data)
 {
 	GtkWidget *optmenu;
@@ -918,9 +926,11 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 	/* Set some data. */
 	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
 	g_object_set_data(G_OBJECT(optmenu), "show_all", GINT_TO_POINTER(show_all));
+	g_object_set_data(G_OBJECT(optmenu), "chck_account_func",
+					  check_account_func);
 
 	/* Create and set the actual menu. */
-	create_account_menu(optmenu, default_account, show_all);
+	create_account_menu(optmenu, default_account, check_account_func, show_all);
 
 	/* And now the last callback. */
 	g_signal_connect(G_OBJECT(optmenu), "changed",
