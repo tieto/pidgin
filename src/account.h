@@ -169,6 +169,13 @@ void gaim_account_set_check_mail(GaimAccount *account, gboolean value);
 void gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info);
 
 /**
+ * Clears all protocol-specific settings on an account.
+ *
+ * @param account The account.
+ */
+void gaim_account_clear_settings(GaimAccount *account);
+
+/**
  * Sets a protocol-specific integer setting for an account.
  *
  * @param account The account.

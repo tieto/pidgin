@@ -308,6 +308,17 @@ gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info)
 }
 
 void
+gaim_account_clear_settings(GaimAccount *account)
+{
+	g_return_if_fail(account != NULL);
+
+	g_hash_table_destroy(account->settings);
+
+	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
+											  g_free, __delete_setting);
+}
+
+void
 gaim_account_set_int(GaimAccount *account, const char *name, int value)
 {
 	GaimAccountSetting *setting;
