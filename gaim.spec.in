@@ -93,6 +93,24 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+- Fri May 31 2002 Rob Flynn <rob@marko.net> (0.59 release)
+- Hungarian translation added (Thanks, Sutto Zoltan)
+- Swedish translation updated (Thanks, Christian Rose)
+- Spanish translation updated (Thanks, Alex)
+- Traditional Chinese translation updated (Thanks, Paladin Liu)
+- Czech translation added (Thanks, Honza)
+- Polish translation updated (Thanks Przemyslaw Sulek)
+- Squashed a bug in buddy right-click menu handling that crashed Gaim.  In the process: found and eliminated some memory leaks.
+- Fixed a significant applet leak
+- Can now change Jabber password on server (Thanks, Nathan Walp)
+- Certain types of Jabber presence errors no longer falsely show a buddy on-line.  Instead now a "broken light-bulb" icon is shown and the error status is available via "Get Away Msg"  (Thanks and a tip o' the hat to Christian Hammond for the graphic)
+- Conversation struct has pointer to toolbar (thanks Brent Priddy and Paul Miller)
+- Zephyr fixes (thanks, Arun A. Tharuvai)
+- Aliases in buddy ticker
+- Perl scripts can play Gaim sounds (thanks Andrew Rodland)
+- Internal sounds can be played by commands (thanks Lex Spoon)
+- Auto-login item in applet menu (thanks Chris Boyle)
+
 * Mon May 13 2002 Rob Flynn <rob@marko.net> (0.58 release)
 - Bulgarian translation added (Thanks, Igel Itzo)
 - Taiwanese translation added (Thanks, Paladin Liu)

@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.59
+version 0.59 (05/31/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
 	* Swedish translation updated (Thanks, Christian Rose)
 	* Spanish translation updated (Thanks, Alex)
@@ -25,7 +25,7 @@ version 0.59
 	* Perl scripts can play Gaim sounds (thanks Andrew Rodland)
 	* Internal sounds can be played by commands (thanks Lex Spoon)
 	* Auto-login item in applet menu (thanks Chris Boyle)
-	
+
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
 	* Traditional Chinese  translation added (Thanks, Paladin Liu)
