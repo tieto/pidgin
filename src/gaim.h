@@ -400,7 +400,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 723 $"
+#define REVISION "gaim:$Revision: 738 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -796,6 +796,7 @@ extern void cancel_link(GtkWidget *, struct conversation *);
 extern void show_font_dialog(struct conversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, struct conversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
+extern void set_color_selection(GtkWidget *selection, GdkColor color);
 
 /* Functions in rvous.c */
 extern void accept_file_dialog(struct file_transfer *);
