@@ -3235,7 +3235,7 @@ msgstr "<b>Stato:</b> "
 
 #: src/protocols/oscar/oscar.c:5402
 msgid "<b>Logged In:</b> "
-msgstr "<b>Connesso:<b>"
+msgstr "<b>Connesso:</b>"
 
 #: src/protocols/oscar/oscar.c:5409
 msgid "<b>Capabilities:</b> "
