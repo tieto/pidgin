@@ -115,6 +115,8 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 					     NULL, 0, GTK_STOCK_OK,
 					     GTK_RESPONSE_ACCEPT, NULL);
 
+	gtk_window_set_role(GTK_WINDOW(dialog), "notify_dialog");
+
 	g_signal_connect(G_OBJECT(dialog), "response",
 					 G_CALLBACK(message_response_cb), dialog);
 
