@@ -47,6 +47,8 @@ char *gaim_plugin_init(GModule *hndl) {
 
 	gaim_signal_connect(handle, event_im_recv, received_im, NULL);
 	gaim_signal_connect(handle, event_im_send, sent_im, NULL);
+
+	return NULL;
 }
 
 char *name() {
