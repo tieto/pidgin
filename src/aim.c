@@ -362,7 +362,9 @@ void show_login()
 		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(reg), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(options), GTK_RELIEF_NONE);
+#ifdef GAIM_PLUGINS
 		gtk_button_set_relief(GTK_BUTTON(plugs), GTK_RELIEF_NONE);
+#endif
 	}
 
 	/* Make the buttons do stuff */
