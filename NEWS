@@ -1,4 +1,18 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
+
+0.76 (04/01/2004):
+	Luke: Okay, normally I wait for Sean to go first, but he said to commit.
+	Its been a few months since the last release, but we haven't just been
+	lazy. A very long ChangeLog for you all. Most notably of course is the
+	addition of WYSIWYG input for chats and conversations. Many thanks to
+	DAYS of long work by Sean, Gary Kramlich, Kevin Stange, Tim Ringenbach,
+	and Stu Tomlinson for their efforts writting, fixing, and testing this.
+	Without the dedicated support of our crazy patch writters, this release
+	would have taken yet longer. Sean also has yahoo working again, with some
+	assistance from our friends over at Trillian, you may all officially
+	rejoice. We also have a large number of bug fixes, closing more than 200
+	bug reports this month alone.
+
 0.75 (01/09/2004):
 	Rob: Woah, what's this? Me? Making a NEWS post!? Say it ain't so!
 	That's right, kiddos, I'm finally coming out of my reclusiveness.
