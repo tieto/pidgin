@@ -1,64 +1,64 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.78 (05/28/2004):
-    * * Plugin plugin API:    4
-    * Added: actions - for plugins to add to the new Plugin Actions menu
+	Plugin API: v4
+	* Added: actions - for plugins to add to the new Plugin Actions menu
 
-    * * Loader plugin API: 2 (no changes)
+	Loader Plugin API: v2 (no changes)
 
-    * * Protocol plugin API: 4
-    * Removed: set_dir, get_dir and dir_search (not used, AIM-centric)
-    * Removed: actions (replaced by generic plugin actions)
+	Protocol Plugin API: v4
+	* Removed: set_dir, get_dir and dir_search (not used, AIM-centric)
+	* Removed: actions (replaced by generic plugin actions)
 
-    * * Perl plugin API: 2 (no changes)
-    * * TCL plugin API: (no changes)
+	Perl Plugin API: v2 (no changes)
+	TCL Plugin API: (no changes)
 
-    * * Signals:
-    * Added: "blist-node-extended-menu" for extending Buddy, Chat and
-             Group right-click menus
-    * Added: "drawing-tooltip" for plugins to allow plugins to change text
-             appearing in tooltips
-    * Added: "gtkblist-created"
-    * Added: "receiving-im-msg" and "receiving-chat-msg" (these behave
-              exactly like received-*-msg used to)
-    * Added: "buddy-idle-updated" signal, for when the idle time changes.
-    * Changed: "received-im-msg" and "received-chat-msg" no longer pass
-               pointers to who, message and flags, and are now void.
-    * Removed: "drawing-menu" - it was UI sepecific and
-               "blist-node-extended-menu" is superior
+	Signals:
+	* Added: "blist-node-extended-menu" for extending Buddy, Chat and
+			 Group right-click menus
+	* Added: "drawing-tooltip" for plugins to allow plugins to change text
+			 appearing in tooltips
+	* Added: "gtkblist-created"
+	* Added: "receiving-im-msg" and "receiving-chat-msg" (these behave
+			  exactly like received-*-msg used to)
+	* Added: "buddy-idle-updated" signal, for when the idle time changes.
+	* Changed: "received-im-msg" and "received-chat-msg" no longer pass
+			   pointers to who, message and flags, and are now void.
+	* Removed: "drawing-menu" - it was UI sepecific and
+			   "blist-node-extended-menu" is superior
 
 version 0.77 (04/22/2004):
-    * Loader & Protocol plugins independantly versioned
-    * Plugin loading now checks versioning on plugins (Standard, Loader &
-      Protocol)
-    * new GAIM_{PLUGIN,PRPL,LOADER}_API_VERSION constants
+	Loader & Protocol Plugins independantly versioned
+	Plugin loading now checks versioning on plugins (Standard, Loader &
+	Protocol)
+	new GAIM_{PLUGIN,PRPL,LOADER}_API_VERSION constants
 
-    * * Plugin plugin API: 3
-    * Added: prefs_info for UI independant plugin prefs
+	Plugin API: v3
+	* Added: prefs_info for UI independant plugin prefs
 
-    * * Loader plugin API: 2
-    * Added: api_version at top of GaimPluginLoaderInfo struct
+	Loader Plugin API: v2
+	* Added: api_version at top of GaimPluginLoaderInfo struct
 
-    * * Protocol plugin API: 2
-    * Added: api_version at top of GaimPluginProtocolInfo struct
-    * Added: chat_menu for protocol specific extensions to the chat menu
-    * Removed: get_away "Nada used it. Pink elephants on parade."
-    * Removed: protocol_prefs (replaced by generic plugin prefs_info)
+	Protocol Plugin API: v2
+	* Added: api_version at top of GaimPluginProtocolInfo struct
+	* Added: chat_menu for protocol specific extensions to the chat menu
+	* Removed: get_away "Nada used it. Pink elephants on parade."
+	* Removed: protocol_prefs (replaced by generic plugin prefs_info)
 
-    * * Perl plugin API: 2 (no changes)
-    * * TCL API: (no changes)
+	Perl Plugin API: v2 (no changes)
+	TCL API: (no changes)
 
-    * * Signals:
-    * Added: "conversation-drag-ended"
+	Signals:
+	* Added: "conversation-drag-ended"
 
 version 0.76 (04/01/2004):
-    * * Plugin API: 2
-    * * Perl plugin API: 2
-    * * Loader plugin API: (not versioned)
-    * * Protocol plugin API: (not versioned)
-    * Added: protocol_prefs for protocol specific preferences
-    * Added: reject_chat so protocols can act on chat invite rejection
+	Plugin API: v2
+	Perl Plugin API: v2
+	Loader Plugin API: (not versioned)
+	Protocol Plugin API: (not versioned)
+	* Added: protocol_prefs for protocol specific preferences
+	* Added: reject_chat so protocols can act on chat invite rejection
 
-    * * TCL plugin API: (not versioned)
-    * Changes to plugin registration to show descriptions
+	TCL Plugin API: (not versioned)
+	* Changes to plugin registration to show descriptions
 
