@@ -724,6 +724,8 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 			show_ee_dialog(6);
 		else if (!g_strcasecmp("kingant", normalize (b->name)))
 			show_ee_dialog(7);
+		else if (!g_strcasecmp("lschiere", normalize (b->name)))
+			show_ee_dialog(8);
 
 	} else {
 
