@@ -602,6 +602,20 @@ iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static gboolean
+ipg_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
+{
+	GaimConnection *gc = servconn->session->account->gc;
+
+	servconn->parsing_msg  = TRUE;
+	servconn->msg_passport = NULL;
+	servconn->msg_friendly = NULL;
+	servconn->msg_len      = atoi(params[0]);
+
+	return TRUE;
+}
+
+static gboolean
 lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
@@ -1392,6 +1406,7 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(notification, "GTC",       blank_cmd);
 		msn_servconn_register_command(notification, "ILN",       iln_cmd);
 		msn_servconn_register_command(notification, "INF",       inf_cmd);
+		msn_servconn_register_command(notification, "IPG",       ipg_cmd);
 		msn_servconn_register_command(notification, "LSG",       lsg_cmd);
 		msn_servconn_register_command(notification, "LST",       lst_cmd);
 		msn_servconn_register_command(notification, "MSG",       msg_cmd);
