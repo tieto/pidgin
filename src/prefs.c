@@ -260,7 +260,6 @@ static void convo_page()
 	gtk_widget_show(sep);
 
 	gaim_button(_("Log all conversations"), &general_options, OPT_GEN_LOG_ALL, box);
-	gaim_button(_("Strip HTML from logs"), &general_options, OPT_GEN_STRIP_HTML, box);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);

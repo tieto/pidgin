@@ -114,12 +114,8 @@ struct conversation *new_conversation(char *name)
 
 		fd = open_log_file(c->name);
 		if (fd > 0) {
-			if (!(general_options & OPT_GEN_STRIP_HTML))
-				fprintf(fd,
-					"<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
+			fprintf(fd, "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
 					full_date());
-			else
-				fprintf(fd, " ---- New Conversation @ %s ----\n", full_date());
 			fclose(fd);
 		} else
 			/* do we want to do something here? */ ;
@@ -818,7 +814,7 @@ void remove_tags(GtkWidget *entry, char *tag)
 	g_free(s);
 }
 
-static char *add_br(char *p)
+static char *html_logize(char *p)
 {
 
 	char *temp_p = p;
@@ -829,7 +825,7 @@ static char *add_br(char *p)
 
 	while (*temp_p != '\0') {
 		char_len++;
-		if (*temp_p == '\n')
+		if ((*temp_p == '\n') || ((*temp_p == '<') && (*(temp_p + 1) == '!')))
 			num_cr++;
 		++temp_p;
 	}
@@ -839,15 +835,19 @@ static char *add_br(char *p)
 	buffer_start = buffer_p;
 
 	while (*temp_p != '\0') {
-		*buffer_p = *temp_p;
 		if (*temp_p == '\n') {
 			*buffer_p++ = '<';
 			*buffer_p++ = 'B';
 			*buffer_p++ = 'R';
 			*buffer_p++ = '>';
-			*buffer_p = '\n';
-		}
-		++buffer_p;
+			*buffer_p++ = '\n';
+		} else if ((*temp_p == '<') && (*(temp_p + 1) == '!')) {
+			*buffer_p++ = '&';
+			*buffer_p++ = 'g';
+			*buffer_p++ = 't';
+			*buffer_p++ = ';';
+		} else
+			*buffer_p++ = *temp_p;
 		++temp_p;
 	}
 	*buffer_p = '\0';
@@ -1161,29 +1161,16 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", 0);
 
 		if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
-			char *t1;
 			char nm[256];
 
-			if (general_options & OPT_GEN_STRIP_HTML) {
-				t1 = strip_html(what);
-			} else {
-				t1 = what;
-			}
 			if (c->is_chat)
 				g_snprintf(nm, 256, "%s.chat", c->name);
 			else
 				g_snprintf(nm, 256, "%s", c->name);
 			fd = open_log_file(nm);
 			if (fd > 0) {
-				if (general_options & OPT_GEN_STRIP_HTML) {
-					fprintf(fd, "%s\n", t1);
-				} else {
-					fprintf(fd, "%s<BR>\n", t1);
-				}
+				fprintf(fd, "%s<BR>\n", what);
 				fclose(fd);
-			}
-			if (general_options & OPT_GEN_STRIP_HTML) {
-				g_free(t1);
 			}
 		}
 
@@ -1236,32 +1223,20 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", 0);
 
 		if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
-			char *t1, *t2;
-			char *nm = g_malloc(256);
+			char *t1;
+			char nm[256];
 			if (c->is_chat)
 				g_snprintf(nm, 256, "%s.chat", c->name);
 			else
 				g_snprintf(nm, 256, "%s", c->name);
 
-			if (general_options & OPT_GEN_STRIP_HTML) {
-				t1 = strip_html(buf);
-				t2 = strip_html(what);
-			} else {
-				t1 = add_br(buf);
-				t2 = add_br(what);
-			}
+			t1 = html_logize(what);
 			fd = open_log_file(nm);
 			if (fd > 0) {
-				if (general_options & OPT_GEN_STRIP_HTML) {
-					fprintf(fd, "%s%s\n", t1, t2);
-				} else {
-					fprintf(fd, "%s%s<BR>\n", t1, t2);
-				}
+				fprintf(fd, "%s%s<BR>\n", buf, t1);
 				fclose(fd);
 			}
 			g_free(t1);
-			g_free(t2);
-			g_free(nm);
 		}
 	}
 
