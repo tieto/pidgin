@@ -137,6 +137,7 @@ src/protocols/napster/napster.c
 src/protocols/oscar/admin.c
 src/protocols/oscar/adverts.c
 src/protocols/oscar/auth.c
+src/protocols/oscar/bart.c
 src/protocols/oscar/bos.c
 src/protocols/oscar/bstream.c
 src/protocols/oscar/buddylist.c
@@ -145,14 +146,13 @@ src/protocols/oscar/chatnav.c
 src/protocols/oscar/conn.c
 src/protocols/oscar/email.c
 src/protocols/oscar/ft.c
-src/protocols/oscar/icon.c
 src/protocols/oscar/icq.c
 src/protocols/oscar/im.c
 src/protocols/oscar/info.c
 src/protocols/oscar/invite.c
 src/protocols/oscar/misc.c
 src/protocols/oscar/msgcookie.c
-src/protocols/oscar/newsearch.c
+src/protocols/oscar/odir.c
 src/protocols/oscar/oscar.c
 src/protocols/oscar/popups.c
 src/protocols/oscar/rxhandlers.c

@@ -4,7 +4,7 @@ tcl_la_LDFLAGS = -module -avoid-version $(TCL_LIBS) $(TK_LIBS)
 
 plugin_LTLIBRARIES = tcl.la
 
-tcl_la_SOURCES = tcl.c tcl_glib.c tcl_cmds.c tcl_signals.c tcl_gaim.h
+tcl_la_SOURCES = tcl.c tcl_glib.c tcl_glib.h tcl_cmds.c tcl_signals.c tcl_gaim.h
 
 AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \
