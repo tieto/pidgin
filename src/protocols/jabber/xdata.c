@@ -273,8 +273,8 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
 
-			if(value && (!strcasecmp(value, "yes") ||
-						!strcasecmp(value, "true") || !strcasecmp(value, "1")))
+			if(value && (!g_strcasecmp(value, "yes") ||
+						!g_strcasecmp(value, "true") || !g_strcasecmp(value, "1")))
 				def = TRUE;
 
 			field = gaim_request_field_bool_new(var, label, def);
