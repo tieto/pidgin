@@ -40,6 +40,8 @@
 # include <net/if_arp.h>
 #endif
 
+#define TREPIA_VERSION "2.50"
+
 static GaimPlugin *my_protocol = NULL;
 
 typedef enum
@@ -1027,7 +1029,9 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 		mac, gaim_account_get_username(account),
 		md5_password);
 
+#if 0
 	g_free(mac);
+#endif
 
 	if (trepia_write(session->fd, buffer, strlen(buffer)) < 0) {
 		gaim_connection_error(session->gc, _("Write error"));
@@ -1192,15 +1196,15 @@ trepia_set_buddy_icon(GaimConnection *gc, const char *filename)
 static void
 trepia_register_user(GaimAccount *account)
 {
-#if 0
 	char *buffer;
+	char *mac = "00:01:02:03:04:05";
 
 	buffer = g_strdup_printf(
-		"<J><a>%s</a><b1>%s</b1><c>2.0</c><d>%s</d><e>%s</e>"
-		"<f>%s</f><g></g><h></h><i></i><j></j><k></k><l></l>"
-		"<m></m></J>");
-
-#endif
+		"<J><a>%s</a><b1>%s</b1><c>%s</c><d>%s</d><e>%s</e>"
+		"<f></f><g></g><h></h><i></i><j></j><k></k><l></l>"
+		"<m></m></J>",
+		mac, "", TREPIA_VERSION, gaim_account_get_username(account),
+		gaim_account_get_password(account));
 }
 
 static GaimPluginProtocolInfo prpl_info =
