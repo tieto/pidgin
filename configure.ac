@@ -140,7 +140,9 @@ if test "$enable_debug" = yes ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
-CFLAGS="$CFLAGS -Wall -g3"
+if test "x$GCC" = "xyes"; then
+	CFLAGS="$CFLAGS -Wall -g3"
+fi
 AC_SUBST(CFLAGS)
 
 AM_PATH_GLIB_2_0(2.0.0,,AC_MSG_ERROR([
