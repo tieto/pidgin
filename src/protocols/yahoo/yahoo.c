@@ -2583,6 +2583,7 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 	int service;
 	char s[4];
 	char *conv_msg = NULL;
+	char *conv_msg2 = NULL;
 
 	if (gc->away) {
 		g_free(gc->away);
@@ -2640,7 +2641,8 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 
 	if ((yd->current_status == YAHOO_STATUS_CUSTOM) && gc->away) {
 		conv_msg = yahoo_string_encode(gc, gc->away, NULL);
-		yahoo_packet_hash(pkt, 19, conv_msg);
+		conv_msg2 = gaim_unescape_html(conv_msg);
+		yahoo_packet_hash(pkt, 19, conv_msg2);
 	}
 
 	if ((yd->current_status != YAHOO_STATUS_AVAILABLE) &&
@@ -2655,13 +2657,15 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 	yahoo_packet_free(pkt);
 	if (conv_msg)
 		g_free(conv_msg);
+	if (conv_msg2)
+		g_free(conv_msg2);
 }
 
 static void yahoo_set_idle(GaimConnection *gc, int idle)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
-	char *msg = NULL;
+	char *msg = NULL, *msg2 = NULL;
 
 	if (idle && yd->current_status == YAHOO_STATUS_AVAILABLE) {
 		pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, YAHOO_STATUS_AVAILABLE, 0);
@@ -2679,7 +2683,8 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 		yahoo_packet_hash(pkt, 10, buf);
 		if (gc->away && yd->current_status == YAHOO_STATUS_CUSTOM) {
 			msg = yahoo_string_encode(gc, gc->away, NULL);
-			yahoo_packet_hash(pkt, 19, msg);
+			msg2 = gaim_unescape_html(msg);
+			yahoo_packet_hash(pkt, 19, msg2);
 			if (idle)
 				yahoo_packet_hash(pkt, 47, "2");
 			else
@@ -2697,6 +2702,8 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	}
 	if (msg)
 		g_free(msg);
+	if (msg2)
+		g_free(msg2);
 }
 
 static GList *yahoo_away_states(GaimConnection *gc)
