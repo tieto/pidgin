@@ -1075,12 +1075,23 @@ static guint idle_buddy_timeout_id = 0;
 static gboolean
 idle_timeout_cb(void)
 {
-	GList *l;
+	GList *l, *l_next;
 
-	for (l = idle_buddies; l != NULL; l = l->next)
+	for (l = idle_buddies; l != NULL; l = l_next)
 	{
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-updated",
-						 l->data);
+		GaimBuddy *buddy = (GaimBuddy *)l->data;
+
+		l_next = l->next;
+
+		if (!GAIM_BUDDY_IS_ONLINE(buddy) || buddy->idle <= 0)
+		{
+			remove_idle_buddy(buddy);
+		}
+		else
+		{
+			gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-updated",
+							 l->data);
+		}
 	}
 
 	return TRUE;
