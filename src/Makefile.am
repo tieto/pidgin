@@ -62,6 +62,12 @@ gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = @LDADD@ @LIBOBJS@
 endif
 
+# UI stuff. We do this here so the PRPLs aren't forced to link with it
+LIBS += $(UI_LIBS)
+
+# Sound libs. Just for fun
+LIBS += $(SOUND_LIBS)
+
 # Static protocols
 LIBS += $(STATIC_LINK_LIBS)
 
