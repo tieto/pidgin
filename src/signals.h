@@ -135,6 +135,28 @@ gulong gaim_signal_connect(void *instance, const char *signal,
 						   void *handle, GaimCallback func, void *data);
 
 /**
+ * Connects a signal handler to a signal for a particular object.
+ *
+ * The signal handler will take a va_args of arguments, instead of
+ * individual arguments.
+ *
+ * Take care not to register a handler function twice. Gaim will
+ * not correct any mistakes for you in this area.
+ *
+ * @param instance The instance to connect to.
+ * @param signal   The name of the signal to connect.
+ * @param handle   The handle of the receiver.
+ * @param func     The callback function.
+ * @param data     The data to pass to the callback function.
+ *
+ * @return The signal handler ID.
+ *
+ * @see gaim_signal_disconnect()
+ */
+gulong gaim_signal_connect_vargs(void *instance, const char *signal,
+								 void *handle, GaimCallback func, void *data);
+
+/**
  * Disconnects a signal handler from a signal on an object.
  *
  * @param instance The instance to disconnect from.
