@@ -792,7 +792,7 @@ static void gaimrc_read_proxy(FILE *f)
 		} else if (!strcmp(p->option, "port")) {
 			proxyport = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "type")) {
-			proxyport = atoi(p->value[0]);
+			proxytype = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "user")) {
 			g_snprintf(proxyuser, sizeof(proxyuser), "%s", p->value[0]);
 		} else if (!strcmp(p->option, "pass")) {
@@ -808,7 +808,7 @@ static void gaimrc_write_proxy(FILE *f)
 	fprintf(f, "\tport { %d }\n", proxyport);
 	fprintf(f, "\ttype { %d }\n", proxytype);
 	fprintf(f, "\tuser { %s }\n", proxyuser);
-	fprintf(f, "\tport { %s }\n", proxypass);
+	fprintf(f, "\tpass { %s }\n", proxypass);
 	fprintf(f, "}\n");
 }
 
