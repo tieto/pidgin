@@ -279,8 +279,6 @@ gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 /**************************************************************************
  * MIME Functions
  **************************************************************************/
-#define OUT_CHARSET "utf-8"
-
 static char *
 gaim_mime_decode_word(const char *charset, const char *encoding, const char *str)
 {
@@ -297,7 +295,7 @@ gaim_mime_decode_word(const char *charset, const char *encoding, const char *str
 	else
 		return NULL;
 
-	converted = g_convert(decoded, len, OUT_CHARSET, charset, NULL, NULL, NULL);
+	converted = g_convert(decoded, len, "utf-8", charset, NULL, NULL, NULL);
 	g_free(decoded);
 
 	return converted;
@@ -318,29 +316,40 @@ gaim_mime_decode_field(const char *str)
 
 	/* One iteration per encoded-word */
 	end_of_last = orig;
-	while ((start = strstr(end_of_last, "=?")) && (end = strstr(start, "?="))) {
+	while ((start = strstr(end_of_last, "=?"))) {
+		/*
+		 * Get to the end of the encoded word by finding the first ?, 
+		 * the second ?, then finally the ?=
+		 */
+		if (((end = strstr(start + 2, "?")) == NULL) || 
+			((end = strstr(end + 1, "?")) == NULL) ||
+			((end = strstr(end + 2, "?=")) == NULL)) {
+			break;
+		}
+
 		/* Append everything from the end of the last encoded-word to the beginning of the next */
 		tmp = g_strndup(end_of_last, (start - end_of_last));
 		donedeal = g_string_append(donedeal, tmp);
 		g_free(tmp);
 
 		/* Split the encoded word */
-		tmp = g_strndup(start + 2, end - start - 4);
+		tmp = g_strndup(start + 2, end - start - 2);
 		encoded_word = g_strsplit(tmp, "?", 3);
 		g_free(tmp);
 		charset = encoded_word[0];
 		encoding = charset != NULL ? encoded_word[1] : NULL;
 		word = encoding != NULL ? encoded_word[2] : NULL;
-		g_strfreev(encoded_word);
 
 		/* Convert the decoded word to utf8 and append it */
 		tmp = gaim_mime_decode_word(charset, encoding, word);
-		donedeal = g_string_append(donedeal, tmp);
-		g_free(tmp);
+		if (tmp != NULL) {
+			donedeal = g_string_append(donedeal, tmp);
+			g_free(tmp);
+		}
 
-		g_free(charset);
-		g_free(encoding);
-		g_free(word);
+		g_strfreev(encoded_word);
+
+		end_of_last = end + 2;
 	}
 
 	/* Append everything from the end of the last encoded-word to the end of the string */
@@ -354,100 +363,9 @@ gaim_mime_decode_field(const char *str)
 	g_free(orig);
 
 	return tmp;
-
-#if 0
-	/* The shx version! */
-	const char *cur, *mark;
-	const char *unencoded, *encoded;
-	char *n, *new;
-
-	n = new = g_malloc(strlen(str));
-
-gaim_debug(GAIM_DEBUG_ERROR, "XXX", "new is %d\n", new);
-
-	/*
-	 * Here we will be looking for encoded words and if they seem to be
-	 * valid then decode them.
-	 * They are of this form: =?charset?encoding?text?=
-	 */
-	for (	unencoded = cur = str;
-			(encoded = cur = strstr(cur, "=?"));
-			unencoded = cur) {
-
-		gboolean found_word = FALSE;
-		int i, num, len, dec_len;
-		char *decoded, *converted;
-		char *tokens[3];
-
-		/* Let's look for tokens, they are between ?'s */
-		for (cur += 2, mark = cur, num = 0; *cur; cur++) {
-			if (*cur == '?') {
-				if (num > 2)
-					/* No more than 3 tokens. */
-					break;
-
-				tokens[num++] = g_strndup(mark, cur - mark);
-
-				mark = (cur + 1);
-
-				if (mark[0] == '=' && mark[1] == '\0') {
-					found_word = TRUE;
-					break;
-				}
-			}
-#if 0
-			/* I think this is rarely going to happen, if at all */
-			else if ((num < 2) && (strchr("()<>@,;:/[]", *cur)))
-				/* There can't be these characters in the first two tokens. */
-				break;
-			else if ((num == 2) && (*cur == ' '))
-				/* There can't be spaces in the third token. */
-				break;
-#endif
-		}
-
-		cur += 2;
-gaim_debug(GAIM_DEBUG_ERROR, "XXX", "new is %d, this is probably different than above, that's bad\n", new);
-		if (found_word) {
-			/* We found an encoded word. */
-	 		/* =?charset?encoding?text?= */
-			len = encoded - unencoded;
-			n = strncpy(n, unencoded, len) + len;
-
-			if (g_ascii_strcasecmp(tokens[1], "Q") == 0)
-				gaim_quotedp_decode(tokens[2], &decoded, &dec_len);
-			else if (g_ascii_strcasecmp(tokens[1], "B") == 0)
-				gaim_base64_decode(tokens[2], &decoded, &dec_len);
-			else
-				decoded = NULL;
-
-			if (decoded) {
-				converted = g_convert(decoded, dec_len, OUT_CHARSET, tokens[0],
-						NULL, &len, NULL);
-				g_free(decoded);
-
-				n = strncpy(n, converted, len) + len;
-				g_free(converted);
-			}
-		} else {
-			/* Some unencoded text. */
-			len = cur - unencoded;
-			n = strncpy(n, unencoded, len) + len;
-		}
-
-		for (i = 0; i < num; i++)
-			g_free(tokens[i]);
-	}
-
-	*n = '\0';
-
-	/* There is unencoded text at the end. */
-	if (*unencoded)
-		n = strcpy(n, unencoded);
-
-	return new;
-#endif
 }
+
+
 
 /**************************************************************************
  * Date/Time Functions
