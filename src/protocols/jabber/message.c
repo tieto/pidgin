@@ -289,7 +289,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			if(!jm->body)
 				jm->body = xmlnode_to_str(child, NULL);
 		} else if(!strcmp(child->name, "html")) {
-			if(!jm->xhtml)
+			if(!jm->xhtml && child->data_sz > 0)
 				jm->xhtml = xmlnode_to_str(child, NULL);
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");

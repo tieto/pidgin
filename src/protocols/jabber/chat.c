@@ -91,13 +91,16 @@ GHashTable *jabber_chat_info_defaults(GaimConnection *gc, const char *chat_name)
 JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 		const char *server)
 {
-	JabberChat *chat;
+	JabberChat *chat = NULL;
 	char *room_jid;
 
-	room_jid = g_strdup_printf("%s@%s", room, server);
+	if(NULL != js->chats)
+	{
+		room_jid = g_strdup_printf("%s@%s", room, server);
 
-	chat = g_hash_table_lookup(js->chats, jabber_normalize(NULL, room_jid));
-	g_free(room_jid);
+		chat = g_hash_table_lookup(js->chats, jabber_normalize(NULL, room_jid));
+		g_free(room_jid);
+	}
 
 	return chat;
 }
