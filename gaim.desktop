@@ -5,6 +5,7 @@ Comment=Multi-protocol Instant Messaging Client
 Comment[es]=Cliente de mensajería instantánea multiprotocolo
 Comment[fr]=Client de messagerie instantanée multiprotocole
 Comment[de]=Multi-Protokoll Instant Messenger Client
+Comment[ko]=멀티 프로토콜 인스턴트 메시징 클라이언트
 Exec=gaim
 Icon=gaim.png
 Terminal=false
