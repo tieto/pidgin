@@ -342,6 +342,30 @@ static void gyahoo_add_buddy(struct gaim_connection *gc, char *name) {
 		yahoo_add_buddy(yd->ctxt, name, gc->username, group, "");
 }
 
+static void yahoo_add_buddies(struct gaim_connection *gc, GList *buddies) {
+	while (buddies) {
+		gyahoo_add_buddy(gc, buddies->data);
+		buddies = buddies->next;
+	}
+}
+
+static void gyahoo_remove_buddy(struct gaim_connection *gc, char *name) {
+	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	struct yahoo_buddy *tmpbuddy;
+	struct group *g = find_group_by_buddy(gc, name);
+	char *group = NULL;
+
+	if (g) {
+		group = g->name;
+	} else if (yd->ctxt && yd->ctxt->buddies[0]) {
+		tmpbuddy = yd->ctxt->buddies[0];
+		group = tmpbuddy->group;
+	}
+
+	if (group)
+		yahoo_remove_buddy(yd->ctxt, name, gc->username, group, "");
+}
+
 static char **yahoo_list_icon(int uc) {
 	if ((uc >> 5) == YAHOO_STATUS_IDLE)
 		return status_idle_xpm;
@@ -390,8 +414,8 @@ void Yahoo_init(struct prpl *ret) {
 	ret->set_idle = yahoo_set_idle;
 	ret->change_passwd = NULL;
 	ret->add_buddy = gyahoo_add_buddy;
-	ret->add_buddies = NULL;
-	ret->remove_buddy = NULL;
+	ret->add_buddies = yahoo_add_buddies;
+	ret->remove_buddy = gyahoo_remove_buddy;
 	ret->add_permit = NULL;
 	ret->add_deny = NULL;
 	ret->rem_permit = NULL;
