@@ -26,69 +26,9 @@
 #include "core.h"
 #include "plugin.h"
 
-#if 0
-/* ok. now the fun begins. first we create a connection structure */
-GaimConnection {
-	int edittype; /* XXX CUI: this is ui-specific and should be removed */
-
-	/* we need to do either oscar or TOC */
-	/* we make this as an int in case if we want to add more protocols later */
-	int protocol;
-	GaimPlugin *prpl;
-	guint32 flags;
-
-	/* erg. */
-	char *checkbox;
-
-	/* all connections need an input watcher */
-	int inpa;
-
-	/* all connections need a list of chats, even if they don't have chat */
-	GSList *buddy_chats;
-
-	/* each connection then can have its own protocol-specific data */
-	void *proto_data;
-
-	GaimAccount *account;
-
-	char username[64];
-	char displayname[128];
-	char password[32];
-	guint keepalive;
-
-	/* stuff needed for per-connection idle times */
-	guint idle_timer;
-	time_t login_time;
-	time_t login_time_official;
-	time_t lastsent;
-	int is_idle;
-
-	char *away;		/* set by protos, is NULL when not away, or set *
-				 * to "" or a custom message when away */
-	char *away_state;	/* updated by serv_set_away, keeps the last set *
-				 * away type */
-	int is_auto_away;	/* used by idle.c */
-
-	int evil;		/* warning level for AIM (why is this here?) */
-	gboolean wants_to_die;	/* defaults to FALSE */
-};
-#endif
-
 #define OPT_CONN_HTML		0x00000001
 /* set this flag on a gc if you want serv_got_im to autoreply when away */
 #define OPT_CONN_AUTO_RESP	0x00000002
-
-struct proto_user_split {
-	char sep;
-	char *label;
-	char *def;
-};
-
-struct proto_user_opt {
-	char *label;
-	char *def;
-	int pos;
-};
 
 struct proto_actions_menu {
 	char *label;

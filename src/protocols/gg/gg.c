@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6025 2003-05-31 20:55:31Z faceprint $
+ * $Id: gg.c 6047 2003-06-01 17:40:20Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -45,6 +45,7 @@
 /* Library from EKG (Eksperymentalny Klient Gadu-Gadu) */
 #include "libgg.h"
 #include "gaim.h"
+#include "accountopt.h"
 #include "multi.h"
 #include "core.h"
 #include "prpl.h"
@@ -53,8 +54,6 @@
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
-
-#define USEROPT_NICK 0
 
 #define GG_CONNECT_STEPS 5
 
@@ -1376,13 +1375,12 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
-	struct proto_user_opt *puo;
+	GaimAccountOption *option;
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Nick:");
-	puo->def   = g_strdup("Gadu-Gadu User");
-	puo->pos   = USEROPT_NICK;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_string_new(_("Nick:"), "nick",
+											"Gadu-Gadu User");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
 	my_protocol = plugin;
 }

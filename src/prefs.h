@@ -24,6 +24,8 @@
 #ifndef _PREFS_H_
 #define _PREFS_H_
 
+#include <glib.h>
+
 /**
  * Pref data types.
  */

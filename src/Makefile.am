@@ -8,6 +8,8 @@ SUBDIRS = protocols
 CORESOURCES = \
 	account.c \
 	account.h \
+	accountopt.c \
+	accountopt.h \
 	blist.c \
 	blist.h \
 	connection.c \

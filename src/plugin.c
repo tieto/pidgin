@@ -40,6 +40,7 @@
 #endif
 
 #include "gaim.h"
+#include "accountopt.h"
 #include "prpl.h"
 #include "event.h"
 #include "notify.h"
@@ -329,30 +330,17 @@ gaim_plugin_unload(GaimPlugin *plugin)
 		if (plugin->info->type == GAIM_PLUGIN_PROTOCOL) {
 			GaimPluginProtocolInfo *prpl_info;
 			GList *l;
-			struct proto_user_split *pus;
-			struct proto_user_opt *puo;
 
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 
-			for (l = prpl_info->user_splits; l != NULL; l = l->next) {
-				pus = l->data;
+			for (l = prpl_info->user_splits; l != NULL; l = l->next)
+				gaim_account_user_split_destroy(l->data);
 
-				g_free(pus->label);
-				g_free(pus->def);
-				g_free(pus);
-			}
+			for (l = prpl_info->protocol_options; l != NULL; l = l->next)
+				gaim_account_option_destroy(l->data);
 
 			g_list_free(prpl_info->user_splits);
-
-			for (l = prpl_info->user_opts; l != NULL; l = l->next) {
-				puo = l->data;
-
-				g_free(puo->label);
-				g_free(puo->def);
-				g_free(puo);
-			}
-
-			g_list_free(prpl_info->user_opts);
+			g_list_free(prpl_info->protocol_options);
 		}
 		else if (plugin->info->type == GAIM_PLUGIN_LOADER) {
 			GaimPluginLoaderInfo *loader_info;

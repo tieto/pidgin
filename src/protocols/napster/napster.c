@@ -39,6 +39,7 @@
 #include <time.h>
 #include <sys/stat.h>
 #include "gaim.h"
+#include "accountopt.h"
 #include "multi.h"
 #include "prpl.h"
 #include "proxy.h"
@@ -47,9 +48,7 @@
 #include "win32dep.h"
 #endif
 
-#define USEROPT_NAPSERVER 3
 #define NAP_SERVER "64.124.41.187"
-#define USEROPT_NAPPORT 4
 #define NAP_PORT 8888
 
 #define NAPSTER_CONNECT_STEPS 2
@@ -650,19 +649,16 @@ static GaimPluginInfo info =
 
 static void __init_plugin(GaimPlugin *plugin)
 {
-	struct proto_user_opt *puo;
+	GaimAccountOption *option;
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Server:"));
-	puo->def   = g_strdup(NAP_SERVER);
-	puo->pos   = USEROPT_NAPSERVER;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_string_new(_("Server"), "server",
+											NAP_SERVER);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Port:"));
-	puo->def   = g_strdup("8888");
-	puo->pos   = USEROPT_NAPPORT;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_int_new(_("Port"), "port", 8888);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
 	my_protocol = plugin;
 }

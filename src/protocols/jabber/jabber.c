@@ -44,6 +44,7 @@
 #include <time.h>
 #include <sys/stat.h>
 #include "gaim.h"
+#include "accountopt.h"
 #include "multi.h"
 #include "prpl.h"
 #ifdef MAX
@@ -4416,32 +4417,25 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
-	struct proto_user_opt *puo;
-	struct proto_user_split *pus;
+	GaimAccountUserSplit *split;
+	GaimAccountOption *option;
 
-	pus = g_new0(struct proto_user_split, 1);
-	pus->sep = '@';
-	pus->label = g_strdup(_("Server:"));
-	pus->def = g_strdup("jabber.org");
-	prpl_info.user_splits = g_list_append(prpl_info.user_splits, pus);
+	/* Splits */
+	split = gaim_account_user_split_new(_("Server"), "jabber.org", '@');
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	pus = g_new0(struct proto_user_split, 1);
-	pus->sep = '/';
-	pus->label = g_strdup(_("Resource:"));
-	pus->def = g_strdup("Gaim");
-	prpl_info.user_splits = g_list_append(prpl_info.user_splits, pus);
+	split = gaim_account_user_split_new(_("Resource"), "Gaim", '/');
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Port:"));
-	puo->def = g_strdup_printf("%d", DEFAULT_PORT);
-	puo->pos = USEROPT_PORT;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	/* Account Options */
+	option = gaim_account_option_int_new(_("Port"), "port", DEFAULT_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Connect Server:"));
-	puo->def = g_strdup("");
-	puo->pos = USEROPT_CONN_SERVER;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_string_new(_("Connect Server"),
+											"connect_server", NULL);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
 	my_protocol = plugin;
 }

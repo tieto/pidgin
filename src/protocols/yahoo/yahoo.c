@@ -42,6 +42,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include "gaim.h"
+#include "accountopt.h"
 #include "multi.h"
 #include "prpl.h"
 #include "proxy.h"
@@ -57,9 +58,7 @@ extern char *yahoo_crypt(const char *, const char *);
 
 #define USEROPT_MAIL 0
 
-#define USEROPT_PAGERHOST 3
 #define YAHOO_PAGER_HOST "scs.yahoo.com"
-#define USEROPT_PAGERPORT 4
 #define YAHOO_PAGER_PORT 5050
 
 #define YAHOO_PROTO_VER 0x0900
@@ -1430,13 +1429,13 @@ G_MODULE_EXPORT void yahoo_init(GaimPlugin *ret) {
 	puo->label = g_strdup(_("Pager Host:"));
 	puo->def = g_strdup(YAHOO_PAGER_HOST);
 	puo->pos = USEROPT_PAGERHOST;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	ret->protocol_options = g_list_append(ret->protocol_options, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Pager Port:"));
 	puo->def = g_strdup("5050");
 	puo->pos = USEROPT_PAGERPORT;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	ret->protocol_options = g_list_append(ret->protocol_options, puo);
 
 	my_protocol = ret;
 }
@@ -1536,19 +1535,17 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
-	struct proto_user_opt *puo;
+	GaimAccountOption *option;
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Pager Host:");
-	puo->def   = g_strdup(YAHOO_PAGER_HOST);
-	puo->pos   = USEROPT_PAGERHOST;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_string_new(_("Pager Host"), "server",
+											YAHOO_PAGER_HOST);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup("Pager Port:");
-	puo->def   = g_strdup("5050");
-	puo->pos   = USEROPT_PAGERPORT;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_int_new(_("Pager Port"), "port",
+										 YAHOO_PAGER_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
 	my_protocol = plugin;
 }

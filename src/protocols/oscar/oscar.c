@@ -45,6 +45,7 @@
 #include <signal.h>
 
 #include "gaim.h"
+#include "accountopt.h"
 #include "multi.h"
 #include "prpl.h"
 #include "core.h"
@@ -55,9 +56,6 @@
 #include "win32dep.h"
 #endif
 
-/* constants to identify proto_opts */
-#define USEROPT_AUTH      0
-#define USEROPT_AUTHPORT  1
 
 #define UC_AOL		0x02
 #define UC_ADMIN	0x04
@@ -6104,19 +6102,16 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
-	struct proto_user_opt *puo;
+	GaimAccountOption *option;
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Auth Host:"));
-	puo->def   = g_strdup("login.oscar.aol.com");
-	puo->pos   = USEROPT_AUTH;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_string_new(_("Auth Host"), "server",
+											"login.oscar.aol.com");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Auth Port:"));
-	puo->def   = g_strdup("5190");
-	puo->pos   = USEROPT_AUTHPORT;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_int_new(_("Auth Port"), "port", 5190);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
 	my_protocol = plugin;
 }

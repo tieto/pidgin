@@ -41,6 +41,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include "gaim.h"
+#include "accountopt.h"
 #include "multi.h"
 #include "core.h"
 #include "prpl.h"
@@ -52,10 +53,6 @@
 
 #define IRC_BUF_LEN 4096
 #define PDIWORDS 32
-
-#define USEROPT_SERV      0
-#define USEROPT_PORT      1
-#define USEROPT_CHARSET   2
 
 #define DEFAULT_SERVER "irc.freenode.net"
 
@@ -3032,26 +3029,21 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
-	struct proto_user_opt *puo;
-	struct proto_user_split *pus;
+	GaimAccountUserSplit *split;
+	GaimAccountOption *option;
 
-	pus = g_new0(struct proto_user_split, 1);
-	pus->sep = '@';
-	pus->label = g_strdup(_("Server:"));
-	pus->def = g_strdup(DEFAULT_SERVER);
-	prpl_info.user_splits = g_list_append(prpl_info.user_splits, pus);
+	split = gaim_account_user_split_new(_("Server"), DEFAULT_SERVER, '@');
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Port:"));
-	puo->def = g_strdup("6667");
-	puo->pos = USEROPT_PORT;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Encoding:"));
-	puo->def = g_strdup("ISO-8859-1");
-	puo->pos = USEROPT_CHARSET;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_int_new(_("Port"), "port", 6667);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+
+	option = gaim_account_option_string_new(_("Encoding"), "charset",
+											"ISO-8859-1");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
 	my_protocol = plugin;
 }

@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
+#include "accountopt.h"
 #include "msg.h"
 #include "page.h"
 #include "prefs.h"
@@ -1209,19 +1210,16 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
-	struct proto_user_opt *puo;
+	GaimAccountOption *option;
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Login Server:"));
-	puo->def = g_strdup(MSN_SERVER);
-	puo->pos = USEROPT_MSNSERVER;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_string_new(_("Login Server"), "server",
+											MSN_SERVER);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Port:"));
-	puo->def = g_strdup("1863");
-	puo->pos = USEROPT_MSNPORT;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_int_new(_("Port"), "port", 1863);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
 	my_protocol = plugin;
 

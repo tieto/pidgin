@@ -48,6 +48,13 @@ enum
 	NUM_COLUMNS
 };
 
+typedef enum
+{
+	ADD_ACCOUNT_DIALOG,
+	MODIFY_ACCOUNT_DIALOG
+
+} AccountPrefsDialogType;
+
 typedef struct
 {
 	GtkWidget *window;
@@ -60,7 +67,24 @@ typedef struct
 
 } AccountsDialog;
 
+typedef struct
+{
+	AccountPrefsDialogType type;
+
+	GtkWidget *window;
+
+	GtkWidget *login_frame;
+
+	GtkWidget *protocol_menu;
+	GtkWidget *screenname_entry;
+
+	GtkSizeGroup *sg;
+
+} AccountPrefsDialog;
+
+
 static AccountsDialog *accounts_dialog = NULL;
+
 
 static char *
 proto_name(int proto)
@@ -69,6 +93,112 @@ proto_name(int proto)
 
 	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
 }
+
+/**************************************************************************
+ * Add/Modify Account dialog
+ **************************************************************************/
+static GtkWidget *
+__make_protocol_menu(AccountPrefsDialog *dialog)
+{
+	return NULL;
+}
+
+static GtkWidget *
+__add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
+			   const char *text, GtkWidget *widget)
+{
+	GtkWidget *hbox;
+	GtkWidget *label;
+
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(text);
+	gtk_size_group_add_widget(dialog->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_widget_show(widget);
+
+	return hbox;
+}
+
+static void
+__add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
+{
+	GtkWidget *frame;
+	GtkWidget *vbox;
+
+	if (dialog->login_frame != NULL)
+		gtk_widget_destroy(dialog->login_frame);
+
+	frame = gaim_gtk_make_frame(parent, _("Login Options"));
+
+	/* cringe */
+	dialog->login_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+
+	gtk_box_reorder_child(GTK_BOX(parent), dialog->login_frame, 0);
+
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+
+	/* Protocol */
+	dialog->protocol_menu = __make_protocol_menu(dialog);
+	__add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
+
+	/* Screen Name */
+	dialog->screenname_entry = gtk_entry_new();
+	__add_pref_box(dialog, vbox, _("Screenname:"), dialog->screenname_entry);
+}
+
+static void
+__show_account_prefs(AccountPrefsDialogType type)
+{
+	AccountPrefsDialog *dialog;
+	GtkWidget *win;
+	GtkWidget *vbox;
+	GtkWidget *bbox;
+	GtkWidget *sep;
+	GtkWidget *disclosure;
+
+	dialog = g_new0(AccountPrefsDialog, 1);
+
+	dialog->type = type;
+
+	GAIM_DIALOG(win);
+	dialog->window = win;
+
+	gtk_window_set_role(GTK_WINDOW(win), "account");
+
+	if (type == ADD_ACCOUNT_DIALOG)
+		gtk_window_set_title(GTK_WINDOW(win), _("Add Account"));
+	else
+		gtk_window_set_title(GTK_WINDOW(win), _("Modify Account"));
+
+	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
+
+#if 0
+	g_signal_connect(G_OBJECT(win), "delete_event",
+					 G_CALLBACK(__account_win_destroy_cb), dialog);
+#endif
+
+	/* Setup the vbox */
+	vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(win), vbox);
+	gtk_widget_show(vbox);
+
+	/* Setup the top frames. */
+	__add_login_options(dialog, vbox);
+#if 0
+	__add_user_options(dialog, vbox);
+#endif
+}
+
+/**************************************************************************
+ * Accounts Dialog
+ **************************************************************************/
 
 static void
 __signed_on_off_cb(GaimConnection *gc, AccountsDialog *dialog)
@@ -196,7 +326,7 @@ __drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 }
 
 static gint
-__window_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsDialog *dialog)
+__accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsDialog *dialog)
 {
 	g_free(accounts_dialog);
 	accounts_dialog = NULL;
@@ -247,13 +377,13 @@ __configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsDialog *dialog)
 static void
 __add_account_cb(GtkWidget *w, AccountsDialog *dialog)
 {
-
+	__show_account_prefs(ADD_ACCOUNT_DIALOG);
 }
 
 static void
 __modify_account_cb(GtkWidget *w, AccountsDialog *dialog)
 {
-
+	__show_account_prefs(MODIFY_ACCOUNT_DIALOG);
 }
 
 static void
@@ -267,7 +397,7 @@ __close_accounts_cb(GtkWidget *w, AccountsDialog *dialog)
 {
 	gtk_widget_destroy(dialog->window);
 
-	__window_destroy_cb(NULL, NULL, dialog);
+	__accedit_win_destroy_cb(NULL, NULL, dialog);
 }
 
 static void
@@ -479,7 +609,7 @@ gaim_gtk_account_dialog_show(void)
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
-					 G_CALLBACK(__window_destroy_cb), accounts_dialog);
+					 G_CALLBACK(__accedit_win_destroy_cb), accounts_dialog);
 	g_signal_connect(G_OBJECT(win), "configure_event",
 					 G_CALLBACK(__configure_cb), accounts_dialog);
 

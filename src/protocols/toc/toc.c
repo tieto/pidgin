@@ -44,6 +44,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "prpl.h"
+#include "accountopt.h"
 #include "multi.h"
 #include "gaim.h"
 #include "proxy.h"
@@ -2074,19 +2075,15 @@ static GaimPluginInfo info =
 static void
 __init_plugin(GaimPlugin *plugin)
 {
-	struct proto_user_opt *puo;
+	GaimAccountOption *option;
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("TOC Host:"));
-	puo->def = g_strdup("toc.oscar.aol.com");
-	puo->pos = USEROPT_AUTH;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_string_new(_("TOC Host"), "server", TOC_HOST);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("TOC Port:"));
-	puo->def = g_strdup("9898");
-	puo->pos = USEROPT_AUTHPORT;
-	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+	option = gaim_account_option_int_new(_("TOC Host"), "port", TOC_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
 
 	my_protocol = plugin;
 }
