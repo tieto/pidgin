@@ -9,7 +9,6 @@ THE CORE:
 		Jabber: user registration (this is buggy anyway and should probably
 		        just be removed?)
 		Napster: I have no clue.
-		Oscar: buddy icons (move into the core)
 		TOC: file transfer (move into the core)
 	Away needs to be modified to include "show" and "status", i.e. you can have
 		an away state, and an away message. This is exactly what ICQ does -
