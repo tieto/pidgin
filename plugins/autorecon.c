@@ -32,7 +32,8 @@ static gboolean do_signon(gpointer data) {
 	gaim_account_connect(account);
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "done calling gaim_account_connect\n");
 
-	info->timeout = 0;
+	if(info)
+		info->timeout = 0;
 
 	return FALSE;
 }
