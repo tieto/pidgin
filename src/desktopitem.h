@@ -117,8 +117,7 @@ GType gaim_desktop_item_get_type       (void);
 /**
  * This function loads 'filename' and turns it into a GnomeDesktopItem.
  *
- * @param file The filename or directory path to load the GaimDesktopItem from
- * @param flags Flags to influence the loading process
+ * @param filename The filename or directory path to load the GaimDesktopItem from
  *
  * @return The newly loaded item, or NULL on error.
  */
