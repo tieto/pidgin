@@ -14,7 +14,7 @@
 G_MODULE_IMPORT GSList *gaim_accounts;
 
 #define INITIAL 8000
-#define MAXTIME 1024000
+#define MAXTIME 2048000
 
 static GHashTable *hash = NULL;
 
@@ -40,7 +40,7 @@ static void reconnect(struct gaim_connection *gc, void *m) {
 		if (!del)
 			del = INITIAL;
 		else
-			del = MAX(2 * del, MAXTIME);
+			del = MIN(2 * del, MAXTIME);
 		tim = g_timeout_add(del, do_signon, gc->account);
 		g_hash_table_insert(hash, gc->account, (gpointer)del);
 	} else {
