@@ -283,7 +283,10 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
 {
         char *c;
         int nl = 1;;
-        fprintf(f, "\t\tident { %s } { %s }\n", u->username, u->password);
+	if (general_options & OPT_GEN_REMEMBER_PASS)
+	        fprintf(f, "\t\tident { %s } { %s }\n", u->username, u->password);
+	else
+		fprintf(f, "\t\tident { %s } {  }\n", u->username);
         fprintf(f, "\t\tuser_info {");
         c = u->user_info;
         while(*c) {
