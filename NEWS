@@ -20,9 +20,12 @@
 	WYSIWYG bugs. Then they went and made me a developer. Which is cool.
 	They told me I could commit WYSIWYG and Yahoo! changes. So I went
 	and fixed IM Image and Direct Connect in AIM for some reason. I also
-	added some new Yahoo! smileys at least. I might work on some of
-	those new Yahoo! features for next release, like buddy icons. But
-	don't count on it.
+	added some new Yahoo! smileys at least. Also you change your link
+	color in your ~/.gtkrc-2.0 file now. I might work on some of those
+	new Yahoo! features for next release, like buddy icons. But don't
+	count on it. Thanks to everyone who congratulated me. And thanks
+	to all our Crazy Patch Writers, who now expect me to apply all their
+	Crazy Patches.
 
 	Christian: First of all, congrats to Tim! He's our latest Gaim
 	developer, and we're all glad to have him on board. He's been a
@@ -33,6 +36,11 @@
 	release.  I've been taking a small break, first due to school and now
 	work, but I'll be coming back strong in the next couple of releases. In
 	the meantime, enjoy.
+
+	Gary: Congrats to Tim, no more competing for most ChangeLog entries.
+	This means you _should_ be winning every release.  Anyways, I didn't
+	finish nearly as much as I wanted to for this release but all of that
+	and then some should appear in 0.79.
 
 0.77 (04/22/2004):
 	Sean: We're back to a somewhat regular release cycle now.  Hooray!
