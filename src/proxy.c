@@ -622,8 +622,6 @@ static gboolean host_resolved(gpointer data)
 	hosts = g_slist_append(hosts, GINT_TO_POINTER(req->addrlen));
 	hosts = g_slist_append(hosts, req->addr);
 	req->callback(hosts, req->data, NULL);
-	g_slist_free(hosts);
-	g_free(req->addr);
 	g_free(req);
 	return FALSE;
 }
