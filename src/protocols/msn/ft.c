@@ -29,7 +29,7 @@
 G_MODULE_IMPORT GSList *connections;
 
 static struct gaim_xfer *
-find_xfer_by_cookie(struct gaim_connection *gc, unsigned long cookie)
+find_xfer_by_cookie(GaimConnection *gc, unsigned long cookie)
 {
 	GSList *g;
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
@@ -52,7 +52,7 @@ find_xfer_by_cookie(struct gaim_connection *gc, unsigned long cookie)
 static void
 msn_xfer_init(struct gaim_xfer *xfer)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	struct msn_xfer_data *xfer_data;
 	struct msn_switchboard *ms;
 	char header[MSN_BUF_LEN];
@@ -117,7 +117,7 @@ msn_xfer_start(struct gaim_xfer *xfer)
 static void
 msn_xfer_end(struct gaim_xfer *xfer)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	struct msn_xfer_data *xfer_data;
 	struct msn_data *md;
 
@@ -142,7 +142,7 @@ msn_xfer_end(struct gaim_xfer *xfer)
 static void
 msn_xfer_cancel_send(struct gaim_xfer *xfer)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	struct msn_xfer_data *xfer_data;
 	struct msn_data *md;
 
@@ -162,7 +162,7 @@ msn_xfer_cancel_send(struct gaim_xfer *xfer)
 static void
 msn_xfer_cancel_recv(struct gaim_xfer *xfer)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	struct msn_xfer_data *xfer_data;
 	struct msn_data *md;
 
@@ -222,7 +222,7 @@ msn_xfer_read(char **buffer, struct gaim_xfer *xfer)
 static size_t
 msn_xfer_write(const char *buffer, size_t size, struct gaim_xfer *xfer)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	struct msn_xfer_data *xfer_data;
 	struct msn_data *md;
 	unsigned char header[3];
@@ -254,7 +254,7 @@ static int
 msn_process_msnftp(struct gaim_xfer *xfer, gint source, const char *buf)
 {
 	struct msn_xfer_data *xfer_data;
-	struct gaim_account *account;
+	GaimAccount *account;
 	char sendbuf[MSN_BUF_LEN];
 
 	xfer_data = (struct msn_xfer_data *)xfer->data;
@@ -367,7 +367,7 @@ msn_msnftp_cb(gpointer data, gint source, GaimInputCondition cond)
 static void
 msn_msnftp_connect(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	struct gaim_xfer *xfer;
 	struct msn_xfer_data *xfer_data;
 	char buf[MSN_BUF_LEN];

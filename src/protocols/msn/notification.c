@@ -27,7 +27,7 @@
 
 typedef struct
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	MsnUser *user;
 
 } MsnPermitAdd;
@@ -43,7 +43,7 @@ static gboolean
 __add_buddy(MsnServConn *servconn, MsnUser *user)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 	struct buddy *b;
 	MsnGroup *group = NULL;
 	struct group *g = NULL;
@@ -125,8 +125,7 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 
 		if (msn_servconn_send_command(session->notification_conn,
 									  "ADD", outparams) <= 0) {
-			hide_login_progress(pa->gc, _("Write error"));
-			signoff(pa->gc);
+			gaim_connection_error(pa->gc, _("Write error"));
 			return;
 		}
 
@@ -155,8 +154,7 @@ msn_cancel_add_cb(MsnPermitAdd *pa)
 
 		if (msn_servconn_send_command(session->notification_conn,
 									  "ADD", outparams) <= 0) {
-			hide_login_progress(pa->gc, _("Write error"));
-			signoff(pa->gc);
+			gaim_connection_error(pa->gc, _("Write error"));
 			return;
 		}
 
@@ -217,7 +215,7 @@ static gboolean
 __ver_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	size_t i;
 	gboolean msnp5_found = FALSE;
 
@@ -229,15 +227,13 @@ __ver_cmd(MsnServConn *servconn, const char *command, const char **params,
 	}
 
 	if (!msnp5_found) {
-		hide_login_progress(gc, _("Protocol not supported"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Protocol not supported"));
 
 		return FALSE;
 	}
 
 	if (!msn_servconn_send_command(servconn, "INF", NULL)) {
-		hide_login_progress(gc, _("Unable to request INF"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to request INF"));
 
 		return FALSE;
 	}
@@ -249,26 +245,27 @@ static gboolean
 __inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimAccount *account = servconn->session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
 	char outparams[MSN_BUF_LEN];
 
 	if (strcmp(params[1], "MD5")) {
-		hide_login_progress(gc, _("Unable to login using MD5"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to login using MD5"));
 
 		return FALSE;
 	}
 
-	g_snprintf(outparams, sizeof(outparams), "MD5 I %s", gc->username);
+	g_snprintf(outparams, sizeof(outparams), "MD5 I %s",
+			   gaim_account_get_username(account));
 
 	if (!msn_servconn_send_command(servconn, "USR", outparams)) {
-		hide_login_progress(gc, _("Unable to send USR"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to send USR"));
 
 		return FALSE;
 	}
 
-	set_login_progress(gc, 4, _("Requesting to send password"));
+	gaim_connection_update_progress(gc, _("Requesting to send password"),
+									4, MSN_CONNECT_STEPS);
 
 	return TRUE;
 }
@@ -278,7 +275,8 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimAccount *account = session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
 	char outparams[MSN_BUF_LEN];
 
 	/* We're either getting the challenge or the OK. Let's find out. */
@@ -292,13 +290,13 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		session->syncing_lists = TRUE;
 
 		if (!msn_servconn_send_command(servconn, "SYN", "0")) {
-			hide_login_progress(gc, _("Unable to write"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Unable to write"));
 
 			return FALSE;
 		}
 
-		set_login_progress(session->account->gc, 4, _("Retrieving buddy list"));
+		gaim_connection_update_progress(gc, _("Retrieving buddy list"),
+										5, MSN_CONNECT_STEPS);
 	}
 	else {
 		/* Challenge */
@@ -322,8 +320,7 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		}
 
 		if (!msn_servconn_send_command(servconn, "USR", outparams)) {
-			hide_login_progress(gc, _("Unable to send password"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Unable to send password"));
 
 			return FALSE;
 		}
@@ -341,19 +338,17 @@ static gboolean
 __out_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 
 	if (!g_ascii_strcasecmp(params[0], "OTH")) {
-		hide_login_progress(gc,
+		gaim_connection_error(gc,
 							_("You have been disconnected. You have "
 							  "signed on from another location."));
-		signoff(gc);
 	}
 	else if (!g_ascii_strcasecmp(params[0], "SSD")) {
-		hide_login_progress(gc,
+		gaim_connection_error(gc,
 							_("You have been disconnected. The MSN servers "
 							  "are going down temporarily."));
-		signoff(gc);
 	}
 
 	return FALSE;
@@ -383,7 +378,7 @@ static gboolean
 __chl_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	char buf[MSN_BUF_LEN];
 	char buf2[3];
 	md5_state_t st;
@@ -406,8 +401,7 @@ __chl_cmd(MsnServConn *servconn, const char *command, const char **params,
 	}
 
 	if (msn_servconn_write(servconn, buf, strlen(buf)) <= 0) {
-		hide_login_progress(gc, _("Unable to write to server"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to write to server"));
 	}
 
 	return TRUE;
@@ -422,7 +416,8 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 {
 	MsnSession *session = servconn->session;
 	MsnUser *user;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *account = session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
 	MsnPermitAdd *pa;
 	GSList *sl;
 	const char *list, *passport;
@@ -459,7 +454,7 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	g_snprintf(msg, sizeof(msg),
 			   _("The user %s (%s) wants to add %s to his or her buddy list."),
-			   passport, friend, gc->username);
+			   passport, friend, gaim_account_get_username(account));
 
 	gaim_request_action(gc, NULL, msg, NULL, 0, pa, 2,
 						_("Authorize"), G_CALLBACK(msn_accept_add_cb),
@@ -492,7 +487,7 @@ static gboolean
 __blp_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 
 	if (!g_ascii_strcasecmp(params[2], "AL")) {
 		/*
@@ -520,7 +515,7 @@ __bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 	const char *passport, *type, *value;
 	struct buddy *b;
 	MsnUser *user;
@@ -559,7 +554,7 @@ static gboolean
 __fln_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 
 	serv_got_update(gc, (char *)params[0], 0, 0, 0, 0, 0);
 
@@ -570,7 +565,7 @@ static gboolean
 __iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	int status = 0;
 	const char *state, *passport, *friend;
 	struct buddy *b;
@@ -640,7 +635,7 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 	int user_num;
 	int num_users;
 	const char *type;
@@ -735,8 +730,7 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 		/* Now we're at the last one, so we can do final work. */
 		if (!session->lists_synced) {
 			if (!msn_servconn_send_command(servconn, "CHG", "NLN")) {
-				hide_login_progress(gc, _("Unable to write"));
-				signoff(gc);
+				gaim_connection_error(gc, _("Unable to write"));
 
 				return FALSE;
 			}
@@ -778,7 +772,7 @@ __nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 	const char *state;
 	const char *passport;
 	const char *friend;
@@ -835,7 +829,7 @@ __rea_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 	char *friend;
 
 	friend = msn_url_decode(params[3]);
@@ -878,7 +872,7 @@ __rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 	/* I hate this. */
 	if (session->moving_buddy) {
 		MsnGroup *group, *old_group;
-		struct gaim_connection *gc = session->account->gc;
+		GaimConnection *gc = session->account->gc;
 		const char *passport = params[3];
 		char outparams[MSN_BUF_LEN];
 
@@ -909,8 +903,7 @@ __rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADD", outparams)) {
-			hide_login_progress(gc, _("Write error"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Write error"));
 			return FALSE;
 		}
 
@@ -930,8 +923,7 @@ __rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 			if (!msn_servconn_send_command(session->notification_conn,
 										   "RMG", outparams)) {
 
-				hide_login_progress(gc, _("Write error"));
-				signoff(gc);
+				gaim_connection_error(gc, _("Write error"));
 				return FALSE;
 			}
 		}
@@ -963,7 +955,8 @@ __url_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimAccount *account = session->account;
+	GaimConnection *gc = gaim_account_get_connection(gc);
 	const char *rru;
 	const char *url;
 	md5_state_t st;
@@ -1017,9 +1010,9 @@ __url_cmd(MsnServConn *servconn, const char *command, const char **params,
 				url);
 		fprintf(fd, "<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n");
 		fprintf(fd, "<input type=\"hidden\" name=\"login\" value=\"%s\">\n",
-				gc->username);
+				gaim_account_get_username(account));
 		fprintf(fd, "<input type=\"hidden\" name=\"username\" value=\"%s\">\n",
-				gc->username);
+				gaim_account_get_username(account));
 		fprintf(fd, "<input type=\"hidden\" name=\"sid\" value=\"%s\">\n",
 				session->passport_info.sid);
 		fprintf(fd, "<input type=\"hidden\" name=\"kv\" value=\"%s\">\n",
@@ -1123,14 +1116,13 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 {
 	MsnSession *session = servconn->session;
 	MsnSwitchBoard *swboard;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 	char *host;
 	char *c;
 	int port;
 
 	if (strcmp(params[1], "SB") && strcmp(params[1], "NS")) {
-		hide_login_progress(gc, _("Got invalid XFR"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Got invalid XFR"));
 		
 		return FALSE;
 	}
@@ -1172,9 +1164,8 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		session->notification_conn = msn_notification_new(session, host, port);
 
 		if (!msn_servconn_connect(session->notification_conn)) {
-			hide_login_progress(gc, _("Unable to transfer to "
+			gaim_connection_error(gc, _("Unable to transfer to "
 									  "notification server"));
-			signoff(gc);
 
 			return FALSE;
 		}
@@ -1215,7 +1206,7 @@ static gboolean
 __initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 	GHashTable *table;
 	const char *unread;
 
@@ -1256,7 +1247,7 @@ static gboolean
 __email_msg(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 	GHashTable *table;
 	const char *from, *subject;
 
@@ -1334,11 +1325,11 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *notification = data;
 	MsnSession *session = notification->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimAccount *account = session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
 
 	if (source == -1) {
-		hide_login_progress(session->account->gc, _("Unable to connect"));
-		signoff(session->account->gc);
+		gaim_connection_error(session->account->gc, _("Unable to connect"));
 		return FALSE;
 	}
 
@@ -1347,12 +1338,12 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if (!msn_servconn_send_command(notification, "VER",
 								   "MSNP7 MSNP6 MSNP5 MSNP4 CVR0")) {
-		hide_login_progress(gc, _("Unable to write to server"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to write to server"));
 		return FALSE;
 	}
 
-	session->user = msn_user_new(session, gc->username, NULL);
+	session->user = msn_user_new(session,
+								 gaim_connection_get_username(account), NULL);
 
 	set_login_progress(session->account->gc, 4, _("Syncing with server"));
 
@@ -1363,12 +1354,11 @@ static void
 __failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *notification = data;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 
 	gc = notification->session->account->gc;
 
-	hide_login_progress(gc, _("Error reading from server"));
-	signoff(gc);
+	gaim_connection_error(gc, _("Error reading from server"));
 }
 
 MsnServConn *

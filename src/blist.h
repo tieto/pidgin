@@ -28,6 +28,13 @@
 
 #include <glib.h>
 
+typedef struct _GaimBlistNode GaimBlistNode;
+
+/* TODO Namespace these! */
+struct chat;
+
+#include "account.h"
+
 /**************************************************************************/
 /* Enumerations                                                           */
 /**************************************************************************/
@@ -57,7 +64,6 @@ enum gaim_buddy_presence_state {
 /* Data Structures                                                        */
 /**************************************************************************/
 
-typedef struct _GaimBlistNode GaimBlistNode;
 /**
  * A Buddy list node.  This can represent a group, a buddy, or anything else.  This is a base class for struct buddy and
  * struct group and for anything else that wants to put itself in the buddy list. */

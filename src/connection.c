@@ -23,6 +23,7 @@
 #include "connection.h"
 
 static GList *connections = NULL;
+static GList *connections_connecting = NULL;
 static GaimConnectionUiOps *connection_ui_ops = NULL;
 
 GaimConnection *
@@ -172,6 +173,8 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		/* Set the time the account came online */
 		time(&gc->login_time);
 
+		connections_connecting = g_list_append(connections_connecting, gc);
+
 		if (ops != NULL && ops->connected != NULL)
 			ops->connected(gc);
 
@@ -230,6 +233,9 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		}
 
 		serv_set_permit_deny(gc);
+	}
+	else {
+		connections_connecting = g_list_remove(connections_connecting, gc);
 	}
 }
 
@@ -292,6 +298,24 @@ gaim_connection_update_progress(GaimConnection *gc, const char *text,
 
 	if (ops != NULL && ops->connect_progress != NULL)
 		ops->connect_progress(gc, text, step, count);
+}
+
+void
+gaim_connection_error(GaimConnection *gc, const char *text)
+{
+	GaimConnectionUiOps *ops;
+
+	g_return_if_fail(gc   != NULL);
+	g_return_if_fail(text != NULL);
+
+	ops = gaim_get_connection_ui_ops();
+
+	gaim_connection_disconnect(gc);
+
+	if (ops != NULL && ops->disconnected != NULL)
+		ops->disconnected(gc, text);
+
+	gaim_connection_destroy(gc);
 }
 
 void

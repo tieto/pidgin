@@ -31,7 +31,7 @@ typedef struct _MsnSession MsnSession;
 
 struct _MsnSession
 {
-	struct gaim_account *account;
+	GaimAccount *account;
 	MsnUser *user;
 
 	char *dispatch_server;
@@ -90,7 +90,7 @@ struct _MsnSession
  *
  * @return The new MSN session.
  */
-MsnSession *msn_session_new(struct gaim_account *account,
+MsnSession *msn_session_new(GaimAccount *account,
 							const char *server, int port);
 
 /**

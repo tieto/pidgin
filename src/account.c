@@ -325,7 +325,8 @@ gaim_account_get_remember_password(const GaimAccount *account)
 }
 
 int
-gaim_account_get_int(const GaimAccount *account, const char *name)
+gaim_account_get_int(const GaimAccount *account, const char *name,
+					 int default_value)
 {
 	GaimAccountSetting *setting;
 
@@ -334,13 +335,17 @@ gaim_account_get_int(const GaimAccount *account, const char *name)
 
 	setting = g_hash_table_lookup(account->settings, name);
 
+	if (setting == NULL)
+		return default_value;
+
 	g_return_val_if_fail(setting->type == GAIM_PREF_INT, -1);
 
 	return setting->value.integer;
 }
 
 const char *
-gaim_account_get_string(const GaimAccount *account, const char *name)
+gaim_account_get_string(const GaimAccount *account, const char *name,
+						const char *default_value)
 {
 	GaimAccountSetting *setting;
 
@@ -349,13 +354,17 @@ gaim_account_get_string(const GaimAccount *account, const char *name)
 
 	setting = g_hash_table_lookup(account->settings, name);
 
+	if (setting == NULL)
+		return default_value;
+
 	g_return_val_if_fail(setting->type == GAIM_PREF_STRING, NULL);
 
 	return setting->value.string;
 }
 
 gboolean
-gaim_account_get_bool(const GaimAccount *account, const char *name)
+gaim_account_get_bool(const GaimAccount *account, const char *name,
+					  gboolean default_value)
 {
 	GaimAccountSetting *setting;
 
@@ -363,6 +372,9 @@ gaim_account_get_bool(const GaimAccount *account, const char *name)
 	g_return_val_if_fail(name    != NULL, FALSE);
 
 	setting = g_hash_table_lookup(account->settings, name);
+
+	if (setting == NULL)
+		return default_value;
 
 	g_return_val_if_fail(setting->type == GAIM_PREF_BOOLEAN, FALSE);
 

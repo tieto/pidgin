@@ -71,24 +71,27 @@ __base64_enc(const char *data, int len)
 }
 
 static gboolean
-__get_buddy_icon_info(struct gaim_account *account, char **base64,
+__get_buddy_icon_info(GaimAccount *account, char **base64,
 					  char **md5sum, int *file_size, int *base64_size)
 {
 	FILE *fp;
 	struct stat sb;
 	md5_state_t st;
 	md5_byte_t di[16];
+	const char *icon;
 
 	if (base64      != NULL) *base64      = NULL;
 	if (md5sum      != NULL) *md5sum      = NULL;
 	if (file_size   != NULL) *file_size   = 0;
 	if (base64_size != NULL) *base64_size = 0;
 
-	if (!stat(account->iconfile, &sb)) {
+	icon = gaim_account_get_buddy_icon(account);
+
+	if (!stat(icon, &sb)) {
 		if (file_size != NULL)
 			*file_size = sb.st_size;
 
-		if ((fp = fopen(account->iconfile, "rb")) != NULL) {
+		if ((fp = fopen(icon, "rb")) != NULL) {
 			char *buf = g_malloc(sb.st_size + 1);
 			char *temp;
 
@@ -140,7 +143,7 @@ __get_buddy_icon_info(struct gaim_account *account, char **base64,
 static gboolean
 __send_icon_data(MsnSwitchBoard *swboard, MsnBuddyIconXfer *buddyicon)
 {
-	struct gaim_connection *gc = swboard->servconn->session->account->gc;
+	GaimConnection *gc = swboard->servconn->session->account->gc;
 	char buf[MSN_BUF_LEN];
 	MsnMessage *msg;
 	int len;
@@ -166,8 +169,7 @@ __send_icon_data(MsnSwitchBoard *swboard, MsnBuddyIconXfer *buddyicon)
 		msn_buddy_icon_xfer_destroy(swboard->buddy_icon_xfer);
 		swboard->buddy_icon_xfer = NULL;
 
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 
 		return FALSE;
 	}
@@ -198,7 +200,7 @@ static gboolean
 __process_invite(MsnServConn *servconn, const MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 	MsnMessage *new_msg;
 	MsnSwitchBoard *swboard;
 	MsnBuddyIconXfer *buddyicon;
@@ -277,8 +279,7 @@ __process_invite(MsnServConn *servconn, const MsnMessage *msg)
 		if ((swboard = msn_session_open_switchboard(session)) == NULL) {
 			msn_message_destroy(new_msg);
 
-			hide_login_progress(gc, _("Write error"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Write error"));
 
 			return FALSE;
 		}
@@ -326,8 +327,7 @@ __process_invite(MsnServConn *servconn, const MsnMessage *msg)
 			if ((swboard = msn_session_open_switchboard(session)) == NULL) {
 				msn_message_destroy(new_msg);
 
-				hide_login_progress(gc, _("Write error"));
-				signoff(gc);
+				gaim_connection_error(gc, _("Write error"));
 
 				return FALSE;
 			}
@@ -398,7 +398,7 @@ __process_invite(MsnServConn *servconn, const MsnMessage *msg)
 static gboolean
 __process_data(MsnServConn *servconn, const MsnMessage *msg)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard;
 	MsnBuddyIconXfer *buddyicon;
 	MsnMessage *ack_msg;
@@ -432,8 +432,7 @@ __process_data(MsnServConn *servconn, const MsnMessage *msg)
 		msn_buddy_icon_xfer_destroy(swboard->buddy_icon_xfer);
 		swboard->buddy_icon_xfer = NULL;
 
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 
 		return FALSE;
 	}
@@ -475,8 +474,8 @@ msn_buddy_icon_msg(MsnServConn *servconn, MsnMessage *msg)
 void
 msn_buddy_icon_invite(MsnSwitchBoard *swboard)
 {
-	struct gaim_account *account = swboard->servconn->session->account;
-	struct gaim_connection *gc = account->gc;
+	GaimAccount *account = swboard->servconn->session->account;
+	GaimConnection *gc = account->gc;
 	MsnMessage *msg;
 	char buf[MSN_BUF_LEN];
 	char *md5sum;
@@ -484,7 +483,7 @@ msn_buddy_icon_invite(MsnSwitchBoard *swboard)
 
 	g_return_if_fail(swboard != NULL);
 
-	if (*account->iconfile == '\0')
+	if (gaim_account_get_buddy_icon(account) == NULL)
 		return; /* We don't have an icon to send. */
 
 	if (!__get_buddy_icon_info(account, NULL, &md5sum,
@@ -519,8 +518,7 @@ msn_buddy_icon_invite(MsnSwitchBoard *swboard)
 	if (!msn_switchboard_send_msg(swboard, msg)) {
 		msn_message_destroy(msg);
 
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 
 		return;
 	}

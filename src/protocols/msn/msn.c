@@ -37,15 +37,16 @@ static char *msn_normalize(const char *str);
 
 typedef struct
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	const char *passport;
 
 } MsnMobileData;
 
 static void
-msn_act_id(struct gaim_connection *gc, const char *entry)
+msn_act_id(GaimConnection *gc, const char *entry)
 {
 	MsnSession *session = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	char outparams[MSN_BUF_LEN];
 	char *alias;
 
@@ -61,20 +62,20 @@ msn_act_id(struct gaim_connection *gc, const char *entry)
 	}
 
 	g_snprintf(outparams, sizeof(outparams), "%s %s",
-			   gc->username, msn_url_encode(alias));
+			   gaim_account_get_username(account), msn_url_encode(alias));
 
 	g_free(alias);
 
 	if (!msn_servconn_send_command(session->notification_conn,
 								   "REA", outparams)) {
 
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
+		return;
 	}
 }
 
 static void
-msn_set_prp(struct gaim_connection *gc, const char *type, const char *entry)
+msn_set_prp(GaimConnection *gc, const char *type, const char *entry)
 {
 	MsnSession *session = gc->proto_data;
 	char outparams[MSN_BUF_LEN];
@@ -87,37 +88,37 @@ msn_set_prp(struct gaim_connection *gc, const char *type, const char *entry)
 	if (!msn_servconn_send_command(session->notification_conn,
 								   "PRP", outparams)) {
 
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
+		return;
 	}
 }
 
 static void
-msn_set_home_phone_cb(struct gaim_connection *gc, const char *entry)
+msn_set_home_phone_cb(GaimConnection *gc, const char *entry)
 {
 	msn_set_prp(gc, "PHH", entry);
 }
 
 static void
-msn_set_work_phone_cb(struct gaim_connection *gc, const char *entry)
+msn_set_work_phone_cb(GaimConnection *gc, const char *entry)
 {
 	msn_set_prp(gc, "PHW", entry);
 }
 
 static void
-msn_set_mobile_phone_cb(struct gaim_connection *gc, const char *entry)
+msn_set_mobile_phone_cb(GaimConnection *gc, const char *entry)
 {
 	msn_set_prp(gc, "PHM", entry);
 }
 
 static void
-__enable_msn_pages_cb(struct gaim_connection *gc)
+__enable_msn_pages_cb(GaimConnection *gc)
 {
 	msn_set_prp(gc, "MOB", "Y");
 }
 
 static void
-__disable_msn_pages_cb(struct gaim_connection *gc)
+__disable_msn_pages_cb(GaimConnection *gc)
 {
 	msn_set_prp(gc, "MOB", "N");
 }
@@ -145,8 +146,7 @@ __send_to_mobile_cb(MsnMobileData *data, const char *entry)
 
 	if (!msn_servconn_write(servconn, page_str, strlen(page_str))) {
 
-		hide_login_progress(data->gc, _("Write error"));
-		signoff(data->gc);
+		gaim_connection_error(data->gc, _("Write error"));
 	}
 
 	g_free(page_str);
@@ -161,18 +161,18 @@ __close_mobile_page_cb(MsnMobileData *data, const char *entry)
 /* -- */
 
 static void
-msn_show_set_friendly_name(struct gaim_connection *gc)
+msn_show_set_friendly_name(GaimConnection *gc)
 {
 	gaim_request_input(gc, NULL, _("Set your friendly name."),
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
-					   gc->displayname, FALSE,
+					   gaim_connection_get_display_name(gc), FALSE,
 					   _("OK"), G_CALLBACK(msn_act_id),
 					   _("Cancel"), NULL, gc);
 }
 
 static void
-msn_show_set_home_phone(struct gaim_connection *gc)
+msn_show_set_home_phone(GaimConnection *gc)
 {
 	MsnSession *session = gc->proto_data;
 
@@ -183,7 +183,7 @@ msn_show_set_home_phone(struct gaim_connection *gc)
 }
 
 static void
-msn_show_set_work_phone(struct gaim_connection *gc)
+msn_show_set_work_phone(GaimConnection *gc)
 {
 	MsnSession *session = gc->proto_data;
 
@@ -194,7 +194,7 @@ msn_show_set_work_phone(struct gaim_connection *gc)
 }
 
 static void
-msn_show_set_mobile_phone(struct gaim_connection *gc)
+msn_show_set_mobile_phone(GaimConnection *gc)
 {
 	MsnSession *session = gc->proto_data;
 
@@ -205,7 +205,7 @@ msn_show_set_mobile_phone(struct gaim_connection *gc)
 }
 
 static void
-msn_show_set_mobile_pages(struct gaim_connection *gc)
+msn_show_set_mobile_pages(GaimConnection *gc)
 {
 	gaim_request_action(gc, NULL, _("Allow MSN Mobile pages?"),
 						_("Do you want to allow or disallow people on "
@@ -218,7 +218,7 @@ msn_show_set_mobile_pages(struct gaim_connection *gc)
 }
 
 static void
-__show_send_to_mobile_cb(struct gaim_connection *gc, const char *passport)
+__show_send_to_mobile_cb(GaimConnection *gc, const char *passport)
 {
 	MsnUser *user;
 	MsnSession *session = gc->proto_data;
@@ -243,7 +243,7 @@ __show_send_to_mobile_cb(struct gaim_connection *gc, const char *passport)
  **************************************************************************/
 
 static const char *
-msn_list_icon(struct gaim_account *a, struct buddy *b)
+msn_list_icon(GaimAccount *a, struct buddy *b)
 {
 	return "msn";
 }
@@ -304,7 +304,7 @@ msn_tooltip_text(struct buddy *b)
 }
 
 static GList *
-msn_away_states(struct gaim_connection *gc)
+msn_away_states(GaimConnection *gc)
 {
 	GList *m = NULL;
 
@@ -320,7 +320,7 @@ msn_away_states(struct gaim_connection *gc)
 }
 
 static GList *
-msn_actions(struct gaim_connection *gc)
+msn_actions(GaimConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_actions_menu *pam;
@@ -371,7 +371,7 @@ msn_actions(struct gaim_connection *gc)
 }
 
 static GList *
-msn_buddy_menu(struct gaim_connection *gc, const char *who)
+msn_buddy_menu(GaimConnection *gc, const char *who)
 {
 	MsnUser *user;
 	struct proto_buddy_menu *pbm;
@@ -395,41 +395,41 @@ msn_buddy_menu(struct gaim_connection *gc, const char *who)
 }
 
 static void
-msn_login(struct gaim_account *account)
+msn_login(GaimAccount *account)
 {
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 	MsnSession *session;
+	const char *username;
 	const char *server;
 	int port;
 
-	server = (*account->proto_opt[USEROPT_MSNSERVER]
-			  ? account->proto_opt[USEROPT_MSNSERVER]
-			  : MSN_SERVER);
-	port = (*account->proto_opt[USEROPT_MSNPORT]
-			? atoi(account->proto_opt[USEROPT_MSNPORT])
-			: MSN_PORT);
+	server = gaim_account_get_string(account, "server", MSN_SERVER);
+	port   = gaim_account_get_int(account,    "port",   MSN_PORT);
 
-
-	gc = new_gaim_conn(account);
+	gc = gaim_account_get_connection(account);
 
 	session = msn_session_new(account, server, port);
 	session->prpl = my_protocol;
 
 	gc->proto_data = session;
 
-	set_login_progress(gc, 1, _("Connecting"));
+	gaim_connection_update_progress(gc, _("Connecting"), 0, MSN_CONNECT_STEPS);
 
-	g_snprintf(gc->username, sizeof(gc->username), "%s",
-			   msn_normalize(gc->username));
+	/* Hmm, I don't like this. */
+	username = msn_normalize(gaim_account_get_username(account));
+
+	if (strcmp(username, gaim_account_get_username(account)))
+		gaim_account_set_username(account, username);
 
 	if (!msn_session_connect(session)) {
-		hide_login_progress(gc, _("Unable to connect"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to connect"));
+
+		return;
 	}
 }
 
 static void
-msn_close(struct gaim_connection *gc)
+msn_close(GaimConnection *gc)
 {
 	MsnSession *session = gc->proto_data;
 
@@ -439,15 +439,16 @@ msn_close(struct gaim_connection *gc)
 }
 
 static int
-msn_send_im(struct gaim_connection *gc, const char *who, const char *message,
+msn_send_im(GaimConnection *gc, const char *who, const char *message,
 			int len, int flags)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;
 	MsnSwitchBoard *swboard;
 
 	swboard = msn_session_find_switch_with_passport(session, who);
 
-	if (g_ascii_strcasecmp(who, gc->username)) {
+	if (g_ascii_strcasecmp(who, gaim_account_get_username(account))) {
 		MsnMessage *msg;
 		MsnUser *user;
 
@@ -467,8 +468,7 @@ msn_send_im(struct gaim_connection *gc, const char *who, const char *message,
 			if ((swboard = msn_session_open_switchboard(session)) == NULL) {
 				msn_message_destroy(msg);
 
-				hide_login_progress(gc, _("Write error"));
-				signoff(gc);
+				gaim_connection_error(gc, _("Write error"));
 
 				return 1;
 			}
@@ -494,8 +494,9 @@ msn_send_im(struct gaim_connection *gc, const char *who, const char *message,
 }
 
 static int
-msn_send_typing(struct gaim_connection *gc, char *who, int typing)
+msn_send_typing(GaimConnection *gc, char *who, int typing)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;
 	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
@@ -504,7 +505,7 @@ msn_send_typing(struct gaim_connection *gc, char *who, int typing)
 	if (!typing)
 		return 0;
 
-	if (!g_ascii_strcasecmp(who, gc->username)) {
+	if (!g_ascii_strcasecmp(who, gaim_account_get_username(account))) {
 		/* We'll just fake it, since we're sending to ourself. */
 		serv_got_typing(gc, who, MSN_TYPING_RECV_TIMEOUT, TYPING);
 
@@ -523,7 +524,8 @@ msn_send_typing(struct gaim_connection *gc, char *who, int typing)
 	msn_message_set_receiver(msg, user);
 	msn_message_set_charset(msg, NULL);
 	msn_message_set_flag(msg, 'U');
-	msn_message_set_attr(msg, "TypingUser", gc->username);
+	msn_message_set_attr(msg, "TypingUser",
+						 gaim_account_get_username(account));
 	msn_message_set_attr(msg, "User-Agent", NULL);
 	msn_message_set_body(msg, "\r\n");
 
@@ -536,7 +538,7 @@ msn_send_typing(struct gaim_connection *gc, char *who, int typing)
 }
 
 static void
-msn_set_away(struct gaim_connection *gc, char *state, char *msg)
+msn_set_away(GaimConnection *gc, char *state, char *msg)
 {
 	MsnSession *session = gc->proto_data;
 	const char *away;
@@ -577,13 +579,13 @@ msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 		away = "NLN";
 
 	if (!msn_servconn_send_command(session->notification_conn, "CHG", away)) {
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
+		return;
 	}
 }
 
 static void
-msn_set_idle(struct gaim_connection *gc, int idle)
+msn_set_idle(GaimConnection *gc, int idle)
 {
 	MsnSession *session = gc->proto_data;
 
@@ -593,13 +595,13 @@ msn_set_idle(struct gaim_connection *gc, int idle)
 	if (!msn_servconn_send_command(session->notification_conn, "CHG",
 								   (idle ? "IDL" : "NLN"))) {
 
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
+		return;
 	}
 }
 
 static void
-msn_add_buddy(struct gaim_connection *gc, const char *name)
+msn_add_buddy(GaimConnection *gc, const char *name)
 {
 	MsnSession *session = gc->proto_data;
 	char *who;
@@ -628,13 +630,13 @@ msn_add_buddy(struct gaim_connection *gc, const char *name)
 
 	if (!msn_servconn_send_command(session->notification_conn,
 								   "ADD", outparams)) {
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
+		return;
 	}
 }
 
 static void
-msn_rem_buddy(struct gaim_connection *gc, char *who, char *group)
+msn_rem_buddy(GaimConnection *gc, char *who, char *group)
 {
 	MsnSession *session = gc->proto_data;
 	char outparams[MSN_BUF_LEN];
@@ -644,13 +646,13 @@ msn_rem_buddy(struct gaim_connection *gc, char *who, char *group)
 	if (!msn_servconn_send_command(session->notification_conn,
 								   "REM", outparams)) {
 
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
+		return;
 	}
 }
 
 static void
-msn_add_permit(struct gaim_connection *gc, const char *who)
+msn_add_permit(GaimConnection *gc, const char *who)
 {
 	MsnSession *session = gc->proto_data;
 	char buf[MSN_BUF_LEN];
@@ -676,8 +678,7 @@ msn_add_permit(struct gaim_connection *gc, const char *who)
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "REM", buf)) {
 
-			hide_login_progress(gc, _("Write error"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Write error"));
 			return;
 		}
 	}
@@ -685,13 +686,13 @@ msn_add_permit(struct gaim_connection *gc, const char *who)
 	g_snprintf(buf, sizeof(buf), "AL %s %s", who, who);
 
 	if (!msn_servconn_send_command(session->notification_conn, "ADD", buf)) {
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
+		return;
 	}
 }
 
 static void
-msn_add_deny(struct gaim_connection *gc, const char *who)
+msn_add_deny(GaimConnection *gc, const char *who)
 {
 	MsnSession *session = gc->proto_data;
 	char buf[MSN_BUF_LEN];
@@ -718,8 +719,7 @@ msn_add_deny(struct gaim_connection *gc, const char *who)
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "REM", buf)) {
 
-			hide_login_progress(gc, _("Write error"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Write error"));
 			return;
 		}
 	}
@@ -727,14 +727,13 @@ msn_add_deny(struct gaim_connection *gc, const char *who)
 	g_snprintf(buf, sizeof(buf), "BL %s %s", who, who);
 
 	if (!msn_servconn_send_command(session->notification_conn, "ADD", buf)) {
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 }
 
 static void
-msn_rem_permit(struct gaim_connection *gc, const char *who)
+msn_rem_permit(GaimConnection *gc, const char *who)
 {
 	MsnSession *session = gc->proto_data;
 	char buf[MSN_BUF_LEN];
@@ -742,8 +741,7 @@ msn_rem_permit(struct gaim_connection *gc, const char *who)
 	g_snprintf(buf, sizeof(buf), "AL %s", who);
 
 	if (!msn_servconn_send_command(session->notification_conn, "REM", buf)) {
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 
@@ -752,14 +750,13 @@ msn_rem_permit(struct gaim_connection *gc, const char *who)
 	g_snprintf(buf, sizeof(buf), "BL %s %s", who, who);
 
 	if (!msn_servconn_send_command(session->notification_conn, "ADD", buf)) {
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 }
 
 static void
-msn_rem_deny(struct gaim_connection *gc, const char *who)
+msn_rem_deny(GaimConnection *gc, const char *who)
 {
 	MsnSession *session = gc->proto_data;
 	char buf[MSN_BUF_LEN];
@@ -767,8 +764,7 @@ msn_rem_deny(struct gaim_connection *gc, const char *who)
 	g_snprintf(buf, sizeof(buf), "BL %s", who);
 
 	if (!msn_servconn_send_command(session->notification_conn, "REM", buf)) {
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 
@@ -777,21 +773,21 @@ msn_rem_deny(struct gaim_connection *gc, const char *who)
 	g_snprintf(buf, sizeof(buf), "AL %s %s", who, who);
 
 	if (!msn_servconn_send_command(session->notification_conn, "ADD", buf)) {
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 }
 
 static void
-msn_set_permit_deny(struct gaim_connection *gc)
+msn_set_permit_deny(GaimConnection *gc)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 	GSList *s, *t = NULL;
 
-	if (gc->account->permdeny == PERMIT_ALL ||
-		gc->account->permdeny == DENY_SOME) {
+	if (account->perm_deny == PERMIT_ALL ||
+		account->perm_deny == DENY_SOME) {
 
 		strcpy(buf, "AL");
 	}
@@ -799,8 +795,7 @@ msn_set_permit_deny(struct gaim_connection *gc)
 		strcpy(buf, "BL");
 
 	if (!msn_servconn_send_command(session->notification_conn, "BLP", buf)) {
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 
@@ -850,8 +845,7 @@ msn_set_permit_deny(struct gaim_connection *gc)
 
 			if (!msn_servconn_send_command(session->notification_conn,
 										   "ADD", buf)) {
-				hide_login_progress(gc, _("Write error"));
-				signoff(gc);
+				gaim_connection_error(gc, _("Write error"));
 				return;
 			}
 		}
@@ -889,8 +883,7 @@ msn_set_permit_deny(struct gaim_connection *gc)
 
 			if (!msn_servconn_send_command(session->notification_conn,
 										   "ADD", buf)) {
-				hide_login_progress(gc, _("Write error"));
-				signoff(gc);
+				gaim_connection_error(gc, _("Write error"));
 				return;
 			}
 		}
@@ -907,7 +900,7 @@ msn_set_permit_deny(struct gaim_connection *gc)
 }
 
 static void
-msn_chat_invite(struct gaim_connection *gc, int id, const char *msg,
+msn_chat_invite(GaimConnection *gc, int id, const char *msg,
 				const char *who)
 {
 	MsnSession *session = gc->proto_data;
@@ -921,7 +914,7 @@ msn_chat_invite(struct gaim_connection *gc, int id, const char *msg,
 }
 
 static void
-msn_chat_leave(struct gaim_connection *gc, int id)
+msn_chat_leave(GaimConnection *gc, int id)
 {
 	MsnSession *session = gc->proto_data;
 	MsnSwitchBoard *swboard = msn_session_find_switch_with_id(session, id);
@@ -937,8 +930,9 @@ msn_chat_leave(struct gaim_connection *gc, int id)
 }
 
 static int
-msn_chat_send(struct gaim_connection *gc, int id, char *message)
+msn_chat_send(GaimConnection *gc, int id, char *message)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;
 	MsnSwitchBoard *swboard = msn_session_find_switch_with_id(session, id);
 	MsnMessage *msg;
@@ -965,13 +959,14 @@ msn_chat_send(struct gaim_connection *gc, int id, char *message)
 
 	msn_message_destroy(msg);
 
-	serv_got_chat_in(gc, id, gc->username, 0, message, time(NULL));
+	serv_got_chat_in(gc, id, (char *)gaim_account_get_username(account),
+					 0, message, time(NULL));
 
 	return 0;
 }
 
 static void
-msn_keepalive(struct gaim_connection *gc)
+msn_keepalive(GaimConnection *gc)
 {
 	MsnSession *session = gc->proto_data;
 	char buf[MSN_BUF_LEN];
@@ -981,14 +976,13 @@ msn_keepalive(struct gaim_connection *gc)
 	if (msn_servconn_write(session->notification_conn,
 						   buf, strlen(buf)) < 0) {
 
-		hide_login_progress(gc, _("Write error"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 }
 
 static void
-msn_group_buddy(struct gaim_connection *gc, const char *who,
+msn_group_buddy(GaimConnection *gc, const char *who,
 				const char *old_group_name, const char *new_group_name)
 {
 	MsnSession *session = gc->proto_data;
@@ -1006,8 +1000,7 @@ msn_group_buddy(struct gaim_connection *gc, const char *who,
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADG", outparams)) {
-			hide_login_progress(gc, _("Write error"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Write error"));
 			return;
 		}
 
@@ -1027,8 +1020,7 @@ msn_group_buddy(struct gaim_connection *gc, const char *who,
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADD", outparams)) {
-			hide_login_progress(gc, _("Write error"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Write error"));
 			return;
 		}
 	}
@@ -1039,8 +1031,7 @@ msn_group_buddy(struct gaim_connection *gc, const char *who,
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "REM", outparams)) {
-			hide_login_progress(gc, _("Write error"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Write error"));
 			return;
 		}
 
@@ -1051,8 +1042,7 @@ msn_group_buddy(struct gaim_connection *gc, const char *who,
 			if (!msn_servconn_send_command(session->notification_conn,
 										   "RMG", outparams)) {
 
-				hide_login_progress(gc, _("Write error"));
-				signoff(gc);
+				gaim_connection_error(gc, _("Write error"));
 				return;
 			}
 		}
@@ -1060,7 +1050,7 @@ msn_group_buddy(struct gaim_connection *gc, const char *who,
 }
 
 static void
-msn_rename_group(struct gaim_connection *gc, const char *old_group_name,
+msn_rename_group(GaimConnection *gc, const char *old_group_name,
 				 const char *new_group_name, GList *members)
 {
 	MsnSession *session = gc->proto_data;
@@ -1076,8 +1066,7 @@ msn_rename_group(struct gaim_connection *gc, const char *old_group_name,
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "REG", outparams)) {
-			hide_login_progress(gc, _("Write error"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Write error"));
 			return;
 		}
 
@@ -1089,8 +1078,7 @@ msn_rename_group(struct gaim_connection *gc, const char *old_group_name,
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADG", outparams)) {
-			hide_login_progress(gc, _("Write error"));
-			signoff(gc);
+			gaim_connection_error(gc, _("Write error"));
 			return;
 		}
 	}
@@ -1106,8 +1094,9 @@ msn_buddy_free(struct buddy *b)
 }
 
 static void
-msn_convo_closed(struct gaim_connection *gc, char *who)
+msn_convo_closed(GaimConnection *gc, char *who)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnSession *session = gc->proto_data;
 	MsnSwitchBoard *swboard;
 	
@@ -1116,7 +1105,8 @@ msn_convo_closed(struct gaim_connection *gc, char *who)
 	if (swboard != NULL) {
 		char sendbuf[256];
 
-		g_snprintf(sendbuf, sizeof(sendbuf), "BYE %s\r\n", gc->username);
+		g_snprintf(sendbuf, sizeof(sendbuf), "BYE %s\r\n",
+				   gaim_account_get_username(account));
 
 		msn_servconn_write(swboard->servconn, sendbuf, strlen(sendbuf));
 

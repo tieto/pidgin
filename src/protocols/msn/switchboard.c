@@ -83,7 +83,7 @@ static gboolean
 __ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 
 	if (swboard->chat != NULL)
@@ -96,7 +96,7 @@ static gboolean
 __bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 	const char *user = params[0];
 
@@ -140,7 +140,7 @@ static gboolean
 __iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 
 	swboard->total_users = atoi(params[2]);
@@ -163,7 +163,7 @@ static gboolean
 __joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 	const char *passport;
 
@@ -231,7 +231,7 @@ static gboolean
 __out_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 
 	if (swboard->chat != NULL)
@@ -264,7 +264,7 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 static gboolean
 __plain_msg(MsnServConn *servconn, MsnMessage *msg)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 	char *body;
 	const char *value;
@@ -303,7 +303,7 @@ __plain_msg(MsnServConn *servconn, MsnMessage *msg)
 static gboolean
 __control_msg(MsnServConn *servconn, MsnMessage *msg)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 	const char *value;
 

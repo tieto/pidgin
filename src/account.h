@@ -263,33 +263,39 @@ gboolean gaim_account_get_remember_password(const GaimAccount *account);
 /**
  * Returns a protocol-specific integer setting for an account.
  *
- * @param account The account.
- * @param name    The name of the setting.
+ * @param account       The account.
+ * @param name          The name of the setting.
+ * @param default_value The default value.
  *
  * @return The value.
  */
-int gaim_account_get_int(const GaimAccount *account, const char *name);
+int gaim_account_get_int(const GaimAccount *account, const char *name,
+						 int default_value);
 
 /**
  * Returns a protocol-specific string setting for an account.
  *
- * @param account The account.
- * @param name    The name of the setting.
+ * @param account       The account.
+ * @param name          The name of the setting.
+ * @param default_value The default value.
  *
  * @return The value.
  */
 const char *gaim_account_get_string(const GaimAccount *account,
-									const char *name);
+									const char *name,
+									const char *default_value);
 
 /**
  * Returns a protocol-specific boolean setting for an account.
  *
- * @param account The account.
- * @param name    The name of the setting.
+ * @param account       The account.
+ * @param name          The name of the setting.
+ * @param default_value The default value.
  *
  * @return The value.
  */
-gboolean gaim_account_get_bool(const GaimAccount *account, const char *name);
+gboolean gaim_account_get_bool(const GaimAccount *account, const char *name,
+							   gboolean default_value);
 
 /**
  * Returns a list of all accounts.

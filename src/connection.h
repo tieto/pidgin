@@ -178,6 +178,14 @@ void gaim_connection_update_progress(GaimConnection *gc, const char *text,
 									 size_t step, size_t count);
 
 /**
+ * Closes a connection with an error.
+ *
+ * @param gc     The connection.
+ * @param reason The error text.
+ */
+void gaim_connection_error(GaimConnection *gc, const char *reason);
+
+/**
  * Disconnects from all connections.
  */
 void gaim_connections_disconnect_all(void);
@@ -188,6 +196,13 @@ void gaim_connections_disconnect_all(void);
  * @return A list of all active connections.
  */
 GList *gaim_connections_get_all(void);
+
+/**
+ * Returns a list of all connections in the process of connecting.
+ *
+ * @return A list of connecting connections.
+ */
+GList *gaim_connections_get_connecting(void);
 
 /**************************************************************************/
 /** @name UI Operations API                                               */

@@ -111,9 +111,4 @@ struct proto_chat_entry {
 	int max;
 };
 
-void set_login_progress(GaimConnection *, float, char *);
-void hide_login_progress(GaimConnection *, char *);
-void hide_login_progress_notice(GaimConnection *, char *);
-void hide_login_progress_error(GaimConnection *, char *);
-
 #endif /* _MULTI_H_ */

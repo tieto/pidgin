@@ -30,7 +30,7 @@ static gboolean
 __ver_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	size_t i;
 	gboolean msnp5_found = FALSE;
 
@@ -42,15 +42,13 @@ __ver_cmd(MsnServConn *servconn, const char *command, const char **params,
 	}
 
 	if (!msnp5_found) {
-		hide_login_progress(gc, _("Protocol not supported"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Protocol not supported"));
 
 		return FALSE;
 	}
 
 	if (!msn_servconn_send_command(servconn, "INF", NULL)) {
-		hide_login_progress(gc, _("Unable to request INF\n"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to request INF\n"));
 
 		return FALSE;
 	}
@@ -62,26 +60,27 @@ static gboolean
 __inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimAccount *account = servconn->session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
 	char outparams[MSN_BUF_LEN];
 
 	if (strcmp(params[1], "MD5")) {
-		hide_login_progress(gc, _("Unable to login using MD5"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to login using MD5"));
 
 		return FALSE;
 	}
 
-	g_snprintf(outparams, sizeof(outparams), "MD5 I %s", gc->username);
+	g_snprintf(outparams, sizeof(outparams), "MD5 I %s",
+			   gaim_account_get_username(account));
 
 	if (!msn_servconn_send_command(servconn, "USR", outparams)) {
-		hide_login_progress(gc, _("Unable to send USR\n"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to send USR\n"));
 
 		return FALSE;
 	}
 
-	set_login_progress(gc, 3, _("Requesting to send password"));
+	gaim_connection_update_progress(gc, _("Requesting to send password"),
+									3, MSN_CONNECT_STEPS);
 
 	return TRUE;
 }
@@ -91,14 +90,13 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
 	MsnSession *session = servconn->session;
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 	char *host;
 	int port;
 	char *c;
 
 	if (param_count < 2 || strcmp(params[1], "NS")) {
-		hide_login_progress(gc, _("Got invalid XFR\n"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Got invalid XFR\n"));
 
 		return FALSE;
 	}
@@ -125,8 +123,7 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	g_free(host);
 
 	if (!msn_servconn_connect(session->notification_conn)) {
-		hide_login_progress(gc, _("Unable to transfer"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to transfer"));
 	}
 
 	return FALSE;
@@ -136,7 +133,7 @@ static gboolean
 __unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 			  size_t param_count)
 {
-	struct gaim_connection *gc = servconn->session->account->gc;
+	GaimConnection *gc = servconn->session->account->gc;
 
 	if (isdigit(*command)) {
 		char buf[4];
@@ -144,12 +141,10 @@ __unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 		strncpy(buf, command, 4);
 		buf[4] = '\0';
 
-		hide_login_progress(gc, (char *)msn_error_get_text(atoi(buf)));
+		gaim_connection_error(gc, (char *)msn_error_get_text(atoi(buf)));
 	}
 	else
-		hide_login_progress(gc, _("Unable to parse message."));
-
-	signoff(gc);
+		gaim_connection_error(gc, _("Unable to parse message."));
 
 	return FALSE;
 }
@@ -159,27 +154,26 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *dispatch = data;
 	MsnSession *session = dispatch->session;
-	struct gaim_connection *gc = session->account->gc;
+	GaimConnection *gc = session->account->gc;
 
 	if (source == -1) {
-		hide_login_progress(session->account->gc, _("Unable to connect"));
-		signoff(session->account->gc);
+		gaim_connection_error(session->account->gc, _("Unable to connect"));
 		return FALSE;
 	}
 
-	set_login_progress(gc, 1, _("Connecting"));
+	gaim_connection_update_progress(gc, _("Connecting"), 1, MSN_CONNECT_STEPS);
 
 	if (dispatch->fd != source)
 		dispatch->fd = source;
 
 	if (!msn_servconn_send_command(dispatch, "VER",
 								   "MSNP7 MSNP6 MSNP5 MSNP4 CVR0")) {
-		hide_login_progress(gc, _("Unable to write to server"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to write to server"));
 		return FALSE;
 	}
 
-	set_login_progress(session->account->gc, 2, _("Syncing with server"));
+	gaim_connection_update_progress(gc, _("Syncing with server"),
+									2, MSN_CONNECT_STEPS);
 
 	return TRUE;
 }
@@ -188,12 +182,11 @@ static void
 __failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *dispatch = data;
-	struct gaim_connection *gc;
+	GaimConnection *gc;
 
 	gc = dispatch->session->account->gc;
 
-	hide_login_progress(gc, _("Error reading from server"));
-	signoff(gc);
+	gaim_connection_error(gc, _("Error reading from server"));
 }
 
 MsnServConn *

@@ -24,7 +24,7 @@
 #include "dispatch.h"
 
 MsnSession *
-msn_session_new(struct gaim_account *account, const char *server, int port)
+msn_session_new(GaimAccount *account, const char *server, int port)
 {
 	MsnSession *session;
 
