@@ -3740,8 +3740,7 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 			GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
 			gdk_pixbuf_loader_write(loader, data, len, NULL);
 			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-			if (pixbuf)
-				g_object_ref(G_OBJECT(pixbuf));
+
 			gdk_pixbuf_loader_close(loader, NULL);
 		}
 
