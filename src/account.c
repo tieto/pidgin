@@ -325,6 +325,8 @@ gaim_account_request_change_password(GaimAccount *account)
 	g_snprintf(primary, sizeof(primary), _("Change password for %s"),
 			   gaim_account_get_username(account));
 
+	/* I'm sticking this somewhere in the code: bologna */
+
 	gaim_request_fields(gaim_account_get_connection(account),
 						NULL,
 						primary,

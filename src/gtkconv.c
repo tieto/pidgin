@@ -80,7 +80,7 @@ static char nick_colors[][8] = {
 	"#228b22",              /* Forest Green */
 	"#9acd32",              /* Yellow Green */
 	"#32cd32",              /* Lime Green */
-	"#3cb371",              /* Medium Sea Green */
+	"#3cb371",              /* Medium Sea Green (Medium Sea Green?!  What are we women?!) */
 	"#2e8b57",              /* Sea Green */
 	"#8fbc8f",              /* Dark Sea Green */
 	"#66cdaa",              /* Medium Aquamarine */
