@@ -1294,16 +1294,6 @@ browser_changed_cb(const char *name, GaimPrefType type, gpointer value,
 	gtk_widget_set_sensitive(hbox, !strcmp(browser, "custom"));
 }
 
-static void
-auto_resp_changed_cb(const char *name, GaimPrefType type, gpointer value,
-		gpointer data)
-{
-	GtkWidget *hbox = data;
-	gboolean enabled = value;
-
-	gtk_widget_set_sensitive(hbox, enabled);
-}
-
 GtkWidget *browser_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -1484,6 +1474,16 @@ GtkWidget *sound_page() {
 #endif /* _WIN32 */
 	gtk_widget_show_all(ret);
 	return ret;
+}
+
+static void
+auto_resp_changed_cb(const char *name, GaimPrefType type, gpointer value,
+		gpointer data)
+{
+	GtkWidget *hbox = data;
+	gboolean enabled = value;
+
+	gtk_widget_set_sensitive(hbox, enabled);
 }
 
 GtkWidget *away_page() {
