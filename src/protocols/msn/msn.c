@@ -406,6 +406,9 @@ msn_buddy_menu(GaimConnection *gc, const char *who)
 	GList *m = NULL;
 
 	b = gaim_find_buddy(gc->account, who);
+
+	g_return_val_if_fail(b != NULL, NULL);
+
 	user = b->proto_data;
 
 	if (user != NULL) {
@@ -1040,12 +1043,16 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 	MsnSession *session = gc->proto_data;
 	MsnGroup *old_group, *new_group;
 	MsnUser *user;
+	const char *friendly;
 	char outparams[MSN_BUF_LEN];
 
 	old_group = msn_groups_find_with_name(session->groups, old_group_name);
 	new_group = msn_groups_find_with_name(session->groups, new_group_name);
 
 	user = msn_users_find_with_passport(session->users, who);
+
+	if ((friendly = msn_user_get_name(user)) == NULL)
+		friendly = msn_user_get_passport(user);
 
 	if (old_group != NULL)
 		msn_user_remove_group_id(user, msn_group_get_id(old_group));
@@ -1072,7 +1079,7 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 	}
 	else {
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
-				   who, who, msn_group_get_id(new_group));
+				   who, friendly, msn_group_get_id(new_group));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADD", outparams)) {

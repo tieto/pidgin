@@ -103,12 +103,18 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 
 		if (b == NULL)
 		{
-			b = gaim_buddy_new(account,
-							   msn_user_get_passport(user), NULL);
+			const char *passport, *friendly;
+
+			passport = msn_user_get_passport(user);
+
+			b = gaim_buddy_new(account, passport, NULL);
 
 			b->proto_data = user;
 
 			gaim_blist_add_buddy(b, NULL, g, NULL);
+
+			if ((friendly = msn_user_get_name(user)) != NULL)
+				serv_got_alias(gc, passport, friendly);
 		}
 		else
 			b->proto_data = user;
@@ -1052,12 +1058,14 @@ iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 	passport = params[2];
 	friend   = msn_url_decode(params[3]);
 
+	user = msn_users_find_with_passport(session->users, passport);
+
 	serv_got_alias(gc, (char *)passport, (char *)friend);
+
+	msn_user_set_name(user, friend);
 
 	if (session->protocol_ver >= 9 && param_count == 6)
 	{
-		user = msn_users_find_with_passport(session->users, passport);
-
 		msnobj = msn_object_new_from_string(msn_url_decode(params[5]));
 		msn_user_set_object(user, msnobj);
 	}
@@ -1471,12 +1479,14 @@ nln_cmd(MsnServConn *servconn, const char *command, const char **params,
 	passport = params[1];
 	friend   = msn_url_decode(params[2]);
 
+	user = msn_users_find_with_passport(session->users, passport);
+
 	serv_got_alias(gc, (char *)passport, (char *)friend);
+
+	msn_user_set_name(user, friend);
 
 	if (session->protocol_ver >= 9 && param_count == 5)
 	{
-		user = msn_users_find_with_passport(session->users, passport);
-
 		msnobj = msn_object_new_from_string(msn_url_decode(params[4]));
 		msn_user_set_object(user, msnobj);
 	}
@@ -1597,6 +1607,7 @@ rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (session->moving_buddy) {
 		MsnGroup *group, *old_group;
 		GaimConnection *gc = session->account->gc;
+		const char *friendly;
 		char outparams[MSN_BUF_LEN];
 
 		group = msn_groups_find_with_name(session->groups,
@@ -1621,8 +1632,11 @@ rem_cmd(MsnServConn *servconn, const char *command, const char **params,
 		g_free(session->dest_group_name);
 		session->dest_group_name = NULL;
 
+		if ((friendly = msn_user_get_name(session->moving_user)) == NULL)
+			friendly = passport;
+
 		g_snprintf(outparams, sizeof(outparams), "FL %s %s %d",
-				   passport, passport, msn_group_get_id(group));
+				   passport, friendly, msn_group_get_id(group));
 
 		if (!msn_servconn_send_command(session->notification_conn,
 									   "ADD", outparams)) {

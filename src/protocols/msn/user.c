@@ -39,8 +39,14 @@ msn_user_new(MsnSession *session, const char *passport, const char *name)
 		msn_users_add(session->users, user);
 	}
 
+	/*
+	 * XXX This seems to reset the friendly name from what it should be
+	 *     to the passport when moving users. So, screw it :)
+	 */
+#if 0
 	if (name != NULL)
 		msn_user_set_name(user, name);
+#endif
 
 	msn_user_ref(user);
 
