@@ -26,6 +26,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -618,8 +619,12 @@ void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int 
 
 		g_free(random);
 
-		if(!g_file_test(dirname, G_FILE_TEST_IS_DIR))
-			mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR);
+		if(!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
+			debug_printf("creating icon cache directory\n");
+			if(mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0)
+				debug_printf("error creating directory %s: %s\n",
+						dirname, strerror(errno));
+		}
 
 		g_free(dirname);
 
