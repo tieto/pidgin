@@ -632,6 +632,8 @@ char *yahoo_html_to_codes(const char *src)
 							g_string_append(dest, "\033[4m");
 						} else if (!g_ascii_strncasecmp(&src[i+1], "/U", sublen)) {
 							g_string_append(dest, "\033[x4m");
+						} else if (!g_ascii_strncasecmp(&src[i+1], "BR", sublen)) {
+							g_string_append_c(dest, '\n');
 						} else if (!g_ascii_strncasecmp(&src[i+1], "/BODY", sublen)) {
 							/* mmm, </body> tags. *BURP* */
 						} else if (!g_ascii_strncasecmp(&src[i+1], "/FONT", sublen) && g_queue_peek_tail(tags)) {
