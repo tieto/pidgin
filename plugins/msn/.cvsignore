@@ -1,0 +1,7 @@
+.deps
+.libs
+Makefile.in
+Makefile
+msn.lo
+md5.lo
+libmsn.la
