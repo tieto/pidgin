@@ -470,12 +470,12 @@ void frombase64(const char *text, char **data, int *size)
 char *tobase16(const char *data, int length)
 {
 	int i;
-	char *ascii = NULL;
+	unsigned char *ascii = NULL;
 
 	if (!data || !length)
 		return NULL;
 
-	ascii = (char *)malloc(length*2 + 1);
+	ascii = malloc(length*2 + 1);
 
 	for (i=0; i<length; i++)
 		snprintf(&ascii[i*2], 3, "%02hhx", data[i]);

@@ -183,7 +183,7 @@ gaim_plugin_probe(const char *filename)
 	plugin = gaim_plugin_new(is_so_file(filename, PLUGIN_EXT), filename);
 
 	if (plugin->native_plugin) {
-		char *error;
+		const char *error;
 		plugin->handle = g_module_open(filename, 0);
 
 		if (plugin->handle == NULL) {
