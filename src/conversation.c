@@ -916,7 +916,7 @@ void toggle_bg_color(GtkWidget *color, struct conversation *c)
 	else if (c->bg_color_dialog)
 		cancel_bgcolor(color, c);
 	else
-		advance_past(c->entry, "<FONT COLOR>", "</FONT>" );
+		advance_past(c->entry, "<BODY BGCOLOR>", "</BODY>" );
 }
 
 void toggle_font(GtkWidget *font, struct conversation *c)
