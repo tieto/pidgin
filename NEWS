@@ -22,6 +22,14 @@
 	Mark: Gaim is coming along quite beautimously.  I'm going to eat 
 	my Pop-tarts now.
 
+	Nathan: oh dot sixty two.  There are a lot of bugs fixed in this release,
+	and one major new feature.  Our Jabber plugin now supports XHTML-IM.  In
+	plain english, this means that you can now format your jabber messages,
+	and other people will see the formatting.  GtkIMHTML still needs some
+	work to get it to parse valid XHTML-IM better, but that will come in time.
+	That time would come sooner if my CS prof accepted "I was hacking on Gaim"
+	as a valid excuse for an extension ;-)
+
 0.61 (04/07/2003):
 	Rob: Nathan commited his news first.  However, I'm cooler so I'm putting
 	my entry above his.  Yeah, so, there were some DnD issues with 0.60. I 
