@@ -1,3 +1,9 @@
+version 0.69
+	* Perl plugin loader is back (now using perl58).
+	* Gaim now performs 'dll hell' check on startup.
+	* Using SHGetFolderPath to determine Gaim's app data directory.
+	* Installer translation for Korean added.
+
 version 0.68: (09/01/2003):
 	* Installer translations for: Bulgarian and Traditional Chinese.
 	* No Perl plugin support, due to the re-write. (It should be back in 
