@@ -5472,7 +5472,7 @@ gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv)
 								 (prpl_info->warn != NULL));
 
 		gtk_widget_set_sensitive(gtkconv->u.im->block,
-								 (prpl_info->add_permit != NULL));
+								 (prpl_info->add_deny != NULL));
 
 		update_convo_add_button(conv);
 	}

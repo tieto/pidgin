@@ -23,9 +23,11 @@
 
 #include "account.h"
 #include "accountopt.h"
+#include "blist.h"
 #include "debug.h"
 #include "multi.h"
 #include "notify.h"
+#include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"
@@ -383,6 +385,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 	gboolean export = FALSE;
+	gboolean got_serv_list = FALSE;
 	GaimBuddy *b;
 	GaimGroup *g;
 
@@ -395,33 +398,48 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		struct yahoo_pair *pair = l->data;
 		l = l->next;
 
-		if (pair->key != 87)
-			continue;
-
-		lines = g_strsplit(pair->value, "\n", -1);
-		for (tmp = lines; *tmp; tmp++) {
-			split = g_strsplit(*tmp, ":", 2);
-			if (!split)
-				continue;
-			if (!split[0] || !split[1]) {
-				g_strfreev(split);
-				continue;
-			}
-			buddies = g_strsplit(split[1], ",", -1);
-			for (bud = buddies; bud && *bud; bud++)
-				if (!(b = gaim_find_buddy(gc->account,  *bud))) {
-					if (!(g = gaim_find_group(split[0]))) {
-						g = gaim_group_new(split[0]);
-						gaim_blist_add_group(g, NULL);
-					}
-					b = gaim_buddy_new(gc->account, *bud, NULL);
-					gaim_blist_add_buddy(b, NULL, g, NULL);
-					export = TRUE;
+		switch (pair->key) {
+		case 87:
+			lines = g_strsplit(pair->value, "\n", -1);
+			for (tmp = lines; *tmp; tmp++) {
+				split = g_strsplit(*tmp, ":", 2);
+				if (!split)
+					continue;
+				if (!split[0] || !split[1]) {
+					g_strfreev(split);
+					continue;
 				}
+				buddies = g_strsplit(split[1], ",", -1);
+				for (bud = buddies; bud && *bud; bud++)
+					if (!(b = gaim_find_buddy(gc->account,  *bud))) {
+						if (!(g = gaim_find_group(split[0]))) {
+							g = gaim_group_new(split[0]);
+							gaim_blist_add_group(g, NULL);
+						}
+						b = gaim_buddy_new(gc->account, *bud, NULL);
+						gaim_blist_add_buddy(b, NULL, g, NULL);
+						export = TRUE;
+					}
+				g_strfreev(buddies);
+				g_strfreev(split);
+			}
+			g_strfreev(lines);
+			break;
+		case 88:
+			buddies = g_strsplit(pair->value, ",", -1);
+			for (bud = buddies; bud && *bud; bud++) {
+				/* The server is already ignoring the user */
+				got_serv_list = TRUE;
+				gaim_privacy_deny_add(gc->account, *bud, 1);
+			}
 			g_strfreev(buddies);
-			g_strfreev(split);
+			break;
 		}
-		g_strfreev(lines);
+
+		if (got_serv_list) {
+			gc->account->perm_deny = 4;
+			serv_set_permit_deny(gc);
+		}
 	}
 
 	if (export)
@@ -800,10 +818,90 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
+static void ignore_buddy(GaimBuddy *b) {
+	GaimGroup *g;
+	GaimConversation *c;
+	GaimAccount *account;
+	gchar *name;
+
+        if (!b)
+                return;
+
+        g = gaim_find_buddys_group(b);
+        name = g_strdup(b->name);
+        account = b->account;
+
+        gaim_debug(GAIM_DEBUG_INFO, "blist",
+                           "Removing '%s' from buddy list.\n", b->name);
+        serv_remove_buddy(account->gc, name, g->name);
+        gaim_blist_remove_buddy(b);
+
+	gaim_privacy_deny_add(account, name, 0);
+
+        gaim_blist_save();
+
+        c = gaim_find_conversation_with_account(name, account);
+
+        if (c != NULL)
+                gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+
+	g_free(name);
+}
+
+static void keep_buddy(GaimBuddy *b) {
+	gaim_privacy_deny_remove(b->account, b->name, 1);
+}
+
+static void yahoo_process_ignore(GaimConnection *gc, struct yahoo_packet *pkt) {
+	GaimBuddy *b;
+	GSList *l;
+	gchar *who = NULL;
+	gchar *sn = NULL;
+	gchar buf[BUF_LONG];
+	gint ignore = 0;
+	gint status = 0;
+
+	for (l = pkt->hash; l; l = l->next) {
+		struct yahoo_pair *pair = l->data;
+		switch (pair->key) {
+		case 0:
+			who = pair->value;
+			break;
+		case 1:
+			sn = pair->value;
+			break;
+		case 13:
+			ignore = strtol(pair->value, NULL, 10);
+			break;
+		case 66:
+			status = strtol(pair->value, NULL, 10);
+			break;
+		default:
+			break;
+		}
+	}
+
+	switch (status) {
+	case 12:
+		b = gaim_find_buddy(gc->account, who);
+		g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
+					"user is on your buddy list.  Clicking \"Yes\" "
+					"will remove and ignore the buddy."), who);
+		gaim_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0, b,
+						G_CALLBACK(ignore_buddy),
+						G_CALLBACK(keep_buddy));
+		break;
+	case 2:
+	case 3:
+	case 0:
+	default:
+		break;
+	}
+}
+
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 {
-	switch (pkt->service)
-	{
+	switch (pkt->service) {
 	case YAHOO_SERVICE_LOGON:
 	case YAHOO_SERVICE_LOGOFF:
 	case YAHOO_SERVICE_ISAWAY:
@@ -833,6 +931,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_AUTH:
 		yahoo_process_auth(gc, pkt);
+		break;
+	case YAHOO_SERVICE_IGNORECONTACT:
+		yahoo_process_ignore(gc, pkt);
 		break;
 	case YAHOO_SERVICE_CONFINVITE:
 	case YAHOO_SERVICE_CONFADDINVITE:
@@ -1440,6 +1541,68 @@ static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *
 	yahoo_packet_free(pkt);
 }
 
+static void yahoo_add_deny(GaimConnection *gc, const char *who) {
+	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	struct yahoo_packet *pkt;
+
+	if (!yd->logged_in)
+		return;
+
+	if (gc->account->perm_deny != 4)
+		return;
+
+	if (!who || who[0] == '\0')
+		return;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash(pkt, 7, who);
+	yahoo_packet_hash(pkt, 13, "1");
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+}
+
+static void yahoo_rem_deny(GaimConnection *gc, const char *who) {
+	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	struct yahoo_packet *pkt;
+
+	if (!yd->logged_in)
+		return;
+
+	if (!who || who[0] == '\0')
+		return;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash(pkt, 7, who);
+	yahoo_packet_hash(pkt, 13, "2");
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+}
+
+static void yahoo_set_permit_deny(GaimConnection *gc) {
+	GaimAccount *acct;
+	GSList *deny;
+
+	acct = gc->account;
+
+	switch (acct->perm_deny) {
+		case 1:
+		case 3:
+		case 5:
+			for (deny = acct->deny;deny;deny = deny->next)
+				yahoo_rem_deny(gc, deny->data);
+			break;
+		case 4:
+			for (deny = acct->deny;deny;deny = deny->next)
+				yahoo_add_deny(gc, deny->data);
+			break;
+		case 2:
+		default:
+			break;
+	}
+}
+
 static gboolean yahoo_unload_plugin(GaimPlugin *plugin)
 {
 	yahoo_dest_colorht();
@@ -1649,10 +1812,10 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_remove_buddy,
 	NULL, /*remove_buddies */
 	NULL, /* add_permit */
-	NULL, /* add_dey */
+	yahoo_add_deny,
 	NULL, /* rem_permit */
-	NULL, /* rem_deny */
-	NULL, /* set_permit_deny */
+	yahoo_rem_deny,
+	yahoo_set_permit_deny,
 	NULL, /* warn */
 	yahoo_c_join,
 	yahoo_c_invite,
