@@ -917,8 +917,6 @@ GtkWidget *list_page() {
 			"/gaim/gtk/blist/show_warning_level", vbox);
 	gaim_gtk_prefs_checkbox(_("Show idle _times"),
 			"/gaim/gtk/blist/show_idle_time", vbox);
-	gaim_gtk_prefs_checkbox(_("Dim i_dle buddies"),
-			"/gaim/gtk/blist/grey_idle_buddies", vbox);
 	gaim_gtk_prefs_checkbox(_("_Automatically expand contacts"),
 			"/gaim/gtk/blist/auto_expand_contacts", vbox);
 

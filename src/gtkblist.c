@@ -439,6 +439,21 @@ map_shadow_windows (gpointer data)
 /**************** END WEIRD DROP SHADOW STUFF ***********************************/
 #endif
 
+static char dim_grey_string[8] = "";
+static char *dim_grey() 
+{
+	if (!gtkblist)
+		return "dim grey";
+	if (!dim_grey_string[0]) {
+		GtkStyle *style = gtk_widget_get_style(gtkblist->treeview);
+		snprintf(dim_grey_string, sizeof(dim_grey_string), "#%02x%02x%02x",
+			 style->text_aa[GTK_STATE_NORMAL].red >> 8,
+			 style->text_aa[GTK_STATE_NORMAL].green >> 8,
+			 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
+	}
+	return dim_grey_string;
+}
+		
 /***************************************************
  *              Callbacks                          *
  ***************************************************/
@@ -2690,8 +2705,7 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 
 		if (!GAIM_BUDDY_IS_ONLINE(buddy))
 			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
-		else if (gaim_presence_is_idle(presence) &&
-				 gaim_prefs_get_bool("/gaim/gtk/blist/grey_idle_buddies"))
+		else if (gaim_presence_is_idle(presence))
 		{
 			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.25, FALSE);
 		}
@@ -2732,8 +2746,7 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBuddy *b)
 		if (!GAIM_BUDDY_IS_ONLINE(b))
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 
-		if (gaim_presence_is_idle(presence) &&
-			gaim_prefs_get_bool("/gaim/gtk/blist/grey_idle_buddies"))
+		if (gaim_presence_is_idle(presence))
 		{
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.25, FALSE);
 		}
@@ -2778,15 +2791,10 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")) {
 
-		if ((gaim_presence_is_idle(presence) && !selected &&
-			 gaim_prefs_get_bool("/gaim/gtk/blist/grey_idle_buddies")) ||
-			!GAIM_BUDDY_IS_ONLINE(b))
+		if ((gaim_presence_is_idle(presence) || !GAIM_BUDDY_IS_ONLINE(b)) && !selected)
 		{
-			if (selected)
-				text = g_strdup(esc);
-			else
-				text = g_strdup_printf("<span color='dim grey'>%s</span>",
-									   esc);
+			text = g_strdup_printf("<span color='%s'>%s</span>",
+					       dim_grey(), esc);
 			g_free(esc);
 			return text;
 		}
@@ -2869,12 +2877,10 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	if(!GAIM_BUDDY_IS_ONLINE(b) && !statustext)
 		statustext = g_strdup(_("Offline "));
 
-	if (gaim_presence_is_idle(presence) && !selected &&
-		gaim_prefs_get_bool("/gaim/gtk/blist/grey_idle_buddies")) {
-
-		text =  g_strdup_printf("<span color='dim grey'>%s</span>\n"
-					"<span color='dim grey' size='smaller'>%s%s%s</span>",
-					esc,
+	if (gaim_presence_is_idle(presence) && !selected) {
+		text =  g_strdup_printf("<span color='%s'>%s</span>\n"
+					"<span color='%s' size='smaller'>%s%s%s</span>",
+					dim_grey(), esc, dim_grey(),
 					statustext != NULL ? statustext : "",
 					idletime != NULL ? idletime : "",
 					warning != NULL ? warning : "");
@@ -2882,12 +2888,19 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			GAIM_BUDDY_IS_ONLINE(b)) {
 		text = g_strdup(esc);
 	} else {
-		text = g_strdup_printf("%s\n"
-					"<span %s size='smaller'>%s%s%s</span>", esc,
-					selected ? "" : "color='dim grey'",
-					statustext != NULL ? statustext :  "",
-					idletime != NULL ? idletime : "",
-					warning != NULL ? warning : "");
+		if (selected)
+			text = g_strdup_printf("%s\n"
+					       "<span size='smaller'>%s%s%s</span>", esc,
+					       statustext != NULL ? statustext :  "",
+					       idletime != NULL ? idletime : "",
+					       warning != NULL ? warning : "");
+		else
+			text = g_strdup_printf("%s\n"
+					       "<span color='%s' size='smaller'>%s%s%s</span>", esc,
+					       dim_grey(), 
+					       statustext != NULL ? statustext :  "",
+					       idletime != NULL ? idletime : "",
+					       warning != NULL ? warning : "");
 	}
 	if (idletime)
 		g_free(idletime);
@@ -3268,8 +3281,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	handle = gaim_gtk_blist_get_handle();
 
 	/* things that affect how buddies are displayed */
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/grey_idle_buddies",
-			_prefs_change_redo_list, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_buddy_icons",
 			_prefs_change_redo_list, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_warning_level",
@@ -3578,19 +3589,18 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 	if (warning_level > 0)
 		warning = g_strdup_printf("%d%%", warning_level);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/grey_idle_buddies") &&
-		gaim_presence_is_idle(presence))
+	if (gaim_presence_is_idle(presence))
 	{
 		if (warning && !selected) {
-			char *w2 = g_strdup_printf("<span color='dim grey'>%s</span>",
-					warning);
+			char *w2 = g_strdup_printf("<span color='%s'>%s</span>",
+						   dim_grey(), warning);
 			g_free(warning);
 			warning = w2;
 		}
 
 		if (idle && !selected) {
-			char *i2 = g_strdup_printf("<span color='dim grey'>%s</span>",
-									   idle);
+			char *i2 = g_strdup_printf("<span color='%s'>%s</span>",
+						   dim_grey(), idle);
 			g_free(idle);
 			idle = i2;
 		}
@@ -4527,7 +4537,6 @@ void gaim_gtk_blist_init(void)
 	/* Initialize prefs */
 	gaim_prefs_add_none("/gaim/gtk/blist");
 	gaim_prefs_add_bool("/gaim/gtk/blist/auto_expand_contacts", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/grey_idle_buddies", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/raise_on_events", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
