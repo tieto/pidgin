@@ -88,6 +88,7 @@ enum {
 	URL_CLICKED,
 	BUTTONS_UPDATE,
 	TOGGLE_FORMAT,
+	CLEAR_FORMAT,
 	LAST_SIGNAL
 };
 static guint signals [LAST_SIGNAL] = { 0 };
@@ -631,8 +632,16 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *class)
 					      NULL,
 					      0,
 					      g_cclosure_marshal_VOID__POINTER,
-					      G_TYPE_NONE, 1,
+					      G_TYPE_NONE, 1, 
 					      G_TYPE_INT);
+	signals[CLEAR_FORMAT] = g_signal_new("format_function_clear",
+					      G_TYPE_FROM_CLASS(gobject_class),
+					      G_SIGNAL_RUN_FIRST,
+					      G_STRUCT_OFFSET(GtkIMHtmlClass, clear_format),
+					      NULL,
+					      0,
+					      g_cclosure_marshal_VOID__POINTER,
+					     G_TYPE_NONE, 0);
 	gobject_class->finalize = gtk_imhtml_finalize;
 }
 
@@ -682,10 +691,12 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 			  GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(imhtml), "drag_data_received", G_CALLBACK(gtk_imhtml_link_drag_rcv_cb), imhtml);
 
+#if 0 /* Remove buggy copy-and-paste for 0.76 */
 #if GTK_CHECK_VERSION(2,2,0)
 	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "button-release-event", G_CALLBACK(button_release_cb), imhtml);
+#endif
 #endif
 	gtk_widget_add_events(GTK_WIDGET(imhtml), GDK_LEAVE_NOTIFY_MASK);
 
@@ -2050,6 +2061,7 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 {
 	GList *del;
 	GtkTextIter start, end;
+	GObject *object = g_object_ref(G_OBJECT(imhtml));
 
 	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start);
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
@@ -2081,6 +2093,9 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	imhtml->edit.backcolor = NULL;
 	imhtml->edit.sizespan = NULL;
 	imhtml->edit.fontsize = 3;
+	printf("Emiting signal\n");
+	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
+	g_object_unref(object);
 }
 
 void gtk_imhtml_page_up (GtkIMHtml *imhtml)

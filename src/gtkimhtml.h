@@ -118,6 +118,7 @@ struct _GtkIMHtmlClass {
 	void (*url_clicked)(GtkIMHtml *, const gchar *);
 	void (*buttons_update)(GtkIMHtml *, GtkIMHtmlButtons);
 	void (*toggle_format)(GtkIMHtml *, GtkIMHtmlButtons);
+	void (*clear_format)(GtkIMHtml *);
 };
 
 struct _GtkIMHtmlFontDetail {

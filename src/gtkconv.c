@@ -2341,6 +2341,7 @@ gray_stuff_out(GaimConversation *conv)
 			buttons = GTK_IMHTML_SMILEY;
 		}
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
+		gtk_imhtmltoolbar_associate_smileys (GTK_IMHTMLTOOLBAR(gtkconv->toolbar), gaim_account_get_protocol_id(gaim_conversation_get_account(conv)));
 
 #if 0
 		/* Deal with menu items */

@@ -69,6 +69,8 @@ struct _GtkIMHtmlToolbar {
 	GtkWidget *link_dialog;
 	GtkWidget *smiley_dialog;
 	GtkWidget *image_dialog;
+
+	char *sml;
 };
 
 struct _GtkIMHtmlToolbarClass {
@@ -80,6 +82,7 @@ GType      gtk_imhtmltoolbar_get_type         (void);
 GtkWidget* gtk_imhtmltoolbar_new              (void);
 
 void gtk_imhtmltoolbar_attach    (GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml);
+void gtk_imhtmltoolbar_associate_smileys (GtkIMHtmlToolbar *toolbar, const char *proto_id);
 
 
 #ifdef __cplusplus

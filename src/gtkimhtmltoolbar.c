@@ -538,14 +538,10 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 			return;
 		}
 
-		/*
-		  if(c->account)
-		  smileys = get_proto_smileys(
-		  gaim_account_get_protocol_id(gaim_conversation_get_account(c)));
+		if (toolbar->sml)
+			smileys = get_proto_smileys(toolbar->sml);
 		  else
-		*/
-
-		smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
+			  smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
 
 		while(smileys) {
 			GtkIMHtmlSmiley *smiley = smileys->data;
@@ -644,6 +640,11 @@ static void toggle_button_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMH
 	}
 }
 
+static void reset_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
+{
+	printf("yo!\n");
+}
+
 enum {
 	LAST_SIGNAL
 };
@@ -654,6 +655,8 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 {
 	GtkIMHtmlToolbar *toolbar = GTK_IMHTMLTOOLBAR(object);
 
+	if (toolbar->sml)
+		free(toolbar->sml);
 	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
 
 	G_OBJECT_CLASS(parent_class)->finalize (object);
@@ -847,11 +850,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(toolbar), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
-
-
-//if (!gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"))
-//	gtk_widget_hide(vbox);
-
+	toolbar->sml = NULL;
 	gtk_widget_show_all(hbox);
 }
 
@@ -895,4 +894,13 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 	toolbar->imhtml = imhtml;
 	g_signal_connect(G_OBJECT(imhtml), "format_functions_update", G_CALLBACK(update_buttons_cb), toolbar);
 	g_signal_connect(G_OBJECT(imhtml), "format_function_toggle", G_CALLBACK(toggle_button_cb), toolbar);
+	g_signal_connect(G_OBJECT(imhtml), "format_function_clear", G_CALLBACK(reset_buttons_cb), toolbar);
+}
+
+void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *proto_id)
+{
+	if (toolbar->sml)
+		g_free(toolbar->sml);
+	
+	toolbar->sml = g_strdup(proto_id);
 }
