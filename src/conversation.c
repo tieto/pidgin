@@ -913,9 +913,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	 * Create a window if one does not exist. If it does, use the last
 	 * created window.
 	 */
-	if (windows == NULL ||
-		!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
-
+	if (windows == NULL) {
 		GaimWindow *win;
 
 		win = gaim_window_new();
