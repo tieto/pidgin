@@ -4727,12 +4727,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	gtk_font_options ^= GTK_IMHTML_NO_COMMENTS;
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
-		gtk_font_options ^= GTK_IMHTML_NO_COLOURS;
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_fonts"))
-		gtk_font_options ^= GTK_IMHTML_NO_FONTS;
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_font_sizes"))
-		gtk_font_options ^= GTK_IMHTML_NO_SIZES;
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_formatting"))
+		gtk_font_options ^= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
 
 	/* this is gonna crash one day, I can feel it. */
 	if (GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol_id(conv->account)))->options &
@@ -5834,7 +5830,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
-#if 1
+#if 0
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_colors", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_fonts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_font_sizes", FALSE);

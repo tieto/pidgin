@@ -760,12 +760,8 @@ GtkWidget *messages_page() {
 			"/gaim/gtk/conversations/spellcheck", vbox);
 #endif
 	vbox = gaim_gtk_make_frame (ret, _("Ignore"));
-	gaim_gtk_prefs_checkbox(_("Ignore c_olors"),
-							"/gaim/gtk/conversations/ignore_colors", vbox);
-	gaim_gtk_prefs_checkbox(_("Ignore font _faces"),
-							"/gaim/gtk/conversations/ignore_fonts", vbox);
-	gaim_gtk_prefs_checkbox(_("Ignore font si_zes"),
-							"/gaim/gtk/conversations/ignore_font_sizes", vbox);
+	gaim_gtk_prefs_checkbox(_("Ignore _formatting"),
+				"/gaim/gtk/conversations/ignore_formatting", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Default Formatting"));
 
@@ -2333,6 +2329,7 @@ void gaim_gtk_prefs_update_old() {
 					  "/gaim/gtk/conversations/send_formatting");
 
 	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
+	gaim_prefs_rename("/gaim/gtk/conversations/ignore_colors", "/gaim/gtk/conversations/ignore_formatting");
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
