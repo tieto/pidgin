@@ -116,6 +116,7 @@ struct _GtkIMHtml {
 
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
+	GSList *backcolor_tags;
 };
 
 struct _GtkIMHtmlClass {

@@ -521,6 +521,79 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 	
 	return FALSE;
 }
+
+struct backcolor_tag {
+	GtkTextMark *start;
+	GtkTextMark *end;
+	char *color;
+};
+
+static gint
+gtk_imhtml_expose_event (GtkWidget      *widget,
+			 GdkEventExpose *event)
+{
+	GSList *l = GTK_IMHTML(widget)->backcolor_tags;
+       	while (l) {
+		struct backcolor_tag *tag = (struct backcolor_tag*)l->data;
+		GdkRectangle visible_rect;
+		GdkRectangle redraw_rect;
+		int top, bottom, height, win_top, win_bottom;
+		GtkTextIter start, end;
+		
+		GdkGC *gc = gdk_gc_new(GDK_DRAWABLE(event->window));
+		GdkColor color;
+		
+		gtk_text_buffer_get_iter_at_mark (GTK_IMHTML(widget)->text_buffer, &start, tag->start);
+
+		if (tag->end)
+			gtk_text_buffer_get_iter_at_mark (GTK_IMHTML(widget)->text_buffer, &end, tag->end);
+		else
+			gtk_text_buffer_get_end_iter (GTK_IMHTML(widget)->text_buffer, &end);
+
+		gtk_text_view_get_line_yrange   (GTK_TEXT_VIEW(widget), &start, &top, NULL);
+		gtk_text_view_get_line_yrange   (GTK_TEXT_VIEW(widget), &end, &bottom, &height);
+		
+		gtk_text_view_get_visible_rect (GTK_TEXT_VIEW(widget), &visible_rect);
+		gtk_text_view_buffer_to_window_coords (GTK_TEXT_VIEW(widget),
+						       GTK_TEXT_WINDOW_TEXT,
+						       visible_rect.x,
+						       visible_rect.y,
+						       &redraw_rect.x,
+						       &redraw_rect.y);
+		gtk_text_view_buffer_to_window_coords (GTK_TEXT_VIEW(widget),
+						       GTK_TEXT_WINDOW_TEXT,
+						       0,
+						       top,
+						       NULL,
+						       &win_top);
+		gtk_text_view_buffer_to_window_coords (GTK_TEXT_VIEW(widget),
+						       GTK_TEXT_WINDOW_TEXT,
+						       0,
+						       bottom + height,
+						       NULL,
+						       &win_bottom);
+		redraw_rect.width = visible_rect.width;
+		redraw_rect.height = visible_rect.height;
+		
+		
+
+		gdk_color_parse(tag->color, &color);
+		gdk_gc_set_rgb_fg_color(gc, &color);
+
+		gdk_draw_rectangle(event->window,
+				   gc,
+				   TRUE,
+				   redraw_rect.x, win_top, redraw_rect.width, win_bottom - win_top);
+		gdk_gc_unref(gc);
+		l = l->next;
+	}
+	if (GTK_WIDGET_CLASS (parent_class)->expose_event)
+		return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
+			(widget, event);
+	return FALSE;
+}
+
+
 static void paste_unformatted_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 {
 	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
@@ -528,6 +601,8 @@ static void paste_unformatted_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 	gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
 
 }
+
+
 
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
@@ -1019,6 +1094,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 
 	gobject_class->finalize = gtk_imhtml_finalize;
 	widget_class->drag_motion = gtk_text_view_drag_motion;
+	widget_class->expose_event = gtk_imhtml_expose_event;
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
 	                                        _("Hyperlink color"),
 	                                        _("Color to draw hyperlinks."),
@@ -1126,6 +1202,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	/* Register HTML Format as desired clipboard format */
 	win_html_fmt = RegisterClipboardFormat("HTML Format");
 #endif
+	imhtml->backcolor_tags = NULL;
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
@@ -2697,9 +2774,18 @@ void
 gtk_imhtml_clear (GtkIMHtml *imhtml)
 {
 	GList *del;
+	GSList *dels
 	GtkTextIter start, end;
 	GObject *object = g_object_ref(G_OBJECT(imhtml));
-
+	
+	for (dels = imhtml->backcolor_tags; dels; dels = dels->next) {
+		struct backcolor_tag *tag = dels->data;
+		g_free(tag->color);
+		g_free(tag);
+	}
+	g_slist_free(imhtml->backcolor_tags);
+	imhtml->backcolor_tags = NULL;
+	
 	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start);
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
 	gtk_text_buffer_delete(imhtml->text_buffer, &start, &end);
@@ -2708,6 +2794,7 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		GtkIMHtmlScalable *scale = del->data;
 		scale->free(scale);
 	}
+	
 	g_list_free(imhtml->scalables);
 	imhtml->scalables = NULL;
 
@@ -3721,7 +3808,7 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 {
 	GObject *object;
 	GtkTextIter start, end;
-
+	struct backcolor_tag *bct = NULL;
 	if (imhtml->edit.backcolor != NULL)
 		g_free(imhtml->edit.backcolor);
 
@@ -3733,14 +3820,35 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 			remove_font_backcolor(imhtml, &start, &end, TRUE);
 			gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_backcolor_tag(imhtml, imhtml->edit.backcolor), &start, &end);
-		} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
-			remove_font_backcolor(imhtml, &start, &end, FALSE);
-			gtk_text_buffer_apply_tag(imhtml->text_buffer,
-			                                  find_font_backcolor_tag(imhtml,
-			                                  imhtml->edit.backcolor), &start, &end);
+			bct = g_malloc(sizeof(struct backcolor_tag));
+			bct->color = strdup(imhtml->edit.backcolor);
+			bct->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &start, TRUE);
+			bct->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &end, TRUE);
+			imhtml->backcolor_tags = g_slist_prepend(imhtml->backcolor_tags, bct);
+		} else {
+			bct = g_malloc(sizeof(struct backcolor_tag));
+			bct->color = strdup(imhtml->edit.backcolor);
+			gtk_text_buffer_get_iter_at_mark (imhtml->text_buffer, &start, 
+							  gtk_text_buffer_get_mark(imhtml->text_buffer, "insert"));
+			bct->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &start, TRUE);
+			bct->end = NULL;
+			imhtml->backcolor_tags = g_slist_prepend(imhtml->backcolor_tags, bct);
+			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+				remove_font_backcolor(imhtml, &start, &end, FALSE);
+				gtk_text_buffer_apply_tag(imhtml->text_buffer,
+							  find_font_backcolor_tag(imhtml,
+										  imhtml->edit.backcolor), &start, &end);
+			}
 		}
 	} else {
-		imhtml->edit.backcolor = NULL;
+		if (imhtml->backcolor_tags) {
+			bct = ((struct backcolor_tag*)(imhtml->backcolor_tags->data));
+			if (bct->end == NULL) {
+				gtk_text_buffer_get_iter_at_mark (imhtml->text_buffer, &end, 
+								  gtk_text_buffer_get_mark(imhtml->text_buffer, "insert"));
+				bct->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &end, TRUE);
+			}
+		}
 		if (imhtml->wbfo) {
 			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
 			remove_font_backcolor(imhtml, &start, &end, TRUE);
