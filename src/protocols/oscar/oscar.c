@@ -6712,6 +6712,11 @@ static void oscar_show_set_info(GaimConnection *gc)
 	gaim_account_request_change_user_info(gaim_connection_get_account(gc));
 }
 
+static void oscar_show_set_info_icqurl(GaimConnection *gc)
+{
+	gaim_notify_uri(gc, "http://web.icq.com/whitepages/login/1,,,00.html");
+}
+
 static void oscar_change_pass(GaimConnection *gc)
 {
 	gaim_account_request_change_password(gaim_connection_get_account(gc));
@@ -6774,6 +6779,14 @@ static GList *oscar_actions(GaimConnection *gc)
 	pam->callback = oscar_show_set_info;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
+
+	if (od->icq) {
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Set User Info (URL)...");
+		pam->callback = oscar_show_set_info_icqurl;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+	}
 
 #if 0
 	pam = g_new0(struct proto_actions_menu, 1);
