@@ -930,6 +930,7 @@ static struct prpl *my_protocol = NULL;
 void zephyr_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_ZEPHYR;
+	ret->options = OPT_PROTO_NO_PASSWORD;
 	ret->name = zephyr_name;
 	ret->login = zephyr_login;
 	ret->close = zephyr_close;

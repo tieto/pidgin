@@ -132,7 +132,9 @@ struct aim_user {
 	GtkWidget *mod;
 	GtkWidget *main;
 	GtkWidget *name;
+	GtkWidget *pwdbox;
 	GtkWidget *pass;
+	GtkWidget *rempass;
 	int tmp_options;
 	int tmp_protocol;
 

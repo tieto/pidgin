@@ -54,8 +54,6 @@
 #define OPT_PROTO_CHAT_TOPIC      0x00000008
 /* IRC and Zephyr don't require passwords, so there's no need for a password prompt */
 #define OPT_PROTO_NO_PASSWORD     0x00000010
-/* ICQ, Yahoo, others? let you send offline messages */
-#define OPT_PROTO_OFFLINE         0x00000020
 
 #define GAIM_AWAY_CUSTOM "Custom"
 

@@ -2094,7 +2094,7 @@ static struct prpl *my_protocol = NULL;
 void irc_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_IRC;
-	ret->options = OPT_PROTO_CHAT_TOPIC;
+	ret->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD;
 	ret->name = irc_name;
 	ret->list_icon = irc_list_icon;
 	ret->buddy_menu = irc_buddy_menu;

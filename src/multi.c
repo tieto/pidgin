@@ -19,6 +19,7 @@
  *
  */
 
+#include <string.h>
 #include <gtk/gtk.h>
 #include "prpl.h"
 #include "multi.h"
@@ -47,7 +48,7 @@ static GtkWidget *newmod = NULL;	/* the dialog for creating a new account */
 static GtkWidget *newmain = NULL;	/* the notebook that holds options */
 static struct aim_user tmpusr = { "", "", "", OPT_USR_REM_PASS, DEFAULT_PROTO,
 		{ "", "", "", "", "", "", "" }, NULL, NULL, NULL, NULL, NULL,
-		OPT_USR_REM_PASS, DEFAULT_PROTO, NULL, NULL, NULL };
+		NULL, NULL, OPT_USR_REM_PASS, DEFAULT_PROTO, NULL, NULL, NULL };
 
 static void generate_prpl_options(struct aim_user *, GtkWidget *);
 
@@ -275,16 +276,38 @@ static void cancel_mod(GtkWidget *w, struct aim_user *u)
 static void set_prot(GtkWidget *opt, int proto)
 {
 	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
+	struct prpl *p, *q;
+	q = find_prpl(proto);
 	if (u && (u->tmp_protocol != proto)) {
 		int i;
 		for (i = 0; i < 7; i++)
 			u->proto_opt[i][0] = '\0';
+		p = find_prpl(u->tmp_protocol);
+		if (!(p->options & OPT_PROTO_NO_PASSWORD) &&
+		     (q->options & OPT_PROTO_NO_PASSWORD)) {
+			gtk_widget_hide(u->pwdbox);
+			gtk_widget_hide(u->rempass);
+		} else if ((p->options & OPT_PROTO_NO_PASSWORD) &&
+			  !(q->options & OPT_PROTO_NO_PASSWORD)) {
+			gtk_widget_show(u->pwdbox);
+			gtk_widget_show(u->rempass);
+		}
 		u->tmp_protocol = proto;
 		generate_prpl_options(u, u->main);
-	} else if (tmpusr.tmp_protocol != proto) {
+	} else if (!u && (tmpusr.tmp_protocol != proto)) {
 		int i;
 		for (i = 0; i < 7; i++)
 			tmpusr.proto_opt[i][0] = '\0';
+		p = find_prpl(tmpusr.tmp_protocol);
+		if (!(p->options & OPT_PROTO_NO_PASSWORD) &&
+		     (q->options & OPT_PROTO_NO_PASSWORD)) {
+			gtk_widget_hide(tmpusr.pwdbox);
+			gtk_widget_hide(tmpusr.rempass);
+		} else if ((p->options & OPT_PROTO_NO_PASSWORD) &&
+			  !(q->options & OPT_PROTO_NO_PASSWORD)) {
+			gtk_widget_show(tmpusr.pwdbox);
+			gtk_widget_show(tmpusr.rempass);
+		}
 		tmpusr.tmp_protocol = tmpusr.protocol = proto;
 		generate_prpl_options(NULL, newmain);
 	}
@@ -341,9 +364,13 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 {
 	GtkWidget *vbox;
 	GtkWidget *hbox;
+	GtkWidget *pwdbox;
 	GtkWidget *label;
 	GtkWidget *name;
 	GtkWidget *pass;
+	GtkWidget *rempass;
+	
+	struct prpl *p = NULL;
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -358,14 +385,14 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 	name = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), name, TRUE, TRUE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	pwdbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), pwdbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Password:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(pwdbox), label, FALSE, FALSE, 0);
 
 	pass = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), pass, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(pwdbox), pass, TRUE, TRUE, 0);
 	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
 
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -377,22 +404,32 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 
 	make_protocol_menu(hbox, u);
 
-	acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
+	rempass = acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
 	acct_button(_("Auto-Login"), u, OPT_USR_AUTO, vbox);
 	/*acct_button(_("Send KeepAlive packet (6 bytes/second)"), u, OPT_USR_KEEPALV, vbox);*/
 
+	gtk_widget_show_all(vbox);
+
 	if (u) {
 		u->name = name;
+		u->pwdbox = pwdbox;
 		u->pass = pass;
+		u->rempass = rempass;
 		gtk_entry_set_text(GTK_ENTRY(name), u->username);
 		gtk_entry_set_text(GTK_ENTRY(pass), u->password);
 		gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
+		p = find_prpl(u->tmp_protocol);
 	} else {
 		tmpusr.name = name;
+		tmpusr.pwdbox = pwdbox;
 		tmpusr.pass = pass;
+		tmpusr.rempass = rempass;
+		p = find_prpl(tmpusr.tmp_protocol);
 	}
-
-	gtk_widget_show_all(vbox);
+	if (p->options & OPT_PROTO_NO_PASSWORD) {
+		gtk_widget_hide(pwdbox);
+		gtk_widget_hide(rempass);
+	}
 }
 
 static void generate_prpl_options(struct aim_user *u, GtkWidget *book)
