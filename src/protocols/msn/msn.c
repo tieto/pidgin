@@ -1643,6 +1643,8 @@ static char *msn_status_text(struct buddy *b) {
 static char *msn_tooltip_text(struct buddy *b) {
 	if (b->present)
 		return g_strdup_printf(_("<b>Status:</b> %s"), msn_get_away_text(b->uc >> 1));
+
+	return NULL;
 }
 
 static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)

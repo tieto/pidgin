@@ -4223,7 +4223,7 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));
-	puo->def = g_strdup_printf("%d", "5222");
+	puo->def = g_strdup_printf("%d", 5222);
 	puo->pos = USEROPT_PORT;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 

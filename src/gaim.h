@@ -363,6 +363,7 @@ extern void show_find_email(struct gaim_connection *);
 extern void show_find_info(struct gaim_connection *);
 extern void show_set_info(struct gaim_connection *);
 extern void show_confirm_del(struct gaim_connection *, gchar *);
+extern void show_confirm_del_group(struct group *);
 
 /* Functions in gaimrc.c */
 extern gint sort_awaymsg_list(gconstpointer, gconstpointer);

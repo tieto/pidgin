@@ -610,7 +610,7 @@ char *away_subs(const char *msg, const char *name)
 	char tmp[20];
 
 	cpy[0] = '\0';
-	c = msg;
+	c = (char *)msg;
 	while (*c) {
 		switch (*c) {
 		case '%':

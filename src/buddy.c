@@ -256,7 +256,7 @@ static void gaim_gtk_blist_add_buddy_cb()
 		show_add_buddy(NULL, NULL, NULL, NULL);
 	}
 }
-
+static void
 gaim_gtk_blist_remove_cb (GtkWidget *w, GaimBlistNode *node) 
 {
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {

@@ -1283,7 +1283,7 @@ static const char *toc_list_icon(struct gaim_account *a, struct buddy *b)
 	return "aim";
 }
 
-static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+static void toc_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
@@ -1452,12 +1452,13 @@ static GList *toc_actions(struct gaim_connection *gc)
 }
 
 G_MODULE_EXPORT void toc_init(struct prpl *ret)
-{	
+{
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_TOC;
 	ret->options = OPT_PROTO_CORRECT_TIME;
 	ret->name = g_strdup("TOC");
 	ret->list_icon = toc_list_icon;
+	ret->list_emblems = toc_list_emblems;
 	ret->away_states = toc_away_states;
 	ret->actions = toc_actions;
 	ret->buddy_menu = toc_buddy_menu;
