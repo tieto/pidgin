@@ -100,7 +100,6 @@ void gaim_prefs_init() {
 	gaim_prefs_add_none("/plugins/core");
 	gaim_prefs_add_none("/plugins/lopl");
 	gaim_prefs_add_none("/plugins/prpl");
-	gaim_prefs_add_string_list("/plugins/loaded", NULL);
 
 	/* XXX: this is where you would want to put prefs declarations */
 

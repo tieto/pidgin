@@ -253,9 +253,12 @@ void gaim_plugins_unload_all(void);
 void gaim_plugins_destroy_all(void);
 
 /**
- * Attempts to load all the plugins that were loaded when gaim last quit
+ * Attempts to load all the plugins in the specified preference key
+ * that were loaded when gaim last quit.
+ *
+ * @param key The preference key containing the list of plugins.
  */
-void gaim_plugins_load_saved(void);
+void gaim_plugins_load_saved(const char *key);
 
 /**
  * Probes for plugins in the registered module paths.

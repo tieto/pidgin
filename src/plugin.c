@@ -532,12 +532,16 @@ gaim_plugins_destroy_all(void)
 }
 
 void
-gaim_plugins_load_saved(void)
+gaim_plugins_load_saved(const char *key)
 {
 #ifdef GAIM_PLUGINS
-	GList *f, *files = gaim_prefs_get_string_list("/plugins/loaded");
+	GList *f, *files;
 
-	for(f = files; f; f = f->next) {
+	g_return_if_fail(key != NULL);
+
+	files = gaim_prefs_get_string_list(key);
+
+	for (f = files; f; f = f->next) {
 		gaim_plugin_load(gaim_plugin_probe(f->data));
 		g_free(f->data);
 	}

@@ -2810,6 +2810,9 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/logging/log_own_states", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/logging/individual_logs", FALSE);
 
+	/* Plugins */
+	gaim_prefs_add_string_list("/gaim/gtk/plugins/loaded", NULL);
+
 	/* Smiley Themes */
 	gaim_prefs_add_none("/gaim/gtk/smileys");
 	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "");

@@ -886,7 +886,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* load plugins we had when we quit */
-	gaim_plugins_load_saved();
+	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
 
 	gaim_pounces_load();
 
