@@ -725,6 +725,10 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 				/* Someone's triyng to ping us.  Let's respond */
 				gchar u_arg[24];
 				gchar u_buf[200];
+				unsigned long tend= time((time_t *)NULL);
+				unsigned long tstart;
+				
+				printf("LA: %s\n", buf);
 
 				strcpy(u_arg, u_message + 6);
 				u_arg[strlen(u_arg) - 1] = '\0';
@@ -733,7 +737,9 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 				 * the serial # and the time so that we can accurately report which
 				 * pings are turning, etc */
 
-				g_snprintf(u_buf, sizeof(u_buf), "Ping Reply From %s", u_nick);
+				tstart = atol(u_arg);
+
+				g_snprintf(u_buf, sizeof(u_buf), "Ping Reply From %s: [%ld seconds]", u_nick, tend-tstart);
 
 				do_error_dialog(u_buf, "Gaim IRC - Ping Reply");
 
@@ -1089,9 +1095,8 @@ static void irc_send_ping(GtkObject * w, char *who)
 	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	char buf[BUF_LEN];
-	unsigned int serial = 2391271;
 
-	g_snprintf(buf, BUF_LEN, "PRIVMSG %s :%cPING %d%c\n", who, '\001', serial, '\001');
+	g_snprintf(buf, BUF_LEN, "PRIVMSG %s :%cPING %ld%c\n", who, '\001', time((time_t *)NULL), '\001');
 
 	write(idata->fd, buf, strlen(buf));
 }
