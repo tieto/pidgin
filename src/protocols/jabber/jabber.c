@@ -734,23 +734,26 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *name, char *type)
 static time_t iso8601_to_time(char *timestamp)
 {
    struct tm t;
-   if(sscanf(timestamp,"%04d%02d%02dT%02d:%02d:%02d", &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec))
+   time_t retval = 0;
+
+   if(sscanf(timestamp,"%04d%02d%02dT%02d:%02d:%02d",
+	 &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec))
    {
       t.tm_year -= 1900;
       t.tm_mon -= 1;
-      return mktime(&t) +
+      t.tm_isdst = 0;
+      retval = mktime(&t);
 #ifdef HAVE_TM_GMTOFF
-	      t.tm_gmtoff
+      retval += t.tm_gmtoff;
 #else
 #     ifdef HAVE_TIMEZONE
-	      timezone
-#     else
-	      0
+	 tzset();	/* making sure */
+         retval -= timezone;
 #     endif
 #endif
 	      ;
    }
-   return 0;
+   return retval;
 }
 
 static void jabber_handlemessage(gjconn gjc, jpacket p)
@@ -929,31 +932,17 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	struct buddy *b = NULL;
 	jid who;
 	char *buddy;
-	xmlnode y,z;
+	xmlnode y;
 	char *show;
 	int state = 0;
 	GSList *resources;
 	char *res;
 	struct conversation *cnv = NULL;
 	struct jabber_chat *jc = NULL;
-	time_t signon = time(NULL);
-	
 
 	to = xmlnode_get_attrib(p->x, "to");
 	from = xmlnode_get_attrib(p->x, "from");
 	type = xmlnode_get_attrib(p->x, "type");
-	
-	z = xmlnode_get_firstchild(p->x);
-	
-	while(z)
-	{
-	   if(NSCHECK(z,NS_DELAY))
-	   {
-	      char *timestamp = xmlnode_get_attrib(z,"stamp");
-	      signon = iso8601_to_time(timestamp);
-	   }
-	   z = xmlnode_get_nextsibling(z);
-	}
 	
 	if ((y = xmlnode_get_tag(p->x, "show"))) {
 		show = xmlnode_get_data(y);
@@ -1021,7 +1010,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 				b->proto_data = g_slist_append(b->proto_data, g_strdup(res));
 			}
 
-			serv_got_update(GJ_GC(gjc), buddy, 1, 0, b->signon ? b->signon : signon, b->idle, state, 0);
+			serv_got_update(GJ_GC(gjc), buddy, 1, 0, b->signon, b->idle, state, 0);
 
 		}
 	} else {

@@ -51,12 +51,12 @@ AC_TRY_COMPILE([#include <sys/types.h>
 #include <sys/socket.h>
 socklen_t x;
 ], [], [AC_MSG_RESULT(yes)], [
-AC_TRY_COMPILE([#include <sys/types>
+AC_TRY_COMPILE([#include <sys/types.h>
 #include <sys/socket.h>
 int accept(int, struct sockaddr *, size_t *);
 ], [], [
 AC_MSG_RESULT(size_t)
-AC_DEFINE(socklen_t, size_t)]. [
+AC_DEFINE(socklen_t, size_t)], [
 AC_MSG_RESULT(int)
 AC_DEFINE(socklen_t, int)])])
 
@@ -409,6 +409,7 @@ AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
+AC_VAR_TIMEZONE_EXTERNALS
 
 AC_OUTPUT([Makefile
            doc/Makefile
