@@ -440,7 +440,6 @@ gpointer gaim_prefs_get_generic(const char *name) {
 gboolean gaim_prefs_get_bool(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 
-	printf("bool name = '%s'\n", name);
 	g_return_val_if_fail(pref != NULL, FALSE);
 	g_return_val_if_fail(pref->type == GAIM_PREF_BOOLEAN, FALSE);
 
