@@ -3,6 +3,15 @@
 MODULE = Gaim::Account  PACKAGE = Gaim::Account  PREFIX = gaim_account_
 PROTOTYPES: ENABLE
 
+Gaim::Connection
+gaim_account_connect(account)
+	Gaim::Account account
+CODE:
+	RETVAL = gaim_account_connect(account,
+								  gaim_account_get_status(account, "online"));
+OUTPUT:
+	RETVAL
+
 void
 gaim_account_disconnect(account)
 	Gaim::Account account
