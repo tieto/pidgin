@@ -171,6 +171,15 @@ GaimXferType gaim_xfer_get_type(const struct gaim_xfer *xfer);
 struct gaim_account *gaim_xfer_get_account(const struct gaim_xfer *xfer);
 
 /**
+ * Returns the completed state for a file transfer.
+ *
+ * @param xfer The file transfer.
+ *
+ * @return The completed state.
+ */
+gboolean gaim_xfer_is_completed(const struct gaim_xfer *xfer);
+
+/**
  * Returns the name of the file being sent or received.
  *
  * @param xfer The file transfer.

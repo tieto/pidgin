@@ -187,6 +187,15 @@ gaim_xfer_get_account(const struct gaim_xfer *xfer)
 	return xfer->account;
 }
 
+gboolean
+gaim_xfer_is_completed(const struct gaim_xfer *xfer)
+{
+	if (xfer == NULL)
+		return TRUE;
+
+	return xfer->completed;
+}
+
 const char *
 gaim_xfer_get_filename(const struct gaim_xfer *xfer)
 {
