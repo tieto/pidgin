@@ -1,295 +1,185 @@
-/* --------------------------------------------------------------------------
+/*
+ * gaim - Jabber Protocol Plugin
  *
- * License
+ * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
- * The contents of this file are subject to the Jabber Open Source License
- * Version 1.0 (the "JOSL").  You may not copy or use this file, in either
- * source code or executable form, except in compliance with the JOSL. You
- * may obtain a copy of the JOSL at http://www.jabber.org/ or at
- * http://www.opensource.org/.  
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- * Software distributed under the JOSL is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied.  See the JOSL
- * for the specific language governing rights and limitations under the
- * JOSL.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Copyrights
- * 
- * Portions created by or assigned to Jabber.com, Inc. are 
- * Copyright (c) 1999-2002 Jabber.com, Inc.  All Rights Reserved.  Contact
- * information for Jabber.com, Inc. is available at http://www.jabber.com/.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Portions Copyright (c) 1998-1999 Jeremie Miller.
- * 
- * Acknowledgements
- * 
- * Special thanks to the Jabber Open Source Contributors for their
- * suggestions and support of Jabber.
- * 
- * Alternatively, the contents of this file may be used under the terms of the
- * GNU General Public License Version 2 or later (the "GPL"), in which case
- * the provisions of the GPL are applicable instead of those above.  If you
- * wish to allow use of your version of this file only under the terms of the
- * GPL and not to allow others to use your version of this file under the JOSL,
- * indicate your decision by deleting the provisions above and replace them
- * with the notice and other provisions required by the GPL.  If you do not
- * delete the provisions above, a recipient may use your version of this file
- * under either the JOSL or the GPL. 
- * 
- * 
- * --------------------------------------------------------------------------*/
+ */
+#include "internal.h"
+#include "server.h"
 
-#include "lib.h"
+#include "presence.h"
+#include "jutil.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
+time_t str_to_time(const char *timestamp)
+{
+	struct tm t;
+	time_t retval = 0;
+	char buf[32]; 
+	char *c;
+	int tzoff = 0;
+
+	time(&retval);
+	localtime_r(&retval, &t);
+
+	snprintf(buf, sizeof(buf), "%s", timestamp);
+	c = buf;
+
+	/* 4 digit year */
+	if(!sscanf(c, "%04d", &t.tm_year)) return 0;
+	c+=4;
+	if(*c == '-')
+        c++;
+
+    t.tm_year -= 1900;
+
+    /* 2 digit month */
+    if(!sscanf(c, "%02d", &t.tm_mon)) return 0;
+    c+=2;
+    if(*c == '-')
+        c++;
+
+    t.tm_mon -= 1;
+
+    /* 2 digit day */
+    if(!sscanf(c, "%02d", &t.tm_mday)) return 0;
+    c+=2;
+    if(*c == 'T') { /* we have more than a date, keep going */
+        c++; /* skip the "T" */
+
+        /* 2 digit hour */
+        if(sscanf(c, "%02d:%02d:%02d", &t.tm_hour, &t.tm_min, &t.tm_sec)) {
+            int tzhrs, tzmins;
+            c+=8;
+            if(*c == '.') /* dealing with precision we don't care about */
+                c += 4;
+
+            if((*c == '+' || *c == '-') &&
+                    sscanf(c+1, "%02d:%02d", &tzhrs, &tzmins)) {
+                tzoff = tzhrs*60*60 + tzmins*60;
+                if(*c == '+')
+                    tzoff *= -1;
+            }
+
+#ifdef HAVE_TM_GMTOFF
+                tzoff += t.tm_gmtoff;
+#else
+#   ifdef HAVE_TIMEZONE
+                tzset();    /* making sure */
+                tzoff -= timezone;
+#   endif
 #endif
-
-/* util for making presence packets */
-xmlnode jutil_presnew(int type, char *to, char *status)
-{
-    xmlnode pres;
-
-    pres = xmlnode_new_tag("presence");
-    switch(type)
-    {
-    case JPACKET__SUBSCRIBE:
-        xmlnode_put_attrib(pres,"type","subscribe");
-        break;
-    case JPACKET__UNSUBSCRIBE:
-        xmlnode_put_attrib(pres,"type","unsubscribe");
-        break;
-    case JPACKET__SUBSCRIBED:
-        xmlnode_put_attrib(pres,"type","subscribed");
-        break;
-    case JPACKET__UNSUBSCRIBED:
-        xmlnode_put_attrib(pres,"type","unsubscribed");
-        break;
-    case JPACKET__PROBE:
-        xmlnode_put_attrib(pres,"type","probe");
-        break;
-    case JPACKET__UNAVAILABLE:
-        xmlnode_put_attrib(pres,"type","unavailable");
-        break;
-    case JPACKET__INVISIBLE:
-        xmlnode_put_attrib(pres,"type","invisible");
-        break;
-    }
-    if(to != NULL)
-        xmlnode_put_attrib(pres,"to",to);
-    if(status != NULL)
-        xmlnode_insert_cdata(xmlnode_insert_tag(pres,"status"),status,strlen(status));
-
-    return pres;
-}
-
-/* util for making IQ packets */
-xmlnode jutil_iqnew(int type, char *ns)
-{
-    xmlnode iq;
-
-    iq = xmlnode_new_tag("iq");
-    switch(type)
-    {
-    case JPACKET__GET:
-        xmlnode_put_attrib(iq,"type","get");
-        break;
-    case JPACKET__SET:
-        xmlnode_put_attrib(iq,"type","set");
-        break;
-    case JPACKET__RESULT:
-        xmlnode_put_attrib(iq,"type","result");
-        break;
-    case JPACKET__ERROR:
-        xmlnode_put_attrib(iq,"type","error");
-        break;
-    }
-    xmlnode_put_attrib(xmlnode_insert_tag(iq,"query"),"xmlns",ns);
-
-    return iq;
-}
-
-/* util for making message packets */
-xmlnode jutil_msgnew(char *type, char *to, char *subj, char *body)
-{
-    xmlnode msg;
-
-    msg = xmlnode_new_tag("message");
-    xmlnode_put_attrib (msg, "type", type);
-    xmlnode_put_attrib (msg, "to", to);
-
-    if (subj)
-    {
-	xmlnode_insert_cdata (xmlnode_insert_tag (msg, "subject"), subj, strlen (subj));
-    }
-
-    xmlnode_insert_cdata (xmlnode_insert_tag (msg, "body"), body, strlen (body));
-
-    return msg;
-}
-
-/* util for making stream packets */
-xmlnode jutil_header(char* xmlns, char* server)
-{
-     xmlnode result;
-     if ((xmlns == NULL)||(server == NULL))
-	  return NULL;
-     result = xmlnode_new_tag("stream:stream");
-     xmlnode_put_attrib(result, "xmlns:stream", "http://etherx.jabber.org/streams");
-     xmlnode_put_attrib(result, "xmlns", xmlns);
-     xmlnode_put_attrib(result, "to", server);
-
-     return result;
-}
-
-/* returns the priority on a presence packet */
-int jutil_priority(xmlnode x)
-{
-    char *str;
-    int p;
-
-    if(x == NULL)
-        return -1;
-
-    if(xmlnode_get_attrib(x,"type") != NULL)
-        return -1;
-
-    x = xmlnode_get_tag(x,"priority");
-    if(x == NULL)
-        return 0;
-
-    str = xmlnode_get_data((x));
-    if(str == NULL)
-        return 0;
-
-    p = atoi(str);
-    if(p >= 0)
-        return p;
-    else
-        return 0;
-}
-
-void jutil_tofrom(xmlnode x)
-{
-    char *to, *from;
-
-    to = xmlnode_get_attrib(x,"to");
-    from = xmlnode_get_attrib(x,"from");
-    xmlnode_put_attrib(x,"from",to);
-    xmlnode_put_attrib(x,"to",from);
-}
-
-xmlnode jutil_iqresult(xmlnode x)
-{
-    xmlnode cur;
-
-    jutil_tofrom(x);
-
-    xmlnode_put_attrib(x,"type","result");
-
-    /* hide all children of the iq, they go back empty */
-    for(cur = xmlnode_get_firstchild(x); cur != NULL; cur = xmlnode_get_nextsibling(cur))
-        xmlnode_hide(cur);
-
-    return x;
-}
-
-char *jutil_timestamp(void)
-{
-    time_t t;
-    struct tm *new_time;
-    static char timestamp[18];
-    int ret;
-
-    t = time(NULL);
-
-    if(t == (time_t)-1)
-        return NULL;
-    new_time = gmtime(&t);
-
-    ret = snprintf(timestamp, 18, "%d%02d%02dT%02d:%02d:%02d", 1900+new_time->tm_year,
-                   new_time->tm_mon+1, new_time->tm_mday, new_time->tm_hour,
-                   new_time->tm_min, new_time->tm_sec);
-
-    if(ret == -1)
-        return NULL;
-
-    return timestamp;
-}
-
-void jutil_error(xmlnode x, terror E)
-{
-    xmlnode err;
-    char code[4];
-
-    xmlnode_put_attrib(x,"type","error");
-    err = xmlnode_insert_tag(x,"error");
-
-    snprintf(code,4,"%d",E.code);
-    xmlnode_put_attrib(err,"code",code);
-    if(E.msg != NULL)
-        xmlnode_insert_cdata(err,E.msg,strlen(E.msg));
-
-    jutil_tofrom(x);
-}
-
-void jutil_delay(xmlnode msg, char *reason)
-{
-    xmlnode delay;
-
-    delay = xmlnode_insert_tag(msg,"x");
-    xmlnode_put_attrib(delay,"xmlns",NS_DELAY);
-    xmlnode_put_attrib(delay,"from",xmlnode_get_attrib(msg,"to"));
-    xmlnode_put_attrib(delay,"stamp",jutil_timestamp());
-    if(reason != NULL)
-        xmlnode_insert_cdata(delay,reason,strlen(reason));
-}
-
-#define KEYBUF 100
-
-char *jutil_regkey(char *key, char *seed)
-{
-    static char keydb[KEYBUF][41];
-    static char seeddb[KEYBUF][41];
-    static int last = -1;
-    char *str, strint[32];
-    int i;
-
-    /* blanket the keydb first time */
-    if(last == -1)
-    {
-        last = 0;
-        memset(&keydb,0,KEYBUF*41);
-        memset(&seeddb,0,KEYBUF*41);
-        srand(time(NULL));
-    }
-
-    /* creation phase */
-    if(key == NULL && seed != NULL)
-    {
-        /* create a random key hash and store it */
-        sprintf(strint,"%d",rand());
-        strcpy(keydb[last],shahash(strint));
-
-        /* store a hash for the seed associated w/ this key */
-        strcpy(seeddb[last],shahash(seed));
-
-        /* return it all */
-        str = keydb[last];
-        last++;
-        if(last == KEYBUF) last = 0;
-        return str;
-    }
-
-    /* validation phase */
-    str = shahash(seed);
-    for(i=0;i<KEYBUF;i++)
-        if(j_strcmp(keydb[i],key) == 0 && j_strcmp(seeddb[i],str) == 0)
-        {
-            seeddb[i][0] = '\0'; /* invalidate this key */
-            return keydb[i];
         }
+    }
+    retval = mktime(&t);
 
-    return NULL;
+    retval += tzoff;
+
+    return retval;
 }
 
+const char *jabber_get_state_string(int s) {
+	switch(s) {
+		case JABBER_STATE_AWAY:
+			return _("Away");
+			break;
+		case JABBER_STATE_CHAT:
+			return _("Chatty");
+			break;
+		case JABBER_STATE_XA:
+			return _("Extended Away");
+			break;
+		case JABBER_STATE_DND:
+			return _("Do Not Disturb");
+			break;
+		default:
+			return _("Available");
+			break;
+	}
+}
+
+JabberID*
+jabber_id_new(const char *str)
+{
+	char *at;
+	char *slash;
+
+	JabberID *jid;
+
+	if(!str)
+		return NULL;
+
+	jid = g_new0(JabberID, 1);
+
+	at = strchr(str, '@');
+	slash = strchr(str, '/');
+
+	if(at) {
+		jid->node = g_strndup(str, at-str);
+		if(slash) {
+			jid->domain = g_strndup(at+1, slash-(at+1));
+			jid->resource = g_strdup(slash+1);
+		} else {
+			jid->domain = g_strdup(at+1);
+		}
+	} else {
+		if(slash) {
+			jid->domain = g_strndup(str, slash-str);
+			jid->resource = g_strdup(slash+1);
+		} else {
+			jid->domain = g_strdup(str);
+		}
+	}
+
+	return jid;
+}
+
+void
+jabber_id_free(JabberID *jid)
+{
+	if(jid) {
+		if(jid->node)
+			g_free(jid->node);
+		if(jid->domain)
+			g_free(jid->domain);
+		if(jid->resource)
+			g_free(jid->resource);
+		g_free(jid);
+	}
+}
+
+
+const char *jabber_get_resource(const char *jid)
+{
+	char *slash;
+
+	slash = strrchr(jid, '/');
+	if(slash)
+		return slash+1;
+	else
+		return NULL;
+}
+
+char *jabber_get_bare_jid(const char *jid)
+{
+	char *slash;
+	slash = strrchr(jid, '/');
+
+	if(slash)
+		return g_strndup(jid, slash - jid);
+	else
+		return g_strdup(jid);
+}

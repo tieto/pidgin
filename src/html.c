@@ -468,7 +468,9 @@ void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out) {
 				ALLOW_TAG("h4");
 				ALLOW_TAG("h5");
 				ALLOW_TAG("h6");
-				ALLOW_TAG("html");
+				/* we only allow html to start the message */
+				if(c == html)
+					ALLOW_TAG("html");
 				ALLOW_TAG_ALT("i", "em");
 				ALLOW_TAG_ALT("italic", "em");
 				ALLOW_TAG("li");

@@ -1,53 +1,30 @@
-EXTRA_DIST = \
-		xmltok_impl.c \
-		xmltok_ns.c \
-		Makefile.mingw \
-		win32/posix.uname.c \
-		win32/utsname.h
+EXTRA_DIST = win32/posix.uname.c \
+			 win32/utsname.h
 
 pkgdir = $(libdir)/gaim
 
-JABBERSOURCES = \
-			asciitab.h \
-			expat.c \
-			genhash.c \
-			hashtable.c \
-			hashtable.h \
-			karma.c \
-			iasciitab.h \
-			latin1tab.h \
-			lib.h \
-			libxode.h \
-			nametab.h \
-			pool.c \
-			sha.c \
-			snprintf.c \
-			socket.c \
-			str.c \
-			utf8tab.h \
-			xhash.c \
-			xmldef.h \
-			xmlnode.c \
-			xmlparse.c \
-			xmlparse.h \
-			xmlrole.c \
-			xmlrole.h \
-			xmltok.c \
-			xmltok.h \
-			xmltok_impl.h \
-			xstream.c \
-			\
-			jabber.h \
-			jconn.c \
-			jid.c \
-			jpacket.c \
-			jutil.c \
-			log.c \
-			log.h \
-			pproxy.c \
-			rate.c \
-			\
-			jabber.c
+JABBERSOURCES = auth.c \
+			  auth.h \
+			  buddy.c \
+			  buddy.h \
+			  chat.c \
+			  chat.h \
+			  iq.c \
+			  iq.h \
+			  jabber.c \
+			  jabber.h \
+			  jutil.c \
+			  jutil.h \
+			  message.c \
+			  message.h \
+			  parser.c \
+			  parser.h \
+			  presence.c \
+			  presence.h \
+			  roster.c \
+			  roster.h \
+			  xmlnode.c \
+			  xmlnode.h 
 
 AM_CFLAGS = $(st)
 
@@ -57,14 +34,16 @@ if STATIC_JABBER
 
 st = -DSTATIC
 noinst_LIBRARIES = libjabber.a
+pkg_LTLIBRARIES =
 
 libjabber_a_SOURCES = $(JABBERSOURCES)
-libjabber_a_CFLAGS = $(AM_CFLAGS)
+libjabber_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
 pkg_LTLIBRARIES = libjabber.la
+noinst_LIBRARIES =
 
 libjabber_la_SOURCES = $(JABBERSOURCES)
 
