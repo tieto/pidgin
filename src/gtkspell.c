@@ -255,6 +255,9 @@ static GList* misspelled_suggest(char *word) {
 	GList *l = NULL;
 	int count;
 
+	if (!word)
+		return NULL;
+
 	buf = g_strdup_printf("^%s\n", word); /* guard against ispell control chars */
 	writetext(buf);
 	g_free(buf);
