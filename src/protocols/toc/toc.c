@@ -1267,6 +1267,15 @@ static void toc_keepalive(GaimConnection *gc)
 
 static const char *toc_list_icon(GaimAccount *a, struct buddy *b)
 {
+	if (!b || (b && b->name && b->name[0] == '+')) {
+		if (a != NULL && isdigit(*gaim_account_get_username(a))) 
+			return "icq";
+		else
+			return "aim";
+	}
+
+	if (b && b->name && isdigit(b->name[0]))
+		return "icq";
 	return "aim";
 }
 
@@ -1275,7 +1284,7 @@ static void toc_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
 
-	if (b->present == GAIM_BUDDY_OFFLINE) {
+	if (!GAIM_BUDDY_IS_ONLINE(b)) {
 		*se = "offline";
 		return;
 	} else {

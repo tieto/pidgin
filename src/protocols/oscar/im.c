@@ -62,15 +62,14 @@ static int aim_im_puticbm(aim_bstream_t *bs, const fu8_t *c, fu16_t ch, const ch
  *
  *
  * Heres the current collection:
- *  0501 0003 0101 0101 01	AOL Mobile Communicator, WinAIM 1.0.414
- *  0501 0003 0101 0201 01	WinAIM 2.0.847, 2.1.1187, 3.0.1464, 
+ *  0501 0003 0101 0101 01		AOL Mobile Communicator, WinAIM 1.0.414
+ *  0501 0003 0101 0201 01		WinAIM 2.0.847, 2.1.1187, 3.0.1464, 
  *					4.3.2229, 4.4.2286
  *  0501 0004 0101 0102 0101	WinAIM 4.1.2010, libfaim (right here)
- *  0501 0003 0101 02		WinAIM 5
- *  0501 0001 01		iChat x.x
- *  0501 0001 0101 01		AOL v6.0, CompuServe 2000 v6.0, any
- *				TOC client
- *  0501 0002 0106		WinICQ 5.45.1.3777.85
+ *  0501 0003 0101 02			WinAIM 5
+ *  0501 0001 01				iChat x.x, mobile buddies
+ *  0501 0001 0101 01			AOL v6.0, CompuServe 2000 v6.0, any TOC client
+ *  0501 0002 0106				WinICQ 5.45.1.3777.85
  *
  * Note that in this function, only the feature bytes are tested, since
  * the rest will always be the same.
