@@ -14,7 +14,7 @@ EXTRA_DIST = 	msn_angel.xpm \
 	msn_dog.xpm \
 	msn_drink.xpm \
 	msn_email.xpm \
-	msn_embaressed.xpm \
+	msn_embarrassed.xpm \
 	msn_film.xpm \
 	msn_flower.xpm \
 	msn_gift.xpm \
