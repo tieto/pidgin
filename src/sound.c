@@ -82,7 +82,7 @@ static void play_audio(unsigned char *data, int size)
 {
 	int fd;
 
-	fd = open("/dev/audio", O_WRONLY | O_EXCL);
+	fd = open("/dev/audio", O_WRONLY | O_EXCL | O_NDELAY);
 	if (fd < 0)
 		return;
 	write(fd, data, size);
@@ -106,7 +106,7 @@ static void play_audio_file(char *file)
 	read(fd, buf, info.st_size - 24);
 	close(fd);
 
-	fd = open("/dev/audio", O_WRONLY | O_EXCL);
+	fd = open("/dev/audio", O_WRONLY | O_EXCL | O_NDELAY);
 	if (fd < 0) {
 		free(buf);
 		return;
