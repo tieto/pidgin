@@ -381,12 +381,12 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 		if (vc_node->name &&
 				!g_ascii_strncasecmp(vc_node->name, "vCard", 5)) {
 			GError *error = NULL;
-			char *avatar_data;
+			unsigned char *avatar_data;
 			gsize avatar_len;
 
 			if(avatar_file && g_file_get_contents(avatar_file, &avatar_data, &avatar_len, &error)) {
 				xmlnode *photo;
-				char *enc;
+				unsigned char *enc;
 				int i;
 				unsigned char hashval[20];
 				char *p, hash[41];

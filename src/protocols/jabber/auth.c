@@ -48,7 +48,11 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 			return TRUE;
 		} else if(xmlnode_get_child(starttls, "required")) {
-			gaim_connection_error(js->gc, _("Server requires SSL for login"));
+			if(gaim_ssl_is_supported()) {
+				gaim_connection_error(js->gc, _("Server requires TLS/SSL for login.  Select \"Enable TLS if available\" in account properties"));
+			} else {
+				gaim_connection_error(js->gc, _("Server requires TLS/SSL for login.  No TLS/SSL support found."));
+			}
 			return TRUE;
 		}
 	}
@@ -61,7 +65,7 @@ static void finish_plaintext_authentication(JabberStream *js)
 	if(js->auth_type == JABBER_AUTH_PLAIN) {
 		xmlnode *auth;
 		GString *response;
-		char *enc_out;
+		unsigned char *enc_out;
 
 		auth = xmlnode_new("auth");
 		xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
@@ -300,7 +304,7 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	md5_byte_t result[16];
 	size_t a1len;
 
-	char *x, *a1, *ha1, *ha2, *kd, *z, *convnode, *convpasswd;
+	unsigned char *x, *a1, *ha1, *ha2, *kd, *z, *convnode, *convpasswd;
 
 	if((convnode = g_convert(jid->node, strlen(jid->node), "iso-8859-1", "utf-8",
 					NULL, NULL, NULL)) == NULL) {
