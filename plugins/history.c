@@ -62,7 +62,7 @@ void historize (char *name, void *data)
 	g_free(path);
 }
 
-char *gaim_plugin_init(GModule *h) {
+G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
 	handle = h;
 
 	gaim_signal_connect(handle, event_new_conversation, historize, NULL);
@@ -71,7 +71,7 @@ char *gaim_plugin_init(GModule *h) {
 }
 
 struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
+G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
 	desc.name = g_strdup(_("History"));
 	desc.version = g_strdup(VERSION);

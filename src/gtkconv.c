@@ -1328,8 +1328,11 @@ notebook_init_grab(struct gaim_gtk_window *gtkwin, GtkWidget *widget)
 
 	/* Grab the pointer */
 	gtk_grab_add(gtkwin->notebook);
-
+#ifndef _WIN32
+	/* Currently for win32 GTK+ (as of 2.2.1), gdk_pointer_is_grabbed will
+	   always be true after a button press. */
 	if (!gdk_pointer_is_grabbed())
+#endif
 		gdk_pointer_grab(gtkwin->notebook->window, FALSE,
 						 GDK_BUTTON1_MOTION_MASK | GDK_BUTTON_RELEASE_MASK,
 						 NULL, cursor, GDK_CURRENT_TIME);
