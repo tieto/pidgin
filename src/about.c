@@ -128,6 +128,7 @@ void show_about(GtkWidget *w, void *data)
 			"  Robert 'Robot101' McQueen<BR>"
 			"  Tim 'marv' Ringenbach<br>"
 			"  Kevin 'SimGuy' Stange<br>"
+			"  Stu 'nosnilmot' Tomlinson<br>"
 			"<BR>", NULL);
 		gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 		g_free(str);
