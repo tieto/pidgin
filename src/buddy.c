@@ -310,7 +310,6 @@ void signoff(struct gaim_connection *gc)
 	update_keepalive(gc, FALSE);
         destroy_all_dialogs();
         destroy_buddy();
-        hide_login_progress("");
 #ifdef USE_APPLET
 	set_user_state(offline);
 	applet_buddy_show = FALSE;

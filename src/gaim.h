@@ -751,8 +751,7 @@ extern void away_list_unclicked(GtkWidget *, struct away_message *);
 extern void away_list_clicked(GtkWidget *, struct away_message *);
 
 /* Functions in aim.c */
-extern void hide_login_progress(char *);
-extern void set_login_progress(int, char *);
+extern void hide_login_progress(char *, char *);
 extern void show_login();
 extern void gaim_setup(struct gaim_connection *gc);
 #ifdef USE_APPLET

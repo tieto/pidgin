@@ -191,8 +191,8 @@ static void oscar_callback(gpointer data, gint source,
 	}
 
 	if (condition & GDK_INPUT_EXCEPTION) {
+		hide_login_progress(gc->username, _("Disconnected."));
 		signoff(gc);
-		hide_login_progress(_("Disconnected."));
 		return;
 	}
 	if (condition & GDK_INPUT_READ) {
@@ -217,8 +217,8 @@ static void oscar_callback(gpointer data, gint source,
 				} else if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(gc->oscar_sess, AIM_CONN_TYPE_BOS))) {
 					debug_print(_("major connection error\n"));
+					hide_login_progress(gc->username, _("Disconnected."));
 					signoff(gc);
-					hide_login_progress(_("Disconnected."));
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);
 					char buf[BUF_LONG];
@@ -268,35 +268,27 @@ struct gaim_connection *oscar_login(char *username, char *password) {
 	gc->oscar_sess = sess;
 
 	sprintf(buf, _("Looking up %s"), FAIM_LOGIN_SERVER);
-	set_login_progress(1, buf);
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, FAIM_LOGIN_SERVER);
 
 	if (conn == NULL) {
 		debug_print(_("internal connection error\n"));
-#ifdef USE_APPLET
-		set_user_state(offline);
-#endif
+		hide_login_progress(gc->username, _("Unable to login to AIM"));
 		destroy_gaim_conn(gc);
-		hide_login_progress(_("Unable to login to AIM"));
 		return NULL;
 	} else if (conn->fd == -1) {
-#ifdef USE_APPLET
-		set_user_state(offline);
-#endif
-		destroy_gaim_conn(gc);
 		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
-			sprintf(debug_buff, _("couldn't resolve host\n"));
-			debug_print(debug_buff);
-			hide_login_progress(debug_buff);
+			sprintf(debug_buff, _("couldn't resolve host"));
+			debug_print(debug_buff); debug_print("\n");
+			hide_login_progress(gc->username, debug_buff);
 		} else if (conn->status & AIM_CONN_STATUS_CONNERR) {
-			sprintf(debug_buff, _("couldn't connect to host\n"));
-			debug_print(debug_buff);
-			hide_login_progress(debug_buff);
+			sprintf(debug_buff, _("couldn't connect to host"));
+			debug_print(debug_buff); debug_print("\n");
+			hide_login_progress(gc->username, debug_buff);
 		}
+		destroy_gaim_conn(gc);
 		return NULL;
 	}
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), username);
-	set_login_progress(2, buf);
 
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
@@ -368,7 +360,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		set_user_state(offline);
 #endif
 		gdk_input_remove(gc->inpa);
-		hide_login_progress(_("Authentication Failed"));
+		hide_login_progress(gc->username, _("Authentication Failed"));
 		signoff(gc);
 		return 0;
 	}
@@ -390,15 +382,15 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
+		hide_login_progress(gc->username, _("Internal Error"));
 		destroy_gaim_conn(gc);
-		hide_login_progress(_("Internal Error"));
 		return -1;
 	} else if (bosconn->status != 0) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
+		hide_login_progress(gc->username, _("Could Not Connect"));
 		destroy_gaim_conn(gc);
-		hide_login_progress(_("Could Not Connect"));
 		return -1;
 	}
 
@@ -428,7 +420,6 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	gc->oscar_conn = bosconn;
 	gc->inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, bosconn);
-	set_login_progress(4, _("Connection established, cookie sent"));
 	return 1;
 }
 

@@ -39,7 +39,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 981 $"
+#define REVISION "gaim:$Revision: 985 $"
 
 
 static unsigned int peer_ver=0;
@@ -64,23 +64,17 @@ struct gaim_connection *toc_login(char *username, char *password)
 	char buf2[2048];
 
 	g_snprintf(buf, sizeof(buf), "Looking up %s", aim_host);	
-	set_login_progress(1, buf);
 
 	sin = (struct in_addr *)get_address(aim_host);
 	if (!sin) {
-	        
-#ifdef USE_APPLET
-		set_user_state(offline);
-#endif /* USE_APPLET */
 		g_snprintf(buf, sizeof(buf), "Unable to lookup %s", aim_host);
-		hide_login_progress(buf);
+		hide_login_progress(username, buf);
 		return NULL;
 	}
 	
 	g_snprintf(toc_addy, sizeof(toc_addy), "%s", inet_ntoa(*sin));
 	g_snprintf(buf, sizeof(buf), "Connecting to %s", inet_ntoa(*sin));
 	
-	set_login_progress(2, buf);
 
 
 	gc = new_gaim_conn(PROTO_TOC, username, password);
@@ -88,12 +82,9 @@ struct gaim_connection *toc_login(char *username, char *password)
 	gc->toc_fd = connect_address(sin->s_addr, aim_port);
 
         if (gc->toc_fd < 0) {
-#ifdef USE_APPLET
-		set_user_state(offline);
-#endif /* USE_APPLET */
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed",
 			 inet_ntoa(*sin));
-		hide_login_progress(buf);
+		hide_login_progress(gc->username, buf);
 		destroy_gaim_conn(gc);
 		return NULL;
         }
@@ -102,24 +93,15 @@ struct gaim_connection *toc_login(char *username, char *password)
 	
 	g_snprintf(buf, sizeof(buf), "Signon: %s",username);
 	
-	set_login_progress(3, buf);
-	
 	if (toc_signon(gc) < 0) {
-#ifdef USE_APPLET
-		set_user_state(offline);
-#endif /* USE_APPLET */
-		hide_login_progress("Disconnected.");
+		hide_login_progress(gc->username, "Disconnected.");
 		destroy_gaim_conn(gc);
 		return NULL;
 	}
 
 	g_snprintf(buf, sizeof(buf), "Waiting for reply...");
-	set_login_progress(4, buf);
 	if (toc_wait_signon(gc) < 0) {
-#ifdef USE_APPLET
-		set_user_state(offline);
-#endif /* USE_APPLET */
-		hide_login_progress("Authentication Failed");
+		hide_login_progress(gc->username, "Authentication Failed");
 		destroy_gaim_conn(gc);
 		return NULL;
 	}
@@ -130,7 +112,6 @@ struct gaim_connection *toc_login(char *username, char *password)
 	save_prefs();
 
 	g_snprintf(buf, sizeof(buf), "Retrieving config...");
-	set_login_progress(5, buf);
 	config = toc_wait_config(gc);
 	gc->state = STATE_ONLINE;
 
@@ -363,8 +344,8 @@ void toc_callback( gpointer          data,
 
         buf = g_malloc(2 * BUF_LONG);
         if (wait_reply(gc, buf, 2 * BUF_LONG) < 0) {
+                hide_login_progress(gc->username, "Connection Closed");
                 signoff(gc); /* this will free gc for us */
-                hide_login_progress("Connection Closed");
                 g_free(buf);
 		return;
         }

@@ -108,30 +108,11 @@ void cancel_logon(void)
 #endif /* USE_APPLET */
 }
 
-void set_login_progress(int howfar, char *whattosay)
+void hide_login_progress(char *name, char *why)
 {
-	/* FIXME: we should do this on a per-connection basis
-	gtk_progress_bar_update(GTK_PROGRESS_BAR(progress),
-				((float)howfar / (float)LOGIN_STEPS));
-	gtk_statusbar_pop(GTK_STATUSBAR(notice), 1);
-	gtk_statusbar_push(GTK_STATUSBAR(notice), 1, whattosay);	
-
-        while (gtk_events_pending())
-               gtk_main_iteration();
-	*/
-}
-
-void hide_login_progress(char *why)
-{
-	/* FIXME: we should do this on a per-connection basis
-	gtk_progress_bar_update(GTK_PROGRESS_BAR(progress),
-				0);
-	gtk_statusbar_pop(GTK_STATUSBAR(notice), 1);
-	gtk_statusbar_push(GTK_STATUSBAR(notice), 1, why);	
-
-        while (gtk_events_pending())
-               gtk_main_iteration();
-	*/
+	char buf[2048];
+	sprintf(buf, _("%s was unable to sign on: %s"), name, why);
+	do_error_dialog(buf, _("Signon Error"));
 }
 
 static int snd_tmout;
