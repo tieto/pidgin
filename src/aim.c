@@ -399,6 +399,10 @@ void sighandler(int sig)
 			WEBSITE "gdb.php. If you need further\n"
 			"assistance, please IM either RobFlynn or SeanEgn and\n"
 			"they can help you.\n");
+#else
+		fprintf(stderr, "Oh no!  Segmentation fault!\n");
+		g_on_error_query (NULL);
+
 #endif
 		abort();
 		break;
