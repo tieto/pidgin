@@ -727,17 +727,12 @@ gaim_request_field_list_clear_selected(GaimRequestField *field)
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
 
-	if (field->u.list.items != NULL)
+	if (field->u.list.selected != NULL)
 	{
-		g_list_foreach(field->u.list.items, (GFunc)g_free, NULL);
-		g_list_free(field->u.list.items);
-		field->u.list.items = NULL;
+		g_list_foreach(field->u.list.selected, (GFunc)g_free, NULL);
+		g_list_free(field->u.list.selected);
+		field->u.list.selected = NULL;
 	}
-
-	g_hash_table_destroy(field->u.list.item_data);
-
-	field->u.list.item_data = g_hash_table_new_full(g_str_hash, g_str_equal,
-													g_free, NULL);
 }
 
 void
@@ -747,12 +742,7 @@ gaim_request_field_list_set_selected(GaimRequestField *field, GList *items)
 	g_return_if_fail(items != NULL);
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
 
-	if (field->u.list.selected != NULL)
-	{
-		g_list_foreach(field->u.list.selected, (GFunc)g_free, NULL);
-		g_list_free(field->u.list.selected);
-		field->u.list.selected = NULL;
-	}
+	gaim_request_field_list_clear_selected(field);
 
 	field->u.list.selected = items;
 }
