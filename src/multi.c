@@ -620,24 +620,33 @@ static void acct_signin(GtkWidget *w, gpointer d)
 	}
 }
 
+static void do_del_acct(gpointer w, struct aim_user *u)
+{
+	if (u->gc) {
+		u->gc->wants_to_die = TRUE;
+		signoff(u->gc);
+	}
+	gtk_clist_remove(GTK_CLIST(list), g_list_index(aim_users, u));
+	aim_users = g_list_remove(aim_users, u);
+	save_prefs();
+}
+
 static void del_acct(GtkWidget *w, gpointer d)
 {
+	char buf[8192];
 	int row = -1;
 	struct aim_user *u;
 	if (GTK_CLIST(list)->selection)
 		row = (int)GTK_CLIST(list)->selection->data;
-	if (row != -1) {
-		u = g_list_nth_data(aim_users, row);
-		if (u) {
-			if (u->gc) {
-				u->gc->wants_to_die = TRUE;
-				signoff(u->gc);
-			}
-			aim_users = g_list_remove(aim_users, u);
-			save_prefs();
-		}
-		gtk_clist_remove(GTK_CLIST(list), row);
-	}
+	if (row == -1)
+	return;
+
+	u = g_list_nth_data(aim_users, row);
+	if (!u)
+		return;
+
+	g_snprintf(buf, sizeof(buf), _("Are you sure you want to delete %s?"), u->username);
+	do_ask_dialog(buf, u, do_del_acct, NULL);
 }
 
 void account_editor(GtkWidget *w, GtkWidget *W)

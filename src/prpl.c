@@ -159,7 +159,8 @@ void do_ask_dialog(const char *text, void *data, void *doit, void *dont)
 
 	button = picture_button(window, _("Accept"), ok_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(button), data);
+	if (dont)
+		gtk_object_set_user_data(GTK_OBJECT(button), data);
 	if (doit)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(doit), data);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(rem_win), window);
