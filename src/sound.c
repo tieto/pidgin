@@ -481,7 +481,19 @@ void play(unsigned char *data, int size)
 	}
 
 	else if ((sound_options & OPT_SOUND_CMD) && sound_cmd[0]) {
-		debug_printf("can't play internal sound with external command -- skipping\n");
+		char command[4096];
+		FILE *child;
+
+		g_snprintf(command, sizeof(command), sound_cmd, "-");
+		
+		child=popen(command, "w");
+		if(child == NULL) {
+			perror("popen");
+			return;
+ 	     }
+ 
+		fwrite(data, size, 1, child);
+		pclose(child);
 		return;
 	}
 
