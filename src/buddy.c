@@ -2044,14 +2044,10 @@ void show_buddy_list()
 
 void refresh_buddy_window()
 {
-        setup_buddy_chats();
- 
         build_edit_tree();
 	build_permit_tree();
         
         update_button_pix();
         gtk_widget_show(blist);
-
-
 }
 

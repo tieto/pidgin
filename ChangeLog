@@ -15,6 +15,7 @@ version 0.10.0:
 	* Removed the Lag-O-Meter
 	* Socks 4/5 Proxy works
 	* Buddy Pounces are now saved in .gaimrc
+	* Buddy Chats are now saved in .gaimrc
 	* Ability to merge gaim, aim2, aim4 buddylists. Thanks again bmiller!
 	* ICQ-style aliases. This lets you change the name you see your buddy
 	  as. For example, if your buddy's SN is 'CouldntGetMyName', you can

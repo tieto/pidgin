@@ -163,9 +163,9 @@ int toc_login(char *username, char *password)
 		parse_toc_buddy_list(config, 0);
 	else
 		do_import(0, 0);
-        refresh_buddy_window();
         
-        
+	setup_buddy_chats();
+
 	g_snprintf(buf2, sizeof(buf2), "toc_init_done");
 	sflap_send(buf2, -1, TYPE_DATA);
 

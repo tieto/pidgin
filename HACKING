@@ -14,7 +14,7 @@ ago, but can't complain because it's usually my fault that I haven't
 looked at the patch yet.) To get gaim from CVS (if you haven't already),
 run the following commands:
 
-$ export CVSROOT=anonymous@cvs.gaim.sourceforge.net:/cvsroot/gaim
+$ export CVSROOT=:pserver:anonymous@cvs.gaim.sourceforge.net:/cvsroot/gaim
 $ cvs login
 (hit enter as the password)
 $ cvs co gaim
