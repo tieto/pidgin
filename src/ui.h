@@ -486,7 +486,7 @@ extern void default_away_menu_init(GtkWidget *);
 extern void build_allow_list();
 extern void build_block_list();
 extern GtkWidget *make_frame(GtkWidget *, char *);
-extern GtkWidget *prefs_away_list;
+extern GtkListStore *prefs_away_store;
 extern GtkWidget *prefs_away_menu;
 extern GtkWidget *pref_fg_picture;
 extern GtkWidget *pref_bg_picture;

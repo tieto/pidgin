@@ -279,7 +279,7 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 	GAIM_DIALOG(window);
 	p->window = window;
 	gtk_window_set_role(GTK_WINDOW(window), "prompt");
-	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 	gtk_window_set_title(GTK_WINDOW(window), _("Gaim - Prompt"));
 	g_signal_connect(GTK_OBJECT(window), "destroy", G_CALLBACK(des_prompt), p);
 	gtk_widget_realize(window);
@@ -335,10 +335,10 @@ void do_proto_menu()
 	if (!protomenu)
 		return;
 
-	l = gtk_container_children(GTK_CONTAINER(protomenu));
+	l = gtk_container_get_children(GTK_CONTAINER(protomenu));
 	while (l) {
 		menuitem = l->data;
-		pam = gtk_object_get_data(GTK_OBJECT(menuitem), "user_data");
+		pam = g_object_get_data(G_OBJECT(menuitem), "proto_actions_menu");
 		if (pam)
 			g_free(pam);
 		gtk_container_remove(GTK_CONTAINER(protomenu), GTK_WIDGET(menuitem));
@@ -356,7 +356,7 @@ void do_proto_menu()
 	if (!count) {
 		g_snprintf(buf, sizeof(buf), _("No actions available"));
 		menuitem = gtk_menu_item_new_with_label(buf);
-		gtk_menu_append(GTK_MENU(protomenu), menuitem);
+		gtk_menu_shell_append(GTK_MENU_SHELL(protomenu), menuitem);
 		gtk_widget_show(menuitem);
 		return;
 	}
@@ -376,10 +376,10 @@ void do_proto_menu()
 			if (act->data) {
 				struct proto_actions_menu *pam = act->data;
 				menuitem = gtk_menu_item_new_with_label(pam->label);
-				gtk_menu_append(GTK_MENU(protomenu), menuitem);
+				gtk_menu_shell_append(GTK_MENU_SHELL(protomenu), menuitem);
 				g_signal_connect(GTK_OBJECT(menuitem), "activate",
 							G_CALLBACK(proto_act), pam);
-				gtk_object_set_data(GTK_OBJECT(menuitem), "user_data", pam);
+				g_object_set_data(G_OBJECT(menuitem), "proto_actions_menu", pam);
 				gtk_widget_show(menuitem);
 			} else {
 				gaim_separator(protomenu);
@@ -397,7 +397,7 @@ void do_proto_menu()
 
 			g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, gc->prpl->name);
 			menuitem = gtk_menu_item_new_with_label(buf);
-			gtk_menu_append(GTK_MENU(protomenu), menuitem);
+			gtk_menu_shell_append(GTK_MENU_SHELL(protomenu), menuitem);
 			gtk_widget_show(menuitem);
 
 			submenu = gtk_menu_new();
@@ -410,10 +410,11 @@ void do_proto_menu()
 				if (act->data) {
 					struct proto_actions_menu *pam = act->data;
 					menuitem = gtk_menu_item_new_with_label(pam->label);
-					gtk_menu_append(GTK_MENU(submenu), menuitem);
+					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 					g_signal_connect(GTK_OBJECT(menuitem), "activate",
 								G_CALLBACK(proto_act), pam);
-					gtk_object_set_data(GTK_OBJECT(menuitem), "user_data", pam);
+					g_object_set_data(G_OBJECT(menuitem), "proto_actions_menu",
+							pam);
 					gtk_widget_show(menuitem);
 				} else {
 					gaim_separator(submenu);
@@ -498,7 +499,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 
 	GAIM_DIALOG(mn->email_win);
 	gtk_window_set_role(GTK_WINDOW(mn->email_win), "mail");
-	gtk_window_set_policy(GTK_WINDOW(mn->email_win), FALSE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(mn->email_win), TRUE);
 	gtk_window_set_title(GTK_WINDOW(mn->email_win), _("Gaim - New Mail"));
 	g_signal_connect(GTK_OBJECT(mn->email_win), "destroy", G_CALLBACK(des_email_win), mn);
 	gtk_widget_realize(mn->email_win);

@@ -245,7 +245,7 @@ static gboolean get_iter_from_data(GtkTreeView *treeview,
 static void add_columns(GtkWidget *treeview)
 {
 	GtkCellRenderer *renderer;
-	GtkTreeViewColumn *column;
+	/* GtkTreeViewColumn *column; */
 
 	/* Screennames */
 	renderer = gtk_cell_renderer_text_new();
@@ -344,7 +344,7 @@ static GtkWidget *acct_button(const char *text, struct mod_account *ma, int opti
 	GtkWidget *button;
 	struct mod_account_opt *mao = g_new0(struct mod_account_opt, 1);
 	button = gtk_check_button_new_with_label(text);
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (ma->options & option));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), (ma->options & option));
 	gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
 	mao->ma = ma;
 	mao->opt = option;
@@ -400,7 +400,7 @@ static void ok_mod(GtkWidget *w, struct mod_account *ma)
 	tmp = ma->opt_entries;
 	while (tmp) {
 		GtkEntry *entry = tmp->data;
-		int pos = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+		int pos = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(entry), "position"));
 		g_snprintf(a->proto_opt[pos], sizeof(a->proto_opt[pos]), "%s",
 				   gtk_entry_get_text(entry));
 		tmp = tmp->next;
@@ -418,7 +418,9 @@ static void ok_mod(GtkWidget *w, struct mod_account *ma)
 		g_free(ma->account->gpi);
 	ma->account->gpi = NULL;
 
-	proxytype = (int)gtk_object_get_user_data(GTK_OBJECT(gtk_menu_get_active(GTK_MENU(ma->proxytype_menu))));
+	proxytype = GPOINTER_TO_INT(g_object_get_data(
+				G_OBJECT(gtk_menu_get_active(GTK_MENU(ma->proxytype_menu))),
+				"proxytype"));
 
 	if(proxytype != PROXY_USE_GLOBAL) {
 		struct gaim_proxy_info *gpi = g_new0(struct gaim_proxy_info, 1);
@@ -467,7 +469,7 @@ static void cancel_mod(GtkWidget *w, struct mod_account *ma)
 
 static void set_prot(GtkWidget *opt, int proto)
 {
-	struct mod_account *ma = gtk_object_get_user_data(GTK_OBJECT(opt));
+	struct mod_account *ma = g_object_get_data(G_OBJECT(opt), "mod_account");
 	struct prpl *p, *q;
 	q = find_prpl(proto);
 	if (ma->protocol != proto) {
@@ -531,10 +533,10 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_account *ma)
 			opt = gtk_menu_item_new_with_label(e->name);
 		else
 			opt = gtk_menu_item_new_with_label("Unknown");
-		gtk_object_set_user_data(GTK_OBJECT(opt), ma);
+		g_object_set_data(G_OBJECT(opt), "mod_account", ma);
 		g_signal_connect(GTK_OBJECT(opt), "activate",
 				   G_CALLBACK(set_prot), (void *)e->protocol);
-		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		gtk_widget_show(opt);
 		p = p->next;
 	}
@@ -630,7 +632,7 @@ static GtkWidget *build_icon_selection(struct mod_account *ma, GtkWidget *box)
 
 	name = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(name), ma->iconfile);
-	gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
+	gtk_editable_set_editable(GTK_EDITABLE(name), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), name, TRUE, TRUE, 5);
 	gtk_widget_show(name);
 	ma->iconentry = name;
@@ -831,7 +833,7 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 
 		entry = gtk_entry_new();
 		gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-		gtk_object_set_user_data(GTK_OBJECT(entry), (void *)puo->pos);
+		g_object_set_data(G_OBJECT(entry), "position", GINT_TO_POINTER(puo->pos));
 		if (ma->proto_opt[puo->pos][0]) {
 			debug_printf("setting text %s\n", ma->proto_opt[puo->pos]);
 			gtk_entry_set_text(GTK_ENTRY(entry), ma->proto_opt[puo->pos]);
@@ -847,15 +849,15 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 
 	if(p->register_user != NULL) {
 		ma->register_user = gtk_check_button_new_with_label(_("Register with server"));
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(ma->register_user), FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ma->register_user), FALSE);
 		gtk_box_pack_start(GTK_BOX(vbox), ma->register_user, FALSE, FALSE, 0);
 		gtk_widget_show(ma->register_user);
 	}
 
 }
 
-static void proxy_dropdown_set(GtkObject *w, struct mod_account *ma) {
-	int opt = (int)gtk_object_get_user_data(w);
+static void proxy_dropdown_set(GObject *w, struct mod_account *ma) {
+	int opt = GPOINTER_TO_INT(g_object_get_data(w, "proxytype"));
 	gtk_widget_set_sensitive(ma->proxy_host_box, (opt != PROXY_NONE && opt != PROXY_USE_GLOBAL));
 }
 
@@ -899,7 +901,7 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 	menu = gtk_menu_new();
 
 	opt = gtk_menu_item_new_with_label("Use Global Proxy Settings");
-	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_USE_GLOBAL);
+	g_object_set_data(G_OBJECT(opt), "proxytype", GINT_TO_POINTER(PROXY_USE_GLOBAL));
 	g_signal_connect(G_OBJECT(opt), "activate",
 			G_CALLBACK(proxy_dropdown_set), ma);
 	gtk_widget_show(opt);
@@ -908,7 +910,7 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 		gtk_menu_set_active(GTK_MENU(menu), 0);
 
 	opt = gtk_menu_item_new_with_label("No Proxy");
-	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_NONE);
+	g_object_set_data(G_OBJECT(opt), "proxytype", GINT_TO_POINTER(PROXY_NONE));
 	g_signal_connect(G_OBJECT(opt), "activate",
 			G_CALLBACK(proxy_dropdown_set), ma);
 	gtk_widget_show(opt);
@@ -917,7 +919,7 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 		gtk_menu_set_active(GTK_MENU(menu), 1);
 
 	opt = gtk_menu_item_new_with_label("SOCKS 4");
-	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_SOCKS4);
+	g_object_set_data(G_OBJECT(opt), "proxytype", GINT_TO_POINTER(PROXY_SOCKS4));
 	g_signal_connect(G_OBJECT(opt), "activate",
 			G_CALLBACK(proxy_dropdown_set), ma);
 	gtk_widget_show(opt);
@@ -926,7 +928,7 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 		gtk_menu_set_active(GTK_MENU(menu), 2);
 
 	opt = gtk_menu_item_new_with_label("SOCKS 5");
-	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_SOCKS5);
+	g_object_set_data(G_OBJECT(opt), "proxytype", GINT_TO_POINTER(PROXY_SOCKS5));
 	g_signal_connect(G_OBJECT(opt), "activate",
 			G_CALLBACK(proxy_dropdown_set), ma);
 	gtk_widget_show(opt);
@@ -935,7 +937,7 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 		gtk_menu_set_active(GTK_MENU(menu), 3);
 
 	opt = gtk_menu_item_new_with_label("HTTP");
-	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_HTTP);
+	g_object_set_data(G_OBJECT(opt), "proxytype", GINT_TO_POINTER(PROXY_HTTP));
 	g_signal_connect(G_OBJECT(opt), "activate",
 			G_CALLBACK(proxy_dropdown_set), ma);
 	gtk_widget_show(opt);
@@ -1078,16 +1080,16 @@ static void show_acct_mod(struct gaim_account *a)
 	gtk_window_set_role(GTK_WINDOW(ma->mod), "account");
 	gtk_widget_realize(ma->mod);
 	gtk_window_set_title(GTK_WINDOW(ma->mod), _("Gaim - Modify Account"));
-	gtk_window_set_policy(GTK_WINDOW(ma->mod), FALSE, FALSE, TRUE);	/* nothing odd here :) */
+	gtk_window_set_resizable(GTK_WINDOW(ma->mod), FALSE);	/* nothing odd here :) */
 	g_signal_connect(GTK_OBJECT(ma->mod), "destroy", G_CALLBACK(delmod), ma);
 
 	vbox = gtk_vbox_new(FALSE, 6);
-	gtk_container_border_width(GTK_CONTAINER(vbox), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 6);
 	gtk_container_add(GTK_CONTAINER(ma->mod), vbox);
 	gtk_widget_show(vbox);
 
 	ma->main = gtk_vbox_new(FALSE, 12);
-	gtk_container_border_width(GTK_CONTAINER(ma->main), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(ma->main), 6);
 	gtk_box_pack_start(GTK_BOX(vbox), ma->main, FALSE, FALSE, 0);
 	gtk_widget_show(ma->main);
 
@@ -1389,7 +1391,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_window_set_title(GTK_WINDOW(acctedit), _("Gaim - Account Editor"));
 	gtk_window_set_role(GTK_WINDOW(acctedit), "accounteditor");
 	gtk_widget_realize(acctedit);
-	gtk_widget_set_usize(acctedit, -1, 250);
+	gtk_widget_set_size_request(acctedit, -1, 250);
 	gtk_window_set_default_size(GTK_WINDOW(acctedit), 550, 250);
 	g_signal_connect(GTK_OBJECT(acctedit), "delete_event", G_CALLBACK(on_delete_acctedit), W);
 
@@ -1480,8 +1482,8 @@ GtkWidget* create_meter_pixmap (GtkWidget *widget, struct gaim_connection *gc)
 	GtkWidget *pixmap;
 
 	create_prpl_icon (widget, gc, &gdkpixmap, &mask);
-			
-	pixmap = gtk_pixmap_new (gdkpixmap, mask);
+
+	pixmap = gtk_image_new_from_pixmap(gdkpixmap, mask);
 	gdk_pixmap_unref (gdkpixmap);
 	gdk_bitmap_unref (mask);
 	return pixmap;
@@ -1708,7 +1710,7 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 
 	meter->status = gtk_statusbar_new();
-	gtk_widget_set_usize(meter->status, 250, 0);
+	gtk_widget_set_size_request(meter->status, 250, 0);
 
 	meter->progress = gtk_progress_bar_new ();
 
@@ -1751,18 +1753,18 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 	if (!meter_win) {
 		GtkWidget *cancel_button;
 		GtkWidget *vbox;
-				
+
 		meter_win = g_new0(struct meter_window, 1);
 		meter_win->rows=0;
-			
+
 		meter_win->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		GAIM_DIALOG(meter_win->window);
-		gtk_window_set_policy(GTK_WINDOW(meter_win->window), 0, 0, 1);
+		gtk_window_set_resizable(GTK_WINDOW(meter_win->window), FALSE);
 		gtk_window_set_role(GTK_WINDOW(meter_win->window), "signon");
 		gtk_container_set_border_width(GTK_CONTAINER(meter_win->window), 5);
 		gtk_window_set_title (GTK_WINDOW (meter_win->window), _("Gaim Account Signon"));
 		gtk_widget_realize(meter_win->window);
-		
+
 		vbox = gtk_vbox_new (FALSE, 0);
 		gtk_container_add (GTK_CONTAINER (meter_win->window), GTK_WIDGET (vbox));
 

@@ -101,7 +101,7 @@ BuddyTickerCreateWindow()
 	if (!ticker)
 		return;
         gtk_ticker_set_spacing( GTK_TICKER( ticker ), 20 );
-        gtk_widget_set_usize( ticker, 500, -1 );
+        gtk_widget_set_size_request( ticker, 500, -1 );
         gtk_container_add( GTK_CONTAINER( tickerwindow ), ticker );
         gtk_ticker_set_interval( GTK_TICKER( ticker ), 500 );
         gtk_ticker_set_scootch( GTK_TICKER( ticker ), 10 );
@@ -215,11 +215,11 @@ BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm )
 	else
 		return;
 	if ( data->pix == (GtkWidget *) NULL ) {
-		data->pix = gtk_pixmap_new( pm, bm );
+		data->pix = gtk_image_new_from_pixmap( pm, bm );
 		gtk_box_pack_start_defaults( GTK_BOX( data->hbox ), data->pix );
 	} else {
 		gtk_widget_hide( data->pix );
-		gtk_pixmap_set(GTK_PIXMAP(data->pix), pm, bm);
+		gtk_image_set_from_pixmap(GTK_IMAGE(data->pix), pm, bm);
 	}
 	gtk_widget_show( data->pix );
 }

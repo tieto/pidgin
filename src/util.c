@@ -1126,11 +1126,11 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char
 
 	if (icon == NULL)
 		menuitem = gtk_menu_item_new_with_mnemonic(str);
-	else 
+	else
 		menuitem = gtk_image_menu_item_new_with_mnemonic(str);
 
 	if (menu)
-		gtk_menu_append(GTK_MENU(menu), menuitem);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	if (sf)
 		g_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
@@ -1173,7 +1173,7 @@ GtkWidget *gaim_new_item_from_pixbuf(GtkWidget *menu, const char *str, char *ico
 		menuitem = gtk_image_menu_item_new_with_mnemonic(_(str));
 
 	if (menu)
-		gtk_menu_append(GTK_MENU(menu), menuitem);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	if (sf)
 		g_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
@@ -1218,7 +1218,7 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 
 	menuitem = gtk_menu_item_new();
 	if (menu)
-		gtk_menu_append(GTK_MENU(menu), menuitem);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	if (sf)
 		/* passing 1 is necessary so if we sign off closing the account editor doesn't exit */
 		g_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
@@ -1232,7 +1232,7 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 	/* Create our pixmap and pack it */
 	gtk_widget_realize(menu->parent);
 	pm = gdk_pixmap_create_from_xpm_d(menu->parent->window, &mask, NULL, xpm);
-	pixmap = gtk_pixmap_new(pm, mask);
+	pixmap = gtk_image_new_from_pixmap(pm, mask);
 	gtk_widget_show(pixmap);
 	gdk_pixmap_unref(pm);
 	gdk_bitmap_unref(mask);
@@ -1264,7 +1264,7 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 
 	menuitem = gtk_menu_item_new();
 	if (menu)
-		gtk_menu_append(GTK_MENU(menu), menuitem);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	gtk_widget_show(menuitem);
 
 	label = gtk_label_new(str);

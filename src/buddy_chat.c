@@ -52,7 +52,7 @@ do_join_chat()
 		char *sval;
 
 		for (tmp = chatentries; tmp != NULL; tmp = tmp->next) {
-			if (gtk_object_get_user_data(tmp->data)) {
+			if (g_object_get_data(tmp->data, "is_spin")) {
 				ival = g_new0(int, 1);
 				*ival = gtk_spin_button_get_value_as_int(tmp->data);
 				data = g_list_append(data, ival);
@@ -121,9 +121,9 @@ rebuild_jc()
 			adjust = gtk_adjustment_new(pce->min, pce->min,
 										pce->max, 1, 10, 10);
 			spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
-			gtk_object_set_user_data(GTK_OBJECT(spin), (void *)1);
+			g_object_set_data(G_OBJECT(spin), "is_spin", GINT_TO_POINTER(TRUE));
 			chatentries = g_list_append(chatentries, spin);
-			gtk_widget_set_usize(spin, 50, -1);
+			gtk_widget_set_size_request(spin, 50, -1);
 			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
 			gtk_widget_show(spin);
 		}
@@ -194,12 +194,12 @@ create_joinchat_menu(GtkWidget *box)
 		g_snprintf(buf, sizeof(buf), "%s (%s)", g->username, g->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
 
-		gtk_object_set_user_data(GTK_OBJECT(opt), g);
+		g_object_set_data(G_OBJECT(opt), "gaim_connection", g);
 
 		g_signal_connect(G_OBJECT(opt), "activate",
 						 G_CALLBACK(joinchat_choose), g);
 
-		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		gtk_widget_show(opt);
 	}
 
@@ -251,7 +251,7 @@ join_chat()
 	if (!joinchat) {
 		GAIM_DIALOG(joinchat);
 		gtk_window_set_role(GTK_WINDOW(joinchat), "joinchat");
-		gtk_window_set_policy(GTK_WINDOW(joinchat), FALSE, TRUE, TRUE);
+		gtk_window_set_resizable(GTK_WINDOW(joinchat), TRUE);
 		gtk_widget_realize(joinchat);
 		g_signal_connect(G_OBJECT(joinchat), "delete_event",
 				   G_CALLBACK(destroy_join_chat), joinchat);

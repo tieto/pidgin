@@ -75,7 +75,7 @@ void show_about(GtkWidget *w, void *data)
 		g_snprintf(abouttitle, sizeof(abouttitle), _("About Gaim v%s"), VERSION);
 		gtk_window_set_title(GTK_WINDOW(about), abouttitle);
 		gtk_window_set_role(GTK_WINDOW(about), "about");
-		gtk_window_set_policy(GTK_WINDOW(about), FALSE, TRUE, TRUE);
+		gtk_window_set_resizable(GTK_WINDOW(about), TRUE);
 		gtk_widget_realize(about);
 
 		vbox = gtk_vbox_new(FALSE, 5);

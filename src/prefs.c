@@ -45,9 +45,7 @@
 #endif
 
 GtkWidget *tree_v = NULL;
-GtkWidget *prefs_away_list = NULL;
 GtkWidget *prefs_away_menu = NULL;
-GtkWidget *preftree = NULL;
 GtkWidget *fontseld = NULL;
 
 GtkListStore *prefs_away_store = NULL;
@@ -60,8 +58,6 @@ static GtkWidget *browser_entry = NULL;
 static GtkWidget *sound_entry = NULL;
 static GtkWidget *away_text = NULL;
 static GtkListStore *smiley_theme_store = NULL;
-GtkCTreeNode *general_node = NULL;
-GtkCTreeNode *deny_node = NULL;
 GtkWidget *prefs_proxy_frame = NULL;
 GtkWidget *gaim_button(const char *, guint *, int, GtkWidget *);
 GtkWidget *gaim_labeled_spin_button(GtkWidget *, const gchar *, int*, int, int, GtkSizeGroup *);
@@ -99,6 +95,7 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	if(sounddialog)
 		gtk_widget_destroy(sounddialog);
 	g_object_unref(G_OBJECT(prefs_away_store));
+	prefs_away_store = NULL;
 	while(l) {
 		plug = l->data;
 		if(plug->iter) {
@@ -1013,7 +1010,7 @@ GtkWidget *sound_page() {
 	sndcmd = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), sndcmd);
 
-	gtk_entry_set_editable(GTK_ENTRY(sndcmd), TRUE);
+	gtk_editable_set_editable(GTK_EDITABLE(sndcmd), TRUE);
 	cmd = gaim_sound_get_command();
 	if(cmd)
 		gtk_entry_set_text(GTK_ENTRY(sndcmd), cmd);
@@ -1525,7 +1522,7 @@ GtkWidget *sound_events_page() {
 	sound_entry = gtk_entry_new();
 	file = gaim_sound_get_event_file(0);
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), file ? file : "(default)");
-	gtk_entry_set_editable(GTK_ENTRY(sound_entry), FALSE);
+	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
 
 	button = gtk_button_new_with_label(_("Test"));
@@ -1763,11 +1760,11 @@ void show_prefs()
 	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
 	gtk_widget_realize(prefs);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
-	gtk_window_set_policy (GTK_WINDOW(prefs), FALSE, FALSE, TRUE);
+	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
 	g_signal_connect(GTK_OBJECT(prefs), "destroy", G_CALLBACK(delete_prefs), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(prefs), vbox);
 	gtk_widget_show(vbox);
 
@@ -2064,9 +2061,9 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 {
 	GtkWidget *button;
 	button = gtk_check_button_new_with_mnemonic(text);
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (*options & option));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), (*options & option));
 	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(button), options);
+	g_object_set_data(G_OBJECT(button), "options", options);
 
 	if (options == &misc_options) {
 		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_misc_option),
@@ -2103,8 +2100,6 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 	return button;
 }
 
-void away_list_clicked(GtkWidget *widget, struct away_message *a)
-{}
 void default_away_menu_init(GtkWidget *omenu)
 {
 	GtkWidget *menu, *opt;
@@ -2120,7 +2115,7 @@ void default_away_menu_init(GtkWidget *omenu)
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(set_default_away),
 				   (gpointer)index);
 		gtk_widget_show(opt);
-		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
 		awy = awy->next;
 		index++;
@@ -2238,7 +2233,7 @@ static gboolean program_is_valid(const char *program)
 
 static void update_spin_value(GtkWidget *w, GtkWidget *spin)
 {
-	int *value = gtk_object_get_user_data(GTK_OBJECT(spin));
+	int *value = g_object_get_data(G_OBJECT(spin), "val");
 	*value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spin));
 }
 
@@ -2259,8 +2254,8 @@ GtkWidget *gaim_labeled_spin_button(GtkWidget *box, const gchar *title, int *val
 
 	adjust = gtk_adjustment_new(*val, min, max, 1, 1, 1);
 	spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
-	gtk_object_set_user_data(GTK_OBJECT(spin), val);
-	gtk_widget_set_usize(spin, 50, -1);
+	g_object_set_data(G_OBJECT(spin), "val", val);
+	gtk_widget_set_size_request(spin, 50, -1);
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(adjust), "value-changed",
 			G_CALLBACK(update_spin_value), GTK_WIDGET(spin));
@@ -2276,10 +2271,10 @@ GtkWidget *gaim_labeled_spin_button(GtkWidget *box, const gchar *title, int *val
 	return label;
 }
 
-void dropdown_set(GtkObject *w, int *option)
+void dropdown_set(GObject *w, int *option)
 {
-	int opt = (int)gtk_object_get_user_data(w);
-	int clear = (int)gtk_object_get_data(w, "clear");
+	int opt = GPOINTER_TO_INT(g_object_get_data(w, "value"));
+	int clear = GPOINTER_TO_INT(g_object_get_data(w, "clear"));
 
 	if (clear != -1) {
 		*option = *option & ~clear;
@@ -2381,8 +2376,8 @@ static GtkWidget *gaim_dropdown_from_list(GtkWidget *box, const gchar *title, in
 		menuitems = g_list_next(menuitems);
 
 		opt = gtk_menu_item_new_with_label(text);
-		gtk_object_set_user_data(GTK_OBJECT(opt), (void *)value);
-		gtk_object_set_data(GTK_OBJECT(opt), "clear", (void *)clear);
+		g_object_set_data(G_OBJECT(opt), "value", GINT_TO_POINTER(value));
+		g_object_set_data(G_OBJECT(opt), "clear", GINT_TO_POINTER(clear));
 		g_signal_connect(GTK_OBJECT(opt), "activate",
 				   G_CALLBACK(dropdown_set), (void *)option);
 		gtk_widget_show(opt);
@@ -2436,7 +2431,7 @@ static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
 	swid = gtk_event_box_new();
 	gtk_widget_set_style(GTK_WIDGET(swid), style);
 	g_object_unref(style);
-	gtk_widget_set_usize(GTK_WIDGET(swid), 40, -1);
+	gtk_widget_set_size_request(GTK_WIDGET(swid), 40, -1);
 	gtk_box_pack_start(GTK_BOX(box), swid, FALSE, FALSE, 5);
 	gtk_widget_show(swid);
 	return swid;
@@ -2457,7 +2452,7 @@ void apply_font_dlg(GtkWidget *w, GtkWidget *f)
 
 	fontface[i] = 0;
 	g_free(fontname);
-	
+
 	gaim_conversation_foreach(gaim_gtkconv_update_font_face);
 }
 

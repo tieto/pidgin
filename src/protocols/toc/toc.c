@@ -1951,17 +1951,17 @@ static void toc_accept_ft(struct ft_request *fr) {
 		ft->window = window = gtk_file_selection_new(_("Gaim - Save As..."));
 		g_snprintf(buf, sizeof(buf), "%s/%s", gaim_home_dir(), fr->filename ? fr->filename : "");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
-		gtk_signal_connect(GTK_OBJECT(window), "destroy",
-				   GTK_SIGNAL_FUNC(cancel_callback), ft);
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(ft->window)->cancel_button), "clicked",
-				   GTK_SIGNAL_FUNC(cancel_callback), ft);
+		g_signal_connect(G_OBJECT(window), "destroy",
+				G_CALLBACK(cancel_callback), ft);
+		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(ft->window)->cancel_button),
+				"clicked", G_CALLBACK(cancel_callback), ft);
 
 		if (!strcmp(fr->UID, FILE_SEND_UID))
-			gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), "clicked",
-					   GTK_SIGNAL_FUNC(toc_send_file), ft);
+			g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+					"clicked", G_CALLBACK(toc_send_file), ft);
 		else
-			gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), "clicked",
-					   GTK_SIGNAL_FUNC(toc_get_file), ft);
+			g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+					"clicked", G_CALLBACK(toc_get_file), ft);
 
 		gtk_widget_show(window);
 	}

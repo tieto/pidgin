@@ -63,14 +63,12 @@ dnd_hints_init_window(const gchar *fname)
 	gdk_pixbuf_render_pixmap_and_mask(pixbuf, &pixmap, &bitmap, 128);
 	gdk_pixbuf_unref(pixbuf);
 
-	gtk_widget_push_visual(gdk_rgb_get_visual());
 	gtk_widget_push_colormap(gdk_rgb_get_cmap());
 	win = gtk_window_new(GTK_WINDOW_POPUP);
-	pix = gtk_pixmap_new(pixmap, bitmap);
+	pix = gtk_image_new_from_pixmap(pixmap, bitmap);
 	gtk_widget_realize(win);
 	gtk_container_add(GTK_CONTAINER(win), pix);
 	gtk_widget_shape_combine_mask(win, bitmap, 0, 0);
-	gtk_widget_pop_visual();
 	gtk_widget_pop_colormap();
 
 	gdk_pixmap_unref(pixmap);
@@ -158,7 +156,7 @@ dnd_hints_show(DndHintWindowId id, gint x, gint y)
 
 	if (w && GTK_IS_WIDGET(w))
 	{
-		gtk_widget_set_uposition(w, hint_windows[id].ox + x,
+		gtk_window_move(GTK_WINDOW(w), hint_windows[id].ox + x,
 								 hint_windows[id].oy + y);
 		gtk_widget_show(w);
 	}

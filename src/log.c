@@ -82,9 +82,9 @@ void update_log_convs()
 	}
 }
 
-static void do_save_convo(GtkObject *obj, GtkWidget *wid)
+static void do_save_convo(GObject *obj, GtkWidget *wid)
 {
-	struct gaim_conversation *c = gtk_object_get_user_data(obj);
+	struct gaim_conversation *c = g_object_get_data(obj, "gaim_conversation");
 	const char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
 	FILE *f;
 
@@ -118,7 +118,8 @@ void save_convo(GtkWidget *save, struct gaim_conversation *c)
 	GtkWidget *window = gtk_file_selection_new(_("Gaim - Save Conversation"));
 	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "%s.log", gaim_home_dir(), normalize(c->name));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
-	gtk_object_set_user_data(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button), c);
+	g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+			"gaim_conversation", c);
 	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
 			   "clicked", G_CALLBACK(do_save_convo), window);
 	g_signal_connect_swapped(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),

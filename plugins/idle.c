@@ -60,7 +60,7 @@ static void make_connect_menu(GtkWidget *box) {
 		opt = gtk_menu_item_new_with_label(g->username);
 		g_signal_connect(GTK_OBJECT(opt), "activate",
 				   G_CALLBACK(sel_gc), g);
-		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		gtk_widget_show(opt);
 		c = g_slist_next(c);
 	}

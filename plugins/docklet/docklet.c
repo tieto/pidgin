@@ -95,7 +95,7 @@ static void docklet_menu(GdkEventButton *event) {
 		case offline_connecting:
 			entry = gtk_menu_item_new_with_label(_("Auto-login"));
 			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(auto_login), NULL);
-			gtk_menu_append(GTK_MENU(menu), entry);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 			break;
 		default:
 			gaim_new_item_from_stock(menu, _("New Message.."), GTK_STOCK_CONVERT, G_CALLBACK(show_im_dialog), NULL, 0, 0, NULL);
@@ -122,7 +122,7 @@ static void docklet_menu(GdkEventButton *event) {
 
 				entry = gtk_menu_item_new_with_label(a->name);
 				g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_away_message), a);
-				gtk_menu_append(GTK_MENU(docklet_awaymenu), entry);
+				gtk_menu_shell_append(GTK_MENU_SHELL(docklet_awaymenu), entry);
 
 				awy = g_slist_next(awy);
 			}
@@ -132,17 +132,17 @@ static void docklet_menu(GdkEventButton *event) {
 
 			entry = gtk_menu_item_new_with_label(_("New..."));
 			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(create_away_mess), NULL);
-			gtk_menu_append(GTK_MENU(docklet_awaymenu), entry);
+			gtk_menu_shell_append(GTK_MENU_SHELL(docklet_awaymenu), entry);
 
 			entry = gtk_menu_item_new_with_label(_("Away"));
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(entry), docklet_awaymenu);
-			gtk_menu_append(GTK_MENU(menu), entry);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 			} break;
 		case away:
 		case away_pending:
 			entry = gtk_menu_item_new_with_label(_("Back"));
 			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_im_back), NULL);
-			gtk_menu_append(GTK_MENU(menu), entry);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 			break;
 	}
 
@@ -151,7 +151,7 @@ static void docklet_menu(GdkEventButton *event) {
 	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_sound_get_mute());
 	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
-	gtk_menu_append(GTK_MENU(menu), entry);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 
 	gaim_new_item_from_stock(menu, _("File Transfers..."), GTK_STOCK_REVERT_TO_SAVED, G_CALLBACK(show_xfer_dialog), NULL, 0, 0, NULL);
 	gaim_new_item_from_pixbuf(menu, _("Accounts..."), "accounts-menu.png", G_CALLBACK(account_editor), NULL, 0, 0, NULL);
@@ -166,7 +166,7 @@ static void docklet_menu(GdkEventButton *event) {
 		default:
 			entry = gtk_menu_item_new_with_label(_("Signoff"));
 			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(signoff_all), NULL);
-			gtk_menu_append(GTK_MENU(menu), entry);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 			break;
 	}
 

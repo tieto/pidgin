@@ -219,7 +219,7 @@ insert_image_cb(GtkWidget *save, struct gaim_conversation *conv)
 	gtk_widget_show(window);
 
 	gaim_gtk_set_state_lock(TRUE);
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
 								FALSE);
 	gaim_gtk_set_state_lock(FALSE);
 }
@@ -744,7 +744,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		g_signal_connect(G_OBJECT(button), "activate",
 						 G_CALLBACK(menu_im_cb), conv);
 		g_object_set_data(G_OBJECT(button), "user_data", who);
-		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 
 		if (gaim_chat_is_user_ignored(GAIM_CHAT(conv), who))
@@ -755,7 +755,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		g_signal_connect(G_OBJECT(button), "activate",
 						 G_CALLBACK(ignore_cb), conv);
 		g_object_set_data(G_OBJECT(button), "user_data", who);
-		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 
 		if (gc && gc->prpl->get_info) {
@@ -763,7 +763,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 			g_signal_connect(G_OBJECT(button), "activate",
 							 G_CALLBACK(menu_info_cb), conv);
 			g_object_set_data(G_OBJECT(button), "user_data", who);
-			gtk_menu_append(GTK_MENU(menu), button);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 			gtk_widget_show(button);
 		}
 
@@ -772,7 +772,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 			g_signal_connect(G_OBJECT(button), "activate",
 							 G_CALLBACK(menu_away_cb), conv);
 			g_object_set_data(G_OBJECT(button), "user_data", who);
-			gtk_menu_append(GTK_MENU(menu), button);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 			gtk_widget_show(button);
 		}
 
@@ -787,11 +787,11 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 							 G_CALLBACK(menu_add_cb), conv);
 
 			g_object_set_data(G_OBJECT(button), "user_data", who);
-			gtk_menu_append(GTK_MENU(menu), button);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 			gtk_widget_show(button);
 		}
 		/* End Jonas */
-		
+
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 					   event->button, event->time);
 	}
@@ -2814,7 +2814,6 @@ setup_chat_pane(struct gaim_conversation *conv)
 
 	/* Setup the outer pane. */
 	vpaned = gtk_vpaned_new();
-	gtk_paned_set_gutter_size(GTK_PANED(vpaned), 15);
 	gtk_widget_show(vpaned);
 
 	/* Setup the top part of the pane. */
@@ -2833,14 +2832,13 @@ setup_chat_pane(struct gaim_conversation *conv)
 		gtk_widget_show(label);
 
 		gtkchat->topic_text = gtk_entry_new();
-		gtk_entry_set_editable(GTK_ENTRY(gtkchat->topic_text), FALSE);
+		gtk_editable_set_editable(GTK_EDITABLE(gtkchat->topic_text), FALSE);
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 5);
 		gtk_widget_show(gtkchat->topic_text);
 	}
 
 	/* Setup the horizontal pane. */
 	hpaned = gtk_hpaned_new();
-	gtk_paned_set_gutter_size(GTK_PANED(hpaned), 15);
 	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 5);
 	gtk_widget_show(hpaned);
 
@@ -3029,7 +3027,6 @@ setup_im_pane(struct gaim_conversation *conv)
 
 	/* Setup the outer pane. */
 	paned = gtk_vpaned_new();
-	gtk_paned_set_gutter_size(GTK_PANED(paned), 15);
 	gtk_widget_show(paned);
 
 	/* Setup the top part of the pane. */
@@ -3193,7 +3190,7 @@ gaim_gtk_new_window(struct gaim_window *win)
 	/* Create the window. */
 	gtkwin->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkwin->window), "conversation");
-	gtk_window_set_policy(GTK_WINDOW(gtkwin->window), TRUE, TRUE, FALSE);
+	gtk_window_set_resizable(GTK_WINDOW(gtkwin->window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->window), 0);
 	gtk_widget_realize(gtkwin->window);
 	gtk_window_set_title(GTK_WINDOW(gtkwin->window), _("Conversations"));
@@ -4138,9 +4135,8 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 		if (!GTK_WIDGET_REALIZED(gtkconv->tab_label))
 			gtk_widget_realize(gtkconv->tab_label);
 
-		gtk_style_set_font(style,
-			gdk_font_ref(gtk_style_get_font(gtk_widget_get_style(
-				gtkconv->tab_label))));
+		style->font_desc = pango_font_description_copy(
+				gtk_widget_get_style(gtkconv->tab_label)->font_desc);
 
 		if (im != NULL && gaim_im_get_typing_state(im) == TYPING) {
 			style->fg[GTK_STATE_NORMAL].red   = 0x4646;
@@ -4168,7 +4164,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 		}
 
 		gtk_widget_set_style(gtkconv->tab_label, style);
-		gtk_style_unref(style);
+		g_object_unref(G_OBJECT(style));
 	}
 	else if (type == GAIM_CONV_UPDATE_TOPIC) {
 		chat = GAIM_CHAT(conv);
@@ -4371,7 +4367,7 @@ redraw_icon(gpointer data)
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 	gdk_pixbuf_unref(scale);
-	gtk_pixmap_set(GTK_PIXMAP(gtkconv->u.im->icon), pm, bm);
+	gtk_image_set_from_pixmap(GTK_IMAGE(gtkconv->u.im->icon), pm, bm);
 	gdk_pixmap_unref(pm);
 	gtk_widget_queue_draw(gtkconv->u.im->icon);
 
@@ -4583,7 +4579,7 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 					 G_CALLBACK(icon_menu), conv);
 	gtk_widget_show(event);
 
-	gtkconv->u.im->icon = gtk_pixmap_new(pm, bm);
+	gtkconv->u.im->icon = gtk_image_new_from_pixmap(pm, bm);
 	gtk_widget_set_size_request(gtkconv->u.im->icon, sf, sf);
 	gtk_container_add(GTK_CONTAINER(event), gtkconv->u.im->icon);
 	gtk_widget_show(gtkconv->u.im->icon);

@@ -4,6 +4,12 @@
 #define GAIM_PLUGINS
 #endif
 
+#ifdef GTK_DISABLE_DEPRECATED
+#undef GTK_DISABLE_DEPRECATED
+#endif
+
+#define GTK_ENABLE_BROKEN
+
 #include "pixmaps/refresh.xpm"
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"

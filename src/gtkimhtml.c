@@ -217,25 +217,28 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
 {
-	return GTK_WIDGET(gtk_type_new(gtk_imhtml_get_type()));
+	return GTK_WIDGET(g_object_new(gtk_imhtml_get_type(), NULL));
 }
 
-GtkType gtk_imhtml_get_type()
+GType gtk_imhtml_get_type()
 {
-	static guint imhtml_type = 0;
+	static GType imhtml_type = 0;
 
 	if (!imhtml_type) {
-		GtkTypeInfo imhtml_info = {
-			"GtkIMHtml",
-			sizeof (GtkIMHtml),
-			sizeof (GtkIMHtmlClass),
-			(GtkClassInitFunc) gtk_imhtml_class_init,
-			(GtkObjectInitFunc) gtk_imhtml_init,
+		static const GTypeInfo imhtml_info = {
+			sizeof(GtkIMHtmlClass),
 			NULL,
-			NULL
+			NULL,
+			(GClassInitFunc) gtk_imhtml_class_init,
+			NULL,
+			NULL,
+			sizeof (GtkIMHtml),
+			0,
+			(GInstanceInitFunc) gtk_imhtml_init
 		};
-		
-		imhtml_type = gtk_type_unique (gtk_text_view_get_type (), &imhtml_info);
+
+		imhtml_type = g_type_register_static(gtk_text_view_get_type(),
+				"GtkIMHtml", &imhtml_info, 0);
 	}
 
 	return imhtml_type;

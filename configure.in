@@ -138,7 +138,7 @@ AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
 *** always available at http://www.gtk.org/.]))
 
 AC_PATH_PROG(gaimpath, gaim)
-CFLAGS="$CFLAGS $GTK_CFLAGS -DGTK_ENABLE_BROKEN"
+CFLAGS="$CFLAGS $GTK_CFLAGS -DGTK_DISABLE_DEPRECATED"
 
 AC_PATH_X
 

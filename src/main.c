@@ -230,7 +230,7 @@ static void doenter(GtkWidget *widget, GtkWidget *w)
 {
 	if (widget == name) {
 		gtk_entry_set_text(GTK_ENTRY(pass), "");
-		gtk_entry_select_region(GTK_ENTRY(GTK_COMBO(name)->entry), 0, 0);
+		gtk_editable_select_region(GTK_EDITABLE(GTK_COMBO(name)->entry), 0, 0);
 		gtk_widget_grab_focus(pass);
 	} else if (widget == pass) {
 		dologin(widget, w);
@@ -302,7 +302,7 @@ void show_login()
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 	gtk_window_set_role(GTK_WINDOW(mainwindow), "login");
-	gtk_window_set_policy(GTK_WINDOW(mainwindow), FALSE, FALSE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(mainwindow), FALSE);
 	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Gaim - Login"));
 	gtk_widget_realize(mainwindow);
 	gdk_window_set_group(mainwindow->window, mainwindow->window);

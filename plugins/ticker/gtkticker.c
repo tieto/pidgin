@@ -49,26 +49,28 @@ static GtkType gtk_ticker_child_type (GtkContainer     *container);
 static GtkContainerClass *parent_class = NULL;
 
 
-GtkType
+GType
 gtk_ticker_get_type (void)
 {
-  static GtkType ticker_type = 0;
+  static GType ticker_type = 0;
 
   if (!ticker_type)
     {
-      static const GtkTypeInfo ticker_info =
+      static const GTypeInfo ticker_info =
       {
-	"GtkTicker",
-	sizeof (GtkTicker),
-	sizeof (GtkTickerClass),
-	(GtkClassInitFunc) gtk_ticker_class_init,
-	(GtkObjectInitFunc) gtk_ticker_init,
-	/* reserved_1 */ NULL,
-        /* reserved_2 */ NULL,
-        (GtkClassInitFunc) NULL,
+		  sizeof(GtkTickerClass),
+		  NULL,
+		  NULL,
+		  (GClassInitFunc) gtk_ticker_class_init,
+		  NULL,
+		  NULL,
+		  sizeof(GtkTicker),
+		  0,
+		  (GInstanceInitFunc) gtk_ticker_init
       };
 
-      ticker_type = gtk_type_unique (GTK_TYPE_CONTAINER, &ticker_info);
+      ticker_type = g_type_register_static (GTK_TYPE_CONTAINER, "GtkTicker",
+			  &ticker_info, 0);
     }
 
   return ticker_type;
@@ -120,10 +122,7 @@ gtk_ticker_init (GtkTicker *ticker)
 GtkWidget*
 gtk_ticker_new (void)
 {
-  GtkTicker *ticker;
-
-  ticker = gtk_type_new (GTK_TYPE_TICKER);
-  return GTK_WIDGET (ticker);
+	return GTK_WIDGET(g_object_new(GTK_TYPE_TICKER, NULL));
 }
 
 static void

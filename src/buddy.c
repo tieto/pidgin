@@ -19,6 +19,12 @@
  *
  */
 
+#ifdef GTK_DISABLE_DEPRECATED
+#undef GTK_DISABLE_DEPRECATED
+#endif
+
+#define GTK_ENABLE_BROKEN
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

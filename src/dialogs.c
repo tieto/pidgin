@@ -276,31 +276,31 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct gaim_conver
 	struct gaim_gtk_conversation *gtkconv;
 	gchar *object_data;
 
-	object_data = gtk_object_get_user_data(GTK_OBJECT(w));
+	object_data = g_object_get_data(G_OBJECT(w), "dialog_type");
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	if (GTK_IS_COLOR_SELECTION_DIALOG(w)) {
 		gaim_gtk_set_state_lock(TRUE);
 		if (w == gtkconv->dialogs.fg_color) {
-			gtk_toggle_button_set_state(
+			gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(gtkconv->toolbar.fgcolor), FALSE);
 			gtkconv->dialogs.fg_color = NULL;
 		} else {
-			gtk_toggle_button_set_state(
+			gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(gtkconv->toolbar.bgcolor), FALSE);
 			gtkconv->dialogs.bg_color = NULL;
 		}
 		gaim_gtk_set_state_lock(FALSE);
 	} else if (GTK_IS_FONT_SELECTION_DIALOG(w)) {
 		gaim_gtk_set_state_lock(TRUE);
-		gtk_toggle_button_set_state(
+		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(gtkconv->toolbar.normal_size), FALSE);
 		gaim_gtk_set_state_lock(FALSE);
 		gtkconv->dialogs.font = NULL;
 	} else if (!g_strcasecmp(object_data, "smiley dialog")) {
 		gaim_gtk_set_state_lock(TRUE);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
 									FALSE);
 		gaim_gtk_set_state_lock(FALSE);
 		gtkconv->dialogs.smiley = NULL;
@@ -666,13 +666,13 @@ void show_ee_dialog(int ee)
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	
+
 	gtk_widget_show_all(window);
 }
 
-void show_info_select_account(GtkObject *w, struct gaim_connection *gc)
+void show_info_select_account(GObject *w, struct gaim_connection *gc)
 {
-	struct getuserinfo *info = gtk_object_get_user_data(w);
+	struct getuserinfo *info = g_object_get_data(w, "getuserinfo");
 	info->gc = gc;
 }
 
@@ -765,12 +765,12 @@ void show_im_dialog()
 				}
 				g_snprintf(buf, sizeof(buf), "%s (%s)", c->username, c->prpl->name);
 				opt = gtk_menu_item_new_with_label(buf);
-				gtk_object_set_user_data(GTK_OBJECT(opt), info);
+				g_object_set_data(G_OBJECT(opt), "getuserinfo", info);
 
 				g_signal_connect(GTK_OBJECT(opt), "activate",
 						   G_CALLBACK(show_info_select_account), c);
 
-				gtk_menu_append(GTK_MENU(menu), opt);
+				gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 				g = g->next;
 			}
 
@@ -864,12 +864,12 @@ void show_info_dialog()
 			}
 			g_snprintf(buf, sizeof(buf), "%s (%s)", c->username, c->prpl->name);
 			opt = gtk_menu_item_new_with_label(buf);
-			gtk_object_set_user_data(GTK_OBJECT(opt), info);
+			g_object_set_data(G_OBJECT(opt), "getuserinfo", info);
 
 			g_signal_connect(GTK_OBJECT(opt), "activate",
 					   G_CALLBACK(show_info_select_account), c);
 
-			gtk_menu_append(GTK_MENU(menu), opt);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 			g = g->next;
 		}
 		
@@ -1013,9 +1013,9 @@ void show_add_group(struct gaim_connection *gc)
 	gtk_widget_grab_focus(GTK_WIDGET(a->entry));
 }
 
-static void addbuddy_select_account(GtkObject *w, struct gaim_connection *gc)
+static void addbuddy_select_account(GObject *w, struct gaim_connection *gc)
 {
-	struct addbuddy *b = gtk_object_get_user_data(w);
+	struct addbuddy *b = g_object_get_data(w, "addbuddy");
 
 	/* Save our account */
 	b->gc = gc;
@@ -1040,12 +1040,12 @@ static void create_online_user_names(struct addbuddy *b)
 		g_snprintf(buf, sizeof(buf), "%s (%s)", 
 				c->username, c->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
-		gtk_object_set_user_data(GTK_OBJECT(opt), b);
+		g_object_set_data(G_OBJECT(opt), "addbuddy", b);
 		g_signal_connect(GTK_OBJECT(opt), "activate",
 				G_CALLBACK(addbuddy_select_account),
 				c);
 		gtk_widget_show(opt);
-		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
 		/* Now check to see if it's our current menu */
 		if (c == b->gc) {
@@ -1208,13 +1208,14 @@ static GtkWidget *deny_opt(char *label, int which, GtkWidget *set)
 		opt = gtk_radio_button_new_with_label(NULL, label);
 	else
 		opt =
-		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
+		    gtk_radio_button_new_with_label(gtk_radio_button_get_group(
+						GTK_RADIO_BUTTON(set)),
 						    label);
 
 	g_signal_connect(GTK_OBJECT(opt), "toggled", G_CALLBACK(set_deny_mode), (void *)which);
 	gtk_widget_show(opt);
 	if (current_deny_gc->account->permdeny == which)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(opt), TRUE);
 
 	return opt;
 }
@@ -1236,7 +1237,7 @@ static void des_deny_opt(GtkWidget *d, gpointer e)
 
 static void set_deny_type()
 {
-	GSList *bg = gtk_radio_button_group(GTK_RADIO_BUTTON(deny_type));
+	GSList *bg = gtk_radio_button_get_group(GTK_RADIO_BUTTON(deny_type));
 
 	switch (current_deny_gc->account->permdeny) {
 	case 5:
@@ -1255,7 +1256,7 @@ static void set_deny_type()
 		break;
 	}
 
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(bg->data), TRUE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(bg->data), TRUE);
 }
 
 void build_allow_list()
@@ -1340,7 +1341,7 @@ static void build_deny_menu()
 		opt = gtk_menu_item_new_with_label(buf);
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(deny_gc_opt), gc);
 		gtk_widget_show(opt);
-		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		if (gc == current_deny_gc)
 			found = TRUE;
 		else if (!found)
@@ -1483,13 +1484,13 @@ void show_privacy_options() {
 	current_is_deny = TRUE;
 
 	privacy_win = pwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_policy(GTK_WINDOW(pwin), FALSE, FALSE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(pwin), FALSE);
 	gtk_window_set_role(GTK_WINDOW(pwin), "privacy");
 	gtk_window_set_title(GTK_WINDOW(pwin), _("Gaim - Privacy"));
 	g_signal_connect(GTK_OBJECT(pwin), "destroy", G_CALLBACK(destroy_privacy), NULL);
 	gtk_widget_realize(pwin);
 
-	gtk_widget_set_usize(pwin, 0, 400);
+	gtk_widget_set_size_request(pwin, 0, 400);
 
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
@@ -1700,7 +1701,7 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 
 static void pounce_choose(GtkWidget *opt, struct addbp *b)
 {
-	struct gaim_account *account = gtk_object_get_user_data(GTK_OBJECT(opt));
+	struct gaim_account *account = g_object_get_data(G_OBJECT(opt), "gaim_account");
 	b->account = account;
 }
 
@@ -1726,9 +1727,9 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 		p = (struct prpl *)find_prpl(account->protocol);
 		g_snprintf(buf, sizeof buf, "%s (%s)", account->username, (p && p->name)?p->name:_("Unknown"));
 		opt = gtk_menu_item_new_with_label(buf);
-		gtk_object_set_user_data(GTK_OBJECT(opt), account);
+		g_object_set_data(G_OBJECT(opt), "gaim_account", account);
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(pounce_choose), b);
-		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		gtk_widget_show(opt);
 
 		if (b->account == account) {
@@ -1774,7 +1775,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 
 	GAIM_DIALOG(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
-	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
 	gtk_window_set_role(GTK_WINDOW(b->window), "new_bp");
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - New Buddy Pounce"));
 	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
@@ -1832,43 +1833,43 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 	gtk_widget_show(table);
-	
+
 	b->p_signon = gtk_check_button_new_with_label(_("Pounce on sign on"));
 	if(edit_bp)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_signon), 
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_signon),
 		                           (edit_bp->options & OPT_POUNCE_SIGNON) ? TRUE : FALSE);
 	else
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_signon), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_signon), TRUE);
 	gtk_table_attach(GTK_TABLE(table), b->p_signon, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->p_signon);
 
 	b->p_unaway = gtk_check_button_new_with_label(_("Pounce on return from away"));
 	if (away)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unaway), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_unaway), TRUE);
 	else if(edit_bp)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unaway), 
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_unaway),
 					   (edit_bp->options & OPT_POUNCE_UNAWAY) ? TRUE : FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->p_unaway, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_widget_show(b->p_unaway);
 
 	b->p_unidle = gtk_check_button_new_with_label(_("Pounce on return from idle"));
 	if (idle)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unidle), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_unidle), TRUE);
 	else if(edit_bp)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unidle), 
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_unidle),
 				           (edit_bp->options & OPT_POUNCE_UNIDLE) ? TRUE : FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->p_unidle, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->p_unidle);
-	
+
 	b->p_typing = gtk_check_button_new_with_label(_("Pounce when buddy is typing to you"));
-	if (edit_bp)		
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_typing),
+	if (edit_bp)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->p_typing),
 					   (edit_bp->options & OPT_POUNCE_TYPING) ? TRUE : FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->p_typing,1,2,1,2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_widget_show(b->p_typing);
 
 	/* </pounce type="when"> */
-	
+
 	/* <pounce type="action"> */
 	frame = gtk_frame_new(_("Pounce Action"));
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
@@ -1880,31 +1881,31 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
 	gtk_widget_show(table);
-	
+
 	b->openwindow = gtk_check_button_new_with_label(_("Open IM Window"));
 	if(edit_bp)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->openwindow), 
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->openwindow),
 			                   (edit_bp->options & OPT_POUNCE_POPUP) ? TRUE : FALSE);
 	else
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->openwindow), FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->openwindow), FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->openwindow, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->openwindow);
-	
+
 	b->popupnotify = gtk_check_button_new_with_label(_("Popup Notification"));
 	if(edit_bp)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->popupnotify), 
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->popupnotify),
 					   (edit_bp->options & OPT_POUNCE_NOTIFY) ? TRUE : FALSE);
 	else
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->popupnotify), FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->popupnotify), FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->popupnotify, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->popupnotify);
 
 	b->sendim = gtk_check_button_new_with_label(_("Send Message"));
 	if(edit_bp)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), 
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->sendim),
 					   (edit_bp->options & OPT_POUNCE_SEND_IM) ? TRUE : FALSE);
 	else
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
 	gtk_table_attach(GTK_TABLE(table), b->sendim, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->sendim);
 
@@ -1912,7 +1913,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	gtk_table_attach(GTK_TABLE(table), b->messentry, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	g_signal_connect(GTK_OBJECT(b->messentry), "activate", G_CALLBACK(do_new_bp), b);
 	if(edit_bp) {
-		gtk_widget_set_sensitive(GTK_WIDGET(b->messentry), 
+		gtk_widget_set_sensitive(GTK_WIDGET(b->messentry),
 					(edit_bp->options & OPT_POUNCE_SEND_IM) ? TRUE : FALSE);
 		gtk_entry_set_text(GTK_ENTRY(b->messentry), edit_bp->message);
 	}
@@ -1924,10 +1925,10 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	b->command = gtk_check_button_new_with_label(_("Execute command on pounce"));
 	gtk_table_attach(GTK_TABLE(table), b->command, 0, 1, 2, 3, GTK_FILL, 0, 0, 0);
 	if(edit_bp)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->command),
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->command),
 					   (edit_bp->options & OPT_POUNCE_COMMAND) ? TRUE : FALSE);
 	else
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->command), FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->command), FALSE);
 	gtk_widget_show(b->command);
 
 	b->commentry = gtk_entry_new();
@@ -1943,13 +1944,13 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	gtk_widget_show(b->commentry);
 	g_signal_connect(GTK_OBJECT(b->command), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), b->commentry);
-	
+
 	b->sound = gtk_check_button_new_with_label(_("Play sound on pounce"));
 	if(edit_bp)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sound), 
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->sound),
 					   (edit_bp->options & OPT_POUNCE_SOUND) ? TRUE : FALSE);
 	else
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sound), FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->sound), FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->sound, 0, 1, 3, 4, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->sound);
 
@@ -1970,10 +1971,10 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	b->save = gtk_check_button_new_with_label(_("Save this pounce after activation"));
 	gtk_container_set_border_width(GTK_CONTAINER(b->save), 7);
 	if(edit_bp)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->save),
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->save),
 					   (edit_bp->options & OPT_POUNCE_SAVE) ? TRUE : FALSE);
 	else
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->save), FALSE);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(b->save), FALSE);
 	gtk_box_pack_start(GTK_BOX(vbox), b->save, FALSE, FALSE, 0);
 	gtk_widget_show(b->save);
 
@@ -2063,7 +2064,7 @@ void show_set_dir(struct gaim_connection *gc)
 	GAIM_DIALOG(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	gtk_window_set_role(GTK_WINDOW(b->window), "set_dir");
-	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set Dir Info"));
 	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
@@ -2246,7 +2247,7 @@ void show_change_passwd(struct gaim_connection *gc)
 	b->gc = gc;
 
 	GAIM_DIALOG(b->window);
-	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
 	gtk_window_set_role(GTK_WINDOW(b->window), "change_passwd");
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Password Change"));
 	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(destroy_dialog), b->window);
@@ -2254,7 +2255,7 @@ void show_change_passwd(struct gaim_connection *gc)
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 
 	fbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_border_width(GTK_CONTAINER(fbox), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
 	gtk_container_add(GTK_CONTAINER(b->window), fbox);
 	gtk_widget_show(fbox);
 
@@ -2263,7 +2264,7 @@ void show_change_passwd(struct gaim_connection *gc)
 	gtk_widget_show(frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -2436,7 +2437,7 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 
 		GAIM_DIALOG(b->window);
 		gtk_window_set_title(GTK_WINDOW(b->window), "Gaim");
-		gtk_container_border_width(GTK_CONTAINER(b->window), 5);
+		gtk_container_set_border_width(GTK_CONTAINER(b->window), 5);
 		gtk_widget_realize(GTK_WIDGET(b->window));
 		g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(info_dlg_free), b);
 
@@ -2454,7 +2455,7 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 		text = gtk_imhtml_new(NULL, NULL);
 		b->text = text;
 		gtk_container_add(GTK_CONTAINER(sw), text);
-		gtk_widget_set_usize(sw, 300, 250);
+		gtk_widget_set_size_request(sw, 300, 250);
 		gaim_setup_imhtml(text);
 
 		ok = picture_button(b->window, _("OK"), ok_xpm);
@@ -2535,7 +2536,7 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 
 	GAIM_DIALOG(p->window);
 	gtk_container_set_border_width(GTK_CONTAINER(p->window), 5);
-	gtk_window_set_policy(GTK_WINDOW(p->window), FALSE, FALSE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(p->window), FALSE);
 	gtk_widget_realize(p->window);
 
 	dialogwindows = g_list_prepend(dialogwindows, p->window);
@@ -2667,7 +2668,7 @@ void show_log_dialog(struct gaim_conversation *c)
 
 		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s.log",
 				   gaim_home_dir(), normalize(c->name));
-		gtk_object_set_user_data(GTK_OBJECT(gtkconv->dialogs.log),
+		g_object_set_data(G_OBJECT(gtkconv->dialogs.log), "dialog_type", 
 								 "log dialog");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(gtkconv->dialogs.log),
 										buf);
@@ -2736,7 +2737,7 @@ void show_find_info(struct gaim_connection *gc)
 	struct findbyinfo *b = g_new0(struct findbyinfo, 1);
 	b->gc = gc;
 	GAIM_DIALOG(b->window);
-	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
 	gtk_window_set_role(GTK_WINDOW(b->window), "find_info");
 	gtk_widget_show(b->window);
 
@@ -2873,7 +2874,7 @@ void show_find_info(struct gaim_connection *gc)
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Info"));
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->firstentry);
 	gtk_container_add(GTK_CONTAINER(b->window), fbox);
-	gtk_container_border_width(GTK_CONTAINER(b->window), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(b->window), 5);
 	gtk_widget_realize(b->window);
 
 	gtk_widget_show(b->window);
@@ -2892,7 +2893,7 @@ void show_find_email(struct gaim_connection *gc)
 	if (g_slist_find(connections, gc))
 		b->gc = gc;
 	GAIM_DIALOG(b->window);
-	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
 	gtk_window_set_role(GTK_WINDOW(b->window), "find_email");
 	gtk_widget_realize(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
@@ -2944,7 +2945,7 @@ void cancel_link(GtkWidget *widget, struct gaim_conversation *c)
 
 	if (gtkconv->toolbar.link) {
 		gaim_gtk_set_state_lock(TRUE);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
 									FALSE);
 		gaim_gtk_set_state_lock(FALSE);
 	}
@@ -2979,7 +2980,7 @@ void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
 
 	if (gtkconv->toolbar.link) {
 		gaim_gtk_set_state_lock(TRUE);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
 									FALSE);
 		gaim_gtk_set_state_lock(FALSE);
 	}
@@ -3098,7 +3099,7 @@ void cancel_fgcolor(GtkWidget *widget, struct gaim_conversation *c)
 
 	if (gtkconv->toolbar.fgcolor && widget) {
 		gaim_gtk_set_state_lock(TRUE);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(gtkconv->toolbar.fgcolor),
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.fgcolor),
 									FALSE);
 		gaim_gtk_set_state_lock(FALSE);
 	}
@@ -3116,7 +3117,7 @@ void cancel_bgcolor(GtkWidget *widget, struct gaim_conversation *c)
 
 	if (gtkconv->toolbar.bgcolor && widget) {
 		gaim_gtk_set_state_lock(TRUE);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(gtkconv->toolbar.bgcolor),
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.bgcolor),
 									FALSE);
 		gaim_gtk_set_state_lock(FALSE);
 	}
@@ -3137,7 +3138,7 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 
 	gtk_color_selection_get_current_color(colorsel, &text_color);
 
-	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
+	c = g_object_get_data(G_OBJECT(colorsel), "gaim_conversation");
 	/* GTK_IS_EDITABLE(c->entry); huh? */
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
@@ -3167,7 +3168,7 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 
 	gtk_color_selection_get_current_color(colorsel, &text_color);
 
-	c = gtk_object_get_user_data(GTK_OBJECT(colorsel));
+	c = g_object_get_data(G_OBJECT(colorsel), "gaim_conversation");
 	/* GTK_IS_EDITABLE(c->entry); huh? */
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
@@ -3217,7 +3218,7 @@ void show_fgcolor_dialog(struct gaim_conversation *c, GtkWidget *color)
 		gtkconv->dialogs.fg_color = gtk_color_selection_dialog_new(_("Select Text Color"));
 		colorsel = GTK_COLOR_SELECTION_DIALOG(gtkconv->dialogs.fg_color)->colorsel;
 		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
-		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
+		g_object_set_data(G_OBJECT(colorsel), "gaim_conversation", c);
 
 		g_signal_connect(GTK_OBJECT(gtkconv->dialogs.fg_color), "delete_event",
 				   G_CALLBACK(delete_event_dialog), c);
@@ -3265,7 +3266,7 @@ void show_bgcolor_dialog(struct gaim_conversation *c, GtkWidget *color)
 		gtkconv->dialogs.bg_color = gtk_color_selection_dialog_new(_("Select Background Color"));
 		colorsel = GTK_COLOR_SELECTION_DIALOG(gtkconv->dialogs.bg_color)->colorsel;
 		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
-		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
+		g_object_set_data(G_OBJECT(colorsel), "gaim_conversation", c);
 
 		g_signal_connect(GTK_OBJECT(gtkconv->dialogs.bg_color), "delete_event",
 				   G_CALLBACK(delete_event_dialog), c);
@@ -3294,7 +3295,7 @@ void cancel_font(GtkWidget *widget, struct gaim_conversation *c)
 
 	if (gtkconv->toolbar.normal_size && widget) {
 		gaim_gtk_set_state_lock(TRUE);
-		gtk_toggle_button_set_state(
+		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(gtkconv->toolbar.normal_size), FALSE);
 		gaim_gtk_set_state_lock(FALSE);
 	}
@@ -3310,11 +3311,12 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 	   but for now only works with font face */
 	int i = 0;
 	char *fontname;
-	struct gaim_conversation *c = gtk_object_get_user_data(GTK_OBJECT(fontsel));
+	struct gaim_conversation *c = g_object_get_data(G_OBJECT(fontsel),
+			"gaim_conversation");
 
 	if (c) {
 		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
-		while(fontname[i] && !isdigit(fontname[i])) { 
+		while(fontname[i] && !isdigit(fontname[i])) {
 			i++;
 		}
 		fontname[i] = 0;
@@ -3357,7 +3359,6 @@ void show_font_dialog(struct gaim_conversation *c, GtkWidget *font)
 								DEFAULT_FONT_FACE " 12");
 		}
 
-		gtk_object_set_user_data(GTK_OBJECT(fontseld), NULL);
 		g_signal_connect(GTK_OBJECT(fontseld), "delete_event",
 				   G_CALLBACK(destroy_fontsel), NULL);
 		g_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->cancel_button),
@@ -3373,10 +3374,7 @@ void show_font_dialog(struct gaim_conversation *c, GtkWidget *font)
 	if (!gtkconv->dialogs.font) {
 		gtkconv->dialogs.font = gtk_font_selection_dialog_new(_("Select Font"));
 
-		if (font)
-			gtk_object_set_user_data(GTK_OBJECT(gtkconv->dialogs.font), c);
-		else
-			gtk_object_set_user_data(GTK_OBJECT(gtkconv->dialogs.font), NULL);
+		g_object_set_data(G_OBJECT(gtkconv->dialogs.font), "gaim_conversation", c);
 
 		if (gtkconv->fontface[0]) {
 			g_snprintf(fonttif, sizeof(fonttif), "%s 12", gtkconv->fontface);
@@ -3461,7 +3459,7 @@ static void create_import_dropdown(GtkFileSelection *fs)
 		opt = gtk_menu_item_new_with_label(buf);
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(set_import_gc), c);
 		gtk_widget_show(opt);
-		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		g = g->next;
 	}
 
@@ -3524,8 +3522,6 @@ static struct away_message *save_away_message(struct create_away *ca)
 
 	save_prefs();
 	do_away_menu();
-	if (prefs_away_list != NULL)
-		gtk_list_select_item(GTK_LIST(prefs_away_list), g_slist_index(away_messages, am));
 
 	return am;
 }
@@ -3607,8 +3603,8 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	/* Set up window */
 	GAIM_DIALOG(ca->window);
-	gtk_widget_set_usize(ca->window, -1, 250);
-	gtk_container_border_width(GTK_CONTAINER(ca->window), 5);
+	gtk_widget_set_size_request(ca->window, -1, 250);
+	gtk_container_set_border_width(GTK_CONTAINER(ca->window), 5);
 	gtk_window_set_role(GTK_WINDOW(ca->window), "away_mess");
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("Gaim - New away message"));
 	g_signal_connect(GTK_OBJECT(ca->window), "delete_event",
@@ -3708,7 +3704,7 @@ void close_smiley_dialog(GtkWidget *widget, struct gaim_conversation *c)
 
 	if (gtkconv->toolbar.smiley) {
 		gaim_gtk_set_state_lock(TRUE);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
 									FALSE);
 		gaim_gtk_set_state_lock(FALSE);
 	}
@@ -3779,7 +3775,7 @@ void show_smiley_dialog(struct gaim_conversation *c, GtkWidget *widget)
 	win = GAIM_GTK_WINDOW(gaim_conversation_get_window(c))->window;
 
 	GAIM_DIALOG(dialog);
-	gtk_window_set_policy(GTK_WINDOW(dialog), FALSE, FALSE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 
@@ -3828,7 +3824,7 @@ void show_smiley_dialog(struct gaim_conversation *c, GtkWidget *widget)
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
 	/* connect signals */
-	gtk_object_set_user_data(GTK_OBJECT(dialog), "smiley dialog");
+	g_object_set_data(G_OBJECT(dialog), "dialog_type", "smiley dialog");
 	g_signal_connect(G_OBJECT(dialog), "delete_event",
 					 G_CALLBACK(delete_event_dialog), c);
 
@@ -3862,13 +3858,12 @@ void alias_dialog_bud(struct buddy *b)
 	static GtkWidget *add = NULL;
 	GtkWidget *label;
 	GtkWidget *topbox;
-	static int a, c;
 
 	if (aliasdlg)
 		gtk_widget_destroy(aliasdlg);
 
 	GAIM_DIALOG(aliasdlg);
-	gtk_window_set_policy(GTK_WINDOW(aliasdlg), FALSE, FALSE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(aliasdlg), FALSE);
 	gtk_window_set_role(GTK_WINDOW(aliasdlg), "alias_dialog");
 	gtk_widget_realize(aliasdlg);
 	dialogwindows = g_list_prepend(dialogwindows, aliasdlg);
@@ -3886,7 +3881,7 @@ void alias_dialog_bud(struct buddy *b)
 	gtk_widget_show(label);
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 5);
 	gtk_box_pack_end(GTK_BOX(bbox), aliasentry, FALSE, FALSE, 5);
-	gtk_entry_set_editable(GTK_ENTRY(aliasentry), FALSE);
+	gtk_editable_set_editable(GTK_EDITABLE(aliasentry), FALSE);
 	gtk_box_pack_start(GTK_BOX(topbox), bbox, FALSE, FALSE, 0);
 
 	/* And the buddy alias box */
@@ -3916,8 +3911,8 @@ void alias_dialog_bud(struct buddy *b)
 	/* Handle closes right */
 	g_signal_connect(GTK_OBJECT(aliasdlg), "destroy", G_CALLBACK(destroy_dialog), aliasdlg);
 	g_signal_connect(GTK_OBJECT(cancel), "clicked", G_CALLBACK(destroy_dialog), aliasdlg);
-	a = g_signal_connect(GTK_OBJECT(add), "clicked", G_CALLBACK(do_alias_bud), b);
-	c = g_signal_connect(GTK_OBJECT(aliasname), "activate", G_CALLBACK(do_alias_bud), b);
+	g_signal_connect(GTK_OBJECT(add), "clicked", G_CALLBACK(do_alias_bud), b);
+	g_signal_connect(GTK_OBJECT(aliasname), "activate", G_CALLBACK(do_alias_bud), b);
 	/* Finish up */
 	gtk_widget_show(add);
 	gtk_widget_show(cancel);
@@ -3952,7 +3947,7 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 	char *name;
 	char *tmp;
 
-	name = gtk_object_get_user_data(GTK_OBJECT(filesel));
+	name = g_object_get_data(G_OBJECT(filesel), "name");
 	tmp = gaim_user_dir();
 	g_snprintf(filename, PATHSIZE, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
 		   name ? normalize(name) : "system", name ? ".log" : "");
@@ -4005,7 +4000,7 @@ static void show_save_log(GtkWidget *w, gchar *name)
 			   "clicked", G_CALLBACK(do_save_log), filesel);
 	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
 			   "clicked", G_CALLBACK(destroy_dialog), filesel);
-	gtk_object_set_user_data(GTK_OBJECT(filesel), name);
+	g_object_set_data(G_OBJECT(filesel), "name", name);
 
 	gtk_widget_realize(filesel);
 	gtk_widget_show(filesel);
@@ -4029,7 +4024,7 @@ static void do_clear_log_file(GtkWidget *w, gchar *name)
 		do_error_dialog(buf, strerror(errno), GAIM_ERROR);
 	}
 
-	window = gtk_object_get_user_data(GTK_OBJECT(w));
+	window = g_object_get_data(G_OBJECT(w), "log_window");
 	destroy_dialog(NULL, window);
 }
 
@@ -4046,7 +4041,7 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	gtk_window_set_role(GTK_WINDOW(window), "dialog");
 	gtk_window_set_title(GTK_WINDOW(window), _("Gaim - Clear Log"));
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
-	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 	g_signal_connect(GTK_OBJECT(window), "delete_event", G_CALLBACK(destroy_dialog), window);
 	gtk_widget_realize(window);
 
@@ -4064,7 +4059,8 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	gtk_widget_show(hbox);
 
 	button = picture_button(window, _("Okay"), ok_xpm);
-	gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(GTK_OBJECT(w)));
+	g_object_set_data(G_OBJECT(button), "log_window", g_object_get_data(G_OBJECT(w),
+				"log_window"));
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(do_clear_log_file), name);
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), window);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
@@ -4080,7 +4076,7 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	return;
 }
 
-static void log_show_convo(GtkWidget *w, struct view_log *view)
+static void log_show_convo(struct view_log *view)
 {
 	gchar buf[BUF_LONG];
 	FILE *fp;
@@ -4105,7 +4101,7 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 	}
 
 	gtk_widget_set_sensitive(view->bbox, FALSE);
-	gtk_signal_disconnect_by_func(GTK_OBJECT(view->window),
+	g_signal_handlers_disconnect_by_func(G_OBJECT(view->window),
 				      G_CALLBACK(destroy_dialog), view->window);
 	block = g_signal_connect(GTK_OBJECT(view->window), "delete_event",
 				   G_CALLBACK(dont_destroy), view->window);
@@ -4143,11 +4139,22 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 	gtk_imhtml_append_text(GTK_IMHTML(view->layout), "<BR>", -1, view->options);
 
 	gtk_widget_set_sensitive(view->bbox, TRUE);
-	gtk_signal_disconnect(GTK_OBJECT(view->window), block);
+	g_signal_handler_disconnect(G_OBJECT(view->window), block);
 	g_signal_connect(GTK_OBJECT(view->window), "delete_event",
 			   G_CALLBACK(destroy_dialog), view->window);
 	g_string_free(string, TRUE);
 	fclose(fp);
+}
+
+static void log_select_convo(GtkTreeSelection *sel, GtkTreeModel *model)
+{
+	GValue val = { 0, };
+	GtkTreeIter iter;
+
+	if(!gtk_tree_selection_get_selected(sel, &model, &iter))
+		return;
+	gtk_tree_model_get_value(model, &iter, 1, &val);
+	log_show_convo(g_value_get_pointer(&val));
 }
 
 static void des_view_item(GtkObject *obj, struct view_log *view)
@@ -4157,9 +4164,9 @@ static void des_view_item(GtkObject *obj, struct view_log *view)
 	g_free(view);
 }
 
-static void des_log_win(GtkObject *win, gpointer data)
+static void des_log_win(GObject *win, gpointer data)
 {
-	char *x = gtk_object_get_user_data(win);
+	char *x = g_object_get_data(win, "log_window");
 	if (x)
 		g_free(x);
 }
@@ -4192,8 +4199,10 @@ void show_log(char *nm)
 	GtkWidget *close_button;
 	GtkWidget *clear_button;
 	GtkWidget *save_button;
-	GtkWidget *list = NULL;
-	GList *item_list = NULL;
+	GtkListStore *list_store;
+	GtkWidget *tree_view;
+	GtkTreeSelection *sel = NULL;
+	GtkTreePath *path;
 	GtkWidget *item = NULL;
 	GtkWidget *last = NULL;
 	GtkWidget *frame;
@@ -4204,7 +4213,6 @@ void show_log(char *nm)
 	guint block;
 	char convo_start[32];
 	long offset = 0;
-	unsigned int i = 0;
 
 	options = GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL;
 	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
@@ -4215,7 +4223,7 @@ void show_log(char *nm)
 		options ^= GTK_IMHTML_NO_SIZES;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_object_set_user_data(GTK_OBJECT(window), name);
+	g_object_set_data(G_OBJECT(window), "name", name);
 	g_signal_connect(GTK_OBJECT(window), "destroy", G_CALLBACK(des_log_win), NULL);
 	gtk_window_set_role(GTK_WINDOW(window), "log");
 	if (name)
@@ -4224,7 +4232,7 @@ void show_log(char *nm)
 		g_snprintf(buf, BUF_LONG, _("Gaim - System Log"));
 	gtk_window_set_title(GTK_WINDOW(window), buf);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
-	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 	block = g_signal_connect(GTK_OBJECT(window), "delete_event",
 				   G_CALLBACK(dont_destroy), window);
 	gtk_widget_realize(window);
@@ -4247,17 +4255,31 @@ void show_log(char *nm)
 			return;
 		}
 
-		list = gtk_list_new();
+		list_store = gtk_list_store_new(2,
+				G_TYPE_STRING,
+				G_TYPE_POINTER);
+
+		tree_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list_store));
+
+		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree_view), FALSE);
+
+		gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(tree_view),
+				-1, "", gtk_cell_renderer_text_new(), "text", 0, NULL);
+
+		sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
+		g_signal_connect(G_OBJECT(sel), "changed",
+				G_CALLBACK(log_select_convo),
+				NULL);
 
 		frame = gtk_frame_new(_("Date"));
 		gtk_widget_show(frame);
 
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
-		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), list);
+		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), tree_view);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 					       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-		gtk_widget_set_usize(sw, 220, 220);
+		gtk_widget_set_size_request(sw, 220, 220);
 		gtk_container_add(GTK_CONTAINER(frame), sw);
 		gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
@@ -4265,16 +4287,10 @@ void show_log(char *nm)
 			if (strstr(buf, "---- New C")) {
 				int length;
 				char *temp = strchr(buf, '@');
+				GtkTreeIter iter;
 
 				if (temp == NULL || strlen(temp) < 2)
 					continue;
-
-				if (i == 1 && item_list) {
-					item_list = g_list_remove(item_list, last);
-					last = NULL;
-				}
-
-				i = 0;
 
 				temp++;
 				length = strcspn(temp, "-");
@@ -4282,7 +4298,7 @@ void show_log(char *nm)
 
 				offset = ftell(fp);
 				g_snprintf(convo_start, length, "%s", temp);
-				item = gtk_list_item_new_with_label(convo_start);
+				gtk_list_store_append(list_store, &iter);
 				view = g_new0(struct view_log, 1);
 				view->options = options;
 				view->offset = offset;
@@ -4290,26 +4306,26 @@ void show_log(char *nm)
 				view->bbox = bbox;
 				view->window = window;
 				view->layout = layout;
-				g_signal_connect(GTK_OBJECT(item), "select",
-						   G_CALLBACK(log_show_convo), view);
-				g_signal_connect(GTK_OBJECT(item), "destroy",
+				gtk_list_store_set(list_store, &iter,
+						0, convo_start,
+						1, view,
+						-1);
+				g_signal_connect(G_OBJECT(window), "destroy",
 						   G_CALLBACK(des_view_item), view);
 				last = item;
-				item_list = g_list_append(item_list, item);
-
-				gtk_widget_show(item);
 			}
-			i++;
 		}
 		fclose(fp);
-		if (i == 1 && item_list)
-			item_list = g_list_remove(item_list, item);
-		
-		if (item_list)
-			gtk_list_insert_items(GTK_LIST(list), item_list, 0 );
+
+		path = gtk_tree_path_new_first();
+		gtk_tree_selection_select_path(sel, path);
+		gtk_tree_path_free(path);
+
+		g_object_unref(G_OBJECT(list_store));
 	}
 
-	gtk_signal_disconnect(GTK_OBJECT(window), block);
+
+	g_signal_handler_disconnect(GTK_OBJECT(window), block);
 	g_signal_connect(GTK_OBJECT(window), "delete_event", G_CALLBACK(destroy_dialog), window);
 
 	frame = gtk_frame_new(_("Conversation"));
@@ -4319,7 +4335,7 @@ void show_log(char *nm)
 	gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	gtk_widget_set_usize(sw, 390, 220);
+	gtk_widget_set_size_request(sw, 390, 220);
 	gtk_container_add(GTK_CONTAINER(frame), sw);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
@@ -4335,7 +4351,7 @@ void show_log(char *nm)
 	g_signal_connect(GTK_OBJECT(close_button), "clicked", G_CALLBACK(destroy_dialog), window);
 
 	clear_button = picture_button(window, _("Clear"), close_xpm);
-	gtk_object_set_user_data(GTK_OBJECT(clear_button), window);
+	g_object_set_data(G_OBJECT(clear_button), "log_window", window);
 	gtk_box_pack_end(GTK_BOX(bbox), clear_button, FALSE, FALSE, 5);
 	g_signal_connect(GTK_OBJECT(clear_button), "clicked", G_CALLBACK(show_clear_log), name);
 
@@ -4343,8 +4359,8 @@ void show_log(char *nm)
 	gtk_box_pack_end(GTK_BOX(bbox), save_button, FALSE, FALSE, 5);
 	g_signal_connect(GTK_OBJECT(save_button), "clicked", G_CALLBACK(show_save_log), name);
 
-	gtk_widget_show_all(window);				
-	
+	gtk_widget_show_all(window);
+
 	if (!name) {
 		view = g_new0(struct view_log, 1);
 		view->options = options;
@@ -4352,12 +4368,10 @@ void show_log(char *nm)
 		view->bbox = bbox;
 		view->window = window;
 		view->layout = layout;
-		log_show_convo(layout, view);
+		log_show_convo(view);
 		g_signal_connect(GTK_OBJECT(layout), "destroy", G_CALLBACK(des_view_item), view);
-	} else {
-		gtk_list_select_item(GTK_LIST(list), 0);
 	}
-	
+
 	gtk_widget_set_sensitive(bbox, TRUE);
 
 	return;
@@ -4377,7 +4391,7 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 	if (resp == GTK_RESPONSE_OK) {
 
 		new_name = gtk_entry_get_text(GTK_ENTRY(entry));
-		g = gtk_object_get_user_data(GTK_OBJECT(entry));
+		g = g_object_get_data(G_OBJECT(entry), "group");
 
 		if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
 			char *prevname;
@@ -4425,7 +4439,7 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 	g_free(filename);
 
 	if (!rename_dialog) {
-		rename_dialog =  gtk_dialog_new_with_buttons(_("Gaim - Rename Group"), GTK_WINDOW(blist), GTK_DIALOG_MODAL, 
+		rename_dialog =  gtk_dialog_new_with_buttons(_("Gaim - Rename Group"), GTK_WINDOW(blist), GTK_DIALOG_MODAL,
 						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 		gtk_dialog_set_default_response (GTK_DIALOG(rename_dialog), GTK_RESPONSE_OK);
 		gtk_container_set_border_width (GTK_CONTAINER(rename_dialog), 6);
@@ -4433,7 +4447,7 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 		gtk_dialog_set_has_separator(GTK_DIALOG(rename_dialog), FALSE);
 		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(rename_dialog)->vbox), 12);
 		gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(rename_dialog)->vbox), 6);
-		
+
 		hbox = gtk_hbox_new(FALSE, 12);
 		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(rename_dialog)->vbox), hbox);
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
@@ -4441,27 +4455,27 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 
 		vbox = gtk_vbox_new(FALSE, 0);
 		gtk_container_add(GTK_CONTAINER(hbox), vbox);
-		
+
 		label = gtk_label_new(_("Please enter a new name for the selected group.\n"));
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-		
+
 		hbox = gtk_hbox_new(FALSE, 6);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-		
+
 		label = gtk_label_new(NULL);
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Group:"));
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-			
+
 		name_entry = gtk_entry_new();
 		gtk_entry_set_activates_default (GTK_ENTRY(name_entry), TRUE);
-		gtk_object_set_user_data(GTK_OBJECT(name_entry), g);
+		g_object_set_data(G_OBJECT(name_entry), "group", g);
 		gtk_entry_set_text(GTK_ENTRY(name_entry), g->name);
 		gtk_box_pack_start(GTK_BOX(hbox), name_entry, FALSE, FALSE, 0);
 		gtk_entry_set_activates_default (GTK_ENTRY(name_entry), TRUE);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(name_entry));
-	
+
 		g_signal_connect(G_OBJECT(rename_dialog), "response", G_CALLBACK(do_rename_group), name_entry);
 
 	}
@@ -4476,14 +4490,14 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 /*  The dialog for renaming buddies                                       */
 /*------------------------------------------------------------------------*/
 
-static void do_rename_buddy(GtkObject *obj, GtkWidget *entry)
+static void do_rename_buddy(GObject *obj, GtkWidget *entry)
 {
 	const char *new_name;
 	struct buddy *b;
 	GSList *gr;
 
 	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
-	b = gtk_object_get_user_data(obj);
+	b = g_object_get_data(obj, "buddy");
 
 	if (!g_slist_find(connections, b->account->gc)) {
 		destroy_dialog(rename_bud_dialog, rename_bud_dialog);
@@ -4529,7 +4543,7 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 	if (!rename_bud_dialog) {
 		GAIM_DIALOG(rename_bud_dialog);
 		gtk_window_set_role(GTK_WINDOW(rename_bud_dialog), "rename_bud_dialog");
-		gtk_window_set_policy(GTK_WINDOW(rename_bud_dialog), FALSE, TRUE, TRUE);
+		gtk_window_set_resizable(GTK_WINDOW(rename_bud_dialog), TRUE);
 		gtk_window_set_title(GTK_WINDOW(rename_bud_dialog), _("Gaim - Rename Buddy"));
 		g_signal_connect(GTK_OBJECT(rename_bud_dialog), "destroy",
 				   G_CALLBACK(destroy_dialog), rename_bud_dialog);
@@ -4551,7 +4565,7 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 
 		name_entry = gtk_entry_new();
 		gtk_box_pack_start(GTK_BOX(fbox), name_entry, TRUE, TRUE, 0);
-		gtk_object_set_user_data(GTK_OBJECT(name_entry), b);
+		g_object_set_data(G_OBJECT(name_entry), "buddy", b);
 		gtk_entry_set_text(GTK_ENTRY(name_entry), b->name);
 		g_signal_connect(GTK_OBJECT(name_entry), "activate",
 				   G_CALLBACK(do_rename_buddy), name_entry);
@@ -4561,7 +4575,7 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
 
 		button = picture_button(rename_bud_dialog, _("OK"), ok_xpm);
-		gtk_object_set_user_data(GTK_OBJECT(button), b);
+		g_object_set_data(G_OBJECT(button), "buddy", b);
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 		g_signal_connect(GTK_OBJECT(button), "clicked",
 				   G_CALLBACK(do_rename_buddy), name_entry);
@@ -4776,7 +4790,7 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(button_box), button_box_3, TRUE, TRUE, 0);
 	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
-	pixmap = gtk_pixmap_new(pm, mask);
+	pixmap = gtk_image_new_from_pixmap(pm, mask);
 	gtk_box_pack_end(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
 
 	if (text) {
@@ -4791,7 +4805,7 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	gtk_widget_show(button_box);
 
 /* this causes clipping on lots of buttons with long text */
-/*  gtk_widget_set_usize(button, 75, 30);*/
+/*  gtk_widget_set_size_request(button, 75, 30);*/
 	gtk_widget_show(button);
 	gdk_pixmap_unref(pm);
 	gdk_bitmap_unref(mask);
@@ -4824,7 +4838,7 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 	gtk_widget_show(button_box);
 	if (dispstyle == 2 || dispstyle == 0) {
 		pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
-		pixmap = gtk_pixmap_new(pm, mask);
+		pixmap = gtk_image_new_from_pixmap(pm, mask);
 		gtk_box_pack_start(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
 
 		gtk_widget_show(pixmap);
@@ -5175,12 +5189,13 @@ void re_show_multi_entry_entries(GtkWidget **entries_table,
 				1 + col_offset, 2 + col_offset, row_num, row_num +1);
 			gtk_widget_show(label);
 
-			med->widget = gtk_entry_new_with_max_length(50);
+			med->widget = gtk_entry_new();
+			gtk_entry_set_max_length(GTK_ENTRY(med->widget), 50);
 			if(med->text != NULL) {
 				gtk_entry_set_text(GTK_ENTRY (med->widget), med->text);
 			}
 			gtk_entry_set_visibility(GTK_ENTRY (med->widget), med->visible);
-			gtk_entry_set_editable(GTK_ENTRY (med->widget), med->editable);
+			gtk_editable_set_editable(GTK_EDITABLE(med->widget), med->editable);
 			gtk_table_attach(GTK_TABLE (*entries_table), med->widget,
 				2 + col_offset, 3 + col_offset, row_num, row_num +1,
 				GTK_FILL|GTK_EXPAND, GTK_FILL|GTK_EXPAND, 5, 0);
@@ -5200,9 +5215,8 @@ void re_show_multi_entry_textboxes(GtkWidget **texts_ibox,
 {
 	GSList *multi_text;
 	MultiTextData *mtd;
-        GtkWidget *frame;
-	GtkWidget *hbox;
-	GtkWidget *vscrollbar;
+	GtkWidget *frame;
+	GtkWidget *sw;
 
 	if(*texts_ibox != NULL) {
 		gtk_widget_destroy(GTK_WIDGET (*texts_ibox));
@@ -5213,20 +5227,24 @@ void re_show_multi_entry_textboxes(GtkWidget **texts_ibox,
 	for(multi_text = multi_text_items; multi_text != NULL; multi_text = multi_text->next) {
 		mtd = (MultiTextData *) multi_text->data;
 		frame = gtk_frame_new(mtd->label);
+		sw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+				GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+				GTK_SHADOW_IN);
+		gtk_widget_set_size_request(sw, 300, 100);
+		gtk_container_add(GTK_CONTAINER (frame), sw);
 		gtk_container_add(GTK_CONTAINER (*texts_ibox), frame);
-		hbox = gtk_hbox_new(FALSE, 0);
-		gtk_container_add(GTK_CONTAINER (frame), hbox);
-		mtd->textbox = gtk_text_new(NULL, NULL);
-		gtk_text_set_editable(GTK_TEXT(mtd->textbox), TRUE);
-		gtk_text_set_word_wrap(GTK_TEXT(mtd->textbox), TRUE);
-		gtk_widget_set_usize(mtd->textbox, 300, 100);
-		gtk_text_insert(GTK_TEXT(mtd->textbox), NULL, NULL, NULL, mtd->text?mtd->text:"", -1);
-		gtk_box_pack_start(GTK_BOX (hbox), mtd->textbox, FALSE, FALSE, 0);
-		vscrollbar = gtk_vscrollbar_new (GTK_TEXT(mtd->textbox)->vadj);
-		gtk_box_pack_start(GTK_BOX (hbox), vscrollbar, FALSE, FALSE, 0);
+		mtd->textbox = gtk_text_view_new();
+		gtk_text_view_set_editable(GTK_TEXT_VIEW(mtd->textbox), TRUE);
+		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(mtd->textbox), GTK_WRAP_WORD);
+		gtk_text_buffer_set_text(
+				gtk_text_view_get_buffer(GTK_TEXT_VIEW(mtd->textbox)),
+					mtd->text?mtd->text:"", -1);
+		gtk_container_add(GTK_CONTAINER (sw), mtd->textbox);
 		gtk_widget_show(mtd->textbox);
-		gtk_widget_show (vscrollbar);
-		gtk_widget_show(hbox);
+		gtk_widget_show(sw);
 		gtk_widget_show(frame);
 	}
 
@@ -5353,8 +5371,7 @@ void set_vcard_dialog_ok_clicked(GtkWidget *widget, gpointer  data)
 			g_free(((MultiTextData *) list->data)->text);
 		}
 		((MultiTextData *) list->data)->text =
-			gtk_editable_get_chars((GtkEditable *) (((MultiTextData *) list->data)->textbox),
-				0, -1);
+			gtk_text_view_get_text(GTK_TEXT_VIEW(((MultiTextData *) list->data)->textbox), FALSE);
 	}
 
 

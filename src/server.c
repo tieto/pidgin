@@ -1175,7 +1175,7 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who,
 static void des_popup(GtkWidget *w, GtkWidget *window)
 {
 	if (w == window) {
-		char *u = gtk_object_get_user_data(GTK_OBJECT(window));
+		char *u = g_object_get_data(G_OBJECT(window), "url");
 		g_free(u);
 	}
 	gtk_widget_destroy(window);
@@ -1193,18 +1193,18 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 
 	GAIM_DIALOG(window);
 	gtk_window_set_role(GTK_WINDOW(window), "popup");
-	gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_window_set_title(GTK_WINDOW(window), "Gaim - Popup");
 	gtk_container_set_border_width(GTK_CONTAINER(window), 5);
 	g_signal_connect(GTK_OBJECT(window), "destroy", G_CALLBACK(des_popup), window);
-	gtk_object_set_user_data(GTK_OBJECT(window), url);
+	g_object_set_data(G_OBJECT(window), "url", url);
 	gtk_widget_realize(window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_widget_set_usize(sw, wid, hei);
+	gtk_widget_set_size_request(sw, wid, hei);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
 
