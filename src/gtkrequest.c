@@ -1398,7 +1398,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 
 #if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
-file_cancel_cb(GtkWidget *widget, GaimGtkRequestData *data)
+file_cancel_cb(GaimGtkRequestData *data)
 {
 	if (data->cbs[0] != NULL)
 		((GaimRequestFileCb)data->cbs[0])(data->user_data, NULL);
@@ -1447,14 +1447,16 @@ gaim_gtk_request_file(const char *title, const char *filename,
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(filesel)), "response",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #else /* FILECHOOSER */
-	filesel = gtk_file_selection_new(title ? title : "");
+	filesel = gtk_file_selection_new(title ? title
+										   : (savedialog ? _("Save File...")
+														 : _("Open File...")));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel), filename);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)), "delete_event",
-					 G_CALLBACK(file_cancel_cb), data);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)), "delete_event",
+							 G_CALLBACK(file_cancel_cb), data);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
 					 "clicked", G_CALLBACK(file_cancel_cb), data);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
-					 "clicked", G_CALLBACK(file_ok_check_if_exists_cb), data);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button), "clicked",
+					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #endif /* FILECHOOSER */
 
 	data->dialog = filesel;
