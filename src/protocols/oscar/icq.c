@@ -189,6 +189,43 @@ faim_export int aim_icq_getallinfo(aim_session_t *sess, const char *uin)
 	return 0;
 }
 
+faim_export int aim_icq_getalias(aim_session_t *sess, const char *uin)
+{
+	aim_conn_t *conn;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	int bslen;
+
+	if (!uin || uin[0] < '0' || uin[0] > '9')
+		return -EINVAL;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+		return -EINVAL;
+
+	bslen = 2 + 4 + 2 + 2 + 2 + 4;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+
+	/* For simplicity, don't bother using a tlvlist */
+	aimbs_put16(&fr->data, 0x0001);
+	aimbs_put16(&fr->data, bslen);
+
+	aimbs_putle16(&fr->data, bslen - 2);
+	aimbs_putle32(&fr->data, atoi(sess->sn));
+	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
+	aimbs_putle16(&fr->data, snacid); /* eh. */
+	aimbs_putle16(&fr->data, 0x04ba); /* shrug. */
+	aimbs_putle32(&fr->data, atoi(uin));
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
 faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin)
 {
 	aim_conn_t *conn;
@@ -448,6 +485,14 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		case 0x00fa: { /* past background and current organizations */
 		} break;
 
+		case 0x0104: { /* alias info */
+			info->nick = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			info->first = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			info->last = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			aim_bstream_advance(&qbs, aimbs_getle16(&qbs)); /* email address? */
+			/* Then 0x00 02 00 */
+		} break;
+
 		case 0x010e: { /* unknown */
 			/* 0x00 00 */
 		} break;
@@ -464,8 +509,13 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		} /* End switch statement */
 
 		if (!(snac->flags & 0x0001)) {
-			if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_INFO)))
-				ret = userfunc(sess, rx, info);
+			if (cmd != 0x104)
+				if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_INFO)))
+					ret = userfunc(sess, rx, info);
+
+			if (info->uin && info->nick)
+				if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_ALIAS)))
+					ret = userfunc(sess, rx, info);
 
 			if (sess->icq_info == info) {
 				sess->icq_info = info->next;

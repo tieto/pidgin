@@ -313,6 +313,7 @@ static int gaim_memrequest       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_selfinfo         (aim_session_t *, aim_frame_t *, ...);
 static int gaim_offlinemsg       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_offlinemsgdone   (aim_session_t *, aim_frame_t *, ...);
+static int gaim_icqalias         (aim_session_t *, aim_frame_t *, ...);
 static int gaim_icqinfo          (aim_session_t *, aim_frame_t *, ...);
 static int gaim_popup            (aim_session_t *, aim_frame_t *, ...);
 #ifndef NOSSI
@@ -1069,6 +1070,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG, gaim_offlinemsg, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSGCOMPLETE, gaim_offlinemsgdone, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_POP, 0x0002, gaim_popup, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_ALIAS, gaim_icqalias, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_INFO, gaim_icqinfo, 0);
 #ifndef NOSSI
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_ERROR, gaim_ssi_parseerr, 0);
@@ -3555,7 +3557,6 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	buf = g_strdup_printf("<b>UIN:</b> %s", who);
 	if (info->nick && info->nick[0]) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Nick:</b> ", info->nick, NULL);  g_free(tmp);
-		serv_got_alias(gc, who, info->nick);
 	}
 	if (info->first && info->first[0]) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>First Name:</b> ", info->first, NULL);  g_free(tmp);
@@ -3652,6 +3653,30 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 
 	g_show_info_text(gc, who, 2, buf, NULL);
 	g_free(buf);
+
+	return 1;
+}
+
+static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	struct gaim_connection *gc = sess->aux_data;
+	gchar who[16];
+	struct buddy *b;
+	va_list ap;
+	struct aim_icq_info *info;
+
+	va_start(ap, fr);
+	info = va_arg(ap, struct aim_icq_info *);
+	va_end(ap);
+
+	if (info->uin && info->nick && info->nick[0]) {
+		g_snprintf(who, sizeof(who), "%lu", info->uin);
+		serv_got_alias(gc, who, info->nick);
+		if ((b = gaim_find_buddy(gc->account, who))) {
+			gaim_buddy_set_setting(b, "servernick", info->nick);
+			gaim_blist_save();
+		}
+	}
 
 	return 1;
 }
@@ -4175,6 +4200,8 @@ static void oscar_add_buddy(struct gaim_connection *gc, const char *name) {
 		}
 	}
 #endif
+	if (od->icq)
+		aim_icq_getalias(od->sess, name);
 }
 
 static void oscar_add_buddies(struct gaim_connection *gc, GList *buddies) {
@@ -4437,30 +4464,38 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (tmp)
 		gaim_blist_save();
 
-	/* Add from local list to server list */
-	if (gc) {
+	{ /* Add from local list to server list */
+		GaimBlistNode *gnode, *bnode;
+		struct group *group;
+		struct buddy *buddy;
+		struct gaim_buddy_list *blist;
 		GSList *cur;
 
 		/* Buddies */
-		for (cur=groups; cur; cur=g_slist_next(cur)) {
-			GSList *curb;
-			struct group *group = cur->data;
-			for (curb=group->members; curb; curb=curb->next) {
-				struct buddy *buddy = curb->data;
-				if(buddy->account == gc->account) {
-					if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
-						/* Store local alias on server */
-						char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
-						if (!alias && buddy->alias[0])
-							aim_ssi_aliasbuddy(sess, od->conn, group->name, buddy->name, buddy->alias);
-						free(alias);
-					} else {
-						debug_printf("ssi: adding buddy %s from local list to server list\n", buddy->name);
-						aim_ssi_addbuddy(sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+		if ((blist = gaim_get_blist()))
+			for (gnode = blist->root; gnode; gnode = gnode->next) {
+				group = (struct group *)gnode;
+				for (bnode = gnode->child; bnode; bnode = bnode->next) {
+					buddy = (struct buddy *)bnode;
+					if (buddy->account == gc->account) {
+						gchar *servernick = gaim_buddy_get_setting(buddy, "servernick");
+						if (servernick) {
+							serv_got_alias(gc, buddy->name, servernick);
+							g_free(servernick);
+						}
+						if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
+							/* Store local alias on server */
+							char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
+							if (!alias && buddy->alias)
+								aim_ssi_aliasbuddy(sess, od->conn, group->name, buddy->name, buddy->alias);
+							free(alias);
+						} else {
+							debug_printf("ssi: adding buddy %s from local list to server list\n", buddy->name);
+							aim_ssi_addbuddy(sess, od->conn, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+						}
 					}
 				}
 			}
-		}
 
 		/* Permit list */
 		if (gc->account->permit) {
@@ -4504,7 +4539,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(dialog_msg);
 		}
 		
-	} /* end if (gc) */
+	} /* end adding buddies from local list to server list */
 
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
