@@ -182,7 +182,7 @@ AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session mana
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
 
 if test "$enable_debug" = yes ; then
-	DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
+#	DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
@@ -234,6 +234,25 @@ PKG_CHECK_MODULES(STARTUP_NOTIFICATION, libstartup-notification-1.0 >= 0.5,
 AC_SUBST(STARTUP_NOTIFICATION_CFLAGS)
 AC_SUBST(STARTUP_NOTIFICATION_LIBS)
 
+
+dnl Check for stuff needed by the evolution integration plugin.
+PKG_CHECK_MODULES(LIBXML, libxml-2.0, have_libxml=yes, have_libxml=no)
+
+AC_SUBST(LIBXML_CFLAGS)
+AC_SUBST(LIBXML_LIBS)
+
+PKG_CHECK_MODULES(LIBEBOOK, libebook-1.0,
+[
+	have_libebook=yes
+],
+[
+	have_libebook=no
+])
+
+AC_SUBST(LIBEBOOK_CFLAGS)
+AC_SUBST(LIBEBOOK_LIBS)
+
+AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$have_libxml" = "xyes" -a test "x$have_libebook" = "xyes")
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
@@ -1014,6 +1033,7 @@ AC_OUTPUT([Makefile
 		   pixmaps/status/default/Makefile
 		   plugins/Makefile
 		   plugins/docklet/Makefile
+		   plugins/gevolution/Makefile
 		   plugins/gaim-remote/Makefile
 		   plugins/gestures/Makefile
 		   plugins/perl/Makefile
