@@ -275,6 +275,7 @@ static void destroy_buddies(struct gaim_connection *gc) {
 			if ((g_slist_length(b->connlist) == 1) && (b->connlist->data == gc)) {
 				if (b->log_timer > 0)
 					gtk_timeout_remove(b->log_timer);
+				b->log_timer = -1;
 				b->connlist = g_slist_remove(b->connlist, gc);
 				gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
 				m = g->members = g_slist_remove(g->members, b);
@@ -325,6 +326,35 @@ void signoff(struct gaim_connection *gc)
 	serv_close(gc);
 
 	if (connections) return;
+
+	{
+		GSList *s = shows;
+		struct group_show *g;
+		GSList *m;
+		struct buddy_show *b;
+		while (s) {
+			g = (struct group_show *)s->data;
+			debug_printf("group_show still exists: %s\n", g->name);
+			m = g->members;
+			while (m) {
+				b = (struct buddy_show *)m->data;
+				debug_printf("buddy_show still exists: %s\n", b->name);
+				m = g_slist_remove(m, b);
+				if (b->log_timer > 0)
+					gtk_timeout_remove(b->log_timer);
+				b->log_timer = -1;
+				gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
+				g_free(b->show);
+				g_free(b->name);
+				g_free(b);
+			}
+			gtk_container_remove(GTK_CONTAINER(buddies), g->item);
+			s = g_slist_remove(s, g);
+			g_free(g->name);
+			g_free(g);
+		}
+		shows = NULL;
+	}
 
 	sprintf(debug_buff, "date: %s\n", full_date());
 	debug_print(debug_buff);
@@ -498,6 +528,7 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
 						gtk_timeout_remove(bs->log_timer);
+					bs->log_timer = -1;
 					gtk_container_remove(GTK_CONTAINER(gs->tree), bs->item);
 					g_free(bs->show);
 					g_free(bs->name);
@@ -1539,10 +1570,14 @@ static gint log_timeout(struct buddy_show *b) {
 	if (!b->connlist) {
 		struct group_show *g = find_gs_by_bs(b);
 		g->members = g_slist_remove(g->members, b);
-		gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
+		if (blist)
+			gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
+		else
+			debug_printf("log_timeout but buddy list not available\n");
 		if ((g->members == NULL) && (display_options & OPT_DISP_NO_MT_GRP)) {
 			shows = g_slist_remove(shows, g);
-			gtk_container_remove(GTK_CONTAINER(buddies), g->item);
+			if (blist)
+				gtk_container_remove(GTK_CONTAINER(buddies), g->item);
 			g_free(g->name);
 			g_free(g);
 		}
@@ -1568,8 +1603,9 @@ static gint log_timeout(struct buddy_show *b) {
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
 	}
+	gtk_timeout_remove(b->log_timer);
 	b->log_timer = -1;
-	return FALSE;
+	return 0;
 }
 
 static char *caps_string(gushort caps)
@@ -1727,6 +1763,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			b->present = 2;
 			if (bs->log_timer > 0)
 				gtk_timeout_remove(bs->log_timer);
+			bs->log_timer = -1;
 			if (!g_slist_find(bs->connlist, gc))
 				bs->connlist = g_slist_append(bs->connlist, gc);
 			else
