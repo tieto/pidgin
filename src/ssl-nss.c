@@ -216,7 +216,7 @@ ssl_nss_close(GaimSslConnection *gsc)
 	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
 
 	if (nss_data->in) PR_Close(nss_data->in);
-	if (nss_data->fd) PR_Close(nss_data->fd);
+	/* if (nss_data->fd) PR_Close(nss_data->fd); */
 
 	g_free(nss_data);
 }
