@@ -451,19 +451,20 @@ void serv_add_buddy(GaimConnection *g, const char *name, GaimGroup *group)
 		prpl_info->add_buddy(g, name, group);
 }
 
-void serv_add_buddies(GaimConnection *g, GList *buddies)
+void serv_add_buddies(GaimConnection *gc, GList *buddies)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g)) {
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc)) {
 		if (prpl_info->add_buddies)
-			prpl_info->add_buddies(g, buddies);
+			prpl_info->add_buddies(gc, buddies);
 		else if (prpl_info->add_buddy) {
 			while (buddies) {
-				prpl_info->add_buddy(g, buddies->data, NULL);
+				GaimBuddy *b = buddies->data;
+				prpl_info->add_buddy(gc, b->name, gaim_find_buddys_group(b));
 				buddies = buddies->next;
 			}
 		}
@@ -536,12 +537,13 @@ void serv_alias_buddy(GaimBuddy *b)
 }
 
 void serv_got_alias(GaimConnection *gc, const char *who, const char *alias) {
-	GaimBuddy *b = gaim_find_buddy(gc->account, who);
+	GSList *buds, *buddies = gaim_find_buddies(gc->account, who);
+	GaimBuddy *b;
 
-	if(!b)
-		return;
-
-	gaim_blist_server_alias_buddy(b, alias);
+	for(buds = buddies; buds; buds = buds->next) {
+		b = buds->data;
+		gaim_blist_server_alias_buddy(b, alias);
+	}
 }
 
 /*
