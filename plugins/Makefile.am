@@ -55,6 +55,7 @@ endif # PLUGINS
 
 EXTRA_DIST = \
 	ChangeLog HOWTO \
+	ChangeLog.API \
 	filectl.c \
 	mailchk.c \
 	pluginpref_example.c \
