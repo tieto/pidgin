@@ -214,7 +214,7 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 0);
 	if (def)
-		gtk_entry_set_text(GTK_ENTRY(entry), text);
+		gtk_entry_set_text(GTK_ENTRY(entry), def);
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(act_prompt), p);
 	p->entry = entry;
 
