@@ -456,7 +456,7 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 
 		if (topic) {
 			char *tmp, *tmp2;
-			tmp = gaim_escape_html(topic);
+			tmp = g_markup_escape_text(topic, -1);
 			tmp2 = gaim_markup_linkify(tmp);
 			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
 			g_free(tmp);

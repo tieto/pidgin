@@ -591,7 +591,7 @@ insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 	char *smiley_text, *escaped_smiley;
 
 	smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
-	escaped_smiley = gaim_escape_html(smiley_text);
+	escaped_smiley = g_markup_escape_text(smiley_text, -1);
 
 	gtk_imhtml_insert_smiley(GTK_IMHTML(toolbar->imhtml),
 							 GTK_IMHTML(toolbar->imhtml)->protocol_name,

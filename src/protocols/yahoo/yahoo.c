@@ -684,7 +684,7 @@ static void yahoo_process_sysmessage(GaimConnection *gc, struct yahoo_packet *pk
 	if (!msg || !g_utf8_validate(msg, -1, NULL))
 		return;
 
-	escmsg = gaim_escape_html(msg);
+	escmsg = g_markup_escape_text(msg, -1);
 
 	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
 	                       me?me:gaim_connection_get_display_name(gc));

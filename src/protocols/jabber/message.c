@@ -172,7 +172,7 @@ static void handle_groupchat(JabberMessage *jm)
 				jm->subject);
 		if(!jm->xhtml && !jm->body) {
 			char *msg, *tmp, *tmp2;
-			tmp = gaim_escape_html(jm->subject);
+			tmp = g_markup_escape_text(jm->subject, -1);
 			tmp2 = gaim_markup_linkify(tmp);
 			if(jid->resource)
 				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, tmp2);

@@ -305,7 +305,7 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	}
 
 	/* If this is an interactive update, print it out */
-	tmp = gaim_escape_html(topic);
+	tmp = g_markup_escape_text(topic, -1);
 	tmp2 = gaim_markup_linkify(tmp);
 	g_free(tmp);
 	if (!strcmp(name, "topic")) {
@@ -920,7 +920,7 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 		return;
 	}
 
-	msg = gaim_escape_html(tmp);
+	msg = g_markup_escape_text(tmp, -1);
 	g_free(tmp);
 
 	tmp = irc_mirc2html(msg);

@@ -793,7 +793,7 @@ static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *t
 	if (text == NULL)
 		return;
 
-	tmp = gaim_escape_html(text);
+	tmp = g_markup_escape_text(text, -1);
 	imhtml_paste_insert(data, tmp, TRUE);
 	g_free(tmp);
 }
@@ -1481,7 +1481,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 				gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
 				return;
 			} else {
-				char *tmp = gaim_escape_html(text);
+				char *tmp = g_markup_escape_text(text, -1);
 				gtk_imhtml_insert_html_at_iter(imhtml, tmp, 0, &iter);
 				g_free(tmp);
 			}

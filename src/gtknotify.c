@@ -593,7 +593,7 @@ uri_command(const char *command, gboolean sync)
 	GError *error = NULL;
 	gint ret = 0;
 
-	escaped = gaim_escape_html(command);
+	escaped = g_markup_escape_text(command, -1);
 	gaim_debug_misc("gtknotify", "Executing %s\n", escaped);
 
 	if (!gaim_program_is_valid(command))

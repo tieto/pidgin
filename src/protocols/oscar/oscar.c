@@ -3411,7 +3411,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	 */
 	if (aim_sn_is_icq(gaim_account_get_username(account)) && aim_sn_is_icq(userinfo->sn)) {
 		/* being recevied by ICQ from ICQ - escape HTML so it is displayed as sent */
-		gchar *tmp2 = gaim_escape_html(tmp);
+		gchar *tmp2 = g_markup_escape_text(tmp, -1);
 		g_free(tmp);
 		tmp = tmp2;
 	}
@@ -3806,7 +3806,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				gchar *tmp;
 
 				/* If the message came from an ICQ user then escape any HTML */
-				tmp = gaim_escape_html(msg2[0]);
+				tmp = g_markup_escape_text(msg2[0], -1);
 
 				if (t) { /* This is an offline message */
 					/* The timestamp is UTC-ish, so we need to get the offset */
@@ -5611,7 +5611,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			if (aim_sn_is_icq(gaim_account_get_username(account))) {
 				/* from an ICQ user */
 				tmpmsg2 = gaim_strdup_withhtml(message);
-				tmpmsg = gaim_escape_html(tmpmsg2);
+				tmpmsg = g_markup_escape_text(tmpmsg2, -1);
 				g_free(tmpmsg2);
 			} else
 				tmpmsg = gaim_strdup_withhtml(message);
@@ -6795,7 +6795,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 				gchar *tmp1, *tmp2;
 				tmp2 = gaim_markup_strip_html(away_utf8);
 				g_free(away_utf8);
-				tmp1 = gaim_escape_html(tmp2);
+				tmp1 = g_markup_escape_text(tmp2, -1);
 				g_free(tmp2);
 				tmp2 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp1);

@@ -757,7 +757,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 			buf = g_malloc(len + 1);
 			g_snprintf(buf, len + 1, "%s", ptr);
 			g_strchomp(buf);
-			tmpescape = gaim_escape_html(buf);
+			tmpescape = g_markup_escape_text(buf, -1);
 			g_free(buf);
 			buf2 = zephyr_to_html(tmpescape);
 			buf3 = zephyr_recv_convert(gc,buf2, strlen(buf2));

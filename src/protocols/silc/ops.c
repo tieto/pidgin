@@ -90,7 +90,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		if (!msg)
 			return;
 
-		tmp = gaim_escape_html(msg);
+		tmp = g_markup_escape_text(msg, -1);
 		/* Send to Gaim */
 		serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
 				 sender->nickname ?
@@ -117,7 +117,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_UTF8) {
-		tmp = gaim_escape_html((const char *)message);
+		tmp = g_markup_escape_text((const char *)message, -1);
 		/* Send to Gaim */
 		serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
 				 sender->nickname ?
@@ -169,7 +169,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		if (!msg)
 			return;
 
-		tmp = gaim_escape_html(msg);
+		tmp = g_markup_escape_text(msg, -1);
 		/* Send to Gaim */
 		serv_got_im(gc, sender->nickname ?
 			    sender->nickname : "<unknown>",
@@ -195,7 +195,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_UTF8) {
-		tmp = gaim_escape_html((const char *)message);
+		tmp = g_markup_escape_text((const char *)message, -1);
 		/* Send to Gaim */
 		serv_got_im(gc, sender->nickname ?
 			    sender->nickname : "<unknown>",
@@ -331,7 +331,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			if (!tmp)
 				break;
 
-			esc = gaim_escape_html(tmp);
+			esc = g_markup_escape_text(tmp, -1);
 			tmp2 = gaim_markup_linkify(esc);
 			g_free(esc);
 
@@ -961,16 +961,16 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			user_modes = va_arg(vp, SilcBuffer);
 
 			s = g_string_new("");
-			tmp2 = gaim_escape_html(client_entry->nickname);
+			tmp2 = g_markup_escape_text(client_entry->nickname, -1);
 			g_string_append_printf(s, "<b>%s:</b> %s", _("Nickname"), tmp2);
 			g_free(tmp2);
 			if (client_entry->realname) {
-				tmp2 = gaim_escape_html(client_entry->realname);
+				tmp2 = g_markup_escape_text(client_entry->realname, -1);
 				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Realname"), tmp2);
 				g_free(tmp2);
 			}
 			if (client_entry->username) {
-				tmp2 = gaim_escape_html(client_entry->username);
+				tmp2 = g_markup_escape_text(client_entry->username, -1);
 				if (client_entry->hostname)
 					g_string_append_printf(s, "<br><b>%s:</b> %s@%s", _("Username"), tmp2, client_entry->hostname);
 				else
@@ -993,7 +993,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			}
 
 			if (statusstr) {
-				tmp2 = gaim_escape_html(statusstr);
+				tmp2 = g_markup_escape_text(statusstr, -1);
 				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Status Text"), tmp2);
 				g_free(statusstr);
 				g_free(tmp2);
@@ -1053,7 +1053,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						silc_free(m);
 
 					}
-					tmp2 = gaim_escape_html(tmp);
+					tmp2 = g_markup_escape_text(tmp, -1);
 					g_string_append_printf(s, "%s", tmp2);
 					g_free(tmp2);
 					silc_free(umodes);
@@ -1112,16 +1112,16 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				break;
 
 			s = g_string_new("");
-			tmp = gaim_escape_html(nickname);
+			tmp = g_markup_escape_text(nickname, -1);
 			g_string_append_printf(s, "<b>%s:</b> %s", _("Nickname"), tmp);
 			g_free(tmp);
 			if (realname) {
-				tmp = gaim_escape_html(realname);
+				tmp = g_markup_escape_text(realname, -1);
 				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Realname"), tmp);
 				g_free(tmp);
 			}
 			if (username) {
-				tmp = gaim_escape_html(username);
+				tmp = g_markup_escape_text(username, -1);
 				if (client_entry && client_entry->hostname)
 					g_string_append_printf(s, "<br><b>%s:</b> %s@%s", _("Username"), tmp, client_entry->hostname);
 				else

@@ -795,7 +795,7 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 		else
 			minus_header = g_strdup(minus_header + 1);
 		g_free(read);
-		minus_header2 = gaim_escape_html(minus_header);
+		minus_header2 = g_markup_escape_text(minus_header, -1);
 		g_free(minus_header);
 		return minus_header2;
 	}

@@ -751,7 +751,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		 * we'll fake like we received it ;)
 		 */
 		body_str = msn_message_to_string(msg);
-		body_enc = gaim_escape_html(body_str);
+		body_enc = g_markup_escape_text(body_str, -1);
 		g_free(body_str);
 
 		format = msn_message_get_attr(msg, "X-MMS-IM-Format");

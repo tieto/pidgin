@@ -293,7 +293,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 205: /* MSG_CLIENT_PRIVMSG */
 		res = g_strsplit(buf, " ", 2);
-		buf2 = gaim_escape_html(res[1]);
+		buf2 = g_markup_escape_text(res[1], -1);
 		serv_got_im(gc, res[0], buf2, 0, time(NULL));
 		g_free(buf2);
 		g_strfreev(res);
@@ -354,7 +354,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 404: /* MSG_SERVER_NOSUCH */
 		/* abused by opennap servers to broadcast stuff */
-		buf2 = gaim_escape_html(buf);
+		buf2 = g_markup_escape_text(buf, -1);
 		serv_got_im(gc, "server", buf2, 0, time(NULL));
 		g_free(buf2);
 		break;
@@ -409,20 +409,20 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 621:
 	case 622: /* MSG_CLIENT_MOTD */
 		/* also replaces MSG_SERVER_MOTD, so we should display it */
-		buf2 = gaim_escape_html(buf);
+		buf2 = g_markup_escape_text(buf, -1);
 		serv_got_im(gc, "motd", buf2, 0, time(NULL));
 		g_free(buf2);
 		break;
 
 	case 627: /* MSG_CLIENT_WALLOP */
 		/* abused by opennap server maintainers to broadcast stuff */
-		buf2 = gaim_escape_html(buf);
+		buf2 = g_markup_escape_text(buf, -1);
 		serv_got_im(gc, "wallop", buf2, 0, time(NULL));
 		g_free(buf2);
 		break;
 
 	case 628: /* MSG_CLIENT_ANNOUNCE */
-		buf2 = gaim_escape_html(buf);
+		buf2 = g_markup_escape_text(buf, -1);
 		serv_got_im(gc, "announce", buf2, 0, time(NULL));
 		g_free(buf);
 		break;

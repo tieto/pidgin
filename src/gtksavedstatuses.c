@@ -180,7 +180,7 @@ status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
 
-	title_escaped = gaim_escape_html(title);
+	title_escaped = g_markup_escape_text(title, -1);
 	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title_escaped);
 	free(title_escaped);
 	gaim_request_action(NULL, NULL, buf, NULL, 0, title, 2,

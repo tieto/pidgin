@@ -744,7 +744,7 @@ silcgaim_view_motd(GaimPluginAction *action)
 		return;
 	}
 
-	tmp = gaim_escape_html(sg->motd);
+	tmp = g_markup_escape_text(sg->motd, -1);
 	gaim_notify_formatted(gc, NULL, _("Message of the Day"), NULL,
 			      tmp, NULL, NULL);
 	g_free(tmp);
@@ -1002,7 +1002,7 @@ static GaimCmdRet silcgaim_cmd_chat_topic(GaimConversation *conv,
 	if (!args || !args[0]) {
 		topic = gaim_conv_chat_get_topic (GAIM_CONV_CHAT(conv));
 		if (topic) {
-			tmp = gaim_escape_html(topic);
+			tmp = g_markup_escape_text(topic, -1);
 			tmp2 = gaim_markup_linkify(tmp);
 			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
 			g_free(tmp);
@@ -1144,7 +1144,7 @@ static GaimCmdRet silcgaim_cmd_motd(GaimConversation *conv,
 		return GAIM_CMD_RET_FAILED;
 	}
 
-	tmp = gaim_escape_html(sg->motd);
+	tmp = g_markup_escape_text(sg->motd, -1);
 	gaim_notify_formatted(gc, NULL, _("Message of the Day"), NULL,
 			tmp, NULL, NULL);
 	g_free(tmp);

@@ -407,7 +407,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 		}
 
 		body_str = msn_message_to_string(msg);
-		body_enc = gaim_escape_html(body_str);
+		body_enc = g_markup_escape_text(body_str, -1);
 		g_free(body_str);
 
 		format = msn_message_get_attr(msg, "X-MMS-IM-Format");
@@ -640,9 +640,9 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			account = cmdproc->session->account;
 
 			if ((b = gaim_find_buddy(account, user)) != NULL)
-				username = gaim_escape_html(gaim_buddy_get_alias(b));
+				username = g_markup_escape_text(gaim_buddy_get_alias(b), -1);
 			else
-				username = gaim_escape_html(user);
+				username = g_markup_escape_text(user, -1);
 
 			str = g_strdup_printf(_("%s has closed the conversation window."),
 								  username);
@@ -811,7 +811,7 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	body = msn_message_get_bin_data(msg, &body_len);
 	body_str = g_strndup(body, body_len);
-	body_enc = gaim_escape_html(body_str);
+	body_enc = g_markup_escape_text(body_str, -1);
 	g_free(body_str);
 
 	passport = msg->remote_user;

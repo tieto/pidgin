@@ -114,7 +114,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	}
 
 	s = g_string_new("");
-	tmp2 = gaim_escape_html(channel->channel_name);
+	tmp2 = g_markup_escape_text(channel->channel_name, -1);
 	g_string_append_printf(s, _("<b>Channel Name:</b> %s"), tmp2);
 	g_free(tmp2);
 	if (channel->user_list && silc_hash_table_count(channel->user_list))
@@ -124,7 +124,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	silc_hash_table_list(channel->user_list, &htl);
 	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
 		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO) {
-			tmp2 = gaim_escape_html(chu->client->nickname);
+			tmp2 = g_markup_escape_text(chu->client->nickname, -1);
 			g_string_append_printf(s, _("<br><b>Channel Founder:</b> %s"),
 					       tmp2);
 			g_free(tmp2);
@@ -141,7 +141,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 				       silc_hmac_get_name(channel->hmac));
 
 	if (channel->topic) {
-		tmp2 = gaim_escape_html(channel->topic);
+		tmp2 = g_markup_escape_text(channel->topic, -1);
 		g_string_append_printf(s, _("<br><b>Channel Topic:</b><br>%s"), tmp2);
 		g_free(tmp2);
 	}
@@ -1312,7 +1312,7 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 					       flags, (unsigned char *)msg2,
 					       strlen(msg2), TRUE);
 	if (ret) {
-		tmp = gaim_escape_html(msg);
+		tmp = g_markup_escape_text(msg, -1);
 		serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, tmp,
 				 time(NULL));
 		g_free(tmp);

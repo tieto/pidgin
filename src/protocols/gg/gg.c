@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12199 2005-03-07 02:19:09Z deryni9 $
+ * $Id: gg.c 12334 2005-03-26 02:43:49Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -527,7 +527,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 				break;
 			imsg = charset_convert(e->event.msg.message, "CP1250", "UTF-8");
 			gaim_str_strip_cr(imsg);
-			jmsg = gaim_escape_html(imsg);
+			jmsg = g_markup_escape_text(imsg, -1);
 			serv_got_im(gc, user, jmsg, 0, e->event.msg.time);
 			g_free(imsg);
 			g_free(jmsg);

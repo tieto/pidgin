@@ -614,7 +614,7 @@ static int irc_chat_send(GaimConnection *gc, int id, const char *what)
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);
 
-	tmp = gaim_escape_html(what);
+	tmp = g_markup_escape_text(what, -1);
 	serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, tmp, time(NULL));
 	g_free(tmp);
 	return 0;

@@ -20,6 +20,8 @@ version 2.0.0cvs:
 	           list of the given account.
 	* Changed: gaim_blist_node_action_new, added a fourth argument, a GList
 	           of GaimBlistNodeActions to be created as a submenu of the item.
+	* Removed: gaim_escape_html(const char *html) (use
+	           g_markup_escape_text(html, -1) instead)
 
 	Signals:
 	* Changed: "received-im-msg and "received-chat-msg" to match, both

@@ -307,7 +307,7 @@ debug_command_cb(GaimConversation *conv,
 
 	if (!g_ascii_strcasecmp(args[0], "version")) {
 		tmp = g_strdup_printf(_("me is using Gaim v%s."), VERSION);
-		markup = gaim_escape_html(tmp);
+		markup = g_markup_escape_text(tmp, -1);
 
 		status = gaim_cmd_do_command(conv, tmp, markup, error);
 
@@ -5349,7 +5349,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		{
 			char *html_title,*label;
 
-			html_title = gaim_escape_html(title);
+			html_title = g_markup_escape_text(title, -1);
 
 			label = g_strdup_printf("<span color=\"%s\">%s</span>",
 			                        color, html_title);

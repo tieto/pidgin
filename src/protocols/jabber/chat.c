@@ -584,7 +584,7 @@ void jabber_chat_change_topic(JabberChat *chat, const char *topic)
 		char *buf, *tmp, *tmp2;
 
 		if(cur) {
-			tmp = gaim_escape_html(cur);
+			tmp = g_markup_escape_text(cur, -1);
 			tmp2 = gaim_markup_linkify(tmp);
 			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
 			g_free(tmp);
