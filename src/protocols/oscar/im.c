@@ -732,16 +732,127 @@ faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, cons
 	return 0;
 }
 
-/*
+/**
+ * Request the status message of the given ICQ user.
+ *
+ * @param sess The oscar session.
+ * @param sn The UIN of the user of whom you wish to request info.
+ * @param type The type of info you wish to request.  This should be the current 
+ *        state of the user, as one of the AIM_ICQ_STATE_* defines.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_send_im_ch2_geticqmessage(aim_session_t *sess, const char *sn, int type)
+{
+	aim_conn_t *conn;
+	int i;
+	fu8_t ck[8];
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !sn)
+		return -EINVAL;
+
+	for (i = 0; i < 8; i++)
+		aimutil_put8(ck+i, (fu8_t) rand());
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sn) + 4+0x5e + 4)))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
+
+	/* Cookie */
+	aimbs_putraw(&fr->data, ck, 8);
+
+	/* Channel (2) */
+	aimbs_put16(&fr->data, 0x0002);
+
+	/* Dest sn */
+	aimbs_put8(&fr->data, strlen(sn));
+	aimbs_putraw(&fr->data, sn, strlen(sn));
+
+	/* TLV t(0005) - Encompasses almost everything below. */
+	aimbs_put16(&fr->data, 0x0005); /* T */
+	aimbs_put16(&fr->data, 0x005e); /* L */
+	{ /* V */
+		aimbs_put16(&fr->data, 0x0000);
+
+		/* Cookie */
+		aimbs_putraw(&fr->data, ck, 8);
+
+		/* Put the 16 byte server relay capability */
+		aim_putcap(&fr->data, AIM_CAPS_ICQSERVERRELAY);
+
+		/* TLV t(000a) */
+		aimbs_put16(&fr->data, 0x000a);
+		aimbs_put16(&fr->data, 0x0002);
+		aimbs_put16(&fr->data, 0x0001);
+
+		/* TLV t(000f) */
+		aimbs_put16(&fr->data, 0x000f);
+		aimbs_put16(&fr->data, 0x0000);
+
+		/* TLV t(2711) */
+		aimbs_put16(&fr->data, 0x2711);
+		aimbs_put16(&fr->data, 0x0036);
+		{ /* V */
+			aimbs_putle16(&fr->data, 0x001b); /* L */
+			aimbs_putle16(&fr->data, 0x0008); /* AAA - Protocol version */
+			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
+			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
+			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
+			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
+			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
+			aimbs_putle16(&fr->data, 0x0003); /* Client features? */
+			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
+			aimbs_putle8(&fr->data, 0x00); /* Unkizown */
+			aimbs_putle16(&fr->data, 0xffff); /* Sequence number?  XXX - This should decrement by 1 with each request */
+
+			aimbs_putle16(&fr->data, 0x000e); /* L */
+			aimbs_putle16(&fr->data, 0xffff); /* Sequence number?  XXX - This should decrement by 1 with each request */
+			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
+			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
+			aimbs_putle32(&fr->data, 0x00000000); /* Unknown */
+
+			/* The type of status message being requested */
+			if (type & AIM_ICQ_STATE_CHAT)
+				aimbs_putle16(&fr->data, 0x03ec);
+			else if(type & AIM_ICQ_STATE_DND)
+				aimbs_putle16(&fr->data, 0x03eb);
+			else if(type & AIM_ICQ_STATE_OUT)
+				aimbs_putle16(&fr->data, 0x03ea);
+			else if(type & AIM_ICQ_STATE_BUSY)
+				aimbs_putle16(&fr->data, 0x03e9);
+			else if(type & AIM_ICQ_STATE_AWAY)
+				aimbs_putle16(&fr->data, 0x03e8);
+
+			aimbs_putle16(&fr->data, 0x0000); /* Status? */
+			aimbs_putle16(&fr->data, 0x0001); /* Priority of this message? */
+			aimbs_putle16(&fr->data, 0x0001); /* L? */
+			aimbs_putle8(&fr->data, 0x00); /* Null termination? */
+		} /* End TLV t(2711) */
+	} /* End TLV t(0005) */
+
+	/* TLV t(0003) */
+	aimbs_put16(&fr->data, 0x0003);
+	aimbs_put16(&fr->data, 0x0000);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+/**
  * This can be used to send an ICQ authorization reply (deny or grant).  It is the "old way."  
  * The new way is to use SSI.  I like the new way a lot better.  This seems like such a hack, 
  * mostly because it's in network byte order.  Figuring this stuff out sometimes takes a while, 
  * but thats ok, because it gives me time to try to figure out what kind of drugs the AOL people 
  * were taking when they merged the two protocols.
  *
- * sn is the destination screen name
- * type is the type of message.  0x0007 for authorization denied.  0x0008 for authorization granted
- * message is the message you want to send, it should be null terminated
+ * @param sn The destination screen name.
+ * @param type The type of message.  0x0007 for authorization denied.  0x0008 for authorization granted.
+ * @param message The message you want to send, it should be null terminated.
+ * @return Return 0 if no errors, otherwise return the error number.
  */
 faim_export int aim_send_im_ch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message)
 {
@@ -1859,7 +1970,11 @@ static int missedcall(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	return ret;
 }
 
-static int clienterr(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+/*
+ * Receive the response from an ICQ status message request.  This contains the 
+ * ICQ status message.  Go figure.
+ */
+static int clientautoresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1873,8 +1988,58 @@ static int clienterr(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	sn = aimbs_getstr(bs, snlen);
 	reason = aimbs_get16(bs);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		 ret = userfunc(sess, rx, channel, sn, reason);
+	switch (reason) {
+		case 0x0003: { /* ICQ status message.  Maybe other stuff too, you never know with these people. */
+			fu8_t statusmsgtype, *msg;
+			fu16_t len;
+			fu32_t state;
+
+			len = aimbs_getle16(bs); /* Should be 0x001b */
+			free(aimbs_getraw(bs, len)); /* Unknown */
+
+			len = aimbs_getle16(bs); /* Should be 0x000e */
+			free(aimbs_getraw(bs, len)); /* Unknown */
+
+			statusmsgtype = aimbs_getle8(bs);
+			switch (statusmsgtype) {
+				case 0xe8:
+					state = AIM_ICQ_STATE_AWAY;
+					break;
+				case 0xe9:
+					state = AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY;
+					break;
+				case 0xea:
+					state = AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_OUT;
+					break;
+				case 0xeb:
+					state = AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY;
+					break;
+				case 0xec:
+					state = AIM_ICQ_STATE_CHAT;
+					break;
+				default:
+					state = 0;
+					break;
+			}
+
+			aimbs_getle8(bs); /* Unknown - 0x03 Maybe this means this is an auto-reply */
+			aimbs_getle16(bs); /* Unknown - 0x0000 */
+			aimbs_getle16(bs); /* Unknown - 0x0000 */
+
+			len = aimbs_getle16(bs);
+			msg = aimbs_getraw(bs, len);
+
+			if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+				ret = userfunc(sess, rx, channel, sn, reason, state, msg);
+
+			free(msg);
+		} break;
+
+		default: {
+			if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+				ret = userfunc(sess, rx, channel, sn, reason);
+		} break;
+	} /* end switch */
 
 	free(ck);
 	free(sn);
@@ -1916,7 +2081,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	else if (snac->subtype == 0x000a)
 		return missedcall(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x000b)
-		return clienterr(sess, mod, rx, snac, bs);
+		return clientautoresp(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x000c)
 		return msgack(sess, mod, rx, snac, bs);
 

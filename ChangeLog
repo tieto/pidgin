@@ -15,7 +15,8 @@ version 0.58:
 	* Better selection in GtkIMHtml (Thanks Ben Miller)
 	* A warning when your OSCAR buddy list is too long
 	  (Thanks, Mark Doliner)
-
+	* ICQ status messages in OSCAR (Thanks, Mark Doliner)
+	
 version 0.57 (04/25/2002):
 	* New authorization method for Yahoo!
 	* Polish translation updated (Thanks Przemyslaw Sulek)

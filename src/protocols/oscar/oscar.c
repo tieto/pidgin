@@ -243,6 +243,7 @@ static int gaim_parse_oncoming   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_offgoing   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_incoming_im(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_misses     (aim_session_t *, aim_frame_t *, ...);
+static int gaim_parse_clientauto (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_user_info  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_motd       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chatnav_info     (aim_session_t *, aim_frame_t *, ...);
@@ -691,6 +692,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_INCOMING, gaim_parse_incoming_im, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_ERROR, gaim_parse_locerr, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_MISSEDCALL, gaim_parse_misses, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_CLIENTAUTORESP, gaim_parse_clientauto, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATECHANGE, gaim_parse_ratechange, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_EVIL, gaim_parse_evilnotify, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOK, AIM_CB_LOK_ERROR, gaim_parse_searcherror, 0);
@@ -1630,6 +1632,83 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+static char *gaim_icq_status(int state) {
+	/* Make a cute little string that shows the status of the dude or dudet */
+	if (state & AIM_ICQ_STATE_CHAT)
+		return g_strdup_printf("Free For Chat");
+	else if (state & AIM_ICQ_STATE_DND)
+		return g_strdup_printf("Do Not Disturb");
+	else if (state & AIM_ICQ_STATE_OUT)
+		return g_strdup_printf("Not Available");
+	else if (state & AIM_ICQ_STATE_BUSY)
+		return g_strdup_printf("Occupied");
+	else if (state & AIM_ICQ_STATE_AWAY)
+		return g_strdup_printf("Away");
+	else if (state & AIM_ICQ_STATE_WEBAWARE)
+		return g_strdup_printf("Web Aware");
+	else if (state & AIM_ICQ_STATE_INVISIBLE)
+		return g_strdup_printf("Invisible");
+	else
+		return g_strdup_printf("Online");
+}
+
+static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	va_list ap;
+	fu16_t chan, reason;
+	char *who;
+
+	va_start(ap, fr);
+	chan = (fu16_t)va_arg(ap, unsigned int);
+	who = va_arg(ap, char *);
+	reason = (fu16_t)va_arg(ap, unsigned int);
+
+	switch(reason) {
+		case 0x0003: { /* Reply from an ICQ status message request */
+			int state = (int)va_arg(ap, fu32_t);
+			char *msg = va_arg(ap, char *);
+			char *status_msg = gaim_icq_status(state);
+			char *dialog_msg, **splitmsg;
+			struct oscar_data *od = gc->proto_data;
+			GSList *l = od->evilhack;
+			gboolean evilhack = FALSE;
+
+			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+			splitmsg = g_strsplit(msg, "\r\n", 0);
+
+			/* If who is in od->evilhack, then we're just getting the away message, otherwise this 
+			 * will just get appended to the info box (which is already showing). */
+			while (l) {
+				char *x = l->data;
+				if (!strcmp(x, normalize(who))) {
+					evilhack = TRUE;
+					g_free(x);
+					od->evilhack = g_slist_remove(od->evilhack, x);
+					break;
+				}
+				l = l->next;
+			}
+
+			if (evilhack)
+				dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR>%s<BR>"), who, status_msg, g_strjoinv("<BR>", splitmsg));
+			else
+				dialog_msg = g_strdup_printf(_("<B>Status:</B> %s<BR><HR><BR>%s<BR>"), status_msg, g_strjoinv("<BR>", splitmsg));
+			g_show_info_text(gc, who, 2, dialog_msg, NULL);
+
+			g_free(status_msg);
+			g_free(dialog_msg);
+			g_strfreev(splitmsg);
+		} break;
+
+		default: {
+			debug_printf("Received an unknown client auto-response from %s.  Type 0x%04x\n", who, reason);
+		} break;
+	}
+	va_end(ap);
+
+	return 1;
+}
+
 static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t reason;
@@ -2397,6 +2476,7 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
 static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	struct gaim_connection *gc = sess->aux_data;
+	struct buddy *budlight;
 	va_list ap;
 	struct aim_icq_simpleinfo *info;
 	char buf[16 * 1024];
@@ -2411,13 +2491,31 @@ static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		   "<B>UIN:</B> %lu<BR>"
 		   "<B>Nick:</B> %s<BR>"
 		   "<B>Name:</B> %s %s<BR>"
-		   "<B>Email:</B> %s\n",
+		   "<B>Email:</B> %s<BR>\n",
 		   info->uin,
 		   info->nick,
 		   info->first, info->last,
 		   info->email);
 
-	g_show_info_text(gc, who, FALSE, buf, NULL);
+	/* If the contact is away, then we also want to get their status message
+	 * and show it in the same window as info.  g_show_info_text gets the status 
+	 * message if the third arg is 0 (this seems really gross to me).  The 
+	 * parse-icq-status-message function knows if it is putting it's message in 
+	 * an info window because the name will _not_ be in od->evilhack.  For getting 
+	 * only the away message the contact's UIN is put in od->evilhack. */
+	if ((budlight = find_buddy(gc, who)) && ((budlight->uc >> 7) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT))) {
+		if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
+			g_show_info_text(gc, who, 0, buf, NULL);
+		else {
+			char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
+			g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, "<BR>\n<HR><BR><I>Remote client does not support sending status messages.</I><BR>\n", NULL);
+			free(state_msg);
+		}
+	} else {
+		char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
+		g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, NULL);
+		free(state_msg);
+	}
 
 	return 1;
 }
@@ -2459,7 +2557,7 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	at += g_snprintf(buf + at, len - at, "<B>%s has the following screen names:</B><BR>", address);
 	for (i = 0; i < num; i++)
 		at += g_snprintf(buf + at, len - at, "%s<BR>", &SNs[i * (MAXSNLEN + 1)]);
-	g_show_info_text(NULL, NULL, FALSE, buf, NULL);
+	g_show_info_text(NULL, NULL, 2, buf, NULL);
 	g_free(buf);
 
 	return 1;
@@ -2635,10 +2733,22 @@ static void oscar_get_info(struct gaim_connection *g, char *name) {
 		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_AWAYMESSAGE);
 }
 
-static void oscar_get_away(struct gaim_connection *g, char *name) {
+static void oscar_get_away(struct gaim_connection *g, char *who) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	if (!odata->icq)
-		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_GENERALINFO);
+	if (odata->icq) {
+		struct buddy *budlight = find_buddy(g, who);
+		if (budlight)
+			if ((budlight->uc & 0xff80) >> 7)
+				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
+					aim_send_im_ch2_geticqmessage(odata->sess, who, (budlight->uc & 0xff80) >> 7);
+				else
+					debug_printf("Error: Remote client does not support retrieval of status messages.\n");
+			else
+				debug_printf("Error: The user %s has no status message, therefore not requesting.\n", who);
+		else
+			debug_printf("Error: Could not find %s in local contact list, therefore unable to request status message.\n", who);
+	} else
+		aim_getinfo(odata->sess, odata->conn, who, AIM_GETINFO_GENERALINFO);
 }
 
 static void oscar_get_caps(struct gaim_connection *g, char *name) {
@@ -2729,13 +2839,13 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY);
 		gc->away = "";
 	} else if (!strcmp(state, "Do Not Disturb")) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_DND);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY);
 		gc->away = "";
 	} else if (!strcmp(state, "Not Available")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
 		gc->away = "";
 	} else if (!strcmp(state, "Occupied")) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_BUSY);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY);
 		gc->away = "";
 	} else if (!strcmp(state, "Free For Chat")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_CHAT);
@@ -3236,12 +3346,12 @@ static char **oscar_list_icon(int uc) {
 			return icon_offline_xpm;
 		if (uc & AIM_ICQ_STATE_CHAT)
 			return icon_ffc_xpm;
-		if (uc & AIM_ICQ_STATE_BUSY)
-		 	return icon_occ_xpm;
-		if (uc & AIM_ICQ_STATE_OUT)
-			return icon_na_xpm;
 		if (uc & AIM_ICQ_STATE_DND)
 		 	return icon_dnd_xpm;
+		if (uc & AIM_ICQ_STATE_OUT)
+			return icon_na_xpm;
+		if (uc & AIM_ICQ_STATE_BUSY)
+		 	return icon_occ_xpm;
 		if (uc & AIM_ICQ_STATE_AWAY)
 			return icon_away_xpm;
 		return icon_online_xpm;
@@ -3433,7 +3543,30 @@ static void oscar_ask_direct_im(struct gaim_connection *gc, gchar *who) {
 static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 	struct oscar_data *od = gc->proto_data;
 	od->evilhack = g_slist_append(od->evilhack, g_strdup(normalize(who)));
-	oscar_get_info(gc, who);
+	if (od->icq) {
+		struct buddy *budlight = find_buddy(gc, who);
+		if (budlight)
+			if ((budlight->uc >> 7) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT))
+				if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
+					aim_send_im_ch2_geticqmessage(od->sess, who, (budlight->uc & 0xff80) >> 7);
+				else {
+					char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
+					char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not support sending status messages.</I><BR>"), who, state_msg);
+					g_show_info_text(gc, who, 2, dialog_msg, NULL);
+					free(state_msg);
+					free(dialog_msg);
+				}
+			else {
+				char *state_msg = gaim_icq_status((budlight->uc & 0xff80) >> 7);
+				char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message.</I><BR>"), who, state_msg);
+				g_show_info_text(gc, who, 2, dialog_msg, NULL);
+				free(state_msg);
+				free(dialog_msg);
+			}
+		else
+			do_error_dialog("Could not find contact in local list, therefore unable to request status message.\n", "Gaim - Error");
+	} else
+		oscar_get_info(gc, who);
 }
 
 static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
@@ -3448,7 +3581,13 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
 
-	if (!odata->icq) {
+	if (odata->icq) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Get Status Msg");
+		pbm->callback = oscar_get_away_msg;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+	} else {
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Get Away Msg");
 		pbm->callback = oscar_get_away_msg;
