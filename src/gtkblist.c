@@ -2937,6 +2937,8 @@ sign_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
 	gtk_widget_set_sensitive(widget, gaim_gtk_privacy_is_showable());
+
+	gaim_gtk_blist_update_toolbar();
 }
 
 
@@ -3209,6 +3211,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_im_cb),
 			 gtkblist->treeview);
 	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Send a message to the selected buddy"), NULL);
+	g_object_set_data(G_OBJECT(button), "button_name", "im");
 	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(_("Get _Info"), GAIM_STOCK_INFO, GAIM_BUTTON_VERTICAL);
@@ -3218,6 +3221,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_info_cb),
 			 gtkblist->treeview);
 	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Get information on the selected buddy"), NULL);
+	g_object_set_data(G_OBJECT(button), "button_name", "info");
 	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(_("_Chat"), GAIM_STOCK_CHAT, GAIM_BUTTON_VERTICAL);
@@ -3226,6 +3230,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_chat_cb), gtkblist->treeview);
 	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Join a chat room"), NULL);
+	gtk_widget_set_sensitive(button, gaim_gtk_blist_joinchat_is_showable());
+	g_object_set_data(G_OBJECT(button), "button_name", "chat");
 	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(_("_Away"), GAIM_STOCK_ICON_AWAY, GAIM_BUTTON_VERTICAL);
@@ -3234,6 +3240,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_away_cb), NULL);
 	gtk_tooltips_set_tip(GTK_TOOLTIPS(gtkblist->tooltips), button, _("Set an away message"), NULL);
+	g_object_set_data(G_OBJECT(button), "button_name", "away");
 	gtk_widget_show(button);
 
 	/* this will show the right image/label widgets for us */
@@ -3425,6 +3432,8 @@ gaim_gtk_blist_update_toolbar_icons (GtkWidget *widget, gpointer data)
 			gtk_widget_show(widget);
 	}
 	else if (GTK_IS_CONTAINER(widget)) {
+		if (GTK_IS_BUTTON(widget) && !strcmp(g_object_get_data(G_OBJECT(widget), "button_name"), "chat"))
+				gtk_widget_set_sensitive(widget, gaim_gtk_blist_joinchat_is_showable());
 		gtk_container_foreach(GTK_CONTAINER(widget),
 							  gaim_gtk_blist_update_toolbar_icons, NULL);
 	}
