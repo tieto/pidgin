@@ -143,10 +143,13 @@ struct msn_buddy {
 
 static void msn_login_callback(gpointer, gint, GaimInputCondition);
 static void msn_login_xfr_connect(gpointer, gint, GaimInputCondition);
+
+#if 0
 static struct msn_file_transfer *find_mft_by_cookie(struct gaim_connection *gc,
 													unsigned long cookie);
 static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc,
 												  struct file_transfer *xfer);
+#endif
 
 #define GET_NEXT(tmp)	while (*(tmp) && *(tmp) != ' ') \
 				(tmp)++; \
@@ -640,6 +643,7 @@ static char *msn_parse_format(char *mime)
 	return cur;
 }
 
+#if 0
 static int msn_process_msnftp(struct msn_file_transfer *mft, char *buf)
 {
 	struct gaim_connection *gc = mft->gc;
@@ -872,6 +876,7 @@ static void msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 		}
 	}
 }
+#endif
 
 static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 {
@@ -905,6 +910,7 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 	} else if (!g_strncasecmp(content, "Content-Type: text/x-msmsgsinvite;",
 							  strlen("Content-Type: text/x-msmsgsinvite;"))) {
 
+#if 0
 		/*
 		 * NOTE: Other things, such as voice communication, would go in
 		 *       here too (since they send the same Content-Type). However,
@@ -914,6 +920,7 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 		 *       this should be changed. For now, it stays.
 		 */
 		msn_process_ft_msg(ms, content);
+#endif
 
 	} else if (!g_strncasecmp(content, "Content-Type: text/plain",
 				  strlen("Content-Type: text/plain"))) {
@@ -2056,6 +2063,7 @@ static int msn_send_typing(struct gaim_connection *gc, char *who, int typing) {
 	return MSN_TYPING_SEND_TIMEOUT;
 }
 
+#if 0
 /* XXX Don't blame me. I stole this from the oscar module! */
 static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc,
 												  struct file_transfer *xfer)
@@ -2253,6 +2261,7 @@ static size_t msn_file_transfer_read(struct gaim_connection *gc,
 
 	return len;
 }
+#endif
 
 static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
 {
@@ -2457,6 +2466,7 @@ static char *msn_get_away_text(int s)
 	}
 }
 
+#if 0
 static void msn_ask_send_file(struct gaim_connection *gc, char *destsn)
 {
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
@@ -2470,6 +2480,7 @@ static void msn_ask_send_file(struct gaim_connection *gc, char *destsn)
 
 	mft->xfer = transfer_out_add(gc, mft->sn);
 }
+#endif
 
 static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 {
@@ -2478,6 +2489,7 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 	struct buddy *b = find_buddy(gc->account, who);
 	static char buf[MSN_BUF_LEN];
 
+#if 0
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Send File");
 	pbm->callback = msn_ask_send_file;
@@ -2486,6 +2498,7 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 
 	if (!b || !(b->uc >> 1))
 		return m;
+#endif
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	g_snprintf(buf, sizeof(buf), _("Status: %s"), msn_get_away_text(b->uc >> 1));
@@ -2854,11 +2867,14 @@ G_MODULE_EXPORT void msn_init(struct prpl *ret)
 	ret->add_deny = msn_add_deny;
 	ret->rem_deny = msn_rem_deny;
 	ret->buddy_free = msn_buddy_free;
+
+#if 0
 	ret->file_transfer_cancel = msn_file_transfer_cancel;
 	ret->file_transfer_in = msn_file_transfer_in;
 	ret->file_transfer_out = msn_file_transfer_out;
 	ret->file_transfer_done = msn_file_transfer_done;
 	ret->file_transfer_read = msn_file_transfer_read;
+#endif
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Server:"));

@@ -1932,6 +1932,7 @@ static void jabber_handletime(gjconn gjc, xmlnode iqnode) {
 	xmlnode_free(x);
 }
 
+#if 0
 struct jabber_file_transfer {
 	enum { JFT_SENDFILE_IN, JFT_SENDFILE_OUT } type;
 	struct file_transfer *xfer;
@@ -2094,8 +2095,10 @@ static void jabber_file_transfer_in(struct gaim_connection *gc, struct file_tran
 
 	proxy_connect(jft->url->address, jft->url->port, jabber_http_recv_callback, jft);
 }
+#endif
 
 static void jabber_handleoob(gjconn gjc, xmlnode iqnode) {
+#if 0
 	struct jabber_file_transfer *jft;
 	struct jabber_data *jd = GJ_GC(gjc)->proto_data;
 	char *msg = NULL;
@@ -2125,6 +2128,7 @@ static void jabber_handleoob(gjconn gjc, xmlnode iqnode) {
 	jd->file_transfers = g_slist_append(jd->file_transfers, jft);
 
 	jft->xfer = transfer_in_add(GJ_GC(gjc), jft->from, jft->name, jft->len, 1, msg);
+#endif
 }
 
 static void jabber_handlelast(gjconn gjc, xmlnode iqnode) {
@@ -4235,11 +4239,14 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 	ret->send_typing = jabber_send_typing;
 	ret->convo_closed = jabber_convo_closed;
 	ret->rename_group = jabber_rename_group;
+
+#if 0
 	ret->file_transfer_out = NULL; /* TODO */
 	ret->file_transfer_in = jabber_file_transfer_in;
 	ret->file_transfer_data_chunk = NULL; /* TODO */
 	ret->file_transfer_done = jabber_file_transfer_done;
 	ret->file_transfer_cancel = jabber_file_transfer_cancel;
+#endif
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));
