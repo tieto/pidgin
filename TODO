@@ -11,7 +11,8 @@ gtk2/new prefs
 	most toolbar buttons stay depressed after being clicked once, only raise when clicked a second time.
 		smiles and links do not.
 	replace legend in info dialog with link to status icons page
-	buddy ticker stays around when you sign off - showing the buddies who were online
+	buddy ticker stays arou+nd when you sign off - showing the 
+		buddies who were online
 	need a close button on conversations for when its tabed if nothing else. [ROB]
 	text like <font color=blah>with only some text</font> being colored causes the whole line to be colored. 
 	lots of font troubles. esp in picking good fonts to use when the theme doesn't have an installed one.
@@ -45,6 +46,9 @@ info dialog
 irc (patch pending?)
 	
 DISCUSSION:
+	"console beep" sound option should use different frequency beeps
+		for different events, or at least give some way to allow
+		this behavior. 
 	do we really need some of the preferences? (Ignore TIK messages.
 	   Does anyone use that method of retrieving Away messages anymore?)
 	show alias in list of people in chat
@@ -68,6 +72,11 @@ DISCUSSION:
 	the privacy dialog has five different options now.  this looks
 		rather ugly.  When we redesign the dialog, perhaps we should
 		change the privacy setting to a combobox? 
+	options on key bindings. (differnet window managers map different things. 
+		make the control key switchable with the alt key or similar)
+		maybe make control/alt+arrow optionally replace control+bracket
+		is this a good idea?
+
 
 IN GENERAL:
 	segfault on pressing back with messages in queue if coming back
@@ -332,10 +341,6 @@ GTK1.2(some of this applies to gtk2 also):
 	tooltip for mute sound is wrong. should read "Mute" not "Sound" when sounds are on
 	bug report: The pixmaps arrow_down.xpm and arrow_right.xpm don't have proper 
 		transparency... it only causes problems if your GTK theme is pixmap based
-	options on key bindings. (differnet window managers map different things. 
-		make the control key switchable with the alt key or similar)
-		maybe make control/alt+arrow optionally replace control+bracket
-		is this a good idea?
 	sendas menu for im dialog. like get info has.
 	bug: if you remove a group in one prpl, it disappears from the online tab
 		even if there are still buddies in that group online
@@ -384,7 +389,6 @@ GTK1.2(some of this applies to gtk2 also):
 		Have a stock ticker (a plugin could easily make use of
 			GtkTicker)
 
-	Buddy Icons need to be converted to use new gdk-pixbuf (GTK2)
 
 
 Then, of course, are all the Bugs that need to be fixed
