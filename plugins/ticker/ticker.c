@@ -210,36 +210,6 @@ static void buddy_ticker_show()
 }
 
 static void
-signoff_cb(GaimConnection *gc)
-{
-	TickerData *td;
-	if (!gaim_connections_get_all()) {
-		while (tickerbuds) {
-			td = tickerbuds->data;
-			tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
-			if (td->timeout != 0)
-				g_source_remove(td->timeout);
-			g_free(td);
-		}
-		gtk_widget_destroy(tickerwindow);
-		tickerwindow = NULL;
-		ticker = NULL;
-	} else {
-		GList *t = tickerbuds;
-		while (t) {
-			td = t->data;
-			t = t->next;
-			if (td->buddy->account == gc->account) {
-				tickerbuds = g_list_remove(tickerbuds, td);
-				if (td->timeout != 0)
-					g_source_remove(td->timeout);
-				g_free(td);
-			}
-		}
-	}
-}
-
-static void
 buddy_signon_cb(GaimBuddy *b)
 {
 	if(buddy_ticker_find_buddy(b))
@@ -264,6 +234,34 @@ away_cb(GaimBuddy *b)
 	else
 		buddy_ticker_add_buddy(b);
 }
+
+static void
+signoff_cb(GaimConnection *gc)
+{
+	TickerData *td;
+	if (!gaim_connections_get_all()) {
+		while (tickerbuds) {
+			td = tickerbuds->data;
+			tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
+			if (td->timeout != 0)
+				g_source_remove(td->timeout);
+			g_free(td);
+		}
+		gtk_widget_destroy(tickerwindow);
+		tickerwindow = NULL;
+		ticker = NULL;
+	} else {
+		GList *t = tickerbuds;
+		while (t) {
+			td = t->data;
+			t = t->next;
+			if (td->buddy->account == gc->account) {
+				buddy_signoff_cb(td->buddy);
+			}
+		}
+	}
+}
+
 
 /*
  *  EXPORTED FUNCTIONS

@@ -532,6 +532,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	char *resource_name;
 	char *bare_jid;
 	char *title;
+	char *text;
 	xmlnode *vcard;
 	GaimBuddy *b;
 
@@ -548,7 +549,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	jb = jabber_buddy_find(js, from, TRUE);
 	info_text = g_string_new("");
 
-	g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n", _("Jabber ID"),
+	g_string_append_printf(info_text, "<b>%s:</b> %s<br/>", _("Jabber ID"),
 			from);
 
 	if(resource_name) {
@@ -557,14 +558,14 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 			char *purdy = NULL;
 			if(jbr->status)
 				purdy = gaim_strdup_withhtml(jbr->status);
-			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/>\n",
+			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/>",
 					_("Status"), jabber_get_state_string(jbr->state),
 					purdy ? ": " : "",
 					purdy ? purdy : "");
 			if(purdy)
 				g_free(purdy);
 		} else {
-			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
+			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 					_("Status"), _("Unknown"));
 		}
 	} else {
@@ -573,9 +574,9 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 			jbr = resources->data;
 			if(jbr->status)
 				purdy = gaim_strdup_withhtml(jbr->status);
-			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
+			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 					_("Resource"), jbr->name);
-			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/><br/>\n",
+			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/><br/>",
 					_("Status"), jabber_get_state_string(jbr->state),
 					purdy ? ": " : "",
 					purdy ? purdy : "");
@@ -592,14 +593,13 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 		for(child = vcard->child; child; child = child->next)
 		{
 			xmlnode *child2;
-			char *text;
 
 			if(child->type != XMLNODE_TYPE_TAG)
 				continue;
 
 			text = xmlnode_get_data(child);
 			if(text && !strcmp(child->name, "FN")) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 						_("Full Name"), text);
 			} else if(!strcmp(child->name, "N")) {
 				for(child2 = child->child; child2; child2 = child2->next)
@@ -612,15 +612,15 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					text2 = xmlnode_get_data(child2);
 					if(text2 && !strcmp(child2->name, "FAMILY")) {
 						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>\n",
+								"<b>%s:</b> %s<br/>",
 								_("Family Name"), text2);
 					} else if(text2 && !strcmp(child2->name, "GIVEN")) {
 						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>\n",
+								"<b>%s:</b> %s<br/>",
 								_("Given Name"), text2);
 					} else if(text2 && !strcmp(child2->name, "MIDDLE")) {
 						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>\n",
+								"<b>%s:</b> %s<br/>",
 								_("Middle Name"), text2);
 					}
 					g_free(text2);
@@ -631,15 +631,15 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					gaim_blist_node_set_string((GaimBlistNode*)b, "servernick", text);
 					gaim_blist_save();
 				}
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 						_("Nickname"), text);
 			} else if(text && !strcmp(child->name, "BDAY")) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 						_("Birthday"), text);
 			} else if(!strcmp(child->name, "ADR")) {
 				/* show which address it is */
 				if(child->child)
-					g_string_append_printf(info_text, "<b>%s:</b><br/>\n",
+					g_string_append_printf(info_text, "<b>%s:</b><br/>",
 							_("Address"));
 				for(child2 = child->child; child2; child2 = child2->next)
 				{
@@ -651,32 +651,32 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					text2 = xmlnode_get_data(child2);
 					if(text2 && !strcmp(child2->name, "POBOX")) {
 						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>\n",
+								"&nbsp;<b>%s:</b> %s<br/>",
 								_("P.O. Box"), text2);
 					} else if(text2 && !strcmp(child2->name, "EXTADR")) {
 						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>\n",
+								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Extended Address"), text2);
 					} else if(text2 && !strcmp(child2->name, "STREET")) {
 						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>\n",
+								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Street Address"), text2);
 					} else if(text2 && !strcmp(child2->name, "LOCALITY")) {
 						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>\n",
+								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Locality"), text2);
 					} else if(text2 && !strcmp(child2->name, "REGION")) {
 						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>\n",
+								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Region"), text2);
 					} else if(text2 && !strcmp(child2->name, "PCODE")) {
 						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>\n",
+								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Postal Code"), text2);
 					} else if(text2 && (!strcmp(child2->name, "CTRY")
 								|| !strcmp(child2->name, "COUNTRY"))) {
 						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>\n",
+								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Country"), text2);
 					}
 					g_free(text2);
@@ -688,14 +688,14 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					number = xmlnode_get_data(child2);
 					if(number) {
 						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>\n", _("Telephone"), number);
+								"<b>%s:</b> %s<br/>", _("Telephone"), number);
 						g_free(number);
 					}
 				} else if((number = xmlnode_get_data(child))) {
 					/* lots of clients (including gaim) do this, but it's
 					 * out of spec */
 					g_string_append_printf(info_text,
-							"<b>%s:</b> %s<br/>\n", _("Telephone"), number);
+							"<b>%s:</b> %s<br/>", _("Telephone"), number);
 					g_free(number);
 				}
 			} else if(!strcmp(child->name, "EMAIL")) {
@@ -705,7 +705,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					userid = xmlnode_get_data(child2);
 					if(userid) {
 						g_string_append_printf(info_text,
-								"<b>%s:</b> <a href='mailto:%s'>%s</a><br/>\n",
+								"<b>%s:</b> <a href='mailto:%s'>%s</a><br/>",
 								_("Email"), userid, userid);
 						g_free(userid);
 					}
@@ -713,7 +713,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					/* lots of clients (including gaim) do this, but it's
 					 * out of spec */
 						g_string_append_printf(info_text,
-								"<b>%s:</b> <a href='mailto:%s'>%s</a><br/>\n",
+								"<b>%s:</b> <a href='mailto:%s'>%s</a><br/>",
 								_("Email"), userid, userid);
 					g_free(userid);
 				}
@@ -728,26 +728,24 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					text2 = xmlnode_get_data(child2);
 					if(text2 && !strcmp(child2->name, "ORGNAME")) {
 						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>\n",
+								"<b>%s:</b> %s<br/>",
 								_("Organization Name"), text2);
 					} else if(text2 && !strcmp(child2->name, "ORGUNIT")) {
 						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>\n",
+								"<b>%s:</b> %s<br/>",
 								_("Organization Unit"), text2);
 					}
 					g_free(text2);
 				}
 			} else if(text && !strcmp(child->name, "TITLE")) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 						_("Title"), text);
 			} else if(text && !strcmp(child->name, "ROLE")) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 						_("Role"), text);
 			} else if(text && !strcmp(child->name, "DESC")) {
-				char *text2 = gaim_strdup_withhtml(text);
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
-						_("Description"), text2);
-				g_free(text2);
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
+						_("Description"), text);
 			} else if(!strcmp(child->name, "PHOTO") ||
 					!strcmp(child->name, "LOGO")) {
 				if((child2 = xmlnode_get_child(child, "BINVAL"))) {
@@ -774,11 +772,14 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 	title = g_strdup_printf("User info for %s", from);
 
+	text = gaim_strdup_withhtml(info_text->str);
+
 	gaim_notify_formatted(NULL, title, _("Jabber Profile"),
-			NULL, info_text->str, NULL, NULL);
+			NULL, text, NULL, NULL);
 
 	g_free(title);
 	g_string_free(info_text, TRUE);
+	g_free(text);
 }
 
 void jabber_buddy_get_info(GaimConnection *gc, const char *who)
