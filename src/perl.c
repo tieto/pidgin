@@ -106,6 +106,7 @@ XS(XS_GAIM_serv_send_im); /* send message to someone (but do not display) */
 
 /* handler commands */
 XS(XS_GAIM_add_event_handler); /* when servers talk */
+XS(XS_GAIM_remove_event_handler); /* remove a handler */
 XS(XS_GAIM_add_timeout_handler); /* figure it out */
 
 /* play sound */
@@ -244,6 +245,7 @@ static void perl_init()
 	newXS ("GAIM::serv_send_im", XS_GAIM_serv_send_im, "GAIM");
 
 	newXS ("GAIM::add_event_handler", XS_GAIM_add_event_handler, "GAIM");
+	newXS ("GAIM::remove_event_handler", XS_GAIM_remove_event_handler, "GAIM");
 	newXS ("GAIM::add_timeout_handler", XS_GAIM_add_timeout_handler, "GAIM");
 
 	newXS ("GAIM::play_sound", XS_GAIM_play_sound, "GAIM");
@@ -812,6 +814,30 @@ XS (XS_GAIM_add_event_handler)
 	perl_event_handlers = g_list_append(perl_event_handlers, handler);
 	debug_printf("registered perl event handler for %s\n", handler->event_type);
 	XSRETURN_EMPTY;
+}
+
+XS (XS_GAIM_remove_event_handler)
+{
+	unsigned int junk;
+	struct _perl_event_handlers *ehn;
+	GList *cur = perl_event_handlers;
+	dXSARGS;
+
+	while (cur) {
+		GList *next = cur->next;
+		ehn = cur->data;
+
+		if (!strcmp(ehn->event_type, SvPV(ST(0), junk)) &&
+			!strcmp(ehn->handler_name, SvPV(ST(1), junk)))
+		{
+	        perl_event_handlers = g_list_remove(perl_event_handlers, ehn);
+			g_free(ehn->event_type);
+			g_free(ehn->handler_name);
+			g_free(ehn);
+		}
+
+		cur = next;
+    }
 }
 
 static int perl_timeout(gpointer data)

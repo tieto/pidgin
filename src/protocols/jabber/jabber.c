@@ -3075,6 +3075,11 @@ static GList *jabber_edit_buddy_menu(struct gaim_connection *gc, char *who) {
 	struct proto_buddy_menu *pbm;
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Info");
+	pbm->callback = jabber_get_info;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Remove From Roster");
 	pbm->callback = jabber_remove_buddy_roster_item;
 	pbm->gc = gc;

@@ -3702,6 +3702,23 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	return m;
 }
 
+static GList *oscar_edit_buddy_menu(struct gaim_connection *gc, char *who)
+{
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
+	struct oscar_data *odata = gc->proto_data;
+
+	if (odata->icq) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Get Info");
+		pbm->callback = oscar_get_info;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+	}
+
+	return m;
+}
+
 static GList *oscar_user_opts()
 {
 	GList *m = NULL;
@@ -3950,6 +3967,7 @@ void oscar_init(struct prpl *ret) {
 	ret->actions = oscar_actions;
 	ret->do_action = oscar_do_action;
 	ret->buddy_menu = oscar_buddy_menu;
+	ret->edit_buddy_menu = oscar_edit_buddy_menu;
 	ret->user_opts = oscar_user_opts;
 	ret->login = oscar_login;
 	ret->close = oscar_close;

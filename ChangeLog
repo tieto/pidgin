@@ -45,6 +45,11 @@ version 0.60:
 	  (Thanks Jonas Birmé)
 	* Parse URL messages and Contact Sending in ICQ (Thanks Mark
 	  Doliner)
+	* Added GAIM::remove_event_handler and made set_info short
+	  circuitable in perl.  (Thanks Ryan McCabe)
+	* Improved MSN internationalization (Thanks A Lee)
+	* Can get info for ICQ and Jabber users from the "Edit
+	  Buddies" tab (Thanks click81)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

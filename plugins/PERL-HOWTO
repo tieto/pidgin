@@ -131,10 +131,15 @@ GAIM::add_event_handler(event, function)
 	so that gaim knows what the changes are.
 
 	Perl scripts can short-circuit certain events (namely event_im_send,
-	event_im_recv, event_chat_send, and event_chat_recv). To short-circuit an
-	event simply return a non-0 value. This will cause all subsequent scripts
-	and the event itself to never happen (i.e. the user won't see it happen,
-	and _send events won't actually send).
+	event_im_recv, event_chat_send, event_chat_recv and event_set_info). To
+	short-circuit an event simply return a non-0 value. This will cause all
+	subsequent scripts and the event itself to never happen (i.e. the user
+	won't see it happen, and _send events won't actually send).
+
+GAIM::remove_event_handler(event, function)
+	This removes the event handler for the specified event that
+	calls "function" as its handler.  The event handler must have been
+	previously added with GAIM::add_event_handler.
 
 GAIM::add_timeout_handler(integer, function, args)
 	This calls function after integer number of seconds. It only calls function

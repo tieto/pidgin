@@ -232,7 +232,8 @@ void serv_set_away_all(char *message)
 void serv_set_info(struct gaim_connection *g, char *info)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_info) {
-		plugin_event(event_set_info, g, info, 0, 0);
+		if (plugin_event(event_set_info, g, info, 0, 0))
+			return;
 		g->prpl->set_info(g, info);
 	}
 }
