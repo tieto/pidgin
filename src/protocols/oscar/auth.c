@@ -87,12 +87,9 @@ static int aim_encode_password_md5(const char *password, const char *key, fu8_t 
 #endif
 
 /*
- * Normally the FLAP version is sent as the first few bytes of the cookie,
- * meaning you generally never call this.
- *
- * But there are times when something might want it seperate. Specifically,
- * libfaim sends this internally when doing SNAC login.
- *
+ * The FLAP version is sent by itself at the beginning of authorization 
+ * connections.  The FLAP version is also sent before the cookie when connecting 
+ * for other services (BOS, chatnav, chat, etc.).
  */
 faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn)
 {
@@ -185,8 +182,6 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 /*
  * Subtype 0x0002
  *
- * send_login(int socket, char *sn, char *password)
- *  
  * This is the initial login request packet.
  *
  * NOTE!! If you want/need to make use of the aim_sendmemblock() function,
@@ -277,7 +272,6 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
  *
  * The client should check the value passed as errorcode. If
  * its nonzero, there was an error.
- *
  */
 static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
@@ -469,7 +463,7 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
-	if ((sn[0] >= '0') && (sn[0] <= '9'))
+	if (isdigit(sn[0]))
 		return goddamnicq(sess, conn, sn);
 
 	aim_sendflapver(sess, conn);

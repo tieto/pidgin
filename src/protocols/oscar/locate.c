@@ -948,7 +948,8 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 			aim_tlvlist_add_noval(&tl, 0x0004);
 	}
 
-	aim_tlvlist_add_caps(&tl, 0x0005, caps);
+	if (caps != 0x00000000)
+		aim_tlvlist_add_caps(&tl, 0x0005, caps);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
 		return -ENOMEM;

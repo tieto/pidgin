@@ -1068,6 +1068,29 @@ faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t icon
 }
 
 /**
+ * Remove a reference to a server stored buddy icon.  This will make your 
+ * icon stop showing up to other people.
+ *
+ * @param sess The oscar session.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_ssi_delicon(aim_session_t *sess)
+{
+	struct aim_ssi_item *tmp;
+
+	if (!sess)
+		return -EINVAL;
+
+	/* Find the ICONINFO item and delete it if it exists*/
+	if ((tmp = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, "1", AIM_SSI_TYPE_ICONINFO)))
+		aim_ssi_itemlist_del(&sess->ssi.local, tmp);
+
+	/* Sync our local list with the server list */
+	aim_ssi_sync(sess);
+	return 0;
+}
+
+/**
  * Stores your setting for whether you should show up as idle or not.
  *
  * @param sess The oscar session.

@@ -256,7 +256,7 @@ struct client_info_s {
 	"us", "en", \
 }
 
-#define CLIENTINFO_ICQBasic_14_3_1068 { \
+#define CLIENTINFO_ICQBASIC_14_3_1068 { \
 	"ICQBasic", \
 	0x010a, \
 	0x0014, 0x0003, \
@@ -265,7 +265,7 @@ struct client_info_s {
 	"us", "en", \
 }
 
-#define CLIENTINFO_Netscape_7_0_1 { \
+#define CLIENTINFO_NETSCAPE_7_0_1 { \
 	"Netscape 2000 an approved user of AOL Instant Messenger (SM)", \
 	0x1d0d, \
 	0x0007, 0x0000, \
@@ -1232,6 +1232,7 @@ faim_export int aim_ssi_deletelist(aim_session_t *sess);
 faim_export int aim_ssi_setpermdeny(aim_session_t *sess, fu8_t permdeny, fu32_t vismask);
 faim_export int aim_ssi_setpresence(aim_session_t *sess, fu32_t presence);
 faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t iconsumlen);
+faim_export int aim_ssi_delicon(aim_session_t *sess);
 
 
 

@@ -3411,7 +3411,7 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 	
 	if (alertitle)
-		gaim_debug(GAIM_DEBUG_MISC, "oscar", "Got an alert '%s' %s\n", alertitle, alerturl);
+		gaim_debug(GAIM_DEBUG_MISC, "oscar", "Got an alert '%s' %s\n", alertitle, alerturl ? alerturl : "");
 
 	return 1;
 }
@@ -6339,22 +6339,22 @@ static void oscar_show_find_email(GaimConnection *gc)
 					   _("Cancel"), NULL, gc);
 }
 
-#if 0
 static void oscar_setavailmsg(GaimConnection *gc, char *text) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
+	aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0, 0);
 	aim_srv_setavailmsg(od->sess, text);
 }
 
 static void oscar_show_setavailmsg(GaimConnection *gc)
 {
-	gaim_request_input(gc, NULL, _("Available Message:"),
-					   NULL, "Please talk to me, I'm lonely! (and single)", TRUE, FALSE,
+	gaim_request_input(gc, NULL, _("Available Message:"), NULL,
+					   _("I'm doing work and hoping for a distraction--IM me!"), 
+					   TRUE, FALSE,
 					   _("OK"), G_CALLBACK(oscar_setavailmsg),
 					   _("Cancel"), NULL,
 					   gc);
 }
-#endif
 
 static void oscar_show_set_info(GaimConnection *gc)
 {
@@ -6424,13 +6424,11 @@ static GList *oscar_actions(GaimConnection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
-#if 0
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Set Available Message");
 	pam->callback = oscar_show_setavailmsg;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
-#endif
 
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Change Password");

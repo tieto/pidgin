@@ -132,9 +132,12 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	alerturl  = aim_tlv_getstr(tlvlist, 0x000d, 1);
 	
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, new, havenewmail, alertitle, alerturl + 2);
+		ret = userfunc(sess, rx, new, havenewmail, alertitle, (alerturl ? alerturl + 2 : NULL));
 
 	aim_tlvlist_free(&tlvlist);
+
+	free(alertitle);
+	free(alerturl);
 
 	return ret;
 }
