@@ -302,22 +302,11 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	GtkWidget *account_hbox;
 	GtkWidget *bbox;
 	GtkWidget *label;
-	GaimAccount *first_account = NULL;
 
-	if (!account) {
-		GList *c;
-		GaimConnection *gc;
+	if (account == NULL) {
+		account = gaim_roomlist_get_first_valid_account();
 
-		for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
-			gc = c->data;
-
-			if (gaim_roomlist_is_possible(gc)) {
-				first_account = gaim_connection_get_account(gc);
-				break;
-			}
-		}
-
-		if (first_account == NULL) {
+		if (account == NULL) {
 			gaim_notify_error(NULL, NULL,
 			                  _("You are not currently signed on with any "
 		                            "protocols that have the ability to list rooms."),
@@ -328,6 +317,7 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	}
 
 	dialog = g_new0(GaimGtkRoomlistDialog, 1);
+	dialog->account = account;
 
 	/* Create the window. */
 	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -348,12 +338,6 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	vbox2 = gtk_vbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(vbox), vbox2);
 	gtk_widget_show(vbox2);
-
-
-	if (!account)
-		dialog->account = first_account;
-	else
-		dialog->account = account;
 
 	/* accounts dropdown list */
 	account_hbox = gtk_hbox_new(FALSE, 6);

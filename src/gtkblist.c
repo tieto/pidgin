@@ -2882,12 +2882,16 @@ static void gaim_gtk_blist_hide_node(GaimBuddyList *list, GaimBlistNode *node)
 }
 
 static void
-signed_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
+sign_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
 {
 	GaimGtkBuddyList *gtkblist = GAIM_GTK_BLIST(blist);
+	GtkWidget *widget;
 
 	gaim_gtk_blist_update_protocol_actions();
 	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
+
+	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
+	gtk_widget_set_sensitive(widget, gaim_roomlist_is_showable());
 }
 
 /* this is called on all sorts of signals, and we have no reason to pass
@@ -3244,10 +3248,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 					gaim_gtk_blist_update_columns, NULL)));
 
 	/* Setup some gaim signal handlers. */
-	gaim_signal_connect(gaim_connections_get_handle(), "signing-on",
-						gtkblist, GAIM_CALLBACK(signed_on_off_cb), list);
-	gaim_signal_connect(gaim_connections_get_handle(), "signing-off",
-						gtkblist, GAIM_CALLBACK(signed_on_off_cb), list);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+						gtkblist, GAIM_CALLBACK(sign_on_off_cb), list);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						gtkblist, GAIM_CALLBACK(sign_on_off_cb), list);
 
 	/* emit our created signal */
 	gaim_signal_emit(gaim_gtk_blist_get_handle(), "gtkblist-created", list);
@@ -3737,10 +3741,10 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	if (!gtkblist)
 		return;
 
-	gaim_signal_disconnect(gaim_connections_get_handle(), "signing-on",
-						   gtkblist, GAIM_CALLBACK(signed_on_off_cb));
-	gaim_signal_disconnect(gaim_connections_get_handle(), "signing-off",
-						   gtkblist, GAIM_CALLBACK(signed_on_off_cb));
+	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-on",
+						   gtkblist, GAIM_CALLBACK(sign_on_off_cb));
+	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-off",
+						   gtkblist, GAIM_CALLBACK(sign_on_off_cb));
 
 	gtk_widget_destroy(gtkblist->window);
 

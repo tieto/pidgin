@@ -113,6 +113,22 @@ extern "C" {
 /*@{*/
 
 /**
+ * Return true if there are accounts signed on that support showing
+ * a roomlist.
+ *
+ * @return True if showing the roomlist is a valid action.
+ */
+gboolean gaim_roomlist_is_showable();
+
+/**
+ * Get the first online acocunt that supports showing a roomlist.
+ *
+ * @return The first selected account of all the accounts that
+ *         support showing a roomlist.
+ */
+GaimAccount *gaim_roomlist_get_first_valid_account();
+
+/**
  * This is used to get the room list on an account, asking the UI
  * to pop up a dialog with the specified account already selected,
  * and pretend the user clicked the get list button.

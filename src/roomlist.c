@@ -39,6 +39,31 @@ static GaimRoomlistUiOps *ops = NULL;
 /**************************************************************************/
 /*@{*/
 
+gboolean gaim_roomlist_is_showable()
+{
+	if (gaim_roomlist_get_first_valid_account() != NULL)
+		return TRUE;
+	return FALSE;
+}
+
+GaimAccount *gaim_roomlist_get_first_valid_account()
+{
+	GList *c;
+	GaimConnection *gc;
+	GaimAccount *first_account = NULL;
+
+	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+		gc = c->data;
+
+		if (gaim_roomlist_is_possible(gc)) {
+			first_account = gaim_connection_get_account(gc);
+			break;
+		}
+	}
+
+	return first_account;
+}
+
 void gaim_roomlist_show_with_account(GaimAccount *account)
 {
 	if (ops && ops->show_with_account)
