@@ -6802,11 +6802,6 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 				m = g_list_append(m, act);
 			}
 #if 0
-			if (userinfo->capabilities & AIM_CAPS_SENDFILE) {
-				act = gaim_blist_node_action_new(_("Send File"),
-						oscar_ask_sendfile, NULL);
-				m = g_list_append(m, act);
-			}
 			if (userinfo->capabilities & AIM_CAPS_GETFILE) {
 				act = gaim_blist_node_action_new(_("Get File"),
 						oscar_ask_getfile, NULL);
