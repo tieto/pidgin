@@ -1445,8 +1445,9 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 	
 	nest_vbox = gtk_vbox_new (FALSE, 0);
 	
-	name_to_print = g_string_prepend(name_to_print, _("Signon: "));
+	g_string_prepend(name_to_print, _("Signon: "));
 	label = gtk_label_new (name_to_print->str);
+	g_string_free(name_to_print, TRUE);
 	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
 		
 	meter->status = gtk_statusbar_new();
