@@ -396,9 +396,11 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 				gpointer val = g_hash_table_lookup(yd->hash, name);
 				if (val) {
 					g_free(val);
-					g_hash_table_insert(yd->hash, name, g_strdup(msg));
+					g_hash_table_insert(yd->hash, name,
+							msg ? g_strdup(msg) : g_malloc0(1));
 				} else
-					g_hash_table_insert(yd->hash, g_strdup(name), g_strdup(msg));
+					g_hash_table_insert(yd->hash, g_strdup(name),
+							msg ? g_strdup(msg) : g_malloc0(1));
 			}
 			break;
 		case 60: /* no clue */
@@ -537,9 +539,11 @@ static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packe
 			gpointer val = g_hash_table_lookup(yd->hash, name);
 			if (val) {
 				g_free(val);
-				g_hash_table_insert(yd->hash, name, g_strdup(msg));
+				g_hash_table_insert(yd->hash, name,
+						msg ? g_strdup(msg) : g_malloc0(1));
 			} else
-				g_hash_table_insert(yd->hash, g_strdup(name), g_strdup(msg));
+				g_hash_table_insert(yd->hash, g_strdup(name),
+						msg ? g_strdup(msg) : g_malloc0(1));
 		}
 	}
 }
@@ -771,9 +775,11 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 		return "Out To Lunch";
 	case YAHOO_STATUS_STEPPEDOUT:
 		return "Stepped Out";
-	default:
-		return NULL;
+	case YAHOO_STATUS_INVISIBLE:
+		return "Invisible";
 	}
+
+	return "Online";
 }
 
 static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
