@@ -311,7 +311,7 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 
 static void pounce_choose(GtkWidget *opt, struct addbp *b)
 {
-	struct gaim_account *account = gtk_object_get_user_data(GTK_OBJECT(opt));
+	struct gaim_account *account = g_object_get_data(G_OBJECT(opt), "gaim_account");
 	b->account = account;
 }
 
@@ -337,7 +337,7 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 		p = (struct prpl *)find_prpl(account->protocol);
 		g_snprintf(buf, sizeof buf, "%s (%s)", account->username, (p && p->name)?p->name:_("Unknown"));
 		opt = gtk_menu_item_new_with_label(buf);
-		gtk_object_set_user_data(GTK_OBJECT(opt), account);
+		g_object_set_data(G_OBJECT(opt), "gaim_account", account);
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(pounce_choose), b);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		gtk_widget_show(opt);

@@ -1650,11 +1650,11 @@ static const char *msn_tooltip_text(struct buddy *b) {
 static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
+#if 0
 	struct proto_buddy_menu *pbm;
 	struct buddy *b = gaim_find_buddy(gc->account, who);
 	static char buf[MSN_BUF_LEN];
 
-#if 0
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Send File");
 	pbm->callback = msn_ask_send_file;

@@ -1069,24 +1069,26 @@ static const char *yahoo_status_text(struct buddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
 	if (b->uc & UC_UNAVAILABLE && b->uc >> 2 != YAHOO_STATUS_IDLE) {
-	       	if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
+		if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
 			return yahoo_get_status_string(b->uc >> 2);
 		else
 			return g_hash_table_lookup(yd->hash, b->name);
 	}
+	return NULL;
 }
 
 static char *yahoo_tooltip_text(struct buddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
 	if (b->uc & UC_UNAVAILABLE && b->uc >> 2 != YAHOO_STATUS_IDLE) {
-	       	if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
+		if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
 			return g_strdup(yahoo_get_status_string(b->uc >> 2));
 		else
 			return g_strdup(g_hash_table_lookup(yd->hash, b->name));
 	}
-} 
-    
+	return NULL;
+}
+
 static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
@@ -1094,7 +1096,6 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct buddy *b = gaim_find_buddy(gc->account, who); /* this should never be null. if it is,
 						  segfault and get the bug report. */
-	static char buf[1024];
 	static char buf2[1024];
 
 	if (b->uc | YAHOO_STATUS_GAME) {

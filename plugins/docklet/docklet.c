@@ -32,6 +32,7 @@
 #include "gaim.h"
 #include "sound.h"
 #include "eggtrayicon.h"
+#include "gtklist.h"
 
 #ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS

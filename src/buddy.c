@@ -340,7 +340,6 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 
 static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, struct buddy *b)
 {
-	int x,y,scr_w,scr_h, w, h;
 	GtkStyle *style;
 	GdkPixbuf *pixbuf = gaim_gtk_blist_get_status_icon(b, GAIM_STATUS_ICON_LARGE);
 	PangoLayout *layout;
@@ -352,9 +351,13 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, s
 	
 	gtk_paint_flat_box (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 			    NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
-	
+
+#if GTK_CHECK_VERSION(2,2,0)
 	gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, pixbuf,
 			0, 0, 4, 4, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+#else
+	gdk_pixbuf_render_to_drawable(pixbuf, NULL, GDK_DRAWABLE(gtkblist->tipwindow->window), 0, 0, 4, 4, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+#endif
 
 	gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, TRUE,
 			  NULL, gtkblist->tipwindow, "tooltip", 38, 4, layout);
@@ -370,7 +373,6 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	GtkTreePath *path;
 	GtkTreeIter iter;
 	GaimBlistNode *node;
-	char *tooltiptext;
 	GValue val = {0};
 
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->rect.x, gtkblist->rect.y, &path, NULL, NULL, NULL))
@@ -386,7 +388,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		char *tooltiptext = gaim_get_tooltip_text(buddy);
 		gtkblist->tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
 		gtk_widget_set_app_paintable(gtkblist->tipwindow, TRUE);
-		gtk_window_set_policy(GTK_WINDOW(gtkblist->tipwindow), FALSE, FALSE, TRUE);
+		gtk_window_set_resizable(GTK_WINDOW(gtkblist->tipwindow), FALSE);
 		gtk_widget_set_name(gtkblist->tipwindow, "gtk-tooltips");
 		g_signal_connect(G_OBJECT(gtkblist->tipwindow), "expose_event", 
 				 G_CALLBACK(gaim_gtk_blist_paint_tip), buddy);
@@ -423,10 +425,10 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		g_object_unref (layout);
 		g_free(tooltiptext);
 		gtk_widget_set_size_request(gtkblist->tipwindow, w, h);
-		gtk_widget_set_uposition(gtkblist->tipwindow, x, y);
+		gtk_window_move(GTK_WINDOW(gtkblist->tipwindow), x, y);
 		gtk_widget_show(gtkblist->tipwindow);
 	}
-	
+
 	gtk_tree_path_free(path);
 	return FALSE;
 }
@@ -520,7 +522,6 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 	char *text = NULL;
 	struct prpl* prpl = find_prpl(b->account->protocol);
 	char *statustext = NULL;
-	char *tooltiptext = NULL;
 	char *warning = NULL, *idletime = NULL;
 
 	if (prpl->tooltip_text) {
@@ -795,6 +796,19 @@ static void gaim_gtk_blist_new_node(GaimBlistNode *node)
 	node->ui_data = g_new0(struct gaim_gtk_blist_node, 1);
 }
 
+void gaim_gtk_blist_update_columns()
+{
+	if (blist_options & OPT_BLIST_SHOW_ICONS) {
+		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, TRUE);
+		gtk_tree_view_column_set_visible(gtkblist->idle_column, FALSE);
+		gtk_tree_view_column_set_visible(gtkblist->warning_column, FALSE);
+	} else {
+		gtk_tree_view_column_set_visible(gtkblist->idle_column, blist_options & OPT_BLIST_SHOW_IDLETIME);
+		gtk_tree_view_column_set_visible(gtkblist->warning_column, blist_options & OPT_BLIST_SHOW_WARN);
+		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, FALSE);
+	}
+}
+
 enum {DRAG_BUDDY, DRAG_ROW};
 
 static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
@@ -805,7 +819,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	GtkWidget *sw;
 	GtkWidget *button;
 	GtkSizeGroup *sg;
- 	GtkTargetEntry gte[] = {{"GAIM_BUDDY", GTK_TARGET_SAME_APP, DRAG_ROW},
+	GtkTargetEntry gte[] = {{"GAIM_BUDDY", GTK_TARGET_SAME_APP, DRAG_ROW},
 				{"application/x-im-contact", 0, DRAG_BUDDY}};
 
 	if (gtkblist) {
@@ -844,7 +858,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_widget_set_size_request(sw, 200, 200);
 
-	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, 
+	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
@@ -912,7 +926,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_info_cb),
 			 gtkblist->treeview);
-	
+
 	button = gaim_pixbuf_button_from_stock(_("Chat"), GAIM_STOCK_CHAT, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
@@ -928,7 +942,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	/* OK... let's show this bad boy. */
 	gaim_gtk_blist_refresh(list);
 	gtk_widget_show_all(gtkblist->window);
-	
+
 	gaim_gtk_blist_update_toolbar();
 
 }
@@ -992,19 +1006,6 @@ void gaim_gtk_blist_update_toolbar() {
 	else
 		gtk_widget_show_all(gtkblist->bbox);
 }
-
-void gaim_gtk_blist_update_columns() 
-{
-	if (blist_options & OPT_BLIST_SHOW_ICONS) {
-		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, TRUE);
-		gtk_tree_view_column_set_visible(gtkblist->idle_column, FALSE);
-		gtk_tree_view_column_set_visible(gtkblist->warning_column, FALSE);
-	} else {
-		gtk_tree_view_column_set_visible(gtkblist->idle_column, blist_options & OPT_BLIST_SHOW_IDLETIME);
-		gtk_tree_view_column_set_visible(gtkblist->warning_column, blist_options & OPT_BLIST_SHOW_WARN);
-		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, FALSE);
-	}
-}					 
 
 static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
