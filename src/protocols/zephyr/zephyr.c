@@ -358,7 +358,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		char *sendertmp;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
 		int len = notice.z_message_len - (ptr - notice.z_message);
-		GaimImFlags flags;
+		GaimImFlags flags = 0;
 		if (len > 0) {
 			buf = g_malloc(len + 1);
 			g_snprintf(buf, len + 1, "%s", ptr);

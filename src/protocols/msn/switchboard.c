@@ -94,7 +94,6 @@ bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		 size_t param_count)
 {
 	GaimAccount *account = servconn->session->account;
-	GaimConnection *gc = account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 	const char *user = params[0];
 
