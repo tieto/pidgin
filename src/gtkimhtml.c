@@ -1330,10 +1330,20 @@ static void
 gtk_imhtml_adjustment_changed (GtkAdjustment *adjustment,
 			       GtkIMHtml     *imhtml)
 {
+	gint width, height;
+	GdkWindow *window;
+
 	if (!GTK_WIDGET_MAPPED (imhtml))
 		return;
 
-	gdk_window_clear (GTK_LAYOUT (imhtml)->bin_window);
+	if (GTK_LAYOUT (imhtml)->freeze_count)
+		return;
+
+	window = GTK_LAYOUT (imhtml)->bin_window;
+	gdk_window_get_size (window, &width, &height);
+	gdk_window_clear_area (window, 0, 0, width, BORDER_SIZE + 10);
+	gdk_window_clear_area (window, 0, height - BORDER_SIZE, width, BORDER_SIZE);
+
 	gtk_imhtml_draw_exposed (imhtml);
 }
 
