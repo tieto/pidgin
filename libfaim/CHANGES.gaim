@@ -1,4 +1,16 @@
 
+Fri Jun 30 02:29:40 UTC 2000 EWarmenhoven
+	- AOL is trying to prevent us from using Oscar. Fortunately, Adam's
+	  been able to figure out what's going on, and so we can sign on
+	  again.
+	- faimconfig.h used to only USEPTHREADS if we were using Linux, but
+	  now it fakes it otherwise (which is kinda stupid since other systems
+	  have pthreads too), but it should make everything still work fine,
+	  so that's back to what's in libfaim's CVS.
+	- Made those 'bleck' printf's that I had made faimdprintf's back to
+	  printf's, just because I don't like having things be very different
+	  from the main libfaim tree.
+
 Wed Jun 21 19:38:18 UTC 2000 EWarmenhoven
 	- Wow, long time since I've been here. Anyway, libfaim is now
 	  compiled (not only by default; there's no way not to compile it).

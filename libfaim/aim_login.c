@@ -98,11 +98,9 @@ int aim_send_login (struct aim_session_t *sess,
     icqmode = 1; /* needs a different password encoding */
     if (clientinfo && (clientinfo->major < 4)) {
       printf("faim: icq: version must be at least 4.30.3141 for ICQ OSCAR login\n");
-      return -1;
     }
     if (strlen(password) > 8) {
       printf("faim: icq: password too long (8 char max)\n");
-      return -1;
     }
   }
 
@@ -135,60 +133,48 @@ int aim_send_login (struct aim_session_t *sess,
   curbyte+= aim_puttlv_16(newpacket->data+curbyte, 0x0009, 0x0015);
 #else
   
-  newpacket->commandlen = 4 + 4 + strlen(sn) + 4+strlen(password) + 6;
- 
-  newpacket->commandlen += 8; /* tlv 0x0014 */
-
-  if (clientinfo) {
-    if (strlen(clientinfo->clientstring))
-      newpacket->commandlen += 4+strlen(clientinfo->clientstring);
-    newpacket->commandlen += 6+6+6+6;
-    if (strlen(clientinfo->country))
-      newpacket->commandlen += 4+strlen(clientinfo->country);
-    if (strlen(clientinfo->lang))
-      newpacket->commandlen += 4+strlen(clientinfo->lang);
-  }
-
   newpacket->lock = 1;
   newpacket->hdr.oscar.type = 0x01;
 
+  /*
+   * These four bytes are actually the FLAP version information.
+   * They're sent here for convenience.  I suppose they could
+   * be seperated out into a seperate FLAP, but this is where
+   * everyone else sends them.
+   */
   curbyte += aimutil_put16(newpacket->data+curbyte, 0x0000);
   curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0001);
-  curbyte += aimutil_put16(newpacket->data+curbyte, strlen(sn));
-  curbyte += aimutil_putstr(newpacket->data+curbyte, sn, strlen(sn));
 
-  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
-  curbyte += aimutil_put16(newpacket->data+curbyte, strlen(password));
+  curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(sn), sn);
+
   password_encoded = (char *) malloc(strlen(password));
   aim_encode_password(password, password_encoded);
-  curbyte += aimutil_putstr(newpacket->data+curbyte, password_encoded, strlen(password));
+  curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0002, strlen(password), password_encoded);
   free(password_encoded);
   
-  if (strlen(clientinfo->clientstring)) {
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x0003);
-    curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->clientstring));
-    curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->clientstring, strlen(clientinfo->clientstring));
-  }
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, /*0x010a*/ 0x0004);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, clientinfo->major /*0x0001*/);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, clientinfo->minor /*0x0001*/);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, 0x0001);
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, clientinfo->build /*0x0013*/);
+  /* XXX is clientstring required by oscar? */
+  if (strlen(clientinfo->clientstring))
+    curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x0003, strlen(clientinfo->clientstring), clientinfo->clientstring);
 
-  curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, 0x00000055);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, clientinfo->major2);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, clientinfo->major);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, clientinfo->minor);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, clientinfo->minor2);
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x001a, clientinfo->build);
 
-  if (strlen(clientinfo->country)) {
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x000e);
-    curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->country));
-    curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->country, strlen(clientinfo->country));
-  }
-  if (strlen(clientinfo->lang)) {
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x000f);
-    curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->lang));
-    curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->lang, strlen(clientinfo->lang));
-  }
+  curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, clientinfo->unknown);
 
+  if (strlen(clientinfo->country))
+    curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000e, strlen(clientinfo->country), clientinfo->country);
+  else
+    curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000e, 2, "us");
+
+  if (strlen(clientinfo->lang))
+    curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000f, strlen(clientinfo->lang), clientinfo->lang);
+  else
+    curbyte += aim_puttlv_str(newpacket->data+curbyte, 0x000f, 2, "en");
+  
+  newpacket->commandlen = curbyte;
 #endif
 
   newpacket->lock = 0;
@@ -440,11 +426,7 @@ unsigned long aim_sendredirect(struct aim_session_t *sess,
 
   tx->lock = 1;
 
-  i += aimutil_put16(tx->data+i, 0x0001);
-  i += aimutil_put16(tx->data+i, 0x0005);
-  i += aimutil_put16(tx->data+i, 0x0000);
-  i += aimutil_put16(tx->data+i, 0x0000);
-  i += aimutil_put16(tx->data+i, 0x0000);
+  i += aim_putsnac(tx->data+i, 0x0001, 0x0005, 0x0000, 0x00000000);
   
   aim_addtlvtochain16(&tlvlist, 0x000d, servid);
   aim_addtlvtochain_str(&tlvlist, 0x0005, ip, strlen(ip));

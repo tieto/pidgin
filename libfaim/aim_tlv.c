@@ -28,18 +28,30 @@ struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen)
 	  
 	  if ((pos+length) <= maxlen)
 	    {
-	      cur = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
-	      memset(cur, 0x00, sizeof(struct aim_tlvlist_t));
+	      /*
+	       * Okay, so now AOL has decided that any TLV of
+	       * type 0x0013 can only be two bytes, despite
+	       * what the actual given length is.  So here 
+	       * we dump any invalid TLVs of that sort.  Hopefully
+	       * theres no special cases to this special case.
+	       *   - mid (30jun2000)
+	       */
+	      if ((type == 0x0013) && (length != 0x0002)) {
+		printf("faim: skipping TLV t(0013) with invalid length (0x%04x)\n", length);
+		length = 0x0002;
+	      } else {
+		cur = (struct aim_tlvlist_t *)malloc(sizeof(struct aim_tlvlist_t));
+		memset(cur, 0x00, sizeof(struct aim_tlvlist_t));
 
-	      cur->tlv = aim_createtlv();	
-	      cur->tlv->type = type;
-	      cur->tlv->length = length;
-	      cur->tlv->value = (u_char *)malloc(length*sizeof(u_char));
-	      memcpy(cur->tlv->value, buf+pos, length);
+		cur->tlv = aim_createtlv();	
+		cur->tlv->type = type;
+		cur->tlv->length = length;
+		cur->tlv->value = (u_char *)malloc(length*sizeof(u_char));
+		memcpy(cur->tlv->value, buf+pos, length);
 	      
-	      cur->next = list;
-	      list = cur;
-	      
+		cur->next = list;
+		list = cur;
+	      }
 	      pos += length;
 	    }
 	}

@@ -149,6 +149,9 @@ struct client_info_s {
   int build;
   char country[3];
   char lang[3];
+  int major2;
+  int minor2;
+  long unknown;
 };
 
 #ifndef TRUE

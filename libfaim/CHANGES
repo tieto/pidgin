@@ -1,6 +1,72 @@
 
 No release numbers
 ------------------
+ - Fri Jun 30 00:04:47 UTC 2000
+   - Removed the forceful ICQ-related warnings, just in case they're wrong
+   - Added three new fields to the client info.  
+      - **REQUIRES CLIENT CHANGES -- see faimtest for new initializer
+   - Cleaned up aim_send_login()
+   - Put in a nice hidious fix for AOL's latest bit of the drama.  See
+      aim_readtlvchain() for the details.
+
+ - Mon Jun 26 07:53:02 UTC 2000
+   - Added utils/aimdebugd for playing with things -- see the README
+   - Added aim_im.c::aim_parse_outgoing_im().  Probably not useful
+      unless you're writing a server or something (or hacking aimdebugd).
+   - aim_send_im() now sends the same data as AIM4 does (three more bytes)
+   - Added aim_debugconn_sendconnect() for aimdebugd-enablement.
+
+ - Sat Jun 24 02:14:07 UTC 2000
+   - Added fakelocks for platforms without pthreads or that have no
+      use for them.
+   - Added workaround for MSG_WAITALL for people with the very broken
+      libc that comes with earlier Red Hat's.
+
+ - Sat Jun 24 00:44:24 UTC 2000
+   - Support zero-type TLVs in aim_extractinfo()
+     - AOL now ocassionally throws extra zeros in so in order to break
+         clients.  Aparently zero-type TLVs are a special case -- if the
+         type is zero, then _there is no length_ field.  AOL are geniuses.
+     - Note that you only get these if you send a bad client string, such
+         as the top one in faimtest.  If you #if 0 that one out and use the
+         second one, you'll be fine.  (Unless you just want to see the message
+         for yourself.  Its nifty. (FREE!))
+   - ICBM parser now uses aim_extractuserinfo() so that it can benefit
+       from the above changes, as well as clean up the whole "is it the 
+       first or the second one of this type?" issue
+     - This also fixes the changes AOL made in away messages.
+   = Fixed a possible buffer overflow when AOL changes the max sn length
+   - Increased MAXSNLEN to 32 (they appear to be valid)
+     - If you start getting messages from someone called "AOL Instant
+        Messenger", see comment one, paragraph two.
+   - aim_select() now returns a -1 if there are no connections open
+   - Connections are now killed completely if there is a major error on them
+   - faimtest now calls aim_logoff() on connection error
+
+ - Fri Jun 23 22:38:47 UTC 2000
+   - Adds start of adverts support
+   - Adds aim_bos_nop().  You may want to send this occassionally
+   - Fixes aim_rxhandlers.c to work for people with three-letter
+       screen names
+
+ - The week prior to Fri Jun 16 19:37:09 UTC 2000
+   - Rethought the rendezvous stuff.  DEFINIT WORK IN PROGRESS
+     - Do not bother trying to use this.  This will probably break
+         your clients.  You may or may not want to fix them, since 
+         I may change it again soon.  
+     - I REPEAT: This really is a developer-only version.  It barely
+         compiles.  I'm just committing it so I don't have so many
+         trees floating around.
+   - Added stuff to support OFT as well as OSCAR protocols
+   - Added aim_send_im_direct() for directim ("IM Image")
+   - Added caps getting/putting routines 
+   - Added more aim_login fixes to avoid more AOL stupidity
+     - This is the same as went to libfaim-devel yesterday, so don't upgrade
+       just to get these changes.
+   - Removed aimicq_encode_password -- now use the same table
+       for both ICQ and AIM
+   - Added AUTHORS
+
  - Tue Jun  6 01:36:48 UTC 2000
    - Inverted gethostbyname2() check.  Not sure how that ended up 
        in that state.
