@@ -73,6 +73,9 @@
 
 #define DEFAULT_SERVER "jabber.org"
 #define DEFAULT_GROUPCHAT "conference.jabber.org"
+#define DEFAULT_PORT 5222
+
+#define USEROPT_PORT 0
 
 typedef struct gjconn_struct {
 	/* Core structure */
@@ -465,18 +468,20 @@ static void gjab_connected(gpointer data, gint source, GdkInputCondition cond)
 static void gjab_start(gjconn j)
 {
 	struct aim_user *user;
+	int port;
 
 	if (!j || j->state != JCONN_STATE_OFF)
 		return;
 
 	user = GJ_GC(j)->user;
+	port = user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) : DEFAULT_PORT;
 
 	j->parser = XML_ParserCreate(NULL);
 	XML_SetUserData(j->parser, (void *)j);
 	XML_SetElementHandler(j->parser, startElement, endElement);
 	XML_SetCharacterDataHandler(j->parser, charData);
 
-	j->fd = proxy_connect(j->user->server, 5222, gjab_connected, GJ_GC(j));
+	j->fd = proxy_connect(j->user->server, port, gjab_connected, GJ_GC(j));
 	if (!user->gc || (j->fd < 0)) {
 		STATE_EVT(JCONN_STATE_OFF)
 		return;
@@ -1952,6 +1957,56 @@ static void jabber_set_idle(struct gaim_connection *gc, int idle) {
    	jd->idle = idle ? time(NULL) - idle : idle;
 }
 
+static void jabber_print_option(GtkEntry *entry, struct aim_user *user)
+{
+	int entrynum;
+
+	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	if (entrynum == USEROPT_PORT) {
+		g_snprintf(user->proto_opt[USEROPT_PORT],
+			   sizeof(user->proto_opt[USEROPT_PORT]), "%s", gtk_entry_get_text(entry));
+	}
+}
+
+static void jabber_user_opts(GtkWidget *book, struct aim_user *user)
+{
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("Jabber Options"));
+	gtk_widget_show(vbox);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(jabber_print_option), user);
+	if (isdigit(user->proto_opt[USEROPT_PORT][0])) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PORT]);
+	} else
+		gtk_entry_set_text(GTK_ENTRY(entry), "5222");
+
+	label = gtk_label_new("To set the server, make your username be user@server.org.");
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	gtk_widget_show(entry);
+}
+
 static struct prpl *my_protocol = NULL;
 
 void Jabber_init(struct prpl *ret)
@@ -1963,7 +2018,7 @@ void Jabber_init(struct prpl *ret)
 	ret->list_icon = jabber_list_icon;
 	ret->away_states = jabber_away_states;
 	ret->buddy_menu = jabber_buddy_menu;
-	ret->user_opts = NULL;
+	ret->user_opts = jabber_user_opts;
 	ret->draw_new_user = jabber_draw_new_user;
 	ret->do_new_user = jabber_do_new_user;
 	ret->login = jabber_login;
