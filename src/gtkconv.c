@@ -63,7 +63,7 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
-#define SEND_COLOR "#267726"
+#define SEND_COLOR "#16569E"
 #define RECV_COLOR "#A82F2F"
 
 static char nick_colors[][8] = {
