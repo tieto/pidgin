@@ -382,6 +382,57 @@ debug_command_cb(GaimConversation *conv,
 	}
 }
 
+static GaimCmdRet
+help_command_cb(GaimConversation *conv,
+                 const char *cmd, char **args, char **error)
+{
+	GString *s;
+	GList *cmds, *l;
+
+	s = g_string_new(_("Use \"/help &lt;command&gt;\" for help on a specific command.\n"
+	                   "The following commands are available in this context:\n"));
+
+	cmds = gaim_cmd_list(conv);
+	for (l = cmds; l; l = l->next)
+		if (l->next)
+			g_string_append_printf(s, "%s, ", (char *)l->data);
+		else
+			g_string_append_printf(s, "%s.", (char *)l->data);
+
+	gaim_conversation_write(conv, NULL, s->str, GAIM_MESSAGE_NO_LOG, time(NULL));
+	g_string_free(s, TRUE);
+	g_list_free(cmds);
+
+	return GAIM_CMD_STATUS_OK;
+}
+
+static GaimCmdRet
+help_arg_command_cb(GaimConversation *conv,
+                 const char *cmd, char **args, char **error)
+{
+	GList *help, *l;
+	GString *s;
+
+	s = g_string_new("");
+	help = gaim_cmd_help(conv, args[0]);
+
+	if (help) {
+		for (l = help; l; l = l->next)
+			if (l->next)
+				g_string_append_printf(s, "%s\n", (char *)l->data);
+			else
+				g_string_append_printf(s, "%s", (char *)l->data);
+	} else {
+		g_string_append(s, _("No such command (in this context)."));
+	}
+
+	gaim_conversation_write(conv, NULL, s->str, GAIM_MESSAGE_NO_LOG, time(NULL));
+	g_string_free(s, TRUE);
+	g_list_free(help);
+
+	return GAIM_CMD_STATUS_OK;
+}
+
 static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
@@ -424,32 +475,32 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 					                                    "commands off from Tools->"
 					                                    "Preferences->Interface->Conversation"
 					                                    "->Enable \"slash\" commands."),
-							GAIM_MESSAGE_SYSTEM, time(NULL));
+							GAIM_MESSAGE_NO_LOG, time(NULL));
 					return;
 				case GAIM_CMD_STATUS_WRONG_ARGS:
 					gaim_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
 					                                    "to that command. If you didn't mean to type a command, "
 				                                            "you can turn commands off from Tools->Preferences->"
 					                                    "Interface->Conversation->Enable \"slash\" commands."),
-							GAIM_MESSAGE_SYSTEM, time(NULL));
+							GAIM_MESSAGE_NO_LOG, time(NULL));
 					return;
 				case GAIM_CMD_STATUS_FAILED:
 					gaim_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
-							GAIM_MESSAGE_SYSTEM, time(NULL));
+							GAIM_MESSAGE_NO_LOG, time(NULL));
 					if(error)
 						g_free(error);
 					return;
 				case GAIM_CMD_STATUS_WRONG_TYPE:
 					if(gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 						gaim_conversation_write(conv, "", _("That command only works in Chats, not IMs."),
-								GAIM_MESSAGE_SYSTEM, time(NULL));
+								GAIM_MESSAGE_NO_LOG, time(NULL));
 					else
 						gaim_conversation_write(conv, "", _("That command only works in IMs, not Chats."),
-								GAIM_MESSAGE_SYSTEM, time(NULL));
+								GAIM_MESSAGE_NO_LOG, time(NULL));
 					return;
 				case GAIM_CMD_STATUS_WRONG_PRPL:
 					gaim_conversation_write(conv, "", _("That command doesn't work on this protocol."),
-							GAIM_MESSAGE_SYSTEM, time(NULL));
+							GAIM_MESSAGE_NO_LOG, time(NULL));
 					return;
 			}
 		}
@@ -6022,12 +6073,20 @@ gaim_gtk_conversations_init(void)
 	/**********************************************************************
 	 * Register commands
 	 **********************************************************************/
-	 gaim_cmd_register("me", "S", GAIM_CMD_P_DEFAULT,
-                        GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
-                        me_command_cb, _("Send an IRC style action to a buddy or chat."));
-	 gaim_cmd_register("debug", "w", GAIM_CMD_P_DEFAULT,
-                        GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
-                        debug_command_cb, _("Send various debug information to the current conversation."));
+	gaim_cmd_register("me", "S", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  me_command_cb, _("Send an IRC style action to a buddy or chat."));
+	gaim_cmd_register("debug", "w", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  debug_command_cb, _("Send various debug information to the current conversation."));
+
+	gaim_cmd_register("help", "", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  help_command_cb, _("/help:  List available commands."));
+
+	gaim_cmd_register("help", "w", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  help_arg_command_cb, _("/help &lt;command&gt;:  Help on a specific command."));
 }
 
 void
