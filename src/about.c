@@ -116,8 +116,9 @@ void show_about(GtkWidget *w, void *null)
 		gtk_signal_connect(GTK_OBJECT(eventbox), "button_press_event",
 				   GTK_SIGNAL_FUNC(about_click), NULL);
 		gdk_window_set_cursor(eventbox->window, gdk_cursor_new(GDK_HAND2));
-		
-		button = picture_button(about, _("Close"), gnome_close_xpm);
+	
+		button = gtk_button_new_with_label("Close");
+
 		if (null == NULL) /* there's a mindtrip */
 			gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
         	                                  GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
