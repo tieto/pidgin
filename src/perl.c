@@ -60,7 +60,7 @@ struct perlscript {
 struct _perl_event_handlers {
 	char *event_type;
 	char *handler_name;
-}
+};
 
 struct _perl_timeout_handlers {
 	char *handler_name;
@@ -526,7 +526,7 @@ int perl_event(enum gaim_event event, char *args)
 	for (handler = perl_event_handlers; handler != NULL; handler = handler->next) {
 		data = handler->data;
 		if (!strcmp(event_name(event), data->event_type))
-			execute_perl(args);
+			execute_perl(data->handler_name, args);
 	}
 
 	return 0;
