@@ -157,7 +157,7 @@ typedef enum
 } GaimProtocolOptions;
 
 /** Custom away message. */
-#define GAIM_AWAY_CUSTOM "Custom"
+#define GAIM_AWAY_CUSTOM _("Custom")
 
 /**
  * Protocol plugin initialization function.

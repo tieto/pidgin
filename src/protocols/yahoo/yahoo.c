@@ -1024,27 +1024,27 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 {
 	switch (a) {
 	case YAHOO_STATUS_BRB:
-		return "Be Right Back";
+		return _("Be Right Back");
 	case YAHOO_STATUS_BUSY:
-		return "Busy";
+		return _("Busy");
 	case YAHOO_STATUS_NOTATHOME:
-		return "Not At Home";
+		return _("Not At Home");
 	case YAHOO_STATUS_NOTATDESK:
-		return "Not At Desk";
+		return _("Not At Desk");
 	case YAHOO_STATUS_NOTINOFFICE:
-		return "Not In Office";
+		return _("Not In Office");
 	case YAHOO_STATUS_ONPHONE:
-		return "On Phone";
+		return _("On Phone");
 	case YAHOO_STATUS_ONVACATION:
-		return "On Vacation";
+		return _("On Vacation");
 	case YAHOO_STATUS_OUTTOLUNCH:
-		return "Out To Lunch";
+		return _("Out To Lunch");
 	case YAHOO_STATUS_STEPPEDOUT:
-		return "Stepped Out";
+		return _("Stepped Out");
 	case YAHOO_STATUS_INVISIBLE:
-		return "Invisible";
+		return _("Invisible");
 	default:
-		return "Online";
+		return _("Online");
 	}
 }
 
@@ -1198,29 +1198,29 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)
 		gc->away = g_strdup(msg);
 	} else if (state) {
 		gc->away = g_strdup("");
-		if (!strcmp(state, "Available")) {
+		if (!strcmp(state, _("Available"))) {
 			yd->current_status = YAHOO_STATUS_AVAILABLE;
 			g_free(gc->away);
 			gc->away = NULL;
-		} else if (!strcmp(state, "Be Right Back")) {
+		} else if (!strcmp(state, _("Be Right Back"))) {
 			yd->current_status = YAHOO_STATUS_BRB;
-		} else if (!strcmp(state, "Busy")) {
+		} else if (!strcmp(state, _("Busy"))) {
 			yd->current_status = YAHOO_STATUS_BUSY;
-		} else if (!strcmp(state, "Not At Home")) {
+		} else if (!strcmp(state, _("Not At Home"))) {
 			yd->current_status = YAHOO_STATUS_NOTATHOME;
-		} else if (!strcmp(state, "Not At Desk")) {
+		} else if (!strcmp(state, _("Not At Desk"))) {
 			yd->current_status = YAHOO_STATUS_NOTATDESK;
-		} else if (!strcmp(state, "Not In Office")) {
+		} else if (!strcmp(state, _("Not In Office"))) {
 			yd->current_status = YAHOO_STATUS_NOTINOFFICE;
-		} else if (!strcmp(state, "On Phone")) {
+		} else if (!strcmp(state, _("On Phone"))) {
 			yd->current_status = YAHOO_STATUS_ONPHONE;
-		} else if (!strcmp(state, "On Vacation")) {
+		} else if (!strcmp(state, _("On Vacation"))) {
 			yd->current_status = YAHOO_STATUS_ONVACATION;
-		} else if (!strcmp(state, "Out To Lunch")) {
+		} else if (!strcmp(state, _("Out To Lunch"))) {
 			yd->current_status = YAHOO_STATUS_OUTTOLUNCH;
-		} else if (!strcmp(state, "Stepped Out")) {
+		} else if (!strcmp(state, _("Stepped Out"))) {
 			yd->current_status = YAHOO_STATUS_STEPPEDOUT;
-		} else if (!strcmp(state, "Invisible")) {
+		} else if (!strcmp(state, _("Invisible"))) {
 			yd->current_status = YAHOO_STATUS_INVISIBLE;
 		} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 			if (gc->is_idle) {
@@ -1277,17 +1277,17 @@ static GList *yahoo_away_states(struct gaim_connection *gc)
 {
 	GList *m = NULL;
 
-	m = g_list_append(m, "Available");
-	m = g_list_append(m, "Be Right Back");
-	m = g_list_append(m, "Busy");
-	m = g_list_append(m, "Not At Home");
-	m = g_list_append(m, "Not At Desk");
-	m = g_list_append(m, "Not In Office");
-	m = g_list_append(m, "On Phone");
-	m = g_list_append(m, "On Vacation");
-	m = g_list_append(m, "Out To Lunch");
-	m = g_list_append(m, "Stepped Out");
-	m = g_list_append(m, "Invisible");
+	m = g_list_append(m, _("Available"));
+	m = g_list_append(m, _("Be Right Back"));
+	m = g_list_append(m, _("Busy"));
+	m = g_list_append(m, _("Not At Home"));
+	m = g_list_append(m, _("Not At Desk"));
+	m = g_list_append(m, _("Not In Office"));
+	m = g_list_append(m, _("On Phone"));
+	m = g_list_append(m, _("On Vacation"));
+	m = g_list_append(m, _("Out To Lunch"));
+	m = g_list_append(m, _("Stepped Out"));
+	m = g_list_append(m, _("Invisible"));
 	m = g_list_append(m, GAIM_AWAY_CUSTOM);
 
 	return m;

@@ -45,7 +45,7 @@
 #endif
 
 /* for people like myself, who are too lazy to add an away msg :) */
-#define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
+#define BORING_DEFAULT_AWAY_MSG _("sorry, i ran out for a while. bbl")
 #define MAX_VALUES 10
 
 GSList *gaim_accounts = NULL;
@@ -295,7 +295,7 @@ static void gaimrc_write_away(FILE *f)
 		fprintf(f, "\tauto { %d } { %d }\n", auto_away,
 			g_slist_index(away_messages, default_away));
 	} else {
-		fprintf(f, "\tmessage { boring default } { %s }\n", BORING_DEFAULT_AWAY_MSG);
+		fprintf(f, "\tmessage { %s } { %s }\n", _("boring default"), BORING_DEFAULT_AWAY_MSG);
 		fprintf(f, "\tauto { 0 } { 0 }\n");
 	}
 

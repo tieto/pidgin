@@ -10,6 +10,8 @@ plugins/notify.c
 plugins/spellchk.c
 plugins/timestamp.c
 plugins/gestures/gestures.c
+plugins/win32/transparency/win2ktrans.c
+plugins/win32/winprefs/winprefs.c
 src/protocols/gg/gg.c
 src/protocols/icq/gaim_icq.c
 src/protocols/irc/irc.c
@@ -47,3 +49,6 @@ src/prpl.c
 src/server.c
 src/sound.c
 src/util.c
+src/prpl.h
+src/gaim-disclosure.c
+src/win32/systray.c

@@ -15,8 +15,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.19\n"
-"POT-Creation-Date: 2003-02-20 10:09+0100\n"
-"PO-Revision-Date: 2003-02-20 10:14+0100\n"
+"POT-Creation-Date: 2003-02-20 22:11+0100\n"
+"PO-Revision-Date: 2003-02-20 22:12+0100\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: de <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: plugins/docklet/docklet.c:96 src/multi.c:263
+#: plugins/docklet/docklet.c:96 src/multi.c:263 src/win32/systray.c:305
 msgid "Auto-login"
 msgstr "Auto-Login"
 
@@ -68,7 +68,7 @@ msgstr "Konten..."
 msgid "Preferences..."
 msgstr "Einstellungen..."
 
-#: plugins/docklet/docklet.c:167 src/buddy.c:2522
+#: plugins/docklet/docklet.c:167 src/buddy.c:2522 src/win32/systray.c:118
 msgid "Signoff"
 msgstr "_Abmelden"
 
@@ -433,8 +433,82 @@ msgstr ""
 "Hochziehen und dann links, um auf ein voriges Gespräch zu wechseln.\n"
 "Hochziehen und dann rechts, um zum nächsten Gespräche zu wechseln."
 
+#: plugins/win32/transparency/win2ktrans.c:121
+#: plugins/win32/transparency/win2ktrans.c:430
+#: plugins/win32/transparency/win2ktrans.c:464
+msgid "Opacity:"
+msgstr "Lichtdurchlässigkeit:"
+
+#: plugins/win32/transparency/win2ktrans.c:383
+#: plugins/win32/transparency/win2ktrans.c:392
+msgid "Transparency"
+msgstr "Transparenz"
+
+#: plugins/win32/transparency/win2ktrans.c:385
+#: plugins/win32/transparency/win2ktrans.c:396
+msgid ""
+"This plugin enables variable alpha transparency on conversation windows.\n"
+"\n"
+"* Note: This plugin requires Win2000 or WinXP."
+msgstr ""
+"Dieses Plugin erlaubt variable Alpha-Transparenz in Gesprächsfenstern.\n"
+"\n"
+"* Hinweis: Dieses Plugin verlangt Win2000 oder WinXP."
+
+#: plugins/win32/transparency/win2ktrans.c:386
+msgid "Rob Flynn &lt;rob@marko.net&gt;"
+msgstr "Rob Flynn &lt;rob@marko.net&gt;"
+
+#. IM Convo trans options
+#: plugins/win32/transparency/win2ktrans.c:411
+msgid "IM Conversation Windows"
+msgstr "IM Gesprächsfenster"
+
+#: plugins/win32/transparency/win2ktrans.c:412
+msgid "_IM window transparency"
+msgstr "_IM Fenstertransparenz"
+
+#: plugins/win32/transparency/win2ktrans.c:422
+msgid "_Show slider bar in IM window"
+msgstr "Zeige _Schiebebalken im IM-Fenster"
+
+#. Buddy List trans options
+#: plugins/win32/transparency/win2ktrans.c:447 src/prefs.c:549
+msgid "Buddy List Window"
+msgstr "Buddy-Listen-Fenster"
+
+#: plugins/win32/transparency/win2ktrans.c:448
+msgid "_Keep Buddy List window on top"
+msgstr "_Lasse Buddy-Listen-Fenster oben"
+
+#: plugins/win32/transparency/win2ktrans.c:451
+msgid "_Buddy List window transparency"
+msgstr "Transparenz des Buddy-Listen-Fensters"
+
+#: plugins/win32/winprefs/winprefs.c:144 plugins/win32/winprefs/winprefs.c:153
+msgid "WinGaim Options"
+msgstr "WinGaim Optionen"
+
+#: plugins/win32/winprefs/winprefs.c:146 plugins/win32/winprefs/winprefs.c:157
+msgid "Options specific to Windows Gaim."
+msgstr "Optionen spezifisch für Windows-Gaim."
+
+#: plugins/win32/winprefs/winprefs.c:147
+msgid "Herman Bloggs &lt;hermanator12002@yahoo.com&gt;"
+msgstr "Herman Bloggs &lt;hermanator12002@yahoo.com&gt;"
+
+#. IM Convo trans options
+#: plugins/win32/winprefs/winprefs.c:170
+msgid "Startup"
+msgstr "Start"
+
+#: plugins/win32/winprefs/winprefs.c:171
+msgid "_Start Gaim on Windows startup"
+msgstr "Starte Gaim beim Windows-Start"
+
 #: src/protocols/gg/gg.c:74 src/protocols/msn/msn.c:1509
-#: src/protocols/msn/msn.c:1612
+#: src/protocols/msn/msn.c:1612 src/protocols/yahoo/yahoo.c:1201
+#: src/protocols/yahoo/yahoo.c:1280
 msgid "Available"
 msgstr "Erreichbar"
 
@@ -448,7 +522,8 @@ msgstr "Nur für Freunde abwesend"
 
 #: src/protocols/gg/gg.c:78 src/protocols/oscar/oscar.c:2474
 #: src/protocols/oscar/oscar.c:3952 src/protocols/oscar/oscar.c:3980
-#: src/protocols/oscar/oscar.c:5098
+#: src/protocols/oscar/oscar.c:5098 src/protocols/yahoo/yahoo.c:1045
+#: src/protocols/yahoo/yahoo.c:1223 src/protocols/yahoo/yahoo.c:1290
 msgid "Invisible"
 msgstr "Unsichtbar"
 
@@ -982,7 +1057,7 @@ msgstr "DCC-Chat"
 msgid "Server:"
 msgstr "Server:"
 
-#: src/protocols/irc/irc.c:2810 src/protocols/jabber/jabber.c:4200
+#: src/protocols/irc/irc.c:2810 src/protocols/jabber/jabber.c:4194
 #: src/protocols/msn/msn.c:2033 src/protocols/napster/napster.c:618
 msgid "Port:"
 msgstr "Port:"
@@ -1021,7 +1096,8 @@ msgstr "Unbekannt"
 
 #: src/protocols/jabber/jabber.c:1175 src/protocols/jabber/jabber.c:1193
 #: src/protocols/oscar/oscar.c:2476 src/protocols/oscar/oscar.c:3963
-#: src/protocols/oscar/oscar.c:5092 src/buddy.c:2672 src/multi.c:253
+#: src/protocols/oscar/oscar.c:5092 src/protocols/yahoo/yahoo.c:1047
+#: src/buddy.c:2672 src/multi.c:253
 msgid "Online"
 msgstr "Online"
 
@@ -1266,7 +1342,7 @@ msgstr "Unbekannter Fehler bei der Anmeldung"
 msgid "Set User Info"
 msgstr "Benutzer-Info setzen"
 
-#: src/protocols/jabber/jabber.c:4194
+#: src/protocols/jabber/jabber.c:4200
 msgid "Connect Server:"
 msgstr "Verbindungsserver:"
 
@@ -1517,11 +1593,14 @@ msgid "Away From Computer"
 msgstr "Weg vom Computer"
 
 #: src/protocols/msn/msn.c:1511 src/protocols/msn/msn.c:1539
+#: src/protocols/yahoo/yahoo.c:1027 src/protocols/yahoo/yahoo.c:1205
+#: src/protocols/yahoo/yahoo.c:1281
 msgid "Be Right Back"
 msgstr "Komme gleich wieder"
 
 #: src/protocols/msn/msn.c:1512 src/protocols/msn/msn.c:1541
-#: src/protocols/msn/msn.c:1600
+#: src/protocols/msn/msn.c:1600 src/protocols/yahoo/yahoo.c:1029
+#: src/protocols/yahoo/yahoo.c:1207 src/protocols/yahoo/yahoo.c:1282
 msgid "Busy"
 msgstr "Beschäftigt"
 
@@ -1530,6 +1609,8 @@ msgid "On The Phone"
 msgstr "Am Telefon"
 
 #: src/protocols/msn/msn.c:1514 src/protocols/msn/msn.c:1545
+#: src/protocols/yahoo/yahoo.c:1041 src/protocols/yahoo/yahoo.c:1219
+#: src/protocols/yahoo/yahoo.c:1288
 msgid "Out To Lunch"
 msgstr "Beim Essen"
 
@@ -2730,6 +2811,36 @@ msgstr "Akzeptieren"
 msgid "Your Yahoo! message did not get sent."
 msgstr "Ihre Yahoo!-Nachricht wurde nicht verschickt."
 
+#: src/protocols/yahoo/yahoo.c:1031 src/protocols/yahoo/yahoo.c:1209
+#: src/protocols/yahoo/yahoo.c:1283
+msgid "Not At Home"
+msgstr "Nicht zu Hause"
+
+#: src/protocols/yahoo/yahoo.c:1033 src/protocols/yahoo/yahoo.c:1211
+#: src/protocols/yahoo/yahoo.c:1284
+msgid "Not At Desk"
+msgstr "Nicht am Tisch"
+
+#: src/protocols/yahoo/yahoo.c:1035 src/protocols/yahoo/yahoo.c:1213
+#: src/protocols/yahoo/yahoo.c:1285
+msgid "Not In Office"
+msgstr "Nicht im Büro"
+
+#: src/protocols/yahoo/yahoo.c:1037 src/protocols/yahoo/yahoo.c:1215
+#: src/protocols/yahoo/yahoo.c:1286
+msgid "On Phone"
+msgstr "Am Telefon"
+
+#: src/protocols/yahoo/yahoo.c:1039 src/protocols/yahoo/yahoo.c:1217
+#: src/protocols/yahoo/yahoo.c:1287
+msgid "On Vacation"
+msgstr "Im Urlaub"
+
+#: src/protocols/yahoo/yahoo.c:1043 src/protocols/yahoo/yahoo.c:1221
+#: src/protocols/yahoo/yahoo.c:1289
+msgid "Stepped Out"
+msgstr "Herausgegangen"
+
 #: src/protocols/yahoo/yahoo.c:1141
 msgid "Activate ID"
 msgstr "Aktiviere ID"
@@ -3006,12 +3117,12 @@ msgstr "Datei"
 
 #: src/buddy.c:2506
 msgid "_Add A Buddy"
-msgstr "_Buddy hinzufügen"
+msgstr "B_uddy hinzufügen"
 
 # vgl. "Join Chat"
 #: src/buddy.c:2508
 msgid "_Join A Chat"
-msgstr "Einen Chat _betreten"
+msgstr "Einen _Chat betreten"
 
 #: src/buddy.c:2510
 msgid "_New Message"
@@ -3725,11 +3836,16 @@ msgstr ""
 "    OPTIONEN:\n"
 "       -h, --help [Kommando]    Zeige Hilfe zum Kommando\n"
 
-#: src/gaimrc.c:265 src/gaimrc.c:1250
+#. for people like myself, who are too lazy to add an away msg :)
+#: src/gaimrc.c:48
+msgid "sorry, i ran out for a while. bbl"
+msgstr "Sorry, ich bin für eine Weile rausgegangen. "
+
+#: src/gaimrc.c:265 src/gaimrc.c:298 src/gaimrc.c:1252
 msgid "boring default"
 msgstr "langweiliger Standard"
 
-#: src/gaimrc.c:1343
+#: src/gaimrc.c:1345
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Konfigurationsdatei %s kann nicht geöffnet werden."
@@ -4270,7 +4386,7 @@ msgstr "Konten"
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/main.c:379
+#: src/main.c:379 src/win32/systray.c:145
 msgid "Sign On"
 msgstr "Anmelden"
 
@@ -4594,10 +4710,6 @@ msgstr "Nac_hrichten/Info/Chat-Buttons verstecken"
 #: src/prefs.c:547
 msgid "Show _pictures on buttons"
 msgstr "_Bild auf Buttons anzeigen"
-
-#: src/prefs.c:549
-msgid "Buddy List Window"
-msgstr "Buddy-Listen-Fenster"
 
 #: src/prefs.c:550
 msgid "_Save window size/position"
@@ -5299,53 +5411,53 @@ msgstr "Buddy-Chat Einladung"
 msgid "More Info"
 msgstr "Mehr Informationen"
 
-#: src/sound.c:74
+#: src/sound.c:78
 msgid "Buddy logs in"
 msgstr "Buddy loggt sich ein"
 
-#: src/sound.c:75
+#: src/sound.c:79
 msgid "Buddy logs out"
 msgstr "Buddy loggt sich aus"
 
-#: src/sound.c:76
+#: src/sound.c:80
 msgid "Message received"
 msgstr "Nachricht empfangen"
 
-#: src/sound.c:77
+#: src/sound.c:81
 msgid "Message received begins conversation"
 msgstr "Nachricht beginnt die Unterhaltung"
 
-#: src/sound.c:78
+#: src/sound.c:82
 msgid "Message sent"
 msgstr "Nachricht gesendet"
 
-#: src/sound.c:79
+#: src/sound.c:83
 msgid "Person enters chat"
 msgstr "Person betritt den Chat"
 
-#: src/sound.c:80
+#: src/sound.c:84
 msgid "Person leaves chat"
 msgstr "Person verläßt den Chat"
 
-#: src/sound.c:81
+#: src/sound.c:85
 msgid "You talk in chat"
 msgstr "Sie sagen im Chat"
 
-#: src/sound.c:82
+#: src/sound.c:86
 msgid "Others talk in chat"
 msgstr "Andere sagen im Chat"
 
-#: src/sound.c:85
+#: src/sound.c:89
 msgid "Someone says your name in chat"
 msgstr "Jemand sagt Ihren Namen im Chat"
 
-#: src/sound.c:176
+#: src/sound.c:180
 #, c-format
 msgid "Unable to play sound because the chosen filename (%s) does not exist."
 msgstr ""
 "Kann keinen Klang abspielen, da der gewählte Dateiname (%s) nicht existiert."
 
-#: src/sound.c:188
+#: src/sound.c:192
 msgid ""
 "Unable to play sound because the 'Command' sound method has been chosen, but "
 "no command has been set."
@@ -5353,7 +5465,7 @@ msgstr ""
 "Kann keinen Klang abspielen, weil die 'Kommando'-Methode gewählt, aber kein "
 "Kommando angegeben wurde."
 
-#: src/sound.c:195
+#: src/sound.c:199
 #, c-format
 msgid ""
 "Unable to play sound because the configured sound command could not be "
@@ -5378,20 +5490,48 @@ msgstr "Kein Raumname angegeben"
 msgid "Invalid AIM URI"
 msgstr "Ungültiger SNAC"
 
-#~ msgid "Not At Home"
-#~ msgstr "Nicht zu Hause"
+#. * Custom away message.
+#: src/prpl.h:160
+msgid "Custom"
+msgstr "Benutzerdefiniert"
 
-#~ msgid "Not At Desk"
-#~ msgstr "Nicht am Tisch"
+#: src/gaim-disclosure.c:253
+msgid "Expander Size"
+msgstr ""
 
-#~ msgid "Not In Office"
-#~ msgstr "Nicht im Büro"
+#: src/gaim-disclosure.c:254
+msgid "Size of the expander arrow"
+msgstr ""
 
-#~ msgid "On Phone"
-#~ msgstr "Am Telefon"
+#: src/win32/systray.c:19
+#, fuzzy
+msgid "Gaim Instant Messenger"
+msgstr "Gaim Instant Messenger"
 
-#~ msgid "On Vacation"
-#~ msgstr "Im Urlaub"
+#: src/win32/systray.c:20
+msgid "Gaim Instant Messenger - Signed off"
+msgstr "Gaim Instant Messenger - Abgemeldet"
 
-#~ msgid "Stepped Out"
-#~ msgstr "Herausgegangen"
+#: src/win32/systray.c:21
+msgid "Gaim Instant Messenger - Away"
+msgstr "Gaim Instant Messenger - Fortgegangen"
+
+#: src/win32/systray.c:103
+msgid "New"
+msgstr "Neu"
+
+#: src/win32/systray.c:127
+msgid "Set Away Message"
+msgstr "Setze Abwesenheits-Mitteilung"
+
+#: src/win32/systray.c:134
+msgid "I'm Back"
+msgstr "Ich bin zurück"
+
+#: src/win32/systray.c:303
+msgid "Preferences"
+msgstr "Einstellungen"
+
+#: src/win32/systray.c:309
+msgid "Exit"
+msgstr "_Beenden"

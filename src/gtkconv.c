@@ -2400,23 +2400,23 @@ meify(char *message, size_t len)
 static GtkItemFactoryEntry menu_items[] =
 {
 	/* Conversation menu */
-	{ "/_Conversation", NULL, NULL, 0, "<Branch>" },
-	{ "/Conversation/_Save As...", NULL, menu_save_as_cb, 0,
+	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 	  "<StockItem>", GTK_STOCK_SAVE_AS },
-	{ "/Conversation/View _History...", NULL, menu_view_history_cb, 0, NULL },
+	{ N_("/Conversation/View _History..."), NULL, menu_view_history_cb, 0, NULL },
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>" },
-	{ "/Conversation/Insert _URL...", NULL, menu_insert_link_cb, 0,
+	{ N_("/Conversation/Insert _URL..."), NULL, menu_insert_link_cb, 0,
 	  "<StockItem>", GAIM_STOCK_LINK },
-	{ "/Conversation/Insert _Image...", NULL, menu_insert_image_cb, 0,
+	{ N_("/Conversation/Insert _Image..."), NULL, menu_insert_image_cb, 0,
 	  "<StockItem>", GAIM_STOCK_IMAGE },
 	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>" },
-	{ "/Conversation/_Close", NULL, menu_close_conv_cb, 0,
+	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
 	  "<StockItem>", GTK_STOCK_CLOSE },
 
 	/* Options */
-	{ "/_Options", NULL, NULL, 0, "<Branch>" },
-	{ "/Options/Enable _Logging", NULL, menu_logging_cb, 0, "<CheckItem>" },
-	{ "/Options/Enable _Sounds", NULL, menu_sounds_cb, 0, "<CheckItem>" },
+	{ N_("/_Options"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/Options/Enable _Logging"), NULL, menu_logging_cb, 0, "<CheckItem>" },
+	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>" },
 };
 
 static const int menu_item_count =
