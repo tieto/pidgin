@@ -1260,11 +1260,35 @@ gaim_accounts_add(GaimAccount *account)
 void
 gaim_accounts_remove(GaimAccount *account)
 {
+	GaimBlistNode *gnode, *bnode;
+
 	g_return_if_fail(account != NULL);
 
 	accounts = g_list_remove(accounts, account);
 
 	schedule_accounts_save();
+
+	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next) {
+		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+
+		for (bnode = gnode->child; bnode != NULL; bnode = bnode->next) {
+			if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+				struct buddy *b = (struct buddy *)bnode;
+
+				if (b->account == account)
+					gaim_blist_remove_buddy(b);
+			}
+			else if (GAIM_BLIST_NODE_IS_CHAT(bnode)) {
+				struct chat *c = (struct chat *)bnode;
+
+				if (c->account == account)
+					gaim_blist_remove_chat(c);
+			}
+		}
+	}
+
+	gaim_blist_save();
 }
 
 void

@@ -516,6 +516,9 @@ void gaim_accounts_add(GaimAccount *account);
 /**
  * Removes an account from the list of accounts.
  *
+ * This will remove any buddies from the buddy list that belong to this
+ * account.
+ *
  * @param account The account.
  */
 void gaim_accounts_remove(GaimAccount *account);
