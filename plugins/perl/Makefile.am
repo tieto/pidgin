@@ -36,7 +36,7 @@ perl_la_DEPENDENCIES = \
 	fi
 
 common_sources = \
-	common/Accounts.xs \
+	common/Account.xs \
 	common/BuddyList.xs \
 	common/Gaim.xs \
 	common/Gaim.pm \
