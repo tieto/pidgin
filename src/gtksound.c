@@ -49,7 +49,6 @@
 
 #include "gtksound.h"
 
-
 struct gaim_sound_event {
 	char *label;
 	char *pref;
@@ -81,9 +80,6 @@ static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
 static int ao_driver = -1;
 #endif /* USE_AO */
 
-static void _pref_sound_method_changed(const char *name, GaimPrefType type,
-		gpointer val, gpointer data);
-
 static gboolean
 mute_login_sounds_cb(gpointer data)
 {
@@ -106,7 +102,65 @@ account_signon_cb(GaimConnection *gc, gpointer data)
 	mute_login_sounds_timeout = gaim_timeout_add(10000, mute_login_sounds_cb, NULL);
 }
 
-static void gaim_gtk_sound_init(void)
+static void
+_pref_sound_method_changed(const char *name, GaimPrefType type,
+		gpointer val, gpointer data) {
+	if(type != GAIM_PREF_STRING || strcmp(name, "/gaim/gtk/sound/method"))
+		return;
+
+	sound_initialized = TRUE;
+
+#ifdef USE_AO
+	ao_driver = -1;
+
+	if(!strcmp(val, "esd"))
+		ao_driver = ao_driver_id("esd");
+	else if(!strcmp(val, "arts"))
+		ao_driver = ao_driver_id("arts");
+	else if(!strcmp(val, "automatic"))
+		ao_driver = ao_default_driver_id();
+
+	if(ao_driver != -1) {
+		ao_info *info = ao_driver_info(ao_driver);
+		gaim_debug_info("sound",
+						"Sound output driver loaded: %s\n", info->name);
+	}
+#endif /* USE_AO */
+#ifdef USE_NAS
+	if (!strcmp(val, "nas"))
+		gaim_debug_info("sound",
+						"Sound output driver loaded: NAS output\n");
+#endif /* USE_NAS */
+}
+
+const char *
+gaim_gtk_sound_get_event_option(GaimSoundEventID event)
+{
+	if(event >= GAIM_NUM_SOUNDS)
+		return 0;
+
+	return sounds[event].pref;
+}
+
+char *
+gaim_gtk_sound_get_event_label(GaimSoundEventID event)
+{
+	if(event >= GAIM_NUM_SOUNDS)
+		return NULL;
+
+	return sounds[event].label;
+}
+
+void *
+gaim_gtk_sound_get_handle()
+{
+	static int handle;
+
+	return &handle;
+}
+
+static void
+gaim_gtk_sound_init(void)
 {
 	void *gtk_sound_handle = gaim_gtk_sound_get_handle();
 
@@ -145,8 +199,7 @@ static void gaim_gtk_sound_init(void)
 	gaim_prefs_add_string("/gaim/gtk/sound/method", "automatic");
 
 #ifdef USE_AO
-	gaim_debug(GAIM_DEBUG_INFO, "sound",
-			"Initializing sound output drivers.\n");
+	gaim_debug_info("sound", "Initializing sound output drivers.\n");
 	ao_initialize();
 #endif /* USE_AO */
 
@@ -154,8 +207,8 @@ static void gaim_gtk_sound_init(void)
 			_pref_sound_method_changed, NULL);
 }
 
-
-static void gaim_gtk_sound_shutdown(void)
+static void
+gaim_gtk_sound_uninit(void)
 {
 #ifdef USE_AO
 	ao_shutdown();
@@ -163,8 +216,26 @@ static void gaim_gtk_sound_shutdown(void)
 	sound_initialized = FALSE;
 }
 
+#ifdef USE_NAS_AUDIO
+static gboolean
+play_file_nas(const char *filename)
+{
+	AuServer *nas_serv;
+	gboolean ret = FALSE;
+
+	if((nas_serv = AuOpenServer(NULL, 0, NULL, 0, NULL, NULL))) {
+		ret = AuSoundPlaySynchronousFromFile(nas_serv, filename, 100);
+		AuCloseServer(nas_serv);
+	}
+
+	return ret;
+}
+
+#endif /* USE_NAS_AUDIO */
+
 #if defined(USE_NAS_AUDIO) || defined(USE_AO)
-gboolean expire_old_child(gpointer data)
+static gboolean
+expire_old_child(gpointer data)
 {
 	int ret;
 	pid_t pid = GPOINTER_TO_INT(data);
@@ -173,14 +244,16 @@ gboolean expire_old_child(gpointer data)
 
 	if(ret == 0) {
 		if(kill(pid, SIGKILL) < 0)
-			gaim_debug_error("gtksound", "Killing process %d failed (%s)\n", pid, strerror(errno));
+			gaim_debug_error("gtksound", "Killing process %d failed (%s)\n",
+							 pid, strerror(errno));
 	}
 
     return FALSE; /* do not run again */
 }
 #endif
 
-static void gaim_gtk_sound_play_file(const char *filename)
+static void
+gaim_gtk_sound_play_file(const char *filename)
 {
 	const char *method;
 #if defined(USE_NAS_AUDIO) || defined(USE_AO)
@@ -315,14 +388,15 @@ static void gaim_gtk_sound_play_file(const char *filename)
 	return;
 #endif /* USE_NAS_AUDIO || USE_AO */
 #else /* _WIN32 */
-	gaim_debug(GAIM_DEBUG_INFO, "sound", "Playing %s\n", filename);
+	gaim_debug_info("sound", "Playing %s\n", filename);
 
 	if (!PlaySound(filename, 0, SND_ASYNC | SND_FILENAME))
-		gaim_debug(GAIM_DEBUG_ERROR, "sound", "Error playing sound.\n");
+		gaim_debug_error("sound", "Error playing sound.\n");
 #endif /* _WIN32 */
 }
 
-static void gaim_gtk_sound_play_event(GaimSoundEventID event)
+static void
+gaim_gtk_sound_play_event(GaimSoundEventID event)
 {
 	char *enable_pref;
 	char *file_pref;
@@ -331,8 +405,7 @@ static void gaim_gtk_sound_play_event(GaimSoundEventID event)
 		return;
 
 	if (event >= GAIM_NUM_SOUNDS) {
-		gaim_debug(GAIM_DEBUG_MISC, "sound",
-				   "got request for unknown sound: %d\n", event);
+		gaim_debug_error("sound", "got request for unknown sound: %d\n", event);
 		return;
 	}
 
@@ -359,7 +432,7 @@ static void gaim_gtk_sound_play_event(GaimSoundEventID event)
 static GaimSoundUiOps sound_ui_ops =
 {
 	gaim_gtk_sound_init,
-	gaim_gtk_sound_shutdown,
+	gaim_gtk_sound_uninit,
 	gaim_gtk_sound_play_file,
 	gaim_gtk_sound_play_event
 };
@@ -368,74 +441,4 @@ GaimSoundUiOps *
 gaim_gtk_sound_get_ui_ops(void)
 {
 	return &sound_ui_ops;
-}
-
-
-static void _pref_sound_method_changed(const char *name, GaimPrefType type,
-		gpointer val, gpointer data) {
-	if(type != GAIM_PREF_STRING || strcmp(name, "/gaim/gtk/sound/method"))
-		return;
-
-	sound_initialized = TRUE;
-
-#ifdef USE_AO
-	ao_driver = -1;
-
-	if(!strcmp(val, "esd"))
-		ao_driver = ao_driver_id("esd");
-	else if(!strcmp(val, "arts"))
-		ao_driver = ao_driver_id("arts");
-	else if(!strcmp(val, "automatic"))
-		ao_driver = ao_default_driver_id();
-
-	if(ao_driver != -1) {
-		ao_info *info = ao_driver_info(ao_driver);
-		gaim_debug(GAIM_DEBUG_INFO, "sound",
-				   "Sound output driver loaded: %s\n", info->name);
-	}
-#endif /* USE_AO */
-#ifdef USE_NAS
-	if (!strcmp(val, "nas"))
-		gaim_debug(GAIM_DEBUG_INFO, "sound",
-				   "Sound output driver loaded: NAS output\n");
-#endif /* USE_NAS */
-}
-
-#ifdef USE_NAS_AUDIO
-static gboolean play_file_nas(const char *filename)
-{
-	AuServer *nas_serv;
-	gboolean ret = FALSE;
-
-	if((nas_serv = AuOpenServer(NULL, 0, NULL, 0, NULL, NULL))) {
-		ret = AuSoundPlaySynchronousFromFile(nas_serv, filename, 100);
-		AuCloseServer(nas_serv);
-	}
-
-	return ret;
-}
-
-#endif /* USE_NAS_AUDIO */
-
-const char *gaim_gtk_sound_get_event_option(GaimSoundEventID event)
-{
-	if(event >= GAIM_NUM_SOUNDS)
-		return 0;
-
-	return sounds[event].pref;
-}
-
-char *gaim_gtk_sound_get_event_label(GaimSoundEventID event)
-{
-	if(event >= GAIM_NUM_SOUNDS)
-		return NULL;
-
-	return sounds[event].label;
-}
-
-void *gaim_gtk_sound_get_handle()
-{
-	static int handle;
-
-	return &handle;
 }

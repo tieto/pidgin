@@ -1179,8 +1179,6 @@ gaim_presence_add_presence(GaimPresence *presence, const GList *source_list)
  *           gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name), current_time, tmp);
  *           g_free(tmp);
  *
- *           gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE); 
- *
  *           char *tmp = g_strdup_printf(_("%s logged out."), alias);
  *           gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
  *           g_free(tmp); 
@@ -1190,8 +1188,6 @@ gaim_presence_add_presence(GaimPresence *presence, const GList *source_list)
  *           g_free(tmp);
  *
  *           serv_got_typing_stopped(gc, name);
- *
- *           gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE); 
  *
  *           gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);
  *

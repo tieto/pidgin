@@ -54,7 +54,7 @@ typedef enum _GaimSoundEventID
 typedef struct _GaimSoundUiOps
 {
 	void (*init)(void);
-	void (*shutdown)(void);
+	void (*uninit)(void);
 	void (*play_file)(const char *filename);
 	void (*play_event)(GaimSoundEventID event);
 
@@ -68,6 +68,20 @@ extern "C" {
 /** @name Sound API                                                       */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Plays the specified sound file.
+ *
+ * @param filename The file to play.
+ */
+void gaim_sound_play_file(const char *filename);
+
+/**
+ * Plays the sound associated with the specified event.
+ *
+ * @param event The event.
+ */
+void gaim_sound_play_event(GaimSoundEventID event);
 
 /**
  * Sets the UI sound operations
@@ -91,21 +105,7 @@ void gaim_sound_init(void);
 /**
  * Shuts down the sound subsystem
  */
-void gaim_sound_shutdown(void);
-
-/**
- * Plays the specified sound file.
- *
- * @param filename The file to play.
- */
-void gaim_sound_play_file(const char *filename);
-
-/**
- * Plays the sound associated with the specified event.
- *
- * @param event The event.
- */
-void gaim_sound_play_event(GaimSoundEventID event);
+void gaim_sound_uninit(void);
 
 /*@}*/
 

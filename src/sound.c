@@ -22,38 +22,14 @@
  */
 #include "internal.h"
 
-#include "sound.h"
+#include "blist.h"
 #include "prefs.h"
+#include "sound.h"
 
 static GaimSoundUiOps *sound_ui_ops = NULL;
 
-void gaim_sound_set_ui_ops(GaimSoundUiOps *ops)
-{
-	if(sound_ui_ops && sound_ui_ops->shutdown)
-		sound_ui_ops->shutdown();
-	sound_ui_ops = ops;
-	if(sound_ui_ops && sound_ui_ops->init)
-		sound_ui_ops->init();
-}
-
-GaimSoundUiOps *gaim_sound_get_ui_ops(void)
-{
-	return sound_ui_ops;
-}
-
-void gaim_sound_init()
-{
-	gaim_prefs_add_none("/core/sound");
-	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
-}
-
-void gaim_sound_shutdown()
-{
-	if(sound_ui_ops && sound_ui_ops->shutdown)
-		sound_ui_ops->shutdown();
-}
-
-void gaim_sound_play_file(const char *filename)
+void
+gaim_sound_play_file(const char *filename)
 {
 	/* FIXME */
 #if 0
@@ -65,7 +41,8 @@ void gaim_sound_play_file(const char *filename)
 		sound_ui_ops->play_file(filename);
 }
 
-void gaim_sound_play_event(GaimSoundEventID event)
+void
+gaim_sound_play_event(GaimSoundEventID event)
 {
 	/* FIXME */
 #if 0
@@ -75,4 +52,61 @@ void gaim_sound_play_event(GaimSoundEventID event)
 
 	if(sound_ui_ops && sound_ui_ops->play_event)
 		sound_ui_ops->play_event(event);
+}
+
+static void
+sound_triggered_cb(GaimBuddy *buddy, GaimSoundEventID event)
+{
+	gaim_sound_play_event(event);
+}
+
+void
+gaim_sound_set_ui_ops(GaimSoundUiOps *ops)
+{
+	if(sound_ui_ops && sound_ui_ops->uninit)
+		sound_ui_ops->uninit();
+
+	sound_ui_ops = ops;
+
+	if(sound_ui_ops && sound_ui_ops->init)
+		sound_ui_ops->init();
+}
+
+GaimSoundUiOps *
+gaim_sound_get_ui_ops(void)
+{
+	return sound_ui_ops;
+}
+
+void *
+gaim_sound_get_handle() {
+	static int handle;
+
+	return &handle;
+}
+
+void
+gaim_sound_init()
+{
+	void *handle       = gaim_sound_get_handle();
+	void *blist_handle = gaim_blist_get_handle();
+
+	gaim_prefs_add_none("/core/sound");
+	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
+
+	gaim_signal_connect(blist_handle, "buddy-signed-on",
+						handle, GAIM_CALLBACK(sound_triggered_cb),
+						GINT_TO_POINTER(GAIM_SOUND_BUDDY_ARRIVE));
+	gaim_signal_connect(blist_handle, "buddy-signed-off",
+						handle, GAIM_CALLBACK(sound_triggered_cb),
+						GINT_TO_POINTER(GAIM_SOUND_BUDDY_LEAVE));
+}
+
+void
+gaim_sound_uninit()
+{
+	gaim_signals_disconnect_by_handle(gaim_sound_get_handle());
+
+	if(sound_ui_ops && sound_ui_ops->uninit)
+		sound_ui_ops->uninit();
 }

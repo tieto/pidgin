@@ -769,7 +769,6 @@ int main(int argc, char *argv[])
 
 	gtk_main();
 
-	gaim_sound_shutdown();
 #ifdef _WIN32
 	wgaim_cleanup();
 #endif

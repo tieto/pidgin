@@ -1,5 +1,6 @@
 /**
  * @file gtksound.h GTK+ Sound API
+ * @ingroup gtkui
  *
  * gaim
  *
@@ -30,20 +31,6 @@
 /*@{*/
 
 /**
- * Get the handle for the GTK+ sound system.
- *
- * @return the handle to the sound system
- */
-void *gaim_gtk_sound_get_handle();
-
-/**
- * Gets GTK Sound UI opsA
- *
- * @return UI operations struct
- */
-GaimSoundUiOps *gaim_gtk_sound_get_ui_ops(void);
-
-/**
  * Get the prefs option for an event.
  *
  * @param event The event.
@@ -58,6 +45,20 @@ const char *gaim_gtk_sound_get_event_option(GaimSoundEventID event);
  * @return The label.
  */
 char *gaim_gtk_sound_get_event_label(GaimSoundEventID event);
+
+/**
+ * Gets GTK+ sound UI ops.
+ *
+ * @return The UI operations structure.
+ */
+GaimSoundUiOps *gaim_gtk_sound_get_ui_ops(void);
+
+/**
+ * Get the handle for the GTK+ sound system.
+ *
+ * @return The handle to the sound system
+ */
+void *gaim_gtk_sound_get_handle();
 
 /*@}*/
 

@@ -131,6 +131,7 @@ gaim_core_quit(void)
 	gaim_accounts_uninit();
 	gaim_statuses_uninit();
 	gaim_prefs_uninit();
+	gaim_sound_uninit();
 
 	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
 	gaim_plugins_destroy_all();
