@@ -862,7 +862,7 @@ static void oscar_xfer_init(GaimXfer *xfer)
 	OscarData *od = gc->proto_data;
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
-		int i;
+		int listenfd;
 
 		xfer->filename = g_path_get_basename(xfer->local_filename);
 		strncpy(oft_info->fh.name, xfer->filename, 64);
@@ -870,15 +870,12 @@ static void oscar_xfer_init(GaimXfer *xfer)
 		oft_info->fh.size = gaim_xfer_get_size(xfer);
 		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
 
-		/*
-		 * First try the port specified earlier (5190).  If that fails, 
-		 * increment by 1 and try again.
-		 */
-		aim_sendfile_listen(od->sess, oft_info);
-		for (i=0; (i<5 && !oft_info->conn); i++) {
-			xfer->local_port = oft_info->port = oft_info->port + 1;
-			aim_sendfile_listen(od->sess, oft_info);
-		}
+		/* Create a listening socket and an associated libfaim conn */
+		if ((listenfd = gaim_network_listen(5190, 5199)) < 0)
+			return;
+		xfer->local_port = gaim_network_get_port_from_fd(listenfd);
+		oft_info->port = xfer->local_port;
+		aim_sendfile_listen(od->sess, oft_info, listenfd);
 		gaim_debug(GAIM_DEBUG_MISC, "oscar",
 				   "port is %d, ip is %s\n",
 				   xfer->local_port, oft_info->clientip);
@@ -1042,11 +1039,10 @@ static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 
 	/* Build the file transfer handle */
 	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, destsn);
-	xfer->local_port = 5190;
 
 	/* Create the oscar-specific data */
-	ip = gaim_network_get_ip_for_account(account, od->conn?od->conn->fd:-1);
-	oft_info = aim_oft_createinfo(od->sess, NULL, destsn, ip, xfer->local_port, 0, 0, NULL);
+	ip = gaim_network_get_ip_for_account(account, od->conn ? od->conn->fd : -1);
+	oft_info = aim_oft_createinfo(od->sess, NULL, destsn, ip, 0, 0, 0, NULL);
 	xfer->data = oft_info;
 
 	 /* Setup our I/O op functions */
@@ -2135,7 +2131,7 @@ static void accept_direct_im(struct ask_direct *d) {
 	GaimConnection *gc = d->gc;
 	OscarData *od;
 	struct direct_im *dim;
-	char *host; int port = 4443;
+	char *host; int port = 5190;
 	int i, rc;
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
@@ -6124,6 +6120,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 	GaimConnection *gc = data->gc;
 	OscarData *od;
 	struct direct_im *dim;
+	int listenfd;
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		g_free(data->who);
@@ -6152,7 +6149,8 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 	dim->gc = gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", data->who);
 
-	dim->conn = aim_odc_initiate(od->sess, data->who);
+	listenfd = gaim_network_listen(5190, 5199);
+	dim->conn = aim_odc_initiate(od->sess, data->who, listenfd, gaim_network_get_port_from_fd(listenfd));
 	if (dim->conn != NULL) {
 		od->direct_ims = g_slist_append(od->direct_ims, dim);
 		dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,

@@ -199,7 +199,7 @@ static int gaim_network_do_listen(short portnum)
 
 int gaim_network_listen(short start, short end)
 {
-	int ret = 0;
+	int ret = -1;
 
 	if (gaim_prefs_get_bool("/core/network/ports_range_use") ||
 		(start > end) || (start < 1024) || (end < 1024)) {

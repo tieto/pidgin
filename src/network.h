@@ -101,7 +101,8 @@ const char *gaim_network_get_ip_for_account(const GaimAccount *account, int fd);
  *              but users are allowed to specify a range.
  * @param end The highest possible port in the range of ports to listen on,
  *            or 0 to let the core decide.
- * @return The file descriptor of the listening socket.
+ * @return The file descriptor of the listening socket, or -1 if 
+ *         no socket could be established.
  */
 int gaim_network_listen(short start, short end);
 

@@ -933,12 +933,12 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
 faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *msg, int len, int encoding, int isawaymsg);
 faim_export const char *aim_odc_getsn(aim_conn_t *conn);
 faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn);
-faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn);
+faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd, fu16_t port);
 faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const fu8_t *cookie);
 
 faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn, const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename);
 faim_export int aim_oft_destroyinfo(struct aim_oft_info *oft_info);
-faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info);
+faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info, int listenfd);
 faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_oft_info *oft_info);
 
 

@@ -158,85 +158,6 @@ faim_export fu32_t aim_oft_checksum_file(char *filename) {
 }
 
 /**
- * Create a listening socket on a given port.
- *
- * XXX - Give the client author the responsibility of setting up a 
- *       listener, then we no longer have a libfaim problem with broken 
- *       solaris *innocent smile* -- jbm
- *
- * @param portnum The port number to bind to.
- * @return The file descriptor of the listening socket.
- */
-static int listenestablish(fu16_t portnum)
-{
-#if HAVE_GETADDRINFO
-	int listenfd;
-	const int on = 1;
-	struct addrinfo hints, *res, *ressave;
-	char serv[5];
-
-	snprintf(serv, sizeof(serv), "%d", portnum);
-	memset(&hints, 0, sizeof(struct addrinfo));
-	hints.ai_flags = AI_PASSIVE;
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	if (getaddrinfo(NULL /* any IP */, serv, &hints, &res) != 0) {
-		perror("getaddrinfo");
-		return -1;
-	} 
-	ressave = res;
-	do { 
-		listenfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-		if (listenfd < 0)
-			continue;
-		setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-		if (bind(listenfd, res->ai_addr, res->ai_addrlen) == 0)
-			break; /* success */
-		close(listenfd);
-	} while ( (res = res->ai_next) );
-
-	if (!res)
-		return -1;
-
-	freeaddrinfo(ressave);
-#else
-	int listenfd;
-	const int on = 1;
-	struct sockaddr_in sockin;
-
-	if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		perror("socket");
-		return -1;
-	}
-
-	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) != 0) {
-		perror("setsockopt");
-		close(listenfd);
-		return -1;
-	}
-
-	memset(&sockin, 0, sizeof(struct sockaddr_in));
-	sockin.sin_family = AF_INET;
-	sockin.sin_port = htons(portnum);
-
-	if (bind(listenfd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0) {
-		perror("bind");
-		close(listenfd);
-		return -1;
-	}
-#endif
-
-	if (listen(listenfd, 4) != 0) {
-		perror("listen");
-		close(listenfd);
-		return -1;
-	}
-	fcntl(listenfd, F_SETFL, O_NONBLOCK);
-
-	return listenfd;
-}
-
-/**
  * After establishing a listening socket, this is called to accept a connection.  It
  * clones the conn used by the listener, and passes both of these to a signal handler.
  * The signal handler should close the listener conn and keep track of the new conn,
@@ -527,20 +448,15 @@ faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn)
  * @param sn The screen name to connect to.
  * @return The new connection.
  */
-faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn)
+faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd, fu16_t port)
 {
 	aim_conn_t *newconn;
 	aim_msgcookie_t *cookie;
 	struct aim_odc_intdata *priv;
-	int listenfd;
-	fu16_t port = 4443;
 	fu8_t localip[4];
 	fu8_t ck[8];
 
 	if (aim_util_getlocalip(localip) == -1)
-		return NULL;
-
-	if ((listenfd = listenestablish(port)) == -1)
 		return NULL;
 
 	aim_im_sendch2_odcrequest(sess, ck, sn, localip, port);
@@ -787,15 +703,10 @@ faim_export int aim_oft_destroyinfo(struct aim_oft_info *oft_info)
  *        connection.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info)
+faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info, int listenfd)
 {
-	int listenfd;
-
 	if (!oft_info)
 		return -EINVAL;
-
-	if ((listenfd = listenestablish(oft_info->port)) == -1)
-		return 1;
 
 	if (!(oft_info->conn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER, NULL))) {
 		close(listenfd);
