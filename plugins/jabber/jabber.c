@@ -130,6 +130,7 @@ struct jabber_chat {
 	jid Jid;
 	struct gaim_connection *gc;
 	struct conversation *b;
+	int id;
 };
 
 static char *jabber_name()
@@ -665,6 +666,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			if ((jc = find_pending_chat(GJ_GC(j), p->from)) != NULL) {
 				/* yes, we're supposed to be. so now we are. */
 				jc->b = serv_got_joined_chat(GJ_GC(j), i++, p->from->user);
+				jc->id = jc->b->id;
 				jd->existing_chats = g_slist_append(jd->existing_chats, jc);
 				jd->pending_chats = g_slist_remove(jd->pending_chats, jc);
 			} else {
@@ -805,7 +807,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 				}
 
 				jd->existing_chats = g_slist_remove(jd->existing_chats, jc);
-				serv_got_chat_left(GJ_GC(j), jc->b->id);
+				serv_got_chat_left(GJ_GC(j), jc->id);
 				g_free(jc);
 			} else {
 				if ((!jc && !(jc = find_existing_chat(GJ_GC(j), who))) || !jc->b) {
