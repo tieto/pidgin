@@ -68,8 +68,6 @@ struct yahoo_data {
 	struct yahoo_session *sess;
 	int current_status;
 	GHashTable *hash;
-	GtkWidget *email_win;
-	GtkWidget *email_label;
 	char *active_id;
 	GList *conns;
 	gboolean logged_in;
