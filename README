@@ -16,8 +16,10 @@ Run:
 
 type "./gaim"
 
-If you built as a GNOME applet, su to root and run "make install". 
-Afterwards panel->add applet->Amusements->Gaim should be there.
+If you want to build as a GNOME applet:
+./configure --enable-gnome ; make
+then su to root and run "make install". 
+Afterwards panel->Add applet->Network->Gaim should be there.
 
 Notes:
 
@@ -29,6 +31,10 @@ If you get errors, upgrade to the latest GTK-1.2 before bothering me.
 
 The resulting executable is standalone, so you can put it in /usr/bin or
 whatever.
+
+The panel (if you made an applet) requires certain things to be in certain
+places, I recommend adding the options --sysconfdir=/etc --datadir=/usr/share
+to ./configure --enable-gnome
 
 Send me bug reports.  The web page is http://www.marko.net/gaim and the ftp
 site is ftp://ftp.marko.net/pub/gaim

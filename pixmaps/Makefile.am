@@ -10,12 +10,14 @@ EXTRA_DIST = admin_icon.xpm aimicon.xpm \
         online.xpm signing_on.xpm msg_pending.xpm \
         away.xpm away_icon.xpm underline.xpm \
         peng_smile.xpm peng_frown.xpm peng_wink.xpm \
-	strike.xpm \ devil-connect.png devil-offline.png \
-	devil-online.png penguin-connect.png \
-	penguin-offline.png penguin-online.png
+	strike.xpm \ gnome/devil-connect.png gnome/devil-offline.png \
+	gnome/devil-online.png gnome/penguin-connect.png \
+	gnome/penguin-offline.png gnome/penguin-online.png
 	
 if GNOMEAPPLET
 gaimpixmapdir = /usr/share/pixmaps/gaim
-gaimpixmap_DATA = aimicon.xpm penguin-connect.png \
-	penguin-offline.png penguin-online.png
+gaimpixmap_DATA = aimicon.xpm
+gaimgnomedir = /usr/share/pixmaps/gaim/gnome
+gaimgnome_DATA = gnome/penguin-online.png gnome/penguin-offline.png \
+	penguin-online.png
 endif
