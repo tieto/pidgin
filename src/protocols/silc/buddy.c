@@ -1076,14 +1076,16 @@ silcgaim_add_buddy_select(SilcGaimBuddyRes r,
 		gaim_request_field_list_add(f, tmp, clients[i]);
 	}
 
-	g_snprintf(tmp, sizeof(tmp),
-		   _("More than one users were found with the same %s. Select "
-		     "the correct user from the list to add to the buddy list."),
-		   r->pubkey_search ? "public key" : "name");
 	gaim_request_fields(NULL, _("Add Buddy"),
-			    _("Select correct user"), tmp, fields,
-			    "OK", G_CALLBACK(silcgaim_add_buddy_select_cb),
-			    "Cancel", G_CALLBACK(silcgaim_add_buddy_select_cancel), r);
+				_("Select correct user"),
+				r->pubkey_search
+					? _("More than one user was found with the same public key. Select "
+						"the correct user from the list to add to the buddy list.")
+					: _("More than one user was found with the same name. Select "
+						"the correct user from the list to add to the buddy list."),
+				fields,
+				_("OK"), G_CALLBACK(silcgaim_add_buddy_select_cb),
+				_("Cancel"), G_CALLBACK(silcgaim_add_buddy_select_cancel), r);
 }
 
 static void

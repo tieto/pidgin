@@ -889,10 +889,10 @@ void silcgaim_chat_join_done(SilcClient client,
 	   give a way to change it afterwards when mode changes. */
 		tmp2 = silc_client_chumode_char(chu->mode);
 		if (tmp2)
-			g_snprintf(tmp, sizeof(tmp), _("%s%s"), tmp2,
+			g_snprintf(tmp, sizeof(tmp), "%s%s", tmp2,
 				   chu->client->nickname);
 		else
-			g_snprintf(tmp, sizeof(tmp), _("%s"),
+			g_snprintf(tmp, sizeof(tmp), "%s",
 				   chu->client->nickname);
 		silc_free(tmp2);
 

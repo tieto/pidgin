@@ -260,7 +260,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			break;
 
 		/* Join user to channel */
-		g_snprintf(buf, sizeof(buf), _("%s@%s"),
+		g_snprintf(buf, sizeof(buf), "%s@%s",
 			   client_entry->username, client_entry->hostname);
 		gaim_conv_chat_add_user(GAIM_CONV_CHAT(convo),
 					g_strdup(client_entry->nickname), buf);
@@ -950,7 +950,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						silc_free(m);
 
 					}
-					g_string_append_printf(s, _("%s\n"), tmp);
+					g_string_append_printf(s, "%s\n", tmp);
 					silc_free(umodes);
 				}
 			}
