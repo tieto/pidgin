@@ -736,7 +736,8 @@ struct buddy *gaim_find_buddy(GaimAccount *account, const char *name)
 	if (!gaimbuddylist)
 		return NULL;
 	
-	if (!name && !buddy);
+	if (!name && !buddy)
+		return NULL;
 
 	if (name) {
 		group = gaimbuddylist->root;
