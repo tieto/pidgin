@@ -142,7 +142,9 @@ void serv_get_info(char *name)
 {
 	/* FIXME: getting someone's info? how do you decide something like that? I think that
 	 * the buddy list/UI needs to be really changed before this gets fixed*/
-	struct gaim_connection *g = connections->data;
+	struct gaim_connection *g;
+	if (!connections) return;
+	g = connections->data;
 
 	if (g && g->prpl && g->prpl->get_info)
 		(*g->prpl->get_info)(g, name);
@@ -151,7 +153,9 @@ void serv_get_info(char *name)
 void serv_get_away_msg(char *name)
 {
 	/* FIXME: see the serv_get_info comment above :-P */
-	struct gaim_connection *g = connections->data;
+	struct gaim_connection *g;
+	if (!connections) return;
+	g = connections->data;
 
 	if (g && g->prpl && g->prpl->get_info)
 		(*g->prpl->get_away_msg)(g, name);
@@ -160,7 +164,9 @@ void serv_get_away_msg(char *name)
 void serv_get_dir(char *name)
 {
 	/* FIXME: see the serv_get_info comment above :-P */
-	struct gaim_connection *g = connections->data;
+	struct gaim_connection *g;
+	if (!connections) return;
+	g = connections->data;
 
 	if (g && g->prpl && g->prpl->get_dir)
 		(*g->prpl->get_dir)(g, name);
@@ -170,7 +176,9 @@ void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 		  char *city, char *state, char *country, int web)
 {
 	/* FIXME */
-	struct gaim_connection *g = connections->data;
+	struct gaim_connection *g;
+	if (!connections) return;
+	g = connections->data;
 
 	if (g && g->prpl && g->prpl->set_dir)
 		(*g->prpl->set_dir)(g, first, middle, last, maiden, city, state, country, web);
@@ -180,7 +188,9 @@ void serv_dir_search(char *first, char *middle, char *last, char *maiden,
 		     char *city, char *state, char *country, char *email)
 {
 	/* FIXME */
-	struct gaim_connection *g = connections->data;
+	struct gaim_connection *g;
+	if (!connections) return;
+	g = connections->data;
 
 	if (g && g->prpl && g->prpl->dir_search)
 		(*g->prpl->dir_search)(g, first, middle, last, maiden, city, state, country, email);
@@ -276,7 +286,9 @@ void serv_add_deny(char *name)
 void serv_set_permit_deny()
 {
 	/* FIXME */
-	struct gaim_connection *g = connections->data;
+	struct gaim_connection *g;
+	if (!connections) return;
+	g = connections->data;
 	if (g && g->protocol == PROTO_TOC) {
 		char buf[MSG_LEN];
 		int at;
@@ -391,7 +403,9 @@ void serv_build_config(char *buf, int len, gboolean show) {
 void serv_save_config()
 {
 	/* FIXME */
-	struct gaim_connection *g = connections->data;
+	struct gaim_connection *g;
+	if (!connections) return;
+	g = connections->data;
 	if (g && g->protocol == PROTO_TOC) {
 		char *buf = g_malloc(BUF_LONG);
 		char *buf2 = g_malloc(MSG_LEN);
