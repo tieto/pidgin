@@ -654,6 +654,21 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 					  gaim_conversation_get_account(conv));
 }
 
+static void
+menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	GaimConvWindow *win = (GaimConvWindow *)data;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+
+	conv = gaim_conv_window_get_active_conversation(win);
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+	g_string_free(conv->history, TRUE);
+	conv->history = g_string_new("");
+}
+
 struct _search {
 	GaimGtkConversation *gtkconv;
 	GtkWidget *entry;
@@ -1412,14 +1427,6 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 			case GDK_Tab:
 				move_to_next_unread_tab(conv);
-
-				return TRUE;
-				break;
-
-			case 'l':
-				gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
-				g_string_free(conv->history, TRUE);
-				conv->history = g_string_new("");
 
 				return TRUE;
 				break;
@@ -3125,6 +3132,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, NULL },
 	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 	  "<StockItem>", GTK_STOCK_SAVE_AS },
+	{ N_("/Conversation/Clear"), "<CTL>L", menu_clear_cb, 0, "<StockItem>", GTK_STOCK_CLEAR },
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>" },
 
