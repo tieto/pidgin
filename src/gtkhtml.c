@@ -1388,7 +1388,7 @@ static gint gtk_html_tooltip_timeout(gpointer data)
 			gap = 2;
 		baseline_skip = style->font->ascent + style->font->descent + gap;
 
-		w = 8 + MAX(gdk_string_width(style->font, "HTML Link:"),
+		w = 8 + MAX(gdk_string_width(style->font, _("HTML Link:")),
 					gdk_string_width(style->font, html->tooltip_hb->url));
 		;
 		h = 8 - gap;
@@ -1797,7 +1797,7 @@ static gint gtk_html_button_press(GtkWidget * widget, GdkEventButton * event)
 			   
 			   if (web_browser == BROWSER_NETSCAPE) {
 			   
-			   button = gtk_menu_item_new_with_label("Open URL in existing window");
+			   button = gtk_menu_item_new_with_label(_("Open URL in existing window"));
 			   gtk_signal_connect(GTK_OBJECT(button), "activate",
 			   GTK_SIGNAL_FUNC(open_url), hb->url);
 			   gtk_menu_append(GTK_MENU(menu), button);
@@ -1806,7 +1806,7 @@ static gint gtk_html_button_press(GtkWidget * widget, GdkEventButton * event)
 			   }
 			   
 			   
-			   button = gtk_menu_item_new_with_label("Open URL in new window");
+			   button = gtk_menu_item_new_with_label(_("Open URL in new window"));
 			   gtk_signal_connect(GTK_OBJECT(button), "activate",
 			   GTK_SIGNAL_FUNC(open_url_nw), hb->url);
 			   gtk_menu_append(GTK_MENU(menu), button);
@@ -1814,7 +1814,7 @@ static gint gtk_html_button_press(GtkWidget * widget, GdkEventButton * event)
 			   
 			   if (web_browser == BROWSER_NETSCAPE) {
 			   
-			   button = gtk_menu_item_new_with_label("Add URL as bookmark");
+			   button = gtk_menu_item_new_with_label(_("Add URL as bookmark"));
 			   gtk_signal_connect(GTK_OBJECT(button), "activate",
 			   GTK_SIGNAL_FUNC(add_bookmark), hb->url);
 			   gtk_menu_append(GTK_MENU(menu), button);
