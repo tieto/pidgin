@@ -98,6 +98,8 @@ G_MODULE_IMPORT GSList *connections;
 
 #define JABBER_TYPING_NOTIFY_INT 15	/* Delay (in seconds) between sending typing notifications */
 
+#define JABBER_KEEPALIVE_STRING "  \t  "
+
 /*
  * Note: "was_connected" may seem redundant, but it was needed and I
  * didn't want to touch the Jabber state stuff not specific to Gaim.
@@ -579,7 +581,9 @@ static void gjab_send_raw(gjconn gjc, const char *str)
 			fprintf(stderr, "DBG: Problem sending.  Error: %d\n", errno);
 			fflush(stderr);
 		}
-		debug_printf("gjab_send_raw: %s\n", str);
+		/* printing keepalives to the debug window is really annoying */
+		if(strcmp(str, JABBER_KEEPALIVE_STRING))
+			debug_printf("gjab_send_raw: %s\n", str);
 	}
 }
 
@@ -3184,9 +3188,12 @@ static void jabber_get_away_msg(struct gaim_connection *gc, char *who) {
 	for(i=0; i<num_resources; i++)
 	{
 		jab_res_info jri = resources->data;
+		char *status;
 		realwho = g_strdup_printf("%s/%s", buddy, jri->name);
+		status = strdup_withhtml(jabber_lookup_away(gjc, realwho));
 		*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", realwho);
-		*ap++ = g_strdup_printf("<B>Status:</B> %s<BR>\n", jabber_lookup_away(gjc, realwho));
+		*ap++ = g_strdup_printf("<B>Status:</B> %s<BR>\n", status);
+		g_free(status);
 		g_free(realwho);
 		resources = resources->next;
 	}
@@ -3405,7 +3412,7 @@ static void jabber_set_idle(struct gaim_connection *gc, int idle) {
 
 static void jabber_keepalive(struct gaim_connection *gc) {
 	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
-	gjab_send_raw(jd->gjc, "  \t  ");
+	gjab_send_raw(jd->gjc, JABBER_KEEPALIVE_STRING);
 }
 
 /*---------------------------------------*/
@@ -3586,9 +3593,9 @@ static void jabber_handlevcard(gjconn gjc, xmlnode querynode, char *from)
 		}
 	}
 
-	status = jabber_lookup_away(gjc, buddy);
-
+	status = strdup_withhtml(jabber_lookup_away(gjc, buddy));
 	*ap++ = g_strdup_printf("<B>Status:</B> %s<BR>\n", status);
+	g_free(status);
 
 	/*
 	 * "Description" handled as a special case: get a copy of the
