@@ -113,7 +113,7 @@ struct prpl {
 	 * (i.e. the prpl says you can set your dir info, the ui shows a dialog and needs to call
 	 * set_dir in order to set it) */
 
-	void (* login)		(struct aim_user *);
+	void (* login)		(struct gaim_account *);
 	void (* close)		(struct gaim_connection *);
 	int  (* send_im)	(struct gaim_connection *, char *who, char *message, int len, int away);
 	void (* set_info)	(struct gaim_connection *, char *info);
@@ -158,7 +158,7 @@ struct prpl {
 	void (* keepalive)	(struct gaim_connection *);
 
 	/* new user registration */
-	void (* register_user)	(struct aim_user *);
+	void (* register_user)	(struct gaim_account *);
 
 	/* get "chat buddy" info and away message */
 	void (* get_cb_info)	(struct gaim_connection *, int, char *who);

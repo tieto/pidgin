@@ -343,8 +343,8 @@ void BuddyTickerShow()
 			b = (struct buddy *)buds->data;
 			if( b->present ) {
 				xpm = NULL;
-				if (b->user->gc->prpl->list_icon)
-					xpm = b->user->gc->prpl->list_icon(b->uc);
+				if (b->account->gc->prpl->list_icon)
+					xpm = b->account->gc->prpl->list_icon(b->uc);
 				if (xpm == NULL)
 					xpm = (char **)no_icon_xpm;
 				pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
@@ -358,7 +358,7 @@ void BuddyTickerShow()
 }
 
 void signon_cb(struct gaim_connection *gc, char *who) {
-	struct buddy *b  = find_buddy(gc->user, who);
+	struct buddy *b  = find_buddy(gc->account, who);
 	char **xpm = NULL;
 	
 	GdkPixmap *pm;
@@ -389,7 +389,7 @@ void buddy_signoff_cb(struct gaim_connection *gc, char *who) {
 }
 
 void away_cb(struct gaim_connection *gc, char *who) {
-	struct buddy *b  = find_buddy(gc->user, who);
+	struct buddy *b  = find_buddy(gc->account, who);
 	char **xpm = NULL;
 	
 	GdkPixmap *pm;

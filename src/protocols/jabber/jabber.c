@@ -801,16 +801,16 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 
 static void gjab_start(gjconn gjc)
 {
-	struct aim_user *user;
+	struct gaim_account *account;
 	int port, rc;
 	char *server;
 
 	if (!gjc || gjc->state != JCONN_STATE_OFF)
 		return;
 
-	user = GJ_GC(gjc)->user;
-	port = user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) : DEFAULT_PORT;
-	server = user->proto_opt[USEROPT_CONN_SERVER][0] ? user->proto_opt[USEROPT_CONN_SERVER] : gjc->user->server;
+	account = GJ_GC(gjc)->account;
+	port = account->proto_opt[USEROPT_PORT][0] ? atoi(account->proto_opt[USEROPT_PORT]) : DEFAULT_PORT;
+	server = account->proto_opt[USEROPT_CONN_SERVER][0] ? account->proto_opt[USEROPT_CONN_SERVER] : gjc->user->server;
 
 
 	gjc->parser = XML_ParserCreate(NULL);
@@ -819,7 +819,7 @@ static void gjab_start(gjconn gjc)
 	XML_SetCharacterDataHandler(gjc->parser, charData);
 
 	rc = proxy_connect(server, port, gjab_connected, GJ_GC(gjc));
-	if (!user->gc || (rc != 0)) {
+	if (!account->gc || (rc != 0)) {
 		STATE_EVT(JCONN_STATE_OFF)
 		return;
 	}
@@ -964,7 +964,7 @@ static void jabber_remove_gaim_buddy(struct gaim_connection *gc, const char *bud
 {
 	struct buddy *b;
 
-	if ((b = find_buddy(gc->user, buddyname)) != NULL) {
+	if ((b = find_buddy(gc->account, buddyname)) != NULL) {
 		debug_printf("removing buddy [1]: %s\n", buddyname);
 		remove_buddy(b);
 		gaim_blist_save();
@@ -1519,7 +1519,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 			jc->b = cnv = serv_got_joined_chat(GJ_GC(gjc), i++, gjid->user);
 			jc->id = gaim_chat_get_id(GAIM_CHAT(jc->b));
 			jc->state = JCS_ACTIVE;
-		} else if ((b = find_buddy(GJ_GC(gjc)->user, buddy)) == NULL) {
+		} else if ((b = find_buddy(GJ_GC(gjc)->account, buddy)) == NULL) {
 			g_free(buddy);
 			gaim_jid_free(gjid);
 			return;
@@ -1624,7 +1624,7 @@ static void jabber_accept_add(struct jabber_add_permit *jap)
 		 * If we don't already have the buddy on *our* buddylist,
 		 * ask if we want him or her added.
 		 */
-		if(find_buddy(jap->gc->user, jap->user) == NULL) {
+		if(find_buddy(jap->gc->account, jap->user) == NULL) {
 			show_got_added(jap->gc, NULL, jap->user, NULL, NULL);
 		}
 	}
@@ -1771,10 +1771,11 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	 * Add or remove a buddy?  Change buddy's alias or group?
 	 */
 	if (BUD_SUB_TO_PEND(sub, ask) || BUD_SUBD_TO(sub, ask)) {
-		if ((b = find_buddy(GJ_GC(gjc)->user, buddyname)) == NULL) {
+		if ((b = find_buddy(GJ_GC(gjc)->account, buddyname)) == NULL) {
 			debug_printf("adding buddy [4]: %s\n", buddyname);
-			b = add_buddy(GJ_GC(gjc)->user, groupname ? groupname : _("Buddies"), buddyname,
-				name ? name : buddyname);
+			b = add_buddy(GJ_GC(gjc)->account,
+					groupname ? groupname : _("Buddies"), buddyname,
+					name ? name : buddyname);
 			gaim_blist_save();
 		} else {
 			struct group *c_grp = find_group_by_buddy(b);
@@ -1792,7 +1793,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 				 * seems rude, but it seems to be the only way...
 				 */
 				remove_buddy(b);
-				b = add_buddy(GJ_GC(gjc)->user, groupname, buddyname,
+				b = add_buddy(GJ_GC(gjc)->account, groupname, buddyname,
 					name ? name : buddyname);
 				gaim_blist_save();
 				if(present) {
@@ -2319,18 +2320,18 @@ static void jabber_handlestate(gjconn gjc, int state)
 	return;
 }
 
-static void jabber_login(struct aim_user *user)
+static void jabber_login(struct gaim_account *account)
 {
-	struct gaim_connection *gc = new_gaim_conn(user);
+	struct gaim_connection *gc = new_gaim_conn(account);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
-	char *loginname = create_valid_jid(user->username, DEFAULT_SERVER, "Gaim");
+	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 
 	jd->buddies = g_hash_table_new(g_str_hash, g_str_equal);
 	jd->chats = NULL;	/* we have no chats yet */
 
 	set_login_progress(gc, 1, _("Connecting"));
 
-	if (!(jd->gjc = gjab_new(loginname, user->password, gc))) {
+	if (!(jd->gjc = gjab_new(loginname, account->password, gc))) {
 		g_free(loginname);
 		debug_printf("jabber: unable to connect (jab_new failed)\n");
 		hide_login_progress(gc, _("Unable to connect"));
@@ -2534,7 +2535,7 @@ static void jabber_roster_update(struct gaim_connection *gc, const char *name, c
 		y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
 		xmlnode_put_attrib(y, "jid", realwho);
 
-		buddy = find_buddy(gc->user, realwho);
+		buddy = find_buddy(gc->account, realwho);
 
 		/*
 		 * See if there's an explict (new?) alias for the buddy or we can pull
@@ -2937,7 +2938,7 @@ static void jabber_join_chat(struct gaim_connection *gc, GList *data)
 		jc->gjid = gjid;
 		jc->gc = gc;
 		((struct jabber_data *)gc->proto_data)->chats = g_slist_append(jcs, jc);
-		add_buddy(gc->user, _("Chats"), realwho, realwho);
+		add_buddy(gc->account, _("Chats"), realwho, realwho);
 	}
 
 	jc->state = JCS_PENDING;
@@ -3242,7 +3243,7 @@ static void jabber_get_cb_away_msg(struct gaim_connection *gc, int cid, char *wh
 static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b = find_buddy(gc->user, who);
+	struct buddy *b = find_buddy(gc->account, who);
 
 	if(b->uc == UC_ERROR)
 	{
@@ -3876,8 +3877,8 @@ static void jabber_setup_set_info(struct gaim_connection *gc)
 	MultiEntryDlg *b = multi_entry_dialog_new();
 	char *cdata;
 	xmlnode x_vc_data = NULL;
-	struct aim_user *tmp = gc->user;
-	b->user = tmp;
+	struct gaim_account *tmp = gc->account;
+	b->account = tmp;
 
 
 	/*
@@ -4127,11 +4128,11 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
 /*
  * Like jabber_login(), only different
  */
-void jabber_register_user(struct aim_user *au)
+void jabber_register_user(struct gaim_account *account)
 {
-	struct gaim_connection *gc = new_gaim_conn(au);
+	struct gaim_connection *gc = new_gaim_conn(account);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
-	char *loginname = create_valid_jid(au->username, DEFAULT_SERVER, "Gaim");
+	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 
 	/*
 	 * These do nothing during registration
@@ -4139,7 +4140,7 @@ void jabber_register_user(struct aim_user *au)
 	jd->buddies = NULL;
 	jd->chats = NULL;
 
-	if ((jd->gjc = gjab_new(loginname, au->password, gc)) == NULL) {
+	if ((jd->gjc = gjab_new(loginname, account->password, gc)) == NULL) {
 		g_free(loginname);
 		debug_printf("jabber: unable to connect (jab_new failed)\n");
 		hide_login_progress(gc, _("Unable to connect"));

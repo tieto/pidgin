@@ -164,7 +164,7 @@ static gboolean domiddleclick(GtkWidget *w, GdkEventButton *event, gpointer null
 
 static void dologin(GtkWidget *widget, GtkWidget *w)
 {
-	struct aim_user *u;
+	struct gaim_account *account;
 	const char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
 	const char *password = gtk_entry_get_text(GTK_ENTRY(pass));
 
@@ -177,12 +177,12 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	 * them, they just have to use the account editor to sign in 
 	 * the second one */
 
-	u = find_user(username, -1);
-	if (!u)
-		u = new_user(username, DEFAULT_PROTO, OPT_USR_REM_PASS);
-	g_snprintf(u->password, sizeof u->password, "%s", password);
+	account = gaim_account_find(username, -1);
+	if (!account)
+		account = gaim_account_new(username, DEFAULT_PROTO, OPT_ACCT_REM_PASS);
+	g_snprintf(account->password, sizeof account->password, "%s", password);
 	save_prefs();
-	serv_login(u);
+	serv_login(account);
 }
 
 /* <name> is a comma-separated list of names, or NULL
@@ -194,27 +194,27 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 */
 static int dologin_named(char *name)
 {
-	struct aim_user *u;
+	struct gaim_account *account;
 	char **names, **n;
 	int retval = -1;
 
 	if (name !=NULL) {	/* list of names given */
 		names = g_strsplit(name, ",", 32);
 		for (n = names; *n != NULL; n++) {
-			u = find_user(*n, -1);
-			if (u) {	/* found a user */
-				if (u->options & OPT_USR_REM_PASS) {
+			account = gaim_account_find(*n, -1);
+			if (account) {	/* found a user */
+				if (account->options & OPT_ACCT_REM_PASS) {
 					retval = 0;
-					serv_login(u);
+					serv_login(account);
 				}
 			}
 		}
 		g_strfreev(names);
 	} else {		/* no name given, use default */
-		u = (struct aim_user *)aim_users->data;
-		if (u->options & OPT_USR_REM_PASS) {
+		account = (struct gaim_account *)gaim_accounts->data;
+		if (account->options & OPT_ACCT_REM_PASS) {
 			retval = 0;
-			serv_login(u);
+			serv_login(account);
 		}
 	}
 
@@ -237,12 +237,12 @@ static void doenter(GtkWidget *widget, GtkWidget *w)
 static void combo_changed(GtkWidget *w, GtkWidget *combo)
 {
 	const char *txt = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(combo)->entry));
-	struct aim_user *u;
+	struct gaim_account *account;
 
-	u = find_user(txt, -1);
+	account = gaim_account_find(txt, -1);
 
-	if (u && u->options & OPT_USR_REM_PASS) {
-		gtk_entry_set_text(GTK_ENTRY(pass), u->password);
+	if (account && account->options & OPT_ACCT_REM_PASS) {
+		gtk_entry_set_text(GTK_ENTRY(pass), account->password);
 	} else {
 		gtk_entry_set_text(GTK_ENTRY(pass), "");
 	}
@@ -251,17 +251,17 @@ static void combo_changed(GtkWidget *w, GtkWidget *combo)
 
 static GList *combo_user_names()
 {
-	GSList *usr = aim_users;
+	GSList *accts = gaim_accounts;
 	GList *tmp = NULL;
-	struct aim_user *u;
+	struct gaim_account *account;
 
-	if (!usr)
+	if (!accts)
 		return g_list_append(NULL, _("<New User>"));
 
-	while (usr) {
-		u = (struct aim_user *)usr->data;
-		tmp = g_list_append(tmp, u->username);
-		usr = usr->next;
+	while (accts) {
+		account = (struct gaim_account *)accts->data;
+		tmp = g_list_append(tmp, account->username);
+		accts = accts->next;
 	}
 
 	return tmp;
@@ -385,9 +385,9 @@ void show_login()
 #endif
 
 	/* Now grab the focus that we need */
-	if (aim_users) {
-		struct aim_user *c = (struct aim_user *)aim_users->data;
-		if (c->options & OPT_USR_REM_PASS) {
+	if (gaim_accounts) {
+		struct gaim_account *account = gaim_accounts->data;
+		if (account->options & OPT_ACCT_REM_PASS) {
 			combo_changed(NULL, name);
 			gtk_widget_grab_focus(button);
 		} else {
@@ -550,18 +550,18 @@ static int ui_main()
 
 static void set_first_user(char *name)
 {
-	struct aim_user *u;
+	struct gaim_account *account;
 
-	u = find_user(name, -1);
+	account = gaim_account_find(name, -1);
 
-	if (!u) {		/* new user */
-		u = g_new0(struct aim_user, 1);
-		g_snprintf(u->username, sizeof(u->username), "%s", name);
-		u->protocol = DEFAULT_PROTO;
-		aim_users = g_slist_prepend(aim_users, u);
+	if (!account) {		/* new user */
+		account = g_new0(struct gaim_account, 1);
+		g_snprintf(account->username, sizeof(account->username), "%s", name);
+		account->protocol = DEFAULT_PROTO;
+		gaim_accounts = g_slist_prepend(gaim_accounts, account);
 	} else {		/* user already exists */
-		aim_users = g_slist_remove(aim_users, u);
-		aim_users = g_slist_prepend(aim_users, u);
+		gaim_accounts = g_slist_remove(gaim_accounts, account);
+		gaim_accounts = g_slist_prepend(gaim_accounts, account);
 	}
 	save_prefs();
 }

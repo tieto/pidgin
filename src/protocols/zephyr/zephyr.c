@@ -320,10 +320,10 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 
 			if (ZParseLocations(&notice, NULL, &nlocs, &user) != ZERR_NONE)
 				return;
-			if ((b = find_buddy(zgc->user, user)) == NULL) {
+			if ((b = find_buddy(zgc->account, user)) == NULL) {
 				char *e = strchr(user, '@');
 				if (e) *e = '\0';
-				b = find_buddy(zgc->user, user);
+				b = find_buddy(zgc->account, user);
 			}
 			if (!b) {
 				free(user);
@@ -451,7 +451,7 @@ static gint check_loc(gpointer data)
 		m = g->members;
 		while (m) {
 			struct buddy *b = m->data;
-			if(b->user->gc == zgc) {
+			if(b->account->gc == zgc) {
 				char *chk;
 				chk = zephyr_normalize(b->name);
 				/* doesn't matter if this fails or not; we'll just move on to the next one */
@@ -573,14 +573,14 @@ static void process_anyone()
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
 			if (buff[0])
-				add_buddy(zgc->user, "Anyone", buff, buff);
+				add_buddy(zgc->account, "Anyone", buff, buff);
 		}
 		fclose(fd);
 	}
 	g_free(filename);
 }
 
-static void zephyr_login(struct aim_user *user)
+static void zephyr_login(struct gaim_account *account)
 {
 	ZSubscription_t sub;
 
@@ -590,7 +590,7 @@ static void zephyr_login(struct aim_user *user)
 		return;
 	}
 
-	zgc = new_gaim_conn(user);
+	zgc = new_gaim_conn(account);
 
 	z_call_s(ZInitialize(), "Couldn't initialize zephyr");
 	z_call_s(ZOpenPort(NULL), "Couldn't open port");
@@ -673,7 +673,7 @@ static void write_anyone()
 		m = g->members;
 		while (m) {
 			b = m->data;
-			if(b->user->gc == zgc) {
+			if(b->account->gc == zgc) {
 				if ((ptr = strchr(b->name, '@')) != NULL) {
 					ptr2 = ptr + 1;
 					/* We should only strip the realm name if the principal

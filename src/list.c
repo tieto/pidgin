@@ -43,7 +43,7 @@
 
 void remove_buddy(struct buddy *rem_b)
 {
-	if(rem_b->user->gc) {
+	if(rem_b->account->gc) {
 		struct group *rem_g = find_group_by_buddy(rem_b);
 
 		ui_remove_buddy(rem_b);
@@ -56,7 +56,7 @@ void remove_buddy(struct buddy *rem_b)
 	} else {
 		char *buf = g_strdup_printf(_("%s was not removed from your buddy "
 					"list, because your account (%s) is not logged in."),
-					rem_b->name, rem_b->user->username);
+					rem_b->name, rem_b->account->username);
 		do_error_dialog(_("Buddy Not Removed"), buf, GAIM_ERROR);
 		g_free(buf);
 	}
@@ -64,11 +64,11 @@ void remove_buddy(struct buddy *rem_b)
 
 void remove_group(struct group *rem_g)
 {
-	GSList *users;
+	GSList *accounts;
 
-	for(users = aim_users; users; users = users->next) {
-		struct aim_user *user = users->data;
-		if(user->gc) {
+	for(accounts = gaim_accounts; accounts; accounts = accounts->next) {
+		struct gaim_account *account = accounts->data;
+		if(account->gc) {
 			GList *tmp = NULL;
 			GSList *buds = rem_g->members;
 
@@ -76,7 +76,7 @@ void remove_group(struct group *rem_g)
 				struct buddy *delb = (struct buddy *)buds->data;
 				buds = buds->next;
 
-				if(delb->user == user) {
+				if(delb->account == account) {
 					tmp = g_list_append(tmp, g_strdup(delb->name));
 					remove_buddy(delb);	/* this should take care of removing
 										   the group_show if necessary */
@@ -84,7 +84,7 @@ void remove_group(struct group *rem_g)
 			}
 
 			if(tmp)
-				serv_remove_buddies(user->gc, tmp, rem_g->name);
+				serv_remove_buddies(account->gc, tmp, rem_g->name);
 
 			while (tmp) {
 				g_free(tmp->data);
@@ -114,13 +114,13 @@ void remove_group(struct group *rem_g)
 	 * mostly. remove_group is only called from one place, so we'll let it handle it. */
 }
 
-struct buddy *add_buddy(struct aim_user *user, const char *group, const char *buddy, const char *show)
+struct buddy *add_buddy(struct gaim_account *account, const char *group, const char *buddy, const char *show)
 {
 	struct buddy *b;
 	struct group *g;
 	const char *good;
 
-	if ((b = find_buddy(user, buddy)) != NULL)
+	if ((b = find_buddy(account, buddy)) != NULL)
 		return b;
 
 	g = find_group(group);
@@ -133,7 +133,7 @@ struct buddy *add_buddy(struct aim_user *user, const char *group, const char *bu
 	if (!b)
 		return NULL;
 
-	b->user = user;
+	b->account = account;
 	b->present = 0;
 
 	b->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
@@ -151,7 +151,7 @@ struct buddy *add_buddy(struct aim_user *user, const char *group, const char *bu
 	b->idle = 0;
 	b->caps = 0;
 
-	ui_add_buddy(user->gc, g, b);
+	ui_add_buddy(account->gc, g, b);
 
 	return b;
 }
@@ -207,7 +207,7 @@ struct group *find_group_by_buddy(struct buddy *b)
 	return NULL;
 }
 
-struct buddy *find_buddy(struct aim_user *user, const char *who)
+struct buddy *find_buddy(struct gaim_account *account, const char *who)
 {
 	struct group *g;
 	struct buddy *b;
@@ -228,7 +228,7 @@ struct buddy *find_buddy(struct aim_user *user, const char *who)
 			*/
 			norm = normalize;
 			whoname = g_strdup(norm(who));
-			if ((b->user == user || !user) && !strcmp(norm(b->name), whoname)) {
+			if ((b->account == account || !account) && !strcmp(norm(b->name), whoname)) {
 				g_free(whoname);
 				return b;
 			}
@@ -240,7 +240,7 @@ struct buddy *find_buddy(struct aim_user *user, const char *who)
 	return NULL;
 }
 
-void parse_toc_buddy_list(struct aim_user *user, char *config)
+void parse_toc_buddy_list(struct gaim_account *account, char *config)
 {
 	char *c;
 	char current[256];
@@ -285,65 +285,65 @@ void parse_toc_buddy_list(struct aim_user *user, char *config)
 				if (utf8 == NULL) {
 					sw[0] = '\0';
 				} else {
-					/* This can leave a partial sequence at the end, 
+					/* This can leave a partial sequence at the end,
 					 * but who cares? */
 					g_strlcpy(sw, utf8, sizeof(sw));
 					g_free(utf8);
 				}
-				
-				if (!find_buddy(user, nm)) {
-					add_buddy(user, current, nm, sw);
+
+				if (!find_buddy(account, nm)) {
+					add_buddy(account, current, nm, sw);
 					bud = g_list_append(bud, nm);
 				}
 			} else if (*c == 'p') {
-				gaim_privacy_permit_add(user, c + 2);
+				gaim_privacy_permit_add(account, c + 2);
 			} else if (*c == 'd') {
-				gaim_privacy_deny_add(user, c + 2);
+				gaim_privacy_deny_add(account, c + 2);
 			} else if (!strncmp("toc", c, 3)) {
-				sscanf(c + strlen(c) - 1, "%d", &user->permdeny);
-				debug_printf("permdeny: %d\n", user->permdeny);
-				if (user->permdeny == 0)
-					user->permdeny = 1;
+				sscanf(c + strlen(c) - 1, "%d", &account->permdeny);
+				debug_printf("permdeny: %d\n", account->permdeny);
+				if (account->permdeny == 0)
+					account->permdeny = 1;
 			} else if (*c == 'm') {
-				sscanf(c + 2, "%d", &user->permdeny);
-				debug_printf("permdeny: %d\n", user->permdeny);
-				if (user->permdeny == 0)
-					user->permdeny = 1;
+				sscanf(c + 2, "%d", &account->permdeny);
+				debug_printf("permdeny: %d\n", account->permdeny);
+				if (account->permdeny == 0)
+					account->permdeny = 1;
 			}
 		} while ((c = strtok(NULL, "\n")));
 
-		if(user->gc) {
+		if(account->gc) {
 			if(bud)
-				serv_add_buddies(user->gc, bud);
-			serv_set_permit_deny(user->gc);
+				serv_add_buddies(account->gc, bud);
+			serv_set_permit_deny(account->gc);
 		}
 		g_list_free(bud);
 	}
 }
 
-void toc_build_config(struct aim_user *user, char *s, int len, gboolean show)
+void toc_build_config(struct gaim_account *account, char *s, int len, gboolean show)
 {
 	GSList *grp = groups;
 	GSList *mem;
 	struct group *g;
 	struct buddy *b;
-	GSList *plist = user->permit;
-	GSList *dlist = user->deny;
+	GSList *plist = account->permit;
+	GSList *dlist = account->deny;
 
 	int pos = 0;
 
-	if (!user->permdeny)
-		user->permdeny = 1;
+	if (!account->permdeny)
+		account->permdeny = 1;
 
-	pos += g_snprintf(&s[pos], len - pos, "m %d\n", user->permdeny);
+	pos += g_snprintf(&s[pos], len - pos, "m %d\n", account->permdeny);
 	while (len > pos && grp) {
 		g = (struct group *)grp->data;
-		if(gaim_group_on_account(g, user)) {
+		if(gaim_group_on_account(g, account)) {
 			pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
 			mem = g->members;
 			while (len > pos && mem) {
 				b = (struct buddy *)mem->data;
-				if(b->user == user) {
+				if(b->account == account) {
 					pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
 							(show && b->alias[0]) ? ":" : "",
 							(show && b->alias[0]) ? b->alias : "");
@@ -535,7 +535,7 @@ static gchar *get_screenname_filename(const char *name)
 
 static gboolean gaim_blist_read(const char *filename);
 
-void do_import(struct aim_user *user, const char *filename)
+void do_import(struct gaim_account *account, const char *filename)
 {
 	GString *buf = NULL;
 	char first[64];
@@ -547,9 +547,9 @@ void do_import(struct aim_user *user, const char *filename)
 	if (filename) {
 		g_snprintf(path, sizeof(path), "%s", filename);
 	} else {
-		char *g_screenname = get_screenname_filename(user->username);
+		char *g_screenname = get_screenname_filename(account->username);
 		char *file = gaim_user_dir();
-		int protocol = (user->protocol == PROTO_OSCAR) ? (isalpha(user->username[0]) ? PROTO_TOC : PROTO_ICQ): user->protocol;
+		int protocol = (account->protocol == PROTO_OSCAR) ? (isalpha(account->username[0]) ? PROTO_TOC : PROTO_ICQ): account->protocol;
 
 		if (file != (char *)NULL) {
 			sprintf(path, "%s" G_DIR_SEPARATOR_S "%s.%d.blist", file, g_screenname, protocol);
@@ -614,28 +614,28 @@ void do_import(struct aim_user *user, const char *filename)
 	if (buf) {
 		buf = g_string_prepend(buf, "toc_set_config {");
 		buf = g_string_append(buf, "}\n");
-		parse_toc_buddy_list(user, buf->str);
+		parse_toc_buddy_list(account, buf->str);
 		g_string_free(buf, TRUE);
 	}
 }
 
 static gboolean is_blocked(struct buddy *b)
 {
-	struct aim_user *user = b->user;
+	struct gaim_account *account = b->account;
 
-	if (user->permdeny == PERMIT_ALL)
+	if (account->permdeny == PERMIT_ALL)
 		return FALSE;
 
-	if (user->permdeny == PERMIT_NONE) {
-		if (user->gc && g_strcasecmp(b->name, user->gc->username))
+	if (account->permdeny == PERMIT_NONE) {
+		if (account->gc && g_strcasecmp(b->name, account->gc->username))
 			return TRUE;
 		else
 			return FALSE;
 	}
 
-	if (user->permdeny == PERMIT_SOME) {
+	if (account->permdeny == PERMIT_SOME) {
 		char *x = g_strdup(normalize(b->name));
-		GSList *s = user->permit;
+		GSList *s = account->permit;
 		while (s) {
 			if (!g_strcasecmp(x, normalize(s->data)))
 				break;
@@ -647,9 +647,9 @@ static gboolean is_blocked(struct buddy *b)
 		return TRUE;
 	}
 
-	if (user->permdeny == DENY_SOME) {
+	if (account->permdeny == DENY_SOME) {
 		char *x = g_strdup(normalize(b->name));
-		GSList *s = user->deny;
+		GSList *s = account->deny;
 		while (s) {
 			if (!g_strcasecmp(x, normalize(s->data)))
 				break;
@@ -702,18 +702,18 @@ GSList *gaim_group_get_accounts(struct group *g) {
 	GSList *ret = NULL;
 	while(buds) {
 		struct buddy *b = buds->data;
-		if(!g_slist_find(ret, b->user))
-			ret = g_slist_append(ret, b->user);
+		if(!g_slist_find(ret, b->account))
+			ret = g_slist_append(ret, b->account);
 		buds = buds->next;
 	}
 	return ret;
 }
 
-gboolean gaim_group_on_account(struct group *g, struct aim_user *user) {
+gboolean gaim_group_on_account(struct group *g, struct gaim_account *account) {
 	GSList *buds = g->members;
 	while(buds) {
 		struct buddy *b = buds->data;
-		if((!user && b->user->gc) || b->user == user)
+		if((!account && b->account->gc) || b->account == account)
 			return TRUE;
 		buds = buds->next;
 	}
@@ -836,10 +836,10 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		g_free(blist_parser_person_name);
 		blist_parser_person_name = NULL;
 	} else if(!strcmp(element_name, "buddy")) {
-		struct aim_user *user = find_user(blist_parser_account_name,
+		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
-		if(user) {
-			struct buddy *b = add_buddy(user, blist_parser_group_name,
+		if(account) {
+			struct buddy *b = add_buddy(account, blist_parser_group_name,
 					blist_parser_buddy_name, blist_parser_buddy_alias);
 			if(blist_parser_buddy_settings) {
 				g_hash_table_destroy(b->settings);
@@ -873,28 +873,28 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "privacy")) {
 		blist_parser_current_tag = BLIST_TAG_GAIM;
 	} else if(!strcmp(element_name, "account")) {
-		struct aim_user *user = find_user(blist_parser_account_name,
+		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
-		if(user) {
-			user->permdeny = blist_parser_privacy_mode;
+		if(account) {
+			account->permdeny = blist_parser_privacy_mode;
 		}
 		blist_parser_current_tag = BLIST_TAG_PRIVACY;
 		g_free(blist_parser_account_name);
 		blist_parser_account_name = NULL;
 	} else if(!strcmp(element_name, "permit")) {
-		struct aim_user *user = find_user(blist_parser_account_name,
+		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
-		if(user) {
-			gaim_privacy_permit_add(user, blist_parser_buddy_name);
+		if(account) {
+			gaim_privacy_permit_add(account, blist_parser_buddy_name);
 		}
 		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
 		g_free(blist_parser_buddy_name);
 		blist_parser_buddy_name = NULL;
 	} else if(!strcmp(element_name, "block")) {
-		struct aim_user *user = find_user(blist_parser_account_name,
+		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
-		if(user) {
-			gaim_privacy_deny_add(user, blist_parser_buddy_name);
+		if(account) {
+			gaim_privacy_deny_add(account, blist_parser_buddy_name);
 		}
 		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
 		g_free(blist_parser_buddy_name);
@@ -994,7 +994,7 @@ void gaim_blist_load() {
 			do_error_dialog(_("Buddy List Error"), msg, GAIM_ERROR);
 			g_free(msg);
 		}
-	} else if(g_slist_length(aim_users)) {
+	} else if(g_slist_length(gaim_accounts)) {
 		/* rob wants to inform the user that their buddy lists are
 		 * being converted */
 		msg = g_strdup_printf(_("Gaim is converting your old buddy lists "
@@ -1008,7 +1008,7 @@ void gaim_blist_load() {
 			gtk_main_iteration();
 
 		/* read in the old lists, then save to the new format */
-		for(accts = aim_users; accts; accts = accts->next) {
+		for(accts = gaim_accounts; accts; accts = accts->next) {
 			do_import(accts->data, NULL);
 		}
 		gaim_blist_save();
@@ -1028,29 +1028,29 @@ static void blist_print_buddy_settings(gpointer key, gpointer data,
 	g_free(data_val);
 }
 
-static void gaim_blist_write(FILE *file, struct aim_user *user) {
-	GSList *grps, *buds, *users;
+static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
+	GSList *grps, *buds, *accounts;
 	fprintf(file, "<?xml version='1.0' encoding='UTF-8' ?>\n");
 	fprintf(file, "<gaim version=\"1\">\n");
 	fprintf(file, "\t<blist>\n");
 
 	for(grps = groups; grps; grps = grps->next) {
 		struct group *g = grps->data;
-		if(!user || gaim_group_on_account(g, user)) {
+		if(!exp_acct || gaim_group_on_account(g, exp_acct)) {
 			char *group_name = g_markup_escape_text(g->name, -1);
 			fprintf(file, "\t\t<group name=\"%s\">\n", group_name);
 			for(buds = g->members; buds; buds = buds->next) {
 				struct buddy *b = buds->data;
-				if(!user || b->user == user) {
+				if(!exp_acct || b->account == exp_acct) {
 					char *bud_name = g_markup_escape_text(b->name, -1);
 					char *bud_alias = NULL;
-					char *acct_name = g_markup_escape_text(b->user->username, -1);
+					char *acct_name = g_markup_escape_text(b->account->username, -1);
 					if(b->alias[0])
 						bud_alias= g_markup_escape_text(b->alias, -1);
 					fprintf(file, "\t\t\t<person name=\"%s\">\n",
 							bud_alias ? bud_alias : bud_name);
 					fprintf(file, "\t\t\t\t<buddy protocol=\"%d\" "
-							"account=\"%s\">\n", b->user->protocol,
+							"account=\"%s\">\n", b->account->protocol,
 							acct_name);
 					fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
 					if(bud_alias) {
@@ -1074,24 +1074,25 @@ static void gaim_blist_write(FILE *file, struct aim_user *user) {
 	fprintf(file, "\t</blist>\n");
 	fprintf(file, "\t<privacy>\n");
 
-	for(users = aim_users; users; users = users->next) {
-		struct aim_user *usr = users->data;
-		char *acct_name = g_markup_escape_text(usr->username, -1);
-		if(!user || usr == user) {
+	for(accounts = gaim_accounts; accounts; accounts = accounts->next) {
+		struct gaim_account *account = accounts->data;
+		char *acct_name = g_markup_escape_text(account->username, -1);
+		if(!exp_acct || account == exp_acct) {
 			fprintf(file, "\t\t<account protocol=\"%d\" name=\"%s\" "
-					"mode=\"%d\">\n", usr->protocol, acct_name, usr->permdeny);
-			for(buds = usr->permit; buds; buds = buds->next) {
+					"mode=\"%d\">\n", account->protocol, acct_name, account->permdeny);
+			for(buds = account->permit; buds; buds = buds->next) {
 				char *bud_name = g_markup_escape_text(buds->data, -1);
 				fprintf(file, "\t\t\t<permit>%s</permit>\n", bud_name);
 				g_free(bud_name);
 			}
-			for(buds = usr->deny; buds; buds = buds->next) {
+			for(buds = account->deny; buds; buds = buds->next) {
 				char *bud_name = g_markup_escape_text(buds->data, -1);
 				fprintf(file, "\t\t\t<block>%s</block>\n", bud_name);
 				g_free(bud_name);
 			}
 			fprintf(file, "\t\t</account>\n");
 		}
+		g_free(acct_name);
 	}
 
 	fprintf(file, "\t</privacy>\n");
@@ -1125,8 +1126,8 @@ void gaim_blist_save() {
 	g_free(filename);
 }
 
-gboolean gaim_privacy_permit_add(struct aim_user *user, const char *who) {
-	GSList *d = user->permit;
+gboolean gaim_privacy_permit_add(struct gaim_account *account, const char *who) {
+	GSList *d = account->permit;
 	char *n = g_strdup(normalize(who));
 	while(d) {
 		if(!g_strcasecmp(n, normalize(d->data)))
@@ -1135,15 +1136,15 @@ gboolean gaim_privacy_permit_add(struct aim_user *user, const char *who) {
 	}
 	g_free(n);
 	if(!d) {
-		user->permit = g_slist_append(user->permit, g_strdup(who));
+		account->permit = g_slist_append(account->permit, g_strdup(who));
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-gboolean gaim_privacy_permit_remove(struct aim_user *user, const char *who) {
-	GSList *d = user->permit;
+gboolean gaim_privacy_permit_remove(struct gaim_account *account, const char *who) {
+	GSList *d = account->permit;
 	char *n = g_strdup(normalize(who));
 	while(d) {
 		if(!g_strcasecmp(n, normalize(d->data)))
@@ -1152,15 +1153,15 @@ gboolean gaim_privacy_permit_remove(struct aim_user *user, const char *who) {
 	}
 	g_free(n);
 	if(d) {
-		user->permit = g_slist_remove(user->permit, d->data);
+		account->permit = g_slist_remove(account->permit, d->data);
 		g_free(d->data);
 		return TRUE;
 	}
 	return FALSE;
 }
 
-gboolean gaim_privacy_deny_add(struct aim_user *user, const char *who) {
-	GSList *d = user->deny;
+gboolean gaim_privacy_deny_add(struct gaim_account *account, const char *who) {
+	GSList *d = account->deny;
 	char *n = g_strdup(normalize(who));
 	while(d) {
 		if(!g_strcasecmp(n, normalize(d->data)))
@@ -1169,15 +1170,15 @@ gboolean gaim_privacy_deny_add(struct aim_user *user, const char *who) {
 	}
 	g_free(n);
 	if(!d) {
-		user->deny = g_slist_append(user->deny, g_strdup(who));
+		account->deny = g_slist_append(account->deny, g_strdup(who));
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-gboolean gaim_privacy_deny_remove(struct aim_user *user, const char *who) {
-	GSList *d = user->deny;
+gboolean gaim_privacy_deny_remove(struct gaim_account *account, const char *who) {
+	GSList *d = account->deny;
 	char *n = g_strdup(normalize(who));
 	while(d) {
 		if(!g_strcasecmp(n, normalize(d->data)))
@@ -1186,7 +1187,7 @@ gboolean gaim_privacy_deny_remove(struct aim_user *user, const char *who) {
 	}
 	g_free(n);
 	if(d) {
-		user->deny = g_slist_remove(user->deny, d->data);
+		account->deny = g_slist_remove(account->deny, d->data);
 		g_free(d->data);
 		return TRUE;
 	}

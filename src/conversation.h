@@ -67,7 +67,7 @@ enum _GaimConvUpdateType
 							       was added.   */
 	GAIM_CONV_UPDATE_REMOVE,  /**< The buddy associated with the conversation
 								   was removed. */
-	GAIM_CONV_UPDATE_USER,    /**< The aim_user was changed. */
+	GAIM_CONV_UPDATE_ACCOUNT, /**< The gaim_account was changed. */
 	GAIM_CONV_UPDATE_TYPING,  /**< The typing state was updated. */
 	GAIM_CONV_UPDATE_UNSEEN,  /**< The unseen state was updated. */
 	GAIM_CONV_UPDATE_LOGGING, /**< Logging for this conversation was
@@ -197,7 +197,7 @@ struct gaim_conversation
 {
 	GaimConversationType type;  /**< The type of conversation.          */
 
-	struct aim_user *user;      /**< The user using this conversation.  */
+	struct gaim_account *account;  /**< The user using this conversation.  */
 	struct gaim_window *window; /**< The parent window.                 */
 
 	int conversation_pos;       /**< The position in the window's list. */
@@ -426,7 +426,7 @@ struct gaim_window *gaim_get_last_window_with_type(GaimConversationType type);
  * @return The new conversation.
  */
 struct gaim_conversation *gaim_conversation_new(GaimConversationType type,
-												struct aim_user *user,
+												struct gaim_account *account,
 												const char *name);
 
 /**
@@ -470,28 +470,28 @@ struct gaim_conversation_ui_ops *gaim_conversation_get_ui_ops(
 		struct gaim_conversation *conv);
 
 /**
- * Sets the specified conversation's aim_user.
+ * Sets the specified conversation's gaim_account.
  *
- * This aim_user represents the user using gaim, not the person the user
+ * This gaim_account represents the user using gaim, not the person the user
  * is having a conversation/chat/flame with.
  *
  * @param conv The conversation.
- * @param user The aim_user.
+ * @param account The gaim_account.
  */
-void gaim_conversation_set_user(struct gaim_conversation *conv,
-								struct aim_user *user);
+void gaim_conversation_set_account(struct gaim_conversation *conv,
+								struct gaim_account *account);
 
 /**
- * Returns the specified conversation's aim_user.
+ * Returns the specified conversation's gaim_account.
  *
- * This aim_user represents the user using gaim, not the person the user
+ * This gaim_account represents the user using gaim, not the person the user
  * is having a conversation/chat/flame with.
  *
  * @param conv The conversation.
  *
- * @return The conversation's aim_user.
+ * @return The conversation's gaim_account.
  */
-struct aim_user *gaim_conversation_get_user(
+struct gaim_account *gaim_conversation_get_account(
 		const struct gaim_conversation *conv);
 
 /**
@@ -688,12 +688,12 @@ struct gaim_conversation *gaim_find_conversation(const char *name);
  * Finds a conversation with the specified name and user.
  *
  * @param name The name of the conversation.
- * @param user The aim_user associated with the conversation.
+ * @param account The gaim_account associated with the conversation.
  *
  * @return The conversation if found, or @c NULL otherwise.
  */
-struct gaim_conversation *gaim_find_conversation_with_user(
-		const char *name, const struct aim_user *user);
+struct gaim_conversation *gaim_find_conversation_with_account(
+		const char *name, const struct gaim_account *account);
 
 /**
  * Writes to a conversation window.

@@ -63,33 +63,33 @@ static void dequeue_message(GtkTreeIter *iter)
 	struct gaim_conversation *cnv;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(awayqueuestore), iter, 0, &name, -1);
-	
+
 	debug_printf("Unqueueing messages from %s.\n", name);
-	
+
 	templist = message_queue;
-	
+
 	while (templist) {
 		struct queued_message *qm = templist->data;
 		if (templist->data) {
 			if (!g_strcasecmp(qm->name, name)) {
-				struct aim_user *user = NULL;
+				struct gaim_account *account = NULL;
 
 				if (g_slist_index(connections, qm->gc) >= 0)
-					user = qm->gc->user;
+					account = qm->gc->account;
 
 				cnv = gaim_find_conversation(name);
 
 				if (!cnv)
-					cnv = gaim_conversation_new(GAIM_CONV_IM, user, qm->name);
+					cnv = gaim_conversation_new(GAIM_CONV_IM, account, qm->name);
 				else
-					gaim_conversation_set_user(cnv, user);
+					gaim_conversation_set_account(cnv, account);
 
 				gaim_im_write(GAIM_IM(cnv), NULL, qm->message, qm->len,
 						qm->flags, qm->tm);
 				g_free(qm->message);
 				g_free(qm);
 				templist = message_queue = g_slist_remove(message_queue, qm);
-				
+
 			} else {
 				templist = templist->next;
 			}
@@ -107,22 +107,22 @@ void purge_away_queue(GSList **queue)
 	GSList *q = *queue;
 	struct queued_message *qm;
 	struct gaim_conversation *cnv;
-	struct aim_user *user;
+	struct gaim_account *account;
 
 	while (q) {
 		qm = q->data;
 
-		user = NULL;
+		account = NULL;
 
 		if (g_slist_index(connections, qm->gc) >= 0)
-			user = qm->gc->user;
+			account = qm->gc->account;
 
 		cnv = gaim_find_conversation(qm->name);
 
 		if (!cnv)
-			cnv = gaim_conversation_new(GAIM_CONV_IM, user, qm->name);
+			cnv = gaim_conversation_new(GAIM_CONV_IM, account, qm->name);
 		else
-			gaim_conversation_set_user(cnv, user);
+			gaim_conversation_set_account(cnv, account);
 
 		gaim_im_write(GAIM_IM(cnv), NULL, qm->message, -1, qm->flags, qm->tm);
 
@@ -140,17 +140,17 @@ void purge_away_queue(GSList **queue)
 gint dequeue_cb(GtkWidget *treeview, GdkEventButton *event, gpointer data) {
 	GtkTreeIter iter;
 	GtkTreeSelection *select;
-	
+
 	if(!(event->type == GDK_2BUTTON_PRESS && event->button == 1))
 		return FALSE; /* Double clicking on the list will unqueue that user's messages. */
-	
+
 	select = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	if(gtk_tree_selection_get_selected(select, NULL, &iter))
 			dequeue_message(&iter);
 
 	return FALSE;
 }
-	
+
 
 
 void toggle_away_queue()

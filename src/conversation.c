@@ -842,7 +842,7 @@ gaim_get_last_window_with_type(GaimConversationType type)
  * Conversation API
  **************************************************************************/
 struct gaim_conversation *
-gaim_conversation_new(GaimConversationType type, struct aim_user *user,
+gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 					  const char *name)
 {
 	struct gaim_conversation *conv;
@@ -851,13 +851,13 @@ gaim_conversation_new(GaimConversationType type, struct aim_user *user,
 		return NULL;
 
 	/* Check if this conversation already exists. */
-	if ((conv = gaim_find_conversation_with_user(name, user)) != NULL)
+	if ((conv = gaim_find_conversation_with_account(name, account)) != NULL)
 		return conv;
 
 	conv = g_malloc0(sizeof(struct gaim_conversation));
 
 	conv->type         = type;
-	conv->user         = user;
+	conv->account      = account;
 	conv->name         = g_strdup(name);
 	conv->title        = g_strdup(name);
 	conv->send_history = g_list_append(NULL, NULL);
@@ -1051,40 +1051,40 @@ gaim_conversation_get_ui_ops(struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_user(struct gaim_conversation *conv,
-						   struct aim_user *user)
+gaim_conversation_set_account(struct gaim_conversation *conv,
+						   struct gaim_account *account)
 {
-	if (conv == NULL || user == gaim_conversation_get_user(conv))
+	if (conv == NULL || account == gaim_conversation_get_account(conv))
 		return;
 
-	conv->user = user;
+	conv->account = account;
 
-	gaim_conversation_update(conv, GAIM_CONV_UPDATE_USER);
+	gaim_conversation_update(conv, GAIM_CONV_UPDATE_ACCOUNT);
 }
 
-struct aim_user *
-gaim_conversation_get_user(const struct gaim_conversation *conv)
+struct gaim_account *
+gaim_conversation_get_account(const struct gaim_conversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
 
-	return conv->user;
+	return conv->account;
 }
 
 struct gaim_connection *
 gaim_conversation_get_gc(const struct gaim_conversation *conv)
 {
-	struct aim_user *user;
+	struct gaim_account *account;
 
 	if (conv == NULL)
 		return NULL;
 
-	user = gaim_conversation_get_user(conv);
+	account = gaim_conversation_get_account(conv);
 
-	if (user == NULL)
+	if (account == NULL)
 		return NULL;
 
-	return user->gc;
+	return account->gc;
 }
 
 void
@@ -1118,18 +1118,18 @@ gaim_conversation_get_title(const struct gaim_conversation *conv)
 void
 gaim_conversation_autoset_title(struct gaim_conversation *conv)
 {
-	struct aim_user *user;
+	struct gaim_account *account;
 	struct buddy *b;
 	const char *text, *name;
 
 	if (conv == NULL)
 		return;
 
-	user = gaim_conversation_get_user(conv);
+	account = gaim_conversation_get_account(conv);
 	name = gaim_conversation_get_name(conv);
 
 	if (((im_options & OPT_IM_ALIAS_TAB) == OPT_IM_ALIAS_TAB) &&
-		user != NULL && ((b = find_buddy(user, name)) != NULL)) {
+		account != NULL && ((b = find_buddy(account, name)) != NULL)) {
 
 		text = get_buddy_alias(b);
 	}
@@ -1320,7 +1320,7 @@ gaim_find_conversation(const char *name)
 }
 
 struct gaim_conversation *
-gaim_find_conversation_with_user(const char *name, const struct aim_user *user)
+gaim_find_conversation_with_account(const char *name, const struct gaim_account *account)
 {
 	struct gaim_conversation *c = NULL;
 	char *cuser;
@@ -1335,7 +1335,7 @@ gaim_find_conversation_with_user(const char *name, const struct aim_user *user)
 		c = (struct gaim_conversation *)cnv->data;
 
 		if (!g_strcasecmp(cuser, normalize(gaim_conversation_get_name(c))) &&
-			user == gaim_conversation_get_user(c)) {
+			account == gaim_conversation_get_account(c)) {
 
 			break;
 		}
@@ -1383,19 +1383,19 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 
 		if (who == NULL) {
 			if ((flags & WFLAG_SEND) == WFLAG_SEND) {
-				b = find_buddy(gc->user, gc->username);
+				b = find_buddy(gc->account, gc->username);
 
 				if (b != NULL && strcmp(b->name, get_buddy_alias(b)))
 					who = get_buddy_alias(b);
-				else if (*gc->user->alias)
-					who = gc->user->alias;
+				else if (*gc->account->alias)
+					who = gc->account->alias;
 				else if (*gc->displayname)
 					who = gc->displayname;
 				else
 					who = gc->username;
 			}
 			else {
-				b = find_buddy(gc->user, gaim_conversation_get_name(conv));
+				b = find_buddy(gc->account, gaim_conversation_get_name(conv));
 
 				if (b != NULL)
 					who = get_buddy_alias(b);
@@ -1404,7 +1404,7 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 			}
 		}
 		else {
-			b = find_buddy(gc->user, who);
+			b = find_buddy(gc->account, who);
 
 			if (b != NULL)
 				who = get_buddy_alias(b);
@@ -2072,7 +2072,7 @@ conv_placement_by_group(struct gaim_conversation *conv)
 		struct group *grp = NULL;
 		GList *wins, *convs;
 
-		b = find_buddy(gaim_conversation_get_user(conv),
+		b = find_buddy(gaim_conversation_get_account(conv),
 					   gaim_conversation_get_name(conv));
 
 		if (b != NULL)
@@ -2093,7 +2093,7 @@ conv_placement_by_group(struct gaim_conversation *conv)
 
 				conv2 = (struct gaim_conversation *)convs->data;
 
-				b2 = find_buddy(gaim_conversation_get_user(conv2),
+				b2 = find_buddy(gaim_conversation_get_account(conv2),
 								gaim_conversation_get_name(conv2));
 
 				if (b2 != NULL)

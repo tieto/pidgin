@@ -487,7 +487,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 			struct gaim_conversation *cnv;
 			struct buddy *b;
 
-			if ((b = find_buddy(gc->user, user)) != NULL)
+			if ((b = find_buddy(gc->account, user)) != NULL)
 				username = get_buddy_alias(b);
 			else
 				username = user;
@@ -1102,7 +1102,7 @@ static void msn_accept_add(struct msn_add_permit *map)
 			signoff(map->gc);
 			return;
 		}
-		gaim_privacy_permit_add(map->gc->user, map->user);
+		gaim_privacy_permit_add(map->gc->account, map->user);
 		build_allow_list(); /* er. right. we'll need to have a thing for this in CUI too */
 		show_got_added(map->gc, NULL, map->user, map->friend, NULL);
 	}
@@ -1124,7 +1124,7 @@ static void msn_cancel_add(struct msn_add_permit *map)
 			signoff(map->gc);
 			return;
 		}
-		gaim_privacy_deny_add(map->gc->user, map->user);
+		gaim_privacy_deny_add(map->gc->account, map->user);
 		build_block_list();
 	}
 
@@ -1141,7 +1141,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 	if (!g_strncasecmp(buf, "ADD", 3)) {
 		char *list, *user, *friend, *tmp = buf;
 		struct msn_add_permit *ap;
-		GSList *perm = gc->user->permit;
+		GSList *perm = gc->account->permit;
 		char msg[MSN_BUF_LEN];
 
 		GET_NEXT(tmp);
@@ -1186,14 +1186,14 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			 * from users who are not in BL will be delivered
 			 *
 			 * In other words, deny some */
-			gc->user->permdeny = DENY_SOME;
+			gc->account->permdeny = DENY_SOME;
 		} else {
 			/* If the current
 			 * setting is BL, only messages from people who are in the AL will be
 			 * delivered.
 			 *
 			 * In other words, permit some */
-			gc->user->permdeny = PERMIT_SOME;
+			gc->account->permdeny = PERMIT_SOME;
 		}
 	} else if (!g_strncasecmp(buf, "BPR", 3)) {
 	} else if (!g_strncasecmp(buf, "CHG", 3)) {
@@ -1266,8 +1266,8 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 	} else if (!g_strncasecmp(buf, "LST", 3)) {
 		char *which, *who, *friend, *tmp = buf;
 		struct msn_add_permit *ap; /* for any as yet undealt with buddies who've added you to their buddy list when you were off-line.  How dare they! */
-		GSList *perm = gc->user->permit; /* current permit list */
-		GSList *denyl = gc->user->deny;
+		GSList *perm = gc->account->permit; /* current permit list */
+		GSList *denyl = gc->account->deny;
 		char msg[MSN_BUF_LEN];
 		int new = 1;
 		int pos, tot;
@@ -1293,14 +1293,14 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			b->friend = g_strdup(friend);
 			md->fl = g_slist_append(md->fl, b);
 		} else if (!g_strcasecmp(which, "AL") && pos) {
-			if (g_slist_find_custom(gc->user->deny, who,
+			if (g_slist_find_custom(gc->account->deny, who,
 							(GCompareFunc)strcmp)) {
 				debug_printf("moving from deny to permit: %s", who);
-				gaim_privacy_deny_remove(gc->user, who);
+				gaim_privacy_deny_remove(gc->account, who);
 			}
-			gaim_privacy_permit_add(gc->user, who);
+			gaim_privacy_permit_add(gc->account, who);
 		} else if (!g_strcasecmp(which, "BL") && pos) {
-			gaim_privacy_deny_add(gc->user, who);
+			gaim_privacy_deny_add(gc->account, who);
 		} else if (!g_strcasecmp(which, "RL")) {
 		    if (pos) {
 			while(perm) {
@@ -1338,15 +1338,15 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			account_online(gc);
 			serv_finish_login(gc);
 
-			md->permit = g_slist_copy(gc->user->permit);
-			md->deny = g_slist_copy(gc->user->deny);
+			md->permit = g_slist_copy(gc->account->permit);
+			md->deny = g_slist_copy(gc->account->deny);
 
 			while (md->fl) {
 				struct msn_buddy *mb = md->fl->data;
-				struct buddy *b = find_buddy(gc->user, mb->user);
+				struct buddy *b = find_buddy(gc->account, mb->user);
 				md->fl = g_slist_remove(md->fl, mb);
 				if(!b)
-					b = add_buddy(gc->user, _("Buddies"), mb->user, NULL);
+					b = add_buddy(gc->account, _("Buddies"), mb->user, NULL);
 				serv_got_alias(gc, mb->user, mb->friend);
 				g_free(mb->user);
 				g_free(mb->friend);
@@ -1993,18 +1993,20 @@ static void msn_login_connect(gpointer data, gint source, GaimInputCondition con
 	set_login_progress(gc, 2,_("Synching with server"));
 }
 
-static void msn_login(struct aim_user *user)
+static void msn_login(struct gaim_account *account)
 {
-	struct gaim_connection *gc = new_gaim_conn(user);
+	struct gaim_connection *gc = new_gaim_conn(account);
 	gc->proto_data = g_new0(struct msn_data, 1);
 
 	set_login_progress(gc, 1, _("Connecting"));
 
 	g_snprintf(gc->username, sizeof(gc->username), "%s", msn_normalize(gc->username));
 
-	if (proxy_connect(user->proto_opt[USEROPT_MSNSERVER][0] ? user->proto_opt[USEROPT_MSNSERVER] : MSN_SERVER, 
-			       user->proto_opt[USEROPT_MSNPORT][0] ? atoi(user->proto_opt[USEROPT_MSNPORT]) : MSN_PORT,
-			       msn_login_connect, gc) != 0) {
+	if (proxy_connect(account->proto_opt[USEROPT_MSNSERVER][0] ?
+				account->proto_opt[USEROPT_MSNSERVER] : MSN_SERVER,
+				account->proto_opt[USEROPT_MSNPORT][0] ?
+				atoi(account->proto_opt[USEROPT_MSNPORT]) : MSN_PORT,
+				msn_login_connect, gc) != 0) {
 		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 	}
@@ -2473,7 +2475,7 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b = find_buddy(gc->user, who);
+	struct buddy *b = find_buddy(gc->account, who);
 	static char buf[MSN_BUF_LEN];
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
@@ -2619,7 +2621,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 	char buf[MSN_BUF_LEN];
 	GSList *s, *t = NULL;
 
-	if (gc->user->permdeny == PERMIT_ALL || gc->user->permdeny == DENY_SOME)
+	if (gc->account->permdeny == PERMIT_ALL || gc->account->permdeny == DENY_SOME)
 		g_snprintf(buf, sizeof(buf), "BLP %u AL\r\n", ++md->trId);
 	else
 		g_snprintf(buf, sizeof(buf), "BLP %u BL\r\n", ++md->trId);
@@ -2633,11 +2635,11 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 	/* this is safe because we'll always come here after we've gotten the list off the server,
 	 * and data is never removed. So if the lengths are equal we don't know about anyone locally
 	 * and so there's no sense in going through them all. */
-	if (g_slist_length(gc->user->permit) == g_slist_length(md->permit)) {
+	if (g_slist_length(gc->account->permit) == g_slist_length(md->permit)) {
 		g_slist_free(md->permit);
 		md->permit = NULL;
 	}
-	if (g_slist_length(gc->user->deny) == g_slist_length(md->deny)) {
+	if (g_slist_length(gc->account->deny) == g_slist_length(md->deny)) {
 		g_slist_free(md->deny);
 		md->deny = NULL;
 	}
@@ -2645,7 +2647,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 		return;
 
 	if (md->permit) {
-		s = g_slist_nth(gc->user->permit, g_slist_length(md->permit));
+		s = g_slist_nth(gc->account->permit, g_slist_length(md->permit));
 		while (s) {
 			char *who = s->data;
 			s = s->next;
@@ -2665,7 +2667,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 			}
 		}
 		while (t) {
-			gaim_privacy_permit_remove(gc->user, t->data);
+			gaim_privacy_permit_remove(gc->account, t->data);
 			t = t->next;
 		}
 		if (t)
@@ -2676,7 +2678,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 	}
 	
 	if (md->deny) {
-		s = g_slist_nth(gc->user->deny, g_slist_length(md->deny));
+		s = g_slist_nth(gc->account->deny, g_slist_length(md->deny));
 		while (s) {
 			char *who = s->data;
 			s = s->next;
@@ -2696,7 +2698,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 			}
 		}
 		while (t) {
-			gaim_privacy_deny_remove(gc->user, t->data);
+			gaim_privacy_deny_remove(gc->account, t->data);
 			t = t->next;
 		}
 		if (t)
@@ -2717,13 +2719,13 @@ static void msn_add_permit(struct gaim_connection *gc, const char *who)
 			     "Perhaps you meant %s@hotmail.com.  No changes were made to your "
 			     "allow list."), who);
 		do_error_dialog(_("Invalid MSN screenname"), buf, GAIM_ERROR);
-		gaim_privacy_permit_remove(gc->user, who);
+		gaim_privacy_permit_remove(gc->account, who);
 		return;
 	}
 
-	if (g_slist_find_custom(gc->user->deny, who, (GCompareFunc)strcmp)) {
+	if (g_slist_find_custom(gc->account->deny, who, (GCompareFunc)strcmp)) {
 		debug_printf("MSN: Moving %s from BL to AL\n", who);
-		gaim_privacy_deny_remove(gc->user, who);
+		gaim_privacy_deny_remove(gc->account, who);
 		g_snprintf(buf, sizeof(buf), "REM %u BL %s\r\n", ++md->trId, who);
 			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 				hide_login_progress(gc, _("Write error"));
@@ -2751,7 +2753,7 @@ static void msn_rem_permit(struct gaim_connection *gc, const char *who)
 		return;
 	}
 
-	gaim_privacy_deny_add(gc->user, who);
+	gaim_privacy_deny_add(gc->account, who);
 	g_snprintf(buf, sizeof(buf), "ADD %u BL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
@@ -2771,13 +2773,13 @@ static void msn_add_deny(struct gaim_connection *gc, const char *who)
 			     "Perhaps you meant %s@hotmail.com.  No changes were made to your "
 			     "block list."), who);
 		do_error_dialog(_("Invalid MSN screenname"), buf, GAIM_ERROR);
-		gaim_privacy_deny_remove(gc->user, who);
+		gaim_privacy_deny_remove(gc->account, who);
 		return;
 	}
 
-	if (g_slist_find_custom(gc->user->permit, who, (GCompareFunc)strcmp)) {
+	if (g_slist_find_custom(gc->account->permit, who, (GCompareFunc)strcmp)) {
 		debug_printf("MSN: Moving %s from AL to BL\n", who);
-		gaim_privacy_permit_remove(gc->user, who);
+		gaim_privacy_permit_remove(gc->account, who);
 		g_snprintf(buf, sizeof(buf), "REM %u AL %s\r\n", ++md->trId, who);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, _("Write error"));
@@ -2807,7 +2809,7 @@ static void msn_rem_deny(struct gaim_connection *gc, const char *who)
 		return;
 	}
 
-	gaim_privacy_permit_add(gc->user, who);
+	gaim_privacy_permit_add(gc->account, who);
 	g_snprintf(buf, sizeof(buf), "ADD %u AL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));

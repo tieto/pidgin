@@ -136,7 +136,7 @@ struct addbp {
 	GtkWidget *sound;
 	GtkWidget *soundentry;
 
-	struct aim_user *user;
+	struct gaim_account *account;
 	struct buddy_pounce *buddy_pounce;
 };
 
@@ -195,7 +195,7 @@ static struct info_dlg *find_info_dlg(struct gaim_connection *gc, char *who)
 struct set_info_dlg {
 	GtkWidget *window;
 	GtkWidget *menu;
-	struct aim_user *user;
+	struct gaim_account *account;
 	GtkWidget *text;
 	GtkWidget *save;
 	GtkWidget *cancel;
@@ -203,7 +203,7 @@ struct set_info_dlg {
 
 struct set_icon_dlg {
 	GtkWidget *window;
-	struct aim_user *user;
+	struct gaim_account *account;
 	GtkWidget *ok;
 	GtkWidget *cancel;
 	GtkWidget *entry;
@@ -460,7 +460,7 @@ void do_remove_buddy(struct buddy *b)
 	g = find_group_by_buddy(b);
 
 	debug_printf(_("Removing '%s' from buddy list.\n"), b->name);
-	serv_remove_buddy(b->user->gc, name, g->name);
+	serv_remove_buddy(b->account->gc, name, g->name);
 	remove_buddy(b);
 	gaim_blist_save();
 
@@ -474,7 +474,7 @@ void do_remove_buddy(struct buddy *b)
 
 void show_confirm_del(struct gaim_connection *gc, gchar *name)
 {
-	struct buddy *bd = find_buddy(gc->user, name);
+	struct buddy *bd = find_buddy(gc->account, name);
 	char *text;
 	if (!bd)
 		return;
@@ -561,7 +561,7 @@ static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 {
 	const char *who;
 	struct gaim_conversation *conv;
-	struct aim_user *user;
+	struct gaim_account *account;
 
 	if (resp == GTK_RESPONSE_OK) {
 		who = gtk_entry_get_text(GTK_ENTRY(info->entry));
@@ -571,17 +571,17 @@ static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 			return;
 		}
 
-		user = (info->gc ? info->gc->user : NULL);
+		account = (info->gc ? info->gc->account : NULL);
 
 		conv = gaim_find_conversation(who);
 
 		if (conv == NULL)
-			conv = gaim_conversation_new(GAIM_CONV_IM, user, who);
+			conv = gaim_conversation_new(GAIM_CONV_IM, account, who);
 		else {
 			gaim_window_raise(gaim_conversation_get_window(conv));
 
-			if (user)
-				gaim_conversation_set_user(conv, info->gc->user);
+			if (account)
+				gaim_conversation_set_account(conv, account);
 		}
 	}
 
@@ -890,7 +890,7 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 
 		c = gaim_find_conversation(who);
 
-		add_buddy(a->gc->user, grp, who, whoalias);
+		add_buddy(a->gc->account, grp, who, whoalias);
 		serv_add_buddy(a->gc, who);
 
 		if (c != NULL)
@@ -1181,7 +1181,7 @@ static void set_deny_mode(GtkWidget *w, int data)
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
 	debug_printf("setting deny mode %d\n", data);
-	current_deny_gc->user->permdeny = data;
+	current_deny_gc->account->permdeny = data;
 	serv_set_permit_deny(current_deny_gc);
 	gaim_blist_save();
 }
@@ -1199,7 +1199,7 @@ static GtkWidget *deny_opt(char *label, int which, GtkWidget *set)
 
 	g_signal_connect(GTK_OBJECT(opt), "toggled", G_CALLBACK(set_deny_mode), (void *)which);
 	gtk_widget_show(opt);
-	if (current_deny_gc->user->permdeny == which)
+	if (current_deny_gc->account->permdeny == which)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
 
 	return opt;
@@ -1224,7 +1224,7 @@ static void set_deny_type()
 {
 	GSList *bg = gtk_radio_button_group(GTK_RADIO_BUTTON(deny_type));
 
-	switch (current_deny_gc->user->permdeny) {
+	switch (current_deny_gc->account->permdeny) {
 	case 5:
 		bg = bg->next->next;
 		break;
@@ -1253,7 +1253,7 @@ void build_allow_list()
 	if (!current_is_deny)
 		return;
 
-	p = current_deny_gc->user->permit;
+	p = current_deny_gc->account->permit;
 
 	gtk_list_store_clear(GTK_LIST_STORE(allow_store));
 
@@ -1277,7 +1277,7 @@ void build_block_list()
 	if (!current_is_deny)
 		return;
 
-	d = current_deny_gc->user->deny;
+	d = current_deny_gc->account->deny;
 
 	gtk_list_store_clear(GTK_LIST_STORE(block_store));
 
@@ -1395,18 +1395,18 @@ static void pref_deny_rem(GtkWidget *button, gboolean permit)
 		return;
 
 	if (permit) {
-		char *name = find_permdeny_by_name(current_deny_gc->user->permit, who);
+		char *name = find_permdeny_by_name(current_deny_gc->account->permit, who);
 
 		if (name) {
-			gaim_privacy_permit_remove(current_deny_gc->user, name);
+			gaim_privacy_permit_remove(current_deny_gc->account, name);
 			serv_rem_permit(current_deny_gc, who);
 			build_allow_list();
 		}
 	} else {
-		char *name = find_permdeny_by_name(current_deny_gc->user->deny, who);
+		char *name = find_permdeny_by_name(current_deny_gc->account->deny, who);
 
 		if (name) {
-			gaim_privacy_deny_remove(current_deny_gc->user, name);
+			gaim_privacy_deny_remove(current_deny_gc->account, name);
 			serv_rem_deny(current_deny_gc, who);
 			build_block_list();
 		}
@@ -1637,9 +1637,9 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 	g_snprintf(bp->message, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->messentry)));
 	g_snprintf(bp->command, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->commentry)));
 	g_snprintf(bp->sound, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->soundentry)));
-	g_snprintf(bp->pouncer, 80, "%s", b->user->username);
+	g_snprintf(bp->pouncer, 80, "%s", b->account->username);
 
-	bp->protocol = b->user->protocol;
+	bp->protocol = b->account->protocol;
 
 	bp->options = 0;
 
@@ -1686,8 +1686,8 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 
 static void pounce_choose(GtkWidget *opt, struct addbp *b)
 {
-	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
-	b->user = u;
+	struct gaim_account *account = gtk_object_get_user_data(GTK_OBJECT(opt));
+	b->account = account;
 }
 
 static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
@@ -1695,8 +1695,8 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
-	GSList *u = aim_users;
-	struct aim_user *a;
+	GSList *u = gaim_accounts;
+	struct gaim_account *account;
 	struct prpl *p;
 	int count = 0;
 	int place = 0;
@@ -1708,22 +1708,22 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 	menu = gtk_menu_new();
 
 	while (u) {
-		a = (struct aim_user *)u->data;
-		p = (struct prpl *)find_prpl(a->protocol);
-		g_snprintf(buf, sizeof buf, "%s (%s)", a->username, (p && p->name)?p->name:_("Unknown"));
+		account = (struct gaim_account *)u->data;
+		p = (struct prpl *)find_prpl(account->protocol);
+		g_snprintf(buf, sizeof buf, "%s (%s)", account->username, (p && p->name)?p->name:_("Unknown"));
 		opt = gtk_menu_item_new_with_label(buf);
-		gtk_object_set_user_data(GTK_OBJECT(opt), a);
+		gtk_object_set_user_data(GTK_OBJECT(opt), account);
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(pounce_choose), b);
 		gtk_menu_append(GTK_MENU(menu), opt);
 		gtk_widget_show(opt);
 
-		if (b->user == a) {
+		if (b->account == account) {
 			gtk_menu_item_activate(GTK_MENU_ITEM(opt));
 			place = count;
 		}
 
 		count++;
-			
+
 		u = u->next;
 	}
 
@@ -1752,9 +1752,9 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	
 	if(edit_bp) {
 		b->buddy_pounce = edit_bp;
-		b->user = find_user(edit_bp->pouncer, edit_bp->protocol);
+		b->account = gaim_account_find(edit_bp->pouncer, edit_bp->protocol);
 	} else {
-		b->user = gc ? gc->user : aim_users->data;
+		b->account = gc ? gc->account : gaim_accounts->data;
 		b->buddy_pounce = NULL;
 	}
 
@@ -2002,14 +2002,14 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 
 	junk = gtk_text_view_get_text(GTK_TEXT_VIEW(b->text), FALSE);
 
-	if (b->user) {
-		strncpy_withhtml(b->user->user_info, junk, sizeof b->user->user_info);
-		gc = b->user->gc;
+	if (b->account) {
+		strncpy_withhtml(b->account->user_info, junk, sizeof b->account->user_info);
+		gc = b->account->gc;
 
 		save_prefs();
 
 		if (gc)
-			serv_set_info(gc, b->user->user_info);
+			serv_set_info(gc, b->account->user_info);
 	}
 	g_free(junk);
 	destroy_dialog(NULL, b->window);
@@ -2324,11 +2324,11 @@ void show_set_info(struct gaim_connection *gc)
 	GtkTextBuffer *buffer;
 	GtkWidget *frame;
 	gchar *buf;
-	struct aim_user *tmp;
+	struct gaim_account *account;
 
 	struct set_info_dlg *b = g_new0(struct set_info_dlg, 1);
-	tmp = gc->user;
-	b->user = tmp;
+	account = gc->account;
+	b->account = account;
 
 	GAIM_DIALOG(b->window);
 	gtk_window_set_role(GTK_WINDOW(b->window), "set_info");
@@ -2343,12 +2343,12 @@ void show_set_info(struct gaim_connection *gc)
 	gtk_widget_show(vbox);
 
 	buf = g_malloc(256);
-	g_snprintf(buf, 256, _("Changing info for %s:"), tmp->username);
+	g_snprintf(buf, 256, _("Changing info for %s:"), account->username);
 	label = gtk_label_new(buf);
 	g_free(buf);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
-	
+
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
@@ -2357,8 +2357,8 @@ void show_set_info(struct gaim_connection *gc)
 	b->text = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(b->text), GTK_WRAP_WORD);
 	gtk_widget_set_size_request(b->text, 300, 200);
-	buf = g_malloc(strlen(tmp->user_info) + 1);
-	strncpy_nohtml(buf, tmp->user_info, strlen(tmp->user_info) + 1);
+	buf = g_malloc(strlen(account->user_info) + 1);
+	strncpy_nohtml(buf, account->user_info, strlen(account->user_info) + 1);
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(b->text));
 	gtk_text_buffer_set_text(buffer, buf, -1);
 	g_free(buf);
@@ -2488,13 +2488,13 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 	who = gtk_entry_get_text(GTK_ENTRY(p->entry));
 
 	if (!p->permit) {
-		if (gaim_privacy_deny_add(p->gc->user, who)) {
+		if (gaim_privacy_deny_add(p->gc->account, who)) {
 			serv_add_deny(p->gc, who);
 			build_block_list();
 			gaim_blist_save();
 		}
 	} else {
-		if (gaim_privacy_permit_add(p->gc->user, who)) {
+		if (gaim_privacy_permit_add(p->gc->account, who)) {
 			serv_add_permit(p->gc, who);
 			build_allow_list();
 			gaim_blist_save();
@@ -3399,7 +3399,7 @@ static void do_import_dialog(GtkWidget *w, gpointer data)
 		return;
 	}
 	if (g_slist_find(connections, importgc)) {
-		do_import(importgc->user, file);
+		do_import(importgc->account, file);
 		gaim_blist_save();
 	}
 	destroy_dialog(NULL, importdialog);
@@ -4369,8 +4369,8 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 				/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
 				accts = gaim_group_get_accounts(g);
 				while(accts) {
-					struct aim_user *au = accts->data;
-					serv_rename_group(au->gc, g, new_name);
+					struct gaim_account *account = accts->data;
+					serv_rename_group(account->gc, g, new_name);
 					accts = g_slist_remove(accts, accts->data);
 				}
 				g_free(g);
@@ -4378,8 +4378,8 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 				prevname = g_strdup(g->name);
 				accts = gaim_group_get_accounts(g);
 				while(accts) {
-					struct aim_user *au = accts->data;
-					serv_rename_group(au->gc, g, new_name);
+					struct gaim_account *account = accts->data;
+					serv_rename_group(account->gc, g, new_name);
 					accts = g_slist_remove(accts, accts->data);
 				}
 				g_snprintf(g->name, sizeof(g->name), "%s", new_name);
@@ -4465,7 +4465,7 @@ static void do_rename_buddy(GtkObject *obj, GtkWidget *entry)
 	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
 	b = gtk_object_get_user_data(obj);
 
-	if (!g_slist_find(connections, b->user->gc)) {
+	if (!g_slist_find(connections, b->account->gc)) {
 		destroy_dialog(rename_bud_dialog, rename_bud_dialog);
 		return;
 	}
@@ -4485,9 +4485,9 @@ static void do_rename_buddy(GtkObject *obj, GtkWidget *entry)
 		struct group *g = find_group_by_buddy(b);
 		char *prevname = g_strdup(b->name);
 		if (g)
-			serv_remove_buddy(b->user->gc, b->name, g->name);
+			serv_remove_buddy(b->account->gc, b->name, g->name);
 		g_snprintf(b->name, sizeof(b->name), "%s", new_name);
-		serv_add_buddy(b->user->gc, b->name);
+		serv_add_buddy(b->account->gc, b->name);
 		handle_buddy_rename(b, prevname);
 		gaim_blist_save();
 		g_free(prevname);
@@ -5343,14 +5343,14 @@ void set_vcard_dialog_ok_clicked(GtkWidget *widget, gpointer  data)
 	/*
 	 * Set the user info and (possibly) send to the server
 	 */
-        if (b->user) {
-                strncpy(b->user->user_info, tmp, sizeof b->user->user_info);
-                gc = b->user->gc;
+        if (b->account) {
+                strncpy(b->account->user_info, tmp, sizeof b->account->user_info);
+                gc = b->account->gc;
 
                 save_prefs();
 
                 if (gc)
-                        serv_set_info(gc, b->user->user_info);
+                        serv_set_info(gc, b->account->user_info);
         }
 
 	g_free(tmp);

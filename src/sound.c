@@ -137,25 +137,6 @@ static int can_play_audio()
 	return check_dev("/dev/audio");
 }
 
-#ifdef ESD_SOUND
-
-int esd_fd;
-
-static int can_play_esd()
-{
-	esd_format_t format = ESD_BITS16 | ESD_STREAM | ESD_PLAY | ESD_MONO;
-
-	esd_fd = esd_play_stream(format, 8012, NULL, "gaim");
-
-	if (esd_fd < 0) {
-		return 0;
-	}
-
-	return 1;
-}
-
-#endif /* ESD_SOUND */
-
 #ifdef ARTSC_SOUND
 
 /*

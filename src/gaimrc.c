@@ -47,7 +47,7 @@
 #define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
 #define MAX_VALUES 10
 
-GSList *aim_users = NULL;
+GSList *gaim_accounts = NULL;
 guint misc_options;
 guint logging_options;
 guint blist_options;
@@ -476,11 +476,11 @@ static void gaimrc_read_plugins(FILE *f)
 }
 #endif /* GAIM_PLUGINS */
 
-static struct aim_user *gaimrc_read_user(FILE *f)
+static struct gaim_account *gaimrc_read_user(FILE *f)
 {
 	struct parse parse_buffer;
 	struct parse *p;
-	struct aim_user *u;
+	struct gaim_account *account;
 	int i;
 	char buf[4096];
 
@@ -492,112 +492,112 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "ident"))
 		return NULL;
 
-	u = g_new0(struct aim_user, 1);
+	account = g_new0(struct gaim_account, 1);
 
-	strcpy(u->username, p->value[0]);
-	strcpy(u->password, p->value[1]);
+	strcpy(account->username, p->value[0]);
+	strcpy(account->password, p->value[1]);
 
-	u->user_info[0] = 0;
-	u->options = OPT_USR_REM_PASS;
-	u->protocol = DEFAULT_PROTO;
-	u->permit = u->deny = NULL;
+	account->user_info[0] = 0;
+	account->options = OPT_ACCT_REM_PASS;
+	account->protocol = DEFAULT_PROTO;
+	account->permit = account->deny = NULL;
 
 	if (!fgets(buf, sizeof(buf), f))
-		return u;
+		return account;
 
 	if (strcmp(buf, "\t\tuser_info {\n")) {
-		return u;
+		return account;
 	}
 
 	if (!fgets(buf, sizeof(buf), f))
-		return u;
+		return account;
 
 	while (strncmp(buf, "\t\t}", 3)) {
 		if (strlen(buf) > 3)
-			strcat(u->user_info, buf + 3);
+			strcat(account->user_info, buf + 3);
 
 		if (!fgets(buf, sizeof(buf), f)) {
-			return u;
+			return account;
 		}
 	}
 
-	if ((i = strlen(u->user_info))) {
-		u->user_info[i - 1] = '\0';
+	if ((i = strlen(account->user_info))) {
+		account->user_info[i - 1] = '\0';
 	}
 
 	if (!fgets(buf, sizeof(buf), f)) {
-		return u;
+		return account;
 	}
 
 	if (!strcmp(buf, "\t}")) {
-		return u;
+		return account;
 	}
 
 	p = parse_line(buf, &parse_buffer);
 
 	if (strcmp(p->option, "user_opts"))
-		return u;
+		return account;
 
-	u->options = atoi(p->value[0]);
-	u->protocol = atoi(p->value[1]);
+	account->options = atoi(p->value[0]);
+	account->protocol = atoi(p->value[1]);
 
 	if (!fgets(buf, sizeof(buf), f))
-		return u;
+		return account;
 
 	if (!strcmp(buf, "\t}"))
-		return u;
+		return account;
 
 	p = parse_line(buf, &parse_buffer);
 
 	if (strcmp(p->option, "proto_opts"))
-		return u;
+		return account;
 
 	for (i = 0; i < 7; i++)
-		g_snprintf(u->proto_opt[i], sizeof u->proto_opt[i], "%s", p->value[i]);
+		g_snprintf(account->proto_opt[i], sizeof account->proto_opt[i], "%s", p->value[i]);
 
 	if (!fgets(buf, sizeof(buf), f))
-		return u;
+		return account;
 
 	if (!strcmp(buf, "\t}"))
-		return u;
+		return account;
 
 	p = parse_line(buf, &parse_buffer);
 
 	if (strcmp(p->option, "iconfile"))
-		return u;
+		return account;
 
-	g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", p->value[0]);
+	g_snprintf(account->iconfile, sizeof(account->iconfile), "%s", p->value[0]);
 
 	if (!fgets(buf, sizeof(buf), f))
-		return u;
+		return account;
 
 	if (!strcmp(buf, "\t}"))
-		return u;
+		return account;
 
 	p = parse_line(buf, &parse_buffer);
 
 	if (strcmp(p->option, "alias"))
-		return u;
+		return account;
 
-	g_snprintf(u->alias, sizeof(u->alias), "%s", p->value[0]);
+	g_snprintf(account->alias, sizeof(account->alias), "%s", p->value[0]);
 
-	return u;
+	return account;
 
 }
 
-static void gaimrc_write_user(FILE *f, struct aim_user *u)
+static void gaimrc_write_user(FILE *f, struct gaim_account *account)
 {
 	char *c;
 	int nl = 1, i;
 
-	if (u->options & OPT_USR_REM_PASS) {
-		fprintf(f, "\t\tident { %s } { %s }\n", u->username, (c = escape_text2(u->password)));
+	if (account->options & OPT_ACCT_REM_PASS) {
+		fprintf(f, "\t\tident { %s } { %s }\n", account->username, (c = escape_text2(account->password)));
 		free(c);
 	} else {
-		fprintf(f, "\t\tident { %s } {  }\n", u->username);
+		fprintf(f, "\t\tident { %s } {  }\n", account->username);
 	}
 	fprintf(f, "\t\tuser_info {");
-	c = u->user_info;
+	c = account->user_info;
 	while (*c) {
 		/* This is not as silly as it looks. */
 		if (*c == '\n') {
@@ -614,29 +614,29 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
 		c++;
 	}
 	fprintf(f, "\n\t\t}\n");
-	fprintf(f, "\t\tuser_opts { %d } { %d }\n", u->options, u->protocol);
+	fprintf(f, "\t\tuser_opts { %d } { %d }\n", account->options, account->protocol);
 	fprintf(f, "\t\tproto_opts");
 	for (i = 0; i < 7; i++)
-		fprintf(f, " { %s }", u->proto_opt[i]);
+		fprintf(f, " { %s }", account->proto_opt[i]);
 	fprintf(f, "\n");
 #ifndef _WIN32
-	fprintf(f, "\t\ticonfile { %s }\n", u->iconfile);
+	fprintf(f, "\t\ticonfile { %s }\n", account->iconfile);
 #else
 	{
 		/* Make sure windows dir speparators arn't swallowed up when
 		   path is read back in from resource file */
-		char* tmp=wgaim_escape_dirsep(u->iconfile);
-		fprintf(f, "\t\ticonfile { %s }\n", tmp);	
+		char* tmp=wgaim_escape_dirsep(account->iconfile);
+		fprintf(f, "\t\ticonfile { %s }\n", tmp);
 		g_free(tmp);
 	}
 #endif
-	fprintf(f, "\t\talias { %s }\n", u->alias);
+	fprintf(f, "\t\talias { %s }\n", account->alias);
 }
 
 static void gaimrc_read_users(FILE *f)
 {
 	char buf[2048];
-	struct aim_user *u=NULL;
+	struct gaim_account *account = NULL;
 	struct parse parse_buffer;
 	struct parse *p=NULL;
 
@@ -652,8 +652,8 @@ static void gaimrc_read_users(FILE *f)
 
 		if (strcmp(p->option, "user")==0 ||
 		    strcmp(p->option, "current_user")==0) {
-			if((u=gaimrc_read_user(f))!=NULL)
-				aim_users = g_slist_append(aim_users, u);
+			if((account=gaimrc_read_user(f))!=NULL)
+				gaim_accounts = g_slist_append(gaim_accounts, account);
 			else {
 				debug_printf("Error reading in users from .gaimrc\n");
 				return;
@@ -664,15 +664,15 @@ static void gaimrc_read_users(FILE *f)
 
 static void gaimrc_write_users(FILE *f)
 {
-	GSList *usr = aim_users;
-	struct aim_user *u;
+	GSList *usr = gaim_accounts;
+	struct gaim_account *account;
 
 	fprintf(f, "users {\n");
 
 	while (usr) {
-		u = (struct aim_user *)usr->data;
+		account = (struct gaim_account *)usr->data;
 		fprintf(f, "\tuser {\n");
-		gaimrc_write_user(f, u);
+		gaimrc_write_user(f, account);
 
 		fprintf(f, "\t}\n");
 

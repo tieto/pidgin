@@ -183,7 +183,7 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 	}
 
 	if (g_strcasecmp(b->name, prevname)) {
-		bs->connlist = g_slist_remove(bs->connlist, b->user->gc);
+		bs->connlist = g_slist_remove(bs->connlist, b->account->gc);
 		if (!bs->connlist) {
 			gs->members = g_slist_remove(gs->members, bs);
 			if (bs->log_timer > 0)
@@ -355,7 +355,7 @@ static void update_num_group(struct group_show *gs)
 	if (g) {
 		for (c = g->members; c; c = c->next) {
 			b = c->data;
-			if(b->user->gc) {
+			if(b->account->gc) {
 				if(b->present)
 					on++;
 				total++;
@@ -443,7 +443,7 @@ void pressed_im_bud(GtkWidget *widget, struct buddy *b)
 	if (c != NULL)
 		gaim_window_show(gaim_conversation_get_window(c));
 	else
-		c = gaim_conversation_new(GAIM_CONV_IM, b->user, b->name);
+		c = gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
 }
 
 void pressed_im(GtkWidget *widget, struct buddy_show *b)
@@ -455,10 +455,10 @@ void pressed_im(GtkWidget *widget, struct buddy_show *b)
 	if (c != NULL) {
 		gaim_window_show(gaim_conversation_get_window(c));
 	} else {
-		struct aim_user *user;
+		struct gaim_account *account;
 
-		user = ((struct gaim_connection *)b->connlist->data)->user;
-		c    = gaim_conversation_new(GAIM_CONV_IM, user, b->name);
+		account = ((struct gaim_connection *)b->connlist->data)->account;
+		c    = gaim_conversation_new(GAIM_CONV_IM, account, b->name);
 	}
 }
 
@@ -475,7 +475,7 @@ void show_syslog()
 void pressed_alias_bs(GtkWidget *widget, struct buddy_show *bs)
 {
 	struct gaim_connection *gc = bs->connlist->data;
-	alias_dialog_bud(find_buddy(gc->user, bs->name));
+	alias_dialog_bud(find_buddy(gc->account, bs->name));
 }
 
 void pressed_alias_bud(GtkWidget *widget, struct buddy *b)
@@ -498,9 +498,9 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 
 	if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
 		struct gaim_conversation *c;
-		struct aim_user *user;
+		struct gaim_account *account;
 
-		user = ((struct gaim_connection *)b->connlist->data)->user;
+		account = ((struct gaim_connection *)b->connlist->data)->account;
 
 		c = gaim_find_conversation(b->name);
 
@@ -511,10 +511,10 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 			gaim_window_switch_conversation(win, index);
 			gaim_window_show(win);
 
-			gaim_conversation_set_user(c, user);
+			gaim_conversation_set_account(c, account);
 		}
 		else
-			c = gaim_conversation_new(GAIM_CONV_IM, user, b->name);
+			c = gaim_conversation_new(GAIM_CONV_IM, account, b->name);
 
 		gaim_window_switch_conversation(gaim_conversation_get_window(c),
 										gaim_conversation_get_index(c));
@@ -561,7 +561,7 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		g_signal_connect(GTK_OBJECT(button), "activate",
 				   G_CALLBACK(new_bp_callback),
-				   cn ? find_buddy(((struct gaim_connection *)cn->data)->user, b->name) : NULL);
+				   cn ? find_buddy(((struct gaim_connection *)cn->data)->account, b->name) : NULL);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -751,8 +751,8 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 		/*
 		 * Add protocol-specific edit buddy menu items if they exist
 		 */
-		if (b->user->gc && b->user->gc->prpl->edit_buddy_menu) {
-			GList *mo = mo_top = b->user->gc->prpl->edit_buddy_menu(b->user->gc, b->name);
+		if (b->account->gc && b->account->gc->prpl->edit_buddy_menu) {
+			GList *mo = mo_top = b->account->gc->prpl->edit_buddy_menu(b->account->gc, b->name);
 
 			while (mo) {
 				struct proto_buddy_menu *pbm = mo->data;
@@ -803,8 +803,8 @@ void ui_remove_buddy(struct buddy *rem_b)
 	if (gs) {
 		bs = find_buddy_show(gs, rem_b->name);
 		if (bs) {
-			if (g_slist_find(bs->connlist, rem_b->user->gc)) {
-				bs->connlist = g_slist_remove(bs->connlist, rem_b->user->gc);
+			if (g_slist_find(bs->connlist, rem_b->account->gc)) {
+				bs->connlist = g_slist_remove(bs->connlist, rem_b->account->gc);
 				if (!g_slist_length(bs->connlist)) {
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
@@ -936,14 +936,14 @@ void redo_buddy_list()
 					gs = new_group_show(g->name);
 				bs = find_buddy_show(gs, b->name);
 				if (!bs) {
-					if (b->user->gc->prpl->list_icon)
+					if (b->account->gc->prpl->list_icon)
 						bs = new_buddy_show(gs, b,
-								b->user->gc->prpl->list_icon(b->
+								b->account->gc->prpl->list_icon(b->
 									uc));
 					else
 						bs = new_buddy_show(gs, b, (char **)no_icon_xpm);
 				}
-				bs->connlist = g_slist_append(bs->connlist, b->user->gc);
+				bs->connlist = g_slist_append(bs->connlist, b->account->gc);
 				update_num_group(gs);
 			}
 		}
@@ -961,14 +961,14 @@ reset_convo_gcs()
 		c = (struct gaim_conversation *)l->data;
 
 		if (!g_slist_find(connections, gaim_conversation_get_gc(c))) {
-			struct aim_user *user;
+			struct gaim_account *account;
 
 			if (connections == NULL)
-				user = ((struct gaim_connection *)connections->data)->user;
+				account = ((struct gaim_connection *)connections->data)->account;
 			else
-				user = NULL;
+				account = NULL;
 
-			gaim_conversation_set_user(c, user);
+			gaim_conversation_set_account(c, account);
 		}
 	}
 }
@@ -1112,7 +1112,7 @@ void build_edit_tree()
 		while (mem) {
 			char buf[256];
 			b = (struct buddy *)mem->data;
-			if(b->user->gc) {
+			if(b->account->gc) {
 				if (get_buddy_alias_only(b)) {
 					g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, get_buddy_alias(b));
 					text[0] = buf;
@@ -1150,7 +1150,7 @@ void ui_add_buddy(struct gaim_connection *gc, struct group *g, struct buddy *b)
 	if (!blist)
 		return;
 
-	if(!b->user->gc)
+	if(!b->account->gc)
 		return;
 
 	p = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, g);
@@ -1200,7 +1200,7 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 		if (*type == EDIT_BUDDY) {
 			b = (struct buddy *)type;
 			g = find_group_by_buddy(b);
-			serv_remove_buddy(b->user->gc, b->name, g->name);
+			serv_remove_buddy(b->account->gc, b->name, g->name);
 			remove_buddy(b);
 			gaim_blist_save();
 		} else if (*type == EDIT_GROUP) {
@@ -1236,12 +1236,12 @@ void add_buddy_callback(GtkWidget *widget, void *dummy)
 			struct buddy *b = (struct buddy *)type;
 			struct group *g = find_group_by_buddy(b);
 			grp = g->name;
-			gc = b->user->gc;
+			gc = b->account->gc;
 		} else if (*type == EDIT_GROUP) {
 			struct group *g = (struct group *)type;
 			grp = g->name;
 			if(g->members)
-				gc = ((struct buddy *)g->members->data)->user->gc;
+				gc = ((struct buddy *)g->members->data)->account->gc;
 			else
 				gc = connections->data;
 		} else {
@@ -1264,7 +1264,7 @@ void add_group_callback(GtkWidget *widget, void *dummy)
 		node = i->data;
 		type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
 		if (*type == EDIT_BUDDY)
-			gc = ((struct buddy *)type)->user->gc;
+			gc = ((struct buddy *)type)->account->gc;
 		else if (*type == EDIT_GROUP)
 			gc = connections->data;
 		else
@@ -1278,7 +1278,7 @@ static void im_callback(GtkWidget *widget, GtkTree *tree)
 	GList *i;
 	struct buddy_show *b = NULL;
 	struct gaim_conversation *c;
-	struct aim_user *user;
+	struct gaim_account *account;
 
 	i = GTK_TREE_SELECTION_OLD(tree);
 	if (i) {
@@ -1291,14 +1291,14 @@ static void im_callback(GtkWidget *widget, GtkTree *tree)
 	if (!b->name)
 		return;
 
-	user = ((struct gaim_connection *)b->connlist->data)->user;
+	account = ((struct gaim_connection *)b->connlist->data)->account;
 
 	c = gaim_find_conversation(b->name);
 
 	if (c == NULL)
-		c = gaim_conversation_new(GAIM_CONV_IM, user, b->name);
+		c = gaim_conversation_new(GAIM_CONV_IM, account, b->name);
 	else {
-		gaim_conversation_set_user(c, user);
+		gaim_conversation_set_account(c, account);
 		gaim_window_raise(gaim_conversation_get_window(c));
 	}
 }
@@ -1372,7 +1372,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 
 	struct buddy_pounce *b;
 	struct gaim_conversation *c;
-	struct aim_user *u;
+	struct gaim_account *account;
 
 	GList *bp = buddy_pounces;
 
@@ -1385,12 +1385,12 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 		if (!(b->options & when))
 			continue;
 
-		u = find_user(b->pouncer, b->protocol);	/* find our user */
-		if (u == NULL)
+		account = gaim_account_find(b->pouncer, b->protocol);	/* find our user */
+		if (account == NULL)
 			continue;
 
 		/* check and see if we're signed on as the pouncer */
-		if (u->gc != gc)
+		if (account->gc != gc)
 			continue;
 
 		if (!g_strcasecmp(who, normalize (b->name))) {	/* find someone to pounce */
@@ -1398,9 +1398,9 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 				c = gaim_find_conversation(name);
 
 				if (c == NULL)
-					c = gaim_conversation_new(GAIM_CONV_IM, u, name);
+					c = gaim_conversation_new(GAIM_CONV_IM, account, name);
 				else
-					gaim_conversation_set_user(c, u);
+					gaim_conversation_set_account(c, account);
 			}
 			if (b->options & OPT_POUNCE_NOTIFY) {
 				char tmp[1024];
@@ -1421,14 +1421,14 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 					c = gaim_find_conversation(name);
 
 					if (c == NULL)
-						c = gaim_conversation_new(GAIM_CONV_IM, u, name);
+						c = gaim_conversation_new(GAIM_CONV_IM, account, name);
 					else
-						gaim_conversation_set_user(c, u);
+						gaim_conversation_set_account(c, account);
 
 					gaim_conversation_write(c, NULL, b->message, -1,
 											WFLAG_SEND, time(NULL));
 
-					serv_send_im(u->gc, name, b->message, -1, 0);
+					serv_send_im(account->gc, name, b->message, -1, 0);
 				}
 			}
 			if (b->options & OPT_POUNCE_COMMAND) {
@@ -1475,7 +1475,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 static void new_bp_callback(GtkWidget *w, struct buddy *b)
 {
 	if (b)
-		show_new_bp(b->name, b->user->gc, b->idle, b->uc & UC_UNAVAILABLE, NULL);
+		show_new_bp(b->name, b->account->gc, b->idle, b->uc & UC_UNAVAILABLE, NULL);
 	else
 		show_new_bp(NULL, NULL, 0, 0, NULL);
 }
@@ -1966,7 +1966,7 @@ static gboolean log_timeout(gpointer data)
 		GdkBitmap *bm;
 		gchar **xpm = NULL;
 		struct gaim_connection *gc = b->connlist->data;
-		struct buddy *light = find_buddy(gc->user, b->name);
+		struct buddy *light = find_buddy(gc->account, b->name);
 		if (gc->prpl->list_icon)
 			xpm = gc->prpl->list_icon(light->uc);
 		if (xpm == NULL)
@@ -2083,7 +2083,7 @@ static void update_idle_time(struct buddy_show *bs)
 	if (!bs->connlist)
 		return;
 	gc = bs->connlist->data;
-	b = find_buddy(gc->user, bs->name);
+	b = find_buddy(gc->account, bs->name);
 	if (!b)
 		return;
 	ihrs = (t - b->idle) / 3600;

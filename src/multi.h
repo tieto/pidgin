@@ -46,7 +46,7 @@ struct gaim_connection {
 	/* each connection then can have its own protocol-specific data */
 	void *proto_data;
 
-	struct aim_user *user;
+	struct gaim_account *account;
 
 	char username[64];
 	char displayname[128];
@@ -106,8 +106,8 @@ extern GSList *connections;
 /* number of accounts that are currently in the process of connecting */
 extern int connecting_count;
 
-struct aim_user *new_user(const char *, int, int);
-struct gaim_connection *new_gaim_conn(struct aim_user *);
+struct gaim_account *gaim_account_new(const char *, int, int);
+struct gaim_connection *new_gaim_conn(struct gaim_account *);
 void destroy_gaim_conn(struct gaim_connection *);
 
 void regenerate_user_list();

@@ -19,10 +19,10 @@ static GHashTable *hash = NULL;
 static guint tim = 0;
 
 static gboolean do_signon(gpointer data) {
-	struct aim_user *u = data;
-	if (g_slist_index(aim_users, u) < 0)
+	struct gaim_account *account = data;
+	if (g_slist_index(gaim_accounts, account) < 0)
 		return FALSE;
-	serv_login(u);
+	serv_login(account);
 	tim = 0;
 	return FALSE;
 }
@@ -30,15 +30,15 @@ static gboolean do_signon(gpointer data) {
 static void reconnect(struct gaim_connection *gc, void *m) {
 	if (!gc->wants_to_die) {
 		int del;
-		del = (int)g_hash_table_lookup(hash, gc->user);
+		del = (int)g_hash_table_lookup(hash, gc->account);
 		if (!del)
 			del = INITIAL;
 		else
 			del = MAX(2 * del, MAXTIME);
-		tim = g_timeout_add(del, do_signon, gc->user);
-		g_hash_table_insert(hash, gc->user, (gpointer)del);
+		tim = g_timeout_add(del, do_signon, gc->account);
+		g_hash_table_insert(hash, gc->account, (gpointer)del);
 	} else {
-		g_hash_table_remove(hash, gc->user);
+		g_hash_table_remove(hash, gc->account);
 	}
 }
 

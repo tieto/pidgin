@@ -467,7 +467,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	struct mail_notify *mn;
 	char buf[2048];
 
-	if (!(gc->user->options & OPT_USR_MAIL_CHECK))
+	if (!(gc->account->options & OPT_ACCT_MAIL_CHECK))
 		return;
 
 	if (!(mn = find_mail_notify(gc))) {
@@ -651,7 +651,7 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 {
 	char buf[BUF_LONG];
 	struct got_add *ga = g_new0(struct got_add, 1);
-	struct buddy *b = find_buddy(gc->user, who);
+	struct buddy *b = find_buddy(gc->account, who);
 
 	ga->gc = gc;
 	ga->who = g_strdup(who);

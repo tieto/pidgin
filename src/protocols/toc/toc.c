@@ -182,27 +182,28 @@ int toc_soc_close( int fd )
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
  * on success. */
-static void toc_login(struct aim_user *user)
+static void toc_login(struct gaim_account *account)
 {
 	struct gaim_connection *gc;
 	struct toc_data *tdt;
 	char buf[80];
 
-	gc = new_gaim_conn(user);
+	gc = new_gaim_conn(account);
 	gc->proto_data = tdt = g_new0(struct toc_data, 1);
 	gc->flags |= OPT_CONN_HTML;
 	gc->flags |= OPT_CONN_AUTO_RESP;
 
 	g_snprintf(buf, sizeof buf, "Looking up %s",
-		   user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST);
+		   account->proto_opt[USEROPT_AUTH][0] ? account->proto_opt[USEROPT_AUTH] : TOC_HOST);
 	set_login_progress(gc, 1, buf);
 
 	debug_printf("* Client connects to TOC\n");
- 	if (proxy_connect(user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST,
-			  user->proto_opt[USEROPT_AUTHPORT][0] ?
-				  atoi(user->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
-			  toc_login_callback, gc) != 0 || !user->gc) {
-		g_snprintf(buf, sizeof(buf), "Connect to %s failed", user->proto_opt[USEROPT_AUTH]);
+	if (proxy_connect(account->proto_opt[USEROPT_AUTH][0] ?
+				account->proto_opt[USEROPT_AUTH] : TOC_HOST,
+				account->proto_opt[USEROPT_AUTHPORT][0] ?
+				atoi(account->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
+				toc_login_callback, gc) != 0 || !account->gc) {
+		g_snprintf(buf, sizeof(buf), "Connect to %s failed", account->proto_opt[USEROPT_AUTH]);
 		hide_login_progress(gc, buf);
 		signoff(gc);
 		return;
@@ -635,7 +636,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		}
 	} else if (!strcasecmp(c, "CONFIG")) {
 		c = strtok(NULL, ":");
-		parse_toc_buddy_list(gc->user, c);
+		parse_toc_buddy_list(gc->account, c);
 	} else if (!strcasecmp(c, "NICK")) {
 		/* ignore NICK so that things get imported/exported properly
 		c = strtok(NULL, ":");
@@ -795,7 +796,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		if (b->window) {
 			char error_buf[BUF_LONG];
-			gaim_conversation_set_user(b, NULL);
+			gaim_conversation_set_account(b, NULL);
 			g_snprintf(error_buf, sizeof error_buf, _("You have been disconnected"
 								  " from chat room %s."), b->name);
 			do_error_dialog(error_buf, NULL, GAIM_ERROR);
@@ -808,10 +809,10 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		url = strtok(NULL, ":");
 
 		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s",
-				gc->user->proto_opt[USEROPT_AUTH][0] ?
-					gc->user->proto_opt[USEROPT_AUTH] : TOC_HOST,
-				gc->user->proto_opt[USEROPT_AUTHPORT][0] ?
-					atoi(gc->user->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
+				gc->account->proto_opt[USEROPT_AUTH][0] ?
+					gc->account->proto_opt[USEROPT_AUTH] : TOC_HOST,
+				gc->account->proto_opt[USEROPT_AUTHPORT][0] ?
+					atoi(gc->account->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
 				url);
 		grab_url(tmp, FALSE, toc_got_info, NULL);
 	} else if (!strcasecmp(c, "DIR_STATUS")) {
@@ -987,7 +988,7 @@ static int toc_send_im(struct gaim_connection *gc, char *name, char *message, in
 static void toc_set_config(struct gaim_connection *gc)
 {
 	char *buf = g_malloc(MSG_LEN), snd[BUF_LEN * 2];
-	toc_build_config(gc->user, buf, MSG_LEN - strlen("toc_set_config \\{\\}"), FALSE);
+	toc_build_config(gc->account, buf, MSG_LEN - strlen("toc_set_config \\{\\}"), FALSE);
 	g_snprintf(snd, MSG_LEN, "toc_set_config {%s}", buf);
 	sflap_send(gc, snd, -1, TYPE_DATA);
 	g_free(buf);
@@ -1195,7 +1196,7 @@ static void toc_chat_leave(struct gaim_connection *g, int id)
 	if (!b)
 		return;		/* can this happen? */
 
-	if (gaim_conversation_get_user(b) == NULL) {
+	if (gaim_conversation_get_account(b) == NULL) {
 		/* TOC already kicked us out of this room */
 		serv_got_chat_left(g, id);
 	}
@@ -1269,7 +1270,7 @@ static GList *toc_buddy_menu(struct gaim_connection *gc, char *who)
 static void toc_add_permit(struct gaim_connection *gc, const char *who)
 {
 	char buf2[BUF_LEN * 2];
-	if (gc->user->permdeny != 3)
+	if (gc->account->permdeny != 3)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
@@ -1280,7 +1281,7 @@ static void toc_add_permit(struct gaim_connection *gc, const char *who)
 static void toc_add_deny(struct gaim_connection *gc, const char *who)
 {
 	char buf2[BUF_LEN * 2];
-	if (gc->user->permdeny != 4)
+	if (gc->account->permdeny != 4)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", normalize(who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
@@ -1294,7 +1295,7 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 	GSList *list;
 	int at;
 
-	switch (gc->user->permdeny) {
+	switch (gc->account->permdeny) {
 	case 1:
 		/* permit all, deny none. to get here reliably we need to have been in permit
 		 * mode, and send an empty toc_add_deny message, which will switch us to deny none */
@@ -1318,7 +1319,7 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 		sflap_send(gc, buf2, -1, TYPE_DATA);
 
 		at = g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
-		list = gc->user->permit;
+		list = gc->account->permit;
 		while (list) {
 			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", normalize(list->data));
 			if (at > MSG_LEN + 32) {	/* from out my ass comes greatness */
@@ -1336,7 +1337,7 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 		sflap_send(gc, buf2, -1, TYPE_DATA);
 
 		at = g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
-		list = gc->user->deny;
+		list = gc->account->deny;
 		while (list) {
 			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", normalize(list->data));
 			if (at > MSG_LEN + 32) {	/* from out my ass comes greatness */
@@ -1356,14 +1357,14 @@ static void toc_set_permit_deny(struct gaim_connection *gc)
 
 static void toc_rem_permit(struct gaim_connection *gc, const char *who)
 {
-	if (gc->user->permdeny != 3)
+	if (gc->account->permdeny != 3)
 		return;
 	toc_set_permit_deny(gc);
 }
 
 static void toc_rem_deny(struct gaim_connection *gc, const char *who)
 {
-	if (gc->user->permdeny != 4)
+	if (gc->account->permdeny != 4)
 		return;
 	toc_set_permit_deny(gc);
 }
@@ -1666,7 +1667,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
 	const char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
-	struct aim_user *user;
+	struct gaim_account *account;
 	char buf[BUF_LEN * 2];
 
 	if (file_is_dir(dirname, old_ft->window))
@@ -1682,7 +1683,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	ft->files = old_ft->files;
 	ft->port = old_ft->port;
 	ft->gc = old_ft->gc;
-	user = ft->gc->user;
+	account = ft->gc->account;
 	gtk_widget_destroy(old_ft->window);
 
 	g_snprintf(buf, sizeof(buf), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
@@ -1855,7 +1856,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
 	const char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
-	struct aim_user *user;
+	struct gaim_account *account;
 	char *buf, buf2[BUF_LEN * 2];
 
 	if (file_is_dir(dirname, old_ft->window))
@@ -1884,7 +1885,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	ft->ip = g_strdup(old_ft->ip);
 	ft->port = old_ft->port;
 	ft->gc = old_ft->gc;
-	user = ft->gc->user;
+	account = ft->gc->account;
 	gtk_widget_destroy(old_ft->window);
 
 	g_snprintf(buf2, sizeof(buf2), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);

@@ -38,8 +38,8 @@ make your patch, simply run 'cvs diff -u >my.patch' and send it off;
 either post it on sf.net/projects/gaim in the patches section, or email it
 to gaim@marko.net.
 
-This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-12-09 09:06:36 -0500 (Sun, 09 Dec 2001) $. Do not expect any information contained
+This file was last modified by $Author: faceprint $ on
+$Date: 2003-01-31 08:03:47 -0500 (Fri, 31 Jan 2003) $. Do not expect any information contained
 within to be current or correct.
 
 Here's something new. Someone requested that I comment the code. No. I'm a
@@ -117,8 +117,8 @@ buddy name, even between connections. (If that's not confusing enough,
 wait until I really start describing how the buddy list works.)
 
 New connections happen the exact same way as described above. Each
-aim_user can have one gaim_connection associated with it. aim_user and
-gaim_connection both have a protocol field. This is kind of confusing:
+gaim_account can have one gaim_connection associated with it. gaim_account
+and gaim_connection both have a protocol field. This is kind of confusing:
 gaim, except for the account editor screen and when the user signs on,
 ignores the user's protocl field, and only uses the connection's protocol
 field. You can change the connection's protocol field once it's created
@@ -436,10 +436,10 @@ MULTIPLE CONNECTIONS AND PRPLS
 ==============================
 
 OK, let's start with the basics. There are users. Each user is contained
-in an aim_user struct, and kept track of in the aim_users GList (GSList?).
-Each aim_user has certain features: a username, a password, and user_info.
-It also has certain options, and the protocol it uses to sign on (kept
-as an int which is #define'd in prpl.h).
+in an gaim_account struct, and kept track of in the gaim_accounts GSList.
+Each gaim_account has certain features: a username, a password, and
+user_info.  It also has certain options, and the protocol it uses to sign
+on (kept as an int which is #define'd in prpl.h).
 
 Now then, there are protocols that gaim knows about. Each protocol is
 in a prpl struct and kept track of in the protocols GSList. The way the
@@ -459,11 +459,11 @@ Here's how struct gaim_connection fits into all of this. At some point
 the User (capitalized to indicate a person and not a name) will try to
 sign on one of Their users. serv_login is then called for that user. It
 searches for the prpl that is assigned to that user, and calls that prpl's
-login function, passing it the aim_user struct that is attempting to sign
-on. The prpl is then responsible for seeing that the gaim_connection
+login function, passing it the gaim_account struct that is attempting to
+sign on. The prpl is then responsible for seeing that the gaim_connection
 is created (by calling new_gaim_connection), and registering it as
-being online (by calling account_online and passing it the aim_user and
-gaim_connection structs). At that point, the aim_user and gaim_connection
+being online (by calling account_online and passing it the gaim_account and
+gaim_connection structs). At that point, the gaim_account and gaim_connection
 structs have pointers to each other, and the gaim_connection struct has
 a pointer to the prpl struct that it is using. The gaim_connections are
 stored in the connections GSList.  The way connection management works is,

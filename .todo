@@ -72,7 +72,7 @@
             make entry widget height preference a relative size, that is it doesn't change the overall height of the window.
         </note>
         <note priority="medium" time="1036039984">
-            Only show one instance of each aim_user at a time in the sign on dialog. reset the progress bar on disconnect instead of creating a new entry.
+            Only show one instance of each gaim_account at a time in the sign on dialog. reset the progress bar on disconnect instead of creating a new entry.
         </note>
         <note priority="medium" time="1036040014">
             buddy pounce stuff

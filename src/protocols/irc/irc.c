@@ -179,7 +179,7 @@ irc_send_convert(struct gaim_connection *gc, char *string, int maxlen, int *done
 	int inleft = strlen(string), outleft = maxlen;
 	GIConv conv;
 	
-	conv = g_iconv_open(gc->user->proto_opt[USEROPT_CHARSET], "UTF-8");
+	conv = g_iconv_open(gc->account->proto_opt[USEROPT_CHARSET], "UTF-8");
 	if (g_iconv(conv, &inptr, &inleft, &outptr, &outleft) == -1) {
 		debug_printf("IRC charset conversion error\n");
 		debug_printf("Sending as UTF-8 (this is a hack!)\n");
@@ -200,7 +200,7 @@ irc_recv_convert(struct gaim_connection *gc, char *string)
 	GError *err = NULL;
 	
 	utf8 = g_convert(string, strlen(string), "UTF-8",
-			 gc->user->proto_opt[USEROPT_CHARSET], NULL, NULL, &err);
+			 gc->account->proto_opt[USEROPT_CHARSET], NULL, NULL, &err);
 	if (err) {
 		debug_printf("IRC recv conversion error: %s\n", err->message);
 		utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
@@ -505,7 +505,7 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	else	{
 		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
 			    chat->nick);
-		convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->user,
+		convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->account,
 									  chat->nick);
 		gaim_conversation_write(convo, NULL, buf, -1, WFLAG_SYSTEM,
 								time(NULL));
@@ -568,7 +568,7 @@ dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
 	struct gaim_conversation *convo;
 	char buf[IRC_BUF_LEN];
 
-	convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->user, chat->nick);
+	convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->account, chat->nick);
 
 	chat->fd = source;
 	g_snprintf (buf, sizeof buf,
@@ -609,7 +609,7 @@ handle_list(struct gaim_connection *gc, char *list)
 		GSList *m = ((struct group *)gr->data)->members;
 		while (m) {
 			struct buddy *b = m->data;
-			if(b->user->gc == gc) {
+			if(b->account->gc == gc) {
 				char *tmp = g_strdup(b->name);
 				char *x, *l;
 				g_strdown(tmp);
@@ -649,7 +649,7 @@ irc_request_buddy_update(gpointer data)
 		GSList *m = g->members;
 		while (m) {
 			struct buddy *b = m->data;
-			if(b->user->gc == gc) {
+			if(b->account->gc == gc) {
 				if (n + strlen(b->name) + 2 > sizeof(buf)) {
 					g_snprintf(buf + n, sizeof(buf) - n, "\r\n");
 					irc_write(id->fd, buf, n);
@@ -1262,7 +1262,7 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
 	}
 	if (!g_strncasecmp(msg, "USERINFO", 8)) {
-		g_snprintf(buf, sizeof(buf), "\001USERINFO Alias: %s\001", gc->user->alias);
+		g_snprintf(buf, sizeof(buf), "\001USERINFO Alias: %s\001", gc->account->alias);
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP USERINFO requested from %s", nick);
 		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
@@ -1393,7 +1393,7 @@ irc_parse(struct gaim_connection *gc, char *buf)
 			if (!c)
 				return FALSE;
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
-			gaim_conversation_set_user(c, NULL);
+			gaim_conversation_set_account(c, NULL);
 			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s: %s"),
 				   word[3], *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5]);
 			do_error_dialog(outbuf, _("IRC Error"), GAIM_ERROR);
@@ -1673,12 +1673,12 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	idata->fd = source;
 	
 	/* Try a quick conversion to see if the specified encoding is OK */
-	test = g_convert("test", strlen("test"), gc->user->proto_opt[USEROPT_CHARSET],
+	test = g_convert("test", strlen("test"), gc->account->proto_opt[USEROPT_CHARSET],
 			 "UTF-8", NULL, NULL, &err);
 	if (err) {
 		debug_printf("Couldn't initialize %s for IRC charset conversion, using ISO-8859-1\n",
-			     gc->user->proto_opt[USEROPT_CHARSET]);
-		strcpy(gc->user->proto_opt[USEROPT_CHARSET], "ISO-8859-1");
+			     gc->account->proto_opt[USEROPT_CHARSET]);
+		strcpy(gc->account->proto_opt[USEROPT_CHARSET], "ISO-8859-1");
 	}
 	
 	g_free(test);
@@ -1688,8 +1688,8 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	if (!*hostname)
 		g_snprintf(hostname, sizeof(hostname), "localhost");
 
-	if (*gc->user->password) {
-		g_snprintf(buf, sizeof(buf), "PASS %s\r\n", gc->user->password);
+	if (*gc->account->password) {
+		g_snprintf(buf, sizeof(buf), "PASS %s\r\n", gc->account->password);
 
 		if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, "Write error");
@@ -1700,8 +1700,8 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 
 	g_snprintf(buf, sizeof(buf), "USER %s %s %s :%s\r\n",
 		   g_get_user_name(), hostname, 
-		   gc->user->proto_opt[USEROPT_SERV], 
-		   gc->user->alias && strlen(gc->user->alias) ? gc->user->alias : "gaim");
+		   gc->account->proto_opt[USEROPT_SERV], 
+		   gc->account->alias && strlen(gc->account->alias) ? gc->account->alias : "gaim");
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
@@ -1719,12 +1719,12 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 }
 
 static void 
-irc_login(struct aim_user *user)
+irc_login(struct gaim_account *account)
 {
 	char buf[IRC_BUF_LEN];
 	int rc;
 
-	struct gaim_connection *gc = new_gaim_conn(user);
+	struct gaim_connection *gc = new_gaim_conn(account);
 	struct irc_data *idata = gc->proto_data = g_new0(struct irc_data, 1);
 
 	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", gc->username);
@@ -1738,10 +1738,11 @@ irc_login(struct aim_user *user)
 	idata->str = g_string_new("");
 	idata->fd = -1;
 
-	rc = proxy_connect(user->proto_opt[USEROPT_SERV],
-				  user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) :
-								     6667, irc_login_callback, gc);
-	if (!user->gc || (rc != 0)) {
+	rc = proxy_connect(account->proto_opt[USEROPT_SERV],
+				  account->proto_opt[USEROPT_PORT][0] ?
+				  atoi(account->proto_opt[USEROPT_PORT]) : 6667,
+				  irc_login_callback, gc);
+	if (!account->gc || (rc != 0)) {
 		hide_login_progress(gc, "Unable to create socket");
 		signoff(gc);
 		return;
@@ -2081,7 +2082,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 		irc_write(id->fd, buf, strlen(buf));
 		if (c) {
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
-			gaim_conversation_set_user(c, NULL);
+			gaim_conversation_set_account(c, NULL);
 			g_snprintf(buf, sizeof(buf), _("You have left %s"), chan);
 			do_error_dialog(buf, _("IRC Part"), GAIM_INFO);
 		}
@@ -2378,7 +2379,7 @@ dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 	chat->fd = accept (chat->fd, (struct sockaddr *) (&addr), &addrlen);
 	if (!chat->fd) {
 		dcc_chat_cancel (chat);
-		convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->user,
+		convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->account,
 									  chat->nick);
 		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
 			    chat->nick);
@@ -2388,7 +2389,7 @@ dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 	}
 	chat->inpa =
 		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_in, chat);
-	convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->user, chat->nick);
+	convo = gaim_conversation_new(GAIM_CONV_IM, chat->gc->account, chat->nick);
 	g_snprintf (buf, sizeof buf, _("DCC Chat with %s established"),
 				chat->nick);
 	gaim_conversation_write(convo, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
@@ -2599,7 +2600,7 @@ irc_send_privmsg(struct gaim_connection *gc, char *who, char *what, gboolean fra
 	char buf[IRC_BUF_LEN], *intl;
 	struct irc_data *id = gc->proto_data;
 	/* 512 - 12 (for PRIVMSG" "" :""\r\n") - namelen - nicklen - 68 */
-	int nicklen = (gc->user->alias && strlen(gc->user->alias)) ? strlen(gc->user->alias) : 4;
+	int nicklen = (gc->account->alias && strlen(gc->account->alias)) ? strlen(gc->account->alias) : 4;
 	int max = 444 - strlen(who) - strlen(g_get_user_name()) - nicklen;
 	
 	int len;

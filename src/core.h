@@ -42,7 +42,7 @@
 #include <gmodule.h>
 #endif
 
-struct aim_user;
+struct gaim_account;
 struct group;
 struct buddy;
 
@@ -56,7 +56,7 @@ struct buddy;
 /* This is far too long to be practical, but MSN users are probably used to long aliases */
 #define SELF_ALIAS_LEN 400
 
-struct aim_user {
+struct gaim_account {
 	char username[64];
 	char alias[SELF_ALIAS_LEN]; 
 	char password[32];
@@ -168,7 +168,7 @@ struct buddy {
         int uc;
 	guint caps; /* woohoo! */
 	void *proto_data; /* what a hack */
-	struct aim_user *user; /* the connection it belongs to */
+	struct gaim_account *account; /* the connection it belongs to */
 	GHashTable *settings;
 };
 
@@ -189,27 +189,27 @@ extern GList *probed_plugins;
 extern GList *callbacks;
 
 /* Functions in buddy.c */
-extern struct buddy *find_buddy(struct aim_user *, const char *);
+extern struct buddy *find_buddy(struct gaim_account *, const char *);
 extern struct group *find_group(const char *);
 extern struct group *find_group_by_buddy(struct buddy *);
-extern struct buddy *add_buddy(struct aim_user *, const char *, const char *, const char *);
+extern struct buddy *add_buddy(struct gaim_account *, const char *, const char *, const char *);
 extern void remove_buddy(struct buddy *);
 extern struct group *add_group(const char *);
 extern void remove_group(struct group *);
-extern void toc_build_config(struct aim_user *, char *, int len, gboolean);
-extern void parse_toc_buddy_list(struct aim_user *, char *);
+extern void toc_build_config(struct gaim_account *, char *, int len, gboolean);
+extern void parse_toc_buddy_list(struct gaim_account *, char *);
 extern void signoff_blocked(struct gaim_connection *);
 extern char* get_buddy_alias_only(struct buddy *);
 extern char* get_buddy_alias(struct buddy *);
 extern GSList *gaim_group_get_accounts(struct group *);
-extern gboolean gaim_group_on_account(struct group *, struct aim_user *);
-extern void do_import(struct aim_user *, const char *);
+extern gboolean gaim_group_on_account(struct group *, struct gaim_account *);
+extern void do_import(struct gaim_account *, const char *);
 extern void gaim_blist_load();
 extern void gaim_blist_save();
-extern gboolean gaim_privacy_permit_add(struct aim_user *, const char *);
-extern gboolean gaim_privacy_permit_remove(struct aim_user *, const char *);
-extern gboolean gaim_privacy_deny_add(struct aim_user *, const char *);
-extern gboolean gaim_privacy_deny_remove(struct aim_user *, const char *);
+extern gboolean gaim_privacy_permit_add(struct gaim_account *, const char *);
+extern gboolean gaim_privacy_permit_remove(struct gaim_account *, const char *);
+extern gboolean gaim_privacy_deny_add(struct gaim_account *, const char *);
+extern gboolean gaim_privacy_deny_remove(struct gaim_account *, const char *);
 extern void gaim_buddy_set_setting(struct buddy *, const char *, const char *);
 extern char *gaim_buddy_get_setting(struct buddy *, const char *);
 

@@ -347,7 +347,7 @@ event_del_conversation:
 	'c'	is the conversation being closed.
 
 event_connecting:
-	struct aim_user *u
+	struct gaim_account *u
 
 	This is called when Gaim attempts to bring a user on-line. The
 	boolean u->connecting is set to true, and connecting_count

@@ -274,7 +274,7 @@ static void icq_acc_auth(struct icq_auth *iq)
 		icq_SendAuthMsg(iq->link, iq->uin);
 
 		g_snprintf(uin, sizeof(uin), "%ld", iq->uin);
-		if (find_buddy(iq->gc->user, uin))
+		if (find_buddy(iq->gc->account, uin))
 			return;
 
 		iqnew = g_memdup(iq, sizeof(struct icq_auth));
@@ -304,8 +304,8 @@ static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, 
 	do_ask_dialog(msg, NULL, iq, _("Authorize"), icq_acc_auth, _("Deny"), icq_den_auth, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 }
 
-static void icq_login(struct aim_user *user) {
-	struct gaim_connection *gc = new_gaim_conn(user);
+static void icq_login(struct gaim_account *account) {
+	struct gaim_connection *gc = new_gaim_conn(account);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
 	icq_Link *link;
 	char ps[9];
@@ -314,11 +314,11 @@ static void icq_login(struct aim_user *user) {
 
 	icq_LogLevel = ICQ_LOG_MESSAGE;
 
-	g_snprintf(ps, sizeof(ps), "%s", user->password);
-	link = id->link = icq_ICQLINKNew(atol(user->username), ps,
-			  user->proto_opt[USEROPT_NICK][0] ? user->proto_opt[USEROPT_NICK] : "gaim user",
+	g_snprintf(ps, sizeof(ps), "%s", account->password);
+	link = id->link = icq_ICQLINKNew(atol(account->username), ps,
+			  account->proto_opt[USEROPT_NICK][0] ? account->proto_opt[USEROPT_NICK] : "gaim user",
 			  TRUE);
-	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", user->proto_opt[USEROPT_NICK]);
+	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", account->proto_opt[USEROPT_NICK]);
 
 	link->icq_Logged = icq_online;
 	link->icq_Disconnected = icq_logged_off;

@@ -574,27 +574,27 @@ XS (XS_GAIM_get_info)
 		{
 			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
 			if (g_slist_find(connections, gc))
-				XST_mIV(i++, g_slist_index(aim_users, gc->user));
+				XST_mIV(i++, g_slist_index(gaim_accounts, gc->account));
 			else
 				XST_mIV(i++, -1);
 		}
 		break;
 	case 5:
 		{
-			GSList *a = aim_users;
+			GSList *a = gaim_accounts;
 			while (a) {
-				struct aim_user *u = a->data;
-				XST_mPV(i++, u->username);
+				struct gaim_account *account = a->data;
+				XST_mPV(i++, account->username);
 				a = a->next;
 			}
 		}
 		break;
 	case 6:
 		{
-			GSList *a = aim_users;
+			GSList *a = gaim_accounts;
 			while (a) {
-				struct aim_user *u = a->data;
-				XST_mIV(i++, u->protocol);
+				struct gaim_account *account = a->data;
+				XST_mIV(i++, account->protocol);
 				a = a->next;
 			}
 		}
@@ -648,7 +648,7 @@ XS (XS_GAIM_buddy_list)
 		mem = g->members;
 		while (mem) {
 			buddy = (struct buddy *)mem->data;
-			if(buddy->user->gc == gc)
+			if(buddy->account == gc->account)
 				XST_mPV(i++, buddy->name);
 			mem = mem->next;
 		}
@@ -675,7 +675,7 @@ XS (XS_GAIM_online_list)
 		mem = g->members;
 		while (mem) {
 			b = (struct buddy *)mem->data;
-			if (b->user->gc == gc && b->present) XST_mPV(i++, b->name);
+			if (b->account == gc->account && b->present) XST_mPV(i++, b->name);
 			mem = mem->next;
 		}
 		list = g_slist_next(list);
@@ -694,8 +694,8 @@ XS (XS_GAIM_command)
 	if (!command) XSRETURN(0);
 	if        (!strncasecmp(command, "signon", 6)) {
 		int index = SvIV(ST(1));
-		if (g_slist_nth_data(aim_users, index))
-		serv_login(g_slist_nth_data(aim_users, index));
+		if (g_slist_nth_data(gaim_accounts, index))
+		serv_login(g_slist_nth_data(gaim_accounts, index));
 	} else if (!strncasecmp(command, "signoff", 7)) {
 		struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
 		if (g_slist_find(connections, gc)) signoff(gc);
@@ -744,7 +744,7 @@ XS (XS_GAIM_user_info)
 
 	gc = (struct gaim_connection *)SvIV(ST(0));
 	if (g_slist_find(connections, gc))
-		buddy = find_buddy(gc->user, SvPV(ST(1), junk));
+		buddy = find_buddy(gc->account, SvPV(ST(1), junk));
 
 	if (!buddy)
 		XSRETURN(0);
@@ -835,9 +835,9 @@ XS (XS_GAIM_print_to_conv)
 	c = gaim_find_conversation(nick);
 
 	if (!c)
-		c = gaim_conversation_new(GAIM_CONV_IM, gc->user, nick);
+		c = gaim_conversation_new(GAIM_CONV_IM, gc->account, nick);
 	else
-		gaim_conversation_set_user(c, gc->user);
+		gaim_conversation_set_account(c, gc->account);
 
 	gaim_conversation_write(c, NULL, what, -1,
 							(WFLAG_SEND | (isauto ? WFLAG_AUTO : 0)),

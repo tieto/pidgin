@@ -151,11 +151,11 @@
 #  define _(x) (x)
 #endif
 
-#define OPT_USR_AUTO		0x00000001
-/*#define OPT_USR_KEEPALV	0x00000002 this shouldn't be optional */
-#define OPT_USR_REM_PASS	0x00000004
-#define OPT_USR_MAIL_CHECK      0x00000008
-/*do not use OPT_USR		0x00000010  talk to robot101 about automatic
+#define OPT_ACCT_AUTO		0x00000001
+/*#define OPT_ACCT_KEEPALV	0x00000002 this shouldn't be optional */
+#define OPT_ACCT_REM_PASS	0x00000004
+#define OPT_ACCT_MAIL_CHECK      0x00000008
+/*do not use OPT_ACCT		0x00000010  talk to robot101 about automatic
  						name stuff with this option
  */
 
@@ -351,7 +351,7 @@ extern guint away_options;
 extern guint away_resend;
 extern int report_idle;
 extern int web_browser;
-extern GSList *aim_users;
+extern GSList *gaim_accounts;
 extern GSList *message_queue;
 extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
@@ -415,7 +415,7 @@ extern void debug_printf(char * fmt, ...) G_GNUC_PRINTF(1,2);
 
 /* Functions in server.c */
 /* input to serv */
-extern void serv_login(struct aim_user *);
+extern void serv_login(struct gaim_account *);
 extern void serv_close(struct gaim_connection *);
 extern void serv_touch_idle(struct gaim_connection *);
 extern int  serv_send_im(struct gaim_connection *, char *, char *, int, int);
@@ -458,7 +458,7 @@ extern void clean_pid();
 extern char *date();
 extern gint linkify_text(char *);
 extern char *sec_to_text(guint);
-extern struct aim_user *find_user(const char *, int) G_GNUC_PURE;
+extern struct gaim_account *gaim_account_find(const char *, int) G_GNUC_PURE;
 extern char *full_date() G_GNUC_PURE;
 extern void check_gaim_versions();
 extern char *away_subs(char *, char *);
@@ -529,7 +529,7 @@ typedef struct multi_entry_dlg {
 	gchar *role;				/* window role */
 	char *title;				/* window title */
 
-	struct aim_user *user;			/* user info - needed for most everything */
+	struct gaim_account *account;			/* user info - needed for most everything */
 
 	MultiInstrData *instructions;		/* instructions (what else?) */
 

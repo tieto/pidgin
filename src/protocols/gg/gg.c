@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4727 2003-01-28 21:42:44Z seanegan $
+ * $Id: gg.c 4766 2003-01-31 13:03:47Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -130,7 +130,7 @@ static gint args_compare(gconstpointer a, gconstpointer b)
 
 static gboolean allowed_uin(struct gaim_connection *gc, char *uin)
 {
-	switch (gc->user->permdeny) {
+	switch (gc->account->permdeny) {
 	case 1:
 		/* permit all, deny none */
 		return TRUE;
@@ -141,13 +141,13 @@ static gboolean allowed_uin(struct gaim_connection *gc, char *uin)
 		break;
 	case 3:
 		/* permit some. */
-		if (g_slist_find_custom(gc->user->permit, uin, args_compare))
+		if (g_slist_find_custom(gc->account->permit, uin, args_compare))
 			return TRUE;
 		return FALSE;
 		break;
 	case 4:
 		/* deny some. */
-		if (g_slist_find_custom(gc->user->deny, uin, args_compare))
+		if (g_slist_find_custom(gc->account->deny, uin, args_compare))
 			return FALSE;
 		return TRUE;
 		break;
@@ -278,7 +278,7 @@ static GList *agg_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b = find_buddy(gc->user, who);
+	struct buddy *b = find_buddy(gc->account, who);
 	static char buf[AGG_BUF_LEN];
 
 	if (!b) {
@@ -532,9 +532,9 @@ static void agg_keepalive(struct gaim_connection *gc)
 	}
 }
 
-static void agg_login(struct aim_user *user)
+static void agg_login(struct gaim_account *account)
 {
-	struct gaim_connection *gc = new_gaim_conn(user);
+	struct gaim_connection *gc = new_gaim_conn(account);
 	struct agg_data *gd = gc->proto_data = g_new0(struct agg_data, 1);
 	char buf[80];
 
@@ -542,13 +542,13 @@ static void agg_login(struct aim_user *user)
 
 	gd->sess = g_new0(struct gg_session, 1);
 
-	if (user->proto_opt[USEROPT_NICK][0])
+	if (account->proto_opt[USEROPT_NICK][0])
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s",
-			   user->proto_opt[USEROPT_NICK]);
+			   account->proto_opt[USEROPT_NICK]);
 
 	set_login_progress(gc, 1, _("Looking up GG server"));
 
-	if (invalid_uin(user->username)) {
+	if (invalid_uin(account->username)) {
 		hide_login_progress(gc, _("Invalid Gadu-Gadu UIN specified"));
 		signoff(gc);
 		return;
@@ -567,8 +567,8 @@ static void agg_login(struct aim_user *user)
 	   gg_login() sucks for me, so I'm using proxy_connect()
 	 */
 
-	gd->sess->uin = (uin_t) strtol(user->username, (char **)NULL, 10);
-	gd->sess->password = g_strdup(user->password);
+	gd->sess->uin = (uin_t) strtol(account->username, (char **)NULL, 10);
+	gd->sess->password = g_strdup(account->password);
 	gd->sess->state = GG_STATE_CONNECTING;
 	gd->sess->check = GG_CHECK_WRITE;
 	gd->sess->async = 1;
@@ -793,7 +793,7 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 		}
 
 		debug_printf("import_buddies_server_results: uin: %s\n", name);
-		if (!find_buddy(gc->user, name)) {
+		if (!find_buddy(gc->account, name)) {
 			/* Default group if none specified on server */
 			gchar *group = g_strdup("Gadu-Gadu");
 			if (strlen(data_tbl[5])) {
@@ -805,7 +805,7 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 				g_strfreev(group_tbl);
 			}
 			/* Add Buddy to our userlist */
-			add_buddy(gc->user, group, name, strlen(show) ? show : name);
+			add_buddy(gc->account, group, name, strlen(show) ? show : name);
 			gaim_blist_save();
 			g_free(group);
 		}
@@ -1017,7 +1017,7 @@ static void export_buddies_server(struct gaim_connection *gc)
 		while (m) {
 			struct buddy *b = m->data;
 
-			if(b->user->gc == gc) {
+			if(b->account->gc == gc) {
 				gchar *newdata;
 				/* GG Number */
 				gchar *name = gg_urlencode(b->name);

@@ -351,7 +351,7 @@ GTK1.2(some of this applies to gtk2 also):
 	option not to raise windows on event while away
 	make entry widget height preference a relative size, that is it doesn't change the
 		overall height of the window.
-	Only show one instance of each aim_user at a time in the sign on dialog. 
+	Only show one instance of each gaim_account at a time in the sign on dialog. 
 		reset the progress bar on disconnect instead of creating a new entry.
 	Status labels in buddy list (mostly just for yahoo/msn)
 	buddy pounce -> drop down list of buddies

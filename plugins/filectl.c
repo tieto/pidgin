@@ -38,22 +38,22 @@ void run_commands() {
 		debug_printf("read: %s\n", buffer);
 		command = getarg(buffer, 0, 0);
 		if (!strncasecmp(command, "signon", 6)) {
-			struct aim_user *u = NULL;
-			GSList *userlist = aim_users;
+			struct gaim_account *account = NULL;
+			GSList *accts = gaim_accounts;
 			arg1 = getarg(buffer, 1, 1);
 			if (arg1) {
-				while (userlist) {
-					struct aim_user *current = userlist->data;
-					if (!strcmp(current->username, arg1)) {
-						u = current;
+				while (accts) {
+					struct gaim_account *a = accts->data;
+					if (!strcmp(a->username, arg1)) {
+						account = a;
 						break;
 					}
-					userlist = userlist->next;
+					accts = accts->next;
 				}
 				free(arg1);
 			}
-			if (u) /* username found */
-				serv_login(u);
+			if (account) /* username found */
+				serv_login(account);
 		} else if (!strncasecmp(command, "signoff", 7)) {
 			struct gaim_connection *gc = NULL;
 			GSList *c = connections;

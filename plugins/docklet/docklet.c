@@ -358,7 +358,7 @@ static void gaim_signoff(struct gaim_connection *gc, void *data) {
 	g_idle_add(docklet_update_status, &docklet);
 }
 
-static void gaim_connecting(struct aim_user *user, void *data) {
+static void gaim_connecting(struct gaim_account *account, void *data) {
 	docklet_update_status();
 }
 

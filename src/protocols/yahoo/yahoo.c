@@ -475,8 +475,8 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 			}
 			buddies = g_strsplit(split[1], ",", -1);
 			for (bud = buddies; bud && *bud; bud++)
-				if (!find_buddy(gc->user, *bud)) {
-					add_buddy(gc->user, split[0], *bud, *bud);
+				if (!find_buddy(gc->account, *bud)) {
+					add_buddy(gc->account, split[0], *bud, *bud);
 					export = TRUE;
 				}
 			g_strfreev(buddies);
@@ -519,7 +519,7 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 		else
 			serv_got_typing_stopped(gc, from);
 	} else if (!g_strncasecmp(msg, "GAME", strlen("GAME"))) {
-		struct buddy *bud = find_buddy(gc->user, from);
+		struct buddy *bud = find_buddy(gc->account, from);
 		void *free1=NULL, *free2=NULL;
 		if (!bud)
 			debug_printf("%s is playing a game, and doesn't want you to know.\n", from);
@@ -954,8 +954,8 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
 
-static void yahoo_login(struct aim_user *user) {
-	struct gaim_connection *gc = new_gaim_conn(user);
+static void yahoo_login(struct gaim_account *account) {
+	struct gaim_connection *gc = new_gaim_conn(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 
 	set_login_progress(gc, 1, "Connecting");
@@ -965,19 +965,19 @@ static void yahoo_login(struct aim_user *user) {
 	yd->games = g_hash_table_new(g_str_hash, g_str_equal);
 
 
-	if (!g_strncasecmp(user->proto_opt[USEROPT_PAGERHOST], "cs.yahoo.com", strlen("cs.yahoo.com"))) {
+	if (!g_strncasecmp(account->proto_opt[USEROPT_PAGERHOST], "cs.yahoo.com", strlen("cs.yahoo.com"))) {
 		/* Figured out the new auth method -- cs.yahoo.com likes to disconnect on buddy remove and add now */
 		debug_printf("Setting new Yahoo! server.\n");
-		g_snprintf(user->proto_opt[USEROPT_PAGERHOST], strlen("scs.yahoo.com") + 1, "scs.yahoo.com");
+		g_snprintf(account->proto_opt[USEROPT_PAGERHOST], strlen("scs.yahoo.com") + 1, "scs.yahoo.com");
 		save_prefs();
 	}
-	
-    
-       	if (proxy_connect(user->proto_opt[USEROPT_PAGERHOST][0] ?
-				user->proto_opt[USEROPT_PAGERHOST] : YAHOO_PAGER_HOST,
-			   user->proto_opt[USEROPT_PAGERPORT][0] ?
-				atoi(user->proto_opt[USEROPT_PAGERPORT]) : YAHOO_PAGER_PORT,
-			   yahoo_got_connected, gc) != 0) {
+
+
+	if (proxy_connect(account->proto_opt[USEROPT_PAGERHOST][0] ?
+				account->proto_opt[USEROPT_PAGERHOST] : YAHOO_PAGER_HOST,
+				account->proto_opt[USEROPT_PAGERPORT][0] ?
+				atoi(account->proto_opt[USEROPT_PAGERPORT]) : YAHOO_PAGER_PORT,
+				yahoo_got_connected, gc) != 0) {
 		hide_login_progress(gc, "Connection problem");
 		signoff(gc);
 		return;
@@ -1069,7 +1069,7 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	struct buddy *b = find_buddy(gc->user, who); /* this should never be null. if it is,
+	struct buddy *b = find_buddy(gc->account, who); /* this should never be null. if it is,
 						  segfault and get the bug report. */
 	static char buf[1024];
 	static char buf2[1024];
@@ -1311,7 +1311,7 @@ static void yahoo_add_buddy(struct gaim_connection *gc, const char *who)
 	if (!yd->logged_in)
 		return;
 
-	g = find_group_by_buddy(find_buddy(gc->user, who));
+	g = find_group_by_buddy(find_buddy(gc->account, who));
 	if (g)
 		group = g->name;
 	else

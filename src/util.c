@@ -508,27 +508,27 @@ void clean_pid(void)
 #endif
 }
 
-struct aim_user *find_user(const char *name, int protocol)
+struct gaim_account *gaim_account_find(const char *name, int protocol)
 {
 	char *who = g_strdup(normalize(name));
-	GSList *usr = aim_users;
-	struct aim_user *u;
+	GSList *accts = gaim_accounts;
+	struct gaim_account *account;
 
-	while (usr) {
-		u = (struct aim_user *)usr->data;
-		if (!strcmp(normalize(u->username), who)) {
+	while (accts) {
+		account = (struct gaim_account *)accts->data;
+		if (!strcmp(normalize(account->username), who)) {
 			if (protocol != -1) {
-				if (u->protocol == protocol) {
+				if (account->protocol == protocol) {
 					g_free(who);
-					return u;
+					return account;
 				}
 			} else {
 				g_free(who);
-				return u;
+				return account;
 			}
 
 		}
-		usr = usr->next;
+		accts = accts->next;
 	}
 	g_free(who);
 	return NULL;
@@ -999,8 +999,8 @@ const char *handle_uri(char *uri) {
 			what = g_strdup(str->str);
 			g_string_free(str, TRUE);
 		}
-		
-		c = gaim_conversation_new(GAIM_CONV_IM, gc->user, who);
+
+		c = gaim_conversation_new(GAIM_CONV_IM, gc->account, who);
 		g_free(who);
 
 		if (what) {
@@ -1013,7 +1013,7 @@ const char *handle_uri(char *uri) {
 		char *who, *group;
 		uri = uri + strlen("aim:addbuddy?");
 		/* spaces are encoded as +'s */
-		
+
 		if (!(who = strstr(uri, "screenname="))) {
 			return _("No screenname given.");
 		}

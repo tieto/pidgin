@@ -213,7 +213,7 @@ static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 static void user_handler(struct UI *ui, guchar subtype, guchar *data)
 {
 	guint id;
-	struct aim_user *u;
+	struct gaim_account *account;
 
 	switch (subtype) {
 		/*
@@ -230,9 +230,9 @@ static void user_handler(struct UI *ui, guchar subtype, guchar *data)
 		if (!data)
 			return;
 		memcpy(&id, data, sizeof(id));
-		u = g_slist_nth_data(aim_users, id);
-		if (u)
-			serv_login(u);
+		account = g_slist_nth_data(gaim_accounts, id);
+		if (account)
+			serv_login(account);
 		/* don't need to do anything here because the UI will get updates from other handlers */
 		break;
 	default:

@@ -238,40 +238,6 @@ struct queued_message {
 	int len;
 };
 
-struct mod_user {
-	struct aim_user *user;
-
-	/* these are temporary */
-	int options;
-	int protocol;
-	char proto_opt[7][256];
-
-	/* stuff for modify window */
-	GtkWidget *mod;
-	GtkWidget *main;
-	GtkWidget *name;
-	GtkWidget *alias;
-	GtkWidget *pwdbox;
-	GtkWidget *pass;
-	GtkWidget *rempass;
-	GtkWidget *user_frame;
-	GtkWidget *proto_frame;
-	GtkSizeGroup *sg;
-	GList *opt_entries;
-
-	/* stuff for icon selection */
-	char iconfile[256];
-	GtkWidget *iconsel;
-	GtkWidget *iconentry;
-	GtkWidget *icondlg;
-
-	/* stuff for mail check prompt */
-	GtkWidget *checkmail;
-
-	/* stuff for register with server */
-	GtkWidget *register_user;
-};
-
 struct smiley_theme {
 	char *path;
 	char *name;

@@ -39,29 +39,29 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/tb_search.xpm"
 
-void serv_login(struct aim_user *user)
+void serv_login(struct gaim_account *account)
 {
-	struct prpl *p = find_prpl(user->protocol);
+	struct prpl *p = find_prpl(account->protocol);
 
-	if (user->gc != NULL || p == NULL)
+	if (account->gc != NULL || p == NULL)
 		return;
 
 	if(!ref_protocol(p))
 		return;
 
 	if (p->login) {
-		if (!strlen(user->password) && !(p->options & OPT_PROTO_NO_PASSWORD) &&
+		if (!strlen(account->password) && !(p->options & OPT_PROTO_NO_PASSWORD) &&
 			!(p->options & OPT_PROTO_PASSWORD_OPTIONAL)) {
 			do_error_dialog(_("Please enter your password"), NULL, GAIM_ERROR);
 			return;
 		}
 
-		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", user->username, p->name);
-		user->connecting = TRUE;
+		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", account->username, p->name);
+		account->connecting = TRUE;
 		connecting_count++;
 		debug_printf("connecting_count: %d\n", connecting_count);
-		plugin_event(event_connecting, user);
-		p->login(user);
+		plugin_event(event_connecting, account);
+		p->login(account);
 	}
 }
 
@@ -128,10 +128,10 @@ void serv_touch_idle(struct gaim_connection *gc)
 
 void serv_finish_login(struct gaim_connection *gc)
 {
-	if (strlen(gc->user->user_info)) {
+	if (strlen(gc->account->user_info)) {
 		/* g_malloc(strlen(gc->user->user_info) * 4);
 		   strncpy_withhtml(buf, gc->user->user_info, strlen(gc->user->user_info) * 4); */
-		serv_set_info(gc, gc->user->user_info);
+		serv_set_info(gc, gc->account->user_info);
 		/* g_free(buf); */
 	}
 
@@ -345,13 +345,13 @@ void serv_remove_buddies(struct gaim_connection *gc, GList *g, char *group)
  */
 void serv_alias_buddy(struct buddy *b)
 {
-	if(b && b->user->gc && b->user->gc->prpl && b->user->gc->prpl->alias_buddy) {
-		b->user->gc->prpl->alias_buddy(b->user->gc, b->name, b->alias);
+	if(b && b->account->gc && b->account->gc->prpl && b->account->gc->prpl->alias_buddy) {
+		b->account->gc->prpl->alias_buddy(b->account->gc, b->name, b->alias);
 	}
 }
 
 void serv_got_alias(struct gaim_connection *gc, char *who, char *alias) {
-	struct buddy *b = find_buddy(gc->user, who);
+	struct buddy *b = find_buddy(gc->account, who);
 	if(!b)
 		return;
 
@@ -371,9 +371,9 @@ void serv_got_alias(struct gaim_connection *gc, char *who, char *alias) {
  */
 void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
 {
-	if(b && b->user->gc && og && ng) {
-		if(b->user->gc->prpl && b->user->gc->prpl->group_buddy) {
-			b->user->gc->prpl->group_buddy(b->user->gc, b->name, og->name, ng->name);
+	if(b && b->account->gc && og && ng) {
+		if(b->account->gc->prpl && b->account->gc->prpl->group_buddy) {
+			b->account->gc->prpl->group_buddy(b->account->gc, b->name, og->name, ng->name);
 		}
 	}
 }
@@ -389,7 +389,7 @@ void serv_rename_group(struct gaim_connection *g, struct group *old_group, const
 
 		for (original=old_group->members; original; original=g_slist_next(original)) {
 			struct buddy *b = original->data;
-			if(b->user == g->user)
+			if(b->account == g->account)
 				tobemoved = g_list_append(tobemoved, b->name);
 		}
 
@@ -582,7 +582,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 	 * We should update the conversation window buttons and menu,
 	 * if it exists.
 	 */
-	cnv = gaim_find_conversation_with_user(name, gc->user);
+	cnv = gaim_find_conversation_with_account(name, gc->account);
 
 	/*
 	 * Plugin stuff. we pass a char ** but we don't want to pass what's
@@ -656,7 +656,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 	if (gc->away) {
 		time_t t;
 		char *tmpmsg;
-		struct buddy *b = find_buddy(gc->user, name);
+		struct buddy *b = find_buddy(gc->account, name);
 		char *alias = b ? get_buddy_alias(b) : name;
 		int row;
 		struct queued_away_response *qar;
@@ -733,7 +733,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			 * while away), and then write it to the convo window.
 			 */
 			if (cnv == NULL)
-				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->user, name);
+				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
 						  away | WFLAG_RECV, mtime);
@@ -825,7 +825,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
 		} else {
 			if (cnv == NULL)
-				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->user, name);
+				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			/* CONV XXX gaim_conversation_set_name(cnv, name); */
 
@@ -845,7 +845,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message,
 void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 					 int evil, time_t signon, time_t idle, int type, guint caps)
 {
-	struct buddy *b = find_buddy(gc->user, name);
+	struct buddy *b = find_buddy(gc->account, name);
 
 	if (signon && (gc->prpl->options & OPT_PROTO_CORRECT_TIME)) {
 		char *tmp = g_strdup(normalize(name));
@@ -953,7 +953,7 @@ void serv_got_typing(struct gaim_connection *gc, char *name, int timeout,
 
 	im = GAIM_IM(cnv);
 
-	gaim_conversation_set_user(cnv, gc->user);
+	gaim_conversation_set_account(cnv, gc->account);
 	gaim_im_set_typing_state(im, state);
 	gaim_im_update_typing(im);
 
@@ -1036,7 +1036,7 @@ struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,
 	struct gaim_conversation *b;
 	struct gaim_chat *chat;
 
-	b = gaim_conversation_new(GAIM_CONV_CHAT, gc->user, name);
+	b = gaim_conversation_new(GAIM_CONV_CHAT, gc->account, name);
 	chat = GAIM_CHAT(b);
 
 	gc->buddy_chats = g_slist_append(gc->buddy_chats, b);

@@ -36,7 +36,7 @@ static GtkWidget *acctedit = NULL;
 static GtkWidget *treeview = NULL; /* the treeview of names in the accteditor */
 static GtkListStore *model = NULL;
 
-static GSList *mod_users = NULL;
+static GSList *mod_accounts = NULL;
 
 enum
 {
@@ -48,38 +48,74 @@ enum
 	NUM_COLUMNS
 };
 
+struct mod_account {
+	struct gaim_account *account;
+
+	/* these are temporary */
+	int options;
+	int protocol;
+	char proto_opt[7][256];
+
+	/* stuff for modify window */
+	GtkWidget *mod;
+	GtkWidget *main;
+	GtkWidget *name;
+	GtkWidget *alias;
+	GtkWidget *pwdbox;
+	GtkWidget *pass;
+	GtkWidget *rempass;
+	GtkWidget *user_frame;
+	GtkWidget *proto_frame;
+	GtkSizeGroup *sg;
+	GList *opt_entries;
+
+	/* stuff for icon selection */
+	char iconfile[256];
+	GtkWidget *iconsel;
+	GtkWidget *iconentry;
+	GtkWidget *icondlg;
+
+	/* stuff for mail check prompt */
+	GtkWidget *checkmail;
+
+	/* stuff for register with server */
+	GtkWidget *register_user;
+};
+
+
+struct mod_account_opt {
+	struct mod_account *ma;
+	int opt;
+};
+
 static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
 						gpointer d);
 static void acct_autologin(GtkCellRendererToggle *cell, gchar *path_str,
 						   gpointer d);
 
-static struct mod_user *find_mod_user(struct aim_user *a)
+static struct mod_account *mod_account_find(struct gaim_account *a)
 {
-	GSList *m = mod_users;
+	GSList *m = mod_accounts;
 	while (m) {
-		struct mod_user *u = m->data;
-		if (u->user == a)
-			return u;
+		struct mod_account *ma = m->data;
+		if (ma->account == a)
+			return ma;
 		m = m->next;
 	}
 	return NULL;
 }
 
-static void generate_protocol_options(struct mod_user *, GtkWidget *);
+static void generate_protocol_options(struct mod_account *, GtkWidget *);
 
-struct mod_usr_opt {
-	struct mod_user *user;
-	int opt;
-};
 
-struct gaim_connection *new_gaim_conn(struct aim_user *user)
+struct gaim_connection *new_gaim_conn(struct gaim_account *account)
 {
 	struct gaim_connection *gc = g_new0(struct gaim_connection, 1);
 	gc->edittype = EDIT_GC;
-	gc->protocol = user->protocol;
-	gc->prpl = find_prpl(user->protocol);
-	g_snprintf(gc->username, sizeof(gc->username), "%s", user->username);
-	g_snprintf(gc->password, sizeof(gc->password), "%s", user->password);
+	gc->protocol = account->protocol;
+	gc->prpl = find_prpl(account->protocol);
+	g_snprintf(gc->username, sizeof(gc->username), "%s", account->username);
+	g_snprintf(gc->password, sizeof(gc->password), "%s", account->password);
 	gc->keepalive = 0;
 	gc->inpa = 0;
 	gc->buddy_chats = NULL;
@@ -88,8 +124,8 @@ struct gaim_connection *new_gaim_conn(struct aim_user *user)
 
 	connections = g_slist_append(connections, gc);
 
-	user->gc = gc;
-	gc->user = user;
+	account->gc = gc;
+	gc->account = account;
 
 	return gc;
 }
@@ -114,7 +150,7 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 		while (h) {
 			n = (struct buddy *)h->data;
 			h = g_slist_next(h);
-			if(n->user == gc->user) {
+			if(n->account == gc->account) {
 				n->present = 0;
 			}
 		}
@@ -160,8 +196,8 @@ static char *proto_name(int proto)
 
 void regenerate_user_list()
 {
-	GSList *u = aim_users;
-	struct aim_user *a;
+	GSList *accounts = gaim_accounts;
+	struct gaim_account *a;
 	GtkTreeIter iter;
 
 	if (!acctedit)
@@ -169,44 +205,27 @@ void regenerate_user_list()
 
 	gtk_list_store_clear(model);
 
-	while (u) {
-		a = (struct aim_user *)u->data;
+	while (accounts) {
+		a = (struct gaim_account *)accounts->data;
 
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter,
 						   COLUMN_SCREENNAME, a->username,
 						   COLUMN_ONLINE, (a->gc ? TRUE : FALSE),
-						   COLUMN_AUTOLOGIN, (a->options & OPT_USR_AUTO),
+						   COLUMN_AUTOLOGIN, (a->options & OPT_ACCT_AUTO),
 						   COLUMN_PROTOCOL, proto_name(a->protocol),
 						   COLUMN_DATA, a,
 						   -1);
-		u = u->next;
+		accounts = accounts->next;
 	}
 }
 
 static gboolean get_iter_from_data(GtkTreeView *treeview,
-								   struct aim_user *a, GtkTreeIter *iter)
+								   struct gaim_account *a, GtkTreeIter *iter)
 {
 	return gtk_tree_model_iter_nth_child(gtk_tree_view_get_model(treeview),
 										 iter, NULL,
-										 g_slist_index(aim_users, a));
-#if 0
-	GtkListModel *model = gtk_tree_view_get_model(treeview);
-	struct aim_user *user;
-	int i;
-
-	rows = gtk_tree_model_iter_n_children(model, NULL);
-
-	for (i = 0; i < rows; i++)
-	{
-		gtk_tree_model_get(model, iter, COLUMN_DATA, &user, -1);
-
-		if (user == a)
-			return TRUE;
-	}
-
-	return FALSE;
-#endif
+										 g_slist_index(gaim_accounts, a));
 }
 
 static void add_columns(GtkWidget *treeview)
@@ -286,59 +305,59 @@ static GtkWidget *generate_list()
 	return win;
 }
 
-static void delmod(GtkWidget *w, struct mod_user *u)
+static void delmod(GtkWidget *w, struct mod_account *ma)
 {
-	mod_users = g_slist_remove(mod_users, u);
-	g_free(u);
+	mod_accounts = g_slist_remove(mod_accounts, ma);
+	g_free(ma);
 }
 
-static void mod_opt(GtkWidget *b, struct mod_usr_opt *m)
+static void mod_opt(GtkWidget *b, struct mod_account_opt *mao)
 {
-	m->user->options = m->user->options ^ m->opt;
+	mao->ma->options = mao->ma->options ^ mao->opt;
 }
 
-static void free_muo(GtkWidget *b, struct mod_usr_opt *m)
+static void free_mao(GtkWidget *b, struct mod_account_opt *mao)
 {
-	g_free(m);
+	g_free(mao);
 }
 
-static GtkWidget *acct_button(const char *text, struct mod_user *u, int option, GtkWidget *box)
+static GtkWidget *acct_button(const char *text, struct mod_account *ma, int option, GtkWidget *box)
 {
 	GtkWidget *button;
-	struct mod_usr_opt *muo = g_new0(struct mod_usr_opt, 1);
+	struct mod_account_opt *mao = g_new0(struct mod_account_opt, 1);
 	button = gtk_check_button_new_with_label(text);
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (u->options & option));
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (ma->options & option));
 	gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
-	muo->user = u;
-	muo->opt = option;
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(mod_opt), muo);
-	g_signal_connect(GTK_OBJECT(button), "destroy", G_CALLBACK(free_muo), muo);
+	mao->ma = ma;
+	mao->opt = option;
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(mod_opt), mao);
+	g_signal_connect(GTK_OBJECT(button), "destroy", G_CALLBACK(free_mao), mao);
 	gtk_widget_show(button);
 	return button;
 }
 
-static void ok_mod(GtkWidget *w, struct mod_user *u)
+static void ok_mod(GtkWidget *w, struct mod_account *ma)
 {
 	GList *tmp;
 	const char *txt;
-	struct aim_user *a;
+	struct gaim_account *a;
 	struct prpl *p;
 	GtkTreeIter iter;
 
-	if (!u->user) {
-		txt = gtk_entry_get_text(GTK_ENTRY(u->name));
-		u->user = new_user(txt, u->protocol, u->options);
+	if (!ma->account) {
+		txt = gtk_entry_get_text(GTK_ENTRY(ma->name));
+		ma->account = gaim_account_new(txt, ma->protocol, ma->options);
 	}
-	a = u->user;
+	a = ma->account;
 
-	a->options = u->options;
-	a->protocol = u->protocol;
-	txt = gtk_entry_get_text(GTK_ENTRY(u->name));
+	a->options = ma->options;
+	a->protocol = ma->protocol;
+	txt = gtk_entry_get_text(GTK_ENTRY(ma->name));
 	g_snprintf(a->username, sizeof(a->username), "%s", txt);
-	txt = gtk_entry_get_text(GTK_ENTRY(u->alias));
+	txt = gtk_entry_get_text(GTK_ENTRY(ma->alias));
 	g_snprintf(a->alias, sizeof(a->alias), "%s", txt);
-	txt = gtk_entry_get_text(GTK_ENTRY(u->pass));
-	if (a->options & OPT_USR_REM_PASS)
+	txt = gtk_entry_get_text(GTK_ENTRY(ma->pass));
+	if (a->options & OPT_ACCT_REM_PASS)
 		g_snprintf(a->password, sizeof(a->password), "%s", txt);
 	else
 		a->password[0] = '\0';
@@ -346,7 +365,7 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 	if (get_iter_from_data(GTK_TREE_VIEW(treeview), a, &iter)) {
 		gtk_list_store_set(model, &iter,
 						   COLUMN_SCREENNAME, a->username,
-						   COLUMN_AUTOLOGIN, (a->options & OPT_USR_AUTO),
+						   COLUMN_AUTOLOGIN, (a->options & OPT_ACCT_AUTO),
 						   COLUMN_PROTOCOL, proto_name(a->protocol),
 						   -1);
 	}
@@ -355,11 +374,11 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), a);
 	gtk_clist_set_text(GTK_CLIST(list), i, 0, a->username);
 	gtk_clist_set_text(GTK_CLIST(list), i, 2,
-			   (a->options & OPT_USR_AUTO) ? "True" : "False");
+			   (a->options & OPT_ACCT_AUTO) ? "True" : "False");
 	gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(a->protocol));
 #endif
 
-	tmp = u->opt_entries;
+	tmp = ma->opt_entries;
 	while (tmp) {
 		GtkEntry *entry = tmp->data;
 		int pos = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
@@ -367,25 +386,25 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 				   gtk_entry_get_text(entry));
 		tmp = tmp->next;
 	}
-	if (u->opt_entries)
-		g_list_free(u->opt_entries);
-	u->opt_entries = NULL;
+	if (ma->opt_entries)
+		g_list_free(ma->opt_entries);
+	ma->opt_entries = NULL;
 
-	g_snprintf(a->iconfile, sizeof(a->iconfile), "%s", u->iconfile);
-	if (u->icondlg)
-		gtk_widget_destroy(u->icondlg);
-	u->icondlg = NULL;
+	g_snprintf(a->iconfile, sizeof(a->iconfile), "%s", ma->iconfile);
+	if (ma->icondlg)
+		gtk_widget_destroy(ma->icondlg);
+	ma->icondlg = NULL;
 
 	/*
 	 * See if user registration is supported/required
 	 */
-	if((p = find_prpl(u->protocol)) == NULL) {
+	if((p = find_prpl(ma->protocol)) == NULL) {
 		/* TBD: error dialog here! (This should never happen, you know...) */
-		fprintf(stderr, "dbg: couldn't find protocol for protocol number %d!\n", u->protocol);
+		fprintf(stderr, "dbg: couldn't find protocol for protocol number %d!\n", ma->protocol);
 		fflush(stderr);
 	} else {
 		if(p->register_user != NULL &&
-		   gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(u->register_user)) == TRUE) {
+		   gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ma->register_user)) == TRUE) {
 			ref_protocol(p);
 			p->register_user(a);
 			/* we don't unref the protocol because register user has callbacks
@@ -396,61 +415,61 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 
 	save_prefs();
 
-	gtk_widget_destroy(u->mod);
+	gtk_widget_destroy(ma->mod);
 }
 
-static void cancel_mod(GtkWidget *w, struct mod_user *u)
+static void cancel_mod(GtkWidget *w, struct mod_account *ma)
 {
-	if (u->opt_entries)
-		g_list_free(u->opt_entries);
-	u->opt_entries = NULL;
-	if (u->icondlg)
-		gtk_widget_destroy(u->icondlg);
-	u->icondlg = NULL;
-	gtk_widget_destroy(u->mod);
+	if (ma->opt_entries)
+		g_list_free(ma->opt_entries);
+	ma->opt_entries = NULL;
+	if (ma->icondlg)
+		gtk_widget_destroy(ma->icondlg);
+	ma->icondlg = NULL;
+	gtk_widget_destroy(ma->mod);
 }
 
 static void set_prot(GtkWidget *opt, int proto)
 {
-	struct mod_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
+	struct mod_account *ma = gtk_object_get_user_data(GTK_OBJECT(opt));
 	struct prpl *p, *q;
 	q = find_prpl(proto);
-	if (u->protocol != proto) {
+	if (ma->protocol != proto) {
 		int i;
 		for (i = 0; i < 7; i++)
-			u->proto_opt[i][0] = '\0';
-		p = find_prpl(u->protocol);
+			ma->proto_opt[i][0] = '\0';
+		p = find_prpl(ma->protocol);
 
 		if (!(p->options & OPT_PROTO_NO_PASSWORD) && (q->options & OPT_PROTO_NO_PASSWORD)) {
-			gtk_widget_hide(u->pwdbox);
-			gtk_widget_hide(u->rempass);
+			gtk_widget_hide(ma->pwdbox);
+			gtk_widget_hide(ma->rempass);
 		} else if ((p->options & OPT_PROTO_NO_PASSWORD) && !(q->options & OPT_PROTO_NO_PASSWORD)) {
-			gtk_widget_show(u->pwdbox);
-			gtk_widget_show(u->rempass);
+			gtk_widget_show(ma->pwdbox);
+			gtk_widget_show(ma->rempass);
 		}
 		if (!(p->options & OPT_PROTO_MAIL_CHECK) && (q->options & OPT_PROTO_MAIL_CHECK)) {
-			gtk_widget_show(u->checkmail);
+			gtk_widget_show(ma->checkmail);
 		} else if ((p->options & OPT_PROTO_MAIL_CHECK) && !(q->options & OPT_PROTO_MAIL_CHECK)) {
-			gtk_widget_hide(u->checkmail);
+			gtk_widget_hide(ma->checkmail);
 		}
 
 		if (!(p->options & OPT_PROTO_BUDDY_ICON) && (q->options & OPT_PROTO_BUDDY_ICON)) {
-			gtk_widget_show(u->iconsel);
+			gtk_widget_show(ma->iconsel);
 		} else if ((p->options & OPT_PROTO_BUDDY_ICON) && !(q->options & OPT_PROTO_BUDDY_ICON)) {
-			gtk_widget_hide(u->iconsel);
+			gtk_widget_hide(ma->iconsel);
 		}
 
 		if ((q->options & OPT_PROTO_BUDDY_ICON) || (q->options & OPT_PROTO_MAIL_CHECK))
-			gtk_widget_show(u->user_frame);
+			gtk_widget_show(ma->user_frame);
 		else
-			gtk_widget_hide(u->user_frame);
+			gtk_widget_hide(ma->user_frame);
 
-		u->protocol = proto;
-		generate_protocol_options(u, u->main);
+		ma->protocol = proto;
+		generate_protocol_options(ma, ma->main);
 	}
 }
 
-static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_user *u)
+static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_account *ma)
 {
 	GtkWidget *optmenu;
 	GtkWidget *menu;
@@ -468,7 +487,7 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_user *u)
 
 	while (p) {
 		e = (struct prpl *)p->data;
-		if (e->protocol == u->protocol)
+		if (e->protocol == ma->protocol)
 			found = TRUE;
 		if (!found)
 			count++;
@@ -476,7 +495,7 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_user *u)
 			opt = gtk_menu_item_new_with_label(e->name);
 		else
 			opt = gtk_menu_item_new_with_label("Unknown");
-		gtk_object_set_user_data(GTK_OBJECT(opt), u);
+		gtk_object_set_user_data(GTK_OBJECT(opt), ma);
 		g_signal_connect(GTK_OBJECT(opt), "activate",
 				   G_CALLBACK(set_prot), (void *)e->protocol);
 		gtk_menu_append(GTK_MENU(menu), opt);
@@ -490,44 +509,44 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_user *u)
 	return optmenu;
 }
 
-static void des_icon_sel(GtkWidget *w, struct mod_user *u)
+static void des_icon_sel(GtkWidget *w, struct mod_account *ma)
 {
-	w = u->icondlg;
-	if (u->icondlg)
-		u->icondlg = NULL;
+	w = ma->icondlg;
+	if (ma->icondlg)
+		ma->icondlg = NULL;
 	if (w)
 		gtk_widget_destroy(w);
 }
 
-static void set_icon(GtkWidget *w, struct mod_user *u)
+static void set_icon(GtkWidget *w, struct mod_account *ma)
 {
-	GtkWidget *sel = u->icondlg;
+	GtkWidget *sel = ma->icondlg;
 	const char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sel));
 
 	if (file_is_dir(file, sel))
 		return;
 
-	gtk_entry_set_text(GTK_ENTRY(u->iconentry), file);
-	g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", file);
-	u->icondlg = NULL;
+	gtk_entry_set_text(GTK_ENTRY(ma->iconentry), file);
+	g_snprintf(ma->iconfile, sizeof(ma->iconfile), "%s", file);
+	ma->icondlg = NULL;
 
 	gtk_widget_destroy(sel);
 }
 
-static void sel_icon_dlg(GtkWidget *w, struct mod_user *u)
+static void sel_icon_dlg(GtkWidget *w, struct mod_account *ma)
 {
 	GtkWidget *dlg;
 	char buf[256];
 
-	if (u->icondlg) {
-		gtk_widget_show(u->icondlg);
+	if (ma->icondlg) {
+		gtk_widget_show(ma->icondlg);
 		return;
 	}
 
 	dlg = gtk_file_selection_new(_("Gaim - Load Buddy Icon"));
 	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(dlg));
-	if (u->iconfile) {
-		char *tmp = g_dirname(u->iconfile);
+	if (ma->iconfile) {
+		char *tmp = g_dirname(ma->iconfile);
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dlg), tmp);
 		g_free(tmp);
 	} else {
@@ -535,24 +554,24 @@ static void sel_icon_dlg(GtkWidget *w, struct mod_user *u)
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dlg), buf);
 	}
 
-	g_signal_connect(GTK_OBJECT(dlg), "destroy", G_CALLBACK(des_icon_sel), u);
+	g_signal_connect(GTK_OBJECT(dlg), "destroy", G_CALLBACK(des_icon_sel), ma);
 	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(dlg)->cancel_button), "clicked",
-			   G_CALLBACK(des_icon_sel), u);
+			   G_CALLBACK(des_icon_sel), ma);
 	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(dlg)->ok_button), "clicked",
-			   G_CALLBACK(set_icon), u);
+			   G_CALLBACK(set_icon), ma);
 
-	u->icondlg = dlg;
+	ma->icondlg = dlg;
 
 	gtk_widget_show(dlg);
 }
 
-static void reset_icon(GtkWidget *w, struct mod_user *u)
+static void reset_icon(GtkWidget *w, struct mod_account *ma)
 {
-	u->iconfile[0] = 0;
-	gtk_entry_set_text(GTK_ENTRY(u->iconentry), "");
+	ma->iconfile[0] = 0;
+	gtk_entry_set_text(GTK_ENTRY(ma->iconentry), "");
 }
 
-static GtkWidget *build_icon_selection(struct mod_user *u, GtkWidget *box)
+static GtkWidget *build_icon_selection(struct mod_account *ma, GtkWidget *box)
 {
 	GtkWidget *hbox;
 	GtkWidget *label;
@@ -560,40 +579,40 @@ static GtkWidget *build_icon_selection(struct mod_user *u, GtkWidget *box)
 	GtkWidget *browse;
 	GtkWidget *reset;
 
-	if (u->user)
-		g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", u->user->iconfile);
+	if (ma->account)
+		g_snprintf(ma->iconfile, sizeof(ma->iconfile), "%s", ma->account->iconfile);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new(_("Buddy Icon File:"));
-	gtk_size_group_add_widget(u->sg, label);
+	gtk_size_group_add_widget(ma->sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	name = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(name), u->iconfile);
+	gtk_entry_set_text(GTK_ENTRY(name), ma->iconfile);
 	gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), name, TRUE, TRUE, 5);
 	gtk_widget_show(name);
-	u->iconentry = name;
+	ma->iconentry = name;
 
 	browse = gtk_button_new_with_label(_("Browse"));
-	g_signal_connect(GTK_OBJECT(browse), "clicked", G_CALLBACK(sel_icon_dlg), u);
+	g_signal_connect(GTK_OBJECT(browse), "clicked", G_CALLBACK(sel_icon_dlg), ma);
 	gtk_box_pack_start(GTK_BOX(hbox), browse, FALSE, FALSE, 0);
 	gtk_widget_show(browse);
 
 	reset = gtk_button_new_with_label(_("Reset"));
-	g_signal_connect(GTK_OBJECT(reset), "clicked", G_CALLBACK(reset_icon), u);
+	g_signal_connect(GTK_OBJECT(reset), "clicked", G_CALLBACK(reset_icon), ma);
 	gtk_box_pack_start(GTK_BOX(hbox), reset, FALSE, FALSE, 0);
 	gtk_widget_show(reset);
 
 	return hbox;
 }
 
-static void generate_login_options(struct mod_user *u, GtkWidget *box)
+static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 {
 	GtkWidget *frame, *frame_parent;
 	GtkWidget *vbox;
@@ -613,66 +632,66 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Screenname:"));
-	gtk_size_group_add_widget(u->sg, label);
+	gtk_size_group_add_widget(ma->sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-	u->name = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), u->name, TRUE, TRUE, 0);
+	ma->name = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), ma->name, TRUE, TRUE, 0);
 
-	u->pwdbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), u->pwdbox, FALSE, FALSE, 0);
+	ma->pwdbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), ma->pwdbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Password:"));
-	gtk_size_group_add_widget(u->sg, label);
+	gtk_size_group_add_widget(ma->sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(u->pwdbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(ma->pwdbox), label, FALSE, FALSE, 0);
 
-	u->pass = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(u->pwdbox), u->pass, TRUE, TRUE, 0);
-	gtk_entry_set_visibility(GTK_ENTRY(u->pass), FALSE);
+	ma->pass = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(ma->pwdbox), ma->pass, TRUE, TRUE, 0);
+	gtk_entry_set_visibility(GTK_ENTRY(ma->pass), FALSE);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Alias:"));
-	gtk_size_group_add_widget(u->sg, label);
+	gtk_size_group_add_widget(ma->sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-	u->alias = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), u->alias, TRUE, TRUE, 0);
+	ma->alias = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), ma->alias, TRUE, TRUE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new(_("Protocol:"));
-	gtk_size_group_add_widget(u->sg, label);
+	gtk_size_group_add_widget(ma->sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-	make_protocol_menu(hbox, u);
+	make_protocol_menu(hbox, ma);
 
-	u->rempass = acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
-	acct_button(_("Auto-Login"), u, OPT_USR_AUTO, vbox);
+	ma->rempass = acct_button(_("Remember Password"), ma, OPT_ACCT_REM_PASS, vbox);
+	acct_button(_("Auto-Login"), ma, OPT_ACCT_AUTO, vbox);
 
 	gtk_widget_show_all(frame_parent);
 
-	if (u->user) {
-		gtk_entry_set_text(GTK_ENTRY(u->name), u->user->username);
-		gtk_entry_set_text(GTK_ENTRY(u->alias), u->user->alias);		
-		gtk_entry_set_text(GTK_ENTRY(u->pass), u->user->password);
+	if (ma->account) {
+		gtk_entry_set_text(GTK_ENTRY(ma->name), ma->account->username);
+		gtk_entry_set_text(GTK_ENTRY(ma->alias), ma->account->alias);
+		gtk_entry_set_text(GTK_ENTRY(ma->pass), ma->account->password);
 	}
 
-	p = find_prpl(u->protocol);
+	p = find_prpl(ma->protocol);
 	if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
-		gtk_widget_hide(u->pwdbox);
-		gtk_widget_hide(u->rempass);
+		gtk_widget_hide(ma->pwdbox);
+		gtk_widget_hide(ma->rempass);
 	}
 }
 
-static void generate_user_options(struct mod_user *u, GtkWidget *box)
+static void generate_user_options(struct mod_account *ma, GtkWidget *box)
 {
 	/* This function will add the appropriate (depending on the current
 	 * protocol) widgets to frame and return TRUE if there anything
@@ -686,38 +705,38 @@ static void generate_user_options(struct mod_user *u, GtkWidget *box)
 	GtkWidget *vbox;
 	GtkWidget *frame;
 
-	struct prpl *p = find_prpl(u->protocol);
+	struct prpl *p = find_prpl(ma->protocol);
 
 	frame = make_frame(box, _("User Options"));
-	u->user_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
-	gtk_widget_show_all(u->user_frame);
+	ma->user_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+	gtk_widget_show_all(ma->user_frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
-	u->checkmail = acct_button(_("New Mail Notifications"), u, OPT_USR_MAIL_CHECK, vbox);
-	u->iconsel = build_icon_selection(u, vbox);
+	ma->checkmail = acct_button(_("New Mail Notifications"), ma, OPT_ACCT_MAIL_CHECK, vbox);
+	ma->iconsel = build_icon_selection(ma, vbox);
 
 	if (!p) {
-		gtk_widget_hide(u->user_frame);
+		gtk_widget_hide(ma->user_frame);
 		return;
 	}
 
 	if (!(p->options & OPT_PROTO_MAIL_CHECK))
-		gtk_widget_hide(u->checkmail);
+		gtk_widget_hide(ma->checkmail);
 	if (!(p->options & OPT_PROTO_BUDDY_ICON))
-		gtk_widget_hide(u->iconsel);
+		gtk_widget_hide(ma->iconsel);
 
 	if ((p->options & OPT_PROTO_BUDDY_ICON) || (p->options & OPT_PROTO_MAIL_CHECK))
 		return;
-	gtk_widget_hide(u->user_frame);
+	gtk_widget_hide(ma->user_frame);
 }
 
-static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
+static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 {
-	struct prpl *p = find_prpl(u->protocol);
+	struct prpl *p = find_prpl(ma->protocol);
 
 	GList *op, *tmp;
 
@@ -729,13 +748,13 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 
 	char buf[256];
 
-	if (u->proto_frame)
-		gtk_widget_destroy(u->proto_frame);
-	u->proto_frame = NULL;
+	if (ma->proto_frame)
+		gtk_widget_destroy(ma->proto_frame);
+	ma->proto_frame = NULL;
 
-	if (u->opt_entries) {
-		g_list_free(u->opt_entries);
-		u->opt_entries = NULL;
+	if (ma->opt_entries) {
+		g_list_free(ma->opt_entries);
+		ma->opt_entries = NULL;
 	}
 
 	if (!p)
@@ -753,8 +772,8 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 	frame = make_frame(box, buf);
 
 	/* BLEH */
-	u->proto_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
-	gtk_widget_show_all(u->proto_frame);
+	ma->proto_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+	gtk_widget_show_all(ma->proto_frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -769,7 +788,7 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 		gtk_widget_show(hbox);
 
 		label = gtk_label_new(puo->label);
-		gtk_size_group_add_widget(u->sg, label);
+		gtk_size_group_add_widget(ma->sg, label);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
@@ -777,35 +796,35 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 		entry = gtk_entry_new();
 		gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 		gtk_object_set_user_data(GTK_OBJECT(entry), (void *)puo->pos);
-		if (u->proto_opt[puo->pos][0]) {
-			debug_printf("setting text %s\n", u->proto_opt[puo->pos]);
-			gtk_entry_set_text(GTK_ENTRY(entry), u->proto_opt[puo->pos]);
+		if (ma->proto_opt[puo->pos][0]) {
+			debug_printf("setting text %s\n", ma->proto_opt[puo->pos]);
+			gtk_entry_set_text(GTK_ENTRY(entry), ma->proto_opt[puo->pos]);
 		} else {
 			gtk_entry_set_text(GTK_ENTRY(entry), puo->def);
 		}
 		gtk_widget_show(entry);
 
-		u->opt_entries = g_list_append(u->opt_entries, entry);
-		
+		ma->opt_entries = g_list_append(ma->opt_entries, entry);
+
 		op = op->next;
 	}
 
 	if(p->register_user != NULL) {
-		u->register_user = gtk_check_button_new_with_label(_("Register with server"));
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(u->register_user), FALSE);
-		gtk_box_pack_start(GTK_BOX(vbox), u->register_user, FALSE, FALSE, 0);
-		gtk_widget_show(u->register_user);
+		ma->register_user = gtk_check_button_new_with_label(_("Register with server"));
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(ma->register_user), FALSE);
+		gtk_box_pack_start(GTK_BOX(vbox), ma->register_user, FALSE, FALSE, 0);
+		gtk_widget_show(ma->register_user);
 	}
 
 }
 
-static void show_acct_mod(struct aim_user *a)
+static void show_acct_mod(struct gaim_account *a)
 {
 	/* This is the fucking modify account dialog. I've fucking seperated it into
 	 * three fucking frames:
 	 * a fucking Login Options frame, a fucking User Options frame and a fucking
-	 * Protcol Options frame. This fucking removes the two fucking tabs, which were
-	 * quite fucking uneccessary. Fuck. */
+	 * Protcol Options frame. This fucking removes the two fucking tabs, which 
+	 * were quite fucking uneccessary. Fuck. */
 				/* -- SeanEgan */
 				/* YEAH!! -- ChipX86 */
 	GtkWidget *hbox, *vbox;
@@ -813,62 +832,62 @@ static void show_acct_mod(struct aim_user *a)
 	GtkWidget *sep;
 	GtkSizeGroup *button_sg;
 
-	struct mod_user *u = find_mod_user(a);
+	struct mod_account *ma = mod_account_find(a);
 
-	if (!u) {
-		u = g_new0(struct mod_user, 1);
-		u->user = a;
-		mod_users = g_slist_append(mod_users, u);
+	if (!ma) {
+		ma = g_new0(struct mod_account, 1);
+		ma->account = a;
+		mod_accounts = g_slist_append(mod_accounts, ma);
 
 		if (a) {
 			int i;
-			u->options = a->options;
+			ma->options = a->options;
 			if (find_prpl(a->protocol))
-				u->protocol = a->protocol;
+				ma->protocol = a->protocol;
 			else if (protocols)
-				u->protocol = ((struct prpl *)protocols->data)->protocol;
+				ma->protocol = ((struct prpl *)protocols->data)->protocol;
 			else
-				u->protocol = -1;
-			g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", a->iconfile);
+				ma->protocol = -1;
+			g_snprintf(ma->iconfile, sizeof(ma->iconfile), "%s", a->iconfile);
 			for (i = 0; i < 7; i++)
-				g_snprintf(u->proto_opt[i], sizeof(u->proto_opt[i]), "%s",
+				g_snprintf(ma->proto_opt[i], sizeof(ma->proto_opt[i]), "%s",
 						a->proto_opt[i]);
 		} else {
-			u->options = OPT_USR_REM_PASS;
+			ma->options = OPT_ACCT_REM_PASS;
 			if (find_prpl(DEFAULT_PROTO))
-				u->protocol = DEFAULT_PROTO;
+				ma->protocol = DEFAULT_PROTO;
 			else if (protocols)
-				u->protocol = ((struct prpl *)protocols->data)->protocol;
+				ma->protocol = ((struct prpl *)protocols->data)->protocol;
 			else
-				u->protocol = -1;
+				ma->protocol = -1;
 		}
 	} else {
-		gtk_widget_show(u->mod);
+		gtk_widget_show(ma->mod);
 		return;
 	}
 
-	u->mod = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(u->mod), "account");
-	gtk_widget_realize(u->mod);
-	gtk_window_set_title(GTK_WINDOW(u->mod), _("Gaim - Modify Account"));
-	gtk_window_set_policy(GTK_WINDOW(u->mod), FALSE, FALSE, TRUE);	/* nothing odd here :) */
-	g_signal_connect(GTK_OBJECT(u->mod), "destroy", G_CALLBACK(delmod), u);
+	ma->mod = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_role(GTK_WINDOW(ma->mod), "account");
+	gtk_widget_realize(ma->mod);
+	gtk_window_set_title(GTK_WINDOW(ma->mod), _("Gaim - Modify Account"));
+	gtk_window_set_policy(GTK_WINDOW(ma->mod), FALSE, FALSE, TRUE);	/* nothing odd here :) */
+	g_signal_connect(GTK_OBJECT(ma->mod), "destroy", G_CALLBACK(delmod), ma);
 
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_container_border_width(GTK_CONTAINER(vbox), 6);
-	gtk_container_add(GTK_CONTAINER(u->mod), vbox);
+	gtk_container_add(GTK_CONTAINER(ma->mod), vbox);
 	gtk_widget_show(vbox);
 
-	u->main = gtk_vbox_new(FALSE, 12);
-	gtk_container_border_width(GTK_CONTAINER(u->main), 6);
-	gtk_box_pack_start(GTK_BOX(vbox), u->main, FALSE, FALSE, 0);
-	gtk_widget_show(u->main);
+	ma->main = gtk_vbox_new(FALSE, 12);
+	gtk_container_border_width(GTK_CONTAINER(ma->main), 6);
+	gtk_box_pack_start(GTK_BOX(vbox), ma->main, FALSE, FALSE, 0);
+	gtk_widget_show(ma->main);
 
-	u->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	ma->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	generate_login_options(u, u->main);
-	generate_user_options(u, u->main);
-	generate_protocol_options(u, u->main);
+	generate_login_options(ma, ma->main);
+	generate_user_options(ma, ma->main);
+	generate_protocol_options(ma, ma->main);
 
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
@@ -879,19 +898,19 @@ static void show_acct_mod(struct aim_user *a)
 	button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_size_group_add_widget(button_sg, button);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(ok_mod), u);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(ok_mod), ma);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_size_group_add_widget(button_sg, button);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(cancel_mod), u);
+	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(cancel_mod), ma);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_end (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
 
 	gtk_widget_show_all(hbox);
-	gtk_widget_show(u->mod);
+	gtk_widget_show(ma->mod);
 }
 
 static void add_acct(GtkWidget *w, gpointer d)
@@ -902,12 +921,12 @@ static void add_acct(GtkWidget *w, gpointer d)
 static void mod_acct_func(GtkTreeModel *model, GtkTreePath *path,
 						  GtkTreeIter *iter, gpointer data)
 {
-	struct aim_user *u;
+	struct gaim_account *a;
 
-	gtk_tree_model_get(model, iter, COLUMN_DATA, &u, -1);
+	gtk_tree_model_get(model, iter, COLUMN_DATA, &a, -1);
 
-	if (u != NULL)
-		show_acct_mod(u);
+	if (a != NULL)
+		show_acct_mod(a);
 }
 
 static void mod_acct(GtkWidget *w, gpointer d)
@@ -917,33 +936,21 @@ static void mod_acct(GtkWidget *w, gpointer d)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
 	gtk_tree_selection_selected_foreach(selection, mod_acct_func, NULL);
-
-#if 0
-	while (l) {
-		row = (int)l->data;
-		if (row != -1) {
-			u = g_slist_nth_data(aim_users, row);
-			if (u)
-				show_acct_mod(u);
-		}
-		l = l->next;
-	}
-#endif
 }
 
 struct pass_prompt {
-	struct aim_user *u;
+	struct gaim_account *account;
 	GtkWidget *win;
 	GtkWidget *entry;
 };
 static GSList *passes = NULL;
 
-static struct pass_prompt *find_pass_prompt(struct aim_user *u)
+static struct pass_prompt *find_pass_prompt(struct gaim_account *account)
 {
 	GSList *p = passes;
 	while (p) {
 		struct pass_prompt *r = p->data;
-		if (r->u == u)
+		if (r->account == account)
 			return r;
 		p = p->next;
 	}
@@ -954,25 +961,25 @@ static void pass_callback(GtkDialog *d, gint resp, struct pass_prompt *p)
 {
 	if (resp == GTK_RESPONSE_YES) {	
 		const char *txt = gtk_entry_get_text(GTK_ENTRY(p->entry));
-		g_snprintf(p->u->password, sizeof(p->u->password), "%s", txt);
-		serv_login(p->u);
+		g_snprintf(p->account->password, sizeof(p->account->password), "%s", txt);
+		serv_login(p->account);
 	}
 	passes = g_slist_remove(passes, p);
 	gtk_widget_destroy(p->win);
 	g_free(p);
 }
 
-static void do_pass_dlg(struct aim_user *u)
+static void do_pass_dlg(struct gaim_account *account)
 {
 	/* we can safely assume that u is not NULL */
-	struct pass_prompt *p = find_pass_prompt(u);
+	struct pass_prompt *p = find_pass_prompt(account);
 	GtkWidget *label;
 	GtkWidget *hbox, *vbox;
 	char *labeltext=NULL;
- 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_auth.png", NULL);
+	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_auth.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
 	g_free(filename);
-	
+
 
 	if (p) {
 		gtk_widget_show(p->win);
@@ -980,10 +987,10 @@ static void do_pass_dlg(struct aim_user *u)
 	}
 
 	p = g_new0(struct pass_prompt, 1);
-	p->u = u;
+	p->account = account;
 	passes = g_slist_append(passes, p);
 
-	p->win = gtk_dialog_new_with_buttons("", NULL, 0, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, 
+	p->win = gtk_dialog_new_with_buttons("", NULL, 0, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						_("_Login"), GTK_RESPONSE_YES, NULL);
 
 	gtk_dialog_set_default_response (GTK_DIALOG(p->win), GTK_RESPONSE_YES);
@@ -1002,14 +1009,15 @@ static void do_pass_dlg(struct aim_user *u)
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);	
 
-	labeltext = g_strdup_printf(_("Please enter your password for %s.\n\n"), u->username);
+	labeltext = g_strdup_printf(_("Please enter your password for %s.\n\n"),
+			account->username);
 	label = gtk_label_new(labeltext);
 	g_free(labeltext);
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	
+
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 	label = gtk_label_new_with_mnemonic(_("_Password"));
@@ -1031,26 +1039,26 @@ static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
 	GtkTreeModel *model = (GtkTreeModel *)d;
 	GtkTreeIter iter;
 
-	struct aim_user *u = NULL;
+	struct gaim_account *account = NULL;
 	struct prpl *p = NULL;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
-	gtk_tree_model_get(model, &iter, COLUMN_DATA, &u, -1);
+	gtk_tree_model_get(model, &iter, COLUMN_DATA, &account, -1);
 
-	p = find_prpl(u->protocol);
-	if (!u->gc && p && p->login) {
-		struct prpl *p = find_prpl(u->protocol);
+	p = find_prpl(account->protocol);
+	if (!account->gc && p && p->login) {
+		struct prpl *p = find_prpl(account->protocol);
 		if (p && !(p->options & OPT_PROTO_NO_PASSWORD) &&
-			!(p->options & OPT_PROTO_PASSWORD_OPTIONAL) && !u->password[0]) {
-			do_pass_dlg(u);
+			!(p->options & OPT_PROTO_PASSWORD_OPTIONAL) && !account->password[0]) {
+			do_pass_dlg(account);
 		} else {
-			serv_login(u);
+			serv_login(account);
 		}
-	} else if (u->gc) {
-		u->gc->wants_to_die = TRUE;
-		signoff(u->gc);
+	} else if (account->gc) {
+		account->gc->wants_to_die = TRUE;
+		signoff(account->gc);
 	} else {
-		if (u->protocol == PROTO_TOC)
+		if (account->protocol == PROTO_TOC)
 			do_error_dialog(_("TOC not found."), 
 					_("You have attempted to login an IM account using the "
 					 "TOC protocol.  Because this protocol is inferior to "
@@ -1071,30 +1079,30 @@ static void acct_autologin(GtkCellRendererToggle *cell, gchar *path_str,
 	GtkTreeModel *model = (GtkTreeModel *)d;
 	GtkTreeIter iter;
 
-	struct aim_user *u = NULL;
+	struct gaim_account *account = NULL;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
-	gtk_tree_model_get(model, &iter, COLUMN_DATA, &u, -1);
+	gtk_tree_model_get(model, &iter, COLUMN_DATA, &account, -1);
 
-	u->options ^= OPT_USR_AUTO;
+	account->options ^= OPT_ACCT_AUTO;
 
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-					   COLUMN_AUTOLOGIN, (u->options & OPT_USR_AUTO), -1);
+					   COLUMN_AUTOLOGIN, (account->options & OPT_ACCT_AUTO), -1);
 
 	save_prefs();
 }
 
-static void do_del_acct(struct aim_user *u)
+static void do_del_acct(struct gaim_account *account)
 {
 	GtkTreeIter iter;
 	GSList *grps = groups, *buds;
 
-	if (u->gc) {
-		u->gc->wants_to_die = TRUE;
-		signoff(u->gc);
+	if (account->gc) {
+		account->gc->wants_to_die = TRUE;
+		signoff(account->gc);
 	}
 
-	if (get_iter_from_data(GTK_TREE_VIEW(treeview), u, &iter)) {
+	if (get_iter_from_data(GTK_TREE_VIEW(treeview), account, &iter)) {
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 	}
 
@@ -1107,7 +1115,7 @@ static void do_del_acct(struct aim_user *u)
 		while(buds) {
 			struct buddy *b = buds->data;
 			buds = buds->next;
-			if(b->user == u) {
+			if(b->account == account) {
 				/* sigh, someday we'll get a central gaim_buddy_free() */
 				g->members = g_slist_remove(g->members, b);
 				g_hash_table_destroy(b->settings);
@@ -1121,7 +1129,7 @@ static void do_del_acct(struct aim_user *u)
 		}
 	}
 
-	aim_users = g_slist_remove(aim_users, u);
+	gaim_accounts = g_slist_remove(gaim_accounts, account);
 
 	gaim_blist_save();
 
@@ -1131,16 +1139,16 @@ static void do_del_acct(struct aim_user *u)
 static void del_acct_func(GtkTreeModel *model, GtkTreePath *path,
 						  GtkTreeIter *iter, gpointer data)
 {
-	struct aim_user *u;
+	struct gaim_account *account;
 
-	gtk_tree_model_get(model, iter, COLUMN_DATA, &u, -1);
+	gtk_tree_model_get(model, iter, COLUMN_DATA, &account, -1);
 
-	if (u != NULL) {
+	if (account != NULL) {
 		char buf[8192];
 
 		g_snprintf(buf, sizeof(buf),
-				   _("Are you sure you want to delete %s?"), u->username);
-		do_ask_dialog(buf, NULL, u, _("Delete"), do_del_acct, _("Cancel"), NULL, NULL, FALSE);
+				   _("Are you sure you want to delete %s?"), account->username);
+		do_ask_dialog(buf, NULL, account, _("Delete"), do_del_acct, _("Cancel"), NULL, NULL, FALSE);
 	}
 }
 
@@ -1152,24 +1160,6 @@ static void del_acct(GtkWidget *w, gpointer d)
 
 	gtk_tree_selection_selected_foreach(selection, del_acct_func, NULL);
 }
-
-#if 0
-static void sel_auto(gpointer w, gpointer d)
-{
-	GSList *l = aim_users;
-	struct aim_user *u;
-	int i = 0;		/* faster than doing g_list_index each time */
-	while (l) {
-		u = l->data;
-		l = l->next;
-		if (u->options & OPT_USR_AUTO)
-			gtk_clist_select_row(GTK_CLIST(list), i, -1);
-		else
-			gtk_clist_unselect_row(GTK_CLIST(list), i, -1);
-		i++;
-	}
-}
-#endif
 
 void account_editor(GtkWidget *w, GtkWidget *W)
 {
@@ -1360,7 +1350,7 @@ void account_online(struct gaim_connection *gc)
 	redo_buddy_list();
 	gaim_setup(gc);
 
-	gc->user->connecting = FALSE;
+	gc->account->connecting = FALSE;
 	connecting_count--;
 	debug_printf("connecting_count: %d\n", connecting_count);
 
@@ -1386,7 +1376,7 @@ void account_online(struct gaim_connection *gc)
 		struct group *g = grps->data;
 		for(buds = g->members; buds; buds = buds->next) {
 			struct buddy *b = buds->data;
-			if(b->user->gc == gc) {
+			if(b->account == gc->account) {
 				add_buds = g_list_append(add_buds, b->name);
 			}
 		}
@@ -1403,7 +1393,7 @@ void account_online(struct gaim_connection *gc)
 	if (!acctedit)
 		return;
 
-	if (get_iter_from_data(GTK_TREE_VIEW(treeview), gc->user, &iter)) {
+	if (get_iter_from_data(GTK_TREE_VIEW(treeview), gc->account, &iter)) {
 		gtk_list_store_set(model, &iter,
 						   COLUMN_ONLINE, TRUE,
 						   COLUMN_PROTOCOL, gc->prpl->name,
@@ -1414,8 +1404,8 @@ void account_online(struct gaim_connection *gc)
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
 		struct gaim_conversation *conv = (struct gaim_conversation *)l->data;
 
-		if (gaim_conversation_get_user(conv) == gc->user) {
-			gaim_conversation_update(conv, GAIM_CONV_UPDATE_USER);
+		if (gaim_conversation_get_account(conv) == gc->account) {
+			gaim_conversation_update(conv, GAIM_CONV_UPDATE_ACCOUNT);
 		}
 	}
 }
@@ -1432,8 +1422,8 @@ void account_offline(struct gaim_connection *gc)
 		g_free(meter);
 	}
 	debug_printf("Disconnecting. user = %p, gc = %p (%p)\n",
-				 gc->user, gc->user->gc, gc);
-	gc->user->gc = NULL;	/* wasn't that awkward? */
+				 gc->account, gc->account->gc, gc);
+	gc->account->gc = NULL;	/* wasn't that awkward? */
 
 	/* take these buddies out of the edit tree */
 	build_edit_tree();
@@ -1441,7 +1431,7 @@ void account_offline(struct gaim_connection *gc)
 	if (!acctedit)
 		return;
 
-	if (get_iter_from_data(GTK_TREE_VIEW(treeview), gc->user, &iter)) {
+	if (get_iter_from_data(GTK_TREE_VIEW(treeview), gc->account, &iter)) {
 		gtk_list_store_set(model, &iter, COLUMN_ONLINE, FALSE, -1);
 	}
 
@@ -1449,23 +1439,23 @@ void account_offline(struct gaim_connection *gc)
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
 		struct gaim_conversation *conv = (struct gaim_conversation *)l->data;
 
-		if (gaim_conversation_get_user(conv) == gc->user) {
-			gaim_conversation_update(conv, GAIM_CONV_UPDATE_USER);
+		if (gaim_conversation_get_account(conv) == gc->account) {
+			gaim_conversation_update(conv, GAIM_CONV_UPDATE_ACCOUNT);
 		}
 	}
 }
 
 void auto_login()
 {
-	GSList *u = aim_users;
-	struct aim_user *a = NULL;
+	GSList *accts = gaim_accounts;
+	struct gaim_account *a = NULL;
 
-	while (u) {
-		a = (struct aim_user *)u->data;
-		if ((a->options & OPT_USR_AUTO) && (a->options & OPT_USR_REM_PASS)) {
+	while (accts) {
+		a = (struct gaim_account *)accts->data;
+		if ((a->options & OPT_ACCT_AUTO) && (a->options & OPT_ACCT_REM_PASS)) {
 			serv_login(a);
 		}
-		u = u->next;
+		accts = accts->next;
 	}
 }
 
@@ -1497,31 +1487,31 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 	GtkWidget *nest_vbox;
 	GString *name_to_print;
 	struct signon_meter *meter;
-	
+
 	name_to_print = g_string_new(gc->username);
-	
+
 	meter = g_new0(struct signon_meter, 1);
-	
+
 	(*rows)++;
 	gtk_table_resize (table, *rows, 4);
-	
+
 	graphic = create_meter_pixmap( widget , gc);
-	
+
 	nest_vbox = gtk_vbox_new (FALSE, 0);
-	
+
 	g_string_prepend(name_to_print, _("Signon: "));
 	label = gtk_label_new (name_to_print->str);
 	g_string_free(name_to_print, TRUE);
 	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
-		
+
 	meter->status = gtk_statusbar_new();
 	gtk_widget_set_usize(meter->status, 250, 0);
-	
+
 	meter->progress = gtk_progress_bar_new ();
-	
+
 	meter->button = gtk_button_new_with_label (_("Cancel"));
 	g_signal_connect (GTK_OBJECT (meter->button), "clicked", G_CALLBACK (cancel_signon), meter);
-		
+
 	gtk_table_attach (GTK_TABLE (table), graphic, 0, 1, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	gtk_table_attach (GTK_TABLE (table), nest_vbox, 1, 2, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 		gtk_box_pack_start (GTK_BOX (nest_vbox), GTK_WIDGET (label), FALSE, FALSE, 0);
@@ -1530,9 +1520,9 @@ static struct signon_meter *register_meter(struct gaim_connection *gc, GtkWidget
 	gtk_table_attach (GTK_TABLE (table), meter->button, 3, 4, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 
 	gtk_widget_show_all (GTK_WIDGET (meter_win->window));
-	
+
 	meter_win->active_count++;
-	
+
 	return meter;
 }
 
@@ -1602,17 +1592,17 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 }
 
 struct kick_dlg {
-	struct aim_user *user;
+	struct gaim_account *account;
 	GtkWidget *dlg;
 };
 static GSList *kicks = NULL;
 
-static struct kick_dlg *find_kick_dlg(struct aim_user *u)
+static struct kick_dlg *find_kick_dlg(struct gaim_account *account)
 {
 	GSList *k = kicks;
 	while (k) {
 		struct kick_dlg *d = k->data;
-		if (d->user == u)
+		if (d->account == account)
 			return d;
 		k = k->next;
 	}
@@ -1634,13 +1624,13 @@ static void hide_login_progress_common(struct gaim_connection *gc,
 				       char *prologue)
 {
 	char buf[2048];
-	struct kick_dlg *k = find_kick_dlg(gc->user);
+	struct kick_dlg *k = find_kick_dlg(gc->account);
 	struct signon_meter *meter = find_signon_meter(gc);
 	sprintf(buf, _("%s\n%s: %s"), full_date(), prologue, details);
 	if (k)
 		gtk_widget_destroy(k->dlg);
 	k = g_new0(struct kick_dlg, 1);
-	k->user = gc->user;
+	k->account = gc->account;
 	k->dlg = do_error_dialog(title, buf, GAIM_ERROR);
 	kicks = g_slist_append(kicks, k);
 	g_signal_connect(GTK_OBJECT(k->dlg), "destroy", G_CALLBACK(set_kick_null), k);
@@ -1712,8 +1702,8 @@ void signoff(struct gaim_connection *gc)
 	/* set this in case the plugin died before really connecting.
 	   do it after calling the plugins so they can determine if
 	   this user was ever on-line or not */
-	if (gc->user->connecting) {
-		gc->user->connecting = FALSE;
+	if (gc->account->connecting) {
+		gc->account->connecting = FALSE;
 		connecting_count--;
 	}
 	debug_printf("connecting_count: %d\n", connecting_count);
@@ -1746,29 +1736,29 @@ void signoff(struct gaim_connection *gc)
 	show_login();
 }
 
-struct aim_user *new_user(const char *name, int proto, int opts)
+struct gaim_account *gaim_account_new(const char *name, int proto, int opts)
 {
-	struct aim_user *u = g_new0(struct aim_user, 1);
-	g_snprintf(u->username, sizeof(u->username), "%s", name);
-	g_snprintf(u->user_info, sizeof(u->user_info), "%s", DEFAULT_INFO);
-	u->protocol = proto;
-	u->options = opts;
-	u->permit = NULL;
-	u->deny = NULL;
-	aim_users = g_slist_append(aim_users, u);
+	struct gaim_account *account = g_new0(struct gaim_account, 1);
+	g_snprintf(account->username, sizeof(account->username), "%s", name);
+	g_snprintf(account->user_info, sizeof(account->user_info), "%s", DEFAULT_INFO);
+	account->protocol = proto;
+	account->options = opts;
+	account->permit = NULL;
+	account->deny = NULL;
+	gaim_accounts = g_slist_append(gaim_accounts, account);
 
 	if (treeview) {
 		GtkTreeIter iter;
 
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter,
-						   COLUMN_SCREENNAME, u->username,
-						   COLUMN_ONLINE, (u->gc ? TRUE : FALSE),
-						   COLUMN_AUTOLOGIN, (u->options & OPT_USR_AUTO),
-						   COLUMN_PROTOCOL, proto_name(u->protocol),
-						   COLUMN_DATA, u,
+						   COLUMN_SCREENNAME, account->username,
+						   COLUMN_ONLINE, (account->gc ? TRUE : FALSE),
+						   COLUMN_AUTOLOGIN, (account->options & OPT_ACCT_AUTO),
+						   COLUMN_PROTOCOL, proto_name(account->protocol),
+						   COLUMN_DATA, account,
 						   -1);
 	}
 
-	return u;
+	return account;
 }

@@ -458,7 +458,7 @@ add_cb(GtkWidget *widget, struct gaim_conversation *conv)
 
 	gc   = gaim_conversation_get_gc(conv);
 	name = gaim_conversation_get_name(conv);
-	b    = find_buddy(gc->user, name);
+	b    = find_buddy(gc->account, name);
 
 	if (b != NULL)
 		show_confirm_del(gc, (char *)name);
@@ -530,7 +530,7 @@ im_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	struct gaim_conversation *conv2;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
-	struct aim_user *user;
+	struct gaim_account *account;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *sel;
@@ -550,16 +550,16 @@ im_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	if (*name == '@') name++;
 	if (*name == '+') name++;
 
-	user = gaim_conversation_get_user(conv);
+	account = gaim_conversation_get_account(conv);
 
 	conv2 = gaim_find_conversation(name);
 
 	if (conv2 != NULL) {
 		gaim_window_raise(gaim_conversation_get_window(conv2));
-		gaim_conversation_set_user(conv2, user);
+		gaim_conversation_set_account(conv2, account);
 	}
 	else
-		conv2 = gaim_conversation_new(GAIM_CONV_IM, user, name);
+		conv2 = gaim_conversation_new(GAIM_CONV_IM, account, name);
 }
 
 static void
@@ -603,18 +603,18 @@ menu_im_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
 	const char *who;
 	struct gaim_conversation *conv2;
-	struct aim_user *user;
+	struct gaim_account *account;
 
 	who = g_object_get_data(G_OBJECT(w), "user_data");
 
-	user = gaim_conversation_get_user(conv);
+	account = gaim_conversation_get_account(conv);
 
 	conv2 = gaim_find_conversation(who);
 
 	if (conv2 != NULL)
 		gaim_window_show(gaim_conversation_get_window(conv2));
 	else
-		conv2 = gaim_conversation_new(GAIM_CONV_IM, user, who);
+		conv2 = gaim_conversation_new(GAIM_CONV_IM, account, who);
 }
 
 static void
@@ -666,7 +666,7 @@ menu_add_cb(GtkWidget *w, struct gaim_conversation *conv)
 
 	gc   = gaim_conversation_get_gc(conv);
 	name = g_object_get_data(G_OBJECT(w), "user_data");
-	b    = find_buddy(gc->user, name);
+	b    = find_buddy(gc->account, name);
 
 	if (b != NULL)
 		show_confirm_del(gc, name);
@@ -683,7 +683,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
 	struct gaim_connection *gc;
-	struct aim_user *user;
+	struct gaim_account *account;
 	GtkTreePath *path;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -693,8 +693,8 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
-	user    = gaim_conversation_get_user(conv);
-	gc      = user->gc;
+	account = gaim_conversation_get_account(conv);
+	gc      = account->gc;
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 	
@@ -714,9 +714,9 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		struct gaim_conversation *c;
 
 		if ((c = gaim_find_conversation(who)) == NULL)
-			c = gaim_conversation_new(GAIM_CONV_IM, user, who);
+			c = gaim_conversation_new(GAIM_CONV_IM, account, who);
 		else
-			gaim_conversation_set_user(c, user);
+			gaim_conversation_set_account(c, account);
 	}
 	else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		static GtkWidget *menu = NULL;
@@ -770,7 +770,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 		/* Added by Jonas <jonas@birme.se> */
 		if (gc) {
-			if (find_buddy(gc->user, who))
+			if (find_buddy(gc->account, who))
 				button = gtk_menu_item_new_with_label(_("Remove"));
 			else
 				button = gtk_menu_item_new_with_label(_("Add"));
@@ -1245,7 +1245,7 @@ entry_stop_rclick_cb(GtkWidget *widget, GdkEventButton *event, gpointer data)
 }
 
 static void
-menu_conv_sel_send_cb(GObject *m, struct aim_user *user)
+menu_conv_sel_send_cb(GObject *m, struct gaim_account *account)
 {
 	struct gaim_window *win = g_object_get_data(m, "user_data");
 	struct gaim_conversation *conv;
@@ -1255,7 +1255,7 @@ menu_conv_sel_send_cb(GObject *m, struct aim_user *user)
 
 	conv = gaim_window_get_active_conversation(win);
 
-	gaim_conversation_set_user(conv, user);
+	gaim_conversation_set_account(conv, account);
 }
 
 static void
@@ -1939,7 +1939,7 @@ got_typing_keypress(struct gaim_conversation *conv, gboolean first)
 static void
 update_send_as_selection(struct gaim_window *win)
 {
-	struct aim_user *user;
+	struct gaim_account *account;
 	struct gaim_conversation *conv;
 	struct gaim_gtk_window *gtkwin;
 	const char *username;
@@ -1951,16 +1951,16 @@ update_send_as_selection(struct gaim_window *win)
 	if (conv == NULL)
 		return;
 
-	user   = gaim_conversation_get_user(conv);
+	account   = gaim_conversation_get_account(conv);
 	gtkwin = GAIM_GTK_WINDOW(win);
 
-	if (user == NULL)
+	if (account == NULL)
 		return;
 
 	if (gtkwin->menu.send_as == NULL)
 		return;
 
-	username = (user->gc == NULL ? user->username : user->gc->username);
+	username = (account->gc == NULL ? account->username : account->gc->username);
 
 	gtk_widget_show(gtkwin->menu.send_as);
 
@@ -2021,12 +2021,12 @@ generate_send_as_items(struct gaim_window *win,
 			 convs = convs->next) {
 
 			struct gaim_conversation *conv;
-			struct aim_user *user;
-			
-			conv = (struct gaim_conversation *)convs->data;
-			user = gaim_conversation_get_user(conv);
+			struct gaim_account *account;
 
-			if (user->gc == NULL) {
+			conv = (struct gaim_conversation *)convs->data;
+			account = gaim_conversation_get_account(conv);
+
+			if (account->gc == NULL) {
 				found_offline = TRUE;
 				break;
 			}
@@ -2064,7 +2064,7 @@ generate_send_as_items(struct gaim_window *win,
 		g_object_set_data(G_OBJECT(menuitem), "user_data", win);
 
 		g_signal_connect(G_OBJECT(menuitem), "activate",
-						 G_CALLBACK(menu_conv_sel_send_cb), gc->user);
+						 G_CALLBACK(menu_conv_sel_send_cb), gc->account);
 
 		gtk_widget_show(menuitem);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -2079,16 +2079,16 @@ generate_send_as_items(struct gaim_window *win,
 		 convs = convs->next) {
 
 		struct gaim_conversation *conv;
-		struct aim_user *user;
+		struct gaim_account *account;
 
 		conv = (struct gaim_conversation *)convs->data;
 
 		if (conv == deleted_conv)
 			continue;
 
-		user = gaim_conversation_get_user(conv);
+		account = gaim_conversation_get_account(conv);
 
-		if (user->gc == NULL) {
+		if (account->gc == NULL) {
 			if (first_offline && found_online) {
 				menuitem = gtk_separator_menu_item_new();
 				gtk_widget_show(menuitem);
@@ -2098,7 +2098,7 @@ generate_send_as_items(struct gaim_window *win,
 			}
 
 			menuitem = gtk_radio_menu_item_new_with_label(group,
-														  user->username);
+														  account->username);
 			group = gtk_radio_menu_item_group(GTK_RADIO_MENU_ITEM(menuitem));
 
 			gtk_widget_set_sensitive(menuitem, FALSE);
@@ -2491,7 +2491,7 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 	/* Now, um, just kind of all over the place. Huh? */
 
 	/* Add button */
-	if (find_buddy(gaim_conversation_get_gc(conv)->user,
+	if (find_buddy(gaim_conversation_get_gc(conv)->account,
 				   gaim_conversation_get_name(conv)) == NULL) {
 		gtkim->add = gaim_gtk_change_text(_("Add"), gtkim->add,
 										  GTK_STOCK_ADD, type);
@@ -3526,7 +3526,7 @@ update_convo_add_button(struct gaim_conversation *conv)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	parent  = gtk_widget_get_parent(gtkconv->u.im->add);
 
-	if (find_buddy(gc->user, gaim_conversation_get_name(conv))) {
+	if (find_buddy(gc->account, gaim_conversation_get_name(conv))) {
 		gtkconv->u.im->add =
 			gaim_gtk_change_text(_("Remove"), gtkconv->u.im->add,
 								 GTK_STOCK_REMOVE, type);
@@ -4103,7 +4103,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 	win     = gaim_conversation_get_window(conv);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	if (type == GAIM_CONV_UPDATE_USER) {
+	if (type == GAIM_CONV_UPDATE_ACCOUNT) {
 		gaim_conversation_autoset_title(conv);
 		gaim_gtkconv_update_buddy_icon(conv);
 		gaim_gtkconv_update_buttons_by_protocol(conv);
