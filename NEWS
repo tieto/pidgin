@@ -40,6 +40,16 @@
 	can transfer files.  After that I got lazy/busy and let Gary, Kevin,
 	and Stu fix all the bugs.
 
+	Nathan: Rob happens to share a birthday with my sister.  So far she's
+	been very vague about what she wants.  She's not an easy person to shop
+	for.  As for things you probably care more about, this release has so
+	much in it that I've forgotten about most of it.  The stupidest of the
+	bugs from 0.75 are fixed.  Jabber has a first pass at file transfer
+	support (no proxy support yet).  SOCKS 5 proxy support may have gotten
+	a little better as a side-effect.  Twinkies and penguin points to all
+	of the crazy patch writers, who did more than their fair share this
+	release.
+
 0.75 (01/09/2004):
 	Rob: Woah, what's this? Me? Making a NEWS post!? Say it ain't so!
 	That's right, kiddos, I'm finally coming out of my reclusiveness.
