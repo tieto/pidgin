@@ -284,6 +284,8 @@ void delete_conversation(struct conversation *c)
 	g_list_free(c->send_history);
 	if (c->typing_timeout)
 		gtk_timeout_remove(c->typing_timeout);
+	if (c->type_again_timeout)
+		gtk_timeout_remove(c->type_again_timeout);
 	g_string_free(c->history, TRUE);
 	g_free(c);
 }
@@ -535,7 +537,8 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 
 	if (!c->is_chat) {
 		GSList *cn = connections;
-		serv_send_typing(c->gc, c->name, FALSE);
+		if (!(misc_options & OPT_MISC_STEALTH_TYPING))
+			serv_send_typing(c->gc, c->name, NOT_TYPING);
 		while (cn) {
 			struct gaim_connection *gc = cn->data;
 			cn = cn->next;
@@ -820,6 +823,16 @@ static void move_next_tab(GtkNotebook *notebook, gboolean chat)
 		gtk_notebook_next_page(notebook);
 }
 
+gboolean send_typed(gpointer data)
+{
+	struct conversation *c = (struct conversation*)data;
+	if (c && c->gc && c->name) {
+		c->type_again = 1;
+		serv_send_typing(c->gc, c->name, TYPED);
+	}
+	return FALSE;
+}
+
 gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct conversation *c)
 {
 	int pos;
@@ -1066,23 +1079,34 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 
 	if (c && (!(misc_options & OPT_MISC_STEALTH_TYPING)) && !c->is_chat) {
 		char *txt = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
-		if (gdk_keyval_to_unicode(event->keyval) && 
+		if (gdk_keyval_to_unicode(event->keyval) &&
 			(strlen(txt) == 0 || (c->type_again != 0 && time(NULL) > c->type_again))) {
-			int timeout = serv_send_typing(c->gc, c->name, TRUE);
+			int timeout = serv_send_typing(c->gc, c->name, TYPING);
 			if (timeout)
 				c->type_again = time(NULL) + timeout;
 			else
 				c->type_again = 0;
+
+			if (c && c->type_again_timeout)
+				gtk_timeout_remove(c->type_again_timeout);
+			/* send TYPED after 5 seconds of not typing */
+			c->type_again_timeout = gtk_timeout_add(5000, send_typed, (gpointer)c);
 		}
 		else if (strlen(txt) == 1) {
 			if ((GTK_OLD_EDITABLE(c->entry)->current_pos == 1 && event->keyval == GDK_BackSpace) ||
-			    (GTK_OLD_EDITABLE(c->entry)->current_pos == 0 && event->keyval == GDK_Delete))
-				serv_send_typing(c->gc, c->name, FALSE);
+			    (GTK_OLD_EDITABLE(c->entry)->current_pos == 0 && event->keyval == GDK_Delete)) {
+				if (c && c->type_again_timeout)
+					gtk_timeout_remove(c->type_again_timeout);
+				serv_send_typing(c->gc, c->name, NOT_TYPING);
+			}
 		} else if (GTK_OLD_EDITABLE(c->entry)->selection_start_pos == 0) {
 			if (GTK_OLD_EDITABLE(c->entry)->selection_end_pos == strlen(txt) &&
 				strlen(txt) > 0 &&
-			    (event->keyval == GDK_BackSpace || event->keyval == GDK_Delete))
-				serv_send_typing(c->gc, c->name, FALSE);
+			    (event->keyval == GDK_BackSpace || event->keyval == GDK_Delete)) {
+				if (c && c->type_again_timeout)
+					gtk_timeout_remove(c->type_again_timeout);
+				serv_send_typing(c->gc, c->name, NOT_TYPING);
+			}
 		}
 		g_free(txt);
 	}

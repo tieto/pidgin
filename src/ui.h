@@ -148,6 +148,7 @@ struct conversation {
 	gint unseen;
 	guint typing_timeout;
 	time_t type_again;
+	guint type_again_timeout;
 
 	/* stuff used just for chat */
         GList *in_room;

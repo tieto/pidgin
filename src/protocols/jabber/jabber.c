@@ -2209,7 +2209,7 @@ static int jabber_send_typing(struct gaim_connection *gc, char *who, int typing)
 
 	if((realwho = get_realwho(gjc, who, FALSE, NULL)) == NULL)
 		return 0;
-	
+
 	x = xmlnode_new_tag("message");
 	xmlnode_put_attrib(x, "to", realwho);
 	xmlnode_insert_tag(x, "gaim");
@@ -2217,9 +2217,9 @@ static int jabber_send_typing(struct gaim_connection *gc, char *who, int typing)
 	y = xmlnode_insert_tag(x, "x");
 	xmlnode_put_attrib(y, "xmlns", "jabber:x:event");
 
-	if(typing)
+	if(typing == TYPING)
 		xmlnode_insert_tag(y, "composing");
-	
+
 	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
 	xmlnode_free(x);
 	g_free(realwho);

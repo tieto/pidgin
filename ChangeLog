@@ -77,6 +77,10 @@ version 0.60:
 	  KDE 3.1. (Thanks Robert McQueen, Ari Pollak, Patrick Aussems)
 	* Plugins dialog and perl script menu merged into preferences.
 	* use snprintf instead of sprintf (Thanks William T. Mahan).
+	* Non-direct connect typing notification for AIM over oscar 
+	  (Thanks Mark Doliner)
+	* Improved typing notification support for Jabber and 
+	  Yahoo! (Thanks Nathan Walp)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
@@ -243,7 +247,7 @@ version 0.53 (02/28/2002):
 	* Better selection in HTML widget (Thanks BMiller)
 	* New icons for ICQ (Thanks Kevin Miller)
 	* Editable buddy pounces (Thanks Jason Willis)
-	* Server side buddy lists in Oscar (Thanks KingAnt :-))
+	* Server side buddy lists in Oscar (Thanks Mark Doliner :-))
 	* Fix for the chatlist plugin
 	* Typing Notification (AIM Direct Connect, Yahoo, MSN)
 	* IM Images (Receive Only)

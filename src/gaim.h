@@ -117,6 +117,10 @@
 #define PERMIT_SOME	3
 #define DENY_SOME	4
 
+#define NOT_TYPING 0
+#define TYPING     1
+#define TYPED      2
+
 #define WFLAG_SEND	0x01
 #define WFLAG_RECV	0x02
 #define WFLAG_AUTO	0x04

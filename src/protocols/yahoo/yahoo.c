@@ -1176,7 +1176,7 @@ int yahoo_send_typing(struct gaim_connection *gc, char *who, int typ)
 	yahoo_packet_hash(pkt, 49, "TYPING");
 	yahoo_packet_hash(pkt, 1, gc->displayname);
 	yahoo_packet_hash(pkt, 14, " ");
-	yahoo_packet_hash(pkt, 13, typ ? "1" : "0");
+	yahoo_packet_hash(pkt, 13, typ == TYPING ? "1" : "0");
 	yahoo_packet_hash(pkt, 5, who);
 	yahoo_packet_hash(pkt, 1002, "1");
 

@@ -2776,8 +2776,10 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing)
 	else {
 		struct buddy *b = find_buddy(gc, name);
 		if (b && (b->uc & UC_TYPINGNOT)) {
-			if (typing)
+			if (typing == TYPING)
 				aim_mtn_send(odata->sess, 0x0001, name, 0x0002);
+			else if (typing == TYPED)
+				aim_mtn_send(odata->sess, 0x0001, name, 0x0001);
 			else
 				aim_mtn_send(odata->sess, 0x0001, name, 0x0000);
 		}
