@@ -377,6 +377,8 @@ AC_OUTPUT([Makefile
 	   pixmaps/protocols/irc/Makefile
 	   pixmaps/protocols/icq/Makefile
 	   pixmaps/protocols/gg/Makefile
+	   pixmaps/smileys/Makefile
+	   pixmaps/smileys/default/Makefile
 	   plugins/Makefile
 	   plugins/docklet/Makefile
 	   plugins/ticker/Makefile

@@ -1,4 +1,4 @@
-SUBDIRS = protocols
+SUBDIRS = protocols smileys
 EXTRA_DIST =	about_menu.png \
 		accounts.png \
 		accounts-menu.png \
@@ -92,11 +92,6 @@ gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning
 
 gaimmenupixdir = $(datadir)/pixmaps/gaim/menus
 gaimmenupix_DATA = insert-image-small.png about_menu.png import-menu.png accounts-menu.png insert-link-small.png
-
-gaimsmileypixdir = $(datadir)/pixmaps/gaim/smileys/default
-gaimsmileypix_DATA =    luke.png oneeye.png crazy.png mrt.png download.png farted.png \
-			smile.png sad.png wink.png tongue.png scream.png kiss.png yell.png cool.png moneymouth.png burp.png embarrassed.png cry.png \
-			think.png crossedlips.png bigsmile.png angel.png
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
 gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png logo.png
