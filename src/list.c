@@ -720,6 +720,7 @@ gboolean gaim_group_on_account(struct group *g, struct gaim_account *account) {
 	return FALSE;
 }
 
+static gboolean blist_safe_to_write = FALSE;
 
 static char *blist_parser_group_name = NULL;
 static char *blist_parser_person_name = NULL;
@@ -986,10 +987,10 @@ void gaim_blist_load() {
 	char *filename;
 	char *msg;
 
-	if(!user_dir) {
-		debug_printf("unable to get user dir!  buddy list load aborted!\n");
+	blist_safe_to_write = TRUE;
+
+	if(!user_dir)
 		return;
-	}
 
 	filename = g_build_filename(user_dir, "blist.xml", NULL);
 
@@ -1112,6 +1113,11 @@ void gaim_blist_save() {
 
 	if(!user_dir)
 		return;
+
+	if(!blist_safe_to_write) {
+		debug_printf("AHH!! tried to write the blist before we read it!\n");
+		return;
+	}
 
 	file = fopen(user_dir, "r");
 	if(!file)
