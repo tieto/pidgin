@@ -24,6 +24,7 @@
 
 #include "internal.h"
 #include "debug.h"
+#include "version.h"
 
 #include "gtkaccount.h"
 #include "gtkblist.h"
@@ -88,7 +89,9 @@ plugin_load(GaimPlugin *plugin)
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
 	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */

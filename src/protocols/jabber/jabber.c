@@ -742,7 +742,7 @@ static void jabber_close(GaimConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
-	jabber_presence_send(gc, "unavailable", _("Logged out"));
+	jabber_presence_send(gc, NULL); /* XXX: FIXME: EEK! */
 	jabber_send_raw(js, "</stream:stream>", -1);
 
 	if(js->gsc) {
@@ -776,6 +776,9 @@ static void jabber_close(GaimConnection *gc)
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 {
+	GaimPresence *gpresence;
+	GaimStatus *status;
+
 	js->state = state;
 	switch(state) {
 		case JABBER_STREAM_OFFLINE:
@@ -807,7 +810,9 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_CONNECTED:
 			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
 			jabber_roster_request(js);
-			jabber_presence_send(js->gc, js->gc->away_state, js->gc->away);
+			gpresence = gaim_account_get_presence(js->gc->account);
+			status = gaim_presence_get_active_status(gpresence);
+			jabber_presence_send(js->gc, status);
 			jabber_disco_items_server(js);
 			serv_finish_login(js->gc);
 			break;
@@ -832,8 +837,8 @@ static const char *jabber_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "jabber";
 }
 
-static void jabber_list_emblems(GaimBuddy *b, char **se, char **sw,
-		char **nw, char **ne)
+static void jabber_list_emblems(GaimBuddy *b, const char **se, const char **sw,
+		const char **nw, const char **ne)
 {
 	JabberStream *js;
 	JabberBuddy *jb;
@@ -853,22 +858,12 @@ static void jabber_list_emblems(GaimBuddy *b, char **se, char **sw,
 		else
 			*se = "offline";
 	} else {
-		switch (b->uc) {
-			case JABBER_STATE_AWAY:
-				*se = "away";
-				break;
-			case JABBER_STATE_CHAT:
-				*se = "chat";
-				break;
-			case JABBER_STATE_XA:
+		GaimStatusType *status_type = gaim_status_get_type(gaim_presence_get_active_status(gaim_buddy_get_presence(b)));
+
+		if(gaim_status_type_get_primitive(status_type) > GAIM_STATUS_ONLINE) {
+			*se = gaim_status_type_get_id(status_type);
+			if(!strcmp(*se, "xa"))
 				*se = "extendedaway";
-				break;
-			case JABBER_STATE_DND:
-				*se = "dnd";
-				break;
-			case JABBER_STATE_ERROR:
-				*se = "error";
-				break;
 		}
 	}
 }
@@ -886,10 +881,12 @@ static char *jabber_status_text(GaimBuddy *b)
 	} else {
 		char *stripped;
 
-		stripped = gaim_markup_strip_html(jabber_buddy_get_status_msg(jb));
+		if(!(stripped = gaim_markup_strip_html(jabber_buddy_get_status_msg(jb)))) {
+			GaimStatus *status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
 
-		if(!stripped && b->uc & UC_UNAVAILABLE)
-			stripped = g_strdup(jabber_get_state_string(b->uc));
+			if(!gaim_status_is_available(status))
+				stripped = g_strdup(gaim_status_get_name(status));
+		}
 
 		if(stripped) {
 			ret = g_markup_escape_text(stripped, -1);
@@ -937,7 +934,7 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 
 			g_string_append_printf(ret, "\n<b>%s:</b> %s%s%s",
 					_("Status"),
-					jabber_get_state_string(jbr->state),
+					jabber_buddy_state_get_name(jbr->state),
 					text ? ": " : "",
 					text ? text : "");
 			if(text)
@@ -951,21 +948,35 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 	return g_string_free(ret, FALSE);
 }
 
-static GList *jabber_away_states(GaimConnection *gc)
+static GList *jabber_status_types(GaimAccount *account)
 {
-	JabberStream *js = gc->proto_data;
-	GList *m = NULL;
+	GaimStatusType *type;
+	GList *types = NULL;
 
-	m = g_list_append(m, _("Online"));
-	m = g_list_append(m, _("Chatty"));
-	m = g_list_append(m, _("Away"));
-	m = g_list_append(m, _("Extended Away"));
-	m = g_list_append(m, _("Do Not Disturb"));
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE, "offline", _("Offline"), TRUE, FALSE, FALSE, "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_ONLINE, "online", _("Online"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "chat", _("Chatty"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY, "xa", _("Extended Away"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE, "dnd", _("Do Not Disturb"), TRUE, TRUE, FALSE, "priority", _("Priority"), gaim_value_new(GAIM_TYPE_INT), "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	/*
 	if(js->protocol_version == JABBER_PROTO_0_9)
 		m = g_list_append(m, _("Invisible"));
-	m = g_list_append(m, GAIM_AWAY_CUSTOM);
+		*/
 
-	return m;
+	return types;
 }
 
 static void
@@ -1488,7 +1499,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_list_emblems,			/* list_emblems */
 	jabber_status_text,				/* status_text */
 	jabber_tooltip_text,			/* tooltip_text */
-	jabber_away_states,				/* away_states */
+	jabber_status_types,			/* status_types */
 	jabber_blist_node_menu,			/* blist_node_menu */
 	jabber_chat_info,				/* chat_info */
 	jabber_chat_info_defaults,		/* chat_info_defaults */
@@ -1498,7 +1509,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_set_info,				/* set_info */
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
-	jabber_presence_send,			/* set_away */
+	NULL,							/* set_away */
 	jabber_idle_set,				/* set_idle */
 	NULL,							/* change_passwd */
 	jabber_roster_add_buddy,		/* add_buddy */

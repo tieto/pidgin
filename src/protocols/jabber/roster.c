@@ -55,7 +55,7 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
 	GSList *buddies, *g2, *l;
-	int present =0, idle=0, state=0;
+	int present =0;
 
 	buddies = gaim_find_buddies(js->gc->account, jid);
 
@@ -70,8 +70,6 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 
 	if(buddies) {
 		present = ((GaimBuddy*)buddies->data)->present;
-		idle = ((GaimBuddy*)buddies->data)->idle;
-		state = ((GaimBuddy*)buddies->data)->uc;
 	}
 
 	while(buddies) {
@@ -104,9 +102,8 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 			gaim_blist_add_group(g, NULL);
 		}
 
+		/* XXX: this hack may need to change */
 		b->present = present;
-		b->idle = idle;
-		b->uc = state;
 
 		gaim_blist_add_buddy(b, NULL, g, NULL);
 		gaim_blist_alias_buddy(b, alias);
@@ -269,12 +266,20 @@ void jabber_roster_add_buddy(GaimConnection *gc, GaimBuddy *buddy,
 	jabber_roster_update(js, who, groups);
 
 	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	if(!strcmp(who, my_bare_jid))
-		jabber_presence_fake_to_self(js, js->gc->away_state, js->gc->away);
-	else if(!jb || !(jb->subscription & JABBER_SUB_TO))
+	if(!strcmp(who, my_bare_jid)) {
+		GaimPresence *gpresence;
+		GaimStatus *status;
+
+		gpresence = gaim_account_get_presence(js->gc->account);
+		status = gaim_presence_get_active_status(gpresence);
+		jabber_presence_fake_to_self(js, status);
+	} else if(!jb || !(jb->subscription & JABBER_SUB_TO)) {
 		jabber_presence_subscription_set(js, who, "subscribe");
-	else if((jbr =jabber_buddy_find_resource(jb, NULL)))
-		serv_got_update(gc, who, TRUE, 0, 0, 0, jbr->state);
+	} else if((jbr =jabber_buddy_find_resource(jb, NULL))) {
+		gaim_prpl_got_user_status(gc->account, who,
+				jabber_buddy_state_get_status_id(jbr->state),
+				"priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status);
+	}
 
 	g_free(my_bare_jid);
 	g_free(who);

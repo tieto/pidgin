@@ -1,6 +1,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
+#include "version.h"
 
 #include "gtkgaim.h"
 #include "gtkplugin.h"
@@ -136,7 +137,9 @@ plugin_unload(GaimPlugin *plugin)
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,
 	GAIM_GTK_PLUGIN_TYPE,
 	0,

@@ -23,6 +23,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "plugin.h"
+#include "version.h"
 
 static int
 add_func(int i1, int i2)
@@ -60,7 +61,9 @@ plugin_load(GaimPlugin *plugin)
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

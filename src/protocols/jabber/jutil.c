@@ -26,26 +26,6 @@
 #include "presence.h"
 #include "jutil.h"
 
-const char *jabber_get_state_string(int s) {
-	switch(s) {
-		case JABBER_STATE_AWAY:
-			return _("Away");
-			break;
-		case JABBER_STATE_CHAT:
-			return _("Chatty");
-			break;
-		case JABBER_STATE_XA:
-			return _("Extended Away");
-			break;
-		case JABBER_STATE_DND:
-			return _("Do Not Disturb");
-			break;
-		default:
-			return _("Available");
-			break;
-	}
-}
-
 gboolean jabber_nodeprep_validate(const char *str)
 {
 	const char *c;

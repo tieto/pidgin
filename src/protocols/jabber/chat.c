@@ -196,6 +196,11 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	xmlnode *presence, *x;
 	char *tmp, *room_jid, *full_jid;
 	JabberStream *js = gc->proto_data;
+	GaimPresence *gpresence;
+	GaimStatus *status;
+	JabberBuddyState state;
+	const char *msg;
+	int priority;
 
 	room = g_hash_table_lookup(data, "room");
 	server = g_hash_table_lookup(data, "server");
@@ -245,7 +250,12 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 
 	g_hash_table_insert(js->chats, room_jid, chat);
 
-	presence = jabber_presence_create(gc->away_state, gc->away);
+	gpresence = gaim_account_get_presence(gc->account);
+	status = gaim_presence_get_active_status(gpresence);
+
+	gaim_status_to_jabber(status, &state, &msg, &priority);
+
+	presence = jabber_presence_create(state, msg, priority);
 	full_jid = g_strdup_printf("%s/%s", room_jid, handle);
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);
@@ -599,6 +609,11 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 {
 	xmlnode *presence;
 	char *full_jid;
+	GaimPresence *gpresence;
+	GaimStatus *status;
+	JabberBuddyState state;
+	const char *msg;
+	int priority;
 
 	if(!chat->muc) {
 		gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "",
@@ -607,7 +622,12 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 		return;
 	}
 
-	presence = jabber_presence_create(chat->js->gc->away_state, chat->js->gc->away);
+	gpresence = gaim_account_get_presence(chat->js->gc->account);
+	status = gaim_presence_get_active_status(gpresence);
+
+	gaim_status_to_jabber(status, &state, &msg, &priority);
+
+	presence = jabber_presence_create(state, msg, priority);
 	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, nick);
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);

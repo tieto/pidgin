@@ -5,6 +5,7 @@
 #include "debug.h"
 #include "signals.h"
 #include "sound.h"
+#include "version.h"
 
 #include "gtkblist.h"
 #include "gtkgaim.h"
@@ -147,7 +148,9 @@ plugin_unload(GaimPlugin *plugin)
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,
 	GAIM_GTK_PLUGIN_TYPE,
 	0,

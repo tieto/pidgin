@@ -22,21 +22,16 @@
 #ifndef _GAIM_JABBER_PRESENCE_H_
 #define _GAIM_JABBER_PRESENCE_H_
 
+#include "buddy.h"
 #include "jabber.h"
 #include "xmlnode.h"
 
-#define JABBER_STATE_AWAY  (0x02 | UC_UNAVAILABLE)
-#define JABBER_STATE_CHAT  (0x04)
-#define JABBER_STATE_XA    (0x08 | UC_UNAVAILABLE)
-#define JABBER_STATE_DND   (0x10 | UC_UNAVAILABLE)
-#define JABBER_STATE_ERROR (0x20 | UC_UNAVAILABLE)
-
-void jabber_presence_send(GaimConnection *gc, const char *state,
-		const char *msg);
-xmlnode *jabber_presence_create(GaimStatus *status);
+void jabber_presence_send(GaimConnection *gc, GaimStatus *status);
+xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority);
 void jabber_presence_parse(JabberStream *js, xmlnode *packet);
 void jabber_presence_subscription_set(JabberStream *js, const char *who,
 		const char *type);
-void jabber_presence_fake_to_self(JabberStream *js, const char *away_state, const char *msg);
+void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *status);
+void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, const char **msg, int *priority);
 
 #endif /* _GAIM_JABBER_PRESENCE_H_ */

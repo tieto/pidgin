@@ -24,6 +24,7 @@
 #include "notify.h"
 #include "request.h"
 #include "server.h"
+#include "status.h"
 #include "util.h"
 
 #include "buddy.h"
@@ -52,96 +53,81 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	g_free(chat_full_jid);
 }
 
-void jabber_presence_fake_to_self(JabberStream *js, const char *away_state, const char *msg) {
+void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 	char *my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 	if(gaim_find_buddy(js->gc->account, my_base_jid)) {
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr;
 		if((jb = jabber_buddy_find(js, my_base_jid, TRUE))) {
-			int state = 0;
-			if(away_state) {
-				if(!strcmp(away_state, _("Away")) ||
-						(msg && *msg && !strcmp(away_state, GAIM_AWAY_CUSTOM)))
-					state = JABBER_STATE_AWAY;
-				else if(!strcmp(away_state, _("Chatty")))
-					state = JABBER_STATE_CHAT;
-				else if(!strcmp(away_state, _("Extended Away")))
-					state = JABBER_STATE_XA;
-				else if(!strcmp(away_state, _("Do Not Disturb")))
-					state = JABBER_STATE_DND;
-			}
-		       
-			if (away_state && !strcmp(away_state, "unavailable")) {
+			JabberBuddyState state;
+			const char *msg;
+			int priority;
+
+			gaim_status_to_jabber(gstatus, &state, &msg, &priority);
+
+			if (state == JABBER_BUDDY_STATE_UNAVAILABLE) {
 				jabber_buddy_remove_resource(jb, js->user->resource);
 			} else {
-				jabber_buddy_track_resource(jb, js->user->resource, 0, state, (msg && *msg) ? msg : NULL);
+				jabber_buddy_track_resource(jb, js->user->resource, priority, state, msg);
 			}
-			if((jbr = jabber_buddy_find_resource(jb, NULL)))
-				serv_got_update(js->gc, my_base_jid, TRUE, 0, 0, 0, jbr->state);
-			else
-				serv_got_update(js->gc, my_base_jid, FALSE, 0, 0, 0, 0);
+			if((jbr = jabber_buddy_find_resource(jb, NULL))) {
+				gaim_prpl_got_user_status(js->gc->account, my_base_jid, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status);
+			} else {
+				gaim_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg);
+			}
 		}
 	}
 	g_free(my_base_jid);
 }
 
 
-void jabber_presence_send(GaimConnection *gc, const char *state,
-		const char *msg)
+void jabber_presence_send(GaimConnection *gc, GaimStatus *status)
 {
 	JabberStream *js = gc->proto_data;
 	xmlnode *presence;
 	char *stripped = NULL;
+	const char *msg;
+	JabberBuddyState state;
+	int priority;
 
-	if(msg) {
+	gaim_status_to_jabber(status, &state, &msg, &priority);
+
+	if(msg)
 		gaim_markup_html_to_xhtml(msg, NULL, &stripped);
-	} else if(!state || strcmp(state, GAIM_AWAY_CUSTOM)) {
-		/* i can't wait until someone re-writes the status/away stuff */
-		stripped = g_strdup("");
-	}
 
-	if(gc->away)
-		g_free(gc->away);
-	gc->away = stripped;
+	presence = jabber_presence_create(state, stripped, priority);
+	g_free(stripped);
 
-	presence = jabber_presence_create(state, stripped);
 	jabber_send(js, presence);
 	g_hash_table_foreach(js->chats, chats_send_presence_foreach, presence);
 	xmlnode_free(presence);
 
-	jabber_presence_fake_to_self(js, state, stripped);
+	jabber_presence_fake_to_self(js, status);
+
 }
 
-xmlnode *jabber_presence_create(const char *state, const char *msg)
+xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority)
 {
 	xmlnode *show, *status, *presence;
+	const char *show_string = NULL;
 
 
 	presence = xmlnode_new("presence");
 
-	if(state) {
-		const char *show_string = NULL;
-		if(!strcmp(state, _("Chatty")))
-			show_string = "chat";
-		else if(!strcmp(state, _("Away")) ||
-				(msg && !strcmp(state, GAIM_AWAY_CUSTOM)))
-			show_string = "away";
-		else if(!strcmp(state, _("Extended Away")))
-			show_string = "xa";
-		else if(!strcmp(state, _("Do Not Disturb")))
-			show_string = "dnd";
-		else if(!strcmp(state, _("Invisible")))
-			xmlnode_set_attrib(presence, "type", "invisible");
-		else if(!strcmp(state, "unavailable"))
-			xmlnode_set_attrib(presence, "type", "unavailable");
 
-		if(show_string) {
-			show = xmlnode_new_child(presence, "show");
-			xmlnode_insert_data(show, show_string, -1);
-		}
+	if(state == JABBER_BUDDY_STATE_UNAVAILABLE)
+		xmlnode_set_attrib(presence, "type", "unavailable");
+	else if(state != JABBER_BUDDY_STATE_ONLINE &&
+			state != JABBER_BUDDY_STATE_UNKNOWN &&
+			state != JABBER_BUDDY_STATE_ERROR)
+		show_string = jabber_buddy_state_get_status_id(state);
+
+	if(show_string) {
+		show = xmlnode_new_child(presence, "show");
+		xmlnode_insert_data(show, show_string, -1);
 	}
 
-	if(msg && *msg) {
+	if(msg) {
 		status = xmlnode_new_child(presence, "status");
 		xmlnode_insert_data(status, msg, -1);
 	}
@@ -179,20 +165,6 @@ static void deny_add_cb(struct _jabber_add_permit *jap)
 	g_free(jap);
 }
 
-static int show_to_state(const char *show) {
-	if(!show)
-		return 0;
-	else if(!strcmp(show, "away"))
-		return JABBER_STATE_AWAY;
-	else if(!strcmp(show, "chat"))
-		return JABBER_STATE_CHAT;
-	else if(!strcmp(show, "xa"))
-		return JABBER_STATE_XA;
-	else if(!strcmp(show, "dnd"))
-		return JABBER_STATE_DND;
-	return 0;
-}
-
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *from = xmlnode_get_attrib(packet, "from");
@@ -205,12 +177,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	JabberID *jid;
 	JabberChat *chat;
 	JabberBuddy *jb;
-	JabberBuddyResource *jbr = NULL;
+	JabberBuddyResource *jbr = NULL, *found_jbr = NULL;
 	GaimConvChatBuddyFlags flags = GAIM_CBFLAGS_NONE;
 	gboolean delayed = FALSE;
 	GaimBuddy *b;
 	char *buddy_name;
-	int state = 0;
+	JabberBuddyState state = JABBER_BUDDY_STATE_UNKNOWN;
 	xmlnode *y;
 	gboolean muc = FALSE;
 
@@ -229,7 +201,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	if(type && !strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet);
 
-		state = JABBER_STATE_ERROR;
+		state = JABBER_BUDDY_STATE_ERROR;
 		jb->error_msg = msg ? msg : g_strdup(_("Unknown Error in presence"));
 	} else if(type && !strcmp(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
@@ -250,10 +222,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	} else {
 		if((y = xmlnode_get_child(packet, "show"))) {
 			char *show = xmlnode_get_data(y);
-			state = show_to_state(show);
+			state = jabber_buddy_status_id_get_state(show);
 			g_free(show);
 		} else {
-			state = 0;
+			state = JABBER_BUDDY_STATE_ONLINE;
 		}
 	}
 
@@ -318,7 +290,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		static int i = 1;
 		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
-		if(state == JABBER_STATE_ERROR) {
+		if(state == JABBER_BUDDY_STATE_ERROR) {
 			char *title, *msg = jabber_parse_error(js, packet);
 
 			if(chat->conv) {
@@ -426,7 +398,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 		g_free(room_jid);
 	} else {
-		if(state != JABBER_STATE_ERROR && !(jb->subscription & JABBER_SUB_TO)) {
+		if(state != JABBER_BUDDY_STATE_ERROR && !(jb->subscription & JABBER_SUB_TO)) {
 			gaim_debug(GAIM_DEBUG_INFO, "jabber",
 					"got unexpected presence from %s, ignoring\n", from);
 			jabber_id_free(jid);
@@ -443,7 +415,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 
-		if(state == JABBER_STATE_ERROR ||
+		if(state == JABBER_BUDDY_STATE_ERROR ||
 				(type && (!strcmp(type, "unavailable") ||
 						  !strcmp(type, "unsubscribed")))) {
 			GaimConversation *conv;
@@ -453,16 +425,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				gaim_conversation_set_name(conv, buddy_name);
 
 		} else {
-			jabber_buddy_track_resource(jb, jid->resource, priority, state,
-					status);
+			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
+					state, status);
 		}
 
-		if((jbr = jabber_buddy_find_resource(jb, NULL)))
-			serv_got_update(js->gc, buddy_name, TRUE, 0, b->signon, b->idle,
-					jbr->state);
-		else
-			serv_got_update(js->gc, buddy_name, FALSE, 0, 0, 0, 0);
-
+		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
+			if(!jbr || jbr == found_jbr) {
+				gaim_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status);
+			}
+		} else {
+			gaim_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status);
+		}
 		g_free(buddy_name);
 	}
 	g_free(status);
@@ -478,4 +451,28 @@ void jabber_presence_subscription_set(JabberStream *js, const char *who, const c
 
 	jabber_send(js, presence);
 	xmlnode_free(presence);
+}
+
+void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, const char **msg, int *priority)
+{
+	const char *status_id;
+
+	if(!status) {
+		*state = JABBER_BUDDY_STATE_UNKNOWN;
+		*msg = NULL;
+		*priority = 0;
+		return;
+	}
+
+	if(state) {
+		status_id = gaim_status_get_id(status);
+		*state = jabber_buddy_status_id_get_state(status_id);
+	}
+
+	if(msg)
+		*msg = gaim_status_get_attr_string(status, "message");
+
+	if(priority)
+		*priority = gaim_status_get_attr_int(status, "priority");
+
 }

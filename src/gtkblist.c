@@ -2588,7 +2588,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 }
 
 struct _emblem_data {
-	char *filename;
+	const char *filename;
 	int x;
 	int y;
 };

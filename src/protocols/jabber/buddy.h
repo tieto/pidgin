@@ -24,6 +24,17 @@
 
 #include "jabber.h"
 
+typedef enum {
+	JABBER_BUDDY_STATE_UNKNOWN = -2,
+	JABBER_BUDDY_STATE_ERROR = -1,
+	JABBER_BUDDY_STATE_UNAVAILABLE = 0,
+	JABBER_BUDDY_STATE_ONLINE,
+	JABBER_BUDDY_STATE_CHAT,
+	JABBER_BUDDY_STATE_AWAY,
+	JABBER_BUDDY_STATE_XA,
+	JABBER_BUDDY_STATE_DND
+} JabberBuddyState;
+
 typedef struct _JabberBuddy {
 	GList *resources;
 	char *error_msg;
@@ -46,7 +57,7 @@ typedef struct _JabberBuddyResource {
 	JabberBuddy *jb;
 	char *name;
 	int priority;
-	int state;
+	JabberBuddyState state;
 	char *status;
 	JabberCapabilities capabilities;
 	char *thread_id;
@@ -57,8 +68,8 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 		gboolean create);
 JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		const char *resource);
-void jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
-		int priority, int state, const char *status);
+JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
+		int priority, JabberBuddyState state, const char *status);
 void jabber_buddy_resource_free(JabberBuddyResource *jbr);
 void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource);
 const char *jabber_buddy_get_status_msg(JabberBuddy *jb);
@@ -70,5 +81,9 @@ GList *jabber_blist_node_menu(GaimBlistNode *node);
 
 void jabber_set_info(GaimConnection *gc, const char *info);
 void jabber_setup_set_info(GaimPluginAction *action);
+
+const char *jabber_buddy_state_get_name(JabberBuddyState state);
+const char *jabber_buddy_state_get_status_id(JabberBuddyState state);
+JabberBuddyState jabber_buddy_status_id_get_state(const char *id);
 
 #endif /* _GAIM_JABBER_BUDDY_H_ */

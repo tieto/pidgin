@@ -29,6 +29,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "util.h"
+#include "version.h"
 
 static GaimPlugin *my_protocol = NULL;
 
@@ -2108,7 +2109,6 @@ static void accept_file_dialog(struct ft_request *ft) {
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PRPL_API_VERSION,
 	0,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
@@ -2171,7 +2171,9 @@ static GaimPluginProtocolInfo prpl_info =
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

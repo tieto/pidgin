@@ -93,8 +93,8 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 	return jbr;
 }
 
-void jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
-		int priority, int state, const char *status)
+JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
+		int priority, JabberBuddyState state, const char *status)
 {
 	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
 
@@ -110,6 +110,8 @@ void jabber_buddy_track_resource(JabberBuddy *jb, const char *resource,
 	if(jbr->status)
 		g_free(jbr->status);
 	jbr->status = g_strdup(status);
+
+	return jbr;
 }
 
 void jabber_buddy_resource_free(JabberBuddyResource *jbr)
@@ -560,7 +562,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 			if(jbr->status)
 				purdy = gaim_strdup_withhtml(jbr->status);
 			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/>",
-					_("Status"), jabber_get_state_string(jbr->state),
+					_("Status"), jabber_buddy_state_get_name(jbr->state),
 					purdy ? ": " : "",
 					purdy ? purdy : "");
 			if(purdy)
@@ -578,7 +580,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 					_("Resource"), jbr->name);
 			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/><br/>",
-					_("Status"), jabber_get_state_string(jbr->state),
+					_("Status"), jabber_buddy_state_get_name(jbr->state),
 					purdy ? ": " : "",
 					purdy ? purdy : "");
 			if(purdy)
@@ -823,12 +825,17 @@ static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 	GaimStatus *status;
 	JabberBuddy *jb = jabber_buddy_find(js, who, TRUE);
 	xmlnode *presence;
+	JabberBuddyState state;
+	const char *msg;
+	int priority;
 
 	account   = gaim_connection_get_account(js->gc);
 	gpresence = gaim_account_get_presence(account);
 	status    = gaim_presence_get_active_status(gpresence);
 
-	presence = jabber_presence_create(status);
+	gaim_status_to_jabber(status, &state, &msg, &priority);
+	presence = jabber_presence_create(state, msg, priority);
+
 	xmlnode_set_attrib(presence, "to", who);
 	if(invisible) {
 		xmlnode_set_attrib(presence, "type", "invisible");
@@ -979,3 +986,69 @@ jabber_blist_node_menu(GaimBlistNode *node)
 }
 
 
+const char *
+jabber_buddy_state_get_name(JabberBuddyState state)
+{
+	switch(state) {
+		case JABBER_BUDDY_STATE_UNKNOWN:
+			return _("Unknown");
+		case JABBER_BUDDY_STATE_ERROR:
+			return _("Error");
+		case JABBER_BUDDY_STATE_UNAVAILABLE:
+			return _("Offline");
+		case JABBER_BUDDY_STATE_ONLINE:
+			return _("Online");
+		case JABBER_BUDDY_STATE_CHAT:
+			return _("Chatty");
+		case JABBER_BUDDY_STATE_AWAY:
+			return _("Away");
+		case JABBER_BUDDY_STATE_XA:
+			return _("Extended Away");
+		case JABBER_BUDDY_STATE_DND:
+			return _("Do Not Disturb");
+	}
+
+	return _("Unknown");
+}
+
+JabberBuddyState jabber_buddy_status_id_get_state(const char *id) {
+	if(!id)
+		return JABBER_BUDDY_STATE_UNKNOWN;
+	if(!strcmp(id, "online"))
+		return JABBER_BUDDY_STATE_ONLINE;
+	if(!strcmp(id, "chat"))
+		return JABBER_BUDDY_STATE_CHAT;
+	if(!strcmp(id, "away"))
+		return JABBER_BUDDY_STATE_AWAY;
+	if(!strcmp(id, "xa"))
+		return JABBER_BUDDY_STATE_XA;
+	if(!strcmp(id, "dnd"))
+		return JABBER_BUDDY_STATE_DND;
+	if(!strcmp(id, "offline"))
+		return JABBER_BUDDY_STATE_UNAVAILABLE;
+	if(!strcmp(id, "error"))
+		return JABBER_BUDDY_STATE_ERROR;
+
+	return JABBER_BUDDY_STATE_UNKNOWN;
+}
+
+const char *jabber_buddy_state_get_status_id(JabberBuddyState state) {
+	switch(state) {
+		case JABBER_BUDDY_STATE_CHAT:
+			return "chat";
+		case JABBER_BUDDY_STATE_AWAY:
+			return "away";
+		case JABBER_BUDDY_STATE_XA:
+			return "xa";
+		case JABBER_BUDDY_STATE_DND:
+			return "dnd";
+		case JABBER_BUDDY_STATE_ONLINE:
+			return "online";
+		case JABBER_BUDDY_STATE_UNKNOWN:
+		case JABBER_BUDDY_STATE_ERROR:
+			return NULL;
+		case JABBER_BUDDY_STATE_UNAVAILABLE:
+			return "offline";
+	}
+	return NULL;
+}

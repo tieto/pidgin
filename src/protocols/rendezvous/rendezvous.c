@@ -32,6 +32,7 @@
 
 #include "mdns.h"
 #include "util.h"
+#include "version.h"
 
 #define RENDEZVOUS_CONNECT_STEPS 2
 
@@ -641,7 +642,9 @@ static GaimPluginProtocolInfo prpl_info;
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
@@ -674,7 +677,6 @@ static void init_plugin(GaimPlugin *plugin)
 	GaimAccountOption *option;
 	char hostname[255];
 
-	prpl_info.api_version			= GAIM_PRPL_API_VERSION;
 	prpl_info.options				= OPT_PROTO_NO_PASSWORD;
 	prpl_info.icon_spec.format		= "jpeg";
 	prpl_info.icon_spec.min_width	= 0;

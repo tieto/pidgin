@@ -31,6 +31,7 @@
 #include "gtkblist.h"
 #include "gtkutils.h"
 #include "signals.h"
+#include "version.h"
 
 /*
  *  MACROS & DEFINES
@@ -466,7 +467,9 @@ static GaimGtkPluginUiInfo ui_info =
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
 	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
