@@ -1384,10 +1384,12 @@ void gaim_blist_remove_account(GaimAccount *account)
 			continue;
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+				gboolean recompute = FALSE;
 				for(bnode = cnode->child; bnode; bnode = bnode->next) {
 					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 						continue;
 					if(account == ((GaimBuddy *)bnode)->account) {
+						recompute = TRUE;
 						if(((GaimBuddy*)bnode)->present == GAIM_BUDDY_ONLINE ||
 								((GaimBuddy*)bnode)->present == GAIM_BUDDY_SIGNING_ON) {
 							((GaimContact*)cnode)->online--;
@@ -1404,12 +1406,12 @@ void gaim_blist_remove_account(GaimAccount *account)
 						((GaimBuddy*)bnode)->idle = 0;
 						((GaimBuddy*)bnode)->evil = 0;
 
-						gaim_contact_compute_priority_buddy((GaimContact*)cnode);
 
 						if(ops)
 							ops->remove(gaimbuddylist, bnode);
 					}
 				}
+				gaim_contact_compute_priority_buddy((GaimContact*)cnode);
 			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode) &&
 					((GaimBlistChat*)cnode)->account == account) {
 				((GaimGroup*)gnode)->currentsize--;
