@@ -709,7 +709,7 @@ void show_im_dialog()
 		gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(entry));
 
-		g_signal_connect(G_OBJECT(imdialog), "response", G_CALLBACK(do_info), entry);
+		g_signal_connect(G_OBJECT(imdialog), "response", G_CALLBACK(do_im), entry);
 
 		dialogwindows = g_list_prepend(dialogwindows, imdialog->window);
 	}
