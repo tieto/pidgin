@@ -584,7 +584,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 	account->ui_settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 				g_free, (GDestroyNotify)g_hash_table_destroy);
 	account->system_log = NULL;
-	
+
 	account->presence = gaim_presence_new_for_account(account);
 
 	prpl = gaim_find_prpl(protocol_id);
@@ -998,7 +998,6 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 	g_return_if_fail(status_id != NULL);
 
 	status = gaim_account_get_status(account, status_id);
-
 	if (status == NULL)
 	{
 		gaim_debug_error("accounts",
@@ -1007,6 +1006,22 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 				   gaim_account_get_protocol_id(account));
 		return;
 	}
+	status_type = gaim_status_get_type(status);
+
+	/*
+	 * If this account should be disconnected, but is online, then disconnect.
+	 */
+	if (active &&
+		(gaim_status_type_get_primitive(status_type) == GAIM_STATUS_OFFLINE) &&
+		gaim_account_is_connected(account))
+	{
+		gaim_account_disconnect(account);
+
+		/* No need to actually set the status, so we just exit */
+		return;
+	}
+
+	/* TODO: Record the status in accounts.xml? */
 
 	va_start(args, active);
 	gaim_status_set_active_with_attrs(status, active, args);
@@ -1015,7 +1030,6 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 	/*
 	 * If this account should be connected, but is not, then connect.
 	 */
-	status_type = gaim_status_get_type(status);
 	if (active &&
 		(gaim_status_type_get_primitive(status_type) != GAIM_STATUS_OFFLINE) &&
 		!gaim_account_is_connected(account))

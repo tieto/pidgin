@@ -1357,7 +1357,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 		dialog->account = gaim_account_new(screenname, dialog->protocol_id);
 		gaim_account_set_enabled(dialog->account, GAIM_GTK_UI, TRUE);
-			
 	}
 	else
 	{
@@ -2042,7 +2041,7 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 					   COLUMN_ENABLED, &enabled,
 					   -1);
 	if (enabled) {
-		gaim_account_disconnect(account);
+		gaim_account_set_status(account, "offline", TRUE, NULL);
 	} else {
 		GaimGtkBuddyList *gtkblist;
 		const char *type;
