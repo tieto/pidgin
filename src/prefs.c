@@ -43,8 +43,6 @@
 #include "win32dep.h"
 #endif
 
-char fontface[128];
-
 GtkWidget *tree_v = NULL;
 GtkWidget *prefs_away_list = NULL;
 GtkWidget *prefs_away_menu = NULL;

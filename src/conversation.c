@@ -64,8 +64,8 @@ GtkWidget *convo_notebook = NULL;
 GtkWidget *convo_menubar = NULL;
 
 char fontface[128] = { 0 };
-
 int fontsize = 3;
+
 extern GdkColor bgcolor;
 extern GdkColor fgcolor;
 
