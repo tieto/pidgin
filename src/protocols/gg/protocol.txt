@@ -1,12 +1,20 @@
 ---------------------------------------------------------------------------
 
-                         protokó³ g*du-g*du 4.x
-        (c) copyright 2001 by wojtek kaniewski <wojtekka@irc.pl>
+                          Protokó³ G*du-G*du 4.x
+
+     (C) Copyright 2001 by Wojtek Kaniewski <wojtekka@irc.pl>,
+                           Robert J. Wo¼ny <speedy@atman.pl>,
+                           Tomasz Jarzynka <tomee@cpi.pl>,
+                           Adam Ludwikowski <adam.ludwikowski@wp.pl>,
+                           Marek Kozina <klith@hybrid.art.pl>,
+			   Rafa³ Florek <raf@regionet.regionet.pl>,
+			   Igor Popik <igipop@wsfiz.edu.pl>
 
 --- 0) disclaimer ---------------------------------------------------------
 
-wszystkie informacje bazuj± na do¶wiadczeniach przeprowadzonych na moim
-domowym komputerze. ¿aden klient g*du-g*du nie zosta³ skrzywdzony podczas
+opis protoko³u bazuj± na do¶wiadczeniach przeprowadzonych na moim
+domowym komputerze oraz informacjach przys³anych do mnie przez ró¿nych
+ludzi. ¿aden klient g*du-g*du nie zosta³ skrzywdzony podczas
 przeprowadzania badañ, blabla.
 
 --- 1) transmisja, format wszystkich pakietów -----------------------------
@@ -37,7 +45,19 @@ chwilê Internet Explorera, po³±czyæ siê z hostem `appmsg.gadu-gadu.pl'.
 	User-Agent: Mozilla/4.7 [en] (Win98; I)
 	Pragma: no-cache
 
-na co powinni¶my dostaæ odpowied¼ w stylu:
+oryginalny klient mo¿e wys³aæ jeden z podanych identyfikatorów przegl±darki:
+
+	Mozilla/4.04 [en] (Win95; I ;Nav)
+	Mozilla/4.7 [en] (Win98; I)
+	Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
+	Mozilla/4.0 (compatible; MSIE 5.0; Windows NT)
+	Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt)
+	Mozilla/4.0 (compatible; MSIE 5.0; Windows 98)
+
+nowsze wersje klienta do zapytania dodaj± równie¿ `version=...' opisuj±ce,
+z jakim klientem serwer ma do czynienia. jednak ze wzglêdu na mo¿liwe
+ró¿nice w protokole, lepiej pomijaæ ten parametr i uwagaæ GG 4.0. w ka¿dym
+razie na to zapytanie serwer powinien odpowiedzieæ:
 
 	HTTP/1.0 200 OK
 	
@@ -47,10 +67,12 @@ co to oznacza? nie mam pojêcia ;) wygl±da na to, ¿e ca³y g*du-g*du jest
 przemy¶lany i w przysz³o¶ci bêdzie mo¿na u¿ywaæ ró¿nych serwerów do ró¿nych
 rzeczy, typu szukanie, obs³uga klientów itd. póki co, ³±czyæ siê trzeba na
 pierwszy adres (tak, ten z portem).
+Je¿eli po³±czenie z portem 8074 nie wyjdzie z jaki¶ specyficznych powodów -
+mo¿na siê ³±czyæ na port 443. 
 
 --- 3) logowanie siê -------------------------------------------------------
 
-po po³±czeniu siê portem 8074 serwera g*du-g*du, dostajemy pakiet typu 0x0001,
+po po³±czeniu siê portem serwera g*du-g*du, dostajemy pakiet typu 0x0001,
 który na potrzeby tego dokumentu nazwiemy:
 
 	#define GG_WELCOME 0x0001
@@ -72,7 +94,7 @@ musimy podaæ kilka informacji:
 		int uin;		/* twój numerek */
 		int hash;		/* hash has³a */
 		int status;		/* status na dzieñ dobry */
-		int dunno1;		/* == 0x0b */
+		int version;		/* wersja klienta */
 		int local_ip;		/* mój adres ip */
 		short local_port;	/* port, na którym s³ucham */
 	};
@@ -84,8 +106,19 @@ serwer.
 	for (hash = 1; *passwd; passwd++)
 		hash *= (*passwd) + 1;
 
-zrozumia³e, racja? je¶li wszystko siê powiedzie, dostaniemy w odpowiedzi
-pakiet typu
+zrozumia³e, racja? liczba oznaczaj±ca wersjê mo¿e byæ jedn± z poni¿szych:
+
+	0x11 - 4.6.1
+	0x10 - 4.5.22, 4.5.21, 4.5.19, 4.5.17, 4.5.15
+	0x0f - 4.5.12
+	0x0b - 4.0.30, 4.0.29, 4.0.28, 4.0.25
+
+oczywi¶cie nie s± to wszystkie mo¿liwe wersje klientów, lecz te, które
+uda³o siê sprawdziæ. najbezpieczniej bêdzie przedstawiaæ siê jako ta
+wersja, której ficzerów u¿ywamy. wiadomo, ¿e 4.0.x nie obs³ugiwa³y trybu
+ukrytego, ani tylko dla znajomych itd.
+
+je¶li wszystko siê powiedzie, dostaniemy w odpowiedzi pakiet typu
 
 	#define GG_LOGIN_OK 0x0003
 
@@ -137,14 +170,16 @@ struktur gg_notify_reply:
 		int status;		/* status danej osoby */
 		int remote_ip;		/* adres ip delikwenta */
 		short remote_port;	/* port, na którym s³ucha klient */
-		int dunno1;		/* == 0x0b */
-		short dunno2;		/* znowu port? */
+		int version;		/* wersja klienta */
+		short dunno1;		/* znowu port? */
 	};
 
 je¶li klient nie obs³uguje po³±czeñ miêdzy klientami (np. g*du-g*du 3.x)
-zamiast adresu ip jest 0, zamiast portu jest 2. niewa¿ne ;) w ka¿dym razie,
-je¶li kto¶ siê pojawi w trakcie pracy, równie¿ zostanie przys³any ten
-pakiet. proste? proste :)
+zamiast adresu ip jest 0, zamiast portu mo¿e byæ 0, 1, 2... niewa¿ne ;)
+port mo¿e przyjmowaæ warto¶æ 1, je¶li klient znajduje siê za jakim¶
+firewallem lub innym urz±dzeniem robi±cym NAT. w ka¿dym razie, je¶li kto¶
+siê pojawi w trakcie pracy, równie¿ zostanie przys³any ten pakiet.
+proste? proste :)
 
 ¿eby dodaæ kogo¶ do listy w trakcie pracy, trzeba wys³aæ ni¿ej opisany
 pakiet. jego format jest identyczny jak przy GG_NOTIFY.
@@ -171,8 +206,10 @@ przejd¼my do sedna sprawy ;)
 
 	#define GG_SEND_MSG 0x000b
 
+	#define GG_CLASS_QUEUED 0x0001	/* tylko przy odbieraniu */
 	#define GG_CLASS_MSG 0x0004
 	#define GG_CLASS_CHAT 0x0008
+	#define GG_CLASS_UNKNOWN_1 0x0020
 
 	struct gg_send_msg {
 		int recipient;
@@ -186,8 +223,27 @@ potwierdzenia. nie wykluczone, ¿e w jakis sposób odró¿nia siê ró¿ne
 rozmowy za pomoc± czê¶ci bajtów, ale raczej nie ma znaczenia. klasa
 wiadomo¶ci pozwala odró¿niæ, czy wiadomo¶æ ma siê pokazaæ w osobym
 okienku czy jako kolejna linijka w okienku rozmowy. wygl±da na to,
-¿e to jaka¶ bitmapa, wiêc najlepiej olaæ inne bity ni¿ 0x0f. (czasem
-klienty wysy³aj± 0x04, czasem 0x24)
+¿e to jaka¶ bitmapa, wiêc najlepiej olaæ inne bity ni¿ 0x0e. (czasem
+klienty wysy³aj± 0x04, czasem 0x24 -- widocznie 0x20 to te¿ jaka¶
+flaga). je¶li odbiorca by³ niedostêpny podczas wysy³ania wiadomo¶ci,
+zostanie zaznaczony bit 0x01.
+
+oryginalny klient wysy³aj±c wiadomo¶æ do kilku u¿ytkowników, wysy³a po
+prostu kilka takich samych pakietów z ró¿nymi numerkami odbiorców. nie
+ma osobnego pakietu do tego. natomiast je¶li chodzi o ,,konferencyjnê''
+do pakietu doklejana jest za ,,char message[];'' nastêpuj±ca struktura:
+
+	struct gg_send_recipients {
+		char flag;		/* == 1 */
+		int count;		/* ilo¶æ odbiorców */
+		int recipients[];	/* tablica odbiorców */
+	};
+
+na przyk³ad, by wys³aæ do trzech ludzi, nale¿y wys³aæ pakiet:
+
+	- -- --- --+--+--+--+--+--+--+-----------+-----------+
+          tre¶æ    |\0|\1|    0x02   |    uin1   |   uin2    |
+	- -- -- ---+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
 serwer po otrzymaniu wiadomo¶ci odsy³a informacjê o tym. przy okazji
 mówi, czy wiadomo¶æ dotar³a do odbiorcy (status == GG_ACK_DELIVERED),
@@ -208,26 +264,29 @@ numer sekwencyjny i adresat ten sam, co przy wysy³aniu.
 
 --- 7) otrzymywanie wiadomo¶ci ---------------------------------------------
 
-zbyt wiele wyja¶nieñ chyba nie trzeba. wiadomo od kogo. nieznane pola to
-co¶ a'la numer sekwencyjny albo identyfikator okienka z rozmow± albo nowe
-dane dla setiathome. klasa wiadomo¶ci taka sama jak przy wysy³aniu:
+zbyt wiele wyja¶nieñ chyba nie trzeba. wiadomo od kogo. drugie pole to
+najprawdopodobniej jaki¶ numerek sekwencyjny. trzecie oznacza czas nadania
+wiadomo¶ci. klasa wiadomo¶ci taka sama jak przy wysy³aniu:
 
 	#define GG_RECV_MSG 0x000a
 	
 	struct gg_recv_msg {
 		int sender;
-		int dunno1;
-		int dunno2;
+		int seq;
+		int time;
 		int class;
 		char message[];
 	};
 
---- 8) otrzymywanie wiadomo¶ci ---------------------------------------------
+w przypadku pakietów ,,konferencyjnych'' na koncu pakietu doklejona jest
+struktura identyczna ze struct gg_send_recipients zawieraj±ca pozosta³ych
+rozmówców.
+
+--- 8) ping/pong -----------------------------------------------------------
 
 od czasu do czasu klient wysy³a pakiet a'la ping do serwera i dostaje pust±
-odpowied¼. ciê¿ko stwierdziæ, czy serwer wywala, je¶li nie dostanie pinga
-przez jaki¶ czas, czy klient siê roz³±cza, je¶li serwer mu nie odpowie.
-jako¶ nie chce mi siê sprawdzaæ ;)
+odpowied¼. o ile dobrze pamiêtam, serwer roz³±cza siê po up³ywie 5 minut od
+otrzymania ostatniej informacji.
 
 	#define GG_PING 0x0008
 	
@@ -239,10 +298,21 @@ jako¶ nie chce mi siê sprawdzaæ ;)
 
 --- 9) podziêkowania -------------------------------------------------------
 
-swój wk³ad w poznanie protoko³u mia³ Robert Wo¼ny, który opisa³ nowo¶ci
-w GG 4.6.
+swój wk³ad w poznanie protoko³u mieli:
+ - Robert J. Wo¼ny <speedy@atman.pl>:
+   opis nowo¶ci w protokole GG 4.6,
+ - Tomasz Jarzynka <tomee@cpi.pl>:
+   badanie timeoutów,
+ - Adam Ludwikowski <adam.ludwikowski@wp.pl>:
+   wiele ró¿nych poprawek do tekstu, badanie wersji,
+ - Marek Kozina <klith@hybrid.art.pl>:
+   czas otrzymania wiadomo¶ci,
+ - Rafa³ Florek <raf@regionet.regionet.pl>:
+   konferencje,
+ - Igor Popik <igipop@wsfiz.edu.pl>:
+   klasy wiadomo¶ci przy odbieraniu zakolejkowanej.
 
 ----------------------------------------------------------------------------
 
-$Id: protocol.txt 2406 2001-09-29 23:06:30Z warmenhoven $
+$Id: protocol.txt 2819 2001-11-27 22:54:32Z warmenhoven $
 

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2805 2001-11-26 21:22:56Z warmenhoven $
+ * $Id: gg.c 2819 2001-11-27 22:54:32Z warmenhoven $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -79,6 +79,7 @@
 #define AGG_HTTP_SEARCH			1
 #define AGG_HTTP_USERLIST_IMPORT	2
 #define AGG_HTTP_USERLIST_EXPORT	3
+#define AGG_HTTP_USERLIST_DELETE	4
 
 #define UC_NORMAL 2
 
@@ -578,7 +579,6 @@ static void agg_login(struct aim_user *user)
 	gd->sess->state = GG_STATE_CONNECTING_HTTP;
 	gd->sess->check = GG_CHECK_WRITE;
 	gd->sess->async = 1;
-	gd->sess->recv_left = 0;
 	gd->sess->fd = proxy_connect(GG_APPMSG_HOST, GG_APPMSG_PORT, login_callback, gc);
 
 	if (gd->sess->fd < 0) {
@@ -667,7 +667,6 @@ static void search_results(struct gaim_connection *gc, gchar *webdata)
 
 	if ((ptr = strstr(webdata, "query_results:")) == NULL || (ptr = strchr(ptr, '\n')) == NULL) {
 		debug_printf("search_callback: pubdir result [%s]\n", webdata);
-		g_free(webdata);
 		do_error_dialog(_("Couldn't get search results"), _("Gadu-Gadu Error"));
 		return;
 	}
@@ -676,8 +675,6 @@ static void search_results(struct gaim_connection *gc, gchar *webdata)
 	buf = g_strconcat("<B>", _("Gadu-Gadu Search Engine"), "</B><BR>\n", NULL);
 
 	webdata_tbl = g_strsplit(ptr, "\n", AGG_PUBDIR_MAX_ENTRIES);
-
-	g_free(webdata);
 
 	j = 0;
 
@@ -768,28 +765,25 @@ static void search_results(struct gaim_connection *gc, gchar *webdata)
 	g_free(buf);
 }
 
-static void agg_import_buddies_results(struct gaim_connection *gc, gchar *webdata)
+static void import_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
 {
 	gchar *ptr;
 	gchar **users_tbl;
 	int i;
 	if (strstr(webdata, "no_data:")) {
-		g_free(webdata);
 		do_error_dialog(_("There is no Buddy List stored on server. Sorry!"),
 				_("Gadu-Gadu Error"));
 		return;
 	}
 
 	if ((ptr = strstr(webdata, "get_results:")) == NULL || (ptr = strchr(ptr, ':')) == NULL) {
-		debug_printf("agg_import_buddies_list: import buddies result [%s]\n", webdata);
-		g_free(webdata);
+		debug_printf("import_buddies_server_results: import buddies result [%s]\n", webdata);
 		do_error_dialog(_("Couldn't Import Buddies List from Server"), _("Gadu-Gadu Error"));
 		return;
 	}
 	ptr++;
 
 	users_tbl = g_strsplit(ptr, "\n", AGG_PUBDIR_MAX_ENTRIES);
-	g_free(webdata);
 
 	/* Parse array of Buddies List */
 	for (i = 0; users_tbl[i] != NULL; i++) {
@@ -806,7 +800,7 @@ static void agg_import_buddies_results(struct gaim_connection *gc, gchar *webdat
 			continue;
 		}
 
-		debug_printf("uin: %s\n", name);
+		debug_printf("import_buddies_server_results: uin: %s\n", name);
 		if (!find_buddy(gc, name)) {
 			/* Default group if none specified on server */
 			gchar *group = g_strdup("Gadu-Gadu");
@@ -828,18 +822,28 @@ static void agg_import_buddies_results(struct gaim_connection *gc, gchar *webdat
 	g_strfreev(users_tbl);
 }
 
-static void agg_export_buddies_results(struct gaim_connection *gc, gchar *webdata)
+static void export_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
 {
 	if (strstr(webdata, "put_success:")) {
-		g_free(webdata);
 		do_error_dialog(_("Buddies List sucessfully transfered into Server"),
 				_("Gadu-Gadu Information"));
 		return;
 	}
 
-	debug_printf("agg_export_buddies_results: webdata [%s]\n", webdata);
-	g_free(webdata);
+	debug_printf("export_buddies_server_results: webdata [%s]\n", webdata);
 	do_error_dialog(_("Couldn't transfer Buddies List into Server"), _("Gadu-Gadu Error"));
+}
+
+static void delete_buddies_server_results(struct gaim_connection *gc, gchar *webdata)
+{
+	if (strstr(webdata, "put_success:")) {
+		do_error_dialog(_("Buddies List sucessfully deleted from Server"),
+				_("Gadu-Gadu Information"));
+		return;
+	}
+
+	debug_printf("delete_buddies_server_results: webdata [%s]\n", webdata);
+	do_error_dialog(_("Couldn't delete Buddies List from Server"), _("Gadu-Gadu Error"));
 }
 
 static void http_results(gpointer data, gint source, GaimInputCondition cond)
@@ -890,10 +894,13 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 		search_results(gc, webdata);
 		break;
 	case AGG_HTTP_USERLIST_IMPORT:
-		agg_import_buddies_results(gc, webdata);
+		import_buddies_server_results(gc, webdata);
 		break;
 	case AGG_HTTP_USERLIST_EXPORT:
-		agg_export_buddies_results(gc, webdata);
+		export_buddies_server_results(gc, webdata);
+		break;
+	case AGG_HTTP_USERLIST_DELETE:
+	        delete_buddies_server_results(gc, webdata);
 		break;
 	case AGG_HTTP_NONE:
 	default:
@@ -901,6 +908,7 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 		break;
 	}
 
+	g_free(webdata);
 	g_free(hdata);
 }
 
@@ -956,7 +964,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 	hdata->inpa = gaim_input_add(source, GAIM_INPUT_READ, http_results, hdata);
 }
 
-static void agg_import_buddies(struct gaim_connection *gc)
+static void import_buddies_server(struct gaim_connection *gc)
 {
 	struct agg_http *hi = g_new0(struct agg_http, 1);
 	static char msg[AGG_BUF_LEN];
@@ -977,7 +985,7 @@ static void agg_import_buddies(struct gaim_connection *gc)
 	}
 }
 
-static void agg_export_buddies(struct gaim_connection *gc)
+static void export_buddies_server(struct gaim_connection *gc)
 {
 	struct agg_http *he = g_new0(struct agg_http, 1);
 	static char msg[AGG_BUF_LEN];
@@ -1015,6 +1023,27 @@ static void agg_export_buddies(struct gaim_connection *gc)
 
 	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
 		g_snprintf(msg, sizeof(msg), _("Buddies List export to Server failed (%s)"),
+			   GG_PUBDIR_HOST);
+		do_error_dialog(msg, _("Gadu-Gadu Error"));
+		g_free(he->request);
+		g_free(he);
+		return;
+	}
+}
+
+static void delete_buddies_server(struct gaim_connection *gc)
+{
+	struct agg_http *he = g_new0(struct agg_http, 1);
+	static char msg[AGG_BUF_LEN];
+
+	he->gc = gc;
+	he->type = AGG_HTTP_USERLIST_DELETE;
+	he->form = AGG_PUBDIR_USERLIST_EXPORT_FORM;
+	he->host = GG_PUBDIR_HOST;
+	he->request = g_strdup_printf("FmNum=%s&Pass=%s&Delete=1", gc->username, gc->password);
+
+	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
+		g_snprintf(msg, sizeof(msg), _("Deletion of Buddies List from Server failed (%s)"),
 			   GG_PUBDIR_HOST);
 		do_error_dialog(msg, _("Gadu-Gadu Error"));
 		g_free(he->request);
@@ -1066,9 +1095,11 @@ static void agg_do_action(struct gaim_connection *gc, char *action)
 	if (!strcmp(action, _("Directory Search"))) {
 		show_find_info(gc);
 	} else if (!strcmp(action, _("Import Buddies List from Server"))) {
-		agg_import_buddies(gc);
+		import_buddies_server(gc);
 	} else if (!strcmp(action, _("Export Buddies List to Server"))) {
-		agg_export_buddies(gc);
+		export_buddies_server(gc);
+	} else if (!strcmp(action, _("Delete Buddies List from Server"))) {
+	        delete_buddies_server(gc);
 	}
 }
 
@@ -1079,6 +1110,7 @@ static GList *agg_actions()
 	m = g_list_append(m, _("Directory Search"));
 	m = g_list_append(m, _("Import Buddies List from Server"));
 	m = g_list_append(m, _("Export Buddies List to Server"));
+	m = g_list_append(m, _("Delete Buddies List from Server"));
 
 	return m;
 }
