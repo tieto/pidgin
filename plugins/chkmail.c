@@ -13,23 +13,24 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <pthread.h>
 #include "gaim.h"
 
 char username[] = "";
 char password[] = "";
 char mailhost[] = "";
 int mailport = 110;
+int state = 0;
 
 static void *handle = NULL;
-extern GtkWidget *blist;
 extern GtkWidget *buddies;
 
-GList *tmp;
 int lastnum = 0;
 int orig = 0;
 int mytimer;
 
 void update_mail();
+void check_mail();
 
 int num_msgs()
 {
@@ -53,6 +54,7 @@ int num_msgs()
                                 g_snprintf(command, sizeof(command), "QUIT\n");
                                 write(fd, command, strlen(command));
 				close(fd);
+printf("DEBUG: Num is %d\n", num);
                                 return num;
                         }
 
@@ -126,7 +128,7 @@ void setup_mail_list()
 
 	buf = g_malloc(BUF_LONG);
 
-	g_snprintf(buf, BUF_LONG, "%s (%d/%d)", mailhost, lastnum - orig, orig);
+	g_snprintf(buf, BUF_LONG, "%s (%d new/%d total)", mailhost, lastnum - orig, lastnum);
 	item = gtk_tree_item_new_with_label(buf);
 	g_free(buf);
 
@@ -136,7 +138,6 @@ void setup_mail_list()
 	
 void gaim_plugin_init(void *h) {
 	handle = h;
-	tmp = gtk_container_children(GTK_CONTAINER(blist));
 
 	orig = num_msgs();
 	lastnum = orig;
@@ -144,34 +145,56 @@ void gaim_plugin_init(void *h) {
 	gaim_signal_connect(handle, event_blist_update, setup_mail_list, NULL);
 	setup_mail_list();
 	
-	mytimer = gtk_timeout_add(30000, (GtkFunction)update_mail, NULL);
+	mytimer = gtk_timeout_add(30000, (GtkFunction)check_mail, NULL);
+}
+
+void check_mail() {
+	pthread_t mail_thread;
+	pthread_attr_t attr;
+
+	printf("Looping in: State = %d\n", state);
+	if (state == 0) {
+		state = 1;
+		printf("Before\n");
+		pthread_attr_init(&attr);
+		pthread_create(&mail_thread, &attr, (void *)&update_mail, NULL);
+		printf("After\n");
+	}
+	printf("Bouncing out, state = %d\n", state);
 }
 
 void update_mail () {
 	int newnum;
 
+	printf("um\n");
 	gtk_timeout_remove(mytimer);
 
+	printf("nm1\n");
 	newnum = num_msgs();
 
+	printf("nm2\n");
 	if ( (newnum >= lastnum) && (newnum > 0)) {
-		newnum = newnum - orig;
+		newnum = newnum - lastnum;
 	} else {
 		newnum = 0;
 	}
 
 	if (newnum < lastnum) {
-		orig = 0;
+		orig = lastnum;
 	}
 
 	lastnum = newnum;
-	mytimer = gtk_timeout_add(30000, (GtkFunction)update_mail, NULL);
+	mytimer = gtk_timeout_add(30000, (GtkFunction)check_mail, NULL);
+	printf("sml1\n");
 	setup_mail_list();
+	printf("sml2\n");
+	state = 0;
 }
 
 
 void gaim_plugin_remove() {
 	gtk_timeout_remove(mytimer);
+	while (state == 1) { }
 	destroy_mail_list();
 	handle = NULL;
 }
