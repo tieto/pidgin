@@ -120,7 +120,9 @@ gboolean gaim_prpl_has_send_file (GaimConnection *gc, const char *name)
 
 	if (prpl_info->has_send_file == NULL || prpl_info->send_file == NULL)
 		return FALSE;
+	if(name)
+		return prpl_info->has_send_file(gc, name);
 
-	return prpl_info->has_send_file(gc, name);
+	return 0;
 	
 }

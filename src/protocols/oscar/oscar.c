@@ -1057,17 +1057,23 @@ static void oscar_sendfile(GaimConnection *gc, const char *destsn, const char *f
 
 static gboolean oscar_has_sendfile (GaimConnection *gc, const char *who)
 {
-	GaimBuddy *b = gaim_find_buddy(gc->account, who);
+	GaimBuddy *b = NULL;
 	aim_userinfo_t *userinfo;
         OscarData *od = gc->proto_data;
 	
+	if(who)
+		b = gaim_find_buddy(gc->account, who);
+	
 	if (b)
 		userinfo = aim_locate_finduserinfo(od->sess, b->name);
+
+	if(userinfo) {
+		/* True if we can send files to this dude, false if we can't */
+		return userinfo->capabilities & AIM_CAPS_SENDFILE;
+	}
 	else
 		return FALSE;
 
-	/* True if we can send files to this dude, false if we can't */
-	return userinfo->capabilities & AIM_CAPS_SENDFILE;
 }
 
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
