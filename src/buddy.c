@@ -39,6 +39,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include "gaim.h"
+#include <aim.h>
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/aol_icon.xpm"
 #include "pixmaps/free_icon.xpm"
@@ -1443,11 +1444,47 @@ gint log_timeout(char *name)
 }
 
 
+static char *caps_string(u_short caps)
+{
+	static char buf[BUF_LEN];
+	int count = 0, i = 0;
+	u_short bit = 1;
+	while (bit <= AIM_CAPS_SENDFILE) {
+		if (bit & caps) {
+			switch (bit) {
+			case AIM_CAPS_BUDDYICON:
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sBuddy Icon"), count ? "," : "");
+				break;
+			case AIM_CAPS_VOICE:
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sVoice"), count ? "," : "");
+				break;
+			case AIM_CAPS_IMIMAGE:
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sIM Image"), count ? "," : "");
+				break;
+			case AIM_CAPS_CHAT:
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sChat"), count ? "," : "");
+				break;
+			case AIM_CAPS_GETFILE:
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sGet File"), count ? "," : "");
+				break;
+			case AIM_CAPS_SENDFILE:
+				i += g_snprintf(buf + i, sizeof(buf) - i, _("%sSend File"), count ? "," : "");
+				break;
+			}
+			count++;
+		}
+		bit <<= 1;
+	}
+	return buf;
+}
+
+
 void set_buddy(struct buddy *b)
 {
 	char infotip[256];
         char idlet[16];
         char warn[256];
+	char caps[256];
 	char *who;
         int i;
         int ihrs, imin;
@@ -1491,8 +1528,13 @@ void set_buddy(struct buddy *b)
 		} else
 			warn[0] = '\0';
 		
-                i = g_snprintf(infotip, sizeof(infotip), _("Name: %s                \nLogged in: %s\n%s%s%s"), b->name, sotime, warn, ((b->idle) ? _("Idle: ") : ""),  itime);
+		if (b->caps) {
+			g_snprintf(caps, sizeof(caps), _("Capabilities: %s\n"), caps_string(b->caps));
+		} else
+			caps[0] = '\0';
 		
+                i = g_snprintf(infotip, sizeof(infotip), _("Name: %s                \nLogged in: %s\n%s%s%s\n%s"), b->name, sotime, warn, ((b->idle) ? _("Idle: ") : ""),  itime, caps);
+
 		gtk_tooltips_set_tip(tips, GTK_WIDGET(b->item), infotip, "");
 
                 g_free(sotime);

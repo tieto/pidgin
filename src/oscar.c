@@ -515,7 +515,7 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 		time_idle = 0;
 
 	serv_got_update(info->sn, 1, info->warnlevel, info->onlinesince,
-			time_idle, type);
+			time_idle, type, info->capabilities);
 
 	return 1;
 }
@@ -529,7 +529,7 @@ int gaim_parse_offgoing(struct aim_session_t *sess,
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
-	serv_got_update(sn, 0, 0, 0, 0, 0);
+	serv_got_update(sn, 0, 0, 0, 0, 0, 0);
 
 	return 1;
 }

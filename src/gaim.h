@@ -195,6 +195,7 @@ struct buddy {
 	time_t signon;
 	time_t idle;
         int uc;
+	u_short caps; /* woohoo! */
 };
 
 struct log_conversation {
@@ -379,7 +380,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 521 $"
+#define REVISION "gaim:$Revision: 523 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -581,7 +582,7 @@ extern void serv_chat_send(int, char *);
 extern void serv_do_imimage(GtkWidget *, char *);
 
 /* output from serv */
-extern void serv_got_update(char *, int, int, time_t, time_t, int);
+extern void serv_got_update(char *, int, int, time_t, time_t, int, u_short);
 extern void serv_got_im(char *, char *, int);
 extern void serv_got_eviled(char *, int);
 extern void serv_got_chat_invite(char *, int, char *, char *);

@@ -442,7 +442,7 @@ void toc_callback( gpointer          data,
                 } else
                         time_idle = 0;
 		
-                serv_got_update(c, logged, evil, signon, time_idle, type);
+                serv_got_update(c, logged, evil, signon, time_idle, type, 0);
 
 	} else if (!strcasecmp(c, "CONFIG")) {
 		/* do we want to load the buddy list again here? */

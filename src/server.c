@@ -744,7 +744,7 @@ void serv_got_im(char *name, char *message, int away)
 
 
 
-void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t idle, int type)
+void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t idle, int type, u_short caps)
 {
         struct buddy *b;
         char *nname;
@@ -822,6 +822,7 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
 	}
 #endif
         b->uc = type;
+	b->caps = caps;
         
         b->signon = signon;
 
