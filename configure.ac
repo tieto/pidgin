@@ -69,7 +69,7 @@ AC_TRY_COMPILE([
 ])
 
 dnl This is a bad, bad hack.  I am a bad, bad man.
-CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include -I\$(top_srcdir)"
+CFLAGS="$CFLAGS -I/opt/include -I\$(top_srcdir)"
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
