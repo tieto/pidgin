@@ -1,15 +1,5 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
-1.0.0 (09/17/2004):
-	Luke: We've changed our pattern for version numbers with this
-	release, we are no longer simply counting versions. This release
-	then marks, not something traditionally "1.0" but the current
-	version of the api.  When backwards compatability with that breaks
-	you'll see 2.0, more details in the faq.  As a side note, if you
-	are reading this and are good with proxy code or with perl's XS C
-	bindings, please get in touch with me, my contact info is on the
-	website.  Gaim could use your help.
-
 0.82 (08/25/2004):
 	Rob: Woah, where did I come from? 
 
