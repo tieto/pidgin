@@ -991,9 +991,18 @@ char *gaim_getip_from_fd(int fd)
 }
 
 gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b) {
-	gchar *a_norm = g_utf8_casefold(a, -1);
-	gchar *b_norm = g_utf8_casefold(b, -1);
-	gint ret = g_utf8_collate(a_norm, b_norm);
+	gchar *a_norm=NULL;
+	gchar *b_norm=NULL;
+	gint ret=-1;
+
+	if(!g_utf8_validate(a, -1, NULL) || !g_utf8_validate(b, -1, NULL)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "gaim_utf8_strcasecmp", "One or both parameters are invalid UTF8\n");
+		return ret;
+	}
+
+	a_norm = g_utf8_casefold(a, -1);
+	b_norm = g_utf8_casefold(b, -1);
+	ret = g_utf8_collate(a_norm, b_norm);
 	g_free(a_norm);
 	g_free(b_norm);
 	return ret;
