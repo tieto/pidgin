@@ -33,6 +33,7 @@ version 2.0.0
 	* Many problems related to having an IM conversation and a chat open
 	  with the same name (Andrew Hart)
 	* Improved buddy list searching with CTRL+F
+	* Correctly show the time when incoming Gadu-Gadu messages were sent
 
 	Preference changes:
 	* Removed "Dim idle buddies" buddy list preference, default to "Yes."
