@@ -1123,41 +1123,51 @@ gaim_gtk_append_blist_node_extended_menu (GtkWidget *menu, GaimBlistNode *node)
 }
 
 
-static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, GaimBuddy *b)
-{
+void
+gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy) {
+	GaimPluginProtocolInfo *prpl_info;
+
+	g_return_if_fail(menu);
+	g_return_if_fail(buddy);
+
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(buddy->account->gc->prpl);
+
 	if (prpl_info && prpl_info->get_info) {
 		gaim_new_item_from_stock(menu, _("Get _Info"), GAIM_STOCK_INFO,
-				G_CALLBACK(gtk_blist_menu_info_cb), b, 0, 0, NULL);
+				G_CALLBACK(gtk_blist_menu_info_cb), buddy, 0, 0, NULL);
 	}
 	gaim_new_item_from_stock(menu, _("I_M"), GAIM_STOCK_IM,
-			G_CALLBACK(gtk_blist_menu_im_cb), b, 0, 0, NULL);
+			G_CALLBACK(gtk_blist_menu_im_cb), buddy, 0, 0, NULL);
 	if (prpl_info && prpl_info->send_file) {
-		if (!prpl_info->can_receive_file 
-				|| prpl_info->can_receive_file(b->account->gc, b->name)) {
-			gaim_new_item_from_stock(menu, _("_Send File"), GAIM_STOCK_FILE_TRANSFER,
-			G_CALLBACK(gtk_blist_menu_send_file_cb), b, 0, 0, NULL);
+		if (!prpl_info->can_receive_file ||
+			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
+		{
+			gaim_new_item_from_stock(menu, _("_Send File"),
+									 GAIM_STOCK_FILE_TRANSFER,
+									 G_CALLBACK(gtk_blist_menu_send_file_cb),
+									 buddy, 0, 0, NULL);
 		}
 	}
 	gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL,
-			G_CALLBACK(gtk_blist_menu_bp_cb), b, 0, 0, NULL);
+			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("View _Log"), NULL,
-			G_CALLBACK(gtk_blist_menu_showlog_cb), b, 0, 0, NULL);
+			G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
 
-	gaim_gtk_append_blist_node_proto_menu(menu, b->account->gc, (GaimBlistNode *) b);
-	gaim_gtk_append_blist_node_extended_menu(menu, (GaimBlistNode *) b);
+	gaim_gtk_append_blist_node_proto_menu(menu, buddy->account->gc,
+										  (GaimBlistNode *)buddy);
+	gaim_gtk_append_blist_node_extended_menu(menu, (GaimBlistNode *)buddy);
 
 	gaim_separator(menu);
 
 	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
-			G_CALLBACK(gtk_blist_menu_alias_cb), b, 0, 0, NULL);
+			G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
-			G_CALLBACK(gaim_gtk_blist_remove_cb), b,
+			G_CALLBACK(gaim_gtk_blist_remove_cb), buddy,
 			0, 0, NULL);
 }
 
-static gboolean gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event,
-		gpointer null)
-{
+static gboolean
+gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
 	GaimBlistNode *node;
 	GValue val = { 0, };
 	GtkTreeIter iter;
@@ -1212,11 +1222,7 @@ create_group_menu (GaimBlistNode *node, GaimGroup *g)
 
 
 static GtkWidget *
-create_chat_menu (GaimBlistNode *node,
-		  GaimChat *c,
-		  GaimPlugin *prpl,
-		  GaimPluginProtocolInfo *prpl_info)
-{
+create_chat_menu(GaimBlistNode *node, GaimChat *c) {
 	GtkWidget *menu;
 	gboolean autojoin;
 
@@ -1262,18 +1268,14 @@ create_contact_menu (GaimBlistNode *node)
 }
 
 static GtkWidget *
-create_buddy_menu (GaimBlistNode *node,
-		   GaimBuddy *b,
-		   GaimPlugin *prpl,
-		   GaimPluginProtocolInfo *prpl_info)
-{
+create_buddy_menu(GaimBlistNode *node, GaimBuddy *b) {
 	struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
 	GtkWidget *menu;
 	GtkWidget *menuitem;
 	gboolean show_offline = gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies");
 
 	menu = gtk_menu_new();
-	make_buddy_menu(menu, prpl_info, b);
+	gaim_gtk_blist_make_buddy_menu(menu, b);
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		gaim_separator(menu);
@@ -1320,10 +1322,7 @@ create_buddy_menu (GaimBlistNode *node,
 				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 				gtk_widget_show(submenu);
 
-				prpl = gaim_find_prpl(gaim_account_get_protocol_id(buddy->account));
-				prpl_info = prpl ? GAIM_PLUGIN_PROTOCOL_INFO(prpl) : NULL;
-
-				make_buddy_menu(submenu, prpl_info, buddy);
+				gaim_gtk_blist_make_buddy_menu(submenu, buddy);
 			}
 		}
 	}
@@ -1346,31 +1345,23 @@ gaim_gtk_blist_show_context_menu(GaimBlistNode *node,
 	/* Create a menu based on the thing we right-clicked on */
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		GaimGroup *g = (GaimGroup *)node;
+
 		menu = create_group_menu(node, g);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		GaimChat *c = (GaimChat *)node;
-		GaimPlugin *prpl = NULL;
-		GaimPluginProtocolInfo *prpl_info = NULL;
-		prpl = gaim_find_prpl(gaim_account_get_protocol_id(c->account));
-		if (prpl != NULL)
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
-		menu = create_chat_menu(node, c, prpl, prpl_info);
+
+		menu = create_chat_menu(node, c);
 	} else if ((GAIM_BLIST_NODE_IS_CONTACT(node)) && (gtknode->contact_expanded)) {
 		menu = create_contact_menu(node);
 	} else if (GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *b;
-		GaimPlugin *prpl = NULL;
-		GaimPluginProtocolInfo *prpl_info = NULL;
 
 		if (GAIM_BLIST_NODE_IS_CONTACT(node))
 			b = gaim_contact_get_priority_buddy((GaimContact*)node);
 		else
 			b = (GaimBuddy *)node;
 
-		prpl = gaim_find_prpl(gaim_account_get_protocol_id(b->account));
-		if (prpl != NULL)
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
-		menu = create_buddy_menu(node, b, prpl, prpl_info);
+		menu = create_buddy_menu(node, b);
 	}
 
 	/* Now display the menu */
@@ -2973,6 +2964,7 @@ raise_on_events_cb()
 /**********************************************************************************
  * Public API Functions                                                           *
  **********************************************************************************/
+
 static void gaim_gtk_blist_new_list(GaimBuddyList *blist)
 {
 	GaimGtkBuddyList *gtkblist;

@@ -129,6 +129,14 @@ GaimBlistUiOps *gaim_gtk_blist_get_ui_ops(void);
 GdkPixbuf *create_prpl_icon(GaimAccount *account);
 
 /**
+ * Populates a menu with the items shown on the buddy list for a buddy.
+ *
+ * @param menu  The menu to populate
+ * @param buddy The buddy who's menu to get
+ */
+void gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy);
+
+/**
  * Refreshes all the nodes of the buddy list.
  * This should only be called when something changes to affect most of the nodes (such as a ui preference changing)
  *
