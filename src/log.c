@@ -757,7 +757,7 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 				}
 
 				if(strchr(buf, '\r'))
-					data->length--;
+					newlen--;
 
 				if (newlen != 0) {
 					log = gaim_log_new(GAIM_LOG_IM, sn, account, -1);
