@@ -859,7 +859,7 @@ static int gaim_getfile_filereq(struct aim_session_t *sess, struct command_rx_st
 	gt = find_getfile_transfer(od, oftconn);
 
 	if (gt->window)
-		return;
+		return 1;
 
 	gt->window = gtk_dialog_new();
 	gtk_window_set_title(GTK_WINDOW(gt->window), _("Gaim - File Transfer"));
@@ -890,7 +890,6 @@ static int gaim_getfile_filereq(struct aim_session_t *sess, struct command_rx_st
 
 static void getfile_send_callback(gpointer data, gint source, GdkInputCondition condition) {
 	struct getfile_transfer *gt = (struct getfile_transfer *)data;
-	char buf[1024];
 	int result;
 
 	result = aim_getfile_send_chunk(gt->conn, gt->file, gt->fh, -1, 1024);
@@ -908,12 +907,11 @@ static int gaim_getfile_filesend(struct aim_session_t *sess, struct command_rx_s
 	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct getfile_transfer *gt;
-	int result;
 
 	va_list ap;
 	struct aim_conn_t *oftconn;
 	struct aim_fileheader_t *fh;
-	char *path, *cookie;
+	char *cookie;
 
 	va_start(ap, command);
 	oftconn = va_arg(ap, struct aim_conn_t *);
@@ -925,7 +923,7 @@ static int gaim_getfile_filesend(struct aim_session_t *sess, struct command_rx_s
 
 	if (gt->gop > 0) {
 		debug_printf("already have output watcher?\n");
-		return;
+		return 1;
 	}
 
 	if ((gt->file = fopen(gt->filename, "r")) == NULL) {
@@ -1035,7 +1033,7 @@ static void do_getfile(GtkObject *obj, struct ask_getfile *g) {
 	ft = localtime(&st.st_ctime);
 	fprintf(file, "%2d/%2d/%4d %2d:%2d %8ld ",
 			ft->tm_mon + 1, ft->tm_mday, ft->tm_year + 1900,
-			ft->tm_hour + 1, ft->tm_min + 1, st.st_size);
+			ft->tm_hour + 1, ft->tm_min + 1, (long)st.st_size);
 	fprintf(file, "%s\r\n", g_basename(filename));
 	rewind(file);
 
@@ -1293,7 +1291,6 @@ int gaim_parse_motd(struct aim_session_t *sess,
 	char *msg;
 	u_short id;
 	va_list ap;
-	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_start(ap, command);
 	id  = (u_short)va_arg(ap, u_int);

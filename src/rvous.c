@@ -647,7 +647,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	at = g_snprintf(buf, ntohl(fhdr.size) + 1, "%2d/%2d/%4d %2d:%2d %8ld ",
 			fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
 			fortime->tm_hour + 1, fortime->tm_min + 1,
-			st.st_size);
+			(long)st.st_size);
 	g_snprintf(buf + at, ntohl(fhdr.size) + 1 - at, "%s\r\n", c);
 	sprintf(debug_buff, "Sending listing.txt (%d bytes) to %s\n",
 			ntohl(fhdr.size) + 1, ft->user);

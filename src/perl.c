@@ -45,8 +45,6 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <gtk/gtk.h>
-#include "pixmaps/add.xpm"
-#include "pixmaps/cancel.xpm"
 
 
 /* perl module support */
@@ -627,7 +625,7 @@ static void do_load(GtkWidget *m, gpointer n) {
 
 void load_perl_script(GtkWidget *w, gpointer d)
 {
-	char *buf, *temp;
+	char *buf;
 
 	if (config) {
 		gtk_widget_show(config);

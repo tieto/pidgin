@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>

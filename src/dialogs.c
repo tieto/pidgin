@@ -641,22 +641,38 @@ void show_im_dialog()
         GtkWidget *label;
 
         if (!imdialog) {
-
-                imdialog = gtk_window_new(GTK_WINDOW_DIALOG);
+		imdialog = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_window_set_wmclass(GTK_WINDOW(imdialog), "imdialog",
-                                       "Gaim");
+				       "Gaim");
 		gtk_window_set_policy(GTK_WINDOW(imdialog), FALSE, TRUE, TRUE);
-                gtk_widget_realize(imdialog);
+		gtk_window_set_title(GTK_WINDOW(imdialog), _("Gaim - IM user"));
+		gtk_signal_connect(GTK_OBJECT(imdialog), "destroy",
+				   GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
+		gtk_widget_realize(imdialog);
+		aol_icon(imdialog->window);
 
-                mainbox = gtk_vbox_new(FALSE, 5);
+		mainbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
 		gtk_container_add(GTK_CONTAINER(imdialog), mainbox);
 
 		frame = gtk_frame_new(_("Send Instant Message"));
-                gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
-	
+		gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
+
+		fbox = gtk_hbox_new(FALSE, 5);
+		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
+		gtk_container_add(GTK_CONTAINER(frame), fbox);
+
+		label = gtk_label_new(_("IM who:"));
+		gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
+
+		imentry = gtk_entry_new();
+		gtk_box_pack_start(GTK_BOX(fbox), imentry, TRUE, TRUE, 0);
+		gtk_signal_connect(GTK_OBJECT(imentry), "activate",
+				   GTK_SIGNAL_FUNC(do_im), imentry);
+		gtk_widget_grab_focus(imentry);
+
 		bbox = gtk_hbox_new(FALSE, 5);
-                gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
 
 		button = picture_button(imdialog, _("Cancel"), cancel_xpm);
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
@@ -667,29 +683,8 @@ void show_im_dialog()
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked",
 				   GTK_SIGNAL_FUNC(do_im), imentry);
-
-		fbox = gtk_hbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-		gtk_container_add(GTK_CONTAINER(frame), fbox);
-
-                label = gtk_label_new(_("IM who:"));
-                gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
-
-		imentry = gtk_entry_new();
-                gtk_box_pack_start(GTK_BOX(fbox), imentry, TRUE, TRUE, 0);
-
-                /* Handle closes right */
-		gtk_signal_connect(GTK_OBJECT(imentry), "activate",
-				   GTK_SIGNAL_FUNC(do_im), imentry);
-                gtk_signal_connect(GTK_OBJECT(imdialog), "destroy",
-                                   GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
-
-		/* Finish up */
-		gtk_window_set_title(GTK_WINDOW(imdialog), _("Gaim - IM user"));
-                gtk_widget_grab_focus(imentry);
-		
-		aol_icon(imdialog->window);
         }
+
         gtk_widget_show_all(imdialog);
 }
 
@@ -769,8 +764,6 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 {
 	char *grp, *who, *whoalias;
         struct conversation *c;
-	GSList *n = connections;
-	struct gaim_connection *g;
         
 	who = gtk_entry_get_text(GTK_ENTRY(a->entry));
         grp = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry));
@@ -1832,7 +1825,6 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 
         char *who;
         char *name;
-        int d = 0;
 
 
         who = gtk_entry_get_text(GTK_ENTRY(p->entry));

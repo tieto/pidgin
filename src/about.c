@@ -66,7 +66,6 @@ void show_about(GtkWidget *w, void *null)
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 	GtkWidget *hbox;
-	GtkWidget *eventbox;
 	GtkWidget *button;
 
 	char abouttitle[45];
