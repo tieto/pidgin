@@ -73,6 +73,7 @@ EXTRA_DIST =	ab.xpm				\
 		mrt.xpm				\
 		msgpend.png			\
 		msn_away.xpm			\
+		msn_occ.xpm			\
 		msn_online.xpm			\
 		napster.xpm			\
 		no_icon.xpm			\

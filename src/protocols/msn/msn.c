@@ -13,6 +13,7 @@
 
 #include "pixmaps/msn_online.xpm"
 #include "pixmaps/msn_away.xpm"
+#include "pixmaps/msn_occ.xpm"
 
 /* MSN Smiley Faces */
 #include "pixmaps/protocols/msn/msn_angry.xpm"
@@ -1892,7 +1893,12 @@ static char **msn_list_icon(int uc)
 {
 	if (uc == 0)
 		return msn_online_xpm;
-
+	
+	uc >>= 1;
+	
+	if (uc == 2 || uc == 6)
+		return msn_occ_xpm;
+	
 	return msn_away_xpm;
 }
 
