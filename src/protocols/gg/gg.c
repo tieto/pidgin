@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2406 2001-09-29 23:06:30Z warmenhoven $
+ * $Id: gg.c 2436 2001-10-04 05:45:18Z warmenhoven $
  *
  * Copyright (C) 2001, Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -969,7 +969,7 @@ static void agg_permit_deny_dummy(struct gaim_connection *gc, char *who)
 
 static struct prpl *my_protocol = NULL;
 
-void agg_init(struct prpl *ret)
+void gg_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_GADUGADU;
 	ret->options = 0;
@@ -1016,7 +1016,7 @@ void agg_init(struct prpl *ret)
 
 char *gaim_plugin_init(GModule *handle)
 {
-	load_protocol(agg_init, sizeof(struct prpl));
+	load_protocol(gg_init, sizeof(struct prpl));
 	return NULL;
 }
 

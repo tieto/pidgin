@@ -59,6 +59,7 @@ libzephyr_a_SOURCES = \
 			ZSubs.c \
 			ZVariables.c \
 			ZWait4Not.c \
+			ZhmStat.c \
 			Zinternal.c \
 			com_err.h \
 			error_message.c \
