@@ -947,10 +947,12 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	struct gaim_window *win;
 	struct gaim_conversation *conv;
 	struct gaim_gtk_conversation *gtkconv;
+	struct gaim_gtk_window *gtkwin;
 
 	conv    = (struct gaim_conversation *)data;
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	win     = gaim_conversation_get_window(conv);
+	gtkwin  = GAIM_GTK_WINDOW(win);
 
 	if (event->keyval == GDK_Escape) {
 		if (convo_options & OPT_CONVO_ESC_CAN_CLOSE) {
@@ -1174,7 +1176,7 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 #ifndef _WIN32
 			XIconifyWindow(GDK_DISPLAY(),
 						   GDK_WINDOW_XWINDOW(gtkwin->window->window),
-						   ((_XPrivDisplay)GDK_DISPALY())->default_screen);
+						   ((_XPrivDisplay)GDK_DISPLAY())->default_screen);
 #endif
 		}
 		else if (event->keyval == '[') {
