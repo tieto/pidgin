@@ -109,6 +109,14 @@ GtkWidget *gaim_gtk_change_text(const char *text, GtkWidget *button,
 void gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
 
 /**
+ * Toggles the sensitivity of all widgets in a pointer array.
+ *
+ * @param widget    @c NULL. Used for signal handlers.
+ * @param to_toggle The array containing the widgets to toggle.
+ */
+void gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
+
+/**
  * Adds a seperator to a menu.
  *
  * @param menu The menu to add a seperator to.

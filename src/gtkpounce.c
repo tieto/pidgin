@@ -21,6 +21,7 @@
  *
  */
 #include <unistd.h>
+#include <string.h>
 #include "gaim.h"
 #include "gtkpounce.h"
 #include "gtkblist.h"
@@ -57,9 +58,12 @@ struct gaim_gtkpounce_dialog
 	GtkWidget *send_msg_entry;
 	GtkWidget *exec_cmd;
 	GtkWidget *exec_cmd_entry;
+	GtkWidget *exec_cmd_browse;
 	GtkWidget *play_sound;
 	GtkWidget *play_sound_entry;
-
+	GtkWidget *play_sound_browse;
+	GtkWidget *play_sound_test;
+	
 	GtkWidget *save_pounce;
 };
 
@@ -90,6 +94,64 @@ cancel_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 	delete_win_cb(NULL, NULL, dialog);
 }
 
+static void
+pounce_update_entryfields(GtkWidget *w, gpointer data)
+{
+	const char *selected_filename;
+	GHashTable *args;
+		
+	args = (GHashTable *) data;
+	
+	selected_filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(g_hash_table_lookup(args, "pounce_file_selector")));
+	if (selected_filename != NULL)
+		gtk_entry_set_text(GTK_ENTRY(g_hash_table_lookup(args, "entry")),selected_filename);
+
+	g_free(args);
+}
+
+static void
+pounce_file_selector(GtkWidget *w, gpointer data)
+{
+	GtkWidget *pounce_file_selector;
+	GtkWidget *entry;
+	GHashTable *args;
+	
+	entry = (GtkWidget *) data;	
+
+	pounce_file_selector = gtk_file_selection_new(_("Select a file"));
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(pounce_file_selector), gtk_entry_get_text(GTK_ENTRY(entry)));
+	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(pounce_file_selector));
+	gtk_file_selection_set_select_multiple(GTK_FILE_SELECTION(pounce_file_selector), FALSE);
+
+	args = g_hash_table_new(g_str_hash,g_str_equal);
+	g_hash_table_insert(args, "pounce_file_selector", (gpointer) pounce_file_selector);
+	g_hash_table_insert(args, "entry", (gpointer) entry);
+	
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(pounce_file_selector)->ok_button),
+					 "clicked", G_CALLBACK(pounce_update_entryfields), (gpointer) args);
+
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(pounce_file_selector)->ok_button),
+							 "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer) pounce_file_selector);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(pounce_file_selector)->cancel_button),
+							 "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer) pounce_file_selector);
+
+	gtk_widget_show(pounce_file_selector);
+}
+
+static void
+pounce_test_sound(GtkWidget *w, gpointer data)
+{
+	const char *filename;
+	GtkWidget *entry;
+
+	entry = (GtkWidget *) data;
+	
+	filename = gtk_entry_get_text(GTK_ENTRY(entry));
+	if ((filename != NULL) && (strlen(filename) > 0))
+		gaim_sound_play_file((char *) filename);
+	else
+		gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
+}
 
 static void
 save_pounce_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
@@ -190,7 +252,6 @@ save_pounce_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 	}
 
 	delete_win_cb(NULL, NULL, dialog);
-
 	/* Rebuild the pounce menu */
 	blist = gaim_get_blist();
 
@@ -402,7 +463,9 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	GtkWidget *table;
 	GtkWidget *sep;
 	GtkSizeGroup *sg;
-
+	GPtrArray *sound_widgets;
+	GPtrArray *exec_widgets;
+	
 	dialog = g_new0(struct gaim_gtkpounce_dialog, 1);
 
 	if (cur_pounce != NULL) {
@@ -524,7 +587,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->typing,      0, 1, 3, 4,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing, 1, 2, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing, 1, 2, 3, 5,
 					 GTK_FILL, 0, 0, 0);
 
 	gtk_widget_show(dialog->signon);
@@ -539,7 +602,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	/* Create the "Pounce Action" frame. */
 	frame = make_frame(vbox2, _("Pounce Action"));
 
-	table = gtk_table_new(2, 5, FALSE);
+	table = gtk_table_new(3, 5, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 	gtk_widget_show(table);
@@ -549,14 +612,20 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	dialog->send_msg = gtk_check_button_new_with_label(_("Send a message"));
 	dialog->exec_cmd = gtk_check_button_new_with_label(_("Execute a command"));
 	dialog->play_sound = gtk_check_button_new_with_label(_("Play a sound"));
-
+	
 	dialog->send_msg_entry   = gtk_entry_new();
 	dialog->exec_cmd_entry   = gtk_entry_new();
+	dialog->exec_cmd_browse = gtk_button_new_with_label(_("Browse"));
 	dialog->play_sound_entry = gtk_entry_new();
-
+	dialog->play_sound_browse = gtk_button_new_with_label(_("Browse"));
+	dialog->play_sound_test = gtk_button_new_with_label(_("Test"));
+	
 	gtk_widget_set_sensitive(dialog->send_msg_entry,   FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_entry,   FALSE);
+	gtk_widget_set_sensitive(dialog->exec_cmd_browse, FALSE);
 	gtk_widget_set_sensitive(dialog->play_sound_entry, FALSE);
+	gtk_widget_set_sensitive(dialog->play_sound_browse,   FALSE);
+	gtk_widget_set_sensitive(dialog->play_sound_test, FALSE);
 
 	gtk_table_attach(GTK_TABLE(table), dialog->open_win,         0, 1, 0, 1,
 					 GTK_FILL, 0, 0, 0);
@@ -564,16 +633,22 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->send_msg,         0, 1, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->send_msg_entry,   1, 2, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->send_msg_entry,   1, 4, 2, 3,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->exec_cmd,         0, 1, 3, 4,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->exec_cmd_entry,   1, 2, 3, 4,
 					 GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), dialog->exec_cmd_browse,   2, 3, 3, 4,
+					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->play_sound,       0, 1, 4, 5,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_entry, 1, 2, 4, 5,
 					 GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_browse, 2, 3, 4, 5,
+					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_test, 3, 4, 4, 5,
+					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
 
 	gtk_widget_show(dialog->open_win);
 	gtk_widget_show(dialog->popup);
@@ -581,26 +656,49 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	gtk_widget_show(dialog->send_msg_entry);
 	gtk_widget_show(dialog->exec_cmd);
 	gtk_widget_show(dialog->exec_cmd_entry);
+	gtk_widget_show(dialog->exec_cmd_browse);
 	gtk_widget_show(dialog->play_sound);
 	gtk_widget_show(dialog->play_sound_entry);
+	gtk_widget_show(dialog->play_sound_browse);
+	gtk_widget_show(dialog->play_sound_test);
 
 	g_signal_connect(G_OBJECT(dialog->send_msg), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive),
 					 dialog->send_msg_entry);
-	g_signal_connect(G_OBJECT(dialog->exec_cmd), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive),
-					 dialog->exec_cmd_entry);
-	g_signal_connect(G_OBJECT(dialog->play_sound), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive),
-					 dialog->play_sound_entry);
 
+	exec_widgets = g_ptr_array_new();
+	g_ptr_array_add(exec_widgets,dialog->exec_cmd_entry);
+	g_ptr_array_add(exec_widgets,dialog->exec_cmd_browse);
+	
+	g_signal_connect(G_OBJECT(dialog->exec_cmd), "clicked",
+					 G_CALLBACK(gtk_toggle_sensitive_array),
+					 exec_widgets);
+	g_signal_connect(G_OBJECT(dialog->exec_cmd_browse), "clicked",
+					 G_CALLBACK(pounce_file_selector),
+					 dialog->exec_cmd_entry);
+
+	sound_widgets = g_ptr_array_new();
+	g_ptr_array_add(sound_widgets,dialog->play_sound_entry);
+	g_ptr_array_add(sound_widgets,dialog->play_sound_browse);
+	g_ptr_array_add(sound_widgets,dialog->play_sound_test);
+
+	g_signal_connect(G_OBJECT(dialog->play_sound), "clicked",
+					 G_CALLBACK(gtk_toggle_sensitive_array),
+					 sound_widgets);
+	g_signal_connect(G_OBJECT(dialog->play_sound_browse), "clicked",
+					 G_CALLBACK(pounce_file_selector),
+					 dialog->play_sound_entry);
+	g_signal_connect(G_OBJECT(dialog->play_sound_test), "clicked",
+					 G_CALLBACK(pounce_test_sound),
+					 dialog->play_sound_entry);
+	
 	g_signal_connect(G_OBJECT(dialog->send_msg_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->exec_cmd_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->play_sound_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
-
+	
 	/* Now the last part, where we have the Save checkbox */
 	dialog->save_pounce = gtk_check_button_new_with_mnemonic(
 		_("_Save this pounce after activation"));
@@ -684,12 +782,15 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->save_pounce),
 									 pounce_data->save);
 
-		gtk_entry_set_text(GTK_ENTRY(dialog->send_msg_entry),
-						   pounce_data->message);
-		gtk_entry_set_text(GTK_ENTRY(dialog->exec_cmd_entry),
-						   pounce_data->command);
-		gtk_entry_set_text(GTK_ENTRY(dialog->play_sound_entry),
-						   pounce_data->sound);
+		if (pounce_data->message != NULL)
+			gtk_entry_set_text(GTK_ENTRY(dialog->send_msg_entry),
+							   pounce_data->message);
+		if (pounce_data->command != NULL)
+			gtk_entry_set_text(GTK_ENTRY(dialog->exec_cmd_entry),
+							   pounce_data->command);
+		if (pounce_data->sound != NULL)
+			gtk_entry_set_text(GTK_ENTRY(dialog->play_sound_entry),
+							   pounce_data->sound);
 	}
 	else {
 		/* Set some defaults */
