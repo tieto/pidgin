@@ -1,10 +1,10 @@
 /**
- * @file pounce.h Buddy pounce API
+ * @file pounce.h Buddy Pounce API
  * @ingroup core
  *
  * gaim
  *
- * Copyright (C) 2003, Christian Hammond <chipx86@gnupdate.org>
+ * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,20 +55,27 @@ typedef void (*GaimPounceCb)(GaimPounce *, GaimPounceEvent, void *);
  */
 struct _GaimPounce
 {
+	char *ui_type;                /**< The type of UI.            */
+
 	GaimPounceEvent events;       /**< The event(s) to pounce on. */
-	GaimAccount *pouncer; /**< The user who is pouncing.  */
+	GaimAccount *pouncer;         /**< The user who is pouncing.  */
 
 	char *pouncee;                /**< The buddy to pounce on.    */
 
-	GaimPounceCb callback;      /**< The callback function to call when the
-	                                   event is triggered. */
-	void (*free)(void *data);     /**< The data free function. */
-	void *data;                   /**< Pounce-specific data. */
+	GHashTable *actions;          /**< The registered actions.    */
+
+	gboolean save;                /**< Whether or not the pounce should
+	                                   be saved after activation. */
+	GaimPounceCb callback;        /**< The callback function to call when the
+	                                   event is triggered.        */
+	void (*free)(void *data);     /**< The data free function.    */
+	void *data;                   /**< Pounce-specific data.      */
 };
 
 /**
  * Creates a new buddy pounce.
  *
+ * @param ui_type The type of UI the pounce is for.
  * @param pouncer The account that will pounce.
  * @param pouncee The buddy to pounce on.
  * @param event   The event(s) to pounce on.
@@ -78,7 +85,8 @@ struct _GaimPounce
  *
  * @return The new buddy pounce structure.
  */
-GaimPounce *gaim_pounce_new(GaimAccount *pouncer, const char *pouncee,
+GaimPounce *gaim_pounce_new(const char *ui_type,
+							GaimAccount *pouncer, const char *pouncee,
 							GaimPounceEvent event, GaimPounceCb cb,
 							void *data, void (*free)(void *));
 
@@ -114,12 +122,43 @@ void gaim_pounce_set_pouncer(GaimPounce *pounce, GaimAccount *pouncer);
 void gaim_pounce_set_pouncee(GaimPounce *pounce, const char *buddy);
 
 /**
- * Sets the callback function to call when the pounce event is triggered.
+ * Sets whether or not the pounce should be saved after execution.
  *
  * @param pounce The buddy pounce.
- * @param cb     The callback function.
+ * @param save   @c TRUE if the pounce should be saved, or @c FALSE otherwise.
  */
-void gaim_pounce_set_callback(GaimPounce *pounce, GaimPounceCb cb);
+void gaim_pounce_set_save(GaimPounce *pounce, gboolean save);
+
+/**
+ * Registers an action type for the pounce.
+ *
+ * @param pounce The buddy pounce.
+ * @param name   The action name.
+ */
+void gaim_pounce_action_register(GaimPounce *pounce, const char *name);
+
+/**
+ * Enables or disables an action for a pounce.
+ *
+ * @param pounce  The buddy pounce.
+ * @param action  The name of the action.
+ * @param enabled The enabled state.
+ */
+void gaim_pounce_action_set_enabled(GaimPounce *pounce, const char *action,
+									gboolean enabled);
+
+/**
+ * Sets a value for an attribute in an action.
+ *
+ * If @a value is @c NULL, the value will be unset.
+ *
+ * @param pounce The buddy pounce.
+ * @param action The action name.
+ * @param attr   The attribute name.
+ * @param value  The value.
+ */
+void gaim_pounce_action_set_attribute(GaimPounce *pounce, const char *action,
+									  const char *attr, const char *value);
 
 /**
  * Sets the pounce-specific data.
@@ -155,6 +194,40 @@ GaimAccount *gaim_pounce_get_pouncer(const GaimPounce *pounce);
  * @return The buddy to pounce on.
  */
 const char *gaim_pounce_get_pouncee(const GaimPounce *pounce);
+
+/**
+ * Returns whether or not the pounce should save after execution.
+ *
+ * @param pounce The buddy pounce.
+ *
+ * @return @c TRUE if the pounce should be saved after execution, or
+ *         @c FALSE otherwise.
+ */
+gboolean gaim_pounce_get_save(const GaimPounce *pounce);
+
+/**
+ * Returns whether or not an action is enabled.
+ *
+ * @param pounce The buddy pounce.
+ * @param action The action name.
+ *
+ * @return @c TRUE if the action is enabled, or @c FALSE otherwise.
+ */
+gboolean gaim_pounce_action_is_enabled(const GaimPounce *pounce,
+									   const char *action);
+
+/**
+ * Returns the value for an attribute in an action.
+ *
+ * @param pounce The buddy pounce.
+ * @param action The action name.
+ * @param attr   The attribute name.
+ *
+ * @return The attribute value, if it exists, or @c NULL.
+ */
+const char *gaim_pounce_action_get_attribute(const GaimPounce *pounce,
+											 const char *action,
+											 const char *attr);
 
 /**
  * Returns the pounce-specific data.

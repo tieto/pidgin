@@ -383,6 +383,17 @@ static void gaimrc_read_away(FILE *f)
  *
  *   -- ChipX86
  */
+typedef enum
+{
+	GAIM_GTKPOUNCE_NONE       = 0x00, /**< No action.          */
+	GAIM_GTKPOUNCE_OPEN_WIN   = 0x01, /**< Open an IM window.  */
+	GAIM_GTKPOUNCE_POPUP      = 0x02, /**< Popup notification. */
+	GAIM_GTKPOUNCE_SEND_MSG   = 0x04, /**< Send a message.     */
+	GAIM_GTKPOUNCE_EXEC_CMD   = 0x08, /**< Execute a command.  */
+	GAIM_GTKPOUNCE_PLAY_SOUND = 0x10  /**< Play a sound.       */
+
+} GaimGtkPounceAction;
+
 static int pounce_evt_trans_table[] =
 {
 	0x010, GAIM_POUNCE_SIGNON,
@@ -1646,11 +1657,27 @@ load_pounces()
 
 		old_pounce_opts_to_new(ph->options, &events, &actions);
 
-		pounce = gaim_gtkpounce_new(account, ph->name, events, actions,
-			(*ph->message == '\0' ? NULL : ph->message),
-			(*ph->command == '\0' ? NULL : ph->command),
-			(*ph->sound   == '\0' ? NULL : ph->sound),
-			(ph->options & 0x100));
+		pounce = gaim_gtkpounce_new(account, ph->name, events);
+
+		gaim_pounce_action_set_enabled(pounce, "open-window",
+			(actions & GAIM_GTKPOUNCE_OPEN_WIN));
+		gaim_pounce_action_set_enabled(pounce, "popup-notify",
+			(actions & GAIM_GTKPOUNCE_POPUP));
+		gaim_pounce_action_set_enabled(pounce, "send-message",
+			(actions & GAIM_GTKPOUNCE_SEND_MSG));
+		gaim_pounce_action_set_enabled(pounce, "execute-command",
+			(actions & GAIM_GTKPOUNCE_EXEC_CMD));
+		gaim_pounce_action_set_enabled(pounce, "play-sound",
+			(actions & GAIM_GTKPOUNCE_PLAY_SOUND));
+
+		gaim_pounce_action_set_attribute(pounce, "send-message", "message",
+			(*ph->message == '\0' ? NULL : ph->message));
+		gaim_pounce_action_set_attribute(pounce, "execute-command", "command",
+			(*ph->sound == '\0' ? NULL : ph->message));
+		gaim_pounce_action_set_attribute(pounce, "play-sound", "filename",
+			(*ph->sound == '\0' ? NULL : ph->message));
+
+		gaim_pounce_set_save(pounce, (ph->options & 0x100));
 
 		g_free(ph);
 	}

@@ -1,9 +1,9 @@
 /**
- * @file gtkpounce.h GTK+ buddy pounce API
+ * @file gtkpounce.c GTK+ Buddy Pounce API
  *
  * gaim
  *
- * Copyright (C) 2003, Christian Hammond <chipx86@gnupdate.org>
+ * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,8 +168,6 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 	struct gaim_buddy_list *blist;
 	struct gaim_gtk_buddy_list *gtkblist;
 	GaimPounceEvent events = GAIM_POUNCE_NONE;
-	GaimGtkPounceAction actions = GAIM_GTKPOUNCE_NONE;
-	gboolean save;
 
 	name = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry));
 
@@ -204,25 +202,6 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->stop_typing)))
 		events |= GAIM_POUNCE_TYPING_STOPPED;
 
-
-	/* Actions */
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->open_win)))
-		actions |= GAIM_GTKPOUNCE_OPEN_WIN;
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->popup)))
-		actions |= GAIM_GTKPOUNCE_POPUP;
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->send_msg)))
-		actions |= GAIM_GTKPOUNCE_SEND_MSG;
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd)))
-		actions |= GAIM_GTKPOUNCE_EXEC_CMD;
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->play_sound)))
-		actions |= GAIM_GTKPOUNCE_PLAY_SOUND;
-
-	save = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->save_pounce));
-
 	/* Data fields */
 	message = gtk_entry_get_text(GTK_ENTRY(dialog->send_msg_entry));
 	command = gtk_entry_get_text(GTK_ENTRY(dialog->exec_cmd_entry));
@@ -232,34 +211,39 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 	if (*command == '\0') command = NULL;
 	if (*sound   == '\0') sound   = NULL;
 
-	if (dialog->pounce == NULL)
-	{
-		gaim_gtkpounce_new(dialog->account, name, events, actions,
-						   message, command, sound, save);
+	if (dialog->pounce == NULL) {
+		dialog->pounce = gaim_gtkpounce_new(dialog->account, name, events);
 	}
-	else
-	{
-		GaimGtkPounceData *pounce_data;
-
+	else {
 		gaim_pounce_set_events(dialog->pounce, events);
 		gaim_pounce_set_pouncer(dialog->pounce, dialog->account);
 		gaim_pounce_set_pouncee(dialog->pounce, name);
-
-		pounce_data = GAIM_GTKPOUNCE(dialog->pounce);
-
-		if (pounce_data->message != NULL) g_free(pounce_data->message);
-		if (pounce_data->command != NULL) g_free(pounce_data->command);
-		if (pounce_data->sound   != NULL) g_free(pounce_data->sound);
-
-		pounce_data->message = (message == NULL ? NULL : g_strdup(message));
-		pounce_data->command = (command == NULL ? NULL : g_strdup(command));
-		pounce_data->sound   = (sound   == NULL ? NULL : g_strdup(sound));
-
-		pounce_data->actions = actions;
-		pounce_data->save    = save;
 	}
 
+	/* Actions*/
+	gaim_pounce_action_set_enabled(dialog->pounce, "open-window",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->open_win)));
+	gaim_pounce_action_set_enabled(dialog->pounce, "popup-notify",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->popup)));
+	gaim_pounce_action_set_enabled(dialog->pounce, "send-message",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->send_msg)));
+	gaim_pounce_action_set_enabled(dialog->pounce, "execute-command",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd)));
+	gaim_pounce_action_set_enabled(dialog->pounce, "play-sound",
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->play_sound)));
+
+	gaim_pounce_action_set_attribute(dialog->pounce, "send-message",
+									 "message", message);
+	gaim_pounce_action_set_attribute(dialog->pounce, "execute-command",
+									 "command", command);
+	gaim_pounce_action_set_attribute(dialog->pounce, "play-sound",
+									 "filename", sound);
+
+	gaim_pounce_set_save(dialog->pounce,
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->save_pounce)));
+
 	delete_win_cb(NULL, NULL, dialog);
+
 	/* Rebuild the pounce menu */
 	blist = gaim_get_blist();
 
@@ -330,21 +314,19 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 {
 	GaimConversation *conv;
 	GaimAccount *account;
-	GaimGtkPounceData *pounce_data;
 	const char *pouncee;
 
-	pounce_data = (GaimGtkPounceData *)data;
-	pouncee     = gaim_pounce_get_pouncee(pounce);
-	account     = gaim_pounce_get_pouncer(pounce);
+	pouncee = gaim_pounce_get_pouncee(pounce);
+	account = gaim_pounce_get_pouncer(pounce);
 
-	if (pounce_data->actions & GAIM_GTKPOUNCE_OPEN_WIN) {
+	if (gaim_pounce_action_is_enabled(pounce, "open-window")) {
 		conv = gaim_find_conversation(pouncee);
 
 		if (conv == NULL)
 			conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
 	}
 
-	if (pounce_data->actions & GAIM_GTKPOUNCE_POPUP) {
+	if (gaim_pounce_action_is_enabled(pounce, "popup-notify")) {
 		char tmp[1024];
 
 		g_snprintf(tmp, sizeof(tmp),
@@ -362,65 +344,69 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		gaim_notify_info(NULL, NULL, tmp, NULL);
 	}
 
-	if (pounce_data->actions & GAIM_GTKPOUNCE_SEND_MSG &&
-		pounce_data->message != NULL) {
+	if (gaim_pounce_action_is_enabled(pounce, "send-message")) {
+		const char *message;
 
-		conv = gaim_find_conversation(pouncee);
+		message = gaim_pounce_action_get_attribute(pounce, "send-message",
+												   "message");
 
-		if (conv == NULL)
-			conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
+		if (message != NULL) {
+			conv = gaim_find_conversation(pouncee);
 
-		gaim_conversation_write(conv, NULL, pounce_data->message, -1,
-								WFLAG_SEND, time(NULL));
+			if (conv == NULL)
+				conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
 
-		serv_send_im(account->gc, (char *)pouncee, pounce_data->message, -1, 0);
-	}
+			gaim_conversation_write(conv, NULL, message, -1,
+									WFLAG_SEND, time(NULL));
 
-	if (pounce_data->actions & GAIM_GTKPOUNCE_EXEC_CMD &&
-		pounce_data->command != NULL) {
-#ifndef _WIN32
-		int pid = fork();
-
-		if (pid == 0) {
-			char *args[4];
-
-			args[0] = "sh";
-			args[1] = "-c";
-			args[2] = pounce_data->command;
-			args[3] = NULL;
-
-			execvp(args[0], args);
-
-			_exit(0);
+			serv_send_im(account->gc, (char *)pouncee, (char *)message, -1, 0);
 		}
-#endif /* _WIN32 */
 	}
 
-	if (pounce_data->actions & GAIM_GTKPOUNCE_PLAY_SOUND) {
-		if (pounce_data->sound != NULL)
-			gaim_sound_play_file(pounce_data->sound);
+#ifndef _WIN32
+	if (gaim_pounce_action_is_enabled(pounce, "execute-command")) {
+		const char *command;
+
+		command = gaim_pounce_action_get_attribute(pounce, "execute-command",
+												   "command");
+
+		if (command != NULL) {
+			int pid = fork();
+
+			if (pid == 0) {
+				char *args[4];
+
+				args[0] = "sh";
+				args[1] = "-c";
+				args[2] = (char *)command;
+				args[3] = NULL;
+
+				execvp(args[0], args);
+
+				_exit(0);
+			}
+		}
+	}
+#endif /* _WIN32 */
+
+	if (gaim_pounce_action_is_enabled(pounce, "play-sound")) {
+		const char *sound;
+
+		sound = gaim_pounce_action_get_attribute(pounce, "play-sound",
+												 "sound");
+
+		if (sound != NULL)
+			gaim_sound_play_file(sound);
 		else
 			gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
 	}
-
-	if (!pounce_data->save)
-		gaim_pounce_destroy(pounce);
 }
 
 static void
 free_pounce(void *data)
 {
-	GaimGtkPounceData *pounce_data;
 	struct gaim_buddy_list *blist;
 	struct gaim_gtk_buddy_list *gtkblist;
-
-	pounce_data = (GaimGtkPounceData *)data;
-
-	if (pounce_data->message != NULL) g_free(pounce_data->message);
-	if (pounce_data->command != NULL) g_free(pounce_data->command);
-	if (pounce_data->sound   != NULL) g_free(pounce_data->sound);
-
-	g_free(data);
 
 	/* Rebuild the pounce menu */
 	blist = gaim_get_blist();
@@ -435,24 +421,20 @@ free_pounce(void *data)
 
 GaimPounce *
 gaim_gtkpounce_new(GaimAccount *pouncer, const char *pouncee,
-				   GaimPounceEvent events, GaimGtkPounceAction actions,
-				   const char *message, const char *command,
-				   const char *sound, gboolean save)
+				   GaimPounceEvent events)
 {
-	GaimGtkPounceData *data;
+	GaimPounce *pounce;
 
-	data = g_new0(GaimGtkPounceData, 1);
+	pounce = gaim_pounce_new(GAIM_GTK_UI, pouncer, pouncee, events,
+							 pounce_cb, NULL, free_pounce);
 
-	data->actions = actions;
+	gaim_pounce_action_register(pounce, "open-window");
+	gaim_pounce_action_register(pounce, "popup-notify");
+	gaim_pounce_action_register(pounce, "send-message");
+	gaim_pounce_action_register(pounce, "execute-command");
+	gaim_pounce_action_register(pounce, "play-sound");
 
-	if (message != NULL) data->message = g_strdup(message);
-	if (command != NULL) data->command = g_strdup(command);
-	if (sound   != NULL) data->sound   = g_strdup(sound);
-
-	data->save = save;
-
-	return gaim_pounce_new(pouncer, pouncee, events, pounce_cb, data,
-						   free_pounce);
+	return pounce;
 }
 
 void
@@ -750,14 +732,10 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 
 	/* Set the values of stuff. */
 	if (cur_pounce != NULL) {
-		GaimPounceEvent events;
-		GaimGtkPounceAction actions;
-		GaimGtkPounceData *pounce_data;
+		GaimPounceEvent events = gaim_pounce_get_events(cur_pounce);
+		const char *value;
 
-		pounce_data = GAIM_GTKPOUNCE(cur_pounce);
-		events      = gaim_pounce_get_events(cur_pounce);
-		actions     = pounce_data->actions;
-
+		/* Events */
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->signon),
 									(events & GAIM_POUNCE_SIGNON));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->signoff),
@@ -775,29 +753,40 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->stop_typing),
 									(events & GAIM_POUNCE_TYPING_STOPPED));
 
+		/* Actions */
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->open_win),
-									(actions & GAIM_GTKPOUNCE_OPEN_WIN));
+			gaim_pounce_action_is_enabled(cur_pounce, "open-window"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->popup),
-									(actions & GAIM_GTKPOUNCE_POPUP));
+			gaim_pounce_action_is_enabled(cur_pounce, "popup-notify"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->send_msg),
-									(actions & GAIM_GTKPOUNCE_SEND_MSG));
+			gaim_pounce_action_is_enabled(cur_pounce, "send-message"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd),
-									(actions & GAIM_GTKPOUNCE_EXEC_CMD));
+			gaim_pounce_action_is_enabled(cur_pounce, "execute-command"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->play_sound),
-									(actions & GAIM_GTKPOUNCE_PLAY_SOUND));
+			gaim_pounce_action_is_enabled(cur_pounce, "play-sound"));
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->save_pounce),
-									 pounce_data->save);
+			gaim_pounce_get_save(cur_pounce));
 
-		if (pounce_data->message != NULL)
-			gtk_entry_set_text(GTK_ENTRY(dialog->send_msg_entry),
-							   pounce_data->message);
-		if (pounce_data->command != NULL)
-			gtk_entry_set_text(GTK_ENTRY(dialog->exec_cmd_entry),
-							   pounce_data->command);
-		if (pounce_data->sound != NULL)
-			gtk_entry_set_text(GTK_ENTRY(dialog->play_sound_entry),
-							   pounce_data->sound);
+		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+													  "send-message",
+													  "message")) != NULL) {
+
+			gtk_entry_set_text(GTK_ENTRY(dialog->send_msg_entry), value);
+		}
+
+		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+													  "execute-command",
+													  "command")) != NULL) {
+
+			gtk_entry_set_text(GTK_ENTRY(dialog->exec_cmd_entry), value);
+		}
+
+		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+													  "play-sound",
+													  "filename")) != NULL) {
+			gtk_entry_set_text(GTK_ENTRY(dialog->play_sound_entry), value);
+		}
 	}
 	else {
 		/* Set some defaults */
