@@ -2367,6 +2367,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/blist/grey_idle_buddies");
 	gaim_prefs_remove("/gaim/gtk/blist/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
+	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
 	gaim_prefs_remove("/gaim/gtk/blist/show_idle_time");
 	gaim_prefs_remove("/gaim/gtk/blist/show_warning_level");
 	gaim_prefs_remove("/gaim/gtk/conversations/html_shortcuts");
