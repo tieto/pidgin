@@ -33,7 +33,36 @@ when you're ready to make your patch, simply run 'cvs diff -u >my.patch'
 and send it off.
 
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-05-19 20:01:55 -0400 (Sat, 19 May 2001) $.
+$Date: 2001-08-15 14:09:48 -0400 (Wed, 15 Aug 2001) $.
+
+
+CODING STYLE
+============
+
+Coding styles are like assholes, everyone has one and no one likes
+anyone elses. This is mine and if you want me to accept a patch from
+you without getting annoyed you'll follow this coding style. :)
+
+It would probably just be easier for me to include CodingStyle from the
+linux kernel source.
+
+Tab indents. I *HATE* 2-space indents, and I strongly dislike 8-space
+indents. Use a tab character. I'm likely to refuse a patch if it has
+2-space indents.
+
+K&R style for braces. Braces always go on the same line as the if, etc.
+that they're associated with; the only exception is functions. Braces
+for else statements should have both braces on the same line as the else
+(i.e. "} else {").
+
+No functionOrVariableNamesLikeThis. Save it for Java. Underscores are
+your friend. "tmp" is an excellent variable name. Hungarian style will
+not be tolerated. Go back to Microsoft.
+
+I have a 105-char wide Eterm. Deal with it.
+
+NO goto. I'm very likely to refuse a patch if it makes use of goto. If
+you feel the need to use goto, you need to rethink your design and flow.
 
 
 PROGRAM FLOW
