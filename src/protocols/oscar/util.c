@@ -203,9 +203,9 @@ faim_export int aim_sncmp(const char *sn1, const char *sn2)
 		sn1++;
 		sn2++;
 		while (*sn2 == ' ')
-			*sn2++;
+			sn2++;
 		while (*sn1 == ' ')
-			*sn1++;
+			sn1++;
 	}
 
 	return 1;
