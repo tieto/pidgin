@@ -1320,7 +1320,7 @@ GtkWidget *browser_page() {
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	label = gtk_label_new_with_mnemonic(_("_Manual: "));
+	label = gtk_label_new_with_mnemonic(_("_Manual:\n(%s for URL)"));
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
@@ -1424,7 +1424,7 @@ GtkWidget *sound_page() {
 				   "/core/sound/while_away", vbox);
 
 #ifndef _WIN32
-	vbox = gaim_gtk_make_frame (ret, _("Sound Method"));
+	vbox = gaim_gtk_make_frame (ret, _("Sound Method:"));
 	dd = prefs_dropdown(vbox, _("_Method"), GAIM_PREF_STRING,
 						"/gaim/gtk/sound/method",
 						_("Console beep"), "beep",
@@ -1446,7 +1446,7 @@ GtkWidget *sound_page() {
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-	label = gtk_label_new_with_mnemonic(_("Sound c_ommand\n(%s for filename)"));
+	label = gtk_label_new_with_mnemonic(_("Sound c_ommand:\n(%s for filename)"));
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
