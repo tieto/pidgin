@@ -213,12 +213,9 @@ connection_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
 {
 	g_snprintf(aim_host, sizeof(aim_host), "%s", gtk_entry_get_text(GTK_ENTRY(pd->aim_host_entry)));
 	sscanf(gtk_entry_get_text(GTK_ENTRY(pd->aim_port_entry)), "%d", &aim_port);
-	if (proxy_type == PROXY_HTTP) {
-		g_snprintf(proxy_host, sizeof(proxy_host), "%s", gtk_entry_get_text(GTK_ENTRY(pd->http_proxy_host_entry)));
-		sscanf(gtk_entry_get_text(GTK_ENTRY(pd->http_proxy_port_entry)), "%d", &proxy_port);
-	} else if (proxy_type == PROXY_SOCKS) {
-		g_snprintf(proxy_host, sizeof(proxy_host), "%s", gtk_entry_get_text(GTK_ENTRY(pd->socks_proxy_host_entry)));
-		sscanf(gtk_entry_get_text(GTK_ENTRY(pd->socks_proxy_port_entry)), "%d", &proxy_port);
+	if (proxy_type != PROXY_NONE) {
+		g_snprintf(proxy_host, sizeof(proxy_host), "%s", gtk_entry_get_text(GTK_ENTRY(pd->proxy_host_entry)));
+		sscanf(gtk_entry_get_text(GTK_ENTRY(pd->proxy_port_entry)), "%d", &proxy_port);
 	}
 
 	g_snprintf(login_host, sizeof(login_host), "%s", gtk_entry_get_text(GTK_ENTRY(pd->login_host_entry)));
@@ -256,33 +253,16 @@ static void set_browser(GtkWidget *w, int *data)
 static void set_connect(GtkWidget *w, int *data)
 {
 	proxy_type = (int)data;
-	if (proxy_type == PROXY_HTTP) {
-                if (pd->http_proxy_host_entry)
-                        gtk_widget_set_sensitive(pd->http_proxy_host_entry, TRUE);
-		if (pd->http_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->http_proxy_port_entry, TRUE);
-		if (pd->socks_proxy_host_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_host_entry, FALSE);
-		if (pd->socks_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_port_entry, FALSE);
-	} else if (proxy_type == PROXY_SOCKS) {
-		if (pd->socks_proxy_host_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_host_entry, TRUE);
-		if (pd->socks_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_port_entry, TRUE);
-                if (pd->http_proxy_host_entry)
-                        gtk_widget_set_sensitive(pd->http_proxy_host_entry, FALSE);
-		if (pd->http_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->http_proxy_port_entry, FALSE);
+	if (proxy_type != PROXY_NONE) {
+                if (pd->proxy_host_entry)
+                        gtk_widget_set_sensitive(pd->proxy_host_entry, TRUE);
+		if (pd->proxy_port_entry)
+			gtk_widget_set_sensitive(pd->proxy_port_entry, TRUE);
 	} else {
-                if (pd->http_proxy_host_entry)
-                        gtk_widget_set_sensitive(pd->http_proxy_host_entry, FALSE);
-		if (pd->http_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->http_proxy_port_entry, FALSE);
-		if (pd->socks_proxy_host_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_host_entry, FALSE);
-		if (pd->socks_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_port_entry, FALSE);
+                if (pd->proxy_host_entry)
+                        gtk_widget_set_sensitive(pd->proxy_host_entry, FALSE);
+		if (pd->proxy_port_entry)
+			gtk_widget_set_sensitive(pd->proxy_port_entry, FALSE);
 	}
         
         save_prefs();
@@ -330,6 +310,7 @@ void build_prefs()
 	GtkWidget *fontbox;
 	GtkWidget *fontframe;
 	GtkWidget *appbox;
+	GtkWidget *appletbox;
 	GtkWidget *away_topbox;
 	GtkWidget *away_botbox;
 	GtkWidget *add_away;
@@ -342,7 +323,13 @@ void build_prefs()
 	GtkWidget *appearance_page;
 	GtkWidget *chat_page;
         GtkWidget *browser_page;
+#ifndef USE_OSCAR /* sorry, since we don't control the comm we can't set
+		     the connection */
         GtkWidget *connection_page;
+#endif
+#ifdef USE_APPLET
+	GtkWidget *applet_page;
+#endif
         GtkWidget *label;
         GtkWidget *browseropt;
         GtkWidget *connectopt;
@@ -396,15 +383,11 @@ void build_prefs()
 	gaim_button("Auto-login", &general_options, OPT_GEN_AUTO_LOGIN, genbox);
 	gaim_button("Log All Conversations", &general_options, OPT_GEN_LOG_ALL, genbox);
 	gaim_button("Strip HTML from log files", &general_options, OPT_GEN_STRIP_HTML, genbox);
-#ifdef USE_APPLET
-	gaim_button("Automatically Show Buddy List", &general_options, OPT_GEN_APP_BUDDY_SHOW, genbox);
-#endif
 	gaim_button("Raise windows when message recieved", &general_options, OPT_GEN_POPUP_WINDOWS, genbox);
         gaim_button("Send URLs as links", &general_options, OPT_GEN_SEND_LINKS, genbox);
 	gaim_button("Show Lag-O-Meter", &general_options, OPT_GEN_SHOW_LAGMETER, genbox);
         gaim_button("Save some window size/positions", &general_options, OPT_GEN_SAVED_WINDOWS, genbox);
         gaim_button("Ignore new conversations when away", &general_options, OPT_GEN_DISCARD_WHEN_AWAY, genbox);
-/*	gaim_button("Automagically check for new releases", &general_options, OPT_GEN_CHECK_VERSIONS, genbox); */
 	gaim_button("Automagically highlight misspelled words", &general_options, OPT_GEN_CHECK_SPELLING, genbox);
 	if (!dw && (general_options & OPT_GEN_DEBUG))
 		general_options = general_options ^ OPT_GEN_DEBUG;
@@ -441,8 +424,30 @@ void build_prefs()
 
         gtk_signal_connect_object( GTK_OBJECT(debugbutton), "clicked", GTK_SIGNAL_FUNC(show_debug), NULL);
 
+
+	/* Applet */
+#ifdef USE_APPLET
+
+	applet_page = gtk_vbox_new(FALSE, 0);
+	label = gtk_label_new("Applet");
+	gtk_widget_show(label);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), applet_page, label);
+
+        appletbox = gtk_vbox_new(FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(applet_page), appletbox, TRUE, TRUE, 5);
+
+	gaim_button("Automatically Show Buddy List", &general_options, OPT_GEN_APP_BUDDY_SHOW, appletbox);
+	gaim_button("Sounds go through GNOME", &sound_options, OPT_SOUND_THROUGH_GNOME, appletbox);
+
+	gtk_widget_show(appletbox);
+	gtk_widget_show(applet_page);
+
+#endif
+	
+
         /* Connection */
         
+#ifndef USE_OSCAR
         connection_page = gtk_vbox_new(FALSE, 0);
         label = gtk_label_new("Connection");
         gtk_widget_show(label);
@@ -507,33 +512,19 @@ void build_prefs()
                 gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(connectopt), TRUE);
 
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	label = gtk_label_new("Proxy Host:");
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-        pd->http_proxy_host_entry = gtk_entry_new();
-        gtk_widget_show(pd->http_proxy_host_entry);
-	gtk_box_pack_start(GTK_BOX(hbox), pd->http_proxy_host_entry, FALSE, FALSE, 0);
-
-	label = gtk_label_new("Port:");
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-        pd->http_proxy_port_entry = gtk_entry_new();
-        gtk_widget_show(pd->http_proxy_port_entry);
-	gtk_box_pack_start(GTK_BOX(hbox), pd->http_proxy_port_entry, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-	
-	gtk_box_pack_start(GTK_BOX(connection_page), hbox, FALSE, FALSE, 0);
-	gtk_entry_set_text(GTK_ENTRY(pd->http_proxy_host_entry), proxy_host);
-
-	g_snprintf(buffer, sizeof(buffer), "%d", proxy_port);
-	gtk_entry_set_text(GTK_ENTRY(pd->http_proxy_port_entry), buffer);
-
         connectopt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(connectopt)), "SOCKS v4 Proxy");
         gtk_box_pack_start(GTK_BOX(connection_page), connectopt, FALSE, FALSE, 0);
-        gtk_signal_connect(GTK_OBJECT(connectopt), "clicked", GTK_SIGNAL_FUNC(set_connect), (void *)PROXY_SOCKS);
+        gtk_signal_connect(GTK_OBJECT(connectopt), "clicked", GTK_SIGNAL_FUNC(set_connect), (void *)PROXY_SOCKS4);
 	gtk_widget_show(connectopt);
-	if (proxy_type == PROXY_SOCKS)
+	if (proxy_type == PROXY_SOCKS4)
+                gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(connectopt), TRUE);
+
+
+        connectopt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(connectopt)), "SOCKS v5 Proxy (DOES NOT WORK!)");
+        gtk_box_pack_start(GTK_BOX(connection_page), connectopt, FALSE, FALSE, 0);
+        gtk_signal_connect(GTK_OBJECT(connectopt), "clicked", GTK_SIGNAL_FUNC(set_connect), (void *)PROXY_SOCKS5);
+	gtk_widget_show(connectopt);
+	if (proxy_type == PROXY_SOCKS5)
                 gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(connectopt), TRUE);
 
 
@@ -541,55 +532,38 @@ void build_prefs()
 	label = gtk_label_new("Proxy Host:");
 	gtk_widget_show(label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-        pd->socks_proxy_host_entry = gtk_entry_new();
-        gtk_widget_show(pd->socks_proxy_host_entry);
-	gtk_box_pack_start(GTK_BOX(hbox), pd->socks_proxy_host_entry, FALSE, FALSE, 0);
+        pd->proxy_host_entry = gtk_entry_new();
+        gtk_widget_show(pd->proxy_host_entry);
+	gtk_box_pack_start(GTK_BOX(hbox), pd->proxy_host_entry, FALSE, FALSE, 0);
 
 	label = gtk_label_new("Port:");
 	gtk_widget_show(label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-        pd->socks_proxy_port_entry = gtk_entry_new();
-        gtk_widget_show(pd->socks_proxy_port_entry);
-	gtk_box_pack_start(GTK_BOX(hbox), pd->socks_proxy_port_entry, FALSE, FALSE, 0);
+        pd->proxy_port_entry = gtk_entry_new();
+        gtk_widget_show(pd->proxy_port_entry);
+	gtk_box_pack_start(GTK_BOX(hbox), pd->proxy_port_entry, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 	
 	gtk_box_pack_start(GTK_BOX(connection_page), hbox, FALSE, FALSE, 0);
-	gtk_entry_set_text(GTK_ENTRY(pd->socks_proxy_host_entry), proxy_host);
+	gtk_entry_set_text(GTK_ENTRY(pd->proxy_host_entry), proxy_host);
 
 	g_snprintf(buffer, sizeof(buffer), "%d", proxy_port);
-	gtk_entry_set_text(GTK_ENTRY(pd->socks_proxy_port_entry), buffer);
+	gtk_entry_set_text(GTK_ENTRY(pd->proxy_port_entry), buffer);
 
 
 	gtk_widget_show(connection_page);
 
 
-	if (proxy_type == PROXY_HTTP) {
-                if (pd->http_proxy_host_entry)
-                        gtk_widget_set_sensitive(pd->http_proxy_host_entry, TRUE);
-		if (pd->http_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->http_proxy_port_entry, TRUE);
-		if (pd->socks_proxy_host_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_host_entry, FALSE);
-		if (pd->socks_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_port_entry, FALSE);
-	} else if (proxy_type == PROXY_SOCKS) {
-		if (pd->socks_proxy_host_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_host_entry, TRUE);
-		if (pd->socks_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_port_entry, TRUE);
-                if (pd->http_proxy_host_entry)
-                        gtk_widget_set_sensitive(pd->http_proxy_host_entry, FALSE);
-		if (pd->http_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->http_proxy_port_entry, FALSE);
+	if (proxy_type != PROXY_NONE) {
+                if (pd->proxy_host_entry)
+                        gtk_widget_set_sensitive(pd->proxy_host_entry, TRUE);
+		if (pd->proxy_port_entry)
+			gtk_widget_set_sensitive(pd->proxy_port_entry, TRUE);
 	} else {
-                if (pd->http_proxy_host_entry)
-                        gtk_widget_set_sensitive(pd->http_proxy_host_entry, FALSE);
-		if (pd->http_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->http_proxy_port_entry, FALSE);
-		if (pd->socks_proxy_host_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_host_entry, FALSE);
-		if (pd->socks_proxy_port_entry)
-			gtk_widget_set_sensitive(pd->socks_proxy_port_entry, FALSE);
+                if (pd->proxy_host_entry)
+                        gtk_widget_set_sensitive(pd->proxy_host_entry, FALSE);
+		if (pd->proxy_port_entry)
+			gtk_widget_set_sensitive(pd->proxy_port_entry, FALSE);
 	}
 
 	
@@ -598,11 +572,11 @@ void build_prefs()
         gtk_signal_connect(GTK_OBJECT(pd->aim_port_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
 	gtk_signal_connect(GTK_OBJECT(pd->login_host_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
 	gtk_signal_connect(GTK_OBJECT(pd->login_port_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
-	gtk_signal_connect(GTK_OBJECT(pd->socks_proxy_host_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
-        gtk_signal_connect(GTK_OBJECT(pd->socks_proxy_port_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
-	gtk_signal_connect(GTK_OBJECT(pd->socks_proxy_host_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
-        gtk_signal_connect(GTK_OBJECT(pd->socks_proxy_port_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
+	gtk_signal_connect(GTK_OBJECT(pd->proxy_host_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
+        gtk_signal_connect(GTK_OBJECT(pd->proxy_port_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
 
+
+#endif /* USE_OSCAR */
 	
 	/* Away */
 	

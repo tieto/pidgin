@@ -66,6 +66,7 @@ GtkWidget *mainwindow = NULL;
 char toc_addy[16];
 char *quad_addr = NULL;
 
+gboolean running = FALSE; /* whether or not we're currently trying to sign on */
 
 void cancel_logon(void)
 {
@@ -119,7 +120,6 @@ static void sound_timeout() {
 }
 
 char g_screenname[ 64 ];	/* gotta be enough */
-gboolean running = FALSE;
 
 void dologin(GtkWidget *widget, GtkWidget *w)
 {
@@ -182,11 +182,6 @@ void gaim_setup() {
 
 #ifdef USE_APPLET
 	 applet_widget_unregister_callback(APPLET_WIDGET(applet),"signon");
-	 applet_widget_register_callback(APPLET_WIDGET(applet),
-			 "buddy",
-			 _("Buddy List"),
-			 (AppletCallbackFunc)createOnlinePopup,
-			 NULL);
 	 applet_widget_register_callback(APPLET_WIDGET(applet),
 			 "signoff",
 			 _("Signoff"),
@@ -477,7 +472,7 @@ extern void show_debug(GtkObject *);
 int main(int argc, char *argv[])
 {
 #ifdef USE_APPLET
-        InitAppletMgr( argc, argv );
+        init_applet_mgr(argc, argv);
 #elif defined USE_THEMES         
         gnome_init("GAIM",NULL,argc,argv);
 #else

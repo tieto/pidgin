@@ -44,7 +44,7 @@ gchar GAIM_GNOME_CONNECT_ICON[255] = GAIM_GNOME_PENGUIN_CONNECT;
 gchar GAIM_GNOME_ONLINE_ICON[255] = GAIM_GNOME_PENGUIN_ONLINE;
 
 GtkWidget *applet;
-GtkWidget *button;
+GtkWidget *appletframe;
 GtkWidget *status_label;
 
 GtkWidget *icon;
@@ -213,7 +213,6 @@ void make_buddy(void) {
 	}	
 	build_edit_tree();
 	build_permit_tree();
-	applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
 	
 }
 
@@ -230,21 +229,8 @@ void make_buddy(void) {
 ****************************************************************/
 
 void applet_show_login(AppletWidget *widget, gpointer data) {
+	/* FIXME : this is so pointless */
         show_login();
-	/*
-        applet_widget_unregister_callback(APPLET_WIDGET(applet),"signon");
-        applet_widget_register_callback(APPLET_WIDGET(applet),
-                "signoff",
-                _("Signoff"),
-                signoff,
-                NULL);
-	insert_applet_away();
-        applet_widget_register_callback(APPLET_WIDGET(applet),
-                "buddy",
-                _("Buddy List"),
-                (AppletCallbackFunc)createOnlinePopup,
-                NULL);
-	*/
 }
 
 void insert_applet_away() {
@@ -369,9 +355,9 @@ GtkAllocation get_applet_pos(){
     GtkAllocation result;
     GNOME_Panel_OrientType orient = applet_widget_get_panel_orient( APPLET_WIDGET(applet) );
     pad = 5;
-    gdk_window_get_position( gtk_widget_get_parent_window( button  ),&x,&y );
+    gdk_window_get_position(gtk_widget_get_parent_window(appletframe), &x, &y);
     buddy_req = gnome_buddy_get_dimentions();
-    applet_req = button->requisition;
+    applet_req = appletframe->requisition;
    switch( orient ){
    	case ORIENT_UP:
    		result.x=x;
@@ -452,7 +438,9 @@ void closeAwayPopup(){
 	closeOnlinePopup();
 }
 
-void AppletClicked( GtkWidget *sender, gpointer data ){
+void AppletClicked( GtkWidget *sender, GdkEventButton *ev, gpointer data ){
+	if (!ev || ev->button != 1 || ev->type != GDK_BUTTON_PRESS)
+		return;
         
 	if( applet_draw_open ){
 	  	switch( MRI_user_status ){
@@ -498,94 +486,13 @@ void AppletClicked( GtkWidget *sender, gpointer data ){
 }
 
 
-#ifdef HAVE_PANEL_SIZE      
-/***************************************************************
-**
-** Code for panel resizing
-**
-****************************************************************/
-static void applet_change_size(GtkWidget *w, PanelSizeType o, gpointer data) {
-        switch(o) {
-                case SIZE_TINY: 
-                /*24x24*/ 
-                	gtk_widget_set_usize( button, 24,24 );
-        
-			/*load offline icon*/
-			load_applet_icon( GAIM_GNOME_OFFLINE_ICON, 
-							 24, 24, &icon_offline_pm, &icon_offline_bm );
- 
- 			/*load connecting icon*/
- 			load_applet_icon( GAIM_GNOME_CONNECT_ICON, 
-							 24, 24, &icon_connect_pm, &icon_connect_bm );
-							 
-			/*load online icon*/
-			load_applet_icon( GAIM_GNOME_ONLINE_ICON, 
-							 24, 24, &icon_online_pm, &icon_online_bm );
-                break;
-                 
-                case SIZE_STANDARD: 
-                /*48x48*/      
-        		gtk_widget_set_usize( button, 48,48 );
-        
-			/*load offline icon*/
-			load_applet_icon( GAIM_GNOME_OFFLINE_ICON, 
-							 32, 34, &icon_offline_pm, &icon_offline_bm );
- 
- 			/*load connecting icon*/
- 			load_applet_icon( GAIM_GNOME_CONNECT_ICON, 
-							 32, 34, &icon_connect_pm, &icon_connect_bm );
-							 
-			/*load online icon*/
-			load_applet_icon( GAIM_GNOME_ONLINE_ICON, 
-							 32, 34, &icon_online_pm, &icon_online_bm );
-     	        break;
-                
-                case SIZE_LARGE: 
-                /*64x64*/
-                	gtk_widget_set_usize( button, 64, 64 );
-        
-			/*load offline icon*/
-			load_applet_icon( GAIM_GNOME_OFFLINE_ICON, 
-							 55, 55, &icon_offline_pm, &icon_offline_bm );
- 
- 			/*load connecting icon*/
- 			load_applet_icon( GAIM_GNOME_CONNECT_ICON, 
-							 55, 55, &icon_connect_pm, &icon_connect_bm );
-							 
-			/*load online icon*/
-			load_applet_icon( GAIM_GNOME_ONLINE_ICON, 
-							 55, 55, &icon_online_pm, &icon_online_bm );
-     	        break;
-                
-                case SIZE_HUGE: 
-                /*80x80*/
-                	gtk_widget_set_usize( button, 80, 80 );
-        
-			/*load offline icon*/
-			load_applet_icon( GAIM_GNOME_OFFLINE_ICON, 
-							 70, 70, &icon_offline_pm, &icon_offline_bm );
- 
- 			/*load connecting icon*/
- 			load_applet_icon( GAIM_GNOME_CONNECT_ICON, 
-							 70, 70, &icon_connect_pm, &icon_connect_bm );
-							 
-			/*load online icon*/
-			load_applet_icon( GAIM_GNOME_ONLINE_ICON, 
-							 70, 70, &icon_online_pm, &icon_online_bm );
-     	 
-                break;
-        }
-}
-#endif /*HAVE_PANEL_SIZE*/
-
-
 /***************************************************************
 **
 ** Initialize GNOME stuff
 **
 ****************************************************************/
 
-gint InitAppletMgr( int argc, char *argv[] ){
+gint init_applet_mgr(int argc, char *argv[]) {
 	GtkWidget *vbox;
 	
 	GtkStyle *label_style;
@@ -600,24 +507,25 @@ gint InitAppletMgr( int argc, char *argv[] ){
         
         applet=applet_widget_new("gaim_applet");
         if(!applet) g_error(_("Can't create GAIM applet!"));
+	gtk_widget_set_events(applet, gtk_widget_get_events(applet) |
+				GDK_BUTTON_PRESS_MASK);
+
+        appletframe = gtk_frame_new(NULL);
         
-        button=gtk_button_new();
-        
-        
-        gtk_widget_set_usize( button, 48,48 );
+        gtk_widget_set_usize(appletframe, 48, 48);
         
 	
 	/*load offline icon*/
-	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, 
-							 32, 32, &icon_offline_pm, &icon_offline_bm );
+	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, 32, 32,
+			&icon_offline_pm, &icon_offline_bm );
  
  	/*load connecting icon*/
- 	load_applet_icon( GAIM_GNOME_CONNECT_ICON, 
-							 32, 32, &icon_connect_pm, &icon_connect_bm );
+ 	load_applet_icon( GAIM_GNOME_CONNECT_ICON, 32, 32,
+			&icon_connect_pm, &icon_connect_bm );
 							 
 	/*load online icon*/
-	load_applet_icon( GAIM_GNOME_ONLINE_ICON, 
-							 32, 32, &icon_online_pm, &icon_online_bm );
+	load_applet_icon( GAIM_GNOME_ONLINE_ICON, 32, 32,
+			&icon_online_pm, &icon_online_bm );
  	
  	/*icon_away and icon_msg_pennding need to be implemented*/		
 		
@@ -644,20 +552,14 @@ gint InitAppletMgr( int argc, char *argv[] ){
 		debug_print(debug_buff);
 	}
 	
-#ifdef  HAVE_PANEL_SIZE 
-        	gtk_signal_connect(GTK_OBJECT(applet),"change_size",
-                           GTK_SIGNAL_FUNC(applet_change_size),
-                           NULL);
-#endif /*HAVE_PANEL_SIZE*/      
-	
 	gtk_box_pack_start(GTK_BOX(vbox), status_label, FALSE, TRUE, 0);
 	
-	gtk_container_add( GTK_CONTAINER(button), vbox );
-	applet_widget_add(APPLET_WIDGET(applet), button);
+	gtk_container_add( GTK_CONTAINER(appletframe), vbox );
+	applet_widget_add(APPLET_WIDGET(applet), appletframe);
 	
 	gtk_widget_show( status_label );
 	gtk_widget_show( vbox );
-	gtk_widget_show( button );
+	gtk_widget_show( appletframe );
 	        
 	applet_widget_set_tooltip(APPLET_WIDGET(applet),"GAIM");
 
@@ -668,7 +570,7 @@ gint InitAppletMgr( int argc, char *argv[] ){
 					      applet_show_about,
 					      NULL);
 					      
-	gtk_signal_connect( GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC( AppletClicked), NULL);
+	gtk_signal_connect( GTK_OBJECT(applet), "button_press_event", GTK_SIGNAL_FUNC( AppletClicked), NULL);
 
         gtk_widget_show(icon);
         gtk_widget_show(applet);

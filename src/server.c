@@ -28,7 +28,7 @@
 #include <unistd.h>
 #include <gtk/gtk.h>
 #ifdef USE_OSCAR
-#include <faim/aim.h>
+#include <aim.h>
 extern int gaim_caps;
 #endif
 #include "gaim.h"
@@ -575,7 +575,7 @@ void serv_chat_whisper(int id, char *who, char *message)
         g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
         sflap_send(buf2, -1, TYPE_DATA);
 #else
-	do_error_dialog("Sorry, Oscar doesn't whisper. Send an IM.",
+	do_error_dialog("Sorry, Oscar doesn't whisper. Send an IM. (The last message was not received.)",
 			"Gaim - Chat");
 #endif
 }

@@ -33,7 +33,8 @@
 
 #define PROXY_NONE 0
 #define PROXY_HTTP 1
-#define PROXY_SOCKS 2		/* Not Implemented !! */
+#define PROXY_SOCKS4 2
+#define PROXY_SOCKS5 3
 
 /* masking gethostbyname function */
 extern struct hostent * proxy_gethostbyname(char *host) ;

@@ -32,10 +32,6 @@
 #include "gaim.h"
 #include "proxy.h"
 
-#ifdef USE_APPLET
-#include "gnome_applet_mgr.h"
-#endif
-
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
 

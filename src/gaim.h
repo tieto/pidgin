@@ -103,10 +103,8 @@ struct prefs_data {
         GtkWidget *aim_port_entry;
         GtkWidget *login_host_entry;
         GtkWidget *login_port_entry;
-        GtkWidget *http_proxy_host_entry;
-        GtkWidget *http_proxy_port_entry;
-        GtkWidget *socks_proxy_host_entry;
-        GtkWidget *socks_proxy_port_entry;
+        GtkWidget *proxy_host_entry;
+        GtkWidget *proxy_port_entry;
 
 };
 
@@ -350,7 +348,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 347 $"
+#define REVISION "gaim:$Revision: 348 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -448,6 +446,7 @@ extern int sound_options;
 #define OPT_SOUND_FIRST_RCV      0x00000010
 #define OPT_SOUND_WHEN_AWAY      0x00000020
 #define OPT_SOUND_SILENT_SIGNON  0x00000040
+#define OPT_SOUND_THROUGH_GNOME  0x00000080
 
 
 extern int font_options;

@@ -350,10 +350,11 @@ int aim_parse_incoming_im_middle(struct aim_session_t *sess,
     }
   else if (channel == 0x0002)
     {	
-      int rendtype;
       struct aim_tlv_t *block1;
       struct aim_tlvlist_t *list2;
       struct aim_tlv_t *tmptlv;
+      struct aim_tlv_t *miscinfo;
+      unsigned short reqclass = 0;
       int a;
       
       /* Class. */
@@ -376,8 +377,11 @@ int aim_parse_incoming_im_middle(struct aim_session_t *sess,
        * There's another block of TLVs embedded in the type 5 here. 
        */
       block1 = aim_gettlv(tlvlist, 0x0005, 1);
-      if (!block1)
+      if (!block1) {
+	printf("faim: no tlv 0x0005 in rendezvous transaction!\n");
+	aim_freetlvchain(&tlvlist);
 	return 1; /* major problem */
+      }
 
       a = 0x1a; /* skip -- not sure what this information is! */
 
@@ -387,77 +391,187 @@ int aim_parse_incoming_im_middle(struct aim_session_t *sess,
        * Its probably just an accepted invitation or something.
        *  
        */
-      if (block1->length <= 0x1a)
-	{
+      if (block1->length <= 0x1a) {
+	aim_freetlvchain(&tlvlist);
+	return 1;
+      }
+
+      list2 = aim_readtlvchain(block1->value+a, block1->length-a);
+
+      if (!(miscinfo = aim_gettlv(list2, 0x2711, 1))) {
+	struct aim_msgcookie_t *cook;
+
+	if ((cook = aim_uncachecookie(sess, cookie)) == NULL) {
+	  printf("faim: no 0x2711 info TLV in rendezvous and its not in cache!\n");
+	  aim_freetlvchain(&list2);
 	  aim_freetlvchain(&tlvlist);
 	  return 1;
 	}
 
-      list2 = aim_readtlvchain(block1->value+a, block1->length-a);
+	if (cook->type == 1) {
+	  struct aim_filetransfer_t *ft;
 
-      if (aim_gettlv(list2, 0x0004, 1) /* start connection */ ||  
-	  aim_gettlv(list2, 0x000b, 1) /* close conncetion */)
-	{
-	  rendtype = 1; /* voice request */
+	  if (cook->data) {
+	    struct aim_tlv_t *errortlv;
+	    int errorcode = -1;
 
-	  /*
-	   * Call client.
-	   */
-	  userfunc = aim_callhandler(command->conn, 0x0004, 0x0007);
-	  if (userfunc)
-	    i = userfunc(sess, 
-			 command, 
-			 channel, 
-			 rendtype,
-			 &userinfo);
-	  else 
-	    i = 0;
-	}
-      else
-	{
-	  struct aim_chat_roominfo roominfo;
-	  char *msg=NULL,*encoding=NULL,*lang=NULL;
+	    ft = (struct aim_filetransfer_t *)cook->data;
 
-	  rendtype = 0; /* chat invite */
-	  if (aim_gettlv(list2, 0x2711, 1))
-	    {
-	      struct aim_tlv_t *nametlv;
-	      
-	      nametlv = aim_gettlv(list2, 0x2711, 1);
-	      aim_chat_readroominfo(nametlv->value, &roominfo);
+	    if ((errortlv = aim_gettlv(list2, 0x000b, 1))) {
+	      errorcode = aimutil_get16(errortlv->value);
 	    }
+	    printf("faim: transfer from %s (%s) for %s cancelled (error code %d)\n", ft->sender, ft->ip, ft->filename, errorcode);
+	    free(cook->data);
+	  } else {
+	    printf("faim: not data attached to file transfer\n");
+	  }
+
+	} else {
+	  printf("faim: unknown cookie cache type %d\n", cook->type);
+	}
+
+	free(cook);
+	return 1;
+      }
+
+
+      /*
+       * Parse the first two bytes of the 0x2711 TLV.  
+       *
+       * This can be interpretted in a couple ways.  
+       *
+       * It could be said that its a service type or some such and
+       * that voice is 0, file transfer is 1, and chat is 4 (and 5).
+       *
+       * Or it could be said that its an exchange value.  Exchanges
+       * four and five are for chat, voice is on exchange zero and
+       * file transfer is done on exchange 1.  
+       *
+       * It should work out the same no how its thought of.
+       *
+       */
+      reqclass = aimutil_get16(miscinfo->value+0);
+   
+      switch (reqclass) {	
+      case AIM_RENDEZVOUS_VOICE: {
+
+	/* XXX: implement all this */
+
+	/*
+	 * Call client.
+	 */
+	userfunc = aim_callhandler(command->conn, 0x0004, 0x0007);
+	if (userfunc || (i = 0)) {
+	  i = userfunc(sess, 
+		       command, 
+		       channel, 
+		       reqclass,
+		       &userinfo);
+	}
+	break;
+      }
+      case AIM_RENDEZVOUS_FILETRANSFER: {
+	char ip[30];
+	char *desc = NULL;
+	struct aim_msgcookie_t cachedcook;
+	struct aim_filetransfer_t *ft;
+
+	memset(ip, 0, sizeof(ip));
+	
+	if (aim_gettlv(list2, 0x0003, 1) && aim_gettlv(list2, 0x0003, 1)) {
+	  struct aim_tlv_t *iptlv, *porttlv;
 	  
-	  if (aim_gettlv(list2, 0x000c, 1))
-	    msg = aim_gettlv_str(list2, 0x000c, 1);
+	  iptlv = aim_gettlv(list2, 0x0003, 1);
+	  porttlv = aim_gettlv(list2, 0x0005, 1);
+
+	  snprintf(ip, sizeof(ip)-1, "%d.%d.%d.%d:%d", 
+		  aimutil_get8(iptlv->value+0),
+		  aimutil_get8(iptlv->value+1),
+		  aimutil_get8(iptlv->value+2),
+		  aimutil_get8(iptlv->value+3),
+		  aimutil_get16(porttlv->value));
+	}
+
+	if (aim_gettlv(list2, 0x000c, 1)) {
+	  desc = aim_gettlv_str(list2, 0x000c, 1);
+	}
+
+	printf("faim: rend: file transfer request from %s for %s: %s (%s)\n",
+	       userinfo.sn,
+	       miscinfo->value+8,
+	       desc, 
+	       ip);
+	
+	memcpy(cachedcook.cookie, cookie, 8);
+	memcpy(cachedcook.extended, block1->value+10, 16);
+	
+	ft = malloc(sizeof(struct aim_filetransfer_t));
+	strncpy(ft->sender, userinfo.sn, sizeof(ft->sender));
+	strncpy(ft->ip, ip, sizeof(ft->ip));
+	ft->filename = strdup(miscinfo->value+8);
+	cachedcook.type = 1; 
+	cachedcook.data = ft;
+
+	if (aim_cachecookie(sess, &cachedcook) != 0)
+	  printf("faim: ERROR caching message cookie\n");
+	
+	
+	aim_denytransfer(sess, command->conn, ft->sender, cookie, 0);
+
+	free(desc);
+	
+	i = 1;
+	break;
+      }
+      case AIM_RENDEZVOUS_FILETRANSFER_GET: {
+	printf("faim: file get request (unsupported)\n");
+	i = 1;
+	break;
+      }
+      case AIM_RENDEZVOUS_CHAT_EX3:
+      case AIM_RENDEZVOUS_CHAT_EX4:
+      case AIM_RENDEZVOUS_CHAT_EX5: {
+	struct aim_chat_roominfo roominfo;
+	char *msg=NULL,*encoding=NULL,*lang=NULL;
+
+	aim_chat_readroominfo(miscinfo->value, &roominfo);
+		  
+	if (aim_gettlv(list2, 0x000c, 1))
+	  msg = aim_gettlv_str(list2, 0x000c, 1);
 	  
-	  if (aim_gettlv(list2, 0x000d, 1))
-	    encoding = aim_gettlv_str(list2, 0x000d, 1);
+	if (aim_gettlv(list2, 0x000d, 1))
+	  encoding = aim_gettlv_str(list2, 0x000d, 1);
 	  
-	  if (aim_gettlv(list2, 0x000e, 1))
-	    lang = aim_gettlv_str(list2, 0x000e, 1);
+	if (aim_gettlv(list2, 0x000e, 1))
+	  lang = aim_gettlv_str(list2, 0x000e, 1);
       
-	  /*
-	   * Call client.
-	   */
-	  userfunc = aim_callhandler(command->conn, 0x0004, 0x0007);
-	  if (userfunc)
-	    i = userfunc(sess, 
-			 command, 
-			 channel, 
-			 rendtype,
-			 &userinfo, 
-			 &roominfo, 
-			 msg, 
-			 encoding?encoding+1:NULL, 
-			 lang?lang+1:NULL);
-	  else 
-	    i = 0;
-      
+	/*
+	 * Call client.
+	 */
+	userfunc = aim_callhandler(command->conn, 0x0004, 0x0007);
+	if (userfunc || (i = 0))
+	  i = userfunc(sess, 
+		       command, 
+		       channel, 
+		       reqclass, /* == roominfo->exchange */
+		       &userinfo, 
+		       &roominfo, 
+		       msg, 
+		       encoding?encoding+1:NULL, 
+		       lang?lang+1:NULL);
 	  free(roominfo.name);
 	  free(msg);
 	  free(encoding);
 	  free(lang);
-	}
+	  break;
+      }
+      default: {
+	printf("faim: rendezvous: unknown rend class 0x%04x\n", reqclass);
+	i = 1;
+	break;
+      }
+      } /* switch */
+
       aim_freetlvchain(&list2);
     }
 
@@ -468,6 +582,41 @@ int aim_parse_incoming_im_middle(struct aim_session_t *sess,
   
 
   return i;
+}
+
+/*
+ * Possible codes:
+ *    AIM_TRANSFER_DENY_NOTSUPPORTED -- "client does not support"
+ *    AIM_TRANSFER_DENY_DECLINE -- "client has declined transfer"
+ *    AIM_TRANSFER_DENY_NOTACCEPTING -- "client is not accepting transfers"
+ * 
+ */
+u_long aim_denytransfer(struct aim_session_t *sess,
+			struct aim_conn_t *conn, 
+			char *sender,
+			char *cookie, 
+			unsigned short code)
+{
+  struct command_tx_struct *newpacket;
+  int curbyte, i;
+
+  if(!(newpacket = aim_tx_new(0x0002, conn, 10+8+2+1+strlen(sender)+6)))
+    return -1;
+
+  newpacket->lock = 1;
+
+  curbyte = aim_putsnac(newpacket->data, 0x0004, 0x000b, 0x0000, sess->snac_nextid);
+  for (i = 0; i < 8; i++)
+    curbyte += aimutil_put8(newpacket->data+curbyte, cookie[i]);
+  curbyte += aimutil_put16(newpacket->data+curbyte, 0x0002);
+  curbyte += aimutil_put8(newpacket->data+curbyte, strlen(sender));
+  curbyte += aimutil_putstr(newpacket->data+curbyte, sender, strlen(sender));
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0003, code);
+
+  newpacket->lock = 0;
+  aim_tx_enqueue(sess, newpacket);
+
+  return (sess->snac_nextid++);
 }
 
 /*

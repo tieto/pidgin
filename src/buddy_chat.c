@@ -273,7 +273,7 @@ static void whisper_callback(GtkWidget *widget, struct buddy_chat *b)
 	GList *selected;
 	char *who;
 
-	strncpy(buf, gtk_entry_get_text(GTK_ENTRY(b->entry)), sizeof(buf)/2);
+	strncpy(buf, gtk_editable_get_chars(GTK_EDITABLE(b->entry), 0, -1), sizeof(buf)/2);
 	if (!strlen(buf))
 		return;
 
@@ -288,7 +288,7 @@ static void whisper_callback(GtkWidget *widget, struct buddy_chat *b)
 	if (!who)
 		return;
 
-	gtk_entry_set_text(GTK_ENTRY(b->entry), "");
+	gtk_editable_delete_text(GTK_EDITABLE(b->entry), 0, -1);
 
         escape_text(buf);
         serv_chat_whisper(b->id, who, buf);

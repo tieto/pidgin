@@ -584,8 +584,10 @@ void show_ee_dialog(int ee)
 		label = gtk_label_new("Amazing!  Simply Amazing!");
 	else if (ee == 1)
 		label = gtk_label_new("Pimpin\' Penguin Style! *Waddle Waddle*");
-	else
+	else if (ee == 2)
 		label = gtk_label_new("You should be me.  I'm so cute!");
+	else
+		label = gtk_label_new("Now that's what I like!");
 
 	gtk_widget_show(label);
 	gtk_widget_show(ok);

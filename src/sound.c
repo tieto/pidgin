@@ -261,7 +261,6 @@ void play(unsigned char *data, int size)
 }
 
 extern int logins_not_muted;
-#ifndef USE_APPLET
 
 void play_sound(int sound)
 {
@@ -294,11 +293,16 @@ void play_sound(int sound)
        }
 }
 
-#else /* USE_APPLET */
+#ifdef USE_APPLET
 
 #include <gnome.h>
-void play_sound(int sound)
+void applet_play_sound(int sound)
 {
+
+	if (!(sound_options & OPT_SOUND_THROUGH_GNOME)) {
+		play_sound(sound);
+		return;
+	}
 
 	switch(sound) {
 	case BUDDY_ARRIVE:

@@ -19,10 +19,6 @@
  *
  */
 
-#ifdef USE_APPLET
-#include <gnome.h>
-#include <applet-widget.h>
-#endif /* USE_APPLET */
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -50,15 +50,7 @@ static void destroy_im_away()
 void do_im_back(GtkWidget *w, GtkWidget *x)
 {
 #ifdef USE_APPLET
-  if(!blist) applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
   applet_widget_unregister_callback(APPLET_WIDGET(applet),"away");
-	if(!blist) {
-	        applet_widget_register_callback(APPLET_WIDGET(applet),
-        	        "buddy",
-                	_("Buddy List"),
-      		        (AppletCallbackFunc)createOnlinePopup,
-                	NULL);
-	}
   MRI_user_status = online;
   insert_applet_away();
 #endif /* USE_APPLET */
@@ -100,13 +92,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
         struct conversation *c;
 
 #ifdef USE_APPLET
-        if(!blist) applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
 	remove_applet_away();
-        if(!blist) applet_widget_register_callback(APPLET_WIDGET(applet),
-                                                   "buddy",
-                                                   _("Buddy List"),
-                                                   (AppletCallbackFunc)createOnlinePopup,
-                                                   NULL);
         applet_widget_register_callback(APPLET_WIDGET(applet),
                                         "away",
                                         _("Back"),

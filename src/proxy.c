@@ -174,7 +174,7 @@ int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
 	        
                 return ret;
                 break;
-        case PROXY_SOCKS: /* Socks v4 proxy (? I'm not a proxy hacker) */
+        case PROXY_SOCKS4: /* Socks v4 proxy (? I'm not a proxy hacker) */
 		/* this is going to be a cross between the HTTP proxy code
 		 * above and the TiK proxy code, translated from tcl->C */
 		{
@@ -228,6 +228,9 @@ int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
 		}
 		return ret;
                 break;
+	case PROXY_SOCKS5:
+		return -1;
+		break;
         default:
                 fprintf(stderr,"Unknown proxy type : %d.\n",proxy_type);
                 break;

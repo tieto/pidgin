@@ -35,7 +35,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include "gaim.h"
-#include <faim/aim.h>
+#include <aim.h>
 #include "gnome_applet_mgr.h"
 
 static int inpa = -1;
@@ -78,6 +78,8 @@ static int gaim_chat_leave       (struct aim_session_t *, struct command_rx_stru
 static int gaim_chat_info_update (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_struct *, ...);
 
+extern void auth_failed();
+
 static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
 	struct aim_conn_t *conn = (struct aim_conn_t *)data;
@@ -87,6 +89,7 @@ static void oscar_callback(gpointer data, gint source,
 		hide_login_progress("Disconnected.");
 		aim_logoff(gaim_sess);
 		gdk_input_remove(inpa);
+		auth_failed();
 		return;
 	}
 	if (condition & GDK_INPUT_READ) {
@@ -95,6 +98,7 @@ static void oscar_callback(gpointer data, gint source,
 			signoff();
 			hide_login_progress("Disconnected.");
 			aim_logoff(gaim_sess);
+			auth_failed();
 			gdk_input_remove(inpa);
 		} else {
 			aim_rxdispatch(gaim_sess);
@@ -192,8 +196,6 @@ void oscar_close() {
 	debug_print("Signed off.\n");
 }
 
-extern void auth_failed();
-
 int gaim_parse_auth_resp(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	struct aim_conn_t *bosconn = NULL;
@@ -225,7 +227,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		set_state(STATE_OFFLINE);
 		hide_login_progress("Authentication Failed");
 		gdk_input_remove(inpa);
-		aim_conn_close(command->conn);
+		aim_conn_kill(sess, &command->conn);
 		auth_failed();
 		return 0;
 	}
@@ -236,7 +238,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	sprintf(debug_buff, "Closing auth connection...\n");
 	debug_print(debug_buff);
 	gdk_input_remove(inpa);
-	aim_conn_close(command->conn);
+	aim_conn_kill(sess, &command->conn);
 
 	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, sess->logininfo.BOSIP);
 	if (bosconn == NULL) {
@@ -245,6 +247,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 #endif
 		set_state(STATE_OFFLINE);
 		hide_login_progress("Internal Error");
+		auth_failed();
 		return -1;
 	} else if (bosconn->status != 0) {
 #ifdef USE_APPLET
@@ -252,6 +255,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 #endif
 		set_state(STATE_OFFLINE);
 		hide_login_progress("Could Not Connect");
+		auth_failed();
 		return -1;
 	}
 
@@ -550,13 +554,14 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					     roominfo->instance,
 					     userinfo->sn,
 					     msg);
-		} else if (rendtype == 1) {
-			/* voice chat */
+		} else if (rendtype == AIM_RENDEZVOUS_FILETRANSFER) {
+			/* libfaim won't tell us that we got this just yet */
+		} else if (rendtype == AIM_RENDEZVOUS_FILETRANSFER_GET) {
+			/* nor will it tell us this. but it's still there */
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);
 		}
-		/* libfaim doesn't do file transfer yet, from what i can tell */
 	}
 
 	return 1;
@@ -684,7 +689,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 				i++;
 			}
 			}
-			aim_conn_close(command->conn);
+			aim_conn_kill(sess, &command->conn);
 			break;
 		default:
 			va_end(ap);

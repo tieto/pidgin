@@ -8,21 +8,83 @@
 
 #include <faim/aim.h> 
 
+/*
+ * Clears out connection list, killing remaining connections.
+ */
 void aim_connrst(struct aim_session_t *sess)
 {
-  int i;
-  for (i = 0; i < AIM_CONN_MAX; i++) {
-    aim_conn_close(&sess->conns[i]);
+  faim_mutex_init(&sess->connlistlock, NULL);
+  if (sess->connlist) {
+    struct aim_conn_t *cur = sess->connlist, *tmp;
+
+    while(cur) {
+      tmp = cur->next;
+      aim_conn_close(cur);
+      free(cur);
+      cur = tmp;
+    }
   }
+  sess->connlist = NULL;
+  return;
 }
 
+/*
+ * Gets a new connection structure.
+ */
 struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
 {
-  int i;
-  for (i=0;i<AIM_CONN_MAX;i++)
-    if (sess->conns[i].fd == -1)
-      return &(sess->conns[i]);
-  return NULL;
+  struct aim_conn_t *newconn, *cur;
+
+  if (!(newconn = malloc(sizeof(struct aim_conn_t)))) 	
+    return NULL;
+
+  memset(newconn, 0, sizeof(struct aim_conn_t));
+  aim_conn_close(newconn);
+  newconn->next = NULL;
+
+  faim_mutex_lock(&sess->connlistlock);
+  if (sess->connlist == NULL)
+    sess->connlist = newconn;
+  else {
+    for (cur = sess->connlist; cur->next; cur = cur->next)
+      ;
+    cur->next = newconn;
+  }
+  faim_mutex_unlock(&sess->connlistlock);
+
+  return newconn;
+}
+
+void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn)
+{
+  struct aim_conn_t *cur;
+
+  if (!deadconn || !*deadconn)	
+    return;
+
+  faim_mutex_lock(&sess->connlistlock);
+  if (sess->connlist == NULL)
+    ;
+  else if (sess->connlist->next == NULL) {
+    if (sess->connlist == *deadconn)
+      sess->connlist = NULL;
+  } else {
+    cur = sess->connlist;
+    while (cur->next) {
+      if (cur->next == *deadconn) {
+	cur->next = cur->next->next;
+	break;
+      }
+      cur = cur->next;
+    }
+  }
+  faim_mutex_unlock(&sess->connlistlock);
+
+  aim_conn_close(*deadconn);
+  free(*deadconn);
+  deadconn = NULL;
+
+  return;
 }
 
 void aim_conn_close(struct aim_conn_t *deadconn)
@@ -47,11 +109,15 @@ void aim_conn_close(struct aim_conn_t *deadconn)
 struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,
 				    int type)
 {
-  int i;
-  for (i=0; i<AIM_CONN_MAX; i++)
-    if (sess->conns[i].type == type)
-      return &(sess->conns[i]);
-  return NULL;
+  struct aim_conn_t *cur;
+
+  faim_mutex_lock(&sess->connlistlock);
+  for (cur = sess->connlist; cur; cur = cur->next) {
+    if (cur->type == type)
+      break;
+  }
+  faim_mutex_unlock(&sess->connlistlock);
+  return cur;
 }
 
 /*
@@ -73,15 +139,18 @@ struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
   u_short port = FAIM_LOGIN_PORT;
   char *host = NULL;
   int i=0;
-  
+
   if ((connstruct=aim_conn_getnext(sess))==NULL)
     return NULL;
 
+  faim_mutex_lock(&connstruct->active);
+  
   connstruct->type = type;
 
   if (!dest) { /* just allocate a struct */
     connstruct->fd = -1;
     connstruct->status = 0;
+    faim_mutex_unlock(&connstruct->active);
     return connstruct;
   }
 
@@ -104,11 +173,12 @@ struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
   strncpy(host, dest, i);
   host[i] = '\0';
 
-  hp = gethostbyname2(host, AF_INET);
+  hp = gethostbyname(host);
   free(host);
 
   if (hp == NULL) {
     connstruct->status = (h_errno | AIM_CONN_STATUS_RESOLVERR);
+    faim_mutex_unlock(&connstruct->active);
     return connstruct;
   }
 
@@ -122,29 +192,40 @@ struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
   if(ret < 0) {
     connstruct->fd = -1;
     connstruct->status = (errno | AIM_CONN_STATUS_CONNERR);
+    faim_mutex_unlock(&connstruct->active);
     return connstruct;
   }
   
+  faim_mutex_unlock(&connstruct->active);
+
   return connstruct;
 }
 
 int aim_conngetmaxfd(struct aim_session_t *sess)
 {
-  int i,j;
+  int j = 0;
+  struct aim_conn_t *cur;
 
-  for (i=0,j=0;i<AIM_CONN_MAX;i++)
-    if(sess->conns[i].fd > j)
-      j = sess->conns[i].fd;
+  faim_mutex_lock(&sess->connlistlock);
+  for (cur = sess->connlist; cur; cur = cur->next) {
+    if (cur->fd > j)
+      j = cur->fd;
+  }
+  faim_mutex_unlock(&sess->connlistlock);
+
   return j;
 }
 
 int aim_countconn(struct aim_session_t *sess)
 {
-  int i,cnt;
+  int cnt = 0;
+  struct aim_conn_t *cur;
 
-  for (i=0,cnt=0;i<AIM_CONN_MAX;i++)
-    if (sess->conns[i].fd > -1)
-      cnt++;
+  faim_mutex_lock(&sess->connlistlock);
+  for (cur = sess->connlist; cur; cur = cur->next)
+    cnt++;
+  faim_mutex_unlock(&sess->connlistlock);
+
   return cnt;
 }
 
@@ -160,15 +241,23 @@ int aim_countconn(struct aim_session_t *sess)
  *    1  outgoing data pending (NULL returned)
  *    2  incoming data pending (connection with pending data returned)
  *
+ * XXX: we could probably stand to do a little courser locking here.
+ *
  */ 
 struct aim_conn_t *aim_select(struct aim_session_t *sess,
 			      struct timeval *timeout, int *status)
 {
+  struct aim_conn_t *cur;
   fd_set fds;
+  int maxfd = 0;
   int i;
 
-  if (aim_countconn(sess) <= 0)
+  faim_mutex_lock(&sess->connlistlock);
+  if (sess->connlist == NULL) {
+    faim_mutex_unlock(&sess->connlistlock);
     return 0;
+  }
+  faim_mutex_unlock(&sess->connlistlock);
 
   /* 
    * If we have data waiting to be sent, return immediatly
@@ -179,24 +268,28 @@ struct aim_conn_t *aim_select(struct aim_session_t *sess,
   } 
 
   FD_ZERO(&fds);
-  
-  for(i=0;i<AIM_CONN_MAX;i++)
-    if (sess->conns[i].fd>-1)
-      FD_SET(sess->conns[i].fd, &fds);
-  
-  if ((i = select(aim_conngetmaxfd(sess)+1, &fds, NULL, NULL, timeout))>=1) {
-    int j;
-    for (j=0;j<AIM_CONN_MAX;j++) {
-	if (sess->conns[j].fd > -1) {
-	    if ((FD_ISSET(sess->conns[j].fd, &fds))) {
-	      *status = 2;
-	      return &(sess->conns[j]);  /* return the first waiting struct */
-	    }
-	  }	
-	}	
-    /* should never get here */
+  maxfd = 0;
+
+  faim_mutex_lock(&sess->connlistlock);
+  for (cur = sess->connlist; cur; cur = cur->next) {
+    FD_SET(cur->fd, &fds);
+    if (cur->fd > maxfd)
+      maxfd = cur->fd;
+  }
+  faim_mutex_unlock(&sess->connlistlock);
+
+  if ((i = select(maxfd+1, &fds, NULL, NULL, timeout))>=1) {
+    faim_mutex_lock(&sess->connlistlock);
+    for (cur = sess->connlist; cur; cur = cur->next) {
+      if (FD_ISSET(cur->fd, &fds)) {
+	*status = 2;
+	faim_mutex_unlock(&sess->connlistlock);
+	return cur;
+      }
+    }
   }
 
+  faim_mutex_unlock(&sess->connlistlock);
   *status = i; /* may be 0 or -1 */
   return NULL;  /* no waiting or error, return */
 }
@@ -205,25 +298,31 @@ int aim_conn_isready(struct aim_conn_t *conn)
 {
   if (conn)
     return (conn->status & 0x0001);
-  else
-    return -1;
+  return -1;
 }
 
 int aim_conn_setstatus(struct aim_conn_t *conn, int status)
 {
-  if (conn)
-    return (conn->status ^= status);
-  else
+  int val;
+
+  if (!conn)
     return -1;
+  
+  faim_mutex_lock(&conn->active);
+  val = conn->status ^= status;
+  faim_mutex_unlock(&conn->active);
+  return val;
 }
 
 int aim_conn_setlatency(struct aim_conn_t *conn, int newval)
 {
   if (!conn)
     return -1;
-  
+
+  faim_mutex_lock(&conn->active);
   conn->forcedlatency = newval;
   conn->lastactivity = 0; /* reset this just to make sure */
+  faim_mutex_unlock(&conn->active);
 
   return 0;
 }
@@ -233,15 +332,8 @@ void aim_session_init(struct aim_session_t *sess)
   if (!sess)
     return;
 
-  memset(sess->logininfo.screen_name, 0x00, MAXSNLEN);
-  sess->logininfo.BOSIP = NULL;
-  memset(sess->logininfo.cookie, 0x00, AIM_COOKIELEN);
-  sess->logininfo.email = NULL;
-  sess->logininfo.regstatus = 0x00;
-
-  memset(sess->conns, 0, sizeof(struct aim_conn_t)*AIM_CONN_MAX);
+  memset(sess, 0, sizeof(struct aim_session_t));
   aim_connrst(sess);
-
   sess->queue_outgoing = NULL;
   sess->queue_incoming = NULL;
   sess->pendingjoin = NULL;

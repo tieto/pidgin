@@ -1,6 +1,38 @@
 
 No release numbers
 ------------------
+ - Tue Jun  6 01:36:48 UTC 2000
+   - Inverted gethostbyname2() check.  Not sure how that ended up 
+       in that state.
+   - Added some of the initial framework to support file transfers
+   - Added in a few checks for that
+     - Can currently parse and send a denial message.
+   - Added cookie caching.  (Sorry, I just like saying that.)
+   - Rearranged channel 2 ICBM parsing (detects the different
+       rendezvous types better and hopefully accuratly).
+   - Killed the connection array.  Now a list.  (Suits the
+       upcoming features better.)  --- REQUIRES CLIENT CHANGES...
+     - In most cases, you need to change aim_conn_close() calls
+         to aim_conn_kill().  This will free them as well as 
+         close them.  If you don't do this, you'll pollute the
+         connection list and leak memory.
+   - Possibly a few other minor things (some cleanups to faimtest for one)
+
+ - Fri Jun  2 23:27:28 UTC 2000
+   - Cleaned up aim_send_login slightly
+   - Added aimicq_encode_password to support the new hash
+       values required for logging in with ICQ
+   - Removed crash when email and/or reg status aren't
+       in the auth response (they're not in ICQ responses)
+   - So now as long as you specify a client version of 
+       4.30.3141 in the client info, and your ICQ number
+       as your screen name, you can login to ICQ via libfaim
+       and use it just like an AIM account.
+   - Added AIM_CB_SPECIAL_CONNERR callback for recieving 
+       messages such as disconnect reasonses ("you logged
+       on from a different machine", etc).
+   - Added faimtest's userinfo handler to support away messages
+
  - Fri Jun  2 15:57:27 UTC 2000
    - Add creation time, maxmsglen, and various unknowns to chat info
      update callback.

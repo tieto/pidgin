@@ -24,6 +24,13 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
     return 0;
 
   /*
+   * Rendezvous (client-client) connections do not speak
+   * FLAP, so this function will break on them.
+   */
+  if (conn->type > 0x01000)
+    return 0;
+
+  /*
    * Read FLAP header.  Six bytes:
    *    
    *   0 char  -- Always 0x2a

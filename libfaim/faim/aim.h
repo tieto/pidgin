@@ -52,9 +52,9 @@
 #define strlen(x) (int)strlen(x)  /* win32 has a unsigned size_t */
 #endif
 
-#if defined(_WIN32) || (defined(mach) && defined(__APPLE__)) 
-#define gethostbyname2(x,y) gethostbyname(x) /* revert to IPv4 */
-#endif 
+#if defined(mach) && defined(__APPLE__)
+#define gethostbyname(x) gethostbyname2(x, AF_INET) 
+#endif
 
 /* 
  * Current Maximum Length for Screen Names (not including NULL) 
@@ -144,6 +144,7 @@ struct client_info_s {
 #define AIM_CONN_TYPE_BOS           0x0002
 #define AIM_CONN_TYPE_CHAT          0x000e
 #define AIM_CONN_TYPE_CHATNAV       0x000d
+#define AIM_CONN_TYPE_RENDEZVOUS    0x0101 /* these do not speak OSCAR! */
 
 /*
  * Status values returned from aim_conn_new().  ORed together.
@@ -164,6 +165,7 @@ struct aim_conn_t {
   struct aim_rxcblist_t *handlerlist;
   faim_mutex_t active; /* lock around read/writes */
   faim_mutex_t seqnum_lock; /* lock around ->seqnum changes */
+  struct aim_conn_t *next;
 };
 
 /* struct for incoming commands */
@@ -218,7 +220,8 @@ struct aim_session_t {
   /* 
    * Connection information
    */
-  struct aim_conn_t conns[AIM_CONN_MAX];
+  struct aim_conn_t *connlist;
+  faim_mutex_t connlistlock;
   
   /* 
    * TX/RX queues 
@@ -245,6 +248,8 @@ struct aim_session_t {
    **/
   struct aim_snac_t *outstanding_snacs;
   u_long snac_nextid;
+
+  struct aim_msgcookie_t *msgcookies;
 };
 
 
@@ -316,6 +321,7 @@ int aim_rxdispatch(struct aim_session_t *);
 
 int aim_logoff(struct aim_session_t *);
 
+void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn);
 
 typedef int (*rxcallback_t)(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_register_callbacks(rxcallback_t *);
@@ -456,6 +462,36 @@ extern u_char aim_caps[6][16];
 
 #define AIM_GETINFO_GENERALINFO 0x00001
 #define AIM_GETINFO_AWAYMESSAGE 0x00003
+
+#define AIM_RENDEZVOUS_VOICE 0x0000
+#define AIM_RENDEZVOUS_FILETRANSFER 0x0001
+#define AIM_RENDEZVOUS_CHAT_EX3 0x0003
+#define AIM_RENDEZVOUS_CHAT_EX4 0x0004
+#define AIM_RENDEZVOUS_CHAT_EX5 0x0005
+#define AIM_RENDEZVOUS_FILETRANSFER_GET 0x0012
+
+struct aim_msgcookie_t {
+  unsigned char cookie[8];
+  unsigned char extended[16];
+  int type;
+  void *data;
+  time_t addtime;
+  struct aim_msgcookie_t *next;
+};
+
+struct aim_filetransfer_t {
+  char sender[MAXSNLEN];	
+  char ip[30];
+  char *filename;
+};
+int aim_cachecookie(struct aim_session_t *sess, struct aim_msgcookie_t *cookie);
+struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, char *cookie);
+int aim_purgecookies(struct aim_session_t *sess);
+
+#define AIM_TRANSFER_DENY_NOTSUPPORTED 0x0000
+#define AIM_TRANSFER_DENY_DECLINE 0x0001
+#define AIM_TRANSFER_DENY_NOTACCEPTING 0x0002
+u_long aim_denytransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sender, char *cookie, unsigned short code);
 
 u_long aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *, unsigned short);
 int aim_extractuserinfo(u_char *, struct aim_userinfo_s *);

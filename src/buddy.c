@@ -275,11 +275,6 @@ void update_button_pix()
 gint applet_destroy_buddy( GtkWidget *widget, GdkEvent *event,gpointer *data ) {
 	set_applet_draw_closed();
 	gnome_buddy_hide();
-	applet_widget_register_callback(APPLET_WIDGET(applet),
-			"buddy",
-			_("Buddy List"),
-			(AppletCallbackFunc)createOnlinePopup,
-			NULL);
 	return (TRUE);
 }
 
@@ -348,7 +343,6 @@ void signoff()
         set_applet_draw_closed();
         applet_widget_unregister_callback(APPLET_WIDGET(applet),"signoff");
 	remove_applet_away();
-	applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
         applet_widget_register_callback(APPLET_WIDGET(applet),
                 "signon",
                 _("Signon"),
@@ -469,6 +463,8 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 			show_ee_dialog(1);
 		else if (!strcasecmp("flynorange", normalize(b->name)))
 			show_ee_dialog(2);
+		else if (!strcasecmp("ewarmenhoven", normalize(b->name)))
+			show_ee_dialog(3);
 
 	} else {
 		

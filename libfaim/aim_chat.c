@@ -19,20 +19,18 @@ char *aim_chat_getname(struct aim_conn_t *conn)
 
 struct aim_conn_t *aim_chat_getconn(struct aim_session_t *sess, char *name)
 {
-  int i;
+  struct aim_conn_t *cur;
+  
+  faim_mutex_lock(&sess->connlistlock);
+  for (cur = sess->connlist; cur; cur = cur->next) {
+    if (cur->type != AIM_CONN_TYPE_CHAT)
+      continue;
+    if (strcmp((char *)cur->priv, name) == 0)
+      break;
+  }
+  faim_mutex_unlock(&sess->connlistlock);
 
-  for (i=0;i<AIM_CONN_MAX;i++)
-    {
-      if (sess->conns[i].type == AIM_CONN_TYPE_CHAT)
-	{
-	  if (sess->conns[i].priv)
-	    if (!strcmp((char *)sess->conns[i].priv, name))
-	      {
-		return &sess->conns[i];
-	      }
-	}
-    }
-  return NULL;
+  return cur;
 }
 
 int aim_chat_attachname(struct aim_conn_t *conn, char *roomname)
@@ -542,21 +540,14 @@ u_long aim_chat_clientready(struct aim_session_t *sess,
 
 int aim_chat_leaveroom(struct aim_session_t *sess, char *name)
 {
-  int i;
+  struct aim_conn_t *conn;
 
-  for (i=0;i<AIM_CONN_MAX;i++)
-    {
-      if (sess->conns[i].type == AIM_CONN_TYPE_CHAT)
-	{
-	  if (sess->conns[i].priv)
-	    if (!strcmp((char *)sess->conns[i].priv, name))
-	      {
-		aim_conn_close(&sess->conns[i]);
-		return 0;
-	      }
-	}
-    }
-  return -1;
+  if ((conn = aim_chat_getconn(sess, name)))
+    aim_conn_kill(sess, &conn);
+
+  if (!conn)
+    return -1;
+  return 0;
 }
 
 /*

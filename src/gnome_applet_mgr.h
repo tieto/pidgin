@@ -62,25 +62,15 @@ enum gaim_user_states {
 #define GAIM_GNOME_PENGUIN_CONNECT "gaim/gnome/penguin-connect.png"
 #define GAIM_GNOME_PENGUIN_ONLINE "gaim/gnome/penguin-online.png"
 
-gint InitAppletMgr();                                              /* Initializes and creates applet */
+gint init_applet_mgr();
 
-void setUserState( enum gaim_user_states state );    /* Set the state the user is in (Online, Offline, etc.) */
+void setUserState( enum gaim_user_states state );
+enum gaim_user_states getUserState();
 
-void setTotalBuddies( gint num );						    /* For future use to display the total number of buddies within the applet */
+void AppletCancelLogon(); /* Used to cancel a logon and reset the applet */ 
 
-void setNumBuddiesOnline( gint num );					/* For future use to display the total number of buddies currently online, within the applet */ 
-
-enum gaim_user_states getUserState();					/* Returns the current state the user is in */
-
-gint getTotalBuddies();											/* Returns the total number of buddys set by setTotalBuddies */
-
-gint getNumBuddiesOnline();									/* Returns the total number of buddys set by setNumBuddiesOnline */
-
-void AppletCancelLogon();                                   /* Used to cancel a logon and reset the applet	*/ 
-
-void set_applet_draw_open();								/* Indicates that the code has a window open that can be controlled by clicking on the applet */
-
-void set_applet_draw_closed();								/* indicates that the code has closed the window that is controled by clicking on the applet */
+void set_applet_draw_open();
+void set_applet_draw_closed();
 
 void insert_applet_away();
 void remove_applet_away();
