@@ -179,7 +179,6 @@ void
 gaim_account_set_username(GaimAccount *account, const char *username)
 {
 	g_return_if_fail(account  != NULL);
-	g_return_if_fail(username != NULL);
 
 	if (account->username != NULL)
 		g_free(account->username);
@@ -193,7 +192,6 @@ void
 gaim_account_set_password(GaimAccount *account, const char *password)
 {
 	g_return_if_fail(account  != NULL);
-	g_return_if_fail(password != NULL);
 
 	if (account->password != NULL)
 		g_free(account->password);
@@ -207,7 +205,6 @@ void
 gaim_account_set_alias(GaimAccount *account, const char *alias)
 {
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(alias   != NULL);
 
 	if (account->alias != NULL)
 		g_free(account->alias);
@@ -221,7 +218,6 @@ void
 gaim_account_set_user_info(GaimAccount *account, const char *user_info)
 {
 	g_return_if_fail(account   != NULL);
-	g_return_if_fail(user_info != NULL);
 
 	if (account->user_info != NULL)
 		g_free(account->user_info);
@@ -235,7 +231,6 @@ void
 gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 {
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(icon    != NULL);
 
 	if (account->buddy_icon != NULL)
 		g_free(account->buddy_icon);

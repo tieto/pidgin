@@ -62,6 +62,9 @@ typedef struct
 	GtkWidget *window;
 	GtkWidget *treeview;
 
+	GtkWidget *modify_button;
+	GtkWidget *delete_button;
+
 	GtkListStore *model;
 	GtkTreeIter drag_iter;
 
@@ -90,6 +93,7 @@ typedef struct
 
 	GtkWidget *top_vbox;
 	GtkWidget *bottom_vbox;
+	GtkWidget *ok_button;
 
 	/* Login Options */
 	GtkWidget *login_frame;
@@ -185,6 +189,16 @@ __set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
 }
 
 static void
+__screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
+{
+	if (dialog->ok_button == NULL)
+		return;
+
+	gtk_widget_set_sensitive(dialog->ok_button,
+							 *gtk_entry_get_text(entry) != '\0');
+}
+
+static void
 __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GtkWidget *frame;
@@ -221,6 +235,9 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	dialog->screenname_entry = gtk_entry_new();
 
 	__add_pref_box(dialog, vbox, _("Screenname:"), dialog->screenname_entry);
+
+	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
+					 G_CALLBACK(__screenname_changed_cb), dialog);
 
 	/* Do the user split thang */
 	if (dialog->plugin == NULL) /* Yeah right. */
@@ -629,6 +646,21 @@ __proxy_type_changed_cb(GtkWidget *optmenu, AccountPrefsDialog *dialog)
 }
 
 static void
+__port_popup_cb(GtkWidget *w, GtkMenu *menu, gpointer data)
+{
+	GtkWidget *item;
+
+	item = gtk_menu_item_new_with_label(
+			_("you can see the butterflies mating"));
+	gtk_widget_show(item);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item);
+
+	item = gtk_menu_item_new_with_label(_("If you look real closely"));
+	gtk_widget_show(item);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item);
+}
+
+static void
 __add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GaimProxyInfo *proxy_info;
@@ -670,8 +702,12 @@ __add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	dialog->proxy_port_entry = gtk_entry_new();
 	__add_pref_box(dialog, vbox2, _("_Port:"), dialog->proxy_port_entry);
 
+	g_signal_connect(G_OBJECT(dialog->proxy_port_entry), "populate-popup",
+					 G_CALLBACK(__port_popup_cb), NULL);
+
 	/* User */
 	dialog->proxy_user_entry = gtk_entry_new();
+
 	__add_pref_box(dialog, vbox2, _("_Username:"), dialog->proxy_user_entry);
 
 	/* Password */
@@ -926,6 +962,8 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	gtk_widget_destroy(dialog->window);
 
 	__account_win_destroy_cb(NULL, NULL, dialog);
+
+	gaim_accounts_sync();
 }
 
 static void
@@ -1027,7 +1065,13 @@ __show_account_prefs(AccountPrefsDialogType type,
 	/* OK button */
 	button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+
+	if (dialog->account == NULL)
+		gtk_widget_set_sensitive(button, FALSE);
+
 	gtk_widget_show(button);
+
+	dialog->ok_button = button;
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(__ok_account_prefs_cb), dialog);
@@ -1433,11 +1477,19 @@ __populate_accounts_list(AccountsDialog *dialog)
 		__add_account(dialog, (GaimAccount *)l->data);
 }
 
+static void
+__account_selected_cb(GtkTreeSelection *sel, AccountsDialog *dialog)
+{
+	gtk_widget_set_sensitive(dialog->modify_button, TRUE);
+	gtk_widget_set_sensitive(dialog->delete_button, TRUE);
+}
+
 static GtkWidget *
 __create_accounts_list(AccountsDialog *dialog)
 {
 	GtkWidget *sw;
 	GtkWidget *treeview;
+	GtkTreeSelection *sel;
 	GtkTargetEntry gte[] = {{"GAIM_ACCOUNT", GTK_TARGET_SAME_APP, 0}};
 
 	/* Create the scrolled window. */
@@ -1469,6 +1521,10 @@ __create_accounts_list(AccountsDialog *dialog)
 	__add_columns(treeview, dialog);
 
 	__populate_accounts_list(dialog);
+
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	g_signal_connect(G_OBJECT(sel), "changed",
+					 G_CALLBACK(__account_selected_cb), dialog);
 
 	/* Setup DND. I wanna be an orc! */
 	gtk_tree_view_enable_model_drag_source(
@@ -1552,7 +1608,9 @@ gaim_gtk_account_dialog_show(void)
 
 	/* Modify button */
 	button = gtk_button_new_from_stock(GAIM_STOCK_MODIFY);
+	dialog->modify_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(button, FALSE);
 	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
@@ -1560,7 +1618,9 @@ gaim_gtk_account_dialog_show(void)
 
 	/* Delete button */
 	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	dialog->delete_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(button, FALSE);
 	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
