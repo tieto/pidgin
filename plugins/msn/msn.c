@@ -431,7 +431,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 		char *user, *tmp = buf;
 		int length;
 		char *msg, *content, *utf;
-		int len;
+		int len, r;
 
 		GET_NEXT(tmp);
 		user = tmp;
@@ -443,12 +443,13 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 
 		msg = g_new0(char, MAX(length + 1, MSN_BUF_LEN));
 
-		if (read(ms->fd, msg, length) != length) {
-			g_free(msg);
-			hide_login_progress(gc, "Unable to read message");
-			signoff(gc);
-			return;
-	
+		for (len = 0; len < length; len += r) {
+			if ((r = read(ms->fd, msg+len, length-len)) <= 0) {
+				g_free(msg);
+				hide_login_progress(gc, "Unable to read message");
+				signoff(gc);
+				return;
+			}
 		}
 
 		content = strstr(msg, "Content-Type: ");
