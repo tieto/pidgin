@@ -22,6 +22,7 @@
 FARPROC wgaim_find_and_loadproc(char*, char*);
 HINSTANCE wgaim_hinstance(void);
 extern void wgaim_im_blink(GtkWidget*);
+extern char* wgaim_escape_dirsep(char*);
 
 /* Determine Gaim paths */
 extern char* wgaim_install_dir(void);

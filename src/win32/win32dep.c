@@ -92,6 +92,33 @@ HINSTANCE wgaim_hinstance(void) {
 	return gaimexe_hInstance;
 }
 
+/* Escape windows dir separators.  This is needed when paths are saved,
+   and on being read back have their '\' chars used as an escape char.
+   Returns and allocated string which needs to be freed.
+*/
+char* wgaim_escape_dirsep( char* filename ) {
+	int sepcount=0;
+	char* ret=NULL;
+	int cnt=0;
+
+	ret = filename;
+	while(*ret) {
+		if(*ret == '\\')
+			sepcount++;
+		ret++;
+	}
+	ret = g_malloc0(strlen(filename) + sepcount + 1);
+	while(*filename) {
+		ret[cnt] = *filename;
+		if(*filename == '\\')
+			ret[++cnt] = '\\';
+		filename++;
+		cnt++;
+	}
+	ret[cnt] = '\0';
+	return ret;
+}
+
 /* Determine whether the specified dll contains the specified procedure.
    If so, load it (if not already loaded). */
 FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
@@ -210,7 +237,6 @@ void wgaim_im_blink(GtkWidget *window) {
 void wgaim_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
-	int err;
 	char* locale=0;
 	char newenv[128];
 
@@ -226,10 +252,7 @@ void wgaim_init(void) {
 	 */
 	wVersionRequested = MAKEWORD( 2, 2 );
 
-	err = WSAStartup( wVersionRequested, &wsaData );
-	if ( err != 0 ) {
-		return 1;
-	}
+	WSAStartup( wVersionRequested, &wsaData );
 
 	/* Confirm that the winsock DLL supports 2.2 */
 	/* Note that if the DLL supports versions greater than
@@ -240,7 +263,6 @@ void wgaim_init(void) {
 			HIBYTE( wsaData.wVersion ) != 2 ) {
 		debug_printf("Could not find a usable WinSock DLL.  Oh well.\n");
 		WSACleanup( );
-		return 1;
 	}
 
 	/* get default locale */
