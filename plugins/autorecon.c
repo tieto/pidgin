@@ -28,12 +28,12 @@ static gboolean do_signon(gpointer data) {
 	if (g_list_index(gaim_accounts_get_all(), account) < 0)
 		return FALSE;
 
+	if(info)
+		info->timeout = 0;
+
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "calling gaim_account_connect\n");
 	gaim_account_connect(account);
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "done calling gaim_account_connect\n");
-
-	if(info)
-		info->timeout = 0;
 
 	return FALSE;
 }
@@ -56,7 +56,6 @@ static void reconnect(GaimConnection *gc, void *m) {
 		info->timeout = g_timeout_add(info->delay, do_signon, account);
 	} else if (info != NULL) {
 		g_hash_table_remove(hash, account);
-		g_free(info);
 	}
 }
 
