@@ -744,6 +744,15 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 
 		}
 	}
+
+	if (data) {
+		data->length = ftell(file) - data->offset;
+		if (data->length != 0)
+			list = g_list_append(list, log);
+		else
+			gaim_log_free(log);
+	}
+
 	fclose(file);
 	return list;
 }
