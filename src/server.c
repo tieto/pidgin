@@ -481,13 +481,32 @@ void serv_alias_buddy(GaimBuddy *b)
 	}
 }
 
-void serv_got_alias(GaimConnection *gc, const char *who, const char *alias) {
-	GSList *buds, *buddies = gaim_find_buddies(gc->account, who);
+void
+serv_got_alias(GaimConnection *gc, const char *who, const char *alias)
+{
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GSList *buds, *buddies = gaim_find_buddies(account, who);
 	GaimBuddy *b;
+	GaimConversation *conv;
 
-	for(buds = buddies; buds; buds = buds->next) {
+	for (buds = buddies; buds; buds = buds->next)
+	{
 		b = buds->data;
 		gaim_blist_server_alias_buddy(b, alias);
+
+		conv = gaim_find_conversation_with_account(b->name, account);
+
+		if (conv != NULL && b->server_alias != NULL &&
+			strcmp(b->server_alias, alias))
+		{
+			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
+										who, alias);
+
+			gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM,
+									time(NULL));
+
+			g_free(tmp);
+		}
 	}
 	g_slist_free(buddies);
 }

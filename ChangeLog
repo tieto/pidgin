@@ -1,6 +1,9 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.79cvs:
+	New Features:
+	* Display name changes are now shown in the conversation windows.
+	  (Robert Mibus)
 	Bug Fixes:
 	* Non-looping animated icons no longer cause Gaim to freeze
 	* Fixed a crash in SILC that sometimes happened when resolving
