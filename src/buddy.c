@@ -648,7 +648,7 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 	gc->groups = g_slist_remove(gc->groups, delg);
 
 	if ((gs = find_group_show(delg->name)) != NULL) {
-		shows = g_slist_remove(shows, gc);
+		shows = g_slist_remove(shows, gs);
 		gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
 		g_free(gs->name);
 		g_free(gs);
