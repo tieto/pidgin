@@ -1,7 +1,11 @@
-LDFLAGS += $(LDADD) $(LIBS) -ggdb -shared
+CFLAGS += -I\$(top_srcdir) -I\$(top_srcdir)/src -DVERSION=\"$(VERSION)\"
 SUFFIXES = .c .so
 .c.so:
-	$(CC) $(CFLAGS) -I\$(top_srcdir)/src -I\$(top_srcdir) -DVERSION=\"$(VERSION)\" -fPIC -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
+	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c $< -o tmp.lo
+	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp.la -rpath $(plugindir) tmp.lo $(LIBS) $(LDFLAGS) $(PLUGIN_LIBS)
+	rm tmp.lo tmp.o libtmp.la
+	mv .libs/libtmp.so.0.0.0 $@
+	rm -rf .libs
 
 if PLUGINS
 
