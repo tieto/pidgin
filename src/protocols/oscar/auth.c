@@ -147,13 +147,10 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 }
 
 /*
- * Part two of the ICQ hack.  Note the ignoring of the key and clientinfo.
+ * Part two of the ICQ hack.  Note the ignoring of the key.
  */
-static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, const char *password)
+static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, const char *password, struct client_info_s *ci)
 {
-	static const char clientstr[] = {"ICQ Inc. - Product of ICQ (TM) 2000b.4.65.1.3281.85"};
-	static const char lang[] = {"en"};
-	static const char country[] = {"us"};
 	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
 	char *password_encoded;
@@ -168,18 +165,20 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 
 	aim_encode_password(password, password_encoded);
 
-	aimbs_put32(&fr->data, 0x00000001);
+	aimbs_put32(&fr->data, 0x00000001); /* FLAP Version */
 	aim_addtlvtochain_raw(&tl, 0x0001, strlen(sn), sn);
 	aim_addtlvtochain_raw(&tl, 0x0002, strlen(password), password_encoded);
-	aim_addtlvtochain_raw(&tl, 0x0003, strlen(clientstr), clientstr);
-	aim_addtlvtochain16(&tl, 0x0016, 0x010a); /* cliend ID */
-	aim_addtlvtochain16(&tl, 0x0017, 0x0004); /* major version */
-	aim_addtlvtochain16(&tl, 0x0018, 0x0041); /* minor version */
-	aim_addtlvtochain16(&tl, 0x0019, 0x0001); /* point version */
-	aim_addtlvtochain16(&tl, 0x001a, 0x0cd1); /* build */
+
+	if (ci->clientstring)
+		aim_addtlvtochain_raw(&tl, 0x0003, strlen(ci->clientstring), ci->clientstring);
+	aim_addtlvtochain16(&tl, 0x0016, (fu16_t)ci->clientid);
+	aim_addtlvtochain16(&tl, 0x0017, (fu16_t)ci->major);
+	aim_addtlvtochain16(&tl, 0x0018, (fu16_t)ci->minor);
+	aim_addtlvtochain16(&tl, 0x0019, (fu16_t)ci->point);
+	aim_addtlvtochain16(&tl, 0x001a, (fu16_t)ci->build);
 	aim_addtlvtochain32(&tl, 0x0014, 0x00000055); /* distribution chan */
-	aim_addtlvtochain_raw(&tl, 0x000f, strlen(lang), lang);
-	aim_addtlvtochain_raw(&tl, 0x000e, strlen(country), country);
+	aim_addtlvtochain_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
+	aim_addtlvtochain_raw(&tl, 0x000e, strlen(ci->country), ci->country);
 
 	aim_writetlvchain(&fr->data, &tl);
 
@@ -276,7 +275,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	 *
 	 */
 	if (sess->flags & AIM_SESS_FLAGS_XORLOGIN)
-		return goddamnicq2(sess, conn, sn, password);
+		return goddamnicq2(sess, conn, sn, password, ci);
 
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))

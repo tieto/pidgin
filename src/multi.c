@@ -1229,6 +1229,16 @@ void auto_login()
 	}
 }
 
+/*
+ * d:)->-< 
+ *
+ * d:O-\-<
+ * 
+ * d:D-/-<
+ *
+ * d8D->-< DANCE!
+ */
+
 static void cancel_signon(GtkWidget *button, struct signon_meter *meter)
 {
 	meter->gc->wants_to_die = TRUE;

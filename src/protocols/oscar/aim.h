@@ -146,7 +146,7 @@ struct client_info_s {
 	const char *lang; /* two-letter abbrev */
 };
 
-#define AIM_CLIENTINFO_KNOWNGOOD_3_5_1670 { \
+#define CLIENTINFO_AIM_3_5_1670 { \
 	"AOL Instant Messenger (SM), version 3.5.1670/WIN32", \
 	0x0004, \
 	0x0003, \
@@ -157,7 +157,7 @@ struct client_info_s {
 	"en", \
 }
 
-#define AIM_CLIENTINFO_KNOWNGOOD_4_1_2010 { \
+#define CLIENTINFO_AIM_4_1_2010 { \
 	  "AOL Instant Messenger (SM), version 4.1.2010/WIN32", \
 	  0x0004, \
 	  0x0004, \
@@ -168,15 +168,38 @@ struct client_info_s {
 	  "en", \
 }
 
+#define CLIENTINFO_ICQ_4_65_3281 { \
+	"ICQ Inc. - Product of ICQ (TM) 2000b.4.65.1.3281.85", \
+	0x010a, \
+	0x0004, \
+	0x0041, \
+	0x0001, \
+	0x0cd1, \
+	"us", \
+	"en", \
+}
+
+#define CLIENTINFO_ICQ_5_34_3728 { \
+	"ICQ Inc. - Product of ICQ (TM).2002a.5.34.1.3728.85", \
+	0x010a, \
+	0x0005, \
+	0x0022, \
+	0x0001, \
+	0x0e8f, \
+	"us", \
+	"en", \
+}
+
 /*
  * I would make 4.1.2010 the default, but they seem to have found
  * an alternate way of breaking that one. 
  *
  * 3.5.1670 should work fine, however, you will be subjected to the
- * memory test, which may require you to have a WinAIM binary laying 
+ * memory test, which may require you to have a WinAIM binary lying 
  * around. (see login.c::memrequest())
  */
-#define AIM_CLIENTINFO_KNOWNGOOD AIM_CLIENTINFO_KNOWNGOOD_3_5_1670
+#define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_3_5_1670
+#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQ_4_65_3281
 
 #ifndef TRUE
 #define TRUE 1

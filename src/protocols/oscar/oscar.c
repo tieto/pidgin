@@ -73,9 +73,14 @@
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
-static int gaim_caps = AIM_CAPS_CHAT |
-		       AIM_CAPS_BUDDYICON |
-		       AIM_CAPS_IMIMAGE;
+static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE;
+/* What does AIM_CAPS_ICQ actually mean? -SE */
+/*   static int caps_icq = AIM_CAPS_ICQ; */
+
+/* Set AIM caps, because Gaim can still do them over ICQ and 
+ * Winicq doesn't mind. */
+static int caps_icq = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE;
+
 static fu8_t gaim_features[] = {0x01, 0x01, 0x01, 0x02};
 
 struct oscar_data {
@@ -883,20 +888,25 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
-#if 0
-	struct client_info_s info = {"gaim", 4, 1, 2010, "us", "en", 0x0004, 0x0000, 0x04b};
-#else
-	struct client_info_s info = AIM_CLIENTINFO_KNOWNGOOD;
-#endif
 	char *key;
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *odata = gc->proto_data;
 
 	va_start(ap, fr);
 	key = va_arg(ap, char *);
 	va_end(ap);
 
-	aim_send_login(sess, fr->conn, gc->username, gc->password, &info, key);
+	if (odata->icq) {
+		struct client_info_s info = CLIENTINFO_ICQ_KNOWNGOOD;
+		aim_send_login(sess, fr->conn, gc->username, gc->password, &info, key);
+	} else {
+#if 0
+		struct client_info_s info = {"gaim", 4, 1, 2010, "us", "en", 0x0004, 0x0000, 0x04b};
+#endif
+		struct client_info_s info = CLIENTINFO_AIM_KNOWNGOOD;
+		aim_send_login(sess, fr->conn, gc->username, gc->password, &info, key);
+	}
 
 	return 1;
 }
@@ -2320,6 +2330,8 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 
 	aim_reqpersonalinfo(sess, fr->conn);
 	aim_bos_reqlocaterights(sess, fr->conn);
@@ -2328,9 +2340,11 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_reqicbmparams(sess);
 
 	aim_bos_reqrights(sess, fr->conn);
-	aim_bos_setgroupperm(sess, fr->conn, AIM_FLAG_ALLUSERS);
-	aim_bos_setprivacyflags(sess, fr->conn, AIM_PRIVFLAGS_ALLOWIDLE |
-						     AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
+	if (od->icq) {
+		aim_bos_setgroupperm(sess, fr->conn, AIM_FLAG_ALLUSERS);
+		aim_bos_setprivacyflags(sess, fr->conn, AIM_PRIVFLAGS_ALLOWIDLE |
+			AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
+	}
 
 	return 1;
 }
@@ -2418,7 +2432,10 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 
 	odata->rights.maxsiglen = odata->rights.maxawaymsglen = (guint)maxsiglen;
 
-	aim_bos_setprofile(sess, fr->conn, gc->user->user_info, NULL, gaim_caps);
+	if (odata->icq)
+		aim_bos_setprofile(sess, fr->conn, NULL, NULL, caps_icq);
+	else
+		aim_bos_setprofile(sess, fr->conn, gc->user->user_info, NULL, caps_aim);
 
 	return 1;
 }
@@ -2720,6 +2737,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
 	int ret = 0;
+
 	if (dim) {
 		if (dim->connected) {  /* If we're not connected yet, send through server */
 			ret =  aim_send_im_direct(odata->sess, dim->conn, message, len == -1 ? strlen(message) : len);
@@ -2860,7 +2878,10 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 
 	inforeal = g_strndup(info, odata->rights.maxsiglen);
 
-	aim_bos_setprofile(odata->sess, odata->conn, inforeal, NULL, gaim_caps);
+	if (odata->icq)
+		aim_bos_setprofile(odata->sess, odata->conn, NULL, NULL, caps_icq);
+	else
+		aim_bos_setprofile(odata->sess, odata->conn, inforeal, NULL, caps_aim);
 
 	g_free(inforeal);
 
@@ -2880,7 +2901,7 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 	gc->away = NULL;
 
 	if (!message) {
-		aim_bos_setprofile(od->sess, od->conn, NULL, "", gaim_caps);
+		aim_bos_setprofile(od->sess, od->conn, NULL, "", caps_aim);
 		return;
 	}
 
@@ -2894,7 +2915,7 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 	}
 
 	gc->away = g_strndup(message, od->rights.maxawaymsglen);
-	aim_bos_setprofile(od->sess, od->conn, NULL, gc->away, gaim_caps);
+	aim_bos_setprofile(od->sess, od->conn, NULL, gc->away, caps_aim);
 
 	return;
 }
@@ -2930,7 +2951,6 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
 			gc->away = "";
 		} else {
-		  
 			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
 		}
 	}
