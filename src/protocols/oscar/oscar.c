@@ -1545,7 +1545,8 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static char *images(int flags) {
 	static char buf[1024];
-	g_snprintf(buf, sizeof(buf), "%s%s%s%s",
+	g_snprintf(buf, sizeof(buf), "%s%s%s%s%s",
+			(flags & AIM_FLAG_ACTIVEBUDDY) ? "<IMG SRC=\"ab_icon.gif\">" : "",
 			(flags & AIM_FLAG_UNCONFIRMED) ? "<IMG SRC=\"dt_icon.gif\">" : "",
 			(flags & AIM_FLAG_AOL) ? "<IMG SRC=\"aol_icon.gif\">" : "",
 			(flags & AIM_FLAG_ADMINISTRATOR) ? "<IMG SRC=\"admin_icon.gif\">" : "",
@@ -2462,10 +2463,10 @@ static char **oscar_list_icon(int uc) {
 			return icon_offline_xpm;
 		return icon_online_xpm;
 	}
-	if (uc & UC_AB)
-		return (char **)ab_xpm;
 	if (uc & UC_UNAVAILABLE)
 		return (char **)away_icon_xpm;
+	if ((uc & UC_AB) && (uc & UC_NORMAL))
+		return (char **)ab_xpm;
 	if (uc & UC_AOL)
 		return (char **)aol_icon_xpm;
 	if (uc & UC_ADMIN)

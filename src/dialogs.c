@@ -74,6 +74,7 @@
 #include "pixmaps/free_icon.xpm"
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/admin_icon.xpm"
+#include "pixmaps/ab.xpm"
 
 #define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 
@@ -1650,6 +1651,8 @@ gchar **info_img_handler(gchar *url)
 		return dt_icon_xpm;
 	if (!g_strcasecmp(url, "admin_icon.gif"))
 		return admin_icon_xpm;
+	if (!g_strcasecmp(url, "ab_icon.gif"))
+		return ab_xpm;
 	return NULL;
 }
 
