@@ -546,7 +546,8 @@ static void dont_add(gpointer x, struct got_add *ga)
 
 static void do_add(gpointer x, struct got_add *ga)
 {
-	show_add_buddy(ga->gc, ga->who, NULL, ga->alias);
+	if (g_slist_find(connections, ga->gc))
+		show_add_buddy(ga->gc, ga->who, NULL, ga->alias);
 }
 
 void show_got_added(struct gaim_connection *gc, const char *id,
