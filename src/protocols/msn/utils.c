@@ -185,7 +185,13 @@ msn_import_html(const char *html, char **attributes, char **message)
 	{
 		if (*c == '<')
 		{
-			if (!g_ascii_strncasecmp(c + 1, "i>", 2))
+			if (!g_ascii_strncasecmp(c + 1, "br>", 3))
+			{
+				msg[retcount++] = '\r';
+				msg[retcount++] = '\n';
+				c += 4;
+			}
+			else if (!g_ascii_strncasecmp(c + 1, "i>", 2))
 			{
 				strcat(fonteffect, "I");
 				c += 3;
