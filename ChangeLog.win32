@@ -1,12 +1,16 @@
-version 0.63
+version 0.64
+
+version 0.63 (05/16/2003)
 	* Gaim installer re-written. Our own GTK+ installer is now bundled 
 	  with the Gaim installer (installs to the same location as the 
 	  dropline version).  Installer gives user the choice to install one
 	  of three GTK+ theme engines, including GTK-Wimp.  Installations
 	  should now work for all users on multi-user machines (including
-	  guest accounts).  No more DLL Hell.
+	  guest accounts).  No more DLL Hell. Sexier installer look (Thanks
+	  Phroggie).
 	* Language translations in the systray menu should now be displayed
 	  properly.
+	* Fixed some bugs (Thanks Phroggie for debugging help).
 
 version 0.60 (4/5/03)
 	* Fixed oscar protocol high cpu usage bug.
