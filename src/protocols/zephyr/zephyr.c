@@ -818,6 +818,7 @@ static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, i
 		"From: @bold($1) <$sender>\n\n$2";
 	notice.z_message_len = strlen(im) + strlen(sig) + 4;
 	notice.z_message = buf;
+	ZSendNotice(&notice, ZAUTH);
 	g_free(buf);
 	return 1;
 }
