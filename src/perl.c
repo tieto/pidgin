@@ -325,10 +325,11 @@ struct gaim_plugin *probe_perl(const char *filename) {
 		ENTER;
 		SAVETMPS;
 		PUSHMARK(SP);
-		count =perl_call_pv("description", G_NOARGS | G_ARRAY);
+
+		count = perl_call_pv("description", G_NOARGS | G_ARRAY | G_EVAL);
 		SPAGAIN;
-		
-		if (count = sizeof(struct gaim_plugin_description) / sizeof(char*)) {
+		debug_printf("desc: %d  char: %d  count: %d\n", sizeof(struct gaim_plugin_description), sizeof(char*), count);
+		if (count == (sizeof(struct gaim_plugin_description) - sizeof(int)) / sizeof(char*)) {
 			plug = g_new0(struct gaim_plugin, 1);
 			plug->type = perl_script;
 			g_snprintf(plug->path, sizeof(plug->path), filename);
