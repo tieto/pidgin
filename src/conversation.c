@@ -530,6 +530,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 
 	if (!c->is_chat) {
 		GSList *cn = connections;
+		serv_send_typing(c->gc, c->name, FALSE);
 		while (cn) {
 			struct gaim_connection *gc = cn->data;
 			cn = cn->next;

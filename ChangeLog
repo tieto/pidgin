@@ -28,7 +28,14 @@ version 0.59 (06/07/2002):
 	* Fixed MSN "Unkown Error Code", "Already there", and 
 	  "Already in opposite list" errors
 	* Changed "Play sound" button to "Mute" button
-	* You can now have "reserved" chars in IM and proxy passwords.
+	* You can now have "reserved" chars in IM and proxy passwords
+	* Jabber now has typing notification  (Thanks, Nathan Walp)
+	* Improved support for Jabber resources  (Thanks, Nathan Walp)
+	* Fixed problem with Gaim crashing on non-ASCII Jabber buddy
+	  aliases (Jabber "name" attribute) chars  (Thanks, Ho-seok Lee)
+	* Plugged memory leaks in Jabber plug-in
+	* Fixed problem with Jabber away status not being propagated to
+	  conference rooms for jabberd (server) v1.4.2 and above
 
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
