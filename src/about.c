@@ -134,7 +134,7 @@ void show_about(GtkWidget *w, void *null)
 		    gtk_label_new(
 				  _("Gaim is a modular Instant Messaging client capable of using AIM, ICQ,\n"
 				   "Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.\n"
-				    "I is written using Gtk+ and is licensed under the GPL.\n\n" "URL: " WEBSITE "\n\n"
+				    "It is written using Gtk+ and is licensed under the GPL.\n\n" "URL: " WEBSITE "\n\n"
 				   "IRC: #gaim on irc.openprojects.net"));
 
 		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
