@@ -2708,9 +2708,11 @@ static void oscar_remove_buddy(struct gaim_connection *g, char *name, char *grou
 	if (odata->icq) {
 		aim_remove_buddy(odata->sess, odata->conn, name);
 	} else {
-		if (odata->sess->ssi.received_data)
-			while (aim_ssi_inlist(odata->sess, odata->conn, name, 0x0000) && !aim_ssi_delbuddies(odata->sess, odata->conn, group, &name, 1))
+		if (odata->sess->ssi.received_data) {
+			char *ssigroup;
+			while (aim_ssi_inlist(odata->sess, odata->conn, name, 0x0000) && (ssigroup = aim_ssi_getparentgroup(odata->sess, odata->conn, name)) && !aim_ssi_delbuddies(odata->sess, odata->conn, ssigroup, &name, 1))
 				debug_printf("ssi: deleted buddy %s from group %s\n", name, group);
+		}
 	}
 }
 
@@ -2769,14 +2771,14 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct aim_ssi_item *curitem;
-	GSList *mem;
 	int tmp;
 	char **sns;
 
 	debug_printf("ssi: syncing local list and server list\n");
 
-	/* Delete the buddy list */
 	if (odata->icq) {
+		/* Delete the buddy list */
+		debug_printf("ssi: using ICQ, removing ssi data\n");
 		aim_ssi_deletelist(sess, fr->conn);
 		return 1;
 	}
@@ -2853,68 +2855,67 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* Add from local list to server list */
 	if (gc) {
+		GSList *cur;
+
 		/* Buddies */
-		GSList *curgrp = gc->groups;
-		while (curgrp) {
+		cur = gc->groups;
+		while (cur) {
+			GSList *curbud;
 			tmp = 0;
-			for (mem=((struct group*)curgrp->data)->members; mem; mem=mem->next)
-				if (!aim_ssi_inlist(sess, fr->conn, ((struct buddy*)mem->data)->name, 0x0000))
+			for (curbud=((struct group*)cur->data)->members; curbud; curbud=curbud->next)
+				if (!aim_ssi_inlist(sess, fr->conn, ((struct buddy*)curbud->data)->name, 0x0000))
 					tmp++;
-			sns = (char **)malloc(tmp*sizeof(char*));
-			tmp = 0;
-			for (mem=((struct group*)curgrp->data)->members; mem; mem=mem->next)
-				if (!aim_ssi_inlist(sess, fr->conn, ((struct buddy*)mem->data)->name, 0x0000)) {
-					debug_printf("ssi: adding buddy %s from local list to server list\n", ((struct buddy*)mem->data)->name);
-					sns[tmp] = ((char *)((struct buddy*)mem->data)->name);
-					tmp++;
-				}
 			if (tmp) {
-				aim_ssi_addbuddies(sess, fr->conn, ((struct group*)curgrp)->name, sns, tmp);
+				sns = (char **)malloc(tmp*sizeof(char*));
+				tmp = 0;
+				for (curbud=((struct group*)cur->data)->members; curbud; curbud=curbud->next)
+					if (!aim_ssi_inlist(sess, fr->conn, ((struct buddy*)curbud->data)->name, 0x0000)) {
+						debug_printf("ssi: adding buddy %s from local list to server list\n", ((struct buddy*)curbud->data)->name);
+						sns[tmp] = ((char *)((struct buddy*)curbud->data)->name);
+						tmp++;
+					}
+				aim_ssi_addbuddies(sess, fr->conn, ((struct group*)cur->data)->name, sns, tmp);
 				free(sns);
 			}
-			curgrp = g_slist_next(curgrp);
+			cur = g_slist_next(cur);
 		}
 
 		/* Permit list */
 		if (gc->permit) {
-			GSList *list;
 			tmp = 0;
-			for (list=gc->permit; list; list=list->next)
-				if (!aim_ssi_inlist(sess, fr->conn, list->data, 0x0002)) {
+			for (cur=gc->permit; cur; cur=cur->next)
+				if (!aim_ssi_inlist(sess, fr->conn, cur->data, 0x0002))
 					tmp++;
-				}
-			sns = (char **)malloc(tmp*sizeof(char*));
-			tmp = 0;
-			for (list=gc->permit; list; list=list->next)
-				if (!aim_ssi_inlist(sess, fr->conn, list->data, 0x0002)) {
-					debug_printf("ssi: adding permit %s from local list to server list\n", list->data);
-					sns[tmp] = list->data;
-					tmp++;
-				}
 			if (tmp) {
-				aim_ssi_addpermits(sess, fr->conn, sns, tmp);
+				sns = (char **)malloc(tmp*sizeof(char*));
+				tmp = 0;
+				for (cur=gc->permit; cur; cur=cur->next)
+					if (!aim_ssi_inlist(sess, fr->conn, cur->data, 0x0002)) {
+						debug_printf("ssi: adding permit %s from local list to server list\n", cur->data);
+						sns[tmp] = cur->data;
+						tmp++;
+					}
+				aim_ssi_addpord(sess, fr->conn, sns, tmp, AIM_SSI_TYPE_PERMIT);
 				free(sns);
 			}
 		}
 
 		/* Deny list */
 		if (gc->deny) {
-			GSList *list;
 			tmp = 0;
-			for (list=gc->deny; list; list=list->next)
-				if (!aim_ssi_inlist(sess, fr->conn, list->data, 0x0003)) {
+			for (cur=gc->deny; cur; cur=cur->next)
+				if (!aim_ssi_inlist(sess, fr->conn, cur->data, 0x0003))
 					tmp++;
-				}
-			sns = (char **)malloc(tmp*sizeof(char*));
-			tmp = 0;
-			for (list=gc->deny; list; list=list->next)
-				if (!aim_ssi_inlist(sess, fr->conn, list->data, 0x0003)) {
-					debug_printf("ssi: adding deny %s from local list to server list\n", list->data);
-					sns[tmp] = list->data;
-					tmp++;
-				}
 			if (tmp) {
-				aim_ssi_adddenies(sess, fr->conn, sns, tmp);
+				sns = (char **)malloc(tmp*sizeof(char*));
+				tmp = 0;
+				for (cur=gc->deny; cur; cur=cur->next)
+					if (!aim_ssi_inlist(sess, fr->conn, cur->data, 0x0003)) {
+						debug_printf("ssi: adding deny %s from local list to server list\n", cur->data);
+						sns[tmp] = cur->data;
+						tmp++;
+					}
+				aim_ssi_addpord(sess, fr->conn, sns, tmp, AIM_SSI_TYPE_DENY);
 				free(sns);
 			}
 		}
@@ -3383,7 +3384,7 @@ static void oscar_add_permit(struct gaim_connection *gc, char *who) {
 	} else {
 		debug_printf("ssi: About to add a permit\n");
 		if (od->sess->ssi.received_data)
-			aim_ssi_addpermits(od->sess, od->conn, &who, 1);
+			aim_ssi_addpord(od->sess, od->conn, &who, 1, AIM_SSI_TYPE_PERMIT);
 	}
 }
 
@@ -3395,7 +3396,7 @@ static void oscar_add_deny(struct gaim_connection *gc, char *who) {
 	} else {
 		debug_printf("ssi: About to add a deny\n");
 		if (od->sess->ssi.received_data)
-			aim_ssi_adddenies(od->sess, od->conn, &who, 1);
+			aim_ssi_addpord(od->sess, od->conn, &who, 1, AIM_SSI_TYPE_DENY);
 	}
 }
 
@@ -3407,7 +3408,7 @@ static void oscar_rem_permit(struct gaim_connection *gc, char *who) {
 	} else {
 		debug_printf("ssi: About to delete a permit\n");
 		if (od->sess->ssi.received_data)
-			aim_ssi_delpermits(od->sess, od->conn, &who, 1);
+			aim_ssi_delpord(od->sess, od->conn, &who, 1, AIM_SSI_TYPE_PERMIT);
 	}
 }
 
@@ -3419,7 +3420,7 @@ static void oscar_rem_deny(struct gaim_connection *gc, char *who) {
 	} else {
 		debug_printf("ssi: About to delete a deny\n");
 		if (od->sess->ssi.received_data)
-			aim_ssi_deldenies(od->sess, od->conn, &who, 1);
+			aim_ssi_delpord(od->sess, od->conn, &who, 1, AIM_SSI_TYPE_DENY);
 	}
 }
 

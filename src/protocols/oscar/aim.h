@@ -1002,8 +1002,8 @@ faim_export int aim_chat_leaveroom(aim_session_t *sess, const char *name);
 
 #define AIM_SSI_TYPE_BUDDY         0x0000
 #define AIM_SSI_TYPE_GROUP         0x0001
-#define AIM_SSI_TYPE_PERMITLIST    0x0002
-#define AIM_SSI_TYPE_DENYLIST      0x0003
+#define AIM_SSI_TYPE_PERMIT        0x0002
+#define AIM_SSI_TYPE_DENY          0x0003
 #define AIM_SSI_TYPE_PDINFO        0x0004
 #define AIM_SSI_TYPE_PRESENCEPREFS 0x0005
 
@@ -1019,25 +1019,23 @@ struct aim_ssi_item {
 faim_export int aim_ssi_reqrights(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_reqdata(aim_session_t *sess, aim_conn_t *conn, time_t localstamp, fu16_t localrev);
 faim_export int aim_ssi_enable(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_ssi_additems(aim_session_t *sess, aim_conn_t *conn, struct aim_ssi_item **items, unsigned int num);
-faim_export int aim_ssi_moditems(aim_session_t *sess, aim_conn_t *conn, struct aim_ssi_item **items, unsigned int num);
-faim_export int aim_ssi_delitems(aim_session_t *sess, aim_conn_t *conn, struct aim_ssi_item **items, unsigned int num);
+faim_export int aim_ssi_addmoddel(aim_session_t *sess, aim_conn_t *conn, struct aim_ssi_item **items, unsigned int num, fu16_t subtype);
 faim_export int aim_ssi_modbegin(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_modend(aim_session_t *sess, aim_conn_t *conn);
 
 faim_export int aim_ssi_inlist(aim_session_t *sess, aim_conn_t *conn, char *name, fu16_t type);
+faim_export char *aim_ssi_getparentgroup(aim_session_t *sess, aim_conn_t *conn, char *name);
 /* faim_export int aim_ssi_getpermdeny(aim_tlvlist_t *tlvlist); */
 faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num);
+faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num);
-faim_export int aim_ssi_addpermits(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
-faim_export int aim_ssi_adddenies(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
+faim_export int aim_ssi_addpord(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num, fu16_t type);
 faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num);
+faim_export int aim_ssi_delmastergroup(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num);
 faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_ssi_delpermits(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
-faim_export int aim_ssi_deldenies(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
+faim_export int aim_ssi_delpord(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num, fu16_t type);
 faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int permdeny);
 
 struct aim_icq_offlinemsg {
