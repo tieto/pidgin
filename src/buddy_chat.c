@@ -107,6 +107,7 @@ static void rebuild_jc()
 {
 	GList *list, *tmp;
 	struct proto_chat_entry *pce;
+	gboolean focus = TRUE;
 
 	if (!joinchatgc)
 		return;
@@ -149,7 +150,10 @@ static void rebuild_jc()
 			gtk_box_pack_start(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
 			if (pce->def)
 				gtk_entry_set_text(GTK_ENTRY(entry), pce->def);
-			gtk_widget_grab_focus(entry);
+			if (focus) {
+				gtk_widget_grab_focus(entry);
+				focus = FALSE;
+			}
 			gtk_signal_connect(GTK_OBJECT(entry), "activate",
 					   GTK_SIGNAL_FUNC(do_join_chat), NULL);
 			gtk_widget_show(entry);
@@ -487,7 +491,10 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 	if (!(flag & WFLAG_WHISPER)) {
 		str = g_strdup(normalize(who));
 		if (!g_strcasecmp(str, normalize(b->gc->username))) {
-			debug_printf("%s %s\n", normalize(who), normalize(b->gc->username));
+			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
+				play_sound(CHAT_YOU_SAY);
+			flag |= WFLAG_SEND;
+		} else if (!g_strcasecmp(str, normalize(b->gc->displayname))) {
 			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
 				play_sound(CHAT_YOU_SAY);
 			flag |= WFLAG_SEND;
@@ -538,14 +545,6 @@ void whisper_callback(GtkWidget *widget, struct conversation *b)
 	gtk_widget_grab_focus(GTK_WIDGET(b->entry));
 
 
-}
-
-void topic_callback(GtkWidget *widget, struct conversation *b) {
-   	char *buf = gtk_entry_get_text(GTK_ENTRY(widget));;
-
-	serv_chat_set_topic(b->gc, b->id, buf);
-
-	g_free(buf);
 }
 
 static gint insertname(gconstpointer one, gconstpointer two)
@@ -968,8 +967,7 @@ void show_new_buddy_chat(struct conversation *b)
 		gtk_widget_show(label);
 
 		b->topic_text = gtk_entry_new();
-		gtk_signal_connect(GTK_OBJECT(b->topic_text), "activate",
-				   GTK_SIGNAL_FUNC(topic_callback), b);
+		gtk_entry_set_editable(GTK_ENTRY(b->topic_text), FALSE);
 		gtk_box_pack_start(GTK_BOX(hbox), b->topic_text, TRUE, TRUE, 5);
 		gtk_widget_show(b->topic_text);
 	}

@@ -315,12 +315,6 @@ void serv_chat_whisper(struct gaim_connection *g, int id, char *who, char *messa
 		(*g->prpl->chat_whisper)(g, id, who, message);
 }
 
-void serv_chat_set_topic(struct gaim_connection *g, int id, char *topic) 
-{
-   	if (g->prpl && g->prpl->chat_set_topic)
-	   	(*g->prpl->chat_set_topic)(g, id, topic);
-}
-
 int serv_chat_send(struct gaim_connection *g, int id, char *message)
 {
 	int val = -EINVAL;

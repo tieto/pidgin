@@ -44,6 +44,7 @@ EXTRA_DIST =	about_small.xpm			\
 		gnomeicu-online.xpm		\
 		group.xpm			\
 		import_small.xpm		\
+		irc_icon.xpm			\
 		italic.xpm			\
 		join.xpm			\
 		kiss.xpm			\

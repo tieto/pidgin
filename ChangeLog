@@ -17,6 +17,7 @@ version 0.44:
 	* Improved the look of the proxy preferences
 	* event_im_recv and event_im_display_rcvd passed whether
 	  the message received was auto-response (see SIGNALS)
+	* IRC fixes
 
 version 0.43 (09/06/2001):
 	* Updated German Translation (thanks Daniel Seifert)

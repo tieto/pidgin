@@ -1517,7 +1517,17 @@ static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 	g_free(chatname);
 	xmlnode_put_attrib(x, "type", "groupchat");
 
-	if (message && strlen(message)) {
+	if (message && strlen(message) > strlen("/topic ") &&
+			!g_strncasecmp(message, "/topic ", strlen("/topic "))) {
+		char buf[8192];
+		char *utf8 = str_to_utf8(message + strlen("/topic "));
+		y = xmlnode_insert_tag(x, "subject");
+		xmlnode_insert_cdata(y, utf8, -1);
+		y = xmlnode_insert_tag(x, "body");
+		g_snprintf(buf, sizeof(buf), "/me has changed the subject to: %s", utf8);
+		xmlnode_insert_cdata(y, buf, -1);
+		g_free(utf8);
+	} else if (message && strlen(message)) {
 		char *utf8 = str_to_utf8(message);
 		y = xmlnode_insert_tag(x, "body");
 		xmlnode_insert_cdata(y, utf8, -1);
@@ -1527,56 +1537,6 @@ static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
 	xmlnode_free(x);
 	return 0;
-}
-
-static void jabber_chat_set_topic(struct gaim_connection *gc, int id, char *topic)
-{
-	GSList *bcs = gc->buddy_chats;
-	struct conversation *b = NULL;
-	struct jabber_data *jd = gc->proto_data;
-	xmlnode x, y;
-	struct jabber_chat *jc = NULL;
-	char *chatname;
-	char buf[8192];
-
-	while (bcs) {
-		b = bcs->data;
-		if (id == b->id)
-			break;
-		bcs = bcs->next;
-	}
-	if (!bcs)
-		return;
-
-	bcs = jd->existing_chats;
-	while (bcs) {
-		jc = bcs->data;
-		if (jc->b == b)
-			break;
-		bcs = bcs->next;
-	}
-	if (!bcs)
-		return;
-
-	x = xmlnode_new_tag("message");
-	xmlnode_put_attrib(x, "from", jid_full(jc->Jid));
-	chatname = g_strdup_printf("%s@%s", jc->Jid->user, jc->Jid->server);
-	xmlnode_put_attrib(x, "to", chatname);
-	g_free(chatname);
-	xmlnode_put_attrib(x, "type", "groupchat");
-
-	if (topic && strlen(topic)) {
-		char *utf8 = str_to_utf8(topic);
-		y = xmlnode_insert_tag(x, "subject");
-		xmlnode_insert_cdata(y, utf8, -1);
-		y = xmlnode_insert_tag(x, "body");
-		g_snprintf(buf, sizeof(buf), "/me has changed the subject to: %s", utf8);
-		xmlnode_insert_cdata(y, buf, -1);
-		g_free(utf8);
-	}
-
-	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
-	xmlnode_free(x);
 }
 
 static void jabber_chat_whisper(struct gaim_connection *gc, int id, char *who, char *message)
@@ -1808,7 +1768,6 @@ void jabber_init(struct prpl *ret)
 	ret->chat_invite = jabber_chat_invite;
 	ret->chat_leave = jabber_chat_leave;
 	ret->chat_whisper = jabber_chat_whisper;
-	ret->chat_set_topic = jabber_chat_set_topic;
 	ret->chat_send = jabber_chat_send;
 	ret->keepalive = jabber_keepalive;
 	ret->normalize = jabber_normalize;
