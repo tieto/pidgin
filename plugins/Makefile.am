@@ -39,7 +39,7 @@ endif # PLUGINS
 
 EXTRA_DIST = \
 	ChangeLog PERL-HOWTO HOWTO SIGNALS \
-	filectl.c mailchk.c gtik.c error.c \
+	filectl.c mailchk.c gtik.c \
 	gaim.pl fortuneprofile.pl
 
 AM_CPPFLAGS = \
