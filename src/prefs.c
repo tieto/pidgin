@@ -559,7 +559,7 @@ static void buddy_page()
 		gtk_widget_set_sensitive(button2, FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), button2);
 #ifdef USE_APPLET
-	gaim_button(_("Display Buddy List near applet"), &blist_options, OPT_BLSIT_NEAR_APPLET, vbox);
+	gaim_button(_("Display Buddy List near applet"), &blist_options, OPT_BLIST_NEAR_APPLET, vbox);
 #endif
 
 	frame = gtk_frame_new(_("Group Displays"));

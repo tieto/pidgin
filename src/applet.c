@@ -149,7 +149,7 @@ void update_pixmaps() {
 extern GtkWidget *mainwindow;
 void applet_show_login(AppletWidget *widget, gpointer data) {
         show_login();
-	if (general_options & OPT_GEN_NEAR_APPLET) {
+	if (blist_options & OPT_BLIST_NEAR_APPLET) {
 		GtkAllocation a = get_applet_pos(FALSE);
 		gtk_widget_set_uposition(mainwindow, a.x, a.y);
 	}
@@ -226,7 +226,7 @@ static GtkAllocation get_applet_pos(gboolean for_blist) {
 
 	gdk_window_get_position(gtk_widget_get_parent_window(appletframe), &x, &y);
 	if (for_blist) {
-	        if (general_options & OPT_GEN_SAVED_WINDOWS) {
+	        if (blist_options & OPT_BLIST_SAVED_WINDOWS) {
 			buddy_req.width = blist_pos.width;
 			buddy_req.height = blist_pos.height;
 		} else {
@@ -263,9 +263,9 @@ void createOnlinePopup(){
 	GtkAllocation al;
 	if (blist) gtk_widget_show(blist);
 	al  = get_applet_pos(TRUE);  
-        if (general_options & OPT_GEN_NEAR_APPLET)
+        if (blist_options & OPT_BLIST_NEAR_APPLET)
                 gtk_widget_set_uposition ( blist, al.x, al.y );
-        else if (general_options & OPT_GEN_SAVED_WINDOWS)
+        else if (blist_options & OPT_BLIST_SAVED_WINDOWS)
                 gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff, blist_pos.y - blist_pos.yoff);
 }
 

@@ -925,7 +925,7 @@ void account_online(struct gaim_connection *gc)
 		gtk_widget_hide(mainwindow);
 
 #ifdef USE_APPLET
-	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
+	if (blist_options & OPT_BLIST_APP_BUDDY_SHOW) {
 		show_buddy_list();
 		refresh_buddy_window();
 		createOnlinePopup();
