@@ -275,7 +275,7 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-menu_view_history_cb(gpointer data, guint action, GtkWidget *widget)
+menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	struct gaim_window *win = (struct gaim_window *)data;
 	struct gaim_conversation *conv;
@@ -1740,7 +1740,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	/* Update the menubar */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-		gtk_widget_set_sensitive(gtkwin->menu.view_history, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.insert_image,
 			(gc && gc->prpl->options & OPT_PROTO_IM_IMAGE));
 
@@ -1748,7 +1748,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 	}
 	else {
-		gtk_widget_set_sensitive(gtkwin->menu.view_history, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.view_log, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE);
 
 		if (gtkwin->menu.send_as != NULL)
@@ -2528,7 +2528,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 	  "<StockItem>", GTK_STOCK_SAVE_AS },
-	{ N_("/Conversation/View _History..."), NULL, menu_view_history_cb, 0, NULL },
+	{ N_("/Conversation/View _Log..."), NULL, menu_view_log_cb, 0, NULL },
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Conversation/Insert _URL..."), NULL, menu_insert_link_cb, 0,
 	  "<StockItem>", GAIM_STOCK_LINK },
@@ -2576,8 +2576,8 @@ setup_menubar(struct gaim_window *win)
 
 	gtkwin->menu.menubar = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 			"<main>");
-	gtkwin->menu.view_history = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-			N_("/Conversation/View History..."));
+	gtkwin->menu.view_log = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
+			N_("/Conversation/View Log..."));
 	gtkwin->menu.insert_link = gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 			N_("/Conversation/Insert URL..."));
 	gtkwin->menu.insert_image = gtk_item_factory_get_widget(gtkwin->menu.item_factory,

@@ -5203,6 +5203,27 @@ static char *oscar_tooltip_text(struct buddy *b) {
 	return yay;
 }
 
+static char *oscar_status_text(struct buddy *b) {
+	struct gaim_connection *gc = b->account->gc;
+	struct oscar_data *od = gc->proto_data;
+	gchar *ret = NULL;
+
+	if ((b->uc & UC_UNAVAILABLE) || (((b->uc & 0xffff0000) >> 16) & AIM_ICQ_STATE_CHAT)) {
+		if (isdigit(b->name[0]))
+			ret = gaim_icq_status((b->uc & 0xffff0000) >> 16);
+		else
+			ret = g_strdup(_("Away"));
+	} else if (!GAIM_BUDDY_IS_ONLINE(b)) {
+		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
+		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))
+			ret = g_strdup(_("Not Authorized"));
+		else
+			ret = g_strdup(_("Offline"));
+	}
+
+	return ret;
+}
+
 /*
  * We have just established a socket with the other dude, so set up some handlers.
  */
@@ -5809,6 +5830,7 @@ G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
 	ret->list_icon = oscar_list_icon;
 	ret->list_emblems = oscar_list_emblems;
 	ret->tooltip_text = oscar_tooltip_text;
+	ret->status_text = oscar_status_text;
 	ret->away_states = oscar_away_states;
 	ret->actions = oscar_actions;
 	ret->buddy_menu = oscar_buddy_menu;

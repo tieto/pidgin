@@ -46,7 +46,7 @@ struct gaim_gtk_window
 	{
 		GtkWidget *menubar;
 
-		GtkWidget *view_history;
+		GtkWidget *view_log;
 		GtkWidget *insert_link;
 		GtkWidget *insert_image;
 		GtkWidget *logging;
