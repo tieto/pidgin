@@ -4356,7 +4356,7 @@ static void oscar_get_info(GaimConnection *gc, const char *name) {
 	if (od->icq && isdigit(name[0]))
 		aim_icq_getallinfo(od->sess, name);
 	else
-		aim_locate_getinfoshort(od->sess, name, 0x00000007);
+		aim_locate_getinfoshort(od->sess, name, 0x00000003);
 }
 
 static void oscar_get_away(GaimConnection *gc, const char *who) {
@@ -5425,8 +5425,10 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 				tmp1 = gaim_strreplace(away_utf8, "<BR>", "\n");
 				tmp2 = gaim_markup_strip_html(tmp1);
 				g_free(tmp1);
-				tmp3 = gaim_str_sub_away_formatters(tmp2, gaim_account_get_username(gaim_connection_get_account(gc)));
+				tmp1 = g_markup_escape_text(tmp2, strlen(tmp2));
 				g_free(tmp2);
+				tmp3 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
+				g_free(tmp1);
 				tmp = ret;
 				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), tmp3, "\n", NULL);
 				g_free(tmp);

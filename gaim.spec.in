@@ -11,8 +11,8 @@ Source:     %{name}-%{version}.tar.gz
 Packager:   Rob Flynn <rob@marko.net>
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 %if "%{_vendor}" != "MandrakeSoft"
-Requires:   gtk2 >= 2.0.0, mozilla-nss
-BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
+Requires:   gtk2 >= 2.0.0, mozilla-nss, gtkspell, audiofile, libao
+BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, libao-devel, pkgconfig, mozilla-nss-devel
 %else
 Requires:   gtk+2.0 >= 2.0.0, libnss3
 BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, libnss3-devel
