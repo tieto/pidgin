@@ -227,6 +227,7 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 {
 	char *txt;
 	int i;
+
 	if (u) {
 		u->options = u->tmp_options;
 		u->protocol = u->tmp_protocol;
@@ -241,25 +242,16 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 				   (u->options & OPT_USR_AUTO) ? "True" : "False");
 		gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(u->protocol));
 	} else {
-		char *titles[4];
-		int i;
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.name));
-		u = g_new0(struct aim_user, 1);
-		g_snprintf(u->username, sizeof(u->username), "%s", txt);
+		u = new_user(txt, tmpusr.protocol, tmpusr.options);
+
 		txt = gtk_entry_get_text(GTK_ENTRY(tmpusr.pass));
 		g_snprintf(u->password, sizeof(u->password), "%s", txt);
-		u->options = tmpusr.options;
-		u->protocol = tmpusr.protocol;
-		gtk_widget_destroy(newmod);
-		titles[0] = u->username;
-		titles[1] = u->gc ? "Yes" : "No";
-		titles[2] = (u->options & OPT_USR_AUTO) ? "True" : "False";
-		titles[3] = proto_name(u->protocol);
-		i = gtk_clist_append(GTK_CLIST(list), titles);
-		gtk_clist_set_row_data(GTK_CLIST(list), i, u);
-		aim_users = g_list_append(aim_users, u);
+
 		for (i = 0; i < 6; i++)
 			g_snprintf(u->proto_opt[i], sizeof(u->proto_opt[i]), "%s", tmpusr.proto_opt[i]);
+
+		gtk_widget_destroy(newmod);
 	}
 	save_prefs();
 }
@@ -840,4 +832,27 @@ void hide_login_progress(struct gaim_connection *gc, char *why)
 	if (gc->meter)
 		gtk_widget_destroy(gc->meter);
 	gc->meter = NULL;
+}
+
+struct aim_user *new_user(char *name, int proto, int opts)
+{
+	char *titles[4];
+	int i;
+
+	struct aim_user *u = g_new0(struct aim_user, 1);
+	g_snprintf(u->username, sizeof(u->username), "%s", name);
+	u->protocol = proto;
+	u->options = opts;
+	aim_users = g_list_append(aim_users, u);
+
+	if (list) {
+		titles[0] = u->username;
+		titles[1] = u->gc ? "Yes" : "No";
+		titles[2] = (u->options & OPT_USR_AUTO) ? "True" : "False";
+		titles[3] = proto_name(u->protocol);
+		i = gtk_clist_append(GTK_CLIST(list), titles);
+		gtk_clist_set_row_data(GTK_CLIST(list), i, u);
+	}
+
+	return u;
 }

@@ -158,11 +158,15 @@ static void delete_reg(gpointer a, gpointer b)
 	}
 }
 
-static void reg_prpl(gpointer a, struct prpl *p)
+void prepare_regbox_for_next()
 {
 	while (GTK_BOX(regbox)->children)
 		gtk_container_remove(GTK_CONTAINER(regbox),
 				     ((GtkBoxChild *)GTK_BOX(regbox)->children->data)->widget);
+}
+
+static void reg_prpl(gpointer a, struct prpl *p)
+{
 	regprpl = p;
 	(*regprpl->draw_new_user)(regbox);
 }

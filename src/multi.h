@@ -71,6 +71,7 @@ struct gaim_connection {
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */
 extern GSList *connections;
 
+struct aim_user *new_user(char *, int, int);
 struct gaim_connection *new_gaim_conn(struct aim_user *);
 void destroy_gaim_conn(struct gaim_connection *);
 

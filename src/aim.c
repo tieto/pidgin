@@ -155,13 +155,8 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	/* if there is more than one user of the same name, then fuck them, they just have
 	 * to use the account editor to sign in the second one */
 	u = find_user(username, -1);
-	if (!u) {
-		u = g_new0(struct aim_user, 1);
-		g_snprintf(u->username, sizeof(u->username), "%s", username);
-		u->protocol = PROTO_TOC;
-		u->options = OPT_USR_REM_PASS;
-		aim_users = g_list_append(aim_users, u);
-	}
+	if (!u)
+		u = new_user(username, PROTO_TOC, OPT_USR_REM_PASS);
 	g_snprintf(u->password, sizeof u->password, "%s", password);
 	save_prefs();
 	serv_login(u);

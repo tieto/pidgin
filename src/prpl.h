@@ -108,6 +108,7 @@ void unload_protocol(struct prpl *);
 struct prpl *find_prpl(int);
 
 void register_user(gpointer, gpointer);
+void prepare_regbox_for_next();
 
 void do_ask_dialog(const char *, void *, void *, void *);
 #endif
