@@ -4,6 +4,7 @@ version 0.80cvs:
 	New Features:
 	* Support for the Epiphany web browser (Leonardo Serra)
 	* Status messages in Gadu-Gadu (Andrew (proton) Wellington)
+	* Ability to send files from the conversation window (Daniel Atallah)
 
 	Bug Fixes:
 	* The firefox browser option now works with firefox 0.9
