@@ -1937,7 +1937,6 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 	}
 
 	idata->inpa = gaim_input_add(idata->fd, GAIM_INPUT_READ, irc_callback, gc);
-	idata->inpa = 0;
 
 	/* Now lets sign ourselves on */
 	account_online(gc);
