@@ -484,8 +484,9 @@ void remove_tags(GtkWidget *entry, char *tag)
 	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1); 
 	t = s;
 	while((t = strstr(t, tag))) {
-		if (((t-s) < finish) && ((t-s) >= start)) 
+		if (((t-s) < finish) && ((t-s) >= start)) { 
 			gtk_editable_delete_text(GTK_EDITABLE(entry), (t-s), (t-s) + strlen(tag));
+		}
 		else t++;
 	}
 	g_free(s);
@@ -797,8 +798,6 @@ void show_conv(struct conversation *c)
 	GtkWidget *toolbar;
 	GtkWidget *bbox;
         GtkWidget *vbox;
-	GtkWidget *vbox2;
-	GtkWidget *paned;
         GtkWidget *add;
         GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i, *wood_i, *palette_i, *link_i;
         GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p, *wood_p, *palette_p, *link_p;
@@ -830,12 +829,6 @@ void show_conv(struct conversation *c)
 
         bbox = gtk_hbox_new(TRUE, 0);
 	vbox = gtk_vbox_new(FALSE, 0);
-	vbox2 = gtk_vbox_new(FALSE, 0);
-	paned=gtk_vpaned_new();
-	gtk_paned_pack1( GTK_PANED( paned ), vbox, FALSE, TRUE);
-	gtk_paned_pack2( GTK_PANED( paned ), vbox2, FALSE, FALSE);
-	gtk_widget_show(vbox2);
-	gtk_widget_show(paned);
 
 	entry = gtk_text_new(NULL, NULL);
 	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
@@ -1002,7 +995,7 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(color), "clicked", GTK_SIGNAL_FUNC(color_callback), c);
        
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(user_keypress_callback), c);
-	gtk_widget_set_usize(entry, 300, 25);
+	gtk_widget_set_usize(entry, 300, 70);
 
 	gtk_box_pack_start(GTK_BOX(bbox), send, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(bbox), info, TRUE, TRUE, 5);
@@ -1015,9 +1008,9 @@ void show_conv(struct conversation *c)
 	/* pack and fill the rest */
 
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
 
 	
 
@@ -1035,7 +1028,7 @@ void show_conv(struct conversation *c)
 	gtk_widget_show(text);
 	
 	
-	gtk_container_add(GTK_CONTAINER(win),paned);
+	gtk_container_add(GTK_CONTAINER(win), vbox);
         gtk_container_border_width(GTK_CONTAINER(win), 10);
 
 	if ((find_log_info(c->name)) || ((general_options & OPT_GEN_LOG_ALL)))

@@ -1,9 +1,10 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.9.13:
+version 0.9.13 (03/27/2000):
 	* Dialog Box Segfault Fixed (When You Click A Toggle Then Cancel)
 	* Double Log-Out Message Fixed
-	* Paned Conversation Window
+	* GNOME compile error fixed
+	* Away Message Problem Fixed
 
 version 0.9.12 (03/25/2000):
 	* Segfault fix for PPC/Alpha/etc machines with log(0)
