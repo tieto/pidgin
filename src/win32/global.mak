@@ -13,6 +13,4 @@ CFLAGS += -O2 -Wall -mno-cygwin -fnative-struct
 VERSION := $(shell cat $(GAIM_TOP)/VERSION)
 
 DEFINES += 	-DVERSION=\"$(VERSION)\" \
-		-DHAVE_CONFIG_H \
-		-DGTK_ENABLE_BROKEN
-
+		-DHAVE_CONFIG_H
