@@ -2830,7 +2830,6 @@ void do_import(GtkWidget *w, void *dummy)
 		buf2 = buf;
 		buf = g_malloc(8193);
                 g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
-		printf("%s\n", buf2);
                 g_free(buf2);
 	/* Something else */
         } else {
