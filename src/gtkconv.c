@@ -4481,7 +4481,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 	/* Add this pane to the conversation's notebook. */
 	gtk_notebook_append_page_menu(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, tabby, menu_tabby);
-	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, TRUE, TRUE, GTK_PACK_END);
+	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, TRUE, TRUE, GTK_PACK_START);
 
 
 	gtk_widget_show(tab_cont);
