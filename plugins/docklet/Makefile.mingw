@@ -57,7 +57,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##
 
 C_SRC =			docklet.c \
-			trayicon-win32.c
+			docklet-win32.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)

@@ -1,5 +1,7 @@
-/* System tray icon (aka docklet) plugin for Gaim
- * Copyright (C) 2002 Robert McQueen <robot101@debian.org>
+/* 
+ * System tray icon (aka docklet) plugin for Gaim
+ * 
+ * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
  * Inspired by a similar plugin by:
  *  John (J5) Palmieri <johnp@martianrock.com>
@@ -27,7 +29,6 @@
     - dernyi's account status menu in the right click
     - optional pop up notices when GNOME2's system-tray-applet supports it */
 
-/* includes */
 #include "internal.h"
 
 #include "core.h"
@@ -48,12 +49,12 @@
 #include "gaim.h"
 #include "ui.h"
 
-#define DOCKLET_PLUGIN_ID "gtk-docklet"
-
 /* globals */
-static struct gaim_tray_ops *tray_ops = NULL;
-static enum docklet_status status=offline;
-static enum docklet_status icon=offline;
+
+GaimPlugin *handle = NULL;
+static struct docklet_ui_ops *ui_ops = NULL;
+static enum docklet_status status = offline;
+static enum docklet_status icon = offline;
 #ifdef _WIN32
 __declspec(dllimport) GSList *unread_message_queue;
 __declspec(dllimport) GSList *away_messages;
@@ -61,20 +62,23 @@ __declspec(dllimport) struct away_message *awaymessage;
 __declspec(dllimport) GSList *message_queue;
 #endif
 
-/* functions */
-extern void trayicon_init();
-static gboolean docklet_update_status();
-static gboolean plugin_unload(GaimPlugin *plugin);
+/* private functions */
 
-static void docklet_toggle_mute(GtkWidget *toggle, void *data) {
+static void
+docklet_toggle_mute(GtkWidget *toggle, void *data)
+{
 	gaim_gtk_sound_set_mute(GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
-static void docklet_set_bool(GtkWidget *widget, const char *key) {
+static void
+docklet_set_bool(GtkWidget *widget, const char *key)
+{
 	gaim_prefs_set_bool(key, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 }
 
-static void docklet_auto_login() {
+static void
+docklet_auto_login()
+{
 	gaim_accounts_auto_login(GAIM_GTK_UI);
 }
 
@@ -82,11 +86,11 @@ static void docklet_auto_login() {
 /* This is a workaround for a bug in windows GTK+.. Clicking outside of the
    menu does not get rid of it, so instead we get rid of it as soon as the
    pointer leaves the menu. */
-static gboolean menu_leave(GtkWidget *menu,
-			   GdkEventCrossing *event,
-			   gpointer user_data) {
+static gboolean
+docklet_menu_leave(GtkWidget *menu, GdkEventCrossing *event, void *data)
+{
 	if(event->detail == GDK_NOTIFY_ANCESTOR) {
-		gaim_debug(GAIM_DEBUG_INFO, "docklet", "leave-notify-event\n");
+		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "menu leave-notify-event\n");
 		gtk_menu_popdown(GTK_MENU(menu));
 	}
 	return FALSE;
@@ -102,9 +106,7 @@ static void docklet_menu() {
 	}
 
 	menu = gtk_menu_new();
-#ifdef _WIN32
-	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(menu_leave), NULL);
-#endif
+
 	switch (status) {
 		case offline:
 		case offline_connecting:
@@ -183,11 +185,16 @@ static void docklet_menu() {
 
 	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(gaim_core_quit), NULL, 0, 0, 0);
 
+#ifdef _WIN32
+	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(docklet_menu_leave), NULL);
+#endif
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
 }
 
-static gboolean docklet_blink_icon() {
+static gboolean
+docklet_blink_icon()
+{
 	if (status == online_pending) {
 		if (status == icon) {
 			/* last icon was the right one... let's change it */
@@ -209,13 +216,15 @@ static gboolean docklet_blink_icon() {
 		return FALSE;
 	}
 
-	if(tray_ops->update_icon)
-		tray_ops->update_icon(icon);
+	if (ui_ops->update_icon)
+		ui_ops->update_icon(icon);
 
 	return TRUE; /* keep blinking */
 }
 
-static gboolean docklet_update_status() {
+static gboolean
+docklet_update_status()
+{
 	enum docklet_status oldstatus;
 
 	oldstatus = status;
@@ -245,72 +254,48 @@ static gboolean docklet_update_status() {
 	/* update the icon if we changed status */
 	if (status != oldstatus) {
 		icon = status;
-		if(tray_ops->update_icon)
-			tray_ops->update_icon(icon);
+		if (ui_ops->update_icon)
+			ui_ops->update_icon(icon);
 
 		/* and schedule the blinker function if messages are pending */
 		if (status == online_pending || status == away_pending) {
 			g_timeout_add(500, docklet_blink_icon, NULL);
 		}
 	}
+
 	return FALSE; /* for when we're called by the glib idle handler */
 }
 
-static void gaim_signon(GaimConnection *gc, void *data) {
-	docklet_update_status();
+void
+docklet_flush_queue()
+{
+	if (unread_message_queue) {
+		purge_away_queue(&unread_message_queue);
+	}
 }
 
-static void gaim_signoff(GaimConnection *gc, void *data) {
-	/* do this when idle so that if the prpl was connecting
-	   and was cancelled, we register that connecting_count
-	   has returned to 0 */
-	/* no longer necessary because Chip decided that us plugins
-	 * didn't need to know if an account was connecting or not
-	 * g_idle_add(docklet_update_status, &docklet); */
-	docklet_update_status();
+void
+docklet_remove_callbacks()
+{
+	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "removing callbacks");
+
+	while (g_source_remove_by_user_data(&handle)) {
+		gaim_debug(GAIM_DEBUG_INFO, NULL, ".");
+	}
+
+	gaim_debug(GAIM_DEBUG_INFO, NULL, "\n");
 }
 
-static void gaim_connecting(GaimAccount *account, void *data) {
-	docklet_update_status();
-}
+/* public code */
 
-static void gaim_away(GaimConnection *gc, char *state, char *message, void *data) {
-	/* we only support global away. this is the way it is, ok? */
-	docklet_update_status();
-}
-
-static void gaim_im_recv(GaimConnection *gc, char **who, char **what, void *data) {
-	/* if message queuing while away is enabled, this event could be the first
-	   message so we need to see if the status (and hence icon) needs changing.
-	   do this when idle so that all message processing is completed, queuing
-	   etc, before we run. */
-	g_idle_add(docklet_update_status, NULL);
-}
-
-/* static void gaim_buddy_signon(GaimConnection *gc, char *who, void *data) {
-}
-
-static void gaim_buddy_signoff(GaimConnection *gc, char *who, void *data) {
-}
-
-static void gaim_buddy_away(GaimConnection *gc, char *who, void *data) {
-}
-
-static void gaim_buddy_back(GaimConnection *gc, char *who, void *data) {
-}
-
-static void gaim_new_conversation(char *who, void *data) {
-} */
-
-/*
- *  Public Code
- */
-void docklet_clicked(int button_type) {
+void
+docklet_clicked(int button_type)
+{
 	switch (button_type) {
 		case 1:
 			if (unread_message_queue) {
 				docklet_flush_queue();
-				docklet_update_status();
+				g_idle_add(docklet_update_status, &handle);
 			} else {
 				gaim_gtk_blist_docklet_toggle();
 			}
@@ -331,41 +316,103 @@ void docklet_clicked(int button_type) {
 	}
 }
 
-void docklet_embedded() {
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Tray Icon: embedded\n");
+void
+docklet_embedded()
+{
 	gaim_gtk_blist_docklet_add();
+
+	docklet_update_status();
+	if (ui_ops->update_icon)
+		ui_ops->update_icon(icon);
 }
 
-void docklet_flush_queue() {
-	if (unread_message_queue) {
-		purge_away_queue(&unread_message_queue);
-	}
+void
+docklet_remove(gboolean visible)
+{
+	if (visible)
+		gaim_gtk_blist_docklet_remove();
+
+	docklet_flush_queue();
 }
 
-
-/* Set Platform Dependent Code */
-void docklet_set_tray_ops(struct gaim_tray_ops *ops) {
-	tray_ops = ops;
+void
+docklet_set_ui_ops(struct docklet_ui_ops *ops)
+{
+	ui_ops = ops;
 }
 
+/* callbacks */
 
-/*
- *  PLUGIN CODE
- */
+static void
+gaim_signon(GaimConnection *gc, void *data)
+{
+	docklet_update_status();
+}
+
+static void
+gaim_signoff(GaimConnection *gc, void *data)
+{
+	/* do this when idle so that if the prpl was connecting
+	   and was cancelled, we register that connecting_count
+	   has returned to 0 */
+	/* no longer necessary because Chip decided that us plugins
+	   didn't need to know if an account was connecting or not
+	   g_idle_add(docklet_update_status, &docklet); */
+	docklet_update_status();
+}
+
+static void
+gaim_connecting(GaimAccount *account, void *data)
+{
+	docklet_update_status();
+}
+
+static void
+gaim_away(GaimConnection *gc, char *state, char *message, void *data)
+{
+	/* we only support global away. this is the way it is, ok? */
+	docklet_update_status();
+}
+
+static void
+gaim_im_recv(GaimConnection *gc, char **who, char **what, void *data)
+{
+	/* if message queuing while away is enabled, this event could be the first
+	   message so we need to see if the status (and hence icon) needs changing.
+	   do this when idle so that all message processing is completed, queuing
+	   etc, before we run. */
+	g_idle_add(docklet_update_status, &handle);
+}
+
+/* static void gaim_buddy_signon(GaimConnection *gc, char *who, void *data) {
+}
+
+static void gaim_buddy_signoff(GaimConnection *gc, char *who, void *data) {
+}
+
+static void gaim_buddy_away(GaimConnection *gc, char *who, void *data) {
+}
+
+static void gaim_buddy_back(GaimConnection *gc, char *who, void *data) {
+}
+
+static void gaim_new_conversation(char *who, void *data) {
+} */
+
+/* plugin glue */
+
+#define DOCKLET_PLUGIN_ID "gtk-docklet"
 
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	trayicon_init();
-	if(tray_ops->create)
-		tray_ops->create();
+	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "plugin loaded\n");
 
-	gaim_prefs_add_none("/plugins/gtk/docklet");
-	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
+	handle = plugin;
 
-	docklet_update_status();
-	if(tray_ops->update_icon)
-		tray_ops->update_icon(icon);
+	docklet_ui_init();
+	if (ui_ops->create)
+		ui_ops->create();
 
 	gaim_signal_connect(plugin, event_signon, gaim_signon, NULL);
 	gaim_signal_connect(plugin, event_signoff, gaim_signoff, NULL);
@@ -378,7 +425,8 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(plugin, event_buddy_back, gaim_buddy_back, NULL);
 	gaim_signal_connect(plugin, event_new_conversation, gaim_new_conversation, NULL); */
 
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Plugin loaded\n");
+	gaim_prefs_add_none("/plugins/gtk/docklet");
+	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
 
 	return TRUE;
 }
@@ -386,21 +434,20 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	gaim_gtk_blist_docklet_remove();
-	docklet_flush_queue();
+	if (ui_ops->destroy)
+		ui_ops->destroy();
+
 	/* XXX: do this while gaim has no other way to toggle the global mute */
 	gaim_gtk_sound_set_mute(FALSE);
+	docklet_remove_callbacks();
 
-	if(tray_ops->destroy)
-		tray_ops->destroy();
-		
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "Plugin unloaded\n");
+	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "plugin unloaded\n");
 
 	return TRUE;
 }
 
 static GtkWidget *
-get_config_frame(GaimPlugin *plugin)
+plugin_config_frame(GaimPlugin *plugin)
 {
 	GtkWidget *frame;
 	GtkWidget *vbox, *hbox;
@@ -425,7 +472,7 @@ get_config_frame(GaimPlugin *plugin)
 
 static GaimGtkPluginUiInfo ui_info =
 {
-	get_config_frame
+	plugin_config_frame
 };
 
 static GaimPluginInfo info =
@@ -443,11 +490,11 @@ static GaimPluginInfo info =
 	                                                  /**  summary        */
 	N_("Displays an icon for Gaim in the system tray."),
 	                                                  /**  description    */
-	N_("Interacts with a Notification Area applet (in GNOME, KDE or "
-	   "Windows for example) to display the current status of Gaim, allow "
-           "fast access to commonly used functions, and to toggle display of "
-	   "the buddy list or login window. Also allows messages to be queued "
-	   "until the icon is clicked, similar to ICQ."),
+	N_("Displays a system tray icon (in GNOME, KDE or Windows for example) "
+	   "to show the current status of Gaim, allow fast access to commonly "
+	   "used functions, and to toggle display of the buddy list or login "
+	   "window. Also allows messages to be queued until the icon is "
+	   "clicked, similar to ICQ."),
 	"Robert McQueen <robot101@debian.org>",           /**< author         */
 	WEBSITE,                                          /**< homepage       */
 
@@ -460,8 +507,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+plugin_init(GaimPlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(docklet, init_plugin, info)
+GAIM_INIT_PLUGIN(docklet, plugin_init, info)

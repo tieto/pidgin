@@ -1,5 +1,7 @@
-/* System tray icon (aka docklet) plugin for Gaim
- * Copyright (C) 2002 Robert McQueen <robot101@debian.org>
+/* 
+ * System tray icon (aka docklet) plugin for Gaim
+ * 
+ * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
  * Inspired by a similar plugin by:
  *  John (J5) Palmieri <johnp@martianrock.com>
@@ -19,10 +21,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
+
 #ifndef _DOCKLET_H_
 #define _DOCKLET_H_
 
-enum docklet_status {
+enum docklet_status
+{
 	offline,
 	offline_connecting,
 	online,
@@ -32,16 +36,23 @@ enum docklet_status {
 	away_pending
 };
 
-struct gaim_tray_ops
+struct docklet_ui_ops
 {
 	void (*create)();
 	void (*destroy)();
 	void (*update_icon)(enum docklet_status);
 };
 
-void docklet_clicked(int button_type);
-void docklet_embedded();
-void docklet_set_tray_ops(struct gaim_tray_ops *ops);
-void docklet_flush_queue();
+/* useful for setting idle callbacks that will be cleaned up */
+extern GaimPlugin *handle;
+
+/* functions in docklet.c */
+extern void docklet_clicked(int);
+extern void docklet_embedded();
+extern void docklet_remove(gboolean);
+extern void docklet_set_ui_ops(struct docklet_ui_ops *);
+
+/* function in docklet-{x11,win32}.c */
+extern void docklet_ui_init();
 
 #endif /* _DOCKLET_H_ */
