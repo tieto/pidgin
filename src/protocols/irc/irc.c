@@ -947,6 +947,12 @@ handle_whois(struct gaim_connection *gc, char *word[], char *word_eol[], int num
 	case 319:
 		id->liststr = g_string_append(id->liststr, "<b>Channels: </b>");
 		break;
+	/* Numeric 320 is used by the freenode irc network for showing 
+	 * that a user is identified to services (Jason Straw <misato@wopn.org>)*/
+	case 320:
+		g_snprintf(tmp, sizeof(tmp), "%s is an Identified User", word[4]);
+		id->liststr = g_string_append(id->liststr, tmp);
+		return;
 	default:
 		break;
 	}
@@ -1034,6 +1040,7 @@ process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 	case 314: /* RPL_WHOWASUSER */
 	case 317: /* RPL_WHOISIDLE */
 	case 319: /* RPL_WHOISCHANNELS */
+	case 320: /* FreeNode Identified */
 		handle_whois(gc, word, word_eol, n);
 		break;
 	case 322: /* RPL_LIST */
