@@ -11,6 +11,7 @@ version 0.76cvs:
 	* Vastly improved browser opening, with tab support! (Nathan Fredrickson)
 	* Added support for connecting to MSN using the port 80 method.
 	* Support for Mozilla Firefox (Chris Friesen and Nathan Fredrickson)
+	* Added protocol-specific preferences (Gary Kramlich)
 	* Local IP address information can be changed in Preferences
 	  (Tim Ringenbach)
 	* Improved local IP address detection (Tim Ringenbach)
