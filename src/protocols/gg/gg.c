@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10926 2004-09-10 19:51:52Z thekingant $
+ * $Id: gg.c 11327 2004-11-19 03:46:15Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -168,9 +168,9 @@ static void agg_set_status(GaimAccount *account, GaimStatus *status)
 	int status_num = gd->own_status;
 	const char *status_id;
 	char *msg = NULL;
-  
+
 	status_id = gaim_status_get_id(status);
-  
+
 	if (!strcmp(status_id, "available"))
 		status_num = GG_STATUS_AVAIL;
 	else if (!strcmp(status_id, "available-friends"))
@@ -186,10 +186,11 @@ static void agg_set_status(GaimAccount *account, GaimStatus *status)
 	else if (!strcmp(status_id, "unavailable"))
 		status_num = GG_STATUS_NOT_AVAIL;
 	else
-		g_assert_not_reached();
+		/* Don't need to do anything */
+		return;
 
 	/* XXX: this was added between the status_rewrite and now and needs to be fixed */
-	if (msg) {
+	if (msg != NULL) {
 	    switch (status_num) {
 		case GG_STATUS_AVAIL:
 		    status_num = GG_STATUS_AVAIL_DESCR;
@@ -302,7 +303,7 @@ static GList *agg_status_types(GaimAccount *account)
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
-		GAIM_STATUS_HIDDEN, "invisible-friends", AGG_STATUS_INVISIBLE,
+		GAIM_STATUS_HIDDEN, "invisible-friends", AGG_STATUS_INVISIBLE_FRIENDS,
 		TRUE, TRUE, FALSE,
 		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
