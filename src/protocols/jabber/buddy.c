@@ -744,8 +744,10 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
 						_("Role"), text);
 			} else if(text && !strcmp(child->name, "DESC")) {
+				char *text2 = gaim_strdup_withhtml(text);
 				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>\n",
-						_("Description"), text);
+						_("Description"), text2);
+				g_free(text2);
 			} else if(!strcmp(child->name, "PHOTO") ||
 					!strcmp(child->name, "LOGO")) {
 				if((child2 = xmlnode_get_child(child, "BINVAL"))) {
@@ -910,16 +912,18 @@ GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
 
 	*/
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	if(jb->invisible & JABBER_INVIS_BUDDY) {
-		pbm->label = _("Un-hide From");
-		pbm->callback = jabber_buddy_make_visible;
-	} else {
-		pbm->label = _("Temporarily Hide From");
-		pbm->callback = jabber_buddy_make_invisible;
+	if(js->protocol_version == JABBER_PROTO_0_9) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		if(jb->invisible & JABBER_INVIS_BUDDY) {
+			pbm->label = _("Un-hide From");
+			pbm->callback = jabber_buddy_make_visible;
+		} else {
+			pbm->label = _("Temporarily Hide From");
+			pbm->callback = jabber_buddy_make_invisible;
+		}
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
 	}
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
 
 	if(jb->subscription & JABBER_SUB_FROM) {
 		pbm = g_new0(struct proto_buddy_menu, 1);

@@ -951,6 +951,7 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 
 static GList *jabber_away_states(GaimConnection *gc)
 {
+	JabberStream *js = gc->proto_data;
 	GList *m = NULL;
 
 	m = g_list_append(m, _("Online"));
@@ -958,7 +959,8 @@ static GList *jabber_away_states(GaimConnection *gc)
 	m = g_list_append(m, _("Away"));
 	m = g_list_append(m, _("Extended Away"));
 	m = g_list_append(m, _("Do Not Disturb"));
-	m = g_list_append(m, _("Invisible"));
+	if(js->protocol_version == JABBER_PROTO_0_9)
+		m = g_list_append(m, _("Invisible"));
 	m = g_list_append(m, GAIM_AWAY_CUSTOM);
 
 	return m;
