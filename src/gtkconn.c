@@ -325,8 +325,7 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 				account2 = g_value_get_pointer(&val);
 				g_value_unset(&val);
 				if (account2 == account) {
-					if (!gtk_list_store_remove(GTK_LIST_STORE(model), &iter))
-						return;
+					gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 					alreadyIterated = TRUE;
 				}
 				g_value_unset(&val);
