@@ -2,15 +2,17 @@
 #define FAIM_INTERNAL
 #include <aim.h>
 
-static aim_tlv_t *createtlv(void)
+static aim_tlv_t *createtlv(fu16_t type, fu16_t length, fu8_t *value)
 {
-	aim_tlv_t *newtlv;
+	aim_tlv_t *ret;
 
-	if (!(newtlv = (aim_tlv_t *)malloc(sizeof(aim_tlv_t))))
+	if (!(ret = (aim_tlv_t *)malloc(sizeof(aim_tlv_t))))
 		return NULL;
-	memset(newtlv, 0, sizeof(aim_tlv_t));
+	ret->type = type;
+	ret->length = length;
+	ret->value = value;
 
-	return newtlv;
+	return ret;
 }
 
 static void freetlv(aim_tlv_t **oldtlv)
@@ -28,7 +30,6 @@ static void freetlv(aim_tlv_t **oldtlv)
 
 /**
  * aim_readtlvchain - Read a TLV chain from a buffer.
- * @param bs Input bstream
  *
  * Reads and parses a series of TLV patterns from a data buffer; the
  * returned structure is manipulatable with the rest of the TLV
@@ -41,6 +42,7 @@ static void freetlv(aim_tlv_t **oldtlv)
  * just as effecient as the in-place TLV parsing used in a couple places
  * in libfaim.
  *
+ * @param bs Input bstream
  */
 faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
 {
@@ -82,21 +84,20 @@ faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
 
 			memset(cur, 0, sizeof(aim_tlvlist_t));
 
-			cur->tlv = createtlv();
+			cur->tlv = createtlv(type, length, NULL);
 			if (!cur->tlv) {
 				free(cur);
 				aim_freetlvchain(&list);
 				return NULL;
 			}
-			cur->tlv->type = type;
-			if ((cur->tlv->length = length)) {
-			       cur->tlv->value = aimbs_getraw(bs, length);	
-			       if (!cur->tlv->value) {
-				       freetlv(&cur->tlv);
-				       free(cur);
-				       aim_freetlvchain(&list);
-				       return NULL;
-			       }
+			if (cur->tlv->length > 0) {
+				cur->tlv->value = aimbs_getraw(bs, length);	
+				if (!cur->tlv->value) {
+					freetlv(&cur->tlv);
+					free(cur);
+					aim_freetlvchain(&list);
+					return NULL;
+				}
 			}
 
 			cur->next = list;
@@ -109,11 +110,6 @@ faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
 
 /**
  * aim_readtlvchain_num - Read a TLV chain from a buffer.
- * @param bs Input bstream
- * @param num The max number of TLVs that will be read, or -1 if unlimited.  
- *        There are a number of places where you want to read in a tlvchain, 
- *        but the chain is not at the end of the SNAC, and the chain is 
- *        preceeded by the number of TLVs.  So you can limit that with this.
  *
  * Reads and parses a series of TLV patterns from a data buffer; the
  * returned structure is manipulatable with the rest of the TLV
@@ -126,6 +122,11 @@ faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
  * just as effecient as the in-place TLV parsing used in a couple places
  * in libfaim.
  *
+ * @param bs Input bstream
+ * @param num The max number of TLVs that will be read, or -1 if unlimited.  
+ *        There are a number of places where you want to read in a tlvchain, 
+ *        but the chain is not at the end of the SNAC, and the chain is 
+ *        preceeded by the number of TLVs.  So you can limit that with this.
  */
 faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num)
 {
@@ -150,24 +151,24 @@ faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num)
 
 		memset(cur, 0, sizeof(aim_tlvlist_t));
 
-		cur->tlv = createtlv();
+		cur->tlv = createtlv(type, length, NULL);
 		if (!cur->tlv) {
 			free(cur);
 			aim_freetlvchain(&list);
 			return NULL;
 		}
-		cur->tlv->type = type;
-		if ((cur->tlv->length = length)) {
-		       cur->tlv->value = aimbs_getraw(bs, length);
-		       if (!cur->tlv->value) {
-			       freetlv(&cur->tlv);
-			       free(cur);
-			       aim_freetlvchain(&list);
-			       return NULL;
-		       }
+		if (cur->tlv->length > 0) {
+			cur->tlv->value = aimbs_getraw(bs, length);
+			if (!cur->tlv->value) {
+				freetlv(&cur->tlv);
+				free(cur);
+				aim_freetlvchain(&list);
+				return NULL;
+			}
 		}
 
-		num--;
+		if (num > 0)
+			num--;
 		cur->next = list;
 		list = cur;
 	}
@@ -177,11 +178,6 @@ faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num)
 
 /**
  * aim_readtlvchain_len - Read a TLV chain from a buffer.
- * @param bs Input bstream
- * @param len The max length in bytes that will be read.
- *        There are a number of places where you want to read in a tlvchain, 
- *        but the chain is not at the end of the SNAC, and the chain is 
- *        preceeded by the length of the TLVs.  So you can limit that with this.
  *
  * Reads and parses a series of TLV patterns from a data buffer; the
  * returned structure is manipulatable with the rest of the TLV
@@ -194,6 +190,11 @@ faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num)
  * just as effecient as the in-place TLV parsing used in a couple places
  * in libfaim.
  *
+ * @param bs Input bstream
+ * @param len The max length in bytes that will be read.
+ *        There are a number of places where you want to read in a tlvchain, 
+ *        but the chain is not at the end of the SNAC, and the chain is 
+ *        preceeded by the length of the TLVs.  So you can limit that with this.
  */
 faim_internal aim_tlvlist_t *aim_readtlvchain_len(aim_bstream_t *bs, fu16_t len)
 {
@@ -218,21 +219,20 @@ faim_internal aim_tlvlist_t *aim_readtlvchain_len(aim_bstream_t *bs, fu16_t len)
 
 		memset(cur, 0, sizeof(aim_tlvlist_t));
 
-		cur->tlv = createtlv();
+		cur->tlv = createtlv(type, length, NULL);
 		if (!cur->tlv) {
 			free(cur);
 			aim_freetlvchain(&list);
 			return NULL;
 		}
-		cur->tlv->type = type;
-		if ((cur->tlv->length = length)) {
-		       cur->tlv->value = aimbs_getraw(bs, length);
-		       if (!cur->tlv->value) {
-			       freetlv(&cur->tlv);
-			       free(cur);
-			       aim_freetlvchain(&list);
-			       return NULL;
-		       }
+		if (cur->tlv->length > 0) {
+			cur->tlv->value = aimbs_getraw(bs, length);
+			if (!cur->tlv->value) {
+				freetlv(&cur->tlv);
+				free(cur);
+				aim_freetlvchain(&list);
+				return NULL;
+			}
 		}
 
 		len -= aim_sizetlvchain(&cur);
@@ -245,10 +245,10 @@ faim_internal aim_tlvlist_t *aim_readtlvchain_len(aim_bstream_t *bs, fu16_t len)
 
 /**
  * aim_tlvlist_copy - Duplicate a TLV chain.
- * @param orig
- *
  * This is pretty pelf exslanatory.
  *
+ * @param orig The TLV chain you want to make a copy of.
+ * @return A newly allocated TLV chain.
  */
 faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig)
 {
@@ -380,7 +380,7 @@ faim_internal int aim_sizetlvchain(aim_tlvlist_t **list)
  * to the TLV chain.
  *
  */
-faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, const fu16_t l, const fu8_t *v)
+faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t length, const fu8_t *value)
 {
 	aim_tlvlist_t *newtlv, *cur;
 
@@ -391,14 +391,13 @@ faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, co
 		return 0;
 	memset(newtlv, 0x00, sizeof(aim_tlvlist_t));
 
-	if (!(newtlv->tlv = createtlv())) {
+	if (!(newtlv->tlv = createtlv(type, length, NULL))) {
 		free(newtlv);
 		return 0;
 	}
-	newtlv->tlv->type = t;
-	if ((newtlv->tlv->length = l)) {
+	if (newtlv->tlv->length > 0) {
 		newtlv->tlv->value = (fu8_t *)malloc(newtlv->tlv->length);
-		memcpy(newtlv->tlv->value, v, newtlv->tlv->length);
+		memcpy(newtlv->tlv->value, value, newtlv->tlv->length);
 	}
 
 	if (!*list)
@@ -468,25 +467,20 @@ faim_internal int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t t, cons
 
 /**
  * aim_addtlvtochain_caps - Add a capability block to a TLV chain
- * @list: Destination chain
- * @type: TLV type to add
- * @caps: Bitfield of capability flags to send
  *
  * Adds a block of capability blocks to a TLV chain. The bitfield
  * passed in should be a bitwise %OR of any of the %AIM_CAPS constants:
  *
- *      %AIM_CAPS_BUDDYICON   Supports Buddy Icons
+ *     %AIM_CAPS_BUDDYICON   Supports Buddy Icons
+ *     %AIM_CAPS_VOICE       Supports Voice Chat
+ *     %AIM_CAPS_IMIMAGE     Supports DirectIM/IMImage
+ *     %AIM_CAPS_CHAT        Supports Chat
+ *     %AIM_CAPS_GETFILE     Supports Get File functions
+ *     %AIM_CAPS_SENDFILE    Supports Send File functions
  *
- *      %AIM_CAPS_VOICE       Supports Voice Chat
- *
- *      %AIM_CAPS_IMIMAGE     Supports DirectIM/IMImage
- *
- *      %AIM_CAPS_CHAT        Supports Chat
- *
- *      %AIM_CAPS_GETFILE     Supports Get File functions
- *
- *      %AIM_CAPS_SENDFILE    Supports Send File functions
- *
+ * @param list Destination chain
+ * @param type TLV type to add
+ * @param caps Bitfield of capability flags to send
  */
 faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, const fu32_t caps)
 {

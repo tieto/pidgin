@@ -21,8 +21,6 @@
  * This is entirely too complicated.
  * You don't know the half of it.
  *
- * XXX - Preserve unknown data in TLV lists
- *
  */
 
 #define FAIM_INTERNAL
