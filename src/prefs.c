@@ -2122,6 +2122,9 @@ void set_display_option(GtkWidget *w, int *option)
 	if ((int)option == OPT_DISP_ONE_CHAT_WINDOW)
 		chat_tabize();
 
+	if ((int)option == OPT_DISP_SHOW_PIXMAPS)
+		toggle_buddy_pixmaps();
+
 #ifdef USE_APPLET
 	update_pixmaps();
 #endif

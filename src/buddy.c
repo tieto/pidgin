@@ -191,6 +191,27 @@ void toggle_show_empty_groups() {
 	}
 }
 
+void toggle_buddy_pixmaps() {
+	GSList *s = shows;
+	struct group_show *g;
+	GSList *m;
+	struct buddy_show *b;
+
+	while (s) {
+		g = s->data;
+		m = g->members;
+		while (m) {
+			b = m->data;
+			if (display_options & OPT_DISP_SHOW_PIXMAPS)
+				gtk_widget_show(b->pix);
+			else
+				gtk_widget_hide(b->pix);
+			m = m->next;
+		}
+		s = s->next;
+	}
+}
+
 static void update_num_group(struct group_show *gs) {
 	GSList *c = connections;
 	struct gaim_connection *gc;
@@ -1740,6 +1761,8 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	b->pix = gtk_pixmap_new(pm, bm);
 	gtk_box_pack_start(GTK_BOX(box), b->pix, FALSE, FALSE, 1);
 	gtk_widget_show(b->pix);
+	if (!(display_options & OPT_DISP_SHOW_PIXMAPS))
+		gtk_widget_hide(b->pix);
 	gdk_pixmap_unref(pm);
 	gdk_bitmap_unref(bm);
 
@@ -1825,6 +1848,8 @@ static gint log_timeout(struct buddy_show *b) {
 		gtk_widget_hide(b->pix);
 		gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
 		gtk_widget_show(b->pix);
+		if (!(display_options & OPT_DISP_SHOW_PIXMAPS))
+			gtk_widget_hide(b->pix);
 		if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER)
 			BuddyTickerSetPixmap(b->name, pm, bm);
 		gdk_pixmap_unref(pm);
@@ -2034,6 +2059,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gtk_widget_hide(bs->pix);
 			gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 			gtk_widget_show(bs->pix);
+			if (!(display_options & OPT_DISP_SHOW_PIXMAPS))
+				gtk_widget_hide(bs->pix);
 			if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER)
 				BuddyTickerSetPixmap(b->name, pm, bm);
 			gdk_pixmap_unref(pm);
