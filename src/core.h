@@ -97,6 +97,7 @@ enum gaim_event {
 	event_im_displayed_rcvd,
 	event_chat_send_invite,
 	event_got_typing,
+	event_del_conversation,
 	/* any others? it's easy to add... */
 };
 

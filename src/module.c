@@ -501,6 +501,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_signon:
 			case event_signoff:
 			case event_new_conversation:
+			case event_del_conversation:
 			case event_error:
 				one = g->function;
 				one(arg1, g->data);

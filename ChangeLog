@@ -53,6 +53,7 @@ version 0.60:
 	* Option to log IMs and Chats seperately.  (Thanks Etan
 	  Reisner)
 	* Nice Oscar changes--mostly internal (Thanks Mark Doliner)
+	* event_del_conversation for plugins (Thanks Bill Tompkins)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

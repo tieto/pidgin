@@ -28,6 +28,7 @@ enum gaim_event {
 	event_im_displayed_rcvd,
 	event_chat_send_invite,
 	event_got_typing,
+	event_del_conversation,
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -331,3 +332,12 @@ event_got_typing:
 
 	'gc' 	is the connection the typing is sent to.
 	'who' 	is the person typing to you.
+event_del_conversation:
+	struct conversation *c
+
+	This is called when a conversation window is closed.  It is
+	called before any memory is deallocated so you are able to
+	access any data related to the conversation without breaking
+	anything.
+
+	'c'	is he conversation being closed.

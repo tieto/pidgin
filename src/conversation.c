@@ -258,6 +258,7 @@ struct log_conversation *find_log_info(char *name)
 
 void delete_conversation(struct conversation *c)
 {
+	plugin_event(event_del_conversation, c, 0, 0, 0);
 	conversations = g_list_remove(conversations, c);
 	if (c->fg_color_dialog)
 		gtk_widget_destroy(c->fg_color_dialog);
