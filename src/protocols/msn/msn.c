@@ -1717,6 +1717,10 @@ static void msn_add_buddy(struct gaim_connection *gc, char *name)
 		/* how did this happen? */
 		return;
 
+	if (strstr(who, ' '))
+		/* This is a broken blist entry. */
+		return;
+
 	while (l) {
 		struct msn_buddy *b = l->data;
 		if (!g_strcasecmp(who, b->user))
