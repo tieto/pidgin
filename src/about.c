@@ -90,7 +90,7 @@ void show_about(GtkWidget *w, void *null)
 		gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 		gtk_widget_show(label);
 		
-		button = gtk_button_new_with_label("Close");
+		button = gtk_button_new_with_label(_("Close"));
 		gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
                                           GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
                 gtk_signal_connect(GTK_OBJECT(about), "destroy",
