@@ -546,9 +546,11 @@ gaim_gtk_core_get_ui_ops(void)
 static void
 show_usage(int mode, const char *name)
 {
+	char *text=NULL;
+
 	switch (mode) {
 	case 0:		/* full help text */
-		printf(_("Gaim %s\n"
+		text=g_strdup_printf(_("Gaim %s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -a, --acct          display account editor window\n"
 		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
@@ -563,8 +565,27 @@ show_usage(int mode, const char *name)
 		       "  -h, --help          display this help and exit\n"), VERSION, name);
 		break;
 	case 1:		/* short message */
-		printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
+		text=g_strdup_printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
 		break;
+	}
+
+	if(text) {
+		char *text_conv;
+		GError *error=NULL;
+
+		/* tries to convert 'text' to users locale */
+		text_conv=g_locale_from_utf8(text,-1,NULL,NULL,&error);
+		if(text_conv) {
+			puts(text_conv);
+			g_free(text_conv);
+		}
+		/* use 'text' as a fallback */
+		else {
+			g_warning("%s\n", error->message);
+			g_error_free(error);
+			puts(text);
+		}
+		g_free(text);
 	}
 }
 

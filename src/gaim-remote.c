@@ -28,9 +28,42 @@
 
 #include <gaim-remote/remote.h>
 
+/* writes a message 'text' to screen
+ * message tries to convert 'text' from utf-8 to user's locale and 
+ * uses the original message 'text' as a fallback
+ *
+ * if channel is 1, the message is printed to stdout
+ * if channel is 2, the message is printed to stderr
+ */ 
+void message(char *text,int channel)
+{
+	char *text_conv=NULL,*text_output;
+	GError *error=NULL;
+	
+	text_conv=g_locale_from_utf8(text,-1,NULL,NULL,&error);
+
+	if(!text_conv) {
+		g_warning("%s\n", error->message);
+		g_error_free(error);
+	}
+
+	text_output=(text_conv ? text_conv : text);
+	
+	switch(channel) {
+	case 1:  puts(text_output); break;
+	case 2:  fputs(text_output, stderr); break;
+	default: break;
+	}
+
+	if(text_conv)
+		g_free(text_conv);
+}
+
 void show_remote_usage(char *name)
 {
-	printf(_("Usage: %s command [OPTIONS] [URI]\n\n"
+	char *text=NULL;
+
+	text=g_strdup_printf(_("Usage: %s command [OPTIONS] [URI]\n\n"
 
 	     "    COMMANDS:\n"
 	     "       uri                      Handle AIM: URI\n"
@@ -38,6 +71,10 @@ void show_remote_usage(char *name)
 
 	     "    OPTIONS:\n"
 	     "       -h, --help [commmand]    Show help for command\n"), name);
+
+	message(text,1);
+	g_free(text);
+	
 	return;
 }
 
@@ -130,13 +167,12 @@ int get_options(int argc, char *argv[])
 	return 0;			
 }
 
-
 int command_uri() {
 	int fd = 0;
 	GaimRemotePacket *p = NULL;
 	fd = gaim_remote_session_connect(0);
 	if (fd<0) {
-		fprintf(stderr, _("Gaim not running (on session 0)\n"));
+		message(_("Gaim not running (on session 0)\n"),2);
 		return 1;
 	}
 	p = gaim_remote_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_URI);
@@ -152,7 +188,7 @@ int command_quit() {
 	GaimRemotePacket *p = NULL;
 	fd = gaim_remote_session_connect(0);
 	if (fd<0) {
-		fprintf(stderr, _("Gaim not running (on session 0)\n"));
+		message(_("Gaim not running (on session 0)\n"),2);
 		return 1;
 	}
 	p = gaim_remote_packet_new(CUI_TYPE_META, CUI_META_QUIT);
@@ -162,29 +198,29 @@ int command_quit() {
 	return 0;
 }
 
-void show_longhelp_uri( char *name, char *command){
+void show_longhelp_uri( char *name, char *command)
+{
 	if(!strcmp(command, "uri")) {
-		printf (_("\n"
-			  "Using AIM: URIs:\n"
-			  "Sending an IM to a screenname:\n"
-			  "	gaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
-			  "In this case, 'Penguin' is the screenname we wish to IM, and 'hello world'\n"
-			  "is the message to be sent.  '+' must be used in place of spaces.\n"
-			  "Please note the quoting used above - if you run this from a shell the '&'\n"
-			  "needs to be escaped, or the command will stop at that point.\n"
-			  "Also,the following will just open a conversation window to a screenname,\n"
-			  "with no message:\n"
-			  "	gaim-remote uri aim:goim?screenname=Penguin\n\n"
-			  "Joining a chat:\n"
-			  "	gaim-remote uri aim:gochat?roomname=PenguinLounge\n"
-			  "...joins the 'PenguinLounge' chat room.\n\n"
-			  "Adding a buddy to your buddy list:\n"
-			  "	gaim-remote uri aim:addbuddy?screenname=Penguin\n"
-			  "...prompts you to add 'Penguin' to your buddy list.\n")
-			);
+		message(_("\n"
+		       "Using AIM: URIs:\n"
+		       "Sending an IM to a screenname:\n"
+		       "	gaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+		       "In this case, 'Penguin' is the screenname we wish to IM, and 'hello world'\n"
+		       "is the message to be sent.  '+' must be used in place of spaces.\n"
+		       "Please note the quoting used above - if you run this from a shell the '&'\n"
+		       "needs to be escaped, or the command will stop at that point.\n"
+		       "Also,the following will just open a conversation window to a screenname,\n"
+		       "with no message:\n"
+		       "	gaim-remote uri 'aim:goim?screenname=Penguin'\n\n"
+		       "Joining a chat:\n"
+		       "	gaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+		       "...joins the 'PenguinLounge' chat room.\n\n"
+		       "Adding a buddy to your buddy list:\n"
+		       "	gaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+			  "...prompts you to add 'Penguin' to your buddy list.\n"), 1);
 	}
 	else if(!strcmp(command, "quit")) {
-		printf (_("\nClose running copy of Gaim\n"));
+		message(_("\nClose running copy of Gaim\n"), 1);
 	}
 	else {
 		show_remote_usage(name);
