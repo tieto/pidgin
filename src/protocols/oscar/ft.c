@@ -190,10 +190,6 @@ faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const 
 	return 0;
 } 
 
-/* XXX: give the client author the responsibility of setting up a
- * listener, then we no longer have a libfaim problem with broken
- * solaris *innocent smile* -jbm */
-
 static int getlocalip(fu8_t *ip)
 {
 	struct hostent *hptr;
@@ -213,79 +209,6 @@ static int getlocalip(fu8_t *ip)
 	return 0;
 }
 
-/* XXX this should probably go in im.c */
-static int aim_request_directim(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu8_t *ip, fu16_t port, fu8_t *ckret)
-{
-	fu8_t ck[8];
-	aim_frame_t *fr;
-	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL, *itl = NULL;
-	int hdrlen, i;
-	fu8_t *hdr;
-	aim_bstream_t hdrbs;
-
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 256+strlen(destsn))))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
-
-	/* 
-	 * Generate a random message cookie 
-	 *
-	 * This cookie needs to be alphanumeric and NULL-terminated to be 
-	 * TOC-compatible.
-	 *
-	 * XXX have I mentioned these should be generated in msgcookie.c?
-	 *
-	 */
-	for (i = 0; i < 7; i++)
-	       	ck[i] = 0x30 + ((fu8_t) rand() % 10);
-	ck[7] = '\0';
-
-	if (ckret)
-		memcpy(ckret, ck, 8);
-
-	/* Cookie */
-	aimbs_putraw(&fr->data, ck, 8);
-
-	/* Channel */
-	aimbs_put16(&fr->data, 0x0002);
-
-	/* Destination SN */
-	aimbs_put8(&fr->data, strlen(destsn));
-	aimbs_putraw(&fr->data, destsn, strlen(destsn));
-
-	aim_addtlvtochain_noval(&tl, 0x0003);
-
-	hdrlen = 2+8+16+6+8+6+4;
-	hdr = malloc(hdrlen);
-	aim_bstream_init(&hdrbs, hdr, hdrlen);
-
-	aimbs_put16(&hdrbs, 0x0000);
-	aimbs_putraw(&hdrbs, ck, 8);
-	aim_putcap(&hdrbs, AIM_CAPS_IMIMAGE);
-
-	aim_addtlvtochain16(&itl, 0x000a, 0x0001);
-	aim_addtlvtochain_raw(&itl, 0x0003, 4, ip);
-	aim_addtlvtochain16(&itl, 0x0005, port);
-	aim_addtlvtochain_noval(&itl, 0x000f);
-	
-	aim_writetlvchain(&hdrbs, &itl);
-
-	aim_addtlvtochain_raw(&tl, 0x0005, aim_bstream_curpos(&hdrbs), hdr);
-
-	aim_writetlvchain(&fr->data, &tl);
-
-	free(hdr);
-	aim_freetlvchain(&itl);
-	aim_freetlvchain(&tl);
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
 /**
  * aim_directim_intitiate - For those times when we want to open up the directim channel ourselves.
  * @sess: your session,
@@ -294,7 +217,7 @@ static int aim_request_directim(aim_session_t *sess, aim_conn_t *conn, const cha
  * @destsn: the SN to connect to.
  *
  */
-faim_export aim_conn_t *aim_directim_initiate(aim_session_t *sess, aim_conn_t *conn, const char *destsn)
+faim_export aim_conn_t *aim_directim_initiate(aim_session_t *sess, const char *destsn)
 { 
 	aim_conn_t *newconn;
 	aim_msgcookie_t *cookie;
@@ -310,7 +233,7 @@ faim_export aim_conn_t *aim_directim_initiate(aim_session_t *sess, aim_conn_t *c
 	if ((listenfd = listenestablish(port)) == -1)
 		return NULL;
 
-	aim_request_directim(sess, conn, destsn, localip, port, ck);
+	aim_request_directim(sess, destsn, localip, port, ck);
 
 	cookie = (aim_msgcookie_t *)calloc(1, sizeof(aim_msgcookie_t));
 	memcpy(cookie->cookie, ck, 8);
@@ -344,7 +267,67 @@ faim_export aim_conn_t *aim_directim_initiate(aim_session_t *sess, aim_conn_t *c
 	faimdprintf(sess, 2,"faim: listening (fd = %d, unconnected)\n", newconn->fd);
 
 	return newconn;
-} 
+}
+
+/**
+ * aim_sendfile_intitiate - For those times when we want to send the file ourselves.
+ * @sess: your session,
+ * @conn: the BOS conn,
+ * @destsn: the SN to connect to.
+ * @filename: the name of the files you want to send
+ *
+ */
+faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *sess, const char *destsn, const char *filename, fu16_t numfiles, fu32_t totsize)
+{ 
+	aim_conn_t *newconn;
+	aim_msgcookie_t *cookie;
+	struct aim_directim_intdata *priv;
+	int listenfd;
+	fu16_t port = 4443;
+	fu8_t localip[4];
+	fu8_t ck[8];
+
+	if (getlocalip(localip) == -1)
+		return NULL;
+
+	if ((listenfd = listenestablish(port)) == -1)
+		return NULL;
+
+	aim_request_sendfile(sess, destsn, filename, numfiles, totsize, localip, port, ck);
+
+	cookie = (aim_msgcookie_t *)calloc(1, sizeof(aim_msgcookie_t));
+	memcpy(cookie->cookie, ck, 8);
+	cookie->type = AIM_COOKIETYPE_OFTIM;
+
+	/* this one is for the cookie */
+	priv = (struct aim_directim_intdata *)calloc(1, sizeof(struct aim_directim_intdata));
+
+	memcpy(priv->cookie, ck, 8);
+	strncpy(priv->sn, destsn, sizeof(priv->sn));
+	cookie->data = priv;
+	aim_cachecookie(sess, cookie);
+
+	/* XXX switch to aim_cloneconn()? */
+	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_RENDEZVOUS_OUT, NULL))) {
+		close(listenfd);
+		return NULL;
+	}
+
+	/* this one is for the conn */
+	priv = (struct aim_directim_intdata *)calloc(1, sizeof(struct aim_directim_intdata));
+
+	memcpy(priv->cookie, ck, 8);
+	strncpy(priv->sn, destsn, sizeof(priv->sn));
+
+	newconn->fd = listenfd;
+	newconn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
+	newconn->internal = priv;
+	newconn->lastactivity = time(NULL);
+
+	faimdprintf(sess, 2,"faim: listening (fd = %d, unconnected)\n", newconn->fd);
+
+	return newconn;
+}
 
 #if 0
 /**
@@ -776,6 +759,9 @@ faim_export struct aim_fileheader_t *aim_getlisting(aim_session_t *sess, FILE *f
  *
  * you need to call accept() when it's connected. returns your fd 
  *
+ * XXX: give the client author the responsibility of setting up a
+ * listener, then we no longer have a libfaim problem with broken
+ * solaris *innocent smile* -jbm
  */
 static int listenestablish(fu16_t portnum)
 {

@@ -2588,7 +2588,7 @@ static void oscar_direct_im(gpointer obj, struct ask_do_dir_im *data) {
 	dim->gc = gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", data->who);
 
-	dim->conn = aim_directim_initiate(od->sess, od->conn, data->who);
+	dim->conn = aim_directim_initiate(od->sess, data->who);
 	if (dim->conn != NULL) {
 		od->direct_ims = g_slist_append(od->direct_ims, dim);
 		dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,

@@ -203,6 +203,8 @@ faim_internal int aim_chat_readroominfo(aim_bstream_t *bs, struct aim_chat_roomi
 
 faim_internal void faimdprintf(aim_session_t *sess, int dlevel, const char *format, ...);
 
+faim_internal int aim_request_directim(aim_session_t *sess, const char *destsn, fu8_t *ip, fu16_t port, fu8_t *ckret);
+faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, const char *filename, fu16_t numfiles, fu32_t totsize, fu8_t *ip, fu16_t port, fu8_t *ckret);
 faim_internal void aim_conn_close_rend(aim_session_t *sess, aim_conn_t *conn);
 faim_internal void aim_conn_kill_rend(aim_session_t *sess, aim_conn_t *conn);
 

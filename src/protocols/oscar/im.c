@@ -449,6 +449,174 @@ faim_export int aim_send_icon(aim_session_t *sess, const char *sn, const fu8_t *
 	return 0;
 }
 
+faim_internal int aim_request_directim(aim_session_t *sess, const char *destsn, fu8_t *ip, fu16_t port, fu8_t *ckret)
+{
+	aim_conn_t *conn;
+	fu8_t ck[8];
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL, *itl = NULL;
+	int hdrlen, i;
+	fu8_t *hdr;
+	aim_bstream_t hdrbs;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+		return -EINVAL;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 256+strlen(destsn))))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
+
+	/* 
+	 * Generate a random message cookie 
+	 *
+	 * This cookie needs to be alphanumeric and NULL-terminated to be 
+	 * TOC-compatible.
+	 *
+	 * XXX have I mentioned these should be generated in msgcookie.c?
+	 *
+	 */
+	for (i = 0; i < 7; i++)
+	       	ck[i] = 0x30 + ((fu8_t) rand() % 10);
+	ck[7] = '\0';
+
+	if (ckret)
+		memcpy(ckret, ck, 8);
+
+	/* Cookie */
+	aimbs_putraw(&fr->data, ck, 8);
+
+	/* Channel */
+	aimbs_put16(&fr->data, 0x0002);
+
+	/* Destination SN */
+	aimbs_put8(&fr->data, strlen(destsn));
+	aimbs_putraw(&fr->data, destsn, strlen(destsn));
+
+	aim_addtlvtochain_noval(&tl, 0x0003);
+
+	hdrlen = 2+8+16+6+8+6+4;
+	hdr = malloc(hdrlen);
+	aim_bstream_init(&hdrbs, hdr, hdrlen);
+
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_putraw(&hdrbs, ck, 8);
+	aim_putcap(&hdrbs, AIM_CAPS_IMIMAGE);
+
+	aim_addtlvtochain16(&itl, 0x000a, 0x0001);
+	aim_addtlvtochain_raw(&itl, 0x0003, 4, ip);
+	aim_addtlvtochain16(&itl, 0x0005, port);
+	aim_addtlvtochain_noval(&itl, 0x000f);
+	
+	aim_writetlvchain(&hdrbs, &itl);
+
+	aim_addtlvtochain_raw(&tl, 0x0005, aim_bstream_curpos(&hdrbs), hdr);
+
+	aim_writetlvchain(&fr->data, &tl);
+
+	free(hdr);
+	aim_freetlvchain(&itl);
+	aim_freetlvchain(&tl);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, const char *filename, fu16_t numfiles, fu32_t totsize, fu8_t *ip, fu16_t port, fu8_t *ckret)
+{
+	aim_conn_t *conn;
+	int i;
+	fu8_t ck[8];
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+		return -EINVAL;
+
+	if (!sn || !filename)
+		return -EINVAL;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sn)+2+2+2+8+16+6+8+6+4+2+2+2+2+4+strlen(filename)+4)))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
+
+	for (i = 0; i < 7; i++)
+		aimutil_put8(ck+i, 0x30 + ((fu8_t) rand() % 10));
+	ck[7] = '\0';
+
+	if (ckret)
+		memcpy(ckret, ck, 8);
+
+	/*
+	 * Cookie
+	 */
+	aimbs_putraw(&fr->data, ck, 8);
+
+	/*
+	 * Channel (2)
+	 */
+	aimbs_put16(&fr->data, 0x0002);
+
+	/*
+	 * Dest sn
+	 */
+	aimbs_put8(&fr->data, strlen(sn));
+	aimbs_putraw(&fr->data, sn, strlen(sn));
+
+	/*
+	 * TLV t(0005)
+	 *
+	 * Encompasses everything below. Gee.
+	 */
+	aimbs_put16(&fr->data, 0x0005);
+	aimbs_put16(&fr->data, 2+8+16+6+8+6+4+2+2+2+2+4+strlen(filename)+4);
+
+	aimbs_put16(&fr->data, 0x0000);
+	aimbs_putraw(&fr->data, ck, 8);
+	aim_putcap(&fr->data, AIM_CAPS_SENDFILE);
+
+	/* TLV t(000a) */
+	aimbs_put16(&fr->data, 0x000a);
+	aimbs_put16(&fr->data, 0x0002);
+	aimbs_put16(&fr->data, 0x0001);
+
+	/* TLV t(0003) (IP) */
+	aimbs_put16(&fr->data, 0x0003);
+	aimbs_put16(&fr->data, 0x0004);
+	aimbs_putraw(&fr->data, ip, 4);
+
+	/* TLV t(0005) (port) */
+	aimbs_put16(&fr->data, 0x0005);
+	aimbs_put16(&fr->data, 0x0002);
+	aimbs_put16(&fr->data, port);
+
+	/* TLV t(000f) */
+	aimbs_put16(&fr->data, 0x000f);
+	aimbs_put16(&fr->data, 0x0000);
+
+	/* TLV t(2711) */
+	aimbs_put16(&fr->data, 0x2711);
+	aimbs_put16(&fr->data, 2+2+4+strlen(filename)+4);
+
+	/* ? */
+	aimbs_put16(&fr->data, 0x0001);
+	aimbs_put16(&fr->data, numfiles);
+	aimbs_put32(&fr->data, totsize);
+	aimbs_putraw(&fr->data, filename, strlen(filename));
+
+	/* ? */
+	aimbs_put32(&fr->data, 0x00000000);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
 static int outgoingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	int i, ret = 0;

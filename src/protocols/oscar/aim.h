@@ -801,8 +801,10 @@ faim_export int aim_send_icon(aim_session_t *sess, const char *sn, const fu8_t *
 faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen);
 faim_export int aim_send_im_direct(aim_session_t *, aim_conn_t *, const char *msg);
 faim_export const char *aim_directim_getsn(aim_conn_t *conn);
-faim_export aim_conn_t *aim_directim_initiate(aim_session_t *, aim_conn_t *, const char *destsn);
+faim_export aim_conn_t *aim_directim_initiate(aim_session_t *, const char *destsn);
 faim_export aim_conn_t *aim_directim_connect(aim_session_t *, const char *sn, const char *addr, const fu8_t *cookie);
+
+faim_export aim_conn_t *aim_sendfile_initiate(aim_session_t *, const char *destsn, const char *filename, fu16_t numfiles, fu32_t totsize);
 
 faim_export aim_conn_t *aim_getfile_initiate(aim_session_t *sess, aim_conn_t *conn, const char *destsn);
 faim_export int aim_oft_getfile_request(aim_session_t *sess, aim_conn_t *conn, const char *name, int size);
