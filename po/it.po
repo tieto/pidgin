@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
-"POT-Creation-Date: 2003-07-17 14:45+0200\n"
+"POT-Creation-Date: 2003-07-17 18:51-0400\n"
 "PO-Revision-Date: 2003-07-09 16:50--100\n"
 "Last-Translator: Claudio Satriano <satriano@na.infn.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -17,65 +17,65 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: plugins/docklet/docklet.c:110 src/gtkaccount.c:443 src/gtkaccount.c:1591
+#: plugins/docklet/docklet.c:111 src/gtkaccount.c:440 src/gtkaccount.c:1588
 msgid "Auto-login"
 msgstr "Login Automatico"
 
-#: plugins/docklet/docklet.c:113
+#: plugins/docklet/docklet.c:114
 msgid "New Message.."
 msgstr "Nuovo Messaggio..."
 
-#: plugins/docklet/docklet.c:114
+#: plugins/docklet/docklet.c:115
 msgid "Join A Chat..."
 msgstr "Entra in Chat..."
 
-#: plugins/docklet/docklet.c:145
+#: plugins/docklet/docklet.c:146
 msgid "New..."
 msgstr "Nuovo..."
 
-#: plugins/docklet/docklet.c:149 src/protocols/gg/gg.c:54
-#: src/protocols/irc/irc.c:1020 src/protocols/jabber/jabber.c:1176
-#: src/protocols/jabber/jabber.c:3437 src/protocols/jabber/jabber.c:3491
-#: src/protocols/oscar/oscar.c:2825 src/protocols/oscar/oscar.c:4548
-#: src/protocols/oscar/oscar.c:5447 src/protocols/oscar/oscar.c:5841
-#: src/gtkblist.c:1589 src/gtkpounce.c:460 src/gtkprefs.c:1504
+#: plugins/docklet/docklet.c:150 src/gtkblist.c:1590 src/gtkpounce.c:460
+#: src/gtkprefs.c:1504 src/protocols/gg/gg.c:54 src/protocols/irc/irc.c:1021
+#: src/protocols/jabber/jabber.c:1176 src/protocols/jabber/jabber.c:3437
+#: src/protocols/jabber/jabber.c:3491 src/protocols/oscar/oscar.c:2825
+#: src/protocols/oscar/oscar.c:4548 src/protocols/oscar/oscar.c:5449
+#: src/protocols/oscar/oscar.c:5843
 msgid "Away"
 msgstr "Assente"
 
-#: plugins/docklet/docklet.c:155 src/away.c:531
+#: plugins/docklet/docklet.c:156 src/away.c:531
 msgid "Back"
 msgstr "Tornato"
 
-#: plugins/docklet/docklet.c:163
+#: plugins/docklet/docklet.c:164
 msgid "Mute Sounds"
 msgstr "Nessun Suono"
 
-#: plugins/docklet/docklet.c:168 src/gtkft.c:557
+#: plugins/docklet/docklet.c:169 src/gtkft.c:557
 msgid "File Transfers"
 msgstr "Trasferimento File"
 
 #. And now for the buttons
-#: plugins/docklet/docklet.c:169 src/gtkaccount.c:1742 src/main.c:415
+#: plugins/docklet/docklet.c:170 src/gtkaccount.c:1739 src/main.c:325
 msgid "Accounts"
 msgstr "Account"
 
-#: plugins/docklet/docklet.c:170 src/gtkprefs.c:2356 src/main.c:425
+#: plugins/docklet/docklet.c:171 src/gtkprefs.c:2356 src/main.c:335
 msgid "Preferences"
 msgstr "Preferenze"
 
-#: plugins/docklet/docklet.c:179
+#: plugins/docklet/docklet.c:180
 msgid "Signoff"
 msgstr "Disconnetti"
 
-#: plugins/docklet/docklet.c:183
+#: plugins/docklet/docklet.c:184
 msgid "Quit"
 msgstr "Esci"
 
-#: plugins/docklet/docklet.c:412
+#: plugins/docklet/docklet.c:413
 msgid "Tray Icon Configuration"
 msgstr "Configurazione dell'Icona di Notifica"
 
-#: plugins/docklet/docklet.c:416
+#: plugins/docklet/docklet.c:417
 msgid "_Hide new messages until tray icon is clicked"
 msgstr "_Nascondi i nuovi messaggi finché non si clicca sull'icona di notifica"
 
@@ -86,19 +86,19 @@ msgstr "_Nascondi i nuovi messaggi finché non si clicca sull'icona di notifica"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/docklet/docklet.c:440
+#: plugins/docklet/docklet.c:441
 msgid "System Tray Icon"
 msgstr "Icona di Notifica"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/docklet/docklet.c:443
+#: plugins/docklet/docklet.c:444
 msgid "Displays an icon for Gaim in the system tray."
 msgstr "Mostra un'icona per Gaim nel vassoio di sistema."
 
 #. *  description
-#: plugins/docklet/docklet.c:445
+#: plugins/docklet/docklet.c:446
 msgid ""
 "Interacts with a Notification Area applet (in GNOME, KDE or Windows for "
 "example) to display the current status of Gaim, allow fast access to "
@@ -172,14 +172,14 @@ msgstr "Verifica che tutti gli eventi stanno funzionando correttamente."
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/filectl.c:203
+#: plugins/filectl.c:201
 msgid "Gaim File Control"
 msgstr "Controllo con File"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/filectl.c:206 plugins/filectl.c:208
+#: plugins/filectl.c:204 plugins/filectl.c:206
 msgid "Allows you to control Gaim by entering commands in a file."
 msgstr "Consente di controllare Gaim immettendo dei comandi in un file."
 
@@ -279,7 +279,7 @@ msgstr "Riduci a Icona se Assente"
 msgid "Iconifies the buddy list and your conversations when you go away."
 msgstr "Riduce a icona la lista dei contatti quando sei assente."
 
-#: plugins/idle.c:70 src/protocols/irc/irc.c:935
+#: plugins/idle.c:70 src/protocols/irc/irc.c:936
 msgid "Idle Time"
 msgstr "Tempo di Inattività"
 
@@ -513,19 +513,19 @@ msgstr ""
 "Aggiunge alle conversazioni informazioni sul tempo nello stile di iChat ogni "
 "N minuti."
 
-#: plugins/gaim-remote/remote.c:86
+#: plugins/gaim-remote/remote.c:87
 msgid "Not connected to AIM"
 msgstr "Non connesso ad AIM"
 
-#: plugins/gaim-remote/remote.c:95 plugins/gaim-remote/remote.c:134
+#: plugins/gaim-remote/remote.c:96 plugins/gaim-remote/remote.c:135
 msgid "No screenname given."
 msgstr "Nessun nome utente fornito."
 
-#: plugins/gaim-remote/remote.c:171
+#: plugins/gaim-remote/remote.c:172
 msgid "No roomname given."
 msgstr "Nessun nome della stanza fornito."
 
-#: plugins/gaim-remote/remote.c:190
+#: plugins/gaim-remote/remote.c:191
 msgid "Invalid AIM URI"
 msgstr "URI AIM non valido"
 
@@ -536,19 +536,19 @@ msgstr "URI AIM non valido"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/gaim-remote/remote.c:735
+#: plugins/gaim-remote/remote.c:713
 msgid "Remote Control"
 msgstr "Controllo Remoto"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/gaim-remote/remote.c:738
+#: plugins/gaim-remote/remote.c:716
 msgid "Provides remote control for gaim applications."
 msgstr "Fornisce un controllo remoto per applicazioni basate su Gaim"
 
 #. *  description
-#: plugins/gaim-remote/remote.c:740
+#: plugins/gaim-remote/remote.c:718
 msgid ""
 "Gives Gaim the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
@@ -770,7 +770,7 @@ msgstr "Assente solo per gli amici"
 #: src/protocols/gg/gg.c:56 src/protocols/jabber/jabber.c:3440
 #: src/protocols/jabber/jabber.c:3503 src/protocols/oscar/oscar.c:2829
 #: src/protocols/oscar/oscar.c:4536 src/protocols/oscar/oscar.c:4563
-#: src/protocols/oscar/oscar.c:5846 src/protocols/yahoo/yahoo.c:1071
+#: src/protocols/oscar/oscar.c:5848 src/protocols/yahoo/yahoo.c:1071
 #: src/protocols/yahoo/yahoo.c:1279 src/protocols/yahoo/yahoo.c:1346
 msgid "Invisible"
 msgstr "Invisibile"
@@ -888,11 +888,11 @@ msgstr "Attivo"
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: src/protocols/gg/gg.c:664 src/gtkrequest.c:168 src/request.h:804
+#: src/gtkrequest.c:168 src/protocols/gg/gg.c:664 src/request.h:804
 msgid "Yes"
 msgstr "Sì"
 
-#: src/protocols/gg/gg.c:664 src/gtkrequest.c:169 src/request.h:804
+#: src/gtkrequest.c:169 src/protocols/gg/gg.c:664 src/request.h:804
 msgid "No"
 msgstr "No"
 
@@ -922,8 +922,8 @@ msgid "Sex"
 msgstr "Sesso"
 
 #. City
-#: src/protocols/gg/gg.c:705 src/protocols/trepia/trepia.c:364
-#: src/dialogs.c:2035 src/dialogs.c:2684
+#: src/dialogs.c:2035 src/dialogs.c:2684 src/protocols/gg/gg.c:705
+#: src/protocols/trepia/trepia.c:364
 msgid "City"
 msgstr "Città"
 
@@ -1026,9 +1026,9 @@ msgstr ""
 msgid "Directory Search"
 msgstr "Ricerca nella Directory"
 
-#: src/protocols/gg/gg.c:1195 src/protocols/jabber/jabber.c:4322
-#: src/protocols/oscar/oscar.c:6110 src/protocols/toc/toc.c:1474
-#: src/dialogs.c:2146 src/dialogs.c:2155
+#: src/dialogs.c:2146 src/dialogs.c:2155 src/protocols/gg/gg.c:1195
+#: src/protocols/jabber/jabber.c:4322 src/protocols/oscar/oscar.c:6112
+#: src/protocols/toc/toc.c:1474
 msgid "Change Password"
 msgstr "Cambia Password"
 
@@ -1074,27 +1074,28 @@ msgstr "Plugin per il Protocollo Gadu-Gadu"
 msgid "Gaim encountered an error communicating with the ICQ server."
 msgstr "Gaim ha incontrato un errore di comunicazione con il server ICQ."
 
-#: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2673
 #: src/dialogs.c:2452 src/gtkconv.c:1112 src/gtkconv.c:2963 src/gtkconv.c:4123
-#: src/gtkrequest.c:175 src/prpl.c:312
+#: src/gtkrequest.c:175 src/protocols/icq/gaim_icq.c:277
+#: src/protocols/oscar/oscar.c:2673 src/prpl.c:312
 msgid "Add"
 msgstr "Aggiungi"
 
 #. Cancel button.
-#: src/protocols/icq/gaim_icq.c:277 src/protocols/irc/irc.c:1104
-#: src/protocols/irc/irc.c:1433 src/protocols/msn/msn.c:171
-#: src/protocols/msn/msn.c:182 src/protocols/msn/msn.c:193
-#: src/protocols/msn/msn.c:204 src/protocols/msn/msn.c:217
-#: src/protocols/oscar/oscar.c:2404 src/protocols/oscar/oscar.c:2441
-#: src/protocols/oscar/oscar.c:2476 src/protocols/oscar/oscar.c:2521
-#: src/protocols/oscar/oscar.c:5719 src/protocols/oscar/oscar.c:5934
-#: src/protocols/oscar/oscar.c:5983 src/protocols/oscar/oscar.c:6043
-#: src/protocols/trepia/trepia.c:380 src/protocols/yahoo/yahoo.c:1188
 #: src/buddy_chat.c:375 src/dialogs.c:459 src/dialogs.c:471 src/dialogs.c:484
 #: src/dialogs.c:2092 src/dialogs.c:2207 src/dialogs.c:2273 src/dialogs.c:2441
 #: src/dialogs.c:2626 src/dialogs.c:2775 src/dialogs.c:3447 src/dialogs.c:3941
-#: src/dialogs.c:4883 src/gtkaccount.c:1480 src/gtkconn.c:146
-#: src/gtkrequest.c:171 src/prpl.c:313 src/request.h:813 src/request.h:823
+#: src/dialogs.c:4883 src/gtkaccount.c:1477 src/gtkconn.c:146
+#: src/gtkrequest.c:171 src/protocols/icq/gaim_icq.c:277
+#: src/protocols/irc/irc.c:1105 src/protocols/irc/irc.c:1434
+#: src/protocols/msn/msn.c:171 src/protocols/msn/msn.c:182
+#: src/protocols/msn/msn.c:193 src/protocols/msn/msn.c:204
+#: src/protocols/msn/msn.c:217 src/protocols/oscar/oscar.c:2404
+#: src/protocols/oscar/oscar.c:2441 src/protocols/oscar/oscar.c:2476
+#: src/protocols/oscar/oscar.c:2521 src/protocols/oscar/oscar.c:5721
+#: src/protocols/oscar/oscar.c:5936 src/protocols/oscar/oscar.c:5985
+#: src/protocols/oscar/oscar.c:6045 src/protocols/trepia/trepia.c:380
+#: src/protocols/yahoo/yahoo.c:1188 src/prpl.c:313 src/request.h:813
+#: src/request.h:823
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -1109,10 +1110,10 @@ msgstr "Gli utenti %s (%s%s%s%s%s) richiedono la tua autorizzazione."
 msgid "Authorize"
 msgstr "Autorizza"
 
-#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1717
-#: src/protocols/msn/notification.c:467 src/protocols/msn/notification.c:749
-#: src/protocols/oscar/oscar.c:2603 src/protocols/oscar/oscar.c:5098
-#: src/dialogs.c:2440
+#: src/dialogs.c:2440 src/protocols/icq/gaim_icq.c:297
+#: src/protocols/jabber/jabber.c:1717 src/protocols/msn/notification.c:467
+#: src/protocols/msn/notification.c:749 src/protocols/oscar/oscar.c:2603
+#: src/protocols/oscar/oscar.c:5098
 msgid "Deny"
 msgstr "Blocca"
 
@@ -1140,7 +1141,7 @@ msgstr "Nickname:"
 msgid "Gaim User"
 msgstr "Utente di Gaim"
 
-#: src/protocols/irc/irc.c:186
+#: src/protocols/irc/irc.c:187
 msgid ""
 "(There was an error converting this message.  Check the 'Encoding' option in "
 "the Account Editor)"
@@ -1148,119 +1149,119 @@ msgstr ""
 "(C'è stato un errore nella conversione di questo messaggio. Controlla "
 "l'opzione 'Codifica' nell'Editor degli Account)"
 
-#: src/protocols/irc/irc.c:487 src/protocols/irc/irc.c:2607
+#: src/protocols/irc/irc.c:488 src/protocols/irc/irc.c:2608
 #, c-format
 msgid "DCC Chat with %s closed"
 msgstr "Chat DCC con %s chiusa"
 
-#: src/protocols/irc/irc.c:540 src/protocols/irc/irc.c:2616
+#: src/protocols/irc/irc.c:541 src/protocols/irc/irc.c:2617
 #, c-format
 msgid "DCC Chat with %s established"
 msgstr "Chat DCC con %s iniziata "
 
-#: src/protocols/irc/irc.c:675
+#: src/protocols/irc/irc.c:676
 msgid "No topic is set"
 msgstr "Non è impostato nessun argomento"
 
-#: src/protocols/irc/irc.c:696 src/protocols/irc/irc.c:1754
+#: src/protocols/irc/irc.c:697 src/protocols/irc/irc.c:1755
 #, c-format
 msgid "<B>%s has changed the topic to: %s</B>"
 msgstr "<B>%s ha impostato come argomento: %s</B>"
 
-#: src/protocols/irc/irc.c:741
+#: src/protocols/irc/irc.c:742
 #, c-format
 msgid "-:- mode/%s [%c%c %s] by %s"
 msgstr ""
 
-#: src/protocols/irc/irc.c:918 src/protocols/irc/irc.c:931
+#: src/protocols/irc/irc.c:919 src/protocols/irc/irc.c:932
 msgid "User"
 msgstr "Utente"
 
 #. Splits
-#: src/protocols/irc/irc.c:922 src/protocols/irc/irc.c:3030
+#: src/protocols/irc/irc.c:923 src/protocols/irc/irc.c:3031
 #: src/protocols/jabber/jabber.c:4418 src/protocols/napster/napster.c:639
 msgid "Server"
 msgstr "Server"
 
-#: src/protocols/irc/irc.c:926 src/protocols/irc/irc.c:1081
-#: src/protocols/irc/irc.c:1646
+#: src/protocols/irc/irc.c:927 src/protocols/irc/irc.c:1082
+#: src/protocols/irc/irc.c:1647
 msgid "IRC Operator"
 msgstr "Operatore IRC"
 
-#: src/protocols/irc/irc.c:939
+#: src/protocols/irc/irc.c:940
 msgid "Channels"
 msgstr "Canali"
 
-#: src/protocols/irc/irc.c:945
+#: src/protocols/irc/irc.c:946
 #, c-format
 msgid "%s is an Identified User"
 msgstr "%s è un Utente Identificato"
 
-#: src/protocols/irc/irc.c:960
+#: src/protocols/irc/irc.c:961
 #, c-format
 msgid "%ld seconds [signon: %s]"
 msgstr "%ld secondi [login: %s]"
 
 #. RPL_REHASHING
-#: src/protocols/irc/irc.c:1081
+#: src/protocols/irc/irc.c:1082
 msgid "Rehashing server"
 msgstr ""
 
 #. ERR_NOSUCHNICK
-#: src/protocols/irc/irc.c:1084
+#: src/protocols/irc/irc.c:1085
 msgid "No such nick/channel"
 msgstr "Nick/canale sconosciuto"
 
-#: src/protocols/irc/irc.c:1084 src/protocols/irc/irc.c:1087
-#: src/protocols/irc/irc.c:1092 src/protocols/irc/irc.c:1096
-#: src/protocols/irc/irc.c:1462 src/protocols/irc/irc.c:1604
+#: src/protocols/irc/irc.c:1085 src/protocols/irc/irc.c:1088
+#: src/protocols/irc/irc.c:1093 src/protocols/irc/irc.c:1097
+#: src/protocols/irc/irc.c:1463 src/protocols/irc/irc.c:1605
 msgid "IRC Error"
 msgstr "Errore IRC"
 
 #. ERR_NOSUCHSERVER
-#: src/protocols/irc/irc.c:1087
+#: src/protocols/irc/irc.c:1088
 msgid "No such server"
 msgstr "Server sconosciuto"
 
 #. ERR_NOMOTD
 #. drop it - bringing up dialog for NOMOTD is annoying
 #. ERR_NONICKNAMEGIVEN
-#: src/protocols/irc/irc.c:1092
+#: src/protocols/irc/irc.c:1093
 msgid "No nickname given"
 msgstr "Nessun nickname specificato"
 
 #. ERR_NOPRIVILEGES
-#: src/protocols/irc/irc.c:1095
+#: src/protocols/irc/irc.c:1096
 msgid "You're not an IRC operator!"
 msgstr "Non sei un operatore IRC!"
 
-#: src/protocols/irc/irc.c:1099
+#: src/protocols/irc/irc.c:1100
 msgid "That nick is already in use.  Please enter a new nick"
 msgstr "Il nick è già in uso. Scegline un altro."
 
 #. Build OK Button
-#: src/protocols/irc/irc.c:1103 src/protocols/msn/msn.c:170
-#: src/protocols/msn/msn.c:181 src/protocols/msn/msn.c:192
-#: src/protocols/msn/msn.c:203 src/protocols/oscar/oscar.c:2440
-#: src/protocols/oscar/oscar.c:2520 src/protocols/oscar/oscar.c:5933
-#: src/protocols/oscar/oscar.c:5982 src/protocols/oscar/oscar.c:6042
-#: src/protocols/yahoo/yahoo.c:1187 src/dialogs.c:2203 src/dialogs.c:2341
-#: src/dialogs.c:2625 src/dialogs.c:2771 src/dialogs.c:3934
-#: src/gtkrequest.c:170 src/request.h:813
+#: src/dialogs.c:2203 src/dialogs.c:2341 src/dialogs.c:2625 src/dialogs.c:2771
+#: src/dialogs.c:3934 src/gtkrequest.c:170 src/protocols/irc/irc.c:1104
+#: src/protocols/msn/msn.c:170 src/protocols/msn/msn.c:181
+#: src/protocols/msn/msn.c:192 src/protocols/msn/msn.c:203
+#: src/protocols/oscar/oscar.c:2440 src/protocols/oscar/oscar.c:2520
+#: src/protocols/oscar/oscar.c:5935 src/protocols/oscar/oscar.c:5984
+#: src/protocols/oscar/oscar.c:6044 src/protocols/yahoo/yahoo.c:1187
+#: src/request.h:813
 msgid "OK"
 msgstr "OK"
 
-#: src/protocols/irc/irc.c:1389 src/protocols/irc/irc.c:1395
-#: src/protocols/irc/irc.c:1401 src/protocols/irc/irc.c:1415
+#: src/protocols/irc/irc.c:1390 src/protocols/irc/irc.c:1396
+#: src/protocols/irc/irc.c:1402 src/protocols/irc/irc.c:1416
 msgid "IRC CTCP info"
 msgstr "IRC CTCP info"
 
-#: src/protocols/irc/irc.c:1425
+#: src/protocols/irc/irc.c:1426
 #, c-format
 msgid "%s would like to establish a DCC chat"
 msgstr "%s vorrebbe iniziare una chat DCC"
 
-#: src/protocols/irc/irc.c:1428
+#: src/protocols/irc/irc.c:1429
 msgid ""
 "This requires a direct connection to be established between the two "
 "computers.  Messages sent will not pass through the IRC server"
@@ -1268,80 +1269,80 @@ msgstr ""
 "Questo richiede l'instaurazione di una connessione diretta tra i due "
 "computer. I messaggi inviati non passeranno attraverso il server IRC."
 
-#: src/protocols/irc/irc.c:1432 src/protocols/oscar/oscar.c:2403
-#: src/protocols/oscar/oscar.c:5718
+#: src/protocols/irc/irc.c:1433 src/protocols/oscar/oscar.c:2403
+#: src/protocols/oscar/oscar.c:5720
 msgid "Connect"
 msgstr "Connetti"
 
-#: src/protocols/irc/irc.c:1459
+#: src/protocols/irc/irc.c:1460
 #, c-format
 msgid "Received an invalid file send request from %s."
 msgstr "Richiesta di invio file non valida ricevuta da %s."
 
-#: src/protocols/irc/irc.c:1540 src/protocols/msn/error.c:133
+#: src/protocols/irc/irc.c:1541 src/protocols/msn/error.c:133
 #: src/protocols/msn/notification.c:292 src/protocols/msn/notification.c:760
 msgid "Unable to write"
 msgstr "Impossibile scrivere"
 
-#: src/protocols/irc/irc.c:1602
+#: src/protocols/irc/irc.c:1603
 #, c-format
 msgid "You have been kicked from %s: %s"
 msgstr "Sei stato cacciato da %s: %s"
 
-#: src/protocols/irc/irc.c:1607
+#: src/protocols/irc/irc.c:1608
 #, c-format
 msgid "Kicked by %s: %s"
 msgstr "Cacciato da %s: %s"
 
-#: src/protocols/irc/irc.c:1663 src/protocols/irc/irc.c:2917
+#: src/protocols/irc/irc.c:1664 src/protocols/irc/irc.c:2918
 msgid "CTCP ClientInfo"
 msgstr "CTCP ClientInfo"
 
-#: src/protocols/irc/irc.c:1669 src/protocols/irc/irc.c:2923
+#: src/protocols/irc/irc.c:1670 src/protocols/irc/irc.c:2924
 msgid "CTCP UserInfo"
 msgstr "CTCP UserInfo"
 
-#: src/protocols/irc/irc.c:1675 src/protocols/irc/irc.c:2929
+#: src/protocols/irc/irc.c:1676 src/protocols/irc/irc.c:2930
 msgid "CTCP Version"
 msgstr "CTCP Version"
 
-#: src/protocols/irc/irc.c:1703 src/protocols/irc/irc.c:2935
+#: src/protocols/irc/irc.c:1704 src/protocols/irc/irc.c:2936
 msgid "CTCP Ping"
 msgstr "CTCP Ping"
 
-#: src/protocols/irc/irc.c:1948 src/protocols/oscar/oscar.c:678
+#: src/protocols/irc/irc.c:1949 src/protocols/oscar/oscar.c:678
 #: src/protocols/toc/toc.c:234
 #, c-format
 msgid "Signon: %s"
 msgstr "Connessione a: %s"
 
-#: src/protocols/irc/irc.c:1962 src/protocols/trepia/trepia.c:1148
+#: src/protocols/irc/irc.c:1963 src/protocols/trepia/trepia.c:1148
 msgid "Unable to create socket"
 msgstr "Impossibile creare il socket"
 
-#: src/protocols/irc/irc.c:2203
+#: src/protocols/irc/irc.c:2204
 #, c-format
 msgid "Topic for %s is %s"
 msgstr "L'argomento di %s è %s"
 
-#: src/protocols/irc/irc.c:2299
+#: src/protocols/irc/irc.c:2300
 #, c-format
 msgid "You have left %s"
 msgstr "Hai abbandonato %s"
 
-#: src/protocols/irc/irc.c:2300
+#: src/protocols/irc/irc.c:2301
 msgid "IRC Part"
 msgstr "IRC Part"
 
-#: src/protocols/irc/irc.c:2355
+#: src/protocols/irc/irc.c:2356
 msgid "<I>Requesting DCC CHAT</I>"
 msgstr "<I>Richiesta di una Chat DCC</I>"
 
-#: src/protocols/irc/irc.c:2372
+#: src/protocols/irc/irc.c:2373
 msgid "<B>Operator commands:<BR>REHASH RESTART</B>"
 msgstr "<B>Comandi dell'operatore:<BR>REHASH RESTART</B>"
 
-#: src/protocols/irc/irc.c:2377
+#: src/protocols/irc/irc.c:2378
 msgid ""
 "<B>CTCP commands:<BR>CLIENTINFO <nick><BR>USERINFO <nick><BR>VERSION "
 "<nick><BR>PING <nick></B><BR>"
@@ -1349,11 +1350,11 @@ msgstr ""
 "<B>Comandi CTCP:<BR>CLIENTINFO <nick><BR>USERINFO <nick><BR>VERSION "
 "<nick><BR>PING <nick></B><BR>"
 
-#: src/protocols/irc/irc.c:2385
+#: src/protocols/irc/irc.c:2386
 msgid "<B>DCC commands:<BR>CHAT <nick></B>"
 msgstr "<B>Comandi DCC:<BR>CHAT <nick></B>"
 
-#: src/protocols/irc/irc.c:2390
+#: src/protocols/irc/irc.c:2391
 msgid ""
 "<B>Currently supported commands:<BR>WHOIS INVITE NICK LIST<BR>JOIN PART "
 "TOPIC KICK<BR>OP DEOP VOICE DEVOICE<BR>ME MSG QUOTE SAY QUIT<BR>MODE VERSION "
@@ -1365,19 +1366,19 @@ msgstr ""
 "W WHOWAS<BR>Digita /HELP OPER per i comandi dell'operatore<BR>Digita /HELP "
 "CTCP per i comandi CTCP<BR>Digita /HELP DCC per i comandi DCC"
 
-#: src/protocols/irc/irc.c:2413
+#: src/protocols/irc/irc.c:2414
 msgid "<B>Unknown command</B>"
 msgstr "<B>Comando sconosciuto</B>"
 
-#: src/protocols/irc/irc.c:2473
+#: src/protocols/irc/irc.c:2474
 msgid "Channel:"
 msgstr "Canale:"
 
-#: src/protocols/irc/irc.c:2478 src/gtkaccount.c:425 src/main.c:399
+#: src/gtkaccount.c:422 src/main.c:309 src/protocols/irc/irc.c:2479
 msgid "Password:"
 msgstr "Password:"
 
-#: src/protocols/irc/irc.c:2904
+#: src/protocols/irc/irc.c:2905
 msgid "DCC Chat"
 msgstr "Chat DCC"
 
@@ -1391,18 +1392,18 @@ msgstr "Chat DCC"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/irc/irc.c:3010 src/protocols/irc/irc.c:3012
+#: src/protocols/irc/irc.c:3011 src/protocols/irc/irc.c:3013
 msgid "IRC Protocol Plugin"
 msgstr "Plugin per il Protocollo IRC"
 
 #. Account Options
-#: src/protocols/irc/irc.c:3034 src/protocols/jabber/jabber.c:4425
-#: src/protocols/msn/msn.c:1259 src/protocols/napster/napster.c:644
-#: src/protocols/trepia/trepia.c:1377 src/gtkprefs.c:1145
+#: src/gtkprefs.c:1145 src/protocols/irc/irc.c:3035
+#: src/protocols/jabber/jabber.c:4425 src/protocols/msn/msn.c:1259
+#: src/protocols/napster/napster.c:644 src/protocols/trepia/trepia.c:1377
 msgid "Port"
 msgstr "Porta"
 
-#: src/protocols/irc/irc.c:3038
+#: src/protocols/irc/irc.c:3039
 msgid "Encoding"
 msgstr "Codifica"
 
@@ -1454,8 +1455,8 @@ msgstr ""
 "La password inserita è uguale a quella corrente. La tua password rimane la "
 "stessa."
 
-#: src/protocols/jabber/jabber.c:1169 src/blist.c:794 src/gtkaccount.c:142
-#: src/gtkpounce.c:307
+#: src/blist.c:794 src/gtkaccount.c:139 src/gtkpounce.c:307
+#: src/protocols/jabber/jabber.c:1169
 msgid "Unknown"
 msgstr "Sconosciuto"
 
@@ -1472,7 +1473,7 @@ msgstr "Ancora Assente"
 
 #: src/protocols/jabber/jabber.c:1182 src/protocols/jabber/jabber.c:3439
 #: src/protocols/jabber/jabber.c:3499 src/protocols/oscar/oscar.c:2819
-#: src/protocols/oscar/oscar.c:4551 src/protocols/oscar/oscar.c:5842
+#: src/protocols/oscar/oscar.c:4551 src/protocols/oscar/oscar.c:5844
 msgid "Do Not Disturb"
 msgstr "Non Disturbare"
 
@@ -1508,9 +1509,9 @@ msgid "No such user."
 msgstr "Utente sconosciuto."
 
 #. Should never happen.
-#: src/protocols/jabber/jabber.c:1831 src/protocols/msn/notification.c:87
-#: src/protocols/msn/notification.c:88 src/protocols/msn/notification.c:644
-#: src/blist.c:502 src/dialogs.c:855
+#: src/blist.c:502 src/dialogs.c:855 src/protocols/jabber/jabber.c:1831
+#: src/protocols/msn/notification.c:87 src/protocols/msn/notification.c:88
+#: src/protocols/msn/notification.c:644
 msgid "Buddies"
 msgstr "Contatti"
 
@@ -1590,7 +1591,7 @@ msgid "Status"
 msgstr "Stato"
 
 #: src/protocols/jabber/jabber.c:3350 src/protocols/jabber/jabber.c:3372
-#: src/protocols/oscar/oscar.c:5455
+#: src/protocols/oscar/oscar.c:5457
 msgid "Not Authorized"
 msgstr "Non Autorizzato"
 
@@ -1598,7 +1599,7 @@ msgstr "Non Autorizzato"
 msgid "View Error Msg"
 msgstr "Visualizza il Messaggio di Errore"
 
-#: src/protocols/jabber/jabber.c:3397 src/gtkconv.c:1099
+#: src/gtkconv.c:1099 src/protocols/jabber/jabber.c:3397
 msgid "Get Away Msg"
 msgstr "Messaggio di Assente"
 
@@ -1619,11 +1620,11 @@ msgid "Re-request authorization"
 msgstr "Richiedi nuovamente l'autorizzazione"
 
 #. state is one of our own strings. it won't be NULL.
-#: src/protocols/jabber/jabber.c:3435 src/protocols/jabber/jabber.c:3485
-#: src/protocols/oscar/oscar.c:2831 src/protocols/oscar/oscar.c:4546
-#: src/protocols/oscar/oscar.c:5840 src/protocols/yahoo/yahoo.c:1075
-#: src/protocols/zephyr/zephyr.c:866 src/protocols/zephyr/zephyr.c:876
-#: src/gtkaccount.c:1580
+#: src/gtkaccount.c:1577 src/protocols/jabber/jabber.c:3435
+#: src/protocols/jabber/jabber.c:3485 src/protocols/oscar/oscar.c:2831
+#: src/protocols/oscar/oscar.c:4546 src/protocols/oscar/oscar.c:5842
+#: src/protocols/yahoo/yahoo.c:1075 src/protocols/zephyr/zephyr.c:866
+#: src/protocols/zephyr/zephyr.c:876
 msgid "Online"
 msgstr "Online"
 
@@ -1643,7 +1644,7 @@ msgstr "Soprannome"
 msgid "Nickname"
 msgstr "Nickname"
 
-#: src/protocols/jabber/jabber.c:3629 src/dialogs.c:2896
+#: src/dialogs.c:2896 src/protocols/jabber/jabber.c:3629
 msgid "URL"
 msgstr "Sito Web"
 
@@ -1668,8 +1669,8 @@ msgid "Postal Code"
 msgstr "Codice Postale"
 
 #. Country
-#: src/protocols/jabber/jabber.c:3635 src/protocols/trepia/trepia.c:372
-#: src/dialogs.c:2057 src/dialogs.c:2702
+#: src/dialogs.c:2057 src/dialogs.c:2702 src/protocols/jabber/jabber.c:3635
+#: src/protocols/trepia/trepia.c:372
 msgid "Country"
 msgstr "Paese"
 
@@ -1677,7 +1678,7 @@ msgstr "Paese"
 msgid "Telephone"
 msgstr "Telefono"
 
-#: src/protocols/jabber/jabber.c:3637 src/dialogs.c:2760
+#: src/dialogs.c:2760 src/protocols/jabber/jabber.c:3637
 msgid "Email"
 msgstr "Email"
 
@@ -1701,8 +1702,8 @@ msgstr "Ruolo"
 msgid "Birthday"
 msgstr "Compleanno"
 
-#: src/protocols/jabber/jabber.c:3643 src/dialogs.c:2906 src/gtkprefs.c:604
-#: src/gtkprefs.c:1840
+#: src/dialogs.c:2906 src/gtkprefs.c:604 src/gtkprefs.c:1840
+#: src/protocols/jabber/jabber.c:3643
 msgid "Description"
 msgstr "Descrizione"
 
@@ -1730,8 +1731,8 @@ msgstr "Registrazione al Server avvenuta con successo!"
 msgid "Unknown registration error"
 msgstr "Errore di registrazione sconosciuto"
 
-#: src/protocols/jabber/jabber.c:4308 src/protocols/oscar/oscar.c:6096
-#: src/protocols/toc/toc.c:1462 src/dialogs.c:2232
+#: src/dialogs.c:2232 src/protocols/jabber/jabber.c:4308
+#: src/protocols/oscar/oscar.c:6098 src/protocols/toc/toc.c:1462
 msgid "Set User Info"
 msgstr "Imposta le Informazioni Utente"
 
@@ -2015,8 +2016,8 @@ msgstr "Invia un messaggio ad un telefonino."
 msgid "Page"
 msgstr "Page"
 
-#: src/protocols/msn/msn.c:236 src/about.c:151 src/dialogs.c:4231
-#: src/gtkrequest.c:173 src/server.c:1458
+#: src/about.c:151 src/dialogs.c:4231 src/gtkrequest.c:173
+#: src/protocols/msn/msn.c:236 src/server.c:1458
 msgid "Close"
 msgstr "Chiudi"
 
@@ -2194,8 +2195,8 @@ msgstr ""
 "\n"
 "Quando la manutenzione sarà terminata, potrai collegarti nuovamente."
 
-#: src/protocols/msn/state.c:30 src/protocols/yahoo/yahoo.c:1073
-#: src/gtkpounce.c:464 src/gtkprefs.c:1532
+#: src/gtkpounce.c:464 src/gtkprefs.c:1532 src/protocols/msn/state.c:30
+#: src/protocols/yahoo/yahoo.c:1073
 msgid "Idle"
 msgstr "Inattivo"
 
@@ -2250,7 +2251,7 @@ msgstr ""
 msgid "%s requested a PING"
 msgstr "%s ha richiesto un PING"
 
-#: src/protocols/napster/napster.c:531 src/gtkblist.c:1572
+#: src/gtkblist.c:1573 src/protocols/napster/napster.c:531
 msgid "Get Info"
 msgstr "Info"
 
@@ -2483,7 +2484,7 @@ msgstr ""
 msgid "Gaim was Unable to get a valid login hash."
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1898 src/protocols/oscar/oscar.c:5556
+#: src/protocols/oscar/oscar.c:1898 src/protocols/oscar/oscar.c:5558
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "IM diretto con %s avviato"
@@ -2684,17 +2685,17 @@ msgstr[0] "Non hai ricevuto %hu messaggio da %s per un motivo sconosciuto"
 msgstr[1] "Non hai ricevuto %hu messaggi da %s per un motivo sconosciuto"
 
 #: src/protocols/oscar/oscar.c:2817 src/protocols/oscar/oscar.c:4560
-#: src/protocols/oscar/oscar.c:5845
+#: src/protocols/oscar/oscar.c:5847
 msgid "Free For Chat"
 msgstr "Disponibile alla Chat"
 
 #: src/protocols/oscar/oscar.c:2821 src/protocols/oscar/oscar.c:4554
-#: src/protocols/oscar/oscar.c:5843
+#: src/protocols/oscar/oscar.c:5845
 msgid "Not Available"
 msgstr "Non Disponibile"
 
 #: src/protocols/oscar/oscar.c:2823 src/protocols/oscar/oscar.c:4557
-#: src/protocols/oscar/oscar.c:5844
+#: src/protocols/oscar/oscar.c:5846
 msgid "Occupied"
 msgstr "Occupato"
 
@@ -2732,7 +2733,7 @@ msgstr "Il tuo messaggio a %s non è stato spedito:"
 msgid "User information for %s unavailable:"
 msgstr "Informazioni sull'utente %s non disponibili:"
 
-#: src/protocols/oscar/oscar.c:3070 src/gtkaccount.c:280
+#: src/gtkaccount.c:277 src/protocols/oscar/oscar.c:3070
 msgid "Buddy Icon"
 msgstr "Icona del Contatto"
 
@@ -2740,19 +2741,19 @@ msgstr "Icona del Contatto"
 msgid "Voice"
 msgstr "Voce"
 
-#: src/protocols/oscar/oscar.c:3076 src/protocols/oscar/oscar.c:5874
+#: src/protocols/oscar/oscar.c:3076 src/protocols/oscar/oscar.c:5876
 msgid "Direct IM"
 msgstr "Messaggio Istantaneo Diretto"
 
-#: src/protocols/oscar/oscar.c:3079 src/gtkblist.c:1581
+#: src/gtkblist.c:1582 src/protocols/oscar/oscar.c:3079
 msgid "Chat"
 msgstr "Chat"
 
-#: src/protocols/oscar/oscar.c:3082 src/protocols/oscar/oscar.c:5890
+#: src/protocols/oscar/oscar.c:3082 src/protocols/oscar/oscar.c:5892
 msgid "Get File"
 msgstr "Ricevi il File"
 
-#: src/protocols/oscar/oscar.c:3085 src/protocols/oscar/oscar.c:5882
+#: src/protocols/oscar/oscar.c:3085 src/protocols/oscar/oscar.c:5884
 msgid "Send File"
 msgstr "Invia il File"
 
@@ -3240,32 +3241,32 @@ msgstr "<b>Connesso:<b>"
 msgid "<b>Capabilities:</b> "
 msgstr "<b>Capacità:</b> "
 
-#: src/protocols/oscar/oscar.c:5415
+#: src/protocols/oscar/oscar.c:5416
 msgid "<b>Available:</b> "
 msgstr "<b>Disponibile:</b> "
 
-#: src/protocols/oscar/oscar.c:5423
+#: src/protocols/oscar/oscar.c:5425
 msgid "<b>Status:</b> Not Authorized"
 msgstr "<b>Stato:</b> Non Autorizzato"
 
-#: src/protocols/oscar/oscar.c:5427 src/gtkblist.c:895
+#: src/gtkblist.c:896 src/protocols/oscar/oscar.c:5429
 msgid "<b>Status:</b> Offline"
 msgstr "<b>Stato:</b> Non Connesso"
 
-#: src/protocols/oscar/oscar.c:5457
+#: src/protocols/oscar/oscar.c:5459
 msgid "Offline"
 msgstr "Non Connesso"
 
-#: src/protocols/oscar/oscar.c:5698
+#: src/protocols/oscar/oscar.c:5700
 msgid "Unable to open Direct IM"
 msgstr "Impossibile aprire un IM diretto"
 
-#: src/protocols/oscar/oscar.c:5711
+#: src/protocols/oscar/oscar.c:5713
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
 msgstr "Hai scelto di aprire una connessione IM diretta con %s."
 
-#: src/protocols/oscar/oscar.c:5714
+#: src/protocols/oscar/oscar.c:5716
 msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
@@ -3273,41 +3274,41 @@ msgstr ""
 "Poiché questo rivela il tuo indirizzo IP, deve essere considerato un rischio "
 "per la privacy. Vuoi continuare?"
 
-#: src/protocols/oscar/oscar.c:5859
+#: src/protocols/oscar/oscar.c:5861
 msgid "Get Status Msg"
 msgstr "Ottieni Messaggio di Stato"
 
-#: src/protocols/oscar/oscar.c:5903
+#: src/protocols/oscar/oscar.c:5905
 msgid "Re-request Authorization"
 msgstr "Richiedi nuovamente l'Autorizzazione"
 
-#: src/protocols/oscar/oscar.c:5924
+#: src/protocols/oscar/oscar.c:5926
 msgid "The new formatting is invalid."
 msgstr "La nuova formattazione non è valida."
 
-#: src/protocols/oscar/oscar.c:5925
+#: src/protocols/oscar/oscar.c:5927
 msgid "Screenname formatting can change only capitalization and whitespace."
 msgstr ""
 "La formattazione del nome utente può modificare solo le maiuscole/minuscole "
 "e gli spazi bianchi."
 
-#: src/protocols/oscar/oscar.c:5931
+#: src/protocols/oscar/oscar.c:5933
 msgid "New screenname formatting:"
 msgstr "Nuova formattazione del nome utente:"
 
-#: src/protocols/oscar/oscar.c:5980
+#: src/protocols/oscar/oscar.c:5982
 msgid "Change Address To:"
 msgstr "Cambia l'Indirizzo in:"
 
-#: src/protocols/oscar/oscar.c:5994
+#: src/protocols/oscar/oscar.c:5996
 msgid "You are awaiting authorization from the following buddies:<BR>"
 msgstr "Stai attendendo autorizzazione dai seguenti contatti:<BR>"
 
-#: src/protocols/oscar/oscar.c:6019
+#: src/protocols/oscar/oscar.c:6021
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>non stai attendendo nessuna autorizzazione</i>"
 
-#: src/protocols/oscar/oscar.c:6024
+#: src/protocols/oscar/oscar.c:6026
 #, c-format
 msgid ""
 "%s<BR><BR>You can re-request authorization from these buddies by right-"
@@ -3317,43 +3318,43 @@ msgstr ""
 "cliccando col tasto destro su di essi e scegliendo \"Richiedi nuovamente "
 "autorizzazione\""
 
-#: src/protocols/oscar/oscar.c:6040
+#: src/protocols/oscar/oscar.c:6042
 msgid "Available Message:"
 msgstr "Messaggio di Disponibile:"
 
-#: src/protocols/oscar/oscar.c:6041
+#: src/protocols/oscar/oscar.c:6043
 msgid "Please talk to me, I'm lonely! (and single)"
 msgstr "Parla con me! Sono solo (e single)"
 
-#: src/protocols/oscar/oscar.c:6103
+#: src/protocols/oscar/oscar.c:6105
 msgid "Set Available Message"
 msgstr "Imposta un Messaggio di Disponibile"
 
-#: src/protocols/oscar/oscar.c:6117
+#: src/protocols/oscar/oscar.c:6119
 msgid "Change Password (URL)"
 msgstr "Cambia Password (URL)"
 
-#: src/protocols/oscar/oscar.c:6128
+#: src/protocols/oscar/oscar.c:6130
 msgid "Format Screenname"
 msgstr "Formatta il Nome Utente"
 
-#: src/protocols/oscar/oscar.c:6134
+#: src/protocols/oscar/oscar.c:6136
 msgid "Confirm Account"
 msgstr "Conferma l'Account"
 
-#: src/protocols/oscar/oscar.c:6140
+#: src/protocols/oscar/oscar.c:6142
 msgid "Display Current Registered Address"
 msgstr "Mostra l'Indirizzo Registrato Attuale"
 
-#: src/protocols/oscar/oscar.c:6146
+#: src/protocols/oscar/oscar.c:6148
 msgid "Change Current Registered Address"
 msgstr "Modifica l'Indirizzo Registrato Attuale"
 
-#: src/protocols/oscar/oscar.c:6155
+#: src/protocols/oscar/oscar.c:6157
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Mostra i Contatti dai quali attendi Autorizzazione"
 
-#: src/protocols/oscar/oscar.c:6163
+#: src/protocols/oscar/oscar.c:6165
 msgid "Search for Buddy by Email"
 msgstr "Cerca un Contatto per Email"
 
@@ -3367,15 +3368,15 @@ msgstr "Cerca un Contatto per Email"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/oscar/oscar.c:6284 src/protocols/oscar/oscar.c:6286
+#: src/protocols/oscar/oscar.c:6286 src/protocols/oscar/oscar.c:6288
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "Plugin per il Protocollo AIM/ICQ"
 
-#: src/protocols/oscar/oscar.c:6303
+#: src/protocols/oscar/oscar.c:6305
 msgid "Auth host"
 msgstr "Host Auth"
 
-#: src/protocols/oscar/oscar.c:6308
+#: src/protocols/oscar/oscar.c:6310
 msgid "Auth port"
 msgstr "Porta Auth"
 
@@ -3566,7 +3567,7 @@ msgstr "Impossibile connettersi per il trasferimento!"
 msgid "Could not write file header.  The file will not be transferred."
 msgstr "Impossibile scrivere l'header del file. Il file non verrà inviato."
 
-#: src/protocols/toc/toc.c:1969 src/gtkft.c:1060
+#: src/gtkft.c:1060 src/protocols/toc/toc.c:1969
 msgid "Gaim - Save As..."
 msgstr "Gaim - Salva con Nome..."
 
@@ -3610,12 +3611,12 @@ msgid "Basic Profile"
 msgstr "Profilo di Base"
 
 #. First Name
-#: src/protocols/trepia/trepia.c:300 src/dialogs.c:1990 src/dialogs.c:2644
+#: src/dialogs.c:1990 src/dialogs.c:2644 src/protocols/trepia/trepia.c:300
 msgid "First Name"
 msgstr "Nome"
 
 #. Last Name
-#: src/protocols/trepia/trepia.c:307 src/dialogs.c:2013 src/dialogs.c:2664
+#: src/dialogs.c:2013 src/dialogs.c:2664 src/protocols/trepia/trepia.c:307
 msgid "Last Name"
 msgstr "Cognome"
 
@@ -3674,7 +3675,7 @@ msgid "I'm From"
 msgstr "Sono di"
 
 #. State
-#: src/protocols/trepia/trepia.c:368 src/dialogs.c:2046 src/dialogs.c:2693
+#: src/dialogs.c:2046 src/dialogs.c:2693 src/protocols/trepia/trepia.c:368
 msgid "State"
 msgstr "Stato"
 
@@ -3683,9 +3684,8 @@ msgstr "Stato"
 msgid "Set your Trepia profile data."
 msgstr "Imposta il tuo profilo Trepia"
 
-#: src/protocols/trepia/trepia.c:379 src/dialogs.c:2088 src/dialogs.c:2269
-#: src/dialogs.c:3435 src/dialogs.c:4240 src/dialogs.c:4878
-#: src/gtkrequest.c:177
+#: src/dialogs.c:2088 src/dialogs.c:2269 src/dialogs.c:3435 src/dialogs.c:4240
+#: src/dialogs.c:4878 src/gtkrequest.c:177 src/protocols/trepia/trepia.c:379
 msgid "Save"
 msgstr "Salva"
 
@@ -4222,7 +4222,7 @@ msgstr ""
 msgid "Account:"
 msgstr "Account:"
 
-#: src/dialogs.c:1391 src/gtkaccount.c:430
+#: src/dialogs.c:1391 src/gtkaccount.c:427
 msgid "Alias:"
 msgstr "Alias:"
 
@@ -4617,28 +4617,28 @@ msgstr ""
 msgid "sorry, i ran out for a while. bbl"
 msgstr "Mi assento per un po'."
 
-#: src/gaimrc.c:364 src/gaimrc.c:1515
+#: src/gaimrc.c:364 src/gaimrc.c:1596
 msgid "boring default"
 msgstr "default"
 
-#: src/gaimrc.c:1179 src/gtkblist.c:1392
+#: src/gaimrc.c:1260 src/gtkblist.c:1393
 msgid "Alphabetical"
 msgstr "Alfabetico"
 
-#: src/gaimrc.c:1181 src/gtkblist.c:1393
+#: src/gaimrc.c:1262 src/gtkblist.c:1394
 msgid "By status"
 msgstr "Per stato"
 
-#: src/gaimrc.c:1183 src/gtkblist.c:1394
+#: src/gaimrc.c:1264 src/gtkblist.c:1395
 msgid "By log size"
 msgstr "Per dimensione del log"
 
-#: src/gaimrc.c:1613
+#: src/gaimrc.c:1694
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Impossibile aprire il file di configurazione %s."
 
-#: src/gtkaccount.c:255
+#: src/gtkaccount.c:252
 #, c-format
 msgid ""
 "<b>File:</b> %s\n"
@@ -4650,293 +4650,293 @@ msgstr ""
 "<b>Dimensione dell'immagine:</b> %dx%d"
 
 #. Build the login options frame.
-#: src/gtkaccount.c:330
+#: src/gtkaccount.c:327
 msgid "Login Options"
 msgstr "Opzioni di Login"
 
-#: src/gtkaccount.c:347
+#: src/gtkaccount.c:344
 msgid "Protocol:"
 msgstr "Protocollo:"
 
-#: src/gtkaccount.c:352
+#: src/gtkaccount.c:349
 msgid "Screenname:"
 msgstr "Nome Utente:"
 
-#: src/gtkaccount.c:434
+#: src/gtkaccount.c:431
 msgid "Remember password"
 msgstr "Ricorda la Password"
 
 #. Build the user options frame.
-#: src/gtkaccount.c:488
+#: src/gtkaccount.c:485
 msgid "User Options"
 msgstr "Opzioni Utente"
 
-#: src/gtkaccount.c:501
+#: src/gtkaccount.c:498
 msgid "New mail notifications"
 msgstr "Notifica i Nuovi Messaggi di Posta"
 
-#: src/gtkaccount.c:510
+#: src/gtkaccount.c:507
 msgid "Buddy icon file:"
 msgstr "File per l'Icona del Contatto:"
 
-#: src/gtkaccount.c:519
+#: src/gtkaccount.c:516
 msgid "_Browse"
 msgstr "_Sfoglia"
 
-#: src/gtkaccount.c:525
+#: src/gtkaccount.c:522
 msgid "_Reset"
 msgstr "_Pulisci"
 
 #. Build the protocol options frame.
-#: src/gtkaccount.c:586
+#: src/gtkaccount.c:583
 #, c-format
 msgid "%s Options"
 msgstr "Opzioni %s"
 
 #. Use Global Proxy Settings
-#: src/gtkaccount.c:707
+#: src/gtkaccount.c:704
 msgid "Use Global Proxy Settings"
 msgstr "Utilizza le Opzioni Globali del Proxy"
 
 #. No Proxy
-#: src/gtkaccount.c:714
+#: src/gtkaccount.c:711
 msgid "No Proxy"
 msgstr "Nessun Proxy"
 
 #. HTTP
-#: src/gtkaccount.c:721
+#: src/gtkaccount.c:718
 msgid "HTTP"
 msgstr "HTTP"
 
 #. SOCKS 4
-#: src/gtkaccount.c:728
+#: src/gtkaccount.c:725
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 #. SOCKS 5
-#: src/gtkaccount.c:735
+#: src/gtkaccount.c:732
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
-#: src/gtkaccount.c:767
+#: src/gtkaccount.c:764
 msgid "you can see the butterflies mating"
 msgstr ""
 
-#: src/gtkaccount.c:771
+#: src/gtkaccount.c:768
 msgid "If you look real closely"
 msgstr ""
 
-#: src/gtkaccount.c:787
+#: src/gtkaccount.c:784
 msgid "Proxy Options"
 msgstr "Opzioni del Proxy"
 
-#: src/gtkaccount.c:803 src/gtkprefs.c:1100
+#: src/gtkaccount.c:800 src/gtkprefs.c:1100
 msgid "Proxy _type:"
 msgstr "_Tipo di proxy:"
 
-#: src/gtkaccount.c:812
+#: src/gtkaccount.c:809
 msgid "_Host:"
 msgstr "_Host:"
 
-#: src/gtkaccount.c:816
+#: src/gtkaccount.c:813
 msgid "_Port:"
 msgstr "_Porta:"
 
-#: src/gtkaccount.c:824
+#: src/gtkaccount.c:821
 msgid "_Username:"
 msgstr "Nome _Utente:"
 
-#: src/gtkaccount.c:829
+#: src/gtkaccount.c:826
 msgid "Pa_ssword:"
 msgstr "Pa_ssword:"
 
-#: src/gtkaccount.c:1142
+#: src/gtkaccount.c:1139
 msgid "Add Account"
 msgstr "Aggiungi un Account"
 
-#: src/gtkaccount.c:1144
+#: src/gtkaccount.c:1141
 msgid "Modify Account"
 msgstr "Modifica l'Account"
 
 #. Add the disclosure
-#: src/gtkaccount.c:1168
+#: src/gtkaccount.c:1165
 msgid "Show more options"
 msgstr "Mostra più opzioni"
 
-#: src/gtkaccount.c:1169
+#: src/gtkaccount.c:1166
 msgid "Show fewer options"
 msgstr "Mostra meno opzioni"
 
 #. Register button
-#: src/gtkaccount.c:1196
+#: src/gtkaccount.c:1193
 msgid "Register"
 msgstr "Iscriviti"
 
-#: src/gtkaccount.c:1475
+#: src/gtkaccount.c:1472
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Sei sicuro di voler eliminare %s?"
 
-#: src/gtkaccount.c:1479 src/gtkrequest.c:174
+#: src/gtkaccount.c:1476 src/gtkrequest.c:174
 msgid "Delete"
 msgstr "Elimina"
 
-#: src/gtkaccount.c:1557
+#: src/gtkaccount.c:1554
 msgid "Screenname"
 msgstr "Nome Utente"
 
-#: src/gtkaccount.c:1598
+#: src/gtkaccount.c:1595
 msgid "Protocol"
 msgstr "Protocollo"
 
-#: src/gtkblist.c:409
+#: src/gtkblist.c:410
 msgid "Add a _Buddy"
 msgstr "_Aggiungi un Contatto"
 
-#: src/gtkblist.c:411
+#: src/gtkblist.c:412
 msgid "Add a C_hat"
 msgstr "Aggiungi una C_hat"
 
-#: src/gtkblist.c:413
+#: src/gtkblist.c:414
 msgid "_Delete Group"
 msgstr "_Elimina il Gruppo"
 
-#: src/gtkblist.c:415
+#: src/gtkblist.c:416
 msgid "_Rename"
 msgstr "_Rinomina"
 
-#: src/gtkblist.c:423
+#: src/gtkblist.c:424
 msgid "_Join"
 msgstr "_Entra"
 
-#: src/gtkblist.c:425
+#: src/gtkblist.c:426
 msgid "Auto-Join"
 msgstr "Entra Automaticamente"
 
-#: src/gtkblist.c:428 src/gtkblist.c:474
+#: src/gtkblist.c:429 src/gtkblist.c:475
 msgid "_Alias"
 msgstr "_Alias"
 
-#: src/gtkblist.c:430 src/gtkblist.c:476
+#: src/gtkblist.c:431 src/gtkblist.c:477
 msgid "_Remove"
 msgstr "_Rimuovi"
 
-#: src/gtkblist.c:448
+#: src/gtkblist.c:449
 msgid "_Get Info"
 msgstr "_Info"
 
-#: src/gtkblist.c:451
+#: src/gtkblist.c:452
 msgid "_IM"
 msgstr "_Messaggio"
 
-#: src/gtkblist.c:453
+#: src/gtkblist.c:454
 msgid "Add Buddy _Pounce"
 msgstr "Aggiungi un _Allarme"
 
-#: src/gtkblist.c:455
+#: src/gtkblist.c:456
 msgid "View _Log"
 msgstr "Mostra il _Log"
 
 #. Buddies menu
-#: src/gtkblist.c:780
+#: src/gtkblist.c:781
 msgid "/_Buddies"
 msgstr "/_Contatti"
 
-#: src/gtkblist.c:781
+#: src/gtkblist.c:782
 msgid "/Buddies/New _Instant Message..."
 msgstr "/Contatti/Nuovo _Messaggio..."
 
-#: src/gtkblist.c:782
+#: src/gtkblist.c:783
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Contatti/Entra in _Chat..."
 
-#: src/gtkblist.c:783
+#: src/gtkblist.c:784
 msgid "/Buddies/Get _User Info..."
 msgstr "/Contatti/_Informazioni su un Contatto..."
 
-#: src/gtkblist.c:785
+#: src/gtkblist.c:786
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Contatti/Mostra i Contatti non in linea"
 
-#: src/gtkblist.c:786
+#: src/gtkblist.c:787
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Contatti/Mostra i Gruppi _Vuoti"
 
-#: src/gtkblist.c:787
+#: src/gtkblist.c:788
 msgid "/Buddies/_Add a Buddy..."
 msgstr "/Contatti/_Aggiungi un Contatto..."
 
-#: src/gtkblist.c:788
+#: src/gtkblist.c:789
 msgid "/Buddies/Add a C_hat..."
 msgstr "/Contatti/Aggiungi una C_hat"
 
-#: src/gtkblist.c:789
+#: src/gtkblist.c:790
 msgid "/Buddies/Add a _Group..."
 msgstr "/Contatti/Aggiungi un _Gruppo"
 
-#: src/gtkblist.c:791
+#: src/gtkblist.c:792
 msgid "/Buddies/_Signoff"
 msgstr "/Contatti/_Disconnetti"
 
-#: src/gtkblist.c:792
+#: src/gtkblist.c:793
 msgid "/Buddies/_Quit"
 msgstr "/Contatti/_Esci"
 
 #. Tools
-#: src/gtkblist.c:795
+#: src/gtkblist.c:796
 msgid "/_Tools"
 msgstr "/_Strumenti"
 
-#: src/gtkblist.c:796
+#: src/gtkblist.c:797
 msgid "/Tools/_Away"
 msgstr "/Strumenti/_Assente"
 
-#: src/gtkblist.c:797
+#: src/gtkblist.c:798
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Strumenti/A_llarmi"
 
-#: src/gtkblist.c:798
+#: src/gtkblist.c:799
 msgid "/Tools/P_rotocol Actions"
 msgstr "/Strumenti/Azioni di P_rotocollo"
 
-#: src/gtkblist.c:800
+#: src/gtkblist.c:801
 msgid "/Tools/A_ccounts"
 msgstr "/Strumenti/A_ccount"
 
-#: src/gtkblist.c:801
+#: src/gtkblist.c:802
 msgid "/Tools/_File Transfers..."
 msgstr "/Strumenti/Trasferimento _File..."
 
-#: src/gtkblist.c:802
+#: src/gtkblist.c:803
 msgid "/Tools/Preferences"
 msgstr "/Strumenti/_Preferenze"
 
-#: src/gtkblist.c:803
+#: src/gtkblist.c:804
 msgid "/Tools/Pr_ivacy"
 msgstr "/Strumenti/Pr_ivacy"
 
-#: src/gtkblist.c:805
+#: src/gtkblist.c:806
 msgid "/Tools/View System _Log"
 msgstr "/Strumenti/Mostra il _Log di Sistema"
 
 #. Help
-#: src/gtkblist.c:808
+#: src/gtkblist.c:809
 msgid "/_Help"
 msgstr "/_Aiuto"
 
-#: src/gtkblist.c:809
+#: src/gtkblist.c:810
 msgid "/Help/Online _Help"
 msgstr "/Aiuto/_Help Online"
 
-#: src/gtkblist.c:810
+#: src/gtkblist.c:811
 msgid "/Help/_Debug Window"
 msgstr "/Aiuto/Finestra di _Debug"
 
-#: src/gtkblist.c:811
+#: src/gtkblist.c:812
 msgid "/Help/_About"
 msgstr "/Aiuto/_A proposito..."
 
-#: src/gtkblist.c:845
+#: src/gtkblist.c:846
 #, c-format
 msgid ""
 "\n"
@@ -4945,36 +4945,36 @@ msgstr ""
 "\n"
 "<b>Account:</b> %s"
 
-#: src/gtkblist.c:907
+#: src/gtkblist.c:908
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:921
-msgid ""
-"\n"
-"<b>Account:</b>"
-msgstr ""
-"\n"
-"<b>Account:</b>"
-
 #: src/gtkblist.c:922
 msgid ""
 "\n"
-"<b>Alias:</b>"
+"<b>Account:</b>"
 msgstr ""
 "\n"
-"<b>Alias:</b>"
+"<b>Account:</b>"
 
 #: src/gtkblist.c:923
 msgid ""
 "\n"
+"<b>Alias:</b>"
+msgstr ""
+"\n"
+"<b>Alias:</b>"
+
+#: src/gtkblist.c:924
+msgid ""
+"\n"
 "<b>Nickname:</b>"
 msgstr ""
 "\n"
 "<b>Nickname:</b>"
 
-#: src/gtkblist.c:924
+#: src/gtkblist.c:925
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -4982,7 +4982,7 @@ msgstr ""
 "\n"
 "<b>Inattivo:</b>"
 
-#: src/gtkblist.c:925
+#: src/gtkblist.c:926
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -4990,7 +4990,7 @@ msgstr ""
 "\n"
 "<b>Richiamato:</b>"
 
-#: src/gtkblist.c:927
+#: src/gtkblist.c:928
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -4998,7 +4998,7 @@ msgstr ""
 "\n"
 "<b>Descrizione:</b> Spettrale"
 
-#: src/gtkblist.c:928
+#: src/gtkblist.c:929
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -5006,7 +5006,7 @@ msgstr ""
 "\n"
 "<b>Stato</b>: Impressionante"
 
-#: src/gtkblist.c:929
+#: src/gtkblist.c:930
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -5014,77 +5014,77 @@ msgstr ""
 "\n"
 "<b>Stato</b>: Rockin'"
 
-#: src/gtkblist.c:1226
+#: src/gtkblist.c:1227
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Inattivo (%dh%02dm) "
 
-#: src/gtkblist.c:1228
+#: src/gtkblist.c:1229
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Inattivo (%dm) "
 
-#: src/gtkblist.c:1232
+#: src/gtkblist.c:1233
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Richiamato (%d%%)"
 
-#: src/gtkblist.c:1235
+#: src/gtkblist.c:1236
 msgid "Offline "
 msgstr "Non Connesso "
 
-#: src/gtkblist.c:1391 src/gtkprefs.c:845 src/gtkprefs.c:1535
+#: src/gtkblist.c:1392 src/gtkprefs.c:845 src/gtkprefs.c:1535
 msgid "None"
 msgstr "Nessuno"
 
-#: src/gtkblist.c:1430 src/gtkprefs.c:2289
+#: src/gtkblist.c:1431 src/gtkprefs.c:2289
 msgid "Buddy List"
 msgstr "Lista Contatti"
 
-#: src/gtkblist.c:1454
+#: src/gtkblist.c:1455
 msgid "/Tools/Away"
 msgstr "/Strumenti/Assente"
 
-#: src/gtkblist.c:1457
+#: src/gtkblist.c:1458
 msgid "/Tools/Buddy Pounce"
 msgstr "/Strumenti/Allarmi"
 
-#: src/gtkblist.c:1460
+#: src/gtkblist.c:1461
 msgid "/Tools/Protocol Actions"
 msgstr "/Strumenti/Azioni di Protocollo"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:1543
+#: src/gtkblist.c:1544
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Contatti/Mostra i Contatti non in linea"
 
-#: src/gtkblist.c:1545
+#: src/gtkblist.c:1546
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Contatti/Mostra i Gruppi Vuoti"
 
-#: src/gtkblist.c:1563 src/gtkconv.c:1071
+#: src/gtkblist.c:1564 src/gtkconv.c:1071
 msgid "IM"
 msgstr "Messaggio"
 
-#: src/gtkblist.c:1569
+#: src/gtkblist.c:1570
 msgid "Send a message to the selected buddy"
 msgstr "Invia un messaggio al contatto selezionato"
 
-#: src/gtkblist.c:1578
+#: src/gtkblist.c:1579
 msgid "Get information on the selected buddy"
 msgstr "Informazioni sul contatto selezionato"
 
-#: src/gtkblist.c:1586
+#: src/gtkblist.c:1587
 msgid "Join a chat room"
 msgstr "Entra in una chat room"
 
-#: src/gtkblist.c:1594
+#: src/gtkblist.c:1595
 msgid "Set an away message"
 msgstr "Imposta un messaggio di assente"
 
-#: src/gtkblist.c:2584
+#: src/gtkblist.c:2585
 msgid "No actions available"
 msgstr "Nessuna azione disponibile"
 
@@ -6639,23 +6639,23 @@ msgstr "%s (%s) ha riportato che %s è diventato inattivo %s"
 msgid "%s (%s) reported that %s returned from idle @ %s"
 msgstr "%s (%s) ha riportato che %s è ritornato attivo %s"
 
-#: src/main.c:235
+#: src/main.c:145
 msgid "Please enter your login."
 msgstr "Inserisci il nome utente."
 
-#: src/main.c:323
+#: src/main.c:233
 msgid "<New User>"
 msgstr "<Nuovo Utente>"
 
-#: src/main.c:365
+#: src/main.c:275
 msgid "Login"
 msgstr "Login"
 
-#: src/main.c:381
+#: src/main.c:291
 msgid "Screen Name:"
 msgstr "Nome Utente:"
 
-#: src/main.c:431
+#: src/main.c:341
 msgid "Sign On"
 msgstr "Connetti"
 
