@@ -435,6 +435,7 @@ out_cmd(MsnServConn *servconn, const char *command, const char **params,
 	GaimConnection *gc = servconn->session->account->gc;
 
 	if (!g_ascii_strcasecmp(params[0], "OTH")) {
+		gc->wants_to_die = TRUE;
 		gaim_connection_error(gc,
 							_("You have been disconnected. You have "
 							  "signed on from another location."));
