@@ -418,11 +418,12 @@ unload_perl_plugin(GaimPlugin *plugin)
 {
 	GaimPerlScript *gps = (GaimPerlScript *)plugin->info->extra_info;
 
-	if (gps == NULL || gps->unload_sub == NULL)
+	if (gps == NULL)
 		return FALSE;
 
 	gaim_debug(GAIM_DEBUG_INFO, "perl", "Unloading perl script\n");
 
+	if (gps->unload_sub != NULL)
 	{
 		dSP;
 		ENTER;
