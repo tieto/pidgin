@@ -1900,6 +1900,7 @@ void show_buddy_list()
         rempermbutton = gtk_button_new_with_label("Remove");
         
        	permtree = gtk_tree_new();
+	build_permit_tree();
        	pbox = gtk_hbox_new(TRUE, 10);
        	xbox = gtk_scrolled_window_new(NULL, NULL);
        	/* Put the buttons in the box */
