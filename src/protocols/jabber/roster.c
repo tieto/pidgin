@@ -117,8 +117,19 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 {
 	xmlnode *query, *item, *group;
 	const char *from = xmlnode_get_attrib(packet, "from");
-	if(from && strcmp(gaim_account_get_username(js->gc->account), from))
+	char *me1, *me2;
+
+	me1 = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+	me2 = g_strdup_printf("%s/%s", me1, js->user->resource);
+
+	if(from && strcmp(from, me1) && strcmp(from, me2)) {
+		g_free(me1);
+		g_free(me2);
 		return;
+	}
+
+	g_free(me1);
+	g_free(me2);
 
 	query = xmlnode_get_child(packet, "query");
 	if(!query)
