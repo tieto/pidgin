@@ -2137,14 +2137,29 @@ static gboolean gaim_blist_read(const char *filename) {
 	}
 
 	gaim = xmlnode_from_str(contents, length);
-	g_free(contents);
-
+	
 	if(!gaim) {
+		FILE *backup;
+		char *name;
 		gaim_debug(GAIM_DEBUG_ERROR, "blist import", "Error parsing %s\n",
 				filename);
+		name = g_build_filename(gaim_user_dir(), "blist.xml~", NULL);
+
+		if((backup = fopen(name, "w"))) {
+			fwrite(contents, length, 1, backup);
+			fclose(backup);
+			chmod(name, S_IRUSR | S_IWUSR);
+		} else {
+			gaim_debug(GAIM_DEBUG_ERROR, "blist load", "Unable to write backup %s\n",
+				   name);
+		}
+		g_free(name);
+		g_free(contents);
 		return FALSE;
 	}
-
+	
+	g_free(contents);
+	
 	blist = xmlnode_get_child(gaim, "blist");
 	if(blist) {
 		xmlnode *groupnode;
@@ -2218,7 +2233,8 @@ void gaim_blist_load() {
 	if(g_file_test(filename, G_FILE_TEST_EXISTS)) {
 		if(!gaim_blist_read(filename)) {
 			msg = g_strdup_printf(_("An error was encountered parsing your "
-						"buddy list.  It has not been loaded."));
+						"buddy list.  It has not been loaded, "
+						"and the old file has moved to blist.xml~."));
 			gaim_notify_error(NULL, NULL, _("Buddy List Error"), msg);
 			g_free(msg);
 		}
