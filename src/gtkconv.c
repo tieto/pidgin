@@ -4841,6 +4841,12 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 			style->fg[GTK_STATE_ACTIVE].blue  = 0x6C6C;
 			style->fg[GTK_STATE_NORMAL] = style->fg[GTK_STATE_ACTIVE];
 		}
+		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_EVENT) {
+			style->fg[GTK_STATE_ACTIVE].red   = 0x8686;;
+			style->fg[GTK_STATE_ACTIVE].green = 0x8282;
+			style->fg[GTK_STATE_ACTIVE].blue  = 0x7272;
+			style->fg[GTK_STATE_NORMAL] = style->fg[GTK_STATE_ACTIVE];
+		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT) {
 			style->fg[GTK_STATE_ACTIVE].red   = 0xDFDF;
 			style->fg[GTK_STATE_ACTIVE].green = 0x4242;

@@ -54,7 +54,8 @@ typedef enum
 {
 	GAIM_UNSEEN_NONE = 0,  /**< No unseen text in the conversation. */
 	GAIM_UNSEEN_TEXT,      /**< Unseen text in the conversation.    */
-	GAIM_UNSEEN_NICK       /**< Unseen text and the nick was said.  */
+	GAIM_UNSEEN_NICK,      /**< Unseen text and the nick was said.  */
+	GAIM_UNSEEN_EVENT      /**< Unseen events in the conversation.  */
 
 } GaimUnseenState;
 

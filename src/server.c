@@ -1083,17 +1083,17 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 				if (c != NULL) {
 
 					char *tmp = g_strdup_printf(_("%s logged in."),
-																			gaim_get_buddy_alias(b));
+												gaim_get_buddy_alias(b));
 
-					gaim_conversation_write(c, NULL, tmp, -1,
-																	WFLAG_SYSTEM, time(NULL));
+					gaim_conversation_write(c, NULL, tmp, -1, WFLAG_SYSTEM,
+											time(NULL));
 					g_free(tmp);
 				}
 				else if (awayqueue && find_queue_total_by_name(b->name)) {
 					struct queued_message *qm = g_new0(struct queued_message, 1);
 					g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
 					qm->message = g_strdup_printf(_("%s logged in."),
-																				gaim_get_buddy_alias(b));
+												  gaim_get_buddy_alias(b));
 					qm->account = gc->account;
 					qm->tm = time(NULL);
 					qm->flags = WFLAG_SYSTEM;
@@ -1112,15 +1112,15 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 				if (c != NULL) {
 
 					char *tmp = g_strdup_printf(_("%s logged out."),
-																			gaim_get_buddy_alias(b));
+												gaim_get_buddy_alias(b));
 					gaim_conversation_write(c, NULL, tmp, -1,
-																	WFLAG_SYSTEM, time(NULL));
+											WFLAG_SYSTEM, time(NULL));
 					g_free(tmp);
 				} else if (awayqueue && find_queue_total_by_name(b->name)) {
 					struct queued_message *qm = g_new0(struct queued_message, 1);
 					g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
 					qm->message = g_strdup_printf(_("%s logged out."),
-																				gaim_get_buddy_alias(b));
+												  gaim_get_buddy_alias(b));
 					qm->account = gc->account;
 					qm->tm = time(NULL);
 					qm->flags = WFLAG_SYSTEM;

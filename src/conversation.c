@@ -1486,6 +1486,9 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		if ((flags & WFLAG_NICK) == WFLAG_NICK ||
 				gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK)
 			unseen = GAIM_UNSEEN_NICK;
+		else if ((flags & WFLAG_SYSTEM) == WFLAG_SYSTEM &&
+				 gaim_conversation_get_unseen(conv) != GAIM_UNSEEN_TEXT)
+			unseen = GAIM_UNSEEN_EVENT;
 		else
 			unseen = GAIM_UNSEEN_TEXT;
 	}
