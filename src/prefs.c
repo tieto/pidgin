@@ -193,6 +193,8 @@ GtkWidget *interface_page() {
 	/* This really shouldn't be in preferences at all */
 	debugbutton = gaim_button(_("Show _debug window"), &misc_options, OPT_MISC_DEBUG, vbox);
 
+	gaim_button(_("D_isplay remote nicknames if no alias is set"), &misc_options, OPT_MISC_USE_SERVER_ALIAS, vbox);
+
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -1645,6 +1647,11 @@ static void set_misc_option(GtkWidget *w, int option)
 
 	if (option == OPT_MISC_DEBUG)
 		show_debug();
+	else if(option == OPT_MISC_USE_SERVER_ALIAS) {
+		redo_buddy_list();
+		build_edit_tree();
+		set_convo_titles();
+	}
 }
 
 static void set_logging_option(GtkWidget *w, int option)

@@ -1187,7 +1187,8 @@ static void set_defaults()
 	int i;
 	struct away_message *a;
 
-	misc_options = 0; 
+	misc_options =
+		OPT_MISC_USE_SERVER_ALIAS;
 
 	logging_options = 0;
 

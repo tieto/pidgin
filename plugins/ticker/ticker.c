@@ -351,7 +351,7 @@ void BuddyTickerShow()
 					if (xpm == NULL)
 						xpm = (char **)no_icon_xpm;
 					pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
-					BuddyTickerAddUser( b->name, b->show, pm, bm );
+					BuddyTickerAddUser( b->name, get_buddy_alias(b), pm, bm );
 					gdk_pixmap_unref(pm);
 					if (bm)
 						gdk_bitmap_unref(bm);
@@ -374,7 +374,7 @@ void signon_cb(struct gaim_connection *gc, char *who) {
 		xpm = (char **)no_icon_xpm;
 	pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
 		
-	BuddyTickerAddUser(who, b->show, pm, bm);
+	BuddyTickerAddUser(who, get_buddy_alias(b), pm, bm);
 	gdk_pixmap_unref(pm);
 	if (bm)
 		gdk_bitmap_unref(bm);

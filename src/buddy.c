@@ -84,7 +84,6 @@ struct buddy_show {
 	GtkWidget *warn;
 	GtkWidget *idle;
 	char *name;
-	char *show;
 	GSList *connlist;
 	guint log_timer;
 	gint sound;
@@ -148,7 +147,6 @@ void handle_group_rename(struct group *g, char *prevname)
 						g_source_remove(bs->log_timer);
 					bs->log_timer = 0;
 					remove_buddy_show(gs, bs);
-					g_free(bs->show);
 					g_free(bs->name);
 					g_free(bs);
 				}
@@ -202,7 +200,6 @@ void handle_group_rename(struct group *g, char *prevname)
 							g_source_remove(bs->log_timer);
 						bs->log_timer = 0;
 						remove_buddy_show(gs, bs);
-						g_free(bs->show);
 						g_free(bs->name);
 						g_free(bs);
 					}
@@ -236,23 +233,18 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 	GtkCTreeNode *c;
 	char buf[256];
 
-	if (!strcmp(b->show, prevname))
-		g_snprintf(b->show, sizeof(b->show), "%s", b->name);
-
 	/* well you shouldn't be calling this if nothing changed. duh. */
 	do_export(b->gc);
 
 	c = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, b);
-	if (strcmp(b->show, b->name))
-		g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, b->show);
+	if (get_buddy_alias_only(b))
+		g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, get_buddy_alias(b));
 	else
 		g_snprintf(buf, sizeof(buf), "%s", b->name);
 	gtk_ctree_node_set_text(GTK_CTREE(edittree), c, 0, buf);
 
 	if ((cnv = find_conversation(b->name)) != NULL)
 		set_convo_title(cnv);
-
-	gs = find_group_show(prevname);
 
 	g = find_group_by_buddy(b->gc, b->name);
 	if (!g) {
@@ -277,13 +269,12 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 				g_source_remove(bs->log_timer);
 			bs->log_timer = 0;
 			remove_buddy_show(gs, bs);
-			g_free(bs->show);
 			g_free(bs->name);
 			g_free(bs);
 		}
 		update_num_group(gs);
 	} else {
-		gtk_label_set_text(GTK_LABEL(bs->label), b->show);
+		gtk_label_set_text(GTK_LABEL(bs->label), get_buddy_alias(b));
 		update_idle_time(bs);
 	}
 }
@@ -306,7 +297,6 @@ void destroy_buddy()
 				g_source_remove(b->log_timer);
 			b->log_timer = 0;
 			gtk_tree_remove_item(GTK_TREE(g->tree), b->item);
-			g_free(b->show);
 			g_free(b->name);
 			g_free(b);
 		}
@@ -750,12 +740,8 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 
 static void un_alias(GtkWidget *a, struct buddy *b)
 {
-	g_snprintf(b->show, sizeof(b->show), "%s", b->name);
-	/* passing b->show as the previous name seems to be the (current)
-	 * way to get the bs->lable changed for that buddy. However, this
-	 * function should do everything that needs to be done
-	 */
-	handle_buddy_rename(b, b->show); /* make me a sammich! */
+	b->alias[0] = '\0';
+	handle_buddy_rename(b, b->name); /* make me a sammich! */
 	serv_alias_buddy(b);
 
 }
@@ -820,7 +806,7 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		if (strcmp(b->name, b->show)) {
+		if (b->alias[0]) {
 			button = gtk_menu_item_new_with_label(_("Un-Alias"));
 			g_signal_connect(GTK_OBJECT(button), "activate", G_CALLBACK(un_alias), b);
 			gtk_menu_append(GTK_MENU(menu), button);
@@ -907,7 +893,6 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 						g_source_remove(bs->log_timer);
 					bs->log_timer = 0;
 					remove_buddy_show(gs, bs);
-					g_free(bs->show);
 					g_free(bs->name);
 					g_free(bs);
 					if (!g_slist_length(gs->members) &&
@@ -1013,7 +998,6 @@ void redo_buddy_list()
 			m = g_slist_remove(m, bs);
 			if (bs->log_timer > 0)
 				g_source_remove(bs->log_timer);
-			g_free(bs->show);
 			g_free(bs->name);
 			g_free(bs);
 		}
@@ -1182,7 +1166,7 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 				while (mem) {
 					b = (struct buddy *)mem->data;
 					if (!find_buddy(pc, b->name))
-						add_buddy(pc, g->name, b->name, b->show);
+						add_buddy(pc, g->name, b->name, b->alias);
 					mem = mem->next;
 				}
 			}
@@ -1301,8 +1285,8 @@ void build_edit_tree()
 			while (mem) {
 				char buf[256];
 				b = (struct buddy *)mem->data;
-				if (strcmp(b->name, b->show)) {
-					g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, b->show);
+				if (get_buddy_alias_only(b)) {
+					g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, get_buddy_alias(b));
 					text[0] = buf;
 				} else
 					text[0] = b->name;
@@ -1341,8 +1325,8 @@ void ui_add_buddy(struct gaim_connection *gc, struct group *g, struct buddy *b)
 		return;
 
 	p = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, g);
-	if (strcmp(b->name, b->show)) {
-		g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, b->show);
+	if (get_buddy_alias_only(b)) {
+		g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, get_buddy_alias(b));
 		text[0] = buf;
 	} else
 		text[0] = b->name;
@@ -1921,7 +1905,6 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	}
 
 	b->name = g_strdup(buddy->name);
-	b->show = g_strdup(buddy->show);
 
 	b->item = gtk_tree_item_new();
 	gtk_tree_insert(GTK_TREE(gs->tree), b->item, pos);
@@ -1943,7 +1926,7 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	gdk_pixmap_unref(pm);
 	gdk_bitmap_unref(bm);
 
-	b->label = gtk_label_new(buddy->show);
+	b->label = gtk_label_new(get_buddy_alias(buddy));
 	gtk_misc_set_alignment(GTK_MISC(b->label), 0.0, 0.5);
 	gtk_box_pack_start(GTK_BOX(box), b->label, FALSE, FALSE, 1);
 	gtk_widget_show(b->label);
@@ -2137,7 +2120,6 @@ static gboolean log_timeout(gpointer data)
 		g_source_remove(b->log_timer);
 		b->log_timer = 0;
 		g_free(b->name);
-		g_free(b->show);
 		g_free(b);
 	} else {
 		/* um.... what do we have to do here? just update the pixmap? */
@@ -2250,6 +2232,8 @@ static void update_idle_time(struct buddy_show *bs)
 	char infotip[2048];
 	char warn[256];
 	char caps[256];
+	char alias[512];
+	char serv_alias[512];
 	char *sotime = NULL, *itime;
 
 	int i;
@@ -2324,10 +2308,19 @@ static void update_idle_time(struct buddy_show *bs)
 	else
 		caps[0] = '\0';
 
-	g_snprintf(infotip, sizeof infotip, _("Alias: %s               \nScreen Name: %s\n"
-					      "%s%s%s%s%s%s"),
-		   b->show, b->name,
-		   (b->signon ? sotime : ""), warn,
+	if (b->alias[0])
+		g_snprintf(alias, sizeof alias, _("Alias: %s\n"), b->alias);
+	else
+		alias[0] = '\0';
+
+	if (b->server_alias[0])
+		g_snprintf(serv_alias, sizeof serv_alias, _("Nickname: %s\n"),
+				b->server_alias);
+	else
+		serv_alias[0] = '\0';
+
+	g_snprintf(infotip, sizeof infotip, _("%s%sScreen Name: %s\n%s%s%s%s%s%s"),
+		   alias, serv_alias, b->name, (b->signon ? sotime : ""), warn,
 		   (b->idle ? _("Idle: ") : ""), itime, (b->idle ? "\n" : ""), caps);
 
 	gtk_tooltips_set_tip(tips, GTK_WIDGET(bs->item), infotip, "");
@@ -2397,12 +2390,14 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				struct conversation *c = find_conversation(b->name);
 				if (c) {
 					char tmp[1024];
-					g_snprintf(tmp, sizeof(tmp), _("%s logged in."), b->show);
+					g_snprintf(tmp, sizeof(tmp), _("%s logged in."),
+							get_buddy_alias(b));
 					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
 				} else if (clistqueue && find_queue_total_by_name(b->name)) {
 					struct queued_message *qm = g_new0(struct queued_message, 1);
 					g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
-					qm->message = g_strdup_printf(_("%s logged in."), b->show);
+					qm->message = g_strdup_printf(_("%s logged in."),
+							get_buddy_alias(b));
 					qm->gc = gc;
 					qm->tm = time(NULL);
 					qm->flags = WFLAG_SYSTEM;
@@ -2456,12 +2451,15 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			struct conversation *c = find_conversation(b->name);
 			if (c) {
 				char tmp[1024];
-				g_snprintf(tmp, sizeof(tmp), _("%s logged out."), b->show);
+				g_snprintf(tmp, sizeof(tmp), _("%s logged out."),
+						get_buddy_alias(b));
 				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
 			} else if (clistqueue && find_queue_total_by_name(b->name)) {
 				struct queued_message *qm = g_new0(struct queued_message, 1);
-				g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
-				qm->message = g_strdup_printf(_("%s logged out."), b->show);
+				g_snprintf(qm->name, sizeof(qm->name), "%s",
+						get_buddy_alias(b));
+				qm->message = g_strdup_printf(_("%s logged out."),
+						get_buddy_alias(b));
 				qm->gc = gc;
 				qm->tm = time(NULL);
 				qm->flags = WFLAG_SYSTEM;

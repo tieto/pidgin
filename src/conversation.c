@@ -1740,8 +1740,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		if (!who) {
 			if (flags & WFLAG_SEND) {
 				b = find_buddy(c->gc, c->gc->username);
-				if (b && strcmp(b->name, b->show))
-					 who = b->show;
+				if (get_buddy_alias(b))
+					 who = get_buddy_alias(b);
 				else if (c->gc->user->alias[0])
 					who = c->gc->user->alias;
 				else if (c->gc->displayname[0])
@@ -1751,14 +1751,14 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			} else {
 				b = find_buddy(c->gc, c->name);
 				if (b)
-					who = b->show;
+					who = get_buddy_alias(b);
 				else
 					who = c->name;
 			}
 		} else {
 			b = find_buddy(c->gc, who);
 			if (b)
-				who = b->show;
+				who = get_buddy_alias(b);
 		}
 	}
 
@@ -3218,7 +3218,7 @@ void set_convo_title(struct conversation *c)
 	GtkNotebook *nb;
 
 	if ((im_options & OPT_IM_ALIAS_TAB) && c->gc && ((b = find_buddy(c->gc, c->name)) != NULL))
-		text = b->show;
+		text = get_buddy_alias(b);
 	else
 		text = c->name;
 

@@ -3760,7 +3760,10 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 static void do_alias_bud(GtkWidget *w, struct buddy *b)
 {
 	const char *al = gtk_entry_get_text(GTK_ENTRY(aliasname));
-	g_snprintf(b->show, sizeof(b->show), "%s", (al && strlen(al)) ? al : b->name);
+	if (al && strlen(al))
+		g_snprintf(b->alias, sizeof(b->alias), "%s", al);
+	else
+		b->alias[0] = '\0';
 	handle_buddy_rename(b, b->name);
 	serv_alias_buddy(b);
 	destroy_dialog(aliasdlg, aliasdlg);
@@ -3811,7 +3814,7 @@ void alias_dialog_bud(struct buddy *b)
 	gtk_box_pack_start(GTK_BOX(topbox), bbox, FALSE, FALSE, 0);
 
 	gtk_entry_set_text(GTK_ENTRY(aliasentry), b->name);
-	gtk_entry_set_text(GTK_ENTRY(aliasname), b->show);
+	gtk_entry_set_text(GTK_ENTRY(aliasname), b->alias);
 
 	/* Put the buttons in the box */
 	bbox = gtk_hbox_new(FALSE, 5);
@@ -4408,8 +4411,6 @@ static void do_rename_buddy(GtkObject *obj, GtkWidget *entry)
 		char *prevname = g_strdup(b->name);
 		if (g)
 			serv_remove_buddy(b->gc, b->name, g->name);
-		if (!strcmp(b->name, b->show))
-			 g_snprintf(b->show, sizeof(b->show), "%s", new_name);
 		g_snprintf(b->name, sizeof(b->name), "%s", new_name);
 		serv_add_buddy(b->gc, b->name);
 		handle_buddy_rename(b, prevname);

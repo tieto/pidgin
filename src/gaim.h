@@ -211,6 +211,7 @@ extern guint misc_options;
 #define OPT_MISC_BROWSER_POPUP		0x00000002
 #define OPT_MISC_BUDDY_TICKER           0x00000004
 #define OPT_MISC_STEALTH_TYPING         0x00000010
+#define OPT_MISC_USE_SERVER_ALIAS		0x00000020
 
 extern guint logging_options;
 #define OPT_LOG_CONVOS			0x00000001

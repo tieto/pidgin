@@ -149,8 +149,9 @@ struct gaim_callback {
 struct buddy {
 	int edittype; /* XXX CUI: this is really a GUI function and we need to put this in ui.h */
 	char name[80];
-	char show[BUDDY_ALIAS_MAXLEN];
-        int present;
+	char alias[BUDDY_ALIAS_MAXLEN];
+	char server_alias[BUDDY_ALIAS_MAXLEN];
+	int present;
 	int evil;
 	time_t signon;
 	time_t idle;
@@ -190,6 +191,8 @@ extern int bud_list_cache_exists(struct gaim_connection *);
 extern void toc_build_config(struct gaim_connection *, char *, int len, gboolean);
 extern void parse_toc_buddy_list(struct gaim_connection *, char *);
 extern void signoff_blocked(struct gaim_connection *);
+extern char* get_buddy_alias_only(struct buddy *);
+extern char* get_buddy_alias(struct buddy *);
 
 /* Functions in core.c */
 extern gint UI_write(struct UI *, guchar *, int);
@@ -240,6 +243,7 @@ extern void serv_got_chat_invite(struct gaim_connection *, char *, char *, char 
 extern struct conversation *serv_got_joined_chat(struct gaim_connection *, int, char *);
 extern void serv_got_chat_left(struct gaim_connection *, int);
 extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *, time_t);
+extern void serv_got_alias(struct gaim_connection *, char *, char *);
 extern void serv_finish_login();
 
 #endif /* _CORE_H_ */

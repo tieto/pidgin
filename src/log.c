@@ -374,37 +374,37 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		}
-	} else if (strcmp(who->name, who->show)) {
+	} else if (get_buddy_alias_only(who)) {
 		switch (what) {
 		case log_signon:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) signed on @ %s"),
-				   gc->username, gc->prpl->name, who->show, who->name, full_date());
+				   gc->username, gc->prpl->name, get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) signed off @ %s"),
-				   gc->username, gc->prpl->name, who->show, who->name, full_date());
+				   gc->username, gc->prpl->name, get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) went away @ %s"),
-				   gc->username, gc->prpl->name, who->show, who->name, full_date());
+				   gc->username, gc->prpl->name, get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) came back @ %s"),
-				   gc->username, gc->prpl->name, who->show, who->name, full_date());
+				   gc->username, gc->prpl->name, get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
 			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) became idle @ %s"),
-				   gc->username, gc->prpl->name, who->show, who->name, full_date());
+				   gc->username, gc->prpl->name, get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
 			g_snprintf(text, sizeof(text),
 				   _("%s (%s) reported that %s (%s) returned from idle @ %s"), gc->username,
-				   gc->prpl->name, who->show, who->name, full_date());
+				   gc->prpl->name, get_buddy_alias(who), who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		default:

@@ -744,7 +744,7 @@ XS (XS_GAIM_user_info)
 	if (!buddy)
 		XSRETURN(0);
 	XST_mPV(0, buddy->name);
-	XST_mPV(1, buddy->show);
+	XST_mPV(1, get_buddy_alias(buddy));
 	XST_mPV(2, buddy->present ? "Online" : "Offline");
 	XST_mIV(3, buddy->evil);
 	XST_mIV(4, buddy->signon);

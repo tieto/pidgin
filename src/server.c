@@ -340,6 +340,19 @@ void serv_alias_buddy(struct buddy *b)
 	}
 }
 
+void serv_got_alias(struct gaim_connection *gc, char *who, char *alias) {
+	struct buddy *b = find_buddy(gc, who);
+	if(!b)
+		return;
+
+	if(alias)
+		g_snprintf(b->server_alias, sizeof(b->server_alias), "%s", alias);
+	else
+		b->server_alias[0] = '\0';
+
+	handle_buddy_rename(b, b->name);
+}
+
 /*
  * Move a buddy from one group to another on server.
  *
@@ -612,7 +625,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		time_t t;
 		char *tmpmsg;
 		struct buddy *b = find_buddy(gc, name);
-		char *alias = b ? b->show : name;
+		char *alias = b ? get_buddy_alias(b) : name;
 		int row;
 		struct queued_away_response *qar;
 

@@ -139,7 +139,10 @@ struct buddy *add_buddy(struct gaim_connection *gc, const char *group, const cha
 		good = buddy;
 
 	g_snprintf(b->name, sizeof(b->name), "%s", good);
-	g_snprintf(b->show, sizeof(b->show), "%s", show ? (show[0] ? show : good) : good);
+	if(show && show[0])
+		g_snprintf(b->alias, sizeof(b->alias), "%s", show);
+	else
+		b->alias[0] = '\0';
 
 	g->members = g_slist_append(g->members, b);
 
@@ -476,8 +479,8 @@ void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean sho
 		while (len > pos && mem) {
 			b = (struct buddy *)mem->data;
 			pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
-					  (show && strcmp(b->name, b->show)) ? ":" : "",
-					  (show && strcmp(b->name, b->show)) ? b->show : "");
+					  (show && b->alias[0]) ? ":" : "",
+					  (show && b->alias[0]) ? b->alias : "");
 			mem = mem->next;
 		}
 		grp = g_slist_next(grp);
@@ -872,3 +875,22 @@ void signoff_blocked(struct gaim_connection *gc)
 		g = g->next;
 	}
 }
+
+char *get_buddy_alias_only(struct buddy *b) {
+	if(!b)
+		return NULL;
+	if(b->alias[0])
+		return b->alias;
+	else if((misc_options & OPT_MISC_USE_SERVER_ALIAS) && b->server_alias[0])
+		return b->server_alias;
+	return NULL;
+}
+
+
+char *get_buddy_alias(struct buddy *b) {
+	char *ret = get_buddy_alias_only(b);
+	if(!ret)
+		return b ? b->name : _("Unknown");
+	return ret;
+}
+

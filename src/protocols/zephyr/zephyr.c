@@ -335,7 +335,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				GString *str = g_string_new("");
 				g_string_sprintfa(str, "<b>User:</b> %s<br>"
 								"<b>Alias:</b> %s<br>",
-								b->name, b->show);
+								b->name, b->alias);
 				if (!nlocs) {
 					g_string_sprintfa(str, "<br>Hidden or not logged-in");
 				}

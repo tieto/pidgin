@@ -483,7 +483,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 			struct buddy *b;
 
 			if ((b = find_buddy(gc, user)) != NULL)
-				username = b->show;
+				username = get_buddy_alias(b);
 			else
 				username = user;
 
@@ -1218,11 +1218,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 		friend = url_decode(tmp);
 
-		if ((b = find_buddy(gc, user)) != NULL) {
-			if (b->proto_data)
-				g_free(b->proto_data);
-			b->proto_data = g_strdup(friend);
-		}
+		serv_got_alias(gc, user, friend);
 
 		if (!g_strcasecmp(state, "BSY")) {
 			status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
@@ -1330,14 +1326,11 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			}
 			while (md->fl) {
 				struct msn_buddy *mb = md->fl->data;
-				struct buddy *b;
+				struct buddy *b = find_buddy(gc, mb->user);
 				md->fl = g_slist_remove(md->fl, mb);
-				if (!(b = find_buddy(gc, mb->user)))
-					add_buddy(gc, _("Buddies"), mb->user, mb->friend);
-				else if (!g_strcasecmp(b->name, b->show)) {
-					g_snprintf(b->show, sizeof(b->show), "%s", mb->friend);
-					handle_buddy_rename(b, b->name);
-				}
+				if(!b)
+					b = add_buddy(gc, _("Buddies"), mb->user, NULL);
+				serv_got_alias(gc, mb->user, mb->friend);
 				g_free(mb->user);
 				g_free(mb->friend);
 				g_free(mb);
@@ -1360,7 +1353,6 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		md->msglen = length;
 	} else if (!g_strncasecmp(buf, "NLN", 3)) {
 		char *state, *user, *friend, *tmp = buf;
-		struct buddy *b;
 		int status = 0;
 
 		GET_NEXT(tmp);
@@ -1372,11 +1364,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 		friend = url_decode(tmp);
 
-		if ((b = find_buddy(gc, user)) != NULL) {
-			if (b->proto_data)
-				g_free(b->proto_data);
-			b->proto_data = g_strdup(friend);
-		}
+		serv_got_alias(gc, user, friend);
 
 		if (!g_strcasecmp(state, "BSY")) {
 			status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
@@ -2439,15 +2427,6 @@ static char *msn_get_away_text(int s)
 	}
 }
 
-static void msn_reset_friend(struct gaim_connection *gc, char *who)
-{
-	struct buddy *b = find_buddy(gc, who);
-	if (!b || !b->proto_data)
-		return;
-	g_snprintf(b->show, sizeof(b->show), "%s", (char *)b->proto_data);
-	handle_buddy_rename(b, b->name);
-}
-
 static void msn_ask_send_file(struct gaim_connection *gc, char *destsn)
 {
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
@@ -2468,12 +2447,6 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 	struct proto_buddy_menu *pbm;
 	struct buddy *b = find_buddy(gc, who);
 	static char buf[MSN_BUF_LEN];
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Reset friendly name");
-	pbm->callback = msn_reset_friend;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Send File");
@@ -2569,18 +2542,6 @@ static void msn_do_action(struct gaim_connection *gc, char *act)
 {
 	if (!strcmp(act, _("Set Friendly Name"))) {
 		do_prompt_dialog(_("Set Friendly Name:"), gc->displayname, gc, msn_act_id, NULL);
-	} else if (!strcmp(act, _("Reset All Friendly Names"))) {
-		GSList *g = gc->groups;
-		while (g) {
-			GSList *m = ((struct group *)g->data)->members;
-			while (m) {
-				struct buddy *b = m->data;
-				if (b->present)
-					msn_reset_friend(gc, b->name);
-				m = m->next;
-			}
-			g = g->next;
-		}
 	}
 }
 

@@ -1780,9 +1780,8 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 					serv_got_update(GJ_GC(gjc), buddyname, 1, 0, signon, idle,
 							uc, 0);
 				}
-			} else if(name != NULL && strcmp(b->show, name)) {
-				strncpy(b->show, name, BUDDY_ALIAS_MAXLEN);
-				b->show[BUDDY_ALIAS_MAXLEN - 1] = '\0';	/* cheap safety feature */
+			} else if(name != NULL && strcmp(b->alias, name)) {
+				g_snprintf(b->alias, sizeof(b->alias), "%s", name);
 				handle_buddy_rename(b, buddyname);
 			}
 		}
@@ -2525,7 +2524,7 @@ static void jabber_roster_update(struct gaim_connection *gc, const char *name, c
 		if(alias && alias[0] != '\0') {
 			my_alias = alias;
 		} else if((buddy = find_buddy(gc, realwho)) != NULL) {
-			my_alias = buddy->show;
+			my_alias = buddy->alias;
 		}
 
 		/* If there's an alias for the buddy, it's not 0-length
