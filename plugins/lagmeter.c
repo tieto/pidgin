@@ -187,7 +187,7 @@ void gaim_plugin_config() {
 		return;
 	}
 
-	confdlg = gtk_window_new(GTK_WINDOW_POPUP);
+	confdlg = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(confdlg), "Gaim Lag Delay");
 
 	box = gtk_hbox_new(FALSE, 0);

@@ -357,7 +357,7 @@ void gaim_plugin_config() {
 	char *pair[2] = {"Replace", "With"};
 	
 	if (configwin) return;
-	configwin = gtk_window_new(GTK_WINDOW_POPUP);
+	configwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_widget_set_usize(configwin, 450, 250);
 	gtk_window_set_title(GTK_WINDOW(configwin), "Spell Check Config");
 

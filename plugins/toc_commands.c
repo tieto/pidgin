@@ -19,7 +19,7 @@ GtkWidget *window;
 char *gaim_plugin_init(GModule *h) {
 	GtkWidget *entry;
 
-	window = gtk_window_new(GTK_WINDOW_POPUP);
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), "Gaim - SFLAP interface");
 
 	entry = gtk_entry_new();

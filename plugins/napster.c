@@ -176,7 +176,7 @@ static struct browse_window *browse_window_new(struct gaim_connection *gc, char 
 	struct browse_window *browse = g_new0(struct browse_window, 1);
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 
-	browse->window = gtk_window_new(GTK_WINDOW_POPUP);
+	browse->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	browse->name = g_strdup(name);
 	browse->list = gtk_clist_new(1);
 	browse->gc = gc;
@@ -1090,7 +1090,7 @@ static void nap_show_search(GtkObject *w, void *omit)
 		gchar *titles[5] = {"Mp3 Name", "Nick", "Size", "Bitrate", "Connection"};
 		search_dialog = g_new0(struct search_window, 1);
 
-		window = gtk_window_new(GTK_WINDOW_POPUP);
+		window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 		vbox = gtk_vbox_new(FALSE, 0);
 
