@@ -21,7 +21,7 @@
  */
 
 #ifndef _GAIM_CMDS_H_
-#define _GAIM_CMDS_H
+#define _GAIM_CMDS_H_
 
 #include "conversation.h"
 
