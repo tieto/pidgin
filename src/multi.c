@@ -23,7 +23,9 @@
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
+#ifdef USE_APPLET
 #include "applet.h"
+#endif
 
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_preferences.xpm"
@@ -707,6 +709,7 @@ void account_online(struct gaim_connection *gc)
 
 	update_connection_dependent_prefs();
 	do_away_menu();
+	do_proto_menu();
 	redo_convo_menus();
 	gaim_setup(gc);
 

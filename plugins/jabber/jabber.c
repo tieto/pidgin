@@ -1087,7 +1087,7 @@ void Jabber_init(struct prpl *ret)
 	ret->protocol = PROTO_JABBER;
 	ret->name = jabber_name;
 	ret->list_icon = jabber_list_icon;
-	ret->action_menu = NULL;
+	ret->buddy_menu = NULL;
 	ret->user_opts = NULL;
 	ret->draw_new_user = NULL;
 	ret->do_new_user = NULL;

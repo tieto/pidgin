@@ -361,6 +361,8 @@ void do_away_menu()
 				}
 				msgs = g_list_next(msgs);
 			}
+
+			g_list_free(tmp);
 		} else {
 			while (con) {
 				char buf[256];

@@ -911,7 +911,7 @@ static void toc_dir_info(GtkObject * obj, char *who)
 	serv_get_dir(gc, who);
 }
 
-static void toc_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
+static void toc_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
 {
 	GtkWidget *button;
 
@@ -1206,6 +1206,28 @@ static GList *toc_away_states()
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
 }
 
+static void toc_do_action(struct gaim_connection *gc, char *act)
+{
+	if (!strcmp(act, "Set User Info")) {
+		show_set_info(gc);
+	} else if (!strcmp(act, "Set Dir Info")) {
+		show_set_dir(gc);
+	} else if (!strcmp(act, "Change Password")) {
+		show_change_passwd(gc);
+	}
+}
+
+static GList *toc_actions()
+{
+	GList *m = NULL;
+
+	m = g_list_append(m, "Set User Info");
+	m = g_list_append(m, "Set Dir Info");
+	m = g_list_append(m, "Change Password");
+
+	return m;
+}
+
 void toc_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_TOC;
@@ -1213,7 +1235,9 @@ void toc_init(struct prpl *ret)
 	ret->name = toc_name;
 	ret->list_icon = toc_list_icon;
 	ret->away_states = toc_away_states;
-	ret->action_menu = toc_action_menu;
+	ret->actions = toc_actions;
+	ret->do_action = toc_do_action;
+	ret->buddy_menu = toc_buddy_menu;
 	ret->user_opts = toc_user_opts;
 	ret->draw_new_user = toc_draw_new_user;
 	ret->do_new_user = toc_do_new_user;

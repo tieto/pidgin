@@ -2055,7 +2055,7 @@ static void oscar_ask_direct_im(GtkObject *m, gchar *who) {
 	do_ask_dialog(buf, data, oscar_direct_im, oscar_cancel_direct_im);
 }
 
-static void oscar_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+static void oscar_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
 	GtkWidget *button;
 	char *n = g_strdup(normalize(gc->username));
 
@@ -2284,13 +2284,31 @@ static GList *oscar_away_states()
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
 }
 
+static void oscar_do_action(struct gaim_connection *gc, char *act)
+{
+	if (!strcmp(act, "Set User Info")) {
+		show_set_info(gc);
+	}
+}
+
+static GList *oscar_actions()
+{
+	GList *m = NULL;
+
+	m = g_list_append(m, "Set User Info");
+
+	return m;
+}
+
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
 	ret->options = OPT_PROTO_HTML | OPT_PROTO_CORRECT_TIME;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;
-	ret->action_menu = oscar_action_menu;
+	ret->actions = oscar_actions;
+	ret->do_action = oscar_do_action;
+	ret->buddy_menu = oscar_buddy_menu;
 	ret->user_opts = oscar_user_opts;
 	ret->draw_new_user = oscar_draw_new_user;
 	ret->do_new_user = oscar_do_new_user;

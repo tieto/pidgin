@@ -382,7 +382,7 @@ static void icq_info(GtkObject *obj, char *who) {
 	serv_get_info(gtk_object_get_user_data(obj), who);
 }
 
-static void icq_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+static void icq_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
 	GtkWidget *button;
 
 	button = gtk_menu_item_new_with_label(_("Get Info"));
@@ -459,7 +459,7 @@ static void icq_init(struct prpl *ret) {
 	ret->name = icq_name;
 	ret->list_icon = icq_list_icon;
 	ret->away_states = icq_away_states;
-	ret->action_menu = icq_action_menu;
+	ret->buddy_menu = icq_buddy_menu;
 	ret->user_opts = icq_user_opts;
 	ret->login = icq_login;
 	ret->close = icq_close;

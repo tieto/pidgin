@@ -411,6 +411,9 @@ extern struct away_message *default_away;
 extern int auto_away;
 extern GtkWidget *awaymenu;
 
+/* Globals in prpl.c */
+extern GtkWidget *protomenu;
+
 /* Globals in buddy.c */
 extern GtkWidget *buddies;
 extern GtkWidget *bpmenu;
@@ -763,7 +766,7 @@ extern void show_find_email();
 extern void show_find_info();
 extern void g_show_info (struct aim_user *, char *);
 extern void g_show_info_text (char *);
-extern void show_set_info();
+extern void show_set_info(struct gaim_connection *);
 extern void show_set_dir();
 extern void show_fgcolor_dialog(struct conversation *c, GtkWidget *color);
 extern void show_bgcolor_dialog(struct conversation *c, GtkWidget *color);
@@ -772,7 +775,7 @@ extern void cancel_bgcolor(GtkWidget *widget, struct conversation *c);
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *,struct conversation *);
-extern void show_change_passwd();
+extern void show_change_passwd(struct gaim_connection *);
 extern void do_import(GtkWidget *, struct gaim_connection *);
 extern int bud_list_cache_exists(struct gaim_connection *);
 extern void show_smiley_dialog(struct conversation *, GtkWidget *);

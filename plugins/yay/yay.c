@@ -472,7 +472,7 @@ static char **yahoo_list_icon(int uc) {
 	return status_away_xpm;
 }
 
-static void yahoo_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+static void yahoo_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	GtkWidget *button;
 	struct buddy *b = find_buddy(gc, who); /* this should never be null. if it is,
@@ -519,7 +519,7 @@ void Yahoo_init(struct prpl *ret) {
 	ret->name = yahoo_name;
 	ret->list_icon = yahoo_list_icon;
 	ret->away_states = yahoo_away_states;
-	ret->action_menu = yahoo_action_menu;
+	ret->buddy_menu = yahoo_buddy_menu;
 	ret->user_opts = NULL;
 	ret->login = yahoo_login;
 	ret->close = yahoo_close;

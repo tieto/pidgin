@@ -848,7 +848,7 @@ void msn_init(struct prpl *ret)
 	ret->protocol = PROTO_MSN;
 	ret->name = msn_name;
 	ret->list_icon = msn_list_icon;
-	ret->action_menu = NULL;
+	ret->buddy_menu = NULL;
 	ret->user_opts = NULL;
 	ret->login = msn_login;
 	ret->close = msn_close;

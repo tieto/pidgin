@@ -1098,7 +1098,7 @@ static void irc_send_ping(GtkObject * w, char *who)
 }
 
 
-static void irc_action_menu(GtkWidget * menu, struct gaim_connection *gc, char *who)
+static void irc_buddy_menu(GtkWidget * menu, struct gaim_connection *gc, char *who)
 {
 	GtkWidget *button;
 
@@ -1117,7 +1117,7 @@ static void irc_init(struct prpl *ret)
 	ret->protocol = PROTO_IRC;
 	ret->name = irc_name;
 	ret->list_icon = irc_list_icon;
-	ret->action_menu = irc_action_menu;
+	ret->buddy_menu = irc_buddy_menu;
 	ret->user_opts = irc_user_opts;
 	ret->login = irc_login;
 	ret->close = irc_close;

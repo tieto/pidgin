@@ -54,10 +54,12 @@ struct prpl {
 	/* returns the XPM associated with the given user class */
 	char **(* list_icon)(int);
 	GList *(* away_states)();
+	GList *(* actions)();
+	void   (* do_action)(struct gaim_connection *, char *);
 
 	/* when UI plugins come, these will have to be reconciled by returning
 	 * structs indicating what kinds of information they want displayed. */
-	void (* action_menu)(GtkWidget *, struct gaim_connection *, char *);
+	void (* buddy_menu)(GtkWidget *, struct gaim_connection *, char *);
 	void (* user_opts)(GtkWidget *, struct aim_user *);
 	void (* draw_new_user)(GtkWidget *);
 	void (* do_new_user)();

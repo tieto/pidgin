@@ -34,6 +34,8 @@ static GtkWidget *regdialog = NULL;
 static GtkWidget *regbox = NULL;
 static struct prpl *regprpl = NULL;
 
+GtkWidget *protomenu = NULL;
+
 struct prpl *find_prpl(int prot)
 {
 	GSList *e = protocols;
@@ -283,4 +285,117 @@ void register_user(gpointer a, gpointer b)
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_reg), NULL);
 
 	gtk_widget_show(regdialog);
+}
+
+static void proto_act(GtkObject *obj, struct gaim_connection *gc)
+{
+	char *act = gtk_object_get_user_data(obj);
+	(*gc->prpl->do_action)(gc, act);
+}
+
+void do_proto_menu()
+{
+	GtkWidget *menuitem;
+	GtkWidget *submenu;
+	GList *l;
+	GSList *c = connections;
+	struct gaim_connection *gc = NULL;
+	int count = 0;
+	char buf[256];
+
+	if (!protomenu)
+		return;
+
+	l = gtk_container_children(GTK_CONTAINER(protomenu));
+	while (l) {
+		gtk_widget_destroy(GTK_WIDGET(l->data));
+		l = l->next;
+	}
+
+	while (c) {
+		gc = c->data;
+		if (gc->prpl->actions && gc->prpl->do_action)
+			count++;
+		c = g_slist_next(c);
+	}
+	c = connections;
+
+	if (!count) {
+		g_snprintf(buf, sizeof(buf), "No actions available");
+		menuitem = gtk_menu_item_new_with_label(buf);
+		gtk_menu_append(GTK_MENU(protomenu), menuitem);
+		gtk_widget_show(menuitem);
+		return;
+	}
+
+	if (count == 1) {
+		GList *tmp, *act;
+		while (c) {
+			gc = c->data;
+			if (gc->prpl->actions && gc->prpl->do_action)
+				break;
+			c = g_slist_next(c);
+		}
+
+		tmp = act = (*gc->prpl->actions)();
+
+		while (act) {
+			if (act->data == NULL) {
+				gaim_separator(protomenu);
+				act = g_list_next(act);
+				continue;
+			}
+
+			menuitem = gtk_menu_item_new_with_label(act->data);
+			gtk_object_set_user_data(GTK_OBJECT(menuitem), act->data);
+			gtk_menu_append(GTK_MENU(protomenu), menuitem);
+			gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+					   GTK_SIGNAL_FUNC(proto_act), gc);
+			gtk_widget_show(menuitem);
+
+			act = g_list_next(act);
+		}
+
+		g_list_free(tmp);
+	} else {
+		while (c) {
+			GList *tmp, *act;
+			gc = c->data;
+			if (!gc->prpl->actions || !gc->prpl->do_action) {
+				c = g_slist_next(c);
+				continue;
+			}
+
+			g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, (*gc->prpl->name)());
+			menuitem = gtk_menu_item_new_with_label(buf);
+			gtk_menu_append(GTK_MENU(protomenu), menuitem);
+			gtk_widget_show(menuitem);
+
+			submenu = gtk_menu_new();
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+			gtk_widget_show(submenu);
+
+			tmp = act = (*gc->prpl->actions)();
+
+			while (act) {
+				if (act->data == NULL) {
+					gaim_separator(protomenu);
+					act = g_list_next(act);
+					continue;
+				}
+
+				menuitem = gtk_menu_item_new_with_label(act->data);
+				gtk_object_set_user_data(GTK_OBJECT(menuitem), act->data);
+				gtk_menu_append(GTK_MENU(submenu), menuitem);
+				gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+						   GTK_SIGNAL_FUNC(proto_act), gc);
+				gtk_widget_show(menuitem);
+
+				act = g_list_next(act);
+			}
+
+			g_list_free(tmp);
+			c = g_slist_next(c);
+		}
+	}
 }

@@ -286,6 +286,7 @@ void signoff(struct gaim_connection *gc)
 	serv_close(gc);
 	redo_buddy_list();
 	do_away_menu();
+	do_proto_menu();
 #ifdef USE_APPLET
 	if (connections)
 		set_user_state(online);
@@ -454,7 +455,7 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 		if (g_slist_length(cn) > 1) {
 			while (cn) {
 				g = (struct gaim_connection *)cn->data;
-				if (g->prpl->action_menu) {
+				if (g->prpl->buddy_menu) {
 					menuitem = gtk_menu_item_new_with_label(g->username);
 					gtk_menu_append(GTK_MENU(menu), menuitem);
 					gtk_widget_show(menuitem);
@@ -463,14 +464,14 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 					gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), conmenu);
 					gtk_widget_show(conmenu);
 
-					(*g->prpl->action_menu)(conmenu, g, b->name);
+					(*g->prpl->buddy_menu)(conmenu, g, b->name);
 				}
 				cn = g_slist_next(cn);
 			}
 		} else {
 			g = (struct gaim_connection *)cn->data;
-			if (g->prpl->action_menu)
-				(*g->prpl->action_menu)(menu, g, b->name);
+			if (g->prpl->buddy_menu)
+				(*g->prpl->buddy_menu)(menu, g, b->name);
 		}
 		
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
@@ -2069,7 +2070,7 @@ static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
  *
  *******************************************************************/
 
-void gaim_seperator(GtkWidget *menu)
+void gaim_separator(GtkWidget *menu)
 {
 	GtkWidget *sep, *menuitem;
 	sep = gtk_hseparator_new();
@@ -2197,11 +2198,13 @@ void show_buddy_list()
         
 	GtkWidget *sw;
 	GtkWidget *menu;
-	GtkWidget *findmenu;
 #ifdef USE_PERL
 	GtkWidget *perlmenu;
 #endif
+#ifdef NO_MULTI
 	GtkWidget *setmenu;
+	GtkWidget *findmenu;
+#endif
 	GtkWidget *menubar;
 	GtkWidget *vbox;
 	GtkWidget *menuitem;
@@ -2242,10 +2245,10 @@ void show_buddy_list()
 	gaim_new_item_with_pixmap(menu, _("Add A Buddy"), add_small_xpm, GTK_SIGNAL_FUNC(add_buddy_callback));
 	gaim_new_item_with_pixmap(menu, _("Join A Chat"), pounce_small_xpm, GTK_SIGNAL_FUNC(chat_callback));
 	gaim_new_item_with_pixmap(menu, _("New Instant Message"), send_small_xpm, GTK_SIGNAL_FUNC(show_im_dialog));
-        gaim_seperator(menu);
+        gaim_separator(menu);
         gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm, GTK_SIGNAL_FUNC(import_callback));
         gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,GTK_SIGNAL_FUNC(export_callback));
-	gaim_seperator(menu);
+	gaim_separator(menu);
 	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_icon_xpm, GTK_SIGNAL_FUNC(signoff_all));
 
 #ifndef USE_APPLET
@@ -2270,8 +2273,9 @@ void show_buddy_list()
         gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), bpmenu);
         do_bp_menu();
 
-        gaim_seperator(menu);
+        gaim_separator(menu);
 
+#ifdef NO_MULTI
 	findmenu = gtk_menu_new();
 	gtk_widget_show(findmenu);
 	menuitem = gaim_new_item_with_pixmap(menu, _("Search for Buddy"), search_small_xpm, NULL);
@@ -2304,12 +2308,18 @@ void show_buddy_list()
 	gtk_menu_append(GTK_MENU(setmenu), menuitem);
 	gtk_signal_connect(GTK_OBJECT(menuitem), "activate", GTK_SIGNAL_FUNC(show_change_passwd), NULL);
 	gtk_widget_show(menuitem);
-#ifndef NO_MULTI
+#else
         gaim_new_item_with_pixmap(menu, _("Accounts"), add_small_xpm, GTK_SIGNAL_FUNC(account_editor));
+
+	protomenu = gtk_menu_new();
+	menuitem = gaim_new_item_with_pixmap(menu, _("Protocol Actions"), prefs_small_xpm, NULL);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), protomenu);
+	do_proto_menu();
 #endif
-	gaim_seperator(menu);
 
         gaim_new_item_with_pixmap(menu, _("Preferences"), prefs_small_xpm, GTK_SIGNAL_FUNC(show_prefs));
+
+	gaim_separator(menu);
 
 #ifdef GAIM_PLUGINS
         gaim_new_item_with_pixmap(menu, _("Plugins"), plugins_small_xpm, GTK_SIGNAL_FUNC(show_plugins));

@@ -1176,7 +1176,7 @@ void nap_show_search(GtkObject *w, void *omit)
 	gtk_widget_show(search_dialog->window);
 }	
 
-static void nap_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
+static void nap_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
 {
 	GtkWidget *button;
 
@@ -1205,7 +1205,7 @@ void nap_init(struct prpl *ret)
 	ret->protocol = PROTO_NAPSTER;
 	ret->name = nap_name;
 	ret->list_icon = nap_list_icon;
-	ret->action_menu = nap_action_menu;
+	ret->buddy_menu = nap_buddy_menu;
 	ret->user_opts = NULL;
 	ret->login = nap_login;
 	ret->close = nap_close;

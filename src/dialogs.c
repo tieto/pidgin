@@ -171,6 +171,7 @@ struct set_info_dlg {
 };
 
 struct set_dir_dlg {
+	struct gaim_connection *gc;
 	GtkWidget *window;
 	GtkWidget *first;
 	GtkWidget *middle;
@@ -1286,16 +1287,13 @@ void do_set_dir(GtkWidget *widget, struct set_dir_dlg *b)
 	char *state = gtk_entry_get_text(GTK_ENTRY(b->state));
 	char *country = gtk_entry_get_text(GTK_ENTRY(b->country));
 
-
-	/* FIXME : set dir. not important */
-        if (connections)
-		serv_set_dir(connections->data, first, middle, last, maiden, city, state, country, web);
+	serv_set_dir(b->gc, first, middle, last, maiden, city, state, country, web);
 
         destroy_dialog(NULL, b->window);
 	g_free(b);
 }
 
-void show_set_dir()
+void show_set_dir(struct gaim_connection *gc)
 {
 	GtkWidget *label;
 	GtkWidget *bot;
@@ -1303,35 +1301,41 @@ void show_set_dir()
 	GtkWidget *hbox;
 	GtkWidget *frame;
 	GtkWidget *fbox;
+	char buf[256];
 
 	struct set_dir_dlg *b = g_new0(struct set_dir_dlg, 1);
+	if (!g_slist_find(connections, gc))
+		gc = connections->data;
+	b->gc = gc;
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
-	//gtk_widget_set_usize(b->window, 300, 300);
+	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	gtk_window_set_wmclass(GTK_WINDOW(b->window), "set_dir", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
-	gtk_widget_show(b->window);
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set Dir Info"));
+        gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
+                           GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+        gtk_widget_realize(b->window);
+	aol_icon(b->window->window);
 
-	dialogwindows = g_list_prepend(dialogwindows, b->window);
+	fbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(b->window), fbox);
+	gtk_widget_show(fbox);
+
+	frame = gtk_frame_new(_("Directory Info"));
+        gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
+	gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 0);
+	gtk_widget_show(frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
         gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_widget_show(vbox);
 
-	frame = gtk_frame_new(_("Directory Info"));
-	fbox = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-
-	/* Build Save Button */
-
-	b->save = picture_button(b->window, _("Save"), save_xpm);
-	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
-	
-	bot = gtk_hbox_new(FALSE, 5);
-
-	gtk_box_pack_end(GTK_BOX(bot), b->cancel, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(bot), b->save, FALSE, FALSE, 0);
-
-	gtk_widget_show(bot);
+	g_snprintf(buf, sizeof(buf), "Setting Dir Info for %s:", gc->username);
+	label = gtk_label_new(buf);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
 
 	b->first = gtk_entry_new();
 	b->middle = gtk_entry_new();
@@ -1427,16 +1431,6 @@ void show_set_dir()
 	gtk_widget_show(hbox);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	/* And add the buttons */
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(fbox), bot, FALSE, FALSE, 0);
-
-
-	gtk_widget_show(vbox);
-	gtk_widget_show(fbox);
-
-	gtk_widget_show(frame);
         gtk_widget_show(b->first); 
         gtk_widget_show(b->middle);
         gtk_widget_show(b->last); 
@@ -1446,18 +1440,22 @@ void show_set_dir()
 	gtk_widget_show(b->country);
 	gtk_widget_show(b->web);
 
-        gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
-                           GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+	/* And add the buttons */
+
+	bot = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), bot, FALSE, FALSE, 0);
+	gtk_widget_show(bot);
+
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(bot), b->cancel, FALSE, FALSE, 0);
         gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked",
                            GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+
+	b->save = picture_button(b->window, _("Save"), save_xpm);
+	gtk_box_pack_end(GTK_BOX(bot), b->save, FALSE, FALSE, 0);
         gtk_signal_connect(GTK_OBJECT(b->save), "clicked", GTK_SIGNAL_FUNC(do_set_dir), b);
 
-	gtk_container_add(GTK_CONTAINER(b->window), fbox);
-
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set Dir Info"));
         gtk_window_set_focus(GTK_WINDOW(b->window), b->first);
-        gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
 
 	gtk_widget_show(b->window);	
 }
@@ -1486,60 +1484,19 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 	g_free(b);
 }
 
-static void pwd_choose(GtkObject *obj, struct passwddlg *pwd)
-{
-	pwd->gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
-}
-
-static void passwd_multi_menu(GtkWidget *box, struct passwddlg *pwd)
-{
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *optmenu;
-	GtkWidget *menu;
-	GtkWidget *opt;
-	GSList *c = connections;
-	struct gaim_connection *g;
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new(_("Change password for:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	optmenu = gtk_option_menu_new();
-	gtk_box_pack_end(GTK_BOX(hbox), optmenu, FALSE, FALSE, 0);
-	gtk_widget_show(optmenu);
-
-	menu = gtk_menu_new();
-
-	while (c) {
-		g = (struct gaim_connection *)c->data;
-		opt = gtk_menu_item_new_with_label(g->username);
-		gtk_object_set_user_data(GTK_OBJECT(opt), g);
-		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(pwd_choose), pwd);
-		gtk_menu_append(GTK_MENU(menu), opt);
-		gtk_widget_show(opt);
-		c = c->next;
-	}
-
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
-
-	pwd->gc = (struct gaim_connection *)connections->data;
-}
-
-void show_change_passwd()
+void show_change_passwd(struct gaim_connection *gc)
 {
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *vbox;
 	GtkWidget *fbox;
 	GtkWidget *frame;
+	char buf[256];
 
 	struct passwddlg *b = g_new0(struct passwddlg, 1);
+	if (!g_slist_find(connections, gc))
+		gc = connections->data;
+	b->gc = gc;
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
@@ -1565,11 +1522,10 @@ void show_change_passwd()
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
-#ifndef NO_MULTI
-	passwd_multi_menu(vbox, b);
-#else
-	b->gc = connections->data;
-#endif
+	g_snprintf(buf, sizeof(buf), "Changing password for %s:", gc->username);
+	label = gtk_label_new(buf);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
 
 	/* First Line */
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -1632,126 +1588,67 @@ void show_change_passwd()
 	gtk_widget_show(b->window);
 }
 
-static void info_choose(GtkWidget *opt, struct set_info_dlg *b)
-{
-	int text_len = gtk_text_get_length(GTK_TEXT(b->text));
-	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
-	gchar *buf = g_malloc(strlen(u->user_info)+1);
-	b->user = u;
-
-	strncpy_nohtml(buf, u->user_info, strlen(u->user_info)+1);
-
-	gtk_text_set_point(GTK_TEXT(b->text), 0);
-	gtk_text_forward_delete(GTK_TEXT(b->text), text_len);
-	gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL, buf, -1);
-
-	g_free(buf);
-}
-
-static void info_user_menu(struct set_info_dlg *b, GtkWidget *box)
-{
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *optmenu;
-	GtkWidget *menu;
-	GtkWidget *opt;
-	GList *u = aim_users;
-	struct aim_user *a;
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new(_("Set info for:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	optmenu = gtk_option_menu_new();
-	gtk_box_pack_start(GTK_BOX(hbox), optmenu, FALSE, FALSE, 0);
-	gtk_widget_show(optmenu);
-
-	menu = gtk_menu_new();
-
-	while (u) {
-		a = (struct aim_user *)u->data;
-		opt = gtk_menu_item_new_with_label(a->username);
-		gtk_object_set_user_data(GTK_OBJECT(opt), a);
-		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(info_choose), b);
-		gtk_menu_append(GTK_MENU(menu), opt);
-		gtk_widget_show(opt);
-		u = u->next;
-	}
-
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu),
-			g_list_index(aim_users, ((struct gaim_connection *)connections->data)->user));
-
-	b->menu = optmenu;
-}
-
-void show_set_info()
+void show_set_info(struct gaim_connection *gc)
 {
 	GtkWidget *buttons;
+	GtkWidget *label;
 	GtkWidget *vbox;
 	gchar *buf;
 	struct aim_user *tmp;
 
 	struct set_info_dlg *b = g_new0(struct set_info_dlg, 1);
+	if (!g_slist_find(connections, gc))
+		gc = connections->data;
+	tmp = gc->user;
+	b->user = tmp;
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
         gtk_window_set_wmclass(GTK_WINDOW(b->window), "set_info", "Gaim");
         dialogwindows = g_list_prepend(dialogwindows, b->window);
-	gtk_widget_realize(b->window);
-
-	buttons = gtk_hbox_new(FALSE, 5);
-	vbox = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-
-	/* Build OK Button */
-
-	b->save = picture_button(b->window, _("Save"), save_xpm);
-	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
-
-	gtk_box_pack_end(GTK_BOX(buttons), b->cancel, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(buttons), b->save, FALSE, FALSE, 0);
-
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Info"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked",
-			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-	gtk_signal_connect(GTK_OBJECT(b->save), "clicked",
-			   GTK_SIGNAL_FUNC(do_save_info), b);
+	gtk_widget_realize(b->window);
+	aol_icon(b->window->window);
 
-	info_user_menu(b, vbox);
+	vbox = gtk_vbox_new(FALSE, 5);
+        gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(b->window), vbox);
+	gtk_widget_show(vbox);
 
-	gtk_widget_show(buttons);
-
+	buf = g_malloc(256);
+	g_snprintf(buf, 256, "Changing info for %s:", tmp->username);
+	label = gtk_label_new(buf);
+	g_free(buf);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+	
 	b->text = gtk_text_new(NULL, NULL);
 	gtk_text_set_word_wrap(GTK_TEXT(b->text), TRUE);
 	gtk_text_set_editable(GTK_TEXT(b->text), TRUE);
 	gtk_widget_set_usize(b->text, 300, 200);
-	if (aim_users) {
-		tmp = ((struct gaim_connection *)connections->data)->user;
-		buf = g_malloc(strlen(tmp->user_info)+1);
-		strncpy_nohtml(buf, tmp->user_info, strlen(tmp->user_info)+1);
-		gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL, buf, -1);
-		b->user = tmp;
-                g_free(buf);
-	}
-
-	gtk_widget_show(b->text);
-
+	buf = g_malloc(strlen(tmp->user_info)+1);
+	strncpy_nohtml(buf, tmp->user_info, strlen(tmp->user_info)+1);
+	gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL, buf, -1);
+	g_free(buf);
 	gtk_box_pack_start(GTK_BOX(vbox), b->text, TRUE, TRUE, 0);
-	gtk_widget_show(vbox);
-
-	gtk_box_pack_start(GTK_BOX(vbox), buttons, FALSE, FALSE, 0);
-
-	gtk_container_add(GTK_CONTAINER(b->window), vbox);
-        gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
-	
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Info"));
+	gtk_widget_show(b->text);
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->text);
+
+	buttons = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), buttons, FALSE, FALSE, 0);
+	gtk_widget_show(buttons);
+
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(buttons), b->cancel, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked",
+			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+
+	b->save = picture_button(b->window, _("Save"), save_xpm);
+	gtk_box_pack_end(GTK_BOX(buttons), b->save, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(b->save), "clicked",
+			   GTK_SIGNAL_FUNC(do_save_info), b);
+
 	gtk_widget_show(b->window);
 
 }
@@ -2292,20 +2189,34 @@ void show_find_email()
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
 	gtk_window_set_wmclass(GTK_WINDOW(b->window), "find_email", "Gaim");
         gtk_widget_realize(b->window);
+        aol_icon(b->window->window);
         dialogwindows = g_list_prepend(dialogwindows, b->window); 
+        gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
+                           GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+        gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Email"));
 
         vbox = gtk_vbox_new(FALSE, 5);
         gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+        gtk_container_add(GTK_CONTAINER(b->window), vbox);
 
 	frame = gtk_frame_new(_("Search for Buddy"));
+        gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+
         topbox = gtk_hbox_new(FALSE, 5);
+        gtk_container_add(GTK_CONTAINER(frame), topbox);
         gtk_container_set_border_width(GTK_CONTAINER(topbox), 5);
 
-	bbox = gtk_hbox_new(FALSE, 5);
+        label = gtk_label_new(_("Email"));
+        gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 0);
 
         b->emailentry = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(topbox), b->emailentry, TRUE, TRUE, 0);
+        gtk_signal_connect(GTK_OBJECT(b->emailentry), "activate",
+                           GTK_SIGNAL_FUNC(do_find_email), b);
+        gtk_window_set_focus(GTK_WINDOW(b->window), b->emailentry);
 
-	/* Build OK Button */
+	bbox = gtk_hbox_new(FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
 
 	button = picture_button(b->window, _("Cancel"), cancel_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
@@ -2316,24 +2227,6 @@ void show_find_email()
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
                            GTK_SIGNAL_FUNC(do_find_email), b);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-
-        label = gtk_label_new(_("Email"));
-        gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(topbox), b->emailentry, TRUE, TRUE, 0);
-
-        gtk_container_add(GTK_CONTAINER(frame), topbox);
-        gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
-
-        gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
-                           GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-        gtk_signal_connect(GTK_OBJECT(b->emailentry), "activate",
-                           GTK_SIGNAL_FUNC(do_find_email), b);
-
-        gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Email"));
-        gtk_window_set_focus(GTK_WINDOW(b->window), b->emailentry);
-        gtk_container_add(GTK_CONTAINER(b->window), vbox);
-        aol_icon(b->window->window);
 
         gtk_widget_show_all(b->window);
 }
