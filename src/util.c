@@ -1091,7 +1091,10 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						}
 						p++;
 					}
-					c = strchr(c, '>') + 1;
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
 					pt = g_new0(struct gaim_parse_tag, 1);
 					pt->src_tag = "font";
 					pt->dest_tag = "span";
