@@ -1027,7 +1027,7 @@ choose_file(struct gaim_xfer *xfer)
 		data->filesel = gtk_file_selection_new(_("Gaim - Save As..."));
 
 	if (gaim_xfer_get_filename(xfer) == NULL)
-		init_str = g_strdup_printf("%s%c", cur_dir, G_DIR_SEPARATOR);
+		init_str = g_strdup_printf("%s" G_DIR_SEPARATOR_S, cur_dir);
 	else
 		init_str = g_build_filename(cur_dir, gaim_xfer_get_filename(xfer),
 									NULL);
