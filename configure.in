@@ -50,7 +50,7 @@ fi
 AM_PATH_GLIB(1.2.0)
 AM_PATH_GTK(1.2.0,,,gthread)
 LIBS="$LIBS $GTK_LIBS"
-CFLAGS="$CFLAGS -I../libfaim/faim"
+CFLAGS="$CFLAGS -I../libfaim -I../libfaim/faim"
 LDADD="$LDADD -L../libfaim -lfaim -pthread"
 
 if test "$enable_gnome" = yes ; then
