@@ -2,13 +2,15 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.82:
 	Bug Fixes:
+	* Joining a Jabber chat no longer causes a crash (Stu Tomlinson)
 	* Selecting a buddy icon for a brand new account no longer
 	  causes a crash
 	* Delayed messages and system messages no longer cause
 	  sound events to be triggered (Nathan Fredrickson)
 	* Remotely canceled file transfers in MSN are now noticed, so that we
 	  don't accidentally cancel the file transfer and crash Gaim
-	  (Felipe Contreras).
+	  (Felipe Contreras)
+	* The chat invite button has a correct label (Stu Tomlinson)
 
 version 0.81 (08/05/2004):
 	New Features:
