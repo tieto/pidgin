@@ -26,6 +26,7 @@ version 0.47:
 	  right-click on their name while they're online.
 	* IRC can do /WHOIS
 	* The usual bug fixes and memory leak plugs
+	* Added Dutch translation
 
 version 0.46 (10/18/2001):
 	* New applet icons (courtesy David Raeman)
