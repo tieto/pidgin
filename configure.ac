@@ -153,6 +153,12 @@ if test "x$enable_gnome" != "xyes" ; then
 fi
 CFLAGS="$CFLAGS $GTK_CFLAGS"
 
+if test "x$enable_panel" = "xyes" ; then
+	dnl Things moved with the new versoin of Orbit. Thanks for
+	dnl telling me, Dan.  This should fix them.
+	CFLAGS="$CFLAGS ORBIT_CFLAGS"
+fi
+
 use_pixbuf=no
 if test "x$enable_pixbuf" = "xyes" ; then
 	AC_PATH_PROG(pixbufcfg, gdk-pixbuf-config)
