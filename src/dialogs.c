@@ -1147,6 +1147,9 @@ static void rebuild_addchat_entries(struct addchat *ac) {
 				focus = FALSE;
 			}
 
+			if(pce->secret)
+				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+
 			gtk_box_pack_end(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
 
 			g_signal_connect(G_OBJECT(entry), "activate",

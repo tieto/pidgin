@@ -44,6 +44,7 @@ struct proto_chat_entry {
 	gboolean is_int;
 	int min;
 	int max;
+	gboolean secret;
 };
 
 #endif /* _MULTI_H_ */
