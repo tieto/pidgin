@@ -5213,7 +5213,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
 			if (info->email2[i] && info->email2[i][0] && (utf8 = gaim_utf8_try_convert(info->email2[i]))) {
-				g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto%s\">%s</a>", _("Email Address"), utf8, utf8);
+				g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("Email Address"), utf8, utf8);
 				g_free(utf8);
 			}
 		}
@@ -5243,14 +5243,14 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		g_string_append_printf(str, "<hr><b>%s:</b><br>%s", _("Additional Information"), utf8);
 		g_free(utf8);
 	}
-	g_string_append_printf(str, "<hr>\n");
+	g_string_append_printf(str, "<hr>");
 	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Home Address"));
 		oscar_string_append(str, "\n<br>", _("Address"), info->homeaddr);
 		oscar_string_append(str, "\n<br>", _("City"), info->homecity);
 		oscar_string_append(str, "\n<br>", _("State"), info->homestate);
 		oscar_string_append(str, "\n<br>", _("Zip Code"), info->homezip);
-		g_string_append_printf(str, "\n<hr>\n");
+		g_string_append_printf(str, "\n<hr>");
 	}
 	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Work Address"));
@@ -5258,7 +5258,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		oscar_string_append(str, "\n<br>", _("City"), info->workcity);
 		oscar_string_append(str, "\n<br>", _("State"), info->workstate);
 		oscar_string_append(str, "\n<br>", _("Zip Code"), info->workzip);
-		g_string_append_printf(str, "\n<hr>\n");
+		g_string_append_printf(str, "\n<hr>");
 	}
 	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Work Information"));
@@ -5269,7 +5269,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 			g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Web Page"), utf8, utf8);
 			g_free(utf8);
 		}
-		g_string_append_printf(str, "\n<hr>\n");
+		g_string_append_printf(str, "\n<hr>");
 	}
 
 	if (buddy != NULL)
