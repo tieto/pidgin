@@ -1,4 +1,4 @@
-/* $Id: libgg.h 11554 2004-12-11 00:06:06Z thekingant $ */
+/* $Id: libgg.h 11615 2004-12-16 03:50:54Z faceprint $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -60,7 +60,7 @@ struct gg_session {
 	int client_port;	/* port, na którym klient s³ucha */
 
 	uin_t uin;		/* numerek klienta */
-	char *password;		/* i jego has³o. zwalniane automagicznie */
+	unsigned char *password;		/* i jego has³o. zwalniane automagicznie */
         
 	int initial_status;	/* pocz±tkowy stan klienta */
 

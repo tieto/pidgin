@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 11327 2004-11-19 03:46:15Z thekingant $
+ * $Id: gg.c 11615 2004-12-16 03:50:54Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1512,7 +1512,7 @@ static void agg_dir_search(GaimConnection *gc, const char *first, const char *mi
 }
 #endif
 
-static void agg_change_passwd(GaimConnection *gc, const char *old, const char *new)
+static void agg_change_passwd(GaimConnection *gc, const unsigned char *old, const unsigned char *new)
 {
 	struct agg_http *hpass = g_new0(struct agg_http, 1);
 	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));

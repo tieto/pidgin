@@ -1,4 +1,4 @@
-/* $Id: libgg.c 11554 2004-12-11 00:06:06Z thekingant $ */
+/* $Id: libgg.c 11615 2004-12-16 03:50:54Z faceprint $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -70,7 +70,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 11554 2004-12-11 00:06:06Z thekingant $";
+= "$Id: libgg.c 11615 2004-12-16 03:50:54Z faceprint $";
 
 #endif 
 
@@ -1461,7 +1461,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			struct gg_welcome *w;
 			struct gg_login60 l;
 			unsigned int hash;
-			char *password = sess->password;
+			unsigned char *password = sess->password;
 
 			gg_debug(GG_DEBUG_MISC, "== GG_STATE_READING_KEY\n");
 

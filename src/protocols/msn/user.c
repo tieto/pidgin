@@ -136,7 +136,7 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		unsigned char *buf;
 		SHA_CTX ctx;
 		gsize len;
-		char *base64;
+		unsigned char *base64;
 		unsigned char digest[20];
 
 		if (msnobj == NULL)

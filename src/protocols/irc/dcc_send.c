@@ -194,7 +194,7 @@ static void irc_dccsend_send_read(gpointer data, int source, GaimInputCondition 
 
 		xd->rxlen -= 4;
 		if (xd->rxlen) {
-			char *tmp = g_memdup(xd->rxqueue + 4, xd->rxlen);
+			unsigned char *tmp = g_memdup(xd->rxqueue + 4, xd->rxlen);
 			g_free(xd->rxqueue);
 			xd->rxqueue = tmp;
 		} else {

@@ -374,7 +374,7 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	else
 	{
 		struct sockaddr_in client_addr;
-		int client;
+		unsigned int client;
 		fd = accept (source, (struct sockaddr *)&client_addr, &client);
 	}
 

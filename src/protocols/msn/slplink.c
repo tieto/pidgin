@@ -631,14 +631,14 @@ typedef struct
 
 #define MAX_FILE_NAME_LEN 0x226
 
-static char *
+static unsigned char *
 gen_context(const char *file_name, const char *file_path)
 {
 	struct stat st;
 	gsize size = 0;
 	MsnContextHeader header;
 	gchar *u8 = NULL;
-	gchar *base, *n;
+	guchar *base, *n;
 	gunichar2 *uni = NULL;
 	glong currentChar = 0;
 	glong uni_len = 0;
@@ -732,8 +732,8 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 						   const MsnObject *obj)
 {
 	MsnSlpCall *slpcall;
-	char *msnobj_data;
-	char *msnobj_base64;
+	unsigned char *msnobj_data;
+	unsigned char *msnobj_base64;
 
 	g_return_if_fail(slplink != NULL);
 	g_return_if_fail(obj     != NULL);
