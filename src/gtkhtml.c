@@ -2054,8 +2054,7 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 				gdk_window_get_size(html->html_area, &hwidth, &hheight);
 				gdk_gc_set_foreground(gc, hb->back);
 				gdk_draw_rectangle(html->html_area, gc, TRUE /* filled */,
-							shift + hb->x,
-							hb->y - html->yoffset - hei - 6,
+							hb->x, hb->y - html->yoffset - hei - 6,
 							hwidth - shift - hb->x + 1, hei + hei + 2);
 			}
 
