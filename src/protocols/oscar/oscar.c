@@ -649,6 +649,10 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 			/* Suspended account */
 			hide_login_progress(gc, _("Your account is currently suspended."));
 			break;
+		case 0x14:
+			/* service temporarily unavailable */
+			hide_login_progress(gc, _("The AOL Instant Messenger service is temporarily unavailable."));
+			break;
 		case 0x18:
 			/* connecting too frequently */
 			hide_login_progress(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
