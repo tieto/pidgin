@@ -797,7 +797,7 @@ struct aim_incomingim_ch1_args {
 struct aim_incomingim_ch2_args {
 	fu16_t status;
 	fu8_t cookie[8];
-	fu16_t reqclass;
+	int reqclass;
 	const char *proxyip;
 	const char *clientip;
 	const char *verifiedip;
