@@ -11,6 +11,8 @@ version 0.71
 	* Multiple copies of gaim installed at different locations no
 	  longer attempt to load the same, possibly incompatible plugins
 	  (Robert McQueen)
+	* The right-click menu for e-mail links now presents a "Copy E-Mail
+	  Address" item.
 	* Zephyr formatting fixes (Arun A Tharuvai)
 	* Zephyr can connect to chats (Karsten Huneycutt)
 	* Get User Info in MSN and Yahoo now return an error indicating that

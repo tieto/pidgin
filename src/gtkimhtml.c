@@ -525,19 +525,42 @@ gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIte
 			menu = gtk_menu_new();
 
 			/* buttons and such */
-			img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-			item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Link Location"));
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_copy),
-					url);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
-			img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_MENU);
-			item = gtk_image_menu_item_new_with_mnemonic(_("_Open Link in Browser"));
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
-			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_open),
-					tempdata);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			if (!strncmp(url, "mailto:", 7))
+			{
+				/* Copy E-Mail Address */
+				img = gtk_image_new_from_stock(GTK_STOCK_COPY,
+											   GTK_ICON_SIZE_MENU);
+				item = gtk_image_menu_item_new_with_mnemonic(
+					_("_Copy E-Mail Address"));
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+				g_signal_connect(G_OBJECT(item), "activate",
+								 G_CALLBACK(url_copy), url + 7);
+				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			}
+			else
+			{
+				/* Copy Link Location */
+				img = gtk_image_new_from_stock(GTK_STOCK_COPY,
+											   GTK_ICON_SIZE_MENU);
+				item = gtk_image_menu_item_new_with_mnemonic(
+					_("_Copy Link Location"));
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+				g_signal_connect(G_OBJECT(item), "activate",
+								 G_CALLBACK(url_copy), url);
+				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
+				/* Open Link in Browser */
+				img = gtk_image_new_from_stock(GTK_STOCK_JUMP_TO,
+											   GTK_ICON_SIZE_MENU);
+				item = gtk_image_menu_item_new_with_mnemonic(
+					_("_Open Link in Browser"));
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+				g_signal_connect(G_OBJECT(item), "activate",
+								 G_CALLBACK(url_open), tempdata);
+				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			}
+
 
 			gtk_widget_show_all(menu);
 			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
