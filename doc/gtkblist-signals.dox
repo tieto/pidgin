@@ -1,0 +1,43 @@
+/** @page gtkblist-signals GtkBlist Signals
+
+ @signals
+  @signal gtkblist-created
+  @signal drawing-menu
+  @signal drawing-tooltip
+ @endsignals
+
+ <hr>
+
+ @signaldef gtkblist-created
+  @signalproto
+(*gtkblist-created)(GaimBuddyList *blist);
+  @endsignalproto
+  @signaldesc
+   Emitted when the buddy list is created.
+  @param blist The buddy list.
+ @endsignaldef
+
+ @signaldef drawing-menu
+  @signalproto
+void (*drawing-menu)(GtkMenu *menu, GaimBuddy *buddy);
+  @endsignalproto
+  @signaldesc
+   Emitted when the user right clicks on a buddy or chat in the buddy list.
+  @param menu The menu that will be shown.
+  @param buddy The buddy or chat.
+ @endsignaldef
+
+ @signaldef drawing-tooltip
+  @signalproto
+void (*drawing-tooltip)(GaimBlistNode *node, char **text);
+  @endsignalproto
+  @signaldesc
+   Emitted just before a tooltip is displayed.
+   @a text is a pointer to a string, so the plugin can replace the text that
+   will be displayed.
+  @note
+   Make sure to free @a *text before you replace it!
+  @param node The blist node for the tooltip.
+  @param text A pointer to the text that will be displayed.
+ @endsignaldef
+*/
