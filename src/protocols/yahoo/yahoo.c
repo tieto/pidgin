@@ -2584,6 +2584,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 			_("<html><body><b>Error retrieving profile</b></body></html>"),
 			  NULL, NULL);
 
+		g_free(info_data->name);
+		g_free(info_data);
 		return;
 	}
 
@@ -2602,6 +2604,9 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 
 		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
 				buf, NULL, NULL);
+
+		g_free(info_data->name);
+		g_free(info_data);
 		return;
 	}
 
@@ -2619,6 +2624,9 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 
 		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
 				buf, NULL, NULL);
+
+		g_free(info_data->name);
+		g_free(info_data);
 		return;
 	}
 
@@ -2814,6 +2822,9 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	}
 
 	g_free(url_buffer);
+
+	g_free(info_data->name);
+	g_free(info_data);
 }
 
 static void yahoo_get_info(GaimConnection *gc, const char *name)
