@@ -44,6 +44,7 @@ struct _GaimRoomlist {
 	GaimAccount *account; /**< The account this list belongs to. */
 	GList *fields; /**< The fields. */
 	GList *rooms; /**< The list of rooms. */
+	gboolean in_progress; /**< The listing is in progress. */
 	gpointer ui_data; /**< UI private data. */
 	gpointer proto_data; /** Prpl private data. */
 	guint ref; /**< The reference count. */
@@ -160,6 +161,17 @@ void gaim_roomlist_set_fields(GaimRoomlist *list, GList *fields);
 void gaim_roomlist_set_in_progress(GaimRoomlist *list, gboolean in_progress);
 
 /**
+ * Gets the "in progress" state of the room list.
+ *
+ * The UI is encourged to somehow hint to the user
+ * whether or not we're busy downloading a room list or not.
+ *
+ * @param list The room list.
+ * @returns True if we're downloading it, or false if we're not.
+ */
+gboolean gaim_roomlist_get_in_progress(GaimRoomlist *list);
+
+/**
  * Adds a room to the list of them.
  *
  * @param list The room list.
@@ -237,6 +249,14 @@ GaimRoomlistRoom *gaim_roomlist_room_new(GaimRoomlistRoomType type, const gchar 
  * @param field The field to append. Strings get g_strdup'd internally.
  */
 void gaim_roomlist_room_add_field(GaimRoomlist *list, GaimRoomlistRoom *room, gconstpointer field);
+
+/**
+ * Join a room, given a GaimRoomlistRoom and it's associated GaimRoomlist.
+ *
+ * @param list The room list the room belongs to.
+ * @param room The room to join.
+ */
+void gaim_roomlist_room_join(GaimRoomlist *list, GaimRoomlistRoom *room);
 
 /*@}*/
 

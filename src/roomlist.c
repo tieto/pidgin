@@ -29,6 +29,7 @@
 #include "connection.h"
 #include "debug.h"
 #include "roomlist.h"
+#include "server.h"
 
 
 static GaimRoomlistUiOps *ops = NULL;
@@ -139,8 +140,17 @@ void gaim_roomlist_set_in_progress(GaimRoomlist *list, gboolean in_progress)
 {
 	g_return_if_fail(list != NULL);
 
+	list->in_progress = in_progress;
+
 	if (ops && ops->in_progress)
 		ops->in_progress(list, in_progress);
+}
+
+gboolean gaim_roomlist_get_in_progress(GaimRoomlist *list)
+{
+	g_return_val_if_fail(list != NULL, FALSE);
+
+	return list->in_progress;
 }
 
 void gaim_roomlist_room_add(GaimRoomlist *list, GaimRoomlistRoom *room)
@@ -265,6 +275,33 @@ void gaim_roomlist_room_add_field(GaimRoomlist *list, GaimRoomlistRoom *room, gc
 			room->fields = g_list_append(room->fields, GINT_TO_POINTER(field));
 			break;
 	}
+}
+
+void gaim_roomlist_room_join(GaimRoomlist *list, GaimRoomlistRoom *room)
+{
+	GHashTable *components;
+	GList *l, *j;
+	GaimConnection *gc;
+
+	g_return_if_fail(list != NULL);
+	g_return_if_fail(room != NULL);
+
+	gc = gaim_account_get_connection(list->account);
+	if (!gc)
+		return;
+
+	components = g_hash_table_new(g_str_hash, g_str_equal);
+
+	g_hash_table_replace(components, "name", room->name);
+	for (l = list->fields, j = room->fields; l && j; l = l->next, j = j->next) {
+		GaimRoomlistField *f = l->data;
+
+		g_hash_table_replace(components, f->name, j->data);
+	}
+
+	serv_join_chat(gc, components);
+
+	g_hash_table_destroy(components);
 }
 
 /*@}*/

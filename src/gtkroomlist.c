@@ -47,13 +47,13 @@ struct _GaimGtkRoomlistDialog {
 	GtkWidget *progress;
 	GtkWidget *sw;
 
-	GtkWidget *list_button;
 	GtkWidget *stop_button;
+	GtkWidget *list_button;
+	GtkWidget *join_button;
 	GtkWidget *close_button;
 
 	GaimAccount *account;
 	GaimRoomlist *roomlist;
-
 };
 
 enum {
@@ -64,13 +64,14 @@ enum {
 
 static GList *roomlists = NULL;
 
-
-
 static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
 	GaimGtkRoomlistDialog *dialog;
 
 	dialog = (GaimGtkRoomlistDialog *) d;
+
+	if (dialog->roomlist && gaim_roomlist_get_in_progress(dialog->roomlist))
+		gaim_roomlist_cancel_get_list(dialog->roomlist);
 
 	/* free stuff here */
 	if (dialog->roomlist)
@@ -95,20 +96,37 @@ static void list_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 	if (!gc)
 		return;
 
+	if (dialog->roomlist != NULL) {
+		rl = dialog->roomlist->ui_data;
+		gtk_widget_destroy(rl->tree);
+		gaim_roomlist_unref(dialog->roomlist);
+	}
+
 	dialog->roomlist = gaim_roomlist_get_list(gc);
 	gaim_roomlist_ref(dialog->roomlist);
 	rl = dialog->roomlist->ui_data;
 	rl->dialog = dialog;
+
 	if (dialog->account_widget)
 		gtk_widget_set_sensitive(dialog->account_widget, FALSE);
+
+	gtk_container_add(GTK_CONTAINER(dialog->sw), rl->tree);
+
+	gtk_widget_set_sensitive(dialog->stop_button, TRUE);
 	gtk_widget_set_sensitive(dialog->list_button, FALSE);
-	gtk_container_add(GTK_CONTAINER(dialog->sw), rl->tree); /* XXX */
+	gtk_widget_set_sensitive(dialog->join_button, FALSE);
 }
 
 static void stop_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 {
 	gaim_roomlist_cancel_get_list(dialog->roomlist);
-	gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
+
+	if (dialog->account_widget)
+		gtk_widget_set_sensitive(dialog->account_widget, TRUE);
+
+	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
+	gtk_widget_set_sensitive(dialog->list_button, TRUE);
+	gtk_widget_set_sensitive(dialog->join_button, FALSE);
 }
 
 static void close_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
@@ -124,28 +142,51 @@ struct _menu_cb_info {
 	GaimRoomlistRoom *room;
 };
 
+static void
+selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
+	GtkTreeIter iter;
+	GValue val = { 0, };
+	GaimRoomlistRoom *room;
+	static struct _menu_cb_info *info;
+	GaimGtkRoomlistDialog *dialog;
+
+	dialog = grl->dialog;
+
+	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
+		gtk_tree_model_get_value(GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
+		room = g_value_get_pointer(&val);
+		if (!room || !(room->type & GAIM_ROOMLIST_ROOMTYPE_ROOM)) {
+			gtk_widget_set_sensitive(dialog->join_button, FALSE);
+			return;
+		}
+
+		info = g_new0(struct _menu_cb_info, 1);
+		info->list = dialog->roomlist;
+		info->room = room;
+
+		g_object_set_data(G_OBJECT(dialog->join_button), "room-info", info);
+
+		gtk_widget_set_sensitive(dialog->join_button, TRUE);
+	} else {
+		gtk_widget_set_sensitive(dialog->join_button, FALSE);
+	}
+}
+
 static void do_join_cb(GtkWidget *w, struct _menu_cb_info *info)
 {
-	GHashTable *components;
-	GList *l, *j;
-	GaimConnection *gc;
+	gaim_roomlist_room_join(info->list, info->room);
+}
 
-	gc = gaim_account_get_connection(info->list->account);
-	if (!gc)
-		return;
-
-	components = g_hash_table_new(g_str_hash, g_str_equal);
-
-	g_hash_table_replace(components, g_strdup("name"), g_strdup(info->room->name));
-	for (l = info->list->fields, j = info->room->fields; l && j; l = l->next, j = j->next) {
-		GaimRoomlistField *f = l->data;
-
-		g_hash_table_replace(components, f->name, j->data);
-	}
-
-	serv_join_chat(gc, components);
-
-	g_hash_table_destroy(components);
+static void join_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
+{
+	GaimRoomlist *rl = dialog->roomlist;
+	GaimGtkRoomlist *grl = rl->ui_data;
+	struct _menu_cb_info *info;
+		
+	info = (struct _menu_cb_info*)g_object_get_data(G_OBJECT(button), "room-info");
+	
+	do_join_cb(grl->tree, info);
+	g_free(info);
 }
 
 static void row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *arg2,
@@ -237,11 +278,11 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 {
 	GaimGtkRoomlistDialog *dialog;
 	GtkWidget *window;
-	GtkWidget *vbox1, *vbox2;
+	GtkWidget *vbox;
+	GtkWidget *vbox2;
 	GtkWidget *account_hbox;
 	GtkWidget *bbox;
 	GtkWidget *label;
-	GtkWidget *button;
 	GaimAccount *first_account = NULL;
 
 	if (!account) {
@@ -281,92 +322,96 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox1 = gtk_vbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(window), vbox1);
-	gtk_widget_show(vbox1);
+	vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+	gtk_widget_show(vbox);
 
-	/* Create the main vbox for top half of the window. */
-	vbox2 = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox1), vbox2, FALSE, FALSE, 0);
+	vbox2 = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(vbox), vbox2);
 	gtk_widget_show(vbox2);
-
-	account_hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox2), account_hbox, TRUE, TRUE, 0);
-	gtk_widget_show(account_hbox);
 
 	/* accounts dropdown list */
 	if (!account) {
+		account_hbox = gtk_hbox_new(FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox2), account_hbox, FALSE, FALSE, 0);
+		gtk_widget_show(account_hbox);
+
 		dialog->account = first_account;
 		label = gtk_label_new(NULL);
 		gtk_box_pack_start(GTK_BOX(account_hbox), label, TRUE, TRUE, 0);
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-
+		gtk_widget_show(label);
 
 		dialog->account_widget = gaim_gtk_account_option_menu_new(first_account, FALSE,
 				G_CALLBACK(dialog_select_account_cb), accounts_filter_func, dialog);
 
 		gtk_box_pack_start(GTK_BOX(account_hbox), dialog->account_widget, TRUE, TRUE, 0);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(dialog->account_widget));
-		gtk_widget_show(label);
 		gtk_widget_show(dialog->account_widget);
+
 	} else {
 		dialog->account = account;
 	}
 
-
-	/* Now the button box for the buttons */
-	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 6);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_EDGE);
-	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
-
-	/* Get list button */
-	button = gtk_button_new_with_mnemonic(_("Get _List"));
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-	dialog->list_button = button;
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(list_button_cb), dialog);
-	/* Stop button */
-	button = gtk_button_new_from_stock(GTK_STOCK_STOP);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-	gtk_widget_set_sensitive(button, FALSE);
-	dialog->stop_button = button;
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(stop_button_cb), dialog);
-	/* Close button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-	dialog->close_button = button;
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(close_button_cb), dialog);
-
-	/* The pusling dilly */
-	dialog->progress = gtk_progress_bar_new();
-	gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR(dialog->progress), 0.1);
-		gtk_progress_bar_set_text(GTK_PROGRESS_BAR(dialog->progress),
-		                          " ");
-	gtk_box_pack_start(GTK_BOX(vbox2), dialog->progress, TRUE, TRUE, 0);
-	gtk_widget_show(dialog->progress);
-
-
-	gtk_widget_show(dialog->window);
-
+	/* scrolled window */
 	dialog->sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(dialog->sw),
 	                                    GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(dialog->sw),
 	                               GTK_POLICY_AUTOMATIC,
 	                               GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start(GTK_BOX(vbox1), dialog->sw, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), dialog->sw, TRUE, TRUE, 0);
+	gtk_widget_set_size_request(dialog->sw, -1, 250);
 	gtk_widget_show(dialog->sw);
+
+	/* progress bar */
+	dialog->progress = gtk_progress_bar_new();
+	gtk_progress_bar_set_pulse_step(GTK_PROGRESS_BAR(dialog->progress), 0.1);
+	gtk_box_pack_start(GTK_BOX(vbox2), dialog->progress, FALSE, FALSE, 0);
+	gtk_widget_show(dialog->progress);
+
+
+	/* button box */
+	bbox = gtk_hbutton_box_new();
+	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
+	gtk_widget_show(bbox);
+
+	/* stop button */
+	dialog->stop_button = gtk_button_new_from_stock(GTK_STOCK_STOP);
+	gtk_box_pack_start(GTK_BOX(bbox), dialog->stop_button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(dialog->stop_button), "clicked",
+	                 G_CALLBACK(stop_button_cb), dialog);
+	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
+	gtk_widget_show(dialog->stop_button);
+
+	/* list button */
+	dialog->list_button = gtk_button_new_with_mnemonic(_("_Get List"));
+	gtk_box_pack_start(GTK_BOX(bbox), dialog->list_button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(dialog->list_button), "clicked",
+	                 G_CALLBACK(list_button_cb), dialog);
+	gtk_widget_show(dialog->list_button);
+
+	/* join button */
+	dialog->join_button = gaim_pixbuf_button_from_stock(_("_Join"), GAIM_STOCK_CHAT,
+	                                                    GAIM_BUTTON_HORIZONTAL);
+	gtk_box_pack_start(GTK_BOX(bbox), dialog->join_button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(dialog->join_button), "clicked",
+					 G_CALLBACK(join_button_cb), dialog);
+	gtk_widget_set_sensitive(dialog->join_button, FALSE);
+	gtk_widget_show(dialog->join_button);
+
+	/* close button */
+	dialog->close_button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_box_pack_start(GTK_BOX(bbox), dialog->close_button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(dialog->close_button), "clicked",
+					 G_CALLBACK(close_button_cb), dialog);
+	gtk_widget_show(dialog->close_button);
+
+	/* show the dialog window and return the dialog */
+	gtk_widget_show(dialog->window);
 
 	return dialog;
 }
@@ -438,6 +483,7 @@ static void gaim_gtk_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 	GtkWidget *tree;
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
+	GtkTreeSelection *selection;
 	GList *l;
 	GType *types;
 
@@ -471,6 +517,10 @@ static void gaim_gtk_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 	tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree), TRUE);
 
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
+	g_signal_connect(G_OBJECT(selection), "changed",
+					 G_CALLBACK(selection_changed_cb), grl);
+	
 	g_object_unref(model);
 
 	grl->model = model;
@@ -513,7 +563,6 @@ static void gaim_gtk_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 	g_signal_connect(G_OBJECT(tree), "button-press-event", G_CALLBACK(room_click_cb), list);
 	g_signal_connect(G_OBJECT(tree), "row-expanded", G_CALLBACK(row_expanded_cb), list);
 	g_signal_connect(G_OBJECT(tree), "row-activated", G_CALLBACK(row_activated_cb), list);
-	/* gtk_container_add(GTK_CONTAINER(grl->sw), tree); */
 }
 
 static void gaim_gtk_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
@@ -588,14 +637,17 @@ static void gaim_gtk_roomlist_in_progress(GaimRoomlist *list, gboolean flag)
 	if (!rl || !rl->dialog)
 		return;
 
-	gtk_widget_set_sensitive(rl->dialog->stop_button, flag);
 	if (flag) {
-		gtk_progress_bar_set_text(GTK_PROGRESS_BAR(rl->dialog->progress),
-		                          _("Downloading List..."));
+		if (rl->dialog->account_widget)
+			gtk_widget_set_sensitive(rl->dialog->account_widget, FALSE);
+		gtk_widget_set_sensitive(rl->dialog->stop_button, TRUE);
+		gtk_widget_set_sensitive(rl->dialog->list_button, FALSE);
 	} else {
-		gtk_progress_bar_set_text(GTK_PROGRESS_BAR(rl->dialog->progress),
-		                          " ");
 		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(rl->dialog->progress), 0.0);
+		if (rl->dialog->account_widget)
+			gtk_widget_set_sensitive(rl->dialog->account_widget, TRUE);
+		gtk_widget_set_sensitive(rl->dialog->stop_button, FALSE);
+		gtk_widget_set_sensitive(rl->dialog->list_button, TRUE);
 	}
 }
 
