@@ -7,7 +7,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim version CVS-20021114\n"
+"Project-Id-Version: Gaim 0.75\n"
 "POT-Creation-Date: 2003-10-09 15:23-0700\n"
 "PO-Revision-Date: 2003-06-07 19:23+0900\n"
 "Last-Translator: Junichi Uekawa <dancer@debian.org>\n"
@@ -56,26 +56,22 @@ msgstr "X 秒毎にメールをチェックする.\n"
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: plugins/docklet/docklet-win32.c:44
-#, fuzzy
 msgid "Gaim"
-msgstr "ゲーム"
+msgstr "Gaim"
 
 #: plugins/docklet/docklet-win32.c:45
-#, fuzzy
 msgid "Gaim - Signed off"
-msgstr "Gaim - アイコン保存"
+msgstr "Gaim - サインオフ"
 
 #: plugins/docklet/docklet-win32.c:46
-#, fuzzy
 msgid "Gaim - Away"
-msgstr "Gaim - 離席!"
+msgstr "Gaim - 離席"
 
 #: plugins/docklet/docklet.c:114 src/gtkaccount.c:482 src/gtkaccount.c:1765
 msgid "Auto-login"
 msgstr "自動ログイン"
 
 #: plugins/docklet/docklet.c:117
-#, fuzzy
 msgid "New Message..."
 msgstr "新しいメッセージ ..."
 
@@ -330,13 +326,15 @@ msgstr "シンボルと価格のみを表示するときにチェック:"
 msgid "Check this box to scroll left to right:"
 msgstr "左から右へスクロールさせるときにチェック:"
 
+# NOTE Please read the source for this. "No change" is one phrase.
 #: plugins/gtik.c:994
 msgid "(No"
-msgstr "(いいえ"
+msgstr ""
 
+# NOTE Please read the source for this. "No change" is one phrase.
 #: plugins/gtik.c:995
 msgid "Change"
-msgstr "変更"
+msgstr ""
 
 #: plugins/history.c:98
 msgid "History"
@@ -468,9 +466,8 @@ msgid "_IM windows"
 msgstr "IM ウィンドウ (_I)"
 
 #: plugins/notify.c:583
-#, fuzzy
 msgid "C_hat windows"
-msgstr "チャットウィンドウ (_C)"
+msgstr "チャットウィンドウ (_H)"
 
 #: plugins/notify.c:590
 #, fuzzy
@@ -482,10 +479,10 @@ msgstr "IM ウィンドウ (_I)"
 msgid "Notification Methods"
 msgstr "通知方法"
 
+# NOTE 0.62
 #: plugins/notify.c:605
-#, fuzzy
 msgid "Prepend _string into window title:"
-msgstr "ウインドウタイトルに文字列を入れる (Enter で保存) (_S):"
+msgstr "ウインドウタイトルに文字列を入れる (_S):"
 
 #. Count method button
 #: plugins/notify.c:624
@@ -494,7 +491,6 @@ msgstr "ウインドウタイトルに新規メッセージの個数を入れる (_O)"
 
 #. Urgent method button
 #: plugins/notify.c:633
-#, fuzzy
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "ウインドウマネージャの \"緊急\" ヒントを設定する (_U)"
 
@@ -521,9 +517,8 @@ msgstr "会話ウインドウで入力されたときに消す (_T)"
 
 #. Remove on message send button
 #: plugins/notify.c:670
-#, fuzzy
 msgid "Remove when a _message gets sent"
-msgstr "離席メッセージの削除"
+msgstr ""
 
 #. Remove on conversation switch button
 #: plugins/notify.c:679
@@ -661,7 +656,7 @@ msgstr "出すメッセージの文書をユーザが定義した法則にしたがって置き換える"
 #. *< id
 #: plugins/ssl/ssl-gnutls.c:190
 msgid "GNUTLS"
-msgstr ""
+msgstr "GNUTLS"
 
 #. *< name
 #. *< version
@@ -679,7 +674,7 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl-nss.c:287
 msgid "NSS"
-msgstr ""
+msgstr "NSS"
 
 #. *< name
 #. *< version
@@ -697,7 +692,7 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl.c:91
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #. *< name
 #. *< version
@@ -749,14 +744,12 @@ msgstr ""
 "す"
 
 #: plugins/tcl/tcl.c:344
-#, fuzzy
 msgid "Tcl Plugin Loader"
-msgstr "Perl プラグインローダ"
+msgstr "Tcl プラグインローダ"
 
 #: plugins/tcl/tcl.c:346 plugins/tcl/tcl.c:347
-#, fuzzy
 msgid "Provides support for loading Tcl plugins"
-msgstr "Perl プラグインをロードするためのサポートを提供します"
+msgstr "Tcl プラグインをロードするためのサポートを提供します"
 
 #. *< api_version
 #. *< type
@@ -933,12 +926,11 @@ msgstr "<FONT SIZE=\"3\">IRC:</FONT> irc.freenode.net の #gaim<BR><BR>"
 
 #: src/about.c:104
 msgid "Active Developers"
-msgstr ""
+msgstr "活発な開発者"
 
 #: src/about.c:105
-#, fuzzy
 msgid "maintainer"
-msgstr "残り"
+msgstr "メンテナ"
 
 #: src/about.c:107
 msgid "lead developer"
@@ -950,11 +942,11 @@ msgstr ""
 
 #: src/about.c:111
 msgid "win32 port"
-msgstr ""
+msgstr "Win32 への移植"
 
 #: src/about.c:114 src/about.c:115 src/about.c:116
 msgid "developer"
-msgstr ""
+msgstr "開発者"
 
 #: src/about.c:117
 #, fuzzy
@@ -963,11 +955,11 @@ msgstr "認証ポート:"
 
 #: src/about.c:124
 msgid "Crazy Patch Writers"
-msgstr ""
+msgstr "クレイジーなパッチ作者"
 
 #: src/about.c:144
 msgid "Retired Developers"
-msgstr ""
+msgstr "引退した開発者"
 
 #: src/about.c:145
 msgid "former libfaim maintainer"
@@ -1007,13 +999,12 @@ msgid "Czech"
 msgstr ""
 
 #: src/about.c:165
-#, fuzzy
 msgid "Danish"
-msgstr "詳細"
+msgstr ""
 
 #: src/about.c:166 src/about.c:194
 msgid "German"
-msgstr ""
+msgstr "ドイツ語"
 
 #: src/about.c:167 src/about.c:195
 msgid "Spanish"
@@ -1021,21 +1012,19 @@ msgstr ""
 
 #: src/about.c:168 src/about.c:196
 msgid "French"
-msgstr ""
+msgstr "フランス語"
 
 #: src/about.c:169
-#, fuzzy
 msgid "Hindi"
-msgstr "隠す"
+msgstr ""
 
 #: src/about.c:170
 msgid "Hungarian"
 msgstr ""
 
 #: src/about.c:171 src/about.c:198
-#, fuzzy
 msgid "Italian"
-msgstr "イタリック"
+msgstr ""
 
 #: src/about.c:172 src/about.c:200
 msgid "Korean"
@@ -1046,9 +1035,8 @@ msgid "Dutch; Flemish"
 msgstr ""
 
 #: src/about.c:174 src/about.c:202
-#, fuzzy
 msgid "Polish"
-msgstr "プラグイン"
+msgstr ""
 
 #: src/about.c:175
 msgid "Portuguese-Brazil"
@@ -1059,9 +1047,8 @@ msgid "Portuguese-Portugal"
 msgstr ""
 
 #: src/about.c:177
-#, fuzzy
 msgid "Romanian"
-msgstr "残り"
+msgstr ""
 
 #: src/about.c:178 src/about.c:203
 msgid "Russian"
@@ -1088,9 +1075,8 @@ msgid "Past Translators"
 msgstr ""
 
 #: src/about.c:190
-#, fuzzy
 msgid "Amharic"
-msgstr "自動"
+msgstr ""
 
 #: src/about.c:191
 msgid "Bulgarian"
@@ -1102,7 +1088,7 @@ msgstr ""
 
 #: src/about.c:199
 msgid "Japanese"
-msgstr ""
+msgstr "日本語"
 
 #: src/about.c:201
 msgid "Norwegian"
@@ -1113,9 +1099,8 @@ msgid "Slovak"
 msgstr ""
 
 #: src/about.c:206
-#, fuzzy
 msgid "Chinese"
-msgstr "チャンネル"
+msgstr "中国語"
 
 #: src/about.c:219 src/dialogs.c:2290 src/gtkrequest.c:205
 #: src/protocols/msn/msn.c:247
@@ -1131,24 +1116,21 @@ msgid "Fill out all fields completely."
 msgstr "全てを入力してください"
 
 #: src/account.c:298
-#, fuzzy
 msgid "Original password"
 msgstr "オリジナルパスワード"
 
 #: src/account.c:304
-#, fuzzy
 msgid "New password"
 msgstr "新しいパスワード"
 
 #: src/account.c:310
-#, fuzzy
 msgid "New password (again)"
 msgstr "新しいパスワード(再入力)"
 
 #: src/account.c:315
-#, fuzzy, c-format
+#, c-format
 msgid "Change password for %s"
-msgstr "%s のパスワードを変更:"
+msgstr "%s のパスワードを変更"
 
 #: src/account.c:321
 #, fuzzy
@@ -1235,7 +1217,7 @@ msgid "Buddies"
 msgstr "仲間"
 
 #: src/blist.c:1103
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%d buddy from group %s was not removed because its account was not logged "
 "in.  This buddy and the group were not removed.\n"
@@ -1303,9 +1285,8 @@ msgid "Missing protocol plugin for %s"
 msgstr "MSNプロトコルプラグイン"
 
 #: src/connection.c:122
-#, fuzzy
 msgid "Registration Error"
-msgstr "不明な登録エラー"
+msgstr "登録エラー"
 
 #: src/connection.c:170 src/gtkconn.c:278
 msgid "Connection Error"
@@ -1355,9 +1336,9 @@ msgid "(+%d more)"
 msgstr "(%d メッセージ)"
 
 #: src/conversation.c:2095
-#, fuzzy, c-format
+#, c-format
 msgid " left the room (%s)."
-msgstr "%sは部屋(%s)を去りました"
+msgstr "は部屋(%s)を去りました"
 
 #: src/conversation.c:2377
 msgid "Last created window"
@@ -1581,9 +1562,8 @@ msgid "Please enter an aliased name for this chat."
 msgstr "チャットの別名を入力してください．\n"
 
 #: src/dialogs.c:1841
-#, fuzzy
 msgid "_Screenname"
-msgstr "スクリーン名 (_S):"
+msgstr "スクリーン名 (_S)"
 
 #: src/dialogs.c:1846 src/gtkblist.c:523 src/gtkblist.c:616
 msgid "_Alias"
@@ -1821,7 +1801,6 @@ msgid "Alias:"
 msgstr "エイリアス:"
 
 #: src/gtkaccount.c:473
-#, fuzzy
 msgid "Remember password"
 msgstr "パスワードを覚える"
 
@@ -1831,24 +1810,20 @@ msgid "User Options"
 msgstr "ユーザオプション"
 
 #: src/gtkaccount.c:540
-#, fuzzy
 msgid "New mail notifications"
 msgstr "新しいメール通知"
 
 #: src/gtkaccount.c:549
-#, fuzzy
 msgid "Buddy icon file:"
 msgstr "仲間アイコンファイル:"
 
 #: src/gtkaccount.c:558
-#, fuzzy
 msgid "_Browse"
-msgstr "ブラウザ (_B)"
+msgstr "閲覧 (_B)"
 
 #: src/gtkaccount.c:564
-#, fuzzy
 msgid "_Reset"
-msgstr "リセット"
+msgstr "リセット (_R)"
 
 #. Build the protocol options frame.
 #: src/gtkaccount.c:626
@@ -1869,17 +1844,17 @@ msgstr "プロキシなし"
 #. HTTP
 #: src/gtkaccount.c:761
 msgid "HTTP"
-msgstr ""
+msgstr "HTTP"
 
 #. SOCKS 4
 #: src/gtkaccount.c:768
 msgid "SOCKS 4"
-msgstr ""
+msgstr "SOCKS 4"
 
 #. SOCKS 5
 #: src/gtkaccount.c:775
 msgid "SOCKS 5"
-msgstr ""
+msgstr "SOCKS 5"
 
 #. Use Environmental Settings
 #: src/gtkaccount.c:782 src/gtkprefs.c:1112
@@ -1908,12 +1883,10 @@ msgid "_Host:"
 msgstr "ホスト名 (_H):"
 
 #: src/gtkaccount.c:864
-#, fuzzy
 msgid "_Port:"
-msgstr "ポート番号:"
+msgstr "ポート番号 (_P):"
 
 #: src/gtkaccount.c:872
-#, fuzzy
 msgid "_Username:"
 msgstr "ユーザ名 (_U):"
 
@@ -2043,9 +2016,8 @@ msgid "Auto-Join"
 msgstr "自動ログイン"
 
 #: src/gtkblist.c:622 src/gtkblist.c:653
-#, fuzzy
 msgid "_Collapse"
-msgstr "閉じる (_C)"
+msgstr ""
 
 #: src/gtkblist.c:658
 msgid "_Expand"
@@ -2086,15 +2058,15 @@ msgstr "チャットを追加 (_H)..."
 
 #: src/gtkblist.c:1097
 msgid "/Buddies/Add a _Group..."
-msgstr "グループを追加(_G)..."
+msgstr "グループを追加 (_G)..."
 
 #: src/gtkblist.c:1099
 msgid "/Buddies/_Signoff"
-msgstr "サインオフ(_S)"
+msgstr "サインオフ (_S)"
 
 #: src/gtkblist.c:1100
 msgid "/Buddies/_Quit"
-msgstr "終了"
+msgstr "終了 (_Q)"
 
 #. Tools
 #: src/gtkblist.c:1103
@@ -2103,37 +2075,33 @@ msgstr "ツール (_T)"
 
 #: src/gtkblist.c:1104
 msgid "/Tools/_Away"
-msgstr "離席(_A)"
+msgstr "離席 (_A)"
 
 #: src/gtkblist.c:1105
 msgid "/Tools/Buddy _Pounce"
-msgstr "仲間を掴む(_P)"
+msgstr "仲間を掴む (_P)"
 
 #: src/gtkblist.c:1106
 msgid "/Tools/P_rotocol Actions"
-msgstr "プロトコルごとの動作(_P)"
+msgstr "プロトコルごとの動作 (_P)"
 
 #: src/gtkblist.c:1108
-#, fuzzy
 msgid "/Tools/A_ccounts"
 msgstr "アカウント (_C)..."
 
 #: src/gtkblist.c:1109
 msgid "/Tools/_File Transfers..."
-msgstr "ファイル転送(_F)"
+msgstr "ファイル転送 (_F)"
 
 #: src/gtkblist.c:1110
-#, fuzzy
 msgid "/Tools/Preferences"
-msgstr "設定..."
+msgstr "設定"
 
 #: src/gtkblist.c:1111
-#, fuzzy
 msgid "/Tools/Pr_ivacy"
-msgstr "個人情報 (_I)..."
+msgstr "個人情報 (_I)"
 
 #: src/gtkblist.c:1113
-#, fuzzy
 msgid "/Tools/View System _Log"
 msgstr "システムログを見る (_L)"
 
@@ -2147,12 +2115,10 @@ msgid "/Help/Online _Help"
 msgstr "オンラインヘルプ (_H)"
 
 #: src/gtkblist.c:1118
-#, fuzzy
 msgid "/Help/_Debug Window"
-msgstr "デバッグウィンドウ (_D)..."
+msgstr "デバッグウィンドウ (_D)"
 
 #: src/gtkblist.c:1119
-#, fuzzy
 msgid "/Help/_About"
 msgstr "gaimについて (_A)..."
 
@@ -2278,7 +2244,7 @@ msgstr "なし"
 
 #: src/gtkblist.c:1780
 msgid "/Tools/Away"
-msgstr "不在"
+msgstr "離席"
 
 #: src/gtkblist.c:1783
 msgid "/Tools/Buddy Pounce"
@@ -2373,7 +2339,7 @@ msgstr "グループの追加"
 #: src/gtkblist.c:3034
 #, fuzzy
 msgid "Add a new group"
-msgstr "新しい仲間を加える"
+msgstr "新しいグループを加える"
 
 #: src/gtkblist.c:3035
 #, fuzzy
@@ -2420,9 +2386,9 @@ msgid "Would you like to overwrite it?"
 msgstr "上書きしますか？"
 
 #: src/gtkconv.c:241
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to store image: %s\n"
-msgstr "%sファイルを読み込めません"
+msgstr ""
 
 #: src/gtkconv.c:303
 msgid "Gaim - Insert Image"
@@ -2495,31 +2461,27 @@ msgstr "会話 (_C)"
 
 #: src/gtkconv.c:2838
 msgid "/Conversation/_Save As..."
-msgstr "名前をつけて保存 (_S)"
+msgstr "名前をつけて保存 (_S)..."
 
 #: src/gtkconv.c:2840
 msgid "/Conversation/View _Log..."
 msgstr "ログを見る (_L)"
 
 #: src/gtkconv.c:2844
-#, fuzzy
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr "掴む仲間に加える"
+msgstr "掴む仲間に加える (_P)..."
 
 #: src/gtkconv.c:2846
-#, fuzzy
 msgid "/Conversation/A_lias..."
-msgstr "名前をつけて保存 (_S)"
+msgstr "エイリアス (_A)..."
 
 #: src/gtkconv.c:2848
-#, fuzzy
 msgid "/Conversation/_Get Info..."
-msgstr "名前をつけて保存 (_S)"
+msgstr "情報取得 (_G)..."
 
 #: src/gtkconv.c:2850
-#, fuzzy
 msgid "/Conversation/In_vite..."
-msgstr "名前をつけて保存 (_S)"
+msgstr "招待 (_V)..."
 
 #: src/gtkconv.c:2855
 msgid "/Conversation/Insert _URL..."
@@ -2530,24 +2492,20 @@ msgid "/Conversation/Insert _Image..."
 msgstr "画像の挿入 (_I)..."
 
 #: src/gtkconv.c:2862
-#, fuzzy
 msgid "/Conversation/_Warn..."
-msgstr "名前をつけて保存 (_S)"
+msgstr "警告 (_W)..."
 
 #: src/gtkconv.c:2864
-#, fuzzy
 msgid "/Conversation/_Block..."
-msgstr "閉じる (_C)"
+msgstr ""
 
 #: src/gtkconv.c:2866
-#, fuzzy
 msgid "/Conversation/_Add..."
-msgstr "名前をつけて保存 (_S)"
+msgstr ""
 
 #: src/gtkconv.c:2868
-#, fuzzy
 msgid "/Conversation/_Remove..."
-msgstr "名前をつけて保存 (_S)"
+msgstr ""
 
 #: src/gtkconv.c:2873
 msgid "/Conversation/_Close"
@@ -2571,24 +2529,20 @@ msgid "/Conversation/View Log..."
 msgstr "ログを見る..."
 
 #: src/gtkconv.c:2924
-#, fuzzy
 msgid "/Conversation/Add Buddy Pounce..."
-msgstr "ログを見る..."
+msgstr "掴む仲間に加える..."
 
 #: src/gtkconv.c:2928
-#, fuzzy
 msgid "/Conversation/Alias..."
-msgstr "名前をつけて保存 (_S)"
+msgstr "エイリアス..."
 
 #: src/gtkconv.c:2932
-#, fuzzy
 msgid "/Conversation/Get Info..."
-msgstr "ログを見る..."
+msgstr "情報取得..."
 
 #: src/gtkconv.c:2936
-#, fuzzy
 msgid "/Conversation/Invite..."
-msgstr "画像を挿入..."
+msgstr "招待..."
 
 #: src/gtkconv.c:2942
 msgid "/Conversation/Insert URL..."
@@ -2599,24 +2553,20 @@ msgid "/Conversation/Insert Image..."
 msgstr "画像を挿入..."
 
 #: src/gtkconv.c:2952
-#, fuzzy
 msgid "/Conversation/Warn..."
-msgstr "名前をつけて保存 (_S)"
+msgstr "警告..."
 
 #: src/gtkconv.c:2956
-#, fuzzy
 msgid "/Conversation/Block..."
-msgstr "ログを見る..."
+msgstr ""
 
 #: src/gtkconv.c:2960
-#, fuzzy
 msgid "/Conversation/Add..."
-msgstr "名前をつけて保存 (_S)"
+msgstr ""
 
 #: src/gtkconv.c:2964
-#, fuzzy
 msgid "/Conversation/Remove..."
-msgstr "名前をつけて保存 (_S)"
+msgstr ""
 
 #: src/gtkconv.c:2970
 msgid "/Options/Enable Logging"
@@ -2777,7 +2727,7 @@ msgstr "名前を付けてアイコンを保存"
 #: src/gtkconv.c:5728 src/gtkconv.c:5731
 #, fuzzy
 msgid "<main>/Conversation/Close"
-msgstr "閉じる (_C)"
+msgstr "閉じる"
 
 #: src/gtkdebug.c:133
 msgid "Debug Window"
@@ -2893,9 +2843,8 @@ msgid "%s wants to send you %s (%s)"
 msgstr "%s は %s (%s) を送信したがっています"
 
 #: src/gtkimhtml.c:535
-#, fuzzy
 msgid "_Copy E-Mail Address"
-msgstr "メールアドレス:"
+msgstr "メールアドレスをコピーする (_C)"
 
 #: src/gtkimhtml.c:547
 msgid "_Copy Link Location"
@@ -2905,8 +2854,8 @@ msgstr "リンクの場所をコピーする (_C)"
 msgid "_Open Link in Browser"
 msgstr "リンクをブラウザで開く (_O)"
 
+# NOTE cf. 0.62
 #: src/gtkimhtml.c:1639
-#, fuzzy
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
@@ -2914,15 +2863,15 @@ msgstr ""
 "Gaim はファイルの拡張子で画像の種類を判断することができませんでした．\n"
 "デフォルトとしてPNGとして扱います．"
 
+# FIXME This looks wrong
 #: src/gtkimhtml.c:1647
 #, c-format
 msgid "Error saving image: %s"
 msgstr "保存エラー，画像: %s"
 
 #: src/gtkimhtml.c:1656
-#, fuzzy
 msgid "Save Image"
-msgstr "画像を保存 (_S)..."
+msgstr "画像を保存"
 
 #: src/gtkimhtml.c:1679
 msgid "_Save Image..."
@@ -2968,9 +2917,8 @@ msgstr ""
 "%s"
 
 #: src/gtknotify.c:412 src/gtknotify.c:432 src/gtknotify.c:440
-#, fuzzy
 msgid "Unable to open URL"
-msgstr "USR を送れません"
+msgstr ""
 
 #: src/gtknotify.c:413
 #, fuzzy
@@ -3232,9 +3180,8 @@ msgid "Send Message"
 msgstr "メッセージ送信"
 
 #: src/gtkprefs.c:793
-#, fuzzy
 msgid "Enter _sends message"
-msgstr "「Enter」でメッセージを送信する (_E)"
+msgstr "「Enter」でメッセージを送信する (_S)"
 
 #: src/gtkprefs.c:795
 msgid "C_ontrol-Enter sends message"
@@ -3245,23 +3192,20 @@ msgid "Window Closing"
 msgstr "ウィンドウを閉じる"
 
 #: src/gtkprefs.c:799
-#, fuzzy
 msgid "_Escape closes window"
-msgstr "「Escape」でウィンドウを閉じる (_S)"
+msgstr "「Escape」でウィンドウを閉じる (_E)"
 
 #: src/gtkprefs.c:802
 msgid "Insertions"
 msgstr "挿入"
 
 #: src/gtkprefs.c:803
-#, fuzzy
 msgid "Control-{B/I/U} inserts _HTML tags"
-msgstr "「Control-{B/I/U/S}」で HTML タグを挿入する (_H)"
+msgstr "「Control-{B/I/U}」で HTML タグを挿入する (_H)"
 
 #: src/gtkprefs.c:805
-#, fuzzy
 msgid "Control-(number) _inserts smileys"
-msgstr "「Control-(number)」で顔文字を挿入する (_S)"
+msgstr "「Control-(number)」で顔文字を挿入する (_I)"
 
 #: src/gtkprefs.c:822
 msgid "Buddy List Sorting"
@@ -3336,9 +3280,8 @@ msgid "Tab Options"
 msgstr "タブオプション"
 
 #: src/gtkprefs.c:910
-#, fuzzy
 msgid "_Tab Placement:"
-msgstr "タブの位置 (_P):"
+msgstr "タブの位置 (_T):"
 
 #: src/gtkprefs.c:912
 msgid "Top"
@@ -3433,14 +3376,12 @@ msgid "_Old-style tab completion"
 msgstr "古いスタイルのタブ補完 (_O)"
 
 #: src/gtkprefs.c:1057
-#, fuzzy
 msgid "_Show people joining in window"
-msgstr "加入/離席をウィンドウで表示 (_S)"
+msgstr "加入をウィンドウで表示 (_S)"
 
 #: src/gtkprefs.c:1059
-#, fuzzy
 msgid "_Show people leaving in window"
-msgstr "加入/離席をウィンドウで表示 (_S)"
+msgstr "離席をウィンドウで表示 (_S)"
 
 #: src/gtkprefs.c:1061
 msgid "Co_lorize screennames"
@@ -3505,9 +3446,8 @@ msgid "Browser Selection"
 msgstr "ブラウザの選択"
 
 #: src/gtkprefs.c:1283
-#, fuzzy
 msgid "_Browser:"
-msgstr "ブラウザ (_B)"
+msgstr "ブラウザ (_B):"
 
 #: src/gtkprefs.c:1293
 #, c-format
@@ -3581,9 +3521,8 @@ msgid "Sound Method"
 msgstr "音声出力の方法"
 
 #: src/gtkprefs.c:1398
-#, fuzzy
 msgid "_Method:"
-msgstr "方法 (_M)"
+msgstr "方法 (_M):"
 
 #: src/gtkprefs.c:1400
 msgid "Console beep"
@@ -3598,12 +3537,12 @@ msgid "Command"
 msgstr "コマンド"
 
 #: src/gtkprefs.c:1419
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Sound c_ommand:\n"
 "(%s for filename)"
 msgstr ""
-"音声出力コマンド (_O)\n"
+"音声出力コマンド (_O):\n"
 "（%s はファイル名になる）"
 
 #: src/gtkprefs.c:1474
@@ -3640,14 +3579,17 @@ msgstr "進行中の会話では自動返答を送らない (_N)"
 msgid "Idle _time reporting:"
 msgstr "休止時間を報告する (_T):"
 
+# FIXME This looks wrong
 #: src/gtkprefs.c:1502
 msgid "Gaim usage"
 msgstr "Gaim の利用法"
 
+# FIXME This looks wrong
 #: src/gtkprefs.c:1505
 msgid "X usage"
 msgstr "X の利用法"
 
+# FIXME This looks wrong
 #: src/gtkprefs.c:1507
 msgid "Windows usage"
 msgstr "ウィンドウの利用法"
@@ -3766,7 +3708,7 @@ msgstr "プロキシ"
 #. We use the registered default browser in windows
 #: src/gtkprefs.c:2277
 msgid "Browser"
-msgstr "閲覧する"
+msgstr "ブラウザ"
 
 #: src/gtkprefs.c:2279
 msgid "Logging"
@@ -3893,9 +3835,8 @@ msgid "No"
 msgstr "いいえ"
 
 #: src/gtkrequest.c:204
-#, fuzzy
 msgid "Apply"
-msgstr "適用 (_Y)"
+msgstr "適用"
 
 #: src/gtksound.c:60
 msgid "Buddy logs in"
@@ -4520,9 +4461,9 @@ msgid "Gaim User"
 msgstr "Gaim ユーザ"
 
 #: src/protocols/irc/cmds.c:41
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown command: %s"
-msgstr "<B>不明なコマンド</B>"
+msgstr "不明なコマンド: %s"
 
 #: src/protocols/irc/cmds.c:135
 msgid ""
@@ -4540,7 +4481,7 @@ msgstr ""
 #: src/protocols/irc/cmds.c:459
 #, fuzzy, c-format
 msgid "current topic is: %s"
-msgstr "トピックが設定されていません"
+msgstr "現在トピックは %s です"
 
 #: src/protocols/irc/cmds.c:461
 msgid "No topic is set"
@@ -4551,9 +4492,8 @@ msgid "Error displaying MOTD"
 msgstr ""
 
 #: src/protocols/irc/irc.c:64
-#, fuzzy
 msgid "No MOTD available"
-msgstr "不在"
+msgstr ""
 
 #: src/protocols/irc/irc.c:65
 msgid "There is no MOTD associated with this connection."
@@ -4612,9 +4552,8 @@ msgid "Server"
 msgstr "サーバ"
 
 #: src/protocols/irc/irc.c:554
-#, fuzzy
 msgid "Encoding"
-msgstr "エンコーディング:"
+msgstr "エンコーディング"
 
 #: src/protocols/irc/msgs.c:98
 msgid "Bad mode"
@@ -4631,35 +4570,32 @@ msgstr ""
 
 #: src/protocols/irc/msgs.c:184
 msgid " <i>(ircop)</i>"
-msgstr ""
+msgstr " <i>(IRC オペレータ)</i>"
 
 #: src/protocols/irc/msgs.c:185
 msgid " <i>(identified)</i>"
 msgstr ""
 
 #: src/protocols/irc/msgs.c:191 src/protocols/jabber/jabber.c:534
-#, fuzzy
 msgid "Username"
-msgstr "ユーザ名 (_U):"
+msgstr "ユーザ名"
 
 #: src/protocols/irc/msgs.c:192 src/protocols/yahoo/yahoo.c:2681
-#, fuzzy
 msgid "Realname"
-msgstr "改名 (_R)"
+msgstr ""
 
 #: src/protocols/irc/msgs.c:202
 msgid "Currently on"
 msgstr ""
 
 #: src/protocols/irc/msgs.c:207
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Idle for:</b> %s<br>"
-msgstr "<b>ユーザ:</b> %s<br>"
+msgstr "<b>アイドル:</b> %s<br>"
 
 #: src/protocols/irc/msgs.c:209
-#, fuzzy
 msgid "Online since"
-msgstr "オンライン"
+msgstr "オンライン開始"
 
 #: src/protocols/irc/msgs.c:212
 msgid "<br><b>Defining adjective:</b> Glorious<br>"
@@ -4670,13 +4606,14 @@ msgstr ""
 msgid "Buddy Information for %s"
 msgstr ""
 
+# NOTE 0.62 (but this looks wrong)-:
 #: src/protocols/irc/msgs.c:247
-#, fuzzy, c-format
+#, c-format
 msgid "%s has changed the topic to: %s"
-msgstr "<B>%sのトピックは変わりました: %s</B>"
+msgstr "%sのトピックは変わりました: %s"
 
 #: src/protocols/irc/msgs.c:252
-#, fuzzy, c-format
+#, c-format
 msgid "The topic for %s is: %s"
 msgstr "%s のトピックは %s です"
 
@@ -4696,9 +4633,8 @@ msgstr ""
 
 #. does this happen?
 #: src/protocols/irc/msgs.c:371
-#, fuzzy
 msgid "no such channel"
-msgstr "そのようなニック/チャンネルはありません"
+msgstr "そのようなチャンネルはありません"
 
 #: src/protocols/irc/msgs.c:374
 #, fuzzy
@@ -4706,7 +4642,6 @@ msgid "User is not logged in"
 msgstr "ログインしていません"
 
 #: src/protocols/irc/msgs.c:379
-#, fuzzy
 msgid "No such nick or channel"
 msgstr "そのようなニック/チャンネルはありません"
 
@@ -4727,17 +4662,17 @@ msgstr ""
 #: src/protocols/irc/msgs.c:552
 #, fuzzy, c-format
 msgid "You have been kicked by %s: (%s)"
-msgstr "あなたは%sに蹴られました: %s"
+msgstr "あなたは%sにより蹴られました: (%s)"
 
 #: src/protocols/irc/msgs.c:560
-#, fuzzy, c-format
+#, c-format
 msgid "Kicked by %s (%s)"
-msgstr "%sにより蹴られました: %s"
+msgstr "%sにより蹴られました (%s)"
 
 #: src/protocols/irc/msgs.c:581
-#, fuzzy, c-format
+#, c-format
 msgid "mode (%s %s) by %s"
-msgstr "-:- モード/%s [%c%c %s] by %s"
+msgstr "モード (%s %s) by %s"
 
 #: src/protocols/irc/msgs.c:660
 #, fuzzy
@@ -4792,14 +4727,13 @@ msgstr ""
 
 #: src/protocols/irc/parse.c:292
 msgid "PONG"
-msgstr ""
+msgstr "PONG"
 
 #: src/protocols/irc/parse.c:292
 msgid "CTCP PING reply"
 msgstr ""
 
 #: src/protocols/irc/parse.c:391
-#, fuzzy
 msgid "Disconnected"
 msgstr "切断されました"
 
@@ -4861,7 +4795,6 @@ msgid "Temporary Authentication Failure"
 msgstr "認証に失敗"
 
 #: src/protocols/jabber/auth.c:379
-#, fuzzy
 msgid "Authentication Failure"
 msgstr "認証に失敗"
 
@@ -4941,12 +4874,10 @@ msgid "Birthday"
 msgstr "誕生日"
 
 #: src/protocols/jabber/buddy.c:514 src/protocols/jabber/buddy.c:515
-#, fuzzy
 msgid "Edit Jabber vCard"
-msgstr "Gaim - Jabber vCardによって開発された"
+msgstr "Jabber vCardによって開発された"
 
 #: src/protocols/jabber/buddy.c:516
-#, fuzzy
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable."
@@ -4964,9 +4895,8 @@ msgid "Status"
 msgstr "状態"
 
 #: src/protocols/jabber/buddy.c:580 src/protocols/jabber/jabber.c:1080
-#, fuzzy
 msgid "Resource"
-msgstr "リソース："
+msgstr "リソース"
 
 #: src/protocols/jabber/buddy.c:624
 msgid "Middle Name"
@@ -4974,7 +4904,6 @@ msgstr "ミドルネーム"
 
 #: src/protocols/jabber/buddy.c:639 src/protocols/jabber/jabber.c:569
 #: src/protocols/oscar/oscar.c:3943 src/protocols/oscar/oscar.c:3959
-#, fuzzy
 msgid "Address"
 msgstr "住所"
 
@@ -4983,19 +4912,16 @@ msgid "P.O. Box"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:757
-#, fuzzy
 msgid "Photo"
-msgstr "ポート番号"
+msgstr "写真"
 
 #: src/protocols/jabber/buddy.c:757
-#, fuzzy
 msgid "Logo"
-msgstr "ログ"
+msgstr ""
 
 #: src/protocols/jabber/buddy.c:771
-#, fuzzy
 msgid "Jabber Profile"
-msgstr "ファイル選択"
+msgstr ""
 
 #: src/protocols/jabber/buddy.c:866
 msgid "Un-hide From"
@@ -5057,12 +4983,10 @@ msgid "Host Unknown"
 msgstr "不明"
 
 #: src/protocols/jabber/jabber.c:118
-#, fuzzy
 msgid "Improper Addressing"
-msgstr "自宅の住所:"
+msgstr ""
 
 #: src/protocols/jabber/jabber.c:120
-#, fuzzy
 msgid "Internal Server Error"
 msgstr "サーバ内部エラー"
 
@@ -5090,14 +5014,12 @@ msgid "Policy Violation"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:134
-#, fuzzy
 msgid "Remote Connection Failed"
-msgstr "Gaim ファイル制御"
+msgstr ""
 
 #: src/protocols/jabber/jabber.c:136
-#, fuzzy
 msgid "Resource Constraint"
-msgstr "Gaim ファイル制御"
+msgstr ""
 
 #: src/protocols/jabber/jabber.c:138
 msgid "Restricted XML"
@@ -5181,7 +5103,6 @@ msgid "Registration Successful"
 msgstr "サーバに登録しました"
 
 #: src/protocols/jabber/jabber.c:431
-#, fuzzy
 msgid "Unknown Error"
 msgstr "不明なエラー"
 
@@ -5201,12 +5122,10 @@ msgid "Already Registered"
 msgstr "すでにそこにいます"
 
 #: src/protocols/jabber/jabber.c:538 src/protocols/jabber/jabber.c:951
-#, fuzzy
 msgid "Password"
-msgstr "パスワード:"
+msgstr "パスワード"
 
 #: src/protocols/jabber/jabber.c:549
-#, fuzzy
 msgid "E-Mail"
 msgstr "メールアドレス"
 
@@ -5224,9 +5143,8 @@ msgid "State"
 msgstr "州"
 
 #: src/protocols/jabber/jabber.c:589
-#, fuzzy
 msgid "Phone"
-msgstr "なし"
+msgstr "電話番号"
 
 #: src/protocols/jabber/jabber.c:607
 msgid "Please fill out the information below to register your new account."
@@ -5276,9 +5194,8 @@ msgid "Do Not Disturb"
 msgstr "邪魔しないでね"
 
 #: src/protocols/jabber/jabber.c:884
-#, fuzzy
 msgid "Password Changed"
-msgstr "Gaim - パスワード変更"
+msgstr "パスワード変更できました"
 
 #: src/protocols/jabber/jabber.c:885
 #, fuzzy
@@ -5288,7 +5205,7 @@ msgstr "パスワード変更ができませんでした"
 #: src/protocols/jabber/jabber.c:895
 #, fuzzy, c-format
 msgid "Error changing password: %s"
-msgstr "%s のパスワードを変更:"
+msgstr "パスワード変更エラー: %s"
 
 #: src/protocols/jabber/jabber.c:899
 #, fuzzy
@@ -5296,7 +5213,6 @@ msgid "Unknown error occurred changing password"
 msgstr "パスワードを変更できません。"
 
 #: src/protocols/jabber/jabber.c:956
-#, fuzzy
 msgid "Password (again)"
 msgstr "新しいパスワード(再入力)"
 
@@ -5329,9 +5245,8 @@ msgid "Force Old SSL"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1091
-#, fuzzy
 msgid "Connect server"
-msgstr "サーバに接続:"
+msgstr "サーバに接続"
 
 #: src/protocols/jabber/message.c:95
 #, fuzzy, c-format
@@ -5378,9 +5293,8 @@ msgstr "チャットに参加できません"
 
 #: src/protocols/msn/dispatch.c:42 src/protocols/msn/notification.c:278
 #: src/protocols/msn/notification.c:509
-#, fuzzy
 msgid "Unable to request USR\n"
-msgstr "INF を要求できません\n"
+msgstr "USR を要求できません\n"
 
 #: src/protocols/msn/dispatch.c:59 src/protocols/msn/notification.c:295
 msgid "Unable to login using MD5"
@@ -5400,9 +5314,8 @@ msgid "Protocol version not supported"
 msgstr "プロトコルがサポートされていません"
 
 #: src/protocols/msn/dispatch.c:117 src/protocols/msn/notification.c:771
-#, fuzzy
 msgid "Unable to request CVR\n"
-msgstr "INF を要求できません\n"
+msgstr "CVR を要求できません\n"
 
 #: src/protocols/msn/dispatch.c:126 src/protocols/msn/notification.c:780
 msgid "Unable to request INF\n"
@@ -5802,31 +5715,29 @@ msgstr ""
 #: src/protocols/msn/msn.c:1310 src/protocols/oscar/oscar.c:3931
 #: src/protocols/trepia/trepia.c:276 src/protocols/trepia/trepia.c:404
 #: src/protocols/yahoo/yahoo.c:2693
-#, fuzzy
 msgid "Age"
-msgstr "年齢:"
+msgstr "年齢"
 
 #. Gender
 #: src/protocols/msn/msn.c:1317 src/protocols/oscar/oscar.c:3917
 #: src/protocols/trepia/trepia.c:270 src/protocols/trepia/trepia.c:412
 #: src/protocols/yahoo/yahoo.c:2705
-#, fuzzy
 msgid "Gender"
-msgstr "性別:"
+msgstr "性別"
 
+# NOTE official translation
 #: src/protocols/msn/msn.c:1325 src/protocols/yahoo/yahoo.c:2699
 msgid "Marital Status"
-msgstr ""
+msgstr "未婚/既婚"
 
 #: src/protocols/msn/msn.c:1332 src/protocols/yahoo/yahoo.c:2687
-#, fuzzy
 msgid "Location"
-msgstr "ZLocate"
+msgstr ""
 
+# NOTE official translation
 #: src/protocols/msn/msn.c:1340 src/protocols/yahoo/yahoo.c:2711
-#, fuzzy
 msgid "Occupation"
-msgstr "忙しい"
+msgstr "職業"
 
 #: src/protocols/msn/msn.c:1357 src/protocols/msn/msn.c:1363
 #: src/protocols/msn/msn.c:1370 src/protocols/msn/msn.c:1377
@@ -5849,21 +5760,21 @@ msgstr ""
 msgid "Favorite Quote"
 msgstr ""
 
+# NOTE official translation
 #: src/protocols/msn/msn.c:1458 src/protocols/yahoo/yahoo.c:2799
-#, fuzzy
 msgid "Last Updated"
-msgstr "名"
+msgstr "最終更新日"
 
 #. Homepage
 #: src/protocols/msn/msn.c:1469 src/protocols/trepia/trepia.c:280
 #: src/protocols/trepia/trepia.c:448
 msgid "Homepage"
-msgstr ""
+msgstr "ウェブページ"
 
 #: src/protocols/msn/msn.c:1491 src/protocols/yahoo/yahoo.c:2817
-#, fuzzy, c-format
+#, c-format
 msgid "User information for %s unavailable"
-msgstr "%s のユーザ情報は利用できません:"
+msgstr "%s のユーザ情報は利用できません"
 
 #: src/protocols/msn/msn.c:1493 src/protocols/yahoo/yahoo.c:2819
 msgid "The user's profile is empty."
@@ -5883,10 +5794,10 @@ msgstr ""
 msgid "MSN Protocol Plugin"
 msgstr "MSNプロトコルプラグイン"
 
+# NOTE 0.62 (but this looks wrong)-:
 #: src/protocols/msn/msn.c:1612 src/protocols/trepia/trepia.c:1330
-#, fuzzy
 msgid "Login server"
-msgstr "サーバにログイン:"
+msgstr "サーバにログイン"
 
 #: src/protocols/msn/notification.c:247
 #, fuzzy, c-format
@@ -6325,12 +6236,12 @@ msgid "Authorization Denied Message:"
 msgstr "承認拒否メッセージ:"
 
 #: src/protocols/oscar/oscar.c:2599
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %u wants to add you to their buddy list for the following reason:\n"
 "%s"
 msgstr ""
-"ユーザ %lu が以下の理由で仲間リストに追加したがっています: \n"
+"ユーザ %u が以下の理由で仲間リストに追加したがっています: \n"
 "%s"
 
 #: src/protocols/oscar/oscar.c:2607 src/protocols/oscar/oscar.c:5078
@@ -6338,13 +6249,13 @@ msgid "Authorization Request"
 msgstr "承認の要求"
 
 #: src/protocols/oscar/oscar.c:2619
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
 "following reason:\n"
 "%s"
 msgstr ""
-"ユーザ%luは、次の理由のためにあなたのコンタクトリストに加えたいというあなたの"
+"ユーザ%uは、次の理由のためにあなたのコンタクトリストに加えたいというあなたの"
 "リクエストを拒否しました：\n"
 "%s"
 
@@ -6354,10 +6265,10 @@ msgstr "ICQ認証は拒否されました。"
 
 #. Someone has granted you authorization
 #: src/protocols/oscar/oscar.c:2627
-#, fuzzy, c-format
+#, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr ""
-"ユーザ%luは、あなたのコンタクトリストに彼らを加えるリクエストを認めました。"
+"ユーザ%uは、あなたのコンタクトリストに彼らを加えるリクエストを認めました。"
 
 #: src/protocols/oscar/oscar.c:2635
 #, c-format
@@ -6399,12 +6310,11 @@ msgstr ""
 "%s"
 
 #: src/protocols/oscar/oscar.c:2672
-#, fuzzy, c-format
+#, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
-msgstr "ICQ ユーザ %lu はあなたにコンタクトを送信しています: %s (%s)"
+msgstr "ICQ ユーザ %u はあなたにコンタクトを送信しています: %s (%s)"
 
 #: src/protocols/oscar/oscar.c:2678
-#, fuzzy
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "この相手を仲間リストに追加しますか?"
 
@@ -6534,6 +6444,7 @@ msgstr "ファイル送信"
 msgid "Games"
 msgstr "ゲーム"
 
+# FIXME This is likely wrong
 #: src/protocols/oscar/oscar.c:3089
 msgid "Add-Ins"
 msgstr "追加"
@@ -6564,9 +6475,8 @@ msgid "ICQ Server Relay"
 msgstr "ICQ サーバ中継"
 
 #: src/protocols/oscar/oscar.c:3110
-#, fuzzy
 msgid "Old ICQ UTF8"
-msgstr "ICQ UTF8"
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:3113
 msgid "Trillian Encryption"
@@ -6577,38 +6487,37 @@ msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
 
 #: src/protocols/oscar/oscar.c:3119
-#, fuzzy
 msgid "Hiptop"
-msgstr "ヒストリ"
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:3122
 msgid "Secure IM"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:3151
-#, fuzzy, c-format
+#, c-format
 msgid "Username: <b>%s</b><br>\n"
-msgstr "メンバー開始 : <b>%s</b><br>\n"
+msgstr "ユーザ名: <b>%s</b><br>\n"
 
 #: src/protocols/oscar/oscar.c:3152
-#, fuzzy, c-format
+#, c-format
 msgid "Warning Level: <b>%d%%</b><br>\n"
-msgstr "オンライン開始 : <b>%s</b><br>\n"
+msgstr "警告レベル: <b>%d%%</b><br>\n"
 
 #: src/protocols/oscar/oscar.c:3155
-#, fuzzy, c-format
+#, c-format
 msgid "Online Since: <b>%s</b><br>\n"
 msgstr "オンライン開始 : <b>%s</b><br>\n"
 
 #: src/protocols/oscar/oscar.c:3159
-#, fuzzy, c-format
+#, c-format
 msgid "Member Since: <b>%s</b><br>\n"
 msgstr "メンバー開始 : <b>%s</b><br>\n"
 
 #: src/protocols/oscar/oscar.c:3164
-#, fuzzy, c-format
+#, c-format
 msgid "Idle: <b>%s</b>"
-msgstr "アイドル : <b>%s</b>"
+msgstr "アイドル： <b>%s</b>"
 
 #: src/protocols/oscar/oscar.c:3167
 msgid "Idle: <b>Active</b>"
@@ -6642,14 +6551,12 @@ msgid "You have been signed off for an unknown reason."
 msgstr "原因不明ですが、あなたはサインオフしました．"
 
 #: src/protocols/oscar/oscar.c:3903 src/protocols/oscar/oscar.c:3909
-#, fuzzy
 msgid "Email Address"
-msgstr "メールアドレス:"
+msgstr "メールアドレス"
 
 #: src/protocols/oscar/oscar.c:3914
-#, fuzzy
 msgid "Mobile Phone"
-msgstr "携帯電話:"
+msgstr "携帯電話"
 
 #: src/protocols/oscar/oscar.c:3917 src/protocols/trepia/trepia.c:272
 #: src/protocols/trepia/trepia.c:413
@@ -6662,9 +6569,8 @@ msgid "Male"
 msgstr "男性"
 
 #: src/protocols/oscar/oscar.c:3934
-#, fuzzy
 msgid "Personal Web Page"
-msgstr "個人的なウェブページ:"
+msgstr "個人的なウェブページ"
 
 #: src/protocols/oscar/oscar.c:3937
 #, fuzzy
@@ -6672,44 +6578,36 @@ msgid "Additional Information"
 msgstr "追加情報"
 
 #: src/protocols/oscar/oscar.c:3941
-#, fuzzy
 msgid "Home Address"
-msgstr "自宅の住所:"
+msgstr "自宅の住所"
 
 #: src/protocols/oscar/oscar.c:3952 src/protocols/oscar/oscar.c:3968
-#, fuzzy
 msgid "Zip Code"
-msgstr "郵便番号:"
+msgstr "郵便番号"
 
 #: src/protocols/oscar/oscar.c:3957
-#, fuzzy
 msgid "Work Address"
-msgstr "勤務先住所:"
+msgstr "勤務先住所"
 
 #: src/protocols/oscar/oscar.c:3973
-#, fuzzy
 msgid "Work Information"
-msgstr "勤務先情報:"
+msgstr "勤務先情報"
 
 #: src/protocols/oscar/oscar.c:3975
-#, fuzzy
 msgid "Company"
-msgstr "会社:"
+msgstr "会社"
 
 #: src/protocols/oscar/oscar.c:3978
-#, fuzzy
 msgid "Division"
-msgstr "所属:"
+msgstr "所属"
 
 #: src/protocols/oscar/oscar.c:3981
-#, fuzzy
 msgid "Position"
-msgstr "役職:"
+msgstr "役職"
 
 #: src/protocols/oscar/oscar.c:3984
-#, fuzzy
 msgid "Web Page"
-msgstr "ウェブページ:"
+msgstr "ウェブページ"
 
 #: src/protocols/oscar/oscar.c:3990
 #, fuzzy, c-format
@@ -6961,7 +6859,7 @@ msgstr ""
 
 #. Granted
 #: src/protocols/oscar/oscar.c:5114
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr "ユーザ %s は、コンタクトリストに彼らを加えることを承認しました。"
 
@@ -6971,7 +6869,7 @@ msgstr "承認が得られました"
 
 #. Denied
 #: src/protocols/oscar/oscar.c:5118
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
 "following reason:\n"
@@ -6985,6 +6883,7 @@ msgstr ""
 msgid "Authorization Denied"
 msgstr "承認は拒否されました"
 
+# FIXME This is likely wrong
 #: src/protocols/oscar/oscar.c:5156 src/protocols/toc/toc.c:1263
 msgid "Exchange:"
 msgstr "交換:"
@@ -6998,11 +6897,8 @@ msgid "<b>Logged In:</b> "
 msgstr "<b>ログインしました:</b> "
 
 #: src/protocols/oscar/oscar.c:5400
-#, fuzzy
 msgid "<b>IP Address:</b> "
-msgstr ""
-"\n"
-"<b>アイドル:</b>"
+msgstr "<b>IP アドレス:</b> "
 
 #: src/protocols/oscar/oscar.c:5408
 msgid "<b>Capabilities:</b> "
@@ -7014,9 +6910,8 @@ msgid "<b>Available:</b> "
 msgstr "<b>機能:</b> "
 
 #: src/protocols/oscar/oscar.c:5431
-#, fuzzy
 msgid "<b>Away Message:</b> "
-msgstr "離席メッセージ"
+msgstr "<b>離席メッセージ:</b> "
 
 #: src/protocols/oscar/oscar.c:5440
 msgid "<b>Status:</b> Not Authorized"
@@ -7100,12 +6995,10 @@ msgstr ""
 "要求する」を選択すればできます．"
 
 #: src/protocols/oscar/oscar.c:6319
-#, fuzzy
 msgid "Find Buddy by E-mail"
 msgstr "E-mailから仲間を探す"
 
 #: src/protocols/oscar/oscar.c:6320
-#, fuzzy
 msgid "Search for a buddy by e-mail address"
 msgstr "メールで仲間を検索"
 
@@ -7115,7 +7008,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6324
 msgid "Search"
-msgstr ""
+msgstr "検索"
 
 #: src/protocols/oscar/oscar.c:6337
 #, fuzzy
@@ -7174,14 +7067,12 @@ msgid "AIM/ICQ Protocol Plugin"
 msgstr "AIM/ICQプロトコルプラグイン"
 
 #: src/protocols/oscar/oscar.c:6623
-#, fuzzy
 msgid "Auth host"
-msgstr "認証ホスト:"
+msgstr "認証ホスト"
 
 #: src/protocols/oscar/oscar.c:6628
-#, fuzzy
 msgid "Auth port"
-msgstr "認証ポート:"
+msgstr "認証ポート"
 
 #: src/protocols/toc/toc.c:167
 #, c-format
@@ -7390,14 +7281,12 @@ msgid "TOC Protocol Plugin"
 msgstr "TOCプロトコルプラグイン"
 
 #: src/protocols/toc/toc.c:2177
-#, fuzzy
 msgid "TOC host"
-msgstr "TOC ホスト:"
+msgstr "TOC ホスト"
 
 #: src/protocols/toc/toc.c:2181
-#, fuzzy
 msgid "TOC port"
-msgstr "TOC ポート番号:"
+msgstr "TOC ポート番号"
 
 #. Basic Profile group.
 #: src/protocols/trepia/trepia.c:254
@@ -7406,9 +7295,8 @@ msgstr ""
 
 #. E-Mail Address
 #: src/protocols/trepia/trepia.c:285
-#, fuzzy
 msgid "E-Mail Address"
-msgstr "メールアドレス:"
+msgstr "メールアドレス"
 
 #: src/protocols/trepia/trepia.c:291
 #, fuzzy
@@ -7423,25 +7311,23 @@ msgstr "Gaim インスタントメッセンジャー"
 
 #. AIM
 #: src/protocols/trepia/trepia.c:301
-#, fuzzy
 msgid "AIM"
-msgstr "IM"
+msgstr "AIM"
 
 #. ICQ
 #: src/protocols/trepia/trepia.c:305
-#, fuzzy
 msgid "ICQ UIN"
-msgstr "ICQ UTF8"
+msgstr "ICQ UIN"
 
 #. MSN
 #: src/protocols/trepia/trepia.c:309
 msgid "MSN"
-msgstr ""
+msgstr "MSN"
 
 #. Yahoo
 #: src/protocols/trepia/trepia.c:313
 msgid "Yahoo"
-msgstr ""
+msgstr "Yahoo"
 
 #. I'm From
 #: src/protocols/trepia/trepia.c:318
@@ -7454,14 +7340,12 @@ msgid "Set your Trepia profile data."
 msgstr ""
 
 #: src/protocols/trepia/trepia.c:459
-#, fuzzy
 msgid "Profile"
-msgstr "ファイル選択"
+msgstr "プロフィール"
 
 #: src/protocols/trepia/trepia.c:481
-#, fuzzy
 msgid "Set Profile"
-msgstr "ファイル選択"
+msgstr ""
 
 #: src/protocols/trepia/trepia.c:517
 msgid "Visit Homepage"
@@ -7493,9 +7377,8 @@ msgstr "ログ"
 #. *< version
 #. *  summary
 #: src/protocols/trepia/trepia.c:1311 src/protocols/trepia/trepia.c:1313
-#, fuzzy
 msgid "Trepia Protocol Plugin"
-msgstr "TOCプロトコルプラグイン"
+msgstr "Trepiaプロトコルプラグイン"
 
 #: src/protocols/yahoo/yahoo.c:700
 msgid "Your Yahoo! message did not get sent."
@@ -7547,17 +7430,15 @@ msgid "Ignore buddy?"
 msgstr "無視"
 
 #: src/protocols/yahoo/yahoo.c:1489
-#, fuzzy
 msgid "Invalid username."
 msgstr "無効なユーザ名"
 
 #: src/protocols/yahoo/yahoo.c:1492
 #, fuzzy
 msgid "Incorrect password."
-msgstr "間違ったニックネームかパスワードです"
+msgstr "間違ったパスワードです"
 
 #: src/protocols/yahoo/yahoo.c:1495
-#, fuzzy
 msgid "Unknown error."
 msgstr "不明なエラー"
 
@@ -7618,9 +7499,8 @@ msgid "Join in Chat"
 msgstr "チャットへ加入"
 
 #: src/protocols/yahoo/yahoo.c:2184
-#, fuzzy
 msgid "Initiate Conference"
-msgstr "エイリアス"
+msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:2230
 msgid "Active which ID?"
@@ -7649,22 +7529,22 @@ msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:2664
 msgid "Yahoo! ID"
-msgstr ""
+msgstr "Yahoo! ID"
 
+# NOTE official translation
 #: src/protocols/yahoo/yahoo.c:2724 src/protocols/yahoo/yahoo.c:2728
 #: src/protocols/yahoo/yahoo.c:2732
 msgid "Hobbies"
-msgstr ""
+msgstr "趣味"
 
+# NOTE official translation
 #: src/protocols/yahoo/yahoo.c:2743 src/protocols/yahoo/yahoo.c:2747
-#, fuzzy
 msgid "Latest News"
-msgstr "名"
+msgstr "最近の出来事"
 
 #: src/protocols/yahoo/yahoo.c:2765
-#, fuzzy
 msgid "Home Page"
-msgstr "ウェブページ:"
+msgstr "ウェブページ"
 
 #: src/protocols/yahoo/yahoo.c:2779
 msgid "Cool Link 1"
@@ -7680,7 +7560,7 @@ msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:2793
 msgid "Member Since"
-msgstr ""
+msgstr "メンバー開始"
 
 #. *< api_version
 #. *< type
@@ -7697,14 +7577,12 @@ msgid "Yahoo Protocol Plugin"
 msgstr "Yahooプロトコルプラグイン"
 
 #: src/protocols/yahoo/yahoo.c:2977
-#, fuzzy
 msgid "Pager host"
-msgstr "ページャホスト:"
+msgstr "ページャホスト"
 
 #: src/protocols/yahoo/yahoo.c:2982
-#, fuzzy
 msgid "Pager port"
-msgstr "ページャポート番号:"
+msgstr "ページャポート番号"
 
 #: src/protocols/yahoo/yahoochat.c:194
 #, c-format
@@ -7826,7 +7704,7 @@ msgid "Please enter your password"
 msgstr "パスワードを入力してください"
 
 #: src/server.c:949
-#, fuzzy, c-format
+#, c-format
 msgid "(%d message)"
 msgid_plural "(%d messages)"
 msgstr[0] "(%d メッセージ)"
@@ -8184,43 +8062,11 @@ msgstr ""
 #~ msgid "<FONT SIZE=\"3\">Active Developers:</FONT><BR>"
 #~ msgstr "<FONT SIZE=\"3\">活発な開発者:</FONT><BR>"
 
-#~ msgid ""
-#~ "  Rob Flynn (maintainer) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko."
-#~ "net</A>&gt;<BR>  Sean Egan (lead developer) &lt;<A HREF=\"mailto:"
-#~ "bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian "
-#~ "'ChipX86' Hammond (developer & webmaster)<BR>  Herman Bloggs (win32 port) "
-#~ "&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">hermanator12002@yahoo."
-#~ "com</A>&gt;<BR>  Nathan 'faceprint' Walp (developer)<BR>  Mark 'KingAnt' "
-#~ "Doliner (developer)<BR>  Luke 'LSchiere' Schierer (support)<BR><BR>"
-#~ msgstr ""
-#~ "  Rob Flynn (maintainer) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko."
-#~ "net</A>&gt;<BR>  Sean Egan (lead developer) &lt;<A HREF=\"mailto:"
-#~ "bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian "
-#~ "'ChipX86' Hammond (developer & webmaster)<BR>  Herman Bloggs (win32 port) "
-#~ "&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">hermanator12002@yahoo."
-#~ "com</A>&gt;<BR>  Nathan 'faceprint' Walp (developer)<BR>  Mark 'KingAnt' "
-#~ "Doliner (developer)<BR>  Luke 'LSchiere' Schierer (support)<BR><BR>"
-
 #~ msgid "<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"
 #~ msgstr "<FONT SIZE=\"3\">クレイジーなパッチ作者:</FONT><BR>"
 
 #~ msgid "<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"
 #~ msgstr "<FONT SIZE=\"3\">引退した開発者:</FONT><BR>"
-
-#~ msgid ""
-#~ "  Adam Fritzler (former libfaim maintainer)<BR>  Eric Warmenhoven (former "
-#~ "lead developer)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
-#~ "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (former maintainer)<BR>  "
-#~ "Jim Seymour (former Jabber developer)<BR>  Mark Spencer (original author) "
-#~ "&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
-#~ "Syd Logan (hacker and designated driver [lazy bum])<BR><BR>"
-#~ msgstr ""
-#~ "  Adam Fritzler (former libfaim maintainer)<BR>  Eric Warmenhoven (former "
-#~ "lead developer)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
-#~ "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (former maintainer)<BR>  "
-#~ "Jim Seymour (former Jabber developer)<BR>  Mark Spencer (original author) "
-#~ "&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
-#~ "Syd Logan (hacker and designated driver [lazy bum])<BR><BR>"
 
 #~ msgid ""
 #~ "Gaim is converting your old buddy lists to a new format, which will now "
@@ -8558,17 +8404,6 @@ msgstr ""
 
 #~ msgid "List of subscribed chats"
 #~ msgstr "参加しているチャットの一覧"
-
-#, fuzzy
-#~ msgid "Chat List"
-#~ msgstr "チャット"
-
-#, fuzzy
-#~ msgid "Allows you to add chat rooms to your buddy list."
-#~ msgstr ""
-#~ "\n"
-#~ "\n"
-#~ "彼らを仲間リストに追加しますか?"
 
 #~ msgid "About Gaim..."
 #~ msgstr "Gaim について..."
