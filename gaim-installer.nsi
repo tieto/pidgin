@@ -51,7 +51,7 @@ SetDateSave on
 !define GAIM_UNINST_EXE				"gaim-uninst.exe"
 !define GAIM_REG_LANG				"Installer Language"
 
-!define GTK_VERSION				"2.2.4"
+!define GTK_VERSION				"2.4.3"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl58.dll"
@@ -59,7 +59,7 @@ SetDateSave on
 !define GTK_RUNTIME_INSTALLER			"..\gtk_installer\gtk-runtime*.exe"
 !define GTK_THEME_DIR				"..\gtk_installer\gtk_themes"
 !define GTK_DEFAULT_THEME_GTKRC_DIR		"share\themes\Default\gtk-2.0"
-!define GTK_DEFAULT_THEME_ENGINE_DIR		"lib\gtk-2.0\2.2.0\engines"
+!define GTK_DEFAULT_THEME_ENGINE_DIR		"lib\gtk-2.0\2.4.0\engines"
 
 ;--------------------------------
 ;Modern UI Configuration
@@ -550,6 +550,7 @@ Section Uninstall
     RMDir /r "$INSTDIR\perlmod"
     Delete "$INSTDIR\plugins\autorecon.dll"
     Delete "$INSTDIR\plugins\docklet.dll"
+    Delete "$INSTDIR\plugins\extplacement.dll"
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
@@ -850,16 +851,15 @@ FunctionEnd
 
 
 ; CheckGtkVersion
-; inputs: Push 2 GTK+ version strings to check. The major and minor values
-; need to be equal, for success.  If the micro val to check is equal or greater
-; to the refrence micro value, then we have success.
+; inputs: Push 2 GTK+ version strings to check. The major value needs to
+; be equal and the minor value needs to be greater or equal.
 ;
 ; Usage:
-;   Push "2.2.0"  ; Refrence version
+;   Push "2.1.0"  ; Refrence version
 ;   Push "2.2.1"  ; Version to check
 ;   Call CheckGtkVersion
 ;   Pop $R0
-;   $R0 will now equal "0", because 2.2.0 is less than 2.2.1
+;   $R0 will now equal "1", because 2.2 is greater than 2.1
 ;
 Function CheckGtkVersion
   ; Version we want to check
@@ -874,18 +874,11 @@ Function CheckGtkVersion
   ; Major version check
   StrCpy $7 $6 1
   StrCpy $9 $8 1
-  IntCmp $7 $9 check_minor
-    Goto bad_version
+  IntCmp $7 $9 check_minor bad_version bad_version
 
   check_minor:
     StrCpy $7 $6 1 2
     StrCpy $9 $8 1 2
-    IntCmp $7 $9 check_micro
-      Goto bad_version
-
-  check_micro:
-    StrCpy $7 $6 1 4
-    StrCpy $9 $8 1 4
     IntCmp $7 $9 good_version bad_version good_version
 
   bad_version:

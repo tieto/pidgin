@@ -13,7 +13,7 @@ GTK_TOP :=		../../win32-dev/gtk_2_0
 GAIM_TOP :=		..
 GAIM_SRC :=		.
 ASPELL_TOP :=		../../win32-dev/aspell-dev-0-50-3-3
-GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.4
+GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.6
 IDLETRACK_TOP :=	$(GAIM_TOP)/src/win32/IdleTracker
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 MINGW_PLUS_DIR :=	$(GAIM_SRC)/win32/mingw_plus
@@ -173,7 +173,7 @@ DLL_LIBS =		-lgtk-win32-2.0 \
 			-lws2_32 \
 			-liberty \
 			-lwinmm \
-			-llibz \
+			-lzdll \
 			-lidletrack \
 			-lnss3 \
 			-lnspr4 \
