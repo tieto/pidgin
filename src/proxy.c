@@ -651,8 +651,12 @@ typedef struct _dns_tdata {
 
 static gboolean dns_main_thread_cb(gpointer data) {
 	dns_tdata *td = (dns_tdata*)data;
+	if (td->errmsg != NULL) {
+		gaim_debug_info("dns", "%s\n", td->errmsg);
+	}
 	td->callback(td->hosts, td->data, td->errmsg);
 	g_free(td->hostname);
+	g_free(td->errmsg);
 	g_free(td);
 	return FALSE;
 }
@@ -662,19 +666,19 @@ static gpointer dns_thread(gpointer data) {
 	dns_tdata *td = (dns_tdata*)data;
 	struct hostent *hp;
 
-	if(!(hp = gethostbyname(td->hostname))) {
-		g_free(td->hostname);
-		g_free(td);
-		return 0;
+	if ((hp = gethostbyname(td->hostname))) {
+		memset(&sin, 0, sizeof(struct sockaddr_in));
+		memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+		sin.sin_family = hp->h_addrtype;
+		sin.sin_port = htons(td->port);
+
+		td->hosts = g_slist_append(td->hosts,
+				GINT_TO_POINTER(sizeof(sin)));
+		td->hosts = g_slist_append(td->hosts,
+				g_memdup(&sin, sizeof(sin)));
+	} else {
+		td->errmsg = g_strdup_printf("DNS error: %d", errno);
 	}
-
-	memset(&sin, 0, sizeof(struct sockaddr_in));
-	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
-	sin.sin_family = hp->h_addrtype;
-	sin.sin_port = htons(td->port);
-
-	td->hosts = g_slist_append(td->hosts, GINT_TO_POINTER(sizeof(sin)));
-	td->hosts = g_slist_append(td->hosts, g_memdup(&sin, sizeof(sin)));
 	/* back to main thread */
 	g_idle_add(dns_main_thread_cb, td);
 	return 0;
