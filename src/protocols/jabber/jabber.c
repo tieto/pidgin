@@ -1232,13 +1232,13 @@ static time_t iso8601_to_time(char *timestamp)
 {
 	struct tm t;
 	time_t retval = 0;
+	localtime_r(NULL, &t);
 
 	if(sscanf(timestamp, "%04d%02d%02dT%02d:%02d:%02d",
 		&t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec))
 	{
 		t.tm_year -= 1900;
 		t.tm_mon -= 1;
-		t.tm_isdst = 0;
 		retval = mktime(&t);
 #		ifdef HAVE_TM_GMTOFF
 			retval += t.tm_gmtoff;
