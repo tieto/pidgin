@@ -137,10 +137,9 @@ static void restore_chat_prefs()
 	setup_buddy_chats();
 }
 
-static void ref_list_callback(gpointer data, char *text)
+static void ref_list_callback(gpointer data, char *text, unsigned long len)
 {
 	char *c;
-	int len;
 	GtkWidget *item;
 	GList *items = GTK_LIST(cp->list1)->children;
 	struct chat_room *cr;
@@ -148,8 +147,6 @@ static void ref_list_callback(gpointer data, char *text)
 
 	if (!text)
 		return;
-
-	len = strlen(text);
 
 	while (items) {
 		g_free(gtk_object_get_user_data(GTK_OBJECT(items->data)));
