@@ -4966,10 +4966,13 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 		if (*color != '\0')
 		{
-			char *label;
+			char *html_title,*label;
+
+			html_title = gaim_escape_html(title);
 
 			label = g_strdup_printf("<span color=\"%s\">%s</span>",
-			                        color, title);
+			                        color, html_title);
+			g_free(html_title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);
 		}
