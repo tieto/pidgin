@@ -1,6 +1,6 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.9.21: 
+version 0.10.0: 
 	* New Smiley Faces and Pixmaps added.
 	* Fixed 0-byte file segfault.
 
