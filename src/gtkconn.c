@@ -36,7 +36,7 @@
 /*
  * The next couple of functions deal with the connection dialog
  */
-struct signon_meter {
+struct login_meter {
 	GaimAccount *account;
 	GtkWidget *button;
 	GtkWidget *progress;
@@ -52,7 +52,7 @@ struct meter_window {
 };
 struct meter_window *meter_win = NULL;
 
-static void kill_meter(struct signon_meter *meter, const char *text)
+static void kill_meter(struct login_meter *meter, const char *text)
 {
 	if(gtk_progress_bar_get_fraction(GTK_PROGRESS_BAR(meter->progress)) == 1)
 		return;
@@ -69,7 +69,7 @@ static void kill_meter(struct signon_meter *meter, const char *text)
 	}
 }
 
-static void cancel_signon(GtkWidget *button, struct signon_meter *meter)
+static void cancel_login(GtkWidget *button, struct login_meter *meter)
 {
 	if (meter->account->gc != NULL) {
 		meter->account->gc->wants_to_die = TRUE;
@@ -90,25 +90,25 @@ static void cancel_signon(GtkWidget *button, struct signon_meter *meter)
 static void cancel_all ()
 {
 	GSList *m = meter_win ? meter_win->meters : NULL;
-	struct signon_meter *meter;
+	struct login_meter *meter;
 
 	while (m) {
 		meter = m->data;
 		if (gaim_connection_get_state(meter->account->gc) != GAIM_CONNECTED)
-			cancel_signon(NULL, meter);
+			cancel_login(NULL, meter);
 		m = m->next;
 	}
 }
 
-static gint meter_destroy(GtkWidget *window, GdkEvent *evt, struct signon_meter *meter)
+static gint meter_destroy(GtkWidget *window, GdkEvent *evt, struct login_meter *meter)
 {
 	return TRUE;
 }
 
-static struct signon_meter *find_signon_meter(GaimConnection *gc)
+static struct login_meter *find_login_meter(GaimConnection *gc)
 {
 	GSList *m = meter_win ? meter_win->meters : NULL;
-	struct signon_meter *meter;
+	struct login_meter *meter;
 
 	while (m) {
 		meter = m->data;
@@ -131,7 +131,7 @@ static GtkWidget* create_meter_pixmap (GaimConnection *gc)
 	return image;
 }
 
-static struct signon_meter *
+static struct login_meter *
 new_meter(GaimConnection *gc, GtkWidget *widget,
 			   GtkWidget *table, gint *rows)
 {
@@ -139,10 +139,10 @@ new_meter(GaimConnection *gc, GtkWidget *widget,
 	GtkWidget *label;
 	GtkWidget *nest_vbox;
 	GString *name_to_print;
-	struct signon_meter *meter;
+	struct login_meter *meter;
 
 
-	meter = g_new0(struct signon_meter, 1);
+	meter = g_new0(struct login_meter, 1);
 
 	meter->account = gaim_connection_get_account(gc);
 	name_to_print = g_string_new(gaim_account_get_username(meter->account));
@@ -154,7 +154,7 @@ new_meter(GaimConnection *gc, GtkWidget *widget,
 
 	nest_vbox = gtk_vbox_new (FALSE, 0);
 
-	g_string_prepend(name_to_print, _("Signon: "));
+	g_string_prepend(name_to_print, _("Logging in: "));
 	label = gtk_label_new (name_to_print->str);
 	g_string_free(name_to_print, TRUE);
 	gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
@@ -167,7 +167,7 @@ new_meter(GaimConnection *gc, GtkWidget *widget,
 
 	meter->button = gaim_pixbuf_button_from_stock (_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
 	g_signal_connect(G_OBJECT (meter->button), "clicked",
-					 G_CALLBACK (cancel_signon), meter);
+					 G_CALLBACK (cancel_login), meter);
 
 	gtk_table_attach (GTK_TABLE (table), graphic, 0, 1, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
 	gtk_table_attach (GTK_TABLE (table), nest_vbox, 1, 2, *rows, *rows+1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
@@ -186,7 +186,7 @@ new_meter(GaimConnection *gc, GtkWidget *widget,
 static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 		const char *text, size_t step, size_t step_count)
 {
-	struct signon_meter *meter;
+	struct login_meter *meter;
 
 	if(!meter_win) {
 		GtkWidget *vbox;
@@ -198,9 +198,9 @@ static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 		meter_win = g_new0(struct meter_window, 1);
 		meter_win->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_resizable(GTK_WINDOW(meter_win->window), FALSE);
-		gtk_window_set_role(GTK_WINDOW(meter_win->window), "signon");
+		gtk_window_set_role(GTK_WINDOW(meter_win->window), "logging_in");
 		gtk_container_set_border_width(GTK_CONTAINER(meter_win->window), 5);
-		gtk_window_set_title(GTK_WINDOW(meter_win->window), _("Signon"));
+		gtk_window_set_title(GTK_WINDOW(meter_win->window), _("Logging In"));
 
 		vbox = gtk_vbox_new (FALSE, 0);
 		gtk_container_add(GTK_CONTAINER(meter_win->window), vbox);
@@ -223,7 +223,7 @@ static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 				G_CALLBACK(meter_destroy), NULL);
 	}
 
-	meter = find_signon_meter(gc);
+	meter = find_login_meter(gc);
 	if(!meter) {
 		meter = new_meter(gc, meter_win->window, meter_win->table,
 				&meter_win->rows);
@@ -238,7 +238,7 @@ static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 
 static void gaim_gtk_connection_connected(GaimConnection *gc)
 {
-	struct signon_meter *meter = find_signon_meter(gc);
+	struct login_meter *meter = find_login_meter(gc);
 
 	gaim_setup(gc);
 
@@ -253,7 +253,7 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 
 static void gaim_gtk_connection_disconnected(GaimConnection *gc)
 {
-	struct signon_meter *meter = find_signon_meter(gc);
+	struct login_meter *meter = find_login_meter(gc);
 
 #if 0 /* XXX CORE/UI */
 	do_away_menu();
@@ -394,7 +394,7 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 
 				gtk_tree_model_get(model, &iter, 4, &account, -1);
 				if (!gaim_account_is_connected(account) && g_list_find(l_accts, account) == NULL)
-					l_accts = g_list_append(l_accts, account); 
+					l_accts = g_list_append(l_accts, account);
 			} while (gtk_tree_model_iter_next(model, &iter));
 
 			/* remove all rows */
@@ -492,7 +492,7 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 /*
  * Called whenever a different account is selected in the GtkListWhatever.
  */
-static void disconnect_tree_cb(GtkTreeSelection *sel, GtkTreeModel *model) 
+static void disconnect_tree_cb(GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	disconnect_window_update_buttons(model);
 }
@@ -502,7 +502,7 @@ static void disconnect_tree_cb(GtkTreeSelection *sel, GtkTreeModel *model)
  * gray the Reconnect All button if there is only 1 disconnected account.
  */
 static void disconnect_connection_change_cb(GaimConnection *gc, void *data) {
-	GaimAccount *account = gaim_connection_get_account(gc); 
+	GaimAccount *account = gaim_connection_get_account(gc);
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GdkPixbuf *icon;
@@ -531,7 +531,7 @@ static void disconnect_connection_change_cb(GaimConnection *gc, void *data) {
 		/* Add  */
 		if (!gaim_account_is_connected(account2)
 				&& g_list_find(l_disc_accts, account2) == NULL)
-			l_disc_accts = g_list_append(l_disc_accts, account2); 
+			l_disc_accts = g_list_append(l_disc_accts, account2);
 	} while (gtk_tree_model_iter_next(model, &iter));
 
 	gtk_dialog_set_response_sensitive(

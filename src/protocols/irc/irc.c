@@ -236,18 +236,18 @@ static void irc_login(GaimAccount *account)
 	irc->server = g_strdup(userparts[1]);
 	g_strfreev(userparts);
 
-	irc->buddies = g_hash_table_new_full((GHashFunc)irc_nick_hash, (GEqualFunc)irc_nick_equal, 
+	irc->buddies = g_hash_table_new_full((GHashFunc)irc_nick_hash, (GEqualFunc)irc_nick_equal,
 					     NULL, (GDestroyNotify)irc_buddy_free);
 	irc->cmds = g_hash_table_new(g_str_hash, g_str_equal);
 	irc_cmd_table_build(irc);
 	irc->msgs = g_hash_table_new(g_str_hash, g_str_equal);
 	irc_msg_table_build(irc);
 
-	buf = g_strdup_printf(_("Signon: %s"), username);
+	buf = g_strdup_printf(_("Logging in: %s"), username);
 	gaim_connection_update_progress(gc, buf, 1, 2);
 	g_free(buf);
 
-	err = gaim_proxy_connect(account, irc->server, 
+	err = gaim_proxy_connect(account, irc->server,
 				 gaim_account_get_int(account, "port", IRC_DEFAULT_PORT),
 				 irc_login_cb, gc);
 

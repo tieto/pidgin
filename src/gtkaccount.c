@@ -733,9 +733,9 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					   FALSE, FALSE, 0);
 	gtk_widget_show(dialog->remember_pass_check);
 
-	/* Auto-Login */
+	/* Auto log in */
 	dialog->auto_login_check =
-		gtk_check_button_new_with_label(_("Auto-login"));
+		gtk_check_button_new_with_label(_("Auto log in"));
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->auto_login_check,
 					   FALSE, FALSE, 0);
 	gtk_widget_show(dialog->auto_login_check);
@@ -2122,7 +2122,7 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 
-	/* Screen name column */
+	/* Screen Name column */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Screen Name"));
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
@@ -2134,7 +2134,7 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 	gtk_tree_view_column_add_attribute(column, renderer,
 					   "pixbuf", COLUMN_ICON);
 
-	/* Screen name */
+	/* Screen Name */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer,
@@ -2155,13 +2155,13 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 	column = gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), 1);
 	gtk_tree_view_column_set_resizable(column, TRUE);
 
-	/* Auto-login? */
+	/* Auto Log In? */
 	renderer = gtk_cell_renderer_toggle_new();
 
 	g_signal_connect(G_OBJECT(renderer), "toggled",
 					 G_CALLBACK(autologin_cb), dialog);
 
-	column = gtk_tree_view_column_new_with_attributes(_("Auto-login"),
+	column = gtk_tree_view_column_new_with_attributes(_("Auto Log In"),
 			renderer, "active", COLUMN_AUTOLOGIN, NULL);
 
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);

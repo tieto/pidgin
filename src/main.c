@@ -288,7 +288,7 @@ void show_login()
 					 G_CALLBACK(gaim_gtk_prefs_show), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button_from_stock(_("_Sign on"), GAIM_STOCK_SIGN_ON, GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("_Log in"), GAIM_STOCK_SIGN_ON, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(dologin), mainwindow);
