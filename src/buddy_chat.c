@@ -462,7 +462,7 @@ static gboolean chat_keypress_callback(GtkWidget *entry, GdkEventKey *event, str
 			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 		} else {
-			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "keypress_event");
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			pos = gtk_editable_get_position(GTK_EDITABLE(entry));
 			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
 		}
