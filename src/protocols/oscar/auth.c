@@ -468,15 +468,22 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 
 	aim_sendflapver(sess, conn);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(sn) /*+8*/ )))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(sn)+8 )))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0017, 0x0006, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0017, 0x0006, 0x0000, snacid);
 
 	aim_tlvlist_add_raw(&tl, 0x0001, strlen(sn), sn);
-/*	aim_tlvlist_add_noval(&tl, 0x004b);
-	aim_tlvlist_add_noval(&tl, 0x005a); */
+
+	/*
+	 * These are sent in logins for recent WinAIM clients.  Maybe tells
+	 * the server we're able to handle SecurID requests?  That's a complete
+	 * guess.
+	 */
+	aim_tlvlist_add_noval(&tl, 0x004b);
+	aim_tlvlist_add_noval(&tl, 0x005a);
+
 	aim_tlvlist_write(&fr->data, &tl);
 	aim_tlvlist_free(&tl);
 
@@ -515,6 +522,53 @@ static int keyparse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	return ret;
 }
 
+/**
+ * Subtype 0x000a
+ *
+ * Receive SecurID request.
+ */
+static int got_securid_request(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+{
+	int ret = 0;
+	aim_rxcallback_t userfunc;
+
+	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+		ret = userfunc(sess, rx);
+
+	return ret;
+}
+
+/**
+ * Subtype 0x000b
+ *
+ * Send SecurID response.
+ */
+faim_export int aim_auth_securid_send(aim_session_t *sess, const char *securid)
+{
+	aim_conn_t *conn;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	int len;
+
+	if (!sess || !(conn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH)) || !securid)
+		return -EINVAL;
+
+	len = strlen(securid);
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 10+2+len)))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, AIM_CB_FAM_ATH, AIM_CB_ATH_SECURID_RESPONSE, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, AIM_CB_FAM_ATH, AIM_CB_ATH_SECURID_RESPONSE, 0x0000, 0);
+
+	aimbs_put16(&fr->data, len);
+	aimbs_putraw(&fr->data, securid, len);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
 static void auth_shutdown(aim_session_t *sess, aim_module_t *mod)
 {
 	if (sess->authinfo) {
@@ -540,6 +594,8 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		return parse(sess, mod, rx, snac, bs);
 	else if (snac->subtype == 0x0007)
 		return keyparse(sess, mod, rx, snac, bs);
+	else if (snac->subtype == 0x000a)
+		return got_securid_request(sess, mod, rx, snac, bs);
 
 	return 0;
 }

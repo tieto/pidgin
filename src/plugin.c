@@ -979,7 +979,6 @@ gaim_plugins_probe(const char *ext)
 													(GCompareFunc)compare_prpl);
 	}
 
-
 #endif /* GAIM_PLUGINS */
 }
 

@@ -219,6 +219,7 @@ static int msgerrreasonlen = 25;
 /* All the libfaim->gaim callback functions */
 static int gaim_parse_auth_resp  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_login      (aim_session_t *, aim_frame_t *, ...);
+static int gaim_parse_auth_securid_request(aim_session_t *, aim_frame_t *, ...);
 static int gaim_handle_redirect  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_info_change      (aim_session_t *, aim_frame_t *, ...);
 static int gaim_account_confirm  (aim_session_t *, aim_frame_t *, ...);
@@ -1783,8 +1784,9 @@ oscar_login(GaimAccount *account, GaimStatus *status)
 	}
 
 	aim_conn_addhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
-	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
+	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
+	aim_conn_addhandler(sess, conn, AIM_CB_FAM_ATH, AIM_CB_ATH_SECURID_REQUEST, gaim_parse_auth_securid_request, 0);
 
 	conn->status |= AIM_CONN_STATUS_INPROGRESS;
 	if (gaim_proxy_connect(account, gaim_account_get_string(account, "server", FAIM_LOGIN_SERVER),
@@ -2335,6 +2337,49 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	gaim_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
 	ck[3] = 0x64;
+
+	return 1;
+}
+
+static void
+gaim_parse_auth_securid_request_yes_cb(gpointer user_data, const char *msg)
+{
+	GaimConnection *gc = user_data;
+	OscarData *od = gc->proto_data;
+	aim_session_t *sess = od->sess;
+
+	aim_auth_securid_send(sess, msg);
+}
+
+static void
+gaim_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
+{
+	GaimConnection *gc = user_data;
+	OscarData *od = gc->proto_data;
+
+	/* Disconnect */
+	gc->wants_to_die = TRUE;
+	gaim_connection_error(gc, _("The SecurID key entered is invalid."));
+	od->killme = TRUE;
+}
+
+static int
+gaim_parse_auth_securid_request(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	gchar *primary;
+
+	gaim_debug_info("oscar", "Got SecurID request\n");
+
+	primary = g_strdup_printf("Enter the SecurID key for %s.", gaim_account_get_username(account));
+	gaim_request_input(gc, NULL, _("Enter SecurID"), primary,
+					   _("Enter the 6 digit number from the digital display."),
+					   FALSE, FALSE, NULL,
+					   _("OK"), G_CALLBACK(gaim_parse_auth_securid_request_yes_cb),
+					   _("Cancel"), G_CALLBACK(gaim_parse_auth_securid_request_no_cb),
+					   gc);
+	g_free(primary);
 
 	return 1;
 }
