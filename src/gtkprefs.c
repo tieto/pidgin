@@ -2385,15 +2385,15 @@ GtkTreeIter *prefs_notebook_add_page(const char *text,
 }
 
 void prefs_notebook_init() {
-	GtkTreeIter p, c;
+	GtkTreeIter p, c, c2;
 	GList *l;
 	GaimPlugin *plug;
 	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, notebook_page++);
-	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c2, &c, notebook_page++);
+	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c2, &c, notebook_page++);
+	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c2, &c, notebook_page++);
 	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Network"), NULL, network_page(), &p, NULL, notebook_page++);
 #ifndef _WIN32
