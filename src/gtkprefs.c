@@ -943,7 +943,7 @@ conversation_placement_cb(const char *name, GaimPrefType type, gpointer value,
 {
 	const char *placement = value;
 
-	if (strcmp(placement, "number"))
+	if (strcmp(placement, "new"))
 		gtk_widget_set_sensitive(GTK_WIDGET(data), FALSE);
 	else
 		gtk_widget_set_sensitive(GTK_WIDGET(data), TRUE);
@@ -972,20 +972,29 @@ GtkWidget *conv_page() {
 
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
+#if 1 /* PREFSLASH04 */
+	label = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
+					"/gaim/gtk/conversations/button_type",
+					_("Pictures"), GAIM_BUTTON_IMAGE,
+					_("Text"), GAIM_BUTTON_TEXT,
+					_("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
+					_("None"), GAIM_BUTTON_NONE,
+					NULL);
 
-	label = gaim_gtk_prefs_labeled_spin_button(vbox, _("Number of conversations per window"),
+	gtk_size_group_add_widget(sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+#endif /* PREFSLASH04 */
+
+#if 0 /* I don't like this */
+ 	label = gaim_gtk_prefs_labeled_spin_button(vbox, _("Number of conversations per window"),
 	                                           "/gaim/gtk/conversations/placement_number",
 	                                           1, 50, sg);
-
 	if (strcmp("number",
-				gaim_prefs_get_string("/gaim/gtk/conversations/placement")))
+		   gaim_prefs_get_string("/gaim/gtk/conversations/placement")))
 		gtk_widget_set_sensitive(label, FALSE);
 	else
 		gtk_widget_set_sensitive(label, TRUE);
-
-	placement_pref_id = gaim_prefs_connect_callback("/gaim/gtk/conversations/placement",
-	                                                conversation_placement_cb,
-	                                                label);
+#endif /* I think it should be a plugin */
 
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
@@ -993,20 +1002,40 @@ GtkWidget *conv_page() {
 	gaim_gtk_prefs_checkbox(_("Show a_liases in tabs/titles"),
 			"/core/conversations/use_alias_for_title", vbox);
 
+	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
+			"/gaim/gtk/conversations/raise_on_events", vbox);
+
+	/* XXX This caption totally sucks but I can't break the string freeze. */
+	gaim_gtk_prefs_checkbox(_("Co_lorize screen names"),
+			"/gaim/gtk/conversations/chat/color_nicks", vbox);
+	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
+			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
+	gaim_gtk_prefs_checkbox(_("Enable buddy icon a_nimation"),
+			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
+	gaim_gtk_prefs_checkbox(_("Notify buddies that you are _typing to them"),
+			"/core/conversations/im/send_typing", vbox);
+
 	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
 
 	tabs_checkbox = gaim_gtk_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
 							"/gaim/gtk/conversations/tabs", vbox);
-
+	if (strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/placement"), "new"))
+		gtk_widget_set_sensitive(tabs_checkbox, FALSE);
+	
+#if 0 /* Overzealous last-minute prefslashing */
 	same_checkbox = gaim_gtk_prefs_checkbox(_("Show IMs and chats in _same tabbed window"),
-							"/core/conversations/combine_chat_im", vbox);
-
+						"/core/conversations/combine_chat_im", vbox);
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(same_checkbox), FALSE);
 	}
+#endif
+
+	placement_pref_id = gaim_prefs_connect_callback("/gaim/gtk/conversations/placement",
+	                                                conversation_placement_cb,
+	                                                tabs_checkbox);
 
 	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), same_checkbox);
+			 G_CALLBACK(gaim_gtk_toggle_sensitive), same_checkbox);
 
 	close_checkbox = gaim_gtk_prefs_checkbox(_("Show _close button on tabs"),
 									"/gaim/gtk/conversations/close_on_tabs",
@@ -1046,94 +1075,42 @@ GtkWidget *conv_page() {
 	return ret;
 }
 
-GtkWidget *im_page() {
-	GtkWidget *ret;
-	GtkWidget *vbox;
-#if 1 /* PREFSLASH04 */
-	GtkWidget *widge;
-#endif /* PREFSLASH04 */
-	GtkSizeGroup *sg;
-
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
-	vbox = gaim_gtk_make_frame (ret, _("Window"));
-#if 1 /* PREFSLASH04 */
-	widge = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
-			"/gaim/gtk/conversations/im/button_type",
-			_("Pictures"), GAIM_BUTTON_IMAGE,
-			_("Text"), GAIM_BUTTON_TEXT,
-			_("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
-			_("None"), GAIM_BUTTON_NONE,
-			NULL);
-
-	gtk_size_group_add_widget(sg, widge);
-	gtk_misc_set_alignment(GTK_MISC(widge), 0, 0);
-#endif /* PREFSLASH04 */
-	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
-			"/gaim/gtk/conversations/im/raise_on_events", vbox);
-	gtk_widget_show (vbox);
-	vbox = gaim_gtk_make_frame (ret, _("Buddy Icons"));
-	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
-			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
-	gaim_gtk_prefs_checkbox(_("Enable buddy icon a_nimation"),
-			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
-
-	vbox = gaim_gtk_make_frame (ret, _("Typing Notification"));
-	gaim_gtk_prefs_checkbox(_("Notify buddies that you are _typing to them"),
-			"/core/conversations/im/send_typing", vbox);
-
-	gtk_widget_show_all(ret);
-	return ret;
-}
-
-GtkWidget *chat_page() {
-	GtkWidget *ret;
-	GtkWidget *vbox;
-#if 1 /* PREFSLASH04 */
-	GtkWidget *dd;
-#endif /* PREFSLASH04 */
-	GtkSizeGroup *sg;
-
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-
-	sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-	vbox = gaim_gtk_make_frame (ret, _("Window"));
-#if 1 /* PREFSLASH04 */
-	dd = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
-			"/gaim/gtk/conversations/chat/button_type",
-			_("Pictures"), GAIM_BUTTON_IMAGE,
-			_("Text"), GAIM_BUTTON_TEXT,
-			_("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
-			_("None"), GAIM_BUTTON_NONE,
-			NULL);
-
-	gtk_size_group_add_widget(sg, dd);
-	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
-#endif /* PREFSLASH04 */
-	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
-			"/gaim/gtk/conversations/chat/raise_on_events", vbox);
-	vbox = gaim_gtk_make_frame (ret, _("Display"));
-	gaim_gtk_prefs_checkbox(_("Co_lorize screen names"),
-			"/gaim/gtk/conversations/chat/color_nicks", vbox);
-
-	gtk_widget_show_all(ret);
-	return ret;
-}
-
 static void network_ip_changed(GtkEntry *entry, gpointer data)
 {
 	gaim_network_set_public_ip(gtk_entry_get_text(entry));
 }
 
+static void
+proxy_changed_cb(const char *name, GaimPrefType type, gpointer value,
+		gpointer data)
+{
+	GtkWidget *frame = data;
+	const char *proxy = value;
+
+	if (strcmp(proxy, "none") && strcmp(proxy, "envvar"))
+		gtk_widget_set_sensitive(frame, TRUE);
+	else
+		gtk_widget_set_sensitive(frame, FALSE);
+}
+
+static void proxy_print_option(GtkEntry *entry, int entrynum)
+{
+	if (entrynum == PROXYHOST)
+		gaim_prefs_set_string("/core/proxy/host", gtk_entry_get_text(entry));
+	else if (entrynum == PROXYPORT)
+		gaim_prefs_set_int("/core/proxy/port", atoi(gtk_entry_get_text(entry)));
+	else if (entrynum == PROXYUSER)
+		gaim_prefs_set_string("/core/proxy/username", gtk_entry_get_text(entry));
+	else if (entrynum == PROXYPASS)
+		gaim_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
+}
+
 GtkWidget *network_page() {
 	GtkWidget *ret;
-	GtkWidget *vbox, *entry;
+	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
 	GtkSizeGroup *sg;
+	GaimProxyInfo *proxy_info;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
@@ -1193,60 +1170,17 @@ GtkWidget *network_page() {
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), spin_button);
 
-	gtk_widget_show_all(ret);
-	return ret;
-}
-
-static void
-proxy_changed_cb(const char *name, GaimPrefType type, gpointer value,
-		gpointer data)
-{
-	GtkWidget *frame = data;
-	const char *proxy = value;
-
-	if (strcmp(proxy, "none") && strcmp(proxy, "envvar"))
-		gtk_widget_set_sensitive(frame, TRUE);
-	else
-		gtk_widget_set_sensitive(frame, FALSE);
-}
-
-static void proxy_print_option(GtkEntry *entry, int entrynum)
-{
-	if (entrynum == PROXYHOST)
-		gaim_prefs_set_string("/core/proxy/host", gtk_entry_get_text(entry));
-	else if (entrynum == PROXYPORT)
-		gaim_prefs_set_int("/core/proxy/port", atoi(gtk_entry_get_text(entry)));
-	else if (entrynum == PROXYUSER)
-		gaim_prefs_set_string("/core/proxy/username", gtk_entry_get_text(entry));
-	else if (entrynum == PROXYPASS)
-		gaim_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
-}
-
-GtkWidget *proxy_page() {
-	GtkWidget *ret;
-	GtkWidget *vbox;
-	GtkWidget *entry;
-	GtkWidget *label;
-	GtkWidget *hbox;
-	GtkWidget *table;
-	GaimProxyInfo *proxy_info;
-
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-
-	vbox = gaim_gtk_make_frame (ret, _("Proxy Type"));
-	gaim_gtk_prefs_dropdown(vbox, _("Proxy _type:"), GAIM_PREF_STRING,
-			"/core/proxy/type",
-			_("No proxy"), "none",
-			"SOCKS 4", "socks4",
-			"SOCKS 5", "socks5",
-			"HTTP", "http",
-			_("Use Environmental Settings"), "envvar",
-			NULL);
-
 	vbox = gaim_gtk_make_frame(ret, _("Proxy Server"));
-	prefs_proxy_frame = vbox;
-
+	prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
+	gaim_gtk_prefs_dropdown(vbox, _("Proxy _type:"), GAIM_PREF_STRING,
+				"/core/proxy/type",
+				_("No proxy"), "none",
+				"SOCKS 4", "socks4",
+				"SOCKS 5", "socks5",
+				"HTTP", "http",
+				_("Use Environmental Settings"), "envvar",
+				NULL);
+	gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
 	proxy_info = gaim_global_proxy_get_info();
 
 	if (proxy_info == NULL ||
@@ -1256,13 +1190,13 @@ GtkWidget *proxy_page() {
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), FALSE);
 	}
 	proxy_pref_id = gaim_prefs_connect_callback("/core/proxy/type",
-												  proxy_changed_cb, prefs_proxy_frame);
+						    proxy_changed_cb, prefs_proxy_frame);
 
-	table = gtk_table_new(2, 4, FALSE);
+	table = gtk_table_new(4, 2, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 10);
-	gtk_container_add(GTK_CONTAINER(vbox), table);
+	gtk_container_add(GTK_CONTAINER(prefs_proxy_frame), table);
 
 
 	label = gtk_label_new_with_mnemonic(_("_Host:"));
@@ -1285,11 +1219,11 @@ GtkWidget *proxy_page() {
 
 	label = gtk_label_new_with_mnemonic(_("_Port:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), label, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
 
 	entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 0, 1, GTK_FILL, 0, 0, 0);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
 
@@ -1304,11 +1238,11 @@ GtkWidget *proxy_page() {
 
 	label = gtk_label_new_with_mnemonic(_("_User:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 
 	entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 2, 3, GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
 
@@ -1322,11 +1256,11 @@ GtkWidget *proxy_page() {
 
 	label = gtk_label_new_with_mnemonic(_("Pa_ssword:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
-	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), label, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
 
 	entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
-	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 3, 4, GTK_FILL , 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 1, 2, GTK_FILL , 0, 0, 0);
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
@@ -1555,10 +1489,177 @@ sound_changed_cb(const char *name, GaimPrefType type, gpointer value,
 }
 #endif
 
+
+static void
+event_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
+{
+	GtkTreeModel *model = (GtkTreeModel *)data;
+	GtkTreeIter iter;
+	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
+	const char *pref;
+
+	gtk_tree_model_get_iter (model, &iter, path);
+	gtk_tree_model_get (model, &iter,
+						2, &pref,
+						-1);
+
+	gaim_prefs_set_bool(pref, !gtk_cell_renderer_toggle_get_active(cell));
+
+	gtk_list_store_set(GTK_LIST_STORE (model), &iter,
+					   0, !gtk_cell_renderer_toggle_get_active(cell),
+					   -1);
+
+	gtk_tree_path_free(path);
+}
+
+static void
+test_sound(GtkWidget *button, gpointer i_am_NULL)
+{
+	char *pref;
+	gboolean temp_value1, temp_value2;
+
+	pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
+			gaim_gtk_sound_get_event_option(sound_row_sel));
+
+	temp_value1 = gaim_prefs_get_bool("/core/sound/while_away");
+	temp_value2 = gaim_prefs_get_bool(pref);
+
+	if (!temp_value1) gaim_prefs_set_bool("/core/sound/while_away", TRUE);
+	if (!temp_value2) gaim_prefs_set_bool(pref, TRUE);
+
+	gaim_sound_play_event(sound_row_sel);
+
+	if (!temp_value1) gaim_prefs_set_bool("/core/sound/while_away", FALSE);
+	if (!temp_value2) gaim_prefs_set_bool(pref, FALSE);
+
+	g_free(pref);
+}
+
+static void
+reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
+{
+	char *pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+			gaim_gtk_sound_get_event_option(sound_row_sel));
+
+	/* This just resets a sound file back to default */
+	gaim_prefs_set_string(pref, "");
+	g_free(pref);
+
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
+}
+
+void close_sounddialog(GtkWidget *w, GtkWidget *w2)
+{
+
+	GtkWidget *dest;
+
+	if (!GTK_IS_WIDGET(w2))
+		dest = w;
+	else
+		dest = w2;
+
+	sounddialog = NULL;
+
+	gtk_widget_destroy(dest);
+}
+
+void do_select_sound(GtkWidget *w, gpointer data)
+{
+	const char *file;
+	char *pref;
+	int snd;
+
+	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sounddialog));
+	snd = GPOINTER_TO_INT(data);
+
+	/* If they type in a directory, change there */
+	if (gaim_gtk_check_if_dir(file, GTK_FILE_SELECTION(sounddialog)))
+		return;
+
+	/* Set it -- and forget it */
+	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+			gaim_gtk_sound_get_event_option(snd));
+	gaim_prefs_set_string(pref, file);
+	g_free(pref);
+
+	/* Set our text entry */
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), file);
+
+	/* Close the window! It's getting cold in here! */
+	close_sounddialog(NULL, sounddialog);
+
+	if (last_sound_dir)
+		g_free(last_sound_dir);
+	last_sound_dir = g_path_get_dirname(file);
+}
+
+static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
+{
+	char *buf = g_malloc(BUF_LEN);
+
+	if (!sounddialog) {
+		sounddialog = gtk_file_selection_new(_("Sound Selection"));
+
+		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(sounddialog));
+
+		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S, last_sound_dir ? last_sound_dir : gaim_home_dir());
+
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sounddialog), buf);
+
+		g_signal_connect(G_OBJECT(sounddialog), "destroy",
+						 G_CALLBACK(close_sounddialog), sounddialog);
+
+		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->ok_button),
+						 "clicked",
+						 G_CALLBACK(do_select_sound), GINT_TO_POINTER(sound_row_sel));
+
+		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->cancel_button),
+						 "clicked",
+						 G_CALLBACK(close_sounddialog), sounddialog);
+	}
+
+	g_free(buf);
+	gtk_widget_show(sounddialog);
+	gdk_window_raise(sounddialog->window);
+}
+
+
+static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
+	GtkTreeIter  iter;
+	GValue val = { 0, };
+	const char *file;
+	char *pref;
+
+	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
+		return;
+	gtk_tree_model_get_value (model, &iter, 3, &val);
+	sound_row_sel = g_value_get_uint(&val);
+
+	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+			gaim_gtk_sound_get_event_option(sound_row_sel));
+	file = gaim_prefs_get_string(pref);
+	g_free(pref);
+	if (sound_entry)
+		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
+	g_value_unset (&val);
+	if (sounddialog)
+		gtk_widget_destroy(sounddialog);
+}
+
 GtkWidget *sound_page() {
 	GtkWidget *ret;
-	GtkWidget *vbox;
+	GtkWidget *vbox, *sw, *button;
 	GtkSizeGroup *sg;
+	GtkTreeIter iter;
+	GtkWidget *event_view;
+	GtkListStore *event_store;
+	GtkCellRenderer *rend;
+	GtkTreeViewColumn *col;
+	GtkTreeSelection *sel;
+	GtkTreePath *path;
+	int j;
+	const char *file;
+	char *pref;	
 #ifndef _WIN32
 	GtkWidget *dd;
 	GtkWidget *hbox;
@@ -1627,8 +1728,88 @@ GtkWidget *sound_page() {
 
 	gaim_set_accessible_label (entry, label);
 #endif /* _WIN32 */
-	gtk_widget_show_all(ret);
 
+	vbox = gaim_gtk_make_frame(ret, _("Sound Events"));
+
+	sw = gtk_scrolled_window_new(NULL,NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	event_store = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
+	
+	for (j=0; j < GAIM_NUM_SOUNDS; j++) {
+		char *pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
+					     gaim_gtk_sound_get_event_option(j));
+		const char *label = gaim_gtk_sound_get_event_label(j);
+
+		if (label == NULL) {
+			g_free(pref);
+			continue;
+		}
+		
+		gtk_list_store_append (event_store, &iter);
+		gtk_list_store_set(event_store, &iter,
+				   0, gaim_prefs_get_bool(pref),
+				   1, _(label),
+				   2, pref,
+				   3, j,
+				   -1);
+		g_free(pref);
+	}
+
+	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(event_store));
+
+	rend = gtk_cell_renderer_toggle_new();
+	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
+	g_signal_connect (G_OBJECT (sel), "changed",
+			  G_CALLBACK (prefs_sound_sel),
+			  NULL);
+	g_signal_connect (G_OBJECT(rend), "toggled",
+			  G_CALLBACK(event_toggled), event_store);
+	path = gtk_tree_path_new_first();
+	gtk_tree_selection_select_path(sel, path);
+	gtk_tree_path_free(path);
+
+	col = gtk_tree_view_column_new_with_attributes (_("Play"),
+							rend,
+							"active", 0,
+							NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
+	
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes (_("Event"),
+							rend,
+							"text", 1,
+							NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
+	g_object_unref(G_OBJECT(event_store));
+	gtk_container_add(GTK_CONTAINER(sw), event_view);
+
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	sound_entry = gtk_entry_new();
+	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+			       gaim_gtk_sound_get_event_option(0));
+	file = gaim_prefs_get_string(pref);
+	g_free(pref);
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
+	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
+	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
+	
+	button = gtk_button_new_with_label(_("Test"));
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
+	
+	button = gtk_button_new_with_label(_("Reset"));
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(reset_sound), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
+	
+	button = gtk_button_new_with_label(_("Choose..."));
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(sel_sound), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
+	gtk_widget_show_all(ret);
+	
 	return ret;
 }
 
@@ -2081,264 +2262,6 @@ static GtkWidget *plugin_page ()
 	return ret;
 }
 
-static void
-event_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
-{
-	GtkTreeModel *model = (GtkTreeModel *)data;
-	GtkTreeIter iter;
-	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
-	const char *pref;
-
-	gtk_tree_model_get_iter (model, &iter, path);
-	gtk_tree_model_get (model, &iter,
-						2, &pref,
-						-1);
-
-	gaim_prefs_set_bool(pref, !gtk_cell_renderer_toggle_get_active(cell));
-
-	gtk_list_store_set(GTK_LIST_STORE (model), &iter,
-					   0, !gtk_cell_renderer_toggle_get_active(cell),
-					   -1);
-
-	gtk_tree_path_free(path);
-}
-
-static void
-test_sound(GtkWidget *button, gpointer i_am_NULL)
-{
-	char *pref;
-	gboolean temp_value1, temp_value2;
-
-	pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
-			gaim_gtk_sound_get_event_option(sound_row_sel));
-
-	temp_value1 = gaim_prefs_get_bool("/core/sound/while_away");
-	temp_value2 = gaim_prefs_get_bool(pref);
-
-	if (!temp_value1) gaim_prefs_set_bool("/core/sound/while_away", TRUE);
-	if (!temp_value2) gaim_prefs_set_bool(pref, TRUE);
-
-	gaim_sound_play_event(sound_row_sel);
-
-	if (!temp_value1) gaim_prefs_set_bool("/core/sound/while_away", FALSE);
-	if (!temp_value2) gaim_prefs_set_bool(pref, FALSE);
-
-	g_free(pref);
-}
-
-static void
-reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
-{
-	char *pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
-			gaim_gtk_sound_get_event_option(sound_row_sel));
-
-	/* This just resets a sound file back to default */
-	gaim_prefs_set_string(pref, "");
-	g_free(pref);
-
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
-}
-
-void close_sounddialog(GtkWidget *w, GtkWidget *w2)
-{
-
-	GtkWidget *dest;
-
-	if (!GTK_IS_WIDGET(w2))
-		dest = w;
-	else
-		dest = w2;
-
-	sounddialog = NULL;
-
-	gtk_widget_destroy(dest);
-}
-
-void do_select_sound(GtkWidget *w, gpointer data)
-{
-	const char *file;
-	char *pref;
-	int snd;
-
-	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sounddialog));
-	snd = GPOINTER_TO_INT(data);
-
-	/* If they type in a directory, change there */
-	if (gaim_gtk_check_if_dir(file, GTK_FILE_SELECTION(sounddialog)))
-		return;
-
-	/* Set it -- and forget it */
-	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
-			gaim_gtk_sound_get_event_option(snd));
-	gaim_prefs_set_string(pref, file);
-	g_free(pref);
-
-	/* Set our text entry */
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), file);
-
-	/* Close the window! It's getting cold in here! */
-	close_sounddialog(NULL, sounddialog);
-
-	if (last_sound_dir)
-		g_free(last_sound_dir);
-	last_sound_dir = g_path_get_dirname(file);
-}
-
-static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
-{
-	char *buf = g_malloc(BUF_LEN);
-
-	if (!sounddialog) {
-		sounddialog = gtk_file_selection_new(_("Sound Selection"));
-
-		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(sounddialog));
-
-		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S, last_sound_dir ? last_sound_dir : gaim_home_dir());
-
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sounddialog), buf);
-
-		g_signal_connect(G_OBJECT(sounddialog), "destroy",
-						 G_CALLBACK(close_sounddialog), sounddialog);
-
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->ok_button),
-						 "clicked",
-						 G_CALLBACK(do_select_sound), GINT_TO_POINTER(sound_row_sel));
-
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->cancel_button),
-						 "clicked",
-						 G_CALLBACK(close_sounddialog), sounddialog);
-	}
-
-	g_free(buf);
-	gtk_widget_show(sounddialog);
-	gdk_window_raise(sounddialog->window);
-}
-
-
-static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
-	GtkTreeIter  iter;
-	GValue val = { 0, };
-	const char *file;
-	char *pref;
-
-	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
-		return;
-	gtk_tree_model_get_value (model, &iter, 3, &val);
-	sound_row_sel = g_value_get_uint(&val);
-
-	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
-			gaim_gtk_sound_get_event_option(sound_row_sel));
-	file = gaim_prefs_get_string(pref);
-	g_free(pref);
-	if (sound_entry)
-		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
-	g_value_unset (&val);
-	if (sounddialog)
-		gtk_widget_destroy(sounddialog);
-}
-
-GtkWidget *sound_events_page() {
-
-	GtkWidget *ret;
-	GtkWidget *sw;
-	GtkWidget *button, *hbox;
-	GtkTreeIter iter;
-	GtkWidget *event_view;
-	GtkListStore *event_store;
-	GtkCellRenderer *rend;
-	GtkTreeViewColumn *col;
-	GtkTreeSelection *sel;
-	GtkTreePath *path;
-	int j;
-	const char *file;
-	char *pref;
-
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-
-	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
-	event_store = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
-
-	for (j=0; j < GAIM_NUM_SOUNDS; j++) {
-		char *pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
-				gaim_gtk_sound_get_event_option(j));
-		const char *label = gaim_gtk_sound_get_event_label(j);
-
-		if (label == NULL) {
-			g_free(pref);
-			continue;
-		}
-
-		gtk_list_store_append (event_store, &iter);
-		gtk_list_store_set(event_store, &iter,
-				   0, gaim_prefs_get_bool(pref),
-				   1, _(label),
-				   2, pref,
-				   3, j,
-				   -1);
-		g_free(pref);
-	}
-
-	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(event_store));
-
-	rend = gtk_cell_renderer_toggle_new();
-	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
-	g_signal_connect (G_OBJECT (sel), "changed",
-			  G_CALLBACK (prefs_sound_sel),
-			  NULL);
-	g_signal_connect (G_OBJECT(rend), "toggled",
-			  G_CALLBACK(event_toggled), event_store);
-	path = gtk_tree_path_new_first();
-	gtk_tree_selection_select_path(sel, path);
-	gtk_tree_path_free(path);
-
-	col = gtk_tree_view_column_new_with_attributes (_("Play"),
-							rend,
-							"active", 0,
-							NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
-
-	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes (_("Event"),
-							rend,
-							"text", 1,
-							NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
-	g_object_unref(G_OBJECT(event_store));
-	gtk_container_add(GTK_CONTAINER(sw), event_view);
-
-	hbox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(ret), hbox, FALSE, FALSE, 0);
-	sound_entry = gtk_entry_new();
-	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
-			gaim_gtk_sound_get_event_option(0));
-	file = gaim_prefs_get_string(pref);
-	g_free(pref);
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
-	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
-	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
-
-	button = gtk_button_new_with_label(_("Test"));
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
-
-	button = gtk_button_new_with_label(_("Reset"));
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(reset_sound), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
-
-	button = gtk_button_new_with_label(_("Choose..."));
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(sel_sound), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
-
-	gtk_widget_show_all (ret);
-
-	return ret;
-}
-
 static void away_message_sel_cb(GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	GtkTreeIter  iter;
@@ -2498,7 +2421,7 @@ GtkTreeIter *prefs_notebook_add_page(const char *text,
 }
 
 void prefs_notebook_init() {
-	GtkTreeIter p, p2, c;
+	GtkTreeIter p, c;
 	GList *l;
 	GaimPlugin *plug;
 	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, notebook_page++);
@@ -2506,23 +2429,18 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &p2, NULL, notebook_page++);
-	prefs_notebook_add_page(_("IMs"), NULL, im_page(), &c, &p2, notebook_page++);
-	prefs_notebook_add_page(_("Chats"), NULL, chat_page(), &c, &p2, notebook_page++);
+	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Network"), NULL, network_page(), &p, NULL, notebook_page++);
-	prefs_notebook_add_page(_("Proxy"), NULL, proxy_page(), &p, NULL, notebook_page++);
 #ifndef _WIN32
 	/* We use the registered default browser in windows */
 	prefs_notebook_add_page(_("Browser"), NULL, browser_page(), &p, NULL, notebook_page++);
 #endif
 	prefs_notebook_add_page(_("Logging"), NULL, logging_page(), &p, NULL, notebook_page++);
-	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &p, NULL, notebook_page++);
-	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, notebook_page++);
 
 	if (gaim_plugins_enabled()) {
-		prefs_notebook_add_page(_("Protocols"), NULL, protocol_page(), &proto_iter, NULL, notebook_page++);
 		prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
 
 		for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
@@ -2555,7 +2473,7 @@ void prefs_notebook_init() {
 					prefs_info->iter = g_new0(GtkTreeIter, 1);
 					prefs_notebook_add_page(_(plug->info->name), NULL,
 										gtk_frame, prefs_info->iter,
-										(plug->info->type == GAIM_PLUGIN_PROTOCOL) ? &proto_iter : &plugin_iter,
+										(plug->info->type == GAIM_PLUGIN_PROTOCOL) ?  NULL : &plugin_iter,
 										notebook_page++);
 				} else if(prefs_info->frame) {
 					/* in the event that there is a pref frame and we can
