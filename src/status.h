@@ -894,15 +894,13 @@ gint gaim_presence_compare(const GaimPresence *presence1,
 const GList *gaim_statuses_get_saved(void);
 
 /**
- * Finds a saved status with the specified status type and primary ID.
+ * Finds a saved status with the specified title.
  *
- * @param status_type The status type of the status.
- * @param id          The primary attribute ID.
+ * @param name The name of the saved status.
  *
  * @return The saved status if found, or NULL.
  */
-GaimStatusSaved *gaim_statuses_find_saved(const GaimStatusType *status_type,
-										  const char *id);
+GaimStatusSaved *gaim_statuses_find_saved(const char *name);
 
 /**
  * Return the name of a given saved status.
@@ -912,6 +910,24 @@ GaimStatusSaved *gaim_statuses_find_saved(const GaimStatusType *status_type,
  * @return The name.
  */
 const char *gaim_statuses_saved_get_name(const GaimStatusSaved *saved_status);
+
+/**
+ * Return the name of a given saved status.
+ *
+ * @param saved_status The saved status.
+ *
+ * @return The name.
+ */
+const GaimStatusType *gaim_statuses_saved_get_type(const GaimStatusSaved *saved_status);
+
+/**
+ * Return the name of a given saved status.
+ *
+ * @param saved_status The saved status.
+ *
+ * @return The name.
+ */
+const char *gaim_statuses_saved_get_message(const GaimStatusSaved *saved_status);
 
 /**
  * Get the handle for the status subsystem.

@@ -1656,8 +1656,18 @@ gaim_statuses_get_saved(void)
 }
 
 GaimStatusSaved *
-gaim_statuses_find_saved(const GaimStatusType *status_type, const char *id)
+gaim_statuses_find_saved(const char *name)
 {
+	GList *l;
+	GaimStatusSaved *status;
+
+	for (l = saved_statuses; l != NULL; l = g_list_next(l))
+	{
+		status = (GaimStatusSaved *)l->data;
+		if (!strcmp(status->name, name))
+			return status;
+	}
+
 	return NULL;
 }
 
@@ -1665,6 +1675,18 @@ const char *
 gaim_statuses_saved_get_name(const GaimStatusSaved *saved_status)
 {
 	return saved_status->name;
+}
+
+const GaimStatusType *
+gaim_statuses_saved_get_type(const GaimStatusSaved *saved_status)
+{
+	return saved_status->type;
+}
+
+const char *
+gaim_statuses_saved_get_message(const GaimStatusSaved *saved_status)
+{
+	return saved_status->message;
 }
 
 void *
@@ -1732,6 +1754,7 @@ gaim_statuses_uninit(void)
 void
 gaim_statuses_sync(void)
 {
+	/* TODO: Write me, baby. */
 }
 
 /**
@@ -1747,8 +1770,6 @@ gaim_statuses_sync(void)
  *   </status>
  *
  * I know.  Moving, huh?
- *
- * TODO: Make sure the name is unique before adding it to the linked list.
  */
 static void
 gaim_statuses_read_parse_status(xmlnode *status)
@@ -1756,10 +1777,11 @@ gaim_statuses_read_parse_status(xmlnode *status)
 	xmlnode *node;
 	const char *name, *state, *message;
 	GaimStatusSaved *new;
+	int i;
 
 	name = xmlnode_get_attrib(status, "name");
 	if (name == NULL)
-		name = "TODO: Make up something unique";
+		name = "No Title";
 
 	node = xmlnode_get_child(status, "state");
 	if (node != NULL) {
@@ -1780,6 +1802,14 @@ gaim_statuses_read_parse_status(xmlnode *status)
 	new->type = NULL;
 	if (message != NULL)
 		new->message = g_strdup(message);
+
+	/* Ensure the title is unique */
+	i = 2;
+	while (gaim_statuses_find_saved(new->name) != NULL) {
+		g_free(new->name);
+		new->name = g_strdup_printf("%s %d", name, i);
+		i++;
+	}
 
 	saved_statuses = g_list_append(saved_statuses, new);
 }
