@@ -2534,7 +2534,9 @@ gboolean gaim_blist_node_get_bool(GaimBlistNode* node, const char *key)
 
 	setting = g_hash_table_lookup(node->settings, key);
 
-	g_return_val_if_fail(setting != NULL, FALSE);
+	if(!setting)
+		return FALSE;
+
 	g_return_val_if_fail(setting->type == GAIM_BLIST_NODE_SETTING_BOOL, FALSE);
 
 	return setting->value.boolean;
@@ -2565,7 +2567,9 @@ int gaim_blist_node_get_int(GaimBlistNode* node, const char *key)
 
 	setting = g_hash_table_lookup(node->settings, key);
 
-	g_return_val_if_fail(setting != NULL, 0);
+	if(!setting)
+		return 0;
+
 	g_return_val_if_fail(setting->type == GAIM_BLIST_NODE_SETTING_INT, 0);
 
 	return setting->value.integer;
@@ -2597,7 +2601,9 @@ const char *gaim_blist_node_get_string(GaimBlistNode* node, const char *key)
 
 	setting = g_hash_table_lookup(node->settings, key);
 
-	g_return_val_if_fail(setting != NULL, NULL);
+	if(!setting)
+		return NULL;
+
 	g_return_val_if_fail(setting->type == GAIM_BLIST_NODE_SETTING_STRING, NULL);
 
 	return setting->value.string;
