@@ -65,9 +65,13 @@ ZEPHYRSOURCES = \
 	\
 	zephyr.c
 
+ZEPHYRSOURCESEXT = zephyr.c
+
 AM_CFLAGS = $(st)
 
 ZEPHYRLIBS = $(KRB4_LDFLAGS) $(KRB4_LIBS)
+
+ZEPHYRLIBSEXT = $(ZEPHYR_LDFLAGS) $(ZEPHYR_LIBS)
 
 libzephyr_la_LDFLAGS = -module -avoid-version
 
@@ -83,8 +87,15 @@ else
 
 st = -Dlint
 pkg_LTLIBRARIES = libzephyr.la
+
+if EXTERNAL_LIBZEPHYR
+libzephyr_la_SOURCES = $(ZEPHYRSOURCESEXT)
+libzephyr_la_LIBADD = $(ZEPHYRLIBSEXT)
+else
 libzephyr_la_SOURCES = $(ZEPHYRSOURCES)
 libzephyr_la_LIBADD  = $(ZEPHYRLIBS)
+endif
+
 
 endif
 

@@ -185,6 +185,9 @@ AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screen
 AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session management support],,enable_sm=yes)
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
 
+AC_ARG_WITH(zephyr,    [  --with-zephyr=PREFIX    Compile Zephyr plugin against external libzephyr],zephyr="$withval",zephyr="no")
+AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
+
 if test "$enable_debug" = yes ; then
 	DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
@@ -1000,6 +1003,35 @@ if test "$kerberos" != "no" ; then
 	LDFLAGS="$orig_LDFLAGS"
 fi
 
+dnl checks for an external libzephyr
+AC_SUBST(ZEPHYR_CFLAGS)
+AC_SUBST(ZEPHYR_LDFLAGS)
+AC_SUBST(ZEPHYR_LIBS)
+if test "$zephyr" != "no" ; then
+	if test "$zephyr" != "yes" ; then 
+		ZEPHYR_CFLAGS="-I${zephyr}/include" 
+		ZEPHYR_LDFLAGS="-L${zephyr}/lib"
+	elif test -d /usr/athena/include/zephyr ; then
+		ZEPHYR_CFLAGS="-I/usr/athena/include"
+	elif test -d /usr/include/zephyr ; then
+ 		ZEPHYR_CFLAGS="-I/usr/include"
+ 	elif test -d /usr/local/include/zephyr ; then
+ 		ZEPHYR_CFLAGS="-I/usr/local/include"
+	fi
+	AC_DEFINE(LIBZEPHYR_EXT, 1 , [Define if external libzephyr should be used.]) 
+	AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
+	orig_LDFLAGS="$LDFLAGS"
+	LDFLAGS="$LDFLAGS $ZEPHYR_LDFLAGS"
+	AC_CHECK_LIB(zephyr, ZInitialize,
+			  [ZEPHYR_LIBS="-lzephyr"],
+			  [AC_ERROR(Zephyr libraries not found)],
+			  -lzephyr)
+	orig_LIBS="$LIBS"
+	LIBS="$orig_LIBS"
+	LDFLAGS="$orig_LDFLAGS"
+fi
+
+
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
 AC_CHECK_FUNCS(gethostid lrand48)
@@ -1066,6 +1098,9 @@ echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
 echo Build with NAS support........ : $enable_nas
 echo Build with GtkSpell support... : $enable_gtkspell
+echo
+echo Use kerberos 4 with zephyr.... : $kerberos
+echo Use external libzephyr........ : $zephyr
 echo
 echo Use XScreenSaver Extension.... : $enable_xss
 echo Use X Session Management...... : $enable_sm

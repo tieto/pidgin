@@ -27,7 +27,8 @@ EXTRA_DIST = \
 	secure.png \
 	trepia.png \
 	wireless.png \
-	yahoo.png
+	yahoo.png \
+	zephyr.png
 
 gaimstatuspixdir = $(datadir)/pixmaps/gaim/status/default
 
