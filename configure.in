@@ -47,7 +47,7 @@ AM_CONDITIONAL(GNOMEAPPLET, test "x$enable_panel" = "xyes")
 AC_ARG_ENABLE(esd,     [  --disable-esd           Turn off ESD (default=auto)],,enable_esd=yes)
 AC_ARG_ENABLE(nas,     [  --enable-nas            Enable NAS (Network Audio System) support],,enable_nas=no)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
-AC_ARG_ENABLE(jabber,  [  --enable-jabber         compile the jabber plugin (requires libxode and libjabber)],,enable_jabber=no)
+AC_ARG_ENABLE(jabber,  [  --disable-jabber         compile the jabber plugin (requires libxode and libjabber)],,enable_jabber=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
@@ -195,6 +195,8 @@ else
 fi
 
 if test "$enable_jabber" = yes ; then
+	AC_CHECK_LIB(xode, XML_ParserCreate, , enable_jabber=no)
+	AC_CHECK_LIB(jabber, jid_new, , enable_jabber=no, -lxode)
 	AC_CHECK_FUNCS(snprintf)
 	AC_CHECK_LIB(nsl, gethostent)
 	AC_CHECK_FUNCS(connect)
@@ -233,8 +235,8 @@ echo
 echo Build with Plugin support.. : $enable_plugins
 echo Build with Perl support.... : $enable_perl
 echo
-#echo Build Jabber PRPL.......... : $enable_jabber
-#echo
+echo Build Jabber PRPL.......... : $enable_jabber
+echo
 echo Build with ESD............. : $enable_esd
 echo Build with NAS............. : $enable_nas
 echo
