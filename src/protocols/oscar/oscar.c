@@ -3948,6 +3948,8 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	GaimConnection *gc = sess->aux_data;
 	gchar *buf, *tmp, *utf8;
 	gchar who[16];
+	GaimBuddy *buddy;
+	gchar *primary;
 	va_list ap;
 	struct aim_icq_info *info;
 
@@ -4056,7 +4058,10 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
 	}
 
-	g_show_info_text(gc, who, 2, buf, NULL);
+	buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
+	primary = g_strdup_printf(_("ICQ Info for %s"), gaim_get_buddy_alias(buddy));
+	gaim_notify_formatted(gc, NULL, primary, NULL, buf, NULL, NULL);
+	g_free(primary);
 	g_free(buf);
 
 	return 1;
@@ -4107,37 +4112,41 @@ static int gaim_popup(aim_session_t *sess, aim_frame_t *fr, ...)
 }
 
 static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
-	GString *buf;
-	va_list ap;
-	char *address, *SNs;
+	GaimConnection *gc = sess->aux_data;
+	gchar *secondary;
+	GString *text;
 	int i, num;
+	va_list ap;
+	char *email, *SNs;
 
 	va_start(ap, fr);
-	address = va_arg(ap, char *);
+	email = va_arg(ap, char *);
 	num = va_arg(ap, int);
 	SNs = va_arg(ap, char *);
 	va_end(ap);
 
-	buf = g_string_new("");
-	g_string_printf(buf, _("<B>%s has the following screen names:</B><BR>"), address);
+	secondary = g_strdup_printf(_("The following screennames are associated with %s"), email);
+	text = g_string_new("");
 	for (i = 0; i < num; i++)
-		g_string_append_printf(buf, "%s<br>", &SNs[i * (MAXSNLEN + 1)]);
-	g_show_info_text(NULL, NULL, 2, buf->str, NULL);
-	g_string_free(buf, TRUE);
+		g_string_append_printf(text, "%s<br>", &SNs[i * (MAXSNLEN + 1)]);
+	gaim_notify_formatted(gc, NULL, _("Search Results"), secondary, text->str, NULL, NULL);
+
+	g_free(secondary);
+	g_string_free(text, TRUE);
 
 	return 1;
 }
 
 static int gaim_parse_searcherror(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
-	char *address;
+	char *email;
 	char *buf;
 
 	va_start(ap, fr);
-	address = va_arg(ap, char *);
+	email = va_arg(ap, char *);
 	va_end(ap);
 
-	buf = g_strdup_printf(_("No results found for email address %s"), address);
+	buf = g_strdup_printf(_("No results found for email address %s"), email);
 	gaim_notify_error(sess->aux_data, NULL, buf, NULL);
 	g_free(buf);
 
@@ -4145,10 +4154,10 @@ static int gaim_parse_searcherror(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_account_confirm(aim_session_t *sess, aim_frame_t *fr, ...) {
+	GaimConnection *gc = sess->aux_data;
 	fu16_t status;
 	va_list ap;
 	char msg[256];
-	GaimConnection *gc = sess->aux_data;
 
 	va_start(ap, fr);
 	status = (fu16_t) va_arg(ap, unsigned int); /* status code of confirmation request */
@@ -5639,7 +5648,7 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	sn = va_arg(ap, char *);
 	percent = va_arg(ap, double);
 	va_end(ap);
-	
+
 	if (!(dim = find_direct_im(od, sn)))
 		return 1;
 	if (dim->watcher) {
@@ -5649,7 +5658,9 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
-	gaim_conversation_update_progress(c, percent);
+	c = gaim_find_conversation(sn);
+	if (c != NULL)
+		gaim_conversation_update_progress(c, percent);
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 				      oscar_callback, dim->conn);
 
@@ -5961,7 +5972,7 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
 		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
 			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Re-request authorization");
+			pbm->label = _("Re-request Authorization");
 			pbm->callback = gaim_auth_sendrequest;
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
@@ -6052,7 +6063,7 @@ static void oscar_show_awaitingauth(GaimConnection *gc)
 	GaimBlistNode *gnode, *cnode, *bnode;
 	int num=0;
 
-	text = g_strdup(_("You are awaiting authorization from the following buddies:<BR>"));
+	text = g_strdup("");
 
 	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 		GaimGroup *group = (GaimGroup *)gnode;
@@ -6070,7 +6081,7 @@ static void oscar_show_awaitingauth(GaimConnection *gc)
 						nombre = g_strdup_printf(" %s (%s)", buddy->name, gaim_get_buddy_alias_only(buddy));
 					else
 						nombre = g_strdup_printf(" %s", buddy->name);
-					tmp = g_strdup_printf("%s<BR>%s", text, nombre);
+					tmp = g_strdup_printf("%s%s<br>", text, nombre);
 					g_free(text);
 					text = tmp;
 					g_free(nombre);
@@ -6081,15 +6092,15 @@ static void oscar_show_awaitingauth(GaimConnection *gc)
 	}
 
 	if (!num) {
-		tmp = g_strdup_printf("%s<BR>%s", text, _("<i>you are not waiting for authorization</i>"));
 		g_free(text);
-		text = tmp;
+		text = g_strdup(_("<i>you are not waiting for authorization</i>"));
 	}
 
-	tmp = g_strdup_printf(_("%s<BR><BR>You can re-request authorization from these buddies by right-clicking on them and clicking \"Re-request authorization.\""), text);
-	g_free(text);
-	text = tmp;
-	g_show_info_text(gc, gaim_account_get_username(gaim_connection_get_account(gc)), 2, text, NULL);
+	gaim_notify_formatted(gc, NULL, _("You are awaiting authorization from "
+						  "the following buddies"),	_("You can re-request "
+						  "authorization from these buddies by "
+						  "right-clicking on them and selecting "
+						  "\"Re-request Authorization.\""), text, NULL, NULL);
 	g_free(text);
 }
 
