@@ -802,14 +802,19 @@ trepia_send_im(GaimConnection *gc, const char *who, const char *message,
 			int len, int flags)
 {
 	TrepiaSession *session = gc->proto_data;
+	char *escaped_msg;
 	char *buffer;
+
+	escaped_msg = g_markup_escape_text(message, -1);
 
 	buffer = g_strdup_printf(
 		"<F>\n"
 		"<a>%s</a>\n"
 		"<b>%s</b>\n"
 		"</F>",
-		who, message);
+		who, escaped_msg);
+
+	g_free(escaped_msg);
 
 	if (trepia_write(session->fd, buffer, strlen(buffer)) < 0) {
 		gaim_connection_error(gc, _("Write error"));
