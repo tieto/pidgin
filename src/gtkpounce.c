@@ -635,6 +635,8 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	/* Delete button */
 	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	if (cur_pounce == NULL)
+		gtk_widget_set_sensitive(button, FALSE);
 	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
