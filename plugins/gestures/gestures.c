@@ -20,15 +20,12 @@
  */
 #include "config.h"
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
-
 #include "gaim.h"
 #include "gstroke.h"
+#include "gtkconv.h"
+#include "gtkplugin.h"
 
-static GModule *handle = NULL;
-struct gaim_plugin_description desc;
+#define GESTURES_PLUGIN_ID "gtk-gestures"
 
 static void
 stroke_close(GtkWidget *widget, void *data)
@@ -153,13 +150,11 @@ toggle_draw_cb(GtkToggleButton *toggle, gpointer data)
 	gstroke_set_draw_strokes(!gstroke_draw_strokes());
 }
 
-char *
-gaim_plugin_init(GModule *h)
+static gboolean
+plugin_load(GaimPlugin *plugin)
 {
 	struct gaim_conversation *conv;
 	GList *l;
-
-	handle = h;
 
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
 		conv = (struct gaim_conversation *)l->data;
@@ -170,13 +165,13 @@ gaim_plugin_init(GModule *h)
 		attach_signals(conv);
 	}
 
-	gaim_signal_connect(handle, event_new_conversation, new_conv_cb, NULL);
+	gaim_signal_connect(plugin, event_new_conversation, new_conv_cb, NULL);
 
-	return NULL;
+	return TRUE;
 }
 
-void
-gaim_plugin_remove(void)
+static gboolean
+plugin_unload(GaimPlugin *plugin)
 {
 	struct gaim_conversation *conv;
 	struct gaim_gtk_conversation *gtkconv;
@@ -192,10 +187,12 @@ gaim_plugin_remove(void)
 
 		gstroke_cleanup(gtkconv->imhtml);
 	}
+
+	return TRUE;
 }
 
-GtkWidget *
-gaim_plugin_config_gtk(void)
+static GtkWidget *
+get_config_frame(GaimPlugin *plugin)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -246,40 +243,47 @@ gaim_plugin_config_gtk(void)
 	return ret;
 }
 
-struct gaim_plugin_description *
-gaim_plugin_desc()
+static GaimGtkPluginUiInfo ui_info =
 {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("Mouse Gestures"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(
-		_("Allows support for mouse gestures in conversation windows.\n"
-		  "Drag the middle mouse button to perform certain actions:\n\n"
-		  "Drag down and then to the right to close a conversation.\n"
-		  "Drag up and then to the left to switch to the previous "
-		  "conversation.\n"
-		  "Drag up and then to the right to switch to the next "
-		  "conversation."));
-	desc.authors = g_strdup("Christian Hammond &lt;chipx86@gnupdate.org&gt;");
-	desc.url = g_strdup(WEBSITE);
+	get_config_frame
+};
 
-	return &desc;
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	GESTURES_PLUGIN_ID,                               /**< id             */
+	N_("Mouse Gestures"),                             /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Provides support for mouse gestures"),
+	                                                  /**  description    */
+	N_("Allows support for mouse gestures in conversation windows.\n"
+	   "Drag the middle mouse button to perform certain actions:\n\n"
+	   "Drag down and then to the right to close a conversation.\n"
+	   "Drag up and then to the left to switch to the previous "
+	   "conversation.\n"
+	   "Drag up and then to the right to switch to the next "
+	   "conversation."),
+	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	&ui_info,                                         /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 }
 
-char *
-name(void)
-{
-	return _("Mouse Gestures");
-}
-
-char *
-description(void)
-{
-	return _("Allows support for mouse gestures in conversation windows.\n"
-			 "Drag the middle mouse button to perform certain actions:\n\n"
-			 "Drag down and then to the right to close a conversation.\n"
-			 "Drag up and then to the left to switch to the previous "
-			 "conversation.\n"
-			 "Drag up and then to the right to switch to the next "
-			 "conversation.");
-}
+GAIM_INIT_PLUGIN(gestures, __init_plugin, info);

@@ -207,7 +207,7 @@ char *gaim_plugin_init(GModule *h)
 
 struct gaim_plugin_description desc; 
 struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
+	desc.api_version = GAIM_PLUGIN_API_VERSION;
 	desc.name = g_strdup("Event Tester");
 	desc.version = g_strdup(VERSION);
 	desc.description = g_strdup("Test to see that all plugin events are working properly.");

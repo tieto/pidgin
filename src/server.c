@@ -40,35 +40,42 @@
 
 void serv_login(struct gaim_account *account)
 {
-	struct prpl *p = find_prpl(account->protocol);
+	GaimPlugin *p = gaim_find_prpl(account->protocol);
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (account->gc != NULL || p == NULL)
 		return;
 
-	if(!ref_protocol(p))
-		return;
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(p);
 
-	if (p->login) {
-		if (!strlen(account->password) && !(p->options & OPT_PROTO_NO_PASSWORD) &&
-			!(p->options & OPT_PROTO_PASSWORD_OPTIONAL)) {
+	if (prpl_info->login) {
+		if (!strlen(account->password) && !(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
+			!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL)) {
 			do_error_dialog(_("Please enter your password"), NULL, GAIM_ERROR);
 			return;
 		}
 
-		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", account->username, p->name);
+		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n",
+					 account->username, p->info->name);
 		account->connecting = TRUE;
 		connecting_count++;
 		debug_printf("connecting_count: %d\n", connecting_count);
-		plugin_event(event_connecting, account);
-		p->login(account);
+		gaim_event_broadcast(event_connecting, account);
+		prpl_info->login(account);
 	}
 }
 
 static gboolean send_keepalive(gpointer d)
 {
 	struct gaim_connection *gc = d;
-	if (gc->prpl && gc->prpl->keepalive)
-		gc->prpl->keepalive(gc);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && prpl_info->keepalive)
+		prpl_info->keepalive(gc);
+
 	return TRUE;
 }
 
@@ -86,7 +93,9 @@ static void update_keepalive(struct gaim_connection *gc, gboolean on)
 
 void serv_close(struct gaim_connection *gc)
 {
-	struct prpl *prpl;
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
 	while (gc->buddy_chats) {
 		struct gaim_conversation *b = gc->buddy_chats->data;
 
@@ -103,14 +112,16 @@ void serv_close(struct gaim_connection *gc)
 
 	update_keepalive(gc, FALSE);
 
-	if (gc->prpl && gc->prpl->close)
-		gc->prpl->close(gc);
+	if (gc->prpl != NULL) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+		if (prpl_info->close)
+			prpl_info->close(gc);
+	}
 
 	prpl = gc->prpl;
 	account_offline(gc);
 	destroy_gaim_conn(gc);
-
-	unref_protocol(prpl);
 }
 
 void serv_touch_idle(struct gaim_connection *gc)
@@ -127,6 +138,11 @@ void serv_touch_idle(struct gaim_connection *gc)
 
 void serv_finish_login(struct gaim_connection *gc)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
 	if (strlen(gc->account->user_info)) {
 		/* g_malloc(strlen(gc->user->user_info) * 4);
 		   strncpy_withhtml(buf, gc->user->user_info, strlen(gc->user->user_info) * 4); */
@@ -140,7 +156,7 @@ void serv_finish_login(struct gaim_connection *gc)
 	gc->idle_timer = g_timeout_add(20000, check_idle, gc);
 	serv_touch_idle(gc);
 
-	if (gc->prpl->options & OPT_PROTO_CORRECT_TIME)
+	if (prpl_info->options & OPT_PROTO_CORRECT_TIME)
 		serv_add_buddy(gc, gc->username);
 
 	update_keepalive(gc, TRUE);
@@ -151,9 +167,15 @@ void serv_finish_login(struct gaim_connection *gc)
  * if it returns zero, it will not send any more typing notifications 
  * typing is a flag - TRUE for typing, FALSE for stopped typing */
 int serv_send_typing(struct gaim_connection *g, char *name, int typing) {
-	if (g && g->prpl && g->prpl->send_typing)
-		return g->prpl->send_typing(g, name, typing);
-	else return 0;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (g && prpl_info && prpl_info->send_typing)
+		return prpl_info->send_typing(g, name, typing);
+
+	return 0;
 }
 
 struct queued_away_response {
@@ -168,11 +190,15 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message,
 {
 	struct gaim_conversation *c;
 	int val = -EINVAL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	c = gaim_find_conversation(name);
 
-	if (gc->prpl && gc->prpl->send_im)
-		val = gc->prpl->send_im(gc, name, message, len, flags);
+	if (prpl_info && prpl_info->send_im)
+		val = prpl_info->send_im(gc, name, message, len, flags);
 
 	if (!(flags & IM_FLAG_AWAY))
 		serv_touch_idle(gc);
@@ -200,20 +226,35 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message,
 
 void serv_get_info(struct gaim_connection *g, char *name)
 {
-	if (g && g->prpl && g->prpl->get_info)
-		g->prpl->get_info(g, name);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (g && prpl_info && prpl_info->get_info)
+		prpl_info->get_info(g, name);
 }
 
 void serv_get_away(struct gaim_connection *g, const char *name)
 {
-	if (g && g->prpl && g->prpl->get_away)
-		g->prpl->get_away(g, name);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (g && prpl_info && prpl_info->get_away)
+		prpl_info->get_away(g, name);
 }
 
 void serv_get_dir(struct gaim_connection *g, char *name)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->get_dir)
-		g->prpl->get_dir(g, name);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->get_dir)
+		prpl_info->get_dir(g, name);
 }
 
 void serv_set_dir(struct gaim_connection *g, const char *first,
@@ -221,8 +262,13 @@ void serv_set_dir(struct gaim_connection *g, const char *first,
 				  const char *city, const char *state, const char *country,
 				  int web)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_dir)
-		g->prpl->set_dir(g, first, middle, last, maiden, city, state,
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->set_dir)
+		prpl_info->set_dir(g, first, middle, last, maiden, city, state,
 						 country, web);
 }
 
@@ -231,15 +277,25 @@ void serv_dir_search(struct gaim_connection *g, const char *first,
 		     const char *city, const char *state, const char *country,
 			 const char *email)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->dir_search)
-		g->prpl->dir_search(g, first, middle, last, maiden, city, state,
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->dir_search)
+		prpl_info->dir_search(g, first, middle, last, maiden, city, state,
 							country, email);
 }
 
 
 void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 {
-	if (gc && gc->prpl && gc->prpl->set_away) {
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && prpl_info->set_away) {
 		char *buf = NULL;
 
 		if (gc->away_state) {
@@ -255,13 +311,13 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 				strncpy_nohtml(buf, message, strlen(message) + 1);
 		}
 
-		gc->prpl->set_away(gc, state, buf);
+		prpl_info->set_away(gc, state, buf);
 
 		if (gc->away && state) {
 			gc->away_state = g_strdup(state);
 		}
 
-		plugin_event(event_away, gc, state, buf);
+		gaim_event_broadcast(event_away, gc, state, buf);
 
 		if (buf)
 			g_free(buf);
@@ -272,65 +328,99 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 
 void serv_set_away_all(char *message)
 {
-	GSList *c = connections;
+	GSList *c;
 	struct gaim_connection *g;
 
-	while (c) {
+	for (c = connections; c != NULL; c = c->next) {
 		g = (struct gaim_connection *)c->data;
+
 		serv_set_away(g, GAIM_AWAY_CUSTOM, message);
-		c = c->next;
 	}
 }
 
 void serv_set_info(struct gaim_connection *g, char *info)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_info) {
-		if (plugin_event(event_set_info, g, info))
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->set_info) {
+		if (gaim_event_broadcast(event_set_info, g, info))
 			return;
-		g->prpl->set_info(g, info);
+
+		prpl_info->set_info(g, info);
 	}
 }
 
 void serv_change_passwd(struct gaim_connection *g, const char *orig, const char *new)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->change_passwd)
-		g->prpl->change_passwd(g, orig, new);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->change_passwd)
+		prpl_info->change_passwd(g, orig, new);
 }
 
 void serv_add_buddy(struct gaim_connection *g, const char *name)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_buddy)
-		g->prpl->add_buddy(g, name);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->add_buddy)
+		prpl_info->add_buddy(g, name);
 }
 
 void serv_add_buddies(struct gaim_connection *g, GList *buddies)
 {
-	if (g && g_slist_find(connections, g) && g->prpl) {
-		if (g->prpl->add_buddies)
-			g->prpl->add_buddies(g, buddies);
-		else if (g->prpl->add_buddy)
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g)) {
+		if (prpl_info->add_buddies)
+			prpl_info->add_buddies(g, buddies);
+		else if (prpl_info->add_buddy) {
 			while (buddies) {
-				g->prpl->add_buddy(g, buddies->data);
+				prpl_info->add_buddy(g, buddies->data);
 				buddies = buddies->next;
 			}
+		}
 	}
 }
 
 
 void serv_remove_buddy(struct gaim_connection *g, char *name, char *group)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->remove_buddy)
-		g->prpl->remove_buddy(g, name, group);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->remove_buddy)
+		prpl_info->remove_buddy(g, name, group);
 }
 
 void serv_remove_buddies(struct gaim_connection *gc, GList *g, char *group)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
 	if (!g_slist_find(connections, gc))
 		return;
+
 	if (!gc->prpl)
 		return;		/* how the hell did that happen? */
-	if (gc->prpl->remove_buddies)
-		gc->prpl->remove_buddies(gc, g, group);
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info->remove_buddies)
+		prpl_info->remove_buddies(gc, g, group);
 	else {
 		while (g) {
 			serv_remove_buddy(gc, g->data, group);
@@ -344,8 +434,13 @@ void serv_remove_buddies(struct gaim_connection *gc, GList *g, char *group)
  */
 void serv_alias_buddy(struct buddy *b)
 {
-	if(b && b->account->gc && b->account->gc->prpl && b->account->gc->prpl->alias_buddy) {
-		b->account->gc->prpl->alias_buddy(b->account->gc, b->name, b->alias);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (b != NULL && b->account->gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(b->account->gc->prpl);
+
+	if (b && prpl_info && prpl_info->alias_buddy) {
+		prpl_info->alias_buddy(b->account->gc, b->name, b->alias);
 	}
 }
 
@@ -373,9 +468,14 @@ void serv_got_alias(struct gaim_connection *gc, char *who, char *alias) {
  */
 void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
 {
-	if(b && b->account->gc && og && ng) {
-		if(b->account->gc->prpl && b->account->gc->prpl->group_buddy) {
-			b->account->gc->prpl->group_buddy(b->account->gc, b->name, og->name, ng->name);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (b->account->gc != NULL && b->account->gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(b->account->gc->prpl);
+
+	if (b && b->account->gc && og && ng) {
+		if (prpl_info && prpl_info->group_buddy) {
+			prpl_info->group_buddy(b->account->gc, b->name, og->name, ng->name);
 		}
 	}
 }
@@ -383,9 +483,15 @@ void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
 /*
  * Rename a group on server roster/list.
  */
-void serv_rename_group(struct gaim_connection *g, struct group *old_group, const char *new_name)
+void serv_rename_group(struct gaim_connection *g, struct group *old_group,
+					   const char *new_name)
 {
-	if (g && g->prpl && old_group && new_name) {
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && old_group && new_name) {
 		GList *tobemoved = NULL;
 		GaimBlistNode *b = ((GaimBlistNode*)old_group)->child;
 
@@ -396,10 +502,10 @@ void serv_rename_group(struct gaim_connection *g, struct group *old_group, const
 			b = b->next;
 		}
 
-		if (g->prpl->rename_group) {
+		if (prpl_info->rename_group) {
 			/* prpl's might need to check if the group already 
 			 * exists or not, and handle that differently */
-			g->prpl->rename_group(g, old_group->name, new_name, tobemoved);
+			prpl_info->rename_group(g, old_group->name, new_name, tobemoved);
 		} else {
 			serv_remove_buddies(g, tobemoved, old_group->name);
 			serv_add_buddies(g, tobemoved);
@@ -411,87 +517,154 @@ void serv_rename_group(struct gaim_connection *g, struct group *old_group, const
 
 void serv_add_permit(struct gaim_connection *g, const char *name)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_permit)
-		g->prpl->add_permit(g, name);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->add_permit)
+		prpl_info->add_permit(g, name);
 }
 
 void serv_add_deny(struct gaim_connection *g, const char *name)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_deny)
-		g->prpl->add_deny(g, name);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->add_deny)
+		prpl_info->add_deny(g, name);
 }
 
 void serv_rem_permit(struct gaim_connection *g, const char *name)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->rem_permit)
-		g->prpl->rem_permit(g, name);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->rem_permit)
+		prpl_info->rem_permit(g, name);
 }
 
 void serv_rem_deny(struct gaim_connection *g, const char *name)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->rem_deny)
-		g->prpl->rem_deny(g, name);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->rem_deny)
+		prpl_info->rem_deny(g, name);
 }
 
 void serv_set_permit_deny(struct gaim_connection *g)
 {
-	/* this is called when either you import a buddy list, and make lots of changes that way,
-	 * or when the user toggles the permit/deny mode in the prefs. In either case you should
-	 * probably be resetting and resending the permit/deny info when you get this. */
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_permit_deny)
-		g->prpl->set_permit_deny(g);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	/*
+	 * this is called when either you import a buddy list, and make lots
+	 * of changes that way, or when the user toggles the permit/deny mode
+	 * in the prefs. In either case you should probably be resetting and
+	 * resending the permit/deny info when you get this.
+	 */
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->set_permit_deny)
+		prpl_info->set_permit_deny(g);
 }
 
 
 void serv_set_idle(struct gaim_connection *g, int time)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_idle)
-		g->prpl->set_idle(g, time);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->set_idle)
+		prpl_info->set_idle(g, time);
 }
 
 void serv_warn(struct gaim_connection *g, char *name, int anon)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->warn)
-		g->prpl->warn(g, name, anon);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->warn)
+		prpl_info->warn(g, name, anon);
 }
 
 void serv_join_chat(struct gaim_connection *g, GList *data)
 {
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->join_chat)
-		g->prpl->join_chat(g, data);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->join_chat)
+		prpl_info->join_chat(g, data);
 }
 
 void serv_chat_invite(struct gaim_connection *g, int id, const char *message, const char *name)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	char *buffy = message && *message ? g_strdup(message) : NULL;
-	plugin_event(event_chat_send_invite, g, (void *)id, name, &buffy);
-	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->chat_invite)
-		g->prpl->chat_invite(g, id, buffy, name);
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	gaim_event_broadcast(event_chat_send_invite, g, (void *)id, name, &buffy);
+
+	if (prpl_info && g_slist_find(connections, g) && prpl_info->chat_invite)
+		prpl_info->chat_invite(g, id, buffy, name);
+
 	if (buffy)
 		g_free(buffy);
 }
 
 void serv_chat_leave(struct gaim_connection *g, int id)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
 	if (!g_slist_find(connections, g))
 		return;
 
-	if (g->prpl && g->prpl->chat_leave)
-		g->prpl->chat_leave(g, id);
+	if (g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && prpl_info->chat_leave)
+		prpl_info->chat_leave(g, id);
 }
 
 void serv_chat_whisper(struct gaim_connection *g, int id, char *who, char *message)
 {
-	if (g->prpl && g->prpl->chat_whisper)
-		g->prpl->chat_whisper(g, id, who, message);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g != NULL && g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && prpl_info->chat_whisper)
+		prpl_info->chat_whisper(g, id, who, message);
 }
 
 int serv_chat_send(struct gaim_connection *g, int id, char *message)
 {
 	int val = -EINVAL;
-	if (g->prpl && g->prpl->chat_send)
-		val = g->prpl->chat_send(g, id, message);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (g->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+
+	if (prpl_info && prpl_info->chat_send)
+		val = prpl_info->chat_send(g, id, message);
+
 	serv_touch_idle(g);
+
 	return val;
 }
 
@@ -600,7 +773,7 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 		buffy = g_malloc(MAX(strlen(msg) + 1, BUF_LONG));
 		strcpy(buffy, msg);
 		angel = g_strdup(who);
-		plugin_return = plugin_event(event_im_recv, gc, &angel, &buffy, &flags);
+		plugin_return = gaim_event_broadcast(event_im_recv, gc, &angel, &buffy, &flags);
 
 		if (!buffy || !angel || plugin_return) {
 			if (buffy)
@@ -831,7 +1004,7 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 		}
 	}
 
-	plugin_event(event_im_displayed_rcvd, gc, name, message, flags, mtime);
+	gaim_event_broadcast(event_im_displayed_rcvd, gc, name, message, flags, mtime);
 	g_free(name);
 	g_free(message);
 }
@@ -843,7 +1016,9 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 {
 	struct buddy *b = gaim_find_buddy(gc->account, name);
 
-	if (signon && (gc->prpl->options & OPT_PROTO_CORRECT_TIME)) {
+	if (signon && (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->options &
+				   OPT_PROTO_CORRECT_TIME)) {
+
 		char *tmp = g_strdup(normalize(name));
 		if (!gaim_utf8_strcasecmp(tmp, normalize(gc->username))) {
 			gc->evil = evil;
@@ -868,12 +1043,12 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 
 	if (!b->idle && idle) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE);
-		plugin_event(event_buddy_idle, gc, b->name);
+		gaim_event_broadcast(event_buddy_idle, gc, b->name);
 		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 	if (b->idle && !idle) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE_RETURN);
-		plugin_event(event_buddy_unidle, gc, b->name);
+		gaim_event_broadcast(event_buddy_unidle, gc, b->name);
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 
@@ -948,7 +1123,7 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 {
 	char buf2[1024];
 
-	plugin_event(event_warned, gc, name, lev);
+	gaim_event_broadcast(event_warned, gc, name, lev);
 
 	if (gc->evil >= lev) {
 		gc->evil = lev;
@@ -984,7 +1159,7 @@ void serv_got_typing(struct gaim_connection *gc, char *name, int timeout,
 
 	b = gaim_find_buddy(gc->account, name);
 
-	plugin_event(event_got_typing, gc, name);
+	gaim_event_broadcast(event_got_typing, gc, name);
 
 	if (b != NULL)
 		gaim_pounce_execute(gc->account, name, GAIM_POUNCE_TYPING);
@@ -1048,7 +1223,7 @@ void serv_got_chat_invite(struct gaim_connection *gc, char *name,
 	struct chat_invite_data *cid = g_new0(struct chat_invite_data, 1);
 
 
-	plugin_event(event_chat_invited, gc, who, name, message);
+	gaim_event_broadcast(event_chat_invited, gc, who, name, message);
 
 	if (message)
 		g_snprintf(buf2, sizeof(buf2),
@@ -1106,7 +1281,7 @@ struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,
 	gaim_window_switch_conversation(gaim_conversation_get_window(b),
 									gaim_conversation_get_index(b));
 
-	plugin_event(event_chat_join, gc, id, name);
+	gaim_event_broadcast(event_chat_join, gc, id, name);
 
 	return b;
 }
@@ -1131,7 +1306,7 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 	if (!conv)
 		return;
 
-	plugin_event(event_chat_leave, g, gaim_chat_get_id(chat));
+	gaim_event_broadcast(event_chat_leave, g, gaim_chat_get_id(chat));
 
 	debug_printf("Leaving room %s.\n", gaim_conversation_get_name(conv));
 
@@ -1176,7 +1351,7 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who,
 	buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
 	strcpy(buffy, message);
 	angel = g_strdup(who);
-	plugin_return = plugin_event(event_chat_recv, g, gaim_chat_get_id(chat),
+	plugin_return = gaim_event_broadcast(event_chat_recv, g, gaim_chat_get_id(chat),
 								 &angel, &buffy);
 
 	if (!buffy || !angel || plugin_return) {

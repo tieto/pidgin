@@ -139,7 +139,7 @@
 		if (drawTimeID > 0) { g_source_remove(drawTimeID); }
 		if (updateTimeID >0) { g_source_remove(updateTimeID); }
 		gtk_widget_destroy(applet);
-		gaim_plugin_unload(handle);
+		gaim_plugin_unload_self(handle);
 	}
 
 
@@ -596,7 +596,7 @@
 	
         struct gaim_plugin_description desc;  
         struct gaim_plugin_description *gaim_plugin_desc() {
-		desc.api_version = PLUGIN_API_VERSION;
+		desc.api_version = GAIM_PLUGIN_API_VERSION;
 		desc.name = g_strdup("Stock Ticker");
 		desc.version = g_strdup(VERSION);
 		desc.description = g_strdup(

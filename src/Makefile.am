@@ -18,6 +18,8 @@ gaim_SOURCES =	about.c \
 		dialogs.c \
 		dnd-hints.c \
 		dnd-hints.h \
+		event.c \
+		event.h \
 		ft.c \
 		ft.h \
 		gaim.h \
@@ -34,6 +36,8 @@ gaim_SOURCES =	about.c \
 		gtkimhtml.c \
 		gtkimhtml.h \
 		gtklist.h \
+		gtkplugin.c \
+		gtkplugin.h \
 		gtkpounce.c \
 		gtkpounce.h \
 		gtkutils.c \
@@ -46,10 +50,10 @@ gaim_SOURCES =	about.c \
 		main.c \
 		md5.c \
 		md5.h \
-		module.c \
+		plugin.c \
+		plugin.h \
 		multi.c \
 		multi.h \
-		perl.c \
 		pounce.c \
 		pounce.h \
 		prefs.c \
@@ -77,7 +81,6 @@ gaim_LDADD = \
 	$(GTK_LIBS) \
 	$(SOUND_LIBS) \
 	$(STATIC_LINK_LIBS) \
-	$(PERL_LIBS) \
 	$(XSS_LIBS) \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
@@ -88,7 +91,6 @@ gaim_remote_DEPENDENCIES = @LIBOBJS@
 gaim_remote_LDADD = @LIBOBJS@ $(GLIB_LIBS)
 
 AM_CPPFLAGS = \
-	$(PERL_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
 	$(AUDIOFILE_CFLAGS) \
 	$(AO_CFLAGS) \

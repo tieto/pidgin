@@ -1,14 +1,10 @@
-#include "config.h"
-
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
-
 #include "gaim.h"
 #include "sound.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#define MAILCHK_PLUGIN_ID "core-mailchk"
 
 #define ANY_MAIL    0x01
 #define UNREAD_MAIL 0x02
@@ -122,7 +118,7 @@ void gaim_plugin_remove()
 
 struct gaim_plugin_description desc; 
 struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
+	desc.api_version = GAIM_PLUGIN_API_VERSION;
 	desc.name = g_strdup("Mail Checker");
 	desc.version = g_strdup(VERSION);
 	desc.description = g_strdup("Checks for new local mail.");

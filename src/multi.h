@@ -23,6 +23,7 @@
 #define _MULTI_H_
 
 #include "core.h"
+#include "plugin.h"
 
 /* ok. now the fun begins. first we create a connection structure */
 struct gaim_connection {
@@ -31,7 +32,7 @@ struct gaim_connection {
 	/* we need to do either oscar or TOC */
 	/* we make this as an int in case if we want to add more protocols later */
 	int protocol;
-	struct prpl *prpl;
+	GaimPlugin *prpl;
 	guint32 flags;
 
 	/* erg. */

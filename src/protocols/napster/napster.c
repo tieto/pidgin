@@ -563,25 +563,23 @@ static void nap_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 		*se = "offline";
 }
 
-static struct prpl *my_protocol = NULL;
+static GaimPlugin *my_protocol = NULL;
 
+#if 0
 G_MODULE_EXPORT void napster_init(struct prpl *ret)
 {
 	struct proto_user_opt *puo;
 	ret->add_buddies = nap_add_buddies;
 	ret->remove_buddy = nap_remove_buddy;
-	ret->add_permit = NULL;
-	ret->rem_permit = NULL;
-	ret->add_deny = NULL;
-	ret->rem_deny = NULL;
-	ret->warn = NULL;
-	ret->chat_info = nap_chat_info;
-	ret->join_chat = nap_join_chat;
-	ret->chat_invite = NULL;
+//	ret->add_permit = NULL;
+//	ret->rem_permit = NULL;
+//	ret->add_deny = NULL;
+//	ret->rem_deny = NULL;
+//	ret->warn = NULL;
+//	ret->chat_invite = NULL;
 	ret->chat_leave = nap_chat_leave;
-	ret->chat_whisper = NULL;
-	ret->chat_send = nap_chat_send;
-	ret->keepalive = NULL;
+//	ret->chat_whisper = NULL;
+//	ret->keepalive = NULL;
 	ret->protocol = PROTO_NAPSTER;
 	ret->name = g_strdup("Napster");
 	ret->list_icon = nap_list_icon;
@@ -589,29 +587,26 @@ G_MODULE_EXPORT void napster_init(struct prpl *ret)
 	ret->login = nap_login;
 	ret->close = nap_close;
 	ret->send_im = nap_send_im;
-	ret->set_info = NULL;
-	ret->get_info = NULL;
-	ret->set_away = NULL;
-	ret->set_dir = NULL;
-	ret->get_dir = NULL;
-	ret->dir_search = NULL;
-	ret->set_idle = NULL;
-	ret->change_passwd = NULL;
+//	ret->set_info = NULL;
+//	ret->get_info = NULL;
+//	ret->set_away = NULL;
+//	ret->set_dir = NULL;
+//	ret->get_dir = NULL;
+//	ret->dir_search = NULL;
+//	ret->set_idle = NULL;
+//	ret->change_passwd = NULL;
 	ret->add_buddy = nap_add_buddy;
-	ret->add_buddies = nap_add_buddies;
-	ret->remove_buddy = nap_remove_buddy;
-	ret->add_permit = NULL;
-	ret->rem_permit = NULL;
-	ret->add_deny = NULL;
-	ret->rem_deny = NULL;
-	ret->warn = NULL;
+//	ret->add_permit = NULL;
+//	ret->rem_permit = NULL;
+//	ret->add_deny = NULL;
+//	ret->rem_deny = NULL;
+//	ret->warn = NULL;
 	ret->chat_info = nap_chat_info;
 	ret->join_chat = nap_join_chat;
-	ret->chat_invite = NULL;
-	ret->chat_leave = nap_chat_leave;
-	ret->chat_whisper = NULL;
+//	ret->chat_invite = NULL;
+//	ret->chat_whisper = NULL;
 	ret->chat_send = nap_chat_send;
-	ret->keepalive = NULL;
+//	ret->keepalive = NULL;
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Server:"));
@@ -636,3 +631,107 @@ G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 #endif
+#endif
+
+static GaimPluginProtocolInfo prpl_info =
+{
+	GAIM_PROTO_NAPSTER,
+	0,
+	NULL,
+	NULL,
+	nap_list_icon,
+	nap_list_emblems,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	nap_chat_info,
+	nap_login,
+	nap_close,
+	nap_send_im,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	nap_add_buddy,
+	nap_add_buddies,
+	nap_remove_buddy,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	nap_join_chat,
+	NULL,
+	nap_chat_leave,
+	NULL,
+	nap_chat_send,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	"prpl-napster",                                     /**< id             */
+	"NAPSTER",                                        /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("NAPSTER Protocol Plugin"),
+	                                                  /**  description    */
+	N_("NAPSTER Protocol Plugin"),
+	NULL,                                             /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&prpl_info                                        /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+	struct proto_user_opt *puo;
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Server");
+	puo->def   = g_strdup(NAP_SERVER);
+	puo->pos   = USEROPT_NAPSERVER;
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Port:");
+	puo->def   = g_strdup("8888");
+	puo->pos   = USEROPT_NAPPORT;
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+
+	my_protocol = plugin;
+}
+
+GAIM_INIT_PLUGIN(napster, __init_plugin, info);

@@ -52,7 +52,7 @@
 #include "win32dep.h"
 #endif
 
-static struct prpl *my_protocol = NULL;
+static GaimPlugin *my_protocol = NULL;
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
@@ -1451,71 +1451,6 @@ static GList *toc_actions(struct gaim_connection *gc)
 	return m;
 }
 
-G_MODULE_EXPORT void toc_init(struct prpl *ret)
-{
-	struct proto_user_opt *puo;
-	ret->protocol = PROTO_TOC;
-	ret->options = OPT_PROTO_CORRECT_TIME;
-	ret->name = g_strdup("TOC");
-	ret->list_icon = toc_list_icon;
-	ret->list_emblems = toc_list_emblems;
-	ret->away_states = toc_away_states;
-	ret->actions = toc_actions;
-	ret->buddy_menu = toc_buddy_menu;
-	ret->login = toc_login;
-	ret->close = toc_close;
-	ret->send_im = toc_send_im;
-	ret->set_info = toc_set_info;
-	ret->get_info = toc_get_info;
-	ret->set_away = toc_set_away;
-	ret->set_dir = toc_set_dir;
-	ret->get_dir = toc_get_dir;
-	ret->dir_search = toc_dir_search;
-	ret->set_idle = toc_set_idle;
-	ret->change_passwd = toc_change_passwd;
-	ret->add_buddy = toc_add_buddy;
-	ret->add_buddies = toc_add_buddies;
-	ret->remove_buddy = toc_remove_buddy;
-	ret->remove_buddies = toc_remove_buddies;
-	ret->add_permit = toc_add_permit;
-	ret->add_deny = toc_add_deny;
-	ret->rem_permit = toc_rem_permit;
-	ret->rem_deny = toc_rem_deny;
-	ret->set_permit_deny = toc_set_permit_deny;
-	ret->warn = toc_warn;
-	ret->chat_info = toc_chat_info;
-	ret->join_chat = toc_join_chat;
-	ret->chat_invite = toc_chat_invite;
-	ret->chat_leave = toc_chat_leave;
-	ret->chat_whisper = toc_chat_whisper;
-	ret->chat_send = toc_chat_send;
-	ret->keepalive = toc_keepalive;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("TOC Host:"));
-	puo->def = g_strdup("toc.oscar.aol.com");
-	puo->pos = USEROPT_AUTH;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("TOC Port:"));
-	puo->def = g_strdup("9898");
-	puo->pos = USEROPT_AUTHPORT;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
-
-	my_protocol = ret;
-}
-
-#ifndef STATIC
-
-G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
-{
-	toc_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
-}
-
-#endif
-
 /*********
  * RVOUS ACTIONS
  ********/
@@ -2038,5 +1973,108 @@ static void accept_file_dialog(struct ft_request *ft) {
 	} else {
 		g_snprintf(buf, sizeof(buf), _("%s requests you to send them a file"), ft->user);
 	}
-	do_ask_dialog(buf, NULL, ft, _("Accept"), toc_accept_ft, _("Cancel"), toc_reject_ft, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+	do_ask_dialog(buf, NULL, ft, _("Accept"), toc_accept_ft, _("Cancel"), toc_reject_ft, my_protocol->handle, FALSE);
 }
+
+static GaimPluginProtocolInfo prpl_info =
+{
+	GAIM_PROTO_TOC,
+	OPT_PROTO_CORRECT_TIME,
+	NULL,
+	NULL,
+	toc_list_icon,
+	toc_list_emblems,
+	NULL,
+	NULL,
+	toc_away_states,
+	toc_actions,
+	toc_buddy_menu,
+	toc_chat_info,
+	toc_login,
+	toc_close,
+	toc_send_im,
+	toc_set_info,
+	NULL,
+	toc_get_info,
+	toc_set_away,
+	NULL,
+	toc_set_dir,
+	toc_get_dir,
+	toc_dir_search,
+	toc_set_idle,
+	toc_change_passwd,
+	toc_add_buddy,
+	toc_add_buddies,
+	toc_remove_buddy,
+	toc_remove_buddies,
+	toc_add_permit,
+	toc_add_deny,
+	toc_rem_permit,
+	toc_rem_deny,
+	toc_set_permit_deny,
+	toc_warn,
+	toc_join_chat,
+	toc_chat_invite,
+	toc_chat_leave,
+	toc_chat_whisper,
+	toc_chat_send,
+	toc_keepalive,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	"prpl-toc",                                       /**< id             */
+	"TOC",                                            /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("TOC Protocol Plugin"),
+	                                                  /**  description    */
+	N_("TOC Protocol Plugin"),
+	NULL,                                             /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&prpl_info                                        /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+	struct proto_user_opt *puo;
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup(_("TOC Host:"));
+	puo->def = g_strdup("toc.oscar.aol.com");
+	puo->pos = USEROPT_AUTH;
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup(_("TOC Port:"));
+	puo->def = g_strdup("9898");
+	puo->pos = USEROPT_AUTHPORT;
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+
+	my_protocol = plugin;
+}
+
+GAIM_INIT_PLUGIN(toc, __init_plugin, info);

@@ -103,13 +103,15 @@ static int ignore_sig_list[] = {
 };
 #endif
 
+STATIC_PROTO_INIT
+
 void do_quit()
 {
 	/* captain's log, stardate... */
 	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
 	/* the self destruct sequence has been initiated */
-	plugin_event(event_quit);
+	gaim_event_broadcast(event_quit);
 
 	/* transmission ends */
 	signoff_all();
@@ -117,14 +119,15 @@ void do_quit()
 	/* record what we have before we blow it away... */
 	save_prefs();
 
-#ifdef GAIM_PLUGINS
-	/* jettison cargo */
-	remove_all_plugins();
-#endif
+	debug_printf("Unloading all plugins\n");
+	gaim_plugins_unload_all();
 
+	/* XXX */
+#if 0
 #ifdef USE_PERL
 	/* yup, perl too */
 	perl_end();
+#endif
 #endif
 
 #ifdef USE_SM
@@ -184,7 +187,9 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 
 	account = gaim_account_find(username, -1);
 	if (!account)
-		account = gaim_account_new(username, DEFAULT_PROTO, OPT_ACCT_REM_PASS);
+		account = gaim_account_new(username, GAIM_PROTO_DEFAULT,
+								   OPT_ACCT_REM_PASS);
+
 	g_snprintf(account->password, sizeof account->password, "%s", password);
 	save_prefs();
 	serv_login(account);
@@ -437,9 +442,9 @@ void sighandler(int sig)
 	default:
 		debug_printf("caught signal %d\n", sig);
 		signoff_all(NULL, NULL);
-#ifdef GAIM_PLUGINS
-		remove_all_plugins();
-#endif
+
+		gaim_plugins_unload_all();
+
 		if (gtk_main_level())
 			gtk_main_quit();
 		core_quit();
@@ -567,7 +572,7 @@ static void set_first_user(char *name)
 	if (!account) {		/* new user */
 		account = g_new0(struct gaim_account, 1);
 		g_snprintf(account->username, sizeof(account->username), "%s", name);
-		account->protocol = DEFAULT_PROTO;
+		account->protocol = GAIM_PROTO_DEFAULT;
 		gaim_accounts = g_slist_prepend(gaim_accounts, account);
 	} else {		/* user already exists */
 		gaim_accounts = g_slist_remove(gaim_accounts, account);
@@ -609,6 +614,7 @@ int main(int argc, char *argv[])
 	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, opt_nologin = 0, dologin_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
+	char *plugin_search_paths[3];
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
@@ -854,11 +860,19 @@ int main(int argc, char *argv[])
 		printf("Gaim %s\n",VERSION);
 		return 0;
 	}
-	
-#if GAIM_PLUGINS || USE_PERL
-	gaim_probe_plugins();
-#endif
-		
+
+	plugin_search_paths[0] = LIBDIR;
+	plugin_search_paths[1] = gaim_user_dir();
+	plugin_search_paths[2] = g_strdup_printf("%s/plugins", gaim_user_dir());
+
+	gaim_plugins_set_search_paths(sizeof(plugin_search_paths) /
+								  sizeof(*plugin_search_paths),
+								  plugin_search_paths);
+
+	g_free(plugin_search_paths[2]);
+
+	gaim_plugins_probe(NULL);
+
 #ifdef _WIN32
 	/* Various win32 initializations */
 	wgaim_init();

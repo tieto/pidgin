@@ -5,27 +5,14 @@
 
 #include "config.h"
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
-
 #include "gaim.h"
 #include "multi.h"
+#include "gtkplugin.h"
 #include <sys/time.h>
 
+#define IDLE_PLUGIN_ID "gtk-idle"
+
 static struct gaim_connection *gc = NULL;
-
-const char *name() {
-	return _("I'dle Mak'er");
-}
-
-const char *description() {
-	return _("Allows you to hand-configure how long you've been idle for");
-}
-
-char *gaim_plugin_init(GModule *module) {
-	return NULL;
-}
 
 static void set_idle(GtkWidget *button, GtkWidget *spinner) {
 	time_t t;
@@ -75,18 +62,9 @@ static void make_connect_menu(GtkWidget *box) {
 		gc = NULL;
 }
 
-struct gaim_plugin_description desc;
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("I'dle Mak'er"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("Allows you to hand-configure how long you've been idle for"));
-	desc.authors = g_strdup("Eric Warmenhoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
-
-GtkWidget *gaim_plugin_config_gtk() {
+static GtkWidget *
+get_config_frame(GaimPlugin *plugin)
+{
 	GtkWidget *ret;
 	GtkWidget *frame, *label;
 	GtkWidget *vbox, *hbox;
@@ -130,3 +108,37 @@ GtkWidget *gaim_plugin_config_gtk() {
 
 	return ret;
 }
+
+static GaimGtkPluginUiInfo ui_info =
+{
+	get_config_frame
+};
+
+static GaimPluginInfo info =
+{
+	2,
+	GAIM_PLUGIN_STANDARD,
+	GAIM_GTK_PLUGIN_TYPE,
+	0,
+	NULL,
+	GAIM_PRIORITY_DEFAULT,
+	IDLE_PLUGIN_ID,
+	N_("I'dle Mak'er"),
+	VERSION,
+	N_("Allows you to hand-configure how long you've been idle for"),
+	N_("Allows you to hand-configure how long you've been idle for"),
+	"Eric Warmenhoven &lt;eric@warmenhoven.org>",
+	WEBSITE,
+	NULL,
+	NULL,
+	NULL,
+	&ui_info,
+	NULL
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+}
+
+GAIM_INIT_PLUGIN(idle, __init_plugin, info);

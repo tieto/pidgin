@@ -28,18 +28,13 @@
 
 #define BUDDY_ALIAS_MAXLEN 388
 
-static struct prpl *my_protocol = NULL;
+static GaimPlugin *my_protocol = NULL;
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
 static void msn_login_callback(gpointer, gint, GaimInputCondition);
 static void msn_login_xfr_connect(gpointer, gint, GaimInputCondition);
-
-#if 0
-static struct msn_file_transfer *find_mft_by_cookie(struct gaim_connection *gc,	unsigned long cookie);
-static struct msn_file_transfer *find_mft_by_xfer(struct gaim_connection *gc, struct file_transfer *xfer);
-#endif
 
 static char *msn_normalize(const char *s)
 {
@@ -366,7 +361,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add %s to his or her buddy list."),
 				ap->user, ap->friend, ap->gc->username);
 
-		//	do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+		//	do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, my_protocol->handle, FALSE);
 	} else if (!g_ascii_strncasecmp(buf, "BLP", 3)) {
 		char *type, *tmp = buf;
 
@@ -515,7 +510,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				ap->gc = gc;
                          
 				g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list"),ap->user, ap->friend);
-				do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+				do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, my_protocol->handle, FALSE);
 			}
 		    }
 			
@@ -1258,168 +1253,6 @@ static int msn_send_typing(struct gaim_connection *gc, char *who, int typing) {
 	return MSN_TYPING_SEND_TIMEOUT;
 }
 
-#if 0
-static void msn_file_transfer_cancel(struct gaim_connection *gc,
-									 struct file_transfer *xfer)
-{
-	struct msn_data *md = gc->proto_data;
-	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
-	struct msn_switchboard *ms = msn_find_switch(gc, mft->sn);
-	char header[MSN_BUF_LEN];
-	char buf[MSN_BUF_LEN];
-
-	if (!ms || !mft)
-	{
-		debug_printf("Eep! Returning from msn_file_transfer_cancel early");
-		return;
-	}
-
-	g_snprintf(header, sizeof(header),
-			   "MIME-Version: 1.0\r\n"
-			   "Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n\r\n"
-			   "Invitation-Command: CANCEL\r\n"
-			   "Invitation-Cookie: %lu\r\n"
-			   "Cancel-Code: REJECT\r\n",
-			   (unsigned long)mft->cookie);
-
-	g_snprintf(buf, sizeof(buf), "MSG %u N %d\r\n%s\r\n\r\n",
-			   ++ms->trId, strlen(header) + strlen("\r\n\r\n"),
-			   header);
-
-	md->file_transfers = g_slist_remove(md->file_transfers, mft);
-
-	if (msn_write(ms->fd, buf, strlen(buf)) < 0)
-	{
-		debug_printf("Uh oh! Killing switch.\n");
-		msn_kill_switch(ms);
-	}
-}
-
-static void msn_file_transfer_in(struct gaim_connection *gc,
-								 struct file_transfer *xfer, int offset)
-{
-	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
-	struct msn_switchboard *ms = msn_find_switch(gc, mft->sn);
-	char header[MSN_BUF_LEN];
-	char buf[MSN_BUF_LEN];
-
-	if (!ms || !mft)
-	{
-		debug_printf("Eep! Returning from msn_file_transfer_in early");
-		return;
-	}
-
-	g_snprintf(header, sizeof(header),
-			   "MIME-Version: 1.0\r\n"
-			   "Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n\r\n"
-			   "Invitation-Command: ACCEPT\r\n"
-			   "Invitation-Cookie: %lu\r\n"
-			   "Launch-Application: FALSE\r\n"
-			   "Request-Data: IP-Address:\r\n",
-			   (unsigned long)mft->cookie);
-
-	g_snprintf(buf, sizeof(buf), "MSG %u N %d\r\n%s\r\n\r\n",
-			   ++ms->trId, strlen(header) + strlen("\r\n\r\n"),
-			   header);
-
-	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
-		msn_kill_switch(ms);
-		return;
-	}
-
-	mft->xfer = xfer;
-}
-
-static void msn_file_transfer_out(struct gaim_connection *gc,
-								  struct file_transfer *xfer,
-								  const char *name, int totfiles, int totsize)
-{
-	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
-	struct msn_switchboard *ms = msn_find_switch(gc, mft->sn);
-	char header[MSN_BUF_LEN];
-	char buf[MSN_BUF_LEN];
-	struct stat sb;
-
-	if (!ms)
-		return;
-
-	if (totfiles > 1)
-		return;
-
-	if (stat(name, &sb) == -1)
-		return;
-
-	mft->cookie = 1 + (guint32)(4294967295.0 * rand() / (RAND_MAX + 1.0));
-
-	g_snprintf(header, sizeof(header),
-		"MIME-Version: 1.0\r\n"
-		"Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n"
-		"Application-Name: File Transfer\r\n"
-		"Application-GUID: {5D3E02AB-6190-11d3-BBBB-00C04F795683}\r\n"
-		"Invitation-Command: INVITE\r\n"
-		"Invitation-Cookie: %lu\r\n"
-		"Application-File: %s\r\n"
-		"Application-FileSize: %ld\r\n",
-		(unsigned long)mft->cookie, name, sb.st_size);
-
-	g_snprintf(buf, sizeof(buf), "MSG %u A %d\r\n%s\r\n\r\n",
-			   ++ms->trId,
-			   strlen(header) + strlen("\r\n\r\n"),
-			   header);
-
-	if (msn_write(ms->fd, buf, strlen(buf)) < 0)
-		msn_kill_switch(ms);
-
-	debug_printf("\n");
-}
-
-static void msn_file_transfer_done(struct gaim_connection *gc,
-								   struct file_transfer *xfer)
-{
-	struct msn_data *md = (struct msn_data *)gc->proto_data;
-	struct msn_file_transfer *mft = find_mft_by_xfer(gc, xfer);
-	char buf[MSN_BUF_LEN];
-
-	g_snprintf(buf, sizeof(buf), "BYE 16777989\r\n");
-
-	msn_write(mft->fd, buf, strlen(buf));
-
-	md->file_transfers = g_slist_remove(md->file_transfers, mft);
-
-	gaim_input_remove(mft->inpa);
-
-	close(mft->fd);
-
-	g_free(mft->filename);
-	g_free(mft->sn);
-	g_free(mft);
-}
-
-static size_t msn_file_transfer_read(struct gaim_connection *gc,
-									 struct file_transfer *xfer, int fd,
-									 char **buf)
-{
-	unsigned char header[3];
-	size_t len, size;
-
-	if (read(fd, header, sizeof(header)) < 3)
-		return 0;
-
-	if (header[0] != 0) {
-		debug_printf("Invalid header[0]: %d. Aborting.\n", header[0]);
-		return 0;
-	}
-
-	size = header[1] | (header[2] << 8);
-
-	*buf = g_new0(char, size);
-
-	for (len = 0; len < size; len += read(fd, *buf + len, size - len));
-
-	return len;
-}
-#endif
-
 static int msn_send_im(struct gaim_connection *gc, const char *who, const char *message, int len, int flags)
 {
 	struct msn_data *md = gc->proto_data;
@@ -1625,21 +1458,6 @@ static char *msn_get_away_text(int s)
 	}
 }
 
-#if 0
-static void msn_ask_send_file(struct gaim_connection *gc, char *destsn)
-{
-	struct msn_data *md = (struct msn_data *)gc->proto_data;
-	struct msn_file_transfer *mft = g_new0(struct msn_file_transfer, 1);
-
-	mft->type = MFT_SENDFILE_OUT;
-	mft->sn = g_strdup(destsn);
-	mft->gc = gc;
-
-	md->file_transfers = g_slist_append(md->file_transfers, mft);
-
-	mft->xfer = transfer_out_add(gc, mft->sn);
-}
-#endif
 static char *msn_status_text(struct buddy *b) {
 	if (b->uc & UC_UNAVAILABLE)
 		return g_strdup(msn_get_away_text(b->uc >> 1));
@@ -1656,22 +1474,6 @@ static char *msn_tooltip_text(struct buddy *b) {
 static GList *msn_buddy_menu(struct gaim_connection *gc, const char *who)
 {
 	GList *m = NULL;
-#if 0
-	struct proto_buddy_menu *pbm;
-	struct buddy *b = gaim_find_buddy(gc->account, who);
-	static char buf[MSN_BUF_LEN];
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Send File");
-	pbm->callback = msn_ask_send_file;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
-	if (!b || !(b->uc >> 1))
-		return m;
-#endif
-
-
 
 	return m;
 }
@@ -2003,86 +1805,105 @@ static void msn_buddy_free(struct buddy *b)
 		g_free(b->proto_data);
 }
 
-G_MODULE_EXPORT void msn_init(struct prpl *ret)
+static GaimPluginProtocolInfo prpl_info =
+{
+	GAIM_PROTO_MSN,
+	OPT_PROTO_MAIL_CHECK,
+	NULL,
+	NULL,
+	msn_list_icon,
+	msn_list_emblems,
+	msn_status_text,
+	msn_tooltip_text,
+	msn_away_states,
+	msn_actions,
+	msn_buddy_menu,
+	NULL,
+	msn_login,
+	msn_close,
+	msn_send_im,
+	NULL,
+	msn_send_typing,
+	NULL,
+	msn_set_away,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	msn_set_idle,
+	NULL,
+	msn_add_buddy,
+	NULL,
+	msn_rem_buddy,
+	NULL,
+	msn_add_permit,
+	msn_add_deny,
+	msn_rem_permit,
+	msn_rem_deny,
+	msn_set_permit_deny,
+	NULL,
+	NULL,
+	msn_chat_invite,
+	msn_chat_leave,
+	NULL,
+	msn_chat_send,
+	msn_keepalive,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	msn_buddy_free,
+	msn_convo_closed,
+	msn_normalize
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	"prpl-msn",                                       /**< id             */
+	"MSN",                                            /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("MSN Protocol Plugin"),
+	                                                  /**  description    */
+	N_("MSN Protocol Plugin"),
+	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&prpl_info                                        /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
 {
 	struct proto_user_opt *puo;
-	ret->protocol = PROTO_MSN;
-	ret->options = OPT_PROTO_MAIL_CHECK;
-	ret->name = g_strdup("MSN");
-	ret->list_icon = msn_list_icon;
-	ret->list_emblems = msn_list_emblems;
-	ret->buddy_menu = msn_buddy_menu;
-	ret->login = msn_login;
-	ret->close = msn_close;
-	ret->send_im = msn_send_im;
-	ret->send_typing = msn_send_typing;
-	ret->away_states = msn_away_states;
-	ret->status_text = msn_status_text;
-	ret->tooltip_text = msn_tooltip_text;
-	ret->set_away = msn_set_away;
-	ret->set_idle = msn_set_idle;
-	ret->add_buddy = msn_add_buddy;
-	ret->remove_buddy = msn_rem_buddy;
-	ret->chat_send = msn_chat_send;
-	ret->chat_invite = msn_chat_invite;
-	ret->chat_leave = msn_chat_leave;
-	ret->normalize = msn_normalize;
-	ret->actions = msn_actions;
-	ret->convo_closed = msn_convo_closed;
-	ret->keepalive = msn_keepalive;
-	ret->set_permit_deny = msn_set_permit_deny;
-	ret->add_permit = msn_add_permit;
-	ret->rem_permit = msn_rem_permit;
-	ret->add_deny = msn_add_deny;
-	ret->rem_deny = msn_rem_deny;
-	ret->buddy_free = msn_buddy_free;
-
-#if 0
-	ret->file_transfer_cancel = msn_file_transfer_cancel;
-	ret->file_transfer_in = msn_file_transfer_in;
-	ret->file_transfer_out = msn_file_transfer_out;
-	ret->file_transfer_done = msn_file_transfer_done;
-	ret->file_transfer_read = msn_file_transfer_read;
-#endif
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Login Server:"));
 	puo->def = g_strdup(MSN_SERVER);
 	puo->pos = USEROPT_MSNSERVER;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));
 	puo->def = g_strdup("1863");
 	puo->pos = USEROPT_MSNPORT;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
-	my_protocol = ret;
+	my_protocol = plugin;
 }
 
-#ifndef STATIC
-
-G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
-{
-	msn_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
-}
-
-G_MODULE_EXPORT void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_MSN);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-G_MODULE_EXPORT char *name()
-{
-	return "MSN";
-}
-
-G_MODULE_EXPORT char *description()
-{
-	return PRPL_DESC("MSN");
-}
-
-#endif
+GAIM_INIT_PLUGIN(msn, __init_plugin, info);

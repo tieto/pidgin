@@ -1,36 +1,52 @@
-#define GAIM_PLUGINS
-
-#include <stdio.h>
+#include "config.h"
 #include "gaim.h"
 
-static GModule *handle = NULL;
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
+	debug_printf("simple plugin loaded.\n");
 
-char *gaim_plugin_init(GModule *h) {
-	printf("plugin loaded.\n");
-	handle = h;
-	return NULL;
+	return TRUE;
 }
 
-void gaim_plugin_remove() {
-	printf("plugin unloaded.\n");
-	handle = NULL;
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
+	debug_printf("simple plugin unloaded.\n");
+
+	return TRUE;
 }
 
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("Simple Plugin");
-	desc.version = g_strdup("1.0");
-	desc.description = g_strdup("Tests to see that most things are working.");
-	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	NULL,                                             /**< id             */
+	N_("Simple Plugin"),                              /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Tests to see that most things are working."),
+	                                                  /**  description    */
+	N_("Tests to see that most things are working."),
+	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 }
 
-char *name() {
-	return "Simple Plugin Version 1.0";
-}
-
-char *description() {
-	return "Tests to see that most things are working.";
-}
+GAIM_INIT_PLUGIN(simple, __init_plugin, info);

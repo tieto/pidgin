@@ -27,6 +27,8 @@
 #ifndef _GAIM_PRPL_H_
 #define _GAIM_PRPL_H_
 
+typedef struct _GaimPluginProtocolInfo GaimPluginProtocolInfo;
+
 #include "core.h"
 #include "proxy.h"
 #include "multi.h"
@@ -44,30 +46,30 @@
  */
 typedef enum
 {
-	PROTO_TOC = 0,     /**< AIM TOC protocol          */
-	PROTO_OSCAR,       /**< AIM OSCAR protocol        */
-	PROTO_YAHOO,       /**< Yahoo Messenger protocol  */
-	PROTO_ICQ,         /**< Outdated ICQ protocol     */
-	PROTO_MSN,         /**< MSN Messenger protocol    */
-	PROTO_IRC,         /**< IRC protocol              */
-	PROTO_FTP,         /**< FTP protocol              */
-	PROTO_VGATE,       /**< VGATE protocol            */
-	PROTO_JABBER,      /**< Jabber protocol           */
-	PROTO_NAPSTER,     /**< Napster/OpenNAP protocol  */
-	PROTO_ZEPHYR,      /**< MIT Zephyr protocol       */
-	PROTO_GADUGADU,    /**< Gadu-Gadu protocol        */
-	PROTO_SAMETIME,    /**< SameTime protocol         */
-	PROTO_TLEN,        /**< TLEN protocol             */
-	PROTO_RVP,         /**< RVP protocol              */
-	PROTO_BACKRUB,     /**< Instant Massager protocol */
-	PROTO_MOO,         /**< MOO protocol              */
-	PROTO_UNTAKEN      /**< Untaken protocol number   */
+	GAIM_PROTO_TOC = 0,     /**< AIM TOC protocol          */
+	GAIM_PROTO_OSCAR,       /**< AIM OSCAR protocol        */
+	GAIM_PROTO_YAHOO,       /**< Yahoo Messenger protocol  */
+	GAIM_PROTO_ICQ,         /**< Outdated ICQ protocol     */
+	GAIM_PROTO_MSN,         /**< MSN Messenger protocol    */
+	GAIM_PROTO_IRC,         /**< IRC protocol              */
+	GAIM_PROTO_FTP,         /**< FTP protocol              */
+	GAIM_PROTO_VGATE,       /**< VGATE protocol            */
+	GAIM_PROTO_JABBER,      /**< Jabber protocol           */
+	GAIM_PROTO_NAPSTER,     /**< Napster/OpenNAP protocol  */
+	GAIM_PROTO_ZEPHYR,      /**< MIT Zephyr protocol       */
+	GAIM_PROTO_GADUGADU,    /**< Gadu-Gadu protocol        */
+	GAIM_PROTO_SAMETIME,    /**< SameTime protocol         */
+	GAIM_PROTO_TLEN,        /**< TLEN protocol             */
+	GAIM_PROTO_RVP,         /**< RVP protocol              */
+	GAIM_PROTO_BACKRUB,     /**< Instant Massager protocol */
+	GAIM_PROTO_MOO,         /**< MOO protocol              */
+	GAIM_PROTO_UNTAKEN      /**< Untaken protocol number   */
 
 } GaimProtocol;
 
 /** Default protocol plugin description */
-#define PRPL_DESC(x) \
-		"Allows gaim to use the " x " protocol.\n\n"        \
+#define GAIM_PRPL_DESC(x) \
+		"Allows gaim to use the " (x) " protocol.\n\n"      \
 		"Now that you have loaded this protocol, use the "  \
 		"Account Editor to add an account that uses this "  \
 		"protocol. You can access the Account Editor from " \
@@ -75,7 +77,7 @@ typedef enum
 		"in the \"Tools\" menu in the buddy list window."
 
 /** Default protocol */
-#define DEFAULT_PROTO   PROTO_OSCAR
+#define GAIM_PROTO_DEFAULT GAIM_PROTO_OSCAR
 
 /*@}*/
 
@@ -163,54 +165,50 @@ typedef enum
 #define GAIM_AWAY_CUSTOM _("Custom")
 
 /**
- * Protocol plugin initialization function.
- */
-typedef void (*proto_init)(struct prpl *);
-
-/**
- * A protocol plugin structure.
+ * A protocol plugin information structure.
  *
  * Every protocol plugin initializes this structure. It is the gateway
  * between gaim and the protocol plugin.
  */
-struct prpl
+struct _GaimPluginProtocolInfo
 {
 	GaimProtocol protocol;        /**< The protocol type.         */
 	GaimProtocolOptions options;  /**< Protocol options.          */
-	struct gaim_plugin *plug;     /**< The base plugin structure. */
-	char *name;
+
+	/* user_splits is a GList of g_malloc'd struct proto_user_split */
+	GList *user_splits;
+	/* user_opts is a GList* of g_malloc'd struct proto_user_opts */
+	GList *user_opts;
 
 	/** 
 	 * Returns the base icon name for the given buddy and account.  
 	 * If buddy is NULL, it will return the name to use for the account's icon
 	 */
-	const char *(* list_icon)(struct gaim_account *account, struct buddy *buddy);
+	const char *(*list_icon)(struct gaim_account *account, struct buddy *buddy);
 
 	/**
-	 * Fills the four char**'s with string identifiers for "emblems" that the UI will
-	 * interpret and display as relevant
+	 * Fills the four char**'s with string identifiers for "emblems"
+	 * that the UI will interpret and display as relevant
 	 */
-	void (* list_emblems)(struct buddy *buddy, char **se, char **sw, char **nw, char **ne);
+	void (*list_emblems)(struct buddy *buddy, char **se, char **sw,
+						  char **nw, char **ne);
 
 	/**
-	 * Gets a short string representing this buddy's status.  This will be shown
-	 * on the buddy list.
+	 * Gets a short string representing this buddy's status.  This will
+	 * be shown on the buddy list.
 	 */
-	char *(* status_text)(struct buddy *buddy);
+	char *(*status_text)(struct buddy *buddy);
 	
 	/**
 	 * Gets a string to put in the buddy list tooltip.
 	 */
-	char *(* tooltip_text)(struct buddy *buddy);
+	char *(*tooltip_text)(struct buddy *buddy);
 	
-	GList *(* away_states)(struct gaim_connection *gc);
-	GList *(* actions)(struct gaim_connection *gc);
-	/* user_splits is a GList of g_malloc'd struct proto_user_split */
-	GList *user_splits;
-	/* user_opts is a GList* of g_malloc'd struct proto_user_opts */
-	GList *user_opts;
-	GList *(* buddy_menu)(struct gaim_connection *, const char *);
-	GList *(* chat_info)(struct gaim_connection *);
+	GList *(*away_states)(struct gaim_connection *gc);
+	GList *(*actions)(struct gaim_connection *gc);
+
+	GList *(*buddy_menu)(struct gaim_connection *, const char *);
+	GList *(*chat_info)(struct gaim_connection *);
 
 	/* All the server-related functions */
 
@@ -221,117 +219,83 @@ struct prpl
 	 * can set your dir info, the ui shows a dialog and needs to call
 	 * set_dir in order to set it)
 	 */
-	void (* login)		(struct gaim_account *);
-	void (* close)		(struct gaim_connection *);
-	int  (* send_im)	(struct gaim_connection *, const char *who, const char *message,
-						 int len, int away);
-	void (* set_info)	(struct gaim_connection *, char *info);
-	int  (* send_typing)    (struct gaim_connection *, char *name, int typing);
-	void (* get_info)	(struct gaim_connection *, const char *who);
-	void (* set_away)	(struct gaim_connection *, char *state, char *message);
-	void (* get_away)       (struct gaim_connection *, const char *who);
-	void (* set_dir)	(struct gaim_connection *, const char *first,
-							   const char *middle,
-							   const char *last,
-							   const char *maiden,
-							   const char *city,
-							   const char *state,
-							   const char *country,
-							   int web);
-	void (* get_dir)	(struct gaim_connection *, const char *who);
-	void (* dir_search)	(struct gaim_connection *, const char *first,
-							   const char *middle,
-							   const char *last,
-							   const char *maiden,
-							   const char *city,
-							   const char *state,
-							   const char *country,
-							   const char *email);
-	void (* set_idle)	(struct gaim_connection *, int idletime);
-	void (* change_passwd)	(struct gaim_connection *, const char *old,
-							 const char *new);
-	void (* add_buddy)	(struct gaim_connection *, const char *name);
-	void (* add_buddies)	(struct gaim_connection *, GList *buddies);
-	void (* remove_buddy)	(struct gaim_connection *, char *name, char *group);
-	void (* remove_buddies)	(struct gaim_connection *, GList *buddies,
-							 const char *group);
-	void (* add_permit)	(struct gaim_connection *, const char *name);
-	void (* add_deny)	(struct gaim_connection *, const char *name);
-	void (* rem_permit)	(struct gaim_connection *, const char *name);
-	void (* rem_deny)	(struct gaim_connection *, const char *name);
-	void (* set_permit_deny)(struct gaim_connection *);
-	void (* warn)		(struct gaim_connection *, char *who, int anonymous);
-	void (* join_chat)	(struct gaim_connection *, GList *data);
-	void (* chat_invite)	(struct gaim_connection *, int id,
-							 const char *who, const char *message);
-	void (* chat_leave)	(struct gaim_connection *, int id);
-	void (* chat_whisper)	(struct gaim_connection *, int id,
-							 char *who, char *message);
-	int  (* chat_send)	(struct gaim_connection *, int id, char *message);
-	void (* keepalive)	(struct gaim_connection *);
+	void (*login)(struct gaim_account *);
+	void (*close)(struct gaim_connection *);
+	int  (*send_im)(struct gaim_connection *, const char *who,
+					const char *message, int len, int away);
+	void (*set_info)(struct gaim_connection *, char *info);
+	int  (*send_typing)(struct gaim_connection *, char *name, int typing);
+	void (*get_info)(struct gaim_connection *, const char *who);
+	void (*set_away)(struct gaim_connection *, char *state, char *message);
+	void (*get_away)(struct gaim_connection *, const char *who);
+	void (*set_dir)(struct gaim_connection *, const char *first,
+					const char *middle, const char *last,
+					const char *maiden, const char *city,
+					const char *state, const char *country, int web);
+	void (*get_dir)(struct gaim_connection *, const char *who);
+	void (*dir_search)(struct gaim_connection *, const char *first,
+					   const char *middle, const char *last,
+					   const char *maiden, const char *city,
+					   const char *state, const char *country,
+					   const char *email);
+	void (*set_idle)(struct gaim_connection *, int idletime);
+	void (*change_passwd)(struct gaim_connection *, const char *old,
+						  const char *new);
+	void (*add_buddy)(struct gaim_connection *, const char *name);
+	void (*add_buddies)(struct gaim_connection *, GList *buddies);
+	void (*remove_buddy)(struct gaim_connection *, char *name, char *group);
+	void (*remove_buddies)(struct gaim_connection *, GList *buddies,
+						   const char *group);
+	void (*add_permit)(struct gaim_connection *, const char *name);
+	void (*add_deny)(struct gaim_connection *, const char *name);
+	void (*rem_permit)(struct gaim_connection *, const char *name);
+	void (*rem_deny)(struct gaim_connection *, const char *name);
+	void (*set_permit_deny)(struct gaim_connection *);
+	void (*warn)(struct gaim_connection *, char *who, int anonymous);
+	void (*join_chat)(struct gaim_connection *, GList *data);
+	void (*chat_invite)(struct gaim_connection *, int id,
+						const char *who, const char *message);
+	void (*chat_leave)(struct gaim_connection *, int id);
+	void (*chat_whisper)(struct gaim_connection *, int id,
+						 char *who, char *message);
+	int  (*chat_send)(struct gaim_connection *, int id, char *message);
+	void (*keepalive)(struct gaim_connection *);
 
 	/* new user registration */
-	void (* register_user)	(struct gaim_account *);
+	void (*register_user)(struct gaim_account *);
 
 	/* get "chat buddy" info and away message */
-	void (* get_cb_info)	(struct gaim_connection *, int, char *who);
-	void (* get_cb_away)	(struct gaim_connection *, int, char *who);
+	void (*get_cb_info)(struct gaim_connection *, int, char *who);
+	void (*get_cb_away)(struct gaim_connection *, int, char *who);
 
 	/* save/store buddy's alias on server list/roster */
-	void (* alias_buddy)	(struct gaim_connection *, const char *who,
-							 const char *alias);
+	void (*alias_buddy)(struct gaim_connection *, const char *who,
+						const char *alias);
 
 	/* change a buddy's group on a server list/roster */
-	void (* group_buddy)	(struct gaim_connection *, const char *who,
-							 const char *old_group, const char *new_group);
+	void (*group_buddy)(struct gaim_connection *, const char *who,
+						const char *old_group, const char *new_group);
 
 	/* rename a group on a server list/roster */
-	void (* rename_group)	(struct gaim_connection *, const char *old_group,
-							 const char *new_group, GList *members);
+	void (*rename_group)(struct gaim_connection *, const char *old_group,
+						 const char *new_group, GList *members);
 
-	void (* buddy_free)	(struct buddy *);
+	void (*buddy_free)(struct buddy *);
 
 	/* this is really bad. */
-	void (* convo_closed)   (struct gaim_connection *, char *who);
+	void (*convo_closed)(struct gaim_connection *, char *who);
 
-	char *(* normalize)(const char *);
+	char *(*normalize)(const char *);
 };
+
+#define GAIM_IS_PROTOCOL_PLUGIN(plugin) \
+	((plugin)->info->type == GAIM_PLUGIN_PROTOCOL)
+
+#define GAIM_PLUGIN_PROTOCOL_INFO(plugin) \
+	((GaimPluginProtocolInfo *)(plugin)->info->extra_info)
 
 /** A list of all loaded protocol plugins. */
 extern GSList *protocols;
-
-/** The number of accounts using a given protocol plugin. */
-extern int prpl_accounts[];
-
-/**
- * Initializes static protocols.
- *
- * This is mostly just for main.c, when it initializes the protocols.
- */
-void static_proto_init();
-
-/**
- * Loads a protocol plugin.
- *
- * @param prpl The initial protocol plugin structure.
- * 
- * @return @c TRUE if the protocol was loaded, or @c FALSE otherwise.
- */
-gboolean load_prpl(struct prpl *prpl);
-
-/**
- * Loads a statically compiled protocol plugin.
- *
- * @param pi The initialization function.
- */
-void load_protocol(proto_init pi);
-
-/**
- * Unloads a protocol plugin.
- *
- * @param prpl The protocol plugin to unload.
- */
-extern void unload_protocol(struct prpl *prpl);
 
 /**
  * Compares two protocol plugins, based off their protocol plugin number.
@@ -343,14 +307,14 @@ extern void unload_protocol(struct prpl *prpl);
  *         0 if the first plugin's number is equal to the second; or
  *         >= 1 if the first plugin's number is greater than the second.
  */
-gint proto_compare(struct prpl *a, struct prpl *b);
+gint gaim_prpl_compare(GaimPlugin *a, GaimPlugin *b);
 
 /**
  * Finds a protocol plugin structure of the specified type.
  *
- * @param type The protocol plugin type.
+ * @param type The protocol plugin;
  */
-struct prpl *find_prpl(GaimProtocol type);
+GaimPlugin *gaim_find_prpl(GaimProtocol type);
 
 /**
  * Creates a menu of all protocol plugins and their protocol-specific
@@ -359,7 +323,7 @@ struct prpl *find_prpl(GaimProtocol type);
  * @note This should be UI-specific code, or rewritten in such a way as to
  *       not use any any GTK code.
  */
-void do_proto_menu();
+void do_proto_menu(void);
 
 /**
  * Shows a message saying that somebody added you as a buddy, and asks
@@ -377,9 +341,9 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 /**
  * Closes do_ask_dialogs when the associated plugin is unloaded.
  *
- * @param module The module.
+ * @param handle The handle.
  */
-void do_ask_cancel_by_handle(GModule *module);
+void do_ask_cancel_by_handle(void *handle);
 
 /**
  * Asks the user a question and acts on the response.
@@ -447,23 +411,5 @@ void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int 
  * @return The buddy icon data.
  */
 void *get_icon_data(struct gaim_connection *gc, const char *who, int *len);
-
-/* stuff to load/unload PRPLs as necessary */
-
-/**
- * Increments the reference count on a protocol plugin.
- *
- * @param prpl The protocol plugin.
- *
- * @return @c TRUE if the protocol plugin is loaded, or @c FALSE otherwise.
- */
-gboolean ref_protocol(struct prpl *prpl);
-
-/**
- * Decrements the reference count on a protocol plugin. 
- *
- * When the reference count hits 0, the protocol plugin is unloaded.
- */
-void unref_protocol(struct prpl *prpl);
 
 #endif /* _PRPL_H_ */

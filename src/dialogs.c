@@ -733,11 +733,13 @@ void show_im_dialog()
 
 			while (g) {
 				c = (struct gaim_connection *)g->data;
-				if (!c->prpl->send_im) {
+
+				if (!GAIM_PLUGIN_PROTOCOL_INFO(c->prpl)->send_im) {
 					g = g->next;
 					continue;
 				}
-				g_snprintf(buf, sizeof(buf), "%s (%s)", c->username, c->prpl->name);
+				g_snprintf(buf, sizeof(buf), "%s (%s)",
+						   c->username, c->prpl->info->name);
 				opt = gtk_menu_item_new_with_label(buf);
 				g_object_set_data(G_OBJECT(opt), "getuserinfo", info);
 
@@ -833,11 +835,13 @@ void show_info_dialog()
 
 		while (g) {
 			c = (struct gaim_connection *)g->data;
-			if (!c->prpl->get_info) {
+
+			if (!GAIM_PLUGIN_PROTOCOL_INFO(c->prpl)->get_info) {
 				g = g->next;
 				continue;
 			}
-			g_snprintf(buf, sizeof(buf), "%s (%s)", c->username, c->prpl->name);
+			g_snprintf(buf, sizeof(buf), "%s (%s)",
+					   c->username, c->prpl->info->name);
 			opt = gtk_menu_item_new_with_label(buf);
 			g_object_set_data(G_OBJECT(opt), "getuserinfo", info);
 
@@ -1033,7 +1037,7 @@ static void create_online_user_names(struct addbuddy *b)
 	while (g) {
 		c = (struct gaim_connection *)g->data;
 		g_snprintf(buf, sizeof(buf), "%s (%s)", 
-				c->username, c->prpl->name);
+				c->username, c->prpl->info->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		g_object_set_data(G_OBJECT(opt), "addbuddy", b);
 		g_signal_connect(GTK_OBJECT(opt), "activate",
@@ -1328,9 +1332,12 @@ static void build_deny_menu()
 	while (c) {
 		gc = (struct gaim_connection *)c->data;
 		c = c->next;
-		if (!gc->prpl->set_permit_deny)
+
+		if (!GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->set_permit_deny)
 			continue;
-		g_snprintf(buf, sizeof buf, "%s (%s)", gc->username, gc->prpl->name);
+
+		g_snprintf(buf, sizeof buf, "%s (%s)",
+				   gc->username, gc->prpl->info->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		g_signal_connect(GTK_OBJECT(opt), "activate", G_CALLBACK(deny_gc_opt), gc);
 		gtk_widget_show(opt);
@@ -1434,7 +1441,7 @@ void update_privacy_connections() { /* This is a slightly better name */
 
 	while (c) {
 		gc = c->data;
-		if (gc->prpl->set_permit_deny)
+		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->set_permit_deny)
 			break;
 		gc = NULL;
 		c = c->next;
@@ -3211,7 +3218,7 @@ void show_smiley_dialog(struct gaim_conversation *c, GtkWidget *widget)
 	if(c->account)
 		smileys = get_proto_smileys(c->account->protocol);
 	else
-		smileys = get_proto_smileys(DEFAULT_PROTO);
+		smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
 
 	while(smileys) {
 		GtkIMHtmlSmiley *smiley = smileys->data;

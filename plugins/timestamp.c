@@ -5,19 +5,17 @@
 
 #include "config.h"
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
-
 #include <time.h>
 #include "gaim.h"
 #include "gtkimhtml.h"
+#include "gtkplugin.h"
+
+#define TIMESTAMP_PLUGIN_ID "gtk-timestamp"
 
 //Set the default to 5 minutes.
-int timestamp = 5 * 60 * 1000;
+static int timestamp = 5 * 60 * 1000;
 
-GModule *handle;
-GSList *timestamp_timeouts;
+static GSList *timestamp_timeouts;
 
 gboolean do_timestamp (gpointer data)
 {
@@ -59,7 +57,9 @@ static void set_timestamp(GtkWidget *button, GtkWidget *spinner) {
 	timestamp = tm;
 }
 
-GtkWidget *gaim_plugin_config_gtk() {
+static GtkWidget *
+get_config_frame(GaimPlugin *plugin)
+{
 	GtkWidget *ret;
 	GtkWidget *frame, *label;
 	GtkWidget *vbox, *hbox;
@@ -97,39 +97,71 @@ GtkWidget *gaim_plugin_config_gtk() {
 	return ret;
 }
 
-
-char *gaim_plugin_init(GModule *h) {
-	GList *cnvs = gaim_get_conversations();
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
+	GList *cnvs;
 	struct gaim_conversation *c;
-	handle = h;
 
-	while (cnvs) {
+	for (cnvs = gaim_get_conversations(); cnvs != NULL; cnvs = cnvs->next) {
 		c = cnvs->data;
 		timestamp_new_convo(c->name);
-		cnvs = cnvs->next;
 	}
-	gaim_signal_connect(handle, event_new_conversation, timestamp_new_convo, NULL);
 
-	return NULL;
+	gaim_signal_connect(plugin, event_new_conversation,
+						timestamp_new_convo, NULL);
+
+	return TRUE;
 }
 
-void gaim_plugin_remove() {
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
 	GSList *to;
-	to = timestamp_timeouts;
-	while (to) {
+
+	for (to = timestamp_timeouts; to != NULL; to = to->next)
 		g_source_remove(GPOINTER_TO_INT(to->data));
-		to = to->next;
-	}
+
 	g_slist_free(timestamp_timeouts);
+
+	return TRUE;
 }
 
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("Timestamp"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("Adds iChat-style timestamps to conversations every N minutes."));
-	desc.authors = g_strdup("Sean Egan &lt;bj91704@binghamton.edu>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
+static GaimGtkPluginUiInfo ui_info =
+{
+	get_config_frame
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	TIMESTAMP_PLUGIN_ID,                              /**< id             */
+	N_("Timestamp"),                                  /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Adds iChat-style timestamps to conversations every N minutes."),
+	                                                  /**  description    */
+	N_("Adds iChat-style timestamps to conversations every N minutes."),
+	"Sean Egan <bj91704@binghamton.edu>",             /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	&ui_info,                                         /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 }
+
+GAIM_INIT_PLUGIN(timestamp, __init_plugin, info);

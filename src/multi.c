@@ -133,7 +133,7 @@ struct gaim_connection *new_gaim_conn(struct gaim_account *account)
 	struct gaim_connection *gc = g_new0(struct gaim_connection, 1);
 	gc->edittype = EDIT_GC;
 	gc->protocol = account->protocol;
-	gc->prpl = find_prpl(account->protocol);
+	gc->prpl = gaim_find_prpl(account->protocol);
 	g_snprintf(gc->username, sizeof(gc->username), "%s", account->username);
 	g_snprintf(gc->password, sizeof(gc->password), "%s", account->password);
 	gc->keepalive = 0;
@@ -212,9 +212,9 @@ static void on_close_acctedit(GtkButton *button, gpointer d)
 
 static char *proto_name(int proto)
 {
-	struct prpl *p = find_prpl(proto);
-	if (p && p->name)
-		return p->name;
+	GaimPlugin *p = gaim_find_prpl(proto);
+	if (p && p->info->name)
+		return p->info->name;
 	else
 		return "Unknown";
 }
@@ -366,14 +366,16 @@ static GtkWidget *acct_button(const char *text, struct mod_account *ma, int opti
 }
 
 static void process_login_opts(struct mod_account *ma) {
-	struct prpl *p = find_prpl(ma->protocol);
+	GaimPlugin *p = gaim_find_prpl(ma->protocol);
 	const char *entry_text;
 	char *username = g_strdup(gtk_entry_get_text(GTK_ENTRY(ma->name)));
 	char *tmp;
 	GList *entries = ma->user_split_entries;
 	GList *user_splits = NULL;
+
 	if(p)
-		user_splits = p->user_splits;
+		user_splits = GAIM_PLUGIN_PROTOCOL_INFO(p)->user_splits;
+
 	while(user_splits) {
 		GtkWidget *entry = entries->data;
 		struct proto_user_split *pus = user_splits->data;
@@ -404,7 +406,8 @@ static void ok_mod(GtkWidget *w, struct mod_account *ma)
 	GList *tmp;
 	const char *txt;
 	struct gaim_account *a;
-	struct prpl *p = find_prpl(ma->protocol);
+	GaimPlugin *p = gaim_find_prpl(ma->protocol);
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	GtkTreeIter iter;
 	int proxytype;
 
@@ -478,21 +481,19 @@ static void ok_mod(GtkWidget *w, struct mod_account *ma)
 		ma->account->gpi = gpi;
 	}
 
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(p);
+
 	/*
 	 * See if user registration is supported/required
 	 */
-	if(!p) {
+	if (!p) {
 		/* TBD: error dialog here! (This should never happen, you know...) */
 		fprintf(stderr, "dbg: couldn't find protocol for protocol number %d!\n", ma->protocol);
 		fflush(stderr);
 	} else {
-		if(p->register_user != NULL &&
+		if (prpl_info->register_user != NULL &&
 		   gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ma->register_user)) == TRUE) {
-			ref_protocol(p);
-			p->register_user(a);
-			/* we don't unref the protocol because register user has callbacks
-			 * that need to get called first, then they will unref the protocol
-			 * appropriately */
+			prpl_info->register_user(a);
 		}
 	}
 
@@ -519,13 +520,13 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box);
 static void set_prot(GtkWidget *opt, int proto)
 {
 	struct mod_account *ma = g_object_get_data(G_OBJECT(opt), "mod_account");
-	struct prpl *p;
+	GaimPlugin *p;
 	if (ma->protocol != proto) {
 		int i;
 
 		for (i = 0; i < 7; i++)
 			ma->proto_opt[i][0] = '\0';
-		p = find_prpl(ma->protocol);
+		p = gaim_find_prpl(ma->protocol);
 
 		process_login_opts(ma);
 
@@ -543,11 +544,12 @@ static void set_prot(GtkWidget *opt, int proto)
 
 static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_account *ma)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *opt;
-	GSList *p = protocols;
-	struct prpl *e;
+	GSList *p;
+	GaimPlugin *e;
 	int count = 0;
 	gboolean found = FALSE;
 
@@ -557,22 +559,23 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_account *ma)
 
 	menu = gtk_menu_new();
 
-	while (p) {
-		e = (struct prpl *)p->data;
-		if (e->protocol == ma->protocol)
+	for (p = protocols; p != NULL; p = p->next) {
+		e = (GaimPlugin *)p->data;
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(e);
+
+		if (prpl_info->protocol == ma->protocol)
 			found = TRUE;
 		if (!found)
 			count++;
-		if (e->name)
-			opt = gtk_menu_item_new_with_label(e->name);
+		if (e->info->name)
+			opt = gtk_menu_item_new_with_label(e->info->name);
 		else
 			opt = gtk_menu_item_new_with_label("Unknown");
 		g_object_set_data(G_OBJECT(opt), "mod_account", ma);
 		g_signal_connect(GTK_OBJECT(opt), "activate",
-				   G_CALLBACK(set_prot), (void *)e->protocol);
+				   G_CALLBACK(set_prot), (void *)prpl_info->protocol);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 		gtk_widget_show(opt);
-		p = p->next;
 	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
@@ -693,7 +696,7 @@ static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 	GList *user_splits = NULL;
 	GList *split_entries;
 
-	struct prpl *p;
+	GaimPlugin *p;
 
 	char *username = NULL;
 	char *start;
@@ -724,9 +727,10 @@ static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	p = find_prpl(ma->protocol);
+	p = gaim_find_prpl(ma->protocol);
+
 	if(p)
-		user_splits = p->user_splits;
+		user_splits = GAIM_PLUGIN_PROTOCOL_INFO(p)->user_splits;
 
 	label = gtk_label_new(_("Screenname:"));
 	gtk_size_group_add_widget(ma->sg, label);
@@ -788,8 +792,8 @@ static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 
 	gtk_widget_show_all(ma->login_frame);
 
-	if(p)
-		user_splits = g_list_last(p->user_splits);
+	if (p)
+		user_splits = g_list_last(GAIM_PLUGIN_PROTOCOL_INFO(p)->user_splits);
 
 	username = g_strdup(ma->username);
 	split_entries = g_list_last(ma->user_split_entries);
@@ -814,7 +818,7 @@ static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 	gtk_entry_set_text(GTK_ENTRY(ma->pass), ma->password);
 	g_free(username);
 
-	if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
+	if (p && (GAIM_PLUGIN_PROTOCOL_INFO(p)->options & OPT_PROTO_NO_PASSWORD)) {
 		gtk_widget_hide(ma->pwdbox);
 		gtk_widget_hide(ma->rempass);
 	}
@@ -833,8 +837,9 @@ static void generate_user_options(struct mod_account *ma, GtkWidget *box)
 
 	GtkWidget *vbox;
 	GtkWidget *frame;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	struct prpl *p = find_prpl(ma->protocol);
+	GaimPlugin *p = gaim_find_prpl(ma->protocol);
 
 	if(ma->user_frame)
 		gtk_widget_destroy(ma->user_frame);
@@ -858,19 +863,26 @@ static void generate_user_options(struct mod_account *ma, GtkWidget *box)
 		return;
 	}
 
-	if (!(p->options & OPT_PROTO_MAIL_CHECK))
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(p);
+
+	if (!(prpl_info->options & OPT_PROTO_MAIL_CHECK))
 		gtk_widget_hide(ma->checkmail);
-	if (!(p->options & OPT_PROTO_BUDDY_ICON))
+	if (!(prpl_info->options & OPT_PROTO_BUDDY_ICON))
 		gtk_widget_hide(ma->iconsel);
 
-	if ((p->options & OPT_PROTO_BUDDY_ICON) || (p->options & OPT_PROTO_MAIL_CHECK))
+	if ((prpl_info->options & OPT_PROTO_BUDDY_ICON) ||
+		(prpl_info->options & OPT_PROTO_MAIL_CHECK)) {
+
 		return;
+	}
+
 	gtk_widget_hide(ma->user_frame);
 }
 
 static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 {
-	struct prpl *p = find_prpl(ma->protocol);
+	GaimPlugin *p = gaim_find_prpl(ma->protocol);
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	GList *op, *tmp;
 
@@ -894,15 +906,17 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 	if (!p)
 		return;
 
-	if (!p->user_opts)
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(p);
+
+	if (!prpl_info->user_opts)
 		return;
 
-	tmp = op = p->user_opts;
+	tmp = op = prpl_info->user_opts;
 
 	if (!op)
 		return;
 
-	g_snprintf(buf, sizeof(buf), _("%s Options"), p->name);
+	g_snprintf(buf, sizeof(buf), _("%s Options"), p->info->name);
 	frame = make_frame(box, buf);
 
 	/* BLEH */
@@ -944,7 +958,7 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 		op = op->next;
 	}
 
-	if(p->register_user != NULL) {
+	if(prpl_info->register_user != NULL) {
 		ma->register_user = gtk_check_button_new_with_label(_("Register with server"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ma->register_user), FALSE);
 		gtk_box_pack_start(GTK_BOX(vbox), ma->register_user, FALSE, FALSE, 0);
@@ -1154,10 +1168,11 @@ static void show_acct_mod(struct gaim_account *a)
 		if (a) {
 			int i;
 			ma->options = a->options;
-			if (find_prpl(a->protocol))
+			if (gaim_find_prpl(a->protocol))
 				ma->protocol = a->protocol;
 			else if (protocols)
-				ma->protocol = ((struct prpl *)protocols->data)->protocol;
+				ma->protocol = GAIM_PLUGIN_PROTOCOL_INFO(
+						((GaimPlugin *)protocols->data))->protocol;
 			else
 				ma->protocol = -1;
 			g_snprintf(ma->iconfile, sizeof(ma->iconfile), "%s", a->iconfile);
@@ -1170,10 +1185,11 @@ static void show_acct_mod(struct gaim_account *a)
 						a->proto_opt[i]);
 		} else {
 			ma->options = OPT_ACCT_REM_PASS;
-			if (find_prpl(DEFAULT_PROTO))
-				ma->protocol = DEFAULT_PROTO;
+			if (gaim_find_prpl(GAIM_PROTO_DEFAULT))
+				ma->protocol = GAIM_PROTO_DEFAULT;
 			else if (protocols)
-				ma->protocol = ((struct prpl *)protocols->data)->protocol;
+				ma->protocol = GAIM_PLUGIN_PROTOCOL_INFO(
+						((GaimPlugin *)protocols->data))->protocol;
 			else
 				ma->protocol = -1;
 		}
@@ -1361,25 +1377,37 @@ static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
 	GtkTreeIter iter;
 
 	struct gaim_account *account = NULL;
-	struct prpl *p = NULL;
+	GaimPlugin *p = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
 	gtk_tree_model_get(model, &iter, COLUMN_DATA, &account, -1);
 
-	p = find_prpl(account->protocol);
-	if (!account->gc && p && p->login) {
-		struct prpl *p = find_prpl(account->protocol);
-		if (p && !(p->options & OPT_PROTO_NO_PASSWORD) &&
-			!(p->options & OPT_PROTO_PASSWORD_OPTIONAL) && !account->password[0]) {
+	p = gaim_find_prpl(account->protocol);
+
+	if (p != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(p);
+
+	if (!account->gc && p && prpl_info->login) {
+		GaimPlugin *p = gaim_find_prpl(account->protocol);
+
+		if (p != NULL)
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(p);
+
+		if (p && !(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
+			!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL) &&
+			!account->password[0]) {
+
 			do_pass_dlg(account);
-		} else {
+		}
+		else {
 			serv_login(account);
 		}
 	} else if (account->gc) {
 		account->gc->wants_to_die = TRUE;
 		signoff(account->gc);
 	} else {
-		if (account->protocol == PROTO_TOC)
+		if (account->protocol == GAIM_PROTO_TOC)
 			do_error_dialog(_("TOC not found."), 
 					_("You have attempted to login an IM account using the "
 					 "TOC protocol.  Because this protocol is inferior to "
@@ -1693,7 +1721,7 @@ void account_online(struct gaim_connection *gc)
 	connecting_count--;
 	debug_printf("connecting_count: %d\n", connecting_count);
 
-	plugin_event(event_signon, gc);
+	gaim_event_broadcast(event_signon, gc);
 	system_log(log_signon, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
 	/* away option given? */
@@ -1737,7 +1765,7 @@ void account_online(struct gaim_connection *gc)
 	if (get_iter_from_data(GTK_TREE_VIEW(treeview), gc->account, &iter)) {
 		gtk_list_store_set(model, &iter,
 						   COLUMN_ONLINE, TRUE,
-						   COLUMN_PROTOCOL, gc->prpl->name,
+						   COLUMN_PROTOCOL, gc->prpl->info->name,
 						   -1);
 	}
 
@@ -1980,7 +2008,7 @@ void hide_login_progress(struct gaim_connection *gc, char *why)
 {
 	gchar *buf;
 
-	plugin_event(event_error, gc, why);
+	gaim_event_broadcast(event_error, gc, why);
 	buf = g_strdup_printf(_("%s was unable to sign on"), gc->username);
 	hide_login_progress_common(gc, why, _("Signon Error"), buf);
 	g_free(buf);
@@ -2004,7 +2032,7 @@ void hide_login_progress_error(struct gaim_connection *gc, char *why)
 {
 	char buf[2048];
 
-	plugin_event(event_error, gc, why);
+	gaim_event_broadcast(event_error, gc, why);
 	g_snprintf(buf, sizeof(buf), _("%s has been signed off"), gc->username);
 	hide_login_progress_common(gc, why, _("Connection Error"), buf);
 }
@@ -2026,19 +2054,13 @@ void signoff(struct gaim_connection *gc)
 {
 	GList *wins;
 
-	/* UI stuff */
-	/* CONV XXX
-	convo_menu_remove(gc);
-	remove_icon_data(gc);
-       	*/
-
 	gaim_blist_remove_account(gc->account);
 
 	/* core stuff */
 	/* remove this here so plugins get a sensible count of connections */
 	connections = g_slist_remove(connections, gc);
 	debug_printf("date: %s\n", full_date());
-	plugin_event(event_signoff, gc);
+	gaim_event_broadcast(event_signoff, gc);
 	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 	/* set this in case the plugin died before really connecting.
 	   do it after calling the plugins so they can determine if

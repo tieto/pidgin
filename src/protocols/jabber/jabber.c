@@ -59,7 +59,7 @@
 #include "win32dep.h"
 #endif
 
-static struct prpl *my_protocol = NULL;
+static GaimPlugin *my_protocol = NULL;
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
@@ -1648,7 +1648,7 @@ static void jabber_handles10n(gjconn gjc, jpacket p)
 
 		jap->gc = GJ_GC(gjc);
 		jap->user = g_strdup(Jid);
-		do_ask_dialog(msg, NULL, jap, _("Authorize"), jabber_accept_add, _("Deny"), jabber_deny_add, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+		do_ask_dialog(msg, NULL, jap, _("Authorize"), jabber_accept_add, _("Deny"), jabber_deny_add, my_protocol->handle, FALSE);
 
 		g_free(msg);
 		xmlnode_free(g);	/* Never needed it here anyway */
@@ -4243,101 +4243,118 @@ static GList *jabber_actions(struct gaim_connection *gc)
 	return m;
 }
 
-G_MODULE_EXPORT void jabber_init(struct prpl *ret)
+static GaimPluginProtocolInfo prpl_info =
 {
-	/* the NULL's aren't required but they're nice to have */
-	struct proto_user_split *pus;
+	GAIM_PROTO_JABBER,
+	OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_CHAT_TOPIC,
+	NULL,
+	NULL,
+	jabber_list_icon,
+	jabber_list_emblems,
+	jabber_status_text,
+	jabber_tooltip_text,
+	jabber_away_states,
+	jabber_actions,
+	jabber_buddy_menu,
+	jabber_chat_info,
+	jabber_login,
+	jabber_close,
+	jabber_send_im,
+	jabber_set_info,
+	jabber_send_typing,
+	jabber_get_info,
+	jabber_set_away,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	jabber_set_idle,
+	jabber_change_passwd,
+	jabber_add_buddy,
+	NULL,
+	jabber_remove_buddy,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	jabber_join_chat,
+	jabber_chat_invite,
+	jabber_chat_leave,
+	jabber_chat_whisper,
+	jabber_chat_send,
+	jabber_keepalive,
+	jabber_register_user,
+	jabber_get_cb_info,
+	jabber_get_cb_away_msg,
+	jabber_alias_buddy,
+	NULL,
+	jabber_rename_group,
+	NULL,
+	jabber_convo_closed,
+	jabber_normalize
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	"prpl-jabber",                                    /**< id             */
+	"Jabber",                                         /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Jabber Protocol Plugin"),
+	                                                  /**  description    */
+	N_("Jabber Protocol Plugin"),
+	NULL,                                             /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&prpl_info                                        /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 	struct proto_user_opt *puo;
-	ret->protocol = PROTO_JABBER;
-	ret->options = OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_CHAT_TOPIC;
-	ret->name = g_strdup("Jabber");
-	ret->list_icon = jabber_list_icon;
-	ret->list_emblems = jabber_list_emblems;
-	ret->status_text = jabber_status_text;
-	ret->tooltip_text = jabber_tooltip_text;
-	ret->away_states = jabber_away_states;
-	ret->actions = jabber_actions;
-	ret->buddy_menu = jabber_buddy_menu;
-	ret->login = jabber_login;
-	ret->close = jabber_close;
-	ret->send_im = jabber_send_im;
-	ret->set_info = jabber_set_info;
-	ret->get_info = jabber_get_info;
-	ret->get_cb_info = jabber_get_cb_info;
-	ret->get_cb_away = jabber_get_cb_away_msg;
-	ret->set_away = jabber_set_away;
-	ret->set_dir = NULL;
-	ret->get_dir = NULL;
-	ret->dir_search = NULL;
-	ret->set_idle = jabber_set_idle;
-	ret->change_passwd = jabber_change_passwd;
-	ret->add_buddy = jabber_add_buddy;
-	ret->add_buddies = NULL;
-	ret->remove_buddy = jabber_remove_buddy;
-	ret->add_permit = NULL;
-	ret->add_deny = NULL;
-	ret->rem_permit = NULL;
-	ret->rem_deny = NULL;
-	ret->set_permit_deny = NULL;
-	ret->warn = NULL;
-	ret->chat_info = jabber_chat_info;
-	ret->join_chat = jabber_join_chat;
-	ret->chat_invite = jabber_chat_invite;
-	ret->chat_leave = jabber_chat_leave;
-	ret->chat_whisper = jabber_chat_whisper;
-	ret->chat_send = jabber_chat_send;
-	ret->keepalive = jabber_keepalive;
-	ret->normalize = jabber_normalize;
-	ret->register_user = jabber_register_user;
-	ret->alias_buddy = jabber_alias_buddy;
-	ret->group_buddy = jabber_group_change;
-	ret->send_typing = jabber_send_typing;
-	ret->convo_closed = jabber_convo_closed;
-	ret->rename_group = jabber_rename_group;
+	struct proto_user_split *pus;
 
 	pus = g_new0(struct proto_user_split, 1);
 	pus->sep = '@';
 	pus->label = g_strdup(_("Server:"));
 	pus->def = g_strdup("jabber.org");
-	ret->user_splits = g_list_append(ret->user_splits, pus);
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, pus);
 
 	pus = g_new0(struct proto_user_split, 1);
 	pus->sep = '/';
 	pus->label = g_strdup(_("Resource:"));
 	pus->def = g_strdup("Gaim");
-	ret->user_splits = g_list_append(ret->user_splits, pus);
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, pus);
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));
 	puo->def = g_strdup_printf("%d", DEFAULT_PORT);
 	puo->pos = USEROPT_PORT;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Connect Server:"));
 	puo->def = g_strdup("");
 	puo->pos = USEROPT_CONN_SERVER;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
-	my_protocol = ret;
+	my_protocol = plugin;
 }
 
-#ifndef STATIC
-
-G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
-{
-	jabber_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
-}
-
-#endif
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: notnil
- * End:
- *
- * vim: shiftwidth=8:
- */
+GAIM_INIT_PLUGIN(jabber, __init_plugin, info);

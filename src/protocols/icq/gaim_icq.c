@@ -510,6 +510,6 @@ void icq_init(struct prpl *ret) {
 G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 {
 	icq_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
+	prpl->plug->desc.api_version = GAIM_PLUGIN_API_VERSION;
 }
 #endif

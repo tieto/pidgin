@@ -68,7 +68,7 @@
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
-static struct prpl *my_protocol = NULL;
+static GaimPlugin *my_protocol = NULL;
 
 /* For win32 compatability */
 G_MODULE_IMPORT GSList *connections;
@@ -508,6 +508,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 		/* oh boy. this is probably bad. i guess the only thing we 
 		 * can really do is return? */
 		debug_printf("oscar callback for closed connection (2).\n");
+		debug_printf("gc = %p\n", gc);
 		return;
 	}
 
@@ -637,6 +638,8 @@ static void oscar_login(struct gaim_account *account) {
 	char buf[256];
 	struct gaim_connection *gc = new_gaim_conn(account);
 	struct oscar_data *od = gc->proto_data = g_new0(struct oscar_data, 1);
+
+	debug_printf("oscar_login: gc = %p\n", gc);
 
 	if (isdigit(*account->username)) {
 		od->icq = TRUE;
@@ -2304,7 +2307,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		strncpy(d->ip, args->verifiedip, sizeof(d->ip));
 		memcpy(d->cookie, args->cookie, 8);
 		g_snprintf(buf, sizeof buf, _("%s has just asked to directly connect to %s"), userinfo->sn, gc->username);
-		do_ask_dialog(buf, _("This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."), d, _("Connect"), accept_direct_im, _("Cancel"), cancel_direct_im, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+		do_ask_dialog(buf, _("This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."), d, _("Connect"), accept_direct_im, _("Cancel"), cancel_direct_im, my_protocol->handle, FALSE);
 	} else {
 		debug_printf("Unknown reqclass %hu\n", args->reqclass);
 	}
@@ -2364,7 +2367,7 @@ static void gaim_auth_sendrequest(struct gaim_connection *gc, const char *name) 
 	data->gc = gc;
 	data->name = g_strdup(name);
 	data->nick = NULL;
-	do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request_msgprompt, _("Cancel"), gaim_auth_dontrequest, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+	do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request_msgprompt, _("Cancel"), gaim_auth_dontrequest, my_protocol->handle, FALSE);
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -2476,7 +2479,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				data->gc = gc;
 				data->name = g_strdup_printf("%lu", args->uin);
 				data->nick = NULL;
-				do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant_msgprompt, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+				do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant_msgprompt, my_protocol->handle, FALSE);
 				g_free(dialog_msg);
 			}
 		} break;
@@ -2538,7 +2541,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					data->gc = gc;
 					data->name = g_strdup(text[i*2+1]);
 					data->nick = g_strdup(text[i*2+2]);
-					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Decline"), gaim_free_name_data, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Decline"), gaim_free_name_data, my_protocol->handle, FALSE);
 					g_free(message);
 				}
 				g_strfreev(text);
@@ -4840,7 +4843,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->gc = gc;
 	data->name = g_strdup(sn);
 	data->nick = NULL;
-	do_ask_dialog(_("Authorization Given"), dialog_msg, data, _("Yes"), gaim_icq_contactadd, _("No"), gaim_free_name_data, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+	do_ask_dialog(_("Authorization Given"), dialog_msg, data, _("Yes"), gaim_icq_contactadd, _("No"), gaim_free_name_data, my_protocol->handle, FALSE);
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -4874,7 +4877,7 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->gc = gc;
 	data->name = g_strdup(sn);
 	data->nick = NULL;
-	do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant_msgprompt, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+	do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant_msgprompt, my_protocol->handle, FALSE);
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -5410,7 +5413,7 @@ static void oscar_ask_direct_im(struct gaim_connection *gc, const char *who) {
 	data->who = g_strdup(who);
 	data->gc = gc;
 	g_snprintf(buf, sizeof(buf),  _("You have selected to open a Direct IM connection with %s."), who);
-	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im, my_protocol->handle, FALSE);
 }
 
 static void oscar_set_permit_deny(struct gaim_connection *gc) {
@@ -5823,77 +5826,111 @@ static void oscar_convo_closed(struct gaim_connection *gc, char *who)
 	g_free(dim);
 }
 
-G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
-	struct proto_user_opt *puo;
-	ret->protocol = PROTO_OSCAR;
-	ret->options = OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE;
-	ret->name = g_strdup("AIM/ICQ");
-	ret->list_icon = oscar_list_icon;
-	ret->list_emblems = oscar_list_emblems;
-	ret->tooltip_text = oscar_tooltip_text;
-	ret->status_text = oscar_status_text;
-	ret->away_states = oscar_away_states;
-	ret->actions = oscar_actions;
-	ret->buddy_menu = oscar_buddy_menu;
-	ret->login = oscar_login;
-	ret->close = oscar_close;
-	ret->send_im = oscar_send_im;
-	ret->send_typing = oscar_send_typing;
-	ret->set_info = oscar_set_info;
-	ret->get_info = oscar_get_info;
-	ret->set_away = oscar_set_away;
-	ret->get_away = oscar_get_away;
-	ret->set_dir = oscar_set_dir;
-	ret->get_dir = NULL; /* Oscar really doesn't have this */
-	ret->dir_search = oscar_dir_search;
-	ret->set_idle = oscar_set_idle;
-	ret->change_passwd = oscar_change_passwd;
-	ret->add_buddy = oscar_add_buddy;
-	ret->add_buddies = oscar_add_buddies;
-	ret->remove_buddy = oscar_remove_buddy;
-	ret->remove_buddies = oscar_remove_buddies;
+static GaimPluginProtocolInfo prpl_info =
+{
+	GAIM_PROTO_OSCAR,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE,
+	NULL,
+	NULL,
+	oscar_list_icon,
+	oscar_list_emblems,
+	oscar_status_text,
+	oscar_tooltip_text,
+	oscar_away_states,
+	oscar_actions,
+	oscar_buddy_menu,
+	oscar_chat_info,
+	oscar_login,
+	oscar_close,
+	oscar_send_im,
+	oscar_set_info,
+	oscar_send_typing,
+	oscar_get_info,
+	oscar_set_away,
+	oscar_get_away,
+	oscar_set_dir,
+	NULL,
+	oscar_dir_search,
+	oscar_set_idle,
+	oscar_change_passwd,
+	oscar_add_buddy,
+	oscar_add_buddies,
+	oscar_remove_buddy,
+	oscar_remove_buddies,
+	oscar_add_permit,
+	oscar_add_deny,
+	oscar_rem_permit,
+	oscar_rem_deny,
+	oscar_set_permit_deny,
+	oscar_warn,
+	oscar_join_chat,
+	oscar_chat_invite,
+	oscar_chat_leave,
+	NULL,
+	oscar_chat_send,
+	oscar_keepalive,
+	NULL,
+	NULL,
+	NULL,
 #ifndef NOSSI
-	ret->group_buddy = oscar_move_buddy;
-	ret->alias_buddy = oscar_alias_buddy;
-	ret->rename_group = oscar_rename_group;
+	oscar_alias_buddy,
+	oscar_move_buddy,
+	oscar_rename_group,
+#else
+	NULL,
+	NULL,
+	NULL,
 #endif
-	ret->add_permit = oscar_add_permit;
-	ret->add_deny = oscar_add_deny;
-	ret->rem_permit = oscar_rem_permit;
-	ret->rem_deny = oscar_rem_deny;
-	ret->set_permit_deny = oscar_set_permit_deny;
+	NULL,
+	oscar_convo_closed,
+	NULL
+};
 
-	ret->warn = oscar_warn;
-	ret->chat_info = oscar_chat_info;
-	ret->join_chat = oscar_join_chat;
-	ret->chat_invite = oscar_chat_invite;
-	ret->chat_leave = oscar_chat_leave;
-	ret->chat_whisper = NULL;
-	ret->chat_send = oscar_chat_send;
-	ret->keepalive = oscar_keepalive;
-	ret->convo_closed = oscar_convo_closed;
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	"prpl-oscar",                                     /**< id             */
+	"AIM/ICQ",                                        /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("AIM/ICQ Protocol Plugin"),
+	                                                  /**  description    */
+	N_("AIM/ICQ Protocol Plugin"),
+	NULL,                                             /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&prpl_info                                        /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+	struct proto_user_opt *puo;
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Auth Host:");
-	puo->def = g_strdup("login.oscar.aol.com");
-	puo->pos = USEROPT_AUTH;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	puo->def   = g_strdup("login.oscar.aol.com");
+	puo->pos   = USEROPT_AUTH;
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Auth Port:");
-	puo->def = g_strdup("5190");
-	puo->pos = USEROPT_AUTHPORT;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	puo->def   = g_strdup("5190");
+	puo->pos   = USEROPT_AUTH;
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
-	my_protocol = ret;
+	my_protocol = plugin;
 }
 
-#ifndef STATIC
-
-G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
-{
-	oscar_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
-}
-
-#endif
+GAIM_INIT_PLUGIN(oscar, __init_plugin, info);

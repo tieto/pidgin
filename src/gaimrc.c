@@ -66,6 +66,7 @@ static guint is_loading_prefs = 0;
 static guint request_save_prefs = 0;
 static guint is_saving_prefs = 0;
 static guint request_load_prefs = 0;
+static guint prefs_initial_load = 0;
 guint proxy_info_is_from_gaimrc = 1; /* Only save proxy info if it
 				      * was loaded from the file
 				      * or otherwise explicitly requested */
@@ -534,24 +535,23 @@ gaimrc_write_pounce(FILE *f)
 	fprintf(f, "}\n");
 }
 
-#ifdef GAIM_PLUGINS
 static void gaimrc_write_plugins(FILE *f)
 {
-	GList *pl = plugins;
-	struct gaim_plugin *p;
+	GList *pl;
+	GaimPlugin *p;
 
 	fprintf(f, "plugins {\n");
 
-	while (pl) {
+	for (pl = gaim_plugins_get_loaded(); pl != NULL; pl = pl->next) {
 		char *path;
 
-		p = (struct gaim_plugin *)pl->data;
+		p = (GaimPlugin *)pl->data;
 
-		path = escape_text2(p->path);
-		fprintf(f, "\tplugin { %s }\n", path);
-		free(path);
-
-		pl = pl->next;
+		if (p->info->type != GAIM_PLUGIN_PROTOCOL) {
+			path = escape_text2(p->path);
+			fprintf(f, "\tplugin { %s }\n", path);
+			free(path);
+		}
 	}
 
 	fprintf(f, "}\n");
@@ -562,7 +562,6 @@ static void gaimrc_read_plugins(FILE *f)
 	struct parse parse_buffer;
 	struct parse *p;
 	char buf[4096];
-	GSList *load = NULL;
 
 	buf[0] = 0;
 
@@ -575,20 +574,10 @@ static void gaimrc_read_plugins(FILE *f)
 
 		p = parse_line(buf, &parse_buffer);
 		if (!strcmp(p->option, "plugin")) {
-			load = g_slist_append(load, g_strdup(p->value[0]));
+			gaim_plugin_load(gaim_plugin_probe(p->value[0]));
 		}
 	}
-	/* this is such a fucked up hack. the reason we do this is because after
-	 * we load a plugin the gaimrc file gets rewrit. so we have to remember
-	 * which ones to load before loading them. */
-	while (load) {
-		if (load->data)
-			load_plugin(load->data);
-		g_free(load->data);
-		load = g_slist_remove(load, load->data);
-	}
 }
-#endif /* GAIM_PLUGINS */
 
 static struct gaim_account *gaimrc_read_user(FILE *f)
 {
@@ -613,7 +602,7 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 
 	account->user_info[0] = 0;
 	account->options = OPT_ACCT_REM_PASS;
-	account->protocol = DEFAULT_PROTO;
+	account->protocol = GAIM_PROTO_DEFAULT;
 	account->permit = account->deny = NULL;
 
 	if (!fgets(buf, sizeof(buf), f))
@@ -1027,19 +1016,21 @@ static void gaimrc_read_options(FILE *f)
 		away_resend = 120;
 
 	if (misc_options & OPT_MISC_BUDDY_TICKER) {
-#ifdef GAIM_PLUGINS
-		gchar* buf;
+		if (gaim_plugins_enabled()) {
+			gchar* buf;
 
-		buf = g_strconcat(LIBDIR, G_DIR_SEPARATOR_S, 
+			buf = g_strconcat(LIBDIR, G_DIR_SEPARATOR_S, 
 #ifndef _WIN32
-				  "ticker.so",
+					  "ticker.so",
 #else
-				  "ticker.dll",
+					  "ticker.dll",
 #endif
-				  NULL);
-		load_plugin(buf);
-		g_free(buf);
-#endif
+					  NULL);
+
+			gaim_plugin_load(gaim_plugin_probe(buf));
+			g_free(buf);
+		}
+
 		misc_options &= ~OPT_MISC_BUDDY_TICKER;
 	} 
 }
@@ -1469,6 +1460,7 @@ void load_prefs()
 	char buf[1024];
 	int ver = 0;
 	debug_printf("load_prefs\n");
+
 	if (is_saving_prefs) {
 		request_load_prefs = 1;
 		debug_printf("currently saving, will request load\n");
@@ -1508,11 +1500,10 @@ void load_prefs()
 			case 2:
 				gaimrc_read_away(f);
 				break;
-#ifdef GAIM_PLUGINS
 			case 3:
-				gaimrc_read_plugins(f);
+				if (gaim_plugins_enabled())
+					gaimrc_read_plugins(f);
 				break;
-#endif
 			case 4:
 				gaimrc_read_pounce(f);
 				break;
@@ -1544,6 +1535,8 @@ void load_prefs()
 		set_defaults();
 		save_prefs();
 	}
+
+	prefs_initial_load = 1;
 }
 
 void save_prefs()
@@ -1553,6 +1546,9 @@ void save_prefs()
 	gchar *filename_temp;
 
 	debug_printf("enter save_prefs\n");  
+	if (!prefs_initial_load)
+		return;
+
 	if (is_loading_prefs) {
 		request_save_prefs = 1;
 		debug_printf("currently loading, will request save\n");
@@ -1576,9 +1572,10 @@ void save_prefs()
 		gaimrc_write_sounds(f);
 		gaimrc_write_away(f);
 		gaimrc_write_pounce(f);
-#ifdef GAIM_PLUGINS
-		gaimrc_write_plugins(f);
-#endif
+
+		if (gaim_plugins_enabled())
+			gaimrc_write_plugins(f);
+
 		gaimrc_write_proxy(f);
 		fclose(f);
 		if (rename(filename_temp, filename) < 0)

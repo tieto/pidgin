@@ -37,6 +37,7 @@
 #include "gtkimhtml.h"
 #include "gaim.h"
 #include "gtklist.h"
+#include "gtkplugin.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "sound.h"
@@ -80,12 +81,16 @@ static GtkTreeIter plugin_iter;
 /*
  * PROTOTYPES
  */
-GtkTreeIter *prefs_notebook_add_page(char*, GdkPixbuf*, GtkWidget*, GtkTreeIter*, GtkTreeIter*, int);
+GtkTreeIter *prefs_notebook_add_page(const char*, GdkPixbuf*, GtkWidget*, GtkTreeIter*, GtkTreeIter*, int);
+
+static void update_plugin_list(void *data);
 
 void delete_prefs(GtkWidget *asdf, void *gdsa) {
-	GList *l = plugins;
-	struct gaim_plugin *plug;
-	
+	GList *l;
+	GaimPlugin *plug;
+
+	gaim_plugins_unregister_probe_notify_cb(update_plugin_list);
+
 	save_prefs();
 	prefs = NULL;
 	tree_v = NULL;
@@ -99,13 +104,20 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 		gtk_widget_destroy(sounddialog);
 	g_object_unref(G_OBJECT(prefs_away_store));
 	prefs_away_store = NULL;
-	while(l) {
+
+	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
 		plug = l->data;
-		if(plug->iter) {
-			g_free(plug->iter);
-			plug->iter = NULL;
+
+		if (GAIM_IS_GTK_PLUGIN(plug)) {
+			GaimGtkPluginUiInfo *ui_info;
+
+			ui_info = GAIM_GTK_PLUGIN_UI_INFO(plug);
+
+			if (ui_info->iter != NULL) {
+				g_free(ui_info->iter);
+				ui_info->iter = NULL;
+			}
 		}
-		l = l->next;
 	}
 }
 
@@ -1113,27 +1125,38 @@ GtkWidget *away_page() {
 	return ret;
 }
 
-#if USE_PLUGINS
-GtkWidget *plugin_description=NULL, *plugin_details=NULL;
+static GtkWidget *plugin_description=NULL, *plugin_details=NULL;
+
 static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model) 
 {
 	gchar buf[1024];
 	GtkTreeIter  iter;
 	GValue val = { 0, };
-	struct gaim_plugin *plug;
+	GaimPlugin *plug;
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	plug = g_value_get_pointer(&val);
 	
-	if (plug->error[0]) 
-		g_snprintf(buf, sizeof(buf), "<span size=\"larger\">%s %s</span>\n\n"
-					       "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
-					       "%s", plug->desc.name, plug->desc.version, plug->error, plug->desc.description); 
-	else
-		g_snprintf(buf, sizeof(buf), "<span size=\"larger\">%s %s</span>\n\n"
-					       "%s", plug->desc.name, plug->desc.version, plug->desc.description); 
+	if (plug->error != NULL) {
+		g_snprintf(buf, sizeof(buf),
+				   "<span size=\"larger\">%s %s</span>\n\n"
+				   "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
+				   "%s",
+				   g_markup_escape_text(_(plug->info->name), -1),
+				   plug->info->version,
+				   g_markup_escape_text(plug->error, -1),
+				   g_markup_escape_text(_(plug->info->description), -1));
+	}
+	else {
+		g_snprintf(buf, sizeof(buf),
+				   "<span size=\"larger\">%s %s</span>\n\n%s",
+				   g_markup_escape_text(_(plug->info->name), -1),
+				   plug->info->version,
+				   g_markup_escape_text(_(plug->info->description), -1));
+	}
+
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
 	g_snprintf(buf, sizeof(buf), 
 #ifndef _WIN32
@@ -1147,7 +1170,12 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		     "<span weight=\"bold\">URL:</span>  %s\n"
 		     "<span weight=\"bold\">File name:</span>  %s"),
 #endif
-		   plug->desc.name, plug->desc.version, plug->desc.authors, plug->desc.url, plug->path);
+		   g_markup_escape_text(_(plug->info->name), -1),
+		   plug->info->version,
+		   g_markup_escape_text(_(plug->info->author), -1),
+		   g_markup_escape_text(plug->info->homepage, -1),
+		   plug->path);
+
 	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
 	g_value_unset (&val);
 }
@@ -1157,9 +1185,8 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	GtkTreeModel *model = (GtkTreeModel *)data;
 	GtkTreeIter iter;
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
-	struct gaim_plugin *plug;
+	GaimPlugin *plug;
 	gchar buf[1024];
-	GtkWidget *(*config)();
 	
 	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
 	gdk_window_set_cursor(prefs->window, wait);
@@ -1168,85 +1195,131 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter, 2, &plug, -1);
 	
-	if (!plug->handle)
+	if (!gaim_plugin_is_loaded(plug)) {
+		gaim_plugin_load(plug);
 
-		if (plug->type == plugin)
-#ifdef GAIM_PLUGINS
-			{
-				load_plugin(plug->path);
-				if (g_module_symbol(plug->handle, "gaim_plugin_config_gtk", (gpointer *)&config)) {
-					plug->iter = g_new0(GtkTreeIter, 1);
-					prefs_notebook_add_page(plug->desc.name, NULL, config(), plug->iter, &plugin_iter, notebook_page++);
-					if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(prefstree), &plugin_iter) == 1) {
-						/* Expand the tree for the first plugin added */
-						GtkTreePath *path2  = gtk_tree_model_get_path(GTK_TREE_MODEL(prefstree), &plugin_iter);
-						gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_v), path2, TRUE);
-						gtk_tree_path_free (path2);
-					}
+		/*
+		 * NOTE: This is basically the same check as before
+		 *       (plug->type == plugin), but now there aren't plugin types.
+		 *       Not yet, anyway. I want to do a V2 of the plugin API.
+		 *       The thing is, we should have a flag specifying the UI type,
+		 *       or just whether it's a general plugin or a UI-specific
+		 *       plugin. We should only load this if it's UI-specific.
+		 *
+		 *         -- ChipX86
+		 */
+		if (GAIM_IS_GTK_PLUGIN(plug))
+		{
+			GtkWidget *config_frame;
+			GaimGtkPluginUiInfo *ui_info;
+
+			ui_info = GAIM_GTK_PLUGIN_UI_INFO(plug);
+			config_frame = gaim_gtk_plugin_get_config_frame(plug);
+
+			if (config_frame != NULL) {
+				ui_info->iter = g_new0(GtkTreeIter, 1);
+				prefs_notebook_add_page(_(plug->info->name), NULL,
+										config_frame, ui_info->iter,
+										&plugin_iter, notebook_page++);
+
+				if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(prefstree),
+												   &plugin_iter) == 1) {
+
+					/* Expand the tree for the first plugin added */
+					GtkTreePath *path2;
+					
+					path2 = gtk_tree_model_get_path(GTK_TREE_MODEL(prefstree),
+													&plugin_iter);
+					gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_v),
+											 path2, TRUE);
+					gtk_tree_path_free(path2);
 				}
 			}
-#else
-	        {}	
-#endif
-		else
-#ifdef USE_PERL
-			perl_load_file(plug->path);
-#else
-	        {}
-#endif 
-	else
-		if (plug->type == plugin)
-#ifdef GAIM_PLUGINS
-			{
-				unload_plugin(plug);
-				if (plug->iter) {
-					gtk_tree_store_remove(GTK_TREE_STORE(prefstree), plug->iter);
-					g_free(plug->iter);
-					plug->iter = NULL;
-				}
+		}
+	}
+	else {
+		if (GAIM_IS_GTK_PLUGIN(plug)) {
+			GaimGtkPluginUiInfo *ui_info;
+
+			ui_info = GAIM_GTK_PLUGIN_UI_INFO(plug);
+
+			if (ui_info != NULL && ui_info->iter != NULL) {
+				gtk_tree_store_remove(GTK_TREE_STORE(prefstree), ui_info->iter);
+				g_free(ui_info->iter);
+				ui_info->iter = NULL;
 			}
-#else
-	                {} 
-#endif
-		else
-#ifdef USE_PERL
-			perl_unload_file(plug);
-#else
-	                {}
-#endif
+		}
+
+		gaim_plugin_unload(plug);
+	}
+
 	gdk_window_set_cursor(prefs->window, NULL);
-	if (plug->error[0]) 
-		g_snprintf(buf, sizeof(buf), "<span size=\"larger\">%s %s</span>\n\n"
-					       "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
-					       "%s", plug->desc.name, plug->desc.version, plug->error, plug->desc.description); 
-	else
-		g_snprintf(buf, sizeof(buf), "<span size=\"larger\">%s %s</span>\n\n"
-					       "%s", plug->desc.name, plug->desc.version, plug->desc.description); 
+
+	if (plug->error != NULL) {
+		g_snprintf(buf, sizeof(buf),
+				   "<span size=\"larger\">%s %s</span>\n\n"
+				   "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
+				   "%s",
+				   g_markup_escape_text(_(plug->info->name), -1),
+				   plug->info->version,
+				   g_markup_escape_text(plug->error, -1),
+				   g_markup_escape_text(_(plug->info->description), -1));
+	}
+	else {
+		g_snprintf(buf, sizeof(buf),
+				   "<span size=\"larger\">%s %s</span>\n\n%s",
+				   g_markup_escape_text(_(plug->info->name), -1),
+				   plug->info->version,
+				   g_markup_escape_text(_(plug->info->description), -1));
+	}
+
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
-	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, plug->handle, -1);
+	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0,
+						gaim_plugin_is_loaded(plug), -1);
 	
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
 	gtk_tree_path_free(path);
 }
 
+static void
+update_plugin_list(void *data)
+{
+	GtkListStore *ls = GTK_LIST_STORE(data);
+	GtkTreeIter iter;
+	GList *probes;
+	GaimPlugin *plug;
+
+	gtk_list_store_clear(ls);
+
+	for (probes = gaim_plugins_get_all();
+		 probes != NULL;
+		 probes = probes->next) {
+
+		plug = probes->data;
+
+		if (plug->info->type != GAIM_PLUGIN_STANDARD)
+			continue;
+
+		gtk_list_store_append (ls, &iter);
+		gtk_list_store_set(ls, &iter,
+				   0, gaim_plugin_is_loaded(plug),
+				   1, plug->info->name ? _(plug->info->name) : plug->path, 
+				   2, plug, -1);
+	}
+}
+
 static GtkWidget *plugin_page ()
 {
 	GtkWidget *ret;
-
 	GtkWidget *sw, *vp;
-	GtkTreeIter iter;
 	GtkWidget *event_view;
 	GtkListStore *ls;
 	GtkCellRenderer *rend, *rendt;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
 	GtkTreePath *path;
-	
 	GtkWidget *nb;
 
-	GList *probes = probed_plugins;
-	struct gaim_plugin *plug;
-	
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
@@ -1257,16 +1330,9 @@ static GtkWidget *plugin_page ()
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
 	ls = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
-	while (probes) {
-		plug = probes->data;
-		gtk_list_store_append (ls, &iter);
-		gtk_list_store_set(ls, &iter,
-				   0, plug->handle,
-				   1, plug->desc.name ? plug->desc.name : plug->path, 
-				   2, plug, -1);
-		probes = probes->next;
-	}
-	
+
+	update_plugin_list(ls);
+
 	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(ls));
 
 	rend = gtk_cell_renderer_toggle_new();
@@ -1340,10 +1406,11 @@ static GtkWidget *plugin_page ()
 	gtk_tree_selection_select_path(sel, path);
 	gtk_tree_path_free(path);
 
+	gaim_plugins_register_probe_notify_cb(update_plugin_list, ls);
+
 	gtk_widget_show_all(ret);
 	return ret;
 }
-#endif
 
 static void event_toggled (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 {
@@ -1678,7 +1745,7 @@ GtkWidget *away_message_page() {
 	return ret;
 }
 
-GtkTreeIter *prefs_notebook_add_page(char *text,
+GtkTreeIter *prefs_notebook_add_page(const char *text,
 				     GdkPixbuf *pixbuf,
 				     GtkWidget *page,
 				     GtkTreeIter *iter,
@@ -1702,11 +1769,8 @@ GtkTreeIter *prefs_notebook_add_page(char *text,
 
 void prefs_notebook_init() {
 	GtkTreeIter p, p2, c;
-#if USE_PLUGINS
-	GtkWidget *(*config)();
-	GList *l = plugins;
-	struct gaim_plugin *plug;
-#endif
+	GList *l;
+	GaimPlugin *plug;
 	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Fonts"), NULL, font_page(), &c, &p, notebook_page++);
@@ -1727,17 +1791,29 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, notebook_page++);
-#if USE_PLUGINS
-	prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
-	while (l) {
-		plug = l->data;
-		if (plug->type == plugin && g_module_symbol(plug->handle, "gaim_plugin_config_gtk", (gpointer *)&config)) {
-			plug->iter = g_new0(GtkTreeIter, 1);
-			prefs_notebook_add_page(plug->desc.name, NULL, config(), plug->iter, &plugin_iter, notebook_page++);
+
+	if (gaim_plugins_enabled()) {
+		prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
+
+		for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
+			plug = l->data;
+
+			if (GAIM_IS_GTK_PLUGIN(plug)) {
+				GtkWidget *config_frame;
+				GaimGtkPluginUiInfo *ui_info;
+
+				ui_info = GAIM_GTK_PLUGIN_UI_INFO(plug);
+				config_frame = gaim_gtk_plugin_get_config_frame(plug);
+
+				if (config_frame != NULL) {
+					ui_info->iter = g_new0(GtkTreeIter, 1);
+					prefs_notebook_add_page(_(plug->info->name), NULL,
+											config_frame, ui_info->iter,
+											&plugin_iter, notebook_page++);
+				}
+			}
 		}
-		l = l->next;
 	}
-#endif
 }
 
 void show_prefs()

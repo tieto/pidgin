@@ -103,7 +103,7 @@ rebuild_jc()
 
 	chatentries = NULL;
 
-	list = joinchatgc->prpl->chat_info(joinchatgc);
+	list = GAIM_PLUGIN_PROTOCOL_INFO(joinchatgc->prpl)->chat_info(joinchatgc);
 
 	for (tmp = list; tmp != NULL; tmp = tmp->next) {
 		GtkWidget *label;
@@ -189,13 +189,14 @@ create_joinchat_menu(GtkWidget *box)
 	for (c = connections; c != NULL; c = c->next) {
 		g = (struct gaim_connection *)c->data;
 
-		if (!g->prpl->join_chat)
+		if (!GAIM_PLUGIN_PROTOCOL_INFO(g->prpl)->join_chat)
 			continue;
 
 		if (!joinchatgc)
 			joinchatgc = g;
 
-		g_snprintf(buf, sizeof(buf), "%s (%s)", g->username, g->prpl->name);
+		g_snprintf(buf, sizeof(buf), "%s (%s)",
+				   g->username, g->prpl->info->name);
 		opt = gtk_menu_item_new_with_label(buf);
 
 		g_object_set_data(G_OBJECT(opt), "gaim_connection", g);
@@ -238,7 +239,7 @@ join_chat()
 	for (c = connections; c != NULL; c = c->next) {
 		gc = c->data;
 
-		if (gc->prpl->join_chat)
+		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat)
 			break;
 
 		gc = NULL;

@@ -1,7 +1,9 @@
 #include "config.h"
 
+#if 0
 #ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
+#endif
 #endif
 
 #include "gaim.h"
@@ -10,6 +12,8 @@
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
+
+#define AUTORECON_PLUGIN_ID "core-autorecon"
 
 G_MODULE_IMPORT GSList *gaim_accounts;
 
@@ -48,41 +52,62 @@ static void reconnect(struct gaim_connection *gc, void *m) {
 	}
 }
 
-/*
- *  EXPORTED FUNCTIONS
- */
-
-struct gaim_plugin_description desc; 
-G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("Autoreconnect"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("When you are kicked offline, this reconnects you."));
-	desc.authors = g_strdup("Eric Warmenhoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
-
-G_MODULE_EXPORT char *name() {
-	return _("Auto Reconnect");
-}
-
-G_MODULE_EXPORT char *description() {
-	return _("When you are kicked offline, this reconnects you.");
-}
-
-G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
 	hash = g_hash_table_new(g_int_hash, g_int_equal);
 
-	gaim_signal_connect(handle, event_signoff, reconnect, NULL);
+	gaim_signal_connect(plugin, event_signoff, reconnect, NULL);
 
-	return NULL;
+	return TRUE;
 }
 
-G_MODULE_EXPORT void gaim_plugin_remove() {
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
 	if (tim)
 		g_source_remove(tim);
+
+	gaim_signal_disconnect(plugin, event_signoff, reconnect);
+
 	g_hash_table_destroy(hash);
+
 	hash = NULL;
 	tim = 0;
+
+	return TRUE;
 }
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	AUTORECON_PLUGIN_ID,                              /**< id             */
+	N_("Auto-Reconnect"),                             /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("When you are kicked offline, this reconnects you."), 
+	                                                  /**  description    */
+	N_("When you are kicked offline, this reconnects you."), 
+	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+}
+
+GAIM_INIT_PLUGIN(autorecon, __init_plugin, info);

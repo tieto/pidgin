@@ -374,6 +374,7 @@ AC_OUTPUT([Makefile
 	   plugins/Makefile
 	   plugins/docklet/Makefile
 	   plugins/gestures/Makefile
+	   plugins/perl/Makefile
 	   plugins/ticker/Makefile
 	   po/Makefile.in 
            sounds/Makefile

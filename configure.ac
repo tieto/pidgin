@@ -243,7 +243,7 @@ fi
 if test "$enable_perl" = yes ; then
 	AC_SUBST(PERL_CFLAGS)
 	AC_SUBST(PERL_LIBS)
-	AC_DEFINE(USE_PERL, 1, [Define if Perl is enabled.])
+	AM_CONDITIONAL(USE_PERL, test "x$enable_perl" = "xyes")
 
 	dnl This is almost definitely wrong, but in case there's
 	dnl something I'm missing, I'll leave it in.
@@ -399,6 +399,7 @@ AC_OUTPUT([Makefile
 	   plugins/Makefile
 	   plugins/docklet/Makefile
 	   plugins/gestures/Makefile
+	   plugins/perl/Makefile
 	   plugins/ticker/Makefile
 	   po/Makefile.in 
            sounds/Makefile

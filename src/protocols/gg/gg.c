@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5500 2003-04-15 04:18:00Z faceprint $
+ * $Id: gg.c 5573 2003-04-25 06:47:33Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1277,73 +1277,101 @@ static void agg_permit_deny_dummy(struct gaim_connection *gc, const char *who)
 	/* It's implemented on client side because GG server doesn't support this */
 }
 
-static struct prpl *my_protocol = NULL;
+static GaimPlugin *my_protocol = NULL;
 
-G_MODULE_EXPORT void gg_init(struct prpl *ret)
+static GaimPluginProtocolInfo prpl_info =
+{
+	GAIM_PROTO_GADUGADU,
+	0,
+	NULL,
+	NULL,
+	agg_list_icon,
+	agg_list_emblems,
+	NULL,
+	NULL,
+	agg_away_states,
+	agg_actions,
+	agg_buddy_menu,
+	NULL,
+	agg_login,
+	agg_close,
+	agg_send_im,
+	NULL,
+	NULL,
+	agg_get_info,
+	agg_set_away,
+	NULL,
+	NULL,
+	NULL,
+	agg_dir_search,
+	NULL,
+	agg_change_passwd,
+	agg_add_buddy,
+	agg_add_buddies,
+	agg_rem_buddy,
+	NULL,
+	agg_permit_deny_dummy,
+	agg_permit_deny_dummy,
+	agg_permit_deny_dummy,
+	agg_permit_deny_dummy,
+	agg_set_permit_deny_dummy,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	agg_keepalive,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	"prpl-gg",		                                  /**< id             */
+	"Gadu-Gadu",                                      /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Gadu-Gadu Protocol Plugin"),
+	                                                  /**  description    */
+	N_("Gadu-Gadu Protocol Plugin"),
+	"Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>",       /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&prpl_info                                        /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
 {
 	struct proto_user_opt *puo;
-	ret->protocol = PROTO_GADUGADU;
-	ret->options = 0;
-	ret->name = g_strdup("Gadu-Gadu");
-	ret->list_icon = agg_list_icon;
-	ret->list_emblems = agg_list_emblems;
-	ret->away_states = agg_away_states;
-	ret->actions = agg_actions;
-	ret->buddy_menu = agg_buddy_menu;
-	ret->chat_info = NULL;
-	ret->login = agg_login;
-	ret->close = agg_close;
-	ret->send_im = agg_send_im;
-	ret->set_info = NULL;
-	ret->get_info = agg_get_info;
-	ret->set_away = agg_set_away;
-	ret->set_dir = NULL;
-	ret->get_dir = agg_get_info;
-	ret->dir_search = agg_dir_search;
-	ret->set_idle = NULL;
-	ret->change_passwd = agg_change_passwd;
-	ret->add_buddy = agg_add_buddy;
-	ret->add_buddies = agg_add_buddies;
-	ret->remove_buddy = agg_rem_buddy;
-	ret->add_permit = agg_permit_deny_dummy;
-	ret->add_deny = agg_permit_deny_dummy;
-	ret->rem_permit = agg_permit_deny_dummy;
-	ret->rem_deny = agg_permit_deny_dummy;
-	ret->set_permit_deny = agg_set_permit_deny_dummy;
-	ret->warn = NULL;
-	ret->join_chat = NULL;
-	ret->chat_invite = NULL;
-	ret->chat_leave = NULL;
-	ret->chat_whisper = NULL;
-	ret->chat_send = NULL;
-	ret->keepalive = agg_keepalive;
-	ret->normalize = NULL;
-     
+
 	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Nick:"));
-	puo->def = g_strdup(_("Gadu-Gadu User"));
-	puo->pos = USEROPT_NICK;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	puo->label = g_strdup("Nick:");
+	puo->def   = g_strdup("Gadu-Gadu User");
+	puo->pos   = USEROPT_NICK;
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
-	my_protocol = ret;
+	my_protocol = plugin;
 }
 
-#ifndef STATIC
-
-G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
-{
-	gg_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
-}
-
-#endif
-
-/*
- * Local variables:
- * c-indentation-style: k&r
- * c-basic-offset: 8
- * indent-tabs-mode: notnil
- * End:
- *
- * vim: shiftwidth=8:
- */
+GAIM_INIT_PLUGIN(gg, __init_plugin, info);

@@ -315,7 +315,8 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	GtkWidget *menu, *menuitem;
 	GtkTreeSelection *sel;
 	GList *list;
-	struct prpl *prpl;
+	GaimPlugin *prpl = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (event->button != 3)
 		return FALSE;
@@ -334,9 +335,12 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 		gaim_new_item_from_stock(menu, _("_Rename"), NULL, G_CALLBACK(show_rename_group), node, 0, 0, NULL);
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		/* Protocol specific options */
-		prpl = find_prpl(((struct buddy*)node)->account->protocol);
+		prpl = gaim_find_prpl(((struct buddy*)node)->account->protocol);
 
-		if (prpl && prpl->get_info)
+		if (prpl != NULL)
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+		if (prpl && prpl_info->get_info)
 			gaim_new_item_from_stock(menu, _("_Get Info"), GAIM_STOCK_INFO, G_CALLBACK(gtk_blist_menu_info_cb), node, 0, 0, NULL);
 
 		gaim_new_item_from_stock(menu, _("_IM"), GAIM_STOCK_IM, G_CALLBACK(gtk_blist_menu_im_cb), node, 0, 0, NULL);
@@ -344,7 +348,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 		gaim_new_item_from_stock(menu, _("View _Log"), NULL, G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
 		if (prpl) {
-			list = prpl->buddy_menu(((struct buddy*)node)->account->gc, ((struct buddy*)node)->name);
+			list = prpl_info->buddy_menu(((struct buddy*)node)->account->gc, ((struct buddy*)node)->name);
 			while (list) {
 				struct proto_buddy_menu *pbm = list->data;
 				menuitem = gtk_menu_item_new_with_mnemonic(pbm->label);
@@ -355,7 +359,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 			}
 		}
 
-		plugin_event (event_draw_menu, menu, ((struct buddy *) node)->name);
+		gaim_event_broadcast (event_draw_menu, menu, ((struct buddy *) node)->name);
 
 		gaim_separator(menu);
 		gaim_new_item_from_stock(menu, _("_Alias"), GAIM_STOCK_EDIT, G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
@@ -676,15 +680,19 @@ static GtkItemFactoryEntry blist_menu[] =
 
 static char *gaim_get_tooltip_text(struct buddy *b)
 {
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	char *text = NULL;
-	struct prpl* prpl = find_prpl(b->account->protocol);
 	char *statustext = NULL;
 	char *aliastext = NULL, *nicktext = NULL;
 	char *warning = NULL, *idletime = NULL;
 
-	if (prpl->tooltip_text) {
+	prpl = gaim_find_prpl(b->account->protocol);
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info->tooltip_text) {
 		const char *end;
-		statustext = prpl->tooltip_text(b);
+		statustext = prpl_info->tooltip_text(b);
 
 		if(statustext && !g_utf8_validate(statustext, -1, &end)) {
 			char *new = g_strndup(statustext,
@@ -760,15 +768,20 @@ GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize si
 
 	int scalesize = 30;
 
-	struct prpl* prpl = find_prpl(b->account->protocol);
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	prpl = gaim_find_prpl(b->account->protocol);
 
 	if (!prpl) 
 		return NULL;
 
-	if (prpl->list_icon)
-		protoname = prpl->list_icon(b->account, b);
-	if (b->present != GAIM_BUDDY_SIGNING_OFF && prpl->list_emblems)
-		prpl->list_emblems(b, &se, &sw, &nw, &ne);
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info->list_icon)
+		protoname = prpl_info->list_icon(b->account, b);
+	if (b->present != GAIM_BUDDY_SIGNING_OFF && prpl_info->list_emblems)
+		prpl_info->list_emblems(b, &se, &sw, &nw, &ne);
 
 	if (size == GAIM_STATUS_ICON_SMALL) {
 		scalesize = 15;
@@ -929,13 +942,18 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 {
 	char *name = gaim_get_buddy_alias(b);
 	char *esc = g_markup_escape_text(name, strlen(name)), *text = NULL;
-	struct prpl* prpl = find_prpl(b->account->protocol);
-
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	/* XXX Clean up this crap */
 
 	int ihrs, imin;
 	char *idletime = NULL, *warning = NULL, *statustext = NULL;
 	time_t t;
+
+	prpl = gaim_find_prpl(b->account->protocol);
+
+	if (prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
 		if ((b->idle && blist_options & OPT_BLIST_GREY_IDLERS && !selected) || !GAIM_BUDDY_IS_ONLINE(b)) {
@@ -952,8 +970,8 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 	ihrs = (t - b->idle) / 3600;
 	imin = ((t - b->idle) / 60) % 60;
 
-	if (prpl && prpl->status_text) {
-		char *tmp = prpl->status_text(b);
+	if (prpl && prpl_info->status_text) {
+		char *tmp = prpl_info->status_text(b);
 		const char *end;
 
 		if(tmp && !g_utf8_validate(tmp, -1, &end)) {
@@ -1755,61 +1773,36 @@ struct gaim_blist_ui_ops *gaim_get_gtk_blist_ui_ops()
 GdkPixbuf *
 create_prpl_icon(struct gaim_account *account)
 {
-	struct prpl *prpl = find_prpl(account->protocol);
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	GdkPixbuf *status = NULL;
 	char *filename = NULL;
 	const char *protoname = NULL;
+	char buf[256];
 
-	/* this is so we can get the icon when the prpl isn't loaded.
-	 * it's not as bad as it looks, since most of the time this function
-	 * is called, the prpl is already loaded, so it'll just increment and
-	 * decrement the refcount, won't have to go through the hassle of
-	 * actually loading and unloading the prpl.  the few times it actually
-	 * does that, it saves us from crashing */
-	if(prpl && prpl->list_icon) {
-		ref_protocol(prpl);
-		protoname = prpl->list_icon(account, NULL);
-		unref_protocol(prpl);
+	prpl = gaim_find_prpl(account->protocol);
+
+	if (prpl != NULL) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+		if (prpl_info->list_icon != NULL)
+			protoname = prpl_info->list_icon(account, NULL);
 	}
 
-	if (!protoname)
+	if (protoname == NULL)
 		return NULL;
 
-	/* "Hey, what's all this crap?" you ask.  Status icons will be themeable too, and 
-	   then it will look up protoname from the theme */
-	if (!strcmp(protoname, "aim")) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "aim.png", NULL);
-		status = gdk_pixbuf_new_from_file(filename,NULL);
-		g_free(filename);
-	} else if (!strcmp(protoname, "yahoo")) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "yahoo.png", NULL);
-		status = gdk_pixbuf_new_from_file(filename,NULL);
-		g_free(filename);
-	} else if (!strcmp(protoname, "msn")) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "msn.png", NULL);
-		status = gdk_pixbuf_new_from_file(filename,NULL);
-		g_free(filename);
-	} else if (!strcmp(protoname, "jabber")) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "jabber.png", NULL);
-		status = gdk_pixbuf_new_from_file(filename,NULL);
-		g_free(filename);
-	} else if (!strcmp(protoname, "icq")) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "icq.png", NULL);
-		status = gdk_pixbuf_new_from_file(filename,NULL);
-		g_free(filename);
-	} else if (!strcmp(protoname, "gadu-gadu")) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "gadu-gadu.png", NULL);
-		status = gdk_pixbuf_new_from_file(filename,NULL);
-		g_free(filename);
-	} else if (!strcmp(protoname, "napster")) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "napster.png", NULL);
-		status = gdk_pixbuf_new_from_file(filename,NULL);
-		g_free(filename);
-	} else if (!strcmp(protoname, "irc")) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "irc.png", NULL);
-		status = gdk_pixbuf_new_from_file(filename,NULL);
-		g_free(filename);
-	}
+	/*
+	 * Status icons will be themeable too, and then it will look up
+	 * protoname from the theme
+	 */
+	g_snprintf(buf, sizeof(buf), "%s.png", protoname);
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
+								"default", buf, NULL);
+	status = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+
 	return status;
 }
 

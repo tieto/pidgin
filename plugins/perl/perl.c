@@ -32,8 +32,6 @@
 #endif
 #undef PACKAGE
 
-#ifdef USE_PERL
-
 #define group perl_group
 #ifdef _WIN32
 /* This took me an age to figure out.. without this __declspec(dllimport)
@@ -84,30 +82,32 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "sound.h"
 
 #ifndef call_pv
-# define call_pv(i,j) perl_call_pv(i,j)
+# define call_pv(i,j) perl_call_pv((i), (j))
 #endif
+
+#define PERL_PLUGIN_ID "core-perl"
 
 struct perlscript {
 	char *name;
 	char *version;
 	char *shutdowncallback; /* bleh */
-	struct gaim_plugin *plug;
+	GaimPlugin *plug;
 };
 
 struct _perl_event_handlers {
 	char *event_type;
 	char *handler_name;
-	struct gaim_plugin *plug;
+	GaimPlugin *plug;
 };
 
 struct _perl_timeout_handlers {
 	char *handler_name;
 	char *handler_args;
 	gint iotag;
-	struct gaim_plugin *plug;
+	GaimPlugin *plug;
 };
 
-static GList *perl_list = NULL; /* should probably extern this at some point */
+static GList *perl_list = NULL;
 static GList *perl_timeout_handlers = NULL;
 static GList *perl_event_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
@@ -152,7 +152,7 @@ xs_init(pTHX)
 	newXS ("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
 
 	/* load up all the custom Gaim perl functions */
-		newXS ("GAIM::register", XS_GAIM_register, "GAIM");
+	newXS ("GAIM::register", XS_GAIM_register, "GAIM");
 	newXS ("GAIM::get_info", XS_GAIM_get_info, "GAIM");
 	newXS ("GAIM::print", XS_GAIM_print, "GAIM");
 	newXS ("GAIM::write_to_conv", XS_GAIM_write_to_conv, "GAIM");
@@ -173,22 +173,28 @@ xs_init(pTHX)
 	newXS ("GAIM::play_sound", XS_GAIM_play_sound, "GAIM");
 }
 
-static char *escape_quotes(char *buf)
+static char *
+escape_quotes(const char *buf)
 {
 	static char *tmp_buf = NULL;
-	char *i, *j;
+	const char *i;
+	char *j;
 
 	if (tmp_buf)
 		g_free(tmp_buf);
+
 	tmp_buf = g_malloc(strlen(buf) * 2 + 1);
+
 	for (i = buf, j = tmp_buf; *i; i++, j++) {
 		if (*i == '\'' || *i == '\\')
 			*j++ = '\\';
+
 		*j = *i;
 	}
+
 	*j = '\0';
 
-	return (tmp_buf);
+	return tmp_buf;
 }
 
 /*
@@ -233,10 +239,10 @@ static char *escape_quotes(char *buf)
 */
 
 static int 
-execute_perl(char *function, char **args)
+execute_perl(const char *function, int argc, char **args)
 {
-	int count, i, ret_value = 1;
-	SV *sv_args[5];
+	int count = 0, i, ret_value = 1;
+	SV *sv_args[argc];
 	STRLEN na;
 
 	/*
@@ -247,41 +253,56 @@ execute_perl(char *function, char **args)
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(sp);
-	for (i=0; i<5; i++)
+
+	for (i = 0; i < argc; i++) {
 		if (args[i]) {
 			sv_args[i] = sv_2mortal(newSVpv(args[i], 0));
 			XPUSHs(sv_args[i]);
 		}
+	}
+
 	PUTBACK;
 	count = call_pv(function, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
-	/* Check for "die," make sure we have 1 argument, and set our return value */
+	/*
+	 * Check for "die," make sure we have 1 argument, and set our
+	 * return value.
+	 */
 	if (SvTRUE(ERRSV)) {
-		debug_printf("Perl function %s exited abnormally: %s\n", function, SvPV(ERRSV, na));
+		debug_printf("Perl function %s exited abnormally: %s\n",
+					 function, SvPV(ERRSV, na));
 		POPs;
-	} else if (count != 1) {
-		/* This should NEVER happen.  G_SCALAR ensures that we WILL have 1 parameter */
-		debug_printf("Perl error from %s: expected 1 return value, but got %d\n", function, count);
-	} else {
-		ret_value = POPi;
 	}
+	else if (count != 1) {
+		/*
+		 * This should NEVER happen.  G_SCALAR ensures that we WILL
+		 * have 1 parameter.
+		 */
+		debug_printf("Perl error from %s: expected 1 return value, "
+					 "but got %d\n", function, count);
+	}
+	else
+		ret_value = POPi;
 
 	/* Check for changed arguments */
-	for (i=0; i<5; i++)
+	for (i = 0; i < argc; i++) {
 		if (args[i] && strcmp(args[i], SvPVX(sv_args[i]))) {
 			/*
-			 * Shizzel.  So the perl script changed one of the parameters, and we want 
-			 * this change to affect the original parameters.  args[i] is just a tempory 
-			 * little list of pointers.  We don't want to free args[i] here because the 
-			 * new parameter doesn't overwrite the data that args[i] points to.  That is 
-			 * done by the function that called execute_perl.  I'm not explaining this 
-			 * very well.  See, it's aggregate...  Oh, but if 2 perl scripts both modify 
-			 * the data, _that's_ a memleak.  This is really kind of hackish.  I should 
-			 * fix it.  Look how long this comment is.  Holy crap.
+			 * Shizzel.  So the perl script changed one of the parameters,
+			 * and we want this change to affect the original parameters.
+			 * args[i] is just a tempory little list of pointers.  We don't
+			 * want to free args[i] here because the new parameter doesn't
+			 * overwrite the data that args[i] points to.  That is done by
+			 * the function that called execute_perl.  I'm not explaining this
+			 * very well.  See, it's aggregate...  Oh, but if 2 perl scripts
+			 * both modify the data, _that's_ a memleak.  This is really kind
+			 * of hackish.  I should fix it.  Look how long this comment is.
+			 * Holy crap.
 			 */
 			args[i] = g_strdup(SvPV(sv_args[i], na));
 		}
+	}
 
 	PUTBACK;
 	FREETMPS;
@@ -290,150 +311,98 @@ execute_perl(char *function, char **args)
 	return ret_value;
 }
 
-void perl_unload_file(struct gaim_plugin *plug) {
-	char *atmp[1] = { "" };
+static void
+perl_unload_file(GaimPlugin *plug)
+{
+	char *atmp[2] = { "", NULL };
 	struct perlscript *scp = NULL;
 	struct _perl_timeout_handlers *thn;
 	struct _perl_event_handlers *ehn;
+	GList *pl;
 
-	GList *pl = perl_list;
-
-	debug_printf("Unloading %s\n", plug->path);
-	while (pl) {
+	for (pl = perl_list; pl != NULL; pl = pl->next) {
 		scp = pl->data;
+
 		if (scp->plug == plug) {
 			perl_list = g_list_remove(perl_list, scp);
+
 			if (scp->shutdowncallback[0])
-				execute_perl(scp->shutdowncallback, atmp);
+				execute_perl(scp->shutdowncallback, 1, atmp);
+
 			g_free(scp->name);
 			g_free(scp->version);
 			g_free(scp->shutdowncallback);
 			g_free(scp);	
+
 			break;
 		}
-		pl = pl->next;
 	}
 
-	pl = perl_timeout_handlers;
-	while (pl) {
+	for (pl = perl_timeout_handlers; pl != NULL; pl = pl->next) {
 		thn = pl->data;
+
 		if (thn && thn->plug == plug) {
 			perl_timeout_handlers = g_list_remove(perl_timeout_handlers, thn);
+
 			g_source_remove(thn->iotag);
 			g_free(thn->handler_args);
 			g_free(thn->handler_name);
 			g_free(thn);
 		}
-		pl = pl->next;
 	}
 
-	pl = perl_event_handlers;
-	while (pl) {
+	for (pl = perl_event_handlers; pl != NULL; pl = pl->next) {
 		ehn = pl->data;
+
 		if (ehn && ehn->plug == plug) {
 			perl_event_handlers = g_list_remove(perl_event_handlers, ehn);
+
 			g_free(ehn->event_type);
 			g_free(ehn->handler_name);
 			g_free(ehn);
 		}
-		pl = pl->next;
 	}
-
-	plug->handle = NULL;
-	plugins = g_list_remove(plugins, plug);
-	save_prefs();
 }
 
-int perl_load_file(char *script_name)
+static int
+perl_load_file(char *script_name, GaimPlugin *plugin)
 {
-	char *atmp[1] = { script_name };
-	struct gaim_plugin *plug = NULL;
-	GList *p = probed_plugins;
+	char *atmp[2] = { script_name, NULL };
 	GList *s;
 	struct perlscript *scp;
 	int ret;
 
 	if (my_perl == NULL)
 		perl_init();
-	
-	while (p) {
-		plug = (struct gaim_plugin *)p->data;
-		if (!strcmp(script_name, plug->path)) 
-			break;
-		p = p->next;
-	}
-	
-	if (!plug) {
-		probe_perl(script_name);
-	}
 
-	plug->handle = plug->path;
-	plugins = g_list_append(plugins, plug);
+	plugin->handle = plugin->path;
 
-	ret = execute_perl("load_n_eval", atmp);
+	ret = execute_perl("load_n_eval", 1, atmp);
 
-	s = perl_list;
-	while (s) {
+	for (s = perl_list; s != NULL; s = s->next) {
 		scp = s->data;
-	
-		if (!strcmp(scp->name, plug->desc.name) &&
-		    !strcmp(scp->version, plug->desc.version))
+
+		if (!strcmp(scp->name, plugin->info->name) &&
+		    !strcmp(scp->version, plugin->info->version)) {
+
 			break;
-		s = s->next;
+		}
 	}
 
 	if (!s) {
-		g_snprintf(plug->error, sizeof(plug->error), _("GAIM::register not called with proper arguments.  Consult PERL-HOWTO."));
+		plugin->error = g_strdup(_("GAIM::register not called with "
+								   "proper arguments.  Consult PERL-HOWTO."));
+
 		return 0;
 	}
 	
-	plug->error[0] = '\0';
 	return ret;
 }
 
-struct gaim_plugin *probe_perl(char *filename) {
-
-	/* XXX This woulld be much faster if I didn't create a new
-	 *     PerlInterpreter every time I probed a plugin */
-
-	PerlInterpreter *prober = perl_alloc();
-	struct gaim_plugin * plug = NULL;
-	char *argv[] = {"", filename};
-	int count;
-	perl_construct(prober);
-	perl_parse(prober, NULL, 2, argv, NULL);
-	
-	{
-		dSP;
-		ENTER;
-		SAVETMPS;
-		PUSHMARK(SP);
-
-		count = perl_call_pv("description", G_NOARGS | G_ARRAY | G_EVAL);
-		SPAGAIN;
-		if (count == (sizeof(struct gaim_plugin_description) - sizeof(int)) / sizeof(char*)) {
-			plug = g_new0(struct gaim_plugin, 1);
-			plug->type = perl_script;
-			g_snprintf(plug->path, sizeof(plug->path), filename);
-			plug->desc.iconfile = g_strdup(POPp);
-			plug->desc.url = g_strdup(POPp);
-			plug->desc.authors = g_strdup(POPp);
-			plug->desc.description = g_strdup(POPp);
-			plug->desc.version = g_strdup(POPp);
-			plug->desc.name = g_strdup(POPp);
-		}
-			
-		PUTBACK;
-		FREETMPS;
-		LEAVE;
-	}
-	perl_destruct(prober);
-	perl_free(prober);
-	return plug;
-}
-
-static void perl_init()
-{	/* changed the name of the variable from load_file to
+static void
+perl_init(void)
+{
+	/* changed the name of the variable from load_file to
 	   perl_definitions since now it does much more than defining
 	   the load_file sub. Moreover, deplaced the initialisation to
 	   the xs_init function. (TheHobbit)*/
@@ -474,18 +443,17 @@ static void perl_init()
 #else
 	perl_parse(my_perl, xs_init, 3, perl_args, NULL);
 #endif
- #ifdef HAVE_PERL_EVAL_PV
+#ifdef HAVE_PERL_EVAL_PV
 	eval_pv(perl_definitions, TRUE);
 #else
 	perl_eval_pv(perl_definitions, TRUE); /* deprecated */
 #endif
-
-
 }
 
-void perl_end()
+static void
+perl_end(void)
 {
-	char *atmp[1] = { "" };
+	char *atmp[2] = { "", NULL };
 	struct perlscript *scp;
 	struct _perl_timeout_handlers *thn;
 	struct _perl_event_handlers *ehn;
@@ -493,8 +461,10 @@ void perl_end()
 	while (perl_list) {
 		scp = perl_list->data;
 		perl_list = g_list_remove(perl_list, scp);
+
 		if (scp->shutdowncallback[0])
-			execute_perl(scp->shutdowncallback, atmp);
+			execute_perl(scp->shutdowncallback, 1, atmp);
+
 		g_free(scp->name);
 		g_free(scp->version);
 		g_free(scp->shutdowncallback);
@@ -514,7 +484,6 @@ void perl_end()
 		ehn = perl_event_handlers->data;
 		perl_event_handlers = g_list_remove(perl_event_handlers, ehn);
 		g_free(ehn->event_type);
-		debug_printf("handler_name: %s\n", ehn->handler_name);
 		g_free(ehn->handler_name);
 		g_free(ehn);
 	}
@@ -531,25 +500,33 @@ XS (XS_GAIM_register)
 	char *name, *ver, *callback, *unused; /* exactly like X-Chat, eh? :) */
 	unsigned int junk;
 	struct perlscript *scp;
-	struct gaim_plugin *plug = NULL;
-	GList *pl = plugins;
+	GaimPlugin *plug = NULL;
+	GList *pl;
 
 	dXSARGS;
 	items = 0;
 
-	name = SvPV (ST (0), junk);
-	ver = SvPV (ST (1), junk);
-	callback = SvPV (ST (2), junk);
-	unused = SvPV (ST (3), junk);
+	name     = SvPV(ST(0), junk);
+	ver      = SvPV(ST(1), junk);
+	callback = SvPV(ST(2), junk);
+	unused   = SvPV(ST(3), junk);
 
-	while (pl) {
+	debug_printf("GAIM::register(%s, %s)\n", name, ver);
+
+	for (pl = gaim_plugins_get_all(); pl != NULL; pl = pl->next) {
 		plug = pl->data;
 
-		if (!strcmp(name, plug->desc.name) &&
-		    !strcmp(ver, plug->desc.version)) {
+		debug_printf("** Comparing '%s' to '%s' and '%s' to '%s'\n",
+					 name, plug->info->name, ver,
+					 plug->info->version);
+
+		if (!strcmp(name, plug->info->name) &&
+		    !strcmp(ver, plug->info->version)) {
+
 			break;
 		}
-		pl = pl->next;
+
+		plug = NULL;
 	}
 
 	if (plug) {
@@ -558,9 +535,14 @@ XS (XS_GAIM_register)
 		scp->version = g_strdup(ver);
 		scp->shutdowncallback = g_strdup(callback);
 		scp->plug = plug; 
+
 		perl_list = g_list_append(perl_list, scp);
+
+		XST_mPV(0, plug->path);
 	}
-	XST_mPV (0, plug->path);
+	else
+		XST_mPV(0, NULL);
+
 	XSRETURN (1);
 }
 
@@ -571,81 +553,97 @@ XS (XS_GAIM_get_info)
 	items = 0;
 
 	switch(SvIV(ST(0))) {
-	case 0:
-		XST_mPV(0, VERSION);
-		i = 1;
-		break;
-	case 1:
-		{
-			GSList *c = connections;
-			struct gaim_connection *gc;
+		case 0:
+			XST_mPV(0, VERSION);
+			i = 1;
+			break;
 
-			while (c) {
-				gc = (struct gaim_connection *)c->data;
-				XST_mIV(i++, (guint)gc);
-				c = c->next;
+		case 1:
+			{
+				GSList *c = connections;
+				struct gaim_connection *gc;
+
+				while (c) {
+					gc = (struct gaim_connection *)c->data;
+					XST_mIV(i++, (guint)gc);
+					c = c->next;
+				}
 			}
-		}
-		break;
-	case 2:
-		{
-			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-			if (g_slist_find(connections, gc))
-				XST_mIV(i++, gc->protocol);
-			else
-				XST_mIV(i++, -1);
-		}
-		break;
-	case 3:
-		{
-			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-			if (g_slist_find(connections, gc))
-				XST_mPV(i++, gc->username);
-			else
-				XST_mPV(i++, "");
-		}
-		break;
-	case 4:
-		{
-			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-			if (g_slist_find(connections, gc))
-				XST_mIV(i++, g_slist_index(gaim_accounts, gc->account));
-			else
-				XST_mIV(i++, -1);
-		}
-		break;
-	case 5:
-		{
-			GSList *a = gaim_accounts;
-			while (a) {
-				struct gaim_account *account = a->data;
-				XST_mPV(i++, account->username);
-				a = a->next;
+			break;
+
+		case 2:
+			{
+				struct gaim_connection *gc =
+					(struct gaim_connection *)SvIV(ST(1));
+
+				if (g_slist_find(connections, gc))
+					XST_mIV(i++, gc->protocol);
+				else
+					XST_mIV(i++, -1);
 			}
-		}
-		break;
-	case 6:
-		{
-			GSList *a = gaim_accounts;
-			while (a) {
-				struct gaim_account *account = a->data;
-				XST_mIV(i++, account->protocol);
-				a = a->next;
+			break;
+
+		case 3:
+			{
+				struct gaim_connection *gc =
+					(struct gaim_connection *)SvIV(ST(1));
+
+				if (g_slist_find(connections, gc))
+					XST_mPV(i++, gc->username);
+				else
+					XST_mPV(i++, "");
 			}
-		}
-		break;
-	case 7:
-		{
-			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
-			if (g_slist_find(connections, gc))
-				XST_mPV(i++, gc->prpl->name);
-			else
-				XST_mPV(i++, "Unknown");
-		}
-		break;
-	default:
-		XST_mPV(0, "Error2");
-		i = 1;
+			break;
+
+		case 4:
+			{
+				struct gaim_connection *gc =
+					(struct gaim_connection *)SvIV(ST(1));
+
+				if (g_slist_find(connections, gc))
+					XST_mIV(i++, g_slist_index(gaim_accounts, gc->account));
+				else
+					XST_mIV(i++, -1);
+			}
+			break;
+
+		case 5:
+			{
+				GSList *a = gaim_accounts;
+				while (a) {
+					struct gaim_account *account = a->data;
+					XST_mPV(i++, account->username);
+					a = a->next;
+				}
+			}
+			break;
+
+		case 6:
+			{
+				GSList *a = gaim_accounts;
+				while (a) {
+					struct gaim_account *account = a->data;
+					XST_mIV(i++, account->protocol);
+					a = a->next;
+				}
+			}
+			break;
+
+		case 7:
+			{
+				struct gaim_connection *gc =
+					(struct gaim_connection *)SvIV(ST(1));
+
+				if (g_slist_find(connections, gc))
+					XST_mPV(i++, gc->prpl->info->name);
+				else
+					XST_mPV(i++, "Unknown");
+			}
+			break;
+
+		default:
+			XST_mPV(0, "Error2");
+			i = 1;
 	}
 
 	XSRETURN(i);
@@ -913,13 +911,21 @@ XS (XS_GAIM_print_to_chat)
 	XSRETURN(0);
 }
 
-int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4, void *arg5)
+static int
+perl_event(GaimEvent event, void *unused, va_list args)
 {
 	char *buf[5] = { NULL, NULL, NULL, NULL, NULL }; /* Maximum of 5 args */
+	void *arg1 = NULL, *arg2 = NULL, *arg3 = NULL, *arg4 = NULL, *arg5 = NULL;
 	char tmpbuf1[16], tmpbuf2[16], tmpbuf3[1];
 	GList *handler;
 	struct _perl_event_handlers *data;
 	int handler_return;
+
+	arg1 = va_arg(args, void *);
+	arg2 = va_arg(args, void *);
+	arg3 = va_arg(args, void *);
+	arg4 = va_arg(args, void *);
+	arg5 = va_arg(args, void *);
 
 	tmpbuf1[0] = '\0';
 	tmpbuf2[0] = '\0';
@@ -1044,18 +1050,24 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		/* we can't handle this usefully without gtk/perl bindings */
 		return 0;
 	default:
-		debug_printf("someone forgot to handle %s in the perl binding\n", event_name(event));
+		debug_printf("someone forgot to handle %s in the perl binding\n",
+					 gaim_event_get_name(event));
 		return 0;
 	}
 
 	/* Call any applicable functions */
-	for (handler = perl_event_handlers; handler != NULL; handler = handler->next) {
+	for (handler = perl_event_handlers;
+		 handler != NULL;
+		 handler = handler->next) {
+
 		data = handler->data;
-		if (!strcmp(event_name(event), data->event_type)) {
-			handler_return = execute_perl(data->handler_name, buf);
-			if (handler_return) {
+
+		if (!strcmp(gaim_event_get_name(event), data->event_type)) {
+
+			handler_return = execute_perl(data->handler_name, 5, buf);
+
+			if (handler_return)
 				return handler_return;
-			}
 		}
 	}
 
@@ -1117,17 +1129,18 @@ XS (XS_GAIM_add_event_handler)
 	unsigned int junk;
 	struct _perl_event_handlers *handler;
 	char *handle;
-	struct gaim_plugin *plug;
-	GList *p = plugins;
+	GaimPlugin *plug;
+	GList *p;
 	dXSARGS;
 	items = 0;
 	
 	handle = SvPV(ST(0), junk);
-	while (p) {
+
+	for (p = gaim_plugins_get_all(); p != NULL; p = p->next) {
 		plug = p->data;
+
 		if (!strcmp(handle, plug->path))
 			break;
-		p = p->next;
 	}
 
 	if (p) {
@@ -1169,13 +1182,14 @@ XS (XS_GAIM_remove_event_handler)
 	}
 }
 
-static int perl_timeout(gpointer data)
+static int
+perl_timeout(gpointer data)
 {
-	char *atmp[1] = { NULL };
+	char *atmp[2] = { NULL, NULL };
 	struct _perl_timeout_handlers *handler = data;
 
 	atmp[0] = escape_quotes(handler->handler_args);
-	execute_perl(handler->handler_name, atmp);
+	execute_perl(handler->handler_name, 1, atmp);
 
 	perl_timeout_handlers = g_list_remove(perl_timeout_handlers, handler);
 	g_free(handler->handler_args);
@@ -1191,18 +1205,19 @@ XS (XS_GAIM_add_timeout_handler)
 	long timeout;
 	struct _perl_timeout_handlers *handler;
 	char *handle;
-	struct gaim_plugin *plug;
-	GList *p = plugins;
+	GaimPlugin *plug;
+	GList *p;
 	
 	dXSARGS;
 	items = 0;
 	
 	handle = SvPV(ST(0), junk);
-	while (p) {
+
+	for (p = gaim_plugins_get_all(); p != NULL; p = p->next) {
 		plug = p->data;
+
 		if (!strcmp(handle, plug->path))
 			break;
-		p = p->next;
 	}
 
 	if (p) {
@@ -1234,11 +1249,142 @@ XS (XS_GAIM_play_sound)
 	XSRETURN_EMPTY;
 }
 
-extern void unload_perl_scripts()
+static gboolean
+probe_perl_plugin(GaimPlugin *plugin)
 {
-	perl_end();
-	perl_init();
+	/* XXX This would be much faster if I didn't create a new
+	 *     PerlInterpreter every time I probed a plugin */
+
+	GaimPluginInfo *info;
+	PerlInterpreter *prober = perl_alloc();
+	char *argv[] = {"", plugin->path };
+	int count;
+	gboolean status = TRUE;
+
+	perl_construct(prober);
+	perl_parse(prober, NULL, 2, argv, NULL);
+	
+	{
+		dSP;
+		ENTER;
+		SAVETMPS;
+		PUSHMARK(SP);
+
+		count = perl_call_pv("description", G_NOARGS | G_ARRAY | G_EVAL);
+		SPAGAIN;
+
+		if (count == 6) {
+			info = g_new0(GaimPluginInfo, 1);
+
+			info->api_version  = 2;
+			info->type         = GAIM_PLUGIN_STANDARD;
+
+			info->dependencies = g_list_append(info->dependencies,
+											   PERL_PLUGIN_ID);
+
+			POPp; /* iconfile */
+
+			info->homepage    = g_strdup(POPp);
+			info->author      = g_strdup(POPp);
+			info->description = g_strdup(POPp);
+			info->version     = g_strdup(POPp);
+			info->name        = g_strdup(POPp);
+
+			plugin->info = info;
+
+			if (!gaim_plugin_register(plugin))
+				status = FALSE;
+		}
+		else
+			status = FALSE;
+
+		PUTBACK;
+		FREETMPS;
+		LEAVE;
+	}
+
+	perl_destruct(prober);
+	perl_free(prober);
+
+	return status;
 }
 
+static gboolean
+load_perl_plugin(GaimPlugin *plugin)
+{
+	perl_load_file(plugin->path, plugin);
 
-#endif /* USE_PERL */
+	return TRUE;
+}
+
+static gboolean
+unload_perl_plugin(GaimPlugin *plugin)
+{
+	perl_unload_file(plugin);
+
+	return TRUE;
+}
+
+static void
+destroy_perl_plugin(GaimPlugin *plugin)
+{
+	if (plugin->info != NULL) {
+		g_free(plugin->info->name);
+		g_free(plugin->info->version);
+		g_free(plugin->info->description);
+		g_free(plugin->info->author);
+		g_free(plugin->info->homepage);
+	}
+}
+
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
+	perl_end();
+
+	return TRUE;
+}
+
+static GaimPluginLoaderInfo loader_info =
+{
+	NULL,                                             /**< exts           */
+
+	probe_perl_plugin,                                /**< probe          */
+	load_perl_plugin,                                 /**< load           */
+	unload_perl_plugin,                               /**< unload         */
+	destroy_perl_plugin,                              /**< destroy        */
+	perl_event                                        /**< broadcast      */
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_LOADER,                               /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	PERL_PLUGIN_ID,                                   /**< id             */
+	N_("Perl Plugin Loader"),                         /**< name           */
+	VERSION,                                          /**< version        */
+	N_("Provides support for loading perl plugins."), /**< summary        */
+	N_("Provides support for loading perl plugins."), /**< description    */
+	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&loader_info                                      /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+	loader_info.exts = g_list_append(loader_info.exts, "pl");
+}
+
+GAIM_INIT_PLUGIN(perl, __init_plugin, info);

@@ -120,9 +120,9 @@ void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 	buddy->uc = status;
 
 	if(!(status & UC_UNAVAILABLE))
-		plugin_event(event_buddy_back, buddy->account->gc, buddy->name);
+		gaim_event_broadcast(event_buddy_back, buddy->account->gc, buddy->name);
 	else
-		plugin_event(event_buddy_away, buddy->account->gc, buddy->name);
+		gaim_event_broadcast(event_buddy_away, buddy->account->gc, buddy->name);
 
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
@@ -133,7 +133,7 @@ static gboolean presence_update_timeout_cb(struct buddy *buddy) {
 
 	if(buddy->present == GAIM_BUDDY_SIGNING_ON) {
 		buddy->present = GAIM_BUDDY_ONLINE;
-		plugin_event(event_buddy_signon, buddy->account->gc, buddy->name);
+		gaim_event_broadcast(event_buddy_signon, buddy->account->gc, buddy->name);
 	} else if(buddy->present == GAIM_BUDDY_SIGNING_OFF) {
 		buddy->present = GAIM_BUDDY_OFFLINE;
 	}
@@ -152,11 +152,11 @@ void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
 
 	if (!GAIM_BUDDY_IS_ONLINE(buddy) && presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_ON;
-		plugin_event(event_buddy_signon, buddy->account->gc, buddy->name);
+		gaim_event_broadcast(event_buddy_signon, buddy->account->gc, buddy->name);
 		do_timer = TRUE;
 	} else if(GAIM_BUDDY_IS_ONLINE(buddy) && !presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_OFF;
-		plugin_event(event_buddy_signoff, buddy->account->gc, buddy->name);
+		gaim_event_broadcast(event_buddy_signoff, buddy->account->gc, buddy->name);
 		do_timer = TRUE;
 	}
 
@@ -813,7 +813,7 @@ static void do_import(struct gaim_account *account, const char *filename)
 	} else {
 		char *g_screenname = get_screenname_filename(account->username);
 		char *file = gaim_user_dir();
-		int protocol = (account->protocol == PROTO_OSCAR) ? (isalpha(account->username[0]) ? PROTO_TOC : PROTO_ICQ): account->protocol;
+		int protocol = (account->protocol == GAIM_PROTO_OSCAR) ? (isalpha(account->username[0]) ? GAIM_PROTO_TOC : GAIM_PROTO_ICQ): account->protocol;
 
 		if (file != (char *)NULL) {
 			sprintf(path, "%s" G_DIR_SEPARATOR_S "%s.%d.blist", file, g_screenname, protocol);

@@ -54,7 +54,7 @@ gint check_idle(gpointer data)
 #endif
 	int idle_time;
 
-	plugin_event(event_blist_update);
+	gaim_event_broadcast(event_blist_update);
 
 	time(&t);
 

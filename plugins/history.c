@@ -3,19 +3,16 @@
 
 #include "config.h"
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
-
 #include "gaim.h"
 #include "gtkimhtml.h"
+#include "gtkplugin.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
 
-#define HISTORY_SIZE (4 * 1024)
+#define HISTORY_PLUGIN_ID "core-history"
 
-GModule *handle;
+#define HISTORY_SIZE (4 * 1024)
 
 void historize (char *name, void *data)
 {
@@ -30,7 +27,7 @@ void historize (char *name, void *data)
 	char *tmp;
 	int size;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
-	
+
 	if (stat(path, &st) || S_ISDIR(st.st_mode) || st.st_size == 0 || 
 	    !(fd = fopen(path, "r"))) {
 		g_free(userdir);
@@ -38,12 +35,12 @@ void historize (char *name, void *data)
 		g_free(path);
 		return;
 	}
-      
+
 	fseek(fd, st.st_size > HISTORY_SIZE ? st.st_size - HISTORY_SIZE : 0, SEEK_SET);
 	size = fread(buf, 1, HISTORY_SIZE, fd);
 	tmp = buf;
 	tmp[size] = 0;
-	
+
 	/* start the history at a newline */
 	while (*tmp && *tmp != '\n')
 		tmp++;
@@ -62,21 +59,39 @@ void historize (char *name, void *data)
 	g_free(path);
 }
 
-G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
-	handle = h;
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
+	gaim_signal_connect(plugin, event_new_conversation, historize, NULL);
 
-	gaim_signal_connect(handle, event_new_conversation, historize, NULL);
-
-	return NULL;
+	return TRUE;
 }
 
-struct gaim_plugin_description desc; 
-G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("History"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("Shows recently logged conversations in new conversations "));
-	desc.authors = g_strdup("Sean Egan &lt;bj91704@binghamton.edu>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
+static GaimPluginInfo info =
+{
+	2,
+	GAIM_PLUGIN_STANDARD,
+	GAIM_GTK_PLUGIN_TYPE,
+	0,
+	NULL,
+	GAIM_PRIORITY_DEFAULT,
+	HISTORY_PLUGIN_ID,
+	N_("History"),
+	VERSION,
+	N_("Shows recently logged conversations in new conversations."),
+	N_("When a new conversation is opened this plugin will insert the last XXX of the last conversation into the current conversation."),
+	"Sean Egan <bj91704@binghamton.edu>",
+	WEBSITE,
+	plugin_load,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 }
+
+GAIM_INIT_PLUGIN(history, __init_plugin, info);

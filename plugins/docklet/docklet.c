@@ -28,14 +28,13 @@
 
 /* includes */
 #include <gtk/gtk.h>
+#include "gtkplugin.h"
 #include "gaim.h"
 #include "sound.h"
 #include "eggtrayicon.h"
 #include "gtklist.h"
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
+#define DOCKLET_PLUGIN_ID "gtk-docklet"
 
 /* types */
 enum docklet_status {
@@ -51,7 +50,7 @@ enum docklet_status {
 /* functions */
 static gboolean docklet_create();
 static gboolean docklet_update_status();
-void gaim_plugin_remove();
+static gboolean plugin_unload(GaimPlugin *plugin);
 
 /* globals */
 static EggTrayIcon *docklet = NULL;
@@ -326,7 +325,7 @@ static gboolean docklet_create() {
 		   something messed up. try destroying it before we proceed,
 		   although docklet_refcount may be all hosed. hopefully won't happen. */
 		debug_printf("Tray Icon: trying to create icon but it already exists?\n");
-		gaim_plugin_remove();
+		plugin_unload(NULL);
 	}
 
 	docklet = egg_tray_icon_new("Gaim");
@@ -394,24 +393,28 @@ static void gaim_buddy_back(struct gaim_connection *gc, char *who, void *data) {
 static void gaim_new_conversation(char *who, void *data) {
 } */
 
-char *gaim_plugin_init(GModule *handle) {
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
 	docklet_create(NULL);
 
-	gaim_signal_connect(handle, event_signon, gaim_signon, NULL);
-	gaim_signal_connect(handle, event_signoff, gaim_signoff, NULL);
-	gaim_signal_connect(handle, event_connecting, gaim_connecting, NULL);
-	gaim_signal_connect(handle, event_away, gaim_away, NULL);
-	gaim_signal_connect(handle, event_im_recv, gaim_im_recv, NULL);
-/*	gaim_signal_connect(handle, event_buddy_signon, gaim_buddy_signon, NULL);
-	gaim_signal_connect(handle, event_buddy_signoff, gaim_buddy_signoff, NULL);
-	gaim_signal_connect(handle, event_buddy_away, gaim_buddy_away, NULL);
-	gaim_signal_connect(handle, event_buddy_back, gaim_buddy_back, NULL);
-	gaim_signal_connect(handle, event_new_conversation, gaim_new_conversation, NULL); */
+	gaim_signal_connect(plugin, event_signon, gaim_signon, NULL);
+	gaim_signal_connect(plugin, event_signoff, gaim_signoff, NULL);
+	gaim_signal_connect(plugin, event_connecting, gaim_connecting, NULL);
+	gaim_signal_connect(plugin, event_away, gaim_away, NULL);
+	gaim_signal_connect(plugin, event_im_recv, gaim_im_recv, NULL);
+/*	gaim_signal_connect(plugin, event_buddy_signon, gaim_buddy_signon, NULL);
+	gaim_signal_connect(plugin, event_buddy_signoff, gaim_buddy_signoff, NULL);
+	gaim_signal_connect(plugin, event_buddy_away, gaim_buddy_away, NULL);
+	gaim_signal_connect(plugin, event_buddy_back, gaim_buddy_back, NULL);
+	gaim_signal_connect(plugin, event_new_conversation, gaim_new_conversation, NULL); */
 
-	return NULL;
+	return TRUE;
 }
 
-void gaim_plugin_remove() {
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
 	if (GTK_WIDGET_VISIBLE(docklet)) {
 		gaim_gtk_blist_docklet_remove();
 	}
@@ -430,9 +433,13 @@ void gaim_plugin_remove() {
 	gaim_sound_set_mute(FALSE);
 
 	debug_printf("Tray Icon: removed\n");
+
+	return TRUE;
 }
 
-GtkWidget *gaim_plugin_config_gtk() {
+static GtkWidget *
+get_config_frame(GaimPlugin *plugin)
+{
 	GtkWidget *frame;
 	GtkWidget *vbox, *hbox;
 	GtkWidget *toggle;
@@ -458,21 +465,45 @@ GtkWidget *gaim_plugin_config_gtk() {
 	return frame;
 }
 
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("System Tray Icon"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("Interacts with a Notification Area applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ."));
-	desc.authors = g_strdup("Robert McQueen &lt;robot101@debian.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
+static GaimGtkPluginUiInfo ui_info =
+{
+	get_config_frame
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	DOCKLET_PLUGIN_ID,                                /**< id             */
+	N_("System Tray Icon"),                           /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Displays an icon for Gaim in the system tray."),
+	                                                  /**  description    */
+	N_("Interacts with a Notification Area applet (in GNOME or KDE, "
+	   "for example) to display the current status of Gaim, allow fast "
+	   "access to commonly used functions, and to toggle display of the "
+	   "buddy list or login window. Also allows messages to be queued "
+	   "until the icon is clicked, similar to ICQ."),
+	"Robert McQueen <robot101@debian.org>",           /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	&ui_info,                                         /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 }
 
-char *name() {
-	return _("System Tray Icon");
-}
-
-char *description() {
-	return _("Interacts with a Notification Area applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ.");
-}
+GAIM_INIT_PLUGIN(docklet, __init_plugin, info);

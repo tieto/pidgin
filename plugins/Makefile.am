@@ -1,9 +1,12 @@
-SUBDIRS = docklet gestures ticker
+DIST_SUBDIRS = docklet gestures perl ticker
+
+if USE_PERL
+PERL_DIR = perl
+endif
+
+SUBDIRS = docklet gestures $(PERL_DIR) ticker
 
 plugindir = $(libdir)/gaim
-
-#CFLAGS += -I\$(top_srcdir) -I\$(top_srcdir)/src -DVERSION=\"$(VERSION)\" $(DEBUG_CFLAGS)
-
 
 autorecon_la_LDFLAGS = -module -avoid-version
 iconaway_la_LDFLAGS  = -module -avoid-version
@@ -32,7 +35,7 @@ history_la_SOURCES   = history.c
 timestamp_la_SOURCES = timestamp.c
 idle_la_SOURCES      = idle.c
 
-endif
+endif # PLUGINS
 
 EXTRA_DIST = \
 	ChangeLog PERL-HOWTO HOWTO SIGNALS \
@@ -51,7 +54,7 @@ AM_CPPFLAGS = \
 #
 SUFFIXES = .c .so
 .c.so:
-	$(LIBTOOL) --mode=compile $(CC) $(AM_CPPFLAGS) $(CFLAGS) -c $< -o tmp$@.lo $(PLUGIN_CFLAGS)
+	$(LIBTOOL) --mode=compile $(CC) -DHAVE_CONFIG $(AM_CPPFLAGS) $(CFLAGS) -c $< -o tmp$@.lo $(PLUGIN_CFLAGS)
 	$(LIBTOOL) --mode=link    $(CC) $(CFLAGS) -o libtmp$@.la -rpath $(plugindir) tmp$@.lo $(LIBS) $(LDFLAGS) -module -avoid-version $(PLUGIN_LIBS)
 	@rm -f tmp$@.lo tmp$@.o libtmp$@.la
 	@cp .libs/libtmp$@.so* $@

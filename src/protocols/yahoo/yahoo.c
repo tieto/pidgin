@@ -1381,9 +1381,10 @@ static void yahoo_remove_buddy(struct gaim_connection *gc, char *who, char *grou
 	yahoo_packet_free(pkt);
 }
 
-static struct prpl *my_protocol = NULL;
+static GaimPlugin *my_protocol = NULL;
 
-G_MODULE_EXPORT void yahoo_init(struct prpl *ret) {
+#if 0
+G_MODULE_EXPORT void yahoo_init(GaimPlugin *ret) {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_YAHOO;
 	ret->options = OPT_PROTO_MAIL_CHECK;
@@ -1429,3 +1430,107 @@ G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 }
 
 #endif
+#endif
+
+static GaimPluginProtocolInfo prpl_info =
+{
+	GAIM_PROTO_YAHOO,
+	OPT_PROTO_MAIL_CHECK,
+	NULL,
+	NULL,
+	yahoo_list_icon,
+	yahoo_list_emblems,
+	yahoo_status_text,
+	yahoo_tooltip_text,
+	yahoo_away_states,
+	yahoo_actions,
+	yahoo_buddy_menu,
+	NULL,
+	yahoo_login,
+	yahoo_close,
+	yahoo_send_im,
+	NULL,
+	yahoo_send_typing,
+	NULL,
+	yahoo_set_away,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	yahoo_set_idle,
+	NULL,
+	yahoo_add_buddy,
+	NULL,
+	yahoo_remove_buddy,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	yahoo_keepalive,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	"prpl-yahoo",                                     /**< id             */
+	"Yahoo",	                                      /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Yahoo Protocol Plugin"),
+	                                                  /**  description    */
+	N_("Yahoo Protocol Plugin"),
+	NULL,                                             /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&prpl_info                                        /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+	struct proto_user_opt *puo;
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Pager Host:");
+	puo->def   = g_strdup(YAHOO_PAGER_HOST);
+	puo->pos   = USEROPT_PAGERHOST;
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Pager Port:");
+	puo->def   = g_strdup("5050");
+	puo->pos   = USEROPT_PAGERPORT;
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
+
+	my_protocol = plugin;
+}
+
+GAIM_INIT_PLUGIN(yahoo, __init_plugin, info);

@@ -59,7 +59,7 @@
 
 #define DEFAULT_SERVER "irc.freenode.net"
 
-static struct prpl *my_protocol = NULL;
+static GaimPlugin *my_protocol = NULL;
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
@@ -1360,7 +1360,7 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		dccchat->port=atoi(chat_args[4]);		
 		g_snprintf(dccchat->nick, sizeof(dccchat->nick), nick);	
 		g_snprintf(ask, sizeof(ask), _("%s would like to establish a DCC chat"), nick);
-		do_ask_dialog(ask, _("This requires a direct connection to be established between the two computers.  Messages sent will not pass through the IRC server"), dccchat, _("Connect"), dcc_chat_init, _("Cancel"), dcc_chat_cancel, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+		do_ask_dialog(ask, _("This requires a direct connection to be established between the two computers.  Messages sent will not pass through the IRC server"), dccchat, _("Connect"), dcc_chat_init, _("Cancel"), dcc_chat_cancel, my_protocol->handle, FALSE);
 	}
 
 
@@ -2833,66 +2833,112 @@ irc_buddy_menu(struct gaim_connection *gc, const char *who)
 	return m;
 }
 
-G_MODULE_EXPORT void 
-irc_init(struct prpl *ret)
+static GaimPluginProtocolInfo prpl_info =
 {
-	struct proto_user_split *pus;
+	GAIM_PROTO_IRC,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
+	NULL,
+	NULL,
+	irc_list_icon,
+	irc_list_emblems,
+	NULL,
+	NULL,
+	irc_away_states,
+	NULL,
+	irc_buddy_menu,
+	irc_chat_info,
+	irc_login,
+	irc_close,
+	irc_send_im,
+	NULL,
+	NULL,
+	irc_get_info,
+	irc_set_away,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	irc_add_buddy,
+	NULL,
+	irc_remove_buddy,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	irc_join_chat,
+	irc_chat_invite,
+	irc_chat_leave,
+	NULL,
+	irc_chat_send,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	irc_convo_closed,
+	NULL
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	"prpl-irc",                                       /**< id             */
+	"IRC",                                            /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("IRC Protocol Plugin"),
+	                                                  /**  description    */
+	N_("IRC Protocol Plugin"),
+	NULL,                                             /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&prpl_info                                        /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 	struct proto_user_opt *puo;
-	ret->protocol = PROTO_IRC;
-	ret->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL;
-	ret->name = g_strdup("IRC");
-	ret->list_icon = irc_list_icon;
-	ret->list_emblems = irc_list_emblems;
-	ret->login = irc_login;
-	ret->close = irc_close;
-	ret->send_im = irc_send_im;
-	ret->add_buddy = irc_add_buddy;
-	ret->remove_buddy = irc_remove_buddy;
-	ret->chat_info = irc_chat_info;
-	ret->join_chat = irc_join_chat;
-	ret->chat_leave = irc_chat_leave;
-	ret->chat_send = irc_chat_send;
-	ret->away_states = irc_away_states;
-	ret->set_away = irc_set_away;
-	ret->get_info = irc_get_info;
-	ret->buddy_menu = irc_buddy_menu;
-	ret->chat_invite = irc_chat_invite;
-	ret->convo_closed = irc_convo_closed;
-#if 0
-	ret->file_transfer_out = irc_file_transfer_out; 
-	ret->file_transfer_in = irc_file_transfer_in;
-	ret->file_transfer_data_chunk = irc_file_transfer_data_chunk;
-	ret->file_transfer_done = irc_file_transfer_done;
-	ret->file_transfer_cancel =irc_file_transfer_cancel;
-#endif
+	struct proto_user_split *pus;
 
 	pus = g_new0(struct proto_user_split, 1);
 	pus->sep = '@';
 	pus->label = g_strdup(_("Server:"));
 	pus->def = g_strdup(DEFAULT_SERVER);
-	ret->user_splits = g_list_append(ret->user_splits, pus);
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, pus);
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));
 	puo->def = g_strdup("6667");
 	puo->pos = USEROPT_PORT;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Encoding:"));
 	puo->def = g_strdup("ISO-8859-1");
 	puo->pos = USEROPT_CHARSET;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
-	my_protocol = ret;
+	my_protocol = plugin;
 }
 
-#ifndef STATIC
-G_MODULE_EXPORT void 
-gaim_prpl_init(struct prpl* prpl)
-{
-	irc_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
-}
-
-#endif
+GAIM_INIT_PLUGIN(irc, __init_plugin, info);

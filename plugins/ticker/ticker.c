@@ -28,19 +28,18 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gaim.h"
+#include "prpl.h"
+#include "gtkplugin.h"
 #include "list.h"
 #include "gtklist.h"
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
+#define TICKER_PLUGIN_ID "gtk-ticker"
 
 static GtkWidget *tickerwindow = NULL;
 static GtkWidget *ticker;
-static GModule *handle;
 
 typedef struct {
 	struct buddy *buddy;
@@ -236,43 +235,69 @@ void away_cb(struct gaim_connection *gc, char *who) {
  *  EXPORTED FUNCTIONS
  */
 
-G_MODULE_EXPORT char *name() {
-	return _("Buddy Ticker");
-}
-
-G_MODULE_EXPORT char *description() {
-	return _("A horizontal scrolling version of the buddy list.");
-}
-
-G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
-	handle = h;
-
-	gaim_signal_connect(h, event_buddy_signon, signon_cb, NULL);
-	gaim_signal_connect(h, event_signoff, signoff_cb, NULL);
-	gaim_signal_connect(h, event_buddy_signoff, buddy_signoff_cb, NULL);
-	gaim_signal_connect(h, event_buddy_away, away_cb, NULL);
-	gaim_signal_connect(h, event_buddy_back, away_cb, NULL);
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
+	gaim_signal_connect(plugin, event_buddy_signon, signon_cb, NULL);
+	gaim_signal_connect(plugin, event_signoff, signoff_cb, NULL);
+	gaim_signal_connect(plugin, event_buddy_signoff, buddy_signoff_cb, NULL);
+	gaim_signal_connect(plugin, event_buddy_away, away_cb, NULL);
+	gaim_signal_connect(plugin, event_buddy_back, away_cb, NULL);
 
 	if (connections)
 		buddy_ticker_show();
-	return NULL;
+
+	return TRUE;
 }
 
-G_MODULE_EXPORT void gaim_plugin_remove() {
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
 	while(tickerbuds) {
 		g_free(tickerbuds->data);
 		tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
 	}
+
 	gtk_widget_destroy(tickerwindow);
+
+	return TRUE;
 }
 
-struct gaim_plugin_description desc;
-G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("Buddy Ticker"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("A horizontal scrolling version of the buddy list."));
-	desc.authors = g_strdup("Syd Logan");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
+static GaimGtkPluginUiInfo ui_info =
+{
+	NULL                                            /**< get_config_frame */
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	TICKER_PLUGIN_ID,                                 /**< id             */
+	N_("Buddy Ticker"),                               /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("A horizontal scrolling version of the buddy list."),
+	                                                  /**  description    */
+	N_("A horizontal scrolling version of the buddy list."),
+	"Syd Logan",                                      /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	&ui_info,                                         /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
 }
+
+GAIM_INIT_PLUGIN(ticker, __init_plugin, info);

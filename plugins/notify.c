@@ -20,10 +20,6 @@
 
 #include "config.h"
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
-
 #include "gaim.h"
 #include <string.h>
 #include <ctype.h>
@@ -33,6 +29,9 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
+#include "gtkplugin.h"
+
+#define NOTIFY_PLUGIN_ID "gtk-notify"
 
 guint type = 1;
 #define TYPE_IM				0x00000001
@@ -558,60 +557,9 @@ void apply_options(GtkWidget *widget, gpointer data) {
 	}
 }
 
-char *gaim_plugin_init(GModule *hndl) {
-	handle = hndl;
-	title_string = g_strdup("(*) ");
-
-	load_notify_prefs();
-
-	gaim_signal_connect(handle, event_im_recv, im_recv_im, NULL);
-	gaim_signal_connect(handle, event_chat_recv, chat_recv_im, NULL);
-	gaim_signal_connect(handle, event_im_send, im_sent_im, NULL);
-	gaim_signal_connect(handle, event_chat_send, chat_sent_im, NULL);
-	gaim_signal_connect(handle, event_new_conversation, new_conv, NULL);
-	gaim_signal_connect(handle, event_chat_join, chat_join, NULL);
-	return NULL;
-}
-
-void gaim_plugin_remove() {
-	GList *c = gaim_get_conversations();
-
-	while (c) {
-		struct gaim_conversation *cnv = (struct gaim_conversation *)c->data;
-		struct gaim_gtk_window *gtkwin;
-
-		gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(cnv));
-
-		detach_signals(cnv);
-		un_star(gtkwin->window, NULL);
-
-		c = c->next;
-	}
-	
-	/* this might be a hack I'm not sure, I don't think so but... */
-	g_free(title_string);
-}
-
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("Message Notification"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("Provides a variety of ways of notifying you of unread messages."));
-	desc.authors = g_strdup("Etan Reisner &lt;deryni@eden.rutgers.edu>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
-
-char *name() {
-	return _("Message Notification");
-}
-
-char *description() {
-	return _("Provides a variety of ways of notifying you of unread messages.");
-}
-
-GtkWidget *gaim_plugin_config_gtk() {
+static GtkWidget *
+get_config_frame(GaimPlugin *plugin)
+{
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox;
 	GtkWidget *toggle, *button;
@@ -688,3 +636,82 @@ GtkWidget *gaim_plugin_config_gtk() {
 	gtk_widget_show_all(ret);
 	return ret;
 }
+
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
+	title_string = g_strdup("(*) ");
+
+	load_notify_prefs();
+
+	gaim_signal_connect(plugin, event_im_recv, im_recv_im, NULL);
+	gaim_signal_connect(plugin, event_chat_recv, chat_recv_im, NULL);
+	gaim_signal_connect(plugin, event_im_send, im_sent_im, NULL);
+	gaim_signal_connect(plugin, event_chat_send, chat_sent_im, NULL);
+	gaim_signal_connect(plugin, event_new_conversation, new_conv, NULL);
+	gaim_signal_connect(plugin, event_chat_join, chat_join, NULL);
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
+	GList *c = gaim_get_conversations();
+
+	while (c) {
+		struct gaim_conversation *cnv = (struct gaim_conversation *)c->data;
+		struct gaim_gtk_window *gtkwin;
+
+		gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(cnv));
+
+		detach_signals(cnv);
+		un_star(gtkwin->window, NULL);
+
+		c = c->next;
+	}
+	
+	/* this might be a hack I'm not sure, I don't think so but... */
+	g_free(title_string);
+
+	return TRUE;
+}
+
+static GaimGtkPluginUiInfo ui_info =
+{
+	get_config_frame
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	NOTIFY_PLUGIN_ID,                                 /**< id             */
+	N_("Message Notification"),                       /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Provides a variety of ways of notifying you of unread messages."),
+	                                                  /**  description    */
+	N_("Provides a variety of ways of notifying you of unread messages."),
+	"Etan Reisner <deryni@eden.rutgers.edu>",         /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	&ui_info,                                         /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+}
+
+GAIM_INIT_PLUGIN(notify, __init_plugin, info);

@@ -36,7 +36,6 @@
 GSList *protocols = NULL;
 
 GtkWidget *protomenu = NULL;
-int prpl_accounts[PROTO_UNTAKEN];
 
 struct _prompt {
 	GtkWidget *window;
@@ -46,100 +45,25 @@ struct _prompt {
 	void *data;
 };
 
-struct prpl *find_prpl(GaimProtocol type)
+GaimPlugin *
+gaim_find_prpl(GaimProtocol type)
 {
-	GSList *e = protocols;
-	struct prpl *r;
+	GSList *l;
+	GaimPlugin *plugin;
 
-	while (e) {
-		r = (struct prpl *)e->data;
-		if (r->protocol == type)
-			return r;
-		e = e->next;
+	for (l = protocols; l != NULL; l = l->next) {
+		plugin = (GaimPlugin *)l->data;
+
+		/* Just In Case (TM) */
+		if (GAIM_IS_PROTOCOL_PLUGIN(plugin)) {
+
+			if (GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol == type)
+				return plugin;
+		}
 	}
 
 	return NULL;
 }
-
-gint proto_compare(struct prpl *a, struct prpl *b)
-{
-	/* neg if a before b, 0 if equal, pos if a after b */
-	return a->protocol - b->protocol;
-}
-
-#ifdef GAIM_PLUGINS
-gboolean load_prpl(struct prpl *p)
-{
-	char *(*gaim_prpl_init)(struct prpl *);
-	debug_printf("Loading protocol %d\n", p->protocol);
-
-	if (!p->plug)
-		return TRUE;
-	
-	p->plug->handle = g_module_open(p->plug->path, 0);
-	if (!p->plug->handle) {
-		debug_printf("%s is unloadable: %s\n", p->plug->path, g_module_error());
-		return TRUE;
-	}
-
-	if (!g_module_symbol(p->plug->handle, "gaim_prpl_init", (gpointer *)&gaim_prpl_init)) {
-		return TRUE;
-	}
-
-	gaim_prpl_init(p);
-	return FALSE;
-}
-#endif
-
-/* This is used only by static protocols */
-void load_protocol(proto_init pi)
-{
-	struct prpl *p = g_new0(struct prpl, 1);
-
-	if (p->protocol == PROTO_ICQ) 
-		do_error_dialog(_("ICQ Protocol detected."),
-				_("Gaim has loaded the ICQ plugin.  This plugin has been deprecated. "
-				  "As such, it was probably not compiled from the same version of the "
-				  "source as this application was, and cannot be guaranteed to work.  "
-				  "It is recommended that you use the AIM/ICQ protocol to connect to ICQ"),
-				GAIM_WARNING);
-	pi(p);
-	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);
-	regenerate_user_list();
-}
-
-void unload_protocol(struct prpl *p)
-{
-	GList *c;
-	struct proto_user_split *pus;
-	struct proto_user_opt *puo;
-	if (p->name)
-		g_free(p->name);
-
-	c = p->user_splits;
-	while (c) {
-		pus = c->data;
-		g_free(pus->label);
-		g_free(pus->def);
-		g_free(pus);
-		c = c->next;
-	}
-	g_list_free(p->user_splits);
-	p->user_splits = NULL;
-
-	c = p->user_opts;
-	while (c) {
-		puo = c->data;
-		g_free(puo->label);
-		g_free(puo->def);
-		g_free(puo);
-		c = c->next;
-	}
-	g_list_free(p->user_opts);
-	p->user_opts = NULL;
-}
-
-STATIC_PROTO_INIT
 
 static void des_win(GtkWidget *a, GtkWidget *b)
 {
@@ -156,7 +80,7 @@ struct doaskstruct {
 	gpointer data;
 };
 
-void do_ask_cancel_by_handle(GModule *handle)
+void do_ask_cancel_by_handle(void *handle)
 {
 	GSList *d = do_ask_dialogs;
 
@@ -335,6 +259,7 @@ void do_proto_menu()
 {
 	GtkWidget *menuitem;
 	GtkWidget *submenu;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	GList *l;
 	GSList *c = connections;
 	struct proto_actions_menu *pam;
@@ -357,8 +282,12 @@ void do_proto_menu()
 
 	while (c) {
 		gc = c->data;
-		if (gc->prpl->actions && gc->login_time)
+
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+		if (prpl_info->actions && gc->login_time)
 			count++;
+
 		c = g_slist_next(c);
 	}
 	c = connections;
@@ -375,12 +304,16 @@ void do_proto_menu()
 		GList *act;
 		while (c) {
 			gc = c->data;
-			if (gc->prpl->actions && gc->login_time)
+
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+			if (prpl_info->actions && gc->login_time)
 				break;
+
 			c = g_slist_next(c);
 		}
 
-		act = gc->prpl->actions(gc);
+		act = prpl_info->actions(gc);
 
 		while (act) {
 			if (act->data) {
@@ -403,12 +336,16 @@ void do_proto_menu()
 			GtkWidget *image;
 
 			gc = c->data;
-			if (!gc->prpl->actions || !gc->login_time) {
+
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+			if (!prpl_info->actions || !gc->login_time) {
 				c = g_slist_next(c);
 				continue;
 			}
 
-			g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, gc->prpl->name);
+			g_snprintf(buf, sizeof(buf), "%s (%s)",
+					   gc->username, gc->prpl->info->name);
 			menuitem = gtk_image_menu_item_new_with_label(buf);
 
 			pixbuf = create_prpl_icon(gc->account);
@@ -429,7 +366,7 @@ void do_proto_menu()
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 			gtk_widget_show(submenu);
 
-			act = gc->prpl->actions(gc);
+			act = prpl_info->actions(gc);
 
 			while (act) {
 				if (act->data) {
@@ -782,9 +719,11 @@ static void reset_reg_dlg()
 				     ((GtkBoxChild *)GTK_BOX(reg_area)->children->data)->widget);
 
 	while (P) {
-		struct prpl *p = P->data;
-		if (p->register_user)
+		GaimPlugin *p = P->data;
+
+		if (GAIM_PLUGIN_PROTOCOL_INFO(p)->register_user)
 			break;
+
 		P = P->next;
 	}
 
@@ -802,10 +741,10 @@ static void reset_reg_dlg()
 	gtk_widget_set_sensitive(reg_reg, TRUE);
 
 	while (P) {	/* we can safely ignore all the previous ones */
-		struct prpl *p = P->data;
+		GaimPlugin *p = P->data;
 		P = P->next;
 
-		if (!p->register_user)
+		if (GAIM_PLUGIN_PROTOCOL_INFO(p)->register_user)
 			continue;
 
 		/* do stuff */
@@ -858,40 +797,5 @@ void register_dialog()
 	reset_reg_dlg();
 
 	gtk_widget_show_all(regdlg);
-}
-
-static gboolean delayed_unload(void *handle) {
-	g_module_close(handle);
-	return FALSE;
-}
-
-gboolean ref_protocol(struct prpl *p) {
-#ifdef GAIM_PLUGINS
-	if(p->plug) { /* This protocol is a plugin */
-		prpl_accounts[p->protocol]++;
-		debug_printf("Protocol %s refcount now %d\n", p->name, prpl_accounts[p->protocol]);
-		if(!p->plug->handle) { /*But the protocol isn't yet loaded */
-			unload_protocol(p);
-			if (load_prpl(p))
-				return FALSE;
-		}
-	}
-#endif /* GAIM_PLUGINS */
-	return TRUE;
-}
-
-void unref_protocol(struct prpl *p) {
-#ifdef GAIM_PLUGINS
-	if(p->plug) { /* This protocol is a plugin */
-		prpl_accounts[p->protocol]--;
-		debug_printf("Protocol %s refcount now %d\n", p->name, prpl_accounts[p->protocol]);
-		if(prpl_accounts[p->protocol] == 0) { /* No longer needed */
-			debug_printf("Throwing out %s protocol plugin\n", p->name);
-			do_ask_cancel_by_handle(p->plug->handle);
-			g_timeout_add(0, delayed_unload, p->plug->handle);
-			p->plug->handle = NULL;
-		}
-	}
-#endif /* GAIM_PLUGINS */
 }
 

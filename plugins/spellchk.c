@@ -3,18 +3,15 @@
  * or nearly directly from xchat, version 1.4.2 by Peter Zelezny and others.
  *
  * TODO:
- * 	? I think i did everything i want to with it.
+ *	? I think i did everything i want to with it.
  *
  * BUGS:
- * 	? I think i fixed them all.
+ *	? I think i fixed them all.
  */
 #include "config.h"
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
-
 #include "gaim.h"
+#include "gtkplugin.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -26,6 +23,8 @@
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
+
+#define SPELLCHECK_PLUGIN_ID "gtk-spellcheck"
 
 enum {
 	BAD_COLUMN,
@@ -382,37 +381,19 @@ static void on_entry_changed(GtkEditable *editable, gpointer data)
  *  EXPORTED FUNCTIONS
  */
 
-G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
 	load_conf();
 
-	gaim_signal_connect(handle, event_im_send, substitute_words, NULL);
-	gaim_signal_connect(handle, event_chat_send, substitute_words, NULL);
-	return NULL;
+	gaim_signal_connect(plugin, event_im_send, substitute_words, NULL);
+	gaim_signal_connect(plugin, event_chat_send, substitute_words, NULL);
+
+	return TRUE;
 }
 
-G_MODULE_EXPORT void gaim_plugin_remove() {
-}
-
-struct gaim_plugin_description desc; 
-G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("Text replacement"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("Replaces text in outgoing messages according to user-defined rules."));
-	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
- 
-G_MODULE_EXPORT char *name() {
-	return _("Text replacement");
-}
-
-G_MODULE_EXPORT char *description() {
-	return _("Replaces text in outgoing messages according to user-defined rules.");
-}
-
-G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
+static GtkWidget *
+get_config_frame(GaimPlugin *plugin)
 {
 	GtkWidget *ret, *vbox, *win;
 	GtkWidget *hbox, *label;
@@ -534,3 +515,37 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()
 	gtk_widget_show_all(ret);
 	return ret;
 }
+
+static GaimGtkPluginUiInfo ui_info =
+{
+	get_config_frame
+};
+
+static GaimPluginInfo info =
+{
+	2,
+	GAIM_PLUGIN_STANDARD,
+	GAIM_GTK_PLUGIN_TYPE,
+	0,
+	NULL,
+	GAIM_PRIORITY_DEFAULT,
+	SPELLCHECK_PLUGIN_ID,
+	N_("Text replacement"),
+	VERSION,
+	N_("Replaces text in outgoing messages according to user-defined rules."),
+	N_("Replaces text in outgoing messages according to user-defined rules."),
+	"Eric Warmnenhoven <eric@warmenhoven.org>",
+	WEBSITE,
+	plugin_load,
+	NULL,
+	NULL,
+	&ui_info,
+	NULL
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+}
+
+GAIM_INIT_PLUGIN(spellcheck, __init_plugin, info);

@@ -217,7 +217,7 @@ common_send(struct gaim_conversation *conv, const char *message)
 	else
 		buffy = g_strdup(buf);
 
-	plugin_return = plugin_event(
+	plugin_return = gaim_event_broadcast(
 			(type == GAIM_CONV_IM ? event_im_send : event_chat_send),
 			gc,
 			(type == GAIM_CONV_IM
@@ -245,7 +245,7 @@ common_send(struct gaim_conversation *conv, const char *message)
 		struct gaim_im *im = GAIM_IM(conv);
 
 		buffy = g_strdup(buf);
-		plugin_event(event_im_displayed_sent, gc,
+		gaim_event_broadcast(event_im_displayed_sent, gc,
 					 gaim_conversation_get_name(conv), &buffy);
 
 		if (buffy != NULL) {
@@ -918,7 +918,7 @@ gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 		place_conv(conv);
 	}
 
-	plugin_event(event_new_conversation, name);
+	gaim_event_broadcast(event_new_conversation, name);
 
 	return conv;
 }
@@ -926,6 +926,7 @@ gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 void
 gaim_conversation_destroy(struct gaim_conversation *conv)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_window *win;
 	struct gaim_conversation_ui_ops *ops;
 	struct gaim_connection *gc;
@@ -940,12 +941,14 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 	gc   = gaim_conversation_get_gc(conv);
 	name = gaim_conversation_get_name(conv);
 
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		if (!(misc_options & OPT_MISC_STEALTH_TYPING))
 			serv_send_typing(gc, (char *)name, NOT_TYPING);
 
-		if (gc && gc->prpl->convo_closed != NULL)
-			gc->prpl->convo_closed(gc, (char *)name);
+		if (gc && prpl_info->convo_closed != NULL)
+			prpl_info->convo_closed(gc, (char *)name);
 	}
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		/*
@@ -972,7 +975,7 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		}
 	}
 
-	plugin_event(event_del_conversation, conv);
+	gaim_event_broadcast(event_del_conversation, conv);
 
 	if (conv->name  != NULL) g_free(conv->name);
 	if (conv->title != NULL) g_free(conv->title);
@@ -1403,6 +1406,7 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 						const char *message, size_t length, int flags,
 						time_t mtime)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_account *account;
 	struct gaim_conversation_ui_ops *ops;
 	struct gaim_window *win;
@@ -1428,8 +1432,10 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 		!g_list_find(gaim_get_conversations(), conv))
 		return;
 
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM ||
-		!(account->gc->prpl->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
 		if (who == NULL) {
 			if (flags & WFLAG_SEND) {
@@ -1939,7 +1945,7 @@ gaim_chat_add_user(struct gaim_chat *chat, const char *user,
 		g_list_insert_sorted(gaim_chat_get_users(chat), g_strdup(user),
 							 insertname_compare));
 
-	plugin_event(event_chat_buddy_join,
+	gaim_event_broadcast(event_chat_buddy_join,
 				 gaim_conversation_get_gc(conv), gaim_chat_get_id(chat),
 				 user);
 
@@ -2021,7 +2027,7 @@ gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
 	conv = gaim_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
-	plugin_event(event_chat_buddy_leave, gaim_conversation_get_gc(conv),
+	gaim_event_broadcast(event_chat_buddy_leave, gaim_conversation_get_gc(conv),
 				 gaim_chat_get_id(chat), user);
 
 	if (ops != NULL && ops->chat_remove_user != NULL)

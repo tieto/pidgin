@@ -32,6 +32,7 @@
 #include "prpl.h"
 #include "gtkimhtml.h"
 #include "gtklist.h"
+#include "plugin.h"
 
 GtkWidget *imaway = NULL;
 
@@ -349,6 +350,8 @@ void do_away_menu()
 	struct away_message *a;
 	GSList *con = connections;
 	struct gaim_connection *gc = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
 	int count = 0;
 
 	if (prefs_away_store != NULL) {
@@ -406,7 +409,10 @@ void do_away_menu()
 
 		while (con) {
 			gc = con->data;
-			if (gc->prpl->away_states &&gc->prpl->set_away)
+
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+			if (prpl_info->away_states != NULL && prpl_info->set_away != NULL)
 				count++;
 			con = g_slist_next(con);
 		}
@@ -417,12 +423,15 @@ void do_away_menu()
 			GList *msgs, *tmp;
 			while (con) {
 				gc = con->data;
-				if (gc->prpl->away_states &&gc->prpl->set_away)
+
+				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+				if (prpl_info->away_states && prpl_info->set_away)
 					break;
 				con = g_slist_next(con);
 			}
 
-			tmp = msgs = gc->prpl->away_states(gc);
+			tmp = msgs = prpl_info->away_states(gc);
 
 			if ((g_list_length(msgs) == 1) && !strcmp(msgs->data, GAIM_AWAY_CUSTOM)) {
 				awy = away_messages;
@@ -484,13 +493,15 @@ void do_away_menu()
 				GList *msgs, *tmp;
 				gc = con->data;
 
-				if (!gc->prpl->away_states ||!gc->prpl->set_away) {
+				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+				if (!prpl_info->away_states || !prpl_info->set_away) {
 					con = con->next;
 					continue;
 				}
 
 				g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gc->username, gc->prpl->name);
+					   gc->username, gc->prpl->info->name);
 				menuitem = gtk_image_menu_item_new_with_label(buf);
 
 				pixbuf = create_prpl_icon(gc->account);
@@ -511,7 +522,7 @@ void do_away_menu()
 				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 				gtk_widget_show(submenu);
 
-				tmp = msgs = gc->prpl->away_states(gc);
+				tmp = msgs = prpl_info->away_states(gc);
 
 				if ((g_list_length(msgs) == 1) &&
 				    (!strcmp(msgs->data, GAIM_AWAY_CUSTOM))) {

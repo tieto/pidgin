@@ -190,7 +190,7 @@ static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 {
 #ifdef GAIM_PLUGINS
 	guint id;
-	struct gaim_plugin *p;
+	GaimPlugin *p;
 
 	switch (subtype) {
 		/*
@@ -198,15 +198,13 @@ static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 		break;
 		*/
 	case CUI_PLUGIN_LOAD:
-		p = load_plugin(data);
-		/* XXX need to broadcast to UIs that plugin has been loaded */
+		gaim_plugin_load(gaim_plugin_probe(data));
 		break;
 	case CUI_PLUGIN_UNLOAD:
 		memcpy(&id, data, sizeof(id));
-		p = g_list_nth_data(plugins, id);
+		p = g_list_nth_data(gaim_plugins_get_loaded(), id);
 		if (p) {
-			unload_plugin(p);
-			/* XXX need to broadcast to UIs that plugin has been unloaded */
+			gaim_plugin_unload(p);
 		}
 		break;
 	default:

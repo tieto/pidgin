@@ -237,7 +237,7 @@ void smiley_theme_probe()
 }
 
 GSList *get_proto_smileys(int protocol) {
-	struct prpl *proto = find_prpl(protocol);
+	GaimPlugin *proto = gaim_find_prpl(protocol);
 	struct smiley_list *list, *def;
 
 	if(!current_smiley_theme)
@@ -248,7 +248,7 @@ GSList *get_proto_smileys(int protocol) {
 	while(list) {
 		if(!strcmp(list->sml, "default"))
 			def = list;
-		else if(proto && !strcmp(proto->name, list->sml))
+		else if(proto && !strcmp(proto->info->name, list->sml))
 			break;
 
 		list = list->next;

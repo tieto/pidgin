@@ -214,7 +214,7 @@ static GtkWidget *
 pounce_user_menu(struct gaim_gtkpounce_dialog *dialog)
 {
 	struct gaim_account *account;
-	struct prpl *prpl;
+	GaimPlugin *prpl;
 	GtkWidget *opt_menu;
 	GtkWidget *menu;
 	GtkWidget *item;
@@ -228,10 +228,11 @@ pounce_user_menu(struct gaim_gtkpounce_dialog *dialog)
 	for (l = gaim_accounts, count = 0; l != NULL; l = l->next, count++) {
 		account = (struct gaim_account *)l->data;
 
-		prpl = (struct prpl *)find_prpl(account->protocol);
+		prpl = gaim_find_prpl(account->protocol);
 
 		g_snprintf(buf, sizeof(buf), "%s (%s)", account->username,
-				   (prpl && prpl->name) ? prpl->name : _("Unknown"));
+				   (prpl && prpl->info->name)
+				   ? prpl->info->name : _("Unknown"));
 
 		item = gtk_menu_item_new_with_label(buf);
 		g_object_set_data(G_OBJECT(item), "user_data", account);

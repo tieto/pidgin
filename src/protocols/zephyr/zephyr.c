@@ -950,39 +950,93 @@ static const char *zephyr_list_icon(struct gaim_account *a, struct buddy *b)
 	return "zephyr";
 }
 
-static struct prpl *my_protocol = NULL;
+static GaimPlugin *my_protocol = NULL;
 
-void zephyr_init(struct prpl *ret)
+static GaimPluginProtocolInfo prpl_info =
 {
-	ret->protocol = PROTO_ZEPHYR;
-	ret->options = OPT_PROTO_NO_PASSWORD;
-	ret->name = g_strdup("Zephyr");
-	ret->list_icon = zephyr_list_icon;
-	ret->login = zephyr_login;
-	ret->close = zephyr_close;
-	ret->add_buddy = zephyr_add_buddy;
-	ret->remove_buddy = zephyr_remove_buddy;
-	ret->send_im = zephyr_send_im;
-	ret->get_info = zephyr_zloc;
-	ret->normalize = zephyr_normalize;
-	ret->buddy_menu = zephyr_buddy_menu;
-	ret->away_states = zephyr_away_states;
-	ret->set_away = zephyr_set_away;
-	ret->chat_info = zephyr_chat_info;
-	ret->join_chat = zephyr_join_chat;
-	ret->chat_send = zephyr_chat_send;
-	ret->chat_leave = zephyr_chat_leave;
+	GAIM_PROTO_ZEPHYR,
+	OPT_PROTO_NO_PASSWORD,
+	NULL,
+	NULL,
+	zephyr_list_icon,
+	NULL,
+	NULL,
+	NULL,
+	zephyr_away_states,
+	NULL,
+	zephyr_buddy_menu,
+	zephyr_chat_info,
+	zephyr_login,
+	zephyr_close,
+	zephyr_send_im,
+	NULL,
+	NULL,
+	zephyr_zloc,
+	zephyr_set_away,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	zephyr_add_buddy,
+	NULL,
+	zephyr_remove_buddy,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	zephyr_join_chat,
+	NULL,
+	zephyr_chat_leave,
+	NULL,
+	zephyr_chat_send,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	zephyr_normalize
+};
 
-	my_protocol = ret;
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	"prpl-zephyr",                                     /**< id             */
+	"Zephyr",                                        /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Zephyr Protocol Plugin"),
+	                                                  /**  description    */
+	N_("Zephyr Protocol Plugin"),
+	NULL,                                             /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	NULL,                                             /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&prpl_info                                        /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+	my_protocol = plugin;
 }
 
-#ifndef STATIC
-
-G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
-{
-	zephyr_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
-}
-
-
-#endif
+GAIM_INIT_PLUGIN(zephyr, __init_plugin, info);

@@ -53,6 +53,8 @@ struct buddy;
 #include "conversation.h"
 #include "ft.h"
 #include "privacy.h"
+#include "plugin.h"
+#include "event.h"
 
 /* Really user states are controlled by the PRPLs now. We just use this for event_away */
 #define UC_UNAVAILABLE  1
@@ -84,90 +86,14 @@ struct gaim_account {
 	int permdeny;
 };
 
-enum gaim_event {
-	event_signon = 0,
-	event_signoff,
-	event_away,
-	event_back,
-	event_im_recv,
-	event_im_send,
-	event_buddy_signon,
-	event_buddy_signoff,
-	event_buddy_away,
-	event_buddy_back,
-	event_buddy_idle,
-	event_buddy_unidle,
-	event_blist_update,
-	event_chat_invited,
-	event_chat_join,
-	event_chat_leave,
-	event_chat_buddy_join,
-	event_chat_buddy_leave,
-	event_chat_recv,
-	event_chat_send,
-	event_warned,
-	event_error,
-	event_quit,
-	event_new_conversation,
-	event_set_info,
-	event_draw_menu,
-	event_im_displayed_sent,
-	event_im_displayed_rcvd,
-	event_chat_send_invite,
-	event_got_typing,
-	event_del_conversation,
-	event_connecting,
-	/* any others? it's easy to add... */
-};
-
 struct UI {
 	GIOChannel *channel;
 	guint inpa;
 };
 
-#define USE_PLUGINS GAIM_PLUGINS || USE_PERL
-#define PLUGIN_API_VERSION 1
-enum gaim_plugin_type {
-	perl_script,
-	plugin
-};
-
-struct gaim_plugin_description {	
-	int api_version;
-	gchar *name;
-	gchar *version;
-	gchar *description;
-	gchar *authors;
-	gchar *url;
-	gchar *iconfile;
-};
-
-struct gaim_plugin {
-	enum gaim_plugin_type type;
-	void *handle;
-	gchar path[128];
-	struct gaim_plugin_description desc;
-	gchar error[128];
-	void *iter;
-};
-
-#ifdef GAIM_PLUGINS
-struct gaim_callback {
-	GModule *handle;
-	enum gaim_event event;
-	void *function;
-	void *data;
-};
-#endif
-
 /* Globals in core.c */
 extern GSList *uis;
 extern int gaim_session;
-
-/* Globals in plugins.c */
-extern GList *plugins;
-extern GList *probed_plugins;
-extern GList *callbacks;
 
 /* Functions in core.c */
 extern gint UI_write(struct UI *, guchar *, int);
@@ -183,31 +109,6 @@ extern void core_quit();
 extern void load_prefs();
 extern void load_pounces();
 extern void save_prefs();
-
-/* Functions in perl.c */
-#ifdef USE_PERL
-extern void perl_end();
-extern int perl_event(enum gaim_event, void *, void *, void *, void *, void *);
-extern int perl_load_file(char *);
-extern void perl_unload_file(struct gaim_plugin *);
-extern void unload_perl_scripts();
-extern void list_perl_scripts();
-extern struct gaim_plugin *probe_perl(char *);
-#endif
-
-/* Functions in plugins.c */
-#ifdef GAIM_PLUGINS
-extern struct gaim_plugin *load_plugin(const char *);
-extern void unload_plugin(struct gaim_plugin *);
-extern struct gaim_plugin *reload_plugin(struct gaim_plugin *);
-extern void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
-extern void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
-extern void gaim_plugin_unload(GModule *);
-extern void remove_all_plugins();
-#endif
-extern void gaim_probe_plugins();
-extern int plugin_event(enum gaim_event, ...);
-extern char *event_name(enum gaim_event);
 
 /* Functions in server.c */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int);

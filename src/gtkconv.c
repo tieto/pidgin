@@ -635,6 +635,7 @@ menu_im_cb(GtkWidget *w, struct gaim_conversation *conv)
 static void
 menu_info_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_connection *gc;
 	char *who;
 
@@ -642,20 +643,23 @@ menu_info_cb(GtkWidget *w, struct gaim_conversation *conv)
 	who = g_object_get_data(G_OBJECT(w), "user_data");
 
 	if (gc != NULL) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
 		/*
 		 * If there are special needs for getting info on users in
 		 * buddy chat "rooms"...
 		 */
-		if (gc->prpl->get_cb_info != NULL)
-			gc->prpl->get_cb_info(gc, gaim_chat_get_id(GAIM_CHAT(conv)), who);
+		if (prpl_info->get_cb_info != NULL)
+			prpl_info->get_cb_info(gc, gaim_chat_get_id(GAIM_CHAT(conv)), who);
 		else
-			gc->prpl->get_info(gc, who);
+			prpl_info->get_info(gc, who);
 	}
 }
 
 static void
 menu_away_cb(GtkWidget *w, struct gaim_conversation *conv)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_connection *gc;
 	char *who;
 
@@ -663,12 +667,14 @@ menu_away_cb(GtkWidget *w, struct gaim_conversation *conv)
 	who = g_object_get_data(G_OBJECT(w), "user_data");
 
 	if (gc != NULL) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
 		/*
 		 * May want to expand this to work similarly to menu_info_cb?
 		 */
 
-		if (gc->prpl->get_cb_away != NULL)
-			gc->prpl->get_cb_away(gc, gaim_chat_get_id(GAIM_CHAT(conv)), who);
+		if (prpl_info->get_cb_away != NULL)
+			prpl_info->get_cb_away(gc, gaim_chat_get_id(GAIM_CHAT(conv)), who);
 	}
 }
 
@@ -695,6 +701,7 @@ static gint
 right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 					struct gaim_conversation *conv)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
 	struct gaim_connection *gc;
@@ -718,6 +725,9 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	if (path == NULL)
 		return FALSE;
+
+	if (gc != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	gtk_tree_selection_select_path(GTK_TREE_SELECTION(
 			gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list))), path);
@@ -769,7 +779,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 
-		if (gc && gc->prpl->get_info) {
+		if (gc && prpl_info->get_info) {
 			button = gtk_menu_item_new_with_label(_("Info"));
 			g_signal_connect(G_OBJECT(button), "activate",
 							 G_CALLBACK(menu_info_cb), conv);
@@ -778,7 +788,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 			gtk_widget_show(button);
 		}
 
-		if (gc && gc->prpl->get_cb_away) {
+		if (gc && prpl_info->get_cb_away) {
 			button = gtk_menu_item_new_with_label(_("Get Away Msg"));
 			g_signal_connect(G_OBJECT(button), "activate",
 							 G_CALLBACK(menu_away_cb), conv);
@@ -1715,6 +1725,7 @@ static void
 switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 				gpointer user_data)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_window *win;
 	struct gaim_conversation *conv;
 	struct gaim_gtk_conversation *gtkconv;
@@ -1736,13 +1747,14 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	if (gc != NULL) {
 		gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 	}
 
 	/* Update the menubar */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.insert_image,
-			(gc && gc->prpl->options & OPT_PROTO_IM_IMAGE));
+			(gc && prpl_info->options & OPT_PROTO_IM_IMAGE));
 
 		if (gtkwin->menu.send_as != NULL)
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
@@ -2922,6 +2934,7 @@ build_conv_toolbar(struct gaim_conversation *conv)
 static GtkWidget *
 setup_chat_pane(struct gaim_conversation *conv)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_gtk_chat_pane *gtkchat;
 	struct gaim_connection *gc;
@@ -2950,7 +2963,10 @@ setup_chat_pane(struct gaim_conversation *conv)
 	gtk_paned_pack1(GTK_PANED(vpaned), vbox, TRUE, FALSE);
 	gtk_widget_show(vbox);
 
-	if (gc->prpl->options & OPT_PROTO_CHAT_TOPIC)
+	if (gc != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info->options & OPT_PROTO_CHAT_TOPIC)
 	{
 		hbox = gtk_hbox_new(FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
@@ -3746,6 +3762,7 @@ static struct gaim_window_ui_ops window_ui_ops =
 static void
 update_convo_add_button(struct gaim_conversation *conv)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_connection *gc;
 	GaimConversationType type;
@@ -3756,6 +3773,8 @@ update_convo_add_button(struct gaim_conversation *conv)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	parent  = gtk_widget_get_parent(gtkconv->u.im->add);
 
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
 	if (gaim_find_buddy(gc->account, gaim_conversation_get_name(conv))) {
 		gtkconv->u.im->add =
 			gaim_gtk_change_text(_("Remove"), gtkconv->u.im->add,
@@ -3764,7 +3783,7 @@ update_convo_add_button(struct gaim_conversation *conv)
 			_("Remove the user from your buddy list"), NULL);
 
 		gtk_widget_set_sensitive(gtkconv->u.im->add,
-			(gc != NULL && gc->prpl->remove_buddy != NULL));
+			(gc != NULL && prpl_info->remove_buddy != NULL));
 	} else {
 		gtkconv->u.im->add =
 			gaim_gtk_change_text(_("Add"), gtkconv->u.im->add,
@@ -3773,7 +3792,7 @@ update_convo_add_button(struct gaim_conversation *conv)
 			_("Add the user to your buddy list"), NULL);
 
 		gtk_widget_set_sensitive(gtkconv->u.im->add,
-			(gc != NULL && gc->prpl->add_buddy != NULL));
+			(gc != NULL && prpl_info->add_buddy != NULL));
 	}
 
 	g_signal_connect(G_OBJECT(gtkconv->u.im->add), "clicked",
@@ -3927,7 +3946,7 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 		strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
 
 	if(gc)
-		sml_attrib = g_strdup_printf("sml=\"%s\"", gc->prpl->name);
+		sml_attrib = g_strdup_printf("sml=\"%s\"", gc->prpl->info->name);
 
 	gtk_font_options ^= GTK_IMHTML_NO_COMMENTS;
 
@@ -5039,6 +5058,7 @@ gaim_gtkconv_update_im_button_style()
 void
 gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct gaim_window *win;
 	struct gaim_gtk_window *gtkwin = NULL;
 	struct gaim_gtk_conversation *gtkconv;
@@ -5062,6 +5082,8 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 		}
 	}
 	else {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
 		gtk_widget_set_sensitive(gtkconv->send, TRUE);
 		if (win != NULL) {
 			gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
@@ -5085,21 +5107,21 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 		}
 
 		gtk_widget_set_sensitive(gtkconv->info,
-								 (gc->prpl->get_info != NULL));
+								 (prpl_info->get_info != NULL));
 
 		gtk_widget_set_sensitive(gtkconv->toolbar.image,
-								 (gc->prpl->options & OPT_PROTO_IM_IMAGE));
+								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
 
 		if (win != NULL && gaim_window_get_active_conversation(win) == conv) {
 			gtk_widget_set_sensitive(gtkwin->menu.insert_image,
-									 (gc->prpl->options & OPT_PROTO_IM_IMAGE));
+									 (prpl_info->options & OPT_PROTO_IM_IMAGE));
 		}
 
 		gtk_widget_set_sensitive(gtkconv->u.im->warn,
-								 (gc->prpl->warn != NULL));
+								 (prpl_info->warn != NULL));
 
 		gtk_widget_set_sensitive(gtkconv->u.im->block,
-								 (gc->prpl->add_permit != NULL));
+								 (prpl_info->add_permit != NULL));
 
 		update_convo_add_button(conv);
 	}
@@ -5111,16 +5133,16 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 			return;
 		}
 
-		gtk_widget_set_sensitive(gtkconv->send, (gc->prpl->chat_send != NULL));
+		gtk_widget_set_sensitive(gtkconv->send, (prpl_info->chat_send != NULL));
 
 		gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
 		/* gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE); */
 
 		gtk_widget_set_sensitive(gtkconv->u.chat->whisper,
-								 (gc->prpl->chat_whisper != NULL));
+								 (prpl_info->chat_whisper != NULL));
 
 		gtk_widget_set_sensitive(gtkconv->u.chat->invite,
-								 (gc->prpl->chat_invite != NULL));
+								 (prpl_info->chat_invite != NULL));
 	}
 }
 
