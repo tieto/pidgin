@@ -700,13 +700,15 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 					struct buddy *b;
 					char *groupname, *buddyname;
 
-					groupname = xmlnode_get_data(xmlnode_get_firstchild(g));
 					if (who->user == NULL) {
 						/* FIXME: transport */
 						g = xmlnode_get_nextsibling(g);
 						continue;
 					}
 					buddyname = g_strdup_printf("%s@%s", who->user, who->server);
+					groupname = xmlnode_get_data(xmlnode_get_firstchild(g));
+					if (groupname == NULL)
+						groupname = "Buddies";
 					if (!(b = find_buddy(GJ_GC(j), buddyname))) {
 						debug_printf("adding buddy: %s\n", buddyname);
 						b =
