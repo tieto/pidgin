@@ -338,7 +338,7 @@ msgstr "Nieuw Bericht"
 
 #: src/buddy.c:2595
 msgid "Import Buddy List"
-msgstr "Buddy-Lijst importeren"
+msgstr "Buddy Lijst importeren"
 
 #: src/buddy.c:2613
 msgid "Tools"
@@ -350,7 +350,7 @@ msgstr "Buddy-Alarm"
 
 #: src/buddy.c:2632 src/dialogs.c:2074 src/dialogs.c:2241
 msgid "Search for Buddy"
-msgstr "Buddies zoeken"
+msgstr "Buddy's zoeken"
 
 #: src/buddy.c:2636
 msgid "by Email"
@@ -410,7 +410,7 @@ msgstr "Over Gaim"
 
 #: src/buddy.c:2727 src/prefs.c:2671
 msgid "Buddy List"
-msgstr "Buddy-Lijst"
+msgstr "Buddy Lijst"
 
 #: src/buddy.c:2781
 msgid "Add a new Buddy"
@@ -434,7 +434,7 @@ msgstr "Buddy's bewerken"
 
 #: src/buddy.c:2847
 msgid "Gaim - Buddy List"
-msgstr "Gaim - Buddy-Lijst"
+msgstr "Gaim - Buddy Lijst"
 
 #: src/buddy_chat.c:104 src/oscar.c:2590 src/toc.c:1001
 msgid "Join what group:"
@@ -489,7 +489,7 @@ msgstr "Negeren"
 #: src/buddy_chat.c:565 src/buddy_chat.c:671
 #, c-format
 msgid "%d %s in room"
-msgstr "%d %s in ruimte"
+msgstr "%d personen in ruimte"
 
 #: src/buddy_chat.c:572
 #, c-format
@@ -516,7 +516,7 @@ msgstr "Onderwerp:"
 
 #: src/buddy_chat.c:908
 msgid "0 people in room"
-msgstr "0 Mensen im ruimte"
+msgstr "0 Personen im ruimte"
 
 #: src/buddy_chat.c:982 src/buddy_chat.c:1123
 msgid "Whisper"
@@ -1201,7 +1201,7 @@ msgstr "g003: Fout: Kan geen verbinding maken.\n"
 
 #: src/multi.c:361 src/prefs.c:189
 msgid "General Options"
-msgstr "Algemene Opties"
+msgstr "Algemene Instellingen"
 
 #: src/multi.c:366
 msgid "Screenname:"
@@ -1626,7 +1626,7 @@ msgstr "Handmatig"
 
 #: src/prefs.c:354
 msgid "Proxy Options"
-msgstr "Proxy Opties"
+msgstr "Proxy Instellingen"
 
 #: src/prefs.c:366
 msgid ""
@@ -1634,11 +1634,11 @@ msgid ""
 "for details."
 msgstr ""
 "Niet alle protocollen kunnen de proxy instellingen gebruiken. "
-"Lees het README bestand voor meer details."
+"Zie het README bestand voor info."
 
 #: src/prefs.c:495
 msgid "Buddy List Options"
-msgstr "Buddy lijst opties"
+msgstr "Buddy Lijst Instellingen"
 
 #: src/prefs.c:507
 msgid "Buddy List Window"
@@ -1694,11 +1694,11 @@ msgstr "Toon inactieve tijd"
 
 #: src/prefs.c:594
 msgid "Conversation Options"
-msgstr "Gesprek opties"
+msgstr "Gespreks Opties"
 
 #: src/prefs.c:606
 msgid "Keyboard Options"
-msgstr "Toestenbord opties"
+msgstr "Instellingen Toetsenbord"
 
 #: src/prefs.c:618
 msgid "Enter sends message"
@@ -1726,7 +1726,7 @@ msgstr "F2 schakeld Tijdweergave im"
 
 #: src/prefs.c:630
 msgid "Display and General Options"
-msgstr "Weergave en algemene opties"
+msgstr "Weergave en algemene Instellingen"
 
 #: src/prefs.c:642
 msgid "Show graphical smileys"
@@ -1774,7 +1774,7 @@ msgstr "Negeer conversaties tijdens afwezigheid"
 
 #: src/prefs.c:827
 msgid "IM Options"
-msgstr "Bericht opties"
+msgstr "Instellingen Berichten"
 
 #: src/prefs.c:839
 msgid "IM Window"
@@ -1790,7 +1790,7 @@ msgstr "Plaatjes en Text"
 
 #: src/prefs.c:860 src/prefs.c:904
 msgid "Pictures"
-msgstr "Alleen plaatjes"
+msgstr "Alleen Plaatjes"
 
 #: src/prefs.c:861 src/prefs.c:905
 msgid "Text"
@@ -1882,7 +1882,7 @@ msgstr "Lijst van geabonneerde chats"
 
 #: src/prefs.c:1358 src/prefs.c:2692
 msgid "Font Options"
-msgstr "Lettertype opties"
+msgstr "Instellingen Lettertype"
 
 #: src/prefs.c:1375
 msgid "Underlined Text"
@@ -1898,7 +1898,7 @@ msgstr "Selecteren"
 
 #: src/prefs.c:1444
 msgid "Font Face for Text"
-msgstr "Lettertype voor text"
+msgstr "Lettertype voor Text"
 
 #: src/prefs.c:1459
 msgid "Font Size for Text"
@@ -1906,7 +1906,7 @@ msgstr "Lettergrootte voor Text"
 
 #: src/prefs.c:1541
 msgid "Gaim - Sound Configuration"
-msgstr "Gaim - Geluidsopties"
+msgstr "Gaim - Geluids Configuratie"
 
 #: src/prefs.c:1576
 msgid "Reset"
@@ -1918,7 +1918,7 @@ msgstr "Kies..."
 
 #: src/prefs.c:1620
 msgid "Sound Options"
-msgstr "Geluidsopties"
+msgstr "Geluids Instellingen"
 
 #: src/prefs.c:1648
 msgid "No sounds when you log in"
@@ -2019,7 +2019,7 @@ msgstr "toon afwezig"
 
 #: src/prefs.c:2212
 msgid "Privacy Options"
-msgstr "Privacy opties"
+msgstr "Privacy Instellingen"
 
 #: src/prefs.c:2228
 msgid "Set privacy for:"
