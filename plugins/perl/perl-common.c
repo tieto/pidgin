@@ -545,7 +545,7 @@ gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
 				if ((*copy_arg = (void *)va_arg(*args, char *)) == NULL)
 					return &PL_sv_undef;
 
-				return newSVGChar(*(char **)*copy_arg);
+				return newSVGChar(*(char *)*copy_arg);
 
 			case GAIM_TYPE_POINTER:
 				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
