@@ -1724,7 +1724,7 @@ msgstr "Erro desconhecido ao registrar"
 #: src/protocols/jabber/jabber.c:4308 src/protocols/oscar/oscar.c:6098
 #: src/protocols/toc/toc.c:1462 src/dialogs.c:2232
 msgid "Set User Info"
-msgstr "Definir informações de usário"
+msgstr "Definir informações de usuário"
 
 #. *< api_version
 #. *< type
@@ -4251,7 +4251,7 @@ msgstr "Permitir que todos os usuários me contatem"
 
 #: src/dialogs.c:1794
 msgid "Allow only users on my buddy list"
-msgstr "Permitir apemas usuários na minha lista de contatos"
+msgstr "Permitir apenas usuários na minha lista de contatos"
 
 #: src/dialogs.c:1798
 msgid "Allow only the users below"
