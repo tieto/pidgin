@@ -399,9 +399,9 @@ static int yahoo_send_im(struct gaim_connection *gc, char *who, char *message, i
 	if ((flags & IM_FLAG_AWAY)|| !strlen(message)) return 0;
 
 	if (flags & IM_FLAG_CHECKBOX)
-		yahoo_send_message(yd->sess, yd->active_id, who, message);
-	else
 		yahoo_send_message_offline(yd->sess, yd->active_id, who, message);
+	else
+		yahoo_send_message(yd->sess, yd->active_id, who, message);
 	return 1;
 }
 
