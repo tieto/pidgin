@@ -468,11 +468,9 @@ void show_login()
         gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(remember), (general_options & OPT_GEN_REMEMBER_PASS));
 
 	if (current_user) {
-		GList *all = aim_users;
-		GList *srch = g_list_find(all, (void *)current_user);
-		int length = g_list_length(all) - g_list_length(srch);
-		
-		gtk_combo_set_value_in_list(GTK_COMBO(name), length, 0);
+		sprintf(debug_buff, "Current user is %s\n", current_user->username);
+		debug_print(debug_buff);
+		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(name)->entry), current_user->username);
 		if ((general_options & OPT_GEN_REMEMBER_PASS)) {
 			combo_changed(NULL, name);
 			gtk_widget_grab_focus(signon);
