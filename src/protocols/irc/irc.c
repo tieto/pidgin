@@ -140,8 +140,6 @@ static void irc_login(GaimAccount *account)
 
 	gc = gaim_account_get_connection(account);
 
-	gc->flags |= OPT_CONN_AUTO_RESP;
-
 	gc->proto_data = irc = g_new0(struct irc_conn, 1);
 	irc->account = account;
 
