@@ -542,6 +542,26 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		
 		GdkGC *gc = gdk_gc_new(GDK_DRAWABLE(event->window));
 		GdkColor color;
+
+		gtk_text_view_get_visible_rect (GTK_TEXT_VIEW(widget), &visible_rect);
+		gtk_text_view_buffer_to_window_coords (GTK_TEXT_VIEW(widget),
+						       GTK_TEXT_WINDOW_TEXT,
+						       visible_rect.x,
+						       visible_rect.y,
+						       &redraw_rect.x,
+						       &redraw_rect.y);
+		
+		if (GTK_IMHTML(widget)->wbfo) {
+			gdk_color_parse(GTK_IMHTML(widget)->edit.backcolor, &color);
+			gdk_gc_set_rgb_fg_color(gc, &color);
+			gdk_draw_rectangle(event->window,
+					   gc,
+					   TRUE,
+					   redraw_rect.x, redraw_rect.y, redraw_rect.width, redraw_rect.height);
+			return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
+				(widget, event);
+;
+		}
 		
 		gtk_text_buffer_get_iter_at_mark (GTK_IMHTML(widget)->text_buffer, &start, tag->start);
 
@@ -553,13 +573,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		gtk_text_view_get_line_yrange   (GTK_TEXT_VIEW(widget), &start, &top, NULL);
 		gtk_text_view_get_line_yrange   (GTK_TEXT_VIEW(widget), &end, &bottom, &height);
 		
-		gtk_text_view_get_visible_rect (GTK_TEXT_VIEW(widget), &visible_rect);
-		gtk_text_view_buffer_to_window_coords (GTK_TEXT_VIEW(widget),
-						       GTK_TEXT_WINDOW_TEXT,
-						       visible_rect.x,
-						       visible_rect.y,
-						       &redraw_rect.x,
-						       &redraw_rect.y);
+	
 		gtk_text_view_buffer_to_window_coords (GTK_TEXT_VIEW(widget),
 						       GTK_TEXT_WINDOW_TEXT,
 						       0,
@@ -577,9 +591,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		
 		
 
-		gdk_color_parse(tag->color, &color);
-		gdk_gc_set_rgb_fg_color(gc, &color);
-
+	
 		gdk_draw_rectangle(event->window,
 				   gc,
 				   TRUE,
