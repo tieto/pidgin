@@ -97,7 +97,7 @@ enum {
 static guint signals [LAST_SIGNAL] = { 0 };
 
 GtkTargetEntry selection_targets[] = {
-/*	{ "text/html", 0, TARGET_HTML },*/
+	{ "text/html", 0, TARGET_HTML },
 	{ "UTF8_STRING", 0, TARGET_UTF8_STRING },
 	{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT },
 	{ "STRING", 0, TARGET_STRING },
@@ -727,12 +727,10 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 			  GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(imhtml), "drag_data_received", G_CALLBACK(gtk_imhtml_link_drag_rcv_cb), imhtml);
 
-#if 0 /* Remove buggy copy-and-paste for 0.76 */
 #if GTK_CHECK_VERSION(2,2,0)
 	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "button-release-event", G_CALLBACK(button_release_cb), imhtml);
-#endif
 #endif
 	gtk_widget_add_events(GTK_WIDGET(imhtml), GDK_LEAVE_NOTIFY_MASK);
 
