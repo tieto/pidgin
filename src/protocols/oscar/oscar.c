@@ -2404,20 +2404,12 @@ static char *oscar_name() {
 	return "Oscar";
 }
 
-static void oscar_send_typing_stopped(struct gaim_connection *gc, char *name) {
-        struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	struct direct_im *dim = find_direct_im(odata, name);
-	if (!dim)
-		return;
-	aim_send_typing(odata->sess, dim->conn, FALSE);
-}
-
-static int oscar_send_typing(struct gaim_connection *gc, char *name) {
+static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
 	if (!dim)
 		return 0;
-	aim_send_typing(odata->sess, dim->conn, TRUE);
+	aim_send_typing(odata->sess, dim->conn, typing);
 	return 0;
 }
 
@@ -3545,7 +3537,6 @@ void oscar_init(struct prpl *ret) {
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;
 	ret->send_typing = oscar_send_typing;
-	ret->send_typing_stopped = oscar_send_typing_stopped;
 	ret->set_info = oscar_set_info;
 	ret->get_info = oscar_get_info;
 	ret->set_away = oscar_set_away;

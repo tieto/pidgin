@@ -903,7 +903,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		char *txt = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
 		if ((strlen(txt) == 0  && event->keyval < 256 && isprint(event->keyval)) ||
 		    (c->type_again != 0 && time(NULL) > c->type_again)) {
-			int timeout = serv_send_typing(c->gc, c->name);
+			int timeout = serv_send_typing(c->gc, c->name, TRUE);
 			if (timeout)
 				c->type_again = time(NULL) + timeout;
 			else
@@ -912,11 +912,11 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		else if (strlen(txt) == 1) {
 			if ((GTK_OLD_EDITABLE(c->entry)->current_pos == 1 && event->keyval == GDK_BackSpace) ||
 			    (GTK_OLD_EDITABLE(c->entry)->current_pos == 0 && event->keyval == GDK_Delete))
-				serv_send_typing_stopped(c->gc, c->name);
+				serv_send_typing(c->gc, c->name, FALSE);
 		} else if (GTK_OLD_EDITABLE(c->entry)->selection_start_pos == 0) {
 			if (GTK_OLD_EDITABLE(c->entry)->selection_end_pos == strlen(txt) &&
 			    (event->keyval == GDK_BackSpace || event->keyval == GDK_Delete))
-				serv_send_typing_stopped(c->gc, c->name);
+				serv_send_typing(c->gc, c->name, FALSE);
 		}
 		g_free(txt);
 	}
@@ -2347,7 +2347,6 @@ gboolean reset_typing(char *name) {
 		return FALSE;
 	}
 		/* Reset the title (if necessary) */
-	debug_printf("resetting style\n");
 	if (c->is_chat) {
 		g_free(name);
 		c->typing_timeout = 0;

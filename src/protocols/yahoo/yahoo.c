@@ -57,11 +57,6 @@ extern char *yahoo_crypt(char *, char *);
 #define USEROPT_PAGERPORT 4
 #define YAHOO_PAGER_PORT 5050
 
-/* I just made these values up.  Anyone know what they should be?
- * -SeanEgan */
-#define YAHOO_TYPING_RECV_TIMEOUT 10
-#define YAHOO_TYPING_SEND_TIMEOUT 8
-
 enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_LOGON = 1,
 	YAHOO_SERVICE_LOGOFF,
@@ -470,7 +465,7 @@ static void yahoo_process_typing(struct gaim_connection *gc, struct yahoo_packet
 {
 	char *msg = NULL;
 	char *from = NULL;
-	time_t tm = time(0);
+	char *typing = NULL;
 	GSList *l = pkt->hash;
 
 	while (l) {
@@ -479,9 +474,14 @@ static void yahoo_process_typing(struct gaim_connection *gc, struct yahoo_packet
 			from = pair->value;
 		if (pair->key == 49)
 			msg = pair->value;
+		if (pair->key == 13)
+			typing = pair->value;
 		l = l->next;
 	}
-	serv_got_typing(gc, from, YAHOO_TYPING_RECV_TIMEOUT);
+	if (*typing == '1')
+		serv_got_typing(gc, from, 0);
+	else
+		serv_got_typing_stopped(gc, from);
 }
 
 static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packet *pkt)
@@ -914,7 +914,7 @@ static int yahoo_send_im(struct gaim_connection *gc, char *who, char *what, int 
 	return 1;
 }
 
-int yahoo_send_typing(struct gaim_connection *gc, char *who)
+int yahoo_send_typing(struct gaim_connection *gc, char *who, int typ)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_TYPING, YAHOO_STATUS_TYPING, 0);//x6431de4f);
@@ -922,7 +922,7 @@ int yahoo_send_typing(struct gaim_connection *gc, char *who)
 	yahoo_packet_hash(pkt, 49, "TYPING");
 	yahoo_packet_hash(pkt, 1, gc->displayname);
 	yahoo_packet_hash(pkt, 14, " ");
-	yahoo_packet_hash(pkt, 13, "1");
+	yahoo_packet_hash(pkt, 13, typ ? "1" : "0");
 	yahoo_packet_hash(pkt, 5, who);
 	yahoo_packet_hash(pkt, 1002, "1");
 
@@ -930,7 +930,7 @@ int yahoo_send_typing(struct gaim_connection *gc, char *who)
 
 	yahoo_packet_free(pkt);
 
-	return YAHOO_TYPING_SEND_TIMEOUT;
+	return 0;
 }
 
 static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)

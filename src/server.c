@@ -144,16 +144,12 @@ void serv_finish_login(struct gaim_connection *gc)
 
 /* This should return the elapsed time in seconds in which Gaim will not send
  * typing notifications.
- * if it returns zero, it will not send any more typing notifications */
-int serv_send_typing(struct gaim_connection *g, char *name) {
+ * if it returns zero, it will not send any more typing notifications 
+ * typing is a flag - TRUE for typing, FALSE for stopped typing */
+int serv_send_typing(struct gaim_connection *g, char *name, int typing) {
 	if (g && g->prpl && g->prpl->send_typing)
-		return g->prpl->send_typing(g, name);
+		return g->prpl->send_typing(g, name, typing);
 	else return 0;
-}
-
-void serv_send_typing_stopped(struct gaim_connection *g, char *name) {
-	if (g && g->prpl && g->prpl->send_typing_stopped)
-		g->prpl->send_typing_stopped(g, name);
 }
 
 int serv_send_im(struct gaim_connection *gc, char *name, char *message, int flags)
@@ -165,7 +161,7 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message, int flag
 	if (!(flags & IM_FLAG_AWAY))
 		serv_touch_idle(gc);
 
-	serv_send_typing_stopped(gc, name);
+	serv_send_typing(gc, name, FALSE);
 	return val;
 }
 

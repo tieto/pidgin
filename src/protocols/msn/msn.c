@@ -1484,15 +1484,15 @@ static void msn_close(struct gaim_connection *gc)
 	g_free(md);
 }
 
-static int msn_send_typing(struct gaim_connection *gc, char *who) {
+static int msn_send_typing(struct gaim_connection *gc, char *who, int typing) {
 	struct msn_switchboard *ms = msn_find_switch(gc, who);
 	char header[MSN_BUF_LEN] =   "MIME-Version: 1.0\r\n"
 				     "Content-Type: text/x-msmsgscontrol\r\n" 
 				     "User-Agent: Gaim/" VERSION "\r\n" 
 				     "TypingUser: ";
 	char buf [MSN_BUF_LEN];
-	if (!ms)
-		return;
+	if (!ms || !typing)
+		return 0;
 	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s\r\n\r\n\r\n",
 		   ++ms->trId,
 		   strlen(header) + strlen("\r\n\r\n\r\n") + strlen(gc->username),
