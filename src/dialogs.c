@@ -4464,16 +4464,16 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 		bbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
 
-		button = picture_button(rename_bud_dialog, _("Cancel"), cancel_xpm);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(button), "clicked",
-				   G_CALLBACK(destroy_dialog), rename_bud_dialog);
-
 		button = picture_button(rename_bud_dialog, _("OK"), ok_xpm);
 		gtk_object_set_user_data(GTK_OBJECT(button), b);
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 		g_signal_connect(GTK_OBJECT(button), "clicked",
 				   G_CALLBACK(do_rename_buddy), name_entry);
+
+		button = picture_button(rename_bud_dialog, _("Cancel"), cancel_xpm);
+		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+		g_signal_connect(GTK_OBJECT(button), "clicked",
+				   G_CALLBACK(destroy_dialog), rename_bud_dialog);
 	}
 
 	gtk_widget_show_all(rename_bud_dialog);
@@ -5206,17 +5206,17 @@ void show_multi_entry_dialog(gpointer data)
 	gtk_box_pack_start(GTK_BOX (vbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
+	button = picture_button(b->window, _("Save"), save_xpm);
+	g_signal_connect(GTK_OBJECT (button), "clicked",
+		G_CALLBACK (b->ok), (gpointer) b);
+	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 5);
+	gtk_widget_show(button);
+
 	button = picture_button(b->window, _("Cancel"), cancel_xpm);
 
 	/* Let "destroy handling" (set above) handle cleanup */
 	g_signal_connect_swapped(GTK_OBJECT (button), "clicked",
 		G_CALLBACK (gtk_widget_destroy), GTK_OBJECT (b->window));
-	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 5);
-	gtk_widget_show(button);
-
-	button = picture_button(b->window, _("Save"), save_xpm);
-	g_signal_connect(GTK_OBJECT (button), "clicked",
-		G_CALLBACK (b->ok), (gpointer) b);
 	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 5);
 	gtk_widget_show(button);
 

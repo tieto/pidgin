@@ -147,7 +147,7 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 	new->type = type;
 
 	/* Set the TLV list */
-	new->data = data;
+	new->data = aim_tlvlist_copy(data);
 
 	/* Add the item to the list in the correct numerical position.  Fancy, eh? */
 	if (*list) {
@@ -693,6 +693,7 @@ faim_export int aim_ssi_addbuddy(aim_session_t *sess, aim_conn_t *conn, const ch
 
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&sess->ssi.local, name, parent->gid, 0xFFFF, AIM_SSI_TYPE_BUDDY, data);
+	aim_freetlvchain(&data);
 
 	/* Modify the parent group */
 	aim_ssi_itemlist_rebuildgroup(sess->ssi.local, group);
@@ -929,6 +930,7 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, fu8_t
 		tmp->data = data;
 	} else {
 		tmp = aim_ssi_itemlist_add(&sess->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PDINFO, data);
+		aim_freetlvchain(&data);
 	}
 
 	/* Sync our local list with the server list */
@@ -961,6 +963,7 @@ faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_
 		tmp->data = data;
 	} else {
 		tmp = aim_ssi_itemlist_add(&sess->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PRESENCEPREFS, data);
+		aim_freetlvchain(&data);
 	}
 
 	/* Sync our local list with the server list */
@@ -1068,42 +1071,33 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	struct aim_ssi_item *cur, *new;
 	fu8_t fmtver; /* guess */
-	fu16_t numitems, namelen;
+	fu16_t numitems, namelen, gid, bid, type;
 	fu32_t timestamp;
+	char *name;
+	aim_tlvlist_t *data;
 
 	if (snac->flags & 0x0001) {
 		/* XXX - Free all ssi data? */
 	}
 
 	fmtver = aimbs_get8(bs); /* Version of ssi data.  Should be 0x00 */
-	numitems = aimbs_get16(bs); /* # of times ssi data has been modified */
+	numitems = aimbs_get16(bs); /* # of items in this SSI SNAC */
 	sess->ssi.numitems += numitems;
 
 	/* Read in the list */
-	/* If we already have a partial list, move cur to the end of it */
-	if (sess->ssi.official)
-		for (cur=sess->ssi.official; cur->next; cur=cur->next);
 	while (aim_bstream_empty(bs) > 4) { /* last four bytes are timestamp */
-		if (!sess->ssi.official) {
-			if (!(sess->ssi.official = malloc(sizeof(struct aim_ssi_item))))
-				return -ENOMEM;
-			cur = sess->ssi.official;
-		} else {
-			if (!(cur->next = malloc(sizeof(struct aim_ssi_item))))
-				return -ENOMEM;
-			cur = cur->next;
-		}
 		if ((namelen = aimbs_get16(bs)))
-			cur->name = aimbs_getstr(bs, namelen);
+			name = aimbs_getstr(bs, namelen);
 		else
-			cur->name = NULL;
-		cur->gid = aimbs_get16(bs);
-		cur->bid = aimbs_get16(bs);
-		cur->type = aimbs_get16(bs);
-		cur->data = aim_readtlvchain_len(bs, aimbs_get16(bs));
-		cur->next = NULL;
+			name = NULL;
+		gid = aimbs_get16(bs);
+		bid = aimbs_get16(bs);
+		type = aimbs_get16(bs);
+		data = aim_readtlvchain_len(bs, aimbs_get16(bs));
+		aim_ssi_itemlist_add(&sess->ssi.official, name, gid, bid, type, data);
+		free(name);
+		aim_freetlvchain(&data);
 	}
 
 	/* Read in the timestamp */
@@ -1112,27 +1106,9 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 
 	if (!(snac->flags & 0x0001)) {
 		/* Make a copy of the list */
-		for (cur=sess->ssi.official; cur; cur=cur->next) {
-			if (!sess->ssi.local) {
-				if (!(sess->ssi.local = malloc(sizeof(struct aim_ssi_item))))
-					return -ENOMEM;
-				new = sess->ssi.local;
-			} else {
-				if (!(new->next = malloc(sizeof(struct aim_ssi_item))))
-					return -ENOMEM;
-				new = new->next;
-			}
-			if (cur->name) {
-				new->name = (char *)malloc((strlen(cur->name)+1)*sizeof(char));
-				strcpy(new->name, cur->name);
-			} else
-				new->name = NULL;
-			new->gid = cur->gid;
-			new->bid = cur->bid;
-			new->type = cur->type;
-			new->data = aim_tlvlist_copy(cur->data);
-			new->next = NULL;
-		}
+		struct aim_ssi_item *cur;
+		for (cur=sess->ssi.official; cur; cur=cur->next)
+			aim_ssi_itemlist_add(&sess->ssi.local, cur->name, cur->gid, cur->bid, cur->type, cur->data);
 
 		sess->ssi.received_data = 1;
 
@@ -1235,7 +1211,9 @@ static int parseadd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 			data = NULL;
 
 		aim_ssi_itemlist_add(&sess->ssi.local, name, gid, bid, type, data);
-		aim_ssi_itemlist_add(&sess->ssi.official, name, gid, bid, type, aim_tlvlist_copy(data));
+		aim_ssi_itemlist_add(&sess->ssi.official, name, gid, bid, type, data);
+		free(name);
+		aim_freetlvchain(&data);
 
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 			ret = userfunc(sess, rx);
@@ -1301,8 +1279,8 @@ static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 			ret = userfunc(sess, rx);
 
-		aim_freetlvchain(&data);
 		free(name);
+		aim_freetlvchain(&data);
 	}
 
 	return ret;
@@ -1368,7 +1346,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		if (cur->ack) {
 			/* Our action was unsuccessful, so change the local list back to how it was */
 			if (cur->action == AIM_CB_SSI_ADD) {
-				/* Remove the item from the items list */
+				/* Remove the item from the local list */
 				if (cur->item->name) {
 					cur->name = (char *)malloc((strlen(cur->item->name)+1)*sizeof(char));
 					strcpy(cur->name, cur->item->name);
@@ -1377,7 +1355,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 				cur->item = NULL;
 
 			} else if (cur->action == AIM_CB_SSI_MOD) {
-				/* Replace the new item with the old item in the items list */
+				/* Replace the official item with the item in the local list */
 				struct aim_ssi_item *cur1;
 				if ((cur1 = aim_ssi_itemlist_find(sess->ssi.local, cur->item->gid, cur->item->bid))) {
 					free(cur1->name);
@@ -1391,19 +1369,15 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 				}
 
 			} else if (cur->action == AIM_CB_SSI_DEL) {
-				/* Add the item to the items list */
-				aim_tlvlist_t *data;
-				data = aim_tlvlist_copy(cur->item->data);
-				aim_ssi_itemlist_add(&sess->ssi.local, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, data);
+				/* Add the item back into the local list */
+				aim_ssi_itemlist_add(&sess->ssi.local, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, cur->item->data);
 			}
 
 		} else {
 			/* Do the exact opposite */
 			if (cur->action == AIM_CB_SSI_ADD) {
-				/* Add the item to the items list */
-				aim_tlvlist_t *data;
-				data = aim_tlvlist_copy(cur->item->data);
-				aim_ssi_itemlist_add(&sess->ssi.official, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, data);
+				/* Add the item to the official list */
+				aim_ssi_itemlist_add(&sess->ssi.official, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, cur->item->data);
 
 			} else if (cur->action == AIM_CB_SSI_MOD) {
 				/* Replace the old item with the new item in the items list */

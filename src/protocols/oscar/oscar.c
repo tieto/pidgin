@@ -513,7 +513,7 @@ static void oscar_callback(gpointer data, gint source,
 		if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
 			debug_printf("got information on rendezvous\n");
 			if (aim_handlerendconnect(odata->sess, conn) < 0) {
-				debug_printf(_("connection error (rend)\n"));
+				debug_printf("connection error (rend)\n");
 				aim_conn_kill(odata->sess, &conn);
 			}
 		} else {
@@ -524,7 +524,7 @@ static void oscar_callback(gpointer data, gint source,
 			} else {
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(odata->sess, AIM_CONN_TYPE_BOS))) {
-					debug_printf(_("major connection error\n"));
+					debug_printf("major connection error\n");
 					hide_login_progress_error(gc, _("Disconnected."));
 					signoff(gc);
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
@@ -630,7 +630,7 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	aim_conn_completeconnect(sess, conn);
 	gc->inpa = gaim_input_add(conn->fd, GAIM_INPUT_READ,
 			oscar_callback, conn);
-	debug_printf(_("Password sent, waiting for response\n"));
+	debug_printf("Password sent, waiting for response\n");
 }
 
 static void oscar_login(struct aim_user *user) {
@@ -665,7 +665,7 @@ static void oscar_login(struct aim_user *user) {
 
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
 	if (conn == NULL) {
-		debug_printf(_("internal connection error\n"));
+		debug_printf("internal connection error\n");
 		hide_login_progress(gc, _("Unable to login to AIM"));
 		signoff(gc);
 		return;
@@ -753,7 +753,7 @@ static void oscar_close(struct gaim_connection *gc) {
 	odata->sess = NULL;
 	g_free(gc->proto_data);
 	gc->proto_data = NULL;
-	debug_printf(_("Signed off.\n"));
+	debug_printf("Signed off.\n");
 }
 
 static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition cond) {
@@ -2080,13 +2080,15 @@ static void gaim_auth_dontrequest(struct name_data *data) {
 static void gaim_auth_grant(struct name_data *data) {
 	struct gaim_connection *gc = data->gc;
 	struct oscar_data *od = gc->proto_data;
+#ifdef NOSSI
+	struct buddy *buddy;
 	gchar message;
 	message = 0;
-#ifdef NOSSI
+	buddy = find_buddy(gc, data->name);
 	aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
-	show_got_added(gc, NULL, data->name, NULL, NULL);
+	show_got_added(gc, NULL, data->name, (buddy ? get_buddy_alias_only(buddy) : NULL), NULL);
 #else
-	aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x01, &message);
+	aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x01, NULL);
 #endif
 	gaim_free_name_data(data);
 }
@@ -4216,21 +4218,22 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 				if (retval->action == AIM_CB_SSI_ADD) {
 					struct name_data *data = g_new(struct name_data, 1);
 					struct buddy *buddy;
-					gchar *alias;
-					gchar *dialog_msg;
+					gchar *dialog_msg, *nombre;
 
 					buddy = find_buddy(gc, retval->name);
 					if (buddy && (get_buddy_alias_only(buddy)))
-						alias = g_strdup_printf(" (%s)", get_buddy_alias_only(buddy));
+						nombre = g_strdup_printf("%s (%s)", retval->name, get_buddy_alias_only(buddy));
 					else
-						alias = g_strdup("");
-					dialog_msg = g_strdup_printf(_("The user %s%s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"), retval->name, alias);
+						nombre = g_strdup(retval->name);
+
+					dialog_msg = g_strdup_printf(_("The user %s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"), nombre);
 					data->gc = gc;
 					data->name = g_strdup(retval->name);
 					data->nick = NULL;
 					do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request, _("Cancel"), gaim_auth_dontrequest);
+
 					g_free(dialog_msg);
-					g_free(alias);
+					g_free(nombre);
 				}
 			} break;
 
@@ -4250,8 +4253,9 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
 	char *sn, *msg;
-	gchar *dialog_msg;
+	gchar *dialog_msg, *nombre;
 	struct name_data *data;
+	struct buddy *buddy;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
@@ -4260,13 +4264,21 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: %s has given you permission to add him to your buddy list\n", sn);
 
-	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add you to their buddy list.  Do you want to add them?"), sn);
+	buddy = find_buddy(gc, sn);
+	if (buddy && (get_buddy_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", sn, get_buddy_alias_only(buddy));
+	else
+		nombre = g_strdup(sn);
+
+	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add you to their buddy list.  Do you want to add them?"), nombre);
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
 	data->name = g_strdup(sn);
 	data->nick = NULL;
 	do_ask_dialog(_("Authorization Given"), dialog_msg, data, _("Yes"), gaim_icq_contactadd, _("No"), gaim_free_name_data);
+
 	g_free(dialog_msg);
+	g_free(nombre);
 
 	return 1;
 }
@@ -4275,8 +4287,9 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
 	char *sn, *msg;
-	gchar *dialog_msg;
+	gchar *dialog_msg, *nombre;
 	struct name_data *data;
+	struct buddy *buddy;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
@@ -4285,22 +4298,32 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: received authorization request from %s\n", sn);
 
-	dialog_msg = g_strdup_printf(_("The user %s wants to add you to their buddy list for the following reason: %s"), sn, msg ? msg : _("No reason given."));
+	buddy = find_buddy(gc, sn);
+	if (buddy && (get_buddy_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", sn, get_buddy_alias_only(buddy));
+	else
+		nombre = g_strdup(sn);
+
+	dialog_msg = g_strdup_printf(_("The user %s wants to add you to their buddy list for the following reason: %s"), nombre, msg ? msg : _("No reason given."));
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
 	data->name = g_strdup(sn);
 	data->nick = NULL;
 	do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant);
+
 	g_free(dialog_msg);
+	g_free(nombre);
 
 	return 1;
 }
 
 static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
 	char *sn, *msg;
-	gchar *dialog_msg;
+	gchar *dialog_msg, *nombre;
 	fu8_t reply;
+	struct buddy *buddy;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
@@ -4308,16 +4331,25 @@ static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
+	debug_printf("ssi: received authorization reply from %s.  Reply is 0x%04hhx\n", sn, reply);
+
+	buddy = find_buddy(gc, sn);
+	if (buddy && (get_buddy_alias_only(buddy)))
+		nombre = g_strdup_printf("%s (%s)", sn, get_buddy_alias_only(buddy));
+	else
+		nombre = g_strdup(sn);
+
 	if (reply) {
 		/* Granted */
-		dialog_msg = g_strdup_printf(_("The user %s has granted your request to add them to your contact list."), sn);
+		dialog_msg = g_strdup_printf(_("The user %s has granted your request to add them to your contact list."), nombre);
 		do_error_dialog(_("Authorization Granted"), dialog_msg, GAIM_INFO);
 	} else {
 		/* Denied */
-		dialog_msg = g_strdup_printf(_("The user %s has denied your request to add them to your contact list for the following reason:\n%s"), sn, msg ? msg : _("No reason given."));
+		dialog_msg = g_strdup_printf(_("The user %s has denied your request to add them to your contact list for the following reason:\n%s"), nombre, msg ? msg : _("No reason given."));
 		do_error_dialog(_("Authorization Denied"), dialog_msg, GAIM_INFO);
 	}
 	g_free(dialog_msg);
+	g_free(nombre);
 
 	return 1;
 }
@@ -4326,13 +4358,15 @@ static int gaim_ssi_gotadded(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
 	char *sn;
+	struct buddy *buddy;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
+	buddy = find_buddy(gc, sn);
 	debug_printf("ssi: %s added you to their buddy list\n", sn);
-	show_got_added(gc, NULL, sn, NULL, NULL);
+	show_got_added(gc, NULL, sn, (buddy ? get_buddy_alias_only(buddy) : NULL), NULL);
 
 	return 1;
 }
