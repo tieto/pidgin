@@ -1159,7 +1159,10 @@ GaimPluginAction *
 gaim_plugin_action_new(char* label, void (*callback)(GaimPluginAction *))
 {
 	GaimPluginAction *act = g_new0(GaimPluginAction, 1);
+
 	act->label = label;
 	act->callback = callback;
+
+	return act;
 }
 
