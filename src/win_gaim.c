@@ -28,11 +28,14 @@
 #include <string.h>
 #include <stdio.h>
 
+typedef int (CALLBACK* LPFNGAIMMAIN)(HINSTANCE, int, char**);
+typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCTSTR);
+
 /*
  *  PROTOTYPES
  */
-static int (*gaim_main)( HINSTANCE, int, char** ) = NULL;
-static void (*MySetDllDirectory)(LPCTSTR lpPathName) = NULL;
+static LPFNGAIMMAIN gaim_main = NULL;
+static LPFNSETDLLDIRECTORY MySetDllDirectory = NULL;
 
 
 static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len) {
@@ -46,13 +49,18 @@ static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data
                 if(ERROR_SUCCESS == (retv=RegQueryValueEx(hkey, val_name, 0, NULL, data, data_len)))
                         ret = TRUE;
                 else
-                        ret = FALSE;
+                        printf("Could not read reg key '%s' subkey '%s' value: '%s'\nError: %u\n",
+                               ((key == HKEY_LOCAL_MACHINE) ? "HKLM" : (key == HKEY_CURRENT_USER) ? "HKCU" : "???"),
+                               sub_key, val_name, (UINT)GetLastError());
                 RegCloseKey(key);
         }
+        else
+                printf("Could not open reg subkey: %s\nError: %u\n", sub_key, (UINT)GetLastError());
+
         return ret;
 }
 
-static void run_dll_prep() {
+static void dll_prep() {
         char gtkpath[MAX_PATH];
         char path[MAX_PATH];
         DWORD plen = MAX_PATH;
@@ -86,41 +94,76 @@ static void run_dll_prep() {
                         strcat(path, "\\lib");
         }
 
-        if((hmod=LoadLibrary("kernel32.dll"))) {
-                MySetDllDirectory = (void*)GetProcAddress(hmod, "SetDllDirectory");
+        printf("GTK+ path found: %s\n", path);
+
+        if((hmod=GetModuleHandle("kernel32.dll"))) {
+                MySetDllDirectory = (LPFNSETDLLDIRECTORY)GetProcAddress(hmod, "SetDllDirectory");
+                if(!MySetDllDirectory)
+                        printf("SetDllDirectory not supported\n");
+        }
+        else
+                printf("Error getting kernel32.dll module handle\n");
+
+        /* For Windows XP SP1+ / Server 2003 we use SetDllDirectory to avoid dll hell */
+        if(MySetDllDirectory) {
+                printf("Using SetDllDirectory\n");
+                MySetDllDirectory(path);
         }
 
-        /* For Windows XP SP1 / Server 2003 we use SetDllDirectory to avoid dll hell */
-        if(MySetDllDirectory)
-                MySetDllDirectory(path);
-        /* For the rest, we set the current directory */
+        /* For the rest, we set the current directory and make sure SafeDllSearch is set
+           to 0 where needed. */
         else {
                 OSVERSIONINFO osinfo;
 
+                printf("Setting current directory to GTK+ dll directory\n");
                 SetCurrentDirectory(path);
-                /* For Windows 2000 SP3 and higher:
+                /* For Windows 2000 (SP3+) / WinXP (No SP):
                  * If SafeDllSearchMode is set to 1, Windows system directories are
                  * searched for dlls before the current directory. Therefore we set it
                  * to 0.
                  */
                 osinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
                 GetVersionEx(&osinfo);
-                if(osinfo.dwMajorVersion == 5 &&
-                   osinfo.dwMinorVersion == 0 &&
-                   strcmp(osinfo.szCSDVersion, "Service Pack 3") >= 0) {
-                        if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_LOCAL_MACHINE, 
-                                                         "System\\CurrentControlSet\\Control\\Session Manager", 
-                                                         0,  KEY_SET_VALUE, &hkey)) {
-                                DWORD regval = 0;
-                                RegSetValueEx(hkey, 
-                                              "SafeDllSearchMode",
-                                              0,
-                                              REG_DWORD,
-                                              (LPBYTE) &regval,
-                                              sizeof(regval));
-                                RegCloseKey(hkey);
+                if((osinfo.dwMajorVersion == 5 &&
+                    osinfo.dwMinorVersion == 0 &&
+                    strcmp(osinfo.szCSDVersion, "Service Pack 3") >= 0) ||
+                   (osinfo.dwMajorVersion == 5 &&
+                    osinfo.dwMinorVersion == 1 &&
+                    strcmp(osinfo.szCSDVersion, "") >= 0)
+                   ) {
+                        DWORD regval = 1;
+                        DWORD reglen = sizeof(DWORD);
+
+                        printf("Using Win2k (SP3+) / WinXP (No SP).. Checking SafeDllSearch\n");
+                        read_reg_string(HKEY_LOCAL_MACHINE,
+                                        "System\\CurrentControlSet\\Control\\Session Manager",
+                                        "SafeDllSearchMode",
+                                        (LPBYTE)&regval,
+                                        &reglen);
+
+                        if(regval != 0) {
+                                printf("Trying to set SafeDllSearchMode to 0\n");
+                                regval = 0;
+                                if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, 
+                                                "System\\CurrentControlSet\\Control\\Session Manager", 
+                                                0,  KEY_SET_VALUE, &hkey) == ERROR_SUCCESS) {
+                                        if(RegSetValueEx(hkey, 
+                                                         "SafeDllSearchMode",
+                                                         0,
+                                                         REG_DWORD,
+                                                         (LPBYTE) &regval,
+                                                         sizeof(DWORD)) != ERROR_SUCCESS)
+                                                printf("Error writing SafeDllSearchMode. Error: %u\n",
+                                                       (UINT)GetLastError());
+                                        RegCloseKey(hkey);
+                                }
+                                else
+                                        printf("Error opening Session Manager key for writing. Error: %u\n",
+                                               (UINT)GetLastError());
                         }
-                }
+                        else
+                                printf("SafeDllSearchMode is set to 0\n");
+                }/*end else*/
         }
 }
 
@@ -171,7 +214,8 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
    - Use default user locale
 */
 static void wgaim_set_locale() {
-        HKEY hkey;
+        char data[10];
+        DWORD datalen = 10;
 	char* locale=NULL;
         char envstr[25];
         LCID lcid;
@@ -181,16 +225,9 @@ static void wgaim_set_locale() {
                 goto finish;
         }
 
-        /* Check reg key set at install time */
-        if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER, 
-                                         "SOFTWARE\\gaim", 
-					 0,  KEY_QUERY_VALUE, &hkey)) {
-                BYTE data[10];
-                DWORD ds = 10;
-                if(ERROR_SUCCESS == RegQueryValueEx(hkey, "Installer Language", 0, NULL, (LPBYTE)&data, &ds)) {
-                        if((locale = wgaim_lcid_to_posix(atoi(data))))
-                                goto finish;
-		}
+        if(read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\gaim", "Installer Language", (LPBYTE)&data, &datalen)) {
+                if((locale = wgaim_lcid_to_posix(atoi(data))))
+                        goto finish;
         }
 
         lcid = GetUserDefaultLCID();
@@ -201,7 +238,8 @@ static void wgaim_set_locale() {
         if(!locale)
                 locale = "en";
 
-        sprintf(envstr, "LANG=%s", locale);
+        snprintf(envstr, 25, "LANG=%s", locale);
+        printf("Setting locale: %s\n", envstr);
         putenv(envstr);
 }
 
@@ -222,10 +260,6 @@ WinMain (struct HINSTANCE__ *hInstance,
         char gaimdir[MAX_PATH];
         HMODULE hmod;
 
-        /* If GAIM_NO_DLL_CHECK is set, don't run the dll check */
-        if(!getenv("GAIM_NO_DLL_CHECK"))
-                run_dll_prep();
-
         /* Load exception handler if we have it */
         if(GetModuleFileName(NULL, gaimdir, MAX_PATH) != 0) {
                 char *tmp = gaimdir;
@@ -238,7 +272,8 @@ WinMain (struct HINSTANCE__ *hInstance,
                 if(prev) {
                         prev[0] = '\0';
                         strcat(gaimdir, "\\exchndl.dll");
-                        LoadLibrary(gaimdir);
+                        if(LoadLibrary(gaimdir))
+                                printf("Loaded exchndl.dll\n");
                 }
         }
         else {
@@ -246,15 +281,14 @@ WinMain (struct HINSTANCE__ *hInstance,
                 MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
         }
 
-        /* Set Gaim locale */
-        wgaim_set_locale();
+        if(!getenv("GAIM_NO_DLL_CHECK"))
+                dll_prep();
 
-        /* Set global file mode to binary so that we don't do any dos file translations */
-        _fmode = _O_BINARY;
+        wgaim_set_locale();
 
         /* Now we are ready for Gaim .. */
         if((hmod=LoadLibrary("gaim.dll"))) {
-                gaim_main = (void*)GetProcAddress(hmod, "gaim_main");
+                gaim_main = (LPFNGAIMMAIN)GetProcAddress(hmod, "gaim_main");
         }
 
         if(!gaim_main) {
