@@ -5224,17 +5224,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
 				else if (flags & GAIM_MESSAGE_RECV) {
-					if (flags & GAIM_MESSAGE_COLORIZE) {
-						const char *u;
-						int m = 0;
-
-						for (u = who; *u != '\0'; u++)
-							m += *u;
-
-						m = m % NUM_NICK_COLORS;
-
-						strcpy(color, nick_colors[m]);
-					}
+					if (flags & GAIM_MESSAGE_COLORIZE) 
+						strcpy(color, g_str_hash(who) % NUM_NICK_COLORS);
 					else
 						strcpy(color, RECV_COLOR);
 				}
