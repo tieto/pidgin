@@ -719,4 +719,4 @@ init_plugin(GaimPlugin *plugin)
 	my_plugin = plugin;
 }
 
-GAIM_INIT_PLUGIN(notify, init_plugin, info);
+GAIM_INIT_PLUGIN(notify, init_plugin, info)

@@ -169,4 +169,4 @@ init_plugin(GaimPlugin *plugin)
 	me = plugin;
 }
 
-GAIM_INIT_PLUGIN(raw, init_plugin, info);
+GAIM_INIT_PLUGIN(raw, init_plugin, info)

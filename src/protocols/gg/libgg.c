@@ -1,4 +1,4 @@
-/* $Id: libgg.c 6304 2003-06-14 23:21:02Z chipx86 $ */
+/* $Id: libgg.c 6513 2003-07-08 06:11:49Z faceprint $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -73,7 +73,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 6304 2003-06-14 23:21:02Z chipx86 $";
+= "$Id: libgg.c 6513 2003-07-08 06:11:49Z faceprint $";
 
 #endif 
 
@@ -253,7 +253,7 @@ static void *gg_recv_packet(struct gg_session *sess)
 				return NULL;
 			}
 			if (errno != EINTR) {
-//				errno = EINVAL;
+				/* errno = EINVAL; */
 				free(buf);
 				return NULL;
 			}
@@ -529,7 +529,7 @@ void gg_logoff(struct gg_session *sess)
  *
  * w przypadku b³êdu zwraca -1, inaczej numer sekwencyjny.
  */
-int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, unsigned char *message)
+int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, char *message)
 {
 	struct gg_send_msg s;
 
@@ -750,7 +750,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 		return -1;
 	}
 
-	p = (void*) h + sizeof(struct gg_header);
+	p = h + sizeof(struct gg_header);
 	
 	if (h->type == GG_RECV_MSG) {
 		struct gg_recv_msg *r = p;
@@ -926,7 +926,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 		case GG_STATE_CONNECTING:
 		{
 			char buf[1024];
-			int res, res_size = sizeof(res);
+			unsigned int res, res_size = sizeof(res);
 
 			gg_debug(GG_DEBUG_MISC, "== GG_STATE_CONNECTING\n");
 
@@ -1074,7 +1074,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 		case GG_STATE_CONNECTING_GG:
 		{
-			int res, res_size = sizeof(res);
+			unsigned int res, res_size = sizeof(res);
 
 			gg_debug(GG_DEBUG_MISC, "== GG_STATE_CONNECTING_GG\n");
 
@@ -1131,7 +1131,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				break;
 			}
 	
-			w = (void*) h + sizeof(struct gg_header);
+			w = (struct gg_welcome *)(h + sizeof(struct gg_header));
 			w->key = fix32(w->key);
 
 			for (hash = 1; *password; password++)

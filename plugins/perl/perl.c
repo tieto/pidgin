@@ -1411,4 +1411,4 @@ init_plugin(GaimPlugin *plugin)
 	loader_info.exts = g_list_append(loader_info.exts, "pl");
 }
 
-GAIM_INIT_PLUGIN(perl, init_plugin, info);
+GAIM_INIT_PLUGIN(perl, init_plugin, info)

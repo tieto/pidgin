@@ -295,7 +295,7 @@ UI_build_broadcast(guchar type, guchar subtype, ...)
 
 #ifndef _WIN32
 static void
-meta_handler(struct UI *ui, guchar subtype, guchar *data)
+meta_handler(struct UI *ui, guchar subtype, gchar *data)
 {
 	GaimRemotePacket *p;
 	GError *error = NULL;
@@ -335,7 +335,7 @@ meta_handler(struct UI *ui, guchar subtype, guchar *data)
 }
 
 static void
-plugin_handler(struct UI *ui, guchar subtype, guchar *data)
+plugin_handler(struct UI *ui, guchar subtype, gpointer data)
 {
 #ifdef GAIM_PLUGINS
 	guint id;
@@ -365,7 +365,7 @@ plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 }
 
 static void
-user_handler(struct UI *ui, guchar subtype, guchar *data)
+user_handler(struct UI *ui, guchar subtype, gchar *data)
 {
 	guint id;
 	GaimAccount *account;
@@ -398,7 +398,7 @@ user_handler(struct UI *ui, guchar subtype, guchar *data)
 }
 
 static void
-message_handler(struct UI *ui, guchar subtype, guchar *data)
+message_handler(struct UI *ui, guchar subtype, gchar *data)
 {
 	switch (subtype) {
 	case CUI_MESSAGE_LIST:
@@ -447,10 +447,10 @@ message_handler(struct UI *ui, guchar subtype, guchar *data)
 }
 
 static gint
-gaim_recv(GIOChannel *source, guchar *buf, gint len)
+gaim_recv(GIOChannel *source, gchar *buf, gint len)
 {
 	gint total = 0;
-	gint cur;
+	guint cur;
 
 	GError *error = NULL;
 
@@ -469,7 +469,7 @@ gaim_recv(GIOChannel *source, guchar *buf, gint len)
 }
 
 static void
-remote_handler(struct UI *ui, guchar subtype, guchar *data, int len)
+remote_handler(struct UI *ui, guchar subtype, gchar *data, int len)
 {
 	const char *resp;
 	char *send;
@@ -496,13 +496,13 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 {
 	struct UI *ui = data;
 
-	guchar type;
-	guchar subtype;
+	gchar type;
+	gchar subtype;
 	guint32 len;
 
 	GError *error = NULL;
 
-	guchar *in;
+	gchar *in;
 
 	/* no byte order worries! this'll change if we go to TCP */
 	if (gaim_recv(source, &type, sizeof(type)) != sizeof(type)) {
@@ -531,7 +531,7 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 		return FALSE;
 	}
 
-	if (gaim_recv(source, (guchar *)&len, sizeof(len)) != sizeof(len)) {
+	if (gaim_recv(source, (gchar *)&len, sizeof(len)) != sizeof(len)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
@@ -545,7 +545,7 @@ UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 	}
 
 	if (len) {
-		in = g_new0(guchar, len);
+		in = g_new0(gchar, len);
 		if (gaim_recv(source, in, len) != len) {
 			gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
 			uis = g_slist_remove(uis, ui);
@@ -605,7 +605,7 @@ static gboolean
 socket_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 {
 	struct sockaddr_un saddr;
-	gint len = sizeof(saddr);
+	guint len = sizeof(saddr);
 	gint fd;
 
 	struct UI *ui;
@@ -695,7 +695,7 @@ core_quit()
 #ifndef _WIN32
 	char buf[1024];
 	close(UI_fd);
-	snprintf(buf, 1024, "%s" G_DIR_SEPARATOR_S "gaim_%s.%d",
+	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d",
 			g_get_tmp_dir(), g_get_user_name(), gaim_session);
 
 	unlink(buf);
@@ -753,4 +753,4 @@ __init_plugin(GaimPlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(remote, __init_plugin, info);
+GAIM_INIT_PLUGIN(remote, __init_plugin, info)

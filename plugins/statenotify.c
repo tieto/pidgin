@@ -93,4 +93,4 @@ init_plugin(GaimPlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(statenotify, init_plugin, info);
+GAIM_INIT_PLUGIN(statenotify, init_plugin, info)

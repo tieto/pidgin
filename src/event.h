@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -62,7 +62,7 @@ typedef enum gaim_event
 	event_got_typing,
 	event_del_conversation,
 	event_connecting,
-	event_conversation_switch,
+	event_conversation_switch
 	/* any others? it's easy to add... */
 
 } GaimEvent;

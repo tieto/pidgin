@@ -1,4 +1,4 @@
-/* $Id: libgg.h 3516 2002-08-29 01:47:15Z seanegan $ */
+/* $Id: libgg.h 6513 2003-07-08 06:11:49Z faceprint $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -107,7 +107,7 @@ enum {
 	GG_SESSION_GG = 1,	/* po³±czenie z serwerem gg */
 	GG_SESSION_HTTP,	/* ogólna sesja http */
 	GG_SESSION_SEARCH,	/* szukanie */
-	GG_SESSION_REGISTER,	/* rejestrowanie */
+	GG_SESSION_REGISTER	/* rejestrowanie */
 };
 
 /*
@@ -130,7 +130,7 @@ enum {
         /* gg_http */
 	GG_STATE_READING_HEADER,	/* czeka na nag³ówek http */
 	GG_STATE_PARSING,               /* przetwarza dane */
-	GG_STATE_DONE,                  /* skoñczy³ */
+	GG_STATE_DONE                  /* skoñczy³ */
 };
 
 /*
@@ -147,14 +147,14 @@ enum {
 enum {
 	GG_CHECK_NONE = 0,		/* nic. nie powinno wyst±piæ */
 	GG_CHECK_WRITE = 1,		/* sprawdzamy mo¿liwo¶æ zapisu */
-	GG_CHECK_READ = 2,		/* sprawdzamy mo¿liwo¶æ odczytu */
+	GG_CHECK_READ = 2		/* sprawdzamy mo¿liwo¶æ odczytu */
 };
 
 struct gg_session *gg_login(uin_t uin, char *password, int async);
 void gg_free_session(struct gg_session *sess);
 void gg_logoff(struct gg_session *sess);
 int gg_change_status(struct gg_session *sess, int status);
-int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, unsigned char *message);
+int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, char *message);
 int gg_ping(struct gg_session *sess);
 
 struct gg_notify_reply {
@@ -186,7 +186,7 @@ enum {
 	GG_EVENT_STATUS,
 	GG_EVENT_ACK,
 	GG_EVENT_CONN_FAILED,
-	GG_EVENT_CONN_SUCCESS,
+	GG_EVENT_CONN_SUCCESS
 };
 
 /*
@@ -199,7 +199,7 @@ enum {
 	GG_FAILURE_READING,
 	GG_FAILURE_WRITING,
 	GG_FAILURE_PASSWORD,
-	GG_FAILURE_404,
+	GG_FAILURE_404
 };
 
 /*
@@ -212,7 +212,7 @@ enum {
 	GG_ERROR_RESOLVING = 1,
 	GG_ERROR_CONNECTING,
 	GG_ERROR_READING,
-	GG_ERROR_WRITING,
+	GG_ERROR_WRITING
 };
 
 /*

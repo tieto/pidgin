@@ -170,4 +170,4 @@ init_plugin(GaimPlugin *plugin)
   gaim_prefs_add_bool("/plugins/gtk/win32/winprefs/auto_start", FALSE);
 }
 
-GAIM_INIT_PLUGIN(winprefs, init_plugin, info);
+GAIM_INIT_PLUGIN(winprefs, init_plugin, info)

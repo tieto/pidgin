@@ -463,4 +463,4 @@ init_plugin(GaimPlugin *plugin)
   gaim_prefs_add_bool("/plugins/gtk/win32/wintrans/bl_on_top", FALSE);
 }
 
-GAIM_INIT_PLUGIN(wintrans, init_plugin, info);
+GAIM_INIT_PLUGIN(wintrans, init_plugin, info)

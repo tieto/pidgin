@@ -31,6 +31,8 @@
 #include "internal.h"
 #include <sys/un.h>
 #include <gaim-remote/remote.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 void
 gaim_remote_session_send_packet(int fd, GaimRemotePacket *p)

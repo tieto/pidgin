@@ -305,4 +305,4 @@ init_plugin(GaimPlugin *plugin)
 								visual_pref_cb, NULL);
 }
 
-GAIM_INIT_PLUGIN(gestures, init_plugin, info);
+GAIM_INIT_PLUGIN(gestures, init_plugin, info)

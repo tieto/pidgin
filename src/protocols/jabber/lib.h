@@ -161,7 +161,7 @@ int pool_size(pool p); /* returns total bytes allocated in this pool */
 #define NETSOCKET_CLIENT 1
 #define NETSOCKET_UDP 2
 
-int make_netsocket(u_short port, char *host, int type);
+int make_netsocket(unsigned short port, char *host, int type);
 struct in_addr *make_addr(char *host);
 int set_fd_close_on_exec(int fd, int flag);
 
@@ -557,8 +557,8 @@ void jlimit_free(jlimit r);
 int jlimit_check(jlimit r, char *key, int points);
 
 
-// #define KARMA_DEBUG
-// default to disable karma 
+/* #define KARMA_DEBUG */
+/* default to disable karma */
 #define KARMA_READ_MAX(k) (abs(k)*100) /* how much you are allowed to read off the sock */
 #define KARMA_INIT 5   /* internal "init" value */
 #define KARMA_HEARTBEAT 2 /* seconds to register for heartbeat */

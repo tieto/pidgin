@@ -167,7 +167,7 @@ typedef enum
 	 *
 	 * Probably just Jabber and Y!M
 	 */
-	OPT_PROTO_USE_POINTSIZE = 0x00000200,
+	OPT_PROTO_USE_POINTSIZE = 0x00000200
 
 } GaimProtocolOptions;
 

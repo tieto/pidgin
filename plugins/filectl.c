@@ -222,4 +222,4 @@ init_plugin(GaimPlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(filectl, init_plugin, info);
+GAIM_INIT_PLUGIN(filectl, init_plugin, info)

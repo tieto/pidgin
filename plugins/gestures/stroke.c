@@ -131,9 +131,11 @@ _gstroke_trans (gchar *sequence, struct gstroke_metrics *metrics)
 	if ((bin_count > (metrics->point_count * GSTROKE_BIN_COUNT_PERCENT))
 	    || (first_bin == TRUE)) {
 
-	  //gchar val = '0' + prev_bin;
-	  //printf ("%c", val);fflush (stdout);
-	  //g_string_append (&sequence, &val);
+		/*
+		gchar val = '0' + prev_bin;
+		printf ("%c", val);fflush (stdout);
+		g_string_append (&sequence, &val);
+		*/
 
 	  first_bin = FALSE;
 	  sequence[sequence_count++] = '0' + prev_bin;
@@ -158,10 +160,11 @@ _gstroke_trans (gchar *sequence, struct gstroke_metrics *metrics)
   _gstroke_init (metrics);
 
   {
-    // FIXME: get rid of this block
-    //gchar val = '0' + current_bin;
-    //printf ("%c\n", val);fflush (stdout);
-    //g_string_append (&sequence,  '\0');
+    /* FIXME: get rid of this block
+	  gchar val = '0' + current_bin;
+	  printf ("%c\n", val);fflush (stdout);
+	  g_string_append (&sequence,  '\0');
+	 */
     sequence[sequence_count] = '\0';
   }
 

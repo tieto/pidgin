@@ -35,7 +35,7 @@ typedef enum
 	GAIM_PROXY_NONE = 0,         /**< No proxy.                         */
 	GAIM_PROXY_HTTP,             /**< HTTP proxy.                       */
 	GAIM_PROXY_SOCKS4,           /**< SOCKS 4 proxy.                    */
-	GAIM_PROXY_SOCKS5,           /**< SOCKS 5 proxy.                    */
+	GAIM_PROXY_SOCKS5            /**< SOCKS 5 proxy.                    */
 
 } GaimProxyType;
 

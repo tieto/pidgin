@@ -53,7 +53,7 @@
  * type = NETSOCKET_UDP is a UDP connection socket
  */
 
-int make_netsocket(u_short port, char *host, int type)
+int make_netsocket(unsigned short port, char *host, int type)
 {
     int s, flag = 1;
     struct sockaddr_in sa;

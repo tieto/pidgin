@@ -528,4 +528,4 @@ init_plugin(GaimPlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(docklet, init_plugin, info);
+GAIM_INIT_PLUGIN(docklet, init_plugin, info)

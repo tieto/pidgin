@@ -157,7 +157,7 @@ int pool_size(pool p); /* returns total bytes allocated in this pool */
 #define NETSOCKET_CLIENT 1
 #define NETSOCKET_UDP 2
 
-int make_netsocket(u_short port, char *host, int type);
+int make_netsocket(unsigned short port, char *host, int type);
 struct in_addr *make_addr(char *host);
 int set_fd_close_on_exec(int fd, int flag);
 
