@@ -1993,9 +1993,13 @@ initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 	if (unread != NULL) {
 		const char *passport = msn_user_get_passport(session->user);
 		const char *url = session->passport_info.file;
+		int count = atoi(unread);
 
-		gaim_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
-						   &passport, &url, NULL, NULL);
+		if (count != 0)
+		{
+			gaim_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+							   &passport, &url, NULL, NULL);
+		}
 	}
 
 	g_hash_table_destroy(table);
