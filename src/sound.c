@@ -111,28 +111,21 @@ int _af_ulaw2linear (unsigned char ulawbyte)
 }
 
 
+int esd_fd;
 
 static int play_esd(unsigned char *data, int size)
 {
-        int fd, i;
-	esd_format_t format = ESD_BITS16 | ESD_STREAM | ESD_PLAY | ESD_MONO;
+        int i;
         guint16 *lineardata;
 	
-	
-        fd = esd_play_stream_fallback(format, 8012, NULL, "gaim");
-
-        if (fd < 0) {
-                return 0;
-	}
-
         lineardata = g_malloc(size * 2);
 
 	for (i=0; i<size; i++)
 		lineardata[i] = _af_ulaw2linear(data[i]);
 	
-	write(fd, lineardata, size * 2);
+	write(esd_fd, lineardata, size * 2);
 
-	close(fd);
+	close(esd_fd);
 	g_free(lineardata);
 
         return 1;
@@ -141,7 +134,15 @@ static int play_esd(unsigned char *data, int size)
 
 static int can_play_esd()
 {
-        return 1;
+	esd_format_t format = ESD_BITS16 | ESD_STREAM | ESD_PLAY | ESD_MONO;
+	
+        esd_fd = esd_play_stream(format, 8012, NULL, "gaim");
+
+        if (esd_fd < 0) {
+                return 0;
+	}
+
+	return 1;
 }
 
 #endif

@@ -8,6 +8,7 @@ version 0.9.19:
 	* Compile-time options affect Preferences dialog
 	* Whispering works (does anyone even use this?)
 	* HTML-tag buttons in chat
+	* Locale support
 
 version 0.9.18 (06/02/2000):
 	* Logging in works better for oscar
