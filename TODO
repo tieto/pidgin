@@ -36,6 +36,12 @@ THE CORE:
 		all of the custom messages, e.g. in Jabber it'd return "Away/" as one
 		of the states, and you'd see "Away" with a menu of all the away
 		messages you have.
+	IRC has /list, Jabber has jabber:iq:browse, AIM has what's currently in the
+		"Chat Rooms" options. We should have a way (besides the prefs window)
+		of showing all the rooms available for each account/protocol (what's a
+		good way to do this? IRC it varies based on who you're connected as,
+		Jabber you need a connection to retrieve the list, and AIM you can get
+		it while you're offline.)
 
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies
