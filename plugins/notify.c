@@ -530,9 +530,9 @@ static void urgent_remove(GaimConversation *c) {
 }
 
 static void save_notify_prefs() {
-	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_im", notify_opts & OPT_TYPE_IM);
-	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_chat", notify_opts & OPT_TYPE_CHAT);
-	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_in_focus", notify_opts & OPT_NOTIFY_IN_FOCUS);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/type_im", notify_opts & OPT_TYPE_IM);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/type_chat", notify_opts & OPT_TYPE_CHAT);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/type_focused", notify_opts & OPT_NOTIFY_IN_FOCUS);
 	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_focus", notify_opts & OPT_NOTIFY_FOCUS);
 	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_click", notify_opts & OPT_NOTIFY_CLICK);	
 	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_type", notify_opts & OPT_NOTIFY_TYPE);
@@ -547,9 +547,9 @@ static void save_notify_prefs() {
 static void load_notify_prefs() {
 	notify_opts = 0;
 	
-	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_im") ? OPT_TYPE_IM : 0);
-	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_chat") ? OPT_TYPE_CHAT : 0);
-	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_in_focus") ? OPT_NOTIFY_IN_FOCUS : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_im") ? OPT_TYPE_IM : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_chat") ? OPT_TYPE_CHAT : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_focused") ? OPT_NOTIFY_IN_FOCUS : 0);
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_focus") ? OPT_NOTIFY_FOCUS : 0);
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_click") ? OPT_NOTIFY_CLICK : 0);	
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_type") ? OPT_NOTIFY_TYPE : 0);
@@ -867,17 +867,18 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_none("/plugins/gtk/X11");
 	gaim_prefs_add_none("/plugins/gtk/X11/notify");
 
-	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_im", TRUE);
-	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_chat", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/type_im", TRUE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/type_chat", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/type_focused", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_string", FALSE);
 	gaim_prefs_add_string("/plugins/gtk/X11/notify/title_string", "(*)");
-	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_quote", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_urgent", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_count", FALSE);
-	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_in_focus", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_focus", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_click", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_type", TRUE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_send", TRUE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_switch", TRUE);
 }
 
 GAIM_INIT_PLUGIN(notify, init_plugin, info)
