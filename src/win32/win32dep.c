@@ -11,8 +11,8 @@
 #include <winuser.h>
 #include <glib.h>
 #include <gdk/gdkwin32.h>
-#include "gaim.h"
 
+#include "gaim.h"
 #include "stdafx.h"
 #include "resource.h"
 #include "MinimizeToTray.h"
@@ -50,7 +50,9 @@ HINSTANCE gaimdll_hInstance = 0;
 /*
  *  PROTOS
  */
+
 BOOL (*MyFlashWindowEx)(PFLASHWINFO pfwi)=NULL;
+FARPROC wgaim_find_and_loadproc(char*, char*);
 
 /*
  *  STATIC CODE
@@ -71,9 +73,23 @@ static void halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, WGAIM_FLA
 	debug_printf("done\n");
 }
 
+static void load_winver_specific_procs(void) {
+	/* Used for Win98+ and WinNT5+ */
+	MyFlashWindowEx = (void*)wgaim_find_and_loadproc("user32.dll", "FlashWindowEx" );
+}
+
+/*
+ *  PUBLIC CODE
+ */
+
+/* Misc Wingaim functions */
+HINSTANCE wgaim_hinstance(void) {
+	return gaimexe_hInstance;
+}
+
 /* Determine whether the specified dll contains the specified procedure.
    If so, load it (if not already loaded). */
-static FARPROC find_and_loadproc( char* dllname, char* procedure ) {
+FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
 	HMODULE hmod;
 	int did_load=0;
 	FARPROC proc = 0;
@@ -100,20 +116,6 @@ static FARPROC find_and_loadproc( char* dllname, char* procedure ) {
 		}
 		return NULL;
 	}
-}
-
-static void load_winver_specific_procs(void) {
-	/* Used for Win98+ and WinNT5+ */
-	MyFlashWindowEx = (void*)find_and_loadproc("user32.dll", "FlashWindowEx" );
-}
-
-/*
- *  PUBLIC CODE
- */
-
-/* Misc Wingaim functions */
-HINSTANCE wgaim_hinstance(void) {
-	return gaimexe_hInstance;
 }
 
 /* Determine Gaim Paths during Runtime */

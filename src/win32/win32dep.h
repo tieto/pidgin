@@ -19,6 +19,7 @@
  ** win32dep.c
  **/
 /* Misc */
+FARPROC wgaim_find_and_loadproc(char*, char*);
 HINSTANCE wgaim_hinstance(void);
 extern void wgaim_im_blink(GtkWidget*);
 
