@@ -4,6 +4,7 @@ version 0.72
 	* Added a search feature to conversations.
 	* Added an option to remove the formatting toolbar, both globally and
 	  on a per-window basis (Nathan Fredrickson)
+	* Fixed the ICQ login crash
 	* Fixed a crash in the Add Chat dialog when selecting an
 	  account that doesn't support chats. Closes bug #821606.
 	* Fixed a bug where new MSN accounts without buddies added wouldn't
