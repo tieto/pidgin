@@ -973,13 +973,57 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 	msn_write(md->fd, buf);
 }
 
+static GList *msn_away_states() 
+{
+	GList *m = NULL;
+
+	m = g_list_append(m, "Available");	
+	m = g_list_append(m, "Away From Computer");	
+	m = g_list_append(m, "Be Right Back");	
+	m = g_list_append(m, "Busy");	
+	m = g_list_append(m, "On The Phone");	
+	m = g_list_append(m, "Out To Lunch");	
+
+	return m;
+}
+
 static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 {
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
 	char buf[MSN_BUF_LEN - 1];
 
+
+	gc->away = NULL;
+	
 	if (msg)
+	{
+		gc->away = "";
 		snprintf(buf, MSN_BUF_LEN, "CHG %d AWY\n", trId(md));
+	}
+
+	else if (state)
+	{
+		char away[4];
+
+		gc->away = "";
+
+		if (!strcmp(state, "Available"))
+			sprintf(away, "NLN");
+		else if (!strcmp(state, "Away From Computer"))
+			sprintf(away, "AWY");
+		else if (!strcmp(state, "Be Right Back"))
+			sprintf(away, "BRB");
+		else if (!strcmp(state, "Busy"))
+			sprintf(away, "BSY");
+		else if (!strcmp(state, "On The Phone"))
+			sprintf(away, "PHN");
+		else if (!strcmp(state, "Out To Lunch"))
+			sprintf(away, "LUN");
+		else
+			sprintf(away, "NLN");
+
+		snprintf(buf, MSN_BUF_LEN, "CHG %d %s\n", trId(md), away);
+	}
 	else if (gc->is_idle)
 		snprintf(buf, MSN_BUF_LEN, "CHG %d IDL\n", trId(md));
 	else
@@ -1055,6 +1099,7 @@ void msn_init(struct prpl *ret)
 	ret->send_im = msn_send_im;
 	ret->set_info = NULL;
 	ret->get_info = NULL;
+	ret->away_states = msn_away_states;
 	ret->set_away = msn_set_away;
 	ret->get_away_msg = NULL;
 	ret->set_dir = NULL;
