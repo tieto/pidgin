@@ -294,9 +294,11 @@ msn_list_emblems(GaimBuddy *b, char **se, char **sw,
 		emblems[i++] = "away";
 
 	if (user == NULL) {
-		gaim_debug(GAIM_DEBUG_ERROR, "msn",
-				   "buddy %s does not have a MsnUser attached!\n",
-				   b->name);
+		/* Shouldn't happen. */
+		gaim_debug_error("msn", "buddy %s does not have a MsnUser attached!\n",
+						 b->name);
+
+		emblems[0] = "offline";
 	}
 	else if (user->mobile)
 		emblems[i++] = "wireless";
