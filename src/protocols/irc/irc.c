@@ -1,12 +1,12 @@
 /**
  * @file irc.c
- * 
+ *
  * gaim
  *
  * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
  * Copyright (C) 2000-2003, Rob Flynn <rob@tgflinux.com>
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -504,7 +504,7 @@ static void _init_plugin(GaimPlugin *plugin)
 	split = gaim_account_user_split_new(_("Server"), IRC_DEFAULT_SERVER, '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = gaim_account_option_int_new(_("Port:"), "port", IRC_DEFAULT_PORT);
+	option = gaim_account_option_int_new(_("Port"), "port", IRC_DEFAULT_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", IRC_DEFAULT_CHARSET);
