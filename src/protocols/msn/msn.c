@@ -848,12 +848,21 @@ msn_rem_deny(GaimConnection *gc, const char *who)
 
 	g_snprintf(buf, sizeof(buf), "BL %s", who);
 
-	if (!msn_servconn_send_command(session->notification_conn, "REM", buf)) {
+	if (!msn_servconn_send_command(session->notification_conn, "REM", buf))
+	{
 		gaim_connection_error(gc, _("Write error"));
 		return;
 	}
 
 	gaim_privacy_permit_add(gc->account, who, TRUE);
+
+	g_snprintf(buf, sizeof(buf), "AL %s", who);
+
+	if (!msn_servconn_send_command(session->notification_conn, "ADD", buf))
+	{
+		gaim_connection_error(gc, _("Write error"));
+		return;
+	}
 }
 
 static void
