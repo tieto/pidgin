@@ -1081,7 +1081,7 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 			from = xmlnode_get_attrib(p->x, "from");
 			querynode = xmlnode_get_tag(p->x, "query");
 			xmlns = xmlnode_get_attrib(querynode, "xmlns");
-			vcard = xmlnode_get_tag(p->x, "vCard");
+			vcard = xmlnode_get_tag(p->x, "VCARD");
 
 			if (NSCHECK(querynode, NS_ROSTER)) {
 				jabber_handleroster(j, querynode);
