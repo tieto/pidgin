@@ -246,13 +246,13 @@ xmlnode_get_data(xmlnode *node)
 	return ret;
 }
 
-static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean pretty, int depth)
+static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 {
 	char *ret;
 	GString *text = g_string_new("");
 	xmlnode *c;
 	char *node_name, *esc, *esc2, *tab = NULL;
-	gboolean need_end = FALSE, has_data = FALSE;
+	gboolean need_end = FALSE, pretty = formatting;
 #ifdef _WIN32
 	static const char *newline = "\r\n";
 #else
@@ -277,19 +277,19 @@ static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean pretty, int
 			g_free(esc2);
 		} else if(c->type == XMLNODE_TYPE_TAG || c->type == XMLNODE_TYPE_DATA) {
 			if(c->type == XMLNODE_TYPE_DATA)
-				has_data = TRUE;
+				pretty = FALSE;
 			need_end = TRUE;
 		}
 	}
 
 	if(need_end) {
-		g_string_append_printf(text, ">%s", (pretty && !has_data) ? newline : "");
+		g_string_append_printf(text, ">%s", pretty ? newline : "");
 
 		for(c = node->child; c; c = c->next)
 		{
 			if(c->type == XMLNODE_TYPE_TAG) {
 				int esc_len;
-				esc = xmlnode_to_str_helper(c, &esc_len, (pretty && !has_data), depth+1);
+				esc = xmlnode_to_str_helper(c, &esc_len, pretty, depth+1);
 				text = g_string_append_len(text, esc, esc_len);
 				g_free(esc);
 			} else if(c->type == XMLNODE_TYPE_DATA) {
@@ -299,7 +299,7 @@ static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean pretty, int
 			}
 		}
 
-		if(tab && pretty && !has_data)
+		if(tab && pretty)
 			text = g_string_append(text, tab);
 		g_string_append_printf(text, "</%s>%s", node_name, pretty ? newline : "");
 	} else {
