@@ -932,6 +932,7 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 /*	gtk_widget_set_usize(button, 75, 30);*/
 	gtk_widget_show(button);
 	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(mask);
 		
 	return button;
 }
@@ -973,6 +974,7 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short show
 	gtk_widget_show(button_box);
 	gtk_widget_show(button);
 	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(mask);
 	
 	gtk_tooltips_set_tip(tips, button, text, "Gaim");	
 	return button;

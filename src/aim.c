@@ -492,6 +492,7 @@ void show_login()
 	gtk_table_attach(GTK_TABLE(table), pmw, 0,2,0,1,0,0,5,5);
 	gtk_widget_show(pmw);
 	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(mask);
 #endif /* USE_APPLET */
 
         

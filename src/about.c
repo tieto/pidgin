@@ -90,6 +90,7 @@ void show_about(GtkWidget *w, void *null)
 		gtk_box_pack_start(GTK_BOX(vbox), pixmap, TRUE, TRUE, 0);
 		gtk_widget_show(pixmap);
 		gdk_pixmap_unref(pm);
+		gdk_bitmap_unref(bm);
 		
 		label = gtk_label_new(
 "GAIM is a client that supports AOL's Instant Messenger protocol\nwritten under the GTK\n" 

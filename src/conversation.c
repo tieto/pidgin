@@ -1293,56 +1293,69 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	     &win->style->white, bold_xpm );
 	link_p = gtk_pixmap_new(link_i, mask);
 	gtk_widget_show(link_p);
+	gdk_bitmap_unref(mask);
 
 	palette_i = gdk_pixmap_create_from_xpm_d (win->window, &mask,
              &win->style->white, bold_xpm );
 	palette_p = gtk_pixmap_new(palette_i, mask);
 	gtk_widget_show(palette_p);
+	gdk_bitmap_unref(mask);
 
 	wood_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask, 
 	     &win->style->white, wood_xpm );
 	wood_p = gtk_pixmap_new(wood_i, mask);
 	gtk_widget_show(wood_p);
+	gdk_bitmap_unref(mask);
 	speaker_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
              &win->style->white, speaker_xpm );
 	speaker_p = gtk_pixmap_new(speaker_i, mask);
 	gtk_widget_show(speaker_p);
+	gdk_bitmap_unref(mask);
 	c->makesound=1;
 	strike_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
 	     &win->style->white, strike_xpm );
 	strike_p = gtk_pixmap_new(strike_i, mask);
 	gtk_widget_show(strike_p);
+	gdk_bitmap_unref(mask);
 	bold_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
              &win->style->white, bold_xpm );
 	bold_p = gtk_pixmap_new(bold_i, mask);
 	gtk_widget_show(bold_p);
+	gdk_bitmap_unref(mask);
 	italic_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
              &win->style->white, italic_xpm );
 	italic_p = gtk_pixmap_new(italic_i, mask);
 	gtk_widget_show(italic_p);
+	gdk_bitmap_unref(mask);
 	underline_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
 	     &win->style->white, underline_xpm );
 	underline_p = gtk_pixmap_new(underline_i, mask);
 	gtk_widget_show(underline_p);
+	gdk_bitmap_unref(mask);
 	small_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
              &win->style->white, small_xpm );
 	small_p = gtk_pixmap_new(small_i, mask);
 	gtk_widget_show(small_p);
+	gdk_bitmap_unref(mask);
 	normal_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
              &win->style->white, normal_xpm );
 	normal_p = gtk_pixmap_new(normal_i, mask);
 	gtk_widget_show(normal_p);
+	gdk_bitmap_unref(mask);
 	big_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
              &win->style->white, big_xpm );
 	big_p = gtk_pixmap_new(big_i, mask);
 	gtk_widget_show(big_p);
+	gdk_bitmap_unref(mask);
 	font_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
 			&win->style->white, bold_xpm );
 	font_p = gtk_pixmap_new(font_i, mask);
 	gtk_widget_show(font_p);
+	gdk_bitmap_unref(mask);
 	smiley_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, smile_icon_xpm);
 	smiley_p = gtk_pixmap_new(smiley_i, mask);
 	gtk_widget_show(smiley_p);
+	gdk_bitmap_unref(mask);
 
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
