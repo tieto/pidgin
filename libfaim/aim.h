@@ -132,6 +132,12 @@
 #define MAXMSGLEN 7987
 
 /*
+ * Maximum size of a Buddy Icon.
+ */
+#define MAXICONLEN 7168
+#define AIM_ICONIDENT "AVT1picture.id"
+
+/*
  * Current Maximum Length for Chat Room Messages
  *
  * This is actually defined by the protocol to be
@@ -469,10 +475,10 @@ faim_export unsigned long aim_debugconn_sendconnect(struct aim_session_t *sess, 
 
 faim_export int aim_logoff(struct aim_session_t *);
 
-#ifndef FAIM_INTERNAL
+#if !defined(FAIM_INTERNAL) || defined(FAIM_INTERNAL_INSANE)
 /* the library should never call aim_conn_kill */
 faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn);
-#endif /* ndef FAIM_INTERNAL */
+#endif
 
 typedef int (*aim_rxcallback_t)(struct aim_session_t *, struct command_rx_struct *, ...);
 
@@ -633,11 +639,71 @@ struct aim_filetransfer_priv {
   struct aim_fileheader_t fh;
 };
 
+struct aim_chat_roominfo {
+  u_short exchange;
+  char *name;
+  u_short instance;
+};
 
 #define AIM_IMFLAGS_AWAY 0x01 /* mark as an autoreply */
 #define AIM_IMFLAGS_ACK  0x02 /* request a receipt notice */
+#define AIM_IMFLAGS_UNICODE    0x04
+#define AIM_IMFLAGS_ISO_8859_1 0x08
+#define AIM_IMFLAGS_BUDDYREQ   0x10 /* buddy icon requested */
+#define AIM_IMFLAGS_HASICON    0x20 /* already has icon (timestamp included) */
 
-faim_export unsigned long aim_send_im(struct aim_session_t *, struct aim_conn_t *, const char *destsn, unsigned short flags, const char *msg, int msglen);
+struct aim_sendimext_args {
+  const char *destsn;
+  unsigned short flags;
+  const char *msg;
+  int msglen;
+  int iconlen;
+  time_t iconstamp;
+  unsigned short iconsum;
+};
+
+struct aim_incomingim_ch1_args {
+  char *msg;
+  int msglen;
+  unsigned long icbmflags;
+  unsigned short flag1;
+  unsigned short flag2;
+  int finlen;
+  unsigned char fingerprint[10];
+  time_t iconstamp;
+};
+
+struct aim_incomingim_ch2_args {
+  unsigned short reqclass;
+  unsigned short status;
+  union {
+    struct {
+      unsigned int length;
+      time_t timestamp;
+      unsigned char *icon;
+    } icon;
+    struct {
+    } voice;
+    struct aim_directim_priv *directim;
+    struct {
+      char *msg;
+      char *encoding;
+      char *lang;
+      struct aim_chat_roominfo roominfo;
+    } chat;
+    struct {
+      char *ip;
+      unsigned char *cookie;
+    } getfile;
+    struct {
+    } sendfile;
+  } info;
+};
+
+faim_export unsigned long aim_send_im_ext(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_sendimext_args *args);
+faim_export unsigned long aim_send_im(struct aim_session_t *, struct aim_conn_t *, const char *destsn, unsigned short flags, const char *msg);
+faim_export int aim_send_icon(struct aim_session_t *sess, struct aim_conn_t *conn, const char *sn, const unsigned char *icon, int iconlen, time_t stamp, unsigned short iconsum);
+faim_export unsigned short aim_iconsum(const unsigned char *buf, int buflen);
 faim_export int aim_send_im_direct(struct aim_session_t *, struct aim_conn_t *, char *);
 faim_export struct aim_conn_t * aim_directim_initiate(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *, char *destsn);
 faim_export struct aim_conn_t *aim_directim_connect(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *);
@@ -727,12 +793,6 @@ faim_export unsigned long aim_remove_buddy(struct aim_session_t *, struct aim_co
 
 /* aim_search.c */
 faim_export u_long aim_usersearch_address(struct aim_session_t *, struct aim_conn_t *, char *);
-
-struct aim_chat_roominfo {
-  u_short exchange;
-  char *name;
-  u_short instance;
-};
 
 struct aim_chat_exchangeinfo {
   u_short number;

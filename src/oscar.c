@@ -1550,51 +1550,37 @@ static int accept_getfile(gpointer w, struct ask_getfile *g) {
 int gaim_parse_incoming_im(struct aim_session_t *sess,
 			   struct command_rx_struct *command, ...) {
 	int channel;
+	struct aim_userinfo_s *userinfo;
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, command);
 	channel = va_arg(ap, int);
+	userinfo = va_arg(ap, struct aim_userinfo_s *);
 
 	/* channel 1: standard message */
 	if (channel == 1) {
-		struct aim_userinfo_s *userinfo;
-		char *msg = NULL;
 		char *tmp = g_malloc(BUF_LONG);
-		u_int icbmflags = 0;
-		u_short flag1, flag2;
+		struct aim_incomingim_ch1_args *args;
 
-		userinfo  = va_arg(ap, struct aim_userinfo_s *);
-		msg       = va_arg(ap, char *);
-		icbmflags = va_arg(ap, u_int);
-		flag1     = (u_short)va_arg(ap, u_int);
-		flag2     = (u_short)va_arg(ap, u_int);
+		args = va_arg(ap, struct aim_incomingim_ch1_args *);
 		va_end(ap);
 
-		g_snprintf(tmp, BUF_LONG, "%s", msg);
-		serv_got_im(gc, userinfo->sn, tmp, icbmflags & AIM_IMFLAGS_AWAY, time((time_t)NULL));
+		g_snprintf(tmp, BUF_LONG, "%s", args->msg);
+		serv_got_im(gc, userinfo->sn, tmp, args->icbmflags & AIM_IMFLAGS_AWAY, time(NULL));
 		g_free(tmp);
 	} else if (channel == 2) {
-		struct aim_userinfo_s *userinfo;
-		int rendtype = va_arg(ap, int);
-		if (rendtype & AIM_CAPS_CHAT) {
-			char *msg, *encoding, *lang;
-			struct aim_chat_roominfo *roominfo;
-
-			userinfo = va_arg(ap, struct aim_userinfo_s *);
-			roominfo = va_arg(ap, struct aim_chat_roominfo *);
-			msg      = va_arg(ap, char *);
-			encoding = va_arg(ap, char *);
-			lang     = va_arg(ap, char *);
-			va_end(ap);
-
+		struct aim_incomingim_ch2_args *args;
+		args = va_arg(ap, struct aim_incomingim_ch2_args *);
+		va_end(ap);
+		if (args->reqclass & AIM_CAPS_CHAT) {
 			serv_got_chat_invite(gc,
-					     roominfo->name,
-					     roominfo->exchange,
+					     args->info.chat.roominfo.name,
+					     args->info.chat.roominfo.exchange,
 					     userinfo->sn,
-					     msg);
-		} else if (rendtype & AIM_CAPS_SENDFILE) {
-		} else if (rendtype & AIM_CAPS_GETFILE) {
+					     args->info.chat.msg);
+		} else if (args->reqclass & AIM_CAPS_SENDFILE) {
+		} else if (args->reqclass & AIM_CAPS_GETFILE) {
 			/*
 			char *ip, *cookie;
 			struct ask_getfile *g = g_new0(struct ask_getfile, 1);
@@ -1616,28 +1602,23 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					userinfo->sn, gc->username);
 			do_ask_dialog(buf, g, accept_getfile, cancel_getfile);
 			*/
-		} else if (rendtype & AIM_CAPS_VOICE) {
-		} else if (rendtype & AIM_CAPS_BUDDYICON) {
-		} else if (rendtype & AIM_CAPS_IMIMAGE) {
-			struct aim_directim_priv *priv;
+		} else if (args->reqclass & AIM_CAPS_VOICE) {
+		} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
+		} else if (args->reqclass & AIM_CAPS_IMIMAGE) {
 			struct ask_direct *d = g_new0(struct ask_direct, 1);
 			char buf[256];
 
-			userinfo = va_arg(ap, struct aim_userinfo_s *);
-			priv = va_arg(ap, struct aim_directim_priv *);
-			va_end(ap);
-
 			debug_printf("%s received direct im request from %s (%s)\n",
-					gc->username, userinfo->sn, priv->ip);
+					gc->username, userinfo->sn, args->info.directim->ip);
 
 			d->gc = gc;
 			d->sn = g_strdup(userinfo->sn);
-			d->priv = priv;
+			d->priv = args->info.directim;
 			g_snprintf(buf, sizeof buf, "%s has just asked to directly connect to %s.",
 					userinfo->sn, gc->username);
 			do_ask_dialog(buf, d, accept_direct_im, cancel_direct_im);
 		} else {
-			debug_printf("Unknown rendtype %d\n", rendtype);
+			debug_printf("Unknown reqclass %d\n", args->reqclass);
 		}
 	}
 
@@ -2270,11 +2251,9 @@ static void oscar_send_im(struct gaim_connection *gc, char *name, char *message,
 		aim_send_im_direct(odata->sess, dim->conn, message);
 	} else {
 		if (away)
-			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message,
-					strlen(message));
+			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
 		else
-			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_ACK, message,
-					strlen(message));
+			aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_ACK, message);
 	}
 }
 

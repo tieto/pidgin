@@ -126,10 +126,12 @@ faim_internal int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *o
 
 faim_internal void faimdprintf(struct aim_session_t *sess, int dlevel, const char *format, ...);
 
+#ifndef FAIM_INTERNAL_INSANE
 /* why the hell wont cpp let you use #error inside #define's? */
 /* isn't it single-pass? so the #error would get passed to the compiler --jbm */
 #define printf() printf called inside libfaim
 #define sprintf() unbounded sprintf used inside libfaim
+#endif
 
 #endif /* __AIM_INTERNAL_H__ */
 #endif /* FAIM_INTERNAL */
