@@ -12,19 +12,27 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 %if "%{_vendor}" == "MandrakeSoft"
 Requires:   gtk+2.0 >= 2.0.0, libnss3
-BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, libnss3-devel, perl-devel
+BuildRequires: libao-devel, libgtk+2.0_0-devel, libtool, audiofile-devel, pkgconfig, libnss3-devel, perl-devel
 Provides:   libgaim-remote0
 %else
-Requires:   gtk2 >= 2.0.0, mozilla-nss, gtkspell, audiofile, libao
-BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
+Requires:   gtk2 >= 2.0.0, mozilla-nss, audiofile, libao
+BuildRequires: libao-devel, gtk2-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
 %endif
 %{?_with_silc:BuildRequires: libsilc-devel}
+%{?_with_tcl:BuildRequires: tcl, tk}
 
 %if %{?_with_silc:1}%{!?_with_silc:0}
 %package silc
 Summary:    SILC (Secure Internet Live Conferencing) plugin for Gaim
 Group:      Applications/Internet
-Requires:   gaim = 1:%{version}
+Requires:   gaim = %{epoch}:%{version}
+%endif
+
+%if %{?_with_tcl:1}%{!?_with_tcl:0}
+%package tcl
+Summary:    Tcl scripting support for Gaim
+Group:      Applications/Internet
+Requires:   gaim = %{epoch}:%{version}
 %endif
 
 %package devel
@@ -50,6 +58,12 @@ Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 SILC (Secure Internet Live Conferencing) plugin for Gaim
 %endif
 
+%if %{?_with_tcl:1}%{!?_with_tcl:0}
+%description tcl
+Tcl plugin loader for Gaim.  This package will allow you to write or
+use Gaim plugins written in the Tcl programming language.
+%endif
+
 %description devel
 The gaim-devel package contains the header files, developer
 documentation, and libraries required for development of gaim scripts
@@ -68,7 +82,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --with-perl-lib=%{buildroot}%{_prefix} \
                                     %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
-                                    %{?_with_silc:--with-silc-libs=%{_libdir}/silc}
+                                    %{?_with_silc:--with-silc-libs=%{_libdir}/silc} \
+                                    %{!?_with_tcl:--disable-tcl}
 
 make %{?_smp_mflags}
 
@@ -84,7 +99,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/*/*/perllocal.pod
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
 find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
 	sed "s@^$RPM_BUILD_ROOT@@g" | \
-	grep -v libsilcgaim.so > %{name}-%{version}-coreplugins
+	grep -v libsilcgaim.so |
+        grep -v tcl.so |
+        grep -v ".tcl$" > %{name}-%{version}-coreplugins
 
 %clean
 rm -rf %{buildroot}
@@ -115,6 +132,13 @@ rm -rf %{buildroot}
 %{_libdir}/gaim/libsilcgaim.*
 %endif
 
+%if %{?_with_tcl:1}%{!?_with_silc:0}
+%files tcl
+%defattr(-, root, root)
+
+%{_libdir}/gaim/tcl.so
+%endif
+
 %files devel
 %defattr(-, root, root)
 
@@ -128,6 +152,10 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/gaim.pc
 
 %changelog
+* Tue Jun 29 2004 Ethan Blanton <eblanton@cs.ohiou.edu>
+- Change Tcl to use --with tcl, the same as SILC, and build a gaim-tcl
+  package if specified.
+
 * Thu Jun 24 2004 Mark Doliner <thekingant@users.sourceforge.net>
 - Add --with silc rebuild option for compiling a separate gaim-silc
   RPM containing the silc protocol plugin (Stu Tomlinson).
