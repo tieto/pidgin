@@ -839,7 +839,8 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_account_set_password(dialog->account, NULL);
 
 	/* Build the username string. */
-	username = g_strdup(gaim_account_get_username(dialog->account));
+	username =
+		g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
 
 	for (l = dialog->prpl_info->user_splits, l2 = dialog->user_split_entries;
 		 l != NULL && l2 != NULL;

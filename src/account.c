@@ -180,7 +180,7 @@ gaim_account_disconnect(GaimAccount *account)
 void
 gaim_account_set_username(GaimAccount *account, const char *username)
 {
-	g_return_if_fail(account  != NULL);
+	g_return_if_fail(account != NULL);
 
 	if (account->username != NULL)
 		g_free(account->username);
