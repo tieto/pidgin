@@ -1066,9 +1066,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 	imhtml->show_comments = TRUE;
 
-	imhtml->zoom = 1.0;
-	imhtml->original_fsize = 0;
-
 	imhtml->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
@@ -3148,48 +3145,26 @@ static GtkTextTag *find_font_face_tag(GtkIMHtml *imhtml, gchar *face)
 	return tag;
 }
 
-static void _init_original_fsize(GtkIMHtml *imhtml)
-{
-	GtkTextAttributes *attr;
-	attr = gtk_text_view_get_default_attributes(GTK_TEXT_VIEW(imhtml));
-	imhtml->original_fsize = pango_font_description_get_size(attr->font);
-	gtk_text_attributes_unref(attr);
-}
-
-static void _recalculate_font_sizes(GtkTextTag *tag, gpointer imhtml)
-{
-	if (strncmp(tag->name, "FONT SIZE ", 10) == 0) {
-		int size;
-
-		size = strtol(tag->name + 10, NULL, 10);
-		g_object_set(G_OBJECT(tag), "size",
-		             (gint) (GTK_IMHTML(imhtml)->original_fsize *
-		             ((double) _point_sizes[size-1] * GTK_IMHTML(imhtml)->zoom)), NULL);
-	}
-
-
-}
-
 static GtkTextTag *find_font_size_tag(GtkIMHtml *imhtml, int size)
 {
 	gchar str[24];
 	GtkTextTag *tag;
-
-	if (!imhtml->original_fsize)
-		_init_original_fsize(imhtml);
 
 	g_snprintf(str, sizeof(str), "FONT SIZE %d", size);
 	str[23] = '\0';
 
 	tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), str);
 	if (!tag) {
-		/* For reasons I don't understand, setting "scale" here scaled based on some default
-		 * size other than my theme's default size. Our size 4 was actually smaller than
-		 * our size 3 for me. So this works around that oddity.
+		/* For reasons I don't understand, setting "scale" here scaled
+		 * based on some default size other than my theme's default
+		 * size. Our size 4 was actually smaller than our size 3 for
+		 * me. So this works around that oddity.
 		 */
+		GtkTextAttributes *attr = gtk_text_view_get_default_attributes(GTK_TEXT_VIEW(imhtml));
 		tag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "size",
-		                                 (gint) (imhtml->original_fsize *
-		                                 ((double) _point_sizes[size-1] * imhtml->zoom)), NULL);
+		                                 (gint) (pango_font_description_get_size(attr->font) *
+		                                 (double) _point_sizes[size-1]), NULL);
+		gtk_text_attributes_unref(attr);
 	}
 
 	return tag;

@@ -111,9 +111,6 @@ struct _GtkIMHtml {
 		GtkTextTag *link;
 	} edit;
 
-	double zoom;
-	int original_fsize;
-
 	char *clipboard_text_string;
 	char *clipboard_html_string;
 
