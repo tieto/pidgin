@@ -721,7 +721,8 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 		g_free(str);
 	}
 
-	if ((flag & WFLAG_RECV) && find_nick(b->gc, message))
+	if ((flag & WFLAG_RECV) && find_nick(b->gc, message)) {
+		play_sound(SND_CHAT_NICK);
 		flag |= WFLAG_NICK;
 
 	write_to_conv(b, message, flag, who, mtime, -1);

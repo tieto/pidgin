@@ -65,6 +65,7 @@ struct sound_struct sounds[NUM_SOUNDS] = {
 	N_("Person leaves chat"), OPT_SOUND_CHAT_PART, BuddyLeave, sizeof(BuddyLeave),
 	N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, Send, sizeof(Send),
 	N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, Receive, sizeof(Receive),
+	N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, Receive, sizeof(Receive),
 	NULL, 0, RedAlert, sizeof(RedAlert)
 };
 
