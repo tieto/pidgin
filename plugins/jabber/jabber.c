@@ -445,11 +445,9 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 	from = xmlnode_get_attrib(p->x, "from");
 	type = xmlnode_get_attrib(p->x, "type");
 
-	debug_printf("jabber: presence: %s, %s %s\n", to, from, type);
 	who = jid_new(j->p, from);
 	if (who->user == NULL) {
 		/* FIXME: transport */
-		debug_printf("user was NULL in handlepresence!\n");
 		return;
 	}
 
@@ -521,7 +519,6 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 					groupname = xmlnode_get_data(xmlnode_get_firstchild(g));
 					if (who->user == NULL) {
 						/* FIXME: transport */
-						debug_printf("user was NULL in handleroster!\n");
 						g = xmlnode_get_nextsibling(g);
 						continue;
 					}
@@ -549,7 +546,6 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 
 			if (who->user == NULL) {
 				/* FIXME: transport */
-				debug_printf("user was NULL in handleroster!\n");
 				x = xmlnode_get_nextsibling(x);
 				continue;
 			}
@@ -735,7 +731,6 @@ static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 		jid who = jid_new(j->p, name);
 		if (who->user == NULL) {
 			/* FIXME: transport */
-			debug_printf("user was NULL in add_buddy!\n");
 			return;
 		}
 		realwho = g_strdup_printf("%s@%s", who->user, who->server);
@@ -770,6 +765,7 @@ static void jabber_remove_buddy(struct gaim_connection *gc, char *name)
 
 	x = jutil_iqnew(JPACKET__SET, NS_ROSTER);
 	y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
+	xmlnode_put_attrib(y, "jid", realwho);
 	xmlnode_put_attrib(y, "subscription", "remove");
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
 
