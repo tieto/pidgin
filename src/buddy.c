@@ -61,19 +61,11 @@
 #include "pixmaps/block_small.xpm"
 
 #include "pixmaps/add_small.xpm"
-#include "pixmaps/import_small.xpm"
-/*#include "pixmaps/export_small.xpm"*/
-#if 0
-#if defined(GAIM_PLUGINS) || defined(USE_PERL)
-#include "pixmaps/plugins_small.xpm"
-#endif
-#endif
 #include "pixmaps/prefs_small.xpm"
 #include "pixmaps/search_small.xpm"
 #include "pixmaps/close_small.xpm"
 #include "pixmaps/exit_small.xpm"
 #include "pixmaps/pounce_small.xpm"
-#include "pixmaps/about_small.xpm"
 
 #include "pixmaps/send_small.xpm"
 #include "pixmaps/gnome_add.xpm"
