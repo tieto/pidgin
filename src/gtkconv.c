@@ -463,7 +463,7 @@ send_cb(GtkWidget *widget, struct gaim_conversation *conv)
 	else
 		gaim_chat_send(GAIM_CHAT(conv), buf);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/hide_on_send"))
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/im/hide_on_send"))
 		gaim_window_hide(gaim_conversation_get_window(conv));
 
 	g_free(buf);
