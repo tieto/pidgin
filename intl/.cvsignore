@@ -34,3 +34,4 @@ cat-compat.c
 linux-msg.sed
 po2tbl.sed.in
 xopen-msg.sed
+plural.c
