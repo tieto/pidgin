@@ -71,6 +71,103 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Fri Apr 04 2003 Rob Flynn <rob@marko.net> (0.60 release)
+-Core:
+- Auto-loading protocol plugins.
+- Plugins dialog and perl script menu merged into preferences.
+- Don't auto-login if an existing Gaim session is already running.
+- Moved "privacy preferences" to Tools menu.
+- -n, --loginwin option to disable autologins.
+- Added support for gettext 0.11.x.
+- Added support for automake 1.6.
+- aim:// URI's supported with gaim-remote command.
+- Quit Gaim remotely with gaim-remote. (Thanks, John Silvestri)
+- Added rudimentary support for X11R6 session management. (Thanks,  Robert McQueen)
+- Conversation backend and UI are now separated. (Thanks, Christian Hammond)
+- Asynchronous, non-blocking, DNS function (Thanks, Nicolas Lichtmaier)
+- As a side effect of the above: IPv6 support. Tested only with IRC (you can receive ipv6 chat requests from irssi!).
+-
+-Plugins:
+- Tray icon plugin--replaces the old GNOME applet. You'll need  the panel Notification Area applet (aka system-tray-applet)  for GNOME 2, or the Kicker for KDE 3.1. (Thanks, Robert McQueen, Nicolás Lichtmaier, Kristian Rietveld, Ari Pollak & Patrick Aussems)
+- Added GAIM::remove_event_handler and made set_info short circuitable in perl. (Thanks, Ryan McCabe)
+- event_del_conversation for plugins. (Thanks, Bill Tompkins)
+- Notify.c plugin rewritten; check its configure dialog. (Thanks, Etan Reisner)
+- Buddy Ticker made a plugin.
+- Idle Maker added to source.
+- Fortune profile added to source.
+-
+-AIM/ICQ:
+- TOC no longer compiles statically by default--use OSCAR.
+- ICQ plugin no longer gets built--use OSCAR.
+- Server-stored buddy lists for ICQ with full support for  authorization (Thanks, Mark Doliner)
+- File send/receive support for Aim over Oscar (Thanks, William T. Mahan and Mark Doliner)
+- Non-direct connect typing notification for AIM over OSCAR. (Thanks, Mark Doliner)
+- Allow only people in buddy list privacy option added for AIM.
+- Full ICQ info reading support. (Thanks, Vincas Ciziunas)
+- Support for synchronizing group renames on server.  Group rename server synchronization for AIM.  Server-side synchronization for moving individual AIM buddy to new group improved. (Thanks, Mark Doliner)
+- Ability to add screenname@mac.com people to AIM buddy lists. (Thanks, Graham Booker)
+- Ability to change ICQ password. (Thanks, Mark Doliner)
+- Option to have AIM notify you if you have unread mail. (Thanks, Mark Doliner)
+- Parse URL messages, Contact Sending and Pager Messages in ICQ. (Thanks, Mark Doliner)
+- use snprintf instead of sprintf. (Thanks, William T. Mahan)
+- Fixed crashbug on empty rvous requests. (Thanks Brandon Scott (Xeon) for pointing this out, and Matt Pandina for the patch)
+- Nice Oscar changes--mostly internal. (Thanks, Mark Doliner)
+-
+-IRC:
+- Added more IRC slash commands -- /W, /VERSION, /MODE, /CTCP stuff, and other cool IRC enhancments. (Thanks, Jonas Birmé)
+- IRC's /topic with no argument displays the current topic (Thanks,  Mark Doliner)
+- DCC File Receive support for IRC.
+- Optional password on IRC accounts. (Thanks, Christian Hammond)
+- Added half-op support.
+-
+-Jabber:
+- Jabber invisibility and permanently cancel sending on-line status to Jabber buddies.
+- Jabber roster updated on group renames.
+- Fixed a possible segfault when signing off Jabber. (Thanks, Craig Boston)
+- Improved typing notification support for Jabber and Yahoo! (Thanks, Nathan Walp)
+- File receive support for Jabber. (Thanks, Nathan Walp)
+-
+-MSN:
+- MSN users are notified when the other party closes the conversation window. (Thanks, Christian Hammond)
+- File receive support for MSN. (Thanks, Christian Hammond)
+-
+Translations:
+- French translation updated. (Thanks, Stephane Wirtel, Sebastian Carpe, and David Odin)
+- Polish translation updated. (Thanks, Przemyslaw Sulek)
+- Finnish translation updated. (Thanks, Tero Kuusela)
+- Spanish translation updated. (Thanks, Lars Goldschlager, Nicolas Lichtmaier) 
+- Traditional Chinese translation updated. (Thanks, Paladin Liu)
+- Japanese translation updated. (Thanks, Junichi Uekawa)
+- Korean translation updated. (Thanks, A Lee)
+- Romanian translation added. (Thanks, Misu Moldovan)
+- Many other translation patches from many people merged in.
+-
+Internationalization:
+- Now using libiconv for better i18n support (Thanks, Junichi Uekawa)
+- Lots of i18n fixes (Thanks Matt Wilson, Ethan Blanton, A Lee)
+- Correct i18n handling for many parts of AIM/ICQ, including instant messages, away messages, and profiles (Thanks, Ethan Blanton)
+- Improved MSN internationalization (Thanks, A Lee)
+-
+-Other:
+- Optionally uniquely colorize nicks in chats
+- Add / Remove buddy menu item added to the chat users list (Thanks, Jonas Birmé)
+- View log button in conversation toolbar (Thanks, Etan Reisner)
+- Option to log IMs and Chats seperately. (Thanks, Etan Reisner)
+- Removed Ctrl-C binding for color
+- Fix first message in tab not displaying bug (Thanks, Etan Reisner)
+- Changed some default options
+- Updated desktop and window icons (Thanks, Robert McQueen)
+- Switch the .desktop file to the new KDE/GNOME common vfolder format (Thanks, Robert McQueen)
+- Removed all deprecated GTK calls.  Now 100% GTK 2. (Thanks Nathan Walp, Christian Hammond, Ari Pollak, Ethan Blanton, Robert McQueen)
+- Read proxy environment variables. (Thanks, Christian Hammond)
+- Fixed security vulnerability with manual browser option (Thanks, Robert McQueen)
+- Can get info for ICQ and Jabber users from the "Edit Buddies" tab (Thanks, Brian Bernas)
+- Code cleanups and fixes (Thanks, Federico Mena Quintero and Ka-Hing Cheung)
+- Word-wrapping on mail notification text (Thanks, Andrew Molloy)
+- Generic File Transfer PRPL interface (Thanks, Christian Hammond)
+- Better supression of auto-responses (Thanks, Joshua Blanton)
+- Drag-and-drop tabs in conversations, and multiple windows with tabs in each (Thanks, Christian Hammond)
+
 * Mon Jun 24 2002 Rob Flynn <rob@marko.net> (0.59 release)
 - Hungarian translation added (Thanks, Sutto Zoltan)
 - Swedish translation updated (Thanks, Christian Rose)
