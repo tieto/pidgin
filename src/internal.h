@@ -88,9 +88,9 @@
 #endif
 
 #ifndef _WIN32
-# include <arpa/inet.h>
 # include <netinet/in.h>
 # include <sys/socket.h>
+# include <arpa/inet.h>
 # include <sys/un.h>
 # include <sys/utsname.h>
 # include <gdk/gdkx.h>
