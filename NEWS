@@ -13,6 +13,18 @@
 	translation files.  Also, all our awesome translators are mentioned 
 	in the about window now.
 
+	Christian: I've been really busy with this stuff. Gaim got a new
+	signal architecture, which is just really cool. The old events system
+	is gone. Now you connect a signal from a handle (which can be
+	a plugin or whatever) to a function, and plugins can register their
+	own functions, and other neat things. Oh yeah, and perl was rewritten.
+	There's a new HOWTO in the Doxygen docs (make docs), but no API
+	reference yet. Developers, look at the plugins/perl/common/*.xs files
+	for now. I also wrote plugin dependencies, which will be more useful
+	down the road. Gaim v0.69 is going to have the new MSN plugin that
+	works with the latest MSN protocol. Please be patient for that, as
+	we're getting a lot of MSN questions we answer over and over.
+
 0.67 (08/14/2003):
 
 	Rob: I live in Georgia.  I don't care about blackouts.  We only
