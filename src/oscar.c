@@ -53,6 +53,8 @@ int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
 		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
 int USE_OSCAR = 0;
 int keepalv = -1;
+int create_exchange = 0;
+char *create_name = NULL;
 
 GList *oscar_chats = NULL;
 
@@ -901,6 +903,46 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 				debug_print(debug_buff);
 				i++;
 			}
+			if (create_exchange) {
+				sprintf(debug_buff, "creating room %s\n",
+						create_name);
+				debug_print(debug_buff);
+				aim_chatnav_createroom(sess, command->conn, create_name, create_exchange);
+				create_exchange = 0;
+				g_free(create_name);
+				create_name = NULL;
+			}
+			}
+			break;
+		case 0x0008: {
+			char *fqcn, *name, *ck;
+			u_short instance, flags, maxmsglen, maxoccupancy, unknown;
+			unsigned char createperms;
+			unsigned long createtime;
+
+			fqcn = va_arg(ap, char *);
+			instance = (u_short)va_arg(ap, u_int);
+			flags = (u_short)va_arg(ap, u_int);
+			createtime = va_arg(ap, unsigned long);
+			maxmsglen = (u_short)va_arg(ap, u_int);
+			maxoccupancy = (u_short)va_arg(ap, u_int);
+			createperms = va_arg(ap, unsigned char);
+			unknown = (u_short)va_arg(ap, u_int);
+			name = va_arg(ap, char *);
+			ck = va_arg(ap, char *);
+			va_end(ap);
+
+			sprintf(debug_buff, "created room: %s %d %d %lu %d %d %d %d %s %s\n", fqcn, instance, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
+			debug_print(debug_buff);
+			if (flags & 0x4) {
+				sprintf(debug_buff, "joining %s on exchange 5\n", name);
+				debug_print(debug_buff);
+				aim_chat_join(gaim_sess, gaim_conn, 5, ck);
+			} else 
+				sprintf(debug_buff, "joining %s on exchange 4\n", name);{
+				debug_print(debug_buff);
+				aim_chat_join(gaim_sess, gaim_conn, 4, ck);
+			}
 			}
 			break;
 		default:
@@ -1231,7 +1273,7 @@ void send_keepalive(gpointer d) {
 }
 
 void update_keepalive(gboolean on) {
-	if (on && keepalv < 0 && blist) {
+	if (on && keepalv < 0 && blist && (general_options & OPT_GEN_KEEPALIVE)) {
 		debug_print("allowing NOP\n");
 		keepalv = gtk_timeout_add(60000, (GtkFunction)send_keepalive, 0);
 	} else if (!on && keepalv > -1) {

@@ -498,9 +498,19 @@ void serv_join_chat(int exchange, char *name)
 	        g_snprintf(buf, sizeof(buf)/2, "toc_chat_join %d \"%s\"", exchange, name);
 	        sflap_send(buf, -1, TYPE_DATA);
 	} else {
+		struct aim_conn_t *cur = NULL;
 		sprintf(debug_buff, "Attempting to join chat room %s.\n", name);
 		debug_print(debug_buff);
-		aim_chat_join(gaim_sess, gaim_conn, exchange, name);
+		if ((cur = aim_getconn_type(gaim_sess, AIM_CONN_TYPE_CHATNAV))) {
+			debug_print("chatnav exists, creating room\n");
+			aim_chatnav_createroom(gaim_sess, cur, name, exchange);
+		} else {
+			/* this gets tricky */
+			debug_print("chatnav does not exist, opening chatnav\n");
+			create_exchange = exchange;
+			create_name = g_strdup(name);
+			aim_bos_reqservice(gaim_sess, gaim_conn, AIM_CONN_TYPE_CHATNAV);
+		}
 	}
 }
 

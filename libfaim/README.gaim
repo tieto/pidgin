@@ -47,6 +47,7 @@ Chat:
  - talking
  - inviting someone
  - getting invited
+ - creating rooms (needed to join empty rooms)
  - refreshing the chatlist in the preferences dialog
 Direct IM (aka IM Image, for sounds and pictures)
 
@@ -55,7 +56,6 @@ CURRENTLY UNSUPPORTED FEATURES
 Telling the server who's on your permit/deny lists
 Chat:
  - whispering (this will never happen)
- - creating rooms (needed to join empty rooms)
 Getting/setting dir info
 Changing your password
 File Transfer (Get/Send)

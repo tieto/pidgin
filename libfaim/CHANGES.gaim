@@ -1,4 +1,8 @@
 
+Thu Sep 14 17:37:28 UTC 2000 EWarmenhoven
+	- libfaim has create room callback now, so you can create and join
+	  empty rooms.
+
 Tue Sep 12 22:58:13 UTC 2000 EWarmenhoven
 	- Added option to send flap_nop every minute
 
