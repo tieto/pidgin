@@ -215,7 +215,7 @@ gaim_connection_disconnect(GaimConnection *gc)
 
 	account = gaim_connection_get_account(gc);
 
-	if (gaim_account_get_connection(account) != NULL) {
+	if (!account->disconnecting) {
 		gaim_account_disconnect(account);
 		return;
 	}

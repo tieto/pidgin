@@ -256,11 +256,13 @@ gaim_account_disconnect(GaimAccount *account)
 
 	gaim_debug_info("account", "Disconnecting account %p\n", account);
 
+	account->disconnecting = TRUE;
 	gc = gaim_account_get_connection(account);
 
-	gaim_account_set_connection(account, NULL);
-
 	gaim_connection_disconnect(gc);
+
+	gaim_account_set_connection(account, NULL);
+	account->disconnecting = FALSE;
 }
 
 void

@@ -62,6 +62,7 @@ struct _GaimAccount
 	char *protocol_id;          /**< The ID of the protocol.              */
 
 	GaimConnection *gc;         /**< The connection handle.               */
+	gboolean disconnecting;     /**< The account is currently disconnecting */
 
 	GHashTable *settings;       /**< Protocol-specific settings.          */
 	GHashTable *ui_settings;    /**< UI-specific settings.                */
