@@ -168,10 +168,6 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 	/* Now we *should* be at the body. */
 	if (!strcmp(msn_message_get_content_type(msg), "application/x-msnmsgrp2p"))
 	{
-		msn_message_set_body(msg, tmp);
-	}
-	else
-	{
 		char header[48];
 		char footer[4];
 
@@ -208,6 +204,10 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 
 		/* Import the footer. */
 		msg->msnslp_footer.app_id = (long)footer;
+	}
+	else
+	{
+		msn_message_set_body(msg, tmp);
 	}
 
 	g_free(tmp_base);
