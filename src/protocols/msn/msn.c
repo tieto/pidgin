@@ -112,6 +112,25 @@ static char *url_decode(const char *msg)
 	return buf;
 }
 
+static char *url_encode(const char *msg)
+{
+	static char buf[MSN_BUF_LEN];
+	int i, j = 0;
+
+	bzero(buf, sizeof(buf));
+	for (i = 0; i < strlen(msg); i++) {
+		if (isalnum(msg[i]))
+			buf[j++] = msg[i];
+		else {
+			sprintf(buf + j, "%%%02x", (unsigned char)msg[i]);
+			j += 3;
+		}
+	}
+	buf[j] = 0;
+
+	return buf;
+}
+
 static char *handle_errcode(char *buf, gboolean show)
 {
 	int errcode;
@@ -811,7 +830,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
-		friend = tmp;
+		friend = url_decode(tmp);
 
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
 	} else if (!g_strncasecmp(buf, "REM", 3)) {
@@ -998,6 +1017,7 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 		GET_NEXT(tmp);
 		friend = tmp;
 		GET_NEXT(tmp);
+		friend = url_decode(friend);
 
 		/* so here, we're either getting the challenge or the OK */
 		if (!g_strcasecmp(resp, "OK")) {
@@ -1399,7 +1419,7 @@ static void msn_act_id(gpointer data, char *entry)
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	g_snprintf(buf, sizeof(buf), "REA %d %s %s\n", ++md->trId, gc->username, entry);
+	g_snprintf(buf, sizeof(buf), "REA %d %s %s\n", ++md->trId, gc->username, url_encode(entry));
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
