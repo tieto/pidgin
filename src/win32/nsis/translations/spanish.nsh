@@ -5,9 +5,15 @@
 ;;  Windows Code page: 1252
 ;;  Translator: Javier Fernandez-Sanguino Peña
 ;;
+;;  Version 2
+;;
 
 ; Startup GTK+ check
 !define GTK_INSTALLER_NEEDED			"El entorno de ejecución de GTK+ falta o necesita ser actualizado.$\rPor favor, instale la versión v${GTK_VERSION} del ejecutable GTK+ o alguna posterior.
+
+; License Page
+!define GAIM_LICENSE_BUTTON			"Siguiente >"
+!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) se distribuye bajo la licencia GPL. Esta licencia se incluye aquí sólo con propósito informativo: $_CLICK"
 
 ; Components Page
 !define GAIM_SECTION_TITLE			"Cliente de mensajería instantánea de Gaim (necesario)"
@@ -27,6 +33,9 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Se ha encontrado una versión antigüa del ejecutable de GTK+. ¿Desea actualizarla?$\rObservación: Gaim no funcionará a menos que lo haga."
+
+; Installer Finish Page
+!define GAIM_FINISH_VISIT_WEB_SITE		"Visite la página Web de Gaim Windows"
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (sólo eliminar)"
