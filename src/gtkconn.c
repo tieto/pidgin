@@ -23,6 +23,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
+#include "stock.h"
 #include "util.h"
 
 #include "gtkblist.h"
@@ -266,18 +267,146 @@ static void gaim_gtk_connection_notice(GaimConnection *gc,
 {
 }
 
+struct disconnect_window {
+	GtkWidget *window;
+	GtkWidget *treeview;
+	GtkWidget *sw;
+	GtkWidget *label;
+};
+struct disconnect_window *disconnect_window = NULL;
+
+static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
+{
+	switch(id) {
+	case GTK_RESPONSE_CLOSE:
+		gtk_widget_destroy(disconnect_window->window);
+		g_free(disconnect_window);
+		disconnect_window = NULL;
+		break;
+	case GTK_RESPONSE_ACCEPT:
+		break;
+	}
+}
+
+static void disconnect_tree_cb(GtkTreeSelection *sel, GtkTreeModel *model) 
+{
+	GtkTreeIter  iter;
+	GValue val = { 0, };
+	const char *label_text;
+
+	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
+		return;
+	gtk_tree_model_get_value (model, &iter, 3, &val);
+	label_text = g_value_get_string(&val);
+	gtk_label_set_markup(GTK_LABEL(disconnect_window->label), label_text);
+	g_value_unset(&val);
+}
+
+
 static void
 gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 {
-	gchar *primary, *secondary;
+	char *label_text = NULL;
+	GdkPixbuf *scale, *icon;
+	GtkTreeViewColumn *col;
+	GtkListStore *list_store;
+	GtkTreeIter iter;
+	
+	icon =  create_prpl_icon(gaim_connection_get_account(gc));
+	scale = gdk_pixbuf_scale_simple(icon, 16, 16, GDK_INTERP_BILINEAR);
 
-	primary = g_strdup_printf(_("%s has been disconnected"),
-				gaim_account_get_username(gaim_connection_get_account(gc)));
-	secondary = g_strdup_printf("%s\n%s", gaim_date_full(),
-								text ? text : _("Reason Unknown."));
-	gaim_notify_error(NULL, _("Connection Error"), primary, secondary);
-	g_free(primary);
-	g_free(secondary);
+	label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">%s has been disconencted.</span>\n\n%s\n%s",
+				     gaim_account_get_username(gaim_connection_get_account(gc)), gaim_date_full(), 
+				     text ? text : _("Reason Unknown."));
+	
+	if (!disconnect_window) {
+		GtkWidget *hbox, *vbox, *img;
+		GtkCellRenderer *rend, *rend2;
+		GtkTreeSelection *sel;
+	
+		disconnect_window = g_malloc(sizeof(disconnect_window));
+		disconnect_window->window = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_NO_SEPARATOR,
+									_("Reconnect"), GTK_RESPONSE_ACCEPT,
+									GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+		g_signal_connect(G_OBJECT(disconnect_window->window), "response", G_CALLBACK(disconnect_response_cb), disconnect_window);
+
+		gtk_container_set_border_width(GTK_CONTAINER(disconnect_window->window), 6);
+		gtk_window_set_resizable(GTK_WINDOW(disconnect_window->window), FALSE);
+		gtk_dialog_set_has_separator(GTK_DIALOG(disconnect_window->window), FALSE);
+		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(disconnect_window->window)->vbox), 12);
+		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(disconnect_window->window)->vbox), 6);
+
+		hbox = gtk_hbox_new(FALSE, 12);
+		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(disconnect_window->window)->vbox), hbox);
+		img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
+		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+		
+		vbox = gtk_vbox_new(FALSE, 12);
+		gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+
+		disconnect_window->label = gtk_label_new(NULL);
+		
+		gtk_label_set_markup(GTK_LABEL(disconnect_window->label), label_text);
+		gtk_label_set_line_wrap(GTK_LABEL(disconnect_window->label), TRUE);
+		gtk_misc_set_alignment(GTK_MISC(disconnect_window->label), 0, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), disconnect_window->label, FALSE, FALSE, 0);
+
+		gtk_widget_show_all(disconnect_window->window);
+
+		/* Tree View */
+		disconnect_window->sw = gtk_scrolled_window_new(NULL,NULL);
+		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(disconnect_window->sw), GTK_SHADOW_IN);
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(disconnect_window->sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+		gtk_box_pack_start(GTK_BOX(vbox), disconnect_window->sw, TRUE, TRUE, 0);
+		
+		list_store = gtk_list_store_new (5, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+		gtk_list_store_append (list_store, &iter);
+		gtk_list_store_set(list_store, &iter,
+				   0, scale,
+				   1, gaim_account_get_username(gaim_connection_get_account(gc)),
+				   2, gaim_date_full(),
+				   3, label_text,
+				   4, gaim_connection_get_account(gc), -1);
+		
+		disconnect_window->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL(list_store));
+		
+		rend = gtk_cell_renderer_pixbuf_new();
+		rend2 = gtk_cell_renderer_text_new();
+		col = gtk_tree_view_column_new();
+		gtk_tree_view_column_set_title(col, _("Account"));
+		gtk_tree_view_column_pack_start(col, rend, FALSE);
+		gtk_tree_view_column_pack_start(col, rend2, FALSE);
+		gtk_tree_view_column_set_attributes(col, rend, "pixbuf", 0, NULL);
+		gtk_tree_view_column_set_attributes(col, rend2, "text", 1, NULL);
+		gtk_tree_view_append_column (GTK_TREE_VIEW(disconnect_window->treeview), col);
+		
+		rend = gtk_cell_renderer_text_new();
+		col = gtk_tree_view_column_new_with_attributes (_("Time"),
+								rend, "text", 2, NULL);
+		gtk_tree_view_append_column (GTK_TREE_VIEW(disconnect_window->treeview), col);
+
+		g_object_unref(G_OBJECT(list_store));
+		gtk_container_add(GTK_CONTAINER(disconnect_window->sw), disconnect_window->treeview);
+		
+		sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (disconnect_window->treeview));
+		g_signal_connect (G_OBJECT (sel), "changed",
+				  G_CALLBACK (disconnect_tree_cb), list_store);
+	} else {
+		list_store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(disconnect_window->treeview)));
+		gtk_list_store_append (list_store, &iter);
+		gtk_list_store_set(list_store, &iter,
+				   0, scale,
+				   1, gaim_account_get_username(gaim_connection_get_account(gc)),
+				   2, gaim_date_full(),
+				   3, label_text,
+				   4, gaim_connection_get_account(gc), -1);
+		gtk_label_set_markup(GTK_LABEL(disconnect_window->label), label_text);
+		gtk_widget_show_all(disconnect_window->sw);
+	}
+	g_free(label_text);
+	g_object_unref(G_OBJECT(icon));
+	g_object_unref(G_OBJECT(scale));
 }
 
 static GaimConnectionUiOps conn_ui_ops =
