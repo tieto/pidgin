@@ -617,15 +617,19 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 
 	if (errorcode || !bosip || !cookie) {
 		switch (errorcode) {
-		case 0x18:
-			/* connecting too frequently */
-			hide_login_progress(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
-			plugin_event(event_error, (void *)983, 0, 0, 0);
-			break;
 		case 0x05:
 			/* Incorrect nick/password */
 			hide_login_progress(gc, _("Incorrect nickname or password."));
 			plugin_event(event_error, (void *)980, 0, 0, 0);
+			break;
+		case 0x11:
+			/* Suspended account */
+			hide_login_progress(gc, _("Your account is currently suspended."));
+			break;
+		case 0x18:
+			/* connecting too frequently */
+			hide_login_progress(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
+			plugin_event(event_error, (void *)983, 0, 0, 0);
 			break;
 		case 0x1c:
 			/* client too old */
@@ -640,7 +644,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		debug_printf("Error URL: %s\n", errurl);
 		aim_conn_kill(sess, &command->conn);
 		signoff(gc);
-		return -1;
+		return 1;
 	}
 
 
@@ -664,7 +668,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	if (bosconn == NULL) {
 		hide_login_progress(gc, _("Internal Error"));
 		signoff(gc);
-		return -1;
+		return 1;
 	}
 
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0003, gaim_bosrights, 0);
@@ -707,7 +711,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	if (bosconn->fd < 0) {
 		hide_login_progress(gc, _("Could Not Connect"));
 		signoff(gc);
-		return -1;
+		return 1;
 	}
 	aim_auth_sendcookie(sess, bosconn, cookie);
 	gdk_input_remove(gc->inpa);
