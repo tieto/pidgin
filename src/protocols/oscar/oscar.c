@@ -4097,13 +4097,36 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	for (curitem=sess->ssi.local; curitem; curitem=curitem->next) {
 		switch (curitem->type) {
 			case 0x0000: { /* Buddy */
-				if ((curitem->name) && (!find_buddy(gc, curitem->name))) {
+				if (curitem->name) {
 					char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, curitem->name);
-					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
-					debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
-					add_buddy(gc, (gname ? gname : "orphans"), curitem->name, alias);
-					free(alias);
-					tmp++;
+					if (!find_buddy(gc, curitem->name)) {
+						char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
+						debug_printf("ssi: adding buddy %s to group %s to local list\n", curitem->name, gname);
+						add_buddy(gc, (gname ? gname : "orphans"), curitem->name, alias);
+						free(alias);
+						tmp++;
+					}
+					if (curitem->name && gname && aim_ssi_waitingforauth(sess->ssi.local, gname, curitem->name)) {
+						struct name_data *data = g_new(struct name_data, 1);
+						gchar *dialog_msg, *nombre;
+						struct buddy *buddy;
+
+						buddy = find_buddy(gc, curitem->name);
+						if (buddy && (get_buddy_alias_only(buddy)))
+							nombre = g_strdup_printf("%s (%s)", curitem->name, get_buddy_alias_only(buddy));
+						else
+							nombre = g_strdup(curitem->name);
+
+						dialog_msg = g_strdup_printf(_("The user %s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"), nombre);
+						data->gc = gc;
+						data->name = g_strdup(curitem->name);
+						data->nick = NULL;
+						do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request, _("Cancel"), gaim_auth_dontrequest, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+
+						g_free(dialog_msg);
+						g_free(nombre);
+					}
+
 				}
 			} break;
 
