@@ -2888,10 +2888,9 @@ static char *oscar_tooltip_text(struct buddy *b) {
 
 	if (bi) {
 		char *caps = caps_string(bi->caps);
-		char *time = asctime(localtime(&bi->signon));
-		*(strchr(time, '\n')) = '\0';
-		return g_strdup_printf(_("<b>Online Since:</b> %s%s%s"), 
-				       time, 
+		char *tstr = sec_to_text(time(NULL) - bi->signon);
+		return g_strdup_printf(_("<b>Logged In:</b> %s%s%s"), 
+				       tstr, 
 				       caps ? _("\n<b>Capabilities:</b> ") : "", caps ? caps : "");
 	} else {
 		return NULL;
