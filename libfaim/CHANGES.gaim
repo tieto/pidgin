@@ -1,4 +1,10 @@
 
+Sun May 28 21:33:43 UTC 2000 EWarmenhoven
+	- Figured out how aim_set_latency works, and why I thought it wasn't
+	  working before, and so now you can receive messages a lot faster, I
+	  hope.
+	- Chat still isn't working, and I don't know why.
+
 Fri May 26 22:56:00 UTC 2000 EWarmenhoven
 	- Adam explained to me everything I was doing wrong, ridiculed me a bit,
 	  and eventually told me how to fix the 100% bug. Gaim/Faim is now

@@ -29,6 +29,7 @@
 #include <gtk/gtk.h>
 #ifdef USE_OSCAR
 #include "../libfaim/aim.h"
+extern int gaim_caps;
 #endif
 #include "gaim.h"
 
@@ -236,7 +237,7 @@ void serv_set_away(char *message)
 	sflap_send(buf, -1, TYPE_DATA);
 #else
 	aim_bos_setprofile(gaim_sess, gaim_conn, current_user->user_info,
-				message, AIM_CAPS_CHAT);
+				message, gaim_caps);
 #endif
 }
 
@@ -249,10 +250,10 @@ void serv_set_info(char *info)
 #else
 	if (awaymessage)
 		aim_bos_setprofile(gaim_sess, gaim_conn, info,
-					awaymessage->message, AIM_CAPS_CHAT);
+					awaymessage->message, gaim_caps);
 	else
 		aim_bos_setprofile(gaim_sess, gaim_conn, info,
-					NULL, AIM_CAPS_CHAT);
+					NULL, gaim_caps);
 #endif
 }
 

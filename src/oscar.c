@@ -41,6 +41,7 @@
 static int inpa = -1;
 struct aim_session_t *gaim_sess;
 struct aim_conn_t    *gaim_conn;
+int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE;
 
 static int gaim_parse_auth_resp  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_auth_server_ready(struct aim_session_t *, struct command_rx_struct *, ...);
@@ -254,6 +255,7 @@ int gaim_auth_server_ready(struct aim_session_t *sess,
 
 int gaim_server_ready(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
+	static int id = 1;
 	switch (command->conn->type) {
 	case AIM_CONN_TYPE_BOS:
 		aim_bos_reqrate(sess, command->conn);
@@ -279,6 +281,7 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_bos_reqrate(sess, command->conn);
 		aim_bos_ackrateresp(sess, command->conn);
 		aim_chat_clientready(sess, command->conn);
+		serv_got_joined_chat(id++, aim_chat_getname(command->conn));
 		break;
 	default: /* huh? */
 		break;
@@ -308,8 +311,10 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	switch(serviceid) {
 	case 0x0005: /* Ads */
 		aim_bos_setbuddylist(sess, command->conn, buddies);
-		aim_bos_setprofile(sess, command->conn, profile,
-					NULL, AIM_CAPS_CHAT);
+		aim_bos_setprofile(sess, command->conn, profile, NULL,
+					gaim_caps);
+		
+		aim_seticbmparam(sess, command->conn);
 
 		aim_bos_clientready(sess, command->conn);
 
@@ -341,6 +346,8 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		if (bud_list_cache_exists())
 			do_import(NULL, 0);
 
+		aim_conn_setlatency(command->conn, 1);
+
 		break;
 	case 0x7: /* Authorizer */
 		{
@@ -366,7 +373,6 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	case 0xe: /* Chat */
 		{
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, ip);
-		static int id = 1;
 		char *roomname = va_arg(ap, char *);
 		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR) {
 			debug_print("unable to connect to chat server\n");
@@ -375,7 +381,6 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		aim_chat_attachname(tstconn, roomname);
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 		aim_auth_sendcookie(sess, tstconn, cookie);
-		serv_got_joined_chat(id++, roomname);
 		}
 		break;
 	default: /* huh? */
@@ -578,6 +583,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	/* FIXME */
 	debug_print("inside chatnav_info\n");
+	aim_conn_close(command->conn);
 	return 1;
 }
 

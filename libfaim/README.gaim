@@ -52,10 +52,6 @@ Telling the server who's on your permit/deny lists
 
 KNOWN ISSUES
 ============
-- libfaim apparently has a problem with receiving messages too fast (sort of).
-You can receive more messages in less time with TOC than with libfaim. It's not
-completely libfaim's fault though.
-
 - The permit/deny stuff is really funny. If I don't put it there, everything
 works great, if I do, it occasionally works, but not well. I've commented it out
 (again - I swear, this is the most on-again-off-again feature).
