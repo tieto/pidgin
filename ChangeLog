@@ -15,6 +15,7 @@ version 0.78cvs
 	* Added support for Novell privacy settings (Mike Stoddard of Novell)
 	* Added ability to initiate multi-user conferences (chats) in Novell (Mike
 	  Stoddard of Novell)
+	* Find and Save buttons on the debug window (Stu Tomlinson)
 
 	Bug Fixes:
 	* Novell 64bit fixes, better error messages, and buddy list sync fixes

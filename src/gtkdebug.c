@@ -25,10 +25,12 @@
 #include "gtkinternal.h"
 
 #include "prefs.h"
+#include "request.h"
 #include "util.h"
 
 #include "gtkdebug.h"
 #include "gtkimhtml.h"
+#include "gtkutils.h"
 #include "stock.h"
 
 #include "ui.h"
@@ -39,6 +41,7 @@ typedef struct
 {
 	GtkWidget *window;
 	GtkWidget *text;
+	GtkWidget *find;
 
 	gboolean timestamps;
 	gboolean paused;
@@ -57,6 +60,11 @@ static char debug_fg_colors[][8] = {
 };
 
 static DebugWindow *debug_win = NULL;
+
+struct _find {
+	DebugWindow *window;
+	GtkWidget *entry;
+};
 
 static gint
 debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
@@ -81,6 +89,152 @@ configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 	}
 
 	return FALSE;
+}
+
+static void
+do_find_cb(GtkWidget *widget, gint resp, struct _find *f)
+{
+	switch (resp) {
+	case GTK_RESPONSE_OK:
+	    gtk_imhtml_search_find(GTK_IMHTML(f->window->text),
+							   gtk_entry_get_text(GTK_ENTRY(f->entry)));
+		break;
+
+	case GTK_RESPONSE_DELETE_EVENT:
+	case GTK_RESPONSE_CLOSE:
+		gtk_imhtml_search_clear(GTK_IMHTML(f->window->text));
+		gtk_widget_destroy(f->window->find);
+		f->window->find = NULL;
+		g_free(f);
+		break;
+	}
+}
+
+static void
+find_cb(GtkWidget *w, DebugWindow *win)
+{
+	GtkWidget *hbox, *img, *label;
+	struct _find *f;
+
+	if(win->find)
+	{
+		gtk_window_present(GTK_WINDOW(win->find));
+		return;
+	}
+
+	f = g_malloc(sizeof(struct _find));
+	f->window = win;
+	win->find = gtk_dialog_new_with_buttons(_("Find"),
+					GTK_WINDOW(win->window), GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+					GTK_STOCK_FIND, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(win->find),
+					 GTK_RESPONSE_OK);
+	g_signal_connect(G_OBJECT(win->find), "response",
+					G_CALLBACK(do_find_cb), f);
+
+	gtk_container_set_border_width(GTK_CONTAINER(win->find), 6);
+	gtk_window_set_resizable(GTK_WINDOW(win->find), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(win->find), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(win->find)->vbox), 12);
+	gtk_container_set_border_width(
+		GTK_CONTAINER(GTK_DIALOG(win->find)->vbox), 6);
+
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(win->find)->vbox),
+					  hbox);
+	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
+								   GTK_ICON_SIZE_DIALOG);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(win->find),
+									  GTK_RESPONSE_OK, FALSE);
+
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Search for:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	f->entry = gtk_entry_new();
+	gtk_entry_set_activates_default(GTK_ENTRY(f->entry), TRUE);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(f->entry));
+	g_signal_connect(G_OBJECT(f->entry), "changed",
+					 G_CALLBACK(gaim_gtk_set_sensitive_if_input),
+					 win->find);
+	gtk_box_pack_start(GTK_BOX(hbox), f->entry, FALSE, FALSE, 0);
+
+	gtk_widget_show_all(win->find);
+	gtk_widget_grab_focus(f->entry);
+}
+
+static void
+do_save_cb(GtkWidget *wid)
+{
+	DebugWindow *win = NULL;
+	const char *filename;
+	char *tmp;
+	FILE *fp;
+
+	win = g_object_get_data(G_OBJECT(GTK_FILE_SELECTION(wid)->ok_button),
+							"gaim_debugwin");
+
+	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
+	gtk_widget_destroy(wid);
+
+	if (filename == NULL)
+		return;
+
+	if ((fp = fopen(filename, "w+")) == NULL)
+		return;
+
+	if (debug_win == NULL)
+		return;
+
+	tmp = gtk_imhtml_get_text(GTK_IMHTML(win->text), NULL, NULL);
+	fprintf(fp, "Gaim Debug log : %s\n", gaim_date_full());
+	fprintf(fp, "%s", tmp);
+	g_free(tmp);
+
+	fclose(fp);
+}
+
+static void
+do_check_save_cb(GtkObject *obj, GtkWidget *wid)
+{
+	const char *filename;
+
+	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
+	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(wid)))
+		return;
+
+	if (g_file_test(filename, G_FILE_TEST_EXISTS))
+	{
+		gaim_request_yes_no(NULL, NULL, _("That file already exists"),
+							_("Would you like to overwrite it?"), 1, wid,
+							G_CALLBACK(do_save_cb), NULL);
+	}
+	else
+		do_save_cb(wid);
+}
+
+static void
+save_cb(GtkWidget *w, DebugWindow *win)
+{
+	char buf[BUF_LONG];
+	GtkWidget *window;
+
+	window = gtk_file_selection_new(_("Save Debug Log"));
+	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "gaim-debug.log",
+			   gaim_home_dir());
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
+	g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+					  "gaim_debugwin", win);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
+					 "clicked", G_CALLBACK(do_check_save_cb), window);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
+							 "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer)window);
+
+	gtk_widget_show(window);
 }
 
 static void
@@ -152,15 +306,13 @@ debug_window_new(void)
 
 		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
-#if 0
 		/* Find button */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_FIND,
-								 NULL, NULL, NULL, NULL, -1);
+								 NULL, NULL, G_CALLBACK(find_cb), win, -1);
 
 		/* Save */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_SAVE,
-								 NULL, NULL, NULL, NULL, -1);
-#endif
+								 NULL, NULL, G_CALLBACK(save_cb), win, -1);
 
 		/* Clear button */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_CLEAR,
@@ -181,10 +333,10 @@ debug_window_new(void)
 											NULL, _("Timestamps"), NULL, NULL,
 											NULL, G_CALLBACK(timestamps_cb),
 											win);
-		
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), 
+
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
 						gaim_prefs_get_bool("/gaim/gtk/debug/timestamps"));
-						
+
 		win->timestamps_handle =
 			gaim_prefs_connect_callback("/gaim/gtk/debug/timestamps",
 										timestamps_pref_cb, button);
