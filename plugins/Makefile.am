@@ -25,4 +25,4 @@ endif
 
 EXTRA_DIST = ChangeLog CRAZY HOWTO SIGNALS autorecon.c error.c filectl.c \
 	gaiminc.c iconaway.c lagmeter.c notify.c simple.c spellchk.c \
-	toc_commands.c
+	toc_commands.c events.c
