@@ -1180,7 +1180,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING,
+	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
@@ -1206,15 +1206,24 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(gtkblist->treeview), FALSE);
 
+	column = gtk_tree_view_column_new ();
+
 	rend = gtk_cell_renderer_pixbuf_new();
-	column = gtk_tree_view_column_new_with_attributes("Status", rend, "pixbuf", STATUS_ICON_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
+	gtk_tree_view_column_pack_start (column, rend, FALSE);
+	gtk_tree_view_column_set_attributes (column, rend, 
+					     "pixbuf", STATUS_ICON_COLUMN,
+					     "visible", STATUS_ICON_VISIBLE_COLUMN,
+					     NULL);
 	g_object_set(rend, "xalign", 0.0, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
-	column = gtk_tree_view_column_new_with_attributes("Name", rend, "markup", NAME_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
+	gtk_tree_view_column_pack_start (column, rend, TRUE);
+	gtk_tree_view_column_set_attributes (column, rend, 
+					     "markup", NAME_COLUMN,
+					     NULL);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
+
+	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 
 	rend = gtk_cell_renderer_text_new();
 	gtkblist->warning_column = gtk_tree_view_column_new_with_attributes("Warning", rend, "markup", WARNING_COLUMN, NULL);
@@ -1450,8 +1459,6 @@ static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpoint
 static void make_a_group(GaimBlistNode *node, GtkTreeIter *iter) {
 	GaimBlistNode *sibling;
 	GtkTreeIter siblingiter;
-	GdkPixbuf *groupicon = gtk_widget_render_icon(gtkblist->treeview,
-			GAIM_STOCK_GROUP, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 	struct group *group = (struct group *)node;
 	char *esc = g_markup_escape_text(group->name, -1);
 	char *mark;
@@ -1471,12 +1478,12 @@ static void make_a_group(GaimBlistNode *node, GtkTreeIter *iter) {
 	gtk_tree_store_insert_after(gtkblist->treemodel, iter, NULL,
 			sibling ? &siblingiter : NULL);
 	gtk_tree_store_set(gtkblist->treemodel, iter,
-			STATUS_ICON_COLUMN, groupicon,
+			STATUS_ICON_COLUMN, NULL,
+			STATUS_ICON_VISIBLE_COLUMN, FALSE,
 			NAME_COLUMN, mark,
 			NODE_COLUMN, node,
 			-1);
 	g_free(mark);
-	g_object_unref(groupicon);
 }
 
 
@@ -1596,6 +1603,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				   STATUS_ICON_COLUMN, status,
+				   STATUS_ICON_VISIBLE_COLUMN, TRUE,
 				   NAME_COLUMN, mark,
 				   WARNING_COLUMN, warning,
 				   IDLE_COLUMN, idle,
