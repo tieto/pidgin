@@ -1305,6 +1305,38 @@ GaimGroup *gaim_find_group(const char *name)
 	return NULL;
 }
 
+GaimContact *
+gaim_find_contact(GaimGroup *group, const char *name)
+{
+	GaimBlistNode *node;
+
+	g_return_val_if_fail(gaim_get_blist() != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	for (node = ((GaimBlistNode *)group)->child;
+		 node != NULL;
+		 node = node->next)
+	{
+		GaimContact *contact;
+		GaimBuddy *buddy;
+
+		if (!GAIM_BLIST_NODE_IS_CONTACT(node))
+			continue;
+
+		contact = (GaimContact *)node;
+
+		if (contact->alias != NULL && !strcmp(contact->alias, name))
+			return contact;
+
+		buddy = gaim_contact_get_priority_buddy(contact);
+
+		if (!strcmp(gaim_get_buddy_alias(buddy), name))
+			return contact;
+	}
+
+	return NULL;
+}
+
 GaimChat *
 gaim_blist_find_chat(GaimAccount *account, const char *name)
 {
