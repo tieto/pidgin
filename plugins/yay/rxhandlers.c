@@ -358,9 +358,12 @@ void yahoo_socket_handler(struct yahoo_session *session, int socket, int type)
 	} else if (conn->type == YAHOO_CONN_TYPE_PROXY) {
 		char *buf = g_malloc0(5000);
 		int nlc = 0;
-		while ((nlc != 2) && (read(socket, &buf[pos++], 1) == 1))
+		while ((nlc != 2) && (read(socket, &buf[pos++], 1) == 1)) {
 			if (buf[pos-1] == '\n')
 				nlc++;
+			else if (buf[pos-1] != '\r')
+				nlc = 0;
+		}
 		if (pos == 1) {
 			g_free(buf);
 			yahoo_close(session, conn);
