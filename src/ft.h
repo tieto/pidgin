@@ -91,9 +91,9 @@ struct gaim_xfer
 		void (*start)(struct gaim_xfer *xfer);
 		void (*end)(struct gaim_xfer *xfer);
 		void (*cancel)(struct gaim_xfer *xfer);
-		size_t (*read)(char **buffer, const struct gaim_xfer *xfer);
+		size_t (*read)(char **buffer, struct gaim_xfer *xfer);
 		size_t (*write)(const char *buffer, size_t size,
-						const struct gaim_xfer *xfer);
+						struct gaim_xfer *xfer);
 		void (*ack)(struct gaim_xfer *xfer);
 
 	} ops;
@@ -300,7 +300,7 @@ struct gaim_xfer_ui_ops *gaim_xfer_get_ui_ops(const struct gaim_xfer *xfer);
  * @param fnc  The read function.
  */
 void gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
-	size_t (*fnc)(char **, const struct gaim_xfer *));
+	size_t (*fnc)(char **, struct gaim_xfer *));
 
 /**
  * Sets the write function for the file transfer.
@@ -309,7 +309,7 @@ void gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
  * @param fnc  The write function.
  */
 void gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
-		size_t (*fnc)(const char *, size_t, const struct gaim_xfer *));
+		size_t (*fnc)(const char *, size_t, struct gaim_xfer *));
 
 /**
  * Sets the acknowledge function for the file transfer.

@@ -336,7 +336,7 @@ gaim_xfer_set_init_fnc(struct gaim_xfer *xfer,
 
 void
 gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
-					   size_t (*fnc)(char **, const struct gaim_xfer *))
+					   size_t (*fnc)(char **, struct gaim_xfer *))
 {
 	if (xfer == NULL)
 		return;
@@ -347,7 +347,7 @@ gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
 void
 gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
 						size_t (*fnc)(const char *, size_t,
-									  const struct gaim_xfer *))
+									  struct gaim_xfer *))
 {
 	if (xfer == NULL)
 		return;
