@@ -742,7 +742,7 @@ char *date()
 }
 
 
-gint clean_pid(void *dummy)
+gboolean clean_pid(gpointer dummy)
 {
 	int status;
 	pid_t pid;

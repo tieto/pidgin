@@ -27,7 +27,6 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <gtk/gtk.h>
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -427,7 +426,7 @@ void play_file(char *filename)
 
 		_exit(0);
 	} else {
-		gtk_timeout_add(100, (GtkFunction)clean_pid, NULL);
+		g_timeout_add(100, clean_pid, NULL);
 	}
 }
 
@@ -481,7 +480,7 @@ void play(unsigned char *data, int size)
 
 		_exit(0);
 	} else {
-		gtk_timeout_add(100, (GtkFunction)clean_pid, NULL);
+		g_timeout_add(100, clean_pid, NULL);
 	}
 }
 

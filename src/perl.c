@@ -48,7 +48,6 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <string.h>
-#include <gtk/gtk.h>
 
 
 /* perl module support */
@@ -82,7 +81,6 @@ static GList *perl_list = NULL; /* should probably extern this at some point */
 static GList *perl_timeout_handlers = NULL;
 static GList *perl_event_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
-static char* last_dir = NULL;
 static void perl_init();
 
 /* dealing with gaim */
@@ -257,7 +255,7 @@ void perl_end()
 	while (perl_timeout_handlers) {
 		thn = perl_timeout_handlers->data;
 		perl_timeout_handlers = g_list_remove(perl_timeout_handlers, thn);
-		gtk_timeout_remove(thn->iotag);
+		g_source_remove(thn->iotag);
 		g_free(thn->handler_name);
 		g_free(thn);
 	}
@@ -681,8 +679,9 @@ XS (XS_GAIM_add_event_handler)
 	XSRETURN_EMPTY;
 }
 
-static int perl_timeout(struct _perl_timeout_handlers *handler)
+static int perl_timeout(gpointer data)
 {
+	struct _perl_timeout_handlers *handler = data;
 	execute_perl(handler->handler_name, "");
 	perl_timeout_handlers = g_list_remove(perl_timeout_handlers, handler);
 	g_free(handler->handler_name);
@@ -704,89 +703,17 @@ XS (XS_GAIM_add_timeout_handler)
 	debug_printf("Adding timeout for %d seconds.\n", timeout/1000);
 	handler->handler_name = g_strdup(SvPV(ST(1), junk));
 	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
-	handler->iotag = gtk_timeout_add(timeout, (GtkFunction)perl_timeout, handler);
+	handler->iotag = g_timeout_add(timeout, perl_timeout, handler);
 	XSRETURN_EMPTY;
 }
 
-static GtkWidget *config = NULL; 
-
-static void cfdes(GtkWidget *m, gpointer n) {
-	if (config) gtk_widget_destroy(config);
-	config = NULL;
-}
-
-static void do_load(GtkWidget *m, gpointer n) {
-	const char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(config));
-	gchar *f = NULL;
-	if (!file || !strlen(file)) {
-		perl_end();
-		perl_init();
-		return;
-	}
-	
-	if (file_is_dir(file, config)) {
-		return;
-	}
-	
-	if (last_dir) {
-		g_free(last_dir);
-	}
-	last_dir = g_dirname(file);
-
-	debug_printf("Loading perl script: %s\n", file);
-	
-	f = g_strdup(file);
-	perl_load_file(f);
-	g_free(f);
-	cfdes(config, NULL);
-}
-
-void load_perl_script(GtkWidget *w, gpointer d)
-{
-	char *buf, *temp;
-
-	if (config) {
-		gtk_widget_show(config);
-		gdk_window_raise(config->window);
-		return;
-	}
-
-	/* Below is basically stolen from plugins.c */
-	config = gtk_file_selection_new(_("Gaim - Select Perl Script"));
-
-	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(config));
-
-	if (!last_dir) {
-		temp = gaim_user_dir();
-		buf = g_strconcat(temp, G_DIR_SEPARATOR_S, NULL);
-		g_free(temp);
-	} else {
-		buf = g_strconcat(last_dir, G_DIR_SEPARATOR_S, NULL);
-	}
-
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(config), buf);
-	gtk_file_selection_complete(GTK_FILE_SELECTION(config), "*.pl"); 
-	gtk_signal_connect(GTK_OBJECT(config), "destroy",  GTK_SIGNAL_FUNC(cfdes),
-			config);
-
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(config)->ok_button),
-			"clicked", GTK_SIGNAL_FUNC(do_load), NULL);
-    
-	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(config)->cancel_button),
-			"clicked", GTK_SIGNAL_FUNC(cfdes), NULL);
-
-	g_free(buf);
-	gtk_widget_show(config);
-	gdk_window_raise(config->window);
-}
-
-extern void unload_perl_scripts(GtkWidget *w, gpointer d)
+extern void unload_perl_scripts()
 {
 	perl_end();
 	perl_init();
 }
 
-extern void list_perl_scripts(GtkWidget *w, gpointer d)
+extern void list_perl_scripts()
 {
 	GList *s = perl_list;
 	struct perlscript *p;

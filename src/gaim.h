@@ -621,7 +621,7 @@ extern char *escape_text2(const char *);
 extern int escape_message(char *msg);
 extern char *tobase64(const char *);
 extern void frombase64(const char *, char **, int *);
-extern gint clean_pid(void *);
+extern gint clean_pid(gpointer);
 extern char *date();
 extern gint linkify_text(char *);
 extern void aol_icon(GdkWindow *);
@@ -796,12 +796,11 @@ extern void play_file(char *);
 /* Functions in perl.c */
 #ifdef USE_PERL
 extern void perl_autoload();
-extern int perl_load_file(char *);
 extern void perl_end();
 extern int perl_event(char *, char *);
-extern void load_perl_script(GtkWidget *, gpointer);
-extern void unload_perl_scripts(GtkWidget *, gpointer);
-extern void list_perl_scripts(GtkWidget *, gpointer);
+extern int perl_load_file(char *);
+extern void unload_perl_scripts();
+extern void list_perl_scripts();
 #endif
 
 /* Functions in plugins.c */
@@ -886,6 +885,7 @@ extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 extern void set_color_selection(GtkWidget *selection, GdkColor color);
 extern void show_rename_group(GtkWidget *, struct group *);
 extern void show_rename_buddy(GtkWidget *, struct buddy *);
+extern void load_perl_script();
 
 /* Functions in browser.c */
 extern void open_url(GtkWidget *, char *);

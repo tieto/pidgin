@@ -4039,3 +4039,74 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 
 	gtk_widget_show_all(rename_bud_dialog);
 }
+
+static GtkWidget *perl_config = NULL; 
+static char *perl_last_dir = NULL;
+
+static void cfdes(GtkWidget *m, gpointer n) {
+	if (perl_config) gtk_widget_destroy(perl_config);
+	perl_config = NULL;
+}
+
+static void do_load(GtkWidget *m, gpointer n) {
+	const char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(perl_config));
+	gchar *f = NULL;
+	if (!file || !strlen(file)) {
+		return;
+	}
+	
+	if (file_is_dir(file, perl_config)) {
+		return;
+	}
+	
+	if (perl_last_dir) {
+		g_free(perl_last_dir);
+	}
+	perl_last_dir = g_dirname(file);
+
+	debug_printf("Loading perl script: %s\n", file);
+	
+	f = g_strdup(file);
+	perl_load_file(f);
+	g_free(f);
+	cfdes(perl_config, NULL);
+}
+
+void load_perl_script()
+{
+	char *buf, *temp;
+
+	if (perl_config) {
+		gtk_widget_show(perl_config);
+		gdk_window_raise(perl_config->window);
+		return;
+	}
+
+	/* Below is basically stolen from plugins.c */
+	perl_config = gtk_file_selection_new(_("Gaim - Select Perl Script"));
+
+	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(perl_config));
+
+	if (!perl_last_dir) {
+		temp = gaim_user_dir();
+		buf = g_strconcat(temp, G_DIR_SEPARATOR_S, NULL);
+		g_free(temp);
+	} else {
+		buf = g_strconcat(perl_last_dir, G_DIR_SEPARATOR_S, NULL);
+	}
+
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(perl_config), buf);
+	gtk_file_selection_complete(GTK_FILE_SELECTION(perl_config), "*.pl"); 
+	gtk_signal_connect(GTK_OBJECT(perl_config), "destroy",  GTK_SIGNAL_FUNC(cfdes),
+			perl_config);
+
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(perl_config)->ok_button),
+			"clicked", GTK_SIGNAL_FUNC(do_load), NULL);
+    
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(perl_config)->cancel_button),
+			"clicked", GTK_SIGNAL_FUNC(cfdes), NULL);
+
+	g_free(buf);
+	gtk_widget_show(perl_config);
+	gdk_window_raise(perl_config->window);
+}
