@@ -1129,23 +1129,6 @@ static void toc_rem_deny(struct gaim_connection *gc, char *who)
 	toc_set_permit_deny(gc);
 }
 
-static void toc_draw_new_user(GtkWidget *box)
-{
-	GtkWidget *label;
-
-	label = gtk_label_new(_("Unfortunately, currently TOC only allows new user registration by "
-				"going to http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no"
-				". Clicking the Register button will open the URL for you."));
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-}
-
-static void toc_do_new_user()
-{
-	open_url(NULL, "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no");
-}
-
 static GList *toc_away_states()
 {
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
@@ -1186,8 +1169,6 @@ void toc_init(struct prpl *ret)
 	ret->do_action = toc_do_action;
 	ret->buddy_menu = toc_buddy_menu;
 	ret->user_opts = toc_user_opts;
-	ret->draw_new_user = toc_draw_new_user;
-	ret->do_new_user = toc_do_new_user;
 	ret->login = toc_login;
 	ret->close = toc_close;
 	ret->send_im = toc_send_im;

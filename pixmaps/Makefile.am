@@ -61,6 +61,7 @@ EXTRA_DIST =	about_small.xpm			\
 		normal.xpm			\
 		ok.xpm				\
 		oneeye.xpm			\
+		panic.xpm			\
 		plugins_small.xpm		\
 		pounce_small.xpm		\
 		prefs_small.xpm			\

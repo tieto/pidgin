@@ -32,8 +32,10 @@
 #include "pixmaps/logo.xpm"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/about_small.xpm"
+#include "pixmaps/panic.xpm"
 
 static GtkWidget *about = NULL;
+static GtkWidget *help = NULL;
 
 static void destroy_about()
 {
@@ -168,4 +170,72 @@ void show_about(GtkWidget *w, void *null)
 	/* Let's give'em something to talk about -- woah woah woah */
 	gtk_widget_show_all(about);
 
+}
+
+static void destroy_help()
+{
+	if (help)
+		gtk_widget_destroy(help);
+	help = NULL;
+}
+
+void gaim_help(GtkWidget *w, void *x)
+{
+	GtkWidget *vbox;
+	GdkPixmap *pm;
+	GdkBitmap *bm;
+	GtkWidget *pix;
+	GtkWidget *label;
+	GtkWidget *hbox;
+	GtkWidget *close;
+
+	if (!help) {
+
+		help = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_title(GTK_WINDOW(help), "Gaim Help");
+		gtk_window_set_wmclass(GTK_WINDOW(help), "help", "Gaim");
+		gtk_window_set_policy(GTK_WINDOW(help), FALSE, TRUE, TRUE);
+		gtk_widget_realize(help);
+		aol_icon(help->window);
+		gtk_signal_connect(GTK_OBJECT(help), "destroy",
+				   GTK_SIGNAL_FUNC(destroy_help), GTK_OBJECT(help));
+		gtk_widget_set_usize(help, 240, -1);
+
+		vbox = gtk_vbox_new(FALSE, 10);
+		gtk_container_add(GTK_CONTAINER(help), vbox);
+
+		hbox = gtk_hbox_new(FALSE, 10);
+		gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+		close = picture_button(help, _("Close"), cancel_xpm);
+		gtk_box_pack_end(GTK_BOX(hbox), close, FALSE, FALSE, 5);
+		gtk_signal_connect(GTK_OBJECT(close), "clicked",
+				   GTK_SIGNAL_FUNC(destroy_help), NULL);
+
+		pm = gdk_pixmap_create_from_xpm_d(help->window, &bm, NULL, panic_xpm);
+		pix = gtk_pixmap_new(pm, bm);
+		gdk_pixmap_unref(pm);
+		gdk_bitmap_unref(bm);
+		gtk_box_pack_start(GTK_BOX(vbox), pix, FALSE, FALSE, 5);
+
+		label = gtk_label_new(_("Relax, help is just around the corner. "
+					"The first thing you'll need to do is get an AIM "
+					"account; you can get one from http://aim.aol.com/. "
+					"Just click the button that says \"New Users\" and "
+					"you can create an account that way. Once you have "
+					"your account, enter the username and password into "
+					"the login window that comes up when you start Gaim, "
+					"and click the Signon button. Once you're online, "
+					"you can talk to one of the Gaim developers for more "
+					"assistance; their contact information is in the "
+					"AUTHORS file in the Gaim source, or at "
+					WEBSITE "contact.shtml. If you can't get online and "
+					"still need more assistance, feel free to email us "
+					"at gaim@marko.net. Thanks for using Gaim!"));
+		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+		gtk_box_pack_end(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	}
+
+	gtk_widget_show_all(help);
 }

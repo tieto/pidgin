@@ -86,15 +86,6 @@ struct prpl {
 	GList *(* buddy_menu)(struct gaim_connection *, char *);
 	GList *(* chat_info)(struct gaim_connection *);
 
-	/* when UI plugins come, these will have to be reconciled by returning
-	 * structs indicating what kinds of information they want displayed. */
-	/* new thought though. instead of UI plugins, just do like X-Chat does;
-	 * have different src- dirs in src: src-common, src-gtk, src-cli, etc.
-	 * then have a prpl-base and prpl-UI stuff. people don't need to change
-	 * their UIs all that often anyway. */
-	void (* draw_new_user)(GtkWidget *);
-	void (* do_new_user)();
-
 	/* all the server-related functions */
 	void (* login)		(struct aim_user *);
 	void (* close)		(struct gaim_connection *);

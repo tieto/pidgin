@@ -590,6 +590,7 @@ extern char latest_ver[25];
 
 /* Functions in about.c */
 extern void show_about(GtkWidget *, void *);
+extern void gaim_help(GtkWidget *, void *);
 
 
 /* Functions in buddy_chat.c */

@@ -2622,23 +2622,6 @@ static void oscar_rem_deny(struct gaim_connection *gc, char *who) {
 	oscar_set_permit_deny(gc);
 }
 
-static void oscar_draw_new_user(GtkWidget *box)
-{
-	GtkWidget *label;
-
-	label = gtk_label_new(_("Unfortunately, currently Oscar only allows new user registration by "
-				"going to http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no"
-				". Clicking the Register button will open the URL for you."));
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-}
-
-static void oscar_do_new_user()
-{
-	open_url(NULL, "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no");
-}
-
 static GList *oscar_away_states()
 {
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
@@ -2715,8 +2698,6 @@ void oscar_init(struct prpl *ret) {
 	ret->do_action = oscar_do_action;
 	ret->buddy_menu = oscar_buddy_menu;
 	ret->user_opts = oscar_user_opts;
-	ret->draw_new_user = oscar_draw_new_user;
-	ret->do_new_user = oscar_do_new_user;
 	ret->login = oscar_login;
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;

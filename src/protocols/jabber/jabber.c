@@ -26,13 +26,6 @@
 #endif
 
 
-#include <gtk/gtk.h>
-#ifdef MAX
-#undef MAX
-#endif
-#ifdef MIN
-#undef MIN
-#endif
 #include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
@@ -48,6 +41,12 @@
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
+#ifdef MAX
+#undef MAX
+#endif
+#ifdef MIN
+#undef MIN
+#endif
 #include "jabber.h"
 #include "proxy.h"
 
@@ -1622,241 +1621,6 @@ static void jabber_chat_whisper(struct gaim_connection *gc, int id, char *who, c
 	xmlnode_free(x);
 }
 
-static GtkWidget *newname = NULL;
-static GtkWidget *newpass1 = NULL;
-static GtkWidget *newpass2 = NULL;
-static GtkWidget *newserv = NULL;
-static jconn regjconn = NULL;
-static int reginpa = 0;
-
-static void newdes()
-{
-	newname = newpass1 = newpass2 = newserv = NULL;
-}
-
-static void jabber_draw_new_user(GtkWidget *box)
-{
-	GtkWidget *hbox;
-	GtkWidget *label;
-
-	if (newname)
-		return;
-
-	label = gtk_label_new("Enter your name, password, and server to register on. If you "
-				"already have a Jabber account and do not need to register one, "
-				"use the Account Editor to add it to your list of accounts.");
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Username:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	newname = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), newname, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(newname), "destroy", GTK_SIGNAL_FUNC(newdes), NULL);
-	gtk_widget_show(newname);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Password:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	newpass1 = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), newpass1, FALSE, FALSE, 5);
-	gtk_entry_set_visibility(GTK_ENTRY(newpass1), FALSE);
-	gtk_widget_show(newpass1);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Confirm:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	newpass2 = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), newpass2, FALSE, FALSE, 5);
-	gtk_entry_set_visibility(GTK_ENTRY(newpass2), FALSE);
-	gtk_widget_show(newpass2);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Server:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	newserv = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(newserv), "jabber.org");
-	gtk_box_pack_end(GTK_BOX(hbox), newserv, FALSE, FALSE, 5);
-	gtk_widget_show(newserv);
-}
-
-static void regstate(jconn j, int state)
-{
-	static int catch = 0;
-	switch (state) {
-		case JCONN_STATE_OFF:
-			gaim_input_remove(reginpa);
-			reginpa = 0;
-			jab_delete(j);
-			break;
-		case JCONN_STATE_CONNECTED:
-			break;
-		case JCONN_STATE_ON:
-			if (catch)
-				break;
-			catch = 1;
-			jab_reg(regjconn);
-			catch = 0;
-			break;
-		case JCONN_STATE_AUTH:
-			break;
-		default:
-			break;
-	}
-}
-
-static void regpacket(jconn j, jpacket p)
-{
-	static int here = 0;
-	switch (p->type) {
-		case JPACKET_MESSAGE:
-			break;
-		case JPACKET_PRESENCE:
-			break;
-		case JPACKET_IQ:
-			if (jpacket_subtype(p) == JPACKET__RESULT) {
-				xmlnode x, y, z;
-				char *user, *id;
-
-				if (here == 2) {
-					struct aim_user *u;
-					user = g_strdup(jid_full(j->user));
-					regjconn = NULL;
-					here = 0;
-					u = new_user(user, PROTO_JABBER, OPT_USR_REM_PASS);
-					g_free(user);
-					g_snprintf(u->password, sizeof(u->password), "%s", j->pass);
-					save_prefs();
-					xmlnode_free(p->x);
-					do_error_dialog("Registration successful! Your account has been"
-							" added to the Account Editor.", "Jabber "
-							"Registration");
-					gtk_entry_set_text(GTK_ENTRY(newname), "");
-					gtk_entry_set_text(GTK_ENTRY(newpass1), "");
-					gtk_entry_set_text(GTK_ENTRY(newpass2), "");
-					return;
-				} else if (here == 1) {
-					x = jutil_iqnew(JPACKET__SET, NS_AUTH);
-					here = 2;
-				} else { /* here == 0 */
-					here = 1;
-					x = jutil_iqnew(JPACKET__GET, NS_AUTH);
-				}
-
-				id = jab_getid(j);
-				xmlnode_put_attrib(x, "id", id);
-				y = xmlnode_get_tag(x, "query");
-
-				user = j->user->user;
-				if (user)
-				{
-					z = xmlnode_insert_tag(y, "username");
-					xmlnode_insert_cdata(z, user, -1);
-				}
-
-				if (here == 2) {
-					z = xmlnode_insert_tag(y, "resource");
-					xmlnode_insert_cdata(z, j->user->resource, -1);
-					z = xmlnode_insert_tag(y, "password");
-					xmlnode_insert_cdata(z, j->pass, -1);
-				}
-
-				jab_send(j, x);
-				xmlnode_free(x);
-			} else if (jpacket_subtype(p) == JPACKET__ERROR) {
-				xmlnode x = xmlnode_get_tag(p->x, "error");
-				if (x) {
-					char buf[8192];
-					g_snprintf(buf, sizeof(buf), "Registration failed: %d %s",
-						     atoi(xmlnode_get_attrib(x, "code")),
-						     xmlnode_get_data(xmlnode_get_firstchild(x)));
-					do_error_dialog(buf, "Jabber Registration");
-				} else {
-					do_error_dialog("Registration failed", "Jabber Registration");
-				}
-				regjconn = NULL;
-				xmlnode_free(p->x);
-				here = 0;
-				return;
-			}
-			break;
-		case JPACKET_S10N:
-			break;
-		default:
-			break;
-	}
-
-	xmlnode_free(p->x);
-}
-
-static void regjcall(gpointer data, gint source, GaimInputCondition cond)
-{
-	gjab_recv((gjconn)regjconn);
-}
-
-static void jabber_do_new_user()
-{
-	const char *name, *pass1, *pass2, *serv;
-	char *tmp;
-	char *user;
-
-	if (!newname || regjconn)
-		return;
-
-	pass1 = gtk_entry_get_text(GTK_ENTRY(newpass1));
-	pass2 = gtk_entry_get_text(GTK_ENTRY(newpass2));
-	if (pass1[0] == 0 || pass2[0] == 0) {
-		do_error_dialog("Please enter the same valid password in both password entry boxes",
-				"Registration error");
-		return;
-	}
-	if (strcmp(pass1, pass2)) {
-		do_error_dialog("Mismatched passwords, please verify that both passwords are the same",
-				"Registration error");
-		return;
-	}
-	name = gtk_entry_get_text(GTK_ENTRY(newname));
-	serv = gtk_entry_get_text(GTK_ENTRY(newserv));
-	if (name[0] == 0 || serv[0] == 0) {
-		do_error_dialog("Please enter a valid username and server", "Registration error");
-		return;
-	}
-
-	user = g_strdup_printf("%s@%s/GAIM", name, serv);
-	tmp = g_strdup(pass1);
-	regjconn = jab_new(user, tmp);
-	g_free(tmp);
-	g_free(user);
-
-	jab_state_handler(regjconn, regstate);
-	jab_packet_handler(regjconn, regpacket);
-
-	jab_start(regjconn);
-	reginpa = gaim_input_add(jab_getfd(regjconn), GAIM_INPUT_READ, regjcall, NULL);
-}
-
 static char *jabber_normalize(const char *s)
 {
 	static char buf[BUF_LEN];
@@ -2014,8 +1778,6 @@ void jabber_init(struct prpl *ret)
 	ret->away_states = jabber_away_states;
 	ret->buddy_menu = jabber_buddy_menu;
 	ret->user_opts = jabber_user_opts;
-	ret->draw_new_user = jabber_draw_new_user;
-	ret->do_new_user = jabber_do_new_user;
 	ret->login = jabber_login;
 	ret->close = jabber_close;
 	ret->send_im = jabber_send_im;

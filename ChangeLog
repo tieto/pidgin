@@ -6,6 +6,9 @@ version 0.44:
 	* Have you ever had it happen where you cancel a login and
 	  Gaim starts using all the available processing power? I
 	  think I fixed that.
+	* Temporarily removed Jabber user registration, which wasn't
+	  working anyway.
+	* Added a spiffy Help button
 
 version 0.43:
 	* Updated German Translation (thanks Daniel Seifert)
