@@ -240,9 +240,15 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
 void update_button_pix()
 {
 
-	adjust_pic(addbutton, _("Add"), (gchar **)buddyadd_xpm);
-	adjust_pic(groupbutton, _("Group"), NULL);
-	adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
+	if (display_options & OPT_DISP_DEVIL_PIXMAPS) {
+		adjust_pic(addbutton, _("Add"), (gchar **)daemon_buddyadd_xpm);
+		adjust_pic(groupbutton, _("Group"), NULL);
+		adjust_pic(rembutton, _("Remove"), (gchar **)daemon_buddydel_xpm);
+	} else {
+		adjust_pic(addbutton, _("Add"), (gchar **)buddyadd_xpm);
+		adjust_pic(groupbutton, _("Group"), NULL);
+		adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
+	}
 	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
 		adjust_pic(chatbutton, _("Chat"), (gchar **)tb_search_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)tmp_send_xpm);
