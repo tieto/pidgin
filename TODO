@@ -1,4 +1,9 @@
 --- STUFF FOR 0.10.1 RELEASE ---
+	Apply/Cancel/OK in Prefs instead of just "Close"
+	Those damn hanging trees are annoying.  I think lethal injections
+		are a much more humane way to handle it.
+	Possibly make blank lines fill with the BG colour?  The user info
+		looks sorta odd but might look better if we do that?  
 	Allow users to select sounds for various events
 	Execute Command on Buddy Pounce
 	Have a page in the prefs for the Applet
