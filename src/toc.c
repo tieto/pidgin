@@ -877,6 +877,8 @@ void parse_toc_buddy_list(char *config, int from_do_import)
         
         /* skip "CONFIG:" (if it exists)*/
 
+	if (config != NULL) {
+
         c = strncmp(config + sizeof(struct sflap_hdr),"CONFIG:",strlen("CONFIG:"))?
 			strtok(config, "\n"):
 			strtok(config + sizeof(struct sflap_hdr)+strlen("CONFIG:"), "\n");
@@ -911,6 +913,8 @@ void parse_toc_buddy_list(char *config, int from_do_import)
       
 	serv_add_buddies(bud);
         serv_set_permit_deny();
+
+	}
 
 	/* perhaps the server dropped the buddy list, try importing from
            cache */
