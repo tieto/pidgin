@@ -1,3 +1,24 @@
+version 0.60
+	* Fixed oscar protocol high cpu usage bug.
+	* Separated aspell from Gaim, and switched to aspell.net windows
+	  installer.  Gaim will function with or without aspell installation.
+	* Gaim installer no longer installs GTK+ runtime dlls. Gaim now
+ 	  requires gtk-win installation (http://www.sf.net/projects/gtk-win)
+
+version 0.60 alpha 5 (2/8/03)
+	* Buddy Icons no longer corrupted.
+	* Buddy & login window drift fixed.
+	* No more console window.
+	* File path related bugs fixed.
+	* Fixed disapearing systray icon bug, w/ failed signon.
+	* Fixed performance issue on some win machines due to Pango uniscribe
+	* Autoreconnect plugin works once more.
+	* Fixed windows idle reporting.
+	* Fixed MSN mail open.
+
+version 0.60 alpha 4.1: (1/22/03)
+	* Bub fix for release for the smiley redraw bug.
+
 version 0.60 alpha 4: (12/29/02)
 	* Feature improvements for transparency plugin.
 	* Font properly set in gtkrc
