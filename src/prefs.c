@@ -220,12 +220,18 @@ GtkTreePath *theme_refresh_theme_list()
 	GSList *themes;
 	GtkTreeIter iter;
 	GtkTreePath *path;
-	int ind;
+	int ind = 0;
+
 
 	smiley_theme_probe();
+	
 	if (!smiley_themes)
 		return;
+
 	themes = smiley_themes;
+
+	gtk_list_store_clear(smiley_theme_store);
+
 	while (themes) {
 		struct smiley_theme *theme = themes->data;
 		char *description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
@@ -249,8 +255,63 @@ GtkTreePath *theme_refresh_theme_list()
 		}
 		ind++;
 	}
+
 	return path;
 }
+
+void theme_install_theme(char *path) {
+	gchar *command;
+	gchar *destdir;
+	gchar *tail;
+
+	/* Just to be safe */
+	g_strchomp(path);
+
+	/* I dont know what you are, get out of here */
+	if ((tail = strrchr(path, '.')) == NULL)
+		return;
+
+	destdir = g_strconcat(gaim_user_dir(), G_DIR_SEPARATOR_S "smileys", NULL);
+
+	/* We'll check this just to make sure. This also lets us do something different on
+	 * other platforms, if need be */
+	if (!g_strcasecmp(tail, ".gz") || !g_strcasecmp(tail, ".tgz"))
+		command = g_strdup_printf("tar > /dev/null xzf \"%s\" -C %s", path, destdir);
+	else {
+		g_free(destdir);
+		return;
+	}
+
+	/* Fire! */
+	system(command);
+
+	g_free(command);
+	g_free(destdir);
+
+	theme_refresh_theme_list();
+}
+
+gint theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, 
+				guint info, guint t, gpointer data) {
+	GList *dcl = dc->targets;
+	gchar *name = sd->data;
+
+	if ((sd->length >= 0) && (sd->format == 8)) {
+		/* Well, it looks like the drag event was cool. 
+		 * Let's do something with it */
+
+		if (!g_strncasecmp(name, "file://", 7)) {
+			/* It looks like we're dealing with a local file. Let's 
+			 * just untar it in the right place */
+			theme_install_theme(name + 7);
+		}
+
+		gtk_drag_finish(dc, TRUE, FALSE, t);
+	}
+
+	gtk_drag_finish(dc, FALSE, FALSE, t);
+}
+
 GtkWidget *theme_page() {
 	GtkWidget *ret;
 	GtkWidget *sw;
@@ -263,6 +324,7 @@ GtkWidget *theme_page() {
 	GtkTreePath *path = NULL;
 	GdkPixbuf *pixbuf;
 	int ind =0;
+	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 1, 0},{"STRING", 2, 0}};
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
@@ -277,7 +339,12 @@ GtkWidget *theme_page() {
 	path = theme_refresh_theme_list();
 	
 	view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(smiley_theme_store));
-	
+
+	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te, 
+					sizeof(te) / sizeof(GtkTargetEntry) , GDK_ACTION_COPY | GDK_ACTION_MOVE);
+
+	g_signal_connect(G_OBJECT(view), "drag_data_received", G_CALLBACK(theme_dnd_recv), smiley_theme_store);
+
 	rend = gtk_cell_renderer_pixbuf_new();
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
 	
