@@ -1850,7 +1850,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
@@ -1881,7 +1881,7 @@ static void yahoo_got_web_connected(gpointer data, gint source, GaimInputConditi
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
@@ -1946,7 +1946,7 @@ static void yahoo_got_cookies(gpointer data, gint source, GaimInputCondition con
 	GaimConnection *gc = data;
 	struct yahoo_data *yd = gc->proto_data;
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 	write(source, yd->auth, strlen(yd->auth));

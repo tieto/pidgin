@@ -1906,7 +1906,7 @@ static void toc_get_file_connect(gpointer data, gint src, GaimInputCondition con
 
 	if (src == -1) {
 		gaim_notify_error(ft->gc, NULL,
-						  _("Could not connect for transfer!"), NULL);
+						  _("Could not connect for transfer."), NULL);
 		fclose(ft->file);
 		g_free(ft->filename);
 		g_free(ft->cookie);

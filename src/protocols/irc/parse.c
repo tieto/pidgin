@@ -389,7 +389,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 		g_free(msg);
 		return;
 	} else if (!strncmp(input, "ERROR ", 6)) {
-		gaim_connection_error(gaim_account_get_connection(irc->account), _("Disconnected"));
+		gaim_connection_error(gaim_account_get_connection(irc->account), _("Disconnected."));
 		return;
 	}
 

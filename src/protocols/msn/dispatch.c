@@ -205,7 +205,7 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if (source == -1)
 	{
-		gaim_connection_error(session->account->gc, _("Unable to connect"));
+		gaim_connection_error(session->account->gc, _("Unable to connect."));
 		return FALSE;
 	}
 

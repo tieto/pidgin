@@ -57,7 +57,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	mechs = xmlnode_get_child(packet, "mechanisms");
 
 	if(!mechs) {
-		gaim_connection_error(js->gc, _("Invalid response from server"));
+		gaim_connection_error(js->gc, _("Invalid response from server."));
 		return;
 	}
 
@@ -150,7 +150,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	const char *pw = gaim_account_get_password(js->gc->account);
 
 	if(!type) {
-		gaim_connection_error(js->gc, _("Invalid response from server"));
+		gaim_connection_error(js->gc, _("Invalid response from server."));
 		return;
 	} else if(!strcmp(type, "error")) {
 		/* XXX: still need to handle XMPP-style errors */
@@ -309,7 +309,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		GHashTable *parts;
 
 		if(!enc_in) {
-			gaim_connection_error(js->gc, _("Invalid response from server"));
+			gaim_connection_error(js->gc, _("Invalid response from server."));
 			return;
 		}
 
@@ -409,7 +409,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 	const char *ns = xmlnode_get_attrib(packet, "xmlns");
 
 	if(!ns || strcmp(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
-		gaim_connection_error(js->gc, _("Invalid response from server"));
+		gaim_connection_error(js->gc, _("Invalid response from server."));
 		return;
 	}
 
@@ -421,7 +421,7 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 	const char *ns = xmlnode_get_attrib(packet, "xmlns");
 
 	if(!ns)
-		gaim_connection_error(js->gc, _("Invalid response from server"));
+		gaim_connection_error(js->gc, _("Invalid response from server."));
 	else if(!strcmp(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
 		if(xmlnode_get_child(packet, "bad-protocol")) {
 			gaim_connection_error(js->gc, _("Bad Protocol"));

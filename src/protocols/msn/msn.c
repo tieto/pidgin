@@ -489,7 +489,7 @@ msn_login(GaimAccount *account)
 		gaim_account_set_username(account, username);
 
 	if (!msn_session_connect(session)) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 
 		return;
 	}

@@ -460,7 +460,7 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
@@ -491,7 +491,7 @@ static void nap_login(GaimAccount *account)
 				gaim_account_get_string(account, "server", NAP_SERVER),
 				gaim_account_get_int(account, "port", NAP_PORT),
 				nap_login_connect, gc) != 0) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 	}
 }
 
