@@ -711,7 +711,9 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 
 	while (chats) {
 		GaimConvChat *chat = GAIM_CONV_CHAT(chats->data);
-		gaim_conv_chat_rename_user(chat, nick, args[0]);
+		/* This is ugly ... */
+		if (gaim_conv_chat_find_user(chat, nick))
+			gaim_conv_chat_rename_user(chat, nick, args[0]);
 		chats = chats->next;
 	}
 	g_free(nick);
