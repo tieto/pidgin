@@ -1022,7 +1022,7 @@ static jab_res_info jabber_find_resource(struct gaim_connection *gc, char *who)
 			} else if(!res) { /* we're looking for the default priority, so... */
 				if(((jab_res_info) resources->data)->priority >= jri->priority)
 					jri = (jab_res_info) resources->data;
-			} else {
+			} else if(((jab_res_info)resources->data)->name) {
 				if(!strcasecmp(((jab_res_info) resources->data)->name, res)) {
 					jri = (jab_res_info) resources->data;
 					break;
@@ -1046,9 +1046,14 @@ static void jabber_track_resource(struct gaim_connection *gc,
 {
 	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, buddy);
 
-	if(jbd && res) {
-		char *who = g_strdup_printf("%s/%s", buddy, res);
-		jab_res_info jri = jabber_find_resource(gc, who);
+	if(jbd) {
+		char *who;
+		jab_res_info jri;
+		if(res)
+			who = g_strdup_printf("%s/%s", buddy, res);
+		else
+			who = g_strdup(buddy);
+		jri = jabber_find_resource(gc, who);
 		g_free(who);
 		if(!jri) {
 			jri = g_new0(struct jabber_resource_info, 1);
@@ -1067,12 +1072,18 @@ static void jabber_track_resource(struct gaim_connection *gc,
 static void jabber_remove_resource(struct gaim_connection *gc, char *buddy, char *res)
 {
 	struct jabber_buddy_data *jbd = jabber_find_buddy(gc, buddy);
-	if(jbd && res) {
-		char *who = g_strdup_printf("%s/%s", buddy, res);
-		jab_res_info jri = jabber_find_resource(gc, who);
+	if(jbd) {
+		char *who;
+		jab_res_info jri;
+		if(res)
+			who = g_strdup_printf("%s/%s", buddy, res);
+		else
+			who = g_strdup(buddy);
+		jri = jabber_find_resource(gc, who);
 		g_free(who);
 		if(jri) {
-			g_free(jri->name);
+			if(jri->name)
+				g_free(jri->name);
 			if(jri->away_msg)
 				g_free(jri->away_msg);
 			jbd->resources = g_slist_remove(jbd->resources, jri);
@@ -1102,7 +1113,7 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *type)
 	char *msg = NULL;
 	jab_res_info jri = NULL;
 
-	if(!p || !p->from || !p->from->resource || !p->from->user)
+	if(!p || !p->from || !p->from->user)
 		return;
 
 	jri = jabber_find_resource(GJ_GC(gjc), jid_full(p->from));
