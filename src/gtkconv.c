@@ -1867,7 +1867,7 @@ toggle_font(GtkWidget *font, struct gaim_conversation *conv)
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(font)))
 		show_font_dialog(conv, font);
-	else if (gtkconv->dialogs.fg_color != NULL)
+	else if (gtkconv->dialogs.font != NULL)
 		cancel_font(font, conv);
 	else
 		gaim_gtk_advance_past(gtkconv, "<FONT FACE>", "</FONT>");

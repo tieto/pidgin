@@ -219,7 +219,6 @@ void set_login_progress(GaimConnection *gc, float howfar, char *message)
 		meter_win->rows=0;
 
 		meter_win->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-		GAIM_DIALOG(meter_win->window);
 		gtk_window_set_resizable(GTK_WINDOW(meter_win->window), FALSE);
 		gtk_window_set_role(GTK_WINDOW(meter_win->window), "signon");
 		gtk_container_set_border_width(GTK_CONTAINER(meter_win->window), 5);
