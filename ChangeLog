@@ -6,6 +6,7 @@ version 0.79cvs:
 	  (Robert Mibus)
 	* Get Info on Yahoo! now works for nonenglish profiles.
 	  (Ambrose Li)
+	* General "Get Info" improvements on Yahoo! and MSN (Ambrose Li)
 	* Yahoo! Japan support. Click More Options and check Yahoo Japan
 	  in the account editor, to use your Yahoo! Japan account.
 	* Gtk themes can now theme the Gaim buddy list independently of

@@ -21,6 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#define PHOTO_SUPPORT 1
+
 #include <glib.h>
 
 #include "msn.h"
@@ -40,6 +42,10 @@
 #include "sync.h"
 #include "slplink.h"
 
+#if PHOTO_SUPPORT
+#include "imgstore.h"
+#endif
+
 #define BUDDY_ALIAS_MAXLEN 387
 
 static GaimPlugin *my_protocol = NULL;
@@ -57,6 +63,18 @@ typedef struct
 	char *name;
 
 } MsnGetInfoData;
+
+typedef struct
+{
+	MsnGetInfoData *info_data;
+	char *stripped;
+	char *url_buffer;
+	GString *s;
+	char *photo_url_text;
+	char *tooltip_text;
+	gboolean has_info;
+
+} MsnGetInfoStepTwoData;
 
 static const char *
 msn_normalize(const GaimAccount *account, const char *str)
@@ -1089,28 +1107,102 @@ msn_remove_group(GaimConnection *gc, const char *name)
 	}
 }
 
+static char *
+msn_tooltip_info_text(MsnGetInfoData *info_data) {
+	GString *s = g_string_sized_new(80); /* wild guess */
+	GaimBuddy *b;
+
+	g_string_printf(s, _("<b>%s:</b> %s<br>"), _("MSN ID"), info_data->name);
+	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
+			info_data->name);
+
+	if (b) {
+		char *statustext = msn_tooltip_text(b);
+		if(b->alias && b->alias[0]) {
+			char *aliastext = g_markup_escape_text(b->alias, -1);
+			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);
+			g_free(aliastext);
+		}
+		if(b->server_alias) {
+			char *nicktext = g_markup_escape_text(b->server_alias, -1);
+			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Nickname"),
+					nicktext);
+			g_free(nicktext);
+		}
+		if (b->idle > 0) {
+			char *idletime = gaim_str_seconds_to_string(time(NULL) - b->idle);
+			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Idle"),
+					idletime);
+			g_free(idletime);
+		}
+		if (statustext) {
+			g_string_append_printf(s, "%s<br>", statustext);
+			g_free(statustext);
+		}
+	}
+
+	return g_string_free(s, FALSE);
+}
+
+#if PHOTO_SUPPORT
+
+static char *msn_get_photo_url(const char *url_text) {
+	char *p;
+	char *it = NULL;
+
+	p = strstr(url_text, " title=\"Click to see the full-size photo.\">");
+
+	if (p) {
+		/* Search backwards for "http://". This is stupid, but it works. */
+		for (; !it && p > url_text; p -= 1) {
+			if (strncmp(p, "\"http://", 8) == 0) {
+				char *q;
+				p += 1; /* skip only the " */
+				q = strchr(p, '"');
+				if (q) {
+					it = g_strndup(p, q - p);
+				}
+			}
+		}
+	}
+	return it;
+}
+
+static void msn_got_photo(void *data, const char *url_text, size_t len);
+
+#endif
+
 static void
 msn_got_info(void *data, const char *url_text, size_t len)
 {
 	MsnGetInfoData *info_data = (MsnGetInfoData *)data;
 	char *stripped, *p, *q;
 	char buf[1024];
+	char *tooltip_text = NULL;
 	char *user_url = NULL;
 	gboolean found;
 	gboolean has_info = FALSE;
 	char *url_buffer;
 	GString *s;
 	int stripped_len;
+#if PHOTO_SUPPORT
+	char *photo_url_text = NULL;
+	MsnGetInfoStepTwoData *info2_data = NULL;
+#endif
 
 	gaim_debug_info("msn", "In msn_got_info\n");
 
+	tooltip_text = msn_tooltip_info_text(info_data);
+
 	if (url_text == NULL || strcmp(url_text, "") == 0)
 	{
-		gaim_notify_formatted(info_data->gc, NULL,
-				_("Buddy Information"), NULL,
-				_("<html><body><b>Error retrieving profile</b></body></html>"),
-				NULL, NULL);
+		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
+				tooltip_text, _("Error retrieving profile"));
 
+		gaim_notify_formatted(info_data->gc, NULL,
+				_("Buddy Information"), NULL, buf, NULL, NULL);
+
+		g_free(tooltip_text);
 		return;
 	}
 
@@ -1133,8 +1225,10 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	 */
 	while ((p = strstr(url_buffer, "&nbsp;")) != NULL)
 	{
-		memmove(p, p + 6, strlen(p + 6));
-		url_buffer[strlen(url_text) - 6] = '\0';
+		*p = ' '; /* Turn &nbsp;'s into ordinary blanks */
+		p += 1;
+		memmove(p, p + 5, strlen(p + 5));
+		url_buffer[strlen(url_buffer) - 5] = '\0';
 	}
 
 	while ((p = strstr(url_buffer, "&#183;")) != NULL)
@@ -1144,11 +1238,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	}
 
 	/* Nuke the nasty \r's that just get in the way */
-	while ((p = strchr(url_buffer, '\r')) != NULL)
-	{
-		memmove(p, p + 1, strlen(p + 1));
-		url_buffer[strlen(url_buffer) - 1] = '\0';
-	}
+	gaim_str_strip_cr(url_buffer);
 
 	/* MSN always puts in &#39; for apostrophes...replace them */
 	while ((p = strstr(url_buffer, "&#39;")) != NULL)
@@ -1171,21 +1261,21 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Extract their Name and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tName", 0, "\t", '\n', "Undisclosed", _("Name"), 0, NULL);
+			"\tName\n", 0, "\t", 0, "Undisclosed", _("Name"), 0, NULL);
 
 	if (found)
 		has_info = TRUE;
 
 	/* Extract their Age and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tAge", 0, "\t", '\n', "Undisclosed", _("Age"), 0, NULL);
+			"\tAge\n", 0, "\n", 0, "Undisclosed", _("Age"), 0, NULL);
 
 	if (found)
 		has_info = TRUE;
 
 	/* Extract their Gender and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tGender", 6, "\t", '\n', "Undisclosed", _("Gender"), 0,
+			"\nGender\n", 0, "\t", 0, "Undisclosed", _("Gender"), 0,
 			NULL);
 
 	if (found)
@@ -1193,7 +1283,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Extract their MaritalStatus and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tMaritalStatus", 0, "\t", '\n', "Undisclosed",
+			"\tMarital Status\n", 0, "\n", 0, "Undisclosed",
 			_("Marital Status"), 0, NULL);
 
 	if (found)
@@ -1201,7 +1291,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Extract their Location and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tLocation", 0, "\t", '\n', "Undisclosed", _("Location"), 0,
+			"\nLocation\n", 0, "\n", 0, "Undisclosed", _("Location"), 0,
 			NULL);
 
 	if (found)
@@ -1209,7 +1299,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Extract their Occupation and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\t Occupation", 6, "\t", '\n', "Undisclosed", _("Occupation"),
+			" Occupation\n", 6, "\n", 0, "Undisclosed", _("Occupation"),
 			0, NULL);
 
 	if (found)
@@ -1225,34 +1315,35 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Check if they have A Little About Me */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tA Little About Me", 1, "Favorite Things", '\n', NULL,
+			" A Little About Me \n\n", 0, "Favorite Things", '\n', NULL,
 			_("A Little About Me"), 0, NULL);
 
 	if (!found)
 	{
 		found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"\tA Little About Me", 1, "Hobbies and Interests", '\n',
+				" A Little About Me \n\n", 0, "Hobbies and Interests", '\n',
 				NULL, _("A Little About Me"), 0, NULL);
 	}
 
 	if (!found)
 	{
 		found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"\tA Little About Me", 1, "Favorite Quote", '\n', NULL,
+				" A Little About Me \n\n", 0, "Favorite Quote", '\n', NULL,
 				_("A Little About Me"), 0, NULL);
 	}
 
 	if (!found)
 	{
 		found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"\tA Little About Me", 1, "My Homepage\tTake a look", '\n',
+				" A Little About Me \n\n", 0, "My Homepage \n\nTake a look",
+				'\n',
 				NULL, _("A Little About Me"), 0, NULL);
 	}
 
 	if (!found)
 	{
 		gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"\tA Little About Me", 1, "last updated", '\n', NULL,
+				" A Little About Me \n\n", 0, "last updated", '\n', NULL,
 				_("A Little About Me"), 0, NULL);
 	}
 
@@ -1261,27 +1352,27 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Check if they have Favorite Things */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"Favorite Things", 1, "Hobbies and Interests", '\n', NULL,
+			" Favorite Things \n\n", 0, "Hobbies and Interests", '\n', NULL,
 			_("Favorite Things"), 0, NULL);
 
 	if (!found)
 	{
 		found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"Favorite Things", 1, "Favorite Quote", '\n', NULL,
-				"Favorite Things", 0, NULL);
+				" Favorite Things \n\n", 0, "Favorite Quote", '\n', NULL,
+				_("Favorite Things"), 0, NULL);
 	}
 
 	if (!found)
 	{
 		found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"Favorite Things", 1, "My Homepage\tTake a look", '\n',
+				" Favorite Things \n\n", 0, "My Homepage \n\nTake a look", '\n',
 				NULL, _("Favorite Things"), 0, NULL);
 	}
 
 	if (!found)
 	{
 		gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"Favorite Things", 1, "last updated", '\n', NULL,
+				" Favorite Things \n\n", 0, "last updated", '\n', NULL,
 				_("Favorite Things"), 0, NULL);
 	}
 
@@ -1290,20 +1381,20 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Check if they have Hobbies and Interests */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"Hobbies and Interests", 1, "Favorite Quote", '\n', NULL,
+			" Hobbies and Interests \n\n", 0, "Favorite Quote", '\n', NULL,
 			_("Hobbies and Interests"), 0, NULL);
 
 	if (!found)
 	{
 		found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"Hobbies and Interests", 1, "My Homepage\tTake a look",
+				" Hobbies and Interests \n\n", 0, "My Homepage \n\nTake a look",
 				'\n', NULL, _("Hobbies and Interests"), 0, NULL);
 	}
 
 	if (!found)
 	{
 		gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"Hobbies and Interests", 1, "last updated", '\n', NULL,
+				" Hobbies and Interests \n\n", 0, "last updated", '\n', NULL,
 				_("Hobbies and Interests"), 0, NULL);
 	}
 
@@ -1312,13 +1403,13 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Check if they have Favorite Quote */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"Favorite Quote", 1, "My Homepage\tTake a look", '\n', NULL,
+			"Favorite Quote \n\n", 0, "My Homepage \n\nTake a look", '\n', NULL,
 			_("Favorite Quote"), 0, NULL);
 
 	if (!found)
 	{
 		gaim_markup_extract_info_field(stripped, stripped_len, s,
-				"Favorite Quote", 1, "last updated", '\n', NULL,
+				"Favorite Quote \n\n", 0, "last updated", '\n', NULL,
 				_("Favorite Quote"), 0, NULL);
 	}
 
@@ -1327,7 +1418,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Extract the last updated date and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tlast updated:", 1, "\n", '\n', NULL, _("Last Updated"), 0,
+			" last updated:", 1, "\n", 0, NULL, _("Last Updated"), 0,
 			NULL);
 
 	if (found)
@@ -1347,30 +1438,108 @@ msn_got_info(void *data, const char *url_text, size_t len)
 		has_info = TRUE;
 	}
 
+	if (found) {
+		/* put a link to the actual profile URL */
+		g_string_append_printf(s, _("<b>%s:</b> "), _("Profile URL"));
+		g_string_append_printf(s, "<br><a href=\"%s%s\">%s%s</a><br>",
+				PROFILE_URL, info_data->name, PROFILE_URL, info_data->name);
+	}
+
 	/* Finish it off, and show it to them */
 	g_string_append(s, "</body></html>\n");
 
+#if PHOTO_SUPPORT
+
+	/* Marshall the existing state */
+	info2_data = g_malloc0(sizeof(MsnGetInfoStepTwoData));
+	info2_data->info_data = info_data;
+	info2_data->stripped = stripped;
+	info2_data->url_buffer = url_buffer;
+	info2_data->s = s;
+	info2_data->photo_url_text = photo_url_text;
+	info2_data->tooltip_text = tooltip_text;
+	info2_data->has_info = has_info;
+
+	/* Try to put the photo in there too, if there's one */
+	photo_url_text = msn_get_photo_url(url_text);
+	if (photo_url_text) {
+		gaim_url_fetch(photo_url_text, FALSE, NULL, FALSE, msn_got_photo,
+				info2_data);
+	} else {
+		/* Emulate a callback */
+		msn_got_photo(info2_data, NULL, 0);
+	}
+}
+
+static void msn_got_photo(void *data, const char *url_text, size_t len)
+{
+	MsnGetInfoStepTwoData *info2_data = (MsnGetInfoStepTwoData *)data;
+	int id = -1;
+
+	/* Unmarshall the saved state */
+	MsnGetInfoData *info_data = info2_data->info_data;
+	char *stripped = info2_data->stripped;
+	char *url_buffer = info2_data->url_buffer;
+	GString *s = info2_data->s;
+	char *photo_url_text = info2_data->photo_url_text;
+	char *tooltip_text = info2_data->tooltip_text;
+	gboolean has_info = info2_data->has_info;
+
+	/* Try to put the photo in there too, if there's one and is readable */
+	if (data && url_text && len != 0) {
+		if (strstr(url_text, "400 Bad Request")
+				|| strstr(url_text, "403 Forbidden")
+				|| strstr(url_text, "404 Not Found")) {
+
+			gaim_debug_info("msn", "Error getting %s: %s\n",
+					photo_url_text, url_text);
+		} else {
+			char buf[1024];
+			gaim_debug_info("msn", "%s is %d bytes\n", photo_url_text, len);
+			id = gaim_imgstore_add(url_text, len, NULL);
+			g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
+			g_string_prepend(s, buf);
+		}
+	}
+
+	/* We continue here from msn_got_info, as if nothing has happened */
+#endif
+
 	if (has_info)
 	{
+		g_string_prepend(s, tooltip_text);
 		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"),
 							  NULL, s->str, NULL, NULL);
 	}
 	else
 	{
-		char primary[256];
+		char *p = strstr(url_buffer, "Unknown Member </TITLE>");
 
-		g_snprintf(primary, sizeof(primary),
-				   _("User information for %s unavailable"),
-				   info_data->name);
-		gaim_notify_error(info_data->gc, NULL, primary,
-						  _("The user's profile is empty."));
+		/* MSN doesn't actually distinguish between "unknown member" and
+		 * a known member with an empty profile. But if we say unknown
+		 * member, it is at least not worse than reading the actual page.
+		 */
+		g_string_printf(s, "<html><body>%s<b>%s</b><br></body></html>",
+				tooltip_text,
+				(p ? _("Error retrieving profile")
+				   : _("The user's profile is empty.")));
+
+		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
+				s->str, NULL, NULL);
 	}
 
 	g_free(stripped);
 	g_free(url_buffer);
 	g_string_free(s, TRUE);
+	g_free(tooltip_text);
 	g_free(info_data->name);
 	g_free(info_data);
+#if PHOTO_SUPPORT
+	g_free(photo_url_text);
+	g_free(info2_data);
+	if (id != -1)
+		gaim_imgstore_unref(id);
+#endif
 }
 
 static void
