@@ -45,17 +45,17 @@ struct _GtkHtmlBit {
 	GdkColor *fore;
 	GdkColor *back;
 	GdkFont *font;
-        int uline;
-        int strike;
-        int width, height;
+	int uline;
+	int strike;
+	int width, height;
 	int x, y;
 	char *url;
 	int was_selected;
 	int sel_s, sel_e;
 	int newline;
-        char *text;
+	char *text;
 	GdkPixmap *pm;
-        int fit;
+	int fit;
 };
 
 
@@ -72,27 +72,26 @@ struct _GtkHtml {
 	
 	int current_x;
 	int current_y;
-        GdkGC *gc;
-        GdkGC *bg_gc;
+	GdkGC *gc;
+	GdkGC *bg_gc;
 	GList *html_bits;
 	GList *urls;
 	int start_sel_x, start_sel_y;
 	GtkHtmlBit *start_sel, *end_sel;
 	int num_start, num_end;
 	char *selected_text;
-        gint editable;
-        gint transparent;
+	gint editable;
+	gint transparent;
 	gint timer;
 	gint last_ver_value;
-        char *title;
-        gint frozen;
-        GtkHtmlBit *cursor_hb;
-        GtkWidget *tooltip_window;
-        GtkHtmlBit *tooltip_hb;
-        int tooltip_timer;
-        int cursor_pos;
-        GdkPixmap *pm;
-        
+	char *title;
+	gint frozen;
+	GtkHtmlBit *cursor_hb;
+	GtkWidget *tooltip_window;
+	GtkHtmlBit *tooltip_hb;
+	int tooltip_timer;
+	int cursor_pos;
+	GdkPixmap *pm;        
 };
 
 
@@ -110,7 +109,6 @@ struct _GtkHtmlClass {
 #define HTML_BIT_PIXMAP 1
 #define HTML_BIT_SEP 2
 
-
 #define HTML_OPTION_NO_COLOURS   0x01
 #define HTML_OPTION_NO_FONTS     0x02
 
@@ -126,30 +124,24 @@ struct _GtkHtmlClass {
 #define PROP_ITALIC_FONT "-*-helvetica-medium-o-*-*-*-%d-*-*-*-*-*-*"
 #define PROP_BOLD_ITALIC_FONT "-*-helvetica-bold-o-*-*-*-%d-*-*-*-*-*-*"
 
-
-
 #define HTML_TOOLTIP_DELAY 500
 
-        
-
-GtkType    gtk_html_get_type         (void);
-GtkWidget* gtk_html_new              (GtkAdjustment *hadj,
-				      GtkAdjustment *vadj);
-void       gtk_html_set_editable     (GtkHtml *html,
-                                      gboolean is_editable);
-void       gtk_html_set_transparent  (GtkHtml *html,
-                                      gboolean is_transparent);
-void       gtk_html_set_adjustments  (GtkHtml       *html,
-                                      GtkAdjustment *hadj,
-				      GtkAdjustment *vadj);
-void       gtk_html_append_text      (GtkHtml      *html,
-                                      char *text,
-                                      gint options);
-void       gtk_html_freeze           (GtkHtml      *html);
-void       gtk_html_thaw             (GtkHtml      *html);
-
-void	gtk_html_add_pixmap	(GtkHtml * html, GdkPixmap *pm, gint fint, gint newline);
-
+GtkType		gtk_html_get_type		(void);
+GtkWidget*	gtk_html_new			(GtkAdjustment *hadj,
+												GtkAdjustment *vadj);
+void	gtk_html_set_editable			(GtkHtml *html,
+												gboolean is_editable);
+void	gtk_html_set_transparent	(GtkHtml *html,
+												gboolean is_transparent);
+void	gtk_html_set_adjustments	(GtkHtml       *html,
+												GtkAdjustment *hadj,
+												GtkAdjustment *vadj);
+void	gtk_html_append_text		(GtkHtml      *html,
+												char *text, gint options);
+void	gtk_html_freeze					(GtkHtml      *html);
+void	gtk_html_thaw					(GtkHtml      *html);
+void	gtk_html_add_pixmap			(GtkHtml * html, GdkPixmap *pm,
+												gint fint, gint newline);
 
 #ifdef __cplusplus
 /*}*/
