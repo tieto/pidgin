@@ -1,4 +1,4 @@
-/* $Id: libgg.h 8872 2004-01-21 05:34:32Z lschiere $ */
+/* $Id: libgg.h 9537 2004-04-23 17:24:19Z lschiere $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -29,6 +29,7 @@ extern "C" {
   #define INADDR_NONE 0xffffffff
 #endif
 
+#include <stdint.h>
 #include <sys/types.h>
 
 /*
@@ -64,6 +65,10 @@ struct gg_session {
 	char *recv_buf;		/* bufor na otrzymywane pakiety */
 	int recv_done;		/* ile ju¿ wczytano do bufora */
         int recv_left;		/* i ile jeszcze trzeba wczytaæ */
+	
+	char *userlist_reply;	/* fragment odpowiedzi listy kontaktów */
+
+	int userlist_blocks;	/* na ile kawa³ków podzielono listê kontaktów */
 };
 
 /*
@@ -153,9 +158,12 @@ enum {
 struct gg_session *gg_login(uin_t uin, char *password, int async);
 void gg_free_session(struct gg_session *sess);
 void gg_logoff(struct gg_session *sess);
+int gg_write(struct gg_session *sess, const char *buf, int length);
 int gg_change_status(struct gg_session *sess, int status);
-int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, char *message);
+int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message);
+int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message, const unsigned char *format, int formatlen);
 int gg_ping(struct gg_session *sess);
+int gg_userlist_request(struct gg_session *sess, char type, const char *request);
 
 struct gg_notify_reply {
 	uin_t uin;			/* numerek */
@@ -169,6 +177,39 @@ struct gg_notify_reply {
 __attribute__ ((packed))
 #endif
 ;
+
+#define GG_NOTIFY_REPLY60 0x0011
+	
+struct gg_notify_reply60 {
+	uint32_t uin;			/* numerek plus flagi w MSB */
+	uint8_t status;			/* status danej osoby */
+	uint32_t remote_ip;		/* adres ip delikwenta */
+	uint16_t remote_port;		/* port, na którym s³ucha klient */
+	uint8_t version;		/* wersja klienta */
+	uint8_t image_size;		/* maksymalny rozmiar grafiki w KiB */
+	uint8_t dunno1;			/* 0x00 */
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
+
+#define GG_STATUS60 0x000f
+	
+struct gg_status60 {
+	uint32_t uin;			/* numerek plus flagi w MSB */
+	uint8_t status;			/* status danej osoby */
+	uint32_t remote_ip;		/* adres ip delikwenta */
+	uint16_t remote_port;		/* port, na którym s³ucha klient */
+	uint8_t version;		/* wersja klienta */
+	uint8_t image_size;		/* maksymalny rozmiar grafiki w KiB */
+	uint8_t dunno1;			/* 0x00 */
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
+
 
 struct gg_status {
 	uin_t uin;			/* numerek */
@@ -186,7 +227,10 @@ enum {
 	GG_EVENT_STATUS,
 	GG_EVENT_ACK,
 	GG_EVENT_CONN_FAILED,
-	GG_EVENT_CONN_SUCCESS
+	GG_EVENT_CONN_SUCCESS,
+	GG_EVENT_STATUS60,		/* kto¶ zmieni³ stan w GG 6.0 */
+	GG_EVENT_NOTIFY60,		/* kto¶ siê pojawi³ w GG 6.0 */
+	GG_EVENT_USERLIST,		/* odpowied¼ listy kontaktów w GG 6.0 */
 };
 
 /*
@@ -228,7 +272,31 @@ struct gg_event {
                         unsigned char *message;
                 } msg;
                 struct gg_notify_reply *notify;
+		struct {			/* @notify60 informacja o li¶cie kontaktów -- GG_EVENT_NOTIFY60 */
+			uin_t uin;		/* numer */
+			int status;	/* stan */
+			uint32_t remote_ip;	/* adres ip */
+			uint16_t remote_port;	/* port */
+			int version;	/* wersja klienta */
+			int image_size;	/* maksymalny rozmiar grafiki w KiB */
+			char *descr;		/* opis stanu */
+			time_t time;		/* czas powrotu */
+		} *notify60;
                 struct gg_status status;
+		struct {			/* @status60 zmiana stanu -- GG_EVENT_STATUS60 */
+			uin_t uin;		/* numer */
+			int status;	/* nowy stan */
+			uint32_t remote_ip;	/* adres ip */
+			uint16_t remote_port;	/* port */
+			int version;	/* wersja klienta */
+			int image_size;	/* maksymalny rozmiar grafiki w KiB */
+			char *descr;		/* opis stanu */
+			time_t time;		/* czas powrotu */
+		} status60;
+		struct {			/* @userlist odpowied¼ listy kontaktów serwera */
+			char type;		/* rodzaj odpowiedzi */
+			char *reply;		/* tre¶æ odpowiedzi */
+		} userlist;
                 struct {
                         uin_t recipient;
                         int status;
@@ -387,6 +455,7 @@ int gg_http_hash(const unsigned char *email, const unsigned char *password);
 #define GG_DEFAULT_PORT 8074
 #define GG_HTTPS_PORT 443
 #define GG_HTTP_USERAGENT "Mozilla/4.0 (compatible MSIE 5.0; Windows 98; I)"
+#define GG_HAS_AUDIO_MASK 0x40000000
 
 struct gg_header {
 	unsigned long type;		/* typ pakietu */
@@ -413,9 +482,29 @@ struct gg_login {
 	uin_t uin;			/* twój numerek */
 	unsigned long hash;		/* hash has³a */
 	unsigned long status;		/* status na dzieñ dobry */
-	unsigned long dunno;		/* == 0x0b */
+	unsigned long version;		/* == 0x20 */
 	unsigned long local_ip;		/* mój adres ip */
 	unsigned short local_port;	/* port, na którym s³ucham */
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
+
+#define GG_LOGIN60 0x0015
+
+struct gg_login60 {
+	uint32_t uin;			/* mój numerek */
+	uint32_t hash;			/* hash has³a */
+	uint32_t status;		/* status na dzieñ dobry */
+	uint32_t version;		/* moja wersja klienta */
+	uint8_t dunno1;			/* 0x00 */
+	uint32_t local_ip;		/* mój adres ip */
+	uint16_t local_port;		/* port, na którym s³ucham */
+	uint32_t external_ip;		/* zewnêtrzny adres ip */
+	uint16_t external_port;		/* zewnêtrzny port */
+	uint8_t image_size;		/* maksymalny rozmiar grafiki w KiB */
+	uint8_t dunno2;			/* 0xbe */
 }
 #ifdef __GNUC__
 __attribute__ ((packed))
@@ -428,12 +517,23 @@ __attribute__ ((packed))
 
 #define GG_NEW_STATUS 0x0002
 
-#define GG_STATUS_NOT_AVAIL 0x0001	/* roz³±czony */
-#define GG_STATUS_AVAIL 0x0002		/* dostêpny */
-#define GG_STATUS_BUSY 0x0003		/* zajêty */
-#define GG_STATUS_INVISIBLE 0x0014	/* niewidoczny (GG 4.6) */
+#define GG_STATUS_NOT_AVAIL 0x0001		/* niedostêpny */
+#define GG_STATUS_NOT_AVAIL_DESCR 0x0015	/* niedostêpny z opisem (4.8) */
+#define GG_STATUS_AVAIL 0x0002			/* dostêpny */
+#define GG_STATUS_AVAIL_DESCR 0x0004		/* dostêpny z opisem (4.9) */
+#define GG_STATUS_BUSY 0x0003			/* zajêty */
+#define GG_STATUS_BUSY_DESCR 0x0005		/* zajêty z opisem (4.8) */
+#define GG_STATUS_INVISIBLE 0x0014		/* niewidoczny (4.6) */
+#define GG_STATUS_INVISIBLE_DESCR 0x0016	/* niewidoczny z opisem (4.9) */
+#define GG_STATUS_BLOCKED 0x0006		/* zablokowany */
 
-#define GG_STATUS_FRIENDS_MASK 0x8000	/* tylko dla znajomych (GG 4.6) */
+#define GG_STATUS_FRIENDS_MASK 0x8000		/* tylko dla znajomych (4.6) */
+
+/* GG_S() stan bez uwzglêdnienia trybu tylko dla znajomych */
+#define GG_S(x) ((x) & ~GG_STATUS_FRIENDS_MASK)
+
+/* GG_S_D() stan opisowy */
+#define GG_S_D(x) (GG_S(x) == GG_STATUS_NOT_AVAIL_DESCR || GG_S(x) == GG_STATUS_AVAIL_DESCR || GG_S(x) == GG_STATUS_BUSY_DESCR || GG_S(x) == GG_STATUS_INVISIBLE_DESCR)
 
 struct gg_new_status {
 	unsigned long status;			/* na jaki zmieniæ? */
@@ -522,6 +622,45 @@ __attribute__ ((packed))
 #define GG_PING 0x0008
 	
 #define GG_PONG 0x0007
+
+#define GG_USERLIST_REQUEST 0x0016
+
+#define GG_USERLIST_PUT 0x00
+#define GG_USERLIST_PUT_MORE 0x01
+#define GG_USERLIST_GET 0x02
+
+struct gg_userlist_request {
+	uint8_t type;
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
+
+#define GG_USERLIST_REPLY 0x0010
+
+#define GG_USERLIST_PUT_REPLY 0x00
+#define GG_USERLIST_PUT_MORE_REPLY 0x02
+#define GG_USERLIST_GET_REPLY 0x06
+#define GG_USERLIST_GET_MORE_REPLY 0x04
+
+struct gg_userlist_reply {
+	uint8_t type;
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
+
+/* listy */
+
+struct list {
+	void *data;
+	struct list *next;
+};
+
+typedef struct list * list_t;
+
 
 #ifdef __cplusplus
 }

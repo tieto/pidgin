@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9504 2004-04-22 01:53:18Z chipx86 $
+ * $Id: gg.c 9537 2004-04-23 17:24:19Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -265,6 +265,125 @@ static GList *agg_buddy_menu(GaimConnection *gc, const char *who)
 	return m;
 }
 
+static void agg_load_buddy_list(GaimConnection *gc, char *buddylist)
+{
+	struct agg_data *gd = (struct agg_data *)gc->proto_data;
+	gchar *ptr = buddylist;
+	gchar **users_tbl;
+	int i;
+	uin_t *userlist = NULL;
+	int userlist_size = 0;
+
+	users_tbl = g_strsplit(ptr, "\r\n", AGG_PUBDIR_MAX_ENTRIES);
+
+	/* Parse array of Buddies List */
+	for (i = 0; users_tbl[i] != NULL; i++) {
+		gchar **data_tbl;
+		gchar *name, *show;
+
+		if (strlen(users_tbl[i])==0) {
+			gaim_debug(GAIM_DEBUG_MISC, "gg",
+					   "import_buddies_server_results: users_tbl[i] is empty\n");
+			continue;
+		}
+
+		data_tbl = g_strsplit(users_tbl[i], ";", 8);
+
+		show = charset_convert(data_tbl[3], "CP1250", "UTF-8");
+		name = data_tbl[6];
+		
+		if (invalid_uin(name)) {
+			continue;
+		}
+
+		gaim_debug(GAIM_DEBUG_MISC, "gg",
+				   "import_buddies_server_results: uin: %s\n", name);
+		if (!gaim_find_buddy(gc->account, name)) {
+			GaimBuddy *b;
+			GaimGroup *g;
+			/* Default group if none specified on server */
+			gchar *group = g_strdup("Gadu-Gadu");
+			if (strlen(data_tbl[5])) {
+				gchar **group_tbl = g_strsplit(data_tbl[5], ",", 2);
+				if (strlen(group_tbl[0])) {
+					g_free(group);
+					group = g_strdup(group_tbl[0]);
+				}
+				g_strfreev(group_tbl);
+			}
+			/* Add Buddy to our userlist */
+			if (!(g = gaim_find_group(group))) {
+				g = gaim_group_new(group);
+				gaim_blist_add_group(g, NULL);
+			}
+			b = gaim_buddy_new(gc->account, name, strlen(show) ? show : NULL);
+			gaim_blist_add_buddy(b,NULL,g,NULL);
+			gaim_blist_save();
+			
+			userlist_size++;
+			userlist = g_renew(uin_t, userlist, userlist_size);
+			userlist[userlist_size - 1] =
+			    (uin_t) strtol((char *)name, (char **)NULL, 10);
+			
+			g_free(group);
+		}
+		g_free(show);
+		g_strfreev(data_tbl);
+	}
+	g_strfreev(users_tbl);
+	
+	if (userlist) {
+	    gg_notify(gd->sess, userlist, userlist_size);
+	    g_free(userlist);
+	}
+}
+
+static void agg_save_buddy_list (GaimConnection *gc, char *existlist)
+{
+    GaimBlistNode *gnode, *cnode, *bnode;
+    char *buddylist = g_strdup(existlist ? existlist : "");
+    char *ptr;
+    struct agg_data *gd = (struct agg_data *)gc->proto_data;
+
+    for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		GaimGroup *g = (GaimGroup *)gnode;
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b = (GaimBuddy *)bnode;
+
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+
+				if(b->account == gc->account) {
+					gchar *newdata;
+					/* GG Number */
+					gchar *name = b->name;
+					/* GG Pseudo */
+					gchar *show = b->alias ? b->alias : b->name;
+					/* Group Name */
+					gchar *gname = g->name;
+
+					newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
+							show, show, show, show, "", gname, name, "", "");
+							
+					ptr = buddylist;
+					buddylist = g_strconcat(ptr, newdata, NULL);
+					
+					g_free(newdata);
+					g_free(ptr);
+				}
+			}
+		}
+	}
+	
+	/* save the list to the gadu gadu server */
+	gg_userlist_request(gd->sess, GG_USERLIST_PUT, buddylist);
+}
+
 static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
@@ -347,6 +466,34 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			}
 		}
 		break;
+	case GG_EVENT_NOTIFY60:
+		{
+			gchar user[20];
+			struct gg_notify_reply60 *n = (void *)e->event.notify60;
+			guint status;
+
+			while (n->uin) {
+				switch (n->status) {
+				case GG_STATUS_NOT_AVAIL:
+					status = UC_UNAVAILABLE;
+					break;
+				case GG_STATUS_AVAIL:
+				case GG_STATUS_BUSY:
+				case GG_STATUS_INVISIBLE:
+					status = UC_NORMAL | (n->status << 5);
+					break;
+				default:
+					status = UC_NORMAL;
+					break;
+				}
+
+				g_snprintf(user, sizeof(user), "%lu", (long unsigned int)n->uin);
+				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
+						status);
+				n++;
+			}
+		}
+		break;
 	case GG_EVENT_STATUS:
 		{
 			gchar user[20];
@@ -371,11 +518,55 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 					status);
 		}
 		break;
+	case GG_EVENT_STATUS60:
+		{
+			gchar user[20];
+			guint status;
+
+			switch (e->event.status60.status) {
+			case GG_STATUS_NOT_AVAIL:
+				status = UC_UNAVAILABLE;
+				break;
+			case GG_STATUS_AVAIL:
+			case GG_STATUS_BUSY:
+			case GG_STATUS_INVISIBLE:
+				status = UC_NORMAL | (e->event.status60.status << 5);
+				break;
+			default:
+				status = UC_NORMAL;
+				break;
+			}
+
+			g_snprintf(user, sizeof(user), "%lu", e->event.status60.uin);
+			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
+					status);
+		}
+		break;	
 	case GG_EVENT_ACK:
 		gaim_debug(GAIM_DEBUG_MISC, "gg",
 				   "main_callback: message %d to %lu sent with status %d\n",
 			     e->event.ack.seq, e->event.ack.recipient, e->event.ack.status);
 		break;
+	case GG_EVENT_USERLIST:
+	{
+	    gaim_debug(GAIM_DEBUG_MISC, "gg", "main_callback: received userlist reply\n");
+	    switch (e->event.userlist.type) {
+		case GG_USERLIST_GET_REPLY:
+		{
+			
+			if (e->event.userlist.reply) {
+			    agg_load_buddy_list(gc, e->event.userlist.reply);
+			}
+			break;
+		}
+
+		case GG_USERLIST_PUT_REPLY:
+		{
+		    /* ignored */
+		}
+	    }
+	}
+
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "gg",
 				   "main_callback: unsupported event %d\n", e->type);
@@ -588,6 +779,7 @@ static void agg_add_buddy(GaimConnection *gc, const char *who, GaimGroup *group)
 	if (invalid_uin(who))
 		return;
 	gg_add_notify(gd->sess, strtol(who, (char **)NULL, 10));
+	agg_save_buddy_list(gc, NULL);
 }
 
 static void agg_rem_buddy(GaimConnection *gc, const char *who, const char *group)
@@ -596,6 +788,7 @@ static void agg_rem_buddy(GaimConnection *gc, const char *who, const char *group
 	if (invalid_uin(who))
 		return;
 	gg_remove_notify(gd->sess, strtol(who, (char **)NULL, 10));
+	agg_save_buddy_list(gc, NULL);
 }
 
 static void agg_add_buddies(GaimConnection *gc, GList *whos)
@@ -618,6 +811,8 @@ static void agg_add_buddies(GaimConnection *gc, GList *whos)
 		gg_notify(gd->sess, userlist, userlist_size);
 		g_free(userlist);
 	}
+	
+	agg_save_buddy_list(gc, NULL);
 }
 
 static void search_results(GaimConnection *gc, gchar *webdata)
@@ -734,6 +929,7 @@ change_pass(GaimConnection *gc)
 	gaim_account_request_change_password(gaim_connection_get_account(gc));
 }
 
+#if 0
 static void import_buddies_server_results(GaimConnection *gc, gchar *webdata)
 {
 	gchar *ptr;
@@ -839,6 +1035,7 @@ static void delete_buddies_server_results(GaimConnection *gc, gchar *webdata)
 					  _("Couldn't delete Buddy List from Gadu-Gadu server"),
 					  NULL);
 }
+#endif
 
 static void password_change_server_results(GaimConnection *gc, gchar *webdata)
 {
@@ -903,6 +1100,7 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 	case AGG_HTTP_SEARCH:
 		search_results(gc, webdata);
 		break;
+#if 0
 	case AGG_HTTP_USERLIST_IMPORT:
 		import_buddies_server_results(gc, webdata);
 		break;
@@ -912,6 +1110,7 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 	case AGG_HTTP_USERLIST_DELETE:
 	        delete_buddies_server_results(gc, webdata);
 		break;
+#endif
 	case AGG_HTTP_PASSWORD_CHANGE:
 		password_change_server_results(gc, webdata);
 		break;
@@ -980,6 +1179,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 	hdata->inpa = gaim_input_add(source, GAIM_INPUT_READ, http_results, hdata);
 }
 
+#if 0
 static void import_buddies_server(GaimConnection *gc)
 {
 	struct agg_http *hi = g_new0(struct agg_http, 1);
@@ -1102,6 +1302,7 @@ static void delete_buddies_server(GaimConnection *gc)
 		return;
 	}
 }
+#endif
 
 static void agg_dir_search(GaimConnection *gc, const char *first, const char *middle,
 			   const char *last, const char *maiden, const char *city, const char *state,
@@ -1209,8 +1410,8 @@ static GList *agg_actions(GaimConnection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
+#if 0
 	m = g_list_append(m, NULL);
-
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Import Buddy List from Server");
 	pam->callback = import_buddies_server;
@@ -1228,6 +1429,7 @@ static GList *agg_actions(GaimConnection *gc)
 	pam->callback = delete_buddies_server;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
+#endif
 
 	return m;
 }
@@ -1301,6 +1503,30 @@ static void agg_permit_deny_dummy(GaimConnection *gc, const char *who)
 	/* It's implemented on client side because GG server doesn't support this */
 }
 
+static void agg_group_buddy (GaimConnection * gc, const char *who,
+			const char *old_group, const char *new_group)
+{
+    GaimBuddy *buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
+    gchar *newdata;
+    /* GG Number */
+    gchar *name = buddy->name;
+    /* GG Pseudo */
+    gchar *show = buddy->alias ? buddy->alias : buddy->name;
+    /* Group Name */
+    const gchar *gname = new_group;
+
+    newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
+		    show, show, show, show, "", gname, name, "", "");
+    agg_save_buddy_list(gc, newdata);
+    g_free(newdata);
+}
+
+static void agg_rename_group (GaimConnection *gc, const char *old_group,
+		     const char *new_group, GList *members)
+{
+    agg_save_buddy_list(gc, NULL);
+}
+
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
@@ -1351,8 +1577,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
-	NULL,
+	agg_group_buddy,
+	agg_rename_group,
 	NULL,
 	NULL,
 	NULL
