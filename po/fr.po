@@ -33,7 +33,7 @@ msgstr "Gaim - Erreur"
 #: plugins/yay/yay.c:201
 #, c-format
 msgid "%s has made %s their buddy%s%s"
-msgstr "%s a ajouté %s dans sa liste""
+msgstr "%s a ajouté %s dans sa liste"
 
 #: plugins/yay/yay.c:203
 #, fuzzy
