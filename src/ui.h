@@ -49,6 +49,9 @@
 #define gtk_style_set_font(s, f) (s)->font = f
 #endif
 
+#define DEFAULT_FONT_XFLD "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
+#define DEFAULT_FONT_FACE "helvetica"
+
 #define BROWSER_NETSCAPE              0
 #define BROWSER_KFM                   1
 #define BROWSER_MANUAL                2

@@ -509,10 +509,11 @@ void set_font_face(char *newfont, struct conversation *c)
 	if (!strcmp(pre_fontface, "<FONT FACE=\"\">")) {
 		g_free(pre_fontface);
 		alloc--;
-		pre_fontface = "<FONT FACE=\"Helvetica\">";
+		pre_fontface = "<FONT FACE=\"" DEFAULT_FONT_FACE "\">";
 	}
 
-	sprintf(c->fontface, "%s", newfont ? (newfont[0] ? newfont : "Helvetica") : "Helvetica");
+	sprintf(c->fontface, "%s", newfont ?
+		(newfont[0] ? newfont : DEFAULT_FONT_FACE) : DEFAULT_FONT_FACE);
 	c->hasfont = 1;
 	surround(c->entry, pre_fontface, "</FONT>");
 	gtk_widget_grab_focus(c->entry);

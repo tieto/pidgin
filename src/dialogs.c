@@ -76,8 +76,6 @@
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/ab.xpm"
 
-#define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
-
 #define PATHSIZE 1024
 
 int smiley_array[FACE_TOTAL];
@@ -2723,7 +2721,7 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 			return;
 		fontseld = gtk_font_selection_dialog_new(_("Select Font"));
 		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
-							DEFAULT_FONT_NAME);
+							DEFAULT_FONT_XFLD);
 
 		gtk_object_set_user_data(GTK_OBJECT(fontseld), NULL);
 		gtk_signal_connect(GTK_OBJECT(fontseld), "delete_event",
@@ -2748,7 +2746,7 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 			gtk_object_set_user_data(GTK_OBJECT(c->font_dialog), NULL);
 
 		gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *) c->font_dialog,
-							DEFAULT_FONT_NAME);
+							DEFAULT_FONT_XFLD);
 
 		gtk_signal_connect(GTK_OBJECT(c->font_dialog), "delete_event",
 				   GTK_SIGNAL_FUNC(delete_event_dialog), c);
@@ -2758,7 +2756,7 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 				   "clicked", GTK_SIGNAL_FUNC(cancel_font), c);
 
 		gtk_font_selection_dialog_set_font_name((GtkFontSelectionDialog *) c->font_dialog,
-							DEFAULT_FONT_NAME);
+							DEFAULT_FONT_XFLD);
 
 		gtk_widget_realize(c->font_dialog);
 

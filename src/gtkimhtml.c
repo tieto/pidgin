@@ -59,9 +59,12 @@
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
 
-#define MAX_SIZE 7
+#define MAX_FONT_SIZE 7
+#define DEFAULT_FONT_SIZE 3
 
-gint font_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
+gint _point_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
+
+#define DEFAULT_PRE_FACE "courier"
 
 #define BORDER_SIZE 2
 #define TOP_BORDER 10
@@ -1927,7 +1930,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		if (italics)
 			newvals [SLANT] = "i";
 		if (fontsize) {
-			g_snprintf (fs, sizeof (fs), "%d", font_sizes [MIN (fontsize, MAX_SIZE) - 1]);
+			g_snprintf (fs, sizeof (fs), "%d", _point_sizes [MIN (fontsize, MAX_FONT_SIZE) - 1]);
 			newvals [PXLSZ] = "*";
 			newvals [PTSZ] = fs;
 		}
@@ -1958,7 +1961,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 			newvals [FMLY] = names [i];
 
 			g_snprintf (fs, sizeof (fs), "%d",
-				    font_sizes [MIN (fontsize, MAX_SIZE) - 1] / 10);
+				    _point_sizes [MIN (fontsize, MAX_FONT_SIZE) - 1] / 10);
 			newvals [PXLSZ] = fs;
 			newvals [PTSZ] = "*";
 
@@ -2501,13 +2504,13 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 	if ((font != NULL) || bold || italics || pre) {
 		if (font && (bold || italics || font->size || font->face || pre)) {
 			if (pre) {
-				bit->font = gtk_imhtml_font_load (imhtml, "courier", bold, italics, font->size);
+				bit->font = gtk_imhtml_font_load (imhtml, DEFAULT_PRE_FACE, bold, italics, font->size);
 			} else {
 				bit->font = gtk_imhtml_font_load (imhtml, font->face, bold, italics, font->size);
 			}
 		} else if (bold || italics || pre) {
 			if (pre) {
-				bit->font = gtk_imhtml_font_load (imhtml, "courier", bold, italics, 0);
+				bit->font = gtk_imhtml_font_load (imhtml, DEFAULT_PRE_FACE, bold, italics, 0);
 			} else {
 				bit->font = gtk_imhtml_font_load (imhtml, NULL, bold, italics, 0);
 			}
@@ -2992,7 +2995,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 								break;
 
 							sscanf (value + 1, "%hd", &font->size);
-							font->size += 3;
+							font->size += DEFAULT_FONT_SIZE;
 							break;
 						}
 
@@ -3005,7 +3008,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 							sscanf (value + 1, "%hd", &font->size);
 							font->size = MIN (font->size, 2);
-							font->size = 3 - font->size;
+							font->size = DEFAULT_FONT_SIZE - font->size;
 							break;
 						}
 
@@ -3036,7 +3039,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 						font->back = gdk_color_copy (oldfont->back);
 				} else {
 					if (!font->size)
-						font->size = 3;
+						font->size = DEFAULT_FONT_SIZE;
 				}
 
 				fonts = g_slist_prepend (fonts, font);
