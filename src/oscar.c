@@ -586,7 +586,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, ip);
 		char *roomname = va_arg(ap, char *);
 		struct chat_connection *ccon;
-		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR) {
+		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR) {
 			debug_print("unable to connect to chat server\n");
 			return 1;
 		}
