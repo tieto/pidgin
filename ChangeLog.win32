@@ -1,4 +1,4 @@
-version 0.65 (06/16/2003):
+version 0.65 (07/16/2003):
 	* WinGaim plugins can now be built with gcc stabs debugging info, 
           allowing for more informative crash dumps.
 	* Buddy List DnD bug fixed.
