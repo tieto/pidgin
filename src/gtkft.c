@@ -31,12 +31,12 @@
 #include "prpl.h"
 #include "util.h"
 
-#include "gaim-disclosure.h"
+#include "gtkgaim-disclosure.h"
 #include "gtkcellrendererprogress.h"
 #include "gtkft.h"
 #include "prefs.h"
 #include "gtkutils.h"
-#include "stock.h"
+#include "gtkstock.h"
 
 #define GAIM_GTKXFER(xfer) \
 	(GaimGtkXferUiData *)(xfer)->ui_data

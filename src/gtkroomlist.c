@@ -26,7 +26,7 @@
 #include "internal.h"
 #include "gtkgaim.h"
 #include "gtkutils.h"
-#include "stock.h"
+#include "gtkstock.h"
 #include "debug.h"
 #include "account.h"
 #include "connection.h"
