@@ -1369,12 +1369,6 @@ void import_callback(GtkWidget *widget, void *null)
 
 void do_quit()
 {
-#ifdef GAIM_PLUGINS
-	GList *c;
-	struct gaim_plugin *p;
-	void (*gaim_plugin_remove)();
-#endif
-
 #ifdef USE_APPLET
 	applet = NULL;
 #endif
@@ -1384,16 +1378,7 @@ void do_quit()
 	plugin_event(event_quit, 0, 0, 0, 0);
 
 	/* then we remove everyone in a mass suicide */
-	c = plugins;
-	while (c) {
-		p = (struct gaim_plugin *)c->data;
-		if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
-			(*gaim_plugin_remove)();
-		/* we don't need to worry about removing callbacks since
-		 * there won't be any more chance to call them back :) */
-		g_free(p);
-		c = c->next;
-	}
+	remove_all_plugins();
 #endif
 	system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 #ifdef USE_PERL

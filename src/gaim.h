@@ -806,6 +806,7 @@ extern void gaim_plugin_unload(GModule *);
 #endif
 extern char *event_name(enum gaim_event);
 extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
+extern void remove_all_plugins();
 
 /* Functions in prefs.c */
 extern void debug_printf( char * fmt, ... );

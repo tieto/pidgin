@@ -981,3 +981,19 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 	return 0;
 #endif
 }
+
+/* Calls the gaim_plugin_remove function in any loaded plugin that has one */
+void remove_all_plugins()
+{
+	GList *c = plugins;
+	struct gaim_plugin *p;
+	void (*gaim_plugin_remove)();
+
+	while (c) {
+		p = (struct gaim_plugin *)c->data;
+		if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
+			(*gaim_plugin_remove)();
+		g_free(p);
+		c = c->next;
+	}
+}

@@ -87,24 +87,11 @@ void cancel_logon(void)
 		gtk_widget_hide(mainwindow);
 #else
 #ifdef GAIM_PLUGINS
-	GList *c;
-	struct gaim_plugin *p;
-	void (*gaim_plugin_remove)();
-
 	/* first we tell those who have requested it we're quitting */
 	plugin_event(event_quit, 0, 0, 0, 0);
 
 	/* then we remove everyone in a mass suicide */
-	c = plugins;
-	while (c) {
-		p = (struct gaim_plugin *)c->data;
-		if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
-			 (*gaim_plugin_remove)();
-		/* we don't need to worry about removing callbacks since
-		 * there won't be any more chance to call them back :) */
-		g_free(p);
-		c = c->next;
-	}
+	remove_all_plugins();
 #endif /* GAIM_PLUGINS */
 #ifdef USE_PERL
 	perl_end();
@@ -406,8 +393,9 @@ void sighandler(int sig)
 		abort();
 		break;
 	default:
-		gtkspell_stop();
 		debug_printf("caught signal %d\n", sig);
+		gtkspell_stop();
+		remove_all_plugins();
 		if (gtk_main_level())
 			gtk_main_quit();
 		exit(0);
