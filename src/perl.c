@@ -182,12 +182,40 @@ static char *escape_quotes(char *buf)
   2001/06/14: execute_perl replaced by Martin Persson <mep@passagen.se>
               previous use of perl_eval leaked memory, replaced with
               a version that uses perl_call instead
+  30/11/2002: execute_perl modified by Eric Timme <timothy@voidnet.com>
+			  args changed to char** so that we can have preparsed
+  			  arguments again, and many headaches ensued! This essentially 
+			  means we replaced one hacked method with a messier hacked 
+			  method out of perceived necessity. Formerly execute_perl 
+			  required a single char_ptr, and it would insert it into an 
+			  array of character pointers and NULL terminate the new array.
+			  Now we have to pass in pre-terminated character pointer arrays
+			  to accomodate functions that want to pass in multiple arguments.
+
+			  Previously arguments were preparsed because an argument list
+			  was constructed in the form 'arg one','arg two' and was
+			  executed via a call like &funcname(arglist) (see .59.x), so
+			  the arglist was magically pre-parsed because of the method. 
+			  With Martin Persson's change to perl_call we now need to
+			  use a null terminated list of character pointers for arguments
+			  if we wish them to be parsed. Lacking a better way to allow
+			  for both single arguments and many I created a NULL terminated
+			  array in every function that called execute_perl and passed
+			  that list into the function.  In the former version a single
+			  character pointer was passed in, and was placed into an array
+			  of character pointers with two elements, with a NULL element
+			  tacked onto the back, but this method no longer seemed prudent.
+
+			  Enhancements in the future might be to get rid of pre-declaring
+			  the array sizes?  I am not comfortable enough with this
+			  subject to attempt it myself and hope it to stand the test
+			  of time.
 */
 
 static int 
-execute_perl(char *function, char *args)
+execute_perl(char *function, char **args)
 {
-	char *perl_args[2] = { args, NULL }, buf[512];
+	char buf[512];
 	int count, ret_value = 1;
 	SV *sv;
 
@@ -195,7 +223,7 @@ execute_perl(char *function, char *args)
         ENTER;
         SAVETMPS;
         PUSHMARK(sp);
-        count = perl_call_argv(function, G_EVAL | G_SCALAR, perl_args);
+        count = perl_call_argv(function, G_EVAL | G_SCALAR, args);
         SPAGAIN;
 
         sv = GvSV(gv_fetchpv("@", TRUE, SVt_PV));
@@ -220,6 +248,7 @@ execute_perl(char *function, char *args)
 }
 
 void perl_unload_file(struct gaim_plugin *plug) {
+	char *atmp[2] = { "", NULL }; /* see execute_perl --et */
 	struct perlscript *scp = NULL;
 	struct _perl_timeout_handlers *thn;
 	struct _perl_event_handlers *ehn;
@@ -232,7 +261,7 @@ void perl_unload_file(struct gaim_plugin *plug) {
 		if (scp->plug == plug) {
 			perl_list = g_list_remove(perl_list, scp);
 			if (scp->shutdowncallback[0])
-				execute_perl(scp->shutdowncallback, "");
+				execute_perl(scp->shutdowncallback, atmp);
 			perl_list = g_list_remove(perl_list, scp);
 			g_free(scp->name);
 			g_free(scp->version);
@@ -274,6 +303,7 @@ void perl_unload_file(struct gaim_plugin *plug) {
 
 int perl_load_file(char *script_name)
 {
+	char *atmp[2] = { script_name, NULL }; /* see execute_perl --et */
 	struct gaim_plugin *plug;
 	GList *p = probed_plugins;
 	GList *s;
@@ -297,7 +327,7 @@ int perl_load_file(char *script_name)
 	plug->handle = plug->path;
 	plugins = g_list_append(plugins, plug);
 
-	ret = execute_perl("load_n_eval", script_name);
+	ret = execute_perl("load_n_eval", atmp);
 
 	s = perl_list;
 	while (s) {
@@ -413,6 +443,7 @@ static void perl_init()
 
 void perl_end()
 {
+	char *atmp[2] = { "", NULL }; /* see execute_perl --et */
 	struct perlscript *scp;
 	struct _perl_timeout_handlers *thn;
 	struct _perl_event_handlers *ehn;
@@ -421,7 +452,7 @@ void perl_end()
 		scp = perl_list->data;
 		perl_list = g_list_remove(perl_list, scp);
 		if (scp->shutdowncallback[0])
-			execute_perl(scp->shutdowncallback, "");
+			execute_perl(scp->shutdowncallback, atmp);
 		g_free(scp->name);
 		g_free(scp->version);
 		g_free(scp->shutdowncallback);
@@ -840,33 +871,47 @@ XS (XS_GAIM_print_to_chat)
 
 int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4, void *arg5)
 {
-	char *buf = NULL;
+	/* changing buf to an array of char pointers so we get @_ back in	
+	 * order; basically scrapping legacy code in favor of blocky		 
+	 * unimaginative code. Additionally, assigned values one at a time 
+	 * for the sake of clarity. --Eric Timme (30 November 2002)	*/ 
+
+	char *buf[5] = { NULL, NULL, NULL, NULL, NULL }; 
+	/* 5 for max 4 arguments =\  Note, if you change the above,
+	 * change the two loops at the bottom that free up memory */
+
 	GList *handler;
 	struct _perl_event_handlers *data;
 	SV *handler_return;
+	int i=0; /* necessary counter variable? --et */
 
 	switch (event) {
 	case event_signon:
 	case event_signoff:
-		buf = g_strdup_printf("'%lu'", (unsigned long)arg1);
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
 		break;
 	case event_away:
-		buf = g_strdup_printf("'%lu','%s'", (unsigned long)arg1,
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%s", 
 				((struct gaim_connection *)arg1)->away ?
 					escape_quotes(((struct gaim_connection *)arg1)->away) : "");
 		break;
 	case event_im_recv:
 		{
 		char *tmp = *(char **)arg2 ? g_strdup(escape_quotes(*(char **)arg2)) : g_malloc0(1);
-		buf = g_strdup_printf("'%lu','%s','%s'", (unsigned long)arg1, tmp,
-			   *(char **)arg3 ? escape_quotes(*(char **)arg3) : "");
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%s", tmp);
+		buf[2] = g_strdup_printf("%s",
+				*(char **)arg3 ? escape_quotes(*(char **)arg3) : "");
 		g_free(tmp);
 		}
 		break;
 	case event_im_send:
 		{
 		char *tmp = arg2 ? g_strdup(escape_quotes(arg2)) : g_malloc0(1);
-		buf = g_strdup_printf("'%lu','%s','%s'", (unsigned long)arg1, tmp,
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%s", tmp);
+		buf[2] = g_strdup_printf("%s", 
 			   *(char **)arg3 ? escape_quotes(*(char **)arg3) : "");
 		g_free(tmp);
 		}
@@ -878,7 +923,8 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 	case event_buddy_back:
 	case event_buddy_idle:
 	case event_buddy_unidle:
-		buf = g_strdup_printf("'%lu','%s'", (unsigned long)arg1, escape_quotes(arg2));
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%s", escape_quotes(arg2));
 		break;
 	case event_chat_invited:
 		{
@@ -886,7 +932,10 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		tmp2 = g_strdup(escape_quotes(arg2));
 		tmp3 = g_strdup(escape_quotes(arg3));
 		tmp4 = arg4 ? g_strdup(escape_quotes(arg4)) : g_malloc0(1);
-		buf = g_strdup_printf("'%lu','%s','%s','%s'", (unsigned long)arg1, tmp2, tmp3, tmp4);
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%s", tmp2);
+		buf[2] = g_strdup_printf("%s", tmp3);
+		buf[3] = g_strdup_printf("%s", tmp4);
 		g_free(tmp2);
 		g_free(tmp3);
 		g_free(tmp4);
@@ -895,18 +944,23 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 	case event_chat_join:
 	case event_chat_buddy_join:
 	case event_chat_buddy_leave:
-		buf = g_strdup_printf("'%lu','%d','%s'", (unsigned long)arg1, (int)arg2,
-				escape_quotes(arg3));
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%d", (int)arg2);
+		buf[2] = g_strdup_printf("%s", escape_quotes(arg3));
 		break;
 	case event_chat_leave:
-		buf = g_strdup_printf("'%lu','%d'", (unsigned long)arg1, (int)arg2);
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%d", (int)arg2);
 		break;
 	case event_chat_recv:
 		{
 		char *t3, *t4;
 		t3 = g_strdup(escape_quotes(*(char **)arg3));
 		t4 = *(char **)arg4 ? g_strdup(escape_quotes(*(char **)arg4)) : g_malloc0(1);
-		buf = g_strdup_printf("'%lu','%d','%s','%s'", (unsigned long)arg1, (int)arg2, t3, t4);
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%d", (int)arg2);
+		buf[2] = g_strdup_printf("%s", t3);
+		buf[3] = g_strdup_printf("%s", t4);
 		g_free(t3);
 		g_free(t4);
 		}
@@ -916,33 +970,41 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		char *t3, *t4;
 		t3 = g_strdup(escape_quotes(arg3));
 		t4 = *(char **)arg4 ? g_strdup(escape_quotes(*(char **)arg4)) : g_malloc0(1);
-		buf = g_strdup_printf("'%lu','%d','%s','%s'", (unsigned long)arg1, (int)arg2, t3, t4);
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%d", (int)arg2);
+		buf[2] = g_strdup_printf("%s", t3);
+		buf[3] = g_strdup_printf("%s", t4);
 		g_free(t3);
 		g_free(t4);
 		}
 		break;
 	case event_chat_send:
-		buf = g_strdup_printf("'%lu','%d','%s'", (unsigned long)arg1, (int)arg2,
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%d", (int)arg2);
+		buf[2] = g_strdup_printf("%s", 
 				*(char **)arg3 ? escape_quotes(*(char **)arg3) : "");
 		break;
 	case event_warned:
-		buf = g_strdup_printf("'%lu','%s','%d'", (unsigned long)arg1,
-				arg2 ? escape_quotes(arg2) : "", (int)arg3);
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%s", arg2 ? escape_quotes(arg2) : "");
+		buf[2] = g_strdup_printf("%d", (int)arg3);
 		break;
 	case event_quit:
 	case event_blist_update:
-		buf = g_malloc0(1);
+		buf[0] = g_malloc0(1);
 		break;
 	case event_new_conversation:
 	case event_del_conversation:
-		buf = g_strdup_printf("'%s'", escape_quotes(arg1));
+		buf[0] = g_strdup_printf("%s", escape_quotes(arg1));
 		break;
 	case event_im_displayed_sent:
 		{
 		char *tmp2, *tmp3;
 		tmp2 = g_strdup(escape_quotes(arg2));
 		tmp3 = *(char **)arg3 ? g_strdup(escape_quotes(*(char **)arg3)) : g_malloc0(1);
-		buf = g_strdup_printf("'%lu','%s','%s'", (unsigned long)arg1, tmp2, tmp3);
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%s", tmp2);
+		buf[2] = g_strdup_printf("%s", tmp3);
 		g_free(tmp2);
 		g_free(tmp3);
 		}
@@ -952,7 +1014,9 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		char *tmp2, *tmp3;
 		tmp2 = g_strdup(escape_quotes(arg2));
 		tmp3 = arg3 ? g_strdup(escape_quotes(arg3)) : g_malloc0(1);
-		buf = g_strdup_printf("'%lu','%s','%s'", (unsigned long)arg1, tmp2, tmp3);
+		buf[0] = g_strdup_printf("%lu", (unsigned long)arg1);
+		buf[1] = g_strdup_printf("%s", tmp2);
+		buf[2] = g_strdup_printf("%s", tmp3);
 		g_free(tmp2);
 		g_free(tmp3);
 		}
@@ -970,15 +1034,21 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		if (!strcmp(event_name(event), data->event_type)) {
 			handler_return = execute_perl(data->handler_name, buf);
 			if (handler_return) {
-				if (buf)
-					g_free(buf);
+				/* loop to try and free up memory from the 
+				 * char pointer array? --et */
+				for (i=0;i<5;i++)
+					if (buf[i])
+						g_free(buf[i]);
 				return handler_return;
 			}
 		}
 	}
 
-	if (buf)
-		g_free(buf);
+	/* loop to try and free up memory from the 
+	 * char pointer array? --et */
+	for (i=0;i<5;i++)
+		if (buf[i])
+			g_free(buf[i]);
 
 	return 0;
 }
@@ -1041,8 +1111,12 @@ XS (XS_GAIM_remove_event_handler)
 
 static int perl_timeout(gpointer data)
 {
+	char *atmp[2] = { NULL, NULL }; /* see execute_perl --et */
 	struct _perl_timeout_handlers *handler = data;
-	execute_perl(handler->handler_name, escape_quotes(handler->handler_args));
+
+	atmp[0] = escape_quotes(handler->handler_args);
+	execute_perl(handler->handler_name, atmp);
+
 	perl_timeout_handlers = g_list_remove(perl_timeout_handlers, handler);
 	g_free(handler->handler_args);
 	g_free(handler->handler_name);
