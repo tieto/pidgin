@@ -1,5 +1,6 @@
 --- STUFF FOR 0.10.1 RELEASE ---
 	Ability to merge gaim, toc, aim2, aim4 buddylists
+	Add "Group Add" button
 	Third sound option for people without soundcards who still want
 		sound events.  Make a PC Speaker Beep (^G / Char 7)
 	--version command line option
