@@ -7302,13 +7302,14 @@ recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer 
 		presence |= 0x00400000;
 		aim_ssi_setpresence(sess, presence);
 	} else {
-		presence &= 0xFFBFFFFF;
+		presence &= ~0x00400000;
 		aim_ssi_setpresence(sess, presence);
 	}
 }
 
 static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin) {
+get_plugin_pref_frame(GaimPlugin *plugin)
+{
 	GaimPluginPrefFrame *frame;
 	GaimPluginPref *ppref;
 
