@@ -42,6 +42,7 @@ LIBS = @LIBS@ $(GTK_LIBS) $(SOUND_LIBS) $(STATIC_LINK_LIBS) $(PERL_LIBS) $(XSS_L
 EXTRA_DIST =	convo.h \
 		core.h \
 		gaim.h \
+		gaim-socket.h \
 		getopt.c \
 		getopt.h \
 		getopt1.c \
