@@ -1,0 +1,26 @@
+Translation README
+
+Updated: 19-April-2003
+------------------
+
+To supply a new translation, you first need a copy of gaim.pot.
+This can be built by typing:
+
+./update.pl --pot
+
+from the gaim/po/ directory.
+
+To update an exsting translation, type:
+
+./update.pl LANG.po
+
+where LANG is the language code to update, such as fr or ja. This will build
+a new gaim.pot and update the translation with the changes. You may then
+begin editing the updated file.
+
+New or updated translations should be sent to the gaim-devel listserv
+(see http://lists.sourceforge.net/lists/listinfo/gaim-devel)
+
+Please check your translations carefully. Make sure you have the same
+number of newlines and %s or other formatting codes in the translation as
+you have in the original.
