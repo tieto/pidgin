@@ -1,6 +1,7 @@
-# translation of nl.po to Dutch
-# Commentaar:
-# Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2003
+# Gaim Dutch translation
+# Copyright (C) 2003, Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>
+#
+# This file is distributed under the same license as the Gaim package.
 #
 msgid ""
 msgstr ""

@@ -1162,7 +1162,6 @@ static void
 msn_got_info(gpointer data, char *url_text, unsigned long len)
 {
 	char *stripped,*p,*q;
-	int count;
 	char buf[1024];
 	char *user_url = NULL;
 

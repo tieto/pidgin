@@ -1,5 +1,5 @@
 # Gaim Hindi translation
-# Copyright (C) 2003, G Karunakar <karunakar@freedomink.org>
+# Copyright (C) 2003, Guntupalli Karunakar <karunakar@freedomink.org>
 #
 # This file is distributed under the same license as the Gaim package.
 #

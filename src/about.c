@@ -129,7 +129,7 @@ void show_about(GtkWidget *w, void *data)
 				_("<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				_("  Adam Fritzler (former libfaim maintainer)<BR>"
-				"  Eric Warmenhoven (former lead developer)"
+				"  Eric Warmenhoven (former lead developer) "
 				"&lt;<A HREF=\"mailto:warmenhoven@yahoo.com\">"
 				"warmenhoven@yahoo.com</A>&gt;<BR>"
 				"  Jim Duchek (former maintainer)<BR>"
@@ -138,6 +138,51 @@ void show_about(GtkWidget *w, void *data)
 				"&lt;<A HREF=\"mailto:markster@marko.net\">"
 				"markster@marko.net</A>&gt;<BR>"
 				"  Syd Logan (hacker and designated driver [lazy bum])<BR>"
+				"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
+
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				_("<FONT SIZE=\"3\">Current Translators:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				_(""
+				"  <b>Czech (cs)</b> - Miloslav Trmac &lt;<a href=\"mailto: mitr@volny.cz\">mitr@volny.cz</a>&gt;<br>"
+				"  <b>Danish (da)</b> - Morten Brix Pedersen &lt;<a href=\"mailto: morten@wtf.dk\">morten@wtf.dk</a>&gt;<br>"
+				"  <b>German (de)</b> - Björn Voigt &lt;<a href=\"mailto: bjoern@cs.tu-berlin.de\">bjoern@cs.tu-berlin.de</a>&gt;<br>"
+				"  <b>Spanish (es)</b> - Javier Fernández-Sanguino Peña &lt;<a href=\"mailto: jfs@debian.org\">jfs@debian.org</a>&gt;<br>"
+				"  <b>French (fr)</b> - E'ric Boumaour &lt;<a href=\"mailto: zongo_fr@users.sourceforge.net\">zongo_fr@users.sourceforge.net</a>&gt;<br>"
+				"  <b>Hindi (hi)</b> - Guntupalli Karunakar &lt;<a href=\"mailto: karunakar@freedomink.org\">karunakar@freedomink.org</a>&gt;<br>"
+				"  <b>Hungarian (hu)</b> - Zoltan Sutto &lt;<a href=\"mailto: suttozoltan@chello.hu\">suttozoltan@chello.hu</a>&gt;<br>"
+				"  <b>Italian (it)</b> - Claudio Satriano &lt;<a href=\"mailto: satriano@na.infn.it\">satriano@na.infn.it</a>&gt;<br>"
+				"  <b>Korean (ko)</b> - Kyung-uk Son &lt;<a href=\"mailto: vvs740@chol.com\">vvs740@chol.com</a>&gt;<br>"
+				"  <b>Dutch; Flemish (nl)</b> - Vincent van Adrighem &lt;<a href=\"mailto: V.vanAdrighem@dirck.mine.nu\">V.vanAdrighem@dirck.mine.nu</a>&gt;<br>"
+				"  <b>Portuguese-Brazil (pt_BR)</b> - Maurício de Lemos Rodrigues Collares Neto &lt;<a href=\"mailto: mauricioc@myrealbox.com\">mauricioc@myrealbox.com</a>&gt;<br>"
+				"  <b>Romanian (ro)</b> - Mişu Moldovan &lt;<a href=\"mailto: dumol@go.ro\">dumol@go.ro</a>&gt;<br>"
+				"  <b>Serbian (sr)</b> - Danilo Segan &lt;<a href=\"mailto: dsegan@gmx.net\">dsegan@gmx.net</a>&gt;<br>"
+				"  <b>Swedish (sv)</b> - Tore Lundqvist &lt;<a href=\"mailto: tlt@mima.x.se\">tlt@mima.x.se</a>&gt;<br>"
+				"  <b>Chinese-China (zh_CN)</b> - Funda Wang &lt;<a href=\"mailto: fundawang@linux.net.cn\">fundawang@linux.net.cn</a>&gt;<br>"
+				"  <b>Chinese-Taiwan (zh_TW)</b> - Ambrose C. Li &lt;<a href=\"mailto: acli@ada.dhs.org\">acli@ada.dhs.org</a>&gt;<br>"
+				"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
+
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				_("<FONT SIZE=\"3\">Past Translators:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				_(""
+				"  <b>Amharic (am)</b> - Daniel Yacob<br>"
+				"  <b>Bulgarian (bg)</b> - Hristo Todorov<br>"
+				"  <b>Catalan (ca)</b> - JM Pérez Cáncer<br>"
+				"  <b>Czech (cs)</b> - Honza Král<br>"
+				"  <b>German (de)</b> - Daniel Seifert, Karsten Weiss<br>"
+				"  <b>Spanish (es)</b> - Amaya Rodrigo, Alejandro G Villar, Nicola's Lichtmaier, JM Pérez Cáncer<br>"
+				"  <b>French (fr)</b> - sebfrance, Stéphane Pontier, Stéphane Wirtel, Loïc Jeannin<br>"
+				"  <b>Hebrew (he)</b> - Pavel Bibergal<br>"
+				"  <b>Italian (it)</b> - Salvatore di Maggio<br>"
+				"  <b>Japanese (ja)</b> - Ryosuke Kutsuna, Taku Yasui, Junichi Uekawa<br>"
+				"  <b>Korean (ko)</b> - Sang-hyun S, A Ho-seok Lee<br>"
+				"  <b>Norwegian (no)</b> - Petter Johan Olsen<br>"
+				"  <b>Polish (pl)</b> - Przemysław Sułek<br>"
+				"  <b>Russian (ru)</b> - Sergey Volozhanin<br>"
+				"  <b>Slovak (sk)</b> - Daniel Režný<br>"
+				"  <b>Swedish (sv)</b> - Christian Rose<br>"
+				"  <b>Chinese-Taiwan (zh_TW)</b> - Paladin R. Liu<br>"
 				"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);

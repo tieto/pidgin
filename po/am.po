@@ -1,5 +1,5 @@
 # Gaim Amharic translation
-# Copyright (C) 2003, Ge'ez Frontier Foundation <locales@geez.org>
+# Copyright (C) 2003, Daniel Yacob, Ge'ez Frontier Foundation <locales@geez.org>
 #
 # This file is distributed under the same license as the gaim package.
 #
@@ -11,7 +11,7 @@ msgstr ""
 "Last-Translator: Ge'ez Frontier Foundation <locales@geez.org>\n"
 "Language-Team: Amharic <locales@geez.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: plugins/docklet/docklet.c:111 src/gtkaccount.c:440 src/gtkaccount.c:1588

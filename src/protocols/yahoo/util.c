@@ -27,6 +27,8 @@
 #include "prpl.h"
 #include "debug.h"
 
+#include <string.h>
+
 
 /*
  * I found these on some website but i don't know that they actually
@@ -126,9 +128,9 @@ char *yahoo_codes_to_html(char *x)
 					continue;
 				else {
 					tmp = g_string_new_len(x + i + 2, j - i - 2);
-					if (tmp->str[0] == '#')
+					if ((tmp->str[0] == '#'))
 						g_string_append_printf(s, "<FONT COLOR=\"%s\">", tmp->str);
-					else if (match = (char *) g_hash_table_lookup(ht, tmp->str))
+					else if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);
 					else {
 						gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
@@ -159,7 +161,7 @@ char *yahoo_codes_to_html(char *x)
 					tmp = g_string_new_len(x + i, j - i + 1);
 					g_string_ascii_down(tmp);
 
-					if (match = (char *) g_hash_table_lookup(ht, tmp->str))
+					if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);
 					else if (!g_ascii_strncasecmp(tmp->str, "<FADE ", 6) ||
 						!g_ascii_strncasecmp(tmp->str, "<ALT ", 5) ||

@@ -38,6 +38,7 @@
 
 /* XXX */
 #include "gtkinternal.h"
+#include "gaim.h"
 #include "ui.h"
 
 extern char *yahoo_crypt(const char *, const char *);
