@@ -469,6 +469,7 @@ extern int display_options;
 #define OPT_DISP_CONV_BUTTON_XPM  0x00080000
 #define OPT_DISP_CHAT_BUTTON_XPM  0x00100000
 #define OPT_DISP_SHOW_WARN        0x00200000
+#define OPT_DISP_IGNORE_FONTS     0x00400000
 
 extern int sound_options;
 #define OPT_SOUND_LOGIN          0x00000001

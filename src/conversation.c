@@ -1178,6 +1178,13 @@ void write_html_with_smileys(GtkWidget *window, GtkWidget *html, char *what)
 	/* hopefully we can later use this for bgcolors in smileys */
 	GdkColor *trans = &window->style->base[GTK_STATE_NORMAL];
 	gboolean in_tag = FALSE;
+	int gtk_font_options = 0;
+			
+	if (display_options & OPT_DISP_IGNORE_COLOUR)	
+		gtk_font_options = gtk_font_options ^ HTML_OPTION_NO_COLOURS;
+
+	if (display_options & OPT_DISP_IGNORE_FONTS) 
+		gtk_font_options = gtk_font_options ^ HTML_OPTION_NO_FONTS;
 
 	for (i = 0; i < strlen(what); i++)
 	{
@@ -1188,8 +1195,9 @@ void write_html_with_smileys(GtkWidget *window, GtkWidget *html, char *what)
 				y++;
 				in_tag = TRUE;
 			} else if ((face = is_smiley(window, &what[i], &len, trans)) != NULL) {
+
 				buf2[y] = 0;
-				gtk_html_append_text(GTK_HTML(html), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+				gtk_html_append_text(GTK_HTML(html), buf2,  gtk_font_options);
 				gtk_html_add_pixmap(GTK_HTML(html), face, 0, 0);
 				y = 0;
 				i += len - 1;
@@ -1208,7 +1216,7 @@ void write_html_with_smileys(GtkWidget *window, GtkWidget *html, char *what)
 	if (y)
 	{
 		buf2[y] = 0;
-		gtk_html_append_text(GTK_HTML(html), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+		gtk_html_append_text(GTK_HTML(html), buf2, gtk_font_options);
 	}
 	g_free(buf2);
 }
@@ -1226,6 +1234,14 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	char *clr;
 	char *smiley = g_malloc(7);
 	struct buddy *b;
+	int gtk_font_options = 0;
+			
+	if (display_options & OPT_DISP_IGNORE_COLOUR)	
+		gtk_font_options = gtk_font_options ^ HTML_OPTION_NO_COLOURS;
+
+	if (display_options & OPT_DISP_IGNORE_FONTS) 
+		gtk_font_options = gtk_font_options ^ HTML_OPTION_NO_FONTS;
+
 
 	if (!who) {
 		if (flags & WFLAG_SEND) {
@@ -1330,7 +1346,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 		if (colorv != -1) {
 			sprintf(buf2, "<BODY BGCOLOR=\"#%x\">", colorv);
-			gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+			gtk_html_append_text(GTK_HTML(c->text), buf2, gtk_font_options);
 		}
 
 		gtk_html_append_text(GTK_HTML(c->text), buf, 0);
@@ -1341,13 +1357,13 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		}
 		else
 		{
-			gtk_html_append_text(GTK_HTML(c->text), what, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+			gtk_html_append_text(GTK_HTML(c->text), what, gtk_font_options);
 		}
 
 		if (colorv != -1) {
-			gtk_html_append_text(GTK_HTML(c->text), "</BODY>", (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+			gtk_html_append_text(GTK_HTML(c->text), "</BODY>", gtk_font_options);
 		}
-                gtk_html_append_text(GTK_HTML(c->text), "<BR>", (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+                gtk_html_append_text(GTK_HTML(c->text), "<BR>", gtk_font_options);
 
 
                 if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {

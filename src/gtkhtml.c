@@ -3471,7 +3471,10 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 							}
 							if (d[strlen(d) - 1] == '\"')
 								d[strlen(d) - 1] = 0;
-							strcpy(current->font, d);
+
+							if (!(options & HTML_OPTION_NO_FONTS)) { 
+								strcpy(current->font, d);
+							}
 						}
 						else if (!strncasecmp(d, "BACK=", strlen("BACK=")))
 						{
