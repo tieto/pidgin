@@ -183,6 +183,7 @@ static char* gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccoun
 				gaim_account_get_username(account))));
 	const char *target;
 	/* does this seem like a bad way to get this component of the path to anyone else? --Nathan */
+	/* XXX: this is in fact a HORRIBLE way to do this, because if we can't find the prpl (plugin won't load) then this goes BOOM.  Someone make a better way...*/
 	const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO(
 			gaim_find_prpl(gaim_account_get_protocol_id(account))
 			)->list_icon(account, NULL);
