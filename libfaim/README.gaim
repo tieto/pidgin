@@ -11,9 +11,9 @@ The only two modifications I'll probably ever make to it are 1) to make my life
 easier or 2) to fix a compilation error. That means that what you're getting
 when you enable oscar is basically faimtest (the very instructional program
 included with the libfaim source on sourceforge) with the Gaim GTK front-end.
-I'll put any changes I make into a file. So far the few changes I've made have
-been to make a few printf's not print, and removing a few defines from a .h and
-putting them in the Makefile/build process.
+So far the changes to libfaim that I've made are:
+- remove mkbuildinfo.sh and put the #defines it creates into Makefile.am
+- fix a typo in aim.h - "aim_directim_initiate", not "aim_directim_intiate"
 
 And finally, a word of warning. Gaim/Faim is VERY buggy. Please, don't use this
 for anything other than laughs right now. Hopefully we'll get it working better
@@ -40,9 +40,7 @@ Being idle
 Being away/coming back
 Setting your info
 Getting users' info
-Getting users' away messages (PLEASE do not use oscar/libfaim just because of
-	this, gaim with libfaim is still really buggy, none of you will listen
-	to me anyway)
+Getting users' away messages
 Telling the server who's on your permit/deny lists
 Chat:
  - joining rooms
@@ -52,6 +50,7 @@ Chat:
  - getting invited
  - refreshing the chatlist in the preferences dialog
 ICQ!!! (Use your UIN instead of your SN to sign on)
+Direct IM (aka IM Image, for sounds and pictures)
 
 CURRENTLY UNSUPPORTED FEATURES
 ==============================
@@ -60,43 +59,33 @@ Chat:
  - whispering (this will never happen)
 Getting/setting dir info
 Changing your password
-File transfer/IM images/voice chat/etc. (RVOUS stuff)
+File Transfer (Get/Send)
+Voice Chat
+Buddy Icon
 
 KNOWN ISSUES
 ============
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.
 
-- The permit list sometimes has problems when you start gaim, but if you change
-to it in the middle of a session there don't seem to be any problems.
+- The permit list stuff is really warped. It works, but if you change it while
+you're signed on, you'll probably get kicked off. Don't ask me why.
 
 - "Allow anyone" and "Deny some" serve the same function. That's not a bug. But
 "Allow anyone" works all the time (?) and "Deny some" doesn't work some of the
 time. That's a bug.
 
-- Sometimes signing on doesn't work completely correctly. I think this is
-because we request chatnav rights when we sign on, but I'm not entirely sure.
-It could also be because of setting up the buddy list and retrieving who's
-online.
-
-- If you sit idle for too long, sometimes it disconnects you (typically after a
-few minutes). It may not be due to being idle, but keeping the lagometer on
-seems to help.
-
 - If you receive a message that's too large, gaim segfaults. I haven't watched
 this in gdb or gotten a backtrace on it, so I'm not exactly sure what the
 problem is. I think this actually happens on the TOC side of things too.
 
-- Gaim/TOC can do RVOUS actions, but Gaim/Faim cannot. This is not because
-there is any difference in the two protocols as far as the actual transfer is
-concerned. Adam wants libfaim to handle *all* of the RVOUS connection stuff,
-which I can understand. Unfortunately, the only part he's implemented is Direct
-Direct IM, and I haven't implemented that on the gaim side yet. 
+- Gaim/TOC can do some RVOUS actions, and Gaim/Faim can do others. This is not
+because there is any difference in the protocols as far as the actual transfer
+is concerned. The only difference is what has been implemented and what hasn't
+been.
 
 - What *is* protocol-dependent about the RVOUS stuff is that only Oscar can
-request RVOUS actions, though both can receive them. However, libfaim cannot
-yet make the requests, so there is no difference between Gaim/TOC and Gaim/Faim
-there.
+request RVOUS actions, though both can receive them.
 
 - Warnings and Dir Info are not in libfaim yet, and so are not in Gaim/Faim yet.
 
