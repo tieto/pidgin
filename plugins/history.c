@@ -22,6 +22,7 @@ void historize (char *name, void *data)
 	char buf[HISTORY_SIZE+1];
 	char *tmp;
 	int size;
+	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
 	
 	if (stat(path, &st) || S_ISDIR(st.st_mode) || st.st_size == 0 || 
 	    !(fd = fopen(path, "r"))) {
@@ -41,8 +42,11 @@ void historize (char *name, void *data)
 		tmp++;
 
 	if (*tmp) tmp++;
-	
-	gtk_imhtml_append_text(GTK_IMHTML(c->text), tmp, strlen(tmp), GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_NEWLINE);
+
+	if(*tmp == '<')
+		options |= GTK_IMHTML_NO_NEWLINE;
+
+	gtk_imhtml_append_text(GTK_IMHTML(c->text), tmp, strlen(tmp), options);
 
 	g_free(userdir);
 	g_free(logfile);
