@@ -738,7 +738,7 @@ static char *toc_name()
 	return "TOC";
 }
 
-static int toc_send_im(struct gaim_connection *gc, char *name, char *message, int away)
+static int toc_send_im(struct gaim_connection *gc, char *name, char *message, int flags)
 {
 	char buf[BUF_LEN * 2];
 	char *tmp = g_malloc(strlen(message) * 2);
@@ -750,7 +750,7 @@ static int toc_send_im(struct gaim_connection *gc, char *name, char *message, in
 		return -E2BIG;
 	}
 	g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
-		   tmp, ((away) ? " auto" : ""));
+		   tmp, ((flags & IM_FLAG_AWAY) ? " auto" : ""));
 	sflap_send(gc, buf, -1, TYPE_DATA);
 	
 	g_free(tmp);

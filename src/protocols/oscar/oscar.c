@@ -2049,13 +2049,13 @@ static char *oscar_name() {
 	return "Oscar";
 }
 
-static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int away) {
+static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int imflags) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
 	if (dim) {
 		return aim_send_im_direct(odata->sess, dim->conn, message);
 	} else {
-		if (away)
+		if (imflags & IM_FLAG_AWAY)
 			return aim_send_im(odata->sess, odata->conn, name, AIM_IMFLAGS_AWAY, message);
 		else {
 			struct aim_sendimext_args args;

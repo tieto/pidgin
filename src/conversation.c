@@ -78,6 +78,9 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 static void update_icon(struct conversation *);
 static void remove_icon(struct conversation *);
 
+static void update_checkbox(struct conversation *);
+static void remove_checkbox(struct conversation *);
+
 /*------------------------------------------------------------------------*/
 /*  Helpers                                                               */
 /*------------------------------------------------------------------------*/
@@ -157,9 +160,8 @@ struct conversation *new_conversation(char *name)
 	c->history = g_string_new("");
 	conversations = g_list_append(conversations, c);
 	show_conv(c);
-	if (c->gc && c->gc->prpl && c->gc->prpl->insert_convo)
-		(*c->gc->prpl->insert_convo)(c->gc, c);
 	update_icon(c);
+	update_checkbox(c);
 	plugin_event(event_new_conversation, name, 0, 0, 0);
 	return c;
 }
@@ -413,9 +415,8 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		gtkspell_detach(GTK_TEXT(c->entry));
 
 	if (!c->is_chat) {
-		if (c->gc && c->gc->prpl && c->gc->prpl->remove_convo)
-			(*c->gc->prpl->remove_convo)(c->gc, c);
 		remove_icon(c);
+		remove_checkbox(c);
 		if (display_options & OPT_DISP_ONE_WINDOW) {
 			if (g_list_length(conversations) > 1) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(convo_notebook),
@@ -858,7 +859,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		buffy = g_strdup(buf);
 		plugin_event(event_im_displayed_sent, c->gc, c->name, &buffy, 0);
 		if (buffy) {
-			err = serv_send_im(c->gc, c->name, buffy, 0);
+			int imflags = 0;
+			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->check)))
+				imflags = IM_FLAG_CHECKBOX;
+			err = serv_send_im(c->gc, c->name, buffy, imflags);
 			g_free(buffy);
 		}
 
@@ -1783,16 +1787,12 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 	if (cnv->gc == c)
 		return;
 
-	if (cnv->gc && cnv->gc->prpl && cnv->gc->prpl->remove_convo)
-		(*cnv->gc->prpl->remove_convo)(cnv->gc, cnv);
-
 	cnv->gc = c;
 
 	update_buttons_by_protocol(cnv);
 
-	if (cnv->gc && cnv->gc->prpl && cnv->gc->prpl->insert_convo)
-		(*cnv->gc->prpl->insert_convo)(cnv->gc, cnv);
 	update_icon(cnv);
+	update_checkbox(cnv);
 }
 
 void update_convo_add_button(struct conversation *c)
@@ -1898,9 +1898,8 @@ void convo_menu_remove(struct gaim_connection *gc)
 		C = (struct conversation *)c->data;
 		c = c->next;
 
-		if (C->gc && C->gc->prpl && C->gc->prpl->remove_convo)
-			(*C->gc->prpl->remove_convo)(C->gc, C);
 		remove_icon(C);
+		remove_checkbox(C);
 	}
 }
 
@@ -1909,9 +1908,6 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 	if (c->gc == gc)
 		return;
 
-	if (c->gc && g_slist_find(connections, c->gc) && c->gc->prpl && c->gc->prpl->remove_convo)
-		(*c->gc->prpl->remove_convo)(c->gc, c);
-
 	c->gc = gc;
 
 	if (gc)
@@ -1919,9 +1915,8 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 
 	update_buttons_by_protocol(c);
 
-	if (c->gc && c->gc->prpl && c->gc->prpl->insert_convo)
-		(*c->gc->prpl->insert_convo)(c->gc, c);
 	update_icon(c);
+	update_checkbox(c);
 }
 
 void update_buttons_by_protocol(struct conversation *c)
@@ -2344,17 +2339,15 @@ void tabize()
 
 			imhtml = c->text;
 			win = c->window;
-			if (c->gc && c->gc->prpl->remove_convo)
-				(*c->gc->prpl->remove_convo)(c->gc, c);
 			remove_icon(c);
+			remove_checkbox(c);
 			show_conv(c);
 			gtk_widget_destroy(c->text);
 			gtk_widget_reparent(imhtml, c->sw);
 			c->text = imhtml;
 			gtk_widget_destroy(win);
-			if (c->gc && c->gc->prpl->insert_convo)
-				(*c->gc->prpl->insert_convo)(c->gc, c);
 			update_icon(c);
+			update_checkbox(c);
 
 			x = x->next;
 		}
@@ -2367,16 +2360,14 @@ void tabize()
 			GtkWidget *imhtml;
 
 			imhtml = c->text;
-			if (c->gc && c->gc->prpl->remove_convo)
-				(*c->gc->prpl->remove_convo)(c->gc, c);
 			remove_icon(c);
+			remove_checkbox(c);
 			show_conv(c);
 			gtk_widget_destroy(c->text);
 			gtk_widget_reparent(imhtml, c->sw);
 			c->text = imhtml;
-			if (c->gc && c->gc->prpl->insert_convo)
-				(*c->gc->prpl->insert_convo)(c->gc, c);
 			update_icon(c);
+			update_checkbox(c);
 
 			x = x->next;
 		}
@@ -2602,10 +2593,10 @@ void update_icon(struct conversation *c)
 	if (!c)
 		return;
 
+	remove_icon(c);
+
 	if (!c->gc)
 		return;
-
-	remove_icon(c);
 
 	data = get_icon_data(c->gc, normalize(c->name), &len);
 	if (!data)
@@ -2660,4 +2651,29 @@ void got_new_icon(struct gaim_connection *gc, char *who)
 	struct conversation *c = find_conversation(who);
 	if (c->gc == gc)
 		update_icon(c);
+}
+
+static void remove_checkbox(struct conversation *c)
+{
+	if (c->check)
+		gtk_container_remove(GTK_CONTAINER(c->lbox), c->check);
+	c->check = NULL;
+}
+
+static void update_checkbox(struct conversation *c)
+{
+	if (!c)
+		return;
+
+	remove_checkbox(c);
+
+	if (!c->gc)
+		return;
+
+	if (!c->gc->prpl->checkbox)
+		return;
+
+	c->check = gtk_check_button_new_with_label(c->gc->prpl->checkbox);
+	gtk_box_pack_start(GTK_BOX(c->lbox), c->check, FALSE, FALSE, 5);
+	gtk_widget_show(c->check);
 }

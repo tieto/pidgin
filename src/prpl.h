@@ -73,6 +73,9 @@ struct prpl {
 	int options;
 	char *(* name)();
 
+	/* for ICQ and Yahoo, who have off/on per-conversation options */
+	char *checkbox;
+
 	/* returns the XPM associated with the given user class */
 	char **(* list_icon)(int);
 	GList *(* away_states)();
@@ -91,8 +94,6 @@ struct prpl {
 	 * their UIs all that often anyway. */
 	void (* draw_new_user)(GtkWidget *);
 	void (* do_new_user)();
-	void (* insert_convo)(struct gaim_connection *, struct conversation *);
-	void (* remove_convo)(struct gaim_connection *, struct conversation *);
 
 	/* all the server-related functions */
 	void (* login)		(struct aim_user *);

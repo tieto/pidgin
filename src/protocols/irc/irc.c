@@ -181,7 +181,7 @@ static gboolean irc_request_buddy_update(gpointer data)
 }
 
 
-static int irc_send_im(struct gaim_connection *gc, char *who, char *message, int away)
+static int irc_send_im(struct gaim_connection *gc, char *who, char *message, int flags)
 {
 
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;

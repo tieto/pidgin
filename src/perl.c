@@ -517,7 +517,7 @@ XS (XS_GAIM_print_to_conv)
 	if (!c)
 		c = new_conversation(nick);
 	write_to_conv(c, what, WFLAG_SEND, NULL, time((time_t)NULL));
-	serv_send_im(c->gc, nick, what, atoi(isauto));
+	serv_send_im(c->gc, nick, what, atoi(isauto) ? IM_FLAG_AWAY : 0);
 }
 
 XS (XS_GAIM_print_to_chat)

@@ -120,13 +120,13 @@ void serv_finish_login(struct gaim_connection *gc)
 
 
 
-int serv_send_im(struct gaim_connection *gc, char *name, char *message, int away)
+int serv_send_im(struct gaim_connection *gc, char *name, char *message, int flags)
 {
 	int val = -EINVAL;
 	if (gc->prpl && gc->prpl->send_im)
-		val = (*gc->prpl->send_im)(gc, name, message, away);
+		val = (*gc->prpl->send_im)(gc, name, message, flags);
 
-	if (!away)
+	if (!(flags & IM_FLAG_AWAY))
 		serv_touch_idle(gc);
 
 	return val;
@@ -428,7 +428,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	if ((general_options & OPT_GEN_TIK_HACK) && gc->away && strlen(gc->away) &&
 	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<")) {
 		char *tmpmsg = stylize(awaymessage->message, MSG_LEN);
-		serv_send_im(gc, name, tmpmsg, 1);
+		serv_send_im(gc, name, tmpmsg, IM_FLAG_AWAY);
 		g_free(tmpmsg);
 		g_free(name);
 		g_free(message);
@@ -549,7 +549,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
-		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
+		serv_send_im(gc, name, away_subs(tmpmsg, alias), IM_FLAG_AWAY);
 		if (!cnv && clistqueue && (general_options & OPT_GEN_QUEUE_WHEN_AWAY)) {
 			struct queued_message *qm;
 			qm = g_new0(struct queued_message, 1);

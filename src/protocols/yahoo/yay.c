@@ -26,7 +26,6 @@
 
 
 #include <netdb.h>
-#include <gtk/gtk.h>
 #include <unistd.h>
 #include <errno.h>
 #include <netinet/in.h>
@@ -74,7 +73,6 @@ struct yahoo_data {
 	char *active_id;
 	GList *conns;
 	gboolean logged_in;
-	GSList *offline;
 };
 
 static char *yahoo_name() {
@@ -390,10 +388,6 @@ static gboolean yahoo_destroy_hash(gpointer key, gpointer val, gpointer data) {
 
 static void yahoo_close(struct gaim_connection *gc) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	while (yd->offline) {
-		g_free(yd->offline->data);
-		yd->offline = g_slist_remove(yd->offline, yd->offline->data);
-	}
 	g_hash_table_foreach_remove(yd->hash, yahoo_destroy_hash, NULL);
 	g_hash_table_destroy(yd->hash);
 	yahoo_disconnect(yd->sess);
@@ -401,19 +395,12 @@ static void yahoo_close(struct gaim_connection *gc) {
 	g_free(yd);
 }
 
-static int yahoo_send_im(struct gaim_connection *gc, char *who, char *message, int away) {
+static int yahoo_send_im(struct gaim_connection *gc, char *who, char *message, int flags) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	GSList *l = yd->offline;
 
-	if (away || !strlen(message)) return 0;
+	if ((flags & IM_FLAG_AWAY)|| !strlen(message)) return 0;
 
-	while (l) {
-		if (!strcmp(who, l->data))
-			break;
-		l = l->next;
-	}
-
-	if (l)
+	if (flags & IM_FLAG_CHECKBOX)
 		yahoo_send_message(yd->sess, yd->active_id, who, message);
 	else
 		yahoo_send_message_offline(yd->sess, yd->active_id, who, message);
@@ -693,58 +680,13 @@ static GList *yahoo_user_opts()
 	return m;
 }
 
-static void toggle_offline(GtkToggleButton *button, struct conversation *c)
-{
-	struct gaim_connection *gc = gtk_object_get_user_data(GTK_OBJECT(button));
-	struct yahoo_data *yd = gc->proto_data;
-	GSList *l = yd->offline;
-
-	while (l) {
-		if (!strcmp(c->name, l->data))
-			break;
-		l = l->next;
-	}
-	if (l) {
-		g_free(l->data);
-		yd->offline = g_slist_remove(yd->offline, l->data);
-	} else
-		yd->offline = g_slist_append(yd->offline, g_strdup(c->name));
-}
-
-static void yahoo_insert_convo(struct gaim_connection *gc, struct conversation *c)
-{
-	GtkWidget *button;
-	struct yahoo_data *yd = gc->proto_data;
-	GSList *l = yd->offline;
-	struct buddy *b = find_buddy(gc, c->name);
-
-	button = gtk_check_button_new_with_label("Send offline message");
-	gtk_box_pack_start(GTK_BOX(c->lbox), button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_offline), c);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	while (l) {
-		if (!strcmp(c->name, l->data))
-			break;
-		l = l->next;
-	}
-	if (l || (b && !b->present))
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
-	gtk_widget_show(button);
-}
-
-static void yahoo_remove_convo(struct gaim_connection *gc, struct conversation *c)
-{
-	while (GTK_BOX(c->lbox)->children)
-		gtk_container_remove(GTK_CONTAINER(c->lbox),
-				     ((GtkBoxChild *)GTK_BOX(c->lbox)->children->data)->widget);
-}
-
 static struct prpl *my_protocol = NULL;
 
 void yahoo_init(struct prpl *ret) {
 	/* the NULL's aren't required but they're nice to have */
 	ret->protocol = PROTO_YAHOO;
 	ret->options = OPT_PROTO_MAIL_CHECK;
+	ret->checkbox = _("Send offline message");
 	ret->name = yahoo_name;
 	ret->list_icon = yahoo_list_icon;
 	ret->away_states = yahoo_away_states;
@@ -752,8 +694,6 @@ void yahoo_init(struct prpl *ret) {
 	ret->do_action = yahoo_do_action;
 	ret->buddy_menu = yahoo_buddy_menu;
 	ret->user_opts = yahoo_user_opts;
-	ret->insert_convo = yahoo_insert_convo;
-	ret->remove_convo = yahoo_remove_convo;
 	ret->login = yahoo_login;
 	ret->close = yahoo_close;
 	ret->send_im = yahoo_send_im;

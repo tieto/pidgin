@@ -720,12 +720,12 @@ static int zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 	return 0;
 }
 
-static int zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int away) {
+static int zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int flags) {
 	ZNotice_t notice;
 	char *buf;
 	const char *sig;
 
-	if (away)
+	if (flags & IM_FLAG_AWAY)
 		sig = "Automated reply:";
 	else {
 		sig = ZGetVariable("zwrite-signature");

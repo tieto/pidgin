@@ -1,4 +1,3 @@
-#include <gtk/gtk.h>
 #include <string.h>
 #include <stdlib.h>
 #include "icq.h"   /* well, we're doing ICQ, right? */
@@ -19,7 +18,6 @@
 struct icq_data {
 	icq_Link *link;
 	int cur_status;
-	GSList *thru_serv;
 };
 
 static guint ack_timer = 0;
@@ -326,21 +324,15 @@ static void icq_close(struct gaim_connection *gc) {
 	icq_Logout(id->link);
 	icq_Disconnect(id->link);
 	icq_ICQLINKDelete(id->link);
-	g_slist_free(id->thru_serv);
 	g_free(id);
 }
 
-static int icq_send_msg(struct gaim_connection *gc, char *who, char *msg, int away) {
-	if (!away && (strlen(msg) > 0)) {
+static int icq_send_msg(struct gaim_connection *gc, char *who, char *msg, int flags) {
+	if (!(flags & IM_FLAG_AWAY) && (strlen(msg) > 0)) {
 		struct icq_data *id = (struct icq_data *)gc->proto_data;
-		GSList *l = id->thru_serv;
 		long w = atol(who);
-		while (l) {
-			if (w == (long)l->data)
-				break;
-			l = l->next;
-		}
-		icq_SendMessage(id->link, w, msg, l ? ICQ_SEND_THRUSERVER : ICQ_SEND_BESTWAY);
+		icq_SendMessage(id->link, w, msg,
+				(flags & IM_FLAG_CHECKBOX) ? ICQ_SEND_THRUSERVER : ICQ_SEND_BESTWAY);
 	}
 	return 0;
 }
@@ -475,63 +467,16 @@ static GList *icq_away_states() {
 	return m;
 }
 
-static void toggle_thru_serv(GtkToggleButton *button, struct conversation *c)
-{
-	struct gaim_connection *gc = gtk_object_get_user_data(GTK_OBJECT(button));
-	struct icq_data *id = gc->proto_data;
-	GSList *l = id->thru_serv;
-	long who = atol(c->name);
-
-	while (l) {
-		if (who == (long)l->data)
-			break;
-		l = l->next;
-	}
-	if (l)
-		id->thru_serv = g_slist_remove(id->thru_serv, (void *)who);
-	else
-		id->thru_serv = g_slist_append(id->thru_serv, (void *)who);
-}
-
-static void icq_insert_convo(struct gaim_connection *gc, struct conversation *c)
-{
-	GtkWidget *button;
-	struct icq_data *id = gc->proto_data;
-	GSList *l = id->thru_serv;
-	long who = atol(c->name);
-
-	button = gtk_check_button_new_with_label("Send message through server");
-	gtk_box_pack_start(GTK_BOX(c->lbox), button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_thru_serv), c);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	while (l) {
-		if (who == (long)l->data)
-			break;
-		l = l->next;
-	}
-	if (l)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
-	gtk_widget_show(button);
-}
-
-static void icq_remove_convo(struct gaim_connection *gc, struct conversation *c)
-{
-	while (GTK_BOX(c->lbox)->children)
-		gtk_container_remove(GTK_CONTAINER(c->lbox),
-				     ((GtkBoxChild *)GTK_BOX(c->lbox)->children->data)->widget);
-}
-
 static struct prpl *my_protocol = NULL;
 
 void icq_init(struct prpl *ret) {
 	ret->protocol = PROTO_ICQ;
+	ret->checkbox = "Send message through server";
 	ret->name = icq_name;
 	ret->list_icon = icq_list_icon;
 	ret->away_states = icq_away_states;
 	ret->buddy_menu = icq_buddy_menu;
 	ret->user_opts = icq_user_opts;
-	ret->insert_convo = icq_insert_convo;
-	ret->remove_convo = icq_remove_convo;
 	ret->login = icq_login;
 	ret->close = icq_close;
 	ret->send_im = icq_send_msg;

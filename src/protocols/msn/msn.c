@@ -1173,7 +1173,7 @@ static void msn_close(struct gaim_connection *gc)
 	g_free(md);
 }
 
-static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
+static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int flags)
 {
 	struct msn_data *md = gc->proto_data;
 	struct msn_switchboard *ms = msn_find_switch(gc, who);
@@ -1204,7 +1204,7 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 		ms->fd = -1;
 	} else
 		/* in msn you can't send messages to yourself, so we'll fake like we received it ;) */
-		serv_got_im(gc, who, message, away, time(NULL));
+		serv_got_im(gc, who, message, flags & IM_FLAG_AWAY, time(NULL));
 	return 0;
 }
 
