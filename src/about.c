@@ -82,7 +82,7 @@ void show_about(GtkWidget *w, void *null)
 
 	if (!about) {
 
-		about = gtk_window_new(GTK_WINDOW_POPUP);
+		about = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 		g_snprintf(abouttitle, sizeof(abouttitle), _("About GAIM v%s"), VERSION);
 		gtk_window_set_title(GTK_WINDOW(about), abouttitle);
