@@ -548,12 +548,12 @@ GtkWidget *list_page() {
 	gaim_button(_("_Raise window on events"), &blist_options, OPT_BLIST_POPUP, vbox);
 
 	vbox = make_frame (ret, _("Group Display"));
-	gaim_button(_("Hide _groups with no online buddies"), &blist_options, OPT_BLIST_NO_MT_GRP, vbox);
-	gaim_button(_("Show _numbers in groups"), &blist_options, OPT_BLIST_SHOW_GRPNUM, vbox);
+	/* gaim_button(_("Hide _groups with no online buddies"), &blist_options, OPT_BLIST_NO_MT_GRP, vbox); */
+	/* gaim_button(_("Show _numbers in groups"), &blist_options, OPT_BLIST_SHOW_GRPNUM, vbox); */
 
 	vbox = make_frame (ret, _("Buddy Display"));
 	gaim_button(_("Show buddy _icons"), &blist_options, OPT_BLIST_SHOW_ICONS, vbox);
-	gaim_button(_("Show buddy t_ype icons"), &blist_options, OPT_BLIST_SHOW_PIXMAPS, vbox);
+	/* gaim_button(_("Show buddy t_ype icons"), &blist_options, OPT_BLIST_SHOW_PIXMAPS, vbox); */
 	gaim_button(_("Show _warning levels"), &blist_options, OPT_BLIST_SHOW_WARN, vbox);
 	gaim_button(_("Show idle _times"), &blist_options, OPT_BLIST_SHOW_IDLETIME, vbox);
 	gaim_button(_("Grey i_dle buddies"), &blist_options, OPT_BLIST_GREY_IDLERS, vbox);
