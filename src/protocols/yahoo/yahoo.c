@@ -3023,28 +3023,71 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 		g_free(msg2);
 }
 
-static GList *yahoo_away_states(GaimConnection *gc)
+static GList *yahoo_status_types(GaimAccount *account)
 {
-	GList *m = NULL;
-	struct yahoo_data *yd = gc->proto_data;
+	GaimConnection *gc = gaim_account_get_connection(account);
+	struct yahoo_data *yd = NULL;
+	GaimStatusType *type;
+	GList *types = NULL;
 
-	m = g_list_append(m, _("Available"));
-	if (!yd->wm) {
-		m = g_list_append(m, _("Be Right Back"));
-		m = g_list_append(m, _("Busy"));
-		m = g_list_append(m, _("Not At Home"));
-		m = g_list_append(m, _("Not At Desk"));
-		m = g_list_append(m, _("Not In Office"));
-		m = g_list_append(m, _("On The Phone"));
-		m = g_list_append(m, _("On Vacation"));
-		m = g_list_append(m, _("Out To Lunch"));
-		m = g_list_append(m, _("Stepped Out"));
+	if (gc)
+		yd = gc->proto_data;
+
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_ONLINE, "online", _("Online"), FALSE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, "available", _("Available"), TRUE);
+	types = g_list_append(types, type);
+
+	if (!yd || !yd->wm) {
+		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "available-wm",
+		                                       "Available With Message", TRUE, TRUE, FALSE,
+		                                       "message", _("Message"),
+		                                       gaim_value_new(GAIM_TYPE_STRING));
+		types = g_list_append(types, type);
+
+
+		type = gaim_status_type_new(GAIM_STATUS_AWAY, "brb", _("Be Right Back"), TRUE);
+		types = g_list_append(types, type);
+
+		type = gaim_status_type_new(GAIM_STATUS_AWAY, "busy", _("Busy"), TRUE);
+		types = g_list_append(types, type);
+
+		type = gaim_status_type_new(GAIM_STATUS_AWAY, "notathome", _("Not At Home"), TRUE);
+		types = g_list_append(types, type);
+
+		type = gaim_status_type_new(GAIM_STATUS_AWAY, "notatdesk", _("Not At Desk"), TRUE);
+		types = g_list_append(types, type);
+
+		type = gaim_status_type_new(GAIM_STATUS_AWAY, "notinoffice", _("Not In Office"), TRUE);
+		types = g_list_append(types, type);
+
+		type = gaim_status_type_new(GAIM_STATUS_AWAY, "onthephone", _("On The Phone"), TRUE);
+		types = g_list_append(types, type);
+
+		type = gaim_status_type_new(GAIM_STATUS_AWAY, "onvacation", _("On Vacation"), TRUE);
+		types = g_list_append(types, type);
+
+		type = gaim_status_type_new(GAIM_STATUS_AWAY, "outtolunch", _("Out To Lunch"), TRUE);
+		types = g_list_append(types, type);
+
+		type = gaim_status_type_new(GAIM_STATUS_AWAY, "steppedout", _("Stepped Out"), TRUE);
+		types = g_list_append(types, type);
+
+		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away",
+		                                       "Away", TRUE, TRUE, FALSE,
+		                                       "message", _("Message"),
+		                                       gaim_value_new(GAIM_TYPE_STRING));
+		types = g_list_append(types, type);
 	}
-	m = g_list_append(m, _("Invisible"));
-	if (!yd->wm)
-		m = g_list_append(m, GAIM_AWAY_CUSTOM);
+	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, "invisible", _("Invisible"), TRUE);
+	types = g_list_append(types, type);
 
-	return m;
+
+	return types;
 }
 
 static void yahoo_keepalive(GaimConnection *gc)
@@ -3289,7 +3332,7 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_list_emblems,
 	yahoo_status_text,
 	yahoo_tooltip_text,
-	yahoo_away_states,
+	yahoo_status_types,
 	yahoo_blist_node_menu,
 	yahoo_c_info,
 	yahoo_c_info_defaults,
