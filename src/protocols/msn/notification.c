@@ -484,6 +484,9 @@ __lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
 	*group_id_1 = group_id;
 	*group_id_2 = group_id;
 
+	if (!strcmp(name, "~"))
+		name = _("Buddies");
+
 	g_hash_table_insert(session->group_names, group_id_1, g_strdup(name));
 	g_hash_table_insert(session->group_ids, g_strdup(name), group_id_2);
 
