@@ -186,11 +186,8 @@ void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *p
 	}
 
 	if (who && room) {
-		GaimConversation *conv;
-
-		conv = gaim_find_conversation_with_account(room, gc->account);
 		/* make sure we're in the room before we process a decline message for it */
-		if(conv && gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		if(yahoo_find_conference(gc, room)) {
 			char *tmp;
 
 			tmp = g_strdup_printf(_("%s declined your conference invitation to room \"%s\" because \"%s\"."),
