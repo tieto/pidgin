@@ -356,9 +356,9 @@ void show_login()
 	gtk_signal_connect(GTK_OBJECT(options), "clicked", GTK_SIGNAL_FUNC(show_prefs), NULL);
 #ifdef GAIM_PLUGINS
 	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_plugins), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
 #endif
 
-	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), options, TRUE, TRUE, 0);
 #ifdef GAIM_PLUGINS
 	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
