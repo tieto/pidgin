@@ -112,7 +112,7 @@ static void default_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) 
 
 	entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
-	gtk_window_set_focus(GTK_WINDOW(joinchat), entry);
+	gtk_widget_grab_focus(entry);
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(do_join_chat), NULL);
 	gtk_widget_show(entry);
 }

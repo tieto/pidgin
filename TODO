@@ -80,6 +80,8 @@ Jabber:
 		transports should be rather difficult.)
 	New Chat Method (?)
 	Rework how subscriptions are handled
+	Browsing
+	Stop using libjabber
 
 Napster:
 	File Transfer
