@@ -20,64 +20,21 @@ GTK_BIN = ../../win32-dev/gtk_2_0/bin
 ##
 
 GMSGFMT = $(GTK_BIN)/msgfmt
-MSGFMT = $(GTK_BIN)/msgfmt
-XGETTEXT = $(GTK_BIN)/xgettext
-MSGMERGE = $(GTK_BIN)/msgmerge
 
 
 .SUFFIXES:
-.SUFFIXES: .c .o .po .pot .pox .gmo .mo
+.SUFFIXES: .po .gmo
 
 
 ##
 ## SOURCES, OBJECTS
 ##
 
-CATALOGS =  bg.gmo cs.gmo da.gmo de.gmo es.gmo fi.gmo fr.gmo hu.gmo it.gmo ja.gmo ko.gmo nl.gmo pl.gmo ro.gmo ru.gmo sk.gmo sv.gmo zh_CN.gmo zh_TW.gmo
-
-POTFILES = \
-     		     ../plugins/docklet/docklet.c \
-     		     ../plugins/chatlist.c \
-		     ../plugins/gtik.c \
-		     ../src/protocols/gg/gg.c \
-     		     ../src/protocols/icq/gaim_icq.c \
-		     ../src/protocols/irc/irc.c \
-		     ../src/protocols/jabber/jabber.c \
-		     ../src/protocols/msn/msn.c \
-		     ../src/protocols/napster/napster.c \
-		     ../src/protocols/oscar/oscar.c \
-		     ../src/protocols/toc/toc.c \
-		     ../src/protocols/yahoo/yahoo.c \
-		     ../src/protocols/zephyr/zephyr.c \
-		     ../src/about.c \
-		     ../src/aim.c \
-		     ../src/away.c \
-		     ../src/buddy.c \
-		     ../src/buddy_chat.c \
-		     ../src/conversation.c \
-		     ../src/dialogs.c \
-		     ../src/gaimrc.c \
-		     ../src/html.c \
-		     ../src/module.c \
-		     ../src/multi.c \
-		     ../src/perl.c \
-		     ../src/plugins.c \
-		     ../src/prefs.c \
-		     ../src/prpl.c \
-		     ../src/server.c \
-		     ../src/sound.c
-
+CATALOGS = $(patsubst %.po,%.gmo,$(wildcard *.po))
 
 ##
 ## RULES
 ##
-
-.pot.pox:
-	$(MAKE) $(PACKAGE).pot
-	$(MSGMERGE) $< $(srcdir)/$(PACKAGE).pot -o $*.pox
-
-.po.mo:
-	$(MSGFMT) -o $@ $<
 
 .po.gmo:
 	rm -f $@ && $(GMSGFMT) --statistics -o $@ $<
@@ -89,14 +46,6 @@ POTFILES = \
 
 
 all: $(CATALOGS)
-
-$(PACKAGE).pot: $(POTFILES) POTFILES.in
-	$(XGETTEXT) --default-domain=$(PACKAGE) --directory=$(GAIM_TOP) \
-	  --add-comments --keyword=_ --keyword=N_ \
-	  --files-from=$(srcdir)/POTFILES.in \
-	&& test ! -f $(PACKAGE).po \
-	   || ( rm -f $(srcdir)/$(PACKAGE).pot \
-		&& mv $(PACKAGE).po $(srcdir)/$(PACKAGE).pot )
 
 install: all
 	mkdir -p $(LOCALEDIR)
@@ -117,4 +66,4 @@ install: all
 	done
 
 clean:
-	rm -f *.gmo *.pot *.pox
+	rm -f *.gmo
