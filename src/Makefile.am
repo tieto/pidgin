@@ -11,8 +11,6 @@ gaim_SOURCES =	about.c \
 		browser.c \
 		buddy.c \
 		buddy_chat.c \
-		buddyicondlg.c \
-		buddyicondlg.h \
 		conversation.c \
 		conversation.h \
 		core.c \
