@@ -74,8 +74,8 @@ static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCon
 	xfer->fd = source;
 	gaim_xfer_start(xfer, source, NULL, 0);
 
-	buf = g_strdup_printf("GET http://%s:%d/%s HTTP/1.0\r\nHost: %s\r\n\r\n",
-			      xd->host, xd->port, xd->path, xd->host);
+	buf = g_strdup_printf("GET /%s HTTP/1.0\r\nHost: %s\r\n\r\n",
+			      xd->path, xd->host);
 	write(xfer->fd, buf, strlen(buf));
 	g_free(buf);
 

@@ -115,7 +115,7 @@ void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
 		data->gc = gc;
 		data->who = g_strdup(who);
 		data->checksum = checksum;
-		gaim_url_fetch(url, TRUE, "Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
+		gaim_url_fetch(url, FALSE, "Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
 		               yahoo_fetch_picture_cb, data);
 	} else if (who && send_icon_info) {
 		yahoo_send_picture_info(gc, who);

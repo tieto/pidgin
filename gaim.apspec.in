@@ -27,7 +27,7 @@ It is written using Gtk+ and is licensed under the GPL.
 Gaim is NOT affiliated with or endorsed by AOL.
 
 [BuildPrepare]
-prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl
+prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl --disable-gtktest
 
 
 [BuildUnprepare]
