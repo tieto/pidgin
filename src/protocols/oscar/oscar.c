@@ -2525,8 +2525,8 @@ static void gaim_auth_dontgrant_msgprompt(struct name_data *data) {
 					   data);
 }
 
-/* When someone sends you contacts  */
-static void gaim_icq_contactadd(struct name_data *data) {
+/* When someone sends you buddies */
+static void gaim_icq_buddyadd(struct name_data *data) {
 	GaimConnection *gc = data->gc;
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
@@ -2611,7 +2611,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x07: { /* Someone has denied you authorization */
 			if (i >= 1) {
-				gchar *dialog_msg = g_strdup_printf(_("The user %u has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
+				gchar *dialog_msg = g_strdup_printf(_("The user %u has denied your request to add them to your buddy list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
 				gaim_notify_info(gc, NULL, _("ICQ authorization denied."),
 								 dialog_msg);
 				g_free(dialog_msg);
@@ -2619,7 +2619,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		} break;
 
 		case 0x08: { /* Someone has granted you authorization */
-			gchar *dialog_msg = g_strdup_printf(_("The user %u has granted your request to add them to your contact list."), args->uin);
+			gchar *dialog_msg = g_strdup_printf(_("The user %u has granted your request to add them to your buddy list."), args->uin);
 			gaim_notify_info(gc, NULL, "ICQ authorization accepted.",
 							 dialog_msg);
 			g_free(dialog_msg);
@@ -2651,10 +2651,10 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x12: {
 			/* Ack for authorizing/denying someone.  Or possibly an ack for sending any system notice */
-			/* Someone added you to their contact list? */
+			/* Someone added you to their buddy list? */
 		} break;
 
-		case 0x13: { /* Someone has sent you some ICQ contacts */
+		case 0x13: { /* Someone has sent you some ICQ buddies */
 			int i, num;
 			gchar **text;
 			text = g_strsplit(args->msg, "\376", 0);
@@ -2664,16 +2664,16 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					num = num*10 + text[0][i]-48;
 				for (i=0; i<num; i++) {
 					struct name_data *data = g_new(struct name_data, 1);
-					gchar *message = g_strdup_printf(_("ICQ user %u has sent you a contact: %s (%s)"), args->uin, text[i*2+2], text[i*2+1]);
+					gchar *message = g_strdup_printf(_("ICQ user %u has sent you a buddy: %s (%s)"), args->uin, text[i*2+2], text[i*2+1]);
 					data->gc = gc;
 					data->name = g_strdup(text[i*2+1]);
 					data->nick = g_strdup(text[i*2+2]);
 
 					gaim_request_action(gc, NULL, message,
-										_("Do you want to add this contact "
-										  "to your Buddy List?"),
+										_("Do you want to add this buddy "
+										  "to your buddy list?"),
 										0, data, 2,
-										_("Add"), G_CALLBACK(gaim_icq_contactadd),
+										_("Add"), G_CALLBACK(gaim_icq_buddyadd),
 										_("Decline"), G_CALLBACK(oscar_free_name_data));
 					g_free(message);
 				}
@@ -2681,7 +2681,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 		} break;
 
-		case 0x1a: { /* Someone has sent you a greeting card or requested contacts? */
+		case 0x1a: { /* Someone has sent you a greeting card or requested buddies? */
 			/* This is boring and silly. */
 		} break;
 
@@ -4352,7 +4352,7 @@ static void oscar_get_away(GaimConnection *gc, const char *who) {
 						   "Error: The user %s has no status message, therefore not requesting.\n", who);
 		else
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-					   "Error: Could not find %s in local contact list, therefore unable to request status message.\n", who);
+					   "Error: Could not find %s in local buddy list, therefore unable to request status message.\n", who);
 	} else
 		aim_locate_getinfoshort(od->sess, who, 0x00000002);
 }
@@ -4969,7 +4969,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 				g_free(buf);
 			}
 
-			case 0x000e: { /* contact requires authorization */
+			case 0x000e: { /* buddy requires authorization */
 				if ((retval->action == AIM_CB_SSI_ADD) && (retval->name))
 					gaim_auth_sendrequest(gc, retval->name);
 			} break;
@@ -5020,7 +5020,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	gaim_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
 						0, data,
-						G_CALLBACK(gaim_icq_contactadd),
+						G_CALLBACK(gaim_icq_buddyadd),
 						G_CALLBACK(oscar_free_name_data));
 
 	g_free(dialog_msg);
@@ -5093,11 +5093,11 @@ static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (reply) {
 		/* Granted */
-		dialog_msg = g_strdup_printf(_("The user %s has granted your request to add them to your contact list."), nombre);
+		dialog_msg = g_strdup_printf(_("The user %s has granted your request to add them to your buddy list."), nombre);
 		gaim_notify_info(gc, NULL, _("Authorization Granted"), dialog_msg);
 	} else {
 		/* Denied */
-		dialog_msg = g_strdup_printf(_("The user %s has denied your request to add them to your contact list for the following reason:\n%s"), nombre, msg ? msg : _("No reason given."));
+		dialog_msg = g_strdup_printf(_("The user %s has denied your request to add them to your buddy list for the following reason:\n%s"), nombre, msg ? msg : _("No reason given."));
 		gaim_notify_info(gc, NULL, _("Authorization Denied"), dialog_msg);
 	}
 	g_free(dialog_msg);
