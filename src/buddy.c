@@ -493,6 +493,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		struct buddy *buddy = (struct buddy*)node;
 		char *tooltiptext = gaim_get_tooltip_text(buddy);
 		gtkblist->tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
+		gtkblist->tipwindow->parent = tv;
 		gtk_widget_set_app_paintable(gtkblist->tipwindow, TRUE);
 		gtk_window_set_resizable(GTK_WINDOW(gtkblist->tipwindow), FALSE);
 		gtk_widget_set_name(gtkblist->tipwindow, "gtk-tooltips");
