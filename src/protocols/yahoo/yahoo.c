@@ -119,7 +119,6 @@ struct yahoo_data {
 	guchar *rxqueue;
 	int rxlen;
 	GHashTable *hash;
-	GSList *login;
 	int current_status;
 	gboolean logged_in;
 };
@@ -134,12 +133,6 @@ struct yahoo_packet {
 	guint32 status;
 	guint32 id;
 	GSList *hash;
-};
-
-struct yahoo_buddy {
-	char *name;
-	int state;
-	char *msg;
 };
 
 static char *yahoo_name() {
@@ -345,11 +338,10 @@ static void yahoo_packet_free(struct yahoo_packet *pkt)
 	g_free(pkt);
 }
 
-static void yahoo_process_logon(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
-	struct yahoo_buddy *buddy = NULL;
 	struct yahoo_packet *newpkt;
 	char *name = NULL;
 	int state = 0;
@@ -362,17 +354,18 @@ static void yahoo_process_logon(struct gaim_connection *gc, struct yahoo_packet 
 		case 0: /* we won't actually do anything with this */
 			break;
 		case 1: /* we don't get the full buddy list here. */
-			account_online(gc);
-			serv_finish_login(gc);
-			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", pair->value);
-			do_import(gc, NULL);
-			yd->logged_in = TRUE;
+			if (!yd->logged_in) {
+				account_online(gc);
+				serv_finish_login(gc);
+				g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", pair->value);
+				do_import(gc, NULL);
+				yd->logged_in = TRUE;
 
-			/* this requests the list. i have a feeling that this is very evil */
-			newpkt = yahoo_packet_new(YAHOO_SERVICE_LIST, YAHOO_STATUS_OFFLINE, 0);
-			yahoo_send_packet(yd, newpkt);
-			yahoo_packet_free(newpkt);
-
+				/* this requests the list. i have a feeling that this is very evil */
+				newpkt = yahoo_packet_new(YAHOO_SERVICE_LIST, YAHOO_STATUS_OFFLINE, 0);
+				yahoo_send_packet(yd, newpkt);
+				yahoo_packet_free(newpkt);
+			}
 			break;
 		case 8: /* how many online buddies we have */
 			break;
@@ -389,45 +382,28 @@ static void yahoo_process_logon(struct gaim_connection *gc, struct yahoo_packet 
 			break;
 		case 17: /* in chat? */
 			break;
-		case 13: /* in pager, i think this should always be 1 */
-			/* we don't actually give notification here. we wait until after we've
-			 * gotten the list, so that they get added to the right group */
-			buddy = g_new0(struct yahoo_buddy, 1);
-			buddy->name = g_strdup(name);
-			buddy->state = state;
-			buddy->msg = msg ? g_strdup(msg) : NULL;
-			yd->login = g_slist_append(yd->login, buddy);
-			break;
-		case 60: /* uh */
-			while (yd->login) {
-				buddy = yd->login->data;
-				state = buddy->state;
-				yd->login = g_slist_remove(yd->login, buddy);
-				if (state == YAHOO_STATUS_AVAILABLE)
-					serv_got_update(gc, buddy->name, 1, 0, 0, 0, 0, 0);
-				else if (state == YAHOO_STATUS_IDLE)
-					serv_got_update(gc, buddy->name, 1, 0, 0, time(NULL) - 600,
-							(state << 1), 0);
-				else
-					serv_got_update(gc, buddy->name, 1, 0, 0, 0,
-							(state << 1) | UC_UNAVAILABLE, 0);
-				if (state == YAHOO_STATUS_CUSTOM) {
-					gpointer val = g_hash_table_lookup(yd->hash, buddy->name);
-					if (val) {
-						g_free(val);
-						g_hash_table_insert(yd->hash, buddy->name,
-								    g_strdup(buddy->msg));
-					} else
-						g_hash_table_insert(yd->hash, g_strdup(buddy->name),
-								    g_strdup(buddy->msg));
-				}
-				g_free(buddy->msg);
-				g_free(buddy->name);
-				g_free(buddy);
+		case 13: /* in pager? */
+			if (pkt->service == YAHOO_SERVICE_LOGOFF ||
+			    strtol(pair->value, NULL, 10) == 0) {
+				serv_got_update(gc, name, 0, 0, 0, 0, 0, 0);
+			}
+			if (state == YAHOO_STATUS_AVAILABLE)
+				serv_got_update(gc, name, 1, 0, 0, 0, 0, 0);
+			else
+				serv_got_update(gc, name, 1, 0, 0, 0, (state << 1) | UC_UNAVAILABLE, 0);
+			if (state == YAHOO_STATUS_CUSTOM) {
+				gpointer val = g_hash_table_lookup(yd->hash, name);
+				if (val) {
+					g_free(val);
+					g_hash_table_insert(yd->hash, name, g_strdup(msg));
+				} else
+					g_hash_table_insert(yd->hash, g_strdup(name), g_strdup(msg));
 			}
 			break;
+		case 60: /* no clue */
+			 break;
 		default:
-			debug_printf("unknown login key %d\n", pair->key);
+			debug_printf("unknown status key %d\n", pair->key);
 			break;
 		}
 
@@ -437,7 +413,6 @@ static void yahoo_process_logon(struct gaim_connection *gc, struct yahoo_packet 
 
 static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *pkt)
 {
-	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	gboolean export = FALSE;
 
@@ -476,29 +451,6 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 
 	if (export)
 		do_export(gc);
-
-	while (yd->login) {
-		struct yahoo_buddy *buddy = yd->login->data;
-		int status = buddy->state;
-		yd->login = g_slist_remove(yd->login, buddy);
-		if (status == YAHOO_STATUS_AVAILABLE)
-			serv_got_update(gc, buddy->name, 1, 0, 0, 0, 0, 0);
-		else if (status == YAHOO_STATUS_IDLE)
-			serv_got_update(gc, buddy->name, 1, 0, 0, time(NULL) - 600, (status << 1), 0);
-		else
-			serv_got_update(gc, buddy->name, 1, 0, 0, 0, (status << 1) | UC_UNAVAILABLE, 0);
-		if (status == YAHOO_STATUS_CUSTOM) {
-			gpointer val = g_hash_table_lookup(yd->hash, buddy->name);
-			if (val) {
-				g_free(val);
-				g_hash_table_insert(yd->hash, buddy->name, g_strdup(buddy->msg));
-			} else
-				g_hash_table_insert(yd->hash, g_strdup(buddy->name), g_strdup(buddy->msg));
-		}
-		g_free(buddy->msg);
-		g_free(buddy->name);
-		g_free(buddy);
-	}
 }
 
 static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packet *pkt)
@@ -538,56 +490,6 @@ static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packe
 	}
 }
 
-static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet *pkt)
-{
-	struct yahoo_data *yd = gc->proto_data;
-	GSList *l = pkt->hash;
-	char *name = NULL;
-	int state = 0;
-	char *msg = NULL;
-
-	while (l) {
-		struct yahoo_pair *pair = l->data;
-
-		switch (pair->key) {
-		case 7:
-			name = pair->value;
-			break;
-		case 10:
-			state = strtol(pair->value, NULL, 10);
-			break;
-		case 19:
-			msg = pair->value;
-			break;
-		case 11: /* i didn't know what this was in the old protocol either */
-			break;
-		case 17: /* in chat? */
-			break;
-		case 13:
-			if (strtol(pair->value, NULL, 10) != 1) {
-				serv_got_update(gc, name, 0, 0, 0, 0, 0, 0);
-				break;
-			}
-			if (state == YAHOO_STATUS_AVAILABLE)
-				serv_got_update(gc, name, 1, 0, 0, 0, 0, 0);
-			else if (state == YAHOO_STATUS_IDLE)
-				serv_got_update(gc, name, 1, 0, 0, time(NULL) - 600, (state << 1), 0);
-			else
-				serv_got_update(gc, name, 1, 0, 0, 0, (state << 1) | UC_UNAVAILABLE, 0);
-			if (state == YAHOO_STATUS_CUSTOM) {
-				gpointer val = g_hash_table_lookup(yd->hash, name);
-				if (val) {
-					g_free(val);
-					g_hash_table_insert(yd->hash, name, g_strdup(msg));
-				} else
-					g_hash_table_insert(yd->hash, g_strdup(name), g_strdup(msg));
-			}
-			break;
-		}
-
-		l = l->next;
-	}
-}
 
 static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packet *pkt)
 {
@@ -667,8 +569,6 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 	switch (pkt->service)
 	{
 	case YAHOO_SERVICE_LOGON:
-		yahoo_process_logon(gc, pkt);
-		break;
 	case YAHOO_SERVICE_LOGOFF:
 	case YAHOO_SERVICE_ISAWAY:
 	case YAHOO_SERVICE_ISBACK:
@@ -827,13 +727,6 @@ static void yahoo_close(struct gaim_connection *gc) {
 	if (yd->rxqueue)
 		g_free(yd->rxqueue);
 	yd->rxlen = 0;
-	while (yd->login) {
-		struct yahoo_buddy *buddy = yd->login->data;
-		yd->login = g_slist_remove(yd->login, buddy);
-		g_free(buddy->msg);
-		g_free(buddy->name);
-		g_free(buddy);
-	}
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
 	g_free(yd);
