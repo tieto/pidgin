@@ -2127,10 +2127,11 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 			if (usesize && fontsize) {
 				g_snprintf (fs, sizeof (fs), "%d", POINT_SIZE (fontsize));
 				newvals [PTSZ] = fs;
-			} else if (!usesize)
+				newvals [PXLSZ] = "*";
+			} else if (!usesize) {
 				newvals [PTSZ] = "*";
-			newvals [PXLSZ] = "*";
-			
+				newvals [PXLSZ] = "*";
+			}
 			
 			if (name) {
 				/* we got passed a name. it might be a list of names. */
@@ -2193,7 +2194,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 				italicsind = 0;
 				usebold = TRUE;
 				usesize = FALSE;
-				} else if (names && names[nameind++]) {
+			} else if (names && names[nameind++]) {
 				useregenc = TRUE;        
 				italicsind = 0;
 				usebold = TRUE;
