@@ -213,11 +213,11 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 	int pos = 0;
 
 	while (pos + 1 < len) {
-		char key[64], *value;
+		char key[64], *value = NULL;
+		int accept;
 		int x;
 
 		struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
-		pkt->hash = g_slist_append(pkt->hash, pair);
 
 		x = 0;
 		while (pos + 1 < len) {
@@ -228,19 +228,28 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 		key[x] = 0;
 		pos += 2;
 		pair->key = strtol(key, NULL, 10);
+		accept = x; /* if x is 0 there was no key, so don't accept it */
 
-		value = g_malloc(len - pos + 1);
+		if (accept)
+			value = g_malloc(len - pos + 1);
 		x = 0;
 		while (pos + 1 < len) {
 			if (data[pos] == 0xc0 && data[pos + 1] == 0x80)
 				break;
-			value[x++] = data[pos++];
+			if (accept)
+				value[x++] = data[pos++];
 		}
-		value[x] = 0;
+		if (accept)
+			value[x] = 0;
 		pos += 2;
-		pair->value = g_strdup(value);
-		g_free(value);
-		debug_printf("Key: %d  \tValue: %s\n", pair->key, pair->value);
+		if (accept) {
+			pair->value = g_strdup(value);
+			g_free(value);
+			pkt->hash = g_slist_append(pkt->hash, pair);
+			debug_printf("Key: %d  \tValue: %s\n", pair->key, pair->value);
+		} else {
+			g_free(pair);
+		}
 	}
 }
 
