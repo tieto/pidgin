@@ -350,15 +350,13 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 		aimbs_putraw(&fr->data, args->msg, args->msglen);
 	}
 
-	/* Set the Request Acknowledge flag */
-	if (args->flags & AIM_IMFLAGS_ACK) {
-		aimbs_put16(&fr->data, 0x0003);
-		aimbs_put16(&fr->data, 0x0000);
-	}
-
 	/* Set the Autoresponse flag */
 	if (args->flags & AIM_IMFLAGS_AWAY) {
 		aimbs_put16(&fr->data, 0x0004);
+		aimbs_put16(&fr->data, 0x0000);
+	} else if (args->flags & AIM_IMFLAGS_ACK) {
+		/* Set the Request Acknowledge flag */
+		aimbs_put16(&fr->data, 0x0003);
 		aimbs_put16(&fr->data, 0x0000);
 	}
 

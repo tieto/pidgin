@@ -4083,23 +4083,14 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	int ret = 0;
 	GError *err = NULL;
 
-	if (dim) {
-		if (dim->connected) {  /* If we're not connected yet, send through server */
-			/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
-			ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0);
-			if (ret == 0)
-				return 1;
-			else return ret;
-		}
-		debug_printf("Direct IM pending, but not connected; sending through server\n");
+	if (dim && dim->connected) {
+		/* If we're directly connected, send a direct IM */
+		/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
+		ret =  aim_odc_send_im(od->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0);
 	} else if (len != -1) {
 		/* Trying to send an IM image outside of a direct connection. */
 		oscar_ask_direct_im(gc, name);
-		return -ENOTCONN;
-	}
-
-	if (imflags & IM_FLAG_AWAY) {
-		ret = aim_im_sendch1(od->sess, name, AIM_IMFLAGS_AWAY, message);
+		ret = -ENOTCONN;
 	} else {
 		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
@@ -4121,6 +4112,9 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			args.features = features_aim;
 			args.featureslen = sizeof(features_aim);
 		}
+
+		if (imflags & IM_FLAG_AWAY)
+			args.flags |= AIM_IMFLAGS_AWAY;
 
 		if (bi->ico_need) {
 			debug_printf("Sending buddy icon request with message\n");
@@ -4149,7 +4143,6 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 					bi->ico_me_time = args.iconstamp;
 					bi->ico_informed = TRUE;
 				}
-
 
 				fclose(file);
 				g_free(buf);
@@ -4198,6 +4191,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 
 		ret = aim_im_sendch1_ext(od->sess, &args);
 	}
+
 	if (ret >= 0)
 		return 1;
 	return ret;
