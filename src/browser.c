@@ -603,10 +603,14 @@ void open_url(GtkWidget *w, char *url)
 
 			char command[1024];
 
-			if ((url[0] == '\"') && (url[strlen(url)-1] == '\"'))
+			char *ms;
+
+			if (strstr(web_command, "\"%s\""))
 				g_snprintf(command, sizeof(command), web_command, url);
-			else
-				g_snprintf(command, sizeof(command), "%s \"%s\"", web_command, url);
+			else if ((ms = strstr(web_command, "%s")) != NULL) {
+				*ms = 0;
+				g_snprintf(command, sizeof(command), "%s\"%s\"%s", web_command, url, ms + 2);
+			}
 
 			args[0] = "sh";
 			args[1] = "-c";
