@@ -633,6 +633,7 @@ irc_request_buddy_update(gpointer data)
 	struct irc_data *id = gc->proto_data;
 	char buf[500];
 	int n = g_snprintf(buf, sizeof(buf), "ISON");
+	gboolean found = FALSE;
 
 	GSList *gr = groups;
 	if (!gr || id->bc)
@@ -651,14 +652,20 @@ irc_request_buddy_update(gpointer data)
 					n = g_snprintf(buf, sizeof(buf), "ISON");
 				}
 				n += g_snprintf(buf + n, sizeof(buf) - n, " %s", b->name);
+
+				found = TRUE;
 			}
 			m = m->next;
 		}
 		gr = gr->next;
 	}
-	g_snprintf(buf + n, sizeof(buf) - n, "\r\n");
-	irc_write(id->fd, buf, strlen(buf));
-	id->bc++;
+
+	if (found) {
+		g_snprintf(buf + n, sizeof(buf) - n, "\r\n");
+		irc_write(id->fd, buf, strlen(buf));
+		id->bc++;
+	}
+
 	return TRUE;
 }
 
