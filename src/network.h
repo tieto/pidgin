@@ -96,8 +96,6 @@ const char *gaim_network_get_local_system_ip(int fd);
  *       function is called twice, it may be important to make a copy
  *       of the returned string.
  *
- * @param account The account to use. This may be @c NULL, and if so
- *                the first step listed above is skipped.
  * @param fd The fd to use to help figure out the IP, or -1.
  * @return The local IP address to be used.
  */
