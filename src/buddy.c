@@ -198,18 +198,24 @@ void update_all_buddies()
 	GList *mem;
         struct buddy *b;
 	struct group *g;
+	int count;
 
         while(grp) {
 		g = (struct group *)grp->data;
                 mem = g->members;
+		count = 0;
                 while(mem) {
 			b = (struct buddy *)mem->data;
 
                         if (b->present || !GTK_WIDGET_VISIBLE(b->item))
 				set_buddy(b);
+
+			if (b->present) count++;
                         
                         mem = mem->next;
                 }
+		if (!count && (display_options & OPT_DISP_NO_MT_GRP))
+			gtk_widget_hide(g->item);
                 grp = grp->next;
         }
 
@@ -1431,6 +1437,8 @@ void set_buddy(struct buddy *b)
 			}
 
 			
+			{ struct group *g = find_group_by_buddy(b->name);
+			  gtk_widget_show(g->item); }
 			gtk_widget_show(b->item);
 			gtk_widget_show(b->label);
                         b->log_timer = gtk_timeout_add(10000, (GtkFunction) log_timeout, b->name);

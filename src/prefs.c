@@ -338,7 +338,7 @@ static void oscar_page()
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
 
-	prefdialog = gtk_frame_new(_("Buddy List Options"));
+	prefdialog = gtk_frame_new(_("Oscar Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
 
 	box = gtk_vbox_new(FALSE, 5);
@@ -376,6 +376,7 @@ static void buddy_page()
 	gtk_widget_show(label);
 
 	gaim_button(_("Show numbers in groups"), &display_options, OPT_DISP_SHOW_GRPNUM, box);
+	gaim_button(_("Hide groups with no online buddies"), &display_options, OPT_DISP_NO_MT_GRP, box);
 	gaim_button(_("Show idle times"), &display_options, OPT_DISP_SHOW_IDLETIME, box);
 	gaim_button(_("Show buddy type icons"), &display_options, OPT_DISP_SHOW_PIXMAPS, box);
 
