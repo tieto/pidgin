@@ -1,4 +1,4 @@
-/* $Id: libgg.c 2488 2001-10-10 20:03:17Z warmenhoven $ */
+/* $Id: libgg.c 2608 2001-10-24 08:35:55Z warmenhoven $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -353,7 +353,7 @@ static void *gg_recv_packet(struct gg_session *sess)
 				return NULL;
 			}
 			if (errno != EINTR) {
-//				errno = EINVAL;
+				/* errno = EINVAL; */
 				free(buf);
 				return NULL;
 			}

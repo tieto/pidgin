@@ -68,8 +68,8 @@ struct _GtkTickerClass
 struct _GtkTickerChild
 {
   GtkWidget *widget;
-  gint x;		// current position
-  gint offset;     	// offset in list
+  gint x;		/* current position */
+  gint offset;     	/* offset in list */
 };
 
 
