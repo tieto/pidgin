@@ -2442,6 +2442,22 @@ void clicked_debug (GtkWidget *widg, gpointer pntr)
 	}
 }
 
+static void
+show_xfer_dialog(GtkMenuItem *item, gpointer user_data)
+{
+	struct gaim_gtkxfer_dialog *dialog;
+
+	dialog = gaim_get_gtkxfer_dialog();
+
+	if (dialog == NULL) {
+		dialog = gaim_gtkxfer_dialog_new();
+
+		gaim_set_gtkxfer_dialog(dialog);
+	}
+
+	gaim_gtkxfer_dialog_show(dialog);
+}
+
 void make_buddy_list()
 {
 
@@ -2535,7 +2551,7 @@ void make_buddy_list()
 				  G_CALLBACK(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
 
 	gaim_new_item_from_stock(menu, _("_File Transfers..."), GTK_STOCK_REVERT_TO_SAVED,
-				G_CALLBACK(gaim_gtkxfer_dialog_show), NULL, 0, 0, NULL);
+				G_CALLBACK(show_xfer_dialog), NULL, 0, 0, NULL);
 
 	gaim_separator(menu);
 

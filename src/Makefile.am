@@ -22,6 +22,8 @@ gaim_SOURCES =	about.c \
 		ft.h \
 		gaim.h \
 		gaim-socket.h \
+		gaim-disclosure.c \
+		gaim-disclosure.h \
 		gaimrc.c \
 		gtkcellrendererprogress.c \
 		gtkcellrendererprogress.h \

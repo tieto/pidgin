@@ -506,7 +506,7 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 	if (ui_ops != NULL && ui_ops->update_progress != NULL)
 		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
 
-	if (xfer->completed)
+	if (gaim_xfer_is_completed(xfer))
 		gaim_xfer_end(xfer);
 }
 
@@ -618,9 +618,6 @@ gaim_xfer_end(struct gaim_xfer *xfer)
 		fclose(xfer->dest_fp);
 		xfer->dest_fp = NULL;
 	}
-
-	/* Delete the transfer. */
-	gaim_xfer_destroy(xfer);
 }
 
 void
@@ -653,9 +650,6 @@ gaim_xfer_cancel(struct gaim_xfer *xfer)
 		ui_ops->cancel(xfer);
 
 	xfer->bytes_remaining = 0;
-
-	/* Delete the transfer. */
-	gaim_xfer_destroy(xfer);
 }
 
 void
