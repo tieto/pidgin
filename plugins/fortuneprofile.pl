@@ -38,7 +38,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 
-$handle = GAIM::register("Fortune Profile", "3.2", "", "");
+$handle = GAIM::register("Fortune Profile", "3.3", "", "");
 
 $tab = "&nbsp;";
 $tab = $tab . $tab . $tab . $tab;
@@ -69,6 +69,9 @@ sub update_away {
   do {
     do {  #It's a while loop because it doesn't always work for some reason
       $fortune =  `$command`;
+      if ($? == -1) {
+        return;
+      }
     } while ($fortune eq "");
     $fortune =~ s/\n/$nl/g;
     $fortune =~ s/\t/$tab/g;
@@ -88,8 +91,8 @@ sub update_away {
 
 sub description {
   my($a, $b, $c, $d, $e, $f) = @_;
-  ("Fortune Profile", "3.2", "Sets your AIM profile to a fortune (with a header and footer of your choice).",
-  "Sean Egan &lt;bj91704\@binghamton.edu>", "http://gaim.sf.net/",
+  ("Fortune Profile", "3.3", "Sets your AIM profile to a fortune (with a header and footer of your choice).",
+  "Sean Egan <bj91704\@binghamton.edu>", "http://gaim.sf.net/",
   "/dev/null");
 }
 
