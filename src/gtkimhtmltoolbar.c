@@ -860,5 +860,10 @@ GType gtk_imhtmltoolbar_get_type()
 
 void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 {
+	g_return_if_fail(toolbar != NULL);
+	g_return_if_fail(GTK_IS_IMHTMLTOOLBAR(toolbar));
+	g_return_if_fail(imhtml != NULL);
+	g_return_if_fail(GTK_IS_IMHTML(imhtml));
+
 	toolbar->imhtml = imhtml;
 }
