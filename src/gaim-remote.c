@@ -89,7 +89,7 @@ void show_remote_usage(char *name)
 	     "       -m, --message=MESG       Message to send or show in conversation window\n"
 	     "       -t, --to=SCREENNAME      Select a target for command\n"
 	     "       -p, --protocol=PROTO     Specify protocol to use\n"
-	     "       -f, --from=SCREENNAME    Specify scree nname to use\n"
+	     "       -f, --from=SCREENNAME    Specify screen name to use\n"
 	     "       -q, --quiet              Send message without showing a conversation\n"
 	     "                                window\n"
 */
