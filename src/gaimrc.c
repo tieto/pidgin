@@ -198,31 +198,6 @@ static int gaimrc_parse_tag(FILE *f)
 	return -1;
 }
 
-static void filter_break(char *msg)
-{
-	char *c;
-	int mc;
-	int cc;
-
-	c = g_malloc(strlen(msg) + 1);
-	strcpy(c, msg);
-
-	mc = 0;
-	cc = 0;
-	while (c[cc] != '\0') {
-		if (c[cc] == '\\') {
-			cc++;
-			msg[mc] = c[cc];
-		} else {
-			msg[mc] = c[cc];
-		}
-		mc++;
-		cc++;
-	}
-	msg[mc] = 0;
-	g_free(c);
-}
-
 static char *escape_text2(const char *msg)
 {
 	char *c, *cpy;
@@ -280,8 +255,6 @@ static void gaimrc_read_away(FILE *f)
 
 			g_snprintf(a->name, sizeof(a->name), "%s", p->value[0]);
 			g_snprintf(a->message, sizeof(a->message), "%s", p->value[1]);
-			filter_break(a->name);
-			filter_break(a->message);
 			away_messages = g_slist_insert_sorted(away_messages, a, sort_awaymsg_list);
 		}
 		/* auto { time } { default message } */
@@ -353,20 +326,15 @@ static void gaimrc_read_pounce(FILE *f)
 			b = g_new0(struct buddy_pounce, 1);
 
 			g_snprintf(b->name, sizeof(b->name), "%s", p->value[0]);
-			filter_break(b->name);
 			g_snprintf(b->message, sizeof(b->message), "%s", p->value[1]);
-			filter_break(b->message);
 			g_snprintf(b->command, sizeof(b->command), "%s", p->value[2]);
-			filter_break(b->command);
 
 			b->options = atoi(p->value[3]);
 
 			g_snprintf(b->pouncer, sizeof(b->pouncer), "%s", p->value[4]);
-			filter_break(b->pouncer);
 			b->protocol = atoi(p->value[5]);
 
 			g_snprintf(b->sound, sizeof(b->sound), "%s", p->value[6]);
-			filter_break(b->sound);
 
 			buddy_pounces = g_list_append(buddy_pounces, b);
 		}
