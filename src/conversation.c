@@ -2121,6 +2121,45 @@ conv_placement_by_group(struct gaim_conversation *conv)
 	}
 }
 
+/* This groups things by account.  Otherwise, the same semantics as above */
+static void
+conv_placement_by_account(struct gaim_conversation *conv)
+{
+	GaimConversationType type;
+	GList *wins, *convs;
+	struct gaim_account *account;
+
+
+	account = gaim_conversation_get_account(conv);
+	type = gaim_conversation_get_type(conv);
+
+
+	/* Go through the list of IMs and find one with this group. */
+	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
+		struct gaim_window *win2;
+		struct gaim_conversation *conv2;
+
+		win2 = (struct gaim_window *)wins->data;
+
+		for (convs = gaim_window_get_conversations(win2);
+				convs != NULL;
+				convs = convs->next) {
+
+			conv2 = (struct gaim_conversation *)convs->data;
+
+			if (((convo_options & OPT_CONVO_COMBINE) ||
+						type == gaim_conversation_get_type(conv2)) &&
+					account == gaim_conversation_get_account(conv2)) {
+				gaim_window_add_conversation(win2, conv);
+				return;
+			}
+
+		}
+	}
+	/* Make a new window. */
+	conv_placement_new_window(conv);
+}
+
 static int
 add_conv_placement_fnc(const char *name, gaim_conv_placement_fnc fnc)
 {
@@ -2146,6 +2185,8 @@ ensure_default_funcs(void)
 							   conv_placement_new_window);
 		add_conv_placement_fnc(_("By group"),
 							   conv_placement_by_group);
+		add_conv_placement_fnc(_("By account"),
+							   conv_placement_by_account);
 	}
 }
 
