@@ -1437,7 +1437,8 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 	if (!type || !strcasecmp(type, "normal") || !strcasecmp(type, "chat")) {
 
 		from = jid_full(p->from);
-		if ((y = xmlnode_get_tag(p->x, "html"))) {
+		/* a gross hack because i'm a nice guy */
+		if ((y = xmlnode_get_tag(p->x, "html")) && xmlnode_get_tag(y, "body")) {
 			msg = xmlnode2str(y);
 		} else if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
@@ -1518,7 +1519,8 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 		struct jabber_chat *jc;
 		static int i = 0;
 
-		if ((y = xmlnode_get_tag(p->x, "html"))) {
+		/* a gross hack because i'm a nice guy */
+		if ((y = xmlnode_get_tag(p->x, "html")) && xmlnode_get_tag(y, "body")) {
 			msg = xmlnode2str(y);
 		} else if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
