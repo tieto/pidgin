@@ -95,7 +95,8 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 		gaim_debug_error("gnutls", "Handshake failed. Error %d\n", ret);
 
 		if (gsc->error_cb != NULL)
-			gsc->error_cb(gsc, GAIM_SSL_HANDSHAKE_FAILED, data);
+			gsc->error_cb(gsc, GAIM_SSL_HANDSHAKE_FAILED,
+						  gsc->connect_cb_data);
 
 		gaim_ssl_close(gsc);
 	}
