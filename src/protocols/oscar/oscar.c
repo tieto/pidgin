@@ -199,85 +199,34 @@ struct name_data {
 	gchar *nick;
 };
 
-static void gaim_free_name_data(struct name_data *data) {
-	g_free(data->name);
-	g_free(data->nick);
-	g_free(data);
-}
-
-static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) {
-	GSList *d = od->direct_ims;
-	struct direct_im *m = NULL;
-
-	while (d) {
-		m = (struct direct_im *)d->data;
-		if (!aim_sncmp(who, m->name))
-			return m;
-		d = d->next;
-	}
-
-	return NULL;
-}
-
-static char *extract_name(const char *name) {
-	char *tmp, *x;
-	int i, j;
-
-	if (!name)
-		return NULL;
-	
-	x = strchr(name, '-');
-
-	if (!x) return NULL;
-	x = strchr(++x, '-');
-	if (!x) return NULL;
-	tmp = g_strdup(++x);
-
-	for (i = 0, j = 0; x[i]; i++) {
-		char hex[3];
-		if (x[i] != '%') {
-			tmp[j++] = x[i];
-			continue;
-		}
-		strncpy(hex, x + ++i, 2); hex[2] = 0;
-		i++;
-		tmp[j++] = strtol(hex, NULL, 16);
-	}
-
-	tmp[j] = 0;
-	return tmp;
-}
-
-static struct chat_connection *find_oscar_chat(struct gaim_connection *gc, int id) {
-	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
-	struct chat_connection *c = NULL;
-
-	while (g) {
-		c = (struct chat_connection *)g->data;
-		if (c->id == id)
-			break;
-		g = g->next;
-		c = NULL;
-	}
-
-	return c;
-}
-
-static struct chat_connection *find_oscar_chat_by_conn(struct gaim_connection *gc,
-							aim_conn_t *conn) {
-	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
-	struct chat_connection *c = NULL;
-
-	while (g) {
-		c = (struct chat_connection *)g->data;
-		if (c->conn == conn)
-			break;
-		g = g->next;
-		c = NULL;
-	}
-
-	return c;
-}
+static char *msgerrreason[] = {
+	N_("Invalid error"),
+	N_("Invalid SNAC"),
+	N_("Rate to host"),
+	N_("Rate to client"),
+	N_("Not logged in"),
+	N_("Service unavailable"),
+	N_("Service not defined"),
+	N_("Obsolete SNAC"),
+	N_("Not supported by host"),
+	N_("Not supported by client"),
+	N_("Refused by client"),
+	N_("Reply too big"),
+	N_("Responses lost"),
+	N_("Request denied"),
+	N_("Busted SNAC payload"),
+	N_("Insufficient rights"),
+	N_("In local permit/deny"),
+	N_("Too evil (sender)"),
+	N_("Too evil (receiver)"),
+	N_("User temporarily unavailable"),
+	N_("No match"),
+	N_("List overflow"),
+	N_("Request ambiguous"),
+	N_("Queue full"),
+	N_("Not while on AOL")
+};
+static int msgerrreasonlen = 25;
 
 /* All the libfaim->gaim callback functions */
 static int gaim_parse_auth_resp  (aim_session_t *, aim_frame_t *, ...);
@@ -353,37 +302,167 @@ static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 /* for icons */
 static gboolean gaim_icon_timerfunc(gpointer data);
 
-static fu32_t check_encoding(const char *utf8);
-static fu32_t parse_encoding(const char *enc);
+static void gaim_free_name_data(struct name_data *data) {
+	g_free(data->name);
+	g_free(data->nick);
+	g_free(data);
+}
 
-static char *msgerrreason[] = {
-	N_("Invalid error"),
-	N_("Invalid SNAC"),
-	N_("Rate to host"),
-	N_("Rate to client"),
-	N_("Not logged in"),
-	N_("Service unavailable"),
-	N_("Service not defined"),
-	N_("Obsolete SNAC"),
-	N_("Not supported by host"),
-	N_("Not supported by client"),
-	N_("Refused by client"),
-	N_("Reply too big"),
-	N_("Responses lost"),
-	N_("Request denied"),
-	N_("Busted SNAC payload"),
-	N_("Insufficient rights"),
-	N_("In local permit/deny"),
-	N_("Too evil (sender)"),
-	N_("Too evil (receiver)"),
-	N_("User temporarily unavailable"),
-	N_("No match"),
-	N_("List overflow"),
-	N_("Request ambiguous"),
-	N_("Queue full"),
-	N_("Not while on AOL")
-};
-static int msgerrreasonlen = 25;
+static fu32_t oscar_encoding_check(const char *utf8)
+{
+	int i = 0;
+	fu32_t encodingflag = 0;
+
+	/* Determine how we can send this message.  Per the warnings elsewhere 
+	 * in this file, these little checks determine the simplest encoding 
+	 * we can use for a given message send using it. */
+	while (utf8[i]) {
+		if ((unsigned char)utf8[i] > 0x7f) {
+			/* not ASCII! */
+			encodingflag = AIM_IMFLAGS_ISO_8859_1;
+			break;
+		}
+		i++;
+	}
+	while (utf8[i]) {
+		/* ISO-8859-1 is 0x00-0xbf in the first byte
+		 * followed by 0xc0-0xc3 in the second */
+		if ((unsigned char)utf8[i] < 0x80) {
+			i++;
+			continue;
+		} else if (((unsigned char)utf8[i] & 0xfc) == 0xc0 &&
+			   ((unsigned char)utf8[i + 1] & 0xc0) == 0x80) {
+			i += 2;
+			continue;
+		}
+		encodingflag = AIM_IMFLAGS_UNICODE;
+		break;
+	}
+
+	return encodingflag;
+}
+
+static fu32_t oscar_encoding_parse(const char *enc)
+{
+	char *charset;
+
+	/* If anything goes wrong, fall back on ASCII and print a message */
+	if (enc == NULL) {
+		debug_printf("Encoding was null, that's odd\n");
+		return 0;
+	}
+	charset = strstr(enc, "charset=");
+	if (charset == NULL) {
+		debug_printf("No charset specified for info, assuming ASCII\n");
+		return 0;
+	}
+	charset += 8;
+	if (!strcmp(charset, "\"us-ascii\"") || !strcmp(charset, "\"utf-8\"")) {
+		/* UTF-8 is our native charset, ASCII is a proper subset */
+		return 0;
+	} else if (!strcmp(charset, "\"iso-8859-1\"")) {
+		return AIM_IMFLAGS_ISO_8859_1;
+	} else if (!strcmp(charset, "\"unicode-2-0\"")) {
+		return AIM_IMFLAGS_UNICODE;
+	} else {
+		debug_printf("Unrecognized character set '%s', using ASCII\n", charset);
+		return 0;
+	}
+}
+
+gchar *oscar_encoding_to_utf8(const char *encoding, char *text, int textlen)
+{
+	gchar *utf8 = NULL;
+	int flags = oscar_encoding_parse(encoding);
+
+	switch (flags) {
+	case 0:
+		utf8 = g_strndup(text, textlen);
+		break;
+	case AIM_IMFLAGS_ISO_8859_1:
+		utf8 = g_convert(text, textlen, "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
+		break;
+	case AIM_IMFLAGS_UNICODE:
+		utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
+		break;
+	}
+
+	return utf8;
+}
+
+static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) {
+	GSList *d = od->direct_ims;
+	struct direct_im *m = NULL;
+
+	while (d) {
+		m = (struct direct_im *)d->data;
+		if (!aim_sncmp(who, m->name))
+			return m;
+		d = d->next;
+	}
+
+	return NULL;
+}
+
+static char *extract_name(const char *name) {
+	char *tmp, *x;
+	int i, j;
+
+	if (!name)
+		return NULL;
+	
+	x = strchr(name, '-');
+
+	if (!x) return NULL;
+	x = strchr(++x, '-');
+	if (!x) return NULL;
+	tmp = g_strdup(++x);
+
+	for (i = 0, j = 0; x[i]; i++) {
+		char hex[3];
+		if (x[i] != '%') {
+			tmp[j++] = x[i];
+			continue;
+		}
+		strncpy(hex, x + ++i, 2); hex[2] = 0;
+		i++;
+		tmp[j++] = strtol(hex, NULL, 16);
+	}
+
+	tmp[j] = 0;
+	return tmp;
+}
+
+static struct chat_connection *find_oscar_chat(struct gaim_connection *gc, int id) {
+	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
+	struct chat_connection *c = NULL;
+
+	while (g) {
+		c = (struct chat_connection *)g->data;
+		if (c->id == id)
+			break;
+		g = g->next;
+		c = NULL;
+	}
+
+	return c;
+}
+
+static struct chat_connection *find_oscar_chat_by_conn(struct gaim_connection *gc,
+							aim_conn_t *conn) {
+	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
+	struct chat_connection *c = NULL;
+
+	while (g) {
+		c = (struct chat_connection *)g->data;
+		if (c->conn == conn)
+			break;
+		g = g->next;
+		c = NULL;
+	}
+
+	return c;
+}
 
 static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	struct gaim_connection *gc = sess->aux_data;
@@ -3046,7 +3125,6 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GSList *l = od->evilhack;
 	gboolean evilhack = FALSE;
 	gchar *membersince = NULL, *onlinesince = NULL, *idle = NULL;
-	fu32_t flags;
 	va_list ap;
 	aim_userinfo_t *info;
 	fu16_t infotype;
@@ -3062,18 +3140,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	if (text_len > 0) {
-		flags = parse_encoding (text_enc);
-		switch (flags) {
-		case 0:
-			utf8 = g_strndup(text, text_len);
-			break;
-		case AIM_IMFLAGS_ISO_8859_1:
-			utf8 = g_convert(text, text_len, "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
-			break;
-		case AIM_IMFLAGS_UNICODE:
-			utf8 = g_convert(text, text_len, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
-			break;
-		default:
+		if (!(utf8 = oscar_encoding_to_utf8(text_enc, text, text_len))) {
 			utf8 = g_strdup(_("<i>Unable to display information because it was sent in an unknown encoding.</i>"));
 			debug_printf("Encountered an unknown encoding while parsing userinfo\n");
 		}
@@ -3133,6 +3200,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} else {
 			g_show_info_text(gc, info->sn, 0,
 					 header,
+					 (utf8 && *utf8) ? _("<b>Away Message:</b><br>") : NULL,
 					 (utf8 && *utf8) ? away_subs(utf8, gc->username) : NULL,
 					 (utf8 && *utf8) ? "<hr>" : NULL,
 					 NULL);
@@ -3146,8 +3214,8 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 				NULL);
 	} else {
 		g_show_info_text(gc, info->sn, 1,
-				 (utf8 && *utf8) ? away_subs(utf8, gc->username) :
-				 _("<i>No Information Provided</i>"),
+				 (utf8 && *utf8) ? _("<b>Profile:</b><br>") : _("<i>No Information Provided</i>"),
+				 (utf8 && *utf8) ? away_subs(utf8, gc->username) : NULL,
 				 NULL);
 	}
 
@@ -3400,14 +3468,14 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (iconlen > 0) {
 		char *b16;
-		struct buddy *b;
+		struct buddy *b = gaim_find_buddy(gc->account, sn);
 		set_icon_data(gc, sn, icon, iconlen);
 		b16 = tobase16(iconcsum, iconcsumlen);
-		b = gaim_find_buddy(gc->account, sn);
-		gaim_buddy_set_setting(b, "icon_checksum", b16);
-		gaim_blist_save();
-		if(b16)
+		if (b16) {
+			gaim_buddy_set_setting(b, "icon_checksum", b16);
+			gaim_blist_save();
 			free(b16);
+		}
 	}
 
 	cur = od->requesticon;
@@ -3699,7 +3767,7 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	if (od->icq)
 		aim_bos_setprofile(sess, fr->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
 	else {
-		flags = check_encoding (gc->account->user_info);
+		flags = oscar_encoding_check (gc->account->user_info);
 
 		if (flags == 0) {
 			aim_bos_setprofile(sess, fr->conn, "us-ascii", gc->account->user_info,
@@ -4197,7 +4265,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		args.destsn = name;
 
 		len = strlen(message);
-		args.flags |= check_encoding(message);
+		args.flags |= oscar_encoding_check(message);
 		if (args.flags & AIM_IMFLAGS_UNICODE) {
 			debug_printf("Sending Unicode IM\n");
 			args.charset = 0x0002;
@@ -4277,96 +4345,108 @@ static void oscar_set_dir(struct gaim_connection *g, const char *first, const ch
 }
 
 
-static void oscar_set_idle(struct gaim_connection *g, int time) {
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+static void oscar_set_idle(struct gaim_connection *gc, int time) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	aim_bos_setidle(od->sess, od->conn, time);
 }
 
-static void oscar_set_info(struct gaim_connection *g, char *info) {
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
-	gchar *inforeal, *unicode;
-	fu32_t flags;
-	int unicode_len;
+static void oscar_set_info(struct gaim_connection *gc, char *text) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	fu32_t flags = 0;
+	char *msg = NULL;
+	int msglen = 0;
 
 	if (od->rights.maxsiglen == 0)
 		do_error_dialog(_("Unable to set AIM profile."), 
 				_("You have probably requested to set your profile before the login procedure completed.  "
-				  "Your profile remains unset; try setting it again when you are fully connected."), GAIM_ERROR);
-
-	if (strlen(info) > od->rights.maxsiglen) {
-		gchar *errstr;
-
-		errstr = g_strdup_printf(_("The maximum profile length of %d bytes has been exceeded.  "
-					   "Gaim has truncated and set it."), od->rights.maxsiglen);
-		do_error_dialog("Profile too long.", errstr, GAIM_WARNING);
-
-		g_free(errstr);
-	}
-
-	inforeal = g_strndup(info, od->rights.maxsiglen);
+				  "Your profile remains unset; try setting it again when you are fully connected."), GAIM_WARNING);
 
 	if (od->icq)
 		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
 	else {
-		flags = check_encoding(inforeal);
-
-		if (flags == 0) {
-			aim_bos_setprofile(od->sess, od->conn, "us-ascii", inforeal, strlen (inforeal),
-					   NULL, NULL, 0, caps_aim);
-		} else {
-			unicode = g_convert (inforeal, strlen(inforeal), "UCS-2BE", "UTF-8", NULL,
-					     &unicode_len, NULL);
-			aim_bos_setprofile(od->sess, od->conn, "unicode-2-0", unicode, unicode_len,
-					   NULL, NULL, 0, caps_aim);
-			g_free(unicode);
+		if (!text) {
+			aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, NULL, 0, caps_aim);
+			return;
 		}
+
+		flags = oscar_encoding_check(text);
+		if (flags & AIM_IMFLAGS_UNICODE) {
+			msg = g_convert(text, strlen(text), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+			aim_bos_setprofile(od->sess, od->conn, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
+			g_free(msg);
+			gc->away = g_strndup(text, od->rights.maxsiglen/2);
+		} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
+			msg = g_convert(text, strlen(text), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
+			aim_bos_setprofile(od->sess, od->conn, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
+			g_free(msg);
+			gc->away = g_strndup(text, od->rights.maxsiglen);
+		} else {
+			msglen = strlen(text);
+			aim_bos_setprofile(od->sess, od->conn, "us-ascii", text, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
+			gc->away = g_strndup(text, od->rights.maxsiglen);
+		}
+
+		if (msglen > od->rights.maxsiglen) {
+			gchar *errstr;
+			errstr = g_strdup_printf(_("The maximum profile length of %d bytes has been exceeded.  "
+						   "Gaim has truncated it for you."), od->rights.maxsiglen);
+			do_error_dialog(_("Profile too long."), errstr, GAIM_WARNING);
+			g_free(errstr);
+		}
+
 	}
-	g_free(inforeal);
 
 	return;
 }
 
-static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od, const char *message)
+static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od, const char *text)
 {
-	fu32_t flags;
-	char *unicode;
-	int unicode_len;
+	fu32_t flags = 0;
+	char *msg = NULL;
+	int msglen = 0;
 
 	if (od->rights.maxawaymsglen == 0)
 		do_error_dialog(_("Unable to set AIM away message."), 
 				_("You have probably requested to set your away message before the login procedure completed.  "
-				  "You remain in a \"present\" state; try setting it again when you are fully connected."), GAIM_ERROR);
-	
+				  "You remain in a \"present\" state; try setting it again when you are fully connected."), GAIM_WARNING);
+
 	if (gc->away) {
 		g_free(gc->away);
 		gc->away = NULL;
 	}
 
-	if (!message) {
+	if (!text) {
 		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, "", 0, caps_aim);
 		return;
 	}
 
-	if (strlen(message) > od->rights.maxawaymsglen) {
-		gchar *errstr;
-
-		errstr = g_strdup_printf(_("The away message length of %d bytes has been exceeded.  "
-					   "Gaim has truncated it and set you away."), od->rights.maxawaymsglen);
-		do_error_dialog("Away message too long.", errstr, GAIM_WARNING);
-		g_free(errstr);
+	flags = oscar_encoding_check(text);
+	if (flags & AIM_IMFLAGS_UNICODE) {
+		msg = g_convert(text, strlen(text), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "unicode-2-0", msg, 
+			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
+		g_free(msg);
+		gc->away = g_strndup(text, od->rights.maxawaymsglen/2);
+	} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
+		msg = g_convert(text, strlen(text), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
+		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "iso-8859-1", msg, 
+			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
+		g_free(msg);
+		gc->away = g_strndup(text, od->rights.maxawaymsglen);
+	} else {
+		msglen = strlen(text);
+		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "us-ascii", text, 
+			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
+		gc->away = g_strndup(text, od->rights.maxawaymsglen);
 	}
 
-	gc->away = g_strndup(message, od->rights.maxawaymsglen);
-	flags = check_encoding(message);
-	
-	if (flags == 0) {
-		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "us-ascii", gc->away, strlen(gc->away),
-				   caps_aim);
-	} else {
-		unicode = g_convert(message, strlen(message), "UCS-2BE", "UTF-8", NULL, &unicode_len, NULL);
-		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "unicode-2-0", unicode, unicode_len,
-				   caps_aim);
-		g_free(unicode);
+	if (msglen > od->rights.maxawaymsglen) {
+		gchar *errstr;
+
+		errstr = g_strdup_printf(_("The maximum away message length of %d bytes has been exceeded.  "
+					   "Gaim has truncated it and set you away."), od->rights.maxawaymsglen);
+		do_error_dialog(_("Away message too long."), errstr, GAIM_WARNING);
+		g_free(errstr);
 	}
 
 	return;
@@ -5779,69 +5859,6 @@ static void oscar_convo_closed(struct gaim_connection *gc, char *who)
 	gaim_input_remove(dim->watcher);
 	aim_conn_kill(od->sess, &dim->conn);
 	g_free(dim);
-}
-
-static fu32_t check_encoding(const char *utf8)
-{
-	int i = 0;
-	fu32_t encodingflag = 0;
-
-	/* Determine how we can send this message.  Per the
-	 * warnings elsewhere in this file, these little
-	 * checks determine the simplest encoding we can use
-	 * for a given message send using it. */
-	while (utf8[i]) {
-		if ((unsigned char)utf8[i] > 0x7f) {
-			/* not ASCII! */
-			encodingflag = AIM_IMFLAGS_ISO_8859_1;
-			break;
-		}
-		i++;
-	}
-	while (utf8[i]) {
-		/* ISO-8859-1 is 0x00-0xbf in the first byte
-		 * followed by 0xc0-0xc3 in the second */
-		if ((unsigned char)utf8[i] < 0x80) {
-			i++;
-			continue;
-		} else if (((unsigned char)utf8[i] & 0xfc) == 0xc0 &&
-			   ((unsigned char)utf8[i + 1] & 0xc0) == 0x80) {
-			i += 2;
-			continue;
-		}
-		encodingflag = AIM_IMFLAGS_UNICODE;
-		break;
-	}
-
-	return encodingflag;
-}
-
-static fu32_t parse_encoding(const char *enc)
-{
-	char *charset;
-
-	/* If anything goes wrong, fall back on ASCII and print a message */
-	if (enc == NULL) {
-		debug_printf("Encoding was null, that's odd\n");
-		return 0;
-	}
-	charset = strstr(enc, "charset=");
-	if (charset == NULL) {
-		debug_printf("No charset specified for info, assuming ASCII\n");
-		return 0;
-	}
-	charset += 8;
-	if (!strcmp(charset, "\"us-ascii\"") || !strcmp(charset, "\"utf-8\"")) {
-		/* UTF-8 is our native charset, ASCII is a proper subset */
-		return 0;
-	} else if (!strcmp(charset, "\"iso-8859-1\"")) {
-		return AIM_IMFLAGS_ISO_8859_1;
-	} else if (!strcmp(charset, "\"unicode-2-0\"")) {
-		return AIM_IMFLAGS_UNICODE;
-	} else {
-		debug_printf("Unrecognized character set '%s', using ASCII\n", charset);
-		return 0;
-	}
 }
 
 G_MODULE_EXPORT void oscar_init(struct prpl *ret) {
