@@ -1,5 +1,6 @@
 TYPEMAP
 gboolean                 T_BOOL
+const char *             T_PV
 Gaim::Account            T_GaimObj
 Gaim::BuddyList::Group   T_GaimObj
 Gaim::BuddyList::Buddy   T_GaimObj

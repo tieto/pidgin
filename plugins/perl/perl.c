@@ -276,7 +276,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 			GaimPluginInfo *info;
 			GaimPerlScript *gps;
 			char *basename;
-			int len;
+			STRLEN len;
 
 			gaim_debug(GAIM_DEBUG_INFO, "perl", "Found plugin info\n");
 
@@ -370,7 +370,7 @@ load_perl_plugin(GaimPlugin *plugin)
 		SPAGAIN;
 
 		if (SvTRUE(ERRSV)) {
-			int len;
+			STRLEN len;
 
 			gaim_debug(GAIM_DEBUG_ERROR, "perl",
 					   "Perl function %s exited abnormally: %s\n",
@@ -429,7 +429,7 @@ unload_perl_plugin(GaimPlugin *plugin)
 		SPAGAIN;
 
 		if (SvTRUE(ERRSV)) {
-			int len;
+			STRLEN len;
 
 			gaim_debug(GAIM_DEBUG_ERROR, "perl",
 					   "Perl function %s exited abnormally: %s\n",

@@ -36,6 +36,8 @@ perl_la_DEPENDENCIES = \
 	fi
 
 common_sources = \
+	common/fallback/const-c.inc \
+	common/fallback/const-xs.inc \
 	common/Account.xs \
 	common/BuddyList.xs \
 	common/BuddyList_Buddy.xs \
