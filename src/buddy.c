@@ -492,6 +492,16 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 	 * via the UI
 	 */
 
+	grp = g_slist_find(gc->groups, rem_g);
+        delg = (struct group *)grp->data;
+        mem = delg->members;
+	
+        mem = g_slist_find(mem, rem_b);
+        delb = (struct buddy *)mem->data;
+	
+        delg->members = g_slist_remove(delg->members, delb);
+        serv_remove_buddy(gc, delb->name);
+
 	gs = find_group_show(rem_g->name);
 	if (gs) {
 		bs = find_buddy_show(gs, rem_b->name);
@@ -517,25 +527,16 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 						update_num_group(gs);
 				} else
 					update_num_group(gs);
-			}
-		}
+			} else
+				update_num_group(gs);
+		} else
+			update_num_group(gs);
 	}
 
-	grp = g_slist_find(gc->groups, rem_g);
-        delg = (struct group *)grp->data;
-        mem = delg->members;
-	
-        mem = g_slist_find(mem, rem_b);
-        delb = (struct buddy *)mem->data;
-	
-        delg->members = g_slist_remove(delg->members, delb);
-        serv_remove_buddy(gc, delb->name);
 	c = find_conversation(delb->name);
-        g_free(delb);
-	mem = delg->members;
-
 	if (c)
 		update_buttons_by_protocol(c);
+        g_free(delb);
 
 	// flush buddy list to cache
 
