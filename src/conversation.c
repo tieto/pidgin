@@ -405,6 +405,8 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 		gtkspell_detach(GTK_TEXT(c->entry));
 
 	if (!c->is_chat) {
+		if (c->gc && c->gc->prpl && c->gc->prpl->remove_convo)
+			(*c->gc->prpl->remove_convo)(c->gc, c);
 		if (display_options & OPT_DISP_ONE_WINDOW) {
 			if (g_list_length(conversations) > 1) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(convo_notebook),
@@ -422,8 +424,6 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 			c->window = NULL;
 		}
 	} else {
-		if (c->gc && c->gc->prpl && c->gc->prpl->remove_convo)
-			(*c->gc->prpl->remove_convo)(c->gc, c);
 		if (display_options & OPT_DISP_ONE_CHAT_WINDOW) {
 			if (g_list_length(chats) > 1) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
