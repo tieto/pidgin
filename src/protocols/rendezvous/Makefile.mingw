@@ -68,7 +68,8 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			mdns.c \
+C_SRC =			direct.c \
+				mdns.c \
 				mdns_cache.c \
 				rendezvous.c
 

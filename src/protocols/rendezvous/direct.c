@@ -27,7 +27,7 @@
 #include "direct.h"
 #include "rendezvous.h"
 
-/*
+#if 0
 gchar *
 gaim_network_convert_ipv4_to_string(void *ip)
 {
@@ -50,27 +50,31 @@ gaim_network_convert_ipv6_to_string(void *ip)
 
 	return ret;
 }
-*/
 
-static gboolean rendezvous_find_buddy_by_ip(gpointer key, gpointer value, gpointer user_data)
+static gboolean
+rendezvous_find_buddy_by_ip(gpointer key, gpointer value, gpointer user_data)
 {
 	RendezvousBuddy *rb = value;
 
-printf("looking at ip=%s\n", rb->ip);
-	if ((rb->ip != NULL) && !strcasecmp(rb->ip, user_data))
-		return TRUE;
+	if (rb->ipv4 == NULL)
+		return FALSE;
 
-	return FALSE;
+printf("looking at ip=%hu.%hu.%hu.%hu\n", rb->ipv4[0], rb->ipv4[1], rb->ipv4[2], rb->ipv4[3]);
+	return !memcmp(rb->ipv4, user_data, 4);
 }
+#endif
 
-void rendezvous_direct_acceptconnection(gpointer data, gint source, GaimInputCondition condition)
+void
+rendezvous_direct_acceptconnection(gpointer data, gint source, GaimInputCondition condition)
 {
 	GaimConnection *gc = (GaimConnection *)data;
 	RendezvousData *rd = gc->proto_data;
 	int fd;
 	struct sockaddr_in6 addr;
 	socklen_t addrlen = sizeof(addr);
+#if 0
 	gchar *ip;
+#endif
 	RendezvousBuddy *rb;
 
 	fd = accept(rd->listener, (struct sockaddr *)&addr, &addrlen);
@@ -78,7 +82,8 @@ void rendezvous_direct_acceptconnection(gpointer data, gint source, GaimInputCon
 		gaim_debug_warning("rendezvous", "accept: %s\n", strerror(errno));
 		return;
 	}
-/*
+
+#if 0
 	printf("\nsa_family=%d\n\n", ((struct sockaddr *)&addr)->sa_family);
 	if (((struct sockaddr *)&addr)->sa_family == AF_INET)
 		ip = gaim_network_convert_ipv4_to_string((unsigned char *)&ip);
@@ -88,7 +93,8 @@ void rendezvous_direct_acceptconnection(gpointer data, gint source, GaimInputCon
 
 	rb = g_hash_table_find(rd->buddies, rendezvous_find_buddy_by_ip, ip);
 	g_free(ip);
-*/
+#endif
+
 	if (rb == NULL) {
 		/* We don't want to talk to people that don't advertise themselves */
 printf("\ndid not find rb\n\n");
@@ -98,5 +104,4 @@ printf("\ndid not find rb\n\n");
 printf("\nip belongs to=%s\n\n", rb->aim);
 
 	rb->fd = fd;
-
 }

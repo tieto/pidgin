@@ -277,7 +277,6 @@ mdns_copy_rr_rdata(unsigned short type, const void *rdata, unsigned int rdlength
 	return ret;
 }
 
-#if 0
 ResourceRecord *
 mdns_copy_rr(const ResourceRecord *rr)
 {
@@ -297,6 +296,7 @@ mdns_copy_rr(const ResourceRecord *rr)
 	return ret;
 }
 
+#if 0
 static GSList *
 mdns_copy_rrs(const GSList *rrs)
 {
@@ -367,6 +367,7 @@ mdns_socket_establish()
 	addr.sin_addr.s_addr = INADDR_ANY;
 	if (bind(fd, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < 0) {
 		gaim_debug_error("mdns", "Unable to bind socket to interface.\n");
+		gaim_debug_error("mdns", "%s\n", strerror(errno));
 		close(fd);
 		return -1;
 	}

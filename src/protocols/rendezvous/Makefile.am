@@ -4,6 +4,8 @@ EXTRA_DIST = \
 pkgdir = $(libdir)/gaim
 
 RENDEZVOUSSOURCES = \
+	direct.c \
+	direct.h \
 	mdns.c \
 	mdns.h \
 	mdns_cache.c \

@@ -82,6 +82,23 @@ rendezvous_extract_name(gchar *domain)
 /* Buddy List Functions     */
 /****************************/
 
+static RendezvousBuddy *
+rendezvous_find_or_create_rendezvousbuddy(GaimConnection *gc, const char *name)
+{
+	RendezvousData *rd = gc->proto_data;
+	RendezvousBuddy *rb;
+
+	rb = g_hash_table_lookup(rd->buddies, name);
+	if (rb == NULL) {
+		rb = g_malloc0(sizeof(RendezvousBuddy));
+		rb->fd = -1;
+		rb->watcher = -1;
+		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
+	}
+
+	return rb;
+}
+
 static void
 rendezvous_addtolocal(GaimConnection *gc, const char *name, const char *domain)
 {
@@ -100,17 +117,14 @@ rendezvous_addtolocal(GaimConnection *gc, const char *name, const char *domain)
 		return;
 
 	b = gaim_buddy_new(account, name, NULL);
+	gaim_blist_node_set_flags((GaimBlistNode *)b, GAIM_BLIST_NODE_FLAG_NO_SAVE);
 	/* gaim_blist_node_set_flag(b, GAIM_BLIST_NODE_FLAG_NO_SAVE); */
 	gaim_blist_add_buddy(b, NULL, g, NULL);
 	gaim_prpl_got_user_status(account, b->name, "online", NULL);
 
 #if 0
 	RendezvousBuddy *rb;
-	rb = g_hash_table_lookup(rd->buddies, name);
-	if (rb == NULL) {
-		rb = g_malloc0(sizeof(RendezvousBuddy));
-		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
-	}
+	rb = rendezvous_find_or_create_rendezvousbuddy(gc, name);
 	rb->ttltimer = gaim_timeout_add(time * 10000, rendezvous_buddy_timeout, gc);
 
 	gaim_timeout_remove(rb->ttltimer);
@@ -177,25 +191,19 @@ rendezvous_removeallfromlocal(GaimConnection *gc)
 static void
 rendezvous_handle_rr_a(GaimConnection *gc, ResourceRecord *rr, const gchar *name)
 {
-	RendezvousData *rd = gc->proto_data;
 	RendezvousBuddy *rb;
 	ResourceRecordRDataSRV *rdata;
 
 	rdata = rr->rdata;
 
-	rb = g_hash_table_lookup(rd->buddies, name);
-	if (rb == NULL) {
-		rb = g_malloc0(sizeof(RendezvousBuddy));
-		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
-	}
+	rb = rendezvous_find_or_create_rendezvousbuddy(gc, name);
 
-	/* rb->ipv4 = gaim_network_convert_ipv4_to_string((unsigned char *)rdata); */
+	memcpy(rb->ipv4, rdata, 4);
 }
 
 static void
 rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, const gchar *name)
 {
-	RendezvousData *rd = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	RendezvousBuddy *rb;
 	GSList *rdata;
@@ -208,11 +216,7 @@ rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, const gchar *na
 	if ((node1 == NULL) || (node1->value == NULL) || (strcmp(node1->value, "1")))
 		return;
 
-	rb = g_hash_table_lookup(rd->buddies, name);
-	if (rb == NULL) {
-		rb = g_malloc0(sizeof(RendezvousBuddy));
-		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
-	}
+	rb = rendezvous_find_or_create_rendezvousbuddy(gc, name);
 
 	node1 = mdns_txt_find(rdata, "1st");
 	node2 = mdns_txt_find(rdata, "last");
@@ -253,7 +257,8 @@ rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, const gchar *na
 				rb->idle += 978307200; /* convert to seconds-since-epoch */
 			}
 			rb->status = UC_IDLE;
-			gaim_prpl_got_user_idle(account, name, TRUE, rb->idle);
+			/* TODO: Do this when the user is added to the buddy list?  Definitely not here! */
+			/* gaim_prpl_got_user_idle(account, name, TRUE, rb->idle); */
 		} else if (!strcmp(node1->value, "dnd")) {
 			/* Away */
 			rb->status = UC_UNAVAILABLE;
@@ -272,35 +277,25 @@ rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, const gchar *na
 static void
 rendezvous_handle_rr_aaaa(GaimConnection *gc, ResourceRecord *rr, const gchar *name)
 {
-	RendezvousData *rd = gc->proto_data;
 	RendezvousBuddy *rb;
 	ResourceRecordRDataSRV *rdata;
 
 	rdata = rr->rdata;
 
-	rb = g_hash_table_lookup(rd->buddies, name);
-	if (rb == NULL) {
-		rb = g_malloc0(sizeof(RendezvousBuddy));
-		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
-	}
+	rb = rendezvous_find_or_create_rendezvousbuddy(gc, name);
 
-	/* rb->ip = gaim_network_convert_ipv6_to_string((unsigned char *)rdata); */
+	memcpy(rb->ipv6, rdata, 16);
 }
 
 static void
 rendezvous_handle_rr_srv(GaimConnection *gc, ResourceRecord *rr, const gchar *name)
 {
-	RendezvousData *rd = gc->proto_data;
 	RendezvousBuddy *rb;
 	ResourceRecordRDataSRV *rdata;
 
 	rdata = rr->rdata;
 
-	rb = g_hash_table_lookup(rd->buddies, name);
-	if (rb == NULL) {
-		rb = g_malloc0(sizeof(RendezvousBuddy));
-		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
-	}
+	rb = rendezvous_find_or_create_rendezvousbuddy(gc, name);
 
 	rb->p2pjport = rdata->port;
 }
@@ -444,6 +439,21 @@ rendezvous_prpl_tooltip_text(GaimBuddy *b)
 	return g_string_free(ret, FALSE);
 }
 
+static GList *
+rendezvous_prpl_status_types(GaimAccount *account)
+{
+	GList *status_types = NULL;
+	GaimStatusType *type;
+
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, "online", _("Online"), FALSE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	return status_types;
+}
+
 /****************************/
 /* Connection Functions      */
 /****************************/
@@ -556,19 +566,23 @@ rendezvous_send_online(GaimConnection *gc)
 {
 	RendezvousData *rd = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	const gchar *me;
+	const gchar *me, *myip;
 	gchar *myname, *mycomp, *myport;
+	gchar **mysplitip;
 	unsigned char myipv4[4];
 
 	me = gaim_account_get_username(account);
 	myname = g_strdup_printf("%s._presence._tcp.local", me);
 	mycomp = g_strdup_printf("%s.local", strchr(me, '@') + 1);
-	/* myipv4 = gaim_network_ip_atoi(gaim_network_get_local_system_ip(-1)); */
-	myipv4[0] = 192;
-	myipv4[1] = 168;
-	myipv4[2] = 1;
-	myipv4[3] = 41;
 	myport = g_strdup_printf("%d", rd->listener_port);
+
+	myip = gaim_network_get_local_system_ip(-1);
+	mysplitip = g_strsplit(myip, ".", 0);
+	myipv4[0] = atoi(mysplitip[0]);
+	myipv4[1] = atoi(mysplitip[1]);
+	myipv4[2] = atoi(mysplitip[2]);
+	myipv4[3] = atoi(mysplitip[3]);
+	g_strfreev(mysplitip);
 
 	mdns_advertise_a(rd->fd, mycomp, myipv4);
 	mdns_advertise_ptr(rd->fd, "_presence._tcp.local", myname);
@@ -677,7 +691,18 @@ rendezvous_prpl_close(GaimConnection *gc)
 static int
 rendezvous_prpl_send_im(GaimConnection *gc, const char *who, const char *message, GaimConvImFlags flags)
 {
+	RendezvousData *rd = gc->proto_data;
+	RendezvousBuddy *rb;
+
 	gaim_debug_info("rendezvous", "Sending IM\n");
+
+	rb = g_hash_table_lookup(rd->buddies, who);
+	if (rb == NULL) {
+		/* TODO: Should print an error to the user, here */
+		gaim_debug_error("rendezvous", "Could not send message to %s: Could not find user information.\n", who);
+	}
+
+	/* TODO: Establish a direct connection then send IM.  Will need to queue the message somewhere. */
 
 	return 1;
 }
@@ -740,6 +765,7 @@ static void init_plugin(GaimPlugin *plugin)
 	prpl_info.list_emblems			= rendezvous_prpl_list_emblems;
 	prpl_info.status_text			= rendezvous_prpl_status_text;
 	prpl_info.tooltip_text			= rendezvous_prpl_tooltip_text;
+	prpl_info.status_types			= rendezvous_prpl_status_types;
 	prpl_info.login					= rendezvous_prpl_login;
 	prpl_info.close					= rendezvous_prpl_close;
 	prpl_info.send_im				= rendezvous_prpl_send_im;

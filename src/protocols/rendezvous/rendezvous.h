@@ -51,14 +51,14 @@ typedef struct _RendezvousBuddy {
 #endif
 	gchar *firstandlast;
 	gchar *aim;
-	gchar *ipv4; /* String representation of an IPv4 address */
-	gchar *ipv6; /* String representation of an IPv6 address */
+	unsigned char ipv4[4];		/**< An IPv4 address */
+	unsigned char ipv6[16];		/**< An IPv6 address */
 	unsigned short p2pjport;
 	int status;
-	int idle;		/**< Current idle time in seconds since the epoch.	*/
-	gchar *msg;		/**< Current status message of this buddy.			*/
-	int fd;			/**< File descriptor of the P2PJ socket.			*/
-	int watcher;	/**< Handle for the watcher of the P2PJ socket.		*/
+	int idle;					/**< Current idle time in seconds since the epoch.	*/
+	gchar *msg;					/**< Current status message of this buddy.			*/
+	int fd;						/**< File descriptor of the P2PJ socket.			*/
+	int watcher;				/**< Handle for the watcher of the P2PJ socket.		*/
 } RendezvousBuddy;
 
 #endif /* _RENDEZVOUS_H_ */
