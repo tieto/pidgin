@@ -33,6 +33,9 @@ GaimStringref *gaim_stringref_new(const char *value)
 {
 	GaimStringref *newref;
 
+	if (value == NULL)
+		return NULL;
+
 	newref = g_malloc(sizeof(GaimStringref) + strlen(value) + 1);
 	strcpy(newref->value, value);
 	newref->ref = 1;
