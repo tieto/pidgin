@@ -826,12 +826,10 @@ int main(int argc, char *argv[])
 
 	gaim_gtk_stock_init();
 
-	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
-
 #ifdef _WIN32
-        wgaim_set_hinstance(hint);
-        wgaim_pre_plugin_init();
+        wgaim_init(hint);
 #endif
+	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
 
 	if (!gaim_core_init(GAIM_GTK_UI)) {
 		fprintf(stderr,
@@ -868,11 +866,6 @@ int main(int argc, char *argv[])
 
 	gaim_pounces_load();
 	gaim_status_load();
-
-#ifdef _WIN32
-	/* Various win32 initializations */
-	wgaim_init();
-#endif
 
 	gaim_set_blist(gaim_blist_new());
 	gaim_blist_load();
