@@ -310,7 +310,6 @@ void build_prefs()
 	GtkWidget *fontbox;
 	GtkWidget *fontframe;
 	GtkWidget *appbox;
-	GtkWidget *appletbox;
 	GtkWidget *away_topbox;
 	GtkWidget *away_botbox;
 	GtkWidget *add_away;
@@ -329,6 +328,7 @@ void build_prefs()
 #endif
 #ifdef USE_APPLET
 	GtkWidget *applet_page;
+	GtkWidget *appletbox;
 #endif
         GtkWidget *label;
         GtkWidget *browseropt;
@@ -438,6 +438,7 @@ void build_prefs()
 
 	gaim_button("Automatically Show Buddy List", &general_options, OPT_GEN_APP_BUDDY_SHOW, appletbox);
 	gaim_button("Sounds go through GNOME", &sound_options, OPT_SOUND_THROUGH_GNOME, appletbox);
+	gaim_button("Buddy list displays near the applet", &general_options, OPT_GEN_NEAR_APPLET, appletbox);
 
 	gtk_widget_show(appletbox);
 	gtk_widget_show(applet_page);

@@ -287,8 +287,10 @@ void gnome_buddy_hide(){
 }
 
 void gnome_buddy_set_pos( gint x, gint y ){
-        if (general_options & OPT_GEN_SAVED_WINDOWS)
+	if (general_options & OPT_GEN_NEAR_APPLET)
 		gtk_widget_set_uposition ( blist, x, y );
+	else if (general_options & OPT_GEN_SAVED_WINDOWS)
+		gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff, blist_pos.y - blist_pos.yoff);
 }
 
 GtkRequisition gnome_buddy_get_dimentions(){

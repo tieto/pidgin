@@ -529,7 +529,8 @@ void set_defaults()
                 OPT_GEN_ENTER_SENDS |
                 OPT_GEN_SAVED_WINDOWS |
                 OPT_GEN_REMEMBER_PASS |
-		OPT_GEN_REGISTERED; 
+		OPT_GEN_REGISTERED |
+		OPT_GEN_NEAR_APPLET; 
         display_options =
                 OPT_DISP_SHOW_IDLETIME |
                 OPT_DISP_SHOW_TIME |

@@ -348,7 +348,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 348 $"
+#define REVISION "gaim:$Revision: 350 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -424,7 +424,7 @@ extern int general_options;
 #define OPT_GEN_BROWSER_POPUP    0x00000800
 #define OPT_GEN_SAVED_WINDOWS    0x00001000
 #define OPT_GEN_DISCARD_WHEN_AWAY 0x00002000
-#define OPT_GEN_CHECK_VERSIONS	0x00004000
+#define OPT_GEN_NEAR_APPLET	0x00004000
 #define OPT_GEN_CHECK_SPELLING	0x00008000
 
 extern int display_options;

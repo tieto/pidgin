@@ -63,6 +63,8 @@ GdkPixmap *icon_msg_pending_bm=NULL;
 GdkPixmap *icon_away_pm=NULL;
 GdkPixmap *icon_away_bm=NULL;
 
+static GtkAllocation get_applet_pos(gboolean);
+
 /***************************************************************
 **
 ** function load_applet_icon
@@ -227,10 +229,13 @@ void make_buddy(void) {
 ** description - I guess it shows the login dialog
 **
 ****************************************************************/
-
+extern GtkWidget *mainwindow;
 void applet_show_login(AppletWidget *widget, gpointer data) {
-	/* FIXME : this is so pointless */
         show_login();
+	if (general_options & OPT_GEN_NEAR_APPLET) {
+		GtkAllocation a = get_applet_pos(FALSE);
+		gtk_widget_set_uposition(mainwindow, a.x, a.y);
+	}
 }
 
 void insert_applet_away() {
@@ -349,14 +354,17 @@ void AppletCancelLogon(){
 **				of the Gnome panel.
 **
 ****************************************************************/ 
-GtkAllocation get_applet_pos(){
+GtkAllocation get_applet_pos(gboolean for_blist) {
     gint x,y,pad;
     GtkRequisition buddy_req, applet_req;
     GtkAllocation result;
     GNOME_Panel_OrientType orient = applet_widget_get_panel_orient( APPLET_WIDGET(applet) );
     pad = 5;
     gdk_window_get_position(gtk_widget_get_parent_window(appletframe), &x, &y);
-    buddy_req = gnome_buddy_get_dimentions();
+    if (for_blist)
+	    buddy_req = gnome_buddy_get_dimentions();
+    else
+	    buddy_req = mainwindow->requisition;
     applet_req = appletframe->requisition;
    switch( orient ){
    	case ORIENT_UP:
@@ -397,7 +405,7 @@ void createSignonPopup(){
 void createOnlinePopup(){
     GtkAllocation al;
     make_buddy();
-    al  = get_applet_pos();  
+    al  = get_applet_pos(TRUE);  
     gnome_buddy_set_pos(  al.x, al.y );
 }
 
