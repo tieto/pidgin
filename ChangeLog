@@ -10,6 +10,7 @@ version 0.75cvs :
 	* Touch-up various dialogs to follow the Gnome Human Interface
 	  Guidelines more closely (Steven Garrity, Nathan Fredrickson, and
 	  Ka-Hing Cheung)
+	* Works better with all-black gtk themes (Etan Reisner)
 	* Mozilla Firebird support (Chris (darth_sebulba04))
 	* Catalan translation updated (Xan (DXpublica))
 	* Chinese (Simplified) translation updated (Funda Wang)

@@ -97,8 +97,8 @@ static char nick_colors[][8] = {
 	"#6a5acd",              /* Slate Blue */
 	"#6495ed",              /* Cornflower Blue */
 	"#708090",              /* Slate gray */
-	"#2f4f4f",		/* Dark Slate Gray */
-	"#ff8c00",		/* Dark Orange */
+	"#2f4f4f",              /* Dark Slate Gray */
+	"#ff8c00",              /* Dark Orange */
 };
 
 #define NUM_NICK_COLORS (sizeof(nick_colors) / sizeof(*nick_colors))
@@ -5092,55 +5092,46 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	}
 	else if (type == GAIM_CONV_UPDATE_TYPING ||
 			 type == GAIM_CONV_UPDATE_UNSEEN) {
-		GtkStyle *style;
+		const gchar *name = NULL;
+		gchar *label = NULL;
 		GaimConvIm *im = NULL;
 
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
 			im = GAIM_CONV_IM(conv);
 
-		style = gtk_style_new();
+		name = gaim_conversation_get_name(conv);
 
 		if (!GTK_WIDGET_REALIZED(gtkconv->tab_label))
 			gtk_widget_realize(gtkconv->tab_label);
 
-		pango_font_description_free(style->font_desc);
-		style->font_desc = pango_font_description_copy(
-				gtk_widget_get_style(gtkconv->tab_label)->font_desc);
-
 		if (im != NULL && gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
-			style->fg[GTK_STATE_NORMAL].red   = 0x4646;
-			style->fg[GTK_STATE_NORMAL].green = 0xA0A0;
-			style->fg[GTK_STATE_NORMAL].blue  = 0x4646;
-			style->fg[GTK_STATE_ACTIVE] = style->fg[GTK_STATE_NORMAL];
+			label = g_strdup_printf("<span color=\"#46A046\">%s</span>", name);
+			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
+			g_free(label);
 		}
 		else if (im != NULL && gaim_conv_im_get_typing_state(im) == GAIM_TYPED) {
-			style->fg[GTK_STATE_NORMAL].red   = 0xD1D1;
-			style->fg[GTK_STATE_NORMAL].green = 0x9494;
-			style->fg[GTK_STATE_NORMAL].blue  = 0x0C0C;
-			style->fg[GTK_STATE_ACTIVE] = style->fg[GTK_STATE_NORMAL];
+			label = g_strdup_printf("<span color=\"#D1940C\">%s</span>", name);
+			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
+			g_free(label);
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK) {
-			style->fg[GTK_STATE_ACTIVE].red   = 0x3131;
-			style->fg[GTK_STATE_ACTIVE].green = 0x4E4E;
-			style->fg[GTK_STATE_ACTIVE].blue  = 0x6C6C;
-			style->fg[GTK_STATE_NORMAL] = style->fg[GTK_STATE_ACTIVE];
+			label = g_strdup_printf("<span color=\"#314E6C\">%s</span>", name);
+			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
+			g_free(label);
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_EVENT) {
-			style->fg[GTK_STATE_ACTIVE].red   = 0x8686;;
-			style->fg[GTK_STATE_ACTIVE].green = 0x8282;
-			style->fg[GTK_STATE_ACTIVE].blue  = 0x7272;
-			style->fg[GTK_STATE_NORMAL] = style->fg[GTK_STATE_ACTIVE];
+			label = g_strdup_printf("<span color=\"#868272\">%s</span>", name);
+			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
+			g_free(label);
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT) {
-			style->fg[GTK_STATE_ACTIVE].red   = 0xDFDF;
-			style->fg[GTK_STATE_ACTIVE].green = 0x4242;
-			style->fg[GTK_STATE_ACTIVE].blue  = 0x1E1E;
-			style->fg[GTK_STATE_NORMAL] = style->fg[GTK_STATE_ACTIVE];
+			label = g_strdup_printf("<span color=\"#DF421E\">%s</span>", name);
+			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
+			g_free(label);
 		}
-
-		gtk_widget_set_style(gtkconv->tab_label, style);
-		g_object_unref(G_OBJECT(style));
+		else
+			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), name);
 
 		if(conv == gaim_conv_window_get_active_conversation(win)) {
 			update_typing_icon(conv);
