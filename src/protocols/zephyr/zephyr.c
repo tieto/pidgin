@@ -682,7 +682,7 @@ static void message_failed(GaimConnection *gc, ZNotice_t notice, struct sockaddr
 	}
 }
 
-static void handle_message(GaimConnection *gc,ZNotice_t notice, struct sockaddr_in from)
+static void handle_message(GaimConnection *gc,ZNotice_t notice)
 {
 	zephyr_account* zephyr = gc->proto_data;
 
@@ -1060,7 +1060,6 @@ static gint check_notify_tzc(gpointer data)
 	GaimConnection *gc = (GaimConnection *)data;
 	zephyr_account* zephyr = gc->proto_data;
 	parse_tree *newparsetree = read_from_tzc(zephyr);
-	struct sockaddr_in from;
 	if (newparsetree != NULL) {
 		gchar *spewtype;
 		if ( (spewtype =  tree_child(find_node(newparsetree,"tzcspew"),2)->contents) ) {
@@ -1084,7 +1083,7 @@ static gint check_notify_tzc(gpointer data)
 				notice.z_default_format = "Class $class, Instance $instance:\n" "To: @bold($recipient) at $time $date\n" "From: @bold($1) <$sender>\n\n$2";
 				notice.z_message_len = strlen(msg) + 3;
 				notice.z_message = buf;
-				handle_message(gc,notice,from);
+				handle_message(gc, notice);
 				g_free(msg);
 				/*				  g_free(zsig); */
 				g_free(buf);
@@ -1175,7 +1174,7 @@ static gint check_notify_zeph02(gpointer data)
 		case UNSAFE:
 		case UNACKED:
 		case ACKED:
-			handle_message(gc,notice, from);
+			handle_message(gc,notice);
 			break;
 		case SERVACK:
 			if (!(g_ascii_strcasecmp(notice.z_message, ZSRVACK_NOTSENT))) {
