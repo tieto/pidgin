@@ -51,8 +51,8 @@ version 0.60:
 	  -- and other cool IRC enhancments (Thanks, Jonas Birmé)
 	* Add / Remove buddy menu item added to the chat users list
 	  (Thanks Jonas Birmé)
-	* Parse URL messages and Contact Sending in ICQ (Thanks Mark
-	  Doliner)
+	* Parse URL messages, Contact Sending and Pager Messages
+	  in ICQ (Thanks Mark Doliner)
 	* Added GAIM::remove_event_handler and made set_info short
 	  circuitable in perl.  (Thanks Ryan McCabe)
 	* Improved MSN internationalization (Thanks A Lee)
@@ -102,6 +102,8 @@ version 0.60:
 	* Better supression of auto-responses (Thanks Joshua Blanton)
 	* MSN users are notified when the other party closes the conversation
 	  window (Thanks, Christian Hammond)
+	* Ability to add screenname@mac.com people to AIM buddy lists
+	  (Thanks, Graham Booker)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

@@ -2043,16 +2043,24 @@ static void gaim_icq_contactdontadd(struct channel4_data *data) {
 	g_free(data);
 }
 
-static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args) {
+static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args, time_t t) {
 	struct gaim_connection *gc = sess->aux_data;
 
+	debug_printf("Received a channel 4 message of type (type 0x%04d).\n", args->type);
 	switch (args->type) {
-		case 0x0001: { /* An almost-normal instant message.  Mac ICQ sends this.  It's peculiar. */
+		case 0x0001: { /* MacICQ message or basic offline message */
 			gchar *uin, *message;
 			uin = g_strdup_printf("%lu", args->uin);
 			message = g_strdup(args->msg);
 			strip_linefeed(message);
-			serv_got_im(gc, uin, message, 0, time(NULL), -1);
+			if (t) {
+				/* This is an offline message */
+				/* I think this timestamp is in UTC, or something */
+				serv_got_im(gc, uin, message, 0, t, -1);
+			} else {
+				/* This is a message from MacICQ/Miranda */
+				serv_got_im(gc, uin, message, 0, time(NULL), -1);
+			}
 			g_free(uin);
 			g_free(message);
 		} break;
@@ -2089,6 +2097,27 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			g_free(dialog_msg);
 		} break;
 
+		case 0x000d: { /* Someone has sent you a pager message from http://web.icq.com/wwp/1,,,00.html?Uin=your_uin */
+			char *dialog_msg;
+			gchar **text;
+			text = g_strsplit(args->msg, "þ", 0);
+			dialog_msg = g_strdup_printf(_("You have received an ICQ page\n\nFrom: %s [%s]\n%s"), text[0], text[3], text[5]);
+			do_error_dialog("ICQ Page", dialog_msg, GAIM_INFO);
+			g_strfreev(text);
+			g_free(dialog_msg);
+		} break;
+
+		case 0x000e: { /* Someone has emailed you at your_uin@pager.icq.com */
+			char *dialog_msg;
+			gchar **text;
+			text = g_strsplit(args->msg, "þ", 0);
+/*			dialog_msg = g_strdup_printf(_("You have received an ICQ email\n\n1=%s\n2=%s\n3=%s\n4=%s\n5=%s\n6=%s\n"), text[0], text[1], text[2], text[3], text[4], text[5]); */
+			dialog_msg = g_strdup_printf(_("You have received an ICQ email\n\nFrom: Not yet"));
+			do_error_dialog("ICQ Email", dialog_msg, GAIM_INFO);
+			g_strfreev(text);
+			g_free(dialog_msg);
+		} break;
+
 		case 0x0012: {
 			/* Ack for authorizing/denying someone.  Or possibly an ack for sending any system notice */
 		} break;
@@ -2114,7 +2143,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 		} break;
 
-		case 0x001a: { /* Someone has requested that you send them from ICQ contacts */
+		case 0x001a: { /* Someone has sent you a greeting card or requested contacts? */
 			/* This is boring and silly. */
 		} break;
 
@@ -2151,7 +2180,7 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 		case 4: { /* ICQ */
 			struct aim_incomingim_ch4_args *args;
 			args = va_arg(ap, struct aim_incomingim_ch4_args *);
-			ret = incomingim_chan4(sess, fr->conn, userinfo, args);
+			ret = incomingim_chan4(sess, fr->conn, userinfo, args, 0);
 		} break;
 
 		default: {
@@ -3142,51 +3171,19 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	struct aim_icq_offlinemsg *msg;
-	struct gaim_connection *gc = sess->aux_data;
+	struct aim_incomingim_ch4_args args;
+	time_t t;
 
 	va_start(ap, fr);
 	msg = va_arg(ap, struct aim_icq_offlinemsg *);
 	va_end(ap);
 
-	debug_printf("Received offline message of type 0x%04x\n", msg->type);
-
-	switch (msg->type) {
-		case 0x0001: { /* Basic offline message */
-			char sender[32];
-			char *dialog_msg = g_strdup(msg->msg);
-			time_t t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
-			g_snprintf(sender, sizeof(sender), "%lu", msg->sender);
-			strip_linefeed(dialog_msg);
-			serv_got_im(gc, sender, dialog_msg, 0, t, -1);
-			g_free(dialog_msg);
-		} break;
-
-		case 0x0006: { /* Authorization request */
-			gaim_icq_authask(gc, msg->sender, msg->msg);
-		} break;
-
-		case 0x0007: { /* Someone has denied you authorization */
-			char *dialog_msg;
-			dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), msg->sender, msg->msg ? msg->msg : _("No reason given."));
-			do_error_dialog(_("ICQ Authorization denied"), dialog_msg, GAIM_ERROR);
-			g_free(dialog_msg);
-		} break;
-
-		case 0x0008: { /* Someone has granted you authorization */
-			char *dialog_msg;
-			dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), msg->sender);
-			do_error_dialog(_("ICQ Authorization Granted"), dialog_msg, GAIM_INFO);
-			g_free(dialog_msg);
-		} break;
-
-		case 0x0012: {
-			/* Ack for authorizing/denying someone.  Or possibly an ack for sending any system notice */
-		} break;
-
-		default: {
-			debug_printf("unknown offline message type 0x%04x\n", msg->type);
-		}
-	}
+	debug_printf("Received offline message.  Converting to channel 4 ICBM...\n");
+	args.uin = msg->sender;
+	args.type = msg->type;
+	args.msg = msg->msg;
+	t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
+	incomingim_chan4(sess, fr->conn, NULL, &args, t);
 
 	return 1;
 }
