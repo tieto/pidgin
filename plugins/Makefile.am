@@ -14,7 +14,7 @@ SUFFIXES = .c .so
 
 
 if PLUGINS
-plugin_DATA = gen_away.so autorecon.so iconaway.so notify.so spellchk.so
+plugin_DATA = autorecon.so iconaway.so notify.so spellchk.so
 plugindir = $(libdir)/gaim
 
 clean distclean clean-recursive distclean-recursive:
