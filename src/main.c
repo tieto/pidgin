@@ -841,6 +841,9 @@ int main(int argc, char *argv[])
 
 	gaim_plugins_probe(NULL);
 
+	gaim_set_blist(gaim_blist_new());
+	gaim_blist_load();
+
 	gaim_prefs_load();
 
 	/* we only read ~/.gaimrc (load_prefs()) if there is no accounts.xml
@@ -857,9 +860,6 @@ int main(int argc, char *argv[])
 
 	gaim_pounces_load();
 	gaim_status_load();
-
-	gaim_set_blist(gaim_blist_new());
-	gaim_blist_load();
 
 	load_pounces();
 	ui_main();
