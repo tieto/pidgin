@@ -1544,7 +1544,7 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 			const char *itemname = NULL;
 
 #if GTK_CHECK_VERSION(2,6,0)
-			char **langs;
+			const char * const *langs;
 			int i;
 			langs = g_get_language_names();
 			for (i = 0; langs[i]; i++) {
