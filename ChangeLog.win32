@@ -1,5 +1,5 @@
 version 0.60 alpha 4:
-	* Nativewin engine now properly working.
+	* Font properly set in gtkrc
 	* Gaim systray icon permanantly parked in systray, with different
 	  icons for connected, disconnected and away.
 	* Right clickable menu for systray.
