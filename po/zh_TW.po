@@ -12,7 +12,7 @@
 # XXX   表示可能有問題，要複查；有問題需討論
 # ANS   表示對 XXX 的看法回覆 (問題解決後 XXX 與 ANS 一概刪除)
 # ----------------------------------------------------------
-# FIXME 未有統一譯法的字詞：Postal code、Profile、match、connect、user info
+# FIXME 未有統一譯法的字詞：Buddy List, Postal code、Profile、match、connect、user info
 # FIXME「such」應為「斯」，即「這個」，但目前譯文沒有統一
 # NOTE  中文統一用「」引號；URL、指令等該用'/"者除外
 # NOTE  以前分「Deny」(拒絕) 和「Block」(封鎖)，現在不分了
@@ -22,7 +22,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.73\n"
-"POT-Creation-Date: 2003-11-12 21:51-0500\n"
+"POT-Creation-Date: 2003-11-13 09:00-0500\n"
 "PO-Revision-Date: 2003-05-29 12:04+0800\n"
 "Last-Translator: Ambrose C. Li <acli@ada.dhs.org>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -2469,19 +2469,19 @@ msgstr "登入"
 msgid "Cancel All"
 msgstr "全部取消"
 
-#: src/gtkconn.c:347
+#: src/gtkconn.c:380
 msgid "Reason Unknown."
 msgstr "理由不明。"
 
-#: src/gtkconn.c:356
+#: src/gtkconn.c:407
 msgid "Reconnect"
 msgstr "重新連線"
 
-#: src/gtkconn.c:404
+#: src/gtkconn.c:446
 msgid "Account"
 msgstr "帳號"
 
-#: src/gtkconn.c:412
+#: src/gtkconn.c:454
 msgid "Time"
 msgstr "時間"
 
@@ -2990,6 +2990,12 @@ msgstr "儲存影像"
 msgid "_Save Image..."
 msgstr "儲存影像(_S)..."
 
+# XXX 這很不通順，但很難把它譯成通順的中文（或日文，或芬蘭文）
+# XXX deryni知道了，但大概不會有改善 :-(
+#: src/gtklog.c:184
+msgid "Conversations with"
+msgstr "與右列使用者的交談"
+
 #: src/gtknotify.c:211
 #, c-format
 msgid "%s has %d new message."
@@ -3314,7 +3320,7 @@ msgstr "按下 Ctrl-{B/I/U} 插入 HTML 標籤(_H)"
 
 #: src/gtkprefs.c:805
 msgid "Control-(number) _inserts smileys"
-msgstr "按下 CTRL-(數字鍵) 插入表情(_I)"
+msgstr "按下 Ctrl-(數字鍵) 插入表情(_I)"
 
 #: src/gtkprefs.c:821
 msgid "Buddy List Sorting"
