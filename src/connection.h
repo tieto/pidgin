@@ -269,6 +269,13 @@ GList *gaim_connections_get_all(void);
  */
 GList *gaim_connections_get_connecting(void);
 
+/**
+ * Checks if gc is still a valid pointer to a gc.
+ *
+ * @return @c TRUE if gc is valid.
+ */
+#define GAIM_CONNECTION_IS_VALID(gc) (g_list_find(gaim_connections_get_all(), (gc)) || g_list_find(gaim_connections_get_connecting(), (gc)))
+
 /*@}*/
 
 /**************************************************************************/

@@ -626,9 +626,18 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	char *last_updated_utf8_string;
 	int lang, strid;
 	GaimBuddy *b;
+	struct yahoo_data *yd;
+
+	if (!GAIM_CONNECTION_IS_VALID(info_data->gc)) {
+		g_free(info_data->name);
+		g_free(info_data);
+		return;
+	}
 
 	gaim_debug_info("yahoo", "In yahoo_got_info\n");
 
+	yd = info_data->gc->proto_data;
+	
 	/* we failed to grab the profile URL. this should never happen */
 	if (url_text == NULL || strcmp(url_text, "") == 0) {
 		gaim_notify_formatted(info_data->gc, NULL, _("Buddy Information"), NULL,
@@ -673,7 +682,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	}
 	if (p) {
 		for (strid = 0; profile_strings[strid].lang != XX; strid += 1) {
-		if (profile_strings[strid].lang == profile_langs[lang].lang) break;
+			if (profile_strings[strid].lang == profile_langs[lang].lang) break;
 		}
 		gaim_debug_info("yahoo", "detected profile lang = %s (%d)\n", profile_strings[strid].lang_string, lang);
 	}
@@ -895,8 +904,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	/* put a link to the actual profile URL */
 	g_string_append_printf(s, _("<b>%s:</b> "), _("Profile URL"));
 	g_string_append_printf(s, "<a href=\"%s%s\">%s%s</a><br>",
-			YAHOO_PROFILE_URL, info_data->name,
-			YAHOO_PROFILE_URL, info_data->name);
+			(yd->jp? YAHOOJP_PROFILE_URL: YAHOO_PROFILE_URL), info_data->name,
+			(yd->jp? YAHOOJP_PROFILE_URL: YAHOO_PROFILE_URL), info_data->name);
 
 	/* finish off the html */
 	g_string_append(s, "</body></html>\n");
@@ -934,11 +943,8 @@ void yahoo_get_info(GaimConnection *gc, const char *name)
 	data->gc   = gc;
 	data->name = g_strdup(name);
 
-	if (yd->jp) {
-		url = g_strdup_printf("%s%s", "http://profiles.yahoo.co.jp/", name);
-	} else {
-		url = g_strdup_printf("%s%s", YAHOO_PROFILE_URL, name);
-	}
+	url = g_strdup_printf("%s%s",
+			(yd->jp? YAHOOJP_PROFILE_URL: YAHOO_PROFILE_URL), name);
 
 	gaim_url_fetch(url, FALSE, NULL, FALSE, yahoo_got_info, data);
 

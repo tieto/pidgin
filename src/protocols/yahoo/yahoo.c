@@ -894,7 +894,7 @@ static void yahoo_process_contact(GaimConnection *gc, struct yahoo_packet *pkt)
 
 static char *yahoo_decode(const char *text)
 {
-	char *converted;
+	char *converted = NULL;
 	char *n, *new;
 	const char *end, *p;
 	int i, k;
@@ -934,7 +934,10 @@ static char *yahoo_decode(const char *text)
 
 	*n = '\0';
 
-	converted = g_convert(new, n - new, OUT_CHARSET, "iso-8859-1", NULL, NULL, NULL);
+	if (strstr(text, "\033$B"))
+		converted = g_convert(new, n - new, OUT_CHARSET, "iso-2022-jp", NULL, NULL, NULL);
+	if (!converted)
+		converted = g_convert(new, n - new, OUT_CHARSET, "iso-8859-1", NULL, NULL, NULL);
 	g_free(new);
 
 	return converted;
@@ -943,9 +946,11 @@ static char *yahoo_decode(const char *text)
 static void yahoo_process_mail(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
+	struct yahoo_data *yd = gc->proto_data;
 	char *who = NULL;
 	char *email = NULL;
 	char *subj = NULL;
+	char *yahoo_mail_url = (yd->jp? YAHOOJP_MAIL_URL: YAHOO_MAIL_URL);
 	int count = 0;
 	GSList *l = pkt->hash;
 
@@ -971,14 +976,14 @@ static void yahoo_process_mail(GaimConnection *gc, struct yahoo_packet *pkt)
 		char *from = g_strdup_printf("%s (%s)", dec_who, email);
 
 		gaim_notify_email(gc, dec_subj, from, gaim_account_get_username(account),
-						  "http://mail.yahoo.com/", NULL, NULL);
+						  yahoo_mail_url, NULL, NULL);
 
 		g_free(dec_who);
 		g_free(dec_subj);
 		g_free(from);
 	} else if (count > 0) {
 		const char *to = gaim_account_get_username(account);
-		const char *url = "http://mail.yahoo.com/";
+		const char *url = yahoo_mail_url;
 
 		gaim_notify_emails(gc, count, FALSE, NULL, NULL, &to, &url,
 						   NULL, NULL);
