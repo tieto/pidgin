@@ -3969,7 +3969,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(lbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
-	ls = gtk_list_store_new(CHAT_USERS_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+	ls = gtk_list_store_new(CHAT_USERS_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), CHAT_USERS_NAME_COLUMN,
 										 GTK_SORT_ASCENDING);
 
@@ -3987,8 +3987,6 @@ setup_chat_pane(GaimConversation *conv)
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), conv);
 
 	rend = gtk_cell_renderer_text_new();
-
-	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
 
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend,
 												   "text", CHAT_USERS_NAME_COLUMN, NULL);

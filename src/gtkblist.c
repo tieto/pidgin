@@ -2337,7 +2337,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", show_im_dialog, 0, "<StockItem>", GAIM_STOCK_IM },
 	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", gaim_gtk_blist_joinchat_show, 0, "<StockItem>", GAIM_STOCK_CHAT },
 	{ N_("/Buddies/Get User _Info..."), "<CTL>I", show_info_dialog, 0, "<StockItem>", GAIM_STOCK_INFO },
-	{ N_("/Buddies/View User _Log..."), "<CTL>L", show_log_dialog, 0, "<StockItem>" },
+	{ N_("/Buddies/View User _Log..."), "<CTL>L", show_log_dialog, 0, NULL },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
