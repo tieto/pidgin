@@ -521,7 +521,7 @@ block_cb(GtkWidget *widget, GaimConversation *conv)
 	account = gaim_conversation_get_account(conv);
 
 	if (account != NULL && gaim_account_is_connected(account))
-		gaim_gtk_request_add_permit(account, gaim_conversation_get_name(conv));
+		gaim_gtk_request_add_block(account, gaim_conversation_get_name(conv));
 
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }
