@@ -154,17 +154,16 @@ clipboard_win32_to_html(char *clipboard) {
 	gint start=0;
 	gint finish=0;
 	gchar *html;
-	FILE *fd;
 
 #if 0 /* Debugging for Windows clipboard */
+	FILE *fd;
+
 	gaim_debug_info("imhtml clipboard", "from clipboard: %s\n", clipboard);
 
 	fd = fopen("e:\\gaimcb.txt", "wb");
 	fprintf(fd, "%s", clipboard);
 	fclose(fd);
 #endif
-
-	if (header = strstr(clipboard, "Version:1.0\n"))
 
 	if (!(header = strstr(clipboard, "StartFragment:")))
 		return NULL;
