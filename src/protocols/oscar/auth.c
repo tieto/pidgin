@@ -236,7 +236,19 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 
 	aim_tlvlist_add_raw(&tl, 0x0001, strlen(sn), sn);
 
-	aim_encode_password_md5(password, key, digest);
+	/* Truncate ICQ passwords, if necessary */
+	if (isdigit(sn[0]) && (strlen(password) > MAXICQPASSLEN))
+	{
+		char truncated[MAXICQPASSLEN + 1];
+		strncpy(truncated, password, MAXICQPASSLEN);
+		truncated[MAXICQPASSLEN] = 0;
+		aim_encode_password_md5(truncated, key, digest);
+	}
+	else
+	{
+		aim_encode_password_md5(password, key, digest);
+	}
+
 	aim_tlvlist_add_raw(&tl, 0x0025, 16, digest);
 
 #ifndef USE_OLD_MD5

@@ -133,6 +133,7 @@ void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, c
 void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_time(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, char **args);
+void irc_msg_unavailable(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, char **args);

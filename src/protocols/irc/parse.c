@@ -79,6 +79,7 @@ static struct _irc_msg {
 	{ "422", "nv:", irc_msg_endmotd },	/* No MOTD available		*/
 	{ "432", "vn:", irc_msg_badnick },	/* Erroneous nickname		*/
 	{ "433", "vn:", irc_msg_nickused },	/* Nickname already in use	*/
+	{ "437", "nc:", irc_msg_unavailable },  /* Nick/channel is unavailable */
 	{ "438", "nn:", irc_msg_nochangenick },	/* Nick may not change		*/
 	{ "442", "nc:", irc_msg_notinchan },	/* Not in channel		*/
 	{ "473", "nc:", irc_msg_inviteonly },	/* Tried to join invite-only	*/

@@ -977,6 +977,16 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 	return;
 }
 
+void irc_msg_unavailable(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	GaimConnection *gc = gaim_account_get_connection(irc->account);
+
+	if (!args || !args[1])
+		return;
+
+	gaim_notify_error(gc, NULL, _("Nick or channel is temporarily unavailable."), args[1]);
+}
+
 void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
