@@ -2265,6 +2265,10 @@ static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
 	gdk_window_get_position(blist->window, &x, &y);
 	gdk_window_get_size(blist->window, &width, &height);
 
+#ifdef USE_APPLET
+	if (applet_buddy_show){
+#endif
+
 	if (e->send_event) {	/* Is a position event */
 		if (blist_pos.x != x || blist_pos.y != y)
 			save = 1;
@@ -2283,6 +2287,10 @@ static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
 	if (save)
 		save_prefs();
 
+#ifdef USE_APPLET
+	}
+#endif
+	
 }
 
 

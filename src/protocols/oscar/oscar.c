@@ -58,6 +58,10 @@
 #include "pixmaps/gnomeicu-occ.xpm"
 #include "pixmaps/gnomeicu-ffc.xpm"
 
+#if defined(__SVR4) && !defined(_SOCKLEN_T)
+typedef uint32_t        socklen_t;
+#endif
+
 /* constants to identify proto_opts */
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1

@@ -394,14 +394,15 @@ static GtkAllocation *get_applet_pos(gboolean for_blist)
 void createOnlinePopup()
 {
 	GtkAllocation *al;
-	if (blist)
-		gtk_widget_show(blist);
+	if (!blist)
+		return;
 	al = get_applet_pos(TRUE);
 	if (blist_options & OPT_BLIST_NEAR_APPLET)
 		gtk_widget_set_uposition(blist, al->x, al->y);
 	else if (blist_options & OPT_BLIST_SAVED_WINDOWS)
 		gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff,
 					 blist_pos.y - blist_pos.yoff);
+	gtk_widget_show(blist);
 	g_free(al);
 }
 

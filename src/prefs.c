@@ -586,6 +586,8 @@ static void buddy_page()
 #ifdef USE_APPLET
 	gaim_button(_("Automatically show buddy list on sign on"), &blist_options,
 		    OPT_BLIST_APP_BUDDY_SHOW, vbox);
+	gaim_button(_("Display Buddy List near applet"), &blist_options, OPT_BLIST_NEAR_APPLET, vbox);
+	
 #endif
 	gaim_button(_("Save Window Size/Position"), &blist_options, OPT_BLIST_SAVED_WINDOWS, vbox);
 
@@ -595,10 +597,6 @@ static void buddy_page()
 		gtk_widget_set_sensitive(button2, FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), button2);
 
-#ifdef USE_APPLET
-	gaim_button(_("Display Buddy List near applet"), &blist_options, OPT_BLIST_NEAR_APPLET, vbox);
-#endif
-	
 	frame = gtk_frame_new(_("Group Displays"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
 	gtk_widget_show(frame);

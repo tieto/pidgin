@@ -266,30 +266,45 @@ static GString *encode_html(char *msg)
 		str = g_string_append(str, cur);
 		cur = ++end;
 		if (!g_strncasecmp(cur, "B>", 2)) {
-			bold = TRUE;
-			str = g_string_append_c(str, '\2');
+			if (!bold) {
+				bold = TRUE;
+				str = g_string_append_c(str, '\2');
+			}
 			cur = cur + 2;
 		} else if (!g_strncasecmp(cur, "I>", 2)) { /* use bold for italics too */
-			italics = TRUE;
-			str = g_string_append_c(str, '\2');
+			if (!italics) {
+				italics = TRUE;
+				str = g_string_append_c(str, '\2');
+			}
 			cur = cur + 2;
 		} else if (!g_strncasecmp(cur, "U>", 2)) {
-			underline = TRUE;
-			str = g_string_append_c(str, '\37');
+			if (!underline) {
+				underline = TRUE;
+				str = g_string_append_c(str, '\37');
+			}
 			cur = cur + 2;
-		}  else if (!g_strncasecmp(cur, "/B>", 3) && bold) { 
-			bold = FALSE;
-			str = g_string_append_c(str, '\2');
+		}  else if (!g_strncasecmp(cur, "/B>", 3)) { 
+			if (bold) {
+				bold = FALSE;
+				str = g_string_append_c(str, '\2');
+			}
 			cur = cur + 3;
-		}  else if (!g_strncasecmp(cur, "/I>", 3) && italics) { 
-			bold = FALSE;
-			str = g_string_append_c(str, '\2');
+		}  else if (!g_strncasecmp(cur, "/I>", 3)) { 
+			if (italics) {
+				italics = FALSE;
+				str = g_string_append_c(str, '\2');
+			}
 			cur = cur + 3;
-		}  else if (!g_strncasecmp(cur, "/U>", 3) && underline) { 
-			bold = FALSE;
-			str = g_string_append_c(str, '\37');
+		}  else if (!g_strncasecmp(cur, "/U>", 3)) { 
+			if (underline) {
+				underline = FALSE;
+				str = g_string_append_c(str, '\37');
+			}
 			cur = cur + 3;
+		}  else {
+			str = g_string_append_c(str, '<');
 		}
+		
 	}
 	str = g_string_append(str, cur);
 	return str;
