@@ -1426,6 +1426,22 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 		return;
 	}
 
+	/* at the moment we don't support profile pages with languages other than
+	 * english. the problem is, that every user may choose his/her own profile
+	 * language. this language has nothing to do with the preferences of the
+	 * user which looks at the profile 
+	 */
+	p = strstr(url_text, "Last Updated:");
+	if (!p) {
+		strcpy(buf, _("<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"));
+		info_extract_field(url_text, buf, "<title>", 0, "'s Yahoo! Profile", 0, NULL,
+				_("If you wish to view this profile, you will need to visit this link in your web browser"),
+				1, YAHOO_PROFILE_URL);
+		strcat(buf, "</body></html>\n");
+		g_show_info_text(NULL, NULL, 2, buf, NULL);
+		return;
+	}
+
 	/* strip_html() doesn't strip out character entities like &nbsp; and &#183;
 	*/
 	while ((p = strstr(url_text, "&nbsp;")) != NULL) {
