@@ -3541,6 +3541,16 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 				ws[wpos++] = '©';
 				c += 5;
 			}
+			else if (!strncasecmp(c, "&quot;", 6))
+			{
+				ws[wpos++] = '\"';
+				c += 5;
+			}
+			else if (!strncasecmp(c, "&reg;", 5))
+			{
+				ws[wpos++] = 174;
+				c += 4;
+			}
 			else if (*(c + 1) == '#')
 			{
 				int pound = 0;
