@@ -619,7 +619,17 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
 	for (i = 0; i < 7; i++)
 		fprintf(f, " { %s }", u->proto_opt[i]);
 	fprintf(f, "\n");
+#ifndef _WIN32
 	fprintf(f, "\t\ticonfile { %s }\n", u->iconfile);
+#else
+	{
+		/* Make sure windows dir speparators arn't swallowed up when
+		   path is read back in from resource file */
+		char* tmp=wgaim_escape_dirsep(u->iconfile);
+		fprintf(f, "\t\ticonfile { %s }\n", tmp);	
+		g_free(tmp);
+	}
+#endif
 	fprintf(f, "\t\talias { %s }\n", u->alias);
 }
 
