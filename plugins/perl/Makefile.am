@@ -38,11 +38,20 @@ perl_la_DEPENDENCIES = \
 common_sources = \
 	common/Account.xs \
 	common/BuddyList.xs \
+	common/BuddyList_Buddy.xs \
+	common/BuddyList_Chat.xs \
+	common/BuddyList_Group.xs \
+	common/Connection.xs \
+	common/ConvWindow.xs \
+	common/Conversation.xs \
+	common/Conversation_Chat.xs \
+	common/Conversation_IM.xs \
 	common/Gaim.xs \
 	common/Gaim.pm \
 	common/Makefile.PL.in \
 	common/typemap \
 	common/module.h
+
 
 EXTRA_DIST = \
 	Makefile.mingw \
