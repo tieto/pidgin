@@ -15,6 +15,7 @@ version 0.79cvs:
 	  sation options (Stu Tomlinson).
 	* Added MSN buddy icons (Felipe Contreras)
 	* Added MSN file transfer (Felipe Contreras)
+	* MSN's idle state now actually sets a buddy idle.
 
 	Bug Fixes:
 	* Non-looping animated icons no longer cause Gaim to freeze
