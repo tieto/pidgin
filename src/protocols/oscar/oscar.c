@@ -5754,8 +5754,10 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 				g_free(away_utf8);
 				tmp2 = gaim_markup_strip_html(tmp1);
 				g_free(tmp1);
-				tmp3 = gaim_str_sub_away_formatters(tmp2, gaim_account_get_username(gaim_connection_get_account(gc)));
+				tmp1 = gaim_strreplace(tmp2, "<", "&lt;");
 				g_free(tmp2);
+				tmp3 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
+				g_free(tmp1);
 				tmp = ret;
 				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), tmp3, "\n", NULL);
 				g_free(tmp);

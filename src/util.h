@@ -454,6 +454,9 @@ void gaim_str_strip_cr(char *str);
  * @param delimiter The substring you want replaced.
  * @param replacement The substring you want inserted in place
  *        of the delimiting substring.
+ *
+ * @return A new string, after performing the substitution.
+ *         free this with g_free().
  */
 gchar *gaim_strreplace(const char *string, const char *delimiter,
 					   const char *replacement);
@@ -466,6 +469,9 @@ gchar *gaim_strreplace(const char *string, const char *delimiter,
  * @param delimiter The substring you want replaced.
  * @param replacement The substring you want inserted in place
  *        of the delimiting substring.
+ *
+ * @return A new string, after performing the substitution.
+ *         free this with g_free().
  */
 gchar *gaim_strcasereplace(const char *string, const char *delimiter,
 						   const char *replacement);
