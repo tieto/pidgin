@@ -93,6 +93,29 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Fri May 10 2002 Rob Flynn <rob@marko.net> (0.58 release)
+- Bulgarian translation added (Thanks, Igel Itzo)
+- Taiwanese translation added (Thanks, Paladin Liu)
+- Better applet transparency
+- Option to raise buddy list on signons/signoffs
+- Formatting of incoming MSN messages	
+- Get Info from menu multiple-account-aware (thanks Brian Bernas)
+- Hide and unhide functions for the filectl plugin. (Thanks, Ari Pollak)
+- Added helpful stuff to the Help menu.
+- Self-aliasing from the account editor.
+- Better selection in GtkIMHtml (Thanks Ben Miller)
+- A warning when your OSCAR buddy list is too long (Thanks, Mark Doliner)
+- ICQ status messages in OSCAR (Thanks, Mark Doliner)
+- Play sound when your name is said in a chat
+- Approval dialog for Jabber when somebody wants to subscribe to user's presence. Also gives user the opportunity to add that buddy if not already on the user's buddy list.
+- Jabber "Change buddy group" roster synchronization now works again. (This was unknowningly broken when the "out-sourced" Jabber libs were upgraded in 0.56)
+- Invalid Jabber I.D.'s no longer crash Gaim.  User now notified with pop-up's.
+- Jabber Buddy sign-on time support, added in 0.57, removed until and unless an inconsistancy can be resolved. (Thanks, Nathan Walp)
+- Bug-fix for potential buffer overflow in Jabber plugin. (Thanks, rwscott)
+- Tempfiles used for secure MSN/HotMail login (added in 0.57) are now themselves created securely.
+- Secure MSN logins (added in 0.57) no longer blow up on Solaris.
+- Timezone support improved.
+
 * Thu Apr 25 2002 Rob Flynn <rob@marko.net (0.57 release)
 - New authorization method for Yahoo!
 - Polish translation updated (Thanks Przemyslaw Sulek)
