@@ -391,17 +391,18 @@ void play_file(char *filename)
 	return;
 #endif
 
+	if (sound_options & OPT_SOUND_BEEP) {
+		gdk_beep();
+		return;
+	}
+
 	pid = fork();
 
 	if (pid < 0)
 		return;
 	else if (pid == 0) {
 		alarm(30);
-		if (sound_options & OPT_SOUND_BEEP) {
-			gdk_beep();
-			_exit(0);
-		}
-
+		
 		if (sound_cmd[0]) {
 			char *args[4];
 			char command[4096];
@@ -455,20 +456,21 @@ void play(unsigned char *data, int size)
 	return;
 #endif
 
+	if (sound_options & OPT_SOUND_BEEP) {
+		gdk_beep();
+		return;
+	}
 	pid = fork();
-
+	
 	if (pid < 0)
 		return;
 	else if (pid == 0) {
 		alarm(30);
-		if (sound_options & OPT_SOUND_BEEP) {
-			gdk_beep();
-			_exit(0);
-		}
+		
 #ifdef ESD_SOUND
 		/* ESD is our player of choice.  Are we OK to
 		 * go there? */
-		else if (sound_options & OPT_SOUND_ESD) {
+		if (sound_options & OPT_SOUND_ESD) {
 			if (can_play_esd()) {
 				if (play_esd(data, size))
 					_exit(0);
