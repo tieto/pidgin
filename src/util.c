@@ -2616,7 +2616,7 @@ parse_content_len(const char *data, size_t data_len)
 	 * if we make sure that there is indeed a \n in our header.
 	 */
 	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
-		sscanf(p, "Content-Length: %d", (int *)&content_len);
+		sscanf(p, "Content-Length: %ud", &content_len);
 		gaim_debug_misc("parse_content_len", "parsed %d\n", content_len);
 	}
 
@@ -2828,11 +2828,18 @@ gaim_url_decode(const char *str)
 	static char buf[BUF_LEN];
 	guint i, j = 0;
 	char *bum;
+	char hex[3];
 
 	g_return_val_if_fail(str != NULL, NULL);
 
+	/*
+	 * XXX - This check could be removed and buf could be made
+	 * dynamically allocated, but this is easier.
+	 */
+	if (strlen(str) >= BUF_LEN)
+		return NULL;
+
 	for (i = 0; i < strlen(str); i++) {
-		char hex[3];
 
 		if (str[i] != '%')
 			buf[j++] = str[i];

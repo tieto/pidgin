@@ -506,9 +506,9 @@ rtf_parse_keyword(NMRtfContext *ctx)
     gboolean param_set = FALSE;
     gboolean is_neg = FALSE;
     int param = 0;
-    char *pch;
     char keyword[30];
     char parameter[20];
+	int i;
 
     keyword[0] = '\0';
     parameter[0] = '\0';
@@ -523,11 +523,11 @@ rtf_parse_keyword(NMRtfContext *ctx)
     }
 
 	/* parse keyword */
-    for (pch = keyword; isalpha(ch); rtf_get_char(ctx, &ch)) {
-        *pch = (char) ch;
-		pch++;
+	for (i = 0; isalpha(ch) && (i < sizeof(keyword) - 1); rtf_get_char(ctx, &ch)) {
+		keyword[i] = (char) ch;
+		i++;
 	}
-    *pch = '\0';
+	keyword[i] = '\0';
 
 	/* check for '-' indicated a negative parameter value  */
     if (ch == '-') {
@@ -540,11 +540,11 @@ rtf_parse_keyword(NMRtfContext *ctx)
     if (isdigit(ch)) {
 
         param_set = TRUE;
-        for (pch = parameter; isdigit(ch); rtf_get_char(ctx, &ch)) {
-            *pch = (char) ch;
-			pch++;
+		for (i = 0; isdigit(ch) && (i < sizeof(parameter) - 1); rtf_get_char(ctx, &ch)) {
+			parameter[i] = (char) ch;
+			i++;
 		}
-        *pch = '\0';
+		parameter[i] = '\0';
 
         ctx->param = param = atoi(parameter);
         if (is_neg)
