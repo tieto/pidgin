@@ -3311,7 +3311,7 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 		flags = check_encoding (gc->account->user_info);
 
 		if (flags == 0) {
-			aim_bos_setprofile(sess, fr->conn, "us-ascii", gc->account->user_info, 
+			aim_bos_setprofile(sess, fr->conn, "us-ascii", gc->account->user_info,
 					   strlen(gc->account->user_info), NULL, NULL, 0, caps_aim);
 		} else {
 			unicode = g_convert (gc->account->user_info, strlen(gc->account->user_info),
@@ -5446,7 +5446,8 @@ static fu32_t parse_encoding(const char *enc)
 		return 0;
 	}
 	charset += 8;
-	if (!strcmp(charset, "\"us-ascii\"")) {
+	if (!strcmp(charset, "\"us-ascii\"") || !strcmp(charset, "\"utf-8\"")) {
+		/* UTF-8 is our native charset, ASCII is a proper subset */
 		return 0;
 	} else if (!strcmp(charset, "\"iso-8859-1\"")) {
 		return AIM_IMFLAGS_ISO_8859_1;
