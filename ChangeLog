@@ -5,6 +5,7 @@ version 0.72
 	* Added an option to remove the formatting toolbar, both globally and
 	  on a per-window basis (Nathan Fredrickson)
 	* Added a drop shadow to the buddy list tooltip
+	* Smileys are copyable
 	* Fixed the ICQ login crash
 	* Fixed a crash in the Add Chat dialog when selecting an
 	  account that doesn't support chats. Closes bug #821606.
@@ -12,6 +13,7 @@ version 0.72
 	  connect.
 	* Fixed a crash when deleting an account that has IMs or chats open.
 	  Closes bug #821630.
+	* Smileys have background colors  
 	* If SSL is not enabled, MSN will load, but error on connect.
 	* Disable Jabber SASL auth until the standard stabilizes
 	* Czech translation updated (Stanislav Brabec, Miloslav Trmac)

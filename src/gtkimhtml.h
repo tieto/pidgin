@@ -37,6 +37,7 @@ extern "C" {
 #define GTK_IS_IMHTML(obj)         (GTK_CHECK_TYPE ((obj), GTK_TYPE_IMHTML))
 #define GTK_IS_IMHTML_CLASS(klass) (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_IMHTML))
 #define GTK_IMHTML_SCALABLE(obj)   ((GtkIMHtmlScalable *)obj)
+#define GTK_IMHTML_COPYABLE(obj)   ((GtkIMHtmlCopyable *)obj)
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
@@ -46,6 +47,7 @@ typedef struct _GtkIMHtmlSmiley		GtkIMHtmlSmiley;
 typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
 typedef struct _GtkIMHtmlImage		GtkIMHtmlImage;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
+typedef struct _GtkIMHtmlCopyable       GtkIMHtmlCopyable;
 
 struct _GtkIMHtml {
 	GtkTextView text_view;
@@ -66,6 +68,8 @@ struct _GtkIMHtml {
 
 	GList *scalables;
 	GdkRectangle old_rect;
+
+	GSList *copyables;
 
 	gchar *search_string;
 };
@@ -101,6 +105,11 @@ struct _GtkIMHtmlScalable {
 	void (*scale)(struct _GtkIMHtmlScalable *, int, int);
 	void (*add_to)(struct _GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
 	void (*free)(struct _GtkIMHtmlScalable *);
+};
+
+struct _GtkIMHtmlCopyable {
+	GtkTextMark *mark;
+	char *text;
 };
 
 struct _GtkIMHtmlImage {
