@@ -274,7 +274,7 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 		  &bgcolor);*/
 		if (!toolbar->bgcolor_dialog) {
 
-			toolbar->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
+			toolbar->bgcolor_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
 			colorsel = GTK_COLOR_SELECTION_DIALOG(toolbar->bgcolor_dialog)->colorsel;
 			//gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
 			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);

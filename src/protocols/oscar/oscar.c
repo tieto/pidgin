@@ -5517,35 +5517,31 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 
 	encoding = oscar_encoding_check(buf);
 	if (encoding & AIM_IMFLAGS_UNICODE) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sending Unicode Chat\n");
+		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sending Unicode chat\n");
 		charset = "unicode-2-0";
 		buf2 = g_convert(buf, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 		if (err) {
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-					   "Error converting a unicode message: %s\n",
-					   err->message);
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-					   "This really shouldn't happen!\n");
-			/* We really shouldn't try to send the
-			* IM now, but I'm not sure what to do */
-	    g_error_free(err);
-	  }
+					   "Error converting to unicode-2-0: %s\n", err->message);
+			g_error_free(err);
+		}
 	} else if (encoding & AIM_IMFLAGS_ISO_8859_1) {
-		gaim_debug(GAIM_DEBUG_INFO, "oscar",
-				   "Sending ISO-8859-1 Chat\n");
+		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Sending ISO-8859-1 chat\n");
 		charset = "iso-8859-1";
 		buf2 = g_convert(buf, len, "ISO-8859-1", "UTF-8", NULL, &len, &err);
 		if (err) {
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-					   "conversion error: %s\n", err->message);
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-					   "Someone tell Ethan his 8859-1 detection is wrong\n");
+					   "Error converting to iso-8859-1: %s\n", err->message);
 			g_error_free(err);
-			encoding = AIM_IMFLAGS_UNICODE;
-			buf2 = g_convert(buf, len, "UCS-2BE", "UTF8", NULL, &len, &err);
+			err = NULL;
+
+			gaim_debug(GAIM_DEBUG_INFO, "oscar", "Falling back to Unicode\n");
+			charset = "unicode-2-0";
+			buf2 = g_convert(buf, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
 			if (err) {
 				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-						   "Error in unicode fallback: %s\n", err->message);
+						   "Error converting to unicode-2-0: %s\n",
+						   err->message);
 				g_error_free(err);
 			}
 		}
@@ -5553,21 +5549,16 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 	  charset = "us-ascii";
 	  buf2 = g_strdup(buf);
 	}
-
-	if (len > c->maxlen)
-		return -E2BIG;
-
 	g_free(buf);
-	buf = gaim_markup_strip_html(buf2);
-	len = strlen(buf);
-	g_free(buf2);
-	if (len > c->maxvis) {
-		g_free(buf);
+
+	if ((len > c->maxlen) || (len > c->maxvis)) {
+		g_free(buf2);
 		return -E2BIG;
 	}
 
-	aim_chat_send_im(od->sess, c->conn, 0, buf, len, charset, "en");
-	g_free(buf);
+	aim_chat_send_im(od->sess, c->conn, 0, buf2, len, charset, "en");
+	g_free(buf2);
+
 	return 0;
 }
 
