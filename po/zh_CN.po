@@ -2813,12 +2813,6 @@ msgid ""
 "not the same version I cannot safely tell you which one it was. Needless to "
 "say, it was not successfully loaded."
 msgstr ""
-"You have attempted to load a protocol which was not compiled from the same "
-"version of the source as this application was. Unfortunately, because it is "
-"not the same version I cannot safely tell you which one it was. Needless to "
-"say, it was not successfully loaded.ÄãÕıÔÚ³¢ÊÔ¼ÓÔØÒ»¸öÎª²»Í¬°æ±¾µÄ Gaim "
-"±àÒëµÄĞ­Òé²å¼ş¡£ºÜ²»ĞÒ£¬ÓÉÓÚ°æ±¾²»Í¬£¬ÎÒÎŞ·¨ÕıÈ·µØ±æÈÏËüÊÇÊ²Ã´¡£²»±Ø¶àËµÁË£¬¸"
-"Ã²å¼şÃ»ÓĞ³É¹¦¼ÓÔØ¡£"
 
 #: src/prpl.c:74
 msgid "Protocol Error"
