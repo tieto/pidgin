@@ -894,8 +894,9 @@ static GtkWidget *
 create_chat_menu (GaimBlistNode *node)
 {
 	GtkWidget *menu;
-	gboolean autojoin = gaim_blist_node_get_bool(node,
-						     "gtk-autojoin");
+	gboolean autojoin = (gaim_blist_node_get_bool(node,
+						     "gtk-autojoin") || (gaim_blist_get_string(node,
+									 "gtk-autojoin") != NULL))
 
 	menu = gtk_menu_new();
 	gaim_new_item_from_stock(menu, _("_Join"), GAIM_STOCK_CHAT,
@@ -4075,7 +4076,9 @@ static void account_signon_cb(GaimConnection *gc, gpointer z)
 			if(chat->account != account)
 				continue;
 
-			if(gaim_blist_node_get_bool((GaimBlistNode*)chat, "gtk-autojoin"))
+			if(gaim_blist_node_get_bool((GaimBlistNode*)chat, "gtk-autojoin") ||
+					(gaim_blist_node_get_string(GaimBlistNode*)chat,
+					 "gtk-autojoin" != NULL))
 				serv_join_chat(gc, chat->components);
 		}
 	}
