@@ -3414,7 +3414,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		gchar *tmp2 = g_markup_escape_text(tmp, -1);
 		g_free(tmp);
 		tmp = tmp2;
-		gaim_strreplace(tmp, "\r\n", "<br>");
+		tmp2 = gaim_strreplace(tmp, "\r\n", "<br>");
 		g_free(tmp);
 		tmp = tmp2;
 	}
