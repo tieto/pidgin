@@ -571,7 +571,7 @@ static void im_page()
 	gaim_button(_("Show logins in window"), &display_options, OPT_DISP_SHOW_LOGON, vbox);
 	gaim_button(_("Show larger entry box on new windows"), &display_options, OPT_DISP_CONV_BIG_ENTRY, vbox);
 
-	frame = gtk_frame_new(_("IM Window"));
+	frame = gtk_frame_new(_("Group Chat Window"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
 	gtk_widget_show(frame);
 
