@@ -554,22 +554,30 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
+#if GTK_CHECK_VERSION(2,4,0) /* Smiley selection menu */
 static void
-destroy_smiley_menu(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+smiley_dialog_closed_cb(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 {
-	if (toolbar->smiley_menu != NULL)
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
+}
+#else
+static void
+destroy_smiley_dialog(GtkIMHtmlToolbar *toolbar)
+{
+	if (toolbar->smiley_dialog != NULL)
 	{
-		gtk_widget_destroy(toolbar->smiley_menu);
-		toolbar->smiley_menu = NULL;
+		gtk_widget_destroy(toolbar->smiley_dialog);
+		toolbar->smiley_dialog = NULL;
 	}
 }
 
 static void
-deactivate_smiley_menu(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+close_smiley_dialog(GtkWidget *widget, GdkEvent *event,
+					GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
-	gtk_button_released(GTK_BUTTON(toolbar->smiley));
 }
+#endif
 
 static void
 insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
@@ -584,10 +592,15 @@ insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 							 escaped_smiley);
 
 	g_free(escaped_smiley);
-	destroy_smiley_menu(NULL, toolbar);
+
+#if !GTK_CHECK_VERSION(2,4,0) /* Smiley selection menu */
+	close_smiley_dialog(NULL, NULL, toolbar);
+#endif
 }
 
-static void add_smiley(GtkIMHtmlToolbar *toolbar, GtkWidget *menu, int row, int col, char *filename, char *face)
+#if GTK_CHECK_VERSION(2,4,0) /* Smiley selection menu */
+static void
+add_smiley(GtkIMHtmlToolbar *toolbar, GtkWidget *menu, int row, int col, char *filename, char *face)
 {
 	GtkWidget *image;
 	GtkWidget *menuitem;
@@ -600,8 +613,32 @@ static void add_smiley(GtkIMHtmlToolbar *toolbar, GtkWidget *menu, int row, int 
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(insert_smiley_text), toolbar);
 	gtk_menu_attach(GTK_MENU(menu), menuitem, col, col+1, row, row+1);
 }
+#else
+static void
+add_smiley(GtkIMHtmlToolbar *toolbar, GtkWidget *table, int row, int col, char *filename, char *face)
+{
+	GtkWidget *image;
+	GtkWidget *button;
 
-static gboolean smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley) {
+	image = gtk_image_new_from_file(filename);
+	button = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(button), image);
+	g_object_set_data(G_OBJECT(button), "smiley_text", face);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(insert_smiley_text), toolbar);
+
+	gtk_tooltips_set_tip(toolbar->tooltips, button, face, NULL);
+
+	gtk_table_attach_defaults(GTK_TABLE(table), button, col, col+1, row, row+1);
+
+	/* these look really weird with borders */
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+
+	gtk_widget_show(button);
+}
+#endif
+
+static gboolean
+smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley) {
 	while(list) {
 		GtkIMHtmlSmiley *cur = list->data;
 		if(!strcmp(cur->file, smiley->file))
@@ -612,6 +649,7 @@ static gboolean smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley) {
 }
 
 
+#if GTK_CHECK_VERSION(2,4,0) /* Smiley selection menu */
 static void
 insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 {
@@ -620,7 +658,8 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	int width;
 	int row = 0, col = 0;
 
-	destroy_smiley_menu(NULL, toolbar);
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley)))
+		return;
 
 	if (toolbar->sml)
 		smileys = get_proto_smileys(toolbar->sml);
@@ -663,19 +702,101 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	}
 
-	/* connect signals */
+	/*
+	 * The menu itself is free'd automatically, but we need to un-press 
+	 * the "insert smiley" button whenever the menu is closed.
+	 *
+	 * XXX - Make sure the menu really is freed!
+	 */
 	g_signal_connect(G_OBJECT(menu), "deactivate",
-					 G_CALLBACK(deactivate_smiley_menu), toolbar);
-	g_signal_connect(G_OBJECT(menu), "selection-done",
-					 G_CALLBACK(destroy_smiley_menu), toolbar);
+					 G_CALLBACK(smiley_dialog_closed_cb), toolbar);
 
 	/* show everything */
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
-	toolbar->smiley_menu = menu;
+	toolbar->smiley_dialog = menu;
 
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
+#else
+static void
+insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
+{
+	GtkWidget *dialog;
+	GtkWidget *smiley_table = NULL;
+	GSList *smileys, *unique_smileys = NULL;
+	int width;
+	int row = 0, col = 0;
+
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley))) {
+		destroy_smiley_dialog(toolbar);
+		gtk_widget_grab_focus(toolbar->imhtml);
+		return;
+	}
+
+	if (toolbar->sml)
+		smileys = get_proto_smileys(toolbar->sml);
+	else
+		smileys = get_proto_smileys(NULL);
+
+	while(smileys) {
+		GtkIMHtmlSmiley *smiley = smileys->data;
+		if(!smiley->hidden) {
+			if(smiley_is_unique(unique_smileys, smiley))
+				unique_smileys = g_slist_append(unique_smileys, smiley);
+		}
+		smileys = smileys->next;
+	}
+
+	GAIM_DIALOG(dialog);
+
+	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
+
+	if(g_slist_length(unique_smileys)) {
+
+		width = floor(sqrt(g_slist_length(unique_smileys)));
+
+		smiley_table = gtk_table_new(width, width, TRUE);
+
+		/* pack buttons */
+
+		while(unique_smileys) {
+			GtkIMHtmlSmiley *smiley = unique_smileys->data;
+			if(!smiley->hidden) {
+				add_smiley(toolbar, smiley_table, row, col, smiley->file, smiley->smile);
+				if(++col >= width) {
+					col = 0;
+					row++;
+				}
+			}
+			unique_smileys = unique_smileys->next;
+		}
+	}
+	else {
+		smiley_table = gtk_label_new(_("This theme has no available smileys."));
+	}
+
+	gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
+
+	gtk_widget_show(smiley_table);
+
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
+
+	/* connect signals */
+	g_signal_connect(G_OBJECT(dialog), "delete_event",
+					 G_CALLBACK(close_smiley_dialog), toolbar);
+
+	/* show everything */
+	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
+	gtk_widget_show_all(dialog);
+
+	toolbar->smiley_dialog = dialog;
+
+	gtk_widget_grab_focus(toolbar->imhtml);
+}
+#endif
 
 static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
 {
@@ -798,7 +919,9 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 	}
 
 	destroy_toolbar_font(NULL, NULL, toolbar);
-	destroy_smiley_menu(NULL, toolbar);
+#if !GTK_CHECK_VERSION(2,4,0) /* Smiley selection menu */
+	destroy_smiley_dialog(toolbar);
+#endif
 	destroy_toolbar_bgcolor(NULL, NULL, toolbar);
 	destroy_toolbar_fgcolor(NULL, NULL, toolbar);
 	close_link_dialog(toolbar);
@@ -833,7 +956,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->fgcolor_dialog = NULL;
 	toolbar->bgcolor_dialog = NULL;
 	toolbar->link_dialog = NULL;
-	toolbar->smiley_menu = NULL;
+	toolbar->smiley_dialog = NULL;
 	toolbar->image_dialog = NULL;
 
 	toolbar->tooltips = gtk_tooltips_new();
@@ -974,7 +1097,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert smiley"), NULL);
 
-	g_signal_connect(G_OBJECT(button), "pressed",
+	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(insert_smiley_cb), toolbar);
 
 	toolbar->smiley = button;
