@@ -7,7 +7,7 @@ endif
 LDFLAGS += -ggdb $(GTK_LIBS) -shared
 .c.so:
 	$(CC) $(CFLAGS) -fPIC -DPIC -o $@ $< $(LDFLAGS)
-plugin_DATA = autorecon.so iconaway.so spellchk.so
+plugin_DATA = autorecon.so iconaway.so notify.so spellchk.so
 plugindir = $(libdir)/gaim
 clean:
 	$(RM) $(plugin_DATA)

@@ -101,4 +101,5 @@ AC_OUTPUT([Makefile
            libfaim/Makefile
            doc/Makefile
            m4/Makefile
+	   gaim.spec
           ])
