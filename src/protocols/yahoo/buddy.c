@@ -79,7 +79,8 @@ int yahoo_add_buddy(struct yahoo_session *session, const char *active_id,
 	if (!send)
 		return 0;
 
-	if (!(conn = yahoo_new_conn(session, YAHOO_CONN_TYPE_DUMB, NULL, 0)))
+	if (!(conn = yahoo_new_conn(session, YAHOO_CONN_TYPE_DUMB, session->auth_host,
+					session->auth_port)))
 		return 0;
 
 	conn->txqueue = send;
@@ -145,7 +146,8 @@ int yahoo_remove_buddy(struct yahoo_session *session, const char *active_id,
 	if (!send)
 		return 0;
 
-	if (!(conn = yahoo_new_conn(session, YAHOO_CONN_TYPE_DUMB, NULL, 0)))
+	if (!(conn = yahoo_new_conn(session, YAHOO_CONN_TYPE_DUMB, session->auth_host,
+					session->auth_port)))
 		return 0;
 
 	conn->txqueue = send;
