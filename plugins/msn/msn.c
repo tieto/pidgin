@@ -368,7 +368,9 @@ void msn_callback (struct gaim_connection * gc, gint fd) {
 		int status;
 		
 		if (strcasecmp("hotmail", resps[1]) == 0) {
-			/* We want to ignore these */
+			/* We want to ignore these.  We can parse them
+			 * eventually if we ever plan on doing anything
+			 * with them */
 			g_strfreev(resps);
 			return;
 		}
