@@ -464,7 +464,7 @@ msn_login(GaimAccount *account)
 		http_method = TRUE;
 
 		gaim_debug(GAIM_DEBUG_INFO, "msn", "using http method\n");
-		
+
 		server = "gateway.messenger.hotmail.com";
 		port   = 80;
 	}

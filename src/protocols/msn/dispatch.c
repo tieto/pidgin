@@ -187,14 +187,7 @@ unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 	GaimConnection *gc = servconn->session->account->gc;
 
 	if (isdigit(*command))
-	{
-		char buf[4];
-
-		strncpy(buf, command, 4);
-		buf[4] = '\0';
-
-		gaim_connection_error(gc, (char *)msn_error_get_text(atoi(buf)));
-	}
+		gaim_connection_error(gc, msn_error_get_text(atoi(command)));
 	else
 		gaim_connection_error(gc, _("Unable to parse message."));
 
