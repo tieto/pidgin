@@ -2909,13 +2909,13 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	else if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
 		signon = time(NULL) - info->sessionlen;
 
-	if (!aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), info->sn))
+	if (!aim_sncmp(gaim_account_get_username(account), info->sn))
 		gaim_connection_set_display_name(gc, info->sn);
 
-	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(gc->account, info->sn));
+	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, info->sn));
 	if (!bi) {
 		bi = g_new0(struct buddyinfo, 1);
-		g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(gc->account, info->sn)), bi);
+		g_hash_table_insert(od->buddyinfo, g_strdup(gaim_normalize(account, info->sn)), bi);
 	}
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
@@ -2935,7 +2935,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		GaimBuddy *b = NULL;
 
 		b16 = gaim_base16_encode(info->iconcsum, info->iconcsumlen);
-		b = gaim_find_buddy(gc->account, info->sn);
+		b = gaim_find_buddy(account, info->sn);
 		/*
 		 * If for some reason the checksum is valid, but cached file is not..
 		 * we want to know.
@@ -2961,7 +2961,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			while (cur && aim_sncmp((char *)cur->data, info->sn))
 				cur = cur->next;
 			if (!cur) {
-				od->requesticon = g_slist_append(od->requesticon, g_strdup(gaim_normalize(gc->account, info->sn)));
+				od->requesticon = g_slist_append(od->requesticon, g_strdup(gaim_normalize(account, info->sn)));
 				if (od->icontimer)
 					gaim_timeout_remove(od->icontimer);
 				od->icontimer = gaim_timeout_add(500, gaim_icon_timerfunc, gc);
@@ -2970,19 +2970,14 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		g_free(b16);
 	}
 
-	/*
-	 * If we have info for ourselves, then update our local warning
-	 * level and set our official time of login.  Is this necessary?
-	 * XXX - This needs to be changed some how.  evil should not be
-	 * handled by the core at all?
-	 */
-	if (!aim_sncmp(info->sn, gaim_account_get_username(account))) {
-		gc->evil = (info->warnlevel/10.0);
-		gc->login_time_official = signon;
-	}
+	gaim_debug_info("oscar", "Signaling got online status for buddy '%s'\n", info->sn);
 
-	/* STATUS - time_idle is idle time, type is type, info->warnlevel/10.0 is warning level */
-	serv_got_update(gc, info->sn, TRUE, signon);
+	gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_ONLINE, NULL);
+	gaim_prpl_got_user_login_time(account, info->sn, signon);
+	gaim_prpl_got_user_warning_level(account, info->sn, info->warnlevel/10.0 + 0.5);
+
+	if (time_idle > 0)
+		gaim_prpl_got_user_idle(account, info->sn, TRUE, time_idle);
 
 	return 1;
 }
@@ -2997,6 +2992,7 @@ static void gaim_check_comment(OscarData *od, const char *str) {
 static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	va_list ap;
 	aim_userinfo_t *info;
 
@@ -3004,7 +3000,7 @@ static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	serv_got_update(gc, info->sn, FALSE, 0);
+	gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_OFFLINE, NULL);
 
 	g_hash_table_remove(od->buddyinfo, gaim_normalize(gc->account, info->sn));
 
@@ -3282,7 +3278,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	 * Note: There *may* be some clients which send messages as HTML formatted -
 	 *       they need to be special-cased somehow.
 	 */
-	if (aim_sn_is_icq(gaim_account_get_username(account) && aim_sn_is_icq(userinfo->sn)) {
+	if (aim_sn_is_icq(gaim_account_get_username(account)) && aim_sn_is_icq(userinfo->sn)) {
 		/* being recevied by ICQ from ICQ - escape HTML so it is displayed as sent */
 		gchar *tmp2 = gaim_escape_html(tmp);
 		g_free(tmp);
@@ -4679,36 +4675,42 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
+	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	va_list ap;
 	fu16_t newevil;
 	aim_userinfo_t *userinfo;
-	GaimConnection *gc = sess->aux_data;
 
 	va_start(ap, fr);
 	newevil = (fu16_t) va_arg(ap, unsigned int);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	serv_got_eviled(gc, (userinfo && userinfo->sn) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
+	/* XXX - What's with the + 0.5? */
+	gaim_prpl_got_account_warning_level(account, (userinfo && userinfo->sn) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
 
 	return 1;
 }
 
 static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
+	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	int warning_level;
 	va_list ap;
 	aim_userinfo_t *info;
-	GaimConnection *gc = sess->aux_data;
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	gc->evil = (info->warnlevel/10.0) + 0.5;
+	warning_level = info->warnlevel/10.0 + 0.5;
 
-	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
-		gc->login_time_official = info->onlinesince;
-	else if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
-		gc->login_time_official = time(NULL) - info->sessionlen;
+	/*
+	 * XXX - Calling this is probably not good.  We just want to set the
+	 * warning level for our account, not tell the user that we were just
+	 * warned.
+	 */
+	gaim_prpl_got_account_warning_level(account, NULL, warning_level);
 
 	return 1;
 }
@@ -5856,9 +5858,12 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
-	int numtypes, i;
-	fu16_t *maxitems;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimStatus *status;
+	int i;
 	va_list ap;
+	int numtypes;
+	fu16_t *maxitems;
 
 	va_start(ap, fr);
 	numtypes = va_arg(ap, int);
@@ -6090,10 +6095,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} /* End of switch on curitem->type */
 	} /* End of for loop */
 
-	/* Set our ICQ status */
-	if  (!gc->away) {
+	/* XXX - STATUS - Set our ICQ status */
+	status = gaim_presence_get_active_status(account->presence);
+	if (gaim_status_is_available(status))
 		aim_setextstatus(sess, AIM_ICQ_STATE_NORMAL);
-	}
 
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
@@ -6820,28 +6825,31 @@ oscar_status_types(GaimAccount *account)
 
 	is_icq = aim_sn_is_icq(gaim_account_get_username(account));
 
-	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, OSCAR_STATUS_ID_INVISIBLE, _("Invisible"), FALSE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
-
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, OSCAR_STATUS_ID_OFFLINE, _("Offline"), FALSE, FALSE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, OSCAR_STATUS_ID_ONLINE, _("Online"), FALSE, FALSE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_AWAY, _("Away"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, OSCAR_STATUS_ID_INVISIBLE, _("Invisible"), TRUE, TRUE, TRUE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_DND, _("Do Not Disturb"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, OSCAR_STATUS_ID_AVAILABLE, _("Available"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_NA, _("Not Available"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, OSCAR_STATUS_ID_FREE4CHAT, _("Free For Chat"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_OCCUPIED, _("Occupied"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_AWAY, _("Away"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_FREE4CHAT, _("Free For Chat"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, OSCAR_STATUS_ID_OCCUPIED, _("Occupied"), TRUE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY, OSCAR_STATUS_ID_DND, _("Do Not Disturb"), TRUE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY, OSCAR_STATUS_ID_NA, _("Not Available"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;

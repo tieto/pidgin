@@ -768,7 +768,6 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		if (!strcmp(tmp, gaim_normalize(gc->account, c))) {
 			gaim_connection_set_display_name(gc, c);
 			gc->evil = evil;
-			gc->login_time_official = signon;
 		}
 		g_free(tmp);
 
