@@ -192,10 +192,12 @@ static void systray_set_away(int nth) {
 }
 
 static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+	static UINT taskbarRestartMsg; /* static here means value is kept across multiple calls to this func */
 
 	switch(msg) {
 	case WM_CREATE:
 		debug_printf("WM_CREATE\n");
+		taskbarRestartMsg = RegisterWindowMessage("TaskbarCreated");
 		break;
 		
 	case WM_TIMER:
@@ -269,7 +271,13 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 		}
 		break;
 	}
-	default:
+	default: 
+		if (msg == taskbarRestartMsg) {
+			/* explorer crashed and left us hanging... 
+			   This will put the systray icon back in it's place, when it restarts */
+			Shell_NotifyIcon(NIM_ADD,&wgaim_nid);
+		}
+		break;
 	}/* end switch */
 
 	return DefWindowProc(hwnd, msg, wparam, lparam);
