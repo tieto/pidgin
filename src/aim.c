@@ -550,7 +550,11 @@ int main(int argc, char *argv[])
 #endif
 
 	/* scan command-line options */
+#ifdef USE_GNOME
 	opterr = 0;
+#else
+	opterr = 1;
+#endif
 	while ((opt = getopt_long(argc, argv, "ahu:f:v",
 				  long_options, NULL)) != -1) {
 		switch (opt) {
@@ -570,6 +574,13 @@ int main(int argc, char *argv[])
 		case 'h':	/* help */
 			opt_help = 1;
 			break;
+#ifndef USE_GNOME
+		case '?':
+		default:
+			show_usage(0, argv[0]);
+			return 0;
+			break;
+#endif
 		}
 	}
 
