@@ -90,7 +90,8 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_CHATLOGOFF,
 	YAHOO_SERVICE_CHATMSG = 0x20,
 	YAHOO_SERVICE_GAMELOGON = 0x28,
-	YAHOO_SERVICE_GAMELOGOFF = 0x29,
+	YAHOO_SERVICE_GAMELOGOFF,
+	YAHOO_SERVICE_GAMEMSG = 0x2a,
 	YAHOO_SERVICE_FILETRANSFER = 0x46,
 	YAHOO_SERVICE_LIST = 0x55,
 	YAHOO_SERVICE_ADDBUDDY = 0x83,
@@ -675,6 +676,7 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 		yahoo_process_status(gc, pkt);
 		break;
 	case YAHOO_SERVICE_MESSAGE:
+	case YAHOO_SERVICE_GAMEMSG:
 		yahoo_process_message(gc, pkt);
 		break;
 	case YAHOO_SERVICE_NEWMAIL:
