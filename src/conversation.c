@@ -2509,24 +2509,23 @@ void set_convo_title(struct conversation *c)
 	int index;
 	GtkNotebook *nb;
 
-	if (!convo_notebook) {
-		char buf[256];
-		if ((find_log_info(c->name)) || (logging_options & OPT_LOG_ALL))
-			g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, c->name);
-		else
-			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, c->name);
-		gtk_window_set_title(GTK_WINDOW(c->window), buf);
-		return;
-	}
-
 	if ((im_options & OPT_IM_ALIAS_TAB) && c->gc && ((b = find_buddy(c->gc, c->name)) != NULL))
 		text = b->show;
 	else
 		text = c->name;
 
-	nb = GTK_NOTEBOOK(convo_notebook);
-	index = g_list_index(conversations, c);
-	gtk_notebook_set_tab_label_text(nb, gtk_notebook_get_nth_page(nb, index), text);
+	if (!convo_notebook) {
+		char buf[256];
+		if ((find_log_info(c->name)) || (logging_options & OPT_LOG_ALL))
+			g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, text);
+		else
+			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, text);
+		gtk_window_set_title(GTK_WINDOW(c->window), buf);
+	} else {
+		nb = GTK_NOTEBOOK(convo_notebook);
+		index = g_list_index(conversations, c);
+		gtk_notebook_set_tab_label_text(nb, gtk_notebook_get_nth_page(nb, index), text);
+	}
 }
 
 void set_convo_titles()
