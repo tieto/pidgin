@@ -593,7 +593,6 @@ gint gaim_sort_smileys (GtkTreeModel	*model,
 						GtkTreeIter		*b,
 						gpointer		userdata)
 {
-	gaim_debug_info("gaim_sort_smileys","entered\n");
 	gint ret = 0;
 	gchar *name1, *name2;
 
@@ -614,7 +613,6 @@ gint gaim_sort_smileys (GtkTreeModel	*model,
 		ret = g_utf8_collate(name1,name2);
 	}
 
-	gaim_debug_info("gaim_sort_smileys","leaving\n");
 	return ret;
 }
 
