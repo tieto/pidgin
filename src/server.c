@@ -1441,7 +1441,7 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 	account = gaim_connection_get_account(gc);
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
-					 "chat-invited", account, who, name, message);
+					 "chat-invited", account, who, name, message, data);
 
 	if (message)
 		g_snprintf(buf2, sizeof(buf2),

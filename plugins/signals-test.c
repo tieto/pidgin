@@ -392,7 +392,8 @@ chat_invited_user_cb(GaimConversation *conv, const char *name,
 
 static void
 chat_invited_cb(GaimAccount *account, const char *inviter,
-				const char *room_name, const char *message, void *data)
+				const char *room_name, const char *message,
+				const GHashTable *components, void *data)
 {
 	gaim_debug_misc("signals test", "chat-invited (%s, %s, %s, %s)\n",
 					gaim_account_get_username(account), inviter,

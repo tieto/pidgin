@@ -2835,13 +2835,14 @@ gaim_conversations_init(void)
 						 gaim_value_new(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "chat-invited",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER,
-						 NULL, 4,
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER_POINTER,
+						 NULL, 5,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
 						 gaim_value_new(GAIM_TYPE_STRING),
 						 gaim_value_new(GAIM_TYPE_STRING),
-						 gaim_value_new(GAIM_TYPE_STRING));
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_POINTER));
 
 	gaim_signal_register(handle, "chat-joined",
 						 gaim_marshal_VOID__POINTER, NULL, 1,

@@ -406,7 +406,8 @@ void (*chat_invited_user)(GaimConversation *conv, const char *name,
  @signaldef chat-invited
   @signalproto
 void (*chat_invited)(GaimAccount *account, const char *inviter,
-                     const char *chat, const char *invite_message);
+                     const char *chat, const char *invite_message
+                     const GHastTable *components);
   @endsignalproto
   @signaldesc
    Emitted when an account was invited to a chat.
@@ -414,6 +415,8 @@ void (*chat_invited)(GaimAccount *account, const char *inviter,
   @param inviter        The username of the person inviting the account.
   @param chat           The name of the chat you're being invited to.
   @param invite_message The optional invite message.
+  @param components     The components necessary if you want to call 
+                        serv_join_chat
  @endsignaldef
 
  @signaldef chat-joined
