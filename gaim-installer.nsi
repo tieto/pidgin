@@ -11,6 +11,7 @@ Var GTK_FOLDER
 Var GTK_THEME_SEL
 Var LANG_IS_SET
 Var ISSILENT
+Var STARTUP_RUN_KEY
 
 ;--------------------------------
 ;Configuration
@@ -199,6 +200,18 @@ Section -SecUninstallOldGaim
   ; Check install rights..
   Call CheckUserInstallRights
   Pop $R0
+
+  ;If gaim is currently set to run on startup,
+  ;  save the section of the Registry where the setting is before uninstalling,
+  ;  so we can put it back after installing the new version
+  ClearErrors
+  ReadRegStr $STARTUP_RUN_KEY HKCU "${GAIM_STARTUP_RUN_KEY}" "Gaim"
+  IfErrors +3
+  StrCpy $STARTUP_RUN_KEY "HKCU"
+  Goto +4
+  ReadRegStr $STARTUP_RUN_KEY HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim"
+  IfErrors +2
+  StrCpy $STARTUP_RUN_KEY "HKLM"
 
   StrCmp $R0 "HKLM" gaim_hklm
   StrCmp $R0 "HKCU" gaim_hkcu done
@@ -445,6 +458,12 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     SetOverwrite on
     WriteUninstaller "$INSTDIR\${GAIM_UNINST_EXE}"
     SetOverwrite off
+
+    ; If we previously had gaim setup to run on startup, make it do so again
+    StrCmp $STARTUP_RUN_KEY "HKCU" +1 +2
+    WriteRegStr HKCU "${GAIM_STARTUP_RUN_KEY}" "Gaim" "$INSTDIR\gaim.exe"
+    StrCmp $STARTUP_RUN_KEY "HKLM" +1 +2
+    WriteRegStr HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim" "$INSTDIR\gaim.exe"
 
   done:
 SectionEnd ; end of default Gaim section
