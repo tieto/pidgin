@@ -10,8 +10,8 @@
 #define FAIM_VERSION_MINOR 99
 #define FAIM_VERSION_MINORMINOR 0
 
-#include <faim/faimconfig.h>
-#include <faim/aim_cbtypes.h>
+#include <faimconfig.h>
+#include <aim_cbtypes.h>
 
 #ifndef FAIM_USEPTHREADS
 #error pthreads are currently required.

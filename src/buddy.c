@@ -1810,7 +1810,7 @@ void show_buddy_list()
 
         buddypane = gtk_vbox_new(FALSE, 0);
         
-        imbutton   = gtk_button_new_with_label("Im");
+        imbutton   = gtk_button_new_with_label("IM");
 	infobutton = gtk_button_new_with_label("Info");
 	chatbutton = gtk_button_new_with_label("Chat");
 
