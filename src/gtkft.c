@@ -723,6 +723,22 @@ gaim_gtkxfer_dialog_hide(struct gaim_gtkxfer_dialog *dialog)
 }
 
 void
+gaim_show_xfer_dialog()
+{
+       struct gaim_gtkxfer_dialog *dialog;
+       
+       dialog = gaim_get_gtkxfer_dialog();
+       
+       if (dialog == NULL) {
+	       dialog = gaim_gtkxfer_dialog_new();
+
+	       gaim_set_gtkxfer_dialog(dialog);
+       }
+
+       gaim_gtkxfer_dialog_show(dialog);
+}
+
+void
 gaim_gtkxfer_dialog_add_xfer(struct gaim_gtkxfer_dialog *dialog,
 							 struct gaim_xfer *xfer)
 {

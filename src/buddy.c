@@ -56,11 +56,22 @@
 
 static struct gaim_gtk_buddy_list *gtkblist = NULL;
 
+/* Docklet nonsense */
+static gboolean gaim_gtk_blist_obscured = FALSE;
+
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node);
 
 /***************************************************
  *              Callbacks                          *
  ***************************************************/
+
+static void gaim_gtk_blist_destroy_cb()
+{
+	if (docklet_count)
+		gaim_blist_set_visible(FALSE);
+	else
+		do_quit();
+}
 
 static void gtk_blist_menu_im_cb(GtkWidget *w, struct buddy *b)
 {
@@ -302,7 +313,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/A_ccounts"), "<CTL>A", account_editor, 0, NULL },
 	{ N_("/Tools/Preferences"), "<CTL>P", show_prefs, 0,
 	  "<StockItem>", GTK_STOCK_PREFERENCES },
-	{ N_("/Tools/_File Transfers"), NULL, NULL, 0,
+	{ N_("/Tools/_File Transfers"), NULL, gaim_show_xfer_dialog, 0,
 	  "<StockItem>", GTK_STOCK_REVERT_TO_SAVED },
 	{ N_("/Tools/sep2"), NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/P_rotocol Actions"), NULL, NULL, 0, "<Branch>" },
@@ -560,6 +571,8 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 
 	gtkblist->vbox = gtk_vbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
+
+	g_signal_connect(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gaim_gtk_blist_destroy_cb), NULL);
 
 	/******************************* Menu bar *************************************/
 	ift = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<GaimMain>", NULL);
@@ -828,10 +841,70 @@ static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 
 static void gaim_gtk_blist_set_visible(struct gaim_buddy_list *list, gboolean show)
 {
-	if (show)
-		gtk_widget_show(gtkblist->window);
-	else
-		gtk_widget_hide(gtkblist->window);
+	if (show) {
+		gtk_window_present(gtkblist->window);
+	} else {
+		if (!connections || docklet_count) {
+#ifdef _WIN32
+			wgaim_systray_minimize(blist);
+#endif
+			gtk_widget_hide(gtkblist->window);
+		} else {
+			gtk_window_iconify(GTK_WINDOW(gtkblist->window));
+		}
+	}
+}
+
+void gaim_gtk_blist_docklet_toggle() {
+	/* Useful for the docklet plugin and also for the win32 tray icon*/
+	/* This is called when one of those is clicked--it will show/hide the 
+	   buddy list/login window--depending on which is active */
+	if (connections && gtkblist) {
+		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
+			gaim_blist_set_visible(GAIM_WINDOW_ICONIFIED(gtkblist->window) || gaim_gtk_blist_obscured);
+		} else {
+#if _WIN32
+			wgaim_systray_maximize(blist);
+#endif
+			gaim_blist_set_visible(TRUE);
+		}
+	} else if (connections) {
+		/* we're logging in or something... do nothing */
+		debug_printf("docklet_toggle called with connections but no blist!\n");
+	} else {
+		if (GTK_WIDGET_VISIBLE(mainwindow)) {
+			if (GAIM_WINDOW_ICONIFIED(mainwindow)) {
+				gtk_window_present(GTK_WINDOW(mainwindow));
+			} else {
+#if _WIN32
+				wgaim_systray_minimize(mainwindow);
+#endif
+				gtk_widget_hide(mainwindow);
+			}
+		} else {
+#if _WIN32
+			wgaim_systray_maximize(mainwindow);
+#endif
+			gtk_window_present(GTK_WINDOW(mainwindow));
+		}
+	}
+}
+
+void gaim_gtk_blist_docklet_add()
+{
+	docklet_count++;
+}
+
+void gaim_gtk_blist_docklet_remove()
+{
+	docklet_count--;
+	if (!docklet_count) {
+		if (connections) {
+			gaim_blist_set_visible(TRUE);
+		} else {
+			gtk_window_present(GTK_WINDOW(gtkblist->window));
+		}
+	}
 }
 
 static struct gaim_blist_ui_ops blist_ui_ops =

@@ -153,7 +153,7 @@ static void docklet_menu(GdkEventButton *event) {
 	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 
-	gaim_new_item_from_stock(menu, _("File Transfers..."), GTK_STOCK_REVERT_TO_SAVED, G_CALLBACK(show_xfer_dialog), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("File Transfers..."), GTK_STOCK_REVERT_TO_SAVED, G_CALLBACK(gaim_show_xfer_dialog), NULL, 0, 0, NULL);
 	gaim_new_item_from_pixbuf(menu, _("Accounts..."), "accounts-menu.png", G_CALLBACK(account_editor), NULL, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("Preferences..."), GTK_STOCK_PREFERENCES, G_CALLBACK(show_prefs), NULL, 0, 0, NULL);
 
@@ -186,7 +186,7 @@ static void docklet_clicked(GtkWidget *button, GdkEventButton *event, void *data
 				docklet_flush_queue();
 				docklet_update_status();
 			} else {
-				docklet_toggle();
+				gaim_gtk_blist_docklet_toggle();
 			}
 			break;
 		case 2:
@@ -296,8 +296,8 @@ static gboolean docklet_update_status() {
 }
 
 static void docklet_embedded(GtkWidget *widget, void *data) {
-	debug_printf("Tray Icon: embedded\n");
-	docklet_add();
+	debug_printf("Tray Icon:embedded\n");
+	gaim_gtk_blist_docklet_add();
 }
 
 static void docklet_remove_callbacks() {
@@ -313,7 +313,7 @@ static void docklet_remove_callbacks() {
 static void docklet_destroyed(GtkWidget *widget, void *data) {
 	debug_printf("Tray Icon: destroyed\n");
 
-	docklet_remove();
+	gaim_gtk_blist_docklet_remove();
 
 	docklet_flush_queue();
 
@@ -448,7 +448,7 @@ char *gaim_plugin_init(GModule *handle) {
 
 void gaim_plugin_remove() {
 	if (GTK_WIDGET_VISIBLE(docklet)) {
-		docklet_remove();
+		gaim_gtk_blist_docklet_remove();
 	}
 
 	docklet_flush_queue();

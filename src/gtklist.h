@@ -96,4 +96,12 @@ void gaim_gtk_blist_refresh(struct gaim_buddy_list *list);
  */
 void gaim_gtk_blist_update_toolbar();
 
+/**
+ * Useful for the docklet plugin and also for the win32 tray icon
+ * This is called when one of those is clicked--it will show/hide the 
+ * buddy list/login window--depending on which is active 
+ */
+void gaim_gtk_blist_docklet_toggle();
+void gaim_gtk_blist_docklet_add();
+void gaim_gtk_blist_docklet_remove();
 #endif /* _GAIM_GTK_LIST_H_ */

@@ -67,6 +67,11 @@ void gaim_gtkxfer_dialog_show(struct gaim_gtkxfer_dialog *dialog);
 void gaim_gtkxfer_dialog_hide(struct gaim_gtkxfer_dialog *dialog);
 
 /**
+ * Shows the file transfer dialog, creating a new one if necessary
+ */
+void gaim_show_xfer_dialog();
+
+/**
  * Adds a file transfer to the dialog.
  *
  * @param dialog The file transfer dialog.
