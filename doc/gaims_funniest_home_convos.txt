@@ -273,3 +273,18 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 (21:05:38) idiot1: nope
 (21:05:42) idiot1: opps
 
+
+---
+
+(20:37:03) marv: nosnilmot: I can just try tweaking gtk_imhtml_get_markup_range
+(20:38:28) nosnilmot: marv: I know you can, because you know what's going on in there, but is there any point in me trying?...
+(20:38:57) marv: nosnilmot: I could explain it to you I guess. Sure why not.
+(20:39:44) nosnilmot: marv: I'd like to know (I think?), but now probably isn't the best time, I shouldn't have asked
+(20:40:11) marv: The buffer is composed to unescaped (no entities) text, with a certain unicode character representing images or smileys or widgets.
+(20:40:26) marv: nosnilmot: oh. well let me know when you feel like listening
+(20:41:10) nosnilmot: marv: don't worry, I will. I need to learn C first.
+(20:41:27) marv: um, you don't know C?
+(20:41:31) nosnilmot: no
+(20:41:44) marv: then what were those patches i applied from you earlier?
+(20:42:05) nosnilmot: you don't need to know C to write patches
+(20:42:12) marv: oh okay
