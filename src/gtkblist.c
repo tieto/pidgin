@@ -1531,11 +1531,19 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	
 	attr.event_mask |= (GDK_EXPOSURE_MASK | GDK_KEY_PRESS_MASK |
 			  GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK );
+	if(gtkblist->east_shadow) {
+		gdk_window_set_user_data (gtkblist->east_shadow, NULL);
+		gdk_window_destroy (gtkblist->east_shadow);
+	}
 	gtkblist->east_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr, 
 					       GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
 	gdk_window_set_user_data (gtkblist->east_shadow, gtkblist->tipwindow);
 	gdk_window_set_back_pixmap (gtkblist->east_shadow, NULL, FALSE);
 
+	if(gtkblist->south_shadow) {
+		gdk_window_set_user_data (gtkblist->south_shadow, NULL);
+		gdk_window_destroy (gtkblist->south_shadow);
+	}
 	gtkblist->south_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr, 
 					       GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
 	gdk_window_set_user_data (gtkblist->south_shadow, gtkblist->tipwindow);
@@ -1644,13 +1652,13 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 	if (gtkblist->tipwindow) {
 		gtk_widget_destroy(gtkblist->tipwindow);
 #ifdef WANT_DROP_SHADOW
-		 gdk_window_set_user_data (gtkblist->east_shadow, NULL);
-			  gdk_window_destroy (gtkblist->east_shadow);
-			  gtkblist->east_shadow = NULL;
+		gdk_window_set_user_data (gtkblist->east_shadow, NULL);
+		gdk_window_destroy (gtkblist->east_shadow);
+		gtkblist->east_shadow = NULL;
 
-			  gdk_window_set_user_data (gtkblist->south_shadow, NULL);
-			  gdk_window_destroy (gtkblist->south_shadow);
-			  gtkblist->south_shadow = NULL;
+		gdk_window_set_user_data (gtkblist->south_shadow, NULL);
+		gdk_window_destroy (gtkblist->south_shadow);
+		gtkblist->south_shadow = NULL;
 #endif
 		gtkblist->tipwindow = NULL;
 	}
