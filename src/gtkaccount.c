@@ -2182,6 +2182,7 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(dialog->treeview), event->x, event->y, &path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
+	gtk_tree_path_free(path);
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, COLUMN_DATA, &account, -1);
 
 	if ((account != NULL) && (event->button == 1) &&
