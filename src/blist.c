@@ -655,7 +655,7 @@ gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
 		gaim_blist_node_remove_setting((GaimBlistNode *)buddy, "buddy_icon");
 
 	schedule_blist_save();
-	
+
 	gaim_blist_update_buddy_icon(buddy);
 }
 

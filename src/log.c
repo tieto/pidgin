@@ -178,115 +178,31 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 	return size;
 }
 
-#if 0
-static char* unescape_filename(const char *escaped) {
-	const char *c = escaped;
-	GString *ret;
-
-	if (escaped == NULL)
-		return NULL;
-
-	ret = g_string_new("");
-
-	/**
-	 *  <>:"/\ |?*'&$ 
-	 *	The above chars are "taboo" for gaim log names and are URL escaped
-	 *  % is also escaped so we can convert back easily
-	 */
-
-	while (*c) {
-		if (*c == '%') {
-			if (*(c + 1) && *(c + 2)) {
-				char hex[2];
-				hex[0] = *(c + 1);
-				hex[1] = *(c + 2);
-				unsigned char *nonhex;
-				gaim_base16_decode(hex, &nonhex);
-				ret = g_string_append_c(ret, *nonhex);
-				g_free(nonhex);
-				c += 2;
-			}
-		} else {
-			ret = g_string_append_c(ret, *c);
-		}
-		c++;
-	}
-
-	return g_string_free(ret, FALSE);
-}
-#endif
-
-static char* escape_filename(const char *unescaped) {
-	const char *c = unescaped;
-	char *hex;
-	GString *ret;
-
-	if (unescaped == NULL)
-		return NULL;
-
-	ret = g_string_new("");
-
-	/**
-	 *  <>:"/\ |?*'&$ 
-	 *	The above chars are "taboo" for gaim log names and are URL escaped
-	 *  % is also escaped so we can convert back easily
-	 */
-
-	while (*c) {
-		switch (*c) {
-			case '<':
-			case '>':
-			case ':':
-			case '"':
-			case '/':
-			case '\\':
-			case ' ':
-			case '|':
-			case '?':
-			case '*':
-			case '\'':
-			case '&':
-			case '$':
-			case '%':
-				hex = g_strdup_printf ("%%%X", (int) *c);
-				ret = g_string_append(ret, hex);
-				g_free(hex);
-				break;
-			default:
-				ret = g_string_append_c(ret, *c);
-		}
-		c++;
-	}
-
-	return g_string_free(ret, FALSE);
-}
-
 static char* gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account) {
-	char *acct_name = escape_filename(gaim_normalize(account,
-				gaim_account_get_username(account)));
-	char *target;
+	char *acct_name = g_strdup(gaim_escape_filename(gaim_normalize(account,
+				gaim_account_get_username(account))));
+	const char *target;
 	/* does this seem like a bad way to get this component of the path to anyone else? --Nathan */
 	const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO(
 			gaim_find_prpl(gaim_account_get_protocol_id(account))
 			)->list_icon(account, NULL);
-	
+
 	char *dir;
 
 	if (type == GAIM_LOG_CHAT) {
 		char *temp = g_strdup_printf("%s.chat", gaim_normalize(account, name));
-		target = escape_filename(temp);
+		target = gaim_escape_filename(temp);
 		g_free(temp);
 	} else if(type == GAIM_LOG_SYSTEM) {
-		target = g_strdup(".system");
+		target = ".system";
 	} else {
-		target = escape_filename(gaim_normalize(account, name));
+		target = gaim_escape_filename(gaim_normalize(account, name));
 	}
 
 
 	dir = g_build_filename(gaim_user_dir(), "logs", prpl, acct_name, target, NULL);
-	g_free(target);
-	g_free(acct_name);
 
+	g_free(acct_name);
 	return dir;
 }
 

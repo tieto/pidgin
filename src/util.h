@@ -736,6 +736,26 @@ char *gaim_text_strip_mnemonic(const char *in);
  */
 #define gaim_add_eight(x) ((x)+8)
 
+/**
+ * Does the reverse of gaim_escape_filename
+ *
+ * This will change hex codes and such to their ascii equivalents.
+ *
+ * @param str The string to translate.
+ *
+ * @return The resulting string.
+ */
+const char *gaim_unescape_filename(const char *str);
+
+/**
+ * Escapes filesystem-unfriendly characters from a filename
+ *
+ * @param str The string to translate.
+ *
+ * @return The resulting string.
+ */
+const char *gaim_escape_filename(const char *str);
+
 #ifdef __cplusplus
 }
 #endif

@@ -3203,3 +3203,34 @@ char *gaim_text_strip_mnemonic(const char *in)
 	return out;
 }
 
+const char* gaim_unescape_filename(const char *escaped) {
+	return gaim_url_decode(escaped);
+}
+
+
+/* this is almost identical to gaim_url_encode (hence gaim_url_decode
+ * being used above), but we want to keep certain characters unescaped
+ * for compat reasons */
+const char *
+gaim_escape_filename(const char *str)
+{
+	static char buf[BUF_LEN];
+	guint i, j = 0;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	for (i = 0; i < strlen(str); i++) {
+		if (isalnum(str[i]) || str[i] == '@')
+			buf[j++] = str[i];
+		else {
+			sprintf(buf + j, "%%%02x", (unsigned char)str[i]);
+			j += 3;
+		}
+	}
+
+	buf[j] = '\0';
+
+	return buf;
+}
+
+
