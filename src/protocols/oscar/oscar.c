@@ -4092,13 +4092,25 @@ static size_t my_strftime(char *s, size_t max, const char  *fmt,
 }
 #endif
 
+static void oscar_string_append(GString *str, char *name, char *value)
+{
+	gchar *utf8;
+
+	if (value && value[0] && (utf8 = gaim_utf8_try_convert(value))) {
+		g_string_append_printf(str, "\n<br><b>%s:</b> %s", name, utf8);
+		g_free(utf8);
+	}
+}
+
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
-	gchar *buf, *tmp, *utf8;
-	gchar who[16];
+	OscarData *od = (OscarData *)gc->proto_data;
 	GaimBuddy *buddy;
-	gchar *primary;
+	struct buddyinfo *bi;
+	gchar who[16];
+	GString *str;
+	gchar *primary, *utf8;
 	va_list ap;
 	struct aim_icq_info *info;
 
@@ -4109,34 +4121,41 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	if (!info->uin)
 		return 0;
 
+	str = g_string_sized_new(100);
 	g_snprintf(who, sizeof(who), "%u", info->uin);
-	buf = g_strdup_printf("<b>%s:</b> %s", _("UIN"), who);
-	if (info->nick && info->nick[0] && (utf8 = gaim_utf8_try_convert(info->nick))) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Nick"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
+	buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
+	if (buddy != NULL)
+		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(buddy->account, buddy->name));
+
+	g_string_append_printf(str, "<b>%s:</b> %s", _("UIN"), who);
+	oscar_string_append(str, _("Nick"), info->nick);
+	if ((bi != NULL) && (bi->ipaddr != 0)) {
+		char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
+						(bi->ipaddr & 0xff000000) >> 24,
+						(bi->ipaddr & 0x00ff0000) >> 16,
+						(bi->ipaddr & 0x0000ff00) >> 8,
+						(bi->ipaddr & 0x000000ff));
+		oscar_string_append(str, _("IP Address"), tstr);
+		g_free(tstr);
 	}
-	if (info->first && info->first[0] && (utf8 = gaim_utf8_try_convert(info->first))) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("First Name"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-	}
-	if (info->last && info->last[0] && (utf8 = gaim_utf8_try_convert(info->last))) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Last Name"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-	}
+	oscar_string_append(str, _("First Name"), info->first);
+	oscar_string_append(str, _("Last Name"), info->last);
+	oscar_string_append(str, _("Last Name"), info->last);
 	if (info->email && info->email[0] && (utf8 = gaim_utf8_try_convert(info->email))) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Email Address"), ":</b> <a href=\"mailto:", utf8, "\">", utf8, "</a>", NULL);  g_free(tmp); g_free(utf8);
+		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("Email Address"), utf8, utf8);
+		g_free(utf8);
 	}
 	if (info->numaddresses && info->email2) {
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
 			if (info->email2[i] && info->email2[i][0] && (utf8 = gaim_utf8_try_convert(info->email2[i]))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Email Address"), ":</b> <a href=\"mailto:", utf8, "\">", utf8, "</a>", NULL);  g_free(tmp); g_free(utf8);
+				g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto%s\">%s</a>", _("Email Address"), utf8, utf8);
+				g_free(utf8);
 			}
 		}
 	}
-	if (info->mobile && info->mobile[0] && (utf8 = gaim_utf8_try_convert(info->mobile))) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Mobile Phone"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-	}
-	if (info->gender) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Gender"), ":</b> ", info->gender==1 ? _("Female") : _("Male"), NULL);  g_free(tmp);
-	}
+	oscar_string_append(str, _("Mobile Phone"), info->mobile);
+	oscar_string_append(str, _("Gender"), info->gender==1 ? _("Female") : _("Male"));
 	if (info->birthyear || info->birthmonth || info->birthday) {
 		char date[30];
 		struct tm tm;
@@ -4144,74 +4163,54 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tm.tm_mon = (int)info->birthmonth-1;
 		tm.tm_year = (int)info->birthyear-1900;
 		strftime(date, sizeof(date), "%x", &tm);
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Birthday"), ":</b> ", date, NULL);  g_free(tmp);
+		oscar_string_append(str, _("Birthday"), date);
 	}
 	if (info->age) {
 		char age[5];
 		snprintf(age, sizeof(age), "%hhd", info->age);
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Age"), ":</b> ", age, NULL);  g_free(tmp);
+		oscar_string_append(str, _("Age"), age);
 	}
 	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = gaim_utf8_try_convert(info->personalwebpage))) {
-		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Personal Web Page"), ":</b> <a href=\"", utf8, "\">", utf8, "</a>", NULL);  g_free(tmp); g_free(utf8);
+		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Personal Web Page"), utf8, utf8);
+		g_free(utf8);
 	}
 	if (info->info && info->info[0] && (utf8 = gaim_utf8_try_convert(info->info))) {
-		tmp = buf;  buf = g_strconcat(tmp, "<hr><b>", _("Additional Information"), ":</b><br>", utf8, NULL);  g_free(tmp); g_free(utf8);
+		g_string_append_printf(str, "<hr><b>%s:</b><br>%s", _("Additional Information"), utf8);
+		g_free(utf8);
 	}
-	tmp = buf;  buf = g_strconcat(tmp, "<hr>\n", NULL);  g_free(tmp);
+	g_string_append_printf(str, "<hr>\n");
 	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
-		tmp = buf;  buf = g_strconcat(tmp, "<b>", _("Home Address"), ":</b>", NULL);  g_free(tmp);
-		if (info->homeaddr && info->homeaddr[0] && (utf8 = gaim_utf8_try_convert(info->homeaddr))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Address"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
-		if (info->homecity && info->homecity[0] && (utf8 = gaim_utf8_try_convert(info->homecity))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("City"), ":</b> ", utf8,  NULL);  g_free(tmp); g_free(utf8);
-		}
-		if (info->homestate && info->homestate[0] && (utf8 = gaim_utf8_try_convert(info->homestate))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("State"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
-		if (info->homezip && info->homezip[0] && (utf8 = gaim_utf8_try_convert(info->homezip))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Zip Code"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
-		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
+		g_string_append_printf(str, "<b>%s:</b>", _("Home Address"));
+		oscar_string_append(str, _("Address"), info->homeaddr);
+		oscar_string_append(str, _("City"), info->homecity);
+		oscar_string_append(str, _("State"), info->homestate);
+		oscar_string_append(str, _("Zip Code"), info->homezip);
+		g_string_append_printf(str, "\n<hr>\n");
 	}
 	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
-		tmp = buf;  buf = g_strconcat(tmp, "<b>", _("Work Address"), ":</b>", NULL);  g_free(tmp);
-		if (info->workaddr && info->workaddr[0] && (utf8 = gaim_utf8_try_convert(info->workaddr))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Address"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
-		if (info->workcity && info->workcity[0] && (utf8 = gaim_utf8_try_convert(info->workcity))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("City"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
-		if (info->workstate && info->workstate[0] && (utf8 = gaim_utf8_try_convert(info->workstate))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("State"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
-		if (info->workzip && info->workzip[0] && (utf8 = gaim_utf8_try_convert(info->workzip))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Zip Code"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
-		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
+		g_string_append_printf(str, "<b>%s:</b>", _("Work Address"));
+		oscar_string_append(str, _("Address"), info->workaddr);
+		oscar_string_append(str, _("City"), info->workcity);
+		oscar_string_append(str, _("State"), info->workstate);
+		oscar_string_append(str, _("Zip Code"), info->workzip);
+		g_string_append_printf(str, "\n<hr>\n");
 	}
 	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
-		tmp = buf;  buf = g_strconcat(tmp, "<b>", _("Work Information"), ":</b>", NULL);  g_free(tmp);
-		if (info->workcompany && info->workcompany[0] && (utf8 = gaim_utf8_try_convert(info->workcompany))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Company"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
-		if (info->workdivision && info->workdivision[0] && (utf8 = gaim_utf8_try_convert(info->workdivision))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Division"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
-		if (info->workposition && info->workposition[0] && (utf8 = gaim_utf8_try_convert(info->workposition))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Position"), ":</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
-		}
+		g_string_append_printf(str, "<b>%s:</b>", _("Work Information"));
+		oscar_string_append(str, _("Company"), info->workcompany);
+		oscar_string_append(str, _("Division"), info->workdivision);
+		oscar_string_append(str, _("Position"), info->workposition);
 		if (info->workwebpage && info->workwebpage[0] && (utf8 = gaim_utf8_try_convert(info->workwebpage))) {
-			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Web Page"), ":</b> <a href=\"", utf8, "\">", utf8, "</a>", NULL);  g_free(tmp); g_free(utf8);
+			g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Web Page"), utf8, utf8);
+			g_free(utf8);
 		}
-		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
+		g_string_append_printf(str, "\n<hr>\n");
 	}
 
-	buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
 	primary = g_strdup_printf(_("ICQ Info for %s"), gaim_get_buddy_alias(buddy));
-	gaim_notify_formatted(gc, NULL, primary, NULL, buf, NULL, NULL);
+	gaim_notify_formatted(gc, NULL, primary, NULL, str->str, NULL, NULL);
 	g_free(primary);
-	g_free(buf);
+	g_string_free(str, TRUE);
 
 	return 1;
 }
@@ -5700,7 +5699,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			g_free(status);
 		}
 
-		if ((bi != NULL) && (bi->ipaddr)) {
+		if ((bi != NULL) && (bi->ipaddr != 0)) {
 			char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
 							(bi->ipaddr & 0xff000000) >> 24,
 							(bi->ipaddr & 0x00ff0000) >> 16,
