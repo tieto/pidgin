@@ -1432,6 +1432,9 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-collapsed", G_CALLBACK(gtk_blist_row_collapsed_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "button-press-event", G_CALLBACK(gtk_blist_button_press_cb), NULL);
 
+	/* Enable CTRL+F searching */
+	gtk_tree_view_set_search_column(GTK_TREE_VIEW(gtkblist->treeview), NAME_COLUMN);
+
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
