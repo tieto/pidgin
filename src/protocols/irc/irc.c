@@ -344,10 +344,12 @@ static void handle_list(struct gaim_connection *gc, char *list)
 		while (m) {
 			struct buddy *b = m->data;
 			char *tmp = g_strdup(b->name);
+			char *x;
 			g_strdown(tmp);
-			if (strstr(id->str->str, tmp))
+			x = strstr(id->str->str, tmp);
+			if (!b->present && x)
 				serv_got_update(gc, b->name, 1, 0, 0, 0, 0, 0);
-			else
+			else if (b->present && !x)
 				serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
 			g_free(tmp);
 			m = m->next;
