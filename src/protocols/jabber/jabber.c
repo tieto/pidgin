@@ -1081,6 +1081,39 @@ static GList *jabber_actions(GaimConnection *gc)
 	return m;
 }
 
+static GaimChat *jabber_find_blist_chat(GaimAccount *account, const char *name)
+{
+	GaimBlistNode *gnode, *cnode;
+	JabberID *jid;
+
+	if(!(jid = jabber_id_new(name)))
+		return NULL;
+
+	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			GaimChat *chat = (GaimChat*)cnode;
+			const char *room, *server;
+			if(!GAIM_BLIST_NODE_IS_CHAT(cnode))
+				continue;
+
+			if(chat->account != account)
+				return;
+
+			if(!(room = g_hash_table_lookup(chat->components, "room")))
+				continue;
+			if(!(server = g_hash_table_lookup(chat->components, "server")))
+				continue;
+
+			if(!g_utf8_collate(room, jid->node) && !g_utf8_collate(server, jid->domain)) {
+				jabber_id_free(jid);
+				return chat;
+			}
+		}
+	}
+	jabber_id_free(jid);
+	return NULL;
+}
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
@@ -1135,7 +1168,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* set_buddy_icon */
 	NULL, /* remove_group */
 	jabber_chat_buddy_real_name,
-	jabber_chat_set_topic
+	jabber_chat_set_topic,
+	jabber_find_blist_chat
 };
 
 static GaimPluginInfo info =

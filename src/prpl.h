@@ -314,6 +314,8 @@ struct _GaimPluginProtocolInfo
 	char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who);
 
 	void (*set_chat_topic)(GaimConnection *gc, int id, const char *topic);
+
+	GaimChat *(*find_blist_chat)(GaimAccount *account, const char *name);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \
