@@ -3790,6 +3790,8 @@ setup_chat_pane(GaimConversation *conv)
 							 gtkconv->entry_buffer);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
 					 G_CALLBACK(entry_key_pressed_cb_2), conv);
+	g_signal_connect(G_OBJECT(sw), "key_press_event",
+					 G_CALLBACK(entry_key_pressed_cb_2), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 
@@ -3888,6 +3890,8 @@ setup_im_pane(GaimConversation *conv)
 							 G_CALLBACK(entry_key_pressed_cb_1),
 							 gtkconv->entry_buffer);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
+					 G_CALLBACK(entry_key_pressed_cb_2), conv);
+	g_signal_connect(G_OBJECT(sw), "key_press_event",
 					 G_CALLBACK(entry_key_pressed_cb_2), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
