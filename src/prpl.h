@@ -324,15 +324,6 @@ gint gaim_prpl_compare(GaimPlugin *a, GaimPlugin *b);
 GaimPlugin *gaim_find_prpl(GaimProtocol type);
 
 /**
- * Creates a menu of all protocol plugins and their protocol-specific
- * actions.
- *
- * @note This should be UI-specific code, or rewritten in such a way as to
- *       not use any any GTK code.
- */
-void do_proto_menu(void);
-
-/**
  * Shows a message saying that somebody added you as a buddy, and asks
  * if you would like to do the same.
  *

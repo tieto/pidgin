@@ -216,7 +216,7 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 	gaim_setup(gc);
 
 	do_away_menu();
-	do_proto_menu();
+	gaim_gtk_blist_update_protocol_actions();
 
 	if(meter)
 		kill_meter(meter, _("Done."));
@@ -233,7 +233,7 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc,
 
 	update_privacy_connections();
 	do_away_menu();
-	do_proto_menu();
+	gaim_gtk_blist_update_protocol_actions();
 
 	if(meter)
 		kill_meter(meter, _("Done."));
