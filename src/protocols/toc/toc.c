@@ -791,7 +791,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		serv_got_joined_chat(gc, id, name);
 	} else if (!g_ascii_strcasecmp(c, "CHAT_IN")) {
-		int id, w;
+		int id;
+		GaimConvChatFlags flags;
 		char *m, *who, *whisper;
 
 		sscanf(strtok(NULL, ":"), "%d", &id);
@@ -802,9 +803,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			m++;
 		m++;
 
-		w = (whisper && (*whisper == 'T')) ? 1 : 0;
+		flags = (whisper && (*whisper == 'T')) ? GAIM_CONV_CHAT_WHISPER : 0;
 
-		serv_got_chat_in(gc, id, who, w, m, time((time_t)NULL));
+		serv_got_chat_in(gc, id, who, flags, m, time((time_t)NULL));
 	} else if (!g_ascii_strcasecmp(c, "CHAT_UPDATE_BUDDY")) {
 		int id;
 		char *in, *buddy;

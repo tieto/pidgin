@@ -715,7 +715,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
                                         send_inst_utf8 = "malformed instance";
                                 }
                                 
-                                serv_got_chat_in(zgc, zt2->id, send_inst_utf8, FALSE, buf3, time(NULL));
+                                serv_got_chat_in(zgc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
                                 g_free(send_inst);
                                 gconv1 = gaim_find_conversation_with_account(zt2->name, zgc->account);
                                 gcc = gaim_conversation_get_chat_data(gconv1);

@@ -1521,9 +1521,9 @@ void serv_got_chat_left(GaimConnection *g, int id)
 }
 
 void serv_got_chat_in(GaimConnection *g, int id, const char *who,
-					  int whisper, const char *message, time_t mtime)
+					  GaimConvChatFlags chatflags, const char *message, time_t mtime)
 {
-	GaimMessageFlags w;
+	GaimMessageFlags msgflags = 0;
 	GSList *bcs;
 	GaimConversation *conv = NULL;
 	GaimConvChat *chat = NULL;
@@ -1578,12 +1578,12 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	/* Make sure URLs are clickable */
 	buf = gaim_markup_linkify(message);
 
-	if (whisper)
-		w = GAIM_MESSAGE_WHISPER;
-	else
-		w = 0;
+	if (chatflags & GAIM_CONV_CHAT_WHISPER)
+		msgflags |= GAIM_MESSAGE_WHISPER;
+	if (chatflags & GAIM_CONV_CHAT_DELAYED)
+		msgflags |= GAIM_MESSAGE_DELAYED;
 
-	gaim_conv_chat_write(chat, who, buf, w, mtime);
+	gaim_conv_chat_write(chat, who, buf, msgflags, mtime);
 
 	g_free(angel);
 	g_free(buf);

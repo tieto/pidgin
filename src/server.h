@@ -94,7 +94,7 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 									   int id, const char *name);
 void serv_got_chat_left(GaimConnection *g, int id);
 void serv_got_chat_in(GaimConnection *g, int id, const char *who,
-					  int whisper, const char *message, time_t mtime);
+					  GaimConvChatFlags chatflags, const char *message, time_t mtime);
 void serv_send_file(GaimConnection *gc, const char *who, const char *file);
 
 #ifdef __cplusplus

@@ -57,8 +57,14 @@ typedef enum
 {
 	GAIM_CONV_IM_AUTO_RESP = 0x0001,    /**< Auto response.    */
 	GAIM_CONV_IM_IMAGES    = 0x0002     /**< Contains images.  */
-
 } GaimConvImFlags;
+
+typedef enum
+{
+	GAIM_CONV_CHAT_WHISPER = 0x0001,    /**< Whispered message.*/
+	GAIM_CONV_CHAT_DELAYED = 0x0002     /**< Delayed message.  */
+
+} GaimConvChatFlags;
 
 typedef enum {
 	GAIM_ICON_SCALE_DISPLAY = 0x01,		/**< We scale the icon when we display it */

@@ -4955,10 +4955,12 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus)) {
 		if (!(flags & GAIM_MESSAGE_WHISPER) && (flags & GAIM_MESSAGE_SEND))
 			gaim_sound_play_event(GAIM_SOUND_CHAT_YOU_SAY);
-		else if (flags & GAIM_MESSAGE_RECV) {
+		else if ((flags & GAIM_MESSAGE_RECV) &&
+			!(flags & GAIM_MESSAGE_DELAYED) && 
+			!(flags & GAIM_MESSAGE_SYSTEM)) {
+				
 			if ((flags & GAIM_MESSAGE_NICK) &&
-				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/nick_said") &&
-				!(flags & GAIM_MESSAGE_SYSTEM)) {
+				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/nick_said")) {
 
 				gaim_sound_play_event(GAIM_SOUND_CHAT_NICK);
 			}

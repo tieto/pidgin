@@ -180,7 +180,8 @@ static void handle_groupchat(JabberMessage *jm)
 
 	if(jm->xhtml || jm->body) {
 		if(jid->resource)
-			serv_got_chat_in(jm->js->gc, chat->id, jid->resource, 0,
+			serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
+							jm->delayed ? GAIM_CONV_CHAT_DELAYED : 0,
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
 			gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "",
@@ -243,6 +244,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	jm = g_new0(JabberMessage, 1);
 	jm->js = js;
 	jm->sent = time(NULL);
+	jm->delayed = FALSE;
 
 	type = xmlnode_get_attrib(packet, "type");
 
@@ -303,6 +305,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					jm->events |= JABBER_MESSAGE_EVENT_COMPOSING;
 			} else if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
+				jm->delayed = TRUE;
 				if(timestamp)
 					jm->sent = gaim_str_to_time(timestamp, TRUE);
 			} else if(xmlns && !strcmp(xmlns, "jabber:x:conference") &&
