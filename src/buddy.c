@@ -198,9 +198,11 @@ void update_all_buddies()
 	GList *mem;
         struct buddy *b;
 	struct group *g;
+	int count;
 
         while(grp) {
 		g = (struct group *)grp->data;
+		count = 0;
                 mem = g->members;
                 while(mem) {
 			b = (struct buddy *)mem->data;
@@ -208,8 +210,14 @@ void update_all_buddies()
                         if (b->present || !GTK_WIDGET_VISIBLE(b->item))
 				set_buddy(b);
 
+			if (b->present) count++;
+
                         mem = mem->next;
                 }
+		/* this is a fall-back in case we missed any */
+		if (!count) gtk_widget_hide(g->item);
+		else gtk_widget_show(g->item);
+
                 grp = grp->next;
         }
 
@@ -471,6 +479,8 @@ void remove_buddy(struct group *rem_g, struct buddy *rem_b)
 {
 	GList *grp;
 	GList *mem;
+	struct buddy *b;
+	int count = 0;
 	
 	struct group *delg;
 	struct buddy *delb;
@@ -486,6 +496,14 @@ void remove_buddy(struct group *rem_g, struct buddy *rem_b)
         delg->members = g_list_remove(delg->members, delb);
         serv_remove_buddy(delb->name);
         g_free(delb);
+	mem = delg->members;
+	while (mem && !count) {
+		b = (struct buddy *)mem->data;
+		if (b->present) count++;
+		mem = mem->next;
+	}
+	if (!count) gtk_widget_hide(delg->item);
+	
 
         serv_save_config();
 
@@ -578,8 +596,8 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 	if (!parent) {
 		GList *grps, *buds;
 		struct group *g, *g2;
-		GList *tmp;
-		int pos;
+		GList *tmp, *mem;
+		int pos, count;
 		struct buddy *b;
 		/* Okay we've moved group order... */
 
@@ -609,7 +627,13 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
                 groups = g_list_remove(groups, g);
 
                 g->item = gtk_tree_item_new_with_label(g->name);
-                gtk_widget_show(g->item);
+		mem = g->members; count = 0;
+		while (mem && !count) {
+			b = (struct buddy *)mem->data;
+			if (b->present) count++;
+			mem = mem->next;
+		}
+		if (!count) gtk_widget_show(g->item);
 
 		if (sibling) {
 			g2 = find_group(target2);
@@ -715,8 +739,18 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
                 
                 update_num_groups();
                 update_show_idlepix();
-		if (b->present)
+		if (b->present) {
+			GList *mem = old_g->members;
+			struct buddy *bt;
+			int count = 0;
+			while (mem && !count) {
+				bt = (struct buddy *)mem->data;
+				if (bt->present) count++;
+				mem = mem->next;
+			}
+			if (!count) gtk_widget_hide(old_g->item);
 			gtk_widget_show(new_g->item);
+		}
                 set_buddy(b);
                 
 
