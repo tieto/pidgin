@@ -396,7 +396,7 @@ static void trap_gdb_bug()
 static void cope_with_gdb_brokenness()
 {
 	static gboolean already_done = FALSE;
-	char s[300], e[300];
+	char s[256], e[512];
 	int n;
 	pid_t ppid;
 
@@ -405,10 +405,13 @@ static void cope_with_gdb_brokenness()
 		return;
 	already_done = TRUE;
 	ppid = getppid();
-	snprintf(s, 300, "/proc/%d/exe", ppid);
+	snprintf(s, sizeof(s), "/proc/%d/exe", ppid);
 	n = readlink(s, e, sizeof(e));
+	if(n < 0)
+		return;
+
 	e[MIN(n,sizeof(e)-1)] = '\0';
-	
+
 	if(strstr(e,"gdb")) {
 		gaim_debug(GAIM_DEBUG_INFO, "dns",
 				   "Debugger detected, performing useless query...\n");
