@@ -498,7 +498,6 @@ void irc_read_dcc_ack (gpointer data, gint source, GaimInputCondition condition)
 
 void dcc_send_callback (gpointer data, gint source, GaimInputCondition condition) {
 		struct irc_file_transfer *ift = data;
-		struct irc_data *id = (struct irc_data *)ift->gc->proto_data;
 		struct sockaddr_in addr;
 		int len = sizeof(addr);
 		
@@ -2030,7 +2029,7 @@ static void dcc_chat_connected(gpointer data, gint source, GdkInputCondition con
 	debug_printf ("Chat with %s established\n", chat->nick);
 	dcc_chat_list = g_slist_append (dcc_chat_list, chat);
 }
-
+#if 0
 static void irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
 		struct irc_data *id = (struct irc_data *)gc->proto_data;
 		struct irc_file_transfer *ift = g_new0(struct irc_file_transfer, 1);
@@ -2049,7 +2048,7 @@ static void irc_ask_send_file(struct gaim_connection *gc, char *destsn) {
 
 		ift->xfer = transfer_out_add(gc, ift->sn);
 }
-
+#endif
 static struct irc_file_transfer *find_ift_by_xfer(struct gaim_connection *gc, 
 				struct file_transfer *xfer) {
 		
@@ -2121,7 +2120,6 @@ static void irc_file_transfer_done(struct gaim_connection *gc, struct file_trans
 }
 
 static void irc_file_transfer_out (struct gaim_connection *gc, struct file_transfer *xfer, const char *name, int totfiles, int totsize) {
-	struct irc_data *id = (struct irc_data *)gc->proto_data;
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
 	struct sockaddr_in addr;
 	char buf[IRC_BUF_LEN];
