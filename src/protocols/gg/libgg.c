@@ -1,4 +1,4 @@
-/* $Id: libgg.c 10574 2004-08-08 05:38:02Z thekingant $ */
+/* $Id: libgg.c 10742 2004-08-25 03:09:08Z thekingant $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -70,7 +70,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 10574 2004-08-08 05:38:02Z thekingant $";
+= "$Id: libgg.c 10742 2004-08-25 03:09:08Z thekingant $";
 
 #endif 
 
@@ -690,7 +690,7 @@ int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipi
 		errno = EFAULT;
 		return -1;
 	}
-	
+
 	if (sess->state != GG_STATE_CONNECTED) {
 		errno = ENOTCONN;
 		return -1;
@@ -702,7 +702,7 @@ int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipi
 	s.seq = fix32(sess->seq);
 	s.msgclass = fix32(msgclass);
 	sess->seq += (rand() % 0x300) + 0x300;
-	
+
 	if (gg_send_packet(sess, GG_SEND_MSG, &s, sizeof(s), message, strlen(message) + 1, format, formatlen, NULL) == -1)
 		return -1;
 
@@ -731,7 +731,7 @@ int gg_ping(struct gg_session *sess)
 	}
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_ping(...);\n");
-	
+
 	return gg_send_packet(sess, GG_PING, NULL);
 }
 
@@ -941,8 +941,8 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 	}
 
 	p = (void *)h + sizeof(struct gg_header);
-	
-	
+
+
 	switch (h->type) {
 	    case GG_RECV_MSG:
 	    {

@@ -128,7 +128,7 @@ static HWND systray_create_hiddenwin() {
 
 	RegisterClassEx(&wcex);
 
-	// Create the window
+	/* Create the window */
 	return (CreateWindow(wname, "", 0, 0, 0, 0, 0, GetDesktopWindow(), NULL, wgaim_hinstance(), 0));
 }
 

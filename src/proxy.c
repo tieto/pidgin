@@ -708,7 +708,7 @@ no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 	 */
 	ret = getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len);
 	if (ret == 0 && error == EINPROGRESS)
-		return; // we'll be called again later
+		return; /* we'll be called again later */
 	if (ret < 0 || error != 0) {
 		if(ret!=0) error = errno;
 		close(source);

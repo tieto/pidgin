@@ -92,10 +92,10 @@ void run_commands() {
 			c = gaim_find_conversation(arg1);
 			if (c)
 			{
-			    /* disable for now
-			    gaim_conversation_write(c, arg2, WFLAG_SEND, NULL, time(NULL), -1);
-			    serv_send_im(c->gc, arg1, arg2, 0);
-			    */
+				/* disable for now
+				gaim_conversation_write(c, arg2, WFLAG_SEND, NULL, time(NULL), -1);
+				serv_send_im(c->gc, arg1, arg2, 0);
+				*/
 			}
 			free(arg1);
 			free(arg2);
@@ -104,13 +104,13 @@ void run_commands() {
 			serv_set_away_all(arg1);
 			free(arg1);
 		} else if (!strncasecmp(command, "hide", 4)) {
-		    //hide_buddy_list();
+			/* hide_buddy_list(); */
 		} else if (!strncasecmp(command, "unhide", 6)) {
-		    //unhide_buddy_list();
+			/* unhide_buddy_list(); */
 		} else if (!strncasecmp(command, "back", 4)) {
-		    //do_im_back();
+			/* do_im_back(); */
 		} else if (!strncasecmp(command, "quit", 4)) {
-		    //gaim_core_quit();
+			/* gaim_core_quit(); */
 		}
 		free(command);
 	}

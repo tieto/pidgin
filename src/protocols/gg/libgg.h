@@ -1,4 +1,4 @@
-/* $Id: libgg.h 10513 2004-08-04 18:27:09Z lschiere $ */
+/* $Id: libgg.h 10742 2004-08-25 03:09:08Z thekingant $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -233,7 +233,7 @@ enum {
 	GG_EVENT_CONN_SUCCESS,
 	GG_EVENT_STATUS60,		/* kto¶ zmieni³ stan w GG 6.0 */
 	GG_EVENT_NOTIFY60,		/* kto¶ siê pojawi³ w GG 6.0 */
-	GG_EVENT_USERLIST,		/* odpowied¼ listy kontaktów w GG 6.0 */
+	GG_EVENT_USERLIST		/* odpowied¼ listy kontaktów w GG 6.0 */
 };
 
 /*

@@ -257,7 +257,7 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 	} else if (toolbar->fgcolor_dialog != NULL) {
 		cancel_toolbar_fgcolor(color, toolbar);
 	} else {
-		//gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>");
+		/* gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>"); */
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
@@ -330,7 +330,7 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 	} else if (toolbar->bgcolor_dialog != NULL) {
 		cancel_toolbar_bgcolor(color, toolbar);
 	} else {
-		//gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>");
+		/* gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>"); */
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
@@ -792,7 +792,7 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *location,
 enum {
 	LAST_SIGNAL
 };
-//static guint signals [LAST_SIGNAL] = { 0 };
+/* static guint signals [LAST_SIGNAL] = { 0 }; */
 
 static void
 gtk_imhtmltoolbar_finalize (GObject *object)

@@ -40,12 +40,12 @@ static DWORD* setup_shared_mem() {
 	BOOL fInit;
 
 	/* Set up the shared memory. */
-	/*hMapObject = CreateFileMapping((HANDLE) 0xFFFFFFFF,  //use paging file
-				       NULL,                // no security attributes
-				       PAGE_READWRITE,      // read/write access
-				       0,                   // size: high 32-bits
-				       sizeof(DWORD),       // size: low 32-bits
-				       "timermem");         // name of map object
+	/*hMapObject = CreateFileMapping((HANDLE) 0xFFFFFFFF,  /* use paging file */
+				       NULL,                /* no security attributes */
+				       PAGE_READWRITE,      /* read/write access */
+				       0,                   /* size: high 32-bits */
+				       sizeof(DWORD),       /* size: low 32-bits */
+				       "timermem");         /* name of map object */
 	*/
 	hMapObject = CreateFileMapping((HANDLE) 0xFFFFFFFF,
 								   NULL,
