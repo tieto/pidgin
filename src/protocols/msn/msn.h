@@ -44,11 +44,6 @@
 /* XXX */
 #include "gaim.h"
 
-#ifdef _WIN32
-# include "win32dep.h"
-# include "stdint.h"
-#endif
-
 #define MSN_BUF_LEN 8192
 
 #define USEROPT_MSNSERVER 3

@@ -22,10 +22,6 @@
  */
 #include "msn.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
 static struct gaim_xfer *
 find_xfer_by_cookie(GaimConnection *gc, unsigned long cookie)
 {
