@@ -216,29 +216,33 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
    - Check NSIS Installer Language reg value
    - Use default user locale
 */
-static void wgaim_set_locale() {
+static const char* wgaim_get_locale() {
+        const char* locale=NULL;
         char data[10];
         DWORD datalen = 10;
-        char* locale=NULL;
-        char envstr[25];
         LCID lcid;
 
         /* Check if user set GAIMLANG env var */
-        if((locale = (char*)getenv("GAIMLANG")))
-                goto finish;
+        if((locale = getenv("GAIMLANG")))
+                return locale;
 
         if(read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\gaim", "Installer Language", (LPBYTE)&data, &datalen)) {
                 if((locale = wgaim_lcid_to_posix(atoi(data))))
-                        goto finish;
+                        return locale;
         }
 
         lcid = GetUserDefaultLCID();
         if((locale = wgaim_lcid_to_posix(lcid)))
-                goto finish;
+                return locale;
 
-        finish:
-        if(!locale)
-                locale = "en";
+		return "en";
+}
+
+static void wgaim_set_locale() {
+        const char* locale=NULL;
+        char envstr[25];
+
+        locale = wgaim_get_locale();
 
         snprintf(envstr, 25, "LANG=%s", locale);
         printf("Setting locale: %s\n", envstr);
