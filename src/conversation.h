@@ -1184,7 +1184,7 @@ void gaim_conv_placement_set_active(int index);
  * Sets the UI operations structure to be used in all gaim conversation
  * windows.
  *
- * @param fnc The function.
+ * @param ops The UI operations structure.
  */
 void gaim_set_win_ui_ops(struct gaim_window_ui_ops *ops);
 
