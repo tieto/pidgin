@@ -60,16 +60,6 @@ ssl_gnutls_uninit(void)
 }
 
 static void
-input_func(gpointer data, gint source, GaimInputCondition cond)
-{
-	GaimSslConnection *gsc = (GaimSslConnection *)data;
-
-	gaim_debug_misc("gnutls", "In input_func\n");
-
-	gsc->input_func(gsc->user_data, gsc, cond);
-}
-
-static void
 ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimSslConnection *gsc = (GaimSslConnection *)data;
@@ -103,14 +93,12 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		gaim_debug_error("gnutls", "Handshake failed\n");
 
+		/* XXX: notify the guy expecting the callback somehow? */
 		gaim_ssl_close(gsc);
 	}
 	else
 	{
-		gaim_debug_info("gnutls", "Adding input handler.\n");
-		gsc->inpa = gaim_input_add(gsc->fd,
-								   GAIM_INPUT_READ | GAIM_INPUT_WRITE,
-								   input_func, gsc);
+		gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
 	}
 }
 

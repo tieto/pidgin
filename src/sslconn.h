@@ -36,8 +36,10 @@ struct _GaimSslConnection
 {
 	char *host;
 	int port;
-	void *user_data;
-	GaimSslInputFunction input_func;
+	void *connect_cb_data;
+	GaimSslInputFunction connect_cb;
+	void *recv_cb_data;
+	GaimSslInputFunction recv_cb;
 
 	int fd;
 	int inpa;
@@ -90,6 +92,16 @@ gboolean gaim_ssl_is_supported(void);
  */
 GaimSslConnection *gaim_ssl_connect(GaimAccount *account, const char *host,
 									int port, GaimSslInputFunction func,
+									void *data);
+
+/**
+ * Adds an input watcher for the specified SSL connection.
+ *
+ * @param gsc   The SSL connection handle.
+ * @param func  The callback function.
+ * @param data  User-defined data.
+ */
+void gaim_ssl_input_add(GaimSslConnection *gsc, GaimSslInputFunction func,
 									void *data);
 
 /**

@@ -36,6 +36,7 @@
 #include "request.h"
 #include "util.h"
 #include "html.h"
+#include "sslconn.h"
 
 /* XXX */
 #include "gaim.h"
@@ -109,6 +110,8 @@ typedef struct gjconn_struct {
 	GHashTable *queries;	/* query tracker */
 
 	void *priv;
+
+	GaimSslConnection *gsc;
 
 } *gjconn, gjconn_struct;
 
@@ -510,7 +513,10 @@ static void gjab_stop(gjconn gjc)
 	gjab_send_raw(gjc, "</stream:stream>");
 	gjc->state = JCONN_STATE_OFF;
 	gjc->was_connected = 0;
-	close(gjc->fd);
+	if(gjc->gsc)
+		gaim_ssl_close(gjc->gsc);
+	else
+		close(gjc->fd);
 	gjc->fd = -1;
 	XML_ParserFree(gjc->parser);
 	gjc->parser = NULL;
@@ -553,14 +559,22 @@ static void gjab_send(gjconn gjc, xmlnode x)
 	if (gjc && gjc->state != JCONN_STATE_OFF) {
 		char *buf = xmlnode2str(x);
 		if (buf) {
-#ifndef _WIN32
-			if(write(gjc->fd, buf, strlen(buf)) < 0) {
-#else
-			if(send(gjc->fd, buf, strlen(buf), 0) < 0) {
-#endif
-				gaim_connection_error(GJ_GC(gjc), _("Write error"));
+			if(gjc->gsc) {
+				if(gaim_ssl_write(gjc->gsc, buf, strlen(buf)) < 0) {
+					gaim_connection_error(GJ_GC(gjc), _("Write error"));
+				} else {
+					gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send (ssl): %s\n", buf);
+				}
 			} else {
-				gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send: %s\n", buf);
+#ifndef _WIN32
+				if(write(gjc->fd, buf, strlen(buf)) < 0) {
+#else
+				if(send(gjc->fd, buf, strlen(buf), 0) < 0) {
+#endif
+					gaim_connection_error(GJ_GC(gjc), _("Write error"));
+				} else {
+					gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send: %s\n", buf);
+				}
 			}
 		}
 	}
@@ -572,16 +586,24 @@ static void gjab_send_raw(gjconn gjc, const char *str)
 		/*
 		 * JFIXME: No error detection?!?!
 		 */
+		if(gjc->gsc) {
+			if(gaim_ssl_write(gjc->gsc, str, strlen(str)) < 0) {
+				gaim_connection_error(GJ_GC(gjc), _("Write error"));
+			} else {
+				gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send_raw (ssl): %s\n", str);
+			}
+		} else {
 #ifndef _WIN32
-		if(write(gjc->fd, str, strlen(str)) < 0) {
+			if(write(gjc->fd, str, strlen(str)) < 0) {
 #else
-		if(send(gjc->fd, str, strlen(str), 0) < 0) {
+			if(send(gjc->fd, str, strlen(str), 0) < 0) {
 #endif
-			gaim_connection_error(GJ_GC(gjc), _("Write error"));
+				gaim_connection_error(GJ_GC(gjc), _("Write error"));
+			}
+			/* printing keepalives to the debug window is really annoying */
+			if(strcmp(str, JABBER_KEEPALIVE_STRING))
+				gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send_raw: %s\n", str);
 		}
-		/* printing keepalives to the debug window is really annoying */
-		if(strcmp(str, JABBER_KEEPALIVE_STRING))
-			gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send_raw: %s\n", str);
 	}
 }
 
@@ -682,6 +704,28 @@ static void gjab_recv(gjconn gjc)
 	}
 }
 
+static void gjab_ssl_recv(gpointer data, GaimSslConnection *gsc,
+		GaimInputCondition cond)
+{
+	static char buf[4096];
+	int len;
+	GaimConnection *gc = data;
+	struct jabber_data *jd = gc->proto_data;
+	gjconn gjc = jd->gjc;
+
+	if (!gjc || gjc->state == JCONN_STATE_OFF)
+		return;
+
+	if((len = gaim_ssl_read(gsc, buf, sizeof(buf) -1)) > 0) {
+		buf[len] = '\0';
+		gaim_debug(GAIM_DEBUG_MISC, "jabber",
+				"input (ssl) (len %d): %s\n", len, buf);
+		XML_Parse(gjc->parser, buf, len, 0);
+	} else if(len < 0) {
+		STATE_EVT(JCONN_STATE_OFF)
+	}
+}
+
 static void startElement(void *userdata, const char *name, const char **attribs)
 {
 	xmlnode x;
@@ -752,10 +796,52 @@ static void charData(void *userdata, const char *s, int slen)
 		xmlnode_insert_cdata(gjc->current, s, slen);
 }
 
-static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
+
+static void gjab_start_stream(gjconn gjc)
 {
 	xmlnode x;
 	char *t, *t2;
+
+	gjc->state = JCONN_STATE_CONNECTED;
+	STATE_EVT(JCONN_STATE_CONNECTED)
+
+	/* start stream */
+	x = jutil_header(NS_CLIENT, gjc->user->server);
+	t = xmlnode2str(x);
+	/* this is ugly, we can create the string here instead of jutil_header */
+	/* what do you think about it? -madcat */
+	t2 = strstr(t, "/>");
+	*t2++ = '>';
+	*t2 = '\0';
+	gjab_send_raw(gjc, "<?xml version='1.0'?>");
+	gjab_send_raw(gjc, t);
+	xmlnode_free(x);
+}
+
+static void gjab_ssl_connected(gpointer data, GaimSslConnection *gsc,
+		GaimInputCondition cond)
+{
+	GaimConnection *gc = data;
+	struct jabber_data *jd;
+	gjconn gjc;
+
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
+		gaim_ssl_close(gsc);
+		return;
+	}
+
+	jd = gc->proto_data;
+	gjc = jd->gjc;
+
+	gjab_start_stream(gjc);
+
+	/* this seems wrong, but... */
+
+	gaim_ssl_input_add(gsc, gjab_ssl_recv, gc);
+}
+
+static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
+{
 	GaimConnection *gc = data;
 	struct jabber_data *jd;
 	gjconn gjc;
@@ -775,22 +861,8 @@ static void gjab_connected(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	gjc->state = JCONN_STATE_CONNECTED;
-	STATE_EVT(JCONN_STATE_CONNECTED)
+	gjab_start_stream(gjc);
 
-	/* start stream */
-	x = jutil_header(NS_CLIENT, gjc->user->server);
-	t = xmlnode2str(x);
-	/* this is ugly, we can create the string here instead of jutil_header */
-	/* what do you think about it? -madcat */
-	t2 = strstr(t, "/>");
-	*t2++ = '>';
-	*t2 = '\0';
-	gjab_send_raw(gjc, "<?xml version='1.0'?>");
-	gjab_send_raw(gjc, t);
-	xmlnode_free(x);
-
-	gc = GJ_GC(gjc);
 	gc->inpa = gaim_input_add(gjc->fd, GAIM_INPUT_READ, jabber_callback, gc);
 }
 
@@ -815,10 +887,19 @@ static void gjab_start(gjconn gjc)
 	XML_SetElementHandler(gjc->parser, startElement, endElement);
 	XML_SetCharacterDataHandler(gjc->parser, charData);
 
-	rc = gaim_proxy_connect(account, server, port, gjab_connected, GJ_GC(gjc));
-	if (!account->gc || (rc != 0)) {
-		STATE_EVT(JCONN_STATE_OFF)
-		return;
+	if(gaim_account_get_bool(account, "ssl", FALSE)
+			&& gaim_ssl_is_supported()) {
+		gjc->gsc = gaim_ssl_connect(account, server, port,
+				gjab_ssl_connected, GJ_GC(gjc));
+	}
+
+	if(!gjc->gsc) {
+		rc = gaim_proxy_connect(account, server, port, gjab_connected,
+				GJ_GC(gjc));
+		if (!account->gc || (rc != 0)) {
+			STATE_EVT(JCONN_STATE_OFF)
+				return;
+		}
 	}
 }
 
@@ -4426,6 +4507,13 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Account Options */
+
+	if(gaim_ssl_is_supported()) {
+		option = gaim_account_option_bool_new(_("Use SSL"), "ssl", FALSE);
+		prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+				option);
+	}
+
 	option = gaim_account_option_int_new(_("Port"), "port", DEFAULT_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);

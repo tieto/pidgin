@@ -117,33 +117,6 @@ ssl_bad_cert(void *arg, PRFileDesc *socket)
 	return status;
 }
 
-static void
-input_func(gpointer data, gint source, GaimInputCondition cond)
-{
-	GaimSslConnection *gsc = (GaimSslConnection *)data;
-#if 0
-	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
-	char *cp, *ip, *sp;
-	int op, kp0, kp1;
-	int result;
-
-	result = SSL_SecurityStatus(nss_data->in, &op, &cp, &kp0,
-								&kp1, &ip, &sp);
-
-	gaim_debug_misc("nss",
-		"bulk cipher %s, %d secret key bits, %d key bits, status: %d\n"
-		"subject DN: %s\n"
-		"issuer  DN: %s\n",
-		cp, kp1, kp0, op, sp, ip);
-
-	PR_Free(cp);
-	PR_Free(ip);
-	PR_Free(sp);
-#endif
-
-	gsc->input_func(gsc->user_data, gsc, cond);
-}
-
 static gboolean
 ssl_nss_init(void)
 {
@@ -227,9 +200,14 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	gsc->inpa = gaim_input_add(gsc->fd,
-							   GAIM_INPUT_READ | GAIM_INPUT_WRITE,
-							   input_func, gsc);
+	gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
+}
+
+static void
+ssl_nss_recv_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	GaimSslConnection *gsc = data;
+	gsc->recv_cb(gsc->recv_cb_data, gsc, cond);
 }
 
 static void
@@ -264,6 +242,7 @@ static GaimSslOps ssl_ops =
 	ssl_nss_init,
 	ssl_nss_uninit,
 	ssl_nss_connect_cb,
+	ssl_nss_recv_cb,
 	ssl_nss_close,
 	ssl_nss_read,
 	ssl_nss_write
