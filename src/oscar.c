@@ -116,7 +116,6 @@ static void oscar_callback(gpointer data, gint source,
 			if (aim_get_command(gaim_sess, conn) >= 0) {
 				aim_rxdispatch(gaim_sess);
 			} else {
-				debug_print(_("connection error!\n"));
 				if (conn->type == AIM_CONN_TYPE_RENDEZVOUS &&
 				    conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM) {
 					struct conversation *cnv =
@@ -126,15 +125,19 @@ static void oscar_callback(gpointer data, gint source,
 						make_direct(cnv, FALSE, NULL, 0);
 					}
 					aim_conn_kill(gaim_sess, &conn);
-				} else if (conn->type = AIM_CONN_TYPE_CHAT) {
-					/* FIXME: we got disconnected from a chat room, but
-					 * libfaim won't tell us which room */
-				} else if (conn->type == AIM_CONN_TYPE_BOS) {
+				} else if ((conn->type == AIM_CONN_TYPE_BOS) ||
+					   !(aim_getconn_type(gaim_sess, AIM_CONN_TYPE_BOS))) {
 					debug_print(_("major connection error\n"));
 					signoff();
 					hide_login_progress(_("Disconnected."));
 					auth_failed();
+				} else if (conn->type = AIM_CONN_TYPE_CHAT) {
+					/* FIXME: we got disconnected from a chat room, but
+					 * libfaim won't tell us which room */
+					debug_print("connection error for chat...\n");
+					aim_conn_kill(gaim_sess, &conn);
 				} else {
+					debug_print("holy crap! generic connection error!\n");
 					aim_conn_kill(gaim_sess, &conn);
 				}
 			}

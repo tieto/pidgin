@@ -6,7 +6,25 @@
 	Redesign the Foreground/Background color options under preferences.
 	Add ability to conersaton window to allow changing of foreground/
 		background colours per conversation window. 
-	Possibly make it so that you can create 'aliases' for buddies
-		on your buddy list.  This won't be too hard it'll just
-		take a bit of work.  Maybe we'll save this one for the
+	Have a page in the prefs for the Applet
+	Redesign the Away Messages page in the prefs
+	Somehow make it so plugins can communicate
+
+	Syd is cool and gave all of these ideas:
+		Have multiple tickers in the same window, one for buddies
+			like it is now, one for who just came online/offline
+			(scrolled faster possibly because that doesn't
+			happen very often), etc.
+		Have tooltips on the passing buddies on the ticker
+		Have a stock ticker (a plugin could easily make use of
+			GtkTicker)
+		Have Alt access the menu in the buddy list, and ctl-char
+			access items in those menus
+
+
+	Possibly make it so that you can create ICQ-style 'aliases' for
+		buddies on your buddy list.  This won't be too hard it'll
+		just take a bit of work.  Maybe we'll save this one for the
 		release after our next release.
+	Maybe someday in the future gaim will be able to support multiple
+		connections, so you can log on as 2+ names at once. Maybe.
