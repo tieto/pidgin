@@ -1,41 +1,40 @@
 # Gaim Serbian translation
-# Copyright (C) 2003:
-#   Danilo Segan <dsegan@gmx.net>
-#   Aleksandar Urosevic <urke@users.sourceforge.net>
+# Copyright © 2003, 2004:
+#   Danilo Segan <dsegan@gmx.net>, 2003, 2004
+#   Aleksandar Urosevic <urke@users.sourceforge.net>, 2003, 2004
+#   Filip Miletic <f.miletic@ewi.tudelft.nl>, 2004
 #   Prevod.org web site.
 #
 # This file is distributed under the same license as the Gaim package.
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.73\n"
+"Project-Id-Version: gaim 0.82\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-25 23:58-0400\n"
-"PO-Revision-Date: 2003-12-15 10:43+0100\n"
-"Last-Translator: Danilo Šegan <dsegan@gmx.net>\n"
-"Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
+"POT-Creation-Date: 2004-08-28 00:01-0400\n"
+"PO-Revision-Date: 2004-08-29 00:30+0200\n"
+"Last-Translator: Filip Miletić <f.miletic@ewi.tudelft.nl>\n"
+"Language-Team: Serbian (sr) <gnom@prevod.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3;    plural=n%10==1 && n%100!=11 ? 0 :    n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: plugins/autorecon.c:233
 msgid "Error Message Suppression"
-msgstr ""
+msgstr "Sakrij poruke o greškama"
 
 #: plugins/autorecon.c:237
-#, fuzzy
 msgid "Hide Disconnect Errors"
-msgstr "Greška pri povezivanju sa bazom"
+msgstr "Sakrij poruke o isključenju"
 
 #: plugins/autorecon.c:241
-#, fuzzy
 msgid "Hide Login Errors"
-msgstr "Greška u spisku drugara"
+msgstr "Sakrij greške o prijavi"
 
 #: plugins/autorecon.c:245
 msgid "Restore Away State On Reconnect"
-msgstr ""
+msgstr "Vrati zapamćeno stanje veze pri povezivanju"
 
 #. *< api_version
 #. *< type
@@ -103,8 +102,8 @@ msgid ""
 "will use what used to be the built-in order active->idle->away->away+idle-"
 ">offline."
 msgstr ""
-"Drugar sa najmanjim rezultatom je drugar koji će imati prvenstvo za stupanje "
-"u vezu.\n"
+"Drugar sa najmanjim rezultatom je drugar koji će imati prvenstvo za stupanje u "
+"vezu.\n"
 "Podrazumevane vrednosti (nepovezan = 4, odsutan = 2 i miran = 1)\n"
 "će koristiti ono što je bilo ugrađen raspored aktivan->miran->odsutan-"
 ">odsutan+miran->nepovezan."
@@ -214,11 +213,11 @@ msgstr "Odjavi se"
 msgid "Quit"
 msgstr "Izlaz"
 
-#: plugins/docklet/docklet.c:505
+#: plugins/docklet/docklet.c:516
 msgid "Tray Icon Configuration"
 msgstr "Podešavanja ikonice na panelu"
 
-#: plugins/docklet/docklet.c:509
+#: plugins/docklet/docklet.c:520
 msgid "_Hide new messages until tray icon is clicked"
 msgstr "_Prikrij nove poruke dok se ne klikne na ikonicu na panelu"
 
@@ -229,19 +228,19 @@ msgstr "_Prikrij nove poruke dok se ne klikne na ikonicu na panelu"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/docklet/docklet.c:533
+#: plugins/docklet/docklet.c:544
 msgid "System Tray Icon"
 msgstr "Ikonica na panelu"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/docklet/docklet.c:536
+#: plugins/docklet/docklet.c:547
 msgid "Displays an icon for Gaim in the system tray."
 msgstr "Prikazuje ikonicu za Gaim u obaveštajnoj zoni panela."
 
 #. *  description
-#: plugins/docklet/docklet.c:538
+#: plugins/docklet/docklet.c:549
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
 "the current status of Gaim, allow fast access to commonly used functions, "
@@ -255,23 +254,20 @@ msgstr ""
 "ne klikne na ikonicu, slično kao i ICQ."
 
 #: plugins/extplacement.c:76
-#, fuzzy
 msgid "By conversation count"
-msgstr "Razgovori sa"
+msgstr "Prema broju razgovora"
 
 #: plugins/extplacement.c:97
-#, fuzzy
 msgid "Conversation Placement"
-msgstr "Razgovori sa"
+msgstr "Smeštanje razgovora"
 
 #: plugins/extplacement.c:102
-#, fuzzy
 msgid "Number of conversations per window"
-msgstr "Prozor razgovora"
+msgstr "Broj razgovora u jednom prozoru"
 
 #: plugins/extplacement.c:108
 msgid "Separate IM and Chat windows when placing by number"
-msgstr ""
+msgstr "Razdvoji prozore sa razgovorima i brzim porukama pri smeštanju po broju"
 
 #. *< api_version
 #. *< type
@@ -281,15 +277,14 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/extplacement.c:127
-#, fuzzy
 msgid "ExtPlacement"
-msgstr "_Razmeštaj:"
+msgstr "Dodatni razmeštaj"
 
 #. *< name
 #. *< version
 #: plugins/extplacement.c:129
 msgid "Extra conversation placement options."
-msgstr ""
+msgstr "Dodatni izbori za razmeštaj razgovora."
 
 #. *< summary
 #. *  description
@@ -298,6 +293,8 @@ msgid ""
 "Restrict the number of conversations per windows, optionally separating IMs "
 "and Chats"
 msgstr ""
+"Ograniči broj razgovora koji se smeštaju u isti prozor, i po želji razdvoji "
+"brze poruke od razgovora."
 
 #. *< api_version
 #. *< type
@@ -335,14 +332,15 @@ msgid "Invalid AIM URI"
 msgstr "Neispravna AIM Internet adresa"
 
 #: plugins/gaim-remote/remote.c:668
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to assign %s to a socket:\n"
 "%s"
-msgstr "Ne mogu da sačuvam sliku: %s.\n"
+msgstr ""
+"Ne mogu da dodelim %s za priključak:\n"
+"%s"
 
 #: plugins/gaim-remote/remote.c:691
-#, fuzzy
 msgid "Unable to open socket"
 msgstr "Ne mogu da čitam soket"
 
@@ -459,9 +457,8 @@ msgstr ""
 
 #: plugins/gevolution/add_buddy_dialog.c:134
 #: plugins/gevolution/assoc-buddy.c:72
-#, fuzzy
 msgid "Local Addressbook"
-msgstr "Adresa e-pošte"
+msgstr "Lokalni imenik"
 
 #: plugins/gevolution/add_buddy_dialog.c:144
 #: plugins/gevolution/add_buddy_dialog.c:155
@@ -474,19 +471,18 @@ msgstr "Ništa"
 #: plugins/gevolution/add_buddy_dialog.c:188
 #: plugins/gevolution/assoc-buddy.c:176 src/gtkprefs.c:2164
 #: src/gtkroomlist.c:553 src/protocols/jabber/jabber.c:598
-#: src/protocols/msn/msn.c:1312 src/protocols/trepia/trepia.c:398
+#: src/protocols/msn/msn.c:1292 src/protocols/trepia/trepia.c:398
 msgid "Name"
 msgstr "Ime"
 
 #: plugins/gevolution/add_buddy_dialog.c:199
-#, fuzzy
 msgid "Instant Messaging"
-msgstr "Brzi pošiljaoci"
+msgstr "Brze poruke"
 
 #. Add the label.
 #: plugins/gevolution/add_buddy_dialog.c:480
 msgid "Select a person from your address book below, or add a new person."
-msgstr ""
+msgstr "Izaberite osobu iz adresara, ili dodajte unos za novu osobu."
 
 #. "Search"
 #: plugins/gevolution/add_buddy_dialog.c:493
@@ -503,15 +499,13 @@ msgstr "Grupa:"
 #. "New Person" button
 #: plugins/gevolution/add_buddy_dialog.c:590
 #: plugins/gevolution/assoc-buddy.c:484
-#, fuzzy
 msgid "New Person"
-msgstr "<Novi korisnik>"
+msgstr "Nova osoba"
 
 #. "Select Buddy" button
 #: plugins/gevolution/add_buddy_dialog.c:607
-#, fuzzy
 msgid "Select Buddy"
-msgstr "Ukloni drugara"
+msgstr "Izaberi drugara"
 
 #. Add the label.
 #: plugins/gevolution/assoc-buddy.c:368
@@ -519,23 +513,22 @@ msgid ""
 "Select a person from your address book to add this buddy to, or create a new "
 "person."
 msgstr ""
+"Izaberite osobu iz adresara kojoj se pridružuje ovo ime drugara, ili "
+"napravite unos za novu osobu."
 
 #. Add the disclosure
 #: plugins/gevolution/assoc-buddy.c:447
-#, fuzzy
 msgid "Show user details"
-msgstr "Prikaži detalje prenosa"
+msgstr "Prikaži detalje o korisniku"
 
 #: plugins/gevolution/assoc-buddy.c:448
-#, fuzzy
 msgid "Hide user details"
-msgstr "Sakrij detalje prenosa"
+msgstr "Sakrij detalje o korisniku"
 
 #. "Associate Buddy" button
 #: plugins/gevolution/assoc-buddy.c:501
-#, fuzzy
 msgid "_Associate Buddy"
-msgstr "Nadeni ime drugaru"
+msgstr "Pridruži drugara"
 
 #: plugins/gevolution/gevo-util.c:65 plugins/gevolution/gevolution.c:89
 #: src/blist.c:774 src/blist.c:982 src/blist.c:1912 src/gtkblist.c:3870
@@ -545,18 +538,17 @@ msgstr "Drugari"
 
 #: plugins/gevolution/gevolution.c:220
 msgid "Add to Address Book"
-msgstr ""
+msgstr "Dodaj u adresar"
 
 #. Configuration frame
 #: plugins/gevolution/gevolution.c:351
-#, fuzzy
 msgid "Evolution Integration Configuration"
-msgstr "Podešavanja ikonice na panelu"
+msgstr "Podešavanje saradnje sa Evolucijom"
 
 #. Label
 #: plugins/gevolution/gevolution.c:354
 msgid "Select all accounts that buddies should be auto-added to."
-msgstr ""
+msgstr "Odredite naloge u koje se drugari automatski dodaju."
 
 #: plugins/gevolution/gevolution.c:384 plugins/idle.c:51 src/gtkconn.c:620
 msgid "Account"
@@ -570,9 +562,8 @@ msgstr "Nalog"
 #. *< priority
 #. *< id
 #: plugins/gevolution/gevolution.c:465
-#, fuzzy
 msgid "Evolution Integration"
-msgstr "Dodatni podaci"
+msgstr "Saradnja sa Evolucijom"
 
 #. *< name
 #. *< version
@@ -580,21 +571,19 @@ msgstr "Dodatni podaci"
 #. *  description
 #: plugins/gevolution/gevolution.c:468 plugins/gevolution/gevolution.c:470
 msgid "Provides integration with Ximian Evolution."
-msgstr ""
+msgstr "Omogućava uzajamnu vezu sa programom Gzimijan evolucija."
 
 #: plugins/gevolution/new_person_dialog.c:268
-#, fuzzy
 msgid "Please enter the person's information below."
-msgstr "Pribavi podatke o korisniku"
+msgstr "Molim unesite podatke o korisniku"
 
 #: plugins/gevolution/new_person_dialog.c:272
 msgid "Please enter the buddy's screen name and account type below."
-msgstr ""
+msgstr "Unesite nadimak drugara i tip naloga ispod."
 
 #: plugins/gevolution/new_person_dialog.c:292
-#, fuzzy
 msgid "Account type:"
-msgstr "Nalog:"
+msgstr "Vrsta naloga:"
 
 #: plugins/gevolution/new_person_dialog.c:296
 msgid "Screenname:"
@@ -602,7 +591,6 @@ msgstr "Ime:"
 
 #. Optional Information section
 #: plugins/gevolution/new_person_dialog.c:316
-#, fuzzy
 msgid "Optional information:"
 msgstr "Dodatni podaci"
 
@@ -613,17 +601,14 @@ msgid "Buddy Icon"
 msgstr "Sličica drugara"
 
 #: plugins/gevolution/new_person_dialog.c:351
-#, fuzzy
 msgid "First name:"
 msgstr "Ime"
 
 #: plugins/gevolution/new_person_dialog.c:363
-#, fuzzy
 msgid "Last name:"
 msgstr "Prezime:"
 
 #: plugins/gevolution/new_person_dialog.c:383
-#, fuzzy
 msgid "E-mail:"
 msgstr "E-pošta"
 
@@ -663,7 +648,6 @@ msgid "Iconifies the buddy list and your conversations when you go away."
 msgstr "Umanjuje spisak drugara i Vaše razgovore kada ste odsutni."
 
 #: plugins/idle.c:55
-#, fuzzy
 msgid "Minutes"
 msgstr "minuta."
 
@@ -672,7 +656,6 @@ msgid "I'dle Mak'er"
 msgstr "Kontrolor neaktivnosti"
 
 #: plugins/idle.c:63 plugins/idle.c:78
-#, fuzzy
 msgid "Set Account Idle Time"
 msgstr "Vreme neaktivnosti"
 
@@ -681,7 +664,6 @@ msgid "_Set"
 msgstr "_Postavi"
 
 #: plugins/idle.c:67 src/away.c:910
-#, fuzzy
 msgid "_Cancel"
 msgstr "Otkaži"
 
@@ -751,7 +733,7 @@ msgstr "Proverava da li je pristigla nova lokalna pošta."
 
 #: plugins/mailchk.c:160
 msgid "Adds a small box to the buddy list that shows if you have new mail."
-msgstr ""
+msgstr "Dodaje kutijicu u spisak drugara koja pokazuje da li imate novu poštu."
 
 #. ---------- "Notify For" ----------
 #: plugins/notify.c:600
@@ -816,7 +798,6 @@ msgstr "Ukloni kada se _poruka pošalje"
 
 #. Remove on conversation switch button
 #: plugins/notify.c:705
-#, fuzzy
 msgid "Remove on switch to conversation ta_b"
 msgstr "Ukloni po _izmeni lista razgovora"
 
@@ -925,8 +906,7 @@ msgid ""
 "Checks periodically for new releases and notifies the user with the "
 "ChangeLog."
 msgstr ""
-"Proverava povremeno za nova izdanja i obaveštava korisnika uz dnevnik "
-"promena."
+"Proverava povremeno za nova izdanja i obaveštava korisnika uz dnevnik promena."
 
 #. *< api_version
 #. *< type
@@ -1076,17 +1056,14 @@ msgid "%s is no longer idle."
 msgstr "%s više nije neaktivan."
 
 #: plugins/statenotify.c:69
-#, fuzzy
 msgid "Notify When"
 msgstr "Obaveštavaj o"
 
 #: plugins/statenotify.c:72
-#, fuzzy
 msgid "Buddy Goes _Away"
 msgstr "Drugar odsutan:"
 
 #: plugins/statenotify.c:75
-#, fuzzy
 msgid "Buddy Goes _Idle"
 msgstr "Drugar miran:"
 
@@ -1173,8 +1150,7 @@ msgstr "Vremenska oznaka"
 #. *  description
 #: plugins/timestamp.c:271 plugins/timestamp.c:273
 msgid "Adds iChat-style timestamps to conversations every N minutes."
-msgstr ""
-"Dodavanje vremenske oznake u razgovor na svakih N minuta, u iČet stilu."
+msgstr "Dodavanje vremenske oznake u razgovor na svakih N minuta, u iČet stilu."
 
 #: plugins/win32/transparency/win2ktrans.c:133
 #: plugins/win32/transparency/win2ktrans.c:387
@@ -1220,11 +1196,10 @@ msgstr "Providnost"
 #. *  summary
 #: plugins/win32/transparency/win2ktrans.c:464
 msgid "Variable Transparency for the buddy list and conversations."
-msgstr ""
+msgstr "Promenljiva providnost za slisak drugara i razgovore."
 
 #. *  description
 #: plugins/win32/transparency/win2ktrans.c:466
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list.\n"
@@ -1270,7 +1245,7 @@ msgstr "_Održavaj prozor sa spiskom drugara na vrhu"
 
 #. Conversations
 #: plugins/win32/winprefs/winprefs.c:381 src/gtkprefs.c:1004
-#: src/gtkprefs.c:2417 src/protocols/msn/msn.c:1640
+#: src/gtkprefs.c:2417 src/protocols/msn/msn.c:1620
 msgid "Conversations"
 msgstr "Razgovori"
 
@@ -1330,8 +1305,8 @@ msgstr "Unesite tekuću lozinku i novu lozinku."
 #: src/protocols/silc/buddy.c:1132 src/protocols/silc/chat.c:421
 #: src/protocols/silc/chat.c:459 src/protocols/silc/chat.c:722
 #: src/protocols/silc/ops.c:1081 src/protocols/silc/ops.c:1691
-#: src/protocols/silc/silc.c:698 src/protocols/yahoo/yahoo.c:2804
-#: src/protocols/yahoo/yahoo.c:2813 src/request.h:1243
+#: src/protocols/silc/silc.c:698 src/protocols/yahoo/yahoo.c:2810
+#: src/protocols/yahoo/yahoo.c:2819 src/request.h:1243
 msgid "OK"
 msgstr "U redu"
 
@@ -1357,8 +1332,8 @@ msgstr "U redu"
 #: src/protocols/silc/buddy.c:1037 src/protocols/silc/buddy.c:1133
 #: src/protocols/silc/chat.c:594 src/protocols/silc/chat.c:723
 #: src/protocols/silc/ops.c:1692 src/protocols/silc/silc.c:699
-#: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2805
-#: src/protocols/yahoo/yahoo.c:2814 src/request.h:1243 src/request.h:1253
+#: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2811
+#: src/protocols/yahoo/yahoo.c:2820 src/request.h:1243 src/request.h:1253
 msgid "Cancel"
 msgstr "Otkaži"
 
@@ -1382,25 +1357,24 @@ msgid "Away!"
 msgstr "Odsutan!"
 
 #: src/away.c:303
-#, fuzzy
 msgid "Edit This Message"
-msgstr "Pošalji kao poruku"
+msgstr "Uredi ovu poruku"
 
 #: src/away.c:308
 msgid "I'm Back!"
 msgstr "Vratio sam se!"
 
 #: src/away.c:362
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure you want to remove the away message \"%s\"?"
-msgstr "Da li ste sigurni da želite obrisati %s?"
+msgstr "Da li ste sigurni da želite da uklonite poruku „%s‟?"
 
 #: src/away.c:364 src/away.c:455
 msgid "Remove Away Message"
 msgstr "Ukloni poruku za odsustvo"
 
 #. Remove button
-#: src/away.c:365 src/gtkconv.c:1400 src/gtkconv.c:3743 src/gtkconv.c:3814
+#: src/away.c:365 src/gtkconv.c:1400 src/gtkconv.c:3744 src/gtkconv.c:3815
 #: src/gtkrequest.c:248
 msgid "Remove"
 msgstr "Ukloni"
@@ -1436,17 +1410,14 @@ msgid "Away title: "
 msgstr "Naslov odsustva: "
 
 #: src/away.c:898
-#, fuzzy
 msgid "_Save"
 msgstr "Sačuvaj"
 
 #: src/away.c:902
-#, fuzzy
 msgid "Sa_ve & Use"
 msgstr "Sačuvaj i koristi"
 
 #: src/away.c:906
-#, fuzzy
 msgid "_Use"
 msgstr "Koristi"
 
@@ -1477,11 +1448,12 @@ msgid "Group not removed"
 msgstr "Grupa nije uklonjena"
 
 #: src/blist.c:2043
-#, fuzzy
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded, "
 "and the old file has moved to blist.xml~."
-msgstr "Došlo je do greške pri obradi spiska drugara. Spisak nije učitan."
+msgstr ""
+"Došlo je do greške pri obradi spiska drugara. Spisak nije učitan a stari "
+"spisak je pomeren u blist.xml~."
 
 #: src/blist.c:2046
 msgid "Buddy List Error"
@@ -1501,9 +1473,9 @@ msgid "Connection Error"
 msgstr "Greška pri povezivanju"
 
 #: src/connection.c:195
-#, fuzzy, c-format
+#, c-format
 msgid "Enter password for %s (%s)"
-msgstr "Unesite lozinku za %s"
+msgstr "Unesite lozinku za %s (%s)"
 
 #: src/conversation.c:229
 msgid "Unable to send message. The message is too large."
@@ -1524,9 +1496,9 @@ msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] je ušao(la) u pričaonicu."
 
 #: src/conversation.c:2052
-#, fuzzy, c-format
+#, c-format
 msgid "You are now known as %s"
-msgstr "%s je promenio(la) ime u %s"
+msgstr "Promenili ste ime u %s"
 
 #: src/conversation.c:2055
 #, c-format
@@ -1559,9 +1531,8 @@ msgid "Last created window"
 msgstr "Poslednje napravljeni prozor"
 
 #: src/conversation.c:2576
-#, fuzzy
 msgid "Separate IM and Chat windows"
-msgstr "Prikaži brze poruke i razgovore u prozorima pomoću _listova"
+msgstr "Razdvoj prozore sa brzim porukama i razgovorima"
 
 #: src/conversation.c:2578 src/gtkprefs.c:1384
 msgid "New window"
@@ -1576,39 +1547,44 @@ msgid "By account"
 msgstr "Prema nalogu"
 
 #: src/ft.c:122
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reading %s: \n"
 "%s.\n"
-msgstr "Greška pri izvršavanju „naredbe“: %s"
+msgstr ""
+"Greška pri čitanju %s: \n"
+"%s.\n"
 
 #: src/ft.c:126
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error writing %s: \n"
 "%s.\n"
-msgstr "Greška pri čitanju sa servera"
+msgstr ""
+"Greška pri upisu %s: \n"
+"%s.\n"
 
 #: src/ft.c:130
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error accessing %s: \n"
 "%s.\n"
-msgstr "Greška pri izvršavanju „naredbe“: %s"
+msgstr ""
+"Greška pri pristupu %s: \n"
+"%s.\n"
 
 #: src/ft.c:161
 msgid "Cannot send a file of 0 bytes."
 msgstr "Ne mogu da pošaljem datoteku od 0 bajtova."
 
 #: src/ft.c:171
-#, fuzzy
 msgid "Cannot send a directory."
-msgstr "Ne mogu da pošaljem datoteku od 0 bajtova."
+msgstr "Ne mogu da pošaljem direktorijum."
 
 #: src/ft.c:178
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
-msgstr ""
+msgstr "%s nije obična datoteka i zato je GAIM neće prepisivati.\n"
 
 #: src/ft.c:232
 #, c-format
@@ -1618,7 +1594,7 @@ msgstr "%s želi da Vam pošalje %s (%s)"
 #: src/ft.c:267
 #, c-format
 msgid "Accept file transfer request from %s?"
-msgstr ""
+msgstr "Da li da prihvatim zahtev za prenos datoteke od drugara %s?"
 
 #: src/ft.c:271
 #, c-format
@@ -1627,6 +1603,9 @@ msgid ""
 "Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
+"Datoteka je spremna za preuzimanje sa:\n"
+"računara: %s\n"
+"na portu: %d"
 
 #: src/ft.c:322
 #, c-format
@@ -1634,9 +1613,9 @@ msgid "%s is not a valid filename.\n"
 msgstr "%s nije ispravan naziv datoteke.\n"
 
 #: src/ft.c:898
-#, fuzzy, c-format
+#, c-format
 msgid "%s canceled the transfer of %s"
-msgstr "%s izmeni temu u: %s"
+msgstr "%s je obustavio prenos za: %s"
 
 #: src/ft.c:948
 #, c-format
@@ -1657,7 +1636,7 @@ msgid "Size of the expander arrow"
 msgstr "Veličina strelice proširivača"
 
 #: src/gaim-remote.c:108
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s command [OPTIONS] [URI]\n"
 "\n"
@@ -1676,19 +1655,20 @@ msgstr ""
 "    NAREDBE:\n"
 "       uri                      Koristi AIM: URI\n"
 "       quit                     Zatvori pokrenutu instancu Gaima\n"
-"\n"
+"       back                     Ukloni obaveštenje o odsustvu\n"
+"       quit                     Zatvori pokrenuti primerak GAIM-a\n"
 "    IZBORI:\n"
 "       -h, --help [naredba]     Prikaži pomoć za naredbu\n"
 
 #: src/gaim-remote.c:185 src/gaim-remote.c:203
-#, fuzzy
 msgid ""
 "Gaim not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
-msgstr "Gaim nije pokrenut (u sesiji 0)\n"
+msgstr ""
+"Gaim nije pokrenut (u sesiji 0)\n"
+"Da li je pokrenut „daljinski upravljač‟?\n"
 
 #: src/gaim-remote.c:219
-#, fuzzy
 msgid ""
 "\n"
 "Using AIM: URIs:\n"
@@ -1716,8 +1696,7 @@ msgstr ""
 "\tgaim-remote uri 'aim:goim?screenname=Pingvin&message=GNU+svet'\n"
 "U ovom slučaju, „Pingvin“ je ime korisnika kome šaljemo poruku, a \n"
 "„GNU svet“ je sama poruka. Mora se koristiti „+“ umesto razmaka. \n"
-"Obratite pažnju na način citiranja iznad — ukoliko ovo koristite iz "
-"ljuske, \n"
+"Obratite pažnju na način citiranja iznad — ukoliko ovo koristite iz ljuske, \n"
 "znak „&“ se mora istaknuti, ili će naredba stati na tom mestu.\n"
 "Takođe, sledeće će samo otvoriti novi prozor za razgovor sa korisnikom, \n"
 "bez slanja poruke:\n"
@@ -1744,12 +1723,16 @@ msgid ""
 "\n"
 "Mark all accounts as \"away\" with the default message.\n"
 msgstr ""
+"\n"
+"Objavi odsustvo sa svih naloga i stavi podrazumevanu poruku.\n"
 
 #: src/gaim-remote.c:247
 msgid ""
 "\n"
 "Set all accounts as not away.\n"
 msgstr ""
+"\n"
+"Vrati sve naloge sa odsustva.\n"
 
 #: src/gtkaccount.c:325
 #, c-format
@@ -1797,7 +1780,6 @@ msgid "New mail notifications"
 msgstr "Obaveštenja o novopristigloj e-pošti"
 
 #: src/gtkaccount.c:807
-#, fuzzy
 msgid "Buddy icon:"
 msgstr "Sličica drugara"
 
@@ -1907,8 +1889,8 @@ msgstr "Ime"
 #: src/gtkaccount.c:2147 src/protocols/jabber/jabber.c:958
 #: src/protocols/oscar/oscar.c:654 src/protocols/oscar/oscar.c:5568
 #: src/protocols/oscar/oscar.c:6757 src/protocols/silc/silc.c:44
-#: src/protocols/yahoo/yahoo.c:2567 src/protocols/zephyr/zephyr.c:1365
-#: src/protocols/zephyr/zephyr.c:1377
+#: src/protocols/yahoo/yahoo.c:2573 src/protocols/zephyr/zephyr.c:2134
+#: src/protocols/zephyr/zephyr.c:2153
 msgid "Online"
 msgstr "Na vezi"
 
@@ -1941,7 +1923,7 @@ msgstr "Dodati drugara u spisak?"
 
 #. Add button
 #: src/gtkaccount.c:2505 src/gtkblist.c:4426 src/gtkconv.c:1402
-#: src/gtkconv.c:3736 src/gtkconv.c:3807 src/gtkrequest.c:247
+#: src/gtkconv.c:3737 src/gtkconv.c:3808 src/gtkrequest.c:247
 #: src/protocols/icq/gaim_icq.c:276 src/protocols/oscar/oscar.c:3741
 #: src/protocols/silc/chat.c:593
 msgid "Add"
@@ -1962,17 +1944,14 @@ msgid "_Account:"
 msgstr "_Nalog:"
 
 #: src/gtkblist.c:1119 src/gtkblist.c:3209
-#, fuzzy
 msgid "Get _Info"
 msgstr "Podaci"
 
 #: src/gtkblist.c:1122 src/gtkblist.c:3199
-#, fuzzy
 msgid "I_M"
 msgstr "Poruka"
 
 #: src/gtkblist.c:1128
-#, fuzzy
 msgid "_Send File"
 msgstr "Pošalji datoteku"
 
@@ -2027,7 +2006,7 @@ msgstr "_Skupi"
 msgid "_Expand"
 msgstr "_Razgranaj"
 
-#: src/gtkblist.c:1919 src/gtkconv.c:4379 src/gtkpounce.c:314
+#: src/gtkblist.c:1919 src/gtkconv.c:4380 src/gtkpounce.c:314
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -2039,7 +2018,6 @@ msgid "/_Buddies"
 msgstr "/_Drugari"
 
 #: src/gtkblist.c:2330
-#, fuzzy
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Drugari/_Nova brza poruka..."
 
@@ -2048,14 +2026,12 @@ msgid "/Buddies/Join a _Chat..."
 msgstr "/Drugari/_Priključi se razgovoru..."
 
 #: src/gtkblist.c:2332
-#, fuzzy
 msgid "/Buddies/Get User _Info..."
 msgstr "/Drugari/Pribavi podatke o _korisniku..."
 
 #: src/gtkblist.c:2333
-#, fuzzy
 msgid "/Buddies/View User _Log..."
-msgstr "/Drugari/Pribavi podatke o _korisniku..."
+msgstr "/Drugari/Pogledaj dnevnik za _korisnika..."
 
 #: src/gtkblist.c:2335
 msgid "/Buddies/Show _Offline Buddies"
@@ -2099,12 +2075,10 @@ msgid "/Tools/Buddy _Pounce"
 msgstr "/Alati/_Zaseda drugaru"
 
 #: src/gtkblist.c:2348
-#, fuzzy
 msgid "/Tools/Account Ac_tions"
-msgstr "/Alati/_Nalozi"
+msgstr "/Alati/_Akcije po nalogu"
 
 #: src/gtkblist.c:2349
-#, fuzzy
 msgid "/Tools/Pl_ugin Actions"
 msgstr "/Alati/Akcije po protokolu"
 
@@ -2117,9 +2091,8 @@ msgid "/Tools/_File Transfers"
 msgstr "/Alati/Prenosi _datoteka..."
 
 #: src/gtkblist.c:2353
-#, fuzzy
 msgid "/Tools/R_oom List"
-msgstr "/Alati/A_kcije po protokolu"
+msgstr "/Alati/S_pisak soba"
 
 #: src/gtkblist.c:2354
 msgid "/Tools/Pr_eferences"
@@ -2172,11 +2145,12 @@ msgstr ""
 "<b>Nalog:</b> %s"
 
 #: src/gtkblist.c:2474
-#, fuzzy
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
-msgstr "<b>Stanje:</b> Nepovezan"
+msgstr ""
+"\n"
+"<b>Stanje:</b> Nepovezan"
 
 #: src/gtkblist.c:2489
 #, c-format
@@ -2216,11 +2190,12 @@ msgstr ""
 "<b>Nadimak:</b>"
 
 #: src/gtkblist.c:2509
-#, fuzzy
 msgid ""
 "\n"
 "<b>Logged In:</b>"
-msgstr "<b>Prijavljen:</b> "
+msgstr ""
+"\n"
+"<b>Prijavljen:</b> "
 
 #: src/gtkblist.c:2510
 msgid ""
@@ -2283,17 +2258,14 @@ msgstr "Nepovezan"
 
 #. Make menu items sensitive/insensitive where appropriate
 #: src/gtkblist.c:2925
-#, fuzzy
 msgid "/Buddies/Join a Chat..."
 msgstr "/Drugari/_Priključi se razgovoru..."
 
 #: src/gtkblist.c:2928
-#, fuzzy
 msgid "/Tools/Room List"
-msgstr "/Alati/A_kcije po protokolu"
+msgstr "/Alati/S_pisak soba"
 
 #: src/gtkblist.c:2931
-#, fuzzy
 msgid "/Tools/Privacy"
 msgstr "/Alati/_Privatnost"
 
@@ -2318,12 +2290,10 @@ msgid "/Tools/Buddy Pounce"
 msgstr "/Alati/Zaseda drugaru"
 
 #: src/gtkblist.c:3087
-#, fuzzy
 msgid "/Tools/Account Actions"
-msgstr "/Alati/_Nalozi"
+msgstr "/Alati/_Akcije po nalozima"
 
 #: src/gtkblist.c:3090
-#, fuzzy
 msgid "/Tools/Plugin Actions"
 msgstr "/Alati/Akcije po protokolu"
 
@@ -2347,7 +2317,6 @@ msgid "Get information on the selected buddy"
 msgstr "Pribavi podatke o izabranom drugaru"
 
 #: src/gtkblist.c:3219
-#, fuzzy
 msgid "_Chat"
 msgstr "Razgovor"
 
@@ -2356,7 +2325,6 @@ msgid "Join a chat room"
 msgstr "Priključi se pričaonici"
 
 #: src/gtkblist.c:3229
-#, fuzzy
 msgid "_Away"
 msgstr "Odsutan"
 
@@ -2366,7 +2334,7 @@ msgstr "Postavi poruku za odsustvo"
 
 #: src/gtkblist.c:3977 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:989 src/protocols/silc/buddy.c:1034
-#: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2734
+#: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2740
 msgid "Add Buddy"
 msgstr "Dodaj drugara"
 
@@ -2386,9 +2354,8 @@ msgid "Account:"
 msgstr "Nalog:"
 
 #: src/gtkblist.c:4288
-#, fuzzy
 msgid "This protocol does not support chat rooms."
-msgstr "Izdanje protokola nije podržano"
+msgstr "Ovo izdanje protokola ne podržava sobe za razgovor."
 
 #: src/gtkblist.c:4304
 msgid ""
@@ -2469,47 +2436,47 @@ msgstr "Vreme"
 #: src/gtkconv.c:327
 #, c-format
 msgid "me is using Gaim v%s."
-msgstr ""
+msgstr "me koristi GAIM v%s."
 
 #: src/gtkconv.c:336
 msgid "Supported debug options are:  version"
-msgstr ""
+msgstr "Podržane opcije za debagiranje su:  version"
 
 #: src/gtkconv.c:360
 msgid "No such command (in this context)."
-msgstr ""
+msgstr "U ovom delu programa takva komanda ne postoji."
 
 #: src/gtkconv.c:363
 msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
 msgstr ""
+"Koristite \"/help &lt;komanda&gt;\" za pomoć za posebnu komandu.\n"
+"U ovom delu programa postoje sledeće komande:\n"
 
 #: src/gtkconv.c:435
-#, fuzzy
 msgid "No such command."
-msgstr "Nema takvog kanala"
+msgstr "Komanda ne postoji"
 
 #: src/gtkconv.c:442
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
-msgstr ""
+msgstr "Greška u sintaksi: uneli ste neispravan broj argumenata."
 
 #: src/gtkconv.c:447
-#, fuzzy
 msgid "Your command failed for an unknown reason."
-msgstr "Odjavljeni ste iz nepoznatih razloga."
+msgstr "Komanda nije izvršena iz nepoznatih razloga."
 
 #: src/gtkconv.c:454
 msgid "That command only works in Chats, not IMs."
-msgstr ""
+msgstr "Ova komanda radi samo sa Razgovorima, a ne sa Brzim porukama."
 
 #: src/gtkconv.c:457
 msgid "That command only works in IMs, not Chats."
-msgstr ""
+msgstr "Ova komanda radi samo sa Brzim porukama, a ne sa Razgovorima."
 
 #: src/gtkconv.c:461
 msgid "That command doesn't work on this protocol."
-msgstr ""
+msgstr "Ova komanda ne postoji u ovom protokolu."
 
 #: src/gtkconv.c:707
 msgid "Invite Buddy Into Chat Room"
@@ -2533,14 +2500,13 @@ msgid "_Message:"
 msgstr "_Poruka:"
 
 #: src/gtkconv.c:813 src/gtkconv.c:2498 src/gtkdebug.c:182
-#, fuzzy
 msgid "Unable to open file."
-msgstr "Ne mogu da pročitam datoteku %s."
+msgstr "Ne mogu da pročitam datoteku."
 
 #: src/gtkconv.c:818
-#, fuzzy, c-format
+#, c-format
 msgid "<h1>Conversation with %s</h1>\n"
-msgstr "Razgovori sa %s"
+msgstr "<h1>Razgovor sa %s</h1>\n"
 
 #: src/gtkconv.c:832
 msgid "Save Conversation"
@@ -2559,7 +2525,7 @@ msgid "IM"
 msgstr "Poruka"
 
 #. Send File button
-#: src/gtkconv.c:1359 src/gtkconv.c:3729 src/protocols/oscar/oscar.c:569
+#: src/gtkconv.c:1359 src/gtkconv.c:3730 src/protocols/oscar/oscar.c:569
 msgid "Send File"
 msgstr "Pošalji datoteku"
 
@@ -2572,7 +2538,7 @@ msgid "Ignore"
 msgstr "Ignoriši"
 
 #. Info button
-#: src/gtkconv.c:1379 src/gtkconv.c:3750
+#: src/gtkconv.c:1379 src/gtkconv.c:3751
 msgid "Info"
 msgstr "Podaci"
 
@@ -2581,7 +2547,6 @@ msgid "Get Away Msg"
 msgstr "Pribavi poruku za odsustvo"
 
 #: src/gtkconv.c:2506
-#, fuzzy
 msgid "Unable to save icon file to disk."
 msgstr "Ne mogu sačuvati datoteku sa ikonicom na disk."
 
@@ -2620,7 +2585,6 @@ msgid "/_Conversation"
 msgstr "/_Razgovor"
 
 #: src/gtkconv.c:3502
-#, fuzzy
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Razgovor/Nova _brza poruka..."
 
@@ -2637,14 +2601,12 @@ msgid "/Conversation/_Save As..."
 msgstr "/Razgovor/_Sačuvaj kao..."
 
 #: src/gtkconv.c:3512
-#, fuzzy
 msgid "/Conversation/Clear"
-msgstr "/Razgovor/_Završi"
+msgstr "/Razgovor/_Obriši"
 
 #: src/gtkconv.c:3516
-#, fuzzy
 msgid "/Conversation/Se_nd File..."
-msgstr "/Razgovor/_Nađi..."
+msgstr "/Razgovor/_Pošalji datoteku..."
 
 #: src/gtkconv.c:3517
 msgid "/Conversation/Add Buddy _Pounce..."
@@ -2708,18 +2670,16 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Izbori/Prikaži _alatke za formatiranje"
 
 #: src/gtkconv.c:3554
-#, fuzzy
 msgid "/Options/Show T_imestamps"
-msgstr "Vremenska oznaka razgovora"
+msgstr "/Izbori/Prikazuj vremenske oznake"
 
 #: src/gtkconv.c:3596
 msgid "/Conversation/View Log"
 msgstr "/Razgovor/Prikaži dnevnik"
 
 #: src/gtkconv.c:3601
-#, fuzzy
 msgid "/Conversation/Send File..."
-msgstr "/Razgovor/Podaci..."
+msgstr "/Razgovor/Pošalji datoteku..."
 
 #: src/gtkconv.c:3605
 msgid "/Conversation/Add Buddy Pounce..."
@@ -2774,98 +2734,93 @@ msgid "/Options/Show Formatting Toolbar"
 msgstr "/Izbori/Prikaži alatke za formatiranje"
 
 #: src/gtkconv.c:3662
-#, fuzzy
 msgid "/Options/Show Timestamps"
-msgstr "Vremenska oznaka razgovora"
+msgstr "/Izbori/Prikazuj vremenske oznake"
 
 #. The buttons, from left to right
 #. Warn button
-#: src/gtkconv.c:3715
+#: src/gtkconv.c:3716
 msgid "Warn"
 msgstr "Upozori"
 
-#: src/gtkconv.c:3716
+#: src/gtkconv.c:3717
 msgid "Warn the user"
 msgstr "Upozori korisnika"
 
 #. Block button
-#: src/gtkconv.c:3722 src/gtkprivacy.c:623 src/gtkprivacy.c:634
+#: src/gtkconv.c:3723 src/gtkprivacy.c:623 src/gtkprivacy.c:634
 msgid "Block"
 msgstr "Blokiraj"
 
-#: src/gtkconv.c:3723
+#: src/gtkconv.c:3724
 msgid "Block the user"
 msgstr "Blokiraj korisnika"
 
-#: src/gtkconv.c:3730
-#, fuzzy
+#: src/gtkconv.c:3731
 msgid "Send a file to the user"
-msgstr "Pošalji mobilnu poruku."
+msgstr "Pošalji datoteku korisniku"
 
-#: src/gtkconv.c:3737
+#: src/gtkconv.c:3738
 msgid "Add the user to your buddy list"
 msgstr "Dodavanje korisnika u Vaš spisak drugara"
 
-#: src/gtkconv.c:3744
+#: src/gtkconv.c:3745
 msgid "Remove the user from your buddy list"
 msgstr "Uklanjanje korisnika sa Vašeg spisak drugara"
 
-#: src/gtkconv.c:3751 src/gtkconv.c:4086
+#: src/gtkconv.c:3752 src/gtkconv.c:4087
 msgid "Get the user's information"
 msgstr "Pribavi podatke o korisniku"
 
 #. Send button
-#: src/gtkconv.c:3757 src/gtkconv.c:3821
+#: src/gtkconv.c:3758 src/gtkconv.c:3822
 msgid "Send"
 msgstr "Pošalji"
 
-#: src/gtkconv.c:3758 src/gtkconv.c:3822
-#, fuzzy
+#: src/gtkconv.c:3759 src/gtkconv.c:3823
 msgid "Send message"
 msgstr "Slanje poruke"
 
 #. The buttons, from left to right
 #. Invite
-#: src/gtkconv.c:3800
+#: src/gtkconv.c:3801
 msgid "Invite"
 msgstr "Pozovi"
 
-#: src/gtkconv.c:3801
+#: src/gtkconv.c:3802
 msgid "Invite a user"
 msgstr "Pozovi korisnika"
 
-#: src/gtkconv.c:3808
-#, fuzzy
+#: src/gtkconv.c:3809
 msgid "Add the chat to your buddy list"
-msgstr "Dodavanje korisnika u Vaš spisak drugara"
+msgstr "Dodavanje razgovora u Vaš spisak drugara"
 
-#: src/gtkconv.c:3815
-#, fuzzy
+#: src/gtkconv.c:3816
 msgid "Remove the chat from your buddy list"
-msgstr "Uklanjanje korisnika sa Vašeg spisak drugara"
+msgstr "Uklanjanje razgovora sa Vašeg spiska drugara"
 
-#: src/gtkconv.c:3939
+#: src/gtkconv.c:3940
 msgid "Topic:"
 msgstr "Tema:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:4002
+#: src/gtkconv.c:4003
 msgid "0 people in room"
 msgstr "Nema nikoga u pričaonici"
 
-#: src/gtkconv.c:4063
+#: src/gtkconv.c:4064
 msgid "IM the user"
 msgstr "Pošalji brzu poruku korisniku"
 
-#: src/gtkconv.c:4075
+#: src/gtkconv.c:4076
 msgid "Ignore the user"
 msgstr "Ignoriši korisnika"
 
-#: src/gtkconv.c:4669
+#: src/gtkconv.c:4670
 msgid "Close conversation"
 msgstr "Okončaj razgovor"
 
-#: src/gtkconv.c:5202 src/gtkconv.c:5231 src/gtkconv.c:5327 src/gtkconv.c:5385
+#: src/gtkconv.c:5203 src/gtkconv.c:5232 src/gtkconv.c:5328 src/gtkconv.c:5386
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
@@ -2873,33 +2828,37 @@ msgstr[0] "%d osoba u pričaonici."
 msgstr[1] "%d osobe u pričaonici."
 msgstr[2] "%d osoba u pričaonici."
 
-#: src/gtkconv.c:5951 src/gtkconv.c:5954
+#: src/gtkconv.c:5955 src/gtkconv.c:5958
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Razgovor/Završi"
 
-#: src/gtkconv.c:6326
+#: src/gtkconv.c:6330
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
 msgstr ""
+"say &lt;poruka&gt;:  Pošalji poruku normalno, kao da nije korišćena komanda."
 
-#: src/gtkconv.c:6329
+#: src/gtkconv.c:6333
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
+"me &lt;akcija&gt;:  Pošalji drugaru ili u razgovor akciju u stilu IRC-a."
 
-#: src/gtkconv.c:6332
+#: src/gtkconv.c:6336
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
 msgstr ""
+"debug &lt;opcija&gt;:  Pošalji razne podatke za ispravljanje grešaka u trenutni "
+"razgovor."
 
-#: src/gtkconv.c:6336
+#: src/gtkconv.c:6340
 msgid "help &lt;command&gt;:  Help on a specific command."
-msgstr ""
+msgstr "help &lt;komanda&gt;:  Pomoć za određenu komandu."
 
 #: src/gtkdebug.c:197
 msgid "Save Debug Log"
-msgstr ""
+msgstr "Snimi dnevnik za ispravljanje grešaka"
 
 #: src/gtkdebug.c:250
 msgid "Debug Window"
@@ -2984,7 +2943,7 @@ msgstr "britanski engleski"
 
 #: src/gtkdialogs.c:91
 msgid "Canadian English"
-msgstr ""
+msgstr "kanadski engleski"
 
 #: src/gtkdialogs.c:92 src/gtkdialogs.c:126
 msgid "German"
@@ -3024,7 +2983,7 @@ msgstr "japanski"
 
 #: src/gtkdialogs.c:101
 msgid "Lithuanian"
-msgstr ""
+msgstr "litvanski"
 
 #: src/gtkdialogs.c:102 src/gtkdialogs.c:132
 msgid "Korean"
@@ -3036,7 +2995,7 @@ msgstr "holandski; flamanski"
 
 #: src/gtkdialogs.c:104
 msgid "Macedonian"
-msgstr ""
+msgstr "makedonski"
 
 #: src/gtkdialogs.c:105
 msgid "Norwegian"
@@ -3067,9 +3026,8 @@ msgid "Serbian"
 msgstr "srpski"
 
 #: src/gtkdialogs.c:112
-#, fuzzy
 msgid "Slovenian"
-msgstr "slovački"
+msgstr "slovenački"
 
 #: src/gtkdialogs.c:113 src/gtkdialogs.c:137
 msgid "Swedish"
@@ -3080,9 +3038,8 @@ msgid "Vietnamese"
 msgstr "vijetnamski"
 
 #: src/gtkdialogs.c:114
-#, fuzzy
 msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "Vijetnamski Gnom tim"
+msgstr "T.M.Thanh i Vijetnamski Gnom tim"
 
 #: src/gtkdialogs.c:115
 msgid "Simplified Chinese"
@@ -3105,20 +3062,15 @@ msgid "Chinese"
 msgstr "kineski"
 
 #: src/gtkdialogs.c:180
-#, fuzzy
 msgid "About Gaim"
-msgstr "O Gaimu, izd.%s"
+msgstr "O Gaimu"
 
 #: src/gtkdialogs.c:195
-#, fuzzy, c-format
+#, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
-msgstr ""
-"<span weight=\"bold\" size=\"larger\">Stigla Vam je pošta!</span>\n"
-"\n"
-"%s"
+msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 
 #: src/gtkdialogs.c:216
-#, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
@@ -3129,9 +3081,8 @@ msgstr ""
 "pomoću Gtk+ i licenciran pod Gnuovom Opštom javnom licencom (GPL).<BR><BR>"
 
 #: src/gtkdialogs.c:225
-#, fuzzy
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"3\">IRC:</FONT> #gaim na irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim na irc.freenode.net<BR><BR>"
 
 #: src/gtkdialogs.c:230
 msgid "Active Developers"
@@ -3154,12 +3105,10 @@ msgid "Past Translators"
 msgstr "Prethodni prevodioci"
 
 #: src/gtkdialogs.c:366 src/gtkdialogs.c:508 src/gtkdialogs.c:560
-#, fuzzy
 msgid "_Screen name"
 msgstr "_Ime:"
 
 #: src/gtkdialogs.c:372 src/gtkdialogs.c:514 src/gtkdialogs.c:566
-#, fuzzy
 msgid "_Account"
 msgstr "_Nalog:"
 
@@ -3168,30 +3117,26 @@ msgid "New Instant Message"
 msgstr "Nova brza poruka"
 
 #: src/gtkdialogs.c:381
-#, fuzzy
 msgid "Please enter the screen name of the person you would like to IM."
-msgstr "Unesite ime osobe kojoj želite da uputite brzu poruku.\n"
+msgstr "Unesite ime osobe kojoj želite da uputite brzu poruku."
 
 #: src/gtkdialogs.c:521
 msgid "Get User Info"
 msgstr "Pribavi podatke o korisniku"
 
 #: src/gtkdialogs.c:523
-#, fuzzy
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
-msgstr "Unesite ime osobe čije podatke želite da vidite.\n"
+msgstr "Unesite ime osobe čije podatke želite da vidite."
 
 #: src/gtkdialogs.c:574
-#, fuzzy
 msgid "Get User Log"
-msgstr "Pribavi podatke o korisniku"
+msgstr "Pribavi dnevnik o korisniku"
 
 #: src/gtkdialogs.c:576
-#, fuzzy
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
-msgstr "Unesite ime osobe čije podatke želite da vidite.\n"
+msgstr "Unesite ime osobe čije podatke želite da vidite."
 
 #: src/gtkdialogs.c:616
 msgid "Warn User"
@@ -3302,23 +3247,20 @@ msgid "%.2f KB/s"
 msgstr "%.2f KB/s"
 
 #: src/gtkft.c:161 src/gtkft.c:978
-#, fuzzy
 msgid "Finished"
-msgstr "finski"
+msgstr "Završeno"
 
 #: src/gtkft.c:164 src/gtkft.c:929
 msgid "Canceled"
 msgstr "Otkaži"
 
 #: src/gtkft.c:167 src/gtkft.c:848
-#, fuzzy
 msgid "Waiting for transfer to begin"
-msgstr "Čekam za odgovor..."
+msgstr "Čekam da prenos počne"
 
 #: src/gtkft.c:220
-#, fuzzy
 msgid "<b>Receiving As:</b>"
-msgstr "<b>Primanje od:</b>"
+msgstr "<b>Prijem kao:</b>"
 
 #: src/gtkft.c:222
 msgid "<b>Receiving From:</b>"
@@ -3329,17 +3271,16 @@ msgid "<b>Sending To:</b>"
 msgstr "<b>Slanje za:</b>"
 
 #: src/gtkft.c:228
-#, fuzzy
 msgid "<b>Sending As:</b>"
-msgstr "<b>Slanje za:</b>"
+msgstr "<b>Slanje kao:</b>"
 
 #: src/gtkft.c:407
 msgid "There is no application configured to open this type of file."
-msgstr ""
+msgstr "Nijedan program nije namenjen za otvaranje ove vrste datoteka."
 
 #: src/gtkft.c:412
 msgid "An error occurred while opening the file."
-msgstr ""
+msgstr "Došlo je do greške pri otvaranju datoteke."
 
 #: src/gtkft.c:503
 msgid "Progress"
@@ -3410,15 +3351,15 @@ msgstr "Neuspeh"
 
 #: src/gtkimhtml.c:602
 msgid "Pa_ste As Text"
-msgstr ""
+msgstr "Zalepi kao tekst"
 
 #: src/gtkimhtml.c:1047
 msgid "Hyperlink color"
-msgstr ""
+msgstr "Boja nad-veze"
 
 #: src/gtkimhtml.c:1048
 msgid "Color to draw hyperlinks."
-msgstr ""
+msgstr "Boja za iscrtavanje nad-veza."
 
 #: src/gtkimhtml.c:1253
 msgid "_Copy E-Mail Address"
@@ -3466,30 +3407,24 @@ msgid "Select Background Color"
 msgstr "Izaberite boju pozadine"
 
 #: src/gtkimhtmltoolbar.c:395
-#, fuzzy
 msgid "_URL"
 msgstr "_Adresa:"
 
 #: src/gtkimhtmltoolbar.c:403
-#, fuzzy
 msgid "_Description"
 msgstr "_Opis:"
 
 #: src/gtkimhtmltoolbar.c:406
-#, fuzzy
 msgid ""
 "Please enter the URL and description of the link that you want to insert. "
 "The description is optional."
 msgstr ""
 "Unesite Internet adresu i opis veze koju želite da ubacite. Opis nije "
-"obavezan.\n"
+"obavezan."
 
 #: src/gtkimhtmltoolbar.c:410
-#, fuzzy
 msgid "Please enter the URL of the link that you want to insert."
-msgstr ""
-"Unesite Internet adresu i opis veze koju želite da ubacite. Opis nije "
-"obavezan.\n"
+msgstr "Unesite Internet adresu i opis veze koju želite da ubacite."
 
 #: src/gtkimhtmltoolbar.c:415
 msgid "Insert Link"
@@ -3510,7 +3445,7 @@ msgstr "Umetni sliku"
 
 #: src/gtkimhtmltoolbar.c:662
 msgid "This theme has no available smileys."
-msgstr ""
+msgstr "Ova tema ne sadrži određen skup smešaka."
 
 #. show everything
 #: src/gtkimhtmltoolbar.c:677
@@ -3562,9 +3497,9 @@ msgid "Insert smiley"
 msgstr "Ubaci smešak"
 
 #: src/gtklog.c:302
-#, fuzzy, c-format
+#, c-format
 msgid "Conversations with %s"
-msgstr "Razgovori sa"
+msgstr "Razgovori sa %s"
 
 #. Window **********
 #: src/gtklog.c:395 src/gtklog.c:411
@@ -3613,9 +3548,9 @@ msgstr ""
 "%s"
 
 #: src/gtknotify.c:430
-#, fuzzy, c-format
+#, c-format
 msgid "The browser command <b>%s</b> is invalid."
-msgstr "Čitač „%s“ je neispravan."
+msgstr "Komanda čitaču <b>%s</b> nije ispravna."
 
 #: src/gtknotify.c:432 src/gtknotify.c:444 src/gtknotify.c:457
 #: src/gtknotify.c:576
@@ -3623,9 +3558,9 @@ msgid "Unable to open URL"
 msgstr "Ne mogu da otvorim adresu"
 
 #: src/gtknotify.c:442 src/gtknotify.c:455
-#, fuzzy, c-format
+#, c-format
 msgid "Error launching <b>%s</b>: %s"
-msgstr "Greška pri izvršavanju „naredbe“: %s"
+msgstr "Greška pri pokretanju<b>%s</b>: %s"
 
 #: src/gtknotify.c:577
 msgid ""
@@ -3655,7 +3590,6 @@ msgid "Pounce Who"
 msgstr "Žrtva"
 
 #: src/gtkpounce.c:431
-#, fuzzy
 msgid "_Buddy name:"
 msgstr "_Ime drugara:"
 
@@ -3665,42 +3599,34 @@ msgid "Pounce When"
 msgstr "Kada da izvršim akciju?"
 
 #: src/gtkpounce.c:463
-#, fuzzy
 msgid "Si_gn on"
 msgstr "Prijavi se"
 
 #: src/gtkpounce.c:465
-#, fuzzy
 msgid "Sign _off"
 msgstr "Odjavi se"
 
 #: src/gtkpounce.c:467
-#, fuzzy
 msgid "A_way"
 msgstr "Odsutan"
 
 #: src/gtkpounce.c:469
-#, fuzzy
 msgid "_Return from away"
 msgstr "Vrati se sa odsustva"
 
 #: src/gtkpounce.c:471
-#, fuzzy
 msgid "_Idle"
 msgstr "Neaktivan"
 
 #: src/gtkpounce.c:473
-#, fuzzy
 msgid "Retur_n from idle"
-msgstr "Kada se probudi"
+msgstr "Aktivira se"
 
 #: src/gtkpounce.c:475
-#, fuzzy
 msgid "Buddy starts _typing"
 msgstr "Kada drugar počinje da kuca"
 
 #: src/gtkpounce.c:477
-#, fuzzy
 msgid "Buddy stops t_yping"
 msgstr "Kada drugar prestaje da kuca"
 
@@ -3710,46 +3636,38 @@ msgid "Pounce Action"
 msgstr "Akcija"
 
 #: src/gtkpounce.c:514
-#, fuzzy
 msgid "Op_en an IM window"
 msgstr "Otvori prozor za brzu poruku"
 
 #: src/gtkpounce.c:516
-#, fuzzy
 msgid "_Popup notification"
 msgstr "Otvori dijalog obaveštenja"
 
 #: src/gtkpounce.c:518
-#, fuzzy
 msgid "Send a _message"
 msgstr "Pošalji poruku"
 
 #: src/gtkpounce.c:520
-#, fuzzy
 msgid "E_xecute a command"
 msgstr "Izvrši naredbu"
 
 #: src/gtkpounce.c:522
-#, fuzzy
 msgid "P_lay a sound"
 msgstr "Pusti zvuk"
 
 #: src/gtkpounce.c:526
-#, fuzzy
 msgid "B_rowse..."
 msgstr "Pretraži"
 
 #: src/gtkpounce.c:528
-#, fuzzy
 msgid "Bro_wse..."
 msgstr "Pretraži"
 
 #: src/gtkpounce.c:529
 msgid "Pre_view"
-msgstr ""
+msgstr "Pregled"
 
 #: src/gtkpounce.c:612
-#, fuzzy
 msgid "Sav_e this pounce after activation"
 msgstr "_Snimi ovu zasedu nakon aktiviranja"
 
@@ -3759,44 +3677,44 @@ msgid "Remove Buddy Pounce"
 msgstr "Ukloni zasedu drugaru"
 
 #: src/gtkpounce.c:954
-#, fuzzy, c-format
+#, c-format
 msgid "%s has started typing to you (%s)"
-msgstr "%s počinje da Vam piše poruku"
+msgstr "%s počinje da Vam piše poruku (%s)"
 
 #: src/gtkpounce.c:956
-#, fuzzy, c-format
+#, c-format
 msgid "%s has signed on (%s)"
-msgstr "%s se prijavio(la)"
+msgstr "%s se prijavio(la) (%s)"
 
 #: src/gtkpounce.c:958
-#, fuzzy, c-format
+#, c-format
 msgid "%s has returned from being idle (%s)"
-msgstr "%s se aktivirao(la)"
+msgstr "%s se aktivirao(la) (%s)"
 
 #: src/gtkpounce.c:960
-#, fuzzy, c-format
+#, c-format
 msgid "%s has returned from being away (%s)"
-msgstr "%s se vratio(la) sa odsustva"
+msgstr "%s se vratio(la) sa odsustva (%s)"
 
 #: src/gtkpounce.c:962
-#, fuzzy, c-format
+#, c-format
 msgid "%s has stopped typing to you (%s)"
-msgstr "%s je prestao(la) da Vam piše"
+msgstr "%s je prestao(la) da Vam piše (%s)"
 
 #: src/gtkpounce.c:964
-#, fuzzy, c-format
+#, c-format
 msgid "%s has signed off (%s)"
-msgstr "%s se odjavio(la)"
+msgstr "%s se odjavio(la) (%s)"
 
 #: src/gtkpounce.c:966
-#, fuzzy, c-format
+#, c-format
 msgid "%s has become idle (%s)"
-msgstr "%s se uspavao(la)"
+msgstr "%s se uspavao(la) (%s)"
 
 #: src/gtkpounce.c:968
-#, fuzzy, c-format
+#, c-format
 msgid "%s has gone away. (%s)"
-msgstr "%s je odišao(la) na odsustvo."
+msgstr "%s je odišao(la) na odsustvo. (%s)"
 
 #: src/gtkpounce.c:969
 msgid "Unknown pounce event. Please report this!"
@@ -3853,22 +3771,23 @@ msgstr "Zanemari veličinu _slova"
 
 #: src/gtkprefs.c:836
 msgid "Default Formatting"
-msgstr ""
+msgstr "Podrazumevano formatiranje"
 
 #: src/gtkprefs.c:838
 msgid "_Send default formatting with outgoing messages"
-msgstr ""
+msgstr "Pošalji podrazumevano formatiranje sa odlazećim porukama"
 
 #: src/gtkprefs.c:870
 msgid ""
 "This is how your outgoing message text will appear when you use protocols "
 "that support formatting. :)"
 msgstr ""
+"Ovako će se vaše poruke pojavljivati u protokolima koji podržavaju "
+"formatiranje. :)"
 
 #: src/gtkprefs.c:873
-#, fuzzy
 msgid "_Clear Formatting"
-msgstr "Očisti dnevnik"
+msgstr "Očisti formatiranje"
 
 #: src/gtkprefs.c:910
 msgid "Send Message"
@@ -3895,7 +3814,6 @@ msgid "Insertions"
 msgstr "Ubacivanje"
 
 #: src/gtkprefs.c:921
-#, fuzzy
 msgid "Control-{B/I/U} changes _formatting"
 msgstr "Control-{B/I/U/S} ubacuje HTML _oznake"
 
@@ -3908,7 +3826,6 @@ msgid "Buddy List Sorting"
 msgstr "Poredak u spisku drugara"
 
 #: src/gtkprefs.c:948
-#, fuzzy
 msgid "_Sorting:"
 msgstr "_Poredak:"
 
@@ -3958,45 +3875,39 @@ msgstr "_Sam razgranaj kontakte"
 
 #: src/gtkprefs.c:1017
 msgid "Enable \"_slash\" commands"
-msgstr ""
+msgstr "Dozvoli komande \"_sa crtom\""
 
 #: src/gtkprefs.c:1020
 msgid "Send unknown \"_slash\" commands as messages"
-msgstr ""
+msgstr "Neprepoznate komande \"_sa crtom\" šalji kao poruke"
 
 #: src/gtkprefs.c:1023
-#, fuzzy
 msgid "Show _formatting toolbar"
 msgstr "Prikaži alatke za formatiranje"
 
 #: src/gtkprefs.c:1025
-#, fuzzy
 msgid "Show _aliases in tabs/titles"
 msgstr "Prikaži a_lijase u jezičcima/naslovima"
 
 #: src/gtkprefs.c:1029
-#, fuzzy
 msgid "Enable buddy ic_on animation"
 msgstr "Uključi _animaciju ikonice drugara"
 
 #: src/gtkprefs.c:1031
-#, fuzzy
 msgid "_Notify buddies that you are typing to them"
 msgstr "Slanje obaveštenja drugarima kada im piše_te"
 
 #: src/gtkprefs.c:1033
-#, fuzzy
 msgid "_Raise IM window on events"
 msgstr "_Izdigni prozor na događaje"
 
 #: src/gtkprefs.c:1036
-#, fuzzy
 msgid "Raise chat _window on events"
 msgstr "_Izdigni prozor na događaje"
 
 #: src/gtkprefs.c:1038
 msgid "Use _multi-colored screen names in chats"
-msgstr ""
+msgstr "Koristi _višebojne nadimke u razgovorima"
 
 #. All the tab options!
 #: src/gtkprefs.c:1042
@@ -4008,11 +3919,10 @@ msgid "Show IMs and chats in _tabbed windows"
 msgstr "Prikaži brze poruke i razgovore u prozorima pomoću _listova"
 
 #: src/gtkprefs.c:1059
-msgid "Show _close button on tabs"
-msgstr "Prikaži dugme za zatvara_nje na jezičcima."
+msgid "Show close b_utton on tabs"
+msgstr "Prikaži dugme za zatvara_nje na jezičcima"
 
 #: src/gtkprefs.c:1062
-#, fuzzy
 msgid "Tab p_lacement:"
 msgstr "Postavka _jezičaka:"
 
@@ -4033,44 +3943,38 @@ msgid "Right"
 msgstr "Desno"
 
 #: src/gtkprefs.c:1073
-#, fuzzy
 msgid "New conversation _placement:"
-msgstr "Okončaj razgovor"
+msgstr "Smeštanje novih razgovora"
 
 # Ovo je svrha ovog polja kod nas, pa neka ostane ovako
 #: src/gtkprefs.c:1124 src/protocols/oscar/oscar.c:712
 #: src/protocols/oscar/oscar.c:4974
-#, fuzzy
 msgid "IP Address"
-msgstr "Ulica"
+msgstr "IP adresa"
 
 #: src/gtkprefs.c:1126
-#, fuzzy
 msgid "_Autodetect IP Address"
-msgstr "Ulica"
+msgstr "Sam odredi IP adresu"
 
 #: src/gtkprefs.c:1135
 msgid "Public _IP:"
-msgstr ""
+msgstr "Javni _IP broj:"
 
 #: src/gtkprefs.c:1159
-#, fuzzy
 msgid "Ports"
-msgstr "Port"
+msgstr "Portovi"
 
 #: src/gtkprefs.c:1162
 msgid "_Manually specify range of ports to listen on"
-msgstr ""
+msgstr "_Ručno odredi opseg portova za slušanje"
 
 #: src/gtkprefs.c:1165
-#, fuzzy
 msgid "_Start Port:"
-msgstr "_Traži izraz:"
+msgstr "_Prvi port:"
 
 #: src/gtkprefs.c:1172
-#, fuzzy
 msgid "_End Port:"
-msgstr "_Port:"
+msgstr "_Poslednji port:"
 
 #: src/gtkprefs.c:1179
 msgid "Proxy Server"
@@ -4086,24 +3990,23 @@ msgstr "_Korisnik:"
 
 #: src/gtkprefs.c:1301
 msgid "Epiphany"
-msgstr ""
+msgstr "Spoznaja"
 
 #: src/gtkprefs.c:1302
 msgid "Firebird"
-msgstr ""
+msgstr "Žar-ptica"
 
 #: src/gtkprefs.c:1303
 msgid "Firefox"
-msgstr ""
+msgstr "Žar-lija"
 
 #: src/gtkprefs.c:1304
 msgid "Galeon"
 msgstr "Galeon"
 
 #: src/gtkprefs.c:1305
-#, fuzzy
 msgid "Gnome Default"
-msgstr "Vijetnamski Gnom tim"
+msgstr "Gnom podrazumevano"
 
 #: src/gtkprefs.c:1306
 msgid "Konqueror"
@@ -4134,22 +4037,20 @@ msgid "_Browser:"
 msgstr "_Veb preglednik:"
 
 #: src/gtkprefs.c:1380
-#, fuzzy
 msgid "_Open link in:"
-msgstr "_Otvori vezu u pregledniku"
+msgstr "_Otvori vezu u:"
 
 #: src/gtkprefs.c:1382
-#, fuzzy
 msgid "Browser default"
-msgstr "Podrazumevano (ne tako) dosadno"
+msgstr "Podrazumevano u pregledniku"
 
 #: src/gtkprefs.c:1383
 msgid "Existing window"
-msgstr ""
+msgstr "Postojeći prozor"
 
 #: src/gtkprefs.c:1385
 msgid "New tab"
-msgstr ""
+msgstr "Novi jezičak"
 
 #: src/gtkprefs.c:1399
 #, c-format
@@ -4182,7 +4083,7 @@ msgstr "Sistemski dnevnik"
 
 #: src/gtkprefs.c:1449
 msgid "_Enable system log"
-msgstr ""
+msgstr "_Omogući sistemski dnevnik"
 
 #: src/gtkprefs.c:1452
 msgid "Log when buddies _sign on/sign off"
@@ -4209,9 +4110,8 @@ msgid "Sound Options"
 msgstr "Postavke zvuka"
 
 #: src/gtkprefs.c:1648
-#, fuzzy
 msgid "Sounds when conversation has _focus"
-msgstr "Ukloni kada prozor razgovora bude _fokusiran"
+msgstr "Zvuk kada prozor razgovora bude _fokusiran"
 
 #: src/gtkprefs.c:1650
 msgid "_Sounds while away"
@@ -4275,28 +4175,24 @@ msgid "_Queue new messages when away"
 msgstr "Odlaži u _red poruke na odsustvu"
 
 #: src/gtkprefs.c:1813
-#, fuzzy
 msgid "_Auto-reply:"
 msgstr "Automatski odgovor"
 
 #: src/gtkprefs.c:1815
-#, fuzzy
 msgid "Never"
-msgstr "Server"
+msgstr "Nikada"
 
 #: src/gtkprefs.c:1816
-#, fuzzy
 msgid "When away"
-msgstr "%s je odišao(la) na odsustvo."
+msgstr "Pri odsustvu"
 
 #: src/gtkprefs.c:1817
-#, fuzzy
 msgid "When away and idle"
-msgstr "Idete na o_dsustvo kada ste neaktivni"
+msgstr "Kada ste odsutni ili spavate"
 
-#: src/gtkprefs.c:1820 src/protocols/msn/msn.c:1180
+#: src/gtkprefs.c:1820 src/protocols/msn/msn.c:1160
 #: src/protocols/msn/state.c:32 src/protocols/novell/novell.c:2804
-#: src/protocols/oscar/oscar.c:4127 src/protocols/yahoo/yahoo.c:2563
+#: src/protocols/oscar/oscar.c:4127 src/protocols/yahoo/yahoo.c:2569
 #: src/protocols/yahoo/yahoo_profile.c:664
 msgid "Idle"
 msgstr "Neaktivan"
@@ -4369,7 +4265,7 @@ msgstr "Učitaj"
 
 #: src/gtkprefs.c:2171
 msgid "Summary"
-msgstr ""
+msgstr "Sažetak"
 
 #: src/gtkprefs.c:2219
 msgid "Details"
@@ -4401,7 +4297,7 @@ msgstr "Zvuk"
 
 #: src/gtkprefs.c:2422
 msgid "Network"
-msgstr ""
+msgstr "Mreža"
 
 #. We use the registered default browser in windows
 #: src/gtkprefs.c:2425
@@ -4441,7 +4337,6 @@ msgid "Block all users"
 msgstr "Blokiraj sve korisnike"
 
 #: src/gtkprivacy.c:82
-#, fuzzy
 msgid "Block only the users below"
 msgstr "Blokiraj niže navedene korisnike"
 
@@ -4539,24 +4434,21 @@ msgid "Would you like to overwrite it?"
 msgstr "Da li želite da je prepišete?"
 
 #: src/gtkrequest.c:1431 src/gtkrequest.c:1452
-#, fuzzy
 msgid "Save File..."
 msgstr "Sačuvaj kao..."
 
 #: src/gtkrequest.c:1432 src/gtkrequest.c:1453
-#, fuzzy
 msgid "Open File..."
 msgstr "Otvori..."
 
 #: src/gtkroomlist.c:331
-#, fuzzy
 msgid "Room List"
-msgstr "Nije na spisku"
+msgstr "Spisak soba"
 
 #. list button
 #: src/gtkroomlist.c:402
 msgid "_Get List"
-msgstr ""
+msgstr "_Dobavi spisak"
 
 #: src/gtksound.c:63
 msgid "Buddy logs in"
@@ -4620,92 +4512,86 @@ msgstr ""
 "Ne mogu reprodukovati zvuk zato što se ne može pokrenuti postavljena zvučna "
 "naredba: %s"
 
-#: src/log.c:106
+#: src/log.c:109
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Dnevnik ne omogućava čitanje</font></b>"
 
-#: src/log.c:545
+#: src/log.c:546
 msgid "XML"
 msgstr "XML"
 
-#: src/log.c:604
-#, fuzzy, c-format
+#: src/log.c:609
+#, c-format
 msgid ""
 "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-"
 "REPLY&gt;:</b></font> %s<br/>\n"
 msgstr ""
-"<font color=\"#16569E\">(%s) <b>%s <SAMO-ODGOVOR>:</b></font> %s<br/>\n"
+"<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;SAMO-"
+"ODGOVOR&gt;:</b></font> %s<br/>\n"
 
-#: src/log.c:606
-#, fuzzy, c-format
+#: src/log.c:611
+#, c-format
 msgid ""
 "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-"
 "REPLY&gt;:</b></font> %s<br/>\n"
 msgstr ""
-"<font color=\"#A82F2F\">(%s) <b>%s <SAMO-ODGOVOR>:</b></font> %s<br/>\n"
+"<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;SAMO-"
+"ODGOVOR&gt;:</b></font> %s<br/>\n"
 
-#: src/log.c:657 src/log.c:787
+#: src/log.c:662 src/log.c:792
 msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
 msgstr "<font color=\"red\"><b>Ne mogu da nađem putanju dnevnika!</b></font>"
 
-#: src/log.c:667 src/log.c:799
+#: src/log.c:672 src/log.c:804
 #, c-format
 msgid "<font color=\"red\"><b>Could not read file: %s</b></font>"
 msgstr "<font color=\"red\"><b>Ne mogu da čitam datoteku: %s</b></font>"
 
-#: src/log.c:671
+#: src/log.c:676
 msgid "HTML"
 msgstr "HTML"
 
-#: src/log.c:732
+#: src/log.c:737
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <SAMO-ODGOVOR>: %s\n"
 
-#: src/log.c:803
+#: src/log.c:808
 msgid "Plain text"
 msgstr "Običan tekst"
 
 #: src/main.c:150
-#, fuzzy
 msgid "Please create an account."
-msgstr "Unesite Vaše podatke."
+msgstr "Načinite nalog."
 
 #: src/main.c:232
 msgid "Login"
 msgstr "Prijava"
 
 #: src/main.c:248
-#, fuzzy
 msgid "<b>_Account:</b>"
-msgstr ""
-"\n"
-"<b>Nalog:</b>"
+msgstr "<b>_Nalog:</b>"
 
 #: src/main.c:262
-#, fuzzy
 msgid "<b>_Password:</b>"
-msgstr "Lozinka:"
+msgstr "<b>_Lozinka:</b>"
 
 #. And now for the buttons
 #: src/main.c:279
-#, fuzzy
 msgid "_Accounts"
-msgstr "_Nalog:"
+msgstr "_Nalozi:"
 
 #: src/main.c:285
-#, fuzzy
 msgid "_Preferences"
 msgstr "Postavke"
 
 #: src/main.c:291
-#, fuzzy
 msgid "_Sign on"
 msgstr "Prijavi se"
 
 #. full help text
 #: src/main.c:517
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Gaim %s\n"
 "Usage: %s [OPTION]...\n"
@@ -4734,7 +4620,7 @@ msgstr ""
 "                       koristiti, razdvojene zarezima)\n"
 "  -n, --loginwin       bez automatske prijave; prikazuje prozor za prijavu\n"
 "  -u, --user=IME       koristi nalog IME\n"
-"  -f, --file=DATOTEKA  koristi DATOTEKA za podešavanja\n"
+"  -c, --config=DIR     koristi DIR za datoteke za podešavanja\n"
 "  -d, --debug          ispisuje poruke za pronalaženje grešaka na standardni "
 "izlaz\n"
 "  -v, --version        prikazuje tekuće izdanje i izađi\n"
@@ -4747,9 +4633,8 @@ msgid "Gaim %s. Try `%s -h' for more information.\n"
 msgstr "Gaim %s. Pokušajte „%s -h“ za više podataka.\n"
 
 #: src/main.c:845
-#, fuzzy
 msgid "Unable to load preferences"
-msgstr "Ne mogu da čitam soket"
+msgstr "Ne mogu da učitam podešavanja"
 
 #: src/main.c:845
 msgid ""
@@ -4757,6 +4642,9 @@ msgid ""
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
 msgstr ""
+"Gaim nije uspeo da učita podešavanja koja imate, jer su snimljena u starom "
+"formatu koji se više ne koristi. Molimo Vas da ponovite podešavanja koristeći "
+"prozor Postavke."
 
 #: src/plugin.c:286
 #, c-format
@@ -4781,12 +4669,12 @@ msgid "Slightly less boring default"
 msgstr "Uobičajeno ali ne (tako) dosadno"
 
 #: src/protocols/gg/gg.c:49 src/protocols/jabber/jutil.c:44
-#: src/protocols/msn/msn.c:463 src/protocols/msn/state.c:29
+#: src/protocols/msn/msn.c:448 src/protocols/msn/state.c:29
 #: src/protocols/msn/state.c:30 src/protocols/msn/state.c:37
 #: src/protocols/msn/state.c:38 src/protocols/novell/novell.c:2795
 #: src/protocols/novell/novell.c:2914 src/protocols/novell/novell.c:2965
-#: src/protocols/oscar/oscar.c:734 src/protocols/yahoo/yahoo.c:2908
-#: src/protocols/yahoo/yahoo.c:3024
+#: src/protocols/oscar/oscar.c:734 src/protocols/yahoo/yahoo.c:2914
+#: src/protocols/yahoo/yahoo.c:3030
 msgid "Available"
 msgstr "Dostupan"
 
@@ -4802,8 +4690,8 @@ msgstr "Odsutan samo za prijatelje"
 #: src/protocols/jabber/presence.c:133 src/protocols/oscar/oscar.c:652
 #: src/protocols/oscar/oscar.c:5483 src/protocols/oscar/oscar.c:5561
 #: src/protocols/oscar/oscar.c:5585 src/protocols/oscar/oscar.c:6763
-#: src/protocols/oscar/oscar.c:6768 src/protocols/yahoo/yahoo.c:2561
-#: src/protocols/yahoo/yahoo.c:2928 src/protocols/yahoo/yahoo.c:3036
+#: src/protocols/oscar/oscar.c:6768 src/protocols/yahoo/yahoo.c:2567
+#: src/protocols/yahoo/yahoo.c:2934 src/protocols/yahoo/yahoo.c:3042
 msgid "Invisible"
 msgstr "Nevidljiv"
 
@@ -4857,7 +4745,7 @@ msgstr "<B>Korisnički broj:</B> %s<BR><B>Stanje:</B> %s<HR>%s"
 #: src/protocols/napster/napster.c:392 src/protocols/oscar/oscar.c:3934
 #: src/protocols/oscar/oscar.c:4156 src/protocols/silc/ops.c:1086
 #: src/protocols/silc/ops.c:1148 src/protocols/toc/toc.c:467
-#: src/protocols/zephyr/zephyr.c:643
+#: src/protocols/zephyr/zephyr.c:722 src/protocols/zephyr/zephyr.c:1138
 msgid "Buddy Information"
 msgstr "Podaci o drugaru"
 
@@ -4877,8 +4765,8 @@ msgstr "Ne mogu da čitam soket"
 #. we didn't successfully connect. tdt->toc_fd is valid here
 #: src/protocols/gg/gg.c:674 src/protocols/icq/gaim_icq.c:343
 #: src/protocols/napster/napster.c:474 src/protocols/napster/napster.c:505
-#: src/protocols/toc/toc.c:169 src/protocols/yahoo/yahoo.c:2199
-#: src/protocols/yahoo/yahoo.c:2228 src/protocols/yahoo/yahoo.c:2291
+#: src/protocols/toc/toc.c:169 src/protocols/yahoo/yahoo.c:2205
+#: src/protocols/yahoo/yahoo.c:2234 src/protocols/yahoo/yahoo.c:2297
 #: src/protocols/yahoo/yahoo_filexfer.c:68
 #: src/protocols/yahoo/yahoo_filexfer.c:109 src/protocols/yahoo/ycht.c:482
 msgid "Unable to connect."
@@ -4929,8 +4817,7 @@ msgstr "Naveden je neispravan Gadu-Gadu korisnički broj"
 
 #: src/protocols/gg/gg.c:842
 msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
-msgstr ""
-"Pokušavate da pošaljete poruku na neispravan Gadu-Gadu korisnički broj."
+msgstr "Pokušavate da pošaljete poruku na neispravan Gadu-Gadu korisnički broj."
 
 #: src/protocols/gg/gg.c:917
 msgid "Couldn't get search results"
@@ -4968,7 +4855,6 @@ msgid "Nick"
 msgstr "Nadimak"
 
 #: src/protocols/gg/gg.c:973 src/protocols/gg/gg.c:976
-#, fuzzy
 msgid "Birth Year"
 msgstr "Godina rođenja"
 
@@ -5193,7 +5079,7 @@ msgstr "Prenos datoteke je obustvaljen"
 
 #: src/protocols/irc/dcc_send.c:273
 msgid "Gaim could not open a listening port."
-msgstr ""
+msgstr "GAIM nije uspeo da otvori port za slušanje."
 
 #: src/protocols/irc/irc.c:74
 msgid "Error displaying MOTD"
@@ -5213,9 +5099,8 @@ msgid "MOTD for %s"
 msgstr "Poruka dana za %s"
 
 #: src/protocols/irc/irc.c:92 src/protocols/irc/irc.c:399
-#, fuzzy
 msgid "Server has disconnected"
-msgstr "%s se odjavio(la)"
+msgstr "Server se isključio"
 
 #: src/protocols/irc/irc.c:157
 msgid "View MOTD"
@@ -5253,13 +5138,11 @@ msgstr "Greška pri čitanju"
 
 #: src/protocols/irc/irc.c:547 src/protocols/silc/chat.c:1368
 #: src/protocols/yahoo/yahoochat.c:1393
-#, fuzzy
 msgid "Users"
-msgstr "Koristi"
+msgstr "Korisnici"
 
 #: src/protocols/irc/irc.c:550 src/protocols/silc/chat.c:1371
 #: src/protocols/silc/ops.c:1166 src/protocols/yahoo/yahoochat.c:1402
-#, fuzzy
 msgid "Topic"
 msgstr "Tema:"
 
@@ -5288,13 +5171,13 @@ msgid "Server"
 msgstr "Server"
 
 #: src/protocols/irc/irc.c:678 src/protocols/jabber/jabber.c:1598
-#: src/protocols/msn/msn.c:1761 src/protocols/napster/napster.c:661
+#: src/protocols/msn/msn.c:1741 src/protocols/napster/napster.c:661
 #: src/protocols/silc/silc.c:1586 src/protocols/trepia/trepia.c:1298
 msgid "Port"
 msgstr "Port"
 
 #: src/protocols/irc/irc.c:681 src/protocols/oscar/oscar.c:7348
-#: src/protocols/zephyr/zephyr.c:1922
+#: src/protocols/zephyr/zephyr.c:2752
 msgid "Encoding"
 msgstr "Način zapisa"
 
@@ -5320,9 +5203,9 @@ msgstr "Izbačeni"
 
 #: src/protocols/irc/msgs.c:182 src/protocols/irc/msgs.c:201
 #: src/protocols/irc/msgs.c:214
-#, fuzzy, c-format
+#, c-format
 msgid "<b>%s:</b> %s"
-msgstr "<b>Stanje:</b> %s"
+msgstr "<b>%s:</b> %s"
 
 #: src/protocols/irc/msgs.c:184
 msgid " <i>(ircop)</i>"
@@ -5334,10 +5217,10 @@ msgstr " <i>(identifikovani)</i>"
 
 #: src/protocols/irc/msgs.c:189 src/protocols/irc/msgs.c:195
 #: src/protocols/irc/msgs.c:196 src/protocols/irc/msgs.c:207
-#: src/protocols/msn/msn.c:1180 src/protocols/yahoo/yahoo_profile.c:664
-#, fuzzy, c-format
+#: src/protocols/msn/msn.c:1160 src/protocols/yahoo/yahoo_profile.c:664
+#, c-format
 msgid "<b>%s:</b> %s<br>"
-msgstr "<b>Korisnik:</b> %s<br>"
+msgstr "<b>%s:</b> %s<br>"
 
 #: src/protocols/irc/msgs.c:196 src/protocols/silc/ops.c:967
 #: src/protocols/silc/ops.c:1117 src/protocols/yahoo/yahoo_profile.c:1005
@@ -5390,9 +5273,9 @@ msgid "Gaim has sent a message the IRC server did not understand."
 msgstr "IRC server nije razumeo poruku koju je poslao Gaim."
 
 #: src/protocols/irc/msgs.c:332
-#, fuzzy, c-format
+#, c-format
 msgid "Users on %s: %s"
-msgstr "Greška %s: %s"
+msgstr "Korisnika na %s: %s"
 
 #: src/protocols/irc/msgs.c:426
 msgid "No such channel"
@@ -5477,19 +5360,23 @@ msgstr "Wallops sa %s"
 
 #: src/protocols/irc/parse.c:109
 msgid "action &lt;action to perform&gt;:  Perform an action."
-msgstr ""
+msgstr "action &lt;akcija&gt;:  Izvedi određenu akciju."
 
 #: src/protocols/irc/parse.c:110
 msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
 msgstr ""
+"away [poruka]:  Postavi poruku o odsustvu ili samo objavi odsustvo bez "
+"poruke."
 
 #: src/protocols/irc/parse.c:111
 msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
 "someone. You must be a channel operator to do this."
 msgstr ""
+"deop &lt;nadimak1&gt; [nadimak2] ...:  Oduzima nekome čin operatora Morate "
+"biti operator kanala da biste ovo uradili."
 
 #: src/protocols/irc/parse.c:112
 msgid ""
@@ -5497,130 +5384,164 @@ msgid ""
 "someone, preventing them from speaking if the channel is moderated (+m). You "
 "must be a channel operator to do this."
 msgstr ""
+"devoice &lt;nadimak1&gt; [nadimak2] ...:  Oduzima nekome pravo glasa, što ga "
+"sprečava da se oglasi kada je kanal moderisan (+m). Morate biti operator "
+"kanala da biste ovo uradili."
 
 #: src/protocols/irc/parse.c:113
 msgid ""
 "invite &lt;nick&gt; [room]:  Invite someone to join you in the specified "
 "channel, or the current channel."
 msgstr ""
+"invite &lt;nick&gt; [room]:  Invite someone to join you in the specified "
+"channel, or the current channel."
 
 #: src/protocols/irc/parse.c:114
 msgid ""
 "j &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
 msgstr ""
+"j &lt;soba1&gt;[,soba2][,...] [ključ1[,ključ2][,...]]:  Unošenje jednog ili "
+"više kanala, ako je potrebno navodeći i ključ."
 
 #: src/protocols/irc/parse.c:115
 msgid ""
 "join &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
 msgstr ""
+"join &lt;soba1&gt;[,soba2][,...] [ključ1[,ključ2][,...]]:  Unošenje jednog ili "
+"više kanala, ako je potrebno navodeći i ključ."
 
 #: src/protocols/irc/parse.c:116
 msgid ""
 "kick &lt;nick&gt; [message]:  Remove someone from a channel. You must be a "
 "channel operator to do this."
 msgstr ""
+"kick &lt;nadimak&gt; [poruka]:  Uklanja nekoga sa kanala. Morate biti "
+"operator da biste ovo uradili."
 
 #: src/protocols/irc/parse.c:117
 msgid ""
 "list:  Display a list of chat rooms on the network. <i>Warning, some servers "
 "may disconnect you upon doing this.</i>"
 msgstr ""
+"list:  Prikazuje spisak soba na mreži. <i>Upozorenje: neki serveri zbog toga "
+"mogu da Vas isključe sa mreže.</i>"
 
 #: src/protocols/irc/parse.c:118
 msgid "me &lt;action to perform&gt;:  Perform an action."
-msgstr ""
+msgstr "me &lt;radnja&gt;:  Izvrši radnju."
 
 #: src/protocols/irc/parse.c:119
 msgid ""
 "mode &lt;nick|channel&gt; &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a channel "
 "or user mode."
 msgstr ""
+"mode &lt;nadimak|kanal&gt; &lt;+|-&gt;&lt;A-Za-z&gt;:  Postavi ili ukini "
+"načim pristupa za kanal ili za korisnika."
 
 #: src/protocols/irc/parse.c:120
 msgid ""
 "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
 "opposed to a channel)."
 msgstr ""
+"msg &lt;nadimak&gt; &lt;poruka&gt;:  Šalje privatnu poruku korisniku (dakle "
+"ne na kanal)."
 
 #: src/protocols/irc/parse.c:121
 msgid "names [channel]:  List the users currently in a channel."
-msgstr ""
+msgstr "names [kanal]:  Ispisuje nadimke korisnika koji su trenutno na kanalu."
 
 #: src/protocols/irc/parse.c:122 src/protocols/jabber/jabber.c:1410
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
-msgstr ""
+msgstr "nick &lt;novi nadimak&gt;:  Menja Vaš nadimak."
 
 #: src/protocols/irc/parse.c:123
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
+"op &lt;nadimak1&gt; [nadimak2] ...:  Dodeljuje nekome operatorski čin. Morate "
+"biti operator kanala da biste ovo moglu da uradite."
 
 #: src/protocols/irc/parse.c:124
 msgid ""
 "operwall &lt;message&gt;:  If you don't know what this is, you probably "
 "can't use it."
 msgstr ""
+"operwall &lt;poruka&gt;:  Ako ne znate šta ova komanda predstavlja, verovatno "
+"ne možete da je koristite."
 
 #: src/protocols/irc/parse.c:125
 msgid ""
 "part [room] [message]:  Leave the current channel, or a specified channel, "
 "with an optional message."
 msgstr ""
+"part [soba] [poruka]:  Napušta trenutni kanal, ili navedeni kanal, po želji "
+"pritom ispisuje i poruku."
 
 #: src/protocols/irc/parse.c:126
 msgid ""
 "ping [nick]:  Asks how much lag a user (or the server if no user specified) "
 "has."
 msgstr ""
+"ping [nadimak]:  Ispisuje koliko je mrežno kašnjenje datog korisnika (ili "
+"servera, ako nijedan nadimak nije naveden)."
 
 #: src/protocols/irc/parse.c:127
 msgid ""
 "query &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
 "opposed to a channel)."
 msgstr ""
+"query &lt;nadimak&gt; &lt;poruka&gt;:  Šalje privatnu poruku korisniku (dakle "
+"ne na kanal)."
 
 #: src/protocols/irc/parse.c:128
 msgid "quit [message]:  Disconnect from the server, with an optional message."
 msgstr ""
+"quit [poruka]:  Isključuje se sa servera i po želji pritom ostavlja poruku."
 
 #: src/protocols/irc/parse.c:129
 msgid "quote [...]:  Send a raw command to the server."
-msgstr ""
+msgstr "quote [...]:  Šalje sirovu komandu serveru."
 
 #: src/protocols/irc/parse.c:130
 msgid ""
 "remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a "
 "channel operator to do this."
 msgstr ""
+"remove &lt;nadimak&gt; [poruka]:  Ukloni nekoga iz sobe. Morate biti "
+"operator kanala da biste ovo uradili."
 
 #: src/protocols/irc/parse.c:131
 msgid "topic [new topic]:  View or change the channel topic."
-msgstr ""
+msgstr "topic [nova tema]:  Pregleda ili menja temu kanala."
 
 #: src/protocols/irc/parse.c:132
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
-msgstr ""
+msgstr "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Postavlja ili ukida korisnikov mod."
 
 #: src/protocols/irc/parse.c:133
 msgid ""
 "voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
+"voice &lt;nick1&gt; [nick2] ...:  Daje nekome glas. Morate biti operator "
+"kanala da biste ovo mogli da uradite."
 
 #: src/protocols/irc/parse.c:134
 msgid ""
 "wallops &lt;message&gt;:  If you don't know what this is, you probably can't "
 "use it."
 msgstr ""
+"wallops &lt;message&gt;:  Ako ne znate čemu služi ova komanda, verovatno ni "
+"ne možete da je koristite."
 
 #: src/protocols/irc/parse.c:135
 msgid "whois &lt;nick&gt;:  Get information on a user."
-msgstr ""
+msgstr "whois &lt;nadimak&gt;:  Uzmi podatke o korisniku."
 
-#: src/protocols/irc/parse.c:242 src/protocols/zephyr/zephyr.c:264
+#: src/protocols/irc/parse.c:242
 msgid ""
 "(There was an error converting this message.  Check the 'Encoding' option in "
 "the Account Editor)"
@@ -5654,18 +5575,20 @@ msgstr "Server zahteva SSL za prijavu"
 #: src/protocols/jabber/auth.c:111
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
+"Server zahteva slanje lozinke u običnom tekstu preko veze koja nije šifrovana."
 
 #: src/protocols/jabber/auth.c:160 src/protocols/jabber/auth.c:161
 #: src/protocols/jabber/auth.c:238 src/protocols/jabber/auth.c:239
-#, fuzzy
 msgid "Plaintext Authentication"
-msgstr "Neuspešna Jahu! identifikacija"
+msgstr "Identifikacija običnim tekstom"
 
 #: src/protocols/jabber/auth.c:162 src/protocols/jabber/auth.c:240
 msgid ""
 "This server requires plaintext authentication over an unencrypted "
 "connection.  Allow this and continue authentication?"
 msgstr ""
+"Ovaj server zahteva prijavu preko veze koja nije šifrovana. Da li da "
+"nastavim sa prijavom?"
 
 #: src/protocols/jabber/auth.c:170 src/protocols/jabber/auth.c:248
 msgid "Server does not use any supported authentication method"
@@ -5690,7 +5613,7 @@ msgid "Given Name"
 msgstr "Ime"
 
 #: src/protocols/jabber/buddy.c:249 src/protocols/jabber/buddy.c:635
-#: src/protocols/jabber/jabber.c:608 src/protocols/msn/msn.c:1173
+#: src/protocols/jabber/jabber.c:608 src/protocols/msn/msn.c:1153
 #: src/protocols/silc/buddy.c:1442 src/protocols/silc/ops.c:820
 #: src/protocols/silc/ops.c:963 src/protocols/silc/ops.c:1113
 #: src/protocols/yahoo/yahoo_profile.c:1000
@@ -5753,6 +5676,7 @@ msgid "Title"
 msgstr "Titula"
 
 # „radno mesto‟ u organizaciji?
+# Uloga je zvanični termin i u UML-u, prim. prev.
 #: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:745
 msgid "Role"
 msgstr "Uloga"
@@ -5779,10 +5703,10 @@ msgstr "DŽaber ID"
 
 #: src/protocols/jabber/buddy.c:563 src/protocols/jabber/buddy.c:570
 #: src/protocols/jabber/buddy.c:581 src/protocols/jabber/jabber.c:938
-#: src/protocols/msn/msn.c:451 src/protocols/novell/novell.c:2817
+#: src/protocols/msn/msn.c:436 src/protocols/novell/novell.c:2817
 #: src/protocols/novell/novell.c:2821 src/protocols/oscar/oscar.c:694
 #: src/protocols/oscar/oscar.c:700 src/protocols/oscar/oscar.c:702
-#: src/protocols/yahoo/yahoo.c:2686
+#: src/protocols/yahoo/yahoo.c:2692
 msgid "Status"
 msgstr "Stanje"
 
@@ -5790,9 +5714,14 @@ msgstr "Stanje"
 msgid "Resource"
 msgstr "Resurs"
 
+# Ovde je nekada stajalo 'ime oca'. Kod nas je srednje ime uglavnom ime
+# oca, ali to definitivno ne mora da bude slučaj na drugim mestima. Npr
+# u Holandiji je vrlo uobičajeno da ljudi imaju po 4-5 imena; uvek se zna
+# koje je prvo, zvanično, ime ali svako može da izabere bilo koje od njih
+# kao omiljeno. Onda se tako predstavlja, tako ga zovu prijatelji itd.
 #: src/protocols/jabber/buddy.c:625 src/protocols/silc/ops.c:812
 msgid "Middle Name"
-msgstr "Ime oca"
+msgstr "Srednje ime"
 
 # Ovo je svrha ovog polja kod nas, pa neka ostane ovako
 #: src/protocols/jabber/buddy.c:643 src/protocols/jabber/jabber.c:623
@@ -5882,60 +5811,52 @@ msgid "Invalid Room Handle"
 msgstr "Neispravna ručka sobe"
 
 #: src/protocols/jabber/chat.c:365
-#, fuzzy
 msgid "Configuration error"
 msgstr "Greška pri povezivanju"
 
 #: src/protocols/jabber/chat.c:374 src/protocols/jabber/chat.c:519
-#, fuzzy
 msgid "Unable to configure"
-msgstr "Nemoguće povezivanje"
+msgstr "Podešavanje nije uspelo"
 
 #: src/protocols/jabber/chat.c:390
-#, fuzzy
 msgid "Room Configuration Error"
-msgstr "Greška pri registraciji"
+msgstr "Greška pri podešavanju sobe"
 
 #: src/protocols/jabber/chat.c:391
 msgid "This room is not capable of being configured"
-msgstr ""
+msgstr "Ova soba nema mogućnosti podešavanja"
 
 #: src/protocols/jabber/chat.c:441 src/protocols/jabber/chat.c:510
-#, fuzzy
 msgid "Registration error"
 msgstr "Greška pri registraciji"
 
 #: src/protocols/jabber/chat.c:593
 msgid "Nick changing not supported in non-MUC chatrooms"
-msgstr ""
+msgstr "Promena nadimka nije podržana u sobama za razgovor koje nisu MUC."
 
 #: src/protocols/jabber/chat.c:637 src/protocols/jabber/chat.c:648
-#, fuzzy
 msgid "Roomlist Error"
-msgstr "Greška pri registraciji"
+msgstr "Greška u spisku soba"
 
 #: src/protocols/jabber/chat.c:638 src/protocols/jabber/chat.c:649
-#, fuzzy
 msgid "Error retreiving roomlist"
-msgstr "Greška pri čitanju sa servera"
+msgstr "Greška pri čitanju spiska soba"
 
 #: src/protocols/jabber/chat.c:689
-#, fuzzy
 msgid "Invalid Server"
 msgstr "Neispravno ime servera"
 
 #: src/protocols/jabber/chat.c:726
-#, fuzzy
 msgid "Enter a Conference Server"
-msgstr "Pokreni razgovor"
+msgstr "Server za razgovore"
 
 #: src/protocols/jabber/chat.c:727
 msgid "Select a conference server to query"
-msgstr ""
+msgstr "Izaberite server za konferencije koji se upituje"
 
 #: src/protocols/jabber/chat.c:730
 msgid "Find Rooms"
-msgstr ""
+msgstr "Pronađi sobe"
 
 #: src/protocols/jabber/jabber.c:76
 msgid "Error initializing session"
@@ -5953,7 +5874,6 @@ msgid "Read Error"
 msgstr "Greška pri čitanju"
 
 #: src/protocols/jabber/jabber.c:324
-#, fuzzy
 msgid "Connection Failed"
 msgstr "Udaljena veza neuspešna"
 
@@ -6028,15 +5948,14 @@ msgid "Register New Jabber Account"
 msgstr "Registruj novi DŽaber nalog"
 
 #: src/protocols/jabber/jabber.c:744
-#, fuzzy
 msgid "Logged out"
-msgstr "%s se odjavi."
+msgstr "Odjavljen"
 
 #. connect to the server
-#: src/protocols/jabber/jabber.c:783 src/protocols/msn/msn.c:609
+#: src/protocols/jabber/jabber.c:783 src/protocols/msn/msn.c:589
 #: src/protocols/napster/napster.c:498 src/protocols/novell/novell.c:2150
 #: src/protocols/oscar/oscar.c:1719 src/protocols/trepia/trepia.c:1064
-#: src/protocols/yahoo/yahoo.c:2422 src/protocols/zephyr/zephyr.c:1020
+#: src/protocols/yahoo/yahoo.c:2428 src/protocols/zephyr/zephyr.c:1455
 msgid "Connecting"
 msgstr "Uspostavljanje veze"
 
@@ -6059,32 +5978,28 @@ msgid "Not Authorized"
 msgstr "Neovlašćen"
 
 #: src/protocols/jabber/jabber.c:913
-#, fuzzy
 msgid "Both"
-msgstr "Na dnu"
+msgstr "Oba"
 
 #: src/protocols/jabber/jabber.c:915
 msgid "From (To pending)"
-msgstr ""
+msgstr "Od (čekanje)"
 
 #: src/protocols/jabber/jabber.c:917
-#, fuzzy
 msgid "From"
-msgstr "Ja sam iz"
+msgstr "Od"
 
 #: src/protocols/jabber/jabber.c:920
-#, fuzzy
 msgid "To"
-msgstr "Na vrhu"
+msgstr "Za"
 
 #: src/protocols/jabber/jabber.c:922
 msgid "None (To pending)"
-msgstr ""
+msgstr "Nijedan (čekanje)"
 
 #: src/protocols/jabber/jabber.c:926
-#, fuzzy
 msgid "Subscription"
-msgstr "Opis"
+msgstr "Pretplata"
 
 #: src/protocols/jabber/jabber.c:946
 msgid "Error"
@@ -6116,9 +6031,8 @@ msgid "Your password has been changed."
 msgstr "Vaša lozinka je izmenjena."
 
 #: src/protocols/jabber/jabber.c:984 src/protocols/jabber/jabber.c:985
-#, fuzzy
 msgid "Error changing password"
-msgstr "Greška pri izmeni lozinke: %s"
+msgstr "Greška pri izmeni lozinke"
 
 #: src/protocols/jabber/jabber.c:1041
 msgid "Password (again)"
@@ -6138,26 +6052,23 @@ msgstr "Postavi podatke o korisniku"
 
 #: src/protocols/jabber/jabber.c:1139
 msgid "Bad Request"
-msgstr ""
+msgstr "Loš zahtev"
 
 #: src/protocols/jabber/jabber.c:1141
-#, fuzzy
 msgid "Conflict"
-msgstr "Uspostavi vezu"
+msgstr "Sukob"
 
 #: src/protocols/jabber/jabber.c:1143
 msgid "Feature Not Implemented"
-msgstr ""
+msgstr "Mogućnost nije podržana"
 
 #: src/protocols/jabber/jabber.c:1145
-#, fuzzy
 msgid "Forbidden"
-msgstr "Skriven"
+msgstr "Zabranjen"
 
 #: src/protocols/jabber/jabber.c:1147
-#, fuzzy
 msgid "Gone"
-msgstr "Ništa"
+msgstr "Otišao"
 
 #: src/protocols/jabber/jabber.c:1149 src/protocols/jabber/jabber.c:1223
 msgid "Internal Server Error"
@@ -6165,88 +6076,75 @@ msgstr "Unutrašnja greška servera"
 
 #: src/protocols/jabber/jabber.c:1151
 msgid "Item Not Found"
-msgstr ""
+msgstr "Nije nađeno"
 
 #: src/protocols/jabber/jabber.c:1153
-#, fuzzy
 msgid "Malformed Jabber ID"
 msgstr "Neispravan DŽaber IB"
 
 #: src/protocols/jabber/jabber.c:1155
-#, fuzzy
 msgid "Not Acceptable"
-msgstr "Nedostupan"
+msgstr "Neprihvatljiv"
 
 #: src/protocols/jabber/jabber.c:1157
-#, fuzzy
 msgid "Not Allowed"
-msgstr "Nedostupan"
+msgstr "Nedozvoljen"
 
 #: src/protocols/jabber/jabber.c:1161
-#, fuzzy
 msgid "Payment Required"
-msgstr "Obavezno je šifrovanje"
+msgstr "Potrebna je uplata"
 
 #: src/protocols/jabber/jabber.c:1163
-#, fuzzy
 msgid "Recipient Unavailable"
-msgstr "Usluga je nedostupna"
+msgstr "Primalac nedostupan"
 
 #: src/protocols/jabber/jabber.c:1167
-#, fuzzy
 msgid "Registration Required"
-msgstr "Greška pri registraciji"
+msgstr "Potrebna je registracija"
 
 #: src/protocols/jabber/jabber.c:1169
 msgid "Remote Server Not Found"
-msgstr ""
+msgstr "Udaljeni računar nije pronađen"
 
 #: src/protocols/jabber/jabber.c:1171
 msgid "Remote Server Timeout"
-msgstr ""
+msgstr "Isteklo je vreme za čekanje na udaljeni server."
 
 #: src/protocols/jabber/jabber.c:1173
-#, fuzzy
 msgid "Server Overloaded"
-msgstr "Server je nedostupan"
+msgstr "Server je preopterećen"
 
 #: src/protocols/jabber/jabber.c:1175
-#, fuzzy
 msgid "Service Unavailable"
 msgstr "Usluga je nedostupna"
 
 #: src/protocols/jabber/jabber.c:1177
-#, fuzzy
 msgid "Subscription Required"
-msgstr "Obavezno je šifrovanje"
+msgstr "Potrebna je pretplate"
 
 #: src/protocols/jabber/jabber.c:1179
 msgid "Unexpected Request"
-msgstr ""
+msgstr "Neočekivani zahtev"
 
 #: src/protocols/jabber/jabber.c:1186
-#, fuzzy
 msgid "Authorization Aborted"
-msgstr "Zahtev odobren"
+msgstr "Prijava prekinuta"
 
 #: src/protocols/jabber/jabber.c:1188
-#, fuzzy
 msgid "Incorrect encoding in authorization"
-msgstr "Primio ovlašćenje"
+msgstr "Pogrešno kodiranje ovlašćenja"
 
 #: src/protocols/jabber/jabber.c:1191
 msgid "Invalid authzid"
 msgstr "Neispravan authzid"
 
 #: src/protocols/jabber/jabber.c:1194
-#, fuzzy
 msgid "Invalid Authorization Mechanism"
-msgstr "Neispravan mehanizam"
+msgstr "Neispravan mehanizam za ovlašćenje"
 
 #: src/protocols/jabber/jabber.c:1197
-#, fuzzy
 msgid "Authorization mechanism too weak"
-msgstr "Zahtev odbijen"
+msgstr "Način ovlašćenja nedovoljno siguran"
 
 #: src/protocols/jabber/jabber.c:1202
 msgid "Temporary Authentication Failure"
@@ -6350,61 +6248,60 @@ msgid "Stream Error"
 msgstr "Greška toka"
 
 #: src/protocols/jabber/jabber.c:1324
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to ban user %s"
-msgstr "Ne mogu da prenesem"
+msgstr "Ne mogu da zabranim korsinika %s"
 
 #: src/protocols/jabber/jabber.c:1376
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to kick user %s"
-msgstr "Nemoguće pronalaženje servera"
+msgstr "Ne mogu da odstranim korisnika %s"
 
 #: src/protocols/jabber/jabber.c:1402
-#, fuzzy
 msgid "config:  Configure a chat room."
-msgstr "Priključi se pričaonici"
+msgstr "config:  Podesi sobu za razgovor."
 
 #: src/protocols/jabber/jabber.c:1406
-#, fuzzy
 msgid "configure:  Configure a chat room."
-msgstr "Priključi se pričaonici"
+msgstr "configure:  Podesi sobu za razgovor."
 
 #: src/protocols/jabber/jabber.c:1415
 msgid "part [room]:  Leave the room."
-msgstr ""
+msgstr "part [soba]:  Napuštanje sobe."
 
 #: src/protocols/jabber/jabber.c:1420
 msgid "register:  Register with a chat room."
-msgstr ""
+msgstr "register:  Prijava u sobu."
 
 #: src/protocols/jabber/jabber.c:1426
 msgid "topic [new topic]:  View or change the topic."
-msgstr ""
+msgstr "topic [nova tema]:  Pregled ili promena teme."
 
 #: src/protocols/jabber/jabber.c:1432
 msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
-msgstr ""
+msgstr "ban &lt;nadimak&gt; [soba]:  Brani pristup korisniku u sobu."
 
 #: src/protocols/jabber/jabber.c:1438
 msgid "invite &lt;user&gt; [room]:  Invite a user to the room."
-msgstr ""
+msgstr "invite &lt;korisnik&gt; [soba]:  Poziva korisnika u sobu."
 
 #: src/protocols/jabber/jabber.c:1444
 msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
-msgstr ""
+msgstr "join: &lt;soba&gt; [server]:  Pridruži se razgovoru na ovom serveru."
 
 #: src/protocols/jabber/jabber.c:1450
 msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
-msgstr ""
+msgstr "kick &lt;korisnik&gt; [soba]:  Izbacuje korisnika iz sobe."
 
 #: src/protocols/jabber/jabber.c:1455
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
 msgstr ""
+"msg &lt;nadimak&gt; &lt;poruka&gt;:  Šalje privatnu poruku drugom korisniku."
 
 #: src/protocols/jabber/jabber.c:1470
 msgid "Hide Operating System"
-msgstr ""
+msgstr "Sakrij ime operativnog sistema"
 
 #. *< api_version
 #. *< type
@@ -6431,7 +6328,7 @@ msgstr "Nametni stari SSL"
 
 #: src/protocols/jabber/jabber.c:1593
 msgid "Allow plaintext auth over unencrypted streams"
-msgstr ""
+msgstr "Dozvoli neskrivene lozinke na nešifrovanim tokovima"
 
 #. Account options
 #: src/protocols/jabber/jabber.c:1602 src/protocols/silc/silc.c:1582
@@ -6444,14 +6341,14 @@ msgid "Message from %s"
 msgstr "Poruka od %s"
 
 #: src/protocols/jabber/message.c:175
-#, fuzzy, c-format
+#, c-format
 msgid "%s has set the topic to: %s"
 msgstr "%s izmeni temu u: %s"
 
 #: src/protocols/jabber/message.c:177
-#, fuzzy, c-format
+#, c-format
 msgid "The topic is: %s"
-msgstr "Tema kanala %s je: %s"
+msgstr "Tema je: %s"
 
 #: src/protocols/jabber/message.c:230
 #, c-format
@@ -6482,36 +6379,39 @@ msgstr "Korisnik %s želi da Vas doda na svoj spisak drugara."
 
 #: src/protocols/jabber/presence.c:289 src/protocols/jabber/presence.c:290
 msgid "Create New Room"
-msgstr ""
+msgstr "Napravi novu sobu"
 
 #: src/protocols/jabber/presence.c:291
 msgid ""
 "You are creating a new room.  Would you like to configure it, or accept the "
 "default settings?"
 msgstr ""
+"Želite da napravite novu sobu. Da li želite da je podesite, ili prihvatate "
+"podrazumevane postavke?"
 
 #: src/protocols/jabber/presence.c:293
 msgid "Configure Room"
-msgstr ""
+msgstr "Postavke za sobu"
 
 #: src/protocols/jabber/presence.c:295
 msgid "Accept Defaults"
-msgstr ""
+msgstr "Prihvati podrazumevano"
 
 #: src/protocols/jabber/presence.c:323
-#, fuzzy, c-format
+#, c-format
 msgid "Error in chat %s"
-msgstr "Greška pri snimanju slike: %s"
+msgstr "Greška pri razgovoru: %s"
 
 #: src/protocols/jabber/presence.c:326
-#, fuzzy, c-format
+#, c-format
 msgid "Error joining chat %s"
-msgstr "Greška pri snimanju slike: %s"
+msgstr "Greška pri uključenju u razgovor: %s"
 
 #: src/protocols/jabber/si.c:582
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
+"Slanje datoteke korisniku %s nije uspelo. Korisnik ne podržava prenos datoteka"
 
 #: src/protocols/jabber/si.c:583 src/protocols/jabber/si.c:584
 msgid "File Send Failed"
@@ -6519,21 +6419,18 @@ msgstr "Neuspešno slanje datoteke"
 
 #: src/protocols/msn/cmdproc.c:342
 msgid "Miscellaneous error"
-msgstr ""
+msgstr "Nedefinisana greška"
 
 #: src/protocols/msn/cmdproc.c:345
-#, fuzzy
 msgid "You have signed on from another location."
-msgstr "Veza Vam je prekinuta, prijavili ste se sa nekog drugog mesta."
+msgstr "Prijavili ste se sa nekog drugog mesta."
 
 #: src/protocols/msn/cmdproc.c:347
-#, fuzzy
 msgid "The MSN servers are going down temporarily."
 msgstr "Veza Vam je prekinuta. Privremeno se gase MSN serveri."
 
 # Mozda "razume poruku"
 #: src/protocols/msn/error.c:35
-#, fuzzy
 msgid "Unable to parse message"
 msgstr "Ne mogu da obradim poruku."
 
@@ -6542,14 +6439,12 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Sintaksna greška (verovatno nedostatak Gaima)"
 
 #: src/protocols/msn/error.c:42
-#, fuzzy
 msgid "Invalid email address"
-msgstr "Neispravna ručka sobe"
+msgstr "Neispravna el. adresa"
 
 #: src/protocols/msn/error.c:45
-#, fuzzy
 msgid "User does not exist"
-msgstr "Datoteka ne postoji."
+msgstr "Korisnik ne postoji."
 
 #: src/protocols/msn/error.c:49
 msgid "Fully Qualified Domain Name missing"
@@ -6579,7 +6474,7 @@ msgstr "Već je prisutan"
 msgid "Not on list"
 msgstr "Nije na spisku"
 
-#: src/protocols/msn/error.c:70 src/protocols/zephyr/zephyr.c:601
+#: src/protocols/msn/error.c:70 src/protocols/zephyr/zephyr.c:679
 msgid "User is offline"
 msgstr "Korisnik nije na vezi"
 
@@ -6636,18 +6531,16 @@ msgid "Not logged in"
 msgstr "Neprijavljen"
 
 #: src/protocols/msn/error.c:116
-#, fuzzy
 msgid "Service Temporarily Unavailable"
-msgstr "Usluge imenika trenutno nisu dostupne."
+msgstr "Usluge trenutno nisu dostupne."
 
 #: src/protocols/msn/error.c:119
 msgid "Database server error"
 msgstr "Greška servera sa bazom"
 
 #: src/protocols/msn/error.c:122
-#, fuzzy
 msgid "Command disabled"
-msgstr "Naredba"
+msgstr "Naredba isključena"
 
 #: src/protocols/msn/error.c:125
 msgid "File operation error"
@@ -6707,7 +6600,6 @@ msgid "Too many sessions"
 msgstr "Previše sesija"
 
 #: src/protocols/msn/error.c:174
-#, fuzzy
 msgid "Passport not verified"
 msgstr "Pasport nalog još uvek nije potvrđen"
 
@@ -6749,9 +6641,8 @@ msgid "Passport account not yet verified"
 msgstr "Pasport nalog još uvek nije potvrđen"
 
 #: src/protocols/msn/error.c:220
-#, fuzzy
 msgid "Bad ticket"
-msgstr "Traka sa spiskom drugara"
+msgstr "Neispravna karta"
 
 #: src/protocols/msn/error.c:224
 #, c-format
@@ -6797,8 +6688,8 @@ msgid ""
 "Mobile pages to your cell phone or other mobile device?"
 msgstr ""
 "Da li želite da dopustite ili zabranite ljudima iz Vašeg spiska drugara da "
-"Vam šalju MSN mobilne stranice na Vaš mobilni telefon ili neki drugi "
-"prenosni uređaj?"
+"Vam šalju MSN mobilne stranice na Vaš mobilni telefon ili neki drugi prenosni "
+"uređaj?"
 
 #: src/protocols/msn/msn.c:287
 msgid "Allow"
@@ -6816,204 +6707,205 @@ msgstr "Pošalji mobilnu poruku."
 msgid "Page"
 msgstr "Stranica"
 
-#: src/protocols/msn/msn.c:451 src/protocols/yahoo/yahoo.c:2686
-#, fuzzy, c-format
+#: src/protocols/msn/msn.c:436 src/protocols/yahoo/yahoo.c:2692
+#, c-format
 msgid ""
 "\n"
 "<b>%s:</b> %s"
-msgstr "<b>Stanje:</b> %s"
+msgstr ""
+"\n"
+"<b>%s:</b> %s"
 
-#: src/protocols/msn/msn.c:464 src/protocols/msn/msn.c:757
+#: src/protocols/msn/msn.c:449 src/protocols/msn/msn.c:737
 #: src/protocols/msn/state.c:34
 msgid "Away From Computer"
 msgstr "Odsutan od računara"
 
-#: src/protocols/msn/msn.c:465 src/protocols/msn/msn.c:759
-#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2543
-#: src/protocols/yahoo/yahoo.c:2910 src/protocols/yahoo/yahoo.c:3026
+#: src/protocols/msn/msn.c:450 src/protocols/msn/msn.c:739
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2549
+#: src/protocols/yahoo/yahoo.c:2916 src/protocols/yahoo/yahoo.c:3032
 msgid "Be Right Back"
 msgstr "Odmah se vraćam"
 
-#: src/protocols/msn/msn.c:466 src/protocols/msn/msn.c:761
+#: src/protocols/msn/msn.c:451 src/protocols/msn/msn.c:741
 #: src/protocols/msn/state.c:31 src/protocols/novell/novell.c:2801
 #: src/protocols/novell/novell.c:2916 src/protocols/novell/novell.c:2970
 #: src/protocols/silc/buddy.c:1383 src/protocols/silc/silc.c:47
-#: src/protocols/silc/silc.c:78 src/protocols/yahoo/yahoo.c:2545
-#: src/protocols/yahoo/yahoo.c:2912 src/protocols/yahoo/yahoo.c:3027
+#: src/protocols/silc/silc.c:78 src/protocols/yahoo/yahoo.c:2551
+#: src/protocols/yahoo/yahoo.c:2918 src/protocols/yahoo/yahoo.c:3033
 msgid "Busy"
 msgstr "Zauzet"
 
-#: src/protocols/msn/msn.c:467 src/protocols/msn/msn.c:763
-#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2553
-#: src/protocols/yahoo/yahoo.c:2920 src/protocols/yahoo/yahoo.c:3031
+#: src/protocols/msn/msn.c:452 src/protocols/msn/msn.c:743
+#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2559
+#: src/protocols/yahoo/yahoo.c:2926 src/protocols/yahoo/yahoo.c:3037
 msgid "On The Phone"
 msgstr "Telefoniram"
 
-#: src/protocols/msn/msn.c:468 src/protocols/msn/msn.c:765
-#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2557
-#: src/protocols/yahoo/yahoo.c:2924 src/protocols/yahoo/yahoo.c:3033
+#: src/protocols/msn/msn.c:453 src/protocols/msn/msn.c:745
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2563
+#: src/protocols/yahoo/yahoo.c:2930 src/protocols/yahoo/yahoo.c:3039
 msgid "Out To Lunch"
 msgstr "Na ručku sam"
 
-#: src/protocols/msn/msn.c:469 src/protocols/msn/msn.c:767
-#: src/protocols/zephyr/zephyr.c:1360 src/protocols/zephyr/zephyr.c:1379
+#: src/protocols/msn/msn.c:454 src/protocols/msn/msn.c:747
+#: src/protocols/zephyr/zephyr.c:2123 src/protocols/zephyr/zephyr.c:2155
 msgid "Hidden"
 msgstr "Skriven"
 
-#: src/protocols/msn/msn.c:480
+#: src/protocols/msn/msn.c:465
 msgid "Set Friendly Name"
 msgstr "Postavi prijateljsko ime"
 
-#: src/protocols/msn/msn.c:485
+#: src/protocols/msn/msn.c:470
 msgid "Set Home Phone Number"
 msgstr "Postavi broj kućnog telefona"
 
-#: src/protocols/msn/msn.c:489
+#: src/protocols/msn/msn.c:474
 msgid "Set Work Phone Number"
 msgstr "Postavi broj telefona na poslu"
 
-#: src/protocols/msn/msn.c:493
+#: src/protocols/msn/msn.c:478
 msgid "Set Mobile Phone Number"
 msgstr "Postavi broj mobilnog telefona"
 
-#: src/protocols/msn/msn.c:499
+#: src/protocols/msn/msn.c:484
 msgid "Enable/Disable Mobile Devices"
 msgstr "Omogući/isključi mobilne uređaje"
 
-#: src/protocols/msn/msn.c:504
+#: src/protocols/msn/msn.c:489
 msgid "Allow/Disallow Mobile Pages"
 msgstr "Dozvoli/zabrani mobilne stranice"
 
-#: src/protocols/msn/msn.c:527
+#: src/protocols/msn/msn.c:512
 msgid "Send to Mobile"
 msgstr "Pošalji na mobilni"
 
-#: src/protocols/msn/msn.c:537
+#: src/protocols/msn/msn.c:522
 msgid "Initiate Chat"
 msgstr "Pokreni razgovor"
 
-#: src/protocols/msn/msn.c:541
-#, fuzzy
-msgid "Update Buddy Icon"
-msgstr "Sličica drugara"
-
-#: src/protocols/msn/msn.c:578
+#: src/protocols/msn/msn.c:558
 msgid ""
 "SSL support is needed for MSN. Please install a supported SSL library. See "
 "http://gaim.sf.net/faq-ssl.php for more information."
 msgstr ""
+"Za povezivanje sa MSN potrebna je podrška za SSL. Molimo instalirajte neku od "
+"podržanih biblioteka ѕa SSL. Više informacija se može pronaći na: http://"
+"gaim.sf.net/faq-ssl.php"
 
-#: src/protocols/msn/msn.c:1168 src/protocols/yahoo/yahoo_profile.c:659
-#: src/protocols/zephyr/zephyr.c:634
+#: src/protocols/msn/msn.c:1148 src/protocols/yahoo/yahoo_profile.c:659
+#: src/protocols/zephyr/zephyr.c:713 src/protocols/zephyr/zephyr.c:1128
 #, c-format
 msgid "<b>Alias:</b> %s<br>"
 msgstr "<b>Nadimak:</b> %s<br>"
 
 #. put a link to the actual profile URL
-#: src/protocols/msn/msn.c:1173 src/protocols/msn/msn.c:1513
+#: src/protocols/msn/msn.c:1153 src/protocols/msn/msn.c:1493
 #: src/protocols/yahoo/yahoo_profile.c:1168 src/util.c:782
-#, fuzzy, c-format
+#, c-format
 msgid "<b>%s:</b> "
-msgstr "<b>Stanje:</b> %s"
+msgstr "<b>%s:</b> "
 
-#: src/protocols/msn/msn.c:1243
-#, fuzzy
+#: src/protocols/msn/msn.c:1223
 msgid "MSN Profile"
-msgstr "Postavi profil"
+msgstr "MSN profil"
 
-#: src/protocols/msn/msn.c:1248 src/protocols/msn/msn.c:1500
+#: src/protocols/msn/msn.c:1228 src/protocols/msn/msn.c:1480
 #: src/protocols/yahoo/yahoo_profile.c:761
-#, fuzzy
 msgid "Error retrieving profile"
 msgstr "Greška pri čitanju sa servera"
 
 #. Age
-#: src/protocols/msn/msn.c:1319 src/protocols/oscar/oscar.c:5007
+#: src/protocols/msn/msn.c:1299 src/protocols/oscar/oscar.c:5007
 #: src/protocols/trepia/trepia.c:285 src/protocols/trepia/trepia.c:404
 #: src/protocols/yahoo/yahoo_profile.c:1015
 msgid "Age"
 msgstr "Starost"
 
 #. Gender
-#: src/protocols/msn/msn.c:1326 src/protocols/oscar/oscar.c:4993
+#: src/protocols/msn/msn.c:1306 src/protocols/oscar/oscar.c:4993
 #: src/protocols/trepia/trepia.c:279 src/protocols/trepia/trepia.c:406
 #: src/protocols/yahoo/yahoo_profile.c:1025
 msgid "Gender"
 msgstr "Pol"
 
-#: src/protocols/msn/msn.c:1335 src/protocols/yahoo/yahoo_profile.c:1020
+#: src/protocols/msn/msn.c:1315 src/protocols/yahoo/yahoo_profile.c:1020
 msgid "Marital Status"
 msgstr "Bračno stanje"
 
-#: src/protocols/msn/msn.c:1342 src/protocols/novell/novell.c:1444
+#: src/protocols/msn/msn.c:1322 src/protocols/novell/novell.c:1444
 #: src/protocols/yahoo/yahoo_profile.c:1010
 msgid "Location"
 msgstr "Mesto"
 
-#: src/protocols/msn/msn.c:1350 src/protocols/yahoo/yahoo_profile.c:1030
+#: src/protocols/msn/msn.c:1330 src/protocols/yahoo/yahoo_profile.c:1030
 msgid "Occupation"
 msgstr "Zanimanje"
 
-#: src/protocols/msn/msn.c:1367 src/protocols/msn/msn.c:1373
-#: src/protocols/msn/msn.c:1380 src/protocols/msn/msn.c:1388
-#: src/protocols/msn/msn.c:1395
+#: src/protocols/msn/msn.c:1347 src/protocols/msn/msn.c:1353
+#: src/protocols/msn/msn.c:1360 src/protocols/msn/msn.c:1368
+#: src/protocols/msn/msn.c:1375
 msgid "A Little About Me"
 msgstr "Ponešto o meni"
 
-#: src/protocols/msn/msn.c:1404 src/protocols/msn/msn.c:1410
-#: src/protocols/msn/msn.c:1417 src/protocols/msn/msn.c:1424
+#: src/protocols/msn/msn.c:1384 src/protocols/msn/msn.c:1390
+#: src/protocols/msn/msn.c:1397 src/protocols/msn/msn.c:1404
 msgid "Favorite Things"
 msgstr "Omiljene stvari"
 
-#: src/protocols/msn/msn.c:1433 src/protocols/msn/msn.c:1439
-#: src/protocols/msn/msn.c:1446
+#: src/protocols/msn/msn.c:1413 src/protocols/msn/msn.c:1419
+#: src/protocols/msn/msn.c:1426
 msgid "Hobbies and Interests"
 msgstr "Hobiji i interesovanja"
 
-#: src/protocols/msn/msn.c:1455 src/protocols/msn/msn.c:1461
+#: src/protocols/msn/msn.c:1435 src/protocols/msn/msn.c:1441
 #: src/protocols/yahoo/yahoo_profile.c:1072
 msgid "Favorite Quote"
 msgstr "Omiljena izreka"
 
-#: src/protocols/msn/msn.c:1469 src/protocols/yahoo/yahoo_profile.c:1123
+#: src/protocols/msn/msn.c:1449 src/protocols/yahoo/yahoo_profile.c:1123
 msgid "Last Updated"
 msgstr "Poslednja dopuna"
 
 #. Homepage
-#: src/protocols/msn/msn.c:1480 src/protocols/silc/ops.c:844
+#: src/protocols/msn/msn.c:1460 src/protocols/silc/ops.c:844
 #: src/protocols/trepia/trepia.c:289 src/protocols/trepia/trepia.c:419
 msgid "Homepage"
 msgstr "Lična stranica"
 
-#: src/protocols/msn/msn.c:1502
+#: src/protocols/msn/msn.c:1482
 msgid "The user has not created a public profile."
-msgstr ""
+msgstr "Korisnik nije napravio javni profil."
 
-#: src/protocols/msn/msn.c:1503
+#: src/protocols/msn/msn.c:1483
 msgid ""
 "MSN reported not being able to find the user's profile. This either means "
 "that the user does not exist, or that the user exists but has not created a "
 "public profile."
 msgstr ""
+"MSN je izvestio da ne može da pronađe korisnikov profil. To znači da ili "
+"korisnik s datim imenom ne postoji, ili da postoji ali da nema javni profil."
 
-#: src/protocols/msn/msn.c:1507
+#: src/protocols/msn/msn.c:1487
 msgid ""
 "Gaim could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
+"GAIM nije uspeo da pronađe informacije u korisnikovom profilu. Korisnik sa "
+"ovim imenom najverovatnije ne postoji."
 
-#: src/protocols/msn/msn.c:1513 src/protocols/yahoo/yahoo_profile.c:1168
-#, fuzzy
+#: src/protocols/msn/msn.c:1493 src/protocols/yahoo/yahoo_profile.c:1168
 msgid "Profile URL"
 msgstr "Profil"
 
-#: src/protocols/msn/msn.c:1645
+#: src/protocols/msn/msn.c:1625
 msgid "Display conversation closed notices"
-msgstr ""
+msgstr "Obavesti o kraju razgovora."
 
-#: src/protocols/msn/msn.c:1650
+#: src/protocols/msn/msn.c:1630
 msgid "Display timeout notices"
-msgstr ""
+msgstr "Obavesti o isteku vremena."
 
 #. *< api_version
 #. *< type
@@ -7026,15 +6918,15 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/msn/msn.c:1735 src/protocols/msn/msn.c:1737
+#: src/protocols/msn/msn.c:1715 src/protocols/msn/msn.c:1717
 msgid "MSN Protocol Plugin"
 msgstr "Dodatak za MSN protokol"
 
-#: src/protocols/msn/msn.c:1756 src/protocols/trepia/trepia.c:1293
+#: src/protocols/msn/msn.c:1736 src/protocols/trepia/trepia.c:1293
 msgid "Login server"
 msgstr "Server za prijavu"
 
-#: src/protocols/msn/msn.c:1765
+#: src/protocols/msn/msn.c:1745
 msgid "Use HTTP Method"
 msgstr "Koristi HTTP režim"
 
@@ -7061,7 +6953,7 @@ msgid "Password sent"
 msgstr "Lozinka poslata"
 
 # bug: plural-forms
-#: src/protocols/msn/notification.c:1079
+#: src/protocols/msn/notification.c:1098
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -7093,34 +6985,34 @@ msgstr[2] ""
 "\n"
 "Nakon što se održavanje završi, moći ćete se ponovo prijaviti."
 
-#: src/protocols/msn/notification.c:1144
+#: src/protocols/msn/notification.c:1163
 msgid "Syncing with server"
 msgstr "Usklađivanje sa serverom"
 
 #: src/protocols/msn/servconn.c:46
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect to %s server"
-msgstr "Ne mogu da se povežem na server"
+msgstr "Ne mogu da se povežem na server %s"
 
 #: src/protocols/msn/servconn.c:50
-#, fuzzy, c-format
+#, c-format
 msgid "Error writing to %s server"
-msgstr "Greška pri čitanju sa servera"
+msgstr "Greška pri čitanju sa servera %s"
 
 #: src/protocols/msn/servconn.c:54
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from %s server"
-msgstr "Greška pri čitanju sa servera"
+msgstr "Greška pri čitanju sa servera %s"
 
 #: src/protocols/msn/servconn.c:58
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown error from %s server"
-msgstr "Nepoznata greška sa kodom %d."
+msgstr "Greška nije prepoznata sa servera: %s"
 
 #: src/protocols/msn/servconn.c:72
 #, c-format
 msgid "MSN error for account %s"
-msgstr ""
+msgstr "MSN je javio grešku za nalog %s"
 
 #: src/protocols/msn/servconn.c:346
 msgid "Received HTTP error. Please report this."
@@ -7141,18 +7033,19 @@ msgid "The user %s (%s) wants to add %s to his or her buddy list."
 msgstr "Korisnik %s (%s) želi da doda %s u svoj spisak drugara."
 
 #: src/protocols/msn/userlist.c:94
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s wants to add %s to his or her buddy list."
-msgstr "Korisnik %s (%s) želi da doda %s u svoj spisak drugara."
+msgstr "Korisnik %s želi da doda %s u svoj spisak drugara."
 
 #: src/protocols/napster/napster.c:229
 msgid "Unable to read header from server"
 msgstr "Ne mogu učitati zaglavlje sa servera"
 
 #: src/protocols/napster/napster.c:243
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read message from server: %s.  Command is %hd, length is %hd."
-msgstr "Ne mogu da pročitam poruku sa servera. Komanda je %hd, dužina je %hd."
+msgstr ""
+"Ne mogu da pročitam poruku sa servera: %s. Komanda je %hd, dužina je %hd."
 
 #: src/protocols/napster/napster.c:306
 #, c-format
@@ -7209,178 +7102,167 @@ msgstr "Dodatak za Napster protokol"
 
 #: src/protocols/novell/nmuser.c:1868
 msgid "Required parameters not passed in"
-msgstr ""
+msgstr "Potrebni parametri nisu preneseni"
 
 #: src/protocols/novell/nmuser.c:1871
-#, fuzzy
 msgid "Unable to write to network"
-msgstr "Ne mogu da pišem na server"
+msgstr "Ne mogu da pišem u mrežu"
 
 #: src/protocols/novell/nmuser.c:1874
-#, fuzzy
 msgid "Unable to read from network"
-msgstr "Ne mogu da čitam soket"
+msgstr "Ne mogu da čitam sa mreže"
 
 #: src/protocols/novell/nmuser.c:1877
-#, fuzzy
 msgid "Error communicating with server"
-msgstr "Greška pri sporazumevanju sa Gadu-Gadu serverom"
+msgstr "Greška pri sporazumevanju sa serverom"
 
 #: src/protocols/novell/nmuser.c:1881
-#, fuzzy
 msgid "Conference not found"
-msgstr "Usluga nije ustanovljena"
+msgstr "Konferencija nije pronađena"
 
 #: src/protocols/novell/nmuser.c:1884
-#, fuzzy
 msgid "Conference does not exist"
-msgstr "Datoteka ne postoji."
+msgstr "Konferencija ne postoji."
 
 #: src/protocols/novell/nmuser.c:1888
-#, fuzzy
 msgid "A folder with that name already exists"
 msgstr "Datoteka već postoji."
 
 #: src/protocols/novell/nmuser.c:1891
-#, fuzzy
 msgid "Not supported"
-msgstr "Domaćin ne podržava"
+msgstr "Nije podržano"
 
 #: src/protocols/novell/nmuser.c:1895
-#, fuzzy
 msgid "Password has expired"
-msgstr "Lozinka izmenjena"
+msgstr "Lozinka je istekla"
 
 #: src/protocols/novell/nmuser.c:1898
-#, fuzzy
 msgid "Invalid password"
-msgstr "Stara lozinka"
+msgstr "Neispravna lozinka"
 
 #: src/protocols/novell/nmuser.c:1901
-#, fuzzy
 msgid "User not found"
-msgstr "Korisnik nije u grupi"
+msgstr "Korisnik nije pronađen"
 
 #: src/protocols/novell/nmuser.c:1904
-#, fuzzy
 msgid "Account has been disabled"
-msgstr "%s se odjavio(la)"
+msgstr "Nalog je isključen"
 
 #: src/protocols/novell/nmuser.c:1907
 msgid "The server could not access the directory"
-msgstr ""
+msgstr "Server nije uspeo da pristupi direktorijumu"
 
 #: src/protocols/novell/nmuser.c:1910
 msgid "Your system administrator has disabled this operation"
-msgstr ""
+msgstr "Vaš sistem administrator je isključio ovu mogućnost"
 
 #: src/protocols/novell/nmuser.c:1913
 msgid "The server is unavailable; try again later"
-msgstr ""
+msgstr "Server nije raspoloživ; probajte kasnije"
 
 #: src/protocols/novell/nmuser.c:1916
 msgid "Cannot add a contact to the same folder twice"
-msgstr ""
+msgstr "Kontakti se ne mogu dvaput dodati u isti folder"
 
 #: src/protocols/novell/nmuser.c:1919
 msgid "Cannot add yourself"
-msgstr ""
+msgstr "Ne možete dodati sami sebe"
 
 #: src/protocols/novell/nmuser.c:1922
 msgid "Master archive is misconfigured"
-msgstr ""
+msgstr "Glavna arhiva nije dobro podešena"
 
 #: src/protocols/novell/nmuser.c:1926
-#, fuzzy
 msgid "Invalid username or password"
-msgstr "Neispravno korisničko ime."
+msgstr "Neispravno korisničko ime ili lozinka."
 
 #: src/protocols/novell/nmuser.c:1929
 msgid "Could not recognize the host of the username you entered"
-msgstr ""
+msgstr "Nalog ili ime računara koje ste uneli nije prepoznato."
 
 #: src/protocols/novell/nmuser.c:1932
 msgid ""
 "Your account has been disabled because too many invalid passwords were "
 "entered"
-msgstr ""
+msgstr "Vaš nalog je isključen jer je bilo suviše neuspelih prijava"
 
 #: src/protocols/novell/nmuser.c:1935
 msgid "You cannot add the same person twice to a conversation"
-msgstr ""
+msgstr "Ne možete dvaput dodati istu osobu u razgovor"
 
 #: src/protocols/novell/nmuser.c:1939
 msgid "You have reached your limit for the number of contacts allowed"
-msgstr ""
+msgstr "Dostigli ste najveći dozvoljen broj kontakata"
 
 #: src/protocols/novell/nmuser.c:1942
-#, fuzzy
 msgid "You have entered an invalid username"
-msgstr "%s nije ispravan naziv servera"
+msgstr "Uneli ste neispravno korisničko ime"
 
 #: src/protocols/novell/nmuser.c:1945
 msgid "An error occurred while updating the directory"
-msgstr ""
+msgstr "Desila se greška prilikom obnove direktorijuma"
 
 #: src/protocols/novell/nmuser.c:1948
 msgid "Incompatible protocol version"
-msgstr ""
+msgstr "Verzija protokola nije prilagođena"
 
 #: src/protocols/novell/nmuser.c:1951
-#, fuzzy
 msgid "The user has blocked you"
-msgstr "Unesite korisnika koga želite da blokirate."
+msgstr "Korisnik Vas je blokirao."
 
 #: src/protocols/novell/nmuser.c:1954
 msgid ""
 "This evaluation version does not allow more than ten users to log in at one "
 "time"
 msgstr ""
+"Ova ogledna verzija ne dozvoljava više od deset istovremeno ulogovanih "
+"korisnika"
 
 #: src/protocols/novell/nmuser.c:1957
 msgid "The user is either offline or you are blocked"
-msgstr ""
+msgstr "Korisnik ili nije na vezi ili ste blokirani"
 
 #: src/protocols/novell/nmuser.c:1960
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown error: 0x%X"
-msgstr "Nepoznata greška"
+msgstr "Nepoznata greška: 0x%X"
 
 #: src/protocols/novell/novell.c:116
 #, c-format
 msgid "Login failed (%s)."
-msgstr ""
+msgstr "Prijava nije uspela (%s)."
 
 #: src/protocols/novell/novell.c:229
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
-msgstr "Ne mogu da pošaljem poruku. Poruka je prevelika."
+msgstr ""
+"Ne mogu da pošaljem poruku. Ne mogu da dobavim podatke o korisniku (%s)."
 
 #: src/protocols/novell/novell.c:378
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add %s to your buddy list (%s)."
-msgstr "Ne mogu da dodam „%s“ u Napster spisak"
+msgstr "Ne mogu da dodam „%s“ u spisak drugara (%s)."
 
 #. TODO: Improve this! message to who or for what conference?
 #: src/protocols/novell/novell.c:404
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message (%s)."
-msgstr "Ne mogu da pošaljem poruku."
+msgstr "Ne mogu da pošaljem poruku. (%s)"
 
 #: src/protocols/novell/novell.c:475 src/protocols/novell/novell.c:969
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to invite user (%s)."
-msgstr "Ne mogu da pišem u datoteku %s."
+msgstr "Ne mogu da pozovem korisnika (%s)."
 
 #: src/protocols/novell/novell.c:514
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message to %s. Could not create the conference (%s)."
-msgstr "Ne mogu da pošaljem poruku. Poruka je prevelika."
+msgstr "Ne mogu da pošaljem poruku za %s. Ne mogu da načinim konferenciju (%s)."
 
 #: src/protocols/novell/novell.c:519
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
-msgstr "Ne mogu da pošaljem poruku. Poruka je prevelika."
+msgstr "Ne mogu da pošaljem poruku. Ne mogu danačinim konverenciju (%s)."
 
 #: src/protocols/novell/novell.c:566
 #, c-format
@@ -7388,72 +7270,73 @@ msgid ""
 "Unable to move user %s to folder %s in the server side list. Error while "
 "creating folder (%s)."
 msgstr ""
+"Neuspelo pomeranje %s u folder %s u serverovom spisku. Greška pri pravljenju "
+"foldera (%s)."
 
 #: src/protocols/novell/novell.c:614
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to add %s to your buddy list. Error creating folder in server side "
 "list (%s)."
-msgstr "Ne mogu da dodam „%s“ u Napster spisak"
+msgstr ""
+"Ne mogu da dodam %s u spisak drugara. Greška pri pravljenju foldera na serveru "
+"(%s)."
 
 #: src/protocols/novell/novell.c:687
-#, fuzzy, c-format
+#, c-format
 msgid "Could not get details for user %s (%s)."
-msgstr "Ne mogu da pošaljem poruku. Poruka je prevelika."
+msgstr "Ne mogu da dobavim detalje o korisniku %s (%s)."
 
 #: src/protocols/novell/novell.c:733 src/protocols/novell/novell.c:879
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add user to privacy list (%s)."
-msgstr "Ne mogu da dodam „%s“ u Napster spisak"
+msgstr "Ne mogu da dodam korisnika u lični spisak (%s)."
 
 #: src/protocols/novell/novell.c:780
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add %s to deny list (%s)."
-msgstr "Ne mogu da dodam „%s“ u Napster spisak"
+msgstr "Ne mogu da dodam %s u spisak odbijenih (%s)."
 
 #: src/protocols/novell/novell.c:833
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add %s to permit list (%s)."
-msgstr "Ne mogu da dodam „%s“ u Napster spisak"
+msgstr "Ne mogu da dodam %s u spisak prihvaćenih (%s)."
 
 #: src/protocols/novell/novell.c:901
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to remove %s from privacy list (%s)."
-msgstr "Ne mogu da dodam „%s“ u Napster spisak"
+msgstr "Ne mogu da uklonim %s iz ličnog spiska (%s)."
 
 #: src/protocols/novell/novell.c:924 src/protocols/novell/novell.c:1619
 #, c-format
 msgid "Unable to change server side privacy settings (%s)."
-msgstr ""
+msgstr "Nije moguće promeniti podešavanja privatnosti na serveru (%s)."
 
 #: src/protocols/novell/novell.c:996
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to create conference (%s)."
-msgstr "Ne mogu načiniti soket"
+msgstr "Ne mogu da načinim konferenciju (%s)."
 
 #: src/protocols/novell/novell.c:1107 src/protocols/novell/novell.c:1658
-#, fuzzy
 msgid "Error communicating with server. Closing connection."
-msgstr "Greška pri sporazumevanju sa Gadu-Gadu serverom"
+msgstr "Greška pri povezivanju sa serverom. Prekidam vezu."
 
 #: src/protocols/novell/novell.c:1442
-#, fuzzy
 msgid "Telephone Number"
 msgstr "Telefon"
 
 #: src/protocols/novell/novell.c:1446
 msgid "Department"
-msgstr ""
+msgstr "Odeljenje"
 
 #: src/protocols/novell/novell.c:1448
-#, fuzzy
 msgid "Personal Title"
-msgstr "Lična veb stranica"
+msgstr "Zvanje"
 
+# Šta je ovo?!
 #: src/protocols/novell/novell.c:1452
-#, fuzzy
 msgid "Mailstop"
-msgstr "E-pošta"
+msgstr "Pošta"
 
 #: src/protocols/novell/novell.c:1454 src/protocols/oscar/oscar.c:4980
 #: src/protocols/oscar/oscar.c:4987
@@ -7461,9 +7344,8 @@ msgid "Email Address"
 msgstr "Adresa e-pošte"
 
 #: src/protocols/novell/novell.c:1470
-#, fuzzy
 msgid "User ID"
-msgstr "Koristi"
+msgstr "Korisnikov ID"
 
 #. tag = _("DN");
 #. value = nm_user_record_get_dn(user_record);
@@ -7473,49 +7355,43 @@ msgstr "Koristi"
 #. }
 #.
 #: src/protocols/novell/novell.c:1484
-#, fuzzy
 msgid "Full name"
 msgstr "Puno ime"
 
 #: src/protocols/novell/novell.c:1505
-#, fuzzy
 msgid "User Properties"
-msgstr "Korisnički izbori"
+msgstr "Korisničke postavke"
 
 #: src/protocols/novell/novell.c:1609
-#, fuzzy, c-format
+#, c-format
 msgid "GroupWise Conference %d"
-msgstr "Pokreni razgovor"
+msgstr "Grupna konferencija %d"
 
 #: src/protocols/novell/novell.c:1634
-#, fuzzy
 msgid "Unable to make SSL connection to server."
-msgstr "Ne mogu da se povežem na server."
+msgstr "Ne mogu da se povežem na SSL server."
 
 #: src/protocols/novell/novell.c:1664
 #, c-format
 msgid "Error processing event or response (%s)."
-msgstr ""
+msgstr "Greška pri obradi događaja ili odgovora (%s)."
 
 #: src/protocols/novell/novell.c:1698
-#, fuzzy
 msgid "Authenticating..."
 msgstr "Identifikacija"
 
 #: src/protocols/novell/novell.c:1713
-#, fuzzy
 msgid "Waiting for response..."
-msgstr "Čekam za odgovor..."
+msgstr "Čekam na odgovor..."
 
 #: src/protocols/novell/novell.c:1848
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been invited to this conversation."
-msgstr "%s zatvori prozor razgovora."
+msgstr "%s je pozvan na ovaj razgovor."
 
 #: src/protocols/novell/novell.c:1875
-#, fuzzy
 msgid "Invitation to Conversation"
-msgstr "Dnevnik razgovora"
+msgstr "Poziv na razgovor"
 
 #: src/protocols/novell/novell.c:1876
 #, c-format
@@ -7524,14 +7400,15 @@ msgid ""
 "\n"
 "Sent: %s"
 msgstr ""
+"Poziv od: %s\n"
+"\n"
+"Poslato: %s"
 
 #: src/protocols/novell/novell.c:1878
-#, fuzzy
 msgid "Would you like to join the conversation?"
-msgstr "Da li želite da je prepišete?"
+msgstr "Da li želite da se priključite razgovoru?"
 
 #: src/protocols/novell/novell.c:1983
-#, fuzzy
 msgid "You have been logged out because you logged in at another workstation."
 msgstr ""
 "Veza je prekinuta zato što ste se prijavili pod ovim imenom sa nekog drugog "
@@ -7541,45 +7418,42 @@ msgstr ""
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
-msgstr ""
+msgstr "Izgleda da %s nije prisutan i da nije primio poslatu poruku."
 
 #. TODO: Would be nice to prompt if not set!
 #. *  gaim_request_fields(gc, _("Server Address"),...);
 #.
 #. ...but for now just error out with a nice message.
 #: src/protocols/novell/novell.c:2135
-#, fuzzy
 msgid ""
 "Unable to connect to server. Please enter the address of the server you wish "
 "to connect to."
-msgstr "Unesite ime korisnika koga želite da blokirate."
+msgstr ""
+"Ne mogu da se povežem na seerver. Unesite adresu servera na kog želite da se "
+"povežem."
 
 #: src/protocols/novell/novell.c:2157
-#, fuzzy
 msgid "Error. SSL support is not installed."
-msgstr "SSL podrška je neophodna za MSN. Instalirajte je."
+msgstr "SSL podrška je neophodna. Instalirajte je."
 
 #: src/protocols/novell/novell.c:2461
 msgid "This conference has been closed. No more messages can be sent."
-msgstr ""
+msgstr "Ova konferencija je zatvorena. Poruke se više ne mogu slati."
 
 #: src/protocols/novell/novell.c:2807 src/protocols/oscar/oscar.c:702
-#: src/protocols/oscar/oscar.c:6568 src/protocols/yahoo/yahoo.c:2565
+#: src/protocols/oscar/oscar.c:6568 src/protocols/yahoo/yahoo.c:2571
 msgid "Offline"
 msgstr "Nepovezan"
 
 #: src/protocols/novell/novell.c:2818
-#, fuzzy
 msgid "Message"
 msgstr "_Poruka:"
 
 #: src/protocols/novell/novell.c:2917 src/protocols/novell/novell.c:2973
-#, fuzzy
 msgid "Appear Offline"
-msgstr "Nepovezan"
+msgstr "Kao nepovezan"
 
 #: src/protocols/novell/novell.c:3367
-#, fuzzy
 msgid "Initiate _Chat"
 msgstr "Pokreni razgovor"
 
@@ -7596,17 +7470,15 @@ msgstr "Pokreni razgovor"
 #. *  description
 #: src/protocols/novell/novell.c:3464 src/protocols/novell/novell.c:3466
 msgid "Novell GroupWise Messenger Protocol Plugin"
-msgstr ""
+msgstr "Novell GroupWise Messenger Protocol Plugin"
 
 #: src/protocols/novell/novell.c:3485
-#, fuzzy
 msgid "Server address"
-msgstr "Ulica"
+msgstr "Adresa servera"
 
 #: src/protocols/novell/novell.c:3489
-#, fuzzy
 msgid "Server port"
-msgstr "Server"
+msgstr "Port servera"
 
 #: src/protocols/oscar/oscar.c:185
 msgid "Invalid error"
@@ -7705,13 +7577,12 @@ msgid "Not while on AOL"
 msgstr "Ne dok je na AOL-u"
 
 #: src/protocols/oscar/oscar.c:400
-#, fuzzy
 msgid ""
 "(There was an error converting this message.  The buddy you are speaking to "
 "most likely has a buggy client.)"
 msgstr ""
-"(Došlo je do greške pri pretvaranju ove poruke. Proverite opciju „Način "
-"zapisa“ u Uredniku naloga)"
+"(Došlo je do greške pri pretvaranju ove poruke. Drugar s kojim pričate "
+"verovatno koristi neispravan program.)"
 
 #: src/protocols/oscar/oscar.c:452
 msgid "(There was an error receiving this message)"
@@ -7791,18 +7662,16 @@ msgid "Video Chat"
 msgstr "Video razgovor"
 
 #: src/protocols/oscar/oscar.c:616
-#, fuzzy
 msgid "iChat AV"
-msgstr "Priključi se razgovoru kao:"
+msgstr "iChat AV"
 
 #: src/protocols/oscar/oscar.c:619
 msgid "Live Video"
-msgstr ""
+msgstr "Živa slika"
 
 #: src/protocols/oscar/oscar.c:622
-#, fuzzy
 msgid "Camera"
-msgstr "Ime"
+msgstr "Kamera"
 
 #: src/protocols/oscar/oscar.c:640 src/protocols/oscar/oscar.c:5582
 #: src/protocols/oscar/oscar.c:6762
@@ -7824,12 +7693,10 @@ msgid "Web Aware"
 msgstr "Pratim veb"
 
 #: src/protocols/oscar/oscar.c:718
-#, fuzzy
 msgid "Capabilities"
-msgstr "<b>Mogućnosti:</b> "
+msgstr "Mogućnosti"
 
 #: src/protocols/oscar/oscar.c:727
-#, fuzzy
 msgid "Buddy Comment"
 msgstr "Primedba za drugara:"
 
@@ -7844,9 +7711,8 @@ msgid "Direct IM with %s failed"
 msgstr "Neposredan razgovor sa %s je neuspešan"
 
 #: src/protocols/oscar/oscar.c:871
-#, fuzzy
 msgid "Direct Connect failed"
-msgstr "Neposredna ICQ veza"
+msgstr "Neposredna veza nije uspela"
 
 #: src/protocols/oscar/oscar.c:948 src/protocols/oscar/oscar.c:1079
 #, c-format
@@ -7856,12 +7722,12 @@ msgstr "Neposredan razgovor sa %s je omogućen"
 #: src/protocols/oscar/oscar.c:1029
 #, c-format
 msgid "Attempting to connect to %s at %s:%hu for Direct IM."
-msgstr ""
+msgstr "Pokušavam da se povežem sa %s na %s:%hu za neposredne brze poruke."
 
 #: src/protocols/oscar/oscar.c:1446
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
-msgstr ""
+msgstr "Tražim od %s da se poveže na %s:%hu za neposredne brze poruke."
 
 #: src/protocols/oscar/oscar.c:1451
 msgid "Unable to open Direct IM"
@@ -7904,6 +7770,9 @@ msgid ""
 "invalid.  Screen names must either start with a letter and contain only "
 "letters, numbers and spaces, or contain only numbers."
 msgstr ""
+"Prijava nije uspela: Prijava pod imenom %s nije uspela jer to korisničko ime "
+"nije važeće. Korisnička imena moraju ili početi slovom i sadržati samo "
+"slova, brojeve i razmake, ili mogu sadržati samo brojeve."
 
 #: src/protocols/oscar/oscar.c:1703
 msgid "Unable to login to AIM"
@@ -8146,12 +8015,9 @@ msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] ""
-"Propustili ste %hu poruku od %s zato što je ograničenje prekoračeno."
-msgstr[1] ""
-"Propustili ste %hu poruke od %s zato što je ograničenje prekoračeno."
-msgstr[2] ""
-"Propustili ste %hu poruka od %s zato što je ograničenje prekoračeno."
+msgstr[0] "Propustili ste %hu poruku od %s zato što je ograničenje prekoračeno."
+msgstr[1] "Propustili ste %hu poruke od %s zato što je ograničenje prekoračeno."
+msgstr[2] "Propustili ste %hu poruka od %s zato što je ograničenje prekoračeno."
 
 #: src/protocols/oscar/oscar.c:3853
 #, c-format
@@ -8178,9 +8044,9 @@ msgstr[1] "Propustili ste %hu poruke od %s iz nepoznatih razloga."
 msgstr[2] "Propustili ste %hu poruka od %s iz nepoznatih razloga."
 
 #: src/protocols/oscar/oscar.c:3925 src/protocols/oscar/oscar.c:4155
-#, fuzzy, c-format
+#, c-format
 msgid "Info for %s"
-msgstr "ICQ podaci za %s"
+msgstr "Podaci za %s"
 
 #: src/protocols/oscar/oscar.c:3991
 #, c-format
@@ -8193,23 +8059,22 @@ msgstr "Nepoznata greška"
 
 #. Data is assumed to be the destination sn
 #: src/protocols/oscar/oscar.c:4027
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message: %s"
-msgstr "Ne mogu da pošaljem poruku."
+msgstr "Ne mogu da pošaljem poruku: %s"
 
 #: src/protocols/oscar/oscar.c:4027 src/protocols/oscar/oscar.c:4032
 #: src/protocols/oscar/oscar.c:4090 src/protocols/oscar/oscar.c:4094
-#, fuzzy
 msgid "Unknown reason."
-msgstr "Nepoznata greška."
+msgstr "Nepoznat razlog."
 
 #: src/protocols/oscar/oscar.c:4030
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message to %s:"
-msgstr "Ne mogu da pošaljem poruku."
+msgstr "Ne mogu da pošaljem poruku za %s:"
 
 #: src/protocols/oscar/oscar.c:4090
-#, fuzzy, c-format
+#, c-format
 msgid "User information not available: %s"
 msgstr "Podaci o korisniku %s nedostupni:"
 
@@ -8219,12 +8084,10 @@ msgid "User information for %s unavailable:"
 msgstr "Podaci o korisniku %s nedostupni:"
 
 #: src/protocols/oscar/oscar.c:4115
-#, fuzzy
 msgid "Warning Level"
-msgstr "Prikaži _nivoe upozorenja"
+msgstr "_Nivoi upozorenja"
 
 #: src/protocols/oscar/oscar.c:4118
-#, fuzzy
 msgid "Online Since"
 msgstr "Na vezi od"
 
@@ -8238,11 +8101,11 @@ msgstr "Možda AIM veza prekinuta."
 
 #. The conversion failed!
 #: src/protocols/oscar/oscar.c:4392
-#, fuzzy
 msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
-msgstr "Propustili ste %hu poruku od %s zato što je bila neispravna."
+msgstr ""
+"[Nije moguće prikazati poruku jer sadrži znake koji se ne mogu prikazati.]"
 
 #: src/protocols/oscar/oscar.c:4612
 msgid "Rate limiting error."
@@ -8277,9 +8140,8 @@ msgid "Mobile Phone"
 msgstr "Mobilni telefon"
 
 #: src/protocols/oscar/oscar.c:4993
-#, fuzzy
 msgid "Not specified"
-msgstr "Neočekivano"
+msgstr "Nije naznačeno"
 
 #: src/protocols/oscar/oscar.c:4994 src/protocols/trepia/trepia.c:281
 #: src/protocols/trepia/trepia.c:407
@@ -8341,7 +8203,7 @@ msgid "Pop-Up Message"
 msgstr "Iskačuća poruka"
 
 #: src/protocols/oscar/oscar.c:5120
-#, fuzzy, c-format
+#, c-format
 msgid "The following screen names are associated with %s"
 msgstr "Naredni nadimci su u vezi sa %s"
 
@@ -8448,6 +8310,8 @@ msgstr "Adresa e-pošte za %s je %s"
 msgid ""
 "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
+"Slika u brzoj poruci nije poslata. Morate biti neposredno povezani za slanje "
+"slika."
 
 #: src/protocols/oscar/oscar.c:5431
 msgid "Unable to set AIM profile."
@@ -8487,9 +8351,8 @@ msgid "Profile too long."
 msgstr "Profil je predugačak."
 
 #: src/protocols/oscar/oscar.c:5480 src/protocols/oscar/oscar.c:6767
-#, fuzzy
 msgid "Visible"
-msgstr "Nevidljiv"
+msgstr "Vidljiv"
 
 #: src/protocols/oscar/oscar.c:5498
 msgid "Unable to set AIM away message."
@@ -8515,8 +8378,8 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr[0] ""
-"Najveća dozvoljena dužina poruke za odsustvo od %d bajta je prekoračena. "
-"Gaim je skratio poruku, i započeo odsustvo."
+"Najveća dozvoljena dužina poruke za odsustvo od %d bajta je prekoračena. Gaim "
+"je skratio poruku, i započeo odsustvo."
 msgstr[1] ""
 "Najveća dozvoljena dužina poruke za odsustvo od %d bajtova je prekoračena. "
 "Gaim je skratio poruku, i započeo odsustvo."
@@ -8535,6 +8398,9 @@ msgid ""
 "must either start with a letter and contain only letters, numbers and "
 "spaces, or contain only numbers."
 msgstr ""
+"Drugar sa imenom %s nije mogao biti dodat jer je nadimak nevažeći. Nadimci "
+"moraju da ili počnu slovom i zatim sadrže slova, brojeve i razmake, ili mogu "
+"sadržati samo brojeve."
 
 #: src/protocols/oscar/oscar.c:5624 src/protocols/oscar/oscar.c:6073
 #: src/protocols/oscar/oscar.c:6087
@@ -8637,23 +8503,21 @@ msgid "_Exchange:"
 msgstr "Raz_mena:"
 
 #: src/protocols/oscar/oscar.c:6325
-#, fuzzy
 msgid "Invalid chat name specified."
-msgstr "Naveden je neispravan Gadu-Gadu korisnički broj"
+msgstr "Navedeno je neispravno ime razgovora."
 
 #: src/protocols/oscar/oscar.c:6414
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
-msgstr ""
+msgstr "Slika nije poslata. Ne možete slati slike za vreme AIM razgovora."
 
 #: src/protocols/oscar/oscar.c:6540
-#, fuzzy
 msgid "Away Message"
 msgstr "Poruke za odsustvo"
 
 #: src/protocols/oscar/oscar.c:6826
-#, fuzzy, c-format
+#, c-format
 msgid "Buddy Comment for %s"
-msgstr "Primedba za drugara:"
+msgstr "Primedba za drugara %s"
 
 #: src/protocols/oscar/oscar.c:6827
 msgid "Buddy Comment:"
@@ -8680,14 +8544,12 @@ msgid "The new formatting is invalid."
 msgstr "Novi zapis je neispravan."
 
 #: src/protocols/oscar/oscar.c:6912
-#, fuzzy
 msgid "Screen name formatting can change only capitalization and whitespace."
 msgstr ""
 "Zapis korisničkog imena se može promeniti samo u veličini slova i broju "
 "razmaka."
 
 #: src/protocols/oscar/oscar.c:6919
-#, fuzzy
 msgid "New screen name formatting:"
 msgstr "Novi zapis korisničkog imena:"
 
@@ -8736,7 +8598,6 @@ msgid "Set User Info..."
 msgstr "Postavi podatke o korisniku..."
 
 #: src/protocols/oscar/oscar.c:7143
-#, fuzzy
 msgid "Set User Info (URL)..."
 msgstr "Postavi podatke o korisniku..."
 
@@ -8757,7 +8618,6 @@ msgid "Configure IM Forwarding (URL)"
 msgstr "Podesi prosleđivanje brzih poruka (adresa)"
 
 #: src/protocols/oscar/oscar.c:7172
-#, fuzzy
 msgid "Format Screen Name..."
 msgstr "Zapis ekranskog imena..."
 
@@ -8782,9 +8642,8 @@ msgid "Search for Buddy by Email..."
 msgstr "Pronađi drugara prema e-adresi..."
 
 #: src/protocols/oscar/oscar.c:7202
-#, fuzzy
 msgid "Search for Buddy by Information"
-msgstr "Pronađi drugara prema e-adresi..."
+msgstr "Pronađi drugara prema podacima"
 
 #. *< api_version
 #. *< type
@@ -8814,48 +8673,47 @@ msgstr "Port"
 #: src/protocols/silc/ft.c:338
 #, c-format
 msgid "User %s is not present in the network"
-msgstr ""
+msgstr "Korisnik %s nije prisutan na mreži"
 
 #: src/protocols/silc/buddy.c:52 src/protocols/silc/buddy.c:109
 #: src/protocols/silc/buddy.c:114 src/protocols/silc/buddy.c:118
 #: src/protocols/silc/buddy.c:123 src/protocols/silc/buddy.c:128
 #: src/protocols/silc/buddy.c:133 src/protocols/silc/buddy.c:251
-#, fuzzy
 msgid "Key Agreement"
-msgstr "Zamena teksta"
+msgstr "Pogodba o ključevima"
 
 #: src/protocols/silc/buddy.c:53
 msgid "Cannot perform the key agreement"
-msgstr ""
+msgstr "Nije moguće složiti se oko ključeva"
 
 #: src/protocols/silc/buddy.c:110
 msgid "Error occurred during key agreement"
-msgstr ""
+msgstr "Došlo je do greške prilikom pregovora o ključevima"
 
 #: src/protocols/silc/buddy.c:114
 msgid "Key Agreement failed"
-msgstr ""
+msgstr "Pregovor o ključevima nije uspeo"
 
 #: src/protocols/silc/buddy.c:119
 msgid "Timeout during key agreement"
-msgstr ""
+msgstr "Vreme je isteklo tokom pregovora"
 
 #: src/protocols/silc/buddy.c:124
 msgid "Key agreement was aborted"
-msgstr ""
+msgstr "Pregovor o ključevima je otkazan"
 
 #: src/protocols/silc/buddy.c:129
 msgid "Key agreement is already started"
-msgstr ""
+msgstr "Pregovor o ključevima je već počeo"
 
 #: src/protocols/silc/buddy.c:134
 msgid "Key agreement cannot be started with yourself"
-msgstr ""
+msgstr "Pregovor o ključevima ne možete voditi sami sa sobom"
 
 #: src/protocols/silc/buddy.c:252 src/protocols/silc/buddy.c:382
 #: src/protocols/silc/buddy.c:507
 msgid "The remote user is not present in the network any more"
-msgstr ""
+msgstr "Udaljeni korisnik više nije na mreži"
 
 #: src/protocols/silc/buddy.c:288
 #, c-format
@@ -8863,6 +8721,8 @@ msgid ""
 "Key agreement request received from %s. Would you like to perform the key "
 "agreement?"
 msgstr ""
+"Korisnik %s je tražio pregovor o ključevima. Da li želite da započnete "
+"pregovor?"
 
 #: src/protocols/silc/buddy.c:292
 #, c-format
@@ -8871,70 +8731,69 @@ msgid ""
 "Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
+"Udaljeni korisnik čeka na pregovor o ključevima na:\n"
+"Računaru: %s\n"
+"Portu: %d"
 
 #: src/protocols/silc/buddy.c:305
 msgid "Key Agreement Request"
-msgstr ""
+msgstr "Zahtev za pregovor o ključevima"
 
 #: src/protocols/silc/buddy.c:381 src/protocols/silc/buddy.c:416
 #: src/protocols/silc/buddy.c:458
-#, fuzzy
 msgid "IM With Password"
-msgstr "Lozinka"
+msgstr "Poruka sa lozinkom"
 
 #: src/protocols/silc/buddy.c:417
 msgid "Cannot set IM key"
-msgstr ""
+msgstr "Ne mogu da pošaljem ključ za brze poruke"
 
 #: src/protocols/silc/buddy.c:459
-#, fuzzy
 msgid "Set IM Password"
-msgstr "Lozinka"
+msgstr "Postavi lozinku"
 
 #: src/protocols/silc/buddy.c:506 src/protocols/silc/buddy.c:541
 #: src/protocols/silc/ops.c:1276 src/protocols/silc/ops.c:1287
 msgid "Get Public Key"
-msgstr ""
+msgstr "Dobavi javni ključ"
 
 #: src/protocols/silc/buddy.c:542 src/protocols/silc/ops.c:1277
 #: src/protocols/silc/ops.c:1288
-#, fuzzy
 msgid "Cannot fetch the public key"
-msgstr "Ne mogu da promenim nadimak"
+msgstr "Ne mogu da dobavim javni ključ"
 
 #: src/protocols/silc/buddy.c:629 src/protocols/silc/buddy.c:1544
 msgid "Show Public Key"
-msgstr ""
+msgstr "Prikaži javni ključ"
 
 #: src/protocols/silc/buddy.c:630 src/protocols/silc/buddy.c:989
 #: src/protocols/silc/chat.c:234
-#, fuzzy
 msgid "Could not load public key"
-msgstr "Ne mogu da promenim nadimak"
+msgstr "Ne mogu da učitam javni ključ"
 
 #: src/protocols/silc/buddy.c:707 src/protocols/silc/ops.c:871
 #: src/protocols/silc/ops.c:943 src/protocols/silc/ops.c:1078
 #: src/protocols/silc/ops.c:1079 src/protocols/silc/ops.c:1098
-#, fuzzy
 msgid "User Information"
-msgstr "Podaci"
+msgstr "Podaci o korisniku"
 
 #: src/protocols/silc/buddy.c:708 src/protocols/silc/ops.c:944
 #: src/protocols/silc/ops.c:1099
-#, fuzzy
 msgid "Cannot get user information"
-msgstr "Izmeni podatke o korisniku za %s"
+msgstr "Ne mogu da dobavim podatke o korisniku"
 
 #: src/protocols/silc/buddy.c:729
 #, c-format
 msgid "The %s buddy is not trusted"
-msgstr ""
+msgstr "Drugar %s nije od poverenja"
 
 #: src/protocols/silc/buddy.c:732
 msgid ""
 "You cannot receive buddy notifications until you import his/her public key.  "
 "You can use the Get Public Key command to get the public key."
 msgstr ""
+"Ne možete koristiti obaveštenja o drugarima dok ne uključite njegov/njen javni "
+"ključ. Možete koristiti Dobavljanje javnog ključa kako biste to učinili."
 
 #. Open file selector to select the public key.
 #: src/protocols/silc/buddy.c:1023
@@ -8944,264 +8803,248 @@ msgstr "Otvori..."
 #: src/protocols/silc/buddy.c:1032
 #, c-format
 msgid "The %s buddy is not present in the network"
-msgstr ""
+msgstr "Drugar %s nije prisutan na mreži"
 
 #: src/protocols/silc/buddy.c:1035
 msgid ""
 "To add the buddy you must import his/her public key. Press Import to import "
 "a public key."
 msgstr ""
+"Da biste dodali drugara morate da dobavite njegov/njen javni ključ. Pritisnite "
+"Dobaci da biste dobavili ključ."
 
 #: src/protocols/silc/buddy.c:1038
 msgid "Import..."
-msgstr ""
+msgstr "Dobavi..."
 
 #: src/protocols/silc/buddy.c:1125
-#, fuzzy
 msgid "Select correct user"
-msgstr "Izaberite boju teksta"
+msgstr "Izaberite pravog korisnika"
 
 #: src/protocols/silc/buddy.c:1127
 msgid ""
 "More than one user was found with the same public key. Select the correct "
 "user from the list to add to the buddy list."
 msgstr ""
+"Pronađeno je više od jednog korisnika sa istim javim ključem. Izaberite "
+"ispravnog korisnika sa spiska koje treba dodati u spisak drugara."
 
 #: src/protocols/silc/buddy.c:1129
 msgid ""
 "More than one user was found with the same name. Select the correct user "
 "from the list to add to the buddy list."
 msgstr ""
+"Pronađeno je više od jednog korisnika sa istim imenom. Izaberite ispravnog "
+"korisnika kog treba dodati u spisak drugara."
 
 #: src/protocols/silc/buddy.c:1377
 msgid "Detached"
-msgstr ""
+msgstr "Otkačen"
 
 #: src/protocols/silc/buddy.c:1381 src/protocols/silc/silc.c:48
 #: src/protocols/silc/silc.c:80
-#, fuzzy
 msgid "Indisposed"
 msgstr "Neobjavljen"
 
 #: src/protocols/silc/buddy.c:1385 src/protocols/silc/silc.c:49
 #: src/protocols/silc/silc.c:82
 msgid "Wake Me Up"
-msgstr ""
+msgstr "Probudi me"
 
 #: src/protocols/silc/buddy.c:1387 src/protocols/silc/silc.c:45
 #: src/protocols/silc/silc.c:74
-#, fuzzy
 msgid "Hyper Active"
-msgstr "Aktivan"
+msgstr "Suviše aktivan"
 
 #: src/protocols/silc/buddy.c:1389
 msgid "Robot"
-msgstr ""
+msgstr "Robot"
 
 #: src/protocols/silc/buddy.c:1396 src/protocols/silc/silc.c:616
 #: src/protocols/silc/util.c:469
-#, fuzzy
 msgid "Happy"
-msgstr "Primeni"
+msgstr "Srećan"
 
 #: src/protocols/silc/buddy.c:1398 src/protocols/silc/silc.c:618
 #: src/protocols/silc/util.c:471
 msgid "Sad"
-msgstr ""
+msgstr "Tužan"
 
 #: src/protocols/silc/buddy.c:1400 src/protocols/silc/silc.c:620
 #: src/protocols/silc/util.c:473
 msgid "Angry"
-msgstr ""
+msgstr "Ljut"
 
 #: src/protocols/silc/buddy.c:1402 src/protocols/silc/silc.c:622
 #: src/protocols/silc/util.c:475
 msgid "Jealous"
-msgstr ""
+msgstr "Ljubomoran"
 
 #: src/protocols/silc/buddy.c:1404 src/protocols/silc/silc.c:624
 #: src/protocols/silc/util.c:477
 msgid "Ashamed"
-msgstr ""
+msgstr "Stidan"
 
 #: src/protocols/silc/buddy.c:1406 src/protocols/silc/silc.c:626
 #: src/protocols/silc/util.c:479
-#, fuzzy
 msgid "Invincible"
-msgstr "Nevidljiv"
+msgstr "Nepobediv"
 
 #: src/protocols/silc/buddy.c:1408 src/protocols/silc/silc.c:628
 #: src/protocols/silc/util.c:481
-#, fuzzy
 msgid "In Love"
-msgstr "Ignoriši"
+msgstr "Zaljubljen"
 
 #: src/protocols/silc/buddy.c:1410 src/protocols/silc/silc.c:630
 #: src/protocols/silc/util.c:483
 msgid "Sleepy"
-msgstr ""
+msgstr "Pospan"
 
 #: src/protocols/silc/buddy.c:1412 src/protocols/silc/silc.c:632
 #: src/protocols/silc/util.c:485
-#, fuzzy
 msgid "Bored"
-msgstr "Masno"
+msgstr "Dosadan"
 
 #: src/protocols/silc/buddy.c:1414 src/protocols/silc/silc.c:634
 #: src/protocols/silc/util.c:487
 msgid "Excited"
-msgstr ""
+msgstr "Uzbuđen"
 
 #: src/protocols/silc/buddy.c:1416 src/protocols/silc/silc.c:636
 #: src/protocols/silc/util.c:489
 msgid "Anxious"
-msgstr ""
+msgstr "Nervozan"
 
 #: src/protocols/silc/buddy.c:1448 src/protocols/silc/ops.c:980
-#, fuzzy
 msgid "User Modes"
 msgstr "Korisnički izbori"
 
 #: src/protocols/silc/buddy.c:1457 src/protocols/silc/ops.c:989
 msgid "Mood"
-msgstr ""
+msgstr "Raspoloženje"
 
 #: src/protocols/silc/buddy.c:1461 src/protocols/silc/ops.c:995
-#, fuzzy
 msgid "Status Text"
 msgstr "Stanje"
 
 #: src/protocols/silc/buddy.c:1466 src/protocols/silc/ops.c:1001
-#, fuzzy
 msgid "Preferred Contact"
-msgstr "Ukloni kontakt"
+msgstr "Željeni kontakt"
 
 #: src/protocols/silc/buddy.c:1471 src/protocols/silc/ops.c:1006
-#, fuzzy
 msgid "Preferred Language"
-msgstr "Postavke"
+msgstr "Željeni jezik"
 
 #: src/protocols/silc/buddy.c:1476 src/protocols/silc/ops.c:1011
-#, fuzzy
 msgid "Device"
-msgstr "Odbij"
+msgstr "Uređaj"
 
 #: src/protocols/silc/buddy.c:1481 src/protocols/silc/ops.c:1016
 #: src/protocols/silc/silc.c:684 src/protocols/silc/silc.c:686
-#, fuzzy
 msgid "Timezone"
-msgstr "Vreme"
+msgstr "Vr. zona"
 
 #: src/protocols/silc/buddy.c:1486 src/protocols/silc/ops.c:1021
-#, fuzzy
 msgid "Geolocation"
 msgstr "Mesto"
 
 #: src/protocols/silc/buddy.c:1529
 msgid "Reset IM Key"
-msgstr ""
+msgstr "Poništi ključ za brze poruke"
 
 #: src/protocols/silc/buddy.c:1534
 msgid "IM with Key Exchange"
-msgstr ""
+msgstr "Brze poruke sa razmenom ključeva"
 
 #: src/protocols/silc/buddy.c:1538
-#, fuzzy
 msgid "IM with Password"
 msgstr "Lozinka"
 
 #: src/protocols/silc/buddy.c:1549
 msgid "Get Public Key..."
-msgstr ""
+msgstr "Dobavi javni ključ..."
 
 #: src/protocols/silc/buddy.c:1555 src/protocols/silc/ops.c:1409
-#, fuzzy
 msgid "Kill User"
-msgstr "Gaim korisnik"
+msgstr "Odstrani korisnika"
 
 #: src/protocols/silc/chat.c:37
-#, fuzzy
 msgid "_Passphrase:"
 msgstr "_Lozinka:"
 
 #: src/protocols/silc/chat.c:78
 #, c-format
 msgid "Channel %s does not exist in the network"
-msgstr ""
+msgstr "Kanal %s ne postoji na mreži"
 
 #: src/protocols/silc/chat.c:79 src/protocols/silc/chat.c:171
-#, fuzzy
 msgid "Channel Information"
-msgstr "Podaci"
+msgstr "Podaci o kanalu"
 
 #: src/protocols/silc/chat.c:80
-#, fuzzy
 msgid "Cannot get channel information"
-msgstr "Izmeni podatke o korisniku za %s"
+msgstr "Ne mogu da dobavim podatke o kanalu"
 
 #: src/protocols/silc/chat.c:117
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Channel Name:</b> %s"
-msgstr "Korisničko ime:"
+msgstr "<b>Ime kanala:</b> %s"
 
 #: src/protocols/silc/chat.c:120
-#, fuzzy, c-format
+#, c-format
 msgid "<br><b>User Count:</b> %d"
-msgstr "<b>Korisnik:</b> %s<br>"
+msgstr "<br><b>Broj korisnika:</b> %d"
 
 #: src/protocols/silc/chat.c:127
 #, c-format
 msgid "<br><b>Channel Founder:</b> %s"
-msgstr ""
+msgstr "<br><b>Osnivač kanala:</b> %s"
 
 #: src/protocols/silc/chat.c:136
 #, c-format
 msgid "<br><b>Channel Cipher:</b> %s"
-msgstr ""
+msgstr "<br><b>Šifra kanala:</b> %s"
 
 #: src/protocols/silc/chat.c:139
 #, c-format
 msgid "<br><b>Channel HMAC:</b> %s"
-msgstr ""
+msgstr "<br><b>HMAC za kanal:</b> %s"
 
 #: src/protocols/silc/chat.c:144
-#, fuzzy, c-format
+#, c-format
 msgid "<br><b>Channel Topic:</b><br>%s"
-msgstr ""
-"<b>Dnevnik promena:</b>\n"
-"%s<br><br>"
+msgstr "<br><b>Tema kanala:</b><br>%s"
 
 #: src/protocols/silc/chat.c:149
 msgid "<br><b>Channel Modes:</b> "
-msgstr ""
+msgstr "<br><b>Modovi kanala:</b> "
 
 #: src/protocols/silc/chat.c:162
 #, c-format
 msgid "<br><b>Founder Key Fingerprint:</b><br>%s"
-msgstr ""
+msgstr "<br><b>Otisak osnivačevog ključa:</b><br>%s"
 
 #: src/protocols/silc/chat.c:163
 #, c-format
 msgid "<br><b>Founder Key Babbleprint:</b><br>%s"
-msgstr ""
+msgstr "<br><b>Tekstualni otisak:</b><br>%s"
 
 #: src/protocols/silc/chat.c:233
 msgid "Add Channel Public Key"
-msgstr ""
+msgstr "Dodaj javni ključ kanala"
 
 #. Add new public key
 #: src/protocols/silc/chat.c:288
 msgid "Open Public Key..."
-msgstr ""
+msgstr "Otvori javni ključ..."
 
 #: src/protocols/silc/chat.c:397
-#, fuzzy
 msgid "Channel Passphrase"
-msgstr "Promena lozinke"
+msgstr "Lozinka za kanal"
 
 #: src/protocols/silc/chat.c:404
 msgid "Channel Public Keys List"
-msgstr ""
+msgstr "Spisak javnih ključeva kanala"
 
 #: src/protocols/silc/chat.c:409
 msgid ""
@@ -9211,358 +9054,321 @@ msgid ""
 "channel public keys are set then only users whose public keys are listed are "
 "able to join."
 msgstr ""
+"Prijava na kanal se koristi kako bi se kanal obezbedio protiv neovlašćenog "
+"pristupa. Prijava se zasniva na lozinkama i digitalnim potpisima. Ako je "
+"lozinka postavljena, onda se mora navesti pri ulasku na kanal. Ako su "
+"postavljeni javni ključevi za kanal, onda jedino korisnici sa navedenim javnim "
+"ključevima mogu da pristupe."
 
 #: src/protocols/silc/chat.c:418 src/protocols/silc/chat.c:419
 #: src/protocols/silc/chat.c:456 src/protocols/silc/chat.c:457
 #: src/protocols/silc/chat.c:886
-#, fuzzy
 msgid "Channel Authentication"
-msgstr "Neuspešna Jahu! identifikacija"
+msgstr "Prijava na kanal"
 
 #: src/protocols/silc/chat.c:420 src/protocols/silc/chat.c:458
-#, fuzzy
 msgid "Add / Remove"
-msgstr "Ukloni"
+msgstr "Dodaj / Ukloni"
 
 #: src/protocols/silc/chat.c:575
-#, fuzzy
 msgid "Group Name"
 msgstr "Grupa"
 
 #: src/protocols/silc/chat.c:579 src/protocols/silc/ops.c:1689
-#, fuzzy
 msgid "Passphrase"
-msgstr "Lozinka poslata"
+msgstr "Lozinka"
 
 #: src/protocols/silc/chat.c:590
-#, fuzzy, c-format
+#, c-format
 msgid "Please enter the %s channel private group name and passphrase."
-msgstr "Unesite naziv grupe koju želite da dodate."
+msgstr "Unesite ime i lozinku za privatnu grupu na kanalu %s"
 
 #: src/protocols/silc/chat.c:592
-#, fuzzy
 msgid "Add Channel Private Group"
-msgstr "Dodaj novu grupu"
+msgstr "Dodaj novu privatnu grupu"
 
 #: src/protocols/silc/chat.c:719
-#, fuzzy
 msgid "User Limit"
-msgstr "Dozvole"
+msgstr "Broj korisnika"
 
 #: src/protocols/silc/chat.c:720
 msgid "Set user limit on channel. Set to zero to reset user limit."
-msgstr ""
+msgstr "Najveći dozvoljeni broj korisnika. Ako je nula, ne postoji granica."
 
 #: src/protocols/silc/chat.c:862
 msgid "Get Info"
 msgstr "Podaci"
 
 #: src/protocols/silc/chat.c:869
-#, fuzzy
 msgid "Invite List"
-msgstr "Pozovi"
+msgstr "Spisak pozvanih"
 
 #: src/protocols/silc/chat.c:873
-#, fuzzy
 msgid "Ban List"
-msgstr "Spisak drugara"
+msgstr "Spisak zabrana"
 
 #: src/protocols/silc/chat.c:880
-#, fuzzy
 msgid "Add Private Group"
-msgstr "Dodaj grupu"
+msgstr "Dodaj privatnu grupu"
 
 #: src/protocols/silc/chat.c:891
 msgid "Reset Permanent"
-msgstr ""
+msgstr "Ukini stalnost"
 
 #: src/protocols/silc/chat.c:895
 msgid "Set Permanent"
-msgstr ""
+msgstr "Postavi stalnost"
 
 #: src/protocols/silc/chat.c:902
-#, fuzzy
 msgid "Set User Limit"
-msgstr "Postavi podatke o korisniku"
+msgstr "Postavi broj korisnika"
 
 #: src/protocols/silc/chat.c:907
-#, fuzzy
 msgid "Reset Topic Restriction"
-msgstr "Obaveštenje o izdanju"
+msgstr "Ukini ograničenje teme"
 
 #: src/protocols/silc/chat.c:911
 msgid "Set Topic Restriction"
-msgstr ""
+msgstr "Postavi ograničenje za temu"
 
 #: src/protocols/silc/chat.c:917
 msgid "Reset Private Channel"
-msgstr ""
+msgstr "Ukini privatnost kanala"
 
 #: src/protocols/silc/chat.c:921
 msgid "Set Private Channel"
-msgstr ""
+msgstr "Postavi privatnost kanala"
 
 #: src/protocols/silc/chat.c:927
 msgid "Reset Secret Channel"
-msgstr ""
+msgstr "Ukini tajnost kanala"
 
 #: src/protocols/silc/chat.c:931
 msgid "Set Secret Channel"
-msgstr ""
+msgstr "Postavi tajnost kanala"
 
 #: src/protocols/silc/chat.c:993
-#, fuzzy, c-format
+#, c-format
 msgid "You are channel founder on <I>%s</I>"
-msgstr "Izbačeni ste sa %s."
+msgstr "Vi ste osnivač kanala na <I>%s</I>"
 
 #: src/protocols/silc/chat.c:997
 #, c-format
 msgid "Channel founder on <I>%s</I> is <I>%s</I>"
-msgstr ""
+msgstr "Osnivač kanala <I>%s</I> je <I>%s</I>"
 
 #: src/protocols/silc/chat.c:1051
 #, c-format
 msgid ""
 "You have to join the %s channel before you are able to join the private group"
 msgstr ""
+"Morate se priključiti kanalu %s pre nego što se priključite privatnoj grupi"
 
 #: src/protocols/silc/chat.c:1053
-#, fuzzy
 msgid "Join Private Group"
-msgstr "Priključi se grupi (kojoj?):"
+msgstr "Priključi se privatnoj grupi"
 
 #: src/protocols/silc/chat.c:1054
-#, fuzzy
 msgid "Cannot join private group"
-msgstr "Ne mogu da uklonim grupu nula"
+msgstr "Nije moguće ući na privatnu grupu"
 
 #: src/protocols/silc/chat.c:1247 src/protocols/silc/silc.c:894
 msgid "Cannot call command"
-msgstr ""
+msgstr "Nije uspelo pozivanje komande"
 
 #: src/protocols/silc/chat.c:1248 src/protocols/silc/silc.c:895
-#, fuzzy
 msgid "Unknown command"
-msgstr "Nepoznata naredba: %s"
+msgstr "Nepoznata naredba"
 
 #: src/protocols/silc/ft.c:89 src/protocols/silc/ft.c:92
 #: src/protocols/silc/ft.c:96 src/protocols/silc/ft.c:100
 #: src/protocols/silc/ft.c:104 src/protocols/silc/ft.c:205
 #: src/protocols/silc/ft.c:210 src/protocols/silc/ft.c:215
 #: src/protocols/silc/ft.c:221 src/protocols/silc/ft.c:340
-#, fuzzy
 msgid "Secure File Transfer"
-msgstr "Prenosi datoteka"
+msgstr "Bezbedni prenos datoteka"
 
 #: src/protocols/silc/ft.c:90 src/protocols/silc/ft.c:93
 #: src/protocols/silc/ft.c:97 src/protocols/silc/ft.c:101
 #: src/protocols/silc/ft.c:105
-#, fuzzy
 msgid "Error during file transfer"
-msgstr "Greška pri čitanju sa servera"
+msgstr "Greška pri prenosu datoteke"
 
 #: src/protocols/silc/ft.c:94
 msgid "Permission denied"
-msgstr ""
+msgstr "Pristup zabranjen"
 
 #: src/protocols/silc/ft.c:98
 msgid "Key agreement failed"
-msgstr ""
+msgstr "Pregovor o ključevima nije uspeo"
 
 #: src/protocols/silc/ft.c:102
-#, fuzzy
 msgid "File transfer sessions does not exist"
-msgstr "Datoteka ne postoji."
+msgstr "Sesije prenosa datoteka ne postoje"
 
 #: src/protocols/silc/ft.c:206
-#, fuzzy
 msgid "No file transfer session active"
-msgstr "Domaćin za prenos datoteka"
+msgstr "Nema aktivnih sesija za prenos"
 
 #: src/protocols/silc/ft.c:211
-#, fuzzy
 msgid "File transfer already started"
-msgstr "Prenos datoteke od %s prekinut.\n"
+msgstr "Prenos datoteke je već počeo"
 
 #: src/protocols/silc/ft.c:216
-#, fuzzy
 msgid "Could not perform key agreement for file transfer"
-msgstr "Ne mogu da uspostavim vezu za prenos."
+msgstr "Ne mogu da uskladim ključeve za prenos datoteka"
 
 #: src/protocols/silc/ft.c:222
-#, fuzzy
 msgid "Could not start the file transfer"
-msgstr "Ne mogu da uspostavim vezu za prenos."
+msgstr "Ne mogu da uspostavim prenos datoteke"
 
 #: src/protocols/silc/ft.c:341
-#, fuzzy
 msgid "Cannot send file"
-msgstr "Ne mogu da pošaljem datoteku od 0 bajtova."
+msgstr "Ne mogu da pošaljem datoteku"
 
 #: src/protocols/silc/ops.c:339 src/protocols/silc/ops.c:348
 #: src/protocols/silc/ops.c:357
-#, fuzzy, c-format
+#, c-format
 msgid "%s has changed the topic of <I>%s</I> to: %s"
-msgstr "%s izmeni temu u: %s"
+msgstr "%s je promenio temu <I>%s</I> na: %s"
 
 #: src/protocols/silc/ops.c:423
 #, c-format
 msgid "<I>%s</I> set channel <I>%s</I> modes to: %s"
-msgstr ""
+msgstr "<I>%s</I> postavlja pristup za kanal <I>%s</I> na: %s"
 
 #: src/protocols/silc/ops.c:427
 #, c-format
 msgid "<I>%s</I> removed all channel <I>%s</I> modes"
-msgstr ""
+msgstr "<I>%s</I> uklanja sve pristupe za kanal <I>%s</I>"
 
 #: src/protocols/silc/ops.c:460
 #, c-format
 msgid "<I>%s</I> set <I>%s's</I> modes to: %s"
-msgstr ""
+msgstr "<I>%s</I> postavlja pristup za <I>%s</I> na: %s"
 
 #: src/protocols/silc/ops.c:468
 #, c-format
 msgid "<I>%s</I> removed all <I>%s's</I> modes"
-msgstr ""
+msgstr "<I>%s</I> ukida sve pristupe za <I>%s</I>"
 
 #: src/protocols/silc/ops.c:497
-#, fuzzy, c-format
+#, c-format
 msgid "You have been kicked off <I>%s</I> by <I>%s</I> (%s)"
-msgstr "Izbacio Vas je %s: (%s)"
+msgstr "Sa kanala <I>%s</I> vas je izbacio <I>%s</I> (%s)"
 
 #: src/protocols/silc/ops.c:527 src/protocols/silc/ops.c:532
 #: src/protocols/silc/ops.c:537
-#, fuzzy, c-format
+#, c-format
 msgid "You have been killed by %s (%s)"
-msgstr "Izbacio Vas je %s: (%s)"
+msgstr "Uklonio vas je %s (%s)"
 
 #: src/protocols/silc/ops.c:558 src/protocols/silc/ops.c:563
 #: src/protocols/silc/ops.c:568
-#, fuzzy, c-format
+#, c-format
 msgid "Killed by %s (%s)"
-msgstr "Izbačeni od strane %s: (%s)"
+msgstr "Uklonio vas je %s (%s)"
 
 #: src/protocols/silc/ops.c:614
-#, fuzzy
 msgid "Server signoff"
 msgstr "Odjavi se"
 
 #: src/protocols/silc/ops.c:801
-#, fuzzy
 msgid "Personal Information"
 msgstr "Podaci o profilu"
 
 #: src/protocols/silc/ops.c:824
-#, fuzzy
 msgid "Birth Day"
 msgstr "Rođendan"
 
 #: src/protocols/silc/ops.c:828
-#, fuzzy
 msgid "Job Title"
 msgstr "Titula"
 
 # „radno mesto‟ u organizaciji?
 #: src/protocols/silc/ops.c:832
-#, fuzzy
 msgid "Job Role"
 msgstr "Uloga"
 
 #: src/protocols/silc/ops.c:836
-#, fuzzy
 msgid "Organization"
-msgstr "Odeljenje u organizaciji"
+msgstr "Organizacija"
 
 #: src/protocols/silc/ops.c:840
-#, fuzzy
 msgid "Unit"
-msgstr "Pozovi"
+msgstr "Jedinica"
 
 #: src/protocols/silc/ops.c:859
-#, fuzzy
 msgid "EMail"
 msgstr "E-pošta"
 
 #: src/protocols/silc/ops.c:864
-#, fuzzy
 msgid "Note"
-msgstr "Ništa"
+msgstr "Beleška"
 
 #: src/protocols/silc/ops.c:912
-#, fuzzy
 msgid "Join Chat"
 msgstr "Priključi se razgovoru"
 
 #: src/protocols/silc/ops.c:1068 src/protocols/silc/ops.c:1139
 msgid "Public Key Fingerprint"
-msgstr ""
+msgstr "Otisak javnog ključa"
 
 #: src/protocols/silc/ops.c:1069 src/protocols/silc/ops.c:1140
 msgid "Public Key Babbleprint"
-msgstr ""
+msgstr "Sažetak javnog ključa"
 
 #: src/protocols/silc/ops.c:1082
-#, fuzzy
 msgid "More..."
-msgstr "Izaberi..."
+msgstr "Više..."
 
 #: src/protocols/silc/ops.c:1155 src/protocols/silc/silc.c:783
-#, fuzzy
 msgid "Detach From Server"
-msgstr "Proksi server"
+msgstr "Isključi se sa servera"
 
 #: src/protocols/silc/ops.c:1155
 msgid "Cannot detach"
-msgstr ""
+msgstr "Ne mogu da se isključim"
 
 #: src/protocols/silc/ops.c:1166
-#, fuzzy
 msgid "Cannot set topic"
-msgstr "Ne mogu da promenim nadimak"
+msgstr "Ne mogu da postavim temu"
 
 #: src/protocols/silc/ops.c:1204
-#, fuzzy
 msgid "Failed to change nickname"
 msgstr "Ne mogu da promenim nadimak"
 
 #: src/protocols/silc/ops.c:1241
-#, fuzzy
 msgid "Roomlist"
-msgstr "Nije na spisku"
+msgstr "Sobe"
 
 #: src/protocols/silc/ops.c:1241
-#, fuzzy
 msgid "Cannot get room list"
-msgstr "Ne mogu da postavim AIM profil."
+msgstr "Ne mogu da dobavim spisak soba"
 
 #: src/protocols/silc/ops.c:1289
 msgid "No public key was received"
-msgstr ""
+msgstr "Nije primljen javni ključ"
 
 #: src/protocols/silc/ops.c:1302 src/protocols/silc/ops.c:1316
-#, fuzzy
 msgid "Server Information"
-msgstr "Podaci o poslu"
+msgstr "Podaci o serveru"
 
 #: src/protocols/silc/ops.c:1303
-#, fuzzy
 msgid "Cannot get server information"
-msgstr "Izmeni podatke o korisniku za %s"
+msgstr "Ne mogu da dobavim podatke o serveru"
 
 #: src/protocols/silc/ops.c:1334 src/protocols/silc/ops.c:1343
-#, fuzzy
 msgid "Server Statistics"
-msgstr "Ulica"
+msgstr "Statistike o serveru"
 
 #: src/protocols/silc/ops.c:1335
-#, fuzzy
 msgid "Cannot get server statistics"
-msgstr "Nije na spisku na serveru"
+msgstr "Ne mogu da dobavim statistike o serveru"
 
 #: src/protocols/silc/ops.c:1344
-#, fuzzy
 msgid "No server statistics available"
-msgstr "Nema dostupnih akcija"
+msgstr "Nema dostupnih statistika"
 
 #: src/protocols/silc/ops.c:1366
 #, c-format
@@ -9583,107 +9389,115 @@ msgid ""
 "Total server operators: %d\n"
 "Total router operators: %d\n"
 msgstr ""
+"Lokalno vreme početka rada: %s\n"
+"Lokalno vreme rada: %s\n"
+"Broj klijenata: %d\n"
+"Broj kanala: %d\n"
+"Broj operatora: %d\n"
+"Broj rutera: %d\n"
+"Broj ćelijskih klijenata: %d\n"
+"Broj ćelijskih kanala: %d\n"
+"Broj ćelijskih servera: %d\n"
+"Ukupno klijenata: %d\n"
+"Ukupno kanala: %d\n"
+"Ukupno servera: %d\n"
+"Ukupno rutera: %d\n"
+"Ukupno operatora servera: %d\n"
+"Ukupno operatora rutera: %d\n"
 
 #: src/protocols/silc/ops.c:1389
 msgid "Network Statistics"
-msgstr ""
+msgstr "Mrežne statistike"
 
 #: src/protocols/silc/ops.c:1397 src/protocols/silc/ops.c:1402
 msgid "Ping"
-msgstr ""
+msgstr "Ping"
 
 #: src/protocols/silc/ops.c:1397
 msgid "Ping failed"
-msgstr ""
+msgstr "Ping nije uspeo"
 
 #: src/protocols/silc/ops.c:1402
-#, fuzzy
 msgid "Ping reply received from server"
-msgstr "Neispravan odgovor servera"
+msgstr "Primljen je odgovor na PING sa servera"
 
 #: src/protocols/silc/ops.c:1410
-#, fuzzy
 msgid "Could not kill user"
-msgstr "Ne mogu da pošaljem"
+msgstr "Ne mogu da uklonim korisnika"
 
 #: src/protocols/silc/ops.c:1491
-#, fuzzy
 msgid "Error during connecting to SILC Server"
-msgstr "Greška pri uspostavljanju veze"
+msgstr "Greška pri povezivanju na SILC server"
 
 #: src/protocols/silc/ops.c:1496
 msgid "Key Exchange failed"
-msgstr ""
+msgstr "Razmena ključeva nije uspela"
 
 #: src/protocols/silc/ops.c:1505
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
+"Nastavljam prekinutu sesiju. Pritisnite Ponovno povezivanje da napravite novu "
+"vezu."
 
 #: src/protocols/silc/ops.c:1540
-#, fuzzy
 msgid "Disconnected by server"
-msgstr "Povezivanje sa serverom"
+msgstr "Server Vas je isključio"
 
 #: src/protocols/silc/ops.c:1600 src/protocols/silc/ops.c:1647
 #: src/protocols/silc/silc.c:173
-#, fuzzy
 msgid "Resuming session"
-msgstr "Previše sesija"
+msgstr "Nastavljam sesiju"
 
 #: src/protocols/silc/ops.c:1602
-#, fuzzy
 msgid "Authenticating connection"
 msgstr "Identifikacija"
 
 #: src/protocols/silc/ops.c:1649
-#, fuzzy
 msgid "Verifying server public key"
-msgstr "Čitanje ključa servera"
+msgstr "Čitanje javnog ključa za server"
 
 #: src/protocols/silc/ops.c:1690
-#, fuzzy
 msgid "Passphrase required"
 msgstr "Obavezno je šifrovanje"
 
 #: src/protocols/silc/ops.c:1719
 msgid "Failure: Version mismatch, upgrade your client"
-msgstr ""
+msgstr "Greška: izdanja se ne slažu, obnovite vašeg klijenta"
 
 #: src/protocols/silc/ops.c:1722
 msgid "Failure: Remote does not trust/support your public key"
-msgstr ""
+msgstr "Greška: druga strana nema poverenja ili ne podržava vaš javni ključ"
 
 #: src/protocols/silc/ops.c:1725
 msgid "Failure: Remote does not support proposed KE group"
-msgstr ""
+msgstr "Greška: druga strana ne podržava predloženu KE grupu"
 
 #: src/protocols/silc/ops.c:1728
 msgid "Failure: Remote does not support proposed cipher"
-msgstr ""
+msgstr "Greška: druga strana ne podržava predloženu šifru"
 
 #: src/protocols/silc/ops.c:1731
 msgid "Failure: Remote does not support proposed PKCS"
-msgstr ""
+msgstr "Greška: druga strana ne podršava predložen PKCS"
 
 #: src/protocols/silc/ops.c:1734
 msgid "Failure: Remote does not support proposed hash function"
-msgstr ""
+msgstr "Greška: druga strana ne podržava predloženu heš funkciju"
 
 #: src/protocols/silc/ops.c:1737
 msgid "Failure: Remote does not support proposed HMAC"
-msgstr ""
+msgstr "Greška: druga strana ne podržava predložen HMAC"
 
 #: src/protocols/silc/ops.c:1739
 msgid "Failure: Incorrect signature"
-msgstr ""
+msgstr "Greška: potpis je neispravan"
 
 #: src/protocols/silc/ops.c:1741
 msgid "Failure: Invalid cookie"
-msgstr ""
+msgstr "Greška: kolačić je neispravan."
 
 #: src/protocols/silc/ops.c:1752
-#, fuzzy
 msgid "Failure: Authentication failed"
 msgstr "Neuspešna identifikacija"
 
@@ -9693,11 +9507,14 @@ msgid ""
 "Received %s's public key. Your local copy does not match this key. Would you "
 "still like to accept this public key?"
 msgstr ""
+"Primljen je javni ključ za %s. Vaša lokalna kopija se ne slaže sa ovim ključem. "
+"da li i dalje želite da prihvatite ovaj javni ključ?"
 
 #: src/protocols/silc/pk.c:108
 #, c-format
 msgid "Received %s's public key. Would you like to accept this public key?"
 msgstr ""
+"Primljen je javni ključ za %s. Da li želite da prihvatite ovaj javni ključ?"
 
 #: src/protocols/silc/pk.c:112
 #, c-format
@@ -9707,100 +9524,96 @@ msgid ""
 "%s\n"
 "%s\n"
 msgstr ""
+"Otisak i sažetak ključa za drugara %s su:\n"
+"\n"
+"%s\n"
+"%s\n"
 
 #: src/protocols/silc/pk.c:115 src/protocols/silc/pk.c:139
 msgid "Verify Public Key"
-msgstr ""
+msgstr "Proveri javni ključ"
 
 #: src/protocols/silc/pk.c:118
-#, fuzzy
 msgid "View..."
 msgstr "Nova..."
 
 # strofa baš i nije odgovarajuća :-)
 #: src/protocols/silc/pk.c:140
-#, fuzzy
 msgid "Unsupported public key type"
-msgstr "Nepodržana vrsta odeljka"
+msgstr "Nepodržana vrsta javnog ključa"
 
 #: src/protocols/silc/silc.c:133
-#, fuzzy
 msgid "Connection failed"
-msgstr "Udaljena veza neuspešna"
+msgstr "Veza neuspešna"
 
 #: src/protocols/silc/silc.c:165
-#, fuzzy
 msgid "Cannot initialize SILC Client connection"
-msgstr "Dovršava povezivanje"
+msgstr "Ne može se pokrenuti SILC klijentska veza"
 
 #: src/protocols/silc/silc.c:176
 msgid "Performing key exchange"
-msgstr ""
+msgstr "Razmena ključeva je u toku"
 
 #: src/protocols/silc/silc.c:248
 msgid "Out of memory"
-msgstr ""
+msgstr "Nema dovoljno memorije"
 
 #. Progress
 #: src/protocols/silc/silc.c:282
-#, fuzzy
 msgid "Connecting to SILC Server"
-msgstr "Povezivanje sa serverom"
+msgstr "Povezivanje sa SILC serverom"
 
 #: src/protocols/silc/silc.c:612
-#, fuzzy
 msgid "Your Current Mood"
-msgstr "Trenutno prisutan"
+msgstr "Trenutno raspoloženje"
 
 #: src/protocols/silc/silc.c:614
 msgid "Normal"
-msgstr ""
+msgstr "Normalno"
 
 #: src/protocols/silc/silc.c:639
 msgid ""
 "\n"
 "Your Preferred Contact Methods"
 msgstr ""
+"\n"
+"Omiljeni načini povezivanja"
 
 #: src/protocols/silc/silc.c:647 src/protocols/silc/util.c:514
-#, fuzzy
 msgid "SMS"
-msgstr "MSN"
+msgstr "SMS"
 
 #: src/protocols/silc/silc.c:649 src/protocols/silc/util.c:516
-#, fuzzy
 msgid "MMS"
-msgstr "MSN"
+msgstr "MMS"
 
 #: src/protocols/silc/silc.c:651 src/protocols/silc/util.c:518
-#, fuzzy
 msgid "Video Conferencing"
-msgstr "Pokreni razgovor"
+msgstr "Video razgovor"
 
 #: src/protocols/silc/silc.c:656
 msgid "Your Current Status"
-msgstr ""
+msgstr "Vaš trenutni status"
 
 #: src/protocols/silc/silc.c:663
-#, fuzzy
 msgid "Online Services"
-msgstr "Na vezi od"
+msgstr "Mrežne usluge"
 
 #: src/protocols/silc/silc.c:666
 msgid "Let others see what services you are using"
-msgstr ""
+msgstr "Objavi spisak mrežnih usluga"
 
 #: src/protocols/silc/silc.c:672
 msgid "Let others see what computer you are using"
-msgstr ""
+msgstr "Objavi ime računara kog koristite"
 
 #: src/protocols/silc/silc.c:679
 msgid "Your VCard File"
-msgstr ""
+msgstr "Vaša elektronska posetnica"
 
 #: src/protocols/silc/silc.c:692 src/protocols/silc/silc.c:693
 msgid "User Online Status Attributes"
-msgstr ""
+msgstr "Osobine mrežnog statusa"
 
 #: src/protocols/silc/silc.c:694
 msgid ""
@@ -9808,236 +9621,239 @@ msgid ""
 "information. Please fill the information you would like other users to see "
 "about yourself."
 msgstr ""
+"Možete dopustiti drugim korisnicima da vide da li ste na vezi ili ne, kako i "
+"vaše privatne podatke. Popunite vaše podatke koje biste želeli da drugi vide."
 
 #: src/protocols/silc/silc.c:734 src/protocols/silc/silc.c:740
 #: src/protocols/silc/silc.c:1143
-#, fuzzy
 msgid "Message of the Day"
-msgstr "Poruka od %s"
+msgstr "Poruka dana"
 
 #: src/protocols/silc/silc.c:734
-#, fuzzy
 msgid "No Message of the Day available"
 msgstr "Nije dostupna poruka dana"
 
 #: src/protocols/silc/silc.c:735 src/protocols/silc/silc.c:1138
-#, fuzzy
 msgid "There is no Message of the Day associated with this connection"
 msgstr "Nema poruke dana za ovu vezu."
 
 #: src/protocols/silc/silc.c:778
-#, fuzzy
 msgid "Online Status"
 msgstr "Na vezi od"
 
 #: src/protocols/silc/silc.c:787
 msgid "View Message of the Day"
-msgstr ""
+msgstr "Pogledaj poruku dana"
 
 #: src/protocols/silc/silc.c:859
 #, c-format
 msgid "User <I>%s</I> is not present in the network"
-msgstr ""
+msgstr "Korisnik <I>%s</I> nije prijavljen na mrežu"
 
 #: src/protocols/silc/silc.c:968
-#, fuzzy
 msgid "Failed to leave channel"
-msgstr "Neuspešno priključenje razgovoru"
+msgstr "Neuspešna odjava sa kanala"
 
 #: src/protocols/silc/silc.c:1014
-#, fuzzy
 msgid "Topic too long"
-msgstr "Profil je predugačak."
+msgstr "Tema je predugačka."
 
 #: src/protocols/silc/silc.c:1095
 msgid "You must specify a nick"
-msgstr ""
+msgstr "Morate navesti nadimak"
 
 #: src/protocols/silc/silc.c:1197
-#, fuzzy, c-format
+#, c-format
 msgid "channel %s not found"
-msgstr "%s nije pronađen.\n"
+msgstr "Kanal %s nije pronađen"
 
 #: src/protocols/silc/silc.c:1202
-#, fuzzy, c-format
+#, c-format
 msgid "channel modes for %s: %s"
 msgstr "Tema kanala %s je: %s"
 
 #: src/protocols/silc/silc.c:1204
 #, c-format
 msgid "no channel modes are set on %s"
-msgstr ""
+msgstr "Nijedan pristup nije podešen za %s"
 
 #: src/protocols/silc/silc.c:1217
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to set cmodes for %s"
-msgstr "Ne mogu da sačuvam sliku: %s.\n"
+msgstr "Ne mogu da sačuvam pristupe za: %s"
 
 #: src/protocols/silc/silc.c:1247
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown command: %s, (may be a Gaim bug)"
-msgstr "Nepoznata naredba: %s"
+msgstr "Nepoznata naredba: %s (može biti i greška u GAIM-u)"
 
 #: src/protocols/silc/silc.c:1310
 msgid "part [channel]:  Leave the chat"
-msgstr ""
+msgstr "part [kanal]:  Napušta razgovor"
 
 #: src/protocols/silc/silc.c:1314
 msgid "leave [channel]:  Leave the chat"
-msgstr ""
+msgstr "leave [kanal]:  Napušta razgovor"
 
 #: src/protocols/silc/silc.c:1318
 msgid "topic [&lt;new topic&gt;]:  View or change the topic"
-msgstr ""
+msgstr "topic [&lt;nova tema&gt;]:  Pregleda ili menja temu"
 
 #: src/protocols/silc/silc.c:1323
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
 msgstr ""
+"join &lt;kanal&gt; [&lt;lozinka&gt;]:  Pristupa razgovoru na ovoj mreži"
 
 #: src/protocols/silc/silc.c:1327
 msgid "list:  List channels on this network"
-msgstr ""
+msgstr "list:  Ispisuje kanale na ovoj mreži"
 
 #: src/protocols/silc/silc.c:1331
 msgid "whois &lt;nick&gt;:  View nick's information"
-msgstr ""
+msgstr "whois &lt;nadimak&gt;:  Pregleda podatke o nadimku"
 
-#: src/protocols/silc/silc.c:1335 src/protocols/zephyr/zephyr.c:1678
+#: src/protocols/silc/silc.c:1335 src/protocols/zephyr/zephyr.c:2472
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
-msgstr ""
+msgstr "msg &lt;nadimak&gt; &lt;poruka&gt;:  Šalje privatnu poruku korisniku"
 
 #: src/protocols/silc/silc.c:1339
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
 msgstr ""
+"query &lt;nadimak&gt; [&lt;poruka&gt;]:  Šalje privatnu poruku korisniku"
 
 #: src/protocols/silc/silc.c:1343
 msgid "motd:  View the server's Message Of The Day"
-msgstr ""
+msgstr "motd:  Ispisuje poruku dana sa servera"
 
 #: src/protocols/silc/silc.c:1347
 msgid "detach:  Detach this session"
-msgstr ""
+msgstr "detach:  Otkači ovu sesiju"
 
 #: src/protocols/silc/silc.c:1351
 msgid "quit [message]:  Disconnect from the server, with an optional message"
-msgstr ""
+msgstr "quit [poruka]:  Isključuje sa servera i pritom po želji ispisuje poruku"
 
 #: src/protocols/silc/silc.c:1355
 msgid "call &lt;command&gt;:  Call any silc client command"
-msgstr ""
+msgstr "call &lt;komanda&gt;:  Izvrši bilo koju komandu SILC klijenta"
 
 #: src/protocols/silc/silc.c:1361
 msgid "kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"
-msgstr ""
+msgstr "kill &lt;nadimak&gt; [-pubkey|&lt;razlog&gt;]:  Ukloni korisnika"
 
 #: src/protocols/silc/silc.c:1365
 msgid "nick &lt;newnick&gt;:  Change your nickname"
-msgstr ""
+msgstr "nick &lt;novi nadimak&gt;:  Menja Vaš nadimak"
 
 #: src/protocols/silc/silc.c:1369
 msgid "whowas &lt;nick&gt;:  View nick's information"
-msgstr ""
+msgstr "whowas &lt;nadimak&gt;:  Prikazuje podatke o nadimku"
 
 #: src/protocols/silc/silc.c:1373
 msgid ""
 "cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display "
 "channel modes"
 msgstr ""
+"cmode &lt;kanal&gt; [+|-&lt;pristup&gt;] [argument]:  Menja ili prikazuje "
+"pristupe kanala"
 
 #: src/protocols/silc/silc.c:1377
 msgid ""
 "cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes "
 "on channel"
 msgstr ""
+"cumode &lt;kanal&gt; +|-&lt;pristupi&gt; &lt;nadimak&gt;:  Menja pristupe za "
+"dati nadimak na kanalu"
 
 #: src/protocols/silc/silc.c:1381
 msgid "umode &lt;usermodes&gt;:  Set your modes in the network"
-msgstr ""
+msgstr "umode &lt;pristupi&gt;:  Postavlja Vaše pristupe na mreži"
 
 #: src/protocols/silc/silc.c:1385
 msgid "oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"
-msgstr ""
+msgstr "oper &lt;nadimak&gt; [-pubkey]:  Dobavlja čin operatora servera"
 
 #: src/protocols/silc/silc.c:1389
 msgid ""
 "invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from "
 "channel invite list"
 msgstr ""
+"invite &lt;kanal&gt; [-|+]&lt;nadimak&gt;:  Poziva nadimak ili dodaje, "
+"odnosno uklanja sa spiska pozvanih"
 
 #: src/protocols/silc/silc.c:1393
 msgid "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
 msgstr ""
+"kick &lt;kanal&gt; &lt;nadimak&gt; [komentar]:  Odstrani nadimak sa kanala"
 
 #: src/protocols/silc/silc.c:1397
 msgid "info [server]:  View server administrative details"
-msgstr ""
+msgstr "info [server]:  Pregledaj administrativne detalje servera"
 
 #: src/protocols/silc/silc.c:1401
 msgid "ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"
-msgstr ""
+msgstr "ban [&lt;kanal&gt; +|-&lt;nadimak&gt;]:  Zabrani pristup nadimku"
 
 #: src/protocols/silc/silc.c:1405
 msgid "getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"
 msgstr ""
+"getkey &lt;nadimak|server&gt;:  Dobavi korisnikov ili serverov javni ključ"
 
 #: src/protocols/silc/silc.c:1409
 msgid "stats:  View server and network statistics"
-msgstr ""
+msgstr "stats:  Pregledaj serverske statistike"
 
 #: src/protocols/silc/silc.c:1413
 msgid "ping:  Send PING to the connected server"
-msgstr ""
+msgstr "ping:  Šalje PING povezanom serveru"
 
 #: src/protocols/silc/silc.c:1418
 msgid "users &lt;channel&gt;:  List users in channel"
-msgstr ""
+msgstr "users &lt;kanal&gt;:  Ispisuje korisnike na kanalu"
 
 #: src/protocols/silc/silc.c:1422
 msgid ""
 "names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List "
 "specific users in channel(s)"
 msgstr ""
+"names [-count|-ops|-halfops|-voices|-normal] &lt;kanal(i)&gt;:  Ispisuje "
+"određene korisnike na kanalu, odn. kanalima"
 
 #: src/protocols/silc/silc.c:1434
-#, fuzzy
 msgid "Instant Messages"
-msgstr "Brzi pošiljaoci"
+msgstr "Brze poruke"
 
 #: src/protocols/silc/silc.c:1439
-#, fuzzy
 msgid "Digitally sign all IM messages"
-msgstr "Beleži sve _brze poruke"
+msgstr "Digitalno potpiši sve _brze poruke"
 
 #: src/protocols/silc/silc.c:1444
 msgid "Verify all IM message signatures"
-msgstr ""
+msgstr "Proveri sve potpise brzih poruka"
 
 #: src/protocols/silc/silc.c:1447
-#, fuzzy
 msgid "Channel Messages"
-msgstr "Poruke za odsustvo"
+msgstr "Poruke za kanal"
 
 #: src/protocols/silc/silc.c:1452
-#, fuzzy
 msgid "Digitally sign all channel messages"
-msgstr "Beleži sve _brze poruke"
+msgstr "Digitalno potpiši sve poruke za kanal"
 
 #: src/protocols/silc/silc.c:1457
 msgid "Verify all channel message signatures"
-msgstr ""
+msgstr "Proveri potpise svih poruka na kanalu"
 
 #: src/protocols/silc/silc.c:1460
 msgid "Default SILC Key Pair"
-msgstr ""
+msgstr "Podrazumevani par ključeva za SILC"
 
 #: src/protocols/silc/silc.c:1465
 msgid "SILC Public Key"
-msgstr ""
+msgstr "SILC javni ključ"
 
 #: src/protocols/silc/silc.c:1470
-#, fuzzy
 msgid "SILC Private Key"
-msgstr "Privatno"
+msgstr "SILC privatni ključ"
 
 #. *< api_version
 #. *< type
@@ -10050,92 +9866,88 @@ msgstr "Privatno"
 #. *< version
 #. *  summary
 #: src/protocols/silc/silc.c:1557
-#, fuzzy
 msgid "SILC Protocol Plugin"
-msgstr "Dodatak za IRC protokol"
+msgstr "Dodatak za SILC protokol"
 
 #. *  description
 #: src/protocols/silc/silc.c:1559
 msgid "Secure Internet Live Conferencing (SILC) Protocol"
-msgstr ""
+msgstr "Secure Internet Live Conferencing (SILC) protokol"
 
 #: src/protocols/silc/silc.c:1589
-#, fuzzy
 msgid "Public key authentication"
-msgstr "Neuspešna Jahu! identifikacija"
+msgstr "Prijava sa javnim ključem"
 
 #: src/protocols/silc/silc.c:1595
 msgid "Public Key File"
-msgstr ""
+msgstr "Datoteka sa javnim ključem"
 
 #: src/protocols/silc/silc.c:1599
-#, fuzzy
 msgid "Private Key File"
-msgstr "Privatno"
+msgstr "Datoteka sa javnim ključem"
 
 #: src/protocols/silc/silc.c:1604
 msgid "Reject watching by other users"
-msgstr ""
+msgstr "Odbij posmatranje od drugih korisnika"
 
 #: src/protocols/silc/silc.c:1607
-#, fuzzy
 msgid "Block invites"
-msgstr "Blokiraj korisnika"
+msgstr "Blokiraj pozive"
 
 #: src/protocols/silc/silc.c:1610
 msgid "Block IMs without Key Exchange"
-msgstr ""
+msgstr "Blokiraj brze poruke bez razmene ključeva"
 
 #: src/protocols/silc/silc.c:1613
 msgid "Reject online status attribute requests"
-msgstr ""
+msgstr "Odbij zahteve za objavu statusa"
 
 #: src/protocols/silc/util.c:202 src/protocols/silc/util.c:227
 msgid "Creating SILC key pair..."
-msgstr ""
+msgstr "Izrada SILC para ključeva je u toku..."
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
 #. sum: 3 tabs or 24 characters)
 #: src/protocols/silc/util.c:310
-#, fuzzy, c-format
+#, c-format
 msgid "Real Name: \t%s\n"
-msgstr "Ime"
+msgstr "Pravo ime: \t%s\n"
 
 #: src/protocols/silc/util.c:312
-#, fuzzy, c-format
+#, c-format
 msgid "User Name: \t%s\n"
-msgstr "_Korisničko ime:"
+msgstr "Korisničko ime: \t%s\n"
 
 #: src/protocols/silc/util.c:314
 #, c-format
 msgid "EMail: \t\t%s\n"
-msgstr ""
+msgstr "El.adresa: \t\t%s\n"
 
 #: src/protocols/silc/util.c:316
-#, fuzzy, c-format
+#, c-format
 msgid "Host Name: \t%s\n"
-msgstr "Ime:"
+msgstr "Računar: \t%s\n"
 
 #: src/protocols/silc/util.c:318
-#, fuzzy, c-format
+#, c-format
 msgid "Organization: \t%s\n"
-msgstr "Naziv organizacije"
+msgstr "Organizacija: \t%s\n"
 
 #: src/protocols/silc/util.c:320
-#, fuzzy, c-format
+#, c-format
 msgid "Country: \t%s\n"
-msgstr "Država"
+msgstr "Država: \t%s\n"
 
 #: src/protocols/silc/util.c:321
 #, c-format
 msgid "Algorithm: \t%s\n"
-msgstr ""
+msgstr "Algoritam: \t%s\n"
 
 #: src/protocols/silc/util.c:322
 #, c-format
 msgid "Key Length: \t%d bits\n"
-msgstr ""
+msgstr "Dužina ključa: \t%d\n"
 
 #: src/protocols/silc/util.c:324
 #, c-format
@@ -10144,6 +9956,9 @@ msgid ""
 "%s\n"
 "\n"
 msgstr ""
+"Otisak javnog ključa\n"
+"%s\n"
+"\n"
 
 #: src/protocols/silc/util.c:325
 #, c-format
@@ -10151,29 +9966,28 @@ msgid ""
 "Public Key Babbleprint:\n"
 "%s"
 msgstr ""
+"Sažetak javnog ključa:\n"
+"%s"
 
 #: src/protocols/silc/util.c:329 src/protocols/silc/util.c:330
-#, fuzzy
 msgid "Public Key Information"
-msgstr "Podaci o profilu"
+msgstr "Podaci o javnom ključu"
 
 #: src/protocols/silc/util.c:512
-#, fuzzy
 msgid "Paging"
 msgstr "Zapisivanje"
 
 #: src/protocols/silc/util.c:536
-#, fuzzy
 msgid "Computer"
-msgstr "Država"
+msgstr "Računar"
 
 #: src/protocols/silc/util.c:540
 msgid "PDA"
-msgstr ""
+msgstr "PDA"
 
 #: src/protocols/silc/util.c:542
 msgid "Terminal"
-msgstr ""
+msgstr "Terminal"
 
 #: src/protocols/toc/toc.c:136
 #, c-format
@@ -10481,28 +10295,28 @@ msgstr "Dodatak za Trepia protokol"
 msgid ""
 "You have been logged off as you have logged in on a different machine or "
 "device."
-msgstr ""
+msgstr "Isključeni ste jer ste se prijavili sa drugog računara ili uređaja."
 
-#: src/protocols/yahoo/yahoo.c:808
+#: src/protocols/yahoo/yahoo.c:813
 msgid "Your Yahoo! message did not get sent."
 msgstr "Vaša Jahu! poruka nije poslata."
 
-#: src/protocols/yahoo/yahoo.c:827
+#: src/protocols/yahoo/yahoo.c:832
 msgid "Buzz!!"
-msgstr ""
+msgstr "Zvrnd!"
 
-#: src/protocols/yahoo/yahoo.c:870
+#: src/protocols/yahoo/yahoo.c:875
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Jahu! sistemska poruka za %s:"
 
-#: src/protocols/yahoo/yahoo.c:936
+#: src/protocols/yahoo/yahoo.c:941
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
 msgstr ""
 "Korisnik %s je (naknadno) odbio zahtev da ga dodate u vaš spisak drugara."
 
-#: src/protocols/yahoo/yahoo.c:939
+#: src/protocols/yahoo/yahoo.c:944
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10511,11 +10325,11 @@ msgstr ""
 "Korisnik %s je (naknadno) odbio zahtev da ga dodate u vaš spisak drugara iz "
 "sledećeg razloga: %s."
 
-#: src/protocols/yahoo/yahoo.c:942
+#: src/protocols/yahoo/yahoo.c:947
 msgid "Add buddy rejected"
 msgstr "Odbijeno dodavanje drugara"
 
-#: src/protocols/yahoo/yahoo.c:1702
+#: src/protocols/yahoo/yahoo.c:1708
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -10526,11 +10340,11 @@ msgstr ""
 "izdanje Gaima najverovatnije neće moći da se prijavi na Jahu. Proverite %s "
 "radi dopuna."
 
-#: src/protocols/yahoo/yahoo.c:1705
+#: src/protocols/yahoo/yahoo.c:1711
 msgid "Failed Yahoo! Authentication"
 msgstr "Neuspešna Jahu! identifikacija"
 
-#: src/protocols/yahoo/yahoo.c:1777
+#: src/protocols/yahoo/yahoo.c:1783
 #, c-format
 msgid ""
 "You have tried to ignore %s, but the user is on your buddy list.  Clicking "
@@ -10539,112 +10353,114 @@ msgstr ""
 "Pokušali ste da ignorišete %s, ali taj korisnik je već u vašem spisku "
 "drugara. Klikom na „Da“ ćete ukloniti i ignorisati ovog drugara."
 
-#: src/protocols/yahoo/yahoo.c:1780
+#: src/protocols/yahoo/yahoo.c:1786
 msgid "Ignore buddy?"
 msgstr "Ignoriši drugara?"
 
-#: src/protocols/yahoo/yahoo.c:1814
+#: src/protocols/yahoo/yahoo.c:1820
 msgid "Invalid username."
 msgstr "Neispravno korisničko ime."
 
-#: src/protocols/yahoo/yahoo.c:1825
-#, fuzzy
+#: src/protocols/yahoo/yahoo.c:1831
 msgid "Normal authentication failed!"
-msgstr "Neuspešna identifikacija"
+msgstr "Obična identifikacija neuspešna"
 
-#: src/protocols/yahoo/yahoo.c:1826
+#: src/protocols/yahoo/yahoo.c:1832
 msgid ""
 "The normal authentication method has failed. This means either your password "
 "is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""
+"Normalna procedura za prijavu nije uspela. To znači da je ili lozinka "
+"neispravna ili da je Yahoo! servis promenio način prijave. GAIM će pokušati "
+"da se poveže koristeći metodu Web Messenger, što ima za posledicu smanjenu "
+"funkcionalnost."
 
-#: src/protocols/yahoo/yahoo.c:1834
+#: src/protocols/yahoo/yahoo.c:1840
 msgid "Incorrect password."
 msgstr "Neispravna lozinka."
 
-#: src/protocols/yahoo/yahoo.c:1837
-#, fuzzy
+#: src/protocols/yahoo/yahoo.c:1843
 msgid "Your account is locked, please log in to the Yahoo! website."
 msgstr "Vaš nalog je zaključan, prijavite se na Jahu! veb stranicu."
 
-#: src/protocols/yahoo/yahoo.c:1840
+#: src/protocols/yahoo/yahoo.c:1846
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
-msgstr ""
+msgstr "Nepoznat broj greške: %d. Prijava na Yahoo! možda može da to otkloni."
 
-#: src/protocols/yahoo/yahoo.c:1894
+#: src/protocols/yahoo/yahoo.c:1900
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
 msgstr "Ne mogu da dodam drugara %s u grupu %s u spisak servera za nalog %s."
 
-#: src/protocols/yahoo/yahoo.c:1897
+#: src/protocols/yahoo/yahoo.c:1903
 msgid "Could not add buddy to server list"
 msgstr "Ne mogu da dodam drugara u spisak servera"
 
-#: src/protocols/yahoo/yahoo.c:2131 src/protocols/yahoo/yahoo.c:2259
+#: src/protocols/yahoo/yahoo.c:2137 src/protocols/yahoo/yahoo.c:2265
 #: src/protocols/yahoo/ycht.c:414
 msgid "Unable to read"
 msgstr "Ne mogu da pišem"
 
-#: src/protocols/yahoo/yahoo.c:2281 src/protocols/yahoo/yahoo.c:2391
-#: src/protocols/yahoo/yahoo.c:2441 src/protocols/yahoo/yahoo.c:2451
+#: src/protocols/yahoo/yahoo.c:2287 src/protocols/yahoo/yahoo.c:2397
+#: src/protocols/yahoo/yahoo.c:2447 src/protocols/yahoo/yahoo.c:2457
 #: src/protocols/yahoo/yahoochat.c:1410 src/protocols/yahoo/yahoochat.c:1471
 #: src/protocols/yahoo/ycht.c:518
 msgid "Connection problem"
 msgstr "Greška pri povezivanju"
 
-#: src/protocols/yahoo/yahoo.c:2547 src/protocols/yahoo/yahoo.c:2914
-#: src/protocols/yahoo/yahoo.c:3028
+#: src/protocols/yahoo/yahoo.c:2553 src/protocols/yahoo/yahoo.c:2920
+#: src/protocols/yahoo/yahoo.c:3034
 msgid "Not At Home"
 msgstr "Nisam kod kuće"
 
-#: src/protocols/yahoo/yahoo.c:2549 src/protocols/yahoo/yahoo.c:2916
-#: src/protocols/yahoo/yahoo.c:3029
+#: src/protocols/yahoo/yahoo.c:2555 src/protocols/yahoo/yahoo.c:2922
+#: src/protocols/yahoo/yahoo.c:3035
 msgid "Not At Desk"
 msgstr "Nisam za stolom"
 
-#: src/protocols/yahoo/yahoo.c:2551 src/protocols/yahoo/yahoo.c:2918
-#: src/protocols/yahoo/yahoo.c:3030
+#: src/protocols/yahoo/yahoo.c:2557 src/protocols/yahoo/yahoo.c:2924
+#: src/protocols/yahoo/yahoo.c:3036
 msgid "Not In Office"
 msgstr "Nisam u kancelariji"
 
-#: src/protocols/yahoo/yahoo.c:2555 src/protocols/yahoo/yahoo.c:2922
-#: src/protocols/yahoo/yahoo.c:3032
+#: src/protocols/yahoo/yahoo.c:2561 src/protocols/yahoo/yahoo.c:2928
+#: src/protocols/yahoo/yahoo.c:3038
 msgid "On Vacation"
 msgstr "Na raspustu sam"
 
-#: src/protocols/yahoo/yahoo.c:2559 src/protocols/yahoo/yahoo.c:2926
-#: src/protocols/yahoo/yahoo.c:3034
+#: src/protocols/yahoo/yahoo.c:2565 src/protocols/yahoo/yahoo.c:2932
+#: src/protocols/yahoo/yahoo.c:3040
 msgid "Stepped Out"
 msgstr "Izašao sam na kratko"
 
-#: src/protocols/yahoo/yahoo.c:2640 src/protocols/yahoo/yahoo.c:2666
+#: src/protocols/yahoo/yahoo.c:2646 src/protocols/yahoo/yahoo.c:2672
 msgid "Not on server list"
 msgstr "Nije na spisku na serveru"
 
-#: src/protocols/yahoo/yahoo.c:2745
+#: src/protocols/yahoo/yahoo.c:2751
 msgid "Join in Chat"
 msgstr "Priključi se razgovoru"
 
-#: src/protocols/yahoo/yahoo.c:2750
+#: src/protocols/yahoo/yahoo.c:2756
 msgid "Initiate Conference"
 msgstr "Pokreni razgovor"
 
-#: src/protocols/yahoo/yahoo.c:2802
+#: src/protocols/yahoo/yahoo.c:2808
 msgid "Active which ID?"
 msgstr "Aktiviraj ID (koji)?"
 
-#: src/protocols/yahoo/yahoo.c:2811
+#: src/protocols/yahoo/yahoo.c:2817
 msgid "Join who in chat?"
 msgstr "Priključi se kome razgovoru?"
 
-#: src/protocols/yahoo/yahoo.c:2821
+#: src/protocols/yahoo/yahoo.c:2827
 msgid "Activate ID..."
 msgstr "Aktiviraj ID..."
 
-#: src/protocols/yahoo/yahoo.c:2825
+#: src/protocols/yahoo/yahoo.c:2831
 msgid "Join user in chat..."
 msgstr "Priključi korisnika razgovoru..."
 
@@ -10659,91 +10475,85 @@ msgstr "Priključi korisnika razgovoru..."
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3350 src/protocols/yahoo/yahoo.c:3352
+#: src/protocols/yahoo/yahoo.c:3356 src/protocols/yahoo/yahoo.c:3358
 msgid "Yahoo Protocol Plugin"
 msgstr "Dodatak za Jahu protokol"
 
-#: src/protocols/yahoo/yahoo.c:3371
-#, fuzzy
+#: src/protocols/yahoo/yahoo.c:3377
 msgid "Yahoo Japan"
-msgstr "Jahu"
+msgstr "Jahu Japan"
 
-#: src/protocols/yahoo/yahoo.c:3374
+#: src/protocols/yahoo/yahoo.c:3380
 msgid "Pager host"
 msgstr "Server"
 
-#: src/protocols/yahoo/yahoo.c:3377
-#, fuzzy
+#: src/protocols/yahoo/yahoo.c:3383
 msgid "Japan Pager host"
-msgstr "Server"
+msgstr "Japanski pejdžer"
 
-#: src/protocols/yahoo/yahoo.c:3380
+#: src/protocols/yahoo/yahoo.c:3386
 msgid "Pager port"
 msgstr "Port"
 
-#: src/protocols/yahoo/yahoo.c:3383
+#: src/protocols/yahoo/yahoo.c:3389
 msgid "File transfer host"
 msgstr "Domaćin za prenos datoteka"
 
-#: src/protocols/yahoo/yahoo.c:3386
-#, fuzzy
+#: src/protocols/yahoo/yahoo.c:3392
 msgid "Japan File transfer host"
-msgstr "Domaćin za prenos datoteka"
+msgstr "Japanski domaćin za prenos datoteka"
 
-#: src/protocols/yahoo/yahoo.c:3389
+#: src/protocols/yahoo/yahoo.c:3395
 msgid "File transfer port"
 msgstr "Port za prenos datoteka"
 
-#: src/protocols/yahoo/yahoo.c:3392
-msgid "Chat Room List Url"
-msgstr ""
-
-#: src/protocols/yahoo/yahoo.c:3395
-msgid "YCHT Host"
-msgstr ""
-
 #: src/protocols/yahoo/yahoo.c:3398
-#, fuzzy
+msgid "Chat Room List Url"
+msgstr "URL za spisak soba"
+
+#: src/protocols/yahoo/yahoo.c:3401
+msgid "YCHT Host"
+msgstr "YCHT Host"
+
+#: src/protocols/yahoo/yahoo.c:3404
 msgid "YCHT Port"
-msgstr "Port"
+msgstr "YCHT Port"
 
 #: src/protocols/yahoo/yahoo_filexfer.c:170
 msgid ""
 "Gaim cannot send files over Yahoo! that are bigger than One Megabyte "
 "(1,048,576 bytes)."
 msgstr ""
+"GAIM ne može da preko servisa Yahoo! šalje datoteke veće od jednog megabajta "
+"(1048576 bajtova)."
 
 #: src/protocols/yahoo/yahoo_profile.c:675
-#, fuzzy, c-format
+#, c-format
 msgid "<b>IP Address:</b> %s<br>"
-msgstr "<b>IP adresa:</b> "
+msgstr "<b>IP adresa:</b> %s<br>"
 
 #: src/protocols/yahoo/yahoo_profile.c:749
 msgid "Yahoo! Japan Profile"
-msgstr ""
+msgstr "Profil za Yahoo! Japan"
 
 #: src/protocols/yahoo/yahoo_profile.c:750
-#, fuzzy
 msgid "Yahoo! Profile"
-msgstr "Profil"
+msgstr "Jahu profil"
 
 #: src/protocols/yahoo/yahoo_profile.c:794
-#, fuzzy
 msgid ""
 "Sorry, profiles marked as containing adult content are not supported at this "
 "time."
 msgstr ""
-"<b>Nažalost, za sada nisu podržani profili koji sadrže ponešto samo za "
-"odrasle.</b><br><br>\n"
+"Na žalost, profili koji imaju sadržaj za odrasle trenutno nisu podržani."
 
 #: src/protocols/yahoo/yahoo_profile.c:796
-#, fuzzy
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser"
 msgstr ""
 "Ukoliko želite da pogledate ovaj profil, treba da posetite ovu vezu u vašem "
-"čitaču veba.<br>"
+"čitaču veba."
 
 #: src/protocols/yahoo/yahoo_profile.c:969
 msgid "Yahoo! ID"
@@ -10782,17 +10592,18 @@ msgid "User information for %s unavailable"
 msgstr "Podaci o korisniku %s nedostupni"
 
 #: src/protocols/yahoo/yahoo_profile.c:1136
-#, fuzzy
 msgid ""
 "Sorry, this profile seems to be in a language that is not supported at this "
 "time."
-msgstr "<b>Nažalost, ne-engleski profili nisu podržani za sada.</b><br><br>\n"
+msgstr "Ovaj profil je napisan na jeziku koji trenutno nije podržan."
 
 #: src/protocols/yahoo/yahoo_profile.c:1152
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
 "server-side problem. Please try again later."
 msgstr ""
+"Nije moguće dobaviti korisnikov profil. To je verovatno prolazni problem na "
+"serveru. Molimo pokušajte kasnije."
 
 #: src/protocols/yahoo/yahoo_profile.c:1155
 msgid ""
@@ -10800,6 +10611,9 @@ msgid ""
 "does not exist; however, Yahoo! sometimes does fail to find a user's "
 "profile. If you know that the user exists, please try again later."
 msgstr ""
+"Nije moguće dobaviti korisnikov profil. To verovatno znači da korisnik ne "
+"postoji; međutim, Yahoo! ponekada ne uspe da pronađe korisnikov profil. Ako "
+"ste sigurni da korisnik postoji, probajte kasnije."
 
 #: src/protocols/yahoo/yahoo_profile.c:1163
 msgid "The user's profile is empty."
@@ -10823,9 +10637,9 @@ msgid "Maybe the room is full?"
 msgstr "Možda je soba popunjena?"
 
 #: src/protocols/yahoo/yahoochat.c:425
-#, fuzzy, c-format
+#, c-format
 msgid "You are now chatting in %s."
-msgstr "Izbačeni ste sa %s."
+msgstr "Razgovarate na %s."
 
 #: src/protocols/yahoo/yahoochat.c:579
 msgid "Failed to join buddy in chat"
@@ -10840,130 +10654,138 @@ msgid "Unable to connect"
 msgstr "Nemoguće povezivanje"
 
 #: src/protocols/yahoo/yahoochat.c:1351
-#, fuzzy
 msgid "Fetching the room list failed."
-msgstr "Možda je soba popunjena?"
+msgstr "Dobavljanje spiska soba nije uspelo."
 
 #: src/protocols/yahoo/yahoochat.c:1396
-#, fuzzy
 msgid "Voices"
 msgstr "Glas"
 
 #: src/protocols/yahoo/yahoochat.c:1399
 msgid "Webcams"
-msgstr ""
+msgstr "Kamere"
 
 #: src/protocols/yahoo/yahoochat.c:1410 src/protocols/yahoo/yahoochat.c:1471
-#, fuzzy
 msgid "Unable to fetch room list."
-msgstr "Ne mogu da postavim AIM profil."
+msgstr "Ne mogu da dobavim spisak soba."
 
 #: src/protocols/yahoo/yahoochat.c:1464
-#, fuzzy
 msgid "User Rooms"
-msgstr "Korisnički izbori"
+msgstr "Korisničke sobe"
 
 #: src/protocols/yahoo/ycht.c:401
-#, fuzzy
 msgid "Connection problem with the YCHT server."
-msgstr "Greška pri povezivanju"
+msgstr "Problem pri povezivanju na YCHT server."
 
-#: src/protocols/zephyr/zephyr.c:597
+#: src/protocols/zephyr/zephyr.c:327
+msgid ""
+"(There was an error converting this message.\t Check the 'Encoding' option "
+"in the Account Editor)"
+msgstr "(Došlo je do greške pri pretvaranju ove poruke.\t Proverite opciju „Način zapisa“ u Uredniku naloga)"
+
+#: src/protocols/zephyr/zephyr.c:675
 #, c-format
 msgid "Unable send to chat %s,%s,%s"
-msgstr ""
+msgstr "Ne mogu da pošaljem razgovor %s,%s,%s"
 
-#: src/protocols/zephyr/zephyr.c:632
+#: src/protocols/zephyr/zephyr.c:711 src/protocols/zephyr/zephyr.c:1126
 #, c-format
 msgid "<b>User:</b> %s<br>"
 msgstr "<b>Korisnik:</b> %s<br>"
 
-#: src/protocols/zephyr/zephyr.c:636
+#: src/protocols/zephyr/zephyr.c:715 src/protocols/zephyr/zephyr.c:1131
 msgid "<br>Hidden or not logged-in"
 msgstr "<br>Sakriven ili neprijavljen"
 
-#: src/protocols/zephyr/zephyr.c:641
+#: src/protocols/zephyr/zephyr.c:720 src/protocols/zephyr/zephyr.c:1133
 #, c-format
 msgid "<br>At %s since %s"
 msgstr "<br>U %s od %s"
 
-#: src/protocols/zephyr/zephyr.c:989 src/protocols/zephyr/zephyr.c:990
+#: src/protocols/zephyr/zephyr.c:1416 src/protocols/zephyr/zephyr.c:1417
 msgid "Anyone"
 msgstr "Bilo ko"
 
-#: src/protocols/zephyr/zephyr.c:1391
+#: src/protocols/zephyr/zephyr.c:2167
 msgid "_Class:"
 msgstr "_Razred:"
 
-#: src/protocols/zephyr/zephyr.c:1397
+#: src/protocols/zephyr/zephyr.c:2173
 msgid "_Instance:"
 msgstr "_Primerak:"
 
-#: src/protocols/zephyr/zephyr.c:1403
+#: src/protocols/zephyr/zephyr.c:2179
 msgid "_Recipient:"
 msgstr "Pri_malac:"
 
-#: src/protocols/zephyr/zephyr.c:1414
+#: src/protocols/zephyr/zephyr.c:2190
 #, c-format
 msgid "Attempt to subscribe to %s,%s,%s failed"
-msgstr ""
+msgstr "Nije uspeo pokušaj prijave na %s,%s,%s"
 
-#: src/protocols/zephyr/zephyr.c:1683
+#: src/protocols/zephyr/zephyr.c:2477
 msgid "zlocate &lt;nick&gt;: Locate user"
-msgstr ""
+msgstr "zlocate &lt;nadimak&gt;: Lociraj korisnika"
 
-#: src/protocols/zephyr/zephyr.c:1688
+#: src/protocols/zephyr/zephyr.c:2482
 msgid "zl &lt;nick&gt;: Locate user"
-msgstr ""
+msgstr "zl &lt;nadimak&gt;: Lociraj korisnika"
 
-#: src/protocols/zephyr/zephyr.c:1693
+#: src/protocols/zephyr/zephyr.c:2487
 msgid "instance &lt;instance&gt;: Set the instance to be used on this class"
 msgstr ""
+"instance &lt;primerak&gt;: Postavlja primerak koji se koristi za ovu klasu"
 
-#: src/protocols/zephyr/zephyr.c:1698
+#: src/protocols/zephyr/zephyr.c:2492
 msgid "inst &lt;instance&gt;: Set the instance to be used on this class"
-msgstr ""
+msgstr "inst &lt;primerak&gt;: Postavlja primerak koji se koristi za ovu klasu"
 
-#: src/protocols/zephyr/zephyr.c:1704
+#: src/protocols/zephyr/zephyr.c:2498
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
 msgstr ""
+"sub &lt;klasa&gt; &lt;primerak&gt; &lt;primalac&gt;: Pridružuje se novom "
+"razgovoru"
 
-#: src/protocols/zephyr/zephyr.c:1709
+#: src/protocols/zephyr/zephyr.c:2503
 msgid ""
 "zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
-msgstr ""
+msgstr "zi &lt;primerak&gt;: Šalje poruku &lt;poruka,<i>primerak</i>,*&gt;"
 
-#: src/protocols/zephyr/zephyr.c:1715
+#: src/protocols/zephyr/zephyr.c:2509
 msgid ""
 "zci &lt;class&gt; &lt;instance&gt;: Send a message to &lt;<i>class</i>,"
 "<i>instance</i>,*&gt;"
 msgstr ""
+"zci &lt;klasa&gt; &lt;primerak&gt;: Šaljnj poruku za &lt;<i>klasa</i>,"
+"<i>primerak</i>,*&gt;"
 
-#: src/protocols/zephyr/zephyr.c:1721
+#: src/protocols/zephyr/zephyr.c:2515
 msgid ""
 "zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;"
 "<i>class</i>,<i>instance</i>,<i>recipient</i>&gt;"
 msgstr ""
+"zcir &lt;klasa&gt; &lt;primerak&gt; &lt;primalac&gt;: Šalje poruke za &lt;"
+"<i>klasa</i>,<i>primerak</i>,<i>primalac</i>&gt;"
 
-#: src/protocols/zephyr/zephyr.c:1727
+#: src/protocols/zephyr/zephyr.c:2521
 msgid ""
 "zir &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;MESSAGE,"
 "<i>instance</i>,<i>recipient</i>&gt;"
 msgstr ""
+"zir &lt;primerak&gt; &lt;primalac&gt;: Šalje poruku &lt;PORUKA,<i>primerak</"
+"i>,<i>primalac</i>&gt;"
 
-#: src/protocols/zephyr/zephyr.c:1732
+#: src/protocols/zephyr/zephyr.c:2526
 msgid "zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"
-msgstr ""
+msgstr "zc &lt;klasa&gt;: Šalje poruku za &lt;<i>klasa</i>,LIČNO,*&gt;"
 
-#: src/protocols/zephyr/zephyr.c:1808
-#, fuzzy
+#: src/protocols/zephyr/zephyr.c:2632
 msgid "Resubscribe"
-msgstr "Odjavi se"
+msgstr "Opet se prijavi"
 
-#: src/protocols/zephyr/zephyr.c:1811
-#, fuzzy
+#: src/protocols/zephyr/zephyr.c:2635
 msgid "Retrieve subscriptions from server"
-msgstr "Neispravan odgovor servera"
+msgstr "Dobavi prijave sa servera"
 
 #. *< api_version
 #. *< type
@@ -10976,28 +10798,29 @@ msgstr "Neispravan odgovor servera"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/zephyr/zephyr.c:1892 src/protocols/zephyr/zephyr.c:1894
+#: src/protocols/zephyr/zephyr.c:2716 src/protocols/zephyr/zephyr.c:2718
 msgid "Zephyr Protocol Plugin"
 msgstr "Dodatak za Zefir protokol"
 
-#: src/protocols/zephyr/zephyr.c:1913
+#: src/protocols/zephyr/zephyr.c:2743
 msgid "Export to .anyone"
-msgstr ""
+msgstr "Izvezi u .anyone"
 
-#: src/protocols/zephyr/zephyr.c:1916
+#: src/protocols/zephyr/zephyr.c:2746
 msgid "Export to .zephyr.subs"
-msgstr ""
+msgstr "Izvezi u .zephyr.subs"
 
-#: src/protocols/zephyr/zephyr.c:1919
+# Šta je bre ovo?!
+#: src/protocols/zephyr/zephyr.c:2749
 msgid "Exposure"
-msgstr ""
+msgstr "Izlaganje"
 
 #. XXX: why in the hell are we calling gaim_connection_error() here?
 #. Forbidden
 #: src/proxy.c:870
-#, fuzzy, c-format
+#, c-format
 msgid "Access denied: proxy server forbids port %d tunnelling."
-msgstr "Pristup odbijen: posrednik odbija tunel na portu 80."
+msgstr "Pristup odbijen: posrednik odbija tunel na portu %d."
 
 #: src/proxy.c:874
 #, c-format
@@ -11033,9 +10856,9 @@ msgid "Please enter your password"
 msgstr "Unesite Vašu lozinku"
 
 #: src/server.c:535
-#, fuzzy, c-format
+#, c-format
 msgid "%s is now known as %s.\n"
-msgstr "%s je promenio(la) ime u %s"
+msgstr "%s je promenio(la) ime u %s.\n"
 
 #: src/server.c:946
 #, c-format
@@ -11056,29 +10879,29 @@ msgid "%s logged in."
 msgstr "%s se prijavi."
 
 #: src/server.c:1210
-#, fuzzy, c-format
+#, c-format
 msgid "%s signed on"
 msgstr "%s se prijavio(la)"
 
 #: src/server.c:1225
-#, fuzzy, c-format
+#, c-format
 msgid "%s came back"
-msgstr "+++ %s (%s) se vratio(la) @ %s"
+msgstr "%s se vratio(la)"
 
 #: src/server.c:1227
-#, fuzzy, c-format
+#, c-format
 msgid "%s went away"
-msgstr "%s je odišao(la) na odsustvo."
+msgstr "%s je otišao(la) na odsustvo."
 
 #: src/server.c:1241
-#, fuzzy, c-format
+#, c-format
 msgid "%s became idle"
 msgstr "%s se uspavao(la)"
 
 #: src/server.c:1252
-#, fuzzy, c-format
+#, c-format
 msgid "%s became unidle"
-msgstr "%s se uspavao(la)"
+msgstr "%s se probudio(la)"
 
 #: src/server.c:1262 src/server.c:1269
 #, c-format
@@ -11086,7 +10909,7 @@ msgid "%s logged out."
 msgstr "%s se odjavi."
 
 #: src/server.c:1282
-#, fuzzy, c-format
+#, c-format
 msgid "%s signed off"
 msgstr "%s se odjavio(la)"
 
@@ -11129,12 +10952,10 @@ msgid "Sorry, I ran out for a bit!"
 msgstr "Žalim, ali mene nema. Vratiću se jednog dana, ne znam ni ja kad!"
 
 #: src/stock.c:87
-#, fuzzy
 msgid "_Alias"
 msgstr "Nadimak"
 
 #: src/stock.c:89
-#, fuzzy
 msgid "_Invite"
 msgstr "Pozovi"
 
@@ -11159,12 +10980,11 @@ msgid "Unknown."
 msgstr "Nepoznato."
 
 #: src/util.c:2381
-#, fuzzy
 msgid "second"
 msgid_plural "seconds"
-msgstr[0] "Ikonica"
-msgstr[1] "Ikonica"
-msgstr[2] "Ikonica"
+msgstr[0] "sekunda"
+msgstr[1] "sekunde"
+msgstr[2] "sekundi"
 
 #: src/util.c:2395
 msgid "day"
@@ -11204,17 +11024,18 @@ msgstr "Premešta podešavanja Gaima u: "
 msgid "Notification"
 msgstr "Obaveštenje"
 
+#~ msgid "Update Buddy Icon"
+#~ msgstr "Obnovi sličicu drugara"
+
 #~ msgid "That file does not exist."
 #~ msgstr "Datoteka ne postoji."
 
 #~ msgid "%s was not found.\n"
 #~ msgstr "%s nije pronađen.\n"
 
-#, fuzzy
 #~ msgid "Userid"
 #~ msgstr "_Korisnik:"
 
-#, fuzzy
 #~ msgid "Your message did not get sent."
 #~ msgstr "Vaša Jahu! poruka nije poslata."
 
@@ -11273,7 +11094,6 @@ msgstr "Obaveštenje"
 #~ msgid "_Bold"
 #~ msgstr "_Masno"
 
-#, fuzzy
 #~ msgid "_Italic"
 #~ msgstr "_Kurzivno"
 
@@ -11315,10 +11135,6 @@ msgstr "Obaveštenje"
 
 #~ msgid "Show _numbers in groups"
 #~ msgstr "Prikaži _brojeve u grupama"
-
-#, fuzzy
-#~ msgid "Send _URLs as links"
-#~ msgstr "Prikaži _Internet adrese kao veze"
 
 #~ msgid "Show IMs and chats in _same tabbed window"
 #~ msgstr "Prikaži brze poruke i razgovore u _istom lisnatom prozoru"
@@ -11365,16 +11181,8 @@ msgstr "Obaveštenje"
 #~ msgid "_Show people leaving in window"
 #~ msgstr "Prikaži u prozoru ljude koji _odlaze"
 
-#, fuzzy
-#~ msgid "Co_lorize screen names"
-#~ msgstr "_Bojenje imena"
-
 #~ msgid "Proxy Type"
 #~ msgstr "Vrsta proksija"
-
-#, fuzzy
-#~ msgid "Sounds when you _log in"
-#~ msgstr "_Bez zvuka po prijavi"
 
 #~ msgid "_Sending messages removes away status"
 #~ msgstr "Slanje poruka Vas vraća sa _odsustva"
@@ -11394,16 +11202,8 @@ msgstr "Obaveštenje"
 #~ msgid "Proxy"
 #~ msgstr "Proksi"
 
-#, fuzzy
 #~ msgid "Protocols"
-#~ msgstr "Protokol"
-
-#, fuzzy
-#~ msgid ""
-#~ "You are not currently signed on with any protocols that have the ability "
-#~ "to list rooms."
-#~ msgstr ""
-#~ "Trenutno niste povezani niti na jedan protokol koji omogućava razgovore."
+#~ msgstr "Protokoli"
 
 #~ msgid ""
 #~ "<B>Supported IRC Commands:</B><BR>AWAY INVITE JOIN KICK<BR>ME MODE MSG "
@@ -11443,26 +11243,6 @@ msgstr "Obaveštenje"
 #~ msgid "Unable to parse message."
 #~ msgstr "Ne mogu da obradim poruku."
 
-#, fuzzy
-#~ msgid ""
-#~ "An MSN screen name must be in the form \"user@server.com\". Perhaps you "
-#~ "meant %s@hotmail.com. No changes were made to your allow list."
-#~ msgstr ""
-#~ "MSN korisničko ime mora biti oblika „korisnik@server.cs“. Verovatno ste "
-#~ "želeli „%s@hotmail.com“. U vašem spisku dozvola nisu učinjene izmene."
-
-#, fuzzy
-#~ msgid "Invalid MSN screen name"
-#~ msgstr "Neispravno MSN korisničko ime"
-
-#, fuzzy
-#~ msgid ""
-#~ "An MSN screen name must be in the form \"user@server.com\". Perhaps you "
-#~ "meant %s@hotmail.com. No changes were made to your block list."
-#~ msgstr ""
-#~ "MSN korisničko ime mora biti oblika „korisnik@server.cs“. Verovatno ste "
-#~ "želeli „%s@hotmail.com“. U vašem spisku zabrana nisu učinjene izmene."
-
 #~ msgid "<html><body><b>Error retrieving profile</b></body></html>"
 #~ msgstr "<html><body><b>Greška pri preuzimanju profila</b></body></html>"
 
@@ -11484,18 +11264,8 @@ msgstr "Obaveštenje"
 #~ msgid "Unable to transfer to notification server"
 #~ msgstr "Ne mogu da se sporazumem sa serverom za obaveštenja"
 
-#, fuzzy
-#~ msgid "IO Error."
-#~ msgstr "Greška"
-
 #~ msgid "An MSN message may not have been received."
 #~ msgstr "Moguće da nije primljena MSN poruka."
-
-#, fuzzy
-#~ msgid ""
-#~ "<b>Status:</b> %s\n"
-#~ "<b>Message:</b> %s"
-#~ msgstr "<B>Stanje:</B> %s<HR>%s"
 
 #~ msgid "<b>Status:</b> %s"
 #~ msgstr "<b>Stanje:</b> %s"
@@ -11816,8 +11586,8 @@ msgstr "Obaveštenje"
 #~ "Communication with the browser failed. Please close all windows and try "
 #~ "again."
 #~ msgstr ""
-#~ "Neuspešno sporazumevanje sa veb čitačem. Zatvorite sve prozore i "
-#~ "pokušajte ponovo."
+#~ "Neuspešno sporazumevanje sa veb čitačem. Zatvorite sve prozore i pokušajte "
+#~ "ponovo."
 
 #~ msgid "Add To"
 #~ msgstr "Dodaj u"
