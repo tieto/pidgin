@@ -72,7 +72,7 @@ static GtkWidget *config = NULL;
 static guint confighandle = 0;
 static GtkWidget *reload = NULL;
 static GtkWidget *unload = NULL;
-static char *last_dir = NULL;
+extern char *last_dir;
 
 /* --------------- Function Declarations --------------------- */
 

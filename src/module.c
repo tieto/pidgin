@@ -52,6 +52,8 @@
 GList *plugins = NULL;
 GList *callbacks = NULL;
 
+char *last_dir = NULL;
+
 /* --------------- Function Declarations --------------------- */
 
 struct gaim_plugin *  load_plugin(char *);
@@ -91,6 +93,10 @@ struct gaim_plugin *load_plugin(char *filename)
 			c = g_list_next(c);
 	}
 	plug = g_malloc(sizeof *plug);
+
+	if (last_dir)
+		g_free(last_dir);
+	last_dir = g_dirname(filename);
 
 	debug_printf("Loading %s\n", filename);
 	plug->handle = g_module_open(filename, 0);
