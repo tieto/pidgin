@@ -57,6 +57,7 @@ void jabber_chat_register(JabberChat *chat);
 void jabber_chat_change_topic(JabberChat *chat, const char *topic);
 void jabber_chat_set_topic(GaimConnection *gc, int id, const char *topic);
 void jabber_chat_change_nick(JabberChat *chat, const char *nick);
+void jabber_chat_part(JabberChat *chat, const char *msg);
 
 
 #endif /* _GAIM_JABBER_CHAT_H_ */

@@ -212,20 +212,12 @@ void jabber_chat_leave(GaimConnection *gc, int id)
 {
 	JabberStream *js = gc->proto_data;
 	JabberChat *chat = jabber_chat_find_by_id(js, id);
-	char *room_jid;
-	xmlnode *presence;
+
 
 	if(!chat)
 		return;
 
-	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
-	gaim_debug(GAIM_DEBUG_INFO, "jabber", "%s is leaving chat %s\n",
-			chat->nick, room_jid);
-	presence = xmlnode_new("presence");
-	xmlnode_set_attrib(presence, "to", room_jid);
-	xmlnode_set_attrib(presence, "type", "unavailable");
-	jabber_send(js, presence);
-	xmlnode_free(presence);
+	jabber_chat_part(chat, NULL);
 }
 
 void jabber_chat_destroy(JabberChat *chat)
@@ -590,6 +582,26 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 
 	jabber_send(chat->js, presence);
 	xmlnode_free(presence);
+}
+
+void jabber_chat_part(JabberChat *chat, const char *msg)
+{
+	char *room_jid;
+	xmlnode *presence;
+
+	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
+	gaim_debug(GAIM_DEBUG_INFO, "jabber", "%s is leaving chat %s\n",
+			chat->nick, room_jid);
+	presence = xmlnode_new("presence");
+	xmlnode_set_attrib(presence, "to", room_jid);
+	xmlnode_set_attrib(presence, "type", "unavailable");
+	if(msg) {
+		xmlnode *status = xmlnode_new_child(presence, "status");
+		xmlnode_insert_data(status, msg, -1);
+	}
+	jabber_send(chat->js, presence);
+	xmlnode_free(presence);
+	g_free(room_jid);
 }
 
 

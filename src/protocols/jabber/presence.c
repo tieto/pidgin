@@ -344,7 +344,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					jabber_chat_destroy(chat);
 				} else {
 					gaim_conv_chat_remove_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
-							NULL);
+							status);
 				}
 			}
 		} else {
