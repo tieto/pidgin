@@ -48,6 +48,7 @@ void show_about(GtkWidget *w, void *data)
 	GtkWidget *sw;
 	GtkWidget *logo;
 	char abouttitle[45];
+	char *str;
 
 	if (!about) {
 
@@ -98,91 +99,102 @@ void show_about(GtkWidget *w, void *data)
 				_("<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net"
 				"<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-			_("<FONT SIZE=\"3\">Active Developers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-			_("  Rob Flynn (maintainer) "
+		/* Active Developers */
+		str = g_strconcat(
+			"<FONT SIZE=\"3\">", _("Active Developers"), ":</FONT><BR>"
+			"  Rob Flynn (", _("maintainer"), ") "
 			"&lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>"
-			"  Sean Egan (lead developer) "
+			"  Sean Egan (", _("lead developer"), ") "
 			"&lt;<A HREF=\"mailto:bj91704@binghamton.edu\">"
 			"bj91704@binghamton.edu</A>&gt;<BR>"
-			"  Christian 'ChipX86' Hammond (developer & webmaster)<BR>"
-			"  Herman Bloggs (win32 port) "
+			"  Christian 'ChipX86' Hammond (", _("developer & webmaster"), ")<BR>"
+			"  Herman Bloggs (", _("win32 port"), ") "
 			"&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">"
 			"hermanator12002@yahoo.com</A>&gt;<BR>"
-			"  Nathan 'faceprint' Walp (developer)<BR>"
-			"  Mark 'KingAnt' Doliner (developer)<BR>"
-			"  Luke 'LSchiere' Schierer (support)<BR>"
-			"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
+			"  Nathan 'faceprint' Walp (", _("developer"), ")<BR>"
+			"  Mark 'KingAnt' Doliner (", _("developer"), ")<BR>"
+			"  Luke 'LSchiere' Schierer (", _("support"), ")<BR>"
+			"<BR>", NULL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		g_free(str);
 
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-			_("<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
-		gtk_imhtml_append_text(GTK_IMHTML(text),
+		/* Crazy Patch Writers */
+		str = g_strconcat(
+			"<FONT SIZE=\"3\">", _("Crazy Patch Writers"), ":</FONT><BR>"
 			"  Benjamin Miller<BR>"
 			"  Decklin Foster<BR>"
 			"  Etan 'deryni' Reisner<BR>"
 			"  Ethan 'Paco-Paco' Blanton<br>"
 			"  Robert 'Robot101' McQueen<BR>"
-			"<BR>", -1, GTK_IMHTML_NO_SCROLL);
+			"<BR>", NULL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		g_free(str);
 
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_("<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_("  Adam Fritzler (former libfaim maintainer)<BR>"
-				"  Eric Warmenhoven (former lead developer) "
+		/* Retired Developers */
+		str = g_strconcat(
+				"<FONT SIZE=\"3\">", _("Retired Developers"), ":</FONT><BR>"
+				"  Adam Fritzler (", _("former libfaim maintainer"), ")<BR>"
+				"  Eric Warmenhoven (", _("former lead developer"), ") "
 				"&lt;<A HREF=\"mailto:warmenhoven@yahoo.com\">"
 				"warmenhoven@yahoo.com</A>&gt;<BR>"
-				"  Jim Duchek (former maintainer)<BR>"
-				"  Jim Seymour (former Jabber developer)<BR>"
-				"  Mark Spencer (original author) "
+				"  Jim Duchek (", _("former maintainer"), ")<BR>"
+				"  Jim Seymour (", _("former Jabber developer"), ")<BR>"
+				"  Mark Spencer (", _("original author"), ") "
 				"&lt;<A HREF=\"mailto:markster@marko.net\">"
 				"markster@marko.net</A>&gt;<BR>"
-				"  Syd Logan (hacker and designated driver [lazy bum])<BR>"
-				"<BR>"), -1, GTK_IMHTML_NO_SCROLL);
+				"  Syd Logan (", _("hacker and designated driver [lazy bum]"), 
+				")<BR>"
+				"<BR>", NULL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		g_free(str);
 
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_("<FONT SIZE=\"3\">Current Translators:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-				"  <b>Catalan (ca)</b> - Robert Millan &lt;<a href=\"mailto: zeratul2@wanadoo.es\">zeratul2@wanadoo.es</a>&gt;<br>"
-				"  <b>Czech (cs)</b> - Miloslav Trmac &lt;<a href=\"mailto: mitr@volny.cz\">mitr@volny.cz</a>&gt;<br>"
-				"  <b>Danish (da)</b> - Morten Brix Pedersen &lt;<a href=\"mailto: morten@wtf.dk\">morten@wtf.dk</a>&gt;<br>"
-				"  <b>German (de)</b> - Björn Voigt &lt;<a href=\"mailto: bjoern@cs.tu-berlin.de\">bjoern@cs.tu-berlin.de</a>&gt;<br>"
-				"  <b>Spanish (es)</b> - Javier Fernández-Sanguino Peña &lt;<a href=\"mailto: jfs@debian.org\">jfs@debian.org</a>&gt;<br>"
-				"  <b>French (fr)</b> - Éric Boumaour &lt;<a href=\"mailto: zongo_fr@users.sourceforge.net\">zongo_fr@users.sourceforge.net</a>&gt;<br>"
-				"  <b>Hindi (hi)</b> - Guntupalli Karunakar &lt;<a href=\"mailto: karunakar@freedomink.org\">karunakar@freedomink.org</a>&gt;<br>"
-				"  <b>Hungarian (hu)</b> - Zoltan Sutto &lt;<a href=\"mailto: suttozoltan@chello.hu\">suttozoltan@chello.hu</a>&gt;<br>"
-				"  <b>Italian (it)</b> - Claudio Satriano &lt;<a href=\"mailto: satriano@na.infn.it\">satriano@na.infn.it</a>&gt;<br>"
-				"  <b>Korean (ko)</b> - Kyung-uk Son &lt;<a href=\"mailto: vvs740@chol.com\">vvs740@chol.com</a>&gt;<br>"
-				"  <b>Dutch; Flemish (nl)</b> - Vincent van Adrighem &lt;<a href=\"mailto: V.vanAdrighem@dirck.mine.nu\">V.vanAdrighem@dirck.mine.nu</a>&gt;<br>"
-				"  <b>Portuguese-Brazil (pt_BR)</b> - Maurício de Lemos Rodrigues Collares Neto &lt;<a href=\"mailto: mauricioc@myrealbox.com\">mauricioc@myrealbox.com</a>&gt;<br>"
-				"  <b>Romanian (ro)</b> - Mişu Moldovan &lt;<a href=\"mailto: dumol@go.ro\">dumol@go.ro</a>&gt;<br>"
-				"  <b>Serbian (sr)</b> - Danilo Šegan &lt;<a href=\"mailto: dsegan@gmx.net\">dsegan@gmx.net</a>&gt;<br>"
-				"  <b>Swedish (sv)</b> - Tore Lundqvist &lt;<a href=\"mailto: tlt@mima.x.se\">tlt@mima.x.se</a>&gt;<br>"
-				"  <b>Simplified Chinese (zh_CN)</b> - Funda Wang &lt;<a href=\"mailto: fundawang@linux.net.cn\">fundawang@linux.net.cn</a>&gt;<br>"
-				"  <b>Traditional Chinese (zh_TW)</b> - Ambrose C. Li &lt;<a href=\"mailto: acli@ada.dhs.org\">acli@ada.dhs.org</a>&gt; and Paladin R. Liu &lt;<a href=\"mailto: paladin@ms1.hinet.net\">paladin@ms1.hinet.net</a><br>"
-				"<BR>", -1, GTK_IMHTML_NO_SCROLL);
+		/* Current Translators */
+		str = g_strconcat(
+				"<FONT SIZE=\"3\">", _("Current Translators"), ":</FONT><BR>"
+				"  <b>", _("Catalan"), " (ca)</b> - Robert Millan &lt;<a href=\"mailto: zeratul2@wanadoo.es\">zeratul2@wanadoo.es</a>&gt;<br>"
+				"  <b>", _("Czech"), " (cs)</b> - Miloslav Trmac &lt;<a href=\"mailto: mitr@volny.cz\">mitr@volny.cz</a>&gt;<br>"
+				"  <b>", _("Danish"), " (da)</b> - Morten Brix Pedersen &lt;<a href=\"mailto: morten@wtf.dk\">morten@wtf.dk</a>&gt;<br>"
+				"  <b>", _("German"), " (de)</b> - Björn Voigt &lt;<a href=\"mailto: bjoern@cs.tu-berlin.de\">bjoern@cs.tu-berlin.de</a>&gt;<br>"
+				"  <b>", _("Spanish"), " (es)</b> - Javier Fernández-Sanguino Peña &lt;<a href=\"mailto: jfs@debian.org\">jfs@debian.org</a>&gt;<br>"
+				"  <b>", _("French"), " (fr)</b> - Éric Boumaour &lt;<a href=\"mailto: zongo_fr@users.sourceforge.net\">zongo_fr@users.sourceforge.net</a>&gt;<br>"
+				"  <b>", _("Hindi"), " (hi)</b> - Guntupalli Karunakar &lt;<a href=\"mailto: karunakar@freedomink.org\">karunakar@freedomink.org</a>&gt;<br>"
+				"  <b>", _("Hungarian"), " (hu)</b> - Zoltan Sutto &lt;<a href=\"mailto: suttozoltan@chello.hu\">suttozoltan@chello.hu</a>&gt;<br>"
+				"  <b>", _("Italian"), " (it)</b> - Claudio Satriano &lt;<a href=\"mailto: satriano@na.infn.it\">satriano@na.infn.it</a>&gt;<br>"
+				"  <b>", _("Korean"), " (ko)</b> - Kyung-uk Son &lt;<a href=\"mailto: vvs740@chol.com\">vvs740@chol.com</a>&gt;<br>"
+				"  <b>", _("Dutch; Flemish"), " (nl)</b> - Vincent van Adrighem &lt;<a href=\"mailto: V.vanAdrighem@dirck.mine.nu\">V.vanAdrighem@dirck.mine.nu</a>&gt;<br>"
+				"  <b>", _("Portuguese-Brazil"), " (pt_BR)</b> - Maurício de Lemos Rodrigues Collares Neto &lt;<a href=\"mailto: mauricioc@myrealbox.com\">mauricioc@myrealbox.com</a>&gt;<br>"
+				"  <b>", _("Romanian"), " (ro)</b> - Mişu Moldovan &lt;<a href=\"mailto: dumol@go.ro\">dumol@go.ro</a>&gt;<br>"
+				"  <b>", _("Serbian"), " (sr)</b> - Danilo Šegan &lt;<a href=\"mailto: dsegan@gmx.net\">dsegan@gmx.net</a>&gt;<br>"
+				"  <b>", _("Swedish"), " (sv)</b> - Tore Lundqvist &lt;<a href=\"mailto: tlt@mima.x.se\">tlt@mima.x.se</a>&gt;<br>"
+				"  <b>", _("Simplified Chinese"), " (zh_CN)</b> - Funda Wang &lt;<a href=\"mailto: fundawang@linux.net.cn\">fundawang@linux.net.cn</a>&gt;<br>"
+				"  <b>", _("Traditional Chinese"), " (zh_TW)</b> - Ambrose C. Li &lt;<a href=\"mailto: acli@ada.dhs.org\">acli@ada.dhs.org</a>&gt; and Paladin R. Liu &lt;<a href=\"mailto: paladin@ms1.hinet.net\">paladin@ms1.hinet.net</a><br>"
+				"<BR>", NULL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		g_free(str);
 
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_("<FONT SIZE=\"3\">Past Translators:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
-		gtk_imhtml_append_text(GTK_IMHTML(text),
-				"  <b>Amharic (am)</b> - Daniel Yacob<br>"
-				"  <b>Bulgarian (bg)</b> - Hristo Todorov<br>"
-				"  <b>Catalan (ca)</b> - JM Pérez Cáncer<br>"
-				"  <b>Czech (cs)</b> - Honza Král<br>"
-				"  <b>German (de)</b> - Daniel Seifert, Karsten Weiss<br>"
-				"  <b>Spanish (es)</b> - Amaya Rodrigo, Alejandro G Villar, Nicolás Lichtmaier, JM Pérez Cáncer<br>"
-				"  <b>French (fr)</b> - sebfrance, Stéphane Pontier, Stéphane Wirtel, Loïc Jeannin<br>"
-				"  <b>Hebrew (he)</b> - Pavel Bibergal<br>"
-				"  <b>Italian (it)</b> - Salvatore di Maggio<br>"
-				"  <b>Japanese (ja)</b> - Ryosuke Kutsuna, Taku Yasui, Junichi Uekawa<br>"
-				"  <b>Korean (ko)</b> - Sang-hyun S, A Ho-seok Lee<br>"
-				"  <b>Norwegian (no)</b> - Petter Johan Olsen<br>"
-				"  <b>Polish (pl)</b> - Przemysław Sułek<br>"
-				"  <b>Russian (ru)</b> - Sergey Volozhanin<br>"
-				"  <b>Slovak (sk)</b> - Daniel Režný<br>"
-				"  <b>Swedish (sv)</b> - Christian Rose<br>"
-				"  <b>Chinese (zh_CN, zh_TW)</b> - Hashao, Rocky S. Lee<br>"
-				"<BR>", -1, GTK_IMHTML_NO_SCROLL);
+		/* Past Translators */
+		str = g_strconcat(
+				"<FONT SIZE=\"3\">", _("Past Translators"), ":</FONT><BR>"
+				"  <b>", _("Amharic"), " (am)</b> - Daniel Yacob<br>"
+				"  <b>", _("Bulgarian"), " (bg)</b> - Hristo Todorov<br>"
+				"  <b>", _("Catalan"), " (ca)</b> - JM Pérez Cáncer<br>"
+				"  <b>", _("Czech"), " (cs)</b> - Honza Král<br>"
+				"  <b>", _("German"), " (de)</b> - Daniel Seifert, Karsten Weiss<br>"
+				"  <b>", _("Spanish"), " (es)</b> - Amaya Rodrigo, Alejandro G Villar, Nicolás Lichtmaier, JM Pérez Cáncer<br>"
+				"  <b>", _("French"), " (fr)</b> - sebfrance, Stéphane Pontier, Stéphane Wirtel, Loïc Jeannin<br>"
+				"  <b>", _("Hebrew"), " (he)</b> - Pavel Bibergal<br>"
+				"  <b>", _("Italian"), " (it)</b> - Salvatore di Maggio<br>"
+				"  <b>", _("Japanese"), " (ja)</b> - Ryosuke Kutsuna, Taku Yasui, Junichi Uekawa<br>"
+				"  <b>", _("Korean"), " (ko)</b> - Sang-hyun S, A Ho-seok Lee<br>"
+				"  <b>", _("Norwegian"), " (no)</b> - Petter Johan Olsen<br>"
+				"  <b>", _("Polish"), " (pl)</b> - Przemysław Sułek<br>"
+				"  <b>", _("Russian"), " (ru)</b> - Sergey Volozhanin<br>"
+				"  <b>", _("Slovak"), " (sk)</b> - Daniel Režný<br>"
+				"  <b>", _("Swedish"), " (sv)</b> - Christian Rose<br>"
+				"  <b>", _("Chinese"), " (zh_CN, zh_TW)</b> - Hashao, Rocky S. Lee<br>"
+				"<BR>", NULL);
+		gtk_imhtml_append_text(GTK_IMHTML(text), str, -1, GTK_IMHTML_NO_SCROLL);
+		g_free(str);
 
 		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
 

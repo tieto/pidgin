@@ -310,7 +310,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 					break;
 				}
 
-				if (src[n] == '"')
+				if (src[n] == '"') {
 					if (!quote) {
 						quote = 1;
 						vstart = n;
@@ -318,6 +318,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 					} else {
 						done = 1;
 					}
+				}
 
 				if (!quote && ((src[n] == ' ') || (src[n] == '>')))
 					done = 1;
@@ -453,7 +454,7 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 
 char *yahoo_html_to_codes(const char *src)
 {
-	int i, j, m, n, vstart, len;
+	int i, j, len;
 	GString *dest;
 	char *ret, *esc;
 	GQueue *colors, *tags;
