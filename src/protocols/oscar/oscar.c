@@ -1214,7 +1214,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	struct gaim_connection *gc = d->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
-	char *host; int port = FAIM_LOGIN_PORT;
+	char *host; int port = 4443;
 	int i;
 
 	debug_printf("Accepted DirectIM.\n");
