@@ -190,7 +190,7 @@ void *gaim_notify_formatted(void *handle, const char *title,
  *                  will be "Search	Results."
  * @param primary   The main point of the message.
  * @param secondary The secondary information.
- * @param results   An array of null-terminated buddy names.
+ * @param results   An null-terminated array of null-terminated buddy names.
  * @param cb        The callback to call when the user closes
  *                  the notification.
  * @param user_data The data to pass to the callback.

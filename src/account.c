@@ -257,8 +257,9 @@ sync_accounts(void)
 
 	if (!accounts_loaded)
 	{
-		gaim_debug_error("accounts", "Attempted to save accounts before they "
-						 "were read!\n");
+		gaim_debug_error("accounts", "Attempted to save accounts before "
+						 "they were read!\n");
+		return;
 	}
 
 	node = accounts_to_xmlnode();

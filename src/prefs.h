@@ -58,6 +58,13 @@ extern "C" {
 /*@{*/
 
 /**
+ * Returns the prefs subsystem handle.
+ *
+ * @return The prefs subsystem handle.
+ */
+void *gaim_prefs_get_handle(void);
+
+/**
  * Initialize core prefs
  */
 void gaim_prefs_init();
@@ -247,11 +254,6 @@ void gaim_prefs_trigger_callback(const char *name);
  * Read preferences
  */
 gboolean gaim_prefs_load();
-
-/**
- * Force an immediate write of preferences
- */
-void gaim_prefs_sync();
 
 /**
  * Rename legacy prefs and delete some that no longer exist.

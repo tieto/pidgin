@@ -512,7 +512,6 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 		val = gaim_request_field_string_get_value(f);
 	if (val && *val) {
 		gaim_prefs_set_string("/plugins/prpl/silc/vcard", val);
-		gaim_prefs_sync();
 		tmp = silc_file_readfile(val, &tmp_len);
 		if (tmp) {
 			tmp[tmp_len] = 0;

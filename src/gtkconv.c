@@ -5891,5 +5891,6 @@ gaim_gtk_conversations_init(void)
 void
 gaim_gtk_conversations_uninit(void)
 {
+	gaim_prefs_disconnect_by_handle(gaim_gtk_conversations_get_handle());
 	gaim_signals_unregister_by_instance(gaim_gtk_conversations_get_handle());
 }
