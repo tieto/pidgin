@@ -17,6 +17,25 @@ version 0.58:
 	  (Thanks, Mark Doliner)
 	* ICQ status messages in OSCAR (Thanks, Mark Doliner)
 	* Play sound when your name is said in a chat
+	* Approval dialog for Jabber when somebody wants to
+	  subscribe to user's presence. Also gives user the
+	  opportunity to add that buddy if not already on the
+	  user's buddy list.
+	* Jabber "Change buddy group" roster synchronization now
+	  works again.  (This was unknowingly broken when the
+	  "out-sourced" Jabber libs were upgraded in 0.56)
+	* Invalid Jabber I.D.'s no longer crash Gaim.  User now
+	  notified with pop-up's.
+	* Jabber Buddy sign-on time support, added in 0.57,
+	  removed until and unless and inconsistency can be
+	  resolved. (Thanks, Nathan Walp)
+	* Bug-fix for potential buffer overflow in Jabber
+	  plugin. (Thanks, rwscott)
+	* Tempfiles used for secure MSN/HotMail login (added in
+	  0.57) are now themselves created securely.
+	* Secure MSN logins (added in 0.57) no longer blow up
+	  on Solaris.
+	* Timezone support improved.
 
 version 0.57 (04/25/2002):
 	* New authorization method for Yahoo!
