@@ -1167,7 +1167,7 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	if (!url_text || !strcmp(url_text,"")) {
 		g_show_info_text(NULL, NULL, 2,
-				"<html><body><b>Error retrieving profile</b></body></html>", NULL);
+				_("<html><body><b>Error retrieving profile</b></body></html>"), NULL);
 		return;
 	}
 
@@ -1211,27 +1211,27 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	/* extract their Name and put it in */
 	info_extract_field(stripped, url_text, "\tName", 0, "\t", '\n',
-			"Undisclosed", "Name", 0, NULL);
+			_("Undisclosed"), _("Name"), 0, NULL);
 
 	/* extract their Age and put it in */
 	info_extract_field(stripped, url_text, "\tAge", 0, "\t", '\n',
-			"Undisclosed", "Age", 0, NULL);
+			_("Undisclosed"), _("Age"), 0, NULL);
 
 	/* extract their Gender and put it in */
 	info_extract_field(stripped, url_text, "\tGender", 6, "\t", '\n',
-			"Undisclosed", "Gender", 0, NULL);
+			_("Undisclosed"), _("Gender"), 0, NULL);
 
 	/* extract their MaritalStatus and put it in */
 	info_extract_field(stripped, url_text, "\tMaritalStatus", 0, "\t", '\n',
-			"Undisclosed", "Marital Status", 0, NULL);
+			_("Undisclosed"), _("Marital Status"), 0, NULL);
 
 	/* extract their Location and put it in */
 	info_extract_field(stripped, url_text, "\tLocation", 0, "\t", '\n',
-			"Undisclosed", "Location", 0, NULL);
+			_("Undisclosed"), _("Location"), 0, NULL);
 
 	/* extract their Occupation and put it in */
 	info_extract_field(stripped, url_text, "\t Occupation", 6, "\t", '\n',
-			"Undisclosed", "Occupation", 0, NULL);
+			_("Undisclosed"), _("Occupation"), 0, NULL);
 
 	/* the fields, 'A Little About Me', 'Favorite Things', 'Hobbies and Interests',
 	 * 'Favorite Quote', and 'My Homepage' may or may not appear, in any combination.
@@ -1241,48 +1241,48 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	/* check if they have A Little About Me */
 	if(!info_extract_field(stripped, url_text, "\tA Little About Me", 1, "Favorite Things", '\n',
-				NULL, "A Little About Me", 0, NULL))
+				NULL, _("A Little About Me"), 0, NULL))
 		if(!info_extract_field(stripped, url_text, "\tA Little About Me", 1, "Hobbies and Interests", '\n',
-					NULL, "A Little About Me", 0, NULL))
+					NULL, _("A Little About Me"), 0, NULL))
 			if(!info_extract_field(stripped, url_text, "\tA Little About Me", 1, "Favorite Quote", '\n',
-						NULL, "A Little About Me", 0, NULL))
+						NULL, _("A Little About Me"), 0, NULL))
 				if(!info_extract_field(stripped, url_text, "\tA Little About Me", 1, "My Homepage\tTake a look", '\n',
-							NULL, "A Little About Me", 0, NULL))
+							NULL, _("A Little About Me"), 0, NULL))
 					info_extract_field(stripped, url_text, "\tA Little About Me", 1, "last updated", '\n',
-							NULL, "A Little About Me", 0, NULL);
+							NULL, _("A Little About Me"), 0, NULL);
 
 	/* check if they have Favorite Things */
 	if(!info_extract_field(stripped, url_text, "Favorite Things", 1, "Hobbies and Interests", '\n',
-				NULL, "Favorite Things", 0, NULL))
+				NULL, _("Favorite Things"), 0, NULL))
 		if(!info_extract_field(stripped, url_text, "Favorite Things", 1, "Favorite Quote", '\n',
 					NULL, "Favorite Things", 0, NULL))
 			if(info_extract_field(stripped, url_text, "Favorite Things", 1, "My Homepage\tTake a look", '\n',
-						NULL, "Favorite Things", 0, NULL))
+						NULL, _("Favorite Things"), 0, NULL))
 				info_extract_field(stripped, url_text, "Favorite Things", 1, "last updated", '\n',
-						NULL, "Favorite Things", 0, NULL);
+						NULL, _("Favorite Things"), 0, NULL);
 
 	/* check if they have Hobbies and Interests */
 	if(!info_extract_field(stripped, url_text, "Hobbies and Interests", 1, "Favorite Quote", '\n',
-				NULL, "Hobbies and Interests", 0, NULL))
+				NULL, _("Hobbies and Interests"), 0, NULL))
 		if(info_extract_field(stripped, url_text, "Hobbies and Interests", 1, "My Homepage\tTake a look", '\n',
-					NULL, "Hobbies and Interests", 0, NULL))
+					NULL, _("Hobbies and Interests"), 0, NULL))
 			info_extract_field(stripped, url_text, "Hobbies and Interests", 1, "last updated", '\n',
-					NULL, "Hobbies and Interests", 0, NULL);
+					NULL, _("Hobbies and Interests"), 0, NULL);
 
 	/* check if they have Favorite Quote */
 	if(!info_extract_field(stripped, url_text, "Favorite Quote", 1, "My Homepage\tTake a look", '\n',
-				NULL, "Favorite Quote", 0, NULL))
+				NULL, _("Favorite Quote"), 0, NULL))
 		info_extract_field(stripped, url_text, "Favorite Quote", 1, "last updated", '\n',
-				NULL, "Favorite Quote", 0, NULL);
+				NULL, _("Favorite Quote"), 0, NULL);
 
 	/* extract the last updated date and put it in */
 	info_extract_field(stripped, url_text, "\tlast updated:", 1, "\n", '\n',
-			NULL, "Last Updated", 0, NULL);
+			NULL, _("Last Updated"), 0, NULL);
 
 	/* if we were able to fetch a homepage url earlier, stick it in there */
 	if(user_url)
 	{
-		g_snprintf(buf,sizeof(buf),"<b>Home Page:</b><br><a href=\"%s\">%s</a><br>\n",user_url,user_url);
+		g_snprintf(buf,sizeof(buf),"<b>%s:</b><br><a href=\"%s\">%s</a><br>\n",_("Home Page"),user_url,user_url);
 		strcat(url_text,buf);
 	}
 

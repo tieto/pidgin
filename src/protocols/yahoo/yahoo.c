@@ -1399,7 +1399,7 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 	/* we failed to grab the profile URL */
 	if (!url_text) {
 		g_show_info_text(NULL, NULL, 2,
-				"<html><body><b>Error retrieving profile</b></body></html>", NULL);
+				_("<html><body><b>Error retrieving profile</b></body></html>"), NULL);
 		return;
 	}
 
@@ -1411,10 +1411,9 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 	 */
 	p = strstr(url_text, "Adult Profiles Warning Message");
 	if (p) {
-		strcpy(buf, "<b>Sorry, profiles marked as containing adult content are ");
-		strcat(buf, "not supported at this time.</b><br><br>\n");
+		strcpy(buf, _("<b>Sorry, profiles marked as containing adult content are not supported at this time.</b><br><br>\n"));
 		info_extract_field(url_text, buf, ".idname=", 0, "%26", 0, NULL,
-				"If you wish to view this profile, you will need to visit this link in your web browser",
+				_("If you wish to view this profile, you will need to visit this link in your web browser"),
 				1, YAHOO_PROFILE_URL);
 		strcat(buf, "</body></html>\n");
 		g_show_info_text(NULL, NULL, 2, buf, NULL);
@@ -1446,39 +1445,39 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 
 	/* extract their Yahoo! ID and put it in */
 	info_extract_field(stripped, url_text, "Yahoo! ID:", 2, "\n", 0,
-			NULL, "Yahoo! ID", 0, NULL);
+			NULL, _("Yahoo! ID"), 0, NULL);
 
 	/* extract their Email address and put it in */
 	info_extract_field(stripped, url_text, "My Email", 5, "\n", 0,
-			"Private", "Email", 0, NULL);
+			_("Private"), _("Email"), 0, NULL);
 
 	/* extract the Nickname if it exists */
 	info_extract_field(stripped, url_text, "Nickname:", 1, "\n", '\n',
-			NULL, "Nickname", 0, NULL);
+			NULL, _("Nickname"), 0, NULL);
 
 	/* extract their RealName and put it in */
 	info_extract_field(stripped, url_text, "RealName:", 1, "\n", '\n',
-			NULL, "Real Name", 0, NULL);
+			NULL, _("Real Name"), 0, NULL);
 
 	/* extract their Location and put it in */
 	info_extract_field(stripped, url_text, "Location:", 2, "\n", '\n',
-			NULL, "Location", 0, NULL);
+			NULL, _("Location"), 0, NULL);
 
 	/* extract their Age and put it in */
 	info_extract_field(stripped, url_text, "Age:", 3, "\n", '\n',
-			NULL, "Age", 0, NULL);
+			NULL, _("Age"), 0, NULL);
 
 	/* extract their MaritalStatus and put it in */
 	info_extract_field(stripped, url_text, "MaritalStatus:", 3, "\n", '\n',
-			"No Answer", "Marital Status", 0, NULL);
+			_("No Answer"), _("Marital Status"), 0, NULL);
 
 	/* extract their Gender and put it in */
 	info_extract_field(stripped, url_text, "Gender:", 3, "\n", '\n',
-			"No Answer", "Gender", 0, NULL);
+			_("No Answer"), _("Gender"), 0, NULL);
 
 	/* extract their Occupation and put it in */
 	info_extract_field(stripped, url_text, "Occupation:", 2, "\n", '\n',
-			NULL, "Occupation", 0, NULL);
+			NULL, _("Occupation"), 0, NULL);
 
 	/* Hobbies, Latest News, and Favorite Quote are a bit different, since the
 	 * values can contain embedded newlines... but any or all of them can also
@@ -1488,24 +1487,24 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 	 * bunch.
 	 */
 	if (!info_extract_field(stripped, url_text, "Hobbies:", 1, "Latest News",
-				'\n', NULL, "Hobbies", 0, NULL))
+				'\n', NULL, _("Hobbies"), 0, NULL))
 		if (!info_extract_field(stripped, url_text, "Hobbies:", 1, "Favorite Quote",
-					'\n', NULL, "Hobbies", 0, NULL))
+					'\n', NULL, _("Hobbies"), 0, NULL))
 			info_extract_field(stripped, url_text, "Hobbies:", 1, "Links",
-					'\n', NULL, "Hobbies", 0, NULL);
+					'\n', NULL, _("Hobbies"), 0, NULL);
 	if (!info_extract_field(stripped, url_text, "Latest News:", 1, "Favorite Quote",
-				'\n', NULL, "Latest News", 0, NULL))
+				'\n', NULL, _("Latest News"), 0, NULL))
 		info_extract_field(stripped, url_text, "Latest News:", 1, "Links",
-				'\n', NULL, "Latest News", 0, NULL);
+				'\n', NULL, _("Latest News"), 0, NULL);
 	info_extract_field(stripped, url_text, "Favorite Quote:", 0, "Links",
-			'\n', NULL, "Favorite Quote", 0, NULL);
+			'\n', NULL, _("Favorite Quote"), 0, NULL);
 
 	/* Home Page will either be "No home page specified",
 	 * or "Home Page: " and a link. */
 	p = strstr(stripped, "No home page specified");
 	if (!p)
 		info_extract_field(stripped, url_text, "Home Page:", 1, " ", 0, NULL,
-				"Home Page", 1, NULL);
+				_("Home Page"), 1, NULL);
 
 	/* Cool Link {1,2,3} is also different.  If "No cool link specified" exists,
 	 * then we have none.  If we have one however, we'll need to check and see if
@@ -1515,19 +1514,19 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 	p = strstr(stripped,"No cool link specified");
 	if (!p)
 		if (info_extract_field(stripped, url_text, "Cool Link 1:", 1, " ", 0, NULL,
-					"Cool Link 1", 1, NULL))
+					_("Cool Link 1"), 1, NULL))
 			if (info_extract_field(stripped, url_text, "Cool Link 2:", 1, " ", 0, NULL,
-						"Cool Link 2", 1, NULL))
+						_("Cool Link 2"), 1, NULL))
 				info_extract_field(stripped, url_text, "Cool Link 3:", 1, " ", 0, NULL,
-						"Cool Link 3", 1, NULL);
+						_("Cool Link 3"), 1, NULL);
 
 	/* see if Member Since is there, and if so, extract it. */
 	info_extract_field(stripped, url_text, "Member Since:", 1, "Last Updated:",
-			'\n', NULL, "Member Since", 0, NULL);
+			'\n', NULL, _("Member Since"), 0, NULL);
 
 	/* extract the Last Updated date and put it in */
 	info_extract_field(stripped, url_text, "Last Updated:", 1, "\n", '\n', NULL,
-			"Last Updated", 0, NULL);
+			_("Last Updated"), 0, NULL);
 
 	/* finish off the html */
 	strcat(url_text, "</body></html>\n");
