@@ -368,54 +368,36 @@ static gchar *oscar_encoding_extract(const char *encoding)
 	return ret;
 }
 
-/*
- * Return the flag specifying the given encoding.
- */
-static fu32_t oscar_encoding_parse(const char *encoding)
-{
-	if ((encoding == NULL) || encoding[0] == '\0') {
-		gaim_debug_warning("oscar", "Empty encoding, assuming ASCII\n");
-		return 0;
-	}
-
-	if (!strcmp(encoding, "us-ascii") || !strcmp(encoding, "utf-8")) {
-		/* UTF-8 is our native encoding, ASCII is a proper subset */
-		return 0;
-	} else if (!strcmp(encoding, "iso-8859-1")) {
-		return AIM_IMFLAGS_ISO_8859_1;
-	} else if (!strcmp(encoding, "unicode-2-0")) {
-		return AIM_IMFLAGS_UNICODE;
-	} else {
-		gaim_debug_warning("oscar",
-				   "Unrecognized character encoding '%s', attempting to convert to utf8 anyway\n", encoding);
-		return 99;
-	}
-}
-
 gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 {
 	gchar *utf8 = NULL;
-	int flags = oscar_encoding_parse(encoding);
 
-	switch (flags) {
-	case 0:
+	if ((encoding == NULL) || encoding[0] == '\0') {
+		gaim_debug_info("oscar", "Empty encoding, assuming UTF-8\n");
+
+	} else if (!strcmp(encoding, "iso-8859-1")) {
+		utf8 = g_convert(text, textlen, "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
+
+	} else if (!strcmp(encoding, "unicode-2-0")) {
+		utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
+
+	} else if (strcmp(encoding, "us-ascii") && strcmp(encoding, "utf-8")) {
+		gaim_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
+						   "attempting to convert to UTF-8 anyway\n");
+		utf8 = g_convert(text, textlen, "UTF-8", encoding, NULL, NULL, NULL);
+	}
+
+	/*
+	 * If utf8 is still NULL then either the encoding is us-ascii/utf-8 or
+	 * we have been unable to convert the text to utf-8 from the encoding
+	 * that was specified.  So we check if the text is valid utf-8 then
+	 * just copy it.
+	 */
+	if (utf8 == NULL) {
 		if (!g_utf8_validate(text, textlen, NULL))
 			utf8 = g_strdup(_("(There was an error converting this message.  The buddy you are speaking to most likely has a buggy client.)"));
 		else
 			utf8 = g_strndup(text, textlen);
-		break;
-	case AIM_IMFLAGS_ISO_8859_1:
-		utf8 = g_convert(text, textlen, "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
-		break;
-	case AIM_IMFLAGS_UNICODE:
-		utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
-		break;
-	case 99:
-		utf8 = g_convert(text, textlen, "UTF-8", encoding, NULL, NULL, NULL);
-		if (utf8 == NULL) {
-			utf8 = g_convert(text, textlen, "UTF-8", "UTF-8", NULL, NULL, NULL);
-		}
-		break;
 	}
 
 	return utf8;
