@@ -286,8 +286,9 @@ void silcgaim_show_public_key(SilcGaim sg,
 	if (ident->country)
 		g_string_append_printf(s, "%s: \t%s\n", _("Country"), ident->country);
 	g_string_append_printf(s, "%s: \t\t%s\n", _("Algorithm"), public_key->name);
-	g_string_append_printf(s, "%s: \t%d bits\n", _("Key Length"), (int)key_len);
-	g_string_append_printf(s, "\n");
+	g_string_append_printf(s, "%s: \t", _("Key Length"));
+	g_string_append_printf(s, _("%d bits"), (int)key_len);
+	g_string_append_printf(s, "\n\n");
 	g_string_append_printf(s, "%s:\n%s\n\n", _("Public Key Fingerprint"), fingerprint);
 	g_string_append_printf(s, "%s:\n%s", _("Public Key Babbleprint"), babbleprint);
 
