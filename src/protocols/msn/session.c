@@ -140,7 +140,8 @@ msn_session_find_switch_with_passport(const MsnSession *session,
 	for (l = session->switches; l != NULL; l = l->next) {
 		swboard = (MsnSwitchBoard *)l->data;
 
-		if (!g_ascii_strcasecmp(passport,
+		if (!swboard->hidden &&
+			!g_ascii_strcasecmp(passport,
 								msn_user_get_passport(swboard->user))) {
 			return swboard;
 		}
@@ -179,7 +180,7 @@ msn_session_find_unused_switch(const MsnSession *session)
 	for (l = session->switches; l != NULL; l = l->next) {
 		swboard = (MsnSwitchBoard *)l->data;
 
-		if (!swboard->in_use)
+		if (!swboard->in_use && !swboard->hidden)
 			return swboard;
 	}
 

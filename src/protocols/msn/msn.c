@@ -871,7 +871,7 @@ msn_normalize(const char *str)
 static GaimPluginProtocolInfo prpl_info =
 {
 	GAIM_PROTO_MSN,
-	OPT_PROTO_MAIL_CHECK,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON,
 	NULL,
 	NULL,
 	msn_list_icon,

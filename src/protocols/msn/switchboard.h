@@ -27,6 +27,7 @@ typedef struct _MsnSwitchBoard MsnSwitchBoard;
 #include "servconn.h"
 #include "msg.h"
 #include "user.h"
+#include "buddyicon.h"
 
 struct _MsnSwitchBoard
 {
@@ -49,6 +50,10 @@ struct _MsnSwitchBoard
 
 	int chat_id;
 	int trId;
+
+	gboolean hidden;
+
+	MsnBuddyIconXfer *buddy_icon_xfer;
 };
 
 /**

@@ -5,6 +5,8 @@ pkgdir = $(libdir)/gaim
 MSNSOURCES = \
 	away.c \
 	away.h \
+	buddyicon.c \
+	buddyicon.h \
 	dispatch.c \
 	dispatch.h \
 	error.c \

@@ -34,6 +34,9 @@ __send_clientinfo(MsnSwitchBoard *swboard)
 {
 	MsnMessage *msg;
 
+	if (swboard->buddy_icon_xfer != NULL)
+		return TRUE;
+
 	msg = msn_message_new();
 	msn_message_set_content_type(msg, "text/x-clientinfo");
 	msn_message_set_charset(msg, NULL);
@@ -97,6 +100,9 @@ __bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnSwitchBoard *swboard = servconn->data;
 	const char *user = params[0];
 
+	if (swboard->hidden)
+		return TRUE;
+
 	if (swboard->chat != NULL)
 		gaim_chat_remove_user(GAIM_CHAT(swboard->chat), user, NULL);
 	else {
@@ -110,8 +116,13 @@ __bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		else
 			username = user;
 
-		g_snprintf(buf, sizeof(buf),
-				   _("%s has closed the conversation window."), username);
+		if (param_count == 2 && atoi(params[1]) == 1)
+			g_snprintf(buf, sizeof(buf),
+					   _("The conversation has become inactive "
+						 "and timed out."));
+		else
+			g_snprintf(buf, sizeof(buf),
+					   _("%s has closed the conversation window."), username);
 
 		if ((conv = gaim_find_conversation(user)) != NULL)
 			gaim_conversation_write(conv, NULL, buf, -1, WFLAG_SYSTEM,
@@ -305,12 +316,17 @@ static gboolean
 __clientinfo_msg(MsnServConn *servconn, const MsnMessage *msg)
 {
 	MsnSession *session = servconn->session;
+	MsnSwitchBoard *swboard = servconn->data;
 	MsnUser *user;
 	GHashTable *clientinfo;
+	const char *value;
 
 	user = msn_user_new(session, servconn->msg_passport, NULL);
 
 	clientinfo = msn_message_get_hashtable_from_body(msg);
+
+	if ((value = g_hash_table_lookup(clientinfo, "Buddy-Icons")) != NULL)
+		msn_buddy_icon_invite(swboard);
 
 	return TRUE;
 }
@@ -404,6 +420,8 @@ msn_switchboard_new(MsnSession *session)
 									   __control_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-clientinfo",
 									   __clientinfo_msg);
+		msn_servconn_register_msg_type(servconn, "application/x-buddyicon",
+									   msn_buddy_icon_msg);
 
 		/* Save these for future use. */
 		switchboard_commands  = servconn->commands;
