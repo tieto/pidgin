@@ -4032,7 +4032,7 @@ static void oscar_remove_buddies(struct gaim_connection *gc, GList *buddies, con
 #ifndef NOSSI
 static void oscar_move_buddy(struct gaim_connection *gc, const char *name, const char *old_group, const char *new_group) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	if (od->sess->ssi.received_data) {
+	if (od->sess->ssi.received_data && strcmp(old_group, new_group)) {
 		debug_printf("ssi: moving buddy %s from group %s to group %s\n", name, old_group, new_group);
 		aim_ssi_movebuddy(od->sess, od->conn, old_group, new_group, name);
 	}

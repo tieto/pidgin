@@ -1134,10 +1134,6 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	char *name;
 	aim_tlvlist_t *data;
 
-	if (snac->flags & 0x0001) {
-		/* XXX - Free all ssi data? */
-	}
-
 	fmtver = aimbs_get8(bs); /* Version of ssi data.  Should be 0x00 */
 	sess->ssi.numitems += aimbs_get16(bs); /* # of items in this SSI SNAC */
 
@@ -1159,7 +1155,7 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	/* Read in the timestamp */
 	sess->ssi.timestamp = aimbs_get32(bs);
 
-	if (!(snac->flags & 0x0001)) {
+	if (snac->flags ^ 0x0001) {
 		/* Make a copy of the list */
 		struct aim_ssi_item *cur;
 		for (cur=sess->ssi.official; cur; cur=cur->next)
