@@ -161,10 +161,10 @@ struct msn_buddy {
 static void msn_login_callback(gpointer, gint, GaimInputCondition);
 static void msn_login_xfr_connect(gpointer, gint, GaimInputCondition);
 
-#define GET_NEXT(tmp)	while (*(tmp) && !isspace(*(tmp))) \
+#define GET_NEXT(tmp)	while (*(tmp) && *(tmp) != ' ') \
 				(tmp)++; \
 			*(tmp)++ = 0; \
-			while (*(tmp) && isspace(*(tmp))) \
+			while (*(tmp) && *(tmp) == ' ') \
 				(tmp)++;
 
 
