@@ -43,7 +43,8 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	gboolean digest_md5 = FALSE, plain=FALSE;
 
 	if((starttls = xmlnode_get_child(packet, "starttls"))) {
-		if(gaim_ssl_is_supported()) {
+		if(gaim_account_get_bool(js->gc->account, "use_tls", TRUE) &&
+						gaim_ssl_is_supported()) {
 			jabber_send_raw(js,
 					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>");
 			return;

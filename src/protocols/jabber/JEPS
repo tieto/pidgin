@@ -1,54 +1,30 @@
 0004: NEED
 	Data Gathering and Reporting
-0012: DONE
-	Last Activity
-0018: DONE (Is it?)
-	Presence (Invisible)
-0022: DONE (replace?)
-	Message Events
-0030: DONE
-	Service Discovery
-0045: DONE
+0045: IN PROGRESS
 	Multi-User Chat
-0047: DONE
+0047: IN PROGRESS
 	In-Band Bytestreams
-0054: DONE (ugly)
-	vCard
 0060: NEED
 	Pub-Sub
-0065: DONE
+0065: IN PROGRESS
 	SOCKS5 Bytestreams
-0071: DONE (needs spec confirmation)
+0071: AWAITING FINAL SPEC
 	XHTML-IM
 0073: NEED
 	Basic IM Protocol Suite
-0077: DONE
-	In-Band Registration
-0078: DONE
-	Non-SASL Authentication
 0080: NEED (Do we?)
 	Geographic Location Information
-0082: DONE
-	Jabber Date and Time Profiles
 0084: NEED
 	User Avatars in Jabber
 0085: NEED
 	Chat State Notifications
-0086: DONE
-	Legacy Errors
 0089: WATCH
 	Generic Alerts
-0090: DONE
-	Entity Time
-0091: DONE
-	Delayed Delivery
-0092: DONE
-	Software Version
 0093: NEED
 	Roster Item Exchange
-0095: DONE
+0095: IN PROGRESS
 	Stream Initiation
-0096: DONE
+0096: IN PROGRESS
 	File Transfer Stream Initiation Profile
 0100: NEED
 	Gateway Interaction (Transports)

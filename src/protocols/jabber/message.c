@@ -182,9 +182,16 @@ static void handle_groupchat(JabberMessage *jm)
 		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(chat->conv), jid->resource,
 				jm->subject);
 
-	if(jm->xhtml || jm->body)
-		serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
-				0, jm->xhtml ? jm->xhtml : jm->body, jm->sent);
+	if(jm->xhtml || jm->body) {
+		if(jid->resource)
+			serv_got_chat_in(jm->js->gc, chat->id, jid->resource, 0,
+							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
+		else if(chat->muc)
+			gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "",
+							jm->xhtml ? jm->xhtml : jm->body,
+							GAIM_MESSAGE_SYSTEM, jm->sent);
+	}
+
 	jabber_id_free(jid);
 }
 

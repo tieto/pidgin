@@ -242,12 +242,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_SET,
 								"http://jabber.org/protocol/muc#owner");
 						xmlnode *query = xmlnode_get_child(iq->node, "query");
-
 						xmlnode *x = xmlnode_new_child(query, "x");
+						char *room_jid = g_strdup_printf("%s@%s", jid->node,
+										jid->domain);
+
+						xmlnode_set_attrib(iq->node, "to", room_jid);
 						xmlnode_set_attrib(x, "xmlns", "jabber:x:data");
 						xmlnode_set_attrib(x, "type", "submit");
 
 						jabber_iq_send(iq);
+
+						g_free(room_jid);
 					}
 				}
 			}

@@ -20,17 +20,6 @@
  */
 #include "internal.h"
 
-/*
-#include "conversation.h"
-#include "ft.h"
-#include "multi.h"
-#include "notify.h"
-#include "proxy.h"
-#include "request.h"
-#include "util.h"
-
-*/
-
 #include "account.h"
 #include "accountopt.h"
 #include "debug.h"
@@ -411,11 +400,15 @@ jabber_login(GaimAccount *account)
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
-	if(gaim_account_get_bool(account, "old_ssl", FALSE)
-			&& gaim_ssl_is_supported()) {
-		js->gsc = gaim_ssl_connect(account, server,
-				gaim_account_get_int(account, "port", 5222),
-				jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
+
+	if(gaim_account_get_bool(account, "old_ssl", FALSE)) {
+		if(gaim_ssl_is_supported()) {
+			js->gsc = gaim_ssl_connect(account, server,
+					gaim_account_get_int(account, "port", 5222),
+					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
+		} else {
+			gaim_connection_error(gc, _("SSL support unavailable"));
+		}
 	}
 
 	if(!js->gsc) {
@@ -705,11 +698,14 @@ static void jabber_register_account(GaimAccount *account)
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
-	if(gaim_account_get_bool(account, "old_ssl", FALSE)
-			&& gaim_ssl_is_supported()) {
-		js->gsc = gaim_ssl_connect(account, server,
-				gaim_account_get_int(account, "port", 5222),
-				jabber_login_callback_ssl, NULL, gc);
+	if(gaim_account_get_bool(account, "old_ssl", FALSE)) {
+		if(gaim_ssl_is_supported()) {
+			js->gsc = gaim_ssl_connect(account, server,
+					gaim_account_get_int(account, "port", 5222),
+					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
+		} else {
+			gaim_connection_error(gc, _("SSL support unavailable"));
+		}
 	}
 
 	if(!js->gsc) {
@@ -1146,7 +1142,12 @@ init_plugin(GaimPlugin *plugin)
 	split = gaim_account_user_split_new(_("Resource"), "Gaim", '/');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = gaim_account_option_bool_new(_("Force Old SSL"), "old_ssl", FALSE);
+	option = gaim_account_option_bool_new(_("Use TLS if available"), "use_tls",
+			TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+			option);
+
+	option = gaim_account_option_bool_new(_("Force old SSL"), "old_ssl", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 
