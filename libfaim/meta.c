@@ -16,17 +16,17 @@ faim_export char *aim_getbuildtime(void)
   return AIM_BUILDTIME;
 }
 
-faim_export char *aim_getbuildstring(void)
+faim_export int aim_getbuildstring(char *buf, int buflen)
 {
-  static char string[100];
 
-  snprintf(string, 99, "%d.%d.%d-%s%s", 
+  snprintf(buf, buflen, "%d.%d.%d-%s%s", 
 	   FAIM_VERSION_MAJOR,
 	   FAIM_VERSION_MINOR,
 	   FAIM_VERSION_MINORMINOR,
 	   aim_getbuilddate(),
 	   aim_getbuildtime());
-  return string;
+
+  return 0;
 }
 
 faim_internal void faimdprintf(struct aim_session_t *sess, int dlevel, const char *format, ...)

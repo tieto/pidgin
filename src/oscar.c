@@ -466,7 +466,7 @@ void oscar_close(struct gaim_connection *gc) {
 		gdk_input_remove(odata->cnpa);
 	if (odata->paspa > 0)
 		gdk_input_remove(odata->paspa);
-	aim_logoff(odata->sess);
+	aim_session_kill(odata->sess);
 	g_free(odata->sess);
 	odata->sess = NULL;
 	g_free(gc->proto_data);
@@ -603,7 +603,11 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 
 int gaim_parse_login(struct aim_session_t *sess,
 		     struct command_rx_struct *command, ...) {
+#if 0
 	struct client_info_s info = {"gaim", 4, 1, 2010, "us", "en", 0x0004, 0x0000, 0x04b};
+#else
+	struct client_info_s info = AIM_CLIENTINFO_KNOWNGOOD;
+#endif
 	char *key;
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
@@ -804,15 +808,15 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 
 int gaim_parse_offgoing(struct aim_session_t *sess,
 			struct command_rx_struct *command, ...) {
-	char *sn;
+	struct aim_userinfo_s *info;
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, command);
-	sn = va_arg(ap, char *);
+	info = va_arg(ap, struct aim_userinfo_s *);
 	va_end(ap);
 
-	serv_got_update(gc, sn, 0, 0, 0, 0, 0, 0);
+	serv_got_update(gc, info->sn, 0, 0, 0, 0, 0, 0);
 
 	return 1;
 }
@@ -1326,8 +1330,8 @@ int gaim_parse_msgerr(struct aim_session_t *sess,
 	char buf[1024];
 
 	va_start(ap, command);
-	destn = va_arg(ap, char *);
 	reason = (u_short)va_arg(ap, u_int);
+	destn = va_arg(ap, char *);
 	va_end(ap);
 
 	sprintf(buf, _("Your message to %s did not get sent: %s"), destn,
@@ -1345,8 +1349,8 @@ int gaim_parse_locerr(struct aim_session_t *sess,
 	char buf[1024];
 
 	va_start(ap, command);
-	destn = va_arg(ap, char *);
 	reason = (u_short)va_arg(ap, u_int);
+	destn = va_arg(ap, char *);
 	va_end(ap);
 
 	sprintf(buf, _("User information for %s unavailable: %s"), destn,
@@ -1418,17 +1422,22 @@ int gaim_parse_motd(struct aim_session_t *sess,
 	char *msg;
 	u_short id;
 	va_list ap;
+	char buildbuf[150];
 
 	va_start(ap, command);
 	id  = (u_short)va_arg(ap, u_int);
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
+	aim_getbuildstring(buildbuf, sizeof(buildbuf));
+
 	debug_printf("MOTD: %s (%d)\n", msg, id);
-	debug_printf("Gaim %s / Libfaim %s\n", VERSION, aim_getbuildstring());
+	debug_printf("Gaim %s / Libfaim %s\n", VERSION, buildbuf);
 	if (id != 4)
 		do_error_dialog(_("Your connection may be lost."),
 				_("AOL error"));
+
+	aim_0001_0020(sess, command->conn);
 
 	return 1;
 }

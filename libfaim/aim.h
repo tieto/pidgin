@@ -169,6 +169,18 @@ struct client_info_s {
   long unknown;
 };
 
+#define AIM_CLIENTINFO_KNOWNGOOD { \
+  "AOL Instant Messenger (SM), version 3.5.1670/WIN32", \
+  0x0003, \
+  0x0005, \
+  0x0686, \
+  "us", \
+  "en", \
+  0x0004, \
+  0x0000, \
+  0x0000002a, \
+}
+
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
@@ -340,6 +352,8 @@ struct aim_session_t {
   void (*debugcb)(struct aim_session_t *sess, int level, const char *format, va_list va); /* same as faim_debugging_callback_t */
 
   struct aim_msgcookie_t *msgcookies;
+
+  void *modlistv;
 };
 
 /* Values for sess->flags */
@@ -444,6 +458,7 @@ typedef int (*rxcallback_t)(struct aim_session_t *, struct command_rx_struct *, 
 faim_export int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
 faim_export int aim_request_login (struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
 faim_export int aim_send_login (struct aim_session_t *, struct aim_conn_t *, char *, char *, struct client_info_s *, char *key);
+faim_export int aim_encode_password_md5(const char *password, const char *key, unsigned char *digest);
 faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, int errorcode, char *errorurl, char *bosip, char *cookie, char *email, int regstatus);
 faim_export int aim_gencookie(unsigned char *buf);
 faim_export int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn);
@@ -483,6 +498,7 @@ faim_export int aim_conn_isconnecting(struct aim_conn_t *conn);
 typedef void (*faim_debugging_callback_t)(struct aim_session_t *sess, int level, const char *format, va_list va);
 faim_export int aim_setdebuggingcb(struct aim_session_t *sess, faim_debugging_callback_t);
 faim_export void aim_session_init(struct aim_session_t *, unsigned long flags, int debuglevel);
+faim_export void aim_session_kill(struct aim_session_t *);
 faim_export void aim_setupproxy(struct aim_session_t *sess, char *server, char *username, char *password);
 faim_export struct aim_conn_t *aim_getconn_type(struct aim_session_t *, int type);
 
@@ -620,6 +636,9 @@ faim_export int aim_oft_getfile_end(struct aim_session_t *sess, struct aim_conn_
 #define AIM_CAPS_GAMES 0x40
 #define AIM_CAPS_SAVESTOCKS 0x80
 
+faim_export int aim_0002_000b(struct aim_session_t *sess, struct aim_conn_t *conn, const char *sn);
+faim_export int aim_0001_0020(struct aim_session_t *sess, struct aim_conn_t *conn);
+
 #define AIM_GETINFO_GENERALINFO 0x00001
 #define AIM_GETINFO_AWAYMESSAGE 0x00003
 
@@ -663,7 +682,7 @@ faim_export int aim_handlerendconnect(struct aim_session_t *sess, struct aim_con
 faim_export unsigned long aim_denytransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sender, char *cookie, unsigned short code);
 faim_export struct aim_conn_t *aim_accepttransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, char *cookie, char *ip, unsigned short listingfiles, unsigned short listingtotsize, unsigned short listingsize, unsigned int listingchecksum, unsigned short rendid);
 
-faim_export unsigned long aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *, unsigned short);
+faim_export int aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *, unsigned short);
 faim_export int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_userinfo_s *info);
 faim_export int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
 
@@ -756,7 +775,7 @@ faim_export char *aim_strsep(char **pp, const char *delim);
 /* aim_meta.c */
 faim_export char *aim_getbuilddate(void);
 faim_export char *aim_getbuildtime(void);
-faim_export char *aim_getbuildstring(void);
+faim_export int aim_getbuildstring(char *buf, int buflen);
 
 #include <aim_internal.h>
 

@@ -14,17 +14,21 @@ struct aim_priv_inforeq {
   unsigned short infotype;
 };
 
-faim_export unsigned long aim_getinfo(struct aim_session_t *sess,
-				      struct aim_conn_t *conn, 
-				      const char *sn,
-				      unsigned short infotype)
+faim_export int aim_getinfo(struct aim_session_t *sess,
+			    struct aim_conn_t *conn, 
+			    const char *sn,
+			    unsigned short infotype)
 {
   struct command_tx_struct *newpacket;
   struct aim_priv_inforeq privdata;
   int i = 0;
 
   if (!sess || !conn || !sn)
-    return 0;
+    return -1;
+
+  if ((infotype != AIM_GETINFO_GENERALINFO) &&
+      (infotype != AIM_GETINFO_AWAYMESSAGE))
+    return -1;
 
   if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 12+1+strlen(sn))))
     return -1;
@@ -44,51 +48,7 @@ faim_export unsigned long aim_getinfo(struct aim_session_t *sess,
   privdata.infotype = infotype;
   aim_cachesnac(sess, 0x0002, 0x0005, 0x0000, &privdata, sizeof(struct aim_priv_inforeq));
 
-  return sess->snac_nextid;
-}
-
-faim_internal int aim_parse_locateerr(struct aim_session_t *sess,
-				      struct command_rx_struct *command)
-{
-  u_long snacid = 0x000000000;
-  struct aim_snac_t *snac = NULL;
-  int ret = 0;
-  rxcallback_t userfunc = NULL;
-  char *dest;
-  unsigned short reason = 0;
-
-  /*
-   * Get SNAC from packet and look it up 
-   * the list of unrepliedto/outstanding
-   * SNACs.
-   *
-   */
-  snacid = aimutil_get32(command->data+6);
-  snac = aim_remsnac(sess, snacid);
-
-  if (!snac) {
-    faimdprintf(sess, 0, "locerr: got an locate-failed error on an unknown SNAC ID! (%08lx)\n", snacid);
-    dest = NULL;
-  } else
-    dest = snac->data;
-
-  reason = aimutil_get16(command->data+10);
-
-  /*
-   * Call client.
-   */
-  userfunc = aim_callhandler(sess, command->conn, 0x0002, 0x0001);
-  if (userfunc)
-    ret =  userfunc(sess, command, dest, reason);
-  else
-    ret = 0;
-  
-  if (snac) {
-    free(snac->data);
-    free(snac);
-  }
-
-  return ret;
+  return 0;
 }
 
 /*
@@ -462,136 +422,6 @@ faim_internal int aim_extractuserinfo(struct aim_session_t *sess, unsigned char 
 }
 
 /*
- * Oncoming Buddy notifications contain a subset of the
- * user information structure.  Its close enough to run
- * through aim_extractuserinfo() however.
- *
- */
-faim_internal int aim_parse_oncoming_middle(struct aim_session_t *sess,
-					    struct command_rx_struct *command)
-{
-  struct aim_userinfo_s userinfo;
-  u_int i = 0;
-  rxcallback_t userfunc=NULL;
-
-  i = 10;
-  i += aim_extractuserinfo(sess, command->data+i, &userinfo);
-
-  userfunc = aim_callhandler(sess, command->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_ONCOMING);
-  if (userfunc)
-    i = userfunc(sess, command, &userinfo);
-
-  return 1;
-}
-
-/*
- * Offgoing Buddy notifications contain no useful
- * information other than the name it applies to.
- *
- */
-faim_internal int aim_parse_offgoing_middle(struct aim_session_t *sess,
-					    struct command_rx_struct *command)
-{
-  char sn[MAXSNLEN+1];
-  u_int i = 0;
-  rxcallback_t userfunc=NULL;
-
-  strncpy(sn, (char *)command->data+11, (int)command->data[10]);
-  sn[(int)command->data[10]] = '\0';
-
-  userfunc = aim_callhandler(sess, command->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_OFFGOING);
-  if (userfunc)
-    i = userfunc(sess, command, sn);
-
-  return 1;
-}
-
-/*
- * This parses the user info stuff out all nice and pretty then calls 
- * the higher-level callback (in the user app).
- *
- */
-faim_internal int aim_parse_userinfo_middle(struct aim_session_t *sess,
-					    struct command_rx_struct *command)
-{
-  struct aim_userinfo_s userinfo;
-  char *text_encoding = NULL;
-  char *text = NULL;
-  u_int i = 0;
-  rxcallback_t userfunc=NULL;
-  struct aim_tlvlist_t *tlvlist;
-  struct aim_snac_t *origsnac = NULL;
-  u_long snacid;
-  struct aim_priv_inforeq *inforeq;
-  
-  snacid = aimutil_get32(&command->data[6]);
-  origsnac = aim_remsnac(sess, snacid);
-
-  if (!origsnac || !origsnac->data) {
-    faimdprintf(sess, 0, "parse_userinfo_middle: major problem: no snac stored!\n");
-    return 1;
-  }
-
-  inforeq = (struct aim_priv_inforeq *)origsnac->data;
-
-  switch (inforeq->infotype) {
-  case AIM_GETINFO_GENERALINFO:
-  case AIM_GETINFO_AWAYMESSAGE:
-    i = 10;
-
-    /*
-     * extractuserinfo will give us the basic metaTLV information
-     */
-    i += aim_extractuserinfo(sess, command->data+i, &userinfo);
-  
-    /*
-     * However, in this command, there's usually more TLVs following...
-     */ 
-    tlvlist = aim_readtlvchain(command->data+i, command->commandlen-i);
-
-    /* 
-     * Depending on what informational text was requested, different
-     * TLVs will appear here.
-     *
-     * Profile will be 1 and 2, away message will be 3 and 4.
-     */
-    if (aim_gettlv(tlvlist, 0x0001, 1)) {
-      text_encoding = aim_gettlv_str(tlvlist, 0x0001, 1);
-      text = aim_gettlv_str(tlvlist, 0x0002, 1);
-    } else if (aim_gettlv(tlvlist, 0x0003, 1)) {
-      text_encoding = aim_gettlv_str(tlvlist, 0x0003, 1);
-      text = aim_gettlv_str(tlvlist, 0x0004, 1);
-    }
-
-    userfunc = aim_callhandler(sess, command->conn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO);
-    if (userfunc) {
-      i = userfunc(sess,
-		   command, 
-		   &userinfo, 
-		   text_encoding, 
-		   text,
-		   inforeq->infotype); 
-    }
-  
-    free(text_encoding);
-    free(text);
-    aim_freetlvchain(&tlvlist);
-    break;
-  default:
-    faimdprintf(sess, 0, "parse_userinfo_middle: unknown infotype in request! (0x%04x)\n", inforeq->infotype);
-    break;
-  }
-
-  if (origsnac) {
-    if (origsnac->data)
-      free(origsnac->data);
-    free(origsnac);
-  }
-
-  return 1;
-}
-
-/*
  * Inverse of aim_extractuserinfo()
  */
 faim_internal int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info)
@@ -696,3 +526,127 @@ faim_export int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_con
   return 0;
 }
 
+faim_export int aim_0002_000b(struct aim_session_t *sess, struct aim_conn_t *conn, const char *sn)
+{
+  struct command_tx_struct *tx;
+  int i = 0;
+
+  if (!sess || !conn || !sn)
+    return 0;
+
+  if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+1+strlen(sn))))
+    return -1;
+
+  tx->lock = 1;
+
+  i = aim_putsnac(tx->data, 0x0002, 0x000b, 0x0000, sess->snac_nextid);
+  i += aimutil_put8(tx->data+i, strlen(sn));
+  i += aimutil_putstr(tx->data+i, sn, strlen(sn));
+  
+  tx->commandlen = i;
+  tx->lock = 0;
+  aim_tx_enqueue(sess, tx);
+
+  return 0;
+}
+
+static int rights(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+{
+  struct aim_tlvlist_t *tlvlist;
+  rxcallback_t userfunc;
+  int ret = 0;
+
+  tlvlist = aim_readtlvchain(data, datalen);
+
+  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+    ret = userfunc(sess, rx);
+
+  aim_freetlvchain(&tlvlist);
+
+  return ret;
+}
+
+static int userinfo(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+{
+  struct aim_userinfo_s userinfo;
+  char *text_encoding = NULL;
+  char *text = NULL;
+  int i = 0;
+  rxcallback_t userfunc;
+  struct aim_tlvlist_t *tlvlist;
+  struct aim_snac_t *origsnac = NULL;
+  struct aim_priv_inforeq *inforeq;
+  int ret = 0;
+
+  origsnac = aim_remsnac(sess, snac->id);
+
+  if (!origsnac || !origsnac->data) {
+    faimdprintf(sess, 0, "parse_userinfo_middle: major problem: no snac stored!\n");
+    return 0;
+  }
+
+  inforeq = (struct aim_priv_inforeq *)origsnac->data;
+
+  if ((inforeq->infotype != AIM_GETINFO_GENERALINFO) &&
+      (inforeq->infotype != AIM_GETINFO_AWAYMESSAGE)) {
+    faimdprintf(sess, 0, "parse_userinfo_middle: unknown infotype in request! (0x%04x)\n", inforeq->infotype);
+    return 0;
+  }
+
+  i = aim_extractuserinfo(sess, data, &userinfo);
+  
+  tlvlist = aim_readtlvchain(data+i, datalen-i);
+
+  /* 
+   * Depending on what informational text was requested, different
+   * TLVs will appear here.
+   *
+   * Profile will be 1 and 2, away message will be 3 and 4.
+   */
+  if (aim_gettlv(tlvlist, 0x0001, 1)) {
+    text_encoding = aim_gettlv_str(tlvlist, 0x0001, 1);
+    text = aim_gettlv_str(tlvlist, 0x0002, 1);
+  } else if (aim_gettlv(tlvlist, 0x0003, 1)) {
+    text_encoding = aim_gettlv_str(tlvlist, 0x0003, 1);
+    text = aim_gettlv_str(tlvlist, 0x0004, 1);
+  }
+
+  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+    ret = userfunc(sess, rx, &userinfo, text_encoding, text, inforeq->infotype);
+
+  free(text_encoding);
+  free(text);
+
+  aim_freetlvchain(&tlvlist);
+
+  if (origsnac) {
+    if (origsnac->data)
+      free(origsnac->data);
+    free(origsnac);
+  }
+
+  return ret;
+}
+
+static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+{
+
+  if (snac->subtype == 0x0003)
+    return rights(sess, mod, rx, snac, data, datalen);
+  else if (snac->subtype == 0x0006)
+    return userinfo(sess, mod, rx, snac, data, datalen);
+
+  return 0;
+}
+
+faim_internal int locate_modfirst(struct aim_session_t *sess, aim_module_t *mod)
+{
+
+  mod->family = 0x0002;
+  mod->version = 0x0000;
+  mod->flags = 0;
+  strncpy(mod->name, "locate", sizeof(mod->name));
+  mod->snachandler = snachandler;
+
+  return 0;
+}

@@ -3,8 +3,10 @@ noinst_LIBRARIES = libfaim.a
 EXTRA_DIST = aim.h aim_cbtypes.h aim_internal.h faimconfig.h md5.h README \
 		CHANGES COPYING BUGS AUTHORS
 
-libfaim_a_SOURCES = 	adverts.c	\
+libfaim_a_SOURCES = 	admin.c		\
+			adverts.c	\
 			auth.c 		\
+			bos.c 		\
 			buddylist.c	\
 			chat.c		\
 			chatnav.c	\
@@ -21,6 +23,7 @@ libfaim_a_SOURCES = 	adverts.c	\
 			rxqueue.c	\
 			search.c	\
 			snac.c		\
+			stats.c		\
 			tlv.c		\
 			txqueue.c	\
 			util.c

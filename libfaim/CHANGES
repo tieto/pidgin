@@ -1,6 +1,72 @@
 
 No release numbers
 ------------------
+ -  Mon Mar 26 16:08:45 PST 2001
+  - Why didn't anyone tell me buddy-offgoing wasn't working?
+    - *** REQUIRES CLIENT CHANGES... buddy-offgoing now passes a userinfo
+          struct (its now identical to buddy-oncoming)
+
+ - Mon Mar 26 15:57:41 PST 2001
+  - Hrmph.
+  - Debuglevel wasn't getting set properly by aim_session_init
+
+ - Sat Mar 24 03:16:32 UTC 2001
+  - vaargs to msgerror and locateerror swapped
+     - ** CLIENT CHANGE: Reason code comes before SN now.  This is so that
+          the backend code for all three error handlers is identical.
+  - aim_getinfo() returns -1 on failure (hah! I don't think anyone checks 
+      return codes from libfaim anyway...they're known for their
+      inconsistency and lack of sensicality)
+  - Remove _DEFAULT handlers in faimtest...
+     - They were not consistent.
+     - They did not make sense.
+     - They did not work anyway.
+     - Most of them were #if 0'd.
+  - Add ICBM Parameter Info callback... you can catch this if you want.
+  - aim_getbuildstring() now takes a buffer instead of returning static (ew!)
+  - Clean up, "factorize", etc
+  - More stuff... (Only one "middle handler" left in rxhandlers.c!)
+
+ - Fri Mar 23 05:42:11 UTC 2001
+  - Export aim_encode_password_md5()
+  - Add middle handler for 000b/0002 (min report interval)
+  - Add aim_session_kill()
+     - CLIENTS MUST CALL THIS either in addition to or instead of
+       aim_logoff(), particularly if you keep lots of sessions open.
+       (Sessions now contain dynamically allocated memory which must be freed.)
+  - Oh, and some other stuff...
+
+ - Fri Mar 23 01:45:28 UTC 2001
+  - Add AIM_CLIENTINFO_KNOWNGOOD
+  - Fix a few details in aim_send_login (thanks temas)
+  - Prevent aim_rxhandlers from being called recursively
+     - This is something that has been in my PENDING_AIM mailbox for over
+       a year now.  I figured it was trivial enough to throw in.  EveryBuddy
+       wanted it, but I don't remember why.  It should never happen anyway.
+  - Use AIM_CLIENTINFO_KNOWNGOOD
+     - This lets faimtest log in after today's round of AOL being mean.
+
+ - Fri Mar 16 23:12:58 UTC 2001
+  - Remove one level from aim_rxdispatch()
+
+ - Wed Mar 14 20:21:49 UTC 2001
+  - Clean up declarations of TLV functions (ie, const)
+  - Add -o and -O to faimtest (I didn't use your patch, josh)
+
+ - Wed Mar 14 03:11:03 UTC 2001
+  - Err...I'll commit before I go home.  More faimtest crap.
+
+ - Tue Mar 13 20:23:04 UTC 2001
+  - Fiddle with faimtest a bit.
+
+ - Sun Mar 11 06:02:19 UTC 2001
+  - Banish socklen_t.
+
+ - Sun Mar 11 05:51:45 UTC 2001 (jbm)
+  - Split off aim_internal.h 
+  - Add aim_tx_cleanqueue()
+  - Remove sn from directim callback (use priv)
+
  - Mon Mar  5 01:19:48 UTC 2001
   - Fix typo in last CHANGES entry.
   - Add fix from Eric to keep efence from complaining about malloc(0)

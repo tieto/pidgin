@@ -215,10 +215,10 @@ faim_export unsigned long aim_bos_setprofile(struct aim_session_t *sess,
     return -1;
 
   i += aim_putsnac(newpacket->data, 0x0002, 0x004, 0x0000, sess->snac_nextid);
-  i += aim_puttlv_str(newpacket->data+i, 0x0001, strlen("text/x-aolrtf; charset=\"us-ascii\""), "text/x-aolrtf; charset=\"us-ascii\"");
+  i += aim_puttlv_str(newpacket->data+i, 0x0001, strlen("text/aolrtf; charset=\"us-ascii\""), "text/x-aolrtf; charset=\"us-ascii\"");
   i += aim_puttlv_str(newpacket->data+i, 0x0002, strlen(profile), profile);
   /* why do we send this twice?  */
-  i += aim_puttlv_str(newpacket->data+i, 0x0003, strlen("text/x-aolrtf; charset=\"us-ascii\""), "text/x-aolrtf; charset=\"us-ascii\"");
+  i += aim_puttlv_str(newpacket->data+i, 0x0003, strlen("text/aolrtf; charset=\"us-ascii\""), "text/x-aolrtf; charset=\"us-ascii\"");
   
   /* Away message -- we send this no matter what, even if its blank */
   if (awaymsg)
@@ -237,58 +237,6 @@ faim_export unsigned long aim_bos_setprofile(struct aim_session_t *sess,
   aim_tx_enqueue(sess, newpacket);
   
   return (sess->snac_nextid++);
-}
-
-/* 
- * aim_bos_setgroupperm(mask)
- * 
- * Set group permisson mask.  Normally 0x1f (all classes).
- *
- * The group permission mask allows you to keep users of a certain
- * class or classes from talking to you.  The mask should be
- * a bitwise OR of all the user classes you want to see you.
- *
- */
-faim_export unsigned long aim_bos_setgroupperm(struct aim_session_t *sess,
-					       struct aim_conn_t *conn, 
-					       u_long mask)
-{
-  return aim_genericreq_l(sess, conn, 0x0009, 0x0004, &mask);
-}
-
-faim_internal int aim_parse_bosrights(struct aim_session_t *sess,
-				      struct command_rx_struct *command, ...)
-{
-  rxcallback_t userfunc = NULL;
-  int ret=1;
-  struct aim_tlvlist_t *tlvlist;
-  unsigned short maxpermits = 0, maxdenies = 0;
-
-  /* 
-   * TLVs follow 
-   */
-  if (!(tlvlist = aim_readtlvchain(command->data+10, command->commandlen-10)))
-    return ret;
-
-  /*
-   * TLV type 0x0001: Maximum number of buddies on permit list.
-   */
-  if (aim_gettlv(tlvlist, 0x0001, 1))
-    maxpermits = aim_gettlv16(tlvlist, 0x0001, 1);
-
-  /*
-   * TLV type 0x0002: Maximum number of buddies on deny list.
-   *
-   */
-  if (aim_gettlv(tlvlist, 0x0002, 1)) 
-    maxdenies = aim_gettlv16(tlvlist, 0x0002, 1);
-  
-  if ((userfunc = aim_callhandler(sess, command->conn, 0x0009, 0x0003)))
-    ret = userfunc(sess, command, maxpermits, maxdenies);
-
-  aim_freetlvchain(&tlvlist);
-
-  return ret;  
 }
 
 /*
@@ -413,7 +361,7 @@ faim_export unsigned long aim_setversions(struct aim_session_t *sess,
   struct command_tx_struct *newpacket;
   int i;
 
-  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10 + (4*12))))
+  if (!(newpacket = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10 + (4*16))))
     return -1;
 
   newpacket->lock = 1;
@@ -423,9 +371,6 @@ faim_export unsigned long aim_setversions(struct aim_session_t *sess,
 
   i += aimutil_put16(newpacket->data+i, 0x0001);
   i += aimutil_put16(newpacket->data+i, 0x0003);
-
-  i += aimutil_put16(newpacket->data+i, 0x0013);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
 
   i += aimutil_put16(newpacket->data+i, 0x0002);
   i += aimutil_put16(newpacket->data+i, 0x0001);
@@ -449,9 +394,15 @@ faim_export unsigned long aim_setversions(struct aim_session_t *sess,
   i += aimutil_put16(newpacket->data+i, 0x0001);
 
   i += aimutil_put16(newpacket->data+i, 0x000b);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
+  i += aimutil_put16(newpacket->data+i, 0x0002);
 
   i += aimutil_put16(newpacket->data+i, 0x000c);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x0013);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
+
+  i += aimutil_put16(newpacket->data+i, 0x0015);
   i += aimutil_put16(newpacket->data+i, 0x0001);
 
   newpacket->commandlen = i;
@@ -869,4 +820,57 @@ faim_export unsigned long aim_icq_setstatus(struct aim_session_t *sess,
   aim_tx_enqueue(sess, newpacket);
 
   return(sess->snac_nextid);
+}
+
+/*
+ * Should be generic enough to handle the errors for all families...
+ *
+ */
+static int generror(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+{
+  int ret = 0;
+  int error = 0;
+  rxcallback_t userfunc;
+  struct aim_snac_t *snac2;
+
+  snac2 = aim_remsnac(sess, snac->id);
+
+  if (datalen)
+    error = aimutil_get16(data);
+
+  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+    ret = userfunc(sess, rx, error, snac2?snac2->data:NULL);
+
+  if (snac2)
+    free(snac2->data);
+  free(snac2);
+
+  return ret;
+}
+
+static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+{
+
+  if (snac->subtype == 0x0001)
+    return generror(sess, mod, rx, snac, data, datalen);
+  else if ((snac->family == 0xffff) && (snac->subtype == 0xffff)) {
+    rxcallback_t userfunc;
+
+    if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+      return userfunc(sess, rx);
+  }
+
+  return 0;
+}
+
+faim_internal int misc_modfirst(struct aim_session_t *sess, aim_module_t *mod)
+{
+
+  mod->family = 0xffff;
+  mod->version = 0x0000;
+  mod->flags = AIM_MODFLAG_MULTIFAMILY;
+  strncpy(mod->name, "misc", sizeof(mod->name));
+  mod->snachandler = snachandler;
+
+  return 0;
 }

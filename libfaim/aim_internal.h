@@ -7,15 +7,50 @@
 #ifndef __AIM_INTERNAL_H__
 #define __AIM_INTERNAL_H__ 1
 
+typedef struct {
+  unsigned short family;
+  unsigned short subtype;
+  unsigned short flags;
+  unsigned long id;
+} aim_modsnac_t;
+
+#define AIM_MODULENAME_MAXLEN 16
+#define AIM_MODFLAG_MULTIFAMILY 0x0001
+typedef struct aim_module_s {
+  unsigned short family;
+  unsigned short flags;
+  unsigned short version;
+  char name[AIM_MODULENAME_MAXLEN+1];
+  int (*snachandler)(struct aim_session_t *sess, struct aim_module_s *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen);
+  void (*shutdown)(struct aim_session_t *sess, struct aim_module_s *mod);
+  void *priv;
+  struct aim_module_s *next;
+} aim_module_t;
+
+faim_internal int aim__registermodule(struct aim_session_t *sess, int (*modfirst)(struct aim_session_t *, aim_module_t *));
+faim_internal void aim__shutdownmodules(struct aim_session_t *sess);
+
+
+faim_internal int buddylist_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int admin_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int bos_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int search_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int stats_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int auth_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int msg_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int misc_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int chatnav_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int chat_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int locate_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+faim_internal int general_modfirst(struct aim_session_t *sess, aim_module_t *mod);
+
 faim_internal unsigned long aim_genericreq_n(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype);
 faim_internal unsigned long aim_genericreq_l(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_long *);
 faim_internal unsigned long aim_genericreq_s(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_short *);
 
-faim_internal int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *command);
 faim_internal void aim_rxqueue_cleanbyconn(struct aim_session_t *sess, struct aim_conn_t *conn);
 faim_internal int aim_recv(int fd, void *buf, size_t count);
 
-faim_internal int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *command, ...);
 faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx_struct *cur);
@@ -23,10 +58,6 @@ faim_internal unsigned int aim_get_next_txseqnum(struct aim_conn_t *);
 faim_internal struct command_tx_struct *aim_tx_new(struct aim_session_t *sess, struct aim_conn_t *conn, unsigned char framing, int chan, int datalen);
 faim_internal int aim_tx_enqueue(struct aim_session_t *, struct command_tx_struct *);
 faim_internal int aim_tx_printqueue(struct aim_session_t *);
-faim_internal int aim_parse_hostonline(struct aim_session_t *sess, struct command_rx_struct *command, ...);
-faim_internal int aim_parse_hostversions(struct aim_session_t *sess, struct command_rx_struct *command, ...);
-faim_internal int aim_parse_accountconfirm(struct aim_session_t *sess, struct command_rx_struct *command);
-faim_internal int aim_parse_infochange(struct aim_session_t *sess, struct command_rx_struct *command);
 faim_internal int aim_tx_cleanqueue(struct aim_session_t *, struct aim_conn_t *);
 
 faim_internal rxcallback_t aim_callhandler(struct aim_session_t *sess, struct aim_conn_t *conn, u_short family, u_short type);
@@ -58,11 +89,7 @@ faim_internal int aim_oft_buildheader(unsigned char *,struct aim_fileheader_t *)
 faim_internal int aim_listenestablish(u_short);
 faim_internal int aim_tx_destroy(struct command_tx_struct *);
 
-faim_internal int aim_authparse(struct aim_session_t *, struct command_rx_struct *);
-faim_internal int aim_handleredirect_middle(struct aim_session_t *, struct command_rx_struct *, ...);
 faim_internal int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *, ...);
-faim_internal int aim_parse_generalerrs(struct aim_session_t *, struct command_rx_struct *command, ...);
-faim_internal int aim_parsemotd_middle(struct aim_session_t *sess, struct command_rx_struct *command, ...);
 
 /* these are used by aim_*_clientready */
 #define AIM_TOOL_JAVA   0x0001
@@ -79,17 +106,7 @@ struct aim_tool_version {
   unsigned short toolversion;
 };
 
-faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command);
-
-faim_internal int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_struct *command);
-faim_internal int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct *command);
-
-faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *, struct command_rx_struct *);
-faim_internal int aim_parse_outgoing_im_middle(struct aim_session_t *, struct command_rx_struct *);
-faim_internal int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *);
 faim_internal int aim_negchan_middle(struct aim_session_t *sess, struct command_rx_struct *command);
-faim_internal int aim_parse_bosrights(struct aim_session_t *sess, struct command_rx_struct *command, ...);
-faim_internal int aim_parse_missedcall(struct aim_session_t *sess, struct command_rx_struct *command);
 
 extern u_char aim_caps[8][16];
 faim_internal unsigned short aim_getcap(struct aim_session_t *sess, unsigned char *capblock, int buflen);
@@ -104,23 +121,9 @@ faim_internal int aim_msgcookie_gettype(int reqclass);
 faim_internal int aim_cookie_free(struct aim_session_t *sess, struct aim_msgcookie_t *cookie);
 
 faim_internal int aim_extractuserinfo(struct aim_session_t *sess, unsigned char *, struct aim_userinfo_s *);
-faim_internal int aim_parse_userinfo_middle(struct aim_session_t *, struct command_rx_struct *);
-faim_internal int aim_parse_oncoming_middle(struct aim_session_t *, struct command_rx_struct *);
-faim_internal int aim_parse_offgoing_middle(struct aim_session_t *, struct command_rx_struct *);
 faim_internal int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info);
-faim_internal int aim_parse_locateerr(struct aim_session_t *sess, struct command_rx_struct *command);
-
-faim_internal int aim_parse_buddyrights(struct aim_session_t *sess, struct command_rx_struct *command, ...);
-
-faim_internal unsigned long aim_parse_searcherror(struct aim_session_t *, struct command_rx_struct *);
-faim_internal unsigned long aim_parse_searchreply(struct aim_session_t *, struct command_rx_struct *);
 
 faim_internal int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo);
-faim_internal int aim_chat_parse_infoupdate(struct aim_session_t *sess, struct command_rx_struct *command);
-faim_internal int aim_chat_parse_joined(struct aim_session_t *sess, struct command_rx_struct *command);
-faim_internal int aim_chat_parse_leave(struct aim_session_t *sess, struct command_rx_struct *command);
-faim_internal int aim_chat_parse_incoming(struct aim_session_t *sess, struct command_rx_struct *command);
-faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct *command);
 
 faim_internal void faimdprintf(struct aim_session_t *sess, int dlevel, const char *format, ...);
 

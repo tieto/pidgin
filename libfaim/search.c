@@ -34,59 +34,47 @@ faim_export unsigned long aim_usersearch_address(struct aim_session_t *sess,
   return sess->snac_nextid;
 }
 
-
-faim_internal unsigned long aim_parse_searcherror(struct aim_session_t *sess, struct command_rx_struct *command) 
+/* XXX can this be integrated with the rest of the error handling? */
+static int error(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  u_int i, ret;
-  int snacid;
+  int ret = 0;
   rxcallback_t userfunc;
-  struct aim_snac_t *snac;
+  struct aim_snac_t *snac2;
 
-  i = 6;
-
-  snacid = aimutil_get32(command->data+i);
-  i += 4;
-  
-  if(!(snac = aim_remsnac(sess, snacid))) {
-    faimdprintf(sess, 2, "faim: couldn't get a snac for %d, probably should crash.\n", snacid);
+  /* XXX the modules interface should have already retrieved this for us */
+  if(!(snac2 = aim_remsnac(sess, snac->id))) {
+    faimdprintf(sess, 2, "couldn't get a snac for 0x%08lx\n", snac->id);
     return 0;
   }
 
-  if((userfunc = aim_callhandler(sess, command->conn, 0x000a, 0x0001)))
-    ret = userfunc(sess, command, snac->data /* address */);
-  else
-    ret = 0;
+  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+    ret = userfunc(sess, rx, snac2->data /* address */);
 
-  if(snac) {
-    if(snac->data)
-      free(snac->data);
-    free(snac);
+  /* XXX freesnac()? */
+  if (snac2) {
+    if(snac2->data)
+      free(snac2->data);
+    free(snac2);
   }
 
   return ret;
 }
-	
-  
-faim_internal unsigned long aim_parse_searchreply(struct aim_session_t *sess, struct command_rx_struct *command)
+
+static int reply(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  u_int i, j, m, ret;
-  int snacid;
+  unsigned int j, m, ret = 0;
   struct aim_tlvlist_t *tlvlist;
   char *cur = NULL, *buf = NULL;
   rxcallback_t userfunc;
-  struct aim_snac_t *snac;
+  struct aim_snac_t *snac2;
 
-  i = 6;
-
-  snacid = aimutil_get32(command->data+i);
-  i += 4;
-
-  if(!(snac = aim_remsnac(sess, snacid))) {
-    faimdprintf(sess, 2, "faim: couldn't get a snac for %d, probably should crash.\n", snacid);
+  if (!(snac2 = aim_remsnac(sess, snac->id))) {
+    faimdprintf(sess, 2, "faim: couldn't get a snac for 0x%08lx\n", snac->id);
     return 0;
   }
 
-  tlvlist = aim_readtlvchain(command->data+i, command->commandlen-i);
+  if (!(tlvlist = aim_readtlvchain(data, datalen)))
+    return 0;
 
   j = 0;
 
@@ -104,19 +92,41 @@ faim_internal unsigned long aim_parse_searchreply(struct aim_session_t *sess, st
 
   aim_freetlvchain(&tlvlist);
 
-  if((userfunc = aim_callhandler(sess, command->conn, 0x000a, 0x0003)))
-    ret = userfunc(sess, command, snac->data /* address */, j, buf);
-  else
-    ret = 0;
+  if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+    ret = userfunc(sess, rx, snac2->data /* address */, j, buf);
 
-  if(snac) {
-    if(snac->data)
-      free(snac->data);
-    free(snac);
+  /* XXX freesnac()? */
+  if(snac2) {
+    if(snac2->data)
+      free(snac2->data);
+    free(snac2);
   }
 
   if(buf)
     free(buf);
 
   return ret;
+}
+
+static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
+{
+
+  if (snac->subtype == 0x0001)
+    return error(sess, mod, rx, snac, data, datalen);
+  else if (snac->subtype == 0x0003)
+    return reply(sess, mod, rx, snac, data, datalen);
+
+  return 0;
+}
+
+faim_internal int search_modfirst(struct aim_session_t *sess, aim_module_t *mod)
+{
+
+  mod->family = 0x000a;
+  mod->version = 0x0000;
+  mod->flags = 0;
+  strncpy(mod->name, "search", sizeof(mod->name));
+  mod->snachandler = snachandler;
+
+  return 0;
 }
