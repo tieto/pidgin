@@ -302,6 +302,9 @@ gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info)
 {
 	g_return_if_fail(account != NULL);
 
+	if (account->proxy_info != NULL)
+		gaim_proxy_info_destroy(account->proxy_info);
+
 	account->proxy_info = info;
 
 	schedule_accounts_save();
