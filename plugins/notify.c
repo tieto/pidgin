@@ -231,7 +231,7 @@ renotify(GaimConvWindow *gaimwin)
 }
 
 static gboolean
-chat_recv_im(GaimAccount *account, char **who, char **text, int id, void *m)
+chat_recv_im(GaimAccount *account, char *who, char *text, int id, void *m)
 {
 	GaimConversation *conv = gaim_find_chat(gaim_account_get_connection(account),
 																					id);
@@ -253,9 +253,9 @@ chat_sent_im(GaimAccount *account, char *text, int id, void *m)
 }
 
 static gboolean
-im_recv_im(GaimAccount *account, char **who, char **what, int *flags, void *m)
+im_recv_im(GaimAccount *account, char *who, char *what, int flags, void *m)
 {
-	GaimConversation *conv = gaim_find_conversation_with_account(*who, account);
+	GaimConversation *conv = gaim_find_conversation_with_account(who, account);
 
 	notify(conv, TRUE);
 

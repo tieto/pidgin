@@ -827,7 +827,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 	plugin_return = GPOINTER_TO_INT(
 		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
-								  "received-im-msg", gc->account,
+								  "receiving-im-msg", gc->account,
 								  &angel, &buffy, &imflags));
 
 	if (!buffy || !angel || plugin_return) {
@@ -837,9 +837,12 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			g_free(angel);
 		return;
 	}
-	name = angel;
 
+	name = angel;
 	message = buffy;
+
+	gaim_signal_emit(gaim_conversations_get_handle(), "received-im-msg", gc->account,
+					 name, message, imflags);
 
 	/* Make sure URLs are clickable */
 	buffy = gaim_markup_linkify(message);
@@ -1485,7 +1488,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 
 	plugin_return = GPOINTER_TO_INT(
 		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
-								  "received-chat-msg", g->account,
+								  "receiving-chat-msg", g->account,
 								  &angel, &buffy, conv));
 
 	if (!buffy || !angel || plugin_return) {
@@ -1497,6 +1500,9 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	}
 	who = angel;
 	message = buffy;
+
+	gaim_signal_emit(gaim_conversations_get_handle(), "received-chat-msg", g->account,
+					 who, message, conv);
 
 	/* Make sure URLs are clickable */
 	buf = gaim_markup_linkify(message);

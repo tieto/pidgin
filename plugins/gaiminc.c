@@ -64,7 +64,7 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(echo_hi), NULL);
 
 	/* this is for doing something fun when we get a message */
-	gaim_signal_connect(gaim_conversations_get_handle(), "received-im-msg",
+	gaim_signal_connect(gaim_conversations_get_handle(), "receiving-im-msg",
 						plugin, GAIM_CALLBACK(reverse), NULL);
 
 	/* this is for doing something fun when a buddy comes online */

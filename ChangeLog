@@ -42,6 +42,7 @@ version 0.78cvs
 	  Direct IM and inherits all its bugs.
 	* Direct IM for AIM should be slightly less buggy, and may actually
 	  work now, if at least one side isn't behind a NAT or firewall.
+	* Made the recieve-*-msg signals match the sending ones (Stu Tomlinson)
 
 	Preference Changes(Stu Tomlinson):
 	* Added a "none" smiley theme to replace the "Show graphical

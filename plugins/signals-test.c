@@ -108,6 +108,19 @@ buddy_signed_off_cb(GaimBuddy *buddy, void *data)
 	gaim_debug_misc("signals test", "buddy-signed-off (%s)\n", buddy->name);
 }
 
+static void
+buddy_extended_menu_cb(GaimBuddy *buddy, void *data)
+{
+	gaim_debug_misc("signals test", "buddy-extended-menu (%s)\n", buddy->name);
+}
+
+static void
+group_extended_menu_cb(GaimGroup *group, void *data)
+{
+	gaim_debug_misc("signals test", "group-extended-menu (%s)\n", group->name);
+}
+
+
 /**************************************************************************
  * Connection subsystem signal callbacks
  **************************************************************************/
@@ -175,14 +188,23 @@ sent_im_msg_cb(GaimAccount *account, const char *recipient, const char *buffer, 
 }
 
 static gboolean
-received_im_msg_cb(GaimAccount *account, char **sender, char **buffer,
+receiving_im_msg_cb(GaimAccount *account, char **sender, char **buffer,
 				   int *flags, void *data)
 {
-	gaim_debug_misc("signals test", "received-im-msg (%s, %s, %s, %d)\n",
+	gaim_debug_misc("signals test", "receiving-im-msg (%s, %s, %s, %d)\n",
 					gaim_account_get_username(account), *sender, *buffer,
 					*flags);
 
 	return FALSE;
+}
+
+static void
+received_im_msg_cb(GaimAccount *account, char *sender, char *buffer,
+				   int flags, void *data)
+{
+	gaim_debug_misc("signals test", "received-im-msg (%s, %s, %s, %d)\n",
+					gaim_account_get_username(account), sender, buffer,
+					flags);
 }
 
 static gboolean
@@ -219,15 +241,25 @@ sent_chat_msg_cb(GaimAccount *account, const char *buffer, int id, void *data)
 }
 
 static gboolean
-received_chat_msg_cb(GaimAccount *account, char **sender, char **buffer,
+receiving_chat_msg_cb(GaimAccount *account, char **sender, char **buffer,
 					 GaimConversation *chat, void *data)
 {
 	gaim_debug_misc("signals test",
-					"received-chat-msg (%s, %s, %s, %s, %s)\n",
+					"receiving-chat-msg (%s, %s, %s, %s)\n",
 					gaim_account_get_username(account), *sender, *buffer,
 					gaim_conversation_get_name(chat));
 
 	return FALSE;
+}
+
+static void
+received_chat_msg_cb(GaimAccount *account, char *sender, char *buffer,
+					 GaimConversation *chat, void *data)
+{
+	gaim_debug_misc("signals test",
+					"received-chat-msg (%s, %s, %s, %s)\n",
+					gaim_account_get_username(account), sender, buffer,
+					gaim_conversation_get_name(chat));
 }
 
 static void
@@ -384,6 +416,10 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(buddy_signed_on_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-signed-off",
 						plugin, GAIM_CALLBACK(buddy_signed_off_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-extended-menu",
+						plugin, GAIM_CALLBACK(buddy_extended_menu_cb), NULL);
+	gaim_signal_connect(blist_handle, "group-extended-menu",
+						plugin, GAIM_CALLBACK(group_extended_menu_cb), NULL);
 
 	/* Connection subsystem signals */
 	gaim_signal_connect(conn_handle, "signing-on",
@@ -404,6 +440,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(sending_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "sent-im-msg",
 						plugin, GAIM_CALLBACK(sent_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "receiving-im-msg",
+						plugin, GAIM_CALLBACK(receiving_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "received-im-msg",
 						plugin, GAIM_CALLBACK(received_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "displaying-chat-msg",
@@ -414,6 +452,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(sending_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "sent-chat-msg",
 						plugin, GAIM_CALLBACK(sent_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "receiving-chat-msg",
+						plugin, GAIM_CALLBACK(receiving_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "received-chat-msg",
 						plugin, GAIM_CALLBACK(received_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "conversation-switching",

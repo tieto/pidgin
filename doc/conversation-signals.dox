@@ -7,6 +7,7 @@
   @signal displayed-im-msg
   @signal sending-im-msg
   @signal sent-im-msg
+  @signal receiving-im-msg
   @signal received-im-msg
   @signal writing-chat-msg
   @signal wrote-chat-msg
@@ -14,6 +15,7 @@
   @signal displayed-chat-msg
   @signal sending-chat-msg
   @signal sent-chat-msg
+  @signal receiving-chat-msg
   @signal received-chat-msg
   @signal conversation-switching
   @signal conversation-switched
@@ -118,9 +120,9 @@ void (*sent_im_msg)(GaimAccount *account, const char *receiver,
   @param message  The message that was sent.
  @endsignaldef
 
- @signaldef received-im-msg
+ @signaldef receiving-im-msg
   @signalproto
-gboolean (*received_im_msg)(GaimAccount *account, char **sender,
+gboolean (*receiving_im_msg)(GaimAccount *account, char **sender,
                             char **message, int *flags);
   @endsignalproto
   @signaldesc
@@ -134,6 +136,19 @@ gboolean (*received_im_msg)(GaimAccount *account, char **sender,
   @param account The account the message was received on.
   @param sender  A pointer to the username of the sender.
   @param message A pointer to the message that was sent.
+  @param flags   The message flags.
+ @endsignaldef
+
+ @signaldef received-im-msg
+  @signalproto
+void (*received_im_msg)(GaimAccount *account, char *sender,
+                            char *message, int flags);
+  @endsignalproto
+  @signaldesc
+   Emitted after an IM is received.
+  @param account The account the message was received on.
+  @param sender  The username of the sender.
+  @param message The message that was sent.
   @param flags   The message flags.
  @endsignaldef
 
@@ -222,9 +237,9 @@ void (*sent_chat_msg)(GaimAccount *account, const char *message, int id);
   @param id      The ID of the chat.
  @endsignaldef
 
- @signaldef received-chat-msg
+ @signaldef receiving-chat-msg
   @signalproto
-gboolean (*received_chat_msg)(GaimAccount *account, char **sender,
+gboolean (*receiving_chat_msg)(GaimAccount *account, char **sender,
                               char **message, GaimConversation *conv);
   @endsignalproto
   @signaldesc
@@ -238,6 +253,19 @@ gboolean (*received_chat_msg)(GaimAccount *account, char **sender,
   @param account The account the message was received on.
   @param sender  A pointer to the username of the sender.
   @param message A pointer to the message that was sent.
+  @param conv    The chat conversation.
+ @endsignaldef
+
+ @signaldef received-chat-msg
+  @signalproto
+void (*received_chat_msg)(GaimAccount *account, char *sender,
+                              char *message, GaimConversation *conv);
+  @endsignalproto
+  @signaldesc
+   Emitted after a chat message is received.
+  @param account The account the message was received on.
+  @param sender  The username of the sender.
+  @param message The message that was sent.
   @param conv    The chat conversation.
  @endsignaldef
 
