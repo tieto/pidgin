@@ -133,7 +133,7 @@ AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session mana
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
 
 if test "$enable_debug" = yes ; then
-	CFLAGS="$CFLAGS -Wall -g3"
+	CFLAGS="$CFLAGS -Wall -g3 -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
@@ -147,7 +147,7 @@ AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
 *** always available at http://www.gtk.org/.]))
 
 AC_PATH_PROG(gaimpath, gaim)
-CFLAGS="$CFLAGS $GTK_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
+CFLAGS="$CFLAGS $GTK_CFLAGS" 
 
 AC_PATH_XTRA
 # We can't assume that $x_libraries will be set, because autoconf does not
