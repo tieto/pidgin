@@ -440,7 +440,7 @@ map_shadow_windows (gpointer data)
 #endif
 
 static char dim_grey_string[8] = "";
-static char *dim_grey() 
+static char *dim_grey()
 {
 	if (!gtkblist)
 		return "dim grey";
@@ -453,7 +453,7 @@ static char *dim_grey()
 	}
 	return dim_grey_string;
 }
-		
+
 /***************************************************
  *              Callbacks                          *
  ***************************************************/
@@ -2899,7 +2899,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 		else
 			text = g_strdup_printf("%s\n"
 					       "<span color='%s' size='smaller'>%s%s%s</span>", esc,
-					       dim_grey(), 
+					       dim_grey(),
 					       statustext != NULL ? statustext :  "",
 					       idletime != NULL ? idletime : "",
 					       warning != NULL ? warning : "");
