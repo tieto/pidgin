@@ -724,10 +724,10 @@ static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
 {
 	switch (resp) {
 	case GTK_RESPONSE_OK:
-		gtk_imhtml_search_find(s->gtkconv->imhtml, gtk_entry_get_text(GTK_ENTRY(s->entry)));
+		gtk_imhtml_search_find(GTK_IMHTML(s->gtkconv->imhtml), gtk_entry_get_text(GTK_ENTRY(s->entry)));
 		break;
 	case GTK_RESPONSE_CLOSE:
-		gtk_imhtml_search_clear(s->gtkconv->imhtml);
+		gtk_imhtml_search_clear(GTK_IMHTML(s->gtkconv->imhtml));
 		gtk_widget_destroy(s->gtkconv->dialogs.search);
 		s->gtkconv->dialogs.search = NULL;
 		g_free(s);
