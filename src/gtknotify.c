@@ -95,7 +95,7 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	}
 
-	dialog = gtk_dialog_new_with_buttons("", NULL, 0,
+	dialog = gtk_dialog_new_with_buttons(title, NULL, 0,
 										 GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
 										 NULL);
 	g_signal_connect(G_OBJECT(dialog), "response",

@@ -84,13 +84,13 @@ static void icq_logged_off(icq_Link *link) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 
 	if (!id->connected) {
-		hide_login_progress(gc, "Unable to connect");
+		gaim_connection_error(gc, "Unable to connect");
 		signoff(gc);
 		return;
 	}
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
-		hide_login_progress(gc, "Unable to connect");
+		gaim_connection_error(gc, "Unable to connect");
 		signoff(gc);
 		return;
 	}
@@ -166,13 +166,13 @@ static void icq_url_incoming(icq_Link *link, unsigned long uin, unsigned char ho
 
 static void icq_wrong_passwd(icq_Link *link) {
 	struct gaim_connection *gc = link->icq_UserData;
-	hide_login_progress(gc, "Invalid password.");
+	gaim_connection_error(gc, "Invalid password.");
 	signoff(gc);
 }
 
 static void icq_invalid_uin(icq_Link *link) {
 	struct gaim_connection *gc = link->icq_UserData;
-	hide_login_progress(gc, "Invalid UIN.");
+	gaim_connection_error(gc, "Invalid UIN.");
 	signoff(gc);
 }
 
@@ -341,7 +341,7 @@ static void icq_login(struct gaim_account *account) {
 	icq_ContactClear(id->link);
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
-		hide_login_progress(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect"));
 		signoff(gc);
 		return;
 	}
@@ -349,7 +349,7 @@ static void icq_login(struct gaim_account *account) {
 	id->cur_status = STATUS_ONLINE;
 	icq_Login(link, STATUS_ONLINE);
 
-	set_login_progress(gc, 0, _("Connecting..."));
+	gaim_connection_update_progress(gc, _("Connecting..."), 0, 2);
 }
 
 static void icq_close(struct gaim_connection *gc) {

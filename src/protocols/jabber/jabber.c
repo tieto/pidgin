@@ -4241,13 +4241,16 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
 		gjc->was_connected = 1;
 		/*
 		 * TBD?
-		set_login_progress(GJ_GC(gjc), 2, _("Connected"));
+		gaim_connection_update_progress(GJ_GC(gjc), _("Connected"), 
+				2, JABBER_CONNECT_STEPS);
 		 */
 		break;
 	case JCONN_STATE_ON:
 		/*
 		 * TBD?
-		set_login_progress(GJ_GC(gjc), 3, _("Requesting Authentication Method"));
+		gaim_connection_update_progress(GJ_GC(gjc), _("Authenticating"),
+				_("Requesting Authentication Method"), 3, 
+				JABBER_CONNECT_STEPS);
 		 */
 		gjab_reqreg(gjc);
 		/*

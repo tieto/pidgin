@@ -22,7 +22,6 @@
 
 #include "account.h"
 #include "debug.h"
-#include "notify.h"
 #include "util.h"
 
 #include "gtkblist.h"
@@ -334,96 +333,3 @@ void away_on_login(char *mesg)
 	}
 	return;
 }
-
-#if 0
-struct kick_dlg {
-	GaimAccount *account;
-	GtkWidget *dlg;
-};
-static GSList *kicks = NULL;
-
-static struct kick_dlg *find_kick_dlg(GaimAccount *account)
-{
-	GSList *k = kicks;
-	while (k) {
-		struct kick_dlg *d = k->data;
-		if (d->account == account)
-			return d;
-		k = k->next;
-	}
-	return NULL;
-}
-
-static void set_kick_null(struct kick_dlg *k)
-{
-	kicks = g_slist_remove(kicks, k);
-	g_free(k);
-}
-
-/*
- * Common code for hide_login_progress(), and hide_login_progress_info()
- */
-static void hide_login_progress_common(GaimConnection *gc,
-				       char *details,
-				       char *title,
-				       char *prologue)
-{
-	gchar *buf;
-	struct kick_dlg *k = find_kick_dlg(gc->account);
-	struct signon_meter *meter = find_signon_meter(gc);
-	buf = g_strdup_printf(_("%s\n%s: %s"), full_date(), prologue, details);
-	if (k)
-		gtk_widget_destroy(k->dlg);
-	k = g_new0(struct kick_dlg, 1);
-	k->account = gc->account;
-	k->dlg = gaim_notify_message(NULL, GAIM_NOTIFY_MSG_ERROR, NULL,
-								 title, buf, G_CALLBACK(set_kick_null), k);
-	kicks = g_slist_append(kicks, k);
-	if (meter) {
-		kill_meter(meter, _("Done."));
-		meter_win->meters = g_slist_remove(meter_win->meters, meter);
-		g_free(meter);
-	}
-	g_free(buf);
-}
-
-static void hide_login_progress(GaimConnection *gc, char *why)
-{
-	GaimAccount *account = gaim_connection_get_account(gc);
-	gchar *buf;
-
-	gaim_event_broadcast(event_error, gc, why);
-	buf = g_strdup_printf(_("%s was unable to sign on"),
-						  gaim_account_get_username(account));
-	hide_login_progress_common(gc, why, _("Signon Error"), buf);
-	g_free(buf);
-}
-
-/*
- * Like hide_login_progress(), but for informational, not error/warning,
- * messages.
- *
- */
-static void hide_login_progress_notice(GaimConnection *gc, char *why)
-{
-	GaimAccount *account = gaim_connection_get_account(gc);
-
-	hide_login_progress_common(gc, why, _("Notice"),
-							   (char *)gaim_account_get_username(account));
-}
-
-/*
- * Like hide_login_progress(), but for non-signon error messages.
- *
- */
-static void hide_login_progress_error(GaimConnection *gc, char *why)
-{
-	char buf[2048];
-	GaimAccount *account = gaim_connection_get_account(gc);
-
-	gaim_event_broadcast(event_error, gc, why);
-	g_snprintf(buf, sizeof(buf), _("%s has been signed off"),
-			   gaim_account_get_username(account));
-	hide_login_progress_common(gc, why, _("Connection Error"), buf);
-}
-#endif

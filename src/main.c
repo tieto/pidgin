@@ -31,6 +31,7 @@
 #include "prpl.h"
 #include "pounce.h"
 #include "sound.h"
+#include "status.h"
 #include "util.h"
 
 //#include "gaim.h"

@@ -30,6 +30,7 @@
 #include "request.h"
 #include "server.h"
 #include "sound.h"
+#include "util.h"
 
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
@@ -364,9 +365,18 @@ void
 gaim_connection_error(GaimConnection *gc, const char *text)
 {
 	GaimConnectionUiOps *ops;
+	gchar *primary, *secondary;
 
 	g_return_if_fail(gc   != NULL);
 	g_return_if_fail(text != NULL);
+
+	primary = g_strdup_printf(_("%s has been disconnected"),
+				gaim_account_get_username(gaim_connection_get_account(gc)));
+	secondary = g_strdup_printf("%s\n%s", full_date(),
+								text ? text : _("Reason Unknown."));
+	gaim_notify_error(NULL, _("Connection Error"), primary, secondary);
+	g_free(primary);
+	g_free(secondary);
 
 	ops = gaim_get_connection_ui_ops();
 

@@ -188,4 +188,3 @@ gaim_get_notify_ui_ops(void)
 {
 	return notify_ui_ops;
 }
-

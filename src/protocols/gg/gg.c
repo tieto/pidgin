@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6509 2003-07-08 03:36:41Z thekingant $
+ * $Id: gg.c 6567 2003-07-13 09:34:48Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -529,7 +529,7 @@ static void agg_login(GaimAccount *account)
 	/*
 	   if (gg_login(gd->sess, strtol(user->username, (char **)NULL, 10), user->password, 1) < 0) {
 	   gaim_debug(GAIM_DEBUG_MISC, "gg", "uin=%u, pass=%s", strtol(user->username, (char **)NULL, 10), user->password); 
-	   hide_login_progress(gc, "Unable to connect.");
+	   gaim_connection_error(gc, "Unable to connect.");
 	   signoff(gc);
 	   return;
 	   }
