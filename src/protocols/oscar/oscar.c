@@ -398,7 +398,7 @@ static void oscar_callback(gpointer data, gint source,
 					c->inpa = 0;
 					c->fd = -1;
 					aim_conn_kill(odata->sess, &conn);
-					sprintf(buf, _("You have been disconnected from chat room %s."), c->name);
+					snprintf(buf, sizeof(buf), _("You have been disconnected from chat room %s."), c->name);
 					do_error_dialog(buf, NULL, GAIM_ERROR);
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
 					if (odata->cnpa > 0)
@@ -1822,7 +1822,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
-	sprintf(buf, _("Your message to %s did not get sent:"), destn);
+	snprintf(buf, sizeof(buf), _("Your message to %s did not get sent:"), destn);
 	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
 
 	return 1;
@@ -1839,7 +1839,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
-	sprintf(buf, _("User information for %s unavailable:"), destn);
+	snprintf(buf, sizeof(buf), _("User information for %s unavailable:"), destn);
 	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
 
 	return 1;

@@ -75,6 +75,7 @@ version 0.60:
 	  Panel Notification Area applet for GNOME 2, or the kicker for
 	  KDE 3.1. (Thanks Robert McQueen, Ari Pollak, Patrick Aussems)
 	* Plugins dialog and perl script menu merged into preferences.
+	* use snprintf instead of sprintf (Thanks William T. Mahan).
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
