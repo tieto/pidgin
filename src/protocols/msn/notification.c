@@ -1705,7 +1705,9 @@ email_msg(MsnServConn *servconn, MsnMessage *msg)
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
 	GHashTable *table;
-	char *from, *subject;
+	char *from, *subject, *tmp;
+
+	from = subject = NULL;
 
 	if (strcmp(msg->passport, "Hotmail")) {
 		/* This isn't an official message. */
@@ -1725,14 +1727,23 @@ email_msg(MsnServConn *servconn, MsnMessage *msg)
 
 	table = msn_message_get_hashtable_from_body(msg);
 
-	from    = gaim_mime_decode_field(g_hash_table_lookup(table, "From"));
-	subject = gaim_mime_decode_field(g_hash_table_lookup(table, "Subject"));
+	tmp = g_hash_table_lookup(table, "From");
+	if (tmp != NULL)
+		from = gaim_mime_decode_field(tmp);
 
-	gaim_notify_email(gc, subject, from, msn_user_get_passport(session->user),
-					  session->passport_info.file, NULL, NULL);
+	tmp = g_hash_table_lookup(table, "Subject");
+	if (tmp != NULL)
+		subject = gaim_mime_decode_field(tmp);
 
-	g_free(from);
-	g_free(subject);
+	if (from != NULL && subject != NULL)	
+		gaim_notify_email(gc, subject, from, msn_user_get_passport(session->user),
+						session->passport_info.file, NULL, NULL);
+
+	if (from != NULL)
+		g_free(from);
+
+	if (subject != NULL)
+		g_free(subject);
 
 	g_hash_table_destroy(table);
 
