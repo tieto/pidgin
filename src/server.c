@@ -510,6 +510,10 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			qm->flags = WFLAG_RECV | away;
 			message_queue = g_slist_append(message_queue, qm);
 
+#ifdef USE_APPLET
+			set_user_state(away);
+#endif
+
 			row = find_queue_row_by_name(qm->name);
 
 			if (row >= 0) {

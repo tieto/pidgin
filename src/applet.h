@@ -63,9 +63,17 @@ enum gaim_user_states {
 #define GAIM_GNOME_PENGUIN_CONNECT "gaim/gnome/penguin-connect.png"
 #define GAIM_GNOME_PENGUIN_ONLINE "gaim/gnome/penguin-online.png"
 
+/*
 #define GAIM_GNOME_OFFLINE_ICON "apple-red.png"
 #define GAIM_GNOME_CONNECT_ICON "gnome-battery.png"
 #define GAIM_GNOME_ONLINE_ICON "apple-green.png"
+*/
+
+#define GAIM_GNOME_OFFLINE_ICON		"gaim/offline.png"
+#define GAIM_GNOME_CONNECT_ICON		"gaim/connect.png"
+#define GAIM_GNOME_ONLINE_ICON 		"gaim/online.png"
+#define GAIM_GNOME_AWAY_ICON		"gaim/away.png"
+#define GAIM_GNOME_MSG_PENDING_ICON	"gaim/msgpend.png"
 
 extern GtkWidget *applet;
 

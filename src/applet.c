@@ -110,7 +110,30 @@ static gboolean update_applet()
 	} else if (!connections) {
 		gtk_pixmap_set(GTK_PIXMAP(icon), icon_offline_pm, icon_offline_bm);
 		applet_set_tooltips(_("Offline. Click to bring up login box."));
-	} else if (!awaymessage) {
+	} else if (awaymessage) {
+		int dsr = 0;
+
+		if ((away_options & OPT_AWAY_QUEUE) && message_queue) {
+			GSList *m = message_queue;
+			int dsr = 0;
+			while (m) {
+				struct queued_message *qm = m->data;
+				if (qm->flags & WFLAG_RECV)
+					dsr++;
+				m = m->next;
+			}
+		}
+
+		if (dsr) {
+			gtk_pixmap_set(GTK_PIXMAP(icon), icon_msg_pending_pm, icon_msg_pending_bm);
+			g_snprintf(buf, sizeof(buf), _("Away: %d pending."), dsr);
+		} else {
+			gtk_pixmap_set(GTK_PIXMAP(icon), icon_away_pm, icon_away_bm);
+			g_snprintf(buf, sizeof(buf), _("Away."));
+		}
+
+		applet_set_tooltips(buf);
+	} else {
 		gtk_pixmap_set(GTK_PIXMAP(icon), icon_online_pm, icon_online_bm);
 		g_snprintf(buf, sizeof buf, "Online: ");
 		while (c) {
@@ -120,8 +143,6 @@ static gboolean update_applet()
 				strcat(buf, ", ");
 		}
 		applet_set_tooltips(buf);
-	} else {
-		gtk_pixmap_set(GTK_PIXMAP(icon), icon_online_pm, icon_online_bm);
 	}
 
 	return TRUE;
@@ -135,6 +156,10 @@ void update_pixmaps()
 			 &icon_connect_pm, &icon_connect_bm);
 	load_applet_icon(GAIM_GNOME_ONLINE_ICON, (sizehint - 1), (sizehint - 1),
 			 &icon_online_pm, &icon_online_bm);
+	load_applet_icon(GAIM_GNOME_AWAY_ICON, (sizehint - 1), (sizehint - 1),
+			 &icon_away_pm, &icon_away_bm);
+	load_applet_icon(GAIM_GNOME_MSG_PENDING_ICON, (sizehint - 1), (sizehint - 1),
+			 &icon_msg_pending_pm, &icon_msg_pending_bm);
 	update_applet();
 	gtk_widget_set_usize(appletframe, sizehint, sizehint);
 }
@@ -326,7 +351,11 @@ gint init_applet_mgr(int argc, char *argv[])
 	/*load online icon */
 	load_applet_icon(GAIM_GNOME_ONLINE_ICON, 32, 32, &icon_online_pm, &icon_online_bm);
 
-	/*icon_away and icon_msg_pennding need to be implemented */
+	/*load away icon */
+	load_applet_icon(GAIM_GNOME_AWAY_ICON, 32, 32, &icon_away_pm, &icon_away_bm);
+
+	/*load msg_pending icon */
+	load_applet_icon(GAIM_GNOME_ONLINE_ICON, 32, 32, &icon_msg_pending_pm, &icon_msg_pending_bm);
 
 	icon = gtk_pixmap_new(icon_offline_pm, icon_offline_bm);
 

@@ -11,6 +11,7 @@ EXTRA_DIST =	ab.xpm				\
 		available-dnd.xpm		\
 		available-xa.xpm		\
 		available.xpm			\
+		away.png			\
 		away_big.xpm			\
 		away_icon.xpm			\
 		away_small.xpm			\
@@ -23,6 +24,7 @@ EXTRA_DIST =	ab.xpm				\
 		cancel.xpm			\
 		close.xpm			\
 		close_small.xpm			\
+		connect.png			\
 		crazy4.xpm			\
 		crossedlips.xpm			\
 		cry.xpm				\
@@ -61,13 +63,16 @@ EXTRA_DIST =	ab.xpm				\
 		luke03.xpm			\
 		moneymouth.xpm			\
 		mrt.xpm				\
+		msgpend.png			\
 		msn_away.xpm			\
 		msn_online.xpm			\
 		napster.xpm			\
 		no_icon.xpm			\
 		normal.xpm			\
+		offline.png			\
 		ok.xpm				\
 		oneeye.xpm			\
+		online.png			\
 		panic.xpm			\
 		plugins_small.xpm		\
 		pounce_small.xpm		\
@@ -103,11 +108,31 @@ EXTRA_DIST =	ab.xpm				\
 		yell.xpm			
 
 
+if DISTRIB
+
+gaimdistpixdir = $(datadir)/pixmaps/gaim
+gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png
+
+distpixmapdir = $(datadir)/pixmaps
+distpixmap_DATA = gaim.xpm
+	
+else
+
+if GNOMEAPPLET
+
+gnomedata    = `@GNOME_CONFIG@ --datadir`
+
+gaimdistpmdir = $(gnomedata)/pixmaps/gaim
+gaimdistpm_DATA = away.png connect.png msgpend.png offline.png online.png
+
+gaimpixmapdir = $(gnomedata)/pixmaps
+gaimpixmap_DATA = gaim.xpm
+
+else
+
 pixmapdir = $(datadir)/pixmaps
 pixmap_DATA = gaim.xpm
 	
-if GNOMEAPPLET
-gnomedata    = `@GNOME_CONFIG@ --datadir`
-gaimpixmapdir = $(gnomedata)/pixmaps
-gaimpixmap_DATA = gaim.xpm
+endif
+
 endif
