@@ -294,7 +294,11 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(sbox), bbox, TRUE, TRUE, 0);
 	gtk_widget_show(bbox);
 
+#ifndef USE_APPLET
 	cancel = gtk_button_new_with_label(_("Quit"));
+#else
+	cancel = gtk_button_new_with_label(_("Close"));
+#endif
 #ifndef NO_MULTI
 	accts = gtk_button_new_with_label(_("Accounts"));
 #endif

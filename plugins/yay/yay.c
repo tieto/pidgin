@@ -77,7 +77,6 @@ static void process_packet_status(struct gaim_connection *gc, struct yahoo_packe
 	}
 
 	for (i = 0; i < pkt->idstatus_count; i++) {
-		struct group *g;
 		struct buddy *b;
 		struct yahoo_idstatus *rec = pkt->idstatus[i];
 		gboolean online = rec->in_pager || rec->in_chat || rec->in_game;
@@ -89,11 +88,11 @@ static void process_packet_status(struct gaim_connection *gc, struct yahoo_packe
 		if (!online)
 			serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
 		else {
-			if (rec->status == YAHOO_STATUS_IDLE)
+			if (rec->status == YAHOO_STATUS_AVAILABLE)
+				serv_got_update(gc, b->name, 1, 0, b->signon, 0, UC_NORMAL, 0);
+			else if (rec->status == YAHOO_STATUS_IDLE)
 				serv_got_update(gc, b->name, 1, 0, b->signon, tmptime - 600,
 						(rec->status << 5) | UC_NORMAL, 0);
-			else if (rec->status == YAHOO_STATUS_AVAILABLE)
-				serv_got_update(gc, b->name, 1, 0, b->signon, 0, UC_NORMAL, 0);
 			else
 				serv_got_update(gc, b->name, 1, 0, b->signon, 0,
 						(rec->status << 5) | UC_UNAVAILABLE, 0);
@@ -110,12 +109,15 @@ static void process_packet_status(struct gaim_connection *gc, struct yahoo_packe
 
 static void process_packet_message(struct gaim_connection *gc, struct yahoo_packet *pkt) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	char buf[BUF_LEN * 4];
 
 	if (pkt->msg) {
 		if (pkt->msgtype == YAHOO_MSGTYPE_BOUNCE)
 			do_error_dialog("Your message did not get received.", "Error");
-		else
-			serv_got_im(gc, pkt->msg_id, pkt->msg, pkt->msg_timestamp ? 1 : 0);
+		else {
+			g_snprintf(buf, sizeof(buf), "%s", pkt->msg);
+			serv_got_im(gc, pkt->msg_id, buf, pkt->msg_timestamp ? 1 : 0);
+		}
 	}
 }
 
@@ -137,9 +139,6 @@ static void process_packet_newmail(struct gaim_connection *gc, struct yahoo_pack
 }
 
 static void process_packet_conference(struct gaim_connection *gc, struct yahoo_packet *pkt) {
-}
-
-static void process_packet_ping(struct gaim_connection *gc, struct yahoo_packet *pkt) {
 }
 
 static void yahoo_callback(gpointer data, gint source, GdkInputCondition condition) {
@@ -182,7 +181,8 @@ static void yahoo_callback(gpointer data, gint source, GdkInputCondition conditi
 					g_snprintf(buf, sizeof buf, "%s on Yahoo has made you "
 								"their friend", pkt->msg_id);
 					do_error_dialog(buf, "Yahoo");
-					show_add_buddy(gc, pkt->msg_id, NULL);
+					if (!find_buddy(gc, pkt->msg_id))
+						show_add_buddy(gc, pkt->msg_id, NULL);
 				}
 				break;
 			case YAHOO_SERVICE_NEWMAIL:
@@ -196,9 +196,6 @@ static void yahoo_callback(gpointer data, gint source, GdkInputCondition conditi
 			case YAHOO_SERVICE_CONFLOGOFF:
 			case YAHOO_SERVICE_CONFMSG:
 				process_packet_conference(gc, pkt);
-				break;
-			case YAHOO_SERVICE_PING:
-				process_packet_ping(gc, pkt);
 				break;
 			case YAHOO_SERVICE_FILETRANSFER:
 			case YAHOO_SERVICE_CALENDAR:
@@ -216,7 +213,6 @@ static void yahoo_callback(gpointer data, gint source, GdkInputCondition conditi
 static void yahoo_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
-	int i;
 
 	struct yahoo_options opt;
 	struct yahoo_context *ctxt;
@@ -269,11 +265,9 @@ static void yahoo_login(struct aim_user *user) {
 		
 		for (buddies = ctxt->buddies; *buddies; buddies++) {
 			struct yahoo_buddy *bud = *buddies;
-			struct buddy *b;
-			struct group *g;
 
-			b = find_buddy(gc, bud->id);
-			if (!b) add_buddy(gc, bud->group, bud->id, bud->id);
+			if (!find_buddy(gc, bud->id))
+				add_buddy(gc, bud->group, bud->id, bud->id);
 		}
 	}
 
@@ -398,7 +392,8 @@ static void yahoo_action_menu(GtkWidget *menu, struct gaim_connection *gc, char 
 	if ((b->uc >> 5) != YAHOO_STATUS_CUSTOM)
 		g_snprintf(buf, sizeof buf, "Status: %s", yahoo_get_status_string(b->uc >> 5));
 	else
-		g_snprintf(buf, sizeof buf, "Custom Status: %s", g_hash_table_lookup(yd->hash, b->name));
+		g_snprintf(buf, sizeof buf, "Custom Status: %s",
+			   (char *)g_hash_table_lookup(yd->hash, b->name));
 	button = gtk_menu_item_new_with_label(buf);
 	gtk_menu_append(GTK_MENU(menu), button);
 	gtk_widget_show(button);
