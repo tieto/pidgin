@@ -21,16 +21,16 @@ static int aim_encode_password(const char *password, unsigned char *encoded);
  * be the first thing you send.
  *
  */
-faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const fu8_t *chipsahoy)
+faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const fu16_t length, const fu8_t *chipsahoy)
 {
 	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x0001, 4+2+2+AIM_COOKIELEN)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x0001, 4+2+2+length)))
 		return -ENOMEM;
 
 	aimbs_put32(&fr->data, 0x00000001);
-	aim_addtlvtochain_raw(&tl, 0x0006, AIM_COOKIELEN, chipsahoy);	
+	aim_addtlvtochain_raw(&tl, 0x0006, length, chipsahoy);
 	aim_writetlvchain(&fr->data, &tl);
 	aim_freetlvchain(&tl);
 
@@ -392,6 +392,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 
 		tmptlv = aim_gettlv(tlvlist, 0x0006, 1);
 
+		info->cookielen = tmptlv->length;
 		info->cookie = tmptlv->value;
 	}
 

@@ -815,7 +815,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("inside auth_resp (Screen name: %s)\n", info->sn);
 
-	if (info->errorcode || !info->bosip || !info->cookie) {
+	if (info->errorcode || !info->bosip || !info->cookielen || !info->cookie) {
 		char buf[256];
 		switch (info->errorcode) {
 		case 0x05:
@@ -930,7 +930,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		od->killme = TRUE;
 		return 0;
 	}
-	aim_sendcookie(sess, bosconn, info->cookie);
+	aim_sendcookie(sess, bosconn, info->cookielen, info->cookie);
 	gaim_input_remove(gc->inpa);
 
 	return 1;
@@ -1318,7 +1318,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
-		aim_sendcookie(sess, tstconn, redir->cookie);
+		aim_sendcookie(sess, tstconn, redir->cookielen, redir->cookie);
 	break;
 
 	case 0xd: /* ChatNav */
@@ -1338,7 +1338,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
-		aim_sendcookie(sess, tstconn, redir->cookie);
+		aim_sendcookie(sess, tstconn, redir->cookielen, redir->cookie);
 	break;
 
 	case 0xe: { /* Chat */
@@ -1373,7 +1373,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(ccon);
 			return 1;
 		}
-		aim_sendcookie(sess, tstconn, redir->cookie);
+		aim_sendcookie(sess, tstconn, redir->cookielen, redir->cookie);
 		debug_printf("Connected to chat room %s exchange %hu\n", ccon->name, ccon->exchange);
 	} break;
 
@@ -1393,7 +1393,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
-		aim_sendcookie(sess, tstconn, redir->cookie);
+		aim_sendcookie(sess, tstconn, redir->cookielen, redir->cookie);
 	} break;
 
 	default: /* huh? */

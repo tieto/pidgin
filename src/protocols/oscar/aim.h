@@ -113,11 +113,6 @@ typedef fu16_t flap_seqnum_t;
  */
 #define MAXCHATMSGLEN 512
 
-/*
- * Standard size of an AIM authorization cookie
- */
-#define AIM_COOKIELEN            0x100
-
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 
 /*
@@ -595,6 +590,7 @@ struct aim_authresp_info {
 	fu16_t regstatus;
 	char *email;
 	char *bosip;
+	fu16_t cookielen;
 	fu8_t *cookie;
 	char *chpassurl;
 	struct aim_clientrelease latestrelease;
@@ -605,6 +601,7 @@ struct aim_authresp_info {
 struct aim_redirect_data {
 	fu16_t group;
 	const char *ip;
+	fu16_t cookielen;
 	const fu8_t *cookie;
 	struct { /* group == AIM_CONN_TYPE_CHAT */
 		fu16_t exchange;
@@ -1054,7 +1051,7 @@ faim_export int aim_seticbmparam(aim_session_t *sess, struct aim_icbmparameters 
 
 
 /* auth.c */
-faim_export int aim_sendcookie(aim_session_t *, aim_conn_t *, const fu8_t *);
+faim_export int aim_sendcookie(aim_session_t *, aim_conn_t *, const fu16_t length, const fu8_t *);
 
 faim_export int aim_admin_changepasswd(aim_session_t *, aim_conn_t *, const char *newpw, const char *curpw);
 faim_export int aim_admin_reqconfirm(aim_session_t *sess, aim_conn_t *conn);
