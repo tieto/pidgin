@@ -61,7 +61,7 @@ static GtkWidget *pluglist;
 static GtkWidget *plugtext;
 static GtkWidget *plugwindow;
 
-static GtkWidget *config;
+static GtkWidget *config = NULL;
 static guint confighandle = 0;
 
 /* --------------- Function Declarations --------------------- */
@@ -71,6 +71,7 @@ static guint confighandle = 0;
 
        void gaim_signal_connect   (void *, enum gaim_event, void *, void *);
        void gaim_signal_disconnect(void *, enum gaim_event, void *);
+       void gaim_plugin_unload    (void *);
 
 static void destroy_plugins  (GtkWidget *, gpointer);
 static void load_file        (GtkWidget *, gpointer);
@@ -139,6 +140,7 @@ static void load_which_plugin(GtkWidget *w, gpointer data) {
 
 void load_plugin(char *filename) {
 	struct gaim_plugin *plug;
+	GList *c = plugins;
 	int (*gaim_plugin_init)();
 	char *(*gaim_plugin_error)(int);
 	char *(*cfunc)();
@@ -147,6 +149,17 @@ void load_plugin(char *filename) {
 	char *plugin_error;
 
 	if (filename == NULL) return;
+	/* i shouldn't be checking based solely on path, but i'm lazy */
+	while (c) {
+		plug = (struct gaim_plugin *)c->data;
+		if (!strcmp(filename, plug->filename)) {
+			sprintf(debug_buff, _("Already loaded %s, "
+						"not reloading.\n"), filename);
+			debug_print(debug_buff);
+			return;
+		}
+		c = c->next;
+	}
 	plug = g_malloc(sizeof *plug);
 	if (filename[0] != '/') {
 		char *buf = g_malloc(BUF_LEN);
@@ -157,7 +170,7 @@ void load_plugin(char *filename) {
 		plug->filename = g_strdup(filename);
 	sprintf(debug_buff, "Loading %s\n", filename);
 	debug_print(debug_buff);
-	/* do NOT OR with RTLD_GLOBAL, otherwise plugins may conflict
+	/* do NOT `OR' with RTLD_GLOBAL, otherwise plugins may conflict
 	 * (it's really just a way to work around other people's bad
 	 * programming, by not using RTLD_GLOBAL :P ) */
 	plug->handle = dlopen(plug->filename, RTLD_LAZY);
@@ -345,7 +358,7 @@ void update_show_plugins() {
 	GtkWidget *label;
 	GtkWidget *list_item;
 
-	if (pluglist == NULL) return;
+	if (plugwindow == NULL) return;
 
 	gtk_list_clear_items(GTK_LIST(pluglist), 0, -1);
 	while (plugs) {
@@ -376,20 +389,49 @@ void unload(GtkWidget *w, gpointer data) {
 	struct gaim_plugin *p;
 	void (*gaim_plugin_remove)();
 	char *error;
-	GList *c = callbacks;
-	struct gaim_callback *g;
 
 	i = GTK_LIST(pluglist)->selection;
 
 	if (i == NULL) return;
 
 	p = gtk_object_get_user_data(GTK_OBJECT(i->data));
-	sprintf(debug_buff, "Unloading %s\n", p->filename);
-	debug_print(debug_buff);
 
 	gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
 	if ((error = (char *)dlerror()) == NULL)
 		(*gaim_plugin_remove)();
+
+	gaim_plugin_unload(p->handle);
+}
+
+static void remove_callback(struct gaim_plugin *p) {
+	gtk_timeout_remove(p->remove);
+	dlclose(p->handle);
+	g_free(p);
+}
+
+/* gaim_plugin_unload serves 2 purposes: 1. so plugins can unload themselves
+ * 					 2. to make my life easier */
+void gaim_plugin_unload(void *handle) {
+	GList *i;
+	struct gaim_plugin *p = NULL;
+	GList *c = callbacks;
+	struct gaim_callback *g;
+
+	i = plugins;
+	while (i) {
+		p = (struct gaim_plugin *)i->data;
+		if (handle == p->handle)
+			break;
+		p = NULL;
+		i = i->next;
+	}
+
+	if (!p)
+		return;
+
+	sprintf(debug_buff, "Unloading %s\n", p->filename);
+	debug_print(debug_buff);
+
 	sprintf(debug_buff, "%d callbacks to search\n", g_list_length(callbacks));
 	debug_print(debug_buff);
 	while (c) {
@@ -408,12 +450,11 @@ void unload(GtkWidget *w, gpointer data) {
 			c = c->next;
 		}
 	}
-	dlclose(p->handle);
+	p->remove = gtk_timeout_add(5000, (GtkFunction)remove_callback, p);
 
 	plugins = g_list_remove(plugins, p);
 	g_free(p->filename);
-	g_free(p);
-	gtk_widget_set_sensitive(config, 0);
+	if (config) gtk_widget_set_sensitive(config, 0);
 	update_show_plugins();
 	save_prefs();
 }
@@ -448,6 +489,7 @@ void hide_plugins(GtkWidget *w, gpointer data) {
 	if (plugwindow)
 		gtk_widget_destroy(plugwindow);
 	plugwindow = NULL;
+	config = NULL;
 }
 
 void gaim_signal_connect(void *handle, enum gaim_event which,

@@ -140,10 +140,11 @@ struct g_url {
 
 #ifdef GAIM_PLUGINS
 struct gaim_plugin {
-	char  *name;
-	char  *filename;
-	char  *description;
-	void  *handle;
+	char *name;
+	char *filename;
+	char *description;
+	void *handle;
+	int   remove;
 };
 
 enum gaim_event {
@@ -384,7 +385,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 433 $"
+#define REVISION "gaim:$Revision: 435 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -522,6 +523,7 @@ extern void add_chat_buddy(struct buddy_chat *, char *);
 extern void remove_chat_buddy(struct buddy_chat *, char *);
 extern void show_new_buddy_chat(struct buddy_chat *);
 extern void setup_buddy_chats();
+extern void do_quit();
 
 
 
@@ -701,6 +703,7 @@ extern void show_plugins(GtkWidget *, gpointer);
 extern void load_plugin (char *);
 extern void gaim_signal_connect(void *, enum gaim_event, void *, void *);
 extern void gaim_signal_disconnect(void *, enum gaim_event, void *);
+extern void gaim_plugin_unload(void *);
 #endif
 
 /* Functions in prefs.c */

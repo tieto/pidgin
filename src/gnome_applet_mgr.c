@@ -617,6 +617,8 @@ gint init_applet_mgr(int argc, char *argv[]) {
 					      
 	gtk_signal_connect( GTK_OBJECT(applet), "button_press_event", GTK_SIGNAL_FUNC( AppletClicked), NULL);
 
+	gtk_signal_connect( GTK_OBJECT(applet), "destroy", GTK_SIGNAL_FUNC( do_quit), NULL);
+
 #ifdef HAVE_PANEL_PIXEL_SIZE
 	gtk_signal_connect(GTK_OBJECT(applet), "change_pixel_size",
 			GTK_SIGNAL_FUNC(applet_change_pixel_size), NULL);

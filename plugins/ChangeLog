@@ -2,15 +2,22 @@ version 0.9.20:
 	It's 3 am the night before finals, it's obviously a good time to hack
 	gaim.
 
+	This became quite long, and if you don't want to read it all, here's
+	the important stuff summed up:
+	- 9 new events (see SIGNALS file for more details)
+	- int gaim_plugin_init(void *) (no longer returns void, see error.c)
+	- void gaim_plugin_unload(void *) (to allow plugin to remove itself)
+	- can only load 1 instance of the same plugin
+
 	The first thing to note is that there are about 9 new events plugins
 	can attach to, most of them dealing with chat, since I know that was a
 	big thing that was missing. Please note that I was nice and decided to
 	tack these extra events onto the end of the enum, which means that
 	plugins do not have to be recompiled in order for them to still work.
 
-	The big thing to note is that gaim_plugin_init no longer returns void,
-	but int.  If it returns 0+, gaim interprets this as there being no
-	error, and continues with loading as normal. (This should be backwards-
+	The big change is that gaim_plugin_init no longer returns void, but
+	int.  If it returns 0+, gaim interprets this as there being no error,
+	and continues with loading as normal. (This should be backwards-
 	compatible: returning 0/1 is the equivalent of returning void.) If it
 	returns a number less than 0, there was an error loading detected by
 	the plugin. At that point, gaim will try to clean things up by removing
@@ -21,6 +28,31 @@ version 0.9.20:
 	error message.  The plugin is then unloaded and closed and life goes
 	back to normal. If any of that was confusing, it was confusing to me,
 	too. I added a plugin, error.c, which should help clear things up.
+
+	Another big thing to note is that plugins can unload themselves. A good
+	example of why this is useful is a ticker plugin. If the user closes
+	the ticker window, they obviously want the plugin to be unloaded. Gaim
+	has no way of knowing that; therefore, the plugin must tell gaim that
+	it is to be unloaded. To have a plugin unload itself, simply call
+	gaim_plugin_unload(void *) (the void* is the handle passed to
+	gaim_plugin_init). Because you are explicitly asking to be removed,
+	gaim assumes that you have done any cleanup already, and so does not
+	call gaim_plugin_remove. Rather, it simply removes your callbacks and
+	unloads the plugin. (There is some trickery to this. Think about it:
+	your plugin calls the function, your plugin is unloaded, and execution
+	returns to your plugin, which no longer exists. This would cause a
+	segfault if it behaved exactly as described. Instead, the plugin is
+	removed from the list of plugins, and removed 5 seconds later. By then
+	the plugin should be effectively gone, though still in memory.)
+
+	In previous versions of gaim, you could load multiple copies of the
+	same plugin. This is no longer the case. The reason for this was that
+	there were not two instances of the plugin in memory; rather, one copy
+	and two structures representing the same plugin. Then, the callbacks
+	would be called twice (since the plugin would most likely act the same
+	across multiple instances), and when one was unloaded, all callbacks
+	for both instances would be removed. Rather than deal with two copies
+	of the same plugin, it is easier and cleaner to only handle one.
 
 	There is a new event, event_quit, which signifies that gaim has exited
 	correctly (i.e. didn't segfault). Also, after this event is called, all

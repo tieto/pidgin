@@ -9,6 +9,11 @@ void enter_callback(GtkWidget *widget, GtkWidget *entry) {
 	sflap_send(entry_text, strlen(entry_text), TYPE_DATA);
 }
 
+void destroy_callback(GtkWidget *widget, void *handle) {
+	gtk_widget_destroy(widget);
+	gaim_plugin_unload(handle);
+}
+
 GtkWidget *window;
 void gaim_plugin_init(void *h) {
 	GtkWidget *entry;
@@ -22,6 +27,10 @@ void gaim_plugin_init(void *h) {
 			   entry);
 	gtk_container_add(GTK_CONTAINER(window), entry);
 	gtk_widget_show(entry);
+
+	gtk_signal_connect(GTK_OBJECT(window), "destroy",
+			   (GtkSignalFunc)destroy_callback,
+			   h);
 
 	gtk_widget_show(window);
 }
