@@ -295,6 +295,7 @@ void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (gc->away_state != NULL && state != NULL &&
+		strcmp(gc->away_state, GAIM_AWAY_CUSTOM) &&
 		!strcmp(gc->away_state, state)) {
 
 		return;
