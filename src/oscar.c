@@ -1826,6 +1826,66 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
 	gtk_widget_show(entry);
 }
 
+static void oscar_add_permit(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	if (gc->permdeny != 3) return;
+	aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, who);
+}
+
+static void oscar_add_deny(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	if (gc->permdeny != 4) return;
+	aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, who);
+}
+
+static void oscar_rem_permit(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	if (gc->permdeny != 3) return;
+	aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITREMOVE, who);
+}
+
+static void oscar_rem_deny(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	if (gc->permdeny != 4) return;
+	aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYREMOVE, who);
+}
+
+static void oscar_set_permit_deny(struct gaim_connection *gc) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	GSList *list;
+	char buf[MAXMSGLEN];
+	int at;
+
+	switch(gc->permdeny) {
+	case 1:
+		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, gc->username);
+		break;
+	case 2:
+		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, gc->username);
+		break;
+	case 3:
+		list = gc->permit;
+		at = g_snprintf(buf, sizeof(buf), "%s", gc->username);
+		while (list) {
+			at += g_snprintf(buf + at, sizeof(buf) - at, "&%s", (char *)list->data);
+			list = list->next;
+		}
+		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, buf);
+		break;
+	case 4:
+		list = gc->deny;
+		at = g_snprintf(buf, sizeof(buf), "%s", gc->username);
+		while (list) {
+			at += g_snprintf(buf + at, sizeof(buf) - at, "&%s", (char *)list->data);
+			list = list->next;
+		}
+		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, buf);
+		break;
+	default:
+		break;
+	}
+}
+
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
 	ret->name = oscar_name;
@@ -1847,11 +1907,11 @@ void oscar_init(struct prpl *ret) {
 	ret->add_buddy = oscar_add_buddy;
 	ret->add_buddies = oscar_add_buddies;
 	ret->remove_buddy = oscar_remove_buddy;
-	ret->add_permit = NULL; /* Oscar's permit/deny stuff is messed up */
-	ret->add_deny = NULL; /* at least, i can't figure it out :-P */
-	ret->rem_permit = NULL;
-	ret->rem_deny = NULL;
-	ret->set_permit_deny = NULL;
+	ret->add_permit = oscar_add_permit;
+	ret->add_deny = oscar_add_deny;
+	ret->rem_permit = oscar_rem_permit;
+	ret->rem_deny = oscar_rem_deny;
+	ret->set_permit_deny = oscar_set_permit_deny;
 	ret->warn = oscar_warn;
 	ret->accept_chat = NULL; /* oscar doesn't have accept, it just joins */
 	ret->join_chat = oscar_join_chat;

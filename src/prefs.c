@@ -1556,9 +1556,7 @@ static void deny_page()
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
-	label = gtk_label_new(_("No. This doesn't work yet. Nothing actually gets sent to the"
-				" server. But the UI works. That's all I wanted."));
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
