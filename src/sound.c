@@ -52,13 +52,23 @@ static int check_dev(char *dev)
 {
 	struct stat stat_buf;
 	uid_t user = getuid();
-	gid_t group = getgid(); 
+	gid_t group = getgid(), 
+	      other_groups[32];
+	int i, numgroups;
+
+	if ((numgroups = getgroups (32, other_groups)) == -1)
+	  return 0;
 	if (stat(dev, &stat_buf))
 		return 0;
 	if (user == stat_buf.st_uid && stat_buf.st_mode & S_IWUSR)
 		return 1;
-	if (group == stat_buf.st_gid && stat_buf.st_mode & S_IWGRP)
-		return 1;
+	if (stat_buf.st_mode & S_IWGRP) {
+		if (group == stat_buf.st_gid)
+			return 1;
+		for (i = 0; i < numgroups; i++)
+			if (other_groups[i] == stat_buf.st_gid)
+				return 1;
+	}
 	if (stat_buf.st_mode & S_IWOTH)
 		return 1;
 	return 0;
