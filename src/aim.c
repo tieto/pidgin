@@ -532,6 +532,15 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 #endif
 
+	if (argc > 1 && !strcmp(argv[1], "--version")) {
+		gtk_init(&argc, &argv);
+		set_defaults(); /* needed for open_url_nw */
+		load_prefs();
+		show_about(0, (void *)1);
+		gtk_main();
+		return 0;
+	}
+
 #ifdef USE_APPLET
         init_applet_mgr(argc, argv);
 #elif defined USE_THEMES         

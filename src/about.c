@@ -41,6 +41,12 @@ static void destroy_about()
 }
 
 
+static void version_exit()
+{
+	exit(0);
+}
+
+
 static void about_click(GtkWidget *w, gpointer m)
 {
 	open_url_nw(NULL, "http://www.marko.net/gaim/");
@@ -110,8 +116,12 @@ void show_about(GtkWidget *w, void *null)
 		gdk_window_set_cursor(eventbox->window, gdk_cursor_new(GDK_HAND2));
 		
 		button = gtk_button_new_with_label(_("Close"));
-		gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
-                                          GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
+		if (null == NULL) /* there's a mindtrip */
+			gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
+        	                                  GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
+		else
+			gtk_signal_connect(GTK_OBJECT(button), "clicked",
+					   GTK_SIGNAL_FUNC(version_exit), NULL);
                 gtk_signal_connect(GTK_OBJECT(about), "destroy",
                                    GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
  		

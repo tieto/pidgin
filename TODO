@@ -3,9 +3,9 @@
 	Add "Group Add" button
 	Third sound option for people without soundcards who still want
 		sound events.  Make a PC Speaker Beep (^G / Char 7)
-	--version command line option
 	I guess we'll stick those legend icons back in the info 
 		window.  I forget why we took them out now.  I think
 		it was because we were going to add minimal IMG tag
 		support to gtkhtml and never did.
 	Save Buddy Pounces (how did I forget this) 		
+	Save Buddy Chats
