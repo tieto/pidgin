@@ -1104,9 +1104,12 @@ void write_html_with_smileys(GtkWidget *window, GtkWidget *html, char *what)
 void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 {
 	char *buf = g_malloc(BUF_LONG);
+	char buf2[1024];
 	char *str;
         FILE *fd;
         char colour[10];
+	int colorv = -1;
+	char *clr;
 	char *smiley = g_malloc(7);
 
 	if (!who) {
@@ -1141,6 +1144,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
                 }
                 
         } else {
+		if ((clr = strstr(what, "<BODY BGCOLOR=\"#")) != NULL) {
+			sscanf(clr + strlen("<BODY BGCOLOR=\"#"), "%x", &colorv);
+		}
 
 		if (flags & WFLAG_WHISPER) {
 			/* if we're whispering, it's not an autoresponse */
@@ -1183,6 +1189,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
                 gtk_html_freeze(GTK_HTML(c->text));
 
+		if (colorv != -1) {
+			sprintf(buf2, "<BODY BGCOLOR=\"#%x\">", colorv);
+			gtk_html_append_text(GTK_HTML(c->text), buf2, 0);
+		}
+
 		gtk_html_append_text(GTK_HTML(c->text), buf, 0);
 
 		if (display_options & OPT_DISP_SHOW_SMILEY)
@@ -1194,6 +1205,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			gtk_html_append_text(GTK_HTML(c->text), what, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 		}
 
+		if (colorv != -1) {
+			gtk_html_append_text(GTK_HTML(c->text), "</BODY>", 0);
+		}
                 gtk_html_append_text(GTK_HTML(c->text), "<BR>", 0);
 
 

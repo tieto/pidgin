@@ -548,7 +548,7 @@ int main(int argc, char *argv[])
 
 #if HAVE_SIGNAL_H
 	/* Let's not violate any PLA's!!!! */
-	signal(SIGSEGV, sighandler);
+	/* signal(SIGSEGV, sighandler); */
 #endif
 
 	if (argc > 1 && !strcmp(argv[1], "--version")) {
