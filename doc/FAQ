@@ -3,11 +3,10 @@ GAIM: The Pimpin' Penguin IM Clone Thats Good For The Soul
 1  The Basics
 	1.1  What does 'gaim' stand for?
 	1.2  Where are my log files stored?
-	1.3  Will you be adding a log viewer?
-	1.4  What are GtkHTML and GtkIMHtml, and why not just use GNOME's
+	1.3  What are GtkHTML and GtkIMHtml, and why not just use GNOME's
 	     GtkHTML?
-	1.5  How do I load plugins/perl scripts?
-	1.6  I'm not a native English speaker and I would like a translated
+	1.4  How do I load plugins/perl scripts?
+	1.5  I'm not a native English speaker and I would like a translated
 	     version of gaim.
 
 2  Multiple Connections
@@ -68,17 +67,7 @@ graham crackers, whatever.
 Your logs are stored in $HOME/.gaim/logs/. They had previously been stored in
 $HOME/.gaim/YourScreenName/ (e.g. $HOME/.gaim/EWarmenhoven).
 
-1.3  Will you be adding a log viewer?
-
-Yes! As a matter of fact, we will be. Here's what needs to happen before then
-though:
-	GtkIMHtml has to be finished and added to gaim
-	The option to not log, and to strip HTML from logs, will be removed
-	HTML-matching must be done (e.g. if you get a message "<u>hi", it
-		should be logged as "<U>hi</U>" to prevent later logs from
-		being underlined)
-
-1.4  What are GtkHTML and GtkIMHtml, and why not just use GNOME's GtkHTML?
+1.3  What are GtkHTML and GtkIMHtml, and why not just use GNOME's GtkHTML?
 
 The widget GAIM had previously used to display HTML was called GtkHTML, and
 was written by Mark and Jim specifically for GAIM. Over time, Rob and Eric
@@ -97,7 +86,7 @@ GNOME libraries that we don't want to force people to use in GAIM. (There is
 a strip-down version, CSCHTML, which doesn't use the GNOME libraries; but the
 first objection (that it supports too many tags) still applies.)
 
-1.5  How do I load plugins/perl scripts?
+1.4  How do I load plugins/perl scripts?
 
 Plugins you had loaded when you quit gaim are loaded again when you start
 gaim. To load a new plugin, either click 'Plugins' on the login screen, or
@@ -114,7 +103,7 @@ From that menu, you can load a new script (similarly to how you loaded a
 plugin above), unload all your loaded scripts, and list which scripts you have
 loaded.
 
-1.6  I'm not a native English speaker and I would like a translated version of
+1.5  I'm not a native English speaker and I would like a translated version of
 gaim.
 
 Gaim currently has a few translations (French, Spanish, Korean, and Simplified

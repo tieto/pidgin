@@ -13,8 +13,9 @@ Mark Spencer      <IM: markster97>		markster@marko.net
 Other Contributors:
 
 Adam Fritzler (mid)
-	Wrote libfaim, fixed the proxy code, and added the stuff to let
-	Oscar go through a proxy.
+	Wrote libfaim, fixed the proxy code, added the stuff to let
+	Oscar go through a proxy, and wrote the beginnings of the
+	Jabber plugin..
 
 Thanks to Torrey Searle for the spell checking code that
 accompanies the gtk_text box :)

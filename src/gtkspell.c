@@ -44,7 +44,7 @@
  * all ispell-related variables can be static.  
  */
 static pid_t spell_pid = -1;
-static int fd_write[2], fd_read[2];
+static int fd_write[2] = {0}, fd_read[2] = {0};
 static int signal_set_up = 0;
 
 /* FIXME? */
@@ -112,6 +112,9 @@ static int readresponse(char *buf) {
 void gtkspell_stop() {
 	if (gtkspell_running()) {
 		kill(spell_pid, SIGHUP); 
+		spell_pid = 0;
+		close(fd_read[0]);
+		close(fd_write[1]);
 	}
 }
 
@@ -139,11 +142,16 @@ int gtkspell_start(char *path, char * args[]) {
 		return -1;
 	} else if (spell_pid == 0) {
 		dup2(fd_write[0], 0);
-		dup2(fd_read[1], 1);
-		dup2(fd_error[1], 2);
-		close(fd_read[0]);
-		close(fd_error[0]);
+		close(fd_write[0]);
 		close(fd_write[1]);
+
+		dup2(fd_read[1], 1);
+		close(fd_read[0]);
+		close(fd_read[1]);
+
+		dup2(fd_error[1], 2);
+		close(fd_error[0]);
+		close(fd_error[1]);
 
 		if (path == NULL) {
 			if (execvp(args[0], args) < 0) 
@@ -155,7 +163,7 @@ int gtkspell_start(char *path, char * args[]) {
 		/* if we get here, we failed.
 		 * send some text on the pipe to indicate status.
 		 */
-		write(fd_read[1], "!", 1);
+		write(0, "!", 1); /* stdout _is_ the pipe. */
 
 		_exit(0);
 	} else {
@@ -167,11 +175,15 @@ int gtkspell_start(char *path, char * args[]) {
 		fd_set rfds;
 		struct timeval tv;
 		
+		close(fd_write[0]);
+		close(fd_read[1]);
+
 		FD_ZERO(&rfds);
 		FD_SET(fd_error[0], &rfds);
 		FD_SET(fd_read[0], &rfds);
 		tv.tv_sec = 2;
 		tv.tv_usec = 0;
+
 		if (select(MAX(fd_error[0], fd_read[0])+1, 
 					&rfds, NULL, NULL, &tv) < 0) {
 			/* FIXME: is this needed? */
@@ -185,6 +197,10 @@ int gtkspell_start(char *path, char * args[]) {
 			gtkspell_stop();
 			return -1;
 		}
+
+		/* we're done with stderr, now. */
+		close(fd_error[0]);
+		close(fd_error[1]);
 
 		/* otherwise, fd_read[0] is set. */
 		readline(buf);
@@ -416,6 +432,7 @@ static void entry_insert_cb(GtkText *gtktext,
 	}
 
 	gtk_editable_set_position(GTK_EDITABLE(gtktext), origpos);
+	gtk_editable_select_region(GTK_EDITABLE(gtktext), origpos, origpos);
 }
 
 static void entry_delete_cb(GtkText *gtktext,

@@ -1869,8 +1869,12 @@ static void update_idle_time(struct buddy_show *bs) {
 		gtk_widget_show(bs->idle);
 
 	/* now we do the tooltip */
-	sotime = sec_to_text(t - b->signon +
-			     ((struct gaim_connection *)bs->connlist->data)->correction_time);
+	if (b->signon) {
+		char *stime = sec_to_text(t - b->signon +
+				     ((struct gaim_connection *)bs->connlist->data)->correction_time);
+		sotime = g_strdup_printf(_("Logged in: %s\n"), stime);
+		g_free(stime);
+	}
 
 	if (b->idle)
 		itime = sec_to_text(t - b->idle);
@@ -1896,14 +1900,16 @@ static void update_idle_time(struct buddy_show *bs) {
 		caps[0] = '\0';
 
 	g_snprintf(infotip, sizeof infotip, _("Alias: %s               \nScreen Name: %s\n"
-				"Logged in: %s\n%s%s%s%s%s"),
-				b->show, b->name, sotime, warn,
+				"%s%s%s%s%s%s"),
+				b->show, b->name, 
+				(b->signon ? sotime : ""), warn,
 				(b->idle ? _("Idle: ") : ""), itime,
 				(b->idle ? "\n" : ""), caps);
 
 	gtk_tooltips_set_tip(tips, GTK_WIDGET(bs->item), infotip, "");
 
-	g_free(sotime);
+	if (b->signon)
+		g_free(sotime);
 	g_free(itime);
 }
 

@@ -87,18 +87,17 @@ static void process_packet_status(struct gaim_connection *gc, struct yahoo_packe
 
 		b = find_buddy(gc, rec->id);
 		if (!b) continue;
-		time(&tmptime);
-		if (b->signon == 0) b->signon = tmptime;
 		if (!online)
 			serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
 		else {
 			if (rec->status == YAHOO_STATUS_AVAILABLE)
-				serv_got_update(gc, b->name, 1, 0, b->signon, 0, UC_NORMAL, 0);
-			else if (rec->status == YAHOO_STATUS_IDLE)
-				serv_got_update(gc, b->name, 1, 0, b->signon, tmptime - 600,
+				serv_got_update(gc, b->name, 1, 0, 0, 0, UC_NORMAL, 0);
+			else if (rec->status == YAHOO_STATUS_IDLE) {
+				time(&tmptime);
+				serv_got_update(gc, b->name, 1, 0, 0, tmptime - 600,
 						(rec->status << 5) | UC_NORMAL, 0);
-			else
-				serv_got_update(gc, b->name, 1, 0, b->signon, 0,
+			} else
+				serv_got_update(gc, b->name, 1, 0, 0, 0,
 						(rec->status << 5) | UC_UNAVAILABLE, 0);
 			if (rec->status == YAHOO_STATUS_CUSTOM) {
 				gpointer val = g_hash_table_lookup(yd->hash, b->name);

@@ -688,7 +688,7 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 
 		res = g_strsplit(buf, " ", 0);
 
-		serv_got_update(gc, res[0], 1, 0, time((time_t *)NULL), 0, 0, 0);
+		serv_got_update(gc, res[0], 1, 0, 0, 0, 0, 0);
 		
 		g_strfreev(res);
 		free(buf);
