@@ -242,7 +242,7 @@ static int can_play_artsc()
 	return 1;
 }
 
-static int play_artsc_file(char *file)
+static int artsc_play_file(char *file)
 {
 	struct stat stat_buf;
 	unsigned char* buf = NULL;
@@ -408,6 +408,11 @@ void play_file(char *filename)
 		}
 #ifdef ESD_SOUND
 		if (esd_play_file(NULL, filename, 1))
+			_exit(0);
+#endif
+
+#ifdef ARTSC_SOUND
+		if (artsc_play_file(filename))
 			_exit(0);
 #endif
 
