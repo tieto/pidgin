@@ -1506,6 +1506,8 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	if(!tooltiptext)
 		return FALSE;
 
+	if(gtkblist->tipwindow)
+		gtk_widget_destroy(gtkblist->tipwindow);
 	gtkblist->tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
 	gtk_widget_set_app_paintable(gtkblist->tipwindow, TRUE);
 	gtk_window_set_resizable(GTK_WINDOW(gtkblist->tipwindow), FALSE);
@@ -1513,7 +1515,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	g_signal_connect(G_OBJECT(gtkblist->tipwindow), "expose_event",
 			G_CALLBACK(gaim_gtk_blist_paint_tip), node);
 	gtk_widget_ensure_style (gtkblist->tipwindow);
-	
+
 #ifdef WANT_DROP_SHADOW
 	attr.window_type = GDK_WINDOW_TEMP;
 	attr.override_redirect = TRUE;
