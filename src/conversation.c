@@ -839,7 +839,6 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 {
 	int pos;
 	gboolean key_is_typing = TRUE;
-	GtkWidget *notebook = NULL;
 
 	if (event->keyval == GDK_Escape) {
 		key_is_typing = FALSE;
@@ -1090,6 +1089,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 	} else if (((!c->is_chat && (im_options & OPT_IM_ONE_WINDOW)) ||
 		    (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) &&
 		   (event->state & GDK_MOD1_MASK) && (event->keyval > '0') && (event->keyval <= '9')) {
+		GtkWidget *notebook = NULL;
 		key_is_typing = FALSE;
 		notebook = (c->is_chat ? chat_notebook : convo_notebook);
 		gtk_notebook_set_page(GTK_NOTEBOOK(notebook), event->keyval - '1');
