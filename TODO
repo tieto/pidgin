@@ -8,6 +8,7 @@ WINGAIM:
 	sounds while away?	
 
 gtk2/new prefs
+	better gtk2-ified icons: maybe a send icon? review the ones we're using now. do they make sense?
 	sound player preference not being saved
 	resize blist doesn't work on some systems.
 	most toolbar buttons stay depressed after being clicked once, only raise when clicked a second time.
