@@ -82,6 +82,7 @@ DLL_C_SRC =		about.c \
 			away.c \
 			blist.c \
 			buddyicon.c \
+			cmds.c \
 			connection.c \
 			conversation.c \
 			core.c \
