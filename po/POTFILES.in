@@ -52,6 +52,7 @@ src/gtkconv.c
 src/gtkdebug.c
 src/gtkft.c
 src/gtkimhtml.c
+src/gtkimhtmltoolbar.c
 src/gtklog.c
 src/gtknotify.c
 src/gtkpounce.c
@@ -68,6 +69,7 @@ src/prefs.c
 src/protocols/gg/gg.c
 src/protocols/icq/gaim_icq.c
 src/protocols/irc/cmds.c
+src/protocols/irc/dcc_send.c
 src/protocols/irc/irc.c
 src/protocols/irc/msgs.c
 src/protocols/irc/parse.c
