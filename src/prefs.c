@@ -39,21 +39,6 @@
 #include "prpl.h"
 #include "proxy.h"
 
-/* xpms for gtk1.2 */
-#if !GTK_CHECK_VERSION (1,3,0)
-#include "pixmaps/cancel.xpm"
-#include "pixmaps/fontface2.xpm"
-#include "pixmaps/gnome_add.xpm"
-#include "pixmaps/gnome_remove.xpm"
-#include "pixmaps/gnome_preferences.xpm"
-#include "pixmaps/bgcolor.xpm"
-#include "pixmaps/fgcolor.xpm"
-#include "pixmaps/save.xpm"
-#include "pixmaps/ok.xpm"
-#include "pixmaps/join.xpm"
-#endif
-
-
 /* temporary preferences */
 static guint misc_options_new;
 static guint logging_options_new;
@@ -77,10 +62,6 @@ static int fontsize_new;
 GdkColor fgcolor_new, bgcolor_new;
 static struct window_size conv_size_new, buddy_chat_size_new;
 char fontface_new[128];
-#if !GTK_CHECK_VERSION(1,3,0)
-char fontxfld_new[256];
-char fontfacexfld[256];
-#endif
 char fontface[128];
 
 GtkWidget *prefs_away_list = NULL;
@@ -88,9 +69,7 @@ GtkWidget *prefs_away_menu = NULL;
 GtkWidget *preftree = NULL;
 GtkWidget *fontseld = NULL;
 
-#if GTK_CHECK_VERSION(1,3,0)
 GtkListStore *prefs_away_store = NULL;
-#endif
 
 static int sound_row_sel = 0;
 static char *last_sound_dir = NULL;
@@ -127,18 +106,12 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	 debugbutton=NULL;
 	 if(sounddialog)
 		gtk_widget_destroy(sounddialog);
-#if GTK_CHECK_VERSION(1,3,0)
 	 g_object_unref(G_OBJECT(prefs_away_store)); 	
-#endif
 }
 
 GtkWidget *preflabel;
 GtkWidget *prefsnotebook;
-#if GTK_CHECK_VERSION(1,3,0)
 GtkTreeStore *prefstree;
-#else
-GtkWidget *prefstree;
-#endif
 
 static void set_misc_options();	
 static void set_logging_options();
@@ -234,9 +207,6 @@ static void apply_cb(GtkWidget *button, void *data)
 
 
 	g_snprintf(fontface, sizeof(fontface), fontface_new);
-#if !GTK_CHECK_VERSION(1,3,0)
-	g_snprintf(fontxfld, sizeof(fontxfld), fontxfld_new);
-#endif	
 	update_convo_font();
 	update_convo_color();
 	save_prefs();
@@ -266,7 +236,6 @@ static void pref_nb_select(GtkTreeSelection *sel, GtkNotebook *nb) {
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (prefsnotebook), g_value_get_int (&val));
 
 }
-
 
 /* These are the pages in the preferences notebook */
 GtkWidget *interface_page() {
@@ -353,6 +322,7 @@ GtkWidget *font_page() {
 	pref_bg_picture = show_color_pref(hbox, FALSE);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(update_color),
 			   pref_bg_picture);
+
 	if (!(font_options_new & OPT_FONT_BGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 	gtk_signal_connect(GTK_OBJECT(select), "clicked", GTK_SIGNAL_FUNC(show_bgcolor_dialog), NULL);
@@ -412,6 +382,11 @@ GtkWidget *list_page() {
 	GtkWidget *vbox;
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+
+/* fixme: docklet
+	gaim_button(_("Automatically show buddy list on sign on"), &blist_options_new,
+		    OPT_BLIST_APP_BUDDY_SHOW, vbox);
+	gaim_button(_("Display Buddy List near applet"), &blist_options_new, OPT_BLIST_NEAR_APPLET, vbox); */
 
 	vbox = make_frame (ret, _("Buttons"));
 	gaim_button(_("_Hide IM/Info/Chat buttons"), &blist_options_new, OPT_BLIST_NO_BUTTONS, vbox);
@@ -672,6 +647,8 @@ GtkWidget *browser_page() {
 			      "Konqueror", BROWSER_KONQ,
 			      "Mozilla", BROWSER_MOZILLA,
 			      "Manual", BROWSER_MANUAL,
+/* fixme: GNOME binary helper
+			      "GNOME URL Handler", BROWSER_GNOME, */
 			      "Galeon", BROWSER_GALEON,
 			      "Opera", BROWSER_OPERA, NULL);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
@@ -862,7 +839,6 @@ GtkWidget *away_page() {
 	return ret;
 }
 
-#if GTK_CHECK_VERSION (1,3,0)
 static void event_toggled (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 {
 	GtkTreeModel *model = (GtkTreeModel *)data;
@@ -876,7 +852,6 @@ static void event_toggled (GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	sound_options_new ^= sounds[soundnum].opt;	
 	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0, sound_options_new & sounds[soundnum].opt, -1);
 }
-#endif
 
 static void test_sound(GtkWidget *button, gpointer i_am_NULL)
 {
@@ -975,7 +950,6 @@ static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 }
 
 
-#if GTK_CHECK_VERSION (1,3,0)
 static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
 	GValue val = { 0, };
@@ -990,7 +964,6 @@ static void prefs_sound_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	if (sounddialog)
 		gtk_widget_destroy(sounddialog);
 }
-#endif
 
 GtkWidget *sound_events_page() {
 
@@ -1076,7 +1049,6 @@ GtkWidget *sound_events_page() {
 	return ret;
 }
 
-#if GTK_CHECK_VERSION (1,3,0)
 void away_message_sel(GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	GtkTreeIter  iter;
@@ -1120,44 +1092,6 @@ void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
 	path = gtk_tree_path_new_first();
 	gtk_tree_selection_select_path(sel, path);
 }
-
-#else
-static struct away_message *cur_message;
-void away_message_sel(GtkWidget *w, struct away_message *a) {
-	gchar buffer[BUF_LONG];
-	char *tmp;
-
-	cur_message = a;
-
-	/* Clear the Box */
-	gtk_imhtml_clear(GTK_IMHTML(away_text));
-
-	/* Fill the text box with new message */
-	strncpy(buffer, a->message, BUF_LONG);
-	tmp = stylize(buffer, BUF_LONG);
-
-	debug_printf("FSD: %s\n", tmp);
-	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, -1, GTK_IMHTML_NO_TITLE |
-			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
-	gtk_imhtml_append_text(GTK_IMHTML(away_text), "<BR>", -1, GTK_IMHTML_NO_TITLE |
-			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
-	g_free(tmp);
-}
-void remove_away_message(GtkWidget *widget, GtkWidget *list) {
-	GList *i;
-	struct away_message *a;
-
-	i = GTK_LIST(prefs_away_list)->selection;
-
-	if (!i)
-		return;
-	if (!i->next) {
-		gtk_imhtml_clear(GTK_IMHTML(away_text));
-	}
-	a = gtk_object_get_user_data(GTK_OBJECT(i->data));
-	rem_away_mess(NULL, a);
-}
-#endif
 
 GtkWidget *away_message_page() {
 	GtkWidget *ret;
@@ -1230,12 +1164,13 @@ GtkWidget *away_message_page() {
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), NULL);
-       
+
 	button = gtk_button_new_from_stock (GTK_STOCK_REMOVE);
 	gtk_size_group_add_widget(sg, button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(remove_away_message), event_view);
-	
+
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
 	button = pixbuf_button(_("_Edit"), "edit.png");
 	gtk_size_group_add_widget(sg, button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), event_view);
@@ -1244,7 +1179,7 @@ GtkWidget *away_message_page() {
 	gtk_widget_show_all(ret);
 	return ret;
 }
-#if GTK_CHECK_VERSION (1,3,0)
+
 GtkTreeIter *prefs_notebook_add_page(char *text, 
 				     GdkPixbuf *pixbuf, 
 				     GtkWidget *page, 
@@ -1266,40 +1201,10 @@ GtkTreeIter *prefs_notebook_add_page(char *text,
 	gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
 	return iter;
 }
-#else
-GtkCTreeNode *prefs_notebook_add_page(char *text, 
-				     GdkPixmap *pixmap, 
-				     GtkWidget *page, 
-				     GtkCTreeNode **iter,
-				     GtkCTreeNode **parent, 
-				     int ind) {
-
-	GtkCTreeNode *itern;
-	char *texts[1];
-
-	texts[0] = text;
-
-	*iter = gtk_ctree_insert_node (GTK_CTREE(prefstree), parent ? *parent : NULL, NULL, &text,
-			       0, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(prefstree), GTK_CTREE_NODE(*iter), (void *)ind);
-	if (pixmap)
-		gdk_pixmap_unref(pixmap);
-	
-	debug_printf("%s\n", texts[0]);
-
-	gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
-	return iter;
-}
-#endif
 
 void prefs_notebook_init() {
 	int a = 0;
-#if GTK_CHECK_VERSION(1,3,0)	
 	GtkTreeIter p, c;
-#else
-	GtkCTreeNode *p = NULL;
-	GtkCTreeNode *c = NULL;
-#endif	
 	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, a++);
 	prefs_notebook_add_page(_("Fonts"), NULL, font_page(), &c, &p, a++);
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, a++);
@@ -1323,12 +1228,10 @@ void show_prefs()
 	GtkWidget *vbox, *vbox2;
 	GtkWidget *hbox;
 	GtkWidget *frame;
-#if GTK_CHECK_VERSION (1,3,0)
 	GtkWidget *tree_v;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *cell;
 	GtkTreeSelection *sel;
-#endif	
 	GtkWidget *notebook;
 	GtkWidget *sep;
 	GtkWidget *button;
@@ -1336,7 +1239,7 @@ void show_prefs()
 	int r;
 
 	if (prefs) {
-		gtk_widget_show(prefs);
+		gtk_window_present(GTK_WINDOW(prefs));
 		return;
 	}
 
@@ -1364,9 +1267,6 @@ void show_prefs()
 	g_snprintf(web_command_new, sizeof(web_command_new), "%s", 
 		   web_command ? web_command : "xterm -e lynx %%s");
 	g_snprintf(fontface_new, sizeof(fontface_new), fontface);
-#if !GTK_CHECK_VERSION(1,3,0)
-	g_snprintf(fontxfld_new, sizeof(fontxfld_new), fontxfld);
-#endif
 	memcpy(&conv_size_new, &conv_size, sizeof(struct window_size));
 	memcpy(&buddy_chat_size_new, &buddy_chat_size, sizeof(struct window_size));	
 	memcpy(&fgcolor_new, &fgcolor, sizeof(GdkColor));
@@ -1397,7 +1297,6 @@ void show_prefs()
 	gtk_widget_show (frame);
 	
 	/* The tree -- much inspired by the Gimp */
-#if GTK_CHECK_VERSION(1,3,0)
 	prefstree = gtk_tree_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_INT);
 	tree_v = gtk_tree_view_new_with_model (GTK_TREE_MODEL (prefstree));
 	gtk_container_add (GTK_CONTAINER (frame), tree_v);
@@ -1414,84 +1313,70 @@ void show_prefs()
 	 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (tree_v), column);
 
-#else
-	 prefstree = gtk_ctree_new(1,0);
-	 gtk_ctree_set_line_style(prefstree, GTK_CTREE_LINES_NONE);
-	 gtk_ctree_set_expander_style(GTK_CTREE(prefstree), GTK_CTREE_EXPANDER_TRIANGLE);
-	 gtk_container_add(GTK_CONTAINER (frame), prefstree);
-	 gtk_widget_set_usize(prefstree, 150, -1);
-	 gtk_widget_show(prefstree);
-#endif /* GTK_CHECK_VERSION */
-
-	 /* The right side */
-	 frame = gtk_frame_new (NULL);
-	 gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
-	 gtk_box_pack_start (GTK_BOX (hbox), frame, TRUE, TRUE, 0);
-	 gtk_widget_show (frame);
+	/* The right side */
+	frame = gtk_frame_new (NULL);
+	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
+	gtk_box_pack_start (GTK_BOX (hbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show (frame);
+	
+	vbox2 = gtk_vbox_new (FALSE, 4);
+	gtk_container_add (GTK_CONTAINER (frame), vbox2);
+	gtk_widget_show (vbox2);
+	
+	frame = gtk_frame_new (NULL);
+	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_OUT);
+	gtk_box_pack_start (GTK_BOX (vbox2), frame, FALSE, TRUE, 0);
+	gtk_widget_show (frame);
+	
+	hbox = gtk_hbox_new (FALSE, 4);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox), 4);
+	gtk_container_add (GTK_CONTAINER (frame), hbox);
+	gtk_widget_show (hbox);
+	
+	preflabel = gtk_label_new(NULL);
+	gtk_box_pack_end (GTK_BOX (hbox), preflabel, FALSE, FALSE, 0);
+	gtk_widget_show (preflabel);
 	 
-	 vbox2 = gtk_vbox_new (FALSE, 4);
-	 gtk_container_add (GTK_CONTAINER (frame), vbox2);
-	 gtk_widget_show (vbox2);
-	 
-	 frame = gtk_frame_new (NULL);
-	 gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_OUT);
-	 gtk_box_pack_start (GTK_BOX (vbox2), frame, FALSE, TRUE, 0);
-	 gtk_widget_show (frame);
-	 
-	 hbox = gtk_hbox_new (FALSE, 4);
-	 gtk_container_set_border_width (GTK_CONTAINER (hbox), 4);
-	 gtk_container_add (GTK_CONTAINER (frame), hbox);
-	 gtk_widget_show (hbox);
-	 
-	 preflabel = gtk_label_new(NULL);
-	 gtk_box_pack_end (GTK_BOX (hbox), preflabel, FALSE, FALSE, 0);
-	 gtk_widget_show (preflabel);
+	/* The notebook */
+	prefsnotebook = notebook = gtk_notebook_new ();
+	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);
+	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
+	gtk_box_pack_start (GTK_BOX (vbox2), notebook, FALSE, FALSE, 0);
 
-	 
-	 /* The notebook */
-	 prefsnotebook = notebook = gtk_notebook_new ();
-	 gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);
-	 gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
-	 gtk_box_pack_start (GTK_BOX (vbox2), notebook, FALSE, FALSE, 0);
+	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_v));
+	g_signal_connect (G_OBJECT (sel), "changed",
+			   G_CALLBACK (pref_nb_select),
+			   notebook);
+	gtk_widget_show(notebook);	 
+	sep = gtk_hseparator_new();
+	gtk_widget_show(sep);
+	gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
+	
+	/* The buttons to press! */
+	hbox = gtk_hbox_new (FALSE, 6);
+	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
+	gtk_container_add (GTK_CONTAINER(vbox), hbox);
+	gtk_widget_show (hbox); 
 
-#if GTK_CHECK_VERSION(1,3,0)
-	 sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_v));
-	 g_signal_connect (G_OBJECT (sel), "changed",
-	 		   G_CALLBACK (pref_nb_select),
-	 		   notebook);
-#else
-	 gtk_signal_connect(GTK_OBJECT(prefstree), "tree-select-row", GTK_SIGNAL_FUNC(pref_nb_select), notebook);
-#endif
-	 gtk_widget_show(notebook);	 
-	 sep = gtk_hseparator_new();
-	 gtk_widget_show(sep);
-	 gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
-	 
-	 /* The buttons to press! */
-	 hbox = gtk_hbox_new (FALSE, 6);
-	 gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
-	 gtk_container_add (GTK_CONTAINER(vbox), hbox);
-	 gtk_widget_show (hbox); 
+	button = gtk_button_new_from_stock (GTK_STOCK_OK);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_cb), prefs); 
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
 
-	 button = gtk_button_new_from_stock (GTK_STOCK_OK);
-	 gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_cb), prefs); 
-	 gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	 gtk_widget_show(button);
+	button = gtk_button_new_from_stock (GTK_STOCK_APPLY);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(apply_cb), prefs); 
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+	
+	button = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
+	gtk_signal_connect_object(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), prefs);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
 
-	 button = gtk_button_new_from_stock (GTK_STOCK_APPLY);
-	 gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(apply_cb), prefs); 
-	 gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	 gtk_widget_show(button);
-	 
-	 button = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
-	 gtk_signal_connect_object(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), prefs);
-	 gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	 gtk_widget_show(button);
+	prefs_notebook_init(); 
 
-	 prefs_notebook_init(); 
-
-	 gtk_tree_view_expand_all (GTK_TREE_VIEW(tree_v));
-	 gtk_widget_show(prefs);
+	gtk_tree_view_expand_all (GTK_TREE_VIEW(tree_v));
+	gtk_widget_show(prefs);
 }
 
 static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
@@ -1803,36 +1688,16 @@ void destroy_colorsel(GtkWidget *w, gpointer d)
 
 void apply_color_dlg(GtkWidget *w, gpointer d)
 {
-#if GTK_CHECK_VERSION(1,3,0)
 	if ((int)d == 1) {
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION
 						      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), 
 						      &fgcolor_new);
-#else
-	gdouble color[3];
-	if ((int)d == 1) {
-		gtk_color_selection_get_color(GTK_COLOR_SELECTION
-					      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), color);
-
-		fgcolor_new.red = ((guint16)(color[0] * 65535)) >> 8;
-		fgcolor_new.green = ((guint16)(color[1] * 65535)) >> 8;
-		fgcolor_new.blue = ((guint16)(color[2] * 65535)) >> 8;
-#endif
 		destroy_colorsel(NULL, (void *)1);
 		update_color(NULL, pref_fg_picture);
 	} else {
-#if GTK_CHECK_VERSION(1,3,0)
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION
 						      (GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), 
 						      &bgcolor_new);
-#else
-		gtk_color_selection_get_color(GTK_COLOR_SELECTION
-					      (GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), color);
-		
-		bgcolor_new.red = ((guint16)(color[0] * 65535)) >> 8;
-		bgcolor_new.green = ((guint16)(color[1] * 65535)) >> 8;
-		bgcolor_new.blue = ((guint16)(color[2] * 65535)) >> 8;
-#endif
 		destroy_colorsel(NULL, (void *)0);
 		update_color(NULL, pref_bg_picture);
 	}
@@ -2052,30 +1917,15 @@ static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
 void apply_font_dlg(GtkWidget *w, GtkWidget *f)
 {
 	int i = 0;
-#if !GTK_CHECK_VERSION(1,3,0)
-	int j = 0, k = 0;
-#endif
 	char *fontname;
 
 	fontname = g_strdup(gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontseld)));
 	destroy_fontsel(0, 0);
 
-#if !GTK_CHECK_VERSION(1,3,0)
-	for (i = 0; i < strlen(fontname); i++) {
-		if (fontname[i] == '-') {
-			if (++j > 2)
-				break;
-		} else if (j == 2)
-			fontface_new[k++] = fontname[i];
-	}
-	fontface_new[k] = '\0';
-	g_snprintf(fontxfld_new, sizeof(fontxfld_new), "%s", fontname);
-#else
 	while(fontname[i] && !isdigit(fontname[i]) && i < sizeof(fontface_new)) { 
 		fontface_new[i] = fontname[i];
 		i++;
 	}
 	
-#endif	
 	g_free(fontname);
 }

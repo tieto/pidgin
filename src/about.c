@@ -69,15 +69,6 @@ char *version()
 	return VERSION;
 }
 
-gboolean is_applet()
-{
-#ifdef USE_APPLET
-	return TRUE;
-#else
-	return FALSE;
-#endif
-}
-
 void show_about(GtkWidget *w, void *null)
 {
 	GtkWidget *vbox;

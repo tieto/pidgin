@@ -1,6 +1,5 @@
 #include "config.h"
 #include "gaim.h"
-#include "applet.h"
 
 #include <gtk/gtk.h>
 #include <stdlib.h>

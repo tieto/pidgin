@@ -22,11 +22,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef USE_APPLET
-#include <gnome.h>
-#include <applet-widget.h>
-#include "applet.h"
-#endif /* USE_APPLET */
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -123,10 +118,6 @@ void dequeue_by_buddy(GtkWidget *clist, gint row, gint column, GdkEventButton *e
 	g_free(name);
 	gtk_clist_remove(GTK_CLIST(clist), row);
 
-#ifdef USE_APPLET
-	set_user_state(away);
-#endif
-	
 }
 	
 	
@@ -170,11 +161,6 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 	awaymessage = NULL;
 	clistqueue = NULL;
 	clistqueuesw = NULL;
-#ifdef USE_APPLET
-	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
-	set_user_state(online);
-	insert_applet_away();
-#endif /* USE_APPLET */
 }
 
 
@@ -260,13 +246,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		return;
 	}
 
-#ifdef USE_APPLET
-	remove_applet_away();
-	applet_widget_register_callback(APPLET_WIDGET(applet),
-					"away", _("Back"), (AppletCallbackFunc)do_im_back, NULL);
-	set_user_state(away);
-#endif
-
 	/* New away message... Clear out the old sent_aways */
 	while (away_time_queue) {
 		struct queued_away_response *qar = away_time_queue->data;
@@ -284,15 +263,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 void rem_away_mess(GtkWidget *w, struct away_message *a)
 {
 	int default_index;
-#ifdef USE_APPLET
-	char *awayname;
-	awayname = g_malloc(sizeof(*awayname) * (6 + strlen(a->name)));
-	awayname[0] = '\0';
-	strcat(awayname, "away/");
-	strcat(awayname, a->name);
-	applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
-	g_free(awayname);
-#endif
 	default_index = g_slist_index(away_messages, default_away);
 	if (default_index == -1) {
 		if (away_messages != NULL)
@@ -338,15 +308,6 @@ void do_away_menu()
 	GSList *con = connections;
 	struct gaim_connection *gc = NULL;
 	int count = 0;
-
-#ifdef USE_APPLET
-	remove_applet_away();
-	if (imaway && applet)
-		applet_widget_register_callback(APPLET_WIDGET(applet),
-						"away", _("Back"), (AppletCallbackFunc)do_im_back, NULL);
-	else if (applet && !imaway)
-		insert_applet_away();
-#endif
 
 	if (prefs_away_list != NULL) {
 		GtkWidget *hbox;

@@ -272,10 +272,8 @@ void delete_conversation(struct conversation *c)
 		gtk_widget_destroy(c->link_dialog);
 	if (c->log_dialog)
 		gtk_widget_destroy(c->log_dialog);
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	if (c->save_icon)
 		gtk_widget_destroy(c->save_icon);
-#endif
 	c->send_history = g_list_first(c->send_history);
 	while (c->send_history) {
 		if (c->send_history->data)
@@ -2642,9 +2640,6 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 		return;
 	if (c->unseen == -1) return;
 	style = gtk_style_new();
-#if !GTK_CHECK_VERSION(1,3,0)
-	gdk_font_unref(gtk_style_get_font(style));
-#endif
 	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 	gtk_widget_set_style(label, style);
 	gtk_style_unref(style);
@@ -2669,9 +2664,6 @@ void show_typing(struct conversation *c) {
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
-#if !GTK_CHECK_VERSION(1,3,0)
-		gdk_font_unref(gtk_style_get_font(style));
-#endif
 		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 		style->fg[0].red = 0x0000;
 		style->fg[0].green = 0x9999;
@@ -2731,9 +2723,6 @@ gboolean reset_typing(char *name) {
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
-#if !GTK_CHECK_VERSION(1,3,0)
-		gdk_font_unref(gtk_style_get_font(style));
-#endif
 		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 		c->unseen = 0;
 		gtk_widget_set_style(label, style);
@@ -2903,16 +2892,7 @@ void show_conv(struct conversation *c)
 	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
 	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);
 
-#if !GTK_CHECK_VERSION(1,3,0) /* This gtk bug should be fixed in gtk2 */
-	/* I hate hackish workarounds.  According to Ari Pollak, a gtk bug causes Gaim to loop
-	 * infinitely if the entry is smaller than the text height.  This is a hackish workaround */ 
-	gtk_widget_set_usize(entry, conv_size.width - 20, 
-			     MAX(conv_size.entry_height, 
-				 gdk_char_height(gtk_widget_get_default_style()->font, '0') +
-				 gtk_widget_get_default_style()->font->ascent + 1));
-#else
 	gtk_widget_set_usize(entry, conv_size.width - 20, MAX(conv_size.entry_height, 25));
-#endif
 
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
@@ -3357,7 +3337,6 @@ void update_convo_font()
 	}
 }
 
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 #define SCALE(x) ((gdk_pixbuf_animation_get_width(x) <= 48 && gdk_pixbuf_animation_get_height(x) <= 48) \
@@ -3497,11 +3476,7 @@ static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 	}
-#if GTK_CHECK_VERSION(1,3,0)
 	 else if (c->anim && !(gdk_pixbuf_animation_is_static_image(c->anim))) 
-#else
-	 else if (c->anim && (gdk_pixbuf_animation_get_num_frames(c->anim) > 1)) 
-#endif
 	{
 		button = gtk_menu_item_new_with_label(_("Enable Animation"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(start_anim), c);
@@ -3524,11 +3499,9 @@ static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation
 
 	return TRUE;
 }
-#endif
 
 void remove_icon(struct conversation *c)
 {
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	if (c->icon)
 		gtk_container_remove(GTK_CONTAINER(c->bbox), c->icon->parent->parent);
 	c->icon = NULL;
@@ -3538,13 +3511,8 @@ void remove_icon(struct conversation *c)
 	if (c->icon_timer)
 		gtk_timeout_remove(c->icon_timer);
 	c->icon_timer = 0;
-#if GTK_CHECK_VERSION(1,3,0)
 	if(c->iter)
 		g_object_unref(c->iter);
-#else
-	c->frame = 0;
-#endif
-#endif
 }
 
 void update_smilies(struct conversation *c)
@@ -3670,7 +3638,6 @@ void update_icon(struct conversation *c)
 	gdk_pixmap_unref(pm);
 	if (bm)
 		gdk_bitmap_unref(bm);
-	
 }
 
 void got_new_icon(struct gaim_connection *gc, char *who)
@@ -3691,7 +3658,6 @@ void set_hide_icons()
 
 void set_anim()
 {
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	GList *c = conversations;
 	if (im_options & OPT_IM_HIDE_ICONS)
 		return;
@@ -3702,7 +3668,6 @@ void set_anim()
 			start_anim(NULL, c->data);
 		c = c->next;
 	}
-#endif
 }
 
 static void remove_checkbox(struct conversation *c)

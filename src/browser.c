@@ -576,10 +576,9 @@ void open_url(GtkWidget *w, char *url)
 
 		netscape_command(command);
 		g_free(command);
-#ifdef USE_GNOME
-	} else if (web_browser == BROWSER_GNOME) {
-		gnome_url_show(url);
-#endif /* USE_GNOME */
+/* fixme: GNOME helper					*
+ *	} else if (web_browser == BROWSER_GNOME) {	*
+ *		gnome_url_show(url);			*/
 	} else {
 		pid_t pid;
 

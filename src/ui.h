@@ -27,29 +27,14 @@
 #endif
 
 #include <gtk/gtk.h>
-#ifdef USE_APPLET
-#include <applet-widget.h>
-#endif /* USE_APPLET */
-#ifdef USE_GNOME
-#include <gnome.h>
-#endif
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#endif
 
-#if GTK_CHECK_VERSION(1,3,0)
 #define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_TOPLEVEL); \
 			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
 #define GdkWindowPrivate GdkWindowObject
 #define gtk_toolbar_new(x,y) gtk_toolbar_new()
 #define gtk_accel_group_attach(x, y) _gtk_accel_group_attach(x, y)
 #define gtk_widget_lock_accelerators(x)
-#else
-#define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_DIALOG)
-#define GTK_OLD_EDITABLE(x) GTK_EDITABLE(x)
-#define gtk_style_get_font(style) (style)->font
-#define gtk_style_set_font(s, f) (s)->font = f
-#endif
 
 #define DEFAULT_FONT_XFLD "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 #define DEFAULT_FONT_FACE "helvetica"
@@ -185,18 +170,12 @@ struct conversation {
 	/* something to distinguish */
 	gboolean is_chat;
 
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	/* buddy icon stuff. sigh. */
 	GtkWidget *icon;
 	GdkPixbufAnimation *anim;
 	guint32 icon_timer;
-	#if GTK_CHECK_VERSION(1,3,0)
 	GdkPixbufAnimationIter *iter;
-	#else
-	int frame;
-	#endif
 	GtkWidget *save_icon;
-#endif
 };
 
 struct log_conversation {
@@ -369,6 +348,10 @@ extern void gaim_separator(GtkWidget *);
 extern void redo_buddy_list(); /* you really shouldn't call this function */
 extern void set_blist_tab();
 extern void hide_buddy_list();
+extern void unhide_buddy_list();
+extern void toggle_buddy_list();
+extern void docklet_add();
+extern void docklet_remove();
 
 /* Functions in buddy_chat.c */
 extern void join_chat();
@@ -469,9 +452,7 @@ extern void load_perl_script();
 extern void aol_icon(GdkWindow *);
 extern GtkWidget *picture_button(GtkWidget *, char *, char **);
 extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
-#if GTK_CHECK_VERSION(1,3,0) || GTK_CHECK_VERSION(1,3,0)
 extern GtkWidget *pixbuf_button(char *, char *);
-#endif
 extern int file_is_dir(const char *, GtkWidget *);
 extern void update_privacy_connections();
 extern void show_privacy_options();

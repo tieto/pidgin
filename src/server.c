@@ -35,9 +35,6 @@
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
-#ifdef USE_APPLET
-#include "applet.h"
-#endif
 
 #include "pixmaps/ok.xpm"
 #include "pixmaps/cancel.xpm"
@@ -596,10 +593,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			qm->flags = WFLAG_RECV | away;
 			qm->len = len;
 			message_queue = g_slist_append(message_queue, qm);
-
-#ifdef USE_APPLET
-			set_user_state(away);
-#endif
 
 			row = find_queue_row_by_name(qm->name);
 

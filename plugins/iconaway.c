@@ -1,8 +1,7 @@
 #include "../config.h"
 #include "gaim.h"
 
-#include <gdk/gdkx.h>
-#include <X11/Xlib.h>
+#include <gtk/gtk.h>
 
 void *handle;
 
@@ -18,18 +17,12 @@ extern void applet_destroy_buddy();
 void iconify_windows(struct gaim_connection *gc, char *state, char *message, void *data) {
 	if (!imaway || !gc->away)
 		return;
-	XIconifyWindow(GDK_DISPLAY(),
-			GDK_WINDOW_XWINDOW(imaway->window),
-		       ((_XPrivDisplay)GDK_DISPLAY())->default_screen);
+	gtk_window_iconify(GTK_WINDOW(imaway));
 	hide_buddy_list();
 	if (all_convos)
-		XIconifyWindow(GDK_DISPLAY(),
-				GDK_WINDOW_XWINDOW(all_convos->window),
-				((_XPrivDisplay)GDK_DISPLAY())->default_screen);
+		gtk_window_iconify(GTK_WINDOW(all_convos));
 	if (all_chats)
-		XIconifyWindow(GDK_DISPLAY(),
-				GDK_WINDOW_XWINDOW(all_chats->window),
-				((_XPrivDisplay)GDK_DISPLAY())->default_screen);
+		gtk_window_iconify(GTK_WINDOW(all_chats));
 }
 
 char *gaim_plugin_init(GModule *h) {

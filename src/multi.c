@@ -25,9 +25,6 @@
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
-#ifdef USE_APPLET
-#include "applet.h"
-#endif
 
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_preferences.xpm"
@@ -129,10 +126,9 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 		g = g_slist_remove(g, g->data);
 	}
 	g_free(gc);
-#ifndef USE_APPLET
+/* fixme: docklet */
 	if (!connections && mainwindow)
 		gtk_widget_show(mainwindow);
-#endif
 }
 
 static void delete_acctedit(GtkWidget *w, gpointer d)
@@ -846,9 +842,6 @@ static void pass_signon(GtkWidget *w, struct pass_prompt *p)
 {
 	const char *txt = gtk_entry_get_text(GTK_ENTRY(p->entry));
 	g_snprintf(p->u->password, sizeof(p->u->password), "%s", txt);
-#ifdef USE_APPLET
-	set_user_state(signing_on);
-#endif
 	serv_login(p->u);
 	gtk_widget_destroy(p->win);
 }
@@ -935,9 +928,6 @@ static void acct_signin(GtkWidget *w, gpointer d)
 				do_pass_dlg(u);
 			} else {
 				serv_login(u);
-#ifdef USE_APPLET
-				set_user_state(signing_on);
-#endif /* USE_APPLET */
 				gtk_clist_set_text(GTK_CLIST(list), row, 1, "Attempting");
 			}
 		} else if (u->gc) {
@@ -1016,7 +1006,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	GtkWidget *button;	/* used for many things */
 
 	if (acctedit) {
-		gtk_widget_show(acctedit);
+		gtk_window_present(GTK_WINDOW(acctedit));
 		return;
 	}
 
@@ -1144,7 +1134,7 @@ void account_online(struct gaim_connection *gc)
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
 
-#ifdef USE_APPLET
+/* fixme: docklet
 	if (blist_options & OPT_BLIST_APP_BUDDY_SHOW) {
 		show_buddy_list();
 		refresh_buddy_window();
@@ -1158,11 +1148,10 @@ void account_online(struct gaim_connection *gc)
 	} else {
 		build_edit_tree();
 	}
-	set_user_state(online);
-#else
+	set_user_state(online); */
+
 	show_buddy_list();
 	refresh_buddy_window();
-#endif
 
 	update_privacy_connections();
 	do_away_menu();
@@ -1220,9 +1209,6 @@ void auto_login()
 	while (u) {
 		a = (struct aim_user *)u->data;
 		if ((a->options & OPT_USR_AUTO) && (a->options & OPT_USR_REM_PASS)) {
-#ifdef USE_APPLET
-			set_user_state(signing_on);
-#endif /* USE_APPLET */
 			serv_login(a);
 		}
 		u = u->next;
@@ -1469,10 +1455,6 @@ void signoff(struct gaim_connection *gc)
 	do_away_menu();
 	do_proto_menu();
 	redo_convo_menus();
-#ifdef USE_APPLET
-	if (connections)
-		set_user_state(online);
-#endif
 	update_privacy_connections();
 
 	if (connections)
@@ -1480,20 +1462,19 @@ void signoff(struct gaim_connection *gc)
 
 	destroy_all_dialogs();
 	destroy_buddy();
-#ifdef USE_APPLET
+/* fixme: docklet
 	set_user_state(offline);
 	applet_buddy_show = FALSE;
 
 	if (applet) {
-		/* These don't have any purpose if the applet is gone :-P */
+		/* These don't have any purpose if the applet is gone :-P
 		applet_widget_unregister_callback(APPLET_WIDGET(applet), "signoff");
 		applet_widget_register_callback(APPLET_WIDGET(applet),
 						"autologin", _("Auto-login"), (AppletCallbackFunc)auto_login, NULL);
 		remove_applet_away();
-	}
-#else
+	} */
+
 	show_login();
-#endif /* USE_APPLET */
 }
 
 struct aim_user *new_user(const char *name, int proto, int opts)

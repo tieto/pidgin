@@ -22,14 +22,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef USE_APPLET
-#include "applet.h"
-#include <gnome.h>
-#else
-#ifdef USE_GNOME
-#include <gnome.h>
-#endif /* USE_GNOME */
-#endif /* USE_APPLET */
 #ifdef GAIM_PLUGINS
 #include <dlfcn.h>
 #endif /* GAIM_PLUGINS */
@@ -58,9 +50,7 @@
 #endif
 #include "locale.h"
 #include "gtkspell.h"
-#ifndef USE_APPLET
 #include <getopt.h>
-#endif
 
 static gchar *aspell_cmd[] = { "aspell", "--sug-mode=fast","-a", NULL };
 static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
@@ -106,11 +96,6 @@ static int ignore_sig_list[] = {
 
 void cancel_logon(void)
 {
-#ifdef USE_APPLET
-	applet_buddy_show = FALSE;
-	if (mainwindow)
-		gtk_widget_hide(mainwindow);
-#else
 #ifdef GAIM_PLUGINS
 	/* first we tell those who have requested it we're quitting */
 	plugin_event(event_quit, 0, 0, 0, 0);
@@ -123,7 +108,6 @@ void cancel_logon(void)
 #endif
 
 	gtk_main_quit();
-#endif /* USE_APPLET */
 }
 
 static int snd_tmout;
@@ -143,12 +127,6 @@ void gaim_setup(struct gaim_connection *gc)
 		logins_not_muted = 0;
 		snd_tmout = gtk_timeout_add(10000, (GtkFunction)sound_timeout, NULL);
 	}
-#ifdef USE_APPLET
-	set_user_state(online);
-	applet_widget_unregister_callback(APPLET_WIDGET(applet), "autologin");
-	applet_widget_register_callback(APPLET_WIDGET(applet),
-					"signoff", _("Signoff"), (AppletCallbackFunc)signoff_all, NULL);
-#endif /* USE_APPLET */
 }
 
 
@@ -311,11 +289,9 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(sbox), bbox, TRUE, TRUE, 0);
 	gtk_widget_show(bbox);
 
-#ifndef USE_APPLET
 	cancel = gtk_button_new_with_label(_("Quit"));
-#else
-	cancel = gtk_button_new_with_label(_("Close"));
-#endif
+/* fixme: docklet					*
+ *	cancel = gtk_button_new_with_label(_("Close"));	*/
 #ifndef NO_MULTI
 	accts = gtk_button_new_with_label(_("Accounts"));
 #endif
@@ -556,30 +532,9 @@ int main(int argc, char *argv[])
 	sigset_t sigset;
 	void (*prev_sig_disp)();
 #endif
-#ifndef USE_APPLET
 	int opt, opt_user = 0;
 	int i;
 
-#ifdef USE_GNOME
-	struct poptOption popt_options[] = {
-		{"acct", 'a', POPT_ARG_NONE, &opt_acct, 'a',
-		 "Display account editor window", NULL},
-		{"away", 'w', POPT_ARG_STRING, NULL, 'w',
-		 "Make away on signon (optional argument MESG specifies name of away message to use)",
-		 "[MESG]"},
-		{"login", 'l', POPT_ARG_STRING, NULL, 'l',
-		 "Automatically login (optional argument NAME specifies account(s) to use)", "[NAME]"},
-		{"loginwin", 'n', POPT_ARG_NONE, &opt_nologin, 'n',
-		 "Don't automatically login; show login window",  NULL},
-		{"user", 'u', POPT_ARG_STRING, &opt_user_arg, 'u',
-		 "Use account NAME", "NAME"},
-		{"file", 'f', POPT_ARG_STRING, &opt_rcfile_arg, 'f',
-		 "Use FILE as config", "FILE"},
-		{"debug", 'd', POPT_ARG_NONE, &opt_debug, 'd',
-		 "Print debugging messages to stdout", NULL},
-		{0, 0, 0, 0, 0, 0, 0}
-	};
-#endif /* USE_GNOME */
 	struct option long_options[] = {
 		{"acct", no_argument, NULL, 'a'},
 		/*{"away", optional_argument, NULL, 'w'}, */
@@ -592,7 +547,6 @@ int main(int argc, char *argv[])
 		{"version", no_argument, NULL, 'v'},
 		{0, 0, 0, 0}
 	};
-#endif
 
 #ifdef DEBUG
 	opt_debug = 1;
@@ -644,10 +598,6 @@ int main(int argc, char *argv[])
 	}		
 #endif
 
-
-#ifdef USE_APPLET
-	init_applet_mgr(argc, argv);
-#else
 	for (i = 0; i < argc; i++) {
 		/* --login option */
 		if (strstr(argv[i], "--l") == argv[i]) {
@@ -721,18 +671,10 @@ int main(int argc, char *argv[])
 	 */
 
 	gtk_set_locale();
-#ifdef USE_GNOME
-	gnome_init_with_popt_table(PACKAGE, VERSION, argc, argv, popt_options, 0, NULL);
-#else
 	gtk_init(&argc, &argv);
-#endif
 
 	/* scan command-line options */
-#ifdef USE_GNOME
-	opterr = 0;
-#else
 	opterr = 1;
-#endif
 	while ((opt = getopt_long(argc, argv, "adhu:f:vn", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'u':	/* set user */
@@ -757,17 +699,13 @@ int main(int argc, char *argv[])
 		case 'n':       /* don't autologin */
 			opt_nologin = 1;
 			break;
-#ifndef USE_GNOME
 		case '?':
 		default:
 			show_usage(1, argv[0]);
 			return 0;
 			break;
-#endif
 		}
 	}
-
-#endif /* USE_APPLET */
 
 	/* show help message */
 	if (opt_help) {
@@ -783,7 +721,6 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-
 	load_prefs();
 
 	core_main();
@@ -792,10 +729,8 @@ int main(int argc, char *argv[])
 	/* set the default username */
 	if (opt_user_arg != NULL) {
 		set_first_user(opt_user_arg);
-#ifndef USE_GNOME
 		g_free(opt_user_arg);
 		opt_user_arg = NULL;
-#endif /* USE_GNOME */
 	}
 
 	if (misc_options & OPT_MISC_DEBUG)
@@ -826,25 +761,6 @@ int main(int argc, char *argv[])
 			opt_login_arg = NULL;
 		}
 	}
-#ifdef USE_APPLET
-	applet_widget_register_callback(APPLET_WIDGET(applet),
-					"prefs", _("Preferences"), show_prefs, NULL);
-	applet_widget_register_callback(APPLET_WIDGET(applet),
-					"accounts",
-					_("Accounts"), (AppletCallbackFunc)account_editor, (void *)1);
-#ifdef GAIM_PLUGINS
-	applet_widget_register_callback(APPLET_WIDGET(applet),
-					"plugins", _("Plugins"), GTK_SIGNAL_FUNC(show_plugins), NULL);
-#endif /* GAIM_PLUGINS */
-
-	applet_widget_register_callback(APPLET_WIDGET(applet),
-					"autologin", _("Auto-login"), (AppletCallbackFunc)auto_login, NULL);
- 
-	if (!opt_acct)
-		auto_login();
-
-	applet_widget_gtk_main();
-#else
 
 	if (!opt_acct && !opt_nologin)
 		auto_login();
@@ -855,8 +771,6 @@ int main(int argc, char *argv[])
 		show_login();
 
 	gtk_main();
-
-#endif /* USE_APPLET */
 
 	if (convo_options & OPT_CONVO_CHECK_SPELLING)
 		gtkspell_stop();

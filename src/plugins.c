@@ -90,13 +90,9 @@ static void load_which_plugin(GtkWidget *, gpointer);
 void update_show_plugins();
 static void hide_plugins(GtkWidget *, gpointer);
 static void clear_plugin_display();
-#if GTK_CHECK_VERSION(1,3,0)
 static struct gaim_plugin *get_selected_plugin(GtkWidget *);
 static void select_plugin(GtkWidget *w, struct gaim_plugin *p);
 static void list_clicked(GtkWidget *, gpointer);
-#else
-static void list_clicked(GtkWidget *, struct gaim_plugin *);
-#endif
 
 /* ------------------ Code Below ---------------------------- */
 
@@ -165,11 +161,7 @@ static void load_which_plugin(GtkWidget *w, gpointer data)
 	/* Select newly loaded plugin */
 	if(p == NULL)
 		return;
-#if GTK_CHECK_VERSION(1,3,0)
 	select_plugin(pluglist, p);
-#else
-	gtk_list_select_item(GTK_LIST(pluglist), g_list_index(plugins, p));
-#endif
 }
 
 void show_plugins(GtkWidget *w, gpointer data)
@@ -185,7 +177,6 @@ void show_plugins(GtkWidget *w, gpointer data)
 	GtkWidget *label;
 	GtkWidget *add;
 	GtkWidget *close;
-#if GTK_CHECK_VERSION(1,3,0)
 	/* stuff needed for GtkTreeView *pluglist */
 	GtkListStore *store;
 	GtkCellRenderer *renderer;
@@ -193,19 +184,17 @@ void show_plugins(GtkWidget *w, gpointer data)
 	GtkTreeSelection *selection;
 	/* needed for GtkTextView *plugtext */
 	GtkTextBuffer *buffer;
-#endif
 	
-	if (plugwindow)
+	if (plugwindow) {
+		gtk_window_present(GTK_WINDOW(plugwindow));
 		return;
+	}
 
 	GAIM_DIALOG(plugwindow);
 	gtk_window_set_wmclass(GTK_WINDOW(plugwindow), "plugins", "Gaim");
 	gtk_widget_realize(plugwindow);
 	aol_icon(plugwindow->window);
 	gtk_window_set_title(GTK_WINDOW(plugwindow), _("Gaim - Plugins"));
-#if !GTK_CHECK_VERSION(1,3,0)
-	gtk_widget_set_usize(plugwindow, 515, 300);
-#endif
 	gtk_signal_connect(GTK_OBJECT(plugwindow), "destroy", GTK_SIGNAL_FUNC(hide_plugins), NULL);
 
 	mainvbox = gtk_vbox_new(FALSE, 0);
@@ -220,9 +209,6 @@ void show_plugins(GtkWidget *w, gpointer data)
 	/* Left side: frame with list of plugin file names */
 	frame = gtk_frame_new(_("Loaded Plugins"));
 	gtk_box_pack_start(GTK_BOX(tophbox), frame, FALSE, FALSE, 0);
-#if !GTK_CHECK_VERSION(1,3,0)
-	gtk_widget_set_usize(frame, 140, -1);
-#endif
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 6);
 	gtk_frame_set_label_align(GTK_FRAME(frame), 0.05, 0.5);
 	gtk_widget_show(frame);
@@ -232,7 +218,6 @@ void show_plugins(GtkWidget *w, gpointer data)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
 					GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_widget_show(scrolledwindow);
-#if GTK_CHECK_VERSION(1,3,0)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolledwindow),
 					GTK_SHADOW_IN);
 
@@ -252,12 +237,6 @@ void show_plugins(GtkWidget *w, gpointer data)
 	g_signal_connect(G_OBJECT(selection), "changed", 
 			G_CALLBACK(list_clicked),
 			NULL);
-#else
-	pluglist = gtk_list_new();
-	gtk_list_set_selection_mode(GTK_LIST(pluglist), GTK_SELECTION_BROWSE);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolledwindow), 
-			pluglist);
-#endif /* GTK_CHECK_VERSION */
 
 	gtk_widget_show(pluglist);
 
@@ -277,7 +256,6 @@ void show_plugins(GtkWidget *w, gpointer data)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
 					GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_widget_show(scrolledwindow);
-#if GTK_CHECK_VERSION(1,3,0)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolledwindow),
 					GTK_SHADOW_IN);		
 	
@@ -291,13 +269,6 @@ void show_plugins(GtkWidget *w, gpointer data)
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(plugtext));
 	gtk_text_buffer_create_tag(buffer, "bold", "weight", 
 			PANGO_WEIGHT_BOLD, NULL);
-#else
-	plugtext = gtk_text_new(NULL, NULL);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolledwindow), 
-				plugtext);
-	gtk_text_set_word_wrap(GTK_TEXT(plugtext), TRUE);
-	gtk_text_set_editable(GTK_TEXT(plugtext), FALSE);
-#endif
 	gtk_widget_show(plugtext);
 
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -357,47 +328,20 @@ void update_show_plugins()
 {
 	GList *plugs = plugins;
 	struct gaim_plugin *p;
-#if GTK_CHECK_VERSION(1,3,0)
 	int pnum = 0;
 	GtkListStore *store;
 	GtkTreeIter iter;
-#else
-	GtkWidget *label;
-	GtkWidget *list_item;
-	GtkWidget *hbox;
-#endif
 	
 	if (plugwindow == NULL)
 		return;
 
-#if GTK_CHECK_VERSION(1,3,0)
 	store = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(pluglist)));
 	gtk_list_store_clear(store);
-#else
-	gtk_list_clear_items(GTK_LIST(pluglist), 0, -1);
-#endif
 	while (plugs) {
 		p = (struct gaim_plugin *)plugs->data;
-#if GTK_CHECK_VERSION(1,3,0)
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter, 0, plugin_makelistname(p->handle), -1);
 		gtk_list_store_set(store, &iter, 1, pnum++, -1);
-#else
-		label = gtk_label_new(plugin_makelistname(p->handle));
-		hbox = gtk_hbox_new(FALSE, 0);  /* for left justification */
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-		list_item = gtk_list_item_new();
-		gtk_container_add(GTK_CONTAINER(list_item), hbox);
-		gtk_signal_connect(GTK_OBJECT(list_item), "select", 
-				GTK_SIGNAL_FUNC(list_clicked), p);
-		gtk_object_set_user_data(GTK_OBJECT(list_item), p);
-		
-		gtk_widget_show(hbox);
-		gtk_widget_show(label);
-		gtk_container_add(GTK_CONTAINER(pluglist), list_item);
-		gtk_widget_show(list_item);
-#endif
 		plugs = g_list_next(plugs);
 	}
 
@@ -407,20 +351,9 @@ void update_show_plugins()
 static void unload_plugin_cb(GtkWidget *w, gpointer data)
 {
 	struct gaim_plugin *p;
-#if GTK_CHECK_VERSION(1,3,0)
 	p = get_selected_plugin(pluglist);
 	if(p == NULL)
 		return;
-#else
-	GList *i;
-	
-	i = GTK_LIST(pluglist)->selection;
-
-	if (i == NULL)
-		return;
-
-	p = gtk_object_get_user_data(GTK_OBJECT(i->data));
-#endif
 	unload_plugin(p);
 	update_show_plugins();
 }
@@ -428,56 +361,31 @@ static void unload_plugin_cb(GtkWidget *w, gpointer data)
 static void plugin_reload_cb(GtkWidget *w, gpointer data)
 {
 	struct gaim_plugin *p;
-#if GTK_CHECK_VERSION(1,3,0)
 	p = get_selected_plugin(pluglist);
 	if(p == NULL)
 		return;
 	p = reload_plugin(p);
-#else
-	GList *i;
-
-	i = GTK_LIST(pluglist)->selection;
-	if (i == NULL)
-		return;
-
-	/* Just pass off plugin to the actual function */
-	p = reload_plugin(gtk_object_get_user_data(GTK_OBJECT(i->data)));
-#endif
 	update_show_plugins();
 
 	/* Try and reselect the plugin in list */
 	if (!pluglist)
 		return;
-#if GTK_CHECK_VERSION(1,3,0)
 	select_plugin(pluglist, p);
-#else
-	gtk_list_select_item(GTK_LIST(pluglist), g_list_index(plugins, p));
-#endif
 }
 
 
-#if GTK_CHECK_VERSION(1,3,0)
 static void list_clicked(GtkWidget *w, gpointer data)
-#else
-static void list_clicked(GtkWidget *w, struct gaim_plugin *p)
-#endif
 {
 	void (*gaim_plugin_config)();
-#if GTK_CHECK_VERSION(1,3,0)
 	struct gaim_plugin *p;
 	GtkTextBuffer *buffer;
 	GtkTextIter iter;
-#else
-	gchar *temp;
-	guint text_len;
-#endif
 
 	if (confighandle != 0) {
 		gtk_signal_disconnect(GTK_OBJECT(config), confighandle);
 		confighandle = 0;
 	}
 
-#if GTK_CHECK_VERSION(1,3,0)
 	p = get_selected_plugin(pluglist);
 	if(p == NULL) { /* No selected plugin */
 		clear_plugin_display();
@@ -501,18 +409,6 @@ static void list_clicked(GtkWidget *w, struct gaim_plugin *p)
 					(p->description != NULL) ? p->description : "", -1);
 
 	gtk_entry_set_text(GTK_ENTRY(plugentry), g_module_name(p->handle));
-#else
-	text_len = gtk_text_get_length(GTK_TEXT(plugtext));
-	gtk_text_set_point(GTK_TEXT(plugtext), 0);
-	gtk_text_forward_delete(GTK_TEXT(plugtext), text_len);
-
-	temp = g_strdup_printf("Name:   %s\n\nDescription:\n%s",
-				(p->name != NULL) ? p->name : "",
-				(p->description != NULL) ? p->description : "");
-	gtk_text_insert(GTK_TEXT(plugtext), NULL, NULL, NULL, temp, -1);
-	g_free(temp);
-	gtk_entry_set_text(GTK_ENTRY(plugentry), g_module_name(p->handle));
-#endif
 	/* Find out if this plug-in has a configuration function */
 	if (g_module_symbol(p->handle, "gaim_plugin_config", (gpointer *)&gaim_plugin_config)) {
 		confighandle = gtk_signal_connect(GTK_OBJECT(config), "clicked",
@@ -559,7 +455,6 @@ static const gchar *plugin_makelistname(GModule *module)
 	return filename;
 }		
 
-#if GTK_CHECK_VERSION(1,3,0)
 static struct gaim_plugin *get_selected_plugin(GtkWidget *w) {
 	/* Given the pluglist widget, this will return a pointer to the plugin
 	 * currently selected in the list, and NULL if none is selected. */
@@ -600,10 +495,8 @@ static void select_plugin(GtkWidget *w, struct gaim_plugin *p) {
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
 	gtk_tree_selection_select_iter(sel, &iter);
 }
-#endif /* GTK_CHECK_VERSION */
 
 static void clear_plugin_display() {
-#if GTK_CHECK_VERSION(1,3,0)
 	GtkTreeSelection *selection;
 	GtkTextBuffer *buffer;
 	
@@ -618,19 +511,6 @@ static void clear_plugin_display() {
 		gtk_widget_set_sensitive(reload, FALSE);
 		gtk_widget_set_sensitive(unload, FALSE);
 	}
-#else
-	/* Clear the display if nothing's selected */
-	if (GTK_LIST(pluglist)->selection == NULL) {
-		guint text_len = gtk_text_get_length(GTK_TEXT(plugtext));
-		gtk_text_set_point(GTK_TEXT(plugtext), 0);
-		gtk_text_forward_delete(GTK_TEXT(plugtext), text_len);
-		gtk_entry_set_text(GTK_ENTRY(plugentry), "");
-
-		gtk_widget_set_sensitive(config, FALSE);
-		gtk_widget_set_sensitive(reload, FALSE);
-		gtk_widget_set_sensitive(unload, FALSE);
-	}
-#endif
 }
 
 #endif

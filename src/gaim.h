@@ -111,7 +111,6 @@
 
 #define WEBSITE "http://gaim.sourceforge.net/"
 
-#ifndef USE_GNOME
 #ifdef ENABLE_NLS
 #  include <libintl.h>
 #  define _(x) gettext(x)
@@ -123,7 +122,6 @@
 #else
 #  define N_(String) (String)
 #  define _(x) (x)
-#endif
 #endif
 
 #define OPT_USR_AUTO		0x00000001

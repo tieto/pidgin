@@ -22,11 +22,6 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#ifdef USE_APPLET
-#include <gnome.h>
-#include <applet-widget.h>
-#include "applet.h"
-#endif /* USE_APPLET */
 #ifdef GAIM_PLUGINS
 #include <dlfcn.h>
 #endif /* GAIM_PLUGINS */
@@ -41,7 +36,6 @@
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
 #include "prpl.h"
 #include "gaim.h"
 #include "pixmaps/login_icon.xpm"
@@ -61,11 +55,8 @@
 #endif
 #include "pixmaps/prefs_small.xpm"
 #include "pixmaps/search_small.xpm"
-#ifdef USE_APPLET
 #include "pixmaps/close_small.xpm"
-#else
 #include "pixmaps/exit_small.xpm"
-#endif
 #include "pixmaps/pounce_small.xpm"
 #include "pixmaps/about_small.xpm"
 
@@ -96,7 +87,6 @@ GtkWidget *buddies;
 
 typedef struct _GtkTreePixmaps GtkTreePixmaps;
 
-
 struct buddy_show {
 	GtkWidget *item;
 	GtkWidget *pix;
@@ -119,6 +109,9 @@ struct group_show {
 	char *name;
 };
 static GSList *shows = NULL;
+
+static gboolean blist_hidden;
+static int docklet_refcount = 0;
 
 /* Predefine some functions */
 static void new_bp_callback(GtkWidget *w, struct buddy *bs);
@@ -520,16 +513,6 @@ void set_blist_tab()
 
 }
 
-
-#ifdef USE_APPLET
-gint applet_destroy_buddy(GtkWidget *widget, GdkEvent *event, gpointer *data)
-{
-	applet_buddy_show = FALSE;
-	gtk_widget_hide(blist);
-	return (TRUE);
-}
-
-#endif
 
 static int handle_click_group(GtkWidget *widget, GdkEventButton *event, struct group *g)
 {
@@ -1418,10 +1401,6 @@ void import_callback(GtkWidget *widget, void *null)
 
 void do_quit()
 {
-#ifdef USE_APPLET
-	applet = NULL;
-#endif
-
 	/* first we tell those who have requested it we're quitting */
 	plugin_event(event_quit, 0, 0, 0, 0);
 
@@ -2016,16 +1995,71 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 	return g;
 }
 
+/* used by this file, and by iconaway.so */
 void hide_buddy_list() {
-	if (blist)
-		XIconifyWindow(GDK_DISPLAY(),
-			       GDK_WINDOW_XWINDOW(blist->window),
-			       ((_XPrivDisplay)GDK_DISPLAY())->default_screen);
+	if (!blist) return;
+	if (!connections || docklet_refcount) {
+		gtk_widget_hide(blist);
+	} else {
+		gtk_window_iconify(GTK_WINDOW(blist));
+	}
+	blist_hidden = TRUE;
 }
 
+/* shared code... not in lschiere/faceprint tree though. oh well */
+static void move_buddy_list() {
+	if (blist_options & OPT_BLIST_SAVED_WINDOWS) {
+		if (blist_pos.width != 0) {	/* Sanity check! */
+			gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff,
+						 blist_pos.y - blist_pos.yoff);
+			gtk_widget_set_usize(blist, blist_pos.width, blist_pos.height);
+		}
+	}
+}
+
+/* mostly used by code in this file */
 void unhide_buddy_list() {
-	if (blist)
-		gdk_window_show(blist->window);
+	if (!blist) return;
+	gtk_window_present(GTK_WINDOW(blist));
+	move_buddy_list();
+	blist_hidden = FALSE;
+}
+
+/* used by the docklet */
+void toggle_buddy_list() {
+	if (blist_hidden) {
+		unhide_buddy_list();
+	} else {
+		hide_buddy_list();
+	}
+}
+
+/* for the delete_event handler */
+static void close_buddy_list() {
+	if (docklet_refcount) {
+		hide_buddy_list();
+	} else {
+		do_quit();
+	}
+}
+
+void docklet_add() {
+	docklet_refcount++;
+	printf("docklet_refcount: %d\n",docklet_refcount);
+}
+
+void docklet_remove() {
+	if (docklet_refcount) {
+		docklet_refcount--;
+	}
+	printf("docklet_refcount: %d\n",docklet_refcount);
+	if (!docklet_refcount) {
+		if (connections) {
+			unhide_buddy_list();
+		} else {
+			gtk_window_present(GTK_WINDOW(mainwindow));
+		}
+	}
 }
 
 static gint log_timeout(struct buddy_show *b)
@@ -2205,9 +2239,6 @@ static void update_idle_time(struct buddy_show *bs)
 		gtk_widget_show(bs->idle);
 
 	style = gtk_style_new();
-#if !GTK_CHECK_VERSION(1,3,0)
-	gdk_font_unref(gtk_style_get_font(style));
-#endif
 	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(bs->label->style)));
 	for (i = 0; i < 5; i++)
 		style->fg[i] = bs->idle->style->fg[i];
@@ -2413,9 +2444,8 @@ static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
 	gdk_window_get_position(blist->window, &x, &y);
 	gdk_window_get_size(blist->window, &width, &height);
 
-#ifdef USE_APPLET
-	if (applet_buddy_show){
-#endif
+/* fixme: docklet		*
+ *	if (applet_buddy_show){	*/
 
 	if (e->send_event) {	/* Is a position event */
 		if (blist_pos.x != x || blist_pos.y != y)
@@ -2435,10 +2465,6 @@ static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
 	if (save)
 		save_prefs();
 
-#ifdef USE_APPLET
-	}
-#endif
-	
 }
 
 
@@ -2626,15 +2652,11 @@ void show_buddy_list()
 	GtkWidget *tbox;
 
 	if (blist) {
-		gtk_widget_show(blist);
+		unhide_buddy_list;
 		return;
 	}
 
-#ifdef USE_APPLET
-	GAIM_DIALOG(blist);
-#else
 	blist = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-#endif
 
 	gtk_window_set_wmclass(GTK_WINDOW(blist), "buddy_list", "Gaim");
 
@@ -2675,13 +2697,11 @@ void show_buddy_list()
 	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_menu_xpm,
 				  GTK_SIGNAL_FUNC(signoff_all), (void*)1, 'd', GDK_CONTROL_MASK, "Ctl+D");
 
-#ifndef USE_APPLET
+	gaim_new_item_with_pixmap(menu, _("Hide"), close_small_xpm,
+				  GTK_SIGNAL_FUNC(hide_buddy_list), NULL, 'h', GDK_CONTROL_MASK, "Ctl+H");
+
 	gaim_new_item_with_pixmap(menu, _("Quit"), exit_small_xpm,
 				  GTK_SIGNAL_FUNC(do_quit), NULL, 'q', GDK_CONTROL_MASK, "Ctl+Q");
-#else
-	gaim_new_item_with_pixmap(menu, _("Close"), close_small_xpm,
-				  GTK_SIGNAL_FUNC(applet_destroy_buddy), NULL, 'x', GDK_CONTROL_MASK, "Ctl+X");
-#endif
 
 	menu = gtk_menu_new();
 
@@ -2878,12 +2898,8 @@ void show_buddy_list()
 
 	gtk_container_add(GTK_CONTAINER(blist), vbox);
 
-#ifndef USE_APPLET
-	gtk_signal_connect(GTK_OBJECT(blist), "delete_event", GTK_SIGNAL_FUNC(do_quit), blist);
-#else
-	gtk_signal_connect(GTK_OBJECT(blist), "delete_event", GTK_SIGNAL_FUNC(applet_destroy_buddy),
+	gtk_signal_connect(GTK_OBJECT(blist), "delete_event", GTK_SIGNAL_FUNC(close_buddy_list),
 			   NULL);
-#endif
 
 	gtk_signal_connect(GTK_OBJECT(blist), "configure_event", GTK_SIGNAL_FUNC(move_blist_window),
 			   NULL);
@@ -2897,14 +2913,8 @@ void show_buddy_list()
 
 
 	gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
-
-	if (blist_options & OPT_BLIST_SAVED_WINDOWS) {
-		if (blist_pos.width != 0) {	/* Sanity check! */
-			gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff,
-						 blist_pos.y - blist_pos.yoff);
-			gtk_widget_set_usize(blist, blist_pos.width, blist_pos.height);
-		}
-	}
+	move_buddy_list();
+	blist_hidden = FALSE;
 }
 
 void refresh_buddy_window()

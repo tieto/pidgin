@@ -36,12 +36,8 @@
 #include <locale.h>
 #endif
 
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixbuf-loader.h>
-#else
-#include "pixmaps/broken.xpm"
-#endif
 
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
@@ -266,9 +262,7 @@ struct im_image {
 	gint width,height;
 	GtkIMHtml *imhtml;
 	GtkIMHtmlBit *bit;
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	GdkPixbuf *pb;
-#endif
 };
 
 struct _GtkIMHtmlBit {
@@ -340,11 +334,7 @@ static GdkColor *gtk_imhtml_get_color           (const gchar *);
 static gint      gtk_imhtml_motion_notify_event (GtkWidget *, GdkEventMotion *);
 
 static void
-#if GTK_CHECK_VERSION(1,3,0)
 gtk_imhtml_finalize (GObject *object)
-#else
-gtk_imhtml_destroy (GtkObject *object)
-#endif
 {
 	GtkIMHtml *imhtml;
 
@@ -371,12 +361,7 @@ gtk_imhtml_destroy (GtkObject *object)
 
 	gtk_smiley_tree_destroy (imhtml->smiley_data);
 
-#if GTK_CHECK_VERSION(1,3,0)
 	G_OBJECT_CLASS (parent_class)->finalize (object);
-#else
-	if (GTK_OBJECT_CLASS (parent_class)->destroy != NULL)
-		(* GTK_OBJECT_CLASS (parent_class)->destroy) (object);
-#endif
 }
 
 static void
@@ -408,13 +393,8 @@ gtk_imhtml_realize (GtkWidget *widget)
 					 &attributes, attributes_mask);
 	gdk_window_set_user_data (widget->window, widget);
 
-#if GTK_CHECK_VERSION(1,3,0)
 	attributes.x = widget->style->xthickness + BORDER_SIZE;
 	attributes.y = widget->style->xthickness + BORDER_SIZE;
-#else
-	attributes.x = widget->style->klass->xthickness + BORDER_SIZE;
-	attributes.y = widget->style->klass->xthickness + BORDER_SIZE;
-#endif
 	attributes.width = MAX (1, (gint) widget->allocation.width - (gint) attributes.x * 2);
 	attributes.height = MAX (1, (gint) widget->allocation.height - (gint) attributes.y * 2);
 	attributes.event_mask = gtk_widget_get_events (widget)
@@ -429,7 +409,7 @@ gtk_imhtml_realize (GtkWidget *widget)
 
 	gdk_window_set_cursor (widget->window, imhtml->arrow_cursor);
 
-	imhtml->default_font = gdk_font_ref (GTK_IMHTML_GET_STYLE_FONT (widget->style));
+	imhtml->default_font = gdk_font_ref (gtk_style_get_font (widget->style));
 
 	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
 	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
@@ -734,13 +714,8 @@ gtk_imhtml_draw_focus (GtkWidget *widget)
 		return;
 
 	if (GTK_WIDGET_HAS_FOCUS (widget)) {
-#if GTK_CHECK_VERSION(1,3,0)
 		gtk_paint_focus (widget->style, widget->window, GTK_STATE_NORMAL, NULL, widget, "text", 
 				 0, 0, widget->allocation.width - 1, widget->allocation.height - 1);
-#else
-		gtk_paint_focus (widget->style, widget->window, NULL, widget, "text", 0, 0,
-				 widget->allocation.width - 1, widget->allocation.height - 1);
-#endif
 		x = 1; y = 1; w = 2; h = 2;
 	}
 
@@ -757,11 +732,7 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 	GList *chunks;
 	struct line_info *line;
 	gfloat x, y;
-#if GTK_CHECK_VERSION(1,3,0)
 	guint32 width, height;
-#else
-	gint width, height;
-#endif
 
 	x = GTK_LAYOUT (imhtml)->hadjustment->value;
 	y = GTK_LAYOUT (imhtml)->vadjustment->value;
@@ -814,18 +785,6 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 	gtk_imhtml_draw_focus (GTK_WIDGET (imhtml));
 }
 
-#if !GTK_CHECK_VERSION(1,3,0)
-static void
-gtk_imhtml_draw (GtkWidget    *widget,
-		 GdkRectangle *area)
-{
-	GtkIMHtml *imhtml;
-
-	imhtml = GTK_IMHTML (widget);
-	gtk_imhtml_draw_exposed (imhtml);
-}
-#endif
-
 static void
 gtk_imhtml_style_set (GtkWidget *widget,
 		      GtkStyle  *style)
@@ -856,7 +815,7 @@ gtk_imhtml_style_set (GtkWidget *widget,
 	imhtml->default_hlfg_color=gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_SELECTED]);
 	if (imhtml->default_font)
 		gdk_font_unref (imhtml->default_font);
-	imhtml->default_font = gdk_font_ref (GTK_IMHTML_GET_STYLE_FONT (widget->style));
+	imhtml->default_font = gdk_font_ref (gtk_style_get_font (widget->style));
 	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
 	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
 				   &widget->style->base [GTK_STATE_NORMAL]);
@@ -971,7 +930,6 @@ gtk_imhtml_size_allocate (GtkWidget     *widget,
 
 	widget->allocation = *allocation;
 
-#if GTK_CHECK_VERSION(1,3,0)
 	new_xsize = MAX (1, (gint) allocation->width -
 			    (gint) (widget->style->xthickness + BORDER_SIZE) * 2);
 	new_ysize = MAX (1, (gint) allocation->height -
@@ -986,22 +944,6 @@ gtk_imhtml_size_allocate (GtkWidget     *widget,
 		gdk_window_move_resize (layout->bin_window,
 					x, y, new_xsize, new_ysize);
 	}
-#else
-	new_xsize = MAX (1, (gint) allocation->width -
-			    (gint) (widget->style->klass->xthickness + BORDER_SIZE) * 2);
-	new_ysize = MAX (1, (gint) allocation->height -
-			    (gint) (widget->style->klass->ythickness + BORDER_SIZE) * 2);
-
-	if (GTK_WIDGET_REALIZED (widget)) {
-		gint x = widget->style->klass->xthickness + BORDER_SIZE;
-		gint y = widget->style->klass->ythickness + BORDER_SIZE;
-		gdk_window_move_resize (widget->window,
-					allocation->x, allocation->y,
-					allocation->width, allocation->height);
-		gdk_window_move_resize (layout->bin_window,
-					x, y, new_xsize, new_ysize);
-	}
-#endif
 
 	layout->hadjustment->page_size = new_xsize;
 	layout->hadjustment->page_increment = new_xsize / 2;
@@ -1989,16 +1931,12 @@ gtk_imhtml_set_scroll_adjustments (GtkLayout     *layout,
 static void
 gtk_imhtml_class_init (GtkIMHtmlClass *class)
 {
-#if GTK_CHECK_VERSION(1,3,0)
 	GObjectClass  *gobject_class;
-#endif
 	GtkObjectClass *object_class;
 	GtkWidgetClass *widget_class;
 	GtkLayoutClass *layout_class;
 
-#if GTK_CHECK_VERSION(1,3,0)
 	gobject_class = (GObjectClass*) class;
-#endif
 	object_class = (GtkObjectClass*) class;
 	widget_class = (GtkWidgetClass*) class;
 	layout_class = (GtkLayoutClass*) class;
@@ -2014,19 +1952,9 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 				GTK_TYPE_NONE, 1,
 				GTK_TYPE_POINTER);
 
-#if GTK_CHECK_VERSION(1,3,0)
 	gobject_class->finalize = gtk_imhtml_finalize;
-#else
-	gtk_object_class_add_signals (object_class, signals, LAST_SIGNAL);
-
-	object_class->destroy = gtk_imhtml_destroy;
-#endif
 
 	widget_class->realize = gtk_imhtml_realize;
-#if !GTK_CHECK_VERSION(1,3,0)
-	widget_class->draw = gtk_imhtml_draw;
-	widget_class->draw_focus = gtk_imhtml_draw_focus;
-#endif
 	widget_class->style_set = gtk_imhtml_style_set;
 	widget_class->expose_event  = gtk_imhtml_expose_event;
 	widget_class->size_allocate = gtk_imhtml_size_allocate;
@@ -2651,7 +2579,6 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 
 		g_free (copy);
 	} else if ((bit->type == TYPE_SMILEY) || (bit->type == TYPE_IMG)) {
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	  if (bit->img) {
 			GdkPixbuf *imagepb = bit->img->pb;
 			GdkPixbuf *tmp = NULL;
@@ -2679,7 +2606,6 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 				gdk_pixbuf_render_pixmap_and_mask(imagepb, &(bit->pm), &(bit->bm), 100);
 			}
 	  }
-#endif
 		
 		gdk_window_get_size (bit->pm, &width, &height);
 
@@ -2910,13 +2836,13 @@ gtk_imhtml_is_amp_escape (const gchar *string,
 		*replace = ' ';
 		*length = 6;
 	} else if (!g_strncasecmp (string, "&copy;", 6)) {
-		*replace = '©';
+		*replace = 'Â©';
 		*length = 6;
 	} else if (!g_strncasecmp (string, "&quot;", 6)) {
 		*replace = '\"';
 		*length = 6;
 	} else if (!g_strncasecmp (string, "&reg;", 5)) {
-		*replace = '®';
+		*replace = 'Â®';
 		*length = 5;
 	} else if (*(string + 1) == '#') {
 		guint pound = 0;
@@ -3383,13 +3309,9 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					char *tmp, *imagedata, *e;
 					const gchar *alltext;
 					struct im_image *img;
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 					GdkPixbufLoader *load;
 					GdkPixbuf *imagepb = NULL;
-#if GTK_CHECK_VERSION(1,3,0)
 					GError *err;
-#endif
-#endif
 					NEW_BIT (NEW_TEXT_BIT);
 					if (!id || !datasize)
 						break;
@@ -3428,22 +3350,15 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					if (img->len) {
 						img->data = g_malloc(img->len);
 						memcpy(img->data, imagedata, img->len);
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 						load = gdk_pixbuf_loader_new();
 
-#if GTK_CHECK_VERSION(1,3,0)
 						if (!gdk_pixbuf_loader_write(load, imagedata, 
 									img->len, &err))
-#else 
-						if (!gdk_pixbuf_loader_write(load, imagedata, img->len))
-#endif
 							g_print("IM Image corrupt or unreadable.\n");
 						else 
 							imagepb = gdk_pixbuf_loader_get_pixbuf(load);
 						img->pb = imagepb;
-#endif
 					}
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 					if (imagepb) {
 						bit = g_new0 (GtkIMHtmlBit, 1);
 						bit->type = TYPE_IMG;
@@ -3456,19 +3371,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 						g_free(img->filename);
 						g_free(img->data);
 					}
-#else
-					bit = g_new0 (GtkIMHtmlBit, 1);
-						bit->type = TYPE_IMG;
-						bit->img = img;
-						if (url)
-							bit->url = g_strdup (url);
-						if (!fonts || ((clr = ((FontDetail *) fonts->data)->back) == NULL))
-							clr = (bg != NULL) ? bg : imhtml->default_bg_color;
-						
-						bit->pm = gdk_pixmap_create_from_xpm_d (GTK_WIDGET (imhtml)->window,
-											&bit->bm, clr, broken_xpm);
-						NEW_BIT (bit);
-#endif
 					g_free(imagedata);
 					g_free(e);
 					g_free(id);
@@ -3554,7 +3456,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 
 	gtk_widget_set_usize (GTK_WIDGET (imhtml), -1, imhtml->y);
 
-#if GTK_CHECK_VERSION(1,3,0)
 	if (!(options & GTK_IMHTML_NO_SCROLL) &&
 	    scrolldown &&
 	    (imhtml->y >= MAX (1,
@@ -3564,17 +3465,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					  MAX (1, (GTK_WIDGET (imhtml)->allocation.height - 
 						   (GTK_WIDGET (imhtml)->style->ythickness +
 						    BORDER_SIZE) * 2)));
-#else
-	if (!(options & GTK_IMHTML_NO_SCROLL) &&
-	    scrolldown &&
-	    (imhtml->y >= MAX (1,
-			       (GTK_WIDGET (imhtml)->allocation.height -
-				(GTK_WIDGET (imhtml)->style->klass->ythickness + BORDER_SIZE) * 2))))
-		gtk_adjustment_set_value (vadj, imhtml->y -
-					  MAX (1, (GTK_WIDGET (imhtml)->allocation.height - 
-						   (GTK_WIDGET (imhtml)->style->klass->ythickness +
-						    BORDER_SIZE) * 2)));
-#endif
 
 	if (url) {
 		g_free (url);
@@ -3664,14 +3554,12 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 			gdk_pixmap_unref (bit->pm);
 		if (bit->bm)
 			gdk_bitmap_unref (bit->bm);
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 		if (bit->img) {
 			g_free(bit->img->filename);
 			g_free(bit->img->data);
 			gdk_pixbuf_unref(bit->img->pb);
 			g_free(bit->img);
 		}
-#endif 
 		
 		while (bit->chunks) {
 			struct line_info *li = bit->chunks->data;
@@ -3688,11 +3576,9 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		imhtml->click = g_list_remove (imhtml->click, imhtml->click->data);
 	}
 	
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	while (imhtml->im_images) {
 		imhtml->im_images = g_list_remove(imhtml->im_images, imhtml->im_images->data);
 	}
-#endif
 	
 	if (imhtml->selected_text) {
 		g_string_free (imhtml->selected_text, TRUE);
@@ -3720,10 +3606,8 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		imhtml->scroll_timer = 0;
 	}
 
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	g_list_free(imhtml->im_images);
 	imhtml->im_images = NULL;
-#endif
 
 	imhtml->x = 0;
 	imhtml->y = TOP_BORDER;

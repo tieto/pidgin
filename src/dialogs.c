@@ -43,9 +43,6 @@
 #include "gaim.h"
 #include "gtkimhtml.h"
 #include "prpl.h"
-#ifdef USE_APPLET
-#include "applet.h"
-#endif
 
 #include "pixmaps/gnome_preferences.xpm"
 #include "pixmaps/cancel.xpm"
@@ -3410,11 +3407,6 @@ static struct away_message *save_away_message(struct create_away *ca)
 	if (!ca->mess)
 		am = g_new0(struct away_message, 1);
 	else {
-#ifdef USE_APPLET
-		char *awayname = g_strdup_printf("away/%s", ca->mess->name);
-		applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
-		g_free(awayname);
-#endif
 		am = ca->mess;
 	}
 
@@ -4604,7 +4596,7 @@ void aol_icon(GdkWindow *w)
 		gdk_window_set_group(w, mainwindow->window);
 #endif
 }
- 
+
 GtkWidget *pixbuf_button(char *text, char *iconfile)
 {
 	GtkWidget *button, *image, *label, *bbox;
@@ -4628,7 +4620,6 @@ GtkWidget *pixbuf_button(char *text, char *iconfile)
 	gtk_widget_show_all(bbox);
 	return button;
 }
-
 
 GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 {
