@@ -1253,14 +1253,70 @@ static struct buddy_show *find_buddy_show(struct group_show *gs, char *name) {
 	return b;
 }
 
+static int group_number(char *group) {
+	GSList *c = connections;
+	struct gaim_connection *g;
+	GSList *m;
+	struct group *p;
+	int pos = 0;
+
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		m = g->groups;
+		while (m) {
+			p = (struct group *)m->data;
+			if (!strcmp(p->name, group))
+				return pos;
+			if (find_group_show(p->name))
+				pos++;
+			m = m->next;
+		}
+		c = c->next;
+	}
+	/* um..... we'll never get here */
+	return -1;
+}
+
+static int buddy_number(char *group, char *buddy) {
+	GSList *c = connections;
+	struct gaim_connection *g;
+	struct group *p;
+	GSList *z;
+	struct buddy *b;
+	int pos = 0;
+	char *tmp1 = g_strdup(normalize(buddy));
+	struct group_show *gs = find_group_show(group);
+
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		p = find_group(g, group);
+		z = p->members;
+		while (z) {
+			b = (struct buddy *)z->data;
+			if (!strcmp(tmp1, normalize(b->name))) {
+				g_free(tmp1);
+				return pos;
+			}
+			if (find_buddy_show(gs, b->name))
+				pos++;
+			z = z->next;
+		}
+		c = c->next;
+	}
+	/* we shouldn't ever get here */
+	debug_printf("got to bad place in buddy_number\n");
+	g_free(tmp1);
+	return -1;
+}
+
 static struct group_show *new_group_show(char *group) {
 	struct group_show *g = g_new0(struct group_show, 1);
+	int pos = group_number(group);
 
 	g->name = g_strdup(group);
 
 	g->item = gtk_tree_item_new();
-	/* FIXME */
-	gtk_tree_append(GTK_TREE(buddies), g->item);
+	gtk_tree_insert(GTK_TREE(buddies), g->item, pos);
 	gtk_signal_connect(GTK_OBJECT(g->item), "button_press_event",
 			   GTK_SIGNAL_FUNC(handle_click_group), NULL);
 	gtk_widget_show(g->item);
@@ -1275,8 +1331,7 @@ static struct group_show *new_group_show(char *group) {
 	gtk_tree_item_expand(GTK_TREE_ITEM(g->item));
 	gtk_widget_show(g->tree);
 
-	/* FIXME */
-	shows = g_slist_append(shows, g);
+	shows = g_slist_insert(shows, g, pos);
 	return g;
 }
 
@@ -1285,13 +1340,13 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	GtkWidget *box;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
+	int pos = buddy_number(gs->name, buddy->name);
 
 	b->name = g_strdup(buddy->name);
 	b->show = g_strdup(buddy->show);
 
 	b->item = gtk_tree_item_new();
-	/* FIXME */
-	gtk_tree_append(GTK_TREE(gs->tree), b->item);
+	gtk_tree_insert(GTK_TREE(gs->tree), b->item, pos);
 	gtk_object_set_user_data(GTK_OBJECT(b->item), b);
 	gtk_signal_connect(GTK_OBJECT(b->item), "button_press_event",
 			   GTK_SIGNAL_FUNC(handle_click_buddy), b);
@@ -1313,8 +1368,7 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	gtk_box_pack_start(GTK_BOX(box), b->label, TRUE, TRUE, 1);
 	gtk_widget_show(b->label);
 
-	/* FIXME */
-	gs->members = g_slist_append(gs->members, b);
+	gs->members = g_slist_insert(gs->members, b, pos);
 	return b;
 }
 

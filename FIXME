@@ -10,7 +10,7 @@ This is just for the buddy list window now. Everything else is nearing completio
 	    `--Zilding
 
    Need to enforce that Buddies comes before Friends, and EWarmenhoven comes before RobFlynn.
-   See appropriate FIXME comments in buddy.c.
+   See appropriate FIXME comments in buddy.c. DONE
 
 2. Need to make it so that when the buddy list is edited the main window properly reflects that.
 
