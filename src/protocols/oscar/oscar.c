@@ -533,15 +533,14 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 		} else {
 			if (aim_get_command(od->sess, conn) >= 0) {
 				aim_rxdispatch(od->sess);
-                                if (od->killme)
-                                        signoff(gc);
+				if (od->killme)
+					gaim_connection_destroy(gc);
 			} else {
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS))) {
 					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 							   "major connection error\n");
-					hide_login_progress_error(gc, _("Disconnected."));
-					signoff(gc);
+					gaim_connection_error(gc, _("Disconnected."));
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);
 					char *buf;
@@ -643,8 +642,7 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	conn->fd = source;
 
 	if (source < 0) {
-		hide_login_progress(gc, _("Couldn't connect to host"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Couldn't connect to host"));
 		return;
 	}
 
@@ -686,13 +684,12 @@ static void oscar_login(GaimAccount *account) {
 	if (conn == NULL) {
 		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 				   "internal connection error\n");
-		hide_login_progress(gc, _("Unable to login to AIM"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to login to AIM"));
 		return;
 	}
 
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gaim_account_get_username(account));
-	set_login_progress(gc, 2, buf);
+	gaim_connection_update_progress(gc, buf, 2, 5);
 
 	aim_conn_addhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, gaim_connerr, 0);
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0007, gaim_parse_login, 0);
@@ -702,8 +699,7 @@ static void oscar_login(GaimAccount *account) {
 	if (proxy_connect(account, gaim_account_get_string(account, "server", FAIM_LOGIN_SERVER),
 			  gaim_account_get_int(account, "port", FAIM_LOGIN_PORT),
 			  oscar_login_connect, gc) < 0) {
-		hide_login_progress(gc, _("Couldn't connect to host"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Couldn't connect to host"));
 		return;
 	}
 	aim_request_login(sess, conn, gaim_account_get_username(account));
@@ -795,14 +791,14 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 	bosconn->fd = source;
 
 	if (source < 0) {
-		hide_login_progress(gc, _("Could Not Connect"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Could Not Connect"));
 		return;
 	}
 
 	aim_conn_completeconnect(sess, bosconn);
 	gc->inpa = gaim_input_add(bosconn->fd, GAIM_INPUT_READ, oscar_callback, bosconn);
-	set_login_progress(gc, 4, _("Connection established, cookie sent"));
+	gaim_connection_update_progress(gc,
+			_("Connection established, cookie sent"), 1, 2);
 }
 
 /* BBB */
@@ -1071,27 +1067,27 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		switch (info->errorcode) {
 		case 0x05:
 			/* Incorrect nick/password */
-			hide_login_progress(gc, _("Incorrect nickname or password."));
+			gaim_connection_error(gc, _("Incorrect nickname or password."));
 			break;
 		case 0x11:
 			/* Suspended account */
-			hide_login_progress(gc, _("Your account is currently suspended."));
+			gaim_connection_error(gc, _("Your account is currently suspended."));
 			break;
 		case 0x14:
 			/* service temporarily unavailable */
-			hide_login_progress(gc, _("The AOL Instant Messenger service is temporarily unavailable."));
+			gaim_connection_error(gc, _("The AOL Instant Messenger service is temporarily unavailable."));
 			break;
 		case 0x18:
 			/* connecting too frequently */
-			hide_login_progress(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
+			gaim_connection_error(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		case 0x1c:
 			/* client too old */
 			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), WEBSITE);
-			hide_login_progress(gc, buf);
+			gaim_connection_error(gc, buf);
 			break;
 		default:
-			hide_login_progress(gc, _("Authentication Failed"));
+			gaim_connection_error(gc, _("Authentication Failed"));
 			break;
 		}
 		gaim_debug(GAIM_DEBUG_ERROR, "oscar",
@@ -1119,7 +1115,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, NULL);
 	if (bosconn == NULL) {
-		hide_login_progress(gc, _("Internal Error"));
+		gaim_connection_error(gc, _("Internal Error"));
 		od->killme = TRUE;
 		return 0;
 	}
@@ -1181,7 +1177,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	rc = proxy_connect(gc->account, host, port, oscar_bos_connect, gc);
 	g_free(host);
 	if (rc < 0) {
-		hide_login_progress(gc, _("Could Not Connect"));
+		gaim_connection_error(gc, _("Could Not Connect"));
 		od->killme = TRUE;
 		return 0;
 	}
@@ -3676,9 +3672,9 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "Disconnected.  Code is 0x%04x and msg is %s\n", code, msg);
 	if ((fr) && (fr->conn) && (fr->conn->type == AIM_CONN_TYPE_BOS)) {
 		if (code == 0x0001) {
-			hide_login_progress_error(gc, _("You have been disconnected because you have signed on with this screen name at another location."));
+			gaim_connection_error_error(gc, _("You have been disconnected because you have signed on with this screen name at another location."));
 		} else {
-			hide_login_progress_error(gc, _("You have been signed off for an unknown reason."));
+			gaim_connection_error_error(gc, _("You have been signed off for an unknown reason."));
 		}
 		od->killme = TRUE;
 	}
@@ -3840,7 +3836,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	od->rights.maxpermits = (guint)maxpermits;
 	od->rights.maxdenies = (guint)maxdenies;
 
-	account_online(gc);
+	gaim_connection_set_state(gc, GAIM_CONNECTED);
 	serv_finish_login(gc);
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar", "buddy list loaded\n");
