@@ -323,14 +323,11 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	char *send = g_malloc(256);
 	char *file = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window)));
 	char *buf;
-	char *header;
-	short hdrlen;
 	int read_rv;
 	char bmagic[7];
 	struct file_header *fhdr = g_new0(struct file_header, 1);
 	struct sockaddr_in sin;
 	guint32 rcv;
-	char *c;
 	GtkWidget *fw = NULL, *fbar = NULL, *label;
 	struct stat st;
 
@@ -378,9 +375,10 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	/* 1. build/send header */
 	buf = frombase64(ft->cookie);
 	sprintf(debug_buff, "Building header to send %s (cookie: %s)\n", file, buf);
+	printf("%s", buf); fflush(stdout);
 	debug_print(debug_buff);
 	fhdr->hdrtype = 0x1108;
-	snprintf(fhdr->bcookie, 9, "%s", buf);
+	snprintf(fhdr->bcookie, 8, "%s", buf);
 	g_free(buf);
 	fhdr->encrypt = 0;
 	fhdr->compress = 0;
@@ -388,10 +386,10 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	fhdr->filesleft = 1;
 	fhdr->totparts = 1;
 	fhdr->partsleft = 1;
-	fhdr->totsize = (long)st.st_size;
-	fhdr->size = htonl((long)(st.st_size));
-	fhdr->modtime = htonl(0);
-	fhdr->checksum = htonl(0); /* FIXME? */
+	fhdr->totsize = (long)st.st_size; /* ? */
+	fhdr->size = (long)st.st_size; /* size of listing.txt */ /* FIXME */
+	fhdr->modtime = 0; /* time since UNIX epoch */ /* FIXME */
+	fhdr->checksum = 0; /* ? */
 	fhdr->rfrcsum = 0;
 	fhdr->rfsize = 0;
 	fhdr->cretime = 0;
@@ -399,9 +397,9 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	fhdr->nrecvd = 0;
 	fhdr->recvcsum = 0;
 	snprintf(fhdr->idstring, 32, "Gaim");
-	fhdr->flags = 0x20; /* don't ask me why */
-	fhdr->lnameoffset = 0x1A;
-	fhdr->lsizeoffset = 0x10;
+	fhdr->flags = 0x20;		/* don't ask me why */
+	fhdr->lnameoffset = 0x1A;	/* ? still no clue */
+	fhdr->lsizeoffset = 0x10;	/* whatever */
 	fhdr->dummy[0] = 0;
 	fhdr->macfileinfo[0] = 0;
 	fhdr->nencode = 0;
