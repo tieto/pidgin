@@ -288,6 +288,18 @@ gaim_gtk_get_cmd_prefix(void)
 }
 
 static GaimCmdRet
+say_command_cb(GaimConversation *conv,
+              const char *cmd, char **args, char **error, void *data)
+{
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		gaim_conv_im_send(GAIM_CONV_IM(conv), args[0]);
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+		gaim_conv_chat_send(GAIM_CONV_CHAT(conv), args[0]);
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet
 me_command_cb(GaimConversation *conv,
               const char *cmd, char **args, char **error, void *data)
 {
@@ -6291,6 +6303,9 @@ gaim_gtk_conversations_init(void)
 	/**********************************************************************
 	 * Register commands
 	 **********************************************************************/
+	gaim_cmd_register("say", "S", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  say_command_cb, _("say &lt;message&gt;:  Send a message normally as if you weren't using a command."), NULL);
 	gaim_cmd_register("me", "S", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
 	                  me_command_cb, _("me &lt;action&gt;:  Send an IRC style action to a buddy or chat."), NULL);
