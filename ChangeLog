@@ -16,7 +16,7 @@ version 0.77cvs
 	* The Clear button in privacy works (Robert Mibus)
 	* MSN error reporting works again (Stu Tomlinson)
 	* All away messages should now show up in tooltips
-	* Removing zephyr budies no longer crashes (Arun A. Tharuvai)
+	* Removing zephyr buddies no longer crashes (Arun A. Tharuvai)
 
 version 0.76 (04/01/2004):
 	New Features:
