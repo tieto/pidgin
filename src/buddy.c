@@ -2395,7 +2395,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 					char tmp[1024];
 					g_snprintf(tmp, sizeof(tmp), _("%s logged in."), b->show);
 					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
-				} else if (clistqueue && find_queue_total_by_name(b->name)) {
+				} else if (awayqueue && find_queue_total_by_name(b->name)) {
 					struct queued_message *qm = g_new0(struct queued_message, 1);
 					g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
 					qm->message = g_strdup_printf(_("%s logged in."), b->show);
@@ -2454,7 +2454,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				char tmp[1024];
 				g_snprintf(tmp, sizeof(tmp), _("%s logged out."), b->show);
 				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
-			} else if (clistqueue && find_queue_total_by_name(b->name)) {
+			} else if (awayqueue && find_queue_total_by_name(b->name)) {
 				struct queued_message *qm = g_new0(struct queued_message, 1);
 				g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
 				qm->message = g_strdup_printf(_("%s logged out."), b->show);
