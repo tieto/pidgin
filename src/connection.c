@@ -165,7 +165,7 @@ gaim_connection_connect(GaimConnection *gc)
 	ops = gaim_connections_get_ui_ops();
 
 	if (gc->prpl != NULL)
-	        prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 	else {
 		gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
 			gaim_account_get_username(gaim_connection_get_account(gc)));
