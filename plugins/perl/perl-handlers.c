@@ -159,8 +159,12 @@ perl_signal_cb(va_list args, void *data)
 					break;
 
 				case GAIM_TYPE_STRING:
-					g_free(*((char **)copy_args[i]));
-					*((char **)copy_args[i]) = g_strdup(SvPV(sv_args[i], na));
+					if (strcmp(*((char **)copy_args[i]), SvPVX(sv_args[i])))
+					{
+						g_free(*((char **)copy_args[i]));
+						*((char **)copy_args[i]) =
+							g_strdup(SvPV(sv_args[i], na));
+					}
 					break;
 
 				case GAIM_TYPE_POINTER:
