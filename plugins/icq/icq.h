@@ -14,6 +14,10 @@
 #include <winsock.h>
 #endif /* _WIN32 */
 
+#ifdef __BEOS__
+#include <socket.h>
+#endif
+
 #include <time.h>
 
 /* ICQLIB version defines */
@@ -260,7 +264,7 @@ typedef struct icq_link
   struct icq_link_private *d;
   
   /** Space for user data */
-  void* icq_UserData;
+  void *icq_UserData;
 } ICQLINK;
 
 extern int icq_Russian;
@@ -516,6 +520,8 @@ struct icq_ChatSession_s {
   /** Remote uin's chat handle. */
   char remote_handle[64];
 
+  /** Space for user data */
+  void *user_data; 
 };
 
 void icq_ChatSessionClose(icq_ChatSession *session);
@@ -572,6 +578,8 @@ struct icq_FileSession_s {
 
   int current_speed;
 
+  /** Space for user data */
+  void *user_data;
 };
           
 icq_FileSession *icq_AcceptFileRequest(ICQLINK *link, unsigned long uin,

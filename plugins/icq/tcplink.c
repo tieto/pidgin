@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcplink.c 1508 2001-02-22 23:07:34Z warmenhoven $
+$Id: tcplink.c 1541 2001-03-04 02:26:32Z warmenhoven $
 $Log$
-Revision 1.4  2001/02/22 23:07:34  warmenhoven
-updating icqlib
+Revision 1.5  2001/03/04 02:26:32  warmenhoven
+updates to icqlib; don't pay attention to exception; my patch for handling hangups. other minor details.
+
+Revision 1.45  2001/03/03 20:13:06  bills
+add compile fix for BeOS
 
 Revision 1.44  2001/02/22 05:40:04  bills
 port tcp connect timeout code and UDP queue to new timeout manager
@@ -815,7 +818,7 @@ void icq_TCPLinkOnDataReceived(icq_TCPLink *plink)
 
   } while (recv_result > 0);
 
-  if (recv_result < 0 && errno!=EWOULDBLOCK) {
+  if (recv_result <= 0 && errno!=EWOULDBLOCK) {
 
     /* receive error - log it */
     icq_FmtLog(plink->icqlink, ICQ_LOG_WARNING, "recv failed from %d (%d-%s),"
@@ -858,10 +861,12 @@ void icq_TCPLinkOnConnect(icq_TCPLink *plink)
   /* check getsockopt */
   len=sizeof(error);
 
+#ifndef __BEOS__
 #ifdef _WIN32
   getsockopt(plink->socket, SOL_SOCKET, SO_ERROR, (char *)&error, &len);
 #else
   getsockopt(plink->socket, SOL_SOCKET, SO_ERROR, &error, &len);
+#endif
 #endif
   if(!error && (plink->mode & (TCP_LINK_SOCKS_CONNECTING | TCP_LINK_SOCKS_AUTHORIZATION |
                                TCP_LINK_SOCKS_AUTHSTATUS | TCP_LINK_SOCKS_NOAUTHSTATUS |

@@ -17,6 +17,7 @@ icq_ChatSession *icq_ChatSessionNew(ICQLINK *icqlink)
     p->id=0L;
     p->icqlink=icqlink;
     p->tcplink=NULL;
+    p->user_data=NULL;
     list_insert(icqlink->d->icq_ChatSessions, 0, p);
   }
 	

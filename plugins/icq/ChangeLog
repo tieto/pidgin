@@ -1,3 +1,12 @@
+2001-03-03  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/chatsession.c, icqlib/filesession.c, icqlib/icq.h.in:
+	add user_data member to icq_ChatSession and icq_FileSession
+
+	* icqlib/icq.h.in, icqlib/tcplink.c: add compile fix for BeOS
+
+	* README.BeOS: added
+
 2001-03-01  Bill Soudan  <soudan@kde.org>
 
 	This should fix all problems introduced by my 02-22 commit.

@@ -38,6 +38,7 @@ icq_FileSession *icq_FileSessionNew(ICQLINK *icqlink)
     p->total_files=0;
     p->total_transferred_bytes=0;
     p->working_dir[0]=0;
+    p->user_data=NULL;
     list_insert(icqlink->d->icq_FileSessions, 0, p);
   }
 	

@@ -52,11 +52,12 @@ static void icq_do_log(ICQLINK *link, time_t time, unsigned char level, const ch
 GList *sockets = NULL;
 struct gaim_sock {
 	int socket;
+	int type;
 	gint inpa;
 };
 
 static void gaim_icq_handler(gpointer data, gint source, GdkInputCondition cond) {
-	if ((cond & GDK_INPUT_READ) || (cond & GDK_INPUT_EXCEPTION))
+	if (cond & GDK_INPUT_READ)
 		icq_HandleReadySocket(source, ICQ_SOCKET_READ);
 	if (cond & GDK_INPUT_WRITE)
 		icq_HandleReadySocket(source, ICQ_SOCKET_WRITE);
@@ -67,24 +68,27 @@ static void icq_sock_notify(int socket, int type, int status) {
 	if (status) {
 		GdkInputCondition cond;
 		if (type == ICQ_SOCKET_READ)
-			cond = GDK_INPUT_READ | GDK_INPUT_EXCEPTION;
+			cond = GDK_INPUT_READ;
 		else
-			cond = GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION;
+			cond = GDK_INPUT_WRITE;
 		gs = g_new0(struct gaim_sock, 1);
 		gs->socket = socket;
+		gs->type = type;
 		gs->inpa = gdk_input_add(socket, cond, gaim_icq_handler, NULL);
 		sockets = g_list_append(sockets, gs);
+		debug_printf("Adding socket notifier: %d %d (%d)\n", socket, type, gs->inpa);
 	} else {
 		GList *m = sockets;
 		while (m) {
 			gs = m->data;
-			if (gs->socket == socket)
+			if ((gs->socket == socket) && (gs->type == type))
 				break;
 			m = g_list_next(m);
 		}
 		if (m) {
 			gdk_input_remove(gs->inpa);
 			sockets = g_list_remove(sockets, gs);
+			debug_printf("Removing socket notifier: %d %d (%d)\n", socket, type, gs->inpa);
 			g_free(gs);
 		}
 	}
