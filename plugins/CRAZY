@@ -40,6 +40,11 @@ Other useful ideas I came up with later:
 
 -Auto-reconnect on kick
 -Stock/News ticker (I don't want it, but some people do)
+-Spell check
+
+	This one watches what you're sending and replaces common misspelled
+	words (e.g. teh -> the, u -> you, r -> are, etc.).
+
 -Play games through the same gaim plugin
 
 	This one I think is one of my crazier ideas that I would only come up
