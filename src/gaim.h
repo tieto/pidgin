@@ -253,6 +253,7 @@ extern guint convo_options;
 #define OPT_CONVO_IGNORE_SIZES		0x00001000
 #define OPT_CONVO_COMBINE		0x00002000
 #define OPT_CONVO_CTL_W_CLOSES          0x00004000
+#define OPT_CONVO_NO_X_ON_TAB		0x00008000
 
 extern guint im_options;
 #define OPT_IM_POPUP			0x00000001

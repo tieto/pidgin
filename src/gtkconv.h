@@ -227,6 +227,11 @@ void gaim_gtkconv_toggle_timestamps(void);
 void gaim_gtkconv_toggle_spellchk(void);
 
 /**
+ * Toggles the presence of close buttons on tabs
+ */
+void gaim_gtkconv_toggle_close_buttons(void);
+
+/**
  * Updates the buddy icon on a conversation.
  *
  * @param conv The conversation.

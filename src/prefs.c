@@ -647,6 +647,7 @@ GtkWidget *tab_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *dd;
+	GtkWidget *button;
 	GtkSizeGroup *sg;
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
@@ -673,14 +674,18 @@ GtkWidget *tab_page() {
 	gaim_button(_("Show all c_hats in one tabbed window"), &chat_options, OPT_CHAT_ONE_WINDOW,
 		    vbox);
 
-	vbox = make_frame (ret, _("Combined Tabs"));
-	gaim_button(_("Show IMs and chats in _same tabbed\nwindow."), &convo_options, OPT_CONVO_COMBINE, vbox);
-
 	vbox = make_frame (ret, _("Buddy List Tabs"));
 	dd = gaim_dropdown(vbox, _("Tab _placement:"), &blist_options, OPT_BLIST_BOTTOM_TAB,
 		      _("Top"), 0,
 		      _("Bottom"), OPT_BLIST_BOTTOM_TAB, NULL);
 	gtk_size_group_add_widget(sg, dd);
+
+	vbox = make_frame (ret, _("Tab Options"));
+	gaim_button(_("Show IMs and chats in _same tabbed window."), &convo_options, OPT_CONVO_COMBINE, vbox);
+	button = gaim_button(_("Show _close button on tabs."), &convo_options, OPT_CONVO_NO_X_ON_TAB, vbox);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(button), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)));
+	convo_options ^= OPT_CONVO_NO_X_ON_TAB;
+
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -1976,6 +1981,9 @@ static void set_convo_option(GtkWidget *w, int option)
 
 	if (option == OPT_CONVO_CHECK_SPELLING)
 		gaim_gtkconv_toggle_spellchk();
+
+	if (option == OPT_CONVO_NO_X_ON_TAB)
+		gaim_gtkconv_toggle_close_buttons();
 }
 
 static void set_im_option(GtkWidget *w, int option)

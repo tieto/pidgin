@@ -3381,14 +3381,14 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 	gtkconv->close = gtk_button_new();
 	gtk_widget_set_size_request(GTK_WIDGET(gtkconv->close), 16, 16);
 	gtk_container_add(GTK_CONTAINER(gtkconv->close),
-					  gtk_image_new_from_stock(GTK_STOCK_CLOSE,
-											   GTK_ICON_SIZE_MENU));
+			  gtk_image_new_from_stock(GTK_STOCK_CLOSE,
+			  GTK_ICON_SIZE_MENU));
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->close), GTK_RELIEF_NONE);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
-						 _("Close conversation"), NULL);
+    			 _("Close conversation"), NULL);
 
 	g_signal_connect(G_OBJECT(gtkconv->close), "clicked",
-					 G_CALLBACK(close_conv_cb), conv);
+			 G_CALLBACK(close_conv_cb), conv);
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(gaim_conversation_get_title(conv));
@@ -3399,8 +3399,11 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 
 	/* Pack it all together. */
 	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->tab_label, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close,     FALSE, FALSE, 0);
-	gtk_widget_show_all(tabby);
+	gtk_widget_show(gtkconv->tab_label);
+	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
+	if (!(convo_options & OPT_CONVO_NO_X_ON_TAB)) 
+		gtk_widget_show_all(gtkconv->close);
+	gtk_widget_show(tabby);
 
 
 	/* Add this pane to the conversations notebook. */
@@ -4266,6 +4269,27 @@ gaim_gtkconv_toggle_spellchk(void)
 		}
 	}
 #endif
+}
+
+void
+gaim_gtkconv_toggle_close_buttons(void)
+{
+	GList *cl;
+	struct gaim_conversation *conv;
+	struct gaim_gtk_conversation *gtkconv;
+	
+	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
+		conv = (struct gaim_conversation *)cl->data;
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+		if (convo_options & OPT_CONVO_NO_X_ON_TAB)
+			gtk_widget_hide(gtkconv->close);
+		else
+			gtk_widget_show_all(gtkconv->close);
+	}
 }
 
 static void
