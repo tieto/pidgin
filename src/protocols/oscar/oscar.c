@@ -89,6 +89,8 @@ struct oscar_data {
 	guint emlpa;
 	guint icopa;
 
+	gboolean iconconnecting;
+
 	GSList *create_rooms;
 
 	gboolean conf;
@@ -1380,6 +1382,8 @@ static int conninitdone_icon(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	aim_clientready(sess, fr->conn);
 
+	od->iconconnecting = FALSE;
+
 	if (od->icontimer)
 		g_source_remove(od->icontimer);
 	od->icontimer = g_timeout_add(100, gaim_icon_timerfunc, gc);
@@ -1639,11 +1643,6 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} break;
 
 	case 0x0010: { /* icon */
-		if (od->icopa > 0)
-			gaim_input_remove(od->icopa);
-		while ((tstconn = aim_conn_findbygroup(sess, 0x0010)))
-			aim_conn_kill(sess, &tstconn);
-
 		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_ICON, NULL))) {
 			debug_printf("unable to connect to icon server\n");
 			g_free(host);
@@ -3397,8 +3396,9 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 	}
 
 	conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON);
-	if (!conn) {
+	if (!conn && !od->iconconnecting) {
 		aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
+		od->iconconnecting = TRUE;
 		return FALSE;
 	}
 
