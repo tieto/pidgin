@@ -6,7 +6,8 @@ version 0.53:
 	* Minor bug fixes re: queued away messages
 	* Better buddy icon transparency (for real this time ;-))
 	* Ability to change formatting of Oscar screen name
-	* Better selection in HTML widget
+	* Better selection in HTML widget (Thanks BMiller)
+	* New icons for ICQ (Thanks Kevin Miller)
 
 version 0.52 (02/17/2002):
 	* Better buddy icon transparency (thanks SeanEgan)
