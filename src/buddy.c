@@ -51,7 +51,6 @@
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/tb_search.xpm"
 #include "pixmaps/login_icon.xpm"
 #include "pixmaps/logout_icon.xpm"
 #include "pixmaps/no_icon.xpm"
@@ -76,9 +75,7 @@
 #include "pixmaps/pounce_small.xpm"
 #include "pixmaps/about_small.xpm"
 
-#include "pixmaps/tmp_send.xpm"
 #include "pixmaps/send_small.xpm"
-#include "pixmaps/join.xpm"
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/group.xpm"
@@ -376,6 +373,28 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
 
 }
 
+/* This will remain here until we phase out the others */
+static void adjust_pic2(GtkWidget *button, const char *c, gchar *icon)
+{
+	GtkWidget *pic;
+	GtkWidget *label;
+
+	/*if the user had opted to put pictures on the buttons */
+	if (blist_options & OPT_BLIST_SHOW_BUTTON_XPM && icon) {
+		label = GTK_BIN(button)->child;
+		gtk_container_remove(GTK_CONTAINER(button), label);
+		gtk_container_add(GTK_CONTAINER(button), gtk_image_new_from_stock(icon, GTK_ICON_SIZE_BUTTON));
+		gtk_widget_show_all(button);
+	} else {
+		label = gtk_label_new(c);
+		gtk_widget_show(label);
+		pic = GTK_BIN(button)->child;
+		gtk_container_remove(GTK_CONTAINER(button), pic);
+		gtk_container_add(GTK_CONTAINER(button), label);
+	}
+
+}
+
 
 void toggle_show_empty_groups()
 {
@@ -499,9 +518,9 @@ void update_button_pix()
 
 	if (!(blist_options & OPT_BLIST_NO_BUTTONS)) {
 		adjust_pic(awaybutton, _("Away"), (gchar **)away_big_xpm);
-		adjust_pic(chatbutton, _("Chat"), (gchar **)join_xpm);
-		adjust_pic(imbutton, _("IM"), (gchar **)tmp_send_xpm);
-		adjust_pic(infobutton, _("Info"), (gchar **)tb_search_xpm);
+		adjust_pic2(chatbutton, _("Chat"), GTK_STOCK_JUMP_TO);
+		adjust_pic2(imbutton, _("IM"), GTK_STOCK_CONVERT);
+		adjust_pic2(infobutton, _("Info"), GTK_STOCK_FIND);
 	}
 	gtk_widget_hide(addbutton->parent);
 	gtk_widget_show(addbutton->parent);
