@@ -1225,6 +1225,28 @@ static gboolean gaim_gtk_blist_refresh_timer(struct gaim_buddy_list *list)
 	return TRUE;
 }
 
+static void gaim_gtk_blist_hide_node(struct gaim_buddy_list *list, GaimBlistNode *node)
+{
+	struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
+	GtkTreeIter iter;
+
+	if (!gtknode || !gtknode->row || !gtkblist)
+		return;
+
+	if(gtkblist->selected_node == node)
+		gtkblist->selected_node = NULL;
+
+	if (get_iter_from_node(node, &iter)) {
+		gtk_tree_store_remove(gtkblist->treemodel, &iter);
+		if(GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CHAT(node)) {
+			gaim_gtk_blist_update(list, node->parent);
+		}
+	}
+	gtk_tree_row_reference_free(gtknode->row);
+	gtknode->row = NULL;
+}
+
+
 /**********************************************************************************
  * Public API Functions                                                           *
  **********************************************************************************/
@@ -1526,28 +1548,10 @@ void gaim_gtk_blist_update_toolbar() {
 
 static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
-	struct _gaim_gtk_blist_node *gtknode;
-	GtkTreeIter iter;
+	gaim_gtk_blist_hide_node(list, node);
 
-	gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
-	if (!gtknode || !gtknode->row)
-		return;
-
-	/* For some reason, we're called before we have a buddy list sometimes */
-	if(!gtkblist)
-		return;
-
-	if(gtkblist->selected_node == node)
-		gtkblist->selected_node = NULL;
-
-	if (get_iter_from_node(node, &iter)) {
-		gtk_tree_store_remove(gtkblist->treemodel, &iter);
-		if(GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CHAT(node)) {
-			gaim_gtk_blist_update(list, node->parent);
-		}
-	}
-	gtk_tree_row_reference_free(gtknode->row);
-	gtknode->row = NULL;
+	g_free(node->ui_data);
+	node->ui_data = NULL;
 }
 
 static gboolean do_selection_changed(GaimBlistNode *new_selection)
@@ -1754,7 +1758,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		if (status != NULL)
 			g_object_unref(status);
 	} else if(GAIM_BLIST_NODE_IS_CHAT(node) && !((struct chat *)node)->account->gc) {
-		gaim_gtk_blist_remove(list, node);
+		gaim_gtk_blist_hide_node(list, node);
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && (((struct buddy*)node)->present != GAIM_BUDDY_OFFLINE || ((blist_options & OPT_BLIST_SHOW_OFFLINE) && ((struct buddy*)node)->account->gc))) {
 		GdkPixbuf *status, *avatar;
 		char *mark;
@@ -1830,7 +1834,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 			g_object_unref(avatar);
 
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node) && !new_entry) {
-		gaim_gtk_blist_remove(list, node);
+		gaim_gtk_blist_hide_node(list, node);
 	}
 
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
