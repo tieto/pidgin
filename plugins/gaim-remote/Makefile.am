@@ -18,7 +18,7 @@ if PLUGINS
 plugin_LTLIBRARIES = gaim-remote.la
 
 gaim_remote_la_SOURCES = remote.c
-gaim_remote_la_LIBADD = -lgaim-remote
+gaim_remote_la_LIBADD = -lgaim-remote $(GLIB_LIBS)
 
 endif
 
