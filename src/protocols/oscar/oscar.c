@@ -3088,7 +3088,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 	/*
 	 * If the message is being received by an ICQ user then escape any HTML,
-	 * because HTML should is not sent over ICQ as a means to format a message.
+	 * because HTML is not sent over ICQ as a means to format a message.
 	 * so any HTML we receive is intended to be displayed
 	 *
 	 * Note: There *may* be some clients which send messages as HTML formatted -
