@@ -461,9 +461,9 @@ void wgaim_systray_init(void) {
 	systray_create_menu();
 
 	/* Load icons, and init systray notify icon */
-	sysicon_disconn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_ICON), IMAGE_ICON, 16, 16, 0);
-	sysicon_conn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_ICON), IMAGE_ICON, 16, 16, 0);
-	sysicon_away = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_ICON), IMAGE_ICON, 16, 16, 0);
+	sysicon_disconn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+	sysicon_conn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+	sysicon_away = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
 
 	/* Create icon in systray */
 	systray_init_icon(systray_hwnd, sysicon_disconn);
