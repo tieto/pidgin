@@ -308,7 +308,8 @@ draw_text (GtkIMHtml        *imhtml,
 		bg = imhtml->default_bg_color;
 	}
 
-	gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff, line->width, line->height);
+	gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff,
+			    line->width ? line->width : imhtml->xsize, line->height);
 
 	if (!line->text) {
 		gdk_gc_unref (gc);
