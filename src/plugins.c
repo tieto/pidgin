@@ -160,7 +160,7 @@ void load_plugin(char *filename) {
 		c = g_list_next(c);
 	}
 	plug = g_malloc(sizeof *plug);
-	if (filename[0] != '/')
+	if (!g_path_is_absolute(filename))
 		plug->filename = g_strconcat(g_get_home_dir(), G_DIR_SEPARATOR_S,
 			PLUGIN_DIR, filename, NULL);
 	else
