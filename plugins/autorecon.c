@@ -20,18 +20,26 @@ char *description() {
 extern void dologin(GtkWidget *, GtkWidget *);
 
 void do_signon() {
-	dologin(NULL, NULL);
-	if (blist) {
+	if (!blist)
+		dologin(NULL, NULL);
+	if (!USE_OSCAR) {
+		if (blist) {
+			gtk_timeout_remove(recon);
+			forced_off = 0;
+			if (away_state)
+				do_away_message(NULL, last_away);
+			return;
+		}
+	} else {
 		gtk_timeout_remove(recon);
 		forced_off = 0;
-		if (away_state)
-			do_away_message(NULL, last_away);
+		if (blist && away_state) do_away_message(NULL, last_away);
 		return;
 	}
 }
 
 void reconnect(void *m) {
-	recon = gtk_timeout_add(2000, (GtkFunction)do_signon, NULL);
+	recon = gtk_timeout_add(8000, (GtkFunction)do_signon, NULL);
 	forced_off = 1;
 }
 
