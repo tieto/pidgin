@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-10-31 05:49:53 -0500 (Tue, 31 Oct 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-11-04 06:05:17 -0500 (Sat, 04 Nov 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -33,10 +33,10 @@ as we try to get things operational again.
 BUDDY LIST
 ==========
 
-The buddy list is completely fucked up. It needs to be heavily modified to be
-able to support The Change. It is currently in the process of being changed,
-and so will probably act very bizarrely. It should still be mostly usable, but
-don't try to edit your buddy list.
+The buddy list is more or less working, to an extent. Idle times are back, but
+the tooltips indicating status isn't. Also, editing your buddy list may have
+adverse affects on gaim, so watch out for that. Other than that it should be
+more or less back to how it was, save a feature or two.
 
 
 TOC
