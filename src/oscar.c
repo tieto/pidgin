@@ -777,11 +777,14 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	dim->gc = d->gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", d->sn);
 
+	od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 	if ((dim->conn = aim_directim_connect(od->sess, od->conn, d->priv)) == NULL) {
+		od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 		g_free(dim);
 		cancel_direct_im(w, d);
 		return TRUE;
 	}
+	od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 
 	if (!(dim->cnv = find_conversation(d->sn))) dim->cnv = new_conversation(d->sn);
 	g_snprintf(buf, sizeof buf, _("<B>Direct IM with %s established</B>"), d->sn);
