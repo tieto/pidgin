@@ -2964,12 +2964,11 @@ static gboolean gaim_gtk_blist_refresh_timer(GaimBuddyList *list)
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
 				GaimBuddy *buddy;
-				GaimPresence *presence;
 
 				buddy = gaim_contact_get_priority_buddy((GaimContact*)cnode);
-				presence = gaim_buddy_get_presence(buddy);
 
-				if (buddy && gaim_presence_is_idle(presence))
+				if (buddy &&
+						gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
 					gaim_gtk_blist_update(list, cnode);
 			}
 		}
@@ -4601,19 +4600,6 @@ void gaim_gtk_blist_docklet_remove()
 	}
 }
 
-void gaim_gtk_blist_status_changed(GaimBuddy *buddy, GaimStatus *status)
-{
-	g_return_if_fail(buddy != NULL);
-
-	/*
-	 * What do we do with status here?
-	 * g_return_if_fail(status != NULL);
-	 */
-
-	gaim_debug_info("gtkblist", "Updating buddy list\n");
-	gaim_gtk_blist_update(gaim_get_blist(), (GaimBlistNode*)buddy);	
-}
-
 static GaimBlistUiOps blist_ui_ops =
 {
 	gaim_gtk_blist_new_list,
@@ -4625,8 +4611,7 @@ static GaimBlistUiOps blist_ui_ops =
 	gaim_gtk_blist_set_visible,
 	gaim_gtk_blist_request_add_buddy,
 	gaim_gtk_blist_request_add_chat,
-	gaim_gtk_blist_request_add_group,
-	gaim_gtk_blist_status_changed
+	gaim_gtk_blist_request_add_group
 };
 
 

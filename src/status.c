@@ -118,8 +118,6 @@ typedef struct
 {
 	GaimAccount *account;
 	char *name;
-	guint id;
-
 } GaimStatusBuddyKey;
 
 
@@ -218,7 +216,7 @@ gaim_status_type_new_with_attrs(GaimStatusPrimitive primitive,
 	g_return_val_if_fail(primitive  != GAIM_STATUS_UNSET, NULL);
 	g_return_val_if_fail(id         != NULL,              NULL);
 	g_return_val_if_fail(name       != NULL,              NULL);
- 	g_return_val_if_fail(attr_id    != NULL,              NULL);
+	g_return_val_if_fail(attr_id    != NULL,              NULL);
 	g_return_val_if_fail(attr_name  != NULL,              NULL);
 	g_return_val_if_fail(attr_value != NULL,              NULL);
 
@@ -561,8 +559,10 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 		}
 	}
 
-	if (ops != NULL && ops->status_changed != NULL)
-		ops->status_changed(buddy, new_status);
+
+
+	if (ops != NULL && ops->update != NULL)
+		ops->update(gaim_get_blist(), (GaimBlistNode*)buddy);
 }
 
 static void
@@ -636,17 +636,20 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 
 		for (l = gaim_presence_get_statuses(presence); l != NULL; l = l->next)
 		{
-			GaimStatus *temp_status = (GaimStatus *)l->data;
-			GaimStatusType *temp_type;
+			GaimStatusType *temp_type = l->data;
+			GaimStatus *temp_status = NULL;
 
 			if  (!gaim_status_compare(temp_status, status))
 				continue;
 
-			temp_type = gaim_status_get_type(temp_status);
-
 			if (gaim_status_type_is_independent(temp_type))
 				continue;
 
+
+			temp_status = (GaimStatus *)g_hash_table_lookup(
+												presence->status_table,
+												gaim_status_type_get_id(temp_type));
+			
 			if (gaim_status_is_active(temp_status))
 			{
 				/*
@@ -915,8 +918,7 @@ gaim_presence_new(GaimPresenceContext context)
 GaimPresence *
 gaim_presence_new_for_account(GaimAccount *account)
 {
-	GaimPresence *presence;
-
+	GaimPresence *presence = NULL;
 	g_return_val_if_fail(account != NULL, NULL);
 
 	presence = gaim_presence_new(GAIM_PRESENCE_CONTEXT_ACCOUNT);
@@ -946,21 +948,15 @@ gaim_presence_new_for_buddy(GaimBuddy *buddy)
 	GaimPresence *presence;
 	GaimStatusBuddyKey *key;
 	GaimAccount *account;
-	gchar *hash_seed;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
+	account = buddy->account;
 
 	account = buddy->account;
-	hash_seed = g_strdup_printf("%s:%s:%s", buddy->name, account->username,
-								account->protocol_id);
 
 	key = g_new0(GaimStatusBuddyKey, 1);
 	key->account = buddy->account;
 	key->name    = g_strdup(buddy->name);
-	key->id		 = g_str_hash(hash_seed);
-
-	g_free(hash_seed);
-	hash_seed = NULL;
 
 	presence = g_hash_table_lookup(buddy_presences, key);
 	if (presence == NULL)
@@ -1303,15 +1299,15 @@ gaim_presence_get_status(const GaimPresence *presence, const char *status_id)
 	g_return_val_if_fail(status_id != NULL, NULL);
 
 	/* What's the purpose of this hash table? */
-  	status = (GaimStatus *)g_hash_table_lookup(presence->status_table,
+	status = (GaimStatus *)g_hash_table_lookup(presence->status_table,
 						   status_id);
-  
+
 	if (status == NULL) {
-		for (l = gaim_presence_get_statuses(presence); 
+		for (l = gaim_presence_get_statuses(presence);
 			 l != NULL && status == NULL; l = l->next)
 		{
 			GaimStatus *temp_status = l->data;
- 
+
 			if (!strcmp(status_id, gaim_status_get_id(temp_status)))
 				status = temp_status;
 		}
@@ -1319,7 +1315,7 @@ gaim_presence_get_status(const GaimPresence *presence, const char *status_id)
 		if (status != NULL)
 			g_hash_table_insert(presence->status_table,
 								g_strdup(gaim_status_get_id(status)), status);
-  	}
+	}
 
 	return status;
 }
@@ -1493,19 +1489,28 @@ score_pref_changed_cb(const char *name, GaimPrefType type, gpointer value,
 	primitive_scores[index] = GPOINTER_TO_INT(value);
 }
 
-guint 
+guint
 gaim_buddy_presences_hash(gconstpointer key)
 {
-	return ((GaimStatusBuddyKey *)key)->id;
+	const GaimStatusBuddyKey *me = key;
+	guint ret;
+	char *str;
+
+	str = g_strdup_printf("%p%s", me->account, me->name);
+	ret = g_str_hash(str);
+	g_free(str);
+
+	return ret;
 }
 
-gboolean 
+gboolean
 gaim_buddy_presences_equal(gconstpointer a, gconstpointer b)
 {
 	GaimStatusBuddyKey *key_a = (GaimStatusBuddyKey *)a;
 	GaimStatusBuddyKey *key_b = (GaimStatusBuddyKey *)b;
 
-	if (key_a->id == key_b->id)
+	if(key_a->account == key_b->account &&
+			!strcmp(key_a->name, key_b->name))
 		return TRUE;
 	else
 		return FALSE;
@@ -1549,7 +1554,6 @@ gaim_statuses_init(void)
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_IDLE));
 
-	/* XXX - I don't think this is destroyed correctly.  --Mark */
 	buddy_presences = g_hash_table_new(gaim_buddy_presences_hash,
 									   gaim_buddy_presences_equal);
 }

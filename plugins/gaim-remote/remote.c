@@ -498,7 +498,7 @@ remote_handler(struct UI *ui, guchar subtype, gchar *data, int len)
 	const char *resp;
 	char *send;
 	GList *c = gaim_connections_get_all();
-	GaimConnection *gc;
+	GaimConnection *gc = NULL;
 	GaimAccount *account;
 
 	switch (subtype) {

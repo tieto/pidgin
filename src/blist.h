@@ -191,7 +191,6 @@ struct _GaimBlistUiOps
 	void (*request_add_chat)(GaimAccount *account, GaimGroup *group, 
 							 const char *alias, const char *name);
 	void (*request_add_group)(void);
-	void (*status_changed)(GaimBuddy *buddy, GaimStatus *status);
 };
 
 
