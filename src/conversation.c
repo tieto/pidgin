@@ -2147,7 +2147,7 @@ void update_progress(struct conversation *c, float percent) {
                GtkBox *box = GTK_BOX(c->text->parent->parent);
                c->progress = gtk_progress_bar_new();
                gtk_box_pack_end(box, c->progress, FALSE, FALSE, 0);
-               gtk_widget_set_usize (c->progress, 1, 8);
+               gtk_widget_set_size_request (c->progress, 1, 8);
                gtk_widget_show (c->progress);
        }
        
@@ -2926,7 +2926,7 @@ void show_conv(struct conversation *c)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-	gtk_widget_set_usize(sw, conv_size.width, conv_size.height);
+	gtk_widget_set_size_request(sw, conv_size.width, conv_size.height);
 	gtk_widget_show(sw);
 
 	text = gtk_imhtml_new(NULL, NULL);
@@ -2974,8 +2974,8 @@ void show_conv(struct conversation *c)
 
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(c->entry), GTK_WRAP_WORD);
 
-	gtk_widget_set_usize(entry, conv_size.width - 20, MAX(conv_size.entry_height, 25));
-
+	gtk_widget_set_size_request(entry, conv_size.width - 20, MAX(conv_size.entry_height, 25));
+			
 	g_signal_connect_swapped(G_OBJECT(c->entry), "key_press_event",
 				 G_CALLBACK(entry_key_pressed), c->entry_buffer);
 	g_signal_connect(G_OBJECT(c->entry), "key_press_event", G_CALLBACK(keypress_callback), c);
@@ -3762,7 +3762,7 @@ void update_icon(struct conversation *c)
 	gtk_widget_show(event);
 
 	c->icon = gtk_pixmap_new(pm, bm);
-	gtk_widget_set_usize(c->icon, sf, sf);
+	gtk_widget_set_size_request(c->icon, sf, sf);
 	gtk_container_add(GTK_CONTAINER(event), c->icon);
 	gtk_widget_show(c->icon);
 	if(im_options & OPT_IM_NO_ANIMATION)

@@ -96,7 +96,8 @@ gtk_smiley_tree_insert (GtkSmileyTree *tree,
 	
 	t->image = path;
 }
-gtk_smiley_tree_destroy (GtkSmileyTree *tree)
+
+gboolean gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 {
 	GSList *list = g_slist_append (NULL, tree);
 
@@ -112,6 +113,7 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 		}
 		g_free (t);
 	}
+	return TRUE;
 }
 
 static GtkTextViewClass *parent_class = NULL;
