@@ -111,7 +111,8 @@ static int readresponse(char *buf) {
 
 void gtkspell_stop() {
 	if (gtkspell_running()) {
-		kill(spell_pid, SIGQUIT); /* FIXME: is this the correct signal? */
+		kill(spell_pid, SIGHUP); /* FIXME: is this the correct signal? */
+		/* note by EWarmenhoven: no. (was SIGQUIT, is now SIGHUP) */
 	}
 }
 
