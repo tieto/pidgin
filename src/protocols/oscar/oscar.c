@@ -5046,10 +5046,13 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gaim_debug_misc("oscar",
-			   "account info: because of %s, perms=0x%04x, err=0x%04x, url=%s, sn=%s, email=%s\n",
-		change ? "change" : "request", perms, err, url, sn, email);
+					"account info: because of %s, perms=0x%04x, err=0x%04x, url=%s, sn=%s, email=%s\n",
+					change ? "change" : "request", perms, err,
+					(url != NULL) ? url : "(null)",
+					(sn != NULL) ? sn : "(null)",
+					(email != NULL) ? email : "(null)");
 
-	if (err && url) {
+	if ((err > 0) && (url != NULL)) {
 		char *dialog_msg;
 		char *dialog_top = g_strdup_printf(_("Error Changing Account Info"));
 		switch (err) {
@@ -5081,13 +5084,13 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 	}
 
-	if (sn) {
+	if (sn != NULL) {
 		char *dialog_msg = g_strdup_printf(_("Your screen name is currently formatted as follows:\n%s"), sn);
 		gaim_notify_info(gc, NULL, _("Account Info"), dialog_msg);
 		g_free(dialog_msg);
 	}
 
-	if (email) {
+	if (email != NULL) {
 		char *dialog_msg = g_strdup_printf(_("The email address for %s is %s"), 
 						   gaim_account_get_username(gaim_connection_get_account(gc)), email);
 		gaim_notify_info(gc, NULL, _("Account Info"), dialog_msg);
