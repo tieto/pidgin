@@ -583,7 +583,7 @@ gen_context(const char *file_name, const char *file_path)
 	glong uni_len = 0;
 	gsize len;
 
-	if (stat(file_name, &st) == 0)
+	if (stat(file_path, &st) == 0)
 		size = st.st_size;
 
 	if(!file_name) {
