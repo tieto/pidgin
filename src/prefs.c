@@ -649,11 +649,12 @@ void gaim_prefs_rename_boolean_toggle(const char *oldname, const char *newname) 
 
 guint gaim_prefs_connect_callback(const char *name, GaimPrefCallback func, gpointer data)
 {
-	struct gaim_pref *pref = find_pref(name);
+	struct gaim_pref *pref;
 	struct pref_cb *cb;
 	static guint cb_id = 0;
 
-	if(!pref)
+	pref = find_pref(name);
+	if (pref == NULL)
 		return 0;
 
 	cb = g_new0(struct pref_cb, 1);
