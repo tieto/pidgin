@@ -61,7 +61,7 @@ int state_lock = 0;
 GdkPixmap *dark_icon_pm = NULL;
 GdkBitmap *dark_icon_bm = NULL;
 
-static GtkWidget *all_convos = NULL;
+GtkWidget *all_convos = NULL;
 static GtkWidget *convo_notebook = NULL;
 
 char fontface[64];
