@@ -332,7 +332,7 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	char *buf;
-	char *xhtml, *plain;
+	char *xhtml;
 
 	if(!who || !msg)
 		return 0;
@@ -348,10 +348,9 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 
 	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body>%s</body></html>", msg);
 
-	gaim_markup_html_to_xhtml(buf, &xhtml, &plain);
+	gaim_markup_html_to_xhtml(buf, &xhtml, &jm->body);
 	g_free(buf);
 
-	jm->body = plain;
 	if(!jbr || jbr->capabilities & JABBER_CAP_XHTML)
 		jm->xhtml = xhtml;
 	else
@@ -378,7 +377,7 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *message)
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	gaim_markup_html_to_xhtml(message, NULL, &jm->body);
+	gaim_markup_html_to_xhtml(message, &jm->xhtml, &jm->body);
 
 	jabber_message_send(jm);
 	jabber_message_free(jm);
