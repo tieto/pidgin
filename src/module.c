@@ -64,7 +64,6 @@ char *last_dir = NULL;
 struct gaim_plugin *  load_plugin(const char *);
 #ifdef GAIM_PLUGINS
               void  unload_plugin(struct gaim_plugin *p);
-struct gaim_plugin *reload_plugin(struct gaim_plugin *p);
 void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
 void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
 void gaim_plugin_unload(GModule *);
@@ -216,8 +215,7 @@ struct gaim_plugin *load_plugin(const char *filename)
 	}
 	
 	if (plug && plug->handle) {
-		reload_plugin(plug);
-		return NULL;
+		return plug;
 	}
 	    
 	if (!plug) {
@@ -332,24 +330,6 @@ void gaim_plugin_unload(GModule *handle)
 	   update_show_plugins(); */
 
 	g_timeout_add(5000, unload_timeout, handle);
-}
-
-/* Do unload/load cycle of plugin. */
-struct gaim_plugin *reload_plugin(struct gaim_plugin *p)
-{
-	char file[1024];
-	GModule *handle = p->handle;
-
-	strncpy(file, g_module_name(handle), sizeof(file));
-	file[sizeof(file) - 1] = '\0';
-
-	debug_printf("Reloading %s\n", file);
-
-	/* Unload */
-	unload_plugin(p);
-
-	/* Load */
-	return load_plugin(file);
 }
 
 /* Remove all callbacks associated with plugin handle */
