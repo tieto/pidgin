@@ -882,7 +882,7 @@ GtkWidget *conv_page() {
 	names = gaim_conv_placement_get_options();
 
 	label = prefs_dropdown_from_list(vbox, _("_Placement:"),
-			GAIM_PREF_STRING, "/core/conversations/placement", names);
+			GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
 	g_list_free(names);
 
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);

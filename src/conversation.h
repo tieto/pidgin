@@ -1241,6 +1241,20 @@ const char *gaim_conv_placement_get_name(const char *id);
 GaimConvPlacementFunc gaim_conv_placement_get_fnc(const char *id);
 
 /**
+ * Sets the current conversation placement function.
+ *
+ * @param func The new conversation placement function.
+ */
+void gaim_conv_placement_set_current_func(GaimConvPlacementFunc func);
+
+/**
+ * Returns the current conversation placement function.
+ *
+ * @return The current conversation placement function.
+ */
+GaimConvPlacementFunc gaim_conv_placement_get_current_func(void);
+
+/**
  * Returns the id of the specified conversation placement function.
  *
  * @param fnc A pointer to the registered function.

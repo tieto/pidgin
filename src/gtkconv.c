@@ -6084,6 +6084,23 @@ chat_button_type_pref_cb(const char *name, GaimPrefType type, gpointer value,
 	}
 }
 
+static void
+conv_placement_pref_cb(const char *name, GaimPrefType type,
+					   gpointer value, gpointer data)
+{
+	GaimConvPlacementFunc func;
+
+	if (strcmp(name, "/gaim/gtk/conversations/placement"))
+		return;
+
+	func = gaim_conv_placement_get_fnc(value);
+
+	if (func == NULL)
+		return;
+
+	gaim_conv_placement_set_current_func(func);
+}
+
 void
 gaim_gtk_conversations_init(void)
 {
@@ -6113,6 +6130,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_urls_as_links", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
+	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "last");
 	gaim_prefs_add_string("/gaim/gtk/conversations/bgcolor", "#FFFFFF");
 	gaim_prefs_add_string("/gaim/gtk/conversations/fgcolor", "#000000");
 	gaim_prefs_add_string("/gaim/gtk/conversations/font_face", "");
@@ -6161,6 +6179,11 @@ gaim_gtk_conversations_init(void)
 								spellcheck_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/tab_side",
 								tab_side_pref_cb, NULL);
+
+	gaim_prefs_connect_callback("/gaim/gtk/conversations/placement",
+			conv_placement_pref_cb, NULL);
+	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
+
 
 
 	/* IM callbacks */

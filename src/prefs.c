@@ -615,6 +615,8 @@ void gaim_prefs_rename(const char *oldname, const char *newname) {
 void gaim_prefs_rename_old() {
 	gaim_prefs_rename("/gaim/gtk/logging/log_ims", "/core/logging/log_ims");
 	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
+	gaim_prefs_rename("/core/conversations/placement",
+					  "/gaim/gtk/conversations/placement");
 }
 
 guint gaim_prefs_connect_callback(const char *name, GaimPrefCallback func, gpointer data)
@@ -879,8 +881,7 @@ gboolean gaim_prefs_load() {
 	GMarkupParseContext *context;
 	GError *error = NULL;
 
-
-	if(!filename) {
+	if (!filename) {
 		prefs_is_loaded = TRUE;
 		return FALSE;
 	}

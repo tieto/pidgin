@@ -851,9 +851,6 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		gaim_conv_window_show(win);
 	}
 	else {
-		if (place_conv == NULL)
-			gaim_prefs_set_string("/core/conversations/placement", "last");
-
 		if (!place_conv)
 			gaim_debug(GAIM_DEBUG_ERROR, "conversation",
 					   "This is about to suck.\n");
@@ -2481,23 +2478,18 @@ gaim_conv_placement_get_fnc(const char *id)
 	return data->fnc;
 }
 
-static void
-conv_placement_pref_cb(const char *name, GaimPrefType type,
-					   gpointer value, gpointer data)
+void
+gaim_conv_placement_set_current_func(GaimConvPlacementFunc func)
 {
-	GaimConvPlacementFunc fnc;
+	g_return_if_fail(func != NULL);
 
-	if (strcmp(name, "/core/conversations/placement"))
-		return;
+	place_conv = func;
+}
 
-	ensure_default_funcs();
-
-	fnc = gaim_conv_placement_get_fnc(value);
-
-	if (fnc == NULL)
-		return;
-
-	place_conv = fnc;
+GaimConvPlacementFunc
+gaim_conv_placement_get_current_func(void)
+{
+	return place_conv;
 }
 
 static void
@@ -2505,10 +2497,10 @@ update_titles_pref_cb(const char *name, GaimPrefType type,
 					  gpointer value, gpointer data)
 {
 	/*
-	 * If the use_server_alias option was changed, and use_alias_for_title 
+	 * If the use_server_alias option was changed, and use_alias_for_title
 	 * is false, then we don't have to do anything here.
 	 */
-	if (!strcmp(name, "/core/buddies/use_server_alias") && 
+	if (!strcmp(name, "/core/buddies/use_server_alias") &&
 		!gaim_prefs_get_bool("/core/conversations/use_alias_for_title"))
 		return;
 
@@ -2550,7 +2542,6 @@ gaim_conversations_init(void)
 	gaim_prefs_add_bool("/core/conversations/away_back_on_send", TRUE);
 	gaim_prefs_add_bool("/core/conversations/use_alias_for_title", TRUE);
 	gaim_prefs_add_bool("/core/conversations/combine_chat_im", FALSE);
-	gaim_prefs_add_string("/core/conversations/placement", "last");
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/core/conversations/chat");
@@ -2563,9 +2554,6 @@ gaim_conversations_init(void)
 	gaim_prefs_add_bool("/core/conversations/im/show_login", TRUE);
 	gaim_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
 
-	gaim_prefs_connect_callback("/core/conversations/placement",
-			conv_placement_pref_cb, NULL);
-	gaim_prefs_trigger_callback("/core/conversations/placement");
 	gaim_prefs_connect_callback("/core/conversations/use_alias_for_title",
 			update_titles_pref_cb, NULL);
 	gaim_prefs_connect_callback("/core/buddies/use_server_alias",

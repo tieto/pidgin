@@ -1065,20 +1065,20 @@ static void gaimrc_read_options(FILE *f)
 		} else if (!strcmp(p->option, "conv_placement")) {
 			switch(atoi(p->value[0])) {
 				case 1:
-					gaim_prefs_set_string("/core/conversations/placement",
+					gaim_prefs_set_string("/gaim/gtk/conversations/placement",
 							"new");
 				break;
 				case 2:
-					gaim_prefs_set_string("/core/conversations/placement",
+					gaim_prefs_set_string("/gaim/gtk/conversations/placement",
 							"group");
 				break;
 				case 3:
-					gaim_prefs_set_string("/core/conversations/placement",
+					gaim_prefs_set_string("/gaim/gtk/conversations/placement",
 							"account");
 				break;
 				case 0:
 				default:
-					gaim_prefs_set_string("/core/conversations/placement",
+					gaim_prefs_set_string("/gaim/gtk/conversations/placement",
 							"last");
 				break;
 			}
