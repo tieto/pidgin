@@ -2,7 +2,32 @@ EXTRA_DIST = \
 		getopt.c \
 		getopt.h \
 		getopt1.c \
-		win_gaim.c
+		win_gaim.c \
+		win32/libc_interface.c \
+		win32/libc_interface.h \
+		win32/libc_internal.h \
+		win32/MinimizeToTray.c \
+		win32/MinimizeToTray.h \
+		win32/gaimrc.rc \
+		win32/global.mak \
+		win32/resource.h \
+		win32/stdafx.h \
+		win32/untar.h \
+		win32/untar.c \
+		win32/wgaimerror.h \
+		win32/win32dep.c \
+		win32/win32dep.h \
+		win32/wspell.c \
+		win32/wspell.h \
+		win32/mingw_plus/winuser_extra.h \
+		win32/nsis/AddtoPath.nsi \
+		win32/gaim-header.bmp \
+		win32/gaim-intro.bmp \
+		win32/gtkInstall.ini \
+		win32/IdleTracker/Makefile.mingw \
+		win32/IdleTracker/idletrack.c \
+		win32/IdleTracker/idletrack.h \
+		win32/themes/gtkrc
 
 SUBDIRS = protocols
 
