@@ -1179,7 +1179,7 @@ GaimConversation *gaim_find_chat(const GaimConnection *gc, int id);
 /*@}*/
 
 /**************************************************************************/
-/** @name Conversation Placement Functions                                */
+/** @name Conversation Placement API                                      */
 /**************************************************************************/
 /*@{*/
 

@@ -628,11 +628,11 @@ GaimAccount *gaim_accounts_find_with_prpl_id(const char *name,
 
 /*@}*/
 
+
 /**************************************************************************/
-/** @name Accounts Subsystem                                              */
+/** @name UI Registration Functions                                       */
 /**************************************************************************/
 /*@{*/
-
 /**
  * Sets the UI operations structure to be used for accounts.
  *
@@ -646,6 +646,14 @@ void gaim_accounts_set_ui_ops(GaimAccountUiOps *ops);
  * @return The UI operations structure in use.
  */
 GaimAccountUiOps *gaim_accounts_get_ui_ops(void);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name Accounts Subsystem                                              */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Returns the accounts subsystem handle.
