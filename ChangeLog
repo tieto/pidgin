@@ -18,6 +18,7 @@ version 0.69
 	* The accounts window now shows offline accounts as greyed out, and
 	  online accounts as colored.
 	* Fixed the text replacement plugin.
+	* Fixed all known signal problems in perl.
 	* The right-click menu for conversation tabs now shows the tab icon
 	  and status, if tab icons are enabled. (Jesse Farmer)
 	* Chinese (Simplified) translation updated (Funda Wang)
