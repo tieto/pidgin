@@ -532,7 +532,7 @@ static void oscar_close(struct gaim_connection *gc) {
 			gdk_pixbuf_unref(n->unanim);
 		if (n->timer)
 			gtk_timeout_remove(n->timer);
-		if (n->cnv)
+		if (n->cnv && n->pix)
 			gtk_container_remove(GTK_CONTAINER(n->cnv->bbox), n->pix);
 		g_free(n->user);
 		if (n->data)
@@ -1779,7 +1779,6 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 				gtk_timeout_remove(ir->timer);
 			ir->timer = 0;
 
-			ir->cnv = c;
 			ir->length = args->info.icon.length;
 
 			if (!ir->length)
@@ -1810,6 +1809,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 				gdk_pixbuf_render_pixmap_and_mask(ir->unanim, &pm, &bm, 0);
 			}
 
+			ir->cnv = c;
 			ir->pix = gtk_pixmap_new(pm, bm);
 			gtk_box_pack_start(GTK_BOX(c->bbox), ir->pix, FALSE, FALSE, 5);
 			if (ir->anim && (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1))
