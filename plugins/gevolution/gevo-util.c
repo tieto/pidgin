@@ -44,14 +44,12 @@ gevo_add_buddy(GaimAccount *account, const char *group_name,
 
 	buddy = gaim_buddy_new(account, screenname, alias);
 	gaim_blist_add_buddy(buddy, NULL, group, NULL);
-	serv_add_buddy(gaim_account_get_connection(account), screenname, group);
+	serv_add_buddy(gaim_account_get_connection(account), buddy);
 
 	if (conv != NULL)
 	{
 		gaim_buddy_icon_update(gaim_conv_im_get_icon(GAIM_CONV_IM(conv)));
 		gaim_conversation_update(conv, GAIM_CONV_UPDATE_ADD);
-
-		gaim_blist_save();
 	}
 }
 
