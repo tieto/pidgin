@@ -754,7 +754,8 @@ gaim_window_switch_conversation(GaimWindow *win, unsigned int index)
 	GaimWindowUiOps *ops;
 
 	g_return_if_fail(win != NULL);
-	g_return_if_fail(index >= 0 &&gaim_window_get_conversation_count(win));
+	g_return_if_fail(index >= 0 &&
+					 index < gaim_window_get_conversation_count(win));
 
 	ops = gaim_window_get_ui_ops(win);
 
@@ -771,6 +772,9 @@ gaim_window_get_active_conversation(const GaimWindow *win)
 	GaimWindowUiOps *ops;
 
 	g_return_val_if_fail(win != NULL, NULL);
+
+	if (gaim_window_get_conversation_count(win) == 0)
+		return NULL;
 
 	ops = gaim_window_get_ui_ops(win);
 

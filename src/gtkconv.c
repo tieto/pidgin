@@ -331,6 +331,9 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = gaim_window_get_active_conversation(win);
 
+	if (conv == NULL)
+		return;
+
 	gaim_conversation_set_logging(conv,
 			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
 }
@@ -3732,10 +3735,17 @@ static int
 gaim_gtk_get_active_index(const GaimWindow *win)
 {
 	GaimGtkWindow *gtkwin;
+	int index;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
-	return gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook));
+	index = gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook));
+
+	/*
+	 * A fix, because the first conversation may be active, but not
+	 * appear in the notebook just yet. -- ChipX86
+	 */
+	return (index == -1 ? 0 : index);
 }
 
 static GaimWindowUiOps window_ui_ops =
