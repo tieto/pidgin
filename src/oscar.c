@@ -665,7 +665,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			va_end(ap);
 
 			serv_got_chat_invite(roominfo->name,
-					     roominfo->instance,
+					     roominfo->exchange,
 					     userinfo->sn,
 					     msg);
 		} else if (rendtype & AIM_CAPS_SENDFILE) {

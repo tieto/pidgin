@@ -905,7 +905,8 @@ static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 		gtk_widget_destroy(w2);
 	} else {
 		char *i = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
-		serv_join_chat(4, i);
+		int id = (int)gtk_object_get_user_data(GTK_OBJECT(w));
+		serv_join_chat(id, i);
 		g_free(i);
 		gtk_widget_destroy(w2);
 	}
@@ -969,8 +970,10 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
 
 	if (!USE_OSCAR)
 	        gtk_object_set_user_data(GTK_OBJECT(d), (void *)id);
-	else
+	else {
 		gtk_object_set_user_data(GTK_OBJECT(d), (void *)g_strdup(name));
+		gtk_object_set_user_data(GTK_OBJECT(yesbtn), (void *)id);
+	}
 
 
         gtk_window_set_title(GTK_WINDOW(d), "Buddy chat invite");
