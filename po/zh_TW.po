@@ -22,7 +22,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.73\n"
-"POT-Creation-Date: 2003-11-16 07:59-0500\n"
+"POT-Creation-Date: 2003-11-17 21:26-0500\n"
 "PO-Revision-Date: 2003-05-29 12:04+0800\n"
 "Last-Translator: Ambrose C. Li <acli@ada.dhs.org>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -419,15 +419,15 @@ msgstr "(無"
 msgid "Change"
 msgstr "變更"
 
-#: plugins/history.c:65
+#: plugins/history.c:75
 msgid "History"
 msgstr "歷史記錄"
 
-#: plugins/history.c:67
+#: plugins/history.c:77
 msgid "Shows recently logged conversations in new conversations."
 msgstr "顯示最近所記錄的交談到新的交談視窗中"
 
-#: plugins/history.c:68
+#: plugins/history.c:78
 msgid ""
 "When a new conversation is opened this plugin will insert the last XXX of "
 "the last conversation into the current conversation."
@@ -664,6 +664,66 @@ msgid ""
 msgstr ""
 "讓您直接輸入指令對各種文字模式的通訊協定（例如 Jabber、MSN、IRC 及 TOC）進行"
 "操作。在輸入欄位輸入指令，按 Enter 後鍵送出；相關資訊會在除錯視窗顯示。"
+
+# XXX 暫譯
+#: plugins/relnot.c:62
+#, c-format
+msgid "You are using Gaim version %s.  The current version is %s.<hr>"
+msgstr "您目前的 Gaim 是第 %s 版，最新的版本是 %s。<hr>"
+
+# XXX 暫譯
+#: plugins/relnot.c:68
+#, c-format
+msgid ""
+"<b>ChangeLog:</b>\n"
+"%s<br><br>"
+msgstr ""
+"<b>功能說明：</b>\n"
+"%s<br><br>"
+
+# XXX 暫譯
+#: plugins/relnot.c:73
+#, c-format
+msgid ""
+"You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
+"\">http://gaim.sourceforge.net</a>."
+msgstr ""
+"下載第 %s 版，請到：<br><a href=\"http://gaim.sourceforge.net/"
+"\">http://gaim.sourceforge.net</a>."
+
+# XXX 暫譯
+#: plugins/relnot.c:77 plugins/relnot.c:78
+msgid "New Version Available"
+msgstr "有新版本"
+
+# XXX 暫譯
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/relnot.c:133
+msgid "Release Notification"
+msgstr "新版本通知"
+
+# XXX 暫譯
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/relnot.c:136
+msgid "Checks periodically for new releases."
+msgstr "不時查看有沒有新版本。"
+
+# XXX 暫譯
+#. *  description
+#: plugins/relnot.c:138
+msgid ""
+"Checks periodically for new releases and notifies the user with the "
+"ChangeLog."
+msgstr ""
+"不時查看有沒有新版本。一發現有，就隨即連同該版本的功能說明一併通知使用者。"
 
 #. *< api_version
 #. *< type
@@ -1199,7 +1259,7 @@ msgstr "斯洛伐克文"
 msgid "Chinese"
 msgstr "中文"
 
-#: src/about.c:221 src/dialogs.c:2190 src/gtkrequest.c:205
+#: src/about.c:221 src/dialogs.c:2180 src/gtkrequest.c:198
 #: src/protocols/msn/msn.c:247
 msgid "Close"
 msgstr "關閉"
@@ -1237,9 +1297,9 @@ msgstr "請輸入您目前的密碼以及希望使用的新密碼。"
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:334 src/connection.c:193 src/dialogs.c:1730
-#: src/dialogs.c:1747 src/dialogs.c:1790 src/gtkblist.c:1512
-#: src/gtkrequest.c:202 src/protocols/jabber/jabber.c:1025
+#: src/account.c:334 src/connection.c:193 src/dialogs.c:1720
+#: src/dialogs.c:1737 src/dialogs.c:1780 src/gtkblist.c:1512
+#: src/gtkrequest.c:195 src/protocols/jabber/jabber.c:1025
 #: src/protocols/msn/msn.c:181 src/protocols/msn/msn.c:192
 #: src/protocols/msn/msn.c:203 src/protocols/msn/msn.c:214
 #: src/protocols/oscar/oscar.c:2455 src/protocols/oscar/oscar.c:2535
@@ -1250,14 +1310,14 @@ msgid "OK"
 msgstr "確定"
 
 #. Cancel button.
-#: src/account.c:335 src/account.c:369 src/buddy_chat.c:375
-#: src/connection.c:194 src/dialogs.c:467 src/dialogs.c:479 src/dialogs.c:492
-#: src/dialogs.c:513 src/dialogs.c:898 src/dialogs.c:1564 src/dialogs.c:1731
-#: src/dialogs.c:1748 src/dialogs.c:1791 src/dialogs.c:1907
+#: src/account.c:335 src/account.c:369 src/buddy_chat.c:371
+#: src/connection.c:194 src/dialogs.c:459 src/dialogs.c:471 src/dialogs.c:484
+#: src/dialogs.c:505 src/dialogs.c:890 src/dialogs.c:1554 src/dialogs.c:1721
+#: src/dialogs.c:1738 src/dialogs.c:1781 src/dialogs.c:1897
 #: src/gtkaccount.c:1622 src/gtkaccount.c:2090 src/gtkblist.c:1513
 #: src/gtkblist.c:3452 src/gtkconn.c:148 src/gtkprivacy.c:568
 #: src/gtkprivacy.c:581 src/gtkprivacy.c:606 src/gtkprivacy.c:617
-#: src/gtkrequest.c:203 src/protocols/icq/gaim_icq.c:277
+#: src/gtkrequest.c:196 src/protocols/icq/gaim_icq.c:277
 #: src/protocols/jabber/buddy.c:512 src/protocols/jabber/jabber.c:657
 #: src/protocols/jabber/jabber.c:1026 src/protocols/msn/msn.c:182
 #: src/protocols/msn/msn.c:193 src/protocols/msn/msn.c:204
@@ -1277,8 +1337,8 @@ msgstr "取消"
 msgid "Change user information for %s"
 msgstr "更改 %s 的個人資訊"
 
-#: src/account.c:368 src/dialogs.c:894 src/dialogs.c:1552 src/dialogs.c:2199
-#: src/gtkrequest.c:209 src/protocols/jabber/buddy.c:511
+#: src/account.c:368 src/dialogs.c:886 src/dialogs.c:1542 src/dialogs.c:2189
+#: src/gtkrequest.c:202 src/protocols/jabber/buddy.c:511
 #: src/protocols/trepia/trepia.c:346
 msgid "Save"
 msgstr "儲存"
@@ -1328,7 +1388,7 @@ msgstr[0] ""
 msgid "Group not removed"
 msgstr "群組未被移除"
 
-#: src/blist.c:1192 src/gtkaccount.c:159 src/gtkutils.c:841
+#: src/blist.c:1192 src/gtkaccount.c:159 src/gtkutils.c:844
 #: src/protocols/jabber/auth.c:110 src/protocols/jabber/buddy.c:563
 msgid "Unknown"
 msgstr "未知"
@@ -1346,7 +1406,7 @@ msgstr "在解析您的好友清單時發生錯誤。好友清單沒有被讀入
 msgid "Buddy List Error"
 msgstr "好友清單錯誤"
 
-#: src/buddy_chat.c:316 src/gtkblist.c:3344
+#: src/buddy_chat.c:312 src/gtkblist.c:3344
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -1354,20 +1414,20 @@ msgstr "您並未登入任何一個可供您加入聊天室的通訊協定。"
 
 # TODO 看起來應該為加一個新的聊天室，並把聊天室歸類到某個群組。
 # NOTE 譯文更動 by Paladin
-#: src/buddy_chat.c:330
+#: src/buddy_chat.c:326
 msgid "Join Chat"
 msgstr "加入聊天室"
 
-#: src/buddy_chat.c:336
+#: src/buddy_chat.c:332
 msgid "Buddy Chat"
 msgstr "好友聊天室"
 
-#: src/buddy_chat.c:346
+#: src/buddy_chat.c:342
 msgid "Join Chat As:"
 msgstr "聊天室所屬帳號："
 
 #. Join button.
-#: src/buddy_chat.c:369
+#: src/buddy_chat.c:365
 msgid "Join"
 msgstr "加入"
 
@@ -1458,15 +1518,15 @@ msgstr "依群組"
 msgid "By account"
 msgstr "依帳號"
 
-#: src/dialogs.c:315
+#: src/dialogs.c:307
 msgid "Warn User"
 msgstr "警告使用者"
 
-#: src/dialogs.c:318
+#: src/dialogs.c:310
 msgid "_Warn"
 msgstr "警告(_W)"
 
-#: src/dialogs.c:334
+#: src/dialogs.c:326
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -1478,37 +1538,37 @@ msgstr ""
 "\n"
 "這個動作將會增加 %s 的警告等級，同時他 / 她將被限制以更嚴格的速率限制。\n"
 
-#: src/dialogs.c:343
+#: src/dialogs.c:335
 msgid "Warn _anonymously?"
 msgstr "以匿名的身份發出警告？(_A)"
 
-#: src/dialogs.c:350
+#: src/dialogs.c:342
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>匿名的警告比較上沒有那麼嚴重。</b>"
 
-#: src/dialogs.c:463
+#: src/dialogs.c:455
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "您正試著將 %s  從您的好友清單中移除。您要繼續這個動作嗎？"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Gaim無法析別；可能有改進的空間
-#: src/dialogs.c:465 src/dialogs.c:466
+#: src/dialogs.c:457 src/dialogs.c:458
 msgid "Remove Buddy"
 msgstr "移除好友"
 
-#: src/dialogs.c:475
+#: src/dialogs.c:467
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "您正試著將 %s 從您的好友清單中移除。您要繼續這個動作嗎？"
 
-#: src/dialogs.c:477 src/dialogs.c:478
+#: src/dialogs.c:469 src/dialogs.c:470
 msgid "Remove Chat"
 msgstr "移除聊天室"
 
-#: src/dialogs.c:487
+#: src/dialogs.c:479
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -1516,11 +1576,11 @@ msgid ""
 msgstr ""
 "您正試著將群組 %s 及相關的成員從您的好友清單中移除。您要繼續這個動作嗎？"
 
-#: src/dialogs.c:490 src/dialogs.c:491
+#: src/dialogs.c:482 src/dialogs.c:483
 msgid "Remove Group"
 msgstr "移除群組"
 
-#: src/dialogs.c:508
+#: src/dialogs.c:500
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -1530,213 +1590,213 @@ msgstr ""
 "作嗎？"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Gaim無法析別；可能有改進的空間
-#: src/dialogs.c:511 src/dialogs.c:512
+#: src/dialogs.c:503 src/dialogs.c:504
 msgid "Remove Contact"
 msgstr "移除好友"
 
-#: src/dialogs.c:660
+#: src/dialogs.c:652
 msgid "New Message"
 msgstr "新訊息"
 
-#: src/dialogs.c:678
+#: src/dialogs.c:670
 msgid "Please enter the screenname of the person you would like to IM.\n"
 msgstr "請輸入您所想要發送即時訊息對象的帳號。\n"
 
-#: src/dialogs.c:694 src/dialogs.c:771
+#: src/dialogs.c:686 src/dialogs.c:763
 msgid "_Screenname:"
 msgstr "帳號(_S)："
 
-#: src/dialogs.c:709 src/dialogs.c:787 src/gtkpounce.c:358
+#: src/dialogs.c:701 src/dialogs.c:779 src/gtkpounce.c:358
 msgid "_Account:"
 msgstr "帳號(_A)："
 
-#: src/dialogs.c:740
+#: src/dialogs.c:732
 msgid "Get User Info"
 msgstr "取得使用者資訊"
 
-#: src/dialogs.c:759
+#: src/dialogs.c:751
 msgid ""
 "Please enter the screenname of the person whose info you would like to "
 "view.\n"
 msgstr "請輸入您所想要查詢對象的帳號。\n"
 
-#: src/dialogs.c:853 src/protocols/jabber/jabber.c:1036
+#: src/dialogs.c:845 src/protocols/jabber/jabber.c:1036
 #: src/protocols/oscar/oscar.c:6481 src/protocols/toc/toc.c:1532
 msgid "Set User Info"
 msgstr "設定使用者資訊"
 
-#: src/dialogs.c:862
+#: src/dialogs.c:854
 #, c-format
 msgid "Changing info for %s:"
 msgstr "修改 %s 的資訊："
 
-#: src/dialogs.c:977
+#: src/dialogs.c:969
 msgid "Insert Link"
 msgstr "加入連結"
 
-#: src/dialogs.c:979
+#: src/dialogs.c:971
 msgid "Insert"
 msgstr "插入"
 
-#: src/dialogs.c:1001
+#: src/dialogs.c:993
 msgid ""
 "Please enter the URL and description of the link that you want to insert.  "
 "The description is optional.\n"
 msgstr "請輸入您所要插入的 URL 及它的描述，描述是選擇性的，可不用輸入。\n"
 
-#: src/dialogs.c:1019 src/protocols/jabber/buddy.c:249
+#: src/dialogs.c:1011 src/protocols/jabber/buddy.c:249
 #: src/protocols/jabber/jabber.c:638
 msgid "URL"
 msgstr "URL"
 
-#: src/dialogs.c:1029 src/gtkprefs.c:601 src/gtkprefs.c:1803
+#: src/dialogs.c:1021 src/gtkprefs.c:601 src/gtkprefs.c:1803
 #: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:738
 msgid "Description"
 msgstr "描述"
 
-#: src/dialogs.c:1165 src/dialogs.c:1182
+#: src/dialogs.c:1157 src/dialogs.c:1174
 msgid "Select Text Color"
 msgstr "設定文字顏色"
 
-#: src/dialogs.c:1217 src/dialogs.c:1234
+#: src/dialogs.c:1209 src/dialogs.c:1226
 msgid "Select Background Color"
 msgstr "設定背景顏色"
 
-#: src/dialogs.c:1319 src/dialogs.c:1345
+#: src/dialogs.c:1311 src/dialogs.c:1337
 msgid "Select Font"
 msgstr "選擇字型"
 
-#: src/dialogs.c:1411
+#: src/dialogs.c:1403
 msgid "You cannot save an away message with a blank title"
 msgstr "您不能儲存一個沒有原因的離開訊息"
 
-#: src/dialogs.c:1413
+#: src/dialogs.c:1405
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr "請給予訊息一個標題；或按「使用」來使用，同時不儲存它。"
 
-#: src/dialogs.c:1423
+#: src/dialogs.c:1415
 msgid "You cannot create an empty away message"
 msgstr "您無法建立一個空白的離開訊息"
 
-#: src/dialogs.c:1488 src/dialogs.c:1496
+#: src/dialogs.c:1480 src/dialogs.c:1488
 msgid "New away message"
 msgstr "新的離開訊息"
 
-#: src/dialogs.c:1506
+#: src/dialogs.c:1498
 msgid "Away title: "
 msgstr "離開原因："
 
-#: src/dialogs.c:1556
+#: src/dialogs.c:1546
 msgid "Save & Use"
 msgstr "儲存並使用"
 
-#: src/dialogs.c:1560
+#: src/dialogs.c:1550
 msgid "Use"
 msgstr "使用"
 
 #. show everything
-#: src/dialogs.c:1709
+#: src/dialogs.c:1699
 msgid "Smile!"
 msgstr "笑一個！"
 
-#: src/dialogs.c:1727
+#: src/dialogs.c:1717
 msgid "Alias Chat"
 msgstr "給聊天室改別名"
 
-#: src/dialogs.c:1727
+#: src/dialogs.c:1717
 msgid "Alias chat"
 msgstr "給聊天室改別名"
 
-#: src/dialogs.c:1728
+#: src/dialogs.c:1718
 msgid "Please enter an aliased name for this chat."
 msgstr "請為這個聊天室輸入一個別名。"
 
 # XXX 中文譯文無法分別出「Alias Buddy」和「Alias Contact」
-#: src/dialogs.c:1744
+#: src/dialogs.c:1734
 msgid "Alias Contact"
 msgstr "給好友改別名"
 
 # XXX 中文譯文無法分別出「Alias Buddy」和「Alias Contact」
-#: src/dialogs.c:1744
+#: src/dialogs.c:1734
 msgid "Alias contact"
 msgstr "給好友改別名"
 
 # XXX 中文譯文無法分別出「Alias Buddy」和「Alias Contact」
-#: src/dialogs.c:1745
+#: src/dialogs.c:1735
 msgid "Please enter an aliased name for this contact."
 msgstr "請為這個好友輸入一個別名。"
 
-#: src/dialogs.c:1776
+#: src/dialogs.c:1766
 msgid "_Screenname"
 msgstr "帳號(_S)"
 
-#: src/dialogs.c:1781 src/gtkblist.c:838 src/gtkblist.c:931 src/gtkblist.c:937
+#: src/dialogs.c:1771 src/gtkblist.c:838 src/gtkblist.c:931 src/gtkblist.c:937
 msgid "_Alias"
 msgstr "別名(_A)"
 
-#: src/dialogs.c:1785
+#: src/dialogs.c:1775
 msgid "Alias Buddy"
 msgstr "為好友加上別名"
 
-#: src/dialogs.c:1786
+#: src/dialogs.c:1776
 msgid "Alias buddy"
 msgstr "為好友加上別名"
 
 # NOTE 這個譯句應該沒有問題。（執行「別名」來看實際使用情況）
 # NOTE 但我把「下列人員...」改為新的譯句...。
-#: src/dialogs.c:1787
+#: src/dialogs.c:1777
 msgid ""
 "Please enter an aliased name for the person below, or rename this contact in "
 "your buddy list."
 msgstr "請為這個好友設定別名，或者更改他（她）在好友清單中所記錄的帳號。"
 
-#: src/dialogs.c:1823 src/dialogs.c:1830
+#: src/dialogs.c:1813 src/dialogs.c:1820
 #, c-format
 msgid "Couldn't write to %s."
 msgstr "無法寫入到 %s。"
 
-#: src/dialogs.c:1854
+#: src/dialogs.c:1844
 msgid "Save Log File"
 msgstr "儲存日誌檔"
 
-#: src/dialogs.c:1882
+#: src/dialogs.c:1872
 #, c-format
 msgid "Couldn't remove file %s."
 msgstr "無法刪除檔案 %s。"
 
-#: src/dialogs.c:1901
+#: src/dialogs.c:1891
 #, c-format
 msgid "You are about to remove the log file for %s.  Do you want to continue?"
 msgstr "您正試著將 %s 的日誌移除。您要繼續這個動作嗎？"
 
-#: src/dialogs.c:1902 src/dialogs.c:2072
+#: src/dialogs.c:1892 src/dialogs.c:2062
 msgid "System Log"
 msgstr "系統日誌"
 
-#: src/dialogs.c:1903 src/dialogs.c:1905
+#: src/dialogs.c:1893 src/dialogs.c:1895
 msgid "Remove Log"
 msgstr "移除日誌"
 
-#: src/dialogs.c:1933 src/dialogs.c:2093
+#: src/dialogs.c:1923 src/dialogs.c:2083
 #, c-format
 msgid "Couldn't open log file %s."
 msgstr "無法開啟日誌檔 %s。"
 
-#: src/dialogs.c:2070
+#: src/dialogs.c:2060
 #, c-format
 msgid "Conversations with %s"
 msgstr "與 %s 的交談"
 
-#: src/dialogs.c:2114 src/protocols/jabber/jabber.c:643
+#: src/dialogs.c:2104 src/protocols/jabber/jabber.c:643
 msgid "Date"
 msgstr "日期"
 
-#: src/dialogs.c:2171
+#: src/dialogs.c:2161
 msgid "Log"
 msgstr "日誌"
 
-#: src/dialogs.c:2194
+#: src/dialogs.c:2184
 msgid "Clear"
 msgstr "清除"
 
@@ -2027,7 +2087,7 @@ msgstr "註冊"
 msgid "Are you sure you want to delete %s?"
 msgstr "您確定要刪除 %s？"
 
-#: src/gtkaccount.c:1621 src/gtkrequest.c:206
+#: src/gtkaccount.c:1621 src/gtkrequest.c:199
 msgid "Delete"
 msgstr "刪除"
 
@@ -2069,8 +2129,8 @@ msgstr "Gaim - 資訊"
 msgid "Add buddy to your list?"
 msgstr "將使用者加入您的好友清單？"
 
-#: src/gtkaccount.c:2089 src/gtkblist.c:3451 src/gtkconv.c:1258
-#: src/gtkconv.c:3149 src/gtkconv.c:4355 src/gtkrequest.c:207
+#: src/gtkaccount.c:2089 src/gtkblist.c:3451 src/gtkconv.c:1257
+#: src/gtkconv.c:3148 src/gtkconv.c:4350 src/gtkrequest.c:200
 #: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2692
 msgid "Add"
 msgstr "加入"
@@ -2374,7 +2434,7 @@ msgstr "/好友/顯示離線好友"
 msgid "/Buddies/Show Empty Groups"
 msgstr "/好友/顯示空的好的群組"
 
-#: src/gtkblist.c:2287 src/gtkconv.c:1217
+#: src/gtkblist.c:2287 src/gtkconv.c:1216
 msgid "IM"
 msgstr "即時訊息"
 
@@ -2486,43 +2546,43 @@ msgstr "帳號"
 msgid "Time"
 msgstr "時間"
 
-#: src/gtkconv.c:186
+#: src/gtkconv.c:185
 msgid "That file already exists"
 msgstr "那個檔案已經存在"
 
-#: src/gtkconv.c:187 src/gtkft.c:1034
+#: src/gtkconv.c:186 src/gtkft.c:1034
 msgid "Would you like to overwrite it?"
 msgstr "您要覆蓋它嗎？"
 
-#: src/gtkconv.c:242
+#: src/gtkconv.c:241
 #, c-format
 msgid "Failed to store image: %s\n"
 msgstr "無法儲存影像：%s\n"
 
-#: src/gtkconv.c:312
+#: src/gtkconv.c:311
 msgid "Gaim - Insert Image"
 msgstr "Gaim - 插入影像"
 
-#: src/gtkconv.c:616
+#: src/gtkconv.c:615
 msgid "Gaim - Invite Buddy Into Chat Room"
 msgstr "Gaim - 邀請好友進入聊天室"
 
 #. Put our happy label in it.
-#: src/gtkconv.c:644
+#: src/gtkconv.c:643
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
 msgstr "請輸入您想邀請的使用者名稱，以及邀請的訊息。"
 
-#: src/gtkconv.c:665
+#: src/gtkconv.c:664
 msgid "_Buddy:"
 msgstr "好友(_B)："
 
-#: src/gtkconv.c:685
+#: src/gtkconv.c:684
 msgid "_Message:"
 msgstr "訊息(_M)："
 
-#: src/gtkconv.c:781
+#: src/gtkconv.c:780
 msgid ""
 "<span weight='bold' size='larger'>Enter a search phrase\n"
 "</span>"
@@ -2530,319 +2590,319 @@ msgstr ""
 "<span weight='bold' size='larger'>請輸入搜尋字串\n"
 "</span>"
 
-#: src/gtkconv.c:788
+#: src/gtkconv.c:787
 msgid "Search term: "
 msgstr "關鍵字："
 
-#: src/gtkconv.c:1225
+#: src/gtkconv.c:1224
 msgid "Un-Ignore"
 msgstr "取消忽略使用者"
 
-#: src/gtkconv.c:1227 src/gtkprefs.c:774
+#: src/gtkconv.c:1226 src/gtkprefs.c:774
 msgid "Ignore"
 msgstr "忽略使用者"
 
 # XXX「Info」的作用似乎係取得使用者資訊，但不肯定，看了其他po檔仍是不肯定這是什麼
 # XXX javajsp (Ka-Hing CHEUNG) 見過的「Info」按紐全都是「取得使用者資訊」
 #. Info button
-#: src/gtkconv.c:1236 src/gtkconv.c:3172
+#: src/gtkconv.c:1235 src/gtkconv.c:3171
 msgid "Info"
 msgstr "取得資訊"
 
-#: src/gtkconv.c:1245
+#: src/gtkconv.c:1244
 msgid "Get Away Msg"
 msgstr "取得離線訊息"
 
-#: src/gtkconv.c:1256 src/gtkconv.c:3155 src/gtkconv.c:4340
-#: src/gtkrequest.c:208
+#: src/gtkconv.c:1255 src/gtkconv.c:3154 src/gtkconv.c:4335
+#: src/gtkrequest.c:201
 msgid "Remove"
 msgstr "移除"
 
-#: src/gtkconv.c:2373
+#: src/gtkconv.c:2372
 msgid "User is typing..."
 msgstr "使用者正在輸入..."
 
-#: src/gtkconv.c:2381
+#: src/gtkconv.c:2380
 msgid "User has typed something and paused"
 msgstr "使用者輸入了些東西，不過目前暫停輸入"
 
 #. Build the Send As menu
-#: src/gtkconv.c:2484
+#: src/gtkconv.c:2483
 msgid "_Send As"
 msgstr "使用帳號(_S)"
 
-#: src/gtkconv.c:2944
+#: src/gtkconv.c:2943
 msgid "Gaim - Save Conversation"
 msgstr "Gaim - 儲存聊天內容"
 
 #. Conversation menu
-#: src/gtkconv.c:2961
+#: src/gtkconv.c:2960
 msgid "/_Conversation"
 msgstr "/交談(_C)"
 
-#: src/gtkconv.c:2963
+#: src/gtkconv.c:2962
 msgid "/Conversation/_Save As..."
 msgstr "/交談/另存新檔(_S)..."
 
-#: src/gtkconv.c:2965
+#: src/gtkconv.c:2964
 msgid "/Conversation/View _Log"
 msgstr "/交談/觀看歷史記錄(_L)"
 
-#: src/gtkconv.c:2966
+#: src/gtkconv.c:2965
 msgid "/Conversation/Search..."
 msgstr "/交談/搜尋..."
 
-#: src/gtkconv.c:2970
+#: src/gtkconv.c:2969
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/交談/新增好友狀態捕捉(_P)..."
 
-#: src/gtkconv.c:2972
+#: src/gtkconv.c:2971
 msgid "/Conversation/A_lias..."
 msgstr "/交談/別名(_L)..."
 
-#: src/gtkconv.c:2974
+#: src/gtkconv.c:2973
 msgid "/Conversation/_Get Info..."
 msgstr "/交談/取得資訊(_G)..."
 
-#: src/gtkconv.c:2976
+#: src/gtkconv.c:2975
 msgid "/Conversation/In_vite..."
 msgstr "/交談/邀請(_V)..."
 
-#: src/gtkconv.c:2981
+#: src/gtkconv.c:2980
 msgid "/Conversation/Insert _URL..."
 msgstr "/交談/插入 URL(_U)"
 
-#: src/gtkconv.c:2983
+#: src/gtkconv.c:2982
 msgid "/Conversation/Insert _Image..."
 msgstr "/交談/插入影像(_I)"
 
-#: src/gtkconv.c:2988
+#: src/gtkconv.c:2987
 msgid "/Conversation/_Warn..."
 msgstr "/交談/警告(_W)..."
 
-#: src/gtkconv.c:2990
+#: src/gtkconv.c:2989
 msgid "/Conversation/_Block..."
 msgstr "/交談/封鎖(_B)..."
 
-#: src/gtkconv.c:2992
+#: src/gtkconv.c:2991
 msgid "/Conversation/_Add..."
 msgstr "/交談/新增(_A)..."
 
-#: src/gtkconv.c:2994
+#: src/gtkconv.c:2993
 msgid "/Conversation/_Remove..."
 msgstr "/交談/移除(_R)..."
 
-#: src/gtkconv.c:2999
+#: src/gtkconv.c:2998
 msgid "/Conversation/_Close"
 msgstr "/交談/關閉(_C)"
 
 #. Options
-#: src/gtkconv.c:3003
+#: src/gtkconv.c:3002
 msgid "/_Options"
 msgstr "/選項(_O)"
 
-#: src/gtkconv.c:3004
+#: src/gtkconv.c:3003
 msgid "/Options/Enable _Logging"
 msgstr "/選項/開始記錄日誌(_L)"
 
-#: src/gtkconv.c:3005
+#: src/gtkconv.c:3004
 msgid "/Options/Enable _Sounds"
 msgstr "/選項/開啟音效(_S)"
 
-#: src/gtkconv.c:3006
+#: src/gtkconv.c:3005
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/選項/顯示格式工具列(_T)"
 
-#: src/gtkconv.c:3048
+#: src/gtkconv.c:3047
 msgid "/Conversation/View Log"
 msgstr "/交談/觀看歷史記錄"
 
-#: src/gtkconv.c:3053
+#: src/gtkconv.c:3052
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/交談/新增好友狀態捕捉..."
 
-#: src/gtkconv.c:3057
+#: src/gtkconv.c:3056
 msgid "/Conversation/Alias..."
 msgstr "/交談/別名..."
 
-#: src/gtkconv.c:3061
+#: src/gtkconv.c:3060
 msgid "/Conversation/Get Info..."
 msgstr "/交談/取得資訊..."
 
-#: src/gtkconv.c:3065
+#: src/gtkconv.c:3064
 msgid "/Conversation/Invite..."
 msgstr "/交談/邀請..."
 
-#: src/gtkconv.c:3071
+#: src/gtkconv.c:3070
 msgid "/Conversation/Insert URL..."
 msgstr "/交談/插入 URL..."
 
-#: src/gtkconv.c:3075
+#: src/gtkconv.c:3074
 msgid "/Conversation/Insert Image..."
 msgstr "/交談/插入影像..."
 
-#: src/gtkconv.c:3081
+#: src/gtkconv.c:3080
 msgid "/Conversation/Warn..."
 msgstr "/交談/警告..."
 
-#: src/gtkconv.c:3085
+#: src/gtkconv.c:3084
 msgid "/Conversation/Block..."
 msgstr "/交談/封鎖..."
 
-#: src/gtkconv.c:3089
+#: src/gtkconv.c:3088
 msgid "/Conversation/Add..."
 msgstr "/交談/新增..."
 
-#: src/gtkconv.c:3093
+#: src/gtkconv.c:3092
 msgid "/Conversation/Remove..."
 msgstr "/交談/移除..."
 
-#: src/gtkconv.c:3099
+#: src/gtkconv.c:3098
 msgid "/Options/Enable Logging"
 msgstr "/選項/開始記錄日誌"
 
-#: src/gtkconv.c:3102
+#: src/gtkconv.c:3101
 msgid "/Options/Enable Sounds"
 msgstr "/選項/開啟音效"
 
-#: src/gtkconv.c:3105
+#: src/gtkconv.c:3104
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/選項/顯示格式工具列"
 
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:3129 src/gtkconv.c:3131 src/gtkconv.c:3229 src/gtkconv.c:3231
-#: src/gtkconv.c:6063
+#: src/gtkconv.c:3128 src/gtkconv.c:3130 src/gtkconv.c:3228 src/gtkconv.c:3230
+#: src/gtkconv.c:6058
 msgid "Send"
 msgstr "送出"
 
-#: src/gtkconv.c:3152 src/gtkconv.c:4358
+#: src/gtkconv.c:3151 src/gtkconv.c:4353
 msgid "Add the user to your buddy list"
 msgstr "將使用者加入您的好友清單"
 
-#: src/gtkconv.c:3158 src/gtkconv.c:4343
+#: src/gtkconv.c:3157 src/gtkconv.c:4338
 msgid "Remove the user from your buddy list"
 msgstr "將使用者自您的好友清單中移除"
 
 #. Warn button
-#: src/gtkconv.c:3165
+#: src/gtkconv.c:3164
 msgid "Warn"
 msgstr "警告"
 
-#: src/gtkconv.c:3169
+#: src/gtkconv.c:3168
 msgid "Warn the user"
 msgstr "警告使用者"
 
-#: src/gtkconv.c:3176 src/gtkconv.c:3614
+#: src/gtkconv.c:3175 src/gtkconv.c:3613
 msgid "Get the user's information"
 msgstr "取得使用者資訊"
 
 #. Block button
-#: src/gtkconv.c:3179 src/gtkprivacy.c:605 src/gtkprivacy.c:616
+#: src/gtkconv.c:3178 src/gtkprivacy.c:605 src/gtkprivacy.c:616
 msgid "Block"
 msgstr "封鎖"
 
-#: src/gtkconv.c:3183
+#: src/gtkconv.c:3182
 msgid "Block the user"
 msgstr "封鎖使用者"
 
 #. Invite
-#: src/gtkconv.c:3241 src/gtkconv.c:6066
+#: src/gtkconv.c:3240 src/gtkconv.c:6061
 msgid "Invite"
 msgstr "邀請"
 
-#: src/gtkconv.c:3244
+#: src/gtkconv.c:3243
 msgid "Invite a user"
 msgstr "邀請使用者"
 
-#: src/gtkconv.c:3283
+#: src/gtkconv.c:3282
 msgid "Bold"
 msgstr "粗體"
 
-#: src/gtkconv.c:3294
+#: src/gtkconv.c:3293
 msgid "Italic"
 msgstr "斜體"
 
-#: src/gtkconv.c:3305
+#: src/gtkconv.c:3304
 msgid "Underline"
 msgstr "底線"
 
-#: src/gtkconv.c:3321
+#: src/gtkconv.c:3320
 msgid "Larger font size"
 msgstr "放大字體"
 
-#: src/gtkconv.c:3333
+#: src/gtkconv.c:3332
 msgid "Normal font size"
 msgstr "正常字體"
 
-#: src/gtkconv.c:3345
+#: src/gtkconv.c:3344
 msgid "Smaller font size"
 msgstr "縮小字體"
 
-#: src/gtkconv.c:3362
+#: src/gtkconv.c:3361
 msgid "Font Face"
 msgstr "字型"
 
-#: src/gtkconv.c:3374
+#: src/gtkconv.c:3373
 msgid "Foreground font color"
 msgstr "前景顏色"
 
-#: src/gtkconv.c:3386
+#: src/gtkconv.c:3385
 msgid "Background color"
 msgstr "背景顏色"
 
-#: src/gtkconv.c:3401
+#: src/gtkconv.c:3400
 msgid "Insert image"
 msgstr "插入影像"
 
-#: src/gtkconv.c:3412
+#: src/gtkconv.c:3411
 msgid "Insert link"
 msgstr "插入連結"
 
-#: src/gtkconv.c:3423
+#: src/gtkconv.c:3422
 msgid "Insert smiley"
 msgstr "插入表情"
 
-#: src/gtkconv.c:3483
+#: src/gtkconv.c:3482
 msgid "Topic:"
 msgstr "主題："
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3534
+#: src/gtkconv.c:3533
 msgid "0 people in room"
 msgstr "沒有人在這個房間"
 
-#: src/gtkconv.c:3591
+#: src/gtkconv.c:3590
 msgid "IM the user"
 msgstr "送出即時訊息給使用者"
 
-#: src/gtkconv.c:3603
+#: src/gtkconv.c:3602
 msgid "Ignore the user"
 msgstr "忽略使用者"
 
-#: src/gtkconv.c:4156
+#: src/gtkconv.c:4151
 msgid "Close conversation"
 msgstr "關閉交談"
 
-#: src/gtkconv.c:4756 src/gtkconv.c:4788 src/gtkconv.c:4909 src/gtkconv.c:4976
+#: src/gtkconv.c:4751 src/gtkconv.c:4783 src/gtkconv.c:4904 src/gtkconv.c:4971
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d 個人在這個房間"
 
-#: src/gtkconv.c:5310
+#: src/gtkconv.c:5305
 msgid "Animate"
 msgstr "動畫"
 
-#: src/gtkconv.c:5315
+#: src/gtkconv.c:5310
 msgid "Hide Icon"
 msgstr "隱藏圖示"
 
-#: src/gtkconv.c:5321
+#: src/gtkconv.c:5316
 msgid "Save Icon As..."
 msgstr "儲存圖示為..."
 
-#: src/gtkconv.c:5800 src/gtkconv.c:5803
+#: src/gtkconv.c:5795 src/gtkconv.c:5798
 msgid "<main>/Conversation/Close"
 msgstr "<mail>/交談/關閉"
 
@@ -2992,7 +3052,7 @@ msgid "_Save Image..."
 msgstr "儲存影像(_S)..."
 
 # NOTE 這個處理的手法係由芬蘭文現任譯者Arto Alakulju提供的
-#: src/gtklog.c:184
+#: src/gtklog.c:244
 msgid "Conversations with"
 msgstr "交談："
 
@@ -3933,15 +3993,15 @@ msgstr "您確定要拒絕 %s？"
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: src/gtkrequest.c:200 src/protocols/gg/gg.c:660 src/request.h:843
+#: src/gtkrequest.c:193 src/protocols/gg/gg.c:660 src/request.h:843
 msgid "Yes"
 msgstr "是"
 
-#: src/gtkrequest.c:201 src/protocols/gg/gg.c:660 src/request.h:843
+#: src/gtkrequest.c:194 src/protocols/gg/gg.c:660 src/request.h:843
 msgid "No"
 msgstr "否"
 
-#: src/gtkrequest.c:204
+#: src/gtkrequest.c:197
 msgid "Apply"
 msgstr "套用"
 
@@ -4003,51 +4063,51 @@ msgid ""
 "launched: %s"
 msgstr "無法播放音效，因為無法執行所設定的音效指令：%s"
 
-#: src/gtkutils.c:288
+#: src/gtkutils.c:291
 msgid "Can't save icon file to disk."
 msgstr "無法儲存圖示檔案磁碟上。"
 
-#: src/gtkutils.c:323
+#: src/gtkutils.c:326
 msgid "Gaim - Save Icon"
 msgstr "Gaim - 儲存圖示"
 
-#: src/log.c:79
+#: src/log.c:80
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">這個日誌模組沒有定義「讀取」函數</font></b>"
 
-#: src/log.c:370
+#: src/log.c:371
 msgid "XML"
 msgstr "XML"
 
-#: src/log.c:448
+#: src/log.c:449
 #, c-format
 msgid "<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"
 msgstr "<font color=\"#16569E\">(%s) <b>%s <自動回應>：</b></font>%s<br/>\n"
 
-#: src/log.c:450
+#: src/log.c:451
 #, c-format
 msgid "<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"
 msgstr "<font color=\"#A82F2F\">(%s) <b>%s <自動回應>：</b></font>%s<br/>\n"
 
-#: src/log.c:478 src/log.c:602
+#: src/log.c:479 src/log.c:604
 msgid "<font color=\"red\"><b>log->logger_data was NULL!</b></font>"
 msgstr "<font color=\"red\"><b>log->logger_data 之值為 NULL！</b></font>"
 
-#: src/log.c:488 src/log.c:612
+#: src/log.c:489 src/log.c:614
 #, c-format
 msgid "<font color=\"red\"><b>Could not read file: %s</b></font>"
 msgstr "<font color=\"red\"><b>無法讀取檔案：%s</b></font>"
 
-#: src/log.c:492
+#: src/log.c:493
 msgid "HTML"
 msgstr "HTML"
 
-#: src/log.c:572
+#: src/log.c:570
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <自動回應>：%s\n"
 
-#: src/log.c:616
+#: src/log.c:618
 msgid "Plain text"
 msgstr "純文字"
 
@@ -4064,7 +4124,7 @@ msgid "Login"
 msgstr "登入"
 
 #. full help text
-#: src/main.c:550
+#: src/main.c:551
 #, c-format
 msgid ""
 "Gaim %s\n"
@@ -4098,7 +4158,7 @@ msgstr ""
 "  -h, --help          顯示這個說明訊息並離開\n"
 
 #. short message
-#: src/main.c:565
+#: src/main.c:566
 #, c-format
 msgid "Gaim %s. Try `%s -h' for more information.\n"
 msgstr "Gaim %s。執行「%s -h」以獲得更進一步的資訊。\n"
