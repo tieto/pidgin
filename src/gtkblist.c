@@ -4544,7 +4544,7 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);
-	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "");
+	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "alphabetical");
 	gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
 	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
 	gaim_prefs_add_int("/gaim/gtk/blist/width", 0);
