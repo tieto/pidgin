@@ -86,7 +86,8 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	char label_text[2048];
 	const char *icon_name = NULL;
 
-	switch (type) {
+	switch (type)
+	{
 		case GAIM_NOTIFY_MSG_ERROR:
 			icon_name = GAIM_STOCK_DIALOG_ERROR;
 			break;
@@ -104,7 +105,8 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 			break;
 	}
 
-	if (icon_name != NULL) {
+	if (icon_name != NULL)
+	{
 		img = gtk_image_new_from_stock(icon_name, GTK_ICON_SIZE_DIALOG);
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	}
@@ -112,6 +114,7 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	dialog = gtk_dialog_new_with_buttons(title ? title : GAIM_ALERT_TITLE,
 					     NULL, 0, GTK_STOCK_OK,
 					     GTK_RESPONSE_ACCEPT, NULL);
+
 	g_signal_connect(G_OBJECT(dialog), "response",
 					 G_CALLBACK(message_response_cb), dialog);
 
@@ -209,19 +212,23 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
-	detail_text = g_strdup_printf(
-		ngettext("%s has %d new message.", "%s has %d new messages.", (int) count),
-		*tos, (int) count);
+	detail_text = g_strdup_printf(ngettext("%s has %d new message.",
+										   "%s has %d new messages.",
+										   (int)count),
+								  *tos, (int)count);
 
-	if (count == 1) {
+	if (count == 1)
+	{
 		char *from_text = NULL, *subject_text = NULL;
 
-		if (froms != NULL) {
+		if (froms != NULL)
+		{
 			from_text = g_strdup_printf(
 				_("<span weight=\"bold\">From:</span> %s\n"), *froms);
 		}
 
-		if (subjects != NULL) {
+		if (subjects != NULL)
+		{
 			subject_text = g_strdup_printf(
 				_("<span weight=\"bold\">Subject:</span> %s\n"), *subjects);
 		}
@@ -240,7 +247,8 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 		if (subject_text != NULL)
 			g_free(subject_text);
 	}
-	else {
+	else
+	{
 		label_text = g_strdup_printf(
 			_("<span weight=\"bold\" size=\"larger\">You have mail!</span>"
 			"\n\n%s"), detail_text);
@@ -293,6 +301,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	char *linked_text;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(title), title);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
 
@@ -306,10 +315,10 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 
 	/* Setup the descriptive label */
 	g_snprintf(label_text, sizeof(label_text),
-		   "<span weight=\"bold\" size=\"larger\">%s</span>%s%s",
-		   primary,
-		   (secondary ? "\n" : ""),
-		   (secondary ? secondary : ""));
+			   "<span weight=\"bold\" size=\"larger\">%s</span>%s%s",
+			   primary,
+			   (secondary ? "\n" : ""),
+			   (secondary ? secondary : ""));
 
 	label = gtk_label_new(NULL);
 
@@ -342,9 +351,9 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(button);
 
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
-					 G_CALLBACK(formatted_close_cb), window);
+							 G_CALLBACK(formatted_close_cb), window);
 	g_signal_connect(G_OBJECT(window), "key_press_event",
-			G_CALLBACK(formatted_input_cb), NULL);
+					 G_CALLBACK(formatted_input_cb), NULL);
 
 
 	/* Add the text to the gtkimhtml */
@@ -363,20 +372,29 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	options ^= GTK_IMHTML_NO_SCROLL;
 
 	gaim_gtk_find_images(text, &images);
-	if(gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")){
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links"))
+	{
 		linked_text = gaim_markup_linkify(text);
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), linked_text,
 										   options, images);
 		g_free(linked_text);
-	} else
-		gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), text, options, images);
+	}
+	else
+	{
+		gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), text,
+										   options, images);
+	}
 
-	if (images) {
+	if (images)
+	{
 		GSList *tmp;
 
-		for (tmp = images; tmp; tmp = tmp->next) {
+		for (tmp = images; tmp; tmp = tmp->next)
+		{
 			GdkPixbuf *pixbuf = tmp->data;
-			if(pixbuf)
+
+			if (pixbuf != NULL)
 				g_object_unref(pixbuf);
 		}
 
@@ -392,7 +410,8 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 static void
 gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 {
-	if (type == GAIM_NOTIFY_EMAIL || type == GAIM_NOTIFY_EMAILS) {
+	if (type == GAIM_NOTIFY_EMAIL || type == GAIM_NOTIFY_EMAILS)
+	{
 		GaimNotifyMailData *data = (GaimNotifyMailData *)ui_handle;
 
 		gtk_widget_destroy(data->dialog);
@@ -406,24 +425,31 @@ gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 
 #ifndef _WIN32
 static gint
-uri_command(const char *command, const gboolean sync)
+uri_command(const char *command, gboolean sync)
 {
 	GError *error = NULL;
 	gint ret = 0;
 
 	gaim_debug_misc("gtknotify", "Executing %s\n", command);
 
-	if (!gaim_program_is_valid(command)) {
-		gchar *tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."), 
-									 command);
+	if (!gaim_program_is_valid(command))
+	{
+		gchar *tmp;
+
+		tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."),
+							  command);
+
 		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 
 		g_free(tmp);
 
-	} else if (sync) {
+	}
+	else if (sync)
+	{
 		gint status;
- 
-		if (!g_spawn_command_line_sync(command, NULL, NULL, &status, &error)) {
+
+		if (!g_spawn_command_line_sync(command, NULL, NULL, &status, &error))
+		{
 			char *tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
 
@@ -431,12 +457,14 @@ uri_command(const char *command, const gboolean sync)
 
 			g_free(tmp);
 			g_error_free(error);
-		} else {
-			ret = status;
 		}
-
-	} else {
-		if (!g_spawn_command_line_async(command, &error)) {
+		else
+			ret = status;
+	}
+	else
+	{
+		if (!g_spawn_command_line_async(command, &error))
+		{
 			char *tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
 
@@ -449,7 +477,7 @@ uri_command(const char *command, const gboolean sync)
 
 	return ret;
 }
-#endif
+#endif /* _WIN32 */
 
 static void *
 gaim_gtk_notify_uri(const char *uri)
@@ -463,53 +491,87 @@ gaim_gtk_notify_uri(const char *uri)
 	web_browser = gaim_prefs_get_string("/gaim/gtk/browsers/browser");
 	place = gaim_prefs_get_int("/gaim/gtk/browsers/place");
 
-	if (!strcmp(web_browser, "netscape")) {
+	if (!strcmp(web_browser, "netscape"))
+	{
 		command = g_strdup_printf("netscape \"%s\"", uri);
-		if (place == GAIM_BROWSER_NEW_WINDOW)
-			remote_command = g_strdup_printf("netscape -remote \"openURL(\"%s\",new-window)\"", uri);
-		else if (place == GAIM_BROWSER_CURRENT)
-			remote_command = g_strdup_printf("netscape -remote \"openURL(\"%s\")\"", uri);
 
-	} else if (!strcmp(web_browser, "opera")) {
+		if (place == GAIM_BROWSER_NEW_WINDOW)
+		{
+			remote_command = g_strdup_printf("netscape -remote "
+											 "\"openURL(\"%s\",new-window)\"",
+											 uri);
+		}
+		else if (place == GAIM_BROWSER_CURRENT)
+		{
+			remote_command = g_strdup_printf("netscape -remote "
+											 "\"openURL(\"%s\")\"", uri);
+		}
+	}
+	else if (!strcmp(web_browser, "opera"))
+	{
 		if (place == GAIM_BROWSER_NEW_WINDOW)
 			command = g_strdup_printf("opera -newwindow \"%s\"", uri);
 		else if (place == GAIM_BROWSER_NEW_TAB)
 			command = g_strdup_printf("opera -newpage \"%s\"", uri);
-		else if (place == GAIM_BROWSER_CURRENT) {
-			remote_command = g_strdup_printf("opera -remote \"openURL(\"%s\")\"", uri);
+		else if (place == GAIM_BROWSER_CURRENT)
+		{
+			remote_command = g_strdup_printf("opera -remote "
+											 "\"openURL(\"%s\")\"", uri);
 			command = g_strdup_printf("opera \"%s\"", uri);
-		} else
+		}
+		else
 			command = g_strdup_printf("opera \"%s\"", uri);
 
-	} else if (!strcmp(web_browser, "kfmclient")) {
+	}
+	else if (!strcmp(web_browser, "kfmclient"))
+	{
 		command = g_strdup_printf("kfmclient openURL \"%s\"", uri);
-		/* does Konqueror have options to open in new tab and/or current window? */
-
-	} else if (!strcmp(web_browser, "galeon")) {
+		/*
+		 * Does Konqueror have options to open in new tab
+		 * and/or current window?
+		 */
+	}
+	else if (!strcmp(web_browser, "galeon"))
+	{
 		if (place == GAIM_BROWSER_NEW_WINDOW)
 			command = g_strdup_printf("galeon -w \"%s\"", uri);
 		else if (place == GAIM_BROWSER_NEW_TAB)
 			command = g_strdup_printf("galeon -n \"%s\"", uri);
 		else
 			command = g_strdup_printf("galeon \"%s\"", uri);
-
-	} else if (!strcmp(web_browser, "mozilla") || 
-			   !strcmp(web_browser, "mozilla-firebird") ||
-			   !strcmp(web_browser, "firefox")) {
+	}
+	else if (!strcmp(web_browser, "mozilla") ||
+			 !strcmp(web_browser, "mozilla-firebird") ||
+			 !strcmp(web_browser, "firefox"))
+	{
 		command = g_strdup_printf("%s \"%s\"", web_browser, uri);
-		if (place == GAIM_BROWSER_NEW_WINDOW)
-			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\",new-window)\"", web_browser, uri);
-		else if (place == GAIM_BROWSER_NEW_TAB)
-			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\",new-tab)\"", web_browser, uri);
-		else if (place == GAIM_BROWSER_CURRENT)
-			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\")\"", web_browser, uri);
 
-	} else if (!strcmp(web_browser, "custom")) {
+		if (place == GAIM_BROWSER_NEW_WINDOW)
+		{
+			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\","
+											 "new-window)\"",
+											 web_browser, uri);
+		}
+		else if (place == GAIM_BROWSER_NEW_TAB)
+		{
+			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\","
+											 "new-tab)\"",
+											 web_browser, uri);
+		}
+		else if (place == GAIM_BROWSER_CURRENT)
+		{
+			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\")\"",
+											 web_browser, uri);
+		}
+	}
+	else if (!strcmp(web_browser, "custom"))
+	{
 		const char *web_command;
 
 		web_command = gaim_prefs_get_string("/gaim/gtk/browsers/command");
 
-		if (web_command == NULL || *web_command == '\0') {
+		if (web_command == NULL || *web_command == '\0')
+		{
 			gaim_notify_error(NULL, NULL, _("Unable to open URL"),
 							  _("The 'Manual' browser command has been "
 								"chosen, but no command has been set."));
@@ -518,7 +580,8 @@ gaim_gtk_notify_uri(const char *uri)
 
 		if (strstr(web_command, "%s"))
 			command = gaim_strreplace(web_command, "%s", uri);
-		else {
+		else
+		{
 			/*
 			 * There is no "%s" in the browser command.  Assume the user
 			 * wanted the URL tacked on to the end of the command.
@@ -527,20 +590,23 @@ gaim_gtk_notify_uri(const char *uri)
 		}
 	}
 
-	if (remote_command != NULL) {
+	if (remote_command != NULL)
+	{
 		/* try the remote command first */
 		if (uri_command(remote_command, TRUE) != 0)
 			uri_command(command, FALSE);
+
 		g_free(remote_command);
-	} else {
-		uri_command(command, FALSE);
+
 	}
+	else
+		uri_command(command, FALSE);
 
 	g_free(command);
 
-#else
+#else /* !_WIN32 */
 	ShellExecute(NULL, NULL, uri, NULL, ".\\", 0);
-#endif
+#endif /* !_WIN32 */
 
 	return NULL;
 }
