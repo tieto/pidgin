@@ -331,6 +331,11 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	}
 
 	cnv = find_conversation(name);
+	if (cnv) {
+		cnv->gc = gc;
+		gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu), g_slist_index(connections, gc));
+		update_buttons_by_protocol(cnv);
+	}
 
 	if (general_options & OPT_GEN_SEND_LINKS) {
 		linkify_text(message);
@@ -344,9 +349,12 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			if (cnv == NULL) {
 				new_conv = 1;
 				cnv = new_conversation(name);
+				cnv->gc = gc;
+				gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
+							    g_slist_index(connections, gc));
+				update_buttons_by_protocol(cnv);
 			}
-		}
-		else {
+		} else {
 			return;
 		}
 		if (cnv != NULL) {
@@ -358,6 +366,10 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		if (cnv == NULL) {
 			new_conv = 1;
 			cnv = new_conversation(name);
+			cnv->gc = gc;
+			gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
+						    g_slist_index(connections, gc));
+			update_buttons_by_protocol(cnv);
 		}
 		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV)) {
 			play_sound(FIRST_RECEIVE);
@@ -369,9 +381,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	}
 
 
-	cnv->gc = gc;
-	gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu), g_slist_index(connections, gc));
-	update_buttons_by_protocol(cnv);
 
 
 	if (awaymessage != NULL) {
