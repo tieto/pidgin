@@ -410,7 +410,7 @@ XS (XS_GAIM_print)
 
 	title = SvPV(ST(0), junk);
 	message = SvPV(ST(1), junk);
-	do_error_dialog(message, title);
+	do_error_dialog(message, NULL, GAIM_INFO);
 	XSRETURN(0);
 }
 
@@ -876,7 +876,7 @@ extern void list_perl_scripts()
 		s = s->next;
 	}
 
-	do_error_dialog(buf, _("Perl Scripts"));
+	do_error_dialog(buf, NULL, GAIM_INFO);
 }
 
 #endif /* USE_PERL */

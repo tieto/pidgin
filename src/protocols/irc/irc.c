@@ -822,12 +822,12 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		irc_request_buddy_update(gc);
 		break;
 	case 401:
-		do_error_dialog(_("No such nick/channel"), _("IRC Error"));
+		do_error_dialog(_("There is no such nick or channel on this IRC channel."), NULL, GAIM_ERROR);
 		break;
 	case 402:
-		do_error_dialog(_("No such server"), _("IRC Error"));
+		do_error_dialog(_("There is no such IRC Server"), NULL, GAIM_ERROR);
 	case 431:
-		do_error_dialog(_("No nickname given"), _("IRC Error"));
+		do_error_dialog(_("No IRC nickname given"), NULL, GAIM_ERROR);
 		break;
 	}
 }
@@ -1068,9 +1068,9 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 				return FALSE;
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
 			c->gc = NULL;
-			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s: %s"),
-					word[3], *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5]);
-			do_error_dialog(outbuf, _("IRC Error"));
+			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s:"),
+				   word[3]);
+			do_error_dialog(outbuf, *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5], GAIM_INFO);
 		} else {
 			char *reason = *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5];
 			char *msg = g_strdup_printf(_("Kicked by %s: %s"), nick, reason);
@@ -1579,7 +1579,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
 			c->gc = NULL;
 			g_snprintf(buf, sizeof(buf), _("You have left %s"), chan);
-			do_error_dialog(buf, _("IRC Part"));
+			do_error_dialog(buf, NULL, GAIM_INFO);
 		}
 	} else if (!g_strcasecmp(pdibuf, "WHOIS")) {
 		g_snprintf(buf, sizeof(buf), "WHOIS %s\r\n", word_eol[2]);

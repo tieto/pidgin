@@ -1333,11 +1333,11 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 
 	if (err < 0) {
 		if (err == -E2BIG)
-			do_error_dialog(_("Unable to send message: too large"), _("Message Error"));
+			do_error_dialog(_("Unable to send message.  The message is too large"), NULL, GAIM_ERROR);
 		else if (err == -ENOTCONN)
 			debug_printf("Not yet connected\n");
 		else
-			do_error_dialog(_("Unable to send message: Unknown reason"), _("Message Error"));
+			do_error_dialog(_("Unable to send message"), NULL, GAIM_ERROR);
 	} else {
 		gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
 
@@ -3478,7 +3478,7 @@ static void do_save_icon(GtkObject *obj, struct conversation *c)
 			fwrite(data, 1, len, file);
 		fclose(file);
 	} else {
-		do_error_dialog("Can't open file for writing", "Error");
+		do_error_dialog("Can't save icon file to disk", strerror(errno), GAIM_ERROR);
 	}
 
 	gtk_widget_destroy(c->save_icon);

@@ -52,7 +52,7 @@ void serv_login(struct aim_user *user)
 
 	if (p && p->login) {
 		if (!strlen(user->password) && !(p->options & OPT_PROTO_NO_PASSWORD)) {
-			do_error_dialog(_("Please enter your password"), _("Signon Error"));
+			do_error_dialog(_("Please enter your password"), NULL, GAIM_ERROR);
 			return;
 		}
 
@@ -805,7 +805,7 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 	g_snprintf(buf2, sizeof(buf2), "%s has just been warned by %s.\nYour new warning level is %d%%",
 		   gc->username, ((name == NULL)? "an anonymous person" : name), lev);
 
-	do_error_dialog(buf2, _("Warned"));
+	do_error_dialog(buf2, NULL, GAIM_INFO);
 }
 
 void serv_got_typing(struct gaim_connection *gc, char *name, int timeout) {

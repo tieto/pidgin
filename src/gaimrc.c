@@ -1139,7 +1139,7 @@ void load_prefs()
 		fclose(f);
 	} else if (opt_rcfile_arg) {
 		g_snprintf(buf, sizeof(buf), _("Could not open config file %s."), opt_rcfile_arg);
-		do_error_dialog(buf, _("Preferences Error"));
+		do_error_dialog(buf, NULL, GAIM_ERROR);
 		set_defaults();
 	} else {
 		set_defaults();

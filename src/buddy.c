@@ -1626,7 +1626,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 					   (when & OPT_POUNCE_UNIDLE) ? "returned from being idle" : 
 					   "returned from being away");
 				
-				do_error_dialog(tmp, _("Buddy Pounce"));
+				do_error_dialog(tmp, NULL, GAIM_INFO);
 			}
 			if (b->options & OPT_POUNCE_SEND_IM) {
 				if (strlen(b->message) > 0) {

@@ -46,6 +46,10 @@ EXTRA_DIST =	ab.xpm				\
 		free_icon.xpm			\
 		gaim.png			\
 		gaim.xpm			\
+		gaim_error.png			\
+		gaim_info.png			\
+		gaim_question.png		\
+		gaim_warning.png		\
 		gg_suncloud.xpm			\
 		gg_sunred.xpm			\
 		gg_sunwhitered.xpm		\
@@ -126,6 +130,9 @@ EXTRA_DIST =	ab.xpm				\
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
 gaimbuttonpix_DATA = edit.png
+
+gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
+gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
 gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png

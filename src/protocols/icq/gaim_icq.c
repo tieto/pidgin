@@ -230,7 +230,7 @@ static void icq_mail_express(icq_Link *link, unsigned char hour, unsigned char m
 
 static void icq_req_not(icq_Link *link, unsigned long id, int type, int arg, void *data) {
 	if (type == ICQ_NOTIFY_FAILED)
-		do_error_dialog("Failure in sending packet", "ICQ error");
+		do_error_dialog(_("Gaim encountered an error communicating with the ICQ server."), NULL, GAIM_ERROR);
 	return;
 }
 

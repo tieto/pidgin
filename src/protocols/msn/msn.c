@@ -348,7 +348,7 @@ static char *handle_errcode(char *buf, gboolean show)
 	}
 
 	if (show)
-		do_error_dialog(msg, _("MSN Error"));
+		do_error_dialog(msg, NULL, GAIM_ERROR);
 
 	return msg;
 }
@@ -555,7 +555,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 		ms->msguser = g_strdup(user);
 		ms->msglen = length;
 	} else if (!g_strncasecmp(buf, "NAK", 3)) {
-		do_error_dialog(_("A message may not have been received."), _("MSN Error"));
+		do_error_dialog(_("An MSN message may not have been received."), NULL, GAIM_ERROR);
 	} else if (!g_strncasecmp(buf, "NLN", 3)) {
 	} else if (!g_strncasecmp(buf, "OUT", 3)) {
 		if (ms->chat)
@@ -812,7 +812,9 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GaimInputCondition co
 		close(source);
 		if (g_slist_find(connections, gc)) {
 			msn_kill_switch(ms);
-			do_error_dialog(_("MSN Error"), _("Gaim was unable to send a message"));
+			do_error_dialog(_("Gaim was unable to send an MSN message"),
+					_("Gaim encountered an error communicating with the "
+					  "MSN switchboard server.  Please try again later."), GAIM_ERROR);
 		}
 		return;
 	}
@@ -2113,7 +2115,7 @@ static void msn_act_id(gpointer data, char *entry)
 	alias = str_to_utf8(url_encode(entry));
 	
 	if (strlen(alias) >= BUDDY_ALIAS_MAXLEN) {
-		do_error_dialog(_("Friendly name too long."), _("MSN Error"));
+		do_error_dialog(_("New MSN friendly name too long."), NULL, GAIM_ERROR);
 		return;
 	}
 	
@@ -2282,7 +2284,11 @@ static void msn_add_permit(struct gaim_connection *gc, char *who)
 	char *dupl;
 
 	if (!strchr(who, '@')) {
-		do_error_dialog(_("Invalid name"), _("MSN Error"));
+		g_snprintf(buf, sizeof(buf), 
+			   _("An MSN screenname must be in the form \"user@server.com\".  "
+			     "Perhaps you meant %s@hotmail.com.  No changes were made to your "
+			     "allow list."), who);
+		do_error_dialog(_("Invalid MSN screenname"), buf, GAIM_ERROR);
 		gc->permit = g_slist_remove(gc->permit, who);
 		g_free(who);
 		return;
@@ -2335,7 +2341,11 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 	char *dupl;
 	
 	if (!strchr(who, '@')) {
-		do_error_dialog(_("Invalid name"), _("MSN Error"));
+		g_snprintf(buf, sizeof(buf), 
+			   _("An MSN screenname must be in the form \"user@server.com\".  "
+			     "Perhaps you meant %s@hotmail.com.  No changes were made to your "
+			     "block list."), who);
+		do_error_dialog(_("Invalid MSN screenname"), buf, GAIM_ERROR);
 		gc->deny = g_slist_remove(gc->deny, who);
 		g_free(who);
 		return;

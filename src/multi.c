@@ -945,15 +945,17 @@ static void acct_signin(GtkWidget *w, gpointer d)
 			signoff(u->gc);
 		} else {
 			if (u->protocol == PROTO_TOC)
-				do_error_dialog(_("You have attempted to login an IM account using the "
+				do_error_dialog(_("TOC not found."), 
+						_("You have attempted to login an IM account using the "
 						 "TOC protocol.  Because this protocol is inferior to "
 						 "OSCAR, it is now compiled as a plugin by default.  "
 						 "To login, edit this account to use OSCAR or load the "
-						  "TOC plugin."), _("Login Error"));
+						  "TOC plugin."), GAIM_ERROR);
 			else
-				do_error_dialog(_("You cannot log this account in; you do not have "
+				do_error_dialog(_("Protocol not found."), 
+						_("You cannot log this account in; you do not have "
 						  "the protocol it uses loaded, or the protocol does "
-						  "not have a login function."), _("Login Error"));
+						  "not have a login function."), GAIM_ERROR);
 		}
 		l = l->next;
 	}
@@ -1389,7 +1391,7 @@ static void hide_login_progress_common(struct gaim_connection *gc,
 		gtk_widget_destroy(k->dlg);
 	k = g_new0(struct kick_dlg, 1);
 	k->user = gc->user;
-	k->dlg = do_error_dialog(buf, title);
+	k->dlg = do_error_dialog(title, buf, GAIM_ERROR);
 	kicks = g_slist_append(kicks, k);
 	gtk_signal_connect(GTK_OBJECT(k->dlg), "destroy", GTK_SIGNAL_FUNC(set_kick_null), k);
 	if (meter) {

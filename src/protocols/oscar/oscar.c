@@ -392,7 +392,7 @@ static void oscar_callback(gpointer data, gint source,
 					c->fd = -1;
 					aim_conn_kill(odata->sess, &conn);
 					sprintf(buf, _("You have been disconnected from chat room %s."), c->name);
-					do_error_dialog(buf, _("Chat Error!"));
+					do_error_dialog(buf, NULL, GAIM_ERROR);
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
 					if (odata->cnpa > 0)
 						gaim_input_remove(odata->cnpa);
@@ -404,8 +404,7 @@ static void oscar_callback(gpointer data, gint source,
 						odata->create_rooms =
 							g_slist_remove(odata->create_rooms, cr);
 						g_free(cr);
-						do_error_dialog(_("Chat is currently unavailable"),
-								_("Gaim - Chat"));
+						do_error_dialog(_("Chat is currently unavailable"), NULL, GAIM_ERROR);
 					}
 					aim_conn_kill(odata->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_AUTH) {
@@ -765,8 +764,9 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 		in = '\0';
 	}
 	if (in != '\n') {
-		do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
-				" You may be disconnected shortly.", "Login Error");
+		do_error_dialog(_("Gaim was Unable to get a valid AIM login hash."),
+				_("You may be disconnected shortly.  You may want to use TOC until "
+				  "this is fixed.  Check " WEBSITE " for updates."), GAIM_WARNING);
 		gaim_input_remove(pos->inpa);
 		close(pos->fd);
 		g_free(pos);
@@ -789,8 +789,9 @@ static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond
 	char buf[BUF_LONG];
 
 	if (source < 0) {
-		do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
-				" You may be disconnected shortly.", "Login Error");
+		do_error_dialog(_("Gaim was Unable to get a valid AIM login hash."),
+				_("You may be disconnected shortly.  You may want to use TOC until "
+				  "this is fixed.  Check " WEBSITE " for updates."), GAIM_WARNING);
 		if (pos->modname)
 			g_free(pos->modname);
 		g_free(pos);
@@ -870,8 +871,9 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (pos->modname)
 			g_free(pos->modname);
 		g_free(pos);
-		do_error_dialog("Gaim was unable to get a valid hash for logging into AIM."
-				" You may be disconnected shortly.", "Login Error");
+		do_error_dialog(_("Gaim was Unable to get valid login hash."),
+				_("You may be disconnected shortly.  You may want to use TOC until "
+				  "this is fixed.  Check " WEBSITE " for updates."), GAIM_WARNING);
 	}
 	pos->fd = fd;
 
@@ -1502,14 +1504,14 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x0007: { /* Someone has denied you authorization */
 			char *dialog_msg;
 			dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, args->msg ? args->msg : _("No reason given."));
-			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Denied"));
+			do_error_dialog(_("ICQ authorization denied."), dialog_msg, GAIM_ERROR);
 			g_free(dialog_msg);
 		} break;
 
 		case 0x0008: { /* Someone has granted you authorization */
 			char *dialog_msg;
 			dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
-			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Granted"));
+			do_error_dialog("ICQ authorization accepted.", dialog_msg, GAIM_INFO);
 			g_free(dialog_msg);
 		} break;
 
@@ -1637,7 +1639,7 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   userinfo->sn);
 			break;
 	}
-	do_error_dialog(buf, _("Gaim - Error"));
+	do_error_dialog(buf, NULL, GAIM_ERROR);
 
 	return 1;
 }
@@ -1733,7 +1735,7 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	m = g_strdup_printf(_("SNAC threw error: %s\n"),
 			reason < msgerrreasonlen ? msgerrreason[reason] : "Unknown error");
-	do_error_dialog(m, _("Gaim - Oscar SNAC Error"));
+	do_error_dialog(m, NULL, GAIM_ERROR);
 	g_free(m);
 
 	return 1;
@@ -1750,9 +1752,8 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
-	sprintf(buf, _("Your message to %s did not get sent: %s"), destn,
-			(reason < msgerrreasonlen) ? msgerrreason[reason] : _("Reason unknown"));
-	do_error_dialog(buf, _("Gaim - Error"));
+	sprintf(buf, _("Your message to %s did not get sent: %s"), destn);
+	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
 
 	return 1;
 }
@@ -1768,9 +1769,8 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
-	sprintf(buf, _("User information for %s unavailable: %s"), destn,
-			(reason < msgerrreasonlen) ? msgerrreason[reason] : _("Reason unknown"));
-	do_error_dialog(buf, _("Gaim - Error"));
+	sprintf(buf, _("User information for %s unavailable: %s"), destn);
+	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
 
 	return 1;
 }
@@ -1986,8 +1986,7 @@ static int gaim_parse_motd(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("MOTD: %s (%d)\n", msg ? msg : "Unknown", id);
 	if (id < 4)
-		do_error_dialog(_("Your connection may be lost."),
-				_("AOL error"));
+		do_error_dialog(_("Your AIM connection may be lost."), NULL, GAIM_WARNING);
 
 	return 1;
 }
@@ -2222,8 +2221,9 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} else if (code == AIM_RATE_CODE_WARNING) {
 		aim_conn_setlatency(fr->conn, windowsize/4);
 	} else if (code == AIM_RATE_CODE_LIMIT) {
-		do_error_dialog(_("The last message was not sent because you are over the rate limit. "
-				  "Please wait 10 seconds and try again."), _("Gaim - Error"));
+		do_error_dialog(_("Rate limiting error."),
+				_("The last message was not sent because you are over the rate limit.  "
+				  "Please wait 10 seconds and try again."), GAIM_ERROR);
 		aim_conn_setlatency(fr->conn, windowsize/2);
 	} else if (code == AIM_RATE_CODE_CLEARLIMIT) {
 		aim_conn_setlatency(fr->conn, 0);
@@ -2454,14 +2454,14 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 		case 0x0007: { /* Someone has denied you authorization */
 			char *dialog_msg;
 			dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), msg->sender, msg->msg ? msg->msg : _("No reason given."));
-			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Denied"));
+			do_error_dialog(_("ICQ Authorization denied"), dialog_msg, GAIM_ERROR);
 			g_free(dialog_msg);
 		} break;
 
 		case 0x0008: { /* Someone has granted you authorization */
 			char *dialog_msg;
 			dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), msg->sender);
-			do_error_dialog(dialog_msg, _("Gaim - ICQ Authorization Granted"));
+			do_error_dialog(_("ICQ Authorization Granted"), dialog_msg, GAIM_INFO);
 			g_free(dialog_msg);
 		} break;
 
@@ -2586,7 +2586,7 @@ static int gaim_parse_searcherror(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	g_snprintf(buf, sizeof(buf), "No results found for email address %s", address);
-	do_error_dialog(buf, _("Error"));
+	do_error_dialog(buf, NULL, GAIM_ERROR);
 
 	return 1;
 }
@@ -2606,7 +2606,7 @@ static int gaim_account_confirm(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (status) {
 		g_snprintf(msg, sizeof(msg), "You should receive an email asking to confirm %s.",
 				gc->username);
-		do_error_dialog(msg, "Confirm");
+		do_error_dialog("Account confirmation requested.", msg, GAIM_INFO);
 	}
 
 	return 1;
@@ -2635,7 +2635,7 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* XXX Do something for other types too. */
 	if ((type == 0x0011) && str && length) {
 		g_snprintf(buf, sizeof(buf), "The email address for %s is %s", gc->username, val);
-		do_error_dialog(buf, "Email");
+		do_error_dialog(buf, NULL, GAIM_INFO);
 	}
 
 	return 1;
@@ -2788,14 +2788,16 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 	gchar *inforeal;
 
 	if (odata->rights.maxsiglen == 0)
-		do_error_dialog("oscar_set_info called before locate rights received", "Protocol Error");
+		do_error_dialog(_("Unable to set AIM profile."), 
+				_("You have probably requested to set your profile before the login procedure completed.  "
+				  "Your profile remains unset; try setting it again when you are fully connected."), GAIM_ERROR);
 
 	if (strlen(info) > odata->rights.maxsiglen) {
 		gchar *errstr;
 
-		errstr = g_strdup_printf("Maximum info length of %d bytes exceeded, truncating", odata->rights.maxsiglen);
-
-		do_error_dialog(errstr, "Info Too Long");
+		errstr = g_strdup_printf(_("The maximum profile length of %d bytes has been exceeded.  "
+					   "Gaim has truncated and set it."), odata->rights.maxsiglen);
+		do_error_dialog("Profile too long.", errstr, GAIM_WARNING);
 
 		g_free(errstr);
 	}
@@ -2813,8 +2815,10 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 {
 
 	if (od->rights.maxawaymsglen == 0)
-		do_error_dialog("oscar_set_away_aim called before locate rights received", "Protocol Error");
-
+		do_error_dialog(_("Unable to set AIM away message."), 
+				_("You have probably requested to set your away message before the login procedure completed.  "
+				  "You remain in a \"present\" state; try setting it again when you are fully connected."), GAIM_ERROR);
+	
 	if (gc->away)
 		g_free(gc->away);
 	gc->away = NULL;
@@ -2827,10 +2831,9 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 	if (strlen(message) > od->rights.maxawaymsglen) {
 		gchar *errstr;
 
-		errstr = g_strdup_printf("Maximum away message length of %d bytes exceeded, truncating", od->rights.maxawaymsglen);
-
-		do_error_dialog(errstr, "Away Message Too Long");
-
+		errstr = g_strdup_printf(_("The away message length of %d bytes has been exceeded.  "
+					   "Gaim has truncated it and set you away."), od->rights.maxawaymsglen);
+		do_error_dialog("Away message too long.", errstr, GAIM_WARNING);
 		g_free(errstr);
 	}
 
@@ -3207,7 +3210,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			char *dialog_msg = g_strdup_printf(_("The maximum number of buddies allowed in your buddy list is %d, and you have %d."
 							     "  Until you are below the limit, some buddies will not show up as online."), 
 							   odata->rights.maxbuddies, tmp);
-			do_error_dialog(dialog_msg, _("Gaim - Warning"));
+			do_error_dialog("Maximum buddy list length exceeded.", dialog_msg, GAIM_WARNING);
 			g_free(dialog_msg);
 		}
 		
@@ -3537,7 +3540,7 @@ static void oscar_direct_im(gpointer obj, struct ask_do_dir_im *data) {
 			g_free(dim);
 			debug_printf("Gave up on old direct IM, trying again\n");
 		} else {
-			do_error_dialog("DirectIM already open.", "Gaim");
+			do_error_dialog("DirectIM already open.", NULL, GAIM_ERROR);
 			return;
 		}
 	}
@@ -3553,7 +3556,7 @@ static void oscar_direct_im(gpointer obj, struct ask_do_dir_im *data) {
 		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINITIATE,
 					gaim_directim_initiate, 0);
 	} else {
-		do_error_dialog(_("Unable to open Direct IM"), _("Error"));
+		do_error_dialog(_("Unable to open Direct IM"), NULL, GAIM_ERROR);
 		g_free(dim);
 	}
 }
@@ -3593,7 +3596,7 @@ static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 				free(dialog_msg);
 			}
 		else
-			do_error_dialog("Could not find contact in local list, therefore unable to request status message.\n", "Gaim - Error");
+			do_error_dialog("Could not find contact in local list, therefore unable to request status message.\n", NULL, GAIM_ERROR);
 	} else
 		oscar_get_info(gc, who);
 }
@@ -3797,7 +3800,8 @@ static void oscar_format_screenname(struct gaim_connection *gc, char *nick) {
 			aim_admin_setnick(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH), nick);
 		}
 	} else {
-		do_error_dialog("The new formatting is invalid.", "Gaim");
+		do_error_dialog("The new formatting is invalid.",
+				"Screenname formatting can change only capitalization and whitespace.", GAIM_ERROR);
 	}
 }
 

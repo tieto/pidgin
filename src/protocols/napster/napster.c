@@ -286,7 +286,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 
 	if (command == 0x194) {
-		do_error_dialog(buf, "Gaim: Napster Error");
+		do_error_dialog(buf, NULL, GAIM_ERROR);
 		g_free(buf);
 		return;
 	}
@@ -294,8 +294,8 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	if (command == 0x12e) {
 		gchar buf2[NAP_BUF_LEN];
 
-		g_snprintf(buf2, NAP_BUF_LEN, "Unable to add '%s' to your hotlist", buf);
-		do_error_dialog(buf2, "Gaim: Napster Error");
+		g_snprintf(buf2, NAP_BUF_LEN, "Unable to add '%s' to your Napster hotlist", buf);
+		do_error_dialog(buf2, NULL, GAIM_ERROR);
 
 		g_free(buf);
 		return;
@@ -375,7 +375,7 @@ static void nap_login_callback(gpointer data, gint source, GaimInputCondition co
 	/* If we have some kind of error, get outta here */
 	if (command == 0x00)
 	{
-		do_error_dialog(buf, "Gaim: Napster Error");
+		do_error_dialog(buf, NULL, GAIM_ERROR);
 		gaim_input_remove(ndata->inpa);
 		ndata->inpa = 0;
 		close(source);

@@ -588,7 +588,8 @@ static void zephyr_login(struct aim_user *user)
 	ZSubscription_t sub;
 
 	if (zgc) {
-		do_error_dialog("Already logged in with Zephyr", "Zephyr");
+		do_error_dialog("Already logged in with Zephyr", "Because Zephyr uses your system username, you are unable to "
+                                "have multiple accounts on it when logged in as the same user.", GAIM_ERROR);
 		return;
 	}
 

@@ -103,13 +103,13 @@ struct gaim_plugin *load_plugin(char *filename)
 	plug->handle = g_module_open(filename, 0);
 	if (!plug->handle) {
 		error = (char *)g_module_error();
-		do_error_dialog(error, _("Plugin Error"));
+		do_error_dialog(_("Gaim was unable to load your plugin."), error, GAIM_ERROR);
 		g_free(plug);
 		return NULL;
 	}
 
 	if (!g_module_symbol(plug->handle, "gaim_plugin_init", (gpointer *)&gaim_plugin_init)) {
-		do_error_dialog(g_module_error(), _("Plugin Error"));
+		do_error_dialog(_("Gaim was unable to load your plugin."), g_module_error(), GAIM_ERROR);
 		g_module_close(plug->handle);
 		g_free(plug);
 		return NULL;
@@ -119,7 +119,7 @@ struct gaim_plugin *load_plugin(char *filename)
 	debug_printf("loaded plugin returned %s\n", retval ? retval : "NULL");
 	if (retval) {
 		plugin_remove_callbacks(plug->handle);
-		do_error_dialog(retval, _("Plugin Error"));
+		do_error_dialog("Gaim was unable to load your plugin.", retval, GAIM_ERROR);
 		g_module_close(plug->handle);
 		g_free(plug);
 		return NULL;

@@ -21,6 +21,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
+#include <errno.h>
 
 guint choice = 1;
 #define NOTIFY_FOCUS		0x00000001
@@ -257,7 +258,7 @@ void save_notify_prefs() {
 
 	snprintf(buf, 1000, "%s/.gaim/.notify", getenv("HOME"));
 	if (!(fp = fopen(buf, "w"))) {
-		do_error_dialog(_("Unable to write to config file"), _("Notify plugin"));
+		do_error_dialog(_("Unable to write notify plugin config file"), strerror(errno), GAIM_ERROR);
 		return;
 	}
 

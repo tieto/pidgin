@@ -67,11 +67,12 @@ void load_protocol(proto_init pi, int size)
 	struct prpl *p;
 	struct prpl *old;
 	if (size != sizeof(struct prpl)) {
-		do_error_dialog(_("You have attempted to load a protocol which was not compiled"
+		do_error_dialog(_("Incompatible protocol detected."),
+				_("You have attempted to load a protocol which was not compiled"
 				  " from the same version of the source as this application was."
 				  " Unfortunately, because it is not the same version I cannot"
 				  " safely tell you which one it was. Needless to say, it was not"
-				  " successfully loaded."), _("Protocol Error"));
+				  " successfully loaded."), GAIM_ERROR);
 		return;
 	}
 	
@@ -81,11 +82,12 @@ void load_protocol(proto_init pi, int size)
 		unload_protocol(old);
 
 	if (p->protocol == PROTO_ICQ) 
-		do_error_dialog(_("Gaim has loaded the ICQ plugin.  This plugin has been deprecated. "
+		do_error_dialog(_("Libicq.so detected."),
+				_("Gaim has loaded the ICQ plugin.  This plugin has been deprecated. "
 				  "As such, it was probably not compiled from the same version of the "
 				  "source as this application was, and cannot be guaranteed to work.  "
 				  "It is reccomended that you use the AIM/ICQ protocol to connect to ICQ"),
-				_("Protocol Warning"));
+				GAIM_WARNING);
 
 
 	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);
@@ -103,7 +105,7 @@ void unload_protocol(struct prpl *p)
 			g_snprintf(buf, sizeof buf, _("%s was using %s, which got removed."
 						      " %s is now offline."), g->username,
 				   p->name(), g->username);
-			do_error_dialog(buf, _("Disconnect"));
+			do_error_dialog(buf, NULL, GAIM_ERROR);
 			signoff(g);
 			c = connections;
 		} else
@@ -587,7 +589,7 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 		   msg ? msg : "",
 		   find_buddy(gc, ga->who) ? "" : _("\n\nDo you wish to add him or her to your buddy list?"));
 	if (find_buddy(gc, ga->who))
-		do_error_dialog(buf, "Added to List");
+		do_error_dialog(buf, NULL, GAIM_INFO);
 	else
 		do_ask_dialog(buf, ga, do_add, dont_add);
 }

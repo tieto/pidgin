@@ -551,55 +551,69 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 /*  The dialog for getting an error                                       */
 /*------------------------------------------------------------------------*/
 
-GtkWidget *do_error_dialog(char *message, char *title)
+GtkWidget *do_error_dialog(char *primary, char *secondary, int type)
 {
 	GtkWidget *d;
 	GtkWidget *label;
 	GtkWidget *close;
 	GtkWidget *img = NULL;
-	/*
-#if GTK_CHECK_VERSION(1,3,0)
-	char *filename;
+	GtkWidget *hbox;
+	char labeltext[1024 * 2];
+ 	char *filename = NULL;
+
+	/* These are the GTK stock dialog icons with our little Gaim logo on top.
+	 * Inspired by the GIMP. */
 	switch (type){
 	case GAIM_LOGO:
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "gaim.png", NULL);
-		break;
-	case GAIM_INFO:
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_info.png", NULL);
-		break;
-	case GAIM_WARNING:
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_warning.png", NULL);
-		break;
-	case GAIM_ERROR:
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_error.png", NULL);
-		break;
-	case GAIM_QUESTION:
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
-		break;
+		 filename = g_build_filename(DATADIR, "pixmaps", "gaim", "gaim.png", NULL);
+		 break;
+ 	case GAIM_INFO:
+	 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_info.png", NULL);
+		break; 
+	 case GAIM_WARNING:
+	 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_warning.png", NULL);
+	  	break;
+	 case GAIM_ERROR:
+	 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_error.png", NULL);
+	 	break;
+		/*	 case GAIM_QUESTION:
+			 filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+			 break;
+		*/
 	}
-	img = gtk_image_new_from_file(filename);
-#endif
-	*/
+	if (filename) {
+		img = gtk_image_new_from_file(filename);
+		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	}
+	d = gtk_dialog_new_with_buttons(NULL, NULL, GTK_DIALOG_MODAL, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT);
+	g_signal_connect(d, "response", G_CALLBACK(gtk_widget_destroy), NULL);
+	
+	gtk_container_set_border_width (GTK_CONTAINER(d), 6);
+	gtk_window_set_resizable(GTK_WINDOW(d), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(d), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(d)->vbox), 12);
+	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(d)->vbox), 6);
 
-	d = gtk_dialog_new();
-	gtk_window_set_policy(GTK_WINDOW(d), FALSE, FALSE, TRUE);
-	gtk_widget_realize(d);
-	label = gtk_label_new(message);
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(d)->vbox), hbox);
+	if (filename) {
+		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	}
+	gtk_widget_show(img);
+
+	g_snprintf(labeltext, sizeof(labeltext), "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s", primary, secondary ? secondary : "");
+	
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), labeltext);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->vbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-	close = picture_button(d, _("Close"), cancel_xpm);
-
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), close, FALSE, FALSE, 5);
-
-	gtk_container_set_border_width(GTK_CONTAINER(d), 5);
-	gtk_window_set_title(GTK_WINDOW(d), title);
-	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), d);
+	gtk_widget_show(hbox);
 	aol_icon(d->window);
 
 	gtk_widget_show(d);
-	gtk_widget_grab_focus(close);
 	return d;
 }
 
@@ -1543,7 +1557,7 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 	struct buddy_pounce *bp;
 	
 	if (strlen(gtk_entry_get_text(GTK_ENTRY(b->nameentry))) == 0) {
-		do_error_dialog(_("Please enter a buddy to pounce."), _("Buddy Pounce Error"));
+		do_error_dialog(_("Please enter a buddy to pounce."), NULL, GAIM_ERROR);
 		return;
 	}
 
@@ -2109,12 +2123,12 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 	new2 = gtk_entry_get_text(GTK_ENTRY(b->new2));
 
 	if (g_strcasecmp(new1, new2)) {
-		do_error_dialog(_("New Passwords Do Not Match"), _("Gaim - Change Password Error"));
+		do_error_dialog(_("New Passwords Do Not Match"), NULL, GAIM_ERROR);
 		return;
 	}
 
 	if ((strlen(orig) < 1) || (strlen(new1) < 1) || (strlen(new2) < 1)) {
-		do_error_dialog(_("Fill out all fields completely"), _("Gaim - Change Password Error"));
+		do_error_dialog(_("Fill out all fields completely"), NULL, GAIM_ERROR);
 		return;
 	}
 
@@ -3428,14 +3442,15 @@ int check_away_mess(struct create_away *ca, int type)
 {
 	if ((strlen(gtk_entry_get_text(GTK_ENTRY(ca->entry))) == 0) && (type == 1)) {
 		/* We shouldn't allow a blank title */
-		do_error_dialog(_("You cannot create an away message with a blank title"),
-				_("Gaim - Error"));
+		do_error_dialog(_("You cannot save an away message with a blank title"), 
+				_("Please give the message a title, or choose \"Make Away\" to use "
+				  "without saving."), GAIM_ERROR);
 		return 0;
 	}
 
 	if ((gtk_text_get_length(GTK_TEXT(ca->text)) == 0) && (type <= 1)) {
 		/* We shouldn't allow a blank message */
-		do_error_dialog(_("You cannot create an empty away message"), _("Gaim - Error"));
+		do_error_dialog(_("You cannot create an empty away message"), NULL, GAIM_ERROR);
 		return 0;
 	}
 
@@ -3915,15 +3930,15 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 
 	if ((fp_new = fopen(path, "w")) == NULL) {
 		g_snprintf(error, BUF_LONG,
-			   "Can't open file %s for writing - %s", path, strerror(errno));
-		do_error_dialog(error, "Error");
+			   _("Couldn't write to %s."), path);
+		do_error_dialog(error, strerror(errno), GAIM_ERROR);
 		return;
 	}
 
 	if ((fp_old = fopen(filename, "r")) == NULL) {
 		g_snprintf(error, BUF_LONG,
-			   "Can't open file %s for reading - %s", filename, strerror(errno));
-		do_error_dialog(error, "Error");
+			   _("Couldn't write to %s."), filename);
+		do_error_dialog(error, strerror(errno), GAIM_ERROR);
 		fclose(fp_new);
 		return;
 	}
@@ -3978,8 +3993,8 @@ static void do_clear_log_file(GtkWidget *w, gchar *name)
 	g_free(tmp);
 
 	if ((remove(filename)) == -1) {
-		g_snprintf(buf, 256, _("Unable to remove file %s - %s"), filename, strerror(errno));
-		do_error_dialog(buf, _("Error"));
+		g_snprintf(buf, 256, _("Couldn't remove file %s." ), filename);
+		do_error_dialog(buf, strerror(errno), GAIM_ERROR);
 	}
 
 	window = gtk_object_get_user_data(GTK_OBJECT(w));
@@ -4054,8 +4069,8 @@ static void log_show_convo(GtkWidget *w, struct view_log *view)
 		g_free(tmp);
 	}
 	if ((fp = fopen(filename, "r")) == NULL) {
-		g_snprintf(buf, BUF_LONG, "Unable to open log file %s", filename);
-		do_error_dialog(buf, "Error!");
+		g_snprintf(buf, BUF_LONG, "Couldn't open log file %s.", filename);
+		do_error_dialog(buf, strerror(errno), GAIM_ERROR);
 		return;
 	}
 
@@ -4185,8 +4200,8 @@ void show_log(char *nm)
 		g_snprintf(filename, 256, "%s/logs/%s.log", tmp, normalize(name));
 		g_free(tmp);
 		if ((fp = fopen(filename, "r")) == NULL) {
-			g_snprintf(buf, BUF_LONG, "Unable to open log file %s", filename);
-			do_error_dialog(buf, "Error!");
+			g_snprintf(buf, BUF_LONG, "Couldn't open log file %s", filename);
+			do_error_dialog(buf, strerror(errno), GAIM_ERROR);
 			return;
 		}
 
@@ -4603,8 +4618,7 @@ void aol_icon(GdkWindow *w)
 		gdk_window_set_group(w, mainwindow->window);
 #endif
 }
-
-#if GTK_CHECK_VERSION(1,3,0)
+ 
 GtkWidget *pixbuf_button(char *text, char *iconfile)
 {
 	GtkWidget *button, *image, *label, *bbox;
@@ -4628,7 +4642,7 @@ GtkWidget *pixbuf_button(char *text, char *iconfile)
 	gtk_widget_show_all(bbox);
 	return button;
 }
-#endif
+
 
 GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 {

@@ -159,7 +159,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	const char *password = gtk_entry_get_text(GTK_ENTRY(pass));
 
 	if (!strlen(username)) {
-		do_error_dialog(_("Please enter your logon"), _("Signon Error"));
+		do_error_dialog(_("Please enter your login."), NULL, GAIM_ERROR);
 		return;
 	}
 

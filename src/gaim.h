@@ -348,7 +348,7 @@ extern void set_blist_tab();
 
 /* Functions in dialogs.c */
 extern void g_show_info_text(struct gaim_connection *, char *, int, char *, ...);
-extern GtkWidget *do_error_dialog(char *, char *);
+extern GtkWidget *do_error_dialog(char *, char *, int type);
 extern void show_change_passwd(struct gaim_connection *);
 extern void show_set_dir(struct gaim_connection *);
 extern void show_find_email(struct gaim_connection *);
