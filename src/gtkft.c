@@ -113,7 +113,7 @@ get_size_string(size_t size)
 			size_index++;
 		}
 
-		return g_strdup_printf("%.3g %s", size_mag, size_str[size_index]);
+		return g_strdup_printf("%.2f %s", size_mag, size_str[size_index]);
 	}
 }
 
