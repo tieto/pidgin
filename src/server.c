@@ -1092,8 +1092,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	GSList *buddies;
 
 	account = gaim_connection_get_account(gc);
-
-	c = gaim_find_conversation(b->name);
+	b = gaim_find_buddy(account, name);
 
 	if (signon && (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->options &
 				   OPT_PROTO_CORRECT_TIME)) {
@@ -1114,7 +1113,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		return;
 	}
 
-	b = gaim_find_buddy(account, name);
+	c = gaim_find_conversation(b->name);
 
 	/* This code will 'align' the name from the TOC */
 	/* server with what's in our record.  We want to */
