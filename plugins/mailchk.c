@@ -90,9 +90,10 @@ static void mail_signon(struct gaim_connection *gc)
 
 static void mail_signoff(struct gaim_connection *gc)
 {
-	if (timer)
+	if (!blist && timer) {
 		gtk_timeout_remove(timer);
-	timer = 0;
+		timer = 0;
+	}
 }
 
 char *gaim_plugin_init(GModule *m)
