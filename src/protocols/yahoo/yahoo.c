@@ -304,7 +304,7 @@ static void yahoo_packet_dump(guchar *data, int len)
 			gaim_debug(GAIM_DEBUG_MISC, "yahoo", "");
 		}
 
-		if (isprint(data[i]))
+		if (g_ascii_isprint(data[i]))
 			gaim_debug(GAIM_DEBUG_MISC, NULL, "%c ", data[i]);
 		else
 			gaim_debug(GAIM_DEBUG_MISC, NULL, ". ");
@@ -364,7 +364,9 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 	int state = 0;
 	int gamestate = 0;
 	char *msg = NULL;
-	
+	int away = 0;
+	int idle = 0;
+
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 
@@ -380,7 +382,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 
 				/* this requests the list. i have a feeling that this is very evil
 				 *
-				 * scs.yahoo.com sends you the list before this packet without  it being 
+				 * scs.yahoo.com sends you the list before this packet without  it being
 				 * requested
 				 *
 				 * do_import(gc, NULL);
@@ -398,15 +400,23 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 10: /* state */
 			state = strtol(pair->value, NULL, 10);
+			if (state >= YAHOO_STATUS_BRB && state <= YAHOO_STATUS_STEPPEDOUT)
+				away = 1;
 			break;
 		case 19: /* custom message */
 			msg = pair->value;
 			break;
-		case 11: /* i didn't know what this was in the old protocol either */
+		case 11: /* this is the buddy's session id */
 			break;
 		case 17: /* in chat? */
 			break;
-		case 13: /* in pager? */
+		case 47: /* is custom status away or not? 2=idle?*/
+			away = strtol(pair->value, NULL, 10);
+			break;
+		case 137:
+			idle = time(NULL) - strtol(pair->value, NULL, 10);
+			break;
+		case 13: /* bitmask, bit 0 = pager, bit 1 = chat, bit 2 = game */
 			if (pkt->service == YAHOO_SERVICE_LOGOFF ||
 			    strtol(pair->value, NULL, 10) == 0) {
 				serv_got_update(gc, name, 0, 0, 0, 0, 0);
@@ -427,11 +437,17 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			if (state == YAHOO_STATUS_AVAILABLE)
 				serv_got_update(gc, name, 1, 0, 0, 0, gamestate);
 			else if (state == YAHOO_STATUS_IDLE)
-				serv_got_update(gc, name, 1, 0, 0, -1, (state << 2) | UC_UNAVAILABLE | gamestate);
-			else
-				serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE | gamestate);
+				serv_got_update(gc, name, 1, 0, 0, (idle?idle:time(NULL)), (state << 2) | UC_UNAVAILABLE | gamestate);
+			else {
+				if (away)
+					serv_got_update(gc, name, 1, 0, 0, idle, (state << 2) | UC_UNAVAILABLE | gamestate);
+				else
+					serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | gamestate);
+			}
+			away = 0;
+			idle = 0;
 			break;
-		case 60: /* no clue */
+		case 60: /* SMS, but comes after 13. but name hasnt been destroyed yet. */
 			 break;
 		case 16: /* Custom error message */
 			gaim_notify_error(gc, NULL, pair->value, NULL);
@@ -518,7 +534,7 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	if (!msg)
 		return;
-	
+
 	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))) {
 		if (*stat == '1')
 			serv_got_typing(gc, from, 0, GAIM_TYPING);
@@ -587,55 +603,83 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-
-static void yahoo_process_contact(GaimConnection *gc, struct yahoo_packet *pkt)
-{
-	struct yahoo_data *yd = gc->proto_data;
+static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 	char *id = NULL;
 	char *who = NULL;
 	char *msg = NULL;
-	char *name = NULL;
-	int state = YAHOO_STATUS_AVAILABLE;
-	int online = FALSE;
-
 	GSList *l = pkt->hash;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
-		if (pair->key == 1)
+
+		switch (pair->key) {
+		case 1:
 			id = pair->value;
-		else if (pair->key == 3)
+			break;
+		case 3:
 			who = pair->value;
-		else if (pair->key == 14)
+			break;
+		case 15: /* time, for when they add us and we're offline */
+			break;
+		case 14:
 			msg = pair->value;
-		else if (pair->key == 7) 
-			name = pair->value;
-		else if (pair->key == 10)
-			state = strtol(pair->value, NULL, 10);
-		else if (pair->key == 13)
-			online = strtol(pair->value, NULL, 10);
+			break;
+		}
 		l = l->next;
 	}
 
 	if (id)
 		show_got_added(gc, id, who, NULL, msg);
-	if (name) {
-		if (state == YAHOO_STATUS_AVAILABLE)
-			serv_got_update(gc, name, 1, 0, 0, 0, 0);
-		else if (state == YAHOO_STATUS_IDLE)
-			serv_got_update(gc, name, 1, 0, 0, -1, (state << 2));
-		else
-			serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE);
-		if (state == YAHOO_STATUS_CUSTOM) {
-			gpointer val = g_hash_table_lookup(yd->hash, name);
-			if (val) {
-				g_free(val);
-				g_hash_table_insert(yd->hash, name,
-						msg ? g_strdup(msg) : g_malloc0(1));
-			} else
-				g_hash_table_insert(yd->hash, g_strdup(name),
-						msg ? g_strdup(msg) : g_malloc0(1));
+}
+
+static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	char *who = NULL;
+	char *msg = NULL;
+	GSList *l = pkt->hash;
+	GString *buf = NULL;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		switch (pair->key) {
+		case 3:
+			who = pair->value;
+			break;
+		case 14:
+			msg = pair->value;
+			break;
 		}
+		l = l->next;
+	}
+
+	if (who) {
+		buf = g_string_sized_new(0);
+		if (!msg)
+			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list."), who);
+		else
+			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg);
+		gaim_notify_info(gc, NULL, buf->str, NULL);
+		g_string_free(buf, TRUE);
+	}
+}
+
+static void yahoo_process_contact(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+
+
+	switch (pkt->status) {
+	case 1:
+		yahoo_process_status(gc, pkt);
+		return;
+	case 3:
+		yahoo_buddy_added_us(gc, pkt);
+		break;
+	case 7:
+		yahoo_buddy_denied_our_add(gc, pkt);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -734,7 +778,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		/* So, Yahoo has stopped supporting its older clients in India, and undoubtedly
 		 * will soon do so in the rest of the world.
-		 * 
+		 *
 		 * The new clients use this authentication method.  I warn you in advance, it's
 		 * bizzare, convoluted, inordinately complicated.  It's also no more secure than
 		 * crypt() was.  The only purpose this scheme could serve is to prevent third
@@ -849,6 +893,8 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_ISBACK:
 	case YAHOO_SERVICE_GAMELOGON:
 	case YAHOO_SERVICE_GAMELOGOFF:
+	case YAHOO_SERVICE_CHATLOGON:
+	case YAHOO_SERVICE_CHATLOGOFF:
 		yahoo_process_status(gc, pkt);
 		break;
 	case YAHOO_SERVICE_NOTIFY:
@@ -1092,16 +1138,16 @@ static void yahoo_game(GaimConnection *gc, const char *name) {
 static char *yahoo_status_text(struct buddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
-	if (b->uc & UC_UNAVAILABLE) {
-		if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
+
+	if ((b->uc & UC_UNAVAILABLE) && ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
+		&& ((b->uc >> 2) != YAHOO_STATUS_IDLE))
 			return g_strdup(yahoo_get_status_string(b->uc >> 2));
-		else {
-			char *stripped = strip_html(g_hash_table_lookup(yd->hash, b->name));
-			if(stripped) {
-				char *ret = g_markup_escape_text(stripped, strlen(stripped));
-				g_free(stripped);
-				return ret;
-			}
+	else if ((b->uc >> 2) == YAHOO_STATUS_CUSTOM) {
+		char *stripped = strip_html(g_hash_table_lookup(yd->hash, b->name));
+		if(stripped) {
+			char *ret = g_markup_escape_text(stripped, strlen(stripped));
+			g_free(stripped);
+			return ret;
 		}
 	}
 	return NULL;
@@ -1110,7 +1156,7 @@ static char *yahoo_status_text(struct buddy *b)
 static char *yahoo_tooltip_text(struct buddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
-	if (b->uc & UC_UNAVAILABLE) {
+	if ((b->uc & UC_UNAVAILABLE) || ((b->uc >> 2) == YAHOO_STATUS_CUSTOM)) {
 		char *status;
 		char *ret;
 		if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
@@ -1298,8 +1344,10 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 	pkt = yahoo_packet_new(service, yd->current_status, 0);
 	g_snprintf(s, sizeof(s), "%d", yd->current_status);
 	yahoo_packet_hash(pkt, 10, s);
-	if (yd->current_status == YAHOO_STATUS_CUSTOM)
+	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
+		yahoo_packet_hash(pkt, 47, "1");
 		yahoo_packet_hash(pkt, 19, msg);
+	}
 
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
