@@ -839,7 +839,7 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(b->list), event->x, event->y, &path, &column, &x, &y);
 	
 	if (path == NULL)
-			return;
+			return FALSE;
 
 	gtk_tree_selection_select_path(GTK_TREE_SELECTION(gtk_tree_view_get_selection(GTK_TREE_VIEW(b->list))), path);
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(mod), &iter, path);
@@ -928,17 +928,15 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
  */
 static void add_chat_buddy_common(struct conversation *b, char *name, int pos)
 {
-        char tmp[BUF_LONG];
-		char ign[1];
-		GtkTreeIter iter;
-		GtkListStore *ls;
+	GtkTreeIter iter;
+	GtkListStore *ls;
 
 
-		ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(b->list)));
+	ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(b->list)));
 
-		gtk_list_store_append(ls, &iter);
-		gtk_list_store_set(ls, &iter, 0, ignored(b, name) ? "X" : " ", 1, name, -1);
-		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), 1, GTK_SORT_ASCENDING);
+	gtk_list_store_append(ls, &iter);
+	gtk_list_store_set(ls, &iter, 0, ignored(b, name) ? "X" : " ", 1, name, -1);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), 1, GTK_SORT_ASCENDING);
 }
 
 void add_chat_buddy(struct conversation *b, char *buddy, char *extra_msg)
@@ -979,7 +977,6 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 	int pos;
 	char tmp[BUF_LONG];
 	GtkTreeIter iter;
-	GtkTreePath *path;
 	GtkTreeModel *mod;
 	int f = 1;
 
@@ -1055,16 +1052,13 @@ void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 	GList *names = b->in_room;
 	char tmp[BUF_LONG];
 	GtkTreeIter iter;
-	GtkTreePath *path;
 	GtkTreeModel *mod;
 	int f = 1;
-	int i = 0;
 
 	plugin_event(event_chat_buddy_leave, b->gc, b->id, buddy);
 
 	while (names) {
 		if (!g_strcasecmp((char *)names->data, buddy)) {
-			char *tmp = names->data;
 			b->in_room = g_list_remove(b->in_room, names->data);
 
 			mod = gtk_tree_view_get_model(GTK_TREE_VIEW(b->list));	
@@ -1116,7 +1110,6 @@ void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 void im_callback(GtkWidget *w, struct conversation *b)
 {
 	gchar *name;
-	GList *i;
 	struct conversation *c;
 	GtkTreeIter iter;
 	GtkTreeModel *mod = gtk_tree_view_get_model(GTK_TREE_VIEW(b->list));
@@ -1197,8 +1190,6 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *list;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
-	GtkTreeSelection *sel;
-	GtkTreeIter *iter;
 
 	char buf[BUF_LONG];
 
