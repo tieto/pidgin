@@ -49,7 +49,6 @@ static void maildes()
 static gboolean check_timeout(gpointer data)
 {
 	gint count = check_mail();
-	char buf[256];
 
 	if (count == -1)
 		return FALSE;
