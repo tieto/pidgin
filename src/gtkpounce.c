@@ -29,10 +29,10 @@
 #include "sound.h"
 #include "notify.h"
 
-struct gaim_gtkpounce_dialog
+typedef struct
 {
 	/* Pounce data */
-	struct gaim_pounce  *pounce;
+	GaimPounce  *pounce;
 	GaimAccount *account;
 
 	/* The window */
@@ -66,14 +66,14 @@ struct gaim_gtkpounce_dialog
 	GtkWidget *play_sound_test;
 	
 	GtkWidget *save_pounce;
-};
+
+} GaimGtkPounceDialog;
 
 /**************************************************************************
  * Callbacks
  **************************************************************************/
 static gint
-delete_win_cb(GtkWidget *w, GdkEventAny *e,
-			  struct gaim_gtkpounce_dialog *dialog)
+delete_win_cb(GtkWidget *w, GdkEventAny *e, GaimGtkPounceDialog *dialog)
 {
 	gtk_widget_destroy(dialog->window);
 	g_free(dialog);
@@ -82,7 +82,7 @@ delete_win_cb(GtkWidget *w, GdkEventAny *e,
 }
 
 static void
-delete_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
+delete_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 {
 	gaim_pounce_destroy(dialog->pounce);
 
@@ -90,7 +90,7 @@ delete_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 }
 
 static void
-cancel_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
+cancel_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 {
 	delete_win_cb(NULL, NULL, dialog);
 }
@@ -98,64 +98,70 @@ cancel_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 static void
 pounce_update_entryfields(GtkWidget *w, gpointer data)
 {
-	const char *selected_filename;
+	const char *filename;
 	GHashTable *args;
-		
-	args = (GHashTable *) data;
-	
-	selected_filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(g_hash_table_lookup(args, "pounce_file_selector")));
-	if (selected_filename != NULL)
-		gtk_entry_set_text(GTK_ENTRY(g_hash_table_lookup(args, "entry")),selected_filename);
+
+	args = (GHashTable *)data;
+
+	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(
+				g_hash_table_lookup(args, "filesel")));
+
+	if (filename != NULL)
+		gtk_entry_set_text(GTK_ENTRY(g_hash_table_lookup(args, "entry")),
+						   filename);
 
 	g_free(args);
 }
 
 static void
-pounce_file_selector(GtkWidget *w, gpointer data)
+filesel(GtkWidget *w, gpointer data)
 {
-	GtkWidget *pounce_file_selector;
+	GtkWidget *filesel;
 	GtkWidget *entry;
 	GHashTable *args;
 	
-	entry = (GtkWidget *) data;	
+	entry = (GtkWidget *)data;	
 
-	pounce_file_selector = gtk_file_selection_new(_("Select a file"));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(pounce_file_selector), gtk_entry_get_text(GTK_ENTRY(entry)));
-	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(pounce_file_selector));
-	gtk_file_selection_set_select_multiple(GTK_FILE_SELECTION(pounce_file_selector), FALSE);
+	filesel = gtk_file_selection_new(_("Select a file"));
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(filesel),
+									gtk_entry_get_text(GTK_ENTRY(entry)));
+	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(filesel));
+	gtk_file_selection_set_select_multiple(GTK_FILE_SELECTION(filesel), FALSE);
 
 	args = g_hash_table_new(g_str_hash,g_str_equal);
-	g_hash_table_insert(args, "pounce_file_selector", (gpointer) pounce_file_selector);
-	g_hash_table_insert(args, "entry", (gpointer) entry);
-	
-	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(pounce_file_selector)->ok_button),
-					 "clicked", G_CALLBACK(pounce_update_entryfields), (gpointer) args);
+	g_hash_table_insert(args, "filesel", filesel);
+	g_hash_table_insert(args, "entry",   entry);
 
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(pounce_file_selector)->ok_button),
-							 "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer) pounce_file_selector);
-	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(pounce_file_selector)->cancel_button),
-							 "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer) pounce_file_selector);
+	g_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
+					 "clicked",
+					 G_CALLBACK(pounce_update_entryfields), args);
 
-	gtk_widget_show(pounce_file_selector);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button),
+							 "clicked",
+							 G_CALLBACK(gtk_widget_destroy), filesel);
+
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(filesel)->cancel_button),
+							 "clicked",
+							 G_CALLBACK(gtk_widget_destroy), filesel);
+
+	gtk_widget_show(filesel);
 }
 
 static void
-pounce_test_sound(GtkWidget *w, gpointer data)
+pounce_test_sound(GtkWidget *w, GtkWidget *entry)
 {
 	const char *filename;
-	GtkWidget *entry;
 
-	entry = (GtkWidget *) data;
-	
 	filename = gtk_entry_get_text(GTK_ENTRY(entry));
-	if ((filename != NULL) && (strlen(filename) > 0))
+
+	if (filename != NULL && *filename != '\0')
 		gaim_sound_play_file((char *) filename);
 	else
 		gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
 }
 
 static void
-save_pounce_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
+save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 {
 	const char *name;
 	const char *message, *command, *sound;
@@ -233,7 +239,7 @@ save_pounce_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 	}
 	else
 	{
-		struct gaim_gtkpounce_data *pounce_data;
+		GaimGtkPounceData *pounce_data;
 
 		gaim_pounce_set_events(dialog->pounce, events);
 		gaim_pounce_set_pouncer(dialog->pounce, dialog->account);
@@ -266,13 +272,13 @@ save_pounce_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 }
 
 static void
-pounce_choose_cb(GtkWidget *item, struct gaim_gtkpounce_dialog *dialog)
+pounce_choose_cb(GtkWidget *item, GaimGtkPounceDialog *dialog)
 {
 	dialog->account = g_object_get_data(G_OBJECT(item), "user_data");
 }
 
 static GtkWidget *
-pounce_user_menu(struct gaim_gtkpounce_dialog *dialog)
+pounce_user_menu(GaimGtkPounceDialog *dialog)
 {
 	GaimAccount *account;
 	GaimPlugin *prpl;
@@ -320,14 +326,14 @@ pounce_user_menu(struct gaim_gtkpounce_dialog *dialog)
 }
 
 static void
-pounce_cb(struct gaim_pounce *pounce, GaimPounceEvent events, void *data)
+pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 {
 	GaimConversation *conv;
 	GaimAccount *account;
-	struct gaim_gtkpounce_data *pounce_data;
+	GaimGtkPounceData *pounce_data;
 	const char *pouncee;
 
-	pounce_data = (struct gaim_gtkpounce_data *)data;
+	pounce_data = (GaimGtkPounceData *)data;
 	pouncee     = gaim_pounce_get_pouncee(pounce);
 	account     = gaim_pounce_get_pouncer(pounce);
 
@@ -404,11 +410,11 @@ pounce_cb(struct gaim_pounce *pounce, GaimPounceEvent events, void *data)
 static void
 free_pounce(void *data)
 {
-	struct gaim_gtkpounce_data *pounce_data;
+	GaimGtkPounceData *pounce_data;
 	struct gaim_buddy_list *blist;
 	struct gaim_gtk_buddy_list *gtkblist;
 
-	pounce_data = (struct gaim_gtkpounce_data *)data;
+	pounce_data = (GaimGtkPounceData *)data;
 
 	if (pounce_data->message != NULL) g_free(pounce_data->message);
 	if (pounce_data->command != NULL) g_free(pounce_data->command);
@@ -427,15 +433,15 @@ free_pounce(void *data)
 	}
 }
 
-struct gaim_pounce *
+GaimPounce *
 gaim_gtkpounce_new(GaimAccount *pouncer, const char *pouncee,
 				   GaimPounceEvent events, GaimGtkPounceAction actions,
 				   const char *message, const char *command,
 				   const char *sound, gboolean save)
 {
-	struct gaim_gtkpounce_data *data;
+	GaimGtkPounceData *data;
 
-	data = g_new0(struct gaim_gtkpounce_data, 1);
+	data = g_new0(GaimGtkPounceData, 1);
 
 	data->actions = actions;
 
@@ -451,9 +457,9 @@ gaim_gtkpounce_new(GaimAccount *pouncer, const char *pouncee,
 
 void
 gaim_gtkpounce_dialog_show(struct buddy *buddy,
-						   struct gaim_pounce *cur_pounce)
+						   GaimPounce *cur_pounce)
 {
-	struct gaim_gtkpounce_dialog *dialog;
+	GaimGtkPounceDialog *dialog;
 	GtkWidget *window;
 	GtkWidget *label;
 	GtkWidget *bbox;
@@ -466,8 +472,8 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	GtkSizeGroup *sg;
 	GPtrArray *sound_widgets;
 	GPtrArray *exec_widgets;
-	
-	dialog = g_new0(struct gaim_gtkpounce_dialog, 1);
+
+	dialog = g_new0(GaimGtkPounceDialog, 1);
 
 	if (cur_pounce != NULL) {
 		dialog->pounce  = cur_pounce;
@@ -675,7 +681,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 					 G_CALLBACK(gtk_toggle_sensitive_array),
 					 exec_widgets);
 	g_signal_connect(G_OBJECT(dialog->exec_cmd_browse), "clicked",
-					 G_CALLBACK(pounce_file_selector),
+					 G_CALLBACK(filesel),
 					 dialog->exec_cmd_entry);
 
 	sound_widgets = g_ptr_array_new();
@@ -687,7 +693,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 					 G_CALLBACK(gtk_toggle_sensitive_array),
 					 sound_widgets);
 	g_signal_connect(G_OBJECT(dialog->play_sound_browse), "clicked",
-					 G_CALLBACK(pounce_file_selector),
+					 G_CALLBACK(filesel),
 					 dialog->play_sound_entry);
 	g_signal_connect(G_OBJECT(dialog->play_sound_test), "clicked",
 					 G_CALLBACK(pounce_test_sound),
@@ -746,7 +752,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	if (cur_pounce != NULL) {
 		GaimPounceEvent events;
 		GaimGtkPounceAction actions;
-		struct gaim_gtkpounce_data *pounce_data;
+		GaimGtkPounceData *pounce_data;
 
 		pounce_data = GAIM_GTKPOUNCE(cur_pounce);
 		events      = gaim_pounce_get_events(cur_pounce);
@@ -810,13 +816,13 @@ new_pounce_cb(GtkWidget *w, struct buddy *b)
 }
 
 static void
-delete_pounce_cb(GtkWidget *w, struct gaim_pounce *pounce)
+delete_pounce_cb(GtkWidget *w, GaimPounce *pounce)
 {
 	gaim_pounce_destroy(pounce);
 }
 
 static void
-edit_pounce_cb(GtkWidget *w, struct gaim_pounce *pounce)
+edit_pounce_cb(GtkWidget *w, GaimPounce *pounce)
 {
 	struct buddy *buddy;
 
@@ -832,12 +838,12 @@ fill_menu(GtkWidget *menu, GCallback cb)
 	GtkWidget *image;
 	GtkWidget *item;
 	GdkPixbuf *pixbuf, *scale;
-	struct gaim_pounce *pounce;
+	GaimPounce *pounce;
 	const char *buddy;
 	GList *bp;
 
 	for (bp = gaim_get_pounces(); bp != NULL; bp = bp->next) {
-		pounce = (struct gaim_pounce *)bp->data;
+		pounce = (GaimPounce *)bp->data;
 		buddy = gaim_pounce_get_pouncee(pounce);
 
 		/* Build the menu item */

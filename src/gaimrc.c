@@ -1619,7 +1619,7 @@ load_pounces()
 {
 	GList *l;
 	struct pounce_placeholder *ph;
-	struct gaim_pounce *pounce;
+	GaimPounce *pounce;
 	GaimAccount *account;
 
 	for (l = buddy_pounces; l != NULL; l = l->next) {

@@ -25,17 +25,19 @@
 
 static GList *pounces = NULL;
 
-struct gaim_pounce *
+GaimPounce *
 gaim_pounce_new(GaimAccount *pouncer, const char *pouncee,
-				GaimPounceEvent event, gaim_pounce_cb cb,
+				GaimPounceEvent event, GaimPounceCb cb,
 				void *data, void (*free)(void *))
 {
-	struct gaim_pounce *pounce;
+	GaimPounce *pounce;
 
-	if (pouncer == NULL || pouncee == NULL || event == 0 || cb == NULL)
-		return NULL;
+	g_return_val_if_fail(pouncer != NULL, NULL);
+	g_return_val_if_fail(pouncee != NULL, NULL);
+	g_return_val_if_fail(event   != 0,    NULL);
+	g_return_val_if_fail(cb      != NULL, NULL);
 
-	pounce = g_new0(struct gaim_pounce, 1);
+	pounce = g_new0(GaimPounce, 1);
 
 	pounce->pouncer  = pouncer;
 	pounce->pouncee  = g_strdup(pouncee);
@@ -50,10 +52,9 @@ gaim_pounce_new(GaimAccount *pouncer, const char *pouncee,
 }
 
 void
-gaim_pounce_destroy(struct gaim_pounce *pounce)
+gaim_pounce_destroy(GaimPounce *pounce)
 {
-	if (pounce == NULL)
-		return;
+	g_return_if_fail(pounce != NULL);
 
 	if (pounce->pouncee != NULL)
 		g_free(pounce->pouncee);
@@ -67,29 +68,28 @@ gaim_pounce_destroy(struct gaim_pounce *pounce)
 }
 
 void
-gaim_pounce_set_events(struct gaim_pounce *pounce, GaimPounceEvent events)
+gaim_pounce_set_events(GaimPounce *pounce, GaimPounceEvent events)
 {
-	if (pounce == NULL || events == GAIM_POUNCE_NONE)
-		return;
+	g_return_if_fail(pounce != NULL);
+	g_return_if_fail(pounce != GAIM_POUNCE_NONE);
 
 	pounce->events = events;
 }
 
 void
-gaim_pounce_set_pouncer(struct gaim_pounce *pounce,
-						GaimAccount *pouncer)
+gaim_pounce_set_pouncer(GaimPounce *pounce, GaimAccount *pouncer)
 {
-	if (pounce == NULL || pouncer == NULL)
-		return;
+	g_return_if_fail(pounce  != NULL);
+	g_return_if_fail(pouncer != NULL);
 
 	pounce->pouncer = pouncer;
 }
 
 void
-gaim_pounce_set_pouncee(struct gaim_pounce *pounce, const char *pouncee)
+gaim_pounce_set_pouncee(GaimPounce *pounce, const char *pouncee)
 {
-	if (pounce == NULL || pouncee == NULL)
-		return;
+	g_return_if_fail(pounce  != NULL);
+	g_return_if_fail(pouncee != NULL);
 
 	if (pounce->pouncee != NULL)
 		g_free(pounce->pouncee);
@@ -98,62 +98,58 @@ gaim_pounce_set_pouncee(struct gaim_pounce *pounce, const char *pouncee)
 }
 
 void
-gaim_pounce_set_data(struct gaim_pounce *pounce, void *data)
+gaim_pounce_set_data(GaimPounce *pounce, void *data)
 {
-	if (pounce == NULL)
-		return;
+	g_return_if_fail(pounce != NULL);
 
 	pounce->data = data;
 }
 
 GaimPounceEvent
-gaim_pounce_get_events(const struct gaim_pounce *pounce)
+gaim_pounce_get_events(const GaimPounce *pounce)
 {
-	if (pounce == NULL)
-		return GAIM_POUNCE_NONE;
+	g_return_val_if_fail(pounce != NULL, GAIM_POUNCE_NONE);
 
 	return pounce->events;
 }
 
 GaimAccount *
-gaim_pounce_get_pouncer(const struct gaim_pounce *pounce)
+gaim_pounce_get_pouncer(const GaimPounce *pounce)
 {
-	if (pounce == NULL)
-		return NULL;
+	g_return_val_if_fail(pounce != NULL, NULL);
 
 	return pounce->pouncer;
 }
 
 const char *
-gaim_pounce_get_pouncee(const struct gaim_pounce *pounce)
+gaim_pounce_get_pouncee(const GaimPounce *pounce)
 {
-	if (pounce == NULL)
-		return NULL;
+	g_return_val_if_fail(pounce != NULL, NULL);
 
 	return pounce->pouncee;
 }
 
 void *
-gaim_pounce_get_data(const struct gaim_pounce *pounce)
+gaim_pounce_get_data(const GaimPounce *pounce)
 {
-	if (pounce == NULL)
-		return NULL;
+	g_return_val_if_fail(pounce != NULL, NULL);
 
 	return pounce->data;
 }
 
 void
-gaim_pounce_execute(const GaimAccount *pouncer,
-					const char *pouncee, GaimPounceEvent events)
+gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
+					GaimPounceEvent events)
 {
-	struct gaim_pounce *pounce;
+	GaimPounce *pounce;
 	GList *l;
 
-	if (events == GAIM_POUNCE_NONE || pouncer == NULL || pouncee == NULL)
-		return;
+	g_return_if_fail(pouncer != NULL);
+	g_return_if_fail(pouncee != NULL);
+	g_return_if_fail(events  != GAIM_POUNCE_NONE);
 
 	for (l = gaim_get_pounces(); l != NULL; l = l->next) {
-		pounce = (struct gaim_pounce *)l->data;
+		pounce = (GaimPounce *)l->data;
 
 		if ((gaim_pounce_get_events(pounce) & events) &&
 			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
@@ -165,18 +161,19 @@ gaim_pounce_execute(const GaimAccount *pouncer,
 	}
 }
 
-struct gaim_pounce *
-gaim_find_pounce(const GaimAccount *pouncer,
-				 const char *pouncee, GaimPounceEvent events)
+GaimPounce *
+gaim_find_pounce(const GaimAccount *pouncer, const char *pouncee,
+				 GaimPounceEvent events)
 {
-	struct gaim_pounce *pounce;
+	GaimPounce *pounce;
 	GList *l;
 
-	if (events == GAIM_POUNCE_NONE || pouncer == NULL || pouncee == NULL)
-		return NULL;
+	g_return_val_if_fail(pouncer != NULL, NULL);
+	g_return_val_if_fail(pouncee != NULL, NULL);
+	g_return_val_if_fail(events  != GAIM_POUNCE_NONE, NULL);
 
 	for (l = gaim_get_pounces(); l != NULL; l = l->next) {
-		pounce = (struct gaim_pounce *)l->data;
+		pounce = (GaimPounce *)l->data;
 
 		if ((gaim_pounce_get_events(pounce) & events) &&
 			(gaim_pounce_get_pouncer(pounce) == pouncer) &&

@@ -23,6 +23,8 @@
 #ifndef _GAIM_POUNCE_H_
 #define _GAIM_POUNCE_H_
 
+typedef struct _GaimPounce GaimPounce;
+
 /**
  * Events that trigger buddy pounces.
  */
@@ -40,10 +42,8 @@ typedef enum
 
 } GaimPounceEvent;
 
-struct gaim_pounce;
-
 /** A pounce callback. */
-typedef void (*gaim_pounce_cb)(struct gaim_pounce *, GaimPounceEvent, void *);
+typedef void (*GaimPounceCb)(GaimPounce *, GaimPounceEvent, void *);
 
 /**
  * A buddy pounce structure.
@@ -53,14 +53,14 @@ typedef void (*gaim_pounce_cb)(struct gaim_pounce *, GaimPounceEvent, void *);
  * signs on or returns from away. Such responses are handled in the
  * UI. The events themselves are done in the core.
  */
-struct gaim_pounce
+struct _GaimPounce
 {
 	GaimPounceEvent events;       /**< The event(s) to pounce on. */
 	GaimAccount *pouncer; /**< The user who is pouncing.  */
 
 	char *pouncee;                /**< The buddy to pounce on.    */
 
-	gaim_pounce_cb callback;      /**< The callback function to call when the
+	GaimPounceCb callback;      /**< The callback function to call when the
 	                                   event is triggered. */
 	void (*free)(void *data);     /**< The data free function. */
 	void *data;                   /**< Pounce-specific data. */
@@ -78,18 +78,16 @@ struct gaim_pounce
  *
  * @return The new buddy pounce structure.
  */
-struct gaim_pounce *gaim_pounce_new(GaimAccount *pouncer,
-									const char *pouncee,
-									GaimPounceEvent event,
-									gaim_pounce_cb cb, void *data,
-									void (*free)(void *));
+GaimPounce *gaim_pounce_new(GaimAccount *pouncer, const char *pouncee,
+							GaimPounceEvent event, GaimPounceCb cb,
+							void *data, void (*free)(void *));
 
 /**
  * Destroys a buddy pounce.
  *
  * @param pounce The buddy pounce.
  */
-void gaim_pounce_destroy(struct gaim_pounce *pounce);
+void gaim_pounce_destroy(GaimPounce *pounce);
 
 /**
  * Sets the events a pounce should watch for.
@@ -97,8 +95,7 @@ void gaim_pounce_destroy(struct gaim_pounce *pounce);
  * @param pounce The buddy pounce.
  * @param events The events to watch for.
  */
-void gaim_pounce_set_events(struct gaim_pounce *pounce,
-							GaimPounceEvent events);
+void gaim_pounce_set_events(GaimPounce *pounce, GaimPounceEvent events);
 
 /**
  * Sets the account that will do the pouncing.
@@ -106,8 +103,7 @@ void gaim_pounce_set_events(struct gaim_pounce *pounce,
  * @param pounce  The buddy pounce.
  * @param pouncer The account that will pounce.
  */
-void gaim_pounce_set_pouncer(struct gaim_pounce *pounce,
-							 GaimAccount *pouncer);
+void gaim_pounce_set_pouncer(GaimPounce *pounce, GaimAccount *pouncer);
 
 /**
  * Sets the buddy a pounce should pounce on.
@@ -115,7 +111,7 @@ void gaim_pounce_set_pouncer(struct gaim_pounce *pounce,
  * @param pounce  The buddy pounce.
  * @param pouncee The buddy to pounce on.
  */
-void gaim_pounce_set_pouncee(struct gaim_pounce *pounce, const char *buddy);
+void gaim_pounce_set_pouncee(GaimPounce *pounce, const char *buddy);
 
 /**
  * Sets the callback function to call when the pounce event is triggered.
@@ -123,7 +119,7 @@ void gaim_pounce_set_pouncee(struct gaim_pounce *pounce, const char *buddy);
  * @param pounce The buddy pounce.
  * @param cb     The callback function.
  */
-void gaim_pounce_set_callback(struct gaim_pounce *pounce, gaim_pounce_cb cb);
+void gaim_pounce_set_callback(GaimPounce *pounce, GaimPounceCb cb);
 
 /**
  * Sets the pounce-specific data.
@@ -131,7 +127,7 @@ void gaim_pounce_set_callback(struct gaim_pounce *pounce, gaim_pounce_cb cb);
  * @param pounce The buddy pounce.
  * @param data   Data specific to the pounce.
  */
-void gaim_pounce_set_data(struct gaim_pounce *pounce, void *data);
+void gaim_pounce_set_data(GaimPounce *pounce, void *data);
 
 /**
  * Returns the events a pounce should watch for.
@@ -140,7 +136,7 @@ void gaim_pounce_set_data(struct gaim_pounce *pounce, void *data);
  *
  * @return The events the pounce is watching for.
  */
-GaimPounceEvent gaim_pounce_get_events(const struct gaim_pounce *pounce);
+GaimPounceEvent gaim_pounce_get_events(const GaimPounce *pounce);
 
 /**
  * Returns the account that will do the pouncing.
@@ -149,7 +145,7 @@ GaimPounceEvent gaim_pounce_get_events(const struct gaim_pounce *pounce);
  *
  * @return The account that will pounce.
  */
-GaimAccount *gaim_pounce_get_pouncer(const struct gaim_pounce *pounce);
+GaimAccount *gaim_pounce_get_pouncer(const GaimPounce *pounce);
 
 /**
  * Returns the buddy a pounce should pounce on.
@@ -158,7 +154,7 @@ GaimAccount *gaim_pounce_get_pouncer(const struct gaim_pounce *pounce);
  *
  * @return The buddy to pounce on.
  */
-const char *gaim_pounce_get_pouncee(const struct gaim_pounce *pounce);
+const char *gaim_pounce_get_pouncee(const GaimPounce *pounce);
 
 /**
  * Returns the pounce-specific data.
@@ -167,7 +163,7 @@ const char *gaim_pounce_get_pouncee(const struct gaim_pounce *pounce);
  *
  * @return The data specific to a buddy pounce.
  */
-void *gaim_pounce_get_data(const struct gaim_pounce *pounce);
+void *gaim_pounce_get_data(const GaimPounce *pounce);
 
 /**
  * Executes a pounce with the specified pouncer, pouncee, and event type.
@@ -176,8 +172,7 @@ void *gaim_pounce_get_data(const struct gaim_pounce *pounce);
  * @param pouncee The buddy that is being pounced.
  * @param events  The events that triggered the pounce.
  */
-void gaim_pounce_execute(const GaimAccount *pouncer,
-						 const char *pouncee,
+void gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 						 GaimPounceEvent events);
 
 /**
@@ -189,9 +184,8 @@ void gaim_pounce_execute(const GaimAccount *pouncer,
  *
  * @return The pounce if found, or @c NULL otherwise.
  */
-struct gaim_pounce *gaim_find_pounce(const GaimAccount *pouncer,
-									 const char *pouncee,
-									 GaimPounceEvent events);
+GaimPounce *gaim_find_pounce(const GaimAccount *pouncer,
+							 const char *pouncee, GaimPounceEvent events);
 
 /**
  * Returns a list of all registered buddy pounces.

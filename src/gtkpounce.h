@@ -42,7 +42,7 @@ typedef enum
 /**
  * GTK+ pounce-specific data.
  */
-struct gaim_gtkpounce_data
+typedef struct
 {
 	GaimGtkPounceAction actions;  /**< The action(s) for this pounce.      */
 
@@ -55,18 +55,11 @@ struct gaim_gtkpounce_data
 
 	gboolean save;          /**< If TRUE, the pounce should be saved after
 	                             activation.                               */
-};
+
+} GaimGtkPounceData;
 
 #define GAIM_GTKPOUNCE(pounce) \
-	((struct gaim_gtkpounce_data *)gaim_pounce_get_data(pounce))
-
-/**
- * The pounce dialog.
- *
- * The structure is opaque, as nobody should be touching anything inside of
- * it.
- */
-struct gaim_gtkpounce_dialog;
+	((GaimGtkPounceData *)gaim_pounce_get_data(pounce))
 
 /**
  * Creates a GTK-specific pounce.
@@ -82,14 +75,11 @@ struct gaim_gtkpounce_dialog;
  *
  * @return The new buddy pounce.
  */
-struct gaim_pounce *gaim_gtkpounce_new(GaimAccount *pouncer,
-									   const char *pouncee,
-									   GaimPounceEvent events,
-									   GaimGtkPounceAction actions,
-									   const char *message,
-									   const char *command,
-									   const char *sound,
-									   gboolean save);
+GaimPounce *gaim_gtkpounce_new(GaimAccount *pouncer, const char *pouncee,
+							   GaimPounceEvent events,
+							   GaimGtkPounceAction actions,
+							   const char *message, const char *command,
+							   const char *sound, gboolean save);
 
 /**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
@@ -97,8 +87,7 @@ struct gaim_pounce *gaim_gtkpounce_new(GaimAccount *pouncer,
  * @param buddy      The optional buddy to pounce on.
  * @param cur_pounce The current buddy pounce, if editting an existing one.
  */
-void gaim_gtkpounce_dialog_show(struct buddy *buddy,
-								struct gaim_pounce *cur_pounce);
+void gaim_gtkpounce_dialog_show(struct buddy *buddy, GaimPounce *cur_pounce);
 
 /**
  * Displays all registered buddy pounces in a menu.
