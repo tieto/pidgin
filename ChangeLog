@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.56:
+version 0.56 (04/11/2002):
 	* German translation update (Thanks Karsten Weiss)
 	* Shell-like send history binded to Ctrl-Up and Ctrl-Down
 	* Russian Translation Updated (thanks Grigory Bakunov)
@@ -9,6 +9,8 @@ version 0.56:
 	* Fixed MSN privacy settings
 	* Group deletion fix (Thanks Mark Doliner)
 	* Alias/Group syncronization for Jabber (Thanks JSeymour)
+ 	* Fixed broken signal handling in gdm-started GNOME sessions 
+ 	  (Thanks Jim Seymour, Vann, Robert McQueen)
 	
 version 0.55 (03/29/2002):
 	* Jabber improvements (Thanks Jim Seymour)

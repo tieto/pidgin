@@ -554,6 +554,7 @@ int main(int argc, char *argv[])
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
+	sigset_t sigset;
 	void (*prev_sig_disp)();
 #endif
 #ifndef USE_APPLET
@@ -603,10 +604,24 @@ int main(int argc, char *argv[])
 #if HAVE_SIGNAL_H
 	/* Let's not violate any PLA's!!!! */
 	/* jseymour: whatever the fsck that means */
+	/* Robot101: for some reason things like gdm like to block     *
+	 * useful signals like SIGCHLD, so we unblock all the ones we  *
+	 * declare a handler for. thanks JSeymour and Vann.            */
+	if (sigemptyset(&sigset)) {
+		char errmsg[BUFSIZ];
+		sprintf(errmsg, "Warning: couldn't initialise empty signal set");
+		perror(errmsg);
+	}
 	for(sig_indx = 0; catch_sig_list[sig_indx] != -1; ++sig_indx) {
 		if((prev_sig_disp = signal(catch_sig_list[sig_indx], sighandler)) == SIG_ERR) {
 			char errmsg[BUFSIZ];
 			sprintf(errmsg, "Warning: couldn't set signal %d for catching",
+				catch_sig_list[sig_indx]);
+			perror(errmsg);
+		}
+		if(sigaddset(&sigset, catch_sig_list[sig_indx])) {
+			char errmsg[BUFSIZ];
+			sprintf(errmsg, "Warning: couldn't include signal %d for unblocking",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
 		}
@@ -619,6 +634,12 @@ int main(int argc, char *argv[])
 			perror(errmsg);
 		}
 	}
+
+	if (sigprocmask(SIG_UNBLOCK, &sigset, NULL)) {
+		char errmsg[BUFSIZ];
+		sprintf(errmsg, "Warning: couldn't unblock signals");
+		perror(errmsg);
+	}		
 #endif
 
 

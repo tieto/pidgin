@@ -99,6 +99,17 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Apr 11 2002 Rob Flynn <rob@marko.net (0.56 release)
+- German translation update (Thanks Karsten Weiss)
+- Shell-like send history binded to Ctrl-Up and Ctrl-Down
+- Russian Translation Updated (thanks Grigory Bakunov)
+- libjabber upgraded to most recent stable version
+- Buddylist looks a little better
+- Fixed MSN privacy settings
+- Group deletion fix (Thanks Mark Doliner)
+- Alias/Group syncronization for Jabber (Thanks JSeymour)
+- Fixed broken signal handling in gdm-started GNOME sessions (Thanks Jim Seymour, Vann, Robert McQueen)
+
 * Fri Mar 29 2002 Rob Flynn <rob@marko.net> (0.55 release)
 - Jabber improvements (Thanks Jim Seymour)
 - Various sound cleanups (Thanks Robert McQueen)
