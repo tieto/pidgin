@@ -3890,7 +3890,7 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 	if (gtkconv->make_sound) {
 		if (flags & WFLAG_RECV) {
 			if (gtkconv->u.im->a_virgin &&
-				gaim_prefs_get_bool("/gaim/gtk/sound/first_im_recv")) {
+				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/first_im_recv")) {
 
 				gaim_sound_play_event(GAIM_SOUND_FIRST_RECEIVE);
 			}
