@@ -144,7 +144,6 @@ extern void show_font_dialog(GaimConversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, GaimConversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 extern void destroy_fontsel(GtkWidget *w, gpointer d);
-extern void join_chat();
 
 /* Functions in server.c */
 /* server.c is in desperate need need of a split */
