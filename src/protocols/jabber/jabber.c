@@ -1088,6 +1088,21 @@ static jab_res_info jabber_find_resource(struct gaim_connection *gc, const char 
 	return jri;
 }
 
+static gboolean jabber_is_default_resource(struct gaim_connection *gc, const char *who)
+{
+	jab_res_info jri = jabber_find_resource(gc, who);
+	char *buddy = g_strdup(who);
+	char *resource = strrchr(buddy, '/');
+
+	if(!resource || !strcmp(resource+1, jri->name)) {
+		g_free(buddy);
+		return TRUE;
+	}
+
+	g_free(buddy);
+	return FALSE;
+}
+
 /*
  * if the resource doesn't exist, create it.  otherwise, just update the priority
  */
@@ -1340,8 +1355,6 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 						jri->has_composing = TRUE;
 					jri->has_xhtml = has_xhtml;
 				}
-				if (xmlnode_get_tag(p->x, "gaim"))
-					flags = IM_FLAG_GAIMUSER;
 				jabber_track_convo_thread(gjc, from, thread_id);
 				if (gaim_find_conversation(from))
 					serv_got_im(GJ_GC(gjc), from, m, flags,
@@ -1454,6 +1467,11 @@ static void jabber_handleavatar(gjconn gjc, xmlnode querynode, char *from) {
 	if((buddy = get_realwho(gjc, from, FALSE, NULL)) == NULL)
 		return;
 
+	if(!jabber_is_default_resource(GJ_GC(gjc), buddy)) {
+		g_free(buddy);
+		return;
+	}
+
 	data = xmlnode_get_tag(querynode, "data");
 
 	if(!data) {
@@ -1559,6 +1577,9 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		}
 	}
 
+	if ((y = xmlnode_get_tag(p->x, "priority")))
+		priority = atoi(xmlnode_get_data(y));
+
 	/* um. we're going to check if it's a chat. if it isn't, and there are pending
 	 * chats, create the chat. if there aren't pending chats and we don't have the
 	 * buddy on our list, simply bail out. */
@@ -1585,11 +1606,14 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	}
 
 	for(y = xmlnode_get_firstchild(p->x); y; y = xmlnode_get_nextsibling(y)) {
-		if(!strcmp(xmlnode_get_name(y), "priority")) {
-			priority = atoi(xmlnode_get_data(y));
-		} else if(!strcmp(xmlnode_get_name(y), "x")) {
+		char *tagname = xmlnode_get_name(y);
+		if(!tagname) {
+			continue;
+		} else if(!strcmp(tagname, "x")) {
 			if(!strcmp(xmlnode_get_attrib(y, "xmlns"), "jabber:x:avatar")) {
 				xmlnode hash = xmlnode_get_tag(y, "hash");
+				if(!jabber_is_default_resource(GJ_GC(gjc), from))
+					continue;
 				if(hash) {
 					char *old_hash = gaim_buddy_get_setting(b, "icon_checksum");
 					char *new_hash = xmlnode_get_data(hash);
@@ -1605,8 +1629,6 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 			}
 		}
 	}
-
-
 
 	if (!cnv) {
 		/* this is where we handle presence information for "regular" buddies */
@@ -2501,7 +2523,6 @@ static int jabber_send_typing(struct gaim_connection *gc, char *who, int typing)
 
 	x = xmlnode_new_tag("message");
 	xmlnode_put_attrib(x, "to", realwho);
-	xmlnode_insert_tag(x, "gaim");
 
 	y = xmlnode_insert_tag(x, "x");
 	xmlnode_put_attrib(y, "xmlns", "jabber:x:event");
@@ -2565,7 +2586,6 @@ static int jabber_send_im(struct gaim_connection *gc, const char *who, const cha
 		g_free(thread_id);
 	}
 
-	xmlnode_insert_tag(x, "gaim");
 	xmlnode_put_attrib(x, "type", "chat");
 
 	/* let other clients know we support typing notification */
