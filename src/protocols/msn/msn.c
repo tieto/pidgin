@@ -107,7 +107,10 @@ msn_act_id(GaimConnection *gc, const char *entry)
 	cmdproc = session->notification->cmdproc;
 	account = gaim_connection_get_account(gc);
 
-	alias = (entry && *entry) ? entry : "";
+	if(entry && strlen(entry))
+		alias = gaim_url_encode(entry);
+	else
+		alias = "";
 
 	if (strlen(alias) > BUDDY_ALIAS_MAXLEN)
 	{
@@ -118,7 +121,7 @@ msn_act_id(GaimConnection *gc, const char *entry)
 
 	msn_cmdproc_send(cmdproc, "REA", "%s %s",
 					 gaim_account_get_username(account),
-					 gaim_url_encode(alias));
+					 alias);
 }
 
 static void
