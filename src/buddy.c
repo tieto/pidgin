@@ -1372,7 +1372,7 @@ void set_buddy(struct buddy *b)
 		} else
 			caps[0] = '\0';
 		
-                i = g_snprintf(infotip, sizeof(infotip), _("Name: %s                \nLogged in: %s\n%s%s%s%s%s"), b->show, sotime, warn, ((b->idle) ? _("Idle: ") : ""),  itime, ((b->idle) ? "\n" : ""), caps);
+                i = g_snprintf(infotip, sizeof(infotip), _("Alias: %s               \nScreen Name: %s\nLogged in: %s\n%s%s%s%s%s"), b->show, b->name, sotime, warn, ((b->idle) ? _("Idle: ") : ""),  itime, ((b->idle) ? "\n" : ""), caps);
 
 		gtk_tooltips_set_tip(tips, GTK_WIDGET(b->item), infotip, "");
 

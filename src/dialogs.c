@@ -853,7 +853,7 @@ void show_add_group()
         
         a->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_policy(GTK_WINDOW(a->window), FALSE, FALSE, TRUE);
-	gtk_widget_show(a->window);
+	gtk_widget_realize(a->window);
 	dialogwindows = g_list_prepend(dialogwindows, a->window);
 
 	bbox = gtk_hbox_new(TRUE, 10);
@@ -927,7 +927,7 @@ void show_add_buddy(char *buddy, char *group)
         a->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_widget_set_usize(a->window, 480, 105);
 	gtk_window_set_policy(GTK_WINDOW(a->window), FALSE, FALSE, TRUE);
-	gtk_widget_show(a->window);
+	gtk_widget_realize(a->window);
 	dialogwindows = g_list_prepend(dialogwindows, a->window);
 
 	bbox = gtk_hbox_new(TRUE, 10);
@@ -3152,7 +3152,7 @@ void alias_dialog(struct buddy *b)
 
         aliasdlg = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_policy(GTK_WINDOW(aliasdlg), FALSE, FALSE, TRUE);
-	gtk_widget_show(aliasdlg);
+	gtk_widget_realize(aliasdlg);
 	dialogwindows = g_list_prepend(dialogwindows, aliasdlg);
 
 	bbox = gtk_hbox_new(TRUE, 10);
