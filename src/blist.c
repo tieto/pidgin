@@ -2228,7 +2228,7 @@ void gaim_blist_remove_account(GaimAccount *account)
 
 						presence = gaim_buddy_get_presence(buddy);
 
-						if(!gaim_presence_is_online(presence)) {
+						if(gaim_presence_is_online(presence)) {
 							contact->online--;
 							if (contact->online == 0)
 								group->online--;
@@ -2237,9 +2237,9 @@ void gaim_blist_remove_account(GaimAccount *account)
 													"last_seen", time(NULL));
 						}
 
-						contact->online--;
-						if (contact->online == 0)
-							group->online--;
+						contact->currentsize--;
+						if (contact->currentsize == 0)
+							group->currentsize--;
 
 						gaim_presence_set_status_active(presence, "offline", TRUE);
 
