@@ -56,7 +56,6 @@ static struct prpl *my_protocol = NULL;
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
-G_MODULE_IMPORT GSList *groups;
 
 #define REVISION "penguin"
 
@@ -268,8 +267,9 @@ static void toc_close(struct gaim_connection *gc)
 
 static void toc_build_config(struct gaim_account *account, char *s, int len, gboolean show)
 {
-	GSList *grp = groups;
-	GSList *mem;
+	GSList *grp = gaim_blist_groups();
+	GSList *grp1 = grp;
+	GSList *mem, *mem1;
 	struct group *g;
 	struct buddy *b;
 	GSList *plist = account->permit;
@@ -281,23 +281,26 @@ static void toc_build_config(struct gaim_account *account, char *s, int len, gbo
 		account->permdeny = 1;
 
 	pos += g_snprintf(&s[pos], len - pos, "m %d\n", account->permdeny);
-	while (len > pos && grp) {
-		g = (struct group *)grp->data;
+	while (len > pos && grp1) {
+		g = (struct group *)grp1->data;
 		if(gaim_group_on_account(g, account)) {
 			pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
-			mem = g->members;
-			while (len > pos && mem) {
-				b = (struct buddy *)mem->data;
+			mem = gaim_blist_members(g);
+			mem1 = mem;
+			while (len > pos && mem1) {
+				b = (struct buddy *)mem1->data;
 				if(b->account == account) {
 					pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
 							(show && b->alias) ? ":" : "",
 							(show && b->alias) ? b->alias : "");
 				}
-				mem = mem->next;
+				mem1 = mem1->next;
 			}
+			g_slist_free(mem);
 		}
-		grp = g_slist_next(grp);
+		grp1 = g_slist_next(grp1);
 	}
+	g_slist_free(grp);
 
 	while (len > pos && plist) {
 		pos += g_snprintf(&s[pos], len - pos, "p %s\n", (char *)plist->data);

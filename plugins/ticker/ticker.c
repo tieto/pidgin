@@ -330,11 +330,11 @@ BuddyTickerClearList( void )
 
 void BuddyTickerShow()
 {
+	/* Someone should fix the ticker
 	struct group *g;
 	struct buddy *b;
 	GSList *grps, *buds;
 	const char *xpm;
-
 	for( grps = groups; grps; grps = grps->next ) {
 		g = (struct group *)grps->data;
 		for( buds = g->members; buds; buds = buds->next ) {
@@ -347,6 +347,7 @@ void BuddyTickerShow()
 			}
 		}
 	}
+	*/
 }
 
 void signon_cb(struct gaim_connection *gc, char *who) {

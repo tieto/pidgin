@@ -345,6 +345,21 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		memcpy(&b, sd->data, sizeof(b));
 		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
 			/* if we're here, I think it means the drop is ok */
+			GtkTreeIter iter;
+			GaimBlistNode *node;
+			GValue val = {0};
+			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
+			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
+			node = g_value_get_pointer(&val);
+			if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
+				if (position == GTK_TREE_VIEW_DROP_AFTER) {
+					gaim_blist_add_buddy(b, node->parent, node);
+				} else if (position == GTK_TREE_VIEW_DROP_BEFORE) {
+					gaim_blist_add_buddy(b, node->parent, node->prev);
+				}
+			} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+				gaim_blist_add_buddy(b, node, NULL);
+			}	
 			gtk_tree_path_free(path);
 		}
 	}
@@ -1214,6 +1229,8 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 {
+	if (!gtkblist)
+		return;
 	gtk_widget_destroy(gtkblist->window);
 
 	gtkblist->window = gtkblist->vbox = gtkblist->treeview = NULL;

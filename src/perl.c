@@ -666,25 +666,27 @@ XS (XS_GAIM_buddy_list)
 	struct gaim_connection *gc;
 	struct buddy *buddy;
 	struct group *g;
-	GSList *list = groups;
-	GSList *mem;
+	GSList *list = gaim_blist_groups(), *list1 = list;
+	GSList *mem, *mem1;
 	int i = 0;
 	dXSARGS;
 	items = 0;
 
 	gc = (struct gaim_connection *)SvIV(ST(0));
 
-	while (list) {
-		g = (struct group *)list->data;
-		mem = g->members;
-		while (mem) {
-			buddy = (struct buddy *)mem->data;
+	while (list1) {
+		g = (struct group *)list1->data;
+		mem1 = mem = gaim_blist_members(g);
+		while (mem1) {
+			buddy = (struct buddy *)mem1->data;
 			if(buddy->account == gc->account)
 				XST_mPV(i++, buddy->name);
-			mem = mem->next;
+			mem1 = mem1->next;
 		}
-		list = g_slist_next(list);
+		g_slist_free(mem);
+		list1 = g_slist_next(list1);
 	}
+	g_slist_free(list);
 	XSRETURN(i);
 }
 
@@ -693,24 +695,27 @@ XS (XS_GAIM_online_list)
 	struct gaim_connection *gc;
 	struct buddy *b;
 	struct group *g;
-	GSList *list = groups;
-	GSList *mem;
+	GSList *list = gaim_blist_groups(), *list1 = list;
+	GSList *mem, *mem1;
 	int i = 0;
 	dXSARGS;
 	items = 0;
 
 	gc = (struct gaim_connection *)SvIV(ST(0));
 
-	while (list) {
-		g = (struct group *)list->data;
-		mem = g->members;
-		while (mem) {
-			b = (struct buddy *)mem->data;
+	while (list1) {
+		g = (struct group *)list1->data;
+		mem = gaim_blist_members(g);
+		mem1 = mem;
+		while (mem1) {
+			b = (struct buddy *)mem1->data;
 			if (b->account == gc->account && b->present) XST_mPV(i++, b->name);
-			mem = mem->next;
+			mem1 = mem1->next;
 		}
-		list = g_slist_next(list);
+		g_slist_free(mem);
+		list1 = g_slist_next(list1);
 	}
+	g_slist_free(list);
 	XSRETURN(i);
 }
 

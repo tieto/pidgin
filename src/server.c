@@ -393,11 +393,11 @@ void serv_rename_group(struct gaim_connection *g, struct group *old_group, const
 		GList *tobemoved = NULL;
 		GSList *original;
 
-		for (original=old_group->members; original; original=g_slist_next(original)) {
+		/*		for (original=old_group->members; original; original=g_slist_next(original)) {
 			struct buddy *b = original->data;
 			if(b->account == g->account)
 				tobemoved = g_list_append(tobemoved, b->name);
-		}
+				} */
 
 		if (g->prpl->rename_group) {
 			/* prpl's might need to check if the group already 

@@ -61,7 +61,6 @@ static struct prpl *my_protocol = NULL;
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
-G_MODULE_IMPORT GSList *groups;
 
 #ifndef INET6_ADDRSTRLEN
 #define INET6_ADDRSTRLEN 46
@@ -570,7 +569,7 @@ static void
 handle_list(struct gaim_connection *gc, char *list)
 {
 	struct irc_data *id = gc->proto_data;
-	GSList *gr;
+	GSList *gr, *gr1;
 
 	id->str = g_string_append_c(id->str, ' ');
 	id->str = g_string_append(id->str, list);
@@ -579,10 +578,12 @@ handle_list(struct gaim_connection *gc, char *list)
 		return;
 
 	g_strdown(id->str->str);
-	gr = groups;
-	while (gr) {
-		GSList *m = ((struct group *)gr->data)->members;
-		while (m) {
+	gr = gaim_blist_groups();
+	gr1 = gr;
+	while (gr1) {
+		GSList *m = gaim_blist_members((struct group *)gr1->data);
+		GSList *m1 = m;
+		while (m1) {
 			struct buddy *b = m->data;
 			if(b->account->gc == gc) {
 				char *tmp = g_strdup(b->name);
@@ -598,10 +599,12 @@ handle_list(struct gaim_connection *gc, char *list)
 					serv_got_update(gc, b->name, 0, 0, 0, 0, 0);
 				g_free(tmp);
 			}
-			m = m->next;
+			m1 = m1->next;
 		}
-		gr = gr->next;
+		g_slist_free(m);
+		gr1 = gr1->next;
 	}
+	g_slist_free(gr);
 	g_string_free(id->str, TRUE);
 	id->str = g_string_new("");
 }
@@ -615,14 +618,16 @@ irc_request_buddy_update(gpointer data)
 	int n = g_snprintf(buf, sizeof(buf), "ISON");
 	gboolean found = FALSE;
 
-	GSList *gr = groups;
+	GSList *gr = gaim_blist_groups();
+	GSList *gr1 = gr;
 	if (!gr || id->bc)
 		return TRUE;
 
-	while (gr) {
+	while (gr1) {
 		struct group *g = gr->data;
-		GSList *m = g->members;
-		while (m) {
+		GSList *m = gaim_blist_members(g);
+		GSList *m1 = m;
+		while (m1) {
 			struct buddy *b = m->data;
 			if(b->account->gc == gc) {
 				if (n + strlen(b->name) + 2 > sizeof(buf)) {
@@ -635,10 +640,12 @@ irc_request_buddy_update(gpointer data)
 
 				found = TRUE;
 			}
-			m = m->next;
+			m1 = m1->next;
 		}
-		gr = gr->next;
+		g_slist_free(m);
+		gr1 = gr1->next;
 	}
+	g_slist_free(gr);
 
 	if (found) {
 		g_snprintf(buf + n, sizeof(buf) - n, "\r\n");

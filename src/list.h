@@ -82,8 +82,6 @@ struct buddy {
 struct group {
 	GaimBlistNode node;                    /**< The node that this group inherits from */
 	char *name;                            /**< The name of this group. */
-	GSList *members;                       /**< The buddies in this group.  This is different from node.child in that it will only
-						  contain buddies. */
 };
 
 
@@ -117,6 +115,29 @@ struct gaim_blist_ui_ops
 			    gboolean show);             /**< Hides or unhides the buddy list */
 	
 }; 
+
+/**************************************************************************/
+/** Public Utility Functions                                              */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns a GSList of the groups
+ */
+GSList *gaim_blist_groups();
+
+/**
+ *  Returns a GSList of the members of a group node.
+ *
+ * It's obviously much faster to recurse the GaimBlistNode linked list
+ * then using this function.  You should try to avoid using it.  Only use it
+ * when you're about to make a milestone release in a few hours and are desperately
+ * trying to add a critical feature
+ *
+ * @param group The group
+ */
+GSList *gaim_blist_members(struct group *group);
+/*@}*/
 
 /**************************************************************************/
 /** @name Buddy List API                                                  */
@@ -293,7 +314,6 @@ void gaim_blist_remove_buddy(struct buddy *buddy);
  * @param group   The group to be removed
  */
 void gaim_blist_remove_group(struct group *group);
-
 
 /**
  * Returns the alias of a buddy.

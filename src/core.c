@@ -56,7 +56,6 @@ static gint UI_fd = -1;
 #endif
 int gaim_session = 0;
 GSList *uis = NULL;
-GSList *groups = NULL;
 
 static guchar *UI_build(guint32 *len, guchar type, guchar subtype, va_list args)
 {

@@ -933,18 +933,20 @@ static GList *groups_tree(struct gaim_connection *gc)
 	GList *tmp = NULL;
 	char *tmp2;
 	struct group *g;
-	GSList *grp = groups;
+	GSList *grp = gaim_blist_groups();
+	GSList *grp1 = grp;
 
 	if (!grp) {
 		tmp2 = g_strdup(_("Buddies"));
 		tmp = g_list_append(tmp, tmp2);
 	} else {
-		while (grp) {
-			g = (struct group *)grp->data;
+		while (grp1) {
+			g = (struct group *)grp1->data;
 			tmp2 = g->name;
 			tmp = g_list_append(tmp, tmp2);
-			grp = g_slist_next(grp);
+			grp1 = g_slist_next(grp);
 		}
+		g_slist_free(grp);
 	}
 	return tmp;
 }
@@ -3901,9 +3903,7 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 			char *prevname;
 	
 			if ((orig = gaim_find_group(new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
-				orig->members = g_slist_concat(orig->members, g->members);
 				gaim_blist_rename_group(orig, g->name);
-				groups = g_slist_remove(groups, g);
 				accts = gaim_group_get_accounts(g);
 				while(accts) {
 					struct gaim_account *account = accts->data;
@@ -3999,7 +3999,7 @@ static void do_rename_buddy(GObject *obj, GtkWidget *entry)
 {
 	const char *new_name;
 	struct buddy *b;
-	GSList *gr;
+	GSList *gr, *gr1;
 
 	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
 	b = g_object_get_data(obj, "buddy");
@@ -4009,12 +4009,16 @@ static void do_rename_buddy(GObject *obj, GtkWidget *entry)
 		return;
 	}
 
-	gr = groups;
-	while (gr) {
-		if (g_slist_find(((struct group *)gr->data)->members, b))
+	gr = gaim_blist_groups();
+	gr1 = gr;
+	while (gr1) {
+		GSList *mem = gaim_blist_members((struct group*)gr->data);
+		if (g_slist_find(mem, b))
 			break;
-		gr = gr->next;
+		gr1 = gr1->next;
+		g_slist_free(mem);
 	}
+	g_slist_free(gr);
 	if (!gr) {
 		destroy_dialog(rename_bud_dialog, rename_bud_dialog);
 		return;

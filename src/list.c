@@ -83,6 +83,34 @@ static void gaim_blist_print()
 }
 
 /*****************************************************************************
+ * Public Utility Functions                                                  *
+ *****************************************************************************/
+
+GSList *gaim_blist_members(struct group *g)
+{
+	GaimBlistNode *group = (GaimBlistNode*)g;
+	GSList *list = NULL;
+	GaimBlistNode *child = group->child;
+	while (child) {
+		list = g_slist_append(list, child);
+		child = child->next;
+	}
+	return list;
+}
+
+GSList *gaim_blist_groups()
+{
+	struct gaim_buddy_list *gaimbuddylist = gaim_get_blist();
+	GSList *list = NULL;
+	GaimBlistNode *g = gaimbuddylist->root;
+	while (g) {
+		list = g_slist_append(list, g);
+		g = g->next;
+	}
+	return list;
+}
+
+/*****************************************************************************
  * Public API functions                                                      *
  *****************************************************************************/
 
@@ -217,6 +245,7 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 	GaimBlistNode *n = node, *node2, *node3;
 	struct group *g = group;
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	gboolean save = FALSE;
 	if (!n) {
 		if (!g) {
 			g = gaim_group_new(_("Buddies"));
@@ -225,13 +254,24 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		n = gaim_blist_get_last_child((GaimBlistNode*)g);
 	}
 
-	node2 = ((GaimBlistNode*)buddy)->next;
-	node3 = ((GaimBlistNode*)buddy)->prev;
-	
-	if (node2)
-		node2->prev = node3;
-	if (node3)
-		node3->next = node2;
+	if (((GaimBlistNode*)buddy)->parent) {
+		/* This buddy was already in the list and is
+		 * being moved.
+		 */
+		ops->remove(gaimbuddylist, (GaimBlistNode*)buddy);
+		node2 = ((GaimBlistNode*)buddy)->next;
+		node3 = ((GaimBlistNode*)buddy)->prev;
+		
+		if (node2)
+			node2->prev = node3;
+		if (node3)
+			node3->next = node2;
+
+		if (((GaimBlistNode*)buddy)->parent != n->parent)
+			serv_move_buddy(buddy, (struct group*)((GaimBlistNode*)buddy)->parent, 
+					(struct group*)n->parent);
+		save = TRUE;
+	}
 
 	if (n) {
 		((GaimBlistNode*)buddy)->next = n->next;
@@ -245,10 +285,10 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		((GaimBlistNode*)buddy)->parent = (GaimBlistNode*)g;
 	}
 
-	g->members = g_slist_append(g->members, buddy);
-	
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
+	if (save) 
+		gaim_blist_save();
 }
 
 struct group *gaim_group_new(const char *name)
@@ -313,8 +353,6 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 		node->prev->next = node->next;
 	if (node->next)
 		node->next->prev = node->prev;
-
-	group->members = g_slist_remove(group->members, buddy);
 
 	ops->remove(gaimbuddylist, node);
 	g_free(buddy->name);
@@ -781,13 +819,15 @@ static void do_import(struct gaim_account *account, const char *filename)
 }
 
 gboolean gaim_group_on_account(struct group *g, struct gaim_account *account) {
-	GSList *buds = g->members;
-	while(buds) {
+	GSList *buds = gaim_blist_members(g);
+	GSList *buds1 = buds;
+	while(buds1) {
 		struct buddy *b = buds->data;
 		if((!account && b->account->gc) || b->account == account)
 			return TRUE;
-		buds = buds->next;
+		buds1 = buds1->next;
 	}
+	g_slist_free(buds);
 	return FALSE;
 }
 
@@ -1121,9 +1161,11 @@ static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
 	for(group = (struct group*)gaimbuddylist->root; group; group = (struct group*)((GaimBlistNode*)group)->next) {
 		if(!exp_acct || gaim_group_on_account(group, exp_acct)) {
 			char *group_name = g_markup_escape_text(group->name, -1);
+			GSList *buds1;
 			fprintf(file, "\t\t<group name=\"%s\">\n", group_name);
-			for(buds = group->members; buds; buds = buds->next) {
-				bud = buds->data;
+			buds = gaim_blist_members(group);
+			for(buds1 = buds; buds1; buds1 = buds1->next) {
+				bud = buds1->data;
 				if(!exp_acct || bud->account == exp_acct) {
 					char *bud_name = g_markup_escape_text(bud->name, -1);
 					char *bud_alias = NULL;
@@ -1149,6 +1191,7 @@ static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
 					g_free(acct_name);
 				}
 			}
+			g_slist_free(buds);
 			fprintf(file, "\t\t</group>\n");
 			g_free(group_name);
 		}
@@ -1189,7 +1232,6 @@ void gaim_blist_save() {
 
 	if(!user_dir)
 		return;
-
 	if(!blist_safe_to_write) {
 		debug_printf("AHH!! tried to write the blist before we read it!\n");
 		return;

@@ -154,22 +154,24 @@ struct meter_window {
 
 void destroy_gaim_conn(struct gaim_connection *gc)
 {
-	GSList *g = groups;
-	GSList *h;
+	GSList *g = gaim_blist_groups(), *g1 = g;
+	GSList *h, *h1;
 	struct group *m;
 	struct buddy *n;
-	while (g) {
-		m = (struct group *)g->data;
-		g = g_slist_next(g);
-		h = m->members;
-		while (h) {
-			n = (struct buddy *)h->data;
-			h = g_slist_next(h);
+	while (g1) {
+		m = (struct group *)g1->data;
+		g1 = g_slist_next(g1);
+		h1 = h = gaim_blist_members(m);
+		while (h1) {
+			n = (struct buddy *)h1->data;
+			h1 = g_slist_next(h1);
 			if(n->account == gc->account) {
 				n->present = 0;
 			}
 		}
+		g_slist_free(h);
 	}
+	g_slist_free(g);
 	g_free(gc->away);
 	g_free(gc->away_state);
 	g_free(gc);
@@ -1312,7 +1314,8 @@ static void acct_autologin(GtkCellRendererToggle *cell, gchar *path_str,
 static void do_del_acct(struct gaim_account *account)
 {
 	GtkTreeIter iter;
-	GSList *grps = groups, *buds;
+	GSList *grps1, *grps, *buds;
+	grps1 = grps = gaim_blist_groups();
 
 	if (account->gc) {
 		account->gc->wants_to_die = TRUE;
@@ -1325,24 +1328,24 @@ static void do_del_acct(struct gaim_account *account)
 
 
 	/* remove the buddies for the account we just destroyed */
-	while(grps) {
-		struct group *g = grps->data;
-		grps = grps->next;
-		buds = g->members;
-		while(buds) {
-			struct buddy *b = buds->data;
-			buds = buds->next;
+	while(grps1) {
+		struct group *g = grps1->data;
+		GSList *buds1, *buds = gaim_blist_members(g);
+		buds1 = buds;
+		grps1 = grps1->next;
+		while(buds1) {
+			struct buddy *b = buds1->data;
+			buds1 = buds1->next;
 			if(b->account == account) {
-				/* sigh, someday we'll get a central gaim_buddy_free() */
-				g->members = g_slist_remove(g->members, b);
-				g_hash_table_destroy(b->settings);
-				g_free(b);
+				gaim_blist_remove_buddy(b);
 			}
 		}
-		if(!g->members) {
+		g_slist_free(buds);
+		if(!((GaimBlistNode*)g)->child) {
 			gaim_blist_remove_group(g);
 		}
 	}
+	g_slist_free(grps);
 
 	gaim_accounts = g_slist_remove(gaim_accounts, account);
 
@@ -1519,7 +1522,7 @@ void account_online(struct gaim_connection *gc)
 	struct signon_meter *meter = find_signon_meter(gc);
 	GList *wins;
 	GtkTreeIter iter;
-	GSList *grps, *buds;
+	GSList *grps, *grps1, *buds, *buds1;
 	GList *add_buds=NULL;
 	GList *l;
 
@@ -1576,16 +1579,19 @@ void account_online(struct gaim_connection *gc)
 	}
 
 	/* let the prpl know what buddies we pulled out of the local list */
-
-	for(grps = groups; grps; grps = grps->next) {
-		struct group *g = grps->data;
-		for(buds = g->members; buds; buds = buds->next) {
-			struct buddy *b = buds->data;
+	grps = gaim_blist_groups();
+	for(grps1 = grps; grps1; grps1 = grps1->next) {
+		struct group *g = grps1->data;
+		buds = gaim_blist_members(g);
+		for(buds1 = buds; buds1; buds1 = buds1->next) {
+			struct buddy *b = buds1->data;
 			if(b->account == gc->account) {
 				add_buds = g_list_append(add_buds, b->name);
 			}
 		}
+		g_slist_free(buds);
 	}
+	g_slist_free(grps);
 
 	if(add_buds) {
 		serv_add_buddies(gc, add_buds);

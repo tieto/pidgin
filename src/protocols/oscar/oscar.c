@@ -73,7 +73,6 @@ static struct prpl *my_protocol = NULL;
 /* For win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 G_MODULE_IMPORT int report_idle;
-G_MODULE_IMPORT GSList *groups;
 
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE;
 static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8;
@@ -4494,6 +4493,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		struct group *group;
 		struct buddy *buddy;
 		struct gaim_buddy_list *blist;
+		GSList *groups = gaim_blist_groups();
 		GSList *cur;
 
 		/* Buddies */
@@ -4548,14 +4548,18 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		/* Check for maximum number of buddies */
 		for (cur=groups, tmp=0; cur; cur=g_slist_next(cur)) {
 			struct group* gr = (struct group*)cur->data;
-			GSList *buds = gr->members;
-			while(buds) {
-				struct buddy *b = buds->data;
+			GSList *buds = gaim_blist_members(gr);
+			GSList *buds1 = buds;
+			while(buds1) {
+				struct buddy *b = buds1->data;
 				if(b->account == gc->account)
 					tmp++;
-				buds = buds->next;
+				buds1 = buds1->next;
 			}
+			g_slist_free(buds);
 		}
+		g_slist_free(groups);
+
 		if (tmp > od->rights.maxbuddies) {
 			char *dialog_msg = g_strdup_printf(_("The maximum number of buddies allowed in your buddy list is %d, and you have %d."
 							     "  Until you are below the limit, some buddies will not show up as online."), 
@@ -5143,7 +5147,7 @@ static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 #ifdef NOSSI
-	GSList *list, *g;
+	GSList *list, *g = gaim_blist_groups(), *g1;
 	char buf[MAXMSGLEN];
 	int at;
 
@@ -5173,18 +5177,21 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, buf);
 		break;
 	case 5:
-		g = groups;
+		g1 = g;
 		at = 0;
-		while (g) {
-			list = ((struct group *)g->data)->members;
-			while (list) {
-				struct buddy *b = list->data;
+		while (g1) {
+			list = gaim_blist_members((struct group *)g->data);
+			GSList list1 = list;
+			while (list1) {
+				struct buddy *b = list1->data;
 				if(b->account == gc->account)
 					at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", b->name);
-				list = list->next;
+				list1 = list1->next;
 			}
-			g = g->next;
+			g_slist_free(list);
+			g1 = g1->next;
 		}
+		g_slist_free(g);
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, buf);
 		break;
 	default:
@@ -5412,15 +5419,17 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
 	gchar *nombre, *text, *tmp;
-	GSList *curg, *curb;
+	GSList *curg = gaim_blist_groups(), *curg1, *curb;
 	int num=0;
 
 	text = g_strdup(_("You are awaiting authorization from the following buddies:<BR>"));
 
-	for (curg=groups; curg; curg=g_slist_next(curg)) {
-		struct group *group = curg->data;
-		for (curb=group->members; curb; curb=g_slist_next(curb)) {
-			struct buddy *buddy = curb->data;
+	for (curg1 = curg; curg1; curg1=g_slist_next(curg1)) {
+		struct group *group = curg1->data;
+		GSList *curb = gaim_blist_members(group);
+		GSList *curb1;
+		for (curb1=curb; curb1; curb1=g_slist_next(curb1)) {
+			struct buddy *buddy = curb1->data;
 			if (buddy->account == gc->account && aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
 				if (gaim_get_buddy_alias_only(buddy))
 					nombre = g_strdup_printf(" %s (%s)", buddy->name, gaim_get_buddy_alias_only(buddy));
@@ -5433,7 +5442,9 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 				num++;
 			}
 		}
+		g_slist_free(curb);
 	}
+	g_slist_free(curg);
 
 	if (!num) {
 		tmp = g_strdup_printf("%s<BR>%s", text, _("<i>you are not waiting for authorization</i>"));

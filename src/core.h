@@ -160,7 +160,6 @@ struct gaim_callback {
 
 /* Globals in core.c */
 extern GSList *uis;
-extern GSList *groups;
 extern int gaim_session;
 
 /* Globals in plugins.c */
