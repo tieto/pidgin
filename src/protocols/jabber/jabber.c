@@ -126,6 +126,7 @@ struct jabber_data {
 	GSList *existing_chats;
 	GHashTable *hash;
 	time_t idle;
+	gboolean die;
 };
 
 struct jabber_chat {
@@ -332,9 +333,12 @@ static void gjab_recv(gjconn j)
 		return;
 
 	if ((len = read(j->fd, buf, sizeof(buf) - 1))) {
+		struct jabber_data *jd = GJ_GC(j)->proto_data;
 		buf[len] = '\0';
 		debug_printf("input (len %d): %s\n", len, buf);
 		XML_Parse(j->parser, buf, len, 0);
+		if (jd->die)
+			signoff(GJ_GC(j));
 	} else if (len <= 0) {
 		STATE_EVT(JCONN_STATE_OFF)
 	}
@@ -983,6 +987,7 @@ static void jabber_handleauthresp(gjconn j, jpacket p)
 		xmlnode xerr;
 		char *errmsg = NULL;
 		int errcode = 0;
+		struct jabber_data *jd = GJ_GC(j)->proto_data;
 
 		debug_printf("auth failed\n");
 		xerr = xmlnode_get_tag(p->x, "error");
@@ -999,7 +1004,7 @@ static void jabber_handleauthresp(gjconn j, jpacket p)
 			hide_login_progress(GJ_GC(j), "Unknown login error");
 		}
 
-		signoff(GJ_GC(j));
+		jd->die = TRUE;
 	}
 }
 
