@@ -653,11 +653,12 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	}
 
 	ret = msn_servconn_write(swboard->servconn, buf, len);
-
+#ifndef _WIN32
+        /* Windows doesn't like Unix paths */
 	fp = fopen("/tmp/msn-msg", "wb");
 	fwrite(buf, 1, len, fp);
 	fclose(fp);
-
+#endif
 	g_free(buf);
 
 	return (ret > 0);
