@@ -7,6 +7,7 @@ version 0.11.0-pre6 (03/06/2001):
 	  (Yan V. Bulgak)
 	* Oscar can: search by email, request confirmation, change password
 	* TOC fixes
+	* ICQ fixes
 	* Faster HTML parsing/rendering
 
 version 0.11.0-pre5 (02/26/2001):
