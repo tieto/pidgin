@@ -36,7 +36,6 @@ struct msn_data {
 	int trId;
 	int inpa;
 	GSList *switches;
-	GSList *xfrs;
 	GSList *fl;
 	gboolean imported;
 };
@@ -51,12 +50,6 @@ struct msn_switchboard {
 	int total;
 	char *user;
 	char *txqueue;
-};
-
-struct msn_xfr {
-	struct gaim_connection *gc;
-	char *user;
-	char *what;
 };
 
 struct msn_buddy {
@@ -302,6 +295,21 @@ static struct msn_switchboard *msn_find_switch(struct gaim_connection *gc, char 
 	return NULL;
 }
 
+static struct msn_switchboard *msn_find_writable_switch(struct gaim_connection *gc)
+{
+	struct msn_data *md = gc->proto_data;
+	GSList *m = md->switches;
+
+	while (m) {
+		struct msn_switchboard *ms = m->data;
+		m = m->next;
+		if (ms->txqueue)
+			return ms;
+	}
+
+	return NULL;
+}
+
 static void msn_kill_switch(struct msn_switchboard *ms)
 {
 	struct gaim_connection *gc = ms->gc;
@@ -315,7 +323,8 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 	if (ms->user)
 		g_free(ms->user);
 	if (ms->txqueue)
-		ms->txqueue = NULL;
+		g_free(ms->txqueue);
+	ms->txqueue = NULL;
 
 	md->switches = g_slist_remove(md->switches, ms);
 
@@ -326,7 +335,6 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 {
 	struct msn_switchboard *ms = data;
 	struct gaim_connection *gc = ms->gc;
-	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 	int i = 0;
 
@@ -347,6 +355,16 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 	} else if (!g_strncasecmp(buf, "BYE", 3)) {
 	} else if (!g_strncasecmp(buf, "CAL", 3)) {
 	} else if (!g_strncasecmp(buf, "IRO", 3)) {
+		char *tot, *friend, *tmp = buf;
+
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		tot = tmp;
+		GET_NEXT(tmp);
+		ms->total = atoi(tot);
+		GET_NEXT(tmp);
+		friend = tmp;
 	} else if (!g_strncasecmp(buf, "JOI", 3)) {
 		if (ms->txqueue) {
 			g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
@@ -356,6 +374,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 			ms->txqueue = NULL;
 			if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 				msn_kill_switch(ms);
+			debug_printf("\n");
 		}
 	} else if (!g_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
@@ -395,8 +414,6 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 			g_free(msg);
 			return;
 		}
-		*skiphead = 0;
-		debug_printf("%s\n", msg);
 		skiphead += 4;
 		utf = utf8_to_str(skiphead);
 		len = MAX(strlen(utf) + 1, BUF_LEN);
@@ -414,17 +431,12 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 	} else if (!g_strncasecmp(buf, "OUT", 3)) {
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
 		/* good, we got USR, now we need to find out who we want to talk to */
-		struct msn_xfr *mx;
+		struct msn_switchboard *ms = msn_find_writable_switch(gc);
 
-		if (!md->xfrs)
+		if (!ms)
 			return;
-		mx = md->xfrs->data;
-		md->xfrs = g_slist_remove(md->xfrs, mx);
 
-		g_snprintf(buf, sizeof(buf), "CAL %d %s\n", ++ms->trId, mx->user);
-		ms->txqueue = mx->what;
-		ms->user = mx->user;
-		g_free(mx);
+		g_snprintf(buf, sizeof(buf), "CAL %d %s\n", ++ms->trId, ms->user);
 		if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 			msn_kill_switch(ms);
 	} else if (isdigit(*buf)) {
@@ -470,7 +482,6 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GdkInputCondition con
 {
 	struct msn_switchboard *ms = data;
 	struct gaim_connection *gc = ms->gc;
-	struct msn_data *md;
 	char buf[MSN_BUF_LEN];
 
 	if (source == -1 || !g_slist_find(connections, gc)) {
@@ -482,8 +493,6 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GdkInputCondition con
 	if (ms->fd != source)
 		ms->fd = source;
 
-	md = gc->proto_data;
-
 	g_snprintf(buf, sizeof(buf), "USR %d %s %s\n", ++ms->trId, gc->username, ms->auth);
 	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
 		g_free(ms->auth);
@@ -491,7 +500,6 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GdkInputCondition con
 		return;
 	}
 
-	md->switches = g_slist_append(md->switches, ms);
 	ms->inpa = gdk_input_add(ms->fd, GDK_INPUT_READ, msn_switchboard_callback, ms);
 }
 
@@ -792,11 +800,12 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 		}
 
 		if (switchboard) {
-			struct msn_switchboard *ms = g_new0(struct msn_switchboard, 1);
+			struct msn_switchboard *ms = msn_find_writable_switch(gc);
+			if (!ms)
+				return;
 
 			GET_NEXT(tmp);
 
-			ms->gc = gc;
 			ms->auth = g_strdup(tmp);
 			ms->fd = proxy_connect(host, port, msn_ss_xfr_connect, ms);
 		} else {
@@ -1046,13 +1055,6 @@ static void msn_close(struct gaim_connection *gc)
 		gdk_input_remove(md->inpa);
 	while (md->switches)
 		msn_kill_switch(md->switches->data);
-	while (md->xfrs) {
-		struct msn_xfr *mx = md->xfrs->data;
-		md->xfrs = g_slist_remove(md->xfrs, mx);
-		g_free(mx->user);
-		g_free(mx->what);
-		g_free(mx);
-	}
 	while (md->fl) {
 		struct msn_buddy *tmp = md->fl->data;
 		md->fl = g_slist_remove(md->fl, tmp);
@@ -1075,8 +1077,8 @@ static void msn_send_im(struct gaim_connection *gc, char *who, char *message, in
 				MIME_HEADER, message);
 		if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 			msn_kill_switch(ms);
+		debug_printf("\n");
 	} else {
-		struct msn_xfr *mx;
 		g_snprintf(buf, MSN_BUF_LEN, "XFR %d SB\n", ++md->trId);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, "Write error");
@@ -1084,11 +1086,12 @@ static void msn_send_im(struct gaim_connection *gc, char *who, char *message, in
 			return;
 		}
 
-		mx = g_new0(struct msn_xfr, 1);
-		md->xfrs = g_slist_append(md->xfrs, mx);
-		mx->user = g_strdup(who);
-		mx->what = g_strdup(message);
-		mx->gc = gc;
+		ms = g_new0(struct msn_switchboard, 1);
+		md->switches = g_slist_append(md->switches, ms);
+		ms->user = g_strdup(who);
+		ms->txqueue = g_strdup(message);
+		ms->gc = gc;
+		ms->fd = -1;
 	}
 }
 
