@@ -2662,19 +2662,16 @@ static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)
 
 void apply_font_dlg(GtkWidget *w, GtkWidget *f)
 {
-	char *fontname, *c;
+	char *fontname, *space;
 
 	fontname =
 		gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(f));
 
 	destroy_fontsel(0, 0);
 
-	for (c = fontname; *c != '\0'; c++) {
-		if (isdigit(*c)) {
-			*(--c) = '\0';
-			break;
-		}
-	}
+	space = strrchr(fontname, ' ');
+	if(space && isdigit(*(space+1)))
+		*space = '\0';
 
 	gaim_prefs_set_string("/gaim/gtk/conversations/font_face", fontname);
 

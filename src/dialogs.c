@@ -1760,33 +1760,21 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 {
 	/* this could be expanded to include font size, weight, etc.
 	   but for now only works with font face */
-	int i = 0;
 	char *fontname;
+	char *space;
 	GaimConversation *c = g_object_get_data(G_OBJECT(fontsel),
 			"gaim_conversation");
 
+	if(!c)
+		return;
+
 	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
 
-	if (c) {
-		while(fontname[i] && !isdigit(fontname[i])) {
-			i++;
-		}
-		fontname[i] = 0;
-		gaim_gtk_set_font_face(GAIM_GTK_CONVERSATION(c), fontname);
-	} else {
-		char *c;
+	space = strrchr(fontname, ' ');
+	if(space && isdigit(*(space+1)))
+		*space = '\0';
 
-		fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
-
-		for (c = fontname; *c != '\0'; c++) {
-			if (isdigit(*c)) {
-				*(--c) = '\0';
-				break;
-			}
-		}
-
-		gaim_prefs_set_string("/gaim/gtk/conversations/font_face", fontname);
-	}
+	gaim_gtk_set_font_face(GAIM_GTK_CONVERSATION(c), fontname);
 
 	g_free(fontname);
 
