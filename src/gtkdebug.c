@@ -299,6 +299,8 @@ debug_window_new(void)
 
 	/* Add the gtkimhtml */
 	frame = gaim_gtk_create_imhtml(FALSE, &win->text, NULL);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(win->text),
+									GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY ^ GTK_IMHTML_IMAGE);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
