@@ -1048,6 +1048,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 		return TRUE;
 	}
 #endif
+	gtk_tree_path_free(path);
 	return FALSE;
 }
 
