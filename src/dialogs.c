@@ -3588,84 +3588,21 @@ void show_smiley_dialog(GaimConversation *c, GtkWidget *widget)
 	return;
 }
 
-static void do_alias_chat(GtkWidget *w, int resp, struct chat *chat)
+static void
+alias_chat_cb(struct chat *chat, const char *new_alias)
 {
-	if(resp == GTK_RESPONSE_OK) {
-		GtkWidget *entry = g_object_get_data(G_OBJECT(w), "alias_entry");
-		const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
-		gaim_blist_alias_chat(chat, text);
-		gaim_blist_save();
-	}
-	gtk_widget_destroy(w);
+	gaim_blist_alias_chat(chat, new_alias);
+	gaim_blist_save();
 }
 
-void alias_dialog_chat(struct chat *chat) {
-	GtkWidget *dialog;
-	GtkWidget *hbox;
-	GtkWidget *img;
-	GtkWidget *vbox;
-	GtkWidget *label;
-	GtkWidget *alias_entry;
-
-	dialog = gtk_dialog_new_with_buttons(_("Alias Chat"), NULL,
-			GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			GTK_STOCK_OK, GTK_RESPONSE_OK,
-			NULL);
-	gtk_dialog_set_default_response(GTK_DIALOG(dialog),
-										GTK_RESPONSE_OK);
-
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), 12);
-	gtk_container_set_border_width(
-			GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), 6);
-
-	/* The main hbox container. */
-	hbox = gtk_hbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
-
-	/* The dialog image. */
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-			GTK_ICON_SIZE_DIALOG);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-
-	/* The main vbox container. */
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(hbox), vbox);
-
-	/* Setup the label containing the description. */
-	label = gtk_label_new(_("Please enter an aliased name for this chat.\n"));
-	gtk_widget_set_size_request(GTK_WIDGET(label), 350, -1);
-
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-
-	hbox = gtk_hbox_new(FALSE, 6);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-
-	/* The "Alias:" label. */
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Alias:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-	/* The alias entry field. */
-	alias_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), alias_entry, FALSE, FALSE, 0);
-	gtk_entry_set_activates_default(GTK_ENTRY(alias_entry), TRUE);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), alias_entry);
-
-	gtk_entry_set_text(GTK_ENTRY(alias_entry), chat->alias);
-
-	g_object_set_data(G_OBJECT(dialog), "alias_entry", alias_entry);
-
-	g_signal_connect(G_OBJECT(dialog), "response",
-			G_CALLBACK(do_alias_chat), chat);
-
-	gtk_widget_show_all(dialog);
+void
+alias_dialog_chat(struct chat *chat)
+{
+	gaim_request_input(NULL, _("Alias Chat"), _("Alias chat"),
+					   _("Please enter an aliased name for this chat."),
+					   chat->alias, FALSE, FALSE,
+					   _("OK"), G_CALLBACK(alias_chat_cb),
+					   _("Cancel"), NULL, chat);
 }
 
 static void
