@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim 0.79cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-06 16:07+0200\n"
-"PO-Revision-Date: 2004-06-06 14:22+0200\n"
+"POT-Creation-Date: 2004-06-07 16:37+0200\n"
+"PO-Revision-Date: 2004-06-07 20:58+0200\n"
 "Last-Translator: Morten Brix Pedersen <morten@wtf.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -254,6 +254,49 @@ msgstr ""
 "vise Gaims nuværende status. Det tillader hurtig adgang til ofte brugte "
 "funktioner, og du kan hurtigt skjule/vise vennelisten. Beskeder kan også "
 "stilles i kø, indtil der er klikket på ikonet, ligesom ICQ."
+
+#: plugins/extplacement.c:85
+msgid "Separate IM and Chat windows"
+msgstr "Seperate samtale- og chatvinduer"
+
+#: plugins/extplacement.c:87
+msgid "By conversation count"
+msgstr "Efter antallet af samtaler"
+
+#: plugins/extplacement.c:109
+msgid "Conversation Placement"
+msgstr "Samtale placering"
+
+#: plugins/extplacement.c:114
+msgid "Number of conversations per window"
+msgstr "Antal af samtaler pr. vindue"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/extplacement.c:134
+msgid "ExtPlacement"
+msgstr "EkstraPlacering"
+
+#. *< name
+#. *< version
+#: plugins/extplacement.c:136
+msgid "Extra conversation placement options."
+msgstr "Ekstra samtale placerings muligheder."
+
+#. *< summary
+#. *  description
+#: plugins/extplacement.c:138
+msgid ""
+"Either restrict the number of conversations per windows or use separate "
+"windows for IMs and Chats"
+msgstr ""
+"Enten begræns antallet af samtaler per vindue eller brug seperate vinduer "
+"til samtalevinduer og chats."
 
 #. *< api_version
 #. *< type
@@ -1482,7 +1525,7 @@ msgstr "Indtast din nuværende og nye adgangskode."
 #: src/protocols/silc/buddy.c:460 src/protocols/silc/buddy.c:1134
 #: src/protocols/silc/chat.c:709 src/protocols/silc/ops.c:994
 #: src/protocols/silc/ops.c:1405 src/protocols/silc/silc.c:688
-#: src/protocols/yahoo/yahoo.c:2643 src/protocols/yahoo/yahoo.c:2652
+#: src/protocols/yahoo/yahoo.c:2642 src/protocols/yahoo/yahoo.c:2651
 #: src/request.h:1242
 msgid "OK"
 msgstr "O.k."
@@ -1508,8 +1551,8 @@ msgstr "O.k."
 #: src/protocols/silc/buddy.c:461 src/protocols/silc/buddy.c:1039
 #: src/protocols/silc/buddy.c:1135 src/protocols/silc/chat.c:710
 #: src/protocols/silc/ops.c:1406 src/protocols/silc/silc.c:689
-#: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2644
-#: src/protocols/yahoo/yahoo.c:2653 src/request.h:1242 src/request.h:1252
+#: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2643
+#: src/protocols/yahoo/yahoo.c:2652 src/request.h:1242 src/request.h:1252
 msgid "Cancel"
 msgstr "Annullér"
 
@@ -2139,7 +2182,7 @@ msgstr "Brugernavn:"
 #: src/gtkaccount.c:1880 src/protocols/jabber/jabber.c:957
 #: src/protocols/oscar/oscar.c:534 src/protocols/oscar/oscar.c:5459
 #: src/protocols/oscar/oscar.c:6641 src/protocols/silc/silc.c:44
-#: src/protocols/yahoo/yahoo.c:2380 src/protocols/zephyr/zephyr.c:1167
+#: src/protocols/yahoo/yahoo.c:2385 src/protocols/zephyr/zephyr.c:1167
 #: src/protocols/zephyr/zephyr.c:1177
 msgid "Online"
 msgstr "Logget ind"
@@ -2569,7 +2612,7 @@ msgstr "Sæt en fraværsbesked"
 
 #: src/gtkblist.c:3912 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:991 src/protocols/silc/buddy.c:1036
-#: src/protocols/silc/buddy.c:1126 src/protocols/yahoo/yahoo.c:2567
+#: src/protocols/silc/buddy.c:1126 src/protocols/yahoo/yahoo.c:2566
 msgid "Add Buddy"
 msgstr "Tilføj ven"
 
@@ -2706,9 +2749,9 @@ msgid ""
 "off from Tools->Preferences->Interface->Conversation->Enable \"slash\" "
 "commands."
 msgstr ""
-"Ingn kommando ved det navn. Hvis det ikke var meningen at du skulle skrive en "
-"kommando, kan du slå det fra i Værktøjer->Indstillinger->Grænseflade->Samtale"
-"->Aktivér \"skråstreg\" kommandoer."
+"Ingn kommando ved det navn. Hvis det ikke var meningen at du skulle skrive "
+"en kommando, kan du slå det fra i Værktøjer->Indstillinger->Grænseflade-"
+">Samtale->Aktivér \"skråstreg\" kommandoer."
 
 #: src/gtkconv.c:481
 msgid ""
@@ -2717,9 +2760,9 @@ msgid ""
 ">Preferences->Interface->Conversation->Enable \"slash\" commands."
 msgstr ""
 "Syntaks fejl: Du indtastede det forkerte antal argumenter til kommandoen. "
-"Hvis det ikke var meningen du ville skrive en kommando, kan du slå det fra "
-"i Værktøjer->Indstillinger->Grænseflade->Samtale->Aktivér \"skråstreg\""
-"kommandoer."
+"Hvis det ikke var meningen du ville skrive en kommando, kan du slå det fra i "
+"Værktøjer->Indstillinger->Grænseflade->Samtale->Aktivér \"skråstreg"
+"\"kommandoer."
 
 #: src/gtkconv.c:488
 msgid "Your command failed for an unknown reason."
@@ -4060,7 +4103,7 @@ msgstr "Send kun automatisk svar, når fraværende"
 
 #: src/gtkprefs.c:1814 src/protocols/msn/state.c:32
 #: src/protocols/novell/novell.c:2729 src/protocols/oscar/oscar.c:3990
-#: src/protocols/yahoo/yahoo.c:2376
+#: src/protocols/yahoo/yahoo.c:2381 src/protocols/yahoo/yahoo_profile.c:785
 msgid "Idle"
 msgstr "Inaktiv"
 
@@ -4511,8 +4554,8 @@ msgstr "Lidt mindre kedelig standard"
 #: src/protocols/msn/state.c:30 src/protocols/msn/state.c:37
 #: src/protocols/msn/state.c:38 src/protocols/novell/novell.c:2720
 #: src/protocols/novell/novell.c:2839 src/protocols/novell/novell.c:2890
-#: src/protocols/oscar/oscar.c:611 src/protocols/yahoo/yahoo.c:2739
-#: src/protocols/yahoo/yahoo.c:2854
+#: src/protocols/oscar/oscar.c:611 src/protocols/yahoo/yahoo.c:2738
+#: src/protocols/yahoo/yahoo.c:2853
 msgid "Available"
 msgstr "Tilgængelig"
 
@@ -4528,8 +4571,8 @@ msgstr "Kun fraværende for venner"
 #: src/protocols/jabber/presence.c:126 src/protocols/oscar/oscar.c:532
 #: src/protocols/oscar/oscar.c:5374 src/protocols/oscar/oscar.c:5452
 #: src/protocols/oscar/oscar.c:5476 src/protocols/oscar/oscar.c:6647
-#: src/protocols/oscar/oscar.c:6652 src/protocols/yahoo/yahoo.c:2374
-#: src/protocols/yahoo/yahoo.c:2759 src/protocols/yahoo/yahoo.c:2864
+#: src/protocols/oscar/oscar.c:6652 src/protocols/yahoo/yahoo.c:2379
+#: src/protocols/yahoo/yahoo.c:2758 src/protocols/yahoo/yahoo.c:2863
 msgid "Invisible"
 msgstr "Usynlig"
 
@@ -4588,8 +4631,8 @@ msgstr "Kan ikke læse fra netværket"
 #. we didn't successfully connect. tdt->toc_fd is valid here
 #: src/protocols/gg/gg.c:601 src/protocols/icq/gaim_icq.c:344
 #: src/protocols/napster/napster.c:474 src/protocols/napster/napster.c:505
-#: src/protocols/toc/toc.c:170 src/protocols/yahoo/yahoo.c:2027
-#: src/protocols/yahoo/yahoo.c:2058 src/protocols/yahoo/yahoo.c:2121
+#: src/protocols/toc/toc.c:170 src/protocols/yahoo/yahoo.c:2032
+#: src/protocols/yahoo/yahoo.c:2063 src/protocols/yahoo/yahoo.c:2126
 #: src/protocols/yahoo/yahoo_filexfer.c:68
 #: src/protocols/yahoo/yahoo_filexfer.c:139
 msgid "Unable to connect."
@@ -4696,10 +4739,10 @@ msgstr "By"
 #: src/protocols/gg/gg.c:928 src/protocols/msn/msn.c:1110
 #: src/protocols/msn/msn.c:1355 src/protocols/napster/napster.c:392
 #: src/protocols/oscar/oscar.c:3802 src/protocols/oscar/oscar.c:4018
-#: src/protocols/toc/toc.c:468 src/protocols/yahoo/yahoo_profile.c:633
-#: src/protocols/yahoo/yahoo_profile.c:655
-#: src/protocols/yahoo/yahoo_profile.c:695
-#: src/protocols/yahoo/yahoo_profile.c:882 src/protocols/zephyr/zephyr.c:568
+#: src/protocols/toc/toc.c:468 src/protocols/yahoo/yahoo_profile.c:643
+#: src/protocols/yahoo/yahoo_profile.c:665
+#: src/protocols/yahoo/yahoo_profile.c:705
+#: src/protocols/yahoo/yahoo_profile.c:917 src/protocols/zephyr/zephyr.c:568
 msgid "Buddy Information"
 msgstr "Venneinformation"
 
@@ -4951,7 +4994,7 @@ msgstr "Vis MOTD"
 #. FIXME: remove this when the ui does it for us.
 #: src/protocols/irc/irc.c:168 src/protocols/jabber/buddy.c:929
 #: src/protocols/msn/msn.c:502 src/protocols/oscar/oscar.c:448
-#: src/protocols/oscar/oscar.c:6751 src/protocols/yahoo/yahoo.c:2586
+#: src/protocols/oscar/oscar.c:6751 src/protocols/yahoo/yahoo.c:2585
 msgid "Send File"
 msgstr "Send fil"
 
@@ -5057,7 +5100,7 @@ msgid " <i>(identified)</i>"
 msgstr " <i>(identificeret)</i>"
 
 #: src/protocols/irc/msgs.c:192 src/protocols/silc/ops.c:929
-#: src/protocols/yahoo/yahoo_profile.c:775
+#: src/protocols/yahoo/yahoo_profile.c:804
 msgid "Realname"
 msgstr "Rigtige navn"
 
@@ -5264,7 +5307,7 @@ msgstr "Fornavn"
 #: src/protocols/jabber/buddy.c:250 src/protocols/jabber/buddy.c:636
 #: src/protocols/jabber/jabber.c:607 src/protocols/silc/buddy.c:1474
 #: src/protocols/silc/ops.c:786 src/protocols/silc/ops.c:927
-#: src/protocols/yahoo/yahoo_profile.c:771
+#: src/protocols/yahoo/yahoo_profile.c:800
 msgid "Nickname"
 msgstr "Kælenavn"
 
@@ -5307,7 +5350,7 @@ msgstr "Telefon"
 
 #: src/protocols/jabber/buddy.c:259 src/protocols/jabber/buddy.c:710
 #: src/protocols/jabber/buddy.c:718 src/protocols/silc/buddy.c:1529
-#: src/protocols/silc/silc.c:633 src/protocols/yahoo/yahoo_profile.c:767
+#: src/protocols/silc/silc.c:633 src/protocols/yahoo/yahoo_profile.c:796
 msgid "Email"
 msgstr "E-post adresse"
 
@@ -5353,7 +5396,7 @@ msgstr "Jabber ID"
 #: src/protocols/msn/msn.c:421 src/protocols/novell/novell.c:2742
 #: src/protocols/novell/novell.c:2746 src/protocols/oscar/oscar.c:574
 #: src/protocols/oscar/oscar.c:580 src/protocols/oscar/oscar.c:582
-#: src/protocols/yahoo/yahoo.c:2505
+#: src/protocols/yahoo/yahoo.c:2504
 msgid "Status"
 msgstr "Status"
 
@@ -5595,7 +5638,7 @@ msgstr "Logget ud"
 #: src/protocols/jabber/jabber.c:782 src/protocols/msn/msn.c:578
 #: src/protocols/napster/napster.c:498 src/protocols/novell/novell.c:2105
 #: src/protocols/oscar/oscar.c:1591 src/protocols/trepia/trepia.c:1064
-#: src/protocols/yahoo/yahoo.c:2246 src/protocols/zephyr/zephyr.c:865
+#: src/protocols/yahoo/yahoo.c:2251 src/protocols/zephyr/zephyr.c:865
 msgid "Connecting"
 msgstr "Tilslutter"
 
@@ -6349,8 +6392,8 @@ msgid "Away From Computer"
 msgstr "Væk fra computeren"
 
 #: src/protocols/msn/msn.c:435 src/protocols/msn/msn.c:728
-#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2356
-#: src/protocols/yahoo/yahoo.c:2741 src/protocols/yahoo/yahoo.c:2855
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2361
+#: src/protocols/yahoo/yahoo.c:2740 src/protocols/yahoo/yahoo.c:2854
 msgid "Be Right Back"
 msgstr "Straks tilbage"
 
@@ -6358,20 +6401,20 @@ msgstr "Straks tilbage"
 #: src/protocols/msn/state.c:31 src/protocols/novell/novell.c:2726
 #: src/protocols/novell/novell.c:2841 src/protocols/novell/novell.c:2895
 #: src/protocols/silc/buddy.c:1411 src/protocols/silc/silc.c:47
-#: src/protocols/silc/silc.c:78 src/protocols/yahoo/yahoo.c:2358
-#: src/protocols/yahoo/yahoo.c:2743 src/protocols/yahoo/yahoo.c:2856
+#: src/protocols/silc/silc.c:78 src/protocols/yahoo/yahoo.c:2363
+#: src/protocols/yahoo/yahoo.c:2742 src/protocols/yahoo/yahoo.c:2855
 msgid "Busy"
 msgstr "Travlt"
 
 #: src/protocols/msn/msn.c:437 src/protocols/msn/msn.c:732
-#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2366
-#: src/protocols/yahoo/yahoo.c:2751 src/protocols/yahoo/yahoo.c:2860
+#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2371
+#: src/protocols/yahoo/yahoo.c:2750 src/protocols/yahoo/yahoo.c:2859
 msgid "On The Phone"
 msgstr "Snakker i telefon"
 
 #: src/protocols/msn/msn.c:438 src/protocols/msn/msn.c:734
-#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2370
-#: src/protocols/yahoo/yahoo.c:2755 src/protocols/yahoo/yahoo.c:2862
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2375
+#: src/protocols/yahoo/yahoo.c:2754 src/protocols/yahoo/yahoo.c:2861
 msgid "Out To Lunch"
 msgstr "Ude til frokost"
 
@@ -6420,33 +6463,33 @@ msgstr ""
 "SSL-understøttelse skal bruges til MSN. Installér et understøttet SSL "
 "bibliotek. Se http://gaim.sf.net/faq-ssl.php for flere oplysninger."
 
-#: src/protocols/msn/msn.c:1111 src/protocols/yahoo/yahoo_profile.c:634
+#: src/protocols/msn/msn.c:1111 src/protocols/yahoo/yahoo_profile.c:644
 msgid "<html><body><b>Error retrieving profile</b></body></html>"
 msgstr "<html><body><b>Fejl ved hentning af profil</b></body></html>"
 
 #. Age
 #: src/protocols/msn/msn.c:1181 src/protocols/oscar/oscar.c:4865
 #: src/protocols/trepia/trepia.c:285 src/protocols/trepia/trepia.c:404
-#: src/protocols/yahoo/yahoo_profile.c:783
+#: src/protocols/yahoo/yahoo_profile.c:812
 msgid "Age"
 msgstr "Alder"
 
 #. Gender
 #: src/protocols/msn/msn.c:1188 src/protocols/oscar/oscar.c:4851
 #: src/protocols/trepia/trepia.c:279 src/protocols/trepia/trepia.c:406
-#: src/protocols/yahoo/yahoo_profile.c:791
+#: src/protocols/yahoo/yahoo_profile.c:820
 msgid "Gender"
 msgstr "Køn"
 
-#: src/protocols/msn/msn.c:1197 src/protocols/yahoo/yahoo_profile.c:787
+#: src/protocols/msn/msn.c:1197 src/protocols/yahoo/yahoo_profile.c:816
 msgid "Marital Status"
 msgstr "Ægteskabelig stilling"
 
-#: src/protocols/msn/msn.c:1204 src/protocols/yahoo/yahoo_profile.c:779
+#: src/protocols/msn/msn.c:1204 src/protocols/yahoo/yahoo_profile.c:808
 msgid "Location"
 msgstr "Beliggenhed"
 
-#: src/protocols/msn/msn.c:1212 src/protocols/yahoo/yahoo_profile.c:795
+#: src/protocols/msn/msn.c:1212 src/protocols/yahoo/yahoo_profile.c:824
 msgid "Occupation"
 msgstr "Beskæftigelse"
 
@@ -6467,11 +6510,11 @@ msgid "Hobbies and Interests"
 msgstr "Hobbyer og interesser"
 
 #: src/protocols/msn/msn.c:1316 src/protocols/msn/msn.c:1322
-#: src/protocols/yahoo/yahoo_profile.c:830
+#: src/protocols/yahoo/yahoo_profile.c:859
 msgid "Favorite Quote"
 msgstr "Yndlings citat"
 
-#: src/protocols/msn/msn.c:1330 src/protocols/yahoo/yahoo_profile.c:873
+#: src/protocols/msn/msn.c:1330 src/protocols/yahoo/yahoo_profile.c:902
 msgid "Last Updated"
 msgstr "Sidst opdateret"
 
@@ -6481,12 +6524,12 @@ msgstr "Sidst opdateret"
 msgid "Homepage"
 msgstr "Hjemmeside"
 
-#: src/protocols/msn/msn.c:1363 src/protocols/yahoo/yahoo_profile.c:888
+#: src/protocols/msn/msn.c:1363 src/protocols/yahoo/yahoo_profile.c:923
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "Bruger oplysninger for %s er ikke tilgængelige"
 
-#: src/protocols/msn/msn.c:1366 src/protocols/yahoo/yahoo_profile.c:890
+#: src/protocols/msn/msn.c:1366 src/protocols/yahoo/yahoo_profile.c:925
 msgid "The user's profile is empty."
 msgstr "Brugerens profil er tom."
 
@@ -6542,7 +6585,7 @@ msgstr "Modtager venneliste"
 msgid "Password sent"
 msgstr "Adgangskode sendt"
 
-#: src/protocols/msn/notification.c:1067
+#: src/protocols/msn/notification.c:1069
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -6571,7 +6614,7 @@ msgstr[1] ""
 "\n"
 "Efter vedligeholdelsen er blevet gennemført, kan du logge ind igen."
 
-#: src/protocols/msn/notification.c:1132
+#: src/protocols/msn/notification.c:1134
 msgid "Syncing with server"
 msgstr "Synkroniserer med server"
 
@@ -7004,7 +7047,7 @@ msgid "This conference has been closed. No more messages can be sent."
 msgstr "Konferencen er blevet lukket. Der kan ikke sendes flere beskeder."
 
 #: src/protocols/novell/novell.c:2732 src/protocols/oscar/oscar.c:582
-#: src/protocols/oscar/oscar.c:6453 src/protocols/yahoo/yahoo.c:2378
+#: src/protocols/oscar/oscar.c:6453 src/protocols/yahoo/yahoo.c:2383
 msgid "Offline"
 msgstr "Offline"
 
@@ -7273,12 +7316,12 @@ msgstr "Direkte forbindelse til %s oprettet"
 #: src/protocols/oscar/oscar.c:906
 #, c-format
 msgid "Attempting to connect to %s at %s:%hu for Direct IM."
-msgstr ""
+msgstr "Prøver at forbinde til %s på %s:%hu for direkte forbindelse."
 
 #: src/protocols/oscar/oscar.c:1322
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
-msgstr ""
+msgstr "Beder %s om at forbinde til os på %s:%hu for direkte forbindelse."
 
 #: src/protocols/oscar/oscar.c:1327
 msgid "Unable to open Direct IM"
@@ -7625,7 +7668,7 @@ msgstr "Advarselsniveau"
 msgid "Online Since"
 msgstr "Online siden"
 
-#: src/protocols/oscar/oscar.c:3985 src/protocols/yahoo/yahoo_profile.c:869
+#: src/protocols/oscar/oscar.c:3985 src/protocols/yahoo/yahoo_profile.c:898
 msgid "Member Since"
 msgstr "Medlem siden"
 
@@ -8263,15 +8306,15 @@ msgstr ""
 #: src/protocols/silc/buddy.c:381 src/protocols/silc/buddy.c:416
 #: src/protocols/silc/buddy.c:458
 msgid "IM With Password"
-msgstr ""
+msgstr "Besked med adgangskode"
 
 #: src/protocols/silc/buddy.c:417
 msgid "Cannot set IM key"
-msgstr ""
+msgstr "Kan ikke sætte nøgle"
 
 #: src/protocols/silc/buddy.c:459
 msgid "Set IM Password"
-msgstr ""
+msgstr "Sæt adgangskode på besked"
 
 #: src/protocols/silc/buddy.c:506 src/protocols/silc/buddy.c:541
 #: src/protocols/silc/ops.c:1080 src/protocols/silc/ops.c:1091
@@ -8306,13 +8349,16 @@ msgstr "Kan ikke hente oplysninger"
 #: src/protocols/silc/buddy.c:729
 #, c-format
 msgid "The %s buddy is not trusted"
-msgstr ""
+msgstr "Vennen %s er ikke betroet"
 
 #: src/protocols/silc/buddy.c:732
 msgid ""
 "You cannot receive buddy notifications until you import his/her public key.  "
 "You can use the Get Public Key command to get the public key."
 msgstr ""
+"Du kan ikke modtage venne-påmindelser før du importerer hans/hendes "
+"offentlige nøgle. Du kan bruge \"Hent offentlig nøgle\" kommandoen for at "
+"hente den offentlige nøgle."
 
 #: src/protocols/silc/buddy.c:1034
 #, c-format
@@ -8353,12 +8399,12 @@ msgstr ""
 
 #: src/protocols/silc/buddy.c:1405
 msgid "Detached"
-msgstr ""
+msgstr "Ikke koblet på"
 
 #: src/protocols/silc/buddy.c:1409 src/protocols/silc/silc.c:48
 #: src/protocols/silc/silc.c:80
 msgid "Indisposed"
-msgstr ""
+msgstr "Utilpas"
 
 #: src/protocols/silc/buddy.c:1413 src/protocols/silc/silc.c:49
 #: src/protocols/silc/silc.c:82
@@ -8422,12 +8468,12 @@ msgstr "Keder sig"
 #: src/protocols/silc/buddy.c:1442 src/protocols/silc/buddy.c:1510
 #: src/protocols/silc/silc.c:624
 msgid "Excited"
-msgstr "Spændt"
+msgstr "Begejstret"
 
 #: src/protocols/silc/buddy.c:1444 src/protocols/silc/buddy.c:1512
 #: src/protocols/silc/silc.c:626
 msgid "Anxious"
-msgstr ""
+msgstr "Spændt"
 
 #: src/protocols/silc/buddy.c:1480
 msgid "Modes"
@@ -8435,7 +8481,7 @@ msgstr ""
 
 #: src/protocols/silc/buddy.c:1490
 msgid "Mood"
-msgstr ""
+msgstr "Humør"
 
 #: src/protocols/silc/buddy.c:1520
 msgid "Status Text"
@@ -8443,11 +8489,11 @@ msgstr "Status tekst"
 
 #: src/protocols/silc/buddy.c:1525
 msgid "Preferred Contact"
-msgstr ""
+msgstr "Foretrukne kontakt"
 
 #: src/protocols/silc/buddy.c:1533
 msgid "Paging"
-msgstr ""
+msgstr "Personsøger"
 
 #: src/protocols/silc/buddy.c:1535 src/protocols/silc/silc.c:637
 msgid "SMS"
@@ -8488,19 +8534,19 @@ msgstr "Tidszone"
 
 #: src/protocols/silc/buddy.c:1576
 msgid "Geolocation"
-msgstr ""
+msgstr "Placering"
 
 #: src/protocols/silc/buddy.c:1635
 msgid "Reset IM Key"
-msgstr ""
+msgstr "Nulstil besked nøgle"
 
 #: src/protocols/silc/buddy.c:1640
 msgid "IM with Key Exchange"
-msgstr ""
+msgstr "Besked med nøgle udveksling"
 
 #: src/protocols/silc/buddy.c:1644
 msgid "IM with Password"
-msgstr ""
+msgstr "Besked med adgangskode"
 
 #: src/protocols/silc/buddy.c:1655
 msgid "Get Public Key..."
@@ -8534,7 +8580,7 @@ msgstr "Kan ikke hente kanal oplysninger"
 
 #: src/protocols/silc/chat.c:217
 msgid "Add Channel Public Key"
-msgstr ""
+msgstr "Tilføj kanalens offentlige nøgle"
 
 #. Add new public key
 #: src/protocols/silc/chat.c:272
@@ -8543,11 +8589,11 @@ msgstr "Åbn offentlig nøgle..."
 
 #: src/protocols/silc/chat.c:383
 msgid "Channel Passphrase"
-msgstr ""
+msgstr "Kanalens adgangssætning"
 
 #: src/protocols/silc/chat.c:390
 msgid "Channel Public Keys List"
-msgstr ""
+msgstr "Kanalens liste med offentlige nøgler"
 
 #: src/protocols/silc/chat.c:395
 msgid ""
@@ -8575,7 +8621,7 @@ msgstr "Adgangskode"
 #: src/protocols/silc/chat.c:577
 #, c-format
 msgid "Please enter the %s channel private group name and passphrase."
-msgstr ""
+msgstr "Indtast %s kanalens private gruppenavn og adgangssætning."
 
 #: src/protocols/silc/chat.c:579
 msgid "Add Channel Private Group"
@@ -8656,14 +8702,15 @@ msgstr "Kanal grundlægger på <I>%s</I> er <I>%s</I>"
 msgid ""
 "You have to join the %s channel before you are able to join the private group"
 msgstr ""
+"Du skal deltage i %s kanalen før du kan deltage i den private gruppe"
 
 #: src/protocols/silc/chat.c:1044
 msgid "Join Private Group"
-msgstr ""
+msgstr "Deltag i privat gruppe"
 
 #: src/protocols/silc/chat.c:1045
 msgid "Cannot join private group"
-msgstr ""
+msgstr "Kan ikke deltage i privat gruppe"
 
 #: src/protocols/silc/chat.c:1227 src/protocols/silc/silc.c:842
 msgid "Cannot call command"
@@ -8697,11 +8744,11 @@ msgstr ""
 
 #: src/protocols/silc/ft.c:102
 msgid "File transfer sessions does not exist"
-msgstr ""
+msgstr "Filoverførsel session eksisterer ikke"
 
 #: src/protocols/silc/ft.c:207
 msgid "No file transfer session active"
-msgstr ""
+msgstr "Ingen filoverførsel session er aktiv"
 
 #: src/protocols/silc/ft.c:212
 msgid "File transfer already started"
@@ -8816,7 +8863,7 @@ msgstr "Kanaler"
 
 #: src/protocols/silc/ops.c:981 src/protocols/silc/util.c:292
 msgid "Public Key Fingerprint"
-msgstr ""
+msgstr "Offentlig nøgle fingeraftryk"
 
 #: src/protocols/silc/ops.c:982 src/protocols/silc/util.c:293
 msgid "Public Key Babbleprint"
@@ -8828,11 +8875,11 @@ msgstr "Mere..."
 
 #: src/protocols/silc/ops.c:1006 src/protocols/silc/silc.c:745
 msgid "Detach From Server"
-msgstr ""
+msgstr "Kobl af fra server"
 
 #: src/protocols/silc/ops.c:1006
 msgid "Cannot detach"
-msgstr ""
+msgstr "Kan ikke koble af"
 
 #: src/protocols/silc/ops.c:1017
 msgid "Cannot set topic"
@@ -8891,19 +8938,19 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1363
 msgid "Verifying server public key"
-msgstr ""
+msgstr "Verificerer serverens offentlige nøgle"
 
 #: src/protocols/silc/ops.c:1404
 msgid "Passphrase required"
-msgstr ""
+msgstr "Adgangssætning krævet"
 
 #: src/protocols/silc/ops.c:1433
 msgid "Failure: Version mismatch, upgrade your client"
-msgstr ""
+msgstr "Fejl: Version uoverensstemmelse, opgradér din klient"
 
 #: src/protocols/silc/ops.c:1436
 msgid "Failure: Remote does not trust/support your public key"
-msgstr ""
+msgstr "Fejl: Fjernmaskine stoler eller understøtter ikke din offentlige nøgle"
 
 #: src/protocols/silc/ops.c:1439
 msgid "Failure: Remote does not support proposed KE group"
@@ -8962,7 +9009,7 @@ msgstr ""
 
 #: src/protocols/silc/pk.c:115 src/protocols/silc/pk.c:139
 msgid "Verify Public Key"
-msgstr ""
+msgstr "Verificér offentlig nøgle"
 
 #: src/protocols/silc/pk.c:118
 msgid "View..."
@@ -8970,7 +9017,7 @@ msgstr "Vis..."
 
 #: src/protocols/silc/pk.c:140
 msgid "Unsupported public key type"
-msgstr ""
+msgstr "Ikke understøttet offentlige nøgle type"
 
 #: src/protocols/silc/silc.c:133
 msgid "Connection failed"
@@ -8978,11 +9025,11 @@ msgstr "Forbindelse fejlede"
 
 #: src/protocols/silc/silc.c:159
 msgid "Cannot initialize SILC Client connection"
-msgstr ""
+msgstr "Kan ikke initialisere SILC klient forbindelse"
 
 #: src/protocols/silc/silc.c:170
 msgid "Performing key exchange"
-msgstr ""
+msgstr "Udfører nøgleudveksling"
 
 #: src/protocols/silc/silc.c:242
 msgid "Out of memory"
@@ -9015,11 +9062,11 @@ msgstr "Din nuværende status"
 
 #: src/protocols/silc/silc.c:653
 msgid "Online Services"
-msgstr ""
+msgstr "Online tjenester"
 
 #: src/protocols/silc/silc.c:656
 msgid "Let others see what services you are using"
-msgstr ""
+msgstr "Lad andre se hvilke tjenester du bruger"
 
 #: src/protocols/silc/silc.c:662
 msgid "Let others see what computer you are using"
@@ -9027,7 +9074,7 @@ msgstr "Lad andre se hvilken computer du bruger"
 
 #: src/protocols/silc/silc.c:669
 msgid "Your VCard File"
-msgstr ""
+msgstr "Din VCard fil"
 
 #: src/protocols/silc/silc.c:682 src/protocols/silc/silc.c:683
 msgid "User Online Status Attributes"
@@ -9039,6 +9086,9 @@ msgid ""
 "information. Please fill the information you would like other users to see "
 "about yourself."
 msgstr ""
+"Du kan lade andre brugere se dine online status oplysninger og dine "
+"personlige oplysninger. Udfyld de oplysninger, du gerne vil have at folk kan "
+"se om dig."
 
 #: src/protocols/silc/silc.c:723 src/protocols/silc/silc.c:728
 msgid "Message of the Day"
@@ -9079,7 +9129,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:920
 msgid "Channel Messages"
-msgstr ""
+msgstr "Kanalbeskeder"
 
 #: src/protocols/silc/silc.c:925
 msgid "Digitally sign all channel messages"
@@ -9091,15 +9141,15 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:933
 msgid "Default SILC Key Pair"
-msgstr ""
+msgstr "Standard SILC nøglepar"
 
 #: src/protocols/silc/silc.c:938
 msgid "SILC Public Key"
-msgstr ""
+msgstr "SILC offentlig nøgle"
 
 #: src/protocols/silc/silc.c:943
 msgid "SILC Private Key"
-msgstr ""
+msgstr "SILC privat nøgle"
 
 #. *< api_version
 #. *< type
@@ -9118,19 +9168,19 @@ msgstr "SILC prokotolmodul"
 #. *  description
 #: src/protocols/silc/silc.c:1028
 msgid "Secure Internet Live Conferencing (SILC) Protocol"
-msgstr ""
+msgstr "Secure Internet Live Conferencing (SILC) protokol"
 
 #: src/protocols/silc/silc.c:1058
 msgid "Public key authentication"
-msgstr ""
+msgstr "Offentlig nøgle godkendelse"
 
 #: src/protocols/silc/silc.c:1064
 msgid "Public Key File"
-msgstr ""
+msgstr "Fil til offentlig nøgle"
 
 #: src/protocols/silc/silc.c:1068
 msgid "Private Key File"
-msgstr ""
+msgstr "Fil til privat nøgle"
 
 #: src/protocols/silc/silc.c:1073
 msgid "Reject watching by other users"
@@ -9138,7 +9188,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:1076
 msgid "Block invites"
-msgstr ""
+msgstr "Blokér invitationer"
 
 #: src/protocols/silc/silc.c:1079
 msgid "Block IMs without Key Exchange"
@@ -9150,7 +9200,7 @@ msgstr ""
 
 #: src/protocols/silc/util.c:197 src/protocols/silc/util.c:217
 msgid "Creating SILC key pair..."
-msgstr ""
+msgstr "Opretter SILC nøglepar..."
 
 #: src/protocols/silc/util.c:277
 msgid "Real Name"
@@ -9175,7 +9225,7 @@ msgstr "Nøgle længde"
 #: src/protocols/silc/util.c:290
 #, c-format
 msgid "%d bits"
-msgstr ""
+msgstr "%d bits"
 
 #: src/protocols/silc/util.c:297 src/protocols/silc/util.c:298
 msgid "Public Key Information"
@@ -9521,7 +9571,7 @@ msgstr ""
 msgid "Add buddy rejected"
 msgstr "Vennetilføjelse nægtet"
 
-#: src/protocols/yahoo/yahoo.c:1613
+#: src/protocols/yahoo/yahoo.c:1618
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -9532,11 +9582,11 @@ msgstr ""
 "Denne version af Gaim vil højst sandsynligt ikke kunne logge på Yahoo. Tjek %"
 "s for opdateringer."
 
-#: src/protocols/yahoo/yahoo.c:1616
+#: src/protocols/yahoo/yahoo.c:1621
 msgid "Failed Yahoo! Authentication"
 msgstr "Fejlede Yahoo! godkendelse"
 
-#: src/protocols/yahoo/yahoo.c:1689
+#: src/protocols/yahoo/yahoo.c:1694
 #, c-format
 msgid ""
 "You have tried to ignore %s, but the user is on your buddy list.  Clicking "
@@ -9545,76 +9595,76 @@ msgstr ""
 "Du har prøvet at ignorere %s, men brugeren er på din venneliste. Hvis du "
 "klikker på \"Ja\" vil det fjerne og ignorere vennen."
 
-#: src/protocols/yahoo/yahoo.c:1692
+#: src/protocols/yahoo/yahoo.c:1697
 msgid "Ignore buddy?"
 msgstr "Ignorér ven?"
 
-#: src/protocols/yahoo/yahoo.c:1725
+#: src/protocols/yahoo/yahoo.c:1730
 msgid "Invalid username."
 msgstr "Ugyldigt brugernavn."
 
-#: src/protocols/yahoo/yahoo.c:1728
+#: src/protocols/yahoo/yahoo.c:1733
 msgid "Incorrect password."
 msgstr "Forkert adgangskode."
 
-#: src/protocols/yahoo/yahoo.c:1731
+#: src/protocols/yahoo/yahoo.c:1736
 msgid "Your account is locked, please log in to the yahoo website."
 msgstr "Din konto er låst. Log ind på yahoo websitet."
 
-#: src/protocols/yahoo/yahoo.c:1734
+#: src/protocols/yahoo/yahoo.c:1739
 #, c-format
 msgid "Unknown error number %d."
 msgstr "Ukendt fejlkode %d"
 
-#: src/protocols/yahoo/yahoo.c:1791
+#: src/protocols/yahoo/yahoo.c:1796
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
 msgstr "Kunne ikke tilføje ven %s til gruppe %s til serverlisten på konto %s."
 
-#: src/protocols/yahoo/yahoo.c:1793
+#: src/protocols/yahoo/yahoo.c:1798
 msgid "Could not add buddy to server list"
 msgstr "Kunne ikke tilføje ven til serverliste"
 
-#: src/protocols/yahoo/yahoo.c:1958 src/protocols/yahoo/yahoo.c:2089
+#: src/protocols/yahoo/yahoo.c:1963 src/protocols/yahoo/yahoo.c:2094
 msgid "Unable to read"
 msgstr "Kunne ikke læse"
 
-#: src/protocols/yahoo/yahoo.c:2111 src/protocols/yahoo/yahoo.c:2221
-#: src/protocols/yahoo/yahoo.c:2266 src/protocols/yahoo/yahoo.c:2276
+#: src/protocols/yahoo/yahoo.c:2116 src/protocols/yahoo/yahoo.c:2226
+#: src/protocols/yahoo/yahoo.c:2271 src/protocols/yahoo/yahoo.c:2281
 #: src/protocols/yahoo/yahoochat.c:1360 src/protocols/yahoo/yahoochat.c:1421
 msgid "Connection problem"
 msgstr "Forbindelsesfejl"
 
-#: src/protocols/yahoo/yahoo.c:2360 src/protocols/yahoo/yahoo.c:2745
-#: src/protocols/yahoo/yahoo.c:2857
+#: src/protocols/yahoo/yahoo.c:2365 src/protocols/yahoo/yahoo.c:2744
+#: src/protocols/yahoo/yahoo.c:2856
 msgid "Not At Home"
 msgstr "Ikke hjemme"
 
-#: src/protocols/yahoo/yahoo.c:2362 src/protocols/yahoo/yahoo.c:2747
-#: src/protocols/yahoo/yahoo.c:2858
+#: src/protocols/yahoo/yahoo.c:2367 src/protocols/yahoo/yahoo.c:2746
+#: src/protocols/yahoo/yahoo.c:2857
 msgid "Not At Desk"
 msgstr "Ikke ved skrivebordet"
 
-#: src/protocols/yahoo/yahoo.c:2364 src/protocols/yahoo/yahoo.c:2749
-#: src/protocols/yahoo/yahoo.c:2859
+#: src/protocols/yahoo/yahoo.c:2369 src/protocols/yahoo/yahoo.c:2748
+#: src/protocols/yahoo/yahoo.c:2858
 msgid "Not In Office"
 msgstr "Ikke på kontoret"
 
-#: src/protocols/yahoo/yahoo.c:2368 src/protocols/yahoo/yahoo.c:2753
-#: src/protocols/yahoo/yahoo.c:2861
+#: src/protocols/yahoo/yahoo.c:2373 src/protocols/yahoo/yahoo.c:2752
+#: src/protocols/yahoo/yahoo.c:2860
 msgid "On Vacation"
 msgstr "På ferie"
 
-#: src/protocols/yahoo/yahoo.c:2372 src/protocols/yahoo/yahoo.c:2757
-#: src/protocols/yahoo/yahoo.c:2863
+#: src/protocols/yahoo/yahoo.c:2377 src/protocols/yahoo/yahoo.c:2756
+#: src/protocols/yahoo/yahoo.c:2862
 msgid "Stepped Out"
 msgstr "Trådt udenfor"
 
-#: src/protocols/yahoo/yahoo.c:2453 src/protocols/yahoo/yahoo.c:2485
+#: src/protocols/yahoo/yahoo.c:2457 src/protocols/yahoo/yahoo.c:2484
 msgid "Not on server list"
 msgstr "Ikke på server liste"
 
-#: src/protocols/yahoo/yahoo.c:2505
+#: src/protocols/yahoo/yahoo.c:2504
 #, c-format
 msgid ""
 "\n"
@@ -9623,27 +9673,27 @@ msgstr ""
 "\n"
 "<b>%s:</b> %s"
 
-#: src/protocols/yahoo/yahoo.c:2577
+#: src/protocols/yahoo/yahoo.c:2576
 msgid "Join in Chat"
 msgstr "Deltag i chat"
 
-#: src/protocols/yahoo/yahoo.c:2581
+#: src/protocols/yahoo/yahoo.c:2580
 msgid "Initiate Conference"
 msgstr "Start konference"
 
-#: src/protocols/yahoo/yahoo.c:2641
+#: src/protocols/yahoo/yahoo.c:2640
 msgid "Active which ID?"
 msgstr "Aktivér hvilket ID?"
 
-#: src/protocols/yahoo/yahoo.c:2650
+#: src/protocols/yahoo/yahoo.c:2649
 msgid "Join who in chat?"
 msgstr "Deltag med hvem i chat?"
 
-#: src/protocols/yahoo/yahoo.c:2660
+#: src/protocols/yahoo/yahoo.c:2659
 msgid "Activate ID..."
 msgstr "Aktivér ID..."
 
-#: src/protocols/yahoo/yahoo.c:2664
+#: src/protocols/yahoo/yahoo.c:2663
 msgid "Join user in chat..."
 msgstr "Deltag med bruger i chat..."
 
@@ -9658,39 +9708,39 @@ msgstr "Deltag med bruger i chat..."
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3179 src/protocols/yahoo/yahoo.c:3181
+#: src/protocols/yahoo/yahoo.c:3178 src/protocols/yahoo/yahoo.c:3180
 msgid "Yahoo Protocol Plugin"
 msgstr "Yahoo protokolmodul"
 
-#: src/protocols/yahoo/yahoo.c:3200
+#: src/protocols/yahoo/yahoo.c:3199
 msgid "Yahoo Japan"
 msgstr "Yahoo Japan"
 
-#: src/protocols/yahoo/yahoo.c:3203
+#: src/protocols/yahoo/yahoo.c:3202
 msgid "Pager host"
 msgstr "Bipper vært"
 
-#: src/protocols/yahoo/yahoo.c:3206
+#: src/protocols/yahoo/yahoo.c:3205
 msgid "Japan Pager host"
 msgstr "Japan Bipper vært"
 
-#: src/protocols/yahoo/yahoo.c:3209
+#: src/protocols/yahoo/yahoo.c:3208
 msgid "Pager port"
 msgstr "Bipper port"
 
-#: src/protocols/yahoo/yahoo.c:3212
+#: src/protocols/yahoo/yahoo.c:3211
 msgid "File transfer host"
 msgstr "Filoverførsel værtsnavn"
 
-#: src/protocols/yahoo/yahoo.c:3215
+#: src/protocols/yahoo/yahoo.c:3214
 msgid "Japan File transfer host"
 msgstr "Japan Filoverførsel værtsnavn"
 
-#: src/protocols/yahoo/yahoo.c:3218
+#: src/protocols/yahoo/yahoo.c:3217
 msgid "File transfer port"
 msgstr "Filoverførsel port"
 
-#: src/protocols/yahoo/yahoo.c:3221
+#: src/protocols/yahoo/yahoo.c:3220
 msgid "Chat Room List Url"
 msgstr "Chatrumsliste adresse"
 
@@ -9702,7 +9752,7 @@ msgstr ""
 "Gaim kan ikke sende filer igennem Yahoo! der er større end en megabyte "
 "(1,048,576 bytes)."
 
-#: src/protocols/yahoo/yahoo_profile.c:651
+#: src/protocols/yahoo/yahoo_profile.c:661
 msgid ""
 "<b>Sorry, profiles marked as containing adult content are not supported at "
 "this time.</b><br><br>\n"
@@ -9710,51 +9760,74 @@ msgstr ""
 "<b>Desværre, profiler der er markeret som indeholdende indhold der ikke er "
 "for børn, er ikke understøttet.<b/><br><br>\n"
 
-#: src/protocols/yahoo/yahoo_profile.c:652
-#: src/protocols/yahoo/yahoo_profile.c:689
+#: src/protocols/yahoo/yahoo_profile.c:662
+#: src/protocols/yahoo/yahoo_profile.c:699
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser<br>"
 msgstr ""
 "Vis du vil vise denne profil, skal du besøge dette link i din webbrowser<br>"
 
-#: src/protocols/yahoo/yahoo_profile.c:688
+#: src/protocols/yahoo/yahoo_profile.c:697
 msgid ""
-"<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"
+"<b>Sorry, this profile seems to be in a language that is not supported at "
+"this time.</b><br><br>\n"
 msgstr ""
-"<b>Desværre, ikke-engelske profiler er ikke understøttet.</b><br><br>\n"
+"<b>Desværre, denne profil er i et sprog som ikke er understøttet på "
+"nuværende tidspunkt.</b><br><br>\n"
 
-#: src/protocols/yahoo/yahoo_profile.c:761
-#: src/protocols/yahoo/yahoo_profile.c:762
+#: src/protocols/yahoo/yahoo_profile.c:771
+#: src/protocols/yahoo/yahoo_profile.c:772
 msgid "Yahoo! ID"
 msgstr "Yahoo! ID"
 
-#: src/protocols/yahoo/yahoo_profile.c:806
-#: src/protocols/yahoo/yahoo_profile.c:809
-#: src/protocols/yahoo/yahoo_profile.c:812
+#: src/protocols/yahoo/yahoo_profile.c:772
+#: src/protocols/yahoo/yahoo_profile.c:785
+#, c-format
+msgid "<b>%s:</b> %s<br>"
+msgstr "<b>%s:</b> %s<br>"
+
+#: src/protocols/yahoo/yahoo_profile.c:780 src/protocols/zephyr/zephyr.c:560
+#, c-format
+msgid "<b>Alias:</b> %s<br>"
+msgstr "<b>Alias:</b> %s<br>"
+
+#: src/protocols/yahoo/yahoo_profile.c:835
+#: src/protocols/yahoo/yahoo_profile.c:838
+#: src/protocols/yahoo/yahoo_profile.c:841
 msgid "Hobbies"
 msgstr "Hobbyer"
 
-#: src/protocols/yahoo/yahoo_profile.c:821
-#: src/protocols/yahoo/yahoo_profile.c:824
+#: src/protocols/yahoo/yahoo_profile.c:850
+#: src/protocols/yahoo/yahoo_profile.c:853
 msgid "Latest News"
 msgstr "Seneste nyt"
 
-#: src/protocols/yahoo/yahoo_profile.c:843
+#: src/protocols/yahoo/yahoo_profile.c:872
 msgid "Home Page"
 msgstr "Hjemmeside"
 
-#: src/protocols/yahoo/yahoo_profile.c:857
+#: src/protocols/yahoo/yahoo_profile.c:886
 msgid "Cool Link 1"
 msgstr "Sejt link 1"
 
-#: src/protocols/yahoo/yahoo_profile.c:861
+#: src/protocols/yahoo/yahoo_profile.c:890
 msgid "Cool Link 2"
 msgstr "Sejt link 1"
 
-#: src/protocols/yahoo/yahoo_profile.c:863
+#: src/protocols/yahoo/yahoo_profile.c:892
 msgid "Cool Link 3"
 msgstr "Sejt link 3"
+
+#. put a link to the actual profile URL
+#: src/protocols/yahoo/yahoo_profile.c:905 src/util.c:791
+#, c-format
+msgid "<b>%s:</b> "
+msgstr "<b>%s:</b> "
+
+#: src/protocols/yahoo/yahoo_profile.c:905
+msgid "Profile URL"
+msgstr "Profil URL"
 
 #: src/protocols/yahoo/yahoochat.c:198
 #, c-format
@@ -9815,11 +9888,6 @@ msgstr "Brugerrum"
 #, c-format
 msgid "<b>User:</b> %s<br>"
 msgstr "<b>Bruger:</b> %s<br>"
-
-#: src/protocols/zephyr/zephyr.c:560
-#, c-format
-msgid "<b>Alias:</b> %s<br>"
-msgstr "<b>Alias:</b> %s<br>"
 
 #: src/protocols/zephyr/zephyr.c:562
 msgid "<br>Hidden or not logged-in"
@@ -9897,11 +9965,11 @@ msgstr "Adgang nægtet: proxy server tillader ikke port %d tunnel."
 msgid "Proxy connection error %d"
 msgstr "Proxy forbindelsesfejl %d"
 
-#: src/proxy.c:1486
+#: src/proxy.c:1495
 msgid "Invalid proxy settings"
 msgstr "Ugyldige mellemværts indstillinger"
 
-#: src/proxy.c:1486
+#: src/proxy.c:1495
 msgid ""
 "Either the host name or port number specified for your given proxy type is "
 "invalid."
@@ -10034,33 +10102,33 @@ msgstr "Åbn post"
 msgid "_Warn"
 msgstr "Advar"
 
-#: src/util.c:2289
+#: src/util.c:2318
 msgid "Calculating..."
 msgstr "Udregner..."
 
-#: src/util.c:2292
+#: src/util.c:2321
 msgid "Unknown."
 msgstr "Ukendt."
 
-#: src/util.c:2323 src/util.c:2328 src/util.c:2333 src/util.c:2336
+#: src/util.c:2354
 msgid "day"
 msgid_plural "days"
 msgstr[0] "dag"
 msgstr[1] "dage"
 
-#: src/util.c:2324 src/util.c:2328 src/util.c:2342 src/util.c:2344
+#: src/util.c:2362
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "time"
 msgstr[1] "timer"
 
-#: src/util.c:2324 src/util.c:2333 src/util.c:2342 src/util.c:2347
+#: src/util.c:2370
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "minut"
 msgstr[1] "minutter"
 
-#: src/util.c:2684
+#: src/util.c:2732
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Fejl ved oprettelse af forbindelse\n"
 
