@@ -54,8 +54,8 @@ static void remove_gaim_buddies(JabberStream *js, const char *jid)
 static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
+	GaimPresence *presence = NULL;
 	GSList *buddies, *g2, *l;
-	int present =0;
 
 	buddies = gaim_find_buddies(js->gc->account, jid);
 
@@ -69,7 +69,7 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 	}
 
 	if(buddies) {
-		present = ((GaimBuddy*)buddies->data)->present;
+		presence = gaim_buddy_get_presence((GaimBuddy*)buddies->data);
 	}
 
 	while(buddies) {
@@ -103,7 +103,8 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		}
 
 		/* XXX: this hack may need to change */
-		b->present = present;
+		/* Is this change better? */
+		b->presence = presence;
 
 		gaim_blist_add_buddy(b, NULL, g, NULL);
 		gaim_blist_alias_buddy(b, alias);
