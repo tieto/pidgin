@@ -433,9 +433,6 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(plugin, event_buddy_away, gaim_buddy_away, NULL);
 	gaim_signal_connect(plugin, event_buddy_back, gaim_buddy_back, NULL); */
 
-	gaim_prefs_add_none("/plugins/gtk/docklet");
-	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
-
 	return TRUE;
 }
 
@@ -518,6 +515,8 @@ static GaimPluginInfo info =
 static void
 plugin_init(GaimPlugin *plugin)
 {
+	gaim_prefs_add_none("/plugins/gtk/docklet");
+	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
 }
 
 GAIM_INIT_PLUGIN(docklet, plugin_init, info)
