@@ -346,23 +346,6 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 					const char *who, const char *alias, const char *msg);
 
 /**
- * Called to notify the user that the account has new mail.
- *
- * If @a count is less than 0, the dialog will display the the sender
- * and the subject, if available. If @a count is greater than 0, it will
- * display how many messages the user has.
- *
- * @param gc      The gaim connection.
- * @param count   The number of new e-mails.
- * @param from    The sender, or @c NULL.
- * @param subject The subject, or @c NULL.
- * @param url     The URL to go to to read the new mail.
- */
-void connection_has_mail(struct gaim_connection *gc, int count,
-						 const char *from, const char *subject,
-						 const char *url);
-
-/**
  * Retrieves and sets the new buddy icon for a user.
  *
  * @param gc   The gaim connection.
