@@ -1961,6 +1961,9 @@ update_send_as_selection(struct gaim_window *win)
 	GtkWidget *menu;
 	GList *child;
 
+	if (g_list_find(gaim_get_windows(), win) == NULL)
+		return FALSE;
+
 	conv = gaim_window_get_active_conversation(win);
 
 
