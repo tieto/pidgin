@@ -3895,6 +3895,8 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		c = gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
 
 		gaim_conv_window_add_conversation(win, c);
+
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
 	else if (sd->target == gdk_atom_intern("application/x-im-contact", FALSE))
 	{
