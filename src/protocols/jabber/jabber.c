@@ -2276,14 +2276,19 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
 
 /*
  * Add/update buddy's roster entry on server
+ *
+ * If "alias" or "group" are NULL, gets them from Gaim's current buddylist values
+ * for the buddy.
  */
-static void jabber_roster_update(struct gaim_connection *gc, char *name)
+static void jabber_roster_update(struct gaim_connection *gc, char *name, char *alias, char *group)
 {
 	xmlnode x, y;
 	char *realwho;
 	gjconn gjc;
 	struct buddy *buddy = NULL;
 	struct group *buddy_group = NULL;
+	char *my_alias = NULL;
+	char *my_group = NULL;
 	
 	if(gc && gc->proto_data && ((struct jabber_data *)gc->proto_data)->gjc && name) {
 		gaim_jid gjid;
@@ -2304,26 +2309,42 @@ static void jabber_roster_update(struct gaim_connection *gc, char *name)
 		y = xmlnode_insert_tag(xmlnode_get_tag(x, "query"), "item");
 		xmlnode_put_attrib(y, "jid", realwho);
 
+		/*
+		 * See if there's an explict (new?) alias for the buddy or we can pull
+		 * one out of current Gaim buddylist data for him.
+		 */
+		if(alias && alias[0] != '\0') {
+			my_alias = alias;
+		} else if((buddy = find_buddy(gc, realwho)) != NULL) {
+			my_alias = buddy->show;
+		}
 
-		/* If we can find the buddy, there's an alias for him, it's not 0-length
+		/* If there's an alias for the buddy, it's not 0-length
 		 * and it doesn't match his JID, add the "name" attribute.
 		 */
-		if((buddy = find_buddy(gc, realwho)) != NULL &&
-			buddy->show != NULL && buddy->show[0] != '\0' && strcmp(realwho, buddy->show))
+		if(my_alias != NULL && my_alias[0] != '\0' && strcmp(realwho, my_alias))
 		{
-			char *utf8 = str_to_utf8(buddy->show);
+			char *utf8 = str_to_utf8(my_alias);
 			xmlnode_put_attrib(y, "name", utf8);
 			g_free(utf8);
 		}
 
 		/*
-		 * Find out what group the buddy's in and send that along
-		 * with the roster item.
+		 * See if there's an explict (new?) group for the buddy or pull
+		 * one out of current Gaim buddylist data for him.
 		 */
-		if((buddy_group = find_group_by_buddy(gc, realwho)) != NULL) {
-			xmlnode z;
-			z = xmlnode_insert_tag(y, "group");
-			xmlnode_insert_cdata(z, buddy_group->name, -1);
+		if(group && group[0] != '\0') {
+			my_group = group;
+		} else if((buddy_group = find_group_by_buddy(gc, realwho)) != NULL) {
+			my_group = buddy_group->name;
+		}
+
+		/*
+		 * Send what group the buddy's in along with the roster item.
+		 */
+		if(my_group != NULL && my_group[0] != '\0') {
+			xmlnode z = xmlnode_insert_tag(y, "group");
+			xmlnode_insert_cdata(z, my_group, -1);
 		}
 
 		gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
@@ -2334,13 +2355,41 @@ static void jabber_roster_update(struct gaim_connection *gc, char *name)
 }
 
 /*
+ * Add/update buddy's alias on server
+ *
+ * This is just a roster update using existing, local buddylist data
+ */
+static void jabber_alias_buddy(struct gaim_connection *gc, char *name)
+{
+	jabber_roster_update(gc, name, NULL, NULL);
+}
+
+/*
  * Change buddy's group on server roster
  */
 static void jabber_group_change(struct gaim_connection *gc, char *name, char *old_group, char *new_group)
 {
-	if(strcmp(old_group, new_group)) {
-		jabber_roster_update(gc, name);
-	}
+	if(old_group && new_group && strcmp(old_group, new_group))
+		jabber_roster_update(gc, name, NULL, new_group);
+}
+
+/*
+ * Group rename
+ *
+ * Jabber doesn't have "groups," per se.  "Group" is simply a JID attribute.
+ * So we iterate through the list of buddies that are in the group and change
+ * the group attribute for each of them.
+ */
+static void jabber_rename_group(struct gaim_connection *gc,
+				char *old_group,
+				char *new_group,
+				GList *members)
+{
+	if(old_group && new_group && strcmp(old_group, new_group))
+		while(members) {
+			jabber_group_change(gc, (char *)(members->data), old_group, new_group);
+			members = members->next;
+		}
 }
 
 static void jabber_add_buddy(struct gaim_connection *gc, char *name)
@@ -2381,7 +2430,7 @@ static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
 	xmlnode_free(x);
 
-	jabber_roster_update(gc, realwho);
+	jabber_roster_update(gc, realwho, NULL, NULL);
 
 	g_free(realwho);
 }
@@ -3965,10 +4014,11 @@ void jabber_init(struct prpl *ret)
 	ret->keepalive = jabber_keepalive;
 	ret->normalize = jabber_normalize;
 	ret->register_user = jabber_register_user;
-	ret->alias_buddy = jabber_roster_update;
+	ret->alias_buddy = jabber_alias_buddy;
 	ret->group_buddy = jabber_group_change;
 	ret->send_typing = jabber_send_typing;
 	ret->convo_closed = jabber_convo_closed;
+	ret->rename_group = jabber_rename_group;
 
 	my_protocol = ret;
 }
