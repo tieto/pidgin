@@ -411,7 +411,7 @@ static int rendezvous_prpl_send_im(GaimConnection *gc, const char *who, const ch
 	return 1;
 }
 
-static void rendezvous_prpl_setaway(GaimConnection *gc, const char *state, const char *text)
+static void rendezvous_prpl_set_away(GaimConnection *gc, const char *state, const char *text)
 {
 	gaim_debug_error("rendezvous", "Set away, state=%s,  text=%s\n", state, text);
 }
@@ -438,7 +438,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	rendezvous_prpl_setaway,
+	rendezvous_prpl_set_away,
 	NULL,
 	NULL,
 	NULL,
@@ -470,7 +470,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-        NULL
+	NULL
 };
 
 static GaimPluginInfo info =

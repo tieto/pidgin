@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9336 2004-04-05 20:42:13Z eblanton $
+ * $Id: gg.c 9340 2004-04-06 01:06:45Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1355,7 +1355,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-        NULL
+	NULL
 };
 
 static GaimPluginInfo info =

@@ -1330,7 +1330,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_roomlist_get_list,
 	jabber_roomlist_cancel,
 	NULL,
-        NULL
+	NULL
 };
 
 static GaimPluginInfo info =

@@ -593,7 +593,7 @@ static GaimPluginProtocolInfo prpl_info =
 	irc_roomlist_get_list,
 	irc_roomlist_cancel,
 	NULL,
-        NULL
+	NULL
 };
 
 

@@ -1308,14 +1308,14 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	trepia_set_buddy_icon,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static GaimPluginInfo info =

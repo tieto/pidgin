@@ -6964,14 +6964,14 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_convo_closed,
 	NULL,
 	oscar_set_icon,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static GaimPluginInfo info =
