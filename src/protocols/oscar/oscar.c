@@ -901,6 +901,7 @@ static int server_ready_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("chatnav: got server ready\n");
 	aim_conn_addhandler(sess, fr->conn, 0x0001, 0x0007, rateresp_chatnav, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CTN, AIM_CB_CTN_INFO, gaim_chatnav_info, 0);
+	aim_setversions(sess, fr->conn);
 	aim_reqrates(sess, fr->conn);
 
 	return 1;
@@ -914,6 +915,7 @@ static int server_ready_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
+	aim_setversions(sess, fr->conn);
 	aim_reqrates(sess, fr->conn);
 
 	return 1;
