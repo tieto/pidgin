@@ -91,6 +91,8 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = NULL;
 	JabberStream *js = NULL;
+	gboolean connected;
+	int primitive;
 	xmlnode *presence, *x, *photo;
 	char *stripped = NULL;
 	const char *msg;
@@ -100,15 +102,21 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 	if(!gaim_status_is_active(status))
 		return;
 
-	if(!account) return ;
-	gc = account->gc;
-	
-	if (!gc && strcmp(gaim_status_get_id(status), "offline"))
+	connected = gaim_account_is_connected(account);
+	primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
+
+	if(primitive != GAIM_STATUS_OFFLINE && !connected) {
 		gaim_account_connect(account);
-	
-	if(!gc) return;
-	js= gc->proto_data;
-	
+	} else if(primitive == GAIM_STATUS_OFFLINE && connected) {
+		gaim_account_disconnect(account);
+	}
+
+	if(!connected)
+		return;
+
+	gc = gaim_account_get_connection(account);
+	js = gc->proto_data;
+
 	gaim_status_to_jabber(status, &state, &msg, &priority);
 
 	if(msg)

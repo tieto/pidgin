@@ -2760,6 +2760,7 @@ int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
 static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
+	gboolean connected = gaim_account_is_connected(account);
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 	int old_status;
@@ -2770,13 +2771,16 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	id = gaim_status_get_id(status);
 	if (!gaim_status_is_active(status))
 		return;
-	if (strcmp(id, YAHOO_STATUS_TYPE_OFFLINE) && !gc) {
+	if (strcmp(id, YAHOO_STATUS_TYPE_OFFLINE) && !connected) {
 		gaim_account_connect(account);
 		return;
-	} else if (!strcmp(id, YAHOO_STATUS_TYPE_OFFLINE) && gc) {
+	} else if (!strcmp(id, YAHOO_STATUS_TYPE_OFFLINE) && connected) {
 		gaim_account_disconnect(account);
 		return;
 	}
+
+	if (!connected)
+		return;
 
 	yd = (struct yahoo_data *)gc->proto_data;
 	old_status = yd->current_status;
