@@ -545,7 +545,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			data->events |= GAIM_POUNCE_IDLE;
 		else if (!strcmp(data->event_type, "return-from-idle"))
 			data->events |= GAIM_POUNCE_IDLE_RETURN;
-		else if (!strcmp(data->event_type, "typing"))
+		else if (!strcmp(data->event_type, "start-typing"))
 			data->events |= GAIM_POUNCE_TYPING;
 		else if (!strcmp(data->event_type, "stop-typing"))
 			data->events |= GAIM_POUNCE_TYPING_STOPPED;

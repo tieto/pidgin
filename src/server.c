@@ -1193,7 +1193,12 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 	gaim_event_broadcast(event_got_typing, gc, name);
 
 	if (b != NULL)
-		gaim_pounce_execute(gc->account, name, GAIM_POUNCE_TYPING);
+                if (state == GAIM_TYPING)
+		        gaim_pounce_execute(gc->account, name,
+					    GAIM_POUNCE_TYPING);
+                else
+		        gaim_pounce_execute(gc->account, name,
+					    GAIM_POUNCE_TYPING_STOPPED);
 
 	if (timeout > 0)
 		gaim_im_start_typing_timeout(im, timeout);

@@ -895,7 +895,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		const char *sound;
 
 		sound = gaim_pounce_action_get_attribute(pounce, "play-sound",
-												 "sound");
+												 "filename");
 
 		if (sound != NULL)
 			gaim_sound_play_file(sound);
