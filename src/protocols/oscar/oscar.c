@@ -418,11 +418,13 @@ gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textle
 	return utf8;
 }
 
-static char *oscar_caps_to_string(guint caps)
+gchar *oscar_caps_to_string(guint caps)
 {
-	static char buf[512], *tmp;
-	int count = 0, i = 0;
+	GString *str;
+	gchar *tmp;
 	guint bit = 1;
+
+	str = g_string_new("");
 
 	if (!caps) {
 		return NULL;
@@ -505,13 +507,12 @@ static char *oscar_caps_to_string(guint caps)
 				break;
 			}
 			if (tmp)
-				i += g_snprintf(buf + i, sizeof(buf) - i, "%s%s", (count ? ", " : ""),
-						tmp);
-			count++;
+				g_string_append_printf(str, "%s%s", (bit == 1 ? "" : ", "), tmp);
 		}
 		bit <<= 1;
 	}
-	return buf; 
+
+	return g_string_free(str, FALSE);
 }
 
 static char *oscar_icqstatus(int state) {
@@ -596,6 +597,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, char *new
 	if ((userinfo != NULL) && (userinfo->capabilities != 0)) {
 		tmp = oscar_caps_to_string(userinfo->capabilities);
 		oscar_string_append(str, newline, _("Capabilities"), tmp);
+		g_free(tmp);
 	}
 
 	if ((b != NULL) && (b->name != NULL) && (g != NULL) && (g->name != NULL)) {
