@@ -4136,8 +4136,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						add_buddy(gc, (gname ? gname : "orphans"), curitem->name, alias);
 						tmp++;
 					}
-					if (curitem->name && gname && aim_ssi_waitingforauth(sess->ssi.local, gname, curitem->name))
-						gaim_auth_sendrequest(gc, curitem->name);
 					free(alias);
 				}
 			} break;
@@ -4204,23 +4202,22 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 		/* Buddies */
 		cur = gc->groups;
-		while (cur) {
-			GSList *curbud;
-			for (curbud=((struct group*)cur->data)->members; curbud; curbud=curbud->next) {
-				struct buddy *buddy = curbud->data;
-				char *gname = aim_ssi_itemlist_findparentname(sess->ssi.local, buddy->name);
-				char *alias = aim_ssi_getalias(sess->ssi.local, gname, buddy->name);
+		for (cur=gc->groups; cur; cur=g_slist_next(cur)) {
+			GSList *curb;
+			struct group *group = cur->data;
+			for (curb=group->members; curb; curb=curb->next) {
+				struct buddy *buddy = curb->data;
 				if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
 					/* Store local alias on server */
+					char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
 					if (!alias && buddy->alias[0])
-						aim_ssi_aliasbuddy(sess, od->conn, gname, buddy->name, buddy->alias);
+						aim_ssi_aliasbuddy(sess, od->conn, group->name, buddy->name, buddy->alias);
+					free(alias);
 				} else {
-					debug_printf("ssi: adding buddy %s from local list to server list\n", ((struct buddy*)curbud->data)->name);
-					aim_ssi_addbuddy(sess, od->conn, buddy->name, ((struct group*)cur->data)->name, get_buddy_alias_only((struct buddy *)curbud->data), NULL, NULL, 0);
+					debug_printf("ssi: adding buddy %s from local list to server list\n", buddy->name);
+					aim_ssi_addbuddy(sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 0);
 				}
-				free(alias);
 			}
-			cur = g_slist_next(cur);
 		}
 
 		/* Permit list */
@@ -4964,16 +4961,16 @@ static GList *oscar_edit_buddy_menu(struct gaim_connection *gc, char *who)
 		pbm->callback = oscar_get_info;
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
+	}
 
-		if (od->sess->ssi.received_data) {
-			char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
-			if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
-				pbm = g_new0(struct proto_buddy_menu, 1);
-				pbm->label = _("Re-Request Authorization");
-				pbm->callback = gaim_auth_sendrequest;
-				pbm->gc = gc;
-				m = g_list_append(m, pbm);
-			}
+	if (od->sess->ssi.received_data) {
+		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
+		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label = _("Re-request Authorization");
+			pbm->callback = gaim_auth_sendrequest;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
 		}
 	}
 
@@ -5158,6 +5155,34 @@ static void oscar_do_action(struct gaim_connection *gc, char *act)
 			aim_admin_getinfo(od->sess, conn, 0x11);
 	} else if (!strcmp(act, "Change Current Registered Address")) {
 		do_prompt_dialog("Change Address To: ", NULL, gc, oscar_change_email, NULL);
+	} else if (!strcmp(act, "Show Buddies Awaiting Authorization")) {
+		gchar *nombre, *text, *tmp;
+		GSList *curg, *curb;
+
+		text = g_strdup(_("You are awaiting authorization from the following buddies:"));
+
+		for (curg=gc->groups; curg; curg=g_slist_next(curg)) {
+			struct group *group = curg->data;
+			for (curb=group->members; curb; curb=g_slist_next(curb)) {
+				struct buddy *buddy = curb->data;
+				if (aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
+					if (get_buddy_alias_only(buddy))
+						nombre = g_strdup_printf(" %s (%s)", buddy->name, get_buddy_alias_only(buddy));
+					else
+						nombre = g_strdup(buddy->name);
+					tmp = g_strdup_printf("%s<BR>%s", text, nombre);
+					g_free(text);
+					text = tmp;
+					g_free(nombre);
+				}
+			}
+		}
+
+		tmp = g_strdup_printf(_("%s<BR><BR>You can re-request authorization from these buddies by right-clicking on them in the \"Edit Buddies\" pane and selecting \"Re-request authorization.\""), text);
+		g_free(text);
+		text = tmp;
+		g_show_info_text(gc, gc->username, 2, text, NULL);
+		g_free(text);
 	} else if (!strcmp(act, "Search for Buddy by Email")) {
 		show_find_email(gc);
 	}
@@ -5174,6 +5199,8 @@ static GList *oscar_actions()
 	m = g_list_append(m, "Confirm Account");
 	m = g_list_append(m, "Display Current Registered Address");
 	m = g_list_append(m, "Change Current Registered Address");
+	m = g_list_append(m, NULL);
+	m = g_list_append(m, "Show Buddies Awaiting Authorization");
 	m = g_list_append(m, NULL);
 	m = g_list_append(m, "Search for Buddy by Email");
 
