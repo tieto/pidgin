@@ -36,7 +36,6 @@ plugins/timestamp.c
 plugins/win32/transparency/win2ktrans.c
 plugins/win32/winprefs/winprefs.c
 src/account.c
-src/away.c
 src/blist.c
 src/connection.c
 src/conversation.c
