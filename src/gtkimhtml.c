@@ -3033,8 +3033,17 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					font->back = gtk_imhtml_get_color (back);
 				if (face && !(options & GTK_IMHTML_NO_FONTS))
 					font->face = g_strdup (face);
-				if (size && !(options & GTK_IMHTML_NO_SIZES))
-					sscanf (size, "%hd", &font->size);
+				if (size && !(options & GTK_IMHTML_NO_SIZES)) {
+					if (*size == '+') {
+						sscanf (size + 1, "%hd", &font->size);
+						font->size += 3;
+					} else if (*size == '-') {
+						sscanf (size + 1, "%hd", &font->size);
+						font->size = MAX (0, 3 - font->size);
+					} else if (isdigit (*size)) {
+						sscanf (size, "%hd", &font->size);
+					}
+				}
 
 				g_free (color);
 				g_free (back);
