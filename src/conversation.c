@@ -1559,13 +1559,13 @@ gaim_conv_im_set_icon(GaimConvIm *im, GaimBuddyIcon *icon)
 {
 	g_return_if_fail(im != NULL);
 
-	if (im->icon == icon)
-		return;
+	if (im->icon != icon)
+	{
+		if (im->icon != NULL)
+			gaim_buddy_icon_unref(im->icon);
 
-	if (im->icon != NULL)
-		gaim_buddy_icon_unref(im->icon);
-
-	im->icon = (icon == NULL ? NULL : gaim_buddy_icon_ref(icon));
+		im->icon = (icon == NULL ? NULL : gaim_buddy_icon_ref(icon));
+	}
 
 	gaim_conversation_update(gaim_conv_im_get_conversation(im),
 							 GAIM_CONV_UPDATE_ICON);

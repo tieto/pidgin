@@ -553,15 +553,15 @@ gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
 {
 	g_return_if_fail(buddy != NULL);
 
-	if (buddy->icon == icon)
-		return;
+	if (buddy->icon != icon)
+	{
+		if (buddy->icon != NULL)
+			gaim_buddy_icon_unref(buddy->icon);
 
-	if (buddy->icon != NULL)
-		gaim_buddy_icon_unref(buddy->icon);
+		buddy->icon = (icon == NULL ? NULL : gaim_buddy_icon_ref(icon));
 
-	buddy->icon = (icon == NULL ? NULL : gaim_buddy_icon_ref(icon));
-
-	gaim_buddy_icon_cache(icon, buddy);
+		gaim_buddy_icon_cache(icon, buddy);
+	}
 
 	gaim_blist_update_buddy_icon(buddy);
 }
