@@ -86,7 +86,10 @@ static void docklet_menu(GdkEventButton *event) {
 	switch (status) {
 		case offline:
 		case offline_connecting:
+/* XXX CHIP KILLED AUTO CONNECTING */
+#if 0
 			gaim_new_item_from_stock(menu, _("Auto-login"), GAIM_STOCK_SIGN_ON, G_CALLBACK(auto_login), NULL, 0, 0, NULL);
+#endif
 			break;
 		default:
 			gaim_new_item_from_stock(menu, _("New Message.."), GAIM_STOCK_IM, G_CALLBACK(show_im_dialog), NULL, 0, 0, NULL);
@@ -246,7 +249,7 @@ static gboolean docklet_update_status() {
 
 	oldstatus = status;
 
-	if (connections) {
+	if (gaim_connections_get_all()) {
 		if (unread_message_queue) {
 			status = online_pending;
 		} else if (awaymessage) {
@@ -255,17 +258,26 @@ static gboolean docklet_update_status() {
 			} else {
 				status = away;
 			}
+/* XXX Chip killed my dog... */
+#if 0
 		} else if (connecting_count) {
 			status = online_connecting;
+#endif
 		} else {
 			status = online;
 		}
 	} else {
+/* XXX ... and my pet goldfish ... */
+#if 0
 		if (connecting_count) {
 			status = offline_connecting;
 		} else {
+#endif
 			status = offline;
+/* XXX ... both of them. */
+#if 0
 		}
+#endif
 	}
 
 	/* update the icon if we changed status */
@@ -346,27 +358,27 @@ static gboolean docklet_create() {
 	return FALSE; /* for when we're called by the glib idle handler */
 }
 
-static void gaim_signon(struct gaim_connection *gc, void *data) {
+static void gaim_signon(GaimConnection *gc, void *data) {
 	docklet_update_status();
 }
 
-static void gaim_signoff(struct gaim_connection *gc, void *data) {
+static void gaim_signoff(GaimConnection *gc, void *data) {
 	/* do this when idle so that if the prpl was connecting
 	   and was cancelled, we register that connecting_count
 	   has returned to 0 */
 	g_idle_add(docklet_update_status, &docklet);
 }
 
-static void gaim_connecting(struct gaim_account *account, void *data) {
+static void gaim_connecting(GaimAccount *account, void *data) {
 	docklet_update_status();
 }
 
-static void gaim_away(struct gaim_connection *gc, char *state, char *message, void *data) {
+static void gaim_away(GaimConnection *gc, char *state, char *message, void *data) {
 	/* we only support global away. this is the way it is, ok? */
 	docklet_update_status();
 }
 
-static void gaim_im_recv(struct gaim_connection *gc, char **who, char **what, void *data) {
+static void gaim_im_recv(GaimConnection *gc, char **who, char **what, void *data) {
 	/* if message queuing while away is enabled, this event could be the first
 	   message so we need to see if the status (and hence icon) needs changing.
 	   do this when idle so that all message processing is completed, queuing
@@ -374,16 +386,16 @@ static void gaim_im_recv(struct gaim_connection *gc, char **who, char **what, vo
 	g_idle_add(docklet_update_status, &docklet);
 }
 
-/* static void gaim_buddy_signon(struct gaim_connection *gc, char *who, void *data) {
+/* static void gaim_buddy_signon(GaimConnection *gc, char *who, void *data) {
 }
 
-static void gaim_buddy_signoff(struct gaim_connection *gc, char *who, void *data) {
+static void gaim_buddy_signoff(GaimConnection *gc, char *who, void *data) {
 }
 
-static void gaim_buddy_away(struct gaim_connection *gc, char *who, void *data) {
+static void gaim_buddy_away(GaimConnection *gc, char *who, void *data) {
 }
 
-static void gaim_buddy_back(struct gaim_connection *gc, char *who, void *data) {
+static void gaim_buddy_back(GaimConnection *gc, char *who, void *data) {
 }
 
 static void gaim_new_conversation(char *who, void *data) {
