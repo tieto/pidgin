@@ -114,6 +114,9 @@ void cancel_logon(void)
 		c = c->next;
 	}
 #endif /* GAIM_PLUGINS */
+#ifdef USE_PERL
+	perl_end();
+#endif
 
 	exit(0);
 #endif /* USE_APPLET */
@@ -554,6 +557,10 @@ int main(int argc, char *argv[])
 		show_debug(NULL);
 
 	gdk_threads_enter();
+
+#ifdef USE_PERL
+	perl_init();
+#endif
 
 #ifdef USE_APPLET
 	applet_widget_register_callback(APPLET_WIDGET(applet),

@@ -968,6 +968,9 @@ void do_quit()
 		c = c->next;
 	}
 #endif
+#ifdef USE_PERL
+	perl_end();
+#endif
 
 	exit(0);
 }

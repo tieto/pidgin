@@ -401,7 +401,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 790 $"
+#define REVISION "gaim:$Revision: 794 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -732,6 +732,13 @@ GtkRequisition gnome_buddy_get_dimentions();
 /* Functions in sound.c */
 extern void play_sound(int);
 
+/* Functions in perl.c */
+#ifdef USE_PERL
+extern void perl_init();
+extern int perl_load_file(char *);
+extern void perl_end();
+extern int perl_event(enum gaim_event, char *);
+#endif
 
 /* Functions in plugins.c */
 #ifdef GAIM_PLUGINS

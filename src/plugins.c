@@ -657,7 +657,7 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 			sprintf(buf, "%s", (char *)arg1);
 			break;
 		case event_buddy_signoff:
-			sprint:
+			sprintf(buf, "%s", (char *)arg1);
 			break;
 		case event_buddy_away:
 			sprintf(buf, "%s", (char *)arg1);
