@@ -1,8 +1,8 @@
 ; Installer script for win32 Gaim
 ; Herman Bloggs <hermanator12002@yahoo.com>
 
-; NOTE: this .NSI script is designed for NSIS 2.0 release candidate 3 and
-; higher.
+; NOTE: this .NSI script is intended for NSIS 2.0 (finale release).
+;
 
 ;--------------------------------
 ;Global Variables
@@ -127,6 +127,7 @@ SetDateSave on
   !insertmacro MUI_LANGUAGE "German"
   !insertmacro MUI_LANGUAGE "Spanish"
   !insertmacro MUI_LANGUAGE "French"
+  !insertmacro MUI_LANGUAGE "Hebrew"
   !insertmacro MUI_LANGUAGE "Italian"
   !insertmacro MUI_LANGUAGE "Japanese"
   !insertmacro MUI_LANGUAGE "Korean"
@@ -156,6 +157,7 @@ SetDateSave on
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "FINNISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\finnish.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "FRENCH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\french.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "GERMAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\german.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "HEBREW"		"${GAIM_NSIS_INCLUDE_PATH}\translations\hebrew.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "HUNGARIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\hungarian.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "ITALIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\italian.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "JAPANESE"		"${GAIM_NSIS_INCLUDE_PATH}\translations\japanese.nsh"
@@ -177,7 +179,6 @@ SetDateSave on
 
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
   !insertmacro MUI_RESERVEFILE_LANGDLL 
-  ReserveFile "${NSISDIR}\Plugins\AccessControl.dll"
   ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
 
 

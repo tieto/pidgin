@@ -35,6 +35,7 @@ EXTRA_DIST = \
 		win32/nsis/translations/finnish.nsh \
 		win32/nsis/translations/french.nsh \
 		win32/nsis/translations/german.nsh \
+		win32/nsis/translations/hebrew.nsh \
 		win32/nsis/translations/hungarian.nsh \
 		win32/nsis/translations/italian.nsh \
 		win32/nsis/translations/japanese.nsh \
