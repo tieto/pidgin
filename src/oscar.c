@@ -342,8 +342,12 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	}
 
 
-	sprintf(debug_buff, "Email: %s\n", sess->logininfo.email);
-	debug_print(debug_buff);
+	if (sess->logininfo.email) {
+		sprintf(debug_buff, "Email: %s\n", sess->logininfo.email);
+		debug_print(debug_buff);
+	} else {
+		debug_print("Email is NULL\n");
+	}
 	sprintf(debug_buff, "Closing auth connection...\n");
 	debug_print(debug_buff);
 	gdk_input_remove(inpa);
