@@ -567,12 +567,11 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		GtkCellRenderer *rend, *rend2;
 
 		disconnect_window = g_new0(struct disconnect_window, 1);
-		disconnect_window->window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, NULL, GTK_DIALOG_NO_SEPARATOR, NULL);
+		disconnect_window->window = gtk_dialog_new_with_buttons(_("Disconnected"), NULL, GTK_DIALOG_NO_SEPARATOR, NULL);
 		g_signal_connect(G_OBJECT(disconnect_window->window), "response", G_CALLBACK(disconnect_response_cb), disconnect_window);
 
 		gtk_container_set_border_width(GTK_CONTAINER(disconnect_window->window), 6);
 		gtk_window_set_resizable(GTK_WINDOW(disconnect_window->window), FALSE);
-		gtk_window_set_title(GTK_WINDOW(disconnect_window->window), _("Disconnected"));
 		gtk_dialog_set_has_separator(GTK_DIALOG(disconnect_window->window), FALSE);
 		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(disconnect_window->window)->vbox), 12);
 		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(disconnect_window->window)->vbox), 6);
