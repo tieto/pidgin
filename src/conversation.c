@@ -3034,7 +3034,7 @@ void remove_icon(struct conversation *c)
 {
 #if USE_PIXBUF
 	if (c->icon)
-		gtk_container_remove(GTK_CONTAINER(c->bbox), c->icon->parent);
+		gtk_container_remove(GTK_CONTAINER(c->bbox), c->icon->parent->parent);
 	c->icon = NULL;
 	if (c->anim)
 		gdk_pixbuf_animation_unref(c->anim);
@@ -3059,6 +3059,7 @@ void update_icon(struct conversation *c)
 	GdkPixbuf *buf;
 
 	GtkWidget *event;
+	GtkWidget *frame;
 	GdkPixbuf *scale;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
@@ -3114,8 +3115,13 @@ void update_icon(struct conversation *c)
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
 	gdk_pixbuf_unref(scale);
 
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(c->bbox), frame, FALSE, FALSE, 5);
+	gtk_widget_show(frame);
+
 	event = gtk_event_box_new();
-	gtk_box_pack_start(GTK_BOX(c->bbox), event, FALSE, FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), event);
 	gtk_signal_connect(GTK_OBJECT(event), "button-press-event", GTK_SIGNAL_FUNC(icon_menu), c);
 	gtk_widget_show(event);
 
