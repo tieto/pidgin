@@ -1006,12 +1006,18 @@ static void set_defaults()
 	for (i = 0; i < 7; i++)
 		sound_file[i] = NULL;
 	font_options = 0;
+	/* Enable all of the sound players that might be available.  The first
+	   available one will be used. */
 	sound_options =
 	    OPT_SOUND_LOGIN |
 	    OPT_SOUND_LOGOUT |
 	    OPT_SOUND_RECV |
 	    OPT_SOUND_SEND |
-	    OPT_SOUND_SILENT_SIGNON;
+	    OPT_SOUND_SILENT_SIGNON |
+	    OPT_SOUND_NORMAL |
+	    OPT_SOUND_NAS |
+	    OPT_SOUND_ARTSC |
+	    OPT_SOUND_ESD;
 
 	report_idle = IDLE_SCREENSAVER;
 	web_browser = BROWSER_NETSCAPE;

@@ -1483,6 +1483,14 @@ static gint sound_cmd_yeah(GtkEntry *entry, GdkEvent *event, gpointer d)
 	return TRUE;
 }
 
+static void set_sound_driver(GtkWidget *w, int option)
+{
+	sound_options &= ~(OPT_SOUND_NORMAL | OPT_SOUND_BEEP |
+			   OPT_SOUND_NAS | OPT_SOUND_ARTSC | OPT_SOUND_ESD);
+	sound_options |= option;
+	save_prefs();
+}
+
 static void sound_page()
 {
 	GtkWidget *parent;
@@ -1493,6 +1501,10 @@ static void sound_page()
 	GtkWidget *hbox;
 	GtkWidget *vbox2;
 	GtkWidget *sep;
+	GtkWidget *omenu;
+	GtkWidget *menu;
+	GtkWidget *opt;
+	int i=1, driver=0;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -1526,13 +1538,81 @@ static void sound_page()
 	gtk_widget_show(vbox2);
 
 	gaim_button(_("No sounds when you log in"), &sound_options, OPT_SOUND_SILENT_SIGNON, vbox2);
-	gaim_button(_("Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, vbox2);
 
 	vbox2 = gtk_vbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 5);
 	gtk_widget_show(vbox2);
 
-	gaim_button(_("Beep instead of playing sound"), &sound_options, OPT_SOUND_BEEP, vbox2);
+	gaim_button(_("Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, vbox2);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
+	hbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Sound Player:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	omenu = gtk_option_menu_new();
+	menu = gtk_menu_new();
+
+#ifdef ESD_SOUND
+	opt = gtk_menu_item_new_with_label("ESD");
+	gtk_signal_connect(GTK_OBJECT(opt), "activate",
+			   GTK_SIGNAL_FUNC(set_sound_driver), 
+			   (gpointer)OPT_SOUND_ESD);
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+	if ((sound_options & OPT_SOUND_ESD) && !driver) driver = i;
+	i++;
+#endif
+#ifdef ARTSC_SOUND
+	opt = gtk_menu_item_new_with_label("ArtsC");
+	gtk_signal_connect(GTK_OBJECT(opt), "activate",
+			   GTK_SIGNAL_FUNC(set_sound_driver), 
+			   (gpointer)OPT_SOUND_ARTSC);
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+	if ((sound_options & OPT_SOUND_ARTSC) && !driver) driver = i;
+	i++;
+#endif
+#ifdef NAS_SOUND
+	opt = gtk_menu_item_new_with_label("NAS");
+	gtk_signal_connect(GTK_OBJECT(opt), "activate",
+			   GTK_SIGNAL_FUNC(set_sound_driver), 
+			   (gpointer)OPT_SOUND_NAS);
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+	if ((sound_options & OPT_SOUND_NAS) && !driver) driver = i;
+	i++;
+#endif
+
+	opt = gtk_menu_item_new_with_label("Native");
+	gtk_signal_connect(GTK_OBJECT(opt), "activate",
+			   GTK_SIGNAL_FUNC(set_sound_driver), 
+			   (gpointer)OPT_SOUND_NORMAL);
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+	if ((sound_options & OPT_SOUND_NORMAL) && !driver) driver = i;
+	i++;
+
+	opt = gtk_menu_item_new_with_label("Console Beep");
+	gtk_signal_connect(GTK_OBJECT(opt), "activate",
+			   GTK_SIGNAL_FUNC(set_sound_driver), 
+			   (gpointer)OPT_SOUND_BEEP);
+	gtk_widget_show(opt);
+	gtk_menu_append(GTK_MENU(menu), opt);
+	if ((sound_options & OPT_SOUND_BEEP) && !driver) driver = i;
+	i++;
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), driver - 1);
+	gtk_box_pack_start(GTK_BOX(hbox), omenu, FALSE, FALSE, 5);
+	gtk_widget_show_all(omenu);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);

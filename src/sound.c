@@ -404,7 +404,7 @@ void play_file(char *filename)
 			else if ((ms = strstr(sound_cmd, "%s")) != NULL) {
 				*ms = 0;
 				g_snprintf(command, sizeof(command), "%s\"%s\"%s", sound_cmd,
-						filename, ms + 2);
+					   filename, ms + 2);
 			} else
 				g_snprintf(command, sizeof(command), sound_cmd);
 			args[0] = "sh";
@@ -415,21 +415,27 @@ void play_file(char *filename)
 			_exit(0);
 		}
 #ifdef ESD_SOUND
-		if (esd_play_file(NULL, filename, 1))
-			_exit(0);
+		else if (sound_options & OPT_SOUND_ESD) {
+			if (esd_play_file(NULL, filename, 1))
+				_exit(0);
+		}
 #endif
 
 #ifdef ARTSC_SOUND
-		if (artsc_play_file(filename))
-			_exit(0);
+		else if (sound_options & OPT_SOUND_ARTSC) {
+			if (artsc_play_file(filename))
+				_exit(0);
+		}
 #endif
 
 #ifdef NAS_SOUND
-		if (play_nas_file(filename))
-			_exit(0);
+		else if (sound_options & OPT_SOUND_NAS) {
+			if (play_nas_file(filename))
+				_exit(0);
+		}
 #endif
-
-		if (can_play_audio()) {
+		else if ((sound_options & OPT_SOUND_NORMAL) && 
+			 can_play_audio()) {
 			play_audio_file(filename);
 			_exit(0);
 		}
@@ -460,32 +466,40 @@ void play(unsigned char *data, int size)
 #ifdef ESD_SOUND
 		/* ESD is our player of choice.  Are we OK to
 		 * go there? */
-		if (can_play_esd()) {
-			if (play_esd(data, size))
-				_exit(0);
+		else if (sound_options & OPT_SOUND_ESD) {
+			if (can_play_esd()) {
+				if (play_esd(data, size))
+					_exit(0);
+			}
 		}
 #endif
 
 #ifdef ARTSC_SOUND
 		/* ArtsC is the new second choice. */
-		if (can_play_artsc()) {
-			if (play_artsc(data, size))
-				_exit(0);
+		else if (sound_options & OPT_SOUND_ARTSC) {
+			if (can_play_artsc()) {
+				if (play_artsc(data, size))
+					_exit(0);
+			}
 		}
 #endif
 
 #ifdef NAS_SOUND
 		/* NAS is our second choice setup. */
-		if (can_play_nas()) {
-			if (play_nas(data, size))
-				_exit(0);
+		else if (sound_options & OPT_SOUND_NAS) {
+			if (can_play_nas()) {
+				if (play_nas(data, size))
+					_exit(0);
+			}
 		}
 #endif
 
 		/* Lastly, we can try just plain old /dev/audio */
-		if (can_play_audio()) {
-			play_audio(data, size);
-			_exit(0);
+		else if (sound_options & OPT_SOUND_NORMAL) {
+			if (can_play_audio()) {
+				play_audio(data, size);
+				_exit(0);
+			}
 		}
 
 		_exit(0);
