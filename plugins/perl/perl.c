@@ -932,6 +932,7 @@ perl_event(GaimEvent event, void *unused, va_list args)
 
 	/* Make a pretty array of char*'s with which to call perl functions */
 	switch (event) {
+	case event_connecting:
 	case event_signon:
 	case event_signoff:
 		g_snprintf(tmpbuf1, 16, "%lu", (unsigned long)arg1);
