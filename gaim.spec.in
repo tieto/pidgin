@@ -94,3 +94,11 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 
 %clean
 rm -r $RPM_BUILD_ROOT
+
+%changelog
+* Thu Sep 06 2001 Rob Flynn <rob@marko.net> (0.28 release)
+- Updated German Translation (thanks Daniel Seifert)
+- Can change friendly name in MSN again
+- Bug fixes
+- Auto-reconnect plugin has exponential timeout (i.e. it tries after 8 seconds, then 16, then 32, etc. up to 17 minutes)
+- Removed file transfer things from Napster. It didn't work well anyway. It'll be back eventually. (Does anyone even use napster anymore?)
