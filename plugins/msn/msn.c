@@ -1133,7 +1133,7 @@ static void msn_newmail_dialog(const char *text)
 	GtkWidget *hbox;
 	GtkWidget *button;
 
-	window = gtk_window_new(GTK_WINDOW_DIALOG);
+	window = gtk_window_new(GTK_WINDOW_POPUP);
 	gtk_window_set_wmclass(GTK_WINDOW(window), "prompt", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(window), _("Gaim-MSN: New Mail"));
@@ -1311,7 +1311,7 @@ static void show_change_name(struct gaim_connection *gc)
 
 	md = (struct msn_data *)gc->proto_data;
 
-	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	b->window = gtk_window_new(GTK_WINDOW_POPUP);
 	gtk_window_set_wmclass(GTK_WINDOW(b->window), "msn_change_name", "Gaim");
 
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Change MSN Name"));
