@@ -2299,19 +2299,18 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 
 void show_typing(struct conversation *c) {
 	
-	GtkStyle *style;
-	GtkNotebook *notebook = GTK_NOTEBOOK(c->is_chat ? chat_notebook : convo_notebook);
-	int offs = ((convo_options & OPT_CONVO_COMBINE) &&
-		    (im_options & OPT_IM_ONE_WINDOW) && c->is_chat) ?
-		g_list_length(conversations) : 0;
-	GList *ws = (c->is_chat ? chats : conversations);
-	GtkWidget *label = gtk_notebook_get_tab_label(notebook,
-						      gtk_notebook_get_nth_page(notebook,
-										offs + g_list_index(ws, c)));
 	if (c->is_chat) /* We shouldn't be getting typing notifications from chats. */
 		return;
 	if (im_options & OPT_IM_ONE_WINDOW) { /* We'll make the tab green */
-		
+		GtkStyle *style;
+		GtkNotebook *notebook = GTK_NOTEBOOK(c->is_chat ? chat_notebook : convo_notebook);
+		int offs = ((convo_options & OPT_CONVO_COMBINE) &&
+			    (im_options & OPT_IM_ONE_WINDOW) && c->is_chat) ?
+			g_list_length(conversations) : 0;
+		GList *ws = (c->is_chat ? chats : conversations);
+		GtkWidget *label = gtk_notebook_get_tab_label(notebook,
+							      gtk_notebook_get_nth_page(notebook,
+											offs + g_list_index(ws, c)));
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
