@@ -1669,6 +1669,17 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	hostname[sizeof(hostname) - 1] = 0;
 	if (!*hostname)
 		g_snprintf(hostname, sizeof(hostname), "localhost");
+
+	if (*gc->user->password) {
+		g_snprintf(buf, sizeof(buf), "PASS %s\r\n", gc->user->password);
+
+		if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
+			hide_login_progress(gc, "Write error");
+			signoff(gc);
+			return;
+		}
+	}
+
 	g_snprintf(buf, sizeof(buf), "USER %s %s %s :%s\r\n",
 		   g_get_user_name(), hostname, 
 		   gc->user->proto_opt[USEROPT_SERV], 
@@ -2670,7 +2681,7 @@ irc_init(struct prpl *ret)
 {
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_IRC;
-	ret->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD;
+	ret->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL;
 	ret->name = g_strdup("IRC");
 	ret->list_icon = irc_list_icon;
 	ret->login = irc_login;

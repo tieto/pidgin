@@ -97,6 +97,7 @@ version 0.60:
 	* Switch the .desktop file to the new KDE/GNOME common vfolder 
 	  format (Thanks Robert McQueen).
 	* Allow only people in buddy list privacy option added for AIM
+	* Optional password on IRC accounts (Thanks, Christian Hammond)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

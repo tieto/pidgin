@@ -2680,7 +2680,7 @@ void update_convo_status(struct conversation *c) {
 			style->fg[0].green = 0x9999;
 			style->fg[0].blue = 0x0000;
 		} else if(c->typing_state == TYPED) {
-			style->fg[0].red = 0xfffff;
+			style->fg[0].red = 0xffff;
 			style->fg[0].green = 0xbbbb;
 			style->fg[0].blue = 0x2222;
 		} else if(c->unseen == 2) {

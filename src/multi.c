@@ -1066,7 +1066,8 @@ static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
 	p = find_prpl(u->protocol);
 	if (!u->gc && p && p->login) {
 		struct prpl *p = find_prpl(u->protocol);
-		if (p && !(p->options & OPT_PROTO_NO_PASSWORD) && !u->password[0]) {
+		if (p && !(p->options & OPT_PROTO_NO_PASSWORD) &&
+			!(p->options & OPT_PROTO_PASSWORD_OPTIONAL) && !u->password[0]) {
 			do_pass_dlg(u);
 		} else {
 			serv_login(u);

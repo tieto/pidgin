@@ -61,20 +61,22 @@
 /* #define OPT_PROTO_HTML            0x00000001 this should be per-connection */
 /* TOC/Oscar have signon time, and the server's time needs to be adjusted to match
  * your computer's time. We wouldn't need this if everyone used NTP. */
-#define OPT_PROTO_CORRECT_TIME    0x00000002
+#define OPT_PROTO_CORRECT_TIME      0x00000002
 /* Jabber lets you choose what name you want for chat. So it shouldn't be pulling
  * the alias for when you're in chat; it gets annoying. */
-#define OPT_PROTO_UNIQUE_CHATNAME 0x00000004
+#define OPT_PROTO_UNIQUE_CHATNAME   0x00000004
 /* IRC, Jabber let you have chat room topics */
-#define OPT_PROTO_CHAT_TOPIC      0x00000008
-/* IRC and Zephyr don't require passwords, so there's no need for a password prompt */
-#define OPT_PROTO_NO_PASSWORD     0x00000010
+#define OPT_PROTO_CHAT_TOPIC        0x00000008
+/* Zephyr doesn't require passwords, so there's no need for a password prompt */
+#define OPT_PROTO_NO_PASSWORD       0x00000010
 /* MSN and Yahoo notify you when you have new mail */
-#define OPT_PROTO_MAIL_CHECK      0x00000020
+#define OPT_PROTO_MAIL_CHECK        0x00000020
 /* Oscar and Jabber have buddy icons */
-#define OPT_PROTO_BUDDY_ICON      0x00000040
+#define OPT_PROTO_BUDDY_ICON        0x00000040
 /* Oscar lets you send images in direct IMs */
-#define OPT_PROTO_IM_IMAGE        0x00000080
+#define OPT_PROTO_IM_IMAGE          0x00000080
+/* Passwords in IRC are optional, and are needed for certain functionality. */
+#define OPT_PROTO_PASSWORD_OPTIONAL 0x00000100
 
 #define GAIM_AWAY_CUSTOM "Custom"
 
