@@ -922,22 +922,30 @@ static void gaimrc_read_options(FILE *f)
 			gaim_prefs_set_int("/gaim/gtk/conversations/font_size", atoi(p->value[0]));
 		} else if (!strcmp(p->option, "foreground")) {
 			char buf[8];
-			fgcolor.red = atoi(p->value[0]);
-			fgcolor.green = atoi(p->value[1]);
-			fgcolor.blue = atoi(p->value[2]);
 
-			g_snprintf(buf, sizeof(buf), "#%2x%2x%2x",
-					   atoi(p->value[0]), atoi(p->value[1]), atoi(p->value[2]));
+			/*this is totally counter intuitive. why would you read in 2 before 1? 
+			 *because gaim 0.6x stored it badly, and to get the intended color
+			 *we have to read it in equally oddly.
+			 * --luke
+			 */
+
+			fgcolor.red = atoi(p->value[0]);
+			fgcolor.blue = atoi(p->value[2]);
+			fgcolor.green = atoi(p->value[1]);
+
+			g_snprintf(buf, sizeof(buf), "#%02x%02x%02x",
+					   atoi(p->value[0]), atoi(p->value[2]), atoi(p->value[1]));
 			gaim_prefs_set_string("/gaim/gtk/conversations/fgcolor", buf);
 
 		} else if (!strcmp(p->option, "background")) {
 			char buf[8];
-			bgcolor.red = atoi(p->value[0]);
-			bgcolor.green = atoi(p->value[1]);
-			bgcolor.blue = atoi(p->value[2]);
 
-			g_snprintf(buf, sizeof(buf), "#%2x%2x%2x",
-					   atoi(p->value[0]), atoi(p->value[1]), atoi(p->value[2]));
+			bgcolor.red = atoi(p->value[0]);
+			bgcolor.blue = atoi(p->value[2]);
+			bgcolor.green = atoi(p->value[1]);
+
+			g_snprintf(buf, sizeof(buf), "#%02x%02x%02x",
+					   atoi(p->value[0]), atoi(p->value[2]), atoi(p->value[1]));
 			gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", buf);
 
 		} else if (!strcmp(p->option, "report_idle")) {
