@@ -29,6 +29,7 @@
 
 #include "internal.h"
 #include "debug.h"
+#include "notify.h"
 #include "prefs.h"
 #include "proxy.h"
 #include "util.h"
@@ -37,7 +38,6 @@
 #define GAIM_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
 static GaimProxyInfo *global_proxy_info = NULL;
-static gboolean global_proxy_info_from_prefs = FALSE;
 
 static int opt_debug = 0;
 
@@ -171,24 +171,12 @@ gaim_proxy_info_get_password(const GaimProxyInfo *info)
 /**************************************************************************
  * Global Proxy API
  **************************************************************************/
-void
-gaim_global_proxy_set_from_prefs(gboolean from_prefs)
-{
-	global_proxy_info_from_prefs = from_prefs;
-}
-
 GaimProxyInfo *
 gaim_global_proxy_get_info(void)
 {
 	return global_proxy_info;
 }
 
-gboolean
-gaim_global_proxy_is_from_prefs(void)
-{
-	return global_proxy_info_from_prefs;
-}
- 
 /**************************************************************************
  * Proxy API
  **************************************************************************/
@@ -843,6 +831,110 @@ proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 
 #define HTTP_GOODSTRING "HTTP/1.0 200"
 #define HTTP_GOODSTRING2 "HTTP/1.1 200"
+
+#if 0
+/* QQQ */
+static void
+http_uri_get_host(const char *uri)
+{
+	GaimProxyInfo *info;
+
+	char *c, *d;
+	char buffer[2048];
+
+	char host[128];
+	char user[128];
+	char pass[128];
+	int  port = 0;
+	int  len  = 0;
+
+	host[0] = '\0';
+	user[0] = '\0';
+	pass[0] = '\0';
+
+	gaim_debug(GAIM_DEBUG_MISC, "gaimrc",
+			   "gaimrc_parse_proxy_uri(%s)\n", proxy);
+
+	if ((c = strchr(proxy, ':')) == NULL)
+	{
+		gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
+				   "No URI detected.\n");
+		/* No URI detected. */
+		return FALSE;
+	}
+
+	len = c - proxy;
+
+	if (strncmp(proxy, "http://", len + 3))
+		return FALSE;
+
+	gaim_debug(GAIM_DEBUG_MISC, "gaimrc", "Found HTTP proxy.\n");
+	/* Get past "://" */
+	c += 3;
+
+	gaim_debug(GAIM_DEBUG_MISC, "gaimrc", "Looking at %s\n", c);
+
+	for (;;)
+	{
+		*buffer = '\0';
+		d = buffer;
+
+		while (*c != '\0' && *c != '@' && *c != ':' && *c != '/')
+			*d++ = *c++;
+
+		*d = '\0';
+
+		if (*c == ':')
+		{
+			/*
+			 * If there is a '@' in there somewhere, we are in the auth part.
+			 * If not, host.
+			 */
+			if (strchr(c, '@') != NULL)
+				strcpy(user, buffer);
+			else
+				strcpy(host, buffer);
+		}
+		else if (*c == '@')
+		{
+			if (user[0] == '\0')
+				strcpy(user, buffer);
+			else
+				strcpy(pass, buffer);
+		}
+		else if (*c == '/' || *c == '\0')
+		{
+			if (host[0] == '\0')
+				strcpy(host, buffer);
+			else
+				port = atoi(buffer);
+
+			/* Done. */
+			break;
+		}
+
+		c++;
+	}
+
+	/* NOTE: HTTP_PROXY takes precendence. */
+	info = gaim_global_proxy_get_info();
+
+	if (*host) gaim_proxy_info_set_host(info, host);
+	if (*user) gaim_proxy_info_set_username(info, user);
+	if (*pass) gaim_proxy_info_set_password(info, pass);
+
+	gaim_proxy_info_set_port(info, port);
+
+	gaim_debug(GAIM_DEBUG_MISC, "gaimrc",
+			   "Host: '%s', User: '%s', Password: '%s', Port: %d\n",
+			   gaim_proxy_info_get_host(info),
+			   gaim_proxy_info_get_username(info),
+			   gaim_proxy_info_get_password(info),
+			   gaim_proxy_info_get_port(info));
+
+	return TRUE;
+}
+#endif
 
 static void
 http_canread(gpointer data, gint source, GaimInputCondition cond)
@@ -1505,6 +1597,10 @@ connection_host_resolved(GSList *hosts, gpointer data,
 				ret = proxy_connect_socks5(phb, addr, addrlen);
 				break;
 
+			case GAIM_PROXY_USE_ENVVAR:
+				ret = proxy_connect_http(phb, addr, addrlen);
+				break;
+
 			default:
 				break;
 		}
@@ -1532,6 +1628,7 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 	const char *connecthost = host;
 	int connectport = port;
 	struct PHB *phb;
+	const gchar *tmp;
 
 	g_return_val_if_fail(host != NULL, -1);
 	g_return_val_if_fail(port != 0 && port != -1, -1);
@@ -1550,12 +1647,40 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 	phb->port = port;
 	phb->account = account;
 
+	if (gaim_proxy_info_get_type(phb->gpi) == GAIM_PROXY_USE_ENVVAR) {
+		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
+			(tmp = g_getenv("http_proxy")) != NULL ||
+			(tmp= g_getenv("HTTPPROXY")) != NULL) {
+			connecthost = tmp;
+			gaim_proxy_info_set_host(phb->gpi, connecthost);
+		}
+
+		if ((tmp = g_getenv("HTTP_PROXY_PORT")) != NULL ||
+			(tmp = g_getenv("http_proxy_port")) != NULL ||
+			(tmp = g_getenv("HTTPPROXYPORT")) != NULL) {
+			connectport = atoi(tmp);
+			gaim_proxy_info_set_port(phb->gpi, connectport);
+		}
+
+		if ((tmp = g_getenv("HTTP_PROXY_USER")) != NULL ||
+			(tmp = g_getenv("http_proxy_user")) != NULL ||
+			(tmp = g_getenv("HTTPPROXYUSER")) != NULL)
+			gaim_proxy_info_set_username(phb->gpi, tmp);
+
+		if ((tmp = g_getenv("HTTP_PROXY_PASS")) != NULL ||
+			(tmp = g_getenv("http_proxy_pass")) != NULL ||
+			(tmp = g_getenv("HTTPPROXYPASS")) != NULL)
+			gaim_proxy_info_set_password(phb->gpi, tmp);
+	}
+
 	if ((gaim_proxy_info_get_type(phb->gpi) != GAIM_PROXY_NONE) &&
 		(gaim_proxy_info_get_host(phb->gpi) == NULL ||
-		 gaim_proxy_info_get_port(phb->gpi) == 0 ||
-		 gaim_proxy_info_get_port(phb->gpi) == -1)) {
+		 gaim_proxy_info_get_port(phb->gpi) <= 0)) {
 
-		gaim_proxy_info_set_type(phb->gpi, GAIM_PROXY_NONE);
+		gaim_notify_error(NULL, NULL, _("Invalid proxy settings"), _("Either the host name or port number specified for your given proxy type is invalid."));
+		g_free(phb->host);
+		g_free(phb);
+		return -1;
 	}
 
 	switch (gaim_proxy_info_get_type(phb->gpi))
@@ -1566,6 +1691,7 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 		case GAIM_PROXY_HTTP:
 		case GAIM_PROXY_SOCKS4:
 		case GAIM_PROXY_SOCKS5:
+		case GAIM_PROXY_USE_ENVVAR:
 			connecthost = gaim_proxy_info_get_host(phb->gpi);
 			connectport = gaim_proxy_info_get_port(phb->gpi);
 			break;
@@ -1599,6 +1725,8 @@ proxy_pref_cb(const char *name, GaimPrefType type, gpointer value,
 			proxytype = GAIM_PROXY_SOCKS4;
 		else if (!strcmp(type, "socks5"))
 			proxytype = GAIM_PROXY_SOCKS5;
+		else if (!strcmp(type, "envvar"))
+			proxytype = GAIM_PROXY_USE_ENVVAR;
 		else
 			proxytype = -1;
 

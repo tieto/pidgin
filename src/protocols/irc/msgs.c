@@ -127,7 +127,7 @@ void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, 
 		return;
 
 	buf = g_strdup_printf("mode for %s: %s %s", args[1], args[2], args[3] ? args[3] : "");
-	gaim_chat_write(GAIM_CHAT(convo), "", buf, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+	gaim_chat_write(GAIM_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	g_free(buf);
 
 	return;
@@ -244,11 +244,11 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 		nick = irc_mask_nick(from);
 		msg = g_strdup_printf(_("%s has changed the topic to: %s"), nick, topic);
 		g_free(nick);
-		gaim_chat_write(GAIM_CHAT(convo), from, msg, WFLAG_SYSTEM, time(NULL));
+		gaim_chat_write(GAIM_CHAT(convo), from, msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	} else {
 		msg = g_strdup_printf(_("The topic for %s is: %s"), chan, topic);
-		gaim_chat_write(GAIM_CHAT(convo), "", msg, WFLAG_SYSTEM, time(NULL));
+		gaim_chat_write(GAIM_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	}
 }
@@ -287,9 +287,9 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 		if (irc->nameconv) {
 			msg = g_strdup_printf("Users on %s: %s", args[1], names);
 			if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
-				gaim_chat_write(GAIM_CHAT(convo), "", msg, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+				gaim_chat_write(GAIM_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 			else
-				gaim_im_write(GAIM_IM(convo), "", msg, -1, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+				gaim_im_write(GAIM_IM(convo), "", msg, -1, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 			g_free(msg);
 			g_free(irc->nameconv);
 			irc->nameconv = NULL;
@@ -367,10 +367,10 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 	if (convo) {
 		if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT) /* does this happen? */
 			gaim_chat_write(GAIM_CHAT(convo), args[1], _("no such channel"),
-					WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+					GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		else
 			gaim_im_write(GAIM_IM(convo), args[1], _("User is not logged in"), -1,
-				      WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+				      GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
 		if ((gc = gaim_account_get_connection(irc->account)) == NULL)
 			return;
@@ -390,7 +390,7 @@ void irc_msg_nosend(struct irc_conn *irc, const char *name, const char *from, ch
 
 	convo = gaim_find_conversation_with_account(args[1], irc->account);
 	if (convo) {
-		gaim_chat_write(GAIM_CHAT(convo), args[1], args[2], WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+		gaim_chat_write(GAIM_CHAT(convo), args[1], args[2], GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
 		if ((gc = gaim_account_get_connection(irc->account)) == NULL)
 			return;
@@ -406,7 +406,7 @@ void irc_msg_notinchan(struct irc_conn *irc, const char *name, const char *from,
 	if (convo) {
 		/*g_slist_remove(irc->gc->buddy_chats, convo);
 		  gaim_conversation_set_account(convo, NULL);*/
-		gaim_chat_write(GAIM_CHAT(convo), args[1], args[2], WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+		gaim_chat_write(GAIM_CHAT(convo), args[1], args[2], GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	}
 }
 
@@ -421,7 +421,7 @@ void irc_msg_notop(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!convo)
 		return;
 
-	gaim_chat_write(GAIM_CHAT(convo), "", args[2], WFLAG_SYSTEM, time(NULL));
+	gaim_chat_write(GAIM_CHAT(convo), "", args[2], GAIM_MESSAGE_SYSTEM, time(NULL));
 }
 
 void irc_msg_invite(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -548,7 +548,7 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 
 	if (!gaim_utf8_strcasecmp(gaim_connection_get_display_name(gc), args[1])) {
 		buf = g_strdup_printf(_("You have been kicked by %s: (%s)"), nick, args[2]);
-		gaim_chat_write(GAIM_CHAT(convo), args[0], buf, WFLAG_SYSTEM, time(NULL));
+		gaim_chat_write(GAIM_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(buf);
 		/*g_slist_remove(irc->gc->buddy_chats, convo);
 		  gaim_conversation_set_account(convo, NULL);*/
@@ -577,7 +577,7 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 			return;
 		}
 		buf = g_strdup_printf(_("mode (%s %s) by %s"), args[1], args[2] ? args[2] : "", nick);
-		gaim_chat_write(GAIM_CHAT(convo), args[0], buf, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+		gaim_chat_write(GAIM_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 	} else {					/* User		*/
 	}
@@ -665,7 +665,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 	nick = irc_mask_nick(from);
 	if (!gaim_utf8_strcasecmp(nick, gaim_connection_get_display_name(gc))) {
 		msg = g_strdup_printf(_("You have parted the channel%s%s"), *args[1] ? ": " : "", args[1]);
-		gaim_chat_write(GAIM_CHAT(convo), args[0], msg, WFLAG_SYSTEM, time(NULL));
+		gaim_chat_write(GAIM_CHAT(convo), args[0], msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	} else {
 		gaim_chat_remove_user(GAIM_CHAT(convo), nick, args[1]);
@@ -711,9 +711,9 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 	g_strfreev(parts);
 	if (convo) {
 		if (gaim_conversation_get_type (convo) == GAIM_CONV_CHAT)
-			gaim_chat_write(GAIM_CHAT(convo), "PONG", msg, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+			gaim_chat_write(GAIM_CHAT(convo), "PONG", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		else
-			gaim_im_write(GAIM_IM(convo), "PONG", msg, -1, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+			gaim_im_write(GAIM_IM(convo), "PONG", msg, -1, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
 		gc = gaim_account_get_connection(irc->account);
 		if (!gc) {

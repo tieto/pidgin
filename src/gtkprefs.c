@@ -1067,7 +1067,10 @@ proxy_changed_cb(const char *name, GaimPrefType type, gpointer value,
 	GtkWidget *frame = data;
 	const char *proxy = value;
 
-	gtk_widget_set_sensitive(frame, strcmp(proxy, "none"));
+	if (strcmp(proxy, "none") && strcmp(proxy, "envvar"))
+		gtk_widget_set_sensitive(frame, TRUE);
+	else
+		gtk_widget_set_sensitive(frame, FALSE);
 }
 
 static void proxy_print_option(GtkEntry *entry, int entrynum)
@@ -1080,9 +1083,6 @@ static void proxy_print_option(GtkEntry *entry, int entrynum)
 		gaim_prefs_set_string("/core/proxy/username", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPASS)
 		gaim_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
-
-	/* If the user specifies it, we want to save it. */
-	gaim_global_proxy_set_from_prefs(TRUE);
 }
 
 GtkWidget *proxy_page() {
@@ -1104,6 +1104,7 @@ GtkWidget *proxy_page() {
 				   "SOCKS 4", "socks4",
 				   "SOCKS 5", "socks5",
 				   "HTTP", "http",
+				   _("Use Environmental Settings"), "envvar",
 				   NULL);
 
 	vbox = gaim_gtk_make_frame(ret, _("Proxy Server"));
@@ -1112,7 +1113,8 @@ GtkWidget *proxy_page() {
 	proxy_info = gaim_global_proxy_get_info();
 
 	if (proxy_info == NULL ||
-		gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_NONE) {
+		gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_NONE ||
+		gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_USE_ENVVAR) {
 
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), FALSE);
 	}

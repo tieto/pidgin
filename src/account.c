@@ -930,12 +930,16 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			if (!strcmp(buffer, "global"))
 				gaim_proxy_info_set_type(data->proxy_info,
 										 GAIM_PROXY_USE_GLOBAL);
+			else if (!strcmp(buffer, "none"))
+				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_NONE);
 			else if (!strcmp(buffer, "http"))
 				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_HTTP);
 			else if (!strcmp(buffer, "socks4"))
 				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_SOCKS4);
 			else if (!strcmp(buffer, "socks5"))
 				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_SOCKS5);
+			else if (!strcmp(buffer, "envvar"))
+				gaim_proxy_info_set_type(data->proxy_info, GAIM_PROXY_USE_ENVVAR);
 			else
 				gaim_debug(GAIM_DEBUG_ERROR, "account",
 						   "Invalid proxy type found when loading account "
@@ -984,7 +988,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	else if (!strcmp(element_name, "proxy")) {
 		data->in_proxy = FALSE;
 
-		if (gaim_proxy_info_get_type(data->proxy_info) == GAIM_PROXY_NONE) {
+		if (gaim_proxy_info_get_type(data->proxy_info) == GAIM_PROXY_USE_GLOBAL) {
 			gaim_proxy_info_destroy(data->proxy_info);
 			data->proxy_info = NULL;
 		}
@@ -1173,20 +1177,25 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 
 	g_hash_table_foreach(account->ui_settings, write_ui_setting_list, fp);
 
-	if ((proxy_info = gaim_account_get_proxy_info(account)) != NULL &&
-		(proxy_type = gaim_proxy_info_get_type(proxy_info)) != GAIM_PROXY_NONE)
+	if ((proxy_info = gaim_account_get_proxy_info(account)) != NULL)
 	{
 		const char *value;
 		int int_value;
 
+		proxy_type = gaim_proxy_info_get_type(proxy_info);
+
 		fprintf(fp, "  <proxy>\n");
 		fprintf(fp, "   <type>%s</type>\n",
 				(proxy_type == GAIM_PROXY_USE_GLOBAL ? "global" :
+				 proxy_type == GAIM_PROXY_NONE       ? "none"   :
 				 proxy_type == GAIM_PROXY_HTTP       ? "http"   :
 				 proxy_type == GAIM_PROXY_SOCKS4     ? "socks4" :
-				 proxy_type == GAIM_PROXY_SOCKS5     ? "socks5" : "unknown"));
+				 proxy_type == GAIM_PROXY_SOCKS5     ? "socks5" :
+				 proxy_type == GAIM_PROXY_USE_ENVVAR ? "envvar" : "unknown"));
 
-		if (proxy_type != GAIM_PROXY_USE_GLOBAL) {
+		if (proxy_type != GAIM_PROXY_USE_GLOBAL &&
+			proxy_type != GAIM_PROXY_NONE &&
+			proxy_type != GAIM_PROXY_USE_ENVVAR) {
 			if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
 				fprintf(fp, "   <host>%s</host>\n", value);
 

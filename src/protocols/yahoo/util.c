@@ -128,7 +128,7 @@ char *yahoo_codes_to_html(char *x)
 					continue;
 				else {
 					tmp = g_string_new_len(x + i + 2, j - i - 2);
-					if ((tmp->str[0] == '#'))
+					if (tmp->str[0] == '#')
 						g_string_append_printf(s, "<FONT COLOR=\"%s\">", tmp->str);
 					else if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);

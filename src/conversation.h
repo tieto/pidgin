@@ -97,6 +97,21 @@ typedef enum
 
 } GaimTypingState;
 
+/**
+ * Flags applicable to a message. Most will have send, recv or system.
+ */
+typedef enum
+{
+	GAIM_MESSAGE_SEND = 0x01,      /**< Outgoing message.     */
+	GAIM_MESSAGE_RECV = 0x02,      /**< Incoming message.     */
+	GAIM_MESSAGE_SYSTEM = 0x04,    /**< System message.       */
+	GAIM_MESSAGE_AUTO_RESP = 0x08, /**< Auto response.        */
+	GAIM_MESSAGE_COLORIZE = 0x10,  /**< Colorize nicks.       */
+	GAIM_MESSAGE_NICK = 0x20,      /**< Contains your nick.   */
+	GAIM_MESSAGE_NO_LOG = 0x40,    /**< Do not log.           */
+	GAIM_MESSAGE_WHISPER = 0x80    /**< Whispered message.    */
+} GaimMessageFlags;
+
 #include "account.h"
 #include "server.h"
 
@@ -136,11 +151,11 @@ struct _GaimConversationUiOps
 {
 	void (*destroy_conversation)(GaimConversation *conv);
 	void (*write_chat)(GaimConversation *conv, const char *who,
-					   const char *message, int flags, time_t mtime);
+					   const char *message, GaimMessageFlags flags, time_t mtime);
 	void (*write_im)(GaimConversation *conv, const char *who,
-					 const char *message, size_t len, int flags, time_t mtime);
+					 const char *message, size_t len, GaimMessageFlags flags, time_t mtime);
 	void (*write_conv)(GaimConversation *conv, const char *who,
-					   const char *message, size_t length, int flags,
+					   const char *message, size_t length, GaimMessageFlags flags,
 					   time_t mtime);
 
 	void (*chat_add_user)(GaimConversation *conv, const char *user);
@@ -732,14 +747,14 @@ GaimConversation *gaim_find_conversation_with_account(
  * @param who     The user who sent the message.
  * @param message The message.
  * @param length  The length of the message.
- * @param flags   The flags.
+ * @param flags   The message flags.
  * @param mtime   The time the message was sent.
  *
  * @see gaim_im_write()
  * @see gaim_chat_write()
  */
 void gaim_conversation_write(GaimConversation *conv, const char *who,
-							 const char *message, size_t length, int flags,
+							 const char *message, size_t length, GaimMessageFlags flags,
 							 time_t mtime);
 
 /**
@@ -884,11 +899,11 @@ void gaim_im_update_typing(GaimIm *im);
  * @param message The message to write.
  * @param len     The length of the message, or -1 to specify the length
  *                of @a message.
- * @param flag    The flags.
+ * @param flags   The message flags.
  * @param mtime   The time the message was sent.
  */
 void gaim_im_write(GaimIm *im, const char *who,
-				   const char *message, size_t len, int flag, time_t mtime);
+				   const char *message, size_t len, GaimMessageFlags flags, time_t mtime);
 
 /**
  * Sends a message to this IM conversation.
@@ -1043,11 +1058,11 @@ int gaim_chat_get_id(const GaimChat *chat);
  * @param chat    The chat.
  * @param who     The user who sent the message.
  * @param message The message to write.
- * @param flag    The flags.
+ * @param flags   The flags.
  * @param mtime   The time the message was sent.
  */
 void gaim_chat_write(GaimChat *chat, const char *who,
-					 const char *message, int flag, time_t mtime);
+					 const char *message, GaimMessageFlags flags, time_t mtime);
 
 /**
  * Sends a message to this chat conversation.

@@ -9,9 +9,10 @@ version 0.68:
 	* Yahoo color receiving support (Tim Ringenbach (marv_sf))
 	* Yahoo and MSN get info support (Nathan Poznick)
 	* Fixed Jabber registrations.
+	* Corrected problems with proxy preferences.
 	* Catalan translation updated (Robert Millan)
-	* Swedish translation updated (Tore Lundqvist (luntor))
 	* German translation updated (Bjoern Voigt)
+	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.67 (08/14/2003):
 	* Brought back the message notification plugin (Brian Tarricone)

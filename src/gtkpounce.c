@@ -859,7 +859,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 				conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
 
 			gaim_conversation_write(conv, NULL, message, -1,
-									WFLAG_SEND, time(NULL));
+									GAIM_MESSAGE_SEND, time(NULL));
 
 			serv_send_im(account->gc, (char *)pouncee, (char *)message, -1, 0);
 		}

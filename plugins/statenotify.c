@@ -21,7 +21,7 @@ write_status(struct buddy *buddy, const char *message)
 
 	g_snprintf(buf, sizeof(buf), message, who);
 
-	gaim_conversation_write(conv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
+	gaim_conversation_write(conv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
 }
 
 static void

@@ -131,7 +131,7 @@ bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		}
 
 		if (*buf != '\0' && (conv = gaim_find_conversation(user)) != NULL) {
-			gaim_conversation_write(conv, NULL, buf, -1, WFLAG_SYSTEM,
+			gaim_conversation_write(conv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM,
 									time(NULL));
 		}
 

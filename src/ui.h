@@ -83,7 +83,7 @@ struct queued_message {
 	char *message;
 	time_t tm;
 	GaimAccount *account;
-	int flags;
+	GaimMessageFlags flags;
 	int len;
 };
 

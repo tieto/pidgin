@@ -477,7 +477,7 @@ static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s failed"), sn);
 		
 	if ((cnv = gaim_find_conversation(sn)))
-		gaim_conversation_write(cnv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
+		gaim_conversation_write(cnv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
 
 	gaim_conversation_update_progress(cnv, 0);
 
@@ -1912,7 +1912,7 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 	if (getpeername(source, &name, &name_len) == 0) {
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
 		dim->connected = TRUE;
-		gaim_conversation_write(cnv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
+		gaim_conversation_write(cnv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
 	
@@ -5591,7 +5591,7 @@ static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	dim->connected = TRUE;
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), sn);
 	g_free(sn);
-	gaim_conversation_write(cnv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
+	gaim_conversation_write(cnv, NULL, buf, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_odc_incoming, 0);
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING, gaim_odc_typing, 0);

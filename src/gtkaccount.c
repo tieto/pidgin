@@ -736,6 +736,13 @@ make_proxy_dropdown(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	gtk_widget_show(item);
 
+	/* Use Environmental Settings */
+	item = gtk_menu_item_new_with_label(_("Use Environmental Settings"));
+	g_object_set_data(G_OBJECT(item), "proxytype",
+					  GINT_TO_POINTER(GAIM_PROXY_USE_ENVVAR));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
 
 	return dropdown;
@@ -748,7 +755,8 @@ proxy_type_changed_cb(GtkWidget *optmenu, AccountPrefsDialog *dialog)
 		gtk_option_menu_get_history(GTK_OPTION_MENU(optmenu)) - 1;
 
 	if (dialog->new_proxy_type == GAIM_PROXY_USE_GLOBAL ||
-		dialog->new_proxy_type == GAIM_PROXY_NONE) {
+		dialog->new_proxy_type == GAIM_PROXY_NONE ||
+		dialog->new_proxy_type == GAIM_PROXY_USE_ENVVAR) {
 
 		gtk_widget_hide_all(dialog->proxy_vbox);
 	}
@@ -832,10 +840,13 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		GaimProxyType type = gaim_proxy_info_get_type(proxy_info);
 
 		/* Hah! */
+		/* I dunno what you're laughing about, fuzz ball. */
+		dialog->new_proxy_type = type;
 		gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->proxy_dropdown),
 									(int)type + 1);
 
-		if (type == GAIM_PROXY_NONE || type == GAIM_PROXY_USE_GLOBAL) {
+		if (type == GAIM_PROXY_USE_GLOBAL || type == GAIM_PROXY_NONE ||
+			type == GAIM_PROXY_USE_ENVVAR) {
 			gtk_widget_hide_all(vbox2);
 		}
 		else {
@@ -1030,7 +1041,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	}
 
 	/* Set the proxy stuff. */
-	if (dialog->new_proxy_type == GAIM_PROXY_NONE) {
+	if (dialog->new_proxy_type == GAIM_PROXY_USE_GLOBAL) {
 		gaim_account_set_proxy_info(dialog->account, NULL);
 	}
 	else {
@@ -1106,8 +1117,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 static void
 register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	GaimPluginProtocolInfo *prpl_info = dialog->prpl_info;
-
 	ok_account_prefs_cb(NULL, dialog);
 
 	gaim_account_register(dialog->account);

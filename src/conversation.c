@@ -374,9 +374,9 @@ common_send(GaimConversation *conv, const char *message)
 
 					if (binary)
 						gaim_im_write(im, NULL, bigbuf, length,
-									  WFLAG_SEND, time(NULL));
+									  GAIM_MESSAGE_SEND, time(NULL));
 					else
-						gaim_im_write(im, NULL, buffy, -1, WFLAG_SEND,
+						gaim_im_write(im, NULL, buffy, -1, GAIM_MESSAGE_SEND,
 									  time(NULL));
 				}
 
@@ -388,7 +388,7 @@ common_send(GaimConversation *conv, const char *message)
 								   buffy, -1, imflags);
 
 				if (err > 0)
-					gaim_im_write(im, NULL, buf, -1, WFLAG_SEND, time(NULL));
+					gaim_im_write(im, NULL, buf, -1, GAIM_MESSAGE_SEND, time(NULL));
 			}
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-im-msg",
@@ -1430,7 +1430,7 @@ gaim_find_conversation_with_account(const char *name,
 
 void
 gaim_conversation_write(GaimConversation *conv, const char *who,
-						const char *message, size_t length, int flags,
+						const char *message, size_t length, GaimMessageFlags flags,
 						time_t mtime)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -1470,7 +1470,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
 			if (who == NULL) {
-				if (flags & WFLAG_SEND) {
+				if (flags & GAIM_MESSAGE_SEND) {
 					b = gaim_find_buddy(account,
 										gaim_account_get_username(account));
 
@@ -1507,19 +1507,19 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	win = gaim_conversation_get_window(conv);
 
 	/* Tab highlighting */
-	if (!(flags & WFLAG_RECV) && !(flags & WFLAG_SYSTEM))
+	if (!(flags & GAIM_MESSAGE_RECV) && !(flags & GAIM_MESSAGE_SYSTEM))
 		return;
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-		if ((flags & WFLAG_RECV) == WFLAG_RECV)
+		if ((flags & GAIM_MESSAGE_RECV) == GAIM_MESSAGE_RECV)
 			gaim_im_set_typing_state(GAIM_IM(conv), GAIM_NOT_TYPING);
 	}
 
 	if (gaim_window_get_active_conversation(win) != conv) {
-		if ((flags & WFLAG_NICK) == WFLAG_NICK ||
+		if ((flags & GAIM_MESSAGE_NICK) == GAIM_MESSAGE_NICK ||
 				gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK)
 			unseen = GAIM_UNSEEN_NICK;
-		else if ((flags & WFLAG_SYSTEM) == WFLAG_SYSTEM &&
+		else if ((flags & GAIM_MESSAGE_SYSTEM) == GAIM_MESSAGE_SYSTEM &&
 				 gaim_conversation_get_unseen(conv) != GAIM_UNSEEN_TEXT)
 			unseen = GAIM_UNSEEN_EVENT;
 		else
@@ -1683,7 +1683,7 @@ gaim_im_update_typing(GaimIm *im)
 
 void
 gaim_im_write(GaimIm *im, const char *who, const char *message,
-			  size_t len, int flags, time_t mtime)
+			  size_t len, GaimMessageFlags flags, time_t mtime)
 {
 	GaimConversation *c;
 
@@ -1872,7 +1872,7 @@ gaim_chat_get_id(const GaimChat *chat)
 
 void
 gaim_chat_write(GaimChat *chat, const char *who, const char *message,
-				int flags, time_t mtime)
+				GaimMessageFlags flags, time_t mtime)
 {
 	GaimAccount *account;
 	GaimConversation *conv;
@@ -1890,7 +1890,7 @@ gaim_chat_write(GaimChat *chat, const char *who, const char *message,
 	if (gaim_chat_is_user_ignored(chat, who))
 		return;
 
-	if (!(flags & WFLAG_WHISPER)) {
+	if (!(flags & GAIM_MESSAGE_WHISPER)) {
 		char *str;
 		const char *disp;
 
@@ -1900,13 +1900,13 @@ gaim_chat_write(GaimChat *chat, const char *who, const char *message,
 		if (!gaim_utf8_strcasecmp(str, normalize(gaim_account_get_username(account))) ||
 			(disp && !gaim_utf8_strcasecmp(str, normalize(disp)))) {
 
-			flags |= WFLAG_SEND;
+			flags |= GAIM_MESSAGE_SEND;
 		}
 		else {
-			flags |= WFLAG_RECV;
+			flags |= GAIM_MESSAGE_RECV;
 
 			if (find_nick(gc, message))
-				flags |= WFLAG_NICK;
+				flags |= GAIM_MESSAGE_NICK;
 		}
 
 		g_free(str);
@@ -1959,7 +1959,7 @@ gaim_chat_add_user(GaimChat *chat, const char *user, const char *extra_msg)
 					   _("%s [<I>%s</I>] entered the room."),
 					   user, extra_msg);
 
-		gaim_conversation_write(conv, NULL, tmp, -1, WFLAG_SYSTEM, time(NULL));
+		gaim_conversation_write(conv, NULL, tmp, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
@@ -2043,7 +2043,7 @@ gaim_chat_rename_user(GaimChat *chat, const char *old_user,
 		g_snprintf(tmp, sizeof(tmp),
 				   _("%s is now known as %s"), old_user, new_user);
 
-		gaim_conversation_write(conv, NULL, tmp, -1, WFLAG_SYSTEM, time(NULL));
+		gaim_conversation_write(conv, NULL, tmp, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 
@@ -2087,7 +2087,7 @@ gaim_chat_remove_user(GaimChat *chat, const char *user, const char *reason)
 		else
 			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), user);
 
-		gaim_conversation_write(conv, NULL, tmp, -1, WFLAG_SYSTEM, time(NULL));
+		gaim_conversation_write(conv, NULL, tmp, -1, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-left",
@@ -2163,7 +2163,7 @@ gaim_chat_remove_users(GaimChat *chat, GList *users, const char *reason)
 			g_snprintf(tmp, sizeof(tmp), _(" left the room (%s)."), reason);
 
 			gaim_conversation_write(conv, NULL, tmp, -1,
-									WFLAG_SYSTEM, time(NULL));
+									GAIM_MESSAGE_SYSTEM, time(NULL));
 		}
 	}
 }

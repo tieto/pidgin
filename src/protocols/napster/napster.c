@@ -435,7 +435,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		buf3 = g_strdup_printf("/me %s", buf2);
 		g_free(buf2);
 		if ((c = nap_find_chat(gc, res[0]))) {
-			gaim_chat_write(GAIM_CHAT(c), res[1], buf3, WFLAG_NICK, time(NULL));
+			gaim_chat_write(GAIM_CHAT(c), res[1], buf3, GAIM_MESSAGE_NICK, time(NULL));
 		}
 		g_free(buf3);
 		g_strfreev(res);

@@ -2698,7 +2698,7 @@ tab_complete(GaimConversation *conv)
 			matches = g_list_remove(matches, matches->data);
 		}
 
-		gaim_conversation_write(conv, NULL, addthis, -1, WFLAG_NOLOG,
+		gaim_conversation_write(conv, NULL, addthis, -1, GAIM_MESSAGE_NO_LOG,
 								time(NULL));
 		gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, partial, -1);
 		g_free(addthis);
@@ -4204,14 +4204,14 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 
 static void
 gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
-					  const char *message, size_t len, int flags,
+					  const char *message, size_t len, GaimMessageFlags flags,
 					  time_t mtime)
 {
 	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	if (!(flags & WFLAG_NOLOG) &&
+	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
 		gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events")) {
 
 		gaim_window_raise(gaim_conversation_get_window(conv));
@@ -4219,7 +4219,7 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 
 	/* Play a sound, if specified in prefs. */
 	if (gtkconv->make_sound) {
-		if (flags & WFLAG_RECV) {
+		if (flags & GAIM_MESSAGE_RECV) {
 			if (gtkconv->u.im->a_virgin &&
 				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/first_im_recv")) {
 
@@ -4240,7 +4240,7 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 
 static void
 gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
-						const char *message, int flags, time_t mtime)
+						const char *message, GaimMessageFlags flags, time_t mtime)
 {
 	GaimGtkConversation *gtkconv;
 
@@ -4248,10 +4248,10 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 
 	/* Play a sound, if specified in prefs. */
 	if (gtkconv->make_sound) {
-		if (!(flags & WFLAG_WHISPER) && (flags & WFLAG_SEND))
+		if (!(flags & GAIM_MESSAGE_WHISPER) && (flags & GAIM_MESSAGE_SEND))
 			gaim_sound_play_event(GAIM_SOUND_CHAT_YOU_SAY);
-		else if (flags & WFLAG_RECV) {
-			if ((flags & WFLAG_NICK) &&
+		else if (flags & GAIM_MESSAGE_RECV) {
+			if ((flags & GAIM_MESSAGE_NICK) &&
 				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/nick_said")) {
 
 				gaim_sound_play_event(GAIM_SOUND_CHAT_NICK);
@@ -4262,10 +4262,10 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 	}
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/chat/color_nicks"))
-		flags |= WFLAG_COLORIZE;
+		flags |= GAIM_MESSAGE_COLORIZE;
 
 	/* Raise the window, if specified in prefs. */
-	if (!(flags & WFLAG_NOLOG) &&
+	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
 		gaim_prefs_get_bool("/gaim/gtk/conversations/chat/raise_on_events")) {
 
 		gaim_window_raise(gaim_conversation_get_window(conv));
@@ -4276,7 +4276,7 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 
 static void
 gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
-						const char *message, size_t length, int flags,
+						const char *message, size_t length, GaimMessageFlags flags,
 						time_t mtime)
 {
 	GaimGtkConversation *gtkconv;
@@ -4301,7 +4301,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	win = gaim_conversation_get_window(conv);
 
-	if (!(flags & WFLAG_NOLOG) &&
+	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
 		((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
 		  gaim_prefs_get_bool("/gaim/gtk/conversations/chat/raise_on_events")) ||
 		 (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
@@ -4340,7 +4340,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		gtk_font_options ^= GTK_IMHTML_USE_POINTSIZE;
 	}
 
-	if (flags & WFLAG_SYSTEM) {
+	if (flags & GAIM_MESSAGE_SYSTEM) {
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
 			g_snprintf(buf, BUF_LONG, "(%s) <B>%s</B>",
 					   mdate, message);
@@ -4366,7 +4366,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			conv->history = g_string_append(conv->history, "<BR>\n");
 		}
 
-		if (!(flags & WFLAG_NOLOG) && gaim_conversation_is_logging(conv)) {
+		if (!(flags & GAIM_MESSAGE_NO_LOG) && gaim_conversation_is_logging(conv)) {
 
 			char *t1;
 			char nm[256];
@@ -4398,7 +4398,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				g_free(t1);
 		}
 	}
-	else if (flags & WFLAG_NOLOG) {
+	else if (flags & GAIM_MESSAGE_NO_LOG) {
 		g_snprintf(buf, BUF_LONG,
 				   "<B><FONT COLOR=\"#777777\">%s</FONT></B><BR>",
 				   message);
@@ -4408,7 +4408,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	else {
 		char *new_message = g_memdup(message, length);
 		
-		if (flags & WFLAG_WHISPER) {
+		if (flags & GAIM_MESSAGE_WHISPER) {
 			str = g_malloc(1024);
 
 			/* If we're whispering, it's not an autoresponse. */
@@ -4425,12 +4425,12 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			if (meify(new_message, length)) {
 				str = g_malloc(1024);
 
-				if (flags & WFLAG_AUTO)
+				if (flags & GAIM_MESSAGE_AUTO_RESP)
 					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, who);
 				else
 					g_snprintf(str, 1024, "***%s", who);
 
-				if (flags & WFLAG_NICK)
+				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
 				else
 					strcpy(color, "#062585");
@@ -4438,15 +4438,15 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			else {
 				str = g_malloc(1024);
 
-				if (flags & WFLAG_AUTO)
+				if (flags & GAIM_MESSAGE_AUTO_RESP)
 					g_snprintf(str, 1024, "%s %s", who, AUTO_RESPONSE);
 				else
 					g_snprintf(str, 1024, "%s:", who);
 
-				if (flags & WFLAG_NICK)
+				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
-				else if (flags & WFLAG_RECV) {
-					if (flags & WFLAG_COLORIZE) {
+				else if (flags & GAIM_MESSAGE_RECV) {
+					if (flags & GAIM_MESSAGE_COLORIZE) {
 						const char *u;
 						int m = 0;
 
@@ -4460,7 +4460,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 					else
 						strcpy(color, "#A82F2F");
 				}
-				else if (flags & WFLAG_SEND)
+				else if (flags & GAIM_MESSAGE_SEND)
 					strcpy(color, "#16569E");
 			}
 		}

@@ -35,7 +35,8 @@ typedef enum
 	GAIM_PROXY_NONE = 0,         /**< No proxy.                         */
 	GAIM_PROXY_HTTP,             /**< HTTP proxy.                       */
 	GAIM_PROXY_SOCKS4,           /**< SOCKS 4 proxy.                    */
-	GAIM_PROXY_SOCKS5            /**< SOCKS 5 proxy.                    */
+	GAIM_PROXY_SOCKS5,           /**< SOCKS 5 proxy.                    */
+	GAIM_PROXY_USE_ENVVAR        /**< Use environmental settings.       */
 
 } GaimProxyType;
 
@@ -184,26 +185,11 @@ const char *gaim_proxy_info_get_password(const GaimProxyInfo *info);
 /*@{*/
 
 /**
- * Sets whether or not the global proxy information is from preferences.
- *
- * @param from_prefs @c TRUE if the info is from preferences.
- */
-void gaim_global_proxy_set_from_prefs(gboolean from_prefs);
-
-/**
  * Returns gaim's global proxy information.
  *
  * @return The global proxy information.
  */
 GaimProxyInfo *gaim_global_proxy_get_info(void);
-
-/**
- * Returns whether or not the current global proxy information is from
- * preferences.
- *
- * @return @c TRUE if the info is from preferences.
- */
-gboolean gaim_global_proxy_is_from_prefs(void);
 
 /*@}*/
 

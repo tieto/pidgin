@@ -23,16 +23,6 @@
 #ifndef _GAIM_SERVER_H_
 #define _GAIM_SERVER_H_
 
-#define WFLAG_SEND	0x01
-#define WFLAG_RECV	0x02
-#define WFLAG_AUTO	0x04
-#define WFLAG_WHISPER	0x08
-#define WFLAG_FILERECV	0x10
-#define WFLAG_SYSTEM	0x20
-#define WFLAG_NICK	0x40
-#define WFLAG_NOLOG	0x80
-#define WFLAG_COLORIZE  0x100
-
 #define IM_FLAG_AWAY     0x01
 #define IM_FLAG_CHECKBOX 0x02
 #define IM_FLAG_GAIMUSER 0x04

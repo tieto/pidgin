@@ -40,9 +40,9 @@ int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, c
 
 	buf = g_strdup_printf(_("Unknown command: %s"), cmd);
 	if (gaim_conversation_get_type(convo) == GAIM_CONV_IM)
-		gaim_im_write(GAIM_IM(convo), "", buf, -1, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+		gaim_im_write(GAIM_IM(convo), "", buf, -1, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	else
-		gaim_chat_write(GAIM_CHAT(convo), "", buf, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+		gaim_chat_write(GAIM_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	g_free(buf);
 
 	return 1;
@@ -139,13 +139,13 @@ int irc_cmd_help(struct irc_conn *irc, const char *cmd, const char *target, cons
 							"PART PING QUERY QUIT<BR>"
 							"QUOTE REMOVE TOPIC UMODE<BR>"
 							"VOICE DEVOICE WALLOPS WHOIS<BR>"),
-				WFLAG_NOLOG, time(NULL));
+				GAIM_MESSAGE_NO_LOG, time(NULL));
 	} else {
 		gaim_im_write(GAIM_IM(convo), "", _("<B>Supported IRC Commands:</B><BR>"
 						    "AWAY JOIN ME MODE<BR>"
 						    "MSG NICK OPERWALL PING<BR>"
 						    "QUERY QUIT QUOTE UMODE<BR>"
-						    "WALLOPS WHOIS"), -1, WFLAG_NOLOG, time(NULL));
+						    "WALLOPS WHOIS"), -1, GAIM_MESSAGE_NO_LOG, time(NULL));
 	}
 
 	return 0;
@@ -413,7 +413,7 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 		gc = gaim_account_get_connection(irc->account);
 		irc_cmd_privmsg(irc, cmd, target, args);
 		gaim_im_write(GAIM_IM(convo), gaim_connection_get_display_name(gc),
-			      args[1], -1, WFLAG_SEND, time(NULL));
+			      args[1], -1, GAIM_MESSAGE_SEND, time(NULL));
 	}
 
 	return 0;
@@ -459,7 +459,7 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 			buf = g_strdup_printf(_("current topic is: %s"), topic);
 		else
 			buf = g_strdup(_("No topic is set"));
-		gaim_chat_write(GAIM_CHAT(convo), target, buf, WFLAG_SYSTEM|WFLAG_NOLOG, time(NULL));
+		gaim_chat_write(GAIM_CHAT(convo), target, buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 
 		return 0;

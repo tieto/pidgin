@@ -258,7 +258,7 @@ void flush_last_auto_responses(GaimConnection *gc)
 }
 
 int serv_send_im(GaimConnection *gc, const char *name, const char *message,
-				 int len, int flags)
+				 int len, int imflags)
 {
 	GaimConversation *c;
 	int val = -EINVAL;
@@ -270,9 +270,9 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	c = gaim_find_conversation(name);
 
 	if (prpl_info && prpl_info->send_im)
-		val = prpl_info->send_im(gc, name, message, len, flags);
+		val = prpl_info->send_im(gc, name, message, len, imflags);
 
-	if (!(flags & IM_FLAG_AWAY))
+	if (!(imflags & IM_FLAG_AWAY))
 		serv_touch_idle(gc);
 
 	if (gc->away &&
@@ -799,7 +799,7 @@ int find_queue_total_by_name(char *name)
 
 	while (templist) {
 		struct queued_message *qm = (struct queued_message *)templist->data;
-		if ((qm->flags & WFLAG_RECV) && !strcmp(name, qm->name))
+		if ((qm->flags & GAIM_MESSAGE_RECV) && !strcmp(name, qm->name))
 			i++;
 
 		templist = templist->next;
@@ -813,12 +813,12 @@ int find_queue_total_by_name(char *name)
  * sure to follow along, kids
  */
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
-				 guint32 flags, time_t mtime, gint len)
+				 guint32 imflags, time_t mtime, gint len)
 {
 	char *buffy;
 	char *angel;
 	int plugin_return;
-	int away = 0;
+	GaimMessageFlags away = 0;
 
 	GaimConversation *cnv;
 
@@ -835,7 +835,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * It's a start.
 	 */
 
-	if (flags & IM_FLAG_GAIMUSER)
+	if (imflags & IM_FLAG_GAIMUSER)
 		gaim_debug(GAIM_DEBUG_MISC, "server", "%s is a gaim user.\n", who);
 
 	/*
@@ -859,7 +859,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		plugin_return = GPOINTER_TO_INT(
 			gaim_signal_emit_return_1(gaim_conversations_get_handle(),
 									  "received-im-msg", gc->account,
-									  &angel, &buffy, &flags));
+									  &angel, &buffy, &imflags));
 
 		if (!buffy || !angel || plugin_return) {
 			if (buffy)
@@ -891,10 +891,10 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * Um. When we call gaim_conversation_write with the message we received,
 	 * it's nice to pass whether or not it was an auto-response. So if it
 	 * was an auto-response, we set the appropriate flag. This is just so
-	 * prpls don't have to know about WFLAG_* (though some do anyway)
+	 * prpls don't have to know about GAIM_MESSAGE_* (though some do anyway)
 	 */
-	if (flags & IM_FLAG_AWAY)
-		away = WFLAG_AUTO;
+	if (imflags & IM_FLAG_AWAY)
+		away = GAIM_MESSAGE_AUTO_RESP;
 
 	/*
 	 * Alright. Two cases for how to handle this. Either we're away or
@@ -936,7 +936,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->message = g_memdup(message, len == -1 ? strlen(message) + 1 : len);
 			qm->account = gc->account;
 			qm->tm = mtime;
-			qm->flags = WFLAG_RECV | away;
+			qm->flags = GAIM_MESSAGE_RECV | away;
 			qm->len = len;
 			message_queue = g_slist_append(message_queue, qm);
 
@@ -973,7 +973,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
-						  away | WFLAG_RECV, mtime);
+						  away | GAIM_MESSAGE_RECV, mtime);
 		}
 
 		/*
@@ -1030,12 +1030,12 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->message = g_strdup(away_subs(tmpmsg, alias));
 			qm->account = gc->account;
 			qm->tm = mtime;
-			qm->flags = WFLAG_SEND | WFLAG_AUTO;
+			qm->flags = GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP;
 			qm->len = -1;
 			message_queue = g_slist_append(message_queue, qm);
 		} else if (cnv != NULL)
 			gaim_im_write(GAIM_IM(cnv), NULL, away_subs(tmpmsg, alias),
-						  len, WFLAG_SEND | WFLAG_AUTO, mtime);
+						  len, GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP, mtime);
 
 		g_free(tmpmsg);
 	} else {
@@ -1063,7 +1063,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->message = g_strdup(message);
 			qm->account = gc->account;
 			qm->tm = mtime;
-			qm->flags = away | WFLAG_RECV;
+			qm->flags = away | GAIM_MESSAGE_RECV;
 			qm->len = len;
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
 		}
@@ -1072,7 +1072,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
-						  away | WFLAG_RECV, mtime);
+						  away | GAIM_MESSAGE_RECV, mtime);
 			gaim_window_flash(gaim_conversation_get_window(cnv));
 		}
 	}
@@ -1113,7 +1113,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		return;
 	}
 
-	c = gaim_find_conversation(b->name);
+	c = gaim_find_conversation_with_account(b->name, account);
 
 	/* This code will 'align' the name from the TOC */
 	/* server with what's in our record.  We want to */
@@ -1154,7 +1154,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					char *tmp = g_strdup_printf(_("%s logged in."),
 												gaim_get_buddy_alias(b));
 
-					gaim_conversation_write(c, NULL, tmp, -1, WFLAG_SYSTEM,
+					gaim_conversation_write(c, NULL, tmp, -1, GAIM_MESSAGE_SYSTEM,
 											time(NULL));
 					g_free(tmp);
 				}
@@ -1165,7 +1165,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 												  gaim_get_buddy_alias(b));
 					qm->account = gc->account;
 					qm->tm = time(NULL);
-					qm->flags = WFLAG_SYSTEM;
+					qm->flags = GAIM_MESSAGE_SYSTEM;
 					qm->len = -1;
 					message_queue = g_slist_append(message_queue, qm);
 				}
@@ -1183,7 +1183,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					char *tmp = g_strdup_printf(_("%s logged out."),
 												gaim_get_buddy_alias(b));
 					gaim_conversation_write(c, NULL, tmp, -1,
-											WFLAG_SYSTEM, time(NULL));
+											GAIM_MESSAGE_SYSTEM, time(NULL));
 					g_free(tmp);
 				} else if (awayqueue && find_queue_total_by_name(b->name)) {
 					struct queued_message *qm = g_new0(struct queued_message, 1);
@@ -1192,7 +1192,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 												  gaim_get_buddy_alias(b));
 					qm->account = gc->account;
 					qm->tm = time(NULL);
-					qm->flags = WFLAG_SYSTEM;
+					qm->flags = GAIM_MESSAGE_SYSTEM;
 					qm->len = -1;
 					message_queue = g_slist_append(message_queue, qm);
 				}
@@ -1437,7 +1437,7 @@ void serv_got_chat_left(GaimConnection *g, int id)
 void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 					  int whisper, const char *message, time_t mtime)
 {
-	int w;
+	GaimMessageFlags w;
 	GSList *bcs;
 	GaimConversation *conv = NULL;
 	GaimChat *chat = NULL;
@@ -1495,7 +1495,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 		buf = g_strdup(message);
 
 	if (whisper)
-		w = WFLAG_WHISPER;
+		w = GAIM_MESSAGE_WHISPER;
 	else
 		w = 0;
 
