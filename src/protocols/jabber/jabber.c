@@ -176,7 +176,7 @@ struct jabber_buddy_data {
  * per-resource info
  */
 typedef struct jabber_resource_info {
-   	char *name;
+	char *name;
 	int priority;
 	int state;
 	char *away_msg;
@@ -1032,10 +1032,10 @@ static struct jabber_buddy_data* jabber_find_buddy(struct gaim_connection *gc, c
 		return jbd;
 	}
 }
-	
+
 /*
  * find a resource by name, or if no name given, return the "default" resource
- * default being the highest priority one.  
+ * default being the highest priority one.
  */
 
 static jab_res_info jabber_find_resource(struct gaim_connection *gc, char *who)
@@ -1156,7 +1156,7 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *type)
 
 	if(!jri)
 		return;
-	
+
 	if (type && (strcasecmp(type, "unavailable") == 0)) {
 		vshow = _("Unavailable");
 	} else {
@@ -1383,8 +1383,8 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 		}
 
 		if ((subj = xmlnode_get_tag(p->x, "subject"))) {
-		   	topic = xmlnode_get_data(subj);
-		} 
+			topic = xmlnode_get_data(subj);
+		}
 
 		jc = find_existing_chat(GJ_GC(gjc), p->from);
 		if (!jc) {
@@ -1421,8 +1421,8 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 					time_sent);
 			}
 		} else { /* message from the server */
-		   	if(jc->b && topic) {
-			   	char tbuf[8192];
+			if(jc->b && topic) {
+				char tbuf[8192];
 				g_snprintf(tbuf, sizeof(tbuf), "%s", topic);
 				chat_set_topic(jc->b, "", tbuf);
 			}
@@ -1432,7 +1432,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 		debug_printf("unhandled message %s\n", type);
 	}
 }
-	   
+
 static void jabber_handlepresence(gjconn gjc, jpacket p)
 {
 	char *to, *from, *type;
@@ -1446,11 +1446,11 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	struct jabber_chat *jc = NULL;
 	int priority = 0;
 	struct jabber_buddy_data *jbd;
-	
+
 	to = xmlnode_get_attrib(p->x, "to");
 	from = xmlnode_get_attrib(p->x, "from");
 	type = xmlnode_get_attrib(p->x, "type");
-	
+
 	if((buddy = get_realwho(gjc, from, FALSE, &gjid)) == NULL)
 		return;
 
@@ -1496,7 +1496,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	}
 
 	if ((y = xmlnode_get_tag(p->x, "priority")))
-	   	priority = atoi(xmlnode_get_data(y));
+		priority = atoi(xmlnode_get_data(y));
 
 	/* um. we're going to check if it's a chat. if it isn't, and there are pending
 	 * chats, create the chat. if there aren't pending chats and we don't have the
@@ -1522,7 +1522,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		/* keep track of away msg somewhat the same as the yahoo plugin */
 		jabber_track_away(gjc, p, type);
 	}
-	
+
 
 	if (!cnv) {
 		/* this is where we handle presence information for "regular" buddies */
@@ -1689,7 +1689,7 @@ static void jabber_handles10n(gjconn gjc, jpacket p)
  * Pending subscription to a buddy?
  */
 #define BUD_SUB_TO_PEND(sub, ask) ((!strcasecmp((sub), "none") || !strcasecmp((sub), "from")) && \
-					(ask) != NULL && !strcasecmp((ask), "subscribe")) 
+					(ask) != NULL && !strcasecmp((ask), "subscribe"))
 
 /*
  * Subscribed to a buddy?
@@ -1760,7 +1760,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 		} else {
 			struct group *c_grp = find_group_by_buddy(GJ_GC(gjc), buddyname);
 
-			/* 
+			/*
 			 * If the buddy's in a new group or his/her alias is changed...
 			 */
 			if(groupname && c_grp && strcmp(c_grp->name, groupname)) {
@@ -1887,7 +1887,7 @@ static void jabber_handleversion(gjconn gjc, xmlnode iqnode) {
 static void jabber_handletime(gjconn gjc, xmlnode iqnode) {
 	xmlnode querynode, x;
 	char *id, *from;
-	time_t now_t; 
+	time_t now_t;
 	struct tm *now;
 	char buf[1024];
 
@@ -1909,7 +1909,7 @@ static void jabber_handletime(gjconn gjc, xmlnode iqnode) {
 	xmlnode_insert_cdata(xmlnode_insert_tag(querynode, "tz"), buf, -1);
 	strftime(buf, 1024, "%d %b %Y %T", now);
 	xmlnode_insert_cdata(xmlnode_insert_tag(querynode, "display"), buf, -1);
-	
+
 	gjab_send(gjc, x);
 
 	xmlnode_free(x);
@@ -2192,14 +2192,14 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 				jabber_handleoob(gjc, p->x);
 			}
 		} else if (jpacket_subtype(p) == JPACKET__GET) {
-		   	xmlnode querynode;
+			xmlnode querynode;
 			querynode = xmlnode_get_tag(p->x, "query");
-		   	if (NSCHECK(querynode, NS_VERSION)) {
-			   	jabber_handleversion(gjc, p->x);
+			if (NSCHECK(querynode, NS_VERSION)) {
+				jabber_handleversion(gjc, p->x);
 			} else if (NSCHECK(querynode, NS_TIME)) {
-			   	jabber_handletime(gjc, p->x);
+				jabber_handletime(gjc, p->x);
 			} else if (NSCHECK(querynode, "jabber:iq:last")) {
-			   	jabber_handlelast(gjc, p->x);
+				jabber_handlelast(gjc, p->x);
 			}
 		} else if (jpacket_subtype(p) == JPACKET__RESULT) {
 			xmlnode querynode, vcard;
@@ -2218,7 +2218,7 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 				jabber_handleroster(gjc, querynode);
 			} else if (NSCHECK(querynode, NS_VCARD)) {
 				jabber_track_queries(gjc->queries, id, TRUE);	/* delete query track */
-			   	jabber_handlevcard(gjc, querynode, from);
+				jabber_handlevcard(gjc, querynode, from);
 			} else if (vcard) {
 				jabber_track_queries(gjc->queries, id, TRUE);	/* delete query track */
 				jabber_handlevcard(gjc, vcard, from);
@@ -2330,7 +2330,7 @@ static void jabber_login(struct aim_user *user)
 }
 
 static gboolean jabber_destroy_hash(gpointer key, gpointer val, gpointer data) {
-   	g_free(key);
+	g_free(key);
 	g_free(val);
 	return TRUE;
 }
@@ -2498,7 +2498,7 @@ static void jabber_roster_update(struct gaim_connection *gc, char *name, char *a
 	struct group *buddy_group = NULL;
 	char *my_alias = NULL;
 	char *my_group = NULL;
-	
+
 	if(gc && gc->proto_data && ((struct jabber_data *)gc->proto_data)->gjc && name) {
 		gaim_jid gjid;
 		gjc = ((struct jabber_data *)gc->proto_data)->gjc;
@@ -3125,9 +3125,9 @@ static void jabber_get_error_msg(struct gaim_connection *gc, char *who) {
 	*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", realwho);
 	*ap++ = g_strdup_printf("<B>Error:</B> %s<BR>\n", jbd->error_msg);
 	*ap = NULL;
-	
+
 	final= g_strjoinv(NULL, str_arr);
-	
+
 	g_strfreev(str_arr);
 
 	g_show_info_text(gc, realwho, 2, final, NULL);
@@ -3178,7 +3178,7 @@ static void jabber_get_away_msg(struct gaim_connection *gc, char *who) {
 	}
 
 	*ap = NULL;
-	
+
 	g_free(buddy);
 
 	final= g_strjoinv(NULL, str_arr);
@@ -3186,7 +3186,7 @@ static void jabber_get_away_msg(struct gaim_connection *gc, char *who) {
 
 	g_show_info_text(gc, who, 2, final, NULL);
 	g_free(final);
-	
+
 }
 
 static void jabber_get_cb_info(struct gaim_connection *gc, int cid, char *who) {
@@ -3381,7 +3381,7 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 static void jabber_set_idle(struct gaim_connection *gc, int idle) {
 	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
 	debug_printf("jabber_set_idle: setting idle %i\n", idle);
-   	jd->idle = idle ? time(NULL) - idle : idle;
+	jd->idle = idle ? time(NULL) - idle : idle;
 }
 
 static void jabber_keepalive(struct gaim_connection *gc) {
@@ -3764,7 +3764,7 @@ static void jabber_set_info(struct gaim_connection *gc, char *info)
 	xmlnode_put_attrib(x, "type", "set");
 
 	id = gjab_getid(gjc);
-	
+
 	xmlnode_put_attrib(x, "id", id);
 
 	/*
