@@ -578,6 +578,8 @@ static int incomingim_ch1(struct aim_session_t *sess, aim_module_t *mod,  struct
 
 		} else if ((type == 0x0008) && (length == 0x000c)) { /* I-HAVE-A-REALLY-PURTY-ICON Flag */
 
+			args.iconchecksum = aimutil_get32(data+i);
+			args.iconlength = aimutil_get32(data+i+4);
 			args.iconstamp = aimutil_get32(data+i+8);
 			args.icbmflags |= AIM_IMFLAGS_HASICON;
 
@@ -655,11 +657,11 @@ static int incomingim_ch2(struct aim_session_t *sess, aim_module_t *mod,  struct
 	}
 
 	/* 
-	* What follows may be TLVs or nothing, depending on the
-	* purpose of the message.
-	*
-	* Ack packets for instance have nothing more to them.
-	*/
+	 * What follows may be TLVs or nothing, depending on the
+	 * purpose of the message.
+	 *
+	 * Ack packets for instance have nothing more to them.
+	 */
 	list2 = aim_readtlvchain(block1->value+2+8+16, block1->length-2-8-16);
 
 	if (!list2 || ((args.reqclass != AIM_CAPS_IMIMAGE) && !(aim_gettlv(list2, 0x2711, 1)))) {
@@ -719,7 +721,7 @@ static int incomingim_ch2(struct aim_session_t *sess, aim_module_t *mod,  struct
 
 		miscinfo = aim_gettlv(list2, 0x2711, 1);
 
-		/* aimutil_get32(miscinfo->value+curpos); i don't know what this is */
+		args.info.icon.checksum = aimutil_get32(miscinfo->value+curpos);
 		curpos += 4;
 		args.info.icon.length = aimutil_get32(miscinfo->value+curpos);
 		curpos += 4;

@@ -674,6 +674,8 @@ struct aim_incomingim_ch1_args {
 	int finlen;
 	unsigned char fingerprint[10];
 	time_t iconstamp;
+	unsigned long iconlength;
+	unsigned long iconchecksum;  
 	int extdatalen;
 	unsigned char *extdata;
 };
@@ -683,6 +685,7 @@ struct aim_incomingim_ch2_args {
 	unsigned short status;
 	union {
 		struct {
+			unsigned long checksum;
 			unsigned int length;
 			time_t timestamp;
 			unsigned char *icon;

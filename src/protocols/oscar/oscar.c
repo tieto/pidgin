@@ -116,6 +116,7 @@ struct ask_direct {
 struct icon_req {
 	char *user;
 	time_t timestamp;
+	unsigned long length;
 	unsigned long checksum;
 	gboolean request;
 };
@@ -1274,8 +1275,12 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 				ir->user = g_strdup(who);
 				od->hasicons = g_slist_append(od->hasicons, ir);
 			}
-			if (args->iconstamp > ir->timestamp)
+			if ((args->iconlength != ir->length) ||
+			    (args->iconchecksum != ir->checksum) ||
+			    (args->iconstamp != ir->timestamp))
 				ir->request = TRUE;
+			ir->length = args->iconlength;
+			ir->checksum = args->iconchecksum;
 			ir->timestamp = args->iconstamp;
 		}
 
