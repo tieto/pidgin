@@ -463,7 +463,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
 	gtk_widget_show(list_item);
 
-	g_snprintf(tmp, sizeof(tmp), _("%d people in room"), g_list_length(b->in_room));
+	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room), g_slist_length(b->in_room) == 1 ? "person" : "people");
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
 
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_JOIN))
@@ -505,7 +505,7 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 		names = names->next;
 	}
 
-	g_snprintf(tmp, sizeof(tmp), _("%d people in room"), g_list_length(b->in_room));
+	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room), g_slist_length(b->in_room) == 1 ? "person" : "people");
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
 
 	if (b->makesound && (sound_options & OPT_SOUND_CHAT_PART))
