@@ -52,6 +52,7 @@ typedef enum
 	GAIM_BROWSER_CURRENT,
 	GAIM_BROWSER_NEW_WINDOW,
 	GAIM_BROWSER_NEW_TAB
+
 } GaimBrowserPlace;
 #endif /* _WIN32 */
 
@@ -64,36 +65,6 @@ extern guint accels_save_timer;
  * @param imhtml The gtkimhtml widget to setup.
  */
 void gaim_setup_imhtml(GtkWidget *imhtml);
-
-/**
- * Surrounds the selected text in a conversation with the specified
- * pre and post strings.
- *
- * @param gtkconv The GTK+ conversation.
- * @param pre     The prefix string.
- * @param post    The postfix string.
- */
-void gaim_gtk_surround(GaimGtkConversation *gtkconv,
-					   const char *pre, const char *post);
-
-/**
- * Advances the cursor past the position of the specified tags.
- *
- * @param gtkconv The GTK+ conversation.
- * @param pre     The prefix string.
- * @param post    The postfix string.
- */
-void gaim_gtk_advance_past(GaimGtkConversation *gtkconv,
-						   const char *pre, const char *post);
-
-/**
- * Surrounds the selected text with the specified font.
- *
- * @param gtkconv The GTK+ conversation.
- * @param font    The new font.
- */
-void gaim_gtk_set_font_face(GaimGtkConversation *gtkconv,
-							const char *font);
 
 /**
  * Displays a dialog for saving the buddy icon in a conversation.
