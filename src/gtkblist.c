@@ -2063,20 +2063,87 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 	}
 }
 
+static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
+		gboolean scaled, gboolean greyed)
+{
+	GdkPixbuf *buf, *ret;
+	GdkPixbufLoader *loader;
+	GaimBuddyIcon *icon;
+	const char *data;
+	size_t len;
+	GaimBuddy *buddy = (GaimBuddy *)node;
+
+	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
+		buddy = gaim_contact_get_priority_buddy((GaimContact*)node);
+	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		buddy = (GaimBuddy*)node;
+	} else {
+		return NULL;
+	}
+
+#if 0
+	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
+		return NULL;
+#endif
+
+	if (!(icon = gaim_buddy_get_icon(buddy)))
+		if (!(icon = gaim_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
+			return NULL;
+
+	loader = gdk_pixbuf_loader_new();
+	data = gaim_buddy_icon_get_data(icon, &len);
+	gdk_pixbuf_loader_write(loader, data, len, NULL);
+	buf = gdk_pixbuf_loader_get_pixbuf(loader);
+	if (buf)
+		g_object_ref(G_OBJECT(buf));
+	gdk_pixbuf_loader_close(loader, NULL);
+	g_object_unref(G_OBJECT(loader));
+
+	if (buf) {
+		if (greyed) {
+			GaimPresence *presence = gaim_buddy_get_presence(buddy);
+			if (!GAIM_BUDDY_IS_ONLINE(buddy))
+				gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
+			if (gaim_presence_is_idle(presence))
+				gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.25, FALSE);
+		}
+
+		if (scaled) {
+			ret = gdk_pixbuf_scale_simple(buf,30,30, GDK_INTERP_BILINEAR);
+			g_object_unref(G_OBJECT(buf));
+		} else
+			ret = buf;
+
+		return ret;
+	}
+
+	return NULL;
+}
+
 static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, GaimBlistNode *node)
 {
 	GtkStyle *style;
 	GdkPixbuf *pixbuf = gaim_gtk_blist_get_status_icon(node, GAIM_STATUS_ICON_LARGE);
 	PangoLayout *layout;
 	char *tooltiptext = gaim_get_tooltip_text(node);
+	GdkPixbuf *avatar = NULL;
+	int layout_width, layout_height;
 
 	if(!tooltiptext)
 		return;
+
+	avatar = gaim_gtk_blist_get_buddy_icon(node, FALSE, FALSE);
 
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
 	pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
 	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
 	pango_layout_set_width(layout, 300000);
+	{
+		int w, h;
+		pango_layout_get_size (layout, &w, &h);
+		layout_width = PANGO_PIXELS(w) + 8;
+		layout_height = PANGO_PIXELS(h) + 8;
+	}
 	style = gtkblist->tipwindow->style;
 
 	gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
@@ -2085,12 +2152,22 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 #if GTK_CHECK_VERSION(2,2,0)
 	gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, pixbuf,
 			0, 0, 4, 4, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+	if(avatar)
+		gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
+				avatar, 0, 0, layout_width + 38 + 4, 4, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 #else
 	gdk_pixbuf_render_to_drawable(pixbuf, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 4, 4, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+	if(avatar)
+		gdk_pixbuf_render_to_drawable(avatar,
+				GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, layout_width + 38 + 4,
+				4, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
 
 	gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, TRUE,
-			  NULL, gtkblist->tipwindow, "tooltip", 38, 4, layout);
+			  NULL, gtkblist->tipwindow, "tooltip", 38 + 4, 4, layout);
+
+	if(avatar)
+		g_object_unref (avatar);
 
 	g_object_unref (pixbuf);
 	g_object_unref (layout);
@@ -2279,6 +2356,17 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	 *  I should #define this or something */
 	w = w + 38;
 	h = MAX(h, 38);
+
+	/* Now the size of the buddy icon */
+	{
+		GdkPixbuf *avatar = NULL;
+
+		if ((avatar = gaim_gtk_blist_get_buddy_icon(node, FALSE, FALSE))) {
+			w += gdk_pixbuf_get_width(avatar) + 8;
+			h = MAX(h, gdk_pixbuf_get_height(avatar) + 8);
+			g_object_unref(avatar);
+		}
+	}
 
 #if GTK_CHECK_VERSION(2,2,0)
 	if (w > mon_size.width)
@@ -2823,50 +2911,6 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	}
 
 	return scale;
-}
-
-static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBuddy *b)
-{
-	GdkPixbuf *buf, *ret;
-	GdkPixbufLoader *loader;
-	GaimBuddyIcon *icon;
-	const char *data;
-	size_t len;
-
-	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
-		return NULL;
-
-	if (!(icon = gaim_buddy_get_icon(b)))
-		if (!(icon = gaim_buddy_icons_find(b->account, b->name))) /* Not sure I like this...*/
-			return NULL;
-
-
-	loader = gdk_pixbuf_loader_new();
-	data = gaim_buddy_icon_get_data(icon, &len);
-	gdk_pixbuf_loader_write(loader, data, len, NULL);
-	buf = gdk_pixbuf_loader_get_pixbuf(loader);
-	if (buf)
-		g_object_ref(G_OBJECT(buf));
-	gdk_pixbuf_loader_close(loader, NULL);
-	g_object_unref(G_OBJECT(loader));
-
-	if (buf)
-	{
-		GaimPresence *presence = gaim_buddy_get_presence(b);
-
-		if (!GAIM_BUDDY_IS_ONLINE(b))
-			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
-
-		if (gaim_presence_is_idle(presence))
-		{
-			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.25, FALSE);
-		}
-
-		ret = gdk_pixbuf_scale_simple(buf,30,30, GDK_INTERP_BILINEAR);
-		g_object_unref(G_OBJECT(buf));
-		return ret;
-	}
-	return NULL;
 }
 
 static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
@@ -3723,7 +3767,7 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 			(gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")
 			 ? GAIM_STATUS_ICON_LARGE : GAIM_STATUS_ICON_SMALL));
 
-	avatar = gaim_gtk_blist_get_buddy_icon(buddy);
+	avatar = gaim_gtk_blist_get_buddy_icon((GaimBlistNode *)buddy, TRUE, TRUE);
 	mark = gaim_gtk_blist_get_name_markup(buddy, selected);
 
 	if (gaim_presence_is_idle(presence))
