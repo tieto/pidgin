@@ -9,3 +9,4 @@ gaim.lib
 gaim.dll
 .*.swp
 *.lo
+*.o
