@@ -19,6 +19,7 @@ version 0.78cvs
 	* Plugin Actions menu (Christopher (siege) O'Brien)
 	* Plugins can now add entries to the rclick menu of a group (Stu
 	  Tomlinson, Christopher (siege) O'Brien)
+	* Hyperlink colors are now themeable via your ~/.gtkrc-2.0 file
 
 	Bug Fixes:
 	* Novell 64bit fixes, better error messages, and buddy list sync fixes

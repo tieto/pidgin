@@ -944,6 +944,7 @@ gtk_imhtml_finalize (GObject *object)
 /* Boring GTK stuff */
 static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 {
+	GtkWidgetClass *widget_class = (GtkWidgetClass *) klass;
 	GtkObjectClass *object_class;
 	GObjectClass   *gobject_class;
 	object_class = (GtkObjectClass*) klass;
@@ -993,6 +994,11 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 							g_cclosure_marshal_VOID__VOID,
 							G_TYPE_NONE, 0);
 	gobject_class->finalize = gtk_imhtml_finalize;
+
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
+	                                        _("Hyperlink color"),
+	                                        _("Color to draw hyperlinks."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 }
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)
@@ -3438,6 +3444,7 @@ void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url)
 	GtkTextTag *linktag;
 	static guint linkno = 0;
 	gchar str[48];
+	GdkColor *color = NULL;
 
 	imhtml->edit.link = NULL;
 
@@ -3447,7 +3454,11 @@ void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url)
 		g_snprintf(str, sizeof(str), "LINK %d", linkno++);
 		str[47] = '\0';
 
-		imhtml->edit.link = linktag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL);
+		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &color, NULL);
+		if (color)
+			imhtml->edit.link = linktag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "foreground-gdk", color, "underline", PANGO_UNDERLINE_SINGLE, NULL);
+		else
+			imhtml->edit.link = linktag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL);
 		g_object_set_data_full(G_OBJECT(linktag), "link_url", g_strdup(url), g_free);
 		g_signal_connect(G_OBJECT(linktag), "event", G_CALLBACK(tag_event), NULL);
 
