@@ -2527,8 +2527,18 @@ gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 		imhtml->edit.bold = span;
 		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 	} else {
+		GtkTextIter start;
 		span = imhtml->edit.bold;
 		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, span->start);
+		if (gtk_text_iter_equal(&start, &iter)) { /* Format turned off before any text was entered, so remove the tag */
+			imhtml->format_spans = g_list_remove(imhtml->format_spans, span);
+			if (span->start_tag)
+				g_free(span->start_tag);
+			if (span->end_tag)
+				g_free(span->end_tag);
+			g_free(span);
+		}
 		imhtml->edit.bold = NULL;
 	}
 	return imhtml->edit.bold != NULL;
@@ -2551,8 +2561,18 @@ gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
 		imhtml->edit.italic = span;
 		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 	} else {
+		GtkTextIter start;
 		span = imhtml->edit.italic;
 		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, span->start);
+		if (gtk_text_iter_equal(&start, &iter)) { /* Format turned off before any text was entered, so remove the tag */
+			imhtml->format_spans = g_list_remove(imhtml->format_spans, span);
+			if (span->start_tag)
+				g_free(span->start_tag);
+			if (span->end_tag)
+				g_free(span->end_tag);
+			g_free(span);
+		}
 		imhtml->edit.italic = NULL;
 	}
 	return imhtml->edit.italic != NULL;
@@ -2575,8 +2595,18 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 		imhtml->edit.underline = span;
 		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 	} else {
+		GtkTextIter start;
 		span = imhtml->edit.underline;
 		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, span->start);
+		if (gtk_text_iter_equal(&start, &iter)) { /* Format turned off before any text was entered, so remove the tag */
+			imhtml->format_spans = g_list_remove(imhtml->format_spans, span);
+			if (span->start_tag)
+				g_free(span->start_tag);
+			if (span->end_tag)
+				g_free(span->end_tag);
+			g_free(span);
+		}
 		imhtml->edit.underline = NULL;
 	}
 	return imhtml->edit.underline != NULL;
@@ -2938,6 +2968,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		closers = g_list_remove(closers, span);
 
 	}
+	printf("gotten: %s\n", str->str);
 	return g_string_free(str, FALSE);
 }
 
