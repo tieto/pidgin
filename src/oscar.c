@@ -592,10 +592,6 @@ static void directim_dialog(struct aim_directim_priv *priv)
 	GtkWidget *label;
 	GtkWidget *yes;
 	GtkWidget *no;
-	GtkWidget *button;
-	GdkBitmap *mask;
-	GdkPixmap *pm;
-	GtkWidget *image;
 	char buf[BUF_LONG];
 
 	window = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -618,43 +614,11 @@ static void directim_dialog(struct aim_directim_priv *priv)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
-	yes = gtk_button_new();
+	yes = picture_button(window, _("Accept"), ok_xpm);
 	gtk_box_pack_start(GTK_BOX(hbox), yes, FALSE, FALSE, 5);
-	gtk_widget_show(yes);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(yes), GTK_RELIEF_NONE);
 
-	button = gtk_hbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(yes), button);
-	gtk_widget_show(button);
-
-	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, ok_xpm);
-	image = gtk_pixmap_new(pm, mask);
-	gtk_box_pack_start(GTK_BOX(button), image, FALSE, FALSE, 2);
-	gtk_widget_show(image);
-
-	label = gtk_label_new(_("Accept"));
-	gtk_box_pack_end(GTK_BOX(button), label, FALSE, FALSE, 2);
-	gtk_widget_show(label);
-
-	no = gtk_button_new();
+	no = picture_button(window, _("Cancel"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), no, FALSE, FALSE, 5);
-	gtk_widget_show(no);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(no), GTK_RELIEF_NONE);
-
-	button = gtk_hbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(no), button);
-	gtk_widget_show(button);
-
-	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, cancel_xpm);
-	image = gtk_pixmap_new(pm, mask);
-	gtk_box_pack_start(GTK_BOX(button), image, FALSE, FALSE, 2);
-	gtk_widget_show(image);
-
-	label = gtk_label_new(_("Cancel"));
-	gtk_box_pack_end(GTK_BOX(button), label, FALSE, FALSE, 2);
-	gtk_widget_show(label);
 
 	gtk_signal_connect(GTK_OBJECT(yes), "clicked",
 			   GTK_SIGNAL_FUNC(accept_directim), window);
@@ -716,8 +680,6 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		} else if (rendtype & AIM_CAPS_IMIMAGE) {
 			/* DirectIM stuff */
 			struct aim_directim_priv *priv, *priv2;
-			struct aim_conn_t *newconn;
-			int watcher;
 
 			userinfo = va_arg(ap, struct aim_userinfo_s *);
 			priv = va_arg(ap, struct aim_directim_priv *);

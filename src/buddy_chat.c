@@ -33,6 +33,10 @@
 
 #include "convo.h"
 
+#include "pixmaps/join.xpm"
+#include "pixmaps/cancel.xpm"
+
+
 static GtkWidget *joinchat;
 static GtkWidget *entry;
 static GtkWidget *invite;

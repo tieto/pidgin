@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 #include "gtkticker.h"
 #include <string.h>
+#include <stdlib.h>
 
 GtkWidget *tickerwindow = NULL;
 GtkWidget *ticker;
@@ -49,6 +50,7 @@ void BuddyTickerClearList( void );
 void BuddyTickerSignOff( void );
 GList * BuddyTickerFindUser( char *name );
 int BuddyTickerMessageRemove( gpointer data );
+extern void pressed_ticker(char *);
 
 // this pref is startup only, so make a shadow here of settings at startup
 // code uses this variable, not display_prefs
@@ -106,12 +108,13 @@ ButtonPressCallback( GtkWidget *widget, GdkEvent *event, gpointer callback_data 
 	TickerData *p = (TickerData *) callback_data;
 
 	pressed_ticker( p->buddy );
+
+	return TRUE;
 }
 
 void
 BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm )
 {
-	GtkWidget *hbox, *label, *pmap;
 	TickerData *p;
 	GList *q;
 
@@ -217,7 +220,7 @@ int
 BuddyTickerMessageRemove( gpointer data )
 {
 	if ( userclose == TRUE )
-		return;
+		return FALSE;
 	gtk_ticker_remove( GTK_TICKER( ticker ), msgw );
 	return FALSE;
 }

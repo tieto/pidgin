@@ -30,6 +30,7 @@
 #include <gdk/gdkprivate.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
+#include <ctype.h>
 
 #ifndef _WIN32
 #include <X11/Xlib.h>

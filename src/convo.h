@@ -25,41 +25,6 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 
-#include "pixmaps/underline.xpm"
-#include "pixmaps/bold.xpm"
-#include "pixmaps/italic.xpm"
-#include "pixmaps/small.xpm"
-#include "pixmaps/normal.xpm"
-#include "pixmaps/big.xpm"
-#include "pixmaps/fontface.xpm"
-#include "pixmaps/speaker.xpm"
-/* #include "pixmaps/aimicon2.xpm" */
-#include "pixmaps/wood.xpm"
-#include "pixmaps/palette.xpm"
-#include "pixmaps/link.xpm"
-#include "pixmaps/strike.xpm"
-
-#include "pixmaps/angel.xpm"
-#include "pixmaps/bigsmile.xpm"
-#include "pixmaps/burp.xpm"
-#include "pixmaps/crossedlips.xpm"
-#include "pixmaps/cry.xpm"
-#include "pixmaps/embarrassed.xpm"
-#include "pixmaps/kiss.xpm"
-#include "pixmaps/moneymouth.xpm"
-#include "pixmaps/sad.xpm"
-#include "pixmaps/scream.xpm"
-#include "pixmaps/smile.xpm"
-#include "pixmaps/smile8.xpm"
-#include "pixmaps/think.xpm"
-#include "pixmaps/tongue.xpm"
-#include "pixmaps/wink.xpm"
-#include "pixmaps/yell.xpm"
-#include "pixmaps/luke03.xpm"
-
-#include "pixmaps/join.xpm"
-#include "pixmaps/cancel.xpm"
-
 
 /* we declare all of the global functions for chat and IM windows here, so
  * that it's easy to keep them merged. */

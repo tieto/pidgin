@@ -405,7 +405,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 613 $"
+#define REVISION "gaim:$Revision: 614 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -610,6 +610,7 @@ extern void serv_chat_leave(int);
 extern void serv_chat_whisper(int, char *, char *);
 extern void serv_chat_send(int, char *);
 extern void serv_do_imimage(GtkWidget *, char *);
+extern void serv_got_imimage(char *, char *, char *, struct aim_conn_t *, int);
 
 /* output from serv */
 extern void serv_got_update(char *, int, int, time_t, time_t, int, u_short);
@@ -797,3 +798,9 @@ extern void add_bookmark(GtkWidget *, char *);
 /* functions for appletmgr */
 extern char * getConfig();
 
+/* fucntions in ticker.c */
+void SetTickerPrefs();
+void BuddyTickerSignOff();
+void BuddyTickerAddUser(char *, GdkPixmap *, GdkBitmap *);
+void BuddyTickerSetPixmap(char *, GdkPixmap *, GdkBitmap *);
+void BuddyTickerSignoff();
