@@ -739,14 +739,14 @@ GtkWidget *away_page() {
 		gtk_widget_set_sensitive(hbox, FALSE);
 
 	vbox = make_frame (ret, _("Idle"));
-	dd = gaim_dropdown(vbox, "Idle _time reporting:", &report_idle, -1,
-			   "None", IDLE_NONE,
-			   "Gaim usage", IDLE_GAIM,
+	dd = gaim_dropdown(vbox, _("Idle _time reporting:"), &report_idle, -1,
+			   _("None"), IDLE_NONE,
+			   _("Gaim usage"), IDLE_GAIM,
 #ifdef USE_SCREENSAVER
 #ifndef _WIN32
-			   "X usage", IDLE_SCREENSAVER,
+			   _("X usage"), IDLE_SCREENSAVER,
 #else
-			   "Windows usage", IDLE_SCREENSAVER,
+			   _("Windows usage"), IDLE_SCREENSAVER,
 #endif
 #endif
 			   NULL);
@@ -755,12 +755,12 @@ GtkWidget *away_page() {
 
 	vbox = make_frame (ret, _("Auto-away"));
 	button = gaim_button(_("Set away _when idle"), &away_options, OPT_AWAY_AUTO, vbox);
-	select = gaim_labeled_spin_button(vbox, "_Minutes before setting away:", &auto_away, 1, 24 * 60, sg);
+	select = gaim_labeled_spin_button(vbox, _("_Minutes before setting away:"), &auto_away, 1, 24 * 60, sg);
 	if (!(away_options & OPT_AWAY_AUTO))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), select);
 
-	label = gtk_label_new_with_mnemonic("Away m_essage:");
+	label = gtk_label_new_with_mnemonic(_("Away m_essage:"));
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	hbox = gtk_hbox_new(FALSE, 0);
