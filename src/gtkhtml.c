@@ -2912,15 +2912,11 @@ static void gtk_html_add_text(GtkHtml * html,
 		g_free(text);
 		count--;
 		if (!count) {
+			/* FIXME : sometimes we need to add newline, sometimes we don't */
 			hbits = g_list_last(html->html_bits);
 			if (!hbits) return; /* does this ever happen? */
 			hb = (GtkHtmlBit *)hbits->data;
 			hb->newline++;
-			if (html->current_x > 0)
-				html->current_x = 0;
-			else
-				html->current_y += cfont->ascent + cfont->descent + 5;
-			return;
 		}
 		return;
 	}
