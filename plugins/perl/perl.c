@@ -289,7 +289,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 			info = g_new0(GaimPluginInfo, 1);
 			gps  = g_new0(GaimPerlScript, 1);
 
-			info->api_version = 2;
+			info->api_version = GAIM_PLUGIN_API_VERSION;
 			info->type = GAIM_PLUGIN_STANDARD;
 
 			info->dependencies = g_list_append(info->dependencies,

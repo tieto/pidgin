@@ -211,20 +211,20 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 			if (Tcl_ListObjGetElements(interp, result, &nelems, &listitems) == TCL_OK) {
 				if (nelems == 6) {
 					info = g_new0(GaimPluginInfo, 1);
-					
-					info->api_version = 2;
+
+					info->api_version = GAIM_PLUGIN_API_VERSION;
 					info->type = GAIM_PLUGIN_STANDARD;
 					info->dependencies = g_list_append(info->dependencies, "core-tcl");
-					
+
 					info->name = g_strdup(Tcl_GetString(listitems[0]));
 					info->version = g_strdup(Tcl_GetString(listitems[1]));
 					info->summary = g_strdup(Tcl_GetString(listitems[2]));
 					info->description = g_strdup(Tcl_GetString(listitems[3]));;
 					info->author = g_strdup(Tcl_GetString(listitems[5]));
 					info->homepage = g_strdup(Tcl_GetString(listitems[5]));
-					
+
 					plugin->info = info;
-					
+
 					if (gaim_plugin_register(plugin))
 						status = TRUE;
 				}
