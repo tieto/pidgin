@@ -8,14 +8,12 @@
 #define _WINUSER_EXTRA_H_
 
 /* From MSDN Lib - Mingw dosn't have */
-/*#if(WINVER >= 0x0500)*/
 #define FLASHW_STOP         0
 #define FLASHW_CAPTION      0x00000001
 #define FLASHW_TRAY         0x00000002
 #define FLASHW_ALL          (FLASHW_CAPTION | FLASHW_TRAY)
 #define FLASHW_TIMER        0x00000004
 #define FLASHW_TIMERNOFG    0x0000000C
-/*#endif /* WINVER >= 0x0500 */
 
 
 /* From MSDN Lib - Mingw dosn't have */
