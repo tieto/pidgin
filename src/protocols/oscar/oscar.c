@@ -2014,20 +2014,6 @@ static void gaim_icq_authdeny(struct channel4_data *data) {
 }
 
 /*
- * For when other people ask you for authorization
- */
-static void gaim_icq_authask(struct gaim_connection *gc, fu32_t uin, char *msg) {
-	struct channel4_data *data = g_new(struct channel4_data, 1);
-	/* The first 6 chars of the message are some type of alien gibberish, so skip them */
-	char *dialog_msg = g_strdup_printf("The user %lu wants to add you to their buddy list for the following reason: %s", uin, (msg && strlen(msg)>6) ? msg+6 : "No reason given.");
-	debug_printf("Received an authorization request from UIN %lu\n", uin);
-	data->gc = gc;
-	data->uin = g_strdup_printf("%lu", uin);
-	do_ask_dialog(dialog_msg, (msg && strlen(msg) > 6) ? msg+6 : _("No reason given."), data, _("Authorize"), gaim_icq_authgrant, _("Deny"), gaim_icq_authdeny);
-	g_free(dialog_msg);
-}
-
-/*
  * Next 2 functions are for when someone sends you contacts
  */
 static void gaim_icq_contactadd(struct channel4_data *data) {
@@ -2045,77 +2031,87 @@ static void gaim_icq_contactdontadd(struct channel4_data *data) {
 
 static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args, time_t t) {
 	struct gaim_connection *gc = sess->aux_data;
+	gchar **msg1, **msg2;
+	GError *err = NULL;
+	int i;
 
-	debug_printf("Received a channel 4 message of type (type 0x%04d).\n", args->type);
+	debug_printf("Received a channel 4 message of type %d.\n", args->type);
+
+	/* Split up the message at the delimeter character, then convert each string to UTF-8 */
+	msg1 = g_strsplit(args->msg, "ş", 0);
+	msg2 = (gchar **)g_malloc(10*sizeof(gchar *)); /* AAA */
+	for (i=0; msg1[i]; i++) {
+		strip_linefeed(msg1[i]);
+		msg2[i] = g_convert(msg1[i], strlen(msg1[i]), "UTF-8", "ISO-8859-1", NULL, NULL, &err);
+		if (err)
+			debug_printf("Error converting a string from ISO-8859-1 to UTF-8 in oscar ICBM channel 4 parsing\n");
+	}
+	msg2[i] = NULL;
+
 	switch (args->type) {
 		case 0x0001: { /* MacICQ message or basic offline message */
-			gchar *uin, *message;
-			uin = g_strdup_printf("%lu", args->uin);
-			message = g_strdup(args->msg);
-			strip_linefeed(message);
-			if (t) {
-				/* This is an offline message */
-				/* I think this timestamp is in UTC, or something */
-				serv_got_im(gc, uin, message, 0, t, -1);
-			} else {
-				/* This is a message from MacICQ/Miranda */
-				serv_got_im(gc, uin, message, 0, time(NULL), -1);
+			if (i >= 1) {
+				gchar *uin = g_strdup_printf("%lu", args->uin);
+				if (t) { /* This is an offline message */
+					/* I think this timestamp is in UTC, or something */
+					serv_got_im(gc, uin, msg2[0], 0, t, -1);
+				} else { /* This is a message from MacICQ/Miranda */
+					serv_got_im(gc, uin, msg2[0], 0, time(NULL), -1);
+				}
+				g_free(uin);
 			}
-			g_free(uin);
-			g_free(message);
 		} break;
 
 		case 0x0004: { /* Someone sent you a URL */
-			gchar **text, *uin, *message;
-			text = g_strsplit(args->msg, "ş", 2);
-			if (text) {
-				uin = g_strdup_printf("%lu", args->uin);
-				message = g_strdup_printf("<A HREF=\"%s\">%s</A>", text[1], text[0]);
-				strip_linefeed(message);
+			if (i >= 2) {
+				gchar *uin = g_strdup_printf("%lu", args->uin);
+				gchar *message = g_strdup_printf("<A HREF=\"%s\">%s</A>", msg2[1], msg2[0]);
 				serv_got_im(gc, uin, message, 0, time(NULL), -1);
-				g_strfreev(text);
 				g_free(uin);
 				g_free(message);
 			}
 		} break;
 
 		case 0x0006: { /* Someone requested authorization */
-			gaim_icq_authask(gc, args->uin, args->msg);
+			if (i >= 6) {
+				struct channel4_data *data = g_new(struct channel4_data, 1);
+				char *dialog_msg = g_strdup_printf(_("The user %lu wants to add you to their buddy list for the following reason: %s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
+				debug_printf("Received an authorization request from UIN %lu\n", args->uin);
+				data->gc = gc;
+				data->uin = g_strdup_printf("%lu", args->uin);
+				do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_icq_authgrant, _("Deny"), gaim_icq_authdeny);
+				g_free(dialog_msg);
+			}
 		} break;
 
 		case 0x0007: { /* Someone has denied you authorization */
-			char *dialog_msg;
-			dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, args->msg ? args->msg : _("No reason given."));
-			do_error_dialog(_("ICQ authorization denied."), dialog_msg, GAIM_ERROR);
-			g_free(dialog_msg);
+			if (i >= 1) {
+				char *dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
+				do_error_dialog(_("ICQ authorization denied."), dialog_msg, GAIM_ERROR);
+				g_free(dialog_msg);
+			}
 		} break;
 
 		case 0x0008: { /* Someone has granted you authorization */
-			char *dialog_msg;
-			dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
+			char *dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
 			do_error_dialog("ICQ authorization accepted.", dialog_msg, GAIM_INFO);
 			g_free(dialog_msg);
 		} break;
 
-		case 0x000d: { /* Someone has sent you a pager message from http://web.icq.com/wwp/1,,,00.html?Uin=your_uin */
-			char *dialog_msg;
-			gchar **text;
-			text = g_strsplit(args->msg, "ş", 0);
-			dialog_msg = g_strdup_printf(_("You have received an ICQ page\n\nFrom: %s [%s]\n%s"), text[0], text[3], text[5]);
-			do_error_dialog("ICQ Page", dialog_msg, GAIM_INFO);
-			g_strfreev(text);
-			g_free(dialog_msg);
+		case 0x000d: { /* Someone has sent you a pager message from http://www.icq.com/your_uin */
+			if (i >= 6) {
+				char *dialog_msg = g_strdup_printf(_("You have received an ICQ page\n\nFrom: %s [%s]\n%s"), msg2[0], msg2[3], msg2[5]);
+				do_error_dialog("ICQ Page", dialog_msg, GAIM_INFO);
+				g_free(dialog_msg);
+			}
 		} break;
 
 		case 0x000e: { /* Someone has emailed you at your_uin@pager.icq.com */
-			char *dialog_msg;
-			gchar **text;
-			text = g_strsplit(args->msg, "ş", 0);
-/*			dialog_msg = g_strdup_printf(_("You have received an ICQ email\n\n1=%s\n2=%s\n3=%s\n4=%s\n5=%s\n6=%s\n"), text[0], text[1], text[2], text[3], text[4], text[5]); */
-			dialog_msg = g_strdup_printf(_("You have received an ICQ email\n\nFrom: Not yet"));
-			do_error_dialog("ICQ Email", dialog_msg, GAIM_INFO);
-			g_strfreev(text);
-			g_free(dialog_msg);
+			if (i >= 6) {
+				char *dialog_msg = g_strdup_printf(_("You have received an ICQ email\n\n1=%s\n2=%s\n3=%s\n4=%s\n5=%s\n6=%s\n"), msg2[0], msg2[1], msg2[2], msg2[3], msg2[4], msg2[5]);
+				do_error_dialog("ICQ Email", dialog_msg, GAIM_INFO);
+				g_free(dialog_msg);
+			}
 		} break;
 
 		case 0x0012: {
@@ -2136,7 +2132,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					data->gc = gc;
 					data->uin = g_strdup(text[i*2+2]);
 					data->nick = g_strdup(text[i*2+1]);
-					do_ask_dialog(message, "Do you want to add this contact to your Buddy List?", data, _("Add"), gaim_icq_contactadd, _("Deny"), gaim_icq_contactdontadd);
+					do_ask_dialog(message, _("Do you want to add this contact to your Buddy List?"), data, _("Add"), gaim_icq_contactadd, _("Deny"), gaim_icq_contactdontadd);
 					g_free(message);
 				}
 				g_strfreev(text);
@@ -2151,6 +2147,9 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			debug_printf("Received a channel 4 message of unknown type (type 0x%04d).\n", args->type);
 		} break;
 	}
+
+	g_strfreev(msg1);
+	g_strfreev(msg2);
 
 	return 1;
 }
@@ -3181,6 +3180,7 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("Received offline message.  Converting to channel 4 ICBM...\n");
 	args.uin = msg->sender;
 	args.type = msg->type;
+	args.msglen = msg->msglen;
 	args.msg = msg->msg;
 	t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
 	incomingim_chan4(sess, fr->conn, NULL, &args, t);

@@ -186,8 +186,8 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		msg.hour = aimbs_getle8(&qbs);
 		msg.minute = aimbs_getle8(&qbs);
 		msg.type = aimbs_getle16(&qbs);
-		msglen = aimbs_getle16(&qbs);
-		msg.msg = aimbs_getstr(&qbs, msglen);
+		msg.msglen = aimbs_getle16(&qbs);
+		msg.msg = aimbs_getstr(&qbs, msg.msglen);
 
 		if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG)))
 			ret = userfunc(sess, rx, &msg);

@@ -1863,7 +1863,8 @@ static int incomingim_ch4(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 	args.uin = aimbs_getle32(&meat);
 	args.type = aimbs_getle16(&meat);
-	args.msg = aimbs_getraw(&meat, aimbs_getle16(&meat));
+	args.msglen = aimbs_getle16(&meat);
+	args.msg = aimbs_getraw(&meat, args.msglen);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, channel, userinfo, &args);
