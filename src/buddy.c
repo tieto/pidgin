@@ -1230,48 +1230,59 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
 
+	/* set the Show Offline Buddies option. must be done
+	 * after the treeview or faceprint gets mad. -Robot101
+	 */
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (ift, N_("/Edit/Show Offline Buddies"))),
+			blist_options & OPT_BLIST_SHOW_OFFLINE);
+
+	/* OK... let's show this bad boy. */
+	gaim_gtk_blist_refresh(list);
+	gaim_gtk_blist_restore_position();
+	gtk_widget_show_all(gtkblist->window);
+
 	/**************************** Button Box **************************************/
+	/* add this afterwards so it doesn't force up the width of the window         */
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	gtkblist->bbox = gtk_hbox_new(TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->bbox, FALSE, FALSE, 0);
+	gtk_widget_show(gtkblist->bbox);
+
 	button = gaim_pixbuf_button_from_stock(_("IM"), GAIM_STOCK_IM, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_im_cb),
 			 gtkblist->treeview);
-	
+	gtk_widget_show(button);
+
 	button = gaim_pixbuf_button_from_stock(_("Get Info"), GAIM_STOCK_INFO, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_info_cb),
 			 gtkblist->treeview);
+	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(_("Chat"), GAIM_STOCK_CHAT, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_chat_cb), NULL);
+	gtk_widget_show(button);
 
 	button = gaim_pixbuf_button_from_stock(_("Away"), GAIM_STOCK_AWAY, GAIM_BUTTON_VERTICAL);
 	gtk_box_pack_start(GTK_BOX(gtkblist->bbox), button, FALSE, FALSE, 0);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_away_cb), NULL);
+	gtk_widget_show(button);
 
+	/* this will show the right image/label widgets for us */
 	gaim_gtk_blist_update_toolbar();
 
-	/* set the Show Offline Buddies option */
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (ift, N_("/Edit/Show Offline Buddies"))),
-			blist_options & OPT_BLIST_SHOW_OFFLINE);
-
-	/* OK... let's show this bad boy. */
-	gaim_gtk_blist_restore_position();
-	gtk_widget_show_all(gtkblist->window);
-
-	gaim_gtk_blist_refresh(list);
+	/* start the refresh timer */
 	gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)gaim_gtk_blist_refresh_timer, list);
 }
 
@@ -1357,8 +1368,8 @@ void gaim_gtk_blist_update_toolbar() {
 	if (blist_options & OPT_BLIST_NO_BUTTON_TEXT && !(blist_options & OPT_BLIST_SHOW_BUTTON_XPM))
 		gtk_widget_hide(gtkblist->bbox);
 	else {
-		gtk_widget_show_all(gtkblist->bbox);
 		gtk_container_foreach(GTK_CONTAINER(gtkblist->bbox), gaim_gtk_blist_update_toolbar_icons, NULL);
+		gtk_widget_show(gtkblist->bbox);
 	}
 }
 

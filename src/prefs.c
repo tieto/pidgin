@@ -540,7 +540,7 @@ GtkWidget *list_page() {
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
-	vbox = make_frame (ret, _("Buttons"));
+	vbox = make_frame (ret, _("Buddy List Toolbar"));
 	gaim_dropdown(vbox, _("Show _buttons as:"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM | OPT_BLIST_NO_BUTTON_TEXT,
 		      _("Pictures"), OPT_BLIST_SHOW_BUTTON_XPM | OPT_BLIST_NO_BUTTON_TEXT, 
 		      _("Text"), 0,

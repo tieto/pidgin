@@ -59,7 +59,7 @@ static struct StockIcon
 	{ GAIM_STOCK_WARN,          NULL,      GTK_STOCK_DIALOG_WARNING   },
 	{ GAIM_STOCK_IM,            NULL,      GTK_STOCK_CONVERT          },
 	{ GAIM_STOCK_CHAT,          NULL,      GTK_STOCK_JUMP_TO          },
-	{ GAIM_STOCK_AWAY,          "buttons", "away.xpm"                 }
+	{ GAIM_STOCK_AWAY,          "gaim",    "away.png"                 }
 };
 
 static gint stock_icon_count = sizeof(stock_icons) / sizeof(*stock_icons);
