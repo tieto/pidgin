@@ -360,6 +360,12 @@ gaim_connections_get_all(void)
 	return connections;
 }
 
+GList *
+gaim_connections_get_connecting(void)
+{
+	return connections_connecting;
+}
+
 void
 gaim_set_connection_ui_ops(GaimConnectionUiOps *ops)
 {
