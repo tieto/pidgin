@@ -383,13 +383,6 @@ msn_users_destroy(MsnUsers *users)
 		users->users = g_list_remove(users->users, l->data);
 	}
 
-	/* See if we've leaked anybody. */
-	while (users->users != NULL) {
-		gaim_debug(GAIM_DEBUG_WARNING, "msn",
-				   "Leaking user %s\n",
-				   msn_user_get_passport(users->users->data));
-	}
-
 	g_free(users);
 }
 
