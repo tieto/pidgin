@@ -42,7 +42,7 @@ gint check_idle(struct gaim_connection *gc)
 	time_t t;
 #ifdef USE_SCREENSAVER
 	static XScreenSaverInfo *mit_info = NULL;
-	Display *d = XOpenDisplay((char*)NULL);
+	Display *d;
 	time_t idle_time;
 #endif
 
@@ -64,11 +64,13 @@ gint check_idle(struct gaim_connection *gc)
 
 #ifdef USE_SCREENSAVER
 	if (report_idle == IDLE_SCREENSAVER) {
+		d = XOpenDisplay((char *)NULL);
 		if (mit_info == NULL) {
 			mit_info = XScreenSaverAllocInfo ();
 		}
 		XScreenSaverQueryInfo (d, DefaultRootWindow(d), mit_info);
 		idle_time = (mit_info->idle)/1000;
+		XCloseDisplay(d);
 	} else
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->lastsent;
