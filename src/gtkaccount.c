@@ -159,7 +159,7 @@ static void add_account(AccountsWindow *dialog, GaimAccount *account);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  GaimAccount *account);
 static char*
-convert_buddy_icon(GaimAccount *account, const char *path);
+convert_buddy_icon(GaimPlugin *plugin, const char *path);
 
 /**************************************************************************
  * Add/Modify Account dialog
@@ -275,7 +275,7 @@ icon_filesel_choose_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	if (dialog->icon_path)
 		g_free(dialog->icon_path);
-	dialog->icon_path = convert_buddy_icon(dialog->account, filename);
+	dialog->icon_path = convert_buddy_icon(dialog->plugin, filename);
 	gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), dialog->icon_path);
 	gtk_widget_show(dialog->icon_entry);
 
@@ -467,7 +467,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 				*rtmp = '\0';
 			if (dialog->icon_path)
 				g_free(dialog->icon_path);
-			dialog->icon_path = convert_buddy_icon(dialog->account, tmp);
+			dialog->icon_path = convert_buddy_icon(dialog->plugin, tmp);
 			gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), dialog->icon_path);
 			gtk_widget_show(dialog->icon_entry);
 			g_free(tmp);
@@ -495,14 +495,14 @@ str_array_match(char **a, char **b)
 #endif
 
 static char*
-convert_buddy_icon(GaimAccount *account, const char *path)
+convert_buddy_icon(GaimPlugin *plugin, const char *path)
 {
 #if GTK_CHECK_VERSION(2,2,0)
 	int width, height;
 	char **pixbuf_formats = NULL;
 	GdkPixbufFormat *format;
 	GdkPixbuf *pixbuf;
-	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(account->protocol_id));
+	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 	char **prpl_formats =  g_strsplit (prpl_info->icon_spec.format,",",0);
 #if !GTK_CHECK_VERSION(2,4,0)
 	GdkPixbufLoader *loader;
