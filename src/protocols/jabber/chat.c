@@ -414,7 +414,7 @@ void jabber_chat_request_room_configure(JabberChat *chat) {
 		return;
 	}
 
-	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
 			"http://jabber.org/protocol/muc#owner");
 	query = xmlnode_get_child(iq->node, "query");
 	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
