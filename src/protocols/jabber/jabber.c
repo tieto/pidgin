@@ -2055,7 +2055,7 @@ static void jabber_xfer_start(struct gaim_xfer *xfer)
 static size_t jabber_xfer_read(char **buffer, struct gaim_xfer *xfer) {
 	struct jabber_xfer_data *data = xfer->data;
 	char test;
-	size_t size;
+	int size;
 
 	if(read(xfer->fd, &test, sizeof(test)) > 0) {
 		data->headers = g_string_append_c(data->headers, test);
@@ -2065,7 +2065,7 @@ static size_t jabber_xfer_read(char **buffer, struct gaim_xfer *xfer) {
 			if(data->newline) {
 				gchar *lenstr = strstr(data->headers->str, "Content-Length: ");
 				if(lenstr) {
-					sscanf(lenstr, "Content-Length: %zd", &size);
+					sscanf(lenstr, "Content-Length: %d", &size);
 					gaim_xfer_set_size(xfer, size);
 				}
 				gaim_xfer_set_read_fnc(xfer, NULL);

@@ -663,19 +663,19 @@ int main(int argc, char *argv[])
 	 * declare a handler for. thanks JSeymour and Vann.            */
 	if (sigemptyset(&sigset)) {
 		char errmsg[BUFSIZ];
-		sprintf(errmsg, "Warning: couldn't initialise empty signal set");
+		snprintf(errmsg, BUFSIZ, "Warning: couldn't initialise empty signal set");
 		perror(errmsg);
 	}
 	for(sig_indx = 0; catch_sig_list[sig_indx] != -1; ++sig_indx) {
 		if((prev_sig_disp = signal(catch_sig_list[sig_indx], sighandler)) == SIG_ERR) {
 			char errmsg[BUFSIZ];
-			sprintf(errmsg, "Warning: couldn't set signal %d for catching",
+			snprintf(errmsg, BUFSIZ, "Warning: couldn't set signal %d for catching",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
 		}
 		if(sigaddset(&sigset, catch_sig_list[sig_indx])) {
 			char errmsg[BUFSIZ];
-			sprintf(errmsg, "Warning: couldn't include signal %d for unblocking",
+			snprintf(errmsg, BUFSIZ, "Warning: couldn't include signal %d for unblocking",
 				catch_sig_list[sig_indx]);
 			perror(errmsg);
 		}
@@ -683,7 +683,7 @@ int main(int argc, char *argv[])
 	for(sig_indx = 0; ignore_sig_list[sig_indx] != -1; ++sig_indx) {
 		if((prev_sig_disp = signal(ignore_sig_list[sig_indx], SIG_IGN)) == SIG_ERR) {
 			char errmsg[BUFSIZ];
-			sprintf(errmsg, "Warning: couldn't set signal %d to ignore",
+			snprintf(errmsg, BUFSIZ, "Warning: couldn't set signal %d to ignore",
 				ignore_sig_list[sig_indx]);
 			perror(errmsg);
 		}
@@ -691,7 +691,7 @@ int main(int argc, char *argv[])
 
 	if (sigprocmask(SIG_UNBLOCK, &sigset, NULL)) {
 		char errmsg[BUFSIZ];
-		sprintf(errmsg, "Warning: couldn't unblock signals");
+		snprintf(errmsg, BUFSIZ, "Warning: couldn't unblock signals");
 		perror(errmsg);
 	}		
 #endif

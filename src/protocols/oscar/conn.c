@@ -316,10 +316,16 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
  */
 faim_export void aim_conn_close(aim_conn_t *deadconn)
 {
+	aim_rxcallback_t userfunc;
 
 	if (deadconn->fd >= 3)
 		close(deadconn->fd);
+
 	deadconn->fd = -1;
+
+	if ((userfunc = aim_callhandler(deadconn->sessv, deadconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNDEAD)))
+		userfunc(deadconn->sessv, NULL, deadconn);
+
 	if (deadconn->handlerlist)
 		aim_clearhandlers(deadconn);
 

@@ -1113,7 +1113,7 @@ static void do_import(struct gaim_account *account, const char *filename)
 		int protocol = (account->protocol == GAIM_PROTO_OSCAR) ? (isalpha(account->username[0]) ? GAIM_PROTO_TOC : GAIM_PROTO_ICQ): account->protocol;
 
 		if (file != (char *)NULL) {
-			sprintf(path, "%s" G_DIR_SEPARATOR_S "%s.%d.blist", file, g_screenname, protocol);
+			snprintf(path, PATHSIZE, "%s" G_DIR_SEPARATOR_S "%s.%d.blist", file, g_screenname, protocol);
 			g_free(g_screenname);
 		} else {
 			g_free(g_screenname);

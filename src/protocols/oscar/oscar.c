@@ -2969,7 +2969,7 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} break;
 
 		default: {
-			printf("Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", sn, type1, type2);
+			gaim_debug(GAIM_DEBUG_ERROR, "oscar", "Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", sn, type1, type2);
 		} break;
 	}
 

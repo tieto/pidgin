@@ -342,6 +342,7 @@ static const char *get_lock_data() {
 	return lock_data;
 }
 
+#if 0
 static void mozilla_remote_obtain_lock(GdkWindow * window)
 {
 	gboolean locked = False;
@@ -374,7 +375,7 @@ static void mozilla_remote_obtain_lock(GdkWindow * window)
 
 	gdk_x11_ungrab_server();
 }
-
+#endif
 
 static void mozilla_remote_free_lock(GdkWindow * window)
 {

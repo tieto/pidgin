@@ -564,7 +564,7 @@ void clean_pid(void)
 	} while (pid != 0 && pid != (pid_t)-1);
 	if(pid == (pid_t)-1 && errno != ECHILD) {
 		char errmsg[BUFSIZ];
-		sprintf(errmsg, "Warning: waitpid() returned %d", pid);
+		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
 		perror(errmsg);
 	}
 #endif

@@ -333,11 +333,11 @@ static void trap_gdb_bug()
 {
 	const char *message =
 		"Gaim's DNS child got a SIGTRAP signal. \n"
-		"This can be caused by trying to run gaim into gdb.\n"
-		"There's a known gdb bug which prevent this, supposedly gaim\n"
-		"should have detected you were using gdb and use an ugly hack,\n"
+		"This can be caused by trying to run gaim inside gdb.\n"
+		"There is a known gdb bug which prevents this.  Supposedly gaim\n"
+		"should have detected you were using gdb and used an ugly hack,\n"
 		"check cope_with_gdb_brokenness() in proxy.c.\n\n"
-		"For more info about the bug check http://sources.redhat.com/ml/gdb/2001-07/msg00349.html\n";
+		"For more info about this bug, see http://sources.redhat.com/ml/gdb/2001-07/msg00349.html\n";
 	fputs("\n* * *\n",stderr);
 	fputs(message,stderr);
 	fputs("* * *\n\n",stderr);
@@ -357,7 +357,7 @@ static void cope_with_gdb_brokenness()
 		return;
 	already_done = TRUE;
 	ppid = getppid();
-	sprintf(s,"/proc/%d/exe", ppid);
+	snprintf(s, 300, "/proc/%d/exe", ppid);
 	n = readlink(s, e, sizeof(e));
 	e[MAX(n,sizeof(e)-1)] = '\0';
 	
