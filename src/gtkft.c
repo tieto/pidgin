@@ -869,6 +869,21 @@ gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
 					   COLUMN_REMAINING, remaining_str,
 					   -1);
 
+	if (gaim_xfer_is_completed(xfer)) {
+		GdkPixbuf *pixbuf;
+
+		pixbuf = gtk_widget_render_icon(dialog->window,
+										GAIM_STOCK_FILE_DONE,
+										GTK_ICON_SIZE_MENU, NULL);
+
+		gtk_list_store_set(GTK_LIST_STORE(xfer_dialog->model), &data->iter,
+						   COLUMN_STATUS, pixbuf,
+						   COLUMN_REMAINING, "Finished.",
+						   -1);
+
+		g_object_unref(pixbuf);
+	}
+
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(xfer_dialog->tree));
 
 	if (xfer == dialog->selected_xfer)
