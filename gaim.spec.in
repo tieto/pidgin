@@ -5,11 +5,10 @@ Release:    0
 Epoch:      1
 License:    GPL
 Group:      Applications/Internet
-Vendor:     Pimpin' Penguins
-Url:        http://gaim.sourceforge.net/
+URL:        http://gaim.sourceforge.net/
 Source:     %{name}-%{version}.tar.gz
-Packager:   Rob Flynn <rob@marko.net>
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
+
 %if "%{_vendor}" != "MandrakeSoft"
 Requires:   gtk2 >= 2.0.0, mozilla-nss, gtkspell, audiofile, libao
 BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
