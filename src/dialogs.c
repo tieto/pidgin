@@ -2192,6 +2192,7 @@ void show_set_info(GaimConnection *gc)
 	GtkWidget *frame;
 	gchar *buf;
 	GaimAccount *account;
+	const char *user_info;
 
 	struct set_info_dlg *b = g_new0(struct set_info_dlg, 1);
 	account = gc->account;
@@ -2222,11 +2223,15 @@ void show_set_info(GaimConnection *gc)
 	b->text = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(b->text), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(b->text, 300, 200);
-	buf = g_malloc(strlen(account->user_info) + 1);
-	strncpy_nohtml(buf, account->user_info, strlen(account->user_info) + 1);
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(b->text));
-	gtk_text_buffer_set_text(buffer, buf, -1);
-	g_free(buf);
+
+	if ((user_info = gaim_account_get_user_info(account)) != NULL) {
+		buf = g_malloc(strlen(user_info) + 1);
+		strncpy_nohtml(buf, user_info, strlen(user_info) + 1);
+		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(b->text));
+		gtk_text_buffer_set_text(buffer, buf, -1);
+		g_free(buf);
+	}
+
 	gtk_container_add(GTK_CONTAINER(frame), b->text);
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->text);
 
