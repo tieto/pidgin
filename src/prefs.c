@@ -628,7 +628,6 @@ static void convo_page()
 	gtk_widget_show(sep);
 
 	gaim_button(_("Show graphical smileys"), &display_options, OPT_DISP_SHOW_SMILEY, box);
-	gaim_button(_("Show buttons with text"), &display_options, OPT_DISP_CONV_SHOW_TEXT, box);
 	gaim_button(_("Show timestamp on messages"), &display_options, OPT_DISP_SHOW_TIME, box);
 	gaim_button(_("Ignore incoming colors"), &display_options, OPT_DISP_IGNORE_COLOUR, box);
 	gaim_button(_("Ignore white backgrounds"), &display_options, OPT_DISP_IGN_WHITE, box);
@@ -672,6 +671,7 @@ static void im_page()
 	gtk_widget_show(label);
 
 	gaim_button(_("Show logins in window"), &display_options, OPT_DISP_SHOW_LOGON, box);
+	gaim_button(_("Show buttons with text"), &display_options, OPT_DISP_CONV_SHOW_TEXT, box);
 	gaim_button(_("Raise windows on events"), &general_options, OPT_GEN_POPUP_WINDOWS, box);
 	gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, box);
 	gaim_button(_("Ignore TiK Automated Messages"), &general_options, OPT_GEN_TIK_HACK, box);
