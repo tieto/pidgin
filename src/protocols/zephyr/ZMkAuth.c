@@ -4,18 +4,18 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: lschiere $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Id: ZMkAuth.c 2096 2001-07-31 01:00:39Z warmenhoven $ */
+/* $Id: ZMkAuth.c 8940 2004-02-07 17:40:57Z lschiere $ */
 
 #include <internal.h>
 
 #ifndef lint
-static const char rcsid_ZMakeAuthentication_c[] = "$Id: ZMkAuth.c 2096 2001-07-31 01:00:39Z warmenhoven $";
+static const char rcsid_ZMakeAuthentication_c[] = "$Id: ZMkAuth.c 8940 2004-02-07 17:40:57Z lschiere $";
 #endif
 
 #ifdef ZEPHYR_USES_KERBEROS
@@ -52,7 +52,7 @@ Code_t ZMakeAuthentication(notice, buffer, buffer_len, len)
 			    SERVER_INSTANCE, __Zephyr_realm, 0);
 	if (result != MK_AP_OK) {
 	    last_authent_time = 0;
-	    return (result+krb_err_base);
+	    return (result+ERROR_TABLE_BASE_krb);
         }
 	last_authent_time = now;
 	last_authent = authent;
