@@ -160,7 +160,8 @@ typedef enum
  * A protocol plugin information structure.
  *
  * Every protocol plugin initializes this structure. It is the gateway
- * between gaim and the protocol plugin.
+ * between gaim and the protocol plugin.  Many of this callbacks can be
+ * NULL.  If a callback must be implemented, it has a comment indicated so.
  */
 struct _GaimPluginProtocolInfo
 {
@@ -168,12 +169,13 @@ struct _GaimPluginProtocolInfo
 
 	GList *user_splits;      /* A GList of GaimAccountUserSplit */
 	GList *protocol_options; /* A GList of GaimAccountOption    */
-	
+
 	GaimBuddyIconSpec icon_spec; /* The icon spec. */
-	
+
 	/**
 	 * Returns the base icon name for the given buddy and account.
-	 * If buddy is NULL, it will return the name to use for the account's icon
+	 * If buddy is NULL, it will return the name to use for the account's
+	 * icon.  This must be implemented.
 	 */
 	const char *(*list_icon)(GaimAccount *account, GaimBuddy *buddy);
 
@@ -202,7 +204,11 @@ struct _GaimPluginProtocolInfo
 	GHashTable *(*chat_info_defaults)(GaimConnection *, const char *chat_name);
 
 	/* All the server-related functions */
+
+	/** This must be implemented. */
 	void (*login)(GaimAccount *);
+
+	/** This must be implemented. */
 	void (*close)(GaimConnection *);
 	int  (*send_im)(GaimConnection *, const char *who,
 					const char *message,
