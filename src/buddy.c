@@ -2352,7 +2352,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			if (bs->sound != 2)
 				play_sound(SND_BUDDY_ARRIVE);
 			if (blist_options & OPT_BLIST_POPUP)
-				unhide_buddy_list();
+				gdk_window_show(blist->window);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 							  NULL, (char **)login_icon_xpm);
 			gtk_widget_hide(bs->pix);
@@ -2411,7 +2411,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if (bs->sound != 1)
 			play_sound(SND_BUDDY_LEAVE);
 		if (blist_options & OPT_BLIST_POPUP)
-			unhide_buddy_list();
+			gdk_window_show(blist->window);
 		bs->connlist = g_slist_remove(bs->connlist, gc);
 		update_num_group(gs);
 		if (bs->log_timer > 0)
