@@ -784,8 +784,6 @@ static void gaimrc_read_options(FILE *f)
 			blist_pos.y = atoi(p->value[1]);
 			blist_pos.width = atoi(p->value[2]);
 			blist_pos.height = atoi(p->value[3]);
-			blist_pos.xoff = atoi(p->value[4]);
-			blist_pos.yoff = atoi(p->value[5]);
 		}
 
 	}
@@ -861,9 +859,8 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\treport_idle { %d }\n", report_idle);
 	fprintf(f, "\tweb_browser { %d }\n", web_browser);
 	fprintf(f, "\tweb_command { %s }\n", web_command);
-	fprintf(f, "\tblist_pos { %d } { %d } { %d } { %d } { %d } { %d }\n",
-		blist_pos.x, blist_pos.y, blist_pos.width, blist_pos.height,
-		blist_pos.xoff, blist_pos.yoff);
+	fprintf(f, "\tblist_pos { %d } { %d } { %d } { %d }\n",
+		blist_pos.x, blist_pos.y, blist_pos.width, blist_pos.height);
 	fprintf(f, "\tconv_size { %d } { %d } { %d }\n",
 		conv_size.width, conv_size.height, conv_size.entry_height);
 	fprintf(f, "\tbuddy_chat_size { %d } { %d } { %d }\n",
