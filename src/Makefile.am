@@ -181,7 +181,7 @@ gaim_remote_SOURCES = \
 gaim_remote_DEPENDENCIES = @LIBOBJS@
 gaim_remote_LDADD = \
 	@LIBOBJS@ $(GLIB_LIBS) $(INTLLIBS) \
-	-L$(top_builddir)/plugins/gaim-remote -lgaim-remote
+	$(top_builddir)/plugins/gaim-remote/libgaim-remote.la
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
