@@ -28,7 +28,7 @@
 #define GAIM_MINOR_VERSION 0
 #define GAIM_MICRO_VERSION 0
 
-#define GAIM_VERSION_CHECK(x,y,z) ((x) == GAIM_MAJOR_VERSION && (y) <= GAIM_MINOR_VERSION && (z) <= GAIM_MICRO_VERSION)
+#define GAIM_VERSION_CHECK(x,y,z) ((x) == GAIM_MAJOR_VERSION && ((y) < GAIM_MINOR_VERSION || ((y) == GAIM_MINOR_VERSION && (z) <= GAIM_MICRO_VERSION))
 
 #ifdef __cplusplus
 extern "C" {
