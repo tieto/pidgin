@@ -925,8 +925,8 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		ap->friend = g_strdup(url_decode(friend));
 		ap->gc = gc;
 
-		g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list."),
-				ap->user, url_decode(ap->friend));
+		g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add %s to his or her buddy list."),
+				ap->user, url_decode(ap->friend), ap->gc->username);
 
 		do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
 	} else if (!g_strncasecmp(buf, "BLP", 3)) {
