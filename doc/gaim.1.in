@@ -100,7 +100,7 @@ discussed later.
 .B View Log
 \fBgaim\fR is capable of automatically log its activities.  These logs are
 either plain text files (with a .log extension) or  html files (with a
-.html extension) located under the \fI~/.gaim/logs\fR directory.  This
+\&.html extension) located under the \fI~/.gaim/logs\fR directory.  This
 menu command will attempt to view this file with \fBgaim\fR's internal log
 viewer.
 .TP
