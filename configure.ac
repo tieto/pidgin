@@ -776,6 +776,7 @@ if test "$enable_tcl" = yes; then
 		       /usr/lib/tcl8.4 \
 		       /usr/lib/tcl8.3 \
 		       /usr/lib/tcl8.2 \
+		       /System/Library/Tcl/8.3 \
 		       /usr/local/lib"
 	for dir in $with_tclconfig $TCLCONFIGDIRS; do
 		if test -f $dir/tclConfig.sh; then
