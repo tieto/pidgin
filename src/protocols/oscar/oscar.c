@@ -1795,13 +1795,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
 		flags |= IM_FLAG_AWAY;
 
-	if (args->icbmflags & AIM_IMFLAGS_HASICON) {
+	if ((args->icbmflags & AIM_IMFLAGS_HASICON) && (args->iconlen) && (args->iconsum) && (args->iconstamp)) {
 		struct icon_req *ir = NULL;
 		GSList *h = od->hasicons;
 
-		if (!args->iconlen || !args->iconsum || !args->iconstamp)
-		    return 1;
-		    
 		debug_printf("%s has an icon\n", userinfo->sn);
 		while (h) {
 			ir = h->data;
