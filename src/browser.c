@@ -513,7 +513,7 @@ static gboolean netscape_command(const char *command)
 	return TRUE;
 }
 
-void open_url(GtkWidget *w, char *url)
+void open_url(GtkWidget *w, const char *url)
 {
 	char *command = NULL;
 	GError *error = NULL;

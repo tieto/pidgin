@@ -187,7 +187,7 @@ extern void purge_away_queue(GSList**);
 extern void do_im_back(GtkWidget *w, GtkWidget *x);
 
 /* Functions in browser.c */
-extern void open_url(GtkWidget *, char *);
+extern void open_url(GtkWidget *, const char *);
 extern void add_bookmark(GtkWidget *, char *);
 
 /* Functions in dialogs.c */
