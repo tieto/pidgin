@@ -4,7 +4,7 @@
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+/* it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
@@ -135,7 +135,7 @@ void show_about(GtkWidget *w, void *null)
 				  _("Gaim is a modular Instant Messaging client capable of using AIM, ICQ,\n"
 				   "Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.\n"
 				    "It is written using Gtk+ and is licensed under the GPL.\n\n" "URL: " WEBSITE "\n\n"
-				   "IRC: #gaim on irc.openprojects.net"));
+				   "IRC: #gaim on irc.freenode.net"));
 
 		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
 		gtk_box_pack_start(GTK_BOX(fbox), label, TRUE, TRUE, 0);
