@@ -1475,7 +1475,7 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 		((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
 		  (chat_options & OPT_CHAT_POPUP)) ||
 		 (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
-		  (im_options & OPT_IM_POPUP)))) {
+		  ((im_options & OPT_IM_POPUP) || (im_options & OPT_IM_POPDOWN))))) {
 
 		gaim_window_show(win);
 	}
