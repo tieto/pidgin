@@ -2168,6 +2168,32 @@ account_selected_cb(GtkTreeSelection *sel, AccountsWindow *dialog)
 	gtk_widget_set_sensitive(dialog->delete_button, selected);
 }
 
+static gboolean
+account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, gpointer user_data)
+{
+	AccountsWindow *dialog;
+	GtkTreePath *path;
+	GtkTreeIter iter;
+	GaimAccount *account;
+
+	dialog = (AccountsWindow *)user_data;
+
+	/* Figure out which node was clicked */
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(dialog->treeview), event->x, event->y, &path, NULL, NULL, NULL))
+		return FALSE;
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
+	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, COLUMN_DATA, &account, -1);
+
+	if ((account != NULL) && (event->button == 1) &&
+		(event->type == GDK_2BUTTON_PRESS))
+	{
+		gaim_gtk_account_dialog_show(GAIM_GTK_MODIFY_ACCOUNT_DIALOG, account);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static GtkWidget *
 create_accounts_list(AccountsWindow *dialog)
 {
@@ -2200,6 +2226,10 @@ create_accounts_list(AccountsWindow *dialog)
 	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 	g_signal_connect(G_OBJECT(sel), "changed",
 					 G_CALLBACK(account_selected_cb), dialog);
+
+	/* Handle double-clicking */
+	g_signal_connect(G_OBJECT(treeview), "button_press_event",
+					 G_CALLBACK(account_treeview_double_click_cb), dialog);
 
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);
