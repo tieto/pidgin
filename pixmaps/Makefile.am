@@ -1,4 +1,5 @@
 EXTRA_DIST =	add.xpm				\
+		add_small.xpm			\
 		admin_icon.xpm			\
 		aimicon.xpm			\
 		aimicon2.xpm			\
@@ -16,6 +17,7 @@ EXTRA_DIST =	add.xpm				\
 		buddydel.xpm			\
 		burp.xpm			\
 		cancel.xpm			\
+		close_small.xpm			\
 		crossedlips.xpm			\
 		cry.xpm				\
 		daemon-buddyadd.xpm		\
@@ -28,6 +30,8 @@ EXTRA_DIST =	add.xpm				\
 		daemon.xpm			\
 		dt_icon.xpm			\
 		embarrassed.xpm			\
+		exit_small.xpm			\
+		export_small.xpm		\
 		fontface.xpm			\
 		fontface2.xpm			\
 		free_icon.xpm			\
@@ -43,6 +47,7 @@ EXTRA_DIST =	add.xpm				\
 		gnome/penguin-offline.png	\
 		gnome/penguin-online.png	\
 		im.xpm				\
+		import_small.xpm		\
 		info.xpm			\
 		italic.xpm			\
 		join.xpm			\
@@ -78,6 +83,7 @@ EXTRA_DIST =	add.xpm				\
 		smile.xpm			\
 		smile8.xpm			\
 		smile_happy.xpm			\
+		smile_icon.xpm			\
 		smile_sad.xpm			\
 		smile_wink.xpm			\
 		speaker.xpm			\
