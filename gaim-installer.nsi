@@ -555,6 +555,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libirc.dll"
     Delete "$INSTDIR\plugins\libjabber.dll"
     Delete "$INSTDIR\plugins\libmsn.dll"
+    Delete "$INSTDIR\plugins\libnovell.dll"
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
