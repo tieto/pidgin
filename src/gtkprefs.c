@@ -966,8 +966,8 @@ GtkWidget *im_page() {
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-#if 0 /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Window"));
+#if 0 /* PREFSLASH04 */
 	widge = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
 			"/gaim/gtk/conversations/im/button_type",
 			_("Pictures"), GAIM_BUTTON_IMAGE,
@@ -978,10 +978,10 @@ GtkWidget *im_page() {
 
 	gtk_size_group_add_widget(sg, widge);
 	gtk_misc_set_alignment(GTK_MISC(widge), 0, 0);
+#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
 			"/gaim/gtk/conversations/im/raise_on_events", vbox);
 	gtk_widget_show (vbox);
-#endif /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Icons"));
 	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
 			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
@@ -1008,8 +1008,8 @@ GtkWidget *chat_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-#if 0 /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Window"));
+#if 0 /* PREFSLASH04 */
 	dd = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
 			"/gaim/gtk/conversations/chat/button_type",
 			_("Pictures"), GAIM_BUTTON_IMAGE,
@@ -1020,9 +1020,9 @@ GtkWidget *chat_page() {
 
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
+#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
 			"/gaim/gtk/conversations/chat/raise_on_events", vbox);
-#endif /* PREFSLASH04 */
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
 #if 0 /* PREFSLASH04 */
 	  gaim_gtk_prefs_checkbox(_("_Show people joining in window"),
