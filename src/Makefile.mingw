@@ -75,14 +75,6 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-SOUND_H_FILES =		$(GAIM_TOP)/sounds/BuddyArrive.h \
-			$(GAIM_TOP)/sounds/BuddyLeave.h \
-			$(GAIM_TOP)/sounds/Receive.h \
-			$(GAIM_TOP)/sounds/RedAlert.h \
-			$(GAIM_TOP)/sounds/Send.h
-
-HEADER_DEPS =		$(SOUND_H_FILES)
-
 DLL_C_SRC =		aim.c \
 			about.c \
 			away.c \
@@ -149,10 +141,6 @@ EXE_LIBS = -lgaim -lglib-2.0
 ## RULES
 ##
 
-# Make Sound headers
-$(GAIM_TOP)/sounds/%.h:
-	$(MAKE) -C $(GAIM_TOP)/sounds -f Makefile.mingw $(@F)
-
 # How to make a C file
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE_PATHS) $(DEFINES) -c $< -o $@
@@ -179,11 +167,11 @@ $(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll:
 # BUILD DLL
 #
 
-$(TARGET).def: $(HEADER_DEPS) $(DLL_OBJECTS)
+$(TARGET).def: $(DLL_OBJECTS)
 	dlltool -D $(TARGET).dll -z $(TARGET).def --export-all-symbols \
 		--exclude-symbols WinMain@16 $^
 
-$(TARGET).base: $(HEADER_DEPS) $(DLL_OBJECTS)
+$(TARGET).base: $(DLL_OBJECTS)
 	$(CC) -mdll $(LDFLAGS) -o junk.tmp -Wl,--base-file,$@ $(DLL_OBJECTS) $(LIB_PATHS) $(DLL_LIBS)
 	rm -rf junk.tmp
 
@@ -191,7 +179,7 @@ $(TARGET).exp: $(TARGET).base $(TARGET).def
 	dlltool --dllname $(TARGET).dll --base-file $(TARGET).base \
 		--output-exp $(TARGET).exp --def $(TARGET).def
 
-$(TARGET).dll: $(HEADER_DEPS) $(DLL_OBJECTS) $(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll $(TARGET).exp
+$(TARGET).dll: $(DLL_OBJECTS) $(GAIM_SRC)/win32/IdleTracker/IdleTrac.dll $(TARGET).exp
 	$(CC) -mdll $(LDFLAGS) -o $(TARGET).dll $(DLL_OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(DLL_LIBS)
 	rm -rf $(TARGET).exp $(TARGET).def $(TARGET).base
 
