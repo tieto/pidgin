@@ -110,7 +110,7 @@ struct group_show {
 };
 static GSList *shows = NULL;
 
-static int docklet_count = 0;
+int docklet_count = 0;
 
 /* Predefine some functions */
 static void new_bp_callback(GtkWidget *w, struct buddy *bs);

@@ -276,6 +276,7 @@ extern GtkWidget *clistqueue;
 extern GtkWidget *buddies;
 extern GtkWidget *bpmenu;
 extern GtkWidget *blist;
+extern int docklet_count;
 
 /* Globals in buddy_chat.c */
 extern GList *chats;	/* list of all chats (only use for tabbing!) */

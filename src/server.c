@@ -691,10 +691,10 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		
 		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
 			play_sound(SND_FIRST_RECEIVE);
-		else if (cnv && cnv->makesound)
+		else if (new_conv || cnv->makesound)
 			play_sound(SND_RECEIVE);
 		
-		if (away_options & OPT_AWAY_QUEUE_UNREAD && !find_conversation(name)) {
+		if (away_options & OPT_AWAY_QUEUE_UNREAD && !find_conversation(name) && docklet_count) {
 			/* We're gonna queue it up and wait for the user to ask for it... probably
 			 * by clicking the docklet or windows tray icon. */
 			struct queued_message *qm;
