@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-02-24 04:34:46 -0500 (Sat, 24 Feb 2001) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2001-02-26 15:38:27 -0500 (Mon, 26 Feb 2001) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -20,10 +20,6 @@ and allows multiple connections (which should also be stable).
 There have been a lot of changes since 0.10.x; I think all of the bugs have
 been worked out but I'm sure there are still a lot remaining. Please, if you
 get bored one day, go on a big bug hunt.
-
-I broke parallel builds. Sorry. Don't compile plugins if you want a parallel
-build. (If someone could tell me how to fix this, and still be somewhat
-portable, I'd appreciate it.)
 
 
 Buddy List

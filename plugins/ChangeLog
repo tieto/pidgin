@@ -1,4 +1,14 @@
-version 0.11.0:
+version 0.11.0pre5:
+	The build process for plugins has changed slightly. Everything still
+	works more or less the same from a user point of view, that is, 'make
+	file.so' will still turn file.c into a plugin. The build now uses
+	libtool in an attempt to increase portability. By using libtool the
+	act of compiling and linking has been divided into two steps (to be
+	precise it always was two but we only called gcc once; now we call
+	libtool twice). PLUGIN_CFLAGS has also been added. Any -D switches you
+	were passing in PLUGIN_LIBS should be passed in PLUGIN_CFLAGS now.
+
+version 0.11.0pre1:
 	Gaim is now multi-connection based. This represents a significant
 	change. Most of the code was modified, though most of the modifications
 	were small (referencing an int as part of a struct as opposed to as a
