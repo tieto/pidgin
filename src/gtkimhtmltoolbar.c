@@ -422,86 +422,103 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 
 
 static void
-do_insert_image_cb(GtkWidget *widget, int resp, GtkIMHtmlToolbar *toolbar)
+do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 {
-	char *name, *filename;
-	char *buf, *filedata;
+	gchar *filename, *name, *buf;
+	char *filedata;
 	size_t size;
 	GError *error = NULL;
 	int id;
 	GtkTextIter iter;
 	GtkTextMark *ins;
 
-	if (resp != GTK_RESPONSE_OK) {
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+	if (response != GTK_RESPONSE_ACCEPT) {
+#else /* FILECHOOSER */
+	if (response != GTK_RESPONSE_OK) {
+#endif /* FILECHOOSER */
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
 
-	name = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget)));
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget));
+#else /* FILECHOOSER */
+	filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget)));
+#endif /* FILECHOOSER */
 
-	if (!name) {
+	if (filename == NULL) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
 
-	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(widget))) {
-		g_free(name);
+#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(widget))) {
+		g_free(filename);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}
+#endif /* FILECHOOSER */
 
+	/* The following triggers a callback that closes the widget */
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 
-	if (!g_file_get_contents(name, &filedata, &size, &error)) {
+	if (!g_file_get_contents(filename, &filedata, &size, &error)) {
 		gaim_notify_error(NULL, NULL, error->message, NULL);
 
 		g_error_free(error);
-		g_free(name);
+		g_free(filename);
 
 		return;
 	}
 
-	filename = name;
-	while (strchr(filename, '/'))
-		filename = strchr(filename, '/') + 1;
+	name = strrchr(filename, G_DIR_SEPARATOR) + 1;
 
-	id = gaim_imgstore_add(filedata, size, filename);
+	id = gaim_imgstore_add(filedata, size, name);
 	g_free(filedata);
 
-	if (!id) {
-		buf = g_strdup_printf(_("Failed to store image: %s\n"), name);
+	if (id == 0) {
+		buf = g_strdup_printf(_("Failed to store image: %s\n"), filename);
 		gaim_notify_error(NULL, NULL, buf, NULL);
 
 		g_free(buf);
-		g_free(name);
+		g_free(filename);
 
 		return;
 	}
 
+	g_free(filename);
+
 	ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)));
 	gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)),
-	                                 &iter, ins);
+									 &iter, ins);
 	gtk_imhtml_insert_image_at_iter(GTK_IMHTML(toolbar->imhtml), id, &iter);
 	gaim_imgstore_unref(id);
-	
-	g_free(name);
 }
 
 
 static void
 insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 {
-	char buf[BUF_LONG];
 	GtkWidget *window;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->image))) {
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+		window = gtk_file_chooser_dialog_new(_("Insert Image"),
+						NULL,
+						GTK_FILE_CHOOSER_ACTION_OPEN,
+						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+						NULL);
+		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_ACCEPT);
+		g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(window)),
+				"response", G_CALLBACK(do_insert_image_cb), toolbar);
+#else /* FILECHOOSER */
 		window = gtk_file_selection_new(_("Insert Image"));
-		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
-
 		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_OK);
 		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)),
 				"response", G_CALLBACK(do_insert_image_cb), toolbar);
+#endif /* FILECHOOSER */
 
 		gtk_widget_show(window);
 		toolbar->image_dialog = window;
@@ -509,6 +526,7 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 		gtk_widget_destroy(toolbar->image_dialog);
 		toolbar->image_dialog = NULL;
 	}
+
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
