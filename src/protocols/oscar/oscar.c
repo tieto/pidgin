@@ -2966,7 +2966,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		gc->login_time_official = signon;
 	}
 
-	serv_got_update(gc, info->sn, 1, (info->warnlevel/10.0) + 0.5, signon, time_idle, type);
+	serv_got_update(gc, info->sn, TRUE, (info->warnlevel/10.0) + 0.5, signon, time_idle, type);
 
 	return 1;
 }
@@ -2988,7 +2988,7 @@ static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	serv_got_update(gc, info->sn, 0, 0, 0, 0, 0);
+	serv_got_update(gc, info->sn, FALSE, 0, 0, 0, 0);
 
 	g_hash_table_remove(od->buddyinfo, gaim_normalize(gc->account, info->sn));
 

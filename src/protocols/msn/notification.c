@@ -453,7 +453,7 @@ fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	gc = cmdproc->session->account->gc;
 
-	serv_got_update(gc, cmd->params[0], 0, 0, 0, 0, 0);
+	serv_got_update(gc, cmd->params[0], FALSE, 0, 0, 0, 0);
 }
 
 static void
@@ -507,7 +507,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else if (!g_ascii_strcasecmp(state, "LUN"))
 		status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 
-	serv_got_update(gc, passport, 1, 0, 0, idle, status);
+	serv_got_update(gc, passport, TRUE, 0, 0, idle, status);
 }
 
 static void
@@ -582,7 +582,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else if (!g_ascii_strcasecmp(state, "LUN"))
 		status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 
-	serv_got_update(gc, passport, 1, 0, 0, idle, status);
+	serv_got_update(gc, passport, TRUE, 0, 0, idle, status);
 }
 
 static void

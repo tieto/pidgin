@@ -1142,7 +1142,7 @@ remove_idle_buddy(GaimBuddy *buddy)
  * @param idle The time at which the buddy became idle, in seconds
  *             since the epoch.
  */
-void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
+void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 					 int evil, time_t signon, time_t idle, int type)
 {
 	GaimAccount *account;

@@ -719,7 +719,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		serv_got_im(gc, c, message, a, time(NULL));
 	} else if (!g_ascii_strcasecmp(c, "UPDATE_BUDDY")) {
 		char *l, *uc, *tmp;
-		int logged, evil, idle, type = 0;
+		gboolean logged_in;
+		int evil, idle, type = 0;
 		time_t signon, time_idle;
 
 		c = strtok(NULL, ":");	/* name */
@@ -729,7 +730,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		sscanf(strtok(NULL, ":"), "%d", &idle);
 		uc = strtok(NULL, ":");
 
-		logged = (l && (*l == 'T')) ? 1 : 0;
+		logged_in = (l && (*l == 'T')) ? TRUE : FALSE;
 
 		if (uc[0] == 'A')
 			type |= UC_AOL;
@@ -770,7 +771,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		}
 		g_free(tmp);
 
-		serv_got_update(gc, c, logged, evil, signon, time_idle, type);
+		serv_got_update(gc, c, logged_in, evil, signon, time_idle, type);
 	} else if (!g_ascii_strcasecmp(c, "ERROR")) {
 		gaim_notify_error(gc, NULL, show_error_message(), NULL);
 	} else if (!g_ascii_strcasecmp(c, "EVILED")) {

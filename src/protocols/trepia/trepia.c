@@ -842,7 +842,7 @@ _parse_data(TrepiaSession *session, char *buf)
 				g_hash_table_insert(session->user_profiles, int_p, profile);
 
 				serv_got_update(session->gc,
-								username, 1, 0,
+								username, TRUE, 0,
 								trepia_profile_get_login_time(profile), 0, 0);
 
 				/* Buddy Icon */
@@ -857,7 +857,7 @@ _parse_data(TrepiaSession *session, char *buf)
 
 					g_free(icon);
 
-					serv_got_update(session->gc, username, 1, 0, 0, 0, 0);
+					serv_got_update(session->gc, username, TRUE, 0, 0, 0, 0);
 				}
 
 				/*
@@ -892,7 +892,7 @@ _parse_data(TrepiaSession *session, char *buf)
 				if (b != NULL)
 					serv_got_update(session->gc,
 									trepia_profile_get_login(profile),
-									0, 0, 0, 0, 0);
+									FALSE, 0, 0, 0, 0);
 
 				gaim_blist_remove_buddy(b);
 

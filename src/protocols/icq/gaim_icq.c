@@ -117,13 +117,13 @@ static void icq_user_online(icq_Link *link, unsigned long uin, unsigned long st,
 
 	g_snprintf(buf, sizeof buf, "%lu", uin);
 	status = (st == STATUS_ONLINE) ? 0 : UC_UNAVAILABLE | (st << 1);
-	serv_got_update(gc, buf, 1, 0, 0, 0, status);
+	serv_got_update(gc, buf, TRUE, 0, 0, 0, status);
 }
 
 static void icq_user_offline(icq_Link *link, unsigned long uin) {
 	struct gaim_connection *gc = link->icq_UserData;
 	char buf[256]; g_snprintf(buf, sizeof buf, "%lu", uin);
-	serv_got_update(gc, buf, 0, 0, 0, 0, 0);
+	serv_got_update(gc, buf, FALSE, 0, 0, 0, 0);
 }
 
 static void icq_user_status(icq_Link *link, unsigned long uin, unsigned long st) {
@@ -133,7 +133,7 @@ static void icq_user_status(icq_Link *link, unsigned long uin, unsigned long st)
 
 	g_snprintf(buf, sizeof buf, "%lu", uin);
 	status = (st == STATUS_ONLINE) ? 0 : UC_UNAVAILABLE | (st << 1);
-	serv_got_update(gc, buf, 1, 0, 0, 0, status);
+	serv_got_update(gc, buf, TRUE, 0, 0, 0, status);
 }
 
 static gboolean icq_set_timeout_cb(gpointer data) {

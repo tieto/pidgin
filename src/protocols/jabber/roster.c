@@ -274,7 +274,7 @@ void jabber_roster_add_buddy(GaimConnection *gc, GaimBuddy *buddy,
 	else if(!jb || !(jb->subscription & JABBER_SUB_TO))
 		jabber_presence_subscription_set(js, who, "subscribe");
 	else if((jbr =jabber_buddy_find_resource(jb, NULL)))
-		serv_got_update(gc, who, 1, 0, 0, 0, jbr->state);
+		serv_got_update(gc, who, TRUE, 0, 0, 0, jbr->state);
 
 	g_free(my_bare_jid);
 	g_free(who);

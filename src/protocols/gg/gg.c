@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10809 2004-08-31 01:45:12Z lschiere $
+ * $Id: gg.c 10819 2004-09-01 01:07:42Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -507,8 +507,8 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 				}
 
 				g_snprintf(user, sizeof(user), "%lu", n->uin);
-				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
-						status);
+				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? FALSE : TRUE, 0, 0,
+					       0, status);
 				n++;
 			}
 		}
@@ -552,8 +552,8 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 					buddy->proto_data = g_strdup(e->event.notify60[i].descr);
 				}
 
-				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
-						status);
+				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? FALSE : TRUE, 0, 0,
+					       0, status);
 				i++;
 			}
 		}
@@ -578,8 +578,8 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			}
 
 			g_snprintf(user, sizeof(user), "%lu", e->event.status.uin);
-			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
-					status);
+			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? FALSE : TRUE, 0, 0,
+					0, status);
 		}
 		break;
 	case GG_EVENT_STATUS60:
@@ -619,8 +619,8 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 				buddy->proto_data = g_strdup(e->event.status60.descr);
 			}
 			    
-			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
-					status);
+			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? FALSE : TRUE, 0, 0,
+					0, status);
 		}
 		break;
 	case GG_EVENT_ACK:

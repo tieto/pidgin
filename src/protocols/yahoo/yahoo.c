@@ -315,13 +315,13 @@ void yahoo_packet_free(struct yahoo_packet *pkt)
 
 static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFriend *f)
 {
-	int online = 1;
+	gboolean online = TRUE;
 
 	if (!gc || !name || !f || !gaim_find_buddy(gaim_connection_get_account(gc), name))
 		return;
 
 	if (f->status == YAHOO_STATUS_OFFLINE)
-		online = 0;
+		online = FALSE;
 
 	serv_got_update(gc, name, online, 0, 0, f->idle, f->away ? UC_UNAVAILABLE : 0);
 }
@@ -437,7 +437,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			if (strtol(pair->value, NULL, 10) == 0) {
 				if (f)
 					f->status = YAHOO_STATUS_OFFLINE;
-				serv_got_update(gc, name, 0, 0, 0, 0, 0);
+				serv_got_update(gc, name, FALSE, 0, 0, 0, 0);
 				break;
 			}
 
@@ -947,7 +947,7 @@ static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *
 		gaim_notify_info(gc, NULL, _("Add buddy rejected"), buf->str);
 		g_string_free(buf, TRUE);
 		g_hash_table_remove(yd->friends, who);
-		serv_got_update(gc, who, 0, 0, 0, 0, 0);
+		serv_got_update(gc, who, FALSE, 0, 0, 0, 0);
 	}
 }
 

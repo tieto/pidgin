@@ -77,9 +77,9 @@ void jabber_presence_fake_to_self(JabberStream *js, const char *away_state, cons
 				jabber_buddy_track_resource(jb, js->user->resource, 0, state, (msg && *msg) ? msg : NULL);
 			}
 			if((jbr = jabber_buddy_find_resource(jb, NULL)))
-				serv_got_update(js->gc, my_base_jid, 1, 0, 0, 0, jbr->state);
+				serv_got_update(js->gc, my_base_jid, TRUE, 0, 0, 0, jbr->state);
 			else
-				serv_got_update(js->gc, my_base_jid, 0, 0, 0, 0, 0);
+				serv_got_update(js->gc, my_base_jid, FALSE, 0, 0, 0, 0);
 		}
 	}
 	g_free(my_base_jid);
@@ -456,10 +456,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if((jbr = jabber_buddy_find_resource(jb, NULL)))
-			serv_got_update(js->gc, buddy_name, 1, 0, b->signon, b->idle,
+			serv_got_update(js->gc, buddy_name, TRUE, 0, b->signon, b->idle,
 					jbr->state);
 		else
-			serv_got_update(js->gc, buddy_name, 0, 0, 0, 0, 0);
+			serv_got_update(js->gc, buddy_name, FALSE, 0, 0, 0, 0);
 
 		g_free(buddy_name);
 	}

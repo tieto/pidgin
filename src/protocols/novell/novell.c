@@ -1149,7 +1149,7 @@ _update_buddy_status(GaimBuddy * buddy, int status, int gmt)
 	GaimConnection *gc = gaim_account_get_connection(buddy->account);
 	int gstatus = status << 1;
 	int idle = 0;
-	int loggedin = 1;
+	gboolean loggedin = TRUE;
 
 	switch (status) {
 		case NM_STATUS_AVAILABLE:
@@ -1160,7 +1160,7 @@ _update_buddy_status(GaimBuddy * buddy, int status, int gmt)
 			gstatus |= UC_UNAVAILABLE;
 			break;
 		case NM_STATUS_OFFLINE:
-			loggedin = 0;
+			loggedin = FALSE;
 			gstatus |= UC_UNAVAILABLE;
 			break;
 		case NM_STATUS_AWAY_IDLE:
@@ -1169,7 +1169,7 @@ _update_buddy_status(GaimBuddy * buddy, int status, int gmt)
 			break;
 		default:
 			gstatus |= UC_UNAVAILABLE;
-			loggedin = 0;
+			loggedin = FALSE;
 			break;
 	}
 

@@ -708,7 +708,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				     client_entry->mode & SILC_UMODE_PAGE ||
 				     client_entry->mode & SILC_UMODE_DETACHED)) {
 					client_entry->mode = mode;
-					gaim_blist_update_buddy_presence(b, GAIM_BUDDY_ONLINE);
+					gaim_blist_update_buddy_presence(b, TRUE);
 				}
 				else if ((mode & SILC_UMODE_GONE) ||
 					 (mode & SILC_UMODE_INDISPOSED) ||
@@ -716,16 +716,16 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 					 (mode & SILC_UMODE_PAGE) ||
 					 (mode & SILC_UMODE_DETACHED)) {
 					client_entry->mode = mode;
-					gaim_blist_update_buddy_presence(b, GAIM_BUDDY_OFFLINE);
+					gaim_blist_update_buddy_presence(b, FALSE);
 				}
 			} else if (notify == SILC_NOTIFY_TYPE_SIGNOFF ||
 				   notify == SILC_NOTIFY_TYPE_SERVER_SIGNOFF ||
 				   notify == SILC_NOTIFY_TYPE_KILLED) {
 				client_entry->mode = mode;
-				gaim_blist_update_buddy_presence(b, GAIM_BUDDY_OFFLINE);
+				gaim_blist_update_buddy_presence(b, FALSE);
 			} else if (notify == SILC_NOTIFY_TYPE_NONE) {
 				client_entry->mode = mode;
-				gaim_blist_update_buddy_presence(b, GAIM_BUDDY_ONLINE);
+				gaim_blist_update_buddy_presence(b, TRUE);
 			}
 		}
 		break;

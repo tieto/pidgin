@@ -263,9 +263,9 @@ void gaim_blist_update_buddy_status(GaimBuddy *buddy, int status);
  * Updates a buddy's presence.
  *
  * @param buddy    The buddy whose presence has changed
- * @param presence The new presence
+ * @param online   If the buddy is now online
  */
-void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence);
+void gaim_blist_update_buddy_presence(GaimBuddy *buddy, gboolean online);
 
 /**
  * Updates a buddy's signon time.

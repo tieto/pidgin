@@ -555,12 +555,12 @@ static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *
 		return;
 
 	if (ib->online && !ib->flag) {
-		serv_got_update(gc, buddy->name, 0, 0, 0, 0, 0);
+		serv_got_update(gc, buddy->name, FALSE, 0, 0, 0, 0);
 		ib->online = FALSE;
 	}
 
 	if (!ib->online && ib->flag) {
-		serv_got_update(gc, buddy->name, 1, 0, 0, 0, 0);
+		serv_got_update(gc, buddy->name, TRUE, 0, 0, 0, 0);
 		ib->online = TRUE;
 	}
 }

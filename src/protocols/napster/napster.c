@@ -282,12 +282,12 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 201: /* MSG_SERVER_SEARCH_RESULT */
 		res = g_strsplit(buf, " ", 0);
-		serv_got_update(gc, res[0], 1, 0, 0, 0, 0);
+		serv_got_update(gc, res[0], TRUE, 0, 0, 0, 0);
 		g_strfreev(res);
 		break;
 
 	case 202: /* MSG_SERVER_SEARCH_END */
-		serv_got_update(gc, buf, 0, 0, 0, 0, 0);
+		serv_got_update(gc, buf, FALSE, 0, 0, 0, 0);
 		break;
 
 	case 205: /* MSG_CLIENT_PRIVMSG */
@@ -301,14 +301,14 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 209: /* MSG_SERVER_USER_SIGNON */
 		/* USERNAME SPEED */
 		res = g_strsplit(buf, " ", 2);
-		serv_got_update(gc, res[0], 1, 0, 0, 0, 0);
+		serv_got_update(gc, res[0], TRUE, 0, 0, 0, 0);
 		g_strfreev(res);
 		break;
 
 	case 210: /* MSG_SERVER_USER_SIGNOFF */
 		/* USERNAME SPEED */
 		res = g_strsplit(buf, " ", 2);
-		serv_got_update(gc, res[0], 0, 0, 0, 0, 0);
+		serv_got_update(gc, res[0], FALSE, 0, 0, 0, 0);
 		g_strfreev(res);
 		break;
 

@@ -720,7 +720,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice, struct sockaddr_
 						     str->str, NULL, NULL);
 				g_string_free(str, TRUE);
 			} else
-				serv_got_update(gc, b->name, nlocs, 0, 0, 0, 0);
+				serv_got_update(gc, b->name, (nlocs > 0) ? TRUE : FALSE, 0, 0, 0, 0);
 
 			g_free(user);
 		}

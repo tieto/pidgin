@@ -114,7 +114,7 @@ static void rendezvous_addtolocal(GaimConnection *gc, const char *name, const ch
 	b = gaim_buddy_new(account, name, NULL);
 	/* gaim_blist_node_set_flag(b, GAIM_BLIST_NODE_FLAG_NO_SAVE); */
 	gaim_blist_add_buddy(b, NULL, g, NULL);
-	serv_got_update(gc, b->name, 1, 0, 0, 0, 0);
+	serv_got_update(gc, b->name, TRUE, 0, 0, 0, 0);
 
 #if 0
 	RendezvousBuddy *rb;
@@ -144,7 +144,7 @@ static void rendezvous_removefromlocal(GaimConnection *gc, const char *name, con
 	if (b == NULL)
 		return;
 
-	serv_got_update(gc, b->name, 0, 0, 0, 0, 0);
+	serv_got_update(gc, b->name, FALSE, 0, 0, 0, 0);
 	gaim_blist_remove_buddy(b);
 	/* XXX - This results in incorrect group counts--needs to be fixed in the core */
 	/* XXX - We also need to call remove_idle_buddy() in server.c for idle buddies */ 
@@ -176,7 +176,7 @@ static void rendezvous_removeallfromlocal(GaimConnection *gc)
 					b = (GaimBuddy *)bnode;
 					if (b->account != account)
 						continue;
-					serv_got_update(gc, b->name, 0, 0, 0, 0, 0);
+					serv_got_update(gc, b->name, FALSE, 0, 0, 0, 0);
 					gaim_blist_remove_buddy(b);
 				}
 			}
@@ -264,7 +264,7 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 			/* Away */
 			rb->status = UC_UNAVAILABLE;
 		}
-		serv_got_update(gc, name, 1, 0, 0, rb->idle, rb->status);
+		serv_got_update(gc, name, TRUE, 0, 0, rb->idle, rb->status);
 	}
 
 	node1 = mdns_txt_find(rdata, "msg");
