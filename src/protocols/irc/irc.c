@@ -416,8 +416,13 @@ static void handle_topic(struct gaim_connection *gc, char *text)
 	*po = 0;
 	po += 2;
 
-	if ((c = irc_find_chat(gc, text)))
+	if ((c = irc_find_chat(gc, text))) {
+		char buf[IRC_BUF_LEN];
 		chat_set_topic(c, NULL, po);
+		g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
+				text, po);
+		write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL));
+	}
 }
 
 static gboolean mode_has_arg(struct gaim_connection *gc, char sign, char mode)
@@ -847,8 +852,13 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 	} else if (!strcmp(cmd, "TOPIC")) {
 		struct conversation *c = irc_find_chat(gc, word[3]);
 		char *topic = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
-		if (c)
+		if (c) {
+			char buf[IRC_BUF_LEN];
 			chat_set_topic(c, nick, topic);
+			g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
+					nick, topic);
+			write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL));
+		}
 	} else if (!strcmp(cmd, "WALLOPS")) { /* */
 	}
 }
