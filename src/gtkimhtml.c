@@ -1952,8 +1952,6 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 #undef ITALICS
 #undef SIZE
 #undef PTSZ
-#undef REG
-#undef ENC
 #undef END
 
 	g_strfreev (xflds);
