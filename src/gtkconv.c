@@ -145,6 +145,7 @@ static void
 do_save_convo(GtkWidget *wid)
 {
 	GaimConversation *conv;
+	const char *name;
 	const char *filename;
 	FILE *fp;
 
@@ -167,6 +168,9 @@ do_save_convo(GtkWidget *wid)
 	if ((fp = fopen(filename, "w+")) == NULL)
 		return;
 
+	name = gaim_conversation_get_name(conv);
+
+	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
 	fprintf(fp, "%s", conv->history->str);
 
 	fclose(fp);
@@ -3069,7 +3073,7 @@ save_convo(GtkWidget *save, GaimConversation *c)
 
 	window = gtk_file_selection_new(_("Save Conversation"));
 
-	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "%s.log",
+	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "%s.html",
 			   gaim_home_dir(), gaim_normalize(c->account, c->name));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 	g_object_set_data(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
@@ -4626,12 +4630,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
 
-		/*conv->history = g_string_append(conv->history, t1);
-		conv->history = g_string_append(conv->history, t2);
-		conv->history = g_string_append(conv->history, "\n");
-
-		g_free(t1);
-		g_free(t2); */
+		conv->history = g_string_append(conv->history, buf);
+		conv->history = g_string_append(conv->history, new_message);
+		conv->history = g_string_append(conv->history, "<BR>\n");
 
 		g_free(with_font_tag);
 		g_free(new_message);
