@@ -59,8 +59,6 @@ static HMENU systray_menu=0;
 static HMENU systray_away_menu=0;
 /* UTF-8 to locale conversion */
 gchar *locenc=NULL;
-static gsize bread=0;
-static gsize bwrite=0;
 
 /*
  *  GLOBALS
@@ -100,14 +98,14 @@ static HMENU systray_create_awy_menu(void) {
 	systray_away_menu = CreatePopupMenu();
 	while (awy && (item_count <= SYSTRAY_CMND_SET_AWY+MAX_AWY_MESSAGES)) {
 		a = (struct away_message *)awy->data;
-		locenc = g_locale_from_utf8(a->name, -1, &bread, &bwrite, NULL);
+		locenc = g_locale_from_utf8(a->name, -1, NULL, NULL, NULL);
 		AppendMenu(systray_away_menu, MF_STRING, item_count, locenc);
 		g_free(locenc);
 		awy = g_slist_next(awy);
 		item_count+=1;
 	}
 	AppendMenu(systray_away_menu, MF_SEPARATOR, 0, 0);
-	locenc = g_locale_from_utf8(_("New"), -1, &bread, &bwrite, NULL);
+	locenc = g_locale_from_utf8(_("New"), -1, NULL, NULL, NULL);
 	AppendMenu(systray_away_menu, MF_STRING, SYSTRAY_CMND_SET_AWY_NEW, locenc);
 	g_free(locenc);
 	return systray_away_menu;
@@ -123,7 +121,7 @@ static void systray_show_menu(int x, int y, BOOL connected) {
 		/* If signoff item dosn't exist.. create it */
 		if(!IsMenuItem(systray_menu, SYSTRAY_CMND_SIGNOFF)) {
 			DeleteMenu(systray_menu, SYSTRAY_CMND_SIGNON, MF_BYCOMMAND);
-			locenc = g_locale_from_utf8(_("Signoff"), -1, &bread, &bwrite, NULL);
+			locenc = g_locale_from_utf8(_("Signoff"), -1, NULL, NULL, NULL);
 			InsertMenu(systray_menu, SYSTRAY_CMND_MENU_EXIT, 
 				   MF_BYCOMMAND | MF_STRING, SYSTRAY_CMND_SIGNOFF, locenc);
 			g_free(locenc);
@@ -133,7 +131,7 @@ static void systray_show_menu(int x, int y, BOOL connected) {
 			if(!DeleteMenu(systray_menu, (UINT)systray_away_menu, MF_BYCOMMAND))
 				debug_printf("Error using DeleteMenu\n");
 		}
-		locenc = g_locale_from_utf8(_("Set Away Message"), -1, &bread, &bwrite, NULL);
+		locenc = g_locale_from_utf8(_("Set Away Message"), -1, NULL, NULL, NULL);
 		InsertMenu(systray_menu, SYSTRAY_CMND_PREFS, 
 			   MF_BYCOMMAND | MF_POPUP | MF_STRING, (UINT)systray_create_awy_menu(),
 			   locenc);
@@ -142,7 +140,7 @@ static void systray_show_menu(int x, int y, BOOL connected) {
 		/* If away, put "I'm Back" option in menu */
 		if(st_state == SYSTRAY_STATE_AWAY) {
 			if(!IsMenuItem(systray_menu, SYSTRAY_CMND_BACK)) {
-				locenc = g_locale_from_utf8(_("I'm Back"), -1, &bread, &bwrite, NULL);
+				locenc = g_locale_from_utf8(_("I'm Back"), -1, NULL, NULL, NULL);
 				InsertMenu(systray_menu, (UINT)systray_away_menu, 
 					   MF_BYCOMMAND | MF_STRING, SYSTRAY_CMND_BACK,
 					   locenc);
@@ -156,7 +154,7 @@ static void systray_show_menu(int x, int y, BOOL connected) {
 		/* If signon item dosn't exist.. create it */
 		if(!IsMenuItem(systray_menu, SYSTRAY_CMND_SIGNON)) {
 			DeleteMenu(systray_menu, SYSTRAY_CMND_SIGNOFF, MF_BYCOMMAND);
-			locenc = g_locale_from_utf8(_("Sign On"), -1, &bread, &bwrite, NULL);
+			locenc = g_locale_from_utf8(_("Sign On"), -1, NULL, NULL, NULL);
 			InsertMenu(systray_menu, SYSTRAY_CMND_MENU_EXIT, 
 				   MF_BYCOMMAND | MF_STRING, SYSTRAY_CMND_SIGNON, locenc);
 			g_free(locenc);
@@ -308,18 +306,17 @@ static void systray_create_menu(void) {
 	/* create popup menu */
 	if((systray_menu = CreatePopupMenu())) {
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_PREFS, 
-			       (locenc=g_locale_from_utf8(_("Preferences"), -1, &bread, &bwrite, NULL))))
+			       (locenc=g_locale_from_utf8(_("Preferences"), -1, NULL, NULL, NULL))))
 			debug_printf("AppendMenu error: %ld\n", GetLastError());
 		g_free(locenc);
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_AUTOLOGIN, 
-			       (locenc=g_locale_from_utf8(_("Auto-login"), -1, &bread, &bwrite, NULL))))
+			       (locenc=g_locale_from_utf8(_("Auto-login"), -1, NULL, NULL, NULL))))
 			debug_printf("AppendMenu error: %ld\n", GetLastError());
 		g_free(locenc);
 		if(!AppendMenu(systray_menu, MF_SEPARATOR, 0, 0))
 			debug_printf("AppendMenu error: %ld\n", GetLastError());
-		g_free(locenc);
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_MENU_EXIT,
-			       (locenc=g_locale_from_utf8(_("Exit"), -1, &bread, &bwrite, NULL))))
+			       (locenc=g_locale_from_utf8(_("Exit"), -1, NULL, NULL, NULL))))
 			debug_printf("AppendMenu error: %ld\n", GetLastError());
 		g_free(locenc);
 	} else
@@ -334,7 +331,7 @@ static void systray_init_icon(HWND hWnd, HICON icon) {
 	wgaim_nid.uFlags=NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	wgaim_nid.uCallbackMessage=WM_TRAYMESSAGE;
 	wgaim_nid.hIcon=icon;
-	locenc=g_locale_from_utf8(GAIM_SYSTRAY_DISCONN_HINT, -1, &bread, &bwrite, NULL);
+	locenc=g_locale_from_utf8(GAIM_SYSTRAY_DISCONN_HINT, -1, NULL, NULL, NULL);
 	strcpy(wgaim_nid.szTip, locenc);
 	g_free(locenc);
 	Shell_NotifyIcon(NIM_ADD,&wgaim_nid);
@@ -342,7 +339,7 @@ static void systray_init_icon(HWND hWnd, HICON icon) {
 
 static void systray_change_icon(HICON icon, char* text) {
 	wgaim_nid.hIcon = icon;
-	locenc = g_locale_from_utf8(text, -1, &bread, &bwrite, NULL);
+	locenc = g_locale_from_utf8(text, -1, NULL, NULL, NULL);
 	lstrcpy(wgaim_nid.szTip, locenc);
 	g_free(locenc);
 	Shell_NotifyIcon(NIM_MODIFY,&wgaim_nid);
