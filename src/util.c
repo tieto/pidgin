@@ -827,6 +827,7 @@ void spell_checker(GtkWidget * text)
                                 g_string_free( string, TRUE );
                         }
                         pclose( file);
+			g_free(word);
                         break;
                 }
                 else if(!isalpha(GTK_TEXT_INDEX(GTK_TEXT(text), start)))

@@ -804,6 +804,7 @@ void remove_tags(GtkWidget *entry, char *tag)
 		while((t = strstr(t, "<FONT SIZE="))) {
 			if (((t-s) < finish) && ((t-s) >= start)) {
 				gtk_editable_delete_text(GTK_EDITABLE(entry), (t-s), (t-s) + strlen(tag));
+				g_free(s);
 				s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
 				t = s;
 			}
@@ -815,6 +816,7 @@ void remove_tags(GtkWidget *entry, char *tag)
 		while((t = strstr(t, tag))) {
 			if (((t-s) < finish) && ((t-s) >= start)) {
 				gtk_editable_delete_text(GTK_EDITABLE(entry), (t-s), (t-s) + strlen(tag));
+				g_free(s);
 				s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
 				t = s;
 			}
@@ -879,6 +881,7 @@ void advance_past(GtkWidget *entry, char *pre, char *post)
 	} else {
 		gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &pos);
 	}
+	g_free(s);
 	sprintf(debug_buff, _("Setting position to %d\n"), pos);
 	debug_print(debug_buff);
 	gtk_editable_set_position(GTK_EDITABLE(entry), pos);
