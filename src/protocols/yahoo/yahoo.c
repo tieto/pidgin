@@ -1850,7 +1850,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect."));
+		gaim_connection_error(gc, _("Unable to connect"));
 		return;
 	}
 
@@ -1881,7 +1881,7 @@ static void yahoo_got_web_connected(gpointer data, gint source, GaimInputConditi
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect."));
+		gaim_connection_error(gc, _("Unable to connect"));
 		return;
 	}
 
@@ -1909,7 +1909,6 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	int len, o = 0;
 
 	len = read(source, buf, sizeof(buf));
-
 	if (len <= 0  || strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302"))) {
 		gaim_connection_error(gc, _("Unable to read"));
 		return;
@@ -1931,9 +1930,8 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	yd->auth = g_strdup(buf2);
 	gaim_input_remove(gc->inpa);
 	close(source);
-
 	/* Now we have our cookies to login with.  I'll go get the milk. */
-	if (gaim_proxy_connect(account, "wcs1.msg.sc5.yahoo.com",
+	if (gaim_proxy_connect(account, "wcs2.msg.dcn.yahoo.com",
 			       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
 			       yahoo_got_web_connected, gc) != 0) {
 		gaim_connection_error(gc, _("Connection problem"));
@@ -1946,7 +1944,7 @@ static void yahoo_got_cookies(gpointer data, gint source, GaimInputCondition con
 	GaimConnection *gc = data;
 	struct yahoo_data *yd = gc->proto_data;
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect."));
+		gaim_connection_error(gc, _("Unable to connect"));
 		return;
 	}
 	write(source, yd->auth, strlen(yd->auth));
@@ -2042,7 +2040,6 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 	url = g_string_append(url, "&.hash=1&.md5=1 HTTP/1.1\r\n"
 			      "Host: login.yahoo.com\r\n\r\n");
 	g_hash_table_destroy(hash);
-	
 	yd->auth = g_string_free(url, FALSE);
 	if (gaim_proxy_connect(account, "login.yahoo.com", 80, yahoo_got_cookies, gc) != 0) {
 		gaim_connection_error(gc, _("Connection problem"));
@@ -2705,10 +2702,9 @@ static void yahoo_add_deny(GaimConnection *gc, const char *who) {
 
 	if (!yd->logged_in)
 		return;
-	
-	/* It seems to work better without this */
-	/* if (gc->account->perm_deny != 4)     */
-	/*	return;                         */
+
+	if (gc->account->perm_deny != 4)
+		return;
 
 	if (!who || who[0] == '\0')
 		return;
