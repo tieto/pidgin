@@ -38,6 +38,7 @@
 #include "gtkutils.h"
 
 #include "ui.h"
+#include "util.h"
 
 typedef struct
 {
@@ -910,7 +911,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 				   _("Unknown pounce event. Please report this!"),
 				   alias);
 
-		gaim_notify_info(NULL, NULL, tmp, NULL);
+		gaim_notify_info(NULL, NULL, tmp, (char*)gaim_date_full());
 	}
 
 	if (gaim_pounce_action_is_enabled(pounce, "send-message")) {
