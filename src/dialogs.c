@@ -1990,18 +1990,67 @@ void show_add_perm(char *who)
         GtkWidget *rbox;
         GtkWidget *topbox;
         GtkWidget *which;
-        struct addperm *p = g_new0(struct addperm, 1);
+	GdkBitmap *mask;
+	GdkPixmap *icon;
+	GtkWidget *icon_i;
+	GtkWidget *button_box;
+
+	struct addperm *p = g_new0(struct addperm, 1);
 
         p->window = gtk_window_new(GTK_WINDOW_DIALOG);
-        dialogwindows = g_list_prepend(dialogwindows, p->window);
-        cancel = gtk_button_new_with_label(_("Cancel"));
-        add = gtk_button_new_with_label(_("Add"));
-        bbox = gtk_hbox_new(TRUE, 10);
+	gtk_widget_show(p->window);
+	dialogwindows = g_list_prepend(dialogwindows, p->window);
+
+	bbox = gtk_hbox_new(TRUE, 10);
         topbox = gtk_hbox_new(FALSE, 5);
         vbox = gtk_vbox_new(FALSE, 5);
         rbox = gtk_vbox_new(FALSE, 5);
         p->entry = gtk_entry_new();
 
+	/* Build Add Button */
+
+	add = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( p->window->window, &mask, NULL, add_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Add"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(add), button_box);
+
+	/* End of Add Button */
+	
+	/* Build Cancel Button */
+
+	cancel = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( p->window->window, &mask, NULL, cancel_xpm);
+
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(cancel), button_box);
+	
+	/* End of Cancel Button */
         if (who != NULL)
                 gtk_entry_set_text(GTK_ENTRY(p->entry), who);
 
@@ -2016,8 +2065,12 @@ void show_add_perm(char *who)
         gtk_widget_show(which);
                 
         /* Put the buttons in the box */
-        gtk_box_pack_start(GTK_BOX(bbox), add, TRUE, TRUE, 10);
-        gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
+	
+	gtk_widget_set_usize(add, 75, 30);
+	gtk_widget_set_usize(cancel, 75, 30);
+
+	gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
 		
         label = gtk_label_new(_("Add"));
         gtk_widget_show(label);
