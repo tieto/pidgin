@@ -1,7 +1,7 @@
 /*
  * gaim
  *
- * Copyright (C) 1998-2002, Mark Spencer <markster@marko.net>
+ * Copyright (C) 2002, Sean Egan <bj91704@binghamton.edu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -652,6 +652,10 @@ GtkWidget *proxy_page() {
 	return ret;
 }
 
+static void browser_print_option(GtkEntry *entry, void *nullish) {
+	g_snprintf(web_command_new, sizeof(web_command_new), "%s", gtk_entry_get_text(entry));
+}
+
 GtkWidget *browser_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox;
@@ -685,6 +689,10 @@ GtkWidget *browser_page() {
 	if (web_browser_new != BROWSER_MANUAL)
 		gtk_widget_set_sensitive(browser_entry, FALSE);
 	gtk_box_pack_start (GTK_BOX (hbox), browser_entry, FALSE, FALSE, 0);
+
+	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command_new);
+	gtk_signal_connect(GTK_OBJECT(browser_entry), "changed",
+			   GTK_SIGNAL_FUNC(browser_print_option), NULL);
 
 	vbox = make_frame (ret, _("Browser Options"));
 	gaim_button(_("Open new _window by default"), &misc_options_new, OPT_MISC_BROWSER_POPUP, vbox);
@@ -1353,7 +1361,8 @@ void show_prefs()
 	web_browser_new = web_browser;
 	proxytype_new = proxytype;
 	g_snprintf(sound_cmd_new, sizeof(sound_cmd_new), "%s", sound_cmd);
-	g_snprintf(web_command_new, sizeof(web_command_new), "%s", web_command);
+	g_snprintf(web_command_new, sizeof(web_command_new), "%s", 
+		   web_command ? web_command : "xterm -e lynx \"%%s\"");
 	g_snprintf(fontface_new, sizeof(fontface_new), fontface);
 #if !GTK_CHECK_VERSION(1,3,0)
 	g_snprintf(fontxfld_new, sizeof(fontxfld_new), fontxfld);

@@ -17,7 +17,7 @@ Url:		http://gaim.sf.net/
 Source:		%{name}-%{version}.tar.gz
 Packager:	Rob Flynn <rob@marko.net>
 BuildRoot:	/var/tmp/%{name}-%{version}-root
-Requires:	gtk+ >= 1.2.5
+Requires:	gtk+ >= 2.0.0
 
 %description
 Gaim allows you to talk to anyone using a variety of messaging 
@@ -31,38 +31,17 @@ unique features, such as perl scripting and C plugins.
 
 Gaim is NOT affiliated with or endorsed by AOL.
 
-%package applet
-Summary:	A Gnome based multiprotocol instant messaging applet
-Group:		Applications/Internet
-Requires:	gtk+ >= 1.2.5
-
-%description applet
-Gaim allows you to talk to anyone using a variety of messaging 
-protocols, including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, 
-MSN Messenger, Jabber, Gadu-Gadu, Napster, and Zephyr.  These 
-protocols are implemented using a modular, easy to use design.  
-To use a protocol, just load the plugin for it.
-
-Gaim supports many common features of other clients, as well as many 
-unique features, such as perl scripting and C plugins.
-
-The applet sits in your Gnome panel. It has all the same functionality
-as the regular application but takes less desktop space.
-
-Gaim is NOT affiliated with or endorsed by AOL.
-
 %prep
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-gnome --disable-artsc
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-artsc
 make
 if [ -d $RPM_BUILD_ROOT ]; then rm -r $RPM_BUILD_ROOT; fi;
 mkdir -p $RPM_BUILD_ROOT%{prefix}
 make prefix=$RPM_BUILD_ROOT%{prefix} install
 make -C src mostlyclean-compile
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --sysconfdir=%{sysconfdir} --enable-distrib --disable-artsc
-make -C src gaim_applet
 
 %install
 make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
@@ -76,20 +55,6 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 %{prefix}/share/locale/*/*/*
 %{prefix}/share/pixmaps/gaim.png
 %{prefix}/share/gnome/apps/Internet/gaim.desktop
-
-
-%files applet
-%defattr(-,root,root)
-%attr(755,root,root) %{prefix}/bin/gaim_applet
-%doc doc/the_penguin.txt doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README ChangeLog plugins/PERL-HOWTO HACKING
-%{prefix}/man/man1/gaim.1.gz
-%{prefix}/lib/gaim/*
-%{prefix}/share/locale/*/*/*
-%{prefix}/share/pixmaps/gaim.png
-%{prefix}/share/pixmaps/gaim/*
-%{prefix}/share/gnome/apps/Internet/gaim.desktop
-%{sysconfdir}/CORBA/servers/*
-%{prefix}/share/applets/Network/*
 
 %clean
 rm -r $RPM_BUILD_ROOT
