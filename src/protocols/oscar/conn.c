@@ -876,6 +876,13 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 
 	sess->modlistv = NULL;
 
+	sess->ssi.received_data = 0;
+	sess->ssi.waiting_for_ack = 0;
+	sess->ssi.holding_queue = NULL;
+	sess->ssi.revision = 0;
+	sess->ssi.items = NULL;
+	sess->ssi.timestamp = (time_t)0;
+
 	/*
 	 * Default to SNAC login unless XORLOGIN is explicitly set.
 	 */

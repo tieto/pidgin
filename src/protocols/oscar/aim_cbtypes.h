@@ -23,6 +23,7 @@
 #define AIM_CB_FAM_TRN 0x000c
 #define AIM_CB_FAM_CTN 0x000d /* ChatNav */
 #define AIM_CB_FAM_CHT 0x000e /* Chat */
+#define AIM_CB_FAM_SSI 0x0013 /* Server stored information */
 #define AIM_CB_FAM_ICQ 0x0015
 #define AIM_CB_FAM_ATH 0x0017
 #define AIM_CB_FAM_OFT 0xfffe /* OFT/Rvous */
@@ -182,6 +183,23 @@
 #define AIM_CB_ICQ_OFFLINEMSGCOMPLETE 0x00f1
 #define AIM_CB_ICQ_SIMPLEINFO 0x00f2
 #define AIM_CB_ICQ_DEFAULT 0xffff
+
+/*
+ * SNAC Family: Server-Stored Buddy Lists
+ */
+#define AIM_CB_SSI_ERROR 0x0001
+#define AIM_CB_SSI_REQRIGHTS 0x0002
+#define AIM_CB_SSI_RIGHTSINFO 0x0003
+#define AIM_CB_SSI_REQLIST 0x0005
+#define AIM_CB_SSI_LIST 0x0006
+#define AIM_CB_SSI_ACTIVATE 0x0007
+#define AIM_CB_SSI_ADD 0x0008
+#define AIM_CB_SSI_MOD 0x0009
+#define AIM_CB_SSI_DEL 0x000A
+#define AIM_CB_SSI_SRVACK 0x000E
+#define AIM_CB_SSI_NOLIST 0x000F
+#define AIM_CB_SSI_EDITSTART 0x0011
+#define AIM_CB_SSI_EDITSTOP 0x0012
 
 /*
  * SNAC Family: Authorizer

@@ -305,6 +305,16 @@ typedef struct aim_session_s {
 
 	/* ---- Internal Use Only ------------------------ */
 
+	/* Server-stored information (ssi) */
+	struct {
+		int received_data;
+		fu16_t revision;
+		struct aim_ssi_item *items;
+		time_t timestamp;
+		int waiting_for_ack;
+		aim_frame_t *holding_queue;
+	} ssi;
+
 	/* Connection information */
 	aim_conn_t *connlist;
 
@@ -998,8 +1008,25 @@ struct aim_ssi_item {
 faim_export int aim_ssi_reqrights(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_reqdata(aim_session_t *sess, aim_conn_t *conn, time_t localstamp, fu16_t localrev);
 faim_export int aim_ssi_enable(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_ssi_additems(aim_session_t *sess, aim_conn_t *conn, struct aim_ssi_item **items, unsigned int num);
+faim_export int aim_ssi_moditems(aim_session_t *sess, aim_conn_t *conn, struct aim_ssi_item **items, unsigned int num);
+faim_export int aim_ssi_delitems(aim_session_t *sess, aim_conn_t *conn, struct aim_ssi_item **items, unsigned int num);
 faim_export int aim_ssi_modbegin(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_modend(aim_session_t *sess, aim_conn_t *conn);
+
+faim_export int aim_ssi_inlist(aim_session_t *sess, aim_conn_t *conn, char *name, fu16_t type);
+/* faim_export int aim_ssi_getpermdeny(aim_tlvlist_t *tlvlist); */
+faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_ssi_addmastergroup(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num);
+faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num);
+faim_export int aim_ssi_addpermits(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
+faim_export int aim_ssi_adddenies(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
+faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num);
+faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **gn, unsigned int num);
+faim_export int aim_ssi_delpermits(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
+faim_export int aim_ssi_deldenies(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num);
+faim_export int aim_ssi_setpermdeny(aim_session_t *sess, aim_conn_t *conn, int permdeny);
 
 struct aim_icq_offlinemsg {
 	fu32_t sender;
