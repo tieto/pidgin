@@ -1560,7 +1560,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 				blist_parser_chat_settings = g_hash_table_new_full(g_str_hash,
 						g_str_equal, g_free, g_free);
 			if(blist_parser_setting_name && blist_parser_setting_value) {
-				g_hash_table_replace(blist_parser_buddy_settings,
+				g_hash_table_replace(blist_parser_chat_settings,
 						g_strdup(blist_parser_setting_name),
 						g_strdup(blist_parser_setting_value));
 			}
