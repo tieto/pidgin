@@ -385,6 +385,8 @@ gaim_find_prpl(const char *id)
 	GList *l;
 	GaimPlugin *plugin;
 
+	g_return_val_if_fail(id != NULL, NULL);
+
 	for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
 		plugin = (GaimPlugin *)l->data;
 
