@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5965 2003-05-30 09:38:29Z chipx86 $
+ * $Id: gg.c 6001 2003-05-31 14:29:44Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1286,7 +1286,7 @@ static void agg_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 		/* Drop all masks */
 		status &= ~(GG_STATUS_FRIENDS_MASK);
 		if (status == GG_STATUS_BUSY)
-			*se = "busy";
+			*se = "away";
 		else if (status == GG_STATUS_INVISIBLE)
 			*se = "invisiible";
 	}
