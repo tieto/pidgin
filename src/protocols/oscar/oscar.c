@@ -489,7 +489,7 @@ static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	if ((cnv = gaim_find_conversation(sn)))
 		gaim_conversation_write(cnv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 
-	gaim_conversation_update_progress(cnv, NULL, u100);
+	gaim_conversation_update_progress(cnv, 0);
 
 	g_free(dim); /* I guess? I don't see it anywhere else... -- mid */
 	g_free(sn);
@@ -3672,9 +3672,9 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "Disconnected.  Code is 0x%04x and msg is %s\n", code, msg);
 	if ((fr) && (fr->conn) && (fr->conn->type == AIM_CONN_TYPE_BOS)) {
 		if (code == 0x0001) {
-			gaim_connection_error_error(gc, _("You have been disconnected because you have signed on with this screen name at another location."));
+			gaim_connection_error(gc, _("You have been disconnected because you have signed on with this screen name at another location."));
 		} else {
-			gaim_connection_error_error(gc, _("You have been signed off for an unknown reason."));
+			gaim_connection_error(gc, _("You have been signed off for an unknown reason."));
 		}
 		od->killme = TRUE;
 	}
