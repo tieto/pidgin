@@ -11,7 +11,7 @@ st = -DSTATIC
 pkg_LTLIBRARIES =
 noinst_LIBRARIES = libmsn.a
 
-libmsn_a_SOURCES = msn.c md5.c md5.h
+libmsn_a_SOURCES = msn.c
 
 else
 
@@ -19,6 +19,6 @@ st =
 pkg_LTLIBRARIES = libmsn.la
 noinst_LIBRARIES =
 
-libmsn_la_SOURCES = msn.c md5.c md5.h
+libmsn_la_SOURCES = msn.c
 
 endif

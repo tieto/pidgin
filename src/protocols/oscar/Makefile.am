@@ -1,4 +1,4 @@
-EXTRA_DIST = aim.h aim_cbtypes.h aim_internal.h faimconfig.h md5.h README \
+EXTRA_DIST = aim.h aim_cbtypes.h aim_internal.h faimconfig.h README \
 		CHANGES COPYING BUGS AUTHORS
 
 pkgdir = $(libdir)/gaim
@@ -24,7 +24,6 @@ liboscar_a_SOURCES = 	admin.c		\
 			im.c		\
 			info.c		\
 			login.c		\
-			md5.c		\
 			meta.c		\
 			misc.c		\
 			msgcookie.c	\
@@ -57,7 +56,6 @@ liboscar_la_SOURCES = 	admin.c		\
 			im.c		\
 			info.c		\
 			login.c		\
-			md5.c		\
 			meta.c		\
 			misc.c		\
 			msgcookie.c	\

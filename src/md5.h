@@ -21,7 +21,7 @@
   ghost@aladdin.com
 
  */
-/*$Id: md5.h 2132 2001-08-04 01:37:49Z mid $ */
+/*$Id: md5.h 2379 2001-09-27 02:56:38Z warmenhoven $ */
 /*
   Independent implementation of MD5 (RFC 1321).
 
