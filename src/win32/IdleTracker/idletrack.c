@@ -10,11 +10,20 @@
 
 #define EXPORT __declspec(dllexport)
 
+/* from msdn docs */
+typedef struct tagMOUSEHOOKSTRUCT {
+    POINT pt; 
+    HWND  hwnd; 
+    UINT  wHitTestCode; 
+    DWORD dwExtraInfo; 
+} MOUSEHOOKSTRUCT;
+
 static HANDLE hMapObject = NULL;
 static DWORD *lastTime = NULL;
 static HHOOK keyHook = NULL;
 static HHOOK mouseHook = NULL;
 static HINSTANCE g_hInstance = NULL;
+static POINT g_point;
 
 static DWORD* setup_shared_mem() {
 	BOOL fInit;
@@ -52,7 +61,6 @@ static DWORD* setup_shared_mem() {
 LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (code < 0)
 		return CallNextHookEx(keyHook, code, wParam, lParam);
-	
 	if (lastTime == NULL)
 		lastTime = setup_shared_mem();
 	
@@ -66,6 +74,14 @@ LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
 LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (code < 0)
 		return CallNextHookEx(mouseHook, code, wParam, lParam);
+
+	/* We need to verify that the Mouse pointer has actually moved. */
+	if((g_point.x == ((MOUSEHOOKSTRUCT*)lParam)->pt.x) &&
+	   (g_point.y == ((MOUSEHOOKSTRUCT*)lParam)->pt.y))
+		return 0;
+
+	g_point.x = ((MOUSEHOOKSTRUCT*)lParam)->pt.x;
+	g_point.y = ((MOUSEHOOKSTRUCT*)lParam)->pt.y;
 	
 	if (lastTime == NULL)
 		lastTime = setup_shared_mem();
@@ -131,6 +147,8 @@ int WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved) {
 	switch(dwReason) {
 		case DLL_PROCESS_ATTACH:
 			g_hInstance = hInstance;
+			g_point.x = 0;
+			g_point.y = 0;
 			break;
 		case DLL_PROCESS_DETACH:
 			break;
