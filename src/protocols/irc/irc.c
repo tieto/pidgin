@@ -78,7 +78,7 @@ static struct conversation *irc_find_chat(struct gaim_connection *gc, char *name
 
 	while (bcs) {
 		struct conversation *b = bcs->data;
-		if (!strcmp(b->name, name))
+		if (!g_strcasecmp(b->name, name))
 			return b;
 		bcs = bcs->next;
 	}
