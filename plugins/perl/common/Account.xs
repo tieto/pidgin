@@ -114,13 +114,6 @@ const char *
 gaim_account_get_public_ip(account)
 	Gaim::Account account
 
-void *
-handle()
-CODE:
-	RETVAL = gaim_accounts_get_handle();
-OUTPUT:
-	RETVAL
-
 
 MODULE = Gaim::Account  PACKAGE = Gaim::Accounts  PREFIX = gaim_accounts_
 
@@ -131,6 +124,13 @@ gaim_accounts_add(account)
 void
 gaim_accounts_remove(account)
 	Gaim::Account account
+
+void *
+handle()
+CODE:
+	RETVAL = gaim_accounts_get_handle();
+OUTPUT:
+	RETVAL
 
 
 MODULE = Gaim::Account  PACKAGE = Gaim
