@@ -61,13 +61,11 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 %attr(755, root, root) %{_libdir}/gaim/*
 
 %{_bindir}/*
-%{_mandir}/man1/gaim.1.*
+%{_mandir}/man1/*
 %{_datadir}/locale/*/*/*
 %{_datadir}/pixmaps/*
-%{_datadir}/pixmaps/gaim/*
-%{_datadir}/pixmaps/gaim/dialogs/*
-%{_datadir}/pixmaps/gaim/buttons/*
-%{_datadir}/applications/gaim.desktop
+%{_datadir}/sounds/*
+%{_datadir}/applications/*
 
 %clean
 rm -r $RPM_BUILD_ROOT
