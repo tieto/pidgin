@@ -205,7 +205,10 @@ void  gaim_blist_alias_buddy (struct buddy *buddy, const char *alias)
 
 	g_free(buddy->alias);
 
-	buddy->alias = g_strdup(alias);
+	if(alias && strlen(alias))
+		buddy->alias = g_strdup(alias);
+	else
+		buddy->alias = NULL;
 
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
