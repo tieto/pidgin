@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: seanegan $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -91,7 +91,7 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 	    }
 #ifndef X_DISPLAY_MISSING
 	    if ((display = getenv("DISPLAY")) && *display) {
-		    (void) strncpy(mytty, sizeof(mytty), display);
+		    (void) strncpy(mytty, display, sizeof(mytty));
 		    mytty[sizeof(mytty)-1] = '\0';
 	    } else {
 #endif
