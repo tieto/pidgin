@@ -38,6 +38,20 @@
 GaimBuddyList *gaimbuddylist = NULL;
 static GaimBlistUiOps *blist_ui_ops = NULL;
 
+struct gaim_blist_node_setting {
+	enum {
+		GAIM_BLIST_NODE_SETTING_BOOL,
+		GAIM_BLIST_NODE_SETTING_INT,
+		GAIM_BLIST_NODE_SETTING_STRING
+	} type;
+	union {
+		gboolean boolean;
+		int integer;
+		char *string;
+	} value;
+};
+
+
 
 /*****************************************************************************
  * Private Utility functions                                                 *
@@ -436,6 +450,8 @@ void gaim_blist_rename_group(GaimGroup *group, const char *name)
 	}
 }
 
+static void gaim_blist_node_initialize_settings(GaimBlistNode* node);
+
 GaimChat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *components)
 {
 	GaimChat *chat;
@@ -449,8 +465,7 @@ GaimChat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *com
 	if(alias && strlen(alias))
 		chat->alias = g_strdup(alias);
 	chat->components = components;
-	chat->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
+	gaim_blist_node_initialize_settings((GaimBlistNode*)chat);
 
 	((GaimBlistNode*)chat)->type = GAIM_BLIST_CHAT_NODE;
 
@@ -498,7 +513,7 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
 	b->account = account;
 	b->name  = g_strdup(screenname);
 	b->alias = g_strdup(alias);
-	b->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	gaim_blist_node_initialize_settings((GaimBlistNode*)b);
 	((GaimBlistNode*)b)->type = GAIM_BLIST_BUDDY_NODE;
 
 	ops = gaim_blist_get_ui_ops();
@@ -751,6 +766,7 @@ GaimContact *gaim_contact_new()
 
 	c->totalsize = c->currentsize = c->online = 0;
 	c->score = INT_MAX;
+	gaim_blist_node_initialize_settings((GaimBlistNode*)c);
 
 	ops = gaim_blist_get_ui_ops();
 	if (ops != NULL && ops->new_node != NULL)
@@ -799,8 +815,7 @@ GaimGroup *gaim_group_new(const char *name)
 		g->totalsize = 0;
 		g->currentsize = 0;
 		g->online = 0;
-		g->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
-				g_free, g_free);
+		gaim_blist_node_initialize_settings((GaimBlistNode*)g);
 		((GaimBlistNode*)g)->type = GAIM_BLIST_GROUP_NODE;
 
 		ops = gaim_blist_get_ui_ops();
@@ -1078,7 +1093,7 @@ void gaim_blist_remove_buddy (GaimBuddy *buddy)
 		gaim_buddy_icon_unref(buddy->icon);
 
 	ops->remove(gaimbuddylist, node);
-	g_hash_table_destroy(buddy->settings);
+	g_hash_table_destroy(buddy->node.settings);
 	g_free(buddy->name);
 	g_free(buddy->alias);
 	g_free(buddy);
@@ -1900,15 +1915,18 @@ static gboolean blist_safe_to_write = FALSE;
 static void parse_setting(GaimBlistNode *node, xmlnode *setting)
 {
 	const char *name = xmlnode_get_attrib(setting, "name");
+	const char *type = xmlnode_get_attrib(setting, "type");
 	char *value = xmlnode_get_data(setting);
 
-	/* XXX: replace with generic settings stuff */
-	if(GAIM_BLIST_NODE_IS_GROUP(node))
-		gaim_group_set_setting((GaimGroup*)node, name, value);
-	else if(GAIM_BLIST_NODE_IS_CHAT(node))
-		gaim_chat_set_setting((GaimChat*)node, name, value);
-	else if(GAIM_BLIST_NODE_IS_BUDDY(node))
-		gaim_buddy_set_setting((GaimBuddy*)node, name, value);
+	if(!value)
+		return;
+
+	if(!type || !strcmp(type, "string"))
+		gaim_blist_node_set_string(node, name, value);
+	else if(!strcmp(type, "bool"))
+		gaim_blist_node_set_bool(node, name, atoi(value));
+	else if(!strcmp(type, "int"))
+		gaim_blist_node_set_int(node, name, atoi(value));
 
 	g_free(value);
 }
@@ -2206,58 +2224,61 @@ gaim_blist_request_add_group(void)
 		ui_ops->request_add_group();
 }
 
-static void blist_print_group_settings(gpointer key, gpointer data,
-		gpointer user_data) {
-	char *key_val;
-	char *data_val;
-	FILE *file = user_data;
+static void blist_print_setting(const char *key,
+		struct gaim_blist_node_setting *setting, FILE *file, int indent)
+{
+	char *key_val, *data_val = NULL;
+	const char *type = NULL;
+	int i;
 
-	if(!key || !data)
+	if(!key)
 		return;
 
-	key_val = g_markup_escape_text(key, -1);
-	data_val = g_markup_escape_text(data, -1);
+	switch(setting->type) {
+		case GAIM_BLIST_NODE_SETTING_BOOL:
+			type = "bool";
+			data_val = g_strdup_printf("%d", setting->value.boolean);
+			break;
+		case GAIM_BLIST_NODE_SETTING_INT:
+			type = "int";
+			data_val = g_strdup_printf("%d", setting->value.integer);
+			break;
+		case GAIM_BLIST_NODE_SETTING_STRING:
+			if(!setting->value.string)
+				return;
 
-	fprintf(file, "\t\t\t<setting name=\"%s\">%s</setting>\n", key_val,
+			type = "string";
+			data_val = g_markup_escape_text(setting->value.string, -1);
+			break;
+	}
+
+	/* this can't happen */
+	if(!type || !data_val)
+		return;
+
+	for(i=0; i<indent; i++) fprintf(file, "\t");
+
+	key_val = g_markup_escape_text(key, -1);
+	fprintf(file, "<setting name=\"%s\" type=\"%s\">%s</setting>\n", key_val, type,
 			data_val);
+
 	g_free(key_val);
 	g_free(data_val);
+}
+
+static void blist_print_group_settings(gpointer key, gpointer data,
+		gpointer user_data) {
+	blist_print_setting(key, data, user_data, 3);
 }
 
 static void blist_print_buddy_settings(gpointer key, gpointer data,
 		gpointer user_data) {
-	char *key_val;
-	char *data_val;
-	FILE *file = user_data;
-
-	if(!key || !data)
-		return;
-
-	key_val = g_markup_escape_text(key, -1);
-	data_val = g_markup_escape_text(data, -1);
-
-	fprintf(file, "\t\t\t\t\t<setting name=\"%s\">%s</setting>\n", key_val,
-			data_val);
-	g_free(key_val);
-	g_free(data_val);
+	blist_print_setting(key, data, user_data, 5);
 }
 
 static void blist_print_cnode_settings(gpointer key, gpointer data,
 		gpointer user_data) {
-	char *key_val;
-	char *data_val;
-	FILE *file = user_data;
-
-	if(!key || !data)
-		return;
-
-	key_val = g_markup_escape_text(key, -1);
-	data_val = g_markup_escape_text(data, -1);
-
-	fprintf(file, "\t\t\t\t<setting name=\"%s\">%s</setting>\n", key_val,
-			data_val);
-	g_free(key_val);
-	g_free(data_val);
+	blist_print_setting(key, data, user_data, 4);
 }
 
 static void blist_print_chat_components(gpointer key, gpointer data,
@@ -2295,7 +2316,7 @@ static void print_buddy(FILE *file, GaimBuddy *buddy) {
 	if(bud_alias) {
 		fprintf(file, "\t\t\t\t\t<alias>%s</alias>\n", bud_alias);
 	}
-	g_hash_table_foreach(buddy->settings, blist_print_buddy_settings, file);
+	g_hash_table_foreach(buddy->node.settings, blist_print_buddy_settings, file);
 	fprintf(file, "\t\t\t\t</buddy>\n");
 	g_free(bud_name);
 	g_free(bud_alias);
@@ -2320,7 +2341,8 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 		if(!exp_acct || gaim_group_on_account(group, exp_acct)) {
 			char *group_name = g_markup_escape_text(group->name, -1);
 			fprintf(file, "\t\t<group name=\"%s\">\n", group_name);
-			g_hash_table_foreach(group->settings, blist_print_group_settings, file);
+			g_hash_table_foreach(group->node.settings,
+					blist_print_group_settings, file);
 			for(cnode = gnode->child; cnode; cnode = cnode->next) {
 				if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
 					GaimContact *contact = (GaimContact*)cnode;
@@ -2361,7 +2383,7 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 						}
 						g_hash_table_foreach(chat->components,
 								blist_print_chat_components, file);
-						g_hash_table_foreach(chat->settings,
+						g_hash_table_foreach(chat->node.settings,
 								blist_print_cnode_settings, file);
 						fprintf(file, "\t\t\t</chat>\n");
 						g_free(acct_name);
@@ -2452,46 +2474,169 @@ void gaim_blist_save() {
 	g_free(filename_real);
 }
 
-void gaim_group_set_setting(GaimGroup *g, const char *key,
-		const char *value) {
-	if(!g)
+
+static void gaim_blist_node_setting_free(struct gaim_blist_node_setting *setting)
+{
+	switch(setting->type) {
+		case GAIM_BLIST_NODE_SETTING_BOOL:
+		case GAIM_BLIST_NODE_SETTING_INT:
+			break;
+		case GAIM_BLIST_NODE_SETTING_STRING:
+			g_free(setting->value.string);
+			break;
+	}
+}
+
+static void gaim_blist_node_initialize_settings(GaimBlistNode* node)
+{
+	if(node->settings)
 		return;
-	g_hash_table_replace(g->settings, g_strdup(key), g_strdup(value));
+
+	node->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+			(GDestroyNotify)gaim_blist_node_setting_free);
 }
 
-const char *gaim_group_get_setting(GaimGroup *g, const char *key) {
-	if(!g)
-		return NULL;
-	return g_hash_table_lookup(g->settings, key);
+void gaim_blist_node_remove_setting(GaimBlistNode *node, const char *key)
+{
+	g_return_if_fail(node != NULL);
+	g_return_if_fail(node->settings != NULL);
+	g_return_if_fail(key != NULL);
+
+	g_hash_table_remove(node->settings, key);
 }
 
-void gaim_chat_set_setting(GaimChat *c, const char *key,
+
+void gaim_blist_node_set_bool(GaimBlistNode* node, const char *key, gboolean value)
+{
+	struct gaim_blist_node_setting *setting;
+
+	g_return_if_fail(node != NULL);
+	g_return_if_fail(node->settings != NULL);
+	g_return_if_fail(key != NULL);
+
+	setting = g_new0(struct gaim_blist_node_setting, 1);
+	setting->type = GAIM_BLIST_NODE_SETTING_BOOL;
+	setting->value.boolean = value;
+
+	g_hash_table_replace(node->settings, g_strdup(key), setting);
+}
+
+gboolean gaim_blist_node_get_bool(GaimBlistNode* node, const char *key)
+{
+	struct gaim_blist_node_setting *setting;
+
+	g_return_val_if_fail(node != NULL, FALSE);
+	g_return_val_if_fail(node->settings != NULL, FALSE);
+	g_return_val_if_fail(key != NULL, FALSE);
+
+	setting = g_hash_table_lookup(node->settings, key);
+
+	return setting ? setting->value.boolean : FALSE;
+}
+
+void gaim_blist_node_set_int(GaimBlistNode* node, const char *key, int value)
+{
+	struct gaim_blist_node_setting *setting;
+
+	g_return_if_fail(node != NULL);
+	g_return_if_fail(node->settings != NULL);
+	g_return_if_fail(key != NULL);
+
+	setting = g_new0(struct gaim_blist_node_setting, 1);
+	setting->type = GAIM_BLIST_NODE_SETTING_STRING;
+	setting->value.integer = value;
+
+	g_hash_table_replace(node->settings, g_strdup(key), setting);
+}
+
+int gaim_blist_node_get_int(GaimBlistNode* node, const char *key)
+{
+	struct gaim_blist_node_setting *setting;
+
+	g_return_val_if_fail(node != NULL, 0);
+	g_return_val_if_fail(node->settings != NULL, 0);
+	g_return_val_if_fail(key != NULL, 0);
+
+	setting = g_hash_table_lookup(node->settings, key);
+
+	return setting ? setting->value.integer : 0;
+}
+
+void gaim_blist_node_set_string(GaimBlistNode* node, const char *key,
 		const char *value)
 {
-	if(!c)
-		return;
-	g_hash_table_replace(c->settings, g_strdup(key), g_strdup(value));
+	struct gaim_blist_node_setting *setting;
+
+	g_return_if_fail(node != NULL);
+	g_return_if_fail(node->settings != NULL);
+	g_return_if_fail(key != NULL);
+
+	setting = g_new0(struct gaim_blist_node_setting, 1);
+	setting->type = GAIM_BLIST_NODE_SETTING_STRING;
+	setting->value.string = g_strdup(value);
+
+	g_hash_table_replace(node->settings, g_strdup(key), setting);
+}
+
+const char *gaim_blist_node_get_string(GaimBlistNode* node, const char *key)
+{
+	struct gaim_blist_node_setting *setting;
+
+	g_return_val_if_fail(node != NULL, NULL);
+	g_return_val_if_fail(node->settings != NULL, NULL);
+	g_return_val_if_fail(key != NULL, NULL);
+
+	setting = g_hash_table_lookup(node->settings, key);
+
+	return setting ? setting->value.string : NULL;
+}
+
+
+/* XXX: this is compatability stuff.  Remove after.... oh, I dunno... 0.77 or so */
+
+void gaim_group_set_setting(GaimGroup *g, const char *key, const char *value)
+{
+	gaim_debug_warning("blist", "gaim_group_set_setting() is deprecated\n");
+
+	gaim_blist_node_set_string((GaimBlistNode*)g, key, value);
+}
+
+const char *gaim_group_get_setting(GaimGroup *g, const char *key)
+{
+	gaim_debug_warning("blist", "gaim_group_get_setting() is deprecated\n");
+
+	return gaim_blist_node_get_string((GaimBlistNode*)g, key);
+}
+
+void gaim_chat_set_setting(GaimChat *c, const char *key, const char *value)
+{
+	gaim_debug_warning("blist", "gaim_chat_set_setting() is deprecated\n");
+
+	gaim_blist_node_set_string((GaimBlistNode*)c, key, value);
 }
 
 const char *gaim_chat_get_setting(GaimChat *c, const char *key)
 {
-	if(!c)
-		return NULL;
-	return g_hash_table_lookup(c->settings, key);
+	gaim_debug_warning("blist", "gaim_chat_get_setting() is deprecated\n");
+
+	return gaim_blist_node_get_string((GaimBlistNode*)c, key);
 }
 
-void gaim_buddy_set_setting(GaimBuddy *b, const char *key,
-		const char *value) {
-	if(!b)
-		return;
-	g_hash_table_replace(b->settings, g_strdup(key), g_strdup(value));
+void gaim_buddy_set_setting(GaimBuddy *b, const char *key, const char *value)
+{
+	gaim_debug_warning("blist", "gaim_buddy_set_setting() is deprecated\n");
+
+	gaim_blist_node_set_string((GaimBlistNode*)b, key, value);
 }
 
-const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key) {
-	if(!b)
-		return NULL;
-	return g_hash_table_lookup(b->settings, key);
+const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key)
+{
+	gaim_debug_warning("blist", "gaim_buddy_get_setting() is deprecated\n");
+
+	return gaim_blist_node_get_string((GaimBlistNode*)b, key);
 }
+
+/* XXX: end compat crap */
 
 int gaim_blist_get_group_size(GaimGroup *group, gboolean offline) {
 	if(!group)

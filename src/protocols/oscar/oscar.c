@@ -1834,10 +1834,11 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		 * If for some reason the checksum is valid, but cached file is not..
 		 * we want to know.
 		 */
-		filename = gaim_buddy_get_setting(b, "buddy_icon");
+		filename = gaim_blist_node_get_string((GaimBlistNode*)b, "buddy_icon");
 		if (filename != NULL) {
 			if (g_file_test(filename, G_FILE_TEST_EXISTS))
-				saved_b16 = gaim_buddy_get_setting(b, "icon_checksum");
+				saved_b16 = gaim_blist_node_get_string((GaimBlistNode*)b,
+						"icon_checksum");
 		} else
 			saved_b16 = NULL;
 
@@ -3468,7 +3469,7 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 									  sn, icon, iconlen);
 		b16 = gaim_base16_encode(iconcsum, iconcsumlen);
 		if (b16) {
-			gaim_buddy_set_setting(b, "icon_checksum", b16);
+			gaim_blist_node_set_string((GaimBlistNode*)b, "icon_checksum", b16);
 			gaim_blist_save();
 			g_free(b16);
 		}
@@ -4076,7 +4077,7 @@ static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 		g_snprintf(who, sizeof(who), "%u", info->uin);
 		serv_got_alias(gc, who, utf8);
 		if ((b = gaim_find_buddy(gc->account, who))) {
-			gaim_buddy_set_setting(b, "servernick", utf8);
+			gaim_blist_node_set_string((GaimBlistNode*)b, "servernick", utf8);
 			gaim_blist_save();
 		}
 		g_free(utf8);
@@ -4959,7 +4960,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 							continue;
 						buddy = (GaimBuddy *)bnode;
 						if (buddy->account == gc->account) {
-							const char *servernick = gaim_buddy_get_setting(buddy, "servernick");
+							const char *servernick = gaim_blist_node_get_string((GaimBlistNode*)buddy, "servernick");
 							if (servernick)
 								serv_got_alias(gc, buddy->name, servernick);
 

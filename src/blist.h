@@ -85,6 +85,7 @@ struct _GaimBlistNode {
 	GaimBlistNode *next;                /**< The sibling after this buddy.  */
 	GaimBlistNode *parent;              /**< The parent of this node        */
 	GaimBlistNode *child;               /**< The child of this node         */
+	GHashTable *settings;               /**< per-node settings              */
 	void          *ui_data;             /**< The UI can put data here.      */
 };
 
@@ -105,7 +106,6 @@ struct _GaimBuddy {
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
 	GaimBuddyIcon *icon;                    /**< The buddy icon. */
 	GaimAccount *account;           /**< the account this buddy belongs to */
-	GHashTable *settings;                   /**< per-buddy settings from the XML buddy list, set by plugins and the likes. */
 	guint timer;							/**< The timer handle. */
 };
 
@@ -132,7 +132,6 @@ struct _GaimGroup {
 	int totalsize;			       /**< The number of chats and contacts in this group */
 	int currentsize;		       /**< The number of chats and contacts in this group corresponding to online accounts */
 	int online;			       /**< The number of chats and contacts in this group who are currently online */
-	GHashTable *settings;                  /**< per-group settings from the XML buddy list, set by plugins and the likes. */
 };
 
 /**
@@ -144,7 +143,6 @@ struct _GaimChat {
 	char *alias;             /**< The display name of this chat. */
 	GHashTable *components;  /**< the stuff the protocol needs to know to join the chat */
 	GaimAccount *account; /**< The account this chat is attached to */
-	GHashTable *settings;    /**< per-chat settings from the XML buddy list, set by plugins and the likes. */
 };
 
 
@@ -704,6 +702,64 @@ void gaim_blist_request_add_chat(GaimAccount *account, GaimGroup *group);
  * buddy list.
  */
 void gaim_blist_request_add_group(void);
+
+/**
+ * Associates a boolean with a node in the buddy list
+ *
+ * @param node  The node to associate the data with
+ * @param key   The identifier for the data
+ * @param value The value to set
+ */
+void gaim_blist_node_set_bool(GaimBlistNode *node, const char *key, gboolean value);
+
+/**
+ * Retreives a named boolean setting from a node in the buddy list
+ *
+ * @param node  The node to retreive the data from
+ * @param key   The identifier of the data
+ *
+ * @return The value, or FALSE if there is no setting
+ */
+gboolean gaim_blist_node_get_bool(GaimBlistNode *node, const char *key);
+
+/**
+ * Associates an integer with a node in the buddy list
+ *
+ * @param node  The node to associate the data with
+ * @param key   The identifier for the data
+ * @param value The value to set
+ */
+void gaim_blist_node_set_int(GaimBlistNode *node, const char *key, int value);
+
+/**
+ * Retreives a named integer setting from a node in the buddy list
+ *
+ * @param node  The node to retreive the data from
+ * @param key   The identifier of the data
+ *
+ * @return The value, or 0 if there is no setting
+ */
+int gaim_blist_node_get_int(GaimBlistNode *node, const char *key);
+
+/**
+ * Associates a string with a node in the buddy list
+ *
+ * @param node  The node to associate the data with
+ * @param key   The identifier for the data
+ * @param value The value to set
+ */
+void gaim_blist_node_set_string(GaimBlistNode *node, const char *key,
+		const char *value);
+
+/**
+ * Retreives a named string setting from a node in the buddy list
+ *
+ * @param node  The node to retreive the data from
+ * @param key   The identifier of the data
+ *
+ * @return The value, or NULL if there is no setting
+ */
+const char *gaim_blist_node_get_string(GaimBlistNode *node, const char *key);
 
 /**
  * Associates some data with the group in the xml buddy list

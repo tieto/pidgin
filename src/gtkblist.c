@@ -522,10 +522,8 @@ static void gtk_blist_menu_im_cb(GtkWidget *w, GaimBuddy *b)
 
 static void gtk_blist_menu_autojoin_cb(GtkWidget *w, GaimChat *chat)
 {
-	if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)))
-		gaim_chat_set_setting(chat, "gtk-autojoin", "true");
-	else
-		gaim_chat_set_setting(chat, "gtk-autojoin", NULL);
+	gaim_blist_node_set_bool((GaimBlistNode*)chat, "gtk-autojoin",
+			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 
 	gaim_blist_save();
 }
@@ -642,7 +640,7 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 	node = g_value_get_pointer(&val);
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		gaim_group_set_setting((GaimGroup *)node, "collapsed", NULL);
+		gaim_blist_node_set_bool(node, "collapsed", FALSE);
 		gaim_blist_save();
 	}
 }
@@ -656,7 +654,7 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 	node = g_value_get_pointer(&val);
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		gaim_group_set_setting((GaimGroup *)node, "collapsed", "true");
+		gaim_blist_node_set_bool(node, "collapsed", TRUE);
 		gaim_blist_save();
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		gaim_gtk_blist_collapse_contact_cb(NULL, node);
@@ -919,14 +917,15 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node) &&
 			event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GaimChat *chat = (GaimChat *)node;
-		const char *autojoin = gaim_chat_get_setting(chat, "gtk-autojoin");
+		gboolean autojoin = gaim_blist_node_get_bool((GaimBlistNode*)chat,
+				"gtk-autojoin");
 
 		menu = gtk_menu_new();
 		gaim_new_item_from_stock(menu, _("_Join"), GAIM_STOCK_CHAT,
 				G_CALLBACK(gtk_blist_menu_join_cb), node, 0, 0, NULL);
 		gaim_new_check_item(menu, _("Auto-Join"),
 				G_CALLBACK(gtk_blist_menu_autojoin_cb), node,
-				(autojoin && !strcmp(autojoin, "true")));
+				autojoin);
 		gaim_new_item_from_stock(menu, _("_Alias"), GAIM_STOCK_EDIT,
 				G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
@@ -1849,7 +1848,7 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBuddy *b)
 	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
 		return NULL;
 
-	if ((file = gaim_buddy_get_setting(b, "buddy_icon")) == NULL)
+	if ((file = gaim_blist_node_get_string((GaimBlistNode*)b, "buddy_icon")) == NULL)
 		return NULL;
 
 	buf = gdk_pixbuf_new_from_file(file, NULL);
@@ -2657,15 +2656,14 @@ static void insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIter *i
 		struct _gaim_gtk_blist_node *gtkparentnode = node->parent->ui_data;
 
 		if(GAIM_BLIST_NODE_IS_GROUP(node->parent)) {
-			if(!gaim_group_get_setting((GaimGroup*)node->parent, "collapsed"))
+			if(!gaim_blist_node_get_bool(node->parent, "collapsed"))
 				expand = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &parent_iter);
 		} else if(GAIM_BLIST_NODE_IS_CONTACT(node->parent) &&
 				gtkparentnode->contact_expanded) {
 			expand = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &parent_iter);
 		}
 		if(expand) {
-			gtk_tree_view_expand_row(GTK_TREE_VIEW(gtkblist->treeview), expand,
-					FALSE);
+			gtk_tree_view_expand_row(GTK_TREE_VIEW(gtkblist->treeview), expand, FALSE);
 			gtk_tree_path_free(expand);
 		}
 	}
@@ -3603,7 +3601,6 @@ static void account_signon_cb(GaimConnection *gc, gpointer z)
 		for(cnode = gnode->child; cnode; cnode = cnode->next)
 		{
 			GaimChat *chat;
-			const char *autojoin;
 
 			if(!GAIM_BLIST_NODE_IS_CHAT(cnode))
 				continue;
@@ -3613,9 +3610,7 @@ static void account_signon_cb(GaimConnection *gc, gpointer z)
 			if(chat->account != account)
 				continue;
 
-			autojoin = gaim_chat_get_setting(chat, "gtk-autojoin");
-
-			if(autojoin && !strcmp(autojoin, "true"))
+			if(gaim_blist_node_get_bool((GaimBlistNode*)chat, "gtk-autojoin"))
 				serv_join_chat(gc, chat->components);
 		}
 	}
