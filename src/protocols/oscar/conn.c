@@ -993,11 +993,6 @@ faim_export int aim_conn_isconnecting(aim_conn_t *conn)
  */
 faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
 {
-	fd_set fds, wfds;
-	struct timeval tv;
-	int res;
-	int error = ETIMEDOUT;
-
 	aim_rxcallback_t userfunc;
 
 	if (!conn || (conn->fd == -1))
@@ -1005,36 +1000,6 @@ faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
 
 	if (!(conn->status & AIM_CONN_STATUS_INPROGRESS))
 		return -1;
-
-	FD_ZERO(&fds);
-	FD_SET(conn->fd, &fds);
-	FD_ZERO(&wfds);
-	FD_SET(conn->fd, &wfds);
-	tv.tv_sec = 0;
-	tv.tv_usec = 0;
-
-	if ((res = select(conn->fd+1, &fds, &wfds, NULL, &tv)) == -1) {
-		error = errno;
-		aim_conn_close(conn);
-		errno = error;
-		return -1;
-	} else if (res == 0) {
-		faimdprintf(sess, 0, "aim_conn_completeconnect: false alarm on %d\n", conn->fd);
-		return 0; /* hasn't really completed yet... */
-	} 
-
-	if (FD_ISSET(conn->fd, &fds) || FD_ISSET(conn->fd, &wfds)) {
-		int len = sizeof(error);
-		if (getsockopt(conn->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
-			error = errno;
-	}
-
-	if (error) {
-		aim_conn_close(conn);
-		errno = error;
-		return -1;
-	}
-	fcntl(conn->fd, F_SETFL, 0); /* XXX should restore original flags */
 
 	conn->status &= ~AIM_CONN_STATUS_INPROGRESS;
 
