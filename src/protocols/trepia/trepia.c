@@ -23,6 +23,7 @@
 
 #include "account.h"
 #include "accountopt.h"
+#include "cipher.h"
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
@@ -30,7 +31,6 @@
 #include "util.h"
 #include "version.h"
 
-#include "md5.h"
 #include "profile.h"
 
 /* XXX */
@@ -123,7 +123,7 @@ _remove_user_fnc(gpointer key, gpointer value, gpointer user_data)
 #endif
 
 static void
-__clear_user_list(TrepiaSession *session)
+_clear_user_list(TrepiaSession *session)
 {
 	GaimBlistNode *gnode, *cnode, *bnode;
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
@@ -152,7 +152,7 @@ __clear_user_list(TrepiaSession *session)
 
 #if 0
 static char *
-__get_mac_address(const char *ip)
+_get_mac_address(const char *ip)
 {
 	char *mac = NULL;
 #ifndef _WIN32
@@ -484,7 +484,7 @@ trepia_blist_node_menu(GaimBlistNode *node)
 }
 
 static void
-__free_parser_data(gpointer user_data)
+_free_parser_data(gpointer user_data)
 {
 #if 0
 	TrepiaParserData *data = user_data;
@@ -500,7 +500,7 @@ __free_parser_data(gpointer user_data)
 }
 
 static void
-__start_element_handler(GMarkupParseContext *context,
+_start_element_handler(GMarkupParseContext *context,
 						const gchar *element_name,
 						const gchar **attribute_names,
 						const gchar **attribute_values,
@@ -522,7 +522,7 @@ __start_element_handler(GMarkupParseContext *context,
 }
 
 static void
-__end_element_handler(GMarkupParseContext *context, const gchar *element_name,
+_end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 					  gpointer user_data,  GError **error)
 {
 	TrepiaParserData *data = user_data;
@@ -550,7 +550,7 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 }
 
 static void
-__text_handler(GMarkupParseContext *context, const gchar *text,
+_text_handler(GMarkupParseContext *context, const gchar *text,
 			   gsize text_len, gpointer user_data, GError **error)
 {
 	TrepiaParserData *data = user_data;
@@ -563,15 +563,15 @@ __text_handler(GMarkupParseContext *context, const gchar *text,
 
 static GMarkupParser accounts_parser =
 {
-	__start_element_handler,
-	__end_element_handler,
-	__text_handler,
+	_start_element_handler,
+	_end_element_handler,
+	_text_handler,
 	NULL,
 	NULL
 };
 
 static int
-__parse_message(const char *buf, TrepiaMessageType *type, GHashTable **info)
+_parse_message(const char *buf, TrepiaMessageType *type, GHashTable **info)
 {
 	TrepiaParserData *parser_data = g_new0(TrepiaParserData, 1);
 	GMarkupParseContext *context;
@@ -582,7 +582,7 @@ __parse_message(const char *buf, TrepiaMessageType *type, GHashTable **info)
 	parser_data->type = type;
 
 	context = g_markup_parse_context_new(&accounts_parser, 0,
-										 parser_data, __free_parser_data);
+										 parser_data, _free_parser_data);
 
 	if (!g_markup_parse_context_parse(context, buf, strlen(buf), NULL)) {
 		g_markup_parse_context_free(context);
@@ -625,7 +625,7 @@ _parse_data(TrepiaSession *session, char *buf)
 
 	account = gaim_connection_get_account(session->gc);
 
-	ret = __parse_message(buf, &type, &info);
+	ret = _parse_message(buf, &type, &info);
 
 	if (ret == 1)
 		return TRUE;
@@ -974,7 +974,7 @@ _data_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-__login_cb(gpointer data, gint source, GaimInputCondition cond)
+_login_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	TrepiaSession *session = data;
 	GaimAccount *account;
@@ -983,8 +983,9 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 	char *mac = "00:01:02:03:04:05";
 	char buf[3];
 	char md5_password[17];
-	md5_state_t st;
-	md5_byte_t di[16];
+	GaimCipher *cipher;
+	GaimCipherContext *context;
+	guint8 di[16];
 	int i;
 
 	if (source < 0) {
@@ -993,7 +994,7 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 #if 0
-	mac = __get_mac_address();
+	mac = _get_mac_address();
 #endif
 
 	session->fd = source;
@@ -1002,9 +1003,10 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	password = gaim_connection_get_password(session->gc);
 
-	md5_init(&st);
-	md5_append(&st, (const md5_byte_t *)password, strlen(password));
-	md5_finish(&st, di);
+	cipher = gaim_ciphers_find_cipher("md5");
+	context = gaim_cipher_context_new(cipher, NULL);
+	gaim_cipher_context_append(context, password, strlen(password));
+	gaim_cipher_context_digest(context, sizeof(di), di, NULL);
 
 	*md5_password = '\0';
 
@@ -1063,12 +1065,12 @@ trepia_login(GaimAccount *account, GaimStatus *status)
 	session->user_profiles = g_hash_table_new_full(g_int_hash, g_int_equal,
 												   g_free, NULL);
 
-	__clear_user_list(session);
+	_clear_user_list(session);
 
 	gaim_connection_update_progress(gc, _("Connecting"), 0,
 									TREPIA_CONNECT_STEPS);
 
-	i = gaim_proxy_connect(account, server, port, __login_cb, session);
+	i = gaim_proxy_connect(account, server, port, _login_cb, session);
 
 	if (i != 0)
 		gaim_connection_error(gc, _("Unable to create socket"));
@@ -1195,7 +1197,7 @@ trepia_register_user(GaimAccount *account)
 		"<f></f><g></g><h></h><i></i><j></j><k></k><l></l>"
 		"<m></m></J>",
 		mac, "", TREPIA_VERSION, gaim_account_get_username(account),
-		gaim_connection_get_password(gc->account));
+		gaim_connection_get_password(account->gc));
 }
 
 static GaimPluginProtocolInfo prpl_info =

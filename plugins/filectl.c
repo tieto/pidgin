@@ -64,14 +64,13 @@ run_commands()
 
 			account = gaim_accounts_find(arg1, arg2);
 			if (account != NULL) /* username found */
-				gaim_account_connect(account, gaim_account_get_status(account, "online"));
+				gaim_account_connect(account);
 
 			free(arg1);
 			free(arg2);
 
 		} else if (!strncasecmp(command, "logout", 7)) {
 			GaimAccount *account;
-			GaimConnection *gc;
 
 			arg1 = getarg(buffer, 1, 1);
 			arg2 = getarg(buffer, 2, 1);

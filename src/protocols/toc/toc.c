@@ -25,6 +25,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "notify.h"
+#include "privacy.h"
 #include "proxy.h"
 #include "prpl.h"
 #include "request.h"
@@ -559,6 +560,96 @@ static char *show_error_message()
  return buf;
 }
 
+static void
+parse_toc_buddy_list(GaimAccount *account, char *config)
+{
+	char *c;
+	char current[256];
+	GList *buddies = NULL;
+
+	if (config == NULL)
+		return;
+
+	/* skip "CONFIG:" (if it exists) */
+	c = strncmp(config + 6 /* sizeof(struct sflap_hdr) */ , "CONFIG:", strlen("CONFIG:")) ?
+		strtok(config, "\n") :
+		strtok(config + 6 /* sizeof(struct sflap_hdr) */  + strlen("CONFIG:"), "\n");
+	do {
+		if (c == NULL)
+			break;
+		if (*c == 'g') {
+			char *utf8 = NULL;
+			utf8 = gaim_utf8_try_convert(c + 2);
+			if (utf8 == NULL) {
+				g_strlcpy(current, _("Invalid Groupname"), sizeof(current));
+			} else {
+				g_strlcpy(current, utf8, sizeof(current));
+				g_free(utf8);
+			}
+			if (!gaim_find_group(current)) {
+				GaimGroup *g = gaim_group_new(current);
+				gaim_blist_add_group(g, NULL);
+			}
+		} else if (*c == 'b') { /*&& !gaim_find_buddy(user, c + 2)) {*/
+			char nm[80], sw[388], *a, *utf8 = NULL;
+
+			if ((a = strchr(c + 2, ':')) != NULL) {
+				*a++ = '\0';		/* nul the : */
+			}
+
+			g_strlcpy(nm, c + 2, sizeof(nm));
+			if (a) {
+				utf8 = gaim_utf8_try_convert(a);
+				if (utf8 == NULL) {
+					gaim_debug(GAIM_DEBUG_ERROR, "toc blist",
+							   "Failed to convert alias for "
+							   "'%s' to UTF-8\n", nm);
+					}
+			}
+			if (utf8 == NULL) {
+				sw[0] = '\0';
+			} else {
+				/* This can leave a partial sequence at the end,
+				 * but who cares? */
+				g_strlcpy(sw, utf8, sizeof(sw));
+				g_free(utf8);
+			}
+
+			if (!gaim_find_buddy(account, nm)) {
+				GaimBuddy *b = gaim_buddy_new(account, nm, sw);
+				GaimGroup *g = gaim_find_group(current);
+				gaim_blist_add_buddy(b, NULL, g, NULL);
+				buddies = g_list_append(buddies, b);
+			}
+		} else if (*c == 'p') {
+			gaim_privacy_permit_add(account, c + 2, TRUE);
+		} else if (*c == 'd') {
+			gaim_privacy_deny_add(account, c + 2, TRUE);
+		} else if (!strncmp("toc", c, 3)) {
+			sscanf(c + strlen(c) - 1, "%d", &account->perm_deny);
+			gaim_debug(GAIM_DEBUG_MISC, "toc blist",
+					   "permdeny: %d\n", account->perm_deny);
+			if (account->perm_deny == 0)
+				account->perm_deny = GAIM_PRIVACY_ALLOW_ALL;
+		} else if (*c == 'm') {
+			sscanf(c + 2, "%d", &account->perm_deny);
+			gaim_debug(GAIM_DEBUG_MISC, "toc blist",
+					   "permdeny: %d\n", account->perm_deny);
+			if (account->perm_deny == 0)
+				account->perm_deny = GAIM_PRIVACY_ALLOW_ALL;
+		}
+	} while ((c = strtok(NULL, "\n")));
+
+	if (account->gc) {
+		if (buddies != NULL) {
+			serv_add_buddies(account->gc, buddies);
+			g_list_free(buddies);
+		}
+		serv_set_permit_deny(account->gc);
+	}
+	g_list_free(buddies);
+}
+
 static void toc_callback(gpointer data, gint source, GaimInputCondition condition)
 {
 	GaimConnection *gc = (GaimConnection *)data;
@@ -602,9 +693,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				   "Client sends TOC \"toc_signon\" message\n");
 		/* i hate icq. */
 		if (username[0] >= '0' && username[0] <= '9')
-			password = g_strndup(gaim_connection_get_password(connection), 8);
+			password = g_strndup(gaim_connection_get_password(gc), 8);
 		else
-			password = g_strdup(gaim_connection_get_password(connection));
+			password = g_strdup(gaim_connection_get_password(gc));
 		g_snprintf(snd, sizeof snd, "toc_signon %s %d  %s %s %s \"%s\"",
 			   AUTH_HOST, AUTH_PORT, gaim_normalize(account, username),
 			   roast_password(password), LANGUAGE, REVISION);
@@ -684,7 +775,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			g_snprintf(snd, sizeof snd, "toc_signon %s %d %s %s %s \"%s\"",
 				   AUTH_HOST, AUTH_PORT,
 				   gaim_normalize(account, gaim_account_get_username(account)),
-				   roast_password(gaim_connection_get_password(connection)),
+				   roast_password(gaim_connection_get_password(gc)),
 				   LANGUAGE, REVISION);
 			if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
 				gaim_connection_error(gc, _("Disconnected."));
@@ -698,7 +789,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		}
 	} else if (!g_ascii_strcasecmp(c, "CONFIG")) {
 		c = strtok(NULL, ":");
-		gaim_blist_parse_toc_buddy_list(account, c);
+		parse_toc_buddy_list(account, c);
 	} else if (!g_ascii_strcasecmp(c, "NICK")) {
 		/* ignore NICK so that things get imported/exported properly
 		c = strtok(NULL, ":");
