@@ -1470,8 +1470,7 @@ delete_account_cb(GaimAccount *account)
 		gtk_list_store_remove(accounts_window->model, &iter);
 	}
 
-	gaim_accounts_remove(account);
-	gaim_account_destroy(account);
+	gaim_accounts_delete(account);
 }
 
 static void

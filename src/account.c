@@ -1260,13 +1260,21 @@ gaim_accounts_add(GaimAccount *account)
 void
 gaim_accounts_remove(GaimAccount *account)
 {
-	GaimBlistNode *gnode, *bnode;
-
 	g_return_if_fail(account != NULL);
 
 	accounts = g_list_remove(accounts, account);
 
 	schedule_accounts_save();
+}
+
+void
+gaim_accounts_delete(GaimAccount *account)
+{
+	GaimBlistNode *gnode, *bnode;
+
+	g_return_if_fail(account != NULL);
+
+	gaim_accounts_remove(account);
 
 	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next) {
 		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
@@ -1289,6 +1297,8 @@ gaim_accounts_remove(GaimAccount *account)
 	}
 
 	gaim_blist_save();
+
+	gaim_account_destroy(account);
 }
 
 void

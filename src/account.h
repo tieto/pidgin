@@ -524,6 +524,16 @@ void gaim_accounts_add(GaimAccount *account);
 void gaim_accounts_remove(GaimAccount *account);
 
 /**
+ * Deletes an account.
+ *
+ * This will remove any buddies from the buddy list that belong to this
+ * account, and will also destroy @a account.
+ *
+ * @param account The account.
+ */
+void gaim_accounts_delete(GaimAccount *account);
+
+/**
  * Auto-logins to all accounts set to auto-login under the specified UI.
  *
  * @param ui The UI.
