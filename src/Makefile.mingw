@@ -107,6 +107,7 @@ DLL_C_SRC =		about.c \
 			gtkprefs.c \
 			gtkprivacy.c \
 			gtkrequest.c \
+			gtkroomlist.c \
 			gtksound.c \
 			gtksourceiter.c \
 			gtkutils.c \
@@ -123,6 +124,7 @@ DLL_C_SRC =		about.c \
 			proxy.c \
 			prpl.c \
 			request.c \
+			roomlist.c \
 			server.c \
 			sha.c \
 			signals.c \
