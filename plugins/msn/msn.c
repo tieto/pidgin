@@ -78,12 +78,56 @@ struct msn_conn {
 	struct gaim_connection *gc;
 	char *secret;
 	char *session;
+	time_t last_trid;
+	char *txqueue;
 };
 
 GSList *msn_connections = NULL;
 
 unsigned long long globalc = 0;
 static void msn_callback(gpointer data, gint source, GdkInputCondition condition);
+
+struct msn_conn *find_msn_conn_by_user(gchar * user)
+{
+	struct msn_conn *mc;
+	GSList *conns = msn_connections;
+
+	while (conns) {
+		mc = (struct msn_conn *)conns->data;
+
+		if (mc != NULL) {
+			if (strcasecmp(mc->user, user) == 0) {
+				return mc;
+			}
+		}
+
+		conns = g_slist_next(conns);
+	}
+
+	return NULL;
+}
+
+struct msn_conn *find_msn_conn_by_trid(time_t trid)
+{
+	struct msn_conn *mc;
+	GSList *conns = msn_connections;
+
+	while (conns) {
+		mc = (struct msn_conn *)conns->data;
+
+		if (mc != NULL) {
+
+			printf("Comparing: %d <==> %d\n", mc->last_trid, trid);
+			if (mc->last_trid == trid) {
+				return mc;
+			}
+		}
+
+		conns = g_slist_next(conns);
+	}
+
+	return NULL;
+}
 
 static char *msn_name()
 {
@@ -127,6 +171,78 @@ static void msn_answer_callback(gpointer data, gint source, GdkInputCondition co
 	
 	/* Append our connection */
 	msn_connections = g_slist_append(msn_connections, mc);
+}
+
+static void msn_invite_callback(gpointer data, gint source, GdkInputCondition condition)
+{
+	struct msn_conn *mc = data;
+	struct msn_data *md = (struct msn_data *)mc->gc->proto_data;
+	char buf[MSN_BUF_LEN];
+	struct gaim_connection *gc = mc->gc;
+	int i = 0;
+
+	fcntl(source, F_SETFL, 0);
+
+	if (condition == GDK_INPUT_WRITE)
+	{
+		/* We just got in here */
+		gdk_input_remove(mc->inpa);
+		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_READ, msn_invite_callback, mc);
+
+		/* Write our signon request */
+		g_snprintf(buf, MSN_BUF_LEN, "USR %d %s %s\n", mc->last_trid, mc->gc->username, mc->secret);
+		msn_write(source, buf);
+		return;
+	}
+
+	bzero(buf, MSN_BUF_LEN);
+		
+	do 
+	{
+		if (read(source, buf + i, 1) < 0)
+		{
+			hide_login_progress(gc, "Read error");
+			signoff(gc);
+			return;
+		}
+
+	} while (buf[i++] != '\n');
+
+	g_strchomp(buf);
+
+	printf("MSN(%d) ==> %s\n", source, buf);
+
+	if (!strncmp("USR ", buf, 4))
+	{
+		char **res;
+
+		res = g_strsplit(buf, " ", 0);
+		if (strcasecmp("OK", res[2]))
+		{
+			g_strfreev(res);
+			close(mc->fd);
+			return;
+		}
+
+		/* We've authorized.  Let's send an invite request */
+		g_snprintf(buf, MSN_BUF_LEN, "CAL %d %s\n", trId(md), mc->user);
+		msn_write(source, buf);
+		return;
+	}
+
+	else if (!strncmp("JOI ", buf, 4))
+	{
+		/* Looks like they just joined! Write their queued message */
+		g_snprintf(buf, MSN_BUF_LEN, "MSG %d N %d\r\n%s%s", trId(md), strlen(mc->txqueue) + strlen(MIME_HEADER), MIME_HEADER, mc->txqueue);
+
+		msn_write(source, buf);
+
+		gdk_input_remove(mc->inpa);
+		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_READ, msn_callback, mc->gc);
+
+		return;
+
+	}
 }
 
 static void msn_callback(gpointer data, gint source, GdkInputCondition condition)
@@ -268,6 +384,49 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_WRITE, msn_answer_callback, mc);
 
 		g_strfreev(address);
+		g_strfreev(res);
+
+		return;
+	}
+	else if (!strncmp("XFR ", buf, 4))
+	{
+		char **res;
+		char *host;
+		char *port;
+		struct msn_conn *mc;
+
+		res = g_strsplit(buf, " ", 0);
+
+		printf("Last trid is: %d\n", md->last_trid);
+		printf("This TrId is: %d\n", atoi(res[1]));
+
+		mc = find_msn_conn_by_trid(atoi(res[1]));
+
+		if (!mc)
+		{
+			g_strfreev(res);
+			return;
+		}
+
+		strcpy(buf, res[3]);
+
+		mc->secret = g_strdup(res[5]);
+		mc->session = g_strdup(res[1]);
+
+		g_strfreev(res);
+
+		res = g_strsplit(buf, ":", 0);
+
+		close(md->fd);
+		
+		/* Now we have the host and port */
+		if (!(md->fd = msn_connect(res[0], atoi(res[1]))))
+			return;
+
+		printf("Connected to: %s:%s\n", res[0], res[1]);
+
+		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_WRITE, msn_invite_callback, mc);
+
 		g_strfreev(res);
 
 		return;
@@ -573,6 +732,47 @@ void msn_login(struct aim_user *user)
 	printf("Connected.\n");
 }
 
+void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
+{
+	struct msn_conn *mc;
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN];
+
+	if (!g_strcasecmp(who, gc->username))
+	{
+		do_error_dialog("You can not send a message to  yourself!", "Gaim: MSN Error");
+		return;
+	}
+
+	mc = find_msn_conn_by_user(who);
+
+	/* If we're not already in a conversation with
+	 * this person then we have to do some tricky things. */
+
+	if (!mc)
+	{
+		gchar buf2[MSN_BUF_LEN];
+		gchar *address;
+		gchar *auth;
+		gchar **res;
+
+		/* Request a new switchboard connection */
+		g_snprintf(buf, MSN_BUF_LEN, "XFR %d SB\n", trId(md));
+		msn_write(md->fd, buf);
+
+		mc = g_new0(struct msn_conn, 1);
+
+		mc->user = g_strdup(who);
+		mc->gc = gc;
+		mc->last_trid = md->last_trid;
+		mc->txqueue = g_strdup(message);
+
+		/* Append our connection */
+		msn_connections = g_slist_append(msn_connections, mc);
+	}
+
+}
+
 static char **msn_list_icon(int uc)
 {
 	if (uc == UC_UNAVAILABLE)
@@ -594,7 +794,7 @@ void msn_init(struct prpl *ret)
 	ret->user_opts = NULL;
 	ret->login = msn_login;
 	ret->close = NULL;
-	ret->send_im = NULL;
+	ret->send_im = msn_send_im;
 	ret->set_info = NULL;
 	ret->get_info = NULL;
 	ret->set_away = NULL;
