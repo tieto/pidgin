@@ -54,11 +54,6 @@ HINSTANCE gaimdll_hInstance = 0;
 BOOL (*MyFlashWindowEx)(PFLASHWINFO pfwi)=NULL;
 FARPROC wgaim_find_and_loadproc(char*, char*);
 
-/* Gaim window filters from systray.c */
-extern GdkFilterReturn st_buddywin_filter(GdkXEvent*, GdkEvent*, gpointer);
-extern GdkFilterReturn st_loginwin_filter(GdkXEvent*, GdkEvent*, gpointer);
-extern GdkFilterReturn st_backwin_filter(GdkXEvent*, GdkEvent*, gpointer);
-
 /*
  *  STATIC CODE
  */
@@ -139,8 +134,7 @@ void wgaim_gtk_window_move(GtkWindow *window, gint x, gint y) {
 	extended_style = GetWindowLong (hWnd, GWL_EXSTYLE);
 	GetClientRect (hWnd, &trect);
 	AdjustWindowRectEx (&trect, style, FALSE, extended_style);
-
-	gtk_window_move(window, x + (-1 * trect.left) , y + (-1 * trect.top));
+	gtk_window_move(window, x + (-1 * trect.left), y + (-1 * trect.top));
 }
 
 
@@ -175,15 +169,6 @@ FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
 		}
 		return NULL;
 	}
-}
-
-/*
- *  These functions are called after their respective windows are created.
- */
-void wgaim_created_loginwin( GtkWidget *loginwin ) {
-	gdk_window_add_filter (GTK_WIDGET(loginwin)->window,
-			       st_loginwin_filter,
-			       NULL);
 }
 
 /* Determine Gaim Paths during Runtime */
