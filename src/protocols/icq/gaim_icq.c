@@ -80,11 +80,12 @@ static void icq_online(icq_Link *link) {
 	struct gaim_connection *gc = link->icq_UserData;
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	debug_printf("%s is now online.\n", gc->username);
-	id->connected = TRUE;
-	account_online(gc);
-	serv_finish_login(gc);
-
-	icq_ChangeStatus(id->link, STATUS_ONLINE);
+	if (!id->connected) {
+		account_online(gc);
+		serv_finish_login(gc);
+		icq_ChangeStatus(id->link, STATUS_ONLINE);
+		id->connected = TRUE;
+	}
 }
 
 static void icq_logged_off(icq_Link *link) {
@@ -103,8 +104,7 @@ static void icq_logged_off(icq_Link *link) {
 		return;
 	}
 
-	icq_Login(link, STATUS_ONLINE);
-	id->cur_status = STATUS_ONLINE;
+	icq_Login(link, id->cur_status);
 }
 
 void strip_linefeed(gchar *text)
@@ -319,8 +319,8 @@ static void icq_login(struct aim_user *user) {
 		return;
 	}
 
-	icq_Login(link, STATUS_ONLINE);
 	id->cur_status = STATUS_ONLINE;
+	icq_Login(link, STATUS_ONLINE);
 
 	set_login_progress(gc, 0, "Connecting...");
 }
