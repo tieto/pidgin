@@ -2775,7 +2775,7 @@ static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(stop_anim), c);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
-	} else if (c->anim) {
+	} else if (c->anim && (gdk_pixbuf_animation_get_num_frames(c->anim) > 1)) {
 		button = gtk_menu_item_new_with_label(_("Enable Animation"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(start_anim), c);
 		gtk_menu_append(GTK_MENU(menu), button);
