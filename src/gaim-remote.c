@@ -2,6 +2,8 @@
  * gaim-remote
  *
  * Copyright (C) 2002, Sean Egan <bj91704@binghamton.edu>
+ * Features/functionality added (C) 2002, John B. Silvestri <silvestrij@mville.edu>
+ *	'quit', long help for URIs
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +27,20 @@
 #include <string.h>
 #include "gaim-socket.h"
 
-void show_remote_usage(char *name) 
+void show_remote_usage(char *name)
 {
 	printf(_("Usage: %s command [OPTIONS] [URI]\n\n"
-		 
+
 	     "    COMMANDS:\n"
-	     "       uri                      Handle AIM:// URI\n"
+	     "       uri                      Handle AIM: URI\n"
+	     "       quit                     Close running copy of Gaim\n\n"
+
+	     "    OPTIONS:\n"
+	     "       -h, --help [commmand]    Show help for command\n"), name);
+	return;
+}
+
+/*To be implemented:
 	     "       info                     Show information about connected accounts\n"
 	     "       list                     Print buddy list\n"
 	     "       ison                     Show presence state of your buddy\n"
@@ -38,18 +48,13 @@ void show_remote_usage(char *name)
 	     "       send                     Send message\n"
 	     "       add                      Add buddy to buddy list\n"
 	     "       remove                   Remove buddy from list\n"
-	     "       quit                     Close running copy of Gaim\n\n"
-		 
-	     "    OPTIONS:\n"
 	     "       -m, --message=MESG       Message to send or show in conversation window\n"
 	     "       -t, --to=SCREENNAME      Select a target for command\n"
 	     "       -p, --protocol=PROTO     Specify protocol to use\n"
 	     "       -f, --from=SCREENNAME    Specify screenname to use\n"
-	     "       -q, --quiet              Send message without showing a conversation\n" 
+	     "       -q, --quiet              Send message without showing a conversation\n"
 	     "                                window\n"
-	     "       -h, --help               Show help for command\n"), name);
-	return;
-}
+*/
 
 static struct option longopts[] = {
 	{"message", required_argument, NULL, 'm'},
@@ -153,10 +158,34 @@ int command_quit() {
 	return 0;
 }
 
+void show_longhelp_uri(){
+	printf ("\n"
+
+	"Using AIM: URIs:\n"
+	"Sending an IM to a screenname:\n"
+	"	gaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+	"In this case, 'Penguin' is the screenname we wish to IM, and 'hello world'\n"
+	"is the message to be sent.  '+' must be used in place of spaces.\n"
+	"Please note the quoting used above - if you run this from a shell the '&'\n"
+	"needs to be escaped, or the command will stop at that point.\n"
+	"Also,the following will just open a conversation window to a screenname,\n"
+	"with no message:\n"
+	"	gaim-remote uri aim:goim?screenname=Penguin\n\n"
+	"Joining a chat:\n"
+	"	gaim-remote uri aim:gochat?roomname=PenguinLounge\n"
+	"...joins the 'PenguinLounge' chat room.\n\n"
+	"Adding a buddy to your buddy list:\n"
+	"	gaim-remote uri aim:addbuddy?screenname=Penguin\n"
+	"...prompts you to add 'Penguin' to your buddy list.\n"
+	);
+	return;
+}
+
+/* Work in progress - JBS
 int command_info(){
 	fprintf(stderr, "Info not yet implemented\n");
     return 1;
-}
+}*/
 
 int main (int argc, char *argv[])
 {
@@ -168,9 +197,13 @@ int main (int argc, char *argv[])
 	
 	
 	if (!strcmp(opts.command, "uri")) {
-		return command_uri();
-	} else if (!strcmp(opts.command, "info")) {
-		return command_info();
+		if(opts.help){
+			show_longhelp_uri();
+		}else{
+			return command_uri();
+		}
+/*	} else if (!strcmp(opts.command, "info")) {
+		return command_info();*/
 	} else if (!strcmp(opts.command, "quit")) {
 		return command_quit();
 	} else {
