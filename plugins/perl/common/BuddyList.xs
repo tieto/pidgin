@@ -8,11 +8,13 @@ gaim_blist_set_visible(show)
 	gboolean show
 
 void
-add_buddy(buddy, group)
+add_buddy(account, buddy, group)
+	Gaim::Account account
 	Gaim::BuddyList::Buddy buddy
 	Gaim::BuddyList::Group group
 CODE:
 	gaim_blist_add_buddy(buddy, NULL, group, NULL);
+	serv_add_buddy(gaim_account_get_connection(account), buddy);
 
 void
 add_group(group)
@@ -56,6 +58,20 @@ PREINIT:
 	GSList *l;
 PPCODE:
 	for (l = gaim_find_buddies(account, name); l != NULL; l = l->next)
+	{
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data,
+			"Gaim::BuddyList::Buddy")));
+	}
+
+	g_slist_free(l);
+
+void
+get_buddies(account)
+	Gaim::Account account
+PREINIT:
+	GSList *l;
+PPCODE:
+	for (l = gaim_get_account_buddies(account); l != NULL; l = l->next)
 	{
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data,
 			"Gaim::BuddyList::Buddy")));

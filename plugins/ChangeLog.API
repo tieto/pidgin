@@ -7,26 +7,30 @@ version 2.0.0cvs:
 	* Removed: gaim_gtk_sound_{get,set}_mute() (replaced by the
 	           /gaim/gtk/sound/mute preference)
 	* Changed: gtk_imhtml_toolbar now descends from GtkHBox making it
-		   easier to add your own widgets to it
+	           easier to add your own widgets to it
 	* Changed: gaim_find_conversation, added a "type" parameter
 	* Changed: gaim_find_conversation_with_account, added a "type" parameter
 	* Changed: gaim_gtk_prefs_labeled_spin_button, the "key" parameter is
-			   now a const char* instead of just a char*
+	           now a const char* instead of just a char*
 	* Changed: gaim_gtk_prefs_labeled_entry, the "key" parameter is
-			   now a const char* instead of just a char*
+	           now a const char* instead of just a char*
+	* Changed: the add_buddy perl sub.  The argument now takes the account
+	           as the first argument, and buddy and group as the second and
+	           third.  It also adds the buddy to the server-side buddy
+	           list of the given account.
 
 	Signals:
 	* Changed: "received-im-msg and "received-chat-msg" to match, both
-			   now pass a conversation pointer and flags
+	           now pass a conversation pointer and flags
 	* Changed: "receiving-im-msg" and "receving-chat-msg" to match, both
-			   now pass a conversation pointer and a pointer to the flags.
+	           now pass a conversation pointer and a pointer to the flags.
 	* Changed: "drawing-tooltip," the second argument is now a GString*
-			   instead of a char**
+	           instead of a char**
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
 	* Changed: gaim_blist_update_buddy_presence(), presence changed to
-		type gboolean
+	           type gboolean
 	* Changed: the versioning scheme, and all the plugin structs
 
 version 0.82 (08/26/2004):
