@@ -3481,7 +3481,7 @@ void show_log(char *name)
 	GtkWidget *close_button;
 	GtkWidget *clear_button;
 	GtkWidget *save_button;
-	GtkWidget *list;
+	GtkWidget *list = NULL;
 	GtkWidget *item;
 	GtkWidget *frame;
 
