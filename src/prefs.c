@@ -119,25 +119,6 @@ void gaim_prefs_init() {
 	/* Buddies */
 	gaim_prefs_add_none("/core/buddies");
 	gaim_prefs_add_bool("/core/buddies/use_server_alias", TRUE);
-
-	/* Conversations */
-	gaim_prefs_add_none("/core/conversations");
-	gaim_prefs_add_bool("/core/conversations/send_urls_as_links", TRUE);
-	gaim_prefs_add_bool("/core/conversations/away_back_on_send", TRUE);
-	gaim_prefs_add_bool("/core/conversations/use_alias_for_title", TRUE);
-	gaim_prefs_add_bool("/core/conversations/combine_chat_im", FALSE);
-
-	/* Conversations -> Chat */
-	gaim_prefs_add_none("/core/conversations/chat");
-	gaim_prefs_add_bool("/core/conversations/chat/show_join", TRUE);
-	gaim_prefs_add_bool("/core/conversations/chat/show_leave", TRUE);
-	gaim_prefs_add_bool("/core/conversations/chat/show_nick_change", TRUE);
-
-	/* Conversations -> IM */
-	gaim_prefs_add_none("/core/conversations/im");
-	gaim_prefs_add_bool("/core/conversations/im/show_login", TRUE);
-	gaim_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
-
 }
 
 static char *

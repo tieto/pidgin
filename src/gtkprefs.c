@@ -958,14 +958,10 @@ GtkWidget *conv_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
 
-	/* Build a list of names. */
-	for (i = 0; i < gaim_conv_placement_get_fnc_count(); i++) {
-		names = g_list_append(names, (char *)gaim_conv_placement_get_name(i));
-		names = g_list_append(names, (char *)gaim_conv_placement_get_name(i));
-	}
+	names = gaim_conv_placement_get_options();
 
 	label = prefs_dropdown_from_list(vbox, _("_Placement:"), GAIM_PREF_STRING,
-									 "/gaim/gtk/conversations/placement",
+									 "/core/conversations/placement",
 									 names);
 
 	g_list_free(names);

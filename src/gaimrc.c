@@ -177,7 +177,6 @@ static guint logging_options;
 static guint blist_options;
 static guint convo_options;
 static guint im_options;
-static guint conv_placement_option;
 static guint chat_options;
 static guint font_options;
 static guint sound_options;
@@ -967,9 +966,25 @@ static void gaimrc_read_options(FILE *f)
 								(im_options & OPT_IM_POPDOWN));
 
 		} else if (!strcmp(p->option, "conv_placement")) {
-			conv_placement_option = atoi(p->value[0]);
-			/* XXX: this still needs converting */
-			gaim_conv_placement_set_active(conv_placement_option);
+			switch(atoi(p->value[0])) {
+				case 1:
+					gaim_prefs_set_string("/core/conversations/placement",
+							"new");
+				break;
+				case 2:
+					gaim_prefs_set_string("/core/conversations/placement",
+							"group");
+				break;
+				case 3:
+					gaim_prefs_set_string("/core/conversations/placement",
+							"account");
+				break;
+				case 0:
+				default:
+					gaim_prefs_set_string("/core/conversations/placement",
+							"last");
+				break;
+			}
 		} else if (!strcmp(p->option, "chat_options")) {
 			chat_options = atoi(p->value[0]);
 

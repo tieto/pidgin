@@ -892,6 +892,7 @@ int main(int argc, char *argv[])
 	gaim_set_sound_ui_ops(gaim_get_gtk_sound_ui_ops());
 	gaim_set_connection_ui_ops(gaim_get_gtk_connection_ui_ops());
 
+	gaim_conversation_init();
 	gaim_proxy_init();
 	gaim_sound_init();
 

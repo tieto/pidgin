@@ -5397,7 +5397,6 @@ gaim_gtk_conversation_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/font_size", 3);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/tabs", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/tab_side", GTK_POS_TOP);
-	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "");
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/gaim/gtk/conversations/chat");

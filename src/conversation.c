@@ -41,6 +41,7 @@
 
 typedef struct
 {
+	char *id;
 	char *name;
 	GaimConvPlacementFunc fnc;
 
@@ -56,7 +57,6 @@ static GList *chats = NULL;
 static GList *windows = NULL;
 static GList *conv_placement_fncs = NULL;
 static GaimConvPlacementFunc place_conv = NULL;
-static int place_conv_index = -1;
 
 static gint
 insertname_compare(gconstpointer one, gconstpointer two)
@@ -926,7 +926,10 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	}
 	else {
 		if (place_conv == NULL)
-			gaim_conv_placement_set_active(0);
+			gaim_prefs_set_string("/core/conversations/placement", "last");
+
+		if (!place_conv)
+			gaim_debug(GAIM_DEBUG_ERROR, "conversation", "This is about to suck.\n");
 
 		place_conv(conv);
 	}
@@ -2181,104 +2184,118 @@ conv_placement_by_account(GaimConversation *conv)
 	conv_placement_new_window(conv);
 }
 
-static int
-add_conv_placement_fnc(const char *name, GaimConvPlacementFunc fnc)
+static ConvPlacementData *get_conv_placement_data(const char *id)
+{
+	ConvPlacementData *data = NULL;
+	GList *n;
+
+	for(n = conv_placement_fncs; n; n = n->next) {
+		data = n->data;
+		if(!strcmp(data->id, id))
+			return data;
+	}
+
+	return NULL;
+}
+
+static void
+add_conv_placement_fnc(const char *id, const char *name,
+		GaimConvPlacementFunc fnc)
 {
 	ConvPlacementData *data;
 
-	data = g_malloc0(sizeof(ConvPlacementData));
+	data = g_new(ConvPlacementData, 1);
 
+	data->id = g_strdup(id);
 	data->name = g_strdup(name);
 	data->fnc  = fnc;
 
 	conv_placement_fncs = g_list_append(conv_placement_fncs, data);
 
-	return gaim_conv_placement_get_fnc_count() - 1;
 }
 
 static void
 ensure_default_funcs(void)
 {
 	if (conv_placement_fncs == NULL) {
-		add_conv_placement_fnc(_("Last created window"),
+		add_conv_placement_fnc("last", _("Last created window"),
 							   conv_placement_last_created_win);
-		add_conv_placement_fnc(_("New window"),
+		add_conv_placement_fnc("new", _("New window"),
 							   conv_placement_new_window);
-		add_conv_placement_fnc(_("By group"),
+		add_conv_placement_fnc("group", _("By group"),
 							   conv_placement_by_group);
-		add_conv_placement_fnc(_("By account"),
+		add_conv_placement_fnc("account", _("By account"),
 							   conv_placement_by_account);
 	}
 }
 
-int
-gaim_conv_placement_add_fnc(const char *name, GaimConvPlacementFunc fnc)
+GList *gaim_conv_placement_get_options(void)
 {
-	g_return_val_if_fail(name != NULL, -1);
-	g_return_val_if_fail(fnc  != NULL, -1);
+	GList *n, *list = NULL;
+	ConvPlacementData *data;
 
-	if (conv_placement_fncs == NULL)
-		ensure_default_funcs();
+	ensure_default_funcs();
 
-	return add_conv_placement_fnc(name, fnc);
+	for(n = conv_placement_fncs; n; n = n->next) {
+		data = n->data;
+		list = g_list_append(list, data->name);
+		list = g_list_append(list, data->id);
+	}
+
+	return list;
+}
+
+
+void
+gaim_conv_placement_add_fnc(const char *id, const char *name, GaimConvPlacementFunc fnc)
+{
+	g_return_if_fail(id != NULL);
+	g_return_if_fail(name != NULL);
+	g_return_if_fail(fnc  != NULL);
+
+	ensure_default_funcs();
+
+	add_conv_placement_fnc(id, name, fnc);
 }
 
 void
-gaim_conv_placement_remove_fnc(int index)
+gaim_conv_placement_remove_fnc(const char *id)
 {
-	ConvPlacementData *data;
-	GList *node;
+	ConvPlacementData *data = get_conv_placement_data(id);
 
-	if (index < 0 || index > g_list_length(conv_placement_fncs))
+	if(!data)
 		return;
 
-	node = g_list_nth(conv_placement_fncs, index);
-	data = (ConvPlacementData *)node->data;
+	conv_placement_fncs = g_list_remove(conv_placement_fncs, data);
 
+	g_free(data->id);
 	g_free(data->name);
 	g_free(data);
-
-	conv_placement_fncs = g_list_remove_link(conv_placement_fncs, node);
-	g_list_free_1(node);
-}
-
-int
-gaim_conv_placement_get_fnc_count(void)
-{
-	ensure_default_funcs();
-
-	return g_list_length(conv_placement_fncs);
 }
 
 const char *
-gaim_conv_placement_get_name(int index)
+gaim_conv_placement_get_name(const char *id)
 {
 	ConvPlacementData *data;
 
 	ensure_default_funcs();
 
-	if (index < 0 || index > g_list_length(conv_placement_fncs))
-		return NULL;
+	data = get_conv_placement_data(id);
 
-	data = g_list_nth_data(conv_placement_fncs, index);
-
-	if (data == NULL)
+	if (!data)
 		return NULL;
 
 	return data->name;
 }
 
 GaimConvPlacementFunc
-gaim_conv_placement_get_fnc(int index)
+gaim_conv_placement_get_fnc(const char *id)
 {
 	ConvPlacementData *data;
 
 	ensure_default_funcs();
 
-	if (index < 0 || index > g_list_length(conv_placement_fncs))
-		return NULL;
-
-	data = g_list_nth_data(conv_placement_fncs, index);
+	data = get_conv_placement_data(id);
 
 	if (data == NULL)
 		return NULL;
@@ -2286,48 +2303,23 @@ gaim_conv_placement_get_fnc(int index)
 	return data->fnc;
 }
 
-int
-gaim_conv_placement_get_fnc_index(GaimConvPlacementFunc fnc)
-{
-	ConvPlacementData *data;
-	GList *node;
-	int i;
-
-	ensure_default_funcs();
-
-	for (node = conv_placement_fncs, i = 0;
-		 node != NULL;
-		 node = node->next, i++) {
-
-		data = (ConvPlacementData *)node->data;
-
-		if (data->fnc == fnc)
-			return i;
-	}
-
-	return -1;
-}
-
-int
-gaim_conv_placement_get_active(void)
-{
-	return place_conv_index;
-}
-
-void
-gaim_conv_placement_set_active(int index)
+static void
+conv_placement_pref_cb(const char *name, GaimPrefType type, gpointer value,
+		gpointer data)
 {
 	GaimConvPlacementFunc fnc;
 
+	if(strcmp(name, "/core/conversations/placement"))
+		return;
+
 	ensure_default_funcs();
 
-	fnc = gaim_conv_placement_get_fnc(index);
+	fnc = gaim_conv_placement_get_fnc(value);
 
 	if (fnc == NULL)
 		return;
 
 	place_conv = fnc;
-	place_conv_index = index;
 }
 
 void
@@ -2340,4 +2332,31 @@ GaimWindowUiOps *
 gaim_get_win_ui_ops(void)
 {
 	return win_ui_ops;
+}
+
+void
+gaim_conversation_init(void)
+{
+	/* Conversations */
+	gaim_prefs_add_none("/core/conversations");
+	gaim_prefs_add_bool("/core/conversations/send_urls_as_links", TRUE);
+	gaim_prefs_add_bool("/core/conversations/away_back_on_send", TRUE);
+	gaim_prefs_add_bool("/core/conversations/use_alias_for_title", TRUE);
+	gaim_prefs_add_bool("/core/conversations/combine_chat_im", FALSE);
+	gaim_prefs_add_string("/core/conversations/placement", "last");
+
+	/* Conversations -> Chat */
+	gaim_prefs_add_none("/core/conversations/chat");
+	gaim_prefs_add_bool("/core/conversations/chat/show_join", TRUE);
+	gaim_prefs_add_bool("/core/conversations/chat/show_leave", TRUE);
+	gaim_prefs_add_bool("/core/conversations/chat/show_nick_change", TRUE);
+
+	/* Conversations -> IM */
+	gaim_prefs_add_none("/core/conversations/im");
+	gaim_prefs_add_bool("/core/conversations/im/show_login", TRUE);
+	gaim_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
+
+	gaim_prefs_connect_callback("/core/conversations/placement",
+			conv_placement_pref_cb, NULL);
+	gaim_prefs_trigger_callback("/core/conversations/placement");
 }

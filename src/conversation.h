@@ -1081,74 +1081,58 @@ GaimConversation *gaim_find_chat(const GaimConnection *gc, int id);
 /*@{*/
 
 /**
+ * Returns a GList containing the IDs and Names of the registered placement
+ * functions.
+ *
+ * @return The list of IDs and names.
+ */
+GList *gaim_conv_placement_get_options(void);
+
+/**
  * Adds a conversation placement function to the list of possible functions.
  *
  * @param name The name of the function.
  * @param fnc  A pointer to the function.
- *
- * @return The index of this entry.
  */
-int gaim_conv_placement_add_fnc(const char *name, GaimConvPlacementFunc fnc);
+void gaim_conv_placement_add_fnc(const char *id, const char *name, GaimConvPlacementFunc fnc);
 
 /**
  * Removes a conversation placement function from the list of possible
  * functions.
  *
- * @param index The index of the function.
+ * @param id The id of the function.
  */
-void gaim_conv_placement_remove_fnc(int index);
-
-/**
- * Returns the number of conversation placement functions.
- *
- * @return The number of registered functions.
- */
-int gaim_conv_placement_get_fnc_count(void);
+void gaim_conv_placement_remove_fnc(const char *id);
 
 /**
  * Returns the name of the conversation placement function at the
- * specified index.
+ * specified id.
  *
- * @param index The index.
+ * @param id The id.
  *
- * @return The name of the function, or @c NULL if this index is out of
- *         range.
+ * @return The name of the function, or @c NULL if this id is invalid.
  */
-const char *gaim_conv_placement_get_name(int index);
+const char *gaim_conv_placement_get_name(const char *id);
 
 /**
  * Returns a pointer to the conversation placement function at the
- * specified index.
+ * specified id.
  *
- * @param index The index.
+ * @param id The id.
  *
  * @return A pointer to the function.
  */
-GaimConvPlacementFunc gaim_conv_placement_get_fnc(int index);
+GaimConvPlacementFunc gaim_conv_placement_get_fnc(const char *id);
 
 /**
- * Returns the index of the specified conversation placement function.
+ * Returns the id of the specified conversation placement function.
  *
  * @param fnc A pointer to the registered function.
  *
- * @return The index of the conversation, or -1 if the function is not
+ * @return The id of the conversation, or NULL if the function is not
  *         registered.
  */
-int gaim_conv_placement_get_fnc_index(GaimConvPlacementFunc fnc);
-
-/**
- * Returns the index of the active conversation placement function.
- *
- * @param index The index of the active function.
- */
-int gaim_conv_placement_get_active(void);
-
-/**
- * Sets the active conversation placement function.
- *
- * @param index The index of the function.
- */
-void gaim_conv_placement_set_active(int index);
+const char *gaim_conv_placement_get_fnc_id(GaimConvPlacementFunc fnc);
 
 /*@}*/
 
