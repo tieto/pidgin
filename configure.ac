@@ -375,7 +375,6 @@ AC_OUTPUT([Makefile
 	       Doxyfile
            doc/Makefile
 	   intl/Makefile
-           m4/Makefile
            pixmaps/Makefile
 	   pixmaps/protocols/Makefile
            pixmaps/protocols/msn/Makefile

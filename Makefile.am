@@ -10,8 +10,7 @@ dist-hook: gaim.spec
 pixmapdir = $(datadir)/applications
 pixmap_DATA = gaim.desktop
 
-SUBDIRS = m4 sounds plugins pixmaps doc po intl src
-ACLOCAL_AMFLAGS = -I m4
+SUBDIRS = sounds plugins pixmaps doc po intl src
 
 docs: Doxyfile.in
 	@doxygen
