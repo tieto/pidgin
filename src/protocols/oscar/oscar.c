@@ -489,7 +489,7 @@ static void gaim_odc_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	if ((cnv = gaim_find_conversation(sn)))
 		gaim_conversation_write(cnv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 
-	gaim_conversation_update_progress(cnv, 100);
+	gaim_conversation_update_progress(cnv, NULL, u100);
 
 	g_free(dim); /* I guess? I don't see it anywhere else... -- mid */
 	g_free(sn);
@@ -798,7 +798,7 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 	aim_conn_completeconnect(sess, bosconn);
 	gc->inpa = gaim_input_add(bosconn->fd, GAIM_INPUT_READ, oscar_callback, bosconn);
 	gaim_connection_update_progress(gc,
-			_("Connection established, cookie sent"), 1, 2);
+			_("Connection established, cookie sent"), 4, 5);
 }
 
 /* BBB */
