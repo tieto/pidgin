@@ -309,6 +309,44 @@ void serv_chat_send(struct gaim_connection *g, int id, char *message)
 	serv_touch_idle(g);
 }
 
+int find_queue_row_by_name(char *name)
+{
+	GSList *templist;
+	char *temp;
+	int i;
+
+	templist = message_queue;
+
+	for (i = 0; i < GTK_CLIST(clistqueue)->rows; i++)
+	{
+		gtk_clist_get_text(GTK_CLIST(clistqueue), i, 0, &temp);
+
+		if (!strcmp(name, temp))
+			return i;
+	}
+
+	return -1;
+}
+
+int find_queue_total_by_name(char *name)
+{
+	GSList *templist;
+	int i = 0;
+
+	templist = message_queue;
+
+	while (templist)
+	{
+		struct queued_message *qm = (struct queued_message *)templist->data;
+		if (!strcmp(name, qm->name))
+			i++;
+	
+		templist = templist->next;
+	}
+
+	return i;
+}
+
 void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away, time_t mtime)
 {
 	struct conversation *cnv;
@@ -354,32 +392,65 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		away = WFLAG_AUTO;
 
 	if (gc->away) {
-		if (!(general_options & OPT_GEN_DISCARD_WHEN_AWAY)) {
-			if (cnv == NULL) {
-				new_conv = 1;
-				cnv = new_conversation(name);
-				cnv->gc = gc;
-				gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
-							    g_slist_index(connections, gc));
-				update_buttons_by_protocol(cnv);
-			}
-		} else {
-			return;
-		}
-		if (cnv != NULL) {
+		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY)
+		{
 			struct queued_message *qm;
-			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
-				play_sound(RECEIVE);
-			/*
+			int row;
+
 			qm = (struct queued_message *)g_new0(struct queued_message, 1);
 			snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = strdup(message);
 			qm->gc = gc;
 			qm->tm = mtime;
 
+			row = find_queue_row_by_name(qm->name);
+
+			if (row >= 0)
+			{
+				char number[32];
+				int qtotal;
+
+				qtotal = find_queue_total_by_name(qm->name);
+
+				snprintf(number, 32, _("(%d messages)"), ++qtotal);
+
+				gtk_clist_set_text(GTK_CLIST(clistqueue), row, 1, number);
+			}
+			else
+			{
+
+				gchar *heh[2];
+
+				heh[0] = strdup(qm->name);
+				heh[1] = strdup(_("(1 message)"));
+				gtk_clist_append(GTK_CLIST(clistqueue), heh);
+
+				g_free(heh[0]);
+				g_free(heh[1]);
+			}
+
 			message_queue = g_slist_append(message_queue, qm);
-			*/
-			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
+		}
+		else
+		{
+			if (!(general_options & OPT_GEN_DISCARD_WHEN_AWAY)) {
+				if (cnv == NULL) {
+					new_conv = 1;
+					cnv = new_conversation(name);
+					cnv->gc = gc;
+					gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu),
+								    g_slist_index(connections, gc));
+					update_buttons_by_protocol(cnv);
+				}
+			} else {
+				return;
+			}
+			if (cnv != NULL) {
+				if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
+					play_sound(RECEIVE);
+				
+				write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
+			}
 		}
 
 	} else {
@@ -393,10 +464,12 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		}
 		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV)) {
 			play_sound(FIRST_RECEIVE);
-		} else {
+		} else 
+		{
 			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 				play_sound(RECEIVE);
 		}
+
 		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime);
 	}
 
@@ -411,19 +484,18 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 		time(&t);
 
+		/* apply default fonts and colors */
+		tmpmsg = stylize(gc->away, MSG_LEN);
+		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
 
 		if ((cnv == NULL) || (t - cnv->sent_away) < 120)
 			return;
 
 		cnv->sent_away = t;
 
-		/* apply default fonts and colors */
-		tmpmsg = stylize(gc->away, MSG_LEN);
-
-		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
-
 		if (cnv != NULL)
 			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL, mtime);
+
 		g_free(tmpmsg);
 	}
 }

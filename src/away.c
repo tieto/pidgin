@@ -40,6 +40,9 @@
 GtkWidget *imaway = NULL;
 
 GtkWidget *awaymenu = NULL;
+GtkWidget *clistqueue = NULL;
+GtkWidget *clistqueuesw;
+
 struct away_message *awaymessage = NULL;
 struct away_message *default_away;
 int auto_away;
@@ -51,24 +54,66 @@ static void destroy_im_away()
 	imaway = NULL;
 }
 
+void purge_away_queue()
+{
+	struct conversation *cnv;
+	GSList *templist = message_queue;
+
+	gtk_clist_freeze(GTK_CLIST(clistqueue));
+
+	gtk_clist_clear(GTK_CLIST(clistqueue));
+
+	while (templist)
+	{
+		struct queued_message *qm = (struct queued_message *)templist->data;
+
+		cnv = find_conversation(qm->name);
+
+		if (!cnv)
+			cnv = new_conversation(qm->name);
+
+		cnv->gc = qm->gc;
+
+		write_to_conv(cnv, qm->message, WFLAG_RECV, NULL, qm->tm);
+
+		free(qm->message);
+
+		templist = g_slist_remove(templist, qm);
+
+		free(qm);
+	}
+
+	gtk_clist_thaw(GTK_CLIST(clistqueue));
+	
+	message_queue = NULL;
+}
+
+void toggle_away_queue()
+{
+	if (!clistqueue || !clistqueuesw)
+		return;
+	
+	if (general_options & OPT_GEN_QUEUE_WHEN_AWAY)
+	{
+		gtk_widget_show(clistqueue);
+		gtk_widget_show(clistqueuesw);
+	}
+	else
+	{
+		gtk_widget_hide(clistqueue);
+		gtk_widget_hide(clistqueuesw);
+		purge_away_queue();
+	}
+	
+}
+
 void do_im_back(GtkWidget *w, GtkWidget *x)
 {
 	if (imaway) {
 		GtkWidget *tmp = imaway;
-		/*GSList *templist = message_queue;
 
-		while (templist)
-		{
-			struct queued_message *qm = (struct queued_message *)templist->data;
+		purge_away_queue();
 
-			free(qm->message);
-
-			message_queue = g_slist_remove(message_queue, qm);
-
-			free(qm);
-		}
-		*/
-		
 		imaway = NULL;
 		gtk_widget_destroy(tmp);
 		if (w != tmp)
@@ -120,7 +165,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 		vscrollbar = gtk_vscrollbar_new(GTK_TEXT(awaytext)->vadj);
 		gtk_widget_show(vscrollbar);
-		gtk_widget_set_usize(awaytext, 225, 100);
+		gtk_widget_set_usize(awaytext, 245, 120);
 		gtk_text_set_word_wrap(GTK_TEXT(awaytext), TRUE);
 		gtk_widget_show(awaytext);
 		gtk_text_freeze(GTK_TEXT(awaytext));
@@ -130,8 +175,19 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		if (display_options & OPT_DISP_COOL_LOOK)
 			gtk_button_set_relief(GTK_BUTTON(back), GTK_RELIEF_NONE);
 
+		clistqueuesw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(clistqueuesw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+
+		clistqueue = gtk_clist_new(2);
+		gtk_clist_set_column_width(GTK_CLIST(clistqueue), 0, 100);
+		gtk_widget_set_usize(GTK_WIDGET(clistqueue), -1, 50);
+		gtk_container_add(GTK_CONTAINER(clistqueuesw), clistqueue);
+
 		/* Put the buttons in the box */
 		gtk_box_pack_start(GTK_BOX(vbox), awaytext, TRUE, TRUE, 0);
+		
+		gtk_box_pack_start(GTK_BOX(vbox), clistqueuesw, TRUE, TRUE, 0);
+		
 		gtk_box_pack_start(GTK_BOX(vbox), back, FALSE, FALSE, 0);
 
 		/* Handle closes right */
@@ -139,6 +195,12 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_signal_connect(GTK_OBJECT(back), "clicked", GTK_SIGNAL_FUNC(do_im_back), imaway);
 
 		/* Finish up */
+		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY)
+		{
+			gtk_widget_show(clistqueuesw);
+			gtk_widget_show(clistqueue);
+		}
+
 		gtk_widget_show(back);
 		gtk_widget_show(vbox);
 		if (strlen(a->name))

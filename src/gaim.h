@@ -426,6 +426,7 @@ extern struct away_message *awaymessage;
 extern struct away_message *default_away;
 extern int auto_away;
 extern GtkWidget *awaymenu;
+extern GtkWidget *clistqueue; 
 
 /* Globals in prpl.c */
 extern GtkWidget *protomenu;
@@ -463,6 +464,7 @@ extern int general_options;
 #define OPT_GEN_CTL_ENTER         0x02000000
 #define OPT_GEN_F2_TOGGLES        0x04000000
 #define OPT_GEN_NO_AUTO_RESP      0x08000000
+#define OPT_GEN_QUEUE_WHEN_AWAY   0x10000000
 
 extern int display_options;
 #define OPT_DISP_SHOW_TIME        0x00000001
@@ -719,6 +721,8 @@ extern void do_away_message(GtkWidget *, struct away_message *);
 extern void do_away_menu();
 extern void away_list_unclicked(GtkWidget *, struct away_message *);
 extern void away_list_clicked(GtkWidget *, struct away_message *);
+extern void toggle_away_queue();
+extern void purge_away_queue();
 
 /* Functions in aim.c */
 extern void show_login();

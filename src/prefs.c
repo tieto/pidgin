@@ -431,6 +431,7 @@ static void convo_page()
 	gaim_button(_("Show URLs as links"), &general_options, OPT_GEN_SEND_LINKS, vbox);
 	gaim_button(_("Highlight misspelled words"), &general_options, OPT_GEN_CHECK_SPELLING, vbox);
 	gaim_button(_("Sending messages removes away status"), &general_options, OPT_GEN_BACK_ON_IM, vbox);
+	gaim_button(_("Queue new messages when away"), &general_options, OPT_GEN_QUEUE_WHEN_AWAY, vbox);
 
 	vbox = gtk_vbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
@@ -2212,6 +2213,9 @@ void set_general_option(GtkWidget *w, int *option)
 
 	if ((int)option == OPT_GEN_CHECK_SPELLING)
 		toggle_spellchk();
+
+	if ((int)option == OPT_GEN_QUEUE_WHEN_AWAY)
+		toggle_away_queue();
 
 	save_prefs();
 }
