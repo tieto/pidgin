@@ -40,6 +40,6 @@ char *jabber_get_bare_jid(const char *jid);
 time_t str_to_time(const char *timestamp);
 const char *jabber_get_state_string(int state);
 
-const char *jabber_normalize(const GaimAccount *account, const char *in);
+const char *jabber_normalize(const char *in);
 
 #endif /* _GAIM_JABBER_JID_H_ */

@@ -179,12 +179,12 @@ char *jabber_get_bare_jid(const char *jid)
 	slash = strrchr(jid, '/');
 
 	if(slash)
-		return g_strndup(jid, slash - jid);
+		return g_utf8_strdown(jid, slash - jid);
 	else
-		return g_strdup(jid);
+		return g_utf8_strdown(jid, -1);
 }
 
-const char *jabber_normalize(const GaimAccount *account, const char *in)
+const char *jabber_normalize(const char *in)
 {
 	static char buf[2048]; /* maximum legal length of a jabber jid */
 	char *tmp;

@@ -68,7 +68,7 @@ JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 
 	room_jid = g_strdup_printf("%s@%s", room, server);
 
-	chat = g_hash_table_lookup(js->chats, room_jid);
+	chat = g_hash_table_lookup(js->chats, jabber_normalize(room_jid));
 	g_free(room_jid);
 
 	return chat;
@@ -160,7 +160,7 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	JabberChat *chat;
 	char *room, *server, *handle, *passwd;
 	xmlnode *presence, *x;
-	char *room_jid, *full_jid;
+	char *tmp, *room_jid, *full_jid;
 	JabberStream *js = gc->proto_data;
 
 	room = g_hash_table_lookup(data, "room");
@@ -174,7 +174,9 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	if(jabber_chat_find(js, room, server))
 		return;
 
-	room_jid = g_strdup_printf("%s@%s", room, server);
+	tmp = g_strdup_printf("%s@%s", room, server);
+	room_jid = g_strdup(jabber_normalize(tmp));
+	g_free(tmp);
 
 	chat = g_new0(JabberChat, 1);
 	chat->js = gc->proto_data;
@@ -227,7 +229,7 @@ void jabber_chat_destroy(JabberChat *chat)
 	JabberStream *js = chat->js;
 	char *room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	g_hash_table_remove(js->chats, room_jid);
+	g_hash_table_remove(js->chats, jabber_normalize(room_jid));
 	g_free(room_jid);
 
 	g_free(chat->room);

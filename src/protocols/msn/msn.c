@@ -36,7 +36,7 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-static const char *msn_normalize(const GaimAccount *account, const char *str);
+static const char *msn_normalize(const char *str);
 
 typedef struct
 {
@@ -461,7 +461,7 @@ msn_login(GaimAccount *account)
 	gaim_connection_update_progress(gc, _("Connecting"), 0, MSN_CONNECT_STEPS);
 
 	/* Hmm, I don't like this. */
-	username = msn_normalize(account, gaim_account_get_username(account));
+	username = msn_normalize(gaim_account_get_username(account));
 
 	if (strcmp(username, gaim_account_get_username(account)))
 		gaim_account_set_username(account, username);
@@ -654,7 +654,7 @@ msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 	char outparams[MSN_BUF_LEN];
 	GSList *l;
 
-	who = msn_normalize(gc->account, name);
+	who = msn_normalize(name);
 
 	if (strchr(who, ' ')) {
 		/* This is a broken blist entry. */
@@ -1187,7 +1187,7 @@ msn_convo_closed(GaimConnection *gc, const char *who)
 }
 
 static const char *
-msn_normalize(const GaimAccount *account, const char *str)
+msn_normalize(const char *str)
 {
 	static char buf[BUF_LEN];
 
