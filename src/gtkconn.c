@@ -213,6 +213,11 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 {
 	struct signon_meter *meter = find_signon_meter(gc);
 
+	gaim_setup(gc);
+
+	do_away_menu();
+	do_proto_menu();
+
 	if(meter)
 		kill_meter(meter, _("Done."));
 }
@@ -227,6 +232,8 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc,
 	struct signon_meter *meter = find_signon_meter(gc);
 
 	update_privacy_connections();
+	do_away_menu();
+	do_proto_menu();
 
 	if(meter)
 		kill_meter(meter, _("Done."));

@@ -31,9 +31,6 @@
 #include "server.h"
 #include "sound.h"
 
-/* XXX UI stuff! */
-#include "ui.h"
-
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
 static GaimConnectionUiOps *connection_ui_ops = NULL;
@@ -171,6 +168,8 @@ gaim_connection_disconnect(GaimConnection *gc)
 void
 gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 {
+	GaimConnectionUiOps *ops;
+
 	g_return_if_fail(gc != NULL);
 
 	if (gc->state == state)
@@ -178,8 +177,12 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 	gc->state = state;
 
+	ops = gaim_get_connection_ui_ops();
+
+	if (gc->state != GAIM_CONNECTED)
+		connections_connecting = g_list_remove(connections_connecting, gc);
+
 	if (gc->state == GAIM_CONNECTED) {
-		GaimConnectionUiOps *ops = gaim_get_connection_ui_ops();
 		GaimBlistNode *gnode,*bnode;
 		GList *wins;
 		GList *add_buds=NULL;
@@ -194,9 +197,6 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		gaim_blist_show();
 		gaim_blist_add_account(gc->account);
-
-		/* XXX I hate this. UI code. -- ChipX86 */
-		gaim_setup(gc);
 
 		/*
 		 * XXX This is a hack! Remove this and replace it with a better event
@@ -248,8 +248,9 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		serv_set_permit_deny(gc);
 	}
-	else {
-		connections_connecting = g_list_remove(connections_connecting, gc);
+	else if (gc->state == GAIM_DISCONNECTED) {
+		if (ops != NULL && ops->disconnected != NULL)
+			ops->disconnected(gc, NULL);
 	}
 }
 
