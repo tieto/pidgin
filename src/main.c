@@ -906,12 +906,13 @@ int main(int argc, char *argv[])
 #ifdef HAVE_STARTUP_NOTIFICATION
 	startup_notification_complete();
 #endif
-
 	gtk_main();
 	gaim_sound_shutdown();
 #ifdef _WIN32
 	wgaim_cleanup();
 #endif
+
+
 	return 0;
 
 }

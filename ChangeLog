@@ -35,6 +35,7 @@ version 0.79cvs:
 	  it is only called once. (Evan Schoenberg).
 	* Flashing windows should work again for unix in window managers that
 	  support the URGENT hint (Etan Reisner)
+	* Dragging into conversation windows works better.
 
 version 0.78 (05/30/2004):
 	New Features:

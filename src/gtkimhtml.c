@@ -71,10 +71,18 @@
 #define gtk_widget_get_clipboard(x, y) gtk_clipboard_get(y)
 #endif
 
+static gboolean
+gtk_text_view_drag_motion (GtkWidget        *widget,
+                           GdkDragContext   *context,
+                           gint              x,
+                           gint              y,
+                           guint             time);
+
 static void preinsert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
 static gboolean gtk_imhtml_is_amp_escape (const gchar *string, gchar **replace, gint *length);
 void gtk_imhtml_close_tags(GtkIMHtml *imhtml, GtkTextIter *iter);
+static void gtk_imhtml_link_drop_cb(GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time, gpointer user_data);
 static void gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, guint info, guint t, GtkIMHtml *imhtml);
 static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *mark, GtkIMHtml *imhtml);
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data);
@@ -96,7 +104,12 @@ enum {
 };
 
 enum {
-	DRAG_URL
+	DRAG_URL,
+	DRAG_HTML,
+	DRAG_UTF8_STRING,
+	DRAG_COMPOUND_TEXT,
+	DRAG_STRING,
+	DRAG_TEXT,
 };
 
 enum {
@@ -117,10 +130,16 @@ GtkTargetEntry selection_targets[] = {
 	{ "TEXT", 0, TARGET_TEXT}};
 
 GtkTargetEntry link_drag_drop_targets[] = {
+	{"text/html", 0, DRAG_HTML },
 	{"x-url/ftp", 0, DRAG_URL},
 	{"x-url/http", 0, DRAG_URL},
 	{"text/uri-list", 0, DRAG_URL},
-	{"_NETSCAPE_URL", 0, DRAG_URL}};
+	{"_NETSCAPE_URL", 0, DRAG_URL},
+	{ "UTF8_STRING", 0, DRAG_UTF8_STRING },
+	{ "COMPOUND_TEXT", 0, DRAG_COMPOUND_TEXT },
+	{ "STRING", 0, DRAG_STRING },
+	{ "TEXT", 0, DRAG_TEXT}};
+
 
 #ifdef _WIN32
 /* Win32 clipboard format value, and functions to convert back and
@@ -988,7 +1007,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 							g_cclosure_marshal_VOID__VOID,
 							G_TYPE_NONE, 0);
 	gobject_class->finalize = gtk_imhtml_finalize;
-
+      	widget_class->drag_motion = gtk_text_view_drag_motion;
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
 	                                        _("Hyperlink color"),
 	                                        _("Color to draw hyperlinks."),
@@ -1043,11 +1062,11 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "button_press_event", G_CALLBACK(gtk_imhtml_button_press_event), NULL);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(preinsert_cb), imhtml);
 	g_signal_connect_after(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(insert_cb), imhtml);
-
 	gtk_drag_dest_set(GTK_WIDGET(imhtml), 0,
 			  link_drag_drop_targets, sizeof(link_drag_drop_targets) / sizeof(GtkTargetEntry),
 			  GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(imhtml), "drag_data_received", G_CALLBACK(gtk_imhtml_link_drag_rcv_cb), imhtml);
+	g_signal_connect(G_OBJECT(imhtml), "drag_drop", G_CALLBACK(gtk_imhtml_link_drop_cb), imhtml);
 
 	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "cut-clipboard", G_CALLBACK(cut_clipboard_cb), NULL);
@@ -1076,11 +1095,10 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->edit.fontsize = 0;
 	imhtml->edit.link = NULL;
 
-
+	
 	imhtml->scalables = NULL;
 
 	gtk_imhtml_set_editable(imhtml, FALSE);
-
 	g_signal_connect(G_OBJECT(imhtml), "populate-popup", 
 					 G_CALLBACK(hijack_menu_cb), NULL);
 
@@ -1241,29 +1259,115 @@ gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIte
 		return FALSE; /* Let clicks go through if we didn't catch anything */
 }
 
+static gboolean
+gtk_text_view_drag_motion (GtkWidget        *widget,
+                           GdkDragContext   *context,
+                           gint              x,
+                           gint              y,
+                           guint             time)
+{
+	GdkDragAction suggested_action = 0;	
+
+	if (gtk_drag_dest_find_target (widget, context,
+				       gtk_drag_dest_get_target_list (widget)) == GDK_NONE) {
+    		/* can't accept any of the offered targets */
+	} else {
+		GtkWidget *source_widget;
+		suggested_action = context->suggested_action;
+		source_widget = gtk_drag_get_source_widget (context);
+		if (source_widget == widget) {
+			/* Default to MOVE, unless the user has
+			 * pressed ctrl or alt to affect available actions
+			 */
+			if ((context->actions & GDK_ACTION_MOVE) != 0)
+				suggested_action = GDK_ACTION_MOVE;
+		}
+	} 
+	
+	if (suggested_action != 0) {
+		gdk_drag_status (context, suggested_action, time);
+	} else {
+		gdk_drag_status (context, 0, time);
+	}
+	
+  /* TRUE return means don't propagate the drag motion to parent
+   * widgets that may also be drop sites.
+   */
+  return TRUE;
+}
+
+static void
+gtk_imhtml_link_drop_cb(GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time, gpointer user_data)
+{
+	GdkAtom target = gtk_drag_dest_find_target (widget, context, NULL);
+	
+	if (target != GDK_NONE)
+		gtk_drag_get_data (widget, context, target, time);
+	else
+		gtk_drag_finish (context, FALSE, FALSE, time);
+
+	return;
+}
+
 static void
 gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
  			    GtkSelectionData *sd, guint info, guint t, GtkIMHtml *imhtml)
 {
+	gchar **links;
+	gchar *link;
+	char *text = sd->data;
+	GtkTextMark *mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
+
+
 	if(gtk_imhtml_get_editable(imhtml) && sd->data){
-		gchar **links;
-		gchar *link;
+		switch (info) {
+		case DRAG_URL:
+			gaim_str_strip_cr(sd->data);
 
-		gaim_str_strip_cr(sd->data);
-
-		links = g_strsplit(sd->data, "\n", 0);
-		while((link = *links++) != NULL){
-			if(gaim_str_has_prefix(link, "http://") ||
-			   gaim_str_has_prefix(link, "https://") ||
-			   gaim_str_has_prefix(link, "ftp://")){
-				gtk_imhtml_insert_link(imhtml, gtk_text_buffer_get_insert(imhtml->text_buffer), link, link);
-			} else if (link=='\0') {
-				/* Ignore blank lines */
-			} else {
-				/* Special reasons, aka images being put in via other tag, etc. */
+			links = g_strsplit(sd->data, "\n", 0);
+			while((link = *links++) != NULL){
+				if(gaim_str_has_prefix(link, "http://") ||
+				   gaim_str_has_prefix(link, "https://") ||
+				   gaim_str_has_prefix(link, "ftp://")){
+					gtk_imhtml_insert_link(imhtml, mark, link, link);
+				} else if (link=='\0') {
+					/* Ignore blank lines */
+				} else {
+					/* Special reasons, aka images being put in via other tag, etc. */
+				}
 			}
-		}
+			break;
+		case DRAG_HTML:
+			if (sd->length >= 2 &&
+			    (*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
+				/* This is UCS-2 */
+				char *tmp;
+				char *utf8 = g_convert(text, sd->length, "UTF-8", "UCS-2", NULL, NULL, NULL);
+				g_free(text);
+				text = utf8;
+				if (!text) {
+					gaim_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in drag_rcv_cb\n");
+					return;
+				}
+				tmp = g_utf8_next_char(text);
+				memmove(text, tmp, strlen(tmp) + 1);
+			}
 
+			if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
+				gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
+				g_free(text);
+				return;
+			}
+			gtk_imhtml_insert_html_at_iter(imhtml, text, 0, &iter);
+			break;
+		default:
+			break;
+		}
+		      
+		
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	} else {
 		gtk_drag_finish(dc, FALSE, FALSE, t);
@@ -1271,8 +1375,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 }
 
 /* this isn't used yet
-static void
-gtk_smiley_tree_remove (GtkSmileyTree     *tree,
+static void gtk_smiley_tree_remove (GtkSmileyTree     *tree,
 			GtkIMHtmlSmiley   *smiley)
 {
 	GtkSmileyTree *t = tree;

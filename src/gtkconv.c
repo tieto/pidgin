@@ -3801,7 +3801,6 @@ setup_chat_pane(GaimConversation *conv)
 						   G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	gaim_setup_imhtml(gtkconv->imhtml);
-
 	gtk_widget_show(gtkconv->imhtml);
 
 	/* Build the right pane. */
@@ -4028,10 +4027,8 @@ setup_im_pane(GaimConversation *conv)
 
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
 			gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
-
 	gaim_setup_imhtml(gtkconv->imhtml);
 	gtk_widget_show(gtkconv->imhtml);
-
 	vbox2 = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, TRUE);
 	gtk_widget_show(vbox2);
@@ -4127,7 +4124,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 {
 	GaimConvWindow *win = conv->window;
 	GaimConversation *c;
-
 	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE))
 	{
 		GaimBlistNode *n = NULL;
@@ -4174,6 +4170,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
+		gtk_drag_finish(dc, FALSE, FALSE, t);
 }
 
 /**************************************************************************
@@ -4387,31 +4384,30 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 		/* Setup drag-and-drop */
 		gtk_drag_dest_set(pane,
-						  GTK_DEST_DEFAULT_MOTION |
-						  GTK_DEST_DEFAULT_DROP,
-						  te, sizeof(te) / sizeof(GtkTargetEntry),
-						  GDK_ACTION_COPY);
-		gtk_drag_dest_set(gtkconv->imhtml,
-						  GTK_DEST_DEFAULT_MOTION |
-				                  GTK_DEST_DEFAULT_DROP,
-						  te, sizeof(te) / sizeof(GtkTargetEntry),
-						  GDK_ACTION_DEFAULT | GDK_ACTION_COPY |
-						  GDK_ACTION_MOVE);
-		gtk_drag_dest_set(gtkconv->entry,
-						  GTK_DEST_DEFAULT_MOTION |
-						  GTK_DEST_DEFAULT_DROP,
-						  te, sizeof(te) / sizeof(GtkTargetEntry),
-						  GDK_ACTION_COPY);
-
+				  GTK_DEST_DEFAULT_MOTION |
+				  GTK_DEST_DEFAULT_DROP,
+				  te, sizeof(te) / sizeof(GtkTargetEntry),
+				  GDK_ACTION_COPY);
+		gtk_drag_dest_set(pane,
+				  GTK_DEST_DEFAULT_MOTION |
+				  GTK_DEST_DEFAULT_DROP,
+				  te, sizeof(te) / sizeof(GtkTargetEntry),
+				  GDK_ACTION_COPY);
+		gtk_drag_dest_set(gtkconv->imhtml, 0,
+				  te, sizeof(te) / sizeof(GtkTargetEntry),
+				  GDK_ACTION_COPY);
+		
+		gtk_drag_dest_set(gtkconv->entry, 0,
+				  te, sizeof(te) / sizeof(GtkTargetEntry),
+				  GDK_ACTION_COPY);
+		
 		g_signal_connect(G_OBJECT(pane), "drag_data_received",
-						 G_CALLBACK(conv_dnd_recv), conv);
+				 G_CALLBACK(conv_dnd_recv), conv);
 		g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
-						 G_CALLBACK(conv_dnd_recv), conv);
-#if 0
+				 G_CALLBACK(conv_dnd_recv), conv);
 		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
-						 G_CALLBACK(conv_dnd_recv), conv);
-#endif
-
+				 G_CALLBACK(conv_dnd_recv), conv);
+		
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 6);
 		gtk_container_set_border_width(GTK_CONTAINER(tab_cont), 6);
