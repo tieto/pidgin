@@ -320,6 +320,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 	}
 
 	msn_session_disconnect(session);
+
 	gaim_connection_error(gc, msg);
 
 	g_free(msg);
@@ -373,11 +374,11 @@ msn_session_finish_login(MsnSession *session)
 	GaimAccount *account;
 	GaimConnection *gc;
 
-	account = session->account;
-	gc = gaim_account_get_connection(account);
-
 	if (session->logged_in)
 		return;
+
+	account = session->account;
+	gc = gaim_account_get_connection(account);
 
 	msn_user_set_buddy_icon(session->user,
 							gaim_account_get_buddy_icon(session->account));

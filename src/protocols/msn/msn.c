@@ -1076,16 +1076,21 @@ msn_chat_invite(GaimConnection *gc, int id, const char *msg,
 {
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
-	MsnCmdProc *cmdproc;
 
 	session = gc->proto_data;
 
 	swboard = msn_session_find_switch_with_id(session, id);
-	g_return_if_fail(swboard != NULL);
 
-	cmdproc = swboard->servconn->cmdproc;
+	if (swboard == NULL)
+	{
+		/* if we have no switchboard, everyone else left the chat already */
+		swboard = msn_switchboard_new(session);
+		msn_switchboard_request(swboard);
+		swboard->chat_id = id;
+		swboard->conv = gaim_find_chat(gc, id);
+	}
 
-	msn_cmdproc_send(cmdproc, "CAL", "%s", who);
+	msn_switchboard_request_add_user(swboard, who);
 }
 
 static void
@@ -1097,11 +1102,12 @@ msn_chat_leave(GaimConnection *gc, int id)
 	session = gc->proto_data;
 
 	swboard = msn_session_find_switch_with_id(session, id);
-	g_return_if_fail(swboard != NULL);
+
+	/* if swboard is NULL we were the only person left anyway */
+	if (swboard == NULL)
+		return;
 
 	msn_switchboard_close(swboard);
-
-	/* serv_got_chat_left(gc, id); */
 }
 
 static int

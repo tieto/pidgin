@@ -227,9 +227,12 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 			GList *l;
 
 			/* gaim_debug_info("msn", "[chat] Switching to chat.\n"); */
-
+#if 0
+			/* this is bad - it causes msn_switchboard_close to be called on the
+			 * switchboard we're in the middle of using :( */
 			if (swboard->conv != NULL)
 				gaim_conversation_destroy(swboard->conv);
+#endif
 
 			cmdproc->session->conv_seq++;
 			swboard->chat_id = cmdproc->session->conv_seq;
@@ -314,7 +317,9 @@ swboard_error_helper(MsnSwitchBoard *swboard, int reason, const char *passport)
 
 	gaim_debug_info("msg", "Error: Unable to call the user %s\n", passport);
 
-	if (swboard->total_users == 0)
+	/* TODO: if current_users > 0, this is probably a chat and an invite failed,
+	 * we should report that in the chat or something */
+	if (swboard->current_users == 0)
 	{
 		swboard->error = reason;
 		msn_switchboard_close(swboard);
@@ -612,10 +617,14 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* This is a helper switchboard */
 		msn_switchboard_destroy(swboard);
 	}
-	else if (swboard->current_users > 1)
+	else if ((swboard->current_users > 1) ||
+			 (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
 	{
 		/* This is a switchboard used for a chat */
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(swboard->conv), user, NULL);
+		swboard->current_users--;
+		if (swboard->current_users == 0)
+			msn_switchboard_destroy(swboard);
 	}
 	else
 	{
@@ -836,13 +845,22 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		body_final = body_enc;
 	}
 
-	if (swboard->current_users > 1)
+	if (swboard->current_users > 1 ||
+		((swboard->conv != NULL) &&
+		 gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
 	{
 		serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
 						 time(NULL));
+		if (swboard->conv == NULL)
+			swboard->conv = gaim_find_chat(gc, swboard->chat_id);
 	}
 	else
+	{
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
+		if (swboard->conv == NULL)
+			swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_IM,
+									passport, gaim_connection_get_account(gc));
+	}
 
 	g_free(body_final);
 }
@@ -1079,6 +1097,9 @@ void
 msn_switchboard_close(MsnSwitchBoard *swboard)
 {
 	g_return_if_fail(swboard != NULL);
+
+	 /* forget any conversation that used to be associated with this swboard */
+	swboard->conv = NULL;
 
 	if (swboard->error != MSN_SB_ERROR_NONE)
 	{

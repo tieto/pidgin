@@ -283,7 +283,6 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		gaim_debug_error("msn", "HTTP: Read error\n");
 		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
-		msn_httpconn_disconnect(httpconn);
 
 		return;
 	}
@@ -310,10 +309,14 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		gaim_debug_error("msn", "HTTP: Special error\n");
 		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
-		msn_httpconn_disconnect(httpconn);
 
 		return;
 	}
+
+	if (httpconn->rx_buf != NULL)
+		g_free(httpconn->rx_buf);
+	httpconn->rx_buf = NULL;
+	httpconn->rx_len = 0;
 
 	if (result_len == 0)
 	{
@@ -322,17 +325,11 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		gaim_debug_info("msn", "HTTP: nothing to do here\n");
 #endif
 		g_free(result_msg);
-		g_free(httpconn->rx_buf);
-		httpconn->rx_buf = NULL;
-		httpconn->rx_len = 0;
 		return;
 	}
 
-	g_free(httpconn->rx_buf);
-	httpconn->rx_buf = NULL;
-	httpconn->rx_len = 0;
-
-	g_free(servconn->rx_buf);
+	if (servconn->rx_buf != NULL)
+		g_free(servconn->rx_buf);
 	servconn->rx_buf = result_msg;
 	servconn->rx_len = result_len;
 
@@ -702,8 +699,10 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 			servconn = httpconn->servconn;
 
-			if (servconn != NULL)
-				servconn->wasted = TRUE;
+			/* I'll be honest, I don't fully understand all this, but this
+			 * causes crashes, Stu. */
+			/* if (servconn != NULL)
+				servconn->wasted = TRUE; */
 
 			g_free(full_session_id);
 			g_free(session_id);

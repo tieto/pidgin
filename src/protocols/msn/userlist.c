@@ -153,10 +153,25 @@ get_store_name(MsnUser *user)
 
 	g_return_val_if_fail(user != NULL, NULL);
 
-	if ((store_name = msn_user_get_store_name(user)) != NULL)
-		return gaim_url_encode(store_name);
+	store_name = msn_user_get_store_name(user);
 
-	return msn_user_get_passport(user);
+	if (store_name != NULL)
+		store_name = gaim_url_encode(store_name);
+	else
+		store_name = msn_user_get_passport(user);
+
+	/* this might be a bit of a hack, but it should prevent notification server
+	 * disconnections for people who have buddies with insane friendly names
+	 * who added you to their buddy list from being disconnected. Stu. */
+	/* Shx: What? Isn't the store_name obtained from the server, and hence it's
+	 * below the BUDDY_ALIAS_MAXLEN ? */
+	/* Stu: yeah, that's why it's a bit of a hack, as you pointed out, we're
+	 * probably decoding the incoming store_name wrong, or something. bleh. */
+
+	if (strlen(store_name) > BUDDY_ALIAS_MAXLEN)
+		store_name = msn_user_get_passport(user);
+
+	return store_name;
 }
 
 static void
@@ -466,7 +481,6 @@ void
 msn_userlist_remove_group(MsnUserList *userlist, MsnGroup *group)
 {
 	userlist->groups = g_list_remove(userlist->groups, group);
-	msn_group_destroy(group);
 }
 
 MsnGroup *
@@ -553,7 +567,10 @@ msn_userlist_remove_group_id(MsnUserList *userlist, int group_id)
 	group = msn_userlist_find_group_with_id(userlist, group_id);
 
 	if (group != NULL)
+	{
 		msn_userlist_remove_group(userlist, group);
+		msn_group_destroy(group);
+	}
 }
 
 void
@@ -629,13 +646,6 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	}
 
 	store_name = (user != NULL) ? get_store_name(user) : who;
-
-	/* this might be a bit of a hack, but it should prevent notification server
-	 * disconnections for people who have buddies with insane friendly names
-	 * who added you to their buddy list from being disconnected. Stu. */
-	/* ... No, that sentence didn't parse for me either. Stu. */
-	if (strlen(store_name) > BUDDY_ALIAS_MAXLEN)
-		store_name = who;
 
 	/* Then request the add to the server. */
 	list = lists[list_id];
