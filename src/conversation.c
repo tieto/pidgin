@@ -83,8 +83,8 @@ GdkPixmap *dark_icon_pm = NULL;
 GdkBitmap *dark_icon_bm = NULL;
 
 char fontface[64];
-GdkColor bgcolor;
-GdkColor fgcolor;
+extern GdkColor bgcolor;
+extern GdkColor fgcolor;
 
 void check_everything(GtkWidget *entry);
 gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c);

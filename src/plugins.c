@@ -32,8 +32,6 @@
 #include "../config.h"
 #endif
 
-#ifdef GAIM_PLUGINS
-
 #include <string.h>
 #include <sys/time.h>
 
@@ -45,6 +43,8 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
+
+#ifdef GAIM_PLUGINS
 
 #include <dlfcn.h>
 

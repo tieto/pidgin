@@ -150,15 +150,6 @@ struct g_url {
         char page[255];
 };
 
-#ifdef GAIM_PLUGINS
-struct gaim_plugin {
-	char *name;
-	char *filename;
-	char *description;
-	void *handle;
-	int   remove;
-};
-
 enum gaim_event {
 	event_signon = 0,
 	event_signoff,
@@ -183,6 +174,15 @@ enum gaim_event {
 	event_quit,
 	event_new_conversation,
 	/* any others? it's easy to add... */
+};
+
+#ifdef GAIM_PLUGINS
+struct gaim_plugin {
+	char *name;
+	char *filename;
+	char *description;
+	void *handle;
+	int   remove;
 };
 
 struct gaim_callback {
@@ -408,7 +408,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 883 $"
+#define REVISION "gaim:$Revision: 895 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

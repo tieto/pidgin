@@ -65,7 +65,7 @@
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
 #include "pixmaps/export_small.xpm"
-#ifdef GAIM_PLUGINS
+#if defined(GAIM_PLUGINS) || defined(USE_PERL)
 #include "pixmaps/plugins_small.xpm"
 #endif
 #include "pixmaps/prefs_small.xpm"
