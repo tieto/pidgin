@@ -41,6 +41,7 @@
 #include "gaim.h"
 #include "gtkhtml.h"
 
+#include "pixmaps/gnome_preferences.xpm"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/save.xpm"
 #include "pixmaps/ok.xpm"
@@ -84,7 +85,6 @@ struct create_away {
         GtkWidget *window;
         GtkWidget *entry;
         GtkWidget *text;
-        GtkWidget *checkbx;
 	struct away_message *mess;
 };
 
@@ -3031,7 +3031,7 @@ void show_import_dialog()
 /*  The dialog for new away messages                                      */
 /*------------------------------------------------------------------------*/
 
-void save_away_mess(GtkWidget *widget, struct create_away *ca)
+static struct away_message *save_away_message(struct create_away *ca)
 {
 	struct away_message *am;
 	guint text_len;
@@ -3049,9 +3049,7 @@ void save_away_mess(GtkWidget *widget, struct create_away *ca)
 	g_free(away_message);
 
 	if (!ca->mess) {
-		away_messages = g_slist_append(away_messages, am);
-		if (GTK_TOGGLE_BUTTON(ca->checkbx)->active)
-			do_away_message(NULL, am);
+		away_messages = g_slist_insert_sorted(away_messages, am, sort_awaymsg_list);
 	}
 
 	save_prefs();
@@ -3059,9 +3057,41 @@ void save_away_mess(GtkWidget *widget, struct create_away *ca)
 	if (prefs_away_list != NULL)
 		gtk_list_select_item(GTK_LIST(prefs_away_list), g_slist_index(away_messages, am));
 	
+	return am;
+}
+
+void save_away_mess(GtkWidget *widget, struct create_away *ca)
+{
+	save_away_message(ca);
 	destroy_dialog(NULL, ca->window);
-	
-	return;
+	g_free(ca);
+}
+
+void use_away_mess(GtkWidget *widget, struct create_away *ca)
+{
+	static struct away_message am;
+	guint text_len;
+	gchar *away_message;
+
+	g_snprintf(am.name, sizeof(am.name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
+	text_len = gtk_text_get_length(GTK_TEXT(ca->text));
+	if (text_len < 0) return;
+	away_message = gtk_editable_get_chars(GTK_EDITABLE(ca->text), 0, text_len);
+
+	g_snprintf(am.message, sizeof(am.message), "%s", away_message);
+	g_free(away_message);
+
+	do_away_message(NULL, &am);
+
+	destroy_dialog(NULL, ca->window);
+	g_free(ca);
+}
+
+void su_away_mess(GtkWidget *widget, struct create_away *ca)
+{
+	do_away_message(NULL, save_away_message(ca));
+	destroy_dialog(NULL, ca->window);
+	g_free(ca);
 }
 	
 void create_away_mess(GtkWidget *widget, void *dummy)
@@ -3079,95 +3109,84 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	/* Set up window */
 	ca->window = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_widget_set_usize(ca->window, 275, 200); 
 	gtk_container_border_width(GTK_CONTAINER(ca->window), 5);
 	gtk_window_set_wmclass(GTK_WINDOW(ca->window), "away_mess", "Gaim");
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("Gaim - New away message"));
-	gtk_widget_show(ca->window);
 	gtk_signal_connect(GTK_OBJECT(ca->window),"delete_event",
 		           GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
-
-        /* top level box */
+	gtk_widget_realize(ca->window);
+	aol_icon(ca->window->window);
 
 	tbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(ca->window), tbox);
-
-	/* Put frame and button-box in the toplevel */
+	gtk_widget_show(tbox);
 
 	frame = gtk_frame_new(_("New away message"));
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 0);
 	gtk_box_pack_start(GTK_BOX(tbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
+
 	fbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_border_width(GTK_CONTAINER(fbox), 5);
 	gtk_container_add(GTK_CONTAINER(frame), fbox);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(tbox), hbox, FALSE, FALSE, 0);
-
-	/* Make a label for away entry */
+	gtk_widget_show(fbox);
 
 	titlebox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), titlebox, FALSE, FALSE, 0);
+	gtk_widget_show(titlebox);
+
 	label = gtk_label_new(_("Away title: "));
 	gtk_box_pack_start(GTK_BOX(titlebox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(fbox), titlebox, FALSE, FALSE, 0);
-
-	/* make away title entry */
 
 	ca->entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(titlebox), ca->entry, TRUE, TRUE, 0);
+	gtk_widget_grab_focus(ca->entry);
+	gtk_widget_show(ca->entry);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 				       GTK_POLICY_AUTOMATIC,
 				       GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX(fbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
-
-	/* create and format text box */
 
 	ca->text = gtk_text_new(NULL, NULL);
 	gtk_text_set_word_wrap(GTK_TEXT(ca->text), TRUE);
 	gtk_text_set_editable(GTK_TEXT(ca->text), TRUE);
 	gtk_container_add(GTK_CONTAINER(sw), ca->text);
 	gtk_widget_show(ca->text);
-	gtk_box_pack_start(GTK_BOX(fbox), sw, TRUE, TRUE, 0);
 
-        /* fill hbox */
-
-	button = picture_button(ca->window, _("Cancel"), cancel_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	
-	button = picture_button(ca->window, _("Save"), save_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(save_away_mess), ca);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	
 	if (dummy && GTK_LIST(prefs_away_list)->selection) {
 		GtkWidget *item = GTK_LIST(prefs_away_list)->selection->data;
 		struct away_message *amt = gtk_object_get_user_data(GTK_OBJECT(item));
 		int pos = 0;
 		gtk_entry_set_text(GTK_ENTRY(ca->entry), amt->name);
-		gtk_editable_insert_text(GTK_EDITABLE(ca->text), amt->message, strlen(amt->message), &pos);
+		gtk_editable_insert_text(GTK_EDITABLE(ca->text), amt->message,
+					strlen(amt->message), &pos);
 		ca->mess = amt;
-	} else {
-		/* Checkbox for showing away msg */
-		ca->checkbx = gtk_check_button_new_with_label(_("Make Away Now"));
-		gtk_box_pack_start(GTK_BOX(fbox), ca->checkbx, FALSE, FALSE, 0);
-		gtk_widget_show(ca->checkbx);
 	}
 
-	/* let the world see what we have done. */
-	gtk_widget_show(label);
-	gtk_widget_show(ca->entry);
-	gtk_widget_show(titlebox);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(tbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
-	gtk_widget_show(tbox);
-	gtk_widget_show(fbox);
-	gtk_widget_show(frame);
 
-        gtk_widget_realize(ca->window);
-        aol_icon(ca->window->window);
-	gtk_widget_grab_focus(ca->entry);
+	button = picture_button(ca->window, _("Cancel"), cancel_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	
+	button = picture_button(ca->window, _("Use"), gnome_preferences_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(use_away_mess), ca);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	
+	button = picture_button(ca->window, _("Save & Use"), add_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(su_away_mess), ca);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	
+	button = picture_button(ca->window, _("Save"), ok_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(save_away_mess), ca);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	
+	gtk_widget_show(ca->window);
 }
 
 /* smiley dialog */

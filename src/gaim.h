@@ -720,6 +720,7 @@ extern GtkWidget *pref_bg_picture;
 extern void set_defaults(int);
 extern void load_prefs();
 extern void save_prefs();
+extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
 gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
