@@ -367,9 +367,9 @@ gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
 
 gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data)
 {	
+	GObject *object;
 	char buf[7];
 	buf[0] = '\0';
-	GObject *object;
 
 	if (event->state & GDK_CONTROL_MASK)
 		switch (event->keyval) {

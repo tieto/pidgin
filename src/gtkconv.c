@@ -2210,13 +2210,13 @@ gray_stuff_out(GaimConversation *conv)
 	GaimConnection *gc;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GdkPixbuf *window_icon = NULL;
+	GtkIMHtmlButtons buttons;
 
 	win     = gaim_conversation_get_window(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gc      = gaim_conversation_get_gc(conv);
-	GtkIMHtmlButtons buttons;
-	
+
 	if (gc != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
