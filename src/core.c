@@ -450,4 +450,5 @@ void core_quit()
 	close(UI_fd);
 	sprintf(buf, "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), getpid());
 	unlink(buf);
+	debug_printf("Removed core\n");
 }

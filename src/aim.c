@@ -385,6 +385,7 @@ void sighandler(int sig)
 		break;
 	case SIGSEGV:
 		core_quit();
+#ifndef DEBUG
 		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
@@ -401,6 +402,7 @@ void sighandler(int sig)
 			WEBSITE "gdb.php. If you need further\n"
 			"assistance, please IM either EWarmenhoven or RobFlynn and\n"
 			"they can help you.\n");
+#endif
 		abort();
 		break;
 	default:
@@ -561,9 +563,7 @@ int main(int argc, char *argv[])
 
 #if HAVE_SIGNAL_H
 	/* Let's not violate any PLA's!!!! */
-#ifndef DEBUG
 	signal(SIGSEGV, sighandler);
-#endif
 	signal(SIGHUP, sighandler);
 	signal(SIGINT, sighandler);
 	signal(SIGTERM, sighandler);
