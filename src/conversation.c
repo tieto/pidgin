@@ -45,6 +45,8 @@ struct ConvPlacementData
 
 #define SEND_TYPED_TIMEOUT 5000
 
+static struct gaim_window_ui_ops *win_ui_ops = NULL;
+
 static GList *conversations = NULL;
 static GList *ims = NULL;
 static GList *chats = NULL;
@@ -436,8 +438,7 @@ gaim_window_new(void)
 
 	win = g_malloc0(sizeof(struct gaim_window));
 
-	/* CONV XXX */
-	win->ui_ops = gaim_get_gtk_window_ui_ops();
+	win->ui_ops = gaim_get_win_ui_ops();
 
 	if (win->ui_ops != NULL && win->ui_ops->new_window != NULL)
 		win->ui_ops->new_window(win);
@@ -1412,8 +1413,6 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 
 	ops->write_conv(conv, who, message, length, flags, mtime);
 
-	/* TODO: Do logging fun stuff. */
-
 	win = gaim_conversation_get_window(conv);
 
 	if (!(flags & WFLAG_NOLOG) &&
@@ -2258,4 +2257,16 @@ gaim_conv_placement_set_active(int index)
 
 	place_conv = fnc;
 	place_conv_index = index;
+}
+
+void
+gaim_set_win_ui_ops(struct gaim_window_ui_ops *ops)
+{
+	win_ui_ops = ops;
+}
+
+struct gaim_window_ui_ops *
+gaim_get_win_ui_ops(void)
+{
+	return win_ui_ops;
 }

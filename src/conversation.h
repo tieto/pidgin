@@ -1078,6 +1078,7 @@ struct gaim_conversation *gaim_find_chat(struct gaim_connection *gc, int id);
 /**************************************************************************/
 /** @name Conversation Placement Functions                                */
 /**************************************************************************/
+/*@{*/
 
 /**
  * Adds a conversation placement function to the list of possible functions.
@@ -1148,5 +1149,30 @@ int gaim_conv_placement_get_active(void);
  * @param index The index of the function.
  */
 void gaim_conv_placement_set_active(int index);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name UI Registration Functions                                       */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Sets the UI operations structure to be used in all gaim conversation
+ * windows.
+ *
+ * @param fnc The function.
+ */
+void gaim_set_win_ui_ops(struct gaim_window_ui_ops *ops);
+
+/**
+ * Returns the gaim window UI operations structure to be used in
+ * new windows.
+ *
+ * @return A filled-out gaim_window_ui_ops structure.
+ */
+struct gaim_window_ui_ops *gaim_get_win_ui_ops(void);
+
+/*@}*/
 
 #endif /* _CONVERSATION_H_ */

@@ -520,6 +520,8 @@ static int ui_main()
 		}
 	}
 
+	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
+
 	setup_stock();
 
 #ifndef _WIN32
