@@ -40,6 +40,9 @@
 
 #define MSN_BUF_LEN 4096
 
+#define MSN_OPT_SERVER   0
+#define MSN_OPT_PORT     1
+
 #define MIME_HEADER "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nX-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; CO=0; CS=0; PF=0\r\n\r\n"
 
 #define MSN_ONLINE  1
@@ -182,6 +185,24 @@ static void msn_add_permit(struct gaim_connection *gc, char *who) {
 	gchar buf[4096];
 
 	g_snprintf(buf, 4096, "ADD %d AL %s %s\n", trId, who, who);
+	write(mdata->fd, buf, strlen(buf));
+}
+
+static void msn_rem_deny(struct gaim_connection *gc, char *who) {
+	struct msn_data *mdata = (struct msn_data *)gc->proto_data;
+	time_t trId = time((time_t *)NULL);
+	gchar buf[4096];
+
+	g_snprintf(buf, 4096, "REM %d BL %s %s\n", trId, who, who);
+	write(mdata->fd, buf, strlen(buf));
+}
+
+static void msn_add_deny(struct gaim_connection *gc, char *who) {
+	struct msn_data *mdata = (struct msn_data *)gc->proto_data;
+	time_t trId = time((time_t *)NULL);
+	gchar buf[4096];
+
+	g_snprintf(buf, 4096, "ADD %d BL %s %s\n", trId, who, who);
 	write(mdata->fd, buf, strlen(buf));
 }
 
@@ -690,7 +711,7 @@ void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 	g_free(buf);
 }
 
-void msn_close (struct gaim_connection *gc) {
+static void msn_close (struct gaim_connection *gc) {
 	struct msn_data *mdata = (struct msn_data *)gc->proto_data;
 	GSList *conns = msn_connections;
 	struct msn_conn *mc = NULL;
@@ -755,7 +776,8 @@ void msn_init(struct prpl *ret) {
 	ret->remove_buddy = msn_remove_buddy;
 	ret->add_permit = msn_add_permit;
 	ret->rem_permit = msn_rem_permit;
-	ret->add_deny = NULL;
+	ret->add_deny = msn_add_deny;
+	ret->rem_deny = msn_rem_deny;
 	ret->warn = NULL;
 	ret->accept_chat = NULL;
 	ret->join_chat = NULL;
@@ -778,3 +800,4 @@ void gaim_plugin_remove() {
 	if (p == my_protocol)
 		unload_protocol(p);
 }
+

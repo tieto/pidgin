@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-12-14 13:54:40 -0500 (Thu, 14 Dec 2000) $ by $Author: robflynn $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-12-14 14:31:51 -0500 (Thu, 14 Dec 2000) $ by $Author: robflynn $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -99,10 +99,10 @@ MSN
 ===
 
 MSN currently supports signing on/off, sending and receiving messages.  The
-buddylist is functional. When sending the initial message (to start a
-conversation) there will be a small delay.  It will appear as if the
-client has frozen.  This will not always be the case.  I have a fix
-that I havent taken the time to write yet.
+buddylist is functional. It also supports permit and deny lists.  When sending 
+the initial message (to start a conversation) there will be a small delay.  It 
+will appear as if the client has frozen.  This will not always be the case.  
+I have a fix that I havent taken the time to write yet.
 
 
 ICQ
