@@ -936,6 +936,7 @@ add_cmd(MsnServConn *servconn, const char *command, const char **params,
 	}
 
 	user = msn_user_new(session, passport, friend);
+	msn_user_set_name(user, friend);
 
 	pa       = g_new0(MsnPermitAdd, 1);
 	pa->user = user;
@@ -1430,6 +1431,8 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 					pa       = g_new0(MsnPermitAdd, 1);
 					pa->user = msn_user_new(session, passport, friend);
 					pa->gc   = gc;
+
+					msn_user_set_name(pa->user, friend);
 
 					g_snprintf(msg, sizeof(msg),
 							   _("The user %s (%s) wants to add you to their "
