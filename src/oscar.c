@@ -610,6 +610,8 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			sprintf(debug_buff, "DirectIM request from %s (%s)\n", userinfo->sn, priv->ip);
 			debug_print(debug_buff);
 
+			/* FIXME : prompt user to see if they really want to do this */
+
 			if (!(newconn = aim_directim_connect(sess, command->conn, priv))) {
 				debug_print("imimage: could not connect\n");
 				return 1;

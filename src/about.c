@@ -41,6 +41,11 @@ static void destroy_about()
 }
 
 
+static void about_click(GtkWidget *w, gpointer m)
+{
+	open_url_nw(NULL, "http://www.marko.net/gaim/");
+}
+
 
 void show_about(GtkWidget *w, void *null)
 {
@@ -48,6 +53,8 @@ void show_about(GtkWidget *w, void *null)
 	GtkWidget *vbox;
 	GtkWidget *pixmap;
 	GtkWidget *label;
+	GtkWidget *eventbox;
+	GtkWidget *label2;
 	GtkStyle *style;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
@@ -89,6 +96,18 @@ void show_about(GtkWidget *w, void *null)
 
 		gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 		gtk_widget_show(label);
+
+		eventbox = gtk_event_box_new();
+		gtk_box_pack_start(GTK_BOX(vbox), eventbox, TRUE, TRUE, 0);
+		gtk_widget_show(eventbox);
+
+		label2 = gtk_label_new("Gaim " VERSION " - http://www.marko.net/gaim/\n");
+		gtk_container_add(GTK_CONTAINER(eventbox), label2);
+		gtk_widget_show(label2);
+
+		gtk_signal_connect(GTK_OBJECT(eventbox), "button_press_event",
+				   GTK_SIGNAL_FUNC(about_click), NULL);
+		gdk_window_set_cursor(eventbox->window, gdk_cursor_new(GDK_HAND2));
 		
 		button = gtk_button_new_with_label(_("Close"));
 		gtk_signal_connect_object(GTK_OBJECT(button), "clicked",

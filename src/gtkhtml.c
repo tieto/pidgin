@@ -3508,9 +3508,9 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 						  0, 0, NULL);
 		gtk_html_add_text(html, cfont, current->color, current->bgcol, tag,
 						  strlen(tag), 0, 0, NULL);
-		gtk_html_add_text(html, cfont, current->color, current->bgcol, ">", 1,
+/*		gtk_html_add_text(html, cfont, current->color, current->bgcol, ">", 1,
 						  0, 0, NULL);
-	}
+*/	}
 
 
 
