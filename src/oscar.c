@@ -664,6 +664,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 	if (channel == 1) {
 		struct aim_userinfo_s *userinfo;
 		char *msg = NULL;
+		char *tmp = g_malloc(BUF_LONG);
 		u_int icbmflags = 0;
 		u_short flag1, flag2;
 
@@ -674,7 +675,9 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		flag2     = (u_short)va_arg(ap, u_int);
 		va_end(ap);
 
-		serv_got_im(userinfo->sn, msg, icbmflags & AIM_IMFLAGS_AWAY);
+		g_snprintf(tmp, BUF_LONG, "%s", msg);
+		serv_got_im(userinfo->sn, tmp, icbmflags & AIM_IMFLAGS_AWAY);
+		g_free(tmp);
 	} else if (channel == 2) {
 		struct aim_userinfo_s *userinfo;
 		int rendtype = va_arg(ap, int);
