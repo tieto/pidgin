@@ -1148,7 +1148,7 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 
 	if (b->user) {
 		g_snprintf(b->user->user_info, sizeof(b->user->user_info), "%s", junk);
-		gc = find_gaim_conn_by_name(b->user->username);
+		gc = b->user->gc;
 			
 		save_prefs();
 

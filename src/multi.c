@@ -156,7 +156,7 @@ static GtkWidget *generate_list()
 	while (u) {
 		a = (struct aim_user *)u->data;
 		titles[0] = a->username;
-		titles[1] = find_gaim_conn_by_name(a->username) ? "Yes" : "No";
+		titles[1] = a->gc ? "Yes" : "No";
 		titles[2] = (a->options & OPT_USR_AUTO) ? "True" : "False";
 		titles[3] = proto_name(a->protocol);
 		i = gtk_clist_append(GTK_CLIST(list), titles);
@@ -240,7 +240,7 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 		u->protocol = tmpusr.protocol;
 		gtk_widget_destroy(newmod);
 		titles[0] = u->username;
-		titles[1] = find_gaim_conn_by_name(u->username) ? "Yes" : "No";
+		titles[1] = u->gc ? "Yes" : "No";
 		titles[2] = (u->options & OPT_USR_AUTO) ? "True" : "False";
 		titles[3] = proto_name(u->protocol);
 		i = gtk_clist_append(GTK_CLIST(list), titles);
