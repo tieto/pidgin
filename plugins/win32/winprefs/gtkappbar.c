@@ -154,6 +154,7 @@ static void print_rect(RECT *rc) {
                    rc->left, rc->right, rc->top, rc->bottom);
 }
 #endif
+/** Set the window style to be the "Tool Window" style - small header, no min/max buttons */
 static void set_toolbar(HWND hwnd, gboolean val) {
 	LONG style=0;
 
@@ -173,7 +174,7 @@ static void set_toolbar(HWND hwnd, gboolean val) {
  *			SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED); 
  */
 }
-
+/** Register the window as an appbar */
 static gboolean gtk_appbar_register(GtkAppBar *ab, HWND hwnd) {
 	APPBARDATA abd;
 
@@ -185,7 +186,7 @@ static gboolean gtk_appbar_register(GtkAppBar *ab, HWND hwnd) {
 
 	return ab->registered;
 }
-
+/** Unregister the window as an appbar */
 static gboolean gtk_appbar_unregister(GtkAppBar *ab, HWND hwnd) {
 	APPBARDATA abd;
 
@@ -195,13 +196,14 @@ static gboolean gtk_appbar_unregister(GtkAppBar *ab, HWND hwnd) {
 	abd.cbSize = sizeof(APPBARDATA);
 	abd.hWnd = hwnd;
 
-	ab->registered = !SHAppBarMessage(ABM_REMOVE, &abd);
+	SHAppBarMessage(ABM_REMOVE, &abd); /** This always returns TRUE */
 
-        if(!ab->registered) {
-                ab->docked = FALSE;
-                ab->docking = FALSE;
-        }
-	return !ab->registered;
+	ab->registered = FALSE;
+
+	ab->docked = FALSE;
+	ab->docking = FALSE;
+
+	return TRUE;
 }
 
 static void gtk_appbar_querypos(GtkAppBar *ab, HWND hwnd, RECT rcWorkspace) {
@@ -248,7 +250,7 @@ static void gtk_appbar_querypos(GtkAppBar *ab, HWND hwnd, RECT rcWorkspace) {
 
 	CopyRect(&(ab->docked_rect), &abd.rc);
 }
-
+/* Actually set the size and screen location of the appbar */
 static void gtk_appbar_setpos(GtkAppBar *ab, HWND hwnd) {
         APPBARDATA abd;
 
@@ -262,7 +264,7 @@ static void gtk_appbar_setpos(GtkAppBar *ab, HWND hwnd) {
 
 	SHAppBarMessage(ABM_SETPOS, &abd);
 }
-
+/** Let any callbacks know that we have docked or undocked */
 static void gtk_appbar_dispatch_dock_cbs(GtkAppBar *ab, gboolean val) {
         GList *lst = ab->dock_cbs;
 
@@ -341,31 +343,35 @@ static GdkFilterReturn wnd_sizing(GtkAppBar *ab, GdkXEvent *xevent) {
         }
         return GDK_FILTER_CONTINUE;
 }
+/** Notify the system that the appbar has been activated */
+static GdkFilterReturn wnd_activate(GtkAppBar *ab, GdkXEvent *xevent) {
+	if (ab->registered) {
+		APPBARDATA abd;
+		MSG *msg = (MSG*)xevent;
+		gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_activate\n");
 
-static GdkFilterReturn wnd_activate(GdkXEvent *xevent) {
-	APPBARDATA abd;
-	MSG *msg = (MSG*)xevent;
-	gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_activate\n");
+		abd.hWnd = msg->hwnd;
+		abd.cbSize = sizeof(APPBARDATA);
 
-	abd.hWnd = msg->hwnd;
-	abd.cbSize = sizeof(APPBARDATA);
-
-	SHAppBarMessage(ABM_ACTIVATE, &abd);
+		SHAppBarMessage(ABM_ACTIVATE, &abd);
+	}
 	return GDK_FILTER_CONTINUE;
 }
+/** Notify the system that the appbar's position has changed */
+static GdkFilterReturn wnd_poschanged(GtkAppBar *ab, GdkXEvent *xevent) {
+	if (ab->registered) {
+		APPBARDATA abd;
+		MSG *msg = (MSG*)xevent;
+		gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_poschanged\n");
 
-static GdkFilterReturn wnd_poschanged(GdkXEvent *xevent) {
-	APPBARDATA abd;
-	MSG *msg = (MSG*)xevent;
-	gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_poschanged\n");
+		abd.hWnd = msg->hwnd;
+		abd.cbSize = sizeof(APPBARDATA);
 
-	abd.hWnd = msg->hwnd;
-	abd.cbSize = sizeof(APPBARDATA);
-
-	SHAppBarMessage(ABM_WINDOWPOSCHANGED, &abd);
+		SHAppBarMessage(ABM_WINDOWPOSCHANGED, &abd);
+	}
 	return GDK_FILTER_CONTINUE;
 }
-
+/** The window is about to change */
 static GdkFilterReturn wnd_poschanging(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
         WINDOWPOS *wpos = (WINDOWPOS*)msg->lParam;
@@ -387,6 +393,7 @@ static GdkFilterReturn wnd_poschanging(GtkAppBar *ab, GdkXEvent *xevent) {
 static GdkFilterReturn wnd_exitsizemove(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
 
+        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_exitsizemove\n");
         if(ab->docking) {
                 gtk_appbar_setpos(ab, msg->hwnd);
                 ab->docking = FALSE;
@@ -406,20 +413,21 @@ static GdkFilterReturn wnd_showwindow(GtkAppBar *ab, GdkXEvent *xevent) {
 
         gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_showwindow\n");
         if(msg->wParam && ab->docked) {
+		ab->iconized = FALSE;
                 gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "shown\n");
                 ab->docked = FALSE;
                 gtk_appbar_dock(ab, ab->side);
-                
         }
         else if(!msg->wParam && ab->docked) {
                 gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "hidden\n");
                 gtk_appbar_unregister(ab, GDK_WINDOW_HWND(ab->win->window));
                 set_toolbar(GDK_WINDOW_HWND(ab->win->window), FALSE);
                 ab->docked = TRUE;
+		ab->iconized = TRUE;
         }
         return GDK_FILTER_CONTINUE;
 }
-
+/** The window's size has changed */
 static GdkFilterReturn wnd_size(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
 
@@ -434,7 +442,7 @@ static GdkFilterReturn wnd_size(GtkAppBar *ab, GdkXEvent *xevent) {
         }
         else if(msg->wParam == SIZE_RESTORED) {
                 gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "Restore\n");
-                if(ab->docked) {
+		if (!ab->iconized && ab->docked) {
                         gtk_appbar_dock(ab, ab->side);
                 }
         }
@@ -498,12 +506,14 @@ static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
 
         case ABN_FULLSCREENAPP:
                 gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_FULLSCREENAPP: %d\n", (BOOL)msg->lParam);
+		if (!ab->iconized && ab->docked) {
 		if ((BOOL)msg->lParam) {
 			SetWindowPos(msg->hwnd, HWND_BOTTOM, 0, 0, 0, 0,
 				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 		} else {
 			SetWindowPos(msg->hwnd, HWND_NOTOPMOST, 0, 0, 0, 0,
 				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+		}
 		}
 
                 break;
@@ -537,9 +547,9 @@ static GdkFilterReturn gtk_appbar_event_filter(GdkXEvent *xevent, GdkEvent *even
         case WM_WINDOWPOSCHANGING:
                 return wnd_poschanging(data, xevent);
 	case WM_WINDOWPOSCHANGED:
-		return wnd_poschanged(xevent);
+		return wnd_poschanged(data, xevent);
 	case WM_ACTIVATE:
-		return wnd_activate(xevent);
+		return wnd_activate(data, xevent);
         case WM_SIZING:
                 return wnd_sizing(data, xevent);
         case WM_MOVING:

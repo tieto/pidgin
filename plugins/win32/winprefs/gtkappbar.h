@@ -27,13 +27,22 @@
 
 typedef struct {
         GtkWidget *win;
+	/** The rectangle of the screen area used for docking */
         RECT docked_rect;
+	/** The height of the window prior to docking */
         UINT undocked_height;
+	/** The side of the screen to which the window is docked*/
         UINT side;
+	/** Is the window currently docked? */
         gboolean docked;
+	/** Is the window currently in the process of docking? */
         gboolean docking;
+	/** Is the window currently registered as an appbar */
         gboolean registered;
+	/** Callback functions to notify of dock state change */
         GList *dock_cbs;
+	/** Is the window currently iconized? */
+	gboolean iconized;
 } GtkAppBar;
 
 typedef void (*GtkAppBarDockCB)(gboolean);
