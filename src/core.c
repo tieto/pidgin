@@ -41,15 +41,12 @@
 static gint UI_fd = -1;
 GSList *uis = NULL;
 
-static guchar *UI_build(guint32 *len, guchar type, guchar subtype, va_list args1)
+static guchar *UI_build(guint32 *len, guchar type, guchar subtype, va_list args)
 {
-	va_list args2;
 	guchar *buffer;
 	guint32 pos;
 	int size;
 	void *data;
-
-	G_VA_COPY(args2, args1);
 
 	*len = sizeof(guchar) * 2 + 4;
 	buffer = g_malloc(*len);
@@ -61,24 +58,22 @@ static guchar *UI_build(guint32 *len, guchar type, guchar subtype, va_list args1
 	/* we come back and do size last */
 	pos += 4;
 
-	size = va_arg(args2, int);
+	size = va_arg(args, int);
 	while (size != -1) {
 		*len += size;
 		buffer = g_realloc(buffer, *len);
 
-		data = va_arg(args2, void *);
+		data = va_arg(args, void *);
 		memcpy(buffer + pos, data, size);
 		pos += size;
 
-		size = va_arg(args2, int);
+		size = va_arg(args, int);
 	}
 
 	pos -= sizeof(guchar) * 2 + 4;
 
 	/* now we do size */
 	memcpy(buffer + sizeof(guchar) * 2, &pos, 4);
-
-	va_end(args2);
 
 	return buffer;
 }
