@@ -382,7 +382,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 533 $"
+#define REVISION "gaim:$Revision: 537 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -495,7 +495,7 @@ extern int font_options;
 #define OPT_FONT_STRIKE          0x00000010
 #define OPT_FONT_FACE            0x00000020
 
-#define DEFAULT_INFO "Visit the GAIM " VERSION " website at <A HREF=\"http://www.marko.net/gaim\">http://www.marko.net/gaim</A>."
+#define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://www.marko.net/gaim\">http://www.marko.net/gaim</A>."
 
 extern int report_idle;
 extern int web_browser;
