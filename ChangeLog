@@ -39,6 +39,8 @@ version 0.81cvs:
 	* The auto-reconnect plugin will no longer attempt to reconnect an
 	  MSN account if you were disconnected because you signed on from
 	  another location (Stu Tomlinson)
+	* On Solaris, chatting in IRC using the UTF-8 charset no longer gives
+	  a "conversion failed" error for every message (Arvind Samptur)
 
 version 0.80 (07/15/2004):
 	New Features:

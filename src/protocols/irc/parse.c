@@ -201,13 +201,16 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 {
 	char *utf8;
 	GError *err = NULL;
-	
-	utf8 = g_convert(string, strlen(string), 
-			 gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET),
-			 "UTF-8", NULL, NULL, &err);
+	const gchar *charset;
+
+	charset = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
+	if (!strcasecmp("UTF-8", charset))
+		return g_strdup(string);
+
+	utf8 = g_convert(string, strlen(string), charset, "UTF-8", NULL, NULL, &err);
 	if (err) {
-		gaim_debug(GAIM_DEBUG_ERROR, "irc", "send conversion error: %s\n", err->message);
-		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Sending raw, which probably isn't right\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Send conversion error: %s\n", err->message);
+		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Sending as UTF-8 instead of %s\n", charset);
 		utf8 = g_strdup(string);
 		g_error_free(err);
 	}
@@ -217,18 +220,27 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 
 static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 {
-	char *utf8;
+	char *utf8 = NULL;
 	GError *err = NULL;
-	
-	utf8 = g_convert(string, strlen(string), "UTF-8",
-			 gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET),
-			 NULL, NULL, &err);
+	const gchar *charset;
+
+	charset = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
+
+	if (!strcasecmp("UTF-8", charset)) {
+		if (g_utf8_validate(string, strlen(string), NULL))
+			utf8 = g_strdup(string);
+	} else {
+		utf8 = g_convert(string, strlen(string), "UTF-8", charset, NULL, NULL, &err);
+	}
+
 	if (err) {
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "recv conversion error: %s\n", err->message);
-		utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
 		g_error_free(err);
 	}
-	
+
+	if (utf8 == NULL)
+		utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
+
 	return utf8;
 }
 
