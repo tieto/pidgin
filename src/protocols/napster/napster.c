@@ -84,15 +84,9 @@ static void nap_write_packet(struct gaim_connection *gc, unsigned short command,
 
 	size = strlen(message);
 
-#ifndef _WIN32
 	write(ndata->fd, &size, 2);
 	write(ndata->fd, &command, 2);
 	write(ndata->fd, message, size);
-#else
-	send(ndata->fd, (char*)&size, 2, 0);
-	send(ndata->fd, (char*)&command, 2, 0);
-	send(ndata->fd, message, size, 0);
-#endif
 }
 
 static int nap_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
@@ -175,13 +169,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	gchar **res;
 	int i;
 
-	if (recv(source,
-#ifndef _WIN32
-		 header,
-#else
-		 (char*)header,
-#endif
-		 4, 0) != 4) {
+	if (recv(source, (void*)header, 4, 0) != 4) {
 		hide_login_progress(gc, "Unable to read");
 		signoff(gc);
 		return;
@@ -383,19 +371,12 @@ static void nap_login_callback(gpointer data, gint source, GaimInputCondition co
 	unsigned short header[2];
 	int len;
 	int command;
-#ifndef _WIN32
+
 	read(source, header, 4);
-#else
-	recv(source, (char*)header, 4, 0);
-#endif
 	len = header[0];
 	command = header[1];	
 
-#ifndef _WIN32
 	read(source, buf, len);
-#else
-	recv(source, buf, len, 0);
-#endif
 	buf[len] = 0;
 
 	/* If we have some kind of error, get outta here */
@@ -404,11 +385,7 @@ static void nap_login_callback(gpointer data, gint source, GaimInputCondition co
 		do_error_dialog(buf, NULL, GAIM_ERROR);
 		gaim_input_remove(ndata->inpa);
 		ndata->inpa = 0;
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		signoff(gc);
 		return;
 	}
@@ -441,11 +418,7 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 	char buf[NAP_BUF_LEN];
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 

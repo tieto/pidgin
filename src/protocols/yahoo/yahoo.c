@@ -365,11 +365,7 @@ static int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt)
 	yahoo_packet_write(pkt, data + pos);
 
 	yahoo_packet_dump(data, len);
-#ifndef _WIN32
 	ret = write(yd->fd, data, len);
-#else
-	ret = send(yd->fd, data, len, 0);
-#endif
 	g_free(data);
 
 	return ret;
@@ -894,19 +890,9 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 	char buf[1024];
 	int len;
 
-#ifndef _WIN32
 	len = read(yd->fd, buf, sizeof(buf));
-#else
-	len = recv(yd->fd, buf, sizeof(buf), 0);
-#endif
 
 	if (len <= 0) {
-#ifdef _WIN32
-	        if(len == SOCKET_ERROR)
-		  debug_printf("Error reading socket: %d\n", WSAGetLastError());
-		else if( len == 0 )
-		  debug_printf("Connection was gracefully closed.\n");
-#endif
 		hide_login_progress_error(gc, "Unable to read");
 		signoff(gc);
 		return;
@@ -968,11 +954,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	struct yahoo_packet *pkt;
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
@@ -1040,11 +1022,8 @@ static void yahoo_close(struct gaim_connection *gc) {
 	g_hash_table_foreach_remove(yd->games, yahoo_destroy_hash, NULL);
 	g_hash_table_destroy(yd->games);
 	if (yd->fd >= 0)
-#ifndef _WIN32
 		close(yd->fd);
-#else
-		closesocket(yd->fd);
-#endif
+
 	if (yd->rxqueue)
 		g_free(yd->rxqueue);
 	yd->rxlen = 0;

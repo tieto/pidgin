@@ -138,11 +138,7 @@ find_dcc_chat (struct gaim_connection *gc, char *nick)
 static int irc_write(int fd, char *data, int len)
 {
 	debug_printf("IRC C: %s", data);
-#ifndef _WIN32
 	return write(fd, data, len);
-#else
-	return send(fd, data, len, 0);
-#endif
 }
 
 static struct conversation *irc_find_chat(struct gaim_connection *gc, char *name)
@@ -458,11 +454,7 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	int n = 0, l;
 	struct conversation *convo;
 	debug_printf("THIS IS TOO MUCH EFFORT\n");
-#ifndef _WIN32
 	n = read (chat->fd, buffer, IRC_BUF_LEN);
-#else
-	n = recv (chat->fd, buffer, IRC_BUF_LEN, 0);
-#endif
 	if (n > 0) {
 
 		buffer[n] = 0;
@@ -1423,11 +1415,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 	gchar buf[1024];
 	gboolean off;
 
-#ifndef _WIN32
 	i = read(idata->fd, buf, 1024);
-#else
-	i = recv(idata->fd, buf, 1024, 0);
-#endif
 	if (i <= 0) {
 		hide_login_progress_error(gc, "Read error");
 		signoff(gc);
@@ -1481,11 +1469,7 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 	char buf[IRC_BUF_LEN];
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
@@ -1601,11 +1585,7 @@ static void irc_close(struct gaim_connection *gc)
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
 
-#ifndef _WIN32
 	close(idata->fd);
-#else
-	closesocket(idata->fd);
-#endif
 	g_free(gc->proto_data);
 }
 

@@ -182,11 +182,7 @@ static char *msn_normalize(const char *s)
 static int msn_write(int fd, void *data, int len)
 {
 	debug_printf("MSN C: %s", data);
-#ifndef _WIN32
 	return write(fd, data, len);
-#else
-	return send(fd, data, len, 0);
-#endif
 }
 
 static char *url_decode(const char *msg)
@@ -460,11 +456,7 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 
 	if (ms->inpa)
 		gaim_input_remove(ms->inpa);
-#ifndef _WIN32
 	close(ms->fd);
-#else
-	closesocket(ms->fd);
-#endif
 	g_free(ms->rxqueue);
 	if (ms->msg)
 		g_free(ms->msguser);
@@ -706,11 +698,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 	/* This is really stupid and I hate to put this here. */
 	if (ms->fd != source)
 		ms->fd = source;
-#ifndef _WIN32
 	len = read(ms->fd, buf, sizeof(buf));
-#else
-	len = recv(ms->fd, buf, sizeof(buf), 0);
-#endif
 	if (len <= 0) {
 		msn_kill_switch(ms);
 		return;
@@ -786,11 +774,7 @@ static void msn_rng_connect(gpointer data, gint source, GaimInputCondition cond)
 	char buf[MSN_BUF_LEN];
 
 	if (source == -1 || !g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		g_free(ms->sessid);
 		g_free(ms->auth);
 		g_free(ms);
@@ -804,11 +788,7 @@ static void msn_rng_connect(gpointer data, gint source, GaimInputCondition cond)
 
 	g_snprintf(buf, sizeof(buf), "ANS %d %s %s %s\r\n", ++ms->trId, gc->username, ms->auth, ms->sessid);
 	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
-#ifndef _WIN32
 		close(ms->fd);
-#else
-		closesocket(ms->fd);
-#endif
 		g_free(ms->sessid);
 		g_free(ms->auth);
 		g_free(ms);
@@ -826,11 +806,7 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GaimInputCondition co
 	char buf[MSN_BUF_LEN];
 
 	if (source == -1 || !g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		if (g_slist_find(connections, gc)) {
 			msn_kill_switch(ms);
 			do_error_dialog(_("Gaim was unable to send an MSN message"),
@@ -1362,11 +1338,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			}
 			ms->auth = g_strdup(tmp);
 		} else {
-#ifndef _WIN32
 			close(md->fd);
-#else
-			closesocket(md->fd);
-#endif
 			gaim_input_remove(md->inpa);
 			md->inpa = 0;
 			md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
@@ -1453,11 +1425,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 	int cont = 1;
 	int len;
 
-#ifndef _WIN32
 	len = read(md->fd, buf, sizeof(buf));
-#else
-	len = recv(md->fd, buf, sizeof(buf), 0);
-#endif
 	if (len <= 0) {
 		hide_login_progress_error(gc, _("Error reading from server"));
 		signoff(gc);
@@ -1533,11 +1501,7 @@ static void msn_login_xfr_connect(gpointer data, gint source, GaimInputCondition
 	char buf[MSN_BUF_LEN];
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
@@ -1669,11 +1633,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		} else
 			port = 1863;
 
-#ifndef _WIN32
 		close(md->fd);
-#else
-		closesocket(md->fd);
-#endif
 		gaim_input_remove(md->inpa);
 		md->inpa = 0;
 		md->fd = 0;
@@ -1704,11 +1664,7 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 	int cont = 1;
 	int len;
 
-#ifndef _WIN32
 	len = read(md->fd, buf, sizeof(buf));
-#else
-	len = recv(md->fd, buf, sizeof(buf), 0);
-#endif
 	if (len <= 0) {
 		hide_login_progress(gc, _("Error reading from server"));
 		signoff(gc);
@@ -1762,11 +1718,7 @@ static void msn_login_connect(gpointer data, gint source, GaimInputCondition con
 	char buf[1024];
 
 	if (!g_slist_find(connections, gc)) {
-#ifndef _WIN32
 		close(source);
-#else
-		closesocket(source);
-#endif
 		return;
 	}
 
@@ -1813,11 +1765,7 @@ static void msn_login(struct aim_user *user)
 static void msn_close(struct gaim_connection *gc)
 {
 	struct msn_data *md = gc->proto_data;
-#ifndef _WIN32
 	close(md->fd);
-#else
-	closesocket(md->fd);
-#endif
 	if (md->inpa)
 		gaim_input_remove(md->inpa);
 	g_free(md->rxqueue);
