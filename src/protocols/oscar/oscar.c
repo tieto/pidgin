@@ -51,7 +51,6 @@
 #define UC_NORMAL	0x10
 #define UC_AB		0x20
 #define UC_WIRELESS	0x40
-#define UC_HIPTOP	0x80
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -1758,8 +1757,6 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		caps = info->capabilities;
 	if (info->flags & AIM_FLAG_ACTIVEBUDDY)
 		type |= UC_AB;
-	if (caps & AIM_CAPS_HIPTOP)
-		type |= UC_HIPTOP;
 
 	if (info->present & AIM_USERINFO_PRESENT_FLAGS) {
 		if (info->flags & AIM_FLAG_UNCONFIRMED)
@@ -3136,6 +3133,9 @@ static char *caps_string(guint caps)
 				break;
 			case AIM_CAPS_VIDEO:
 				tmp = _("Video Chat");
+				break;
+			case AIM_CAPS_ICHATAV:
+				tmp = _("iChat AV");
 				break;
 			default:
 				tmp = NULL;
@@ -5385,6 +5385,8 @@ static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 		gc = account->gc;
 	if (gc != NULL)
 		od = gc->proto_data;
+	if (od != NULL)
+		userinfo = aim_locate_finduserinfo(od->sess, b->name);
 
 	if (!GAIM_BUDDY_IS_ONLINE(b)) {
 		char *gname;
@@ -5423,16 +5425,14 @@ static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 		emblems[i++] = "admin";
 	if (b->uc & UC_AB && i < 4)
 		emblems[i++] = "activebuddy";
-	if (b->uc & UC_HIPTOP && i < 4)
-		emblems[i++] = "hiptop";
 /*	if (b->uc & UC_UNCONFIRMED && i < 4)
 		emblems[i++] = "unconfirmed"; */
 
-	if ((i < 4) && (od != NULL)) {
-		userinfo = aim_locate_finduserinfo(od->sess, b->name);
-		if ((userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_SECUREIM))
+	if ((i < 4) && (userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_HIPTOP))
+			emblems[i++] = "hiptop";
+
+	if ((i < 4) && (userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_SECUREIM))
 			emblems[i++] = "secure";
-	}
 
 	*se = emblems[0];
 	*sw = emblems[1];

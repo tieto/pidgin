@@ -219,7 +219,7 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 	if (!bs || !conn || (count < 0))
 		return -EINVAL;
 
-	/* Make sure we don't send paste the end of the bs */
+	/* Make sure we don't send past the end of the bs */
 	if (count > aim_bstream_empty(bs))
 		count = aim_bstream_empty(bs); /* truncate to remaining space */
 
@@ -373,9 +373,9 @@ faim_export int aim_tx_flushqueue(aim_session_t *sess)
 }
 
 /*
- *  This is responsable for removing sent commands from the transmit 
- *  queue. This is not a required operation, but it of course helps
- *  reduce memory footprint at run time!  
+ * This is responsible for removing sent commands from the transmit 
+ * queue. This is not a required operation, but it of course helps
+ * reduce memory footprint at run time!  
  */
 faim_export void aim_tx_purgequeue(aim_session_t *sess)
 {
