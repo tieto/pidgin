@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10819 2004-09-01 01:07:42Z lschiere $
+ * $Id: gg.c 10835 2004-09-03 21:21:25Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -33,6 +33,7 @@
 #include "prpl.h"
 #include "server.h"
 #include "util.h"
+#include "version.h"
 
 #define GG_CONNECT_STEPS 5
 
@@ -1611,7 +1612,6 @@ static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PRPL_API_VERSION,
 	0,
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
@@ -1674,7 +1674,9 @@ static GaimPluginProtocolInfo prpl_info =
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

@@ -28,6 +28,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "signals.h"
+#include "version.h"
 
 #ifdef _WIN32
 # define PLUGIN_EXT ".dll"
@@ -239,10 +240,12 @@ gaim_plugin_probe(const char *filename)
 		return NULL;
 	}
 
-	if (plugin->info->api_version != GAIM_PLUGIN_API_VERSION)
+	if (plugin->info->magic != GAIM_PLUGIN_MAGIC ||
+			plugin->info->major_version != GAIM_MAJOR_VERSION ||
+			plugin->info->minor_version > GAIM_MINOR_VERSION)
 	{
-		gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: API version mismatch %d (need %d)\n",
-				   plugin->path, plugin->info->api_version, GAIM_PLUGIN_API_VERSION);
+		gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: API version mismatch %d.%d.x (need %d.%d.x)\n",
+				   plugin->path, plugin->info->major_version, plugin->info->minor_version, GAIM_MAJOR_VERSION, GAIM_MINOR_VERSION);
 		gaim_plugin_destroy(plugin);
 		return NULL;
 	}
@@ -479,6 +482,17 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 	if (load_queue != NULL)
 		load_queue = g_list_remove(load_queue, plugin);
 
+	/* true, this may leak a little memory if there is a major version
+	 * mismatch, but it's a lot better than trying to free something
+	 * we shouldn't, and crashing while trying to load an old plugin */
+	if(plugin->info == NULL || plugin->info->magic != GAIM_PLUGIN_MAGIC ||
+			plugin->info->major_version != GAIM_MAJOR_VERSION) {
+		if(plugin->handle)
+			g_module_close(plugin->handle);
+		g_free(plugin);
+		return;
+	}
+
 	if (plugin->info != NULL && plugin->info->dependencies != NULL)
 		g_list_free(plugin->info->dependencies);
 
@@ -492,8 +506,7 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 
 			loader_info = GAIM_PLUGIN_LOADER_INFO(plugin);
 
-			if (loader_info != NULL && plugin->info->api_version >= 3 &&
-				loader_info->exts != NULL)
+			if (loader_info != NULL && loader_info->exts != NULL)
 			{
 				for (exts = GAIM_PLUGIN_LOADER_INFO(plugin)->exts;
 					 exts != NULL;
@@ -971,11 +984,10 @@ gaim_plugin_register(GaimPlugin *plugin)
 
 		loader_info = GAIM_PLUGIN_LOADER_INFO(plugin);
 
-		if (loader_info == NULL ||
-			loader_info->api_version != GAIM_LOADER_API_VERSION)
+		if (loader_info == NULL)
 		{
-			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: API version mismatch %d (need %d)\n",
-							   plugin->path, loader_info->api_version, GAIM_LOADER_API_VERSION);
+			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable\n",
+							   plugin->path);
 			return FALSE;
 		}
 
@@ -987,11 +999,10 @@ gaim_plugin_register(GaimPlugin *plugin)
 
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 
-		if (prpl_info == NULL ||
-			prpl_info->api_version != GAIM_PRPL_API_VERSION)
+		if (prpl_info == NULL)
 		{
-			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: API version mismatch %d (need %d)\n",
-							   plugin->path, prpl_info->api_version, GAIM_PRPL_API_VERSION);
+			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable\n",
+							   plugin->path);
 			return FALSE;
 		}
 

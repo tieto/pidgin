@@ -36,6 +36,7 @@
 #include "notify.h"
 #include "prefs.h"
 #include "util.h"
+#include "version.h"
 
 /* 1 day */
 #define MIN_CHECK_INTERVAL 60 * 60 * 24
@@ -123,7 +124,9 @@ plugin_load(GaimPlugin *plugin)
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

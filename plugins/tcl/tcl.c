@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Ethan Blanton <eblanton@cs.purdue.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -43,6 +43,7 @@
 #include "signals.h"
 #include "debug.h"
 #include "util.h"
+#include "version.h"
 
 struct tcl_plugin_data {
 	GaimPlugin *plugin;
@@ -69,7 +70,7 @@ GaimPlugin *tcl_interp_get_plugin(Tcl_Interp *interp)
 static int tcl_init_interp(Tcl_Interp *interp)
 {
 	char *rcfile;
-	char init[] = 
+	char init[] =
 		"namespace eval ::gaim {\n"
 		"	namespace export account buddy connection conversation\n"
 		"	namespace export core debug notify prefs send_im\n"
@@ -221,7 +222,9 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 				if (nelems == 6) {
 					info = g_new0(GaimPluginInfo, 1);
 
-					info->api_version = GAIM_PLUGIN_API_VERSION;
+					info->magic = GAIM_PLUGIN_MAGIC;
+					info->major_version = GAIM_MAJOR_VERSION;
+					info->minor_version = GAIM_MINOR_VERSION;
 					info->type = GAIM_PLUGIN_STANDARD;
 					info->dependencies = g_list_append(info->dependencies, "core-tcl");
 
@@ -339,7 +342,6 @@ static gboolean tcl_unload(GaimPlugin *plugin)
 
 static GaimPluginLoaderInfo tcl_loader_info =
 {
-	GAIM_LOADER_API_VERSION,
 	NULL,
 	tcl_probe_plugin,
 	tcl_load_plugin,
@@ -349,7 +351,9 @@ static GaimPluginLoaderInfo tcl_loader_info =
 
 static GaimPluginInfo tcl_info =
 {
-	GAIM_PLUGIN_API_VERSION,
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_LOADER,
 	NULL,
 	0,

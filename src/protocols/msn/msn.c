@@ -36,6 +36,7 @@
 #include "utils.h"
 #include "prpl.h"
 #include "util.h"
+#include "version.h"
 
 #include "switchboard.h"
 #include "notification.h"
@@ -1639,7 +1640,6 @@ static GaimPluginUiInfo prefs_info = {
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_MAIL_CHECK,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
@@ -1702,7 +1702,9 @@ static GaimPluginProtocolInfo prpl_info =
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

@@ -89,6 +89,7 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "debug.h"
 #include "plugin.h"
 #include "signals.h"
+#include "version.h"
 
 #include "perl-common.h"
 #include "perl-handlers.h"
@@ -289,7 +290,9 @@ probe_perl_plugin(GaimPlugin *plugin)
 			info = g_new0(GaimPluginInfo, 1);
 			gps  = g_new0(GaimPerlScript, 1);
 
-			info->api_version = GAIM_PLUGIN_API_VERSION;
+			info->magic = GAIM_PLUGIN_MAGIC;
+			info->major_version = GAIM_MAJOR_VERSION;
+			info->minor_version = GAIM_MINOR_VERSION;
 			info->type = GAIM_PLUGIN_STANDARD;
 
 			info->dependencies = g_list_append(info->dependencies,
@@ -510,9 +513,7 @@ plugin_unload(GaimPlugin *plugin)
 
 static GaimPluginLoaderInfo loader_info =
 {
-	GAIM_LOADER_API_VERSION,                          /**< api_version    */
 	NULL,                                             /**< exts           */
-
 	probe_perl_plugin,                                /**< probe          */
 	load_perl_plugin,                                 /**< load           */
 	unload_perl_plugin,                               /**< unload         */
@@ -521,7 +522,9 @@ static GaimPluginLoaderInfo loader_info =
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_LOADER,                               /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

@@ -41,6 +41,7 @@
 #include "proxy.h"
 #include "request.h"
 #include "util.h"
+#include "version.h"
 
 #include "aim.h"
 #include "md5.h"
@@ -7326,7 +7327,6 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
@@ -7399,7 +7399,9 @@ static GaimPluginUiInfo prefs_info = {
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

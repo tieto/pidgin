@@ -23,6 +23,7 @@
 #include "debug.h"
 #include "plugin.h"
 #include "sslconn.h"
+#include "version.h"
 
 #define SSL_PLUGIN_ID "core-ssl"
 
@@ -80,7 +81,9 @@ plugin_unload(GaimPlugin *plugin)
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
     NULL,                                             /**< ui_requirement */
 	GAIM_PLUGIN_FLAG_INVISIBLE,                       /**< flags          */

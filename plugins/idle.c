@@ -10,6 +10,7 @@
 #include "plugin.h"
 #include "request.h"
 #include "server.h"
+#include "version.h"
 
 #define IDLE_PLUGIN_ID "gtk-idle"
 
@@ -85,7 +86,9 @@ actions(GaimPlugin *plugin, gpointer context)
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,
 	NULL,
 	0,

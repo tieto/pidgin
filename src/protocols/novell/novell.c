@@ -30,6 +30,7 @@
 #include "request.h"
 #include "network.h"
 #include "privacy.h"
+#include "version.h"
 
 #define DEFAULT_PORT			8300
 #define NOVELL_CONNECT_STEPS	4
@@ -3390,7 +3391,6 @@ novell_keepalive(GaimConnection *gc)
 }
 
 static GaimPluginProtocolInfo prpl_info = {
-	GAIM_PRPL_API_VERSION,
 	0,
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
@@ -3452,7 +3452,9 @@ static GaimPluginProtocolInfo prpl_info = {
 };
 
 static GaimPluginInfo info = {
-	GAIM_PLUGIN_API_VERSION,		/**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_PROTOCOL,			/**< type           */
 	NULL,					/**< ui_requirement */
 	0,					/**< flags          */

@@ -191,8 +191,6 @@ struct _GaimRoomlistRoom;
  */
 struct _GaimPluginProtocolInfo
 {
-	unsigned int api_version;     /**< API version number.             */
-
 	GaimProtocolOptions options;  /**< Protocol options.          */
 
 	GList *user_splits;      /* A GList of GaimAccountUserSplit */
@@ -314,11 +312,6 @@ struct _GaimPluginProtocolInfo
 
 #define GAIM_PLUGIN_PROTOCOL_INFO(plugin) \
 	((GaimPluginProtocolInfo *)(plugin)->info->extra_info)
-
-/* It's not like we're going to run out of integers for this version
-   number, but we only want to really change it once per release. */
-/* GAIM_PRPL_API_VERSION last changed for version: 0.83 */
-#define GAIM_PRPL_API_VERSION 8 
 
 #ifdef __cplusplus
 extern "C" {

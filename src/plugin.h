@@ -59,8 +59,7 @@ typedef enum
 
 #define GAIM_PLUGIN_FLAG_INVISIBLE 0x01
 
-#define GAIM_PLUGIN_API_VERSION 4
-#define GAIM_LOADER_API_VERSION 2
+#define GAIM_PLUGIN_MAGIC 0xc0cac01a /* this must be greater than 4 */
 
 /**
  * Detailed information about a plugin.
@@ -69,7 +68,9 @@ typedef enum
  */
 struct _GaimPluginInfo
 {
-	unsigned int api_version;
+	unsigned int magic;
+	unsigned int major_version;
+	unsigned int minor_version;
 	GaimPluginType type;
 	char *ui_requirement;
 	unsigned long flags;
@@ -99,8 +100,6 @@ struct _GaimPluginInfo
  */
 struct _GaimPluginLoaderInfo
 {
-	unsigned int api_version;
-
 	GList *exts;
 
 	gboolean (*probe)(GaimPlugin *plugin);

@@ -4,6 +4,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "signals.h"
+#include "version.h"
 
 #include "plugin.h"
 #include "pluginpref.h"
@@ -102,7 +103,9 @@ static GaimPluginUiInfo prefs_info =
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

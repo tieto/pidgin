@@ -36,6 +36,7 @@
 #include "debug.h"
 #include "prpl.h"
 #include "notify.h"
+#include "version.h"
 
 /* XXX */
 #include "away.h"
@@ -728,7 +729,9 @@ plugin_unload(GaimPlugin *plugin)
 
 static GaimPluginInfo info =
 {
-	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
+	GAIM_PLUGIN_MAGIC,
+	GAIM_MAJOR_VERSION,
+	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
 	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
