@@ -15,10 +15,11 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
                key?
          1.8.  Can I use Gaim for GTK+1.2?
          1.9.  Can I run Gaim on IRIX?
-         1.10. How do I apply the patch "something.diff"?
-         1.11. Why is gaim crashing when I start it?
-         1.12. Gaim <non-current version> is buggy. Gaim CVS is buggy. Why?
-         1.13. Why do you always say not to use CVS?
+         1.10. Can I run gaim on MacOSX?
+         1.11. How do I apply the patch "something.diff"?
+         1.12. Why is gaim crashing when I start it?
+         1.13. Gaim <non-current version> is buggy. Gaim CVS is buggy. Why?
+         1.14. Why do you always say not to use CVS?
 
 2. Using Gaim
 
@@ -29,15 +30,18 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
          2.4.  How do I make gaim use emacs-like keybindings?
          2.5.  How do I use smiley themes?
          2.6.  Why are the status icons so big?
-         2.7.  How do I get sound to work correctly?
-         2.8.  How do I make Gaim use ALSA or OSS for playing sounds? What does
+         2.7.  Why do the emblems move around the status icon?
+         2.8.  How do I get sound to work correctly?
+         2.9.  How do I make Gaim use ALSA or OSS for playing sounds? What does
                the "Automatic" option do?
                Why does Gaim use the same WM_CLASS for every window? It makes
-         2.9.  it impossible to control window size and placement for the buddy
+         2.10. it impossible to control window size and placement for the buddy
                list separately from the conversations.
-         2.10. What is a "Buddy Pounce"?
-         2.11. Where does gaim store its logs?
-         2.12. Can I use Gaim for e-mail, blogging, an RSS feed, or something
+         2.11. I blocked someone accidentally, how can I unblock them?
+         2.12. What is a "Buddy Pounce"?
+         2.13. Where does gaim store its logs?
+         2.14. How can I see my own status with Gaim?
+         2.15. Can I use Gaim for e-mail, blogging, an RSS feed, or something
                else that isn't IM-related?
 
 3. Features
@@ -76,6 +80,9 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
          6.9.  I heard AOL is combining ICQ and AIM, does that mean I can send
                a message from an AIM account to an ICQ account and vice-versa?
          6.10. Why can't I connect via either Oscar or TOC?
+               English is not my native language, and some of my friends have
+         6.11. trouble seeing my IMs/I have trouble seeing my friends' IMs. How
+               do I use a native language character set with ICQ?
 
 7. IRC Protocol
 
@@ -98,20 +105,31 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 9. Y!M (Yahoo) Protocol
 
-         9.1. I cannot connect to yahoo!
+         9.1. I cannot connect to Yahoo! and get "Invalid Password" errors, or
+              I'm using a version of Gaim older than 0.79!
+         9.2. I cannot connect to Yahoo! and I'm behind a firewall or NAT. Why
+              doesn't Gaim have Yahoo's "Firewall with no proxy" option?
+         9.3. I blocked someone, but it doesn't seem to have worked.
+         9.4. Can I get a list of Yahoo! Chat rooms? What about non-US lists?
+         9.5. What protocol does Gaim use to connect to Yahoo!?
 
 10. MSN Protocol
 
-         10.1. I'm getting lots of "Already in Opposite list" errors on msn,
-               why?
-         10.2. Is there a way to invite more than one person to an MSN chat?
-         10.3. Is MSNP9 (MSN6) going to be supported?
-         10.4. Will I be able to use Gaim for MSN after October 15th 2003? (The
-               day they're preventing third party clients from connecting)
-         10.5. I just upgraded Gaim and the MSN plugin will not load. Why?
-         10.6. The MSN plugin won't load, but I have Mozilla NSS!
-         10.7. What does "MSN: S: 911 3" in the debug window mean when I cannot
-               connect to msn?
+         10.1.  I'm getting lots of "Already in Opposite list" errors on MSN,
+                why?
+         10.2.  Is there a way to invite more than one person to an MSN chat?
+         10.3.  Is MSNP9 (MSN6) going to be supported?
+                Will I be able to use Gaim for MSN after October 15th 2003?
+         10.4.  (The day they're preventing third party clients from
+                connecting)
+         10.5.  I just upgraded Gaim and the MSN plugin will not load. Why?
+         10.6.  The MSN plugin won't load, but I have Mozilla NSS!
+         10.7.  What does "MSN: S: 911 3" in the debug window mean when I
+                cannot connect to MSN?
+         10.8.  How do I set an MSN avatar?
+         10.9.  What does "Has you" in the buddy tooltip mean?
+         10.10. How do I set my MSN Friendly Name (the name other users see)?
+         10.11. What does "Error reading from switchboard server" mean?
 
 11. Gadu-Gadu Protocol
 
@@ -121,68 +139,67 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 12. Zephyr Protocol
 
          12.1. What is Zephyr?
-         12.2. Other Zephyr clients (zwgc,owl,tzc) work, but gaim dies with
+         12.2. Other Zephyr clients (zwgc,owl,tzc) work, but Gaim dies with
                "Couldn't initialize zephyr".
-         12.3. Gaim isn't working, but I never got any other zephyr client
+         12.3. Gaim isn't working, but I never got any other Zephyr client
                working on this machine.
+         12.4. How do I use Zephyr from behind my firewall, or without
+               recompiling with kerberos support if needed?
 
-13. Trepia Protocol
+13. SILC Protocol
 
-         13.1. I heard Trepia was going to be in 0.65. Where is it?
-         13.2. Trepia is showing people in Japan, England, etc. on my buddy
-               list. I thought this was supposed to show people in my area?
+         13.1. What is SILC?
 
-14. SILC Protocol
+14. Novell Protocol
 
-         14.1. What is SILC?
+         14.1. Are there any public servers for Novell?
+         14.2. I can't seem to get it to work.
 
-15. Novell Protocol
+15. Scripts and Plugins
 
-         15.1. Are there any public servers for Novell?
-         15.2. I can't seem to get it to work.
-
-16. Scripts and Plugins
-
-         16.1. How do I use perl scripts with Gaim?
-         16.2. How do I compile a plugin for Gaim?
-         16.3. I have a plugin or perl script for Gaim that does not work with
-               0.60 or higher.
-         16.4. Where can I find documentation on writing plugins and Perl
+         15.1. How do I use perl scripts with Gaim?
+         15.2. How do I compile a plugin for Gaim?
+         15.3. I have a plugin or perl script for Gaim that used to work, but
+               does not with the current version.
+         15.4. Where can I find documentation on writing plugins and Perl
                scripts?
 
-17. Development
+16. Development
 
-         17.1. Can I help?
-         17.2. Gaim never leaves a core file.
-         17.3. Where should I report bugs?
-         17.4. Where should I submit patches?
-         17.5. Did you guys reverse engineer it?
+         16.1. Can I help?
+         16.2. Gaim never leaves a core file.
+         16.3. Where should I report bugs?
+         16.4. Where should I submit patches?
+         16.5. Did you guys reverse engineer it?
 
-18. Misc. Questions
+17. Misc. Questions
 
-         18.1. Can I IM you guys?
-         18.2. Hello?
+         17.1. Can I IM you guys?
+         17.2. Hello?
                Can I give you money/hardware/other expensive things that can be
-         18.3. hocked for cash what with you all being students/
+         17.3. hocked for cash what with you all being students/
                full-time-workers and helping to produce this wonderful software
                instead of studying/sleeping?
-         18.4. Does Gaim support secure instant messaging (encrypted IMs)?
-         18.5. Why are the passwords in accounts.xml not encrypted?
-         18.6. What is gaim-remote?
-         18.7. When will the next version of Gaim be released?
+         17.4. Does Gaim support secure instant messaging (encrypted IMs)?
+         17.5. Why are the passwords in accounts.xml not encrypted?
+         17.6. What is gaim-remote?
+         17.7. When will the next version of Gaim be released?
+         17.8. What will the next version be?
+         17.9. So, can I look forward to mega-sexy super functionality with
+               Gaim?
 
 +------------------------------------------------------------------------------
 | 1. Compiling and Installing
 +------------------------------------------------------------------------------
 
 1.1  What does "Gaim" stand for?
-
+ 
   For freedom! No, seriously, it doesn't stand for anything. It's our name and
   we're sticking to it. The two acceptable forms of capitalization are "Gaim"
   and "gaim" (and not "GAIM").
 
 1.2  Why can't I compile Gaim?
-
+ 
   Make sure you have relatively recent versions of automake, autoconf, and
   gettext. HOWEVER, generally speaking, having the absolute newest of them is
   not as good as having one version short of newest since we might not have
@@ -203,14 +220,14 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 1.3  I'm trying to install Gaim, but it complains that I don't have
      libgtkspell.so.0, from where can I get this?
-
+ 
   libtgtkspell.so.0 is provided by gtkspell. This library is used by Gaim to
   provide the "Highlight misspelled words" feature. You can find an RPM of
   gtkspell at freshrpms.net. You can find the source and a non-Red Hat specific
   RPM at gtkspell.sourceforge.net.
 
 1.4  What do I need to use the SILC protocol?
-
+ 
   You need to install the SILC toolkit (http://silcnet.org/software/download/
   toolkit/) and the Gaim SILC plugin. This plugin is generally provided as a
   separate package (such as a gaim-silc RPM). If you're compiling yourself, see
@@ -218,7 +235,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   compiling an SRPM, use "--with silc" to build the gaim-silc RPM.
 
 1.5  Is there some way I can compile just Gaim, without all of these protocols?
-
+ 
   Yeah. There are actually three ways to do it.
 
    1. Use the --with-static-prpls option to ./configure along with
@@ -237,8 +254,8 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 1.6  I installed a new version of Gaim, but the about window says I'm still
      using the old version.
-
-  If you compiled yourself, and you previously had an rpm or a Debian package
+ 
+  If you compiled yourself, and you previously had an RPM or a Debian package
   installed, you need to remove that first. rpm -e gaim or dpkg -p gaim should
   work.
 
@@ -247,7 +264,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   usr/local.
 
 1.7  Are the packages signed? If so, by who, and how can I get the key?
-
+ 
   Yes, all packages are signed. The signature for the tarball and bzip2 archive
   are provided by separate downloads. The RPMs we provide are signed by either
   Ethan Blanton, Mark Doliner, or Christian Hammond. Usually the Mandrake and
@@ -256,7 +273,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   http://pgp.mit.edu/ is popular.
 
 1.8  Can I use Gaim for GTK+1.2?
-
+ 
   As of version 0.60, Gaim has been completely converted to using GTK+2.0. We
   really really really recommend using the most current version of Gaim and not
   a GTK+1.2 version of Gaim. However, if you are living in the '90s, or you're
@@ -267,44 +284,53 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   breathtakingly beautiful.
 
 1.9  Can I run Gaim on IRIX?
-
+ 
   It has been done before. Please see http://sourceforge.net/forum/forum.php?
   thread_id=725839&forum_id=665 at our SourceForge Forum.
 
-1.10  How do I apply the patch "something.diff"?
+1.10  Can I run gaim on MacOSX?
+ 
+  Yes you can, but we do not provide a package for it. The reason being is that
+  to use gaim on MacOSX, you need to install an X server and gtk, which we are
+  not prepared to support. You can either compile gaim (and its dependencies)
+  yourself, or you can use the fink installer available from http://fink.sf.net
+  . If you would like a native aqua interface or a user-friendly installer, we
+  suggest trying Adium (http://www.adiumx.com/).
 
+1.11  How do I apply the patch "something.diff"?
+ 
   Type patch -p0 < something.diff from inside the gaim directory. If that
   doesn't work, try patch -p1 < something.diff.
 
-1.11  Why is gaim crashing when I start it?
-
+1.12  Why is gaim crashing when I start it?
+ 
   First of all make sure you are using the most recent version of Gaim. If you
   still have problems, try the following:
 
-    * Make sure only one version of Gaim is installed. "whereis gaim" can
+    • Make sure only one version of Gaim is installed. "whereis gaim" can
       sometimes be useful for determining this.
-    * "export GDK_USE_XFT=0" in a terminal and then run Gaim from the same
+    • "export GDK_USE_XFT=0" in a terminal and then run Gaim from the same
       terminal.
-    * If gaim is not crashing, but is just sitting there not displaying
+    • If gaim is not crashing, but is just sitting there not displaying
       anything, try turning off anything else that might be using the sound
       device (ie xmms) and then starting gaim. If this fixes the problem, it is
       a libao issue, not a gaim issue, and can be worked around by the use of
       esd or arts.
-    * Try disabling or deleting any 3rd party plugins, especially anything
+    • Try disabling or deleting any 3rd party plugins, especially anything
       related to encryption.
-    * If you use 0.75 or higher on win32, try deleting tcl.dll.
-    * If you have ever installed 0.65, edit your ~/.gaimrc, changing your auto
+    • If you use 0.75 or higher on win32, try deleting tcl.dll.
+    • If you have ever installed 0.65, edit your ~/.gaimrc, changing your auto
       away preference from -1 to 0.
 
-1.12  Gaim <non-current version> is buggy. Gaim CVS is buggy. Why?
-
+1.13  Gaim <non-current version> is buggy. Gaim CVS is buggy. Why?
+ 
   Non-current versions have old bugs which may be fixed in the current
   version--that's why we make new releases. CVS is frequently unusable because
   of changes in the code. Bugs are introduced during the development process
   and are hopefully fixed before a release is made.
 
-1.13  Why do you always say not to use CVS?
-
+1.14  Why do you always say not to use CVS?
+ 
   That's a long story. For starters, see the previous question. It is often the
   case that Gaim CVS exhibits bad behavior due to features and bugfixes which
   are in a transitory state or which are not yet well understood. These bad
@@ -355,7 +381,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 +------------------------------------------------------------------------------
 
 2.1  How do I register for a new account?
-
+ 
   This depends on the protocol.
 
   AIM: Go to http://my.screenname.aol.com/_cqr/login/login.psp?siteId=
@@ -378,13 +404,13 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   Novell: See your Novell server administrator.
 
 2.2  How do I use AIM, MSN, Yahoo!, Jabber, ICQ, or any other protocol?
-
+ 
   Use the Account Editor (Tools->Accounts, or the Accounts button on the start
   screen) to add the account of the appropriate messaging service. Use the
   checkbox in the account editor to sign online.
 
 2.3  How do I change the font Gaim uses?
-
+ 
   The font preference in Gaim is used only for the formatting of outgoing
   messages. The display fonts used by the rest of Gaim are those specified by
   GTK. To change this font you need to edit your ~/.gtkrc-2.0 file. If you need
@@ -399,12 +425,12 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   Text.
 
 2.4  How do I make gaim use emacs-like keybindings?
-
+ 
   You need to edit your ~/.gtkrc-2.0 to contain the keybindings line from http:
   //gaim.sf.net/gtkrc-2.0.
 
 2.5  How do I use smiley themes?
-
+ 
   To select a theme, open Gaim's preferences to the "Smiley Themes" page and
   click on whichever theme you want to use. To install a theme, simply drag it
   into the theme selector. You can find themes on the Gaim Smiley Themes (http:
@@ -414,7 +440,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   directory in ~/.gaim/smileys/
 
 2.6  Why are the status icons so big?
-
+ 
   We believe that, by adding a second line of text to each buddy list entry,
   we're able to show more information about each buddy on the buddy list. The
   'Big List,' as we call it, shows status text, idle time, and warning level
@@ -429,25 +455,36 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   similar to IM clients they may have used in the past. The 'Big List' can be
   disabled by un-checking "Show buddy icons" in the Buddy List preferences.
 
-2.7  How do I get sound to work correctly?
+2.7  Why do the emblems move around the status icon?
+ 
+  The four corners of the icon have different precedence. The lower-right is
+  the highest, lower-left is second-highest, etc. The most important emblem is
+  in the lower-right, always. When an AOL buddy is not away, the fact that [s]
+  he's an AOL user is the most important information shown in the icon. The
+  consistency is that the user can always look in the same place on the icon to
+  find out what he needs to know. Also, importantly, the lower-right corner
+  emblem is the only emblem that shows up when "Small list" is on, and only one
+  emblem would fit.
 
+2.8  How do I get sound to work correctly?
+ 
   Gaim uses libao to play sounds. Playing sounds directly through esound or
   arts is no longer supported.
 
-  Libao is a cross-platform library that allows programs to output PCM audio
+  `Libao is a cross-platform library that allows programs to output PCM audio
   data to the native audio devices on a wide variety of platforms. It currently
   supports OSS (Open Sound System), ESD (ESounD), ALSA (Advanced Linux Sound
   Architecture), Sun audio system (used in Solaris, OpenBSD, and NetBSD), aRts
-  (Analog Realtime Synthesizer).
+  (Analog Realtime Synthesizer). '
 
   To compile Gaim with support for libao you need libao-devel and
   audiofile-devel. To use libao you need libao and audiofile. If you do not
   wish to install these packages you can also just change your sound playing
   method in preferences to Command and use "esdplay %s" or "artsplay %s."
 
-2.8  How do I make Gaim use ALSA or OSS for playing sounds? What does the
+2.9  How do I make Gaim use ALSA or OSS for playing sounds? What does the
      "Automatic" option do?
-
+ 
   If you choose "Automatic", "ESD", or "Arts", Gaim uses libao to play sounds.
   Choosing "ESD" or "Arts" forces libao to play sounds using that method, while
   choosing "Automatic" lets it decide for itself.
@@ -455,17 +492,19 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   If you choose "Automatic", you can create a file, either /etc/libao.conf or ~
   /.libao, and put one of the following lines in it:
 
+
      default_driver=alsa
 
      default_driver=oss
+
   Other drivers, like alsa09, arts, esd, irix, macosx, and sun might also be
   supported, depending on your platform, and how libao was compiled. See also
   'man 5 libao.conf'.
 
-2.9  Why does Gaim use the same WM_CLASS for every window? It makes it
-     impossible to control window size and placement for the buddy list
-     separately from the conversations.
-
+2.10  Why does Gaim use the same WM_CLASS for every window? It makes it
+      impossible to control window size and placement for the buddy list
+      separately from the conversations.
+ 
   Both strings in the WM_CLASS property are supposed to be the same for all
   windows in the same instance of an application. ICCCM states that one is
   meant to be the same for all instances of the application, the other is meant
@@ -480,8 +519,12 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   differentiating between Gaim windows, please ensure that it uses the
   WM_WINDOW_ROLE hint per the ICCCM.
 
-2.10  What is a "Buddy Pounce"?
+2.11  I blocked someone accidentally, how can I unblock them?
+ 
+  See the "Privacy" option under the "Tools" menu of the Buddy List.
 
+2.12  What is a "Buddy Pounce"?
+ 
   Gaim introduced buddy pounces a few releases before AOL came out with "Buddy
   Alerts." Despite this though, you could think of a buddy pounce as an Alert
   and get an idea of the most minimal uses of a buddy pounce. In reality, a
@@ -493,19 +536,25 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   occur the next time gaim detects the event, ie the next time the person in
   your buddy list who you have pounced signs on.
 
-2.11  Where does gaim store its logs?
-
+2.13  Where does gaim store its logs?
+ 
   On unix, they are in ~/.gaim/logs, on win32 they are in the $drive\Documents
   and Settings\user\Application Data\.gaim\logs directory. In either case, new
   logs (new as of 0.73) are in subdirectories that correspond to protocol/
   yourscreenname/theirscreenname.
 
-2.12  Can I use Gaim for e-mail, blogging, an RSS feed, or something else that
-      isn't IM-related?
+2.14  How can I see my own status with Gaim?
+ 
+  Currently the only supported method to see your own status is to add yourself
+  to your buddy list. This works with Aim, ICQ, Y!M, IRC, and some of the
+  others, and is mimiced by gaim for MSN and Jabber.
 
-  No, you can't. We get requests for this often, but Gaim is indeed a
-  messenging client. Aside from the capabilities each protocol may support, the
-  Gaim developers have no intention to turn Gaim into a multi-feature Internet
+2.15  Can I use Gaim for e-mail, blogging, an RSS feed, or something else that
+      isn't IM-related?
+ 
+  No, you can't. We get requests for this often, but Gaim is indeed a messaging
+  client. Aside from the capabilities each protocol may support, the Gaim
+  developers have no intention to turn Gaim into a multi-feature Internet
   client capable of doing everything under the sun. We also won't be helping to
   develop plugins to turn it into that. There are many Internet applications
   available for Linux, Windows, or whatever operating system you use that would
@@ -516,15 +565,15 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 +------------------------------------------------------------------------------
 
 3.1  Does Gaim support file transfer?
-
+ 
   Somewhat, yeah. As of 0.79 the following is supported:
 
-    * Sending and receiving files on AIM (although it might be a bit buggy)
-    * Sending and receiving files on IRC
-    * Sending and receiving files on Jabber
-    * Sending and receiving files on MSN
-    * Sending and receiving files on SILC
-    * Sending and receiving files on Yahoo (sending is limited to 1Mb)
+    • Sending and receiving files on AIM (although it might be a bit buggy)
+    • Sending and receiving files on IRC
+    • Sending and receiving files on Jabber
+    • Sending and receiving files on MSN
+    • Sending and receiving files on SILC
+    • Sending and receiving files on Yahoo (sending is limited to 1Mb)
 
   Most of the protocols themselves support file transfer, but Gaim has not been
   written to support it yet. If you would like file transfer to work better or
@@ -533,7 +582,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 3.2  Is there a Gaim tray icon, or docklet, or gnome applet, or panel icon, or
      something?
-
+ 
   Yeah, Gaim supports what is called a system tray icon that conforms to the
   standards at www.freedesktop.org. This tray icon is supported by Windows, KDE
   3.1, Gnome 2.2, and Red Hat Gnome 2.0. All you have to do is load the "System
@@ -550,21 +599,21 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   about this.
 
 3.3  What do those colors in the conversation tab mean?
-
-    * Red - A message is waiting for you
-    * Blue - Someone sent a message containing your name
-    * Green - The buddy is typing
-    * Yellow - The buddy began typing, and then stopped
-    * Gray - There has been a join or a part in that chat, or the buddy has
+ 
+    • Red - A message is waiting for you
+    • Blue - Someone sent a message containing your name
+    • Green - The buddy is typing
+    • Yellow - The buddy began typing, and then stopped
+    • Gray - There has been a join or a part in that chat, or the buddy has
       signed off
 
 3.4  Will Gaim save my buddy list to the server?
-
+ 
   Yes, Gaim saves your buddy list to the server for AIM, ICQ, Jabber, MSN,
   Novell and Yahoo!.
 
 3.5  Can I import or export my buddy list?
-
+ 
   Sorry, no. Old versions of Gaim supported this, but new versions do not. All
   the code for saving and loading buddy lists was rewritten, and support for
   importing and exporting buddy lists was never re-added. However, with all
@@ -572,26 +621,29 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   useful today than in the past.
 
 3.6  Does Gaim support animated smileys?
-
+ 
   Yes, as of version 0.70 Gaim supports animated smileys.
 
 3.7  Can I make Gaim group screen names by the person that owns them? You know,
      like Trillian's Meta Contacts?
-
+ 
   Sure! Right click a buddy on your list and at the bottom of the menu click
   "Expand". Then just drag other screen names to the same person below it. When
   you're done, click on the arrow to collapse them. When the contact is
   collapsed, Gaim will select a buddy to display based on the status of the
   buddies in the contact, and their order.
 
-3.8  How do I get the old logging back?
+  You may need to turn off the preference option to automatically expand
+  Contacts in order to be able to edit an existing Contact.
 
+3.8  How do I get the old logging back?
+ 
   The old logging was removed because it was deficient in many ways. There is
   no way in Gaim itself to revert to the old logging, but the new logging is so
   good you could implement something similar to the old logging as a plugin.
 
 3.9  How can I convert my old logs to the new format?
-
+ 
   It's not possible to perfectly convert from the old format to the new format
   because the old format is missing some information necessary to do that (eg.
   which account the messages were sent from).
@@ -607,14 +659,14 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 +------------------------------------------------------------------------------
 
 4.1  How do I use ICQ?
-
+ 
   ICQ support is part of the OSCAR protocol, labeled AIM/ICQ in Gaim. To use
   it, simply put your account number in the "Screen Name" box and your password
   in the "Password" box. Leave the server settings set to the default
   (login.oscar.aol.com and port 5190).
 
 4.2  Can I send SMS messages?
-
+ 
   Kind of. See our answer to this for the AIM/ICQ Protocol.
 
 +------------------------------------------------------------------------------
@@ -622,7 +674,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 +------------------------------------------------------------------------------
 
 5.1  What is the TOC protocol?
-
+ 
   It's an AIM protocol used by Quick Buddy and AIM Express. It's recommended
   that you don't use it. You should use Gaim's OSCAR (AIM/ICQ) protocol
   instead. We keep TOC around in case OSCAR ever stops working. However, we are
@@ -633,11 +685,11 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 +------------------------------------------------------------------------------
 
 6.1  Can I set my profile?
-
+ 
   Yes you can. Go to Tools->Account Actions
 
 6.2  Can I set a buddy icon?
-
+ 
   Yes. Go to the Account Editor (Tools->Accounts from the buddy list), and
   click to "Modify" the AIM/ICQ account you wish to have an icon. Enter the
   full path to the image you wish to use in the box labeled "Buddy Icon File."
@@ -646,7 +698,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   Windows understands, such as .bmp, .gif, and .jpg.
 
 6.3  Some of my buddies are not showing up as online, why is that?
-
+ 
   AOL has set a limit for the maximum number of people you can have in your
   buddy list. This number is currently 200. If you don't think you are anywhere
   near that limit, it is possible that your server-stored buddy list is
@@ -656,13 +708,13 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   AIM program from AOL. This will usually correct any problems with the list.
 
 6.4  Can I use AIM URI's such as "aim:goim?screenname=robflynn"?
-
+ 
   Yes, with Gaim 0.60 and higher, but it can be difficult to set up. You need
   to pass the entire URI to the gaim-remote program (included with gaim). To do
   this with Gnome 2, run gnome-file-types-properties or "File Types and
   Programs" from the preferences menu. Add a service with protocol "aim" and
   set the program to gaim-remote uri "%s". This will make AIM URIs work in
-  Galeon 2. Also, not all types of aim URI's are supported. The ones that are
+  Galeon 2. Also, not all types of AIM URI's are supported. The ones that are
   supported are goim, addbuddy, and gochat.
 
   You'll need the "Remote Control" plugin loaded for this to work.
@@ -671,7 +723,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   over.
 
 6.5  I just changed my buddy icon, and I can't see the new one.
-
+ 
   First, try IMing yourself a few times. Buddy icons are checked when you IM
   people, so depending on the protocol, that may work. If it still doesn't
   update, check the file size (buddy icons must be smaller than 4kb) and the
@@ -681,12 +733,12 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   the protocol supports it, try restarting Gaim.
 
 6.6  Does Gaim support DirectIM and IM Image?
-
+ 
   Yeah, kind of. This tends to be one of the buggier areas of Gaim. If it's not
   working for you, make sure that at least one person is not behind a firewall.
 
 6.7  Can I send SMS messages?
-
+ 
   Yep, just send an IM to the person's phone number. For example, if the phone
   number is (919) 555-1234, you would IM the screen name +19195551234 We think
   this should work for countries with a country code of 1 (the United States
@@ -695,13 +747,13 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   Sending SMS messages using "the ICQ method" is not yet supported.
 
 6.8  Can I add SMS numbers to my buddy list?
-
+ 
   Not currently. This functionality has been broken since around September
   2003. There is no ETA for when it will be fixed.
 
 6.9  I heard AOL is combining ICQ and AIM, does that mean I can send a message
      from an AIM account to an ICQ account and vice-versa?
-
+ 
   Yes, AOL is slowly letting the two messaging networks interoperate with each
   other. Messaging between the two protocols works as long as the receiver of
   the message supports it. Gaim 0.60 supports sending and receiving messages
@@ -721,19 +773,26 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   using Windows AIM version 5.2.3139 will show up in an ICQ buddy list.
 
 6.10  Why can't I connect via either Oscar or TOC?
-
+ 
   If you are using Linux, your kernel may be using a network option called
   "ECN". It seems that the AOL servers are currently dropping packets marked as
   "ECN-capable". In order to turn this off, run the command "echo 0 > /proc/sys
   /net/ipv4/tcp_ecn" as root, or (if your distribution supports it) put the
   line "net.ipv4.tcp_ecn = 0" in the file /etc/sysctl.conf.
 
+6.11  English is not my native language, and some of my friends have trouble
+      seeing my IMs/I have trouble seeing my friends' IMs. How do I use a
+      native language character set with ICQ?
+ 
+  Gaim 0.82 and higher allow you to specify a character encoding to use when
+  conversing with ICQ users. Use the account editor to set this encoding.
+
 +------------------------------------------------------------------------------
 | 7. IRC Protocol
 +------------------------------------------------------------------------------
 
 7.1  How do I join a channel with the IRC plugin?
-
+ 
   First create the account, then sign on. After you have signed on, you can use
   File->Join A Chat on the buddy list to join a channel. In any window, either
   a conversation or a chat, in which your IRC user is the sender, you can also
@@ -741,30 +800,31 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 7.2  Is there a way to make Gaim automatically identify me and/or join IRC
      chats on login?
-
+ 
   Yes. Add NickServ to your buddy list and place buddy pounces on him/her/it.
+  Do not include "/msg nickserv" as part of the message to send.
 
   In version 0.64 or higher, you can add a chat to your buddy list, right click
-  it, and tell gaim to auto-join it.
+  it, and tell Gaim to auto-join it.
 
 +------------------------------------------------------------------------------
 | 8. Jabber Protocol
 +------------------------------------------------------------------------------
 
 8.1  How do I choose which Jabber server to use?
-
+ 
   The Jabber server name is part of your Jabber I.D., such as
   somebody@server.name. So when entering your Jabber "screen name", the server
   is specified as part of your JID.
 
 8.2  How do I change my Jabber resource to be other than the default of "/
      Gaim"?
-
+ 
   When you create your account in Gaim, simply append the desired resource
   identifier to your Jabber I.D. For example: somebody@server.name/resource
 
 8.3  How do I register a new Jabber account?
-
+ 
   As of version 0.52 and up:
 
    1. Click "Tools->Accounts->Add"
@@ -779,7 +839,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   type in what you thought you did, you're hosed.
 
 8.4  How do I use invisibility?
-
+ 
   Jabber invisibility support is available in Gaim version 0.60 and later.
 
   There are two ways to use Jabber invisibility: on a per-buddy and on a
@@ -809,19 +869,19 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 8.5  I've a buddy that I keep removing from my buddy list but the entry keeps
      coming back every time I log in again! How can I stop this?
-
+ 
   With Gaim 0.60 or later, it might be continuing to import the old buddy
   lists. Remove ~/.gaim/*.blist - these are no longer used, the buddy list is
   now stored in ~/.gaim/blist.xml
 
 8.6  Can I remove a buddy from my Jabber roster entirely?
-
+ 
   With Gaim 0.60 or later, the deletion code will do this. Gaim currently does
   not retain invisibility settings between logins, just as it doesn't currently
   retain "away" status.
 
 8.7  What does "Cancel Presence Notification" do?
-
+ 
   This selection, available in Gaim version 0.60 and later, and found by
   right-clicking on a buddy entry in the buddy list, prevents that Jabber I.D.
   from receiving future presence notifications when you log on to the server.
@@ -833,54 +893,131 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 | 9. Y!M (Yahoo) Protocol
 +------------------------------------------------------------------------------
 
-9.1  I cannot connect to yahoo!
-
+9.1  I cannot connect to Yahoo! and get "Invalid Password" errors, or I'm using
+     a version of Gaim older than 0.79!
+ 
   Make sure you have at least 0.79.
+
+9.2  I cannot connect to Yahoo! and I'm behind a firewall or NAT. Why doesn't
+     Gaim have Yahoo's "Firewall with no proxy" option?
+ 
+  Yahoo!'s firewall with no proxy option connects to Yahoo! by wrapping the
+  YMSG protocol inside HTTP. Gaim currently doesn't support doing this.
+
+  Gaim does support changing the port it connects to. Try changing the
+  Pager Port in the Account editor under "Show more options". Ports known to
+  work are: 20, 23, 25, 80, 119, 5050, 8001, and 8002. While this doesn't work
+  for as many people as actually tunneling through the HTTP protocol would, it
+  helps many users.
+
+9.3  I blocked someone, but it doesn't seem to have worked.
+ 
+  As of 0.81, this is a known bug in our Yahoo code. We're not sure what
+  exactly is wrong, but it seems to fail most often when automatically removing
+  the buddy from your buddy list at the same time it blocks them. It also
+  always seems to fail if Gaim already thinks the buddy is blocked, and you try
+  to block them again.
+
+  We suggest manually removing Yahoo! buddies before attempting to block them.
+  For buddies which Gaim reports are blocked but which are not, unblocking them
+  and reblocking them from the Tools->Privacy dialog will often get things
+  working.
+
+9.4  Can I get a list of Yahoo! Chat rooms? What about non-US lists?
+ 
+  Tools->Room List will let you list available Yahoo! Chat rooms. Yahoo! does
+  support hidden and invite-only rooms. If you know the name of the room you
+  wish to join, and it's not invite only, you can join it via Buddies->Join a
+  Chat. You can also create a chat room this way, although we don't support
+  setting the hidden or invite-only type settings.
+
+  To get a non-US room list, you'll need to change the Chat Room List Url in
+  the account editor, under "Show more options". By default this field contains
+  "http://insider.msg.yahoo.com/ycontent/". You can add a country code prefix
+  to the url to fetch the list for another country. For example, for the German
+  list, you would use "http://de.insider.msg.yahoo.com/ycontent/".
+
+  The list of known country codes for this url is:
+
+  aa => Asia
+  ar => Argentina
+  au => Australia
+  br => Brazil
+  ca => Canada
+  cf => Central African Republic
+  cn => China
+  de => Germany
+  dk => Denmark
+  es => Spain
+  fr => France
+  hk => Hong Kong
+  in => India
+  it => Italy
+  kr => Korea, Republic of
+  mx => Mexico
+  no => Norway
+  se => Sweden
+  sg => Singapore
+  tw => Taiwan
+  uk => United Kingdom
+
+9.5  What protocol does Gaim use to connect to Yahoo!?
+ 
+  Normally Gaim uses the YMSG protocol, which is the same protocol that the
+  official Yahoo! clients use. If an attempt to login returns the "Invalid
+  Password" error code, Gaim automatically tries to log in using the "Web
+  Messenger" method. This method still uses the YMSG protocol, but
+  authenticates differently, and connects to a different server.
+
+  While in Web Messenger mode, several things work differently or not at all.
+  Adding, moving, and removing buddies doesn't work, and the only available
+  statuses are "Available" and "Invisible". In addition, the Yahoo! server
+  seems to ignore all Yahoo! Chat related packets. For this reason, we use the
+  YCHT protocol to join Yahoo! Chat rooms while connected using the Web
+  Messenger method.
 
 +------------------------------------------------------------------------------
 | 10. MSN Protocol
 +------------------------------------------------------------------------------
 
-10.1  I'm getting lots of "Already in Opposite list" errors on msn, why?
-
+10.1  I'm getting lots of "Already in Opposite list" errors on MSN, why?
+ 
   The reason this happens is because you have a screen name in both your permit
   list and your deny list. There are two ways to fix this: the correct way and
-  the quick way. The correct way is to go to tools->preferences (tools->privacy
-  in 0.60 or later), and manually scan the list and remove the duplicate
-  entries. The quick way is to remove the msn .blist file from the ~/.gaim
-  directory. This will have a side effect: the msn server stores the screen
-  names of your contacts, but does not store what group they are in, so you
-  will have to re-sort your msn contacts into the appropriate groups. The buddy
-  list is ~/.gaim/blist.xml in 0.60 and later, but be aware that this contains
-  your buddy list for all accounts, and also stores the "Contact" grouping of
-  Buddies.
+  the quick way. The correct way is to go to Tools->Privacy, and manually scan
+  the list and remove the duplicate entries. The quick way is to remove the
+  blist.xml file from the ~/.gaim directory. Be aware that this contains your
+  buddy list for all accounts, and also stores the "Contact" grouping of
+  Buddies. Also, the MSN server stores the screen names of your contacts, but
+  does not store what group they are in, so you will have to re-sort your MSN
+  contacts into the appropriate groups.
 
 10.2  Is there a way to invite more than one person to an MSN chat?
-
+ 
   Not at this time. When the conversation framework gets another rewrite, it is
   possible that it will be worked on. Until that time, sorry. :)
 
 10.3  Is MSNP9 (MSN6) going to be supported?
-
+ 
   MSNP9 support has existed in Gaim since 0.69. However, at this point,
-  features such as custom smileys and buddy icons aren't yet implemented.
+  features such as custom smileys aren't yet implemented.
 
 10.4  Will I be able to use Gaim for MSN after October 15th 2003? (The day
       they're preventing third party clients from connecting)
-
+ 
   Yes. We use MSNP9, which is available in 0.69 and up, and MSNP9 is supported
   after October 15th 2003.
 
 10.5  I just upgraded Gaim and the MSN plugin will not load. Why?
-
+ 
   You did not compile with SSL support, or the SSL plugin failed to load. As of
-  protocol version 9, the MSN protocol requires the use of SSL, which gaim
+  protocol version 9, the MSN protocol requires the use of SSL, which Gaim
   provides by either GnuTLS or the combination of NSS and NSPR from the Mozilla
   project. Install one or both of these and recompile Gaim, and see the next
   question.
 
 10.6  The MSN plugin won't load, but I have Mozilla NSS!
-
+ 
   Some distributions, including Slackware, install Mozilla NSS to a
   non-standard directory. The fix is simple. Edit /etc/ld.so.conf and add /usr/
   lib/mozilla-1.4 (or whatever version you're using, but it's usually 1.4) to
@@ -891,24 +1028,46 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   Mozilla 1.5 has a broken .pc file and does not install the necessary .h
   files, and so will not be detected.
 
-  See http://gaim.sf.net/faq-ssl.php on getting SSL to work with gaim.
+  See http://gaim.sf.net/faq-ssl.php on getting SSL to work with Gaim.
 
 10.7  What does "MSN: S: 911 3" in the debug window mean when I cannot connect
-      to msn?
-
+      to MSN?
+ 
   See http://gaim.sf.net/911.txt.
+
+10.8  How do I set an MSN avatar?
+ 
+  Gaim calls these Buddy Icons. Go to Tools->Accounts and click to Modify your
+  MSN account. You can drag and drop a file to the resulting dialog, or use the
+  Open button.
+
+10.9  What does "Has you" in the buddy tooltip mean?
+ 
+  It shows you if that MSN user has added you to his/her buddy list. "Has you:
+  No" does not mean you can't talk to that person.
+
+10.10  How do I set my MSN Friendly Name (the name other users see)?
+ 
+  In the Buddy List window, go to Tools->Account Actions->account->Set Friendly
+  Name.
+
+10.11  What does "Error reading from switchboard server" mean?
+ 
+  We haven't fully figured that out yet, but even Microsoft's client seems to
+  get similar errors, although with less frequency than we do. See Bug 1060205
+  for further information.
 
 +------------------------------------------------------------------------------
 | 11. Gadu-Gadu Protocol
 +------------------------------------------------------------------------------
 
 11.1  What is Gadu-Gadu?
-
+ 
   Gadu-Gadu is an IM protocol popular in Poland. You can find more about it at
   www.gadu-gadu.pl (website in Polish).
 
 11.2  Why doesn't it work right?
-
+ 
   We have not had a Gadu-Gadu maintainer in some time and are currently
   struggling to keep this protocol functional. If you have any problems, you
   will need to submit a patch for them, as we are unlikely to have much luck
@@ -920,72 +1079,73 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 +------------------------------------------------------------------------------
 
 12.1  What is Zephyr?
-
+ 
   Zephyr is an IM protocol developed at MIT for use with Project Athena. Its
   features include Kerberos IV authentication, multi-level chats (aka
   "subscriptions"). You're probably using this because your college/employer/
   organization uses it as a local IM/chat system. If not, you probably don't
   have a server to connect to.
 
-12.2  Other Zephyr clients (zwgc,owl,tzc) work, but gaim dies with "Couldn't
+12.2  Other Zephyr clients (zwgc,owl,tzc) work, but Gaim dies with "Couldn't
       initialize zephyr".
-
+ 
   Your site might require the use of Kerberos 4 for authentication, though few
-  (if any) prepackaged gaim binaries compile it with Kerberos support. The
-  solution is to compile gaim with the --with-krb4 flag to point to the
-  location of your Kerberos 4 devel files, usually one of /usr, /usr/local, or
-  /usr/athena , e.g. ./configure --with-krb4=/path/to/kerberosIV
+  prepackaged Gaim binaries use Kerberos. One solution is to compile Gaim with
+  the --with-krb4 flag to point to the location of your Kerberos 4 devel files,
+  usually one of /usr, /usr/local, or /usr/athena , e.g. ./configure
+  --with-krb4=/path/to/kerberosIV
 
-12.3  Gaim isn't working, but I never got any other zephyr client working on
+12.3  Gaim isn't working, but I never got any other Zephyr client working on
       this machine.
-
-  You need to have zhm (which comes with the standard zephyr distribution)
-  installed, and running, and pointed at your zephyr servers. e.g.
+ 
+  You need to have zhm (which comes with the standard Zephyr distribution)
+  installed, and running, and pointed at your Zephyr servers. e.g.
 
   zhm z1.example.com z2.example.com z3.example.com
 
-  Alternatively, there might be a firewall or a NAT between you and the zephyr
-  servers. Zephyr doesn't work in an environment where incoming connections
-  cannot be made to arbitrary UDP ports.
+  Alternatively, there might be a firewall or a NAT between you and the Zephyr
+  servers. Zephyr generally doesn't work in an environment where incoming
+  connections cannot be made to arbitrary UDP ports.
+
+12.4  How do I use Zephyr from behind my firewall, or without recompiling with
+      kerberos support if needed?
+ 
+  You can use tzc, "Trivial Zephyr Client" and ssh to run Zephyr from a machine
+  that is behind a firewall or NAT. First, make sure that tzc is installed and
+  working on the remote machine. The best version of tzc to use can be found
+  http://www.club.cc.cmu.edu/debian/dists/testing/contrib/source/
+  tzc-cclub_001-3.tar.gz. Second, make sure that you can make a passwordless
+  ssh connection to the remote machine and get kerberos 4 tickets. Then, click
+  on "Show more options", enable "Use tzc", and set the tzc command to
+
+  /path/to/ssh username@hostname /path/to/tzc -e "%s"
+
+  Alternately, if you have tzc working on your machine, you can enable "Use
+  tzc", and set the tzc command to
+
+  /path/to/tzc -e "%s"
 
 +------------------------------------------------------------------------------
-| 13. Trepia Protocol
+| 13. SILC Protocol
 +------------------------------------------------------------------------------
 
-13.1  I heard Trepia was going to be in 0.65. Where is it?
-
-  Support for the Trepia protocol was removed right before 0.65's release. It
-  may make it into a future version, but we're not sure yet.
-
-13.2  Trepia is showing people in Japan, England, etc. on my buddy list. I
-      thought this was supposed to show people in my area?
-
-  We believe this to be the fault of protocol, not Gaim. As Trepia continues to
-  update and refine their protocol, it will become more accurate. If we find
-  out otherwise, we will attempt to incorporate the changes necessary to act
-  like the official client.
-
-+------------------------------------------------------------------------------
-| 14. SILC Protocol
-+------------------------------------------------------------------------------
-
-14.1  What is SILC?
-
+13.1  What is SILC?
+ 
   SILC is an open protocol designed from the ground up with security in mind.
   It is, or should be, the protocol of choice for the paranoid. See http://
   www.silcnet.org for more details.
 
 +------------------------------------------------------------------------------
-| 15. Novell Protocol
+| 14. Novell Protocol
 +------------------------------------------------------------------------------
 
-15.1  Are there any public servers for Novell?
-
+14.1  Are there any public servers for Novell?
+ 
   Not really. This protocol is designed to connect to a Novell GroupWise server
   running on a corporate LAN.
 
-15.2  I can't seem to get it to work.
-
+14.2  I can't seem to get it to work.
+ 
   Novell tells us that this protocol plugin will only work with either the
   GroupWise Messenger for Linux server or the GroupWise Messenger SP2 (or
   higher) server for NetWare and Windows. In addition, the server must be
@@ -995,34 +1155,46 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   provided us.
 
 +------------------------------------------------------------------------------
-| 16. Scripts and Plugins
+| 15. Scripts and Plugins
 +------------------------------------------------------------------------------
 
-16.1  How do I use perl scripts with Gaim?
-
+15.1  How do I use perl scripts with Gaim?
+ 
   Save the perl script to ~/.gaim/plugins/ or $prefix/lib/gaim/, restart Gaim,
   and load the perl script by checking the check box next to its name on the
   Plugins page in preferences.
 
-16.2  How do I compile a plugin for Gaim?
-
+15.2  How do I compile a plugin for Gaim?
+ 
   To compile a plugin for Gaim, you must have Gaim's source code. To download
   Gaim's source code, get the most recent tarball from http://
   gaim.sourceforge.net/downloads.php (http://gaim.sf.net/downloads.php) and
   untar it with the command:
+
   tar zxvf filename
+
   where filename is the file you downloaded.
 
   After you have a Gaim source code tree:
 
    1. Change to the resulting directory and run the command:
+
       ./configure
+
       This will create the necessary make files.
    2. Move the plugin you wish to compile into the plugins/ directory in the
       Gaim source code tree.
    3. Change to the plugins/ directory.
-   4. Type:
+   4. On Unix/Linux Type:
+
       make name.so
+
+      where the name of the file you wish to compile is name.c.
+
+      On Win32 Type:
+
+      make -f Makefile.mingw name.dll
+
       where the name of the file you wish to compile is name.c.
 
       Note well the difference in the extensions. If you type make name.c
@@ -1033,17 +1205,19 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
       compiling it yourself, $prefix is /usr/local by default. Otherwise,
       $prefix is /usr.
 
-16.3  I have a plugin or perl script for Gaim that does not work with 0.60 or
-      higher.
-
-  The plugin and perl script API has changed in 0.60, which means plugins and
-  perl scripts must be modified in order to work. The plugin or perl script
+15.3  I have a plugin or perl script for Gaim that used to work, but does not
+      with the current version.
+ 
+  The plugin and perl script API has changed several times, which means plugins
+  and perl scripts must be modified in order to work. The plugin or perl script
   must be located in $prefix/lib/gaim/ or in ~/.gaim/plugins/, and must
-  implement the new API, as documented in the HOWTO file in the plugins
-  directory. Plugins and perl scripts are now controlled from preferences.
+  implement the new API, as documented by the make docs command from the root
+  of the Gaim source code tree. This will generated html documentation in the
+  doc/html directory. Also note that plugins and perl scripts are now
+  controlled from preferences.
 
-16.4  Where can I find documentation on writing plugins and Perl scripts?
-
+15.4  Where can I find documentation on writing plugins and Perl scripts?
+ 
   If you look in the plugins/ directory in the Gaim source, you should see a
   HOWTO file with some details for C plugins. Also be sure to check out our
   online documentation (http://gaim.sf.net/api/index.html). Be especially sure
@@ -1054,11 +1228,11 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   make docs. You will need doxygen and graphviz dot installed for this to work.
 
 +------------------------------------------------------------------------------
-| 17. Development
+| 16. Development
 +------------------------------------------------------------------------------
 
-17.1  Can I help?
-
+16.1  Can I help?
+ 
   But of course. Just find something that's bugging you and fix it. There are a
   slew of a bug reports in Gaim's bug report tracker - you could pick one and
   try to tackle it and submit a patch. You could also help with general bug
@@ -1067,59 +1241,59 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   you follow the same coding style used in Gaim, and make sure you don't break
   the core/UI split.
 
-17.2  Gaim never leaves a core file.
-
+16.2  Gaim never leaves a core file.
+ 
   On most installs core files are limited in size to 0 bytes, and are therefore
   not created. To rectify this situation, add ulimit -c unlimited to your
   startup scripts (~/.bash_profile is a good place) or run it manually in a
-  terminal before starting gaim from that terminal. You can also run Gaim
+  terminal before starting Gaim from that terminal. You can also run Gaim
   directly in gdb with gdb gaim.
 
-17.3  Where should I report bugs?
+16.3  Where should I report bugs?
+ 
+  http://gaim.sf.net/bug.php.
 
-  http://gaim.sf.net/".
+16.4  Where should I submit patches?
+ 
+  http://gaim.sf.net/patches.php.
 
-17.4  Where should I submit patches?
-
-  http://gaim.sf.net/".
-
-17.5  Did you guys reverse engineer it?
-
+16.5  Did you guys reverse engineer it?
+ 
   TOC, Jabber, MSN, Napster, and IRC are published protocols, so we didn't have
   to reverse engineer those. Oscar, ICQ, and Yahoo are not published, and were
   reverse engineered by other people. Novell was provided by Novell, and SILC
   was written by one of the protocol's developers.
 
 +------------------------------------------------------------------------------
-| 18. Misc. Questions
+| 17. Misc. Questions
 +------------------------------------------------------------------------------
 
-18.1  Can I IM you guys?
-
+17.1  Can I IM you guys?
+ 
   Sure! Look at the Contact Information (http://gaim.sf.net/contactinfo.php)
   page!
 
-18.2  Hello?
-
+17.2  Hello?
+ 
   We don't know how to answer this question. Stop asking it.
 
-18.3  Can I give you money/hardware/other expensive things that can be hocked
+17.3  Can I give you money/hardware/other expensive things that can be hocked
       for cash what with you all being students/full-time-workers and helping
       to produce this wonderful software instead of studying/sleeping?
-
+ 
   No. We're completely fool-hardy and won't accept any gratuities with no
   strings attached for just being good guys. That and we'd have to share with
   everyone who has submitted patches. ;-)
 
-18.4  Does Gaim support secure instant messaging (encrypted IMs)?
-
-  Short answer: Yes, use the SILC protocol. Long Answer(for other protocols):
-  Not natively. Doing secure instant messaging right is a big deal and
-  requires, among other things, an authentication scheme. Simply encrypting
-  your data stream without verifying the party with whom you are chatting is
-  not secure in any way; some other clients offer options like this, but we
-  feel that such measures instill a false sense of security that is more
-  harmful than helpful.
+17.4  Does Gaim support secure instant messaging (encrypted IMs)?
+ 
+  Short answer: Yes, use the SILC protocol.
+  Long Answer(for other protocols): Not natively. Doing secure instant
+  messaging right is a big deal and requires, among other things, an
+  authentication scheme. Simply encrypting your data stream without verifying
+  the party with whom you are chatting is not secure in any way; some other
+  clients offer options like this, but we feel that such measures instill a
+  false sense of security that is more harmful than helpful.
 
   There are a number of 3rd party plugin developers working on developing a
   secure IM framework, the better ones using the GnuPG and the OpenPGP trust
@@ -1127,24 +1301,44 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   read the documentation on the "web of trust" model available at www.gnupg.org
   and try out one of these.
 
-18.5  Why are the passwords in accounts.xml not encrypted?
-
+17.5  Why are the passwords in accounts.xml not encrypted?
+ 
   This is a case of a really long answer to a short question. Read our
   explanation at http://gaim.sf.net/plaintextpasswords.txt.
 
-18.6  What is gaim-remote?
-
+17.6  What is gaim-remote?
+ 
   gaim-remote is a second executable included with Gaim starting with 0.60. It
   allows you to perform some actions to control/manipulate an existing Gaim
   process from the command line. Run gaim-remote --help to get an idea of what
   we currently envision it doing.
 
-18.7  When will the next version of Gaim be released?
-
+17.7  When will the next version of Gaim be released?
+ 
   The schedule for releases is every third Thursday. However, a new version
   will only be released if it meets a certain standard of quality (i.e., it
   will not be released if it still has a large number of serious bugs).
   Therefore, some releases will take longer than others. Major rewrites means
   lots of new bugs to work out. The new version will be released as soon as it
   is possible to do so.
+
+17.8  What will the next version be?
+ 
+  Starting with version 1.0.0, Gaim version numbers have 3 parts to them. The
+  format is major.minor.micro. If we change something internally in Gaim such
+  that some plugins won't work with the newer version, we will increment the
+  major version number. If we don't increment the major version number, and
+  we've added things to the Gaim API that won't break any older stuff, we will
+  increment the minor version number. In any other cases, we will increment the
+  micro version number. Even and odd numbers have nothing to do with stability,
+  and you should always be running the latest release of Gaim to get new
+  features and bug fixes.
+
+17.9  So, can I look forward to mega-sexy super functionality with Gaim?
+ 
+  Yes, that is the intended idea. In fact, there have been quite a number of
+  unpopular geeks who have made the switch to gaim. In a matter of days, the
+  number of dates and awesomeness points received by the geek increased ten
+  fold! You, too, can have an exciting life with Gaim. Get Gaim. Get the babes.
+  Get uhh... hmm.
 
