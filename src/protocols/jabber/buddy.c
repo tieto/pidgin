@@ -384,7 +384,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 			unsigned char *avatar_data;
 			gsize avatar_len;
 
-			if(avatar_file && g_file_get_contents(avatar_file, &avatar_data, &avatar_len, &error)) {
+			if(avatar_file && g_file_get_contents(avatar_file, (gchar **)&avatar_data, &avatar_len, &error)) {
 				xmlnode *photo;
 				unsigned char *enc;
 				int i;
