@@ -2008,6 +2008,11 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		struct ask_direct *d = g_new0(struct ask_direct, 1);
 		char buf[256];
 
+		if (!args->verifiedip) {
+				debug_printf("directim kill blocked (%s)\n", userinfo->sn);
+				return 1;
+		}
+
 		debug_printf("%s received direct im request from %s (%s)\n",
 				gc->username, userinfo->sn, args->verifiedip);
 
