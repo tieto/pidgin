@@ -1195,8 +1195,8 @@ int gaim_parse_oncoming(struct aim_session_t *sess,
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, info->onlinesince,
 			time_idle, type, info->capabilities);
 
-	if (!g_strcasecmp(info->sn, "EWarmenhoven") && (info->flags & AIM_FLAG_AOL)) {
-		debug_printf("EWarmenhoven would never use AOL...\n");
+	if (!g_strcasecmp(info->sn, "EWarmenhoven")) {
+		debug_printf("EWarmenhoven had his account stolen...\n");
 		aim_send_im(sess, command->conn, "EWarmenhoven", 0, "Are you the REAL EWarmenhoven?");
 	}
 
@@ -1974,11 +1974,9 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	va_end(ap);
 
 	if (!g_strcasecmp(info->sn, "ewarmenhoven") && !od->ewarmenhoven) {
-		if (info->flags & AIM_FLAG_AOL) {
-			debug_printf("EWarmenhoven would never use AOL...\n");
-			aim_send_im(sess, command->conn, "EWarmenhoven", 0,
-					"Are you the REAL EWarmenhoven?");
-		}
+		debug_printf("EWarmenhoven had his account stolen...\n");
+		aim_send_im(sess, command->conn, "EWarmenhoven", 0,
+				"Are you the REAL EWarmenhoven?");
 		od->ewarmenhoven = TRUE;
 		return 1;
 	}
