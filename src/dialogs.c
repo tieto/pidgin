@@ -1576,17 +1576,9 @@ void insert_smiley_text(GtkWidget *widget, GaimConversation *c)
 	GtkTextIter select_iter, insert_iter;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	select_mark = gtk_text_buffer_get_selection_bound(gtkconv->entry_buffer);
-	insert_mark = gtk_text_buffer_get_insert(gtkconv->entry_buffer);
-
-	if(insert_mark != select_mark) { /* there is text selected */
-		gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &select_iter, select_mark);
-		gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &insert_iter, insert_mark);
-		gtk_text_buffer_delete(gtkconv->entry_buffer, &select_iter, &insert_iter);
-	}
-
-	gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, smiley_text, -1);
+	
+	gtk_imhtml_insert_smiley(GTK_IMHTML(gtkconv->entry), smiley_text);
+	
 	close_smiley_dialog(NULL, c);
 }
 

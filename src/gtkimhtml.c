@@ -2194,6 +2194,39 @@ void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text
 	imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 }
 
+void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *smiley)
+{
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	GdkPixbuf *pixbuf = NULL;
+	GdkPixbufAnimation *annipixbuf = NULL;
+	GtkWidget *icon = NULL;
+
+	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
+	g_object_set_data(G_OBJECT(anchor), "text_tag", smiley);
+	annipixbuf = gtk_smiley_tree_image(imhtml, NULL, smiley);
+	if(annipixbuf) {
+		if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
+			pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
+			if(pixbuf)
+				icon = gtk_image_new_from_pixbuf(pixbuf);
+		} else {
+			icon = gtk_image_new_from_animation(annipixbuf);
+		}
+	}
+	
+	if (icon) {
+		gtk_widget_show(icon);
+		gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
+#if GTK_CHECK_VERSION(2,2,0)
+		gtk_imhtml_copyable_new(imhtml, 
+					gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE), 
+					smiley);
+#endif
+	}
+}
+
 int span_compare_begin(const GtkIMHtmlFormatSpan *a, const GtkIMHtmlFormatSpan *b, GtkTextBuffer *buffer)
 {
 	GtkTextIter ia, ib;
@@ -2239,7 +2272,9 @@ char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
 
 	while ((c = gtk_text_iter_get_char(&iter)) != 0) {
 		if (c == 0xFFFC) {
-			/* This is an image or a smiley */
+			GtkTextChildAnchor* anchor = gtk_text_iter_get_child_anchor(&iter);
+			char *text = g_object_get_data(G_OBJECT(anchor), "text_tag");
+			str = g_string_append(str, text);
 		} else {
 			while (gtk_text_iter_equal(&eiter, &iter)) {
 				/* This is where we shall insert the ending tag of

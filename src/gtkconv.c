@@ -3581,7 +3581,8 @@ setup_chat_pane(GaimConversation *conv)
 	gtkconv->entry_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
-	
+	gaim_setup_imhtml(GTK_IMHTML(gtkconv->entry));
+		
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"),
@@ -3679,6 +3680,7 @@ setup_im_pane(GaimConversation *conv)
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
 	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
+	gaim_setup_imhtml(GTK_IMHTML(gtkconv->entry));
 	gtkconv->entry_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
