@@ -434,6 +434,7 @@ __bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnSession *session = servconn->session;
 	struct gaim_connection *gc = session->account->gc;
 	const char *passport, *type, *value;
+	struct buddy *b;
 	MsnUser *user;
 
 	passport = params[1];
@@ -443,23 +444,24 @@ __bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	user = msn_users_find_with_passport(session->users, passport);
 
 	if (value != NULL) {
-		if (!strcmp(type, "MOB"))
-			user->mobile = (!strcmp(value, "Y"));
+		if (!strcmp(type, "MOB")) {
+			if (!strcmp(value, "Y")) {
+				user->mobile = TRUE;
+
+				if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
+					if (GAIM_BUDDY_IS_ONLINE(b)) {
+						serv_got_update(gc, (char *)passport,
+										1, 0, 0, 0, b->uc);
+					}
+				}
+			}
+		}
 		else if (!strcmp(type, "PHH"))
 			msn_user_set_home_phone(user, msn_url_decode(value));
 		else if (!strcmp(type, "PHW"))
 			msn_user_set_work_phone(user, msn_url_decode(value));
 		else if (!strcmp(type, "PHM"))
 			msn_user_set_mobile_phone(user, msn_url_decode(value));
-	}
-
-	if (!strcmp(type, "MOB") || !strcmp(type, "MBE")) {
-		struct buddy *b;
-
-		if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
-			if (GAIM_BUDDY_IS_ONLINE(b))
-				serv_got_update(gc, (char *)passport, 1, 0, 0, 0, b->uc);
-		}
 	}
 
 	return TRUE;
