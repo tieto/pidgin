@@ -11,9 +11,6 @@ void received_im(char **who, char **what, void *m) {
 	struct conversation *cnv = find_conversation(*who);
 	GtkWindow *win;
 
-	if (!strcmp(*what, LAGOMETER_STR))
-		return;
-
 	if (cnv == NULL)
 		cnv = new_conversation(*who);
 
