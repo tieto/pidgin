@@ -1,5 +1,24 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+1.0.0 (09/17/2004):
+	Nathan: Hah!  Bet you weren't expecting this!  OK, if you were
+	paying any attention to the flame^H^H^H^H^Hthread on gaim-devel,
+	you might have been expecting this.  But here it is, 1.0.0.  Our
+	new versioning scheme has slightly more meaning than the older
+	one (expecially for plugin authors), but our 1.0(.0) release is
+	just as meaningless as we could have hoped.  Enjoy!
+
+	Luke: We've changed our pattern for version numbers with this
+	release, we are no longer simply counting versions. This release
+	then marks, not something traditionally "1.0" but the current
+	version of the api.  When backwards compatability with that breaks
+	you'll see 2.0, more details in the faq.  As a side note, if you
+	are reading this and are good with proxy code or with perl's XS C
+	bindings, please get in touch with me, my contact info is on the
+	website.  Gaim could use your help.
+
+	Mark: I love a circus.
+
 0.82 (08/25/2004):
 	Rob: Woah, where did I come from? 
 

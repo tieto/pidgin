@@ -8,7 +8,7 @@ version 2.0.0
 	* gaim-remote can send text (John B. Silvestri)
 	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
 
-version 0.83:
+version 1.0.0 (09/17/2004):
 	New Features:
 	* Drag-and-drop buddy support for the Invite dialog (Stu Tomlinson)
 	* Drag-and-drop buddy support for the Pounce dialog (Stu Tomlinson)
@@ -19,10 +19,15 @@ version 0.83:
 	  windows (Dave West)
 	* Display file transfer messages when someone sends you a file
 	  over AIM (Dave West)
+	* Handle MSN buddy lists more sanely (Felipe Contreras)
+	* Zephyr can use tzc to run from behind a firewall (Arun A Tharuvai)
 
 	Bug Fixes:
+	* Work around window manager stupidity with new dialog windows (Dave West)
 	* Compile with gtk 2.5.x (Gary Kramlich)
 	* Escape invalid characters in log names (Daniel Atallah)
+	* Fix for clicking add in an msn chat with 2 or more people in your buddy
+	  list (Daniel Atallah)
 
 version 0.82.1 (08/27/2004):
 	Bug Fixes:

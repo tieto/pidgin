@@ -1,6 +1,7 @@
-version 0.83:
-	* The "Start Gaim on Windows starup" setting is preserved
+version 1.0.0 (09/17/2004):
+	* The "Start Gaim on Windows startup" setting is preserved
 	  when Gaim is reinstalled (Daniel Atallah)
+	* Pasting HTML no longer adds linewrapping where it shouldn't
 
 version 0.82.1 (08/27/2004):
 	* Update version of gtk checked by the installer
@@ -19,7 +20,7 @@ version 0.82 (08/26/2004):
 version 0.81 (08/05/2004):
 	* Napster joins binary release (Thanks Kevin)
 	* Gaim's gtkspell build now makes use of pango's squigly underline
-          (Thanks Nathan Fredrickson and Daniel Atallah)
+		(Thanks Nathan Fredrickson and Daniel Atallah)
 
 version 0.80 (07/15/2004):
 	* idletrack.dll now unloads properly when you quit Gaim in Windows
