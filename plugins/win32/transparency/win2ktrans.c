@@ -1,9 +1,8 @@
 /*
- * win2ktrans
+ * gaim - Transparency plugin
  *
  * copyright (c) 1998-2002, rob flynn <rob@marko.net>
- *
- * Contributions by Herman Bloggs <hermanator12002@yahoo.com>
+ * copyright (c) 2002-2003, Herman Bloggs <hermanator12002@yahoo.com>
  *
  * this program is free software; you can redistribute it and/or modify
  * it under the terms of the gnu general public license as published by
@@ -69,7 +68,6 @@ static const char *OPT_WINTRANS_IM_ALPHA  ="/plugins/gtk/win32/wintrans/im_alpha
 static const char *OPT_WINTRANS_IM_SLIDER ="/plugins/gtk/win32/wintrans/im_slider";
 static const char *OPT_WINTRANS_BL_ENABLED="/plugins/gtk/win32/wintrans/bl_enabled";
 static const char *OPT_WINTRANS_BL_ALPHA  ="/plugins/gtk/win32/wintrans/bl_alpha";
-static const char *OPT_WINTRANS_BL_ON_TOP ="/plugins/gtk/win32/wintrans/bl_on_top";
 static int imalpha = 255;
 static int blalpha = 255;
 GList *window_list = NULL;
@@ -189,8 +187,8 @@ static void gaim_new_conversation(char *who) {
 	win = gtkwin->window;
 
 	/* check prefs to see if we want trans */
-	if (gaim_prefs_get_bool(OPT_WINTRANS_IM_SLIDER)) {
-		/* Look up this window to see if it already has a scroller */
+	if (gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED) && gaim_prefs_get_bool(OPT_WINTRANS_IM_SLIDER)) {
+		/* Look up this window to see if it already has a slider */
 		if(!find_slidwin(win)) {
 			GtkWidget *slider_box=NULL;
 			slider_win *slidwin=NULL;
@@ -232,11 +230,6 @@ static void gaim_new_conversation(char *who) {
 
 static void blist_created() {
 	if(blist) {
-		if(gaim_prefs_get_bool(OPT_WINTRANS_BL_ON_TOP))
-			SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-		else
-			SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-
 		if(gaim_prefs_get_bool(OPT_WINTRANS_BL_ENABLED))
 			set_wintrans(blist, blalpha);
 		else
@@ -267,14 +260,7 @@ static void bl_alpha_change(GtkWidget *w, gpointer data) {
 
 static void set_trans_option(GtkWidget *w, const char *pref) {
         gaim_prefs_set_bool(pref, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
-	if(pref == OPT_WINTRANS_BL_ON_TOP) {
-		if(blist) {
-			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
-				SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-			else
-				SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-		}
-	} else if(pref == OPT_WINTRANS_BL_ENABLED) {
+	if(pref == OPT_WINTRANS_BL_ENABLED) {
 		if(blist) {
 			if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 				set_wintrans(blist, blalpha);
@@ -319,7 +305,6 @@ G_MODULE_EXPORT gboolean plugin_unload(GaimPlugin *plugin) {
 		window_list = NULL;
 	}
 	if(blist) {
-		SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		set_wintrans_off(blist);
 	}
 	return TRUE;
@@ -374,9 +359,6 @@ G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 	
 	/* Buddy List trans options */
 	bltransbox = gaim_gtk_make_frame (ret, _("Buddy List Window"));
-	button = wgaim_button(_("_Keep Buddy List window on top"), OPT_WINTRANS_BL_ON_TOP, bltransbox);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (void *)OPT_WINTRANS_BL_ON_TOP);
-
 	button = wgaim_button(_("_Buddy List window transparency"), OPT_WINTRANS_BL_ENABLED, bltransbox);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (void *)OPT_WINTRANS_BL_ENABLED);
 
@@ -460,7 +442,6 @@ init_plugin(GaimPlugin *plugin)
   gaim_prefs_add_bool("/plugins/gtk/win32/wintrans/im_slider", FALSE);
   gaim_prefs_add_bool("/plugins/gtk/win32/wintrans/bl_enabled", FALSE);
   gaim_prefs_add_int("/plugins/gtk/win32/wintrans/bl_alpha", 255);
-  gaim_prefs_add_bool("/plugins/gtk/win32/wintrans/bl_on_top", FALSE);
 }
 
 GAIM_INIT_PLUGIN(wintrans, init_plugin, info)
