@@ -299,19 +299,21 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jabber_chat_destroy(chat);
 			jabber_id_free(jid);
 			g_free(status);
+			g_free(room_jid);
 			return;
 		}
 
 
-		if(!chat->conv) {
-			chat->id = i++;
-			chat->muc = muc;
-			chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
-			gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), jid->resource);
-		}
-
 		if(type && !strcmp(type, "unavailable")) {
 			gboolean nick_change = FALSE;
+
+			/* If we haven't joined the chat yet, we don't care that someone left */
+			if(!chat->conv) {
+				jabber_id_free(jid);
+				g_free(status);
+				g_free(room_jid);
+				return;
+			}
 
 			jabber_buddy_remove_resource(jb, jid->resource);
 			if(chat->muc) {
@@ -345,6 +347,13 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				}
 			}
 		} else {
+			if(!chat->conv) {
+				chat->id = i++;
+				chat->muc = muc;
+				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
+				gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), jid->resource);
+			}
+
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
 					status);
 
