@@ -1,5 +1,4 @@
 LDFLAGS += $(LDADD) $(LIBS) -ggdb -shared
-CFLAGS += -DHAVE_CONFIG_H
 SUFFIXES = .c .so
 .c.so:
 	$(CC) $(CFLAGS) -I../src -DVERSION=\"$(VERSION)\" -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
