@@ -1813,10 +1813,11 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		bi->caps = caps;
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
-	if (info->availablemsg) {
-		free(bi->availablemsg);
+	free(bi->availablemsg);
+	if (info->availablemsg)
 		bi->availablemsg = g_strdup(info->availablemsg);
-	}
+	else
+		bi->availablemsg = NULL;
 
 	/* Server stored icon stuff */
 	if (info->iconcsumlen) {
@@ -1852,6 +1853,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
 	va_list ap;
 	aim_userinfo_t *info;
 
@@ -1860,6 +1862,8 @@ static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	serv_got_update(gc, info->sn, 0, 0, 0, 0, 0);
+
+	g_hash_table_remove(od->buddyinfo, normalize(info->sn));
 
 	return 1;
 }

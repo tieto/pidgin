@@ -952,11 +952,13 @@ static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	char *msg = NULL;
-	fu16_t id;
+	fu16_t type;
+	fu8_t number, length;
 
-	aimbs_get16(bs); /* 0x0002 */
-	aimbs_get16(bs); /* 0x0404 or 0x0407?  Maybe 0x04 and then a length? */
-	msg = aimbs_getstr(bs, aimbs_get16(bs));
+	type = aimbs_get16(bs); /* 0x0002 */
+	number = aimbs_get8(bs); /* 0x04 */
+	length = aimbs_get8(bs); /* the first length */
+	msg = aimbs_getstr(bs, aimbs_get16(bs)); /* the second length is just for the message */
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, msg);
