@@ -782,6 +782,9 @@ void gaim_request_field_list_set_selected(GaimRequestField *field,
 /**
  * Returns a list of selected items in a list field.
  *
+ * To retrieve the data for each item, use
+ * gaim_request_field_list_get_data().
+ *
  * @param field The field.
  *
  * @return The list of selected items.
