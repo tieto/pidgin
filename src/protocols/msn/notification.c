@@ -831,8 +831,10 @@ __rea_cmd(MsnServConn *servconn, const char *command, const char **params,
 	struct gaim_connection *gc = session->account->gc;
 	char *friend;
 
-	friend = msn_url_decode(params[2]);
+	friend = msn_url_decode(params[3]);
 
+	gaim_debug(GAIM_DEBUG_INFO, "msn", "Setting friendly name to %s\n",
+			   friend);
 	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
 
 	return TRUE;
