@@ -532,7 +532,6 @@ extern char *sec_to_text(int);
 extern struct aim_user *find_user(const char *, int);
 extern char *full_date();
 extern void check_gaim_versions();
-extern void spell_checker(GtkWidget *);
 extern char *away_subs(char *, char *);
 extern GtkWidget *picture_button(GtkWidget *, char *, char **);
 extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);

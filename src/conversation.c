@@ -34,6 +34,7 @@
 #include "gtkhtml.h"
 #include <gdk/gdkkeysyms.h>
 #include "convo.h"
+#include "gtkspell.h"
 
 #include "pixmaps/underline.xpm"
 #include "pixmaps/bold.xpm"
@@ -344,6 +345,9 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	}
 
 	debug_print("conversation close callback\n");
+
+	if (general_options & OPT_GEN_CHECK_SPELLING)
+		gtkspell_detach(GTK_TEXT(c->entry));
 
 	if (c->window)
 	        gtk_widget_destroy(c->window);
@@ -1389,29 +1393,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 
 
-void check_spelling( GtkEditable * editable, gchar * new_text,
-                                                          gint length, gint * position,
-                                                          gpointer data )
-{
-	if (general_options & OPT_GEN_CHECK_SPELLING)
-	{
-        	gtk_signal_handler_block_by_func(GTK_OBJECT(editable),
-        	GTK_SIGNAL_FUNC(check_spelling), data);
-		gtk_text_set_point(GTK_TEXT(editable), *position);
-		gtk_text_insert(GTK_TEXT(editable), NULL, &(GTK_WIDGET(editable)->style->fg[0]), NULL, new_text, length );
-        	if(isspace(new_text[0]))
-        	{
-                	gtk_text_freeze(GTK_TEXT(editable));
-                	spell_checker(GTK_WIDGET(editable));
-                	gtk_text_thaw(GTK_TEXT(editable));
-        	}
-        	gtk_signal_handler_unblock_by_func(GTK_OBJECT(editable),
-				GTK_SIGNAL_FUNC(check_spelling), data);
-        	gtk_signal_emit_stop_by_name(GTK_OBJECT(editable), "insert-text");
-	}
-}
-
-
 GtkWidget *build_conv_toolbar(struct conversation *c) {
         GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i, *wood_i, *fgcolor_i, *bgcolor_i, *link_i, *font_i, *smiley_i;
         GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p, *wood_p, *fgcolor_p, *bgcolor_p, *link_p, *font_p, *smiley_p;
@@ -1890,10 +1871,41 @@ void show_conv(struct conversation *c)
 	gtk_window_set_focus(GTK_WINDOW(win),entry);
 
 	gtk_signal_connect(GTK_OBJECT(win), "delete_event", GTK_SIGNAL_FUNC(delete_event_convo), c);
-	gtk_signal_connect(GTK_OBJECT(entry), "insert-text", GTK_SIGNAL_FUNC(check_spelling), entry);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), entry);
+	if (general_options & OPT_GEN_CHECK_SPELLING)
+		gtkspell_attach(GTK_TEXT(c->entry));
 
 	gtk_widget_show(win);
 }
 
 
+void toggle_spellchk() {
+	GList *cnv = conversations;
+	GSList *cht;
+	struct conversation *c;
+	GSList *con = connections;
+	struct gaim_connection *gc;
+
+	while (cnv) {
+		c = (struct conversation *)cnv->data;
+		if (general_options & OPT_GEN_CHECK_SPELLING)
+			gtkspell_attach(GTK_TEXT(c->entry));
+		else
+			gtkspell_detach(GTK_TEXT(c->entry));
+		cnv = cnv->next;
+	}
+
+	while (con) {
+		gc = (struct gaim_connection *)con->data;
+		cht = gc->buddy_chats;
+		while (cht) {
+			c = (struct conversation *)cht->data;
+			if (general_options & OPT_GEN_CHECK_SPELLING)
+				gtkspell_attach(GTK_TEXT(c->entry));
+			else
+				gtkspell_detach(GTK_TEXT(c->entry));
+			cht = cht->next;
+		}
+		con = con->next;
+	}
+}

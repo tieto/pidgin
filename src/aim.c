@@ -53,6 +53,7 @@
 #endif
 #include "locale.h"
 #include "gtkticker.h"
+#include "gtkspell.h"
 #ifndef USE_GNOME
 #include <getopt.h>
 #endif
@@ -101,7 +102,7 @@ void cancel_logon(void)
 	perl_end();
 #endif
 
-	exit(0);
+	gtk_main_quit();
 #endif /* USE_APPLET */
 }
 
@@ -572,6 +573,7 @@ int main(int argc, char *argv[])
 	if (general_options & OPT_GEN_DEBUG)
 		show_debug(NULL);
 
+	gtkspell_start(NULL, ispell_cmd);
 #ifdef USE_PERL
 	perl_init();
 	perl_autoload();
@@ -622,6 +624,8 @@ int main(int argc, char *argv[])
         
 #endif /* USE_APPLET */
         
+	gtkspell_stop();
+
 	return 0;
 	
 }

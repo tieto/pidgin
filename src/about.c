@@ -43,7 +43,7 @@ static void destroy_about()
 
 static void version_exit()
 {
-	exit(0);
+	gtk_main_quit();
 }
 
 

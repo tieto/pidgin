@@ -11,6 +11,7 @@ gaim_applet_SOURCES =	about.c \
 			gaimrc.c \
 			gnome_applet_mgr.c \
 			gtkhtml.c \
+			gtkspell.c \
 			gtkticker.c \
 			html.c \
 			idle.c \
@@ -42,6 +43,7 @@ gaim_SOURCES =	about.c \
 		gaimrc.c \
 		gnome_applet_mgr.c \
 		gtkhtml.c \
+		gtkspell.c \
 		gtkticker.c \
 		html.c \
 		idle.c \
@@ -71,6 +73,7 @@ EXTRA_DIST =	convo.h \
 		getopt.h \
 		getopt1.c \
 		gtkhtml.h \
+		gtkspell.h \
 		gtkticker.h \
 		gnome_applet_mgr.h \
 		multi.h \

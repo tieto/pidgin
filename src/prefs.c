@@ -1587,6 +1587,9 @@ void set_general_option(GtkWidget *w, int *option)
        	if ((int)option == OPT_GEN_LOG_ALL)
        		update_log_convs();
 
+	if ((int)option == OPT_GEN_CHECK_SPELLING)
+		toggle_spellchk();
+
 	save_prefs();
 }
 

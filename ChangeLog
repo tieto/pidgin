@@ -11,6 +11,7 @@ version 0.11.0:
 	  (Thanks Ryan C. Gordon)
 	* Plugin system uses GModule now (improves portability, adds features)
 	* Perl got updates (reread plugins/PERL-HOWTO)
+	* Spell checker now uses gtkspell
 
 version 0.10.3 (10/09/2000):
 	* Segfault when viewing user info fixed

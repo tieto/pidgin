@@ -1037,7 +1037,7 @@ void do_quit()
 	perl_end();
 #endif
 
-	exit(0);
+	gtk_main_quit();
 }
 
 void add_buddy_callback(GtkWidget *widget, void *dummy)
