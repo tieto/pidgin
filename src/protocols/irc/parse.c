@@ -208,8 +208,10 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 	enclist = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
 	encodings = g_strsplit(enclist, ",", 2);
 
-	if (encodings[0] == NULL || !strcasecmp("UTF-8", encodings[0]))
+	if (encodings[0] == NULL || !strcasecmp("UTF-8", encodings[0])) {
+		g_strfreev(encodings);
 		return g_strdup(string);
+	}
 
 	utf8 = g_convert(string, strlen(string), encodings[0], "UTF-8", NULL, NULL, &err);
 	if (err) {
