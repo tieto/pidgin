@@ -1784,11 +1784,12 @@ void show_conv(struct conversation *c)
 
 	create_convo_menu(c);
 
+	entry = gtk_text_new(NULL, NULL);
+	c->entry = entry;
+
 	toolbar = build_conv_toolbar(c);
 	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 5);
 
-	entry = gtk_text_new(NULL, NULL);
-	c->entry = entry;
 	gtk_object_set_user_data(GTK_OBJECT(entry), c);
 	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
 	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);

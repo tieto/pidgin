@@ -641,11 +641,12 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, TRUE, FALSE);
 	gtk_widget_show(vbox);
 
+	chatentry = gtk_text_new( NULL, NULL );
+	b->entry = chatentry;
+
 	toolbar = build_conv_toolbar(b);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, TRUE, TRUE, 5);
 
-	chatentry = gtk_text_new( NULL, NULL );
-	b->entry = chatentry;
 	gtk_object_set_user_data(GTK_OBJECT(chatentry), b);
 	gtk_text_set_editable(GTK_TEXT(chatentry), TRUE);
 	gtk_text_set_word_wrap(GTK_TEXT(chatentry), TRUE);
