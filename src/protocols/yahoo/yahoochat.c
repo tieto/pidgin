@@ -39,6 +39,7 @@
 #include "internal.h"
 
 #include "yahoo.h"
+#include "yahoo_packet.h"
 #include "yahoochat.h"
 #include "ycht.h"
 
@@ -62,10 +63,7 @@ static void yahoo_chat_online(GaimConnection *gc)
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 109, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 6, "abcde");
-
-	yahoo_send_packet(yd, pkt);
-
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 }
 
 /* this is slow, and different from the gaim_* version in that it (hopefully) won't add a user twice */
@@ -603,9 +601,7 @@ void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, G
 
 	yahoo_packet_hash(pkt, 57, room);
 
-	yahoo_send_packet(yd, pkt);
-
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 }
 
 static int yahoo_conf_send(GaimConnection *gc, const char *dn, const char *room,
@@ -633,9 +629,7 @@ static int yahoo_conf_send(GaimConnection *gc, const char *dn, const char *room,
 	if (utf8)
 		yahoo_packet_hash(pkt, 97, "1"); /* utf-8 */
 
-	yahoo_send_packet(yd, pkt);
-
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 	g_free(msg);
 	g_free(msg2);
 
@@ -666,9 +660,7 @@ static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const ch
 			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), memarr[i], NULL, GAIM_CBFLAGS_NONE, TRUE);
 		}
 	}
-	yahoo_send_packet(yd, pkt);
-
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 
 	if (memarr)
 		g_strfreev(memarr);
@@ -701,11 +693,9 @@ static void yahoo_conf_invite(GaimConnection *gc, GaimConversation *c,
 		yahoo_packet_hash(pkt, 52, name);
 		yahoo_packet_hash(pkt, 53, name);
 	}
-	yahoo_send_packet(yd, pkt);
-
-	yahoo_packet_free(pkt);
-	if (msg)
-		g_free(msg2);
+	
+	yahoo_packet_send_and_free(pkt, yd);
+	g_free(msg2);
 }
 
 /*
@@ -736,9 +726,7 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	yahoo_packet_hash(pkt, 108, "1");
 	yahoo_packet_hash(pkt, 112, "0"); /* what does this one mean? */
 
-	yahoo_send_packet(yd, pkt);
-
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 
 	yd->in_chat = 0;
 	if (yd->chat_name) {
@@ -755,8 +743,7 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATLOGOUT,
 			YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, dn);
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 
 	yd->chat_online = 0;
 	g_free(eroom);
@@ -839,8 +826,7 @@ static int yahoo_chat_send(GaimConnection *gc, const char *dn, const char *room,
 	if (utf8)
 		yahoo_packet_hash(pkt, 97, "1");
 
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 	g_free(msg1);
 	g_free(room2);
 
@@ -872,9 +858,7 @@ static void yahoo_chat_join(GaimConnection *gc, const char *dn, const char *room
 	yahoo_packet_hash(pkt, 104, room2);
 	yahoo_packet_hash(pkt, 129, "0");
 
-	yahoo_send_packet(yd, pkt);
-
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 	g_free(room2);
 }
 
@@ -904,12 +888,10 @@ static void yahoo_chat_invite(GaimConnection *gc, const char *dn, const char *bu
 	yahoo_packet_hash(pkt, 117, (msg2?msg2:""));
 	yahoo_packet_hash(pkt, 129, "0");
 
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 
 	g_free(room2);
-	if (msg2)
-		g_free(msg2);
+	g_free(msg2);
 }
 
 void yahoo_chat_goto(GaimConnection *gc, const char *name)
@@ -935,8 +917,7 @@ void yahoo_chat_goto(GaimConnection *gc, const char *name)
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 62, "2");
 
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 }
 /*
  * These are the functions registered with the core

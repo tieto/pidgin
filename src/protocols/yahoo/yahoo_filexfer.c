@@ -28,6 +28,7 @@
 #include "proxy.h"
 #include "ft.h"
 #include "yahoo.h"
+#include "yahoo_packet.h"
 #include "yahoo_filexfer.h"
 
 
@@ -141,7 +142,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 			       buf);
 	write(xfer->fd, post, strlen(post));
 
-	yahoo_send_packet_special(xfer->fd, pkt, 8);
+	yahoo_packet_send_special(pkt, xfer->fd, 8);
 	yahoo_packet_free(pkt);
 
 	write(xfer->fd, "29\xc0\x80", 4);

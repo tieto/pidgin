@@ -32,6 +32,7 @@
 #include "util.h"
 
 #include "yahoo.h"
+#include "yahoo_packet.h"
 #include "yahoo_friend.h"
 #include "yahoo_picture.h"
 
@@ -247,8 +248,7 @@ void yahoo_send_picture_info(GaimConnection *gc, const char *who)
 	buf = g_strdup_printf("%d", yd->picture_checksum);
 	yahoo_packet_hash(pkt, 192, buf);
 
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 	g_free(buf);
 }
 
@@ -261,8 +261,7 @@ void yahoo_send_picture_request(GaimConnection *gc, const char *who)
 	yahoo_packet_hash(pkt, 4, gaim_connection_get_display_name(gc)); /* me */
 	yahoo_packet_hash(pkt, 5, who); /* the other guy */
 	yahoo_packet_hash(pkt, 13, "1"); /* 1 = request, 2 = reply */
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 }
 
 void yahoo_send_picture_checksum(GaimConnection *gc)
@@ -275,8 +274,7 @@ void yahoo_send_picture_checksum(GaimConnection *gc)
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 212, "1");
 	yahoo_packet_hash(pkt, 192, cksum);
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 	g_free(cksum);
 }
 
@@ -290,8 +288,7 @@ void yahoo_send_picture_update_to_user(GaimConnection *gc, const char *who, int 
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 5, who);
 	yahoo_packet_hash(pkt, 206, typestr);
-	yahoo_send_packet(yd, pkt);
-	yahoo_packet_free(pkt);
+	yahoo_packet_send_and_free(pkt, yd);
 
 	g_free(typestr);
 }
@@ -432,7 +429,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 			       buf);
 	write(d->fd, post, strlen(post));
 
-	yahoo_send_packet_special(d->fd, pkt, 8);
+	yahoo_packet_send_special(pkt, d->fd, 8);
 	yahoo_packet_free(pkt);
 
 	write(d->fd, "29\xc0\x80", 4);

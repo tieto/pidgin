@@ -16,6 +16,8 @@ YAHOOSOURCES = \
 	yahoo_filexfer.c \
 	yahoo_friend.h \
 	yahoo_friend.c \
+	yahoo_packet.h \
+	yahoo_packet.c \
 	yahoo_picture.c \
 	yahoo_picture.h \
 	yahoo_profile.c \
