@@ -244,11 +244,12 @@ sent_chat_msg_cb(GaimAccount *account, const char *buffer, int id, void *data)
 
 static gboolean
 received_chat_msg_cb(GaimAccount *account, char **sender, char **buffer,
-					 int id, void *data)
+					 GaimConversation *chat, void *data)
 {
 	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "received-chat-msg (%s, %s, %s, %s, %d)\n",
-			   gaim_account_get_username(account), *sender, *buffer, id);
+			   "received-chat-msg (%s, %s, %s, %s, %s)\n",
+			   gaim_account_get_username(account), *sender, *buffer,
+			   gaim_conversation_get_name(chat));
 
 	return FALSE;
 }
