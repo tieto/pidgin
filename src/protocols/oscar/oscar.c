@@ -55,6 +55,7 @@
 
 #ifdef _WIN32
 #include "win32dep.h"
+#define NOSIGALARM
 #endif
 
 #include "pixmaps/protocols/oscar/ab.xpm"
@@ -1512,8 +1513,9 @@ static int oscar_sendfile_accepted(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_file_transfer *oft;
 	va_list ap;
 	aim_conn_t *conn, *listenerconn;
-
+#ifndef NOSIGALARM
 	alarm(0); /* reset timeout alarm */
+#endif
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	listenerconn = va_arg(ap, aim_conn_t *);
@@ -1588,7 +1590,7 @@ static void oscar_start_transfer_out(struct gaim_connection *gc,
 				GAIM_ERROR);
 		return;
 	}
-
+#ifndef NOSIGALARM
 	{
 		/* XXX is there a good glib-oriented way of doing this?
 		 * -- wtm */
@@ -1599,7 +1601,7 @@ static void oscar_start_transfer_out(struct gaim_connection *gc,
 		sigaction(SIGALRM, &act, NULL);
 		alarm(OFT_TIMEOUT);
 	}
-
+#endif
 	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
 			AIM_CB_OFT_GETFILEINITIATE,
 			oscar_sendfile_accepted,
@@ -2189,7 +2191,9 @@ static int gaim_parse_clientauto_rend(aim_session_t *sess,
 			if (oft) {
 				buf = g_strdup_printf(_("%s has declined to receive a file from %s.\n"),
 						who, gc->username);
+#ifndef NOSIGALARM
 				alarm(0); /* reset timeout alarm */
+#endif
 				oft_listening = NULL;
 				transfer_abort(oft->xfer, buf);
 				g_free(buf);
