@@ -8,6 +8,7 @@ version 0.71
 	* Multiple copies of gaim installed at different locations no
 	  longer attempt to load the same, possibly incompatible plugins
 	  (Robert McQueen)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
 
 version 0.70 (09/28/2003):
 	* Implemented Yahoo's new authentication method (Cerulean Studios)

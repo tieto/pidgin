@@ -26,7 +26,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.69\n"
-"POT-Creation-Date: 2003-09-24 23:26-0400\n"
+"POT-Creation-Date: 2003-09-27 10:51-0400\n"
 "PO-Revision-Date: 2003-05-29 12:04+0800\n"
 "Last-Translator: Ambrose C. Li <acli@ada.dhs.org>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -91,7 +91,7 @@ msgid "Auto-login"
 msgstr "自動登入"
 
 #: plugins/docklet/docklet.c:117
-msgid "New Message.."
+msgid "New Message..."
 msgstr "新訊息..."
 
 #: plugins/docklet/docklet.c:118
@@ -102,7 +102,7 @@ msgstr "加入聊天室..."
 msgid "New..."
 msgstr "新增..."
 
-#: plugins/docklet/docklet.c:153 src/gtkblist.c:1792 src/gtkpounce.c:461
+#: plugins/docklet/docklet.c:153 src/gtkblist.c:1797 src/gtkpounce.c:461
 #: src/gtkprefs.c:1468 src/protocols/gg/gg.c:54 src/protocols/irc/msgs.c:189
 #: src/protocols/jabber/jabber.c:1268 src/protocols/jabber/jabber.c:3533
 #: src/protocols/jabber/jabber.c:3587 src/protocols/oscar/oscar.c:2841
@@ -128,7 +128,7 @@ msgstr "檔案傳輸"
 msgid "Accounts"
 msgstr "帳號清單"
 
-#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2325 src/main.c:325
+#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2335 src/main.c:325
 msgid "Preferences"
 msgstr "偏好設定"
 
@@ -475,59 +475,72 @@ msgid "Checks for new local mail."
 msgstr "檢查本地端的新郵件。"
 
 #. ---------- "Notify For" ----------
-#: plugins/notify.c:707
+#: plugins/notify.c:572
 msgid "Notify For"
 msgstr "通知種類"
 
-#: plugins/notify.c:711
+#: plugins/notify.c:576
 msgid "_IM windows"
 msgstr "即時訊息視窗(_I)"
 
-#: plugins/notify.c:716
-msgid "_Chat windows"
-msgstr "聊天視窗(_C)"
+#: plugins/notify.c:583
+msgid "C_hat windows"
+msgstr "聊天視窗(_H)"
+
+#: plugins/notify.c:590
+msgid "_Focused windows"
+msgstr "焦點視窗(_F)"
 
 #. ---------- "Notification Methods" ----------
-#: plugins/notify.c:722
+#: plugins/notify.c:598
 msgid "Notification Methods"
 msgstr "通知方式"
 
-#: plugins/notify.c:728
+#: plugins/notify.c:605
 msgid "Prepend _string into window title:"
 msgstr "加入字串到視窗標題之前(_S)："
 
-#: plugins/notify.c:739
-msgid "_Quote window title"
-msgstr "視窗標題前後加上引號(_Q)"
-
-#: plugins/notify.c:744
-msgid "Set Window Manager \"_URGENT\" Hint"
-msgstr "強迫視窗管理員顯示提示(_U)"
-
-#: plugins/notify.c:749
+#. Count method button
+#: plugins/notify.c:624
 msgid "Insert c_ount of new messages into window title"
 msgstr "加入新訊息數目到視窗標題中(_O)"
 
-#: plugins/notify.c:754
-msgid "_Notify even if conversation is in focus"
-msgstr "當這個交談取得輸入焦點時，依然執行通知的動作(_N)"
+# TODO 這個應該有問題。找到資料後再改進。
+#. Urgent method button
+#: plugins/notify.c:633
+msgid "Set window manager \"_URGENT\" hint"
+msgstr "強迫視窗管理員顯示提示(_U)"
 
-#. ---------- "Notification Methods" ----------
-#: plugins/notify.c:760
+#. ---------- "Notification Removals" ----------
+#: plugins/notify.c:640
 msgid "Notification Removal"
 msgstr "通知移除"
 
-#: plugins/notify.c:764
-msgid "Remove when conversation window gains _focus"
-msgstr "當交談取得輸入焦點時移除通知(_F)"
+#. Remove on focus button
+#: plugins/notify.c:646
+msgid "Remove when conversation window _gains focus"
+msgstr "當交談取得輸入焦點時移除通知(_G)"
 
-#: plugins/notify.c:769
+#. Remove on click button
+#: plugins/notify.c:654
 msgid "Remove when conversation window _receives click"
 msgstr "當交談視窗被點選時移除通知(_R)"
 
-#: plugins/notify.c:774
+#. Remove on type button
+#: plugins/notify.c:662
 msgid "Remove when _typing in conversation window"
 msgstr "當在交談視窗中輸入時移除通知(_T)"
+
+#. Remove on message send button
+#: plugins/notify.c:670
+msgid "Remove when a _message gets sent"
+msgstr "送出訊息後移除通知(_M)"
+
+# XXX 這個可能有誤，要複查
+#. Remove on conversation switch button
+#: plugins/notify.c:679
+msgid "Remove on conversation ta_b switch"
+msgstr "當視窗標籤被點選後移除通知(_B)"
 
 #. *< api_version
 #. *< type
@@ -536,14 +549,14 @@ msgstr "當在交談視窗中輸入時移除通知(_T)"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/notify.c:858
+#: plugins/notify.c:762
 msgid "Message Notification"
 msgstr "訊息通知"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/notify.c:861 plugins/notify.c:863
+#: plugins/notify.c:765 plugins/notify.c:767
 msgid "Provides a variety of ways of notifying you of unread messages."
 msgstr "提供多種方式來通知您有未讀取的訊息。"
 
@@ -813,8 +826,8 @@ msgid "_Start Gaim on Windows startup"
 msgstr "當 Windows 啟動時同時執行 Gaim(_S)"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:1633
-#: src/gtkprefs.c:2258
+#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:1638
+#: src/gtkprefs.c:2268
 msgid "Buddy List"
 msgstr "好友清單"
 
@@ -834,7 +847,7 @@ msgstr "將好友清單視窗保持在桌面的最上層(_K)"
 
 #. Conversations
 #: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:893
-#: src/gtkprefs.c:2259
+#: src/gtkprefs.c:2269
 msgid "Conversations"
 msgstr "交談"
 
@@ -1086,16 +1099,16 @@ msgstr "移除離開訊息"
 msgid "Set All Away"
 msgstr "全部設為離開"
 
-#: src/blist.c:547 src/gtkprefs.c:2261
+#: src/blist.c:547 src/gtkprefs.c:2271
 msgid "Chats"
 msgstr "聊天"
 
-#: src/blist.c:642 src/blist.c:808 src/dialogs.c:872
+#: src/blist.c:642 src/blist.c:811 src/dialogs.c:872
 #: src/protocols/jabber/jabber.c:1919 src/protocols/msn/notification.c:1135
 msgid "Buddies"
 msgstr "好友"
 
-#: src/blist.c:1074
+#: src/blist.c:1097
 #, c-format
 msgid ""
 "%d buddy from group %s was not removed because its account was not logged "
@@ -1107,25 +1120,25 @@ msgstr[0] ""
 "%d 個在 %s 群組的好友並沒有被移除，因為他們所對應的帳號並沒有登入。這些好友及"
 "群組沒有被移除。\n"
 
-#: src/blist.c:1083
+#: src/blist.c:1106
 msgid "Group not removed"
 msgstr "群組未被移除"
 
-#: src/blist.c:1134 src/gtkaccount.c:140 src/gtkpounce.c:307
+#: src/blist.c:1157 src/gtkaccount.c:140 src/gtkpounce.c:307
 #: src/gtkutils.c:842 src/protocols/jabber/jabber.c:1261
 msgid "Unknown"
 msgstr "未知"
 
-#: src/blist.c:1452
+#: src/blist.c:1475
 msgid "Invalid Groupname"
 msgstr "無效的群組名稱"
 
-#: src/blist.c:2232
+#: src/blist.c:2255
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr "在解析您的好友清單時發生錯誤。好友清單沒有被讀入。"
 
-#: src/blist.c:2234
+#: src/blist.c:2257
 msgid "Buddy List Error"
 msgstr "好友清單錯誤"
 
@@ -1368,8 +1381,8 @@ msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
 "your buddy list.  Do you want to continue?"
 msgstr ""
-"您正試著將好友 %s 及相關的其他 %d 個好友從您的好友清單中移除。您要繼續這個動作"
-"嗎？"
+"您正試著將好友 %s 及相關的其他 %d 個好友從您的好友清單中移除。您要繼續這個動"
+"作嗎？"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Gaim無法析別；可能有改進的空間
 #: src/dialogs.c:531 src/dialogs.c:532
@@ -1496,6 +1509,7 @@ msgid "First Name"
 msgstr "名"
 
 # TODO: Untranslated
+# NOTE: 芬蘭文譯「其他名」，但中文這樣譯仍然是太怪了
 #. Line 2
 #: src/dialogs.c:1511 src/dialogs.c:2073
 msgid "Middle Name"
@@ -1881,15 +1895,15 @@ msgstr "不好意思，我離開一下下。"
 msgid "boring default"
 msgstr "無聊（預設）"
 
-#: src/gaimrc.c:1267 src/gtkblist.c:1595
+#: src/gaimrc.c:1267 src/gtkblist.c:1600
 msgid "Alphabetical"
 msgstr "依照字母"
 
-#: src/gaimrc.c:1269 src/gtkblist.c:1596
+#: src/gaimrc.c:1269 src/gtkblist.c:1601
 msgid "By status"
 msgstr "依照狀態"
 
-#: src/gaimrc.c:1271 src/gtkblist.c:1597
+#: src/gaimrc.c:1271 src/gtkblist.c:1602
 msgid "By log size"
 msgstr "依照日誌大小"
 
@@ -2122,105 +2136,105 @@ msgid "_Expand"
 msgstr "展開(_E)"
 
 #. Buddies menu
-#: src/gtkblist.c:1005
+#: src/gtkblist.c:1010
 msgid "/_Buddies"
 msgstr "/好友(_B)"
 
-#: src/gtkblist.c:1006
+#: src/gtkblist.c:1011
 msgid "/Buddies/New _Instant Message..."
 msgstr "/好友/新即時訊息(_I)"
 
-#: src/gtkblist.c:1007
+#: src/gtkblist.c:1012
 msgid "/Buddies/Join a _Chat..."
 msgstr "/好友/加入聊天室(_C)"
 
-#: src/gtkblist.c:1008
+#: src/gtkblist.c:1013
 msgid "/Buddies/Get _User Info..."
 msgstr "/好友/取得使用者資訊(_U)"
 
-#: src/gtkblist.c:1010
+#: src/gtkblist.c:1015
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/好友/顯示離線好友(_O)"
 
-#: src/gtkblist.c:1011
+#: src/gtkblist.c:1016
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/好友/顯示空白的群組(_E)"
 
-#: src/gtkblist.c:1012
+#: src/gtkblist.c:1017
 msgid "/Buddies/_Add a Buddy..."
 msgstr "/好友/新增一個好友(_A)"
 
-#: src/gtkblist.c:1013
+#: src/gtkblist.c:1018
 msgid "/Buddies/Add a C_hat..."
 msgstr "/好友/新增一個聊天室(_H)"
 
-#: src/gtkblist.c:1014
+#: src/gtkblist.c:1019
 msgid "/Buddies/Add a _Group..."
 msgstr "/好友/新增一個群組(_G)"
 
-#: src/gtkblist.c:1016
+#: src/gtkblist.c:1021
 msgid "/Buddies/_Signoff"
 msgstr "/好友/登出(_S)"
 
-#: src/gtkblist.c:1017
+#: src/gtkblist.c:1022
 msgid "/Buddies/_Quit"
 msgstr "/好友/結束程式(_Q)"
 
 #. Tools
-#: src/gtkblist.c:1020
+#: src/gtkblist.c:1025
 msgid "/_Tools"
 msgstr "工具(_T)"
 
-#: src/gtkblist.c:1021
+#: src/gtkblist.c:1026
 msgid "/Tools/_Away"
 msgstr "/工具/離開(_A)"
 
-#: src/gtkblist.c:1022
+#: src/gtkblist.c:1027
 msgid "/Tools/Buddy _Pounce"
 msgstr "/工具/好友狀態捕捉(_P)"
 
-#: src/gtkblist.c:1023
+#: src/gtkblist.c:1028
 msgid "/Tools/P_rotocol Actions"
 msgstr "/工具/通訊協定相關設定(_R)"
 
-#: src/gtkblist.c:1025
+#: src/gtkblist.c:1030
 msgid "/Tools/A_ccounts"
 msgstr "/工具/帳號清單(_C)"
 
-#: src/gtkblist.c:1026
+#: src/gtkblist.c:1031
 msgid "/Tools/_File Transfers..."
 msgstr "/工具/檔案傳輸(_F)"
 
-#: src/gtkblist.c:1027
+#: src/gtkblist.c:1032
 msgid "/Tools/Preferences"
 msgstr "/工具/偏好設定"
 
-#: src/gtkblist.c:1028
+#: src/gtkblist.c:1033
 msgid "/Tools/Pr_ivacy"
 msgstr "/工具/隱私設定(_I)"
 
-#: src/gtkblist.c:1030
+#: src/gtkblist.c:1035
 msgid "/Tools/View System _Log"
 msgstr "觀看系統日誌(_L)"
 
 #. Help
-#: src/gtkblist.c:1033
+#: src/gtkblist.c:1038
 msgid "/_Help"
 msgstr "說明(_H)"
 
-#: src/gtkblist.c:1034
+#: src/gtkblist.c:1039
 msgid "/Help/Online _Help"
 msgstr "線上說明(_H)"
 
-#: src/gtkblist.c:1035
+#: src/gtkblist.c:1040
 msgid "/Help/_Debug Window"
 msgstr "/說明/除錯視窗(_D)"
 
-#: src/gtkblist.c:1036
+#: src/gtkblist.c:1041
 msgid "/Help/_About"
 msgstr "/說明/關於(_A)"
 
-#: src/gtkblist.c:1066
+#: src/gtkblist.c:1071
 #, c-format
 msgid ""
 "\n"
@@ -2229,16 +2243,16 @@ msgstr ""
 "\n"
 "<b>帳號：</b>%s"
 
-#: src/gtkblist.c:1125 src/protocols/oscar/oscar.c:5498
+#: src/gtkblist.c:1130 src/protocols/oscar/oscar.c:5498
 msgid "<b>Status:</b> Offline"
 msgstr "<b>狀態：</b>離線"
 
-#: src/gtkblist.c:1137
+#: src/gtkblist.c:1142
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:1151
+#: src/gtkblist.c:1156
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2246,7 +2260,7 @@ msgstr ""
 "\n"
 "<b>帳號：</b>"
 
-#: src/gtkblist.c:1152
+#: src/gtkblist.c:1157
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2254,7 +2268,7 @@ msgstr ""
 "\n"
 "<b>別名：</b>"
 
-#: src/gtkblist.c:1153
+#: src/gtkblist.c:1158
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2262,7 +2276,7 @@ msgstr ""
 "\n"
 "<b>暱稱：</b>"
 
-#: src/gtkblist.c:1154
+#: src/gtkblist.c:1159
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2270,7 +2284,7 @@ msgstr ""
 "\n"
 "<b>閒置：</b>"
 
-#: src/gtkblist.c:1155
+#: src/gtkblist.c:1160
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2278,7 +2292,7 @@ msgstr ""
 "\n"
 "<b>警告：<b>"
 
-#: src/gtkblist.c:1157
+#: src/gtkblist.c:1162
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2286,7 +2300,7 @@ msgstr ""
 "\n"
 "<b>介紹：</b>幽靈似的"
 
-#: src/gtkblist.c:1158
+#: src/gtkblist.c:1163
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2294,7 +2308,7 @@ msgstr ""
 "\n"
 "<b>狀態：</b>頂呱呱"
 
-#: src/gtkblist.c:1159
+#: src/gtkblist.c:1164
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2302,81 +2316,81 @@ msgstr ""
 "\n"
 "<b>狀態：</b>頂呱呱"
 
-#: src/gtkblist.c:1413
+#: src/gtkblist.c:1418
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "閒置（%d 小時 %d 分）"
 
-#: src/gtkblist.c:1415
+#: src/gtkblist.c:1420
 #, c-format
 msgid "Idle (%dm) "
 msgstr "閒置（%d 分）"
 
-#: src/gtkblist.c:1419
+#: src/gtkblist.c:1424
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "警告 (%d%%)"
 
-#: src/gtkblist.c:1422
+#: src/gtkblist.c:1427
 msgid "Offline "
 msgstr "離線"
 
-#: src/gtkblist.c:1594 src/gtkprefs.c:841 src/gtkprefs.c:1499
+#: src/gtkblist.c:1599 src/gtkprefs.c:841 src/gtkprefs.c:1499
 msgid "None"
 msgstr "無"
 
-#: src/gtkblist.c:1657
+#: src/gtkblist.c:1662
 msgid "/Tools/Away"
 msgstr "/工具/離開"
 
-#: src/gtkblist.c:1660
+#: src/gtkblist.c:1665
 msgid "/Tools/Buddy Pounce"
 msgstr "/工具/好友狀態捕捉"
 
-#: src/gtkblist.c:1663
+#: src/gtkblist.c:1668
 msgid "/Tools/Protocol Actions"
 msgstr "/工具/通訊協定相關設定"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:1746
+#: src/gtkblist.c:1751
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/好友/顯示離線好友"
 
-#: src/gtkblist.c:1748
+#: src/gtkblist.c:1753
 msgid "/Buddies/Show Empty Groups"
 msgstr "/好友/顯示空的好的群組"
 
-#: src/gtkblist.c:1766 src/gtkconv.c:1073
+#: src/gtkblist.c:1771 src/gtkconv.c:1073
 msgid "IM"
 msgstr "即時訊息"
 
-#: src/gtkblist.c:1772
+#: src/gtkblist.c:1777
 msgid "Send a message to the selected buddy"
 msgstr "傳送訊息給被選取的好友"
 
-#: src/gtkblist.c:1775 src/protocols/napster/napster.c:531
+#: src/gtkblist.c:1780 src/protocols/napster/napster.c:531
 msgid "Get Info"
 msgstr "取得資訊"
 
-#: src/gtkblist.c:1781
+#: src/gtkblist.c:1786
 msgid "Get information on the selected buddy"
 msgstr "取得被選取好友的資訊"
 
-#: src/gtkblist.c:1784 src/protocols/oscar/oscar.c:3095
+#: src/gtkblist.c:1789 src/protocols/oscar/oscar.c:3095
 msgid "Chat"
 msgstr "聊天"
 
-#: src/gtkblist.c:1789
+#: src/gtkblist.c:1794
 msgid "Join a chat room"
 msgstr "加入一個聊天室"
 
-#: src/gtkblist.c:1797
+#: src/gtkblist.c:1802
 msgid "Set an away message"
 msgstr "設定一個離開訊息"
 
-#: src/gtkblist.c:2859
+#: src/gtkblist.c:2871
 msgid "No actions available"
 msgstr "不允許任何動作"
 
@@ -3661,64 +3675,64 @@ msgstr "重置"
 msgid "Choose..."
 msgstr "選擇..."
 
-#: src/gtkprefs.c:2217
+#: src/gtkprefs.c:2227
 msgid "_Edit"
 msgstr "編輯(_E)"
 
-#: src/gtkprefs.c:2253
+#: src/gtkprefs.c:2263
 msgid "Interface"
 msgstr "介面"
 
-#: src/gtkprefs.c:2254
+#: src/gtkprefs.c:2264
 msgid "Smiley Themes"
 msgstr "表情主題"
 
-#: src/gtkprefs.c:2255
+#: src/gtkprefs.c:2265
 msgid "Fonts"
 msgstr "字型"
 
-#: src/gtkprefs.c:2256
+#: src/gtkprefs.c:2266
 msgid "Message Text"
 msgstr "訊息文字"
 
-#: src/gtkprefs.c:2257
+#: src/gtkprefs.c:2267
 msgid "Shortcuts"
 msgstr "快捷鍵"
 
-#: src/gtkprefs.c:2260
+#: src/gtkprefs.c:2270
 msgid "IMs"
 msgstr "即時訊息"
 
-#: src/gtkprefs.c:2262
+#: src/gtkprefs.c:2272
 msgid "Proxy"
 msgstr "代理伺服器"
 
 #. We use the registered default browser in windows
-#: src/gtkprefs.c:2265
+#: src/gtkprefs.c:2275
 msgid "Browser"
 msgstr "瀏覽器"
 
-#: src/gtkprefs.c:2267
+#: src/gtkprefs.c:2277
 msgid "Logging"
 msgstr "日誌"
 
-#: src/gtkprefs.c:2268
+#: src/gtkprefs.c:2278
 msgid "Sounds"
 msgstr "音效"
 
-#: src/gtkprefs.c:2269
+#: src/gtkprefs.c:2279
 msgid "Sound Events"
 msgstr "事件音效"
 
-#: src/gtkprefs.c:2270
+#: src/gtkprefs.c:2280
 msgid "Away / Idle"
 msgstr "離開 / 閒置"
 
-#: src/gtkprefs.c:2271
+#: src/gtkprefs.c:2281
 msgid "Away Messages"
 msgstr "離開訊息"
 
-#: src/gtkprefs.c:2274
+#: src/gtkprefs.c:2284
 msgid "Plugins"
 msgstr "模組清單"
 
@@ -5568,8 +5582,8 @@ msgstr "無法由伺服器讀取標頭資訊"
 
 #: src/protocols/napster/napster.c:246
 #, c-format
-msgid "Unable to read mesage from server.  Command is %hd, length is %hd."
-msgstr "無法由伺服器讀取資訊（指令為 %hd，長度為 %hd）。"
+msgid "Unable to read message from server.  Command is %hd, length is %hd."
+msgstr "無法由伺服器讀取資訊。指令為 %hd，長度為 %hd。"
 
 #: src/protocols/napster/napster.c:307
 #, c-format
@@ -7093,8 +7107,6 @@ msgstr "不在伺服器上的清單中"
 
 # NOTE #gaim 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
 # NOTE Yahoo 的「Chat」正式譯文為「聯誼園地」
-# TODO 譯文有待改進
-# NOTE 譯文更動 by Paladin
 #: src/protocols/yahoo/yahoo.c:1577
 msgid "Join in Chat"
 msgstr "加入好友目前所在的聊天室"
@@ -7159,10 +7171,10 @@ msgstr "酷連結(二)"
 msgid "Cool Link 3"
 msgstr "酷連結(三)"
 
-# TODO Untranslated
+# TODO 譯文有待改進
 #: src/protocols/yahoo/yahoo.c:2114
 msgid "Member Since"
-msgstr ""
+msgstr "自右列日期起為成員"
 
 #. *< api_version
 #. *< type
@@ -7186,8 +7198,6 @@ msgstr "傳呼系統伺服器"
 msgid "Pager port"
 msgstr "傳呼系統通訊埠"
 
-# TODO 要核對譯文
-# NOTE 譯文更動 by Paladin
 #: src/protocols/yahoo/yahoochat.c:191
 #, c-format
 msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
@@ -7197,26 +7207,18 @@ msgstr "%s 婉拒了你詢問他（她）到會議室「%s」的邀請，理由�
 msgid "Invitation Rejected"
 msgstr "邀請被婉拒了"
 
-# TODO 要核對譯文
-# NOTE No Problem
 #: src/protocols/yahoo/yahoochat.c:317
 msgid "Failed to join chat"
 msgstr "無法加入聊天室"
 
-# TODO 要核對譯文
-# NOTE 譯文更動 by Paladin
 #: src/protocols/yahoo/yahoochat.c:317
 msgid "Maybe the room is full?"
 msgstr "或許參與聊天室使用者已經到達上限？"
 
-# TODO 要核對譯文
-# NOTE 譯文更動 by Paladin
 #: src/protocols/yahoo/yahoochat.c:509
 msgid "Failed to join buddy in chat"
 msgstr "無法加入好友目前所在的聊天室"
 
-# TODO 要核對譯文
-# NOTE No Problem
 #: src/protocols/yahoo/yahoochat.c:510
 msgid "Maybe they're not in a chat?"
 msgstr "可能他（她）並不在聊天室內？"
@@ -7443,6 +7445,12 @@ msgstr "通知"
 #: src/win32/win32dep.c:475
 msgid "Moving Gaim user settings directory to:"
 msgstr "包含 Gaim 的使用者設定的目錄現在移至："
+
+#~ msgid "_Quote window title"
+#~ msgstr "視窗標題前後加上引號(_Q)"
+
+#~ msgid "_Notify even if conversation is in focus"
+#~ msgstr "當這個交談取得輸入焦點時，依然執行通知的動作(_N)"
 
 #~ msgid "There was an error launching your chosen browser: %s"
 #~ msgstr "啟動您所選擇的瀏覽器時發生錯誤：%s"
