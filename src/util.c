@@ -917,13 +917,10 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	{
 		label = gtk_label_new(text);
 		gtk_box_pack_start(GTK_BOX(button_box_3), label, FALSE, FALSE, 2);
+		gtk_widget_show(label);
 	}
 
 	gtk_widget_show(pixmap);
-	if (text)
-	{
-		gtk_widget_show(label);
-	}
 	gtk_widget_show(button_box_2);
 	gtk_widget_show(button_box_3);
 	gtk_widget_show(button_box);
@@ -958,6 +955,8 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 	button_box_2 = gtk_vbox_new(FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, TRUE, TRUE, 0);
+	gtk_widget_show(button_box_2);
+	gtk_widget_show(button_box);
 	if (dispstyle == 2 || dispstyle == 0) {
 		pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
 		pixmap = gtk_pixmap_new(pm, mask);
@@ -965,6 +964,8 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 
 		gtk_widget_show(pixmap);
 
+		gdk_pixmap_unref(pm);
+		gdk_bitmap_unref(mask);
 	}
 
 	if (dispstyle == 2 || dispstyle == 1)
@@ -974,15 +975,8 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 		gtk_box_pack_end(GTK_BOX(button_box_2), label, FALSE, FALSE, 0);
 	}
 
-	gtk_widget_show(button_box_2);
-	gtk_widget_show(button_box);
-	gtk_widget_show(button);
-	if (dispstyle == 2 || dispstyle == 0) {
-		gdk_pixmap_unref(pm);
-		gdk_bitmap_unref(mask);
-	}
-	
 	gtk_tooltips_set_tip(tips, button, text, "Gaim");	
+	gtk_widget_show(button);
 	return button;
 }
 

@@ -64,19 +64,12 @@ static void delete_prefs(GtkWidget *, void *);
 
 static GtkWidget *prefdialog = NULL;
 static GtkWidget *debugbutton = NULL;
-static GtkWidget *prefrem = NULL;
 GtkWidget *prefs_away_list = NULL;
 
 static void destdeb(GtkWidget *m, gpointer n)
 {
 	gtk_widget_destroy(debugbutton);
 	debugbutton = NULL;
-}
-
-static void remdes(GtkWidget *m, gpointer n)
-{
-	gtk_widget_destroy(prefrem);
-	prefrem = NULL;
 }
 
 static void general_page()

@@ -183,7 +183,6 @@ void show_login()
 	GtkWidget *bbox;
 	GtkWidget *hbox;
 	GtkWidget *sbox;
-	GtkWidget *label;
 	GtkWidget *table;
 
 	GtkWidget *pmw;
