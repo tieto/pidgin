@@ -1323,15 +1323,15 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				break;
 
 			case GDK_Page_Up:
-				if (curconv + 1 < numconvs)
-					gaim_conv_window_switch_conversation(win,  curconv + 1);
+				if (curconv > 0)
+					gaim_conv_window_switch_conversation(win, curconv - 1);
 
 				return TRUE;
 				break;
 
 			case GDK_Page_Down:
-				if (curconv > 0)
-					gaim_conv_window_switch_conversation(win, curconv - 1);
+				if (curconv + 1 < numconvs)
+					gaim_conv_window_switch_conversation(win,  curconv + 1);
 
 				return TRUE;
 				break;
@@ -3736,8 +3736,7 @@ setup_chat_pane(GaimConversation *conv)
 	default_formatize(conv);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
-			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"),
-				25));
+			gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
@@ -3835,8 +3834,7 @@ setup_im_pane(GaimConversation *conv)
 	default_formatize(conv);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
-			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"),
-				25));
+			gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
