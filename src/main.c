@@ -816,11 +816,13 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+#if GTK_CHECK_VERSION(2,2,0)
 	if(! gui_check) {
 	    const char *display_name_arg = gdk_get_display_arg_name ();
 	    g_warning ("cannot open display: %s", display_name_arg ? display_name_arg : " ");
 	    return 1;
 	}
+#endif
 
 	gaim_gtk_stock_init();
 

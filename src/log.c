@@ -207,7 +207,7 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 {
 	GDir *dir;
 	GList *list = NULL;
-	const char *filename;
+	const char *filename, *tmp;
 	char *me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
 
 	const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
@@ -221,7 +221,8 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 		return NULL;
 	}
 	while ((filename = g_dir_read_name(dir))) {
-		if (g_str_has_suffix(filename, ext)) {
+		tmp = filename + (strlen(filename) - strlen(ext));
+		if (tmp > filename && !strcmp(tmp, ext)) {
 			const char *l = filename;
 			struct tm time;
 			GaimLog *log;
