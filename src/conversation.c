@@ -360,7 +360,8 @@ static void do_save_convo(GtkObject *obj, GtkWidget *wid)
 	FILE *f;
 	if (file_is_dir(filename, wid))
 		return;
-	if (g_list_find(conversations, c))
+	if ((!c->is_chat && g_list_find(conversations, c)) ||
+	    (c->is_chat && g_slist_find(connections, c->gc) && g_slist_find(c->gc->buddy_chats, c)))
 		filename = g_strdup(filename);
 	else
 		filename = NULL;
