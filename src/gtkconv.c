@@ -3670,10 +3670,12 @@ gaim_gtkconv_button_new(const char *icon, const char *text, const char *tooltip,
 					(buttons == GAIM_BUTTON_IMAGE ? NULL : text),
 					(buttons == GAIM_BUTTON_TEXT ? NULL : icon),
 					GAIM_BUTTON_VERTICAL);
-	gtk_tooltips_set_tip(tooltips, button, tooltip, NULL);
+	if (tooltip != NULL)
+		gtk_tooltips_set_tip(tooltips, button, tooltip, NULL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(callback), data);
+	if (callback != NULL)
+		g_signal_connect(G_OBJECT(button), "clicked",
+						 G_CALLBACK(callback), data);
 
 	return button;
 }
