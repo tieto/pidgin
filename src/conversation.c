@@ -1066,8 +1066,8 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 
 	if (c && (!(misc_options & OPT_MISC_STEALTH_TYPING)) && !c->is_chat) {
 		char *txt = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
-		if ((strlen(txt) == 0  && gdk_keyval_to_unicode(event->keyval) && isprint(event->keyval)) ||
-		    (c->type_again != 0 && time(NULL) > c->type_again)) {
+		if (gdk_keyval_to_unicode(event->keyval) && 
+			(strlen(txt) == 0 || (c->type_again != 0 && time(NULL) > c->type_again))) {
 			int timeout = serv_send_typing(c->gc, c->name, TRUE);
 			if (timeout)
 				c->type_again = time(NULL) + timeout;
