@@ -397,7 +397,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 
 int gaim_parse_login(struct aim_session_t *sess,
 		     struct command_rx_struct *command, ...) {
-	struct client_info_s info = {"AOL Instant Messenger (TM), version 2.1.1187/WIN32", 4, 30, 3141, "us", "en", 0x0004, 0x0001, 0x055};
+	struct client_info_s info = {"AOL Instant Messenger (SM), version 4.1.2010/WIN32", 4, 30, 3141, "us", "en", 0x0004, 0x0001, 0x055};
 	char *key;
 	va_list ap;
 
