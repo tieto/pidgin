@@ -1717,6 +1717,7 @@ static void update_idle_time(struct buddy_show *bs) {
 	char *sotime, *itime;
 
 	time(&t);
+	if (!bs->connlist) return;
 	b = find_buddy(bs->connlist->data, bs->name);
 	if (!b) return;
 	ihrs = (t - b->idle) / 3600; imin = ((t - b->idle) / 60) % 60;
