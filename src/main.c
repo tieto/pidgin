@@ -252,7 +252,7 @@ void show_login()
 
 	/* why isn't there a gtk_label_new_with_markup? */
 	label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), _("<b>Screen Name:</b>"));
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("<b>_Account:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
 
@@ -266,7 +266,7 @@ void show_login()
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 5);
 
 	label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), _("<b>Password:</b>"));
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("<b>_Password:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
 
@@ -283,19 +283,19 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 5);
 
 	/* And now for the buttons */
-	button = gaim_pixbuf_button_from_stock(_("Accounts"), GAIM_STOCK_ACCOUNTS, GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("_Accounts"), GAIM_STOCK_ACCOUNTS, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_accounts_window_show), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button_from_stock(_("Preferences"), GTK_STOCK_PREFERENCES, GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("_Preferences"), GTK_STOCK_PREFERENCES, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_prefs_show), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button_from_stock(_("Sign on"), GAIM_STOCK_SIGN_ON, GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(_("_Sign on"), GAIM_STOCK_SIGN_ON, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(dologin), mainwindow);
