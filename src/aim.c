@@ -249,7 +249,7 @@ void doenter(GtkWidget *widget, GtkWidget *w)
 		gtk_entry_select_region(GTK_ENTRY(GTK_COMBO(name)->entry), 0, 0);
 		gtk_widget_grab_focus(pass);
 	} else if (widget == pass) {
-		gtk_widget_grab_focus(signon);
+		dologin(widget, w);
 	}
 
 }
