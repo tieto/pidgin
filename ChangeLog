@@ -5,6 +5,7 @@ version 0.11.0:
 	* logs now stored to ~/.gaim/logs rather than ~/.gaim/SN/
 	* protocol plugins
 	* user configurable sounds
+	* scroll bar now functions properly in chat room user lists
 
 version 0.10.3 (10/09/2000):
 	* Segfault when viewing user info fixed
