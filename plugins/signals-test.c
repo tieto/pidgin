@@ -35,42 +35,38 @@
 static void
 account_connecting_cb(GaimAccount *account, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test", "account-connecting (%s)\n",
-			   gaim_account_get_username(account));
+	gaim_debug_misc("signals test", "account-connecting (%s)\n",
+					gaim_account_get_username(account));
 }
 
 static void
 account_away_cb(GaimAccount *account, const char *state,
 				const char *message, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "account-away (%s, %s, %s)\n",
-			   gaim_account_get_username(account), state, message);
+	gaim_debug_misc("signals test", "account-away (%s, %s, %s)\n",
+					gaim_account_get_username(account), state, message);
 }
 
 static void
 account_setting_info_cb(GaimAccount *account, const char *info, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "account-setting-info (%s, %s)\n",
-			   gaim_account_get_username(account), info);
+	gaim_debug_misc("signals test", "account-setting-info (%s, %s)\n",
+					gaim_account_get_username(account), info);
 }
 
 static void
 account_set_info_cb(GaimAccount *account, const char *info, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "account-set-info (%s, %s)\n",
-			   gaim_account_get_username(account), info);
+	gaim_debug_misc("signals test", "account-set-info (%s, %s)\n",
+					gaim_account_get_username(account), info);
 }
 
 static void
 account_warned_cb(GaimAccount *account, const char *warner, int level,
 				  void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "account-warned (%s, %s, %d)\n",
-			   gaim_account_get_username(account), warner, level);
+	gaim_debug_misc("signals test", "account-warned (%s, %s, %d)\n",
+					gaim_account_get_username(account), warner, level);
 }
 
 /**************************************************************************
@@ -79,43 +75,37 @@ account_warned_cb(GaimAccount *account, const char *warner, int level,
 static void
 buddy_away_cb(GaimBuddy *buddy, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "buddy-away (%s)\n", buddy->name);
+	gaim_debug_misc("signals test", "buddy-away (%s)\n", buddy->name);
 }
 
 static void
 buddy_back_cb(GaimBuddy *buddy, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "buddy-back (%s)\n", buddy->name);
+	gaim_debug_misc("signals test", "buddy-back (%s)\n", buddy->name);
 }
 
 static void
 buddy_idle_cb(GaimBuddy *buddy, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "buddy-idle (%s)\n", buddy->name);
+	gaim_debug_misc("signals test", "buddy-idle (%s)\n", buddy->name);
 }
 
 static void
 buddy_unidle_cb(GaimBuddy *buddy, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "buddy-unidle (%s)\n", buddy->name);
+	gaim_debug_misc("signals test", "buddy-unidle (%s)\n", buddy->name);
 }
 
 static void
 buddy_signed_on_cb(GaimBuddy *buddy, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "buddy-signed-on (%s)\n", buddy->name);
+	gaim_debug_misc("signals test", "buddy-signed-on (%s)\n", buddy->name);
 }
 
 static void
 buddy_signed_off_cb(GaimBuddy *buddy, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "buddy-signed-off (%s)\n", buddy->name);
+	gaim_debug_misc("signals test", "buddy-signed-off (%s)\n", buddy->name);
 }
 
 /**************************************************************************
@@ -124,33 +114,29 @@ buddy_signed_off_cb(GaimBuddy *buddy, void *data)
 static void
 signing_on_cb(GaimConnection *gc, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "signing-on (%s)\n",
-			   gaim_account_get_username(gaim_connection_get_account(gc)));
+	gaim_debug_misc("signals test", "signing-on (%s)\n",
+					gaim_account_get_username(gaim_connection_get_account(gc)));
 }
 
 static void
 signed_on_cb(GaimConnection *gc, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "signed-on (%s)\n",
-			   gaim_account_get_username(gaim_connection_get_account(gc)));
+	gaim_debug_misc("signals test", "signed-on (%s)\n",
+					gaim_account_get_username(gaim_connection_get_account(gc)));
 }
 
 static void
 signing_off_cb(GaimConnection *gc, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "signing-off (%s)\n",
-			   gaim_account_get_username(gaim_connection_get_account(gc)));
+	gaim_debug_misc("signals test", "signing-off (%s)\n",
+					gaim_account_get_username(gaim_connection_get_account(gc)));
 }
 
 static void
 signed_off_cb(GaimConnection *gc, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "signed-off (%s)\n",
-			   gaim_account_get_username(gaim_connection_get_account(gc)));
+	gaim_debug_misc("signals test", "signed-off (%s)\n",
+					gaim_account_get_username(gaim_connection_get_account(gc)));
 }
 
 /**************************************************************************
@@ -160,9 +146,8 @@ static gboolean
 displaying_im_msg_cb(GaimAccount *account, GaimConversation *conv,
 		     char **buffer, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "displaying-im-msg (%s, %s)\n",
-			   gaim_conversation_get_name(conv), *buffer);
+	gaim_debug_misc("signals test", "displaying-im-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), *buffer);
 
 	return FALSE;
 }
@@ -170,37 +155,32 @@ displaying_im_msg_cb(GaimAccount *account, GaimConversation *conv,
 static void
 displayed_im_msg_cb(GaimConversation *conv, const char *buffer, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "displayed-im-msg (%s, %s)\n",
-			   gaim_conversation_get_name(conv), buffer);
+	gaim_debug_misc("signals test", "displayed-im-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), buffer);
 }
 
 static void
 sending_im_msg_cb(GaimAccount *account, char *recipient, char **buffer, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "sending-im-msg (%s, %s, %s)\n",
-			   gaim_account_get_username(account), recipient,
-			   *buffer);
+	gaim_debug_misc("signals test", "sending-im-msg (%s, %s, %s)\n",
+					gaim_account_get_username(account), recipient, *buffer);
 
 }
 
 static void
 sent_im_msg_cb(GaimAccount *account, const char *recipient, const char *buffer, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "sent-im-msg (%s, %s, %s)\n",
-			   gaim_account_get_username(account),
-			   recipient, buffer);
+	gaim_debug_misc("signals test", "sent-im-msg (%s, %s, %s)\n",
+					gaim_account_get_username(account), recipient, buffer);
 }
 
 static gboolean
 received_im_msg_cb(GaimAccount *account, char **sender, char **buffer,
 				   int *flags, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "received-im-msg (%s, %s, %s, %d)\n",
-			   gaim_account_get_username(account), *sender, *buffer, *flags);
+	gaim_debug_misc("signals test", "received-im-msg (%s, %s, %s, %d)\n",
+					gaim_account_get_username(account), *sender, *buffer,
+					*flags);
 
 	return FALSE;
 }
@@ -209,9 +189,8 @@ static gboolean
 displaying_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
 		       char **buffer, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "displaying-chat-msg (%s, %s)\n",
-			   gaim_conversation_get_name(conv), *buffer);
+	gaim_debug_misc("signals test", "displaying-chat-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), *buffer);
 
 	return FALSE;
 }
@@ -219,17 +198,15 @@ displaying_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
 static void
 displayed_chat_msg_cb(GaimConversation *conv, const char *buffer, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "displayed-chat-msg (%s, %s)\n",
-			   gaim_conversation_get_name(conv), buffer);
+	gaim_debug_misc("signals test", "displayed-chat-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), buffer);
 }
 
 static gboolean
 sending_chat_msg_cb(GaimAccount *account, char **buffer, int id, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "sending-chat-msg (%s, %s, %d)\n",
-			   gaim_account_get_username(account), *buffer, id);
+	gaim_debug_misc("signals test", "sending-chat-msg (%s, %s, %d)\n",
+					gaim_account_get_username(account), *buffer, id);
 
 	return FALSE;
 }
@@ -237,19 +214,18 @@ sending_chat_msg_cb(GaimAccount *account, char **buffer, int id, void *data)
 static void
 sent_chat_msg_cb(GaimAccount *account, const char *buffer, int id, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "sent-chat-msg (%s, %s, %d)\n",
-			   gaim_account_get_username(account), buffer, id);
+	gaim_debug_misc("signals test", "sent-chat-msg (%s, %s, %d)\n",
+					gaim_account_get_username(account), buffer, id);
 }
 
 static gboolean
 received_chat_msg_cb(GaimAccount *account, char **sender, char **buffer,
 					 GaimConversation *chat, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "received-chat-msg (%s, %s, %s, %s, %s)\n",
-			   gaim_account_get_username(account), *sender, *buffer,
-			   gaim_conversation_get_name(chat));
+	gaim_debug_misc("signals test",
+					"received-chat-msg (%s, %s, %s, %s, %s)\n",
+					gaim_account_get_username(account), *sender, *buffer,
+					gaim_conversation_get_name(chat));
 
 	return FALSE;
 }
@@ -258,122 +234,108 @@ static void
 conversation_switching_cb(GaimConversation *old_conv,
 						  GaimConversation *new_conv, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "conversation-switching (%s, %s)\n",
-			   gaim_conversation_get_name(old_conv),
-			   gaim_conversation_get_name(new_conv));
+	gaim_debug_misc("signals test", "conversation-switching (%s, %s)\n",
+					gaim_conversation_get_name(old_conv),
+					gaim_conversation_get_name(new_conv));
 }
 
 static void
 conversation_switched_cb(GaimConversation *old_conv,
 						 GaimConversation *new_conv, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "conversation-switched (%s, %s)\n",
-			   gaim_conversation_get_name(old_conv),
-			   gaim_conversation_get_name(new_conv));
+	gaim_debug_misc("signals test", "conversation-switched (%s, %s)\n",
+					gaim_conversation_get_name(old_conv),
+					gaim_conversation_get_name(new_conv));
 }
 
 static void
 conversation_created_cb(GaimConversation *conv, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "conversation-created (%s)\n",
-			   gaim_conversation_get_name(conv));
+	gaim_debug_misc("signals test", "conversation-created (%s)\n",
+					gaim_conversation_get_name(conv));
 }
 
 static void
 deleting_conversation_cb(GaimConversation *conv, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "deleting-conversation (%s)\n",
-			   gaim_conversation_get_name(conv));
+	gaim_debug_misc("signals test", "deleting-conversation (%s)\n",
+					gaim_conversation_get_name(conv));
 }
 
 static void
 buddy_typing_cb(GaimConversation *conv, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "buddy-typing (%s)\n",
-			   gaim_conversation_get_name(conv));
+	gaim_debug_misc("signals test", "buddy-typing (%s)\n",
+					gaim_conversation_get_name(conv));
 }
 
 static void
 chat_buddy_joining_cb(GaimConversation *conv, const char *user, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "chat-buddy-joining (%s, %s)\n",
-			   gaim_conversation_get_name(conv), user);
+	gaim_debug_misc("signals test", "chat-buddy-joining (%s, %s)\n",
+					gaim_conversation_get_name(conv), user);
 }
 
 static void
 chat_buddy_joined_cb(GaimConversation *conv, const char *user, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "chat-buddy-joined (%s, %s)\n",
-			   gaim_conversation_get_name(conv), user);
+	gaim_debug_misc("signals test", "chat-buddy-joined (%s, %s)\n",
+					gaim_conversation_get_name(conv), user);
 }
 
 static void
 chat_buddy_leaving_cb(GaimConversation *conv, const char *user,
 					  const char *reason, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "chat-buddy-leaving (%s, %s, %s)\n",
-			   gaim_conversation_get_name(conv), user, reason);
+	gaim_debug_misc("signals test", "chat-buddy-leaving (%s, %s, %s)\n",
+					gaim_conversation_get_name(conv), user, reason);
 }
 
 static void
 chat_buddy_left_cb(GaimConversation *conv, const char *user,
 				   const char *reason, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "chat-buddy-left (%s, %s, %s)\n",
-			   gaim_conversation_get_name(conv), user, reason);
+	gaim_debug_misc("signals test", "chat-buddy-left (%s, %s, %s)\n",
+					gaim_conversation_get_name(conv), user, reason);
 }
 
 static void
 chat_inviting_user_cb(GaimConversation *conv, const char *name,
 					  const char *reason, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "chat-inviting-user (%s, %s, %s)\n",
-			   gaim_conversation_get_name(conv), name, reason);
+	gaim_debug_misc("signals test", "chat-inviting-user (%s, %s, %s)\n",
+					gaim_conversation_get_name(conv), name, reason);
 }
 
 static void
 chat_invited_user_cb(GaimConversation *conv, const char *name,
 					  const char *reason, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "chat-invited-user (%s, %s, %s)\n",
-			   gaim_conversation_get_name(conv), name, reason);
+	gaim_debug_misc("signals test", "chat-invited-user (%s, %s, %s)\n",
+					gaim_conversation_get_name(conv), name, reason);
 }
 
 static void
 chat_invited_cb(GaimAccount *account, const char *inviter,
 				const char *room_name, const char *message, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "chat-invited (%s, %s, %s, %s)\n",
-			   gaim_account_get_username(account), inviter,
-			   room_name, message);
+	gaim_debug_misc("signals test", "chat-invited (%s, %s, %s, %s)\n",
+					gaim_account_get_username(account), inviter,
+					room_name, message);
 }
 
 static void
 chat_joined_cb(GaimConversation *conv, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "chat-joined (%s)\n",
-			   gaim_conversation_get_name(conv));
+	gaim_debug_misc("signals test", "chat-joined (%s)\n",
+					gaim_conversation_get_name(conv));
 }
 
 static void
 chat_left_cb(GaimConversation *conv, void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "chat-left (%s)\n",
-			   gaim_conversation_get_name(conv));
+	gaim_debug_misc("signals test", "chat-left (%s)\n",
+					gaim_conversation_get_name(conv));
 }
 
 /**************************************************************************
@@ -382,8 +344,7 @@ chat_left_cb(GaimConversation *conv, void *data)
 static void
 quitting_cb(void *data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "signals test",
-			   "quitting ()\n");
+	gaim_debug_misc("signals test", "quitting ()\n");
 }
 
 /**************************************************************************
