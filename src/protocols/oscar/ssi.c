@@ -678,11 +678,11 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess)
 		cur = next;
 	}
 
-	/* Check if there are empty groups */
+	/* Check if there are empty groups and delete them */
 	cur = sess->ssi.local;
 	while (cur) {
 		next = cur->next;
-		if ((cur->type == AIM_SSI_TYPE_GROUP) && (cur->data)) {
+		if (cur->type == AIM_SSI_TYPE_GROUP) {
 			aim_tlv_t *tlv = aim_gettlv(cur->data, 0x00c8, 1);
 			if (!tlv || !tlv->length)
 				aim_ssi_itemlist_del(&sess->ssi.local, cur);
