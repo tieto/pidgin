@@ -2389,19 +2389,6 @@ static void apply_color_dlg(GtkWidget *w, gpointer d)
 	}
 }
 
-void set_color_selection(GtkWidget *selection, GdkColor color)
-{
-	gdouble colors[4];
-
-	colors[0] = color.red;
-	colors[1] = color.green;
-	colors[2] = color.blue;
-	colors[3] = 0; /* opacity, currently unused */
-	gtk_color_selection_set_color(GTK_COLOR_SELECTION(selection), colors);
-
-	return;
-}
-	
 void show_color_dialog(struct conversation *c, GtkWidget *color)
 {
 	GtkWidget *colorsel;
@@ -2409,8 +2396,6 @@ void show_color_dialog(struct conversation *c, GtkWidget *color)
 	if ((int)color == 1) { /* foreground */
 		if (fgcseld) return;
 		fgcseld = gtk_color_selection_dialog_new(_("Select Text Color"));
-
-		set_color_selection(GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel, fgcolor);
 		
 		gtk_signal_connect(GTK_OBJECT(fgcseld), "delete_event", GTK_SIGNAL_FUNC(destroy_colorsel), (void *)1);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->cancel_button), "clicked", GTK_SIGNAL_FUNC(destroy_colorsel), (void *)1);
@@ -2423,8 +2408,6 @@ void show_color_dialog(struct conversation *c, GtkWidget *color)
 	} else if ((int)color == 2) { /* background */
 		if (bgcseld) return;
 		bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
-
-		set_color_selection(GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel, bgcolor);
 
 		gtk_signal_connect(GTK_OBJECT(bgcseld), "delete_event", GTK_SIGNAL_FUNC(destroy_colorsel), NULL);
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->cancel_button), "clicked", GTK_SIGNAL_FUNC(destroy_colorsel), NULL);
@@ -2441,8 +2424,6 @@ void show_color_dialog(struct conversation *c, GtkWidget *color)
 		c->color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
 		
 		colorsel = GTK_COLOR_SELECTION_DIALOG(c->color_dialog)->colorsel;
-
-		set_color_selection(colorsel, fgcolor);
 
 		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);
 		
