@@ -370,7 +370,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			return;
 		}
 		/* we're supposed to check that it's really TOC v1 here but we know it is ;) */
-		debug_printf("TOC version: %s\n", buf + sizeof(struct sflap_hdr) + 4);
+		debug_printf("TOC version: %s\n", buf + sizeof(struct sflap_hdr) + 8);
 
 		/* we used to check for the CONFIG here, but we'll wait until we've sent our
 		 * version of the config and then the toc_init_done message. we'll come back to
