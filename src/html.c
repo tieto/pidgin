@@ -91,7 +91,7 @@ gchar *strip_html(const gchar *text)
 
 struct g_url *parse_url(char *url)
 {
-	struct g_url *test = g_new0(struct g_url);
+	struct g_url *test = g_new0(struct g_url, 1);
 	char scan_info[255];
 	char port[5];
 	int f;
@@ -117,7 +117,7 @@ struct g_url *parse_url(char *url)
 		snprintf(port, sizeof(port), "80");
 	}
 	if (f == 1)
-		snprintf(test->page, sizeof(test->page), "");
+		test->page[0] = '\0';
 
 	sscanf(port, "%d", &test->port);
 	return test;
