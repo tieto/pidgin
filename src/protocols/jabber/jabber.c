@@ -605,18 +605,25 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 
-		for(x = xmlnode_get_child(packet, "x"); x; x = xmlnode_get_next_twin(x)) {
-			const char *xmlns;
-			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
-				continue;
+		if((x = xmlnode_get_child_with_namespace(packet, "x",
+						"jabber:x:data"))) {
+			jabber_x_data_request(js, x, jabber_register_x_data_cb, NULL);
+			return;
+		} else if((x = xmlnode_get_child_with_namespace(packet, "x",
+						"jabber:x:oob"))) {
+			xmlnode *url;
 
-			if(!strcmp(xmlns, "jabber:x:data")) {
-				jabber_x_data_request(js, x, jabber_register_x_data_cb, NULL);
-				return;
+			if((url = xmlnode_get_child(x, "url"))) {
+				char *href;
+				if((href = xmlnode_get_data(url))) {
+					gaim_notify_uri(NULL, href);
+					g_free(href);
+					js->gc->wants_to_die = TRUE;
+					jabber_connection_schedule_close(js);
+					return;
+				}
 			}
 		}
-
-		/* XXX: if no jabber:x:data, but jabber:x:oob is there, use that */
 
 		/* as a last resort, use the old jabber:iq:register syntax */
 
