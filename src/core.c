@@ -37,8 +37,6 @@
 
 #include "gaim.h"
 
-#if DEVEL
-
 static gint UI_fd = -1;
 struct UI {
 	GIOChannel *channel;
@@ -173,15 +171,12 @@ static gint open_socket()
 	return fd;
 }
 
-#endif /* DEVEL */
-
 int core_main()
 {
 	/*
 	GMainLoop *loop;
 	 */
 
-#if DEVEL
 	GIOChannel *channel;
 
 	UI_fd = open_socket();
@@ -191,7 +186,6 @@ int core_main()
 	channel = g_io_channel_unix_new(UI_fd);
 	g_io_add_watch(channel, G_IO_IN, socket_readable, NULL);
 	g_io_channel_unref(channel);
-#endif
 
 	/*
 	loop = g_main_new(TRUE);
@@ -203,10 +197,8 @@ int core_main()
 
 void core_quit()
 {
-#ifdef DEVEL
 	char buf[1024];
 	close(UI_fd);
 	sprintf(buf, "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), getpid());
 	unlink(buf);
-#endif
 }

@@ -19,10 +19,6 @@
 #undef NEED_GNOMESUPPORT_H
 #undef ZEPHYR_INT32
 #undef ZEPHYR_USES_KERBEROS
-#undef DEVEL
 #ifndef STATIC_PROTO_INIT
 #undef STATIC_PROTO_INIT
 #endif
-
-
-
