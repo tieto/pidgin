@@ -1,4 +1,8 @@
 
+Tue Aug  8 21:04:30 UTC 2000 EWarmenhoven
+	- Solaris doesn't have getaddrinfo(). Well, old versions of Solaris
+	  don't. I changed aim_ft.c to try to work around this problem.
+
 Tue Aug  8 04:59:55 UTC 2000 EWarmenhoven
 	- Small updates to libfaim. Hopefully this should fix a lot of the
 	  conn->type segfaults and pthread hangs.
