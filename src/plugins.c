@@ -262,6 +262,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	if (plugwindow) return;
 
 	plugwindow = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_window_set_wmclass(GTK_WINDOW(plugwindow), "plugins", "Gaim");
 	gtk_widget_realize(plugwindow);
 	aol_icon(plugwindow->window);
 	gtk_container_border_width(GTK_CONTAINER(plugwindow), 10);

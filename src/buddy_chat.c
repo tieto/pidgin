@@ -113,6 +113,8 @@ void join_chat()
 
 	if (!joinchat) {
 		joinchat = gtk_window_new(GTK_WINDOW_DIALOG);
+                gtk_window_set_wmclass(GTK_WINDOW(joinchat), "joinchat",
+                                      "Gaim");
 		gtk_window_set_policy(GTK_WINDOW(joinchat), FALSE, FALSE, TRUE);
 		gtk_widget_realize(joinchat);
 		bbox = gtk_hbox_new(TRUE, 10);
@@ -527,6 +529,7 @@ void show_new_buddy_chat(struct conversation *b)
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	b->window = win;
+        gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
 
 	vpaned = gtk_vpaned_new();
 	hpaned = gtk_hpaned_new();

@@ -1638,6 +1638,7 @@ void show_conv(struct conversation *c)
 	int dispstyle;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 
 	gtk_widget_realize(win);

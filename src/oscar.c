@@ -626,6 +626,7 @@ static void directim_dialog(struct aim_directim_priv *priv)
 
 	window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_title(GTK_WINDOW(window), _("Accept Direct IM?"));
+	gtk_window_set_wmclass(GTK_WINDOW(window), "directim", "Gaim");
 	gtk_widget_realize(window);
 	aol_icon(window->window);
 	gtk_object_set_user_data(GTK_OBJECT(window), (void *)priv);

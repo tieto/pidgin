@@ -325,6 +325,11 @@ void show_login()
         }
        
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        /* Set the WM name and class */
+        gtk_window_set_wmclass(GTK_WINDOW(mainwindow), "login",
+                               "Gaim");
+        /* Disallow resizing */
+        gtk_window_set_policy(GTK_WINDOW(mainwindow), FALSE, FALSE, TRUE);
 	gtk_widget_realize(mainwindow);
 	signon   = gtk_button_new_with_label(_("Signon"));
 	cancel   = gtk_button_new_with_label(_("Cancel"));
@@ -458,8 +463,7 @@ void show_login()
 	gtk_container_add(GTK_CONTAINER(mainwindow),table );
 	
 	gtk_widget_show(table);
-	gtk_window_set_title(GTK_WINDOW(mainwindow),_("Gaim - Login"));
-
+        gtk_window_set_title(GTK_WINDOW(mainwindow),_("Gaim - Login"));
 
         gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(remember), (general_options & OPT_GEN_REMEMBER_PASS));
 

@@ -4,6 +4,7 @@ version 0.10.1:
 	* Better chatroom logging
 	* Oscar works again. Pay no attention to Slashdot.
 	* gtkhtml handles background colours better.
+	* Better support for things like Sawfish
 
 version 0.10.0 (09/11/2000): 
 	* New Smiley Faces and Pixmaps added.

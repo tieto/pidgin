@@ -575,7 +575,8 @@ void load_perl_script(GtkWidget *w, gpointer d)
 	}
 
 	config = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_window_set_policy(GTK_WINDOW(config), 0, 0, 1);
+	gtk_window_set_policy(GTK_WINDOW(config), TRUE, TRUE, FALSE);
+	gtk_window_set_wmclass(GTK_WINDOW(config), "perl_script", "Gaim");
 	gtk_window_set_title(GTK_WINDOW(config), "Gaim - Add Perl Script");
 	gtk_container_set_border_width(GTK_CONTAINER(config), 5);
 	gtk_signal_connect(GTK_OBJECT(config), "destroy", GTK_SIGNAL_FUNC(cfdes), 0);

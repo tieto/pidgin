@@ -1581,6 +1581,7 @@ void show_prefs()
 	}
 
 	prefs = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_wmclass(GTK_WINDOW(prefs), "preferences", "Gaim");
 	gtk_widget_realize(prefs);
 	aol_icon(prefs->window);
 	gtk_container_border_width(GTK_CONTAINER(prefs), 10);
@@ -1668,6 +1669,8 @@ static void build_debug()
 	box = gtk_hbox_new(FALSE,0);
 	dw->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_title(GTK_WINDOW(dw->window), _("GAIM debug output window"));
+	gtk_window_set_wmclass(GTK_WINDOW(dw->window),
+                               "debug_out", "Gaim");
 	gtk_container_add(GTK_CONTAINER(dw->window), box);
 	dw->entry = gtk_text_new(NULL,NULL);
 	gtk_widget_set_usize(dw->entry, 500, 200);

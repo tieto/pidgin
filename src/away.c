@@ -93,6 +93,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 	if (!imaway) {
 		imaway = gtk_window_new(GTK_WINDOW_DIALOG);
+                gtk_window_set_wmclass(GTK_WINDOW(imaway), "imaway", "Gaim");
 		gtk_widget_realize(imaway);
 		aol_icon(imaway->window);
 		back = picture_button(imaway, _("I'm Back!"), join_xpm);

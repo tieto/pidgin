@@ -630,6 +630,7 @@ void accept_file_dialog(struct file_transfer *ft)
 
         
         ft->window = gtk_window_new(GTK_WINDOW_DIALOG);
+        gtk_window_set_wmclass(GTK_WINDOW(ft->window), "accept_file", "Gaim");
 
         accept = gtk_button_new_with_label(_("Accept"));
         info = gtk_button_new_with_label(_("Info"));

@@ -72,6 +72,7 @@ void show_about(GtkWidget *w, void *null)
 	             
 		g_snprintf(abouttitle, sizeof(abouttitle), _("About GAIM v%s"), VERSION);
 		gtk_window_set_title(GTK_WINDOW(about), abouttitle);
+                gtk_window_set_wmclass(GTK_WINDOW(about), "about", "Gaim" );
 		gtk_container_border_width(GTK_CONTAINER(about), 2);
 		gtk_widget_set_usize(about, 535, 430);
 
