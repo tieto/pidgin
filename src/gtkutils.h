@@ -26,7 +26,7 @@
 #define _GAIM_GTKUTILS_H_
 
 #include "gtkconv.h"
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 #include "prpl.h"
 
 typedef enum

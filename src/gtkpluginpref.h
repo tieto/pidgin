@@ -32,7 +32,7 @@
 
 #include "pluginpref.h"
 
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 
 #ifdef __cplusplus
 extern "C" {

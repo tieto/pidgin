@@ -25,7 +25,7 @@
 #ifndef _GAIM_AWAY_H_
 #define _GAIM_AWAY_H_
 
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 
 /* XXX CUI: away messages aren't really anything more than char* but we need two char*'s
  * for the UI so that people can name their away messages when they save them. So these

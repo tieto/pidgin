@@ -183,9 +183,9 @@ gaim_headers = \
 	gtkdialogs.h \
 	gtkeventloop.h \
 	gtkft.h \
+	gtkgaim.h \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
-	gtkinternal.h \
 	gtklog.h \
 	gtknotify.h \
 	gtkplugin.h \

@@ -25,7 +25,7 @@
  * pluginized- Sean Egan, Summer 2002
  */
 #include "internal.h"
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 
 #include "blist.h"
 #include "conversation.h"

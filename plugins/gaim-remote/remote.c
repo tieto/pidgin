@@ -22,7 +22,7 @@
  * @todo Make this a core plugin!
  */
 #include "internal.h"
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 
 #ifndef _WIN32
 # include <sys/un.h>

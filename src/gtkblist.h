@@ -25,6 +25,7 @@
 #ifndef _GAIM_GTKBLIST_H_
 #define _GAIM_GTKBLIST_H_
 
+#include "gtkgaim.h"
 #include "blist.h"
 
 enum {

@@ -66,7 +66,8 @@
  *  react to focus-in events when the entry or history widgets are focused)
  */
 
-#include "gtkinternal.h"
+#include "internal.h"
+#include "gtkgaim.h"
 
 #include "debug.h"
 #include "prefs.h"

@@ -27,7 +27,6 @@
 
 /* XXX CORE/UI: this goes away when away messages become sane */
 #include "away.h"
-#include "gtkinternal.h"
 
 
 static GaimSoundUiOps *sound_ui_ops = NULL;

@@ -1,5 +1,5 @@
 /**
- * @file gtkinternal.h Internal UI definitions and includes
+ * @file gtkgaim.h UI definitions and includes
  * @ingroup gtkui
  *
  * gaim
@@ -22,10 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKINTERNAL_H_
-#define _GAIM_GTKINTERNAL_H_
-
-#include "internal.h"
+#ifndef _GAIM_GTKGAIM_H_
+#define _GAIM_GTKGAIM_H_
 
 #ifndef _WIN32
 # include <gdk/gdkx.h>
@@ -49,4 +47,5 @@
 #endif
 
 
-#endif /* _GAIM_GTKINTERNAL_H_ */
+#endif /* _GAIM_GTKGAIM_H_ */
+

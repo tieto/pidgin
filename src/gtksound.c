@@ -20,7 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "gtkinternal.h"
+#include "internal.h"
+#include "gtkgaim.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -393,4 +394,3 @@ char *gaim_gtk_sound_get_event_label(GaimSoundEventID event)
 
 	return sounds[event].label;
 }
-

@@ -1,7 +1,8 @@
 /* Puts last 4k of log in new conversations a la Everybuddy (and then
  * stolen by Trillian "Pro") */
 
-#include "gtkinternal.h"
+#include "internal.h"
+#include "gtkgaim.h"
 
 #include "conversation.h"
 #include "debug.h"

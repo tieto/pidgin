@@ -3,6 +3,7 @@
  * or nearly directly from xchat, version 1.4.2 by Peter Zelezny and others.
  */
 #include "internal.h"
+#include "gtkgaim.h"
 
 #include "debug.h"
 #include "signals.h"

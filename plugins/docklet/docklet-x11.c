@@ -23,7 +23,7 @@
  */
 
 #include "internal.h"
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 #include "debug.h"
 #include "stock.h"
 

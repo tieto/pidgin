@@ -30,7 +30,7 @@
     - optional pop up notices when GNOME2's system-tray-applet supports it */
 
 #include "internal.h"
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 
 #include "core.h"
 #include "debug.h"

@@ -21,7 +21,7 @@
  *
  */
 #include "internal.h"
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 
 #include "conversation.h"
 #include "debug.h"

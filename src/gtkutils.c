@@ -22,7 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "gtkinternal.h"
+#include "internal.h"
+#include "gtkgaim.h"
 
 #ifndef _WIN32
 # include <X11/Xlib.h>

@@ -23,9 +23,6 @@
 # include <config.h>
 #endif
 
-#include <glib.h>
-#include <gtk/gtk.h>
-
 #include "debug.h"
 #include "internal.h"
 #include "pluginpref.h"

@@ -27,7 +27,7 @@
 
 /* XXX CORE/UI */
 #include "away.h"
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 
 
 /* for people like myself who are too lazy to add an away msg :) */

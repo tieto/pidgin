@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-#include "gtkinternal.h"
+#include "internal.h"
+#include "gtkgaim.h"
 
 #include "account.h"
 #include "util.h"
@@ -472,4 +472,3 @@ void gaim_gtk_syslog_show()
 
 	gtk_widget_show_all(syslog_viewer->window);	
 }
-

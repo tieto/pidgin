@@ -25,7 +25,7 @@
 #ifndef _GAIM_GTKDIALOGS_H_
 #define _GAIM_GTKDIALOGS_H_
 
-#include "gtkinternal.h"
+#include "gtkgaim.h"
 
 #include "account.h"
 #include "conversation.h"
