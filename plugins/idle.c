@@ -16,12 +16,12 @@
 
 static struct gaim_connection *gc = NULL;
 
-char *name() {
-	return "I'dle Mak'er";
+const char *name() {
+	return _("I'dle Mak'er");
 }
 
-char *description() {
-	return "Allows you to hand-configure how long you've been idle for";
+const char *description() {
+	return _("Allows you to hand-configure how long you've been idle for");
 }
 
 char *gaim_plugin_init(GModule *module) {
@@ -81,7 +81,7 @@ struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
 	desc.name = g_strdup("I'dle Mak'er");
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Allows you to hand-configure how long you've been idle for");
+	desc.description = g_strdup(_("Allows you to hand-configure how long you've been idle for"));
 	desc.authors = g_strdup("Eric Warmenhoven &lt;eric@warmenhoven.org>");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
@@ -105,19 +105,19 @@ GtkWidget *gaim_plugin_config_gtk() {
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
-	label = gtk_label_new("Set");
+	label = gtk_label_new(_("Set"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
 	make_connect_menu(hbox);
 
-	label = gtk_label_new("idle for");
+	label = gtk_label_new(_("idle for"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
 	adj = (GtkAdjustment *)gtk_adjustment_new(10, 0, G_MAXINT, 1, 0, 0);
 	spinner = gtk_spin_button_new(adj, 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), spinner, TRUE, TRUE, 0);
 
-	label = gtk_label_new("minutes.");
+	label = gtk_label_new(_("minutes."));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
 	hbox = gtk_hbox_new(TRUE, 5);
