@@ -49,6 +49,8 @@ SetDateSave on
 
 !define GTK_VERSION			"2.2.2"
 !define GTK_REG_KEY			"SOFTWARE\GTK\2.0"
+!define PERL_REG_KEY			"SOFTWARE\Perl"
+!define PERL_DLL			"perl58.dll"
 !define GTK_DEFAULT_INSTALL_PATH	"$PROGRAMFILES\Common Files\GTK\2.0"
 !define GTK_RUNTIME_INSTALLER		"..\gtk_installer\gtk-runtime*.exe"
 !define GTK_THEME_DIR			"..\gtk_installer\gtk_themes"
@@ -313,6 +315,7 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 
   gaim_hklm:
     ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
+    WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "" "$INSTDIR\gaim.exe"
     WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R1\bin"
     WriteRegStr HKLM ${GAIM_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKLM ${GAIM_REG_KEY} "Version" "${GAIM_VERSION}"
@@ -344,6 +347,25 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     !ifdef DEBUG
     File ..\win32-dev\drmingw\exchndl.dll
     !endif
+
+    ; Check if Perl is installed, If not remove perl plugin
+    ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
+    StrCmp $R2 "" 0 perl_exists
+      ReadRegStr $R2 HKCU ${PERL_REG_KEY} ""
+      StrCmp $R2 "" perl_remove perl_exists
+
+      perl_remove:
+        Delete "$INSTDIR\plugins\perl.dll"
+        RMDir /r "$INSTDIR\perlmod"
+        Goto perl_done
+ 
+      perl_exists:
+        IfFileExists "$R2\bin\${PERL_DLL}" 0 perl_remove
+        StrCmp $R0 "HKLM" 0 perl_done
+          ReadRegStr $R3 HKLM "${HKLM_APP_PATHS_KEY}" "Path"
+          WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R3;$R2\bin"
+
+    perl_done:
 
     ; If we don't have install rights and no hklm GTK install.. then Start in lnk property should
     ; remain gaim dir.. otherwise it should be set to the GTK bin dir. (to avoid dll hell)

@@ -8,6 +8,7 @@
  */
 #include <windows.h>
 #include <stdlib.h>
+#include <glib.h>
 
 /*
  *  GLOBALS
@@ -22,7 +23,7 @@ __declspec(dllimport) HINSTANCE gaimexe_hInstance;
  *  PROTOTYPES
  */
 extern int gaim_main( int, char** );
-
+extern char* wgaim_install_dir();
 
 #ifdef __GNUC__
 #  ifndef _stdcall
@@ -36,7 +37,14 @@ WinMain (struct HINSTANCE__ *hInstance,
 	 char               *lpszCmdLine,
 	 int                 nCmdShow)
 {
+        char* drmingw;
 	gaimexe_hInstance = hInstance;
+
+	/* Load exception handler if we have it */
+	drmingw = g_build_filename(wgaim_install_dir(), "exchndl.dll", NULL);
+	LoadLibrary(drmingw);
+	g_free(drmingw);
+
 	return gaim_main (__argc, __argv);
 }
 

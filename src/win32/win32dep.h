@@ -56,6 +56,7 @@ extern int wgaim_gz_untar(const char* filename, const char* destdir);
 extern void wgaim_systray_minimize( GtkWidget* );
 extern void wgaim_systray_maximize( GtkWidget* );
 /* init / cleanup */
+extern void wgaim_pre_plugin_init(void);
 extern void wgaim_init(void);
 extern void wgaim_cleanup(void);
 

@@ -412,18 +412,27 @@ void wgaim_set_locale() {
 
 /* Windows Initializations */
 
+void wgaim_pre_plugin_init(void) {
+        char *perlenv, *newenv;
+
+        /* Tell perl where to find Gaim's perl modules */
+        perlenv = (char*)g_getenv("PERL5LIB");
+        newenv = g_strdup_printf("PERL5LIB=%s%s%s%s",
+                                 perlenv ? perlenv : "", 
+                                 perlenv ? ";" : "", 
+                                 wgaim_install_dir(), 
+                                 "\\perlmod;");
+        if(putenv(newenv)<0)
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
+        g_free(newenv);
+}
+
 void wgaim_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	char newenv[128];
-	char* drmingw;
 
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init\n");
-
-	/* Load exception handler if we have it */
-	drmingw = g_build_filename(wgaim_install_dir(), "exchndl.dll", NULL);
-	LoadLibrary(drmingw);
-	g_free(drmingw);
 
 	load_winver_specific_procs();
 

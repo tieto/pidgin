@@ -805,6 +805,10 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
+#ifdef _WIN32
+        wgaim_pre_plugin_init();
+#endif
+
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();
 	plugin_search_paths[2] = g_strdup_printf("%s/plugins", gaim_user_dir());

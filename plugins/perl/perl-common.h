@@ -1,10 +1,13 @@
 #ifndef _GAIM_PERL_COMMON_H_
 #define _GAIM_PERL_COMMON_H_
 
+#include <glib.h>
+#ifdef _WIN32
+#undef pipe
+#endif
 #include <XSUB.h>
 #include <EXTERN.h>
 #include <perl.h>
-#include <glib.h>
 
 #include "value.h"
 

@@ -1,0 +1,77 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for Gaim perl module.
+#
+
+TARGET = Gaim
+
+CC := gcc
+PERL := /cygdrive/c/perl/bin/perl
+
+EXTUTILS := C:/perl/lib/ExtUtils
+GAIM_TOP := ../../..
+GTK_TOP := ../../../../win32-dev/gtk_2_0
+PERL_TOP := ../../../../win32-dev/perl58
+PERL_PLUGIN_TOP := ..
+GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+PERLMOD_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/perlmod
+
+INCLUDE_PATHS =		-I. \
+			-I$(GAIM_TOP) \
+			-I$(GAIM_TOP)/src \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(PERL_TOP)/CORE
+
+LIB_PATHS = 		-L$(PERL_TOP) \
+			-L$(PERL_PLUGIN_TOP) \
+			-L$(GAIM_TOP)/src \
+			-L$(GTK_TOP)/lib
+
+
+XS_FILES =		Account.xs \
+			BuddyList.xs \
+			BuddyList_Buddy.xs \
+			BuddyList_Chat.xs \
+			BuddyList_Group.xs \
+			Connection.xs \
+			ConvWindow.xs \
+			Conversation.xs \
+			Conversation_Chat.xs \
+			Conversation_IM.xs \
+			Gaim.xs
+
+FALLBACKS =		const-c.inc const-xs.inc
+
+C_FILES = $(XS_FILES:%.xs=%.c)
+
+OBJECTS = $(C_FILES:%.c=%.o)
+
+LIBS =			-lperl58 \
+			-lperl \
+			-lgaim \
+			-lglib-2.0
+
+# How to make a C file
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDE_PATHS) $(DEFINES) -c $< -o $@
+
+# How to make a XS file
+%.c: %.xs
+	$(PERL) $(EXTUTILS)/xsubpp -typemap $(EXTUTILS)/typemap -typemap typemap $< > $@
+
+%.inc:
+	cp fallback/$@ ./
+
+all: $(TARGET).dll
+
+install:
+	mkdir -p $(PERLMOD_INSTALL_DIR)
+	cp $(TARGET).dll Gaim.pm $(PERLMOD_INSTALL_DIR)
+
+$(TARGET).dll: $(FALLBACKS) $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) -o $(TARGET).dll
+
+clean:
+	rm -rf *.o $(TARGET).dll $(FALLBACKS)

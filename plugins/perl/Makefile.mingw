@@ -10,7 +10,7 @@
 
 GTK_TOP :=		../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../..
-PERL_LIB_DIR :=		../../../win32-dev/perl56
+PERL_LIB_DIR :=		../../../win32-dev/perl58
 PERL_INCLUDE :=         $(PERL_LIB_DIR)/CORE
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
@@ -84,7 +84,7 @@ LIBS =			-lgtk-win32-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lgaim \
-			-lperl56
+			-lperl58
 
 
 ##
@@ -103,10 +103,11 @@ LIBS =			-lgtk-win32-2.0 \
 .PHONY: all clean
 
 all: $(TARGET).dll
+	$(MAKE) -C ./common -f Makefile.mingw
 
 install:
 	cp $(TARGET).dll $(DLL_INSTALL_DIR)
-
+	$(MAKE) -C ./common -f Makefile.mingw install
 
 ##
 ## BUILD Dependencies
@@ -120,7 +121,7 @@ $(GAIM_TOP)/src/gaim.lib:
 ##
 
 $(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS)  -Wl,--export-all-symbols -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
 
 
 ##
@@ -129,4 +130,5 @@ $(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
 
 clean:
 	rm -rf *.o
-	rm -rf $(TARGET).dll
+	rm -rf $(TARGET).dll $(TARGET).lib
+	$(MAKE) -C ./common -f Makefile.mingw clean

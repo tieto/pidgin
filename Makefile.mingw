@@ -11,7 +11,6 @@ GAIM_PLUGINS = ./plugins
 GAIM_PIXMAPS = ./pixmaps
 GAIM_SOUNDS = ./sounds
 GAIM_INSTALL_DIR = ./win32-install-dir
-PERL_TOP = ../win32-dev/perl56
 GTKSPELL_TOP = ../win32-dev/gtkspell-2.0.4/gtkspell
 NSS_TOP = ../win32-dev/nss-3.8
 NSPR_TOP = ../win32-dev/nspr-4.3
@@ -30,8 +29,7 @@ PO = ./po
 
 VERSION := $(shell cat ./VERSION)
 
-NEEDED_DLLS =		$(PERL_TOP)/perl56.dll \
-			$(GTKSPELL_TOP)/libgtkspell.dll \
+NEEDED_DLLS =		$(GTKSPELL_TOP)/libgtkspell.dll \
 			$(IDLETRACK_TOP)/idletrack.dll \
 			$(NSS_TOP)/lib/nss3.dll \
 			$(NSS_TOP)/lib/nssckbi.dll \

@@ -2,10 +2,13 @@ typedef struct group *Gaim__Group;
 
 #define group perl_group
 
+#include <glib.h>
+#ifdef _WIN32
+#undef pipe
+#endif
 #include <EXTERN.h>
 #include <perl.h>
 #include <XSUB.h>
-#include <glib.h>
 
 #undef group
 
