@@ -1253,7 +1253,7 @@ write_setting(gpointer key, gpointer value, gpointer user_data)
 		fprintf(fp, "   <setting name='%s' type='int'>%d</setting>\n",
 				name, setting->value.integer);
 	}
-	else if (setting->type == GAIM_PREF_STRING) {
+	else if (setting->type == GAIM_PREF_STRING && setting->value.string != NULL) {
 		fprintf(fp, "   <setting name='%s' type='string'>%s</setting>\n",
 				name, setting->value.string);
 	}
