@@ -5,10 +5,15 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Claudio Satriano <satriano@na.infn.it>, 2003.
+;;  Version 2
 ;;
 
 ; Startup GTK+ check
 LangString GTK_INSTALLER_NEEDED			${LANG_ITALIAN} "L'ambiente di runtime GTK+ non è presente o deve essere aggiornato.$\rInstallare GTK+ versione ${GTK_VERSION} o maggiore"
+
+; License Page
+LangString GAIM_LICENSE_BUTTON			${LANG_ITALIAN} "Avanti >"
+LangString GAIM_LICENSE_BOTTOM_TEXT			${LANG_ITALIAN} "$(^Name) è distribuito sotto licenza GPL. La licenza è mostrata qui solamente a scopo informativo. $_CLICK" 
 
 ; Components Page
 LangString GAIM_SECTION_TITLE				${LANG_ITALIAN} "Gaim - Client per Messaggi Immediati (richiesto)"
@@ -26,13 +31,11 @@ LangString GTK_WIMP_THEME_DESC			${LANG_ITALIAN} "GTK-Wimp (Windows impersonator
 LangString GTK_BLUECURVE_THEME_DESC			${LANG_ITALIAN} "Il tema Bluecurve."
 LangString GTK_LIGHTHOUSEBLUE_THEME_DESC		${LANG_ITALIAN} "Il tema Lighthouseblue."
 
-; Extra GTK+ Dir Selector Page
-LangString GTK_PAGE_TITLE				${LANG_ITALIAN} "Scegli la posizione per l'installazione"
-LangString GTK_PAGE_SUBTITLE				${LANG_ITALIAN} "Scegli la cartella nella quale installare GTK+"
-LangString GTK_PAGE_INSTALL_MSG1			${LANG_ITALIAN} "Setup installerà GTK+ nella seguente cartella"
-LangString GTK_PAGE_INSTALL_MSG2			${LANG_ITALIAN} "Per installare in una cartella differente, fai clic su Sfoglia e scegli un'altra cartella. Fai clic su Avanti per continuare."
-LangString GTK_PAGE_UPGRADE_MSG1			${LANG_ITALIAN} "Setup aggiornerà la versione di GTK+ trovata nella seguente cartella"
+; GTK+ Directory Page
 LangString GTK_UPGRADE_PROMPT				${LANG_ITALIAN} "È stata trovata una versione precedente di GTK+. Vuoi aggiornarla?$\rNota: Gaim potrebbe non funzionare senza l'aggiornamento."
+
+; Installer Finish Page
+LangString GAIM_FINISH_VISIT_WEB_SITE		${LANG_ITALIAN} "Visita la pagina web di Gaim per Windows" 
 
 ; Gaim Section Prompts and Texts
 LangString GAIM_UNINSTALL_DESC			${LANG_ITALIAN} "Gaim (solo rimozione)"

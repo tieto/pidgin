@@ -5,10 +5,15 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Duarte Serrano Gonçalves Henriques <duarte_henriques@myrealbox.com>, 2003.
+;;  Version 2
 ;;
 
 ; Startup GTK+ check
 LangString GTK_INSTALLER_NEEDED			${LANG_PORTUGUESE} "O ambiente de tempo de execução do GTK+ está ausente ou precisa de ser actualizado.$\rPor favor instale a versão v${GTK_VERSION} ou superior do ambiente de tempo de execução do GTK+."
+
+; License Page
+LangString GAIM_LICENSE_BUTTON			${LANG_PORTUGUESE} "Seguinte >"
+LangString GAIM_LICENSE_BOTTOM_TEXT			${LANG_PORTUGUESE} "$(^Name) está disponível sob alicença GPL. O texto da licença é fornecido meramente a título informativo. $_CLICK" 
 
 ; Components Page
 LangString GAIM_SECTION_TITLE				${LANG_PORTUGUESE} "Cliente de mensagens instantâneas Gaim (obrigatório)"
@@ -26,13 +31,11 @@ LangString GTK_WIMP_THEME_DESC			${LANG_PORTUGUESE} "O tema 'GTK-Wimp' ('Windows
 LangString GTK_BLUECURVE_THEME_DESC			${LANG_PORTUGUESE} "O tema 'Bluecurve'."
 LangString GTK_LIGHTHOUSEBLUE_THEME_DESC		${LANG_PORTUGUESE} "O tema 'Lighthouseblue'."
 
-; Extra GTK+ Dir Selector Page
-LangString GTK_PAGE_TITLE				${LANG_PORTUGUESE} "Escolha o local da instalação"
-LangString GTK_PAGE_SUBTITLE				${LANG_PORTUGUESE} "Escolha a pasta em que o GTK+ será instalado"
-LangString GTK_PAGE_INSTALL_MSG1			${LANG_PORTUGUESE} "O instalador irá instalar o GTK+ na seguinte pasta"
-LangString GTK_PAGE_INSTALL_MSG2			${LANG_PORTUGUESE} "Para instalar numa pasta diferente, clique em Procurar e seleccione outra pasta. Clique em Próximo para continuar."
-LangString GTK_PAGE_UPGRADE_MSG1			${LANG_PORTUGUESE} "O instalador irá actualizar o GTK+ encontrado na seguinte pasta"
+; GTK+ Directory Page
 LangString GTK_UPGRADE_PROMPT				${LANG_PORTUGUESE} "Foi encontrada ma versão antiga do ambiente de tempo de execução do GTK+. Deseja actualizá-lo?$\rNota: O Gaim poderá não funcionar se não o fizer."
+
+; Installer Finish Page
+LangString GAIM_FINISH_VISIT_WEB_SITE		${LANG_PORTUGUESE} "Visite a página web do Gaim para Windows" 
 
 ; Gaim Section Prompts and Texts
 LangString GAIM_UNINSTALL_DESC			${LANG_PORTUGUESE} "Gaim (remover apenas)"
