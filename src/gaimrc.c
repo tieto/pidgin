@@ -914,6 +914,96 @@ static void gaimrc_write_sounds(FILE *f)
 	fprintf(f, "}\n");
 }
 
+static gboolean gaimrc_parse_proxy_uri(const char *proxy)
+{
+	char *c, *d;
+	char buffer[2048];
+
+	char host[128];
+	char user[128];
+	char pass[128];
+	int  port = 0;
+	int  len  = 0;
+
+	if ((c = strchr(proxy, ':')) == NULL)
+	{
+		/* No URI detected. */
+		return FALSE;
+	}
+
+	len = c - proxy;
+
+	if (!strncmp(proxy, "http", len))
+		proxytype = PROXY_HTTP;
+	else
+		return FALSE;
+
+	/* Get past "://" */
+	c += 3;
+
+	for (;;)
+	{
+		*buffer = '\0';
+		d = buffer;
+
+		while (*c != '\0' && *c != '@' && *c != ':' && *c != '/')
+			*d++ = *c++;
+
+		*d = '\0';
+
+		if (*c == ':')
+		{
+			/*
+			 * If there is a '@' in there somewhere, we are in the auth part.
+			 * If not, host.
+			 */
+			if (strchr(c, '@') != NULL)
+				strcmp(user, buffer);
+			else
+				strcmp(host, buffer);
+		}
+		else if (*c == '@')
+		{
+			if (user == NULL)
+				strcmp(user, buffer);
+			else
+				strcmp(pass, buffer);
+		}
+		else if (*c == '/' || *c == '\0')
+		{
+			if (host == NULL)
+				strcmp(host, buffer);
+			else
+				port = atoi(buffer);
+
+			/* Done. */
+			break;
+		}
+
+		c++;
+	}
+
+	/* NOTE: HTTP_PROXY takes precendence. */
+	if (host)
+		strcpy(proxyhost, host);
+	else
+		*proxyhost = '\0';
+
+	if (user)
+		strcpy(proxyuser, user);
+	else
+		*proxyuser = '\0';
+
+	if (pass)
+		strcpy(proxypass, pass);
+	else
+		*proxypass = '\0';
+	
+	proxyport = port;
+
+	return TRUE;
+}
+
 static void gaimrc_read_proxy(FILE *f)
 {
 	char buf[2048];
@@ -944,6 +1034,8 @@ static void gaimrc_read_proxy(FILE *f)
 		}
 	}
 	if (!proxyhost[0]) {
+		gboolean getVars = TRUE;
+		
 		if (g_getenv("HTTP_PROXY"))
 			g_snprintf(proxyhost, sizeof(proxyhost), "%s", g_getenv("HTTP_PROXY"));
 		else if (g_getenv("http_proxy"))
@@ -951,29 +1043,36 @@ static void gaimrc_read_proxy(FILE *f)
 		else if (g_getenv("HTTPPROXY"))
 			g_snprintf(proxyhost, sizeof(proxyhost), "%s", g_getenv("HTTPPROXY"));
 
-		if (g_getenv("HTTP_PROXY_PORT"))
-			proxyport = atoi(g_getenv("HTTP_PROXY_PORT"));
-		else if (g_getenv("http_proxy_port"))
-			proxyport = atoi(g_getenv("http_proxy_port"));
-		else if (g_getenv("HTTPPROXYPORT"))
-			proxyport = atoi(g_getenv("HTTPPROXYPORT"));
+		if (*proxyhost != '\0')
+			getVars = !gaimrc_parse_proxy_uri(proxyhost);
 
-		if (g_getenv("HTTP_PROXY_USER"))
-			g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("HTTP_PROXY_USER"));
-		else if (g_getenv("http_proxy_user"))
-			g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("http_proxy_user"));
-		else if (g_getenv("HTTPPROXYUSER"))
-			g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("HTTPPROXYUSER"));
+		if (getVars)
+		{
+			if (g_getenv("HTTP_PROXY_PORT"))
+				proxyport = atoi(g_getenv("HTTP_PROXY_PORT"));
+			else if (g_getenv("http_proxy_port"))
+				proxyport = atoi(g_getenv("http_proxy_port"));
+			else if (g_getenv("HTTPPROXYPORT"))
+				proxyport = atoi(g_getenv("HTTPPROXYPORT"));
 
-		if (g_getenv("HTTP_PROXY_PASS"))
-			g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("HTTP_PROXY_PASS"));
-		else if (g_getenv("http_proxy_pass"))
-			g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("http_proxy_pass"));
-		else if (g_getenv("HTTPPROXYPASS"))
-			g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("HTTPPROXYPASS"));
+			if (g_getenv("HTTP_PROXY_USER"))
+				g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("HTTP_PROXY_USER"));
+			else if (g_getenv("http_proxy_user"))
+				g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("http_proxy_user"));
+			else if (g_getenv("HTTPPROXYUSER"))
+				g_snprintf(proxyuser, sizeof(proxyuser), "%s", g_getenv("HTTPPROXYUSER"));
 
-		if (proxyhost[0])
-			proxytype = PROXY_HTTP;
+			if (g_getenv("HTTP_PROXY_PASS"))
+				g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("HTTP_PROXY_PASS"));
+			else if (g_getenv("http_proxy_pass"))
+				g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("http_proxy_pass"));
+			else if (g_getenv("HTTPPROXYPASS"))
+				g_snprintf(proxypass, sizeof(proxypass), "%s", g_getenv("HTTPPROXYPASS"));
+
+			
+			if (proxyhost[0])
+				proxytype = PROXY_HTTP;
+		}
 	}
 }
 
