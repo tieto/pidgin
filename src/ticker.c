@@ -25,6 +25,7 @@
 #include "gtkticker.h"
 #include <string.h>
 #include <stdlib.h>
+#include "gaim.h"
 
 GtkWidget *tickerwindow = NULL;
 GtkWidget *ticker;
@@ -74,7 +75,7 @@ BuddyTickerDestroyWindow( GtkWidget *window )
 	userclose = TRUE;
 }
 
-static char *msg = "Welcome to GAIM 0.9.20, brought to you by Rob Flynn (maintainer), Eric Warmenhoven, Mark Spencer, Jeramey Crawford, Jim Duchek, and Syd Logan"; 
+static char *msg = "Welcome to GAIM " VERSION ", brought to you by Rob Flynn (maintainer), Eric Warmenhoven, Mark Spencer, Jeramey Crawford, Jim Duchek, and Syd Logan"; 
 
 void
 BuddyTickerCreateWindow()
