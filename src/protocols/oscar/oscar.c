@@ -4480,7 +4480,7 @@ static GList *oscar_edit_buddy_menu(struct gaim_connection *gc, char *who)
 static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (od->icq) {
-		GSList *list;
+		GSList *list, *g;
 		char buf[MAXMSGLEN];
 		int at;
 
@@ -4510,7 +4510,7 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 			aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, buf);
 			break;
 		case 5:
-			GList *g = gc->groups;
+			g = gc->groups;
 			at  = 0;
 			while (g) {
 			        list = ((struct group *)g->data)->members;
