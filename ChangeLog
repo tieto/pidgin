@@ -54,7 +54,7 @@ version 0.79cvs:
 	  changes, as it should be.
 	* Zepher bug fixes and memory leak plugs (Arun A Tharuvai)
 	* Rewrite of MSN buddylist support, which fixed a known syncronization bug
-	  and some others(Felipe Contreras)
+	  and some others (Felipe Contreras)
 
 version 0.78 (05/30/2004):
 	New Features:
