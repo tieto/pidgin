@@ -2649,7 +2649,7 @@ void update_icon(struct conversation *c)
 void got_new_icon(struct gaim_connection *gc, char *who)
 {
 	struct conversation *c = find_conversation(who);
-	if (c->gc == gc)
+	if (c && (c->gc == gc))
 		update_icon(c);
 }
 
