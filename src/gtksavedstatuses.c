@@ -285,7 +285,6 @@ create_saved_status_list(StatusWindow *dialog)
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);
 
-
 	/* Add columns */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Title"));
@@ -319,6 +318,11 @@ create_saved_status_list(StatusWindow *dialog)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
 									   STATUS_WINDOW_COLUMN_MESSAGE);
+
+	/* Sort the title column by default */
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(dialog->model),
+										 STATUS_WINDOW_COLUMN_TITLE,
+										 GTK_SORT_ASCENDING);
 
 	/* Populate list */
 	populate_saved_status_list(dialog);
