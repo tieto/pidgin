@@ -314,7 +314,17 @@ void oscar_login(struct aim_user *user) {
 
 void oscar_close(struct gaim_connection *gc) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	GSList *c = odata->oscar_chats;
+	struct chat_connection *n;
 	if (gc->protocol != PROTO_OSCAR) return;
+	
+	while (c) {
+		n = (struct chat_connection *)c->data;
+		gdk_input_remove(n->inpa);
+		g_free(n->name);
+		g_free(n);
+		c = c->next;
+	}
 	if (gc->inpa > 0)
 		gdk_input_remove(gc->inpa);
 	if (odata->cnpa > 0)

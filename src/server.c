@@ -438,6 +438,10 @@ void serv_chat_invite(struct gaim_connection *g, int id, char *message, char *na
 
 void serv_chat_leave(struct gaim_connection *g, int id)
 {
+	/* i think this is the only one this should be necessary for since this is the
+	 * only thing that could possibly get called after the connection is closed */
+	if (!g_slist_find(connections, g)) return;
+
 	if (g->prpl && g->prpl->chat_leave)
 		(*g->prpl->chat_leave)(g, id);
 }
