@@ -421,6 +421,11 @@ GtkTreePath *theme_refresh_theme_list()
 						    "<span size='smaller' foreground='dim grey'>%s</span>",
 						    theme->name, theme->author, theme->desc);
 		gtk_list_store_append (smiley_theme_store, &iter);
+
+		/*
+		 * LEAK - Gentoo memprof thinks pixbuf is leaking here... but it
+		 * looks like it should be ok to me.  Anyone know what's up?  --Mark
+		 */
 		pixbuf = gdk_pixbuf_new_from_file(theme->icon, NULL);
 
 		gtk_list_store_set(smiley_theme_store, &iter,
@@ -452,6 +457,7 @@ void theme_install_theme(char *path, char *extn) {
 #endif
 	gchar *destdir;
 	gchar *tail;
+	GtkTreePath *themepath = NULL;
 
 	/* Just to be safe */
 	g_strchomp(path);
@@ -489,7 +495,9 @@ void theme_install_theme(char *path, char *extn) {
 #endif
 	g_free(destdir);
 
-	theme_refresh_theme_list();
+	themepath = theme_refresh_theme_list();
+	if (themepath != NULL)
+		gtk_tree_path_free(themepath);
 }
 
 static void
