@@ -2371,12 +2371,12 @@ static char **oscar_list_icon(int uc) {
 		return (char **)away_icon_xpm;
 	if (uc & UC_AOL)
 		return (char **)aol_icon_xpm;
-	if (uc & UC_NORMAL)
-		return (char **)free_icon_xpm;
 	if (uc & UC_ADMIN)
 		return (char **)admin_icon_xpm;
 	if (uc & UC_UNCONFIRMED)
 		return (char **)dt_icon_xpm;
+	if (uc & UC_NORMAL)
+		return (char **)free_icon_xpm;
 	return NULL;
 }
 
