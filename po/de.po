@@ -3104,7 +3104,7 @@ msgstr "Alarm-Aktion"
 
 #: src/gtkpounce.c:457
 msgid "Open an IM window"
-msgstr "Nachricht-Fenster öffnen"
+msgstr "Gesprächsfenster öffnen"
 
 #: src/gtkpounce.c:458
 msgid "Popup notification"
