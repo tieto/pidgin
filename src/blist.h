@@ -42,6 +42,7 @@ typedef struct _GaimBuddy GaimBuddy;
 
 #include "account.h"
 #include "buddyicon.h"
+#include "status.h"
 
 /**************************************************************************/
 /* Enumerations                                                           */
@@ -56,10 +57,10 @@ typedef enum
 
 } GaimBlistNodeType;
 
-#define GAIM_BLIST_NODE_IS_CHAT(n) ((n)->type == GAIM_BLIST_CHAT_NODE)
-#define GAIM_BLIST_NODE_IS_BUDDY(n) ((n)->type == GAIM_BLIST_BUDDY_NODE)
+#define GAIM_BLIST_NODE_IS_CHAT(n)    ((n)->type == GAIM_BLIST_CHAT_NODE)
+#define GAIM_BLIST_NODE_IS_BUDDY(n)   ((n)->type == GAIM_BLIST_BUDDY_NODE)
 #define GAIM_BLIST_NODE_IS_CONTACT(n) ((n)->type == GAIM_BLIST_CONTACT_NODE)
-#define GAIM_BLIST_NODE_IS_GROUP(n) ((n)->type == GAIM_BLIST_GROUP_NODE)
+#define GAIM_BLIST_NODE_IS_GROUP(n)   ((n)->type == GAIM_BLIST_GROUP_NODE)
 
 typedef enum
 {
@@ -70,9 +71,9 @@ typedef enum
 
 } GaimBuddyPresenceState;
 
-#define GAIM_BUDDY_IS_ONLINE(b) ((b)->account->gc && \
-		((b)->present == GAIM_BUDDY_ONLINE || \
-		 (b)->present == GAIM_BUDDY_SIGNING_ON))
+#define GAIM_BUDDY_IS_ONLINE(b) \
+	((b) != NULL && gaim_account_is_connected((b)->account) && \
+	 gaim_presence_is_online(gaim_buddy_get_presence(b)))
 
 typedef enum
 {
@@ -270,27 +271,10 @@ void gaim_blist_update_buddy_presence(GaimBuddy *buddy, gboolean online);
 /**
  * Updates a buddy's signon time.
  *
- * @param buddy  The buddy whose idle time has changed.
+ * @param buddy  The buddy whose sign-on time has changed.
  * @param signon The buddy's signon time since the dawn of the UNIX epoch.
  */
 void gaim_blist_update_buddy_signon(GaimBuddy *buddy, time_t signon);
-
-/**
- * Updates a buddy's idle time.
- *
- * @param buddy  The buddy whose idle time has changed
- * @param idle   The buddy's idle time in minutes.
- */
-void gaim_blist_update_buddy_idle(GaimBuddy *buddy, int idle);
-
-
-/**
- * Updates a buddy's warning level.
- *
- * @param buddy   The buddy whose warning level has changed.
- * @param warning The warning level as an int from 0 to 100.
- */
-void gaim_blist_update_buddy_evil(GaimBuddy *buddy, int warning);
 
 /**
  * Updates a buddy's icon.
@@ -413,6 +397,15 @@ GaimBuddyIcon *gaim_buddy_get_icon(const GaimBuddy *buddy);
 GaimContact *gaim_buddy_get_contact(GaimBuddy *buddy);
 
 /**
+ * Returns a buddy's presence.
+ *
+ * @param buddy The buddy.
+ *
+ * @return The buddy's presence.
+ */
+GaimPresence *gaim_buddy_get_presence(const GaimBuddy *buddy);
+
+/**
  * Adds a new buddy to the buddy list.
  *
  * The buddy will be inserted right after node or prepended to the
@@ -511,6 +504,13 @@ const char *gaim_contact_get_alias(GaimContact *contact);
  */
 gboolean gaim_contact_on_account(GaimContact *contact, GaimAccount *account);
 
+
+/**
+ * Re-calculates the priority buddy for a contact.
+ *
+ * @param contact The contact.
+ */
+void gaim_contact_compute_priority_buddy(GaimContact *contact);
 
 /**
  * Removes a buddy from the buddy list and frees the memory allocated to it.

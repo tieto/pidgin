@@ -243,7 +243,9 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 
 	gaim_setup(gc);
 
+#if 0 /* XXX CORE/UI */
 	do_away_menu();
+#endif
 	gaim_gtk_blist_update_protocol_actions();
 
 	if (meter)
@@ -254,7 +256,9 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc)
 {
 	struct signon_meter *meter = find_signon_meter(gc);
 
+#if 0 /* XXX CORE/UI */
 	do_away_menu();
+#endif
 	gaim_gtk_blist_update_protocol_actions();
 
 	if (meter)
@@ -682,11 +686,12 @@ gaim_gtk_connections_get_ui_ops(void)
 }
 
 /*
- * This function needs to be moved out of here once away messages are 
+ * This function needs to be moved out of here once away messages are
  * core/UI split.
  */
 void away_on_login(const char *mesg)
 {
+#if 0 /* XXX CORE/UI */
 	GSList *awy = away_messages;
 	struct away_message *a, *message = NULL;
 	GaimGtkBuddyList *gtkblist;
@@ -713,4 +718,5 @@ void away_on_login(const char *mesg)
 		message = away_messages->data;
 	}
 	do_away_message(NULL, message);
+#endif
 }

@@ -1,9 +1,9 @@
 If you plan to use gaim CVS, PLEASE read this message in its entirety!
 
-Gaim is a fast-moving project with a somewhat regular release schedule.  
-Due to the rate of gaim development, CVS undergoes frequent bursts of 
-massive changes, often leaving behind brokenness and partial 
-functionality while the responsible developers rewrite some portion of 
+Gaim is a fast-moving project with a somewhat regular release schedule.
+Due to the rate of gaim development, CVS undergoes frequent bursts of
+massive changes, often leaving behind brokenness and partial
+functionality while the responsible developers rewrite some portion of
 code or seek to add new features.
 
 What this all boils down to is that CVS _WILL_ sometimes be broken.

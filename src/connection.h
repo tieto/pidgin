@@ -91,12 +91,7 @@ struct _GaimConnection
 	time_t last_sent_time;       /**< The time something was last sent.  */
 	int is_idle;                 /**< Idle state of the connection.      */
 
-	char *away;                  /**< The current away message, or NULL  */
-	char *away_state;            /**< The last away type.                */
 	gboolean is_auto_away;       /**< Whether or not it's auto-away.     */
-
-	int evil;                    /**< Warning level for AIM (why is
-	                                  this here?)                        */
 
 	gboolean wants_to_die;	     /**< Wants to Die state.  This is set
 	                                  when the user chooses to sign off,

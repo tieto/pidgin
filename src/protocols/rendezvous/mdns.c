@@ -1383,6 +1383,7 @@ mdns_read_rrs(int numrecords, const char *data, unsigned int datalen, int *offse
 /**
  * If invalid data is encountered at any point when parsing data
  * then the entire packet is discarded and NULL is returned.
+ *
  */
 DNSPacket *
 mdns_read(int fd)

@@ -79,12 +79,6 @@ gaim_connection_destroy(GaimConnection *gc)
 	if (gc->display_name != NULL)
 		g_free(gc->display_name);
 
-	if (gc->away != NULL)
-		g_free(gc->away);
-
-	if (gc->away_state != NULL)
-		g_free(gc->away_state);
-
 	if (gc->disconnect_timeout)
 		gaim_timeout_remove(gc->disconnect_timeout);
 

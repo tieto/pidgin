@@ -21,6 +21,7 @@
  *
  */
 #include "internal.h"
+#include "blist.h"
 #include "conversation.h"
 #include "debug.h"
 #include "log.h"
@@ -31,6 +32,7 @@
 #include "signals.h"
 #include "server.h"
 #include "sound.h"
+#include "status.h"
 #include "util.h"
 
 /* XXX UI Stuff */
@@ -791,6 +793,7 @@ void serv_set_buddyicon(GaimConnection *gc, const char *filename)
 
 }
 
+#if 0
 int find_queue_row_by_name(char *name)
 {
 	gchar *temp;
@@ -829,6 +832,7 @@ int find_queue_total_by_name(char *name)
 
 	return i;
 }
+#endif
 
 /*
  * woo. i'm actually going to comment this function. isn't that fun. make
@@ -837,11 +841,17 @@ int find_queue_total_by_name(char *name)
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				 GaimConvImFlags imflags, time_t mtime)
 {
+	GaimAccount *account;
 	GaimConversation *cnv;
+	GaimPresence *presence;
+	GaimStatus *status;
 	GaimMessageFlags msgflags;
 	char *message, *name;
 	char *angel, *buffy;
 	int plugin_return;
+
+	account  = gaim_connection_get_account(gc);
+	presence = gaim_account_get_presence(account);
 
 	/*
 	 * We should update the conversation window buttons and menu,
@@ -916,6 +926,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * this to be queued properly, we have to make sure that the
 		 * imaway dialog actually exists, first.
 		 */
+#if 0
 		if (!cnv && awayqueue &&
 			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
 			/*
@@ -961,7 +972,10 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 								2, _("(1 message)"),
 								-1);
 			}
-		} else {
+		}
+		else
+#endif
+		{
 			/*
 			 * Make sure the conversation
 			 * exists and is updated (partly handled above already), play
@@ -969,7 +983,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			 * while away), and then write it to the convo window.
 			 */
 			if (cnv == NULL)
-				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
+				cnv = gaim_conversation_new(GAIM_CONV_IM, account, name);
 
 			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
 			gaim_conv_window_flash(gaim_conversation_get_window(cnv));
@@ -1016,13 +1030,14 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		lar->sent = t;
 
 		/* apply default fonts and colors */
-		tmpmsg = stylize(gc->away, MSG_LEN);
+		tmpmsg = stylize(away_msg, MSG_LEN);
 
 		/* Move this to oscar.c! */
 		buffy = gaim_str_sub_away_formatters(tmpmsg, alias);
 		serv_send_im(gc, name, buffy, GAIM_CONV_IM_AUTO_RESP);
 		g_free(buffy);
 
+#if 0
 		if (!cnv && awayqueue &&
 			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
 
@@ -1035,12 +1050,20 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->tm = mtime;
 			qm->flags = GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP;
 			message_queue = g_slist_append(message_queue, qm);
-		} else if (cnv != NULL)
-			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, gaim_str_sub_away_formatters(tmpmsg, alias),
-						  GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP, mtime);
+		}
+		else if (cnv != NULL)
+#endif
+		{
+			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL,
+							   gaim_str_sub_away_formatters(tmpmsg, alias),
+							   GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP,
+							   mtime);
+		}
 
 		g_free(tmpmsg);
-	} else {
+	}
+	else
+	{
 		/*
 		 * We're not away. This is easy. If the convo window doesn't
 		 * exist, create and update it (if it does exist it was updated
@@ -1052,6 +1075,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * Robot101 will fix this after his exams. honest.
 		 * I guess he didn't specify WHICH exams, exactly...
 		 */
+/* XXX CORE/UI */
+#if 0
 		if (docklet_count &&
 		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages") &&
 		    !gaim_find_conversation_with_account(name, gc->account)) {
@@ -1069,12 +1094,15 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
 		}
 		else {
+#endif
 			if (cnv == NULL)
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
 			gaim_conv_window_flash(gaim_conversation_get_window(cnv));
+#if 0
 		}
+#endif
 	}
 
 	g_free(name);
@@ -1174,7 +1202,7 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 
 	alias = gaim_escape_html(gaim_buddy_get_alias(b));
 
-	old_idle = b->idle;
+	presence = gaim_buddy_get_presence(b);
 
 	if (loggedin) {
 		if (!GAIM_BUDDY_IS_ONLINE(b)) {

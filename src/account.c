@@ -30,8 +30,9 @@
 #include "prefs.h"
 #include "prpl.h"
 #include "request.h"
-#include "signals.h"
 #include "server.h"
+#include "signals.h"
+#include "status.h"
 #include "util.h"
 
 typedef enum
@@ -126,9 +127,9 @@ gaim_account_new(const char *username, const char *protocol_id)
 {
 	GaimAccount *account = NULL;
 
-	g_return_val_if_fail(username    != NULL, NULL);
+	g_return_val_if_fail(username != NULL, NULL);
 
-	if(protocol_id)
+	if (protocol_id != NULL)
 		account = gaim_accounts_find(username, protocol_id);
 
 	if (account != NULL)
@@ -138,13 +139,16 @@ gaim_account_new(const char *username, const char *protocol_id)
 
 	gaim_account_set_username(account, username);
 
-	gaim_account_set_protocol_id(account, protocol_id ? protocol_id : GAIM_PROTO_DEFAULT);
+	gaim_account_set_protocol_id(account,
+		(protocol_id ? protocol_id : GAIM_PROTO_DEFAULT));
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 											  g_free, delete_setting);
 	account->ui_settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 				g_free, (GDestroyNotify)g_hash_table_destroy);
 	account->system_log = NULL;
+
+	account->presence = gaim_presence_new_for_account(account);
 
 	return account;
 }
@@ -156,14 +160,12 @@ gaim_account_destroy(GaimAccount *account)
 
 	g_return_if_fail(account != NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "account",
-			   "Destroying account %p\n", account);
+	gaim_debug_info("account", "Destroying account %p\n", account);
 
 	if (account->gc != NULL)
 		gaim_connection_destroy(account->gc);
 
-	gaim_debug(GAIM_DEBUG_INFO, "account",
-			   "Continuing to destroy account %p\n", account);
+	gaim_debug_info("account", "Continuing to destroy account %p\n", account);
 
 	for (l = gaim_get_conversations(); l != NULL; l = l->next)
 	{
@@ -181,6 +183,10 @@ gaim_account_destroy(GaimAccount *account)
 
 	g_hash_table_destroy(account->settings);
 	g_hash_table_destroy(account->ui_settings);
+
+	gaim_account_set_status_types(account, NULL);
+
+	gaim_presence_destroy(account->presence);
 
 	if(account->system_log)
 		gaim_log_free(account->system_log);
@@ -200,8 +206,8 @@ gaim_account_register(GaimAccount *account)
 
 	gc = gaim_connection_new(account);
 
-	gaim_debug(GAIM_DEBUG_INFO, "account",
-			"Registering account %p. gc = %p\n", account, gc);
+	gaim_debug_info("account", "Registering account %p. gc = %p\n",
+					account, gc);
 
 	gaim_connection_register(gc);
 
@@ -220,8 +226,8 @@ gaim_account_connect(GaimAccount *account)
 
 	gc = gaim_connection_new(account);
 
-	gaim_debug(GAIM_DEBUG_INFO, "account",
-			   "Connecting to account %p. gc = %p\n", account, gc);
+	gaim_debug_info("account", "Connecting to account %p. gc = %p\n",
+					account, gc);
 
 	gaim_connection_connect(gc);
 
@@ -236,8 +242,7 @@ gaim_account_disconnect(GaimAccount *account)
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(gaim_account_is_connected(account));
 
-	gaim_debug(GAIM_DEBUG_INFO, "account",
-			   "Disconnecting account %p\n", account);
+	gaim_debug_info("account", "Disconnecting account %p\n", account);
 
 	gc = gaim_account_get_connection(account);
 
@@ -512,6 +517,57 @@ gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info)
 }
 
 void
+gaim_account_set_status_types(GaimAccount *account, GList *status_types)
+{
+	g_return_if_fail(account != NULL);
+
+	if (account->status_types != NULL)
+	{
+		GList *l;
+
+		for (l = account->status_types; l != NULL; l = l->next)
+			gaim_status_type_destroy((GaimStatusType *)l->data);
+
+		g_list_free(account->status_types);
+	}
+
+	account->status_types = status_types;
+}
+
+void
+gaim_account_set_status(GaimAccount *account, const char *status_id,
+						gboolean active, ...)
+{
+	GaimStatus *status;
+
+	g_return_if_fail(account   != NULL);
+	g_return_if_fail(status_id != NULL);
+
+	status = gaim_account_get_status(account, status_id);
+
+	if (status == NULL)
+	{
+		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
+				   "Invalid status ID %s for account %s (%s)\n",
+				   status_id, gaim_account_get_username(account),
+				   gaim_account_get_protocol_id(account));
+		return;
+	}
+
+	if (!active && gaim_status_is_independent(status))
+	{
+		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
+				   "Cannot deactivate an exclusive status.\n");
+		return;
+	}
+
+	if (gaim_status_is_active(status) == active)
+		return;
+
+	gaim_status_set_active(status, active);
+}
+
+void
 gaim_account_clear_settings(GaimAccount *account)
 {
 	g_return_if_fail(account != NULL);
@@ -778,6 +834,60 @@ gaim_account_get_proxy_info(const GaimAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	return account->proxy_info;
+}
+
+GaimStatus *
+gaim_account_get_status(const GaimAccount *account, const char *status_id)
+{
+	g_return_val_if_fail(account   != NULL, NULL);
+	g_return_val_if_fail(status_id != NULL, NULL);
+
+	return gaim_presence_get_status(account->presence, status_id);
+}
+
+GaimStatusType *
+gaim_account_get_status_type(const GaimAccount *account, const char *id)
+{
+	const GList *l;
+
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(id      != NULL, NULL);
+
+	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next)
+	{
+		GaimStatusType *status_type = (GaimStatusType *)l->data;
+
+		if (!strcmp(gaim_status_type_get_id(status_type), id))
+			return status_type;
+	}
+
+	return NULL;
+}
+
+GaimPresence *
+gaim_account_get_presence(const GaimAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	return account->presence;
+}
+
+gboolean
+gaim_account_is_status_active(const GaimAccount *account,
+							  const char *status_id)
+{
+	g_return_val_if_fail(account   != NULL, FALSE);
+	g_return_val_if_fail(status_id != NULL, FALSE);
+
+	return gaim_presence_is_status_active(account->presence, status_id);
+}
+
+const GList *
+gaim_account_get_status_types(const GaimAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	return account->status_types;
 }
 
 int

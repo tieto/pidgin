@@ -33,7 +33,7 @@
 
 void jabber_presence_send(GaimConnection *gc, const char *state,
 		const char *msg);
-xmlnode *jabber_presence_create(const char *state, const char *msg);
+xmlnode *jabber_presence_create(GaimStatus *status);
 void jabber_presence_parse(JabberStream *js, xmlnode *packet);
 void jabber_presence_subscription_set(JabberStream *js, const char *who,
 		const char *type);

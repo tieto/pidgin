@@ -818,10 +818,17 @@ void jabber_buddy_get_info_chat(GaimConnection *gc, int id,
 static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 		gboolean invisible)
 {
+	GaimPresence *gpresence;
+	GaimAccount *account;
+	GaimStatus *status;
 	JabberBuddy *jb = jabber_buddy_find(js, who, TRUE);
 	xmlnode *presence;
 
-	presence = jabber_presence_create(js->gc->away_state, js->gc->away);
+	account   = gaim_connection_get_account(js->gc);
+	gpresence = gaim_account_get_presence(account);
+	status    = gaim_presence_get_active_status(gpresence);
+
+	presence = jabber_presence_create(status);
 	xmlnode_set_attrib(presence, "to", who);
 	if(invisible) {
 		xmlnode_set_attrib(presence, "type", "invisible");

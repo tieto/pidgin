@@ -108,14 +108,19 @@ gint check_idle(gpointer data)
 
 			if(!default_away && away_messages)
 				default_away = away_messages->data;
+*/
 
 			gaim_debug(GAIM_DEBUG_INFO, "idle",
 					   "Making %s away automatically\n",
 					   gaim_account_get_username(account));
+
+/* XXX CORE/UI
 			if (g_list_length(gaim_connections_get_all()) == 1)
 				do_away_message(NULL, default_away);
 			else if (default_away)
 				serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
+*/
+
 			gc->is_auto_away = 1;
 		} else
 			gc->is_auto_away = 2;
@@ -126,6 +131,8 @@ gint check_idle(gpointer data)
 			return TRUE;
 		}
 		gc->is_auto_away = 0;
+
+/* XXX CORE/UI
 		if (awaymessage == NULL) {
 			gaim_debug(GAIM_DEBUG_INFO, "idle",
 					   "Removing auto-away message for %s\n", gaim_account_get_username(account));
@@ -140,6 +147,7 @@ gint check_idle(gpointer data)
 				serv_set_away(gc, GAIM_AWAY_CUSTOM, awaymessage->message);
 			}
 		}
+*/
 	}
 
 

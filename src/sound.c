@@ -59,8 +59,11 @@ void gaim_sound_shutdown()
 
 void gaim_sound_play_file(const char *filename)
 {
+	/* FIXME */
+#if 0
 	if(awaymessage && !gaim_prefs_get_bool("/core/sound/while_away"))
 		return;
+#endif
 
 	if(sound_ui_ops && sound_ui_ops->play_file)
 		sound_ui_ops->play_file(filename);
@@ -68,8 +71,11 @@ void gaim_sound_play_file(const char *filename)
 
 void gaim_sound_play_event(GaimSoundEventID event)
 {
+	/* FIXME */
+#if 0
 	if(awaymessage && !gaim_prefs_get_bool("/core/sound/while_away"))
 		return;
+#endif
 
 	if(sound_ui_ops && sound_ui_ops->play_event)
 		sound_ui_ops->play_event(event);

@@ -145,9 +145,30 @@ static void irc_blist_emblems(GaimBuddy *b, char **se, char **sw, char **nw, cha
 		*se = "offline";
 }
 
-static GList *irc_away_states(GaimConnection *gc)
+static GList *irc_status_types(GaimAccount *account)
 {
-	return g_list_append(NULL, (gpointer)GAIM_AWAY_CUSTOM);
+	GaimStatusType *type;
+	GList *types = NULL;
+
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, "offline",
+								_("Offline"), FALSE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_ONLINE, "online",
+								_("Online"), FALSE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, "available",
+								_("Available"), TRUE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(
+		GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+
+	types = g_list_append(types, type);
+
+	return types;
 }
 
 static GList *irc_actions(GaimPlugin *plugin, gpointer context)
@@ -344,20 +365,18 @@ static void irc_get_info(GaimConnection *gc, const char *who)
 	irc_cmd_whois(irc, "whois", NULL, args);
 }
 
-static void irc_set_away(GaimConnection *gc, const char *state, const char *msg)
+static void irc_set_status(GaimAccount *account, GaimStatus *status)
 {
+	GaimConnection *gc = gaim_account_get_connection(account);
 	struct irc_conn *irc = gc->proto_data;
 	const char *args[1];
+	const char *status_id = gaim_status_get_id(status);
 
-	if (gc->away) {
-		g_free(gc->away);
-		gc->away = NULL;
-	}
+	if (!strcmp(status_id, "away"))
+		args[0] = gaim_status_get_attr_string(status, "message");
+	else if (!strcmp(status_id, "available"))
+		args[0] = NULL;
 
-	if (msg)
-		gc->away = g_strdup(msg);
-
-	args[0] = msg;
 	irc_cmd_away(irc, "away", NULL, args);
 }
 

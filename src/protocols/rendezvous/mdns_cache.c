@@ -51,8 +51,6 @@ mdns_cache_find(gchar *name, unsigned short type)
 void
 mdns_cache_add(const ResourceRecord *rr)
 {
-	ResourceRecord *new;
-
 	g_return_if_fail(rr != NULL);
 	g_return_if_fail((rr->type != 0) && (rr->type != RENDEZVOUS_RRTYPE_ALL));
 
@@ -78,15 +76,14 @@ mdns_cache_remove(gchar *name, unsigned short type)
 	mdns_free_rr(rr);
 }
 
-void
-mdns_cache_remove_all()
+void mdns_cache_remove_all()
 {
-	mdns_free_rrs(rrs);
+	while (resourcerecords != NULL)
+		mdns_cache_remove(resourcerecords->data);
 	rrs = NULL;
 }
 
-void
-mdns_cache_respond(int fd, const Question *q)
+void mdns_cache_respond(int fd, Question *q)
 {
 	GSList *slist;
 	ResourceRecord *cur;

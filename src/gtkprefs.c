@@ -94,7 +94,9 @@ static GtkTreeIter *prefs_notebook_add_page(const char*, GdkPixbuf*,
 static void delete_prefs(GtkWidget *, void *);
 static void update_plugin_list(void *data);
 
+/* XXX CORE/UI
 static void set_default_away(GtkWidget *, gpointer);
+*/
 
 static void
 update_spin_value(GtkWidget *w, GtkWidget *spin)
@@ -2241,14 +2243,24 @@ static void away_message_sel_cb(GtkTreeSelection *sel, GtkTreeModel *model)
 	GValue val = { 0, };
 	gchar buffer[BUF_LONG];
 	char *tmp;
+/* XXX CORE/UI
 	struct away_message *am;
+*/
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
 	gtk_tree_model_get_value (model, &iter, 1, &val);
+
+/* XXX CORE/UI
 	am = g_value_get_pointer(&val);
+*/
+
 	gtk_imhtml_clear(GTK_IMHTML(away_text));
+
+/* XXX CORE/UI
 	strncpy(buffer, am->message, BUF_LONG);
+*/
+
 	tmp = stylize(buffer, BUF_LONG);
 	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, GTK_IMHTML_NO_TITLE |
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
@@ -2296,9 +2308,16 @@ void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
 	gtk_tree_model_get_value (GTK_TREE_MODEL(prefs_away_store), &iter, 1, &val);
+
+/* XXX CORE/UI
 	am = g_value_get_pointer (&val);
+*/
+
 	gtk_imhtml_clear(GTK_IMHTML(away_text));
+
+/* XXX CORE/UI
 	rem_away_mess(NULL, am);
+*/
 }
 
 GtkWidget *away_message_page() {
@@ -2306,13 +2325,15 @@ GtkWidget *away_message_page() {
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *sw;
-	GtkTreeIter iter;
 	GtkWidget *event_view;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
+/* XXX CORE/UI
+	GtkTreeIter iter;
 	GSList *awy = away_messages;
 	struct away_message *a;
+*/
 	GtkSizeGroup *sg;
 
 	ret = gtk_vbox_new(FALSE, 18);
@@ -2326,6 +2347,7 @@ GtkWidget *away_message_page() {
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
 	prefs_away_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+/* XXX CORE/UI
 	while (awy) {
 		a = (struct away_message *)awy->data;
 		gtk_list_store_append (prefs_away_store, &iter);
@@ -2334,6 +2356,7 @@ GtkWidget *away_message_page() {
 				   1, a, -1);
 		awy = awy->next;
 	}
+*/
 	event_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(prefs_away_store));
 
 	rend = gtk_cell_renderer_text_new();
@@ -2634,16 +2657,20 @@ gaim_gtk_prefs_checkbox(const char *text, const char *key, GtkWidget *page)
 
 void default_away_menu_init(GtkWidget *omenu)
 {
-	GtkWidget *menu, *opt;
+	GtkWidget *menu;
+/* XXX CORE/UI
+	GtkWidget *opt;
 	int index = 0, default_index = 0;
 	GSList *awy = away_messages;
 	struct away_message *a;
+*/
 	const char *default_name;
 
 	menu = gtk_menu_new();
 
 	default_name = gaim_prefs_get_string("/core/away/default_message");
 
+/* XXX CORE/UI
 	while (awy) {
 		a = (struct away_message *)awy->data;
 		opt = gtk_menu_item_new_with_label(a->name);
@@ -2658,12 +2685,18 @@ void default_away_menu_init(GtkWidget *omenu)
 		awy = awy->next;
 		index++;
 	}
+*/
 
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(omenu));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
+
+/* XXX CORE/UI
 	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), default_index);
+*/
 }
 
+/* XXX CORE/UI */
+#if 0
 void set_default_away(GtkWidget *w, gpointer data)
 {
 	struct away_message *default_away = NULL;
@@ -2682,6 +2715,7 @@ void set_default_away(GtkWidget *w, gpointer data)
 	else
 		gaim_prefs_set_string("/core/away/default_message", "");
 }
+#endif
 
 static void
 smiley_theme_pref_cb(const char *name, GaimPrefType type, gpointer value,

@@ -2511,7 +2511,8 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 
 static GaimAccountUiOps ui_ops =
 {
-	gaim_gtk_accounts_notify_added
+	gaim_gtk_accounts_notify_added,
+	NULL
 };
 
 GaimAccountUiOps *

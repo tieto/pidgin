@@ -861,7 +861,7 @@ int main(int argc, char *argv[])
 	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
 
 	gaim_pounces_load();
-	gaim_status_load();
+	gaim_statuses_load();
 
 	ui_main();
 

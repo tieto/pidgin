@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10835 2004-09-03 21:21:25Z faceprint $
+ * $Id: gg.c 10838 2004-09-03 21:35:52Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -435,6 +435,7 @@ static void agg_save_buddy_list(GaimConnection *gc, char *existlist)
 static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	struct agg_data *gd = gc->proto_data;
 	struct gg_event *e;
 
@@ -1557,19 +1558,19 @@ static const char *agg_list_icon(GaimAccount *a, GaimBuddy *b)
 
 static void agg_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
 {
-	int status;
-	if (b->present == GAIM_BUDDY_OFFLINE)
+	GaimPresence *presence = gaim_buddy_get_presence(b);
+
+	if (!GAIM_BUDDY_IS_ONLINE(b))
 		*se = "offline";
-	else if (b->uc == UC_UNAVAILABLE)
+	else if (gaim_presence_is_status_active(presence, "away") ||
+			 gaim_presence_is_status_active(presence, "away-friends"))
+	{
 		*se = "away";
-	else {
-		status = b->uc >> 5;
-		/* Drop all masks */
-		status &= ~(GG_STATUS_FRIENDS_MASK);
-		if (status == GG_STATUS_BUSY)
-			*se = "away";
-		else if (status == GG_STATUS_INVISIBLE)
-			*se = "invisiible";
+	}
+	else if (gaim_presence_is_status_active(presence, "invisible") ||
+			 gaim_presence_is_status_active(presence, "invisible-friends"))
+	{
+		*se = "invisible";
 	}
 }
 

@@ -4985,6 +4985,16 @@ static size_t my_strftime(char *s, size_t max, const char  *fmt,
 }
 #endif
 
+static void oscar_string_append(GString *str, char *name, char *value)
+{
+	gchar *utf8;
+
+	if (value && value[0] && (utf8 = gaim_utf8_try_convert(value))) {
+		g_string_append_printf(str, "\n<br><b>%s:</b> %s", name, utf8);
+		g_free(utf8);
+	}
+}
+
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;

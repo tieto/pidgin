@@ -1118,6 +1118,7 @@ void gaim_blist_merge_contact(GaimContact *source, GaimBlistNode *node)
 
 void gaim_blist_add_group(GaimGroup *group, GaimBlistNode *node)
 {
+#if 0
 	GaimBlistUiOps *ops;
 	GaimBlistNode *gnode = (GaimBlistNode*)group;
 
@@ -1272,6 +1273,8 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	if (buddy->icon != NULL)
 		gaim_buddy_icon_unref(buddy->icon);
 	g_hash_table_destroy(buddy->node.settings);
+	gaim_presence_remove_buddy(buddy->presence, buddy);
+	gaim_presence_destroy(buddy->presence);
 	g_free(buddy->name);
 	g_free(buddy->alias);
 	g_free(buddy);
@@ -1728,8 +1731,7 @@ void gaim_blist_remove_account(GaimAccount *account)
 						((GaimBuddy*)bnode)->present = GAIM_BUDDY_OFFLINE;
 
 						((GaimBuddy*)bnode)->uc = 0;
-						((GaimBuddy*)bnode)->idle = 0;
-						((GaimBuddy*)bnode)->evil = 0;
+						/* XXX ((GaimBuddy*)bnode)->idle = 0; */
 
 
 						if (ops && ops->remove)

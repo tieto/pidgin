@@ -44,6 +44,7 @@ struct _GaimAccountUiOps
 	void (*notify_added)(GaimAccount *account, const char *remote_user,
 						 const char *id, const char *alias,
 						 const char *message);
+	void (*status_changed)(GaimAccount *account, GaimStatus *status);
 };
 
 struct _GaimAccount
@@ -71,6 +72,10 @@ struct _GaimAccount
 	GSList *permit;             /**< Permit list.                         */
 	GSList *deny;               /**< Deny list.                           */
 	int perm_deny;              /**< The permit/deny setting.             */
+
+	GList *status_types;        /**< Status types.                        */
+
+	GaimPresence *presence;     /**< Presence.                            */
 	GaimLog *system_log;        /**< The system log                       */
 
 	void *ui_data;             /**< The UI can put data here.			  */
@@ -250,6 +255,37 @@ void gaim_account_set_auto_login(GaimAccount *account, const char *ui,
  * @param info    The proxy information.
  */
 void gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info);
+
+/**
+ * Sets the account's status types.
+ *
+ * @param account      The account.
+ * @param status_types The list of status types.
+ */
+void gaim_account_set_status_types(GaimAccount *account, GList *status_types);
+
+/**
+ * Sets the account's presence.
+ *
+ * @param account  The account.
+ * @param presence The presence.
+ */
+void gaim_account_set_presence(GaimAccount *account, GaimPresence *presence);
+
+/**
+ * Activates or deactivates a status.
+ *
+ * Only independent statuses can be deactivated with this. To deactivate
+ * an exclusive status, activate a separate status.
+ *
+ * @param account   The account.
+ * @param status_id The ID of the status.
+ * @param active    The active state.
+ * @param ...       Optional NULL-terminated attributes passed for the
+ *                  new status, in an id, value pair.
+ */
+void gaim_account_set_status(GaimAccount *account, const char *status_id,
+							 gboolean active, ...);
 
 /**
  * Clears all protocol-specific settings on an account.
@@ -439,6 +475,60 @@ gboolean gaim_account_get_auto_login(const GaimAccount *account,
  * @return The proxy information.
  */
 GaimProxyInfo *gaim_account_get_proxy_info(const GaimAccount *account);
+
+/**
+ * Returns the account status with the specified ID.
+ *
+ * Note that this works differently than gaim_buddy_get_status() in that
+ * it will only return NULL if the status was not registered.
+ *
+ * @param account   The account.
+ * @param status_id The status ID.
+ *
+ * @return The status, or NULL if it was never registered.
+ */
+GaimStatus *gaim_account_get_status(const GaimAccount *account,
+									const char *status_id);
+
+/**
+ * Returns the account status type with the specified ID.
+ *
+ * @param account The account.
+ * @param id      The ID of the status type.
+ *
+ * @return The status type if found, or NULL.
+ */
+GaimStatusType *gaim_account_get_status_type(const GaimAccount *account,
+											 const char *id);
+
+/**
+ * Returns the account's presence.
+ *
+ * @param account The account.
+ *
+ * @return The account's presence.
+ */
+GaimPresence *gaim_account_get_presence(const GaimAccount *account);
+
+/**
+ * Returns whether or not an account status is active.
+ *
+ * @param account   The account.
+ * @param status_id The status ID.
+ *
+ * @return TRUE if active, or FALSE if not.
+ */
+gboolean gaim_account_is_status_active(const GaimAccount *account,
+									   const char *status_id);
+
+/**
+ * Returns the account's status types.
+ *
+ * @param account The account.
+ *
+ * @return The account's status types.
+ */
+const GList *gaim_account_get_status_types(const GaimAccount *account);
 
 /**
  * Returns a protocol-specific integer setting for an account.

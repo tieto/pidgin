@@ -33,6 +33,7 @@
 #include "util.h"
 #include "request.h"
 
+#if 0
 /* XXX CORE/UI: Until we can get rid of the message queue stuff... */
 #include "away.h"
 #include "gaim.h"
@@ -915,3 +916,4 @@ create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_widget_show_all(ca->window);
 	gtk_container_set_focus_chain(GTK_CONTAINER(vbox), focus_chain);
 }
+#endif /* 0 */

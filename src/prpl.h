@@ -94,6 +94,7 @@ typedef struct {
 #include "blist.h"
 #include "proxy.h"
 #include "plugin.h"
+#include "status.h"
 
 struct proto_chat_entry {
 	char *label;
@@ -175,9 +176,6 @@ typedef enum
 	OPT_PROTO_USE_POINTSIZE = 0x00000200
 
 } GaimProtocolOptions;
-
-/** Custom away message. */
-#define GAIM_AWAY_CUSTOM _("Custom")
 
 /** Some structs defined in roomlist.h */
 struct _GaimRoomlist;
@@ -317,12 +315,139 @@ struct _GaimPluginProtocolInfo
 extern "C" {
 #endif
 
+/**************************************************************************/
+/** @name Protocol Plugin API                                             */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Notifies Gaim that an account's idle state and time have changed.
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account   The account.
+ * @param idle      The user's idle state.
+ * @param idle_time The user's idle time.
+ */
+void gaim_prpl_got_account_idle(GaimAccount *account, gboolean idle,
+								time_t idle_time);
+
+/**
+ * Notifies Gaim of an account's log-in time.
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account    The account the user is on.
+ * @param login_time The user's log-in time.
+ */
+void gaim_prpl_got_account_login_time(GaimAccount *account, const char *name,
+									  time_t login_time);
+
+/**
+ * Notifies Gaim that an account's status has changed.
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account   The account the user is on.
+ * @param status_id The status ID.
+ * @param attr_id   The first attribute ID, or NULL for no attribute updates.
+ * @param ...       A NULL-terminated list of attribute IDs and values,
+ *                  beginning with the value for @a attr_id.
+ */
+void gaim_prpl_got_account_status(GaimAccount *account,
+								  const char *status_id, const char *attr_id,
+								  ...);
+
+/**
+ * Notifies Gaim that an account's warning level has changed.
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account  The account the user is on.
+ * @param username The user that warned the account.
+ * @param level    The new warning level.
+ */
+void gaim_prpl_got_account_warning_level(GaimAccount *account,
+										 const char *username,
+										 unsigned int level);
+
+
+/**
+ * Notifies Gaim that a user's idle state and time have changed.
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account   The account the user is on.
+ * @param name      The screen name of the user.
+ * @param idle      The user's idle state.
+ * @param idle_time The user's idle time.
+ */
+void gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
+							 gboolean idle, time_t idle_time);
+
+/**
+ * Notifies Gaim of a user's log-in time.
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account    The account the user is on.
+ * @param name       The screen name of the user.
+ * @param login_time The user's log-in time.
+ */
+void gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
+								   time_t login_time);
+
+/**
+ * Notifies Gaim that a user's status has changed.
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account   The account the user is on.
+ * @param name      The screen name of the user.
+ * @param status_id The status ID.
+ * @param attr_id   The first attribute ID, or NULL for no attribute updates.
+ * @param ...       A NULL-terminated list of attribute IDs and values,
+ *                  beginning with the value for @a attr_id.
+ */
+void gaim_prpl_got_user_status(GaimAccount *account, const char *name,
+							   const char *status_id, const char *attr_id, ...);
+
+/**
+ * Notifies Gaim that a user's warning level has changed.
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account The account the user is on.
+ * @param name    The screen name of the user.
+ * @param level   The new warning level.
+ */
+void gaim_prpl_got_user_warning_level(GaimAccount *account, const char *name,
+									  unsigned int level);
+
+/**
+ * Informs the server that an account's status changed.
+ *
+ * @param account The account the user is on.
+ * @param status  The status that was activated, or deactivated
+ *                (in the case of independent statuses).
+ */
+void gaim_prpl_set_account_status(GaimAccount *account, GaimStatus *status);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Protocol Plugin Subsystem API                                   */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Finds a protocol plugin structure of the specified type.
  *
  * @param id The protocol plugin;
  */
 GaimPlugin *gaim_find_prpl(const char *id);
+
+/*@}*/
 
 #ifdef __cplusplus
 }
