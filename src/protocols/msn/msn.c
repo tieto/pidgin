@@ -1055,7 +1055,8 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			md->fl = g_slist_append(md->fl, b);
 		} else if (!g_strcasecmp(which, "AL") && pos) {
 			char *dupl;
-			if ((dupl = g_slist_find_custom(gc->deny, who, strcmp))) {
+			if ((dupl = (char *)g_slist_find_custom(gc->deny, who, 
+							(GCompareFunc)strcmp))) {
 				debug_printf("moving from deny to permit: %s", who);
 				gc->deny = g_slist_remove(gc->deny, dupl);
 			}
@@ -2215,7 +2216,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 				t = g_slist_append(t, who);
 				continue;
 			}
-			if ((dupl = g_slist_find(md->deny, who))) {
+			if ((dupl = (char *)g_slist_find(md->deny, who))) {
 				t = g_slist_append(t, who);
 				continue;
 			}
@@ -2249,7 +2250,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 				t = g_slist_append(t, who);
 				continue;
 			}
-			if ((dupl = g_slist_find(md->deny, who))) {
+			if ((dupl = (char *)g_slist_find(md->deny, who))) {
 				t = g_slist_append(t, who);
 				continue;
 			}
@@ -2286,7 +2287,8 @@ static void msn_add_permit(struct gaim_connection *gc, char *who)
 		return;
 	}
 
-	if ((dupl = g_slist_find_custom(gc->deny, who, strcmp))) {
+	if ((dupl = (char *)g_slist_find_custom(gc->deny, who, 
+					(GCompareFunc)strcmp))) {
 		debug_printf("MSN: Moving %s from BL to AL\n", who);
 		gc->deny = g_slist_remove(gc->deny, dupl);
 		g_snprintf(buf, sizeof(buf), "REM %d BL %s\r\n", ++md->trId, who);
@@ -2338,7 +2340,8 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 		return;
 	}
 
-	if ((dupl = g_slist_find_custom(gc->permit, who, strcmp))) {
+	if ((dupl = (char *)g_slist_find_custom(gc->permit, who, 
+					(GCompareFunc)strcmp))) {
 		debug_printf("MSN: Moving %s from AL to BL\n", who);
 		gc->permit = g_slist_remove(gc->permit, dupl);
 		g_snprintf(buf, sizeof(buf), "REM %d AL %s\r\n", ++md->trId, who);

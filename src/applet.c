@@ -377,7 +377,7 @@ gint init_applet_mgr(int argc, char *argv[])
 			   GTK_SIGNAL_FUNC(applet_change_pixel_size), NULL);
 #endif
 
-	applet_widget_send_draw(applet, TRUE);
+	applet_widget_send_draw(APPLET_WIDGET(applet), TRUE);
 	gtk_signal_connect(GTK_OBJECT(applet), "do-draw", GTK_SIGNAL_FUNC(update_applet), NULL);
 	gtk_widget_show(icon);
 	gtk_widget_show(applet);
