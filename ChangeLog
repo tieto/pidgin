@@ -6,7 +6,7 @@ version 0.68:
 	* Added plugin dependency support.
 	* Rewrote the Perl plugin. All old scripts will break, but it offers
 	  a much better API for new scripts.
-	* Yahoo color receiving eupport (Tim Ringenbach (marv_sf))
+	* Yahoo color recieving support (Tim Ringenbach (marv_sf))
 	* Yahoo and MSN get info support (Nathan Poznick)
 	* Catalan translation updated (Robert Millan)
 	* Swedish translation updated (Tore Lundqvist (luntor))
