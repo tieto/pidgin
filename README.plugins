@@ -1,10 +1,5 @@
 Note:
 
-The plugins that come with GAIM are for educational purposes only.
-We have released them hoping to give you guys enough information to
-go on.  We'll continue developing them in our free time but we ask you
-to do the same.  If you have any suggestions for them, let us know.
-
 If you do not wish to enable the plugin support within GAIM, run the
 ./configure script with the --disable-plugins option and recompile your
 source code.  This will prevent the ability to load plugins.
