@@ -6,9 +6,10 @@ version 0.10.0:
 	* Smiley dialog
 	* Fixed 0-byte file segfault.
 	* Borderless buttons (for that cool pop-up look)
-	* Fixed resizing bugs
+	* Fixed some resizing bugs
 	* Added Ctrl+{B/I/U/S} hotkeys to conversation windows.
 	* Support for %n, %d, and %t in away messages.  Thanks bmiller!
+	* Background colors
 	
 version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features

@@ -2059,6 +2059,19 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 			/*end my stuff*/
 
 
+			{
+			int wid = gdk_string_width(hb->font, hb->text),
+			    hei = gdk_text_height(hb->font, "C", 1);
+			if (hb->back != NULL)
+				gdk_gc_set_foreground(gc, hb->back);
+			else
+				gdk_gc_set_foreground(gc, &widget->style->base[selected_state]);
+
+			gdk_draw_rectangle(html->html_area, gc, TRUE /* filled */, shift + hb->x,
+							hb->y - html->yoffset - hei - 2,
+							wid, hei + hei/2);
+			}
+
 			if (hb->fore != NULL)
 				gdk_gc_set_foreground(gc, hb->fore);
 			else
@@ -2631,6 +2644,7 @@ static void gtk_html_realize(GtkWidget * widget)
 	html->gc = gdk_gc_new(html->html_area);
 	gdk_gc_set_exposures(html->gc, TRUE);
 	gdk_gc_set_foreground(html->gc, &widget->style->text[GTK_STATE_NORMAL]);
+	gdk_gc_set_background(html->gc, &widget->style->base[GTK_STATE_NORMAL]);
 
 	gdk_window_show(html->html_area);
 

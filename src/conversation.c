@@ -1006,6 +1006,9 @@ static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], sad_xpm);
 	} else if (!strncmp(m, ";)", 2)) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], wink_xpm);
+	} else if (!strncmp(m, ":p", 2) ||
+		   !strncmp(m, ":P", 2)) {
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], tongue_xpm);
 	}
 
 	if (face || strlen(m) < 3) return face;
