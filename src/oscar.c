@@ -57,8 +57,8 @@
 
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_GETFILE | AIM_CAPS_IMIMAGE;
 
-static GtkWidget *join_chat_spin;
-static GtkWidget *join_chat_entry;
+static GtkWidget *join_chat_spin = NULL;
+static GtkWidget *join_chat_entry = NULL;
 
 struct oscar_data {
 	struct aim_session_t *sess;

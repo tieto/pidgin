@@ -45,7 +45,7 @@ static GtkWidget *entry;
 static GtkWidget *invite;
 static GtkWidget *inviteentry;
 static GtkWidget *invitemess;
-static GtkWidget *jc_vbox;
+static GtkWidget *jc_vbox = NULL;
 extern int state_lock;
 
 GList *chats = NULL;

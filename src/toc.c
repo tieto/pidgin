@@ -119,8 +119,8 @@ struct signon {
 #define USEROPT_SOCKSPORT 3
 #define USEROPT_PROXYTYPE 4
 
-static GtkWidget *join_chat_spin;
-static GtkWidget *join_chat_entry;
+static GtkWidget *join_chat_spin = NULL;
+static GtkWidget *join_chat_entry = NULL;
 
 static void toc_callback(gpointer, gint, GdkInputCondition);
 static unsigned char *roast_password(char *);
