@@ -33,6 +33,7 @@ version 0.78cvs
 	* IRC disconnect crash fix (Luciano Miguel Ferreira Rocha)
 	* Novell prpl works on big endian machines (Novell)
 	* Zephyr works on 64 bit machines (Arun A Tharuvai)
+	* Yahoo works on 64 bit machines (Gary Kramlich)
 	* Print Gadu-Gadu messages to the debug window instead of the console
 	* New tabs should scroll correctly again (Tim Ringenbach)
 	* Ampersands in links should work right (Tim Ringenbach)
