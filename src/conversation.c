@@ -3027,6 +3027,8 @@ static gboolean redraw_icon(gpointer data)
 				gdk_pixbuf_frame_get_y_offset(frame),-1,-1);
 		
 		gdk_pixmap_unref(src);
+		if (bm)
+			gdk_bitmap_unref(bm);
 		gtk_widget_queue_draw(c->icon);
 		gdk_gc_unref(gc);
 		break;
