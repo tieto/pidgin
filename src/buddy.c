@@ -379,6 +379,16 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 #endif
 }
 
+static void gaim_gtk_blist_show_empty_groups_cb(gpointer data, guint action, GtkWidget *item)
+{
+	if(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item)))
+		blist_options &= ~OPT_BLIST_NO_MT_GRP;
+	else
+		blist_options |= OPT_BLIST_NO_MT_GRP;
+	save_prefs();
+	gaim_gtk_blist_refresh(gaim_get_blist());
+}
+
 static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_action,
 		GtkWidget *checkitem) {
 	GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
@@ -645,6 +655,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	  "<StockItem>", GAIM_STOCK_INFO },
 	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Show Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
+	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/_Add a Buddy..."), NULL, gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD }, 
 	{ N_("/Buddies/Add a _Group..."), NULL, show_add_group, 0, NULL},
 	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>" },
@@ -1235,8 +1246,10 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	/* set the Show Offline Buddies option. must be done
 	 * after the treeview or faceprint gets mad. -Robot101
 	 */
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (ift, N_("/Edit/Show Offline Buddies"))),
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (ift, N_("/Buddies/Show Offline Buddies"))),
 			blist_options & OPT_BLIST_SHOW_OFFLINE);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (ift, N_("/Buddies/Show Empty Groups"))),
+			!(blist_options & OPT_BLIST_NO_MT_GRP));
 
 	/* OK... let's show this bad boy. */
 	gaim_gtk_blist_refresh(list);
@@ -1410,7 +1423,8 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 		gtk_tree_store_remove(gtkblist->treemodel, &iter);
 		if(GAIM_BLIST_NODE_IS_BUDDY(node) &&
 		   !(blist_options & OPT_BLIST_SHOW_OFFLINE) &&
-		   gaim_blist_get_group_online_count((struct group *)node->parent) == 0) {
+		   (blist_options & OPT_BLIST_NO_MT_GRP) &&
+		   !gaim_blist_get_group_online_count((struct group *)node->parent)) {
 			GtkTreeIter groupiter;
 			if(get_iter_from_node(node->parent, &groupiter))
 				gtk_tree_store_remove(gtkblist->treemodel, &groupiter);
@@ -1495,7 +1509,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 	if (!get_iter_from_node(node, &iter)) { /* This is a newly added node */
 		new_entry = TRUE;
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-			if (((struct buddy*)node)->present || (blist_options & OPT_BLIST_SHOW_OFFLINE && ((struct buddy*)node)->account->gc)) {
+			if (((struct buddy*)node)->present || ((blist_options & OPT_BLIST_SHOW_OFFLINE) && ((struct buddy*)node)->account->gc)) {
 				GtkTreeIter groupiter;
 				GaimBlistNode *oldersibling;
 				GtkTreeIter oldersiblingiter;
@@ -1505,8 +1519,9 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 					/* This buddy's group has not yet been added.
 					 * We do that here */
 					make_a_group(node->parent, &groupiter);
-					expand = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter);
 				}
+				if(!gtk_tree_model_iter_has_child(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter))
+					expand = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter);
 
 				oldersibling = node->prev;
 				while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter)) {
@@ -1520,13 +1535,14 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 			}
 		}
-		else if (GAIM_BLIST_NODE_IS_GROUP(node) && (blist_options & OPT_BLIST_SHOW_OFFLINE)) {
+		else if (GAIM_BLIST_NODE_IS_GROUP(node) &&
+					((blist_options & OPT_BLIST_SHOW_OFFLINE) ||
+					!(blist_options & OPT_BLIST_NO_MT_GRP))) {
 			make_a_group(node, &iter);
 			expand = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 		}
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		if ((gaim_blist_get_group_online_count((struct group *)node) == 0) ||
-				(!gtk_tree_model_iter_has_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter) && !(blist_options & OPT_BLIST_SHOW_OFFLINE))) {
+		if((blist_options & OPT_BLIST_NO_MT_GRP) && !(blist_options & OPT_BLIST_SHOW_OFFLINE) && !gaim_blist_get_group_online_count((struct group *)node)) {
 			gtk_tree_store_remove(gtkblist->treemodel, &iter);
 		} else {
 			struct group *group = (struct group *)node;
@@ -1546,7 +1562,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		}
 	}
 
-	if (GAIM_BLIST_NODE_IS_BUDDY(node) && (((struct buddy*)node)->present || (blist_options & OPT_BLIST_SHOW_OFFLINE && ((struct buddy*)node)->account->gc))) {
+	if (GAIM_BLIST_NODE_IS_BUDDY(node) && (((struct buddy*)node)->present || ((blist_options & OPT_BLIST_SHOW_OFFLINE) && ((struct buddy*)node)->account->gc))) {
 		GdkPixbuf *status, *avatar;
 		char *mark;
 		char *warning = NULL, *idle = NULL;
