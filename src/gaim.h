@@ -113,7 +113,6 @@
 #endif
 #endif
 
-extern struct prefs_data *pd;
 extern struct debug_window *dw;
 
 struct aim_user {
@@ -129,23 +128,6 @@ struct save_pos {
         int height;
         int xoff;
         int yoff;
-};
-
-struct prefs_data {
-        GtkWidget *window;
-        GtkWidget *away_list;
-        struct away_message *cur_message;
-        GtkWidget *away_text;
-        char *edited_message;
-        GtkWidget *browser_entry;
-        GtkWidget *nwbutton;
-        GtkWidget *aim_host_entry;
-        GtkWidget *aim_port_entry;
-        GtkWidget *login_host_entry;
-        GtkWidget *login_port_entry;
-        GtkWidget *proxy_host_entry;
-        GtkWidget *proxy_port_entry;
-
 };
 
 
@@ -408,7 +390,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 633 $"
+#define REVISION "gaim:$Revision: 662 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -747,6 +729,8 @@ extern void debug_print( char * chars );
 extern void set_general_option(GtkWidget *, int *);
 extern void set_option(GtkWidget *, int *);
 extern void show_prefs();
+extern void show_debug(GtkObject *);
+extern GtkWidget *prefs_away_list;
 
 /* Functions in gaimrc.c */
 extern void set_defaults();

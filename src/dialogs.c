@@ -2732,8 +2732,8 @@ void create_mess(GtkWidget *widget, struct create_away *ca)
                 away_messages = g_list_append(away_messages, b);
                 save_prefs();
                 do_away_menu();
-                if (pd != NULL)
-                        gtk_list_select_item(GTK_LIST(pd->away_list), g_list_index(away_messages, b));
+                if (prefs_away_list != NULL)
+                        gtk_list_select_item(GTK_LIST(prefs_away_list), g_list_index(away_messages, b));
 	}
 
 	/* stick it on the away list */

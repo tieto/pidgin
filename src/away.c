@@ -41,7 +41,7 @@ GtkWidget *imaway=NULL;
 extern enum gaim_user_states MRI_user_status;
 #endif
 
-GtkWidget *awaymenu;
+GtkWidget *awaymenu = NULL;
 struct away_message *awaymessage = NULL;
 
 static void destroy_im_away()
@@ -94,6 +94,9 @@ void do_away_message(GtkWidget *w, struct away_message *a)
         char buf[BUF_LONG];
         GList *cnv = conversations;
         struct conversation *c;
+
+	if (!blist)
+		return;
 
 #ifdef USE_APPLET
 	remove_applet_away();
@@ -159,6 +162,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
         } else {
 		destroy_im_away();
 		do_away_message(w, a);
+		return;
 	}
 
         /* New away message... Clear out the old sent_aways */
@@ -233,8 +237,8 @@ void do_away_menu()
 		insert_applet_away();
 #endif
 
-	if (pd != NULL) {
-                gtk_list_clear_items(GTK_LIST(pd->away_list), 0, -1);
+	if (prefs_away_list != NULL) {
+                gtk_list_clear_items(GTK_LIST(prefs_away_list), 0, -1);
 		while(awy) {
 			a = (struct away_message *)awy->data;
 			label = gtk_label_new(a->name);
@@ -245,16 +249,16 @@ void do_away_menu()
 			gtk_object_set_user_data(GTK_OBJECT(list_item), a);
 
 			gtk_widget_show(label);
-			gtk_container_add(GTK_CONTAINER(pd->away_list), list_item);
+			gtk_container_add(GTK_CONTAINER(prefs_away_list), list_item);
 			gtk_widget_show(list_item);
 
 			awy = awy->next;
 		}
 		if (away_messages != NULL)
-                        gtk_list_select_item(GTK_LIST(pd->away_list), 0);
+                        gtk_list_select_item(GTK_LIST(prefs_away_list), 0);
 	}
 	
-        
+	if (!awaymenu) return;
 	l = gtk_container_children(GTK_CONTAINER(awaymenu));
 	
 	while(l) {
