@@ -1,6 +1,32 @@
 
 No release numbers
 ------------------
+ - Mon Jul 17 01:56:31 UTC 2000
+   - Added 0004/000c callback (for message acknowledgments)
+      - This goes with the AIM_IMFLAGS_ACK option that has been there
+        for ages now.  When you send a message with that option, you'll
+        get a message back containing the screenname, telling you it was sent.
+   - Moved the aim_conn_kill's out of aim_get_command() and into
+      the client.  They're only closed in there now.  This is so that you 
+      can detect what type of connection died.  You'll want to handle
+      BOS and chat connections in special ways most likely.  You'll also
+      need to call aim_conn_kill when you're done with it.
+   - Added/fixed the Rate Change handlers.  Now passes up a long that
+      should contain a number.  I'm currently in pattern-searching mode.
+
+ - Sun Jul 16 22:59:39 GMT 2000
+   - Fixed the locking in the rendezvous code.  Hopefully is safe now.
+
+ - Sun Jul 16 11:03:28 GMT 2000
+   - Fixed 0001/000a chat printf.  (Actually a one liner a few days ago.)
+   - Started integrating josh's 3k rendezvous patch.  Currently only
+      directim is working.  And its got bugs.  But he's not online
+      right now, so I can't bitch.  I'd love to bitch here, but I'm 
+      tired. 
+     - Can definitly accept directim connections and send/recieve.
+     - See faimtest for the new callbacks.  (Urg.)
+     - Here weeee gooooo.  (Not sure if this will break everyone or not.)
+
  - Fri Jun 30 00:04:47 UTC 2000
    - Removed the forceful ICQ-related warnings, just in case they're wrong
    - Added three new fields to the client info.  

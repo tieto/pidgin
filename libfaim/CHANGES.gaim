@@ -1,4 +1,11 @@
 
+Tue Jul 18 05:31:15 UTC 2000 EWarmenhoven
+	- Lots of updates to libfaim; updates to gaim to use latest libfaim.
+	- libfaim can do directIM now, but I haven't brought gaim up-to-date
+	  on that yet. I will soon (hopefully tonight).
+	- Just a side note: I got WinAIM to run under wine, which means I
+	  don't need to do testing in the dark anymore (hopefully).
+
 Fri Jun 30 02:29:40 UTC 2000 EWarmenhoven
 	- AOL is trying to prevent us from using Oscar. Fortunately, Adam's
 	  been able to figure out what's going on, and so we can sign on

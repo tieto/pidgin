@@ -82,6 +82,8 @@ static int gaim_chat_join        (struct aim_session_t *, struct command_rx_stru
 static int gaim_chat_leave       (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_chat_info_update (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_chat_incoming_msg(struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_msgack     (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_ratechange (struct aim_session_t *, struct command_rx_struct *, ...);
 
 extern void auth_failed();
 
@@ -98,15 +100,25 @@ static void oscar_callback(gpointer data, gint source,
 		return;
 	}
 	if (condition & GDK_INPUT_READ) {
-		if (aim_get_command(gaim_sess, conn) < 0) {
-			debug_print(_("connection error!\n"));
-			signoff();
-			hide_login_progress(_("Disconnected."));
-			aim_logoff(gaim_sess);
-			auth_failed();
-			gdk_input_remove(inpa);
+		if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
+			if (aim_handlerendconnect(gaim_sess, conn) < 0) {
+				debug_print(_("connection error (rend)\n"));
+			}
 		} else {
-			aim_rxdispatch(gaim_sess);
+			if (aim_get_command(gaim_sess, conn) >= 0) {
+				aim_rxdispatch(gaim_sess);
+			} else {
+				debug_print(_("connection error!\n"));
+				aim_conn_kill(gaim_sess, &conn);
+				if (!aim_getconn_type(gaim_sess, AIM_CONN_TYPE_BOS)) {
+					debug_print(_("major connection error\n"));
+					signoff();
+					hide_login_progress(_("Disconnected."));
+					aim_logoff(gaim_sess);
+					auth_failed();
+					gdk_input_remove(inpa);
+				}
+			}
 		}
 	}
 }
@@ -277,9 +289,10 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_INCOMING, gaim_parse_incoming_im, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_ERROR, gaim_parse_misses, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_MISSEDCALL, gaim_parse_misses, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATECHANGE, gaim_parse_misses, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATECHANGE, gaim_parse_ratechange, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ERROR, gaim_parse_misses, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_user_info, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ACK, gaim_parse_msgack, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_CTN, AIM_CB_CTN_DEFAULT, aim_parse_unknown, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEFAULT, aim_parse_unknown, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
@@ -775,7 +788,6 @@ int gaim_chat_leave(struct aim_session_t *sess,
 
 int gaim_chat_info_update(struct aim_session_t *sess,
 			  struct command_rx_struct *command, ...) {
-	/* FIXME */
 	debug_print("inside chat_info_update\n");
 	return 1;
 }
@@ -807,3 +819,36 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 
 	return 1;
 }
+
+ /*
+  * Recieved in response to an IM sent with the AIM_IMFLAGS_ACK option.
+  */
+int gaim_parse_msgack(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	unsigned short type;
+	char *sn = NULL;
+
+	ap = va_start(ap, command);
+	type = va_arg(ap, unsigned short);
+	sn = va_arg(ap, char *);
+	va_end(ap);
+
+	sprintf(debug_buff, "Sent message to %s.\n", sn);
+	debug_print(debug_buff);
+
+	return 1;
+}
+
+int gaim_parse_ratechange(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	unsigned long newrate;
+
+	va_start(ap, command); 
+	newrate = va_arg(ap, unsigned long);
+	va_end(ap);
+
+	sprintf(debug_buff, "ratechange: %lu\n", newrate);
+	debug_print(debug_buff);
+
+	return 1;
+};

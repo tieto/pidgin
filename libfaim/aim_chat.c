@@ -70,6 +70,8 @@ u_long aim_chat_send_im(struct aim_session_t *sess,
   for (i=0;i<8;i++)
     curbyte += aimutil_put8(newpacket->data+curbyte, (u_char) random());
 
+  aim_cachecookie(sess, aim_mkcookie(newpacket->data+curbyte-8, AIM_COOKIETYPE_CHAT, NULL));
+
   /*
    * metaTLV start.  -- i assume this is a metaTLV.  it could be the
    *                    channel ID though.
@@ -430,10 +432,12 @@ int aim_chat_parse_incoming(struct aim_session_t *sess,
   i = 10; /* skip snac */
 
   /*
-   * ICBM Cookie.  Ignore it.
+   * ICBM Cookie.  Cache it.
    */ 
   for (z=0; z<8; z++,i++)
     cookie[z] = command->data[i];
+
+  aim_cachecookie(sess, aim_mkcookie(cookie, AIM_COOKIETYPE_ICBM, NULL));
 
   /*
    * Channel ID
@@ -579,6 +583,7 @@ u_long aim_chat_invite(struct aim_session_t *sess,
    */
   for (i=0;i<8;i++)
     curbyte += aimutil_put8(newpacket->data+curbyte, (u_char)rand());
+  aim_cachecookie(sess, aim_mkcookie(newpacket->data+curbyte-8, AIM_COOKIETYPE_CHAT, NULL));
 
   /*
    * Channel (2)

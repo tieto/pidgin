@@ -9,6 +9,7 @@ libfaim_a_SOURCES = 	aim_ads.c		\
 			aim_chat.c		\
 			aim_chatnav.c		\
 			aim_conn.c		\
+			aim_ft.c		\
 			aim_im.c		\
 			aim_info.c		\
 			aim_login.c		\

@@ -25,6 +25,18 @@
 #include <stdarg.h>
 #include <errno.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#include <time.h>
+#include <io.h>
+#else
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/time.h>
+#include <unistd.h>
+#endif
+
 #ifdef FAIM_USEPTHREADS
 #include <pthread.h>
 #define faim_mutex_t pthread_mutex_t 
@@ -43,18 +55,6 @@
 #define faim_mutex_init(x, y) *x = 0
 #define faim_mutex_lock(x) *x = 1;
 #define faim_mutex_unlock(x) *x = 0;
-#endif
-
-#ifdef _WIN32
-#include <windows.h>
-#include <time.h>
-#include <io.h>
-#else
-#include <netdb.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <sys/time.h>
-#include <unistd.h>
 #endif
 
 /* Portability stuff (DMP) */
@@ -167,7 +167,19 @@ struct client_info_s {
 #define AIM_CONN_TYPE_BOS           0x0002
 #define AIM_CONN_TYPE_CHAT          0x000e
 #define AIM_CONN_TYPE_CHATNAV       0x000d
+
+/* they start getting arbitrary in rendezvous stuff =) */
 #define AIM_CONN_TYPE_RENDEZVOUS    0x0101 /* these do not speak OSCAR! */
+#define AIM_CONN_TYPE_RENDEZVOUS_OUT 0x0102 /* socket waiting for accept() */
+
+/*
+ * Subtypes, we need these for OFT stuff.
+ */
+#define AIM_CONN_SUBTYPE_OFT_DIRECTIM  0x0001
+#define AIM_CONN_SUBTYPE_OFT_GETFILE   0x0002
+#define AIM_CONN_SUBTYPE_OFT_SENDFILE  0x0003
+#define AIM_CONN_SUBTYPE_OFT_BUDDYICON 0x0004
+#define AIM_CONN_SUBTYPE_OFT_VOICE     0x0005
 
 /*
  * Status values returned from aim_conn_new().  ORed together.
@@ -182,7 +194,8 @@ struct client_info_s {
 
 struct aim_conn_t {
   int fd;
-  int type;
+  unsigned short type;
+  unsigned short subtype;
   int seqnum;
   int status;
   void *priv; /* misc data the client may want to store */
@@ -199,11 +212,12 @@ struct command_rx_struct {
   unsigned char hdrtype; /* defines which piece of the union to use */
   union {
     struct { 
-      char type;        
+      char type;
       unsigned short seqnum;     
     } oscar;
     struct {
       unsigned short type;
+      unsigned char magic[4]; /* ODC2 OFT2 */
       unsigned short hdr2len;
       unsigned char *hdr2; /* rest of bloated header */
     } oft;
@@ -227,6 +241,7 @@ struct command_tx_struct {
     } oscar;
     struct {
       unsigned short type;
+      unsigned char magic[4]; /* ODC2 OFT2 */
       unsigned short hdr2len;
       unsigned char *hdr2;
     } oft;
@@ -362,8 +377,9 @@ int aim_counttlvchain(struct aim_tlvlist_t **list);
  */
 int aim_get_command(struct aim_session_t *, struct aim_conn_t *);
 int aim_rxdispatch(struct aim_session_t *);
-u_long aim_debugconn_sendconnect(struct aim_session_t *sess,
-				 struct aim_conn_t *conn);
+
+u_long aim_debugconn_sendconnect(struct aim_session_t *sess, struct aim_conn_t *conn);
+
 int aim_logoff(struct aim_session_t *);
 
 void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn);
@@ -374,6 +390,8 @@ int aim_register_callbacks(rxcallback_t *);
 u_long aim_genericreq_n(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype);
 u_long aim_genericreq_l(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_long *);
 u_long aim_genericreq_s(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_short *);
+
+struct aim_fileheader_t *aim_oft_getfh(char *hdr);
 
 /* aim_login.c */
 int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
@@ -399,7 +417,7 @@ void aim_rxqueue_cleanbyconn(struct aim_session_t *sess, struct aim_conn_t *conn
 int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *command, ...);
 int aim_parse_missed_im(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
-
+int aim_get_command_rendezvous(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 struct command_tx_struct *aim_tx_new(unsigned short framing, int chan, struct aim_conn_t *conn, int datalen);
 int aim_tx_enqueue__queuebased(struct aim_session_t *, struct command_tx_struct *);
@@ -479,6 +497,9 @@ u_long aim_bos_reqlocaterights(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_reqicbmparaminfo(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
 
+struct aim_fileheader_t *aim_getlisting(struct aim_session_t*);
+int aim_listenestablish(u_short);
+
 /* aim_rxhandlers.c */
 int aim_rxdispatch(struct aim_session_t *);
 int aim_authparse(struct aim_session_t *, struct command_rx_struct *);
@@ -489,6 +510,12 @@ int aim_parse_generalerrs(struct aim_session_t *, struct command_rx_struct *comm
 int aim_parsemotd_middle(struct aim_session_t *sess, struct command_rx_struct *command, ...);
 
 /* aim_im.c */
+struct aim_directim_priv {
+  unsigned char cookie[8];
+  char sn[MAXSNLEN+1];
+  char ip[30];
+};
+
 #define AIM_IMFLAGS_AWAY 0x01 /* mark as an autoreply */
 #define AIM_IMFLAGS_ACK  0x02 /* request a receipt notice */
 
@@ -498,6 +525,10 @@ int aim_parse_outgoing_im_middle(struct aim_session_t *, struct command_rx_struc
 u_long aim_seticbmparam(struct aim_session_t *, struct aim_conn_t *conn);
 int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *);
 int aim_negchan_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+
+struct aim_conn_t * aim_directim_intiate(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *, char *);
+int aim_send_im_direct(struct aim_session_t *, struct aim_conn_t *, char *);
+struct aim_conn_t *aim_directim_connect(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *);
 
 /* aim_info.c */
 #define AIM_CAPS_BUDDYICON 0x01
@@ -522,20 +553,79 @@ struct aim_msgcookie_t {
   struct aim_msgcookie_t *next;
 };
 
-struct aim_filetransfer_t {
-  char sender[MAXSNLEN];	
-  char ip[30];
-  char *filename;
+struct aim_fileheader_t {
+#if 0
+  char  magic[4];            /* 0 */
+  short hdrlen;           /* 4 */
+  short hdrtype;             /* 6 */
+#endif
+  char  bcookie[8];       /* 8 */
+  short encrypt;          /* 16 */
+  short compress;         /* 18 */
+  short totfiles;         /* 20 */
+  short filesleft;        /* 22 */
+  short totparts;         /* 24 */
+  short partsleft;        /* 26 */
+  long  totsize;          /* 28 */
+  long  size;             /* 32 */
+  long  modtime;          /* 36 */
+  long  checksum;         /* 40 */
+  long  rfrcsum;          /* 44 */
+  long  rfsize;           /* 48 */
+  long  cretime;          /* 52 */
+  long  rfcsum;           /* 56 */
+  long  nrecvd;           /* 60 */
+  long  recvcsum;         /* 64 */
+  char  idstring[32];     /* 68 */
+  char  flags;            /* 100 */
+  char  lnameoffset;      /* 101 */
+  char  lsizeoffset;      /* 102 */
+  char  dummy[69];        /* 103 */
+  char  macfileinfo[16];  /* 172 */
+  short nencode;          /* 188 */
+  short nlanguage;        /* 190 */
+  char  name[64];         /* 192 */
+                          /* 256 */
 };
+
+struct aim_filetransfer_priv {
+  char sn[MAXSNLEN];
+  char cookie[8];
+  char ip[30];
+  int state;
+  struct aim_fileheader_t fh;
+};
+
+#define AIM_COOKIETYPE_UNKNOWN  0x00
+#define AIM_COOKIETYPE_ICBM     0x01
+#define AIM_COOKIETYPE_ADS      0x02
+#define AIM_COOKIETYPE_BOS      0x03
+#define AIM_COOKIETYPE_IM       0x04
+#define AIM_COOKIETYPE_CHAT     0x05
+#define AIM_COOKIETYPE_CHATNAV  0x06
+/* we'll move OFT up a bit to give breathing room.  not like it really
+ * matters. */
+#define AIM_COOKIETYPE_OFTIM    0x10
+#define AIM_COOKIETYPE_OFTGET   0x11
+#define AIM_COOKIETYPE_OFTSEND  0x12
+#define AIM_COOKIETYPE_OFTVOICE 0x13
+#define AIM_COOKIETYPE_OFTIMAGE 0x14
+#define AIM_COOKIETYPE_OFTICON  0x15
+
 int aim_cachecookie(struct aim_session_t *sess, struct aim_msgcookie_t *cookie);
-struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, char *cookie);
-int aim_purgecookies(struct aim_session_t *sess);
+int aim_purgecookies(struct aim_session_t *sess, int maxage);
+struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, char *cookie, int type);
+struct aim_msgcookie_t *aim_mkcookie(unsigned char *, int, void *);
+struct aim_msgcookie_t *aim_checkcookie(struct aim_session_t *, char *, int);
+int aim_getcookietype(int);
+
+int aim_handlerendconnect(struct aim_session_t *sess, struct aim_conn_t *cur);
 
 #define AIM_TRANSFER_DENY_NOTSUPPORTED 0x0000
 #define AIM_TRANSFER_DENY_DECLINE 0x0001
 #define AIM_TRANSFER_DENY_NOTACCEPTING 0x0002
 u_long aim_denytransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sender, char *cookie, unsigned short code);
-u_long aim_accepttransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sender, char *cookie, unsigned short rendid);
+u_long aim_accepttransfer(struct aim_session_t *sess, struct aim_conn_t *conn,struct aim_conn_t *oftconn, char *sender, char *cookie, unsigned short rendid);
 
 u_long aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *, unsigned short);
 int aim_extractuserinfo(u_char *, struct aim_userinfo_s *);

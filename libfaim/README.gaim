@@ -60,7 +60,7 @@ Chat:
  - whispering (this will never happen)
 Getting/setting dir info
 Changing your password
-File transfer/IM images/voice chat/etc.
+File transfer/IM images/voice chat/etc. (RVOUS stuff)
 
 KNOWN ISSUES
 ============
@@ -87,15 +87,11 @@ seems to help.
 this in gdb or gotten a backtrace on it, so I'm not exactly sure what the
 problem is. I think this actually happens on the TOC side of things too.
 
-- Gaim/TOC can do file transfers, but Gaim/Faim cannot. This is not because
+- Gaim/TOC can do RVOUS actions, but Gaim/Faim cannot. This is not because
 there is any difference in the two protocols as far as the actual transfer is
-concerned. The only thing preventing this is it is currently not possible to
-recognize when we've received a file transfer request using libfaim. Once
-libfaim can tell us that we've received the request, the only thing we should
-need to change is to have oscar.c wait for one of those notifications and then
-call accept_file_transfer() from rvous.c. No modification of rvous.c should be
-necessary at that point. (The same should apply to IM Images and Voice Chat and
-all the other RVOUS stuff - they are all protocol-independent.)
+concerned. Adam wants libfaim to handle *all* of the RVOUS connection stuff,
+which I can understand. Unfortunately, the only part he's implemented is Direct
+Direct IM, and I haven't implemented that on the gaim side yet. 
 
 - What *is* protocol-dependent about the RVOUS stuff is that only Oscar can
 request RVOUS actions, though both can receive them. However, libfaim cannot

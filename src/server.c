@@ -167,7 +167,7 @@ void serv_send_im(char *name, char *message, int away)
 		if (away)
 			aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, message);
 		else
-			aim_send_im(gaim_sess, gaim_conn, name, 0, message);
+			aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_ACK, message);
 	}
         if (!away)
                 serv_touch_idle();

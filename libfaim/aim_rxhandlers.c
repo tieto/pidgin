@@ -420,7 +420,7 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0007, workingPtr);
 	    break;
 	  case 0x000a:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x000a, workingPtr);
+	    workingPtr->handled = aim_parse_ratechange_middle(sess, workingPtr);
 	    break;
 	  case 0x000f:
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x000f, workingPtr);
@@ -481,6 +481,9 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	    break;
 	  case 0x000a:
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0004, 0x000a, workingPtr);
+	    break;
+	  case 0x000c:
+	    workingPtr->handled = aim_parse_msgack_middle(sess, workingPtr);
 	    break;
 	  default:
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_MSG, AIM_CB_MSG_DEFAULT, workingPtr);
@@ -555,7 +558,7 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	  else if (subtype == 0x0007)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0007, workingPtr);
 	  else
-	    printf("Chat: unknown snac %04x/%04x\n", family, subtype);
+	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
 	} else if (family == 0x000e) {
 	  if (subtype == 0x0002)
 	    workingPtr->handled = aim_chat_parse_infoupdate(sess, workingPtr);
@@ -586,6 +589,10 @@ int aim_rxdispatch(struct aim_session_t *sess)
 	
 	break;
       }
+      case AIM_CONN_TYPE_RENDEZVOUS_OUT: {
+	/* not possible */
+	break;
+      }
       default:
 	printf("\ninternal error: unknown connection type (very bad.) (type = %d, fd = %d, commandlen = %02x)\n\n", workingPtr->conn->type, workingPtr->conn->fd, workingPtr->commandlen);
 	workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, workingPtr);
@@ -605,8 +612,52 @@ int aim_rxdispatch(struct aim_session_t *sess)
   return 0;
 }
 
+int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct *command)
+{
+  rxcallback_t userfunc = NULL;
+  char sn[MAXSNLEN];
+  unsigned short type;
+  int i = 10+8; /* skip SNAC and cookie */
+  int ret = 1;
+  unsigned char snlen;
+
+  type = aimutil_get16(command->data+i);
+  i += 2;
+
+  snlen = aimutil_get8(command->data+i);
+  i++;
+
+  memset(sn, 0, sizeof(sn));
+  strncpy(sn, command->data+i, snlen);
+
+  if ((userfunc = aim_callhandler(command->conn, 0x0004, 0x000c)))
+    ret =  userfunc(sess, command, type, sn);
+
+  return ret;
+}
+
+int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command)
+{
+  rxcallback_t userfunc = NULL;
+  int i = 10; /* skip SNAC */
+  int ret = 1;
+  unsigned long newrate;
+
+  if (command->commandlen != 0x2f) {
+    printf("faim: unknown rate change length 0x%04x\n", command->commandlen);
+    return 1;
+  }
+  
+  newrate = aimutil_get32(command->data+34);
+
+  if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x000a)))
+    ret =  userfunc(sess, command, newrate);
+
+  return ret;
+}
+
 int aim_parsemotd_middle(struct aim_session_t *sess,
-			      struct command_rx_struct *command, ...)
+			 struct command_rx_struct *command, ...)
 {
   rxcallback_t userfunc = NULL;
   char *msg;

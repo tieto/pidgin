@@ -29,6 +29,8 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
    */
   if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) 
     return aim_get_command_rendezvous(sess, conn);
+  if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) 
+    return 0; 
 
   /*
    * Read FLAP header.  Six bytes:
@@ -40,7 +42,7 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
    */
   faim_mutex_lock(&conn->active);
   if (read(conn->fd, generic, 6) < 6){
-    aim_conn_kill(sess, &conn);
+    aim_conn_close(conn);
     faim_mutex_unlock(&conn->active);
     return -1;
   }
@@ -51,6 +53,7 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
    */
   if (generic[0] != 0x2a) {
     faimdprintf(1, "Bad incoming data!");
+    aim_conn_close(conn);
     faim_mutex_unlock(&conn->active);
     return -1;
   }	
@@ -89,7 +92,7 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
   if (read(conn->fd, newrx->data, newrx->commandlen) < newrx->commandlen){
     free(newrx->data);
     free(newrx);
-    aim_conn_kill(sess, &conn);
+    aim_conn_close(conn);
     faim_mutex_unlock(&conn->active);
     return -1;
   }
@@ -120,82 +123,6 @@ int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *conn)
   newrx->conn->lastactivity = time(NULL);
 
   return 0;  
-}
-
-int aim_get_command_rendezvous(struct aim_session_t *sess, struct aim_conn_t *conn)
-{
-  unsigned char hdrbuf1[6];
-  unsigned char *hdr = NULL;
-  int hdrlen, hdrtype;
-  int payloadlength = 0;
-  int flags = 0;
-  char *snptr = NULL;
-
-  if (read(conn->fd, hdrbuf1, 6) < 6) {
-    perror("read");
-    printf("faim: rend: read error\n");
-    aim_conn_kill(sess, &conn);
-    return -1;
-  }
-
-  hdrlen = aimutil_get16(hdrbuf1+4);
-
-  hdrlen -= 6;
-  hdr = malloc(hdrlen);
-
-  faim_mutex_lock(&conn->active);
-  if (read(conn->fd, hdr, hdrlen) < hdrlen) {
-    perror("read");
-    printf("faim: rend: read2 error\n");
-    free(hdr);
-    faim_mutex_unlock(&conn->active);
-    aim_conn_kill(sess, &conn);
-    return -1;
-  }
-  
-  hdrtype = aimutil_get16(hdr);  
-
-  switch (hdrtype) {
-  case 0x0001: {
-    payloadlength = aimutil_get32(hdr+22);
-    flags = aimutil_get16(hdr+32);
-    snptr = hdr+38;
-
-    printf("OFT frame: %04x / %04x / %04x / %s\n", hdrtype, payloadlength, flags, snptr);
-
-    if (flags == 0x000e) {
-      printf("directim: %s has started typing\n", snptr);
-    } else if ((flags == 0x0000) && payloadlength) {
-      unsigned char *buf;
-      buf = malloc(payloadlength+1);
-
-      /* XXX theres got to be a better way */
-      faim_mutex_lock(&conn->active);
-      if (recv(conn->fd, buf, payloadlength, MSG_WAITALL) < payloadlength) {
-	perror("read");
-	printf("faim: rend: read3 error\n");
-	free(buf);
-	faim_mutex_unlock(&conn->active);
-	aim_conn_kill(sess, &conn);
-	return -1;
-      }
-      faim_mutex_unlock(&conn->active);
-      buf[payloadlength] = '\0';
-      printf("directim: %s/%04x/%04x/%s\n", snptr, payloadlength, flags, buf);
-      aim_send_im_direct(sess, conn, buf);
-      free(buf);
-    }
-    break;
-  }
-  default:
-    printf("OFT frame: type %04x\n", hdrtype);  
-    /* data connection may be unreliable here */
-    break;
-  } /* switch */
-
-  free(hdr);
-  
-  return 0;
 }
 
 /*

@@ -24,6 +24,7 @@
 #define AIM_CB_FAM_CTN 0x000d /* ChatNav */
 #define AIM_CB_FAM_CHT 0x000e /* Chat */
 #define AIM_CB_FAM_ATH 0x0017
+#define AIM_CB_FAM_OFT 0xfffe /* OFT/Rvous */
 #define AIM_CB_FAM_SPECIAL 0xffff /* Internal libfaim use */
 
 /*
@@ -179,6 +180,21 @@
 #define AIM_CB_ATH_LOGINRESPONSE 0x0003
 #define AIM_CB_ATH_AUTHREQ 0x0006
 #define AIM_CB_ATH_AUTHRESPONSE 0x0007
+
+/*
+ * OFT Services
+ *
+ * See non-SNAC note below.
+ */
+#define AIM_CB_OFT_DIRECTIMCONNECTREQ 0x0001
+#define AIM_CB_OFT_DIRECTIMINCOMING 0x0002
+#define AIM_CB_OFT_DIRECTIMDISCONNECT 0x0003
+#define AIM_CB_OFT_DIRECTIMTYPING 0x0006
+#define AIM_CB_OFT_DIRECTIMINITIATE 0x0007
+
+#define AIM_CB_OFT_GETFILECONNECT 0x0004
+#define AIM_CB_OFT_GETFILECOMPLETE 0x0005
+#define AIM_CB_OFT_GETFILEINITIATE 0x0007
 
 /*
  * SNAC Family: Internal Messages
