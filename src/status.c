@@ -580,8 +580,6 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 {
 	GaimPresenceContext context = gaim_presence_get_context(presence);
 
-	gaim_debug_info("notify_status_update", "Context is %d\n", context);
-
 	if (context == GAIM_PRESENCE_CONTEXT_ACCOUNT)
 	{
 		GaimAccount *account = gaim_presence_get_account(presence);

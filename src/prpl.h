@@ -197,6 +197,10 @@ struct _GaimPluginProtocolInfo
 	 */
 	char *(*tooltip_text)(GaimBuddy *buddy);
 
+	/**
+	 * This must be implemented, and must add at least the offline
+	 * and online states.
+	 */
 	GList *(*status_types)(GaimAccount *account);
 
 	GList *(*blist_node_menu)(GaimBlistNode *node);

@@ -164,14 +164,13 @@ static void nap_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gr
 
 static char *nap_get_chat_name(GHashTable *data) {
 	char *name = g_hash_table_lookup(data, "group");
-	
+
 	/* Make sure the name has a # preceding it */
 	if (name[0] != '#') {
 		return g_strdup_printf("#%s", name);
 	}
 
 	return g_strdup(name);
-	
 }
 
 /* 400 - MSG_CLIENT_JOIN */
@@ -545,6 +544,26 @@ static void nap_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 		*se = "offline";
 }
 
+static GList *nap_status_types(GaimAccount *account)
+{
+	GList *types = NULL;
+	GaimStatusType *type;
+
+	g_return_val_if_fail(account != NULL, NULL);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
+									 "offline",
+									 _("Offline"), FALSE, FALSE, FALSE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE,
+									 "online",
+									 _("Online"), FALSE, FALSE, FALSE);
+	types = g_list_append(types, type);
+
+	return types;
+}
+
 static GList *nap_chat_info(GaimConnection *gc)
 {
 	GList *m = NULL;
@@ -582,7 +601,7 @@ static GaimPluginProtocolInfo prpl_info =
 	nap_list_emblems,		/* list_emblems */
 	NULL,					/* status_text */
 	NULL,					/* tooltip_text */
-	NULL,					/* away_states */
+	nap_status_types,		/* status_types */
 	NULL,					/* blist_node_menu */
 	nap_chat_info,			/* chat_info */
 	nap_chat_info_defaults, /* chat_info_defaults */
