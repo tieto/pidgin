@@ -1962,6 +1962,8 @@ void show_buddy_list()
 
 
 	
+	update_button_pix();
+
 
 
         label = gtk_label_new(_("Online"));
