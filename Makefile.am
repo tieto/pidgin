@@ -1,6 +1,7 @@
 EXTRA_DIST = \
 		COPYRIGHT \
 		Doxyfile.in \
+		gaim.pc.in \
 		gaim.spec.in \
 		gaim.desktop \
 		gaim2blt.pl \
@@ -22,6 +23,12 @@ EXTRA_DIST = \
 		plugins/win32/winprefs/Makefile.mingw \
 		plugins/win32/winprefs/winprefs.c \
 		po/Makefile.mingw
+
+gaimincludedir=$(includedir)/gaim
+gaiminclude_HEADERS = config.h
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = gaim.pc
 
 dist-hook: gaim.spec
 	cp gaim.spec $(distdir)

@@ -1170,6 +1170,7 @@ AC_OUTPUT([Makefile
 		   src/protocols/trepia/Makefile
 		   src/protocols/yahoo/Makefile
 		   src/protocols/zephyr/Makefile
+		   gaim.pc
 		   gaim.spec
 		  ])
 

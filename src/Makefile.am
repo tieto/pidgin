@@ -57,145 +57,156 @@ EXTRA_DIST = \
 
 SUBDIRS = protocols
 
-CORESOURCES = \
+gaim_core_SOURCES = \
 	account.c \
-	account.h \
 	accountopt.c \
+	blist.c \
+	buddyicon.c \
+	cmds.c \
+	connection.c \
+	conversation.c \
+	core.c \
+	debug.c \
+	eventloop.c \
+	ft.c \
+	imgstore.c \
+	log.c \
+	md5.c \
+	network.c \
+	notify.c \
+	plugin.c \
+	pluginpref.c \
+	pounce.c \
+	privacy.c \
+	proxy.c \
+	prefs.c \
+	prpl.c \
+	request.c \
+	roomlist.c \
+	server.c \
+	sha.c \
+	signals.c \
+	status.c \
+	stringref.c \
+	sound.c \
+	sslconn.c \
+	util.c \
+	value.c \
+	xmlnode.c
+
+gaim_coreheaders = \
+	account.h \
 	accountopt.h \
 	away.h \
-	blist.c \
 	blist.h \
-	buddyicon.c \
 	buddyicon.h \
-	cmds.c \
 	cmds.h \
-	connection.c \
 	connection.h \
-	conversation.c \
 	conversation.h \
-	core.c \
 	core.h \
-	debug.c \
 	debug.h \
-	eventloop.c \
 	eventloop.h \
-	ft.c \
 	ft.h \
-	imgstore.c \
 	imgstore.h \
-	log.c \
 	log.h \
-	md5.c \
 	md5.h \
 	multi.h \
-	network.c \
 	network.h \
-	notify.c \
 	notify.h \
-	plugin.c \
 	plugin.h \
-	pluginpref.c \
 	pluginpref.h \
-	pounce.c \
 	pounce.h \
-	privacy.c \
 	privacy.h \
-	proxy.c \
 	proxy.h \
-	prefs.c \
 	prefs.h \
-	prpl.c \
 	prpl.h \
-	request.c \
 	request.h \
-	roomlist.c \
 	roomlist.h \
-	server.c \
 	server.h \
-	sha.c \
 	sha.h \
-	signals.c \
 	signals.h \
-	status.c \
 	status.h \
-	stringref.c \
 	stringref.h \
-	sound.c \
 	sound.h \
-	sslconn.c \
 	sslconn.h \
-	util.c \
 	util.h \
-	value.c \
 	value.h \
-	xmlnode.c \
 	xmlnode.h
 
 bin_PROGRAMS = gaim gaim-remote
+
 gaim_SOURCES = \
-	$(CORESOURCES) \
+	$(gaim_core_SOURCES) \
 	about.c \
 	away.c \
 	dialogs.c \
 	dnd-hints.c \
-	dnd-hints.h \
-	gaim.h \
 	gaim-disclosure.c \
-	gaim-disclosure.h \
 	gaimrc.c \
 	gtkaccount.c \
-	gtkaccount.h \
 	gtkcellrendererprogress.c \
-	gtkcellrendererprogress.h \
 	gtkblist.c \
-	gtkblist.h \
 	gtkconn.c \
-	gtkconn.h \
 	gtkconv.c \
-	gtkconv.h \
 	gtkdebug.c \
-	gtkdebug.h \
 	gtkeventloop.c \
-	gtkeventloop.h \
 	gtkft.c \
-	gtkft.h \
 	gtkimhtml.c \
-	gtkimhtml.h \
 	gtkimhtmltoolbar.c \
-	gtkimhtmltoolbar.h \
-	gtkinternal.h \
 	gtklog.c \
-	gtklog.h \
 	gtknotify.c \
-	gtknotify.h \
 	gtkplugin.c \
-	gtkplugin.h \
 	gtkpluginpref.c \
-	gtkpluginpref.h \
 	gtkprefs.c \
-	gtkprefs.h \
 	gtkprivacy.c \
-	gtkprivacy.h \
 	gtkpounce.c \
-	gtkpounce.h \
 	gtkrequest.c \
-	gtkrequest.h \
 	gtkroomlist.c \
-	gtkroomlist.h \
 	gtksound.c \
-	gtksound.h \
 	gtksourceiter.c \
-	gtksourceiter.h \
 	gtkutils.c \
-	gtkutils.h \
 	idle.c \
-	internal.h \
 	main.c \
 	session.c \
 	stock.c \
+	themes.c
+
+gaim_headers = \
+	$(gaim_coreheaders) \
+	dnd-hints.h \
+	gaim.h \
+	gaim-disclosure.h \
+	gtkaccount.h \
+	gtkcellrendererprogress.h \
+	gtkblist.h \
+	gtkconn.h \
+	gtkconv.h \
+	gtkdebug.h \
+	gtkeventloop.h \
+	gtkft.h \
+	gtkimhtml.h \
+	gtkimhtmltoolbar.h \
+	gtkinternal.h \
+	gtklog.h \
+	gtknotify.h \
+	gtkplugin.h \
+	gtkpluginpref.h \
+	gtkprefs.h \
+	gtkprivacy.h \
+	gtkpounce.h \
+	gtkrequest.h \
+	gtkroomlist.h \
+	gtksound.h \
+	gtksourceiter.h \
+	gtkutils.h \
+	internal.h \
 	stock.h \
-	themes.c \
 	ui.h
+
+gaimincludedir=$(includedir)/gaim
+gaiminclude_HEADERS = \
+	$(gaim_coreheaders) \
+	$(gaim_headers)
 
 gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 gaim_LDFLAGS = -export-dynamic
