@@ -897,8 +897,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		
 		gtk_html_append_text(GTK_HTML(c->text), "<BR>", 0);
 
-                gtk_html_thaw(GTK_HTML(c->text));
-
                 if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
                         char *t1;
 
@@ -1058,8 +1056,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
                 gtk_html_append_text(GTK_HTML(c->text), "<BR>", 0);
 
 
-                gtk_html_thaw(GTK_HTML(c->text));
-
                 if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
                         char *t1, *t2;
 			char *nm = g_malloc(256);
@@ -1098,6 +1094,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
         if ((c->is_chat && (general_options & OPT_GEN_POPUP_CHAT)) ||
 	   (!c->is_chat && (general_options & OPT_GEN_POPUP_WINDOWS)))
                 gdk_window_show(c->window->window);
+
+	gtk_html_thaw(GTK_HTML(c->text));
 
 	g_free(smiley);        
 	g_free(buf);
