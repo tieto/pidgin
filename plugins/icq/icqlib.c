@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: icqlib.c 1508 2001-02-22 23:07:34Z warmenhoven $
+$Id: icqlib.c 1535 2001-03-03 00:26:04Z warmenhoven $
 $Log$
-Revision 1.5  2001/02/22 23:07:34  warmenhoven
-updating icqlib
+Revision 1.6  2001/03/03 00:26:04  warmenhoven
+icqlib updates. beginnings of system logging.
+
+Revision 1.52  2001/03/01 05:30:43  bills
+only initialize TCP subsystem when use_tcp is enabled
 
 Revision 1.51  2001/02/22 05:37:39  bills
 new timeout manager code, correct compilation warnings
@@ -188,8 +191,9 @@ ICQLINK *icq_ICQLINKNew(DWORD uin, const char *password, const char *nick,
   icq_UDPQueueNew(link);
 
   /* TCP stuff */
-  icq_TCPInit(link);
   link->icq_UseTCP = useTCP;
+  if (useTCP)
+    icq_TCPInit(link);
 
   /* Proxy stuff */
   link->icq_UseProxy = 0;

@@ -2,6 +2,7 @@
 
 #include "timeout.h"
 
+icq_Timeout *icq_CurrentTimeout = NULL;
 list *icq_TimeoutList = NULL;
 
 void (*icq_SetTimeout)(long length);
@@ -38,25 +39,60 @@ icq_Timeout *icq_TimeoutNew(int length, icq_TimeoutHandler handler,
 void icq_TimeoutDelete(icq_Timeout *timeout)
 {
   list_remove(icq_TimeoutList, timeout);
+
+  /* if this was the timeout we were currently waiting on, move on
+   * to the next */
+  if (icq_CurrentTimeout = timeout)
+  {
+    icq_CurrentTimeout = NULL;
+    icq_TimeoutDoNotify();
+  }
+
   free(timeout);
 }
 
-int _icq_HandleTimeout(void *p, va_list data)
+int _icq_HandleTimeout1(void *p, va_list data)
 {
   icq_Timeout *t = p;
-  time_t current_time = va_arg(data, time_t);
   int complete = 0;
+  time_t current_time = va_arg(data, time_t);
+  list *expired_timeouts = va_arg(data, list *);
 
   if (t->expire_time <= current_time)
-    (*t->handler)(t->data);
+    list_enqueue(expired_timeouts, t);
   else
     /* traversal is complete when we reach an expire time in the future */
     complete = 1;
 
-  if (t->single_shot)
-    icq_TimeoutDelete(t);
+  return complete;
+}
+
+int _icq_HandleTimeout2(void *p, va_list data)
+{
+  icq_Timeout *t = p;
+
+  /* maybe a previously executed timeout caused us to be deleted, so
+   * make sure we're still around */
+  if (list_find(icq_TimeoutList, t))
+    (t->handler)(t->data);
+}
+
+int _icq_HandleTimeout3(void *p, va_list data)
+{
+  icq_Timeout *t = p;
+  int complete = 0;
+  time_t current_time = va_arg(data, time_t);
+
+  if (t->expire_time <= current_time)
+  {
+    if (t->single_shot)
+      icq_TimeoutDelete(t);
+    else
+      t->expire_time = current_time + t->length;
+  }
   else
-    t->expire_time = current_time + t->length;
+    /* traversal is complete when we reach an expire time in the future */
+    complete = 1;
 
   return complete;
 }
@@ -64,9 +100,24 @@ int _icq_HandleTimeout(void *p, va_list data)
 void icq_HandleTimeout()
 {
   time_t current_time = time(NULL);
+  list *expired_timeouts = list_new();
 
-  /* call handler functions for all timeouts that have expired */
-  list_traverse(icq_TimeoutList, _icq_HandleTimeout, current_time);
+  icq_CurrentTimeout = NULL;
+
+  /* these three operations must be split up, in the case where a
+   * timeout function causes timers to be deleted - this ensures
+   * we don't try to free any timers that have already been removed
+   * or corrupt the list traversal process */
+
+  /* determine which timeouts that have expired */
+  list_traverse(icq_TimeoutList, _icq_HandleTimeout1, current_time,
+    expired_timeouts);
+
+  /* call handler function for expired timeouts */
+  list_traverse(expired_timeouts, _icq_HandleTimeout2);
+
+  /* delete any expired timeouts */
+  list_traverse(icq_TimeoutList, _icq_HandleTimeout3, current_time);
 
   if (icq_TimeoutList->count)
     icq_TimeoutDoNotify();
@@ -74,10 +125,18 @@ void icq_HandleTimeout()
 
 void icq_TimeoutDoNotify()
 {
-  time_t current_time = time(NULL);
+  time_t length, current_time = time(NULL);
 
-  icq_Timeout *t = (icq_Timeout *)list_first(icq_TimeoutList);
-  long length = t->expire_time - current_time;
+  if (!icq_TimeoutList->count)
+  {
+    if (icq_SetTimeout)
+      (*icq_SetTimeout)(0);
+    return;
+  }
+
+  icq_CurrentTimeout = (icq_Timeout *)list_first(icq_TimeoutList);
+  length = icq_CurrentTimeout->expire_time - current_time;
+
   if (icq_SetTimeout)
     (*icq_SetTimeout)(length);
 }

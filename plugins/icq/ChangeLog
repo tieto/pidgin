@@ -1,3 +1,19 @@
+2001-03-01  Bill Soudan  <soudan@kde.org>
+
+	This should fix all problems introduced by my 02-22 commit.
+
+	* icqlib/icqlib.c: only initialize TCP subsystem when use_tcp is 
+	enabled
+
+	* icqlib/timeout.c: don't crash when timeouts are deleted during 
+	icq_HandleTimeout, send a zero-length icq_SetTimeout when
+	appropriate to clear current timeout request
+
+	* icqlib/udp.c: rewrote icq_UDPEncode and icq_UDPCheckCode
+	functions to do their work in a seperate buffer so original
+	icq_Packet isn't corrupted, fixed bug where UDP_CMD_ACKs were
+	being queued on the UDP packet queue
+
 2001-02-22  Bill Soudan  <soudan@kde.org>
 
 	Note the icq_SetTimeout callback has been moved outside of

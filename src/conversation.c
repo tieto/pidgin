@@ -111,12 +111,12 @@ struct conversation *new_conversation(char *name)
 	c = (struct conversation *)g_new0(struct conversation, 1);
 	g_snprintf(c->name, sizeof(c->name), "%s", name);
 
-	if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
+	if ((logging_options & OPT_LOG_ALL) || find_log_info(c->name)) {
 		FILE *fd;
 
 		fd = open_log_file(c->name);
 		if (fd > 0) {
-			if (!(general_options & OPT_GEN_STRIP_HTML))
+			if (!(logging_options & OPT_LOG_STRIP_HTML))
 				fprintf(fd,
 					"<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
 					full_date());
@@ -172,7 +172,7 @@ void rm_log(struct log_conversation *a)
 	save_prefs();
 
 	if (cnv) {
-		if (!(general_options & OPT_GEN_LOG_ALL))
+		if (!(logging_options & OPT_LOG_ALL))
 			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, cnv->name);
 		else
 			g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, cnv->name);
@@ -233,7 +233,7 @@ void update_log_convs()
 
 		if (c->log_button)
 			gtk_widget_set_sensitive(c->log_button,
-						 ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
+						 ((logging_options & OPT_LOG_ALL)) ? FALSE : TRUE);
 
 		cnv = cnv->next;
 	}
@@ -246,7 +246,7 @@ void update_log_convs()
 
 			if (c->log_button)
 				gtk_widget_set_sensitive(c->log_button,
-							 ((general_options & OPT_GEN_LOG_ALL)) ? FALSE :
+							 ((logging_options & OPT_LOG_ALL)) ? FALSE :
 							 TRUE);
 
 			bcs = bcs->next;
@@ -1182,7 +1182,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	if (display_options & OPT_DISP_IGNORE_SIZES)
 		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_SIZES;
 
-	if (!(general_options & OPT_GEN_STRIP_HTML))
+	if (!(logging_options & OPT_LOG_STRIP_HTML))
 		gtk_font_options = gtk_font_options ^ GTK_IMHTML_RETURN_LOG;
 
 	if (!who) {
@@ -1211,7 +1211,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", 0);
 
-		if (general_options & OPT_GEN_STRIP_HTML) {
+		if (logging_options & OPT_LOG_STRIP_HTML) {
 			char *t1 = strip_html(what);
 			c->history = g_string_append(c->history, t1);
 			c->history = g_string_append(c->history, "\n");
@@ -1221,11 +1221,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			c->history = g_string_append(c->history, "<BR>\n");
 		}
 
-		if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
+		if ((logging_options & OPT_LOG_ALL) || find_log_info(c->name)) {
 			char *t1;
 			char nm[256];
 
-			if (general_options & OPT_GEN_STRIP_HTML) {
+			if (logging_options & OPT_LOG_STRIP_HTML) {
 				t1 = strip_html(what);
 			} else {
 				t1 = what;
@@ -1236,14 +1236,14 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 				g_snprintf(nm, 256, "%s", c->name);
 			fd = open_log_file(nm);
 			if (fd > 0) {
-				if (general_options & OPT_GEN_STRIP_HTML) {
+				if (logging_options & OPT_LOG_STRIP_HTML) {
 					fprintf(fd, "%s\n", t1);
 				} else {
 					fprintf(fd, "%s<BR>\n", t1);
 				}
 				fclose(fd);
 			}
-			if (general_options & OPT_GEN_STRIP_HTML) {
+			if (logging_options & OPT_LOG_STRIP_HTML) {
 				g_free(t1);
 			}
 		}
@@ -1302,7 +1302,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", 0);
 
-		if (general_options & OPT_GEN_STRIP_HTML) {
+		if (logging_options & OPT_LOG_STRIP_HTML) {
 			char *t1, *t2;
 			t1 = strip_html(buf);
 			t2 = strip_html(what);
@@ -1324,7 +1324,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			g_free(t2);
 		}
 
-		if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
+		if ((logging_options & OPT_LOG_ALL) || find_log_info(c->name)) {
 			char *t1, *t2;
 			char *nm = g_malloc(256);
 			if (c->is_chat)
@@ -1332,7 +1332,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			else
 				g_snprintf(nm, 256, "%s", c->name);
 
-			if (general_options & OPT_GEN_STRIP_HTML) {
+			if (logging_options & OPT_LOG_STRIP_HTML) {
 				t1 = strip_html(buf);
 				t2 = strip_html(what);
 			} else {
@@ -1341,7 +1341,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			}
 			fd = open_log_file(nm);
 			if (fd > 0) {
-				if (general_options & OPT_GEN_STRIP_HTML) {
+				if (logging_options & OPT_LOG_STRIP_HTML) {
 					fprintf(fd, "%s%s\n", t1, t2);
 				} else {
 					fprintf(fd, "%s%s%s<BR>\n", t1, t2, logstr->str);
@@ -1599,7 +1599,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	c->font = font;
 	c->smiley = smiley;
 
-	gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
+	gtk_widget_set_sensitive(c->log_button, ((logging_options & OPT_LOG_ALL)) ? FALSE : TRUE);
 
 	gtk_widget_set_sensitive(c->bold, ((font_options & OPT_FONT_BOLD)) ? FALSE : TRUE);
 	gtk_widget_set_sensitive(c->italic, ((font_options & OPT_FONT_ITALIC)) ? FALSE : TRUE);
@@ -1805,7 +1805,7 @@ void show_conv(struct conversation *c)
 	gtk_container_border_width(GTK_CONTAINER(win), 10);
 	gtk_widget_realize(win);
 	aol_icon(win->window);
-	if ((find_log_info(c->name)) || ((general_options & OPT_GEN_LOG_ALL)))
+	if ((find_log_info(c->name)) || ((logging_options & OPT_LOG_ALL)))
 		 g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, c->name);
 	else
 		g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, c->name);

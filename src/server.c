@@ -448,7 +448,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 			cv = (struct conversation *)cnv->data;
 			if (!strcasecmp(who, normalize(cv->name))) {
 				g_snprintf(cv->name, sizeof(cv->name), "%s", name);
-				if (find_log_info(name) || (general_options & OPT_GEN_LOG_ALL))
+				if (find_log_info(name) || (logging_options & OPT_LOG_ALL))
 					 g_snprintf(who, 63, LOG_CONVERSATION_TITLE, name);
 				else
 					g_snprintf(who, 63, CONVERSATION_TITLE, name);
@@ -637,7 +637,7 @@ void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 	b->history = g_string_new("");
 	g_snprintf(b->name, 80, "%s", name);
 
-	if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(b->name)) {
+	if ((logging_options & OPT_LOG_ALL) || find_log_info(b->name)) {
 		FILE *fd;
 		char *filename;
 
@@ -645,7 +645,7 @@ void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 		g_snprintf(filename, 100, "%s.chat", b->name);
 
 		fd = open_log_file(filename);
-		if (!(general_options & OPT_GEN_STRIP_HTML))
+		if (!(logging_options & OPT_LOG_STRIP_HTML))
 			fprintf(fd,
 				"<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n",
 				full_date());

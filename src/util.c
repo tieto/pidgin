@@ -347,7 +347,7 @@ FILE *open_log_file(char *name)
 	int res;
 	gchar *gaim_dir;
 
-	if (!(general_options & OPT_GEN_LOG_ALL)) {
+	if (!(logging_options & OPT_LOG_ALL)) {
 
 		l = find_log_info(name);
 		if (!l)

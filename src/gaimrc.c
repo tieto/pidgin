@@ -44,6 +44,7 @@ int general_options;
 int display_options;
 int sound_options;
 int font_options;
+int logging_options;
 
 int report_idle, web_browser;
 struct save_pos blist_pos;
@@ -610,6 +611,7 @@ static void gaimrc_read_options(FILE *f)
 {
 	char buf[2048];
 	struct parse *p;
+	gboolean read_logging = FALSE;
 
 	buf[0] = 0;
 
@@ -630,6 +632,9 @@ static void gaimrc_read_options(FILE *f)
 			sound_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "font_options")) {
 			font_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "logging_options")) {
+			logging_options = atoi(p->value[0]);
+			read_logging = TRUE;
 		} else if (!strcmp(p->option, "font_face")) {
 			if (p->value[0] != NULL)
 				g_snprintf(fontface, sizeof(fontface), "%s", p->value[0]);
@@ -660,6 +665,14 @@ static void gaimrc_read_options(FILE *f)
 
 	}
 
+	if (!read_logging) {
+		logging_options = 0;
+		if (general_options & OPT_GEN_LOG_ALL)
+			logging_options |= OPT_LOG_ALL;
+		if (general_options & OPT_GEN_STRIP_HTML)
+			logging_options |= OPT_LOG_STRIP_HTML;
+	}
+
 }
 
 static void gaimrc_write_options(FILE *f)
@@ -670,6 +683,7 @@ static void gaimrc_write_options(FILE *f)
 	fprintf(f, "\tdisplay_options { %d }\n", display_options);
 	fprintf(f, "\tsound_options { %d }\n", sound_options);
 	fprintf(f, "\tfont_options { %d }\n", font_options);
+	fprintf(f, "\tlogging_options { %d }\n", logging_options);
 	if (fontface)
 		fprintf(f, "\tfont_face { %s }\n", fontface);
 	fprintf(f, "\tfont_size { %d }\n", fontsize);

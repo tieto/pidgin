@@ -54,7 +54,6 @@ static void prefs_build_buddy();
 static void prefs_build_convo();
 static void prefs_build_sound();
 static void prefs_build_away();
-static void prefs_build_browser();
 static void prefs_build_deny();
 static gint handle_delete(GtkWidget *, GdkEvent *, void *);
 static void delete_prefs(GtkWidget *, void *);
@@ -164,6 +163,161 @@ static void general_page()
 	gtk_widget_show(prefdialog);
 }
 
+static GtkWidget *browser_entry = NULL;
+static GtkWidget *new_window = NULL;
+
+static void set_browser(GtkWidget *w, int *data)
+{
+	web_browser = (int)data;
+	if (web_browser != BROWSER_MANUAL) {
+		if (browser_entry)
+			gtk_widget_set_sensitive(browser_entry, FALSE);
+	} else {
+		if (browser_entry)
+			gtk_widget_set_sensitive(browser_entry, TRUE);
+	}
+
+	if (web_browser != BROWSER_NETSCAPE) {
+		if (new_window)
+			gtk_widget_set_sensitive(new_window, FALSE);
+	} else {
+		if (new_window)
+			gtk_widget_set_sensitive(new_window, TRUE);
+	}
+
+
+	save_prefs();
+}
+
+static int manualentry_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
+{
+	g_snprintf(web_command, sizeof(web_command), "%s", gtk_entry_get_text(GTK_ENTRY(browser_entry)));
+	save_prefs();
+	return TRUE;
+}
+
+static GtkWidget *browser_radio(char *label, int which, GtkWidget *box, GtkWidget *set)
+{
+	GtkWidget *opt;
+
+	if (!set)
+		opt = gtk_radio_button_new_with_label(NULL, label);
+	else
+		opt =
+		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
+						    label);
+	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_browser), (void *)which);
+	gtk_widget_show(opt);
+	if (web_browser == which)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	return opt;
+}
+
+static void brentdes(GtkWidget *m, gpointer n)
+{
+	browser_entry = NULL;
+	new_window = NULL;
+}
+
+static void browser_page()
+{
+	GtkWidget *parent;
+	GtkWidget *box;
+	GtkWidget *label;
+	GtkWidget *opt;
+
+	parent = prefdialog->parent;
+	gtk_widget_destroy(prefdialog);
+
+	prefdialog = gtk_frame_new(_("Browser Options"));
+	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_add(GTK_CONTAINER(prefdialog), box);
+	gtk_widget_show(box);
+
+	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	opt = browser_radio(_("Netscape"), BROWSER_NETSCAPE, box, NULL);
+	opt = browser_radio(_("KFM"), BROWSER_KFM, box, opt);
+#ifdef USE_GNOME
+	opt = browser_radio(_("GNOME URL Handler"), BROWSER_GNOME, box, opt);
+#endif /* USE_GNOME */
+	opt = browser_radio(_("Manual"), BROWSER_MANUAL, box, opt);
+
+	browser_entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(box), browser_entry, FALSE, FALSE, 0);
+	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command);
+	gtk_signal_connect(GTK_OBJECT(browser_entry), "focus_out_event",
+			   GTK_SIGNAL_FUNC(manualentry_key_pressed), NULL);
+	gtk_signal_connect(GTK_OBJECT(browser_entry), "destroy", GTK_SIGNAL_FUNC(brentdes), NULL);
+	gtk_widget_show(browser_entry);
+
+	new_window =
+	    gaim_button(_("Pop up new window by default"), &general_options, OPT_GEN_BROWSER_POPUP, box);
+
+	if (web_browser != BROWSER_MANUAL) {
+		gtk_widget_set_sensitive(browser_entry, FALSE);
+	} else {
+		gtk_widget_set_sensitive(browser_entry, TRUE);
+	}
+
+	if (web_browser != BROWSER_NETSCAPE) {
+		gtk_widget_set_sensitive(new_window, FALSE);
+	} else {
+		gtk_widget_set_sensitive(new_window, TRUE);
+	}
+
+	gtk_widget_show(prefdialog);
+}
+
+static void logging_page()
+{
+	GtkWidget *parent;
+	GtkWidget *box;
+	GtkWidget *label;
+	GtkWidget *sep;
+
+	parent = prefdialog->parent;
+	gtk_widget_destroy(prefdialog);
+
+	prefdialog = gtk_frame_new(_("Logging Options"));
+	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_add(GTK_CONTAINER(prefdialog), box);
+	gtk_widget_show(box);
+
+	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	gaim_button(_("Log all conversations"), &logging_options, OPT_LOG_ALL, box);
+	gaim_button(_("Strip HTML from conversationlogs"), &logging_options, OPT_LOG_STRIP_HTML, box);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	label = gtk_label_new(_("Nothing below is implemented yet"));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	gaim_button(_("Log when buddies sign on/sign off"), &logging_options, OPT_LOG_BUDDY_SIGNON, box);
+	gaim_button(_("Log when buddies become idle/un-idle"), &logging_options, OPT_LOG_BUDDY_IDLE, box);
+	gaim_button(_("Log when buddies go away/come back"), &logging_options, OPT_LOG_BUDDY_AWAY, box);
+	gaim_button(_("Log your own signons/idleness/awayness (as set by options above)"), &logging_options, OPT_LOG_MY_SIGNON, box);
+	gaim_button(_("Individual log file for each buddy's signons"), &logging_options, OPT_LOG_INDIVIDUAL, box);
+
+	gtk_widget_show(prefdialog);
+}
+
 static void buddy_page()
 {
 	GtkWidget *parent;
@@ -256,13 +410,6 @@ static void convo_page()
 	gaim_button(_("Ignore colors"), &display_options, OPT_DISP_IGNORE_COLOUR, box);
 	gaim_button(_("Ignore font faces"), &display_options, OPT_DISP_IGNORE_FONTS, box);
 	gaim_button(_("Ignore font sizes"), &display_options, OPT_DISP_IGNORE_SIZES, box);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
-
-	gaim_button(_("Log all conversations"), &general_options, OPT_GEN_LOG_ALL, box);
-	gaim_button(_("Strip HTML from logs"), &general_options, OPT_GEN_STRIP_HTML, box);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
@@ -1413,119 +1560,6 @@ static void away_page()
 	gtk_widget_show(prefdialog);
 }
 
-static GtkWidget *browser_entry = NULL;
-static GtkWidget *new_window = NULL;
-
-static void set_browser(GtkWidget *w, int *data)
-{
-	web_browser = (int)data;
-	if (web_browser != BROWSER_MANUAL) {
-		if (browser_entry)
-			gtk_widget_set_sensitive(browser_entry, FALSE);
-	} else {
-		if (browser_entry)
-			gtk_widget_set_sensitive(browser_entry, TRUE);
-	}
-
-	if (web_browser != BROWSER_NETSCAPE) {
-		if (new_window)
-			gtk_widget_set_sensitive(new_window, FALSE);
-	} else {
-		if (new_window)
-			gtk_widget_set_sensitive(new_window, TRUE);
-	}
-
-
-	save_prefs();
-}
-
-static int manualentry_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
-{
-	g_snprintf(web_command, sizeof(web_command), "%s", gtk_entry_get_text(GTK_ENTRY(browser_entry)));
-	save_prefs();
-	return TRUE;
-}
-
-static GtkWidget *browser_radio(char *label, int which, GtkWidget *box, GtkWidget *set)
-{
-	GtkWidget *opt;
-
-	if (!set)
-		opt = gtk_radio_button_new_with_label(NULL, label);
-	else
-		opt =
-		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
-						    label);
-	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_browser), (void *)which);
-	gtk_widget_show(opt);
-	if (web_browser == which)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
-
-	return opt;
-}
-
-static void brentdes(GtkWidget *m, gpointer n)
-{
-	browser_entry = NULL;
-	new_window = NULL;
-}
-
-static void browser_page()
-{
-	GtkWidget *parent;
-	GtkWidget *box;
-	GtkWidget *label;
-	GtkWidget *opt;
-
-	parent = prefdialog->parent;
-	gtk_widget_destroy(prefdialog);
-
-	prefdialog = gtk_frame_new(_("Browser Options"));
-	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
-
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
-	gtk_container_add(GTK_CONTAINER(prefdialog), box);
-	gtk_widget_show(box);
-
-	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	opt = browser_radio(_("Netscape"), BROWSER_NETSCAPE, box, NULL);
-	opt = browser_radio(_("KFM"), BROWSER_KFM, box, opt);
-#ifdef USE_GNOME
-	opt = browser_radio(_("GNOME URL Handler"), BROWSER_GNOME, box, opt);
-#endif /* USE_GNOME */
-	opt = browser_radio(_("Manual"), BROWSER_MANUAL, box, opt);
-
-	browser_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(box), browser_entry, FALSE, FALSE, 0);
-	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command);
-	gtk_signal_connect(GTK_OBJECT(browser_entry), "focus_out_event",
-			   GTK_SIGNAL_FUNC(manualentry_key_pressed), NULL);
-	gtk_signal_connect(GTK_OBJECT(browser_entry), "destroy", GTK_SIGNAL_FUNC(brentdes), NULL);
-	gtk_widget_show(browser_entry);
-
-	new_window =
-	    gaim_button(_("Pop up new window by default"), &general_options, OPT_GEN_BROWSER_POPUP, box);
-
-	if (web_browser != BROWSER_MANUAL) {
-		gtk_widget_set_sensitive(browser_entry, FALSE);
-	} else {
-		gtk_widget_set_sensitive(browser_entry, TRUE);
-	}
-
-	if (web_browser != BROWSER_NETSCAPE) {
-		gtk_widget_set_sensitive(new_window, FALSE);
-	} else {
-		gtk_widget_set_sensitive(new_window, TRUE);
-	}
-
-	gtk_widget_show(prefdialog);
-}
-
 static GtkWidget *deny_conn_hbox = NULL;
 static GtkWidget *deny_opt_menu = NULL;
 static struct gaim_connection *current_deny_gc = NULL;
@@ -1938,7 +1972,6 @@ void show_prefs()
 	prefs_build_convo();
 	prefs_build_sound();
 	prefs_build_away();
-	prefs_build_browser();
 	prefs_build_deny();
 
 	//general_page();
@@ -2065,9 +2098,6 @@ void set_general_option(GtkWidget *w, int *option)
 {
 	general_options = general_options ^ (int)option;
 
-	if ((int)option == OPT_GEN_LOG_ALL)
-		update_log_convs();
-
 	if ((int)option == OPT_GEN_CHECK_SPELLING)
 		toggle_spellchk();
 
@@ -2120,6 +2150,16 @@ void set_font_option(GtkWidget *w, int *option)
 	save_prefs();
 }
 
+void set_logging_option(GtkWidget *w, int *option)
+{
+	logging_options = logging_options ^ (int)option;
+
+	if ((int)option == OPT_LOG_ALL)
+		update_log_convs();
+
+	save_prefs();
+}
+
 GtkWidget *gaim_button(const char *text, int *options, int option, GtkWidget *page)
 {
 	GtkWidget *button;
@@ -2130,16 +2170,17 @@ GtkWidget *gaim_button(const char *text, int *options, int option, GtkWidget *pa
 	if (options == &font_options)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_font_option),
 				   (int *)option);
-
 	if (options == &sound_options)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_sound_option),
 				   (int *)option);
 	if (options == &display_options)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_display_option),
 				   (int *)option);
-
 	if (options == &general_options)
 		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_general_option),
+				   (int *)option);
+	if (options == &logging_options)
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_logging_option),
 				   (int *)option);
 	gtk_widget_show(button);
 
@@ -2148,12 +2189,23 @@ GtkWidget *gaim_button(const char *text, int *options, int option, GtkWidget *pa
 
 void prefs_build_general()
 {
+	GtkCTreeNode *node;
 	char *text[1];
 
 	text[0] = _("General");
 	general_node = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 					     text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), general_node, general_page);
+
+	text[0] = _("Browser");
+	node = gtk_ctree_insert_node(GTK_CTREE(preftree), general_node, NULL,
+				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
+	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, browser_page);
+
+	text[0] = _("Logging");
+	node = gtk_ctree_insert_node(GTK_CTREE(preftree), general_node, NULL,
+				     text, 5, NULL, NULL, NULL, NULL, 0, 1);
+	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, logging_page);
 
 	gtk_ctree_select(GTK_CTREE(preftree), general_node);
 }
@@ -2225,17 +2277,6 @@ void prefs_build_away()
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 				       text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, away_page);
-}
-
-void prefs_build_browser()
-{
-	GtkCTreeNode *parent;
-	char *text[1];
-
-	text[0] = _("Browser");
-	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
-				       text, 5, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, browser_page);
 }
 
 void prefs_build_deny()

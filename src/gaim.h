@@ -422,8 +422,8 @@ extern GtkWidget *blist;
 extern int general_options;
 #define OPT_GEN_ENTER_SENDS       0x00000001
 /* #define OPT_GEN_AUTO_LOGIN        0x00000002 now OPT_USR_AUTO */
-#define OPT_GEN_LOG_ALL           0x00000004
-#define OPT_GEN_STRIP_HTML        0x00000008
+#define OPT_GEN_LOG_ALL           0x00000004 /* now OPT_LOG_ALL */
+#define OPT_GEN_STRIP_HTML        0x00000008 /* now OPT_LOG_STRIP_HTML */
 #define OPT_GEN_APP_BUDDY_SHOW    0x00000010
 #define OPT_GEN_POPUP_WINDOWS     0x00000020
 #define OPT_GEN_SEND_LINKS        0x00000040
@@ -498,6 +498,15 @@ extern int font_options;
 #define OPT_FONT_FGCOL           0x00000040
 #define OPT_FONT_BGCOL           0x00000080
 #define OPT_FONT_SIZE            0x00000100
+
+extern int logging_options;
+#define OPT_LOG_ALL              0x00000001
+#define OPT_LOG_STRIP_HTML       0x00000002
+#define OPT_LOG_BUDDY_SIGNON     0x00000004
+#define OPT_LOG_BUDDY_IDLE       0x00000008
+#define OPT_LOG_BUDDY_AWAY       0x00000010
+#define OPT_LOG_MY_SIGNON        0x00000020
+#define OPT_LOG_INDIVIDUAL       0x00000040
 
 #define OPT_USR_AUTO		0x00000001
 #define OPT_USR_KEEPALV		0x00000002

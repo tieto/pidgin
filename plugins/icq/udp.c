@@ -1,9 +1,14 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2  -*- */
 /*
-$Id: udp.c 1508 2001-02-22 23:07:34Z warmenhoven $
+$Id: udp.c 1535 2001-03-03 00:26:04Z warmenhoven $
 $Log$
-Revision 1.4  2001/02/22 23:07:34  warmenhoven
-updating icqlib
+Revision 1.5  2001/03/03 00:26:04  warmenhoven
+icqlib updates. beginnings of system logging.
+
+Revision 1.29  2001/03/01 05:37:15  bills
+rewrote icq_UDPEncode and icq_UDPCheckCode functions to do their work in
+a seperate buffer so original icq_Packet isn't corrupted, fixed bug where
+UDP_CMD_ACKs were being queued on the UDP packet queue
 
 Revision 1.28  2001/02/22 05:40:04  bills
 port tcp connect timeout code and UDP queue to new timeout manager
@@ -147,7 +152,7 @@ static const BYTE icq_UDPTable[] = {
   0x47, 0x43, 0x69, 0x48, 0x33, 0x51, 0x54, 0x5D, 0x6E, 0x3C, 0x31, 0x64, 0x35, 0x5A, 0x00, 0x00,
 };
 
-void icq_UDPCheckCode(icq_Packet *p)
+DWORD icq_UDPCalculateCheckCode(icq_Packet *p)
 {
   DWORD num1, num2;
   DWORD r1,r2;
@@ -172,8 +177,7 @@ void icq_UDPCheckCode(icq_Packet *p)
   num2 += icq_UDPTable[r2];
   num2 ^= 0xFF00FF;
 
-  icq_PacketGoto(p, 0x14);
-  icq_PacketAppend32(p, num1 ^ num2);
+  return num1 ^ num2;
 }
 
 DWORD icq_UDPScramble(DWORD cc)
@@ -195,29 +199,28 @@ DWORD icq_UDPScramble(DWORD cc)
   return a[0] + a[1] + a[2] + a[3] + a[4];
 }
 
-void icq_UDPEncode(icq_Packet *p)
+void icq_UDPEncode(icq_Packet *p, void *buffer)
 {
-  DWORD checkcode;
+  DWORD checkcode = icq_UDPCalculateCheckCode(p);
   DWORD code1, code2, code3;
   DWORD pos;
-  DWORD data;
 
-  icq_UDPCheckCode(p);
-  icq_PacketGoto(p, 20);
-  checkcode = icq_PacketRead32(p);
+  memcpy(buffer, p->data, p->length);
+
+  *(DWORD *)(buffer+0x14)=htoicql(checkcode);
   code1 = p->length * 0x68656c6cL;
   code2 = code1 + checkcode;
   pos = 0x0A;
 
   for(; pos < p->length; pos+=4)
   {
+    DWORD data = icqtohl(*(DWORD *)((p->data)+pos));
     code3 = code2 + icq_UDPTable[pos & 0xFF];
-    data = icqtohl(*(DWORD *)((p->data)+pos));
     data ^= code3;
-    *(DWORD*)((p->data)+pos)=htoicql(data);
+    *(DWORD*)(buffer+pos)=htoicql(data);
   }
   checkcode = icq_UDPScramble(checkcode);
-  *(DWORD *)((p->data)+0x14)=htoicql(checkcode);
+  *(DWORD *)(buffer+0x14)=htoicql(checkcode);
 }
 
 /*********************************************************
@@ -226,7 +229,7 @@ proxy support for TCP sockets is different!
 *********************************************************/
 int icq_UDPSockWriteDirect(ICQLINK *link, icq_Packet *p)
 {
-  char tmpbuf[ICQ_PACKET_DATA_SIZE];
+  char tmpbuf[ICQ_PACKET_DATA_SIZE+10];
 
   if(link->icq_UDPSok <= 3)
   {
@@ -234,13 +237,14 @@ int icq_UDPSockWriteDirect(ICQLINK *link, icq_Packet *p)
     return -1;
   }
 
-  icq_UDPEncode(p);
+  icq_UDPEncode(p, tmpbuf+10);
+
   if(!link->icq_UseProxy)
   {
 #ifdef _WIN32
-    return send(link->icq_UDPSok, p->data, p->length, 0);
+    return send(link->icq_UDPSok, tmpbuf+10, p->length, 0);
 #else
-    return write(link->icq_UDPSok, p->data, p->length);
+    return write(link->icq_UDPSok, tmpbuf+10, p->length);
 #endif
   }
   else
@@ -251,7 +255,6 @@ int icq_UDPSockWriteDirect(ICQLINK *link, icq_Packet *p)
     tmpbuf[3] = 1; /* address type IP v4 */
     *(unsigned long*)&tmpbuf[4] = htonl(link->icq_ProxyDestIP);
     *(unsigned short*)&tmpbuf[8] = htons(link->icq_ProxyDestPort);
-    memcpy(&tmpbuf[10], p->data, p->length);
 #ifdef _WIN32
     return send(link->icq_UDPSok, tmpbuf, p->length+10, 0)-10;
 #else
@@ -498,7 +501,7 @@ void icq_UDPAck(ICQLINK *link, int seq) /* V5 */
   icq_PacketAppend32(p, rand());
 
   icq_FmtLog(link, ICQ_LOG_MESSAGE, "Acking\n");
-  icq_UDPSockWrite(link, p);
+  icq_UDPSockWriteDirect(link, p);
 }
 
 /***************************************************
