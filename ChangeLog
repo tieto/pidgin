@@ -2,54 +2,53 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.78cvs
 	New Features:
-	* Support for the SILC (http://www.silcnet.org/) protocol from
-	  Pekka Riikonen.
-	* Option to suppress the disconnect notification when using
+	* Support for the SILC protocol (http://www.silcnet.org/)
+	  (Pekka Riikonen)
+	* Option to suppress disconnect notification when using
 	  the autoreconnect plugin (Christopher (siege) O'Brien)
 	* Added support for dragging buddies from the buddy list into the
-	  Add Buddy Pounce dialog.
+	  Add Buddy Pounce dialog
 	* Pounce notification now includes time (Mike Lundy)
 	* The history plugin now shows history for chats in addition to IMs
-	* Menu item to view log (Tom Samstag)
-	* Conversation and Chat sizes automatically saved (Stu Tomlinson)
+	* Menu item to view conversation logs (Tom Samstag)
+	* Conversation and chat sizes automatically saved (Stu Tomlinson)
 	* Added support for Novell privacy settings (Mike Stoddard of Novell)
 	* Added ability to initiate multi-user conferences (chats) in Novell (Mike
 	  Stoddard of Novell)
 	* Find and Save buttons on the debug window (Stu Tomlinson)
 	* Plugin Actions menu (Christopher (siege) O'Brien)
-	* Plugins can now add entries to the rclick menu of a group and a chat(Stu
-	  Tomlinson, Christopher (siege) O'Brien)
+	* Plugins can now add entries to the right-click menu of a group or chat
+	  (Stu Tomlinson and Christopher (siege) O'Brien)
 	* Hyperlink colors are now themeable via your ~/.gtkrc-2.0 file
 
 	Bug Fixes:
-	* Novell 64bit fixes, better error messages, and buddy list sync fixes
-	  (Mike Stoddard of Novell)
 	* Compiles again with gcc 2.96 (Ignacio J. Elia)
 	* Gtk2.0 compatibility fixes (Tim Ringenbach)
+	* Many documentation updates (Jonathan Champ, Gary Kramlich and
+	  Stu Tomlinson)
+	* Yahoo works on 64 bit machines (Gary Kramlich)
+	* Zephyr works on 64 bit machines (Arun A Tharuvai)
+	* Novell 64bit fixes, better error messages, and buddy list sync fixes
+	  (Mike Stoddard of Novell)
+	* Novell protocol works on big endian machines (Novell)
 	* Massive rewrite of MSN support, which should fix a number of issues
-	  and make errors easier to interpret. (Felipe Contreras)
-	* Gadu-Gadu updates (Andrew Wellington)
+	  and make errors easier to interpret (Felipe Contreras)
+	* ALT-F works correctly in the System Log Viewer (Stu Tomlinson)
+	* New tabs should scroll correctly again (Tim Ringenbach)
 	* Dialogs opened from a conversation window are now closed when
 	  the conversation window is closed, preventing a crash (Kevin Stange)
-	* Updated and standardized blist signals (Gary Kramlich)
-	* More doxygen fixes (Jonathan Champ)
 	* Copy/paste encoding fixes (Joe Marcus Clarke)
 	* IRC disconnect crash fix (Luciano Miguel Ferreira Rocha)
-	* Novell prpl works on big endian machines (Novell)
-	* Zephyr works on 64 bit machines (Arun A Tharuvai)
-	* Yahoo works on 64 bit machines (Gary Kramlich)
+	* Ampersands in links should work correctly (Tim Ringenbach)
+	* DirectIM and IM Image support for AIM are greatly improved
+	  (Tim Ringenbach)
+	* Gadu-Gadu updates (Andrew Wellington)
 	* Print Gadu-Gadu messages to the debug window instead of the console
-	* New tabs should scroll correctly again (Tim Ringenbach)
-	* Ampersands in links should work right (Tim Ringenbach)
-	* IM Image support for AIM is back. It may be buggy, and depends on
-	  Direct IM and inherits all its bugs.
-	* Direct IM for AIM should be slightly less buggy, and may actually
-	  work now, if at least one side isn't behind a NAT or firewall.
+	* Updated and standardized blist signals (Gary Kramlich)
 	* Made the recieve-*-msg signals match the sending ones (Stu Tomlinson)
-	* Documentation updates (Gary Kramlich, Stu Tomlinson)
-	* ALT-F works right in the System Log Viewer (Stu Tomlinson)
 
 	Preference Changes:
+	* Added "Conversation placement - By conversation count"
 	* Added a "none" smiley theme to replace the "Show graphical
 	  smileys" option
 	* Removed "Show logins in window," default to yes
@@ -70,7 +69,6 @@ version 0.78cvs
 	* Removed "Send autoresponse in active conversations", default to no
 	* Removed "Show people joining in window", default to yes
 	* Removed "Show people leaving in window", default to yes
-	* Added "Conversation placement - By conversation count"
 
 version 0.77 (04/22/2004):
 	New Features:
