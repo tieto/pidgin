@@ -436,6 +436,9 @@ void show_warn_dialog(char *who)
 	/* End of Cancel Button */
         /* Put the buttons in the box */
 
+	gtk_widget_set_usize(warn, 75, 30);
+	gtk_widget_set_usize(cancel, 75, 30);
+
 	gtk_box_pack_start(GTK_BOX(bbox), warn, TRUE, TRUE, 5);
         gtk_box_pack_end(GTK_BOX(bbox), cancel, TRUE, TRUE, 5);
 
@@ -528,6 +531,7 @@ do_error_dialog(char *message, char *title)
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(close), button_box);
+	gtk_widget_set_usize(close, 75, 30);
 	gtk_widget_show(close);
 
 	/* End of Close Button */
@@ -782,6 +786,7 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
 	/* End of OK Button */
@@ -812,6 +817,7 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
 	/* End of Cancel Button */
@@ -982,6 +988,9 @@ void show_add_buddy(char *buddy, char *group)
 	gtk_container_add(GTK_CONTAINER(cancel), button_box);
 	
 	/* End of Cancel Button */
+
+	gtk_widget_set_usize(add, 75, 30);
+	gtk_widget_set_usize(cancel, 75, 30);
 	
         gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
         gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
@@ -1116,6 +1125,7 @@ void show_new_bp(char *name)
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
 	/* End of OK Button */
@@ -1145,6 +1155,7 @@ void show_new_bp(char *name)
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
 	/* End of Cancel Button */
@@ -1448,6 +1459,9 @@ void show_change_passwd()
 	
 	/* End of Cancel Button */
 
+	gtk_widget_set_usize(b->ok, 75, 30);
+	gtk_widget_set_usize(b->cancel, 75, 30);
+
 	gtk_widget_show(b->ok);
 	gtk_widget_show(b->cancel);
 
@@ -1599,6 +1613,8 @@ void show_set_info()
 	
 	/* End of Cancel Button */
 
+	gtk_widget_set_usize(b->save, 75, 30);
+	gtk_widget_set_usize(b->cancel, 75, 30);
 
 	gtk_widget_show(b->save);
 	gtk_widget_show(b->cancel);
@@ -2089,6 +2105,7 @@ void show_find_info()
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(ok), button_box);
+	gtk_widget_set_usize(ok, 75, 30);
 
 	/* End of OK Button */
 	
@@ -2111,6 +2128,7 @@ void show_find_info()
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(cancel), button_box);
+	gtk_widget_set_usize(cancel, 75, 30);
 	
 	/* End of Cancel Button */
 
@@ -2125,8 +2143,10 @@ void show_find_info()
 	b->stateentry = gtk_entry_new();
 	b->countryentry = gtk_entry_new();
 
-        gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, TRUE, 10);
-        gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
+	gtk_widget_set_usize(ok, 75, 30);
+	gtk_widget_set_usize(cancel, 75, 30);
+        gtk_box_pack_end(GTK_BOX(bbox), ok, FALSE, FALSE, 10);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 10);
 
 	/* Line 1 */
         label = gtk_label_new(_("First Name"));
@@ -2299,6 +2319,7 @@ void show_find_email()
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
 	/* End of OK Button */
@@ -2328,6 +2349,7 @@ void show_find_email()
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
 	/* End of Cancel Button */

@@ -116,6 +116,7 @@ void join_chat()
         gtk_widget_show(button_box);
 
         gtk_container_add(GTK_CONTAINER(join), button_box);
+	gtk_widget_set_usize(join, 75, 30);
 
         /* End of OK Button */
 
@@ -138,6 +139,8 @@ void join_chat()
         gtk_widget_show(button_box);
 
         gtk_container_add(GTK_CONTAINER(cancel), button_box);
+
+	gtk_widget_set_usize(cancel, 75, 30);
 
         /* End of Cancel Button */
 
