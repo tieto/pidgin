@@ -2517,6 +2517,7 @@ static void apply_color_dlg(GtkWidget *w, gpointer d)
 		fgcolor.green = ((guint16)(color[1]*65535))>>8;
 		fgcolor.blue = ((guint16)(color[2]*65535))>>8;
 		update_color(NULL, pref_fg_picture);
+		update_convo_color(TRUE);
 	} else {
 		gtk_color_selection_get_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), color);
 		destroy_colorsel(NULL, (void *)0);
@@ -2525,6 +2526,7 @@ static void apply_color_dlg(GtkWidget *w, gpointer d)
 		bgcolor.green = ((guint16)(color[1]*65535))>>8;
 		bgcolor.blue = ((guint16)(color[2]*65535))>>8;
 		update_color(NULL, pref_bg_picture);
+		update_convo_color(FALSE);
 	}
 }
 
@@ -2688,6 +2690,7 @@ void apply_font_dlg(GtkWidget *w, GtkWidget *f) {
 			fontface[k++] = fontname[i];
 	}
 	fontface[k] = '\0';
+	update_convo_font();
 }
 
 void show_font_dialog(struct conversation *c, GtkWidget *font)

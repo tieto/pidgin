@@ -2351,3 +2351,34 @@ void update_chat_tabs() {
 		}
 	}
 }
+
+void update_convo_color(gboolean fg)
+{
+	GList *c = conversations;
+	struct conversation *b;
+
+	while (c) {
+		b = c->data;
+		c = c->next;
+		if (fg) {
+			if (b->hasfg) continue;
+			b->fgcol = fgcolor;
+		} else {
+			if (b->hasbg) continue;
+			b->bgcol = bgcolor;
+		}
+	}
+}
+
+void update_convo_font()
+{
+	GList *c = conversations;
+	struct conversation *b;
+
+	while (c) {
+		b = c->data;
+		c = c->next;
+		if (b->hasfont) continue;
+		sprintf(b->fontface, "%s", fontface);
+	}
+}
