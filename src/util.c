@@ -2764,12 +2764,12 @@ gaim_url_fetch(const char *url, gboolean full,
 	int sock;
 	GaimFetchUrlData *gfud;
 
-	gaim_debug_info("gaim_url_fetch",
-			 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
-			 url, full, user_agent, http11);
-
 	g_return_if_fail(url != NULL);
 	g_return_if_fail(cb  != NULL);
+	
+	gaim_debug_info("gaim_url_fetch",
+			 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
+			 url, full, user_agent?user_agent:"(null)", http11);
 
 	gfud = g_new0(GaimFetchUrlData, 1);
 
