@@ -3911,9 +3911,11 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 	if (strcmp(state, _("Invisible"))) {
 		if (aim_ssi_getpermdeny(od->sess->ssi.local) != gc->permdeny)
 			aim_ssi_setpermdeny(od->sess, od->conn, gc->permdeny, 0xffffffff);
+		gc->permdeny = 4;
 	} else {
 		if (aim_ssi_getpermdeny(od->sess->ssi.local) != 0x03)
 			aim_ssi_setpermdeny(od->sess, od->conn, 0x03, 0xffffffff);
+		gc->permdeny = 3;
 	}
 
 	if (!strcmp(state, _("Online")))
