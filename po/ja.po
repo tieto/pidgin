@@ -382,8 +382,7 @@ msgid ""
 "When a new conversation is opened this plugin will insert the last "
 "conversation into the current conversation."
 msgstr ""
-"あたらしい会話が開始されたらプラグインは前回の会話の最後のXXX行を現在の会話に"
-"追加します"
+"あたらしい会話が開始されたらプラグインは前回の会話を現在の会話に追加します"
 
 #. *< api_version
 #. *< type
@@ -1357,7 +1356,6 @@ msgid ""
 msgstr "チャットできる機能がついているプロトコルでサインオンしていません．"
 
 #: src/buddy_chat.c:223
-#, fuzzy
 msgid "Join a Chat"
 msgstr "チャットへ加入"
 
@@ -1535,7 +1533,7 @@ msgstr "チャットを削除"
 #: src/dialogs.c:541
 #, fuzzy
 msgid "New Instant Message"
-msgstr "新しいIMの送信"
+msgstr "新しいIM"
 
 #: src/dialogs.c:559
 msgid "Please enter the screenname of the person you would like to IM.\n"
@@ -2378,9 +2376,8 @@ msgid "Add Group"
 msgstr "グループの追加"
 
 #: src/gtkblist.c:3698
-#, fuzzy
 msgid "Please enter the name of the group to be added."
-msgstr "加わるグループ名を入力してください。\n"
+msgstr "加わるグループ名を入力してください。"
 
 #: src/gtkblist.c:4215
 msgid "No actions available"
@@ -3513,7 +3510,7 @@ msgstr "プロキシサーバ"
 
 #: src/gtkprefs.c:1150
 msgid "_User:"
-msgstr "ユーザ名 (_U)"
+msgstr "ユーザ名 (_U):"
 
 #: src/gtkprefs.c:1204
 msgid "Opera"
