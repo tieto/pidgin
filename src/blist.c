@@ -460,6 +460,10 @@ void gaim_blist_add_chat(GaimBlistChat *chat, GaimGroup *group, GaimBlistNode *n
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	gboolean save = FALSE;
 
+
+	g_return_if_fail(chat != NULL);
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT((GaimBlistNode*)chat));
+
 	if (!n) {
 		if (!g) {
 			g = gaim_group_new(_("Chats"));
@@ -537,6 +541,7 @@ void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *g
 	struct _gaim_hbuddy *hb;
 
 	g_return_if_fail(buddy != NULL);
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY((GaimBlistNode*)buddy));
 
 	bnode = (GaimBlistNode *)buddy;
 
@@ -711,8 +716,8 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 	GaimBlistNode *gnode, *cnode, *bnode;
 	gboolean save = FALSE;
 
-	if(!contact)
-		return;
+	g_return_if_fail(contact != NULL);
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CONTACT((GaimBlistNode*)contact));
 
 	if(node && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
 				GAIM_BLIST_NODE_IS_CHAT(node)))
@@ -801,6 +806,9 @@ void  gaim_blist_add_group (GaimGroup *group, GaimBlistNode *node)
 	struct gaim_blist_ui_ops *ops;
 	GaimBlistNode *gnode = (GaimBlistNode*)group;
 	gboolean save = FALSE;
+
+	g_return_if_fail(group != NULL);
+	g_return_if_fail(GAIM_BLIST_NODE_IS_GROUP((GaimBlistNode*)group));
 
 	if (!gaimbuddylist)
 		gaimbuddylist = gaim_blist_new();
