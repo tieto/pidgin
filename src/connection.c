@@ -41,6 +41,37 @@ static GaimConnectionUiOps *connection_ui_ops = NULL;
 
 static int connections_handle;
 
+static gboolean
+send_keepalive(gpointer data)
+{
+	GaimConnection *gc = data;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && prpl_info->keepalive)
+		prpl_info->keepalive(gc);
+
+	return TRUE;
+}
+
+static void
+update_keepalive(GaimConnection *gc, gboolean on)
+{
+	if (on && !gc->keepalive)
+	{
+		gaim_debug_info("connection", "Activating keepalive.\n");
+		gc->keepalive = gaim_timeout_add(30000, send_keepalive, gc);
+	}
+	else if (!on && gc->keepalive > 0)
+	{
+		gaim_debug_info("connection", "Deactivating keepalive.\n");
+		gaim_timeout_remove(gc->keepalive);
+		gc->keepalive = 0;
+	}
+}
+
 void
 gaim_connection_new(GaimAccount *account, gboolean regist, const char *password)
 {
@@ -119,18 +150,40 @@ gaim_connection_destroy(GaimConnection *gc)
 
 	account = gaim_connection_get_account(gc);
 
-	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
+	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED)
+	{
 		GList *wins;
 		GaimPresence *presence = NULL;
+		GaimPluginProtocolInfo *prpl_info = NULL;
 
 		gaim_debug_info("connection", "Disconnecting connection %p\n", gc);
 
 		if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
-			gaim_blist_remove_account(gaim_connection_get_account(gc));
+			gaim_blist_remove_account(account);
 
 		gaim_signal_emit(gaim_connections_get_handle(), "signing-off", gc);
 
-		serv_close(gc);
+		while (gc->buddy_chats)
+		{
+			GaimConversation *b = gc->buddy_chats->data;
+
+			gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
+			gaim_conv_chat_left(GAIM_CONV_CHAT(b));
+		}
+
+		if (gc->idle_timer > 0)
+			gaim_timeout_remove(gc->idle_timer);
+		gc->idle_timer = 0;
+
+		update_keepalive(gc, FALSE);
+
+		if (gc->prpl != NULL)
+		{
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+			if (prpl_info->close)
+				(prpl_info->close)(gc);
+		}
 
 		connections = g_list_remove(connections, gc);
 
@@ -276,6 +329,8 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		}
 
 		serv_set_permit_deny(gc);
+
+		update_keepalive(gc, TRUE);
 	}
 	else if (gc->state == GAIM_DISCONNECTED) {
 		GaimAccount *account = gaim_connection_get_account(gc);

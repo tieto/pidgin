@@ -33,7 +33,6 @@
 extern "C" {
 #endif
 
-void serv_close(GaimConnection *);
 void serv_touch_idle(GaimConnection *);
 int  serv_send_im(GaimConnection *, const char *, const char *, GaimConvImFlags);
 void serv_get_info(GaimConnection *, const char *);

@@ -86,7 +86,7 @@ struct _GaimConnection
 	void *proto_data;            /**< Protocol-specific data.            */
 
 	char *display_name;          /**< The name displayed.                */
-	guint keep_alive;            /**< Keep-alive.                        */
+	guint keepalive;             /**< Keep-alive.                        */
 
 	guint idle_timer;            /**< The idle timer.                    */
 	time_t login_time;           /**< Time of login.                     */

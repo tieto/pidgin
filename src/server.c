@@ -44,57 +44,6 @@
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
 
-static gboolean send_keepalive(gpointer d)
-{
-	GaimConnection *gc = d;
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	if (prpl_info && prpl_info->keepalive)
-		prpl_info->keepalive(gc);
-
-	return TRUE;
-}
-
-static void update_keepalive(GaimConnection *gc, gboolean on)
-{
-	if (on && !gc->keep_alive) {
-		gaim_debug(GAIM_DEBUG_INFO, "server", "allowing NOP\n");
-		gc->keep_alive = gaim_timeout_add(60000, send_keepalive, gc);
-	} else if (!on && gc->keep_alive > 0) {
-		gaim_debug(GAIM_DEBUG_INFO, "server", "removing NOP\n");
-		gaim_timeout_remove(gc->keep_alive);
-		gc->keep_alive = 0;
-	}
-}
-
-void serv_close(GaimConnection *gc)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	while (gc->buddy_chats) {
-		GaimConversation *b = gc->buddy_chats->data;
-
-		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
-		gaim_conv_chat_left(GAIM_CONV_CHAT(b));
-	}
-
-	if (gc->idle_timer > 0)
-		gaim_timeout_remove(gc->idle_timer);
-	gc->idle_timer = 0;
-
-	update_keepalive(gc, FALSE);
-
-	if (gc->prpl != NULL) {
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-		if (prpl_info->close)
-			(prpl_info->close)(gc);
-	}
-}
-
 void serv_touch_idle(GaimConnection *gc)
 {
 	/* Are we idle?  If so, not anymore */
@@ -125,8 +74,6 @@ void serv_finish_login(GaimConnection *gc)
 
 	gc->idle_timer = gaim_timeout_add(20000, check_idle, gc);
 	serv_touch_idle(gc);
-
-	update_keepalive(gc, TRUE);
 }
 
 /* This should return the elapsed time in seconds in which Gaim will not send
