@@ -1365,8 +1365,10 @@ __online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
 	gboolean online;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
-	gtk_tree_model_get(model, &iter, COLUMN_DATA, &account,
-					   COLUMN_ONLINE, &online, -1);
+	gtk_tree_model_get(model, &iter,
+					   COLUMN_DATA, &account,
+					   COLUMN_ONLINE, &online,
+					   -1);
 
 	if (online)
 		gaim_account_disconnect(account);
@@ -1436,8 +1438,6 @@ __add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 	g_object_set(renderer, "xalign", 0.0, "xpad", 10, NULL);
-
-
 }
 
 static void
@@ -1515,7 +1515,7 @@ __create_accounts_list(AccountsDialog *dialog)
 	dialog->model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF,
 									   G_TYPE_STRING, G_TYPE_STRING,
 									   G_TYPE_BOOLEAN, G_TYPE_BOOLEAN,
-									   G_TYPE_BOOLEAN, G_TYPE_POINTER);
+									   G_TYPE_POINTER);
 
 	/* And now the actual treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
