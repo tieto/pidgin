@@ -362,6 +362,7 @@ static void disconnect_window_update_buttons(GtkTreeModel *model)
 		gaim_account_is_connected(account) ? _("_Remove") : _("_Reconnect"));
 	gtk_label_set_markup(GTK_LABEL(disconnect_window->label), label_text);
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(disconnect_window->window), GTK_RESPONSE_ACCEPT, TRUE);
+	gtk_tree_model_get_iter_first(model, &iter);
 	if (gaim_account_is_connected(account) && !(gtk_tree_model_iter_next(model, &iter)))
 		gtk_widget_hide(disconnect_window->reconnect_btn);
 	else
