@@ -503,7 +503,7 @@ static gboolean find_chat_buddy(struct conversation *b, char *name)
 	GList *m = b->in_room;
 
 	while (m) {
-		if (!strcasecmp(m->data, name))
+		if (!strcmp(m->data, name))
 			return TRUE;
 		m = m->next;
 	}
@@ -769,7 +769,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 				if (!jc)
 					jc = find_existing_chat(GJ_GC(j), who);
 				jd = jc->gc->proto_data;
-				if (strcasecmp(who->resource, jc->Jid->resource)) {
+				if (strcmp(who->resource, jc->Jid->resource)) {
 					remove_chat_buddy(jc->b, who->resource);
 					return;
 				}
