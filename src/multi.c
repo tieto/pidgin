@@ -424,7 +424,8 @@ static GtkWidget *build_icon_selection(struct mod_user *u, GtkWidget *box)
 	GtkWidget *browse;
 	GtkWidget *reset;
 
-	g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", u->user->iconfile);
+	if (u->user)
+		g_snprintf(u->iconfile, sizeof(u->iconfile), "%s", u->user->iconfile);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
@@ -513,8 +514,10 @@ static void generate_general_options(struct mod_user *u, GtkWidget *book)
 	u->rempass = rempass;
 	u->checkmail = checkmail;
 	u->iconsel = iconsel;
-	gtk_entry_set_text(GTK_ENTRY(name), u->user->username);
-	gtk_entry_set_text(GTK_ENTRY(pass), u->user->password);
+	if (u->user) {
+		gtk_entry_set_text(GTK_ENTRY(name), u->user->username);
+		gtk_entry_set_text(GTK_ENTRY(pass), u->user->password);
+	}
 	gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
 }
 
