@@ -625,32 +625,29 @@ static void gaimrc_write_user(FILE *f, struct aim_user *u)
 static void gaimrc_read_users(FILE *f)
 {
 	char buf[2048];
-	struct aim_user *u;
+	struct aim_user *u=NULL;
 	struct parse parse_buffer;
-	struct parse *p;
+	struct parse *p=NULL;
 
 	buf[0] = 0;
 
-	while (buf[0] != '}') {
+	while (fgets(buf, sizeof(buf), f)) {
 		if (buf[0] == '#')
 			continue;
-
-		if (!fgets(buf, sizeof(buf), f))
-			return;
-
-
+		else if(buf[0] == '}')
+			break;
 
 		p = parse_line(buf, &parse_buffer);
 
-		if (!strcmp(p->option, "current_user")) {
-		} else if (strcmp(p->option, "user")) {
-			continue;
-		} else {
+		if (strcmp(p->option, "user")==0 ||
+		    strcmp(p->option, "current_user")==0) {
+			if((u=gaimrc_read_user(f))!=NULL)
+				aim_users = g_slist_append(aim_users, u);
+			else {
+				debug_printf("Error reading in users from .gaimrc\n");
+				return;
+			}
 		}
-
-		u = gaimrc_read_user(f);
-
-		aim_users = g_slist_append(aim_users, u);
 	}
 }
 
