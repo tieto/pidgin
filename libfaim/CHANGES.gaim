@@ -1,4 +1,13 @@
 
+Tue May 30 23:40:11 UTC 2000 EWarmenhoven
+	- So today, somone IMs me and says that he thinks that allowing only the
+	  people on your buddy list to see you is a good thing, and that I
+	  should implement it. Well, I did, but it doesn't work right most of
+	  the time, as far as I can tell. At least it works occasionally. I
+	  think I did everything right though. Maybe my timing is off?
+	- Updates to libfaim, so I updated gaim's copy. There should really be a
+	  better system.
+
 Tue May 30 04:04:40 UTC 2000 EWarmenhoven
 	- Well, after trying to screw around with the permit/deny stuff a bit,
 	  I finally decided that having a permit list was for people who didn't

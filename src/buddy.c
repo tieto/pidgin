@@ -1582,6 +1582,10 @@ static void set_permit(GtkWidget *w, int *data)
 	/* We don't save this 'at home', it's on the server.
          * So, we gotta resend the config to the server. */
         serv_save_config();
+#ifdef USE_OSCAR
+	/* we do this here because we can :) */
+	serv_set_permit_deny();
+#endif
 }
 
 

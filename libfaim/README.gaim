@@ -33,6 +33,9 @@ Getting users' away messages (PLEASE do not use oscar/libfaim just because of
 	this, gaim with libfaim is still really buggy, none of you will listen
 	to me anyway)
 Telling the server who's on your permit/deny lists
+Chat:
+ - getting invited
+ - refreshing the chatlist in the preferences dialog
 
 CURRENTLY UNSUPPORTED FEATURES
 ==============================
@@ -41,10 +44,8 @@ Chat:
  - joining rooms
  - leaving rooms
  - talking
- - getting invited
  - inviting someone
  - whispering (this will never happen)
- - refreshing the chatlist in the preferences dialog
 Getting/setting dir info
 Changing your password
 File transfer/IM images/voice chat/etc.

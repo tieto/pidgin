@@ -133,9 +133,8 @@ struct aim_conn_t {
   time_t lastactivity; /* time of last transmit */
   int forcedlatency; 
   struct aim_rxcblist_t *handlerlist;
-#ifdef FAIM_USEPTHREADS
-  faim_mutex_t active;
-#endif
+  faim_mutex_t active; /* lock around read/writes */
+  faim_mutex_t seqnum_lock; /* lock around ->seqnum changes */
 };
 
 /* struct for incoming commands */

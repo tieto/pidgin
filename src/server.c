@@ -344,11 +344,11 @@ void serv_add_deny(char *name)
 
 void serv_set_permit_deny()
 {
+#ifndef USE_OSCAR
 	char buf[MSG_LEN];
 	int at;
 	GList *list;
 
-#ifndef USE_OSCAR
         /* FIXME!  We flash here. */
         if (permdeny == 1 || permdeny == 3) {
         	g_snprintf(buf, sizeof(buf), "toc_add_permit");
@@ -379,14 +379,41 @@ void serv_set_permit_deny()
 #else
 	/* oscar requires us to do everyone at once (?) */
 	/* I think this code is OK now. */
-	list = deny; at = 0;
-	if (list == NULL) return;
-	while (list) {
-		at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&", list->data);
-		list = list->next;
+	char buf[BUF_LONG]; int at; GList *list, *grp, *bud;
+	if (permdeny == 3) { /* Permit Some : Only people on buddy list and
+				on permit list */
+		struct group *g; struct buddy *b;
+		at = 0; list = permit; grp = groups;
+		debug_print("Setting permit list...\n");
+		while (grp) {
+			g = (struct group *)grp->data;
+			bud = g->members;
+			while (bud) {
+				b = (struct buddy *)bud->data;
+				at += g_snprintf(&buf[at], sizeof(buf) - at,
+					"%s&", b->name);
+				bud = bud->next;
+			}
+			grp = grp->next;
+		}
+		while (list) {
+			at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&",
+					list->data);
+			list = list->next;
+		}
+		aim_bos_changevisibility(gaim_sess, gaim_conn,
+					AIM_VISIBILITYCHANGE_PERMITADD, buf);
+	} else { /* Deny Some : Deny people on deny list */
+		list = deny; at = 0;
+		if (list == NULL) return;
+		while (list) {
+			at += g_snprintf(&buf[at], sizeof(buf) - at, "%s&",
+					list->data);
+			list = list->next;
+		}
+		aim_bos_changevisibility(gaim_sess, gaim_conn,
+					AIM_VISIBILITYCHANGE_DENYADD, buf);
 	}
-	aim_bos_changevisibility(gaim_sess, gaim_conn,
-				AIM_VISIBILITYCHANGE_DENYADD, buf);
 #endif
 }
 

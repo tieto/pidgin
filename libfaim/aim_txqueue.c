@@ -141,7 +141,12 @@ int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct command_tx_stru
  */
 u_int aim_get_next_txseqnum(struct aim_conn_t *conn)
 {
-  return ( ++conn->seqnum );
+  u_int ret;
+  
+  faim_mutex_lock(&conn->seqnum_lock);
+  ret = ++conn->seqnum;
+  faim_mutex_unlock(&conn->seqnum_lock);
+  return ret;
 }
 
 /*

@@ -40,6 +40,7 @@ void aim_conn_close(struct aim_conn_t *deadconn)
     free(deadconn->priv);
   deadconn->priv = NULL;
   faim_mutex_init(&deadconn->active, NULL);
+  faim_mutex_init(&deadconn->seqnum_lock, NULL);
 }
 
 struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,
