@@ -430,10 +430,14 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 }
 
 
-#if GTK_CHECK_VERSION(2,4,0)
-gboolean str_array_match(char **a, char **b)
+#if GTK_CHECK_VERSION(2,2,0)
+static gboolean
+str_array_match(char **a, char **b)
 {
 	int i, j;
+
+	if (!a || !b)
+		return FALSE;
 	for (i = 0; a[i] != NULL; i++)
 		for (j = 0; b[j] != NULL; j++)
 			if (!g_ascii_strcasecmp(a[i], b[j]))
@@ -445,14 +449,38 @@ gboolean str_array_match(char **a, char **b)
 static void
 convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 {
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,2,0)
 	int width, height;
-	char **pixbuf_formats;
+	char **pixbuf_formats = NULL;
 	GdkPixbufFormat *format;
+	GdkPixbuf *pixbuf;
 	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(account->protocol_id));
 	char **prpl_formats =  g_strsplit (prpl_info->icon_spec.format,",",0);
+#if !GTK_CHECK_VERSION(2,4,0)
+	GdkPixbufLoader *loader;
+	FILE *file;
+	struct stat st;
+	void *data = NULL;
+#endif
 
+#if GTK_CHECK_VERSION(2,4,0)
 	format = gdk_pixbuf_get_file_info (path, &width, &height);
+#else
+	loader = gdk_pixbuf_loader_new();
+	if (!stat(path, &st) && (file = fopen(path, "rb")) != NULL) {
+		data = g_malloc(st.st_size);
+		fread(data, 1, st.st_size, file);
+		fclose(file);
+		gdk_pixbuf_loader_write(loader, data, st.st_size, NULL);
+		g_free(data);
+	}
+	pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+	width = gdk_pixbuf_get_width(pixbuf);
+	height = gdk_pixbuf_get_height(pixbuf);
+	format = gdk_pixbuf_loader_get_format(loader);
+	gdk_pixbuf_loader_close(loader, NULL);
+	g_object_unref(G_OBJECT(pixbuf));
+#endif
 	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
 
 	if (str_array_match(pixbuf_formats, prpl_formats) &&                                 /* This is an acceptable format AND */
@@ -463,15 +491,15 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 		   prpl_info->icon_spec.max_height >= height))) {                                  /* The icon is the correct size */
 #endif
 		gaim_account_set_buddy_icon(account, path);
-#if GTK_CHECK_VERSION(2,4,0)
+#if GTK_CHECK_VERSION(2,2,0)
 	} else {
 		int i;
 		GError *error = NULL;
-		GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(path, &error);
 		GdkPixbuf *scale;
 		char *random   = g_strdup_printf("%x", g_random_int());
 		const char *dirname = gaim_buddy_icons_get_cache_dir();
 		char *filename = g_build_filename(dirname, random, NULL);
+		pixbuf = gdk_pixbuf_new_from_file(path, &error);
 		if (!error && prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) {
 			int new_width = gdk_pixbuf_get_width(pixbuf);
 			int new_height = gdk_pixbuf_get_height(pixbuf);
@@ -487,13 +515,14 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 
 			scale = gdk_pixbuf_scale_simple (pixbuf, new_width, new_height,
 					GDK_INTERP_HYPER);
-			gdk_pixbuf_unref(pixbuf);
+			g_object_unref(G_OBJECT(pixbuf));
 			pixbuf = scale;
 		}
 		if (error) {
 			g_free(filename);
 			g_free(random);
 			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
+			g_error_free(error);
 			return;
 		}
 		for (i = 0; prpl_formats[i]; i++) {
@@ -505,10 +534,11 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 			gaim_account_set_buddy_icon(account, filename);
 		} else {
 			gaim_debug_error("buddyicon", "Could not convert icon to usable format: %s\n", error->message);
+			g_error_free(error);
 		}
 		g_free(filename);
 		g_free(random);
-		g_object_unref(pixbuf);
+		g_object_unref(G_OBJECT(pixbuf));
 	}
 #endif
 }
