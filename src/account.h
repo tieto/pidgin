@@ -47,7 +47,6 @@ struct _GaimAccount
 	char *buddy_icon;           /**< The buddy icon.             */
 
 	gboolean remember_pass;     /**< Remember the password.      */
-	gboolean check_mail;        /**< Check for mail.             */
 
 	char *protocol_id;          /**< The ID of the protocol.     */
 

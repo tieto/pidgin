@@ -945,6 +945,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_account_set_protocol_id(dialog->account, dialog->protocol_id);
 	}
 
+	/* Clear the existing settings. */
+	gaim_account_clear_settings(dialog->account);
+
 	/* Alias */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->alias_entry));
 
@@ -976,8 +979,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	gaim_account_set_auto_login(dialog->account, GAIM_GTK_UI,
 			gtk_toggle_button_get_active(
 				GTK_TOGGLE_BUTTON(dialog->auto_login_check)));
-
-	/* TODO: Do something about auto-login. */
 
 	/* Password */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
@@ -1016,7 +1017,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	g_free(username);
 
 	/* Add the protocol settings */
-	gaim_account_clear_settings(dialog->account);
 
 	for (l = dialog->prpl_info->protocol_options,
 		 l2 = dialog->protocol_opt_entries;
