@@ -89,8 +89,10 @@ faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen)
 	fu32_t sum;
 	int i;
 
-	for (i = 0, sum = 0; i < buflen; i += 2)
+	for (i = 0, sum = 0; i + 1 < buflen; i += 2)
 		sum += (buf[i+1] << 8) + buf[i];
+	if (i < buflen)
+		sum += buf[i];
 
 	sum = ((sum & 0xffff0000) >> 16) + (sum & 0x0000ffff);
 
