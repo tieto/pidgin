@@ -97,6 +97,7 @@ static void icq_online(ICQLINK *link) {
 	gc->options |= OPT_USR_KEEPALV;
 	serv_finish_login(gc);
 
+	icq_ContactClear(id->link);
 	if (bud_list_cache_exists(gc))
 		do_import(NULL, gc);
 
@@ -313,7 +314,6 @@ static void icq_add_buddies(struct gaim_connection *gc, GList *whos) {
 	while (whos) {
 		icq_ContactAdd(id->link, atol(whos->data));
 		icq_ContactSetVis(id->link, atol(whos->data), TRUE);
-		icq_SendNewUser(id->link, atol(whos->data));
 		whos = whos->next;
 	}
 }
