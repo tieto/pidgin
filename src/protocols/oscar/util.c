@@ -142,6 +142,7 @@ faim_export fu16_t aimutil_iconsum(const fu8_t *buf, int buflen)
 /**
  * Check if the given screen name is a valid AIM screen name.
  * Example: BobDole
+ * Example: Henry_Ford@mac.com
  *
  * @return 1 if the screen name is valid, 0 if not.
  */
@@ -150,7 +151,9 @@ static int aim_snvalid_aim(const char *sn)
 	int i;
 
 	for (i = 0; sn[i] != '\0'; i++) {
-		if (!isalnum(sn[i]) && (sn[i] != ' ') && (sn[i] != '@') && (sn[i] != '.') && (sn[i] != '_'))
+		if (!isalnum(sn[i]) && (sn[i] != ' ') &&
+			(sn[i] != '@') && (sn[i] != '.') &&
+			(sn[i] != '_') && (sn[i] != '-'))
 			return 0;
 	}
 
