@@ -366,7 +366,7 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config)
 					how_many++;
 				}
 			} else if (*c == 'b' && !find_buddy(gc, c + 2)) {
-				char nm[80], sw[80], *tmp = c + 2;
+				char nm[80], sw[388], *tmp = c + 2;
 				int i = 0;
 				while (*tmp != ':' && *tmp)
 					nm[i++] = *tmp++;
