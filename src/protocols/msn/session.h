@@ -63,9 +63,9 @@ struct _MsnSession
 	MsnUserList *userlist;
 	MsnUserList *sync_userlist;
 
-	int servconns_count;
-	GList *switches;
-	GList *directconns;
+	int servconns_count; /**< The count of server connections. */
+	GList *switches; /**< The list of all the switchboards. */
+	GList *directconns; /**< The list of all the directconnections. */
 
 	int conv_seq;
 

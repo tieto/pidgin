@@ -189,7 +189,9 @@ transaction_timeout(gpointer data)
 	trans = data;
 	g_return_val_if_fail(trans != NULL, FALSE);
 
-	gaim_debug_info("msn", "%s %d %s\n", trans->command, trans->trId, trans->params);
+#if 0
+	gaim_debug_info("msn", "timed out: %s %d %s\n", trans->command, trans->trId, trans->params);
+#endif
 
 	if (trans->timeout_cb != NULL)
 		trans->timeout_cb(trans->cmdproc, trans);

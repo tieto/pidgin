@@ -125,10 +125,21 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *servconn = data;
 
+	servconn->processing = FALSE;
+
+	if (servconn->wasted)
+	{
+		msn_servconn_destroy(servconn);
+		return;
+	}
+
 	servconn->fd = source;
 
 	if (source > 0)
 	{
+		servconn->connected = TRUE;
+		servconn->cmdproc->ready = TRUE;
+
 		/* Someone wants to know we connected. */
 		servconn->connect_cb(servconn);
 		servconn->inpa = gaim_input_add(servconn->fd, GAIM_INPUT_READ,
@@ -169,8 +180,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 
 	if (r == 0)
 	{
-		servconn->connected = TRUE;
-		servconn->cmdproc->ready = TRUE;
+		servconn->processing = TRUE;
 		return TRUE;
 	}
 	else
@@ -206,6 +216,7 @@ msn_servconn_disconnect(MsnServConn *servconn)
 			gaim_timeout_remove(servconn->http_data->timer);
 	}
 
+	servconn->rx_buf = NULL;
 	servconn->rx_len = 0;
 	servconn->payload_len = 0;
 

@@ -66,14 +66,16 @@ struct _MsnSwitchBoard
 							  messages of this switchboard, or @c NULL if
 							  this is a helper switchboard. */
 
-	gboolean empty;      /**< A flag that states if the swithcboard has no
-						   users in it. */
-	gboolean invited;    /**< A flag that states if we were invited to the
-						   switchboard. */
-	gboolean destroying; /**< A flag that states if the switchboard is on
-						   the process of being destroyed. */
-	gboolean ready;      /**< A flag that states if his switchboard is
-						   ready to be used. */
+	gboolean empty;			/**< A flag that states if the swithcboard has no
+							  users in it. */
+	gboolean invited;		/**< A flag that states if we were invited to the
+							  switchboard. */
+	gboolean destroying;	/**< A flag that states if the switchboard is on
+							  the process of being destroyed. */
+	gboolean ready;			/**< A flag that states if this switchboard is
+							  ready to be used. */
+	gboolean closed;		/**< A flag that states if the switchboard has
+							  been closed by the user. */
 
 	int current_users;
 	int total_users;
@@ -81,7 +83,8 @@ struct _MsnSwitchBoard
 
 	int chat_id;
 
-	GQueue *im_queue;
+	GQueue *im_queue; /**< Queue of messages to send. */
+	GList *ack_list; /**< List of messages waiting for an ack. */
 
 	MsnSBErrorType error; /**< The error that occured in this switchboard
 							(if applicable). */
@@ -183,6 +186,15 @@ gboolean msn_switchboard_connect(MsnSwitchBoard *swboard,
  * @param swboard The switchboard to disconnect from.
  */
 void msn_switchboard_disconnect(MsnSwitchBoard *swboard);
+
+/**
+ * Closes the switchboard.
+ *
+ * Called when a conversation is closed.
+ *
+ * @param swboard The switchboard to close.
+ */
+void msn_switchboard_close(MsnSwitchBoard *swboard);
 
 void msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg);
 void msn_switchboard_queue_msg(MsnSwitchBoard *swboard, MsnMessage *msg);

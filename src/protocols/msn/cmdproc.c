@@ -109,6 +109,7 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 	size_t len;
 
 	g_return_if_fail(cmdproc != NULL);
+	g_return_if_fail(cmdproc->ready);
 	g_return_if_fail(trans != NULL);
 
 	servconn = cmdproc->servconn;
@@ -152,6 +153,7 @@ msn_cmdproc_send_quick(MsnCmdProc *cmdproc, const char *command,
 	size_t len;
 
 	g_return_if_fail(cmdproc != NULL);
+	g_return_if_fail(cmdproc->ready);
 	g_return_if_fail(command != NULL);
 
 	servconn = cmdproc->servconn;
@@ -187,6 +189,7 @@ msn_cmdproc_send(MsnCmdProc *cmdproc, const char *command,
 	va_list arg;
 
 	g_return_if_fail(cmdproc != NULL);
+	g_return_if_fail(cmdproc->ready);
 	g_return_if_fail(command != NULL);
 
 	trans = g_new0(MsnTransaction, 1);

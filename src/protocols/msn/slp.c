@@ -739,6 +739,11 @@ got_emoticon(MsnSlpCall *slpcall,
 	gaim_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
 
 #if 0
+	serv_got_smiley(slpcall->slplink->session->account->gc, 
+		slpcall->slplink->remote_user, slpcall->data_info, data, size);
+#endif
+
+#if 0
 	GaimConversation *conv;
 	GaimConnection *gc = slpsession->swboard->servconn->session->account->gc;
 	serv_got_smiley(gc, info, data, size);

@@ -1278,6 +1278,15 @@ msn_notification_init(void)
 	msn_table_add_error(cbs_table, "ADD", add_error);
 	/* msn_table_add_error(cbs_table, "REA", rea_error); */
 
+	/* I received a '500' error from the notification server just now.
+	 * I think this means 'Service temporarily unavailable' or similar,
+	 * in response to a USR command. We should report this instead of
+	 * 'Error reading from notification server'.
+	 * I'm not going to implement this right now, because we're string
+	 * frozen (and I'd probably break something anyway), so I'll put this
+	 * here as a reminder, or something. Stu. */
+	/* msn_table_add_error(cbs_table, "USR", usr_error); */
+
 	msn_table_add_msg_type(cbs_table,
 						   "text/x-msmsgsprofile",
 						   profile_msg);

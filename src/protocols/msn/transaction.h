@@ -47,7 +47,7 @@ struct _MsnTransaction
 
 	int timer;
 
-	void *data; /* The data to be used on the different callbacks */
+	void *data; /**< The data to be used on the different callbacks. */
 	GHashTable *callbacks;
 	gboolean has_custom_callbacks;
 	MsnErrorCb error_cb;
@@ -57,8 +57,8 @@ struct _MsnTransaction
 	size_t payload_len;
 
 	GQueue *queue;
-	MsnCommand *pendent_cmd; /* The command that is waiting for the result of
-								this transaction. */
+	MsnCommand *pendent_cmd; /**< The command that is waiting for the result of
+							   this transaction. */
 };
 
 MsnTransaction *msn_transaction_new(MsnCmdProc *cmdproc,

@@ -24,7 +24,7 @@
 #ifndef _MSN_SLP_H_
 #define _MSN_SLP_H_
 
-#define MSN_DEBUG_MSG 1
+/* #define MSN_DEBUG_MSG 1 */
 /* #define MSN_DEBUG_SLPMSG 1 */
 
 /* #define MSN_DEBUG_SLP 1 */

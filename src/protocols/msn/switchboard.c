@@ -91,10 +91,13 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 			msg_error_helper(swboard->servconn->cmdproc, msg,
 							 MSN_MSG_ERROR_SB);
 		}
-		msn_message_destroy(msg);
+		msn_message_unref(msg);
 	}
 
 	g_queue_free(swboard->im_queue);
+
+	for (l = swboard->ack_list; l != NULL; l = l->next)
+		msn_message_unref(l->data);
 
 	if (swboard->im_user != NULL)
 		g_free(swboard->im_user);
@@ -333,26 +336,27 @@ cal_error_helper(MsnTransaction *trans, int reason)
 static void
 msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 {
+	MsnSwitchBoard *swboard;
+
 	g_return_if_fail(cmdproc != NULL);
 	g_return_if_fail(msg     != NULL);
 
-	if (msg->nak_cb != NULL)
+	if ((error != MSN_MSG_ERROR_SB) && (msg->nak_cb != NULL))
 		msg->nak_cb(msg, msg->ack_data);
+
+	swboard = cmdproc->servconn->data;
 
 	if (msg->type == MSN_MSG_TEXT)
 	{
-		MsnSwitchBoard *swboard;
 		const char *format;
 		char *body_str, *body_enc, *pre, *post;
 		char *str_reason;
-
-		swboard = cmdproc->servconn->data;
 
 #if 0
 		if (swboard->conv == NULL)
 		{
 			if (msg->ack_ref)
-				 msn_message_unref(msg);
+				msn_message_unref(msg);
 
 			return;
 		}
@@ -403,16 +407,21 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 		g_free(pre);
 		g_free(post);
 
-		msn_switchboard_report_user(cmdproc->servconn->data,
-									GAIM_MESSAGE_ERROR, str_reason);
-		msn_switchboard_report_user(cmdproc->servconn->data,
-									GAIM_MESSAGE_RAW, body_str);
+		msn_switchboard_report_user(swboard, GAIM_MESSAGE_ERROR,
+									str_reason);
+		msn_switchboard_report_user(swboard, GAIM_MESSAGE_RAW,
+									body_str);
 
 		g_free(body_str);
 	}
 
-	if (msg->ack_ref)
+	/* If a timeout occures we will want the msg around just in case we
+	 * receive the ACK after the timeout. */
+	if (msg->ack_ref && error != MSN_MSG_ERROR_TIMEOUT)
+	{
+		swboard->ack_list = g_list_remove(swboard->ack_list, msg);
 		msn_message_unref(msg);
+	}
 }
 
 /**************************************************************************
@@ -526,6 +535,9 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_switchboard_process_queue(swboard);
 
 	send_clientcaps(swboard);
+
+	if (swboard->closed)
+		msn_switchboard_close(swboard);
 }
 
 static void
@@ -568,6 +580,7 @@ nak_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
+	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
 
 	msg = cmd->trans->data;
@@ -575,6 +588,8 @@ ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (msg->ack_cb != NULL)
 		msg->ack_cb(msg, msg->ack_data);
 
+	swboard = cmdproc->servconn->data;
+	swboard->ack_list = g_list_remove(swboard->ack_list, msg);
 	msn_message_unref(msg);
 }
 
@@ -797,12 +812,14 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	{
 		msg->ack_ref = TRUE;
 		msn_message_ref(msg);
+		swboard->ack_list = g_list_append(swboard->ack_list, msg);
 		msn_transaction_set_timeout_cb(trans, msg_timeout);
 	}
 	else if (msg->type == MSN_MSG_SLP)
 	{
 		msg->ack_ref = TRUE;
 		msn_message_ref(msg);
+		swboard->ack_list = g_list_append(swboard->ack_list, msg);
 		msn_transaction_set_timeout_cb(trans, msg_timeout);
 #if 0
 		if (msg->ack_cb != NULL)
@@ -920,10 +937,10 @@ msn_switchboard_disconnect(MsnSwitchBoard *swboard)
 /**************************************************************************
  * Call stuff
  **************************************************************************/
-#if 0
 static void
 got_cal(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
+#if 0
 	MsnSwitchBoard *swboard;
 	const char *user;
 
@@ -932,8 +949,8 @@ got_cal(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	user = cmd->params[0];
 
 	msn_switchboard_add_user(swboard, user);
-}
 #endif
+}
 
 static void
 cal_timeout(MsnCmdProc *cmdproc, MsnTransaction *trans)
@@ -963,7 +980,9 @@ msn_switchboard_request_add_user(MsnSwitchBoard *swboard, const char *user)
 	cmdproc = swboard->servconn->cmdproc;
 
 	trans = msn_transaction_new(cmdproc, "CAL", "%s", user);
-	/* msn_transaction_add_cb(trans, "CAL", got_cal); */
+	/* this doesn't do anything, but users seem to think that
+	 * 'Unhandled command' is some kind of error, so we don't report it */
+	msn_transaction_add_cb(trans, "CAL", got_cal);
 
 	msn_transaction_set_data(trans, swboard);
 	msn_transaction_set_timeout_cb(trans, cal_timeout);
@@ -984,6 +1003,10 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	char *host;
 	int port;
 	swboard = cmd->trans->data;
+
+	if (g_list_find(cmdproc->session->switches, swboard) == NULL)
+		/* The conversation window was closed. */
+		return;
 
 	msn_switchboard_set_auth_key(swboard, cmd->params[4]);
 
@@ -1055,10 +1078,30 @@ msn_switchboard_request(MsnSwitchBoard *swboard)
 
 	trans = msn_transaction_new(cmdproc, "XFR", "%s", "SB");
 	msn_transaction_add_cb(trans, "XFR", got_swboard);
+
 	msn_transaction_set_data(trans, swboard);
 	msn_transaction_set_error_cb(trans, xfr_error);
 
 	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+void
+msn_switchboard_close(MsnSwitchBoard *swboard)
+{
+	g_return_if_fail(swboard != NULL);
+
+	if (g_queue_is_empty(swboard->im_queue))
+	{
+		MsnCmdProc *cmdproc;
+
+		cmdproc = swboard->servconn->cmdproc;
+
+		msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
+
+		msn_switchboard_destroy(swboard);
+	}
+	else
+		swboard->closed = TRUE;
 }
 
 /**************************************************************************

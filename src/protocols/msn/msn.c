@@ -1124,17 +1124,13 @@ msn_chat_leave(GaimConnection *gc, int id)
 {
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
-	MsnCmdProc *cmdproc;
 
 	session = gc->proto_data;
 
 	swboard = msn_session_find_switch_with_id(session, id);
 	g_return_if_fail(swboard != NULL);
 
-	cmdproc = swboard->servconn->cmdproc;
-
-	msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
-	msn_switchboard_destroy(swboard);
+	msn_switchboard_close(swboard);
 
 	/* serv_got_chat_left(gc, id); */
 }
@@ -1240,7 +1236,6 @@ msn_convo_closed(GaimConnection *gc, const char *who)
 {
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
-	MsnCmdProc *cmdproc;
 
 	session = gc->proto_data;
 
@@ -1254,10 +1249,7 @@ msn_convo_closed(GaimConnection *gc, const char *who)
 	if (swboard == NULL)
 		return;
 
-	cmdproc = swboard->servconn->cmdproc;
-
-	msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
-	msn_switchboard_destroy(swboard);
+	msn_switchboard_close(swboard);
 }
 
 static void
@@ -1491,7 +1483,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* Extract their Name and put it in */
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"\tName\n", 0, "\t", 0, "Undisclosed", _("Name"), 0, NULL);
+			"\nName\n", 0, "\t", 0, "Undisclosed", _("Name"), 0, NULL);
 
 	if (found)
 		has_info = TRUE;
