@@ -1741,14 +1741,40 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
         }
 
         if (d) {
-		build_block_list();
-		serv_add_deny(p->gc, name);
+		GSList *d = p->gc->deny;
+		char *n;
+		n = g_strdup(normalize(name));
+		while (d) {
+			if (!strcasecmp(n, normalize(d->data)))
+				break;
+			d = d->next;
+		}
+		g_free(n);
+		if (!d) {
+			p->gc->deny = g_slist_append(p->gc->deny, name);
+			build_block_list();
+			serv_add_deny(p->gc, name);
+			do_export(0, 0);
+		} else
+			g_free(name);
         } else {
-		build_allow_list();
-		serv_add_permit(p->gc, name);
+		GSList *d = p->gc->permit;
+		char *n;
+		n = g_strdup(normalize(name));
+		while (d) {
+			if (!strcasecmp(n, normalize(d->data)))
+				break;
+			d = d->next;
+		}
+		g_free(n);
+		if (!d) {
+			p->gc->permit = g_slist_append(p->gc->permit, name);
+			build_allow_list();
+			serv_add_permit(p->gc, name);
+			do_export(0, 0);
+		} else
+			g_free(name);
         }
-
-	do_export(0, 0);
 
         destroy_dialog(NULL, p->window);
 }
