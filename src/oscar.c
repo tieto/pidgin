@@ -885,20 +885,27 @@ static int gaim_getfile_filereq(struct aim_session_t *sess, struct command_rx_st
 	return 1;
 }
 
-/*
 static void getfile_send_callback(gpointer data, gint source, GdkInputCondition condition) {
 	struct getfile_transfer *gt = (struct getfile_transfer *)data;
 	char buf[1024];
+	int result;
 
-	debug_printf("getfile_send_callback for file %s to %s\n", gt->filename, gt->receiver);
-	gt->pos += aim_getfile_send_chunk(gt->conn, gt->file, gt->fh, gt->pos, 1024);
+	result = aim_getfile_send_chunk(gt->conn, gt->file, gt->fh, -1, 1024);
+	gt->pos += result;
+	if (result == 0) {
+		gdk_input_remove(gt->gop); gt->gop = 0;
+	} else if (result == -1) {
+		do_error_dialog(_("Error in transfer"), "Gaim");
+		gdk_input_remove(gt->gop); gt->gop = 0;
+		interrupt_getfile(NULL, gt);
+	}
 }
-*/
 
 static int gaim_getfile_filesend(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct getfile_transfer *gt;
+	int result;
 
 	va_list ap;
 	struct aim_conn_t *oftconn;
@@ -923,11 +930,10 @@ static int gaim_getfile_filesend(struct aim_session_t *sess, struct command_rx_s
 		return 1;
 	}
 	gt->pos = 0;
-	gt->fh = fh;
+	gt->fh = g_memdup(fh, sizeof(struct aim_fileheader_t));
+	fseek(gt->file, 0, SEEK_SET);
 
-	/* gt->gop = gdk_input_add(gt->conn->fd, GDK_INPUT_WRITE, getfile_send_callback, gt); */
-	/* yes, this is bad. but i don't think aim_getfile_send_chunk works. */
-	aim_getfile_send(oftconn, gt->file, fh);
+	gt->gop = gdk_input_add(gt->conn->fd, GDK_INPUT_WRITE, getfile_send_callback, gt);
 
 	return 1;
 }
