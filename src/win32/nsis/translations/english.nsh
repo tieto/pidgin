@@ -34,7 +34,7 @@ LangString GTK_UPGRADE_PROMPT				${LANG_ENGLISH} "An old version of the GTK+ run
 
 ; Gaim Section Prompts and Texts
 LangString GAIM_UNINSTALL_DESC			${LANG_ENGLISH} "Gaim (remove only)"
-LangString GAIM_PROMPT_WIPEOUT			${LANG_ENGLISH} "You're old Gaim directory is about to be deleted. Would you like to continue?$\r$\rNote: Any non-standard plugins that you may have installed will be deleted.$\rGaim user settings will not be affected."
+LangString GAIM_PROMPT_WIPEOUT			${LANG_ENGLISH} "Your old Gaim directory is about to be deleted. Would you like to continue?$\r$\rNote: Any non-standard plugins that you may have installed will be deleted.$\rGaim user settings will not be affected."
 LangString GAIM_PROMPT_DIR_EXISTS			${LANG_ENGLISH} "The installation directory you specified already exists. Any contents$\rwill be deleted. Would you like to continue?"
 
 ; GTK+ Section Prompts
