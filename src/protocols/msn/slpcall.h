@@ -57,6 +57,15 @@ struct _MsnSlpCall
 	long session_id;
 	long app_id;
 
+	gboolean pending; /**< A flag that states if we should wait for this
+						slpcall to start and do not time out. */
+	gboolean progress; /**< A flag that states if there has been progress since
+						 the last time out. */
+	gboolean wasted; /**< A flag that states if this slpcall is going to be
+					   destroyed. */
+	gboolean started; /**< A flag that states if this slpcall's session has
+						been initiated. */
+
 	void (*progress_cb)(MsnSlpCall *slpcall,
 						gsize total_length, gsize len, gsize offset);
 	void (*session_init_cb)(MsnSlpSession *slpsession);
@@ -68,8 +77,6 @@ struct _MsnSlpCall
 
 	MsnSlpCb cb;
 	void (*end_cb)(MsnSlpCall *slpcall);
-	gboolean wasted;
-	gboolean started;
 
 	int timer;
 };

@@ -51,7 +51,8 @@ struct _MsnSession
 	int dispatch_port;
 
 	gboolean connected;
-	gboolean logged_in; /* temporal flag to ignore local blist adds */
+	gboolean logged_in; /**< A temporal flag to ignore local buddy list adds. */
+	gboolean destroying; /**< A flag that states if the session is being destroyed. */
 
 	MsnNotification *notification;
 	MsnNexus *nexus;

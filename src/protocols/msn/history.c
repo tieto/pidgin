@@ -67,7 +67,12 @@ msn_history_find(MsnHistory *history, unsigned int trId)
 void
 msn_history_add(MsnHistory *history, MsnTransaction *trans)
 {
-	GQueue *queue = history->queue;
+	GQueue *queue;
+
+	g_return_if_fail(history != NULL);
+	g_return_if_fail(trans   != NULL);
+
+	queue = history->queue;
 
 	trans->trId = history->trId++;
 

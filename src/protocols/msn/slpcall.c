@@ -189,11 +189,21 @@ msn_slp_call_close(MsnSlpCall *slpcall)
 gboolean
 msn_slp_call_timeout(gpointer data)
 {
+	MsnSlpCall *slpcall;
+
 	gaim_debug_info("msn", "slpcall timeout\n");
 
-	msn_slp_call_destroy(data);
+	slpcall = data;
 
-	return FALSE;
+	if (!slpcall->pending && !slpcall->progress)
+	{
+		msn_slp_call_destroy(slpcall);
+		return FALSE;
+	}
+
+	slpcall->progress = FALSE;
+
+	return TRUE;
 }
 
 MsnSlpCall *
@@ -240,15 +250,6 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 			msn_slp_call_session_init(slpcall);
 	}
 #endif
-
-	if (slpcall != NULL)
-	{
-		if (slpcall->timer)
-			gaim_timeout_remove(slpcall->timer);
-
-		slpcall->timer = gaim_timeout_add(MSN_SLPCALL_TIMEOUT,
-										  msn_slp_call_timeout, slpcall);
-	}
 
 	return slpcall;
 }

@@ -58,6 +58,8 @@ msn_session_destroy(MsnSession *session)
 {
 	g_return_if_fail(session != NULL);
 
+	session->destroying = TRUE;
+
 	if (session->connected)
 		msn_session_disconnect(session);
 

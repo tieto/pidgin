@@ -59,6 +59,8 @@ msn_slplink_new(MsnSession *session, const char *username)
 {
 	MsnSlpLink *slplink;
 
+	g_return_val_if_fail(session != NULL, NULL);
+
 	slplink = g_new0(MsnSlpLink, 1);
 
 	slplink->session = session;
@@ -80,6 +82,8 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 {
 	MsnSession *session;
 
+	g_return_if_fail(slplink != NULL);
+
 	session = slplink->session;
 
 	if (slplink->local_user != NULL)
@@ -90,6 +94,9 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	if (slplink->directconn != NULL)
 		msn_directconn_destroy(slplink->directconn);
+
+	while (slplink->slp_calls != NULL)
+		msn_slp_call_destroy(slplink->slp_calls->data);
 
 	session->slplinks =
 		g_list_remove(session->slplinks, slplink);
@@ -288,12 +295,7 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	if ((slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030) && (slpmsg->slpcall != NULL))
 	{
-		if (slpmsg->slpcall->timer)
-		{
-			gaim_timeout_remove(slpmsg->slpcall->timer);
-			slpmsg->slpcall->timer = gaim_timeout_add(MSN_SLPCALL_TIMEOUT,
-													  msn_slp_call_timeout, slpmsg->slpcall);
-		}
+		slpmsg->slpcall->progress = TRUE;
 
 		if (slpmsg->slpcall->progress_cb != NULL)
 		{
@@ -525,12 +527,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 	if ((slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030) && (slpmsg->slpcall != NULL))
 	{
-		if (slpmsg->slpcall->timer)
-		{
-			gaim_timeout_remove(slpmsg->slpcall->timer);
-			slpmsg->slpcall->timer = gaim_timeout_add(MSN_SLPCALL_TIMEOUT,
-													  msn_slp_call_timeout, slpmsg->slpcall);
-		}
+		slpmsg->slpcall->progress = TRUE;
 
 		if (slpmsg->slpcall->progress_cb != NULL)
 		{
@@ -682,6 +679,8 @@ msn_slplink_request_ft(MsnSlpLink *slplink, GaimXfer *xfer)
 	slpcall->progress_cb = msn_xfer_progress_cb;
 	slpcall->cb = msn_xfer_completed_cb;
 	slpcall->xfer = xfer;
+
+	slpcall->pending = TRUE;
 
 	gaim_xfer_set_cancel_send_fnc(xfer, msn_xfer_cancel);
 

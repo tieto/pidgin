@@ -1255,18 +1255,16 @@ msn_convo_closed(GaimConnection *gc, const char *who)
 
 	cmdproc = swboard->servconn->cmdproc;
 
+#if 0
 	if (swboard->current_users == 1)
 	{
-		/* This must happen on both IM's and Chat's, right? */
-		GaimAccount *account;
-
-		account = gaim_connection_get_account(gc);
-
-		msn_cmdproc_send_quick(cmdproc, "BYE", "%s",
-							   gaim_account_get_username(account));
-
+		msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
 		msn_switchboard_destroy(swboard);
 	}
+#else
+	msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
+	msn_switchboard_destroy(swboard);
+#endif
 }
 
 static void

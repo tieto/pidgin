@@ -331,6 +331,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		slpcall->progress_cb = msn_xfer_progress_cb;
 		slpcall->branch = g_strdup(branch);
 
+		slpcall->pending = TRUE;
+
 		xfer = gaim_xfer_new(account, GAIM_XFER_RECEIVE,
 							 slpcall->slplink->remote_user);
 
@@ -934,6 +936,10 @@ end_user_display(MsnSlpCall *slpcall)
 	gaim_debug_info("msn", "End User Display\n");
 
 	userlist = slpcall->slplink->session->userlist;
+
+	/* If the session is being destroyed we better stop doing anything. */
+	if (slpcall->slplink->session->destroying)
+		return;
 
 	/* Free one window slot */
 	userlist->buddy_icon_window++;
