@@ -349,19 +349,9 @@ silcgaim_close_final(gpointer *context)
 static void
 silcgaim_close(GaimConnection *gc)
 {
-	GList *l;
-	GaimConversation *conv;
 	SilcGaim sg = gc->proto_data;
-	if (!sg)
-		return;
 
-	/* Close all conversations for this connection */
-	for (l = gaim_get_conversations(); l; l = l->next)
-	{
-		conv = l->data;
-		if (gc == conv->account->gc)
-			gaim_conversation_destroy(conv);
-	}
+	g_return_if_fail(sg != NULL);
 
 	/* Send QUIT */
 	silc_client_command_call(sg->client, sg->conn, NULL,
