@@ -922,7 +922,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 
 static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 	char buf[1024];
-	char *fn, *url, *email, *nickname, *status;
+	char *fn, *url, *email, *nickname, *status, *desc;
 	jid who;
 	char *buddy;
 	struct jabber_data *jd = GJ_GC(j)->proto_data;
@@ -935,6 +935,7 @@ static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 	url = xmlnode_get_tag_data(querynode, "URL");
 	email = xmlnode_get_tag_data(querynode, "EMAIL");
 	nickname = xmlnode_get_tag_data(querynode, "NICKNAME");
+	desc = xmlnode_get_tag_data(querynode, "DESC");
 	status = g_hash_table_lookup(jd->hash, buddy);
 	if (!status)
 		status = "Online";
@@ -951,7 +952,9 @@ static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 		at += g_snprintf(buf + at, sizeof(buf) - at,
 				"<B>Email:</B> <A HREF=\"mailto:%s\">%s</A><BR>", email, email);
 	at += g_snprintf(buf + at, sizeof(buf) - at, "<B>Status:</B> %s\n", status);
-	
+	if (desc)
+		at += g_snprintf(buf + at, sizeof(buf) - at, "<HR>%s<br>\n", desc);
+
 	g_show_info_text(buf);
 	g_free(buddy);
 }
