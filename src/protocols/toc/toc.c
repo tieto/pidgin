@@ -288,35 +288,45 @@ static void toc_build_config(GaimAccount *account, char *s, int len, gboolean sh
 	}
 }
 
-static int escape_message(char *msg)
+char *escape_message(const char *msg)
 {
-	char *c, *cpy;
-	int cnt = 0;
-	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
-	if (strlen(msg) > BUF_LEN) {
-		debug_printf("Warning:  truncating message to 2048 bytes\n");
-		msg[2047] = '\0';
-	}
+	char *ret;
+	int i, j;
 
-	cpy = g_strdup(msg);
-	c = cpy;
-	while (*c) {
-		switch (*c) {
-		case '$':
-		case '[':
-		case ']':
-		case '(':
-		case ')':
-			msg[cnt++] = '\\';
-			/* Fall through */
-		default:
-			msg[cnt++] = *c;
+	if (!msg)
+		return NULL;
+
+	/* Calculate the length after escaping */
+	for (i=0, j=0; msg[i]; i++)
+		switch (msg[i]) {
+			case '$':
+			case '[':
+			case ']':
+			case '(':
+			case ')':
+				j++;
+			default:
+				j++;
 		}
-		c++;
-	}
-	msg[cnt] = '\0';
-	g_free(cpy);
-	return cnt;
+
+	/* Allocate a string */
+	ret = (char *)malloc((j+1) * sizeof(char));
+
+	/* Copy the string */
+	for (i=0, j=0; msg[i]; i++)
+		switch (msg[i]) {
+			case '$':
+			case '[':
+			case ']':
+			case '(':
+			case ')':
+				ret[j++] = '\\';
+			default:
+				ret[j++] = msg[i];
+			}
+	ret[j] = '\0';
+
+	return ret;
 }
 
 /*
@@ -332,100 +342,104 @@ char *escape_text(const char *msg)
 		return NULL;
 
 	/* Calculate the length after escaping */
-	i = 0;
-	j = 0;
-	while (msg[i++])
+	for (i=0, j=0; msg[i]; i++)
 		switch (msg[i]) {
-		case '\n':
-			j += 4;
-			break;
-		case '{':
-		case '}':
-		case '\\':
-		case '"':
-			j += 1;
-		default:
-			j += 1;
+			case '\n':
+				j += 4;
+				break;
+			case '{':
+			case '}':
+			case '\\':
+			case '"':
+				j += 1;
+			default:
+				j += 1;
 		}
 
 	/* Allocate a string */
 	ret = (char *)malloc((j+1) * sizeof(char));
 
 	/* Copy the string */
-	i = 0;
-	j = 0;
-	while (msg[i]) {
+	for (i=0, j=0; msg[i]; i++)
 		switch (msg[i]) {
-		case '\n':
-			ret[j] = '<';
-			ret[j+1] = 'B';
-			ret[j+2] = 'R';
-			ret[j+3] = '>';
-			j += 4;
-			break;
-		case '{':
-		case '}':
-		case '\\':
-		case '"':
-			ret[j] = '\\';
-			j++;
-		default:
-			ret[j] = msg[i];
-			j++;
+			case '\n':
+				ret[j++] = '<';
+				ret[j++] = 'B';
+				ret[j++] = 'R';
+				ret[j++] = '>';
+				break;
+			case '{':
+			case '}':
+			case '\\':
+			case '"':
+				ret[j++] = '\\';
+			default:
+				ret[j++] = msg[i];
 		}
-		i++;
-	}
 	ret[j] = '\0';
 
 	return ret;
 }
 
-static int sflap_send(GaimConnection *gc, char *buf, int olen, int type)
+static int sflap_send(GaimConnection *gc, const char *buf, int olen, int type)
 {
+	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
 	int len;
 	int slen = 0;
+	int ret;
 	struct sflap_hdr hdr;
-	char obuf[MSG_LEN];
-	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
+	char *escaped, *obuf;
 
 	if (tdt->state == STATE_PAUSE)
 		/* TOC has given us the PAUSE message; sending could cause a disconnect
 		 * so we just return here like everything went through fine */
 		return 0;
 
-	if (olen < 0)
-		len = escape_message(buf);
-	else
+	if (olen < 0) {
+		escaped = escape_message(buf);
+		len = strlen(buf);
+	} else {
+		escaped = g_memdup(buf, olen);
 		len = olen;
+	}
 
-	/* One _last_ 2048 check here!  This shouldn't ever
-	   * get hit though, hopefully.  If it gets hit on an IM
-	   * It'll lose the last " and the message won't go through,
-	   * but this'll stop a segfault. */
+	/*
+	 * One _last_ 2048 check here!  This shouldn't ever
+	 * get hit though, hopefully.  If it gets hit on an IM
+	 * It'll lose the last " and the message won't go through,
+	 * but this'll stop a segfault.
+	 */
 	if (len > MSG_LEN) {
 		debug_printf("message too long, truncating\n");
-		buf[MSG_LEN - 1] = '\0';
+		escaped[MSG_LEN - 1] = '\0';
 		len = MSG_LEN;
 	}
 
 	if (olen < 0)
-		debug_printf("TOC C: %s\n", buf);
+		debug_printf("TOC C: %s\n", escaped);
 
 	hdr.ast = '*';
 	hdr.type = type;
 	hdr.seqno = htons(tdt->seqno++ & 0xffff);
 	hdr.len = htons(len + (type == TYPE_SIGNON ? 0 : 1));
 
+	obuf = (char *)malloc((sizeof(hdr)+len+1) * sizeof(char));
 	memcpy(obuf, &hdr, sizeof(hdr));
 	slen += sizeof(hdr);
-	memcpy(&obuf[slen], buf, len);
+
+	memcpy(&obuf[slen], escaped, len);
 	slen += len;
+
 	if (type != TYPE_SIGNON) {
 		obuf[slen] = '\0';
 		slen += 1;
 	}
 
-	return toc_write(tdt->toc_fd, obuf, slen);
+	ret = toc_write(tdt->toc_fd, obuf, slen);
+	free(obuf);
+	free(escaped);
+
+	return ret;
 }
 
 static int wait_reply(GaimConnection *gc, char *buffer, size_t buflen)
@@ -1124,7 +1138,7 @@ static void toc_change_passwd(GaimConnection *g, const char *orig, const char *n
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
-	sflap_send(g, buf, strlen(buf), TYPE_DATA);
+	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
 static void toc_add_buddy(GaimConnection *g, const char *name)
