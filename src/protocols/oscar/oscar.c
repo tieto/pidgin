@@ -410,13 +410,201 @@ gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textle
 	return utf8;
 }
 
-static void oscar_string_append(GString *str, char *name, char *value)
+static char *oscar_caps_to_string(guint caps)
+{
+	static char buf[512], *tmp;
+	int count = 0, i = 0;
+	guint bit = 1;
+
+	if (!caps) {
+		return NULL;
+	} else while (bit <= AIM_CAPS_LAST) {
+		if (bit & caps) {
+			switch (bit) {
+			case AIM_CAPS_BUDDYICON:
+				tmp = _("Buddy Icon");
+				break;
+			case AIM_CAPS_TALK:
+				tmp = _("Voice");
+				break;
+			case AIM_CAPS_DIRECTIM:
+				tmp = _("AIM Direct IM");
+				break;
+			case AIM_CAPS_CHAT:
+				tmp = _("Chat");
+				break;
+			case AIM_CAPS_GETFILE:
+				tmp = _("Get File");
+				break;
+			case AIM_CAPS_SENDFILE:
+				tmp = _("Send File");
+				break;
+			case AIM_CAPS_GAMES:
+			case AIM_CAPS_GAMES2:
+				tmp = _("Games");
+				break;
+			case AIM_CAPS_ADDINS:
+				tmp = _("Add-Ins");
+				break;
+			case AIM_CAPS_SENDBUDDYLIST:
+				tmp = _("Send Buddy List");
+				break;
+			case AIM_CAPS_ICQ_DIRECT:
+				tmp = _("ICQ Direct Connect");
+				break;
+			case AIM_CAPS_APINFO:
+				tmp = _("AP User");
+				break;
+			case AIM_CAPS_ICQRTF:
+				tmp = _("ICQ RTF");
+				break;
+			case AIM_CAPS_EMPTY:
+				tmp = _("Nihilist");
+				break;
+			case AIM_CAPS_ICQSERVERRELAY:
+				tmp = _("ICQ Server Relay");
+				break;
+			case AIM_CAPS_ICQUTF8OLD:
+				tmp = _("Old ICQ UTF8");
+				break;
+			case AIM_CAPS_TRILLIANCRYPT:
+				tmp = _("Trillian Encryption");
+				break;
+			case AIM_CAPS_ICQUTF8:
+				tmp = _("ICQ UTF8");
+				break;
+			case AIM_CAPS_HIPTOP:
+				tmp = _("Hiptop");
+				break;
+			case AIM_CAPS_SECUREIM:
+				tmp = _("Security Enabled");
+				break;
+			case AIM_CAPS_VIDEO:
+				tmp = _("Video Chat");
+				break;
+			/* Not actually sure about this one... WinAIM doesn't show anything */
+			case AIM_CAPS_ICHATAV:
+				tmp = _("iChat AV");
+				break;
+			case AIM_CAPS_LIVEVIDEO:
+				tmp = _("Live Video");
+				break;
+			case AIM_CAPS_CAMERA:
+				tmp = _("Camera");
+				break;
+			default:
+				tmp = NULL;
+				break;
+			}
+			if (tmp)
+				i += g_snprintf(buf + i, sizeof(buf) - i, "%s%s", (count ? ", " : ""),
+						tmp);
+			count++;
+		}
+		bit <<= 1;
+	}
+	return buf; 
+}
+
+static char *oscar_icqstatus(int state) {
+	/* Make a cute little string that shows the status of the dude or dudet */
+	if (state & AIM_ICQ_STATE_CHAT)
+		return g_strdup_printf(_("Free For Chat"));
+	else if (state & AIM_ICQ_STATE_DND)
+		return g_strdup_printf(_("Do Not Disturb"));
+	else if (state & AIM_ICQ_STATE_OUT)
+		return g_strdup_printf(_("Not Available"));
+	else if (state & AIM_ICQ_STATE_BUSY)
+		return g_strdup_printf(_("Occupied"));
+	else if (state & AIM_ICQ_STATE_AWAY)
+		return g_strdup_printf(_("Away"));
+	else if (state & AIM_ICQ_STATE_WEBAWARE)
+		return g_strdup_printf(_("Web Aware"));
+	else if (state & AIM_ICQ_STATE_INVISIBLE)
+		return g_strdup_printf(_("Invisible"));
+	else
+		return g_strdup_printf(_("Online"));
+}
+
+static void oscar_string_append(GString *str, char *newline, char *name, char *value)
 {
 	gchar *utf8;
 
 	if (value && value[0] && (utf8 = gaim_utf8_try_convert(value))) {
-		g_string_append_printf(str, "\n<br><b>%s:</b> %s", name, utf8);
+		g_string_append_printf(str, "%s<b>%s:</b> %s", newline, name, utf8);
 		g_free(utf8);
+	}
+}
+
+static void oscar_string_append_info(GaimConnection *gc, GString *str, char *newline, GaimBuddy *b, aim_userinfo_t *userinfo)
+{
+	OscarData *od = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimGroup *g = NULL;
+	struct buddyinfo *bi = NULL;
+	char *tmp;
+
+	if ((str == NULL) || (str == NULL) || (newline == NULL) || ((b == NULL) && (userinfo == NULL)))
+		return;
+
+	if (userinfo == NULL)
+		userinfo = aim_locate_finduserinfo(od->sess, b->name);
+
+	if (b == NULL)
+		b = gaim_find_buddy(gc->account, userinfo->sn);
+
+	if (b != NULL)
+		g = gaim_find_buddys_group(b);
+
+	if (userinfo != NULL)
+		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
+
+
+
+
+	if (GAIM_BUDDY_IS_ONLINE(b)) {
+		if (isdigit(b->name[0])) {
+			tmp = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
+			oscar_string_append(str, newline, _("Status"), tmp);
+			g_free(tmp);
+		}
+	} else {
+		char *tmp = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
+		if (aim_ssi_waitingforauth(od->sess->ssi.local, tmp, b->name))
+			oscar_string_append(str, newline, _("Status"), _("Not Authorized"));
+		else
+			oscar_string_append(str, newline, _("Status"), _("Offline"));
+	}
+
+
+
+	if ((bi != NULL) && (bi->ipaddr != 0)) {
+		char *tmp =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
+						(bi->ipaddr & 0xff000000) >> 24,
+						(bi->ipaddr & 0x00ff0000) >> 16,
+						(bi->ipaddr & 0x0000ff00) >> 8,
+						(bi->ipaddr & 0x000000ff));
+		oscar_string_append(str, newline, _("IP Address"), tmp);
+		g_free(tmp);
+	}
+
+	if ((userinfo != NULL) && (userinfo->capabilities != 0)) {
+		tmp = oscar_caps_to_string(userinfo->capabilities);
+		oscar_string_append(str, newline, _("Capabilities"), tmp);
+	}
+
+	if ((b != NULL) && (b->name != NULL) && (g != NULL) && (g->name != NULL)) {
+		tmp = aim_ssi_getcomment(od->sess->ssi.local, g->name, b->name);
+		if (tmp != NULL) {
+			oscar_string_append(str, newline, _("Buddy Comment"), tmp);
+			g_free(tmp);
+		}
+	}
+
+	if ((bi != NULL) && (bi->availmsg != NULL) && !(b->uc & UC_UNAVAILABLE)) {
+		tmp = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
+		oscar_string_append(str, newline, _("Available"), tmp);
+		g_free(tmp);
 	}
 }
 
@@ -2954,26 +3142,6 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static char *gaim_icq_status(int state) {
-	/* Make a cute little string that shows the status of the dude or dudet */
-	if (state & AIM_ICQ_STATE_CHAT)
-		return g_strdup_printf(_("Free For Chat"));
-	else if (state & AIM_ICQ_STATE_DND)
-		return g_strdup_printf(_("Do Not Disturb"));
-	else if (state & AIM_ICQ_STATE_OUT)
-		return g_strdup_printf(_("Not Available"));
-	else if (state & AIM_ICQ_STATE_BUSY)
-		return g_strdup_printf(_("Occupied"));
-	else if (state & AIM_ICQ_STATE_AWAY)
-		return g_strdup_printf(_("Away"));
-	else if (state & AIM_ICQ_STATE_WEBAWARE)
-		return g_strdup_printf(_("Web Aware"));
-	else if (state & AIM_ICQ_STATE_INVISIBLE)
-		return g_strdup_printf(_("Invisible"));
-	else
-		return g_strdup_printf(_("Online"));
-}
-
 static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_t reason, const char *cookie) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
@@ -3004,7 +3172,7 @@ static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, fu16_t reas
 
 	switch(reason) {
 		case 0x0003: { /* Reply from an ICQ status message request */
-			char *status_msg = gaim_icq_status(state);
+			char *status_msg = oscar_icqstatus(state);
 			char *dialog_msg, **splitmsg;
 
 			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
@@ -3173,111 +3341,11 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static char *caps_string(guint caps)
-{
-	static char buf[512], *tmp;
-	int count = 0, i = 0;
-	guint bit = 1;
-
-	if (!caps) {
-		return NULL;
-	} else while (bit <= AIM_CAPS_LAST) {
-		if (bit & caps) {
-			switch (bit) {
-			case AIM_CAPS_BUDDYICON:
-				tmp = _("Buddy Icon");
-				break;
-			case AIM_CAPS_TALK:
-				tmp = _("Voice");
-				break;
-			case AIM_CAPS_DIRECTIM:
-				tmp = _("AIM Direct IM");
-				break;
-			case AIM_CAPS_CHAT:
-				tmp = _("Chat");
-				break;
-			case AIM_CAPS_GETFILE:
-				tmp = _("Get File");
-				break;
-			case AIM_CAPS_SENDFILE:
-				tmp = _("Send File");
-				break;
-			case AIM_CAPS_GAMES:
-			case AIM_CAPS_GAMES2:
-				tmp = _("Games");
-				break;
-			case AIM_CAPS_ADDINS:
-				tmp = _("Add-Ins");
-				break;
-			case AIM_CAPS_SENDBUDDYLIST:
-				tmp = _("Send Buddy List");
-				break;
-			case AIM_CAPS_ICQ_DIRECT:
-				tmp = _("ICQ Direct Connect");
-				break;
-			case AIM_CAPS_APINFO:
-				tmp = _("AP User");
-				break;
-			case AIM_CAPS_ICQRTF:
-				tmp = _("ICQ RTF");
-				break;
-			case AIM_CAPS_EMPTY:
-				tmp = _("Nihilist");
-				break;
-			case AIM_CAPS_ICQSERVERRELAY:
-				tmp = _("ICQ Server Relay");
-				break;
-			case AIM_CAPS_ICQUTF8OLD:
-				tmp = _("Old ICQ UTF8");
-				break;
-			case AIM_CAPS_TRILLIANCRYPT:
-				tmp = _("Trillian Encryption");
-				break;
-			case AIM_CAPS_ICQUTF8:
-				tmp = _("ICQ UTF8");
-				break;
-			case AIM_CAPS_HIPTOP:
-				tmp = _("Hiptop");
-				break;
-			case AIM_CAPS_SECUREIM:
-				tmp = _("Security Enabled");
-				break;
-			case AIM_CAPS_VIDEO:
-				tmp = _("Video Chat");
-				break;
-			/* Not actually sure about this one... WinAIM doesn't show anything */
-			case AIM_CAPS_ICHATAV:
-				tmp = _("iChat AV");
-				break;
-			case AIM_CAPS_LIVEVIDEO:
-				tmp = _("Live Video");
-				break;
-			case AIM_CAPS_CAMERA:
-				tmp = _("Camera");
-				break;
-			default:
-				tmp = NULL;
-				break;
-			}
-			if (tmp)
-				i += g_snprintf(buf + i, sizeof(buf) - i, "%s%s", (count ? ", " : ""),
-						tmp);
-			count++;
-		}
-		bit <<= 1;
-	}
-	return buf; 
-}
-
 static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	OscarData *od = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	GString *str;
 	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL;
-	struct buddyinfo *bi;
-	GaimBuddy *b = NULL;
-	GaimGroup *g = NULL;
 	va_list ap;
 	aim_userinfo_t *userinfo;
 
@@ -3285,55 +3353,25 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
-
 	str = g_string_new("");
 	g_string_append_printf(str, "<b>%s:</b> %s", _("Screen Name"), userinfo->sn);
 	g_string_append_printf(str, "\n<br><b>%s</b>: %d%%", _("Warning Level"), (int)((userinfo->warnlevel/10.0) + 0.5));
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE)
-		oscar_string_append(str, _("Online Since"),
+		oscar_string_append(str, "\n<br>", _("Online Since"),
 							asctime(localtime((time_t *)&userinfo->onlinesince)));
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE)
-		oscar_string_append(str, _("Member Since"),
+		oscar_string_append(str, "\n<br>", _("Member Since"),
 							asctime(localtime((time_t *)&userinfo->membersince)));
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
 		tmp = gaim_str_seconds_to_string(userinfo->idletime*60);
-		oscar_string_append(str, _("Idle"), tmp);
-		g_free(tmp);
-	} else
-		oscar_string_append(str, _("Idle"), _("Active"));
-
-	if ((bi != NULL) && (bi->ipaddr != 0)) {
-		tmp =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
-							(bi->ipaddr & 0xff000000) >> 24,
-							(bi->ipaddr & 0x00ff0000) >> 16,
-							(bi->ipaddr & 0x0000ff00) >> 8,
-							(bi->ipaddr & 0x000000ff));
-		g_string_append_printf(str, "\n<b>%s:</b> %s", _("IP Address"), tmp);
+		oscar_string_append(str, "\n<br>", _("Idle"), tmp);
 		g_free(tmp);
 	}
 
-	if (userinfo->capabilities != 0) {
-		tmp = caps_string(userinfo->capabilities);
-		oscar_string_append(str, _("Capabilities"), tmp);
-	}
-
-	if ((g != NULL) && (g->name != NULL)) {
-		tmp = aim_ssi_getcomment(od->sess->ssi.local, g->name, b->name);
-		if (tmp != NULL) {
-			oscar_string_append(str, _("Buddy Comment"), tmp);
-			g_free(tmp);
-		}
-	}
-
-	if ((bi != NULL) && (bi->availmsg != NULL) && !(b->uc & UC_UNAVAILABLE)) {
-		tmp = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
-		oscar_string_append(str, _("Available"), tmp);
-		g_free(tmp);
-	}
+	oscar_string_append_info(gc, str, "\n<br>", NULL, userinfo);
 
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 		tmp = oscar_encoding_extract(userinfo->away_encoding);
@@ -3355,7 +3393,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	}
 
-	tmp = gaim_str_sub_away_formatters(str->str, gaim_account_get_username(gaim_connection_get_account(gc)));
+	tmp = gaim_str_sub_away_formatters(str->str, gaim_account_get_username(account));
 	g_string_free(str, TRUE);
 	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, tmp, NULL, NULL);
 	g_free(tmp);
@@ -4164,19 +4202,18 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(buddy->account, buddy->name));
 
 	g_string_append_printf(str, "<b>%s:</b> %s", _("UIN"), who);
-	oscar_string_append(str, _("Nick"), info->nick);
+	oscar_string_append(str, "\n<br>", _("Nick"), info->nick);
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
 		char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
 						(bi->ipaddr & 0xff000000) >> 24,
 						(bi->ipaddr & 0x00ff0000) >> 16,
 						(bi->ipaddr & 0x0000ff00) >> 8,
 						(bi->ipaddr & 0x000000ff));
-		oscar_string_append(str, _("IP Address"), tstr);
+		oscar_string_append(str, "\n<br>", _("IP Address"), tstr);
 		g_free(tstr);
 	}
-	oscar_string_append(str, _("First Name"), info->first);
-	oscar_string_append(str, _("Last Name"), info->last);
-	oscar_string_append(str, _("Last Name"), info->last);
+	oscar_string_append(str, "\n<br>", _("First Name"), info->first);
+	oscar_string_append(str, "\n<br>", _("Last Name"), info->last);
 	if (info->email && info->email[0] && (utf8 = gaim_utf8_try_convert(info->email))) {
 		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("Email Address"), utf8, utf8);
 		g_free(utf8);
@@ -4190,8 +4227,8 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 			}
 		}
 	}
-	oscar_string_append(str, _("Mobile Phone"), info->mobile);
-	oscar_string_append(str, _("Gender"), info->gender==1 ? _("Female") : _("Male"));
+	oscar_string_append(str, "\n<br>", _("Mobile Phone"), info->mobile);
+	oscar_string_append(str, "\n<br>", _("Gender"), info->gender==1 ? _("Female") : _("Male"));
 	if (info->birthyear || info->birthmonth || info->birthday) {
 		char date[30];
 		struct tm tm;
@@ -4199,12 +4236,12 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tm.tm_mon = (int)info->birthmonth-1;
 		tm.tm_year = (int)info->birthyear-1900;
 		strftime(date, sizeof(date), "%x", &tm);
-		oscar_string_append(str, _("Birthday"), date);
+		oscar_string_append(str, "\n<br>", _("Birthday"), date);
 	}
 	if (info->age) {
 		char age[5];
 		snprintf(age, sizeof(age), "%hhd", info->age);
-		oscar_string_append(str, _("Age"), age);
+		oscar_string_append(str, "\n<br>", _("Age"), age);
 	}
 	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = gaim_utf8_try_convert(info->personalwebpage))) {
 		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Personal Web Page"), utf8, utf8);
@@ -4217,25 +4254,25 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	g_string_append_printf(str, "<hr>\n");
 	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Home Address"));
-		oscar_string_append(str, _("Address"), info->homeaddr);
-		oscar_string_append(str, _("City"), info->homecity);
-		oscar_string_append(str, _("State"), info->homestate);
-		oscar_string_append(str, _("Zip Code"), info->homezip);
+		oscar_string_append(str, "\n<br>", _("Address"), info->homeaddr);
+		oscar_string_append(str, "\n<br>", _("City"), info->homecity);
+		oscar_string_append(str, "\n<br>", _("State"), info->homestate);
+		oscar_string_append(str, "\n<br>", _("Zip Code"), info->homezip);
 		g_string_append_printf(str, "\n<hr>\n");
 	}
 	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Work Address"));
-		oscar_string_append(str, _("Address"), info->workaddr);
-		oscar_string_append(str, _("City"), info->workcity);
-		oscar_string_append(str, _("State"), info->workstate);
-		oscar_string_append(str, _("Zip Code"), info->workzip);
+		oscar_string_append(str, "\n<br>", _("Address"), info->workaddr);
+		oscar_string_append(str, "\n<br>", _("City"), info->workcity);
+		oscar_string_append(str, "\n<br>", _("State"), info->workstate);
+		oscar_string_append(str, "\n<br>", _("Zip Code"), info->workzip);
 		g_string_append_printf(str, "\n<hr>\n");
 	}
 	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Work Information"));
-		oscar_string_append(str, _("Company"), info->workcompany);
-		oscar_string_append(str, _("Division"), info->workdivision);
-		oscar_string_append(str, _("Position"), info->workposition);
+		oscar_string_append(str, "\n<br>", _("Company"), info->workcompany);
+		oscar_string_append(str, "\n<br>", _("Division"), info->workdivision);
+		oscar_string_append(str, "\n<br>", _("Position"), info->workposition);
 		if (info->workwebpage && info->workwebpage[0] && (utf8 = gaim_utf8_try_convert(info->workwebpage))) {
 			g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Web Page"), utf8, utf8);
 			g_free(utf8);
@@ -5722,47 +5759,11 @@ static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 static char *oscar_tooltip_text(GaimBuddy *b) {
 	GaimConnection *gc = b->account->gc;
 	OscarData *od = gc->proto_data;
-	GaimGroup *g = gaim_find_buddys_group(b);
-	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od->sess, b->name);
-	GString *ret = g_string_new("");
+	GString *str = g_string_new("");
 
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
-		if (isdigit(b->name[0])) {
-			char *status;
-			status = gaim_icq_status((b->uc & 0xffff0000) >> 16);
-			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Status"), status);
-			g_free(status);
-		}
-
-		if ((bi != NULL) && (bi->ipaddr != 0)) {
-			char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
-							(bi->ipaddr & 0xff000000) >> 24,
-							(bi->ipaddr & 0x00ff0000) >> 16,
-							(bi->ipaddr & 0x0000ff00) >> 8,
-							(bi->ipaddr & 0x000000ff));
-			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("IP Address"), tstr);
-			g_free(tstr);
-		}
-
-		if ((userinfo != NULL) && (userinfo->capabilities)) {
-			char *caps = caps_string(userinfo->capabilities);
-			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Capabilities"), caps);
-		}
-
-		if (g && g->name) {
-			char *comment = aim_ssi_getcomment(od->sess->ssi.local, g->name, b->name);
-			if (comment != NULL) {
-				g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Buddy Comment"), comment);
-				free(comment);
-			}
-		}
-
-		if ((bi != NULL) && (bi->availmsg != NULL) && !(b->uc & UC_UNAVAILABLE)) {
-			gchar *escaped = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
-			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Available"), escaped);
-			g_free(escaped);
-		}
+		oscar_string_append_info(gc, str, "\n", b, userinfo);
 
 		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
@@ -5778,19 +5779,13 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 				g_free(tmp2);
 				tmp2 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp1);
-				g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Away Message"), tmp2);
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), tmp2);
 				g_free(tmp2);
 			}
 		}
-	} else {
-		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
-		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))
-			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Status"), _("Not Authorized"));
-		else
-			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Status"), _("Offline"));
 	}
 
-	return g_string_free(ret, FALSE);;
+	return g_string_free(str, FALSE);
 }
 
 static char *oscar_status_text(GaimBuddy *b) {
@@ -5800,7 +5795,7 @@ static char *oscar_status_text(GaimBuddy *b) {
 
 	if ((b->uc & UC_UNAVAILABLE) || (((b->uc & 0xffff0000) >> 16) & AIM_ICQ_STATE_CHAT)) {
 		if (isdigit(b->name[0]))
-			ret = gaim_icq_status((b->uc & 0xffff0000) >> 16);
+			ret = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
 		else
 			ret = g_strdup(_("Away"));
 	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
