@@ -287,11 +287,7 @@ struct _GtkIMHtmlBit {
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 
-#if GTK_CHECK_VERSION(1,3,0)
-	PangoFontDescription *font;
-#else
 	GdkFont *font;
-#endif
 	GdkColor *fore;
 	GdkColor *back;
 	GdkColor *bg;
@@ -1446,11 +1442,7 @@ static gint
 gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 {
 	GtkStyle *style;
-#if GTK_CHECK_VERSION(1,3,0)
-	PangoFontDescription *font;
-#else
 	GdkFont *font;
-#endif
 	gint y, baseline_skip, gap;
 
 	style = imhtml->tip_window->style;
