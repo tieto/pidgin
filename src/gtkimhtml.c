@@ -151,9 +151,11 @@ static gchar *
 clipboard_win32_to_html(char *clipboard) {
 	const char *header;
 	const char *begin, *end;
-	gint start=0;
-	gint finish=0;
+	gint start = 0;
+	gint finish = 0;
 	gchar *html;
+	gchar **split;
+	int clipboard_length = 0;
 
 #if 0 /* Debugging for Windows clipboard */
 	FILE *fd;
@@ -165,25 +167,38 @@ clipboard_win32_to_html(char *clipboard) {
 	fclose(fd);
 #endif
 
-	if (!(header = strstr(clipboard, "StartFragment:")))
-		return NULL;
+	clipboard_length = strlen(clipboard);
 
+	if (!(header = strstr(clipboard, "StartFragment:")) || (header - clipboard) >= clipboard_length)
+		return NULL;
 	sscanf(header, "StartFragment:%d", &start);
 
-	header = strstr(clipboard, "EndFragment:");
+	if (!(header = strstr(clipboard, "EndFragment:")) || (header - clipboard) >= clipboard_length)
+		return NULL;
 	sscanf(header, "EndFragment:%d", &finish);
+
+	if (finish > clipboard_length)
+		finish = clipboard_length;
+
+	if (start > finish)
+		start = finish;
 
 	begin = clipboard + start;
 
-	if (header == NULL)
-		end = clipboard + strlen(clipboard);
-	else
-		end = clipboard + finish;
+	end = clipboard + finish;
 
-	html = g_strstrip(g_strndup(begin, end-begin));
+	html = g_strndup(begin, end - begin);
+
+	/* any newlines in the string will now be \r\n, so we need to strip out the \r */
+	split = g_strsplit(html, "\r\n", 0);
+	g_free(html);
+	html = g_strjoinv("\n", split);
+	g_strfreev(split);
+
+	html = g_strstrip(html);
 
 #if 0 /* Debugging for Windows clipboard */
-	gaim_debug_info("imhtml clipboard", "HTML fragment: %s\n", html);
+	gaim_debug_info("imhtml clipboard", "HTML fragment: '%s'\n", html);
 #endif
 
 	return html;
