@@ -29,6 +29,8 @@ BuildRoot:  /var/tmp/%{name}-%{version}-root
 Requires:   gtk2 >= 2.0.0
 Prefix:     %{prefix}
 
+BuildRequires: libao-devel >= 0.8.3
+
 %description
 Gaim allows you to talk to anyone using a variety of messaging 
 protocols, including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, 
