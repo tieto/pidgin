@@ -1073,7 +1073,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 
 	a->entry = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), a->entry, 1, 2, 0, 1);
-	gtk_window_set_focus(GTK_WINDOW(a->window), a->entry);
+	gtk_widget_grab_focus(a->entry);
 	if (buddy != NULL)
 		gtk_entry_set_text(GTK_ENTRY(a->entry), buddy);
 	gtk_signal_connect(GTK_OBJECT(a->entry), "activate", GTK_SIGNAL_FUNC(do_add_buddy), a);
