@@ -462,10 +462,27 @@ void gaim_xfer_cancel_remote(GaimXfer *xfer);
  */
 void gaim_xfer_error(GaimXferType type, const char *who, const char *msg);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name File Transfer Subsystem API                                     */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the IP address of the local system.
+ *
+ * @note The returned IP address must be g_free()'d when no longer
+ *       in use.
+ *
+ * @return The local IP address.
+ */
+char *gaim_xfers_get_local_ip(void);
+
 /**
  * Initializes the file transfer subsystem.
  */
-void gaim_xfer_init(void);
+void gaim_xfers_init(void);
 
 /*@}*/
 

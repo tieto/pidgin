@@ -51,6 +51,8 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 
 	if (ip != NULL && *ip != '\0')
 		xfer->local_ip = g_strdup(ip);
+	else
+		xfer->local_ip = gaim_xfers_get_local_ip();
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
@@ -704,8 +706,33 @@ gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
 	g_free(title);
 }
 
+/**************************************************************************
+ * File Transfer Subsystem API
+ **************************************************************************/
+char *
+gaim_xfers_get_local_ip(void)
+{
+	struct hostent *host;
+	char localhost[129];
+	long unsigned add;
+	char ip[46];
+
+	if (gethostname(localhost, 128) < 0)
+		return NULL;
+
+	if ((host = gethostbyname(localhost)) == NULL)
+		return NULL;
+
+	memcpy(&add, host->h_addr_list[0], 4);
+	add = htonl(add);
+
+	g_snprintf(ip, 11, "%lu", add);
+
+	return g_strdup(ip);
+}
+
 void
-gaim_xfer_init(void)
+gaim_xfers_init(void)
 {
 	gaim_prefs_add_none("/core/ft");
 	gaim_prefs_add_string("/core/ft/public_ip", "");

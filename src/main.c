@@ -507,7 +507,7 @@ gaim_gtk_ui_init(void)
 	gaim_gtk_blist_init();
 	gaim_gtk_conversation_init();
 	gaim_gtk_pounces_init();
-	gaim_gtk_xfer_init();
+	gaim_gtk_xfers_init();
 }
 
 static void
