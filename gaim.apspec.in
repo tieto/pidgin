@@ -7,28 +7,26 @@ ShortName: gaim
 Maintainer: The Gaim Developers
 URL: http://gaim.sourceforge.net/
 Packager: Tim Ringenbach <marv_sf@users.sourceforge.net>
-Summary: Gaim allows you to talk to friends on a variety of chat network, such as AIM, ICQ, Yahoo!, MSN, and IRC.
+Summary: A GTK+ based multiprotocol instant messaging client
 SoftwareVersion: @VERSION@
-
-# Only uncomment InterfaceVersion if your package exposes interfaces to other software,
-# for instance if it includes DSOs or python/perl modules. See the developer guide for more info,
-# or ask on autopackage-dev if you don't understand interface versioning in autopackage.
-#
 InterfaceVersion: 2.0
-
 PackageVersion: 1
 
-
 [Description]
-Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber,
-ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all at once.
-It is written using Gtk+ and is licensed under the GPL.
+Gaim allows you to talk to anyone using a variety of messaging protocols,
+including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, MSN Messenger, Jabber,
+Gadu-Gadu, Napster, and Zephyr. These protocols are implemented using a
+modular, easy to use design. To use a protocol, just add an account using the
+account editor.
 
-Gaim is NOT affiliated with or endorsed by AOL.
+Gaim supports many common features of other clients, as well as many unique
+features, such as perl scripting, TCL scripting and C plugins.
+
+Gaim is NOT affiliated with or endorsed by America Online, Inc., Microsoft
+Corporation, Yahoo! Inc., or ICQ Inc.
 
 [BuildPrepare]
 prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl --disable-gtktest
-
 
 [BuildUnprepare]
 unprepareBuild
@@ -45,9 +43,7 @@ require @gtk.org/gtk 2.2
 require @68k.org/libaudiofile 0.0
 require @xiph.org/libao 2.0
 require @gtkspell.sourceforge.net/gtkspell 0.0
-
 require @gnutls.org/gnutls 11.0 || { require @mozilla.org/nspr 4 && require @mozilla.org/nss 3; }
-
 
 [Install]
 # Put your installation script here
@@ -57,7 +53,7 @@ installLib ./lib/libgaim-remote.so.0.0.0
 copyFiles ./lib/gaim "$PREFIX/lib"
 installMan 1 ./man/man1/gaim.1
 installDesktop "Networking/Instant Messaging" ./share/applications/gaim.desktop
-copyFiles ./share/locale "$PREFIX/share"
+installLocale ./share/locale
 copyFiles ./share/pixmaps "$PREFIX/share"
 copyFiles ./share/sounds "$PREFIX/share"
 installIcon ./share/pixmaps/gaim.png
