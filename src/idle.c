@@ -84,8 +84,12 @@ gint check_idle(struct gaim_connection *gc)
 			debug_printf("removing auto-away message for %s\n", gc->username);
 			serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
 		} else {
-			debug_printf("replacing auto-away with global for %s\n", gc->username);
-			serv_set_away(gc, GAIM_AWAY_CUSTOM, awaymessage->message);
+			if (g_slist_length(connections) == 1)
+				do_im_back(0, 0);
+			else {
+				debug_printf("replacing auto-away with global for %s\n", gc->username);
+				serv_set_away(gc, GAIM_AWAY_CUSTOM, awaymessage->message);
+			}
 		}
 	}
 
