@@ -29,6 +29,8 @@ version 0.60:
 	* Fortune profile added to source.
 
 	AIM/ICQ:
+	* Server-stored buddy lists for ICQ with full support for 
+	  authorization (Thanks, Mark Doliner)
 	* TOC no longer compiles statically by default--use OSCAR.
 	* ICQ plugin no longer gets built--use OSCAR.
 	* File send/receive support for Aim over Oscar (Thanks, William T. Mahan)
