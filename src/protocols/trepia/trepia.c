@@ -110,6 +110,7 @@ __clear_user_list(GaimAccount *account)
 static char *
 __get_mac_address(const char *ip)
 {
+#if 0
 	char *mac = NULL;
 #ifndef _WIN32
 	struct sockaddr_in sin = { 0 };
@@ -147,6 +148,9 @@ __get_mac_address(const char *ip)
 #endif
 
 	return mac;
+#endif
+
+	return NULL;
 }
 
 /**************************************************************************
