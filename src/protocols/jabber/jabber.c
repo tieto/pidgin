@@ -1025,15 +1025,27 @@ static void jabber_handles10n(gjconn gjc, jpacket p)
 {
 	xmlnode g;
 	char *Jid = xmlnode_get_attrib(p->x, "from");
-	char *ask = xmlnode_get_attrib(p->x, "type");
+	char *type = xmlnode_get_attrib(p->x, "type");
 
 	g = xmlnode_new_tag("presence");
 	xmlnode_put_attrib(g, "to", Jid);
-	if (!strcmp(ask, "subscribe"))
+	if (!strcmp(type, "subscribe"))
 		xmlnode_put_attrib(g, "type", "subscribed");
-	else if (!strcmp(ask, "unsubscribe"))
+	else if (!strcmp(type, "unsubscribe"))
 		xmlnode_put_attrib(g, "type", "unsubscribed");
 	else {
+		if (!strcmp(type, "unsubscribed")) {
+			xmlnode y;
+			char *status;
+			if((y = xmlnode_get_tag(p->x, "status")) && (status = xmlnode_get_data(y)) &&
+					!strcmp(status, "Not Found")) {
+				char *msg = g_strdup_printf("%s: \"%s\"", _("No such user"), 
+					xmlnode_get_attrib(p->x, "from"));
+				do_error_dialog(msg, _("Jabber Error"));
+				g_free(msg);
+			}
+		}
+
 		xmlnode_free(g);
 		return;
 	}
@@ -1078,7 +1090,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	char *Jid, *name, *sub, *ask;
 	jid who;
 	struct buddy *b = NULL;
-	char *buddyname, *groupname;
+	char *buddyname, *groupname = NULL;
 
 	Jid = xmlnode_get_attrib(x, "jid");
 	name = xmlnode_get_attrib(x, "name");
@@ -1099,20 +1111,44 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 
 	buddyname = g_strdup_printf("%s@%s", who->user, who->server);
 
-	if((g = xmlnode_get_tag(x, "group")) == NULL || (groupname = xmlnode_get_data(g)) == NULL) {
-		groupname = _("Buddies");
+	if((g = xmlnode_get_tag(x, "group")) != NULL && xmlnode_get_datasz(g) > 0) {
+		groupname = xmlnode_get_data(g);
 	}
 
-
 	/*
-	 * Add or remove a buddy?
+	 * Add or remove a buddy?  Change buddy's alias or group?
 	 */
 	if (BUD_SUB_TO_PEND(sub, ask) || BUD_SUBD_TO(sub, ask)) {
 		if ((b = find_buddy(GJ_GC(gjc), buddyname)) == NULL) {
 			debug_printf("adding buddy [4]: %s\n", buddyname);
-			b = add_buddy(GJ_GC(gjc), groupname, buddyname,
+			b = add_buddy(GJ_GC(gjc), groupname ? groupname : _("Buddies"), buddyname,
 				name ? name : buddyname);
 			do_export(GJ_GC(gjc));
+		} else {
+			struct group *c_grp = find_group_by_buddy(GJ_GC(gjc), buddyname);
+
+			/* 
+			 * If the buddy's in a new group or his/her alias is changed...
+			 */
+			if(groupname && c_grp && strcmp(c_grp->name, groupname)) {
+				int present = b->present;	/* save presence state */
+				int uc = b->uc;			/* and away state (?) */
+
+				/*
+				 * seems rude, but it seems to be the only way...
+				 */
+				remove_buddy(GJ_GC(gjc), c_grp, b);
+				b = add_buddy(GJ_GC(gjc), groupname, buddyname,
+					name ? name : buddyname);
+				do_export(GJ_GC(gjc));
+				if(present) {
+					serv_got_update(GJ_GC(gjc), buddyname, 1, 0, 0, 0, uc, 0);
+				}
+			} else if(name != NULL && strcmp(b->show, name)) {
+				strncpy(b->show, name, BUDDY_ALIAS_MAXLEN);
+				b->show[BUDDY_ALIAS_MAXLEN - 1] = '\0';	/* cheap safety feature */
+				handle_buddy_rename(b, buddyname);
+			}
 		}
 	}  else if (BUD_USUB_TO_PEND(sub, ask) || BUD_USUBD_TO(sub, ask) || !strcasecmp(sub, "remove")) {
 		if ((b = find_buddy(GJ_GC(gjc), buddyname)) != NULL) {
@@ -1399,7 +1435,6 @@ static void jabber_handlepacket(gjconn gjc, jpacket p)
 		}
 
 		break;
-
 	case JPACKET_S10N:
 		jabber_handles10n(gjc, p);
 		break;
@@ -1587,7 +1622,7 @@ static void jabber_roster_update(struct gaim_connection *gc, char *name)
 		 * and it doesn't match his JID, add the "name" attribute.
 		 */
 		if((buddy = find_buddy(gc, realwho)) != NULL &&
-			buddy->show != NULL && strcmp(realwho, buddy->show)) {
+			buddy->show != NULL && buddy->show[0] != '\0' && strcmp(realwho, buddy->show)) {
 
 			xmlnode_put_attrib(y, "name", buddy->show);
 		}
@@ -1609,13 +1644,21 @@ static void jabber_roster_update(struct gaim_connection *gc, char *name)
 	}
 }
 
+/*
+ * Change buddy's group on server roster
+ */
+static void jabber_group_change(struct gaim_connection *gc, char *name, char *old_group, char *new_group)
+{
+	if(strcmp(old_group, new_group)) {
+		jabber_roster_update(gc, name);
+	}
+}
+
 static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 {
-	xmlnode x, y;
+	xmlnode x;
 	char *realwho;
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
-	struct buddy *buddy = NULL;
-	struct group *buddy_group = NULL;
 
 	if (!((struct jabber_data *)gc->proto_data)->did_import)
 		return;
@@ -2993,6 +3036,8 @@ void jabber_init(struct prpl *ret)
 	ret->normalize = jabber_normalize;
 	ret->buddy_free = jabber_buddy_free;
 	ret->register_user = jabber_register_user;
+	ret->alias_buddy = jabber_roster_update;
+	ret->group_buddy = jabber_group_change;
 
 	my_protocol = ret;
 }

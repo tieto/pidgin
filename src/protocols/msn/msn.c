@@ -1884,7 +1884,7 @@ static void msn_act_id(gpointer data, char *entry)
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	if (strlen(url_encode(entry)) > 387) {
+	if (strlen(url_encode(entry)) >= BUDDY_ALIAS_MAXLEN) {
 		do_error_dialog("Friendly name too long.", "MSN Error");
 		return;
 	}

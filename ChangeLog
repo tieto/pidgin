@@ -7,7 +7,8 @@ version 0.56:
 	* libjabber upgraded to most recent stable version
 	* Buddylist looks a little better
 	* Fixed MSN privacy settings
-	* Group deletion fix
+	* Group deletion fix (Thanks Mark Doliner)
+	* Alias/Group syncronization for Jabber (Thanks JSeymour)
 	
 version 0.55 (03/29/2002):
 	* Jabber improvements (Thanks Jim Seymour)

@@ -3382,6 +3382,7 @@ static void do_alias_bud(GtkWidget *w, struct buddy *b)
 	char *al = gtk_entry_get_text(GTK_ENTRY(aliasname));
 	g_snprintf(b->show, sizeof(b->show), "%s", (al && strlen(al)) ? al : b->name);
 	handle_buddy_rename(b, b->name);
+	serv_alias_buddy(b);
 	destroy_dialog(aliasdlg, aliasdlg);
 }
 

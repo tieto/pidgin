@@ -396,6 +396,8 @@ extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
 extern int  serv_chat_send(struct gaim_connection *, int, char *);
 extern void serv_got_popup(char *, char *, int, int);
 extern void serv_get_away(struct gaim_connection *, char *);
+extern void serv_alias_buddy(struct buddy *);
+extern void serv_move_buddy(struct buddy *, struct group *, struct group *);
 
 /* Functions in util.c */
 extern char *normalize(const char *);

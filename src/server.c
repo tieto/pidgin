@@ -285,6 +285,36 @@ void serv_remove_buddies(struct gaim_connection *gc, GList *g, char *group)
 	}
 }
 
+/*
+ * Set buddy's alias on server roster/list
+ */
+void serv_alias_buddy(struct buddy *b)
+{
+	if(b && b->gc && b->gc->prpl && b->gc->prpl->alias_buddy) {
+		b->gc->prpl->alias_buddy(b->gc, b->name);
+	}
+}
+
+/*
+ * Move a buddy from one group to another on server.
+ *
+ * Note: For now we'll not deal with changing gc's at the same time, but
+ * it should be possible.  Probably needs to be done, someday.
+ */
+void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
+{
+	if(b && b->gc && og && og->gc && ng && ng->gc) {
+		/*
+		 * If there are no connection changes...
+		 */
+		if(b->gc == og->gc && b->gc == ng->gc && ng->gc == og->gc) {
+			if(b->gc->prpl && b->gc->prpl->group_buddy) {
+				b->gc->prpl->group_buddy(b->gc, b->name, og->name, ng->name);
+			}
+		}
+	}
+}
+
 void serv_add_permit(struct gaim_connection *g, char *name)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_permit)

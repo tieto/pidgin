@@ -161,6 +161,12 @@ struct prpl {
 	void (* get_cb_info)	(struct gaim_connection *, int, char *who);
 	void (* get_cb_away)	(struct gaim_connection *, int, char *who);
 
+	/* save/store buddy's alias on server list/roster */
+	void (* alias_buddy)	(struct gaim_connection *, char *who);
+
+	/* change a buddy's group on a server list/roster */
+	void (* group_buddy)	(struct gaim_connection *, char *who, char *old_group, char *new_group);
+
 	void (* buddy_free)	(struct buddy *);
 
 	/* this is really bad. */

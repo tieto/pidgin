@@ -110,10 +110,12 @@ struct gaim_callback {
 
 #endif
 
+#define BUDDY_ALIAS_MAXLEN 388	/* because MSN names can be 387 characters */
+
 struct buddy {
 	int edittype; /* XXX CUI: this is really a GUI function and we need to put this in ui.h */
 	char name[80];
-	char show[388]; /* because MSN names can be 387 characters */
+	char show[BUDDY_ALIAS_MAXLEN];
         int present;
 	int evil;
 	time_t signon;

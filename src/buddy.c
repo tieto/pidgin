@@ -754,6 +754,7 @@ static void un_alias(GtkWidget *a, struct buddy *b)
 	GtkCTreeNode *node = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, b);
 	g_snprintf(b->show, sizeof(b->show), "%s", b->name);
 	gtk_ctree_node_set_text(GTK_CTREE(edittree), node, 0, b->name);
+	serv_alias_buddy(b);
 	if (gs)
 		bs = find_buddy_show(gs, b->name);
 	if (bs)
@@ -1094,9 +1095,15 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 		} else
 			new_g->members = g_slist_append(new_g->members, buddy);
 
-		/* we do the add after it's added locally so that prpls can find it if necessary */
-		if (add)
+		/*
+		 * we do the add after it's added locally so that prpls can find it if necessary
+		 * JFIXME: Er, shouldn't the buddy be removed from the old server, as well?
+		 */
+		if (add) {
 			serv_add_buddy(new_g->gc, buddy->name);
+		} else {
+			serv_move_buddy(buddy, old_g, new_g);
+		}
 
 		do_export(buddy->gc);
 		if (buddy->gc != new_g->gc) {
