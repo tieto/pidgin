@@ -313,7 +313,7 @@ meta_handler(struct UI *ui, guchar subtype, gchar *data)
 			g_source_remove(ui->inpa);
 			g_free(ui);
 		}
-		gaim_core_quit();
+		g_timeout_add(0, gaim_core_quit_cb, NULL);
 		break;
 	case CUI_META_DETACH:
 		uis = g_slist_remove(uis, ui);

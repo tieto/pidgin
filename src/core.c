@@ -145,6 +145,14 @@ gaim_core_quit(void)
 	_core = NULL;
 }
 
+gboolean
+gaim_core_quit_cb(gpointer unused)
+{
+	gaim_core_quit();
+
+	return FALSE;
+}
+
 const char *
 gaim_core_get_version(void)
 {
