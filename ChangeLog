@@ -10,6 +10,9 @@ version 0.9.20:
 	* Added buddy list ticker (See prefs/Appearance). Clicking on a
 	  name will cause a new or previous IM window to display for 
 	  that screenname 
+	* "You are sending messages too quickly" error is now fixed
+	   when you have a large buddylist.
+	* Dialog windows are now prettier
 
 version 0.9.19 (06/09/2000):
 	* Graphical Smiley Faces
