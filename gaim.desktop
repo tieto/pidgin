@@ -2,12 +2,13 @@
 Encoding=UTF-8
 Name=Gaim Internet Messenger
 Name[de]=Gaim Internet Messenger
-Name[dk]=Gaim - kvikbeskeder
+Name[da]=Gaim - internet beskeder
 Name[fr]=Gaim Messagerie Instantanée
 Name[it]=Gaim Internet Messenger
 Name[pl]=Komunikator Internetowy Gaim
 Name[pt]=Mensageiro Instantâneo Gaim
 GenericName=Internet Messenger
+GenericName[da]=Internet beskeder
 GenericName[fr]=Messagerie instantanée
 GenericName[it]=Internet Messenger
 GenericName[pl]=Komunikator Internetowy
