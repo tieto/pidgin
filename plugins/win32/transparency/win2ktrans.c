@@ -48,6 +48,15 @@
 #define OPT_WGAIM_BUDDYWIN_ONTOP        0x00000008
 
 /*
+ *  DATA STRUCTS
+ */
+typedef struct {
+	GtkWidget *win;
+	GtkWidget *slider;
+} slider_win;
+
+
+/*
  *  GLOBALS
  */
 G_MODULE_IMPORT GtkWidget *blist;
@@ -130,10 +139,26 @@ GtkWidget *wintrans_slider(GtkWidget *win) {
 	return frame;
 }
 
+static slider_win* find_slidwin( GtkWidget *win ) {
+	GList *tmp = window_list;
+
+	while(tmp) {
+		if( ((slider_win*)(tmp->data))->win == win)
+			return (slider_win*)tmp->data;
+		tmp = tmp->next;
+	}
+	return NULL;
+}
+
 gboolean win_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
+	slider_win *slidwin=NULL;
 	/* Remove window from the window list */
 	debug_printf("win2ktrans.dll: Conv window destoyed.. removing from list\n");
-	window_list = g_list_remove(window_list, (gpointer)widget);
+
+	if((slidwin=find_slidwin(widget))) {
+		window_list = g_list_remove(window_list, (gpointer)slidwin);
+		g_free(slidwin);
+	}
 	return FALSE;
 }
 
@@ -152,8 +177,9 @@ static void gaim_new_conversation(char *who) {
 	if ((trans_options & OPT_WGAIM_IMTRANS) &&
 	    (trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
 		/* Look up this window to see if it already has a scroller */
-		if(!g_list_find(window_list, (gpointer)win)) {
+		if(!find_slidwin(win)) {
 			GtkWidget *slider_box=NULL;
+			slider_win *slidwin=NULL;
 		
 			/* Get top vbox */
 			for ( wl1 = wl = gtk_container_get_children(GTK_CONTAINER(win));
@@ -172,8 +198,11 @@ static void gaim_new_conversation(char *who) {
 			gtk_box_pack_start(GTK_BOX(vbox),
 					   slider_box,
 					   FALSE, FALSE, 0);
-			/* Add window to list, to track that it has a scroller */
-			window_list = g_list_append(window_list, (gpointer)win);
+			/* Add window to list, to track that it has a slider */
+			slidwin = g_new0( slider_win, 1 );
+			slidwin->win = win;
+			slidwin->slider = slider_box;
+			window_list = g_list_append(window_list, (gpointer)slidwin);
 			/* Set callback to remove window from the list, if the window is destroyed */
 			g_signal_connect(GTK_OBJECT(win), "destroy_event", G_CALLBACK(win_destroy_cb), NULL);
 		}
@@ -327,7 +356,17 @@ G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
 
 G_MODULE_EXPORT void gaim_plugin_remove() {
 	debug_printf("Removing win2ktrans.dll plugin\n");
+
+	/* Remove slider bars */
 	if(window_list) {
+		GList *tmp=window_list;
+		while(tmp) {
+			slider_win *slidwin = (slider_win*)tmp->data;
+			gtk_widget_destroy(slidwin->slider);
+			set_wintrans_off(slidwin->win);
+			g_free(slidwin);
+			tmp=tmp->next;
+		}
 		g_list_free(window_list);
 		window_list = NULL;
 	}
