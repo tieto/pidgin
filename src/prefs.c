@@ -209,6 +209,7 @@ static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	filename = g_value_get_string(&val);
 	load_smiley_theme(filename, TRUE);
 	g_value_unset (&val);
+	save_prefs();
 }
 
 GtkWidget *theme_page() {
