@@ -97,16 +97,16 @@ void show_about(GtkWidget *w, void *data)
 				  "Gtk+ and is licensed under the GPL.<BR><BR>"), GTK_IMHTML_NO_SCROLL);
 
 	gtk_imhtml_append_text(GTK_IMHTML(text),
-			"<FONT SIZE=\"3\">URL:</FONT> <A HREF=\"" GAIM_WEBSITE "\">"
+			"<FONT SIZE=\"4\">URL:</FONT> <A HREF=\"" GAIM_WEBSITE "\">"
 			GAIM_WEBSITE "</A><BR><BR>", GTK_IMHTML_NO_SCROLL);
 
 	gtk_imhtml_append_text(GTK_IMHTML(text),
-			_("<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net"
+			_("<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net"
 			"<BR><BR>"), GTK_IMHTML_NO_SCROLL);
 
 	/* Active Developers */
 	str = g_strconcat(
-		"<FONT SIZE=\"3\">", _("Active Developers"), ":</FONT><BR>"
+		"<FONT SIZE=\"4\">", _("Active Developers"), ":</FONT><BR>"
 		"  Rob Flynn (", _("maintainer"), ") "
 		"&lt;<A HREF=\"mailto:gaim@robflynn.com\">gaim@robflynn.com</A>&gt;<BR>"
 		"  Sean Egan (", _("lead developer"), ") "
@@ -126,7 +126,7 @@ void show_about(GtkWidget *w, void *data)
 
 	/* Crazy Patch Writers */
 	str = g_strconcat(
-		"<FONT SIZE=\"3\">", _("Crazy Patch Writers"), ":</FONT><BR>"
+		"<FONT SIZE=\"4\">", _("Crazy Patch Writers"), ":</FONT><BR>"
 		"  Benjamin Miller<BR>"
 		"  Decklin Foster<BR>"
 		"  Etan 'deryni' Reisner<BR>"
@@ -141,7 +141,7 @@ void show_about(GtkWidget *w, void *data)
 
 	/* Retired Developers */
 	str = g_strconcat(
-			"<FONT SIZE=\"3\">", _("Retired Developers"), ":</FONT><BR>"
+			"<FONT SIZE=\"4\">", _("Retired Developers"), ":</FONT><BR>"
 			"  Adam Fritzler (", _("former libfaim maintainer"), ")<BR>"
 			"  Eric Warmenhoven (", _("former lead developer"), ") "
 			"&lt;<A HREF=\"mailto:warmenhoven@yahoo.com\">"
@@ -159,7 +159,7 @@ void show_about(GtkWidget *w, void *data)
 
 	/* Current Translators */
 	str = g_strconcat(
-			"<FONT SIZE=\"3\">", _("Current Translators"), ":</FONT><BR>"
+			"<FONT SIZE=\"4\">", _("Current Translators"), ":</FONT><BR>"
 			"  <b>", _("Catalan"), " (ca)</b> - Robert Millan &lt;<a href=\"mailto: zeratul2@wanadoo.es\">zeratul2@wanadoo.es</a>&gt;<br>"
 			"  <b>", _("Czech"), " (cs)</b> - Miloslav Trmac &lt;<a href=\"mailto: mitr@volny.cz\">mitr@volny.cz</a>&gt;<br>"
 			"  <b>", _("Danish"), " (da)</b> - Morten Brix Pedersen &lt;<a href=\"mailto: morten@wtf.dk\">morten@wtf.dk</a>&gt;<br>"
@@ -191,7 +191,7 @@ void show_about(GtkWidget *w, void *data)
 
 	/* Past Translators */
 	str = g_strconcat(
-			"<FONT SIZE=\"3\">", _("Past Translators"), ":</FONT><BR>"
+			"<FONT SIZE=\"4\">", _("Past Translators"), ":</FONT><BR>"
 			"  <b>", _("Amharic"), " (am)</b> - Daniel Yacob<br>"
 			"  <b>", _("Bulgarian"), " (bg)</b> - Hristo Todorov<br>"
 			"  <b>", _("Catalan"), " (ca)</b> - JM Pérez Cáncer<br>"
