@@ -454,11 +454,6 @@ void do_remove_buddy(GtkWidget *w, struct buddy *b)
 
 }
 
-void toggle_confirm_del_cb(GtkWidget *w, int opt)
-{
-	im_options = im_options ^ opt;
-}
-
 void show_confirm_del(struct gaim_connection *gc, gchar *name)
 {
 	struct confirm_del *b = g_new0(struct confirm_del, 1);

@@ -906,6 +906,7 @@ static void im_page()
 			vbox2);
 	gaim_button(_("Raise windows on events"), &im_options, OPT_IM_POPUP, vbox2);
 	gaim_button(_("Show logins in window"), &im_options, OPT_IM_LOGON, vbox2);
+
 	frame = gtk_frame_new(_("Window Sizes"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
 	gtk_widget_show(frame);
