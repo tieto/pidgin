@@ -128,7 +128,63 @@ struct grab_url_data {
 	gboolean startsaving;
 	char *webdata;
 	unsigned long len;
+	unsigned long data_len;
 };
+
+static gboolean
+parse_redirect(const char *data, size_t data_len, gint sock,
+			   struct grab_url_data *gunk)
+{
+	gchar *s;
+
+	if ((s = g_strstr_len(data, data_len, "Location: ")) != NULL) {
+		gchar *new_url, *end;
+		int len;
+
+		s += strlen("Location: ");
+		end = strchr(s, '\r');
+
+		/* Just in case :) */
+		if (end == NULL)
+			end = strchr(s, '\n');
+
+		len = end - s;
+
+		new_url = g_malloc(len + 1);
+		strncpy(new_url, s, len);
+		new_url[len] = '\0';
+
+		/* Close the existing stuff. */
+		gaim_input_remove(gunk->inpa);
+		close(sock);
+
+		/* Try again, with this new location. */
+		grab_url(new_url, gunk->full, gunk->callback,
+				 gunk->data);
+
+		/* Free up. */
+		g_free(new_url);
+		g_free(gunk->webdata);
+		g_free(gunk->website);
+		g_free(gunk->url);
+		g_free(gunk);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static size_t
+parse_content_len(const char *data, size_t data_len)
+{
+	gchar *s;
+	size_t content_len = 0;
+
+	sscanf(data, "Content-Length: %d", &content_len);
+
+	return content_len;
+}
 
 static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 {
@@ -154,6 +210,8 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 		fcntl(sock, F_SETFL, O_NONBLOCK);
 		gunk->sentreq = TRUE;
 		gunk->inpa = gaim_input_add(sock, GAIM_INPUT_READ, grab_url_callback, dat);
+		gunk->data_len = 4096;
+		gunk->webdata = g_malloc(gunk->data_len);
 		return;
 	}
 
@@ -162,21 +220,51 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 			errno = 0;
 			return;
 		}
+
+		gunk->len++;
+
+		if (gunk->len == gunk->data_len + 1) {
+			gunk->data_len += (gunk->data_len) / 2;
+
+			gunk->webdata = g_realloc(gunk->webdata, gunk->data_len);
+		}
+
+		gunk->webdata[gunk->len - 1] = data;
+
 		if (!gunk->startsaving) {
 			if (data == '\r')
 				return;
 			if (data == '\n') {
-				if (gunk->newline)
+				if (gunk->newline) {
+					size_t content_len;
 					gunk->startsaving = TRUE;
+
+					/* See if we can find a redirect. */
+					if (parse_redirect(gunk->webdata, gunk->len, sock, gunk))
+						return;
+
+					/* No redirect. See if we can find a content length. */
+					content_len = parse_content_len(gunk->webdata, gunk->len);
+
+					if (content_len == 0) {
+						/* We'll stick with an initial 8192 */
+						content_len = 8192;
+					}
+
+					/* Out with the old... */
+					gunk->len = 0;
+					g_free(gunk->webdata);
+					gunk->webdata = NULL;
+
+					/* In with the new. */
+					gunk->data_len = content_len;
+					gunk->webdata = g_malloc(gunk->data_len);
+				}
 				else
 					gunk->newline = TRUE;
 				return;
 			}
 			gunk->newline = FALSE;
-		} else {
-			gunk->len++;
-			gunk->webdata = g_realloc(gunk->webdata, gunk->len);
-			gunk->webdata[gunk->len - 1] = data;
 		}
 	} else if (errno != ETIMEDOUT) {
 		gunk->webdata = g_realloc(gunk->webdata, gunk->len + 1);
