@@ -207,7 +207,7 @@ handle_receive_message(NMUser * user, NMEvent * event, gboolean autoreply)
 	conn = nm_user_get_conn(user);
 
 	/* Read the conference guid */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
 		rc = nm_read_all(conn, guid, size);
@@ -215,12 +215,12 @@ handle_receive_message(NMUser * user, NMEvent * event, gboolean autoreply)
 
 	/* Read the conference flags */
 	if (rc == NM_OK) {
-		rc = nm_read_all(conn, (char *) &flags, sizeof(flags));
+		rc = nm_read_uint32(conn, &flags);
 	}
 
 	/* Read the message text */
 	if (rc == NM_OK) {
-		rc = nm_read_all(conn, (char *) &size, sizeof(size));
+		rc = nm_read_uint32(conn, &size);
 		if (rc == NM_OK) {
 
 			msg = g_new0(char, size + 1);
@@ -322,7 +322,7 @@ handle_conference_invite(NMUser * user, NMEvent * event)
 	conn = nm_user_get_conn(user);
 
 	/* Read the conference guid */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
 		rc = nm_read_all(conn, guid, size);
@@ -330,7 +330,7 @@ handle_conference_invite(NMUser * user, NMEvent * event)
 
 	/* Read the the message */
 	if (rc == NM_OK) {
-		rc = nm_read_all(conn, (char *) &size, sizeof(size));
+		rc = nm_read_uint32(conn, &size);
 		if (rc == NM_OK) {
 			msg = g_new0(char, size + 1);
 			rc = nm_read_all(conn, msg, size);
@@ -397,7 +397,7 @@ handle_conference_invite_notify(NMUser * user, NMEvent * event)
 	conn = nm_user_get_conn(user);
 
 	/* Read the conference guid */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
 		rc = nm_read_all(conn, guid, size);
@@ -447,7 +447,7 @@ handle_conference_reject(NMUser * user, NMEvent * event)
 	conn = nm_user_get_conn(user);
 
 	/* Read the conference guid */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
 		rc = nm_read_all(conn, guid, size);
@@ -484,7 +484,7 @@ handle_conference_left(NMUser * user, NMEvent * event)
 	conn = nm_user_get_conn(user);
 
 	/* Read the conference guid */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
 		rc = nm_read_all(conn, guid, size);
@@ -492,7 +492,7 @@ handle_conference_left(NMUser * user, NMEvent * event)
 
 	/* Read the conference flags */
 	if (rc == NM_OK) {
-		rc = nm_read_all(conn, (char *) &flags, sizeof(flags));
+		rc = nm_read_uint32(conn, &flags);
 	}
 
 	if (rc == NM_OK) {
@@ -532,7 +532,7 @@ handle_conference_closed(NMUser * user, NMEvent * event)
 	conn = nm_user_get_conn(user);
 
 	/* Read the conference guid */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
 		rc = nm_read_all(conn, guid, size);
@@ -570,7 +570,7 @@ handle_conference_joined(NMUser * user, NMEvent * event)
 	conn = nm_user_get_conn(user);
 
 	/* Read the conference guid */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
 		rc = nm_read_all(conn, guid, size);
@@ -578,7 +578,7 @@ handle_conference_joined(NMUser * user, NMEvent * event)
 
 	/* Read the conference flags */
 	if (rc == NM_OK) {
-		rc = nm_read_all(conn, (char *) &flags, sizeof(flags));
+		rc = nm_read_uint32(conn, &flags);
 	}
 
 	if (rc == NM_OK) {
@@ -625,7 +625,7 @@ handle_typing(NMUser * user, NMEvent * event)
 	conn = nm_user_get_conn(user);
 
 	/* Read the conference guid */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
 		rc = nm_read_all(conn, guid, size);
@@ -662,11 +662,11 @@ handle_status_change(NMUser * user, NMEvent * event)
 	conn = nm_user_get_conn(user);
 
 	/* Read new status */
-	rc = nm_read_all(conn, (char *) &status, sizeof(status));
+	rc = nm_read_uint16(conn, &status);
 	if (rc == NM_OK) {
 
 		/* Read the status text */
-		rc = nm_read_all(conn, (char *) &size, sizeof(size));
+		rc = nm_read_uint32(conn, &size);
 		if (rc == NM_OK) {
 			if (size > 0) {
 				text = g_new0(char, size + 1);
@@ -704,7 +704,7 @@ handle_undeliverable_status(NMUser * user, NMEvent * event)
 	conn = nm_user_get_conn(user);
 
 	/* Read the conference guid */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		guid = g_new0(char, size + 1);
 		rc = nm_read_all(conn, guid, size);
@@ -864,7 +864,7 @@ nm_process_event(NMUser * user, int type)
 	conn = nm_user_get_conn(user);
 
 	/* Read the event source */
-	rc = nm_read_all(conn, (char *) &size, sizeof(size));
+	rc = nm_read_uint32(conn, &size);
 	if (rc == NM_OK) {
 		if (size > 0) {
 			source = g_new0(char, size);

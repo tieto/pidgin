@@ -110,6 +110,28 @@ int nm_tcp_read(NMConn * conn, void *buff, int len);
 NMERR_T nm_read_all(NMConn * conn, char *buf, int len);
 
 /**
+ * Read a 32 bit value and convert it to the host byte order.
+ *
+ * @param conn	The connection to read from.
+ * @param val	A pointer to unsigned 32 bit integer
+ *
+ * @return		NM_OK on success, NMERR_TCP_READ if read fails.
+ */
+NMERR_T
+nm_read_uint32(NMConn *conn, guint32 *val);
+
+/**
+ * Read a 16 bit value and convert it to the host byte order.
+ *
+ * @param conn	The connection to read from.
+ * @param val	A pointer to unsigned 16 bit integer
+ *
+ * @return		NM_OK on success, NMERR_TCP_READ if read fails.
+ */
+NMERR_T
+nm_read_uint16(NMConn *conn, guint16 *val);
+
+/**
  * Dispatch a request to the server.
  *
  * @param conn		The connection.

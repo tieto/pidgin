@@ -237,13 +237,39 @@ nm_read_all(NMConn * conn, char *buff, int len)
 }
 
 NMERR_T
+nm_read_uint32(NMConn *conn, guint32 *val)
+{
+	NMERR_T rc = NM_OK;
+
+	rc = nm_read_all(conn, (char *)val, sizeof(*val));
+	if (rc == NM_OK) {
+		*val = GUINT32_FROM_LE(*val);
+	}
+
+	return rc;
+}
+
+NMERR_T
+nm_read_uint16(NMConn *conn, guint16 *val)
+{
+	NMERR_T rc = NM_OK;
+
+	rc = nm_read_all(conn, (char *)val, sizeof(*val));
+	if (rc == NM_OK) {
+		*val = GUINT16_FROM_LE(*val);
+	}
+
+	return rc;
+}
+
+NMERR_T
 nm_write_fields(NMConn * conn, NMField * fields)
 {
 	NMERR_T rc = NM_OK;
 	NMField *field;
 	char *value = NULL;
 	char *method = NULL;
-	char buffer[512];
+	char buffer[4096];
 	int ret;
 	int bytes_to_send;
 	int val = 0;
@@ -287,7 +313,12 @@ nm_write_fields(NMConn * conn, NMField * fields)
 					value = url_escape_string((char *) field->value);
 					bytes_to_send = g_snprintf(buffer, sizeof(buffer),
 											   "&val=%s", value);
-					ret = nm_tcp_write(conn, buffer, bytes_to_send);
+					if (bytes_to_send > (int)sizeof(buffer)) {
+						ret = nm_tcp_write(conn, buffer, sizeof(buffer));
+					} else {
+						ret = nm_tcp_write(conn, buffer, bytes_to_send);
+					}
+
 					if (ret < 0) {
 						rc = NMERR_TCP_WRITE;
 					}
@@ -499,7 +530,7 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 		if (rc != NM_OK)
 			break;
 
-		rc = nm_read_all(conn, (char *) &val, sizeof(val));
+		rc = nm_read_uint32(conn, &val);
 		if (rc != NM_OK)
 			break;
 
@@ -515,7 +546,7 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 		if (type == NMFIELD_TYPE_MV || type == NMFIELD_TYPE_ARRAY) {
 
 			/* Read the subarray (first read the number of items in the array) */
-			rc = nm_read_all(conn, (char *) &val, sizeof(val));
+			rc = nm_read_uint32(conn, &val);
 			if (rc != NM_OK)
 				break;
 
@@ -533,7 +564,7 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 		} else if (type == NMFIELD_TYPE_UTF8 || type == NMFIELD_TYPE_DN) {
 
 			/* Read the string (first read the length) */
-			rc = nm_read_all(conn, (char *) &val, sizeof(val));
+			rc = nm_read_uint32(conn, &val);
 			if (rc != NM_OK)
 				break;
 
@@ -557,7 +588,7 @@ nm_read_fields(NMConn * conn, int count, NMField ** fields)
 		} else {
 
 			/* Read the numerical value */
-			rc = nm_read_all(conn, (char *) &val, sizeof(val));
+			rc = nm_read_uint32(conn, &val);
 			if (rc != NM_OK)
 				break;
 

@@ -980,7 +980,7 @@ nm_process_new_data(NMUser * user)
 		if (strncmp((char *) &val, "HTTP", strlen("HTTP")) == 0)
 			rc = nm_process_response(user);
 		else
-			rc = nm_process_event(user, val);
+			rc = nm_process_event(user, GUINT32_FROM_LE(val));
 
 	} else {
 		rc = NMERR_PROTOCOL;
