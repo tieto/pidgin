@@ -596,6 +596,7 @@ static void buddy_page()
 	if (blist_options & OPT_BLIST_NO_BUTTONS)
 		gtk_widget_set_sensitive(button2, FALSE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), button2);
+	gaim_button(_("Raise Buddy List on Signons and Signoffs"), &blist_options, OPT_BLIST_POPUP, vbox);
 
 	frame = gtk_frame_new(_("Group Displays"));
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);

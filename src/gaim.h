@@ -211,6 +211,7 @@ extern guint blist_options;
 #define OPT_BLIST_SHOW_WARN		0x00000200
 #define OPT_BLIST_GREY_IDLERS		0x00000400
 #define OPT_BLIST_BOTTOM_TAB		0X00000800
+#define OPT_BLIST_POPUP                 0x00001000
 
 extern guint convo_options;
 #define OPT_CONVO_ENTER_SENDS		0x00000001

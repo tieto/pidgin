@@ -1987,13 +1987,23 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 }
 
 void hide_buddy_list() {
-	#ifdef USE_APPLET
+#ifdef USE_APPLET
 	applet_destroy_buddy(NULL, NULL, NULL);
 #else
 	XIconifyWindow(GDK_DISPLAY(),
 			GDK_WINDOW_XWINDOW(blist->window),
 			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
 #endif
+}
+
+void unhide_buddy_list() {
+#ifdef USE_APPLET
+	if (!applet_buddy_show) {
+		applet_buddy_show = TRUE;
+		createOnlinePopup();
+	}
+#endif /* USE_APPLET */
+	gdk_window_show(blist->window);
 }
 
 static gint log_timeout(struct buddy_show *b)
@@ -2279,6 +2289,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if (b->present == 1) {
 			if (bs->sound != 2)
 				play_sound(SND_BUDDY_ARRIVE);
+			if (blist_options & OPT_BLIST_POPUP)
+				unhide_buddy_list();
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 							  NULL, (char **)login_icon_xpm);
 			gtk_widget_hide(bs->pix);
@@ -2342,7 +2354,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				   off */
 		if (bs->sound != 1)
 			play_sound(SND_BUDDY_LEAVE);
-
+		if (blist_options & OPT_BLIST_POPUP)
+			unhide_buddy_list();
 		bs->connlist = g_slist_remove(bs->connlist, gc);
 		update_num_group(gs);
 		if (bs->log_timer > 0)

@@ -4,6 +4,7 @@ version 0.58:
 	* Bulgarian translation added (Thanks, Igel Itzo)
 	* Taiwanese translation added (Thanks, Paladin Liu)
 	* Better applet transparency
+	* Option to raise buddy list on signons/signoffs
 
 version 0.57 (04/25/2002):
 	* New authorization method for Yahoo!
