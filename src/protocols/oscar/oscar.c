@@ -1612,15 +1612,17 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static char *images(int flags) {
 	static char buf[1024];
-	g_snprintf(buf, sizeof(buf), "%s%s%s%s%s%s",
+	g_snprintf(buf, sizeof(buf), "%s%s%s%s%s%s%s",
 			(flags & AIM_FLAG_ACTIVEBUDDY) ? "<IMG SRC=\"ab_icon.gif\">" : "",
 			(flags & AIM_FLAG_UNCONFIRMED) ? "<IMG SRC=\"dt_icon.gif\">" : "",
 			(flags & AIM_FLAG_AOL) ? "<IMG SRC=\"aol_icon.gif\">" : "",
+			(flags & AIM_FLAG_ICQ) ? "<IMG SRC=\"icq_icon.gif\">" : "",
 			(flags & AIM_FLAG_ADMINISTRATOR) ? "<IMG SRC=\"admin_icon.gif\">" : "",
 			(flags & AIM_FLAG_FREE) ? "<IMG SRC=\"free_icon.gif\">" : "",
 			(flags & AIM_FLAG_WIRELESS) ? "<IMG SRC=\"wireless_icon.gif\">" : "");
 	return buf;
 }
+
 
 /* XXX This is horribly copied from ../../buddy.c. */
 static char *caps_string(guint caps)
@@ -1714,15 +1716,17 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	prof = va_arg(ap, char *);
 	va_end(ap);
 
-	g_snprintf(legend, sizeof legend,
-			_("<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
-			"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
-			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
-			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
-			"<IMG SRC=\"admin_icon.gif\"> : Administrator <br>"
-			"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive Agent<br>"
-			"<IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"));
-
+	if (!od->icq) {
+		g_snprintf(legend, sizeof legend,
+				_("<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
+				"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
+				"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
+				"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
+				"<IMG SRC=\"admin_icon.gif\"> : Administrator <br>"
+				"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive Agent<br>"
+				"<IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"));
+	}
+		
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		onlinesince = g_strdup_printf("Online Since : <B>%s</B><BR>\n",
 					asctime(localtime(&info->onlinesince)));
@@ -2618,7 +2622,7 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_DND);
 		gc->away = "";
 	} else if (!strcmp(state, "Not Available")) {
-		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT);
+		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
 		gc->away = "";
 	} else if (!strcmp(state, "Occupied")) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_BUSY);
@@ -2631,7 +2635,7 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 		gc->away = "";
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
 	 	if (message) {
-			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT);
+			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
 			gc->away = "";
 		} else {
 		  
@@ -3094,24 +3098,24 @@ static char **oscar_list_icon(int uc) {
 		return (char **)icon_online_xpm;
 	if (uc & 0xff80) {
 		uc >>= 7;
-		if (uc & AIM_ICQ_STATE_AWAY)
-			return icon_away_xpm;
-		if (uc & AIM_ICQ_STATE_DND)
-			return icon_dnd_xpm;
-		if (uc & AIM_ICQ_STATE_OUT)
-			return icon_na_xpm;
-		if (uc & AIM_ICQ_STATE_BUSY)
-			return icon_occ_xpm;
-		if (uc & AIM_ICQ_STATE_CHAT)
-			return icon_ffc_xpm;
 		if (uc & AIM_ICQ_STATE_INVISIBLE)
 			return icon_offline_xpm;
+		if (uc & AIM_ICQ_STATE_CHAT)
+			return icon_ffc_xpm;
+		if (uc & AIM_ICQ_STATE_BUSY)
+		 	return icon_occ_xpm;
+		if (uc & AIM_ICQ_STATE_OUT)
+			return icon_na_xpm;
+		if (uc & AIM_ICQ_STATE_DND)
+		 	return icon_dnd_xpm;
+		if (uc & AIM_ICQ_STATE_AWAY)
+			return icon_away_xpm;
 		return icon_online_xpm;
 	}
-	if (uc & UC_WIRELESS)
-		return (char **)wireless_icon_xpm;
 	if (uc & UC_UNAVAILABLE)
 		return (char **)away_icon_xpm;
+	if (uc & UC_WIRELESS)
+		return (char **)wireless_icon_xpm;
 	if (uc & UC_AB)
 		return (char **)ab_xpm;
 	if (uc & UC_AOL)

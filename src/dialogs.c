@@ -80,6 +80,7 @@
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/ab.xpm"
 #include "pixmaps/wireless_icon.xpm"
+#include "pixmaps/gnomeicu-online.xpm"
 
 #define PATHSIZE 1024
 
@@ -1854,6 +1855,8 @@ gchar **info_img_handler(gchar *url)
 		return ab_xpm;
 	if (!g_strcasecmp(url, "wireless_icon.gif"))
 		return wireless_icon_xpm;
+	if (!g_strcasecmp(url, "icq_icon.gif"))
+		return icon_online_xpm
 	return NULL;
 }
 
