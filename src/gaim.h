@@ -617,7 +617,6 @@ extern gint check_idle(struct gaim_connection *);
 
 /* Functions in util.c */
 extern char *normalize(const char *);
-extern char *escape_text2(const char *);
 extern char *tobase64(const char *);
 extern void frombase64(const char *, char **, int *);
 extern gint clean_pid(gpointer);
@@ -635,9 +634,7 @@ extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
 extern void translate_lst (FILE *, char *);
 extern void translate_blt (FILE *, char *);
 extern char *stylize(gchar *, int);
-extern int set_dispstyle (int);
 extern void show_usage (int, char *);
-extern void set_first_user (char *);
 extern int do_auto_login (char *);
 extern int file_is_dir (const char *, GtkWidget *);
 extern char *gaim_user_dir();

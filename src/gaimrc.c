@@ -165,7 +165,7 @@ static int gaimrc_parse_tag(FILE *f)
 	return -1;
 }
 
-void filter_break(char *msg)
+static void filter_break(char *msg)
 {
 	char *c;
 	int mc;
@@ -190,6 +190,40 @@ void filter_break(char *msg)
 	g_free(c);
 }
 
+static char *escape_text2(const char *msg)
+{
+	char *c, *cpy;
+	char *woo;
+	int cnt = 0;
+	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
+
+	woo = malloc(strlen(msg) * 4 + 1);
+	cpy = g_strndup(msg, 2048);
+	c = cpy;
+	while (*c) {
+		switch (*c) {
+		case '\n':
+			woo[cnt++] = '<';
+			woo[cnt++] = 'B';
+			woo[cnt++] = 'R';
+			woo[cnt++] = '>';
+			break;
+		case '{':
+		case '}':
+		case '\\':
+		case '"':
+			woo[cnt++] = '\\';
+			/* Fall through */
+		default:
+			woo[cnt++] = *c;
+		}
+		c++;
+	}
+	woo[cnt] = '\0';
+
+	g_free(cpy);
+	return woo;
+}
 
 static void gaimrc_read_away(FILE *f)
 {

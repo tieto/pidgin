@@ -413,6 +413,23 @@ void sighandler(int sig)
 }
 #endif
 
+static void set_first_user(char *name)
+{
+	struct aim_user *u;
+
+	u = find_user(name, -1);
+
+	if (!u) {		/* new user */
+		u = g_new0(struct aim_user, 1);
+		g_snprintf(u->username, sizeof(u->username), "%s", name);
+		u->protocol = DEFAULT_PROTO;
+		aim_users = g_list_prepend(aim_users, u);
+	} else {		/* user already exists */
+		aim_users = g_list_remove(aim_users, u);
+		aim_users = g_list_prepend(aim_users, u);
+	}
+	save_prefs();
+}
 
 int main(int argc, char *argv[])
 {

@@ -31,15 +31,10 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <sys/wait.h>
-#include <gtk/gtk.h>
 #include <ctype.h>
 #include <math.h>
-#include <pixmaps/aimicon.xpm>
 #include "gaim.h"
 #include "prpl.h"
-
-static GdkPixmap *icon_pm = NULL;
-static GdkBitmap *icon_bm = NULL;
 
 char *full_date()
 {
@@ -473,45 +468,6 @@ FILE *open_system_log_file(char *name)
 		return open_gaim_log_file("system", &x);
 }
 
-char *escape_text2(const char *msg)
-{
-	char *c, *cpy;
-	char *woo;
-	int cnt = 0;
-	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
-	if (strlen(msg) > BUF_LEN) {
-		fprintf(stderr, "Warning:  truncating message to 2048 bytes\n");
-	}
-
-	woo = malloc(strlen(msg) * 4 + 1);
-	cpy = g_strndup(msg, 2048);
-	c = cpy;
-	while (*c) {
-		switch (*c) {
-		case '\n':
-			woo[cnt++] = '<';
-			woo[cnt++] = 'B';
-			woo[cnt++] = 'R';
-			woo[cnt++] = '>';
-			break;
-		case '{':
-		case '}':
-		case '\\':
-		case '"':
-			woo[cnt++] = '\\';
-			/* Fall through */
-		default:
-			woo[cnt++] = *c;
-		}
-		c++;
-	}
-	woo[cnt] = '\0';
-
-	g_free(cpy);
-	return woo;
-}
-
-
 char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" "0123456789+/";
 
 
@@ -681,18 +637,6 @@ gboolean clean_pid(gpointer dummy)
 	return FALSE;
 }
 
-void aol_icon(GdkWindow *w)
-{
-#ifndef _WIN32
-	if (icon_pm == NULL) {
-		icon_pm = gdk_pixmap_create_from_xpm_d(w, &icon_bm, NULL, (gchar **)aimicon_xpm);
-	}
-	gdk_window_set_icon(w, NULL, icon_pm, icon_bm);
-	if (mainwindow)
-		gdk_window_set_group(w, mainwindow->window);
-#endif
-}
-
 struct aim_user *find_user(const char *name, int protocol)
 {
 	char *who = g_strdup(normalize(name));
@@ -772,95 +716,6 @@ char *away_subs(char *msg, char *name)
 	return (cpy);
 }
 
-GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
-{
-	GtkWidget *button;
-	GtkWidget *button_box, *button_box_2, *button_box_3;
-	GtkWidget *label;
-	GdkBitmap *mask;
-	GdkPixmap *pm;
-	GtkWidget *pixmap;
-
-	button = gtk_button_new();
-	if (misc_options & OPT_MISC_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-
-	button_box_2 = gtk_hbox_new(FALSE, 0);
-	button_box_3 = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(button_box), button_box_3, TRUE, TRUE, 0);
-	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
-	pixmap = gtk_pixmap_new(pm, mask);
-	gtk_box_pack_end(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
-
-	if (text) {
-		label = gtk_label_new(text);
-		gtk_box_pack_start(GTK_BOX(button_box_3), label, FALSE, FALSE, 2);
-		gtk_widget_show(label);
-	}
-
-	gtk_widget_show(pixmap);
-	gtk_widget_show(button_box_2);
-	gtk_widget_show(button_box_3);
-	gtk_widget_show(button_box);
-
-/* this causes clipping on lots of buttons with long text */
-/*  gtk_widget_set_usize(button, 75, 30);*/
-	gtk_widget_show(button);
-	gdk_pixmap_unref(pm);
-	gdk_bitmap_unref(mask);
-
-	return button;
-}
-
-static GtkTooltips *button_tips = NULL;
-GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short dispstyle)
-{
-	GtkWidget *button;
-	GtkWidget *button_box, *button_box_2;
-	GdkBitmap *mask;
-	GdkPixmap *pm;
-	GtkWidget *pixmap;
-	GtkWidget *label;
-
-	if (!button_tips)
-		button_tips = gtk_tooltips_new();
-	button = gtk_button_new();
-	if (misc_options & OPT_MISC_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-
-	button_box = gtk_hbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-
-	button_box_2 = gtk_vbox_new(FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, TRUE, TRUE, 0);
-	gtk_widget_show(button_box_2);
-	gtk_widget_show(button_box);
-	if (dispstyle == 2 || dispstyle == 0) {
-		pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
-		pixmap = gtk_pixmap_new(pm, mask);
-		gtk_box_pack_start(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
-
-		gtk_widget_show(pixmap);
-
-		gdk_pixmap_unref(pm);
-		gdk_bitmap_unref(mask);
-	}
-
-	if (dispstyle == 2 || dispstyle == 1) {
-		label = gtk_label_new(text);
-		gtk_widget_show(label);
-		gtk_box_pack_end(GTK_BOX(button_box_2), label, FALSE, FALSE, 0);
-	}
-
-	gtk_tooltips_set_tip(button_tips, button, text, "Gaim");
-	gtk_widget_show(button);
-	return button;
-}
 
 
 /* remove leading whitespace from a string */
@@ -1044,39 +899,6 @@ char *stylize(gchar *text, int length)
 	return buf;
 }
 
-int set_dispstyle(int chat)
-{
-	int dispstyle;
-
-	if (chat) {
-		switch (chat_options & (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM)) {
-		case OPT_CHAT_BUTTON_TEXT:
-			dispstyle = 1;
-			break;
-		case OPT_CHAT_BUTTON_XPM:
-			dispstyle = 0;
-			break;
-		default:	/* both or neither */
-			dispstyle = 2;
-			break;
-		}
-	} else {
-		switch (im_options & (OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM)) {
-		case OPT_IM_BUTTON_TEXT:
-			dispstyle = 1;
-			break;
-		case OPT_IM_BUTTON_XPM:
-			dispstyle = 0;
-			break;
-		default:	/* both or neither */
-			dispstyle = 2;
-			break;
-		}
-	}
-	return dispstyle;
-}
-
-
 void show_usage(int mode, char *name)
 {
 	switch (mode) {
@@ -1096,25 +918,6 @@ void show_usage(int mode, char *name)
 		printf("Try `%s -h' for more information.\n", name);
 		break;
 	}
-}
-
-
-void set_first_user(char *name)
-{
-	struct aim_user *u;
-
-	u = find_user(name, -1);
-
-	if (!u) {		/* new user */
-		u = g_new0(struct aim_user, 1);
-		g_snprintf(u->username, sizeof(u->username), "%s", name);
-		u->protocol = DEFAULT_PROTO;
-		aim_users = g_list_prepend(aim_users, u);
-	} else {		/* user already exists */
-		aim_users = g_list_remove(aim_users, u);
-		aim_users = g_list_prepend(aim_users, u);
-	}
-	save_prefs();
 }
 
 
@@ -1152,27 +955,6 @@ int do_auto_login(char *name)
 	}
 
 	return retval;
-}
-
-
-int file_is_dir(const char *path, GtkWidget *w)
-{
-	struct stat st;
-	char *name;
-
-	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
-		/* append a / if needed */
-		if (path[strlen(path) - 1] != '/') {
-			name = g_strconcat(path, "/", NULL);
-		} else {
-			name = g_strdup(path);
-		}
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(w), name);
-		g_free(name);
-		return 1;
-	}
-
-	return 0;
 }
 
 GSList *message_split(char *message, int limit)
@@ -1280,7 +1062,7 @@ void away_on_login(char *mesg)
 
 	if (mesg == NULL) {
 		/* Use default message */
-		do_away_message((GtkWidget *)NULL, default_away);
+		do_away_message(NULL, default_away);
 	} else {
 		/* Use argument */
 		while (awy) {
@@ -1293,7 +1075,7 @@ void away_on_login(char *mesg)
 		}
 		if (message == NULL)
 			message = default_away;
-		do_away_message((GtkWidget *)NULL, message);
+		do_away_message(NULL, message);
 	}
 	return;
 }

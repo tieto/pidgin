@@ -1823,6 +1823,38 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 	update_checkbox(cnv);
 }
 
+int set_dispstyle(int chat)
+{
+	int dispstyle;
+
+	if (chat) {
+		switch (chat_options & (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM)) {
+		case OPT_CHAT_BUTTON_TEXT:
+			dispstyle = 1;
+			break;
+		case OPT_CHAT_BUTTON_XPM:
+			dispstyle = 0;
+			break;
+		default:	/* both or neither */
+			dispstyle = 2;
+			break;
+		}
+	} else {
+		switch (im_options & (OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM)) {
+		case OPT_IM_BUTTON_TEXT:
+			dispstyle = 1;
+			break;
+		case OPT_IM_BUTTON_XPM:
+			dispstyle = 0;
+			break;
+		default:	/* both or neither */
+			dispstyle = 2;
+			break;
+		}
+	}
+	return dispstyle;
+}
+
 void update_convo_add_button(struct conversation *c)
 {
 	int dispstyle = set_dispstyle(0);

@@ -48,6 +48,7 @@ extern void block_callback(GtkWidget *, struct conversation *);
 extern void add_callback(GtkWidget *, struct conversation *);
 
 /* now both */
+extern int set_dispstyle (int);
 extern void info_callback(GtkWidget *, struct conversation *);
 extern void do_bold(GtkWidget *, GtkWidget *);
 extern void do_italic(GtkWidget *, GtkWidget *);
