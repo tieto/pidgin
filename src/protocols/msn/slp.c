@@ -629,6 +629,8 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body, gsize len)
 		slpcall = msn_slplink_find_slp_call(slplink, call_id);
 		g_free(call_id);
 
+		g_return_val_if_fail(slpcall != NULL, NULL);
+
 		if (strncmp(status, "200 OK", 6))
 		{
 			/* It's not valid. Kill this off. */

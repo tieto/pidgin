@@ -298,8 +298,8 @@ msn_slplink_send_msgpart(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		if ((slpmsg->slpcall != NULL) &&
 			(slpmsg->slpcall->progress_cb != NULL))
 		{
-			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size, len,
-										slpmsg->offset);
+			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size,
+										 len, slpmsg->offset);
 		}
 	}
 
@@ -509,10 +509,14 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		g_return_if_reached();
 	}
 
-	if ((slpmsg->slpcall != NULL) &&
-		(slpmsg->slpcall->progress_cb != NULL))
+	if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{
-		slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size, len, offset);
+		if ((slpmsg->slpcall != NULL) &&
+			(slpmsg->slpcall->progress_cb != NULL))
+		{
+			slpmsg->slpcall->progress_cb(slpmsg->slpcall, slpmsg->size,
+										 len, offset);
+		}
 	}
 
 #if 0
