@@ -735,6 +735,15 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		swboard = msn_session_get_swboard(session, who);
 
 		msn_import_html(message, &msgformat, &msgtext);
+
+		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
+		{
+			g_free(msgformat);
+			g_free(msgtext);
+
+			return -E2BIG;
+		}
+
 		msg = msn_message_new_plain(msgtext);
 		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
 
@@ -1129,6 +1138,14 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 	if (swboard->ready)
 	{
 		msn_import_html(message, &msgformat, &msgtext);
+
+		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
+		{
+			g_free(msgformat);
+			g_free(msgtext);
+
+			return -E2BIG;
+		}
 
 		msg = msn_message_new_plain(msgtext);
 		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);

@@ -115,7 +115,7 @@ GType gaim_desktop_item_get_type       (void);
 #define GAIM_DESKTOP_ITEM_DOC_PATH	"X-GNOME-DocPath" /* string */
 
 /**
- * This function loads 'filename' and turns it into a GnomeDesktopItem.
+ * This function loads 'filename' and turns it into a GaimDesktopItem.
  *
  * @param filename The filename or directory path to load the GaimDesktopItem from
  *
@@ -133,7 +133,7 @@ GaimDesktopItem *gaim_desktop_item_new_from_file (const char *filename);
  * @param item A desktop item
  *
  * @return The type of the specified 'item'. The returned memory
- * remains owned by the GnomeDesktopItem and should not be freed.
+ * remains owned by the GaimDesktopItem and should not be freed.
  */
 GaimDesktopItemType gaim_desktop_item_get_entry_type (const GaimDesktopItem *item);
 
@@ -149,7 +149,7 @@ const char *gaim_desktop_item_get_string (const GaimDesktopItem *item,
 					  const char *attr);
 
 /**
- * Creates a copy of a GnomeDesktopItem.  The new copy has a refcount of 1.
+ * Creates a copy of a GaimDesktopItem.  The new copy has a refcount of 1.
  * Note: Section stack is NOT copied.
  *
  * @param item The item to be copied

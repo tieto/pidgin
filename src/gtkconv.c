@@ -3307,41 +3307,43 @@ get_chat_buddy_status_icon(GaimConvChat *chat, const char *name, GaimConvChatBud
 {
 	GdkPixbuf *pixbuf, *scale, *scale2;
 	char *filename;
-	char *image = NULL;
+	const char *image = NULL;
 
 	if (flags & GAIM_CBFLAGS_FOUNDER) {
-		image = g_strdup("founder.png");
+		image = "founder.png";
 	} else if (flags & GAIM_CBFLAGS_OP) {
-		image = g_strdup("op.png");
+		image = "op.png";
 	} else if (flags & GAIM_CBFLAGS_HALFOP) {
-		image = g_strdup("halfop.png");
+		image = "halfop.png";
 	} else if (flags & GAIM_CBFLAGS_VOICE) {
-		image = g_strdup("voice.png");
+		image = "voice.png";
 	} else if ((!flags) && gaim_conv_chat_is_user_ignored(chat, name)) {
-		image = g_strdup("ignored.png");
-	}
-	if (image) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", image, NULL);
-		g_free(image);
-		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
-		if (!pixbuf)
-			return NULL;
-		scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
-		g_object_unref(pixbuf);
-		if (flags && gaim_conv_chat_is_user_ignored(chat, name)) {
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "ignored.png", NULL);
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-			g_free(filename);
-			scale2 = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
-			g_object_unref(pixbuf);
-			gdk_pixbuf_composite(scale2, scale, 0, 0, 15, 15, 0, 0, 1, 1, GDK_INTERP_BILINEAR, 192);
-			g_object_unref(scale2);
-		}
-		return scale;
+		image = "ignored.png";
+	} else {
+		return NULL;
 	}
 
-	return NULL;
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", image, NULL);
+	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+
+	if (!pixbuf)
+		return NULL;
+
+	scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
+	g_object_unref(pixbuf);
+
+	if (flags && gaim_conv_chat_is_user_ignored(chat, name)) {
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "ignored.png", NULL);
+		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		g_free(filename);
+		scale2 = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
+		g_object_unref(pixbuf);
+		gdk_pixbuf_composite(scale2, scale, 0, 0, 15, 15, 0, 0, 1, 1, GDK_INTERP_BILINEAR, 192);
+		g_object_unref(scale2);
+	}
+
+	return scale;
 }
 
 static void

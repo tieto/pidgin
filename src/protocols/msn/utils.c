@@ -209,10 +209,15 @@ msn_import_html(const char *html, char **attributes, char **message)
 				strcat(fonteffect, "U");
 				c += 3;
 			}
+			else if (!g_ascii_strncasecmp(c + 1, "s>", 2))
+			{
+				strcat(fonteffect, "S");
+				c += 3;
+			}
 			else if (!g_ascii_strncasecmp(c + 1, "a href=\"", 8))
 			{
 				c += 9;
-				
+
 				if (!g_ascii_strncasecmp(c, "mailto:", 7))
 					c += 7;
 
