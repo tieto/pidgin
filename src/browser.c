@@ -603,7 +603,10 @@ void open_url(GtkWidget *w, char *url)
 
 			char command[1024];
 
-			g_snprintf(command, sizeof(command), web_command, url);
+			if ((url[0] == '\"') && (url[strlen(url)-1] == '\"'))
+				g_snprintf(command, sizeof(command), web_command, url);
+			else
+				g_snprintf(command, sizeof(command), "%s \"%s\"", web_command, url);
 
 			args[0] = "sh";
 			args[1] = "-c";
