@@ -25,5 +25,5 @@ libfaim_a_SOURCES = 	aim_auth.c 		\
 			aim_txqueue.c		\
 			aim_util.c
 
-CFLAGS += $(GAIM_CFLAGS) -I../src -DAIM_BUILDDATE=\"`date +%Y%m%d`\" -DAIM_BUILDTIME=\"`date +%H%M%S`\"
+CFLAGS += -DAIM_BUILDDATE=\"`date +%Y%m%d`\" -DAIM_BUILDTIME=\"`date +%H%M%S`\"
 

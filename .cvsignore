@@ -16,3 +16,7 @@ Receive.h
 aclocal.m4
 libtool
 gaim.spec
+config.h.in
+config.h
+stamp-h.in
+stamp-h

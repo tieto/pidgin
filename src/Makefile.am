@@ -12,9 +12,4 @@ gaim_SOURCES = about.c aim.c away.c browser.c buddy.c buddy_chat.c \
 	server.c sound.c toc.c util.c
 endif
 
-
-CFLAGS += $(GAIM_CFLAGS)
-LIBS += $(GAIM_LIBS)
-LDADD += $(GAIM_LDADD)
-
 EXTRA_DIST = gaim.h proxy.h gnome_applet_mgr.h gtkhtml.h

@@ -23,6 +23,9 @@
 /* it is intended to : 1st handle http proxy, using the CONNECT command
  , 2nd provide an easy way to add socks support */
 
+#ifdef HAVE_CONFIG_H
+#include "../config.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

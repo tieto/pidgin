@@ -1,6 +1,6 @@
-dn3l Process this file with autoconf to produce a configure script.
+dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/aim.c)
-
+AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([gaim], [0.9.19])
 
 dnl Checks for programs.
@@ -30,7 +30,7 @@ AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(socket strdup strstr atexit)
 
 dnl This is a bad, bad hack.  I am a bad, bad man.
-CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include"
+CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include -I../"
 
 AC_ARG_ENABLE(debug, [  --enable-debug          compile with debugging support],enable_debug=yes,)
 AC_ARG_ENABLE(gnome, [  --enable-gnome          compile as a GNOME applet],enable_gnome=yes,)
@@ -40,59 +40,61 @@ AC_ARG_ENABLE(oscar, [  --enable-oscar          Enable Oscar support (experiment
 AC_ARG_ENABLE(nas,   [  --enable-nas            Enable NAS (Network Audio System) support],enable_nas=yes,)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile with out plugin support],enable_plugins=no,enable_plugins=yes)
 
-GAIM_CFLAGS="$CFLAGS -I../"
-GAIM_LIBS="$LIBS"
-GAIM_LDADD="$LDADD"
 LIBFAIM_DO=""
 
 if test "$enable_debug" = yes ; then
-	GAIM_CFLAGS="$GAIM_CFLAGS -Wall -d -g -DDEBUG"
+	CFLAGS="$CFLAGS -Wall -d -g"
+	AC_DEFINE(DEBUG)
 fi
 
 if test "$enable_oscar" = yes ; then
-	GAIM_CFLAGS="$GAIM_CFLAGS -DUSE_OSCAR -I../libfaim/faim"
-        GAIM_LDADD="$GAIM_LDADD -L../libfaim -lfaim"
+	CFLAGS="$CFLAGS -I../libfaim/faim"
+	AC_DEFINE(USE_OSCAR)
+        LDADD="$LDADD -L../libfaim -lfaim"
         LIBFAIM_DO="libfaim.a"
 fi
 
 AM_PATH_GLIB(1.2.0)
 AM_PATH_GTK(1.2.0,,,gthread)
-GAIM_LIBS="$GAIM_LIBS $GTK_LIBS"
+LIBS="$LIBS $GTK_LIBS"
 
 if test "$enable_gnome" = yes ; then
 	GNOME_INIT(applets)
 	GNOME_X_CHECKS
-        GAIM_CFLAGS="$GNOME_INCLUDEDIR $GAIM_CFLAGS -DUSE_APPLET"
-	GAIM_LIBS="$GAIM_LIBS $GNOME_LIBDIR $GNOME_APPLETS_LIBS"
+        CFLAGS="$CFLAGS $GNOME_INCLUDEDIR"
+	AC_DEFINE(USE_APPLET)
+	LIBS="$LIBS $GNOME_LIBDIR $GNOME_APPLETS_LIBS"
 fi
 
-GAIM_CFLAGS="$GAIM_CFLAGS $GTK_CFLAGS"
+CFLAGS="$CFLAGS $GTK_CFLAGS"
 
 if test "$enable_plugins" = yes ; then
-	GAIM_CFLAGS="$GAIM_CFLAGS -DGAIM_PLUGINS"
+	AC_DEFINE(GAIM_PLUGINS)
 fi
 
 if test "$enable_nas" = yes ; then
-	GAIM_CFLAGS="$GAIM_CFLAGS -DNAS_SOUND"
-        GAIM_LIBS="$GAIM_LIBS -laudio"
+	AC_DEFINE(NAS_SOUND)
+        LIBS="$LIBS -laudio"
 fi
 
 if test "$enable_esd" = yes ; then
 	AM_PATH_GESD
         if test "$no_esd" != yes ; then
-        	GAIM_CFLAGS="$GAIM_CFLAGS $ESD_CFLAGS -DESD_SOUND"
-                GAIM_LIBS="$GAIM_LIBS $ESD_LIBS"
+        	CFLAGS="$CFLAGS $ESD_CFLAGS"
+		AC_DEFINE(ESD_SOUND)
+                LDADD="$LDADD $ESD_LIBS"
         fi
 fi
 
 if test "$ac_cv_cygwin" = yes ; then
-	GAIM_LDADD="$GAIM_LDADD -static"
-	GAIM_CFLAGS="$GAIM_CFLAGS -Wall -g -DDEBUG"
+	LDADD="$LDADD -static"
+	CFLAGS="$CFLAGS -Wall -g"
+	AC_DEFINE(DEBUG)
 fi                           
 
-AC_SUBST(GAIM_CFLAGS)
-AC_SUBST(GAIM_LIBS)
-AC_SUBST(GAIM_LDADD)
+AC_SUBST(CFLAGS)
+AC_SUBST(LDADD)
+AC_SUBST(LIBS)
 AC_SUBST(LIBFAIM_DO)
 
 AC_OUTPUT([Makefile

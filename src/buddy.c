@@ -19,6 +19,9 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+#include "../config.h"
+#endif
 #ifdef USE_APPLET
 #include <gnome.h>
 #include <applet-widget.h>

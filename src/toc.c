@@ -21,6 +21,9 @@
 
 
 
+#ifdef HAVE_CONFIG_H
+#include "../config.h"
+#endif
 #include <netdb.h>
 #include <gtk/gtk.h>
 #include <unistd.h>

@@ -28,6 +28,10 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+#include "../config.h"
+#endif
+
 #ifdef GAIM_PLUGINS
 
 #include <string.h>
