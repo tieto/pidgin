@@ -70,7 +70,7 @@ static void gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, g
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
 #define MAX_FONT_SIZE 7
 #define POINT_SIZE(x) (options & GTK_IMHTML_USE_POINTSIZE ? x : _point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
-static gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
+static gdouble _point_sizes [] = { .5, .75, 1, 1.5, 2, 3, 4};
 
 enum {
 	TARGET_HTML,
@@ -228,9 +228,9 @@ gtk_imhtml_tip (gpointer data)
 	gtk_widget_ensure_style (imhtml->tip_window);
 	layout = gtk_widget_create_pango_layout(imhtml->tip_window, imhtml->tip);
 	font = pango_font_get_metrics(pango_context_load_font(pango_layout_get_context(layout),
-														  imhtml->tip_window->style->font_desc),
-														  NULL);
-
+							      imhtml->tip_window->style->font_desc),
+				      NULL);
+	
 
 	pango_layout_get_pixel_size(layout, &scr_w, NULL);
 	gap = PANGO_PIXELS((pango_font_metrics_get_ascent(font) +
@@ -1469,7 +1469,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 							gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 						ws[0] = '\0'; wpos = 0;
 						/* NEW_BIT (NEW_TEXT_BIT); */
-						fonts = g_slist_remove (fonts, font);
+					
 						if (font->face) {
 							gtk_imhtml_toggle_fontface(imhtml, NULL);
 							g_free (font->face);
@@ -1485,8 +1485,25 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 						if (font->sml)
 							g_free (font->sml);
 						g_free (font);
+
+						if (font->size != 3)
+							gtk_imhtml_font_set_size(imhtml, 3);
+
+						fonts = fonts->next;
+						if (fonts) {
+							GtkIMHtmlFontDetail *font = fonts->data;
+							
+							if (font->face) 
+								gtk_imhtml_toggle_fontface(imhtml, font->face);
+							if (font->fore) 
+								gtk_imhtml_toggle_forecolor(imhtml, font->fore);
+							if (font->back) 
+								gtk_imhtml_toggle_backcolor(imhtml, font->back);
+							if (font->size != 3)
+								gtk_imhtml_font_set_size(imhtml, font->size);
+						}
 					}
-					break;
+						break;
 				case 28:        /* /A    */
 					if (url) {
 						gtk_imhtml_insert_link(imhtml, url, ws);
@@ -1534,26 +1551,26 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 						if (fonts)
 							oldfont = fonts->data;
 
-						if (color && !(options & GTK_IMHTML_NO_COLOURS))
+						if (color && !(options & GTK_IMHTML_NO_COLOURS)) {
 							font->fore = color;
-						else if (oldfont && oldfont->fore)
-							font->fore = g_strdup(oldfont->fore);
-						if (font->fore)
 							gtk_imhtml_toggle_forecolor(imhtml, font->fore);
-
-						if (back && !(options & GTK_IMHTML_NO_COLOURS))
+						}	
+						//else if (oldfont && oldfont->fore)
+						//	font->fore = g_strdup(oldfont->fore);
+						
+						if (back && !(options & GTK_IMHTML_NO_COLOURS)) {
 							font->back = back;
-						else if (oldfont && oldfont->back)
-							font->back = g_strdup(oldfont->back);
-						if (font->back)
 							gtk_imhtml_toggle_backcolor(imhtml, font->back);
-
-						if (face && !(options & GTK_IMHTML_NO_FONTS))
+						}
+						//else if (oldfont && oldfont->back)
+						//	font->back = g_strdup(oldfont->back);
+						
+						if (face && !(options & GTK_IMHTML_NO_FONTS)) {
 							font->face = face;
-						else if (oldfont && oldfont->face)
-							font->face = g_strdup(oldfont->face);
-						if (font->face)
 							gtk_imhtml_toggle_fontface(imhtml, font->face);
+						}
+						//else if (oldfont && oldfont->face)
+						//		font->face = g_strdup(oldfont->face);
 
 						if (sml)
 							font->sml = sml;
@@ -1574,7 +1591,9 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 								font->size = 100;
 						} else if (oldfont)
 							font->size = oldfont->size;
-						/* gtk_imhtml_font_set_size(imhtml, font->size); */
+						else
+							font->size = 3;
+						gtk_imhtml_font_set_size(imhtml, font->size);
 						g_free(size);
 						fonts = g_slist_prepend (fonts, font);
 					}
@@ -2313,7 +2332,7 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 		 * in a row without creating unnecessary tags */
 		if (span->tag == NULL) {
 			span->tag = gtk_text_buffer_create_tag
-				(imhtml->text_buffer, NULL, "size-points", (double)_point_sizes [imhtml->edit.fontsize-1], NULL);
+				(imhtml->text_buffer, NULL, "scale", (double)_point_sizes [imhtml->edit.fontsize-1], NULL);
 			span->start_tag = g_strdup_printf("<font size=\"%d\">", imhtml->edit.fontsize);
 			span->end_tag = g_strdup("</font>");
 		}
@@ -2502,7 +2521,7 @@ gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color)
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
-	if (!imhtml->edit.forecolor) {
+	if (color) { //!imhtml->edit.forecolor) {
 		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->start_tag = g_strdup_printf("<font color=\"%s\">", color);
@@ -2528,7 +2547,7 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
-	if (!imhtml->edit.backcolor) {
+	if (color) { //!imhtml->edit.backcolor) {
 		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->start_tag = g_strdup_printf("<font back=\"%s\">", color);
@@ -2552,7 +2571,7 @@ gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face)
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
-	if (!imhtml->edit.fontface) {
+	if (face) { //!imhtml->edit.fontface) {
 		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->start_tag = g_strdup_printf("<font face=\"%s\">", face);
