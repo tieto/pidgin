@@ -40,9 +40,8 @@ You'll now have your normal gaim tree with ./configure and all (which
 your life really simple, learn how CVS works. CVS is your friend.) To make
 a patch, just edit the files right there in that tree (don't bother with
 two trees, or even two copies of the same file). Then when you're ready to
-make your patch, simply run 'cvs diff -u >my.patch' and send it off;
-either post it on sf.net/projects/gaim in the patches section, or email it
-to gaim@marko.net.
+make your patch, simply run 'cvs diff -u >my.patch' and post it on 
+sf.net/projects/gaim in the patches section.
 
 Some Documentation is available on the Gaim api if you run the command 
 $make docs
