@@ -13,6 +13,7 @@ version 0.76cvs:
 	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
 	* Gadu-Gadu might actually connect again (Ignacy Gawedzki)
 	* Catalan translation updated (Xan (DXpublica))
+	* Danish translation updated (Morten Brix Pedersen (mbrix))
 	* English (British) translation updated (Luke Ross (lukeross))
 	* Hebrew translation had 1 character removed (Ambrose C. LI)
 	* Russian translation updated (Alexandre Prokoudine)
