@@ -4615,6 +4615,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		g_free(with_font_tag);
 		g_free(new_message);
 	}
+
 	if(sml_attrib)
 		g_free(sml_attrib);
 }

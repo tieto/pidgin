@@ -1413,6 +1413,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	gaim_chat_write(chat, who, buf, w, mtime);
 
 	g_free(buf);
+	g_free(buffy);
 }
 
 static void des_popup(GtkWidget *w, GtkWidget *window)

@@ -156,6 +156,7 @@ irc_send_convert(GaimConnection *gc, const char *string, int maxlen, int *done)
 	int inleft = strlen(string), outleft = maxlen;
 	GIConv conv;
 	
+	/* XXX - I think the below line is leaking */
 	conv = g_iconv_open(gaim_account_get_string(gaim_connection_get_account(gc), "charset", "UTF-8") , "UTF-8");
 	if (g_iconv(conv, &inptr, &inleft, &outptr, &outleft) == -1) {
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Charset conversion error\n");
