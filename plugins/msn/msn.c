@@ -298,7 +298,7 @@ static void msn_add_request(struct gaim_connection *gc, char *buf)
 	if (!strcasecmp(res[2], "RL")) {
 		struct msn_ask_add_permit *ap = g_new0(struct msn_ask_add_permit, 1);
 
-		snprintf(buf, MSN_BUF_LEN, "The user %s (%s) wants to add you to their buddylist.", res[4], res[5]);
+		snprintf(buf, MSN_BUF_LEN, "The user %s (%s) wants to add you to their buddylist.", res[4], url_decode(res[5]));
 
 		ap->user = g_strdup(res[4]);
 
