@@ -384,12 +384,14 @@ msn_buddy_menu(struct gaim_connection *gc, const char *who)
 	b = gaim_find_buddy(gc->account, who);
 	user = b->proto_data;
 
-	if (user->mobile) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label    = _("Send to Mobile");
-		pbm->callback = __show_send_to_mobile_cb;
-		pbm->gc       = gc;
-		m = g_list_append(m, pbm);
+	if (user != NULL) {
+		if (user->mobile) {
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label    = _("Send to Mobile");
+			pbm->callback = __show_send_to_mobile_cb;
+			pbm->gc       = gc;
+			m = g_list_append(m, pbm);
+		}
 	}
 
 	return m;
