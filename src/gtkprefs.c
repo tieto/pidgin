@@ -736,24 +736,44 @@ static void update_color(GtkWidget *w, GtkWidget *pic)
 	g_object_unref(style);
 }
 
-GtkWidget *font_page() {
+GtkWidget *messages_page() {
 	GtkWidget *ret;
+	GtkWidget *vbox;
 	GtkWidget *imhtml;
 	GtkWidget *toolbar;
 	GtkWidget *sw;
+	GtkWidget *frame;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
+	vbox = gaim_gtk_make_frame (ret, _("Display"));
+	gaim_gtk_prefs_checkbox(_("Show _timestamp on messages"),
+			"/gaim/gtk/conversations/show_timestamps", vbox);
+#ifdef USE_GTKSPELL
+	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
+			"/gaim/gtk/conversations/spellcheck", vbox);
+#endif
+	gaim_gtk_prefs_checkbox(_("Ignore formatting on incoming messages"),
+			"/gaim/gtk/conversations/ignore_formatting", vbox);
+
+	vbox = gaim_gtk_make_frame (ret, _("Default Formatting"));
+
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+
 	toolbar = gtk_imhtmltoolbar_new();
-	gtk_box_pack_start(GTK_BOX(ret), toolbar, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
-
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
 	imhtml = gtk_imhtml_new(NULL, NULL);
 	gtk_imhtml_set_editable(GTK_IMHTML(imhtml), TRUE);
@@ -769,7 +789,7 @@ GtkWidget *font_page() {
 	gaim_setup_imhtml(imhtml);
 	gtk_imhtml_append_text(GTK_IMHTML(imhtml), "This is preview text", 0);
 	gtk_container_add(GTK_CONTAINER(sw), imhtml);
-	
+
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
 		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
@@ -782,26 +802,6 @@ GtkWidget *font_page() {
 	gtk_imhtml_toggle_backcolor(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"));
 	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
 
-	gtk_widget_show_all(ret);
-	return ret;
-}
-
-
-GtkWidget *messages_page() {
-	GtkWidget *ret;
-	GtkWidget *vbox;
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-
-	vbox = gaim_gtk_make_frame (ret, _("Display"));
-	gaim_gtk_prefs_checkbox(_("Show _timestamp on messages"),
-			"/gaim/gtk/conversations/show_timestamps", vbox);
-#ifdef USE_GTKSPELL
-	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
-			"/gaim/gtk/conversations/spellcheck", vbox);
-#endif
-	gaim_gtk_prefs_checkbox(_("Ignore formatting on incoming messages"),
-			"/gaim/gtk/conversations/ignore_formatting", vbox);
 	gtk_widget_show_all(ret);
 	return ret;
 }
@@ -900,7 +900,7 @@ GtkWidget *conv_page() {
 	GtkWidget *vbox;
 	GtkWidget *label;
 	GtkWidget *close_checkbox;/*, *icons_checkbox;*/
-	GtkWidget *tabs_checkbox, *same_checkbox;
+	GtkWidget *tabs_checkbox, *same_checkbox, *tab_placement;
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
@@ -936,17 +936,6 @@ GtkWidget *conv_page() {
 
 	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
 
-	label = gaim_gtk_prefs_dropdown(vbox, _("_Tab Placement:"), GAIM_PREF_INT,
-			"/gaim/gtk/conversations/tab_side",
-			_("Top"), GTK_POS_TOP,
-			_("Bottom"), GTK_POS_BOTTOM,
-			_("Left"), GTK_POS_LEFT,
-			_("Right"), GTK_POS_RIGHT,
-			NULL);
-
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_size_group_add_widget(sg, label);
-
 	tabs_checkbox = gaim_gtk_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
 							"/gaim/gtk/conversations/tabs", vbox);
 
@@ -970,6 +959,28 @@ GtkWidget *conv_page() {
 
 	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), close_checkbox);
+
+	tab_placement = gtk_hbox_new(FALSE, 0);
+
+	label = gaim_gtk_prefs_dropdown(tab_placement, _("_Tab Placement:"), GAIM_PREF_INT,
+			"/gaim/gtk/conversations/tab_side",
+			_("Top"), GTK_POS_TOP,
+			_("Bottom"), GTK_POS_BOTTOM,
+			_("Left"), GTK_POS_LEFT,
+			_("Right"), GTK_POS_RIGHT,
+			NULL);
+
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_size_group_add_widget(sg, label);
+
+	gtk_box_pack_start(GTK_BOX(vbox), tab_placement, FALSE, FALSE, 0);
+
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
+		gtk_widget_set_sensitive(GTK_WIDGET(tab_placement), FALSE);
+	}
+
+	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), tab_placement);
 
 	gtk_widget_show_all(ret);
 
@@ -2444,7 +2455,6 @@ void prefs_notebook_init() {
 	GaimPlugin *plug;
 	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Fonts"), NULL, font_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
