@@ -20,6 +20,7 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
+#include "prefs.h"
 #include "switchboard.h"
 #include "utils.h"
 
@@ -117,17 +118,27 @@ __bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 		else
 			username = user;
 
-		if (param_count == 2 && atoi(params[1]) == 1)
-			g_snprintf(buf, sizeof(buf),
-					   _("The conversation has become inactive "
-						 "and timed out."));
-		else
-			g_snprintf(buf, sizeof(buf),
-					   _("%s has closed the conversation window."), username);
+		*buf = '\0';
 
-		if ((conv = gaim_find_conversation(user)) != NULL)
+		if (param_count == 2 && atoi(params[1]) == 1) {
+			if (gaim_prefs_get_bool("/plugins/prpl/msn/conv_timeout_notice")) {
+				g_snprintf(buf, sizeof(buf),
+						   _("The conversation has become inactive "
+							 "and timed out."));
+			}
+		}
+		else {
+			if (gaim_prefs_get_bool("/plugins/prpl/msn/conv_close_notice")) {
+				g_snprintf(buf, sizeof(buf),
+						   _("%s has closed the conversation window."),
+						   username);
+			}
+		}
+
+		if (*buf != '\0' && (conv = gaim_find_conversation(user)) != NULL) {
 			gaim_conversation_write(conv, NULL, buf, -1, WFLAG_SYSTEM,
 									time(NULL));
+		}
 
 		msn_switchboard_destroy(swboard);
 

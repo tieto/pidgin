@@ -22,6 +22,7 @@
 #include "msn.h"
 #include "msg.h"
 #include "page.h"
+#include "prefs.h"
 #include "session.h"
 #include "state.h"
 #include "utils.h"
@@ -1223,6 +1224,10 @@ __init_plugin(GaimPlugin *plugin)
 	prpl_info.user_opts = g_list_append(prpl_info.user_opts, puo);
 
 	my_protocol = plugin;
+
+	gaim_prefs_add_none("/plugins/prpl/msn");
+	gaim_prefs_add_bool("/plugins/prpl/msn/conv_close_notice",   TRUE);
+	gaim_prefs_add_bool("/plugins/prpl/msn/conv_timeout_notice", TRUE);
 }
 
 GAIM_INIT_PLUGIN(msn, __init_plugin, info);
