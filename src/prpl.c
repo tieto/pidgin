@@ -553,7 +553,7 @@ static gint find_icon_data(gconstpointer a, gconstpointer b)
 	return ((x->gc != y->gc) || g_strcasecmp(x->who, y->who));
 }
 
-void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
+void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int len)
 {
 	struct gaim_conversation *conv;
 	struct icon_data tmp;
@@ -650,7 +650,7 @@ void remove_icon_data(struct gaim_connection *gc)
 	}
 }
 
-void *get_icon_data(struct gaim_connection *gc, char *who, int *len)
+void *get_icon_data(struct gaim_connection *gc, const char *who, int *len)
 {
 	struct icon_data tmp = { gc, normalize(who), NULL, 0 };
 	GList *l = g_list_find_custom(icons, &tmp, find_icon_data);

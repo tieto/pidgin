@@ -358,13 +358,13 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			node = g_value_get_pointer(&val);
 			if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 				if (position == GTK_TREE_VIEW_DROP_AFTER) {
-					gaim_blist_add_buddy(b, node->parent, node);
+					gaim_blist_add_buddy(b, (struct group *)node->parent, node);
 				} else if (position == GTK_TREE_VIEW_DROP_BEFORE) {
-					gaim_blist_add_buddy(b, node->parent, node->prev);
+					gaim_blist_add_buddy(b, (struct group *)node->parent, node->prev);
 				}
 			} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-				gaim_blist_add_buddy(b, node, NULL);
-			}	
+				gaim_blist_add_buddy(b, (struct group *)node, NULL);
+			}
 			gtk_tree_path_free(path);
 		}
 	}

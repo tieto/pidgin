@@ -433,7 +433,7 @@ void connection_has_mail(struct gaim_connection *gc, int count,
  * @param data The icon data.
  * @param len  The length of @a data.
  */
-void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len);
+void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int len);
 
 /**
  * Retrieves the buddy icon data for a user.
@@ -444,7 +444,7 @@ void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len);
  *
  * @return The buddy icon data.
  */
-void *get_icon_data(struct gaim_connection *gc, char *who, int *len);
+void *get_icon_data(struct gaim_connection *gc, const char *who, int *len);
 
 /* stuff to load/unload PRPLs as necessary */
 

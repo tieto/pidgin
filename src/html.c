@@ -56,16 +56,20 @@ gchar *strip_html(const gchar *text)
 	for (i = 0, j = 0; text2[i]; i++) {
 		if (text2[i] == '<') {
 			k = i + 1;
-			while (text2[k]) {
-				if (text2[k] == '<') {
-					visible = 1;
-					break;
+			if(g_ascii_isspace(text2[k])) {
+				visible = 1;
+			} else {
+				while (text2[k]) {
+					if (text2[k] == '<') {
+						visible = 1;
+						break;
+					}
+					if (text2[k] == '>') {
+						visible = 0;
+						break;
+					}
+					k++;
 				}
-				if (text2[k] == '>') {
-					visible = 0;
-					break;
-				}
-				k++;
 			}
 		} else if (text2[i] == '>' && !visible) {
 			visible = 1;

@@ -3190,14 +3190,20 @@ static char *jabber_tooltip_text(struct buddy *b)
 {
 	jab_res_info jri = jabber_find_resource(b->account->gc, b->name);
 	if(jri) {
-		char *text = strip_html(jabber_lookup_away(GC_GJ(b->account->gc),
+		char *stripped = strip_html(jabber_lookup_away(GC_GJ(b->account->gc),
 					b->name));
-		char *ret = g_strdup_printf(_("<b>Status:</b> %s%s%s"),
+		char *text = NULL;
+		char *ret;
+		if(stripped)
+			text = g_markup_escape_text(stripped, strlen(stripped));
+		ret = g_strdup_printf(_("<b>Status:</b> %s%s%s"),
 				jabber_get_state_string(jri->state), text ? ": " : "",
 				text ? text : "");
 
-		if(text)
+		if(stripped) {
+			g_free(stripped);
 			g_free(text);
+		}
 		return ret;
 	}
 	return NULL;
@@ -3206,13 +3212,16 @@ static char *jabber_tooltip_text(struct buddy *b)
 static char *jabber_status_text(struct buddy *b)
 {
 	if (b->uc & UC_UNAVAILABLE) {
-		char *ret = strip_html(jabber_lookup_away(GC_GJ(b->account->gc),
+		char *stripped = strip_html(jabber_lookup_away(GC_GJ(b->account->gc),
 					b->name));
-		if(!ret) {
+		char *ret;
+		if(!stripped) {
 			jab_res_info jri = jabber_find_resource(b->account->gc, b->name);
 			if(jri)
-				ret = g_strdup(jabber_get_state_string(jri->state));
+				stripped = g_strdup(jabber_get_state_string(jri->state));
 		}
+		ret = g_markup_escape_text(stripped, strlen(stripped));
+		g_free(stripped);
 		return ret;
 	}
 	return NULL;

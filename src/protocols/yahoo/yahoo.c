@@ -413,10 +413,6 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 			}
 			if (g_hash_table_lookup(yd->games, name))
 				gamestate = YAHOO_STATUS_GAME;
-			if (state == YAHOO_STATUS_AVAILABLE)
-				serv_got_update(gc, name, 1, 0, 0, 0, gamestate);
-			else 
-				serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE | gamestate);
 			if (state == YAHOO_STATUS_CUSTOM) {
 				gpointer val = g_hash_table_lookup(yd->hash, name);
 				if (val) {
@@ -427,6 +423,10 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 					g_hash_table_insert(yd->hash, g_strdup(name),
 							msg ? g_strdup(msg) : g_malloc0(1));
 			}
+			if (state == YAHOO_STATUS_AVAILABLE)
+				serv_got_update(gc, name, 1, 0, 0, 0, gamestate);
+			else
+				serv_got_update(gc, name, 1, 0, 0, 0, (state << 2) | UC_UNAVAILABLE | gamestate);
 			break;
 		case 60: /* no clue */
 			 break;
@@ -1078,8 +1078,14 @@ static char *yahoo_status_text(struct buddy *b)
 	if (b->uc & UC_UNAVAILABLE) {
 		if ((b->uc >> 2) != YAHOO_STATUS_CUSTOM)
 			return g_strdup(yahoo_get_status_string(b->uc >> 2));
-		else
-			return strip_html(g_hash_table_lookup(yd->hash, b->name));
+		else {
+			char *stripped = strip_html(g_hash_table_lookup(yd->hash, b->name));
+			if(stripped) {
+				char *ret = g_markup_escape_text(stripped, strlen(stripped));
+				g_free(stripped);
+				return ret;
+			}
+		}
 	}
 	return NULL;
 }
@@ -1095,8 +1101,10 @@ static char *yahoo_tooltip_text(struct buddy *b)
 		else
 			status = strip_html(g_hash_table_lookup(yd->hash, b->name));
 		if(status) {
-			ret = g_strdup_printf(_("<b>Status:</b> %s"), status);
+			char *escaped = g_markup_escape_text(status, strlen(status));
+			ret = g_strdup_printf(_("<b>Status:</b> %s"), escaped);
 			g_free(status);
+			g_free(escaped);
 			return ret;
 		}
 	}
