@@ -53,6 +53,7 @@
 #define KEY_SCROLL_PIXELS        10
 
 int font_sizes[] = { 80, 100, 120, 140, 200, 300, 400 };
+GtkHtmlBit *start_of_line = NULL;
 
 /*
 GdkFont *fixed_font[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -168,7 +169,7 @@ static gint html_bit_is_onscreen(GtkHtml * html, GtkHtmlBit * hb);
 static void draw_cursor(GtkHtml * html);
 static void undraw_cursor(GtkHtml * html);
 
-static int get_line_height(GtkHtml *, GtkHtmlBit *);
+static int get_line_max_height(GtkHtml *, GtkHtmlBit *);
 
 static GtkWidgetClass *parent_class = NULL;
 
@@ -1844,8 +1845,6 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	if (html->frozen > 0)
 		return;
 
-	hbits = g_list_find(html->html_bits, hb);
-	
 	if (hb->type == HTML_BIT_TEXT)
 	{
 
@@ -2047,12 +2046,34 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 
 			if (hb->text && hb->back != NULL) {
 				int hwidth, hheight, hei, tmpcnt;
-				hei = get_line_height(html, hb);
+				
+				/* get the gtkhtmlbit at the start of each line, and use it as the starting point to calculate the
+				max height of each line and set the background-rectangle's size accordingly */
+				/* FIXME: only works for fontsize <= 3, large fonts still have whitespace above them */
+				/* FIXME: should also include a method of eliminating 'gaps' between different line using
+				different text sizes */
+				if (!start_of_line)
+					start_of_line = hb;
+				else
+				{
+					hbits = g_list_find(html->html_bits, hb);
+					if (hbits->prev)
+					{
+						hbit = hbits->prev->data;
+						if (hbit && hbit->newline)
+								start_of_line = hb;
+					}
+					else
+						start_of_line = hb;
+				}
+					
+				hei = get_line_max_height(html, start_of_line);
 				gdk_window_get_size(html->html_area, &hwidth, &hheight);
 				gdk_gc_set_foreground(gc, hb->back);
 				/* we use a 2-pixel window border */
 				if (hb->x < 2)
 					hb->x = 2;
+				g_print("text = %s *** top = %d, bottom = %d, newline = %d\n", hb->text, hb->y - html->yoffset - hei - 6, hei + hei + 2, hb->newline);
 				gdk_draw_rectangle(html->html_area, gc, TRUE /* filled */,
 							hb->x, hb->y - html->yoffset - hei - 6,
 							hwidth - shift - hb->x + 1, hei + hei + 2);
@@ -2092,7 +2113,24 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	{
 		if (hb->back != NULL) {
 			int hwidth, hheight, hei, tmpcnt;
-			hei = get_line_height(html, hb);
+			
+			if (!start_of_line)
+				start_of_line = hb;
+			else
+			{
+				hbits = g_list_find(html->html_bits, hb);
+				if (hbits->prev)
+				{
+					hbit = hbits->prev->data;
+					if (hbit && hbit->newline)
+							start_of_line = hb;
+				}
+				else
+					start_of_line = hb;
+			}
+					
+			hei = get_line_max_height(html, start_of_line);
+
 			gdk_window_get_size(html->html_area, &hwidth, &hheight);
 			gdk_gc_set_foreground(gc, hb->back);
 			gdk_draw_rectangle(html->html_area, gc, TRUE,
@@ -2128,7 +2166,24 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 		clear_area(html, &area);
 		if (hb->back != NULL) {
 			int hwidth, hheight, hei, tmpcnt;
-			hei = get_line_height(html, hb);
+			
+			if (!start_of_line)
+				start_of_line = hb;
+			else
+			{
+				hbits = g_list_find(html->html_bits, hb);
+				if (hbits->prev)
+				{
+					hbit = hbits->prev->data;
+					if (hbit && hbit->newline)
+							start_of_line = hb;
+				}
+				else
+					start_of_line = hb;
+			}
+					
+			hei = get_line_max_height(html, start_of_line);
+			
 			gdk_window_get_size(html->html_area, &hwidth, &hheight);
 			gdk_gc_set_foreground(gc, hb->back);
 			for (tmpcnt = 0; tmpcnt < hb->newline; tmpcnt++) {
@@ -4391,12 +4446,13 @@ void gtk_html_thaw(GtkHtml * html)
 	}
 }
 
+/*
 static int get_line_height(GtkHtml *html, GtkHtmlBit *start)
 {
 	int height, max_height = 0;
 	GList *hbits = html->html_bits;
 	GtkHtmlBit *hbit = start; /* default this in case hbits is NULL */
-
+/*
 	hbits = g_list_find(hbits, start);
 
 	while (hbits)
@@ -4413,6 +4469,33 @@ static int get_line_height(GtkHtml *html, GtkHtmlBit *start)
 	}
 
 	if (max_height == 0)
+		max_height = gdk_text_height(hbit->font, "C", 1);	
+		
+	return max_height;
+}
+*/
+static int get_line_max_height(GtkHtml *html, GtkHtmlBit *start)
+{
+	int height, max_height = 0;
+	GList *hbits = html->html_bits;
+	GtkHtmlBit *hbit = start; /* default this in case hbits is NULL */
+
+	hbits = g_list_find(hbits, start);
+
+	while (hbits)
+	{
+		hbit = (GtkHtmlBit *)hbits->data;	
+		if (hbit->font)
+			height = gdk_text_height(hbit->font, "C", 1);	
+
+		if (max_height < height)
+			max_height = height;
+		if (hbit->newline)
+			break;
+		hbits = hbits->next;
+	}
+
+	if (!max_height)
 		max_height = gdk_text_height(hbit->font, "C", 1);	
 		
 	return max_height;
