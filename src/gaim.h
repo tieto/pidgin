@@ -63,12 +63,13 @@
 #define UC_NORMAL	8
 #define UC_UNAVAILABLE  16
 
-#define WFLAG_SEND 1
-#define WFLAG_RECV 2
-#define WFLAG_AUTO 4
-#define WFLAG_WHISPER 8
-#define WFLAG_FILERECV 16
-#define WFLAG_SYSTEM 32
+#define WFLAG_SEND	0x01
+#define WFLAG_RECV	0x02
+#define WFLAG_AUTO	0x04
+#define WFLAG_WHISPER	0x08
+#define WFLAG_FILERECV	0x10
+#define WFLAG_SYSTEM	0x20
+#define WFLAG_NICK	0x40
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 

@@ -1429,11 +1429,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			if (meify(what)) {
 				str = g_malloc(1024);
 				g_snprintf(str, 1024, "***%s", who);
-				strcpy(colour, "#6C2585\0");
+				strcpy(colour, "#6C2585");
 			} else {
 				str = g_malloc(1024);
 				g_snprintf(str, 1024, "*%s*:", who);
-				strcpy(colour, "#00ff00\0");
+				strcpy(colour, "#00ff00");
 			}
 		} else {
 			if (meify(what)) {
@@ -1442,14 +1442,19 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, who);
 				else
 					g_snprintf(str, 1024, "***%s", who);
-				strcpy(colour, "#062585\0");
+				if (flags & WFLAG_NICK)
+					strcpy(colour, "#ef7f00");
+				else
+					strcpy(colour, "#062585");
 			} else {
 				str = g_malloc(1024);
 				if (flags & WFLAG_AUTO)
 					g_snprintf(str, 1024, "%s %s", who, AUTO_RESPONSE);
 				else
 					g_snprintf(str, 1024, "%s:", who);
-				if (flags & WFLAG_RECV)
+				if (flags & WFLAG_NICK)
+					strcpy(colour, "#ef7f00");
+				else if (flags & WFLAG_RECV)
 					strcpy(colour, "#ff0000");
 				else if (flags & WFLAG_SEND)
 					strcpy(colour, "#0000ff");

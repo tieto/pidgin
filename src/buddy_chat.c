@@ -25,6 +25,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
@@ -469,6 +470,46 @@ gboolean meify(char *message)
 		return FALSE;
 }
 
+static gboolean find_nick(struct gaim_connection *gc, char *message)
+{
+	char *msg = g_strdup(message), *who, *p;
+	int n;
+	g_strdown(msg);
+
+	who = g_strdup(gc->username);
+	n = strlen(who);
+	g_strdown(who);
+
+	if ((p = strstr(msg, who)) != NULL) {
+		if ((p == msg) || (!isalnum(*(p - 1)) && !isalnum(*(p + n)))) {
+			g_free(who);
+			g_free(msg);
+			return TRUE;
+		}
+	}
+	g_free(who);
+
+	if (g_strcasecmp(gc->username, gc->displayname)) {
+		g_free(msg);
+		return FALSE;
+	}
+
+	who = g_strdup(gc->displayname);
+	n = strlen(who);
+	g_strdown(who);
+
+	if ((p = strstr(msg, who)) != NULL) {
+		if ((p == msg) || (!isalnum(*(p - 1)) && !isalnum(*(p + n)))) {
+			g_free(who);
+			g_free(msg);
+			return TRUE;
+		}
+	}
+	g_free(who);
+	g_free(msg);
+	return FALSE;
+}
+
 void chat_write(struct conversation *b, char *who, int flag, char *message, time_t mtime)
 {
 	GList *ignore = b->ignored;
@@ -488,11 +529,11 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 
 	if (!(flag & WFLAG_WHISPER)) {
 		str = g_strdup(normalize (who));
-		if (!g_strcasecmp(str, normalize (b->gc->username))) {
+		if (!g_strcasecmp(str, normalize(b->gc->username))) {
 			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
 				play_sound(CHAT_YOU_SAY);
 			flag |= WFLAG_SEND;
-		} else if (!g_strcasecmp(str, normalize (b->gc->displayname))) {
+		} else if (!g_strcasecmp(str, normalize(b->gc->displayname))) {
 			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
 				play_sound(CHAT_YOU_SAY);
 			flag |= WFLAG_SEND;
@@ -503,6 +544,9 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 		}
 		g_free(str);
 	}
+
+	if ((flag & WFLAG_RECV) && find_nick(b->gc, message))
+		flag |= WFLAG_NICK;
 
 	write_to_conv(b, message, flag, who, mtime);
 }
