@@ -3611,8 +3611,16 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					"Received a channel 4 message of type 0x%02hhx.\n",
 					args->type);
 
-	/* Split up the message at the delimeter character, then convert each string to UTF-8 */
-	msg1 = g_strsplit(args->msg, "\376", 0);
+	/*
+	 * Split up the message at the delimeter character, then convert each
+	 * string to UTF-8.  Unless, of course, this is a type 1 message.  If
+	 * this is a type 1 message, then the delimiter 0xfe could be a valid
+	 * character in whatever encoding the message was sent in.  Type 1
+	 * messages are always made up of only one part, so we can easily account
+	 * for this suck-ass part of the protocol by splitting the string into at
+	 * most 1 baby string.
+	 */
+	msg1 = g_strsplit(args->msg, "\376", (args->type == 0x01 ? 1 : 0));
 	for (numtoks=0; msg1[numtoks]; numtoks++);
 	msg2 = (gchar **)g_malloc((numtoks+1)*sizeof(gchar *));
 	for (i=0; msg1[i]; i++) {
