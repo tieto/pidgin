@@ -1129,6 +1129,11 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 			return;
 		g_snprintf(buf, sizeof(buf), "%s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
+	} else if (!g_strcasecmp(pdibuf, "SAY")) {
+		if (!*word_eol[2])
+			return;
+		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, word_eol[2]);
+		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "KICK")) {
 		if (!*word[2])
 			return;
@@ -1164,6 +1169,19 @@ static void handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_snprintf(buf, sizeof(buf), _("You have left %s"), chan);
 			do_error_dialog(buf, _("IRC Part"));
 		}
+	} else if (!g_strcasecmp(pdibuf, "HELP")) {
+		struct conversation *c = NULL;
+		if (is_channel(gc, who)) {
+			c = irc_find_chat(gc, who);
+		} else {
+			c = find_conversation(who);
+		}
+		if (!c)
+			return;
+		write_to_conv(c, "<B>Currently supported commands:<BR>"
+				 "JOIN PART TOPIC<BR>"
+				 "OP DEOP VOICE DEVOICE KICK<BR>"
+				 "NICK ME QUOTE SAY</B><BR>", WFLAG_SYSTEM, NULL, time(NULL));
 	}
 }
 
