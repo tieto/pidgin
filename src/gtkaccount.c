@@ -89,6 +89,7 @@ typedef struct
 	/* Login Options */
 	GtkWidget *login_frame;
 	GtkWidget *protocol_menu;
+	GtkWidget *password_box;
 	GtkWidget *screenname_entry;
 	GtkWidget *password_entry;
 	GtkWidget *alias_entry;
@@ -276,7 +277,8 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Password */
 	dialog->password_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
-	__add_pref_box(dialog, vbox, _("Password:"), dialog->password_entry);
+	dialog->password_box = __add_pref_box(dialog, vbox, _("Password:"),
+										  dialog->password_entry);
 
 	/* Alias */
 	dialog->alias_entry = gtk_entry_new();
@@ -317,7 +319,7 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (dialog->prpl_info != NULL &&
 		(dialog->prpl_info->options & OPT_PROTO_NO_PASSWORD)) {
 
-		gtk_widget_hide(dialog->password_entry);
+		gtk_widget_hide(dialog->password_box);
 		gtk_widget_hide(dialog->remember_pass_check);
 	}
 }
@@ -413,8 +415,10 @@ __add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gboolean bool_value;
 	int int_value;
 
-	if (dialog->protocol_frame != NULL)
+	if (dialog->protocol_frame != NULL) {
 		gtk_widget_destroy(dialog->protocol_frame);
+		dialog->protocol_frame = NULL;
+	}
 
 	if (dialog->prpl_info == NULL ||
 		dialog->prpl_info->protocol_options == NULL) {
