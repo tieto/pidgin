@@ -3,11 +3,14 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 version 0.67
 	* Brought back the message notification plugin (Brian Tarricone)
 	  You'll need to reconfigure your settings for this plugin
-	* Various bug fixes (larne from irc, Tim Ringenbach, Bjoern 
-	  Voigt, Paul A (darkrain))
+	* New Jabber vCard dialog.
+	* New IRC PRPL (Ethan Blanton)
+	* Various dialog rewrites (Jabber vCard, Add Group, Alias Chat,
+	  Rename Group)
 	* Shows "hiptop" icon for AIM buddies using hiptop
 	  devices (Robey Pointer)
-	* New IRC PRPL (Ethan Blanton)
+	* Various bug fixes (larne from irc, Tim Ringenbach, Bjoern 
+	  Voigt, Paul A (darkrain))
 	* British English "translation" updated (Sam Halliday)
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
@@ -17,8 +20,8 @@ version 0.67
 	* Hindi translation added (Guntupalli Karunakar)
 	* Hungarian translation updated (Zoltan Sutto)
 	* Italian translation updated (Luca Beltrame, Claudio Satriano)
-	* Portuguese (Brazilian) translation updated (Mauricio de Lemos Rodrigues Collares 
-	  Neto)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
 	* Serbian translation updated (Danilo Segan)
 	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
 
