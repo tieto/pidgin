@@ -624,7 +624,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 * about the buddy icon that the user has stored on 
 			 * the server.
 			 */
-			char *iconstr;
+/*			char *iconstr;
 			outinfo->iconstrlen = length-4;
 			outinfo->iconstrlen -= aim_bstream_advance(bs, aimbs_get16(bs));
 			outinfo->iconstrlen -= aim_bstream_advance(bs, aimbs_get16(bs));
@@ -633,7 +633,8 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 				memcpy(outinfo->iconstr, iconstr, outinfo->iconstrlen);
 			} else
 				outinfo->iconstrlen = 0;
-			free(iconstr);
+			free(iconstr); */
+			outinfo->iconstrlen = 0;
 
 		} else if (type == 0x001e) {
 			/*

@@ -1755,9 +1755,9 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (od->icontimer)
 			g_source_remove(od->icontimer);
 		od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
+		memcpy(bi->iconstr, info->iconstr, info->iconstrlen);
 	}
 	bi->iconstrlen = info->iconstrlen;
-	memcpy(bi->iconstr, info->iconstr, info->iconstrlen);
 
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon,
 			time_idle, type);
