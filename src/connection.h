@@ -31,6 +31,10 @@ typedef struct _GaimConnection GaimConnection;
 #include "account.h"
 #include "plugin.h"
 
+#define OPT_CONN_HTML		0x00000001
+/* set this flag on a gc if you want serv_got_im to autoreply when away */
+#define OPT_CONN_AUTO_RESP	0x00000002
+
 typedef enum
 {
 	GAIM_DISCONNECTED = 0, /**< Disconnected. */

@@ -20,32 +20,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "internal.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
-#include <gtk/gtk.h>
-
-#include "gtkaccount.h"
 #include "account.h"
 #include "accountopt.h"
+#include "debug.h"
 #include "event.h"
-#include "prefs.h"
 #include "plugin.h"
-#include "stock.h"
-#include "gtkblist.h"
+#include "prefs.h"
+#include "request.h"
+#include "util.h"
+
 #include "gaim-disclosure.h"
+#include "gtkaccount.h"
+#include "gtkblist.h"
+#include "gtkutils.h"
+#include "stock.h"
+
+#include "ui.h"
+
+/* XXX for do_quit() */
 #include "gaim.h"
-
-#ifdef _WIN32
-# include <gdk/gdkwin32.h>
-#else
-# include <unistd.h>
-# include <gdk/gdkx.h>
-#endif
-
-#include <string.h>
 
 enum
 {

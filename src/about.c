@@ -19,17 +19,14 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-#include <gtk/gtk.h>
-#include "gaim.h"
+#include "internal.h"
 #include "gtkimhtml.h"
+#include "gtkutils.h"
+#include "stock.h"
+#include "ui.h"
+
+/* XXX For WEBSITE */
+#include "gaim.h"
 
 static GtkWidget *about = NULL;
 
@@ -38,21 +35,6 @@ static void destroy_about()
 	if (about)
 		gtk_widget_destroy(about);
 	about = NULL;
-}
-
-char *name()
-{
-	return PACKAGE;
-}
-
-char *description()
-{
-	return WEBSITE;
-}
-
-char *version()
-{
-	return VERSION;
 }
 
 void show_about(GtkWidget *w, void *data)

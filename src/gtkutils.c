@@ -1,7 +1,10 @@
-/*
+/**
+ * @file gtkutils.h GTK+ utility functions
+ * @ingroup gtkui
+ *
  * gaim
  *
- * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
+ * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,43 +19,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
+#include "internal.h"
+
 #ifndef _WIN32
-#include <sys/time.h>
-#include <unistd.h>
-#include <gdk/gdkx.h>
-#include <X11/Xlib.h>
+# include <X11/Xlib.h>
 #else
-#ifdef small
-#undef small
-#endif
+# ifdef small
+#  undef small
+# endif
 #endif /*_WIN32*/
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <ctype.h>
-#include <gtk/gtk.h>
+
 #ifdef USE_GTKSPELL
-#include <gtkspell/gtkspell.h>
+# include <gtkspell/gtkspell.h>
 #endif
-#include "gtkimhtml.h"
+
 #include <gdk/gdkkeysyms.h>
+
+#include "debug.h"
+#include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
-#include "gaim.h"
+#include "util.h"
+
+#include "gtkconv.h"
+#include "gtkimhtml.h"
+#include "gtkutils.h"
 #include "ui.h"
-#include "notify.h"
 
 #ifdef _WIN32
 #include "wspell.h"
-#include "win32dep.h"
 #endif
 
 void

@@ -18,13 +18,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-#include "config.h"
+#include "internal.h"
 
-#include "gaim.h"
+#include "debug.h"
 #include "prefs.h"
-#include "gstroke.h"
+
 #include "gtkconv.h"
 #include "gtkplugin.h"
+#include "gtkutils.h"
+
+#include "gaim.h"
+
+#include "gstroke.h"
 
 #define GESTURES_PLUGIN_ID "gtk-gestures"
 

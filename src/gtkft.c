@@ -1,9 +1,10 @@
 /**
- * @file gtkft.c The GTK+ file transfer UI
+ * @file gtkft.c GTK+ file transfer UI
+ * @ingroup gtkui
  *
  * gaim
  *
- * Copyright (C) 2003, Christian Hammond <chipx86@gnupdate.org>
+ * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +19,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
-#include "gaim.h"
-#include "prpl.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
-#include "gtkcellrendererprogress.h"
-#include "gaim-disclosure.h"
+#include "internal.h"
+
+#include "debug.h"
 #include "notify.h"
+#include "ft.h"
+#include "prpl.h"
 #include "request.h"
+#include "util.h"
+
+#include "gaim-disclosure.h"
+#include "gtkcellrendererprogress.h"
+#include "gtkft.h"
+#include "stock.h"
 
 #define GAIM_GTKXFER(xfer) \
 	(struct gaim_gtkxfer_ui_data *)(xfer)->ui_data

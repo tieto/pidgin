@@ -289,19 +289,6 @@ time_t get_time(int year, int month, int day,
 FILE *gaim_mkstemp(gchar **path);
 
 /**
- * Acts upon an aim: URI.
- *
- * @param uri The URI.
- *
- * @return The response based off the action in the URI.
- */
-const char *handle_uri(char *uri);
-
-/* This guy does its best to convert a string to UTF-8 from an unknown
- * encoding by checking the locale and trying some sane defaults ...
- * if everything fails it returns NULL. */
-
-/**
  * Attempts to convert a string to UTF-8 from an unknown encoding.
  *
  * This function checks the locale and tries sane defaults.

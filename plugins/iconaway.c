@@ -1,11 +1,11 @@
-#include "config.h"
+#include "internal.h"
 
-#include "gaim.h"
+#include "conversation.h"
+
+#include "gtkconv.h"
 #include "gtkplugin.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gaim.h"
 
 #define ICONAWAY_PLUGIN_ID "gtk-iconaway"
 

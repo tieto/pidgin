@@ -20,23 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <glib.h>
-
+#include "internal.h"
 #include "account.h"
 #include "debug.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "server.h"
 #include "util.h"
-#include "gaim.h"
 
 typedef enum
 {

@@ -18,19 +18,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#include "gaim.h"
-#include "ui.h"
-#include "gtkimhtml.h"
+#include "conversation.h"
+#include "debug.h"
 #include "prpl.h"
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <sys/stat.h>
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gtkconv.h"
+#include "gtkimhtml.h"
+
+#include "ui.h"
 
 struct smiley_list {
 	char *sml;

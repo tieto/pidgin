@@ -18,26 +18,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <gtk/gtk.h>
-#include "gtkimhtml.h"
-
-#include "prpl.h"
-#include "notify.h"
-#include "gaim.h"
+#include "debug.h"
 #include "multi.h"
+#include "notify.h"
+#include "prpl.h"
+#include "server.h"
+
+#include "gtkimhtml.h"
+#include "gtkutils.h"
+#include "ui.h"
 
 #ifdef _WIN32
-#include "wspell.h"
+# include "wspell.h"
 #endif
 
 static GList *chatentries = NULL;

@@ -18,27 +18,26 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <errno.h>
-#include "gtkimhtml.h"
-#include "prpl.h"
+#include "internal.h"
+#include "conversation.h"
+#include "debug.h"
+#include "log.h"
 #include "multi.h"
-#include "gaim.h"
-#include "sound.h"
-#include "pounce.h"
 #include "notify.h"
+#include "pounce.h"
 #include "prefs.h"
+#include "prpl.h"
+#include "request.h"
+#include "server.h"
+#include "sound.h"
+#include "util.h"
+
+/* XXX UI Stuff */
+#include "gaim.h"
+#include "gtkimhtml.h"
+#include "gtkconv.h"
+#include "gtkutils.h"
+#include "ui.h"
 
 void serv_login(GaimAccount *account)
 {
@@ -1193,7 +1192,7 @@ void serv_got_eviled(GaimConnection *gc, const char *name, int lev)
 }
 
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
-					 int state) {
+					 GaimTypingState state) {
 
 	struct buddy *b;
 	GaimConversation *cnv = gaim_find_conversation(name);
@@ -1230,11 +1229,11 @@ void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 
 	im = GAIM_IM(c);
 
-	if (im->typing_state == NOT_TYPING)
+	if (im->typing_state == GAIM_NOT_TYPING)
 		return;
 
 	gaim_im_stop_typing_timeout(im);
-	gaim_im_set_typing_state(im, NOT_TYPING);
+	gaim_im_set_typing_state(im, GAIM_NOT_TYPING);
 	gaim_im_update_typing(im);
 
 	b = gaim_find_buddy(gc->account, name);

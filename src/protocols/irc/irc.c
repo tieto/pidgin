@@ -22,34 +22,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#include <config.h>
-
-#ifndef _WIN32
-#include <unistd.h>
-#else
-#include <winsock.h>
-#endif
-
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/time.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <ctype.h>
-#include "gaim.h"
+#include "account.h"
 #include "accountopt.h"
+#include "conversation.h"
+#include "debug.h"
+#include "ft.h"
 #include "multi.h"
-#include "core.h"
-#include "prpl.h"
+#include "notify.h"
 #include "proxy.h"
+#include "prpl.h"
+#include "request.h"
+#include "server.h"
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+/* XXX for g_show_info_text(), WEBSITE, etc. */
+#include "gaim.h"
 
 #define IRC_BUF_LEN 4096
 #define PDIWORDS 32

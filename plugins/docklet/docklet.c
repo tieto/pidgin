@@ -27,15 +27,25 @@
     - optional pop up notices when GNOME2's system-tray-applet supports it */
 
 /* includes */
-#include <gtk/gtk.h>
-#include "gtkplugin.h"
-#include "gtkaccount.h"
-#include "gaim.h"
-#include "sound.h"
-#include "gtksound.h"
+#include "internal.h"
+
+#include "debug.h"
 #include "prefs.h"
+#include "sound.h"
+
+#include "gtkaccount.h"
 #include "gtkblist.h"
+#include "gtkft.h"
+#include "gtkplugin.h"
+#include "gtkprefs.h"
+#include "gtksound.h"
+#include "gtkutils.h"
+#include "stock.h"
+
 #include "eggtrayicon.h"
+
+#include "gaim.h"
+#include "ui.h"
 
 #define DOCKLET_PLUGIN_ID "gtk-docklet"
 

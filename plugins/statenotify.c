@@ -1,3 +1,9 @@
+#include "internal.h"
+
+#include "blist.h"
+#include "conversation.h"
+#include "debug.h"
+
 #include "gaim.h"
 
 static void

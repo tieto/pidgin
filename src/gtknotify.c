@@ -20,12 +20,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "gtknotify.h"
-#include "stock.h"
-#include <gtk/gtk.h>
+#include "internal.h"
 
-/* XXX For ngettext :/ */
-#include "gaim.h"
+#include "debug.h"
+#include "connection.h"
+#include "stock.h"
+
+#include "gtknotify.h"
+
+#include "ui.h"
 
 typedef struct
 {

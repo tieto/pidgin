@@ -18,34 +18,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
+ *
+ * @todo Make this a core plugin!
  */
-#include "config.h"
+#include "internal.h"
 
-#include "gaim.h"
-
-#ifdef _WIN32
-#include <winsock.h>
-#include <io.h>
-#else
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <unistd.h>
+#ifndef _WIN32
+# include <sys/un.h>
 #endif
 
-#include <sys/stat.h>
-#include <errno.h>
 #include <signal.h>
 #include <getopt.h>
-#include <stdarg.h>
-#include <string.h>
 
+#include "conversation.h"
+#include "debug.h"
+#include "prpl.h"
+
+/* XXX */
+#include "gtkconv.h"
+#include "gtkplugin.h"
 #include "gaim.h"
-#include "remote-socket.h"
+#include "ui.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
+#include <gaim-remote/remote.h>
 
 #define REMOTE_PLUGIN_ID "core-remote"
 
@@ -57,8 +52,148 @@ struct UI {
 #ifndef _WIN32
 static gint UI_fd = -1;
 #endif
-int gaim_session = 0;
-GSList *uis = NULL;
+static int gaim_session = 0;
+static GSList *uis = NULL;
+
+/* AIM URI's ARE FUN :-D */
+const char *
+gaim_remote_handle_uri(const char *uri)
+{
+	const char *username;
+	GString *str;
+	GList *conn;
+	GaimConnection *gc = NULL;
+	GaimAccount *account;
+
+	gaim_debug(GAIM_DEBUG_INFO, "gaim_remote_handle_uri", "Handling URI: %s\n", uri);
+
+	/* Well, we'd better check to make sure we have at least one
+	   AIM account connected. */
+	for (conn = gaim_connections_get_all(); conn != NULL; conn = conn->next) {
+		gc = conn->data;
+		account = gaim_connection_get_account(gc);
+		username = gaim_account_get_username(account);
+
+		if (gaim_account_get_protocol(account) == GAIM_PROTO_OSCAR &&
+			username != NULL && isalpha(*username)) {
+
+			break;
+		}
+	}
+
+	if (gc == NULL)
+		return _("Not connected to AIM");
+
+ 	/* aim:goim?screenname=screenname&message=message */
+	if (!g_ascii_strncasecmp(uri, "aim:goim?", strlen("aim:goim?"))) {
+		char *who, *what;
+		GaimConversation *c;
+		uri = uri + strlen("aim:goim?");
+		
+		if (!(who = strstr(uri, "screenname="))) {
+			return _("No screenname given.");
+		}
+		/* spaces are encoded as +'s */
+		who = who + strlen("screenname=");
+		str = g_string_new(NULL);
+		while (*who && (*who != '&')) {
+			g_string_append_c(str, *who == '+' ? ' ' : *who);
+			who++;
+		}
+		who = g_strdup(str->str);
+		g_string_free(str, TRUE);
+		
+		what = strstr(uri, "message=");
+		if (what) {
+			what = what + strlen("message=");
+			str = g_string_new(NULL);
+			while (*what && (*what != '&' || !g_ascii_strncasecmp(what, "&amp;", 5))) {
+				g_string_append_c(str, *what == '+' ? ' ' : *what);
+				what++;
+			}
+			what = g_strdup(str->str);
+			g_string_free(str, TRUE);
+		}
+
+		c = gaim_conversation_new(GAIM_CONV_IM, gc->account, who);
+		g_free(who);
+
+		if (what) {
+			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(c);
+
+			gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, what, -1);
+			g_free(what);
+		}
+	} else if (!g_ascii_strncasecmp(uri, "aim:addbuddy?", strlen("aim:addbuddy?"))) {
+		char *who, *group;
+		uri = uri + strlen("aim:addbuddy?");
+		/* spaces are encoded as +'s */
+
+		if (!(who = strstr(uri, "screenname="))) {
+			return _("No screenname given.");
+		}
+		who = who + strlen("screenname=");
+		str = g_string_new(NULL);
+		while (*who && (*who != '&')) {
+			g_string_append_c(str, *who == '+' ? ' ' : *who);
+			who++;
+		}
+		who = g_strdup(str->str);
+		g_string_free(str, TRUE);
+
+		group = strstr(uri, "group=");
+		if (group) {
+			group = group + strlen("group=");
+			str = g_string_new(NULL);
+			while (*group && (*group != '&' || !g_ascii_strncasecmp(group, "&amp;", 5))) {
+				g_string_append_c(str, *group == '+' ? ' ' : *group);
+				group++;
+			}
+			group = g_strdup(str->str);
+			g_string_free(str, TRUE);
+		}
+
+		gaim_debug(GAIM_DEBUG_MISC, "gaim_remote_handle_uri", "who: %s\n", who);
+		show_add_buddy(gc, who, group, NULL);
+		g_free(who);
+		if (group)
+			g_free(group);
+	} else if (!g_ascii_strncasecmp(uri, "aim:gochat?", strlen("aim:gochat?"))) {
+		char *room;
+		GHashTable *components;
+		int exch = 5;
+		
+		uri = uri + strlen("aim:gochat?");
+		/* spaces are encoded as +'s */
+		
+		if (!(room = strstr(uri, "roomname="))) {
+			return _("No roomname given.");
+		}
+		room = room + strlen("roomname=");
+		str = g_string_new(NULL);
+		while (*room && (*room != '&')) {
+			g_string_append_c(str, *room == '+' ? ' ' : *room);
+			room++;
+		}
+		room = g_strdup(str->str);
+		g_string_free(str, TRUE);
+		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+				g_free);
+		g_hash_table_replace(components, g_strdup("room"), room);
+		g_hash_table_replace(components, g_strdup("exchange"),
+				g_strdup_printf("%d", exch));
+
+		serv_join_chat(gc, components);
+		g_hash_table_destroy(components);
+	} else {
+		return _("Invalid AIM URI");
+	}
+	
+	
+	return NULL;
+}
+
+
 
 #if 0
 static guchar *
@@ -345,7 +480,7 @@ remote_handler(struct UI *ui, guchar subtype, guchar *data, int len)
 		send = g_malloc(len + 1);
 		memcpy(send, data, len);
 		send[len] = 0;
-		resp = handle_uri(send);
+		resp = gaim_remote_handle_uri(send);
 		g_free(send);
 		/* report error */
 		break;
@@ -585,7 +720,7 @@ static GaimPluginInfo info =
 {
 	2,                                                /**< api_version    */
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
+	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */

@@ -23,12 +23,7 @@
 #define _MULTI_H_
 
 #include "account.h"
-#include "core.h"
 #include "plugin.h"
-
-#define OPT_CONN_HTML		0x00000001
-/* set this flag on a gc if you want serv_got_im to autoreply when away */
-#define OPT_CONN_AUTO_RESP	0x00000002
 
 struct proto_actions_menu {
 	char *label;

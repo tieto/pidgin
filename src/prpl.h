@@ -65,6 +65,7 @@ typedef enum
 
 } GaimProtocol;
 
+
 #include "blist.h"
 #include "proxy.h"
 #include "plugin.h"

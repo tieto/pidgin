@@ -20,14 +20,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+#include "internal.h"
+#include "blist.h"
 #include "connection.h"
 #include "debug.h"
-#include "gaim.h"
+#include "log.h"
+#include "notify.h"
+#include "prefs.h"
+#include "request.h"
+#include "server.h"
+#include "sound.h"
+
+/* XXX UI stuff! */
+#include "ui.h"
 
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
 static GaimConnectionUiOps *connection_ui_ops = NULL;
+
 
 GaimConnection *
 gaim_connection_new(GaimAccount *account)
@@ -144,6 +154,7 @@ gaim_connection_disconnect(GaimConnection *gc)
 		gaim_request_close_with_handle(gc);
 		gaim_notify_close_with_handle(gc);
 
+		/* XXX UI stuff! */
 		update_privacy_connections();
 	}
 
@@ -153,10 +164,11 @@ gaim_connection_disconnect(GaimConnection *gc)
 	if (connections != NULL)
 		return;
 
-	destroy_all_dialogs();
+	/* XXX destroy_all_dialogs(); */
+
 	gaim_blist_destroy();
 
-	show_login();
+	/* XXX show_login(); */
 }
 
 /*
@@ -196,7 +208,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		gaim_blist_show();
 		gaim_blist_add_account(gc->account);
 
-		/* I hate this. -- ChipX86 */
+		/* XXX I hate this. UI code. -- ChipX86 */
 		gaim_setup(gc);
 
 		/*

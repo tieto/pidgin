@@ -22,14 +22,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "debug.h"
 
-#include <string.h>
+/* XXX */
+extern void do_quit();
 
-#include "gaim.h"
+extern char *opt_rcfile_arg;
 
 #ifdef USE_SM
 
@@ -37,6 +37,7 @@
 #include <X11/SM/SMlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+
 #define ERROR_LENGTH 512
 
 static IceIOErrorHandler ice_installed_io_error_handler;

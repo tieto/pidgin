@@ -1,5 +1,6 @@
 /**
  * @file gtkpounce.c GTK+ Buddy Pounce API
+ * @ingroup gtkui
  *
  * gaim
  *
@@ -20,14 +21,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <unistd.h>
-#include <string.h>
-#include "gaim.h"
-#include "gtkpounce.h"
-#include "gtkblist.h"
-#include "prpl.h"
-#include "sound.h"
+#include "internal.h"
+
+#include "conversation.h"
+#include "debug.h"
 #include "notify.h"
+#include "prpl.h"
+#include "server.h"
+#include "sound.h"
+
+#include "gtkblist.h"
+#include "gtkpounce.h"
+#include "gtkutils.h"
+
+#include "ui.h"
 
 typedef struct
 {

@@ -24,8 +24,6 @@
 #ifndef _GAIM_CONVERSATION_H_
 #define _GAIM_CONVERSATION_H_
 
-#include "account.h"
-
 /**************************************************************************/
 /** Data Structures                                                       */
 /**************************************************************************/
@@ -33,6 +31,7 @@
 typedef enum   _GaimConversationType  GaimConversationType;
 typedef enum   _GaimUnseenState       GaimUnseenState;
 typedef enum   _GaimConvUpdateType    GaimConvUpdateType;
+typedef enum   _GaimTypingState       GaimTypingState;
 typedef struct _GaimWindowUiOps       GaimWindowUiOps;
 typedef struct _GaimWindow            GaimWindow;
 typedef struct _GaimConversationUiOps GaimConversationUiOps;
@@ -85,6 +84,21 @@ enum _GaimConvUpdateType
 	GAIM_CONV_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
 	GAIM_CONV_UPDATE_AWAY      /**< The other user went away.                */
 };
+
+/**
+ * The typing state of a user.
+ */
+enum _GaimTypingState
+{
+	GAIM_NOT_TYPING = 0,  /**< Not typing.                 */
+	GAIM_TYPING,          /**< Currently typing.           */
+	GAIM_TYPED            /**< Stopped typing momentarily. */
+};
+
+
+#include "account.h"
+#include "server.h"
+
 
 /**
  * Conversation window operations.
@@ -161,7 +175,7 @@ struct _GaimIm
 {
 	GaimConversation *conv;            /**< The parent conversation.     */
 
-	int    typing_state;               /**< The current typing state.    */
+	GaimTypingState typing_state;      /**< The current typing state.    */
 	guint  typing_timeout;             /**< The typing timer handle.     */
 	time_t type_again;                 /**< The type again time.         */
 	guint  type_again_timeout;         /**< The type again timer handle. */
@@ -1156,6 +1170,11 @@ void gaim_set_win_ui_ops(GaimWindowUiOps *ops);
  * @return A filled-out GaimWindowUiOps structure.
  */
 GaimWindowUiOps *gaim_get_win_ui_ops(void);
+
+/**
+ * Initializes the conversation subsystem.
+ */
+void gaim_conversation_init(void);
 
 /*@}*/
 

@@ -18,26 +18,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <string.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <ctype.h>
+#include "internal.h"
+#include "blist.h"
 #include "conversation.h"
-#include "gaim.h"
-#include "multi.h"
-#include "prpl.h"
+#include "debug.h"
 #include "notify.h"
 #include "prefs.h"
+#include "prpl.h"
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+/* XXX */
+#include "ui.h"
 
 typedef struct
 {
@@ -148,7 +139,7 @@ reset_typing(gpointer data)
 
 	im = GAIM_IM(c);
 
-	gaim_im_set_typing_state(im, NOT_TYPING);
+	gaim_im_set_typing_state(im, GAIM_NOT_TYPING);
 	gaim_im_update_typing(im);
 	gaim_im_stop_typing_timeout(im);
 
@@ -169,7 +160,7 @@ send_typed(gpointer data)
 		gaim_im_set_type_again(GAIM_IM(conv), TRUE);
 
 		/* XXX Somebody add const stuff! */
-		serv_send_typing(gc, (char *)name, TYPED);
+		serv_send_typing(gc, (char *)name, GAIM_TYPED);
 
 		gaim_debug(GAIM_DEBUG_MISC, "conversation", "typed...\n");
 	}
@@ -962,7 +953,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			if (gaim_prefs_get_bool("/core/conversations/im/send_typing"))
-				serv_send_typing(gc, (char *)name, NOT_TYPING);
+				serv_send_typing(gc, (char *)name, GAIM_NOT_TYPING);
 
 			if (gc && prpl_info->convo_closed != NULL)
 				prpl_info->convo_closed(gc, (char *)name);
@@ -1483,7 +1474,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		if ((flags & WFLAG_RECV) == WFLAG_RECV)
-			gaim_im_set_typing_state(GAIM_IM(conv), NOT_TYPING);
+			gaim_im_set_typing_state(GAIM_IM(conv), GAIM_NOT_TYPING);
 	}
 
 	if (gaim_window_get_active_conversation(win) != conv) {

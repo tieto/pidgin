@@ -18,13 +18,8 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+/*
+ * NOTE - I'd like to see this entire file just go away! -- ChipX86
+ */
 
-#include <glib.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-
-
+/* DONE! */

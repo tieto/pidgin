@@ -18,35 +18,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#include <config.h>
-
-#ifndef _WIN32
-#include <netdb.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#else
-#include <winsock.h>
-#endif
-
-#include <errno.h>
-#include <time.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <sys/stat.h>
-#include "gaim.h"
+#include "account.h"
 #include "accountopt.h"
+#include "conversation.h"
+#include "debug.h"
 #include "multi.h"
+#include "notify.h"
 #include "prpl.h"
 #include "proxy.h"
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+/* XXX */
+#include "gaim.h"
 
 #define NAP_SERVER "64.124.41.187"
 #define NAP_PORT 8888

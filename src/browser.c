@@ -25,41 +25,18 @@
  * their protocol.  Nifty.
  *
  */
+#include "internal.h"
 
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#ifdef _WIN32
-#include <gdk/gdkwin32.h>
-#else
-#include <unistd.h>
-#ifndef HOST_NAME_MAX
-#define HOST_NAME_MAX 255
-#endif
-#include <gdk/gdkx.h>
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-
-
-
-#include <gtk/gtk.h>
 #include <gdk/gdkprivate.h>
-#include "gaim.h"
+
+#include "debug.h"
 #include "notify.h"
 #include "prefs.h"
+#include "util.h"
 
 #ifndef _WIN32
-
-
-
-
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-
 
 static const char *progname = "gaim";
 static const char *expected_mozilla_version = "1.1";

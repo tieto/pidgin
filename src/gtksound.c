@@ -19,44 +19,29 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifdef HAVE_ENDIAN_H
-#include <endian.h>
-#endif
-
-#include <stdio.h>
-#include <string.h>
-#include <glib.h>
-
-#ifndef _WIN32
-#include <unistd.h>
-#else
+#ifdef _WIN32
 #include <windows.h>
 #include <mmsystem.h>
 #endif
 
 #ifdef USE_AO
-#include <ao/ao.h>
-#include <audiofile.h>
+# include <ao/ao.h>
+# include <audiofile.h>
 #endif /* USE_AO */
 
 #ifdef USE_NAS_AUDIO
-#include <audio/audiolib.h>
-#include <audio/soundlib.h>
+# include <audio/audiolib.h>
+# include <audio/soundlib.h>
 #endif /* USE_NAS_AUDIO */
 
-#include "gaim.h" /* for gettext stuff */
-#include "sound.h"
-#include "gtksound.h"
+#include "debug.h"
+#include "notify.h"
 #include "prefs.h"
+#include "sound.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gtksound.h"
 
 
 struct gaim_sound_event {

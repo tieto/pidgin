@@ -19,43 +19,27 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <sys/types.h>
-/* this must happen before sys/socket.h or freebsd won't compile */
-
-#ifndef _WIN32
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#endif
-
-#include <errno.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <signal.h>
-
-#include "gaim.h"
+#include "account.h"
 #include "accountopt.h"
+#include "conversation.h"
+#include "debug.h"
+#include "ft.h"
 #include "multi.h"
+#include "notify.h"
+#include "privacy.h"
 #include "prpl.h"
-#include "core.h"
 #include "proxy.h"
+#include "request.h"
+#include "util.h"
+
 #include "aim.h"
 #include "md5.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+/* XXX */
+#include "gaim.h"
+#include "ui.h"
 
 
 #define UC_AOL		0x02
@@ -3016,11 +3000,11 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} break;
 
 		case 0x0001: { /* Paused typing */
-			serv_got_typing(gc, sn, 0, TYPED);
+			serv_got_typing(gc, sn, 0, GAIM_TYPED);
 		} break;
 
 		case 0x0002: { /* Typing */
-			serv_got_typing(gc, sn, 0, TYPING);
+			serv_got_typing(gc, sn, 0, GAIM_TYPING);
 		} break;
 
 		default: {
@@ -4222,9 +4206,9 @@ static int oscar_send_typing(GaimConnection *gc, char *name, int typing) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(od, name);
 	if (dim)
-		if (typing == TYPING)
+		if (typing == GAIM_TYPING)
 			aim_odc_send_typing(od->sess, dim->conn, 0x0002);
-		else if (typing == TYPED)
+		else if (typing == GAIM_TYPED)
 			aim_odc_send_typing(od->sess, dim->conn, 0x0001);
 		else
 			aim_odc_send_typing(od->sess, dim->conn, 0x0000);
@@ -4235,9 +4219,9 @@ static int oscar_send_typing(GaimConnection *gc, char *name, int typing) {
 		if (!list) {
 			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(name));
 			if (bi && bi->typingnot) {
-				if (typing == TYPING)
+				if (typing == GAIM_TYPING)
 					aim_im_sendmtn(od->sess, 0x0001, name, 0x0002);
-				else if (typing == TYPED)
+				else if (typing == GAIM_TYPED)
 					aim_im_sendmtn(od->sess, 0x0001, name, 0x0001);
 				else
 					aim_im_sendmtn(od->sess, 0x0001, name, 0x0000);
@@ -5627,9 +5611,9 @@ static int gaim_odc_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 		/* I had to leave this. It's just too funny. It reminds me of my sister. */
 		gaim_debug(GAIM_DEBUG_INFO, "oscar",
 				   "ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
-		serv_got_typing(gc, sn, 0, TYPING);
+		serv_got_typing(gc, sn, 0, GAIM_TYPING);
 	} else if (typing == 0x0001)
-		serv_got_typing(gc, sn, 0, TYPED);
+		serv_got_typing(gc, sn, 0, GAIM_TYPED);
 	else
 		serv_got_typing_stopped(gc, sn);
 	return 1;

@@ -24,6 +24,7 @@
 #ifndef _UI_H_
 #define _UI_H_
 
+#if 0
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -38,7 +39,10 @@
 #include "gtkprefs.h"
 #include "gtkutils.h"
 #include "stock.h"
+#endif
 
+#include "account.h"
+#include "conversation.h"
 
 /**
  * Our UI's identifier.
@@ -99,27 +103,6 @@ typedef enum
 
 } GaimButtonStyle;
 
-/* XXX CUI: save_pos and window_size are used by gaimrc.c which is core.
- * Need to figure out options saving. Same goes for several global variables as well. */
-struct save_pos {
-        int x;
-        int y;
-        int width;
-        int height;
-};
-
-struct window_size {
-	int width;
-	int height;
-	int entry_height;
-};
-
-struct log_conversation {
-	char name[80];
-	char filename[512];
-        struct log_conversation *next;
-};
-
 /* XXX CUI: away messages aren't really anything more than char* but we need two char*'s
  * for the UI so that people can name their away messages when they save them. So these
  * are really a UI function and struct away_message should be removed from the core. */
@@ -158,7 +141,6 @@ struct smiley_theme {
 #define EDIT_BUDDY 2
 
 /* Globals in aim.c */
-extern GList *log_conversations; /* this should be moved to conversations.c */
 extern GSList *away_messages; /* this should be moved to away.c */
 extern GtkWidget *mainwindow;
 extern int docklet_count;
@@ -193,9 +175,9 @@ extern GSList *smiley_themes;
 extern void show_about(GtkWidget *, void *);
 extern void gaim_help(GtkWidget *, void *);
 
-/* Functions in aim.c */
+/* Functions in main.c */
 extern void show_login();
-extern void gaim_setup(GaimConnection *gc);
+extern void gaim_setup(GaimConnection *);
 
 /* Functions in away.c */
 extern void rem_away_mess(GtkWidget *, struct away_message *);

@@ -507,7 +507,7 @@ msn_send_typing(GaimConnection *gc, char *who, int typing)
 
 	if (!g_ascii_strcasecmp(who, gaim_account_get_username(account))) {
 		/* We'll just fake it, since we're sending to ourself. */
-		serv_got_typing(gc, who, MSN_TYPING_RECV_TIMEOUT, TYPING);
+		serv_got_typing(gc, who, MSN_TYPING_RECV_TIMEOUT, GAIM_TYPING);
 
 		return MSN_TYPING_SEND_TIMEOUT;
 	}

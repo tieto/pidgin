@@ -24,20 +24,7 @@
 #ifndef _GAIM_PROXY_H_
 #define _GAIM_PROXY_H_
 
-#include <sys/types.h>
-/*this must happen before sys/socket.h or freebsd won't compile*/
-
-#ifndef _WIN32
-# include <sys/socket.h>
-# include <netdb.h>
-# include <netinet/in.h>
-#else
-# include <winsock.h>
-#endif
-
 #include <glib.h>
-
-#include "account.h"
 
 /**
  * A type of proxy connection.
@@ -77,6 +64,9 @@ typedef struct
 } GaimProxyInfo;
 
 typedef void (*GaimInputFunction)(gpointer, gint, GaimInputCondition);
+
+
+#include "account.h"
 
 /**************************************************************************/
 /** @name Proxy structure API                                             */

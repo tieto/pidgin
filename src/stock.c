@@ -20,14 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "stock.h"
-#include "core.h"
-#include <gtk/gtk.h>
-#include <string.h>
+#include "internal.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "stock.h"
 
 static struct StockIcon
 {

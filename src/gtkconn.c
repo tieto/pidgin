@@ -18,17 +18,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#include <string.h>
-#include <gtk/gtk.h>
+#include "internal.h"
 
 #include "account.h"
-#include "gtkblist.h"
-#include "gaim.h"
+#include "debug.h"
+#include "notify.h"
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gtkblist.h"
+#include "gtkutils.h"
+
+#include "ui.h"
 
 struct signon_meter {
 	GaimAccount *account;
@@ -281,7 +281,7 @@ void away_on_login(char *mesg)
 	return;
 }
 
-
+#if 0
 struct kick_dlg {
 	GaimAccount *account;
 	GtkWidget *dlg;
@@ -372,4 +372,4 @@ static void hide_login_progress_error(GaimConnection *gc, char *why)
 			   gaim_account_get_username(account));
 	hide_login_progress_common(gc, why, _("Connection Error"), buf);
 }
-
+#endif

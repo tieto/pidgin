@@ -19,44 +19,12 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "internal.h"
 
-#ifndef _WIN32
-#include <unistd.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#else
-#include <direct.h>
-#include <io.h>
-#endif
-
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
-#include <ctype.h>
-#ifdef HAVE_ICONV
-#include <iconv.h>
-#endif
-#include <math.h>
-#include "gaim.h"
+#include "conversation.h"
+#include "debug.h"
 #include "prpl.h"
 #include "prefs.h"
-
-#ifndef _WIN32
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#else
-#include "win32dep.h"
-#endif
-
-#ifndef MAXPATHLEN
-#define MAXPATHLEN 1024
-#endif
 
 static char home_dir[MAXPATHLEN];
 
@@ -1005,144 +973,6 @@ FILE *gaim_mkstemp(gchar **fpath)
 	}
 
 	return fp;
-}
-
-/* AIM URI's ARE FUN :-D */
-const char *
-handle_uri(char *uri)
-{
-	const char *username;
-	GString *str;
-	GList *conn;
-	GaimConnection *gc = NULL;
-	GaimAccount *account;
-
-	gaim_debug(GAIM_DEBUG_INFO, "handle_uri", "Handling URI: %s\n", uri);
-
-	/* Well, we'd better check to make sure we have at least one
-	   AIM account connected. */
-	for (conn = gaim_connections_get_all(); conn != NULL; conn = conn->next) {
-		gc = conn->data;
-		account = gaim_connection_get_account(gc);
-		username = gaim_account_get_username(account);
-
-		if (gaim_account_get_protocol(account) == GAIM_PROTO_OSCAR &&
-			username != NULL && isalpha(*username)) {
-
-			break;
-		}
-	}
-
-	if (gc == NULL)
-		return _("Not connected to AIM");
-
- 	/* aim:goim?screenname=screenname&message=message */
-	if (!g_ascii_strncasecmp(uri, "aim:goim?", strlen("aim:goim?"))) {
-		char *who, *what;
-		GaimConversation *c;
-		uri = uri + strlen("aim:goim?");
-		
-		if (!(who = strstr(uri, "screenname="))) {
-			return _("No screenname given.");
-		}
-		/* spaces are encoded as +'s */
-		who = who + strlen("screenname=");
-		str = g_string_new(NULL);
-		while (*who && (*who != '&')) {
-			g_string_append_c(str, *who == '+' ? ' ' : *who);
-			who++;
-		}
-		who = g_strdup(str->str);
-		g_string_free(str, TRUE);
-		
-		what = strstr(uri, "message=");
-		if (what) {
-			what = what + strlen("message=");
-			str = g_string_new(NULL);
-			while (*what && (*what != '&' || !g_ascii_strncasecmp(what, "&amp;", 5))) {
-				g_string_append_c(str, *what == '+' ? ' ' : *what);
-				what++;
-			}
-			what = g_strdup(str->str);
-			g_string_free(str, TRUE);
-		}
-
-		c = gaim_conversation_new(GAIM_CONV_IM, gc->account, who);
-		g_free(who);
-
-		if (what) {
-			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(c);
-
-			gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, what, -1);
-			g_free(what);
-		}
-	} else if (!g_ascii_strncasecmp(uri, "aim:addbuddy?", strlen("aim:addbuddy?"))) {
-		char *who, *group;
-		uri = uri + strlen("aim:addbuddy?");
-		/* spaces are encoded as +'s */
-
-		if (!(who = strstr(uri, "screenname="))) {
-			return _("No screenname given.");
-		}
-		who = who + strlen("screenname=");
-		str = g_string_new(NULL);
-		while (*who && (*who != '&')) {
-			g_string_append_c(str, *who == '+' ? ' ' : *who);
-			who++;
-		}
-		who = g_strdup(str->str);
-		g_string_free(str, TRUE);
-
-		group = strstr(uri, "group=");
-		if (group) {
-			group = group + strlen("group=");
-			str = g_string_new(NULL);
-			while (*group && (*group != '&' || !g_ascii_strncasecmp(group, "&amp;", 5))) {
-				g_string_append_c(str, *group == '+' ? ' ' : *group);
-				group++;
-			}
-			group = g_strdup(str->str);
-			g_string_free(str, TRUE);
-		}
-
-		gaim_debug(GAIM_DEBUG_MISC, "handle_uri", "who: %s\n", who);
-		show_add_buddy(gc, who, group, NULL);
-		g_free(who);
-		if (group)
-			g_free(group);
-	} else if (!g_ascii_strncasecmp(uri, "aim:gochat?", strlen("aim:gochat?"))) {
-		char *room;
-		GHashTable *components;
-		int exch = 5;
-		
-		uri = uri + strlen("aim:gochat?");
-		/* spaces are encoded as +'s */
-		
-		if (!(room = strstr(uri, "roomname="))) {
-			return _("No roomname given.");
-		}
-		room = room + strlen("roomname=");
-		str = g_string_new(NULL);
-		while (*room && (*room != '&')) {
-			g_string_append_c(str, *room == '+' ? ' ' : *room);
-			room++;
-		}
-		room = g_strdup(str->str);
-		g_string_free(str, TRUE);
-		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-				g_free);
-		g_hash_table_replace(components, g_strdup("room"), room);
-		g_hash_table_replace(components, g_strdup("exchange"),
-				g_strdup_printf("%d", exch));
-
-		serv_join_chat(gc, components);
-		g_hash_table_destroy(components);
-	} else {
-		return _("Invalid AIM URI");
-	}
-	
-	
-	return NULL;
 }
 
 char *gaim_try_conv_to_utf8(const char *str)

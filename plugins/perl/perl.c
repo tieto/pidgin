@@ -23,43 +23,42 @@
  * X-Chat Copyright (C) 1998 Peter Zelezny.
  *
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
 #ifdef DEBUG
-#undef DEBUG
+# undef DEBUG
 #endif
-#endif
+
 #undef PACKAGE
 
 #define group perl_group
+
 #ifdef _WIN32
 /* This took me an age to figure out.. without this __declspec(dllimport)
  * will be ignored.
  */
-#define HASATTRIBUTE
+# define HASATTRIBUTE
 #endif
+
 #include <EXTERN.h>
+
 #ifndef _SEM_SEMUN_UNDEFINED
-#define HAS_UNION_SEMUN
+# define HAS_UNION_SEMUN
 #endif
+
 #include <perl.h>
 #include <XSUB.h>
+
 #ifndef _WIN32
-#include <sys/mman.h>
+# include <sys/mman.h>
 #endif
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+
 #undef PACKAGE
-#include <stdio.h>
+
 #ifndef _WIN32
-#include <dirent.h>
+# include <dirent.h>
 #else
-/* We're using perl's win32 port of this */
-#define dirent direct
+ /* We're using perl's win32 port of this */
+# define dirent direct
 #endif
-#include <string.h>
 
 #undef group
 
@@ -72,14 +71,22 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 
 #undef _
 #ifdef DEBUG
-#undef DEBUG
+# undef DEBUG
 #endif
 #ifdef _WIN32
-#undef pipe
+# undef pipe
 #endif
-#include "gaim.h"
+
+#include "internal.h"
+
+#include "debug.h"
 #include "prpl.h"
+#include "notify.h"
+#include "server.h"
 #include "sound.h"
+
+#include "gaim.h"
+#include "ui.h"
 
 #ifndef call_pv
 # define call_pv(i,j) perl_call_pv((i), (j))
@@ -1395,11 +1402,11 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
 	my_plugin = plugin;
 
 	loader_info.exts = g_list_append(loader_info.exts, "pl");
 }
 
-GAIM_INIT_PLUGIN(perl, __init_plugin, info);
+GAIM_INIT_PLUGIN(perl, init_plugin, info);

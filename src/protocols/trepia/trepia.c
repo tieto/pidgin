@@ -19,17 +19,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "gaim.h"
+#include "internal.h"
+
 #include "account.h"
 #include "accountopt.h"
+#include "debug.h"
+#include "notify.h"
+#include "request.h"
+#include "server.h"
+#include "util.h"
+
 #include "md5.h"
 #include "profile.h"
-#include <sys/stat.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
 
 /* XXX */
+#include "gaim.h"
 #include "multi.h"
 
 #ifndef _WIN32

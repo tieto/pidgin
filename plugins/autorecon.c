@@ -1,11 +1,10 @@
-#include "config.h"
+#include "internal.h"
 
-#include "gaim.h"
+#include "connection.h"
+#include "debug.h"
 #include "prpl.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gaim.h"
 
 #define AUTORECON_PLUGIN_ID "core-autorecon"
 

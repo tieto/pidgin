@@ -27,41 +27,19 @@
 /* it is intended to : 1st handle http proxy, using the CONNECT command
  , 2nd provide an easy way to add socks support */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/time.h>
-
-#ifndef _WIN32
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <signal.h>
-#else
-#include <winsock.h>
-#endif
-
-#include <fcntl.h>
-#include <errno.h>
-#include "gaim.h"
-#include "proxy.h"
+#include "internal.h"
+#include "debug.h"
 #include "prefs.h"
-
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "proxy.h"
+#include "util.h"
 
 #define GAIM_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
 #define GAIM_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
 static GaimProxyInfo *global_proxy_info = NULL;
 static gboolean global_proxy_info_from_prefs = FALSE;
+
+static int opt_debug = 0;
 
 struct PHB {
 	GaimInputFunction func;
@@ -597,7 +575,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 					FD_SET(child_in[0], &fds);
 					rc = select(child_in[0]+1, &fds, NULL, NULL, &tv);
 					if(!rc) {
-						if(opt_debug)
+						if (opt_debug)
 							fprintf(stderr,"dns[%d]: nobody needs me... =(\n", getpid());
 						break;
 					}
@@ -1392,7 +1370,7 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned int len;
 	int error = ETIMEDOUT;
 
-	gaim_debug(GAIM_INFO, "socks5 proxy", "Connected.\n");
+	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Connected.\n");
 
 	if (phb->inpa > 0)
 		gaim_input_remove(phb->inpa);

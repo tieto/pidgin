@@ -3,12 +3,16 @@
  * Modified by: Chris J. Friesen <Darth_Sebulba04@yahoo.com> Jan 05, 2003.
  * <INSERT GPL HERE> */
 
-#include "config.h"
+#include "internal.h"
 
-#include <time.h>
-#include "gaim.h"
+#include "conversation.h"
+#include "debug.h"
+
 #include "gtkimhtml.h"
 #include "gtkplugin.h"
+#include "gtkutils.h"
+
+#include "gaim.h"
 
 #define TIMESTAMP_PLUGIN_ID "gtk-timestamp"
 

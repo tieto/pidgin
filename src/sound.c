@@ -18,18 +18,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "internal.h"
 
 #include "sound.h"
 #include "prefs.h"
-#include "gaim.h" /* XXX: this goes away when away messages become sane */
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+/* XXX: this goes away when away messages become sane */
+#include "ui.h"
+
 
 static GaimSoundUiOps *sound_ui_ops = NULL;
 

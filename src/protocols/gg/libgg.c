@@ -1,4 +1,4 @@
-/* $Id: libgg.c 6100 2003-06-03 02:00:33Z chipx86 $ */
+/* $Id: libgg.c 6304 2003-06-14 23:21:02Z chipx86 $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -50,9 +50,10 @@
 #  define WORDS_BIGENDIAN 1
 #endif
 #include "libgg.h"
-#include "config.h"
-#include "gaim.h"
+
+#include "internal.h"
 #include "proxy.h"
+#include "debug.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -72,7 +73,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 6100 2003-06-03 02:00:33Z chipx86 $";
+= "$Id: libgg.c 6304 2003-06-14 23:21:02Z chipx86 $";
 
 #endif 
 
@@ -581,7 +582,8 @@ int gg_ping(struct gg_session *sess)
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_ping(...);\n");
 	
 	if(ping_outstanding) {
-		debug_printf("Trying to send ping, when we havn't been ponged on last ping\n");
+		gaim_debug(GAIM_DEBUG_INFO, "gg",
+				   "Trying to send ping, when we havn't been ponged on last ping\n");
 		return 1;
 	}
 	else {

@@ -19,14 +19,50 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "internal.h"
+
+#include "account.h"
+#include "conversation.h"
+#include "debug.h"
+#include "ft.h"
+#include "log.h"
+#include "notify.h"
+#include "prefs.h"
+#include "prpl.h"
+#include "pounce.h"
+#include "sound.h"
+#include "util.h"
+
+//#include "gaim.h"
+
+#include "gtkaccount.h"
+#include "gtkblist.h"
+#include "gtkconn.h"
+#include "gtkconv.h"
+#include "gtkdebug.h"
+#include "gtkft.h"
+#include "gtknotify.h"
+#include "gtkprefs.h"
+#include "gtkrequest.h"
+#include "gtksound.h"
+#include "stock.h"
+
+#include "ui.h"
+
+#if HAVE_SIGNAL_H
+# include <signal.h>
 #endif
+
+#include "locale.h"
+#include <getopt.h>
+
+#if 0
 #ifdef GAIM_PLUGINS
-#ifndef _WIN32
-#include <dlfcn.h>
-#endif
+# ifndef _WIN32
+#  include <dlfcn.h>
+# endif
 #endif /* GAIM_PLUGINS */
+
 #include <gtk/gtk.h>
 #ifndef _WIN32
 #include <gdk/gdkx.h>
@@ -69,11 +105,14 @@
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
+#endif
+
+extern void load_prefs();
+extern void load_pounces();
 
 static GtkWidget *name;
 static GtkWidget *pass;
 
-GList *log_conversations = NULL;
 GSList *away_messages = NULL;
 GSList *message_queue = NULL;
 GSList *unread_message_queue = NULL;
@@ -148,6 +187,7 @@ void do_quit()
 	/* and end it all... */
 	gtk_main_quit();
 }
+
 
 static guint snd_tmout = 0;
 static gboolean sound_timeout(gpointer data)

@@ -22,18 +22,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+/* XXX eww */
+#include "src/internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
-#include "gaim.h"
-#include "prpl.h"
+#include "debug.h"
 #include "multi.h"
+#include "notify.h"
+#include "prpl.h"
+#include "server.h"
+#include "util.h"
+
 #include "zephyr/zephyr.h"
+
+#include "gaim.h"
 
 extern Code_t ZGetLocations(ZLocations_t *, int *);
 extern Code_t ZSetLocation(char *);

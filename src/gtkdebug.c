@@ -4,7 +4,7 @@
  *
  * gaim
  *
- * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
+ * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "gtkdebug.h"
-#include "gaim.h"
-#include "gtkimhtml.h"
+#include "internal.h"
+
 #include "prefs.h"
-#include <gtk/gtk.h>
+#include "util.h"
+
+#include "gtkdebug.h"
+#include "gtkimhtml.h"
+
+#include "ui.h"
+
+extern int opt_debug;
 
 typedef struct
 {

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6100 2003-06-03 02:00:33Z chipx86 $
+ * $Id: gg.c 6304 2003-06-14 23:21:02Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -19,41 +19,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef _WIN32
-#include <netdb.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#else
-#include <winsock.h>
-#endif
-
-#include <errno.h>
-#include <fcntl.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <ctype.h>
 /* Library from EKG (Eksperymentalny Klient Gadu-Gadu) */
 #include "libgg.h"
-#include "gaim.h"
-#include "accountopt.h"
-#include "multi.h"
-#include "core.h"
-#include "prpl.h"
-#include "proxy.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "account.h"
+#include "accountopt.h"
+#include "debug.h"
+#include "multi.h"
+#include "notify.h"
+#include "proxy.h"
+#include "prpl.h"
+#include "server.h"
+#include "util.h"
+
+/* XXX for g_show_info_text(), WEBSITE, and stuff */
+#include "gaim.h"
 
 #define GG_CONNECT_STEPS 5
 
@@ -292,7 +274,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	struct agg_data *gd = gc->proto_data;
 	struct gg_event *e;
 
-	debug_printf("main_callback enter: begin\n");
+	gaim_debug(GAIM_DEBUG_INFO, "gg", "main_callback enter: begin\n");
 
 	if (gd->sess->fd != source)
 		gd->sess->fd = source;
@@ -303,7 +285,8 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	if (!(e = gg_watch_fd(gd->sess))) {
-		debug_printf("main_callback: gg_watch_fd failed - CRITICAL!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "gg",
+				   "main_callback: gg_watch_fd failed - CRITICAL!\n");
 		gaim_connection_error(gc, _("Unable to read socket"));
 		return;
 	}
@@ -313,7 +296,8 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 		/* do nothing */
 		break;
 	case GG_EVENT_CONN_SUCCESS:
-		debug_printf("main_callback: CONNECTED AGAIN!?\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "gg",
+				   "main_callback: CONNECTED AGAIN!?\n");
 		break;
 	case GG_EVENT_CONN_FAILED:
 		if (gc->inpa)
@@ -388,11 +372,13 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 		}
 		break;
 	case GG_EVENT_ACK:
-		debug_printf("main_callback: message %d to %lu sent with status %d\n",
+		gaim_debug(GAIM_DEBUG_MISC, "gg",
+				   "main_callback: message %d to %lu sent with status %d\n",
 			     e->event.ack.seq, e->event.ack.recipient, e->event.ack.status);
 		break;
 	default:
-		debug_printf("main_callback: unsupported event %d\n", e->type);
+		gaim_debug(GAIM_DEBUG_ERROR, "gg",
+				   "main_callback: unsupported event %d\n", e->type);
 		break;
 	}
 	gg_free_event(e);
@@ -404,12 +390,13 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 	struct agg_data *gd = gc->proto_data;
 	struct gg_event *e;
 
-	debug_printf("GG login_callback...\n");
+	gaim_debug(GAIM_DEBUG_INFO, "gg", "login_callback...\n");
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
-	debug_printf("Found GG connection\n");
+
+	gaim_debug(GAIM_DEBUG_INFO, "gg", "Found GG connection\n");
 
 	if (source == 0) {
 		gaim_connection_error(gc, _("Unable to connect."));
@@ -418,13 +405,14 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 
 	gd->sess->fd = source;
 
-	debug_printf("Source is valid.\n");
+	gaim_debug(GAIM_DEBUG_MISC, "gg", "Source is valid.\n");
 	if (gc->inpa == 0) {
-		debug_printf("login_callback.. checking gc->inpa .. is 0.. setting fd watch\n");
+		gaim_debug(GAIM_DEBUG_MISC, "gg",
+				   "login_callback.. checking gc->inpa .. is 0.. setting fd watch\n");
 		gc->inpa = gaim_input_add(gd->sess->fd, GAIM_INPUT_READ, login_callback, gc);
-		debug_printf("Adding watch on fd\n"); 
+		gaim_debug(GAIM_DEBUG_INFO, "gg", "Adding watch on fd\n"); 
 	}
-	debug_printf("Checking State.\n");
+	gaim_debug(GAIM_DEBUG_INFO, "gg", "Checking State.\n");
 	switch (gd->sess->state) {
 	case GG_STATE_READING_DATA:
 		gaim_connection_update_progress(gc, _("Reading data"), 2, GG_CONNECT_STEPS);
@@ -439,12 +427,13 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		gaim_connection_update_progress(gc, _("Exchanging key hash"), 5, GG_CONNECT_STEPS);
 		break;
 	default:
-		debug_printf("No State found\n");
+		gaim_debug(GAIM_DEBUG_INFO, "gg", "No State found\n");
 		break;
 	}
-	debug_printf("gg_watch_fd\n");
+	gaim_debug(GAIM_DEBUG_MISC, "gg", "gg_watch_fd\n");
 	if (!(e = gg_watch_fd(gd->sess))) {
-		debug_printf("login_callback: gg_watch_fd failed - CRITICAL!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "gg",
+				   "login_callback: gg_watch_fd failed - CRITICAL!\n");
 		gaim_connection_error(gc, _("Critical error in GG library\n"));
 		return;
 	}
@@ -473,11 +462,12 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		/* Set new watch on login server ip */
 		if(gc->inpa)
 			gc->inpa = gaim_input_add(gd->sess->fd, GAIM_INPUT_READ, login_callback, gc);
-		debug_printf("Setting watch on connection with login server.\n"); 
+		gaim_debug(GAIM_DEBUG_INFO, "gg",
+				   "Setting watch on connection with login server.\n"); 
 		break;
 	}/* end switch() */
 
-	debug_printf("checking gg_event\n");
+	gaim_debug(GAIM_DEBUG_MISC, "gg", "checking gg_event\n");
 	switch (e->type) {
 	case GG_EVENT_NONE:
 		/* nothing */
@@ -499,10 +489,10 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		handle_errcode(gc, e->event.failure);
 		break;
 	default:
-		debug_printf("no gg_event\n");
+		gaim_debug(GAIM_DEBUG_MISC, "gg", "no gg_event\n");
 		break;
 	}
-	debug_printf("Returning from login_callback\n");
+	gaim_debug(GAIM_DEBUG_INFO, "gg", "Returning from login_callback\n");
 	gg_free_event(e);
 }
 
@@ -538,7 +528,7 @@ static void agg_login(GaimAccount *account)
 
 	/*
 	   if (gg_login(gd->sess, strtol(user->username, (char **)NULL, 10), user->password, 1) < 0) {
-	   debug_printf("uin=%u, pass=%s", strtol(user->username, (char **)NULL, 10), user->password); 
+	   gaim_debug(GAIM_DEBUG_MISC, "gg", "uin=%u, pass=%s", strtol(user->username, (char **)NULL, 10), user->password); 
 	   hide_login_progress(gc, "Unable to connect.");
 	   signoff(gc);
 	   return;
@@ -639,7 +629,7 @@ static void search_results(GaimConnection *gc, gchar *webdata)
 	int i, j;
 
 	if ((ptr = strstr(webdata, "query_results:")) == NULL || (ptr = strchr(ptr, '\n')) == NULL) {
-		debug_printf("search_callback: pubdir result [%s]\n", webdata);
+		gaim_debug(GAIM_DEBUG_MISC, "gg", "search_callback: pubdir result [%s]\n", webdata);
 		gaim_notify_error(gc, NULL, _("Couldn't get search results"), NULL);
 		return;
 	}
@@ -751,7 +741,7 @@ static void import_buddies_server_results(GaimConnection *gc, gchar *webdata)
 	}
 
 	if ((ptr = strstr(webdata, "get_results:")) == NULL || (ptr = strchr(ptr, ':')) == NULL) {
-		debug_printf("import_buddies_server_results: import buddies result [%s]\n", webdata);
+		gaim_debug(GAIM_DEBUG_MISC, "gg", "import_buddies_server_results: import buddies result [%s]\n", webdata);
 		gaim_notify_error(gc, NULL,
 						  _("Couldn't Import Buddy List from Server"), NULL);
 		return;
@@ -766,7 +756,8 @@ static void import_buddies_server_results(GaimConnection *gc, gchar *webdata)
 		gchar *name, *show;
 
 		if (strlen(users_tbl[i])==0) {
-			debug_printf("import_buddies_server_results: users_tbl[i] is empty\n");
+			gaim_debug(GAIM_DEBUG_MISC, "gg",
+					   "import_buddies_server_results: users_tbl[i] is empty\n");
 			continue;
 		}
 
@@ -780,7 +771,8 @@ static void import_buddies_server_results(GaimConnection *gc, gchar *webdata)
 			continue;
 		}
 
-		debug_printf("import_buddies_server_results: uin: %s\n", name);
+		gaim_debug(GAIM_DEBUG_MISC, "gg",
+				   "import_buddies_server_results: uin: %s\n", name);
 		if (!gaim_find_buddy(gc->account, name)) {
 			struct buddy *b;
 			struct group *g;
@@ -819,7 +811,8 @@ static void export_buddies_server_results(GaimConnection *gc, gchar *webdata)
 		return;
 	}
 
-	debug_printf("export_buddies_server_results: webdata [%s]\n", webdata);
+	gaim_debug(GAIM_DEBUG_MISC, "gg",
+			   "export_buddies_server_results: webdata [%s]\n", webdata);
 	gaim_notify_error(gc, NULL,
 					  _("Couldn't transfer Buddy List to Gadu-Gadu server"),
 					  NULL);
@@ -834,7 +827,8 @@ static void delete_buddies_server_results(GaimConnection *gc, gchar *webdata)
 		return;
 	}
 
-	debug_printf("delete_buddies_server_results: webdata [%s]\n", webdata);
+	gaim_debug(GAIM_DEBUG_MISC, "gg",
+			   "delete_buddies_server_results: webdata [%s]\n", webdata);
 	gaim_notify_error(gc, NULL,
 					  _("Couldn't delete Buddy List from Gadu-Gadu server"),
 					  NULL);
@@ -848,7 +842,8 @@ static void password_change_server_results(GaimConnection *gc, gchar *webdata)
 		return;
 	}
 
-	debug_printf("password_change_server_results: webdata [%s]\n", webdata);
+	gaim_debug(GAIM_DEBUG_MISC, "gg",
+			   "password_change_server_results: webdata [%s]\n", webdata);
 	gaim_notify_error(gc, NULL,
 					  _("Password couldn't be changed"), NULL);
 }
@@ -861,10 +856,11 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 	int len;
 	char read_data;
 
-	debug_printf("http_results: begin\n");
+	gaim_debug(GAIM_DEBUG_INFO, "gg", "http_results: begin\n");
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
-		debug_printf("search_callback: g_slist_find error\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "gg",
+				   "search_callback: g_slist_find error\n");
 		gaim_input_remove(hdata->inpa);
 		g_free(hdata);
 		close(source);
@@ -894,7 +890,8 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 	gaim_input_remove(hdata->inpa);
 	close(source);
 
-	debug_printf("http_results: type %d, webdata [%s]\n", hdata->type, webdata);
+	gaim_debug(GAIM_DEBUG_MISC, "gg",
+			   "http_results: type %d, webdata [%s]\n", hdata->type, webdata);
 
 	switch (hdata->type) {
 	case AGG_HTTP_SEARCH:
@@ -914,7 +911,8 @@ static void http_results(gpointer data, gint source, GaimInputCondition cond)
 		break;
 	case AGG_HTTP_NONE:
 	default:
-		debug_printf("http_results: unsupported type %d\n", hdata->type);
+		gaim_debug(GAIM_DEBUG_ERROR, "gg",
+				   "http_results: unsupported type %d\n", hdata->type);
 		break;
 	}
 
@@ -929,10 +927,11 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 	gchar *request = hdata->request;
 	gchar *buf;
 
-	debug_printf("http_req_callback: begin\n");
+	gaim_debug(GAIM_DEBUG_INFO, "gg", "http_req_callback: begin\n");
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
-		debug_printf("http_req_callback: g_slist_find error\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "gg",
+				   "http_req_callback: g_slist_find error\n");
 		g_free(request);
 		g_free(hdata);
 		close(source);
@@ -945,7 +944,8 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
-	debug_printf("http_req_callback: http request [%s]\n", request);
+	gaim_debug(GAIM_DEBUG_MISC, "gg",
+			   "http_req_callback: http request [%s]\n", request);
 
 	buf = g_strdup_printf("POST %s HTTP/1.0\r\n"
 			      "Host: %s\r\n"

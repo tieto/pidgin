@@ -28,6 +28,8 @@
 /**************************************************************************/
 struct gaim_xfer;
 
+#include "account.h"
+
 /**
  * Types of file transfers.
  */

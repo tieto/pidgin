@@ -8,21 +8,15 @@
  * BUGS:
  *	? I think i fixed them all.
  */
-#include "config.h"
+#include "internal.h"
+
+#include "debug.h"
+#include "util.h"
+
+#include "gtkplugin.h"
+#include "gtkutils.h"
 
 #include "gaim.h"
-#include "gtkplugin.h"
-
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <fcntl.h>
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
 
 #define SPELLCHECK_PLUGIN_ID "gtk-spellcheck"
 

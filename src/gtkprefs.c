@@ -21,38 +21,30 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
-#include <sys/time.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <gtk/gtk.h>
-#include "gtkimhtml.h"
-#include "gaim.h"
-#include "gtkblist.h"
-#include "gtkdebug.h"
-#include "gtkplugin.h"
-#include "gtkprefs.h"
-#include "prpl.h"
+#include "debug.h"
+#include "notify.h"
 #include "prefs.h"
 #include "proxy.h"
+#include "prpl.h"
 #include "sound.h"
-#include "gtksound.h"
-#include "notify.h"
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gtkblist.h"
+#include "gtkconv.h"
+#include "gtkdebug.h"
+#include "gtkimhtml.h"
+#include "gtkplugin.h"
+#include "gtkprefs.h"
+#include "gtksound.h"
+#include "gtkutils.h"
+#include "stock.h"
+
+#include "ui.h"
+
+/* XXX for grab_url */
+#include "gaim.h"
 
 #define PROXYHOST 0
 #define PROXYPORT 1

@@ -3,7 +3,7 @@
  *
  * gaim
  *
- * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
+ * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,24 +20,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <sys/stat.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
-
-#include <gtk/gtk.h>
-#include "gaim.h"
-#include "proxy.h"
+#include "internal.h"
+#include "ft.h"
 #include "notify.h"
-
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "proxy.h"
 
 static struct gaim_xfer_ui_ops *xfer_ui_ops = NULL;
 

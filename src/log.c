@@ -2,28 +2,22 @@
  * Function to remove a log file entry
  * ---------------------------------------------------
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
+#include "internal.h"
 
-#ifndef _WIN32
-#include <unistd.h>
-#endif
-
-#include "gaim.h"
-#include "core.h"
+#include "conversation.h"
+#include "debug.h"
+#include "log.h"
 #include "multi.h"
+#include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
-#include "notify.h"
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gtkconv.h"
+
+#include "ui.h"
+
+GList *log_conversations = NULL;
 
 void rm_log(struct log_conversation *a)
 {

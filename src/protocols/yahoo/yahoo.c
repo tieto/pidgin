@@ -19,38 +19,24 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#ifndef _WIN32
-#include <netdb.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#else
-#include <winsock.h>
-#endif
-
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <ctype.h>
-#include "gaim.h"
+#include "account.h"
 #include "accountopt.h"
+#include "debug.h"
 #include "multi.h"
+#include "notify.h"
 #include "prpl.h"
 #include "proxy.h"
+#include "request.h"
+#include "server.h"
+#include "util.h"
+
 #include "md5.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+/* XXX */
+#include "gaim.h"
+#include "ui.h"
 
 extern char *yahoo_crypt(const char *, const char *);
 
@@ -529,7 +515,7 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 	
 	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))) {
 		if (*stat == '1')
-			serv_got_typing(gc, from, 0, TYPING);
+			serv_got_typing(gc, from, 0, GAIM_TYPING);
 		else
 			serv_got_typing_stopped(gc, from);
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
@@ -1233,7 +1219,7 @@ int yahoo_send_typing(GaimConnection *gc, char *who, int typ)
 	yahoo_packet_hash(pkt, 49, "TYPING");
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 14, " ");
-	yahoo_packet_hash(pkt, 13, typ == TYPING ? "1" : "0");
+	yahoo_packet_hash(pkt, 13, typ == GAIM_TYPING ? "1" : "0");
 	yahoo_packet_hash(pkt, 5, who);
 	yahoo_packet_hash(pkt, 1002, "1");
 

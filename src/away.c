@@ -16,24 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  *
+ *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-#include <gtk/gtk.h>
-#include "gaim.h"
-#include "prpl.h"
-#include "gtkimhtml.h"
-#include "gtkblist.h"
+#include "conversation.h"
+#include "debug.h"
 #include "plugin.h"
 #include "prefs.h"
+#include "prpl.h"
+#include "util.h"
+
+/* XXX Until we can get rid of the message queue stuff... */
+#include "gaim.h"
+
+#include "gtkblist.h"
+#include "gtkimhtml.h"
+#include "gtkprefs.h"
+#include "gtkutils.h"
+#include "ui.h"
 
 GtkWidget *imaway = NULL;
 

@@ -24,6 +24,8 @@
 #ifndef _GAIM_GTK_LIST_H_
 #define _GAIM_GTK_LIST_H_
 
+#include "blist.h"
+
 enum {
 	STATUS_ICON_COLUMN,
 	STATUS_ICON_VISIBLE_COLUMN,

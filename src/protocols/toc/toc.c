@@ -18,40 +18,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifndef _WIN32
-#include <netdb.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#else
-#include <winsock.h>
-#endif
-
-#include <gtk/gtk.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include "prpl.h"
+#include "account.h"
 #include "accountopt.h"
+#include "conversation.h"
+#include "debug.h"
+#include "prpl.h"
 #include "multi.h"
-#include "gaim.h"
+#include "notify.h"
 #include "proxy.h"
+#include "request.h"
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+/* XXX */
+#include "gaim.h"
+#include "ui.h"
 
 static GaimPlugin *my_protocol = NULL;
 

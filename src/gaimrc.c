@@ -18,36 +18,24 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
-
-#ifndef _WIN32
-#include <sys/time.h>
-#include <unistd.h>
-#endif
-
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "gaim.h"
-#include "prpl.h"
+#include "account.h"
+#include "debug.h"
+#include "log.h"
+#include "notify.h"
+#include "pounce.h"
 #include "prefs.h"
 #include "proxy.h"
+#include "prpl.h"
 #include "sound.h"
-#include "gtksound.h"
-#include "pounce.h"
-#include "gtkpounce.h"
-#include "notify.h"
+#include "ui.h"
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gaim.h"
+
+#include "gtkpounce.h"
+#include "gtksound.h"
 
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG _("sorry, i ran out for a while. bbl")

@@ -28,12 +28,9 @@
 /* This provides code for connecting to a Gaim socket and communicating with
  * it.  It will eventually be made a library once the core and ui are split. */
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#include "internal.h"
 #include <sys/un.h>
-#include <unistd.h>
-#include "gaim.h"
-#include "remote-socket.h"
+#include <gaim-remote/remote.h>
 
 void
 gaim_remote_session_send_packet(int fd, GaimRemotePacket *p)

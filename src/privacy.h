@@ -19,7 +19,6 @@
  *
  */
 
-#include "gaim.h"
 gboolean gaim_privacy_permit_add(GaimAccount *account, const char *name);
 gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name);
 gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name);

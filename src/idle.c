@@ -18,31 +18,32 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <time.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
+#include "internal.h"
 
 #ifdef USE_SCREENSAVER
-#ifndef _WIN32
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/extensions/scrnsaver.h>
-#include <gdk/gdkx.h>
-#else
-#include "idletrack.h"
-#endif
+# ifndef _WIN32
+#  include <X11/Xlib.h>
+#  include <X11/Xutil.h>
+#  include <X11/extensions/scrnsaver.h>
+#  include <gdk/gdkx.h>
+# else
+#  include "idletrack.h"
+# endif
 #endif /* USE_SCREENSAVER */
 
-#include "gaim.h"
 #include "connection.h"
+#include "debug.h"
+#include "log.h"
 #include "multi.h"
-#include "prpl.h"
 #include "prefs.h"
+#include "prpl.h"
+
+#include "ui.h"
+
+#include "gtkprefs.h"
+
+/* XXX For the away stuff */
+#include "gaim.h"
 
 #define IDLEMARK 600   	/* 10 minutes! */
 

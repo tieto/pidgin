@@ -1,15 +1,18 @@
 /* Puts last 4k of log in new conversations a la Everybuddy (and then
  * stolen by Trillian "Pro") */
 
-#include "config.h"
+#include "internal.h"
 
-#include "gaim.h"
+#include "conversation.h"
+#include "debug.h"
 #include "prefs.h"
+#include "util.h"
+
+#include "gtkconv.h"
 #include "gtkimhtml.h"
 #include "gtkplugin.h"
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
+
+#include "gaim.h"
 
 #define HISTORY_PLUGIN_ID "core-history"
 

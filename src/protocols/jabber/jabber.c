@@ -19,46 +19,35 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <sys/types.h>
-/*this must happen before sys/socket.h or freebsd won't compile*/
-
-#ifndef _WIN32
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/utsname.h>
-#include <unistd.h>
-#else
-#include "utsname.h"
-#endif
-
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <sys/stat.h>
-#include "gaim.h"
-#include "accountopt.h"
-#include "multi.h"
-#include "prpl.h"
-#ifdef MAX
-#undef MAX
-#endif
-#ifdef MIN
-#undef MIN
-#endif
-#include "jabber.h"
-#include "proxy.h"
+#include "internal.h"
 
 #ifdef _WIN32
-#include "win32dep.h"
+# include "utsname.h"
 #endif
+
+#include "account.h"
+#include "accountopt.h"
+#include "conversation.h"
+#include "debug.h"
+#include "ft.h"
+#include "multi.h"
+#include "notify.h"
+#include "prpl.h"
+#include "request.h"
+#include "util.h"
+
+/* XXX */
+#include "gaim.h"
+
+#ifdef MAX
+# undef MAX
+#endif
+#ifdef MIN
+# undef MIN
+#endif
+
+#include "jabber.h"
+#include "proxy.h"
 
 static GaimPlugin *my_protocol = NULL;
 
@@ -1093,6 +1082,7 @@ static jab_res_info jabber_find_resource(GaimConnection *gc, const char *who)
 	return jri;
 }
 
+#if 0
 static gboolean jabber_is_default_resource(GaimConnection *gc, const char *who)
 {
 	jab_res_info jri = jabber_find_resource(gc, who);
@@ -1107,6 +1097,7 @@ static gboolean jabber_is_default_resource(GaimConnection *gc, const char *who)
 	g_free(buddy);
 	return FALSE;
 }
+#endif
 
 /*
  * if the resource doesn't exist, create it.  otherwise, just update the priority
@@ -1413,7 +1404,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 			/* a non-message message! */
 			from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
 			if(typing)
-				serv_got_typing(GJ_GC(gjc), from, 0, TYPING);
+				serv_got_typing(GJ_GC(gjc), from, 0, GAIM_TYPING);
 			else
 				serv_got_typing_stopped(GJ_GC(gjc), from);
 			g_free(from);
@@ -2484,7 +2475,7 @@ static int jabber_send_typing(GaimConnection *gc, char *who, int typing)
 	y = xmlnode_insert_tag(x, "x");
 	xmlnode_put_attrib(y, "xmlns", "jabber:x:event");
 
-	if(typing == TYPING)
+	if(typing == GAIM_TYPING)
 		xmlnode_insert_tag(y, "composing");
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);

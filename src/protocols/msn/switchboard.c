@@ -327,7 +327,7 @@ control_msg(MsnServConn *servconn, MsnMessage *msg)
 		(value = msn_message_get_attr(msg, "TypingUser")) != NULL) {
 
 		serv_got_typing(gc, servconn->msg_passport, MSN_TYPING_RECV_TIMEOUT,
-						TYPING);
+						GAIM_TYPING);
 	}
 
 	return TRUE;

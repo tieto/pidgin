@@ -19,31 +19,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#ifndef _WIN32
-#include <sys/time.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#endif
-
-#include <sys/types.h>
-#include <fcntl.h>
-#include <errno.h>
-#include "gaim.h"
+#include "debug.h"
 #include "proxy.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gaim.h"
 
 gchar *strip_html(const gchar *text)
 {

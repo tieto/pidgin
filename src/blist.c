@@ -19,29 +19,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#ifndef _WIN32
-#include <unistd.h>
-#else
-#include <direct.h>
-#endif
-#include <ctype.h>
-#include "gaim.h"
-#include "prpl.h"
+#include "internal.h"
 #include "blist.h"
+#include "conversation.h"
+#include "debug.h"
 #include "notify.h"
 #include "prefs.h"
-
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "privacy.h"
+#include "prpl.h"
+#include "server.h"
+#include "util.h"
 
 #define PATHSIZE 1024
 

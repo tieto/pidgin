@@ -3,12 +3,16 @@
  * 40-day idle times.
  */
 
-#include "config.h"
+#include "internal.h"
+
+#include "connection.h"
+#include "debug.h"
+#include "server.h"
+
+#include "gtkplugin.h"
+#include "gtkutils.h"
 
 #include "gaim.h"
-#include "multi.h"
-#include "gtkplugin.h"
-#include <sys/time.h>
 
 #define IDLE_PLUGIN_ID "gtk-idle"
 

@@ -15,6 +15,7 @@ endif
 
 INCLUDES = \
 	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/plugins \
 	-DVERSION=\"$(VERSION)\" \
 	-DDATADIR=\"$(datadir)\" \
 	$(DEBUG_CFLAGS)

@@ -21,10 +21,9 @@
  *
  */
 
-#include "gaim.h"
+#include "internal.h"
+
 #include <getopt.h>
-#include <unistd.h>
-#include <string.h>
 #include <locale.h>
 
 #include <gaim-remote/remote.h>

@@ -1,7 +1,8 @@
-/*
- * gaim
+/**
+ * @file gtkconv.h GTK+ Conversation API
+ * @ingroup gtkui
  *
- * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
+ * Copyright (C) 2002-2003 Christian Hammond <chipx86@gnupdate.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,44 +19,44 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
+#include "internal.h"
+
 #ifndef _WIN32
-#include <sys/time.h>
-#include <unistd.h>
-#include <gdk/gdkx.h>
-#include <X11/Xlib.h>
-#endif /*_WIN32*/
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <ctype.h>
-#include <gtk/gtk.h>
-#ifdef USE_GTKSPELL
-#include <gtkspell/gtkspell.h>
+# include <X11/Xlib.h>
 #endif
+
+#ifdef USE_GTKSPELL
+# include <gtkspell/gtkspell.h>
+#endif
+
 #include <gdk/gdkkeysyms.h>
-#include "prpl.h"
-#include "gtkimhtml.h"
-#include "dnd-hints.h"
-#include "sound.h"
-#include "gtkblist.h"
+
+#include "debug.h"
+#include "log.h"
+#include "multi.h"
 #include "notify.h"
 #include "prefs.h"
+#include "prpl.h"
+#include "sound.h"
+#include "util.h"
+
+#include "dnd-hints.h"
+#include "gtkblist.h"
 #include "gtkconv.h"
-#include "gaim.h"
+#include "gtkimhtml.h"
+#include "gtkutils.h"
+#include "stock.h"
+
 #include "ui.h"
-#include "debug.h"
-#include "multi.h"
+
+/* XXX */
+#include "gaim.h"
 
 #ifdef _WIN32
-#include "win32dep.h"
-#include "wspell.h"
+# include "wspell.h"
 #endif
+
+#define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
 static char nick_colors[][8] = {
 	"#ba55d3",              /* Medium Orchid */
@@ -1325,7 +1326,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 		/* XXX The (char *) should go away! Somebody add consts to stuff! */
 		serv_send_typing(gaim_conversation_get_gc(conv),
 						 (char *)gaim_conversation_get_name(conv),
-						 NOT_TYPING);
+						 GAIM_NOT_TYPING);
 	}
 	else {
 		/* We're deleting, but not all of it, so it counts as typing. */
@@ -1936,7 +1937,7 @@ got_typing_keypress(GaimConversation *conv, gboolean first)
 
 	/*
 	 * We know we got something, so we at least have to make sure we don't
-	 * send TYPED any time soon.
+	 * send GAIM_TYPED any time soon.
 	 */
 
 	im = GAIM_IM(conv);
@@ -1951,7 +1952,7 @@ got_typing_keypress(GaimConversation *conv, gboolean first)
 
 		int timeout = serv_send_typing(gaim_conversation_get_gc(conv),
 									   (char *)gaim_conversation_get_name(conv),
-									   TYPING);
+									   GAIM_TYPING);
 
 		if (timeout)
 			gaim_im_set_type_again(im, time(NULL) + timeout);
@@ -1976,7 +1977,7 @@ update_typing_icon(GaimConversation *conv)
 		gtk_widget_destroy(gtkwin->menu.typing_icon);
 		gtkwin->menu.typing_icon = NULL;
 	}
-	if(im && gaim_im_get_typing_state(im) == TYPING) {
+	if(im && gaim_im_get_typing_state(im) == GAIM_TYPING) {
 		gtkwin->menu.typing_icon = gtk_image_menu_item_new();
 		gtk_image_menu_item_set_image(
 				GTK_IMAGE_MENU_ITEM(gtkwin->menu.typing_icon),
@@ -1984,7 +1985,7 @@ update_typing_icon(GaimConversation *conv)
 					GTK_ICON_SIZE_MENU));
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
 				_("User is typing..."), NULL);
-	} else if(im && gaim_im_get_typing_state(im) == TYPED) {
+	} else if(im && gaim_im_get_typing_state(im) == GAIM_TYPED) {
 		gtkwin->menu.typing_icon = gtk_image_menu_item_new();
 		gtk_image_menu_item_set_image(
 				GTK_IMAGE_MENU_ITEM(gtkwin->menu.typing_icon),
@@ -4456,13 +4457,13 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		style->font_desc = pango_font_description_copy(
 				gtk_widget_get_style(gtkconv->tab_label)->font_desc);
 
-		if (im != NULL && gaim_im_get_typing_state(im) == TYPING) {
+		if (im != NULL && gaim_im_get_typing_state(im) == GAIM_TYPING) {
 			style->fg[GTK_STATE_NORMAL].red   = 0x4646;
 			style->fg[GTK_STATE_NORMAL].green = 0xA0A0;
 			style->fg[GTK_STATE_NORMAL].blue  = 0x4646;
 			style->fg[GTK_STATE_ACTIVE] = style->fg[GTK_STATE_NORMAL];
 		}
-		else if (im != NULL && gaim_im_get_typing_state(im) == TYPED) {
+		else if (im != NULL && gaim_im_get_typing_state(im) == GAIM_TYPED) {
 			style->fg[GTK_STATE_NORMAL].red   = 0xD1D1;
 			style->fg[GTK_STATE_NORMAL].green = 0x9494;
 			style->fg[GTK_STATE_NORMAL].blue  = 0x0C0C;

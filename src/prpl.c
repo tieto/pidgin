@@ -18,22 +18,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
-#include "gaim.h"
+#include "internal.h"
+#include "debug.h"
 #include "gtkutils.h"
 #include "gtkblist.h"
 #include "multi.h"
-#include "prpl.h"
 #include "notify.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "prpl.h"
+#include "request.h"
+#include "ui.h"
+#include "util.h"
 
 GtkWidget *protomenu = NULL;
 

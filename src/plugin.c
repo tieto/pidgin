@@ -34,29 +34,15 @@
  * Yeah, well now I'm re-writing a good portion of it! The perl stuff was
  * a hack. Tsk tsk! -- Christian <chipx86@gnupdate.org>
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "gaim.h"
 #include "accountopt.h"
-#include "prpl.h"
+#include "debug.h"
 #include "event.h"
 #include "notify.h"
-
-#include <string.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "prefs.h"
+#include "prpl.h"
+#include "request.h"
 
 #ifdef _WIN32
 # define PLUGIN_EXT ".dll"

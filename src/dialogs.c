@@ -18,46 +18,29 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#include "internal.h"
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <ctype.h>
-
-#ifdef _WIN32
-#include <winsock.h>
-#else
-#include <sys/socket.h>
-#include <time.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#endif
-
-#include <errno.h>
-#include <math.h>
-
-#include <gtk/gtk.h>
-#include "gaim.h"
-#include "gtkimhtml.h"
-#include "prpl.h"
-#include "gtkblist.h"
+#include "debug.h"
+#include "log.h"
+#include "multi.h"
 #include "notify.h"
 #include "prefs.h"
-#include "multi.h"
+#include "privacy.h"
+#include "prpl.h"
+#include "request.h"
+#include "util.h"
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gtkblist.h"
+#include "gtkconv.h"
+#include "gtkimhtml.h"
+#include "gtkprefs.h"
+#include "gtkutils.h"
+#include "stock.h"
 
-#define PATHSIZE 1024
+#include "ui.h"
+
+/* XXX For the soon-to-be-deprecated MultiEntryDlg stuff */
+#include "gaim.h"
 
 static GtkWidget *imdialog = NULL;	/*I only want ONE of these :) */
 static GList *dialogwindows = NULL;

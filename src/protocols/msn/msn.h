@@ -22,35 +22,27 @@
 #ifndef _MSN_H_
 #define _MSN_H_
 
-#include "config.h"
+#include "internal.h"
 
-#ifndef _WIN32
-#include <unistd.h>
-#else
-#include <winsock.h>
-#include <io.h>
-#endif
-
-
-#include <sys/stat.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
-#include <ctype.h>
-#ifndef _WIN32
-#include <netdb.h>
-#endif
-
-#include "gaim.h"
 #include "account.h"
+#include "accountopt.h"
 #include "blist.h"
-#include "conversation.h"
 #include "connection.h"
+#include "conversation.h"
 #include "debug.h"
 #include "md5.h"
+#include "notify.h"
+#include "privacy.h"
 #include "proxy.h"
 #include "prpl.h"
+#include "request.h"
+#include "server.h"
+#include "util.h"
+
+#include "ui.h"
+
+/* XXX */
+#include "gaim.h"
 
 #ifdef _WIN32
 #include "win32dep.h"

@@ -29,6 +29,14 @@ typedef struct _GaimAccount GaimAccount;
 #include "proxy.h"
 #include "prpl.h"
 
+enum
+{
+	PERMIT_ALL  = 1,
+	PERMIT_NONE,
+	PERMIT_SOME,
+	DENY_SOME
+};
+
 struct _GaimAccount
 {
 	char *username;             /**< The username.               */

@@ -20,12 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <glib.h>
+#include "internal.h"
+#include "debug.h"
+#include "pounce.h"
 
 #include "debug.h"
 #include "pounce.h"

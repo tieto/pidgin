@@ -21,20 +21,19 @@
  * ticker.c -- Syd Logan, Summer 2000
  * pluginized- Sean Egan, Summer 2002
  */
+#include "internal.h"
 
-
-#include <gtk/gtk.h>
-#include "gtkticker.h"
-#include <string.h>
-#include <stdlib.h>
-#include "gaim.h"
-#include "prpl.h"
-#include "gtkplugin.h"
 #include "blist.h"
+#include "conversation.h"
+#include "debug.h"
+#include "prpl.h"
+
 #include "gtkblist.h"
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
+#include "gtkplugin.h"
+
+#include "gaim.h"
+
+#include "gtkticker.h"
 
 #define TICKER_PLUGIN_ID "gtk-ticker"
 
