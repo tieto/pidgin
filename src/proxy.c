@@ -765,6 +765,7 @@ proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		return -1;
 	}
 	fcntl(fd, F_SETFL, O_NONBLOCK);
+	fcntl(fd, F_SETFD, FD_CLOEXEC);
 
 	if (connect(fd, (struct sockaddr *)addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
@@ -957,6 +958,7 @@ proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 	}
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
+	fcntl(fd, F_SETFD, FD_CLOEXEC);
 
 	if (connect(fd, addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
@@ -1088,6 +1090,7 @@ proxy_connect_socks4(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		return -1;
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
+	fcntl(fd, F_SETFD, FD_CLOEXEC);
 
 	if (connect(fd, addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
@@ -1341,6 +1344,7 @@ proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		return -1;
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
+	fcntl(fd, F_SETFD, FD_CLOEXEC);
 
 	if (connect(fd, addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
