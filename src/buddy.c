@@ -1132,6 +1132,8 @@ struct buddy *find_buddy(char *who)
 void rem_bp(GtkWidget *w, struct buddy_pounce *b)
 {
 	buddy_pounces = g_list_remove(buddy_pounces, b);
+	do_bp_menu();
+	save_prefs();
 }
 
 void do_pounce(char *name)
