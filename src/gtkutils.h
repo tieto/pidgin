@@ -45,6 +45,8 @@ typedef enum
 
 typedef gboolean (*GaimCheckAccountFunc)(GaimAccount *account);
 
+extern guint accels_save_timer;
+
 /**
  * Sets up a gtkimhtml widget, loads it with smileys, and sets the
  * default signal handlers.
@@ -283,5 +285,22 @@ void gaim_gtk_find_images(const char *message, GSList **list);
  * @todo Move this to a UI-specific file.
  */
 char *stylize(const gchar *text, int len);
+
+/**
+ * Save menu accelerators callback
+ */
+void gaim_gtk_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,
+														 GdkModifierType arg2, GClosure *arg3,
+														 gpointer data);
+
+/**
+ * Save menu accelerators
+ */
+gboolean gaim_gtk_save_accels(gpointer data);
+
+/**
+ * Load menu accelerators
+ */
+void gaim_gtk_load_accels();
 
 #endif /* _GAIM_GTK_UTILS_H_ */

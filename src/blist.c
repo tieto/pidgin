@@ -114,32 +114,34 @@ GaimContact *gaim_buddy_get_contact(GaimBuddy *buddy)
 static void gaim_contact_compute_priority_buddy(GaimContact *contact) {
 	GaimBlistNode *bnode;
 	contact->priority = NULL;
+	contact->score = INT_MAX;
 
 	for(bnode = ((GaimBlistNode*)contact)->child; bnode; bnode = bnode->next) {
 		GaimBuddy *buddy;
+		int score = 0;
+
 		if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 			continue;
 		buddy = (GaimBuddy*)bnode;
 		if(!gaim_account_is_connected(buddy->account))
 			continue;
 
-		if(!contact->priority) {
+		if (!GAIM_BUDDY_IS_ONLINE(buddy))
+			score += gaim_prefs_get_int("/core/contact/offline_score");
+		if (buddy->uc & UC_UNAVAILABLE)
+			score += gaim_prefs_get_int("/core/contact/away_score");
+		if (buddy->idle)
+			score += gaim_prefs_get_int("/core/contact/idle_score");
+
+		score += gaim_account_get_int(buddy->account, "score", 0);
+
+		if (score < contact->score) {
 			contact->priority = buddy;
-		} else if(GAIM_BUDDY_IS_ONLINE(buddy)) {
-			if(!GAIM_BUDDY_IS_ONLINE(contact->priority)) {
-				contact->priority = buddy;
-			} else if(!(buddy->uc & UC_UNAVAILABLE) && !buddy->idle &&
-					(contact->priority->uc & UC_UNAVAILABLE ||
-					 contact->priority->idle)) {
-				contact->priority = buddy;
-			} else if(!buddy->idle && contact->priority->idle) {
-				contact->priority = buddy;
-			} else if(contact->priority->uc & UC_UNAVAILABLE &&
-					contact->priority->idle && (!(buddy->uc & UC_UNAVAILABLE) ||
-						!buddy->idle)) {
-				contact->priority = buddy;
-			}
+			contact->score = score;
 		}
+		if (gaim_prefs_get_bool("/core/contact/last_match"))
+			if (score == contact->score)
+				contact->priority = buddy;
 	}
 }
 
@@ -747,6 +749,7 @@ GaimContact *gaim_contact_new()
 	((GaimBlistNode*)c)->type = GAIM_BLIST_CONTACT_NODE;
 
 	c->totalsize = c->currentsize = c->online = 0;
+	c->score = INT_MAX;
 
 	ops = gaim_blist_get_ui_ops();
 	if (ops != NULL && ops->new_node != NULL)

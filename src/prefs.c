@@ -120,6 +120,13 @@ void gaim_prefs_init() {
 	/* Buddies */
 	gaim_prefs_add_none("/core/buddies");
 	gaim_prefs_add_bool("/core/buddies/use_server_alias", TRUE);
+
+	/* Contact Priority Settings */
+	gaim_prefs_add_none("/core/contact");
+	gaim_prefs_add_bool("/core/contact/last_match", FALSE);
+	gaim_prefs_add_int("/core/contact/offline_score", 4);
+	gaim_prefs_add_int("/core/contact/away_score", 2);
+	gaim_prefs_add_int("/core/contact/idle_score", 1);
 }
 
 static char *

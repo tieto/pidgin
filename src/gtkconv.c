@@ -3026,6 +3026,8 @@ setup_menubar(GaimConvWindow *win)
 
 	gtk_item_factory_create_items(gtkwin->menu.item_factory, menu_item_count,
 								  menu_items, win);
+	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
+									 G_CALLBACK(gaim_gtk_save_accels_cb), NULL);
 
 
 	gtkwin->menu.menubar =
