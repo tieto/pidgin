@@ -35,11 +35,18 @@
 	if ((tag = strstr(str, id "=\"")) != NULL) \
 	{ \
 		char buf[16]; \
+		size_t offset; \
 		tag += strlen(id "=\""); \
 		c = strchr(tag, '"'); \
-		strncpy(buf, tag, c - tag); \
-		buf[c - tag] = '\0'; \
-		obj->field = atoi(buf); \
+		if (c != NULL) \
+		{ \
+			memset(buf, 0, sizeof(buf)); \
+			offset = c - tag; \
+			if (offset >= sizeof(buf)) \
+				offset = sizeof(buf) - 1; \
+			strncpy(buf, tag, offset); \
+			obj->field = atoi(buf); \
+		} \
 	}
 
 static GList *local_objs;
