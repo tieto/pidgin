@@ -1215,7 +1215,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			char *t1 = strip_html(what);
 			c->history = g_string_append(c->history, t1);
 			c->history = g_string_append(c->history, "\n");
-			g_free(what);
+			g_free(t1);
 		} else {
 			c->history = g_string_append(c->history, what);
 			c->history = g_string_append(c->history, "<BR>\n");
