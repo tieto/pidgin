@@ -429,22 +429,49 @@ do_error_dialog(char *message, char *title)
 {
         GtkWidget *d;
 	GtkWidget *label;
+	GtkWidget *icon_i;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
+	GtkWidget *button_box;
 	GtkWidget *close;
 
 
 	d = gtk_dialog_new();
-
+	gtk_window_set_policy(GTK_WINDOW(d), FALSE, FALSE, TRUE);
+	gtk_widget_show(d);
         label = gtk_label_new(message);
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_widget_show(label);
-	close = gtk_button_new_with_label(_("Close"));
-	gtk_widget_show(close);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->vbox),
 		label, FALSE, FALSE, 5);
+		
+	/* Build Close Button */
+
+	close = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( d->window, &mask, NULL, cancel_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Close"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(close), button_box);
+	gtk_widget_show(close);
+
+	/* End of Close Button */
+
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), 
 		close, FALSE, FALSE, 5);
-		
 
+	gtk_container_set_border_width(GTK_CONTAINER(d), 5);
 	gtk_window_set_title(GTK_WINDOW(d), title);
 	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), d);
         gtk_widget_realize(d);
