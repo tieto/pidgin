@@ -1,7 +1,7 @@
 LDFLAGS += $(LDADD) $(LIBS) -ggdb -shared
 SUFFIXES = .c .so
 .c.so:
-	$(CC) $(CFLAGS) -I../src -DVERSION=\"$(VERSION)\" -fPIC -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
+	$(CC) $(CFLAGS) -I\$(top_srcdir)/src -I\$(top_srcdir) -DVERSION=\"$(VERSION)\" -fPIC -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
 
 if PLUGINS
 
@@ -18,4 +18,4 @@ endif
 
 EXTRA_DIST = ChangeLog PERL-HOWTO CRAZY HOWTO SIGNALS autorecon.c error.c filectl.c \
 	gaiminc.c iconaway.c lagmeter.c notify.c simple.c spellchk.c \
-	toc_commands.c events.c gaim.pl
+	toc_commands.c events.c gaim.pl irc.c

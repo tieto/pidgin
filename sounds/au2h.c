@@ -15,6 +15,8 @@ int main(int argc, char *argv[])
 	FILE *f;
 	int res,x;
 	char buf[BUF_SIZE];
+	char file[256];
+	int offset = 0, cnt;
 
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0) {
@@ -27,7 +29,16 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	argv[1][strlen(argv[1])-3]='\0';
-	fprintf(f, "static unsigned char %s[] = {\n", argv[1]);
+	cnt = strlen(argv[1]);
+	while (offset != cnt) {
+		if (argv[1][cnt - offset] == '/') {
+			offset--;
+			break;
+		}
+		offset++;
+	}
+	sprintf(file, "%s", &argv[1][cnt - offset]);
+	fprintf(f, "static unsigned char %s[] = {\n", file);
 	read(fd, buf, 8); /* id & offset */
 	read(fd, buf, 8); /* len & encoding */
 	read(fd, buf, 8); /* rate & count */

@@ -9,31 +9,14 @@ all: BuddyArrive.h BuddyLeave.h Send.h Receive.h
 clean distclean:
 	rm -f BuddyArrive.h BuddyLeave.h Send.h Receive.h
 
-BuddyArrive.h: au2h BuddyArrive.au
-	./au2h BuddyArrive.au BuddyArrive.h
+BuddyArrive.h: BuddyArrive.au au2h
+	./au2h $< $@
 
-BuddyLeave.h: au2h BuddyLeave.au
-	./au2h BuddyLeave.au BuddyLeave.h
+BuddyLeave.h: BuddyLeave.au au2h
+	./au2h $< $@
 
-Send.h: au2h Send.au                              
-	./au2h Send.au Send.h                  
+Send.h: Send.au au2h
+	./au2h $< $@
 
-Receive.h: au2h Receive.au                              
-	./au2h Receive.au Receive.h                  
-
-#if GNOMEAPPLET
-#gnomedata = `@GNOME_CONFIG@ --datadir`
-#gaimsoundsdir = $(gnomedata)/sounds/gaim
-#gaimsounds_DATA = $(EXTRA_DIST)
-#endif
-#
-#if DISTRIB
-#gaimdistribdir = $(datadir)/sounds/gaim
-#gaimdistrib_DATA = $(EXTRA_DIST)
-#endif
-#
-#if GNOMEBITS
-#bitsdata = `@GNOME_CONFIG@ --datadir`
-#bitssoundsdir = $(bitsdata)/sounds/gaim
-#bitssounds_DATA = $(EXTRA_DIST)
-#endif
+Receive.h: Receive.au au2h
+	./au2h $< $@

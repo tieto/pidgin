@@ -1,4 +1,4 @@
-CFLAGS += -I../../src
+CFLAGS += -I\$(top_srcdir)/src
 LIBS = $(GTK_LIBS)
 
 pkgdir = $(libdir)/gaim
