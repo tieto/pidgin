@@ -398,6 +398,7 @@ AC_CHECK_HEADERS(termios.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_OUTPUT([Makefile
+	       Doxyfile
            doc/Makefile
 	   intl/Makefile
            m4/Makefile
