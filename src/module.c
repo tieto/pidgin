@@ -527,23 +527,36 @@ void remove_all_plugins()
 
 void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 {
+	guint id;
+	struct gaim_plugin *p;
+
 	switch (subtype) {
 		/*
 	case CUI_PLUGIN_LIST:
 		break;
 		*/
 	case CUI_PLUGIN_LOAD:
-		load_plugin(data);
+		p = load_plugin(data);
 		/* XXX need to broadcast to UIs that plugin has been loaded */
 		break;
-		/*
 	case CUI_PLUGIN_UNLOAD:
+		memcpy(&id, data, sizeof(id));
+		p = g_list_nth_data(plugins, id);
+		if (p) {
+			unload_plugin(p);
+			/* XXX need to broadcast to UIs that plugin has been unloaded */
+		}
 		break;
 	case CUI_PLUGIN_RELOAD:
+		memcpy(&id, data, sizeof(id));
+		p = g_list_nth_data(plugins, id);
+		if (p) {
+			p = reload_plugin(p);
+			/* XXX need to broadcast to UIs that plugin has been reloaded */
+		}
 		break;
-		*/
 	default:
-		debug_printf("unhandled plugin subtype: %d\n", subtype);
+		debug_printf("unhandled plugin subtype %d\n", subtype);
 		break;
 	}
 }

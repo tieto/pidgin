@@ -90,6 +90,37 @@ static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 	}
 }
 
+static void user_handler(struct UI *ui, guchar subtype, guchar *data)
+{
+	guint id;
+	struct aim_user *u;
+
+	switch (subtype) {
+		/*
+	case CUI_USER_LIST:
+		break;
+	case CUI_USER_ADD:
+		break;
+	case CUI_USER_REMOVE:
+		break;
+	case CUI_USER_MODIFY:
+		break;
+		*/
+	case CUI_USER_SIGNON:
+		if (!data)
+			return;
+		memcpy(&id, data, sizeof(id));
+		u = g_slist_nth_data(aim_users, id);
+		if (u)
+			serv_login(u);
+		/* don't need to do anything here because the UI will get updates from other handlers */
+		break;
+	default:
+		debug_printf("unhandled user subtype %d\n", subtype);
+		break;
+	}
+}
+
 static gint gaim_recv(GIOChannel *source, void *buf, gint len)
 {
 	gint total = 0;
@@ -144,15 +175,18 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		return FALSE;
 	}
 
-	in = g_new0(guchar, len);
-	if (gaim_recv(source, in, len) != len) {
-		debug_printf("UI has abandoned us!\n");
-		uis = g_slist_remove(uis, ui);
-		g_io_channel_close(ui->channel);
-		g_source_remove(ui->inpa);
-		g_free(ui);
-		return FALSE;
-	}
+	if (len) {
+		in = g_new0(guchar, len);
+		if (gaim_recv(source, in, len) != len) {
+			debug_printf("UI has abandoned us!\n");
+			uis = g_slist_remove(uis, ui);
+			g_io_channel_close(ui->channel);
+			g_source_remove(ui->inpa);
+			g_free(ui);
+			return FALSE;
+		}
+	} else
+		in = NULL;
 
 	switch (type) {
 		case CUI_TYPE_META:
@@ -161,10 +195,10 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		case CUI_TYPE_PLUGIN:
 			plugin_handler(ui, subtype, in);
 			break;
-			/*
 		case CUI_TYPE_USER:
 			user_handler(ui, subtype, in);
 			break;
+			/*
 		case CUI_TYPE_CONN:
 			conn_handler(ui, subtype, in);
 			break;
@@ -183,7 +217,8 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 			break;
 	}
 
-	g_free(in);
+	if (in)
+		g_free(in);
 	return TRUE;
 }
 
