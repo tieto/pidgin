@@ -246,8 +246,11 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 						"%s has added you to his or her contact list.\n",
 						passport);
 
-		if (!(user->list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
+		if (!(user->list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP |
+							   MSN_LIST_FL_OP)))
+		{
 			got_new_entry(gc, passport, friendly);
+		}
 	}
 
 	user->list_op |= (1 << list_id);
