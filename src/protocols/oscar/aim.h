@@ -443,7 +443,6 @@ typedef struct aim_session_s {
 	struct aim_icq_info *icq_info;
 	struct aim_oft_info *oft_info;
 	struct aim_authresp_info *authinfo;
-	struct aim_emailinfo *emailinfo;
 
 	/* Server-stored information (ssi) */
 	struct {
@@ -603,16 +602,12 @@ faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_bos_setidle(aim_session_t *, aim_conn_t *, fu32_t);
 faim_export int aim_bos_changevisibility(aim_session_t *, aim_conn_t *, int, const char *);
 faim_export int aim_bos_setbuddylist(aim_session_t *, aim_conn_t *, const char *);
-faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile_encoding, const char *profile, const int profile_len, const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len, fu32_t caps);
 faim_export int aim_bos_setgroupperm(aim_session_t *, aim_conn_t *, fu32_t mask);
 faim_export int aim_bos_setprivacyflags(aim_session_t *, aim_conn_t *, fu32_t);
 faim_export int aim_reqpersonalinfo(aim_session_t *, aim_conn_t *);
 faim_export int aim_reqservice(aim_session_t *, aim_conn_t *, fu16_t);
 faim_export int aim_bos_reqrights(aim_session_t *, aim_conn_t *);
 faim_export int aim_bos_reqbuddyrights(aim_session_t *, aim_conn_t *);
-faim_export int aim_bos_reqlocaterights(aim_session_t *, aim_conn_t *);
-faim_export int aim_setdirectoryinfo(aim_session_t *sess, aim_conn_t *conn, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy);
-faim_export int aim_setuserinterests(aim_session_t *sess, aim_conn_t *conn, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, fu16_t privacy);
 faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status);
 
 #define AIM_CLIENTTYPE_UNKNOWN  0x0000
@@ -936,24 +931,24 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_
 
 
 
-/* info.c */
+/* 0x0002 - locate.c */
 /*
  * AIM User Info, Standard Form.
  */
-#define AIM_FLAG_UNCONFIRMED 	0x0001 /* "damned transients" */
+#define AIM_FLAG_UNCONFIRMED	0x0001 /* "damned transients" */
 #define AIM_FLAG_ADMINISTRATOR	0x0002
-#define AIM_FLAG_AOL		0x0004
-#define AIM_FLAG_OSCAR_PAY	0x0008
-#define AIM_FLAG_FREE 		0x0010
-#define AIM_FLAG_AWAY		0x0020
-#define AIM_FLAG_ICQ		0x0040
-#define AIM_FLAG_WIRELESS	0x0080
-#define AIM_FLAG_UNKNOWN100	0x0100
-#define AIM_FLAG_UNKNOWN200	0x0200
-#define AIM_FLAG_ACTIVEBUDDY    0x0400
-#define AIM_FLAG_UNKNOWN800	0x0800
-#define AIM_FLAG_ABINTERNAL     0x1000
-#define AIM_FLAG_ALLUSERS	0x001f
+#define AIM_FLAG_AOL			0x0004
+#define AIM_FLAG_OSCAR_PAY		0x0008
+#define AIM_FLAG_FREE 			0x0010
+#define AIM_FLAG_AWAY			0x0020
+#define AIM_FLAG_ICQ			0x0040
+#define AIM_FLAG_WIRELESS		0x0080
+#define AIM_FLAG_UNKNOWN100		0x0100
+#define AIM_FLAG_UNKNOWN200		0x0200
+#define AIM_FLAG_ACTIVEBUDDY	0x0400
+#define AIM_FLAG_UNKNOWN800		0x0800
+#define AIM_FLAG_ABINTERNAL		0x1000
+#define AIM_FLAG_ALLUSERS		0x001f
 
 #define AIM_USERINFO_PRESENT_FLAGS        0x00000001
 #define AIM_USERINFO_PRESENT_MEMBERSINCE  0x00000002
@@ -966,8 +961,8 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_
 #define AIM_USERINFO_PRESENT_SESSIONLEN   0x00000100
 #define AIM_USERINFO_PRESENT_CREATETIME   0x00000200
 
-typedef struct {
-	char sn[MAXSNLEN+1];
+typedef struct aim_userinfo_s {
+	char *sn;
 	fu16_t warnlevel; /* evil percent * 10 (999 = 99.9%) */
 	fu16_t idletime; /* in seconds */
 	fu16_t flags;
@@ -982,22 +977,24 @@ typedef struct {
 		fu8_t crap[0x25]; /* until we figure it out... */
 	} icqinfo;
 	fu32_t present;
+
 	fu16_t iconcsumlen;
 	fu8_t *iconcsum;
-	char *availmsg_encoding;
-	char *availmsg;
-	int availmsg_len;
-} aim_userinfo_t;
 
-faim_export const char *aim_userinfo_sn(aim_userinfo_t *ui);
-faim_export fu16_t aim_userinfo_flags(aim_userinfo_t *ui);
-faim_export fu16_t aim_userinfo_idle(aim_userinfo_t *ui);
-faim_export float aim_userinfo_warnlevel(aim_userinfo_t *ui);
-faim_export time_t aim_userinfo_createtime(aim_userinfo_t *ui);
-faim_export time_t aim_userinfo_membersince(aim_userinfo_t *ui);
-faim_export time_t aim_userinfo_onlinesince(aim_userinfo_t *ui);
-faim_export fu32_t aim_userinfo_sessionlen(aim_userinfo_t *ui);
-faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu32_t cap);
+	char *info;
+	char *info_encoding;
+	fu16_t info_len;
+
+	char *avail;
+	char *avail_encoding;
+	fu16_t avail_len;
+
+	char *away;
+	char *away_encoding;
+	fu16_t away_len;
+
+	struct aim_userinfo_s *next;
+} aim_userinfo_t;
 
 #define AIM_CAPS_BUDDYICON	0x00000001
 #define AIM_CAPS_VOICE		0x00000002
@@ -1023,16 +1020,10 @@ faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu32_t cap);
 #define AIM_CAPS_SECUREIM	0x00200000
 #define AIM_CAPS_LAST		0x00400000
 
-faim_export int aim_0002_000b(aim_session_t *sess, aim_conn_t *conn, const char *sn);
-
 #define AIM_SENDMEMBLOCK_FLAG_ISREQUEST  0
 #define AIM_SENDMEMBLOCK_FLAG_ISHASH     1
 
 faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t offset, fu32_t len, const fu8_t *buf, fu8_t flag);
-
-#define AIM_GETINFO_GENERALINFO 0x00001
-#define AIM_GETINFO_AWAYMESSAGE 0x00003
-#define AIM_GETINFO_CAPABILITIES 0x0004
 
 struct aim_invite_priv {
 	char *sn;
@@ -1058,7 +1049,15 @@ struct aim_invite_priv {
 #define AIM_COOKIETYPE_OFTIMAGE 0x14
 #define AIM_COOKIETYPE_OFTICON  0x15
 
-/* 0x0005 */ faim_export int aim_getinfo(aim_session_t *, aim_conn_t *, const char *, fu16_t);
+faim_export aim_userinfo_t *aim_locate_finduserinfo(const char *sn);
+
+/* 0x0002 */ faim_export int aim_locate_reqrights(aim_session_t *sess);
+/* 0x0004 */ faim_export int aim_locate_setprofile(aim_session_t *sess, const char *profile_encoding, const char *profile, const int profile_len, const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len, fu32_t caps);
+/* 0x0005 */ faim_export int aim_locate_getinfo(aim_session_t *sess, const char *, fu16_t);
+/* 0x0009 */ faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy);
+/* 0x000b */ faim_export int aim_locate_000b(aim_session_t *sess, const char *sn);
+/* 0x000f */ faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, fu16_t privacy);
+/* 0x0015 */ faim_export int aim_locate_getinfoshort(aim_session_t *sess, const char *sn, fu32_t flags);
 
 
 

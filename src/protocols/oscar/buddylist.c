@@ -252,6 +252,8 @@ static int buddychange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, &userinfo);
 
+	if (snac->subtype == 0x000b)
+		aim_locate_requestuserinfo(sess, userinfo.sn);
 	aim_info_free(&userinfo);
 
 	return ret;

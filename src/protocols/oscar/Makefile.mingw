@@ -81,8 +81,8 @@ C_SRC =			admin.c		\
 			ft.c		\
 			icq.c		\
 			im.c		\
-			info.c		\
 			invite.c	\
+			locate.c	\
 			misc.c		\
 			msgcookie.c	\
 			odir.c		\

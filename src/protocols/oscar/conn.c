@@ -891,7 +891,6 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	sess->ssi.waiting_for_ack = 0;
 
 	sess->authinfo = NULL;
-	sess->emailinfo = NULL;
 
 	/*
 	 * Default to SNAC login unless XORLOGIN is explicitly set.

@@ -649,7 +649,7 @@ faim_internal char *aim_gettlv_str(aim_tlvlist_t *list, const fu16_t t, const in
 
 	newstr = (char *) malloc(tlv->length + 1);
 	memcpy(newstr, tlv->value, tlv->length);
-	*(newstr + tlv->length) = '\0';
+	newstr[tlv->length] = '\0';
 
 	return newstr;
 }

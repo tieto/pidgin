@@ -100,7 +100,6 @@ struct oscar_data {
 
 	gboolean killme;
 	gboolean icq;
-	GSList *evilhack;
 	guint icontimer;
 	guint getblisttimer;
 
@@ -150,10 +149,12 @@ struct ask_direct {
 	fu8_t cookie[8];
 };
 
-/* Various PRPL-specific buddy info that we want to keep track of */
+/*
+ * Various PRPL-specific buddy info that we want to keep track of
+ * Some other info is maintained by locate.c, and I'd like to move 
+ * the rest of this to libfaim, mostly im.c
+ */
 struct buddyinfo {
-	time_t signon;
-	int caps;
 	gboolean typingnot;
 	gchar *availmsg;
 	fu32_t ipaddr;
@@ -167,9 +168,6 @@ struct buddyinfo {
 	unsigned long ico_csum;
 	time_t ico_time;
 	gboolean ico_need;
-
-	fu16_t iconcsumlen;
-	fu8_t *iconcsum;
 };
 
 struct name_data {
@@ -218,7 +216,7 @@ static int gaim_parse_offgoing   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_incoming_im(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_misses     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_clientauto (aim_session_t *, aim_frame_t *, ...);
-static int gaim_parse_user_info  (aim_session_t *, aim_frame_t *, ...);
+static int gaim_parse_userinfo   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_motd       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chatnav_info     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chat_join        (aim_session_t *, aim_frame_t *, ...);
@@ -294,7 +292,6 @@ static void oscar_free_name_data(struct name_data *data) {
 static void oscar_free_buddyinfo(void *data) {
 	struct buddyinfo *bi = data;
 	g_free(bi->availmsg);
-	g_free(bi->iconcsum);
 	g_free(bi);
 }
 
@@ -732,10 +729,6 @@ static void oscar_close(GaimConnection *gc) {
 		free(sn);
 	}
 	g_hash_table_destroy(od->buddyinfo);
-	while (od->evilhack) {
-		g_free(od->evilhack->data);
-		od->evilhack = g_slist_remove(od->evilhack, od->evilhack->data);
-	}
 	while (od->create_rooms) {
 		struct create_room *cr = od->create_rooms->data;
 		g_free(cr->name);
@@ -1135,7 +1128,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOK, 0x0003, gaim_parse_searchreply, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ERROR, gaim_parse_msgerr, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_MTN, gaim_parse_mtn, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_user_info, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_userinfo, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ACK, gaim_parse_msgack, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0004, 0x0005, gaim_icbm_param_info, 0);
@@ -1342,12 +1335,12 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
-	char *key;
-	va_list ap;
 	GaimConnection *gc = sess->aux_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimAccount *ac = gaim_connection_get_account(gc);
 	struct oscar_data *od = gc->proto_data;
+	va_list ap;
+	char *key;
 
 	va_start(ap, fr);
 	key = va_arg(ap, char *);
@@ -1809,23 +1802,20 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		bi = g_new0(struct buddyinfo, 1);
 		g_hash_table_insert(od->buddyinfo, g_strdup(normalize(info->sn)), bi);
 	}
-	bi->signon = info->onlinesince ? info->onlinesince : (info->sessionlen + time(NULL));
-	if (caps)
-		bi->caps = caps;
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
 	bi->ipaddr = info->icqinfo.ipaddr;
 
 	/* Available message stuff */
 	free(bi->availmsg);
-	if (info->availmsg)
-		if (info->availmsg_encoding) {
-			gchar *enc = g_strdup_printf("charset=\"%s\"", info->availmsg_encoding);
-			bi->availmsg = oscar_encoding_to_utf8(enc, info->availmsg, info->availmsg_len);
+	if (info->avail != NULL)
+		if (info->avail_encoding) {
+			gchar *enc = g_strdup_printf("charset=\"%s\"", info->avail_encoding);
+			bi->availmsg = oscar_encoding_to_utf8(enc, info->avail, info->avail_len);
 			g_free(enc);
 		} else {
 			/* No explicit encoding means utf8.  Yay. */
-			bi->availmsg = g_strdup(info->availmsg);
+			bi->availmsg = g_strdup(info->avail);
 		}
 	else
 		bi->availmsg = NULL;
@@ -1835,11 +1825,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		char *b16, *saved_b16;
 		GaimBuddy *b;
 
-		free(bi->iconcsum);
-		bi->iconcsum = malloc(info->iconcsumlen);
-		memcpy(bi->iconcsum, info->iconcsum, info->iconcsumlen);
-		bi->iconcsumlen = info->iconcsumlen;
-		b16 = tobase16(bi->iconcsum, bi->iconcsumlen);
+		b16 = tobase16(info->iconcsum, info->iconcsumlen);
 		b = gaim_find_buddy(gc->account, info->sn);
 		saved_b16 = gaim_buddy_get_setting(b, "icon_checksum");
 		if (!b16 || !saved_b16 || strcmp(b16, saved_b16)) {
@@ -2880,30 +2866,11 @@ static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, fu16_t reas
 		case 0x0003: { /* Reply from an ICQ status message request */
 			char *status_msg = gaim_icq_status(state);
 			char *dialog_msg, **splitmsg;
-			struct oscar_data *od = gc->proto_data;
-			GSList *l = od->evilhack;
-			gboolean evilhack = FALSE;
 
 			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
 			splitmsg = g_strsplit(msg, "\r\n", 0);
 
-			/* If who is in od->evilhack, then we're just getting the away message, otherwise this 
-			 * will just get appended to the info box (which is already showing). */
-			while (l) {
-				char *x = l->data;
-				if (!strcmp(x, normalize(who))) {
-					evilhack = TRUE;
-					g_free(x);
-					od->evilhack = g_slist_remove(od->evilhack, x);
-					break;
-				}
-				l = l->next;
-			}
-
-			if (evilhack)
-				dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, status_msg, g_strjoinv("<BR>", splitmsg));
-			else
-				dialog_msg = g_strdup_printf(_("<B>Status:</B> %s<HR>%s"), status_msg, g_strjoinv("<BR>", splitmsg));
+			dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, status_msg, g_strjoinv("<BR>", splitmsg));
 			g_show_info_text(gc, who, 2, dialog_msg, NULL);
 
 			g_free(status_msg);
@@ -3156,110 +3123,54 @@ static char *caps_string(guint caps)
 	return buf; 
 }
 
-static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
-	gchar *header;
-	GSList *l = od->evilhack;
-	gboolean evilhack = FALSE;
-	gchar *membersince = NULL, *onlinesince = NULL, *idle = NULL;
+	GString *text;
+	char *info_utf8 = NULL, *away_utf8 = NULL;
 	va_list ap;
-	aim_userinfo_t *info;
-	fu16_t infotype;
-	char *text_enc = NULL, *text = NULL, *utf8 = NULL;
-	int text_len;
-	const char *username = gaim_account_get_username(gaim_connection_get_account(gc));
+	aim_userinfo_t *userinfo;
 
 	va_start(ap, fr);
-	info = va_arg(ap, aim_userinfo_t *);
-	infotype = (fu16_t) va_arg(ap, unsigned int);
-	text_enc = va_arg(ap, char *);
-	text = va_arg(ap, char *);
-	text_len = va_arg(ap, int);
+	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	if (text_len > 0) {
-		if (!(utf8 = oscar_encoding_to_utf8(text_enc, text, text_len))) {
-			utf8 = g_strdup(_("<i>Unable to display information because it was sent in an unknown encoding.</i>"));
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-					   "Encountered an unknown encoding while parsing userinfo\n");
-		}
-	}
+	text = g_string_new("");
+	g_string_append_printf(text, _("Username: <b>%s</b><br>\n"), userinfo->sn);
+	g_string_append_printf(text, _("Warning Level: <b>%d%%</b><br>\n"), (int)((userinfo->warnlevel/10.0) + 0.5));
 
-	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
-		onlinesince = g_strdup_printf(_("Online Since : <b>%s</b><br>\n"),
-					asctime(localtime((time_t *)&info->onlinesince)));
-	}
+	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE)
+		g_string_append_printf(text, _("Online Since: <b>%s</b><br>\n"),
+					asctime(localtime((time_t *)&userinfo->onlinesince)));
 
-	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
-		membersince = g_strdup_printf(_("Member Since : <b>%s</b><br>\n"),
-					asctime(localtime((time_t *)&info->membersince)));
-	}
+	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE)
+		g_string_append_printf(text, _("Member Since: <b>%s</b><br>\n"),
+					asctime(localtime((time_t *)&userinfo->membersince)));
 
-	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
-		gchar *itime = sec_to_text(info->idletime*60);
-		idle = g_strdup_printf(_("Idle : <b>%s</b>"), itime);
+	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
+		gchar *itime = sec_to_text(userinfo->idletime*60);
+		g_string_append_printf(text, _("Idle: <b>%s</b>"), itime);
 		g_free(itime);
 	} else
-		idle = g_strdup(_("Idle: <b>Active</b>"));
+		g_string_append_printf(text, _("Idle: <b>Active</b>"));
 
-	header = g_strdup_printf(_("Username : <b>%s</b>  %s <br>\n"
-			"Warning Level : <b>%d %%</b><br>\n"
-			"%s"
-			"%s"
-			"%s\n"
-			"<hr>\n"),
-			info->sn,
-			/* images(info->flags), */
-			"",
-			(int)((info->warnlevel/10.0) + 0.5),
-			onlinesince ? onlinesince : "",
-			membersince ? membersince : "",
-			idle ? idle : "");
-
-	g_free(onlinesince);
-	g_free(membersince);
-	g_free(idle);
-
-	while (l) {
-		char *x = l->data;
-		if (!strcmp(x, normalize(info->sn))) {
-			evilhack = TRUE;
-			g_free(x);
-			od->evilhack = g_slist_remove(od->evilhack, x);
-			break;
+	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
+		away_utf8 = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
+		if (away_utf8 != NULL) {
+			g_string_append_printf(text, _("<hr>%s"), away_utf8);
+			g_free(away_utf8);
 		}
-		l = l->next;
 	}
 
-	if (infotype == AIM_GETINFO_AWAYMESSAGE) {
-		if (evilhack) {
-			g_show_info_text(gc, info->sn, 2,
-					 header,
-					 (utf8 && *utf8) ? away_subs(utf8, username) :
-					 _("<i>User has no away message</i>"), NULL);
-		} else {
-			g_show_info_text(gc, info->sn, 0,
-					 header,
-					 (utf8 && *utf8) ? away_subs(utf8, username) : NULL,
-					 (utf8 && *utf8) ? "<hr>" : NULL,
-					 NULL);
+	if ((userinfo->info_len > 0) && (userinfo->info != NULL) && (userinfo->info_encoding != NULL)) {
+		info_utf8 = oscar_encoding_to_utf8(userinfo->info_encoding, userinfo->info, userinfo->info_len);
+		if (info_utf8 != NULL) {
+			g_string_append_printf(text, _("<hr>%s"), info_utf8);
+			g_free(info_utf8);
 		}
-	} else if (infotype == AIM_GETINFO_CAPABILITIES) {
-		g_show_info_text(gc, info->sn, 2,
-				header,
-				"<i>", _("Client Capabilities: "),
-				caps_string(info->capabilities),
-				"</i>",
-				NULL);
-	} else {
-		g_show_info_text(gc, info->sn, 1,
-				 (utf8 && *utf8) ? away_subs(utf8, username) : _("<i>No Information Provided</i>"),
-				 NULL);
 	}
 
-	g_free(header);
-	g_free(utf8);
+	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, text->str, NULL, NULL);
+	g_string_free(text, TRUE);
 
 	return 1;
 }
@@ -3551,7 +3462,7 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 static gboolean gaim_icon_timerfunc(gpointer data) {
 	GaimConnection *gc = data;
 	struct oscar_data *od = gc->proto_data;
-	struct buddyinfo *bi;
+	aim_userinfo_t *userinfo;
 	aim_conn_t *conn;
 
 	conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON);
@@ -3594,9 +3505,9 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 		return FALSE;
 	}
 
-	bi = g_hash_table_lookup(od->buddyinfo, (char *)od->requesticon->data);
-	if (bi && (bi->iconcsumlen > 0)) {
-		aim_bart_request(od->sess, od->requesticon->data, bi->iconcsum, bi->iconcsumlen);
+	userinfo = aim_locate_finduserinfo((char *)od->requesticon->data);
+	if ((userinfo != NULL) && (userinfo->iconcsumlen > 0)) {
+		aim_bart_request(od->sess, od->requesticon->data, userinfo->iconcsum, userinfo->iconcsumlen);
 		return FALSE;
 	} else {
 		char *sn = od->requesticon->data;
@@ -3748,7 +3659,7 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_ssi_reqdata(sess);
 #endif
 
-	aim_bos_reqlocaterights(sess, fr->conn);
+	aim_locate_reqrights(sess);
 	aim_bos_reqbuddyrights(sess, fr->conn);
 	aim_im_reqparams(sess);
 	aim_bos_reqrights(sess, fr->conn); /* XXX - Don't call this with ssi? */
@@ -3852,7 +3763,7 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	od->rights.maxsiglen = od->rights.maxawaymsglen = (guint)maxsiglen;
 
 	if (od->icq)
-		aim_bos_setprofile(sess, fr->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
+		aim_locate_setprofile(sess, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
 	else
 		oscar_set_info(gc, gc->account->user_info);
 
@@ -4420,21 +4331,19 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	return ret;
 }
 
-static void oscar_get_info(GaimConnection *g, const char *name) {
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+static void oscar_get_info(GaimConnection *gc, const char *name) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+
 	if (od->icq)
 		aim_icq_getallinfo(od->sess, name);
 	else
-		/* people want the away message on the top, so we get the away message
-		 * first and then get the regular info, since it's too difficult to
-		 * insert in the middle. i hate people. */
-		aim_getinfo(od->sess, od->conn, name, AIM_GETINFO_AWAYMESSAGE);
+		aim_locate_getinfoshort(od->sess, name, 0x00000007);
 }
 
-static void oscar_get_away(GaimConnection *g, const char *who) {
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
+static void oscar_get_away(GaimConnection *gc, const char *who) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (od->icq) {
-		GaimBuddy *budlight = gaim_find_buddy(g->account, who);
+		GaimBuddy *budlight = gaim_find_buddy(gc->account, who);
 		if (budlight)
 			if ((budlight->uc & 0xffff0000) >> 16)
 				aim_im_sendch2_geticqaway(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
@@ -4445,14 +4354,14 @@ static void oscar_get_away(GaimConnection *g, const char *who) {
 			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 					   "Error: Could not find %s in local contact list, therefore unable to request status message.\n", who);
 	} else
-		aim_getinfo(od->sess, od->conn, who, AIM_GETINFO_GENERALINFO);
+		aim_locate_getinfoshort(od->sess, who, 0x00000002);
 }
 
-static void oscar_set_dir(GaimConnection *g, const char *first, const char *middle, const char *last,
+static void oscar_set_dir(GaimConnection *gc, const char *first, const char *middle, const char *last,
 			  const char *maiden, const char *city, const char *state, const char *country, int web) {
 	/* XXX - some of these things are wrong, but i'm lazy */
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
-	aim_setdirectoryinfo(od->sess, od->conn, first, middle, last,
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	aim_locate_setdirinfo(od->sess, first, middle, last,
 				maiden, NULL, NULL, city, state, NULL, 0, web);
 }
 
@@ -4476,10 +4385,10 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 							  "again when you are fully connected."));
 
 	if (od->icq)
-		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
+		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
 	else {
 		if (!text) {
-			aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, NULL, 0, caps_aim);
+			aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, NULL, 0, caps_aim);
 			return;
 		}
 		
@@ -4487,15 +4396,15 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 		flags = oscar_encoding_check(text_html);
 		if (flags & AIM_IMFLAGS_UNICODE) {
 			msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
-			aim_bos_setprofile(od->sess, od->conn, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
+			aim_locate_setprofile(od->sess, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
 			g_free(msg);
 		} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
 			msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
-			aim_bos_setprofile(od->sess, od->conn, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
+			aim_locate_setprofile(od->sess, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
 			g_free(msg);
 		} else {
 			msglen = strlen(text_html);
-			aim_bos_setprofile(od->sess, od->conn, "us-ascii", text_html, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
+			aim_locate_setprofile(od->sess, "us-ascii", text_html, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
 		}
 
 		if (msglen > od->rights.maxsiglen) {
@@ -4537,7 +4446,7 @@ static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const 
 	}
 
 	if (!text) {
-		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, "", 0, caps_aim);
+		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0, caps_aim);
 		return;
 	}
 
@@ -4545,19 +4454,19 @@ static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const 
 	flags = oscar_encoding_check(text_html);
 	if (flags & AIM_IMFLAGS_UNICODE) {
 		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
-		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "unicode-2-0", msg, 
+		aim_locate_setprofile(od->sess, NULL, NULL, 0, "unicode-2-0", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
 		g_free(msg);
 		gc->away = g_strndup(text, od->rights.maxawaymsglen/2);
 	} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
 		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
-		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "iso-8859-1", msg, 
+		aim_locate_setprofile(od->sess, NULL, NULL, 0, "iso-8859-1", msg, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
 		g_free(msg);
 		gc->away = g_strndup(text_html, od->rights.maxawaymsglen);
 	} else {
 		msglen = strlen(text_html);
-		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "us-ascii", text_html, 
+		aim_locate_setprofile(od->sess, NULL, NULL, 0, "us-ascii", text_html, 
 			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
 		gc->away = g_strndup(text_html, od->rights.maxawaymsglen);
 	}
@@ -5441,70 +5350,86 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 	GaimConnection *gc = b->account->gc;
 	struct oscar_data *od = gc->proto_data;
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
-	gchar *tmp, *yay = g_strdup("");
+	aim_userinfo_t *userinfo = aim_locate_finduserinfo(b->name);
+	gchar *tmp = NULL, *ret = g_strdup("");
 
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
 		if (isdigit(b->name[0])) {
-			char *tmp, *status;
+			char *status;
 			status = gaim_icq_status((b->uc & 0xffff0000) >> 16);
-			tmp = yay;
-			yay = g_strconcat(tmp, _("<b>Status:</b> "), status, "\n", NULL);
+			tmp = ret;
+			ret = g_strconcat(tmp, _("<b>Status:</b> "), status, "\n", NULL);
 			g_free(tmp);
 			g_free(status);
 		}
 
-		if (bi) {
-			char *tstr = sec_to_text(time(NULL) - bi->signon + 
+		if (userinfo != NULL) {
+			char *tstr = sec_to_text(time(NULL) - userinfo->onlinesince + 
 				(gc->login_time_official ? gc->login_time_official - gc->login_time : 0));
-			tmp = yay;
-			yay = g_strconcat(tmp, _("<b>Logged In:</b> "), tstr, "\n", NULL);
+			tmp = ret;
+			ret = g_strconcat(tmp, _("<b>Logged In:</b> "), tstr, "\n", NULL);
 			free(tmp);
 			free(tstr);
+		}
 
-			if (bi->ipaddr) {
-				char *tstr =  g_strdup_printf("%hhd.%hhd.%hhd.%hhd",
-								(bi->ipaddr & 0xff000000) >> 24,
-								(bi->ipaddr & 0x00ff0000) >> 16,
-								(bi->ipaddr & 0x0000ff00) >> 8,
-								(bi->ipaddr & 0x000000ff));
-				tmp = yay;
-				yay = g_strconcat(tmp, _("<b>IP Address:</b> "), tstr, "\n", NULL);
-				free(tmp);
-				free(tstr);
-			}
+		if ((bi != NULL) && (bi->ipaddr)) {
+			char *tstr =  g_strdup_printf("%hhd.%hhd.%hhd.%hhd",
+							(bi->ipaddr & 0xff000000) >> 24,
+							(bi->ipaddr & 0x00ff0000) >> 16,
+							(bi->ipaddr & 0x0000ff00) >> 8,
+							(bi->ipaddr & 0x000000ff));
+			tmp = ret;
+			ret = g_strconcat(tmp, _("<b>IP Address:</b> "), tstr, "\n", NULL);
+			free(tmp);
+			free(tstr);
+		}
 
-			if (bi->caps) {
-				char *caps = caps_string(bi->caps);
-				tmp = yay;
-				yay = g_strconcat(tmp, _("<b>Capabilities:</b> "), caps, "\n", NULL);
-				free(tmp);
-			}
+		if ((userinfo != NULL) && (userinfo->capabilities)) {
+			char *caps = caps_string(userinfo->capabilities);
+			tmp = ret;
+			ret = g_strconcat(tmp, _("<b>Capabilities:</b> "), caps, "\n", NULL);
+			free(tmp);
+		}
 
-			if (bi->availmsg && !(b->uc & UC_UNAVAILABLE)) {
-				gchar *escaped = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
-				tmp = yay;
-				yay = g_strconcat(tmp, _("<b>Available:</b> "), escaped, "\n", NULL);
+		if ((bi != NULL) && (bi->availmsg != NULL) && !(b->uc & UC_UNAVAILABLE)) {
+			gchar *escaped = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
+			tmp = ret;
+			ret = g_strconcat(tmp, _("<b>Available:</b> "), escaped, "\n", NULL);
+			free(tmp);
+			g_free(escaped);
+		}
+
+		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
+			gchar *away_utf8 = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
+			if (away_utf8 != NULL) {
+				gchar *withcr, *nohtml;
+				withcr = gaim_strreplace(away_utf8, "<BR>", "\n");
+				nohtml = strip_html(withcr);
+				g_free(withcr);
+				tmp = ret;
+				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), nohtml, "\n", NULL);
 				free(tmp);
-				g_free(escaped);
+				g_free(nohtml);
+				g_free(away_utf8);
 			}
 		}
 	} else {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
 		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name)) {
-			tmp = yay;
-			yay = g_strconcat(tmp, _("<b>Status:</b> Not Authorized"), "\n", NULL);
+			tmp = ret;
+			ret = g_strconcat(tmp, _("<b>Status:</b> Not Authorized"), "\n", NULL);
 			g_free(tmp);
 		} else {
-			tmp = yay;
-			yay = g_strconcat(tmp, _("<b>Status:</b> Offline"), "\n", NULL);
+			tmp = ret;
+			ret = g_strconcat(tmp, _("<b>Status:</b> Offline"), "\n", NULL);
 			g_free(tmp);
 		}
 	}
 
 	/* remove the trailing newline character */
-	if (yay)
-		yay[strlen(yay)-1] = '\0';
-	return yay;
+	if (ret)
+		ret[strlen(ret)-1] = '\0';
+	return ret;
 }
 
 static char *oscar_status_text(GaimBuddy *b) {
@@ -6142,13 +6067,13 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 #endif
 	} else {
 		GaimBuddy *b = gaim_find_buddy(gc->account, who);
-		struct buddyinfo *bi;
+		aim_userinfo_t *userinfo;
 
 		if (b)
-			bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
+			userinfo = aim_locate_finduserinfo(b->name);
 
-		if (b && bi && aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), who) && GAIM_BUDDY_IS_ONLINE(b)) {
-			if (bi->caps & AIM_CAPS_DIRECTIM) {
+		if (b && userinfo && aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), who) && GAIM_BUDDY_IS_ONLINE(b)) {
+			if (userinfo->capabilities & AIM_CAPS_DIRECTIM) {
 				pbm = g_new0(struct proto_buddy_menu, 1);
 				pbm->label = _("Direct IM");
 				pbm->callback = oscar_ask_direct_im;
@@ -6156,7 +6081,7 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 				m = g_list_append(m, pbm);
 			}
 
-			if (bi->caps & AIM_CAPS_SENDFILE) {
+			if (userinfo->capabilities & AIM_CAPS_SENDFILE) {
 				pbm = g_new0(struct proto_buddy_menu, 1);
 				pbm->label = _("Send File");
 				pbm->callback = oscar_ask_sendfile;
@@ -6164,7 +6089,7 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 				m = g_list_append(m, pbm);
 			}
 #if 0
-			if (bi->caps & AIM_CAPS_GETFILE) {
+			if (userinfo->capabilities & AIM_CAPS_GETFILE) {
 				pbm = g_new0(struct proto_buddy_menu, 1);
 				pbm->label = _("Get File");
 				pbm->callback = oscar_ask_getfile;

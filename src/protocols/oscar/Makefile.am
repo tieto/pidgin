@@ -27,8 +27,8 @@ OSCARSOURCES = \
 	ft.c           \
 	icq.c          \
 	im.c           \
-	info.c         \
 	invite.c       \
+	locate.c       \
 	md5.h          \
 	misc.c         \
 	msgcookie.c    \

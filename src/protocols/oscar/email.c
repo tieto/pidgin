@@ -12,6 +12,11 @@
 #include <aim.h>
 
 /**
+ * All info maintained by this family.
+ */
+static struct aim_emailinfo *emailinfo = NULL;
+
+/**
  * Subtype 0x0006 - Request information about your email account
  *
  * @param sess The oscar session.
@@ -85,7 +90,7 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	cookie16 = aimbs_getraw(bs, 16); /* Mail cookie sent above */
 
 	/* See if we already have some info associated with this cookie */
-	for (new=sess->emailinfo; (new && strncmp(cookie16, new->cookie16, 16)); new=new->next);
+	for (new=emailinfo; (new && strncmp(cookie16, new->cookie16, 16)); new=new->next);
 	if (new) {
 		/* Free some of the old info, if existant */
 		free(new->cookie8);
@@ -97,8 +102,8 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 		if (!(new = malloc(sizeof(struct aim_emailinfo))))
 			return -ENOMEM;
 		memset(new, 0, sizeof(struct aim_emailinfo));
-		new->next = sess->emailinfo;
-		sess->emailinfo = new;
+		new->next = emailinfo;
+		emailinfo = new;
 	}
 
 	new->cookie8 = cookie8;
@@ -177,9 +182,9 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 
 static void email_shutdown(aim_session_t *sess, aim_module_t *mod)
 {
-	while (sess->emailinfo) {
-		struct aim_emailinfo *tmp = sess->emailinfo;
-		sess->emailinfo = sess->emailinfo->next;
+	while (emailinfo) {
+		struct aim_emailinfo *tmp = emailinfo;
+		emailinfo = emailinfo->next;
 		free(tmp->cookie16);
 		free(tmp->cookie8);
 		free(tmp->url);

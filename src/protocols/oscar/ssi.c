@@ -1908,8 +1908,6 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 static void ssi_shutdown(aim_session_t *sess, aim_module_t *mod)
 {
 	aim_ssi_freelist(sess);
-
-	return;
 }
 
 faim_internal int ssi_modfirst(aim_session_t *sess, aim_module_t *mod)
