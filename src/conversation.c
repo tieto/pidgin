@@ -963,15 +963,16 @@ gaim_conversation_destroy(GaimConversation *conv)
 		}
 		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			/*
-			 * This is unfortunately necessary, because calling serv_chat_leave()
-			 * calls this gaim_conversation_destroy(), which leads to two calls
-			 * here.. We can't just return after this, because then it'll return
-			 * on the next pass. So, since serv_got_chat_left(), which is
-			 * eventually called from the prpl that serv_chat_leave() calls,
-			 * removes this conversation from the gc's buddy_chats list, we're
-			 * going to check to see if this exists in the list. If so, we want
-			 * to return after calling this, because it'll be called again. If not,
-			 * fall through, because it'll have already been removed, and we'd
+			 * This is unfortunately necessary, because calling
+			 * serv_chat_leave() calls this gaim_conversation_destroy(),
+			 * which leads to two calls here.. We can't just return after
+			 * this, because then it'll return on the next pass. So, since
+			 * serv_got_chat_left(), which is eventually called from the
+			 * prpl that serv_chat_leave() calls, removes this conversation
+			 * from the gc's buddy_chats list, we're going to check to see
+			 * if this exists in the list. If so, we want to return after
+			 * calling this, because it'll be called again. If not, fall
+			 * through, because it'll have already been removed, and we'd
 			 * be on the 2nd pass.
 			 *
 			 * Long paragraph. <-- Short sentence.

@@ -1934,7 +1934,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		if (gtkwin->menu.send_as != NULL)
 			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 	}
-	else {
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 		gtk_widget_show(gtkwin->menu.invite);
 
 		gtk_widget_hide(gtkwin->menu.view_log);
@@ -1963,7 +1963,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		gtk_widget_set_sensitive(gtkwin->menu.remove, FALSE);
 
 		if (gtkwin->menu.send_as != NULL)
-			gtk_widget_hide(gtkwin->menu.send_as);
+			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 	}
 
 	update_typing_icon(conv);
@@ -2232,6 +2232,7 @@ update_send_as_selection(GaimWindow *win)
 			break;
 		}
 	}
+
 	return FALSE;
 }
 
