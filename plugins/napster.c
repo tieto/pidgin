@@ -34,6 +34,9 @@
 #include <time.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <ctype.h>
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
@@ -45,9 +48,34 @@ GSList *nap_connections = NULL;
 
 static unsigned int chat_id = 0;
 
+struct browse_window {
+	GtkWidget *window;
+	GtkWidget *list;
+	struct gaim_connection *gc;
+	char *name;
+};
+
+struct nap_download_box {
+	GtkWidget *window;
+	GtkWidget *ok;
+	GtkWidget *entry;
+	gchar *who;
+};
+
 struct nap_channel {
 	unsigned int id;
 	gchar *name;
+};
+
+struct nap_file_request {
+	gchar *name;
+	gchar *file;
+	int fd;
+	long size;
+	long total;
+	int status;
+	int inpa;
+	FILE *mp3;
 };
 
 struct nap_data {
@@ -56,6 +84,8 @@ struct nap_data {
 
 	gchar *email;
 	GSList *channels;
+	GSList *requests;
+	GSList *browses;
 };
 
 static char *nap_name()
@@ -85,6 +115,81 @@ void nap_write_packet(struct gaim_connection *gc, unsigned short command, char *
 	write(ndata->fd, &size, 2);
 	write(ndata->fd, &command, 2);
 	write(ndata->fd, message, size);
+}
+
+void nap_send_download_req(struct gaim_connection *gc, char *who, char *file)
+{
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	gchar buf[NAP_BUF_LEN];
+
+	g_snprintf(buf, NAP_BUF_LEN, "%s \"%s\"", who, file);
+
+	nap_write_packet(gc, 0xCB, buf);
+}
+
+void nap_handle_download(GtkCList *clist, gint row, gint col, GdkEventButton *event, gpointer user_data)
+{
+	gchar **results;
+	struct browse_window *bw = (struct browse_window *)user_data;
+
+	gtk_clist_get_text(GTK_CLIST(bw->list), row, 0, results);	
+
+	nap_send_download_req(bw->gc, bw->name, results[0]);
+
+}
+
+struct browse_window *browse_window_new(struct gaim_connection *gc, char *name)
+{
+	struct browse_window *browse = g_new0(struct browse_window, 1);
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+
+	browse->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	browse->name = g_strdup(name);
+	browse->list = gtk_clist_new(1);
+	browse->gc = gc;
+
+	gtk_widget_show(browse->list);
+	gtk_container_add(GTK_CONTAINER(browse->window), browse->list);
+
+	gtk_widget_set_usize(GTK_WIDGET(browse->window), 300, 250);
+	gtk_widget_show(browse->window);
+
+	/*FIXME: I dont like using select-row.  Im lazy. Ill fix it later */
+	gtk_signal_connect(GTK_OBJECT(browse->list), "select-row", GTK_SIGNAL_FUNC(nap_handle_download), browse);
+
+	ndata->browses = g_slist_append(ndata->browses, browse);
+}
+
+void browse_window_add_file(struct browse_window *bw, char *name)
+{
+	char *fn[1];
+	fn[0] = strdup(name);
+	printf("User '%s' has file '%s'\n", bw->name, name);
+	gtk_clist_append(GTK_CLIST(bw->list), fn);
+
+	free(fn[0]);
+}
+
+static struct browse_window *find_browse_window_by_name(struct gaim_connection *gc, char *name)
+{
+	struct browse_window *browse;
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	GSList *browses;
+
+	browses = ndata->browses;
+
+	while (browses) {
+		browse = (struct browse_window *)browses->data;
+
+		if (browse) {
+			if (!g_strcasecmp(name, browse->name)) {
+				return browse;
+			}
+		}
+		browses = g_slist_next(browses);
+	}
+
+	return NULL;
 }
 
 static void nap_send_im(struct gaim_connection *gc, char *who, char *message, int away)
@@ -158,6 +263,189 @@ static struct conversation *find_conversation_by_id(struct gaim_connection *gc, 
 	}
 
 	return b;
+}
+
+/* This is a strange function.  I smoke too many bad bad things :-) */
+struct nap_file_request * find_request_by_fd(struct gaim_connection *gc, int fd)
+{
+	struct nap_file_request *req;
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	GSList *requests;
+
+	requests = ndata->requests;
+
+	while (requests) {
+		req = (struct nap_file_request *)requests->data;
+
+		if (req) {
+			if (req->fd == fd)
+				return req;
+		}
+		requests = g_slist_next(requests);
+	}
+
+	return NULL;
+}
+
+static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condition)
+{
+	struct gaim_connection *gc = (struct gaim_connection *)data;
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	struct nap_file_request *req;
+	unsigned char *buf;
+	int i = 0;
+	gchar *c;
+	int len;
+
+	req = find_request_by_fd(gc, source);
+	if (!req) /* Something bad happened */
+		return;
+	
+	buf = (char *)malloc(sizeof(char) * (NAP_BUF_LEN + 1));
+
+	if (req->status == 0)
+	{
+		int j;
+		gchar tmp[32];
+		long filesize;
+		gchar **parse_name;
+		gchar path[2048];
+
+
+		recv(source, buf, 1, 0);
+
+		/* We should receive a '1' upon connection */
+		if (buf[0] != '1')
+		{
+			do_error_dialog("Uh Oh", "Uh Oh");
+			gdk_input_remove(req->inpa);
+			ndata->requests = g_slist_remove(ndata->requests, req);
+			g_free(req->name);
+			g_free(req->file);
+			close(source);
+			g_free(req);
+			free(buf);
+			return;
+		}
+		
+		/* Lets take a peek at the awaiting data */
+		i = recv(source, buf, NAP_BUF_LEN, MSG_PEEK);
+		buf[i] = 0; /* Make sure that we terminate our string */
+
+		/* Looks like the uploader sent the proper data. Let's see how big the 
+		 * file is */
+
+		for (j = 0, i = 0; isdigit(buf[i]); i++, j++)
+		{
+			tmp[j] = buf[i];
+		}	
+		tmp[j] = 0;
+		filesize = atol(tmp);
+
+		/* Save the size of the file */
+		req->total = filesize;
+
+		/* If we have a zero file size then something bad happened */
+		if (filesize == 0) {
+			gdk_input_remove(req->inpa);
+			ndata->requests = g_slist_remove(ndata->requests, req);
+			g_free(req->name);
+			g_free(req->file);
+			g_free(req);
+			free(buf);
+			close(source);
+			return;
+		}
+
+		/* Now that we've done that, let's go ahead and read that
+		 * data to get it out of the way */
+		recv(source, buf, strlen(tmp), 0); 
+
+		/* Now, we should tell the server that we're download something */
+		nap_write_packet(gc, 0xda, "\n");
+
+		req->status = 1;
+
+		/* FIXME: We dont want to force the file name.  I'll parse this
+		 * later */
+
+		parse_name = g_strsplit(req->file, "\\", 0);
+		g_snprintf(path, sizeof(path), "%s/%s", getenv("HOME"), parse_name[sizeof(parse_name)]);
+		printf("Gonna try to save to: %s\n", path);
+		g_strfreev(parse_name);
+		
+		req->mp3 = fopen(path, "w");
+		free(buf);
+		return;
+	}
+
+	/* Looks like our status isn't 1.  It's safe to assume we're downloadin' */
+	i = recv(source, buf, NAP_BUF_LEN, 0);
+
+	req->size += i; /* Lets add up the total */
+
+	printf("Downloaded %ld of %ld\n", req->size, req->total);
+
+	fwrite(buf, i, sizeof(char), req->mp3);
+
+	free(buf);
+
+	if (req->size >= req->total) {
+		printf("Download complete.\n");
+		nap_write_packet(gc, 0xdb, "\n"); /* Tell the server we're finished */
+		gdk_input_remove(req->inpa);
+		ndata->requests = g_slist_remove(ndata->requests, req);
+		g_free(req->name);
+		g_free(req->file);
+		g_free(req);
+		fclose(req->mp3);
+		close(source);
+	}
+}
+
+void nap_get_file(struct gaim_connection *gc, gchar *user, gchar *file, unsigned long host, unsigned int port)
+{
+	int fd;
+	struct sockaddr_in site;
+	char buf[NAP_BUF_LEN];
+	int inpa;
+	struct nap_file_request *req = g_new0(struct nap_file_request, 1);
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+
+
+	site.sin_family = AF_INET;
+	site.sin_addr.s_addr = host;
+	site.sin_port = htons(port);
+
+	fd = socket(AF_INET, SOCK_STREAM, 0);
+
+	if (fd < 0) {
+		do_error_dialog("Error connecting to user", "Gaim: Napster error");
+		return;
+	}
+
+	/* Make a connection with the server */
+	if (connect(fd, (struct sockaddr *)&site, sizeof(site)) < 0) {
+		do_error_dialog("Error connecting to user", "Gaim: Napster error");
+		return;
+	 }
+	
+	req->fd = fd;
+	req->name = g_strdup(user);
+	req->file = g_strdup(file);
+	req->size = 0;
+	req->status = 0;
+	req->total = 0;
+
+	/* Send our request to the user */
+	g_snprintf(buf, sizeof(buf), "GET%s \"%s\" 0\n", user, file);
+	write(fd, buf, strlen(buf));
+
+	/* Add our request */
+	ndata->requests = g_slist_append(ndata->requests, req);
+
+	/* And start monitoring */
+	req->inpa = gdk_input_add(fd, GDK_INPUT_READ, nap_ctc_callback, gc);
 }
 
 static void nap_callback(gpointer data, gint source, GdkInputCondition condition)
@@ -329,6 +617,40 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 		return;
 	}
 
+	if (command == 0xd4) {
+		/* Looks like we're getting a browse response */
+		gchar user[64];
+		gchar file[2048];
+		struct browse_window *bw = NULL;
+		
+		int i,j;
+
+		for (i = 0, j = 0; buf[i] != ' '; i++, j++)
+		{
+			user[j] = buf[i];
+		}
+		user[j] = 0; i++; i++;
+
+		for (j = 0; buf[i] != '\"'; i++, j++)
+		{
+			file[j] = buf[i];
+		}
+		file[j] = 0;
+
+		bw = find_browse_window_by_name(gc, user);
+		if (!bw)
+		{
+			/* If a browse window isn't found, let's create one */
+			bw = browse_window_new(gc, user);
+		}
+
+		browse_window_add_file(bw, file);
+		
+		free(buf);
+		return;
+		
+	}
+
 	if (command == 0x12d) {
 		/* Our buddy was added successfully */
 		free(buf);
@@ -343,7 +665,53 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 		return;
 	}
 
+	if (command == 0xcc) {
+		/* We received a Download ACK from a user.  The way this is printed is kind of
+		 * strange so we'll need to parse this one ourselves.  */
+
+		gchar user[64];
+		gchar file[2048];
+		gchar hoststr[16];
+		gchar portstr[16];
+		int i,j;
+
+		for (i = 0, j = 0; buf[i] != ' '; i++, j++)
+		{
+			user[j] = buf[i];
+		}
+		user[j] = 0; i++;
+
+		for (j = 0; buf[i] != ' '; i++, j++)
+		{
+			hoststr[j] = buf[i];
+		}
+		hoststr[j] = 0; i++;
+
+		for (j = 0; buf[i] != ' '; i++, j++)
+		{
+			portstr[j] = buf[i];
+		}
+		portstr[j] = 0; i++;
+
+		i++; /* We do this to ignore the first quotation mark */
+
+		for (j = 0; buf[i] != '\"'; i++, j++)
+		{
+			file[j] = buf[i];
+		}
+		file[j] = 0;
+
+		/* Aaight.  We dont need nuttin' else. Let's download the file */
+		nap_get_file(gc, user, file, atol(hoststr), atoi(portstr));
+
+		free(buf);
+
+		return;
+	}
+
 	printf("NAP: [COMMAND: 0x%04x] %s\n", command, buf);
+
+	free(buf);
 }
 
 
@@ -399,37 +767,37 @@ static void nap_login(struct aim_user *user)
 	int i;
 	int status;
 
-	host = gethostbyname("64.124.41.184");
+//	host = gethostbyname("208.184.216.24");
+	host = gethostbyname("213.254.1.82");
 
-        if (!host) {
-                hide_login_progress(gc, "Unable to resolve hostname");
-                signoff(gc);
-                return;
-        }
+	if (!host) {
+		hide_login_progress(gc, "Unable to resolve hostname");
+		signoff(gc);
+		return;
+	}
 
-        site.sin_family = AF_INET;
-        site.sin_addr.s_addr = *(long *)(host->h_addr);
+	site.sin_family = AF_INET;
+	site.sin_addr.s_addr = *(long *)(host->h_addr);
+	site.sin_port = htons(8888);
 
-        site.sin_port = htons(8888);
-
-        fd = socket(AF_INET, SOCK_STREAM, 0);
-        if (fd < 0) {
-                hide_login_progress(gc, "Unable to create socket");
-                signoff(gc);
-                return;
-        }
+	fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (fd < 0) {
+		hide_login_progress(gc, "Unable to create socket");
+		signoff(gc);
+		return;
+	}
 
 	/* Make a connection with the server */
-        if (connect(fd, (struct sockaddr *)&site, sizeof(site)) < 0) {
-                hide_login_progress(gc, "Unable to connect.");
-                signoff(gc);
-                 return;
-         }
+	if (connect(fd, (struct sockaddr *)&site, sizeof(site)) < 0) {
+		hide_login_progress(gc, "Unable to connect.");
+		signoff(gc);
+		 return;
+	 }
 
 	ndata->fd = fd;
 	
 	/* And write our signon data */
-	g_snprintf(buf, NAP_BUF_LEN, "%s %s 0 \"Gnapster 1.4.1a\" 0", gc->username, gc->password);
+	g_snprintf(buf, NAP_BUF_LEN, "%s %s 0 \"Gaim - Napster Plugin\" 0", gc->username, gc->password);
 	nap_write_packet(gc, 0x02, buf);
 	
 	/* And set up the input watcher */
@@ -503,8 +871,11 @@ static void nap_close(struct gaim_connection *gc)
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	gchar buf[NAP_BUF_LEN];
 	struct nap_channel *channel;
+	struct browse_window *browse;
+	struct nap_file_request *req;
 	GSList *channels = ndata->channels;
-
+	GSList *requests = ndata->requests;
+	
 	if (gc->inpa)
 		gdk_input_remove(gc->inpa);
 
@@ -513,6 +884,26 @@ static void nap_close(struct gaim_connection *gc)
 		g_free(channel->name);
 		ndata->channels = g_slist_remove(ndata->channels, channel);
 		g_free(channel);
+	}
+
+	while (ndata->browses) {
+		browse = (struct browse_window *)ndata->browses->data;
+		g_free(browse->name);
+		gtk_widget_destroy(browse->window);
+		ndata->browses = g_slist_remove(ndata->browses, browse);
+		g_free(browse);
+	}
+
+	while (ndata->requests) {
+		req = (struct nap_file_request *)ndata->requests->data;
+		g_free(req->name);
+		g_free(req->file);
+		if (req->inpa) {
+			gdk_input_remove(req->inpa);
+		}
+		ndata->requests = g_slist_remove(ndata->requests, req);
+		g_free(req);
+		
 	}
 
 	free(gc->proto_data);
@@ -541,6 +932,28 @@ static void nap_draw_new_user(GtkWidget *box)
 	gtk_widget_show(label);
 }
 
+
+void nap_send_browse(GtkObject *w, char *who)
+{
+	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
+	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
+	gchar buf[NAP_BUF_LEN];
+
+	g_snprintf(buf, NAP_BUF_LEN, "%s", who);
+	nap_write_packet(gc, 0xd3, buf);
+}
+
+static void nap_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
+{
+	GtkWidget *button;
+
+	button = gtk_menu_item_new_with_label("List Files");
+	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(nap_send_browse), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+}
+
 static char** nap_list_icon(int uc)
 {
 	return napster_xpm;
@@ -553,7 +966,7 @@ void nap_init(struct prpl *ret)
 	ret->protocol = PROTO_NAPSTER;
 	ret->name = nap_name;
 	ret->list_icon = nap_list_icon;
-	ret->action_menu = NULL;
+	ret->action_menu = nap_action_menu;
 	ret->user_opts = NULL;
 	ret->login = nap_login;
 	ret->close = nap_close;
