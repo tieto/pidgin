@@ -33,85 +33,94 @@ static GSList *accountReconnecting = NULL;
 static GaimConnectionUiOps *old_ops = NULL;
 static GaimConnectionUiOps *new_ops = NULL;
 
-static void connect_progress(GaimConnection *gc, const char *text,
-							 size_t step, size_t step_count) {
-	if(old_ops == NULL || old_ops->connect_progress == NULL) {
+static void
+connect_progress(GaimConnection *gc, const char *text,
+				 size_t step, size_t step_count)
+{
+	if (old_ops == NULL || old_ops->connect_progress == NULL) {
 		/* there's nothing to call through to, so don't bother
 		   checking prefs */
 		return;
-	} else if(gaim_prefs_get_bool(OPT_HIDE_RECONNECTING_DIALOG) && accountReconnecting && 
+	} else if (gaim_prefs_get_bool(OPT_HIDE_RECONNECTING_DIALOG) && accountReconnecting &&
 			g_slist_find(accountReconnecting, gc->account)) {
 		/* this is a reconnecting, and we're hiding those */
 		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
 			"hide connecting dialog while reconnecting\n");
 		return;
 	}
-	
+
 	old_ops->connect_progress(gc, text, step, step_count);
 }
 
-static void connected(GaimConnection *gc) {
-	if(old_ops == NULL || old_ops->connected == NULL) {
+static void
+connected(GaimConnection *gc)
+{
+	if (old_ops == NULL || old_ops->connected == NULL) {
 		/* there's nothing to call through to, so don't bother
 		   checking prefs */
 		return;
-	} else if(gaim_prefs_get_bool(OPT_HIDE_RECONNECTING_DIALOG) && accountReconnecting && 
+	} else if (gaim_prefs_get_bool(OPT_HIDE_RECONNECTING_DIALOG) && accountReconnecting &&
 			g_slist_find(accountReconnecting, gc->account)) {
 		/* this is a reconnecting, and we're hiding those */
 		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
 			"hide connecting dialog while reconnecting\n");
 		return;
 	}
-	
+
 	old_ops->connected(gc);
 }
 
-static void disconnected(GaimConnection *gc) {
-	if(old_ops == NULL || old_ops->disconnected == NULL) {
+static void
+disconnected(GaimConnection *gc)
+{
+	if (old_ops == NULL || old_ops->disconnected == NULL) {
 		/* there's nothing to call through to, so don't bother
 		   checking prefs */
 		return;
-	} else if(gaim_prefs_get_bool(OPT_HIDE_RECONNECTING_DIALOG) && accountReconnecting && 
+	} else if (gaim_prefs_get_bool(OPT_HIDE_RECONNECTING_DIALOG) && accountReconnecting &&
 			g_slist_find(accountReconnecting, gc->account)) {
 		/* this is a reconnecting, and we're hiding those */
 		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
 			"hide connecting dialog while reconnecting\n");
 		return;
 	}
-	
+
 	old_ops->disconnected(gc);
 }
 
-static void notice(GaimConnection *gc, const char *text) {
-	if(old_ops == NULL || old_ops->notice == NULL) {
+static void
+notice(GaimConnection *gc, const char *text)
+{
+	if (old_ops == NULL || old_ops->notice == NULL) {
 		/* there's nothing to call through to, so don't bother
 		   checking prefs */
 		return;
-	} else if(gaim_prefs_get_bool(OPT_HIDE_RECONNECTING_DIALOG) && accountReconnecting && 
+	} else if (gaim_prefs_get_bool(OPT_HIDE_RECONNECTING_DIALOG) && accountReconnecting &&
 			g_slist_find(accountReconnecting, gc->account)) {
 		/* this is a reconnecting, and we're hiding those */
 		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
 			"hide connecting dialog while reconnecting\n");
 	}
-	
+
 	old_ops->notice(gc, text);
 }
 
-static void report_disconnect(GaimConnection *gc, const char *text) {
-
-	if(old_ops == NULL || old_ops->report_disconnect == NULL) {
+static void
+report_disconnect(GaimConnection *gc, const char *text)
+{
+	if (old_ops == NULL || old_ops->report_disconnect == NULL) {
 		/* there's nothing to call through to, so don't bother
 		   checking prefs */
 		return;
 
-	} else if(gc->state == GAIM_CONNECTED
+	} else if (gc->state == GAIM_CONNECTED
 			&& gaim_prefs_get_bool(OPT_HIDE_CONNECTED)) {
 		/* this is a connected error, and we're hiding those */
 		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
 				"hid disconnect error message (%s)\n", text);
 		return;
 
-	} else if(gc->state == GAIM_CONNECTING
+	} else if (gc->state == GAIM_CONNECTING
 			&& gaim_prefs_get_bool(OPT_HIDE_CONNECTING)) {
 		/* this is a connecting error, and we're hiding those */
 		gaim_debug(GAIM_DEBUG_INFO, "autorecon",
@@ -125,7 +134,9 @@ static void report_disconnect(GaimConnection *gc, const char *text) {
 }
 
 
-static gboolean do_signon(gpointer data) {
+static gboolean
+do_signon(gpointer data)
+{
 	GaimAccount *account = data;
 	GaimAutoRecon *info;
 
@@ -136,7 +147,7 @@ static gboolean do_signon(gpointer data) {
 	if (g_list_index(gaim_accounts_get_all(), account) < 0)
 		return FALSE;
 
-	if(info)
+	if (info)
 		info->timeout = 0;
 
 	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "calling gaim_account_connect\n");
@@ -147,7 +158,9 @@ static gboolean do_signon(gpointer data) {
 }
 
 
-static void reconnect(GaimConnection *gc, void *m) {
+static void
+reconnect(GaimConnection *gc, void *m)
+{
 	GaimAccount *account;
 	GaimAutoRecon *info;
 	GSList* listAccount;
@@ -171,19 +184,20 @@ static void reconnect(GaimConnection *gc, void *m) {
 				g_source_remove(info->timeout);
 		}
 		info->timeout = g_timeout_add(info->delay, do_signon, account);
-		
+
 		if (!listAccount)
 			accountReconnecting = g_slist_prepend(accountReconnecting, account);
 	} else if (info != NULL) {
 		g_hash_table_remove(hash, account);
-		
+
 		if (listAccount)
 			accountReconnecting = g_slist_delete_link(accountReconnecting, listAccount);
 	}
 }
 
 static void
-reconnected(GaimConnection *gc, void *m) {
+reconnected(GaimConnection *gc, void *m)
+{
 	GaimAccount *account;
 
 	g_return_if_fail(gc != NULL);
@@ -222,7 +236,7 @@ plugin_load(GaimPlugin *plugin)
 	overridden ui ops or something... I have a good idea of how to write
 	such a creature if someone wants it done.  - siege 2004-04-20 */
 
-	/* get old ops, make a copy with a minor change */ 
+	/* get old ops, make a copy with a minor change */
 	old_ops = gaim_connections_get_ui_ops();
 	new_ops = (GaimConnectionUiOps *) g_memdup(old_ops,
 			sizeof(GaimConnectionUiOps));
@@ -235,7 +249,7 @@ plugin_load(GaimPlugin *plugin)
 
 	hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL,
 			free_auto_recon);
-	
+
 	accountReconnecting = NULL;
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
@@ -259,7 +273,7 @@ plugin_unload(GaimPlugin *plugin)
 
 	g_hash_table_destroy(hash);
 	hash = NULL;
-	
+
 	if (accountReconnecting) {
 		g_slist_free(accountReconnecting);
 		accountReconnecting = NULL;
@@ -273,7 +287,9 @@ plugin_unload(GaimPlugin *plugin)
 }
 
 
-static GaimPluginPrefFrame *get_plugin_pref_frame(GaimPlugin *plugin) {
+static
+GaimPluginPrefFrame *get_plugin_pref_frame(GaimPlugin *plugin)
+{
 	GaimPluginPrefFrame *frame = gaim_plugin_pref_frame_new();
 	GaimPluginPref *pref;
 
@@ -344,4 +360,3 @@ init_plugin(GaimPlugin *plugin)
 }
 
 GAIM_INIT_PLUGIN(autorecon, init_plugin, info)
-
