@@ -78,23 +78,17 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 	g_return_if_fail(log->logger);
 	g_return_if_fail(log->logger->write);
 
-	if ((log->type == GAIM_LOG_IM &&
-				gaim_prefs_get_bool("/core/logging/log_ims")) ||
-			(log->type == GAIM_LOG_CHAT &&
-			 gaim_prefs_get_bool("/core/logging/log_chats")) ||
-			(log->type == GAIM_LOG_SYSTEM &&
-			 gaim_prefs_get_bool("/core/logging/log_system"))) {
-		struct _gaim_logsize_user *lu;
-		(log->logger->write)(log, type, from, time, message);
+	struct _gaim_logsize_user *lu;
+	(log->logger->write)(log, type, from, time, message);
 
-		lu = g_new(struct _gaim_logsize_user, 1);
+	lu = g_new(struct _gaim_logsize_user, 1);
 
-		lu->name = g_strdup(gaim_normalize(log->account, log->name));
-		lu->account = log->account;
-		g_hash_table_remove(logsize_users, lu);
-		g_free(lu->name);
-		g_free(lu);
-	}
+	lu->name = g_strdup(gaim_normalize(log->account, log->name));
+	lu->account = log->account;
+	g_hash_table_remove(logsize_users, lu);
+	g_free(lu->name);
+	g_free(lu);
+
 }
 
 char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)

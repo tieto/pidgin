@@ -137,7 +137,7 @@ extern "C" {
 	void gaim_log_free(GaimLog *log);
 
 	/**
-	 * Writes to a log file
+	 * Writes to a log file. Assumes you have checked preferences already.
 	 *
 	 * @param log          The log to write to
 	 * @param type         The type of message being logged
