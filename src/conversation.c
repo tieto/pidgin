@@ -704,9 +704,9 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 					if (d) {
 						gtk_notebook_set_page(
 								GTK_NOTEBOOK(notebook),
-								g_list_index(chats, d));
+								g_list_index(ws, d));
 					} else {
-						cnv = g_list_last(chats);
+						cnv = g_list_last(ws);
 						if (c == cnv->data)
 							gtk_notebook_set_page(
 								GTK_NOTEBOOK(notebook), 0);
