@@ -24,7 +24,6 @@
 #include "../config.h"
 #endif
 
-#ifdef USE_OSCAR
 
 #include <netdb.h>
 #include <gtk/gtk.h>
@@ -48,6 +47,7 @@ struct aim_session_t *gaim_sess;
 struct aim_conn_t    *gaim_conn;
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
 		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
+int USE_OSCAR = 0;
 
 GList *oscar_chats = NULL;
 
@@ -352,10 +352,6 @@ int gaim_chat_server_ready(struct aim_session_t *sess,
 	serv_got_joined_chat(id++, aim_chat_getname(command->conn));
 	return 1;
 }
-
-extern void gaim_setup();
-extern int  bud_list_cache_exists();
-extern void do_import(GtkWidget *w, void *dummy);
 
 int gaim_handle_redirect(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
@@ -808,5 +804,3 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 
 	return 1;
 }
-
-#endif /* USE_OSCAR */

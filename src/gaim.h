@@ -249,14 +249,12 @@ struct chat_room {
         int exchange;
 };
 
-#ifdef USE_OSCAR
 struct chat_connection {
 	char *name;
 	int fd; /* this is redundant since we have the conn below */
 	struct aim_conn_t *conn;
 	int inpa;
 };
-#endif
 
 struct debug_window {
 	GtkWidget *window;
@@ -386,7 +384,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 421 $"
+#define REVISION "gaim:$Revision: 433 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -406,11 +404,9 @@ extern GtkWidget *applet;
 #endif /* USE_APPLET */
 
 /* Globals in oscar.c */
-#ifdef USE_OSCAR
 extern struct aim_session_t *gaim_sess;
 extern struct aim_conn_t    *gaim_conn;
 extern GList *oscar_chats;
-#endif
 
 /* Globals in server.c */
 extern int correction_time;
@@ -466,6 +462,8 @@ extern int general_options;
 #define OPT_GEN_CHECK_SPELLING	0x00008000
 #define OPT_GEN_POPUP_CHAT	0x00010000
 #define OPT_GEN_BACK_ON_IM	0x00020000
+#define OPT_GEN_USE_OSCAR	0x00040000
+extern int USE_OSCAR;
 
 extern int display_options;
 #define OPT_DISP_SHOW_TIME       0x00000001
@@ -629,11 +627,9 @@ extern unsigned int *get_address(char *);
 extern int connect_address(unsigned int, unsigned short);
 
 /* Functions in oscar.c */
-#ifdef USE_OSCAR
 extern int oscar_login(char *, char *);
 extern void oscar_close();
 extern struct chat_connection *find_oscar_chat(char *name);
-#endif /* not #else because we still use some toc functions */
 
 /* Functions in toc.c */
 extern void toc_close();
@@ -684,6 +680,7 @@ extern void away_list_clicked(GtkWidget *, struct away_message *);
 extern void hide_login_progress(char *);
 extern void set_login_progress(int, char *);
 extern void show_login();
+extern void gaim_setup();
 #ifdef USE_APPLET
 extern void createOnlinePopup();
 extern void applet_show_login(AppletWidget *, gpointer);

@@ -30,10 +30,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <gtk/gtk.h>
-#ifdef USE_OSCAR
 #include <aim.h>
 extern int gaim_caps;
-#endif
 #include "gaim.h"
 
 static int idle_timer = -1;
@@ -46,20 +44,23 @@ int correction_time = 0;
 
 int serv_login(char *username, char *password)
 {
-#ifndef USE_OSCAR
-        return toc_login(username, password);
-#else
-	return oscar_login(username, password);
-#endif
+	if (!(general_options & OPT_GEN_USE_OSCAR)) {
+		USE_OSCAR = 0;
+	        return toc_login(username, password);
+	} else {
+		USE_OSCAR = 1;
+		debug_print("Logging in using Oscar. Expect problems.\n");
+		return oscar_login(username, password);
+	}
 }
 
 void serv_close()
 {
-#ifndef USE_OSCAR
-	toc_close();
-#else
-	oscar_close();
-#endif
+	if (!USE_OSCAR)
+		toc_close();
+	else
+		oscar_close();
+
         gtk_timeout_remove(idle_timer);
         idle_timer = -1;
 }
@@ -156,55 +157,55 @@ void serv_finish_login()
 
 void serv_send_im(char *name, char *message, int away)
 {
-#ifndef USE_OSCAR
+	if (!USE_OSCAR) {
 	char buf[MSG_LEN - 7];
 
         g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
                    message, ((away) ? " auto" : ""));
 	sflap_send(buf, strlen(buf), TYPE_DATA);
-#else
+	} else {
 	if (away)
 		aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, message);
 	else
 		aim_send_im(gaim_sess, gaim_conn, name, 0, message);
-#endif
+	}
         if (!away)
                 serv_touch_idle();
 }
 
 void serv_get_info(char *name)
 {
-#ifndef USE_OSCAR
+	if (!USE_OSCAR) {
         char buf[MSG_LEN];
         g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
         sflap_send(buf, -1, TYPE_DATA);
-#else
+	} else {
 	aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_GENERALINFO);
-#endif
+	}
 }
 
 void serv_get_away_msg(char *name)
 {
-#ifndef USE_OSCAR
+	if (!USE_OSCAR) {
 	/* HAHA! TOC doesn't have this yet */
-#else
+	} else {
 	aim_getinfo(gaim_sess, gaim_conn, name, AIM_GETINFO_AWAYMESSAGE);
-#endif
+	}
 }
 
 void serv_get_dir(char *name)
 {
-#ifndef USE_OSCAR
-        char buf[MSG_LEN];
-        g_snprintf(buf, MSG_LEN, "toc_get_dir %s", normalize(name));
-        sflap_send(buf, -1, TYPE_DATA);
-#endif
+	if (!USE_OSCAR) {
+		char buf[MSG_LEN];
+		g_snprintf(buf, MSG_LEN, "toc_get_dir %s", normalize(name));
+		sflap_send(buf, -1, TYPE_DATA);
+	}
 }
 
 void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 		  char *city, char *state, char *country, int web)
 {
-#ifndef USE_OSCAR
+	if (!USE_OSCAR) {
 	char buf2[BUF_LEN*4], buf[BUF_LEN];
 	g_snprintf(buf2, sizeof(buf2), "%s:%s:%s:%s:%s:%s:%s:%s", first,
 		   middle, last, maiden, city, state, country,
@@ -212,54 +213,54 @@ void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 	escape_text(buf2);
 	g_snprintf(buf, sizeof(buf), "toc_set_dir %s", buf2);
 	sflap_send(buf, -1, TYPE_DATA);
-#endif
+	}
 }
 
 void serv_dir_search(char *first, char *middle, char *last, char *maiden,
 		     char *city, char *state, char *country, char *email)
 {
-#ifndef USE_OSCAR
-	char buf[BUF_LONG];
-	g_snprintf(buf, sizeof(buf)/2, "toc_dir_search %s:%s:%s:%s:%s:%s:%s:%s", first, middle, last, maiden, city, state, country, email);
-	sprintf(debug_buff,"Searching for: %s,%s,%s,%s,%s,%s,%s\n", first, middle, last, maiden, city, state, country);
-	debug_print(debug_buff);
-	sflap_send(buf, -1, TYPE_DATA);
-#else
-	if (strlen(email))
-		aim_usersearch_address(gaim_sess, gaim_conn, email);
-#endif
+	if (!USE_OSCAR) {
+		char buf[BUF_LONG];
+		g_snprintf(buf, sizeof(buf)/2, "toc_dir_search %s:%s:%s:%s:%s:%s:%s:%s", first, middle, last, maiden, city, state, country, email);
+		sprintf(debug_buff,"Searching for: %s,%s,%s,%s,%s,%s,%s\n", first, middle, last, maiden, city, state, country);
+		debug_print(debug_buff);
+		sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		if (strlen(email))
+			aim_usersearch_address(gaim_sess, gaim_conn, email);
+	}
 }
 
 
 void serv_set_away(char *message)
 {
-#ifndef USE_OSCAR
-        char buf[MSG_LEN];
-        if (message)
-                g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
-        else
-                g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
-	sflap_send(buf, -1, TYPE_DATA);
-#else
-	aim_bos_setprofile(gaim_sess, gaim_conn, current_user->user_info,
-				message, gaim_caps);
-#endif
+	if (!USE_OSCAR) {
+	        char buf[MSG_LEN];
+	        if (message)
+	                g_snprintf(buf, MSG_LEN, "toc_set_away \"%s\"", message);
+	        else
+	                g_snprintf(buf, MSG_LEN, "toc_set_away \"\"");
+		sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		aim_bos_setprofile(gaim_sess, gaim_conn, current_user->user_info,
+					message, gaim_caps);
+	}
 }
 
 void serv_set_info(char *info)
 {
-#ifndef USE_OSCAR
-	char buf[MSG_LEN];
-	g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", info);
-	sflap_send(buf, -1, TYPE_DATA);
-#else
-	if (awaymessage)
-		aim_bos_setprofile(gaim_sess, gaim_conn, info,
-					awaymessage->message, gaim_caps);
-	else
-		aim_bos_setprofile(gaim_sess, gaim_conn, info,
-					NULL, gaim_caps);
-#endif
+	if (!USE_OSCAR) {
+		char buf[MSG_LEN];
+		g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", info);
+		sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		if (awaymessage)
+			aim_bos_setprofile(gaim_sess, gaim_conn, info,
+						awaymessage->message, gaim_caps);
+		else
+			aim_bos_setprofile(gaim_sess, gaim_conn, info,
+						NULL, gaim_caps);
+	}
 }
 
 extern gboolean change_password;
@@ -267,34 +268,34 @@ extern char *old_password;
 extern char *new_password;
 
 void serv_change_passwd(char *orig, char *new) {
-#ifndef USE_OSCAR
-	char *buf = g_malloc(BUF_LONG); 
-	g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
-	sflap_send(buf, strlen(buf), TYPE_DATA);
-	g_free(buf);
-#else
-	if (change_password) return;
-	change_password = TRUE;
-	old_password = g_strdup(orig);
-	new_password = g_strdup(new);
-	aim_bos_reqservice(gaim_sess, gaim_conn, AIM_CONN_TYPE_AUTH);
-#endif
+	if (!USE_OSCAR) {
+		char *buf = g_malloc(BUF_LONG); 
+		g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
+		sflap_send(buf, strlen(buf), TYPE_DATA);
+		g_free(buf);
+	} else {
+		if (change_password) return;
+		change_password = TRUE;
+		old_password = g_strdup(orig);
+		new_password = g_strdup(new);
+		aim_bos_reqservice(gaim_sess, gaim_conn, AIM_CONN_TYPE_AUTH);
+	}
 }
 
 void serv_add_buddy(char *name)
 {
-#ifndef USE_OSCAR
-	char buf[1024];
-	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
-	sflap_send(buf, -1, TYPE_DATA);
-#else
-	aim_add_buddy(gaim_sess, gaim_conn, name);
-#endif
+	if (!USE_OSCAR) {
+		char buf[1024];
+		g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
+		sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		aim_add_buddy(gaim_sess, gaim_conn, name);
+	}
 }
 
 void serv_add_buddies(GList *buddies)
 {
-#ifndef USE_OSCAR
+	if (!USE_OSCAR) {
 	char buf[MSG_LEN];
         int n, num = 0;
 
@@ -310,7 +311,7 @@ void serv_add_buddies(GList *buddies)
                 buddies = buddies->next;
         }
 	sflap_send(buf, -1, TYPE_DATA);
-#else
+	} else {
 	char buf[MSG_LEN];
 	int n = 0;
 	while(buddies) {
@@ -323,50 +324,50 @@ void serv_add_buddies(GList *buddies)
 		buddies = buddies->next;
 	}
 	aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
-#endif
+	}
 }
 
 
 void serv_remove_buddy(char *name)
 {
-#ifndef USE_OSCAR
-	char buf[1024];
-	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
-	sflap_send(buf, -1, TYPE_DATA);
-#else
-	aim_remove_buddy(gaim_sess, gaim_conn, name);
-#endif
+	if (!USE_OSCAR) {
+		char buf[1024];
+		g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
+		sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		aim_remove_buddy(gaim_sess, gaim_conn, name);
+	}
 }
 
 void serv_add_permit(char *name)
 {
-#ifndef USE_OSCAR
-	char buf[1024];
-	g_snprintf(buf, sizeof(buf), "toc_add_permit %s", normalize(name));
-	sflap_send(buf, -1, TYPE_DATA);
-#else
-	serv_set_permit_deny();
-#endif
+	if (!USE_OSCAR) {
+		char buf[1024];
+		g_snprintf(buf, sizeof(buf), "toc_add_permit %s", normalize(name));
+		sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		serv_set_permit_deny();
+	}
 }
 
 
 
 void serv_add_deny(char *name)
 {
-#ifndef USE_OSCAR
-	char buf[1024];
-	g_snprintf(buf, sizeof(buf), "toc_add_deny %s", normalize(name));
-	sflap_send(buf, -1, TYPE_DATA);
-#else
-	serv_set_permit_deny();
-#endif
+	if (!USE_OSCAR) {
+		char buf[1024];
+		g_snprintf(buf, sizeof(buf), "toc_add_deny %s", normalize(name));
+		sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		serv_set_permit_deny();
+	}
 }
 
 
 
 void serv_set_permit_deny()
 {
-#ifndef USE_OSCAR
+	if (!USE_OSCAR) {
 	char buf[MSG_LEN];
 	int at;
 	GList *list;
@@ -401,7 +402,7 @@ void serv_set_permit_deny()
 		buf[at] = 0;
 		sflap_send(buf, -1, TYPE_DATA);
 	}
-#else
+	} else {
 	/* oscar requires us to do everyone at once (?) */
 	/* I think this code is OK now. */
 	char buf[BUF_LONG]; int at; GList *list, *grp, *bud;
@@ -439,30 +440,30 @@ void serv_set_permit_deny()
 		aim_bos_changevisibility(gaim_sess, gaim_conn,
 					AIM_VISIBILITYCHANGE_DENYADD, buf);
 	}
-#endif
+	}
 }
 
 void serv_set_idle(int time)
 {
-#ifndef USE_OSCAR
-	char buf[256];
-	g_snprintf(buf, sizeof(buf), "toc_set_idle %d", time);
-	sflap_send(buf, -1, TYPE_DATA);
-#else
-	aim_bos_setidle(gaim_sess, gaim_conn, time);
-#endif
+	if (!USE_OSCAR) {
+		char buf[256];
+		g_snprintf(buf, sizeof(buf), "toc_set_idle %d", time);
+		sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		aim_bos_setidle(gaim_sess, gaim_conn, time);
+	}
 }
 
 
 void serv_warn(char *name, int anon)
 {
-#ifndef USE_OSCAR
-	char *send = g_malloc(256);
-	g_snprintf(send, 255, "toc_evil %s %s", name,
-		   ((anon) ? "anon" : "norm"));
-	sflap_send(send, -1, TYPE_DATA);
-	g_free(send);
-#endif
+	if (!USE_OSCAR) {
+		char *send = g_malloc(256);
+		g_snprintf(send, 255, "toc_evil %s %s", name,
+			   ((anon) ? "anon" : "norm"));
+		sflap_send(send, -1, TYPE_DATA);
+		g_free(send);
+	}
 }
 
 void serv_build_config(char *buf, int len) {
@@ -472,79 +473,77 @@ void serv_build_config(char *buf, int len) {
 
 void serv_save_config()
 {
-#ifndef USE_OSCAR
-	char *buf = g_malloc(BUF_LONG);
-	char *buf2 = g_malloc(MSG_LEN);
-	serv_build_config(buf, BUF_LONG / 2);
-	g_snprintf(buf2, MSG_LEN, "toc_set_config {%s}", buf);
-        sflap_send(buf2, -1, TYPE_DATA);
-	g_free(buf2);
-	g_free(buf);
-#endif
+	if (!USE_OSCAR) {
+		char *buf = g_malloc(BUF_LONG);
+		char *buf2 = g_malloc(MSG_LEN);
+		serv_build_config(buf, BUF_LONG / 2);
+		g_snprintf(buf2, MSG_LEN, "toc_set_config {%s}", buf);
+	        sflap_send(buf2, -1, TYPE_DATA);
+		g_free(buf2);
+		g_free(buf);
+	}
 }
 
 
 void serv_accept_chat(int i)
 {
-#ifndef USE_OSCAR
-        char *buf = g_malloc(256);
-        g_snprintf(buf, 255, "toc_chat_accept %d",  i);
-        sflap_send(buf, -1, TYPE_DATA);
-        g_free(buf);
-#else
+	if (!USE_OSCAR) {
+	        char *buf = g_malloc(256);
+	        g_snprintf(buf, 255, "toc_chat_accept %d",  i);
+	        sflap_send(buf, -1, TYPE_DATA);
+	        g_free(buf);
+	} else {
 	/* this should never get called because libfaim doesn't use the id
 	 * (i'm not even sure Oscar does). go through serv_join_chat instead */
-#endif
+	}
 }
 
 void serv_join_chat(int exchange, char *name)
 {
-#ifndef USE_OSCAR
-        char buf[BUF_LONG];
-        g_snprintf(buf, sizeof(buf)/2, "toc_chat_join %d \"%s\"", exchange, name);
-        sflap_send(buf, -1, TYPE_DATA);
-#else
-	sprintf(debug_buff, "Attempting to join chat room %s.\n", name);
-	debug_print(debug_buff);
-	/* aim_bos_reqservice(gaim_sess, gaim_conn, AIM_CONN_TYPE_CHATNAV); */
-	/* aim_chatnav_createroom(gaim_sess, aim_getconn_type(gaim_sess, AIM_CONN_TYPE_CHATNAV), name, 0x0004); */
-	aim_chat_join(gaim_sess, gaim_conn, 0x0004, name);
-#endif
+	if (!USE_OSCAR) {
+	        char buf[BUF_LONG];
+	        g_snprintf(buf, sizeof(buf)/2, "toc_chat_join %d \"%s\"", exchange, name);
+	        sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		sprintf(debug_buff, "Attempting to join chat room %s.\n", name);
+		debug_print(debug_buff);
+		aim_chat_join(gaim_sess, gaim_conn, 0x0004, name);
+	}
 }
 
 void serv_chat_invite(int id, char *message, char *name)
 {
-#ifndef USE_OSCAR
-        char buf[BUF_LONG];
-        g_snprintf(buf, sizeof(buf)/2, "toc_chat_invite %d \"%s\" %s", id, message, normalize(name));
-        sflap_send(buf, -1, TYPE_DATA);
-#else
-	GList *bcs = buddy_chats;
-	struct buddy_chat *b = NULL;
+	if (!USE_OSCAR) {
+	        char buf[BUF_LONG];
+	        g_snprintf(buf, sizeof(buf)/2, "toc_chat_invite %d \"%s\" %s", id, message, normalize(name));
+	        sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		GList *bcs = buddy_chats;
+		struct buddy_chat *b = NULL;
 
-	while (bcs) {
-		b = (struct buddy_chat *)bcs->data;
-		if (id == b->id)
-			break;
-		bcs = bcs->next;
-		b = NULL;
-	}
+		while (bcs) {
+			b = (struct buddy_chat *)bcs->data;
+			if (id == b->id)
+				break;
+			bcs = bcs->next;
+			b = NULL;
+		}
 
-	if (!b)
-		return;
+		if (!b)
+			return;
 		
-	aim_chat_invite(gaim_sess, gaim_conn, name, message, 0x4, b->name, 0x1);
-#endif
+		aim_chat_invite(gaim_sess, gaim_conn, name, message, 0x4, b->name, 0x1);
+	}
 }
 
 void serv_chat_leave(int id)
 {
-#ifndef USE_OSCAR
-        char *buf = g_malloc(256);
-        g_snprintf(buf, 255, "toc_chat_leave %d",  id);
-        sflap_send(buf, -1, TYPE_DATA);
-        g_free(buf);
-#else
+	if (!USE_OSCAR) {
+	        char *buf = g_malloc(256);
+	        g_snprintf(buf, 255, "toc_chat_leave %d",  id);
+	        sflap_send(buf, -1, TYPE_DATA);
+	        g_free(buf);
+	} else {
 	GList *bcs = buddy_chats;
 	struct buddy_chat *b = NULL;
 	struct chat_connection *c = NULL;
@@ -576,45 +575,45 @@ void serv_chat_leave(int id)
 	}
 	/* we do this because with Oscar it doesn't tell us we left */
 	serv_got_chat_left(b->id);
-#endif
+	}
 }
 
 void serv_chat_whisper(int id, char *who, char *message)
 {
-#ifndef USE_OSCAR
-        char buf2[MSG_LEN];
-        g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
-        sflap_send(buf2, -1, TYPE_DATA);
-#else
-	do_error_dialog("Sorry, Oscar doesn't whisper. Send an IM. (The last message was not received.)",
-			"Gaim - Chat");
-#endif
+	if (!USE_OSCAR) {
+	        char buf2[MSG_LEN];
+	        g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
+	        sflap_send(buf2, -1, TYPE_DATA);
+	} else {
+		do_error_dialog("Sorry, Oscar doesn't whisper. Send an IM. (The last message was not received.)",
+				"Gaim - Chat");
+	}
 }
 
 void serv_chat_send(int id, char *message)
 {
-#ifndef USE_OSCAR
-        char buf[MSG_LEN];
-        g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"",id, message);
-        sflap_send(buf, -1, TYPE_DATA);
-#else
-	struct aim_conn_t *cn;
-	GList *bcs = buddy_chats;
-	struct buddy_chat *b = NULL;
+	if (!USE_OSCAR) {
+	        char buf[MSG_LEN];
+	        g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"",id, message);
+	        sflap_send(buf, -1, TYPE_DATA);
+	} else {
+		struct aim_conn_t *cn;
+		GList *bcs = buddy_chats;
+		struct buddy_chat *b = NULL;
 
-	while (bcs) {
-		b = (struct buddy_chat *)bcs->data;
-		if (id == b->id)
-			break;
-		bcs = bcs->next;
-		b = NULL;
+		while (bcs) {
+			b = (struct buddy_chat *)bcs->data;
+			if (id == b->id)
+				break;
+			bcs = bcs->next;
+			b = NULL;
+		}
+		if (!b)
+			return;
+
+		cn = aim_chat_getconn(gaim_sess, b->name);
+		aim_chat_send_im(gaim_sess, cn, message);
 	}
-	if (!b)
-		return;
-
-	cn = aim_chat_getconn(gaim_sess, b->name);
-	aim_chat_send_im(gaim_sess, cn, message);
-#endif
 }
 
 
@@ -883,16 +882,16 @@ static void close_invite(GtkWidget *w, GtkWidget *w2)
 
 static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 {
-#ifndef USE_OSCAR
-        int i = (int)gtk_object_get_user_data(GTK_OBJECT(w2));
-        serv_accept_chat(i);
-	gtk_widget_destroy(w2);
-#else
-	char *i = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
-	serv_join_chat(0, i); /* for oscar, it doesn't use the id anyway */
-	g_free(i);
-	gtk_widget_destroy(w2);
-#endif
+	if (!USE_OSCAR) {
+	        int i = (int)gtk_object_get_user_data(GTK_OBJECT(w2));
+	        serv_accept_chat(i);
+		gtk_widget_destroy(w2);
+	} else {
+		char *i = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
+		serv_join_chat(0, i); /* for oscar, it doesn't use the id anyway */
+		g_free(i);
+		gtk_widget_destroy(w2);
+	}
 }
 
 
@@ -946,11 +945,11 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
 
 
         /*		gtk_widget_set_usize(d, 200, 110); */
-#ifndef USE_OSCAR
-        gtk_object_set_user_data(GTK_OBJECT(d), (void *)id);
-#else
-	gtk_object_set_user_data(GTK_OBJECT(d), (void *)g_strdup(name));
-#endif
+
+	if (!USE_OSCAR)
+	        gtk_object_set_user_data(GTK_OBJECT(d), (void *)id);
+	else
+		gtk_object_set_user_data(GTK_OBJECT(d), (void *)g_strdup(name));
 
 
         gtk_window_set_title(GTK_WINDOW(d), "Buddy chat invite");
@@ -1074,20 +1073,17 @@ void serv_got_chat_in(int id, char *who, int whisper, char *message)
 
 void serv_rvous_accept(char *name, char *cookie, char *uid)
 {
-#ifndef USE_OSCAR
+	/* Oscar doesn't matter here because this won't ever be called for it */
 	char buf[MSG_LEN];
 	g_snprintf(buf, MSG_LEN, "toc_rvous_accept %s %s %s", normalize(name),
 			cookie, uid);
 	sflap_send(buf, strlen(buf), TYPE_DATA);
-#endif
 }
 
 void serv_rvous_cancel(char *name, char *cookie, char *uid)
 {
-#ifndef USE_OSCAR
 	char buf[MSG_LEN];
 	g_snprintf(buf, MSG_LEN, "toc_rvous_cancel %s %s %s", normalize(name),
 			cookie, uid);
 	sflap_send(buf, strlen(buf), TYPE_DATA);
-#endif
 }

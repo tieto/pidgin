@@ -453,14 +453,10 @@ void show_error_dialog(char *d)
 {
 
 	int no = atoi(d);
-#ifndef USE_OSCAR
-	char *w = strtok(NULL, ":");
-#else
-	char *w = d + 4;
-#endif
+	char *w;
 	char buf[256];
 	char buf2[32];
- 	
+
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
 	struct gaim_callback *g;
@@ -475,6 +471,11 @@ void show_error_dialog(char *d)
 	}
 #endif
 
+	if (USE_OSCAR)
+		w = d + 4;
+	else
+		w = strtok(NULL, ":");
+ 	
 	
         switch(no) {
         case 69:

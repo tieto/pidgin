@@ -1,6 +1,4 @@
-noinst_LIBRARIES = $(LIBFAIM_DO)
-
-EXTRA_LIBRARIES = libfaim.a
+noinst_LIBRARIES = libfaim.a
 
 EXTRA_DIST = faim/aim.h faim/aim_cbtypes.h faim/faimconfig.h README \
 		README.gaim CHANGES CHANGES.gaim COPYING BUGS

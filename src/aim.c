@@ -202,7 +202,9 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 		running = FALSE;
                 return;
 	}
-#ifdef USE_OSCAR
+
+	if (!USE_OSCAR) /* serv_login will set up USE_OSCAR */
+		gaim_setup();
 }
 
 void auth_failed() {
@@ -213,7 +215,6 @@ void auth_failed() {
  * process, it doesn't end there. gaim_setup will be called later from
  * oscar.c, after the buddy list is made and serv_finish_login is called */
 void gaim_setup() {
-#endif /* USE_OSCAR */
 	if (sound_options & OPT_SOUND_LOGIN &&
 		sound_options & OPT_SOUND_SILENT_SIGNON) {
 		logins_not_muted = 0;
@@ -461,7 +462,7 @@ void show_login()
 
 
         gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(remember), (general_options & OPT_GEN_REMEMBER_PASS));
-        
+
 	if (current_user) {
 		GList *all = aim_users;
 		GList *srch = g_list_find(all, (void *)current_user);

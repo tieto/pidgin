@@ -452,13 +452,13 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy *
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-#ifdef USE_OSCAR /* FIXME : someday maybe TOC can do this too */
+	if (USE_OSCAR) {
 		button = gtk_menu_item_new_with_label(_("Away Msg"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(pressed_away_msg), b);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
-#endif
+	}
 
 		button = gtk_menu_item_new_with_label(_("Toggle Logging"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
@@ -1636,10 +1636,8 @@ static void set_permit(GtkWidget *w, int *data)
 	/* We don't save this 'at home', it's on the server.
          * So, we gotta resend the config to the server. */
         serv_save_config();
-#ifdef USE_OSCAR
 	/* we do this here because we can :) */
 	serv_set_permit_deny();
-#endif
 }
 
 

@@ -408,7 +408,7 @@ FILE *open_log_file (char *name)
 /* we only need this for TOC, because messages must be escaped */
 int escape_message(char *msg)
 {
-#ifndef USE_OSCAR
+if (!USE_OSCAR) {
 	char *c, *cpy;
 	int cnt=0;
 	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
@@ -438,15 +438,15 @@ int escape_message(char *msg)
 	msg[cnt]='\0';
 	g_free(cpy);
 	return cnt;
-#else
+} else {
 	return strlen(msg);
-#endif
+}
 }
 
 /* we don't need this for oscar either */
 int escape_text(char *msg)
 {
-#ifndef USE_OSCAR
+if (!USE_OSCAR) {
 	char *c, *cpy;
 	int cnt=0;
 	/* Assumes you have a buffer able to cary at least BUF_LEN * 4 bytes */
@@ -479,9 +479,9 @@ int escape_text(char *msg)
 	msg[cnt]='\0';
 	g_free(cpy);
 	return cnt;
-#else
+} else {
 	return strlen(msg);
-#endif
+}
 }
 
 char * escape_text2(char *msg)

@@ -38,7 +38,6 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#ifndef USE_OSCAR
 
 
 /* descriptor for talking to TOC */
@@ -826,8 +825,6 @@ char *toc_wait_config()
 	else
 		return NULL;
 }
-
-#endif /* USE_OSCAR */
 
 void toc_build_config(char *s, int len)
 {

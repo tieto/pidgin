@@ -212,7 +212,6 @@ manualentry_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
 	return TRUE;
 }
 
-#ifndef USE_OSCAR
 static int
 connection_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
 {
@@ -228,7 +227,6 @@ connection_key_pressed(GtkWidget *w, GdkEvent *event, void *dummy)
 	save_prefs();
 	return TRUE;
 }
-#endif
 
 
 
@@ -326,13 +324,10 @@ void build_prefs()
 	GtkWidget *appearance_page;
 	GtkWidget *chat_page;
         GtkWidget *browser_page;
-#ifndef USE_OSCAR /* sorry, since we don't control the comm we can't set
-		     the connection */
         GtkWidget *connection_page;
         GtkWidget *connectopt;
 	GtkWidget *hbox;
         GtkWidget *hbox2;
-#endif
 #ifdef USE_APPLET
 	GtkWidget *applet_page;
 	GtkWidget *appletbox;
@@ -456,12 +451,15 @@ void build_prefs()
 
         /* Connection */
         
-#ifndef USE_OSCAR
         connection_page = gtk_vbox_new(FALSE, 0);
         label = gtk_label_new(_("Connection"));
         gtk_widget_show(label);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), connection_page, label);
 
+	gaim_button(_("Use Oscar Protocol (experimental; only takes effect before signon)"), &general_options, OPT_GEN_USE_OSCAR, connection_page);
+	label = gtk_label_new(_("The following options do not apply if you use Oscar."));
+	gtk_box_pack_start(GTK_BOX(connection_page), label, FALSE, FALSE, 10);
+	gtk_widget_show(label);
 	hbox = gtk_hbox_new(FALSE, 0);
 	label = gtk_label_new(_("TOC Host:"));
 	gtk_widget_show(label);
@@ -585,8 +583,6 @@ void build_prefs()
         gtk_signal_connect(GTK_OBJECT(pd->proxy_port_entry), "focus_out_event", GTK_SIGNAL_FUNC(connection_key_pressed), NULL);
 
 
-#endif /* USE_OSCAR */
-	
 	/* Away */
 	
         a = awaymessage;
