@@ -767,7 +767,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	MsnObject *obj;
 	char **tokens;
 	char *smile;
-	const char *who;
+	const char *who, *sha1c;
 
 	GaimConversation *conversation;
 	GaimConnection *gc;
@@ -780,6 +780,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	obj = msn_object_new_from_string(gaim_url_decode(tokens[1]));
 
 	who = msn_object_get_creator(obj);
+	sha1c = msn_object_get_sha1c(obj);
 
 	slplink = msn_session_get_slplink(session, who);
 
@@ -787,7 +788,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	conversation = gaim_find_conversation_with_account(GAIM_CONV_ANY, who, gc->account);
 
-	if (gaim_conv_custom_smiley_add(conversation, smile, "sha1" /* i think it's a sha1 checksum? */, "base64 encoded checksum here, shx should fix this!")) {
+	if (gaim_conv_custom_smiley_add(conversation, smile, "sha1", sha1c)) {
 		msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 	}
 
