@@ -655,6 +655,7 @@ void show_new_buddy_chat(struct conversation *b)
 	info = picture_button2(win, _("Info"), tb_search_xpm, FALSE);
 	gtk_box_pack_start(GTK_BOX(bbox2), info, dispstyle, dispstyle, 0);
 	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), b);
+	b->info = info;
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, TRUE, FALSE);
@@ -721,6 +722,8 @@ void show_new_buddy_chat(struct conversation *b)
 	b->hasbg = 0;
 	b->fgcol = fgcolor;
 	b->hasfg = 0;
+
+	update_buttons_by_protocol(b);
 
 	gtk_widget_show(win);
 }

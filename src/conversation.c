@@ -1727,27 +1727,44 @@ void redo_convo_menus()
 
 void update_buttons_by_protocol(struct conversation *c)
 {
-	if (c->gc->prpl->set_info == NULL)
+	if (c->gc->prpl->set_info == NULL && c->info)
 		gtk_widget_set_sensitive(c->info, FALSE);
 	else
 		gtk_widget_set_sensitive(c->info, TRUE);
 
-	if (c->gc->prpl->send_im == NULL)
+	if (c->gc->prpl->send_im == NULL && c->send)
 		gtk_widget_set_sensitive(c->send, FALSE);
 	else
 		gtk_widget_set_sensitive(c->send, TRUE);
 
-	if (c->gc->prpl->warn == NULL)
+	if (c->gc->prpl->warn == NULL && c->warn)
 		gtk_widget_set_sensitive(c->warn, FALSE);
 	else
 		gtk_widget_set_sensitive(c->warn, TRUE);
 
-	if (c->gc->prpl->add_permit == NULL)
+	if (c->gc->prpl->add_permit == NULL && c->block)
 		gtk_widget_set_sensitive(c->block, FALSE);
 	else
 		gtk_widget_set_sensitive(c->block, TRUE);
 
-	update_convo_add_button(c);
+	if (c->add)
+		update_convo_add_button(c);
+
+	if (c->whisper) 
+	{
+		if (c->gc->prpl->chat_whisper == NULL)
+			gtk_widget_set_sensitive(c->whisper, FALSE);
+		else
+			gtk_widget_set_sensitive(c->whisper, TRUE);
+	}
+
+	if (c->invite) 
+	{
+		if (c->gc->prpl->chat_invite == NULL)
+			gtk_widget_set_sensitive(c->invite, FALSE);
+		else
+			gtk_widget_set_sensitive(c->invite, TRUE);
+	}
 }
 
 
