@@ -31,6 +31,7 @@ static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *
 	int state = 0;
 
 	for (it = str_array; *it; it++) {
+		if (!**it) continue;
 		if (!strncmp(*it, "ERROR", strlen("ERROR"))) {
 			yahoo_close(session, conn);
 			if (session->callbacks[YAHOO_HANDLE_BADPASSWORD].function)
@@ -86,10 +87,12 @@ static int yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn *
 			if (state == 1) {
 				struct yahoo_group *grp = g_new0(struct yahoo_group, 1);
 				char *end = strchr(*it, ':');
-				grp->name = g_strndup(*it, end - *it);
-				end++;
-				grp->buddies = g_strsplit(end, ",", 1024);
-				session->groups = g_list_append(session->groups, grp);
+				if (end) {
+					grp->name = g_strndup(*it, end - *it);
+					end++;
+					grp->buddies = g_strsplit(end, ",", 1024);
+					session->groups = g_list_append(session->groups, grp);
+				}
 			} else if (state == 2) {
 				session->ignored = g_list_append(session->ignored, g_strdup(*it));
 			} else if (state == 3) {
