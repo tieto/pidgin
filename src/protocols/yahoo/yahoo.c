@@ -304,6 +304,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *name = NULL;
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
+		gc->wants_to_die = TRUE;
 		gaim_connection_error(gc, _("You have been logged off as you have logged in on a different machine or device."));
 		return;
 	}
