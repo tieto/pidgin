@@ -216,15 +216,6 @@ static void docklet_menu() {
 
 	gaim_separator(menu);
 
-	switch (status) {
-		case offline:
-		case offline_connecting:
-			break;
-		default:
-			gaim_new_item_from_stock(menu, _("Log Out"), GTK_STOCK_CLOSE, G_CALLBACK(gaim_connections_disconnect_all), NULL, 0, 0, 0);
-			break;
-	}
-
 	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(gaim_core_quit), NULL, 0, 0, NULL);
 
 #ifdef _WIN32
