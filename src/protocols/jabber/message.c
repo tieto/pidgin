@@ -21,9 +21,9 @@
 #include "internal.h"
 
 #include "debug.h"
-#include "html.h"
 #include "notify.h"
 #include "server.h"
+#include "util.h"
 
 #include "buddy.h"
 #include "chat.h"
@@ -348,7 +348,7 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 
 	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body>%s</body></html>", msg);
 
-	html_to_xhtml(buf, &xhtml, &plain);
+	gaim_markup_html_to_xhtml(buf, &xhtml, &plain);
 	g_free(buf);
 
 	jm->body = plain;
@@ -378,7 +378,7 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *message)
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 
-	html_to_xhtml(message, NULL, &jm->body);
+	gaim_markup_html_to_xhtml(message, NULL, &jm->body);
 
 	jabber_message_send(jm);
 	jabber_message_free(jm);

@@ -30,7 +30,6 @@
 #include "proxy.h"
 #include "request.h"
 #include "util.h"
-#include "html.h"
 
 static GaimPlugin *my_protocol = NULL;
 

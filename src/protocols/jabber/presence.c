@@ -21,10 +21,10 @@
 #include "internal.h"
 
 #include "debug.h"
-#include "html.h"
 #include "notify.h"
 #include "request.h"
 #include "server.h"
+#include "util.h"
 
 #include "buddy.h"
 #include "chat.h"
@@ -54,7 +54,7 @@ void jabber_presence_send(GaimConnection *gc, const char *state,
 	char *stripped = NULL;
 
 	if(msg) {
-		html_to_xhtml(msg, NULL, &stripped);
+		gaim_markup_html_to_xhtml(msg, NULL, &stripped);
 	} else {
 		stripped = g_strdup("");
 	}

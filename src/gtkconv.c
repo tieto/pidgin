@@ -33,7 +33,6 @@
 #include <locale.h>
 
 #include "debug.h"
-#include "html.h"
 #include "imgstore.h"
 #include "log.h"
 #include "multi.h"
@@ -4388,7 +4387,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml), buf2, 0, images);
 
 		if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
-			char *t1 = strip_html(buf);
+			char *t1 = gaim_markup_strip_html(buf);
 
 			conv->history = g_string_append(conv->history, t1);
 			conv->history = g_string_append(conv->history, "\n");
@@ -4406,7 +4405,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			char nm[256];
 
 			if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
-				t1 = strip_html(buf);
+				t1 = gaim_markup_strip_html(buf);
 			else
 				t1 = buf;
 
@@ -4544,8 +4543,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
 			char *t1, *t2;
 
-			t1 = strip_html(buf);
-			t2 = strip_html(new_message);
+			t1 = gaim_markup_strip_html(buf);
+			t2 = gaim_markup_strip_html(new_message);
 
 			conv->history = g_string_append(conv->history, t1);
 			conv->history = g_string_append(conv->history, t2);
@@ -4581,8 +4580,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				strncpy(nm, gaim_conversation_get_name(conv), sizeof(nm));
 
 			if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
-				t1 = strip_html(buf);
-				t2 = strip_html(with_font_tag);
+				t1 = gaim_markup_strip_html(buf);
+				t2 = gaim_markup_strip_html(with_font_tag);
 			}
 			else {
 				t1 = html_logize(buf);

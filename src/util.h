@@ -350,6 +350,55 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
 							  GData **attributes);
 
 /**
+ * Extracts a field of data from HTML.
+ *
+ * This is a scary function. See protocols/msn/msn.c and
+ * protocols/yahoo/yahoo.c for example usage.
+ *
+ * @param str            The string to parse.
+ * @param dest_buffer    The destination buffer to append the new
+ *                       field info to.
+ * @param start_token    The beginning token.
+ * @param skip           The number of characters to skip after the
+ *                       start token.
+ * @param end_token      The ending token.
+ * @param check_value    The value that the last character must meet.
+ * @param no_value_token The token indicating no value is given.
+ * @param display_name   The short descriptive name to display for this token.
+ * @param is_link        TRUE if this should be a link, or FALSE otherwise.
+ * @param link_prefix    The prefix for the link.
+ *
+ * @return TRUE if successful, or FALSE otherwise.
+ */
+gboolean gaim_markup_extract_info_field(const char *str, char *dest_buffer,
+										const char *start_token, int skip,
+										const char *end_token,
+										char check_value,
+										const char *no_value_token,
+										const char *display_name,
+										gboolean is_link,
+										const char *link_prefix);
+
+/**
+ * Converts HTML markup to XHTML.
+ *
+ * @param html       The HTML markup.
+ * @param dest_xhtml The destination XHTML output.
+ * @param dest_plain The destination plain-text output.
+ */
+void gaim_markup_html_to_xhtml(const char *html, char **dest_xhtml,
+							   char **dest_plain);
+
+/**
+ * Strips HTML tags from a string.
+ *
+ * @param str The string to strip HTML from.
+ *
+ * @return The new string without HTML. This must be freed.
+ */
+char *gaim_markup_strip_html(const char *str);
+
+/**
  * Parses a URL, returning its host, port, and file path.
  *
  * The returned data must be freed.

@@ -30,7 +30,7 @@
 #include "state.h"
 #include "utils.h"
 #include "multi.h"
-#include "html.h"
+#include "util.h"
 
 #define BUDDY_ALIAS_MAXLEN 388
 
@@ -1236,7 +1236,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	url_buffer = g_strdup(url_text);
 
 	/* If they have a homepage link, MSN masks it such that we need to
-	 * fetch the url out before strip_html() nukes it */
+	 * fetch the url out before gaim_markup_strip_html() nukes it */
 	if ((p = strstr(url_text,
 			"Take a look at my </font><A class=viewDesc title=\"")) != NULL)
 	{
@@ -1247,7 +1247,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	}
 
 	/*
-	 * strip_html() doesn't strip out character entities like &nbsp;
+	 * gaim_markup_strip_html() doesn't strip out character entities like &nbsp;
 	 * and &#183;
 	 */
 	while ((p = strstr(url_buffer, "&nbsp;")) != NULL)
@@ -1278,34 +1278,37 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	}
 
 	/* Nuke the html, it's easier than trying to parse the horrid stuff */
-	stripped = strip_html(url_buffer);
+	stripped = gaim_markup_strip_html(url_buffer);
 
 	/* Gonna re-use the memory we've already got for url_buffer */
 	strcpy(url_buffer, "<html><body>\n");
 
 	/* Extract their Name and put it in */
-	info_extract_field(stripped, url_buffer, "\tName", 0, "\t", '\n',
-					   "Undisclosed", _("Name"), 0, NULL);
+	gaim_markup_extract_info_field(stripped, url_buffer, "\tName", 0, "\t",
+								   '\n', "Undisclosed", _("Name"), 0, NULL);
 
 	/* Extract their Age and put it in */
-	info_extract_field(stripped, url_buffer, "\tAge", 0, "\t", '\n',
-					   "Undisclosed", _("Age"), 0, NULL);
+	gaim_markup_extract_info_field(stripped, url_buffer, "\tAge", 0, "\t",
+								   '\n', "Undisclosed", _("Age"), 0, NULL);
 
 	/* Extract their Gender and put it in */
-	info_extract_field(stripped, url_buffer, "\tGender", 6, "\t", '\n',
-					   "Undisclosed", _("Gender"), 0, NULL);
+	gaim_markup_extract_info_field(stripped, url_buffer, "\tGender", 6, "\t",
+								   '\n', "Undisclosed", _("Gender"), 0, NULL);
 
 	/* Extract their MaritalStatus and put it in */
-	info_extract_field(stripped, url_buffer, "\tMaritalStatus", 0, "\t", '\n',
-					   "Undisclosed", _("Marital Status"), 0, NULL);
+	gaim_markup_extract_info_field(stripped, url_buffer, "\tMaritalStatus",
+								   0, "\t", '\n', "Undisclosed",
+								   _("Marital Status"), 0, NULL);
 
 	/* Extract their Location and put it in */
-	info_extract_field(stripped, url_buffer, "\tLocation", 0, "\t", '\n',
-					   "Undisclosed", _("Location"), 0, NULL);
+	gaim_markup_extract_info_field(stripped, url_buffer, "\tLocation", 0,
+								   "\t", '\n', "Undisclosed", _("Location"),
+								   0, NULL);
 
 	/* Extract their Occupation and put it in */
-	info_extract_field(stripped, url_buffer, "\t Occupation", 6, "\t", '\n',
-					   "Undisclosed", _("Occupation"), 0, NULL);
+	gaim_markup_extract_info_field(stripped, url_buffer, "\t Occupation", 6,
+								   "\t", '\n', "Undisclosed", _("Occupation"),
+								   0, NULL);
 
 	/*
 	 * The fields, 'A Little About Me', 'Favorite Things', 'Hobbies
@@ -1316,102 +1319,99 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	 */
 
 	/* Check if they have A Little About Me */
-	found = info_extract_field(stripped, url_buffer, "\tA Little About Me",
-							   1, "Favorite Things", '\n', NULL,
-							   _("A Little About Me"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer,
+			"\tA Little About Me", 1, "Favorite Things", '\n', NULL,
+			_("A Little About Me"), 0, NULL);
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_buffer,
-								   "\tA Little About Me", 1,
-								   "Hobbies and Interests", '\n', NULL,
-								   _("A Little About Me"), 0, NULL);
+		found = gaim_markup_extract_info_field(stripped, url_buffer,
+				"\tA Little About Me", 1, "Hobbies and Interests", '\n',
+				NULL, _("A Little About Me"), 0, NULL);
 	}
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_buffer,
-								   "\tA Little About Me", 1,
-								   "Favorite Quote", '\n', NULL,
-								   _("A Little About Me"), 0, NULL);
+		found = gaim_markup_extract_info_field(stripped, url_buffer,
+				"\tA Little About Me", 1, "Favorite Quote", '\n', NULL,
+				_("A Little About Me"), 0, NULL);
 	}
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_buffer,
-								   "\tA Little About Me", 1,
-								   "My Homepage\tTake a look", '\n', NULL,
-								   _("A Little About Me"), 0, NULL);
+		found = gaim_markup_extract_info_field(stripped, url_buffer,
+				"\tA Little About Me", 1, "My Homepage\tTake a look", '\n',
+				NULL, _("A Little About Me"), 0, NULL);
 	}
 
 	if (!found)
 	{
-		info_extract_field(stripped, url_buffer, "\tA Little About Me", 1,
-						   "last updated", '\n',
-							NULL, _("A Little About Me"), 0, NULL);
+		gaim_markup_extract_info_field(stripped, url_buffer,
+				"\tA Little About Me", 1, "last updated", '\n', NULL,
+				_("A Little About Me"), 0, NULL);
 	}
 
 	/* Check if they have Favorite Things */
-	found = info_extract_field(stripped, url_buffer, "Favorite Things", 1,
-							   "Hobbies and Interests", '\n', NULL,
-							   _("Favorite Things"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer,
+				"Favorite Things", 1, "Hobbies and Interests", '\n', NULL,
+				_("Favorite Things"), 0, NULL);
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_buffer, "Favorite Things", 1,
-								   "Favorite Quote", '\n', NULL,
-								   "Favorite Things", 0, NULL);
+		found = gaim_markup_extract_info_field(stripped, url_buffer,
+				"Favorite Things", 1, "Favorite Quote", '\n', NULL,
+				"Favorite Things", 0, NULL);
 	}
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_buffer, "Favorite Things", 1,
-								   "My Homepage\tTake a look", '\n', NULL,
-								   _("Favorite Things"), 0, NULL);
+		found = gaim_markup_extract_info_field(stripped, url_buffer,
+				"Favorite Things", 1, "My Homepage\tTake a look", '\n', NULL,
+				_("Favorite Things"), 0, NULL);
 	}
 
 	if (!found)
 	{
-		info_extract_field(stripped, url_buffer, "Favorite Things", 1,
-						   "last updated", '\n', NULL,
-						   _("Favorite Things"), 0, NULL);
+		gaim_markup_extract_info_field(stripped, url_buffer,
+				"Favorite Things", 1, "last updated", '\n', NULL,
+				_("Favorite Things"), 0, NULL);
 	}
 
 	/* Check if they have Hobbies and Interests */
-	found = info_extract_field(stripped, url_buffer, "Hobbies and Interests",
-							   1, "Favorite Quote", '\n', NULL,
-							   _("Hobbies and Interests"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer,
+			"Hobbies and Interests", 1, "Favorite Quote", '\n', NULL,
+			_("Hobbies and Interests"), 0, NULL);
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_buffer,
-								   "Hobbies and Interests", 1,
-								   "My Homepage\tTake a look", '\n', NULL,
-								   _("Hobbies and Interests"), 0, NULL);
+		found = gaim_markup_extract_info_field(stripped, url_buffer,
+				"Hobbies and Interests", 1, "My Homepage\tTake a look",
+				'\n', NULL, _("Hobbies and Interests"), 0, NULL);
 	}
 
 	if (!found)
 	{
-		info_extract_field(stripped, url_buffer, "Hobbies and Interests",
-						   1, "last updated", '\n', NULL,
-						   _("Hobbies and Interests"), 0, NULL);
+		gaim_markup_extract_info_field(stripped, url_buffer,
+				"Hobbies and Interests", 1, "last updated", '\n', NULL,
+				_("Hobbies and Interests"), 0, NULL);
 	}
 
 	/* Check if they have Favorite Quote */
-	found = info_extract_field(stripped, url_buffer, "Favorite Quote", 1,
-							   "My Homepage\tTake a look", '\n', NULL,
-							   _("Favorite Quote"), 0, NULL);
+	found = gaim_markup_extract_info_field(stripped, url_buffer,
+			"Favorite Quote", 1, "My Homepage\tTake a look", '\n', NULL,
+			_("Favorite Quote"), 0, NULL);
 
 	if (!found)
 	{
-		info_extract_field(stripped, url_buffer, "Favorite Quote", 1,
-						   "last updated", '\n', NULL,
-						   _("Favorite Quote"), 0, NULL);
+		gaim_markup_extract_info_field(stripped, url_buffer,
+				"Favorite Quote", 1, "last updated", '\n', NULL,
+				_("Favorite Quote"), 0, NULL);
 	}
 
 	/* Extract the last updated date and put it in */
-	info_extract_field(stripped, url_buffer, "\tlast updated:", 1, "\n", '\n',
-					   NULL, _("Last Updated"), 0, NULL);
+	gaim_markup_extract_info_field(stripped, url_buffer,
+			"\tlast updated:", 1, "\n", '\n', NULL, _("Last Updated"),
+			0, NULL);
 
 	/* If we were able to fetch a homepage url earlier, stick it in there */
 	if (user_url != NULL)

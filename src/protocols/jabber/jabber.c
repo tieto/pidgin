@@ -34,13 +34,13 @@
 #include "account.h"
 #include "accountopt.h"
 #include "debug.h"
-#include "html.h"
 #include "message.h"
 #include "multi.h"
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"
 #include "server.h"
+#include "util.h"
 
 #include "auth.h"
 #include "buddy.h"
@@ -777,7 +777,9 @@ static char *jabber_status_text(GaimBuddy *b)
 	} else if(jb && !GAIM_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 		ret = g_strdup(jb->error_msg);
 	} else {
-		char *stripped = strip_html(jabber_buddy_get_status_msg(jb));
+		char *stripped;
+
+		stripped = gaim_markup_strip_html(jabber_buddy_get_status_msg(jb));
 
 		if(!stripped && b->uc & UC_UNAVAILABLE)
 			stripped = g_strdup(jabber_get_state_string(b->uc));
@@ -802,7 +804,7 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 		char *text = NULL;
 		if(jbr->status) {
 			char *stripped;
-			stripped = strip_html(jbr->status);
+			stripped = gaim_markup_strip_html(jbr->status);
 			text = g_markup_escape_text(stripped, -1);
 			g_free(stripped);
 		}

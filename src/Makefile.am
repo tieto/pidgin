@@ -64,8 +64,6 @@ CORESOURCES = \
 	debug.h \
 	ft.c \
 	ft.h \
-	html.c \
-	html.h \
 	imgstore.c \
 	imgstore.h \
 	md5.c \

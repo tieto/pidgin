@@ -33,7 +33,6 @@
 #include "request.h"
 #include "server.h"
 #include "util.h"
-#include "html.h"
 
 #include "sha.h"
 #include "yahoo.h"
@@ -1919,7 +1918,7 @@ static char *yahoo_status_text(GaimBuddy *b)
 	case YAHOO_STATUS_CUSTOM:
 		if (!f->msg)
 			return NULL;
-		stripped = strip_html(f->msg);
+		stripped = gaim_markup_strip_html(f->msg);
 		if (stripped) {
  			char *ret = g_markup_escape_text(stripped, strlen(stripped));
  			g_free(stripped);
@@ -1953,7 +1952,7 @@ static char *yahoo_tooltip_text(GaimBuddy *b)
 		case YAHOO_STATUS_CUSTOM:
 			if (!f->msg)
 				return NULL;
-			status = strip_html(f->msg);
+			status = gaim_markup_strip_html(f->msg);
 			break;
 		default:
 			status = g_strdup(yahoo_get_status_string(f->status));
@@ -2411,7 +2410,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	p = strstr(url_text, "Adult Profiles Warning Message");
 	if (p) {
 		strcpy(buf, _("<b>Sorry, profiles marked as containing adult content are not supported at this time.</b><br><br>\n"));
-		info_extract_field(url_text, buf, ".idname=", 0, "%26", 0, NULL,
+		gaim_markup_extract_info_field(url_text, buf, ".idname=", 0, "%26", 0, NULL,
 				_("If you wish to view this profile, you will need to visit this link in your web browser"),
 				1, YAHOO_PROFILE_URL);
 		strcat(buf, "</body></html>\n");
@@ -2428,7 +2427,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	p = strstr(url_text, "Last Updated:");
 	if (!p) {
 		strcpy(buf, _("<b>Sorry, non-English profiles are not supported at this time.</b><br><br>\n"));
-		info_extract_field(url_text, buf, "<title>", 0, "'s Yahoo! Profile", 0, NULL,
+		gaim_markup_extract_info_field(url_text, buf, "<title>", 0, "'s Yahoo! Profile", 0, NULL,
 				_("If you wish to view this profile, you will need to visit this link in your web browser"),
 				1, YAHOO_PROFILE_URL);
 		strcat(buf, "</body></html>\n");
@@ -2439,7 +2438,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 
 	url_buffer = g_strdup(url_text);
 
-	/* strip_html() doesn't strip out character entities like &nbsp; and &#183;
+	/* gaim_markup_strip_html() doesn't strip out character entities like &nbsp; and &#183;
 	*/
 	while ((p = strstr(url_buffer, "&nbsp;")) != NULL) {
 		memmove(p, p + 6, strlen(p + 6));
@@ -2457,45 +2456,45 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	}
 
 	/* nuke the html, it's easier than trying to parse the horrid stuff */
-	stripped = strip_html(url_buffer);
+	stripped = gaim_markup_strip_html(url_buffer);
 
 	/* gonna re-use the memory we've already got for url_buffer */
 	strcpy(url_buffer, "<html><body>\n");
 
 	/* extract their Yahoo! ID and put it in */
-	info_extract_field(stripped, url_buffer, "Yahoo! ID:", 2, "\n", 0,
+	gaim_markup_extract_info_field(stripped, url_buffer, "Yahoo! ID:", 2, "\n", 0,
 			NULL, _("Yahoo! ID"), 0, NULL);
 
 	/* extract their Email address and put it in */
-	info_extract_field(stripped, url_buffer, "My Email", 5, "\n", 0,
+	gaim_markup_extract_info_field(stripped, url_buffer, "My Email", 5, "\n", 0,
 			"Private", _("Email"), 0, NULL);
 
 	/* extract the Nickname if it exists */
-	info_extract_field(stripped, url_buffer, "Nickname:", 1, "\n", '\n',
+	gaim_markup_extract_info_field(stripped, url_buffer, "Nickname:", 1, "\n", '\n',
 			NULL, _("Nickname"), 0, NULL);
 
 	/* extract their RealName and put it in */
-	info_extract_field(stripped, url_buffer, "RealName:", 1, "\n", '\n',
+	gaim_markup_extract_info_field(stripped, url_buffer, "RealName:", 1, "\n", '\n',
 			NULL, _("Realname"), 0, NULL);
 
 	/* extract their Location and put it in */
-	info_extract_field(stripped, url_buffer, "Location:", 2, "\n", '\n',
+	gaim_markup_extract_info_field(stripped, url_buffer, "Location:", 2, "\n", '\n',
 			NULL, _("Location"), 0, NULL);
 
 	/* extract their Age and put it in */
-	info_extract_field(stripped, url_buffer, "Age:", 3, "\n", '\n',
+	gaim_markup_extract_info_field(stripped, url_buffer, "Age:", 3, "\n", '\n',
 			NULL, _("Age"), 0, NULL);
 
 	/* extract their MaritalStatus and put it in */
-	info_extract_field(stripped, url_buffer, "MaritalStatus:", 3, "\n", '\n',
+	gaim_markup_extract_info_field(stripped, url_buffer, "MaritalStatus:", 3, "\n", '\n',
 			"No Answer", _("Marital Status"), 0, NULL);
 
 	/* extract their Gender and put it in */
-	info_extract_field(stripped, url_buffer, "Gender:", 3, "\n", '\n',
+	gaim_markup_extract_info_field(stripped, url_buffer, "Gender:", 3, "\n", '\n',
 			"No Answer", _("Gender"), 0, NULL);
 
 	/* extract their Occupation and put it in */
-	info_extract_field(stripped, url_buffer, "Occupation:", 2, "\n", '\n',
+	gaim_markup_extract_info_field(stripped, url_buffer, "Occupation:", 2, "\n", '\n',
 			NULL, _("Occupation"), 0, NULL);
 
 	/* Hobbies, Latest News, and Favorite Quote are a bit different, since the
@@ -2505,24 +2504,24 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	 * looking for the 'Links' heading, which is the next thing to follow this
 	 * bunch.
 	 */
-	if (!info_extract_field(stripped, url_buffer, "Hobbies:", 1, "Latest News",
+	if (!gaim_markup_extract_info_field(stripped, url_buffer, "Hobbies:", 1, "Latest News",
 				'\n', NULL, _("Hobbies"), 0, NULL))
-		if (!info_extract_field(stripped, url_buffer, "Hobbies:", 1, "Favorite Quote",
+		if (!gaim_markup_extract_info_field(stripped, url_buffer, "Hobbies:", 1, "Favorite Quote",
 					'\n', NULL, _("Hobbies"), 0, NULL))
-			info_extract_field(stripped, url_buffer, "Hobbies:", 1, "Links",
+			gaim_markup_extract_info_field(stripped, url_buffer, "Hobbies:", 1, "Links",
 					'\n', NULL, _("Hobbies"), 0, NULL);
-	if (!info_extract_field(stripped, url_buffer, "Latest News:", 1, "Favorite Quote",
+	if (!gaim_markup_extract_info_field(stripped, url_buffer, "Latest News:", 1, "Favorite Quote",
 				'\n', NULL, _("Latest News"), 0, NULL))
-		info_extract_field(stripped, url_buffer, "Latest News:", 1, "Links",
+		gaim_markup_extract_info_field(stripped, url_buffer, "Latest News:", 1, "Links",
 				'\n', NULL, _("Latest News"), 0, NULL);
-	info_extract_field(stripped, url_buffer, "Favorite Quote:", 0, "Links",
+	gaim_markup_extract_info_field(stripped, url_buffer, "Favorite Quote:", 0, "Links",
 			'\n', NULL, _("Favorite Quote"), 0, NULL);
 
 	/* Home Page will either be "No home page specified",
 	 * or "Home Page: " and a link. */
 	p = strstr(stripped, "No home page specified");
 	if (!p)
-		info_extract_field(stripped, url_buffer, "Home Page:", 1, " ", 0, NULL,
+		gaim_markup_extract_info_field(stripped, url_buffer, "Home Page:", 1, " ", 0, NULL,
 				_("Home Page"), 1, NULL);
 
 	/* Cool Link {1,2,3} is also different.  If "No cool link specified" exists,
@@ -2532,19 +2531,19 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	 */
 	p = strstr(stripped,"No cool link specified");
 	if (!p)
-		if (info_extract_field(stripped, url_buffer, "Cool Link 1:", 1, " ", 0, NULL,
+		if (gaim_markup_extract_info_field(stripped, url_buffer, "Cool Link 1:", 1, " ", 0, NULL,
 					_("Cool Link 1"), 1, NULL))
-			if (info_extract_field(stripped, url_buffer, "Cool Link 2:", 1, " ", 0, NULL,
+			if (gaim_markup_extract_info_field(stripped, url_buffer, "Cool Link 2:", 1, " ", 0, NULL,
 						_("Cool Link 2"), 1, NULL))
-				info_extract_field(stripped, url_buffer, "Cool Link 3:", 1, " ", 0, NULL,
+				gaim_markup_extract_info_field(stripped, url_buffer, "Cool Link 3:", 1, " ", 0, NULL,
 						_("Cool Link 3"), 1, NULL);
 
 	/* see if Member Since is there, and if so, extract it. */
-	info_extract_field(stripped, url_buffer, "Member Since:", 1, "Last Updated:",
+	gaim_markup_extract_info_field(stripped, url_buffer, "Member Since:", 1, "Last Updated:",
 			'\n', NULL, _("Member Since"), 0, NULL);
 
 	/* extract the Last Updated date and put it in */
-	info_extract_field(stripped, url_buffer, "Last Updated:", 1, "\n", '\n', NULL,
+	gaim_markup_extract_info_field(stripped, url_buffer, "Last Updated:", 1, "\n", '\n', NULL,
 			_("Last Updated"), 0, NULL);
 
 	/* finish off the html */

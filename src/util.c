@@ -2,8 +2,9 @@
  * @file util.h Utility Functions
  * @ingroup core
  *
- * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
- * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
+ * Copyright (C) 1998-1999 Mark Spencer <markster@marko.net>
+ *               2003 Christian Hammond <chipx86@gnupdate.org>
+ *               2003 Nathan Walp <faceprint@faceprint.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1166,6 +1167,448 @@ gaim_markup_find_tag(const char *needle, const char *haystack,
 	}
 
 	return found;
+}
+
+gboolean
+gaim_markup_extract_info_field(const char *str, char *dest_buffer,
+							   const char *start_token, int skip,
+							   const char *end_token, char check_value,
+							   const char *no_value_token,
+							   const char *display_name, gboolean is_link,
+							   const char *link_prefix)
+{
+	const char *p, *q;
+	char buf[1024];
+
+	g_return_val_if_fail(str          != NULL, FALSE);
+	g_return_val_if_fail(dest_buffer  != NULL, FALSE);
+	g_return_val_if_fail(start_token  != NULL, FALSE);
+	g_return_val_if_fail(end_token    != NULL, FALSE);
+	g_return_val_if_fail(display_name != NULL, FALSE);
+
+	p = strstr(str, start_token);
+
+	if (p == NULL)
+		return FALSE;
+
+	p += strlen(start_token) + skip;
+
+	if (check_value != '\0' && *p == check_value)
+		return FALSE;
+
+	q = strstr(p, end_token);
+
+	if (q != NULL && (!no_value_token ||
+					  (no_value_token && strncmp(p, no_value_token,
+												 strlen(no_value_token)))))
+	{
+		strcat(dest_buffer, "<b>");
+		strcat(dest_buffer, display_name);
+		strcat(dest_buffer, ":</b> ");
+
+		if (is_link)
+		{
+			strcat(dest_buffer, "<br><a href=\"");
+			memcpy(buf, p, q - p);
+			buf[q - p] = '\0';
+
+			if (link_prefix)
+				strcat(dest_buffer, link_prefix);
+
+			strcat(dest_buffer, buf);
+			strcat(dest_buffer, "\">");
+
+			if (link_prefix)
+				strcat(dest_buffer, link_prefix);
+
+			strcat(dest_buffer, buf);
+			strcat(dest_buffer, "</a>");
+		}
+		else
+		{
+			memcpy(buf, p, q - p);
+			buf[q - p] = '\0';
+			strcat(dest_buffer, buf);
+		}
+
+		strcat(dest_buffer, "<br>\n");
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+struct gaim_parse_tag {
+	char *src_tag;
+	char *dest_tag;
+};
+
+#define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
+						const char *o = c + strlen("<" x); \
+						const char *p = NULL, *q = NULL, *r = NULL; \
+						GString *innards = g_string_new(""); \
+						while(o && *o) { \
+							if(!q && (*o == '\"' || *o == '\'') ) { \
+								q = o; \
+							} else if(q) { \
+								if(*o == *q) { \
+									char *unescaped = g_strndup(q+1, o-q-1); \
+									char *escaped = g_markup_escape_text(unescaped, -1); \
+									g_string_append_printf(innards, "%c%s%c", *q, escaped, *q); \
+									g_free(unescaped); \
+									g_free(escaped); \
+									q = NULL; \
+								} else if(*c == '\\') { \
+									o++; \
+								} \
+							} else if(*o == '<') { \
+								r = o; \
+							} else if(*o == '>') { \
+								p = o; \
+								break; \
+							} else { \
+								innards = g_string_append_c(innards, *o); \
+							} \
+							o++; \
+						} \
+						if(p && !r) { \
+							if(*(p-1) != '/') { \
+								struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1); \
+								pt->src_tag = x; \
+								pt->dest_tag = y; \
+								tags = g_list_prepend(tags, pt); \
+							} \
+							xhtml = g_string_append(xhtml, "<" y); \
+							c += strlen("<" x ); \
+							xhtml = g_string_append(xhtml, innards->str); \
+							xhtml = g_string_append_c(xhtml, '>'); \
+							c = p + 1; \
+						} else { \
+							xhtml = g_string_append(xhtml, "&lt;"); \
+							plain = g_string_append_c(plain, '<'); \
+							c++; \
+						} \
+						g_string_free(innards, TRUE); \
+						continue; \
+					} \
+						if(!g_ascii_strncasecmp(c, "<" x, strlen("<" x)) && \
+								(*(c+strlen("<" x)) == '>' || \
+								 !g_ascii_strncasecmp(c+strlen("<" x), "/>", 2))) { \
+							xhtml = g_string_append(xhtml, "<" y); \
+							c += strlen("<" x); \
+							if(*c != '/') { \
+								struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1); \
+								pt->src_tag = x; \
+								pt->dest_tag = y; \
+								tags = g_list_prepend(tags, pt); \
+								xhtml = g_string_append_c(xhtml, '>'); \
+							} else { \
+								xhtml = g_string_append(xhtml, "/>");\
+							} \
+							c = strchr(c, '>') + 1; \
+							continue; \
+						}
+#define ALLOW_TAG(x) ALLOW_TAG_ALT(x, x)
+void
+gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
+						  char **plain_out)
+{
+	GString *xhtml = g_string_new("");
+	GString *plain = g_string_new("");
+	GList *tags = NULL, *tag;
+	const char *c = html;
+
+	while(c && *c) {
+		if(*c == '<') {
+			if(*(c+1) == '/') { /* closing tag */
+				tag = tags;
+				while(tag) {
+					struct gaim_parse_tag *pt = tag->data;
+					if(!g_ascii_strncasecmp((c+2), pt->src_tag, strlen(pt->src_tag)) && *(c+strlen(pt->src_tag)+2) == '>') {
+						c += strlen(pt->src_tag) + 3;
+						break;
+					}
+					tag = tag->next;
+				}
+				if(tag) {
+					while(tags) {
+						struct gaim_parse_tag *pt = tags->data;
+						g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
+						if(tags == tag)
+							break;
+						tags = g_list_remove(tags, pt);
+						g_free(pt);
+					}
+					g_free(tag->data);
+					tags = g_list_remove(tags, tag->data);
+				} else {
+					/* we tried to close a tag we never opened! escape it
+					 * and move on */
+					xhtml = g_string_append(xhtml, "&lt;");
+					plain = g_string_append_c(plain, '<');
+					c++;
+				}
+			} else { /* opening tag */
+				ALLOW_TAG("a");
+				ALLOW_TAG_ALT("b", "strong");
+				ALLOW_TAG("blockquote");
+				ALLOW_TAG_ALT("bold", "strong");
+				ALLOW_TAG("cite");
+				ALLOW_TAG("div");
+				ALLOW_TAG("em");
+				ALLOW_TAG("h1");
+				ALLOW_TAG("h2");
+				ALLOW_TAG("h3");
+				ALLOW_TAG("h4");
+				ALLOW_TAG("h5");
+				ALLOW_TAG("h6");
+				/* we only allow html to start the message */
+				if(c == html)
+					ALLOW_TAG("html");
+				ALLOW_TAG_ALT("i", "em");
+				ALLOW_TAG_ALT("italic", "em");
+				ALLOW_TAG("li");
+				ALLOW_TAG("ol");
+				ALLOW_TAG("p");
+				ALLOW_TAG("pre");
+				ALLOW_TAG("q");
+				ALLOW_TAG("span");
+				ALLOW_TAG("strong");
+				ALLOW_TAG("ul");
+
+				/* we skip <HR> because it's not legal in XHTML-IM.  However,
+				 * we still want to send something sensible, so we put a
+				 * linebreak in its place. <BR> also needs special handling
+				 * because putting a </BR> to close it would just be dumb. */
+				if((!g_ascii_strncasecmp(c, "<br", 3)
+							|| !g_ascii_strncasecmp(c, "<hr", 3))
+						&& (*(c+3) == '>' ||
+							!g_ascii_strncasecmp(c+3, "/>", 2) ||
+							!g_ascii_strncasecmp(c+3, " />", 3))) {
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<br/>");
+					if(*c != '\n')
+						plain = g_string_append_c(plain, '\n');
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<u>", 3) || !g_ascii_strncasecmp(c, "<underline>", strlen("<underline>"))) {
+					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = *(c+2) == '>' ? "u" : "underline";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<span style='text-decoration: underline;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<s>", 3) || !g_ascii_strncasecmp(c, "<strike>", strlen("<strike>"))) {
+					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = *(c+2) == '>' ? "s" : "strike";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<span style='text-decoration: line-through;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<sub>", 5)) {
+					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = "sub";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<span style='vertical-align:sub;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<sup>", 5)) {
+					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = "sup";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
+					const char *p = c;
+					GString *style = g_string_new("");
+					struct gaim_parse_tag *pt;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "color=", strlen("color="))) {
+							const char *q = p + strlen("color=");
+							GString *color = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								color = g_string_append_c(color, *q);
+								q++;
+							}
+							g_string_append_printf(style, "color: %s; ", color->str);
+							g_string_free(color, TRUE);
+							p = q;
+						} else if(!g_ascii_strncasecmp(p, "face=", strlen("face="))) {
+							const char *q = p + strlen("face=");
+							gboolean space_allowed = FALSE;
+							GString *face = g_string_new("");
+							if(*q == '\'' || *q == '\"') {
+								space_allowed = TRUE;
+								q++;
+							}
+							while(*q && *q != '\"' && *q != '\'' && (space_allowed || *q != ' ')) {
+								face = g_string_append_c(face, *q);
+								q++;
+							}
+							g_string_append_printf(style, "font-family: %s; ", face->str);
+							g_string_free(face, TRUE);
+							p = q;
+						} else if(!g_ascii_strncasecmp(p, "size=", strlen("size="))) {
+							const char *q = p + strlen("size=");
+							int sz;
+							const char *size = "medium";
+							if(*q == '\'' || *q == '\"')
+								q++;
+							sz = atoi(q);
+							if(sz < 3)
+								size = "smaller";
+							else if(sz > 3)
+								size = "larger";
+							g_string_append_printf(style, "font-size: %s; ", size);
+							p = q;
+						}
+						p++;
+					}
+					c = strchr(c, '>') + 1;
+					pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = "font";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					xhtml = g_string_append(xhtml, "<span");
+					if(style->len)
+						g_string_append_printf(xhtml, " style='%s'", style->str);
+					xhtml = g_string_append_c(xhtml, '>');
+					g_string_free(style, TRUE);
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<body ", 6)) {
+					const char *p = c;
+					gboolean did_something = FALSE;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "bgcolor=", strlen("bgcolor="))) {
+							const char *q = p + strlen("bgcolor=");
+							struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+							GString *color = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								color = g_string_append_c(color, *q);
+								q++;
+							}
+							g_string_append_printf(xhtml, "<span style='background: %s;'>", color->str);
+							g_string_free(color, TRUE);
+							c = strchr(c, '>') + 1;
+							pt->src_tag = "body";
+							pt->dest_tag = "span";
+							tags = g_list_prepend(tags, pt);
+							did_something = TRUE;
+							break;
+						}
+						p++;
+					}
+					if(did_something) continue;
+				}
+				/* this has to come after the special case for bgcolor */
+				ALLOW_TAG("body");
+				if(!g_ascii_strncasecmp(c, "<!--", strlen("<!--"))) {
+					char *p = strstr(c + strlen("<!--"), "-->");
+					if(p) {
+						xhtml = g_string_append(xhtml, "<!--");
+						c += strlen("<!--");
+						continue;
+					}
+				}
+
+				xhtml = g_string_append(xhtml, "&lt;");
+				plain = g_string_append_c(plain, '<');
+				c++;
+			}
+		} else {
+			xhtml = g_string_append_c(xhtml, *c);
+			plain = g_string_append_c(plain, *c);
+			c++;
+		}
+	}
+	tag = tags;
+	while(tag) {
+		g_string_append_printf(xhtml, "</%s>", (char *)tag->data);
+		tag = tag->next;
+	}
+	g_list_free(tags);
+	if(xhtml_out)
+		*xhtml_out = g_strdup(xhtml->str);
+	if(plain_out)
+		*plain_out = g_strdup(plain->str);
+	g_string_free(xhtml, TRUE);
+	g_string_free(plain, TRUE);
+}
+
+char *
+gaim_markup_strip_html(const char *str)
+{
+	int i, j, k;
+	gboolean visible = TRUE;
+	gchar *str2;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	str2 = g_strdup(str);
+
+	for (i = 0, j = 0; str2[i]; i++)
+	{
+		if (str2[i] == '<')
+		{
+			k = i + 1;
+
+			if(g_ascii_isspace(str2[k]))
+				visible = TRUE;
+			else
+			{
+				while (str2[k])
+				{
+					if (str2[k] == '<')
+					{
+						visible = TRUE;
+						break;
+					}
+
+					if (str2[k] == '>')
+					{
+						visible = FALSE;
+						break;
+					}
+
+					k++;
+				}
+			}
+		}
+		else if (str2[i] == '>' && !visible)
+		{
+			visible = TRUE;
+			continue;
+		}
+
+		if (str2[i] == '&' && strncasecmp(str2 + i, "&quot;", 6) == 0)
+		{
+		    str2[j++] = '\"';
+		    i = i + 5;
+		    continue;
+		}
+
+		if (visible)
+			str2[j++] = str2[i];
+	}
+
+	str2[j] = '\0';
+
+	return str2;
 }
 
 gboolean

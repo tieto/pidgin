@@ -41,7 +41,6 @@
 #include "proxy.h"
 #include "request.h"
 #include "util.h"
-#include "html.h"
 
 #include "aim.h"
 #include "md5.h"
@@ -5279,7 +5278,7 @@ static int oscar_chat_send(GaimConnection *g, int id, const char *message) {
 	if (strlen(buf) > c->maxlen)
 		return -E2BIG;
 
-	buf2 = strip_html(buf);
+	buf2 = gaim_markup_strip_html(buf);
 	if (strlen(buf2) > c->maxvis) {
 		g_free(buf2);
 		return -E2BIG;
@@ -5418,7 +5417,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			if (away_utf8 != NULL) {
 				gchar *tmp1, *tmp2;
 				tmp1 = gaim_strreplace(away_utf8, "<BR>", "\n");
-				tmp2 = strip_html(tmp1);
+				tmp2 = gaim_markup_strip_html(tmp1);
 				g_free(tmp1);
 				tmp1 = away_subs(tmp2, gaim_connection_get_display_name(gc));
 				g_free(tmp2);
