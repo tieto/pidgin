@@ -176,6 +176,11 @@ struct gaim_gtk_conversation
 #define GAIM_GTK_CONVERSATION(conv) \
 	((struct gaim_gtk_conversation *)(conv)->ui_data)
 
+#define GAIM_IS_GTK_WINDOW(win) \
+	(gaim_window_get_ops(win) == gaim_get_gtk_window_ops())
+
+#define GAIM_IS_GTK_CONVERSATION(conv) \
+	(gaim_conversation_get_ops(win) == gaim_get_gtk_conversation_ops())
 
 /**************************************************************************
  * @name GTK+ Conversation API
