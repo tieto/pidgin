@@ -79,10 +79,6 @@ typedef fu16_t flap_seqnum_t;
 #define TRUE (!FALSE)
 #endif
 
-#ifndef bool
-#define bool fu8_t
-#endif
-
 /* 
  * Current Maximum Length for Screen Names (not including NULL) 
  *
@@ -432,7 +428,7 @@ typedef struct aim_session_s {
 		char password[128];
 	} socksproxy;
 
-	bool nonblocking;
+	fu8_t nonblocking;
 
 	int debug;
 	void (*debugcb)(struct aim_session_s *sess, int level, const char *format, va_list va); /* same as faim_debugging_callback_t */
@@ -582,7 +578,7 @@ faim_export int aim_conn_isconnecting(aim_conn_t *conn);
 
 typedef void (*faim_debugging_callback_t)(aim_session_t *sess, int level, const char *format, va_list va);
 faim_export int aim_setdebuggingcb(aim_session_t *sess, faim_debugging_callback_t);
-faim_export void aim_session_init(aim_session_t *, bool nonblocking, int debuglevel);
+faim_export void aim_session_init(aim_session_t *, fu8_t nonblocking, int debuglevel);
 faim_export void aim_session_kill(aim_session_t *);
 faim_export void aim_setupproxy(aim_session_t *sess, const char *server, const char *username, const char *password);
 faim_export aim_conn_t *aim_getconn_type(aim_session_t *, int type);
@@ -868,7 +864,7 @@ struct aim_incomingim_ch4_args {
 /* 0x0006 */ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, const char *msg, fu16_t exchange, const char *roomname, fu16_t instance);
 /* 0x0006 */ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 /* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
-/* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, bool usecookie, const char *sn, const fu8_t *ip, fu16_t port);
+/* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, fu8_t usecookie, const char *sn, const fu8_t *ip, fu16_t port);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_info *oft_info);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_oft_info *info);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_oft_info *oft_info);

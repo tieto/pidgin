@@ -829,7 +829,7 @@ static void defaultdebugcb(aim_session_t *sess, int level, const char *format, v
  * @param nonblocking Set to true if you want connections to be non-blocking.
  * @param debuglevel Level of debugging output (zero is least).
  */
-faim_export void aim_session_init(aim_session_t *sess, bool nonblocking, int debuglevel)
+faim_export void aim_session_init(aim_session_t *sess, fu8_t nonblocking, int debuglevel)
 {
 
 	if (!sess)

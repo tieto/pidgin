@@ -674,7 +674,7 @@ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg
  * Subtype 0x0006 - Send an "I want to directly connect to you" message
  *
  */
-faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, bool usecookie, const char *sn, const fu8_t *ip, fu16_t port)
+faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, fu8_t usecookie, const char *sn, const fu8_t *ip, fu16_t port)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
