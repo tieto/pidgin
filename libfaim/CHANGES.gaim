@@ -1,4 +1,8 @@
 
+Tue Aug  8 04:59:55 UTC 2000 EWarmenhoven
+	- Small updates to libfaim. Hopefully this should fix a lot of the
+	  conn->type segfaults and pthread hangs.
+
 Fri Jul 21 19:47:36 UTC 2000 EWarmenhoven
 	- Direct IM. I think I ironed out most of the bugs. Now all I have
 	  to do is add support for the <BINARY> tags. Fun.

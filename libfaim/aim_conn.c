@@ -55,6 +55,25 @@ struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
   return newconn;
 }
 
+static void aim_conn_init(struct aim_conn_t *deadconn)
+{
+  if (!deadconn)
+    return;
+
+  deadconn->fd = -1;
+  deadconn->subtype = -1;
+  deadconn->type = -1;
+  deadconn->seqnum = 0;
+  deadconn->lastactivity = 0;
+  deadconn->forcedlatency = 0;
+  deadconn->handlerlist = NULL;
+  deadconn->priv = NULL;
+  faim_mutex_init(&deadconn->active, NULL);
+  faim_mutex_init(&deadconn->seqnum_lock, NULL);
+  
+  return;
+}
+
 void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn)
 {
   struct aim_conn_t *cur;
@@ -83,7 +102,7 @@ void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn)
   /* XXX: do we need this for txqueue too? */
   aim_rxqueue_cleanbyconn(sess, *deadconn);
 
-  aim_conn_close(*deadconn);
+  aim_conn_init(*deadconn);
   free(*deadconn);
   deadconn = NULL;
 
@@ -92,21 +111,32 @@ void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn)
 
 void aim_conn_close(struct aim_conn_t *deadconn)
 {
+  int typesav = -1, subtypesav = -1;
+  void *privsav = NULL;
+
+  faim_mutex_destroy(&deadconn->active);
+  faim_mutex_destroy(&deadconn->seqnum_lock);
   if (deadconn->fd >= 3)
     close(deadconn->fd);
-  deadconn->fd = -1;
-  deadconn->type = -1;
-  deadconn->seqnum = 0;
-  deadconn->lastactivity = 0;
-  deadconn->forcedlatency = 0;
   if (deadconn->handlerlist)
     aim_clearhandlers(deadconn);
-  deadconn->handlerlist = NULL;
-  if (deadconn->priv)
+
+  typesav = deadconn->type;
+  subtypesav = deadconn->subtype;
+
+  if (deadconn->priv && (deadconn->type != AIM_CONN_TYPE_RENDEZVOUS)) {
     free(deadconn->priv);
-  deadconn->priv = NULL;
-  faim_mutex_init(&deadconn->active, NULL);
-  faim_mutex_init(&deadconn->seqnum_lock, NULL);
+    deadconn->priv = NULL;
+  }
+  privsav = deadconn->priv;
+
+  aim_conn_init(deadconn);
+
+  deadconn->type = typesav;
+  deadconn->subtype = subtypesav;
+  deadconn->priv = privsav;
+
+  return;
 }
 
 struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,

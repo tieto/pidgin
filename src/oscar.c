@@ -113,16 +113,14 @@ static void oscar_callback(gpointer data, gint source,
 				debug_print(_("connection error (rend)\n"));
 			}
 		} else {
-			char *direct = NULL;
-			if (conn->type == AIM_CONN_TYPE_RENDEZVOUS &&
-			    conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
-				direct = g_strdup(((struct aim_directim_priv *)conn->priv)->sn);
 			if (aim_get_command(gaim_sess, conn) >= 0) {
 				aim_rxdispatch(gaim_sess);
 			} else {
 				debug_print(_("connection error!\n"));
-				if (direct) {
-					struct conversation *cnv = find_conversation(direct);
+				if (conn->type == AIM_CONN_TYPE_RENDEZVOUS &&
+				    conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM) {
+					struct conversation *cnv =
+						find_conversation(((struct aim_directim_priv *)conn->priv)->sn);
 					debug_print("connection error for directim\n");
 					if (cnv) {
 						make_direct(cnv, FALSE, NULL, 0);
@@ -138,7 +136,6 @@ static void oscar_callback(gpointer data, gint source,
 					gdk_input_remove(inpa);
 				}
 			}
-			if (direct) g_free(direct);
 		}
 	}
 }

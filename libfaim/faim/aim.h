@@ -43,6 +43,7 @@
 #define faim_mutex_init pthread_mutex_init
 #define faim_mutex_lock pthread_mutex_lock
 #define faim_mutex_unlock pthread_mutex_unlock
+#define faim_mutex_destroy pthread_mutex_destroy
 #elif defined(FAIM_USEFAKELOCKS)
 /*
  * For platforms without pthreads, we also assume
@@ -55,6 +56,7 @@
 #define faim_mutex_init(x, y) *x = 0
 #define faim_mutex_lock(x) *x = 1;
 #define faim_mutex_unlock(x) *x = 0;
+#define faim_mutex_destroy(x) *x = 0;
 #endif
 
 /* Portability stuff (DMP) */

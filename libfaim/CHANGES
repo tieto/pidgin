@@ -1,6 +1,13 @@
 
 No release numbers
 ------------------
+ - Tue Aug  8 04:25:35 UTC 2000
+   - Preserve subtype and priv after aim_conn_close
+
+ - Tue Aug  8 04:15:47 UTC 2000
+   - Fixed double-calling of faim_mutex_init
+   - conn->type preserved after aim_conn_close
+
  - Mon Jul 17 01:56:31 UTC 2000
    - Added 0004/000c callback (for message acknowledgments)
       - This goes with the AIM_IMFLAGS_ACK option that has been there
