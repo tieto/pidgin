@@ -4107,6 +4107,13 @@ void conv_show_log(GtkWidget *w, gpointer data)
 	g_free(name);
 }
 
+void chat_show_log(GtkWidget *w, gpointer data)
+{
+	char *name = g_strdup_printf("%s.chat", data);
+	show_log(name);
+	g_free(name);
+}
+
 void show_log(char *nm)
 {
 	gchar filename[256];
