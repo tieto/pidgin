@@ -3592,10 +3592,12 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 	FILE *fp_old, *fp_new;
 	char filename[PATHSIZE];
 	char *name;
+	char *tmp;
 
 	name = gtk_object_get_user_data(GTK_OBJECT(filesel));
-	g_snprintf(filename, PATHSIZE, "%s/logs/%s.log", 
-		   gaim_user_dir(), normalize(name));
+	tmp = gaim_user_dir();
+	g_snprintf(filename, PATHSIZE, "%s/logs/%s.log", tmp, normalize(name));
+	g_free(tmp);
 
 	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
 	strncpy(path, file, PATHSIZE-1);
@@ -3664,9 +3666,11 @@ static void do_clear_log_file(GtkWidget *w, gchar *name)
 	gchar buf[256];
 	gchar filename[256];
 	GtkWidget *window;
+	char *tmp;
 
-	g_snprintf(filename, 256, "%s/logs/%s.log", 
-		   gaim_user_dir(), normalize(name));
+	tmp = gaim_user_dir();
+	g_snprintf(filename, 256, "%s/logs/%s.log", tmp, normalize(name));
+	g_free(tmp);
 
 	if ((remove(filename)) == -1) {
 		g_snprintf(buf, 256, _("Unable to remove file %s - %s"),
