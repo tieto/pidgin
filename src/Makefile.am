@@ -89,7 +89,9 @@ CORESOURCES = \
 	sound.c \
 	sound.h \
 	util.c \
-	util.h
+	util.h \
+	value.c \
+	value.h
 
 bin_PROGRAMS = gaim gaim-remote
 gaim_SOURCES = \

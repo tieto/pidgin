@@ -25,53 +25,6 @@
 
 #include <glib.h>
 
-#if 0
-/**
- * Event types
- */
-typedef enum gaim_event
-{
-	event_signon = 0,
-	event_signoff,
-	event_away,
-	event_back,
-	event_im_recv,
-	event_im_send,
-	event_buddy_signon,
-	event_buddy_signoff,
-	event_buddy_away,
-	event_buddy_back,
-	event_buddy_idle,
-	event_buddy_unidle,
-	event_blist_update,
-	event_chat_invited,
-	event_chat_join,
-	event_chat_leave,
-	event_chat_buddy_join,
-	event_chat_buddy_leave,
-	event_chat_recv,
-	event_chat_send,
-	event_warned,
-	event_error,
-	event_quit,
-	event_new_conversation,
-	event_set_info,
-	event_draw_menu,
-	event_im_displayed_sent,
-	event_im_displayed_rcvd,
-	event_chat_send_invite,
-	event_got_typing,
-	event_del_conversation,
-	event_connecting,
-	event_conversation_switch
-	/* any others? it's easy to add... */
-
-} GaimEvent;
-
-typedef int (*GaimSignalBroadcastFunc)(GaimEvent event, void *data,
-									   va_list args);
-#endif
-
 #define GAIM_CALLBACK(func) ((GaimCallback)func)
 
 typedef void (*GaimCallback)(void);
