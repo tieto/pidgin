@@ -45,6 +45,7 @@ typedef struct
 {
 	void *(*request_input)(const char *title, const char *primary,
 						   const char *secondary, const char *default_value,
+						   gboolean multiline,
 						   const char *ok_text, GCallback ok_cb,
 						   const char *cancel_text, GCallback cancel_cb,
 						   void *user_data);
@@ -57,9 +58,11 @@ typedef struct
 							const char *secondary, unsigned int default_action,
 							void *user_data, va_list actions);
 
-	void (*close_request)(GaimRequestType type, void *uihandle);
+	void (*close_request)(GaimRequestType type, void *ui_handle);
 
 } GaimRequestUiOps;
+
+typedef void (*GaimRequestInputCb)(const char *, void *);
 
 /**************************************************************************/
 /** @name Request API                                                     */
@@ -74,6 +77,7 @@ typedef struct
  * @param primary       The main point of the message.
  * @param secondary     The secondary information.
  * @param default_value The default value.
+ * @param multiline     TRUE if the inputted text can span multiple lines.
  * @param ok_text       The text for the OK button.
  * @param ok_cb         The callback for the OK button.
  * @param cancel_text   The text for the cancel button.
@@ -84,7 +88,7 @@ typedef struct
  */
 void *gaim_request_input(void *handle, const char *title,
 						 const char *primary, const char *secondary,
-						 const char *default_value,
+						 const char *default_value, gboolean multiline,
 						 const char *ok_text, GCallback ok_cb,
 						 const char *cancel_text, GCallback cancel_cb,
 						 void *user_data);

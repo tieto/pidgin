@@ -37,6 +37,7 @@ typedef struct
 void *
 gaim_request_input(void *handle, const char *title, const char *primary,
 				   const char *secondary, const char *default_value,
+				   gboolean multiline,
 				   const char *ok_text, GCallback ok_cb,
 				   const char *cancel_text, GCallback cancel_cb,
 				   void *user_data)
@@ -56,7 +57,8 @@ gaim_request_input(void *handle, const char *title, const char *primary,
 		info->type      = GAIM_REQUEST_INPUT;
 		info->handle    = handle;
 		info->ui_handle = ops->request_input(title, primary, secondary,
-											 default_value, ok_text, ok_cb,
+											 default_value, multiline,
+											 ok_text, ok_cb,
 											 cancel_text, cancel_cb,
 											 user_data);
 
@@ -116,7 +118,8 @@ gaim_request_choice_varg(void *handle, const char *title,
 		info->type      = GAIM_REQUEST_CHOICE;
 		info->handle    = handle;
 		info->ui_handle = ops->request_choice(title, primary, secondary,
-											  default_value, ok_text, ok_cb,
+											  default_value,
+											  ok_text, ok_cb,
 											  cancel_text, cancel_cb,
 											  user_data, choices);
 
