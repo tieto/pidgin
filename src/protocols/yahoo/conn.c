@@ -272,9 +272,9 @@ int yahoo_disconnect(struct yahoo_session *session)
 {
 	if (!session)
 		return 0;
+	yahoo_logoff(session);
 	if (session->name)
 		g_free(session->name);
-	yahoo_logoff(session);
 	session->name = NULL;
 	while (session->connlist)
 		yahoo_close(session, session->connlist->data);
