@@ -535,7 +535,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	g_snprintf(buf, limit, "%s", buf2);
 	g_free(buf2);
 	gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
-	if (!strlen(buf)) return;
+	if (!strlen(buf)) {
+		g_free(buf);
+		return;
+	}
 
 	if (general_options & OPT_GEN_SEND_LINKS)
 		linkify_text(buf);
@@ -592,6 +595,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		plugin_event(evnt, c->name, &buffy, 0);
 		if (!buffy) {
 			g_free(buf2);
+			g_free(buf);
 			return;
 		}
 		g_snprintf(buf, limit, "%s", buffy);
@@ -629,6 +633,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	}
 
 	gtk_widget_grab_focus(c->entry);
+	g_free(buf2);
+	g_free(buf);
 }
 
 static int
