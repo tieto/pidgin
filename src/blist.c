@@ -639,6 +639,22 @@ gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
 	gaim_blist_update_buddy_icon(buddy);
 }
 
+GaimAccount *
+gaim_buddy_get_account(const GaimBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	return buddy->account;
+}
+
+const char *
+gaim_buddy_get_name(const GaimBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	return buddy->name;
+}
+
 GaimBuddyIcon *
 gaim_buddy_get_icon(const GaimBuddy *buddy)
 {

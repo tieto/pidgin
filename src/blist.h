@@ -378,6 +378,24 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
 void gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon);
 
 /**
+ * Returns a buddy's account.
+ *
+ * @param buddy The buddy.
+ *
+ * @return The account
+ */
+GaimAccount *gaim_buddy_get_account(const GaimBuddy *buddy);
+
+/**
+ * Returns a buddy's name
+ *
+ * @param buddy The buddy.
+ *
+ * @return The name.
+ */
+const char *gaim_buddy_get_name(const GaimBuddy *buddy);
+
+/**
  * Returns a buddy's icon.
  *
  * @param buddy The buddy.
