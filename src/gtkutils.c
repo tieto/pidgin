@@ -548,6 +548,8 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 {
 	GaimPluginProtocolInfo *prpl_info;
 	GaimPlugin *plugin;
+	GtkWidget *hbox;
+	GtkWidget *label;
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *item;
@@ -555,6 +557,7 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 	GdkPixbuf *pixbuf;
 	GdkPixbuf *scale;
 	GList *p;
+	GtkSizeGroup *sg;
 	char *filename;
 	const char *proto_name;
 	char buf[256];
@@ -571,6 +574,8 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 	g_signal_connect(G_OBJECT(optmenu), "changed",
 					 G_CALLBACK(__protocol_menu_cb), cb);
 
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
 	for (p = gaim_plugins_get_protocols(), i = 0;
 		 p != NULL;
 		 p = p->next, i++) {
@@ -579,7 +584,12 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 
 		/* Create the item. */
-		item = gtk_image_menu_item_new_with_label(plugin->info->name);
+		item = gtk_menu_item_new();
+
+		/* Create the hbox. */
+		hbox = gtk_hbox_new(FALSE, 4);
+		gtk_container_add(GTK_CONTAINER(item), hbox);
+		gtk_widget_show(hbox);
 
 		/* Load the image. */
 		proto_name = prpl_info->list_icon(NULL, NULL);
@@ -595,11 +605,24 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 											GDK_INTERP_BILINEAR);
 			image = gtk_image_new_from_pixbuf(scale);
+
 			g_object_unref(G_OBJECT(pixbuf));
 			g_object_unref(G_OBJECT(scale));
-			gtk_widget_show(image);
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
 		}
+		else
+			image = gtk_image_new();
+
+		gtk_size_group_add_widget(sg, image);
+
+		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
+		gtk_widget_show(image);
+
+		/* Create the label. */
+		label = gtk_label_new(plugin->info->name);
+		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+		gtk_widget_show(label);
 
 		g_object_set_data(G_OBJECT(item), "protocol",
 						 GINT_TO_POINTER(prpl_info->protocol));
@@ -615,6 +638,8 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 
 	if (selected_index != -1)
 		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), selected_index);
+
+	g_object_unref(sg);
 
 	return optmenu;
 }
