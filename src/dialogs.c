@@ -58,7 +58,6 @@
 #include "pixmaps/save.xpm"
 #include "pixmaps/ok.xpm"
 #include "pixmaps/add.xpm"
-#include "pixmaps/warn.xpm"
 #include "pixmaps/close.xpm"
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
@@ -896,17 +895,19 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 	destroy_dialog(NULL, a->window);
 }
 
-void do_add_group(GtkWidget *w, struct addbuddy *a)
+void do_add_group(GtkWidget *w, int resp, struct addbuddy *a)
 {
 	const char *grp;
+	
+	if (resp == GTK_RESPONSE_OK) {
+		grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
 
-	grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
+		if (!a->gc)
+			a->gc = connections->data;
 
-	if (!a->gc)
-		a->gc = connections->data;
-
-	add_group(a->gc, grp);
-	do_export(a->gc);
+		add_group(a->gc, grp);
+		do_export(a->gc);
+	}
 
 	destroy_dialog(NULL, a->window);
 }
@@ -941,71 +942,53 @@ static void free_dialog(GtkWidget *w, struct addbuddy *a)
 
 void show_add_group(struct gaim_connection *gc)
 {
-	GtkWidget *cancel;
-	GtkWidget *add;
+
+	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
-	GtkWidget *bbox;
-	GtkWidget *vbox;
-	GtkWidget *topbox;
-	GtkWidget *frame;
+	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+	GtkWidget *img = gtk_image_new_from_file(filename);
 
 	struct addbuddy *a = g_new0(struct addbuddy, 1);
 	a->gc = gc;
 
-	GAIM_DIALOG(a->window);
-	gtk_window_set_wmclass(GTK_WINDOW(a->window), "add_group", "Gaim");
-	gtk_window_set_policy(GTK_WINDOW(a->window), FALSE, FALSE, TRUE);
-	gtk_widget_realize(a->window);
-	dialogwindows = g_list_prepend(dialogwindows, a->window);
+	a->window =  gtk_dialog_new_with_buttons("", blist, GTK_DIALOG_MODAL, 
+						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response (GTK_DIALOG(a->window), GTK_RESPONSE_OK);
+	gtk_container_set_border_width (GTK_CONTAINER(a->window), 6);
+	gtk_window_set_resizable(GTK_WINDOW(a->window), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(a->window), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(a->window)->vbox), 12);
+	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), 6);
+		
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	bbox = gtk_hbox_new(TRUE, 10);
-	topbox = gtk_hbox_new(FALSE, 5);
-	vbox = gtk_vbox_new(FALSE, 5);
-
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+		
+	label = gtk_label_new(_("Please enter the name of the group to be added.\n"));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+		
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Group:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		
 	a->entry = gtk_entry_new();
-	/* Put the buttons in the box */
+	gtk_entry_set_activates_default (GTK_ENTRY(a->entry), TRUE);
+	gtk_box_pack_start(GTK_BOX(hbox), a->entry, FALSE, FALSE, 0);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->entry));
 
-	add = picture_button(a->window, _("Add"), add_xpm);
+	g_signal_connect(G_OBJECT(a->window), "response", G_CALLBACK(do_add_group), a);
 
-	cancel = picture_button(a->window, _("Cancel"), cancel_xpm);
-
-	gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
-	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
-
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_label(GTK_FRAME(frame), _("Add Group"));
-
-	label = gtk_label_new(_("Group"));
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(topbox), a->entry, FALSE, FALSE, 5);
-
-	/* And the boxes in the box */
-	gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
-
-	/* Handle closes right */
-	gtk_signal_connect(GTK_OBJECT(a->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), a->window);
-	gtk_signal_connect(GTK_OBJECT(a->window), "destroy", GTK_SIGNAL_FUNC(free_dialog), a);
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), a->window);
-	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(do_add_group), a);
-	gtk_signal_connect(GTK_OBJECT(a->entry), "activate", GTK_SIGNAL_FUNC(do_add_group), a);
-	/* Finish up */
-	gtk_widget_show(add);
-	gtk_widget_show(cancel);
-	gtk_widget_show(a->entry);
-	gtk_widget_show(topbox);
-	gtk_widget_show(bbox);
-	gtk_widget_show(vbox);
-	gtk_widget_show(frame);
-	gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Group"));
-	gtk_window_set_focus(GTK_WINDOW(a->window), a->entry);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	gtk_container_add(GTK_CONTAINER(a->window), frame);
-	gtk_container_set_border_width(GTK_CONTAINER(a->window), 5);
-	gtk_widget_realize(a->window);
-
-	gtk_widget_show(a->window);
+	gtk_widget_show_all(a->window);
+	gtk_widget_grab_focus(GTK_WIDGET(a->entry));
 }
 
 static void addbuddy_select_account(GtkObject *w, struct gaim_connection *gc)
