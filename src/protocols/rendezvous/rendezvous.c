@@ -25,10 +25,10 @@
 #include "accountopt.h"
 #include "blist.h"
 #include "conversation.h"
+#include "cipher.h"
 #include "debug.h"
 #include "network.h"
 #include "prpl.h"
-#include "sha.h"
 #include "version.h"
 
 #include "direct.h"
@@ -493,7 +493,7 @@ rendezvous_add_to_txt_iconhash(RendezvousData *rd, const char *iconfile)
 		return;
 
 	icondata = rendezvous_read_icon_data(iconfile, &iconlength);
-	shaBlock((unsigned char *)icondata, iconlength, hash);
+	gaim_cipher_digest_region("sha1", (guint8 *)icondata, iconlength, sizeof(hash), hash, NULL);
 	g_free(icondata);
 
 	base16 = gaim_base16_encode(hash, 20);
