@@ -5559,8 +5559,9 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 
 	g_free(buf);
 	buf = gaim_markup_strip_html(buf2);
+	len = strlen(buf);
 	g_free(buf2);
-	if (strlen(buf) > c->maxvis) {
+	if (len > c->maxvis) {
 		g_free(buf);
 		return -E2BIG;
 	}
