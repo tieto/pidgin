@@ -1371,6 +1371,9 @@ gaim_unescape_html(const char *html) {
 			} else if (!strncmp(c, "&quot;", 6)) {
 				ret = g_string_append_c(ret, '"');
 				c += 6;
+			} else if (!strncmp(c, "<br>", 4)) {
+				ret = g_string_append_c(ret, '\n');
+				c += 4;
 			} else {
 				ret = g_string_append_c(ret, *c);
 				c++;
