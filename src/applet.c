@@ -55,7 +55,7 @@ static GdkPixmap *get_applet_icon(const char *name)
 	GdkPixmap *cache;
 	GdkGC *gc;
 	char *path;
-	GdkPixbuf *pb;
+	GdkPixbuf *pb, *scale;
 	guchar *dst, *p;
 	double affine[6];
 	int r,g,b,i;
@@ -66,17 +66,18 @@ static GdkPixmap *get_applet_icon(const char *name)
 	gdk_gc_copy(gc, applet->style->bg_gc[GTK_WIDGET_STATE(applet)]);
 
 	path = gnome_pixmap_file(name);
-	pb = gdk_pixbuf_new_from_file(path);
+	scale = gdk_pixbuf_new_from_file(path);
 	g_free(path);
-	if (!pb)
+	if (!scale)
 		return NULL;
+	pb = gdk_pixbuf_scale_simple(scale, sizehint, sizehint, GDK_INTERP_HYPER);
 
 	dst = g_new0(guchar, sizehint*sizehint*3);
 	r = applet->style->bg[GTK_WIDGET_STATE(applet)].red>>8;
 	g = applet->style->bg[GTK_WIDGET_STATE(applet)].green>>8;
 	b = applet->style->bg[GTK_WIDGET_STATE(applet)].blue>>8;
 	p = dst;
-	for (i = 0; i < 48*48; i++) {
+	for (i = 0; i < sizehint * sizehint; i++) {
 		*p++ = r;
 		*p++ = g;
 		*p++ = b;
@@ -319,11 +320,6 @@ gint init_applet_mgr(int argc, char *argv[])
 	GdkPixmap *pm;
 
 	applet_widget_init("GAIM", VERSION, argc, argv, NULL, 0, NULL);
-
-	/*init imlib for graphics */
-	gdk_imlib_init();
-	gtk_widget_push_visual(gdk_imlib_get_visual());
-	gtk_widget_push_colormap(gdk_imlib_get_colormap());
 
 	applet = applet_widget_new("gaim_applet");
 	if (!applet)
