@@ -455,7 +455,7 @@ void do_proto_menu()
 
 			while (act) {
 				if (act->data == NULL) {
-					gaim_separator(protomenu);
+					gaim_separator(submenu);
 					act = g_list_next(act);
 					continue;
 				}
