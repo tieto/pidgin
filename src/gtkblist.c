@@ -2892,6 +2892,9 @@ sign_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
 	gtk_widget_set_sensitive(widget, gaim_roomlist_is_showable());
+
+	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
+	gtk_widget_set_sensitive(widget, gaim_gtk_privacy_is_showable());
 }
 
 /* this is called on all sorts of signals, and we have no reason to pass
