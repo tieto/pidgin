@@ -1462,30 +1462,35 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		return 1;
 	}
 	
-	what++;
-	process_data_init(pdibuf, what, word, word_eol, TRUE);
-	g_string_free(str, TRUE);
+	process_data_init(pdibuf, what + 1, word, word_eol, TRUE);
+	g_string_free(str, FALSE);
 	if (!g_strcasecmp(pdibuf, "ME")) {
 		if (dccchat) {
 			g_snprintf(buf, sizeof(buf), "\001ACTION %s\001\r\n", word_eol[2]);
 			irc_write(dccchat->fd, buf, strlen(buf));
+			g_free(what);
 			return 1;
 		}
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :\001ACTION %s\001\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
+		g_free(what);
 		return 1;
 	} else if (!g_strcasecmp(pdibuf, "INVITE")) {
 		char buf[IRC_BUF_LEN];
 		g_snprintf(buf, sizeof(buf), "INVITE %s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "TOPIC")) {
-		if (!*word_eol[2])
+		if (!*word_eol[2]) {
+			g_free(what);
 			return -EINVAL;
+		}
 		g_snprintf(buf, sizeof(buf), "TOPIC %s :%s\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "NICK")) {
-		if (!*word_eol[2])
+		if (!*word_eol[2]) {
+			g_free(what);
 			return -EINVAL;
+		}
 		g_snprintf(buf, sizeof(buf), "NICK %s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "OP")) {
@@ -1497,34 +1502,46 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 	} else if (!g_strcasecmp(pdibuf, "DEVOICE")) {
 		set_mode(gc, who, '-', 'v', word);
 	} else if (!g_strcasecmp(pdibuf, "QUOTE")) {
-		if (!*word_eol[2])
+		if (!*word_eol[2]) {
+			g_free(what);
 			return -EINVAL;
+		}
 		g_snprintf(buf, sizeof(buf), "%s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "SAY")) {
-		if (!*word_eol[2])
+		if (!*word_eol[2]) {
+			g_free(what);
 			return -EINVAL;
+		}
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 		return 1;
 	} else if (!g_strcasecmp(pdibuf, "MSG")) {
-		if (!*word[2])
+		if (!*word[2]) {
+			g_free(what);
 			return -EINVAL;
-		if (!*word_eol[3])
+		}
+		if (!*word_eol[3]) {
+			g_free(what);
 			return -EINVAL;
+		}
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", word[2], word_eol[3]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "KICK")) {
-		if (!*word[2])
+		if (!*word[2]) {
+			g_free(what);
 			return -EINVAL;
+		}
 		if (*word_eol[3])
 			g_snprintf(buf, sizeof(buf), "KICK %s %s :%s\r\n", who, word[2], word_eol[3]);
 		else
 			g_snprintf(buf, sizeof(buf), "KICK %s %s\r\n", who, word[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "JOIN") || !g_strcasecmp(pdibuf, "J")) {
-		if (!*word[2])
+		if (!*word[2]) {
+			g_free(what);
 			return -EINVAL;
+		}
 		if (*word[3])
 			g_snprintf(buf, sizeof(buf), "JOIN %s %s\r\n", word[2], word[3]);
 		else
@@ -1534,8 +1551,10 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		char *chan = *word[2] ? word[2] : who;
 		char *reason = word_eol[3];
 		struct conversation *c;
-		if (!is_channel(gc, chan))
+		if (!is_channel(gc, chan)) {
+			g_free(what);
 			return -EINVAL;
+		}
 		c = irc_find_chat(gc, chan);
 		g_snprintf(buf, sizeof(buf), "PART %s%s%s\r\n", chan,
 				*reason ? " :" : "",
@@ -1560,8 +1579,10 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		} else {
 			c = find_conversation(who);
 		}
-		if (!c)
+		if (!c) {
+			g_free(what);
 			return -EINVAL;
+		}
 		write_to_conv(c, "<B>Currently supported commands:<BR>"
 				 "WHOIS INVITE NICK LIST<BR>"
 				 "JOIN PART TOPIC KICK<BR>"
@@ -1575,11 +1596,13 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		} else {
 			c = find_conversation(who);
 		}
-		if (!c)
+		if (!c) {
+			g_free(what);
 			return -EINVAL;
+		}
 		write_to_conv(c, "<B>Unknown command</B>", WFLAG_NOLOG, NULL, time(NULL), -1);
 	}
-
+	g_free(what);
 	return 0;
 }
 
@@ -1613,7 +1636,7 @@ static void irc_chat_invite(struct gaim_connection *gc, int idn, char *message, 
 	irc_write(id->fd, buf, strlen(buf));
 }
 
-static int irc_send_im(struct gaim_connection *gc, char *who, char *what, int flags)
+static int irc_send_im(struct gaim_connection *gc, char *who, char *what, int len, int flags)
 {
 	if (*who == '@' || *who == '+')
 		return send_msg(gc, who + 1, what);
@@ -1787,7 +1810,7 @@ static void irc_start_chat(struct gaim_connection *gc, char *who) {
 			       chat);
 	snprintf (buf, sizeof buf, "\001DCC CHAT chat %s %d\001\n",
 		  chat->ip_address, chat->port);
-	irc_send_im (gc, who, buf, 0);
+	irc_send_im (gc, who, buf, -1, 0);
 }
 
 static void irc_get_info(struct gaim_connection *gc, char *who)

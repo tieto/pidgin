@@ -978,7 +978,7 @@ static GList *yahoo_actions() {
 	return m;
 }
 
-static int yahoo_send_im(struct gaim_connection *gc, char *who, char *what, int flags)
+static int yahoo_send_im(struct gaim_connection *gc, char *who, char *what, int len, int flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);

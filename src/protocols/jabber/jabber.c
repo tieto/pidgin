@@ -1503,7 +1503,7 @@ static void jabber_close(struct gaim_connection *gc)
 	gc->proto_data = NULL;
 }
 
-static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, int flags)
+static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
 {
 	xmlnode x, y;
 	char *realwho;

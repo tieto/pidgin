@@ -102,7 +102,7 @@ struct prpl {
 
 	void (* login)		(struct aim_user *);
 	void (* close)		(struct gaim_connection *);
-	int  (* send_im)	(struct gaim_connection *, char *who, char *message, int away);
+	int  (* send_im)	(struct gaim_connection *, char *who, char *message, int len, int away);
 	void (* set_info)	(struct gaim_connection *, char *info);
 	int  (* send_typing)    (struct gaim_connection *, char *name, int typing);
 	void (* get_info)	(struct gaim_connection *, char *who);

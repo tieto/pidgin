@@ -181,12 +181,13 @@ struct aim_directim_intdata *intdata = (struct aim_directim_intdata *)conn->inte
  * aim_send_im_direct - send IM client-to-client over established connection
  * @sess: session to conn
  * @conn: directim connection
- * @msg: null-terminated string to send. 
+ * @msg:  null-terminated string to send. 
+ * len:   The length of the message to send, including binary data.
  * 
  * Call this just like you would aim_send_im, to send a directim. You
  * _must_ have previously established the directim connection.
  */
-faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const char *msg)
+faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const char *msg, int len)
 {
 	struct aim_directim_intdata *intdata = (struct aim_directim_intdata *)conn->internal;
 	aim_frame_t *fr;
@@ -195,7 +196,7 @@ faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const 
 	if (!sess || !conn || !msg || (conn->type != AIM_CONN_TYPE_RENDEZVOUS)) 
 		return -EINVAL; 
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, strlen(msg))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, len)))
 		return -ENOMEM;	
 
 	memcpy(fr->hdr.oft.magic, "ODC2", 4);
@@ -216,7 +217,7 @@ faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const 
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_put16(&hdrbs, 0x0000);
-	aimbs_put32(&hdrbs, strlen(msg));
+	aimbs_put32(&hdrbs, len);
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_put16(&hdrbs, 0x0000);
@@ -251,7 +252,7 @@ faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const 
 	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x393e);
 	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0xcac8);
 #endif
-	aimbs_putraw(&fr->data, msg, strlen(msg));
+	aimbs_putraw(&fr->data, msg, len);
 	
 	aim_tx_enqueue(sess, fr);
 	
@@ -1121,7 +1122,7 @@ static int handlehdr_directim(aim_session_t *sess, aim_conn_t *conn, fu8_t *hdr)
 			}
 			recvd = recvd + i;
 			msg2 = msg2 + i;
-			if ((userfunc=aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DOWNLOADIMAGE)))
+			if ((userfunc=aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER)))
 				userfunc(sess, &fr, snptr, (double)recvd / payloadlength);
 		}
 		

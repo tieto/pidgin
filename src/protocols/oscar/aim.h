@@ -249,8 +249,8 @@ typedef struct aim_conn_s {
  */
 typedef struct aim_bstream_s {
 	fu8_t *data;
-	fu16_t len;
-	fu16_t offset;
+	fu32_t len;
+	fu32_t offset;
 } aim_bstream_t;
 
 typedef struct aim_frame_s {
@@ -838,7 +838,7 @@ faim_export int aim_send_im(aim_session_t *, const char *destsn, unsigned short 
 faim_export int aim_send_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen);
 faim_export int aim_send_typing(aim_session_t *sess, aim_conn_t *conn, int typing);
-faim_export int aim_send_im_direct(aim_session_t *, aim_conn_t *, const char *msg);
+faim_export int aim_send_im_direct(aim_session_t *, aim_conn_t *, const char *msg, int len);
 faim_export const char *aim_directim_getsn(aim_conn_t *conn);
 faim_export aim_conn_t *aim_directim_initiate(aim_session_t *, const char *destsn);
 faim_export aim_conn_t *aim_directim_connect(aim_session_t *, const char *sn, const char *addr, const fu8_t *cookie);

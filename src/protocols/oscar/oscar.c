@@ -1273,7 +1273,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 				gaim_directim_incoming, 0);
 	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
 				gaim_directim_typing, 0);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DOWNLOADIMAGE,
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER,
 			        gaim_update_ui, 0);
 	for (i = 0; i < (int)strlen(d->ip); i++) {
 		if (d->ip[i] == ':') {
@@ -2424,13 +2424,13 @@ static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing)
 	return 0;
 }
 
-static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int imflags) {
+static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int len, int imflags) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
 	int ret = 0;
 	if (dim) {
 		if (dim->connected) {  /* If we're not connected yet, send through server */
-			ret =  aim_send_im_direct(odata->sess, dim->conn, message);
+			ret =  aim_send_im_direct(odata->sess, dim->conn, message, len == -1 ? strlen(len) : len);
 			if (ret == 0)
 				return 1;
 			else return ret;
@@ -3146,7 +3146,7 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 				gaim_directim_incoming, 0);
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
 				gaim_directim_typing, 0);
-	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DOWNLOADIMAGE,
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER,
 			    gaim_update_ui, 0);
 	return 1;
 }

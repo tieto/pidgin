@@ -736,7 +736,7 @@ static int zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 	return 0;
 }
 
-static int zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int flags) {
+static int zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int len, int flags) {
 	ZNotice_t notice;
 	char *buf;
 	const char *sig;

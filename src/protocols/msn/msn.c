@@ -1527,7 +1527,7 @@ static int msn_send_typing(struct gaim_connection *gc, char *who, int typing) {
 	return MSN_TYPING_SEND_TIMEOUT;
 }
 
-static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int flags)
+static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
 {
 	struct msn_data *md = gc->proto_data;
 	struct msn_switchboard *ms = msn_find_switch(gc, who);

@@ -1518,7 +1518,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 					set_convo_gc(c, u->gc);
 
 					write_to_conv(c, b->message, WFLAG_SEND, NULL, time(NULL), -1);
-					serv_send_im(u->gc, name, b->message, 0);
+					serv_send_im(u->gc, name, b->message, -1, 0);
 				}
 			}
 			if (b->options & OPT_POUNCE_COMMAND) {

@@ -259,7 +259,7 @@ static void message_handler(struct UI *ui, guchar subtype, guchar *data)
 			pos += len;
 
 			memcpy(&flags, data + pos, sizeof(flags));
-			serv_send_im(gc, who, msg, flags);
+			serv_send_im(gc, who, msg, -1, flags);
 
 			g_free(who);
 			g_free(msg);

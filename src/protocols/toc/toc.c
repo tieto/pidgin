@@ -919,7 +919,7 @@ static char *toc_name()
 	return "TOC";
 }
 
-static int toc_send_im(struct gaim_connection *gc, char *name, char *message, int flags)
+static int toc_send_im(struct gaim_connection *gc, char *name, char *message, int len, int flags)
 {
 	char buf[BUF_LEN * 2];
 	char *tmp = g_malloc(strlen(message) * 4 + 1); /* 4 because \n gets replaced with <BR> */

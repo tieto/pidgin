@@ -77,7 +77,7 @@ static void nap_write_packet(struct gaim_connection *gc, unsigned short command,
 	write(ndata->fd, message, size);
 }
 
-static int nap_send_im(struct gaim_connection *gc, char *who, char *message, int flags)
+static int nap_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
 {
 	gchar buf[NAP_BUF_LEN];
 

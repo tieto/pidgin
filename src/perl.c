@@ -586,7 +586,7 @@ XS (XS_GAIM_serv_send_im)
 		XSRETURN(0);
 		return;
 	}
-	serv_send_im(gc, nick, what, isauto);
+	serv_send_im(gc, nick, what, -1, isauto);
 	XSRETURN(0);
 }
 
@@ -613,7 +613,7 @@ XS (XS_GAIM_print_to_conv)
 		c = new_conversation(nick);
 	set_convo_gc(c, gc);
 	write_to_conv(c, what, WFLAG_SEND | (isauto ? WFLAG_AUTO : 0), NULL, time(NULL), -1);
-	serv_send_im(c->gc, nick, what, isauto ? IM_FLAG_AWAY : 0);
+	serv_send_im(c->gc, nick, what, -1, isauto ? IM_FLAG_AWAY : 0);
 	XSRETURN(0);
 }
 

@@ -154,6 +154,7 @@ struct conversation {
 	GtkWidget *menu;
 	GtkWidget *check;
 	GtkWidget *progress;
+	GSList    *images;  /* A list of filenames to embed */
 	gint unseen;
 	guint typing_timeout;
 	time_t type_again;

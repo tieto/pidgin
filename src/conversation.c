@@ -927,7 +927,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 void send_callback(GtkWidget *widget, struct conversation *c)
 {
 	char *buf, *buf2;
-	int limit;
+	int limit, length=0;
 	int err = 0;
 
 	if (!c->gc)
@@ -1033,20 +1033,63 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 			int imflags = 0;
 			if (c->check && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->check)))
 				imflags = IM_FLAG_CHECKBOX;
-			err = serv_send_im(c->gc, c->name, buffy, imflags);
+			if (c->images) {
+				int id, offset;
+				char *bigbuf;
+				GSList *tmplist = c->images;
+				id = 1;
+				length = strlen(buffy) + strlen("<BINARY></BINARY>");
+				bigbuf = g_malloc(length);
+				g_snprintf(bigbuf, strlen(buffy)+strlen("<BINARY> "), "%s<BINARY>", buffy);
+				offset = strlen(buffy) + strlen("<BINARY>");
+				while (tmplist) {
+				  FILE *imgfile;
+				  struct stat st;
+					char imgtag[1024];
+					if (stat(tmplist->data, &st) != 0) {
+						debug_printf("Could not stat %s\n", tmplist->data);
+						break;
+					}
+					g_snprintf(imgtag, sizeof(imgtag),
+						   "<DATA ID=\"%d\" SIZE=\"%d\">",
+						   id, st.st_size);
+					length = length + strlen(imgtag) + st.st_size;
+					bigbuf = realloc(bigbuf, length);
+					if (!(imgfile = fopen(c->images->data, "r"))) {
+						debug_printf("Could not open %s\n", tmplist->data);
+						break;
+					}
+					g_snprintf(bigbuf + offset, strlen(imgtag) + 1, "%s", imgtag);
+					offset = offset + strlen(imgtag);
+					fread(bigbuf + offset, 1, st.st_size, imgfile);
+					offset = offset + st.st_size;
+					g_snprintf(bigbuf + offset, strlen("</DATA>"), "</DATA>");
+					offset= offset + strlen("</DATA>");
+					id++;
+					tmplist = tmplist->next;
+				}
+				
+				g_snprintf(bigbuf + offset, strlen("</BINARY>"), "</BINARY>");   
+				if (serv_send_im(c->gc, c->name, bigbuf, length, imflags) > 0) {
+					write_to_conv(c, bigbuf, WFLAG_SEND, NULL, time(NULL), length);
+					if (c->makesound && (sound_options & OPT_SOUND_SEND))
+						play_sound(SEND);
+					if (im_options & OPT_IM_POPDOWN)
+						gtk_widget_hide(c->window);
+					
+				}
+				g_free(bigbuf);
+			} else {
+				if (serv_send_im(c->gc, c->name, buffy, -1, imflags) > 0)
+					write_to_conv(c, buf, WFLAG_SEND, NULL, time(NULL), -1);
+				if (c->makesound && (sound_options & OPT_SOUND_SEND))
+					play_sound(SEND);
+				if (im_options & OPT_IM_POPDOWN)
+					gtk_widget_hide(c->window);
+			}
 			g_free(buffy);
 		}
-
-
-		if (err > 0) {
-			write_to_conv(c, buf, WFLAG_SEND, NULL, time(NULL), -1);
-
-			if (c->makesound && (sound_options & OPT_SOUND_SEND))
-				play_sound(SEND);
-
-			if (im_options & OPT_IM_POPDOWN)
-				gtk_widget_hide(c->window);
-		}
+		
 	} else {
 		err = serv_chat_send(c->gc, c->id, buf);
 
