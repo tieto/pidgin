@@ -2001,7 +2001,6 @@ static void msn_buddy_free(struct buddy *b)
 
 G_MODULE_EXPORT void msn_init(struct prpl *ret)
 {
-	struct proto_user_split *pus;
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_MSN;
 	ret->options = OPT_PROTO_MAIL_CHECK;
@@ -2041,13 +2040,6 @@ G_MODULE_EXPORT void msn_init(struct prpl *ret)
 	ret->file_transfer_done = msn_file_transfer_done;
 	ret->file_transfer_read = msn_file_transfer_read;
 #endif
-
-	pus = g_new0(struct proto_user_split, 1);
-	pus->sep = '@';
-	pus->label = g_strdup(_("Server:"));
-	pus->def = g_strdup("hotmail.com");
-	ret->user_splits = g_list_append(ret->user_splits, pus);
-
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Login Server:"));
