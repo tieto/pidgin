@@ -1,4 +1,5 @@
 --- STUFF FOR 0.10.1 RELEASE ---
+	Allow users to select sounds for various events
 	Execute Command on Buddy Pounce
 	Have a page in the prefs for the Applet
 	The about window is very ugly.  I think this shall be fixed.  

@@ -75,6 +75,7 @@
 #endif
 #include "pixmaps/exit_small.xpm"
 #include "pixmaps/pounce_small.xpm"
+#include "pixmaps/about_small.xpm"
 
 #include "pixmaps/tmp_send.xpm"
 #include "pixmaps/tb_search.xpm"
@@ -1880,7 +1881,7 @@ void show_buddy_list()
 	gtk_menu_item_right_justify(GTK_MENU_ITEM(menuitem));
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 	
-	gaim_new_item(menu, _("About Gaim"), show_about);
+	gaim_new_item_with_pixmap(menu, _("About Gaim"), about_small_xpm, show_about);
 
         gtk_widget_show(menubar);
 
