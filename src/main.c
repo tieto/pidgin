@@ -539,6 +539,31 @@ gaim_gtk_core_get_ui_ops(void)
 	return &core_ops;
 }
 
+static void
+show_usage(int mode, const char *name)
+{
+	switch (mode) {
+	case 0:		/* full help text */
+		printf(_("Gaim %s\n"
+		       "Usage: %s [OPTION]...\n\n"
+		       "  -a, --acct          display account editor window\n"
+		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
+		       "                      name of away message to use)\n"
+		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
+		       "                      account(s) to use, seperated by commas)\n"
+		       "  -n, --loginwin      don't automatically login; show login window\n"
+		       "  -u, --user=NAME     use account NAME\n"
+		       "  -f, --file=FILE     use FILE as config\n"
+		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -v, --version       display the current version and exit\n"
+		       "  -h, --help          display this help and exit\n"), VERSION, name);
+		break;
+	case 1:		/* short message */
+		printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
+		break;
+	}
+}
+
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
 int gaim_main(HINSTANCE hint, int argc, char *argv[])

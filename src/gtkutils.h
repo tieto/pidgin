@@ -284,14 +284,4 @@ void gaim_gtk_find_images(const char *message, GSList **list);
  */
 char *stylize(const gchar *text, int len);
 
-/**
- * Shows the usage options for the gaim binary.
- *
- * @param mode @c 0 for full options, or @c 1 for a short summary.
- * @param name The name of the binary.
- *
- * @todo Move this to the binary, when a library is formed.
- */
-void show_usage(int mode, const char *name);
-
 #endif /* _GAIM_GTK_UTILS_H_ */
