@@ -1589,6 +1589,14 @@ gaim_presence_get_warning_level(const GaimPresence *presence)
 	return presence->warning_level;
 }
 
+time_t
+gaim_presence_get_login_time(const GaimPresence *presence)
+{
+	g_return_val_if_fail(presence != NULL, 0);
+
+	return presence->login_time;
+}
+
 gint
 gaim_presence_compare(const GaimPresence *presence1,
 		const GaimPresence *presence2)

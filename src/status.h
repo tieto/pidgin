@@ -916,6 +916,15 @@ time_t gaim_presence_get_idle_time(const GaimPresence *presence);
 unsigned int gaim_presence_get_warning_level(const GaimPresence *presence);
 
 /**
+ * Returns the presence's login time.
+ *
+ * @param presence The presence.
+ *
+ * @return The presence's login time.
+ */
+time_t gaim_presence_get_login_time(const GaimPresence *presence);
+
+/**
  * Compares two presences for availability.
  *
  * @param presence1 The first presence.

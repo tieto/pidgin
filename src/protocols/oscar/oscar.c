@@ -109,6 +109,7 @@ struct _OscarData {
 	guint icontimer;
 	guint getblisttimer;
 	guint getinfotimer;
+	gint timeoffset;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
@@ -3020,8 +3021,10 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	else if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
 		signon = time(NULL) - info->sessionlen;
 
-	if (!aim_sncmp(gaim_account_get_username(account), info->sn))
+	if (!aim_sncmp(gaim_account_get_username(account), info->sn)) {
 		gaim_connection_set_display_name(gc, info->sn);
+		od->timeoffset = signon - gc->login_time;
+	}
 
 	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, info->sn));
 	if (!bi) {
@@ -3095,7 +3098,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 		gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_AWAY, NULL);
 	else
 		gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_AVAILABLE, NULL);
-	gaim_prpl_got_user_login_time(account, info->sn, signon);
+	gaim_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
 	gaim_prpl_got_user_warning_level(account, info->sn, info->warnlevel/10.0 + 0.5);
 
 	if (time_idle > 0)
@@ -4279,6 +4282,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
+	OscarData *od = gc->proto_data;
 	GString *str;
 	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL, *title = NULL;
 	va_list ap;
@@ -4293,12 +4297,12 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	g_string_append_printf(str, "\n<br><b>%s</b>: %d%%", _("Warning Level"), (int)((userinfo->warnlevel/10.0) + 0.5));
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
-		time_t t = userinfo->onlinesince;
+		time_t t = userinfo->onlinesince - od->timeoffset;
 		oscar_string_append(str, "\n<br>", _("Online Since"), ctime(&t));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
-		time_t t = userinfo->membersince;
+		time_t t = userinfo->membersince - od->timeoffset;
 		oscar_string_append(str, "\n<br>", _("Member Since"), ctime(&t));
 	}
 

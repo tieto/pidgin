@@ -2668,7 +2668,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		GaimPresence *presence;
 		char *tmp;
 		gboolean idle;
-		time_t idle_secs;
+		time_t idle_secs, signon;
 		int lastseen;
 		unsigned int warning_level;
 
@@ -2728,9 +2728,10 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		}
 
 		/* Logged In */
-		if (b->signon > 0)
+		signon = gaim_presence_get_login_time(presence);
+		if (signon > 0)
 		{
-			tmp = gaim_str_seconds_to_string(time(NULL) - b->signon);
+			tmp = gaim_str_seconds_to_string(time(NULL) - signon);
 			g_string_append_printf(str, _("\n<b>Logged In:</b> %s"), tmp);
 			g_free(tmp);
 		}

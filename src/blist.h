@@ -113,7 +113,6 @@ struct _GaimBuddy {
 	char *server_alias;                     /**< The server-specified alias of the buddy.  (i.e. MSN "Friendly Names") */
 	GaimBuddyPresenceState present;         /**< This is 0 if the buddy appears offline, 1 if he appears online, and 2 if
 						    he has recently signed on */
-	time_t signon;                          /**< The time the buddy signed on. */
 	int uc;                                 /**< This is a cryptic bitmask that makes sense only to the prpl.  This will get changed */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
 	GaimBuddyIcon *icon;                    /**< The buddy icon. */
@@ -258,14 +257,6 @@ void gaim_blist_set_visible(gboolean show);
  * @param old_status The status from which we are changing.
  */
 void gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status);
-
-/**
- * Updates a buddy's signon time.
- *
- * @param buddy  The buddy whose sign-on time has changed.
- * @param signon The buddy's signon time since the dawn of the UNIX epoch.
- */
-void gaim_blist_update_buddy_signon(GaimBuddy *buddy, time_t signon);
 
 /**
  * Updates a buddy's icon.

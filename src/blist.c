@@ -801,21 +801,6 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 }
 
-void gaim_blist_update_buddy_signon(GaimBuddy *buddy, time_t signon)
-{
-	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
-
-	g_return_if_fail(buddy != NULL);
-
-	if (buddy->signon == signon)
-		return;
-
-	buddy->signon = signon;
-
-	if (ops && ops->update)
-		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
-}
-
 void gaim_blist_update_buddy_icon(GaimBuddy *buddy)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
