@@ -804,8 +804,6 @@ void do_add_group(GtkWidget *w, struct addbuddy *a)
 	if (a->gc) add_group(a->gc, grp);
 	else if (connections) add_group(connections->data, grp);
 
-	build_edit_tree();
-
 	do_export( (GtkWidget *) NULL, 0 );
 
 	destroy_dialog(NULL, a->window);

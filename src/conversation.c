@@ -1722,36 +1722,43 @@ void update_convo_add_button(struct conversation *c)
 {
 	int dispstyle = set_dispstyle(0);
 	GtkWidget *parent = c->add->parent;
-	gtk_widget_destroy(c->add);
+	gboolean rebuild = FALSE;
 
 	if (find_buddy(c->gc, c->name)) {
-		c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
-
-		if (c->gc) 
-		{
+		if (!gtk_object_get_user_data(GTK_OBJECT(c->add))) {
+			gtk_widget_destroy(c->add);
+			c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
+			rebuild = TRUE;
+		}
+		if (c->gc) {
 			if (c->gc->prpl->remove_buddy == NULL)
 				gtk_widget_set_sensitive(c->add, FALSE);
 			else
 				gtk_widget_set_sensitive(c->add, TRUE);
-		}
+		} else
+			gtk_widget_set_sensitive(c->add, FALSE);
+		gtk_object_set_user_data(GTK_OBJECT(c->add), c);
 	} else {
-		c->add = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
-		if (c->gc) 
-		{
+		if (gtk_object_get_user_data(GTK_OBJECT(c->add))) {
+			gtk_widget_destroy(c->add);
+			c->add = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
+			rebuild = TRUE;
+		}
+		if (c->gc) {
 			if (c->gc->prpl->add_buddy == NULL)
 				gtk_widget_set_sensitive(c->add, FALSE);
 			else
 				gtk_widget_set_sensitive(c->add, TRUE);
-		}
+		} else
+			gtk_widget_set_sensitive(c->add, FALSE);
 	}
 
-	if (!c->gc)
-		gtk_widget_set_sensitive(c->add, FALSE);
-
-	gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-	gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
-	gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
-	gtk_widget_show(c->add);
+	if (rebuild) {
+		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+		gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
+		gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
+		gtk_widget_show(c->add);
+	}
 }
 
 static void create_convo_menu(struct conversation *cnv)
@@ -2050,9 +2057,10 @@ void show_conv(struct conversation *c)
 	gtk_box_pack_end(GTK_BOX(bbox), c->sep1, dispstyle, dispstyle, 0);
 	gtk_widget_show(c->sep1);
 
-	if (c->gc && find_buddy(c->gc, c->name) != NULL)
-		 add = picture_button2(win, _("Remove"), gnome_remove_xpm, dispstyle);
-	else
+	if (c->gc && find_buddy(c->gc, c->name) != NULL) {
+		add = picture_button2(win, _("Remove"), gnome_remove_xpm, dispstyle);
+		gtk_object_set_user_data(GTK_OBJECT(add), c);
+	} else
 		add = picture_button2(win, _("Add"), gnome_add_xpm, dispstyle);
 	c->add = add;
 	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);

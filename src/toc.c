@@ -135,7 +135,7 @@ static void toc_login(struct aim_user *user)
 	gc = new_gaim_conn(user);
 	gc->proto_data = tdt = g_new0(struct toc_data, 1);
 
-	g_snprintf(buf, sizeof buf, "Lookin up %s",
+	g_snprintf(buf, sizeof buf, "Looking up %s",
 		   user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST);
 	/* this is such a hack */
 	set_login_progress(gc, 1, buf);

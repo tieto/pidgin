@@ -1053,6 +1053,8 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 
 struct group *add_group(struct gaim_connection *gc, char *group)
 {
+        GtkCTreeNode *c = NULL, *p;
+	char *text[1];
 	struct group *g = find_group(gc, group);
 	if (g)
 		return g;
@@ -1069,7 +1071,12 @@ struct group *add_group(struct gaim_connection *gc, char *group)
 	
 	if (!blist) return g;
 
-	build_edit_tree();
+	c = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, gc);
+	text[0] = g->name;
+	p = gtk_ctree_insert_node(GTK_CTREE(edittree), c,
+				  NULL, text, 5, NULL, NULL,
+				  NULL, NULL, 0, 1);
+	gtk_ctree_node_set_row_data(GTK_CTREE(edittree), p, g);
 	
 	if (!(display_options & OPT_DISP_NO_MT_GRP) && !find_group_show(group))
 		new_group_show(group);
