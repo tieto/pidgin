@@ -14,6 +14,10 @@
 
 	Herman: This is to make up for slipping off the two week release cycle.
 
+	Luke: Okay, people, yes we did test 0.65 for bugs, but hey, some things
+	slip through. This release makes up for that. This should fix the bugs 
+	0.65 introduced, at least the ones that most of you would otherwise hit.
+
 0.65 (07/14/2003):
 	Rob: Wooo! We're finally ready for 0.65.  Are you guys excited?  I
 	haven't worked on anything in this release, either.  I've been
