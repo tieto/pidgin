@@ -2330,18 +2330,18 @@ gray_stuff_out(GaimConversation *conv)
 		}
 
 		/* Deal with the toolbar */
-		
+
 		if (gc->flags & GAIM_CONNECTION_HTML) {
 			buttons = -1;    /* Everything on */
 			if (!(prpl_info->options & OPT_PROTO_IM_IMAGE))
-				buttons ^= GTK_IMHTML_IMAGE; 
+				buttons &= ~GTK_IMHTML_IMAGE;
 			if (gc->flags & GAIM_CONNECTION_NO_BGCOLOR)
-				buttons ^= GTK_IMHTML_BACKCOLOR;
+				buttons &= ~GTK_IMHTML_BACKCOLOR;
 		} else {
-			buttons = 0;
+			buttons = GTK_IMHTML_SMILEY;
 		}
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
-	
+
 #if 0
 		/* Deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
