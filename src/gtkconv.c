@@ -2237,7 +2237,8 @@ update_send_as_selection(GaimWindow *win)
 	GtkWidget *menu;
 	GList *child;
 
-	g_return_val_if_fail(g_list_find(gaim_get_windows(), win) != NULL, FALSE);
+	if (g_list_find(gaim_get_windows(), win) == NULL)
+		return FALSE;
 
 	conv = gaim_window_get_active_conversation(win);
 
