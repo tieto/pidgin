@@ -21,7 +21,6 @@
  */
 #include "msn.h"
 #include "session.h"
-#include "dispatch.h"
 #include "notification.h"
 
 MsnSession *
@@ -108,20 +107,24 @@ msn_session_connect(MsnSession *session)
 
 	if (session->http_method)
 	{
-		session->notification_conn =
-			msn_notification_new(session, "gateway.messenger.hotmail.com", 80);
+		session->notification_conn = msn_notification_new(session);
 
-		if (msn_servconn_connect(session->notification_conn))
+		if (msn_notification_connect(session->notification_conn,
+									 "gateway.messenger.hotmail.com", 80))
+		{
 			return TRUE;
+		}
 	}
 	else
 	{
-		session->dispatch_conn = msn_dispatch_new(session,
-												  session->dispatch_server,
-												  session->dispatch_port);
+		session->notification_conn = msn_notification_new(session);
 
-		if (msn_servconn_connect(session->dispatch_conn))
+		if (msn_notification_connect(session->notification_conn,
+									 session->dispatch_server,
+									 session->dispatch_port))
+		{
 			return TRUE;
+		}
 	}
 
 	return FALSE;
@@ -132,11 +135,6 @@ msn_session_disconnect(MsnSession *session)
 {
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->connected);
-
-	if (session->dispatch_conn != NULL) {
-		msn_servconn_destroy(session->dispatch_conn);
-		session->dispatch_conn = NULL;
-	}
 
 	while (session->switches != NULL) {
 		MsnSwitchBoard *board = (MsnSwitchBoard *)session->switches->data;

@@ -53,8 +53,11 @@ struct _MsnServConn
 
 	MsnHttpMethodData *http_data;
 
-	char *server;
+#if 0
+	/* shx: not used */
+	char *host;
 	int port;
+#endif
 
 	int fd;
 	int inpa;
@@ -75,9 +78,8 @@ struct _MsnServConn
 	GHashTable *commands;
 	GHashTable *msg_types;
 
-	gboolean (*connect_cb)(gpointer, gint, GaimInputCondition);
-	void (*failed_read_cb)(gpointer, gint, GaimInputCondition);
-	void (*login_cb)(gpointer, gint, GaimInputCondition);
+	gboolean (*connect_cb)(MsnServConn *servconn);
+	void (*disconnect_cb)(MsnServConn *servconn);
 
 	void *data;
 };
@@ -86,20 +88,24 @@ MsnServConn *msn_servconn_new(MsnSession *session);
 
 void msn_servconn_destroy(MsnServConn *servconn);
 
-gboolean msn_servconn_connect(MsnServConn *servconn);
+gboolean msn_servconn_connect(MsnServConn *servconn, const char *host,
+							  int port);
 void msn_servconn_disconnect(MsnServConn *servconn);
 
+#if 0
+/* shx: not used */
 void msn_servconn_set_server(MsnServConn *servconn, const char *server,
 							 int port);
 
 const char *msn_servconn_get_server(const MsnServConn *servconn);
 int msn_servconn_get_port(const MsnServConn *servconn);
+#endif
 
 void msn_servconn_set_connect_cb(MsnServConn *servconn,
-		gboolean (*connect_cb)(gpointer, gint, GaimInputCondition));
+		gboolean (*connect_cb)(MsnServConn *servconn));
 
-void msn_servconn_set_failed_read_cb(MsnServConn *servconn,
-		void (*failed_read_cb)(gpointer, gint, GaimInputCondition));
+void msn_servconn_set_disconnect_cb(MsnServConn *servconn,
+		void (*disconnect_cb)(MsnServConn *servconn));
 
 size_t msn_servconn_write(MsnServConn *servconn, const char *buf,
 						  size_t size);

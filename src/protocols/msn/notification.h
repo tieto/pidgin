@@ -25,7 +25,9 @@
 #include "session.h"
 #include "servconn.h"
 
-MsnServConn *msn_notification_new(MsnSession *session, const char *server,
-								  int port);
+MsnServConn *msn_notification_new(MsnSession *session);
+gboolean msn_notification_connect(MsnServConn *notification,
+							  const char *host, int port);
+void msn_notification_disconnect(MsnServConn *notification);
 
 #endif /* _MSN_NOTIFICATION_H_ */

@@ -68,8 +68,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			dispatch.c \
-			error.c \
+C_SRC =			error.c \
 			group.c \
 			httpmethod.c \
 			msg.c \

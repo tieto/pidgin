@@ -4,8 +4,6 @@ EXTRA_DIST = \
 pkgdir = $(libdir)/gaim
 
 MSNSOURCES = \
-	dispatch.c \
-	dispatch.h \
 	error.c \
 	error.h \
 	group.c \

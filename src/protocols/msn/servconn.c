@@ -23,6 +23,8 @@
 #include "servconn.h"
 #include "error.h"
 
+static void read_cb(gpointer data, gint source, GaimInputCondition cond);
+
 typedef struct
 {
 	char *command;
@@ -196,9 +198,21 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	MsnServConn *servconn = data;
 
 	gaim_debug_info("msn", "In servconn's connect_cb\n");
-	if (servconn->connect_cb(data, source, cond))
+
+	servconn->fd = source;
+
+	if (source > 0)
+	{
+		/* Someone wants to know we connected. */
+		servconn->connect_cb(servconn);
 		servconn->inpa = gaim_input_add(servconn->fd, GAIM_INPUT_READ,
-										servconn->login_cb, data);
+										read_cb, data);
+	}
+	else
+	{
+		GaimConnection *gc = servconn->session->account->gc;
+		gaim_connection_error(gc, _("Unable to connect."));
+	}
 }
 
 MsnServConn *
@@ -210,7 +224,6 @@ msn_servconn_new(MsnSession *session)
 
 	servconn = g_new0(MsnServConn, 1);
 
-	servconn->login_cb = msn_servconn_parse_data;
 	servconn->session = session;
 
 	if (session->http_method)
@@ -231,28 +244,29 @@ msn_servconn_new(MsnSession *session)
 }
 
 gboolean
-msn_servconn_connect(MsnServConn *servconn)
+msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 {
 	MsnSession *session;
 	int i;
 
-	g_return_val_if_fail(servconn         != NULL, FALSE);
-	g_return_val_if_fail(servconn->server != NULL, FALSE);
-	g_return_val_if_fail(!servconn->connected,     TRUE);
+	g_return_val_if_fail(servconn != NULL, FALSE);
+	g_return_val_if_fail(host     != NULL, FALSE);
+	g_return_val_if_fail(port      > 0,    FALSE);
 
 	session = servconn->session;
 
+	if (servconn->connected)
+		msn_servconn_disconnect(servconn);
+
 	if (session->http_method)
 	{
-		servconn->http_data->gateway_ip = g_strdup(servconn->server);
-
-		g_free(servconn->server);
-		servconn->server = g_strdup("gateway.messenger.hotmail.com");
-		servconn->port = 80;
+		servconn->http_data->gateway_ip = g_strdup(host);
+		host = "gateway.messenger.hotmail.com";
+		port = 80;
 	}
 
-	i = gaim_proxy_connect(session->account, servconn->server,
-						   servconn->port, connect_cb, servconn);
+	i = gaim_proxy_connect(session->account, host, port, connect_cb,
+						   servconn);
 
 	if (i == 0)
 		servconn->connected = TRUE;
@@ -274,6 +288,8 @@ msn_servconn_disconnect(MsnServConn *servconn)
 		gaim_input_remove(servconn->inpa);
 
 	close(servconn->fd);
+
+	servconn->connected = FALSE;
 
 	if (servconn->http_data != NULL)
 	{
@@ -308,7 +324,8 @@ msn_servconn_disconnect(MsnServConn *servconn)
 		msn_servconn_unqueue_message(servconn, entry->msg);
 	}
 
-	servconn->connected = FALSE;
+	if (servconn->disconnect_cb)
+		servconn->disconnect_cb(servconn);
 }
 
 void
@@ -325,11 +342,17 @@ msn_servconn_destroy(MsnServConn *servconn)
 	if (servconn->connected)
 		msn_servconn_disconnect(servconn);
 
-	if (servconn->server != NULL)
-		g_free(servconn->server);
+#if 0
+	/* shx: not used */
+	if (servconn->host != NULL)
+		g_free(servconn->host);
+#endif
 
 	g_free(servconn);
 }
+
+#if 0
+/* shx: this isn't used */
 
 void
 msn_servconn_set_server(MsnServConn *servconn, const char *server, int port)
@@ -338,11 +361,11 @@ msn_servconn_set_server(MsnServConn *servconn, const char *server, int port)
 	g_return_if_fail(server != NULL);
 	g_return_if_fail(port > 0);
 
-	if (servconn->server != NULL)
-		g_free(servconn->server);
+	if (servconn->host != NULL)
+		g_free(servconn->host);
 
-	servconn->server = g_strdup(server);
-	servconn->port   = port;
+	servconn->host = g_strdup(server);
+	servconn->port = port;
 }
 
 const char *
@@ -350,7 +373,7 @@ msn_servconn_get_server(const MsnServConn *servconn)
 {
 	g_return_val_if_fail(servconn != NULL, NULL);
 
-	return servconn->server;
+	return servconn->host;
 }
 
 int
@@ -360,11 +383,11 @@ msn_servconn_get_port(const MsnServConn *servconn)
 
 	return servconn->port;
 }
+#endif
 
 void
 msn_servconn_set_connect_cb(MsnServConn *servconn,
-							gboolean (*connect_cb)(gpointer, gint,
-												   GaimInputCondition))
+							gboolean (*connect_cb)(MsnServConn *servconn))
 {
 	g_return_if_fail(servconn != NULL);
 
@@ -372,13 +395,13 @@ msn_servconn_set_connect_cb(MsnServConn *servconn,
 }
 
 void
-msn_servconn_set_failed_read_cb(MsnServConn *servconn,
-								void (*failed_read_cb)(gpointer, gint,
-													   GaimInputCondition))
+msn_servconn_set_disconnect_cb(MsnServConn *servconn,
+							   void (*disconnect_cb)(MsnServConn
+													 *servconn))
 {
 	g_return_if_fail(servconn != NULL);
 
-	servconn->failed_read_cb = failed_read_cb;
+	servconn->disconnect_cb = disconnect_cb;
 }
 
 size_t
@@ -491,8 +514,19 @@ msn_servconn_register_msg_type(MsnServConn *servconn,
 	g_hash_table_insert(servconn->msg_types, g_strdup(content_type), cb);
 }
 
-void
-msn_servconn_parse_data(gpointer data, gint source, GaimInputCondition cond)
+static void
+failed_io(MsnServConn *servconn)
+{
+	GaimConnection *gc =
+		gaim_account_get_connection(servconn->session->account);
+
+	gaim_connection_error(gc, _("IO Error."));
+
+	msn_servconn_disconnect(servconn);
+}
+
+static void
+read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *servconn = (MsnServConn *)data;
 	MsnSession *session = servconn->session;
@@ -504,8 +538,7 @@ msn_servconn_parse_data(gpointer data, gint source, GaimInputCondition cond)
 
 	if (len <= 0)
 	{
-		if (servconn->failed_read_cb != NULL)
-			servconn->failed_read_cb(data, source, cond);
+		failed_io(servconn);
 
 		return;
 	}
@@ -565,7 +598,7 @@ msn_servconn_parse_data(gpointer data, gint source, GaimInputCondition cond)
 
 			close(servconn->fd);
 
-			i = gaim_proxy_connect(session->account, servconn->server,
+			i = gaim_proxy_connect(session->account, servconn->host,
 								   servconn->port, servconn->login_cb,
 								   servconn);
 

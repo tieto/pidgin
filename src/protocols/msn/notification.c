@@ -1582,11 +1582,9 @@ xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		}
 	}
 	else if (!strcmp(params[1], "NS")) {
-		msn_servconn_destroy(session->notification_conn);
-
-		session->notification_conn = msn_notification_new(session, host, port);
-
-		if (!msn_servconn_connect(session->notification_conn)) {
+		if (!msn_notification_connect(session->notification_conn, host,
+									  port))
+		{
 			gaim_connection_error(gc, _("Unable to transfer to "
 									  "notification server"));
 
@@ -1770,22 +1768,13 @@ system_msg(MsnServConn *servconn, MsnMessage *msg)
 }
 
 static gboolean
-connect_cb(gpointer data, gint source, GaimInputCondition cond)
+connect_cb(MsnServConn *servconn)
 {
-	MsnServConn *notification = data;
-	MsnSession *session = notification->session;
+	MsnSession *session = servconn->session;
 	GaimAccount *account = session->account;
 	GaimConnection *gc = gaim_account_get_connection(account);
 	char proto_vers[256];
 	size_t i;
-
-	if (source == -1) {
-		gaim_connection_error(session->account->gc, _("Unable to connect."));
-		return FALSE;
-	}
-
-	if (notification->fd != source)
-		notification->fd = source;
 
 	proto_vers[0] = '\0';
 
@@ -1800,7 +1789,7 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	strncat(proto_vers, "CVR0", sizeof(proto_vers));
 
-	if (!msn_servconn_send_command(notification, "VER", proto_vers))
+	if (!msn_servconn_send_command(servconn, "VER", proto_vers))
 	{
 		gaim_connection_error(gc, _("Unable to write to server"));
 		return FALSE;
@@ -1815,27 +1804,14 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	return TRUE;
 }
 
-static void
-failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
-{
-	MsnServConn *notification = data;
-	GaimConnection *gc;
-
-	gc = notification->session->account->gc;
-
-	gaim_connection_error(gc, _("Error reading from server"));
-}
-
 MsnServConn *
-msn_notification_new(MsnSession *session, const char *server, int port)
+msn_notification_new(MsnSession *session)
 {
 	MsnServConn *notification;
 
 	notification = msn_servconn_new(session);
 
-	msn_servconn_set_server(notification, server, port);
 	msn_servconn_set_connect_cb(notification, connect_cb);
-	msn_servconn_set_failed_read_cb(notification, failed_read_cb);
 
 	if (session->http_method)
 		notification->http_data->server_type = "NS";
@@ -1901,4 +1877,12 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 	}
 
 	return notification;
+}
+
+gboolean
+msn_notification_connect(MsnServConn *notification, const char *host, int port)
+{
+	g_return_val_if_fail(notification != NULL, FALSE);
+
+	return msn_servconn_connect(notification, host, port);
 }

@@ -40,6 +40,7 @@ struct _MsnSwitchBoard
 	char *session_id;
 
 	gboolean invited;
+	gboolean destroying;
 
 	GaimConversation *chat;
 
@@ -146,13 +147,13 @@ gboolean msn_switchboard_is_invited(const MsnSwitchBoard *swboard);
  * Connects to a switchboard.
  *
  * @param swboard The switchboard.
- * @param server  The server.
+ * @param host    The host.
  * @param port    The port.
  *
  * @return @c TRUE if able to connect, or @c FALSE otherwise.
  */
 gboolean msn_switchboard_connect(MsnSwitchBoard *swboard,
-								 const char *server, int port);
+								 const char *host, int port);
 
 /**
  * Disconnects from a switchboard.

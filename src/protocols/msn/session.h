@@ -45,7 +45,6 @@ struct _MsnSession
 
 	gboolean connected;
 
-	MsnServConn *dispatch_conn;
 	MsnServConn *notification_conn;
 
 	MsnNexus *nexus;

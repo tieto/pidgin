@@ -416,15 +416,11 @@ clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
  * Connect stuff
  **************************************************************************/
 static gboolean
-connect_cb(gpointer data, gint source, GaimInputCondition cond)
+connect_cb(MsnServConn *servconn)
 {
-	MsnServConn *servconn = data;
 	GaimAccount *account = servconn->session->account;
 	MsnSwitchBoard *swboard = servconn->data;
 	char outparams[MSN_BUF_LEN];
-
-	if (servconn->fd != source)
-		servconn->fd = source;
 
 	swboard->in_use = TRUE;
 
@@ -456,11 +452,13 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-failed_read_cb(gpointer data, gint source, GaimInputCondition cond)
+disconnect_cb(MsnServConn *servconn)
 {
-	MsnServConn *servconn = data;
+	MsnSwitchBoard *swboard;
 
-	msn_switchboard_destroy(servconn->data);
+	swboard = servconn->data;
+	if (!swboard->destroying)
+		msn_switchboard_destroy(swboard);
 }
 
 MsnSwitchBoard *
@@ -475,7 +473,7 @@ msn_switchboard_new(MsnSession *session)
 
 	swboard->servconn = servconn = msn_servconn_new(session);
 	msn_servconn_set_connect_cb(servconn, connect_cb);
-	msn_servconn_set_failed_read_cb(servconn, failed_read_cb);
+	msn_servconn_set_disconnect_cb(servconn, disconnect_cb);
 
 	if (session->http_method)
 		swboard->servconn->http_data->server_type = "SB";
@@ -533,7 +531,9 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	MsnSession *session;
 
 	g_return_if_fail(swboard != NULL);
+	g_return_if_fail(!swboard->destroying);
 
+	swboard->destroying = TRUE;
 	session = swboard->servconn->session;
 
 	if (swboard->servconn->connected)
@@ -627,13 +627,11 @@ msn_switchboard_is_invited(const MsnSwitchBoard *swboard)
 }
 
 gboolean
-msn_switchboard_connect(MsnSwitchBoard *swboard, const char *server, int port)
+msn_switchboard_connect(MsnSwitchBoard *swboard, const char *host, int port)
 {
 	g_return_val_if_fail(swboard != NULL, FALSE);
 
-	msn_servconn_set_server(swboard->servconn, server, port);
-
-	if (msn_servconn_connect(swboard->servconn))
+	if (msn_servconn_connect(swboard->servconn, host, port))
 		swboard->in_use = TRUE;
 
 	return swboard->in_use;

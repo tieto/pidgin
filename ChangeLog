@@ -4,6 +4,7 @@ version 0.77cvs
 	New Features:
 	* The System Log returns (Ka-Hing Cheung)
 	* Added a conversation-drag-ended signal (Etan Reisner)
+	* Reorganized and cleaned up the MSN protocol plugin (Felipe Contreras)
 
 	Bug Fixes:
 	* Save Conversation works again (Kevin Stange)
