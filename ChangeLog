@@ -12,6 +12,8 @@ version 0.54
 	* Yahoo! will tell you when your buddies are playing Yahoo! 
  	  games and give you the ability to join them
 	* Yahoo! can receive offline messages
+	* IRC can do DCC chat.
+	* IRC will convert HTML formatting to mIRC formatting.
 	
 version 0.53 (02/28/2002):
 	* Updated Polish Translation (thanks Przemyslaw Sulek)

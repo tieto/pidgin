@@ -25,7 +25,7 @@
 
 #include <config.h>
 
-
+#include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
@@ -47,6 +47,18 @@
 #define USEROPT_SERV      0
 #define USEROPT_PORT      1
 
+struct dcc_chat
+{
+	struct gaim_connection *gc;	
+	char ip_address[12];	
+	int port;		
+	int fd;			
+	int inpa;		
+	char nick[80];		
+};
+
+GSList *dcc_chat_list = NULL;
+
 struct irc_data {
 	int fd;
 	gboolean online;
@@ -67,6 +79,27 @@ struct irc_data {
 	gboolean in_list;
 	GString *liststr;
 };
+
+struct dcc_chat *
+find_dcc_chat (struct gaim_connection *gc, char *nick)
+{
+	GSList *tmp;
+	struct dcc_chat *data;
+	tmp = dcc_chat_list;
+	while (tmp != NULL)
+		{
+			data = (struct dcc_chat *) (tmp)->data;
+			if (data 
+			    && data->nick 
+			    && strcmp (nick, data->nick) == 0
+			    && gc == data->gc)
+				{
+					return data;
+				}
+			tmp = tmp->next;
+		}
+	return NULL;
+}
 
 static char *irc_name()
 {
@@ -222,6 +255,46 @@ static char *int_to_col(int c)
 	}
 }
 
+static GString *encode_html(char *msg)
+{
+	GString *str = g_string_new("");
+	char *cur = msg, *end = msg;
+	gboolean bold = FALSE, underline = FALSE, italics = FALSE;
+	
+	while ((end = strchr(cur, '<'))) {
+		*end = 0;
+		str = g_string_append(str, cur);
+		cur = ++end;
+		if (!g_strncasecmp(cur, "B>", 2)) {
+			bold = TRUE;
+			str = g_string_append_c(str, '\2');
+			cur = cur + 2;
+		} else if (!g_strncasecmp(cur, "I>", 2)) { /* use bold for italics too */
+			italics = TRUE;
+			str = g_string_append_c(str, '\2');
+			cur = cur + 2;
+		} else if (!g_strncasecmp(cur, "U>", 2)) {
+			underline = TRUE;
+			str = g_string_append_c(str, '\37');
+			cur = cur + 2;
+		}  else if (!g_strncasecmp(cur, "/B>", 3) && bold) { 
+			bold = FALSE;
+			str = g_string_append_c(str, '\2');
+			cur = cur + 3;
+		}  else if (!g_strncasecmp(cur, "/I>", 3) && italics) { 
+			bold = FALSE;
+			str = g_string_append_c(str, '\2');
+			cur = cur + 3;
+		}  else if (!g_strncasecmp(cur, "/U>", 3) && underline) { 
+			bold = FALSE;
+			str = g_string_append_c(str, '\37');
+			cur = cur + 3;
+		}
+	}
+	str = g_string_append(str, cur);
+	return str;
+}
+
 static GString *decode_html(char *msg)
 {
 	GString /* oo la la */ *str = g_string_new("");
@@ -324,6 +397,58 @@ static void irc_got_im(struct gaim_connection *gc, char *who, char *what, int fl
 	GString *str = decode_html(what);
 	serv_got_im(gc, who, str->str, flags, t, -1);
 	g_string_free(str, TRUE);
+}
+
+static void dcc_chat_cancel(void *, struct dcc_chat *);
+
+void
+dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
+{
+	struct dcc_chat *chat = data;
+	gchar buffer[IRC_BUF_LEN];
+	gchar buf[128];
+	int n = 0, l;
+	struct conversation *convo;
+	debug_printf("THIS IS TOO MUCH EFFORT\n");
+	n = read (chat->fd, buffer, IRC_BUF_LEN);
+	if (n > 0)
+	  {
+		  
+		  /* Strip the terminating \n */
+		  l = 0;
+		  while (buffer[l] && buffer[l] != '\n' && l <= n) 
+			  l++;
+		  buffer[l] = '\000';
+		  
+		  /* Convert to HTML */
+		  debug_printf ("DCC Message from: %s\n", chat->nick);
+		  irc_got_im(chat->gc, chat->nick, buffer, 0, time(NULL));
+	  }
+	
+	else	{
+		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
+			    chat->nick);
+		convo = new_conversation (chat->nick);
+		write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
+			       time ((time_t) NULL), -1);
+		dcc_chat_cancel (NULL,chat);
+	}
+}
+
+void dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
+	struct dcc_chat *chat = data;
+	struct conversation *convo = new_conversation (chat->nick);
+	char buf[IRC_BUF_LEN];
+	chat->fd = source;
+	g_snprintf (buf, sizeof buf,
+		    "DCC Chat with %s established",
+		    chat->nick);
+	write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
+		       time ((time_t) NULL), -1);
+	debug_printf ("Chat with %s established\n", chat->nick);
+	dcc_chat_list =  g_slist_append (dcc_chat_list, chat);
+	gaim_input_remove(chat->inpa);
+	chat->inpa = gaim_input_add(source, GAIM_INPUT_READ, dcc_chat_in, chat);
 }
 
 static void irc_got_chat_in(struct gaim_connection *gc, int id, char *who, int whisper, char *msg, time_t t)
@@ -779,6 +904,33 @@ static void handle_privmsg(struct gaim_connection *gc, char *to, char *nick, cha
 	}
 }
 
+static void dcc_chat_init(gpointer obj, struct dcc_chat *data) {
+	struct dcc_chat * chat = g_new0(struct dcc_chat, 1);
+	
+	memcpy(chat, data, sizeof(struct dcc_chat));  /* we have to make a new one
+						       * because the old one get's freed by
+						       * dcc_chat_cancel. */
+	proxy_connect(chat->ip_address, chat->port, dcc_chat_callback, chat);
+}
+
+static void dcc_chat_cancel(gpointer obj, struct dcc_chat *data){
+	if (find_dcc_chat(data->gc, data->nick)) {
+		dcc_chat_list = g_slist_remove(dcc_chat_list, data); 
+		gaim_input_remove (data->inpa);
+		close (data->fd);
+	}
+	g_free(data);
+}
+
+static void irc_convo_closed(struct gaim_connection *gc, char *who)
+{
+	struct dcc_chat *dchat = find_dcc_chat(gc, who);
+	if (!dchat)
+		return;
+
+	dcc_chat_cancel(NULL, dchat);
+}
+
 static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 			char *msg, char *word[], char *word_eol[])
 {
@@ -797,6 +949,18 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		tmp = g_strconcat("/me", msg + 6, NULL);
 		handle_privmsg(gc, to, nick, tmp);
 		g_free(tmp);
+	}
+	if (!g_strncasecmp(msg, "DCC CHAT", 8)) {
+		char **chat_args = g_strsplit(msg, " ", 5);
+		char ask[1024];
+		struct dcc_chat * dccchat = g_new0(struct dcc_chat, 1);
+		dccchat->gc = gc;	
+		g_snprintf(dccchat->ip_address, sizeof(dccchat->ip_address), chat_args[3]);	
+		dccchat->port=atoi(chat_args[4]);		
+		g_snprintf(dccchat->nick, sizeof(dccchat->nick), nick);	
+		g_snprintf(ask, sizeof(ask), _("%s has requested a DCC chat.  "
+					       "Would you like to establish the direct connection?"), nick);
+		do_ask_dialog(ask, dccchat, dcc_chat_init, dcc_chat_cancel);
 	}
 	/* XXX should probably write_to_conv or something here */
 }
@@ -1263,27 +1427,49 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 	char buf[IRC_BUF_LEN];
 	char pdibuf[IRC_BUF_LEN];
 	char *word[PDIWORDS], *word_eol[PDIWORDS];
+	char *tmp = g_strdup(what);
+	GString *str = encode_html(tmp);
+	struct dcc_chat *dccchat = find_dcc_chat(gc, who);
 	struct irc_data *id = gc->proto_data;
+	g_free(tmp);
 	if (*what != '/') {
 		unsigned int max = 440 - strlen(who);
 		char t;
 		while (strlen(what) > max) {
 			t = what[max];
 			what[max] = 0;
-			g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, what);
+			if (dccchat) {
+				g_snprintf(buf, sizeof(buf), "%s\r\n", str->str);
+				irc_write(dccchat->fd, buf, strlen(buf));
+				g_string_free(str, TRUE);
+				return 1;
+			}
+			g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, str->str);
 			irc_write(id->fd, buf, strlen(buf));
 			what[max] = t;
 			what = what + max;
 		}
-		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, what);
+		if (dccchat) {
+			g_snprintf(buf, sizeof(buf), "%s\r\n", str->str);
+			irc_write(dccchat->fd, buf, strlen(buf));
+			g_string_free(str, TRUE);
+			return 1;
+		}
+		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :%s\r\n", who, str->str);
 		irc_write(id->fd, buf, strlen(buf));
+		g_string_free(str, TRUE);
 		return 1;
 	}
-
+	
 	what++;
-	process_data_init(pdibuf, what, word, word_eol, TRUE);
-
-	       if (!g_strcasecmp(pdibuf, "ME")) {
+	process_data_init(pdibuf, str->str, word, word_eol, TRUE);
+	g_string_free(str, TRUE);
+	if (!g_strcasecmp(pdibuf, "ME")) {
+		if (dccchat) {
+			g_snprintf(buf, sizeof(buf), "\001ACTION %s\001\r\n", word_eol[2]);
+			irc_write(dccchat->fd, buf, strlen(buf));
+			return 1;
+		}
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :\001ACTION %s\001\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 		return 1;
@@ -1518,6 +1704,91 @@ static char **irc_list_icon(int uc)
 	return irc_icon_xpm;
 }
 
+static int getlocalip(char *ip) /* Thanks, libfaim */
+{
+	struct hostent *hptr;
+	char localhost[129];
+	long unsigned add;
+	
+	/* XXX if available, use getaddrinfo() */
+	/* XXX allow client to specify which IP to use for multihomed boxes */
+	
+	if (gethostname(localhost, 128) < 0)
+		return -1;
+
+	if (!(hptr = gethostbyname(localhost)))
+		return -1;
+	
+	memcpy(&add, hptr->h_addr_list[0], 4);
+	add = htonl(add);
+	g_snprintf(ip, 11, "%lu", add);
+
+	return 0;
+}
+
+static void dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
+{
+	struct dcc_chat *chat = data;
+	struct conversation *convo;
+	char buf[128];
+	struct sockaddr_in addr;
+	int addrlen = sizeof (addr);
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons (chat->port);
+	addr.sin_addr.s_addr = INADDR_ANY;
+	chat->fd = accept (chat->fd, (struct sockaddr *) (&addr), &addrlen);
+	if (!chat->fd)
+	  {
+		  dcc_chat_cancel (NULL,chat);
+		  convo = new_conversation (chat->nick);
+		  g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
+			      chat->nick);
+		  write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
+				 time ((time_t) NULL), -1);
+		  return;
+	  }
+	chat->inpa =
+		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_in, chat);
+	convo = new_conversation (chat->nick);
+	g_snprintf (buf, sizeof buf, "DCC Chat with %s established",
+		    chat->nick);
+	write_to_conv (convo, buf, WFLAG_SYSTEM, NULL, time ((time_t) NULL), -1);
+	debug_printf ("Chat with %s established\n", chat->nick);
+	dcc_chat_list = g_slist_append (dcc_chat_list, chat);
+}
+
+static void irc_start_chat(struct gaim_connection *gc, char *who) {
+	struct dcc_chat *chat;
+	int len;
+	struct sockaddr_in addr;
+	char buf[200];
+	
+	/* Create a socket */
+	chat = g_new0 (struct dcc_chat, 1);
+	chat->fd = socket (AF_INET, SOCK_STREAM, 0);
+	chat->gc = gc;
+	g_snprintf (chat->nick, sizeof (chat->nick), "%s", who);
+	if (chat->fd < 0)  {
+		  dcc_chat_cancel (NULL,chat);
+		  return;
+	}
+	addr.sin_family = AF_INET;
+	addr.sin_port = 0;
+	addr.sin_addr.s_addr = INADDR_ANY;
+	bind (chat->fd, (struct sockaddr *) &addr, sizeof (addr));
+	listen (chat->fd, 1);
+	len = sizeof (addr);
+	getsockname (chat->fd, (struct sockaddr *) &addr, &len);
+	chat->port = ntohs (addr.sin_port);
+	getlocalip(chat->ip_address);
+	chat->inpa =
+		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_connected,
+			       chat);
+	snprintf (buf, sizeof buf, "\001DCC CHAT chat %s %d\001\n",
+		  chat->ip_address, chat->port);
+	irc_send_im (gc, who, buf, 0);
+}
+
 static void irc_get_info(struct gaim_connection *gc, char *who)
 {
 	struct irc_data *idata = gc->proto_data;
@@ -1542,7 +1813,11 @@ static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
 	pbm->callback = irc_get_info;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
-
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("DCC Chat");
+	pbm->callback = irc_start_chat;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 	return m;
 }
 
@@ -1569,6 +1844,7 @@ void irc_init(struct prpl *ret)
 	ret->get_info = irc_get_info;
 	ret->buddy_menu = irc_buddy_menu;
 	ret->chat_invite = irc_chat_invite;
+	ret->convo_closed = irc_convo_closed;
 	my_protocol = ret;
 }
 
