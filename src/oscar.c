@@ -545,9 +545,9 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		struct aim_userinfo_s *userinfo;
 		int rendtype = va_arg(ap, int);
 		if (rendtype == 0 ||
-		    rendtype == AIM_RENDEZVOUS_EX3 ||
-		    rendtype == AIM_RENDEZVOUS_EX4 ||
-		    rendtype == AIM_RENDEZVOUS_EX5) {
+		    rendtype == AIM_RENDEZVOUS_CHAT_EX3 ||
+		    rendtype == AIM_RENDEZVOUS_CHAT_EX4 ||
+		    rendtype == AIM_RENDEZVOUS_CHAT_EX5) {
 			char *msg, *encoding, *lang;
 			struct aim_chat_roominfo *roominfo;
 
