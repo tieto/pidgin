@@ -50,12 +50,12 @@
 #include "jabber.h"
 #include "proxy.h"
 
-#include "pixmaps/available.xpm"
-#include "pixmaps/available-away.xpm"
-#include "pixmaps/available-chat.xpm"
-#include "pixmaps/available-xa.xpm"
-#include "pixmaps/available-dnd.xpm"
-#include "pixmaps/available-error.xpm"
+#include "pixmaps/protocols/jabber/available.xpm"
+#include "pixmaps/protocols/jabber/available-away.xpm"
+#include "pixmaps/protocols/jabber/available-chat.xpm"
+#include "pixmaps/protocols/jabber/available-xa.xpm"
+#include "pixmaps/protocols/jabber/available-dnd.xpm"
+#include "pixmaps/protocols/jabber/available-error.xpm"
 
 /* The priv member of gjconn's is a gaim_connection for now. */
 #define GJ_GC(x) ((struct gaim_connection *)(x)->priv)
