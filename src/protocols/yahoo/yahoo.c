@@ -446,6 +446,8 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 {
 	GSList *l = pkt->hash;
 	gboolean export = FALSE;
+	struct buddy *b;
+	struct group *g;
 
 	while (l) {
 		char **lines;
@@ -470,10 +472,13 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 			}
 			buddies = g_strsplit(split[1], ",", -1);
 			for (bud = buddies; bud && *bud; bud++)
-				if (!gaim_find_buddy(gc->account, *bud)) {
-					struct buddy *b = gaim_buddy_new(gc->account, *bud, NULL);
-					struct group *g = gaim_group_new(split[0]);
-					gaim_blist_add_buddy(b,g,NULL);
+				if (!(b = gaim_find_buddy(gc->account,  *bud))) {
+					if (!(g = gaim_find_group(split[0]))) {
+						g = gaim_group_new(split[0]);
+						gaim_blist_add_group(g, NULL);
+					}
+					b = gaim_buddy_new(gc->account, *bud, NULL);
+					gaim_blist_add_buddy(b, g, NULL);
 					export = TRUE;
 				}
 			g_strfreev(buddies);

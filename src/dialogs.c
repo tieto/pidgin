@@ -885,8 +885,10 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 		whoalias = gtk_entry_get_text(GTK_ENTRY(a->entry_for_alias));
 
 		c = gaim_find_conversation(who);
-		if (!(g = gaim_find_group(grp)))
+		if (!(g = gaim_find_group(grp))) {
 			g = gaim_group_new(grp);
+			gaim_blist_add_group(g, NULL);
+		}
 		b = gaim_buddy_new(a->gc->account, who, whoalias);
 		gaim_blist_add_buddy(b, g, NULL);
 		serv_add_buddy(a->gc, who);

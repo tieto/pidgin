@@ -1749,10 +1749,14 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 			struct buddy *b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
 			struct group *g;
 			if (groupname) {
-				if (!(g = gaim_find_group(groupname)))
+				if (!(g = gaim_find_group(groupname))) {
 					g = gaim_group_new(groupname);
-			} else
+					gaim_blist_add_group(g, NULL);
+				}
+			} else {
 				g = gaim_group_new(_("Buddies"));
+				gaim_blist_add_group(g, NULL);
+			}
 			debug_printf("adding buddy [4]: %s\n", buddyname);
 			gaim_blist_add_buddy(b, g, NULL);
 			gaim_blist_save();

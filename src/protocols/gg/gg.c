@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5088 2003-03-14 11:38:21Z seanegan $
+ * $Id: gg.c 5095 2003-03-14 17:06:00Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -806,8 +806,10 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 				g_strfreev(group_tbl);
 			}
 			/* Add Buddy to our userlist */
-			if (!(g = gaim_find_group(group)))
+			if (!(g = gaim_find_group(group))) {
 				g = gaim_group_new(group);
+				gaim_blist_add_group(g, NULL);
+			}
 			b = gaim_buddy_new(gc->account, name, strlen(show) ? show : NULL);
 			gaim_blist_add_buddy(b,g,NULL);
 			gaim_blist_save();

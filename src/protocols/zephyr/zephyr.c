@@ -573,8 +573,13 @@ static void process_anyone()
 {
 	FILE *fd;
 	gchar buff[BUFSIZ], *filename;
-        struct group *g = gaim_group_new("Anyone");
+        struct group *g;
         struct buddy *b;
+
+	if (!(g = gaim_find_group(_("Anyone")))) {
+		g = gaim_group_new(_("Anyone"));
+		gaim_blist_add_group(g, NULL);
+	}
         
 	filename = g_strconcat(gaim_home_dir(), "/.anyone", NULL);
 	if ((fd = fopen(filename, "r")) != NULL) {
