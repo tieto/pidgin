@@ -1,5 +1,9 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
+version 0.62
+	* Keyboard shortcuts in the buddy list work again (Thanks Joe 
+	 Clarke).
+
 version 0.61 (04/07/2003):
 	* Split the buddy pounce core and UI, and rewrote the UI for it.
 	* Removed folder icons and excess space from the buddy list (Thanks
