@@ -1,5 +1,21 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+0.78 (05/28/2004):
+	Luke: A very long time, once again, since the last release. I think
+	its mostly worth it. A few of you will still have trouble with msn
+	but we've worked out a number of bugs even there.  Thanks to heroic
+	efforts on the part of Mark, we closed 400 some odd reports this
+	month.  We are also welcoming Tim to the project, a very active
+	crazy patch writer who has brought massive improvements to WYSIWYG
+	and direct im this release. Again, it still won't work for every
+	one, but it will work for more people than it used to. Most
+	noticably, this release brings a LARGE simplicfication of the
+	preferences available. Please don't complain if your favorite
+	preference is no longer there. Take some time to think about
+	how and if it could be useful to a majority of people who use
+	Gaim in ways nothing like you. You'll find that the answer will
+	usually be that the preference isn't all that important.
+
 0.77 (04/22/2004):
 	Sean: We're back to a somewhat regular release cycle now.  Hooray!
 	WYSIWYG is much improved in this release, and you can now copy and paste
@@ -48,7 +64,7 @@
 	nothing interesting on it at all.  Others may tell you "we haven't just
 	been lazy," or "you guys will find that we've managed to do some neat
 	stuf in this one."  They lie.  All of them.
-	
+
 	Luke: Okay, normally I wait for Sean to go first, but he said to commit.
 	Its been a few months since the last release, but we haven't just been
 	lazy. A very long ChangeLog for you all. Most notably of course is the
