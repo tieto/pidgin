@@ -27,6 +27,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "connection.h"
+#include "debug.h"
 #include "prefs.h"
 #include "stock.h"
 #include "util.h"
