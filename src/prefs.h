@@ -215,7 +215,7 @@ int gaim_prefs_get_int(const char *name);
 const char *gaim_prefs_get_string(const char *name);
 
 /**
- * Get string pref value
+ * Get string list pref value
  *
  * @param name The name of the pref
  * @return The value of the pref

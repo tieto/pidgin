@@ -79,13 +79,15 @@ struct _GaimEventLoopUiOps
 /*@{*/
 /**
  * Creates a callback timer.
- * The timer will repeat until the function returns <tt>FALSE</tt>. The
+ * The timer will repeat until the function returns @c FALSE. The
  * first call will be at the end of the first interval.
  * @param interval	The time between calls of the function, in
  *					milliseconds.
  * @param function	The function to call.
- * @param data		data to pass to <tt>function</tt>.
- **/
+ * @param data		data to pass to @a function.
+ * @return A handle to the timer which can be passed to 
+ *         gaim_timeout_remove to remove the timer.
+ */
 guint gaim_timeout_add(guint interval, GSourceFunc function, gpointer data);
 
 /**

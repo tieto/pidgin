@@ -246,7 +246,7 @@ gboolean gaim_status_type_is_user_settable(const GaimStatusType *status_type);
 gboolean gaim_status_type_is_independent(const GaimStatusType *status_type);
 
 /**
- * Returns whether or not the status type is exlusive.
+ * Returns whether the status type is exclusive.
  *
  * @param status_type The status type.
  *
@@ -686,8 +686,8 @@ void gaim_presence_set_idle(GaimPresence *presence, gboolean idle,
 /**
  * Sets the login time on a presence.
  *
- * @param presence The presence.
- * @param level    The login time.
+ * @param presence   The presence.
+ * @param login_time The login time.
  */
 void gaim_presence_set_login_time(GaimPresence *presence, time_t login_time);
 

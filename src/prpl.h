@@ -314,6 +314,7 @@ void gaim_prpl_got_account_idle(GaimAccount *account, gboolean idle,
  * This is meant to be called from protocol plugins.
  *
  * @param account    The account the user is on.
+ * @param name       Name of the user.
  * @param login_time The user's log-in time.
  */
 void gaim_prpl_got_account_login_time(GaimAccount *account, const char *name,

@@ -212,13 +212,15 @@ extern "C" {
 
 /**
  * Creates a new buddy list
+ *
+ * @return The new buddy list.
  */
 GaimBuddyList *gaim_blist_new();
 
 /**
  * Sets the main buddy list.
  *
- * @return The main buddy list.
+ * @param blist The buddy list you want to use.
  */
 void gaim_set_blist(GaimBuddyList *blist);
 
@@ -231,7 +233,6 @@ GaimBuddyList *gaim_get_blist(void);
 
 /**
  * Shows the buddy list, creating a new one if necessary.
- *
  */
 void gaim_blist_show();
 
@@ -591,8 +592,8 @@ const char *gaim_chat_get_name(GaimChat *chat);
 /**
  * Finds the buddy struct given a screenname and an account
  *
- * @param name    The buddy's screenname
  * @param account The account this buddy belongs to
+ * @param name    The buddy's screenname
  * @return        The buddy or NULL if the buddy does not exist
  */
 GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name);
@@ -600,8 +601,8 @@ GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name);
 /**
  * Finds the buddy struct given a screenname, an account, and a group
  *
- * @param name    The buddy's screenname
  * @param account The account this buddy belongs to
+ * @param name    The buddy's screenname
  * @param group   The group to look in
  * @return        The buddy or NULL if the buddy does not exist in the group
  */
@@ -611,8 +612,8 @@ GaimBuddy *gaim_find_buddy_in_group(GaimAccount *account, const char *name,
 /**
  * Finds all GaimBuddy structs given a screenname and an account
  *
- * @param name    The buddy's screenname
  * @param account The account this buddy belongs to
+ * @param name    The buddy's screenname
  *
  * @return        A GSList of buddies (which must be freed), or NULL if the buddy doesn't exist
  */

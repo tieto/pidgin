@@ -175,6 +175,8 @@ GaimValue *gaim_value_dup(const GaimValue *value);
 /**
  * Returns a value's type.
  *
+ * @param value The value whose type you want.
+ *
  * @return The value's type.
  */
 GaimType gaim_value_get_type(const GaimValue *value);
@@ -185,6 +187,8 @@ GaimType gaim_value_get_type(const GaimValue *value);
  * If the value's type is not GAIM_TYPE_SUBTYPE, this will return 0.
  * Subtypes should never have a subtype of 0.
  *
+ * @param value The value whose subtype you want.
+ *
  * @return The value's subtype, or 0 if @a type is not GAIM_TYPE_SUBTYPE.
  */
 unsigned int gaim_value_get_subtype(const GaimValue *value);
@@ -193,6 +197,8 @@ unsigned int gaim_value_get_subtype(const GaimValue *value);
  * Returns a value's specific type.
  *
  * If the value's type is not GAIM_TYPE_BOXED, this will return @c NULL.
+ *
+ * @param value The value whose specific type you want.
  *
  * @return The value's specific type, or @a NULL if not GAIM_TYPE_BOXED.
  */

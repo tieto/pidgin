@@ -96,6 +96,8 @@ extern "C" {
  *
  * @param username    The username.
  * @param protocol_id The protocol ID.
+ *
+ * @return The new account.
  */
 GaimAccount *gaim_account_new(const char *username, const char *protocol_id);
 
@@ -128,8 +130,6 @@ GaimConnection *gaim_account_register(GaimAccount *account);
  * Disconnects from an account.
  *
  * @param account The account to disconnect from.
- *
- * @return The gaim connection.
  */
 void gaim_account_disconnect(GaimAccount *account);
 
