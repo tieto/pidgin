@@ -83,6 +83,7 @@ static struct _irc_msg {
 	{ "474", "nc:", irc_msg_banned },	/* Banned from channel		*/
 	{ "482", "nc:", irc_msg_notop },	/* Need to be op to do that	*/
 	{ "501", "n:", irc_msg_badmode },	/* Unknown mode flag		*/
+	{ "506", "nc:", irc_msg_nosend },	/* Must identify to send	*/
 	{ "515", "nc:", irc_msg_regonly },	/* Registration required	*/
 	{ "invite", "n:", irc_msg_invite },	/* Invited			*/
 	{ "join", ":", irc_msg_join },		/* Joined a channel		*/
