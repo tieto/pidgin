@@ -208,6 +208,7 @@ BuddyTickerSignoff( void )
 		p = tickerbuds;
 	}
 	userclose = FALSE;
+	gtk_widget_hide( tickerwindow );
 }
 
 void
