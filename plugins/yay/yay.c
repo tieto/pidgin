@@ -69,7 +69,8 @@ static void process_packet_status(struct gaim_connection *gc, struct yahoo_packe
 	int i;
 	time_t tmptime;
 
-	if (pkt->service == YAHOO_SERVICE_LOGOFF && !strcasecmp(pkt->active_id, gc->username)) {
+	if (pkt->service == YAHOO_SERVICE_LOGOFF && !strcasecmp(pkt->active_id, gc->username) &&
+			pkt->msgtype == YAHOO_MSGTYPE_ERROR) {
 		hide_login_progress(gc, "Disconnected");
 		signoff(gc);
 		return;
@@ -79,23 +80,13 @@ static void process_packet_status(struct gaim_connection *gc, struct yahoo_packe
 		struct group *g;
 		struct buddy *b;
 		struct yahoo_idstatus *rec = pkt->idstatus[i];
+		gboolean online = rec->in_pager || rec->in_chat || rec->in_game;
 
 		b = find_buddy(gc, rec->id);
-		if (!b) {
-			struct yahoo_buddy **buddy;
-			for (buddy = yd->ctxt->buddies; *buddy; buddy++) {
-				struct yahoo_buddy *bud = *buddy;
-
-				if (!strcasecmp(rec->id, bud->id))
-					if (!find_buddy(gc, bud->id))
-						b = add_buddy(gc, bud->group, bud->id, bud->id);
-			}
-			if (!b)
-				continue; /* ???!!! */
-		}
+		if (!b) continue;
 		time(&tmptime);
 		if (b->signon == 0) b->signon = tmptime;
-		if (pkt->service == YAHOO_SERVICE_LOGOFF)
+		if (!online)
 			serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
 		else {
 			if (rec->status == YAHOO_STATUS_IDLE)
@@ -145,6 +136,12 @@ static void process_packet_newmail(struct gaim_connection *gc, struct yahoo_pack
 	}
 }
 
+static void process_packet_conference(struct gaim_connection *gc, struct yahoo_packet *pkt) {
+}
+
+static void process_packet_ping(struct gaim_connection *gc, struct yahoo_packet *pkt) {
+}
+
 static void yahoo_callback(gpointer data, gint source, GdkInputCondition condition) {
 	struct gaim_connection *gc = (struct gaim_connection *)data;
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
@@ -152,10 +149,8 @@ static void yahoo_callback(gpointer data, gint source, GdkInputCondition conditi
 	struct yahoo_rawpacket *rawpkt;
 	struct yahoo_packet *pkt;
 
-	if (!yahoo_getdata(yd->ctxt)) {
-		hide_login_progress(gc, "Disconnected");
-		signoff(gc);
-	}
+	if (!yahoo_getdata(yd->ctxt))
+		return;
 
 	while ((rawpkt = yahoo_getpacket(yd->ctxt)) != NULL) {
 		pkt = yahoo_parsepacket(yd->ctxt, rawpkt);
@@ -168,6 +163,8 @@ static void yahoo_callback(gpointer data, gint source, GdkInputCondition conditi
 			case YAHOO_SERVICE_LOGOFF:
 			case YAHOO_SERVICE_ISAWAY:
 			case YAHOO_SERVICE_ISBACK:
+			case YAHOO_SERVICE_GAMELOGON:
+			case YAHOO_SERVICE_GAMELOGOFF:
 				process_packet_status(gc, pkt);
 				break;
 			case YAHOO_SERVICE_MESSAGE:
@@ -193,6 +190,19 @@ static void yahoo_callback(gpointer data, gint source, GdkInputCondition conditi
 				/* do we really want to do this? */
 				process_packet_newmail(gc, pkt);
 				break;
+			case YAHOO_SERVICE_CONFINVITE:
+			case YAHOO_SERVICE_CONFADDINVITE:
+			case YAHOO_SERVICE_CONFLOGON:
+			case YAHOO_SERVICE_CONFLOGOFF:
+			case YAHOO_SERVICE_CONFMSG:
+				process_packet_conference(gc, pkt);
+				break;
+			case YAHOO_SERVICE_PING:
+				process_packet_ping(gc, pkt);
+				break;
+			case YAHOO_SERVICE_FILETRANSFER:
+			case YAHOO_SERVICE_CALENDAR:
+			case YAHOO_SERVICE_CHATINVITE:
 			default:
 				debug_printf("Unhandled packet type %s\n",
 						yahoo_get_service_string(pkt->service));
