@@ -990,7 +990,7 @@ GtkWidget *conv_page() {
 GtkWidget *im_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
-#if 0 /* PREFSLASH04 */
+#if 1 /* PREFSLASH04 */
 	GtkWidget *widge;
 #endif /* PREFSLASH04 */
 	GtkSizeGroup *sg;
@@ -1001,7 +1001,7 @@ GtkWidget *im_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Window"));
-#if 0 /* PREFSLASH04 */
+#if 1 /* PREFSLASH04 */
 	widge = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
 			"/gaim/gtk/conversations/im/button_type",
 			_("Pictures"), GAIM_BUTTON_IMAGE,
@@ -1033,7 +1033,7 @@ GtkWidget *im_page() {
 GtkWidget *chat_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
-#if 0 /* PREFSLASH04 */
+#if 1 /* PREFSLASH04 */
 	GtkWidget *dd;
 #endif /* PREFSLASH04 */
 	GtkSizeGroup *sg;
@@ -1043,7 +1043,7 @@ GtkWidget *chat_page() {
 
 	sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame (ret, _("Window"));
-#if 0 /* PREFSLASH04 */
+#if 1 /* PREFSLASH04 */
 	dd = gaim_gtk_prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
 			"/gaim/gtk/conversations/chat/button_type",
 			_("Pictures"), GAIM_BUTTON_IMAGE,
@@ -1058,12 +1058,6 @@ GtkWidget *chat_page() {
 	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
 			"/gaim/gtk/conversations/chat/raise_on_events", vbox);
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
-#if 0 /* PREFSLASH04 */
-	  gaim_gtk_prefs_checkbox(_("_Show people joining in window"),
-			"/core/conversations/chat/show_join", vbox);
-	gaim_gtk_prefs_checkbox(_("_Show people leaving in window"),
-			"/core/conversations/chat/show_leave", vbox);
-#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("Co_lorize screen names"),
 			"/gaim/gtk/conversations/chat/color_nicks", vbox);
 
@@ -1479,11 +1473,6 @@ GtkWidget *logging_page() {
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
 	gtk_widget_set_sensitive(box, syslog_enabled);
 
-#if 0 /* PREFSLASH04 */
-	gaim_gtk_prefs_checkbox(_("I_ndividual log file for each buddy's signons"),
-				   "/gaim/gtk/logging/individual_logs", vbox);
-#endif /* PREFSLASH04 */
-
 	gtk_widget_show_all(ret);
 	return ret;
 }
@@ -1670,10 +1659,10 @@ GtkWidget *away_page() {
 static GtkWidget *
 protocol_page() {
 	GtkWidget *ret;
-	
+
 	ret = gtk_label_new(NULL);
 	gtk_widget_show(ret);
-	
+
 	return ret;
 }
 
@@ -1690,7 +1679,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		return;
 	gtk_tree_model_get_value (model, &iter, 3, &val);
 	plug = g_value_get_pointer(&val);
-	
+
 	pname = g_markup_escape_text(_(plug->info->name), -1);
 	pdesc = g_markup_escape_text(_(plug->info->description), -1);
 	pauth = g_markup_escape_text(_(plug->info->author), -1);
@@ -1794,7 +1783,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 		}
 
 		if(GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
-			GtkTreeIter iter;			
+			GtkTreeIter iter;
 			GtkWidget *pref_frame;
 			GaimPluginUiInfo *prefs_info;
 
@@ -1964,27 +1953,27 @@ static GtkWidget *plugin_page ()
 							"text", 1,
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
-	
+
 	rendt = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes(_("Summary"),
 							rendt,
 							"text", 2,
 							NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(event_view), col);
-	
+
 	g_object_unref(G_OBJECT(ls));
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
-	
+
 
 	nb = gtk_notebook_new();
 	gtk_notebook_set_tab_pos (GTK_NOTEBOOK(nb), GTK_POS_BOTTOM);
 	gtk_notebook_popup_disable(GTK_NOTEBOOK(nb));
-	
+
 	/* Description */
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	plugin_description = gtk_label_new(NULL);
-	
+
 	vp = gtk_viewport_new(NULL, NULL);
 	gtk_viewport_set_shadow_type(GTK_VIEWPORT(vp), GTK_SHADOW_NONE);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
@@ -1992,7 +1981,7 @@ static GtkWidget *plugin_page ()
 	gtk_container_add(GTK_CONTAINER(vp), plugin_description);
 	gtk_container_add(GTK_CONTAINER(sw), vp);
 
-	gtk_label_set_selectable(GTK_LABEL(plugin_description), TRUE);  
+	gtk_label_set_selectable(GTK_LABEL(plugin_description), TRUE);
 	gtk_label_set_line_wrap(GTK_LABEL(plugin_description), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(plugin_description), 0, 0);
 	gtk_misc_set_padding(GTK_MISC(plugin_description), 6, 6);
@@ -2002,7 +1991,7 @@ static GtkWidget *plugin_page ()
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	plugin_details = gtk_label_new(NULL);
-	
+
 	vp = gtk_viewport_new(NULL, NULL);
 	gtk_viewport_set_shadow_type(GTK_VIEWPORT(vp), GTK_SHADOW_NONE);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
@@ -2010,16 +1999,16 @@ static GtkWidget *plugin_page ()
 	gtk_container_add(GTK_CONTAINER(vp), plugin_details);
 	gtk_container_add(GTK_CONTAINER(sw), vp);
 
-	gtk_label_set_selectable(GTK_LABEL(plugin_details), TRUE);  
+	gtk_label_set_selectable(GTK_LABEL(plugin_details), TRUE);
 	gtk_label_set_line_wrap(GTK_LABEL(plugin_details), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(plugin_details), 0, 0);
-	gtk_misc_set_padding(GTK_MISC(plugin_details), 6, 6);	
+	gtk_misc_set_padding(GTK_MISC(plugin_details), 6, 6);
 	gtk_notebook_append_page(GTK_NOTEBOOK(nb), sw, gtk_label_new(_("Details")));
 	gtk_box_pack_start(GTK_BOX(ret), nb, TRUE, TRUE, 0);
 
 	g_signal_connect (G_OBJECT (sel), "changed",
 			  G_CALLBACK (prefs_plugin_sel),
-			  NULL); 
+			  NULL);
 	g_signal_connect (G_OBJECT(rend), "toggled",
 			  G_CALLBACK(plugin_load), ls);
 
@@ -2574,7 +2563,7 @@ void gaim_gtk_prefs_show(void)
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
 	gtk_widget_show(scrolled_window);
-								
+
 	/* The tree -- much inspired by the Gimp */
 	prefstree = gtk_tree_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_INT);
 	tree_v = gtk_tree_view_new_with_model (GTK_TREE_MODEL (prefstree));
@@ -2915,7 +2904,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_rename("/gaim/gtk/logging/log_ims", "/core/logging/log_ims");
 	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
 	gaim_prefs_rename("/core/conversations/placement",
-					  "/gaim/gtk/conversations/placement");  
+					  "/gaim/gtk/conversations/placement");
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
@@ -2929,4 +2918,5 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
+	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
 }

@@ -1949,16 +1949,14 @@ gaim_conv_chat_add_user(GaimConvChat *chat, const char *user, const char *extra_
 	if (ops != NULL && ops->chat_add_user != NULL)
 		ops->chat_add_user(conv, user);
 
-	if (gaim_prefs_get_bool("/core/conversations/chat/show_join")) {
-		if (extra_msg == NULL)
-			g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), user);
-		else
-			g_snprintf(tmp, sizeof(tmp),
-					   _("%s [<I>%s</I>] entered the room."),
-					   user, extra_msg);
+	if (extra_msg == NULL)
+		g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), user);
+	else
+		g_snprintf(tmp, sizeof(tmp),
+				   _("%s [<I>%s</I>] entered the room."),
+				   user, extra_msg);
 
-		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
-	}
+	gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
 					 "chat-buddy-joined", conv, user);
@@ -2089,15 +2087,13 @@ gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user, const char *rea
 
 	/* NOTE: Don't remove them from ignored in case they re-enter. */
 
-	if (gaim_prefs_get_bool("/core/conversations/chat/show_leave")) {
-		if (reason != NULL && *reason != '\0')
-			g_snprintf(tmp, sizeof(tmp),
-					   _("%s left the room (%s)."), user, reason);
-		else
-			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), user);
+	if (reason != NULL && *reason != '\0')
+		g_snprintf(tmp, sizeof(tmp),
+				   _("%s left the room (%s)."), user, reason);
+	else
+		g_snprintf(tmp, sizeof(tmp), _("%s left the room."), user);
 
-		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
-	}
+	gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-left",
 					 conv, user, reason);
@@ -2149,31 +2145,29 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 
 	/* NOTE: Don't remove them from ignored in case they re-enter. */
 
-	if (gaim_prefs_get_bool("/core/conversations/chat/show_leave")) {
-		if (reason != NULL && *reason != '\0') {
-			int i;
-			int size = g_list_length(users);
-			int max = MIN(10, size);
-			GList *l;
+	if (reason != NULL && *reason != '\0') {
+		int i;
+		int size = g_list_length(users);
+		int max = MIN(10, size);
+		GList *l;
 
-			*tmp = '\0';
+		*tmp = '\0';
 
-			for (l = users, i = 0; i < max; i++, l = l->next) {
-				g_strlcat(tmp, (char *)l->data, sizeof(tmp));
+		for (l = users, i = 0; i < max; i++, l = l->next) {
+			g_strlcat(tmp, (char *)l->data, sizeof(tmp));
 
-				if (i < max - 1)
-					g_strlcat(tmp, ", ", sizeof(tmp));
-			}
-
-			if (size > 10)
-				g_snprintf(tmp, sizeof(tmp),
-						   _("(+%d more)"), size - 10);
-
-			g_snprintf(tmp, sizeof(tmp), _(" left the room (%s)."), reason);
-
-			gaim_conversation_write(conv, NULL, tmp,
-									GAIM_MESSAGE_SYSTEM, time(NULL));
+			if (i < max - 1)
+				g_strlcat(tmp, ", ", sizeof(tmp));
 		}
+
+		if (size > 10)
+			g_snprintf(tmp, sizeof(tmp),
+					   _("(+%d more)"), size - 10);
+
+		g_snprintf(tmp, sizeof(tmp), _(" left the room (%s)."), reason);
+
+		gaim_conversation_write(conv, NULL, tmp,
+								GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 
@@ -2644,8 +2638,6 @@ gaim_conversations_init(void)
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/core/conversations/chat");
-	gaim_prefs_add_bool("/core/conversations/chat/show_join", TRUE);
-	gaim_prefs_add_bool("/core/conversations/chat/show_leave", TRUE);
 	gaim_prefs_add_bool("/core/conversations/chat/show_nick_change", TRUE);
 
 	/* Conversations -> IM */

@@ -5813,6 +5813,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "last");
+	gaim_prefs_add_int("/gaim/gtk/conversations/placement_number", 1);
 	gaim_prefs_add_string("/gaim/gtk/conversations/bgcolor", "#FFFFFF");
 	gaim_prefs_add_string("/gaim/gtk/conversations/fgcolor", "#000000");
 	gaim_prefs_add_string("/gaim/gtk/conversations/font_face", "");

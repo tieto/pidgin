@@ -43,7 +43,7 @@ version 0.78cvs
 	* Direct IM for AIM should be slightly less buggy, and may actually
 	  work now, if at least one side isn't behind a NAT or firewall.
 
-	Preference Changes:
+	Preference Changes(Stu Tomlinson):
 	* Added a "none" smiley theme to replace the "Show graphical
 	  smileys" option
 	* Removed "Show logins in window," default to yes
@@ -62,6 +62,8 @@ version 0.78cvs
 	* Removed "Sounds when you log in", default to no
 	* Removed "Seconds before resending autoresponse", default to 600 seconds
 	* Removed "Send autoresponse in active conversations", default to no
+	* Removed "Show people joining in window", default to yes
+	* Removed "Show people leaving in window", default to yes
 	* Added "Conversation placement - By conversation count"
 
 version 0.77 (04/22/2004):

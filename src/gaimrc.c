@@ -915,8 +915,6 @@ static void gaimrc_read_options(FILE *f)
 						 ? GAIM_BUTTON_IMAGE : GAIM_BUTTON_TEXT_IMAGE)
 					 : ((display_options & OPT_DISP_NO_BUTTONS)
 						 ? GAIM_BUTTON_NONE : GAIM_BUTTON_TEXT)));
-			gaim_prefs_set_bool("/core/conversations/chat/show_join",
-					display_options & OPT_DISP_CHAT_LOGON);
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/button_type",
 					((display_options & OPT_DISP_CONV_BUTTON_XPM)
 					 ? ((display_options & OPT_DISP_CONV_BUTTON_TEXT)
@@ -1049,8 +1047,6 @@ static void gaimrc_read_options(FILE *f)
 						 ? GAIM_BUTTON_TEXT_IMAGE : GAIM_BUTTON_IMAGE)
 					 : ((chat_options & OPT_CHAT_BUTTON_TEXT)
 						 ? GAIM_BUTTON_TEXT : GAIM_BUTTON_NONE)));
-			gaim_prefs_set_bool("/core/conversations/chat/show_join",
-					chat_options & OPT_CHAT_LOGON);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/raise_on_events",
 					chat_options & OPT_CHAT_POPUP);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/color_nicks",
