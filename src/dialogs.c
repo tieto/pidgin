@@ -715,7 +715,25 @@ void show_info_dialog()
 
 		frame = gtk_frame_new(_("Get User Info"));
                 gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
+
+		fbox = gtk_hbox_new(FALSE, 5);
+		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
+		gtk_container_add(GTK_CONTAINER(frame), fbox);
+
+                label = gtk_label_new(_("User:"));
+                gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
+                gtk_widget_show(label);
+
+		infoentry = gtk_entry_new();
+                gtk_box_pack_start(GTK_BOX(fbox), infoentry, TRUE, TRUE, 0);
+
+                /* Handle closes right */
+		gtk_signal_connect(GTK_OBJECT(infoentry), "activate",
+				   GTK_SIGNAL_FUNC(do_info), infoentry);
+                gtk_signal_connect(GTK_OBJECT(infodialog), "destroy",
+                                   GTK_SIGNAL_FUNC(destroy_dialog), infodialog);
 	
+                /* Buttons */
 		bbox = gtk_hbox_new(FALSE, 5);
                 gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
 	
@@ -728,23 +746,6 @@ void show_info_dialog()
 		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(button), "clicked",
 				   GTK_SIGNAL_FUNC(do_info), infoentry);
-
-		fbox = gtk_hbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-		gtk_container_add(GTK_CONTAINER(frame), fbox);
-
-                label = gtk_label_new(_("User:"));
-                gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
-                gtk_widget_show(label);
-
-		infoentry = gtk_entry_new();
-                gtk_box_pack_start(GTK_BOX(fbox), infoentry, TRUE, TRUE, 10);
-
-                /* Handle closes right */
-		gtk_signal_connect(GTK_OBJECT(infoentry), "activate",
-				   GTK_SIGNAL_FUNC(do_info), infoentry);
-                gtk_signal_connect(GTK_OBJECT(infodialog), "destroy",
-                                   GTK_SIGNAL_FUNC(destroy_dialog), infodialog);
 
 		/* Finish up */
 		gtk_window_set_title(GTK_WINDOW(infodialog), _("Gaim - Get User Info"));
