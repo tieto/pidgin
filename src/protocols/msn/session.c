@@ -180,7 +180,7 @@ msn_session_find_unused_switch(const MsnSession *session)
 	for (l = session->switches; l != NULL; l = l->next) {
 		swboard = (MsnSwitchBoard *)l->data;
 
-		if (!swboard->in_use && !swboard->hidden)
+		if (!swboard->in_use)
 			return swboard;
 	}
 
