@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 3670 2002-09-30 01:05:18Z seanegan $
+ * $Id: gg.c 3680 2002-10-06 00:39:02Z seanegan $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -51,10 +51,10 @@
 #include "gaim.h"
 #include "proxy.h"
 
-#include "pixmaps/gg_suncloud.xpm"
-#include "pixmaps/gg_sunred.xpm"
-#include "pixmaps/gg_sunwhitered.xpm"
-#include "pixmaps/gg_sunyellow.xpm"
+#include "pixmaps/protocols/gg/gg_suncloud.xpm"
+#include "pixmaps/protocols/gg/gg_sunred.xpm"
+#include "pixmaps/protocols/gg/gg_sunwhitered.xpm"
+#include "pixmaps/protocols/gg/gg_sunyellow.xpm"
 
 #define USEROPT_NICK 0
 

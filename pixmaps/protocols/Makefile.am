@@ -1,1 +1,1 @@
-SUBDIRS = msn yahoo oscar
+SUBDIRS = gg msn yahoo oscar
