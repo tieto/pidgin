@@ -733,26 +733,27 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *name, char *type)
 
 static time_t iso8601_to_time(char *timestamp)
 {
-   struct tm t;
-   time_t retval = 0;
+	struct tm t;
+	time_t retval = 0;
 
-   if(sscanf(timestamp,"%04d%02d%02dT%02d:%02d:%02d",
-	 &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec))
-   {
-      t.tm_year -= 1900;
-      t.tm_mon -= 1;
-      t.tm_isdst = 0;
-      retval = mktime(&t);
-#ifdef HAVE_TM_GMTOFF
-      retval += t.tm_gmtoff;
-#else
-#     ifdef HAVE_TIMEZONE
-	 tzset();	/* making sure */
-         retval -= timezone;
-#     endif
-#endif
-   }
-   return retval;
+	if(sscanf(timestamp,"%04d%02d%02dT%02d:%02d:%02d",
+		&t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec))
+	{
+		t.tm_year -= 1900;
+		t.tm_mon -= 1;
+		t.tm_isdst = 0;
+		retval = mktime(&t);
+#		ifdef HAVE_TM_GMTOFF
+			retval += t.tm_gmtoff;
+#		else
+#		        ifdef HAVE_TIMEZONE
+				tzset();	/* making sure */
+				retval -= timezone;
+#		        endif
+#		endif
+	}
+
+	return retval;
 }
 
 static void jabber_handlemessage(gjconn gjc, jpacket p)
@@ -1058,6 +1059,60 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	return;
 }
 
+/*
+ * Used only by Jabber accept/deny add stuff just below
+ */
+struct jabber_add_permit {
+	gjconn gjc;
+	gchar *user;
+};
+
+/*
+ * Common part for Jabber accept/deny adds
+ *
+ * "type" says whether we'll permit/deny the subscribe request
+ */
+static void jabber_accept_deny_add(struct jabber_add_permit *jap, const char *type)
+{
+	xmlnode g = xmlnode_new_tag("presence");
+
+	xmlnode_put_attrib(g, "to", jap->user);
+	xmlnode_put_attrib(g, "type", type);
+	gjab_send(jap->gjc, g);
+
+	xmlnode_free(g);
+}
+
+/*
+ * Callback from "accept" in do_ask_dialog() invoked by jabber_handles10n()
+ */
+static void jabber_accept_add(gpointer w, struct jabber_add_permit *jap)
+{
+	jabber_accept_deny_add(jap, "subscribed");
+	/*
+	 * If we don't already have the buddy on *our* buddylist,
+	 * ask if we want him or her added.
+	 */
+	if(find_buddy(GJ_GC(jap->gjc), jap->user) == NULL) {
+		show_got_added(GJ_GC(jap->gjc), NULL, jap->user, NULL, NULL);
+	}
+	g_free(jap->user);
+	g_free(jap);
+}
+
+/*
+ * Callback from "deny/cancel" in do_ask_dialog() invoked by jabber_handles10n()
+ */
+static void jabber_deny_add(gpointer w, struct jabber_add_permit *jap)
+{
+	jabber_accept_deny_add(jap, "unsubscribed");
+	g_free(jap->user);
+	g_free(jap);
+}
+
+/*
+ * Handle subscription requests
+ */
 static void jabber_handles10n(gjconn gjc, jpacket p)
 {
 	xmlnode g;
@@ -1066,11 +1121,32 @@ static void jabber_handles10n(gjconn gjc, jpacket p)
 
 	g = xmlnode_new_tag("presence");
 	xmlnode_put_attrib(g, "to", Jid);
-	if (!strcmp(type, "subscribe"))
-		xmlnode_put_attrib(g, "type", "subscribed");
-	else if (!strcmp(type, "unsubscribe"))
+
+	if (!strcmp(type, "subscribe")) {
+		/*
+		 * A "subscribe to us" request was received - put up the approval dialog
+		 */
+		struct jabber_add_permit *jap = g_new0(struct jabber_add_permit, 1);
+		gchar *msg = g_strdup_printf(_("The user %s wants to add you to their buddy list."),
+				Jid);
+
+		jap->gjc = gjc;
+		jap->user = g_strdup(Jid);
+		do_ask_dialog(msg, jap, jabber_accept_add, jabber_deny_add);
+
+		g_free(msg);
+		xmlnode_free(g);	/* Never needed it here anyway */
+		return;
+
+	} else if (!strcmp(type, "unsubscribe")) {
+		/*
+		 * An "unsubscribe to us" was received - simply "approve" it
+		 */
 		xmlnode_put_attrib(g, "type", "unsubscribed");
-	else {
+	} else {
+		/*
+		 * Did we attempt to subscribe to somebody and they do not exist?
+		 */
 		if (!strcmp(type, "unsubscribed")) {
 			xmlnode y;
 			char *status;
