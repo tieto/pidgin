@@ -540,7 +540,12 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 		play_sound(CHAT_JOIN);
 
 	if (display_options & OPT_DISP_CHAT_LOGON) {
-		g_snprintf(tmp, sizeof(tmp), _("<B>%s entered the room.</B>"), name);
+		if (display_options & OPT_DISP_SHOW_TIME)
+			g_snprintf(tmp, sizeof(tmp),
+					_("<FONT SIZE=\"2\">(%s) </FONT><B>%s entered the room.</B>"),
+						date(), name);
+		else
+			g_snprintf(tmp, sizeof(tmp), _("<B>%s entered the room.</B>"), name);
 		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL);
 	}
 }
