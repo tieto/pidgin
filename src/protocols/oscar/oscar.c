@@ -5363,8 +5363,8 @@ static GList *oscar_chat_info(GaimConnection *gc) {
 	return m;
 }
 
-static void oscar_join_chat(GaimConnection *g, GHashTable *data) {
-	OscarData *od = (OscarData *)g->proto_data;
+static void oscar_join_chat(GaimConnection *gc, GHashTable *data) {
+	OscarData *od = (OscarData *)gc->proto_data;
 	aim_conn_t *cur;
 	char *name, *exchange;
 
@@ -5373,6 +5373,12 @@ static void oscar_join_chat(GaimConnection *g, GHashTable *data) {
 
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "Attempting to join chat room %s.\n", name);
+
+	if ((name == NULL) || (*name == '\0')) {
+		gaim_notify_error(gc, NULL, _("Invalid chat name specified."), NULL);
+		return;
+	}
+
 	if ((cur = aim_getconn_type(od->sess, AIM_CONN_TYPE_CHATNAV))) {
 		gaim_debug(GAIM_DEBUG_INFO, "oscar",
 				   "chatnav exists, creating room\n");
@@ -5389,9 +5395,9 @@ static void oscar_join_chat(GaimConnection *g, GHashTable *data) {
 	}
 }
 
-static void oscar_chat_invite(GaimConnection *g, int id, const char *message, const char *name) {
-	OscarData *od = (OscarData *)g->proto_data;
-	struct chat_connection *ccon = find_oscar_chat(g, id);
+static void oscar_chat_invite(GaimConnection *gc, int id, const char *message, const char *name) {
+	OscarData *od = (OscarData *)gc->proto_data;
+	struct chat_connection *ccon = find_oscar_chat(gc, id);
 	
 	if (!ccon)
 		return;
@@ -5400,9 +5406,9 @@ static void oscar_chat_invite(GaimConnection *g, int id, const char *message, co
 			ccon->exchange, ccon->name, 0x0);
 }
 
-static void oscar_chat_leave(GaimConnection *g, int id) {
-	OscarData *od = g ? (OscarData *)g->proto_data : NULL;
-	GSList *bcs = g->buddy_chats;
+static void oscar_chat_leave(GaimConnection *gc, int id) {
+	OscarData *od = gc ? (OscarData *)gc->proto_data : NULL;
+	GSList *bcs = gc->buddy_chats;
 	GaimConversation *b = NULL;
 	struct chat_connection *c = NULL;
 	int count = 0;
@@ -5422,20 +5428,20 @@ static void oscar_chat_leave(GaimConnection *g, int id) {
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "Attempting to leave room %s (currently in %d rooms)\n", b->name, count);
 	
-	c = find_oscar_chat(g, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
+	c = find_oscar_chat(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
 	if (c != NULL) {
 		if (od)
 			od->oscar_chats = g_slist_remove(od->oscar_chats, c);
 		if (c->inpa > 0)
 			gaim_input_remove(c->inpa);
-		if (g && od->sess)
+		if (gc && od->sess)
 			aim_conn_kill(od->sess, &c->conn);
 		g_free(c->name);
 		g_free(c->show);
 		g_free(c);
 	}
 	/* we do this because with Oscar it doesn't tell us we left */
-	serv_got_chat_left(g, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
+	serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
 }
 
 static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
