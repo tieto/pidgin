@@ -310,13 +310,12 @@ void update_log_convs()
 
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
-
 		if (c->log_button) {
 			if (c->is_chat)
-				gtk_widget_set_sensitive(c->log_button,
+				gtk_widget_set_sensitive(GTK_WIDGET(c->log_button),
 						   ((logging_options & OPT_LOG_CHATS)) ? FALSE : TRUE);
 			else
-				gtk_widget_set_sensitive(c->log_button,
+				gtk_widget_set_sensitive(GTK_WIDGET(c->log_button),
 							 ((logging_options & OPT_LOG_CONVOS)) ? FALSE : TRUE);
 		}
 
@@ -328,14 +327,13 @@ void update_log_convs()
 		bcs = g->buddy_chats;
 		while (bcs) {
 			c = (struct conversation *)bcs->data;
-
 			if (c->log_button) {
 				if (c->is_chat)
-					gtk_widget_set_sensitive(c->log_button,
+					gtk_widget_set_sensitive(GTK_WIDGET(c->log_button),
 					 		   ((logging_options & OPT_LOG_CHATS)) ? FALSE :
 							   TRUE);
 				else
-					gtk_widget_set_sensitive(c->log_button,
+					gtk_widget_set_sensitive(GTK_WIDGET(c->log_button),
 								 ((logging_options & OPT_LOG_CONVOS)) ? FALSE :
 								 TRUE);
 			}
@@ -365,10 +363,6 @@ void update_font_buttons()
 		if (c->underline)
 			gtk_widget_set_sensitive(c->underline,
 						 ((font_options & OPT_FONT_UNDERLINE)) ? FALSE : TRUE);
-
-		if (c->strike)
-			gtk_widget_set_sensitive(c->strike,
-						 ((font_options & OPT_FONT_STRIKE)) ? FALSE : TRUE);
 
 		cnv = cnv->next;
 	}
@@ -406,7 +400,7 @@ void toggle_loggle(GtkWidget *loggle, struct conversation *c)
 
 	if (find_log_info(c->name))
 		rm_log(find_log_info(c->name));
-	else if (GTK_TOGGLE_BUTTON(loggle)->active)
+	else if (GTK_CHECK_MENU_ITEM(c->log_button)->active)
 		show_log_dialog(c);
 	else
 		cancel_log(NULL, c);
@@ -414,16 +408,7 @@ void toggle_loggle(GtkWidget *loggle, struct conversation *c)
 
 void toggle_sound(GtkWidget *widget, struct conversation *c)
 {
-	GdkPixmap *pm;
-	GdkBitmap *bm;
-  
 	c->makesound = !c->makesound;
-	
-	pm = gdk_pixmap_create_from_xpm_d(c->window->window, &bm, &c->window->style->white, 
-					  c->makesound ? speaker_xpm : speaker_mute_xpm);
-	gtk_pixmap_set(GTK_PIXMAP(c->speaker_p), pm, bm);
-	gdk_pixmap_unref(pm);
-	gdk_bitmap_unref(bm);
 }
 
 static void do_save_convo(GtkObject *obj, GtkWidget *wid)
@@ -522,10 +507,13 @@ void insert_smiley(GtkWidget *smiley, struct conversation *c)
 {
 	if (state_lock)
 		return;
+
 	if (GTK_TOGGLE_BUTTON(smiley)->active)
 		show_smiley_dialog(c, smiley);
 	else if (c->smiley_dialog)
 		close_smiley_dialog(smiley, c);
+
+	gtk_widget_grab_focus(c->entry);
 
 	return;
 }
@@ -954,14 +942,6 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				do_bold(c->bold, c->entry);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
-			case 's':
-			case 'S':
-				quiet_set(c->strike,
-					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->strike)));
-				do_strike(c->strike, c->entry);
-				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-				break;
-			
 			case '-':
 				do_small(NULL, c->entry);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
@@ -1217,7 +1197,6 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	}
 
 	quiet_set(c->bold, FALSE);
-	quiet_set(c->strike, FALSE);
 	quiet_set(c->italic, FALSE);
 	quiet_set(c->underline, FALSE);
 	quiet_set(c->font, FALSE);
@@ -1650,16 +1629,25 @@ void toggle_font(GtkWidget *font, struct conversation *c)
 		advance_past(c->entry, "<FONT FACE>", "</FONT>");
 }
 
+void insert_link_cb(GtkWidget *w, struct conversation *c)
+{
+	show_add_link(c->link, c);
+}
+
 void toggle_link(GtkWidget *linky, struct conversation *c)
 {
 	if (state_lock)
 		return;
-	if (GTK_TOGGLE_BUTTON(linky)->active)
-		show_add_link(linky, c);
+
+	if (GTK_TOGGLE_BUTTON(c->link)->active)
+		show_add_link(c->link, c);
+
 	else if (c->link_dialog)
-		cancel_link(linky, c);
+		cancel_link(c->link, c);
 	else
 		advance_past(c->entry, "<A HREF>", "</A>");
+
+	gtk_widget_grab_focus(c->entry);
 }
 
 void do_strike(GtkWidget *strike, GtkWidget *entry)
@@ -1682,6 +1670,8 @@ void do_bold(GtkWidget *bold, GtkWidget *entry)
 		surround(entry, "<B>", "</B>");
 	else
 		advance_past(entry, "<B>", "</B>");
+
+	gtk_widget_grab_focus(entry);
 }
 
 void do_underline(GtkWidget *underline, GtkWidget *entry)
@@ -1692,6 +1682,8 @@ void do_underline(GtkWidget *underline, GtkWidget *entry)
 		surround(entry, "<U>", "</U>");
 	else
 		advance_past(entry, "<U>", "</U>");
+
+	gtk_widget_grab_focus(entry);
 }
 
 void do_italic(GtkWidget *italic, GtkWidget *entry)
@@ -1702,6 +1694,8 @@ void do_italic(GtkWidget *italic, GtkWidget *entry)
 		surround(entry, "<I>", "</I>");
 	else
 		advance_past(entry, "<I>", "</I>");
+
+	gtk_widget_grab_focus(entry);
 }
 
 /* html code to modify font sizes must all be the same length, */
@@ -1711,21 +1705,30 @@ void do_small(GtkWidget *small, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
+
 	surround(entry, "<FONT SIZE=\"1\">", "</FONT>");
+
+	gtk_widget_grab_focus(entry);
 }
 
 void do_normal(GtkWidget *normal, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
+
 	surround(entry, "<FONT SIZE=\"3\">", "</FONT>");
+
+	gtk_widget_grab_focus(entry);
 }
 
 void do_big(GtkWidget *big, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
+
 	surround(entry, "<FONT SIZE=\"5\">", "</FONT>");
+
+	gtk_widget_grab_focus(entry);
 }
 
 void check_everything(GtkWidget *entry)
@@ -1782,13 +1785,6 @@ void check_everything(GtkWidget *entry)
 		quiet_set(c->underline, TRUE);
 	else
 		quiet_set(c->underline, FALSE);
-
-	if (invert_tags(entry, "<STRIKE>", "</STRIKE>", 0))
-		quiet_set(c->strike, TRUE);
-	else if (count_tag(entry, "<STRIKE>", "</STRIKE>"))
-		quiet_set(c->strike, TRUE);
-	else
-		quiet_set(c->strike, FALSE);
 }
 
 
@@ -2161,6 +2157,208 @@ void update_progress(struct conversation *c, float percent) {
                gtk_progress_set_percentage(GTK_PROGRESS(c->progress), percent);
 }
 
+GtkWidget *build_conv_menubar(struct conversation *c)
+{
+	GtkWidget *menubar;
+	GtkWidget *menu;
+	GtkWidget *menuitem;
+
+	menubar = gtk_menu_bar_new();
+
+	menu = gtk_menu_new();
+
+	/* The file menu */
+	menuitem = gaim_new_item(NULL, _("File"));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
+	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
+
+	gaim_new_item_from_stock(menu, _("_Save Conversation"), "gtk-save-as", GTK_SIGNAL_FUNC(save_convo), c, 0, 0, NULL); 
+
+	gaim_new_item_from_stock(menu, _("View _History"), NULL, GTK_SIGNAL_FUNC(conv_show_log), GINT_TO_POINTER(c->name), 0, 0, NULL); 
+
+	menuitem = gtk_menu_item_new();
+	gtk_menu_append(GTK_MENU(menu), menuitem);
+/*
+	c->sendfile_btn = gaim_new_item_from_pixbuf(menu, _("Send File"), "send-file-small.png", NULL, NULL, 0, 0, NULL); */
+
+	gaim_new_item_from_pixbuf(menu, _("Insert URL"), NULL, GTK_SIGNAL_FUNC(insert_link_cb), c, 0, 0, NULL); 
+	c->image_menubtn = gaim_new_item_from_pixbuf(menu, _("Insert Image"), "insert-image-small.png", GTK_SIGNAL_FUNC(insert_image), c, 0, 0, NULL); 
+
+	menuitem = gtk_menu_item_new();
+	gtk_menu_append(GTK_MENU(menu), menuitem);
+
+	gaim_new_item_from_stock(menu, _("_Close"), "gtk-close", GTK_SIGNAL_FUNC(close_callback), c, 0, 0, NULL); 
+
+	/* The Options  menu */
+	menu = gtk_menu_new();
+
+	menuitem = gaim_new_item(NULL, _("Options"));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
+	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
+
+	/* Logging */
+	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Enable _Logging"));
+	c->log_button = menuitem;  /* We should save this */
+	
+	state_lock = 1;
+	if (find_log_info(c->name))
+		 gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(menuitem), TRUE);
+	else
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(menuitem), FALSE);
+	state_lock = 0;
+
+	gtk_signal_connect(GTK_OBJECT(menuitem), "toggled", GTK_SIGNAL_FUNC(toggle_loggle), c);
+
+	/* Sounds */
+
+	gtk_menu_append(GTK_MENU(menu), menuitem);
+
+	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Enable _Sounds"));
+	c->makesound = 1;
+	gtk_signal_connect(GTK_OBJECT(menuitem), "toggled", GTK_SIGNAL_FUNC(toggle_sound), c);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), TRUE);
+	gtk_menu_append(GTK_MENU(menu), menuitem);
+
+
+
+	/* Now set the current values or something */
+	gtk_widget_set_sensitive(GTK_WIDGET(c->log_button), (logging_options & OPT_LOG_CONVOS) ? FALSE : TRUE);
+
+	gtk_widget_show_all(menubar);
+
+	return menubar;
+
+}
+
+GtkWidget *build_conv_toolbar2(struct conversation *c)
+{
+		GtkWidget *vbox;
+		GtkWidget *hbox;
+		GtkWidget *button;
+		GtkWidget *sep;
+		GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
+		/*
+	c->toolbar = toolbar;
+	c->bold = bold;
+	c->strike = strike;
+	c->italic = italic;
+	c->underline = underline;
+	c->log_button = wood;
+	c->viewer_button = viewer;
+	c->fgcolorbtn = fgcolorbtn;
+	c->bgcolorbtn = bgcolorbtn;
+	c->link = link;
+	c->wood = wood;
+	c->font = font;
+	c->smiley = smiley;
+	c->imagebtn = image;
+	c->speaker = speaker;
+	c->speaker_p = speaker_p;
+	*/
+
+		vbox = gtk_vbox_new(FALSE, 0);
+		sep = gtk_hseparator_new();
+		gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+		
+		hbox = gtk_hbox_new(FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+		/* Bold */
+		button = gaim_pixbuf_toolbar_button_from_stock("gtk-bold");
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_bold), c->entry);
+		c->bold = button; /* We should remember this */
+
+		/* Italic */
+		button = gaim_pixbuf_toolbar_button_from_stock("gtk-italic");
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_italic), c->entry);
+		c->italic = button; /* We should remember this */
+
+		/* Underline */
+		button = gaim_pixbuf_toolbar_button_from_stock("gtk-underline");
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_underline), c->entry);
+		c->underline = button; /* We should remember this */
+
+		/* Sep */
+		sep = gtk_vseparator_new();
+		gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
+
+		/* Increase font size */
+		button = gaim_pixbuf_toolbar_button_from_file("text_bigger.png");
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_big), c->entry);
+		
+		/* Normal Font Size */
+		button = gaim_pixbuf_toolbar_button_from_file("text_normal.png");
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_normal), c->entry);
+		c->font = button; /* We should remember this */
+		
+		/* Decrease font size */
+		button = gaim_pixbuf_toolbar_button_from_file("text_smaller.png");
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_small), c->entry);
+
+		/* Sep */
+		sep = gtk_vseparator_new();
+		gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
+
+		/* Font Color */
+		button = gaim_pixbuf_toolbar_button_from_stock("gtk-select-color");
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_fg_color), c);
+		c->fgcolorbtn = button; /* We should remember this */
+
+		/* Font Color */
+		button = gaim_pixbuf_toolbar_button_from_stock("gtk-select-color");
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_bg_color), c);
+		c->bgcolorbtn = button; /* We should remember this */
+
+
+		/* Sep */
+		sep = gtk_vseparator_new();
+		gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
+
+		/* Insert IM Image  */
+		button = gaim_pixbuf_toolbar_button_from_file("insert-image-small.png");
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(insert_image), c);
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		c->imagebtn = button;
+
+		/* Insert Link  */
+		button = gaim_pixbuf_toolbar_button_from_file("insert-link-small.png");
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_link), c);
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		c->link = button;
+
+		/* Insert Smiley */
+		button = gaim_pixbuf_toolbar_button_from_file("insert-smiley-small.png");
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(insert_smiley), c);
+		gtk_size_group_add_widget(sg, button);
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		c->smiley = button;
+
+		sep = gtk_hseparator_new();
+		gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+
+		gtk_widget_show_all(vbox);
+
+		return vbox;
+}
+
 GtkWidget *build_conv_toolbar(struct conversation *c)
 {
 	GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i,
@@ -2488,7 +2686,7 @@ void update_convo_add_button(struct conversation *c)
 	if (find_buddy(c->gc, c->name)) {
 		if (!gtk_object_get_user_data(GTK_OBJECT(c->add))) {
 			gtk_widget_destroy(c->add);
-			c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
+			c->add = gaim_pixbuf_button_from_stock(_("Remove"), "gtk-remove", GAIM_BUTTON_VERTICAL);
 			rebuild = TRUE;
 		}
 		if (c->gc) {
@@ -2502,7 +2700,7 @@ void update_convo_add_button(struct conversation *c)
 	} else {
 		if (gtk_object_get_user_data(GTK_OBJECT(c->add))) {
 			gtk_widget_destroy(c->add);
-			c->add = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
+			c->add = gaim_pixbuf_button_from_stock(_("Add"), "gtk-add", GAIM_BUTTON_VERTICAL);
 			rebuild = TRUE;
 		}
 		if (c->gc) {
@@ -2516,8 +2714,10 @@ void update_convo_add_button(struct conversation *c)
 
 	if (rebuild) {
 		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-		gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
-		gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
+		gtk_box_pack_start(GTK_BOX(parent), c->add, FALSE, FALSE, 0);
+		gtk_box_reorder_child(GTK_BOX(parent), c->add, 3);
+		gtk_button_set_relief(GTK_BUTTON(c->add), GTK_RELIEF_NONE);
+		gtk_size_group_add_widget(c->sg, c->add);
 		gtk_widget_show(c->add);
 	}
 }
@@ -2630,22 +2830,33 @@ void update_buttons_by_protocol(struct conversation *c)
 		gtk_widget_set_sensitive(c->info, FALSE);
 	else if (c->info)
 		gtk_widget_set_sensitive(c->info, TRUE);
-
+/*
+	if (!c->is_chat && c->gc->prpl->file_transfer_out)
+			gtk_widget_set_sensitive(c->sendfile_btn, TRUE);
+	else
+			gtk_widget_set_sensitive(c->sendfile_btn, FALSE);
+*/	
 	if (c->is_chat) {
 		if (c->gc->prpl->chat_send == NULL && c->send)
 			gtk_widget_set_sensitive(c->send, FALSE);
 		else
 			gtk_widget_set_sensitive(c->send, TRUE);
+		
 		gtk_widget_set_sensitive(c->imagebtn, FALSE);
+		gtk_widget_set_sensitive(c->image_menubtn, FALSE);
 	} else {
 		if (c->gc->prpl->send_im == NULL && c->send)
 			gtk_widget_set_sensitive(c->send, FALSE);
 		else
 			gtk_widget_set_sensitive(c->send, TRUE);
-		if (c->gc->prpl->options & OPT_PROTO_IM_IMAGE)
+		if (c->gc->prpl->options & OPT_PROTO_IM_IMAGE) {
 			gtk_widget_set_sensitive(c->imagebtn, TRUE);
-		else
+			gtk_widget_set_sensitive(c->image_menubtn, TRUE);
+		}
+		else {
+			gtk_widget_set_sensitive(c->image_menubtn, FALSE);
 			gtk_widget_set_sensitive(c->imagebtn, FALSE);
+		}
 	}
 
 	if (c->gc->prpl->warn == NULL && c->warn)
@@ -2813,7 +3024,9 @@ void show_conv(struct conversation *c)
 	GtkWidget *toolbar;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	int dispstyle = set_dispstyle(0);
+	GtkWidget *menubar;
+
+	c->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	c->font_dialog = NULL;
 	c->fg_color_dialog = NULL;
@@ -2882,7 +3095,7 @@ void show_conv(struct conversation *c)
 		gtk_object_set_user_data(GTK_OBJECT(win), c);
 		gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
 		gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
-		gtk_container_border_width(GTK_CONTAINER(win), 10);
+		gtk_container_border_width(GTK_CONTAINER(win), 0);
 		gtk_widget_realize(win);
 		gtk_signal_connect(GTK_OBJECT(win), "delete_event",
 				   GTK_SIGNAL_FUNC(delete_event_convo), c);
@@ -2897,6 +3110,9 @@ void show_conv(struct conversation *c)
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_paned_pack1(GTK_PANED(paned), vbox, FALSE, TRUE);
 	gtk_widget_show(vbox);
+
+	menubar = build_conv_menubar(c);
+	gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, TRUE, 0);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	c->sw = sw;
@@ -2942,7 +3158,7 @@ void show_conv(struct conversation *c)
 	if (!(im_options & OPT_IM_ONE_WINDOW))
 		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
 
-	toolbar = build_conv_toolbar(c);
+	toolbar = build_conv_toolbar2(c);
 	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 0);
 
 	gtk_object_set_user_data(GTK_OBJECT(entry), c);
@@ -2964,57 +3180,88 @@ void show_conv(struct conversation *c)
 	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);
 
+/* I'm leaving this here just incase we want to bring this back. I'd rather not have the close
+ * button any more.  If we do, though, it needs to be on the left side.  I might bring it back and put
+ * it on that side.  */
+
+/*	
 	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
 	c->close = close;
 	gtk_object_set_user_data(GTK_OBJECT(close), c);
 	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
 	gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 0);
 	gtk_widget_show(close);
-
+	
 	c->sep1 = gtk_vseparator_new();
 	gtk_box_pack_end(GTK_BOX(bbox), c->sep1, dispstyle, dispstyle, 0);
 	gtk_widget_show(c->sep1);
+*/	
 
-	if (c->gc && find_buddy(c->gc, c->name) != NULL) {
-		add = picture_button2(win, _("Remove"), gnome_remove_xpm, dispstyle);
-		gtk_object_set_user_data(GTK_OBJECT(add), c);
-	} else
-		add = picture_button2(win, _("Add"), gnome_add_xpm, dispstyle);
-	c->add = add;
-	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-	gtk_box_pack_end(GTK_BOX(bbox), add, dispstyle, dispstyle, 0);
-	gtk_widget_show(add);
-
-	block = picture_button2(win, _("Block"), block_xpm, dispstyle);
-	c->block = block;
-	gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
-	gtk_box_pack_end(GTK_BOX(bbox), block, dispstyle, dispstyle, 0);
-	gtk_widget_show(block);
-
-	warn = picture_button2(win, _("Warn"), warn_xpm, dispstyle);
-	c->warn = warn;
-	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
-	gtk_box_pack_end(GTK_BOX(bbox), warn, dispstyle, dispstyle, 0);
-	gtk_widget_show(warn);
-
-	info = picture_button2(win, _("Info"), tb_search_xpm, dispstyle);
-	c->info = info;
-
-	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
-	gtk_box_pack_end(GTK_BOX(bbox), info, dispstyle, dispstyle, 0);
-	gtk_widget_show(info);
-
-	c->sep2 = gtk_vseparator_new();
-	gtk_box_pack_end(GTK_BOX(bbox), c->sep2, dispstyle, dispstyle, 0);
-	gtk_widget_show(c->sep2);
-
-	send = picture_button2(win, _("Send"), tmp_send_xpm, dispstyle);
+	/* Put the send button on the right */
+	send = gaim_pixbuf_button_from_stock(_("Send"), "gtk-convert", GAIM_BUTTON_VERTICAL);
 	c->send = send;
 	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
-	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), send, FALSE, FALSE, 0);
 	gtk_widget_show(send);
 
+	c->sep2 = gtk_vseparator_new();
+	gtk_box_pack_end(GTK_BOX(bbox), c->sep2, FALSE, TRUE, 0);
+	gtk_widget_show(c->sep2);
+	
+	/* And put the other buttons on the left */
+
+	if (c->gc && find_buddy(c->gc, c->name) != NULL) {
+		add = gaim_pixbuf_button_from_stock(_("Remove"), "gtk-remove", GAIM_BUTTON_VERTICAL);
+		gtk_object_set_user_data(GTK_OBJECT(add), c);
+	} else
+		add = gaim_pixbuf_button_from_stock(_("Add"), "gtk-add", GAIM_BUTTON_VERTICAL);
+
+	c->add = add;
+	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+	gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 0);
+	gtk_widget_show(add);
+
+	warn = gaim_pixbuf_button_from_stock(_("Warn"), "gtk-dialog-warning", GAIM_BUTTON_VERTICAL);
+	c->warn = warn;
+	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
+	gtk_box_pack_start(GTK_BOX(bbox), warn, FALSE, FALSE, 0);
+	gtk_widget_show(warn);
+
+	info = gaim_pixbuf_button_from_stock(_("Info"), "gtk-find", GAIM_BUTTON_VERTICAL);
+	c->info = info;
+	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
+	gtk_box_pack_start(GTK_BOX(bbox), info, FALSE, FALSE, 0);
+	gtk_widget_show(info);
+
+
+	block = gaim_pixbuf_button_from_stock(_("Block"), "gtk-stop", GAIM_BUTTON_VERTICAL);
+	c->block = block;
+	gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
+	gtk_box_pack_start(GTK_BOX(bbox), block, FALSE, FALSE, 0);
+	gtk_widget_show(block);
+
+	/* I don't know if these should have borders.  They look kind of dumb
+	 * with borders.  */
+	gtk_button_set_relief(GTK_BUTTON(info), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(warn), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(send), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(block), GTK_RELIEF_NONE);
+
+	gtk_size_group_add_widget(c->sg, info);
+	gtk_size_group_add_widget(c->sg, add);
+	gtk_size_group_add_widget(c->sg, warn);
+	gtk_size_group_add_widget(c->sg, send);
+	gtk_size_group_add_widget(c->sg, block);
+
+	gtk_box_reorder_child(GTK_BOX(bbox), c->warn, 1);
+	gtk_box_reorder_child(GTK_BOX(bbox), c->block, 2);
+	gtk_box_reorder_child(GTK_BOX(bbox), c->add, 3);
+	gtk_box_reorder_child(GTK_BOX(bbox), c->info, 4);
+	
+
 	update_buttons_by_protocol(c);
+
 	if (!(im_options & OPT_IM_ONE_WINDOW))
 		gtk_widget_grab_focus(c->entry);
 	gtk_widget_show(win);
@@ -3678,6 +3925,7 @@ void update_icon(struct conversation *c)
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), bm ? GTK_SHADOW_NONE : GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(c->bbox), frame, FALSE, FALSE, 5);
+	gtk_box_reorder_child(GTK_BOX(c->bbox), frame, 0);
 	gtk_widget_show(frame);
 
 	event = gtk_event_box_new();

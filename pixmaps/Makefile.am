@@ -41,6 +41,9 @@ EXTRA_DIST =	about_small.xpm			\
 		gnome_preferences.xpm		\
 		gnome_remove.xpm 		\
 		group.xpm			\
+		insert-image-small.png \
+		insert-link-small.png \
+		insert-smiley-small.png \
 		image_icon.xpm			\
 		import_small.xpm		\
 		italic.xpm			\
@@ -75,6 +78,7 @@ EXTRA_DIST =	about_small.xpm			\
 		scream.xpm			\
 		search_small.xpm		\
 		send_small.xpm			\
+		send-file-small.png	\
 		signon.png \
 		small.xpm			\
 		smile.xpm			\
@@ -92,6 +96,9 @@ EXTRA_DIST =	about_small.xpm			\
 		tb_refresh.xpm			\
 		tb_search.xpm			\
 		tb_undo.xpm			\
+		text_bigger.png			\
+		text_normal.png	\
+		text_smaller.png		\
 		think.xpm			\
 		tmp_send.xpm			\
 		tongue.xpm			\
@@ -103,10 +110,13 @@ EXTRA_DIST =	about_small.xpm			\
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
-gaimbuttonpix_DATA = edit.png accounts.png signon.png preferences.png
+gaimbuttonpix_DATA = edit.png accounts.png signon.png preferences.png insert-image-small.png text_bigger.png text_smaller.png
 
 gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
 gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png 
+
+gaimmenupixdir = $(datadir)/pixmaps/gaim/menus
+gaimmenupix_data = send-file-small.png insert-image-small.png
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
 gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png logo.png

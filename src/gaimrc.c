@@ -805,15 +805,15 @@ static void gaimrc_read_options(FILE *f)
 	if (conv_size.width == 0 &&
 	    conv_size.height == 0 &&
 	    conv_size.entry_height == 0) {
-		conv_size.width = 320;
-		conv_size.height = 175;
+		conv_size.width = 410;
+		conv_size.height = 160;
 		conv_size.entry_height = 50;
 	}
 
 	if (buddy_chat_size.width == 0 &&
 	    buddy_chat_size.height == 0 &&
 	    buddy_chat_size.entry_height == 0) {
-		buddy_chat_size.width = 320;
+		buddy_chat_size.width = 410;
 		buddy_chat_size.height = 160;
 		buddy_chat_size.entry_height = 50;
 	}

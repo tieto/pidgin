@@ -109,6 +109,7 @@ struct conversation {
 	GtkWidget *fgcolorbtn;
 	GtkWidget *bgcolorbtn;
 	GtkWidget *link;
+/*	GtkWidget *sendfile_btn; */
 	GtkWidget *wood;
 	GtkWidget *viewer_button;
 	GtkWidget *log_button;
@@ -116,6 +117,7 @@ struct conversation {
 	GtkWidget *font;
 	GtkWidget *smiley;
 	GtkWidget *imagebtn;
+	GtkWidget *image_menubtn;
 	GtkWidget *speaker;
 	GtkWidget *speaker_p;
 	GtkWidget *fg_color_dialog;
@@ -460,6 +462,7 @@ extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
 extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonStyle);
 extern GtkWidget *gaim_pixbuf_button_from_stock(char *, char *, GaimButtonStyle);
 extern GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *);
+extern GtkWidget *gaim_pixbuf_toolbar_button_from_file(char *);
 extern int file_is_dir(const char *, GtkWidget *);
 extern void update_privacy_connections();
 extern void show_privacy_options();

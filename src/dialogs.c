@@ -312,7 +312,7 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct conversatio
 		c->smiley_dialog = NULL;
 	} else if (!g_strcasecmp(object_data, "log dialog")) {
 		set_state_lock(1);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->wood), FALSE);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(c->log_button), FALSE);
 		set_state_lock(0);
 		c->log_dialog = NULL;
 	}
@@ -2571,9 +2571,9 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 
 void cancel_log(GtkWidget *widget, struct conversation *c)
 {
-	if (c->wood) {
+	if (c->log_button) {
 		set_state_lock(1);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->wood), FALSE);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(c->log_button), FALSE);
 		set_state_lock(0);
 	}
 	dialogwindows = g_list_remove(dialogwindows, c->log_dialog);
@@ -4600,6 +4600,33 @@ GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *icon)
 	gtk_widget_show_all(bbox);
 	return button;
 }
+
+GtkWidget *gaim_pixbuf_toolbar_button_from_file(char *icon)
+{
+	GtkWidget *button, *image,  *bbox;
+	char *filename;
+
+	if (!icon)
+		return NULL;
+
+	button = gtk_toggle_button_new();
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+
+	bbox = gtk_vbox_new(FALSE, 0);
+
+	gtk_container_add (GTK_CONTAINER(button), bbox);
+	
+	filename = g_build_filename (DATADIR, "pixmaps", "gaim", "buttons", icon, NULL);
+	debug_printf("Loading: %s\n", filename);
+	image = gtk_image_new_from_file(filename);
+	g_free(filename);
+
+	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+
+	gtk_widget_show_all(bbox);
+	return button;
+}
+
 
 GtkWidget *gaim_pixbuf_button_from_stock(char *text, char *icon, GaimButtonStyle style)
 {
