@@ -5549,7 +5549,7 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 	GaimPresence *presence;
 	const gchar *status_id;
 	int charset = 0;
-	gchar *text_html = NULL;
+	const gchar *text_html = NULL;
 	char *msg = NULL;
 	gsize msglen = 0;
 
@@ -5558,13 +5558,12 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 	status_id = gaim_status_get_id(status);
 	presence = gaim_account_get_presence(account);
 
+	gaim_debug_info("oscar", "Setting status to %s\n", status_id);
+
 	if (primitive == GAIM_STATUS_HIDDEN)
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
 	else
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
-
-
-	aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 
 	if (od->rights.maxawaymsglen == 0)
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
@@ -5578,56 +5577,49 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
 #if 0
 		/* Set an available message */
-		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
 		aim_srv_setavailmsg(od->sess, text);
 #endif
-		return;
-	}
 
-	/*
-	 * XXX - Using status_id below is definitely wrong.  We want to get
-	 * the away message that the Gaim user just set.  We probably want
-	 * to get a certain attribute from status->attr_values, but I don't
-	 * think any of that is implemented yet.
-	 *
-	 * Something like
-	 * text_html = gaim_status_get_attr_string(status, "message");
-	 */
-	status_id = gaim_status_get_name(status);
-	text_html = gaim_strdup_withhtml(status_id);
+	} else if (primitive == GAIM_STATUS_AWAY) {
+		text_html = gaim_status_get_attr_string(status, "message");
 
-	charset = oscar_charset_check(text_html);
-	if (charset == AIM_CHARSET_UNICODE) {
-		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
-		aim_locate_setprofile(od->sess, NULL, NULL, 0, "unicode-2-0", msg, 
-			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
-		g_free(msg);
-	} else if (charset == AIM_CHARSET_CUSTOM) {
-		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
-		aim_locate_setprofile(od->sess, NULL, NULL, 0, "iso-8859-1", msg, 
-			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
-		g_free(msg);
+		if (text_html == NULL) {
+			text_html = _("Away");
+		}
+
+		charset = oscar_charset_check(text_html);
+		if (charset == AIM_CHARSET_UNICODE) {
+			msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+			aim_locate_setprofile(od->sess, NULL, NULL, 0, "unicode-2-0", msg,
+				(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
+			g_free(msg);
+		} else if (charset == AIM_CHARSET_CUSTOM) {
+			msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
+			aim_locate_setprofile(od->sess, NULL, NULL, 0, "iso-8859-1", msg,
+				(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
+			g_free(msg);
+		} else {
+			msglen = strlen(text_html);
+			aim_locate_setprofile(od->sess, NULL, NULL, 0, "us-ascii", text_html,
+				(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
+		}
+
+		if (msglen > od->rights.maxawaymsglen) {
+			gchar *errstr;
+
+			errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "
+									 "has been exceeded.  Gaim has truncated it for you.",
+									 "The maximum away message length of %d bytes "
+									 "has been exceeded.  Gaim has truncated it for you.",
+									 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
+			gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
+			g_free(errstr);
+		}
+
 	} else {
-		msglen = strlen(text_html);
-		aim_locate_setprofile(od->sess, NULL, NULL, 0, "us-ascii", text_html, 
-			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
+		gaim_debug_info("oscar", "Don't know what to do for this status\n");
+
 	}
-
-	if (msglen > od->rights.maxawaymsglen) {
-		gchar *errstr;
-
-		errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "
-								 "has been exceeded.  Gaim has truncated it for you.",
-								 "The maximum away message length of %d bytes "
-								 "has been exceeded.  Gaim has truncated it for you.",
-								 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
-		gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
-		g_free(errstr);
-	}
-
-	g_free(text_html);
-
-	return;
 }
 
 static void

@@ -750,7 +750,7 @@ gaim_status_set_attr_string(GaimStatus *status, const char *id,
 	attr = gaim_status_type_get_attr(status_type, id);
 	g_return_if_fail(attr != NULL);
 
-	attr_value = gaim_status_attr_get_value_type(attr);
+	attr_value = gaim_status_get_attr_value(status, id);
 	g_return_if_fail(gaim_value_get_type(attr_value) == GAIM_TYPE_STRING);
 
 	gaim_value_set_string(attr_value, value);
@@ -833,6 +833,12 @@ gaim_status_is_online(const GaimStatus *status)
 			primitive != GAIM_STATUS_OFFLINE);
 }
 
+/*
+ * What's the difference between
+ * gaim_status_get_attr_value(GaimStatus *status, const char *id)
+ * gaim_status_attr_get_value_type(GaimStatusAttr *attr)
+ * and I think there was another similar one...
+ */
 GaimValue *
 gaim_status_get_attr_value(const GaimStatus *status, const char *id)
 {
