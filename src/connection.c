@@ -49,6 +49,8 @@ gaim_connection_new(GaimAccount *account)
 void
 gaim_connection_destroy(GaimConnection *gc)
 {
+	GaimAccount *account;
+
 	g_return_if_fail(gc != NULL);
 
 	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
@@ -56,6 +58,9 @@ gaim_connection_destroy(GaimConnection *gc)
 
 		return;
 	}
+
+	account = gaim_connection_get_account(gc);
+	gaim_account_set_connection(account, NULL);
 
 	if (gc->display_name != NULL)
 		g_free(gc->display_name);

@@ -269,7 +269,6 @@ void
 gaim_account_set_connection(GaimAccount *account, GaimConnection *gc)
 {
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(gc      != NULL);
 
 	account->gc = gc;
 
