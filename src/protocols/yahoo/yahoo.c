@@ -308,9 +308,9 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 1: /* we don't get the full buddy list here. */
 			if (!yd->logged_in) {
+				gaim_connection_set_display_name(gc, pair->value);
 				gaim_connection_set_state(gc, GAIM_CONNECTED);
 				serv_finish_login(gc);
-				gaim_connection_set_display_name(gc, pair->value);
 				yd->logged_in = TRUE;
 
 				/* this requests the list. i have a feeling that this is very evil
