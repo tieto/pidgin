@@ -409,41 +409,14 @@ gboolean gaim_str_has_suffix(const char *s, const char *x);
 const char *gaim_str_sub_away_formatters(const char *str, const char *name);
 
 /**
- * Copies a string and replaces all HTML linebreaks with newline characters.
- *
- * @param dest     The destination string.
- * @param src      The source string.
- * @param dest_len The destination string length.
- *
- * @see gaim_strncpy_withhtml()
- * @see gaim_strdup_withhtml()
- */
-void gaim_strncpy_nohtml(char *dest, const char *src, size_t dest_len);
-
-/**
- * Copies a string and replaces all newline characters with HTML linebreaks.
- *
- * @param dest     The destination string.
- * @param src      The source string.
- * @param dest_len The destination string length.
- *
- * @see gaim_strncpy_nohtml()
- * @see gaim_strdup_withhtml()
- */
-void gaim_strncpy_withhtml(gchar *dest, const gchar *src, size_t dest_len);
-
-/**
  * Duplicates a string and replaces all newline characters from the
  * source string with HTML linebreaks.
  *
  * @param src The source string.
  *
- * @return The new string.
- *
- * @see gaim_strncpy_nohtml()
- * @see gaim_strncpy_withhtml()
+ * @return The new string.  Must be g_free'd by the caller.
  */
-char *gaim_strdup_withhtml(const char *src);
+gchar *gaim_strdup_withhtml(const gchar *src);
 
 /**
  * Ensures that all linefeeds have a matching carriage return.
@@ -470,8 +443,20 @@ void gaim_str_strip_cr(char *str);
  * @param replacement The substring you want inserted in place
  *        of the delimiting substring.
  */
-char *gaim_strreplace(const char *string, const char *delimiter,
-					  const char *replacement);
+gchar *gaim_strreplace(const char *string, const char *delimiter,
+					   const char *replacement);
+
+/**
+ * Given a string, this replaces one substring with another
+ * ignoring case and returns a newly allocated string.
+ *
+ * @param string The string from which to replace stuff.
+ * @param delimiter The substring you want replaced.
+ * @param replacement The substring you want inserted in place
+ *        of the delimiting substring.
+ */
+gchar *gaim_strcasereplace(const char *string, const char *delimiter,
+						   const char *replacement);
 
 /**
  * This is like strstr, except that it ignores ASCII case in

@@ -896,7 +896,7 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 
 				g_hash_table_remove(gaimbuddylist->buddies, hb);
 
-				if(!gaim_find_buddy_in_group(b->account, b->name, gnode)) {
+				if(!gaim_find_buddy_in_group(b->account, b->name, g)) {
 					hb->group = gnode;
 					g_hash_table_replace(gaimbuddylist->buddies, hb, b);
 

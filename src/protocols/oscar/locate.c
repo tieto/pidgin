@@ -257,7 +257,7 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 	}
 }
 
-static void aim_locate_dorequest(aim_session_t *sess) {
+faim_export void aim_locate_dorequest(aim_session_t *sess) {
 	struct userinfo_node *cur = sess->locate.torequest;
 
 	if (cur == NULL)
@@ -309,8 +309,13 @@ static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
 	}
 
 	if (!was_explicit) {
+		aim_conn_t *conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC);
+		aim_rxcallback_t userfunc;
+
 		sess->locate.waiting_for_response = FALSE;
-		aim_locate_dorequest(sess);
+
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_LOC, AIM_CB_LOC_REQUESTINFOTIMEOUT)))
+			userfunc(sess, NULL);
 	}
 
 	return was_explicit;

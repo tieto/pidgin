@@ -1073,6 +1073,7 @@ struct aim_invite_priv {
 #define AIM_COOKIETYPE_OFTICON  0x15
 
 faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const char *sn);
+faim_export void aim_locate_dorequest(aim_session_t *sess);
 
 /* 0x0002 */ faim_export int aim_locate_reqrights(aim_session_t *sess);
 /* 0x0004 */ faim_export int aim_locate_setprofile(aim_session_t *sess, const char *profile_encoding, const char *profile, const int profile_len, const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len);

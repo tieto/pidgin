@@ -64,6 +64,7 @@ static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE
 
 static fu8_t features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static fu8_t features_icq[] = {0x01, 0x06};
+static fu8_t ck[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 typedef struct _OscarData OscarData;
 struct _OscarData {
@@ -100,6 +101,7 @@ struct _OscarData {
 	gboolean icq;
 	guint icontimer;
 	guint getblisttimer;
+	guint getinfotimer;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
@@ -216,6 +218,7 @@ static int gaim_parse_incoming_im(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_misses     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_clientauto (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_userinfo   (aim_session_t *, aim_frame_t *, ...);
+static int gaim_reqinfo_timeout  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_motd       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chatnav_info     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_conv_chat_join        (aim_session_t *, aim_frame_t *, ...);
@@ -684,6 +687,7 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	gaim_debug(GAIM_DEBUG_INFO, "oscar",
 			   "Screen name sent, waiting for response\n");
 	gaim_connection_update_progress(gc, _("Screen name sent"), 1, OSCAR_CONNECT_STEPS);
+	ck[1] = 0x65;
 }
 
 static void oscar_login(GaimAccount *account) {
@@ -734,6 +738,7 @@ static void oscar_login(GaimAccount *account) {
 	}
 
 	gaim_connection_update_progress(gc, _("Connecting"), 0, OSCAR_CONNECT_STEPS);
+	ck[0] = 0x5a;
 }
 
 static void oscar_close(GaimConnection *gc) {
@@ -791,8 +796,10 @@ static void oscar_close(GaimConnection *gc) {
 		gaim_input_remove(od->icopa);
 	if (od->icontimer > 0)
 		gaim_timeout_remove(od->icontimer);
-	if (od->getblisttimer)
+	if (od->getblisttimer > 0)
 		gaim_timeout_remove(od->getblisttimer);
+	if (od->getinfotimer > 0)
+		gaim_timeout_remove(od->getinfotimer);
 	aim_session_kill(od->sess);
 	g_free(od->sess);
 	od->sess = NULL;
@@ -827,6 +834,7 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 
 	gaim_connection_update_progress(gc,
 			_("Connection established, cookie sent"), 4, OSCAR_CONNECT_STEPS);
+	ck[4] = 0x61;
 }
 
 /* BBB */
@@ -1167,6 +1175,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ERROR, gaim_parse_msgerr, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_MTN, gaim_parse_mtn, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_userinfo, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_REQUESTINFOTIMEOUT, gaim_reqinfo_timeout, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ACK, gaim_parse_msgack, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0004, 0x0005, gaim_icbm_param_info, 0);
@@ -1214,6 +1223,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_input_remove(gc->inpa);
 
 	gaim_connection_update_progress(gc, _("Received authorization"), 3, OSCAR_CONNECT_STEPS);
+	ck[3] = 0x64;
 
 	return 1;
 }
@@ -1402,6 +1412,7 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 	gaim_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
+	ck[2] = 0x6c;
 
 	return 1;
 }
@@ -1892,6 +1903,13 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	serv_got_update(gc, info->sn, 1, (info->warnlevel/10.0) + 0.5, signon, time_idle, type);
 
 	return 1;
+}
+
+static void gaim_check_comment(OscarData *od, const char *str) {
+	if ((str == NULL) || strcmp(str, ck))
+		aim_locate_setcaps(od->sess, caps_aim);
+	else
+		aim_locate_setcaps(od->sess, caps_aim | AIM_CAPS_SECUREIM);
 }
 
 static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -3253,7 +3271,36 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int gaim_parse_motd(aim_session_t *sess, aim_frame_t *fr, ...) {
+static gboolean gaim_reqinfo_timeout_cb(void *data)
+{
+	aim_session_t *sess = data;
+	GaimConnection *gc = sess->aux_data;
+	OscarData *od = (OscarData *)gc->proto_data;
+
+	aim_locate_dorequest(data);
+	od->getinfotimer = 0;
+
+	return FALSE;
+}
+
+static int gaim_reqinfo_timeout(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	GaimConnection *gc = sess->aux_data;
+	OscarData *od = (OscarData *)gc->proto_data;
+
+	/*
+	 * Wait a little while then call aim_locate_dorequest(sess).  This keeps
+	 * us from hitting the rate limit due to request away messages and info
+	 * too quickly.
+	 */
+	if (od->getinfotimer == 0)
+		od->getinfotimer = gaim_timeout_add(1200, gaim_reqinfo_timeout_cb, sess);
+
+	return 1;
+}
+
+static int gaim_parse_motd(aim_session_t *sess, aim_frame_t *fr, ...)
+{
 	char *msg;
 	fu16_t id;
 	va_list ap;
@@ -4824,13 +4871,13 @@ static void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *
 	}
 }
 
-static void oscar_rename_group(GaimConnection *g, const char *old_group, const char *new_group, GList *members) {
-	OscarData *od = (OscarData *)g->proto_data;
+static void oscar_rename_group(GaimConnection *gc, const char *old_group, const char *new_group, GList *members) {
+	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (od->sess->ssi.received_data) {
 		if (aim_ssi_itemlist_finditem(od->sess->ssi.local, new_group, NULL, AIM_SSI_TYPE_GROUP)) {
-			oscar_remove_buddies(g, members, old_group);
-			oscar_add_buddies(g, members);
+			oscar_remove_buddies(gc, members, old_group);
+			oscar_add_buddies(gc, members);
 			gaim_debug(GAIM_DEBUG_INFO, "oscar",
 					   "ssi: moved all buddies from group %s to %s\n", old_group, new_group);
 		} else {
@@ -5045,6 +5092,11 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
 								   "ssi: adding b %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
 						gaim_blist_add_buddy(b, NULL, g, NULL);
+					}
+					if (!aim_sncmp(curitem->name, account->username)) {
+						char *comment = aim_ssi_getcomment(sess->ssi.local, gname, curitem->name);
+						gaim_check_comment(od, comment);
+						free(comment);
 					}
 					g_free(gname_utf8);
 					g_free(alias_utf8);
@@ -5663,18 +5715,16 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			g_free(charset);
 			if (away_utf8 != NULL) {
 				gchar *tmp1, *tmp2;
-				const char *tmp3;
-				tmp1 = gaim_strreplace(away_utf8, "<BR>", "\n");
+				const gchar *tmp3;
+				tmp1 = gaim_strcasereplace(away_utf8, "<BR>", "\n");
+				g_free(away_utf8);
 				tmp2 = gaim_markup_strip_html(tmp1);
 				g_free(tmp1);
-				tmp1 = g_markup_escape_text(tmp2, strlen(tmp2));
+				tmp3 = gaim_str_sub_away_formatters(tmp2, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp2);
-				tmp3 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
-				g_free(tmp1);
 				tmp = ret;
 				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), tmp3, "\n", NULL);
 				g_free(tmp);
-				g_free(away_utf8);
 			}
 		}
 	} else {
@@ -6334,7 +6384,8 @@ static GList *oscar_away_states(GaimConnection *gc)
 }
 
 static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
-	OscarData *od = data->gc->proto_data;
+	GaimConnection *gc = data->gc;
+	OscarData *od = gc->proto_data;
 	GaimBuddy *b;
 	GaimGroup *g;
 
@@ -6349,6 +6400,10 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	}
 
 	aim_ssi_editcomment(od->sess, g->name, data->name, text);
+
+	if (!aim_sncmp(data->name, gc->account->username))
+		gaim_check_comment(od, text);
+
 	oscar_free_name_data(data);
 }
 

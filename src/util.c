@@ -1642,84 +1642,32 @@ gaim_str_sub_away_formatters(const char *msg, const char *name)
 	return (cpy);
 }
 
-/*
- * rcg10312000 This could be more robust, but it works for my current
- *  goal: to remove those annoying <BR> tags.  :)
- * dtf12162000 made the loop more readable. i am a neat freak. ;) */
-void
-gaim_strncpy_nohtml(char *dest, const char *src, size_t destsize)
+gchar *
+gaim_strdup_withhtml(const gchar *src)
 {
-	char *ptr;
-
-	g_return_if_fail(dest != NULL);
-	g_return_if_fail(src  != NULL);
-	g_return_if_fail(destsize > 0);
-
-	g_snprintf(dest, destsize, "%s", src);
-
-	while ((ptr = strstr(dest, "<BR>")) != NULL) {
-		/* replace <BR> with a newline. */
-		*ptr = '\n';
-		memmove(ptr + 1, ptr + 4, strlen(ptr + 4) + 1);
-	}
-}
-
-void
-gaim_strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
-{
-	gchar *end;
-
-	g_return_if_fail(dest != NULL);
-	g_return_if_fail(src  != NULL);
-	g_return_if_fail(destsize > 0);
-
-	end = dest + destsize;
-
-	while (dest < end) {
-		if (*src == '\n' && dest < end - 5) {
-			strcpy(dest, "<BR>");
-			src++;
-			dest += 4;
-		} else if(*src == '\r') {
-			src++;
-		} else {
-			*dest++ = *src;
-			if (*src == '\0')
-				return;
-			else
-				src++;
-		}
-	}
-}
-
-/*
- * Like strncpy_withhtml (above), but malloc()'s the necessary space
- *
- * The caller is responsible for freeing the space pointed to by the
- * return value.
- */
-char *
-gaim_strdup_withhtml(const char *src)
-{
-	char *sp, *dest;
-	gulong destsize;
+	gulong destsize, i, j;
+	gchar *dest;
 
 	g_return_val_if_fail(src != NULL, NULL);
 
-	/*
-	 * All we need do is multiply the number of newlines by 3 (the
-	 * additional length of "<BR>" over "\n"), account for the
-	 * terminator, malloc the space and call strncpy_withhtml.
-	 */
-	for(destsize = 0, sp = (gchar *)src;
-		(sp = strchr(sp, '\n')) != NULL;
-		++sp, ++destsize)
-		;
+	/* New length is (length of src) + (number of \n's * 3) + 1 */
+	for (i = 0, j = 0; src[i] != '\0'; i++)
+		if (src[i] == '\n')
+			j++;
 
-	destsize *= 3;
-	destsize += strlen(src) + 1;
+	destsize = i + (j * 3) + 1;
 	dest = g_malloc(destsize);
-	gaim_strncpy_withhtml(dest, src, destsize);
+
+	/* Copy stuff, ignoring \r's, because they are dumb */
+	for (i = 0, j = 0; src[i] != '\0'; i++) {
+		if (src[i] == '\n') {
+			strcpy(&dest[j], "<BR>");
+			j += 4;
+		} else if (src[i] != '\r')
+			dest[j++] = src[i];
+	}
+
+	dest[destsize-1] = '\0';
 
 	return dest;
 }
@@ -1799,7 +1747,7 @@ gaim_str_strip_cr(char *text)
 	g_free(text2);
 }
 
-char *
+gchar *
 gaim_strreplace(const char *string, const char *delimiter,
 				const char *replacement)
 {
@@ -1813,6 +1761,54 @@ gaim_strreplace(const char *string, const char *delimiter,
 	split = g_strsplit(string, delimiter, 0);
 	ret = g_strjoinv(replacement, split);
 	g_strfreev(split);
+
+	return ret;
+}
+
+gchar *
+gaim_strcasereplace(const char *string, const char *delimiter,
+					const char *replacement)
+{
+	gchar *ret;
+	int length_del, length_rep, i, j;
+
+	g_return_val_if_fail(string      != NULL, NULL);
+	g_return_val_if_fail(delimiter   != NULL, NULL);
+	g_return_val_if_fail(replacement != NULL, NULL);
+
+	length_del = strlen(delimiter);
+	length_rep = strlen(replacement);
+
+	/* Count how many times the delimiter appears */
+	i = 0; /* position in the source string */
+	j = 0; /* number of occurences of "delimiter" */
+	while (string[i] != '\0') {
+		if (!strncasecmp(&string[i], delimiter, length_del)) {
+			i += length_del;
+			j += length_rep;
+		} else {
+			i++;
+			j++;
+		}
+	}
+
+	ret = g_malloc(j+1);
+
+	i = 0; /* position in the source string */
+	j = 0; /* position in the destination string */
+	while (string[i] != '\0') {
+		if (!strncasecmp(&string[i], delimiter, length_del)) {
+			strncpy(&ret[j], replacement, length_rep);
+			i += length_del;
+			j += length_rep;
+		} else {
+			ret[j] = string[i];
+			i++;
+			j++;
+		}
+	}
+
+	ret[j] = '\0';
 
 	return ret;
 }
