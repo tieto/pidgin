@@ -4461,8 +4461,11 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 
 		if (msglen > od->rights.maxsiglen) {
 			gchar *errstr;
-			errstr = g_strdup_printf(_("The maximum profile length of %d bytes has been exceeded.  "
-						   "Gaim has truncated it for you."), od->rights.maxsiglen);
+			errstr = g_strdup_printf(ngettext("The maximum profile length of %d byte "
+									 "has been exceeded.  Gaim has truncated it for you.",
+									 "The maximum profile length of %d bytes "
+									 "has been exceeded.  Gaim has truncated it for you.",
+									 od->rights.maxsiglen), od->rights.maxsiglen);
 			gaim_notify_warning(gc, NULL, _("Profile too long."), errstr);
 			g_free(errstr);
 		}
@@ -4523,8 +4526,11 @@ static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const 
 	if (msglen > od->rights.maxawaymsglen) {
 		gchar *errstr;
 
-		errstr = g_strdup_printf(_("The maximum away message length of %d bytes has been exceeded.  "
-					   "Gaim has truncated it and set you away."), od->rights.maxawaymsglen);
+		errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "
+								 "has been exceeded.  Gaim has truncated it for you.",
+								 "The maximum away message length of %d bytes "
+								 "has been exceeded.  Gaim has truncated it for you.",
+								 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
 		gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
 		g_free(errstr);
 	}

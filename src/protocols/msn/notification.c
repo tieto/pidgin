@@ -1339,18 +1339,25 @@ system_msg(MsnServConn *servconn, MsnMessage *msg)
 	if ((type_s = g_hash_table_lookup(table, "Type")) != NULL) {
 		int type = atoi(type_s);
 		char buf[MSN_BUF_LEN];
+		int minutes;
 
 		switch (type) {
 			case 1:
-				g_snprintf(buf, sizeof(buf),
-						   _("The MSN server will shut down for maintenance "
-							 "in %d minute(s). You will automatically be "
-							 "signed out at that time. Please finish any "
-						     "conversations in progress.\n\n"
-							 "After the maintenance has been completed, you "
-							 "will be able to successfully sign in."),
-						   atoi(g_hash_table_lookup(table, "Arg1")));
-
+				minutes = atoi(g_hash_table_lookup(table, "Arg1"));
+				g_snprintf(buf, sizeof(buf), ngettext(
+						   "The MSN server will shut down for maintenance "
+						   "in %d minute. You will automatically be "
+						   "signed out at that time.  Please finish any "
+						   "conversations in progress.\n\nAfter the "
+						   "maintenance has been completed, you will be "
+						   "able to successfully sign in.", 
+						   "The MSN server will shut down for maintenance "
+						   "in %d minutes. You will automatically be "
+						   "signed out at that time.  Please finish any "
+						   "conversations in progress.\n\nAfter the "
+						   "maintenance has been completed, you will be "
+						   "able to successfully sign in.", minutes),
+						   minutes);
 			default:
 				break;
 		}

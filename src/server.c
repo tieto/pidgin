@@ -871,7 +871,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				int qtotal;
 
 				qtotal = find_queue_total_by_name(qm->name);
-				g_snprintf(number, 32, _("(%d messages)"), qtotal);
+				g_snprintf(number, 32, ngettext("(%d message)",
+						   "(%d messages)", qtotal), qtotal);
 				g_snprintf(path, 10, "%d", row);
 				gtk_tree_model_get_iter_from_string(
 								GTK_TREE_MODEL(awayqueuestore), &iter, path);

@@ -34,66 +34,67 @@ void check_mail();
 
 int num_msgs()
 {
-        struct in_addr *sin;
-        char recv[1024];
-        char command[256];
-        int fd;
-        int num = 0;
-        int step = 0;
-        int len;
+	struct in_addr *sin;
+	char recv[1024];
+	char command[256];
+	int fd;
+	int num = 0;
+	int step = 0;
+	int len;
 
-        sin = (struct in_addr *)get_address(mailhost);
-        fd = connect_address(sin->s_addr, mailport);
+	sin = (struct in_addr *)get_address(mailhost);
+	fd = connect_address(sin->s_addr, mailport);
 	while ((len = read(fd, recv, 1023))>0) {
 		recv[len] = 0;
-                if (!strncmp(recv, "-ERR", strlen("-ERR"))) { step = 4; break; 
-                } else if (!strncmp(recv, "+OK", strlen("+OK"))) {
-                        if (step == 3) {
-                                if (sscanf(recv, "+OK %d %d\n", &num, &step) != 2)
-                                        break;
-                                g_snprintf(command, sizeof(command), "QUIT\n");
-                                write(fd, command, strlen(command));
+		if (!strncmp(recv, "-ERR", strlen("-ERR"))) {
+			step = 4;
+			break;
+		} else if (!strncmp(recv, "+OK", strlen("+OK"))) {
+			if (step == 3) {
+				if (sscanf(recv, "+OK %d %d\n", &num, &step) != 2)
+					break;
+				g_snprintf(command, sizeof(command), "QUIT\n");
+				write(fd, command, strlen(command));
 				close(fd);
-printf("DEBUG: Num is %d\n", num);
-                                return num;
-                        }
+				return num;
+			}
 
-                        if (step == 0) {
-                                g_snprintf(command, sizeof(command), "USER %s\n", username);
-                                write(fd, command, strlen(command));
-                                step = 1;
-                        } else if (step == 1) {
-                                g_snprintf(command, sizeof(command), "PASS %s\n", password);
-                                write(fd, command, strlen(command));
-                                step = 2;
-                        } else if (step == 2) {
-                                g_snprintf(command, sizeof(command), "STAT\n");
-                                write(fd, command, strlen(command));
-                                step = 3;
-                        }
-                }
-        }
-        close(fd);
+			if (step == 0) {
+				g_snprintf(command, sizeof(command), "USER %s\n", username);
+				write(fd, command, strlen(command));
+				step = 1;
+			} else if (step == 1) {
+				g_snprintf(command, sizeof(command), "PASS %s\n", password);
+				write(fd, command, strlen(command));
+				step = 2;
+			} else if (step == 2) {
+				g_snprintf(command, sizeof(command), "STAT\n");
+				write(fd, command, strlen(command));
+				step = 3;
+			}
+		}
+	}
+	close(fd);
+
 	return 0;
 }
 
 void destroy_mail_list()
 {
-        GList *list;
-        GtkWidget *w;
+	GList *list;
+	GtkWidget *w;
 
-        list = GTK_TREE(buddies)->children;
-
-        while (list) {
-                w = (GtkWidget *)list->data;
-                if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, _("Mail Server"))) {
-                        gtk_tree_remove_items(GTK_TREE(buddies), list);
+	list = GTK_TREE(buddies)->children;
+	while (list) {
+		w = (GtkWidget *)list->data;
+		if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, _("Mail Server"))) {
+			gtk_tree_remove_items(GTK_TREE(buddies), list);
 			list = GTK_TREE(buddies)->children;
-                        if (!list)
-                                break;
-                }
-                list = list->next;
-        }
+			if (!list)
+				break;
+		}
+		list = list->next;
+	}
 }
 
 
@@ -152,28 +153,21 @@ void check_mail() {
 	pthread_t mail_thread;
 	pthread_attr_t attr;
 
-	printf("Looping in: State = %d\n", state);
 	if (state == 0) {
 		state = 1;
-		printf("Before\n");
 		pthread_attr_init(&attr);
 		pthread_create(&mail_thread, &attr, (void *)&update_mail, NULL);
-		printf("After\n");
 	}
-	printf("Bouncing out, state = %d\n", state);
 }
 
 void update_mail () {
 	int newnum;
 
-	printf("um\n");
 	g_source_remove(mytimer);
 
-	printf("nm1\n");
 	newnum = num_msgs();
 
-	printf("nm2\n");
-	if ( (newnum >= lastnum) && (newnum > 0)) {
+	if ((newnum >= lastnum) && (newnum > 0)) {
 		newnum = newnum - lastnum;
 	} else {
 		newnum = 0;
@@ -185,9 +179,7 @@ void update_mail () {
 
 	lastnum = newnum;
 	mytimer = g_timeout_add(30000, check_mail, NULL);
-	printf("sml1\n");
 	setup_mail_list();
-	printf("sml2\n");
 	state = 0;
 }
 

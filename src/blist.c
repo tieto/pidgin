@@ -748,11 +748,15 @@ void  gaim_blist_remove_group (struct group *group)
 			child = child->next;
 		}
 
-		buf = g_strdup_printf(_("%d buddies from group %s were not "
-					"removed because their accounts were not logged in.  These "
-					"buddies and the group were not removed.\n"),
-				count, group->name);
-
+		buf = g_strdup_printf(ngettext("%d buddy from group %s was not removed "
+									   "because its account was not logged in."
+									   "  This buddy and the group were not "
+									   "removed.\n", 
+									   "%d buddies from group %s were not "
+									   "removed because their accounts were "
+									   " not logged in.  These buddies and "
+									    "the group were not removed.\n", count),
+							  count, group->name);
 		gaim_notify_error(NULL, NULL, _("Group not removed"), buf);
 		g_free(buf);
 		return;
