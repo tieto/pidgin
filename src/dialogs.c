@@ -1558,7 +1558,8 @@ static void passwd_multi_menu(GtkWidget *box, struct passwddlg *pwd)
 	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu),
+			g_list_index(aim_users, ((struct gaim_connection *)connections->data)->user));
 
 	pwd->gc = (struct gaim_connection *)connections->data;
 }
@@ -1710,7 +1711,8 @@ static void info_user_menu(struct set_info_dlg *b, GtkWidget *box)
 	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu),
+			g_list_index(aim_users, ((struct gaim_connection *)connections->data)->user));
 
 	b->menu = optmenu;
 }
@@ -1756,8 +1758,8 @@ void show_set_info()
 	gtk_widget_set_usize(b->text, 300, 200);
 	if (aim_users) {
 		gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL,
-				((struct aim_user *)aim_users->data)->user_info, -1);
-		b->user = (struct aim_user *)aim_users->data;
+				((struct gaim_connection *)connections->data)->user->user_info, -1);
+		b->user = ((struct gaim_connection *)connections->data)->user;
 	}
 
 	gtk_widget_show(b->text);
