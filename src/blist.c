@@ -2330,12 +2330,12 @@ static void print_buddy(FILE *file, GaimBuddy *buddy) {
 	if(bud_server_alias) {
 		fprintf(file, "\t\t\t\t\t<server_alias>%s</server_alias>\n", bud_server_alias);
 	}
-	g_hash_table_foreach(((GAIM_BLIST_NODE*)buddy)->settings, blist_print_buddy_settings, file);
+	g_hash_table_foreach(buddy->node.settings, blist_print_buddy_settings, file);
 	fprintf(file, "\t\t\t\t</buddy>\n");
 	g_free(bud_name);
 	g_free(bud_alias);
 	g_free(acct_name);
-	g_free(budd_server_alias);
+	g_free(bud_server_alias);
 }
 
 static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
