@@ -715,20 +715,20 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 			flag |= WFLAG_SEND;
 		} else {
 		       	flag |= WFLAG_RECV;
+			if (find_nick(g->gc, message))
+				flag |= WFLAG_NICK;
 		}
 		g_free(str);
 	}
 
-	if (flag & WFLAG_RECV && b->makesound) 
-	{
-		if (sound_options & OPT_SOUND_CHAT_NICK && find_nick(b->gc, message))
+	if (flag & WFLAG_RECV && b->makesound) {
+		if (flags & WFLAG_NICK && (sound_options & OPT_SOUND_CHAT_NICK)) {
 			play_sound(SND_CHAT_NICK);
-		else
+		} else {
 			play_sound(SND_CHAT_SAY);
-		if(find_nick(b->gc, message))
-			flag |= WFLAG_NICK;
+		}
 	}
-	write_to_conv(b, message, flag, who, mtime, -1);
+		write_to_conv(b, message, flag, who, mtime, -1);
 }
 
 
