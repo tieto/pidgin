@@ -3097,19 +3097,29 @@ gaim_url_decode(const char *str)
 const char *
 gaim_url_encode(const char *str)
 {
+	const char *iter;
 	static char buf[BUF_LEN];
+	char utf_char[6];
 	guint i, j = 0;
 
 	g_return_val_if_fail(str != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
 
-	for (i = 0; i < strlen(str) && j < (BUF_LEN - 1); i++) {
-		if (isalnum(str[i]))
-			buf[j++] = str[i];
-		else {
-			if (j > (BUF_LEN - 4))
-				break;
-			sprintf(buf + j, "%%%02x", (unsigned char)str[i]);
-			j += 3;
+	iter = str;
+	for (; *iter && j < (BUF_LEN - 1) ; iter = g_utf8_next_char(iter)) {
+		gunichar c = g_utf8_get_char(iter);
+		/* If the character is an ASCII character and is alphanumeric,
+		 * or one of the specified values, no need to escape */
+		if (c < 256 && isalnum(c)) {
+			buf[j++] = c;
+		} else {
+			int bytes = g_unichar_to_utf8(c, utf_char);
+			for (i = 0; i < bytes; i++) {
+				if (j > (BUF_LEN - 4))
+					break;
+				sprintf(buf + j, "%%%02x", utf_char[i] & 0xff);
+				j += 3;
+			}
 		}
 	}
 
@@ -3462,20 +3472,30 @@ const char* gaim_unescape_filename(const char *escaped) {
 const char *
 gaim_escape_filename(const char *str)
 {
+	const char *iter;
 	static char buf[BUF_LEN];
+	char utf_char[6];
 	guint i, j = 0;
 
 	g_return_val_if_fail(str != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
 
-	for (i = 0; i < strlen(str) && j < (BUF_LEN - 1); i++) {
-		if (isalnum(str[i]) || str[i] == '@' || str[i] == '-' ||
-				str[i] == '_' || str[i] == '.' || str[i] == '#')
-			buf[j++] = str[i];
-		else {
-			if (j > (BUF_LEN - 4))
-				break;
-			sprintf(buf + j, "%%%02x", (unsigned char)str[i]);
-			j += 3;
+	iter = str;
+	for (; *iter && j < (BUF_LEN - 1) ; iter = g_utf8_next_char(iter)) {
+		gunichar c = g_utf8_get_char(iter);
+		/* If the character is an ASCII character and is alphanumeric,
+		 * or one of the specified values, no need to escape */
+		if (c < 256 && (isalnum(c) || c == '@' || c == '-' ||
+				c == '_' || c == '.' || c == '#')) {
+			buf[j++] = c;
+		} else {
+			int bytes = g_unichar_to_utf8(c, utf_char);
+			for (i = 0; i < bytes; i++) {
+				if (j > (BUF_LEN - 4))
+					break;
+				sprintf(buf + j, "%%%02x", utf_char[i] & 0xff);
+				j += 3;
+			}
 		}
 	}
 
