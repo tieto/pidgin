@@ -99,6 +99,24 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Fri Mar 29 2002 Rob Flynn <rob@marko.net> (0.55 release)
+- Jabber improvements (Thanks Jim Seymour)
+- Various sound cleanups (Thanks Robert McQueen)
+- Login process shown in single window (Thanks Michael Golden)
+- Can reorder your accounts in the account editor (Thanks Luke Schierer)
+- Updated Dutch translation
+- Shows "mobile" icon for Oscar buddies using mobile devices (Thanks Mark Doliner)
+- Fixed bug in MSN smilies that crashed PPC (and other?) platforms
+- Updated Polish Translation (Thanks Przemyslaw Sulek)
+- Updated Spanish Translation (Thanks Amaya)
+- Updated French translation
+- Updated Finnish translation (Thanks Tero Kuusela)
+- HTTP Proxy settings now HTTP compliant (Thanks Robert McQueen)
+- Speling corections (Thanks Tero Kuusela)
+- Oscar list icon fixes (Thanks Mark Doliner)
+- Oscar idle times work again (Thanks Mark Doliner)
+- Protocol icons on Edit Buddies tab (Thanks Christian Hammond)
+
 * Thu Mar 14 2002 Rob Flynn <rob@marko.net> (0.54 release)
 - Compiles without GdkPixbuf again
 - GtkIMHtml will refresh when you set a new GTK+ theme
