@@ -238,6 +238,9 @@ gaim_xfer_get_progress(const struct gaim_xfer *xfer)
 	if (xfer == NULL)
 		return 0.0;
 
+	if (gaim_xfer_get_size(xfer) == 0)
+		return 0.0;
+
 	return ((double)gaim_xfer_get_bytes_sent(xfer) /
 			(double)gaim_xfer_get_size(xfer));
 }
@@ -305,7 +308,7 @@ gaim_xfer_set_dest_filename(struct gaim_xfer *xfer, const char *filename)
 void
 gaim_xfer_set_size(struct gaim_xfer *xfer, size_t size)
 {
-	if (xfer == NULL || size == 0)
+	if (xfer == NULL)
 		return;
 
 	xfer->size = size;
@@ -400,7 +403,10 @@ gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
 	if (xfer == NULL || buffer == NULL)
 		return 0;
 
-	s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
+	if (gaim_xfer_get_size(xfer) == 0)
+		s = 4096;
+	else
+		s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
 
 	if (xfer->ops.read != NULL)
 		r = xfer->ops.read(buffer, xfer);
@@ -477,7 +483,7 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 	if (ui_ops != NULL && ui_ops->update_progress != NULL)
 		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
 
-	if (xfer->bytes_remaining == 0)
+	if (r == 0)
 		gaim_xfer_end(xfer);
 }
 

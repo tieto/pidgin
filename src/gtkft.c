@@ -516,39 +516,45 @@ gaim_gtkxfer_update_progress(struct gaim_xfer *xfer, double percent)
 
 	data = (struct gaim_gtkxfer_ui_data *)xfer->ui_data;
 
-	now     = time(NULL);
-	kb_rem  = gaim_xfer_get_bytes_remaining(xfer) / 1024.0;
-	kb_sent = gaim_xfer_get_bytes_sent(xfer) / 1024.0;
-	elapsed = (now - data->start_time);
-	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
-
-	secs_remaining = (int)(kb_rem / kbps);
-
-	if (secs_remaining <= 0) {
-		GdkPixbuf *pixbuf = NULL;
-
+	if (gaim_xfer_get_size(xfer) == 0) {
 		*speed_buf = '\0';
-		strncpy(estimate_buf, _("Done."), sizeof(estimate_buf));
-
-		pixbuf = gtk_widget_render_icon(xfer_dialog->window,
-										GAIM_STOCK_FILE_DONE,
-										GTK_ICON_SIZE_MENU, NULL);
-
-		gtk_list_store_set(xfer_dialog->model, &data->iter,
-						   COLUMN_STATUS, pixbuf,
-						   -1);
-
-		g_object_unref(pixbuf);
+		strncpy(estimate_buf, _("Unknown"), sizeof(estimate_buf));
 	}
 	else {
-		int h = secs_remaining / 3600;
-		int m = (secs_remaining % 3600) / 60;
-		int s = secs_remaining % 60;
+		now     = time(NULL);
+		kb_rem  = gaim_xfer_get_bytes_remaining(xfer) / 1024.0;
+		kb_sent = gaim_xfer_get_bytes_sent(xfer) / 1024.0;
+		elapsed = (now - data->start_time);
+		kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
-		g_snprintf(estimate_buf, sizeof(estimate_buf),
-				   _("%d:%02d:%02d"), h, m, s);
-		g_snprintf(speed_buf, sizeof(speed_buf),
-				   _("%.2f KB/s"), kbps);
+		secs_remaining = (int)(kb_rem / kbps);
+
+		if (secs_remaining <= 0) {
+			GdkPixbuf *pixbuf = NULL;
+
+			*speed_buf = '\0';
+			strncpy(estimate_buf, _("Done."), sizeof(estimate_buf));
+
+			pixbuf = gtk_widget_render_icon(xfer_dialog->window,
+											GAIM_STOCK_FILE_DONE,
+											GTK_ICON_SIZE_MENU, NULL);
+
+			gtk_list_store_set(xfer_dialog->model, &data->iter,
+							   COLUMN_STATUS, pixbuf,
+							   -1);
+
+			g_object_unref(pixbuf);
+		}
+		else {
+			int h = secs_remaining / 3600;
+			int m = (secs_remaining % 3600) / 60;
+			int s = secs_remaining % 60;
+
+			g_snprintf(estimate_buf, sizeof(estimate_buf),
+					   _("%d:%02d:%02d"), h, m, s);
+			g_snprintf(speed_buf, sizeof(speed_buf),
+					   _("%.2f KB/s"), kbps);
+		}
 	}
 
 	gtk_list_store_set(xfer_dialog->model, &data->iter,
