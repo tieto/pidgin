@@ -2,6 +2,7 @@ TYPEMAP
 gboolean            T_BOOL
 Gaim::Account       T_GaimObj
 Gaim::Connection    T_GaimObj
+Gaim::Plugin        T_GaimObj
 
 INPUT
 

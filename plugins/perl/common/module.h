@@ -17,3 +17,4 @@ typedef struct group *Gaim__Group;
 
 typedef GaimAccount *Gaim__Account;
 typedef GaimConnection *Gaim__Connection;
+typedef GaimPlugin *Gaim__Plugin;

@@ -8,7 +8,10 @@ perl_la_LDFLAGS = -module -avoid-version $(PERL_LIBS)
 perl_la_LIBADD = $(PERL_LIBS)
 perl_la_SOURCES = \
 	perl.c \
-	perl-common.c
+	perl-common.c \
+	perl-common.h \
+	perl-handlers.c \
+	perl-handlers.h
 
 perl_la_DEPENDENCIES = \
 	.libs/libperl_orig.a \

@@ -161,130 +161,24 @@ perl_init(void)
 	perl_run(my_perl);
 }
 
-/*
-  2003/02/06: execute_perl modified by Mark Doliner <mark@kingant.net>
-		Pass parameters by pushing them onto the stack rather than
-		passing an array of strings.  This way, perl scripts can
-		modify the parameters and we can get the changed values
-		and then shoot ourselves.  I mean, uh, use them.
-
-  2001/06/14: execute_perl replaced by Martin Persson <mep@passagen.se>
-		previous use of perl_eval leaked memory, replaced with
-		a version that uses perl_call instead
-
-  30/11/2002: execute_perl modified by Eric Timme <timothy@voidnet.com>
-		args changed to char** so that we can have preparsed
-  		arguments again, and many headaches ensued! This essentially
-		means we replaced one hacked method with a messier hacked
-		method out of perceived necessity. Formerly execute_perl
-		required a single char_ptr, and it would insert it into an
-		array of character pointers and NULL terminate the new array.
-		Now we have to pass in pre-terminated character pointer arrays
-		to accomodate functions that want to pass in multiple arguments.
-
-		Previously arguments were preparsed because an argument list
-		was constructed in the form 'arg one','arg two' and was
-		executed via a call like &funcname(arglist) (see .59.x), so
-		the arglist was magically pre-parsed because of the method.
-		With Martin Persson's change to perl_call we now need to
-		use a null terminated list of character pointers for arguments
-		if we wish them to be parsed. Lacking a better way to allow
-		for both single arguments and many I created a NULL terminated
-		array in every function that called execute_perl and passed
-		that list into the function.  In the former version a single
-		character pointer was passed in, and was placed into an array
-		of character pointers with two elements, with a NULL element
-		tacked onto the back, but this method no longer seemed prudent.
-
-		Enhancements in the future might be to get rid of pre-declaring
-		the array sizes?  I am not comfortable enough with this
-		subject to attempt it myself and hope it to stand the test
-		of time.
-*/
-
-static int
-execute_perl(const char *function, int argc, char **args)
-{
-	int count = 0, i, ret_value = 1;
-	SV *sv_args[argc];
-	STRLEN na;
-
-	/*
-	 * Set up the perl environment, push arguments onto the
-	 * perl stack, then call the given function
-	 */
-	dSP;
-	ENTER;
-	SAVETMPS;
-	PUSHMARK(sp);
-
-	for (i = 0; i < argc; i++) {
-		if (args[i]) {
-			sv_args[i] = sv_2mortal(newSVpv(args[i], 0));
-			XPUSHs(sv_args[i]);
-		}
-	}
-
-	PUTBACK;
-	count = call_pv(function, G_EVAL | G_SCALAR);
-	SPAGAIN;
-
-	/*
-	 * Check for "die," make sure we have 1 argument, and set our
-	 * return value.
-	 */
-	if (SvTRUE(ERRSV)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "perl",
-				   "Perl function %s exited abnormally: %s\n",
-				   function, SvPV(ERRSV, na));
-		POPs;
-	}
-	else if (count != 1) {
-		/*
-		 * This should NEVER happen.  G_SCALAR ensures that we WILL
-		 * have 1 parameter.
-		 */
-		gaim_debug(GAIM_DEBUG_ERROR, "perl",
-				   "Perl error from %s: expected 1 return value, "
-				   "but got %d\n", function, count);
-	}
-	else
-		ret_value = POPi;
-
-	/* Check for changed arguments */
-	for (i = 0; i < argc; i++) {
-		if (args[i] && strcmp(args[i], SvPVX(sv_args[i]))) {
-			/*
-			 * Shizzel.  So the perl script changed one of the parameters,
-			 * and we want this change to affect the original parameters.
-			 * args[i] is just a tempory little list of pointers.  We don't
-			 * want to free args[i] here because the new parameter doesn't
-			 * overwrite the data that args[i] points to.  That is done by
-			 * the function that called execute_perl.  I'm not explaining this
-			 * very well.  See, it's aggregate...  Oh, but if 2 perl scripts
-			 * both modify the data, _that's_ a memleak.  This is really kind
-			 * of hackish.  I should fix it.  Look how long this comment is.
-			 * Holy crap.
-			 */
-			args[i] = g_strdup(SvPV(sv_args[i], na));
-		}
-	}
-
-	PUTBACK;
-	FREETMPS;
-	LEAVE;
-
-	return ret_value;
-}
-
 static void
 perl_end(void)
 {
-	if (my_perl != NULL) {
-		perl_destruct(my_perl);
-		perl_free(my_perl);
-		my_perl = NULL;
-	}
+	if (my_perl == NULL)
+		return;
+
+	perl_eval_pv(
+		"foreach my $lib (@DynaLoader::dl_modules) {"
+		  "if ($lib =~ /^Gaim\\b/) {"
+		    "$lib .= '::deinit();';"
+		    "eval $lib;"
+		  "}"
+		"}",
+		TRUE);
+
+	perl_destruct(my_perl);
+	perl_free(my_perl);
+	my_perl = NULL;
 }
 
 void
