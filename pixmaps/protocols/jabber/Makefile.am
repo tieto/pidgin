@@ -3,5 +3,6 @@ EXTRA_DIST = 	available.xpm 		\
 		available-chat.xpm 	\
 		available-xa.xpm	\
 		available-dnd.xpm	\
-		available-error.xpm	\
+		available-error.xpm
+
 
