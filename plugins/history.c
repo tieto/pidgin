@@ -32,7 +32,7 @@ void historize (char *name, void *data)
 		return;
 	}
       
-	fseek(fd, st.st_size > HISTORY_SIZE ? st.st_size - HISTORY_SIZE : st.st_size, SEEK_SET);
+	fseek(fd, st.st_size > HISTORY_SIZE ? st.st_size - HISTORY_SIZE : 0, SEEK_SET);
 	size = fread(buf, 1, HISTORY_SIZE, fd);
 	tmp = buf;
 	tmp[size] = 0;
