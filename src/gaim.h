@@ -27,8 +27,9 @@
 #endif
 
 #include "core.h"
-#include "ui.h"
 #include "list.h"
+#include "ui.h"
+#include "util.h"
 
 #define XPATCH BAD /* Because Kalla Said So */
 
@@ -419,40 +420,6 @@ extern void serv_get_away(struct gaim_connection *, char *);
 extern void serv_alias_buddy(struct buddy *);
 extern void serv_move_buddy(struct buddy *, struct group *, struct group *);
 extern void serv_rename_group(struct gaim_connection *, struct group *, const char *);
-
-/* Functions in util.c */
-extern char *normalize(const char *);
-extern char *tobase64(const char *);
-extern void frombase64(const char *, char **, int *);
-extern char *tobase16(const char *, int);
-extern int frombase16(const char *, char **);
-extern void clean_pid();
-extern char *date();
-extern gint linkify_text(char *);
-extern char *sec_to_text(guint);
-extern struct gaim_account *gaim_account_find(const char *, int) G_GNUC_PURE;
-extern char *full_date() G_GNUC_PURE;
-extern void check_gaim_versions();
-extern char *away_subs(char *, char *);
-extern char *stylize(gchar *, int);
-extern void show_usage (int, char *);
-extern const gchar *gaim_home_dir();
-extern char *gaim_user_dir();
-extern void strncpy_nohtml(gchar *, const gchar *, size_t);
-extern void strncpy_withhtml(gchar *, const gchar *, size_t);
-extern gchar *strdup_withhtml(const gchar *);
-extern void away_on_login(char *);
-extern char *add_cr(char *);
-extern void strip_linefeed(char *);
-extern time_t get_time(int, int, int, int, int, int) G_GNUC_CONST;
-extern FILE *gaim_mkstemp(gchar **);
-extern const char *handle_uri(char *);
-/* This guy does its best to convert a string to UTF-8 from an unknown
- * encoding by checking the locale and trying some sane defaults ...
- * if everything fails it returns NULL. */
-char *gaim_try_conv_to_utf8(const char *str);
-char *gaim_getip_from_fd(int fd);
-gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b);
 
 /* Functions in log.h */
 extern FILE *open_log_file (const char *, int);

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef _CONVERSATION_H_
-#define _CONVERSATION_H_
+#ifndef _GAIM_CONVERSATION_H_
+#define _GAIM_CONVERSATION_H_
 
 /**************************************************************************/
 /** Data Structures                                                       */
@@ -1198,4 +1198,4 @@ struct gaim_window_ui_ops *gaim_get_win_ui_ops(void);
 
 /*@}*/
 
-#endif /* _CONVERSATION_H_ */
+#endif /* _GAIM_CONVERSATION_H_ */

@@ -1517,6 +1517,38 @@ void kill_meter(struct signon_meter *meter) {
 	}
 }
 
+void away_on_login(char *mesg)
+{
+	GSList *awy = away_messages;
+	struct away_message *a, *message = NULL;
+	struct gaim_gtk_buddy_list *gtkblist;
+
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+
+	if (!gtkblist->window) {
+		return;
+	}
+
+	if (mesg == NULL) {
+		/* Use default message */
+		do_away_message(NULL, default_away);
+	} else {
+		/* Use argument */
+		while (awy) {
+			a = (struct away_message *)awy->data;
+			if (strcmp(a->name, mesg) == 0) {
+				message = a;
+				break;
+			}
+			awy = awy->next;
+		}
+		if (message == NULL)
+			message = default_away;
+		do_away_message(NULL, message);
+	}
+	return;
+}
+
 void account_online(struct gaim_connection *gc)
 {
 	struct signon_meter *meter = find_signon_meter(gc);

@@ -600,7 +600,7 @@ struct gaim_account *gaim_account_find(const char *name, int protocol)
 
 /* Look for %n, %d, or %t in msg, and replace with the sender's name, date,
    or time */
-char *away_subs(char *msg, char *name)
+char *away_subs(const char *msg, const char *name)
 {
 	char *c;
 	static char cpy[BUF_LONG];
@@ -650,7 +650,7 @@ char *away_subs(char *msg, char *name)
 	return (cpy);
 }
 
-char *stylize(gchar *text, int length)
+char *stylize(const gchar *text, int length)
 {
 	gchar *buf;
 	char *tmp = g_malloc(length);
@@ -704,7 +704,7 @@ char *stylize(gchar *text, int length)
 	return buf;
 }
 
-void show_usage(int mode, char *name)
+void show_usage(int mode, const char *name)
 {
 	switch (mode) {
 	case 0:		/* full help text */
@@ -871,38 +871,6 @@ gchar *strdup_withhtml(const gchar *src)
 	strncpy_withhtml(dest, src, destsize);
 
 	return(dest);
-}
-
-void away_on_login(char *mesg)
-{
-	GSList *awy = away_messages;
-	struct away_message *a, *message = NULL;
-	struct gaim_gtk_buddy_list *gtkblist;
-
-	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
-
-	if (!gtkblist->window) {
-		return;
-	}
-
-	if (mesg == NULL) {
-		/* Use default message */
-		do_away_message(NULL, default_away);
-	} else {
-		/* Use argument */
-		while (awy) {
-			a = (struct away_message *)awy->data;
-			if (strcmp(a->name, mesg) == 0) {
-				message = a;
-				break;
-			}
-			awy = awy->next;
-		}
-		if (message == NULL)
-			message = default_away;
-		do_away_message(NULL, message);
-	}
-	return;
 }
 
 void strip_linefeed(gchar *text)
