@@ -291,6 +291,7 @@ extern GtkWidget *fgcseld;
 extern GtkWidget *bgcseld;
 
 /* Globals in prefs.c */
+extern GtkWidget *prefs;
 extern struct debug_window *dw;
 extern GtkWidget *fontseld;
 
@@ -475,6 +476,7 @@ extern void set_default_away(GtkWidget *, gpointer);
 extern void default_away_menu_init(GtkWidget *);
 extern void build_allow_list();
 extern void build_block_list();
+extern GtkWidget *make_frame(GtkWidget *, char *);
 extern GtkWidget *prefs_away_list;
 extern GtkWidget *prefs_away_menu;
 extern GtkWidget *pref_fg_picture;

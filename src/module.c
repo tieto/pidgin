@@ -89,10 +89,10 @@ void gaim_probe_plugins() {
 	struct gaim_plugin *plug;
 	char userspace[128];
 	char *probedirs[] = {LIBDIR, &userspace, 0};
+	int l;
 #if GAIM_PLUGINS     
 	char *(*gaim_plugin_init)(GModule *);
 	char *(*cfunc)();
-	int l;
 	struct gaim_plugin_description *(*desc)();
 	GModule *handle;
 #endif
@@ -167,9 +167,11 @@ struct gaim_plugin *load_plugin(const char *filename)
 	if (!filename || !strlen(filename))
 		return NULL;
 
+#ifdef USE_PERL
 	if (is_so_file(filename, ".pl")) {
 		return perl_load_file(filename);
 	}
+#endif
 
 	while (filename && p) {
 		plug = (struct gaim_plugin *)p->data;

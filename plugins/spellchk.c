@@ -358,22 +358,18 @@ static void good_changed() {
 	}
 }
 
-void gaim_plugin_config() {
-	GtkWidget *win;
-	GtkWidget *vbox;
+GtkWidget *gaim_plugin_config_gtk() {
+	GtkWidget *ret, *vbox, *win;
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GList *w = words;
 	struct replace_words *r;
 	char *pair[2] = {"Replace", "With"};
-	
-	if (configwin) return;
-	GAIM_DIALOG(configwin);
-	gtk_widget_set_usize(configwin, 450, 250);
-	gtk_window_set_title(GTK_WINDOW(configwin), "Spell Check Config");
-	gtk_signal_connect(GTK_OBJECT(configwin), "destroy", GTK_SIGNAL_FUNC(close_config), NULL);
 
-	vbox = gtk_vbox_new(0, 2);
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	
+	vbox = make_frame(ret, _("Text Replacements"));
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
 	gtk_container_add(GTK_CONTAINER(configwin), vbox);
 	gtk_widget_show (vbox);
@@ -452,5 +448,6 @@ void gaim_plugin_config() {
 		w = w->next;
 	}
 
-	gtk_widget_show(configwin);
+	gtk_widget_show_all(ret);
+	return ret;
 }

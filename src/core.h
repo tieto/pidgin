@@ -132,6 +132,7 @@ struct gaim_plugin {
 	gchar path[128];
 	struct gaim_plugin_description desc;
 	gchar error[128];
+	void *iter;
 };
 
 #ifdef GAIM_PLUGINS

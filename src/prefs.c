@@ -90,8 +90,10 @@ void set_default_away(GtkWidget *, gpointer);
 static void apply_prefs();
 
 struct debug_window *dw = NULL;
-static GtkWidget *prefs = NULL;
+GtkWidget *prefs = NULL;
 GtkWidget *debugbutton = NULL;
+static int notebook_page = 0;
+static GtkTreeIter plugin_iter;
 
 void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	int v;
@@ -107,6 +109,7 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	browser_entry = NULL;
 	debugbutton = NULL;
 	prefs_away_menu = NULL;
+	notebook_page = 0;
 	if(sounddialog)
 		gtk_widget_destroy(sounddialog);
 	g_object_unref(G_OBJECT(prefs_away_store));
@@ -145,7 +148,7 @@ static void proxy_print_option(GtkEntry *entry, int entrynum)
 }
 
 
-static GtkWidget *make_frame(GtkWidget *ret, char *text) {
+GtkWidget *make_frame(GtkWidget *ret, char *text) {
 	GtkWidget *vbox, *label, *hbox;
 	char labeltext[256];
 
@@ -885,6 +888,8 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
 	struct gaim_plugin *plug;
 	gchar buf[1024];
+	GtkWidget *(*config)();
+	
 	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
 	gdk_window_set_cursor(prefs->window, wait);
 	gdk_cursor_unref(wait);
@@ -896,7 +901,13 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 
 		if (plug->type == plugin)
 #ifdef GAIM_PLUGINS
-			load_plugin(plug->path);
+			{
+				load_plugin(plug->path);
+				if (g_module_symbol(plug->handle, "gaim_plugin_config_gtk", (gpointer *)&config)) {
+					plug->iter = g_new0(GtkTreeIter, 1);
+					prefs_notebook_add_page(plug->desc.name, NULL, config(), plug->iter, &plugin_iter, notebook_page++);
+				}
+			}
 #else
 	        {}	
 #endif
@@ -909,7 +920,14 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	else
 		if (plug->type == plugin)
 #ifdef GAIM_PLUGINS
-			unload_plugin(plug);
+			{
+				unload_plugin(plug);
+				if (plug->iter) {
+					gtk_tree_store_remove(GTK_TREE_STORE(prefstree), plug->iter);
+					g_free(plug->iter);
+					plug->iter = NULL;
+				}
+			}
 #else
 	                {} 
 #endif
@@ -1418,26 +1436,38 @@ GtkTreeIter *prefs_notebook_add_page(char *text,
 }
 
 void prefs_notebook_init() {
-	int a = 0;
 	GtkTreeIter p, c;
-	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, a++);
-	prefs_notebook_add_page(_("Fonts"), NULL, font_page(), &c, &p, a++);
-	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, a++);
-	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, a++);
-	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, a++);
-	prefs_notebook_add_page(_("IM Window"), NULL, im_page(), &c, &p, a++);
-	prefs_notebook_add_page(_("Chat Window"), NULL, chat_page(), &c, &p, a++);
-	prefs_notebook_add_page(_("Tabs"), NULL, tab_page(), &c, &p, a++);
-	prefs_notebook_add_page(_("Proxy"), NULL, proxy_page(), &p, NULL, a++);
-	prefs_notebook_add_page(_("Browser"), NULL, browser_page(), &p, NULL, a++);
-
-	prefs_notebook_add_page(_("Logging"), NULL, logging_page(), &p, NULL, a++);
-	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &p, NULL, a++);
-	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, a++);
-	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, a++);
-	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, a++);
 #if USE_PLUGINS
-	prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &p, NULL, a++);
+	GtkWidget *(*config)();
+	GList *l = plugins;
+	struct gaim_plugin *plug;
+#endif
+	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("Fonts"), NULL, font_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("IM Window"), NULL, im_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Chat Window"), NULL, chat_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Tabs"), NULL, tab_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Proxy"), NULL, proxy_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("Browser"), NULL, browser_page(), &p, NULL, notebook_page++);
+
+	prefs_notebook_add_page(_("Logging"), NULL, logging_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, notebook_page++);
+#if USE_PLUGINS
+	prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
+	while (l) {
+		plug = l->data;
+		if (plug->type == plugin && g_module_symbol(plug->handle, "gaim_plugin_config_gtk", (gpointer *)&config)) {
+			plug->iter = g_new0(GtkTreeIter, 1);
+			prefs_notebook_add_page(plug->desc.name, NULL, config(), plug->iter, &plugin_iter, notebook_page++);
+		}
+		l = l->next;
+	}
 #endif
 }
 

@@ -41,9 +41,7 @@ void *handle;
  */
 GtkWidget *really_evil_hack;
 /*  GHashTable *hash = NULL; */
-GtkWidget *Dialog = NULL;
-GtkWidget *Click, *Focus, *Type, *InFocus;
-GtkWidget *String, *Count, *Quote, *Urgent, *Entry;
+GtkWidget *Entry;
 gchar *title_string = "(*) ";
 
 /* predefine some functions, less warnings */
@@ -321,51 +319,6 @@ void options(GtkWidget *widget, gpointer data) {
 		method ^= METHOD_COUNT;
 }
 
-void setup_buttons() {
-	if (choice & NOTIFY_FOCUS)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Focus), TRUE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Click), TRUE);
-	if (choice & NOTIFY_TYPE)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Type), TRUE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Type), FALSE);
-
-	if (method & METHOD_STRING)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(String), TRUE);
-	else
-		gtk_widget_set_sensitive(Entry, FALSE);
-
-	if (method & METHOD_QUOTE)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Quote), TRUE);
-
-	if (method & METHOD_URGENT)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Urgent), TRUE);
-
-	if (choice & NOTIFY_IN_FOCUS)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(InFocus), TRUE);
-
-	if (method & METHOD_COUNT)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(Count), TRUE);
-
-	return;
-}
-
-void close_dialog(GtkWidget *widget, gpointer data) {
-	gint option = GPOINTER_TO_INT(data);
-
-	if (option > 0) {
-		title_string = g_strdup(gtk_entry_get_text(GTK_ENTRY(Entry)));
-		save_notify_prefs();
-	}
-	else if (option < 0)
-		load_notify_prefs();
-
-	if (Dialog)
-		gtk_widget_destroy(Dialog);
-	Dialog = NULL;
-}
-
 char *gaim_plugin_init(GModule *hndl) {
 	handle = hndl;
 
@@ -425,112 +378,57 @@ char *description() {
 		" where you have not responded to a message yet.";
 }
 
-void gaim_plugin_config() {
-	GtkWidget *dialog_vbox;
-	GtkWidget *button, *label;
-	GtkWidget *box, *box2, *box3, *box4, *frame;
+GtkWidget *gaim_plugin_config_gtk() {
+	GtkWidget *ret;
+	GtkWidget *vbox, *hbox;
+	GtkWidget *toggle;
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
-	if (Dialog)
-		return;
-
-	/* main config dialog */
-	Dialog = gtk_dialog_new();
-	gtk_window_set_title(GTK_WINDOW(Dialog), "Notify plugin configuration");
-	gtk_window_set_policy(GTK_WINDOW(Dialog), FALSE, FALSE, TRUE);
-	gtk_signal_connect(GTK_OBJECT(Dialog), "destroy", GTK_SIGNAL_FUNC(close_dialog), GINT_TO_POINTER(-1));
-
-	dialog_vbox = GTK_DIALOG(Dialog)->vbox;
-
-	/* Ok and Cancel buttons */
-	box = gtk_hbox_new(FALSE, 8);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(Dialog)->action_area), box);
-
-  button = gtk_button_new_with_label(_("Cancel"));
-  gtk_box_pack_end(GTK_BOX(box), button, FALSE, FALSE, 0);
-  gtk_widget_set_usize(button, 80, -2);
-  gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(close_dialog), GINT_TO_POINTER(0));
-
-  button = gtk_button_new_with_label(_("Ok"));
-  gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
-  gtk_widget_set_usize(button, 80, -2);
-  gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(close_dialog), GINT_TO_POINTER(1));
-
-	/* warning label */
-	label = gtk_label_new(_("Changes in notification removal options take effect only on new conversation windows"));
-	gtk_box_pack_start(GTK_BOX(dialog_vbox), label, FALSE, FALSE, 1);
-
-	/* main hbox */
-	box = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(dialog_vbox), box, FALSE, FALSE, 0);
-
-	box4 = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), box4, FALSE, FALSE, 0);
-
-	/* un-notify choices */
-	frame = gtk_frame_new(_("Remove notification when:"));
-	gtk_box_pack_start(GTK_BOX(box4), frame, FALSE, FALSE, 0);
-
-	box2 = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), box2);
-
-	Focus = gtk_radio_button_new_with_label(NULL, _("Conversation window gains focus."));
-	gtk_box_pack_start(GTK_BOX(box2), Focus, FALSE, FALSE, 2);
-
-	Click = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(Focus), _("Conversation window gets clicked."));
-	gtk_box_pack_start(GTK_BOX(box2), Click, FALSE, FALSE, 2);
-
-	Type = gtk_check_button_new_with_label(_("Type in conversation window"));
-	gtk_box_pack_start(GTK_BOX(box2), Type, FALSE, FALSE, 2);
-
-	/* notification method choices */
-	/* do I need/want any other notification methods? */
-	frame = gtk_frame_new(_("Notification method:"));
-	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 0);
-
-	box2 = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), box2);
-
-	box3 = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box2), box3, FALSE, FALSE, 0);
-
-	String = gtk_check_button_new_with_label(_("Insert string into window title:"));
-	gtk_box_pack_start(GTK_BOX(box3), String, FALSE, FALSE, 0);
-
+	vbox = make_frame(ret, _("Notification Methods"));
+	hbox = gtk_hbox_new(FALSE, 18);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	toggle = gtk_check_button_new_with_mnemonic(_("Prepend _string into window title:"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), method & METHOD_STRING);
+	gtk_signal_connect(GTK_OBJECT(toggle), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(2));
+	gtk_box_pack_start(GTK_BOX(hbox), toggle, FALSE, FALSE, 0);
 	Entry = gtk_entry_new_with_max_length(7);
-	gtk_box_pack_start(GTK_BOX(box3), Entry, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(GTK_WIDGET(Entry), method & METHOD_STRING);
+	gtk_box_pack_start(GTK_BOX(hbox), Entry, FALSE, FALSE, 0);
 	gtk_entry_set_text(GTK_ENTRY(Entry), title_string);
 
-	Quote = gtk_check_button_new_with_label(_("Quote window title."));
-	gtk_box_pack_start(GTK_BOX(box2), Quote, FALSE, FALSE, 0);
+	toggle = gtk_check_button_new_with_mnemonic(_("_Quote window title."));
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), method & METHOD_QUOTE);
+	gtk_signal_connect(GTK_OBJECT(toggle), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(3));
 
-	Urgent = gtk_check_button_new_with_label(_("Send URGENT to window manager."));
-	gtk_box_pack_start(GTK_BOX(box2), Urgent, FALSE, FALSE, 0);
+	toggle = gtk_check_button_new_with_mnemonic(_("Set Window Manager \"_URGENT\" Hint"));
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), method & METHOD_URGENT);
+	gtk_signal_connect(GTK_OBJECT(toggle), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(4));
+	
+	toggle = gtk_check_button_new_with_mnemonic(_("Insert _count of new messages into window title"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), method & METHOD_COUNT);
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(toggle), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(6));
 
-	label = gtk_label_new(_("Function oddly with tabs:"));
-	gtk_box_pack_start(GTK_BOX(box2), label, FALSE, FALSE, 0);
+	toggle = gtk_check_button_new_with_mnemonic(_("_Notify even if conversation is in focus."));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), choice & NOTIFY_IN_FOCUS);
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(toggle), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(5));
 
-	Count = gtk_check_button_new_with_label(_("Insert count of new messages into window title"));
-	gtk_box_pack_start(GTK_BOX(box2), Count, FALSE, FALSE, 0);
+	/*--------------*/
+	vbox = make_frame(ret, _("Notification Removal"));
+	toggle = gtk_check_button_new_with_mnemonic(_("Remove when conversation window gains _focus."));
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), choice & NOTIFY_FOCUS);
+	gtk_signal_connect(GTK_OBJECT(toggle), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(0));
 
-	/* general options */
-	frame = gtk_frame_new(_("General Options"));
-	gtk_box_pack_start(GTK_BOX(box4), frame, FALSE, FALSE, 0);
+	toggle = gtk_check_button_new_with_mnemonic(_("Remove when _typing in conversation window"));
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), choice & NOTIFY_TYPE);
+	gtk_signal_connect(GTK_OBJECT(toggle), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(1));
 
-	box = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), box);
-
-	InFocus = gtk_check_button_new_with_label(_("Notify even when window is in focus"));
-	gtk_box_pack_start(GTK_BOX(box), InFocus, FALSE, FALSE, 0);
-
-	/* setup buttons, then attach signals */
-	setup_buttons();
-	gtk_signal_connect(GTK_OBJECT(Focus), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(0));
-	gtk_signal_connect(GTK_OBJECT(Type), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(1));
-	gtk_signal_connect(GTK_OBJECT(String), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(2));
-	gtk_signal_connect(GTK_OBJECT(Quote), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(3));
-	gtk_signal_connect(GTK_OBJECT(Urgent), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(4));
-	gtk_signal_connect(GTK_OBJECT(InFocus), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(5));
-	gtk_signal_connect(GTK_OBJECT(Count), "toggled", GTK_SIGNAL_FUNC(options), GINT_TO_POINTER(6));
-
-	gtk_widget_show_all(Dialog);
+	gtk_widget_show_all(ret);
+	return ret;
 }

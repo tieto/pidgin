@@ -293,75 +293,40 @@ static void parent_destroy()
 	parent = NULL;
 }
 
-void gaim_plugin_config()
+GtkWidget *gaim_plugin_config_gtk()
 {
-	GtkWidget *vbox;
-	GtkWidget *frame;
-	GtkWidget *box;
-	GtkWidget *table;
-	GtkWidget *rem_button, *add_button, *ref_button;
+	GtkWidget *ret, *vbox;
 	GtkWidget *list1, *list2;
-	GtkWidget *label;
 	GtkWidget *sw1, *sw2;
-	GtkWidget *item;
-	GtkWidget *hbox;
-	GtkWidget *button;
-	GList *crs = chat_rooms;
+	GtkWidget *ref_button, *add_button, *rem_button;
+	GtkWidget *table, *label;
+	struct chat_room *cr = NULL;
 	GList *items = NULL;
-	struct chat_room *cr;
-
-	if (parent) {
-		gtk_widget_show(parent);
-		return;
-	}
-
+	GList *crs = chat_rooms;
+	
 	if (cp)
-		g_free(cp);
-	cp = g_new0(struct chat_page, 1);
+                g_free(cp);
+        cp = g_new0(struct chat_page, 1);
 
-	parent = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_widget_set_usize(parent, 300, 400);
-	gtk_window_set_title(GTK_WINDOW(parent), "Chat Rooms");
-	gtk_window_set_wmclass(GTK_WINDOW(parent), "chatlist", "Gaim");
-	gtk_widget_realize(parent);
-	gtk_signal_connect(GTK_OBJECT(parent), "destroy",
-			   GTK_SIGNAL_FUNC(parent_destroy), NULL);
 
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(parent), vbox);
-	gtk_widget_show(vbox);
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
-
-	button = picture_button(parent, _("Close"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-			   GTK_SIGNAL_FUNC(parent_destroy), NULL);
-
-	frame = gtk_frame_new(_("Chat Rooms"));
-	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 5);
-	gtk_widget_show(frame);
-
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
-	gtk_container_add(GTK_CONTAINER(frame), box);
-	gtk_widget_show(box);
+	vbox = make_frame(ret, _("Chat Rooms"));
 
 	table = gtk_table_new(4, 2, FALSE);
 	gtk_widget_show(table);
 
-	gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), table, TRUE, TRUE, 0);
 
 	list1 = gtk_list_new();
 	list2 = gtk_list_new();
 	sw1 = gtk_scrolled_window_new(NULL, NULL);
 	sw2 = gtk_scrolled_window_new(NULL, NULL);
 
-	ref_button = picture_button(parent, _("Refresh"), refresh_xpm);
-	add_button = picture_button(parent, _("Add"), gnome_add_xpm);
-	rem_button = picture_button(parent, _("Remove"), gnome_remove_xpm);
+	ref_button = picture_button(prefs, _("Refresh"), refresh_xpm);
+	add_button = picture_button(prefs, _("Add"), gnome_add_xpm);
+	rem_button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
 	gtk_widget_show(list1);
 	gtk_widget_show(sw1);
 	gtk_widget_show(list2);
@@ -370,19 +335,12 @@ void gaim_plugin_config()
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw1), list1);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list2);
 
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw1),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-
 	cp->list1 = list1;
 	cp->list2 = list2;
 
 	gtk_signal_connect(GTK_OBJECT(ref_button), "clicked", GTK_SIGNAL_FUNC(refresh_list), cp);
 	gtk_signal_connect(GTK_OBJECT(rem_button), "clicked", GTK_SIGNAL_FUNC(remove_chat), cp);
 	gtk_signal_connect(GTK_OBJECT(add_button), "clicked", GTK_SIGNAL_FUNC(add_chat), cp);
-
-
 
 	label = gtk_label_new(_("List of available chats"));
 	gtk_widget_show(label);
@@ -423,8 +381,8 @@ void gaim_plugin_config()
 	}
 
 	gtk_list_append_items(GTK_LIST(list2), items);
-
-	gtk_widget_show(parent);
+	gtk_widget_show_all(ret);
+	return ret;
 }
 
 static void handle_signon(struct gaim_connection *gc)

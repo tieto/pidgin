@@ -16,10 +16,6 @@ void gaim_plugin_remove() {
 	handle = NULL;
 }
 
-void gaim_plugin_config() {
-	printf("configuring plugin.\n");
-}
-
 struct gaim_plugin_description desc; 
 struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
