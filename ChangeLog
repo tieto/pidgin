@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 0.79cvs:
+version 0.79 (06/24/2004):
 	New Features:
 	* Display name changes are now shown in the conversation windows.
 	  (Robert Mibus)
@@ -34,8 +34,7 @@ version 0.79cvs:
 	  logged in using the web messenger method
 
 	Bug Fixes:
-	* Switched Yahoo! (not Japan) over to using Web Messenger auth
-	  again, like 0.75, due to last minute protocol changes
+	* Fixed Yahoo! authentication problems.  (Cerulean Studios)	
 	* Non-looping animated icons no longer cause Gaim to freeze
 	* Flashing windows should work again for unix in window managers that
 	  support the URGENT hint (Etan Reisner)

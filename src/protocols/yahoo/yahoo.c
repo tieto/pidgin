@@ -1496,6 +1496,8 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	 */
 	
 	shaUpdate(&ctx1, pass_hash_xor1, 64);
+	if (y >= 3)
+		ctx1.sizeLo = 0x1ff;
 	shaUpdate(&ctx1, magic_key_char, 4);
 	shaFinal(&ctx1, digest1);
 	
@@ -1587,6 +1589,8 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	 */
 	
 	shaUpdate(&ctx1, crypt_hash_xor1, 64);
+	if (y >= 3)
+		ctx1.sizeLo = 0x1ff;
 	shaUpdate(&ctx1, magic_key_char, 4);
 	shaFinal(&ctx1, digest1);
 	
