@@ -131,7 +131,7 @@ static void load_file(GtkWidget *w, gpointer data)
 
 	g_free(buf);
 
-	gtk_widget_show(GTK_FILE_SELECTION(plugin_dialog)->ok_button);
+	gtk_widget_show(plugin_dialog);
 	gdk_window_raise(plugin_dialog->window);   
 }
 
