@@ -162,13 +162,52 @@ __get_mac_address(const char *ip)
 /**************************************************************************
  * Callbacks
  **************************************************************************/
+#define SET_STRING_FIELD(tag, id) \
+	if ((value = gaim_request_fields_get_string(fields, (id))) != NULL) { \
+		buf = g_strdup_printf("%s<%s>%s</%s>", temp, (tag), value, (tag)); \
+		g_free(temp); \
+		temp = buf; \
+	}
+
+#define SET_INT_FIELD(tag, id) \
+	int_val = gaim_request_fields_get_integer(fields, (id)); \
+	buf = g_strdup_printf("%s<%s>%d</%s>", temp, (tag), int_val, (tag)); \
+	g_free(temp); \
+	temp = buf;
+
 static void
 save_profile_cb(GaimConnection *gc, GaimRequestFields *fields)
 {
+	const char *value;
 	char *buf, *temp;
+	int int_val;
 
 	buf = g_strdup("<K>");
 	temp = buf;
+
+	SET_STRING_FIELD("b", "email");
+	SET_STRING_FIELD("c", "homepage");
+	SET_STRING_FIELD("d", "firstname");
+	SET_STRING_FIELD("e", "lastname");
+	SET_STRING_FIELD("f", "icq");
+	SET_STRING_FIELD("g", "aim");
+	SET_STRING_FIELD("h", "msn");
+	SET_STRING_FIELD("i", "yahoo");
+	SET_INT_FIELD(   "j", "age");
+
+	int_val = gaim_request_fields_get_choice(fields, "gender");
+
+	buf = g_strdup_printf("%s<k>%c</k>", temp, (int_val == 1 ? 'F' : 'M'));
+	g_free(temp);
+	temp = buf;
+
+	SET_STRING_FIELD("l", "profile");
+	SET_STRING_FIELD("n", "country");
+	SET_STRING_FIELD("o", "state");
+	SET_STRING_FIELD("p", "city");
+	SET_STRING_FIELD("o", "state");
+
+	buf = g_strdup_printf("%s</K>", temp);
 
 	gaim_debug(GAIM_DEBUG_MISC, "trepia", "Setting profile: {%s}\n",
 			   buf);
@@ -191,6 +230,8 @@ set_profile(GaimConnection *gc)
 	field = gaim_request_field_string_new("firstname", _("First Name"), NULL,
 										  FALSE);
 	gaim_request_field_group_add_field(group, field);
+	gaim_debug(GAIM_DEBUG_MISC, "trepia", "feld type = %d\n",
+			   field->type);
 
 	/* Last Name */
 	field = gaim_request_field_string_new("lastname", _("Last Name"), NULL,
@@ -249,16 +290,16 @@ set_profile(GaimConnection *gc)
 	group = gaim_request_field_group_new(_("I'm From"));
 	gaim_request_fields_add_group(fields, group);
 
-	/* Country */
-	field = gaim_request_field_string_new("country", _("Country"), NULL, FALSE);
+	/* City */
+	field = gaim_request_field_string_new("city", _("City"), NULL, FALSE);
 	gaim_request_field_group_add_field(group, field);
 
 	/* State */
 	field = gaim_request_field_string_new("state", _("State"), NULL, FALSE);
 	gaim_request_field_group_add_field(group, field);
 
-	/* City */
-	field = gaim_request_field_string_new("city", _("City"), NULL, FALSE);
+	/* Country */
+	field = gaim_request_field_string_new("country", _("Country"), NULL, FALSE);
 	gaim_request_field_group_add_field(group, field);
 
 
