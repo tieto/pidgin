@@ -39,12 +39,6 @@
 #include "prefs.h"
 #include "signals.h"
 
-/* XXX - Get this out of here! */
-#include "away.h"
-
-/* XXX For the away stuff */
-#include "gaim.h"
-
 #define IDLEMARK 600   	/* 10 minutes! */
 
 gint check_idle(gpointer data)

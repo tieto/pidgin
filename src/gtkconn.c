@@ -29,7 +29,6 @@
 #include "stock.h"
 #include "util.h"
 
-#include "away.h"
 #include "gtkblist.h"
 #include "gtkdialogs.h"
 #include "gtkutils.h"

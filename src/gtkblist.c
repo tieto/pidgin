@@ -37,7 +37,6 @@
 #include "stock.h"
 #include "util.h"
 
-#include "away.h"
 #include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkconv.h"

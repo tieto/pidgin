@@ -99,7 +99,6 @@ gaim_coresources = \
 gaim_coreheaders = \
 	account.h \
 	accountopt.h \
-	away.h \
 	blist.h \
 	buddyicon.h \
 	cmds.h \
@@ -139,7 +138,6 @@ bin_PROGRAMS = gaim gaim-remote
 
 gaim_SOURCES = \
 	$(gaim_coresources) \
-	away.c \
 	dnd-hints.c \
 	gaim-disclosure.c \
 	gtkaccount.c \

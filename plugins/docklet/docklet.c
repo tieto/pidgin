@@ -40,7 +40,6 @@
 #include "sound.h"
 #include "version.h"
 
-#include "away.h"
 #include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkft.h"

@@ -25,10 +25,6 @@
 #include "sound.h"
 #include "prefs.h"
 
-/* XXX CORE/UI: this goes away when away messages become sane */
-#include "away.h"
-
-
 static GaimSoundUiOps *sound_ui_ops = NULL;
 
 void gaim_sound_set_ui_ops(GaimSoundUiOps *ops)

@@ -39,7 +39,6 @@
 #include "version.h"
 
 /* XXX */
-#include "away.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gaim.h"
