@@ -481,7 +481,7 @@ void irc_msg_ison(struct irc_conn *irc, const char *name, const char *from, char
 static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *irc)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
-	struct buddy *buddy = gaim_find_buddy(irc->account, name);
+	GaimBuddy *buddy = gaim_find_buddy(irc->account, name);
 
 	if (!gc || !buddy)
 		return;

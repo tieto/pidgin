@@ -54,8 +54,8 @@ struct gaim_gtk_buddy_list {
 
 	GtkWidget *treeview;            /**< It's a treeview... d'uh. */
 	GtkTreeStore *treemodel;        /**< This is the treemodel.  */
-	GtkTreeViewColumn *idle_column, 
-		*warning_column, 
+	GtkTreeViewColumn *idle_column,
+		*warning_column,
 		*buddy_icon_column;
 
 	GtkItemFactory *ift;
@@ -68,7 +68,7 @@ struct gaim_gtk_buddy_list {
 
 	guint      timeout;              /**< The timeout for the tooltip. */
 	GdkRectangle rect;               /**< This is the bounding rectangle of the
-					       cell we're currently hovering over.  This is 
+					       cell we're currently hovering over.  This is
 					       used for tooltips. */
 	GtkWidget *tipwindow;            /**< The window used by the tooltip */
 
@@ -99,7 +99,7 @@ struct gaim_blist_ui_ops *gaim_get_gtk_blist_ui_ops(void);
  * Returns the base image to represent the account, based on the currently selected theme
  *
  * @param account  The account.
- * 
+ *
  * @return         The icon
  */
 GdkPixbuf *create_prpl_icon(GaimAccount *account);
@@ -120,8 +120,8 @@ void gaim_gtk_blist_update_toolbar();
 
 /**
  * Useful for the docklet plugin and also for the win32 tray icon
- * This is called when one of those is clicked--it will show/hide the 
- * buddy list/login window--depending on which is active 
+ * This is called when one of those is clicked--it will show/hide the
+ * buddy list/login window--depending on which is active
  */
 void gaim_gtk_blist_docklet_toggle();
 void gaim_gtk_blist_docklet_add();

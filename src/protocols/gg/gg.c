@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 7147 2003-08-25 15:42:39Z lschiere $
+ * $Id: gg.c 7221 2003-09-02 03:41:10Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -251,7 +251,7 @@ static GList *agg_buddy_menu(GaimConnection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b = gaim_find_buddy(gc->account, who);
+	GaimBuddy *b = gaim_find_buddy(gc->account, who);
 	static char buf[AGG_BUF_LEN];
 
 	if (!b) {
@@ -773,8 +773,8 @@ static void import_buddies_server_results(GaimConnection *gc, gchar *webdata)
 		gaim_debug(GAIM_DEBUG_MISC, "gg",
 				   "import_buddies_server_results: uin: %s\n", name);
 		if (!gaim_find_buddy(gc->account, name)) {
-			struct buddy *b;
-			struct group *g;
+			GaimBuddy *b;
+			GaimGroup *g;
 			/* Default group if none specified on server */
 			gchar *group = g_strdup("Gadu-Gadu");
 			if (strlen(data_tbl[5])) {
@@ -791,7 +791,7 @@ static void import_buddies_server_results(GaimConnection *gc, gchar *webdata)
 				gaim_blist_add_group(g, NULL);
 			}
 			b = gaim_buddy_new(gc->account, name, strlen(show) ? show : NULL);
-			gaim_blist_add_buddy(b,g,NULL);
+			gaim_blist_add_buddy(b,NULL,g,NULL);
 			gaim_blist_save();
 			g_free(group);
 		}
@@ -1006,7 +1006,7 @@ static void export_buddies_server(GaimConnection *gc)
 	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));
 	gchar *p = gg_urlencode(gaim_account_get_password(gc->account));
 
-	GaimBlistNode *gnode, *bnode;
+	GaimBlistNode *gnode, *cnode, *bnode;
 
 	he->gc = gc;
 	he->type = AGG_HTTP_USERLIST_EXPORT;
@@ -1018,42 +1018,46 @@ static void export_buddies_server(GaimConnection *gc)
 	g_free(p);
 
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-		struct group *g = (struct group *)gnode;
+		GaimGroup *g = (GaimGroup *)gnode;
 		int num_added=0;
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for(bnode = gnode->child; bnode; bnode = bnode->next) {
-			struct buddy *b = (struct buddy *)bnode;
-
-			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b = (GaimBuddy *)bnode;
 
-			if(b->account == gc->account) {
-				gchar *newdata;
-				/* GG Number */
-				gchar *name = gg_urlencode(b->name);
-				/* GG Pseudo */
-				gchar *show = gg_urlencode(b->alias ? b->alias : b->name);
-				/* Group Name */
-				gchar *gname = gg_urlencode(g->name);
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
 
-				ptr = he->request;
-				newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s",
-						show, show, show, show, "", gname, name);
+				if(b->account == gc->account) {
+					gchar *newdata;
+					/* GG Number */
+					gchar *name = gg_urlencode(b->name);
+					/* GG Pseudo */
+					gchar *show = gg_urlencode(b->alias ? b->alias : b->name);
+					/* Group Name */
+					gchar *gname = gg_urlencode(g->name);
 
-				if(num_added > 0)
-					he->request = g_strconcat(ptr, "%0d%0a", newdata, NULL);
-				else
-					he->request = g_strconcat(ptr, newdata, NULL);
+					ptr = he->request;
+					newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s",
+							show, show, show, show, "", gname, name);
 
-				num_added++;
+					if(num_added > 0)
+						he->request = g_strconcat(ptr, "%0d%0a", newdata, NULL);
+					else
+						he->request = g_strconcat(ptr, newdata, NULL);
 
-				g_free(newdata);
-				g_free(ptr);
+					num_added++;
 
-				g_free(gname);
-				g_free(show);
-				g_free(name);
+					g_free(newdata);
+					g_free(ptr);
+
+					g_free(gname);
+					g_free(show);
+					g_free(name);
+				}
 			}
 		}
 	}
@@ -1254,12 +1258,12 @@ static void agg_get_info(GaimConnection *gc, const char *who)
 	}
 }
 
-static const char *agg_list_icon(GaimAccount *a, struct buddy *b)
+static const char *agg_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	return "gadu-gadu";
 }
 
-static void agg_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+static void agg_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	int status;
 	if (b->present == GAIM_BUDDY_OFFLINE)

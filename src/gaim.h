@@ -43,9 +43,9 @@ extern void show_set_dir(GaimConnection *);
 extern void show_find_email(GaimConnection *);
 extern void show_find_info(GaimConnection *);
 extern void show_set_info(GaimConnection *);
-extern void show_confirm_del(struct buddy *);
-extern void show_confirm_del_group(struct group *);
-extern void show_confirm_del_chat(struct chat *);
+extern void show_confirm_del(GaimBuddy *);
+extern void show_confirm_del_group(GaimGroup *);
+extern void show_confirm_del_blist_chat(GaimBlistChat *);
 
 /* Functions in gaimrc.c */
 extern gint sort_awaymsg_list(gconstpointer, gconstpointer);

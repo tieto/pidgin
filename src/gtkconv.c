@@ -456,7 +456,7 @@ static void
 add_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimConnection *gc;
-	struct buddy *b;
+	GaimBuddy *b;
 	const char *name;
 
 	gc   = gaim_conversation_get_gc(conv);
@@ -734,7 +734,7 @@ menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimWindow *win = (GaimWindow *)data;
 	GaimConversation *conv;
-	struct buddy *b;
+	GaimBuddy *b;
 
 	conv = gaim_window_get_active_conversation(win);
 
@@ -991,7 +991,7 @@ static void
 menu_chat_add_cb(GtkWidget *w, GaimConversation *conv)
 {
 	GaimConnection *gc;
-	struct buddy *b;
+	GaimBuddy *b;
 	char *name;
 
 	gc   = gaim_conversation_get_gc(conv);
@@ -1468,9 +1468,8 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 		if (gaim_im_get_type_again_timeout(im))
 			gaim_im_stop_type_again_timeout(im);
 
-		/* XXX The (char *) should go away! Somebody add consts to stuff! */
 		serv_send_typing(gaim_conversation_get_gc(conv),
-						 (char *)gaim_conversation_get_name(conv),
+						 gaim_conversation_get_name(conv),
 						 GAIM_NOT_TYPING);
 	}
 	else {
@@ -2462,9 +2461,7 @@ generate_send_as_items(GaimWindow *win, GaimConversation *deleted_conv)
 static GList *
 generate_invite_user_names(GaimConnection *gc)
 {
-	GaimBlistNode *gnode,*bnode;
-	struct group *g;
-	struct buddy *buddy;
+	GaimBlistNode *gnode,*cnode,*bnode;
 	static GList *tmp = NULL;
 
 	if (tmp)
@@ -2476,14 +2473,21 @@ generate_invite_user_names(GaimConnection *gc)
 		for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 			if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 				continue;
-			g = (struct group *)gnode;
-			for(bnode = gnode->child; bnode; bnode = bnode->next) {
-				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+			for(cnode = gnode->child; cnode; cnode = cnode->next) {
+				if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 					continue;
-				buddy = (struct buddy *)bnode;
+				for(bnode = cnode->child; bnode; bnode = bnode->next) {
+					GaimBuddy *buddy;
 
-				if (buddy->account == gc->account && GAIM_BUDDY_IS_ONLINE(buddy))
-					tmp = g_list_append(tmp, buddy->name);
+					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+
+					buddy = (GaimBuddy *)bnode;
+
+					if (buddy->account == gc->account &&
+							GAIM_BUDDY_IS_ONLINE(buddy))
+						tmp = g_list_append(tmp, buddy->name);
+				}
 			}
 		}
 	}
@@ -3637,14 +3641,19 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
 		GaimBlistNode *n = NULL;
+		GaimBuddy *b;
 		memcpy(&n, sd->data, sizeof(n));
 
-		if (!GAIM_BLIST_NODE_IS_BUDDY(n))
+		if (GAIM_BLIST_NODE_IS_CONTACT(n))
+			b = gaim_contact_get_priority_buddy((GaimContact*)n);
+		else if (GAIM_BLIST_NODE_IS_BUDDY(n))
+			b = (GaimBuddy*)n;
+		else
 			return;
 
 		c = gaim_conversation_new(GAIM_CONV_IM,
-								  ((struct buddy *)n)->account,
-								  ((struct buddy *)n)->name);
+								  ((GaimBuddy *)n)->account,
+								  ((GaimBuddy *)n)->name);
 
 		gaim_window_add_conversation(win, c);
 	}
@@ -4847,7 +4856,7 @@ update_tab_icon(GaimConversation *conv)
 	GaimGtkConversation *gtkconv;
 	GaimAccount *account;
 	const char *name;
-	struct buddy *b;
+	GaimBuddy *b;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	name = gaim_conversation_get_name(conv);
@@ -5198,7 +5207,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	GError *err = NULL;
 	gboolean animate = TRUE;
 
-	struct buddy *buddy;
+	GaimBuddy *buddy;
 
 	void *data;
 	int len, delay;

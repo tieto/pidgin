@@ -270,13 +270,13 @@ initiate_chat_cb(GaimConnection *gc, const char *passport)
  **************************************************************************/
 
 static const char *
-msn_list_icon(GaimAccount *a, struct buddy *b)
+msn_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	return "msn";
 }
 
 static void
-msn_list_emblems(struct buddy *b, char **se, char **sw,
+msn_list_emblems(GaimBuddy *b, char **se, char **sw,
 				 char **nw, char **ne)
 {
 	MsnUser *user;
@@ -308,7 +308,7 @@ msn_list_emblems(struct buddy *b, char **se, char **sw,
 }
 
 static char *
-msn_status_text(struct buddy *b)
+msn_status_text(GaimBuddy *b)
 {
 	if (b->uc & UC_UNAVAILABLE)
 		return g_strdup(msn_away_get_text(MSN_AWAY_TYPE(b->uc)));
@@ -317,7 +317,7 @@ msn_status_text(struct buddy *b)
 }
 
 static char *
-msn_tooltip_text(struct buddy *b)
+msn_tooltip_text(GaimBuddy *b)
 {
 	char *text = NULL;
 	/* MsnUser *user = b->proto_data; */
@@ -403,7 +403,7 @@ msn_buddy_menu(GaimConnection *gc, const char *who)
 	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnUser *user;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b;
+	GaimBuddy *b;
 	GList *m = NULL;
 
 	b = gaim_find_buddy(gc->account, who);
@@ -1116,7 +1116,7 @@ msn_rename_group(GaimConnection *gc, const char *old_group_name,
 }
 
 static void
-msn_buddy_free(struct buddy *b)
+msn_buddy_free(GaimBuddy *b)
 {
 	if (b->proto_data != NULL) {
 		msn_user_destroy(b->proto_data);

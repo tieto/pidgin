@@ -516,7 +516,7 @@ void serv_remove_buddies(GaimConnection *gc, GList *g, const char *group)
 /*
  * Set buddy's alias on server roster/list
  */
-void serv_alias_buddy(struct buddy *b)
+void serv_alias_buddy(GaimBuddy *b)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -529,7 +529,7 @@ void serv_alias_buddy(struct buddy *b)
 }
 
 void serv_got_alias(GaimConnection *gc, const char *who, const char *alias) {
-	struct buddy *b = gaim_find_buddy(gc->account, who);
+	GaimBuddy *b = gaim_find_buddy(gc->account, who);
 
 	if(!b)
 		return;
@@ -543,7 +543,7 @@ void serv_got_alias(GaimConnection *gc, const char *who, const char *alias) {
  * Note: For now we'll not deal with changing gc's at the same time, but
  * it should be possible.  Probably needs to be done, someday.
  */
-void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
+void serv_move_buddy(GaimBuddy *b, GaimGroup *og, GaimGroup *ng)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -560,7 +560,7 @@ void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
 /*
  * Rename a group on server roster/list.
  */
-void serv_rename_group(GaimConnection *g, struct group *old_group,
+void serv_rename_group(GaimConnection *g, GaimGroup *old_group,
 					   const char *new_name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -570,15 +570,22 @@ void serv_rename_group(GaimConnection *g, struct group *old_group,
 
 	if (prpl_info && old_group && new_name) {
 		GList *tobemoved = NULL;
-		GaimBlistNode *b = ((GaimBlistNode*)old_group)->child;
+		GaimBlistNode *cnode, *bnode;
 
-		while (b) {
-			if(GAIM_BLIST_NODE_IS_BUDDY(b)) {
-				struct buddy *bd = (struct buddy *)b;
-				if (bd->account == g->account)
-					tobemoved = g_list_append(tobemoved, bd->name);
+		for(cnode = ((GaimBlistNode*)old_group)->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b;
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				b = (GaimBuddy*)bnode;
+
+				if(b->account == g->account)
+					tobemoved = g_list_append(tobemoved, b->name);
+
 			}
-			b = b->next;
+
 		}
 
 		if (prpl_info->rename_group) {
@@ -890,8 +897,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	if (gc->away) {
 		time_t t = time(NULL);
 		char *tmpmsg;
-		struct buddy *b = gaim_find_buddy(gc->account, name);
-		char *alias = b ? gaim_get_buddy_alias(b) : name;
+		GaimBuddy *b = gaim_find_buddy(gc->account, name);
+		const char *alias = b ? gaim_get_buddy_alias(b) : name;
 		int row;
 		struct last_auto_response *lar;
 
@@ -1073,7 +1080,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 {
 	GaimAccount *account;
 	GaimConversation *c;
-	struct buddy *b;
+	GaimBuddy *b;
 	GSList *buddies;
 
 	account = gaim_connection_get_account(gc);
@@ -1233,7 +1240,7 @@ void serv_got_eviled(GaimConnection *gc, const char *name, int lev)
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 GaimTypingState state) {
 
-	struct buddy *b;
+	GaimBuddy *b;
 	GaimConversation *cnv = gaim_find_conversation_with_account(name, gc->account);
 	GaimIm *im;
 
@@ -1265,7 +1272,7 @@ void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 
 	GaimConversation *c = gaim_find_conversation_with_account(name, gc->account);
 	GaimIm *im;
-	struct buddy *b;
+	GaimBuddy *b;
 
 	if (!c)
 		return;

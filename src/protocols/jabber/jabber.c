@@ -959,7 +959,7 @@ static gboolean find_chat_buddy(GaimConversation *b, char *name)
  */
 static void jabber_remove_gaim_buddy(GaimConnection *gc, const char *buddyname)
 {
-	struct buddy *b;
+	GaimBuddy *b;
 
 	if ((b = gaim_find_buddy(gc->account, buddyname)) != NULL) {
 		gaim_debug(GAIM_DEBUG_INFO, "jabber",
@@ -1492,7 +1492,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 static void jabber_handlepresence(gjconn gjc, jpacket p)
 {
 	char *to, *from, *type;
-	struct buddy *b = NULL;
+	GaimBuddy *b = NULL;
 	gaim_jid gjid;
 	char *buddy;
 	xmlnode y;
@@ -1787,7 +1787,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	xmlnode g;
 	char *who, *name, *sub, *ask;
 	gaim_jid gjid;
-	struct buddy *b = NULL;
+	GaimBuddy *b = NULL;
 	struct jabber_buddy_data *jbd = NULL;
 	char *buddyname, *groupname = NULL;
 
@@ -1822,7 +1822,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	 */
 	if (BUD_SUB_TO_PEND(sub, ask) || BUD_SUBD_TO(sub, ask)) {
 		if ((b = gaim_find_buddy(GJ_GC(gjc)->account, buddyname)) == NULL) {
-			struct group *g;
+			GaimGroup *g;
 			b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
 			if (groupname) {
 				if (!(g = gaim_find_group(groupname))) {
@@ -1835,23 +1835,23 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 			}
 			gaim_debug(GAIM_DEBUG_INFO, "jabber",
 					   "adding buddy [4]: %s\n", buddyname);
-			gaim_blist_add_buddy(b, g, NULL);
+			gaim_blist_add_buddy(b, NULL, g, NULL);
 			gaim_blist_save();
 		} else {
 			gboolean save = FALSE;
-			struct group *c_grp = gaim_find_buddys_group(b);
+			GaimGroup *c_grp = gaim_find_buddys_group(b);
 
 			/*
 			 * If the buddy's in a new group or his/her alias is changed...
 			 */
 			if(groupname && c_grp && strcmp(c_grp->name, groupname)) {
-				struct group *g = gaim_find_group(groupname);
+				GaimGroup *g = gaim_find_group(groupname);
 				if(!g) {
 					g = gaim_group_new(groupname);
 					gaim_blist_add_group(g, NULL);
 				}
 
-				gaim_blist_add_buddy(b, g, NULL);
+				gaim_blist_add_buddy(b, NULL, g, NULL);
 				save = TRUE;
 			}
 
@@ -2563,8 +2563,8 @@ static void jabber_roster_update(GaimConnection *gc, const char *name, const cha
 	xmlnode x, y;
 	char *realwho;
 	gjconn gjc;
-	struct buddy *buddy = NULL;
-	struct group *buddy_group = NULL;
+	GaimBuddy *buddy = NULL;
+	GaimGroup *buddy_group = NULL;
 	const char *my_alias = NULL;
 	const char *my_group = NULL;
 
@@ -2859,12 +2859,12 @@ static void invisible_to_all_buddies(GaimConnection *gc, gboolean invisible)
 		g_hash_table_foreach(jd->buddies, set_invisible_to_buddy_status, GINT_TO_POINTER(invisible));
 }
 
-static const char *jabber_list_icon(GaimAccount *a, struct buddy *b)
+static const char *jabber_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	return "jabber";
 }
 
-static void jabber_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+static void jabber_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	struct jabber_buddy_data *jbd = jabber_find_buddy(b->account->gc, b->name, FALSE);
 
@@ -3326,7 +3326,7 @@ static void jabber_get_cb_away_msg(GaimConnection *gc, int cid, const char *who)
 
 }
 
-static char *jabber_tooltip_text(struct buddy *b)
+static char *jabber_tooltip_text(GaimBuddy *b)
 {
 	struct jabber_buddy_data *jbd = jabber_find_buddy(b->account->gc, b->name, FALSE);
 	jab_res_info jri = jabber_find_resource(b->account->gc, b->name);
@@ -3354,7 +3354,7 @@ static char *jabber_tooltip_text(struct buddy *b)
 	return ret;
 }
 
-static char *jabber_status_text(struct buddy *b)
+static char *jabber_status_text(GaimBuddy *b)
 {
 	struct jabber_buddy_data *jbd = jabber_find_buddy(b->account->gc, b->name, FALSE);
 	char *ret = NULL;
@@ -3379,7 +3379,7 @@ static char *jabber_status_text(struct buddy *b)
 static GList *jabber_buddy_menu(GaimConnection *gc, const char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
-	struct buddy *b = gaim_find_buddy(gc->account, who);
+	GaimBuddy *b = gaim_find_buddy(gc->account, who);
 
 	if(b->uc == UC_ERROR)
 	{

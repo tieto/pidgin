@@ -466,8 +466,8 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 	gboolean export = FALSE;
-	struct buddy *b;
-	struct group *g;
+	GaimBuddy *b;
+	GaimGroup *g;
 
 	while (l) {
 		char **lines;
@@ -498,7 +498,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 						gaim_blist_add_group(g, NULL);
 					}
 					b = gaim_buddy_new(gc->account, *bud, NULL);
-					gaim_blist_add_buddy(b, g, NULL);
+					gaim_blist_add_buddy(b, NULL, g, NULL);
 					export = TRUE;
 				}
 			g_strfreev(buddies);
@@ -541,7 +541,7 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 		else
 			serv_got_typing_stopped(gc, from);
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
-		struct buddy *bud = gaim_find_buddy(gc->account, from);
+		GaimBuddy *bud = gaim_find_buddy(gc->account, from);
 		void *free1=NULL, *free2=NULL;
 		if (!bud) {
 			gaim_debug(GAIM_DEBUG_WARNING, "yahoo",
@@ -1064,12 +1064,12 @@ static void yahoo_close(GaimConnection *gc) {
 	g_free(yd);
 }
 
-static const char *yahoo_list_icon(GaimAccount *a, struct buddy *b)
+static const char *yahoo_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	return "yahoo";
 }
 
-static void yahoo_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+static void yahoo_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	int i = 0;
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
@@ -1135,7 +1135,7 @@ static void yahoo_game(GaimConnection *gc, const char *name) {
 	g_free(game);
 }
 
-static char *yahoo_status_text(struct buddy *b)
+static char *yahoo_status_text(GaimBuddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
 
@@ -1153,7 +1153,7 @@ static char *yahoo_status_text(struct buddy *b)
 	return NULL;
 }
 
-static char *yahoo_tooltip_text(struct buddy *b)
+static char *yahoo_tooltip_text(GaimBuddy *b)
 {
 	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
 	if ((b->uc & UC_UNAVAILABLE) || ((b->uc >> 2) == YAHOO_STATUS_CUSTOM)) {
@@ -1179,7 +1179,7 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	struct buddy *b = gaim_find_buddy(gc->account, who); /* this should never be null. if it is,
+	GaimBuddy *b = gaim_find_buddy(gc->account, who); /* this should never be null. if it is,
 						  segfault and get the bug report. */
 	static char buf2[1024];
 
@@ -1407,7 +1407,7 @@ static void yahoo_add_buddy(GaimConnection *gc, const char *who)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
-	struct group *g;
+	GaimGroup *g;
 	char *group = NULL;
 
 	if (!yd->logged_in)

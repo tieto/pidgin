@@ -71,10 +71,10 @@ void serv_chat_whisper(GaimConnection *, int, const char *, const char *);
 int  serv_chat_send(GaimConnection *, int, const char *);
 void serv_got_popup(const char *, const char *, int, int);
 void serv_get_away(GaimConnection *, const char *);
-void serv_alias_buddy(struct buddy *);
+void serv_alias_buddy(GaimBuddy *);
 void serv_got_alias(GaimConnection *gc, const char *who, const char *alias);
-void serv_move_buddy(struct buddy *, struct group *, struct group *);
-void serv_rename_group(GaimConnection *, struct group *, const char *);
+void serv_move_buddy(GaimBuddy *, GaimGroup *, GaimGroup *);
+void serv_rename_group(GaimConnection *, GaimGroup *, const char *);
 void serv_got_eviled(GaimConnection *gc, const char *name, int lev);
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 GaimTypingState state);

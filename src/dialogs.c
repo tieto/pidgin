@@ -379,16 +379,16 @@ void show_warn_dialog(GaimConnection *gc, char *who)
 }
 
 static void
-do_remove_chat(struct chat *chat)
+do_remove_chat(GaimBlistChat *chat)
 {
 	gaim_blist_remove_chat(chat);
 	gaim_blist_save();
 }
 
 static void
-do_remove_buddy(struct buddy *b)
+do_remove_buddy(GaimBuddy *b)
 {
-	struct group *g;
+	GaimGroup *g;
 	GaimConversation *c;
 	gchar *name;
 	GaimAccount *account;
@@ -414,33 +414,45 @@ do_remove_buddy(struct buddy *b)
 	g_free(name);
 }
 
-void do_remove_group(struct group *g)
+void do_remove_group(GaimGroup *g)
 {
-	GaimBlistNode *b = ((GaimBlistNode*)g)->child;
-	while (b) {
-		if(GAIM_BLIST_NODE_IS_BUDDY(b)) {
-			struct buddy *bd = (struct buddy *)b;
-			GaimConversation *c = gaim_find_conversation_with_account(bd->name, bd->account);
-			if (gaim_account_is_connected(bd->account)) {
-				serv_remove_buddy(bd->account->gc, bd->name, g->name);
-				gaim_blist_remove_buddy(bd);
-
-				if (c != NULL)
-					gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+	GaimBlistNode *cnode, *bnode;
+	cnode = ((GaimBlistNode*)g)->child;
+	while(cnode) {
+		if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+			bnode = cnode->child;
+			cnode = cnode->next;
+			while(bnode) {
+				GaimBuddy *b;
+				if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+					b = (GaimBuddy*)bnode;
+					bnode = bnode->next;
+					GaimConversation *c = gaim_find_conversation_with_account(b->name, b->account);
+					if(gaim_account_is_connected(b->account)) {
+						serv_remove_buddy(b->account->gc, b->name, g->name);
+						gaim_blist_remove_buddy(b);
+						if(c)
+							gaim_conversation_update(c,
+									GAIM_CONV_UPDATE_REMOVE);
+					}
+				} else {
+					bnode = bnode->next;
+				}
 			}
-		} else if(GAIM_BLIST_NODE_IS_CHAT(b)) {
-			struct chat *chat = (struct chat *)b;
-			if (gaim_account_is_connected(chat->account)) {
+		} else if(GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+			GaimBlistChat *chat = (GaimBlistChat *)cnode;
+			cnode = cnode->next;
+			if(gaim_account_is_connected(chat->account))
 				gaim_blist_remove_chat(chat);
-			}
+		} else {
+			cnode = cnode->next;
 		}
-		b = b->next;
 	}
 	gaim_blist_remove_group(g);
 	gaim_blist_save();
 }
 
-void show_confirm_del(struct buddy *b)
+void show_confirm_del(GaimBuddy *b)
 {
 	char *text;
 	if (!b)
@@ -455,9 +467,9 @@ void show_confirm_del(struct buddy *b)
 	g_free(text);
 }
 
-void show_confirm_del_chat(struct chat *chat)
+void show_confirm_del_blist_chat(GaimBlistChat *chat)
 {
-	char *name = gaim_chat_get_display_name(chat);
+	char *name = gaim_blist_chat_get_display_name(chat);
 	char *text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"), name);
 
 	gaim_request_action(NULL, NULL, _("Remove Chat"), text, -1, chat, 2,
@@ -468,7 +480,7 @@ void show_confirm_del_chat(struct chat *chat)
 	g_free(text);
 }
 
-void show_confirm_del_group(struct group *g)
+void show_confirm_del_group(GaimGroup *g)
 {
 	char *text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
 			       g->name);
@@ -777,8 +789,8 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 {
 	const char *grp, *who, *whoalias;
 	GaimConversation *c;
-	struct buddy *b;
-	struct group *g;
+	GaimBuddy *b;
+	GaimGroup *g;
 	void *icon_data;
 	void *icon_data2;
 	int icon_len;
@@ -795,7 +807,7 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 			gaim_blist_add_group(g, NULL);
 		}
 		b = gaim_buddy_new(a->gc->account, who, whoalias);
-		gaim_blist_add_buddy(b, g, NULL);
+		gaim_blist_add_buddy(b, NULL, g, NULL);
 		serv_add_buddy(a->gc, who);
 
 		if (c != NULL)
@@ -819,7 +831,7 @@ static GList *groups_tree()
 {
 	GList *tmp = NULL;
 	char *tmp2;
-	struct group *g;
+	GaimGroup *g;
 
 	GaimBlistNode *gnode = gaim_get_blist()->root;
 
@@ -829,7 +841,7 @@ static GList *groups_tree()
 	} else {
 		while (gnode) {
 			if(GAIM_BLIST_NODE_IS_GROUP(gnode)) {
-				g = (struct group *)gnode;
+				g = (GaimGroup *)gnode;
 				tmp2 = g->name;
 				tmp = g_list_append(tmp, tmp2);
 			}
@@ -848,7 +860,7 @@ static void free_dialog(GtkWidget *w, struct addbuddy *a)
 static void
 add_group_cb(GaimConnection *gc, const char *group_name)
 {
-	struct group *g;
+	GaimGroup *g;
 
 	g = gaim_group_new(group_name);
 	gaim_blist_add_group(g, NULL);
@@ -994,8 +1006,8 @@ static void do_add_chat(GtkWidget *w, struct addchat *ac) {
 			g_free, g_free);
 	GList *tmp;
 
-	struct chat *chat;
-	struct group *group;
+	GaimBlistChat *chat;
+	GaimGroup *group;
 	const char *group_name;
 
 	for(tmp = ac->entries; tmp; tmp = tmp->next) {
@@ -1011,7 +1023,7 @@ static void do_add_chat(GtkWidget *w, struct addchat *ac) {
 		}
 	}
 
-	chat = gaim_chat_new(ac->account, gtk_entry_get_text(GTK_ENTRY(ac->alias_entry)), components);
+	chat = gaim_blist_chat_new(ac->account, gtk_entry_get_text(GTK_ENTRY(ac->alias_entry)), components);
 
 	group_name = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(ac->group_combo)->entry));
 	if (!(group = gaim_find_group(group_name))) {
@@ -1239,7 +1251,7 @@ static void create_online_account_menu_for_add_chat(struct addchat *ac)
 	gtk_option_menu_set_history(GTK_OPTION_MENU(ac->account_menu), place);
 }
 
-void show_add_chat(GaimAccount *account, struct group *group) {
+void show_add_chat(GaimAccount *account, GaimGroup *group) {
     struct addchat *ac = g_new0(struct addchat, 1);
     struct gaim_gtk_buddy_list *gtkblist;
     GList *c;
@@ -1255,18 +1267,18 @@ void show_add_chat(GaimAccount *account, struct group *group) {
     gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
     if (account) {
-	ac->account = account;
-    } else {
-	/* Select an account with chat capabilities */
-	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
-	    gc = c->data;
+		ac->account = account;
+	} else {
+		/* Select an account with chat capabilities */
+		for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+			gc = c->data;
 
-	    if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat) {
-		ac->account = gc->account;
-		break;
-	    }
+			if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat) {
+				ac->account = gc->account;
+				break;
+			}
+		}
 	}
-    }
 
     if (!ac->account) {
 		gaim_notify_error(NULL, NULL,
@@ -2963,14 +2975,14 @@ void show_smiley_dialog(GaimConversation *c, GtkWidget *widget)
 }
 
 static void
-alias_chat_cb(struct chat *chat, const char *new_alias)
+alias_chat_cb(GaimBlistChat *chat, const char *new_alias)
 {
 	gaim_blist_alias_chat(chat, new_alias);
 	gaim_blist_save();
 }
 
 void
-alias_dialog_chat(struct chat *chat)
+alias_dialog_blist_chat(GaimBlistChat *chat)
 {
 	gaim_request_input(NULL, _("Alias Chat"), _("Alias chat"),
 					   _("Please enter an aliased name for this chat."),
@@ -2980,7 +2992,7 @@ alias_dialog_chat(struct chat *chat)
 }
 
 static void
-alias_buddy_cb(struct buddy *buddy, GaimRequestFields *fields)
+alias_buddy_cb(GaimBuddy *buddy, GaimRequestFields *fields)
 {
 	const char *alias;
 
@@ -2993,7 +3005,7 @@ alias_buddy_cb(struct buddy *buddy, GaimRequestFields *fields)
 }
 
 void
-alias_dialog_bud(struct buddy *b)
+alias_dialog_bud(GaimBuddy *b)
 {
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
@@ -3487,13 +3499,13 @@ void show_log(char *nm)
 /*  The dialog for renaming groups                                        */
 /*------------------------------------------------------------------------*/
 
-static void do_rename_group(struct group *g, const char *new_name)
+static void do_rename_group(GaimGroup *g, const char *new_name)
 {
 	gaim_blist_rename_group(g, new_name);
 	gaim_blist_save();
 }
 
-void show_rename_group(GtkWidget *unused, struct group *g)
+void show_rename_group(GtkWidget *unused, GaimGroup *g)
 {
 	gaim_request_input(NULL, _("Rename Group"), _("New group name"),
 					   _("Please enter a new name for the selected group."),

@@ -140,13 +140,13 @@ extern void do_im_back(GtkWidget *w, GtkWidget *x);
 void *gaim_gtk_notify_uri(const char *uri);
 
 /* Functions in dialogs.c */
-extern void alias_dialog_bud(struct buddy *);
-extern void alias_dialog_chat(struct chat *);
+extern void alias_dialog_bud(GaimBuddy *);
+extern void alias_dialog_blist_chat(GaimBlistChat *);
 extern void show_warn_dialog(GaimConnection *, char *);
 extern void show_im_dialog();
 extern void show_info_dialog();
 extern void show_add_buddy(GaimConnection *, char *, char *, char *);
-extern void show_add_chat(GaimAccount *, struct group *);
+extern void show_add_chat(GaimAccount *, GaimGroup *);
 extern void show_add_group(GaimConnection *);
 extern void destroy_all_dialogs();
 extern void show_import_dialog();
@@ -171,7 +171,7 @@ extern void cancel_link(GtkWidget *, GaimConversation *);
 extern void show_font_dialog(GaimConversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, GaimConversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
-extern void show_rename_group(GtkWidget *, struct group *);
+extern void show_rename_group(GtkWidget *, GaimGroup *);
 extern void destroy_fontsel(GtkWidget *w, gpointer d);
 extern void join_chat();
 

@@ -248,9 +248,9 @@ static void toc_close(GaimConnection *gc)
 
 static void toc_build_config(GaimAccount *account, char *s, int len, gboolean show)
 {
-	GaimBlistNode *gnode,*bnode;
-	struct group *g;
-	struct buddy *b;
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimGroup *g;
+	GaimBuddy *b;
 	GSList *plist = account->permit;
 	GSList *dlist = account->deny;
 
@@ -261,19 +261,24 @@ static void toc_build_config(GaimAccount *account, char *s, int len, gboolean sh
 
 	pos += g_snprintf(&s[pos], len - pos, "m %d\n", account->perm_deny);
 	for(gnode = gaim_get_blist()->root; gnode && len > pos; gnode = gnode->next) {
-		g = (struct group *)gnode;
+		g = (GaimGroup *)gnode;
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		if(gaim_group_on_account(g, account)) {
 			pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
-			for(bnode = gnode->child; bnode && len > pos; bnode = bnode->next) {
-				b = (struct buddy *)bnode;
-				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+			for(cnode = gnode->child; cnode; cnode = cnode->next) {
+				if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 					continue;
-				if(b->account == account) {
-					pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
-							(show && b->alias) ? ":" : "",
-							(show && b->alias) ? b->alias : "");
+				for(bnode = gnode->child; bnode && len > pos; bnode = bnode->next) {
+					b = (GaimBuddy *)bnode;
+					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+					if(b->account == account) {
+						pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n",
+								b->name,
+								(show && b->alias) ? ":" : "",
+								(show && b->alias) ? b->alias : "");
+					}
 				}
 			}
 		}
@@ -1332,10 +1337,10 @@ static void toc_keepalive(GaimConnection *gc)
 	sflap_send(gc, "", 0, TYPE_KEEPALIVE);
 }
 
-static const char *toc_list_icon(GaimAccount *a, struct buddy *b)
+static const char *toc_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	if (!b || (b && b->name && b->name[0] == '+')) {
-		if (a != NULL && isdigit(*gaim_account_get_username(a))) 
+		if (a != NULL && isdigit(*gaim_account_get_username(a)))
 			return "icq";
 		else
 			return "aim";
@@ -1346,7 +1351,7 @@ static const char *toc_list_icon(GaimAccount *a, struct buddy *b)
 	return "aim";
 }
 
-static void toc_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+static void toc_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;

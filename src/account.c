@@ -1300,7 +1300,7 @@ gaim_accounts_remove(GaimAccount *account)
 void
 gaim_accounts_delete(GaimAccount *account)
 {
-	GaimBlistNode *gnode, *bnode;
+	GaimBlistNode *gnode, *cnode, *bnode;
 
 	g_return_if_fail(account != NULL);
 
@@ -1309,16 +1309,18 @@ gaim_accounts_delete(GaimAccount *account)
 	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next) {
 		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
+		for (cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+				for (bnode = cnode->child; bnode; bnode = bnode->next) {
+					if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+						GaimBuddy *b = (GaimBuddy *)bnode;
 
-		for (bnode = gnode->child; bnode != NULL; bnode = bnode->next) {
-			if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
-				struct buddy *b = (struct buddy *)bnode;
-
-				if (b->account == account)
-					gaim_blist_remove_buddy(b);
-			}
-			else if (GAIM_BLIST_NODE_IS_CHAT(bnode)) {
-				struct chat *c = (struct chat *)bnode;
+						if (b->account == account)
+							gaim_blist_remove_buddy(b);
+					}
+				}
+			} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+				GaimBlistChat *c = (GaimBlistChat *)cnode;
 
 				if (c->account == account)
 					gaim_blist_remove_chat(c);

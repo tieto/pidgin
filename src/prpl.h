@@ -202,25 +202,25 @@ struct _GaimPluginProtocolInfo
 	 * Returns the base icon name for the given buddy and account.
 	 * If buddy is NULL, it will return the name to use for the account's icon
 	 */
-	const char *(*list_icon)(GaimAccount *account, struct buddy *buddy);
+	const char *(*list_icon)(GaimAccount *account, GaimBuddy *buddy);
 
 	/**
 	 * Fills the four char**'s with string identifiers for "emblems"
 	 * that the UI will interpret and display as relevant
 	 */
-	void (*list_emblems)(struct buddy *buddy, char **se, char **sw,
+	void (*list_emblems)(GaimBuddy *buddy, char **se, char **sw,
 						  char **nw, char **ne);
 
 	/**
 	 * Gets a short string representing this buddy's status.  This will
 	 * be shown on the buddy list.
 	 */
-	char *(*status_text)(struct buddy *buddy);
+	char *(*status_text)(GaimBuddy *buddy);
 
 	/**
 	 * Gets a string to put in the buddy list tooltip.
 	 */
-	char *(*tooltip_text)(struct buddy *buddy);
+	char *(*tooltip_text)(GaimBuddy *buddy);
 
 	GList *(*away_states)(GaimConnection *gc);
 	GList *(*actions)(GaimConnection *gc);
@@ -300,7 +300,7 @@ struct _GaimPluginProtocolInfo
 	void (*rename_group)(GaimConnection *, const char *old_group,
 						 const char *new_group, GList *members);
 
-	void (*buddy_free)(struct buddy *);
+	void (*buddy_free)(GaimBuddy *);
 
 	/* this is really bad. */
 	void (*convo_closed)(GaimConnection *, const char *who);

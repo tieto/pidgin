@@ -316,7 +316,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		if (!g_ascii_strcasecmp(notice.z_opcode, LOCATE_LOCATE)) {
 			int nlocs;
 			char *user;
-			struct buddy *b;
+			GaimBuddy *b;
 
 			if (ZParseLocations(&notice, NULL, &nlocs, &user) != ZERR_NONE)
 				return;
@@ -438,7 +438,7 @@ static gint check_notify(gpointer data)
 
 static gint check_loc(gpointer data)
 {
-	GaimBlistNode *gnode,*bnode;
+	GaimBlistNode *gnode, *cnode, *bnode;
 	ZAsyncLocateData_t ald;
 
 	ald.user = NULL;
@@ -448,17 +448,21 @@ static gint check_loc(gpointer data)
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for(bnode = gnode->child; bnode; bnode = bnode->next) {
-			struct buddy *b = (struct buddy *)bnode;
-			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			if(b->account->gc == zgc) {
-				char *chk;
-				chk = zephyr_normalize(b->name);
-				/* doesn't matter if this fails or not; we'll just move on to the next one */
-				ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
-				free(ald.user);
-				free(ald.version);
+			for(bnode = gnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b = (GaimBuddy *)bnode;
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				if(b->account->gc == zgc) {
+					char *chk;
+					chk = zephyr_normalize(b->name);
+					/* doesn't matter if this fails or not; we'll just move on to the next one */
+					ZRequestLocations(chk, &ald, UNACKED, ZAUTH);
+					free(ald.user);
+					free(ald.version);
+				}
 			}
 		}
 	}
@@ -565,21 +569,21 @@ static void process_anyone()
 {
 	FILE *fd;
 	gchar buff[BUFSIZ], *filename;
-        struct group *g;
-        struct buddy *b;
+	GaimGroup *g;
+	GaimBuddy *b;
 
 	if (!(g = gaim_find_group(_("Anyone")))) {
 		g = gaim_group_new(_("Anyone"));
 		gaim_blist_add_group(g, NULL);
 	}
-        
+
 	filename = g_strconcat(gaim_home_dir(), "/.anyone", NULL);
 	if ((fd = fopen(filename, "r")) != NULL) {
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
 			if (buff[0]) {
                                 b = gaim_buddy_new(zgc->account, buff, NULL);
-				gaim_blist_add_buddy(b, g, NULL);
+				gaim_blist_add_buddy(b, NULL, g, NULL);
                         }
 		}
 		fclose(fd);
@@ -665,8 +669,8 @@ static void write_zsubs()
 
 static void write_anyone()
 {
-	GaimBlistNode *gnode,*bnode;
-	struct buddy *b;
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimBuddy *b;
 	char *ptr, *fname, *ptr2;
 	FILE *fd;
 
@@ -680,23 +684,27 @@ static void write_anyone()
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for(bnode = gnode->child; bnode; bnode = bnode->next) {
-			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			b = (struct buddy *)bnode;
-			if(b->account->gc == zgc) {
-				if ((ptr = strchr(b->name, '@')) != NULL) {
-					ptr2 = ptr + 1;
-					/* We should only strip the realm name if the principal
-					   is in the user's realm
-					   */
-					if (!g_ascii_strcasecmp(ptr2,ZGetRealm())) {
-						*ptr = '\0';
+			for(bnode = gnode->child; bnode; bnode = bnode->next) {
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				b = (GaimBuddy *)bnode;
+				if(b->account->gc == zgc) {
+					if ((ptr = strchr(b->name, '@')) != NULL) {
+						ptr2 = ptr + 1;
+						/* We should only strip the realm name if the principal
+						   is in the user's realm
+						   */
+						if (!g_ascii_strcasecmp(ptr2,ZGetRealm())) {
+							*ptr = '\0';
+						}
 					}
+					fprintf(fd, "%s\n", b->name);
+					if (ptr)
+						*ptr = '@';
 				}
-				fprintf(fd, "%s\n", b->name);
-				if (ptr)
-					*ptr = '@';
 			}
 		}
 	}
@@ -951,7 +959,7 @@ static void zephyr_chat_leave(GaimConnection *gc, int id)
 	}
 }
 
-static const char *zephyr_list_icon(GaimAccount *a, struct buddy *b)
+static const char *zephyr_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	return "zephyr";
 }

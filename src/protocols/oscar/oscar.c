@@ -1832,7 +1832,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Server stored icon stuff */
 	if (info->iconcsumlen) {
 		char *b16, *saved_b16;
-		struct buddy *b;
+		GaimBuddy *b;
 
 		free(bi->iconcsum);
 		bi->iconcsum = malloc(info->iconcsumlen);
@@ -2436,8 +2436,8 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
 		struct oscar_data *od = gc->proto_data;
-		struct buddy *buddy = gaim_find_buddy(gc->account, data->name);
-		struct group *group = gaim_find_buddys_group(buddy);
+		GaimBuddy *buddy = gaim_find_buddy(gc->account, data->name);
+		GaimGroup *group = gaim_find_buddys_group(buddy);
 		if (buddy && group) {
 			gaim_debug(GAIM_DEBUG_INFO, "oscar",
 					   "ssi: adding buddy %s to group %s\n",
@@ -2470,7 +2470,7 @@ static void gaim_auth_dontrequest(struct name_data *data) {
 
 static void gaim_auth_sendrequest(GaimConnection *gc, const char *name) {
 	struct name_data *data = g_new(struct name_data, 1);
-	struct buddy *buddy;
+	GaimBuddy *buddy;
 	gchar *dialog_msg, *nombre;
 
 	buddy = gaim_find_buddy(gc->account, name);
@@ -2501,7 +2501,7 @@ static void gaim_auth_grant(struct name_data *data) {
 	if (g_list_find(gaim_connections_get_all(), gc)) {
 		struct oscar_data *od = gc->proto_data;
 #ifdef NOSSI
-		struct buddy *buddy;
+		GaimBuddy *buddy;
 		gchar message;
 		message = 0;
 		buddy = gaim_find_buddy(gc->account, data->name);
@@ -3511,7 +3511,7 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (iconlen > 0) {
 		char *b16;
-		struct buddy *b = gaim_find_buddy(gc->account, sn);
+		GaimBuddy *b = gaim_find_buddy(gc->account, sn);
 		set_icon_data(gc, sn, icon, iconlen);
 		b16 = tobase16(iconcsum, iconcsumlen);
 		if (b16) {
@@ -4056,7 +4056,7 @@ static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
 	gchar who[16], *utf8;
-	struct buddy *b;
+	GaimBuddy *b;
 	va_list ap;
 	struct aim_icq_info *info;
 
@@ -4415,7 +4415,7 @@ static void oscar_get_info(GaimConnection *g, const char *name) {
 static void oscar_get_away(GaimConnection *g, const char *who) {
 	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	if (od->icq) {
-		struct buddy *budlight = gaim_find_buddy(g->account, who);
+		GaimBuddy *budlight = gaim_find_buddy(g->account, who);
 		if (budlight)
 			if ((budlight->uc & 0xffff0000) >> 16)
 				aim_im_sendch2_geticqaway(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
@@ -4639,8 +4639,8 @@ static void oscar_add_buddy(GaimConnection *gc, const char *name) {
 	aim_add_buddy(od->sess, od->conn, name);
 #else
 	if ((od->sess->ssi.received_data) && !(aim_ssi_itemlist_exists(od->sess->ssi.local, name))) {
-		struct buddy *buddy = gaim_find_buddy(gc->account, name);
-		struct group *group = gaim_find_buddys_group(buddy);
+		GaimBuddy *buddy = gaim_find_buddy(gc->account, name);
+		GaimGroup *group = gaim_find_buddys_group(buddy);
 		if (buddy && group) {
 			gaim_debug(GAIM_DEBUG_INFO, "oscar",
 					   "ssi: adding buddy %s to group %s\n", name, group->name);
@@ -4669,8 +4669,8 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
 #else
 	if (od->sess->ssi.received_data) {
 		while (buddies) {
-			struct buddy *buddy = gaim_find_buddy(gc->account, (const char *)buddies->data);
-			struct group *group = gaim_find_buddys_group(buddy);
+			GaimBuddy *buddy = gaim_find_buddy(gc->account, (const char *)buddies->data);
+			GaimGroup *group = gaim_find_buddys_group(buddy);
 			if (buddy && group) {
 				gaim_debug(GAIM_DEBUG_INFO, "oscar",
 						   "ssi: adding buddy %s to group %s\n", (const char *)buddies->data, group->name);
@@ -4849,7 +4849,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					char *gname_utf8 = gaim_try_conv_to_utf8(gname);
 					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
 					char *alias_utf8 = gaim_try_conv_to_utf8(alias);
-					struct buddy *buddy = gaim_find_buddy(gc->account, curitem->name);
+					GaimBuddy *buddy = gaim_find_buddy(gc->account, curitem->name);
 					/* Should gname be freed here? -- elb */
 					/* Not with the current code, but that might be cleaner -- med */
 					free(alias);
@@ -4860,7 +4860,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 							buddy->alias = g_strdup(alias_utf8);
 						}
 					} else {
-						struct group *g;
+						GaimGroup *g;
 						buddy = gaim_buddy_new(gc->account, curitem->name, alias_utf8);
 
 						if (!(g = gaim_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
@@ -4870,7 +4870,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
 								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
-						gaim_blist_add_buddy(buddy, g, NULL);
+						gaim_blist_add_buddy(buddy, NULL, g, NULL);
 						export = TRUE;
 					}
 					free(gname_utf8);
@@ -4935,9 +4935,9 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		gaim_blist_save();
 
 	{ /* Add from local list to server list */
-		GaimBlistNode *gnode, *bnode;
-		struct group *group;
-		struct buddy *buddy;
+		GaimBlistNode *gnode, *cnode, *bnode;
+		GaimGroup *group;
+		GaimBuddy *buddy;
 		struct gaim_buddy_list *blist;
 		GSList *cur;
 
@@ -4946,37 +4946,42 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			for (gnode = blist->root; gnode; gnode = gnode->next) {
 				if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 					continue;
-				group = (struct group *)gnode;
-				for (bnode = gnode->child; bnode; bnode = bnode->next) {
-					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				group = (GaimGroup *)gnode;
+				for (cnode = gnode->child; cnode; cnode = cnode->next) {
+					if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 						continue;
-					buddy = (struct buddy *)bnode;
-					if (buddy->account == gc->account) {
-						gchar *servernick = gaim_buddy_get_setting(buddy, "servernick");
-						if (servernick) {
-							serv_got_alias(gc, buddy->name, servernick);
-							g_free(servernick);
-						}
-						if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
-							/* Store local alias on server */
-							char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
-							if (!alias && buddy->alias && strlen(buddy->alias))
-								aim_ssi_aliasbuddy(sess, group->name, buddy->name, buddy->alias);
-							free(alias);
-						} else {
-							gaim_debug(GAIM_DEBUG_INFO, "oscar",
-									   "ssi: adding buddy %s from local list to server list\n", buddy->name);
-							aim_ssi_addbuddy(sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+					for (bnode = cnode->child; bnode; bnode = bnode->next) {
+						if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+							continue;
+						buddy = (GaimBuddy *)bnode;
+						if (buddy->account == gc->account) {
+							gchar *servernick = gaim_buddy_get_setting(buddy, "servernick");
+							if (servernick) {
+								serv_got_alias(gc, buddy->name, servernick);
+								g_free(servernick);
+							}
+							if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
+								/* Store local alias on server */
+								char *alias = aim_ssi_getalias(sess->ssi.local, group->name, buddy->name);
+								if (!alias && buddy->alias && strlen(buddy->alias))
+									aim_ssi_aliasbuddy(sess, group->name, buddy->name, buddy->alias);
+								free(alias);
+							} else {
+								gaim_debug(GAIM_DEBUG_INFO, "oscar",
+										"ssi: adding buddy %s from local list to server list\n", buddy->name);
+								aim_ssi_addbuddy(sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
+							}
 						}
 					}
 				}
 			}
+
 		/* Permit list */
 		if (gc->account->permit) {
 			for (cur=gc->account->permit; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
 					gaim_debug(GAIM_DEBUG_INFO, "oscar",
-							   "ssi: adding permit %s from local list to server list\n", (char *)cur->data);
+							"ssi: adding permit %s from local list to server list\n", (char *)cur->data);
 					aim_ssi_addpermit(sess, cur->data);
 				}
 		}
@@ -4986,7 +4991,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			for (cur=gc->account->deny; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
 					gaim_debug(GAIM_DEBUG_INFO, "oscar",
-							   "ssi: adding deny %s from local list to server list\n", (char *)cur->data);
+							"ssi: adding deny %s from local list to server list\n", (char *)cur->data);
 					aim_ssi_adddeny(sess, cur->data);
 				}
 		}
@@ -5063,7 +5068,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *sn, *msg;
 	gchar *dialog_msg, *nombre;
 	struct name_data *data;
-	struct buddy *buddy;
+	GaimBuddy *buddy;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
@@ -5102,7 +5107,7 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *sn, *msg;
 	gchar *dialog_msg, *nombre;
 	struct name_data *data;
-	struct buddy *buddy;
+	GaimBuddy *buddy;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
@@ -5141,7 +5146,7 @@ static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *sn, *msg;
 	gchar *dialog_msg, *nombre;
 	fu8_t reply;
-	struct buddy *buddy;
+	GaimBuddy *buddy;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
@@ -5177,7 +5182,7 @@ static int gaim_ssi_gotadded(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	va_list ap;
 	char *sn;
-	struct buddy *buddy;
+	GaimBuddy *buddy;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
@@ -5344,7 +5349,7 @@ static int oscar_chat_send(GaimConnection *g, int id, const char *message) {
 	return 0;
 }
 
-static const char *oscar_list_icon(GaimAccount *a, struct buddy *b) {
+static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b) {
 	if (!b || (b && b->name && b->name[0] == '+')) {
 		if (a != NULL && isdigit(*gaim_account_get_username(a)))
 			return "icq";
@@ -5357,7 +5362,7 @@ static const char *oscar_list_icon(GaimAccount *a, struct buddy *b) {
 	return "aim";
 }
 
-static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
@@ -5413,7 +5418,7 @@ static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 	*ne = emblems[3];
 }
 
-static char *oscar_tooltip_text(struct buddy *b) {
+static char *oscar_tooltip_text(GaimBuddy *b) {
 	GaimConnection *gc = b->account->gc;
 	struct oscar_data *od = gc->proto_data;
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
@@ -5471,7 +5476,7 @@ static char *oscar_tooltip_text(struct buddy *b) {
 	return yay;
 }
 
-static char *oscar_status_text(struct buddy *b) {
+static char *oscar_status_text(GaimBuddy *b) {
 	GaimConnection *gc = b->account->gc;
 	struct oscar_data *od = gc->proto_data;
 	gchar *ret = NULL;
@@ -5896,7 +5901,7 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 		m = g_list_append(m, pbm);
 #endif
 	} else {
-		struct buddy *b = gaim_find_buddy(gc->account, who);
+		GaimBuddy *b = gaim_find_buddy(gc->account, who);
 		struct buddyinfo *bi;
 
 		if (b)
@@ -6022,29 +6027,33 @@ static void oscar_show_awaitingauth(GaimConnection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
 	gchar *nombre, *text, *tmp;
-	GaimBlistNode *gnode,*bnode;
+	GaimBlistNode *gnode, *cnode, *bnode;
 	int num=0;
 
 	text = g_strdup(_("You are awaiting authorization from the following buddies:<BR>"));
 
 	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-		struct group *group = (struct group *)gnode;
+		GaimGroup *group = (GaimGroup *)gnode;
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for (bnode = gnode->child; bnode; bnode = bnode->next) {
-			struct buddy *buddy = (struct buddy *)bnode;
-			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+		for (cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			if (buddy->account == gc->account && aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
-				if (gaim_get_buddy_alias_only(buddy))
-					nombre = g_strdup_printf(" %s (%s)", buddy->name, gaim_get_buddy_alias_only(buddy));
-				else
-					nombre = g_strdup_printf(" %s", buddy->name);
-				tmp = g_strdup_printf("%s<BR>%s", text, nombre);
-				g_free(text);
-				text = tmp;
-				g_free(nombre);
-				num++;
+			for (bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *buddy = (GaimBuddy *)bnode;
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				if (buddy->account == gc->account && aim_ssi_waitingforauth(od->sess->ssi.local, group->name, buddy->name)) {
+					if (gaim_get_buddy_alias_only(buddy))
+						nombre = g_strdup_printf(" %s (%s)", buddy->name, gaim_get_buddy_alias_only(buddy));
+					else
+						nombre = g_strdup_printf(" %s", buddy->name);
+					tmp = g_strdup_printf("%s<BR>%s", text, nombre);
+					g_free(text);
+					text = tmp;
+					g_free(nombre);
+					num++;
+				}
 			}
 		}
 	}

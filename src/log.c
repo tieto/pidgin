@@ -171,7 +171,7 @@ static FILE *open_gaim_log_file(const char *name, int *flag)
 	return fd;
 }
 
-static FILE *open_system_log_file(char *name)
+static FILE *open_system_log_file(const char *name)
 {
 	int x;
 
@@ -232,7 +232,7 @@ FILE *open_log_file(const char *name, int is_chat)
 }
 
 void system_log(enum log_event what, GaimConnection *gc,
-				struct buddy *who, int why)
+				GaimBuddy *who, int why)
 {
 	GaimAccount *account = NULL;
 	FILE *fd;
@@ -255,7 +255,7 @@ void system_log(enum log_event what, GaimConnection *gc,
 
 	if (gaim_prefs_get_bool("/gaim/gtk/logging/individual_logs")) {
 		if (why & OPT_LOG_MY_SIGNON)
-			fd = open_system_log_file(gc ? (char *)gaim_account_get_username(account) : NULL);
+			fd = open_system_log_file(gc ? gaim_account_get_username(account) : NULL);
 		else
 			fd = open_system_log_file(who->name);
 	} else

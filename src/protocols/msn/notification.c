@@ -43,9 +43,9 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 {
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
-	struct buddy *b;
+	GaimBuddy *b;
 	MsnGroup *group = NULL;
-	struct group *g = NULL;
+	GaimGroup *g = NULL;
 	int group_id;
 
 	group_id = msn_user_get_group_id(user);
@@ -96,7 +96,7 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 		b = gaim_buddy_new(gc->account,
 						   msn_user_get_passport(user), NULL);
 
-		gaim_blist_add_buddy(b, g, NULL);
+		gaim_blist_add_buddy(b, NULL, g, NULL);
 	}
 
 	b->proto_data = user;
@@ -520,7 +520,7 @@ bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnSession *session = servconn->session;
 	GaimConnection *gc = session->account->gc;
 	const char *passport, *type, *value;
-	struct buddy *b;
+	GaimBuddy *b;
 	MsnUser *user;
 
 	if (param_count < 4)
@@ -574,7 +574,7 @@ iln_cmd(MsnServConn *servconn, const char *command, const char **params,
 	GaimConnection *gc = servconn->session->account->gc;
 	int status = 0;
 	const char *state, *passport, *friend;
-	struct buddy *b;
+	GaimBuddy *b;
 
 	state    = params[1];
 	passport = params[2];
@@ -625,7 +625,7 @@ lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
 {
 	MsnSession *session = servconn->session;
 	MsnGroup *group;
-	struct group *g;
+	GaimGroup *g;
 	const char *name;
 	int group_num, num_groups, group_id;
 

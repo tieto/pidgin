@@ -511,12 +511,12 @@ static void nap_close(GaimConnection *gc)
 	g_free(ndata);
 }
 
-static const char* nap_list_icon(GaimAccount *a, struct buddy *b)
+static const char* nap_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	return "napster";
 }
 
-static void nap_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
+static void nap_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	if (b->present == GAIM_BUDDY_OFFLINE)
 		*se = "offline";

@@ -105,7 +105,7 @@ bye_cmd(MsnServConn *servconn, const char *command, const char **params,
 	else {
 		const char *username;
 		GaimConversation *conv;
-		struct buddy *b;
+		GaimBuddy *b;
 		char buf[MSN_BUF_LEN];
 
 		if ((b = gaim_find_buddy(account, user)) != NULL)

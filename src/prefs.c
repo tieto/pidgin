@@ -102,8 +102,6 @@ void gaim_prefs_init() {
 	gaim_prefs_add_none("/plugins/lopl");
 	gaim_prefs_add_none("/plugins/prpl");
 
-	/* XXX: this is where you would want to put prefs declarations */
-
 	/* Away */
 	gaim_prefs_add_none("/core/away");
 	gaim_prefs_add_bool("/core/away/away_when_idle", TRUE);

@@ -44,7 +44,7 @@ static GtkWidget *tickerwindow = NULL;
 static GtkWidget *ticker;
 
 typedef struct {
-	struct buddy *buddy;
+	GaimBuddy *buddy;
 	GtkWidget *ebox;
 	GtkWidget *label;
 	GtkWidget *icon;
@@ -86,13 +86,13 @@ static void buddy_ticker_create_window() {
 }
 
 static gboolean buddy_click_cb(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-	struct buddy *b = user_data;
+	GaimBuddy *b = user_data;
 
 	gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
 	return TRUE;
 }
 
-static TickerData *buddy_ticker_find_buddy(struct buddy *b) {
+static TickerData *buddy_ticker_find_buddy(GaimBuddy *b) {
 	GList *tb;
 	for(tb = tickerbuds; tb; tb = tb->next) {
 		TickerData *td = tb->data;
@@ -102,7 +102,7 @@ static TickerData *buddy_ticker_find_buddy(struct buddy *b) {
 	return NULL;
 }
 
-static void buddy_ticker_set_pixmap(struct buddy *b) {
+static void buddy_ticker_set_pixmap(GaimBuddy *b) {
 	TickerData *td = buddy_ticker_find_buddy(b);
 	GdkPixbuf *pixbuf;
 
@@ -128,7 +128,7 @@ gaim_debug(GAIM_DEBUG_ERROR, "XXX", "we're updating the pixmap, you bitch\n");
 	return FALSE;
 }
 
-static void buddy_ticker_add_buddy(struct buddy *b) {
+static void buddy_ticker_add_buddy(GaimBuddy *b) {
 	GtkWidget *hbox;
 	TickerData *td;
 
@@ -167,7 +167,7 @@ static void buddy_ticker_add_buddy(struct buddy *b) {
 	td->timeout = g_timeout_add(11000, buddy_ticker_set_pixmap_cb, td);
 }
 
-static void buddy_ticker_remove_buddy(struct buddy *b) {
+static void buddy_ticker_remove_buddy(GaimBuddy *b) {
 	TickerData *td = buddy_ticker_find_buddy(b);
 
 	if (!td)
@@ -186,8 +186,8 @@ static void buddy_ticker_remove_buddy(struct buddy *b) {
 static void buddy_ticker_show()
 {
 	struct gaim_buddy_list *list = gaim_get_blist();
-	GaimBlistNode *gnode, *bnode;
-	struct buddy *b;
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimBuddy *b;
 
 	if(!list)
 		return;
@@ -195,12 +195,16 @@ static void buddy_ticker_show()
 	for(gnode = list->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for(bnode = gnode->child; bnode; bnode = bnode->next) {
-			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			b = (struct buddy *)bnode;
-			if(GAIM_BUDDY_IS_ONLINE(b))
-				buddy_ticker_add_buddy(b);
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				b = (GaimBuddy *)bnode;
+				if(GAIM_BUDDY_IS_ONLINE(b))
+					buddy_ticker_add_buddy(b);
+			}
 		}
 	}
 }
@@ -236,7 +240,7 @@ signoff_cb(GaimConnection *gc)
 }
 
 static void
-buddy_signon_cb(struct buddy *b)
+buddy_signon_cb(GaimBuddy *b)
 {
 	if(buddy_ticker_find_buddy(b))
 		buddy_ticker_set_pixmap(b);
@@ -245,7 +249,7 @@ buddy_signon_cb(struct buddy *b)
 }
 
 static void
-buddy_signoff_cb(struct buddy *b)
+buddy_signoff_cb(GaimBuddy *b)
 {
 	buddy_ticker_remove_buddy(b);
 	if(!tickerbuds)
@@ -253,7 +257,7 @@ buddy_signoff_cb(struct buddy *b)
 }
 
 static void
-away_cb(struct buddy *b)
+away_cb(GaimBuddy *b)
 {
 	if(buddy_ticker_find_buddy(b))
 		buddy_ticker_set_pixmap(b);

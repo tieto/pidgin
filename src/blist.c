@@ -49,6 +49,7 @@ static GaimBlistNode *gaim_blist_get_last_sibling(GaimBlistNode *node)
 		n = n->next;
 	return n;
 }
+
 static GaimBlistNode *gaim_blist_get_last_child(GaimBlistNode *node)
 {
 	if (!node)
@@ -75,18 +76,24 @@ static guint _gaim_blist_hbuddy_equal (struct _gaim_hbuddy *hb1, struct _gaim_hb
 static void blist_pref_cb(const char *name, GaimPrefType typ, gpointer value, gpointer data)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	GaimBlistNode *group, *buddy;
+	GaimBlistNode *gnode, *cnode, *bnode;
 
 	if (!ops)
 		return;
 
-	for(group = gaimbuddylist->root; group; group = group->next) {
-		if(!GAIM_BLIST_NODE_IS_GROUP(group))
+	for(gnode = gaimbuddylist->root; gnode; gnode = gnode->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for(buddy = group->child; buddy; buddy = buddy->next) {
-			if(!GAIM_BLIST_NODE_IS_BUDDY(buddy))
-				continue;
-			ops->update(gaimbuddylist, buddy);
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+				for(bnode = cnode->child; bnode; bnode = bnode->next) {
+					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+					ops->update(gaimbuddylist, bnode);
+				}
+			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+				ops->update(gaimbuddylist, cnode);
+			}
 		}
 	}
 }
@@ -126,7 +133,7 @@ gaim_get_blist(void)
 	return gaimbuddylist;
 }
 
-void  gaim_blist_show () 
+void  gaim_blist_show ()
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	if (ops)
@@ -147,7 +154,7 @@ void  gaim_blist_set_visible (gboolean show)
 		ops->set_visible(gaimbuddylist, show);
 }
 
-void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
+void  gaim_blist_update_buddy_status (GaimBuddy *buddy, int status)
 {
 	struct gaim_blist_ui_ops *ops;
 
@@ -168,7 +175,7 @@ void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
 
-static gboolean presence_update_timeout_cb(struct buddy *buddy) {
+static gboolean presence_update_timeout_cb(GaimBuddy *buddy) {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	GaimConversation *conv;
 
@@ -195,7 +202,7 @@ static gboolean presence_update_timeout_cb(struct buddy *buddy) {
 	return FALSE;
 }
 
-void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
+void gaim_blist_update_buddy_presence(GaimBuddy *buddy, int presence) {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	gboolean do_timer = FALSE;
 
@@ -203,12 +210,16 @@ void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_ON;
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-on", buddy);
 		do_timer = TRUE;
-		((struct group *)((GaimBlistNode *)buddy)->parent)->online++;
+		((GaimContact*)((GaimBlistNode*)buddy)->parent)->online++;
+		if(((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 1)
+			((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online++;
 	} else if(GAIM_BUDDY_IS_ONLINE(buddy) && !presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_OFF;
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-off", buddy);
 		do_timer = TRUE;
-		((struct group *)((GaimBlistNode *)buddy)->parent)->online--;
+		((GaimContact*)((GaimBlistNode*)buddy)->parent)->online--;
+		if(((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 0)
+			((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online--;
 	}
 
 	if(do_timer) {
@@ -222,26 +233,29 @@ void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
 }
 
 
-void  gaim_blist_update_buddy_idle (struct buddy *buddy, int idle)
+void  gaim_blist_update_buddy_idle (GaimBuddy *buddy, int idle)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	buddy->idle = idle;
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
-void  gaim_blist_update_buddy_evil (struct buddy *buddy, int warning)
+
+void  gaim_blist_update_buddy_evil (GaimBuddy *buddy, int warning)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	buddy->evil = warning;
 	if (ops)
 		ops->update(gaimbuddylist,(GaimBlistNode*)buddy);
 }
-void gaim_blist_update_buddy_icon(struct buddy *buddy) {
+
+void gaim_blist_update_buddy_icon(GaimBuddy *buddy) {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	if(ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
-void  gaim_blist_rename_buddy (struct buddy *buddy, const char *name)
+
+void  gaim_blist_rename_buddy (GaimBuddy *buddy, const char *name)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	g_free(buddy->name);
@@ -250,7 +264,7 @@ void  gaim_blist_rename_buddy (struct buddy *buddy, const char *name)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
 
-void gaim_blist_alias_chat(struct chat *chat, const char *alias)
+void gaim_blist_alias_chat(GaimBlistChat *chat, const char *alias)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 
@@ -265,7 +279,7 @@ void gaim_blist_alias_chat(struct chat *chat, const char *alias)
 		ops->update(gaimbuddylist, (GaimBlistNode*)chat);
 }
 
-void  gaim_blist_alias_buddy (struct buddy *buddy, const char *alias)
+void  gaim_blist_alias_buddy (GaimBuddy *buddy, const char *alias)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	GaimConversation *conv;
@@ -286,7 +300,7 @@ void  gaim_blist_alias_buddy (struct buddy *buddy, const char *alias)
 		gaim_conversation_autoset_title(conv);
 }
 
-void  gaim_blist_server_alias_buddy (struct buddy *buddy, const char *alias)
+void  gaim_blist_server_alias_buddy (GaimBuddy *buddy, const char *alias)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	GaimConversation *conv;
@@ -307,10 +321,10 @@ void  gaim_blist_server_alias_buddy (struct buddy *buddy, const char *alias)
 		gaim_conversation_autoset_title(conv);
 }
 
-void gaim_blist_rename_group(struct group *group, const char *name)
+void gaim_blist_rename_group(GaimGroup *group, const char *name)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	struct group *dest_group;
+	GaimGroup *dest_group;
 	GaimBlistNode *prev, *child, *next;
 	GSList *accts;
 
@@ -325,11 +339,15 @@ void gaim_blist_rename_group(struct group *group, const char *name)
 		while(child)
 		{
 			next = child->next;
-			if(GAIM_BLIST_NODE_IS_BUDDY(child)) {
-				gaim_blist_add_buddy((struct buddy *)child, dest_group, prev);
+			if(GAIM_BLIST_NODE_IS_CONTACT(child)) {
+				GaimBlistNode *bnode;
+				gaim_blist_add_contact((GaimContact *)child, dest_group, prev);
+				for(bnode = child->child; bnode; bnode = bnode->next)
+					gaim_blist_add_buddy((GaimBuddy*)bnode, (GaimContact*)child,
+							NULL, bnode->prev);
 				prev = child;
 			} else if(GAIM_BLIST_NODE_IS_CHAT(child)) {
-				gaim_blist_add_chat((struct chat *)child, dest_group, prev);
+				gaim_blist_add_chat((GaimBlistChat *)child, dest_group, prev);
 				prev = child;
 			} else {
 				gaim_debug(GAIM_DEBUG_ERROR, "blist",
@@ -355,15 +373,15 @@ void gaim_blist_rename_group(struct group *group, const char *name)
 	}
 }
 
-struct chat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *components)
+GaimBlistChat *gaim_blist_chat_new(GaimAccount *account, const char *alias, GHashTable *components)
 {
-	struct chat *chat;
+	GaimBlistChat *chat;
 	struct gaim_blist_ui_ops *ops;
 
 	if(!components)
 		return NULL;
 
-	chat = g_new0(struct chat, 1);
+	chat = g_new0(GaimBlistChat, 1);
 	chat->account = account;
 	if(alias && strlen(alias))
 		chat->alias = g_strdup(alias);
@@ -381,7 +399,7 @@ struct chat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *
 	return chat;
 }
 
-char *gaim_chat_get_display_name(struct chat *chat)
+char *gaim_blist_chat_get_display_name(GaimBlistChat *chat)
 {
 	char *name;
 
@@ -408,12 +426,12 @@ char *gaim_chat_get_display_name(struct chat *chat)
 	return name;
 }
 
-struct buddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const char *alias)
+GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const char *alias)
 {
-	struct buddy *b;
+	GaimBuddy *b;
 	struct gaim_blist_ui_ops *ops;
 
-	b = g_new0(struct buddy, 1);
+	b = g_new0(GaimBuddy, 1);
 	b->account = account;
 	b->name  = g_strdup(screenname);
 	b->alias = g_strdup(alias);
@@ -428,10 +446,10 @@ struct buddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const
 	return b;
 }
 
-void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *node)
+void gaim_blist_add_chat(GaimBlistChat *chat, GaimGroup *group, GaimBlistNode *node)
 {
 	GaimBlistNode *n = node, *cnode = (GaimBlistNode*)chat;
-	struct group *g = group;
+	GaimGroup *g = group;
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	gboolean save = FALSE;
 
@@ -442,7 +460,7 @@ void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *
 					gaim_blist_get_last_sibling(gaimbuddylist->root));
 		}
 	} else {
-		g = (struct group*)n->parent;
+		g = (GaimGroup*)n->parent;
 	}
 
 	/* if we're moving to overtop of ourselves, do nothing */
@@ -453,10 +471,10 @@ void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *
 		/* This chat was already in the list and is
 		 * being moved.
 		 */
-		((struct group *)cnode->parent)->totalsize--;
+		((GaimGroup *)cnode->parent)->totalsize--;
 		if (gaim_account_is_connected(chat->account)) {
-			((struct group *)cnode->parent)->online--;
-			((struct group *)cnode->parent)->currentsize--;
+			((GaimGroup *)cnode->parent)->online--;
+			((GaimGroup *)cnode->parent)->currentsize--;
 		}
 		if(cnode->next)
 			cnode->next->prev = cnode->prev;
@@ -477,10 +495,10 @@ void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *
 		cnode->prev = n;
 		cnode->parent = n->parent;
 		n->next = cnode;
-		((struct group *)n->parent)->totalsize++;
+		((GaimGroup *)n->parent)->totalsize++;
 		if (gaim_account_is_connected(chat->account)) {
-			((struct group *)n->parent)->online++;
-			((struct group *)n->parent)->currentsize++;
+			((GaimGroup *)n->parent)->online++;
+			((GaimGroup *)n->parent)->currentsize++;
 		}
 	} else {
 		if(((GaimBlistNode*)g)->child)
@@ -502,83 +520,111 @@ void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *
 		gaim_blist_save();
 }
 
-void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistNode *node)
+void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *group, GaimBlistNode *node)
 {
-	GaimBlistNode *n = node, *bnode = (GaimBlistNode*)buddy;
-	struct group *g = group;
+	GaimBlistNode *cnode, *bnode;
+	GaimGroup *g;
+	GaimContact *c;
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	struct _gaim_hbuddy *hb;
 	gboolean save = FALSE;
+	struct _gaim_hbuddy *hb;
 
-	if (!n) {
-		if (!g) {
+	g_return_if_fail(buddy != NULL);
+
+	bnode = (GaimBlistNode *)buddy;
+
+	/* if we're moving to overtop of ourselves, do nothing */
+	if(bnode == node || (!node && bnode->parent &&
+				contact && bnode->parent == (GaimBlistNode*)contact
+				&& bnode == bnode->parent->child))
+		return;
+
+	if(node && GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		c = (GaimContact*)node->parent;
+		g = (GaimGroup*)node->parent->parent;
+	} else if(contact) {
+		c = contact;
+		g = (GaimGroup*)((GaimBlistNode*)c)->parent;
+	} else  {
+		if(group) {
+			g = group;
+		} else {
 			g = gaim_group_new(_("Buddies"));
 			gaim_blist_add_group(g,
 					gaim_blist_get_last_sibling(gaimbuddylist->root));
 		}
-	} else {
-		g = (struct group*)n->parent;
+		c = gaim_contact_new();
+		gaim_blist_add_contact(c, g,
+				gaim_blist_get_last_child((GaimBlistNode*)g));
 	}
 
-	/* if we're moving to overtop of ourselves, do nothing */
-	if(bnode == n)
-		return;
+	cnode = (GaimBlistNode *)c;
 
-	if (bnode->parent) {
-		/* This buddy was already in the list and is
-		 * being moved.
-		 */
-		((struct group *)bnode->parent)->totalsize--;
-		if (gaim_account_is_connected(buddy->account))
-			((struct group *)bnode->parent)->currentsize--;
-		if (GAIM_BUDDY_IS_ONLINE(buddy))
-			((struct group *)bnode->parent)->online--;
+	if(bnode->parent) {
+		if(GAIM_BUDDY_IS_ONLINE(buddy)) {
+			((GaimContact*)bnode->parent)->online--;
+			if(((GaimContact*)bnode->parent)->online == 0)
+				((GaimGroup*)bnode->parent->parent)->online--;
+		}
+		if(gaim_account_is_connected(buddy->account)) {
+			((GaimContact*)bnode->parent)->currentsize--;
+			if(((GaimContact*)bnode->parent)->currentsize == 0)
+				((GaimGroup*)bnode->parent->parent)->currentsize--;
+		}
+		((GaimContact*)bnode->parent)->totalsize--;
+		/* the group totalsize will be taken care of by remove_contact below */
+
+		if(bnode->parent->parent != (GaimBlistNode*)g)
+			serv_move_buddy(buddy, (GaimGroup *)bnode->parent->parent, g);
 
 		if(bnode->next)
 			bnode->next->prev = bnode->prev;
 		if(bnode->prev)
 			bnode->prev->next = bnode->next;
-		if(bnode->parent->child == bnode)
+		if(bnode->parent->child == bnode) {
 			bnode->parent->child = bnode->next;
+			if(!bnode->parent->child)
+				gaim_blist_remove_contact((GaimContact*)bnode->parent);
+		}
 
 		ops->remove(gaimbuddylist, bnode);
 
-		if (bnode->parent != ((GaimBlistNode*)g)) {
-			serv_move_buddy(buddy, (struct group*)bnode->parent, g);
-		}
 		save = TRUE;
 	}
 
-	if (n) {
-		if(n->next)
-			n->next->prev = (GaimBlistNode*)buddy;
-		((GaimBlistNode*)buddy)->next = n->next;
-		((GaimBlistNode*)buddy)->prev = n;
-		((GaimBlistNode*)buddy)->parent = n->parent;
-		n->next = (GaimBlistNode*)buddy;
-		((struct group *)n->parent)->totalsize++;
-		if (gaim_account_is_connected(buddy->account))
-			((struct group *)n->parent)->currentsize++;
-		if (GAIM_BUDDY_IS_ONLINE(buddy))
-			((struct group *)n->parent)->online++;
+	if(node && GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		if(node->next)
+			node->next->prev = bnode;
+		bnode->next = node->next;
+		bnode->prev = node;
+		bnode->parent = node->parent;
+		node->next = bnode;
 	} else {
-		if(((GaimBlistNode*)g)->child)
-			((GaimBlistNode*)g)->child->prev = (GaimBlistNode*)buddy;
-		((GaimBlistNode*)buddy)->prev = NULL;
-		((GaimBlistNode*)buddy)->next = ((GaimBlistNode*)g)->child;
-		((GaimBlistNode*)g)->child = (GaimBlistNode*)buddy;
-		((GaimBlistNode*)buddy)->parent = (GaimBlistNode*)g;
-		g->totalsize++;
-		if (gaim_account_is_connected(buddy->account))
-			g->currentsize++;
-		if (GAIM_BUDDY_IS_ONLINE(buddy))
-			g->online++;
+		if(cnode->child)
+			cnode->child->prev = bnode;
+		bnode->prev = NULL;
+		bnode->next = cnode->child;
+		cnode->child = bnode;
+		bnode->parent = cnode;
 	}
+
+	if(GAIM_BUDDY_IS_ONLINE(buddy)) {
+		((GaimContact*)bnode->parent)->online++;
+		if(((GaimContact*)bnode->parent)->online == 1)
+			((GaimGroup*)bnode->parent->parent)->online++;
+	}
+	if(gaim_account_is_connected(buddy->account)) {
+		((GaimContact*)bnode->parent)->currentsize++;
+		if(((GaimContact*)bnode->parent)->currentsize == 1)
+			((GaimGroup*)bnode->parent->parent)->currentsize++;
+	}
+	((GaimContact*)bnode->parent)->totalsize++;
+
 
 	hb = g_malloc(sizeof(struct _gaim_hbuddy));
 	hb->name = g_strdup(normalize(buddy->name));
 	hb->account = buddy->account;
-	hb->group = ((GaimBlistNode*)buddy)->parent;
+	hb->group = ((GaimBlistNode*)buddy)->parent->parent;
 
 	if (g_hash_table_lookup(gaimbuddylist->buddies, (gpointer)hb)) {
 		/* This guy already exists */
@@ -594,13 +640,28 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		gaim_blist_save();
 }
 
-struct group *gaim_group_new(const char *name)
+GaimContact *gaim_contact_new()
 {
-	struct group *g = gaim_find_group(name);
+	struct gaim_blist_ui_ops *ops;
+	GaimContact *c = g_new0(GaimContact, 1);
+	((GaimBlistNode*)c)->type = GAIM_BLIST_CONTACT_NODE;
+
+	c->totalsize = c->currentsize = c->online = 0;
+
+	ops = gaim_get_blist_ui_ops();
+	if (ops != NULL && ops->new_node != NULL)
+		ops->new_node((GaimBlistNode *)c);
+
+	return c;
+}
+
+GaimGroup *gaim_group_new(const char *name)
+{
+	GaimGroup *g = gaim_find_group(name);
 
 	if (!g) {
 		struct gaim_blist_ui_ops *ops;
-		g= g_new0(struct group, 1);
+		g= g_new0(GaimGroup, 1);
 		g->name = g_strdup(name);
 		g->totalsize = 0;
 		g->currentsize = 0;
@@ -618,7 +679,81 @@ struct group *gaim_group_new(const char *name)
 	return g;
 }
 
-void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
+void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNode *node)
+{
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimGroup *g;
+	GaimBlistNode *gnode, *cnode;
+	gboolean save = FALSE;
+
+	if(!contact)
+		return;
+
+	if(node && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
+				GAIM_BLIST_NODE_IS_CHAT(node)))
+		g = (GaimGroup*)node->parent;
+	else if(group)
+		g = group;
+	else {
+		g = gaim_group_new(_("Buddies"));
+		gaim_blist_add_group(g,
+				gaim_blist_get_last_sibling(gaimbuddylist->root));
+	}
+
+	gnode = (GaimBlistNode*)g;
+	cnode = (GaimBlistNode*)contact;
+
+	if(cnode->parent) {
+
+		ops->remove(gaimbuddylist, cnode);
+
+		if(gnode->child == cnode)
+			gnode->child = cnode->next;
+		if(cnode->prev)
+			cnode->prev->next = cnode->next;
+		if(cnode->next)
+			cnode->next->prev = cnode->prev;
+
+
+		if(contact->online > 0)
+			((GaimGroup*)cnode->parent)->online--;
+		if(contact->currentsize > 0)
+			((GaimGroup*)cnode->parent)->currentsize--;
+		((GaimGroup*)cnode->parent)->totalsize--;
+
+		save = TRUE;
+	}
+
+	if(node && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
+				GAIM_BLIST_NODE_IS_CHAT(node))) {
+		if(node->next)
+			node->next->prev = cnode;
+		cnode->next = node->next;
+		cnode->prev = node;
+		cnode->parent = node->parent;
+		node->next = cnode;
+	} else {
+		if(gnode->child)
+			gnode->child->prev = cnode;
+		cnode->prev = NULL;
+		cnode->next = gnode->child;
+		gnode->child = cnode;
+		cnode->parent = gnode;
+	}
+
+	if(contact->online > 0)
+		g->online++;
+	if(contact->currentsize > 0)
+		g->currentsize++;
+	g->totalsize++;
+
+	if(ops && cnode->child)
+		ops->update(gaimbuddylist, cnode);
+	if (save)
+		gaim_blist_save();
+}
+
+void  gaim_blist_add_group (GaimGroup *group, GaimBlistNode *node)
 {
 	struct gaim_blist_ui_ops *ops;
 	GaimBlistNode *gnode = (GaimBlistNode*)group;
@@ -652,7 +787,7 @@ void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
 		save = TRUE;
 	}
 
-	if (node) {
+	if (node && GAIM_BLIST_NODE_IS_GROUP(node)) {
 		gnode->next = node->next;
 		gnode->prev = node;
 		if(node->next)
@@ -675,33 +810,70 @@ void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
 		gaim_blist_save();
 }
 
-void  gaim_blist_remove_buddy (struct buddy *buddy)
+void gaim_blist_remove_contact(GaimContact* contact)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 
-	GaimBlistNode *gnode, *node = (GaimBlistNode*)buddy;
-	struct group *group;
+	GaimBlistNode *gnode, *cnode = (GaimBlistNode*)contact;
+
+	gnode = cnode->parent;
+
+	if(cnode->child) {
+		while(cnode->child) {
+			gaim_blist_remove_buddy((GaimBuddy*)cnode->child);
+		}
+	} else {
+		if(ops)
+			ops->remove(gaimbuddylist, cnode);
+
+		if(gnode->child == cnode)
+			gnode->child = cnode->next;
+		if(cnode->prev)
+			cnode->prev->next = cnode->next;
+		if(cnode->next)
+			cnode->next->prev = cnode->prev;
+
+		g_free(contact);
+	}
+}
+
+void  gaim_blist_remove_buddy (GaimBuddy *buddy)
+{
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+
+	GaimBlistNode *cnode, *node = (GaimBlistNode*)buddy;
+	GaimGroup *group;
 	struct _gaim_hbuddy hb, *key;
 	struct buddy *val;
 
-	gnode = node->parent;
-	group = (struct group *)gnode;
+	cnode = node->parent;
+	group = (GaimGroup *)cnode->parent;
 
-	if(gnode->child == node)
-		gnode->child = node->next;
+	if(GAIM_BUDDY_IS_ONLINE(buddy)) {
+		((GaimContact*)cnode)->online--;
+		if(((GaimContact*)cnode)->online == 0)
+			group->online--;
+	}
+	if(gaim_account_is_connected(buddy->account)) {
+		((GaimContact*)cnode)->currentsize--;
+		if(((GaimContact*)cnode)->currentsize == 0)
+			group->currentsize--;
+	}
+	((GaimContact*)cnode)->totalsize--;
+
 	if (node->prev)
 		node->prev->next = node->next;
 	if (node->next)
 		node->next->prev = node->prev;
-	group->totalsize--;
-	if (gaim_account_is_connected(buddy->account))
-		group->currentsize--;
-	if (GAIM_BUDDY_IS_ONLINE(buddy))
-		group->online--;
+	if(cnode->child == node) {
+		cnode->child = node->next;
+		if(!cnode->child)
+			gaim_blist_remove_contact((GaimContact*)cnode);
+	}
 
 	hb.name = normalize(buddy->name);
 	hb.account = buddy->account;
-	hb.group = ((GaimBlistNode*)buddy)->parent;
+	hb.group = ((GaimBlistNode*)buddy)->parent->parent;
 	if (g_hash_table_lookup_extended(gaimbuddylist->buddies, &hb, (gpointer *)&key, (gpointer *)&val)) {
 		g_hash_table_remove(gaimbuddylist->buddies, &hb);
 		g_free(key->name);
@@ -718,15 +890,15 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 	g_free(buddy);
 }
 
-void  gaim_blist_remove_chat (struct chat *chat)
+void  gaim_blist_remove_chat (GaimBlistChat *chat)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 
 	GaimBlistNode *gnode, *node = (GaimBlistNode*)chat;
-	struct group *group;
+	GaimGroup *group;
 
 	gnode = node->parent;
-	group = (struct group *)gnode;
+	group = (GaimGroup *)gnode;
 
 	if(gnode->child == node)
 		gnode->child = node->next;
@@ -746,7 +918,7 @@ void  gaim_blist_remove_chat (struct chat *chat)
 	g_free(chat);
 }
 
-void  gaim_blist_remove_group (struct group *group)
+void  gaim_blist_remove_group (GaimGroup *group)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *node = (GaimBlistNode*)group;
@@ -787,7 +959,36 @@ void  gaim_blist_remove_group (struct group *group)
 	g_free(group);
 }
 
-char *gaim_get_buddy_alias_only(struct buddy *b) {
+GaimBuddy *gaim_contact_get_priority_buddy(GaimContact *contact) {
+	GaimBuddy *top = NULL;
+	GaimBlistNode *bnode;
+
+	for(bnode = ((GaimBlistNode*)contact)->child; bnode; bnode = bnode->next) {
+		GaimBuddy *buddy;
+		if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+			continue;
+		buddy = (GaimBuddy*)bnode;
+		if(!top) {
+			top = buddy;
+		} else if(GAIM_BUDDY_IS_ONLINE(buddy)) {
+			if(!GAIM_BUDDY_IS_ONLINE(top)) {
+				top = buddy;
+			} else if(!(buddy->uc & UC_UNAVAILABLE) && !buddy->idle &&
+					(top->uc & UC_UNAVAILABLE || top->idle)) {
+				top = buddy;
+			} else if(!buddy->idle && top->idle) {
+				top = buddy;
+			} else if(top->uc & UC_UNAVAILABLE && top->idle &&
+					(!(buddy->uc & UC_UNAVAILABLE) || !buddy->idle)) {
+				top = buddy;
+			}
+		}
+	}
+
+	return top;
+}
+
+const char *gaim_get_buddy_alias_only(GaimBuddy *b) {
 	if(!b)
 		return NULL;
 
@@ -803,9 +1004,9 @@ char *gaim_get_buddy_alias_only(struct buddy *b) {
 	return NULL;
 }
 
-char *  gaim_get_buddy_alias (struct buddy *buddy)
+const char *  gaim_get_buddy_alias (GaimBuddy *buddy)
 {
-	char *ret = gaim_get_buddy_alias_only(buddy);
+	const char *ret = gaim_get_buddy_alias_only(buddy);
 
 	if(!ret)
 		return buddy ? buddy->name : _("Unknown");
@@ -813,9 +1014,9 @@ char *  gaim_get_buddy_alias (struct buddy *buddy)
 	return ret;
 }
 
-struct buddy *gaim_find_buddy(GaimAccount *account, const char *name)
+GaimBuddy *gaim_find_buddy(GaimAccount *account, const char *name)
 {
-	struct buddy *buddy;
+	GaimBuddy *buddy;
 	struct _gaim_hbuddy hb;
 	GaimBlistNode *group;
 
@@ -862,25 +1063,25 @@ GSList *gaim_find_buddies(GaimAccount *account, const char *name)
 	return ret;
 }
 
-struct group *gaim_find_group(const char *name)
+GaimGroup *gaim_find_group(const char *name)
 {
 	GaimBlistNode *node;
 	if (!gaimbuddylist)
 		return NULL;
 	node = gaimbuddylist->root;
 	while(node) {
-		if (!strcmp(((struct group*)node)->name, name))
-			return (struct group*)node;
+		if (!strcmp(((GaimGroup *)node)->name, name))
+			return (GaimGroup *)node;
 		node = node->next;
 	}
 	return NULL;
 }
 
-struct chat *
+GaimBlistChat *
 gaim_blist_find_chat(GaimAccount *account, const char *name)
 {
 	char *chat_name;
-	struct chat *chat;
+	GaimBlistChat *chat;
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	struct proto_chat_entry *pce;
@@ -894,7 +1095,7 @@ gaim_blist_find_chat(GaimAccount *account, const char *name)
 		for (node = group->child; node != NULL; node = node->next) {
 			if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 
-				chat = (struct chat *)node;
+				chat = (GaimBlistChat*)node;
 
 				prpl = gaim_find_prpl(gaim_account_get_protocol(chat->account));
 				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
@@ -918,97 +1119,126 @@ gaim_blist_find_chat(GaimAccount *account, const char *name)
 	return NULL;
 }
 
-struct group *
-gaim_blist_chat_get_group(struct chat *chat)
+GaimGroup *
+gaim_blist_chat_get_group(GaimBlistChat *chat)
 {
 	g_return_val_if_fail(chat != NULL, NULL);
 
-	return (struct group *)(((GaimBlistNode *)chat)->parent);
+	return (GaimGroup *)(((GaimBlistNode *)chat)->parent);
 }
 
-struct group *gaim_find_buddys_group(struct buddy *buddy)
+GaimGroup *gaim_find_buddys_group(GaimBuddy *buddy)
 {
 	if (!buddy)
 		return NULL;
-	return (struct group*)(((GaimBlistNode*)buddy)->parent);
+	return (GaimGroup *)(((GaimBlistNode*)buddy)->parent->parent);
 }
 
-GSList *gaim_group_get_accounts(struct group *g)
+GSList *gaim_group_get_accounts(GaimGroup *g)
 {
 	GSList *l = NULL;
-	GaimBlistNode *child = ((GaimBlistNode *)g)->child;
+	GaimBlistNode *gnode, *cnode, *bnode;
 
-	while (child) {
-		GaimAccount *account = NULL;
-		if (GAIM_BLIST_NODE_IS_BUDDY(child))
-			account = ((struct buddy *)child)->account;
-		else if (GAIM_BLIST_NODE_IS_CHAT(child))
-			account = ((struct chat *)child)->account;
-		if (!g_slist_find(l, account))
-			l = g_slist_append(l, account);
-		child = child->next;
+	gnode = (GaimBlistNode *)g;
+
+	for(cnode = gnode->child;  cnode; cnode = cnode->next) {
+		if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+			if(!g_slist_find(l, ((GaimBlistChat *)cnode)->account))
+				l = g_slist_append(l, ((GaimBlistChat *)cnode)->account);
+		} else if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+					if(!g_slist_find(l, ((GaimBuddy *)bnode)->account))
+						l = g_slist_append(l, ((GaimBuddy *)bnode)->account);
+				}
+			}
+		}
 	}
+
 	return l;
 }
 
 void gaim_blist_add_account(GaimAccount *account)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	GaimBlistNode *group, *buddy;
+	GaimBlistNode *gnode, *cnode, *bnode;
 
 	if(!gaimbuddylist)
 		return;
 
-	for(group = gaimbuddylist->root; group; group = group->next) {
-		if(!GAIM_BLIST_NODE_IS_GROUP(group))
+	if(!ops)
+		return;
+
+	for(gnode = gaimbuddylist->root; gnode; gnode = gnode->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for(buddy = group->child; buddy; buddy = buddy->next) {
-			if(GAIM_BLIST_NODE_IS_BUDDY(buddy)) {
-				if (account == ((struct buddy*)buddy)->account) {
-					((struct group *)group)->currentsize++;
-					if(ops)
-						ops->update(gaimbuddylist, buddy);
-				}
-			} else if(GAIM_BLIST_NODE_IS_CHAT(buddy)) {
-				if (account == ((struct chat*)buddy)->account) {
-					((struct group *)group)->online++;
-					((struct group *)group)->currentsize++;
-					if(ops)
-						ops->update(gaimbuddylist, buddy);
-				}
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+					for(bnode = cnode->child; bnode; bnode = bnode->next) {
+						if(GAIM_BLIST_NODE_IS_BUDDY(bnode) &&
+								((GaimBuddy*)bnode)->account == account) {
+							((GaimContact*)cnode)->currentsize++;
+							if(((GaimContact*)cnode)->currentsize == 1)
+								((GaimGroup*)gnode)->currentsize++;
+							if(GAIM_BUDDY_IS_ONLINE((GaimBuddy*)bnode)) {
+								((GaimContact*)cnode)->online++;
+								if(((GaimContact*)cnode)->online == 1)
+									((GaimGroup*)gnode)->online++;
+							}
+							ops->update(gaimbuddylist, bnode);
+						}
+					}
+					ops->update(gaimbuddylist, cnode);
+			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode) &&
+					((GaimBlistChat*)cnode)->account == account) {
+					((GaimGroup *)gnode)->online++;
+					((GaimGroup *)gnode)->currentsize++;
+					ops->update(gaimbuddylist, cnode);
 			}
 		}
+		ops->update(gaimbuddylist, gnode);
 	}
 }
 
 void gaim_blist_remove_account(GaimAccount *account)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	GaimBlistNode *group, *buddy;
+	GaimBlistNode *gnode, *cnode, *bnode;
 
 	if (!gaimbuddylist)
 		return;
 
-	for(group = gaimbuddylist->root; group; group = group->next) {
-		if(!GAIM_BLIST_NODE_IS_GROUP(group))
+	for(gnode = gaimbuddylist->root; gnode; gnode = gnode->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for(buddy = group->child; buddy; buddy = buddy->next) {
-			if(GAIM_BLIST_NODE_IS_BUDDY(buddy)) {
-				if (account == ((struct buddy*)buddy)->account) {
-					if (GAIM_BUDDY_IS_ONLINE((struct buddy*)buddy))
-						((struct group *)group)->online--;
-					((struct buddy*)buddy)->present = GAIM_BUDDY_OFFLINE;
-					((struct group *)group)->currentsize--;
-					if(ops)
-						ops->remove(gaimbuddylist, buddy);
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+				for(bnode = cnode->child; bnode; bnode = bnode->next) {
+					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+					if(account == ((GaimBuddy *)bnode)->account) {
+						if(((GaimBuddy*)bnode)->present == GAIM_BUDDY_ONLINE ||
+								((GaimBuddy*)bnode)->present == GAIM_BUDDY_SIGNING_ON) {
+							((GaimContact*)cnode)->online--;
+							if(((GaimContact*)cnode)->online == 0)
+								((GaimGroup*)gnode)->online--;
+						}
+						((GaimContact*)cnode)->currentsize--;
+						if(((GaimContact*)cnode)->currentsize == 0)
+							((GaimGroup*)gnode)->currentsize--;
+
+						((GaimBuddy*)bnode)->present = GAIM_BUDDY_OFFLINE;
+
+						if(ops)
+							ops->remove(gaimbuddylist, bnode);
+					}
 				}
-			} else if(GAIM_BLIST_NODE_IS_CHAT(buddy)) {
-				if (account == ((struct chat*)buddy)->account) {
-					((struct group *)group)->online--;
-					((struct group *)group)->currentsize--;
-					if(ops)
-						ops->remove(gaimbuddylist, buddy);
-				}
+			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode) &&
+					((GaimBlistChat*)cnode)->account == account) {
+				((GaimGroup*)gnode)->currentsize--;
+				((GaimGroup*)gnode)->online--;
+				if(ops)
+					ops->remove(gaimbuddylist, cnode);
 			}
 		}
 	}
@@ -1040,7 +1270,7 @@ void parse_toc_buddy_list(GaimAccount *account, char *config)
 					g_free(utf8);
 				}
 				if (!gaim_find_group(current)) {
-					struct group *g = gaim_group_new(current);
+					GaimGroup *g = gaim_group_new(current);
 					gaim_blist_add_group(g,
 							gaim_blist_get_last_sibling(gaimbuddylist->root));
 				}
@@ -1070,9 +1300,9 @@ void parse_toc_buddy_list(GaimAccount *account, char *config)
 				}
 
 				if (!gaim_find_buddy(account, nm)) {
-					struct buddy *b = gaim_buddy_new(account, nm, sw);
-					struct group *g = gaim_find_group(current);
-					gaim_blist_add_buddy(b, g,
+					GaimBuddy *b = gaim_buddy_new(account, nm, sw);
+					GaimGroup *g = gaim_find_group(current);
+					gaim_blist_add_buddy(b, NULL, g,
 							gaim_blist_get_last_child((GaimBlistNode*)g));
 					bud = g_list_append(bud, g_strdup(nm));
 				}
@@ -1304,7 +1534,7 @@ static void do_import(GaimAccount *account, const char *filename)
 		char *file = gaim_user_dir();
 		GaimProtocol prpl_num;
 		int protocol;
-		
+
 		prpl_num = gaim_account_get_protocol(account);
 
 		protocol = prpl_num;
@@ -1394,23 +1624,33 @@ static void do_import(GaimAccount *account, const char *filename)
 	}
 }
 
-gboolean gaim_group_on_account(struct group *g, GaimAccount *account) {
-	GaimBlistNode *bnode;
-	for(bnode = g->node.child; bnode; bnode = bnode->next) {
-		struct buddy *b = (struct buddy *)bnode;
-		if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-			continue;
-		if((!account && gaim_account_is_connected(b->account))
-				|| b->account == account)
-			return TRUE;
+gboolean gaim_group_on_account(GaimGroup *g, GaimAccount *account) {
+	GaimBlistNode *cnode, *bnode;
+	for(cnode = ((GaimBlistNode *)g)->child; cnode; cnode = cnode->next) {
+		if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+					GaimBuddy *buddy = (GaimBuddy *)bnode;
+					if((!account && gaim_account_is_connected(buddy->account))
+							|| buddy->account == account)
+						return TRUE;
+				}
+			}
+		} else if(GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+			GaimBlistChat *chat = (GaimBlistChat *)cnode;
+			if((!account && gaim_account_is_connected(chat->account))
+					|| chat->account == account)
+				return TRUE;
+		}
 	}
 	return FALSE;
 }
 
 static gboolean blist_safe_to_write = FALSE;
 
+GaimGroup *blist_parser_group = NULL;
+GaimContact *blist_parser_contact = NULL;
 static char *blist_parser_group_name = NULL;
-static char *blist_parser_person_name = NULL;
 static char *blist_parser_account_name = NULL;
 static int blist_parser_account_protocol = 0;
 static char *blist_parser_chat_alias = NULL;
@@ -1432,7 +1672,7 @@ enum {
 	BLIST_TAG_GROUP,
 	BLIST_TAG_CHAT,
 	BLIST_TAG_COMPONENT,
-	BLIST_TAG_PERSON,
+	BLIST_TAG_CONTACT,
 	BLIST_TAG_BUDDY,
 	BLIST_TAG_NAME,
 	BLIST_TAG_ALIAS,
@@ -1466,10 +1706,17 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 			}
 		}
 		if(blist_parser_group_name) {
-			struct group *g = gaim_group_new(blist_parser_group_name);
-			gaim_blist_add_group(g,
+			blist_parser_group = gaim_group_new(blist_parser_group_name);
+			gaim_blist_add_group(blist_parser_group,
 					gaim_blist_get_last_sibling(gaimbuddylist->root));
 		}
+	} else if(!strcmp(element_name, "contact")) {
+		tag_stack = g_list_prepend(tag_stack,
+				GINT_TO_POINTER(BLIST_TAG_CONTACT));
+
+		blist_parser_contact = gaim_contact_new();
+		gaim_blist_add_contact(blist_parser_contact, blist_parser_group,
+				gaim_blist_get_last_sibling(((GaimBlistNode*)blist_parser_group)->child));
 	} else if(!strcmp(element_name, "chat")) {
 		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_CHAT));
 		for(i=0; attribute_names[i]; i++) {
@@ -1478,14 +1725,6 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 				blist_parser_account_name = g_strdup(attribute_values[i]);
 			} else if(!strcmp(attribute_names[i], "protocol")) {
 				blist_parser_account_protocol = atoi(attribute_values[i]);
-			}
-		}
-	} else if(!strcmp(element_name, "person")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_PERSON));
-		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "name")) {
-				g_free(blist_parser_person_name);
-				blist_parser_person_name = g_strdup(attribute_values[i]);
 			}
 		}
 	} else if(!strcmp(element_name, "buddy")) {
@@ -1550,18 +1789,21 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "group")) {
 		if(blist_parser_group_settings) {
-			struct group *g = gaim_find_group(blist_parser_group_name);
+			GaimGroup *g = gaim_find_group(blist_parser_group_name);
 			g_hash_table_destroy(g->settings);
 			g->settings = blist_parser_group_settings;
 		}
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 		blist_parser_group_settings = NULL;
+		blist_parser_group = NULL;
+		blist_parser_group_name = NULL;
 	} else if(!strcmp(element_name, "chat")) {
 		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
-			struct chat *chat = gaim_chat_new(account, blist_parser_chat_alias, blist_parser_chat_components);
-			struct group *g = gaim_find_group(blist_parser_group_name);
+			GaimBlistChat *chat = gaim_blist_chat_new(account,
+					blist_parser_chat_alias, blist_parser_chat_components);
+			GaimGroup *g = gaim_find_group(blist_parser_group_name);
 			gaim_blist_add_chat(chat,g,
 					gaim_blist_get_last_child((GaimBlistNode*)g));
 			if(blist_parser_chat_settings) {
@@ -1576,18 +1818,18 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		blist_parser_chat_components = NULL;
 		blist_parser_chat_settings = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "person")) {
-		g_free(blist_parser_person_name);
-		blist_parser_person_name = NULL;
+	} else if(!strcmp(element_name, "contact")) {
+		if(blist_parser_contact && !blist_parser_contact->node.child)
+			gaim_blist_remove_contact(blist_parser_contact);
+		blist_parser_contact = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "buddy")) {
 		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
-			struct buddy *b = gaim_buddy_new(account, blist_parser_buddy_name, blist_parser_buddy_alias);
-			struct group *g = gaim_find_group(blist_parser_group_name);
-			gaim_blist_add_buddy(b,g,
-					gaim_blist_get_last_child((GaimBlistNode*)g));
+			GaimBuddy *b = gaim_buddy_new(account, blist_parser_buddy_name, blist_parser_buddy_alias);
+			gaim_blist_add_buddy(b,blist_parser_contact, blist_parser_group,
+					gaim_blist_get_last_child((GaimBlistNode*)blist_parser_contact));
 			if(blist_parser_buddy_settings) {
 				g_hash_table_destroy(b->settings);
 				b->settings = blist_parser_buddy_settings;
@@ -1797,24 +2039,6 @@ void gaim_blist_load() {
 			g_free(msg);
 		}
 	} else if(g_list_length(gaim_accounts_get_all())) {
-#if 0
-		GMainContext *ctx;
-
-		/* rob wants to inform the user that their buddy lists are
-		 * being converted */
-		msg = g_strdup_printf(_("Gaim is converting your old buddy lists "
-					"to a new format, which will now be located at %s"),
-				filename);
-		gaim_notify_info(NULL, NULL, _("Converting Buddy List"), msg);
-		g_free(msg);
-
-		/* now, let gtk actually display the dialog before we start anything */
-		ctx = g_main_context_default();
-
-		while(g_main_context_pending(ctx))
-			g_main_context_iteration(ctx, FALSE);
-#endif
-
 		/* read in the old lists, then save to the new format */
 		for(accts = gaim_accounts_get_all(); accts; accts = accts->next) {
 			do_import(accts->data, NULL);
@@ -1861,6 +2085,24 @@ static void blist_print_buddy_settings(gpointer key, gpointer data,
 	g_free(data_val);
 }
 
+static void blist_print_cnode_settings(gpointer key, gpointer data,
+		gpointer user_data) {
+	char *key_val;
+	char *data_val;
+	FILE *file = user_data;
+
+	if(!key || !data)
+		return;
+
+	key_val = g_markup_escape_text(key, -1);
+	data_val = g_markup_escape_text(data, -1);
+
+	fprintf(file, "\t\t\t\t<setting name=\"%s\">%s</setting>\n", key_val,
+			data_val);
+	g_free(key_val);
+	g_free(data_val);
+}
+
 static void blist_print_chat_components(gpointer key, gpointer data,
 		gpointer user_data) {
 	char *key_val;
@@ -1879,54 +2121,62 @@ static void blist_print_chat_components(gpointer key, gpointer data,
 	g_free(data_val);
 }
 
+static void print_buddy(FILE *file, GaimBuddy *buddy) {
+	char *bud_name = g_markup_escape_text(buddy->name, -1);
+	char *bud_alias = NULL;
+	char *acct_name = g_markup_escape_text(buddy->account->username, -1);
+	if(buddy->alias)
+		bud_alias= g_markup_escape_text(buddy->alias, -1);
+	fprintf(file, "\t\t\t\t<buddy protocol=\"%d\" "
+			"account=\"%s\">\n",
+			gaim_account_get_protocol(buddy->account),
+			acct_name);
+	fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
+	if(bud_alias) {
+		fprintf(file, "\t\t\t\t\t<alias>%s</alias>\n", bud_alias);
+	}
+	g_hash_table_foreach(buddy->settings, blist_print_buddy_settings, file);
+	fprintf(file, "\t\t\t\t</buddy>\n");
+	g_free(bud_name);
+	g_free(bud_alias);
+	g_free(acct_name);
+}
+
 static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 	GList *accounts;
 	GSList *buds;
-	GaimBlistNode *gnode,*bnode;
-	struct group *group;
-	struct buddy *bud;
+	GaimBlistNode *gnode, *cnode, *bnode;
 	fprintf(file, "<?xml version='1.0' encoding='UTF-8' ?>\n");
 	fprintf(file, "<gaim version=\"1\">\n");
 	fprintf(file, "\t<blist>\n");
 
 	for(gnode = gaimbuddylist->root; gnode; gnode = gnode->next) {
+		GaimGroup *group;
+
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		group = (struct group *)gnode;
+
+		group = (GaimGroup *)gnode;
 		if(!exp_acct || gaim_group_on_account(group, exp_acct)) {
 			char *group_name = g_markup_escape_text(group->name, -1);
 			fprintf(file, "\t\t<group name=\"%s\">\n", group_name);
 			g_hash_table_foreach(group->settings, blist_print_group_settings, file);
-			for(bnode = gnode->child; bnode; bnode = bnode->next) {
-				if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
-					bud = (struct buddy *)bnode;
-					if(!exp_acct || bud->account == exp_acct) {
-						char *bud_name = g_markup_escape_text(bud->name, -1);
-						char *bud_alias = NULL;
-						char *acct_name = g_markup_escape_text(bud->account->username, -1);
-						if(bud->alias)
-							bud_alias= g_markup_escape_text(bud->alias, -1);
-						fprintf(file, "\t\t\t<person name=\"%s\">\n",
-								bud_alias ? bud_alias : bud_name);
-						fprintf(file, "\t\t\t\t<buddy protocol=\"%d\" "
-								"account=\"%s\">\n",
-								gaim_account_get_protocol(bud->account),
-								acct_name);
-						fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
-						if(bud_alias) {
-							fprintf(file, "\t\t\t\t\t<alias>%s</alias>\n",
-									bud_alias);
+			for(cnode = gnode->child; cnode; cnode = cnode->next) {
+				if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+					fprintf(file, "\t\t\t<contact>\n");
+
+					for(bnode = cnode->child; bnode; bnode = bnode->next) {
+						if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+							GaimBuddy *buddy = (GaimBuddy *)bnode;
+							if(!exp_acct || buddy->account == exp_acct) {
+								print_buddy(file, buddy);
+							}
 						}
-						g_hash_table_foreach(bud->settings,
-								blist_print_buddy_settings, file);
-						fprintf(file, "\t\t\t\t</buddy>\n");
-						fprintf(file, "\t\t\t</person>\n");
-						g_free(bud_name);
-						g_free(bud_alias);
-						g_free(acct_name);
 					}
-				} else if(GAIM_BLIST_NODE_IS_CHAT(bnode)) {
-					struct chat *chat = (struct chat *)bnode;
+
+					fprintf(file, "\t\t\t</contact>\n");
+				} else if(GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+					GaimBlistChat *chat = (GaimBlistChat *)cnode;
 					if(!exp_acct || chat->account == exp_acct) {
 						char *acct_name = g_markup_escape_text(chat->account->username, -1);
 						fprintf(file, "\t\t\t<chat protocol=\"%d\" account=\"%s\">\n",
@@ -1939,9 +2189,8 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 						}
 						g_hash_table_foreach(chat->components,
 								blist_print_chat_components, file);
-						/* works for chats too, I don't feel like renaming */
 						g_hash_table_foreach(chat->settings,
-								blist_print_buddy_settings, file);
+								blist_print_cnode_settings, file);
 						fprintf(file, "\t\t\t</chat>\n");
 						g_free(acct_name);
 					}
@@ -2026,20 +2275,20 @@ void gaim_blist_save() {
 	g_free(filename_real);
 }
 
-void gaim_group_set_setting(struct group *g, const char *key,
+void gaim_group_set_setting(GaimGroup *g, const char *key,
 		const char *value) {
 	if(!g)
 		return;
 	g_hash_table_replace(g->settings, g_strdup(key), g_strdup(value));
 }
 
-char *gaim_group_get_setting(struct group *g, const char *key) {
+char *gaim_group_get_setting(GaimGroup *g, const char *key) {
 	if(!g)
 		return NULL;
 	return g_strdup(g_hash_table_lookup(g->settings, key));
 }
 
-void gaim_chat_set_setting(struct chat *c, const char *key,
+void gaim_blist_chat_set_setting(GaimBlistChat *c, const char *key,
 		const char *value)
 {
 	if(!c)
@@ -2047,21 +2296,21 @@ void gaim_chat_set_setting(struct chat *c, const char *key,
 	g_hash_table_replace(c->settings, g_strdup(key), g_strdup(value));
 }
 
-char *gaim_chat_get_setting(struct chat *c, const char *key)
+char *gaim_blist_chat_get_setting(GaimBlistChat *c, const char *key)
 {
 	if(!c)
 		return NULL;
 	return g_strdup(g_hash_table_lookup(c->settings, key));
 }
 
-void gaim_buddy_set_setting(struct buddy *b, const char *key,
+void gaim_buddy_set_setting(GaimBuddy *b, const char *key,
 		const char *value) {
 	if(!b)
 		return;
 	g_hash_table_replace(b->settings, g_strdup(key), g_strdup(value));
 }
 
-char *gaim_buddy_get_setting(struct buddy *b, const char *key) {
+char *gaim_buddy_get_setting(GaimBuddy *b, const char *key) {
 	if(!b)
 		return NULL;
 	return g_strdup(g_hash_table_lookup(b->settings, key));
@@ -2078,14 +2327,14 @@ gaim_get_blist_ui_ops(void)
 	return blist_ui_ops;
 }
 
-int gaim_blist_get_group_size(struct group *group, gboolean offline) {
+int gaim_blist_get_group_size(GaimGroup *group, gboolean offline) {
 	if(!group)
 		return 0;
 
 	return offline ? group->totalsize : group->currentsize;
 }
 
-int gaim_blist_get_group_online_count(struct group *group) {
+int gaim_blist_get_group_online_count(GaimGroup *group) {
 	if(!group)
 		return 0;
 

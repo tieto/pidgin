@@ -57,7 +57,7 @@ extern "C" {
 extern GList *log_conversations;
 
 FILE *open_log_file (const char *, int);
-void system_log(enum log_event, GaimConnection *, struct buddy *, int);
+void system_log(enum log_event, GaimConnection *, GaimBuddy *, int);
 void rm_log(struct log_conversation *);
 struct log_conversation *find_log_info(const char *);
 void update_log_convs();

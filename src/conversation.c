@@ -1195,7 +1195,7 @@ void
 gaim_conversation_autoset_title(GaimConversation *conv)
 {
 	GaimAccount *account;
-	struct buddy *b;
+	GaimBuddy *b;
 	const char *text, *name;
 
 	g_return_if_fail(conv != NULL);
@@ -1437,7 +1437,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	GaimAccount *account;
 	GaimConversationUiOps *ops;
 	GaimWindow *win;
-	struct buddy *b;
+	GaimBuddy *b;
 	GaimUnseenState unseen;
 	/* int logging_font_options = 0; */
 
@@ -1471,7 +1471,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 			if (who == NULL) {
 				if (flags & GAIM_MESSAGE_SEND) {
 					b = gaim_find_buddy(account,
-										gaim_account_get_username(account));
+							gaim_account_get_username(account));
 
 					if (b != NULL && strcmp(b->name, gaim_get_buddy_alias(b)))
 						who = gaim_get_buddy_alias(b);
@@ -2270,8 +2270,8 @@ conv_placement_by_group(GaimConversation *conv)
 	type = gaim_conversation_get_type(conv);
 
 	if (type == GAIM_CONV_IM) {
-		struct buddy *b;
-		struct group *grp = NULL;
+		GaimBuddy *b;
+		GaimGroup *grp = NULL;
 		GList *wins, *convs;
 
 		b = gaim_find_buddy(gaim_conversation_get_account(conv),
@@ -2284,8 +2284,8 @@ conv_placement_by_group(GaimConversation *conv)
 		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
 			GaimWindow *win2;
 			GaimConversation *conv2;
-			struct buddy *b2;
-			struct group *g2 = NULL;
+			GaimBuddy *b2;
+			GaimGroup *g2 = NULL;
 
 			win2 = (GaimWindow *)wins->data;
 
@@ -2313,8 +2313,8 @@ conv_placement_by_group(GaimConversation *conv)
 		conv_placement_new_window(conv);
 	}
 	else if (type == GAIM_CONV_CHAT) {
-		struct chat *chat;
-		struct group *group = NULL;
+		GaimBlistChat *chat;
+		GaimGroup *group = NULL;
 		GList *wins, *convs;
 
 		chat = gaim_blist_find_chat(gaim_conversation_get_account(conv),
@@ -2327,8 +2327,8 @@ conv_placement_by_group(GaimConversation *conv)
 		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
 			GaimWindow *win2;
 			GaimConversation *conv2;
-			struct chat *chat2;
-			struct group *group2 = NULL;
+			GaimBlistChat *chat2;
+			GaimGroup *group2 = NULL;
 
 			win2 = (GaimWindow *)wins->data;
 

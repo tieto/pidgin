@@ -204,7 +204,7 @@ process_invite(MsnServConn *servconn, const MsnMessage *msg)
 	MsnMessage *new_msg;
 	MsnSwitchBoard *swboard;
 	MsnBuddyIconXfer *buddyicon;
-	struct buddy *b;
+	GaimBuddy *b;
 	GHashTable *table;
 	const char *command;
 

@@ -6,7 +6,7 @@
 #include "signals.h"
 
 static void
-write_status(struct buddy *buddy, const char *message)
+write_status(GaimBuddy *buddy, const char *message)
 {
 	GaimConversation *conv;
 	const char *who;
@@ -25,25 +25,25 @@ write_status(struct buddy *buddy, const char *message)
 }
 
 static void
-buddy_away_cb(struct buddy *buddy, void *data)
+buddy_away_cb(GaimBuddy *buddy, void *data)
 {
 	write_status(buddy, _("%s has gone away."));
 }
 
 static void
-buddy_unaway_cb(struct buddy *buddy, void *data)
+buddy_unaway_cb(GaimBuddy *buddy, void *data)
 {
 	write_status(buddy, _("%s is no longer away."));
 }
 
 static void
-buddy_idle_cb(struct buddy *buddy, void *data)
+buddy_idle_cb(GaimBuddy *buddy, void *data)
 {
 	write_status(buddy, _("%s has become idle."));
 }
 
 static void
-buddy_unidle_cb(struct buddy *buddy, void *data)
+buddy_unidle_cb(GaimBuddy *buddy, void *data)
 {
 	write_status(buddy, _("%s is no longer idle."));
 }

@@ -305,7 +305,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 	}
 
 	if (gc->state == GAIM_CONNECTED) {
-		GaimBlistNode *gnode,*bnode;
+		GaimBlistNode *gnode,*cnode,*bnode;
 		GList *wins;
 		GList *add_buds=NULL;
 
@@ -352,9 +352,15 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 			if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 				continue;
-			for(bnode = gnode->child; bnode; bnode = bnode->next) {
-				if(GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
-					struct buddy *b = (struct buddy *)bnode;
+			for(cnode = gnode->child; cnode; cnode = cnode->next) {
+				if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+					continue;
+				for(bnode = cnode->child; bnode; bnode = bnode->next) {
+					GaimBuddy *b;
+					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+
+					b = (GaimBuddy *)bnode;
 					if(b->account == gc->account) {
 						add_buds = g_list_append(add_buds, b->name);
 					}

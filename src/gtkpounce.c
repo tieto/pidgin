@@ -710,7 +710,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 }
 
 static void
-new_pounce_cb(GtkWidget *w, struct buddy *b)
+new_pounce_cb(GtkWidget *w, GaimBuddy *b)
 {
 	if (b == NULL)
 		gaim_gtkpounce_dialog_show(NULL, NULL, NULL);

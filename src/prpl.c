@@ -123,7 +123,7 @@ void set_icon_data(GaimConnection *gc, const char *who, void *data, int len)
 	struct icon_data tmp;
 	GList *l;
 	struct icon_data *id;
-	struct buddy *b;
+	GaimBuddy *b;
 	/* i'm going to vent here a little bit about normalize().  normalize()
 	 * uses a static buffer, so when we call functions that use normalize() from
 	 * functions that use normalize(), whose parameters are the result of running
@@ -279,7 +279,7 @@ void show_got_added(GaimConnection *gc, const char *id,
 	GaimAccount *account;
 	char buf[BUF_LONG];
 	struct got_add *ga;
-	struct buddy *b;
+	GaimBuddy *b;
 
 	account = gaim_connection_get_account(gc);
 	b = gaim_find_buddy(gc->account, who);
