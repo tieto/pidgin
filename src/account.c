@@ -146,6 +146,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 											  g_free, delete_setting);
 	account->ui_settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 				g_free, (GDestroyNotify)g_hash_table_destroy);
+	account->system_log = NULL;
 
 	return account;
 }
@@ -182,6 +183,9 @@ gaim_account_destroy(GaimAccount *account)
 
 	g_hash_table_destroy(account->settings);
 	g_hash_table_destroy(account->ui_settings);
+
+	if(account->system_log)
+		gaim_log_free(account->system_log);
 
 	g_free(account);
 }
@@ -911,6 +915,30 @@ gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
 	g_return_val_if_fail(setting->type == GAIM_PREF_BOOLEAN, default_value);
 
 	return setting->value.bool;
+}
+
+GaimLog *
+gaim_account_get_log(GaimAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	if(!account->system_log){
+		account->system_log	 = gaim_log_new(GAIM_LOG_SYSTEM, account->username,
+											account, account->gc->login_time);
+	}
+
+	return account->system_log;
+}
+
+void
+gaim_account_destroy_log(GaimAccount *account)
+{
+	g_return_if_fail(account != NULL);
+
+	if(account->system_log){
+		gaim_log_free(account->system_log);
+		account->system_log = NULL;
+	}
 }
 
 /* XML Stuff */

@@ -1100,6 +1100,9 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	GaimBuddy *b;
 	GSList *buddies;
 	int old_idle;
+ 	time_t current_time = time(NULL);
+ 	int signing_on = 0;
+ 	int signing_off = 0;
 
 	account = gaim_connection_get_account(gc);
 	b = gaim_find_buddy(account, name);
@@ -1148,65 +1151,135 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 */
 	gaim_blist_update_buddy_status(b, type);
 
+ 	if (loggedin) {
+ 		if (!GAIM_BUDDY_IS_ONLINE(b)) {
+ 			signing_on = TRUE;
+ 		}
+ 	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
+ 		signing_off = TRUE;
+ 	}
+
+
+	if (signing_on) {
+		if (gaim_prefs_get_bool("/core/conversations/im/show_login")) {
+			if (c != NULL) {
+
+				char *tmp = g_strdup_printf(_("%s logged in."),
+											gaim_get_buddy_alias(b));
+
+				gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM,
+										time(NULL));
+				g_free(tmp);
+			}
+			else if (awayqueue && find_queue_total_by_name(b->name)) {
+				struct queued_message *qm = g_new0(struct queued_message, 1);
+				g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
+				qm->message = g_strdup_printf(_("%s logged in."),
+											  gaim_get_buddy_alias(b));
+				qm->account = gc->account;
+				qm->tm = time(NULL);
+				qm->flags = GAIM_MESSAGE_SYSTEM;
+				message_queue = g_slist_append(message_queue, qm);
+			}
+		}
+		gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
+
+ 		if(gaim_prefs_get_bool("/core/logging/log_system") &&
+ 		   gaim_prefs_get_bool("/core/logging/log_signon_signoff")) {
+ 			GaimAccount *account = gaim_connection_get_account(gc);
+ 			GaimLog *log = gaim_account_get_log(account);
+ 			char *tmp = g_strdup_printf(_("%s signed on"),
+ 										gaim_get_buddy_alias(b));
+ 
+ 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+ 						   current_time, tmp);
+ 			g_free(tmp);
+ 		}
+	}
+
+ 	if(gaim_prefs_get_bool("/core/logging/log_system") &&
+ 	   gaim_prefs_get_bool("/core/logging/log_away_state")) {
+ 		GaimAccount *account = gaim_connection_get_account(gc);
+ 		GaimLog *log = gaim_account_get_log(account);
+ 		char *tmp = NULL;
+ 
+ 		if((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE))
+ 			tmp = g_strdup_printf(_("%s came back"), gaim_get_buddy_alias(b));
+ 		else if(!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE))
+ 			tmp = g_strdup_printf(_("%s went away"), gaim_get_buddy_alias(b));
+ 
+ 		if(tmp){
+ 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+ 						   current_time, tmp);
+ 			g_free(tmp);
+ 		}
+ 	}
+
 	if (!old_idle && idle) {
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
+ 		if(gaim_prefs_get_bool("/core/logging/log_system") &&
+ 		   gaim_prefs_get_bool("/core/logging/log_idle_state")) {
+ 			GaimAccount *account = gaim_connection_get_account(gc);
+ 			GaimLog *log = gaim_account_get_log(account);
+ 			char *tmp = g_strdup_printf(_("%s became idle"),
+ 										gaim_get_buddy_alias(b));
+ 
+ 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+ 						   current_time, tmp);
+ 			g_free(tmp);
+ 		}
 	} else if (old_idle && !idle) {
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
+ 
+ 		if(gaim_prefs_get_bool("/core/logging/log_system") &&
+ 		   gaim_prefs_get_bool("/core/logging/log_idle_state")) {
+ 			GaimAccount *account = gaim_connection_get_account(gc);
+ 			GaimLog *log = gaim_account_get_log(account);
+ 			char *tmp = g_strdup_printf(_("%s became unidle"),
+ 										gaim_get_buddy_alias(b));
+ 
+ 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+ 						   current_time, tmp);
+ 			g_free(tmp);
+ 		}
 	}
 
-	if (loggedin) {
-		if (!GAIM_BUDDY_IS_ONLINE(b)) {
-			if (gaim_prefs_get_bool("/core/conversations/im/show_login")) {
-				if (c != NULL) {
+	if (signing_off) {
+		if (gaim_prefs_get_bool("/core/conversations/im/show_login")) {
+			if (c != NULL) {
 
-					char *tmp = g_strdup_printf(_("%s logged in."),
-												gaim_get_buddy_alias(b));
-
-					gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM,
-											time(NULL));
-					g_free(tmp);
-				}
-				else if (awayqueue && find_queue_total_by_name(b->name)) {
-					struct queued_message *qm = g_new0(struct queued_message, 1);
-					g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
-					qm->message = g_strdup_printf(_("%s logged in."),
-												  gaim_get_buddy_alias(b));
-					qm->account = gc->account;
-					qm->tm = time(NULL);
-					qm->flags = GAIM_MESSAGE_SYSTEM;
-					message_queue = g_slist_append(message_queue, qm);
-				}
+				char *tmp = g_strdup_printf(_("%s logged out."),
+											gaim_get_buddy_alias(b));
+				gaim_conversation_write(c, NULL, tmp,
+										GAIM_MESSAGE_SYSTEM, time(NULL));
+				g_free(tmp);
+			} else if (awayqueue && find_queue_total_by_name(b->name)) {
+				struct queued_message *qm = g_new0(struct queued_message, 1);
+				g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
+				qm->message = g_strdup_printf(_("%s logged out."),
+											  gaim_get_buddy_alias(b));
+				qm->account = gc->account;
+				qm->tm = time(NULL);
+				qm->flags = GAIM_MESSAGE_SYSTEM;
+				message_queue = g_slist_append(message_queue, qm);
 			}
-			gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
-			/* LOG system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON); */
 		}
-	} else {
-		if (GAIM_BUDDY_IS_ONLINE(b)) {
+		serv_got_typing_stopped(gc, name); /* obviously not typing */
+		gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
 
-			if (gaim_prefs_get_bool("/core/conversations/im/show_login")) {
-				if (c != NULL) {
-
-					char *tmp = g_strdup_printf(_("%s logged out."),
-												gaim_get_buddy_alias(b));
-					gaim_conversation_write(c, NULL, tmp,
-											GAIM_MESSAGE_SYSTEM, time(NULL));
-					g_free(tmp);
-				} else if (awayqueue && find_queue_total_by_name(b->name)) {
-					struct queued_message *qm = g_new0(struct queued_message, 1);
-					g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
-					qm->message = g_strdup_printf(_("%s logged out."),
-												  gaim_get_buddy_alias(b));
-					qm->account = gc->account;
-					qm->tm = time(NULL);
-					qm->flags = GAIM_MESSAGE_SYSTEM;
-					message_queue = g_slist_append(message_queue, qm);
-				}
-			}
-			serv_got_typing_stopped(gc, name); /* obviously not typing */
-			gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
-			/* LOG system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON); */
-		}
+ 		if(gaim_prefs_get_bool("/core/logging/log_system") &&
+ 		   gaim_prefs_get_bool("/core/logging/log_signon_signoff")) {
+ 			GaimAccount *account = gaim_connection_get_account(gc);
+ 			GaimLog *log = gaim_account_get_log(account);
+ 			char *tmp = g_strdup_printf(_("%s signed off"),
+ 										gaim_get_buddy_alias(b));
+ 
+ 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
+ 						   current_time, tmp);
+ 			g_free(tmp);
+ 		}
 	}
+
 
 	if (c != NULL)
 		gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);

@@ -71,10 +71,6 @@ typedef enum
 } GaimProtocol;
 
 
-#include "blist.h"
-#include "proxy.h"
-#include "plugin.h"
-
 /** Default protocol plugin description */
 #define GAIM_PRPL_DESC(x) \
 		"Allows gaim to use the " (x) " protocol.\n\n"      \
@@ -97,6 +93,10 @@ typedef enum
 	GAIM_CONV_IM_AUTO_RESP = 0x0001,    /**< Auto response.    */
 	GAIM_CONV_IM_IMAGES    = 0x0002     /**< Contains images.  */
 } GaimConvImFlags;
+
+#include "blist.h"
+#include "proxy.h"
+#include "plugin.h"
 
 /**
  * Protocol options

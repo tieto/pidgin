@@ -87,6 +87,9 @@ struct _GaimLogLogger {
 	/** Returns the total size of all the logs. If this is undefined a default
 	 * implementation is used */
 	int (*total_size)(const char *name, GaimAccount *account);
+
+	/** This function returns a sorted GList of available system GaimLogs */
+	GList *(*list_syslog)(GaimAccount *account);
 };
 
 /**
@@ -169,6 +172,14 @@ extern "C" {
 	GList *gaim_log_get_logs(const char *name, GaimAccount *account);
 
 	/**
+	 * Returns a list of all available system logs
+	 *
+	 * @param account The account
+	 * @return		A sorted list of GaimLogs
+	 */
+	GList *gaim_log_get_system_logs(GaimAccount *account);
+
+	/**
 	 * Returns the size of a log 
 	 *
 	 * @param log                 The log
@@ -184,6 +195,16 @@ extern "C" {
 	 * @return                    The size in bytes
 	 */
 	 int gaim_log_get_total_size(const char *name, GaimAccount *account);
+
+	/**
+	 * Implements GCompareFunc
+	 *
+	 * @param y				   A GaimLog
+	 * @param z				   Another GaimLog
+	 * @return					A value as specified by GCompareFunc
+	 */
+	 gint gaim_log_compare(gconstpointer y, gconstpointer z);
+
 	/******************************************
 	 ** LOGGER FUNCTIONS **********************
 	 ******************************************/

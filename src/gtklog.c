@@ -35,6 +35,7 @@
 
 static GHashTable *log_viewers = NULL;
 static void populate_log_tree(GaimGtkLogViewer *lv);
+static GaimGtkLogViewer *syslog_viewer = NULL;
 
 struct log_viewer_hash_t {
 	char *screenname;
@@ -113,11 +114,16 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 }
 
 static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
-	GaimGtkLogViewer *lv = g_hash_table_lookup(log_viewers, ht);
+	GaimGtkLogViewer *lv = syslog_viewer;
 
-	g_hash_table_remove(log_viewers, ht);
-	g_free(ht->screenname);
-	g_free(ht);
+	if(ht != NULL){
+		lv = g_hash_table_lookup(log_viewers, ht);
+		g_hash_table_remove(log_viewers, ht);
+		g_free(ht->screenname);
+		g_free(ht);
+	} else
+		syslog_viewer = NULL;
+
 	while (lv->logs) {
 		GaimLog *log = lv->logs->data;
 		GList *logs2;
@@ -128,12 +134,31 @@ static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht
 	}
 	if (lv->search)
 		g_free(lv->search);
-	g_free(lv);		
+	g_free(lv);
 	gtk_widget_destroy(w);
 
 	return TRUE;
 }
+#if 0
+static gboolean destroy_syslog_cb(GtkWidget *w, gint resp, void *cb)
+{
+	while (syslog_viewer->logs) {
+		GaimLog *log = syslog_viewer->logs->data;
+		GList *logs2;
+		gaim_log_free(log);
+		logs2 = syslog_viewer->logs->next;
+		g_list_free_1(syslog_viewer->logs);
+		syslog_viewer->logs = logs2;
+	}
+	if (syslog_viewer->search)
+		g_free(syslog_viewer->search);
+	g_free(syslog_viewer);
+	syslog_viewer = NULL;
+	gtk_widget_destroy(w);
 
+	return TRUE;
+}
+#endif
 static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	GtkTreeIter   iter;
 	GValue val = { 0, };
@@ -311,3 +336,108 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 
 	gtk_widget_show_all(lv->window);
 }
+
+void gaim_gtk_syslog_show()
+{
+	GtkWidget *hbox, *vbox;
+	GtkCellRenderer *rend;
+	GtkTreeViewColumn *col;
+	GtkTreeSelection *sel;
+	GtkWidget *label, *pane, *sw, *button;
+	char *text;
+	GList *accounts = NULL;
+
+	if(syslog_viewer){
+		gtk_window_present(GTK_WINDOW(syslog_viewer->window));
+		return;
+	}
+
+	syslog_viewer = g_new0(GaimGtkLogViewer, 1);
+
+	for(accounts = gaim_accounts_get_all(); accounts != NULL;
+		accounts = accounts->next) {
+		GList *logs;
+		GaimAccount *account = (GaimAccount *)accounts->data;
+		if(!gaim_find_prpl(gaim_account_get_protocol_id(account)))
+			continue;
+
+		logs = gaim_log_get_system_logs(account);
+		syslog_viewer->logs = g_list_concat(syslog_viewer->logs, logs);
+	}
+	syslog_viewer->logs = g_list_sort(syslog_viewer->logs, gaim_log_compare);
+
+	/* Window ***********/
+	syslog_viewer->window = gtk_dialog_new_with_buttons(_("System Log"), NULL, 0, 
+						 GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+	gtk_container_set_border_width (GTK_CONTAINER(syslog_viewer->window), 6);
+	gtk_dialog_set_has_separator(GTK_DIALOG(syslog_viewer->window), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(syslog_viewer->window)->vbox), 0);
+	g_signal_connect(G_OBJECT(syslog_viewer->window), "response", 
+					 G_CALLBACK(destroy_cb), NULL);
+
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 6);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(syslog_viewer->window)->vbox), hbox,
+					   FALSE, FALSE, 0);
+
+	/* Label ************/
+	label = gtk_label_new(NULL);
+	text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>",
+						   _("System Log"));
+	gtk_label_set_markup(GTK_LABEL(label), text);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	g_free(text);
+
+	/* Pane *************/
+	pane = gtk_hpaned_new();
+	gtk_container_set_border_width(GTK_CONTAINER(pane), 6);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(syslog_viewer->window)->vbox), pane,
+					   TRUE, TRUE, 0);
+	
+	/* List *************/
+	sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	gtk_paned_add1(GTK_PANED(pane), sw);
+	syslog_viewer->treestore = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
+	syslog_viewer->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (syslog_viewer->treestore));
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes ("time", rend, "markup", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW(syslog_viewer->treeview), col);
+	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (syslog_viewer->treeview), FALSE);
+	gtk_container_add (GTK_CONTAINER (sw), syslog_viewer->treeview);
+
+	gtk_widget_set_size_request(syslog_viewer->treeview, 170, 200);
+	populate_log_tree(syslog_viewer);
+
+	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (syslog_viewer->treeview));
+	g_signal_connect (G_OBJECT (sel), "changed",
+			  G_CALLBACK (log_select_cb),
+			  syslog_viewer);
+		
+	/* Viewer ************/
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_paned_add2(GTK_PANED(pane), vbox);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	syslog_viewer->imhtml = gtk_imhtml_new(NULL, NULL);
+	gtk_container_add(GTK_CONTAINER(sw), syslog_viewer->imhtml);
+	gaim_setup_imhtml(syslog_viewer->imhtml);
+	gtk_widget_set_size_request(syslog_viewer->imhtml, 400, 200);
+		
+	/* Search box **********/
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	syslog_viewer->entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), syslog_viewer->entry, TRUE, TRUE, 0);
+	button = gtk_button_new_from_stock(GTK_STOCK_FIND);
+	g_signal_connect (G_OBJECT (button), "pressed",
+			  G_CALLBACK (search_cb),
+			  syslog_viewer);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+	gtk_widget_show_all(syslog_viewer->window);	
+}
+

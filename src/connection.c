@@ -313,6 +313,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		GaimBlistNode *gnode,*cnode,*bnode;
 		GList *wins;
 		GList *add_buds=NULL;
+		GaimAccount *account = gaim_connection_get_account(gc);
 
 		/* Set the time the account came online */
 		time(&gc->login_time);
@@ -321,7 +322,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 			ops->connected(gc);
 
 		gaim_blist_show();
-		gaim_blist_add_account(gc->account);
+		gaim_blist_add_account(account);
 
 		/*
 		 * XXX This is a hack! Remove this and replace it with a better event
@@ -335,6 +336,17 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		/* LOG system_log(log_signon, gc, NULL,
 		   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
+		if(gaim_prefs_get_bool("/core/logging/log_system") &&
+		   gaim_prefs_get_bool("/core/logging/log_own_states")){
+			GaimLog *log = gaim_account_get_log(account);
+			char *msg = g_strdup_printf("+++ %s signed on",
+										gaim_account_get_username(account));
+			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
+						   gaim_account_get_username(account), gc->login_time,
+						   msg);
+			g_free(msg);						   
+		}
+
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);
 
 #if 0
@@ -380,8 +392,23 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		serv_set_permit_deny(gc);
 	}
 	else if (gc->state == GAIM_DISCONNECTED) {
+		GaimAccount *account = gaim_connection_get_account(gc);
+
+		if(gaim_prefs_get_bool("/core/logging/log_system") &&
+		   gaim_prefs_get_bool("/core/logging/log_own_states")){
+			GaimLog *log = gaim_account_get_log(account);
+			char *msg = g_strdup_printf("+++ %s signed off",
+										gaim_account_get_username(account));
+			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
+						   gaim_account_get_username(account), time(NULL),
+						   msg);
+			g_free(msg);						   
+		}
+
+		gaim_account_destroy_log(account);
+
 		if (ops != NULL && ops->disconnected != NULL)
-			ops->disconnected(gc);
+			ops->disconnected(gc);		
 	}
 }
 

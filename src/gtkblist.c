@@ -559,12 +559,10 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBuddy *b)
 	gaim_gtk_log_show(b->name, b->account);
 }
 
-#if 0
 static void gtk_blist_show_systemlog_cb()
 {
-	/* LOG show_log(NULL); */
+	gaim_gtk_syslog_show();
 }
-#endif
 
 static void gtk_blist_show_onlinehelp_cb()
 {
@@ -2254,10 +2252,8 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, NULL },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, NULL },
-#if 0
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
-#endif
 
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },

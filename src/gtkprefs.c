@@ -1433,6 +1433,10 @@ GtkWidget *logging_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GList *names;
+	GtkWidget *sys_box;
+	GtkWidget *box;
+	int syslog_enabled = gaim_prefs_get_bool("/core/logging/log_system");
+
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
@@ -1446,19 +1450,41 @@ GtkWidget *logging_page() {
 				  "/core/logging/log_ims", vbox);
 	gaim_gtk_prefs_checkbox(_("Log all c_hats"),
 				  "/core/logging/log_chats", vbox);
-/*
+
 	vbox = gaim_gtk_make_frame (ret, _("System Logs"));
-	gaim_gtk_prefs_checkbox(_("Log when buddies _sign on/sign off"),
-				   "/gaim/gtk/logging/log_signon_signoff", vbox);
-	gaim_gtk_prefs_checkbox(_("Log when buddies become _idle/un-idle"),
-				   "/gaim/gtk/logging/log_idle_state", vbox);
-	gaim_gtk_prefs_checkbox(_("Log when buddies go away/come _back"),
-				   "/gaim/gtk/logging/log_away_state", vbox);
-	gaim_gtk_prefs_checkbox(_("Log your _own signons/idleness/awayness"),
-				   "/gaim/gtk/logging/log_own_states", vbox);
+
+	sys_box = gaim_gtk_prefs_checkbox(_("_Enable system log"),
+									  "/core/logging/log_system", vbox);
+
+	box = gaim_gtk_prefs_checkbox(_("Log when buddies _sign on/sign off"),
+								  "/core/logging/log_signon_signoff", vbox);
+	g_signal_connect(G_OBJECT(sys_box), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
+	gtk_widget_set_sensitive(box, syslog_enabled);
+
+	box = gaim_gtk_prefs_checkbox(_("Log when buddies become _idle/un-idle"),
+								  "/core/logging/log_idle_state", vbox);
+	g_signal_connect(G_OBJECT(sys_box), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
+	gtk_widget_set_sensitive(box, syslog_enabled);
+
+	box = gaim_gtk_prefs_checkbox(_("Log when buddies go away/come _back"),
+								  "/core/logging/log_away_state", vbox);
+	g_signal_connect(G_OBJECT(sys_box), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
+	gtk_widget_set_sensitive(box, syslog_enabled);
+
+	box = gaim_gtk_prefs_checkbox(_("Log your _own signons/idleness/awayness"),
+								  "/core/logging/log_own_states", vbox);
+	g_signal_connect(G_OBJECT(sys_box), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
+	gtk_widget_set_sensitive(box, syslog_enabled);
+
+/*
 	gaim_gtk_prefs_checkbox(_("I_ndividual log file for each buddy's signons"),
 				   "/gaim/gtk/logging/individual_logs", vbox);
 */
+
 	gtk_widget_show_all(ret);
 	return ret;
 }

@@ -37,6 +37,7 @@ typedef gboolean (*GaimFilterAccountFunc)(GaimAccount *account);
 #include "connection.h"
 #include "proxy.h"
 #include "prpl.h"
+#include "log.h"
 
 struct _GaimAccountUiOps
 {
@@ -71,6 +72,7 @@ struct _GaimAccount
 	GSList *permit;             /**< Permit list.                         */
 	GSList *deny;               /**< Deny list.                           */
 	int perm_deny;              /**< The permit/deny setting.             */
+ 	GaimLog *system_log;        /**< The system log                       */
 };
 
 #ifdef __cplusplus
@@ -539,6 +541,24 @@ const char *gaim_account_get_ui_string(const GaimAccount *account,
  */
 gboolean gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
 								  const char *name, gboolean default_value);
+
+
+/**
+ * Returns the system log for an account.
+ * Create it if it doesn't already exist.
+ *
+ * @param gc The account.
+ *
+ * @return The log.
+ */
+GaimLog *gaim_account_get_log(GaimAccount *account);
+
+/**
+ * Frees the system log of an account
+ *
+ * @param gc The account.
+ */
+	void gaim_account_destroy_log(GaimAccount *account);
 
 /*@}*/
 
