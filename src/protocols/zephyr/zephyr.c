@@ -316,7 +316,7 @@ static gboolean pending_zloc(char *who)
 static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 {
 	if (!g_strcasecmp(notice.z_class, LOGIN_CLASS)) {
-		/* well, we'll be updating in 2 seconds anyway, might as well ignore this. */
+		/* well, we'll be updating in 20 seconds anyway, might as well ignore this. */
 	} else if (!g_strcasecmp(notice.z_class, LOCATE_CLASS)) {
 		if (!g_strcasecmp(notice.z_opcode, LOCATE_LOCATE)) {
 			int nlocs;
@@ -359,6 +359,8 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 	} else {
 		char *buf, *buf2;
 		char *send_inst;
+		char *realmptr;
+		char *sendertmp;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
 		int len = notice.z_message_len - (ptr - notice.z_message);
 		int away;
@@ -387,10 +389,24 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 						zt2->open = TRUE;
 						serv_got_joined_chat(zgc, zt2->id, zt2->name);
 					}
-					send_inst = g_strdup_printf("%s %s", notice.z_sender,
-								    notice.z_class_inst);
+					/* If the person is in the default Realm, then strip the 
+					   Realm from the sender field */
+					sendertmp = g_strdup_printf("%s",notice.z_sender);
+					realmptr = strchr(sendertmp,'@');
+					realmptr++;
+					if (!g_strcasecmp(realmptr,ZGetRealm())) {
+						realmptr--;
+						sprintf(realmptr,"%c",'\0');
+						send_inst = g_strdup_printf("%s %s",sendertmp,
+									    notice.z_class_inst);
+								     
+					} else {
+						send_inst = g_strdup_printf("%s %s",notice.z_sender,
+									    notice.z_class_inst);
+					}
 					serv_got_chat_in(zgc, zt2->id, send_inst, FALSE,
 								buf2, time(NULL));
+					g_free(sendertmp);
 					g_free(send_inst);
 				}
 				free_triple(zt1);
@@ -498,13 +514,15 @@ static void process_zsubs()
 			strip_comments(buff);
 			if (buff[0]) {
 				triple = g_strsplit(buff, ",", 3);
-				if (triple[0] && triple[1] && triple[2]) {
+				if (triple[0] && triple[1] ) {
 					char *tmp = g_strdup_printf("%s@%s", g_getenv("USER"),
 								    ZGetRealm());
 					char *atptr;
 					sub.zsub_class = triple[0];
 					sub.zsub_classinst = triple[1];
-					if (!g_strcasecmp(triple[2], "%me%")) {
+					if(triple[2] == NULL) {
+						recip = g_malloc0(1);
+					} else if (!g_strcasecmp(triple[2], "%me%")) {
 						recip = g_strdup_printf("%s@%s", g_getenv("USER"),
 										ZGetRealm());
 					} else if (!g_strcasecmp(triple[2], "*")) {
@@ -608,6 +626,7 @@ static void write_zsubs()
 	FILE *fd;
 	char *fname;
 
+	char** triple;
 	fname = g_strdup_printf("%s/.zephyr.subs", g_get_home_dir());
 	fd = fopen(fname, "w");
 	
@@ -618,7 +637,19 @@ static void write_zsubs()
 	
 	while (s) {
 		zt = s->data;
-		fprintf(fd, "%s\n", zt->name);
+		triple = g_strsplit(zt->name,",",3);
+		if (triple[2] != NULL) {
+			if (!g_strcasecmp(triple[2], "")) {
+				fprintf(fd, "%s,%s,*\n", triple[0], triple[1]);
+			} else if (!g_strcasecmp(triple[2], ZGetSender())) {
+				fprintf(fd, "%s,%s,%%me%%\n",triple[0],triple[1]);
+			} else {
+				fprintf(fd, "%s\n", zt->name);
+			}
+		} else {
+			fprintf(fd, "%s,%s,*\n",triple[0], triple[1]);
+		}
+		g_free(triple);
 		s = s->next;
 	}
 	g_free(fname);
@@ -630,7 +661,7 @@ static void write_anyone()
 	GSList *gr, *m;
 	struct group *g;
 	struct buddy *b;
-	char *ptr, *fname;
+	char *ptr, *fname, *ptr2;
 	FILE *fd;
 
 	fname = g_strdup_printf("%s/.anyone", g_get_home_dir());
@@ -646,8 +677,15 @@ static void write_anyone()
 		m = g->members;
 		while (m) {
 			b = m->data;
-			if ((ptr = strchr(b->name, '@')) != NULL)
-				*ptr = '\0';
+			if ((ptr = strchr(b->name, '@')) != NULL) {
+				ptr2 = ptr + 1;
+				/* We should only strip the realm name if the principal
+				   is in the user's realm
+				*/
+				if (!g_strcasecmp(ptr2,ZGetRealm())) {
+					*ptr = '\0';
+				}
+			}
 			fprintf(fd, "%s\n", b->name);
 			if (ptr)
 				*ptr = '@';

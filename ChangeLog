@@ -20,6 +20,7 @@ version 0.59
 	  the hat to Christian Hammond for the graphic)
 	* Conversation struct has pointer to toolbar (thanks Brent
 	  Priddy and Paul Miller)
+	* Zephyr fixes (thanks, (Arun A. Tharuvai)
 
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
