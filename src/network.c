@@ -34,13 +34,13 @@ const unsigned char *
 gaim_network_ip_atoi(const char *ip)
 {
 	static unsigned char ret[4];
-	gchar delimiter = '.';
+	gchar *delimiter = ".";
 	gchar **split;
 	int i;
 
 	g_return_val_if_fail(ip != NULL, NULL);
 
-	split = g_strsplit(ip, &delimiter, 4);
+	split = g_strsplit(ip, delimiter, 4);
 	for (i = 0; split[i] != NULL; i++)
 		ret[i] = atoi(split[i]);
 	g_strfreev(split);
