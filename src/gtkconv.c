@@ -4446,6 +4446,9 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(gaim_conversation_get_title(conv));
+#if GTK_CHECK_VERSION(2,6,0)
+	g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
 	gtkconv->menu_label = gtk_label_new(gaim_conversation_get_title(conv));
 #if 0
 	gtk_misc_set_alignment(GTK_MISC(gtkconv->tab_label), 0.00, 0.5);
@@ -4478,6 +4481,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 	/* Add this pane to the conversation's notebook. */
 	gtk_notebook_append_page_menu(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, tabby, menu_tabby);
+	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, TRUE, TRUE, GTK_PACK_END);
+
 
 	gtk_widget_show(tab_cont);
 
