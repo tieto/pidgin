@@ -211,13 +211,27 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			}
 		case GAIM_TYPE_INT64:
 		case GAIM_TYPE_UINT64:
+			/* Tcl < 8.4 doesn't have wide ints, so we have ugly
+			 * ifdefs in here */
 			if (gaim_value_is_outgoing(handler->argtypes[i])) {
-				vals[i] = (void *)va_arg(args, guint64 *);
+				vals[i] = (void *)va_arg(args, gint64 *);
+				#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 4)
 				Tcl_LinkVar(handler->interp, name->str,
 					    vals[i], TCL_LINK_WIDE_INT);
+				#else
+				/* This is going to cause weirdness at best,
+				 * but what do you want ... we're losing
+				 * precision */
+				Tcl_LinkVar(handler->interp, name->str,
+					    vals[i], TCL_LINK_INT);
+				#endif /* Tcl >= 8.4 */
 				arg = Tcl_NewStringObj(name->str, -1);
 			} else {
-				arg = Tcl_NewWideIntObj(va_arg(args, guint64));
+				#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 4)
+				arg = Tcl_NewWideIntObj(va_arg(args, gint64));
+				#else
+				arg = Tcl_NewIntObj((int)va_arg(args, int));
+				#endif /* Tcl >= 8.4 */
 			}
 			break;
 		case GAIM_TYPE_STRING:
