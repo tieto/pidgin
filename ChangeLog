@@ -12,6 +12,7 @@ version 0.75cvs :
 	* Swedish translation updated (Tore Lundqvist (luntor))
 	* Vietnamese translation updated (T.M.Thanh)
 
+
 version 0.74 (11/25/2003):
 	* Sort-by-size log sorting fix
 	* Log directory umask fix for users of gaim-remote
