@@ -41,8 +41,6 @@ struct _GaimGtkStatusSelectorPrivate
 #if GTK_CHECK_VERSION(2,4,0)
 	GtkListStore *model;
 #endif
-
-	GHashTable *icon_table;
 };
 
 #if GTK_CHECK_VERSION(2,4,0)
@@ -119,14 +117,6 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 #endif
 
 	selector->priv = g_new0(GaimGtkStatusSelectorPrivate, 1);
-
-	selector->priv->icon_table =
-		g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-
-	g_hash_table_insert(selector->priv->icon_table,
-						"online", "available.png");
-	g_hash_table_insert(selector->priv->icon_table,
-						"away", "away.png");
 
 #if GTK_CHECK_VERSION(2,4,0)
 	selector->priv->model = gtk_list_store_new(NUM_COLUMNS, G_TYPE_POINTER,
@@ -213,12 +203,6 @@ gaim_gtk_status_selector_destroy(GtkObject *obj)
 	g_return_if_fail(GAIM_GTK_IS_STATUS_SELECTOR(obj));
 
 	selector = GAIM_GTK_STATUS_SELECTOR(obj);
-
-	if (selector->priv->icon_table != NULL)
-	{
-		g_hash_table_destroy(selector->priv->icon_table);
-		selector->priv->icon_table = NULL;
-	}
 
 	if (GTK_OBJECT_CLASS(parent_class)->destroy)
 		GTK_OBJECT_CLASS(parent_class)->destroy(obj);
