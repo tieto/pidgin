@@ -8,6 +8,7 @@ static GModule *handle = NULL;
 char *gaim_plugin_init(GModule *h) {
 	printf("plugin loaded.\n");
 	handle = h;
+	return NULL;
 }
 
 void gaim_plugin_remove() {
