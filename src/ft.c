@@ -72,6 +72,8 @@ struct file_transfer {
 	int bytesleft;
 };
 
+
+
 static int ft_choose_file(gpointer a, struct file_transfer *xfer);
 static void ft_cancel(gpointer w, struct file_transfer *xfer);
 static void ft_delete(struct file_transfer *xfer);
@@ -100,6 +102,7 @@ struct file_transfer *transfer_in_add(struct gaim_connection *gc,
 	struct file_transfer *xfer = ft_new(FILE_TRANSFER_TYPE_RECEIVE, gc,
 			who);
 	char *buf;
+	char *sizebuf;
 	static const char *sizestr[4] = { "bytes", "KB", "MB", "GB" };
 	float sizemag = (float)totsize;
 	int szindex = 0;
@@ -115,14 +118,21 @@ struct file_transfer *transfer_in_add(struct gaim_connection *gc,
 		szindex++;
 	}
 
-	if (xfer->totfiles == 1) 
-		buf = g_strdup_printf(_("%s requests that %s accept a file: %s (%.3g %s)"),
-		who, xfer->gc->username, initname,
-		sizemag, sizestr[szindex]);
+	if (totsize == -1)
+		sizebuf = g_strdup_printf(_("Unkown"));
 	else
-		buf = g_strdup_printf(_("%s requests that %s accept %d files: %s (%.3g %s)"),
+		sizebuf = g_strdup_printf("%.3g %s", sizemag, sizestr[szindex]);
+
+	if (xfer->totfiles == 1) {
+		buf = g_strdup_printf(_("%s requests that %s accept a file: %s (%s)"),
+		who, xfer->gc->username, initname, sizebuf);
+	} else {
+		buf = g_strdup_printf(_("%s requests that %s accept %d files: %s (%s)"),
 		who, xfer->gc->username, xfer->totfiles,
-		initname, sizemag, sizestr[szindex]);
+		initname, sizebuf);
+	}
+
+	g_free(sizebuf);
 
 	if (msg) {
 		char *newmsg = g_strconcat(buf, ": ", msg, NULL);
