@@ -182,6 +182,13 @@ int serv_send_typing(struct gaim_connection *g, char *name, int typing) {
 	else return 0;
 }
 
+struct queued_away_response {
+	char name[80];
+	time_t sent_away;
+};
+
+struct queued_away_response *find_queued_away_response_by_name(char *name);
+
 int serv_send_im(struct gaim_connection *gc, char *name, char *message, int len, int flags)
 {
 	int val = -EINVAL;
@@ -191,6 +198,21 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message, int len,
 
 	if (!(flags & IM_FLAG_AWAY))
 		serv_touch_idle(gc);
+
+	if (gc->away && away_options & OPT_AWAY_DELAY_IN_USE &&
+			!(away_options & OPT_AWAY_NO_AUTO_RESP)) {
+		time_t t;
+		struct queued_away_response *qar;
+		time(&t);
+		qar = find_queued_away_response_by_name(name);
+		if (!qar) {
+			qar = (struct queued_away_response *)g_new0(struct queued_away_response, 1);
+			g_snprintf(qar->name, sizeof(qar->name), "%s", name);
+			qar->sent_away = 0;
+			away_time_queue = g_slist_append(away_time_queue, qar);
+		}
+		qar->sent_away = t;
+	}
 
 	if (cnv && cnv->type_again_timeout)
 		gtk_timeout_remove(cnv->type_again_timeout);
@@ -499,11 +521,6 @@ int find_queue_total_by_name(char *name)
 
 	return i;
 }
-
-struct queued_away_response {
-	char name[80];
-	time_t sent_away;
-};
 
 struct queued_away_response *find_queued_away_response_by_name(char *name)
 {

@@ -340,6 +340,7 @@ extern guint away_options;
 #define OPT_AWAY_QUEUE			0x00000020
 #define OPT_AWAY_IDLE_RESP		0x00000040
 #define OPT_AWAY_QUEUE_UNREAD           0x00000080
+#define OPT_AWAY_DELAY_IN_USE		0x00000100
 
 extern guint away_resend;
 extern int report_idle;

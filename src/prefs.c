@@ -819,6 +819,7 @@ GtkWidget *away_page() {
 				 &away_resend_new, 1, 24 * 60 * 60, sg);
 	gaim_button(_("_Don't send auto-response"), &away_options_new, OPT_AWAY_NO_AUTO_RESP, vbox);
 	gaim_button(_("_Only send auto-response when idle"), &away_options_new, OPT_AWAY_IDLE_RESP, vbox);
+	gaim_button(_("Do_n't send auto-response in active conversations"), &away_options_new, OPT_AWAY_DELAY_IN_USE, vbox);
 
 	if (away_options_new & OPT_AWAY_NO_AUTO_RESP)
 		gtk_widget_set_sensitive(hbox, FALSE);
