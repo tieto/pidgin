@@ -10,7 +10,11 @@
 #undef USE_SCREENSAVER
 #undef NO_MULTI
 #undef DEBUG
-#undef GAIM_PLUGINS
+
+#ifndef GAIM_PLUGINS
+# undef GAIM_PLUGINS
+#endif
+
 #undef USE_PERL
 #undef NAS_SOUND
 #undef ESD_SOUND
