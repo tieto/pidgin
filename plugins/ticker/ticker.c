@@ -73,7 +73,7 @@ void
 BuddyTickerDestroyWindow( GtkWidget *window )
 {
 	BuddyTickerClearList();
-        gtk_ticker_stop_scroll( GTK_TICKER( ticker ) );
+	gtk_ticker_stop_scroll( GTK_TICKER( ticker ) );
 	gtk_widget_destroy( window );	
 	ticker = tickerwindow = (GtkWidget *) NULL;
 	userclose = TRUE;
@@ -86,28 +86,28 @@ void
 BuddyTickerCreateWindow()
 {
 
-      	if ( tickerwindow != (GtkWidget *) NULL ) 
+	if ( tickerwindow != (GtkWidget *) NULL ) 
 		return;
 	debug_printf("Making ticker\n");
-        tickerwindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-        g_signal_connect (GTK_OBJECT(tickerwindow), "destroy",
-                G_CALLBACK (BuddyTickerDestroyWindow), "WM destroy");
-        gtk_window_set_title (GTK_WINDOW(tickerwindow), _("Gaim - Buddy Ticker"));
-        gtk_window_set_role (GTK_WINDOW(tickerwindow), "ticker");
+	tickerwindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	g_signal_connect (GTK_OBJECT(tickerwindow), "destroy",
+	G_CALLBACK (BuddyTickerDestroyWindow), "WM destroy");
+	gtk_window_set_title (GTK_WINDOW(tickerwindow), _("Gaim - Buddy Ticker"));
+	gtk_window_set_role (GTK_WINDOW(tickerwindow), "ticker");
 	gtk_widget_realize(tickerwindow);
 
-        ticker = gtk_ticker_new();
+	ticker = gtk_ticker_new();
 	if (!ticker)
 		return;
-        gtk_ticker_set_spacing( GTK_TICKER( ticker ), 20 );
-        gtk_widget_set_size_request( ticker, 500, -1 );
-        gtk_container_add( GTK_CONTAINER( tickerwindow ), ticker );
-        gtk_ticker_set_interval( GTK_TICKER( ticker ), 500 );
-        gtk_ticker_set_scootch( GTK_TICKER( ticker ), 10 );
+	gtk_ticker_set_spacing( GTK_TICKER( ticker ), 20 );
+	gtk_widget_set_size_request( ticker, 500, -1 );
+	gtk_container_add( GTK_CONTAINER( tickerwindow ), ticker );
+	gtk_ticker_set_interval( GTK_TICKER( ticker ), 500 );
+	gtk_ticker_set_scootch( GTK_TICKER( ticker ), 10 );
 	/* Damned egotists
-	  msgw = gtk_label_new( msg );
-	  gtk_ticker_add( GTK_TICKER( ticker ), msgw );
-        */
+	   msgw = gtk_label_new( msg );
+	   gtk_ticker_add( GTK_TICKER( ticker ), msgw );
+	*/
 	gtk_ticker_start_scroll( GTK_TICKER( ticker ) );
 
 	g_timeout_add( 60000, BuddyTickerMessageRemove, NULL);
@@ -120,7 +120,29 @@ gint
 ButtonPressCallback( GtkWidget *widget, GdkEvent *event, gpointer callback_data ) 
 {
 	TickerData *p = (TickerData *) callback_data;
-	gaim_conversation_new(GAIM_CONV_IM, NULL, p->buddy);
+	struct gaim_buddy_list *gaimbuddylist;
+	GaimBlistNode *group;
+	GaimBlistNode *buddy;
+	struct buddy *b = NULL;
+	char *norm_name = g_strdup(normalize(p->buddy));
+
+	if (!(gaimbuddylist = gaim_get_blist()))
+		return TRUE;
+
+	group = gaimbuddylist->root;
+	while (group) {
+		buddy = group->child;
+		while (buddy) {
+			if (!gaim_utf8_strcasecmp(normalize(((struct buddy*)buddy)->name), norm_name))
+				b = (struct buddy*)buddy;
+			buddy = buddy->next;
+		}
+		group = group->next;
+	}
+	g_free(norm_name);
+
+	if (b->account)
+		gaim_conversation_new(GAIM_CONV_IM, b->account, p->buddy);
 	
 	return TRUE;
 }
@@ -162,9 +184,9 @@ BuddyTickerAddUser( char *name, char *alias, const char *pb)
 
 	/* click detection */
 
-        gtk_widget_set_events (p->ebox, GDK_BUTTON_PRESS_MASK);
-        g_signal_connect (GTK_OBJECT (p->ebox), "button_press_event",
-                G_CALLBACK(ButtonPressCallback), (gpointer) p);
+	gtk_widget_set_events (p->ebox, GDK_BUTTON_PRESS_MASK);
+	g_signal_connect (GTK_OBJECT (p->ebox), "button_press_event",
+		G_CALLBACK(ButtonPressCallback), (gpointer) p);
 
 	gtk_box_pack_start_defaults( GTK_BOX( p->hbox ), p->ebox );
 	gtk_widget_show( p->ebox );
@@ -177,7 +199,7 @@ BuddyTickerAddUser( char *name, char *alias, const char *pb)
 
 	gtk_widget_show( p->label );
 
-        gtk_widget_show( tickerwindow );
+	gtk_widget_show( tickerwindow );
 }
 
 void 
@@ -351,9 +373,9 @@ void BuddyTickerShow()
 }
 
 void signon_cb(struct gaim_connection *gc, char *who) {
-	struct buddy *b  = gaim_find_buddy(gc->account, who);
+	struct buddy *b = gaim_find_buddy(gc->account, who);
 	const char *xpm = NULL;
-       
+
 	if (gc->prpl->list_icon)
 		xpm = gc->prpl->list_icon(b->account, b);
 	
@@ -373,7 +395,7 @@ void buddy_signoff_cb(struct gaim_connection *gc, char *who) {
 }
 
 void away_cb(struct gaim_connection *gc, char *who) {
-	struct buddy *b  = gaim_find_buddy(gc->account, who);
+	struct buddy *b = gaim_find_buddy(gc->account, who);
 	const char *xpm = NULL;
 	
 	if (gc->prpl->list_icon)
