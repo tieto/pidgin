@@ -2591,11 +2591,15 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x04: { /* Someone sent you a URL */
 			if (i >= 2) {
-				gchar *uin = g_strdup_printf("%u", args->uin);
-				gchar *message = g_strdup_printf("<A HREF=\"%s\">%s</A>", msg2[1], msg2[0]);
-				serv_got_im(gc, uin, message, 0, time(NULL));
-				g_free(uin);
-				g_free(message);
+				if (msg2[1] != NULL) {
+					gchar *uin = g_strdup_printf("%u", args->uin);
+					gchar *message = g_strdup_printf("<A HREF=\"%s\">%s</A>",
+													 msg2[1],
+													 (msg2[0] && msg2[0][0]) ? msg2[0] : msg2[1]);
+					serv_got_im(gc, uin, message, 0, time(NULL));
+					g_free(uin);
+					g_free(message);
+				}
 			}
 		} break;
 
