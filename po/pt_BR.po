@@ -3,9 +3,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-01 11:22-0300\n"
+"POT-Creation-Date: 2003-07-02 11:10-0300\n"
 "PO-Revision-Date: 2003-07-01 11:22-0300\n"
-"Last-Translator: Maurício de Lemos Rodrigues Collares Neto <mauricioc@myrealbox.com>\n"
+"Last-Translator: Maurício de Lemos Rodrigues Collares Neto "
+"<mauricioc@myrealbox.com>\n"
 "Language-Team: pt_BR <pt_BR@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,7 +16,7 @@ msgstr ""
 #: plugins/docklet/docklet.c:105 src/gtkaccount.c:468 src/gtkaccount.c:1623
 #: src/win32/systray.c:365
 msgid "Auto-login"
-msgstr "Conectar automaticamente"
+msgstr "Auto-conectar"
 
 #: plugins/docklet/docklet.c:108
 msgid "New Message.."
@@ -102,10 +103,11 @@ msgid ""
 "functions, and to toggle display of the buddy list or login window. Also "
 "allows messages to be queued until the icon is clicked, similar to ICQ."
 msgstr ""
-"Interage com um applet Área de Notificação (no GNOME ou KDE, por exemplo) para "
-"exibir o status atual do Gaim, permitir acesso rápido para funções comumente"
-"utilizadas, e para exibir ou ocultar a lista de contatos ou a tela de login. Permite"
-"também que mensagens fiquem ocultas até que o ícone seja clicado, como no ICQ."
+"Interage com um applet Área de Notificação (no GNOME ou KDE, por exemplo) "
+"para exibir o status atual do Gaim, permitir acesso rápido para funções "
+"comumenteutilizadas, e para exibir ou ocultar a lista de contatos ou a tela "
+"de login. Permitetambém que mensagens fiquem ocultas até que o ícone seja "
+"clicado, como no ICQ."
 
 #. *< api_version
 #. *< type
@@ -206,9 +208,8 @@ msgid ""
 msgstr ""
 "Este é um plugin muito legal que faz varias coisas:\n"
 "- Diz a você quem escreveu o programa quando você se conecta\n"
-"- Reverte todos os textos que chegam"
-"- Manda uma mensagem para as pessoas na sua lista imediatamente quando elas se conectam"
-
+"- Reverte todos os textos que chegam- Manda uma mensagem para as pessoas na "
+"sua lista imediatamente quando elas se conectam"
 
 #: plugins/gtik.c:719
 msgid "Gnome Stock Ticker Properties"
@@ -252,8 +253,8 @@ msgid ""
 "When a new conversation is opened this plugin will insert the last XXX of "
 "the last conversation into the current conversation."
 msgstr ""
-"Quando uma nova conversa é aberta este plugin irá inserir as últimas XXX linhas da"
-"última conversa na conversa atual"
+"Quando uma nova conversa é aberta este plugin irá inserir as últimas XXX "
+"linhas daúltima conversa na conversa atual"
 
 #. *< api_version
 #. *< type
@@ -271,7 +272,8 @@ msgstr "Minimizar enquanto ausente"
 #. *  summary
 #: plugins/iconaway.c:77 plugins/iconaway.c:79
 msgid "Iconifies the buddy list and your conversations when you go away."
-msgstr "Minimiza a lista de contatos e suas conversas quando você fica ausente."
+msgstr ""
+"Minimiza a lista de contatos e suas conversas quando você fica ausente."
 
 #: plugins/idle.c:88 src/protocols/irc/irc.c:934
 msgid "Idle Time"
@@ -299,7 +301,8 @@ msgstr "C'riador de Ina'tividade"
 
 #: plugins/idle.c:139 plugins/idle.c:140
 msgid "Allows you to hand-configure how long you've been idle for"
-msgstr "Permite que você configue manualmente por quanto tempo você está inativo"
+msgstr ""
+"Permite que você configue manualmente por quanto tempo você está inativo"
 
 #. *< api_version
 #. *< type
@@ -415,9 +418,10 @@ msgstr "Permite enviar entrada pura para protocolos baseados em texto."
 msgid ""
 "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
-msgstr "Permite enviar entrada pura para protocolos (Jabber, MSN, IRC, TOC) "
-"baseados em texto. Pressione 'Enter' na caixa de entrada para enviar. Verifique"
-"a janela de debug"
+msgstr ""
+"Permite enviar entrada pura para protocolos (Jabber, MSN, IRC, TOC) baseados "
+"em texto. Pressione 'Enter' na caixa de entrada para enviar. Verifiquea "
+"janela de debug"
 
 #. *< api_version
 #. *< type
@@ -467,8 +471,9 @@ msgstr "Substituição de texto"
 
 #: plugins/spellchk.c:528 plugins/spellchk.c:529
 msgid "Replaces text in outgoing messages according to user-defined rules."
-msgstr "Substitui texto nas mensagens enviadas de acordo com regras definidas "
-"pelo usuário"
+msgstr ""
+"Substitui texto nas mensagens enviadas de acordo com regras definidas pelo "
+"usuário"
 
 #: plugins/timestamp.c:74
 msgid "iChat Timestamp"
@@ -498,7 +503,8 @@ msgstr "Marcação de tempo"
 #. *  summary
 #: plugins/timestamp.c:150 plugins/timestamp.c:152
 msgid "Adds iChat-style timestamps to conversations every N minutes."
-msgstr "Adiciona marcações de tempo como as do iChat às conversas a cada N minutos."
+msgstr ""
+"Adiciona marcações de tempo como as do iChat às conversas a cada N minutos."
 
 #: plugins/gaim-remote/remote.c:85
 msgid "Not connected to AIM"
@@ -540,8 +546,8 @@ msgid ""
 "Gives Gaim the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
 msgstr ""
-"Dá ao Gaim a possibilidade de ser controlado remotamente através de aplicações "
-"de terceiros ou pela ferramenta gaim-remote."
+"Dá ao Gaim a possibilidade de ser controlado remotamente através de "
+"aplicações de terceiros ou pela ferramenta gaim-remote."
 
 #. Configuration frame
 #: plugins/gestures/gestures.c:222
@@ -590,11 +596,14 @@ msgid ""
 "Drag up and then to the right to switch to the next conversation."
 msgstr ""
 "Permite suporte a gestos do mouse nas janelas de conversa.\n"
-"Arraste o mouse com o botão do meio pressionado para executar certas ações: \n"
+"Arraste o mouse com o botão do meio pressionado para executar certas "
+"ações: \n"
 "\n"
 "Arraste para baixo e depois para a direita para fechar uma conversa.\n"
-"Arraste para cima e depois para a esquerda para alternar para a conversa anterior.\n"
-"Arraste para cima e depois para a direita para alternar para a próxima conversa."
+"Arraste para cima e depois para a esquerda para alternar para a conversa "
+"anterior.\n"
+"Arraste para cima e depois para a direita para alternar para a próxima "
+"conversa."
 
 #. *< api_version
 #. *< type
@@ -690,7 +699,8 @@ msgstr "Opções específicas do Gaim para Windows."
 
 #: plugins/perl/perl.c:405
 msgid "GAIM::register not called with proper arguments.  Consult PERL-HOWTO."
-msgstr "GAIM::register não foi chamada com argumentos válidos. Consule o PERL-HOWTO"
+msgstr ""
+"GAIM::register não foi chamada com argumentos válidos. Consule o PERL-HOWTO"
 
 #. *< api_version
 #. *< type
@@ -728,8 +738,8 @@ msgid ""
 "Notifies in a conversation window when a buddy goes or returns from away or "
 "idle."
 msgstr ""
-"Notifica na janela de conversa quando um contato sai ou entra do status de ausente ou "
-"inativo"
+"Notifica na janela de conversa quando um contato sai ou entra do status de "
+"ausente ou inativo"
 
 #: src/protocols/gg/gg.c:52 src/protocols/jabber/jabber.c:1184
 #: src/protocols/msn/msn.c:311 src/protocols/msn/state.c:27
@@ -921,7 +931,8 @@ msgstr "Lista de contatos transferida para o servidor Gadu-Gadu com sucesso"
 
 #: src/protocols/gg/gg.c:817
 msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
-msgstr "Não foi possível transferir a lista de contatos para o servidor Gadu-Gadu"
+msgstr ""
+"Não foi possível transferir a lista de contatos para o servidor Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:825
 msgid "Buddy List successfully deleted from Gadu-Gadu server"
@@ -948,8 +959,8 @@ msgid ""
 "Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
-"O Gaim não pôde completar sua requisição devido a um problema ao comunicar-se com"
-"o servidor HTTP do Gadu-Gadu. Por favor tente de novo mais tarde."
+"O Gaim não pôde completar sua requisição devido a um problema ao comunicar-"
+"se como servidor HTTP do Gadu-Gadu. Por favor tente de novo mais tarde."
 
 #: src/protocols/gg/gg.c:994
 msgid "Unable to import Gadu-Gadu buddy list"
@@ -960,8 +971,8 @@ msgid ""
 "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
-"O Gaim não pôde conectar ao servidor da lista de contatos do Gadu-Gadu. Por favor tente "
-"de novo mais tarde."
+"O Gaim não pôde conectar ao servidor da lista de contatos do Gadu-Gadu. Por "
+"favor tente de novo mais tarde."
 
 #: src/protocols/gg/gg.c:1064
 msgid "Couldn't export buddy list"
@@ -971,7 +982,8 @@ msgstr "Impossível exportar lista de contatos"
 msgid ""
 "Gaim was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
-"O Gaim não pôde conectar com o servidor da lista de contatos do Gadu-Gadu. Por favor tente de novo mais tarde."
+"O Gaim não pôde conectar com o servidor da lista de contatos do Gadu-Gadu. "
+"Por favor tente de novo mais tarde."
 
 #: src/protocols/gg/gg.c:1087
 msgid "Unable to delete Gadu-Gadu buddy list"
@@ -998,8 +1010,8 @@ msgid ""
 "Gaim was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
-"O Gaim não pôde alterar a senha devido a um erro ao conectar ao "
-"servidor Gadu-Gadu. Por favor tente de novo mais tarde."
+"O Gaim não pôde alterar a senha devido a um erro ao conectar ao servidor "
+"Gadu-Gadu. Por favor tente de novo mais tarde."
 
 #: src/protocols/gg/gg.c:1187
 msgid "Directory Search"
@@ -1032,8 +1044,8 @@ msgid ""
 "Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
-"O Gaim não pôde acessar o perfil deste usuário devido a um erro ao conectar ao "
-"servidor de diretório. Por favor tente de novo mais tarde."
+"O Gaim não pôde acessar o perfil deste usuário devido a um erro ao conectar "
+"ao servidor de diretório. Por favor tente de novo mais tarde."
 
 #. *< api_version
 #. *< type
@@ -1125,8 +1137,8 @@ msgid ""
 "(There was an error converting this message.  Check the 'Encoding' option in "
 "the Account Editor)"
 msgstr ""
-"(Ocorreu um erro ao converter essa mensagem. Verifique a opção 'Codificação' no "
-"Editor de Contas)"
+"(Ocorreu um erro ao converter essa mensagem. Verifique a opção 'Codificação' "
+"no Editor de Contas)"
 
 #: src/protocols/irc/irc.c:486 src/protocols/irc/irc.c:2605
 #, c-format
@@ -1247,6 +1259,7 @@ msgid ""
 msgstr ""
 "Isto requer que uma conexão direta seja estabelecida entre os dois "
 "computadores. As mensagens enviadas não passarão pelo servidor de IRC"
+
 #: src/protocols/irc/irc.c:1430 src/protocols/oscar/oscar.c:2400
 #: src/protocols/oscar/oscar.c:5708
 msgid "Connect"
@@ -1292,7 +1305,7 @@ msgstr "CTCP Ping"
 #: src/protocols/toc/toc.c:233
 #, c-format
 msgid "Signon: %s"
-msgstr "Conectou em: %s"
+msgstr "Conectando: %s"
 
 #: src/protocols/irc/irc.c:1960 src/protocols/trepia/trepia.c:1079
 msgid "Unable to create socket"
@@ -1339,11 +1352,10 @@ msgid ""
 "W WHOWAS<BR>Type /HELP OPER for operator commands<BR>Type /HELP CTCP for "
 "CTCP commands<BR>Type /HELP DCC for DCC commands"
 msgstr ""
-"Comandos suportados atualmente:<BR>WHOIS INVITE NICK LIST<BR>JOIN PART "
-"TOPIC KICK<BR>OP DEOP VOICE DEVOICE<BR>ME MSG QUOTE SAY QUIT<BR>MODE VERSION "
-"W WHOWAS<BR>Digite /HELP OPER para ver os comandos de operador<BR>Digite /HELP CTCP para ver os "
-"comandos CTCP<BR>Digite /HELP DCC para ver os comandos DCC"
-
+"Comandos suportados atualmente:<BR>WHOIS INVITE NICK LIST<BR>JOIN PART TOPIC "
+"KICK<BR>OP DEOP VOICE DEVOICE<BR>ME MSG QUOTE SAY QUIT<BR>MODE VERSION W "
+"WHOWAS<BR>Digite /HELP OPER para ver os comandos de operador<BR>Digite /HELP "
+"CTCP para ver os comandos CTCP<BR>Digite /HELP DCC para ver os comandos DCC"
 
 #: src/protocols/irc/irc.c:2411
 msgid "<B>Unknown command</B>"
@@ -1395,8 +1407,7 @@ msgid ""
 "The current password you entered is incorrect.  Your password has not been "
 "changed."
 msgstr ""
-"A senha atual que você digitou está incorreta. Sua senha não foi "
-"alterada."
+"A senha atual que você digitou está incorreta. Sua senha não foi alterada."
 
 #: src/protocols/jabber/jabber.c:988
 msgid "Unable to change password"
@@ -1407,8 +1418,8 @@ msgid ""
 "The new password you entered is the same as your current password.  Your "
 "password remains the same."
 msgstr ""
-"A nova senha que você digitou é igual a sua senha atual. Sua senha "
-"permanece a mesma."
+"A nova senha que você digitou é igual a sua senha atual. Sua senha permanece "
+"a mesma."
 
 #: src/protocols/jabber/jabber.c:1169 src/blist.c:724 src/gtkaccount.c:148
 #: src/gtkpounce.c:307
@@ -1665,7 +1676,9 @@ msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
 msgstr ""
-"Todos os itens a seguir são opcionais. Preencha apenas as informações que quiser"
+"Todos os itens a seguir são opcionais. Preencha apenas as informações que "
+"quiser"
+
 #: src/protocols/jabber/jabber.c:3670
 msgid "User Identity"
 msgstr "Identidade do usuário"
@@ -1972,8 +1985,8 @@ msgid ""
 "Do you want to allow or disallow people on your buddy list to send you MSN "
 "Mobile pages to your cell phone or other mobile device?"
 msgstr ""
-"Você deseja permitir ou não permitir que pessoas na sua lista de contatos enviem "
-"pages MSN Mobile para seu celular ou outro dispositivo móvel?"
+"Você deseja permitir ou não permitir que pessoas na sua lista de contatos "
+"enviem pages MSN Mobile para seu celular ou outro dispositivo móvel?"
 
 #: src/protocols/msn/msn.c:215
 msgid "Allow"
@@ -2069,8 +2082,9 @@ msgid ""
 "An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
 "%s@hotmail.com. No changes were made to your allow list."
 msgstr ""
-"Um nome de usuário MSN deve estar na forma \"usuário@servidor.com\". Talvez você quis dizer "
-"%s@hotmail.com. Nenhuma mudança foi feita na sua lista de usuários permitidos."
+"Um nome de usuário MSN deve estar na forma \"usuário@servidor.com\". Talvez "
+"você quis dizer %s@hotmail.com. Nenhuma mudança foi feita na sua lista de "
+"usuários permitidos."
 
 #: src/protocols/msn/msn.c:666 src/protocols/msn/msn.c:706
 msgid "Invalid MSN screenname"
@@ -2082,8 +2096,9 @@ msgid ""
 "An MSN screenname must be in the form \"user@server.com\". Perhaps you meant "
 "%s@hotmail.com. No changes were made to your block list."
 msgstr ""
-"Um nome de usuário MSN deve estar na forma \"usuário@servidor.com\". Talvez você quis dizer "
-"%s@hotmail.com. Nenhuma mudança foi feita na sua lista de usuários bloqueados."
+"Um nome de usuário MSN deve estar na forma \"usuário@servidor.com\". Talvez "
+"você quis dizer %s@hotmail.com. Nenhuma mudança foi feita na sua lista de "
+"usuários bloqueados."
 
 #. *< api_version
 #. *< type
@@ -2096,7 +2111,7 @@ msgstr ""
 #. *< version
 #. *  summary
 #: src/protocols/msn/msn.c:1197 src/protocols/msn/msn.c:1199
-msgid "MSN Plugin Protocol"
+msgid "MSN Protocol Plugin"
 msgstr "Plugin do protocolo MSN"
 
 #: src/protocols/msn/msn.c:1216 src/protocols/trepia/trepia.c:1303
@@ -2121,7 +2136,7 @@ msgstr "Impossível enviar senha"
 
 #: src/protocols/msn/notification.c:328
 msgid "Password sent"
-msgstr "senha enviada"
+msgstr "Senha enviada"
 
 #: src/protocols/msn/notification.c:346
 msgid "You have been disconnected. You have signed on from another location."
@@ -2129,7 +2144,8 @@ msgstr "Você foi desconectado. Você conectou de outro local."
 
 #: src/protocols/msn/notification.c:351
 msgid "You have been disconnected. The MSN servers are going down temporarily."
-msgstr "Você foi desconectado. Os servidores MSN vão sair do ar temporariamente."
+msgstr ""
+"Você foi desconectado. Os servidores MSN vão sair do ar temporariamente."
 
 #: src/protocols/msn/notification.c:462
 #, c-format
@@ -2160,8 +2176,8 @@ msgid ""
 "sign in."
 msgstr ""
 "O servidor MSN vai sair do ar para manutenção em %d minuto(s). Você será "
-"automaticamente desconectado depois desse tempo. Por favor termine quaisquer conversas em "
-"curso.\n"
+"automaticamente desconectado depois desse tempo. Por favor termine quaisquer "
+"conversas em curso.\n"
 "\n"
 "Depois que a manutenção terminar, você poderá conectar com sucesso."
 
@@ -2241,7 +2257,7 @@ msgstr "Ingressar em qual grupo:"
 #. *< version
 #. *  summary
 #: src/protocols/napster/napster.c:621 src/protocols/napster/napster.c:623
-msgid "Napster Plugin Protocol"
+msgid "NAPSTER Protocol Plugin"
 msgstr "Plugin do protocolo Napster"
 
 #: src/protocols/oscar/oscar.c:172
@@ -2418,14 +2434,17 @@ msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
-"Você esteve conectando e desconectando com muita frequência. Espere dez minutos "
-"E tente novamente. Se você continuar tentando, vai ter que esperar ainda mais."
+"Você esteve conectando e desconectando com muita frequência. Espere dez "
+"minutos E tente novamente. Se você continuar tentando, vai ter que esperar "
+"ainda mais."
 
 #. client too old
 #: src/protocols/oscar/oscar.c:1071
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr "A versão do cliente que você está usando é velha demais. Favor atualizar em %s"
+msgstr ""
+"A versão do cliente que você está usando é velha demais. Favor atualizar em %"
+"s"
 
 #: src/protocols/oscar/oscar.c:1075 src/protocols/toc/toc.c:614
 msgid "Authentication Failed"
@@ -2442,8 +2461,8 @@ msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
 "fixed.  Check %s for updates."
 msgstr ""
-"Você pode ser desconectado num curto período de tempo. Você pode querer usar o TOC até que isso esteja "
-"corrigido. Verifique por atualizações em %s."
+"Você pode ser desconectado num curto período de tempo. Você pode querer usar "
+"o TOC até que isso esteja corrigido. Verifique por atualizações em %s."
 
 #: src/protocols/oscar/oscar.c:1208 src/protocols/oscar/oscar.c:1238
 msgid "Gaim was Unable to get a valid AIM login hash."
@@ -2474,12 +2493,13 @@ msgid ""
 "considered a privacy risk."
 msgstr ""
 "Isto requer uma conexão direta entre os dois computadores e é necessário "
-"para MI com imagens. Por revelar seu IP, isto pode ser considerado um "
-"risco de privacidade."
+"para MI com imagens. Por revelar seu IP, isto pode ser considerado um risco "
+"de privacidade."
 
 #: src/protocols/oscar/oscar.c:2427
 msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Por favor me autorize para que eu possa adicioná-lo a minha lista de contatos"
+msgstr ""
+"Por favor me autorize para que eu possa adicioná-lo a minha lista de contatos"
 
 #: src/protocols/oscar/oscar.c:2435
 msgid "Authorization Request Message:"
@@ -2495,8 +2515,8 @@ msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
 "you want to send an authorization request?"
 msgstr ""
-"O usuário %s requer autorização antes de ser adicionado a uma lista de cotnatos. Você "
-"deseja enviar um pedido de autorização?"
+"O usuário %s requer autorização antes de ser adicionado a uma lista de "
+"cotnatos. Você deseja enviar um pedido de autorização?"
 
 #: src/protocols/oscar/oscar.c:2469 src/protocols/oscar/oscar.c:2471
 msgid "Request Authorization"
@@ -2520,8 +2540,10 @@ msgid ""
 "The user %u wants to add you to their buddy list for the following reason:\n"
 "%s"
 msgstr ""
-"O usuário %u deseja adicionar você a lista de contatos dele pelo seguinte motivo: \n"
+"O usuário %u deseja adicionar você a lista de contatos dele pelo seguinte "
+"motivo: \n"
 "%s"
+
 #: src/protocols/oscar/oscar.c:2595 src/protocols/oscar/oscar.c:5084
 msgid "Authorization Request"
 msgstr "Pedido de autorização"
@@ -2532,7 +2554,9 @@ msgid ""
 "The user %u has denied your request to add them to your contact list for the "
 "following reason:\n"
 "%s"
-msgstr "O usuário %u negou seu pedido para adicioná-lo a sua contact list com o seguinte motivo: \n"
+msgstr ""
+"O usuário %u negou seu pedido para adicioná-lo a sua contact list com o "
+"seguinte motivo: \n"
 "%s"
 
 #: src/protocols/oscar/oscar.c:2608
@@ -2617,9 +2641,10 @@ msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] "Você perdeu %hu mensagem de %s porque o limite de frequência foi excedido."
-msgstr[1] "Você perdeu %hu mensagens de %s porque o limite de frequência foi excedido."
-""
+msgstr[0] ""
+"Você perdeu %hu mensagem de %s porque o limite de frequência foi excedido."
+msgstr[1] ""
+"Você perdeu %hu mensagens de %s porque o limite de frequência foi excedido."
 
 #: src/protocols/oscar/oscar.c:2779
 #, c-format
@@ -2763,7 +2788,9 @@ msgstr "ICQ UTF8"
 msgid ""
 "<i>Unable to display information because it was sent in an unknown encoding."
 "</i>"
-msgstr "<i>Impossível exibir informação por ela ter sido enviada numa codificação desconhecida</i>"
+msgstr ""
+"<i>Impossível exibir informação por ela ter sido enviada numa codificação "
+"desconhecida</i>"
 
 #: src/protocols/oscar/oscar.c:3162
 #, c-format
@@ -2821,15 +2848,18 @@ msgstr "Erro na limitação da taxa."
 msgid ""
 "The last message was not sent because you are over the rate limit.  Please "
 "wait 10 seconds and try again."
-msgstr "A última mensagem não foi enviada porque você excedeu a taxa limite. Por favor "
-"espere 10 segundos e tente novamente."
+msgstr ""
+"A última mensagem não foi enviada porque você excedeu a taxa limite. Por "
+"favor espere 10 segundos e tente novamente."
 
 #: src/protocols/oscar/oscar.c:3700
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
 msgstr ""
-"Você foi desconectado porque conectou-se de outro local com o mesmo nome de usuário."
+"Você foi desconectado porque conectou-se de outro local com o mesmo nome de "
+"usuário."
+
 #: src/protocols/oscar/oscar.c:3702
 msgid "You have been signed off for an unknown reason."
 msgstr "Você foi desconectado por um motivo desconhecido."
@@ -2973,8 +3003,8 @@ msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
 "is too long."
 msgstr ""
-"Erro 0x%04x: Impossível formatar nome de usuário pois o nome requisitado "
-"é muito extenso."
+"Erro 0x%04x: Impossível formatar nome de usuário pois o nome requisitado é "
+"muito extenso."
 
 #: src/protocols/oscar/oscar.c:4171
 #, c-format
@@ -3035,9 +3065,9 @@ msgid ""
 "completed.  Your profile remains unset; try setting it again when you are "
 "fully connected."
 msgstr ""
-"Você provavelmente requisitou que seu perfil fosse definido antes do procedimento de conexão "
-"ser concluído. Seu prfil continua o mesmo; tente defini-lo novamente quando você "
-"estiver totalmente conectado."
+"Você provavelmente requisitou que seu perfil fosse definido antes do "
+"procedimento de conexão ser concluído. Seu prfil continua o mesmo; tente "
+"defini-lo novamente quando você estiver totalmente conectado."
 
 #: src/protocols/oscar/oscar.c:4450
 #, c-format
@@ -3045,7 +3075,8 @@ msgid ""
 "The maximum profile length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr ""
-"O tamanho máximo de %d bytes do seu perfil foi excedido. O Gaim truncou-o para você"
+"O tamanho máximo de %d bytes do seu perfil foi excedido. O Gaim truncou-o "
+"para você"
 
 #: src/protocols/oscar/oscar.c:4452
 msgid "Profile too long."
@@ -3061,9 +3092,10 @@ msgid ""
 "procedure completed.  You remain in a \"present\" state; try setting it "
 "again when you are fully connected."
 msgstr ""
-"Você provavelmente requisitou que sua mensagem de away fosse definida antes do procedimento de conexão ser concluído. "
-"Você permanece com um status \"presente\"; tente defini-lo "
-"novamente quando você estiver totalmente conectado."
+"Você provavelmente requisitou que sua mensagem de away fosse definida antes "
+"do procedimento de conexão ser concluído. Você permanece com um status "
+"\"presente\"; tente defini-lo novamente quando você estiver totalmente "
+"conectado."
 
 #: src/protocols/oscar/oscar.c:4508
 #, c-format
@@ -3071,8 +3103,8 @@ msgid ""
 "The maximum away message length of %d bytes has been exceeded.  Gaim has "
 "truncated it and set you away."
 msgstr ""
-"O tamanho máximo de %d bytes da mensagem de away foi excedido. O Gaim truncou-a "
-"e definiu seu status como ausente"
+"O tamanho máximo de %d bytes da mensagem de away foi excedido. O Gaim "
+"truncou-a e definiu seu status como ausente"
 
 #: src/protocols/oscar/oscar.c:4510
 msgid "Away message too long."
@@ -3088,8 +3120,9 @@ msgid ""
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 msgstr ""
-"O Gaim não pôde recuperar a sua lista de contatos dos servidores AIM no momento. "
-"Sua lista de contatos não foi perdida, e provavelmente estará disponível em algumas horas."
+"O Gaim não pôde recuperar a sua lista de contatos dos servidores AIM no "
+"momento. Sua lista de contatos não foi perdida, e provavelmente estará "
+"disponível em algumas horas."
 
 #: src/protocols/oscar/oscar.c:4821 src/protocols/oscar/oscar.c:4822
 #: src/protocols/oscar/oscar.c:4827
@@ -3102,8 +3135,8 @@ msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
-"Não foi possível adicionar o contato %s porque você tem muitos contatos na ua lista de "
-"contatos. Por favor remova um e tente novamente."
+"Não foi possível adicionar o contato %s porque você tem muitos contatos na "
+"ua lista de contatos. Por favor remova um e tente novamente."
 
 #: src/protocols/oscar/oscar.c:4991 src/protocols/oscar/oscar.c:5004
 msgid "(no name)"
@@ -3120,9 +3153,9 @@ msgid ""
 "for this is that you have the maximum number of allowed buddies in your "
 "buddy list."
 msgstr ""
-"Não foi possível adicionar o contato %s por uma razão desconhecida. O motivo mais comum "
-"para isso é que você tem o número máximo de contatos permitido na sua "
-"lista de contatos."
+"Não foi possível adicionar o contato %s por uma razão desconhecida. O motivo "
+"mais comum para isso é que você tem o número máximo de contatos permitido na "
+"sua lista de contatos."
 
 #: src/protocols/oscar/oscar.c:5039
 #, c-format
@@ -3130,8 +3163,8 @@ msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
 "want to add them?"
 msgstr ""
-"O usuário %s lhe deu permissão para adicioná-lo a sua lista de contatos. Você "
-"deseja adicioná-lo?"
+"O usuário %s lhe deu permissão para adicioná-lo a sua lista de contatos. "
+"Você deseja adicioná-lo?"
 
 #: src/protocols/oscar/oscar.c:5045
 msgid "Authorization Given"
@@ -3143,7 +3176,8 @@ msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
 "%s"
 msgstr ""
-"O usuário %s deseja adicionar você a lista de contatos dele pelo seguinte motivo: \n"
+"O usuário %s deseja adicionar você a lista de contatos dele pelo seguinte "
+"motivo: \n"
 "%s"
 
 #. Granted
@@ -3164,7 +3198,8 @@ msgid ""
 "following reason:\n"
 "%s"
 msgstr ""
-"O usuário %s negou seu pedido para adicioná-lo a sua contact list com o seguinte motivo: \n"
+"O usuário %s negou seu pedido para adicioná-lo a sua contact list com o "
+"seguinte motivo: \n"
 "%s"
 
 #: src/protocols/oscar/oscar.c:5125
@@ -3217,8 +3252,8 @@ msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
 msgstr ""
-"Por revelar seu endereço IP, isto pode ser considerado um risco de privacidade. "
-"Deseja continuar?"
+"Por revelar seu endereço IP, isto pode ser considerado um risco de "
+"privacidade. Deseja continuar?"
 
 #: src/protocols/oscar/oscar.c:5849
 msgid "Get Status Msg"
@@ -3234,7 +3269,9 @@ msgstr "A nova formatação é inválida."
 
 #: src/protocols/oscar/oscar.c:5915
 msgid "Screenname formatting can change only capitalization and whitespace."
-msgstr "A formatação do nome do usuário pode mudar apenas a capitalização e os espaços."
+msgstr ""
+"A formatação do nome do usuário pode mudar apenas a capitalização e os "
+"espaços."
 
 #: src/protocols/oscar/oscar.c:5921
 msgid "New screenname formatting:"
@@ -3355,7 +3392,9 @@ msgstr "Alertar %s não é permitido"
 
 #: src/protocols/toc/toc.c:483
 msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Uma mensagem foi descartada, você está excedendo o limite de velocidade do servidor."
+msgstr ""
+"Uma mensagem foi descartada, você está excedendo o limite de velocidade do "
+"servidor."
 
 #: src/protocols/toc/toc.c:486
 #, c-format
@@ -3375,7 +3414,9 @@ msgstr "Você perdeu uma MI de %s porque ela era muito extensa."
 #: src/protocols/toc/toc.c:495
 #, c-format
 msgid "You missed an IM from %s because it was sent too fast."
-msgstr "Você perdeu uma mensagem de MI de %s porque ela foi enviada muito rapidamente."
+msgstr ""
+"Você perdeu uma mensagem de MI de %s porque ela foi enviada muito "
+"rapidamente."
 
 #: src/protocols/toc/toc.c:498
 msgid "Failure."
@@ -3424,15 +3465,17 @@ msgstr "O serviço está temporariamente indisponível."
 
 #: src/protocols/toc/toc.c:535
 msgid "Your warning level is currently too high to log in."
-msgstr "Seu nível de alerta é alto demais para que você possa se conectar no momento."
+msgstr ""
+"Seu nível de alerta é alto demais para que você possa se conectar no momento."
 
 #: src/protocols/toc/toc.c:538
 msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
 msgstr ""
-"Você esteve conectando e desconectando com muita frequência. Espere dez minutos "
-"E tente novamente. Se você continuar tentando, vai ter que esperar ainda mais."
+"Você esteve conectando e desconectando com muita frequência. Espere dez "
+"minutos E tente novamente. Se você continuar tentando, vai ter que esperar "
+"ainda mais."
 
 #: src/protocols/toc/toc.c:540
 #, c-format
@@ -3470,9 +3513,10 @@ msgid ""
 "if you send a message. Gaim will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
-"Quando isto acontece, o TOC ignora quaisquer mesagens enviadas para ele, e poderá lhe chutar "
-"caso você envie uma mensagem. O Gaim ira evitar que qualquer mensgem seja enviada. Isto "
-"é apenas temporário, por favor seja paciente."
+"Quando isto acontece, o TOC ignora quaisquer mesagens enviadas para ele, e "
+"poderá lhe chutar caso você envie uma mensagem. O Gaim ira evitar que "
+"qualquer mensgem seja enviada. Isto é apenas temporário, por favor seja "
+"paciente."
 
 #: src/protocols/toc/toc.c:1312
 msgid "Get Dir Info"
@@ -3502,7 +3546,9 @@ msgstr "Não foi possível conectar para transferência!"
 
 #: src/protocols/toc/toc.c:1837
 msgid "Could not write file header.  The file will not be transferred."
-msgstr "Não foi possível escrever cabeçalho de arquivo. O arquivo não será transferido."
+msgstr ""
+"Não foi possível escrever cabeçalho de arquivo. O arquivo não será "
+"transferido."
 
 #: src/protocols/toc/toc.c:1937 src/gtkft.c:1060
 msgid "Gaim - Save As..."
@@ -3752,8 +3798,8 @@ msgid ""
 "Because Zephyr uses your system username, you are unable to have multiple "
 "accounts on it when logged in as the same user."
 msgstr ""
-"Por o Zephyr usar o seu nome do usuário do sistema, você não pode ter múltiplas "
-"contas nele enquanto estiver logado com o mesmo usuário."
+"Por o Zephyr usar o seu nome do usuário do sistema, você não pode ter "
+"múltiplas contas nele enquanto estiver logado com o mesmo usuário."
 
 #: src/protocols/zephyr/zephyr.c:848
 msgid "ZLocate"
@@ -3796,9 +3842,9 @@ msgid ""
 "Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.  It is "
 "written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
-"O Gaim é um cliente de Mensagem Instantânea modular capaz de usar o AIM, ICQ, "
-"Yahoo!, MSN, IRC, Jabber, Napster, Zepyhr, e Gadu-Gadu ao mesmo tempo. Ele é "
-"escrito usando o Gtk+ e é licenceado sob a GPL.<BR><BR>"
+"O Gaim é um cliente de Mensagem Instantânea modular capaz de usar o AIM, "
+"ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zepyhr, e Gadu-Gadu ao mesmo tempo. "
+"Ele é escrito usando o Gtk+ e é licenceado sob a GPL.<BR><BR>"
 
 #: src/about.c:98
 msgid "<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
@@ -3821,11 +3867,11 @@ msgstr ""
 "  Rob Flynn (mantenedor) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</"
 "A>&gt;<BR>  Sean Egan (desenvolvedor principal) &lt;<A HREF=\"mailto:"
 "bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian "
-"'ChipX86' Hammond (desenvolvedor & webmaster)<BR>  Herman Bloggs (port para win32) "
-"&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">hermanator12002@yahoo.com</"
-"A>&gt;<BR>  Nathan 'faceprint' Walp (desenvolvedor)<BR>  Mark 'KingAnt' Doliner "
-"(desenvolvedor)<BR>  Luke 'LSchiere' Schierer (suporte)<BR><BR>"
-
+"'ChipX86' Hammond (desenvolvedor & webmaster)<BR>  Herman Bloggs (port para "
+"win32) &lt;<A HREF=\"mailto:hermanator12002@yahoo.com"
+"\">hermanator12002@yahoo.com</A>&gt;<BR>  Nathan 'faceprint' Walp "
+"(desenvolvedor)<BR>  Mark 'KingAnt' Doliner (desenvolvedor)<BR>  Luke "
+"'LSchiere' Schierer (suporte)<BR><BR>"
 
 #: src/about.c:119
 msgid "<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"
@@ -3847,10 +3893,10 @@ msgstr ""
 "  Adam Fritzler (antigo mantenedor do libfaim)<BR>  Eric Warmenhoven (antigo "
 "desenvolvedor principal)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
 "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (antigo mantenedor)<BR>  "
-"Jim Seymour (antigo desenvolvedor do Jabber)<BR>  Mark Spencer (autor original) "
-"&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
-"Syd Logan (hacker and dirigente designado [vagabundo preguiçoso])<BR><BR>"
-
+"Jim Seymour (antigo desenvolvedor do Jabber)<BR>  Mark Spencer (autor "
+"original) &lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</"
+"A>&gt;<BR>  Syd Logan (hacker and dirigente designado [vagabundo preguiçoso])"
+"<BR><BR>"
 
 #: src/away.c:223
 msgid "Gaim - Away!"
@@ -3897,7 +3943,8 @@ msgstr "Nome de grupo inválido"
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr ""
-"Um erro foi encontrado ao processar sua lista de contatos. Ela não foi carregada."
+"Um erro foi encontrado ao processar sua lista de contatos. Ela não foi "
+"carregada."
 
 #: src/blist.c:1634
 msgid "Buddy List Error"
@@ -3911,8 +3958,8 @@ msgid ""
 "Gaim is converting your old buddy lists to a new format, which will now be "
 "located at %s"
 msgstr ""
-"O Gaim está convertendo sua antiga lista de contatos para um novo formato, que agora " 
-"estará localizado em %s"
+"O Gaim está convertendo sua antiga lista de contatos para um novo formato, "
+"que agora estará localizado em %s"
 
 #: src/blist.c:1645
 msgid "Converting Buddy List"
@@ -3922,7 +3969,8 @@ msgstr "Convertendo lista de contatos"
 msgid ""
 "Communication with the browser failed. Please close all windows and try "
 "again."
-msgstr "A comunicação com o browser falhou. Por favor feche todas as janelas e tente "
+msgstr ""
+"A comunicação com o browser falhou. Por favor feche todas as janelas e tente "
 "novamente."
 
 #: src/browser.c:569
@@ -3930,8 +3978,8 @@ msgid ""
 "Unable to launch your browser because the 'Manual' browser command has been "
 "chosen, but no command has been set."
 msgstr ""
-"Impossível chamar o browser porque a opção de comando do browser 'Manual' foi "
-"escolhida, mas nenhum comando foi definido."
+"Impossível chamar o browser porque a opção de comando do browser 'Manual' "
+"foi escolhida, mas nenhum comando foi definido."
 
 #: src/browser.c:586
 #, c-format
@@ -3943,7 +3991,8 @@ msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr ""
-"Atualmente, você não está conectado em nenhum protocolo que possui o recurso de chat."
+"Atualmente, você não está conectado em nenhum protocolo que possui o recurso "
+"de chat."
 
 #: src/buddy_chat.c:330
 msgid "Join Chat"
@@ -4032,7 +4081,6 @@ msgstr ""
 "Isto irá aumentar o nível de alerta de %s e ele ou ela estará sujeito a um "
 "limite de taxa mais rígido.\n"
 
-
 #: src/dialogs.c:372
 msgid "Warn _anonymously?"
 msgstr "Alertar anonimamente?"
@@ -4084,7 +4132,9 @@ msgstr "Nova mensagem"
 
 #: src/dialogs.c:642
 msgid "Please enter the screenname of the person you would like to IM.\n"
-msgstr "Por favor digite o nome de usuário da pessoa com quem você deseja trocar MI.\n"
+msgstr ""
+"Por favor digite o nome de usuário da pessoa com quem você deseja trocar "
+"MI.\n"
 
 #: src/dialogs.c:658 src/dialogs.c:735 src/dialogs.c:3747
 msgid "_Screenname:"
@@ -4103,8 +4153,8 @@ msgid ""
 "Please enter the screenname of the person whose info you would like to "
 "view.\n"
 msgstr ""
-"Por favor digite o nome de usuário da pessoa cuja informação você gostaria de "
-"ver.\n"
+"Por favor digite o nome de usuário da pessoa cuja informação você gostaria "
+"de ver.\n"
 
 #: src/dialogs.c:881
 msgid "Add Group"
@@ -4128,9 +4178,10 @@ msgid ""
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
 "The alias will be displayed in place of the screen name whenever possible.\n"
 msgstr ""
-"Por favor digite o nome de usuário da pessoa que você gostaria de adicionar a sua "
-"lista de contatos. Você pode, opcionalmente, digitar um apelido para o contato. "
-"O apelido será exibido no lugar do nome do usuário sempre que possível.\n"
+"Por favor digite o nome de usuário da pessoa que você gostaria de adicionar "
+"a sua lista de contatos. Você pode, opcionalmente, digitar um apelido para o "
+"contato. O apelido será exibido no lugar do nome do usuário sempre que "
+"possível.\n"
 
 #: src/dialogs.c:981
 msgid "Screen Name"
@@ -4179,7 +4230,8 @@ msgstr "Privacidade"
 
 #: src/dialogs.c:1742
 msgid "Changes to privacy settings take effect immediately."
-msgstr "Mudanças nas configurações de privacidade entram em efeito imediatamente"
+msgstr ""
+"Mudanças nas configurações de privacidade entram em efeito imediatamente"
 
 #: src/dialogs.c:1751
 msgid "Set privacy for:"
@@ -4329,7 +4381,8 @@ msgstr "Você não pode salvar uma mensagem de away com um título em branco"
 #: src/dialogs.c:3281
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
-msgstr "Por favor dê um título à mensagem, ou escolha \"Use\" para usar sem salvar."
+msgstr ""
+"Por favor dê um título à mensagem, ou escolha \"Use\" para usar sem salvar."
 
 #: src/dialogs.c:3291
 msgid "You cannot create an empty away message"
@@ -4379,8 +4432,8 @@ msgid ""
 "Please enter an aliased name for the person below, or rename this contact in "
 "your buddy list.\n"
 msgstr ""
-"Por favor digite um apelido para a pessoa abaixo, ou renomeie este contato na "
-"sua lista de contatos.\n"
+"Por favor digite um apelido para a pessoa abaixo, ou renomeie este contato "
+"na sua lista de contatos.\n"
 
 #: src/dialogs.c:3815 src/dialogs.c:3822
 #, c-format
@@ -4500,7 +4553,6 @@ msgstr ""
 "    OPTIONS:\n"
 "       -h, --help [comando]      Mostra a ajuda do comando\n"
 
-
 #: src/gaim-remote.c:136 src/gaim-remote.c:152
 msgid "Gaim not running (on session 0)\n"
 msgstr "O Gaim não está rodando (na sessão 0)\n"
@@ -4531,11 +4583,14 @@ msgstr ""
 "Usando URIs AIM: :\n"
 "Enviando uma MI para um nome de usuário:\n"
 "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
-"Neste caso, 'Penguin' é o nome de usuário que receberá a MI, e 'hello world'\n"
+"Neste caso, 'Penguin' é o nome de usuário que receberá a MI, e 'hello "
+"world'\n"
 "é a mensagem a ser enviada. '+' precisa ser usado no lugar dos espaços.\n"
-"Favor notar o uso das aspas acima - se você rodar isso através de shell o '&'\n"
+"Favor notar o uso das aspas acima - se você rodar isso através de shell o "
+"'&'\n"
 "precisa ser escapado, ou o comando vai parar naquele ponto.\n"
-"Além disso, o comando a seguir irá apenas abrir uma janela de conversa com um\n"
+"Além disso, o comando a seguir irá apenas abrir uma janela de conversa com "
+"um\n"
 "nome de usuário, sem nenhuma mensagem\n"
 "\tgaim-remote uri aim:goim?screenname=Penguin\n"
 "\n"
@@ -4546,7 +4601,6 @@ msgstr ""
 "Adicionando um contato à sua lista:\n"
 "\tgaim-remote uri aim:addbuddy?screenname=Penguin\n"
 "...pergunta a você se deseja adicionar 'Penguin' a sua lista de contatos.\n"
-
 
 #: src/gaim-remote.c:184
 msgid ""
@@ -4909,7 +4963,6 @@ msgstr ""
 "\n"
 "<b>Inativo desde:</b>"
 
-
 #: src/gtkblist.c:925
 msgid ""
 "\n"
@@ -5089,8 +5142,8 @@ msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
 msgstr ""
-"Favor digitar o nome do usuário que você gostaria de convidar, junto com"
-"uma mensagem de convite opcional."
+"Favor digitar o nome do usuário que você gostaria de convidar, junto comuma "
+"mensagem de convite opcional."
 
 #: src/gtkconv.c:613
 msgid "_Buddy:"
@@ -5509,8 +5562,8 @@ msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
 msgstr ""
-"Não foi possível descobrir o tipo de imagem baseando-se na extensão fornecida.  "
-"O padrão (PNG) vai ser usado."
+"Não foi possível descobrir o tipo de imagem baseando-se na extensão "
+"fornecida.  O padrão (PNG) vai ser usado."
 
 #: src/gtkimhtml.c:1607
 #, c-format
@@ -5553,7 +5606,6 @@ msgstr ""
 "\n"
 "%s%s%s%s"
 
-
 #: src/gtknotify.c:225
 #, c-format
 msgid ""
@@ -5564,7 +5616,6 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">Você tem email!</span>\n"
 "\n"
 "%s"
-
 
 #: src/gtkpounce.c:140
 msgid "Select a file"
@@ -5720,8 +5771,8 @@ msgid ""
 "Select a smiley theme that you would like to use from the list below. New "
 "themes can be installed by dragging and dropping them onto the theme list."
 msgstr ""
-"Selecione um tema de emoticons que você gostaria de usar da lista abaixo. Novos "
-"temas podem ser instalados arrastando e soltando-os na lista de temas."
+"Selecione um tema de emoticons que você gostaria de usar da lista abaixo. "
+"Novos temas podem ser instalados arrastando e soltando-os na lista de temas."
 
 #: src/gtkprefs.c:648
 msgid "Icon"
@@ -6043,7 +6094,9 @@ msgstr "_Senha"
 #: src/gtkprefs.c:1230
 #, c-format
 msgid "The entered manual browser '%s' is not valid. Hyperlinks will not work."
-msgstr "O browser digitado manualmente, '%s', não é válido. Hiperlinks não funcionarão."
+msgstr ""
+"O browser digitado manualmente, '%s', não é válido. Hiperlinks não "
+"funcionarão."
 
 #: src/gtkprefs.c:1250
 msgid "Konqueror"
@@ -6170,7 +6223,6 @@ msgstr ""
 "C_omando do som\n"
 "(%s para nome do arquivo)"
 
-
 #: src/gtkprefs.c:1477
 msgid "_Sending messages removes away status"
 msgstr "_Enviar mensagens remove o status de ausente"
@@ -6260,7 +6312,6 @@ msgstr ""
 "<span weight=\"bold\">Escrito por:</span>  %s\n"
 "<span weight=\"bold\">URL:</span>  %s\n"
 "<span weight=\"bold\">Nome do arquivo:</span>  %s"
-
 
 #: src/gtkprefs.c:1767
 msgid "Load"
@@ -6409,15 +6460,17 @@ msgid ""
 "Unable to play sound because the 'Command' sound method has been chosen, but "
 "no command has been set."
 msgstr ""
-"Não foi possível tocar o som porque o método para reproduzir o som 'Comando' foi selecionado, mas "
-"nenhum comando foi definido"
+"Não foi possível tocar o som porque o método para reproduzir o som 'Comando' "
+"foi selecionado, mas nenhum comando foi definido"
 
 #: src/gtksound.c:175
 #, c-format
 msgid ""
 "Unable to play sound because the configured sound command could not be "
 "launched: %s"
-msgstr "Não foi possível tocar o som porque o comando de som configurado não ""pôde ser executado: %s"
+msgstr ""
+"Não foi possível tocar o som porque o comando de som configurado não pôde "
+"ser executado: %s"
 
 #: src/gtkutils.c:283
 msgid "Can't save icon file to disk."
@@ -6672,7 +6725,6 @@ msgid ""
 msgstr ""
 "%s foi alertado por %s.\n"
 "Seu novo nível de alerta é %d%%"
-
 
 #: src/server.c:1188
 msgid "an anonymous person"
