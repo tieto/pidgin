@@ -1568,6 +1568,9 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 	GError *error = NULL;
 #if GTK_CHECK_VERSION(2,2,0)
 	GSList *formats = gdk_pixbuf_get_formats();
+#else
+	char *basename = g_path_get_basename(filename);
+	char *ext = strrchr(basename, '.');
 #endif
 
 	if (g_file_test(filename, G_FILE_TEST_IS_DIR)) {
@@ -1611,9 +1614,6 @@ static void write_img_to_file(GtkWidget *w, GtkFileSelection *sel)
 	g_slist_free(formats);
 #else
 	/* this is really ugly code, but I think it will work */
-	char *basename = g_path_get_basename(filename);
-	char *ext = strrchr(basename, '.');
-
 	if(ext) {
 		ext++;
 		if(!g_ascii_strcasecmp(ext, "jpeg") || !g_ascii_strcasecmp(ext, "jpg"))
