@@ -1974,17 +1974,18 @@ void debug_printf(char *fmt, ...)
 	va_list ap;
 	gchar *s;
 
-	if (general_options & OPT_GEN_DEBUG && dw) {
-		va_start(ap, fmt);
-		s = g_strdup_vprintf(fmt, ap);
-		va_end(ap);
+	va_start(ap, fmt);
+	s = g_strdup_vprintf(fmt, ap);
+	va_end(ap);
 
+	if (general_options & OPT_GEN_DEBUG && dw) {
 		gtk_text_insert(GTK_TEXT(dw->entry), NULL, NULL, NULL, s, -1);
-#ifdef DEBUG
-		g_print("%s", s);
-#endif
-		g_free(s);
 	}
+
+#ifdef DEBUG
+	g_print("%s", s);
+#endif
+	g_free(s);
 }
 
 static gint handle_delete(GtkWidget *w, GdkEvent *event, void *dummy)
