@@ -29,6 +29,7 @@
 #endif /* USE_THEMES */
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
+#include <gdk/gdk.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -473,6 +474,8 @@ int main(int argc, char *argv[])
 	if (general_options & OPT_GEN_DEBUG)
 		show_debug(NULL);
 
+	gdk_threads_enter();
+
 #ifdef USE_APPLET
 	applet_widget_register_callback(APPLET_WIDGET(applet),
 					"prefs",
@@ -508,6 +511,7 @@ int main(int argc, char *argv[])
         gtk_main();
         
 #endif /* USE_APPLET */
+	gdk_threads_leave();
         
 	return 0;
 	

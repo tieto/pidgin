@@ -647,9 +647,11 @@ void toc_callback( gpointer          data,
 	                for (i--; i >= 0; i--)
 	                        g_free(messages[i]);
                 
+			gdk_threads_enter();
 	                pthread_create(&thread, NULL, 
 				       (void*(*)(void*))accept_file_dialog, ft);
 			pthread_detach(thread);
+			gdk_threads_leave();
 		} else if (!strcmp(uuid, FILE_GET_UID)) {
 			/* we're sending a file */
 	                for (i=0; i<4; i++) {
