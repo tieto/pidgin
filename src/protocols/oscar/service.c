@@ -957,7 +957,6 @@ static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame
 	fu8_t number, length, cached;
 
 	type = aimbs_get16(bs); 
-	printf("blah: %d\n", type);
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) {
 		switch (type) {
 		case 0x0001:
