@@ -1,5 +1,12 @@
 Translation README
 
+Updated: 04-October-2003
+------------------
+
+Translated .po files may be submitted in whatever native encoding is
+most convenient (and hopefully canonical).  Please ensure that the
+Content-type: line reflects the proper character set.
+
 
 
 Updated: 19-April-2003
@@ -31,10 +38,6 @@ you have in the original.
 
 Updated: 05-August-2003
 ------------------
-
-All translations should be in UTF-8.  You can use the following command to 
-convert from one encoding to another, if needed:
-> iconv -f iso-8859-1 -t utf-8 xx.po > xx.po.new
 
 Before submitting updated or new translations, please run the following 
 command to ensure the file does not contain errors:
