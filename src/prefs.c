@@ -66,6 +66,8 @@ static struct gaim_pref prefs = { GAIM_PREF_NONE, NULL, {NULL}, NULL,
 void gaim_prefs_init() {
 	prefs_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
+	gaim_prefs_add_none("/core");
+
 	/* XXX: this is where you would want to put prefs declarations */
 }
 
@@ -512,14 +514,14 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 
 	pref_name_full = g_string_new(pref_name);
 
-	for(tmp = prefs_stack; tmp; tmp = tmp->prev) {
+	for(tmp = prefs_stack; tmp; tmp = tmp->next) {
 		pref_name_full = g_string_prepend_c(pref_name_full, '/');
 		pref_name_full = g_string_prepend(pref_name_full, tmp->data);
 	}
 
 	pref_name_full = g_string_prepend_c(pref_name_full, '/');
 
-	if(find_pref(pref_name_full->str)) {
+	if(!find_pref(pref_name_full->str)) {
 		switch(pref_type) {
 			case GAIM_PREF_NONE:
 				gaim_prefs_add_none(pref_name_full->str);
