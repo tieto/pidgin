@@ -35,7 +35,7 @@
  */
 
 /* size of the text buffer used in various word-processing routines. */
-#define BUFSIZE 1024
+/* #define BUFSIZE 1024 */
 /* number of suggestions to display on each menu. */
 #define MENUCOUNT 10
 #define BUGEMAIL "gtkspell-devel@lists.sourceforge.net"
@@ -74,42 +74,64 @@ extern void debug_printf(char *, ...);
 static void writetext(char *text) {
 	write(fd_write[1], text, strlen(text));
 }
-static int readpipe(char *buf, int bufsize) {
-	int len;
-	len = read(fd_read[0], buf, bufsize-1);
-	if (len < 0) {
-		error_print("read: %s\n", strerror(errno));
-		return -1;
-	} else if (len == 0) {
-		error_print("pipe closed.\n");
-		return -1;
-	} else if (len == bufsize-1) {
-		error_print("buffer overflowed?\n");
+
+static char *readline() {
+	int len = 1024;
+	gchar *buf = g_malloc(len);
+	int pos = 0;
+	do {
+		int val = read(fd_read[0], buf + pos, 1);
+		if (val <= 0) {
+			error_print("read: %s\n", strerror(errno));
+			g_free(buf);
+			return NULL;
+		}
+		pos += val;
+		if (pos == len) {
+			len *= 2;
+			buf = g_realloc(buf, len);
+		}
+	} while (buf[pos - 1] != '\n');
+
+	buf = g_realloc(buf, pos + 1);
+	buf[pos] = 0;
+	return buf;
+}
+
+static char *readresponse() {
+	char *r1, *r2, *result;
+
+	r1 = readline();
+	if (!r1)
+		return NULL;
+	if (*r1 == '\n') {
+		g_strchomp(r1);
+		return r1;
+	}
+	r2 = readline();
+	if (!r2) {
+		g_free(r1);
+		return NULL;
 	}
 
-	buf[len] = 0;
-	return len;
-}
-static int readline(char *buf) {
-	return readpipe(buf, BUFSIZE);
-}
-
-static int readresponse(char *buf) {
-	int len;
-	len = readpipe(buf, BUFSIZE);
-
-	/* all ispell responses of any reasonable length should end in \n\n.
-	 * depending on the speed of the spell checker, this may require more
-	 * reading. */
-	if (len >= 2 && (buf[len-1] != '\n' || buf[len-2] != '\n')) {
-		len += readpipe(buf+len, BUFSIZE-len);
+	while (r2 && *r2 != '\n') {
+		char *tmp = r1;
+		r1 = g_strconcat(tmp, r2, NULL);
+		g_free(tmp);
+		g_free(r2);
+		r2 = readline();
 	}
 
-	/* now we can remove all of the the trailing newlines. */
-	while (len > 0 && buf[len-1] == '\n')
-		buf[--len] = 0;
+	if (!r2) {
+		g_free(r1);
+		return NULL;
+	}
 
-	return len;
+	result = g_strconcat(r1, r2, NULL);
+	g_free(r1);
+	g_free(r2);
+	g_strchomp(result);
+	return result;
 }
 
 
@@ -124,7 +146,6 @@ void gtkspell_stop() {
 
 int gtkspell_start(char *path, char * args[]) {
 	int fd_error[2];
-	char buf[BUFSIZE];
 
 	if (gtkspell_running()) {
 		error_print("gtkspell_start called while already running.\n");
@@ -178,6 +199,7 @@ int gtkspell_start(char *path, char * args[]) {
 		 */
 		fd_set rfds;
 		struct timeval tv;
+		char *buf;
 		
 		close(fd_write[0]);
 		close(fd_read[1]);
@@ -207,36 +229,43 @@ int gtkspell_start(char *path, char * args[]) {
 		close(fd_error[1]);
 
 		/* otherwise, fd_read[0] is set. */
-		readline(buf);
+		buf = readline();
 
 		/* ispell should print something like this:
 		 * @(#) International Ispell Version 3.1.20 10/10/95
 		 * if it doesn't, it's an error. */
-		if (buf[0] != '@') {
+		if (!buf || buf[0] != '@') {
+			if (buf)
+				g_free(buf);
 			gtkspell_stop();
 			return -1;
 		}
+		g_free(buf);
 	}
 
 	/* put ispell into terse mode.  
 	 * this makes it not respond on correctly spelled words. */
-	sprintf(buf, "!\n");
-	writetext(buf);
+	writetext("!\n");
 	return 0;
 }
 
 static GList* misspelled_suggest(char *word) {
-	char buf[BUFSIZE];
+	char *buf;
 	char *newword;
 	GList *l = NULL;
 	int count;
 
-	sprintf(buf, "^%s\n", word); /* guard against ispell control chars */
+	buf = g_strdup_printf("^%s\n", word); /* guard against ispell control chars */
 	writetext(buf);
-	readresponse(buf);
+	g_free(buf);
+	buf = readresponse();
+
+	if (!buf)
+		return NULL;
 
 	switch (buf[0]) { /* first char is ispell command. */
 		case 0: /* no response: word is ok. */
+			g_free(buf);
 			return NULL;
 		case '&': /* misspelled, with suggestions */
 			/* & <orig> <count> <ofs>: <miss>, <miss>, <guess>, ... */
@@ -260,6 +289,7 @@ static GList* misspelled_suggest(char *word) {
 
 				count--;
 			}
+			g_free(buf);
 			return l;
 
 		case '#': /* misspelled, no suggestions */
@@ -268,6 +298,7 @@ static GList* misspelled_suggest(char *word) {
 			strtok(buf, " "); /* & */
 			newword = strtok(NULL, " "); /* orig */
 			l = g_list_append(l, g_strdup(newword));
+			g_free(buf);
 			return l;
 		default:
 			error_print("Unsupported spell command '%c'.\n"
@@ -275,24 +306,32 @@ static GList* misspelled_suggest(char *word) {
 			error_print("Input [%s]\nOutput [%s]\n", word, buf);
 
 	}
+	g_free(buf);
 	return NULL;
 }
 
 static int misspelled_test(char *word) {
-	char buf[BUFSIZE];
-	sprintf(buf, "^%s\n", word); /* guard against ispell control chars */
+	char *buf;
+	buf = g_strdup_printf("^%s\n", word); /* guard against ispell control chars */
 	writetext(buf);
-	readresponse(buf);
+	g_free(buf);
+	buf = readresponse();
+
+	if (!buf)
+		return 0;
 
 	if (buf[0] == 0) {
+		g_free(buf);
 		return 0;
 	} else if (buf[0] == '&' || buf[0] == '#' || buf[0] == '?') {
+		g_free(buf);
 		return 1;
 	}
 	
 	error_print("Unsupported spell command '%c'.\n"
 			"This is a bug; mail " BUGEMAIL " about it.\n", buf[0]);
 	error_print("Input [%s]\nOutput [%s]\n", word, buf);
+	g_free(buf);
 	return -1;
 }
 
@@ -300,7 +339,7 @@ static gboolean iswordsep(char c) {
 	return !isalpha(c) && c != '\'';
 }
 
-static gboolean get_word_from_pos(GtkText* gtktext, int pos, char* buf, 
+static gboolean get_word_from_pos(GtkText* gtktext, int pos, char** buf, 
 		int *pstart, int *pend) {
 	gint start, end;
 
@@ -316,9 +355,10 @@ static gboolean get_word_from_pos(GtkText* gtktext, int pos, char* buf,
 	}
 
 	if (buf) {
+		*buf = g_malloc(end - start + 1);
 		for (pos = start; pos < end; pos++) 
-			buf[pos-start] = GTK_TEXT_INDEX(gtktext, pos);
-		buf[pos-start] = 0;
+			(*buf)[pos-start] = GTK_TEXT_INDEX(gtktext, pos);
+		(*buf)[pos-start] = 0;
 	}
 
 	if (pstart) *pstart = start;
@@ -327,7 +367,7 @@ static gboolean get_word_from_pos(GtkText* gtktext, int pos, char* buf,
 	return TRUE;
 }
 
-static gboolean get_curword(GtkText* gtktext, char* buf, 
+static gboolean get_curword(GtkText* gtktext, char** buf, 
 		int *pstart, int *pend) {
 	int pos = gtk_editable_get_position(GTK_EDITABLE(gtktext));
 	return get_word_from_pos(gtktext, pos, buf, pstart, pend);
@@ -354,9 +394,11 @@ static void change_color(GtkText *gtktext,
 
 static gboolean check_at(GtkText *gtktext, int from_pos) {
 	int start, end;
-	char buf[BUFSIZE];
+	char *buf = NULL;
 
-	if (!get_word_from_pos(gtktext, from_pos, buf, &start, &end)) {
+	if (!get_word_from_pos(gtktext, from_pos, &buf, &start, &end)) {
+		if (buf)
+			g_free(buf);
 		return FALSE;
 	}
 
@@ -367,10 +409,14 @@ static gboolean check_at(GtkText *gtktext, int from_pos) {
 			gdk_colormap_alloc_color(gc, &highlight, FALSE, TRUE);;
 		}
 		change_color(gtktext, start, end, &highlight);
+		if (buf)
+			g_free(buf);
 		return TRUE;
 	} else { 
 		change_color(gtktext, start, end, 
 				&(GTK_WIDGET(gtktext)->style->fg[0]));
+		if (buf)
+			g_free(buf);
 		return FALSE;
 	}
 }
@@ -456,7 +502,6 @@ static void entry_delete_cb(GtkText *gtktext,
 static void replace_word(GtkWidget *w, gpointer d) {
 	int start, end;
 	char *newword;
-	char buf[BUFSIZE];
 
 	/* we don't save their position, 
 	 * because the cursor is moved by the click. */
@@ -464,7 +509,7 @@ static void replace_word(GtkWidget *w, gpointer d) {
 	gtk_text_freeze(GTK_TEXT(d));
 
 	gtk_label_get(GTK_LABEL(GTK_BIN(w)->child), &newword);
-	get_curword(GTK_TEXT(d), buf, &start, &end);
+	get_curword(GTK_TEXT(d), NULL, &start, &end);
 
 	gtk_text_set_point(GTK_TEXT(d), end);
 	gtk_text_backward_delete(GTK_TEXT(d), end-start);
@@ -479,6 +524,7 @@ static GtkMenu *make_menu(GList *l, GtkText *gtktext) {
 	menu = gtk_menu_new(); {
 		caption = g_strdup_printf("Not in dictionary: %s", (char*)l->data);
 		item = gtk_menu_item_new_with_label(caption);
+		g_free(caption);
 		/* I'd like to make it so this item is never selectable, like
 		 * the menu titles in the GNOME panel... unfortunately, the GNOME
 		 * panel creates their own custom widget to do this! */
@@ -527,12 +573,14 @@ static GtkMenu *make_menu(GList *l, GtkText *gtktext) {
 }
 
 static void popup_menu(GtkText *gtktext, GdkEventButton *eb) {
-	char buf[BUFSIZE];
+	char *buf = NULL;
 	GList *list, *l;
 
-	get_curword(gtktext, buf, NULL, NULL);
+	get_curword(gtktext, &buf, NULL, NULL);
 
 	list = misspelled_suggest(buf);
+	if (buf)
+		g_free(buf);
 	if (list != NULL) {
 		gtk_menu_popup(make_menu(list, gtktext), NULL, NULL, NULL, NULL,
 				eb->button, eb->time);
