@@ -946,6 +946,8 @@ static gboolean gaim_blist_read(const char *filename) {
 	gsize length;
 	GMarkupParseContext *context;
 	GError *error = NULL;
+
+	debug_printf("gaim_blist_read: reading %s\n", filename);
 	if(!g_file_get_contents(filename, &contents, &length, &error)) {
 		debug_printf("error reading blist: %s\n", error->message);
 		g_error_free(error);
@@ -973,6 +975,8 @@ static gboolean gaim_blist_read(const char *filename) {
 	if(blist_parser_error_occurred)
 		return FALSE;
 
+	debug_printf("gaim_blist_read: finished reading %s\n", filename);
+
 	return TRUE;
 }
 
@@ -982,8 +986,10 @@ void gaim_blist_load() {
 	char *filename;
 	char *msg;
 
-	if(!user_dir)
+	if(!user_dir) {
+		debug_printf("unable to get user dir!  buddy list load aborted!\n");
 		return;
+	}
 
 	filename = g_build_filename(user_dir, "blist.xml", NULL);
 
