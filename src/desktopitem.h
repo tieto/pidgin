@@ -1,5 +1,5 @@
 /**
- * @file gaim-desktop-item.h Functions for managing .desktop files
+ * @file desktopitem.h Functions for managing .desktop files
  * @ingroup core
  *
  * Gaim is the legal property of its developers, whose names are too numerous

@@ -435,7 +435,7 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 	GtkWidget *radio = NULL;
 	char *label_text;
 	char *radio_text;
-	
+
 	data            = g_new0(GaimGtkRequestData, 1);
 	data->type      = GAIM_REQUEST_ACTION;
 	data->user_data = user_data;
@@ -454,7 +454,7 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog),
 			      text_to_stock(cancel_text), 0);
-	
+
 	gtk_dialog_add_button(GTK_DIALOG(dialog),
 			      text_to_stock(ok_text), 1);
 
@@ -481,14 +481,14 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
-	
+
 	/* Descriptive label */
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 				      "%s</span>%s%s" : "%s%s%s"),
 				     (primary ? primary : ""),
 				     ((primary && secondary) ? "\n\n" : ""),
 				     (secondary ? secondary : ""));
-	
+
 	label = gtk_label_new(NULL);
 
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
@@ -497,7 +497,7 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
 	g_free(label_text);
-	
+
 	vbox2 = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
 	while ((radio_text = va_arg(args, char*))) {
@@ -508,7 +508,7 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 		       if (resp == default_value)
 			       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
 	}
-	 
+
 	g_object_set_data(G_OBJECT(dialog), "radio", radio);
 
 	/* Show everything. */

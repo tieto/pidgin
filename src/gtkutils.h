@@ -361,7 +361,7 @@ gboolean gaim_running_gnome(void);
  * Manages drag'n'drop of files.
  *
  * @param sd GtkSelectionData for managing drag'n'drop
- * @param gc Connection to be used (may be NULL if conv is not NULL)
+ * @param account Account to be used (may be NULL if conv is not NULL)
  * @param who Buddy name (may be NULL if conv is not NULL)
  */
 void gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who);

@@ -1107,8 +1107,8 @@ void *gaim_request_input(void *handle, const char *title,
  * @param cancel_text   The text for the cancel button.
  * @param cancel_cb     The callback for the cancel button.
  * @param user_data     The data to pass to the callback.
- * @param choice_count  The number of choices.
- * @param ...           The choices.
+ * @param ...           The choices.  This argument list should be
+ *                      terminated with a NULL parameter.
  *
  * @return A UI-specific handle.
  */
@@ -1132,8 +1132,8 @@ void *gaim_request_choice(void *handle, const char *title,
  * @param cancel_text   The text for the cancel button.
  * @param cancel_cb     The callback for the cancel button.
  * @param user_data     The data to pass to the callback.
- * @param choice_count  The number of choices.
- * @param choices       The choices.
+ * @param choices       The choices.  This argument list should be
+ *                      terminated with a NULL parameter.
  *
  * @return A UI-specific handle.
  */
