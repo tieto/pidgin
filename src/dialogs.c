@@ -782,7 +782,7 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
         if (c != NULL) {
 		GtkWidget *parent = c->add_button->parent;
 		gtk_widget_destroy(c->add_button);
-		c->add_button = picture_button2(c->window, NULL, gnome_remove_xpm);
+		c->add_button = picture_button(c->window, NULL, gnome_remove_xpm);
 		gtk_signal_connect(GTK_OBJECT(c->add_button), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
 		gtk_box_pack_end(GTK_BOX(parent), c->add_button, FALSE, FALSE, 0);
 		gtk_box_reorder_child(GTK_BOX(parent), c->add_button, 1);

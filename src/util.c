@@ -936,13 +936,14 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	return button;
 }
 
-GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm)
+GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short showtext)
 {
 	GtkWidget *button;
 	GtkWidget *button_box, *button_box_2;
 	GdkBitmap *mask;
 	GdkPixmap *pm;
 	GtkWidget *pixmap;
+	GtkWidget *label;
 	GtkTooltips *tips;	
 	
 	tips = gtk_tooltips_new();
@@ -953,12 +954,19 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm)
 	button_box = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(button), button_box);
 
-	button_box_2 = gtk_hbox_new(FALSE, 0);
+	button_box_2 = gtk_vbox_new(FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(button_box), button_box_2, TRUE, TRUE, 0);
 	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
 	pixmap = gtk_pixmap_new(pm, mask);
-	gtk_box_pack_end(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(button_box_2), pixmap, FALSE, FALSE, 0);
+
+	if (showtext == TRUE)
+	{
+		label = gtk_label_new(text);
+		gtk_widget_show(label);
+		gtk_box_pack_end(GTK_BOX(button_box_2), label, FALSE, FALSE, 0);
+	}
 
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	

@@ -426,7 +426,7 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 		remove_buddy(find_group_by_buddy(c->name), find_buddy(c->name));
 		build_edit_tree();
 		gtk_widget_destroy(c->add_button);
-		c->add_button = picture_button2(c->window, NULL, gnome_add_xpm);
+		c->add_button = picture_button(c->window, NULL, gnome_add_xpm);
 		gtk_signal_connect(GTK_OBJECT(c->add_button), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
 		gtk_box_pack_end(GTK_BOX(parent), c->add_button, FALSE, FALSE, 0);
 		gtk_box_reorder_child(GTK_BOX(parent), c->add_button, 1);
@@ -1484,7 +1484,8 @@ void show_conv(struct conversation *c)
 	GtkWidget *paned;
 	GtkWidget *add;
 	GtkWidget *toolbar;
-
+	int dispstyle;
+	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 
@@ -1493,16 +1494,24 @@ void show_conv(struct conversation *c)
         
 	c->window = win;
        
-
-	send = picture_button2(win, _("Send"), tmp_send_xpm);
-	info = picture_button2(win, _("Info"), tb_search_xpm);
-	warn = picture_button2(win, _("Warn"), warn_xpm);
-	close = picture_button2(win, _("Close"), cancel_xpm);
-	if (find_buddy(c->name) != NULL)
-		add = picture_button2(win, _("Remove"), gnome_remove_xpm);
+	if (display_options & OPT_DISP_CONV_SHOW_TEXT)
+	{
+		dispstyle = TRUE;
+	}
 	else
-		add = picture_button2(win, _("Add"), gnome_add_xpm);
-	block = picture_button2(win, _("Block"), block_xpm);
+	{
+		dispstyle = FALSE;
+	}
+
+	send = picture_button2(win, _("Send"), tmp_send_xpm, dispstyle);
+	info = picture_button2(win, _("Info"), tb_search_xpm, dispstyle);
+	warn = picture_button2(win, _("Warn"), warn_xpm, dispstyle);
+	close = picture_button2(win, _("Close"), cancel_xpm, dispstyle);
+	if (find_buddy(c->name) != NULL)
+		add = picture_button2(win, _("Remove"), gnome_remove_xpm, dispstyle);
+	else
+		add = picture_button2(win, _("Add"), gnome_add_xpm, dispstyle);
+	block = picture_button2(win, _("Block"), block_xpm, dispstyle);
 
 	/* use a slicker look if the user wants to */
 	if (display_options & OPT_DISP_COOL_LOOK)
@@ -1570,12 +1579,12 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
 	gtk_widget_set_usize(entry, 300, 25);
 
-	gtk_box_pack_end(GTK_BOX(bbox), close, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), add, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), block, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), warn, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), info, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(bbox), send, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), add, dispstyle, dispstyle, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), block, dispstyle, dispstyle, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), warn, dispstyle, dispstyle, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), info, dispstyle, dispstyle, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 0);
 	
 	/* pack and fill the rest */
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
