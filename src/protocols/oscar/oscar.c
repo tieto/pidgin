@@ -1725,6 +1725,8 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 				"<IMG SRC=\"admin_icon.gif\"> : Administrator <br>"
 				"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive Agent<br>"
 				"<IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"));
+	} else {
+		legend[0] = 0;
 	}
 		
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
