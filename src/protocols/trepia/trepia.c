@@ -156,9 +156,20 @@ _remove_user_fnc(gpointer key, gpointer value, gpointer user_data)
 static void
 __clear_user_list(TrepiaSession *session)
 {
-	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Clearing user list\n");
-	g_hash_table_foreach(session->user_profiles, _remove_user_fnc, session);
-	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Done clearing user list\n");
+	GaimBlistNode *gnode, *bnode;
+	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		bnode = gnode->child;
+		while(bnode) {
+			struct buddy *buddy = (struct buddy *)bnode;
+			if(GAIM_BLIST_NODE_IS_BUDDY(bnode) &&
+					buddy->account == session->gc->account) {
+				bnode = bnode->next;
+				gaim_blist_remove_buddy(buddy);
+			} else {
+				bnode = bnode->next;
+			}
+		}
+	}
 }
 
 #if 0
@@ -1062,8 +1073,6 @@ static void
 trepia_close(GaimConnection *gc)
 {
 	TrepiaSession *session = gc->proto_data;
-
-	__clear_user_list(session);
 
 	if (session->rxqueue != NULL)
 		g_string_free(session->rxqueue, TRUE);

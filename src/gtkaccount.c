@@ -1504,10 +1504,12 @@ online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
 					   COLUMN_ONLINE, &online,
 					   -1);
 
-	if (online)
+	if (online) {
+		account->gc->wants_to_die = TRUE;
 		gaim_account_disconnect(account);
-	else
+	} else {
 		gaim_account_connect(account);
+	}
 }
 
 static void
