@@ -107,8 +107,6 @@ struct aim_user *new_user(const char *, int, int);
 struct gaim_connection *new_gaim_conn(struct aim_user *);
 void destroy_gaim_conn(struct gaim_connection *);
 
-struct gaim_connection *find_gaim_conn_by_name(char *);
-
 void account_editor(GtkWidget *, GtkWidget *);
 void regenerate_user_list();
 

@@ -107,25 +107,6 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 #endif
 }
 
-struct gaim_connection *find_gaim_conn_by_name(char *name)
-{
-	char *who = g_strdup(normalize(name));
-	GSList *c = connections;
-	struct gaim_connection *g = NULL;
-
-	while (c) {
-		g = (struct gaim_connection *)c->data;
-		if (!strcmp(normalize(g->username), who)) {
-			g_free(who);
-			return g;
-		}
-		c = c->next;
-	}
-
-	g_free(who);
-	return NULL;
-}
-
 static void delete_acctedit(GtkWidget *w, gpointer d)
 {
 	if (acctedit) {
