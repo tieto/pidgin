@@ -183,6 +183,9 @@ gaim_plugin_probe(const char *filename)
 
 	g_return_val_if_fail(filename != NULL, NULL);
 
+	if (!g_file_test(filename, G_FILE_TEST_EXISTS))
+		return NULL;
+
 	plugin = gaim_plugins_find_with_filename(filename);
 
 	if (plugin != NULL)
