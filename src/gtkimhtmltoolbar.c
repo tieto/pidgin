@@ -33,7 +33,7 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtkutils.h"
 
-static GtkVBoxClass *parent_class = NULL;
+static GtkHBoxClass *parent_class = NULL;
 
 static void do_bold(GtkWidget *bold, GtkIMHtmlToolbar *toolbar)
 {
@@ -849,22 +849,13 @@ static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 	GObjectClass   *gobject_class;
 	object_class = (GtkObjectClass*) class;
 	gobject_class = (GObjectClass*) class;
-	parent_class = gtk_type_class(GTK_TYPE_VBOX);
-	/*	signals[URL_CLICKED] = g_signal_new(url_clicked",
-						G_TYPE_FROM_CLASS(gobject_class),
-						G_SIGNAL_RUN_FIRST,
-						G_STRUCT_OFFSET(GtkIMHtmlClass, url_clicked),
-						NULL,
-						0,
-						g_cclosure_marshal_VOID__POINTER,
-						G_TYPE_NONE, 1,
-						G_TYPE_POINTER);*/
+	parent_class = gtk_type_class(GTK_TYPE_HBOX);
 	gobject_class->finalize = gtk_imhtmltoolbar_finalize;
 }
 
 static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 {
-	GtkWidget *hbox;
+	GtkWidget *hbox = GTK_HBOX(toolbar);
 	GtkWidget *button;
 	GtkWidget *sep;
 	GtkSizeGroup *sg;
@@ -878,15 +869,9 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->image_dialog = NULL;
 
 	toolbar->tooltips = gtk_tooltips_new();
-
+	
+	gtk_box_set_spacing(GTK_BOX(toolbar), 6);
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(toolbar), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
-
-	hbox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(toolbar), hbox, FALSE, FALSE, 0);
 
 	/* Bold */
 	button = gaim_pixbuf_toolbar_button_from_stock(GTK_STOCK_BOLD);
@@ -1026,10 +1011,6 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	toolbar->smiley = button;
 
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(toolbar), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 	toolbar->sml = NULL;
 	gtk_widget_show_all(hbox);
 }
@@ -1056,7 +1037,7 @@ GType gtk_imhtmltoolbar_get_type()
 			(GInstanceInitFunc) gtk_imhtmltoolbar_init
 		};
 
-		imhtmltoolbar_type = g_type_register_static(GTK_TYPE_VBOX,
+		imhtmltoolbar_type = g_type_register_static(GTK_TYPE_HBOX,
 				"GtkIMHtmlToolbar", &imhtmltoolbar_info, 0);
 	}
 

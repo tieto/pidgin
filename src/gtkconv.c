@@ -3995,7 +3995,7 @@ setup_chat_pane(GaimConversation *conv)
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
 	GtkWidget *vpaned, *hpaned;
-	GtkWidget *vbox, *hbox;
+	GtkWidget *vbox, *hbox, *frame, *vbox2, *sep;
 	GtkWidget *lbox, *bbox;
 	GtkWidget *label;
 	GtkWidget *list;
@@ -4184,12 +4184,11 @@ setup_chat_pane(GaimConversation *conv)
 	gtkconv->info = button;
 
 	/* Build the toolbar. */
+	frame = gtk_frame_new(NULL);
+	
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, TRUE);
 	gtk_widget_show(vbox);
-
-	gtkconv->toolbar = gtk_imhtmltoolbar_new();
-	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->toolbar, FALSE, FALSE, 0);
 
 	gtkconv->lower_hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->lower_hbox, TRUE, TRUE, 0);
@@ -4199,6 +4198,20 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox, TRUE, TRUE, 0);
 	gtk_widget_show(vbox);
 
+	frame = gtk_frame_new(NULL);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	vbox2 = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), vbox2);
+	gtk_widget_show_all(frame);
+	
+       	gtkconv->toolbar = gtk_imhtmltoolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->toolbar, FALSE, FALSE, 0);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox2), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
 	/* Setup the entry widget.
 	 * We never show the horizontal scrollbar because it was causing weird
 	 * lockups when typing text just as you type the character that would 
@@ -4206,10 +4219,10 @@ setup_chat_pane(GaimConversation *conv)
 	 */
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+				       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+					    GTK_SHADOW_NONE);
+	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
@@ -4270,8 +4283,8 @@ setup_im_pane(GaimConversation *conv)
 	GaimGtkConversation *gtkconv;
 	GaimGtkImPane *gtkim;
 	GtkWidget *paned;
-	GtkWidget *vbox;
-	GtkWidget *vbox2;
+	GtkWidget *vbox, *sep;
+	GtkWidget *vbox2, *vbox3, *frame;
 	GtkWidget *sw;
 	GList *focus_chain = NULL;
 
@@ -4321,10 +4334,6 @@ setup_im_pane(GaimConversation *conv)
 	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, TRUE);
 	gtk_widget_show(vbox2);
 
-	/* Build the toolbar. */
-	gtkconv->toolbar = gtk_imhtmltoolbar_new();
-	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->toolbar, FALSE, FALSE, 0);
-
 	/* Setup the entry widget.
 	 * We never show the horizontal scrollbar because it was causing weird
 	 * lockups when typing text just as you type the character that would
@@ -4338,12 +4347,27 @@ setup_im_pane(GaimConversation *conv)
 	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox2, TRUE, TRUE, 0);
 	gtk_widget_show(vbox2);
 
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
+	vbox3 = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame), vbox3);
+	gtk_widget_show_all(frame);
+
+	/* Build the toolbar. */
+	gtkconv->toolbar = gtk_imhtmltoolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox3), gtkconv->toolbar, FALSE, FALSE, 0);
+	
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(vbox3), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
+										GTK_SHADOW_NONE);
+	gtk_box_pack_start(GTK_BOX(vbox3), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);

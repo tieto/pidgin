@@ -40,7 +40,7 @@ typedef struct _GtkIMHtmlToolbar		GtkIMHtmlToolbar;
 typedef struct _GtkIMHtmlToolbarClass		GtkIMHtmlToolbarClass;
 
 struct _GtkIMHtmlToolbar {
-	GtkVBox box;
+	GtkHBox box;
 
 	GtkWidget *imhtml;
 
@@ -74,7 +74,7 @@ struct _GtkIMHtmlToolbar {
 };
 
 struct _GtkIMHtmlToolbarClass {
-	GtkVBoxClass parent_class;
+	GtkHBoxClass parent_class;
 
 };
 
