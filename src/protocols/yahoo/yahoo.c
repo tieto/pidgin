@@ -1964,6 +1964,46 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
+static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	char *who = NULL, *msg = NULL;
+	GSList *l = pkt->hash;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		switch (pair->key) {
+		case 4:
+			who = pair->value;
+			break;
+		case 5:
+			/* us */
+			break;
+		case 230:
+			/* the audible, in foo.bar.baz format */
+			break;
+		case 231:
+			/* the text of the audible */
+			msg = pair->value;
+			break;
+		case 232:
+			/* weird number (md5 hash?), like 8ebab9094156135f5dcbaccbeee662a5c5fd1420 */
+			break;
+		}
+
+		l = l->next;
+	}
+
+	if (!who || !msg)
+		return;
+	if (!g_utf8_validate(msg, -1, NULL)) {
+		gaim_debug_misc("yahoo", "Warning, nonutf8 audible, ignoring!\n");
+		return;
+	}
+
+	serv_got_im(gc, who, msg, 0, time(NULL));
+}
+
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	switch (pkt->service) {
@@ -2068,6 +2108,8 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_PICTURE_UPLOAD:
 		yahoo_process_picture_upload(gc, pkt);
 		break;
+	case YAHOO_SERVICE_AUDIBLE:
+		yahoo_process_audible(gc, pkt);
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
