@@ -421,47 +421,53 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 {
 	pending_dns_request_t *req = NULL;
 	dns_params_t dns_params;
+	gchar *host_temp;
 
-	char *host_temp = g_strdup(hostname);
-	strncpy(dns_params.hostname, g_strstrip(host_temp), sizeof(dns_params.hostname)-1);
+	host_temp = g_strstrip(g_strdup(hostname));
+	strncpy(dns_params.hostname, host_temp, sizeof(dns_params.hostname) - 1);
 	g_free(host_temp);
-	dns_params.hostname[sizeof(dns_params.hostname)-1] = '\0';
+	dns_params.hostname[sizeof(dns_params.hostname) - 1] = '\0';
 	dns_params.port = port;
 
-	/* Is there a free available child? */
-	while(free_dns_children && !req) {
-		GSList *l = free_dns_children;
-		free_dns_children = g_slist_remove_link(free_dns_children, l);
-		req = l->data;
-		g_slist_free(l);
+	/*
+	 * If we have any children, attempt to have them perform the DNS
+	 * query.  If we're able to send the query to a child, then req
+	 * will be set to the pending_dns_request_t.  Otherwise, req will
+	 * be NULL and we'll need to create a new DNS request child.
+	 */
+	while (free_dns_children != NULL) {
+		req = free_dns_children->data;
+		free_dns_children = g_slist_remove(free_dns_children, req);
 
-		if(send_dns_request_to_child(req, &dns_params) != 0) {
-			req_free(req);
-			req = NULL;
-			continue;
-		}
+		if (send_dns_request_to_child(req, &dns_params) == 0)
+			/* We found an acceptable child, yay */
+			break;
 
+		req_free(req);
 	}
 
-	if(!req) {
+	/*
+	 * We need to create a new DNS request child.
+	 */
+	if (req == NULL) {
 		int child_out[2], child_in[2];
 
-		if(number_of_dns_children >= MAX_DNS_CHILDREN) {
+		if (number_of_dns_children >= MAX_DNS_CHILDREN) {
 			queued_dns_request_t *r = g_new(queued_dns_request_t, 1);
 			memcpy(&(r->params), &dns_params, sizeof(dns_params));
 			r->callback = callback;
 			r->data = data;
-			if(!queued_requests)
+			if (!queued_requests)
 				queued_requests = g_queue_new();
 			g_queue_push_tail(queued_requests, r);
 
 			gaim_debug(GAIM_DEBUG_INFO, "dns",
-					   "DNS query for '%s' queued\n", hostname);
+					   "DNS query for '%s' queued\n", dns_params.hostname);
 
 			return 0;
 		}
 
-		if(pipe(child_out) || pipe(child_in)) {
+		if (pipe(child_out) || pipe(child_in)) {
 			gaim_debug(GAIM_DEBUG_ERROR, "dns",
 					   "Could not create pipes: %s\n", strerror(errno));
 			return -1;
@@ -472,8 +478,10 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 
 		cope_with_gdb_brokenness();
 
-		req->dns_pid=fork();
-		if(req->dns_pid==0) {
+		req->dns_pid = fork();
+
+		/* If we are a child... */
+		if (req->dns_pid == 0) {
 			const int zero = 0;
 			int rc;
 
@@ -493,35 +501,35 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 			signal(SIGTRAP, trap_gdb_bug);
 #endif
 
-
+			/* We should not access the parent's side of the pipe, so close them... */
 			close(child_out[0]);
 			close(child_in[1]);
 
-			while(1) {
-				if(dns_params.hostname[0] == '\0') {
+			while (1) {
+				if (dns_params.hostname[0] == '\0') {
 					const char Y = 'Y';
 					fd_set fds;
 					struct timeval tv = { .tv_sec = 40 , .tv_usec = 0 };
 					FD_ZERO(&fds);
 					FD_SET(child_in[0], &fds);
 					rc = select(child_in[0]+1, &fds, NULL, NULL, &tv);
-					if(!rc) {
+					if (!rc) {
 						if (opt_debug)
-							fprintf(stderr,"dns[%d]: nobody needs me... =(\n", getpid());
+							fprintf(stderr,"dns[%d]: Nobody needs me... =(\n", getpid());
 						break;
 					}
 					rc = read(child_in[0], &dns_params, sizeof(dns_params));
-					if(rc < 0) {
+					if (rc < 0) {
 						perror("read()");
 						break;
 					}
-					if(rc==0) {
-						if(opt_debug)
-							fprintf(stderr,"dns[%d]: Ops, father has gone, wait for me, wait...!\n", getpid());
+					if (rc==0) {
+						if (opt_debug)
+							fprintf(stderr,"dns[%d]: Father has gone, wait for me, wait...!\n", getpid());
 						_exit(0);
 					}
-					if(dns_params.hostname[0] == '\0') {
-						fprintf(stderr, "dns[%d]: hostname = \"\" (port = %d)!!!\n", getpid(), dns_params.port);
+					if (dns_params.hostname[0] == '\0') {
+						fprintf(stderr, "dns[%d]: Hostname = \"\" (port = %d)!!!\n", getpid(), dns_params.port);
 						_exit(1);
 					}
 					write(child_out[1], &Y, 1);
@@ -539,10 +547,10 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 				 */
 				hints.ai_socktype = SOCK_STREAM;
 				rc = getaddrinfo(dns_params.hostname, servname, &hints, &res);
-				if(rc) {
+				if (rc) {
 					write(child_out[1], &rc, sizeof(int));
 					close(child_out[1]);
-					if(opt_debug)
+					if (opt_debug)
 						fprintf(stderr,"dns[%d] Error: getaddrinfo returned %d\n",
 							getpid(), rc);
 					dns_params.hostname[0] = '\0';
@@ -550,7 +558,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 				}
 				write(child_out[1], &zero, sizeof(zero));
 				tmp = res;
-				while(res) {
+				while (res) {
 					size_t ai_addrlen = res->ai_addrlen;
 					write(child_out[1], &ai_addrlen, sizeof(ai_addrlen));
 					write(child_out[1], res->ai_addr, res->ai_addrlen);
@@ -559,12 +567,13 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 				freeaddrinfo(tmp);
 				write(child_out[1], &zero, sizeof(zero));
 #else
+				/* XXX - Should hostname be changed to dns_params.hostname? */
 				if (!inet_aton(hostname, &sin.sin_addr)) {
 					struct hostent *hp;
-					if(!(hp = gethostbyname(dns_params.hostname))) {
+					if (!(hp = gethostbyname(dns_params.hostname))) {
 						write(child_out[1], &h_errno, sizeof(int));
 						close(child_out[1]);
-						if(opt_debug)
+						if (opt_debug)
 							fprintf(stderr,"DNS Error: %d\n", h_errno);
 						_exit(0);
 					}
@@ -584,31 +593,35 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 			close(child_out[1]);
 			close(child_in[0]);
 			_exit(0);
-		}
+		} /* End of child process */
+
+		/* We should not access the child's side of the pipe, so close them... */
 		close(child_out[1]);
 		close(child_in[0]);
-		if(req->dns_pid==-1) {
+		if (req->dns_pid==-1) {
 			gaim_debug(GAIM_DEBUG_ERROR, "dns",
 					   "Could not create child process for DNS: %s\n",
 					   strerror(errno));
 			g_free(req);
 			return -1;
 		}
-		req->fd_in = child_in[1];
 		req->fd_out = child_out[0];
+		req->fd_in = child_in[1];
 		number_of_dns_children++;
 		gaim_debug(GAIM_DEBUG_INFO, "dns",
 				   "Created new DNS child %d, there are now %d children.\n",
 				   req->dns_pid, number_of_dns_children);
 	}
-	req->host=g_strdup(hostname);
-	req->port=port;
-	req->callback=callback;
-	req->data=data;
+
+	req->host = g_strdup(dns_params.hostname);
+	req->port = port;
+	req->callback = callback;
+	req->data = data;
 	req->inpa = gaim_input_add(req->fd_out, GAIM_INPUT_READ, host_resolved, req);
+
 	return 0;
 }
-#else
+#else /* __unix__ */
 
 typedef struct {
 	gpointer data;
@@ -659,7 +672,7 @@ gaim_gethostbyname_async(const char *hostname, int port,
 	return 0;
 }
 
-#endif
+#endif /* __unix__ */
 
 static void
 no_one_calls(gpointer data, gint source, GaimInputCondition cond)
