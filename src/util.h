@@ -168,7 +168,7 @@ const gchar *gaim_home_dir(void);
 
 /**
  * Returns the gaim settings directory in the user's home directory.
- * 
+ *
  * @return The gaim settings directory.
  *
  * @see gaim_home_dir()
@@ -255,7 +255,7 @@ time_t get_time(int year, int month, int day,
  * g_free().
  *
  * @param path The returned path to the temp file.
- * 
+ *
  * @return A file pointer to the temporary file, or @c NULL on failure.
  */
 FILE *gaim_mkstemp(gchar **path);
@@ -307,7 +307,7 @@ gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b);
  *
  * @param string The string from which to replace stuff.
  * @param delimiter The substring you want replaced.
- * @param replacement The substring you want inserted in place 
+ * @param replacement The substring you want inserted in place
  *        of the delimiting substring.
  */
 gchar *gaim_strreplace(const gchar *string, const gchar *delimiter,

@@ -1890,9 +1890,6 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 		close(sock);
 		gfud->callback(gfud->user_data, gfud->webdata, gfud->len);
 
-		if (gfud->webdata)
-			g_free(gfud->webdata);
-
 		destroy_fetch_url_data(gfud);
 	}
 	else
