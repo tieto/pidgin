@@ -726,17 +726,12 @@ edit_pounce_cb(GtkWidget *w, struct gaim_pounce *pounce)
 static void
 fill_menu(GtkWidget *menu, GCallback cb)
 {
-	GtkWidget *box;
-	GtkWidget *label;
 	GtkWidget *image;
 	GtkWidget *item;
 	GdkPixbuf *pixbuf, *scale;
 	struct gaim_pounce *pounce;
 	const char *buddy;
-	GtkSizeGroup *sg;
 	GList *bp;
-
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (bp = gaim_get_pounces(); bp != NULL; bp = bp->next) {
 		pounce = (struct gaim_pounce *)bp->data;
@@ -752,8 +747,6 @@ fill_menu(GtkWidget *menu, GCallback cb)
 		else
 			image = gtk_image_new_from_pixbuf(scale);
 
-		gtk_size_group_add_widget(sg, image);
-
 		g_object_unref(G_OBJECT(scale));
 		g_object_unref(G_OBJECT(pixbuf));
 
@@ -766,8 +759,6 @@ fill_menu(GtkWidget *menu, GCallback cb)
 		/* Set our callbacks. */
 		g_signal_connect(G_OBJECT(item), "activate", cb, pounce);
 	}
-
-	g_object_unref(sg);
 }
 
 void
