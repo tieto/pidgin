@@ -244,7 +244,6 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 					"  Gary 'grim' Kramlich<BR>"
 					"  Robert 'Robot101' McQueen<BR>"
 					"  Benjamin Miller<BR>"
-					"  Etan 'deryni' Reisner<BR>"
 					"  Kevin 'SimGuy' Stange<BR>"
 					"<BR>");
 
