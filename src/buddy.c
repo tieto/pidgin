@@ -51,6 +51,8 @@
 #include "pixmaps/away_small.xpm"
 #include "pixmaps/away_big.xpm"
 
+#include "pixmaps/block_small.xpm"
+
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
 /*#include "pixmaps/export_small.xpm"*/
@@ -2746,6 +2748,8 @@ void show_buddy_list()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), protomenu);
 	do_proto_menu();
 
+	gaim_new_item_with_pixmap(menu, _("Privacy"), block_small_xpm,
+				  GTK_SIGNAL_FUNC(show_privacy_options), NULL, 0, 0, 0);
 	gaim_new_item_with_pixmap(menu, _("Preferences"), prefs_small_xpm,
 				  GTK_SIGNAL_FUNC(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
 	gaim_new_item_with_pixmap(menu, _("View System Log"), prefs_small_xpm,

@@ -993,9 +993,7 @@ static void set_defaults()
 	int i;
 	struct away_message *a;
 
-	misc_options =
-		OPT_MISC_BUDDY_TICKER |
-		OPT_MISC_COOL_LOOK;
+	misc_options = OPT_MISC_COOL_LOOK;
 
 	logging_options = 0;
 
@@ -1006,6 +1004,7 @@ static void set_defaults()
 		OPT_BLIST_SHOW_GRPNUM |
 		OPT_BLIST_SHOW_PIXMAPS |
 		OPT_BLIST_SHOW_IDLETIME |
+		OPT_BLIST_GREY_IDLERS |
 		OPT_BLIST_SHOW_BUTTON_XPM;
 
 	convo_options =
@@ -1019,13 +1018,15 @@ static void set_defaults()
 	im_options =
 		OPT_IM_POPUP |
 		OPT_IM_LOGON |
-		OPT_IM_BUTTON_XPM;
+		OPT_IM_BUTTON_XPM |
+		OPT_IM_ONE_WINDOW ;
 
 	chat_options =
 		OPT_CHAT_LOGON |
 		OPT_CHAT_POPUP |
 		OPT_CHAT_BUTTON_XPM |
-		OPT_CHAT_TAB_COMPLETE;
+		OPT_CHAT_TAB_COMPLETE |
+		OPT_CHAT_ONE_WINDOW;
 
 	font_options = 0;
 

@@ -73,6 +73,12 @@ struct sound_struct sounds[NUM_SOUNDS] = {
 	{NULL, 0, RedAlert, sizeof(RedAlert)},
 	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, Receive, sizeof(Receive)}
 };
+int sound_order[] = {
+	SND_BUDDY_ARRIVE, SND_BUDDY_LEAVE,
+	SND_FIRST_RECEIVE, SND_RECEIVE, SND_SEND,
+	SND_CHAT_JOIN, SND_CHAT_LEAVE,
+	SND_CHAT_YOU_SAY, SND_CHAT_SAY, SND_CHAT_NICK, 0
+};
 
 static int check_dev(char *dev)
 {

@@ -54,6 +54,8 @@
 #include "pixmaps/add.xpm"
 #include "pixmaps/warn.xpm"
 #include "pixmaps/close.xpm"
+#include "pixmaps/gnome_add.xpm"
+#include "pixmaps/gnome_remove.xpm"
 
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
@@ -1120,6 +1122,393 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
 }
 
+
+/*------------------------------------------------------------------------*
+ *  Privacy Settings                                                      *
+ *------------------------------------------------------------------------*/
+static GtkWidget *deny_type = NULL;
+static GtkWidget *deny_conn_hbox = NULL;
+static GtkWidget *deny_opt_menu = NULL;
+static struct gaim_connection *current_deny_gc = NULL;
+static gboolean current_is_deny = FALSE;
+static GtkWidget *allow_list = NULL;
+static GtkWidget *block_list = NULL;
+
+static void set_deny_mode(GtkWidget *w, int data)
+{
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		return;
+	debug_printf("setting deny mode %d\n", data);
+	current_deny_gc->permdeny = data;
+	serv_set_permit_deny(current_deny_gc);
+	do_export(current_deny_gc);
+}
+
+static GtkWidget *deny_opt(char *label, int which, GtkWidget *box, GtkWidget *set)
+{
+	GtkWidget *opt;
+
+	if (!set)
+		opt = gtk_radio_button_new_with_label(NULL, label);
+	else
+		opt =
+		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
+						    label);
+	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(opt), "toggled", GTK_SIGNAL_FUNC(set_deny_mode), (void *)which);
+	gtk_widget_show(opt);
+	if (current_deny_gc->permdeny == which)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	return opt;
+}
+
+static void des_deny_opt(GtkWidget *d, gpointer e)
+{
+	gtk_widget_destroy(d);
+	current_deny_gc = NULL;
+	deny_conn_hbox = NULL;
+	deny_type = NULL;
+	deny_opt_menu = NULL;
+	current_is_deny = FALSE;
+	allow_list = NULL;
+	block_list = NULL;
+}
+
+static void set_deny_type()
+{
+	GSList *bg = gtk_radio_button_group(GTK_RADIO_BUTTON(deny_type));
+
+	switch (current_deny_gc->permdeny) {
+	case 4:
+		break;
+	case 3:
+		bg = bg->next->next;
+		break;
+	case 2:
+		bg = bg->next;
+		break;
+	case 1:
+		bg = bg->next->next->next;
+		break;
+	}
+
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(bg->data), TRUE);
+}
+
+void build_allow_list()
+{
+	GtkWidget *label;
+	GtkWidget *list_item;
+	GSList *p;
+
+	if (!current_is_deny)
+		return;
+
+	p = current_deny_gc->permit;
+
+	gtk_list_remove_items(GTK_LIST(allow_list), GTK_LIST(allow_list)->children);
+
+	while (p) {
+		label = gtk_label_new(p->data);
+		list_item = gtk_list_item_new();
+		gtk_container_add(GTK_CONTAINER(list_item), label);
+		gtk_object_set_user_data(GTK_OBJECT(list_item), p->data);
+		gtk_widget_show(label);
+		gtk_container_add(GTK_CONTAINER(allow_list), list_item);
+		gtk_widget_show(list_item);
+		p = p->next;
+	}
+}
+
+void build_block_list()
+{
+	GtkWidget *label;
+	GtkWidget *list_item;
+	GSList *d;
+
+	if (!current_is_deny)
+		return;
+
+	d = current_deny_gc->deny;
+
+	gtk_list_remove_items(GTK_LIST(block_list), GTK_LIST(block_list)->children);
+
+	while (d) {
+		label = gtk_label_new(d->data);
+		list_item = gtk_list_item_new();
+		gtk_container_add(GTK_CONTAINER(list_item), label);
+		gtk_object_set_user_data(GTK_OBJECT(list_item), d->data);
+		gtk_widget_show(label);
+		gtk_container_add(GTK_CONTAINER(block_list), list_item);
+		gtk_widget_show(list_item);
+		d = d->next;
+	}
+}
+
+static void deny_gc_opt(GtkWidget *opt, struct gaim_connection *gc)
+{
+	current_deny_gc = gc;
+	set_deny_type();
+	build_allow_list();
+	build_block_list();
+}
+
+static void build_deny_menu()
+{
+	GtkWidget *menu;
+	GtkWidget *opt;
+	GSList *c = connections;
+	struct gaim_connection *gc;
+	int count = 0;
+	gboolean found = FALSE;
+	char buf[2048];
+
+	if (g_slist_length(connections) == 1) {
+		gtk_widget_hide(deny_conn_hbox);
+		return;
+	} else
+		gtk_widget_show(deny_conn_hbox);
+
+	menu = gtk_menu_new();
+
+	while (c) {
+		gc = (struct gaim_connection *)c->data;
+		c = c->next;
+		if (!gc->prpl->set_permit_deny)
+			continue;
+		g_snprintf(buf, sizeof buf, "%s (%s)", gc->username, gc->prpl->name());
+		opt = gtk_menu_item_new_with_label(buf);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(deny_gc_opt), gc);
+		gtk_widget_show(opt);
+		gtk_menu_append(GTK_MENU(menu), opt);
+		if (gc == current_deny_gc)
+			found = TRUE;
+		else if (!found)
+			count++;
+	}
+
+	if (!found) {
+		current_deny_gc = connections->data;
+		count = 0;
+	}
+
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(deny_opt_menu));
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(deny_opt_menu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(deny_opt_menu), count);
+
+	gtk_widget_show(menu);
+	gtk_widget_show(deny_opt_menu);
+}
+
+static void pref_deny_add(GtkWidget *button, gboolean permit)
+{
+	show_add_perm(current_deny_gc, NULL, permit);
+}
+
+static void pref_deny_rem(GtkWidget *button, gboolean permit)
+{
+	GList *i;
+	char *who;
+
+	if (permit && !allow_list)
+		return;
+	if (!permit && !block_list)
+		return;
+
+	if (permit)
+		i = GTK_LIST(allow_list)->selection;
+	else
+		i = GTK_LIST(block_list)->selection;
+
+	if (!i)
+		return;
+	who = gtk_object_get_user_data(GTK_OBJECT(i->data));
+	if (permit) {
+		current_deny_gc->permit = g_slist_remove(current_deny_gc->permit, who);
+		serv_rem_permit(current_deny_gc, who);
+		build_allow_list();
+	} else {
+		current_deny_gc->deny = g_slist_remove(current_deny_gc->deny, who);
+		serv_rem_deny(current_deny_gc, who);
+		build_block_list();
+	}
+
+	do_export(current_deny_gc);
+}
+
+GtkWidget *privacy_win;
+void update_privacy_connections() { /* This is a slightly better name */
+	gboolean needdeny = FALSE;
+	GSList *c = connections;
+	struct gaim_connection *gc = NULL;
+
+	if (!privacy_win)
+		return;
+
+	while (c) {
+		gc = c->data;
+		if (gc->prpl->set_permit_deny)
+			break;
+		gc = NULL;
+		c = c->next;
+	}
+	needdeny = (gc != NULL);
+	
+
+	if (needdeny) {
+		gtk_widget_set_sensitive(privacy_win, TRUE);
+		build_deny_menu();
+		build_allow_list();
+		build_block_list();
+	} else {
+		gtk_widget_set_sensitive(privacy_win, FALSE);
+	}
+}
+static void destroy_privacy() {
+	current_deny_gc = NULL;
+	privacy_win = NULL;
+}
+
+void show_privacy_options()
+{
+	GtkWidget *pwin;
+	GtkWidget *box;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *vbox;
+	GtkWidget *sw;
+	GtkWidget *bbox;
+	GtkWidget *button;
+	GtkWidget *sep;
+	GtkWidget *close_button;
+
+	current_deny_gc = connections->data;	/* this is safe because this screen will only be
+						   available when there are connections */
+	current_is_deny = TRUE;
+
+	
+	privacy_win = pwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_policy(GTK_WINDOW(pwin), FALSE, TRUE, TRUE);
+	gtk_window_set_wmclass(GTK_WINDOW(pwin), "privacy", "Gaim");
+	gtk_window_set_title(GTK_WINDOW(pwin), _("Gaim - Privacy"));
+	gtk_signal_connect(GTK_OBJECT(pwin), "destroy", GTK_SIGNAL_FUNC(destroy_privacy), NULL);
+	gtk_widget_realize(pwin);
+	aol_icon(pwin->window);
+
+	gtk_widget_set_usize(pwin, 0, 400);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
+	gtk_container_add(GTK_CONTAINER(pwin), box);
+	gtk_widget_show(box);
+
+	label = gtk_label_new(_("Privacy settings are affected immediately."));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	deny_conn_hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), deny_conn_hbox, FALSE, FALSE, 0);
+	gtk_widget_show(deny_conn_hbox);
+
+	label = gtk_label_new(_("Set privacy for:"));
+	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	deny_opt_menu = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), deny_opt_menu, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(deny_opt_menu), "destroy", GTK_SIGNAL_FUNC(des_deny_opt), NULL);
+	gtk_widget_show(deny_opt_menu);
+
+	build_deny_menu();
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, TRUE, TRUE, 5);
+	gtk_widget_show(hbox);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	deny_type = deny_opt(_("Allow all users to contact me"), 1, vbox, NULL);
+	deny_type = deny_opt(_("Allow only the users below"), 3, vbox, deny_type);
+
+	label = gtk_label_new(_("Allow List"));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+	gtk_widget_show(sw);
+
+	allow_list = gtk_list_new();
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), allow_list);
+	gtk_widget_show(allow_list);
+
+	build_allow_list();
+
+	bbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_widget_show(bbox);
+
+	button = picture_button(pwin, _("Add"), gnome_add_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_add), (void *)TRUE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	button = picture_button(pwin, _("Remove"), gnome_remove_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_rem), (void *)TRUE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	deny_type = deny_opt(_("Deny all users"), 2, vbox, deny_type);
+	deny_type = deny_opt(_("Block the users below"), 4, vbox, deny_type);
+
+	label = gtk_label_new(_("Block List"));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+	gtk_widget_show(sw);
+
+	block_list = gtk_list_new();
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), block_list);
+	gtk_widget_show(block_list);
+
+	build_block_list();
+
+	bbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_widget_show(bbox);
+
+	button = picture_button(pwin, _("Add"), gnome_add_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_add), FALSE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	button = picture_button(pwin, _("Remove"), gnome_remove_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(pref_deny_rem), FALSE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	hbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+	close_button = picture_button(pwin, _("Close"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), close_button, FALSE, FALSE, 5);
+	gtk_signal_connect_object(GTK_OBJECT(close_button), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), pwin);
+
+	gtk_widget_show(pwin);
+}
+
+ 
 
 /*------------------------------------------------------------------------*/
 /*  The dialog for new buddy pounces                                      */
@@ -2573,8 +2962,8 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 /* Color Selection Dialog                               */
 /*------------------------------------------------------*/
 
-static GtkWidget *fgcseld = NULL;
-static GtkWidget *bgcseld = NULL;
+GtkWidget *fgcseld = NULL;
+GtkWidget *bgcseld = NULL;
 
 void cancel_fgcolor(GtkWidget *widget, struct conversation *c)
 {
@@ -2654,43 +3043,6 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	debug_printf("#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
 	g_free(open_tag);
 	cancel_bgcolor(NULL, c);
-}
-
-static void destroy_colorsel(GtkWidget *w, gpointer d)
-{
-	if (d) {
-		gtk_widget_destroy(fgcseld);
-		fgcseld = NULL;
-	} else {
-		gtk_widget_destroy(bgcseld);
-		bgcseld = NULL;
-	}
-}
-
-static void apply_color_dlg(GtkWidget *w, gpointer d)
-{
-	gdouble color[3];
-	if ((int)d == 1) {
-		gtk_color_selection_get_color(GTK_COLOR_SELECTION
-					      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), color);
-		destroy_colorsel(NULL, (void *)1);
-
-		fgcolor.red = ((guint16)(color[0] * 65535)) >> 8;
-		fgcolor.green = ((guint16)(color[1] * 65535)) >> 8;
-		fgcolor.blue = ((guint16)(color[2] * 65535)) >> 8;
-		update_color(NULL, pref_fg_picture);
-		update_convo_color(TRUE);
-	} else {
-		gtk_color_selection_get_color(GTK_COLOR_SELECTION
-					      (GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), color);
-		destroy_colorsel(NULL, (void *)0);
-
-		bgcolor.red = ((guint16)(color[0] * 65535)) >> 8;
-		bgcolor.green = ((guint16)(color[1] * 65535)) >> 8;
-		bgcolor.blue = ((guint16)(color[2] * 65535)) >> 8;
-		update_color(NULL, pref_bg_picture);
-		update_convo_color(FALSE);
-	}
 }
 
 void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
@@ -2853,25 +3205,6 @@ void destroy_fontsel(GtkWidget *w, gpointer d)
 {
 	gtk_widget_destroy(fontseld);
 	fontseld = NULL;
-}
-
-void apply_font_dlg(GtkWidget *w, GtkWidget *f)
-{
-	int i, j = 0, k = 0;
-	char *fontname;
-
-	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontseld));
-	destroy_fontsel(0, 0);
-	for (i = 0; i < strlen(fontname); i++) {
-		if (fontname[i] == '-') {
-			if (++j > 2)
-				break;
-		} else if (j == 2)
-			fontface[k++] = fontname[i];
-	}
-	fontface[k] = '\0';
-	g_snprintf(fontxfld, sizeof(fontxfld), "%s", fontname);
-	update_convo_font();
 }
 
 void show_font_dialog(struct conversation *c, GtkWidget *font)
@@ -4225,6 +4558,32 @@ void aol_icon(GdkWindow *w)
 		gdk_window_set_group(w, mainwindow->window);
 #endif
 }
+
+#if GTK_CHECK_VERSION(1,3,0)
+GtkWidget *pixbuf_button(char *text, char *iconfile)
+{
+	GtkWidget *button, *image, *label, *bbox;
+	button = gtk_button_new();
+	bbox = gtk_hbox_new(FALSE, 5);
+	gtk_container_add (GTK_CONTAINER(button), bbox);
+	if (iconfile) {
+		char *filename;
+		filename = g_build_filename (DATADIR, "pixmaps", "gaim", "buttons", iconfile, NULL);
+		debug_printf("Loading: %s\n", filename);
+		image = gtk_image_new_from_file(filename);
+		gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+		g_free(filename);
+	}
+	if (text) {
+		label = gtk_label_new(NULL);
+		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), button);
+		gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	}
+	gtk_widget_show_all(bbox);
+	return button;
+}
+#endif
 
 GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 {

@@ -84,13 +84,6 @@
 #define CUI_CHAT_SEND		5
 #define CUI_CHAT_RECV		6
 
-
-#define BROWSER_NETSCAPE              0
-#define BROWSER_KFM                   1
-#define BROWSER_MANUAL                2
-/*#define BROWSER_INTERNAL              3*/
-#define BROWSER_GNOME                 4
-
 #define IM_FLAG_AWAY     0x01
 #define IM_FLAG_CHECKBOX 0x02
 #define IM_FLAG_GAIMUSER 0x04
@@ -112,6 +105,7 @@
 #define WFLAG_SYSTEM	0x20
 #define WFLAG_NICK	0x40
 #define WFLAG_NOLOG	0x80
+#define WFLAG_COLORIZE  0x100
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
@@ -253,6 +247,7 @@ extern guint chat_options;
 #define OPT_CHAT_BR_TAB			0x00000040
 #define OPT_CHAT_TAB_COMPLETE		0x00000080
 #define OPT_CHAT_OLD_STYLE_TAB		0x00000100
+#define OPT_CHAT_COLORIZE               0x00000200
 
 extern guint font_options;
 #define OPT_FONT_BOLD			0x00000001
@@ -285,6 +280,7 @@ extern guint sound_options;
 #define OPT_SOUND_CMD			0x00020000
 #define OPT_SOUND_CHAT_NICK             0x00040000
 /* remember to also change the struct in sound.c */
+
 #define SND_BUDDY_ARRIVE 0
 #define SND_BUDDY_LEAVE 1
 #define SND_RECEIVE 2
@@ -297,10 +293,9 @@ extern guint sound_options;
 #define SND_POUNCE_DEFAULT 9
 #define SND_CHAT_NICK 10
 #define NUM_SOUNDS 11
-/* these two for the sound_order list in prefs.c */
-#define SND_SEPARATOR -1
-#define SND_END -2
+
 extern char *sound_file[NUM_SOUNDS];
+extern int sound_order[];
 
 /* global sound struct */
 struct sound_struct {
@@ -433,12 +428,13 @@ extern void strncpy_withhtml(gchar *, const gchar *, size_t);
 extern gchar *strdup_withhtml(const gchar *);
 extern void away_on_login(char *);
 extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
-extern unsigned char *utf8_to_str(unsigned char *);
-extern char *str_to_utf8(unsigned char *);
 extern char *add_cr(char *);
 extern void strip_linefeed(char *);
 extern time_t get_time(int, int, int, int, int, int);
 extern FILE *gaim_mkstemp(gchar **);
+extern char *convert_string(char *, const char *, const char *);
+#define utf8_to_str(in) convert_string(in, nl_langinfo(CODESET), "UTF-8");
+#define str_to_utf8(in) convert_string(in, "UTF-8", nl_langinfo(CODESET));
 
 /*------------------------------------------------------------------------*/
 /*  Multi-Entry dialog and vCard dialog support                           */

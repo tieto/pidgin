@@ -26,6 +26,8 @@
 #include <config.h>
 #endif
 
+#include <iconv.h>
+#include <langinfo.h>
 #include <stdio.h>
 #include <time.h>
 #include <glib.h>

@@ -1155,7 +1155,7 @@ void account_online(struct gaim_connection *gc)
 	refresh_buddy_window();
 #endif
 
-	update_connection_dependent_prefs();
+	update_privacy_connections();
 	do_away_menu();
 	do_proto_menu();
 	redo_convo_menus();
@@ -1454,7 +1454,7 @@ void signoff(struct gaim_connection *gc)
 	if (connections)
 		set_user_state(online);
 #endif
-	update_connection_dependent_prefs();
+	update_privacy_connections();
 
 	if (connections)
 		return;

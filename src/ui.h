@@ -33,7 +33,7 @@
 #ifdef USE_GNOME
 #include <gnome.h>
 #endif
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #endif
 
@@ -180,12 +180,16 @@ struct conversation {
 	/* something to distinguish */
 	gboolean is_chat;
 
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	/* buddy icon stuff. sigh. */
 	GtkWidget *icon;
 	GdkPixbufAnimation *anim;
 	guint32 icon_timer;
+	#if GTK_CHECK_VERSION(1,3,0)
+	GdkPixbufAnimationIter *iter;
+	#else
 	int frame;
+	#endif
 	GtkWidget *save_icon;
 #endif
 };
@@ -303,6 +307,8 @@ extern int fontsize;
 extern GdkColor bgcolor;
 extern GdkColor fgcolor;
 extern int smiley_array[FACE_TOTAL];
+extern GtkWidget *fgcseld;
+extern GtkWidget *bgcseld;
 
 /* Globals in prefs.c */
 extern struct debug_window *dw;
@@ -458,7 +464,14 @@ extern void load_perl_script();
 extern void aol_icon(GdkWindow *);
 extern GtkWidget *picture_button(GtkWidget *, char *, char **);
 extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
+#if GTK_CHECK_VERSION(1,3,0) || GTK_CHECK_VERSION(1,3,0)
+extern GtkWidget *pixbuf_button(char *, char *);
+#endif
 extern int file_is_dir(const char *, GtkWidget *);
+extern void update_privacy_connections();
+extern void show_privacy_options();
+extern void build_allow_list();
+extern void build_block_list();
 
 /* Functions in multi.c */
 extern void account_editor(GtkWidget *, GtkWidget *);
@@ -476,13 +489,16 @@ extern void show_debug();
 extern void update_color(GtkWidget *, GtkWidget *);
 extern void set_default_away(GtkWidget *, gpointer);
 extern void default_away_menu_init(GtkWidget *);
-extern void update_connection_dependent_prefs();
 extern void build_allow_list();
 extern void build_block_list();
 extern GtkWidget *prefs_away_list;
 extern GtkWidget *prefs_away_menu;
 extern GtkWidget *pref_fg_picture;
 extern GtkWidget *pref_bg_picture;
+extern void apply_font_dlg(GtkWidget *, GtkWidget *);
+extern void apply_color_dlg(GtkWidget *, gpointer);
+extern void destroy_colorsel(GtkWidget *, gpointer);
+
 
 /* Functions in prpl.c */
 extern void register_dialog();

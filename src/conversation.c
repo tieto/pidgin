@@ -271,7 +271,7 @@ void delete_conversation(struct conversation *c)
 		gtk_widget_destroy(c->link_dialog);
 	if (c->log_dialog)
 		gtk_widget_destroy(c->log_dialog);
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	if (c->save_icon)
 		gtk_widget_destroy(c->save_icon);
 #endif
@@ -1751,6 +1751,10 @@ void check_everything(GtkWidget *entry)
 /*  Takin care of the window..                                            */
 /*------------------------------------------------------------------------*/
 
+static char* nick_colors[] = {"#ff0000", "#ff00ff", "#00ffff", "#04a241",
+			      "#ffae00", "#bd008a", "#4c9f9c", "#7f0000",
+			      "#6477a2"};
+#define NUM_NICK_COLORS 9
 
 /* this is going to be interesting since the conversation could either be a
  * normal IM conversation or a chat window. but hopefully it won't matter */
@@ -1897,7 +1901,20 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 					g_snprintf(str, 1024, "%s:", who);
 				if (flags & WFLAG_NICK)
 					strcpy(colour, "#af7f00");
-				else if (flags & WFLAG_RECV)
+				else if (flags & WFLAG_RECV) {
+					if (flags & WFLAG_COLORIZE) {
+						char *u = who;	
+						int m = 0;
+						while (*u) {
+							m = m + *u;
+							u++;
+						}
+						m = m % NUM_NICK_COLORS;
+						strcpy(colour, nick_colors[m]);
+					} else {
+						strcpy(colour, "#ff0000");
+					}
+				} else if (flags & WFLAG_RECV)
 					strcpy(colour, "#ff0000");
 				else if (flags & WFLAG_SEND)
 					strcpy(colour, "#0000ff");
@@ -3291,7 +3308,7 @@ void update_convo_font()
 	}
 }
 
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 #define SCALE(x) ((gdk_pixbuf_animation_get_width(x) <= 48 && gdk_pixbuf_animation_get_height(x) <= 48) \
@@ -3308,6 +3325,9 @@ static gboolean redraw_icon(gpointer data)
 	GdkPixmap *src;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
+#if GTK_CHECK_VERSION(1,3,0)
+	GdkPixbufAnimationIter *iter;
+#endif
 	GdkGC *gc;
 	gint delay;
 
@@ -3316,6 +3336,23 @@ static gboolean redraw_icon(gpointer data)
 		return FALSE;
 	}
 
+#if GTK_CHECK_VERSION(1,3,0)
+	gdk_pixbuf_animation_iter_advance(c->iter, NULL);
+	buf = gdk_pixbuf_animation_iter_get_pixbuf(c->iter);
+	scale = gdk_pixbuf_scale_simple(buf,
+					MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
+					    gdk_pixbuf_animation_get_width(c->anim), 1),
+					MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
+					    gdk_pixbuf_animation_get_height(c->anim), 1),
+					GDK_INTERP_NEAREST);
+	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
+	gdk_pixbuf_unref(scale);
+	gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
+	gdk_pixmap_unref(pm);
+	if (bm)
+		gdk_bitmap_unref(bm);
+	delay = MAX(gdk_pixbuf_animation_iter_get_delay_time(c->iter), 13);
+#else
 	frames = gdk_pixbuf_animation_get_frames(c->anim);
 	frame = g_list_nth_data(frames, c->frame);
 	switch (gdk_pixbuf_frame_get_action(frame)) {
@@ -3383,8 +3420,9 @@ static gboolean redraw_icon(gpointer data)
 
 	c->frame = (c->frame + 1) % g_list_length(frames);
 	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
-	c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+#endif
 
+	c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 	return FALSE;
 }
 
@@ -3400,10 +3438,13 @@ static void start_anim(GtkObject *obj, struct conversation *c)
 	GList *frames;
 	GdkPixbufFrame *frame;
 	int delay;
-
+#if GTK_CHECK_VERSION(1,3,0)
+	delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter);
+#else
 	frames = gdk_pixbuf_animation_get_frames(c->anim);
 	frame = g_list_nth_data(frames, c->frame);
 	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
+#endif
 	if (c->anim)
 	    c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 }
@@ -3490,7 +3531,13 @@ static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(stop_anim), c);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
-	} else if (c->anim && (gdk_pixbuf_animation_get_num_frames(c->anim) > 1)) {
+	}
+#if GTK_CHECK_VERSION(1,3,0)
+	 else if (c->anim && !(gdk_pixbuf_animation_is_static_image(c->anim))) 
+#else
+	 else if (c->anim && (gdk_pixbuf_animation_get_num_frames(c->anim) > 1)) 
+#endif
+	{
 		button = gtk_menu_item_new_with_label(_("Enable Animation"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(start_anim), c);
 		gtk_menu_append(GTK_MENU(menu), button);
@@ -3516,7 +3563,7 @@ static gboolean icon_menu(GtkObject *obj, GdkEventButton *e, struct conversation
 
 void remove_icon(struct conversation *c)
 {
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	if (c->icon)
 		gtk_container_remove(GTK_CONTAINER(c->bbox), c->icon->parent->parent);
 	c->icon = NULL;
@@ -3526,7 +3573,11 @@ void remove_icon(struct conversation *c)
 	if (c->icon_timer)
 		gtk_timeout_remove(c->icon_timer);
 	c->icon_timer = 0;
+#if GTK_CHECK_VERSION(1,3,0)
+	g_object_unref(c->iter);
+#else
 	c->frame = 0;
+#endif
 #endif
 }
 
@@ -3558,12 +3609,14 @@ void update_smilies(struct conversation *c)
 
 void update_icon(struct conversation *c)
 {
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	char filename[256];
 	FILE *file;
-
+#if GTK_CHECK_VERSION(1,3,0)
+	GError *err;
+#endif
 	void *data;
-	int len;
+	int len, delay;
 
 	GList *frames;
 	GdkPixbuf *buf;
@@ -3599,28 +3652,47 @@ void update_icon(struct conversation *c)
 	fwrite(data, 1, len, file);
 	fclose(file);
 
+#if GTK_CHECK_VERSION(1,3,0)
+	c->anim = gdk_pixbuf_animation_new_from_file(filename, &err);
+#else
 	c->anim = gdk_pixbuf_animation_new_from_file(filename);
+#endif
 	/* make sure we remove the file as soon as possible */
 	unlink(filename);
 
 	if (!c->anim)
 		return;
 
-	frames = gdk_pixbuf_animation_get_frames(c->anim);
-	buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
-	sf = SCALE(c->anim);
-	scale = gdk_pixbuf_scale_simple(buf,
-					MAX(gdk_pixbuf_get_width(buf) * sf /
-					    gdk_pixbuf_animation_get_width(c->anim), 1),
-					MAX(gdk_pixbuf_get_height(buf) * sf /
-					    gdk_pixbuf_animation_get_height(c->anim), 1),
-					GDK_INTERP_NEAREST);
-
-	if (gdk_pixbuf_animation_get_num_frames(c->anim) > 1) {
-		int delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
+#if GTK_CHECK_VERSION(1,3,0)
+		c->iter = gdk_pixbuf_animation_get_iter(c->anim, NULL);
+		buf = gdk_pixbuf_animation_iter_get_pixbuf(c->iter);
+		scale = gdk_pixbuf_scale_simple(buf,
+						MAX(gdk_pixbuf_get_width(buf) * sf /
+						    gdk_pixbuf_animation_get_width(c->anim), 1),
+						MAX(gdk_pixbuf_get_height(buf) * sf /
+						    gdk_pixbuf_animation_get_height(c->anim), 1),
+						GDK_INTERP_NEAREST);
+		delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter);
+#else
 		c->frame = 1;
-		c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
-	}
+		frames = gdk_pixbuf_animation_get_frames(c->anim);
+		buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
+		sf = SCALE(c->anim);
+		scale = gdk_pixbuf_scale_simple(buf,
+						MAX(gdk_pixbuf_get_width(buf) * sf /
+						    gdk_pixbuf_animation_get_width(c->anim), 1),
+						MAX(gdk_pixbuf_get_height(buf) * sf /
+						    gdk_pixbuf_animation_get_height(c->anim), 1),
+						GDK_INTERP_NEAREST);
+		if (gdk_pixbuf_animation_get_num_frames(c->anim) > 1) {
+			delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
+		} else { 
+			delay = 0;
+		}
+#endif
+		if (delay)
+			c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+	
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 	gdk_pixbuf_unref(scale);
@@ -3645,6 +3717,7 @@ void update_icon(struct conversation *c)
 	if (bm)
 		gdk_bitmap_unref(bm);
 #endif
+	
 }
 
 void got_new_icon(struct gaim_connection *gc, char *who)
@@ -3665,7 +3738,7 @@ void set_hide_icons()
 
 void set_anim()
 {
-#if USE_PIXBUF
+#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	GList *c = conversations;
 	if (im_options & OPT_IM_HIDE_ICONS)
 		return;

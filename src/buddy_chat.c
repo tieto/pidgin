@@ -728,7 +728,10 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 			play_sound(SND_CHAT_SAY);
 		}
 	}
-		write_to_conv(b, message, flag, who, mtime, -1);
+
+	if (chat_options & OPT_CHAT_COLORIZE) 
+		flag |= WFLAG_COLORIZE;
+	write_to_conv(b, message, flag, who, mtime, -1);
 }
 
 
