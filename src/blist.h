@@ -177,15 +177,15 @@ struct _GaimBuddyList {
 struct _GaimBlistUiOps
 {
 	void (*new_list)(GaimBuddyList *list); /**< Sets UI-specific data on a buddy list. */
-	void (*new_node)(GaimBlistNode *node);      /**< Sets UI-specific data on a node. */
-	void (*show)(GaimBuddyList *list);     /**< The core will call this when its finished doing it's core stuff */
+	void (*new_node)(GaimBlistNode *node); /**< Sets UI-specific data on a node. */
+	void (*show)(GaimBuddyList *list);     /**< The core will call this when its finished doing its core stuff */
 	void (*update)(GaimBuddyList *list,
-		       GaimBlistNode *node);            /**< This will update a node in the buddy list. */
+		       GaimBlistNode *node);       /**< This will update a node in the buddy list. */
 	void (*remove)(GaimBuddyList *list,
-		       GaimBlistNode *node);            /**< This removes a node from the list */
+		       GaimBlistNode *node);       /**< This removes a node from the list */
 	void (*destroy)(GaimBuddyList *list);  /**< When the list gets destroyed, this gets called to destroy the UI. */
 	void (*set_visible)(GaimBuddyList *list,
-			    gboolean show);             /**< Hides or unhides the buddy list */
+			    gboolean show);            /**< Hides or unhides the buddy list */
 	void (*request_add_buddy)(GaimAccount *account, const char *username,
 							  const char *group, const char *alias);
 	void (*request_add_chat)(GaimAccount *account, GaimGroup *group, 
