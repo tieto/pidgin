@@ -70,46 +70,38 @@ gboolean count_remove(GtkWidget *widget);
 void quote_add(GtkWidget *widget);
 gboolean quote_remove(GtkWidget *widget);
 /* urgent functions */
-void urgent_add(struct conversation *c);
-gboolean urgent_remove(struct conversation *c);
+void urgent_add(struct gaim_conversation *c);
+gboolean urgent_remove(struct gaim_conversation *c);
 
-struct conversation *find_chat(struct gaim_connection *gc, int id) {
-	GList *cnv = chats;
-	struct conversation *c;
-
-	while (cnv) {
-		c = (struct conversation *) cnv->data;
-
-		if (c && (c->gc == gc) && c->is_chat && (c->id == id))
-			return c;
-
-		cnv = cnv->next;
-	}
-	return NULL;
-}
-
-int notify(struct conversation *cnv) {
+int notify(struct gaim_conversation *cnv) {
+	struct gaim_gtk_window *gtkwin;
 	Window focus_return;
 	int revert_to_return;
 
-	XGetInputFocus(GDK_WINDOW_XDISPLAY(cnv->window->window), &focus_return, &revert_to_return);
+	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(cnv));
+
+	XGetInputFocus(GDK_WINDOW_XDISPLAY(gtkwin->window->window), &focus_return, &revert_to_return);
 
 	if ((choice & NOTIFY_IN_FOCUS) ||
-			focus_return != GDK_WINDOW_XWINDOW(cnv->window->window)) {
+			focus_return != GDK_WINDOW_XWINDOW(gtkwin->window->window)) {
 		if (method & METHOD_STRING)
-			string_add(cnv->window);
+			string_add(gtkwin->window);
 		if (method & METHOD_COUNT)
-			count_add(cnv->window, 0);
+			count_add(gtkwin->window, 0);
 		if (method & METHOD_QUOTE)
-			quote_add(cnv->window);
+			quote_add(gtkwin->window);
 		if (method & METHOD_URGENT)
 			urgent_add(cnv);
 	}
 	return 0;
 }
 
-guint unnotify(struct conversation *c, gboolean clean) {
+guint unnotify(struct gaim_conversation *c, gboolean clean) {
+	struct gaim_gtk_window *gtkwin;
 	guint option = 0;
+
+	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+	
 	/* The top level ifs check whether we are either cleaning all methods,
 	 * or whether we have that method is currently selected.
 	 * If we do then they are cleaned
@@ -118,15 +110,15 @@ guint unnotify(struct conversation *c, gboolean clean) {
 	 * and if that method is currently selected.
 	 * If we did and it is then set option so that it can be re-added */
 	if (clean || (method & METHOD_QUOTE))
-		if (quote_remove(c->window) && (method & METHOD_QUOTE))
+		if (quote_remove(gtkwin->window) && (method & METHOD_QUOTE))
 			option ^= METHOD_QUOTE;
 	
 	if (clean || (method & METHOD_COUNT))
-		if (count_remove(c->window) && (method & METHOD_COUNT))
+		if (count_remove(gtkwin->window) && (method & METHOD_COUNT))
 			option ^= METHOD_COUNT;
 
 	if (clean || (method & METHOD_STRING))
-		if (string_remove(c->window) && (method & METHOD_STRING))
+		if (string_remove(gtkwin->window) && (method & METHOD_STRING))
 			option ^= METHOD_STRING;
 
 	if (clean || (method & METHOD_URGENT))
@@ -137,7 +129,7 @@ guint unnotify(struct conversation *c, gboolean clean) {
 }
 
 void chat_recv_im(struct gaim_connection *gc, int id, char **who, char **text) {
-	struct conversation *c = find_chat(gc, id);
+	struct gaim_conversation *c = gaim_find_chat(gc, id);
 
 	if (c && (type & TYPE_CHAT))
 		notify(c);
@@ -145,7 +137,7 @@ void chat_recv_im(struct gaim_connection *gc, int id, char **who, char **text) {
 }
 
 void chat_sent_im(struct gaim_connection *gc, int id, char **text) {
-	struct conversation *c = find_chat(gc, id);
+	struct gaim_conversation *c = gaim_find_chat(gc, id);
 
 	if (c && (type & TYPE_CHAT))
 		unnotify(c, FALSE);
@@ -153,7 +145,7 @@ void chat_sent_im(struct gaim_connection *gc, int id, char **text) {
 }
 
 int im_recv_im(struct gaim_connection *gc, char **who, char **what, void *m) {
-	struct conversation *c = find_conversation(*who);
+	struct gaim_conversation *c = gaim_find_conversation(*who);
 
 	if (c && (type & TYPE_IM))
 		notify(c);
@@ -161,70 +153,81 @@ int im_recv_im(struct gaim_connection *gc, char **who, char **what, void *m) {
 }
 
 int im_sent_im(struct gaim_connection *gc, char *who, char **what, void *m) {
-	struct conversation *c = find_conversation(who);
+	struct gaim_conversation *c = gaim_find_conversation(who);
 
 	if (c && (type & TYPE_IM))
 		unnotify(c, FALSE);
 	return 0;
 }
 
-int attach_signals(struct conversation *c) {
+int attach_signals(struct gaim_conversation *c) {
+	struct gaim_gtk_conversation *gtkconv;
+	struct gaim_gtk_window *gtkwin;
+
+	gtkconv = GAIM_GTK_CONVERSATION(c);
+	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+
 	if (choice & NOTIFY_FOCUS) {
-		g_signal_connect(G_OBJECT(c->window), "focus-in-event", G_CALLBACK(un_star), NULL);
+		g_signal_connect(G_OBJECT(gtkwin->window), "focus-in-event", G_CALLBACK(un_star), NULL);
 	}
 
 	if (choice & NOTIFY_CLICK) {
-		g_signal_connect(G_OBJECT(c->window), "button_press_event", G_CALLBACK(un_star), NULL);
+		g_signal_connect(G_OBJECT(gtkwin->window), "button_press_event", G_CALLBACK(un_star), NULL);
 
-		g_signal_connect_swapped(G_OBJECT(c->text), "button_press_event", G_CALLBACK(un_star), G_OBJECT(c->window));
+		g_signal_connect_swapped(G_OBJECT(gtkconv->imhtml), "button_press_event", G_CALLBACK(un_star), G_OBJECT(gtkwin->window));
 
-		g_signal_connect_swapped(G_OBJECT(c->entry), "button_press_event", G_CALLBACK(un_star), G_OBJECT(c->window));
+		g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "button_press_event", G_CALLBACK(un_star), G_OBJECT(gtkwin->window));
 	}
 
 	if (choice & NOTIFY_TYPE) {
-		g_signal_connect_swapped(G_OBJECT(c->entry), "key-press-event", G_CALLBACK(un_star), G_OBJECT(c->window));
+		g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key-press-event", G_CALLBACK(un_star), G_OBJECT(gtkwin->window));
 	}
 
-	g_object_set_data(G_OBJECT(c->window), "user_data", c);
-	g_object_set_data(G_OBJECT(c->window), "notify_data", GUINT_TO_POINTER(choice));
+	g_object_set_data(G_OBJECT(gtkwin->window), "user_data", c);
+	g_object_set_data(G_OBJECT(gtkwin->window), "notify_data", GUINT_TO_POINTER(choice));
 	return 0;
 }
 
-void detach_signals(struct conversation *c) {
-	guint options = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(c->window), "notify_data"));
+void detach_signals(struct gaim_conversation *c) {
+	struct gaim_gtk_conversation *gtkconv;
+	struct gaim_gtk_window *gtkwin;
+	guint options;
+	
+	gtkconv = GAIM_GTK_CONVERSATION(c);
+	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+	
+	options = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(gtkwin->window), "notify_data"));
 
 	if (options & NOTIFY_FOCUS) {
-		g_signal_handlers_disconnect_by_func(G_OBJECT(c->window), un_star, NULL);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkwin->window), un_star, NULL);
 	}
 	if (options & NOTIFY_CLICK) {
-		g_signal_handlers_disconnect_by_func(G_OBJECT(c->window), un_star, NULL);
-		g_signal_handlers_disconnect_by_func(G_OBJECT(c->text), un_star, c->window);
-		g_signal_handlers_disconnect_by_func(G_OBJECT(c->entry), un_star, c->window);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkwin->window), un_star, NULL);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->imhtml), un_star, gtkwin->window);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->entry), un_star, gtkwin->window);
 	}
 
 	if (options & NOTIFY_TYPE) {
-		g_signal_handlers_disconnect_by_func(G_OBJECT(c->entry), un_star, c->window);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->entry), un_star, gtkwin->window);
 	}
 }
 
 void new_conv(char *who) {
-	struct conversation *c = find_conversation(who);
+	struct gaim_conversation *c = gaim_find_conversation(who);
 
 	if (c && (type & TYPE_IM))
 		attach_signals(c);
-	return;
 }
 
 void chat_join(struct gaim_connection *gc, int id, char *room) {
-	struct conversation *c = find_chat(gc, id);
+	struct gaim_conversation *c = gaim_find_chat(gc, id);
 
 	if (c && (type & TYPE_CHAT))
 		attach_signals(c);
-	return;
 }
 
 int un_star(GtkWidget *widget, gpointer data) {
-	struct conversation *c = g_object_get_data(G_OBJECT(widget), "user_data");
+	struct gaim_conversation *c = g_object_get_data(G_OBJECT(widget), "user_data");
 
 	if (method & METHOD_QUOTE)
 		quote_remove(widget);
@@ -338,36 +341,60 @@ gboolean quote_remove(GtkWidget *widget) {
 	return FALSE;
 }
 
-void urgent_add(struct conversation *c) {
-	XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window));
+void urgent_add(struct gaim_conversation *c) {
+	struct gaim_gtk_window *gtkwin;
+	XWMHints *hints;
+
+	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+
+	hints = XGetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window));
 	hints->flags |= XUrgencyHint;
-	XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+	XSetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window), hints);
 	XFree(hints);
 }
 
-gboolean urgent_remove(struct conversation *c) {
-	if ((c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW)) || (!c->is_chat && (im_options & OPT_IM_ONE_WINDOW))) {
-		if (c->is_chat) {
-			struct conversation *c = (struct conversation *)chats->data;
-			GdkWindow *win = c->window->window;
+gboolean urgent_remove(struct gaim_conversation *c) {
+	struct gaim_gtk_conversation *gtkconv;
 
-			XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win));
+	gtkconv = GAIM_GTK_CONVERSATION(c);
+
+	if ((gaim_conversation_get_type(c) == GAIM_CONV_CHAT &&
+		 (chat_options & OPT_CHAT_ONE_WINDOW)) ||
+		(gaim_conversation_get_type(c) != GAIM_CONV_CHAT &&
+		 (im_options & OPT_IM_ONE_WINDOW))) {
+		if (gaim_conversation_get_type(c) == GAIM_CONV_CHAT) {
+			struct gaim_conversation *c = (struct gaim_conversation *)gaim_get_chats()->data;
+			struct gaim_gtk_window *gtkwin;
+			GdkWindow *win;
+			XWMHints *hints;
+
+			gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+
+			win = gtkwin->window->window;
+
+			hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win));
 			if (hints->flags & XUrgencyHint) {
 				hints->flags &= ~XUrgencyHint;
-				XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+				XSetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window), hints);
 				XFree(hints);
 				return TRUE;
 			}
 			XFree(hints);
 			return FALSE;
 		} else {
-			struct conversation *c = (struct conversation *)conversations->data;
-			GdkWindow *win = c->window->window;
+			struct gaim_conversation *c;
+			struct gaim_gtk_window *gtkwin;
+			GdkWindow *win;
+			XWMHints *hints;
 
-			XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win));
+			c = (struct gaim_conversation *)gaim_get_ims()->data;
+			gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+			win = gtkwin->window->window;
+
+			hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win));
 			if (hints->flags & XUrgencyHint) {
 				hints->flags &= ~XUrgencyHint;
-				XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+				XSetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window), hints);
 				XFree(hints);
 				return TRUE;
 			}
@@ -375,10 +402,15 @@ gboolean urgent_remove(struct conversation *c) {
 			return FALSE;
 		}
 	} else {
-		XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window));
+		struct gaim_gtk_window *gtkwin;
+		XWMHints *hints;
+
+		gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+		hints = XGetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window));
+
 		if (hints->flags & XUrgencyHint) {
 			hints->flags &= ~XUrgencyHint;
-			XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+			XSetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window), hints);
 			XFree(hints);
 			return TRUE;
 		}
@@ -480,7 +512,16 @@ void apply_options(GtkWidget *widget, gpointer data) {
 
 	while (cnv) {
 		guint notification;
-		struct conversation *c = (struct conversation *) cnv->data;
+		struct gaim_conversation *c = (struct gaim_conversation *) cnv->data;
+		struct gaim_gtk_conversation *gtkconv;
+		struct gaim_gtk_window *gtkwin;
+		guint options = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(c->window), "notify_data"));
+
+		gtkconv = GAIM_GTK_CONVERSATION(c);
+		gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+
+		if (options & NOTIFY_FOCUS)
+			g_signal_handlers_disconnect_by_func(G_OBJECT(gtkwin->window), un_star, NULL);
 
 		/* remove old notification signals */
 		detach_signals(c);
@@ -490,11 +531,11 @@ void apply_options(GtkWidget *widget, gpointer data) {
 	
 		/* re-add appropriate notification methods cleaned above */
 		if (notification & METHOD_STRING) /* re-add string */
-			string_add(c->window);
+			string_add(gtkwin->window);
 		if (notification & METHOD_QUOTE) /* re-add quote */
-			quote_add(c->window);
+			quote_add(gtkwin->window);
 		if (notification & METHOD_COUNT) /* re-add count */
-			count_add(c->window, Number);
+			count_add(gtkwin->window, Number);
 		if (notification & METHOD_URGENT) /* re-add urgent */
 			urgent_add(c);
 
@@ -503,8 +544,6 @@ void apply_options(GtkWidget *widget, gpointer data) {
 
 		cnv = cnv->next;
 	}
-
-	return;
 }
 
 char *gaim_plugin_init(GModule *hndl) {
@@ -523,14 +562,17 @@ char *gaim_plugin_init(GModule *hndl) {
 }
 
 void gaim_plugin_remove() {
-	GList *c = conversations;
+	GList *c = gaim_get_ims();
 
 	while (c) {
-		struct conversation *cnv = (struct conversation *)c->data;
-		
+		struct gaim_conversation *cnv = (struct gaim_conversation *)c->data;
+		struct gaim_gtk_window *gtkwin;
+
+		gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(cnv));
+
 		detach_signals(cnv);
-		un_star(cnv->window, NULL);
-		
+		un_star(gtkwin->window, NULL);
+
 		c = c->next;
 	}
 	

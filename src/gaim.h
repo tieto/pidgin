@@ -368,16 +368,16 @@ void create_prpl_icon(GtkWidget *widget, struct gaim_connection *gc,
 					  GdkPixmap **pixmap, GdkBitmap **mask);
 
 /* Functions in buddy_chat.c */
-extern void show_new_buddy_chat(struct conversation *);
-extern void chat_set_topic(struct conversation*, char*, char*);
-/*extern void add_chat_buddy(struct conversation *, char *);*/
-extern void add_chat_buddy(struct conversation *, char *, char *);
-extern void rename_chat_buddy(struct conversation *, char *, char *);
-extern void remove_chat_buddy(struct conversation *, char *, char *);
+#if 0
+extern void show_new_buddy_chat(struct gaim_conversation *);
+extern void chat_set_topic(struct gaim_conversation*, char*, char*);
+/*extern void add_chat_buddy(struct gaim_conversation *, char *);*/
+extern void add_chat_buddy(struct gaim_conversation *, char *, char *);
+extern void rename_chat_buddy(struct gaim_conversation *, char *, char *);
+extern void remove_chat_buddy(struct gaim_conversation *, char *, char *);
+#endif
 
 /* Functions in conversation.c */
-extern void write_to_conv(struct conversation *, char *, int, char *, time_t, int);
-extern struct conversation *find_conversation(const char *);
 extern void set_anim();
 extern void set_blist_tab();
 
@@ -402,7 +402,7 @@ struct g_url {
 };
 
 extern void grab_url(char *, gboolean, void (*callback)(gpointer, char *, unsigned long), gpointer);
-extern gchar *strip_html(gchar *);
+extern gchar *strip_html(const gchar *);
 struct g_url *parse_url(char *url);
 
 /* Functions in idle.c */
@@ -481,8 +481,8 @@ extern void system_log(enum log_event, struct gaim_connection *, struct buddy *,
 extern void rm_log(struct log_conversation *);
 extern struct log_conversation *find_log_info(const char *);
 extern void update_log_convs();
-extern void save_convo(GtkWidget *save, struct conversation *c);
-extern char *html_logize(char *p);
+extern void save_convo(GtkWidget *save, struct gaim_conversation *c);
+extern char *html_logize(const char *p);
 
 /*------------------------------------------------------------------------*/
 /*  Multi-Entry dialog and vCard dialog support                           */

@@ -44,7 +44,7 @@
 #include "win32dep.h"
 #endif
 
-gchar *strip_html(gchar *text)
+gchar *strip_html(const gchar *text)
 {
 	int i, j, k;
 	int visible = 1;

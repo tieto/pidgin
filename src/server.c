@@ -90,10 +90,13 @@ void serv_close(struct gaim_connection *gc)
 {
 	struct prpl *prpl;
 	while (gc->buddy_chats) {
-		struct conversation *b = gc->buddy_chats->data;
+		struct gaim_conversation *b = gc->buddy_chats->data;
+
 		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
-		b->gc = NULL;
-		update_buttons_by_protocol(b);
+
+		/* TODO: Nuke the UI-specific code here. */
+		if (gaim_conversation_get_ops(b) == gaim_get_gtk_conversation_ops())
+			gaim_gtkconv_update_buttons_by_protocol(b);
 	}
 
 	if (gc->idle_timer > 0)
@@ -162,10 +165,14 @@ struct queued_away_response {
 
 struct queued_away_response *find_queued_away_response_by_name(char *name);
 
-int serv_send_im(struct gaim_connection *gc, char *name, char *message, int len, int flags)
+int serv_send_im(struct gaim_connection *gc, char *name, char *message,
+				 int len, int flags)
 {
+	struct gaim_conversation *c;
 	int val = -EINVAL;
-	struct conversation *cnv = find_conversation(name);
+
+	c = gaim_find_conversation(name);
+
 	if (gc->prpl && gc->prpl->send_im)
 		val = gc->prpl->send_im(gc, name, message, len, flags);
 
@@ -187,8 +194,8 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message, int len,
 		qar->sent_away = t;
 	}
 
-	if (cnv && cnv->type_again_timeout)
-		g_source_remove(cnv->type_again_timeout);
+	if (c && gaim_im_get_type_again_timeout(GAIM_IM(c)))
+		gaim_im_stop_type_again_timeout(GAIM_IM(c));
 
 	return val;
 }
@@ -211,18 +218,24 @@ void serv_get_dir(struct gaim_connection *g, char *name)
 		g->prpl->get_dir(g, name);
 }
 
-void serv_set_dir(struct gaim_connection *g, const char *first, const char *middle, const char *last, const char *maiden,
-		  const char *city, const char *state, const char *country, int web)
+void serv_set_dir(struct gaim_connection *g, const char *first,
+				  const char *middle, const char *last, const char *maiden,
+				  const char *city, const char *state, const char *country,
+				  int web)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_dir)
-		g->prpl->set_dir(g, first, middle, last, maiden, city, state, country, web);
+		g->prpl->set_dir(g, first, middle, last, maiden, city, state,
+						 country, web);
 }
 
-void serv_dir_search(struct gaim_connection *g, const char *first, const char *middle, const char *last, const char *maiden,
-		     const char *city, const char *state, const char *country, const char *email)
+void serv_dir_search(struct gaim_connection *g, const char *first,
+					 const char *middle, const char *last, const char *maiden,
+		     const char *city, const char *state, const char *country,
+			 const char *email)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->dir_search)
-		g->prpl->dir_search(g, first, middle, last, maiden, city, state, country, email);
+		g->prpl->dir_search(g, first, middle, last, maiden, city, state,
+							country, email);
 }
 
 
@@ -532,39 +545,47 @@ struct queued_away_response *find_queued_away_response_by_name(char *name)
 	return NULL;
 }
 
-/* woo. i'm actually going to comment this function. isn't that fun. make sure to follow along, kids */
-void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 flags, time_t mtime, gint len)
+/*
+ * woo. i'm actually going to comment this function. isn't that fun. make
+ * sure to follow along, kids
+ */
+void serv_got_im(struct gaim_connection *gc, char *name, char *message,
+				 guint32 flags, time_t mtime, gint len)
 {
 	char *buffy;
 	char *angel;
 	int plugin_return;
 	int away = 0;
 
-	struct conversation *cnv;
-	int new_conv = 0;
+	struct gaim_conversation *cnv;
 
-	/* pay no attention to the man behind the curtain.
+	/*
+	 * Pay no attention to the man behind the curtain.
 	 *
-	 * the reason i feel okay with this is because it's useful to some plugins.
-	 * Gaim doesn't ever use it itself. Besides, it's not entirely accurate; it's
-	 * possible to have false negatives with most protocols. Also with some it's
-	 * easy to have false positives as well. So if you're a plugin author, don't
-	 * rely on this, still do your own checks. but uh. it's a start. */
+	 * The reason i feel okay with this is because it's useful to some
+	 * plugins. Gaim doesn't ever use it itself. Besides, it's not entirely
+	 * accurate; it's possible to have false negatives with most protocols.
+	 * Also with some it's easy to have false positives as well. So if you're
+	 * a plugin author, don't rely on this, still do your own checks. But uh.
+	 * It's a start.
+	 */
+
 	if (flags & IM_FLAG_GAIMUSER)
 		debug_printf("%s is a gaim user.\n", name);
 
-	/* we should update the conversation window buttons and menu, if it exists. */
-	cnv = find_conversation(name);
-	if (cnv)
-		set_convo_gc(cnv, gc);
-	/* we do the new_conv check here in case any plugins decide to create it */
-	else
-		new_conv = 1;
+	/*
+	 * We should update the conversation window buttons and menu,
+	 * if it exists.
+	 */
+	cnv = gaim_find_conversation_with_user(name, gc->user);
 
-	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
-	 * by the prpls. so we create temp holders and pass those instead. it's basically
-	 * just to avoid segfaults. of course, if the data is binary, plugins don't see it.
-	 * bitch all you want; i really don't want you to be dealing with it. */
+	/*
+	 * Plugin stuff. we pass a char ** but we don't want to pass what's
+	 * been given us by the prpls. So we create temp holders and pass
+	 * those instead. It's basically just to avoid segfaults. Of course,
+	 * if the data is binary, plugins don't see it. Bitch all you want;
+	 * I really don't want you to be dealing with it.
+	 */
 	if (len < 0) {
 		buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
 		strcpy(buffy, message);
@@ -586,10 +607,15 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 	}
 
 #if 0
-	/* TiK, using TOC, sends an automated message in order to get your away message. Now,
-	 * this is one of the biggest hacks I think I've seen. But, in order to be nice to
-	 * TiK, we're going to give users the option to ignore it. */
-	if ((away_options & OPT_AWAY_TIK_HACK) && gc->away && strlen(gc->away) && (len < 0) &&
+	/*
+	 * TiK, using TOC, sends an automated message in order to get your
+	 * away message. Now, this is one of the biggest hacks I think I've
+	 * seen. But, in order to be nice to TiK, we're going to give users
+	 * the option to ignore it.
+	 */
+	if ((away_options & OPT_AWAY_TIK_HACK) && gc->away &&
+		strlen(gc->away) && (len < 0) &&
+
 	    !strcmp(message, ">>>Automated Message: Getting Away Message<<<")) {
 		char *tmpmsg = stylize(awaymessage->message, MSG_LEN);
 		serv_send_im(gc, name, tmpmsg, -1, IM_FLAG_AWAY);
@@ -600,20 +626,28 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 	}
 #endif
 
-	/* if you can't figure this out, stop reading right now.
-	 * "we're not worthy! we're not worthy!" */
+	/*
+	 * If you can't figure this out, stop reading right now.
+	 * "We're not worthy! We're not worthy!"
+	 */
 	if ((len < 0) && (convo_options & OPT_CONVO_SEND_LINKS))
 		linkify_text(message);
 
-	/* um. when we call write_to_conv with the message we received, it's nice to pass whether
-	 * or not it was an auto-response. so if it was an auto-response, we set the appropriate
-	 * flag. this is just so prpls don't have to know about WFLAG_* (though some do anyway) */
+	/*
+	 * Um. When we call gaim_conversation_write with the message we received,
+	 * it's nice to pass whether or not it was an auto-response. So if it
+	 * was an auto-response, we set the appropriate flag. This is just so
+	 * prpls don't have to know about WFLAG_* (though some do anyway)
+	 */
 	if (flags & IM_FLAG_AWAY)
 		away = WFLAG_AUTO;
 
-	/* alright. two cases for how to handle this. either we're away or we're not. if we're not,
-	 * then it's easy. if we are, then there are three or four different ways of handling it
-	 * and different things we have to do for each. */
+	/*
+	 * Alright. Two cases for how to handle this. Either we're away or
+	 * we're not. If we're not, then it's easy. If we are, then there
+	 * are three or four different ways of handling it and different
+	 * things we have to do for each.
+	 */
 	if (gc->away) {
 		time_t t;
 		char *tmpmsg;
@@ -624,15 +658,22 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 
 		time(&t);
 
-		/* either we're going to queue it or not. Because of the way awayness currently
-		 * works, this is fucked up. it's possible for an account to be away without the
-		 * imaway dialog being shown. in fact, it's possible for *all* the accounts to be
-		 * away without the imaway dialog being shown. so in order for this to be queued
-		 * properly, we have to make sure that the imaway dialog actually exists, first. */
+		/*
+		 * Either we're going to queue it or not. Because of the way
+		 * awayness currently works, this is fucked up. It's possible
+		 * for an account to be away without the imaway dialog being
+		 * shown. In fact, it's possible for *all* the accounts to be
+		 * away without the imaway dialog being shown. So in order for
+		 * this to be queued properly, we have to make sure that the
+		 * imaway dialog actually exists, first.
+		 */
 		if (!cnv && clistqueue && (away_options & OPT_AWAY_QUEUE)) {
-			/* alright, so we're going to queue it. neat, eh? :) so first we create
-			 * something to store the message, and add it to our queue. Then we update
-			 * the away dialog to indicate that we've queued something. */
+			/* 
+			 * Alright, so we're going to queue it. Neat, eh? :)
+			 * So first we create something to store the message, and add
+			 * it to our queue. Then we update the away dialog to indicate
+			 * that we've queued something.
+			 */
 			struct queued_message *qm;
 
 			qm = g_new0(struct queued_message, 1);
@@ -661,50 +702,62 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 				gtk_clist_append(GTK_CLIST(clistqueue), heh);
 			}
 		} else {
-			/* ok, so we're not queuing it. well then, we'll try to handle it normally.
-			 * Some people think that ignoring it is a perfectly acceptible way to handle
-			 * it. i think they're on crack, but hey, that's why it's optional. */
+			/*
+			 * Ok, so we're not queuing it. Well then, we'll try to handle
+			 * it normally. Some people think that ignoring it is a perfectly
+			 * acceptible way to handle it. I think they're on crack, but
+			 * hey, that's why it's optional.
+			 */
 			if (away_options & OPT_AWAY_DISCARD) {
 				g_free(name);
 				g_free(message);
 				return;
 			}
 
-			/* ok, so we're not ignoring it. make sure the conversation exists and is
-			 * updated (partly handled above already), play the receive sound (sound.c
-			 * will take care of not playing while away), and then write it to the
-			 * convo window. */
+			/*
+			 * Ok, so we're not ignoring it. Make sure the conversation
+			 * exists and is updated (partly handled above already), play
+			 * the receive sound (sound.c will take care of not playing
+			 * while away), and then write it to the convo window.
+			 */
 			if (cnv == NULL) {
-				cnv = new_conversation(name);
-				set_convo_gc(cnv, gc);
+				cnv = gaim_conversation_new(GAIM_CONV_IM, name);
+				gaim_conversation_set_user(cnv, gc->user);
 			}
-			if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
-				play_sound(SND_FIRST_RECEIVE);
-			else if (cnv->makesound)
-				play_sound(SND_RECEIVE);
 
-			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
+			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
+						  away | WFLAG_RECV, mtime);
 		}
 
-		/* regardless of whether we queue it or not, we should send an auto-response.
-		 * that is, of course, unless the horse.... no wait. don't autorespond if:
+		/*
+		 * Regardless of whether we queue it or not, we should send an
+		 * auto-response. That is, of course, unless the horse.... no wait.
+		 * Don't autorespond if:
+		 *
 		 *  - it's not supported on this connection
 		 *  - or it's disabled
 		 *  - or the away message is empty
-		 *  - or we're not idle and the 'only auto respond if idle' pref is set
+		 *  - or we're not idle and the 'only auto respond if idle' pref
+		 *    is set
 		 */
-		if (!(gc->flags & OPT_CONN_AUTO_RESP) || (away_options & OPT_AWAY_NO_AUTO_RESP) ||
-		      !strlen(gc->away) || ((away_options & OPT_AWAY_IDLE_RESP) && !gc->is_idle)) {
+		if (!(gc->flags & OPT_CONN_AUTO_RESP) ||
+			(away_options & OPT_AWAY_NO_AUTO_RESP) || !strlen(gc->away) ||
+			((away_options & OPT_AWAY_IDLE_RESP) && !gc->is_idle)) {
+
 			g_free(name);
 			g_free(message);
 			return;
 		}
 
-		/* this used to be based on the conversation window. but um, if you went away, and
-		 * someone sent you a message and got your auto-response, and then you closed the
-		 * window, and then the sent you another one, they'd get the auto-response back
-		 * too soon. besides that, we need to keep track of this even if we've got a queue.
-		 * so the rest of this block is just the auto-response, if necessary */
+		/*
+		 * This used to be based on the conversation window. But um, if
+		 * you went away, and someone sent you a message and got your
+		 * auto-response, and then you closed the window, and then the
+		 * sent you another one, they'd get the auto-response back too
+		 * soon. Besides that, we need to keep track of this even if we've
+		 * got a queue. So the rest of this block is just the auto-response,
+		 * if necessary
+		 */
 		qar = find_queued_away_response_by_name(name);
 		if (!qar) {
 			qar = (struct queued_away_response *)g_new0(struct queued_away_response, 1);
@@ -733,22 +786,24 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			qm->len = -1;
 			message_queue = g_slist_append(message_queue, qm);
 		} else if (cnv != NULL)
-			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL,
-				      mtime, len);
+			gaim_im_write(GAIM_IM(cnv), NULL, away_subs(tmpmsg, alias),
+						  len, WFLAG_SEND | WFLAG_AUTO, mtime);
+
 		g_free(tmpmsg);
 	} else {
-		/* we're not away. this is easy. if the convo window doesn't exist, create and update
-		 * it (if it does exist it was updated earlier), then play a sound indicating we've
-		 * received it and then display it. easy. */
-		
-		if (new_conv && (sound_options & OPT_SOUND_FIRST_RCV))
-			play_sound(SND_FIRST_RECEIVE);
-		else if (new_conv || cnv->makesound)
-			play_sound(SND_RECEIVE);
-		
-		if (away_options & OPT_AWAY_QUEUE_UNREAD && !find_conversation(name) && docklet_count) {
-			/* We're gonna queue it up and wait for the user to ask for it... probably
-			 * by clicking the docklet or windows tray icon. */
+		/*
+		 * We're not away. This is easy. If the convo window doesn't
+		 * exist, create and update it (if it does exist it was updated
+		 * earlier), then play a sound indicating we've received it and
+		 * then display it. Easy.
+		 */
+		if (away_options & OPT_AWAY_QUEUE_UNREAD &&
+			!gaim_find_conversation(name) && docklet_count) {
+
+			/*
+			 * We're gonna queue it up and wait for the user to ask for
+			 * it... probably by clicking the docklet or windows tray icon.
+			 */
 			struct queued_message *qm;
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
@@ -760,18 +815,18 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
 		} else {
 			if (cnv == NULL) {
-				cnv = new_conversation(name);
-				set_convo_gc(cnv, gc);
+				cnv = gaim_conversation_new(GAIM_CONV_IM, name);
+				gaim_conversation_set_user(cnv, gc->user);
 			}
-						
-			set_convo_name(cnv, name);
-			
-			write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
-#ifdef _WIN32
-			wgaim_im_blink(cnv->window);
-#endif
+
+			/* CONV XXX gaim_conversation_set_name(cnv, name); */
+
+			gaim_im_write(GAIM_IM(cnv), NULL, message, len,
+						  away | WFLAG_RECV, mtime);
+			gaim_window_flash(gaim_conversation_get_window(cnv));
 		}
 	}
+
 	plugin_event(event_im_displayed_rcvd, gc, name, message, flags, mtime);
 	g_free(name);
 	g_free(message);
@@ -779,8 +834,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 
 
 
-void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int evil, time_t signon,
-		     time_t idle, int type, guint caps)
+void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
+					 int evil, time_t signon, time_t idle, int type, guint caps)
 {
 	struct buddy *b = find_buddy(gc->user, name);
 
@@ -870,39 +925,50 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 
 	gc->evil = lev;
 
-	g_snprintf(buf2, sizeof(buf2), _("%s has just been warned by %s.\nYour new warning level is %d%%"),
-		   gc->username, ((name == NULL)? _("an anonymous person") : name), lev);
+	g_snprintf(buf2, sizeof(buf2),
+			   _("%s has just been warned by %s.\n"
+				 "Your new warning level is %d%%"),
+			   gc->username,
+			   ((name == NULL)? _("an anonymous person") : name), lev);
 
 	do_error_dialog(buf2, NULL, GAIM_INFO);
 }
 
-void serv_got_typing(struct gaim_connection *gc, char *name, int timeout, int state) {
-	struct conversation *cnv = find_conversation(name);
-	 if (cnv) {
-		 set_convo_gc(cnv, gc);
-		 cnv->typing_state = state;
-		 update_convo_status(cnv);
-	} else return;
-	 plugin_event(event_got_typing, gc, name);
-	 do_pounce(gc, name, OPT_POUNCE_TYPING);
-	 if (timeout > 0) {
-		 if (cnv->typing_timeout)
-			 g_source_remove (cnv->typing_timeout);
-		 cnv->typing_timeout = g_timeout_add_full(G_PRIORITY_DEFAULT_IDLE,
-				 timeout * 1000, reset_typing, g_strdup(name), g_free);
-	 }
+void serv_got_typing(struct gaim_connection *gc, char *name, int timeout,
+					 int state) {
+
+	struct gaim_conversation *cnv = gaim_find_conversation(name);
+	struct gaim_im *im;
+
+	if (!cnv)
+		return;
+
+	im = GAIM_IM(cnv);
+
+	gaim_conversation_set_user(cnv, gc->user);
+	gaim_im_set_typing_state(im, state);
+	gaim_im_update_typing(im);
+
+	plugin_event(event_got_typing, gc, name);
+	do_pounce(gc, name, OPT_POUNCE_TYPING);
+
+	if (timeout > 0)
+		gaim_im_start_typing_timeout(im, timeout);
 }
 
 void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
-	struct conversation *c = find_conversation(name);
-	if(!c)
+
+	struct gaim_conversation *c = gaim_find_conversation(name);
+	struct gaim_im *im;
+
+	if (!c)
 		return;
-	if (c->typing_timeout) {
-		g_source_remove(c->typing_timeout);
-		c->typing_timeout=0;
-	}
-	c->typing_state = NOT_TYPING;
-	update_convo_status(c);
+
+	im = GAIM_IM(c);
+
+	gaim_im_stop_typing_timeout(im);
+	gaim_im_set_typing_state(im, NOT_TYPING);
+	gaim_im_update_typing(im);
 }
 
 static void close_invite(GtkWidget *w, GtkWidget *w2)
@@ -945,7 +1011,8 @@ static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 
 
 
-void serv_got_chat_invite(struct gaim_connection *g, char *name, char *who, char *message, GList *data)
+void serv_got_chat_invite(struct gaim_connection *g, char *name,
+						  char *who, char *message, GList *data)
 {
 	GtkWidget *d;
 	GtkWidget *label;
@@ -958,11 +1025,13 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, char *who, char
 	plugin_event(event_chat_invited, g, who, name, message);
 
 	if (message)
-		g_snprintf(buf2, sizeof(buf2), _("User '%s' invites %s to buddy chat room: '%s'\n%s"), who,
-			   g->username, name, message);
+		g_snprintf(buf2, sizeof(buf2),
+				   _("User '%s' invites %s to buddy chat room: '%s'\n%s"),
+				   who, g->username, name, message);
 	else
-		g_snprintf(buf2, sizeof(buf2), _("User '%s' invites %s to buddy chat room: '%s'\n"), who,
-			   g->username, name);
+		g_snprintf(buf2, sizeof(buf2),
+				   _("User '%s' invites %s to buddy chat room: '%s'\n"),
+				   who, g->username, name);
 
 	d = gtk_dialog_new();
 	gtk_widget_realize(d);
@@ -982,38 +1051,39 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, char *who, char
 
 
 	gtk_window_set_title(GTK_WINDOW(d), _("Buddy chat invite"));
-	g_signal_connect(GTK_OBJECT(nobtn), "clicked", G_CALLBACK(close_invite), d);
-	g_signal_connect(GTK_OBJECT(yesbtn), "clicked", G_CALLBACK(chat_invite_callback), d);
-
+	g_signal_connect(G_OBJECT(nobtn), "clicked",
+					 G_CALLBACK(close_invite), d);
+	g_signal_connect(G_OBJECT(yesbtn), "clicked",
+					 G_CALLBACK(chat_invite_callback), d);
 
 	gtk_widget_show(d);
 }
 
-struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
+struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *gc,
+											   int id, char *name)
 {
-	struct conversation *b;
+	struct gaim_conversation *b;
+	struct gaim_chat *chat;
 
-	b = (struct conversation *)g_new0(struct conversation, 1);
+	b = gaim_conversation_new(GAIM_CONV_CHAT, name);
+	chat = GAIM_CHAT(b);
+
 	gc->buddy_chats = g_slist_append(gc->buddy_chats, b);
-	chats = g_list_append(chats, b);
 
-	b->is_chat = TRUE;
-	b->ignored = NULL;
-	b->in_room = NULL;
-	b->id = id;
-	b->gc = gc;
-	b->send_history = g_list_append(NULL, NULL);
-	b->history = g_string_new("");
-	g_snprintf(b->name, 80, "%s", name);
+	gaim_chat_set_id(chat, id);
+	gaim_conversation_set_user(b, gc->user);
 	
-	if ((logging_options & OPT_LOG_CHATS) || find_log_info(b->name)) {
+	if ((logging_options & OPT_LOG_CHATS) ||
+		find_log_info(gaim_conversation_get_name(b))) {
+
 		FILE *fd;
 		char *filename;
 
 		filename = (char *)malloc(100);
-		g_snprintf(filename, 100, "%s.chat", b->name);
+		g_snprintf(filename, 100, "%s.chat", gaim_conversation_get_name(b));
 
-		fd = open_log_file(filename, b->is_chat);
+		fd = open_log_file(filename, TRUE);
+		
 		if (fd) {
 			if (!(logging_options & OPT_LOG_STRIP_HTML))
 				fprintf(fd,
@@ -1027,7 +1097,9 @@ struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, ch
 		free(filename);
 	}
 
-	show_new_buddy_chat(b);
+	gaim_window_show(gaim_conversation_get_window(b));
+	gaim_window_switch_conversation(gaim_conversation_get_window(b),
+									gaim_conversation_get_index(b));
 
 	plugin_event(event_chat_join, gc, id, name);
 
@@ -1036,62 +1108,71 @@ struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, ch
 
 void serv_got_chat_left(struct gaim_connection *g, int id)
 {
-	GSList *bcs = g->buddy_chats;
-	struct conversation *b = NULL;
+	GSList *bcs;
+	struct gaim_conversation *conv = NULL;
+	struct gaim_chat *chat = NULL;
 
+	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
+		conv = (struct gaim_conversation *)bcs->data;
 
-	while (bcs) {
-		b = (struct conversation *)bcs->data;
-		if (id == b->id) {
+		chat = GAIM_CHAT(conv);
+
+		if (gaim_chat_get_id(chat) == id)
 			break;
-		}
-		b = NULL;
-		bcs = bcs->next;
+
+		conv = NULL;
 	}
 
-	if (!b)
+	if (!conv)
 		return;
 
-	plugin_event(event_chat_leave, g, b->id);
+	plugin_event(event_chat_leave, g, gaim_chat_get_id(chat));
 
-	debug_printf("Leaving room %s.\n", b->name);
+	debug_printf("Leaving room %s.\n", gaim_conversation_get_name(conv));
 
-	g->buddy_chats = g_slist_remove(g->buddy_chats, b);
+	g->buddy_chats = g_slist_remove(g->buddy_chats, conv);
 
-	delete_chat(b);
+	gaim_conversation_destroy(conv);
 }
 
-void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper, char *message,
-		      time_t mtime)
+void serv_got_chat_in(struct gaim_connection *g, int id, char *who,
+					  int whisper, char *message, time_t mtime)
 {
 	int w;
-	GSList *bcs = g->buddy_chats;
-	struct conversation *b = NULL;
+	GSList *bcs;
+	struct gaim_conversation *conv = NULL;
+	struct gaim_chat *chat = NULL;
 	char *buf;
 	char *buffy, *angel;
 	int plugin_return;
 
-	while (bcs) {
-		b = (struct conversation *)bcs->data;
-		if (id == b->id)
-			break;
-		bcs = bcs->next;
-		b = NULL;
+	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
+		conv = (struct gaim_conversation *)bcs->data;
 
+		chat = GAIM_CHAT(conv);
+
+		if (gaim_chat_get_id(chat) == id)
+			break;
+
+		conv = NULL;
 	}
-	if (!b)
+
+	if (!conv)
 		return;
 
-	
-	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
-	 * by the prpls. so we create temp holders and pass those instead. it's basically
-	 * just to avoid segfaults. of course, if the data is binary, plugins don't see it.
-	 * bitch all you want; i really don't want you to be dealing with it. */
-	
+	/*
+	 * Plugin stuff. We pass a char ** but we don't want to pass what's
+	 * been given us by the prpls. so we create temp holders and pass those
+	 * instead. It's basically just to avoid segfaults. Of course, if the
+	 * data is binary, plugins don't see it. Bitch all you want; i really
+	 * don't want you to be dealing with it.
+	 */
+
 	buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
 	strcpy(buffy, message);
 	angel = g_strdup(who);
-	plugin_return = plugin_event(event_chat_recv, g, b->id, &angel, &buffy);
+	plugin_return = plugin_event(event_chat_recv, g, gaim_chat_get_id(chat),
+								 &angel, &buffy);
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
@@ -1114,7 +1195,8 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	else
 		w = 0;
 
-	chat_write(b, who, w, buf, mtime);
+	gaim_chat_write(chat, who, buf, w, mtime);
+
 	g_free(who);
 	g_free(message);
 	g_free(buf);

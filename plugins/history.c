@@ -19,7 +19,8 @@ GModule *handle;
 
 void historize (char *name, void *data)
 {
-	struct conversation *c = find_conversation(name);
+	struct gaim_conversation *c = gaim_find_conversation(name);
+	struct gaim_gtk_conversation *gtkconv;
 	struct stat st;
 	FILE *fd;
 	char *userdir = g_strdup(gaim_user_dir());
@@ -52,7 +53,9 @@ void historize (char *name, void *data)
 	if(*tmp == '<')
 		options |= GTK_IMHTML_NO_NEWLINE;
 
-	gtk_imhtml_append_text(GTK_IMHTML(c->text), tmp, strlen(tmp), options);
+	gtkconv = GAIM_GTK_CONVERSATION(c);
+
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), tmp, strlen(tmp), options);
 
 	g_free(userdir);
 	g_free(logfile);

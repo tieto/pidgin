@@ -50,6 +50,10 @@ EXTRA_DIST =	about_menu.png \
 		status-game.xpm			\
 		status-here.xpm			\
 		status-idle.xpm			\
+		tb_drag_arrow_down.xpm  \
+		tb_drag_arrow_left.xpm  \
+		tb_drag_arrow_right.xpm \
+		tb_drag_arrow_up.xpm    \
 		tb_forward.xpm			\
 		tb_redo.xpm			\
 		tb_refresh.xpm			\
@@ -72,7 +76,7 @@ gaimmenupixdir = $(datadir)/pixmaps/gaim/menus
 gaimmenupix_DATA = insert-image-small.png about_menu.png import-menu.png accounts-menu.png insert-link-small.png
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
-gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png logo.png
+gaimdistpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_drag_arrow_right.xpm tb_drag_arrow_up.xpm
 
 distpixmapdir = $(datadir)/pixmaps
 distpixmap_DATA = gaim.png

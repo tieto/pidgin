@@ -121,7 +121,7 @@ gint
 ButtonPressCallback( GtkWidget *widget, GdkEvent *event, gpointer callback_data ) 
 {
 	TickerData *p = (TickerData *) callback_data;
-	new_conversation(p->buddy);
+	gaim_conversation_new(GAIM_CONV_IM, p->buddy);
 	
 	return TRUE;
 }

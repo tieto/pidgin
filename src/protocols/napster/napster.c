@@ -141,16 +141,16 @@ static struct nap_channel *find_channel_by_id(struct gaim_connection *gc, int id
 	return NULL;
 }
 
-static struct conversation *find_conversation_by_id(struct gaim_connection *gc, int id)
+static struct gaim_conversation *find_conversation_by_id(struct gaim_connection *gc, int id)
 {
 	GSList *bc = gc->buddy_chats;
-	struct conversation *b = NULL;
+	struct gaim_conversation *b = NULL;
 
 	while (bc) {
-		b = (struct conversation *)bc->data;
-		if (id == b->id) {
+		b = (struct gaim_conversation *)bc->data;
+		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 			break;
-		}
+
 		bc = bc->next;
 		b = NULL;
 	}
@@ -243,7 +243,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	if (command == 0x198 || command == 0x196) {
 		struct nap_channel *channel;
-		struct conversation *convo;
+		struct gaim_conversation *convo;
 		gchar **res;
 
 		res = g_strsplit(buf, " ", 0);
@@ -251,7 +251,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		channel = find_channel_by_name(gc, res[0]);
 		convo = find_conversation_by_id(gc, channel->id);
 
-		add_chat_buddy(convo, res[1], NULL);
+		gaim_chat_add_user(GAIM_CHAT(convo), res[1], NULL);
 
 		g_strfreev(res);
 
@@ -261,7 +261,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	if (command == 0x197) {
 		struct nap_channel *channel;
-		struct conversation *convo;
+		struct gaim_conversation *convo;
 		gchar **res;
 
 		res = g_strsplit(buf, " ", 0);
@@ -269,7 +269,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		channel = find_channel_by_name(gc, res[0]);
 		convo = find_conversation_by_id(gc, channel->id);
 
-		remove_chat_buddy(convo, res[1], NULL);
+		gaim_chat_remove_user(GAIM_CHAT(convo), res[1], NULL);
 		
 		g_strfreev(res);
 		g_free(buf);

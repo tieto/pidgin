@@ -21,7 +21,7 @@ GSList *timestamp_timeouts;
 
 gboolean do_timestamp (gpointer data)
 {
-	struct conversation *c = data;
+	struct gaim_conversation *c = (struct gaim_conversation *)data;
 	char *buf;
 	char mdate[6];
 	time_t tim = time(NULL);
@@ -31,14 +31,14 @@ gboolean do_timestamp (gpointer data)
 
 	strftime(mdate, sizeof(mdate), "%H:%M", localtime(&tim));
 	buf = g_strdup_printf("            %s", mdate);
-	write_to_conv(c, buf, WFLAG_NOLOG, NULL, tim, -1);
+	gaim_conversation_write(c, NULL, buf, WFLAG_NOLOG, tim, -1);
 	g_free(buf);
 	return TRUE;
 }
 
 void timestamp_new_convo(char *name)
 {
-	struct conversation *c = find_conversation(name);
+	struct gaim_conversation *c = gaim_find_conversation(name);
 	do_timestamp(c);
 
 	timestamp_timeouts = g_slist_append(timestamp_timeouts,
@@ -100,7 +100,7 @@ GtkWidget *gaim_plugin_config_gtk() {
 
 char *gaim_plugin_init(GModule *h) {
 	GList *cnvs = conversations;
-	struct conversation *c;
+	struct gaim_conversation *c;
 	handle = h;
 
 	while (cnvs) {

@@ -23,6 +23,8 @@
 #define _CONVO_H_
 
 #include <gtk/gtk.h>
+#include "conversation.h"
+#include "gtkconv.h"
 #include "gaim.h"
 
 #if 0
@@ -42,33 +44,33 @@ extern GtkWidget *chat_notebook;
  * that it's easy to keep them merged. */
 
 /* chat first */
-extern void im_callback(GtkWidget *, struct conversation *);
-extern void ignore_callback(GtkWidget *, struct conversation *);
-extern void whisper_callback(GtkWidget *, struct conversation *);
-extern void invite_callback(GtkWidget *, struct conversation *);
-extern void tab_complete(struct conversation *c);
+extern void im_callback(GtkWidget *, struct gaim_conversation *);
+extern void ignore_callback(GtkWidget *, struct gaim_conversation *);
+extern void whisper_callback(GtkWidget *, struct gaim_conversation *);
+extern void invite_callback(GtkWidget *, struct gaim_conversation *);
+extern void tab_complete(struct gaim_conversation *c);
 
 /* now IM */
-extern void warn_callback(GtkWidget *, struct conversation *);
-extern void block_callback(GtkWidget *, struct conversation *);
-extern void add_callback(GtkWidget *, struct conversation *);
+extern void warn_callback(GtkWidget *, struct gaim_conversation *);
+extern void block_callback(GtkWidget *, struct gaim_conversation *);
+extern void add_callback(GtkWidget *, struct gaim_conversation *);
 
 /* now both */
 extern int set_dispstyle (int);
-extern void info_callback(GtkWidget *, struct conversation *);
-extern void do_bold(GtkWidget *, struct conversation *);
-extern void do_italic(GtkWidget *, struct conversation *);
-extern void do_underline(GtkWidget *, struct conversation *);
-extern void do_strike(GtkWidget *, struct conversation *);
-extern void do_small(GtkWidget *, struct conversation *);
-extern void do_normal(GtkWidget *, struct conversation *);
-extern void do_big(GtkWidget *, struct conversation *);
-extern void toggle_font(GtkWidget *, struct conversation *);
-extern void toggle_color(GtkWidget *, struct conversation *);
-extern void toggle_loggle(GtkWidget *, struct conversation *);
-extern void insert_smiley(GtkWidget *, struct conversation *);
+extern void info_callback(GtkWidget *, struct gaim_conversation *);
+extern void do_bold(GtkWidget *, struct gaim_conversation *);
+extern void do_italic(GtkWidget *, struct gaim_conversation *);
+extern void do_underline(GtkWidget *, struct gaim_conversation *);
+extern void do_strike(GtkWidget *, struct gaim_conversation *);
+extern void do_small(GtkWidget *, struct gaim_conversation *);
+extern void do_normal(GtkWidget *, struct gaim_conversation *);
+extern void do_big(GtkWidget *, struct gaim_conversation *);
+extern void toggle_font(GtkWidget *, struct gaim_conversation *);
+extern void toggle_color(GtkWidget *, struct gaim_conversation *);
+extern void toggle_loggle(GtkWidget *, struct gaim_conversation *);
+extern void insert_smiley(GtkWidget *, struct gaim_conversation *);
 /* sound is handled by set_option */
-extern gboolean keypress_callback(GtkWidget *, GdkEventKey *, struct conversation *);
+extern gboolean keypress_callback(GtkWidget *, GdkEventKey *, struct gaim_conversation *);
 extern gboolean stop_rclick_callback(GtkWidget *, GdkEventButton *, gpointer);
 extern void check_spelling( GtkEditable *, gchar *, gint, gint *, gpointer);
 extern int entry_key_pressed(GtkTextBuffer *);
@@ -76,10 +78,10 @@ extern int entry_key_pressed(GtkTextBuffer *);
 extern void convo_switch(GtkNotebook *, GtkWidget *, gint, gpointer);
 extern gint delete_all_convo(GtkWidget *, GdkEventAny *, gpointer);
 
-extern GtkWidget *build_conv_toolbar(struct conversation *);
+extern GtkWidget *build_conv_toolbar(struct gaim_conversation *);
 
-extern void send_callback(GtkWidget *, struct conversation *);
-extern int close_callback(GtkWidget *, struct conversation *);
+extern void send_callback(GtkWidget *, struct gaim_conversation *);
+extern int close_callback(GtkWidget *, struct gaim_conversation *);
 
 extern gboolean meify(char *, int);
 

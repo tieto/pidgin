@@ -520,6 +520,9 @@ static int ui_main()
 			load_smiley_theme(smile->path, TRUE);
 		}
 	}
+
+	setup_stock();
+
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
 	icon_path = g_build_filename(DATADIR, "pixmaps", "gaim.png", NULL);

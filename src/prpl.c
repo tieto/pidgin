@@ -553,6 +553,7 @@ static gint find_icon_data(gconstpointer a, gconstpointer b)
 
 void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
 {
+	struct gaim_conversation *conv;
 	struct icon_data tmp;
 	GList *l;
 	struct icon_data *id;
@@ -585,7 +586,11 @@ void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
 	id->data = g_memdup(data, len);
 	id->len = len;
 
-	got_new_icon(gc, who);
+	/* Update the buddy icon for this user. */
+	conv = gaim_find_conversation(who);
+
+	if (conv != NULL && gaim_conversation_get_gc(conv) == gc)
+		gaim_gtkconv_update_buddy_icon(conv);
 }
 
 void remove_icon_data(struct gaim_connection *gc)

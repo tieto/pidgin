@@ -745,14 +745,17 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		int id;
 		char *in, *buddy;
 		GSList *bcs = gc->buddy_chats;
-		struct conversation *b = NULL;
+		struct gaim_conversation *b = NULL;
+		struct gaim_chat *chat;
 
 		sscanf(strtok(NULL, ":"), "%d", &id);
 		in = strtok(NULL, ":");
 
+		chat = GAIM_CHAT(b);
+
 		while (bcs) {
-			b = (struct conversation *)bcs->data;
-			if (id == b->id)
+			b = (struct gaim_conversation *)bcs->data;
+			if (id == gaim_chat_get_id(chat))
 				break;
 			bcs = bcs->next;
 			b = NULL;
@@ -763,10 +766,10 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		if (in && (*in == 'T'))
 			while ((buddy = strtok(NULL, ":")) != NULL)
-				add_chat_buddy(b, buddy, NULL);
+				gaim_chat_add_user(chat, buddy, NULL);
 		else
 			while ((buddy = strtok(NULL, ":")) != NULL)
-				remove_chat_buddy(b, buddy, NULL);
+				gaim_chat_remove_user(chat, buddy, NULL);
 	} else if (!strcasecmp(c, "CHAT_INVITE")) {
 		char *name, *who, *message;
 		int *id = g_new0(int, 1);
@@ -779,14 +782,14 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		serv_got_chat_invite(gc, name, who, message, g_list_append(NULL, id));
 	} else if (!strcasecmp(c, "CHAT_LEFT")) {
 		GSList *bcs = gc->buddy_chats;
-		struct conversation *b = NULL;
+		struct gaim_conversation *b = NULL;
 		int id;
 
 		sscanf(strtok(NULL, ":"), "%d", &id);
 
 		while (bcs) {
-			b = (struct conversation *)bcs->data;
-			if (id == b->id)
+			b = (struct gaim_conversation *)bcs->data;
+			if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 				break;
 			b = NULL;
 			bcs = bcs->next;
@@ -797,7 +800,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		if (b->window) {
 			char error_buf[BUF_LONG];
-			b->gc = NULL;
+			gaim_conversation_set_user(b, NULL);
 			g_snprintf(error_buf, sizeof error_buf, _("You have been disconnected"
 								  " from chat room %s."), b->name);
 			do_error_dialog(error_buf, NULL, GAIM_ERROR);
@@ -1183,12 +1186,12 @@ static void toc_chat_invite(struct gaim_connection *g, int id, const char *messa
 static void toc_chat_leave(struct gaim_connection *g, int id)
 {
 	GSList *bcs = g->buddy_chats;
-	struct conversation *b = NULL;
+	struct gaim_conversation *b = NULL;
 	char buf[BUF_LEN * 2];
 
 	while (bcs) {
-		b = (struct conversation *)bcs->data;
-		if (id == b->id)
+		b = (struct gaim_conversation *)bcs->data;
+		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 			break;
 		b = NULL;
 		bcs = bcs->next;
@@ -1197,8 +1200,10 @@ static void toc_chat_leave(struct gaim_connection *g, int id)
 	if (!b)
 		return;		/* can this happen? */
 
-	if (!b->gc)		/* TOC already kicked us out of this room */
+	if (gaim_conversation_get_user(b) == NULL) {
+		/* TOC already kicked us out of this room */
 		serv_got_chat_left(g, id);
+	}
 	else {
 		g_snprintf(buf, 255, "toc_chat_leave %d", id);
 		sflap_send(g, buf, -1, TYPE_DATA);

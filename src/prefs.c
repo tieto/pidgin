@@ -434,8 +434,10 @@ GtkWidget *font_page() {
 
 	if (!(font_options & OPT_FONT_FACE))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(toggle_sensitive), select);
-	g_signal_connect(GTK_OBJECT(select), "clicked", G_CALLBACK(show_font_dialog), NULL);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
+	g_signal_connect(GTK_OBJECT(select), "clicked",
+					 G_CALLBACK(show_font_dialog), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -445,7 +447,8 @@ GtkWidget *font_page() {
 	select = gaim_labeled_spin_button(hbox, NULL, &fontsize, 1, 7, NULL);
 	if (!(font_options & OPT_FONT_SIZE))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(toggle_sensitive), select);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
 
 	vbox = make_frame(ret, _("Color"));
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -463,7 +466,8 @@ GtkWidget *font_page() {
 
 	if (!(font_options & OPT_FONT_FGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(toggle_sensitive), select);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
 	g_signal_connect(GTK_OBJECT(select), "clicked", G_CALLBACK(show_fgcolor_dialog), NULL);
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
@@ -479,7 +483,8 @@ GtkWidget *font_page() {
 	if (!(font_options & OPT_FONT_BGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 	g_signal_connect(GTK_OBJECT(select), "clicked", G_CALLBACK(show_bgcolor_dialog), NULL);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(toggle_sensitive), select);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -987,7 +992,8 @@ GtkWidget *away_page() {
 	select = gaim_labeled_spin_button(vbox, _("_Minutes before setting away:"), &auto_away, 1, 24 * 60, sg);
 	if (!(away_options & OPT_AWAY_AUTO))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(toggle_sensitive), select);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
 
 	label = gtk_label_new_with_mnemonic(_("Away m_essage:"));
 	gtk_size_group_add_widget(sg, label);
@@ -999,7 +1005,8 @@ GtkWidget *away_page() {
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), prefs_away_menu);
 	if (!(away_options & OPT_AWAY_AUTO))
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_away_menu), FALSE);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(toggle_sensitive), prefs_away_menu);
+	g_signal_connect(GTK_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), prefs_away_menu);
 	default_away_menu_init(prefs_away_menu);
 	gtk_widget_show(prefs_away_menu);
 	gtk_box_pack_start(GTK_BOX(hbox), prefs_away_menu, FALSE, FALSE, 0);
@@ -1860,7 +1867,7 @@ static void set_misc_option(GtkWidget *w, int option)
 	else if(option == OPT_MISC_USE_SERVER_ALIAS) {
 		redo_buddy_list();
 		build_edit_tree();
-		set_convo_titles();
+		gaim_conversation_foreach(gaim_conversation_autoset_title);
 	}
 }
 
@@ -1904,39 +1911,42 @@ static void set_convo_option(GtkWidget *w, int option)
 	convo_options ^= option;
 
 	if (option == OPT_CONVO_SHOW_SMILEY)
-		toggle_smileys();
+		gaim_gtkconv_toggle_smileys();
 
 	if (option == OPT_CONVO_SHOW_TIME)
-		toggle_timestamps();
+		gaim_gtkconv_toggle_timestamps();
 
 	if (option == OPT_CONVO_CHECK_SPELLING)
-		toggle_spellchk();
+		gaim_gtkconv_toggle_spellchk();
 }
 
 static void set_im_option(GtkWidget *w, int option)
 {
 	im_options ^= option;
 
+#if 0
 	if (option == OPT_IM_ONE_WINDOW)
 		im_tabize();
+#endif
 
 	if (option == OPT_IM_HIDE_ICONS)
-		set_hide_icons();
+		gaim_gtkconv_hide_buddy_icons();
 
-	if (option == OPT_IM_ALIAS_TAB) {
-		set_convo_titles();
-	}
+	if (option == OPT_IM_ALIAS_TAB)
+		gaim_conversation_foreach(gaim_conversation_autoset_title);
 
 	if (option == OPT_IM_NO_ANIMATION)
-		set_anim();
+		gaim_gtkconv_set_anim();
 }
 
 static void set_chat_option(GtkWidget *w, int option)
 {
 	chat_options ^= option;
 
+#if 0
 	if (option == OPT_CHAT_ONE_WINDOW)
 		chat_tabize();
+#endif
 }
 
 void set_sound_option(GtkWidget *w, int option)
@@ -1948,7 +1958,7 @@ static void set_font_option(GtkWidget *w, int option)
 {
 	font_options ^= option;
 
-	update_font_buttons();
+	gaim_gtkconv_update_font_buttons();
 }
 
 static void set_away_option(GtkWidget *w, int option)
@@ -2178,14 +2188,16 @@ void dropdown_set(GtkObject *w, int *option)
 			gtk_widget_set_sensitive(sndcmd, FALSE);
 	} else if (option == (int*)&im_options) { 
 		if (clear == (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB))
-			update_im_tabs();
+			gaim_gtkconv_update_tabs();
+			/* CONV XXX update_im_tabs(); */
 		else if (clear == (OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM))
-			update_im_button_pix();
+			gaim_gtkconv_update_im_button_style();
 	} else if (option == (int*)&chat_options) {
 		if (clear == (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB))
-			update_chat_tabs();
+			gaim_gtkconv_update_tabs();
+			/* CONV XXX update_chat_tabs(); */
 		else if (clear == (OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM))
-			update_chat_button_pix();
+			gaim_gtkconv_update_chat_button_style();
 	} else if (option == (int*)&blist_options) {
 		set_blist_tab();
 	}

@@ -14,6 +14,8 @@ version 0.60:
 	* Quit Gaim remotely with gaim-remote. (Thanks, John Silvestri)
 	* Added rudimentary support for X11R6 session management. (Thanks, 
 	  Robert McQueen)
+	* Conversation backend and UI are now separated. (Thanks,
+	  Christian Hammond)
 
 	Plugins:
 	* Tray icon plugin--replaces the old GNOME applet. You'll need 
@@ -115,7 +117,7 @@ version 0.60:
 		- Account editor (rewritten by Christian Hammond)
 		- Preferences dialog (rewritten by Sean Egan)
 		- SignOn Screen (rewritten by Rob Flynn)
-		- Conversation Window (needs tooltips)
+		- Conversation Window
 		- Chat Window (sort of: needs menu bar, tooltips)
 		- GtkIMHtml (Ari Pollak, Christian Hammond)
 		- Buddy Icons
@@ -137,6 +139,8 @@ version 0.60:
 	* Word-wrapping on mail notification text (Thanks, Andrew Molloy)
 	* Generic File Transfer PRPL interface (Thanks, William T. Mahan)
 	* Better supression of auto-responses (Thanks, Joshua Blanton)
+	* Drag-and-drop tabs in conversations, and multiple windows with tabs
+	  in each (Thanks, Christian Hammond)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

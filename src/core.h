@@ -42,7 +42,13 @@
 #include <gmodule.h>
 #endif
 
+struct aim_user;
+struct group;
+struct buddy;
+
+
 #include "multi.h"
+#include "conversation.h"
 
 /* Really user states are controlled by the PRPLs now. We just use this for event_away */
 #define UC_UNAVAILABLE  1
@@ -254,7 +260,7 @@ extern void serv_got_typing(struct gaim_connection *, char *, int, int);
 extern void serv_got_typing_stopped(struct gaim_connection *, char *);
 extern void serv_got_eviled(struct gaim_connection *, char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, char *, char *, GList *);
-extern struct conversation *serv_got_joined_chat(struct gaim_connection *, int, char *);
+extern struct gaim_conversation *serv_got_joined_chat(struct gaim_connection *, int, char *);
 extern void serv_got_chat_left(struct gaim_connection *, int);
 extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *, time_t);
 extern void serv_got_alias(struct gaim_connection *, char *, char *);

@@ -25,6 +25,7 @@
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
+#include "conversation.h"
 
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/ok.xpm"
@@ -1332,9 +1333,11 @@ void kill_meter(struct signon_meter *meter) {
 void account_online(struct gaim_connection *gc)
 {
 	struct signon_meter *meter = find_signon_meter(gc);
+	GList *wins;
 	GtkTreeIter iter;
 	GSList *grps, *buds;
 	GList *add_buds=NULL;
+	GList *l;
 
 	/* Set the time the account came online */
 	time(&gc->login_time);
@@ -1355,7 +1358,17 @@ void account_online(struct gaim_connection *gc)
 	update_privacy_connections();
 	do_away_menu();
 	do_proto_menu();
-	redo_convo_menus();
+
+	/*
+	 * XXX This is a hack! Remove this and replace it with a better event
+	 *     notification system.
+	 */
+	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
+		struct gaim_window *win = (struct gaim_window *)wins->data;
+		gaim_conversation_update(gaim_window_get_conversation_at(win, 0),
+								 GAIM_CONV_ACCOUNT_ONLINE);
+	}
+
 	redo_buddy_list();
 	gaim_setup(gc);
 
@@ -1409,25 +1422,44 @@ void account_online(struct gaim_connection *gc)
 						   -1);
 	}
 
-	return;
+	/* Update the conversation windows that use this account. */
+	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
+		struct gaim_conversation *conv = (struct gaim_conversation *)l->data;
+
+		if (gaim_conversation_get_user(conv) == gc->user) {
+			gaim_conversation_update(conv, GAIM_CONV_UPDATE_USER);
+		}
+	}
 }
 
 void account_offline(struct gaim_connection *gc)
 {
 	struct signon_meter *meter = find_signon_meter(gc);
 	GtkTreeIter iter;
+	GList *l;
 
 	if (meter) {
 		kill_meter(meter);
 		meters = g_slist_remove(meters, meter);
 		g_free(meter);
 	}
+	debug_printf("Disconnecting. user = %p, gc = %p (%p)\n",
+				 gc->user, gc->user->gc, gc);
 	gc->user->gc = NULL;	/* wasn't that awkward? */
 	if (!acctedit)
 		return;
 
 	if (get_iter_from_data(GTK_TREE_VIEW(treeview), gc->user, &iter)) {
 		gtk_list_store_set(model, &iter, COLUMN_ONLINE, FALSE, -1);
+	}
+
+	/* Update the conversation windows that use this account. */
+	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
+		struct gaim_conversation *conv = (struct gaim_conversation *)l->data;
+
+		if (gaim_conversation_get_user(conv) == gc->user) {
+			gaim_conversation_update(conv, GAIM_CONV_UPDATE_USER);
+		}
 	}
 }
 
@@ -1671,9 +1703,13 @@ void signoff_all()
 
 void signoff(struct gaim_connection *gc)
 {
+	GList *wins;
+
 	/* UI stuff */
+	/* CONV XXX
 	convo_menu_remove(gc);
 	remove_icon_data(gc);
+	*/
 
 	/* core stuff */
 	/* remove this here so plugins get a sensible count of connections */
@@ -1695,7 +1731,17 @@ void signoff(struct gaim_connection *gc)
 	redo_buddy_list();
 	do_away_menu();
 	do_proto_menu();
-	redo_convo_menus();
+
+	/*
+	 * XXX This is a hack! Remove this and replace it with a better event
+	 *     notification system.
+	 */
+	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
+		struct gaim_window *win = (struct gaim_window *)wins->data;
+		gaim_conversation_update(gaim_window_get_conversation_at(win, 0),
+								 GAIM_CONV_ACCOUNT_OFFLINE);
+	}
+
 	update_privacy_connections();
 
 	/* in, out, shake it all about */

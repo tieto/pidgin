@@ -118,7 +118,7 @@ struct msn_data {
 
 struct msn_switchboard {
 	struct gaim_connection *gc;
-	struct conversation *chat;
+	struct gaim_conversation *chat;
 	int fd;
 	int inpa;
 
@@ -415,7 +415,7 @@ static struct msn_switchboard *msn_find_switch_by_id(struct gaim_connection *gc,
 	while (m) {
 		struct msn_switchboard *ms = m->data;
 		m = m->next;
-		if (ms->chat && (ms->chat->id == id))
+		if (ms->chat && gaim_chat_get_id(GAIM_CHAT(ms->chat)) == id)
 			return ms;
 	}
 
@@ -458,7 +458,7 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 		ms->txqueue = g_slist_remove(ms->txqueue, ms->txqueue->data);
 	}
 	if (ms->chat)
-		serv_got_chat_left(gc, ms->chat->id);
+		serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)));
 
 	md->switches = g_slist_remove(md->switches, ms);
 
@@ -474,18 +474,18 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 	if (!g_strncasecmp(buf, "ACK", 3)) {
 	} else if (!g_strncasecmp(buf, "ANS", 3)) {
 		if (ms->chat)
-			add_chat_buddy(ms->chat, gc->username, NULL);
+			gaim_chat_add_user(GAIM_CHAT(ms->chat), gc->username, NULL);
 	} else if (!g_strncasecmp(buf, "BYE", 3)) {
 		char *user, *tmp = buf;
 		GET_NEXT(tmp);
 		user = tmp;
 
 		if (ms->chat) {
-			remove_chat_buddy(ms->chat, user, NULL);
+			gaim_chat_remove_user(GAIM_CHAT(ms->chat), user, NULL);
 		} else {
 			char msgbuf[256];
 			const char *username;
-			struct conversation *cnv;
+			struct gaim_conversation *cnv;
 			struct buddy *b;
 
 			if ((b = find_buddy(gc->user, user)) != NULL)
@@ -496,8 +496,9 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 			g_snprintf(msgbuf, sizeof(msgbuf),
 					   _("%s has closed the conversation window"), username);
 
-			if ((cnv = find_conversation(user)))
-				write_to_conv(cnv, msgbuf, WFLAG_SYSTEM, NULL, time(NULL), -1); 
+			if ((cnv = gaim_find_conversation(user)))
+				gaim_conversation_write(cnv, NULL, msgbuf, -1,
+										WFLAG_SYSTEM, time(NULL));
 
 			msn_kill_switch(ms);
 			return 0;
@@ -518,7 +519,8 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 		if (ms->total > 1) {
 			if (!ms->chat)
 				ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-			add_chat_buddy(ms->chat, user, NULL);
+
+			gaim_chat_add_user(GAIM_CHAT(ms->chat), user, NULL);
 		} 
 	} else if (!g_strncasecmp(buf, "JOI", 3)) {
 		char *user, *tmp = buf;
@@ -528,13 +530,13 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 
 		if (ms->total == 1) {
 			ms->chat = serv_got_joined_chat(gc, ++id, "MSN Chat");
-			add_chat_buddy(ms->chat, ms->user, NULL);
-			add_chat_buddy(ms->chat, gc->username, NULL);
+			gaim_chat_add_user(GAIM_CHAT(ms->chat), ms->user, NULL);
+			gaim_chat_add_user(GAIM_CHAT(ms->chat), gc->username, NULL);
 			g_free(ms->user);
 			ms->user = NULL;
 		}
 		if (ms->chat)
-			add_chat_buddy(ms->chat, user, NULL);
+			gaim_chat_add_user(GAIM_CHAT(ms->chat), user, NULL);
 		ms->total++;
 		while (ms->txqueue) {
 			char *send = add_cr(ms->txqueue->data);
@@ -569,7 +571,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 	} else if (!g_strncasecmp(buf, "NLN", 3)) {
 	} else if (!g_strncasecmp(buf, "OUT", 3)) {
 		if (ms->chat)
-			serv_got_chat_left(gc, ms->chat->id);
+			serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)));
 		msn_kill_switch(ms);
 		return 0;
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
@@ -915,7 +917,8 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 		}
 		
 		if (ms->chat)
-			serv_got_chat_in(ms->gc, ms->chat->id, ms->msguser, flags, message, time(NULL));
+			serv_got_chat_in(ms->gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)),
+							 ms->msguser, flags, message, time(NULL));
 		else
 			serv_got_im(ms->gc, ms->msguser, message, flags, time(NULL), -1);
 

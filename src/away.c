@@ -57,19 +57,20 @@ void purge_away_queue(GSList **queue)
 {
 	GSList *q = *queue;
 	struct queued_message *qm;
-	struct conversation *cnv;
+	struct gaim_conversation *cnv;
 
 	while (q) {
 		qm = q->data;
 
-		cnv = find_conversation(qm->name);
+		cnv = gaim_find_conversation(qm->name);
+
 		if (!cnv)
-			cnv = new_conversation(qm->name);
+			cnv = gaim_conversation_new(GAIM_CONV_IM, qm->name);
 
 		if (g_slist_index(connections, qm->gc) >= 0)
-			set_convo_gc(cnv, qm->gc);
+			gaim_conversation_set_user(cnv, qm->gc->user);
 
-		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm, qm->len);
+		gaim_im_write(GAIM_IM(cnv), NULL, qm->message, -1, qm->flags, qm->tm);
 
 		g_free(qm->message);
 		g_free(qm);
@@ -86,7 +87,7 @@ void dequeue_by_buddy(GtkWidget *clist, gint row, gint column, GdkEventButton *e
 	char *temp;
 	char *name;
 	GSList *templist;
-	struct conversation *cnv;
+	struct gaim_conversation *cnv;
 	
 	if(!(event->type == GDK_2BUTTON_PRESS && event->button == 1))
 		return; /* Double clicking on the clist will unqueue that users messages. */
@@ -102,13 +103,16 @@ void dequeue_by_buddy(GtkWidget *clist, gint row, gint column, GdkEventButton *e
 		struct queued_message *qm = templist->data;
 		if (templist->data) {
 			if (!g_strcasecmp(qm->name, name)) {
-				cnv = find_conversation(name);
+				cnv = gaim_find_conversation(name);
+
 				if (!cnv)
-					cnv = new_conversation(qm->name);
+					cnv = gaim_conversation_new(GAIM_CONV_IM, qm->name);
+
 				if (g_slist_index(connections, qm->gc) >= 0)
-					set_convo_gc(cnv, qm->gc);
-				
-				write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm, qm->len);
+					gaim_conversation_set_user(cnv, qm->gc->user);
+
+				gaim_conversation_write(cnv, NULL, qm->message, qm->len,
+										qm->flags, qm->tm);
 				g_free(qm->message);
 				g_free(qm);
 				templist = message_queue = g_slist_remove(message_queue, qm);

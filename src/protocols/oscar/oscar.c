@@ -156,7 +156,7 @@ struct chat_connection {
 	int inpa;
 	int id;
 	struct gaim_connection *gc; /* i hate this. */
-	struct conversation *cnv; /* bah. */
+	struct gaim_conversation *cnv; /* bah. */
 	int maxlen;
 	int maxvis;
 };
@@ -458,7 +458,7 @@ static void oscar_file_transfer_disconnect(aim_session_t *sess, aim_conn_t *conn
 static void gaim_directim_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct conversation *cnv;
+	struct gaim_conversation *cnv;
 	struct direct_im *dim;
 	char *sn;
 	char buf[256];
@@ -476,9 +476,10 @@ static void gaim_directim_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	else 
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s failed"), sn);
 		
-	if ((cnv = find_conversation(sn)))
-		write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
-	update_progress(cnv, 100);
+	if ((cnv = gaim_find_conversation(sn)))
+		gaim_conversation_write(cnv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
+
+	gaim_conversation_update_progress(cnv, 100);
 
 	g_free(dim); /* I guess? I don't see it anywhere else... -- mid */
 	g_free(sn);
@@ -1487,7 +1488,7 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 	struct direct_im *dim = data;
 	struct gaim_connection *gc = dim->gc;
 	struct oscar_data *od = gc->proto_data;
-	struct conversation *cnv;
+	struct gaim_conversation *cnv;
 	char buf[256];
 	struct sockaddr name;
 	socklen_t name_len = 1;
@@ -1505,14 +1506,14 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 	if (dim->conn->fd != source)
 		dim->conn->fd = source;
 	aim_conn_completeconnect(od->sess, dim->conn);
-	if (!(cnv = find_conversation(dim->name))) 
-		cnv = new_conversation(dim->name);
+	if (!(cnv = gaim_find_conversation(dim->name))) 
+		cnv = gaim_conversation_new(GAIM_CONV_IM, dim->name);
 
 	/* This is the best way to see if we're connected or not */
 	if (getpeername(source, &name, &name_len) == 0) {
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
 		dim->connected = TRUE;
-		write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
+		gaim_conversation_write(cnv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 	}
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
 	
@@ -2956,7 +2957,7 @@ static int gaim_chat_join(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 
 	for (i = 0; i < count; i++)
-		add_chat_buddy(c->cnv, info[i].sn, NULL);
+		gaim_chat_add_user(GAIM_CHAT(c->cnv), info[i].sn, NULL);
 
 	return 1;
 }
@@ -2979,7 +2980,7 @@ static int gaim_chat_leave(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 
 	for (i = 0; i < count; i++)
-		remove_chat_buddy(c->cnv, info[i].sn, NULL);
+		gaim_chat_remove_user(GAIM_CHAT(c->cnv), info[i].sn, NULL);
 
 	return 1;
 }
@@ -4507,14 +4508,14 @@ static void oscar_chat_invite(struct gaim_connection *g, int id, const char *mes
 static void oscar_chat_leave(struct gaim_connection *g, int id) {
 	struct oscar_data *odata = g ? (struct oscar_data *)g->proto_data : NULL;
 	GSList *bcs = g->buddy_chats;
-	struct conversation *b = NULL;
+	struct gaim_conversation *b = NULL;
 	struct chat_connection *c = NULL;
 	int count = 0;
 
 	while (bcs) {
 		count++;
-		b = (struct conversation *)bcs->data;
-		if (id == b->id)
+		b = (struct gaim_conversation *)bcs->data;
+		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 			break;
 		bcs = bcs->next;
 		b = NULL;
@@ -4525,7 +4526,7 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 
 	debug_printf("Attempting to leave room %s (currently in %d rooms)\n", b->name, count);
 	
-	c = find_oscar_chat(g, b->id);
+	c = find_oscar_chat(g, gaim_chat_get_id(GAIM_CHAT(b)));
 	if (c != NULL) {
 		if (odata)
 			odata->oscar_chats = g_slist_remove(odata->oscar_chats, c);
@@ -4538,20 +4539,20 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 		g_free(c);
 	}
 	/* we do this because with Oscar it doesn't tell us we left */
-	serv_got_chat_left(g, b->id);
+	serv_got_chat_left(g, gaim_chat_get_id(GAIM_CHAT(b)));
 }
 
 static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	GSList *bcs = g->buddy_chats;
-	struct conversation *b = NULL;
+	struct gaim_conversation *b = NULL;
 	struct chat_connection *c = NULL;
 	char *buf, *buf2;
 	int i, j;
 
 	while (bcs) {
-		b = (struct conversation *)bcs->data;
-		if (id == b->id)
+		b = (struct gaim_conversation *)bcs->data;
+		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 			break;
 		bcs = bcs->next;
 		b = NULL;
@@ -4730,7 +4731,7 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	aim_conn_t *newconn, *listenerconn;
-	struct conversation *cnv;
+	struct gaim_conversation *cnv;
 	struct direct_im *dim;
 	char buf[256];
 	char *sn;
@@ -4748,8 +4749,8 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("DirectIM: initiate success to %s\n", sn);
 	dim = find_direct_im(od, sn);
 
-	if (!(cnv = find_conversation(sn)))
-		cnv = new_conversation(sn);
+	if (!(cnv = gaim_find_conversation(sn)))
+		cnv = gaim_conversation_new(GAIM_CONV_IM, sn);
 	gaim_input_remove(dim->watcher);
 	dim->conn = newconn;
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
@@ -4757,7 +4758,7 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	dim->connected = TRUE;
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), sn);
 	g_free(sn);
-	write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
+	gaim_conversation_write(cnv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
 				gaim_directim_incoming, 0);
@@ -4774,7 +4775,7 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	double percent;
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct conversation *c;
+	struct gaim_conversation *c;
 	struct direct_im *dim;
 
 	va_start(ap, fr);
@@ -4791,8 +4792,8 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	while (gtk_events_pending())
 		gtk_main_iteration();
 	
-	if ((c = find_conversation(sn)))
-		update_progress(c, percent);
+	if ((c = gaim_find_conversation(sn)))
+		gaim_conversation_update_progress(c, percent);
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 				      oscar_callback, dim->conn);
 

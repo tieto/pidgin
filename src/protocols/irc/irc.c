@@ -204,28 +204,14 @@ irc_recv_convert(struct gaim_connection *gc, char *string)
 	return (utf8);
 }
 
-static struct conversation *
+static struct gaim_conversation *
 irc_find_chat(struct gaim_connection *gc, char *name)
 {
 	GSList *bcs = gc->buddy_chats;
 
 	while (bcs) {
-		struct conversation *b = bcs->data;
+		struct gaim_conversation *b = bcs->data;
 		if (!g_strcasecmp(b->name, name))
-			return b;
-		bcs = bcs->next;
-	}
-	return NULL;
-}
-
-static struct conversation *
-irc_find_chat_by_id(struct gaim_connection *gc, int id)
-{
-	GSList *bcs = gc->buddy_chats;
-
-	while (bcs) {
-		struct conversation *b = bcs->data;
-		if (b->id == id)
 			return b;
 		bcs = bcs->next;
 	}
@@ -496,7 +482,7 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	gchar buffer[IRC_BUF_LEN];
 	gchar buf[128];
 	int n = 0;
-	struct conversation *convo;
+	struct gaim_conversation *convo;
 	debug_printf("THIS IS TOO MUCH EFFORT\n");
 	n = read (chat->fd, buffer, IRC_BUF_LEN);
 	if (n > 0) {
@@ -514,9 +500,9 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	else	{
 		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
 			    chat->nick);
-		convo = new_conversation (chat->nick);
-		write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
-			       time ((time_t) NULL), -1);
+		convo = gaim_conversation_new(GAIM_CONV_IM, chat->nick);
+		gaim_conversation_write(convo, NULL, buf, -1, WFLAG_SYSTEM,
+								time(NULL));
 		dcc_chat_cancel (chat);
 	}
 }
@@ -573,14 +559,16 @@ dcc_recv_callback (gpointer data, gint source, GaimInputCondition condition) {
 void 
 dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
 	struct dcc_chat *chat = data;
-	struct conversation *convo = new_conversation (chat->nick);
+	struct gaim_conversation *convo;
 	char buf[IRC_BUF_LEN];
+
+	convo = gaim_conversation_new(GAIM_CONV_IM, chat->nick);
+
 	chat->fd = source;
 	g_snprintf (buf, sizeof buf,
 		    _("DCC Chat with %s established"),
 		    chat->nick);
-	write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
-		       time ((time_t) NULL), -1);
+	gaim_conversation_write(convo, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 	debug_printf ("Chat with %s established\n", chat->nick);
 	dcc_chat_list =  g_slist_append (dcc_chat_list, chat);
 	gaim_input_remove(chat->inpa);
@@ -676,31 +664,41 @@ irc_request_buddy_update(gpointer data)
 static void 
 handle_names(struct gaim_connection *gc, char *chan, char *names)
 {
-	struct conversation *c = irc_find_chat(gc, chan);
+	struct gaim_conversation *c = irc_find_chat(gc, chan);
+	struct gaim_chat *chat;
 	char **buf, **tmp;
+
 	if (!c) return;
 	if (*names == ':') names++;
+
+	chat = GAIM_CHAT(c);
+
 	buf = g_strsplit(names, " ", -1);
+
 	for (tmp = buf; *tmp; tmp++)
-		add_chat_buddy(c, *tmp, NULL);
+		gaim_chat_add_user(chat, *tmp, NULL);
+
 	g_strfreev(buf);
 }
 
 static void 
 handle_notopic(struct gaim_connection *gc, char *text)
 {
-	struct conversation *c;
+	struct gaim_conversation *c;
+
 	if ((c = irc_find_chat(gc, text))) {
 		char buf[IRC_BUF_LEN];
+
 		g_snprintf(buf, sizeof(buf), _("No topic is set"));
-		chat_set_topic(c, NULL, buf);
+
+		gaim_chat_set_topic(GAIM_CHAT(c), NULL, buf);
 	}
 }
 
 static void 
 handle_topic(struct gaim_connection *gc, char *text)
 {
-	struct conversation *c;
+	struct gaim_conversation *c;
 	char *po = strchr(text, ' ');
 
 	if (!po)
@@ -711,10 +709,11 @@ handle_topic(struct gaim_connection *gc, char *text)
 
 	if ((c = irc_find_chat(gc, text))) {
 		char buf[IRC_BUF_LEN];
-		chat_set_topic(c, NULL, po);
+		gaim_chat_set_topic(GAIM_CHAT(c), NULL, po);
 		g_snprintf(buf, sizeof(buf), _("<B>%s has changed the topic to: %s</B>"),
 			   text, po);
-		write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
+
+		gaim_conversation_write(c, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 	}
 }
 
@@ -752,7 +751,7 @@ mode_has_arg(struct gaim_connection *gc, char sign, char mode)
 static void 
 irc_chan_mode(struct gaim_connection *gc, char *room, char sign, char mode, char *argstr, char *who)
 {
-	struct conversation *c = irc_find_chat(gc, room);
+	struct gaim_conversation *c = irc_find_chat(gc, room);
 	char buf[IRC_BUF_LEN];
 	char *nick = g_strndup(who, strchr(who, '!') - who);
 
@@ -760,13 +759,14 @@ irc_chan_mode(struct gaim_connection *gc, char *room, char sign, char mode, char
 		   room, sign, mode, strlen(argstr) ? argstr : "",
 		   nick);
 	g_free(nick);
-	write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL), -1);
+
+	gaim_conversation_write(c, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 }
 
 static void 
 irc_user_mode(struct gaim_connection *gc, char *room, char sign, char mode, char *nick)
 {
-	struct conversation *c = irc_find_chat(gc, room);
+	struct gaim_conversation *c = irc_find_chat(gc, room);
 	GList *r;
 
 	if (mode != 'o' && mode != 'v')
@@ -775,7 +775,7 @@ irc_user_mode(struct gaim_connection *gc, char *room, char sign, char mode, char
 	if (!c)
 		return;
 
-	r = c->in_room;
+	r = gaim_chat_get_users(GAIM_CHAT(c));
 	while (r) {
 		gboolean op = FALSE, voice = FALSE;
 		char *who = r->data;
@@ -804,7 +804,7 @@ irc_user_mode(struct gaim_connection *gc, char *room, char sign, char mode, char
 			tmp = g_strdup(r->data);
 			g_snprintf(buf, sizeof(buf), "%s%s%s", op ? "@" : "",
 				   voice ? "+" : "", nick);
-			rename_chat_buddy(c, tmp, buf);
+			gaim_chat_rename_user(GAIM_CHAT(c), tmp, buf);
 			g_free(tmp);
 			return;
 		}
@@ -818,7 +818,7 @@ handle_mode(struct gaim_connection *gc, char *word[], char *word_eol[], gboolean
 	struct irc_data *id = gc->proto_data;
 	int offset = n324 ? 4 : 3;
 	char *chan = word[offset];
-	struct conversation *c = irc_find_chat(gc, chan);
+	struct gaim_conversation *c = irc_find_chat(gc, chan);
 	char *modes = word[offset + 1];
 	int len = strlen(word_eol[offset]) - 1;
 	char sign = *modes++;
@@ -1101,11 +1101,18 @@ is_channel(struct gaim_connection *gc, char *name)
 }
 
 static void 
-irc_rem_chat_bud(struct gaim_connection *gc, char *nick, struct conversation *b, char *reason)
+irc_rem_chat_bud(struct gaim_connection *gc, char *nick, struct gaim_conversation *b, char *reason)
 {
 
+	struct gaim_chat *chat;
+
 	if (b) {
-		GList *r = b->in_room;
+		GList *r;
+
+		chat = GAIM_CHAT(b);
+
+		r = gaim_chat_get_users(chat);
+
 		while (r) {
 			char *who = r->data;
 			if (*who == '@')
@@ -1114,7 +1121,7 @@ irc_rem_chat_bud(struct gaim_connection *gc, char *nick, struct conversation *b,
 				who++;
 			if (!g_strcasecmp(who, nick)) {
 				char *tmp = g_strdup(r->data);
-				remove_chat_buddy(b, tmp, reason);
+				gaim_chat_remove_user(chat, tmp, reason);
 				g_free(tmp);
 				break;
 			}
@@ -1123,7 +1130,7 @@ irc_rem_chat_bud(struct gaim_connection *gc, char *nick, struct conversation *b,
 	} else {
 		GSList *bcs = gc->buddy_chats;
 		while (bcs) {
-			struct conversation *bc = bcs->data;
+			struct gaim_conversation *bc = bcs->data;
 			irc_rem_chat_bud(gc, nick, bc, reason);
 			bcs = bcs->next;
 		}
@@ -1137,9 +1144,14 @@ irc_change_name(struct gaim_connection *gc, char *old, char *new)
 	char buf[IRC_BUF_LEN];
 
 	while (bcs) {
-		struct conversation *b = bcs->data;
+		struct gaim_conversation *b = bcs->data;
+		struct gaim_chat *chat;
+		GList *r;
 
-		GList *r = b->in_room;
+		chat = GAIM_CHAT(b);
+
+		r = gaim_chat_get_users(chat);
+
 		while (r) {
 			char *who = r->data;
 			int n = 0;
@@ -1150,8 +1162,8 @@ irc_change_name(struct gaim_connection *gc, char *old, char *new)
 			g_snprintf(buf + n, sizeof(buf) - n, "%s", new);
 			if (!strcmp(who, old)) {
 				char *tmp = g_strdup(r->data);
-				rename_chat_buddy(b, tmp, buf);
-				r = b->in_room;
+				gaim_chat_rename_user(chat, tmp, buf);
+				r = gaim_chat_get_users(chat);
 				g_free(tmp);
 				break;
 			} else
@@ -1165,18 +1177,19 @@ static void
 handle_privmsg(struct gaim_connection *gc, char *to, char *nick, char *msg)
 {
 	if (is_channel(gc, to)) {
-		struct conversation *c = irc_find_chat(gc, to);
+		struct gaim_conversation *c = irc_find_chat(gc, to);
 		if (!c)
 			return;
-		irc_got_chat_in(gc, c->id, nick, 0, msg, time(NULL));
+		irc_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(c)),
+						nick, 0, msg, time(NULL));
 	} else {
 		char *tmp = g_malloc(strlen(nick) + 2);
 		g_snprintf(tmp, strlen(nick) + 2, "@%s", nick);
-		if (find_conversation(tmp))
+		if (gaim_find_conversation(tmp))
 			irc_got_im(gc, tmp, msg, 0, time(NULL));
 		else {
 			*tmp = '+';
-			if (find_conversation(tmp))
+			if (gaim_find_conversation(tmp))
 				irc_got_im(gc, tmp, msg, 0, time(NULL));
 			else
 				irc_got_im(gc, nick, msg, 0, time(NULL));
@@ -1364,18 +1377,18 @@ irc_parse(struct gaim_connection *gc, char *buf)
 		irc_parse_join(gc, nick, word, word_eol);
 	} else if (!strcmp(cmd, "KICK")) {
 		if (!strcmp(gc->displayname, word[4])) {
-			struct conversation *c = irc_find_chat(gc, word[3]);
+			struct gaim_conversation *c = irc_find_chat(gc, word[3]);
 			if (!c)
 				return FALSE;
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
-			c->gc = NULL;
+			gaim_conversation_set_user(c, NULL);
 			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s: %s"),
 				   word[3], *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5]);
 			do_error_dialog(outbuf, _("IRC Error"), GAIM_ERROR);
 		} else {
 			char *reason = *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5];
 			char *msg = g_strdup_printf(_("Kicked by %s: %s"), nick, reason);
-			struct conversation *c = irc_find_chat(gc, word[3]);
+			struct gaim_conversation *c = irc_find_chat(gc, word[3]);
 			irc_rem_chat_bud(gc, word[4], c, msg);
 			g_free(msg);
 		}
@@ -1485,9 +1498,9 @@ irc_parse_join(struct gaim_connection *gc, char *nick,
 {
 	char *chan = *word[3] == ':' ? word[3] + 1 : word[3];
 	static int id = 1;
-	struct conversation *c;
+	struct gaim_conversation *c;
 	char *hostmask, *p;
-		
+
 	if (!g_strcasecmp(gc->displayname, nick)) {
 		serv_got_joined_chat(gc, id++, chan);
 	} else {
@@ -1500,7 +1513,9 @@ irc_parse_join(struct gaim_connection *gc, char *nick,
 				if (pend) {
 					*pend = 0;
 				}
-				add_chat_buddy(c, nick, p+1);
+
+				gaim_chat_add_user(GAIM_CHAT(c), nick, p + 1);
+
 				g_free(hostmask);
 			}
 		}
@@ -1511,15 +1526,16 @@ static void
 irc_parse_topic(struct gaim_connection *gc, char *nick,
                 char *word[], char *word_eol[])
 {
-	struct conversation *c = irc_find_chat(gc, word[3]);
+	struct gaim_conversation *c = irc_find_chat(gc, word[3]);
 	char *topic = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
 	char buf[IRC_BUF_LEN];
 
 	if (c) {
-		chat_set_topic(c, nick, topic);
+		gaim_chat_set_topic(GAIM_CHAT(c), nick, topic);
 		g_snprintf(buf, sizeof(buf),
 				   _("<B>%s has changed the topic to: %s</B>"), nick, topic);
-		write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
+
+		gaim_conversation_write(c, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 	}
 }
 
@@ -1528,7 +1544,8 @@ irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
                char *word[], char *word_eol[])
 {
 	char *chan = cmd + 5;
-	struct conversation *c;
+	struct gaim_conversation *c;
+	struct gaim_chat *chat;
 	char *reason = word_eol[4];
 	GList *r;
 
@@ -1539,10 +1556,14 @@ irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
 	if (!(c = irc_find_chat(gc, chan)))
 		return FALSE;
 	if (!strcmp(nick, gc->displayname)) {
-		serv_got_chat_left(gc, c->id);
+		serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(c)));
 		return FALSE;
 	}
-	r = c->in_room;
+
+	chat = GAIM_CHAT(c);
+
+	r = gaim_chat_get_users(GAIM_CHAT(c));
+
 	while (r) {
 		char *who = r->data;
 		if (*who == '@')
@@ -1551,13 +1572,13 @@ irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
 			who++;
 		if (!g_strcasecmp(who, nick)) {
 			char *tmp = g_strdup(r->data);
-			remove_chat_buddy(c, tmp, reason);
+			gaim_chat_remove_user(chat, tmp, reason);
 			g_free(tmp);
 			break;
 		}
 		r = r->next;
 	}
-	   return TRUE;
+	return TRUE;
 }
 
 static void 
@@ -1909,8 +1930,10 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 	int len;
 	struct dcc_chat *dccchat = find_dcc_chat(gc, who);
 	struct irc_data *id = gc->proto_data;
+
 	g_free(tmp);
 	what = str->str;
+
 	if (*what != '/') {
 		if (dccchat) {
 			intl = irc_send_convert(gc, what, sizeof(buf), &len);
@@ -1946,10 +1969,19 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "TOPIC")) {
 		if (!*word_eol[2]) {
-			struct conversation *c;
+			struct gaim_conversation *c;
+			struct gaim_chat *chat;
+
 			c = irc_find_chat(gc, who);
-			g_snprintf(buf, sizeof(buf), _("Topic for %s is %s"), who, c->topic ? c->topic : "(no topic set)");
-			write_to_conv(c, buf, WFLAG_SYSTEM | WFLAG_NOLOG, NULL, time(NULL), -1);
+			chat = GAIM_CHAT(c);
+
+			g_snprintf(buf, sizeof(buf), _("Topic for %s is %s"),
+					   who, (gaim_chat_get_topic(chat)
+							 ? gaim_chat_get_topic(chat)
+							 : "(no topic set)"));
+
+			gaim_conversation_write(c, NULL, buf, -1,
+									WFLAG_SYSTEM | WFLAG_NOLOG, time(NULL));
 		} else {
 			/* This could be too long */
 			intl = irc_send_convert(gc, word_eol[2], sizeof(buf), &len);
@@ -2024,7 +2056,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 	} else if (!g_strcasecmp(pdibuf, "PART")) {
 		char *chan = *word[2] ? word[2] : who;
 		char *reason = word_eol[3];
-		struct conversation *c;
+		struct gaim_conversation *c;
 		if (!is_channel(gc, chan)) {
 			g_free(what);
 			return -EINVAL;
@@ -2039,7 +2071,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 		irc_write(id->fd, buf, strlen(buf));
 		if (c) {
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
-			c->gc = NULL;
+			gaim_conversation_set_user(c, NULL);
 			g_snprintf(buf, sizeof(buf), _("You have left %s"), chan);
 			do_error_dialog(buf, _("IRC Part"), GAIM_INFO);
 		}
@@ -2084,7 +2116,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 				irc_ctcp_ping(gc, word[3]);
 		}
 	} else if (!g_strcasecmp(pdibuf, "DCC")) {
-		struct conversation *c = NULL;
+		struct gaim_conversation *c = NULL;
 		if (!g_strcasecmp(word[2], "CHAT")) {
 			if (word[3])
 				irc_start_chat(gc, word[3]);
@@ -2092,64 +2124,70 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 			if (is_channel(gc, who)) {
 				c = irc_find_chat(gc, who);
 			} else {
-				c = find_conversation(who);
+				c = gaim_find_conversation(who);
 			}
 			if (c) {
-				write_to_conv(c, _("<I>Requesting DCC CHAT</I>"),
-					      WFLAG_SYSTEM, NULL, 
-					      time(NULL), -1);
+				gaim_conversation_write(c, NULL,
+										_("<I>Requesting DCC CHAT</I>"),
+										-1, WFLAG_SYSTEM, time(NULL));
 			}
 		}
 	} else if (!g_strcasecmp(pdibuf, "HELP")) {
-		struct conversation *c = NULL;
+		struct gaim_conversation *c = NULL;
 		if (is_channel(gc, who)) {
 			c = irc_find_chat(gc, who);
 		} else {
-			c = find_conversation(who);
+			c = gaim_find_conversation(who);
 		}
 		if (!c) {
 			g_free(what);
 			return -EINVAL;
 		}
 		if (!g_strcasecmp(word[2], "OPER")) {
-			write_to_conv(c, _("<B>Operator commands:<BR>"
-				      "REHASH RESTART</B>"),
-				      WFLAG_NOLOG, NULL, time(NULL), -1);
+			gaim_conversation_write(c, NULL,
+				_("<B>Operator commands:<BR>"
+				  "REHASH RESTART</B>"),
+				-1, WFLAG_NOLOG, time(NULL));
 		} else if (!g_strcasecmp(word[2], "CTCP")) {
-			write_to_conv(c, _("<B>CTCP commands:<BR>"
-				      "CLIENTINFO <nick><BR>"
-				      "USERINFO <nick><BR>"
-				      "VERSION <nick><BR>"
-				      "PING <nick></B><BR>"),
-				      WFLAG_NOLOG, NULL, time(NULL), -1);
+			gaim_conversation_write(c, NULL,
+			_("<B>CTCP commands:<BR>"
+			  "CLIENTINFO <nick><BR>"
+			  "USERINFO <nick><BR>"
+			  "VERSION <nick><BR>"
+			  "PING <nick></B><BR>"),
+			-1, WFLAG_NOLOG, time(NULL));
 		} else if (!g_strcasecmp(word[2], "DCC")) {
-			write_to_conv(c, _("<B>DCC commands:<BR>"
-				      "CHAT <nick></B>"),
-				      WFLAG_NOLOG, NULL, time(NULL), -1);
+			gaim_conversation_write(c, NULL,
+				_("<B>DCC commands:<BR>"
+				  "CHAT <nick></B>"),
+				-1, WFLAG_NOLOG, time(NULL));
 		} else {
-			write_to_conv(c, _("<B>Currently supported commands:<BR>"
-				      "WHOIS INVITE NICK LIST<BR>"
-				      "JOIN PART TOPIC KICK<BR>"
-				      "OP DEOP VOICE DEVOICE<BR>"
-				      "ME MSG QUOTE SAY QUIT<BR>"
-				      "MODE VERSION W WHOWAS<BR>"
-				      "Type /HELP OPER for operator commands<BR>"
-				      "Type /HELP CTCP for CTCP commands<BR>"
-				      "Type /HELP DCC for DCC commands"),
-				      WFLAG_NOLOG, NULL, time(NULL), -1);
+			gaim_conversation_write(c, NULL,
+				_("<B>Currently supported commands:<BR>"
+				  "WHOIS INVITE NICK LIST<BR>"
+				  "JOIN PART TOPIC KICK<BR>"
+				  "OP DEOP VOICE DEVOICE<BR>"
+				  "ME MSG QUOTE SAY QUIT<BR>"
+				  "MODE VERSION W WHOWAS<BR>"
+				  "Type /HELP OPER for operator commands<BR>"
+				  "Type /HELP CTCP for CTCP commands<BR>"
+				  "Type /HELP DCC for DCC commands"),
+				-1, WFLAG_NOLOG, time(NULL));
 		}
 	} else {
-		struct conversation *c = NULL;
+		struct gaim_conversation *c = NULL;
 		if (is_channel(gc, who)) {
 			c = irc_find_chat(gc, who);
 		} else {
-			c = find_conversation(who);
+			c = gaim_find_conversation(who);
 		}
 		if (!c) {
 			g_free(what);
 			return -EINVAL;
 		}
-		write_to_conv(c, _("<B>Unknown command</B>"), WFLAG_NOLOG, NULL, time(NULL), -1);
+
+		gaim_conversation_write(c, NULL, _("<B>Unknown command</B>"),
+								-1, WFLAG_NOLOG, time(NULL));
 	}
 	g_free(what);
 	return 0;
@@ -2182,7 +2220,7 @@ static void
 irc_chat_invite(struct gaim_connection *gc, int idn, const char *message, const char *name) {
 	char buf[IRC_BUF_LEN]; 
 	struct irc_data *id = gc->proto_data;
-	struct conversation *c = irc_find_chat_by_id(gc, idn);
+	struct gaim_conversation *c = gaim_find_chat(gc, idn);
 	g_snprintf(buf, sizeof(buf), "INVITE %s %s\r\n", name, c->name);
 	irc_write(id->fd, buf, strlen(buf));
 }
@@ -2240,7 +2278,7 @@ static void
 irc_chat_leave(struct gaim_connection *gc, int id)
 {
 	struct irc_data *idata = gc->proto_data;
-	struct conversation *c = irc_find_chat_by_id(gc, id);
+	struct gaim_conversation *c = gaim_find_chat(gc, id);
 	char buf[IRC_BUF_LEN];
 
 	if (!c) return;
@@ -2252,11 +2290,12 @@ irc_chat_leave(struct gaim_connection *gc, int id)
 static int 
 irc_chat_send(struct gaim_connection *gc, int id, char *what)
 {
-	struct conversation *c = irc_find_chat_by_id(gc, id);
+	struct gaim_conversation *c = gaim_find_chat(gc, id);
 	if (!c)
 		return -EINVAL;
 	if (send_msg(gc, c->name, what) > 0)
-		serv_got_chat_in(gc, c->id, gc->displayname, 0, what, time(NULL));
+		serv_got_chat_in(gc, gaim_chat_get_id(GAIM_CHAT(c)),
+						 gc->displayname, 0, what, time(NULL));
 	return 0;
 }
 
@@ -2319,7 +2358,7 @@ static void
 dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 {
 	struct dcc_chat *chat = data;
-	struct conversation *convo;
+	struct gaim_conversation *convo;
 	char buf[128];
 	struct sockaddr_in addr;
 	int addrlen = sizeof (addr);
@@ -2329,19 +2368,19 @@ dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 	chat->fd = accept (chat->fd, (struct sockaddr *) (&addr), &addrlen);
 	if (!chat->fd) {
 		dcc_chat_cancel (chat);
-		convo = new_conversation (chat->nick);
+		convo = gaim_conversation_new(GAIM_CONV_IM, chat->nick);
 		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
 			    chat->nick);
-		write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
-			       time ((time_t) NULL), -1);
+		gaim_conversation_write(convo, NULL, buf, -1,
+								WFLAG_SYSTEM, time(NULL));
 		return;
 	}
 	chat->inpa =
 		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_in, chat);
-	convo = new_conversation (chat->nick);
+	convo = gaim_conversation_new(GAIM_CONV_IM, chat->nick);
 	g_snprintf (buf, sizeof buf, _("DCC Chat with %s established"),
-		    chat->nick);
-	write_to_conv (convo, buf, WFLAG_SYSTEM, NULL, time ((time_t) NULL), -1);
+				chat->nick);
+	gaim_conversation_write(convo, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 	debug_printf ("Chat with %s established\n", chat->nick);
 	dcc_chat_list = g_slist_append (dcc_chat_list, chat);
 }

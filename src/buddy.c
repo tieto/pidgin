@@ -150,7 +150,7 @@ void handle_group_rename(struct group *g, char *prevname)
 
 void handle_buddy_rename(struct buddy *b, char *prevname)
 {
-	struct conversation *cnv;
+	struct gaim_conversation *cnv;
 	struct buddy_show *bs;
 	struct group_show *gs;
 	struct group *g;
@@ -164,8 +164,8 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 		g_snprintf(buf, sizeof(buf), "%s", b->name);
 	gtk_ctree_node_set_text(GTK_CTREE(edittree), c, 0, buf);
 
-	if ((cnv = find_conversation(b->name)) != NULL)
-		set_convo_title(cnv);
+	if ((cnv = gaim_find_conversation(b->name)) != NULL)
+		gaim_conversation_autoset_title(cnv);
 
 	g = find_group_by_buddy(b);
 	if (!g) {
@@ -436,31 +436,34 @@ static int handle_click_group(GtkWidget *widget, GdkEventButton *event, struct g
 
 void pressed_im_bud(GtkWidget *widget, struct buddy *b)
 {
-	struct conversation *c;
+	struct gaim_conversation *c;
 
-	c = find_conversation(b->name);
+	c = gaim_find_conversation(b->name);
 
 	if (c != NULL) {
-		gdk_window_show(c->window->window);
+		gaim_window_show(gaim_conversation_get_window(c));
 	} else {
-		c = new_conversation(b->name);
+		c = gaim_conversation_new(GAIM_CONV_IM, b->name);
 
-		set_convo_gc(c, b->user->gc);
+		gaim_conversation_set_user(c, b->user);
 	}
 }
 
 void pressed_im(GtkWidget *widget, struct buddy_show *b)
 {
-	struct conversation *c;
+	struct gaim_conversation *c;
 
-	c = find_conversation(b->name);
+	c = gaim_find_conversation(b->name);
 
 	if (c != NULL) {
-		gdk_window_show(c->window->window);
+		gaim_window_show(gaim_conversation_get_window(c));
 	} else {
-		c = new_conversation(b->name);
+		struct gaim_connection *gc;
 
-		set_convo_gc(c, b->connlist->data);
+		gc = (struct gaim_connection *)b->connlist->data;
+		c  = gaim_conversation_new(GAIM_CONV_IM, b->name);
+
+		gaim_conversation_set_user(c, gc->user);
 	}
 }
 
@@ -498,19 +501,28 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 	if (!b->connlist)
 		return FALSE;
 	if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
-		struct conversation *c;
+		struct gaim_conversation *c;
+		struct gaim_connection *gc;
 
-		c = find_conversation(b->name);
+		c = gaim_find_conversation(b->name);
 
-		if (c != NULL)
-			gdk_window_show(c->window->window);
+		if (c != NULL) {
+			struct gaim_window *win = gaim_conversation_get_window(c);
+			size_t index = gaim_conversation_get_index(c);
+
+			gaim_window_switch_conversation(win, index);
+			gaim_window_show(win);
+		}
 		else
-			c = new_conversation(b->name);
+			c = gaim_conversation_new(GAIM_CONV_IM, b->name);
 
-		set_convo_gc(c, b->connlist->data);
-		if (im_options & OPT_IM_ONE_WINDOW)
-			raise_convo_tab(c);
-		gtk_widget_grab_focus(c->entry);
+		gc = (struct gaim_connection *)b->connlist->data;
+		gaim_conversation_set_user(c, gc->user);
+
+		gaim_window_switch_conversation(gaim_conversation_get_window(c),
+										gaim_conversation_get_index(c));
+
+		/* XXX-GTK gtk_widget_grab_focus(c->entry); */
 	} else if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
 		static GtkWidget *menu = NULL;
 		static GList *mo_top = NULL;
@@ -783,7 +795,7 @@ static void ui_remove_buddy_node(struct group *rem_g, struct buddy *rem_b)
 
 void ui_remove_buddy(struct buddy *rem_b)
 {
-	struct conversation *c;
+	struct gaim_conversation *c;
 	struct group *rem_g = find_group_by_buddy(rem_b);
 	struct group_show *gs;
 	struct buddy_show *bs;
@@ -818,9 +830,12 @@ void ui_remove_buddy(struct buddy *rem_b)
 			update_num_group(gs);
 	}
 
-	c = find_conversation(rem_b->name);
+	c = gaim_find_conversation(rem_b->name);
+
 	if (c)
-		update_buttons_by_protocol(c);
+		gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+
+		/* CONVXXX update_buttons_by_protocol(c); */
 
 	/* Remove CTree node for buddy */
 	ui_remove_buddy_node(rem_g, rem_b);
@@ -938,8 +953,31 @@ void redo_buddy_list()
 	update_idle_times();
 }
 
-static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *parent,
-			   GtkCTreeNode *sibling, gpointer data)
+void
+reset_convo_gcs()
+{
+	GList *l;
+	struct gaim_conversation *c;
+
+	for (l = gaim_get_ims(); l != NULL; l = l->next) {
+		c = (struct gaim_conversation *)l->data;
+
+		if (!g_slist_find(connections, gaim_conversation_get_gc(c))) {
+			struct aim_user *user;
+
+			if (connections == NULL)
+				user = ((struct gaim_connection *)connections->data)->user;
+			else
+				user = NULL;
+
+			gaim_conversation_set_user(c, user);
+		}
+	}
+}
+
+static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child,
+						   GtkCTreeNode *parent, GtkCTreeNode *sibling,
+						   gpointer data)
 {
 	int *ctype, *ptype = NULL, *stype = NULL;
 
@@ -1241,7 +1279,9 @@ static void im_callback(GtkWidget *widget, GtkTree *tree)
 {
 	GList *i;
 	struct buddy_show *b = NULL;
-	struct conversation *c;
+	struct gaim_conversation *c;
+	struct aim_user *user;
+
 	i = GTK_TREE_SELECTION_OLD(tree);
 	if (i) {
 		b = gtk_object_get_user_data(GTK_OBJECT(i->data));
@@ -1253,16 +1293,16 @@ static void im_callback(GtkWidget *widget, GtkTree *tree)
 	if (!b->name)
 		return;
 
-	c = find_conversation(b->name);
-	if (c == NULL) {
-		c = new_conversation(b->name);
-	} else {
-		gdk_window_raise(c->window->window);
-	}
+	c = gaim_find_conversation(b->name);
 
-	set_convo_gc(c, b->connlist->data);
+	if (c == NULL)
+		c = gaim_conversation_new(GAIM_CONV_IM, b->name);
+	else
+		gaim_window_raise(gaim_conversation_get_window(c));
+
+	user = ((struct gaim_connection *)b->connlist->data)->user;
+	gaim_conversation_set_user(c, user);
 }
-
 
 static void info_callback(GtkWidget *widget, GtkTree *tree)
 {
@@ -1332,7 +1372,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 	char *who;
 
 	struct buddy_pounce *b;
-	struct conversation *c;
+	struct gaim_conversation *c;
 	struct aim_user *u;
 
 	GList *bp = buddy_pounces;
@@ -1356,11 +1396,12 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 
 		if (!g_strcasecmp(who, normalize (b->name))) {	/* find someone to pounce */
 			if (b->options & OPT_POUNCE_POPUP) {
-				c = find_conversation(name);
-				if (c == NULL)
-					c = new_conversation(name);
+				c = gaim_find_conversation(name);
 
-				set_convo_gc(c, u->gc);
+				if (c == NULL)
+					c = gaim_conversation_new(GAIM_CONV_IM, name);
+
+				gaim_conversation_set_user(c, u);
 			}
 			if (b->options & OPT_POUNCE_NOTIFY) {
 				char tmp[1024];
@@ -1378,14 +1419,16 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 			}
 			if (b->options & OPT_POUNCE_SEND_IM) {
 				if (strlen(b->message) > 0) {
-					c = find_conversation(name);
+					c = gaim_find_conversation(name);
 
 					if (c == NULL)
-						c = new_conversation(name);
+						c = gaim_conversation_new(GAIM_CONV_IM, name);
 
-					set_convo_gc(c, u->gc);
+					gaim_conversation_set_user(c, u);
 
-					write_to_conv(c, b->message, WFLAG_SEND, NULL, time(NULL), -1);
+					gaim_conversation_write(c, NULL, b->message, -1,
+											WFLAG_SEND, time(NULL));
+
 					serv_send_im(u->gc, name, b->message, -1, 0);
 				}
 			}
@@ -2176,12 +2219,13 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 				g_source_remove(bs->log_timer);
 			bs->log_timer = g_timeout_add(10000, log_timeout, bs);
 			if ((bs->sound != 2) && (im_options & OPT_IM_LOGON)) {
-				struct conversation *c = find_conversation(b->name);
+				struct gaim_conversation *c = gaim_find_conversation(b->name);
 				if (c) {
 					char tmp[1024];
 					g_snprintf(tmp, sizeof(tmp), _("%s logged in."),
-							get_buddy_alias(b));
-					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
+							   get_buddy_alias(b));
+					gaim_conversation_write(c, NULL, tmp, -1,
+											WFLAG_SYSTEM, time(NULL));
 				} else if (clistqueue && find_queue_total_by_name(b->name)) {
 					struct queued_message *qm = g_new0(struct queued_message, 1);
 					g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
@@ -2237,12 +2281,13 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
 		if ((bs->sound != 1) && (im_options & OPT_IM_LOGON)) {
-			struct conversation *c = find_conversation(b->name);
+			struct gaim_conversation *c = gaim_find_conversation(b->name);
 			if (c) {
 				char tmp[1024];
 				g_snprintf(tmp, sizeof(tmp), _("%s logged out."),
-						get_buddy_alias(b));
-				write_to_conv(c, tmp, WFLAG_SYSTEM, NULL, time(NULL), -1);
+						   get_buddy_alias(b));
+				gaim_conversation_write(c, NULL, tmp, -1,
+										WFLAG_SYSTEM, time(NULL));
 			} else if (clistqueue && find_queue_total_by_name(b->name)) {
 				struct queued_message *qm = g_new0(struct queued_message, 1);
 				g_snprintf(qm->name, sizeof(qm->name), "%s",

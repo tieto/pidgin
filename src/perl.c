@@ -762,7 +762,7 @@ XS (XS_GAIM_user_info)
 XS (XS_GAIM_write_to_conv)
 {
 	char *nick, *who, *what;
-	struct conversation *c;
+	struct gaim_conversation *c;
 	int junk;
 	int send, wflags;
 	dXSARGS;
@@ -782,11 +782,12 @@ XS (XS_GAIM_write_to_conv)
 		default: wflags=WFLAG_RECV;
 	}	
 		
-	c = find_conversation(nick);
+	c = gaim_find_conversation(nick);
+
 	if (!c)
-		c = new_conversation(nick);
+		c = gaim_conversation_new(GAIM_CONV_IM, nick);
 		
-	write_to_conv(c, what, wflags, who, time(NULL), -1);
+	gaim_conversation_write(c, who, what, -1, wflags, time(NULL));
 	XSRETURN(0);
 }
 
@@ -817,7 +818,7 @@ XS (XS_GAIM_print_to_conv)
 	struct gaim_connection *gc;
 	char *nick, *what;
 	int isauto;
-	struct conversation *c;
+	struct gaim_conversation *c;
 	unsigned int junk;
 	dXSARGS;
 	items = 0;
@@ -830,12 +831,14 @@ XS (XS_GAIM_print_to_conv)
 		XSRETURN(0);
 		return;
 	}
-	c = find_conversation(nick);
+	c = gaim_find_conversation(nick);
 	if (!c)
-		c = new_conversation(nick);
-	set_convo_gc(c, gc);
-	write_to_conv(c, what, WFLAG_SEND | (isauto ? WFLAG_AUTO : 0), NULL, time(NULL), -1);
-	serv_send_im(c->gc, nick, what, -1, isauto ? IM_FLAG_AWAY : 0);
+		c = gaim_conversation_new(GAIM_CONV_IM, nick);
+	gaim_conversation_set_user(c, gc->user);
+	gaim_conversation_write(c, NULL, what, -1,
+							(WFLAG_SEND | (isauto ? WFLAG_AUTO : 0)),
+							time(NULL));
+	serv_send_im(gc, nick, what, -1, isauto ? IM_FLAG_AWAY : 0);
 	XSRETURN(0);
 }
 
@@ -846,7 +849,7 @@ XS (XS_GAIM_print_to_chat)
 	struct gaim_connection *gc;
 	int id;
 	char *what;
-	struct conversation *b = NULL;
+	struct gaim_conversation *b = NULL;
 	GSList *bcs;
 	unsigned int junk;
 	dXSARGS;
@@ -862,8 +865,9 @@ XS (XS_GAIM_print_to_chat)
 	}
 	bcs = gc->buddy_chats;
 	while (bcs) {
-		b = (struct conversation *)bcs->data;
-		if (b->id == id)
+		b = (struct gaim_conversation *)bcs->data;
+
+		if (gaim_chat_get_id(gaim_conversation_get_chat_data(b)) == id)
 			break;
 		bcs = bcs->next;
 		b = NULL;

@@ -15,7 +15,9 @@
 #include "core.h"
 #include "multi.h"
 #include "prpl.h"
+#include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -23,14 +25,14 @@
 
 void rm_log(struct log_conversation *a)
 {
-	struct conversation *cnv = find_conversation(a->name);
+	struct gaim_conversation *cnv = gaim_find_conversation(a->name);
 
 	log_conversations = g_list_remove(log_conversations, a);
 
 	save_prefs();
 
 	if (cnv && !(im_options & OPT_IM_ONE_WINDOW))
-		set_convo_title(cnv);
+		gaim_conversation_autoset_title(cnv);
 }
 
 struct log_conversation *find_log_info(const char *name)
@@ -56,70 +58,61 @@ struct log_conversation *find_log_info(const char *name)
 
 void update_log_convs()
 {
-	GSList *C = connections;
-	struct gaim_connection *g;
-	GSList *bcs;
-	GList *cnv = conversations;
-	struct conversation *c;
+	GList *cnv;
+	struct gaim_conversation *c;
+	struct gaim_gtk_conversation *gtkconv;
 
-	while (cnv) {
-		c = (struct conversation *)cnv->data;
-		if (c->log_button) {
-			if (c->is_chat)
-				gtk_widget_set_sensitive(GTK_WIDGET(c->log_button),
+	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
+
+		c = (struct gaim_conversation *)cnv->data;
+
+		if (gaim_conversation_get_ops(c) != gaim_get_gtk_conversation_ops())
+			continue;
+
+		gtkconv = GAIM_GTK_CONVERSATION(c);
+
+		if (gtkconv->toolbar.log) {
+			if (gaim_conversation_get_type(c) == GAIM_CONV_CHAT)
+				gtk_widget_set_sensitive(GTK_WIDGET(gtkconv->toolbar.log),
 						   ((logging_options & OPT_LOG_CHATS)) ? FALSE : TRUE);
 			else
-				gtk_widget_set_sensitive(GTK_WIDGET(c->log_button),
+				gtk_widget_set_sensitive(GTK_WIDGET(gtkconv->toolbar.log),
 							 ((logging_options & OPT_LOG_CONVOS)) ? FALSE : TRUE);
 		}
-
-		cnv = cnv->next;
-	}
-
-	while (C) {
-		g = (struct gaim_connection *)C->data;
-		bcs = g->buddy_chats;
-		while (bcs) {
-			c = (struct conversation *)bcs->data;
-			if (c->log_button) {
-				if (c->is_chat)
-					gtk_widget_set_sensitive(GTK_WIDGET(c->log_button),
-					 		   ((logging_options & OPT_LOG_CHATS)) ? FALSE :
-							   TRUE);
-				else
-					gtk_widget_set_sensitive(GTK_WIDGET(c->log_button),
-								 ((logging_options & OPT_LOG_CONVOS)) ? FALSE :
-								 TRUE);
-			}
-
-			bcs = bcs->next;
-		}
-		C = C->next;
 	}
 }
 
 static void do_save_convo(GtkObject *obj, GtkWidget *wid)
 {
-	struct conversation *c = gtk_object_get_user_data(obj);
+	struct gaim_conversation *c = gtk_object_get_user_data(obj);
 	const char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
 	FILE *f;
+
 	if (file_is_dir(filename, wid))
 		return;
-	if (!((!c->is_chat && g_list_find(conversations, c)) ||
-	      (c->is_chat && g_slist_find(connections, c->gc) && g_slist_find(c->gc->buddy_chats, c))))
+
+	if (!((gaim_conversation_get_type(c) != GAIM_CONV_CHAT &&
+		   g_list_find(gaim_get_ims(), c)) ||
+		  (gaim_conversation_get_type(c) == GAIM_CONV_CHAT &&
+		   g_list_find(gaim_get_chats(), c))))
  		filename = NULL;
+
 	gtk_widget_destroy(wid);
+
 	if (!filename)
 		return;
+
 	f = fopen(filename, "w+");
+
 	if (!f)
 		return;
+
 	fprintf(f, "%s", c->history->str);
 	fclose(f);
 }
 
 
-void save_convo(GtkWidget *save, struct conversation *c)
+void save_convo(GtkWidget *save, struct gaim_conversation *c)
 {
 	char buf[BUF_LONG];
 	GtkWidget *window = gtk_file_selection_new(_("Gaim - Save Conversation"));
@@ -131,46 +124,6 @@ void save_convo(GtkWidget *save, struct conversation *c)
 	g_signal_connect_swapped(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
 				  "clicked", G_CALLBACK(gtk_widget_destroy), (gpointer)window);
 	gtk_widget_show(window);
-}
-
-char *html_logize(char *p)
-{
-	char *temp_p = p;
-	char *buffer_p;
-	char *buffer_start;
-	int num_cr = 0;
-	int char_len = 0;
-
-	while (*temp_p != '\0') {
-		char_len++;
-		if ((*temp_p == '\n') || ((*temp_p == '<') && (*(temp_p + 1) == '!')))
-			num_cr++;
-		++temp_p;
-	}
-
-	temp_p = p;
-	buffer_p = g_malloc(char_len + (4 * num_cr) + 1);
-	buffer_start = buffer_p;
-
-	while (*temp_p != '\0') {
-		if (*temp_p == '\n') {
-			*buffer_p++ = '<';
-			*buffer_p++ = 'B';
-			*buffer_p++ = 'R';
-			*buffer_p++ = '>';
-			*buffer_p++ = '\n';
-		} else if ((*temp_p == '<') && (*(temp_p + 1) == '!')) {
-			*buffer_p++ = '&';
-			*buffer_p++ = 'l';
-			*buffer_p++ = 't';
-			*buffer_p++ = ';';
-		} else
-			*buffer_p++ = *temp_p;
-		++temp_p;
-	}
-	*buffer_p = '\0';
-
-	return buffer_start;
 }
 
 static FILE *open_gaim_log_file(const char *name, int *flag)
@@ -462,4 +415,47 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 	}
 
 	fclose(fd);
+}
+
+char *html_logize(const char *p)
+{
+	const char *temp_p;
+	char *buffer_p;
+	char *buffer_start;
+	int num_cr = 0;
+	int char_len = 0;
+
+	for (temp_p = p; *temp_p != '\0'; temp_p++) {
+		char_len++;
+
+		if ((*temp_p == '\n') || ((*temp_p == '<') && (*(temp_p + 1) == '!')))
+			num_cr++;
+	}
+
+	buffer_p = g_malloc(char_len + (4 * num_cr) + 1);
+
+	for (temp_p = p, buffer_start = buffer_p;
+		 *temp_p != '\0';
+		 temp_p++) {
+
+		if (*temp_p == '\n') {
+			*buffer_p++ = '<';
+			*buffer_p++ = 'B';
+			*buffer_p++ = 'R';
+			*buffer_p++ = '>';
+			*buffer_p++ = '\n';
+
+		} else if ((*temp_p == '<') && (*(temp_p + 1) == '!')) {
+			*buffer_p++ = '&';
+			*buffer_p++ = 'l';
+			*buffer_p++ = 't';
+			*buffer_p++ = ';';
+
+		} else
+			*buffer_p++ = *temp_p;
+	}
+
+	*buffer_p = '\0';
+
+	return buffer_start;
 }

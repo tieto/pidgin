@@ -84,9 +84,12 @@ DLL_C_SRC =		aim.c \
 			conversation.c \
 			core.c \
 			dialogs.c \
+			dnd-utils.c \
 			ft.c \
 			gaimrc.c \
+			gtkconv.c \
 			gtkimhtml.c \
+			gtkutils.c \
 			html.c \
 			idle.c \
 			list.c \

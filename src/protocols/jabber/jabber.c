@@ -219,7 +219,7 @@ typedef struct gaim_jid_struct *gaim_jid;
 struct jabber_chat {
 	gaim_jid gjid;
 	struct gaim_connection *gc;
-	struct conversation *b;
+	struct gaim_conversation *b;
 	int id;
 	int state;
 };
@@ -821,10 +821,10 @@ static void gjab_start(gjconn gjc)
 /*
  * Find chat by chat group name
  */
-static struct conversation *find_chat(struct gaim_connection *gc, char *name)
+static struct gaim_conversation *find_chat(struct gaim_connection *gc, char *name)
 {
 	GSList *bcs = gc->buddy_chats;
-	struct conversation *b = NULL;
+	struct gaim_conversation *b = NULL;
 	char *chat = g_strdup(normalize(name));
 
 	while (bcs) {
@@ -854,14 +854,14 @@ static struct conversation *find_chat(struct gaim_connection *gc, char *name)
 static int jabber_find_chat_by_convo_id(struct gaim_connection *gc, int id, struct jabber_chat **jc)
 {
 	GSList *bcs = gc->buddy_chats;
-	struct conversation *b = NULL;
+	struct gaim_conversation *b = NULL;
 	struct jabber_data *jd = gc->proto_data;
 
 	*jc = NULL;
 
 	while(bcs != NULL) {
 		b = bcs->data;
-		if (id == b->id)
+		if (id == gaim_chat_get_id(GAIM_CHAT(b)))
 			break;
 		bcs = bcs->next;
 	}
@@ -937,9 +937,9 @@ static struct jabber_chat *find_pending_chat(struct gaim_connection *gc, jid cha
 	return jc;
 }
 
-static gboolean find_chat_buddy(struct conversation *b, char *name)
+static gboolean find_chat_buddy(struct gaim_conversation *b, char *name)
 {
-	GList *m = b->in_room;
+	GList *m = gaim_chat_get_users(GAIM_CHAT(b));
 
 	while (m) {
 		if (!strcmp(m->data, name))
@@ -1324,8 +1324,9 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 			struct jabber_chat *jc;
 			g_snprintf(m, sizeof(m), "%s", msg);
 			if (((jc = find_existing_chat(GJ_GC(gjc), p->from)) != NULL) && jc->b)
-				serv_got_chat_in(GJ_GC(gjc), jc->b->id, p->from->resource, 1, m,
-					time_sent);
+				serv_got_chat_in(GJ_GC(gjc),
+								 gaim_chat_get_id(GAIM_CHAT(jc->b)),
+								 p->from->resource, 1, m, time_sent);
 			else {
 				int flags = 0;
 				jab_res_info jri = jabber_find_resource(GJ_GC(gjc), from);
@@ -1334,7 +1335,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 				if (xmlnode_get_tag(p->x, "gaim"))
 					flags = IM_FLAG_GAIMUSER;
 				jabber_track_convo_thread(gjc, from, thread_id);
-				if (find_conversation(from))
+				if (gaim_find_conversation(from))
 					serv_got_im(GJ_GC(gjc), from, m, flags,
 						time_sent, -1);
 				else {
@@ -1393,7 +1394,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 			if ((jc = find_pending_chat(GJ_GC(gjc), p->from)) != NULL) {
 				/* yes, we're supposed to be. so now we are. */
 				jc->b = serv_got_joined_chat(GJ_GC(gjc), i++, p->from->user);
-				jc->id = jc->b->id;
+				jc->id = gaim_chat_get_id(GAIM_CHAT(jc->b));
 				jc->state = JCS_ACTIVE;
 			} else {
 				/* no, we're not supposed to be. */
@@ -1404,7 +1405,8 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 		if (p->from->resource) {
 			if (!y) {
 				if (!find_chat_buddy(jc->b, p->from->resource)) {
-					add_chat_buddy(jc->b, p->from->resource, NULL);
+					gaim_chat_add_user(GAIM_CHAT(jc->b),
+									   p->from->resource, NULL);
 				} else if ((y = xmlnode_get_tag(p->x, "status"))) {
 					jabber_track_away(gjc, p, NULL);
 				}
@@ -1414,18 +1416,20 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 				if (topic) {
 					char tbuf[8192];
 					g_snprintf(tbuf, sizeof(tbuf), "%s", topic);
-					chat_set_topic(jc->b, p->from->resource, tbuf);
+					gaim_chat_set_topic(GAIM_CHAT(jc->b),
+										p->from->resource, tbuf);
 				}
 
 				g_snprintf(buf, sizeof(buf), "%s", msg);
-				serv_got_chat_in(GJ_GC(gjc), jc->b->id, p->from->resource, 0, buf,
-					time_sent);
+				serv_got_chat_in(GJ_GC(gjc),
+								 gaim_chat_get_id(GAIM_CHAT(jc->b)),
+								 p->from->resource, 0, buf, time_sent);
 			}
 		} else { /* message from the server */
 			if(jc->b && topic) {
 				char tbuf[8192];
 				g_snprintf(tbuf, sizeof(tbuf), "%s", topic);
-				chat_set_topic(jc->b, "", tbuf);
+				gaim_chat_set_topic(GAIM_CHAT(jc->b), "", tbuf);
 			}
 		}
 
@@ -1443,7 +1447,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	xmlnode y;
 	char *show;
 	int state = 0;
-	struct conversation *cnv = NULL;
+	struct gaim_conversation *cnv = NULL;
 	struct jabber_chat *jc = NULL;
 	int priority = 0;
 	struct jabber_buddy_data *jbd;
@@ -1506,7 +1510,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		static int i = 0x70;
 		if ((jc = find_pending_chat(GJ_GC(gjc), gjid)) != NULL) {
 			jc->b = cnv = serv_got_joined_chat(GJ_GC(gjc), i++, gjid->user);
-			jc->id = jc->b->id;
+			jc->id = gaim_chat_get_id(GAIM_CHAT(jc->b));
 			jc->state = JCS_ACTIVE;
 		} else if ((b = find_buddy(GJ_GC(gjc)->user, buddy)) == NULL) {
 			g_free(buddy);
@@ -1545,7 +1549,8 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 				jd = jc->gc->proto_data;
 				/* if it's not ourselves...*/
 				if (strcmp(gjid->resource, jc->gjid->resource) && jc->b) {
-					remove_chat_buddy(jc->b, gjid->resource, NULL);
+					gaim_chat_remove_user(GAIM_CHAT(jc->b), gjid->resource,
+										  NULL);
 					g_free(buddy);
 					gaim_jid_free(gjid);
 					return;
@@ -1565,7 +1570,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 					return;
 				}
 				if (!find_chat_buddy(jc->b, gjid->resource)) {
-					add_chat_buddy(jc->b, gjid->resource, NULL);
+					gaim_chat_add_user(GAIM_CHAT(jc->b), gjid->resource, NULL);
 				}
 			}
 		}

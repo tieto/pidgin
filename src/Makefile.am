@@ -13,16 +13,21 @@ gaim_SOURCES =	about.c \
 		buddy.c \
 		buddy_chat.c \
 		conversation.c \
-		convo.h \
+		conversation.h \
 		core.c \
 		core.h \
 		dialogs.c \
+		dnd-hints.c \
+		dnd-hints.h \
 		ft.c \
 		gaim.h \
 		gaim-socket.h \
 		gaimrc.c \
+		gtkconv.c \
+		gtkconv.h \
 		gtkimhtml.c \
 		gtkimhtml.h \
+		gtkutils.c \
 		html.c \
 		idle.c \
 		list.c \
@@ -42,6 +47,8 @@ gaim_SOURCES =	about.c \
 		session.c \
 		socket.c \
 		sound.c \
+		stock.c \
+		stock.h \
 		themes.c \
 		util.c \
 		ui.h
@@ -68,4 +75,3 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DDATADIR=\"$(datadir)\" \
 	$(DEBUG_CFLAGS)
-

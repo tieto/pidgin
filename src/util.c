@@ -972,7 +972,7 @@ const char *handle_uri(char *uri) {
  	/* aim:goim?screenname=screenname&message=message */
 	if (!g_strncasecmp(uri, "aim:goim?", strlen("aim:goim?"))) {
 		char *who, *what;
-		struct conversation *c;
+		struct gaim_conversation *c;
 		uri = uri + strlen("aim:goim?");
 		
 		if (!(who = strstr(uri, "screenname="))) {
@@ -1000,11 +1000,14 @@ const char *handle_uri(char *uri) {
 			g_string_free(str, TRUE);
 		}
 		
-		c = new_conversation(who);
-		set_convo_gc(c, gc);
+		c = gaim_conversation_new(GAIM_CONV_IM, who);
+		gaim_conversation_set_user(c, gc->user);
 		g_free(who);
+
 		if (what) {
-			gtk_text_buffer_insert_at_cursor(c->entry_buffer, what, -1);
+			struct gaim_gtk_conversation *gtkconv = GAIM_GTK_CONVERSATION(c);
+
+			gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, what, -1);
 			g_free(what);
 		}
 	} else if (!g_strncasecmp(uri, "aim:addbuddy?", strlen("aim:addbuddy?"))) {

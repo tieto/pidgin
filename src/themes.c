@@ -179,20 +179,17 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 	}
 
 	if (load) {
-		GList *cnv = conversations;
-		while (cnv) {
-			struct conversation *c = cnv->data;
-			smiley_themeize(c->text);
-			cnv=cnv->next;
-		}
+		GList *cnv;
+		
+		for (cnv = conversations; cnv != NULL; cnv = cnv->next) {
+			struct gaim_conversation *conv = cnv->data;
+			
+			if (gaim_conversation_get_ops(conv) ==
+				gaim_get_gtk_conversation_ops()) {
 
-		cnv = chats;
-		while (cnv) {
-			struct conversation *c = cnv->data;
-			smiley_themeize(c->text);
-			cnv=cnv->next;
+				smiley_themeize(GAIM_GTK_CONVERSATION(conv)->imhtml);
+			}
 		}
-
 	}
 
 	g_free(dirname);
