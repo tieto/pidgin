@@ -422,6 +422,7 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 {
 	GaimConnection *gc = gaim_account_get_connection(log->account);
 	char date[64];
+	char *msg_fixed;
 	struct generic_logger_data *data = log->logger_data;
 	if(!data) {
 		/* This log is new */
@@ -473,36 +474,35 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 	if(!data->file)
 		return;
 
+	gaim_markup_html_to_xhtml(message, &msg_fixed, NULL);
+
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
 	if (type & GAIM_MESSAGE_SYSTEM)
-		fprintf(data->file, "(%s)<b> %s</b><br/>\n", date, message);
+		fprintf(data->file, "(%s)<b> %s</b><br/>\n", date, msg_fixed);
 	else if (type & GAIM_MESSAGE_WHISPER)
 		fprintf(data->file, "<font color=\"#6C2585\">(%s)<b> %s:</b></font> %s<br/>\n",
-			date, from, message);
+			date, from, msg_fixed);
 	else if (type & GAIM_MESSAGE_AUTO_RESP) {
 		if (type & GAIM_MESSAGE_SEND)
-			fprintf(data->file, _("<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, message);
+			fprintf(data->file, _("<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, msg_fixed);
 		else if (type & GAIM_MESSAGE_RECV)
-			fprintf(data->file, _("<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, message);
+			fprintf(data->file, _("<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, msg_fixed);
 	} else if (type & GAIM_MESSAGE_RECV) {
-		char *msg = g_strdup(message);
-		if(gaim_message_meify(msg, -1))
+		if(gaim_message_meify(msg_fixed, -1))
 			fprintf(data->file, "<font color=\"#6C2585\">(%s) <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
-					date, from, gc->prpl->info->name, msg);
+					date, from, gc->prpl->info->name, msg_fixed);
 		else
 			fprintf(data->file, "<font color=\"#A82F2F\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
-					date, from, gc->prpl->info->name, msg);
-		g_free(msg);
+					date, from, gc->prpl->info->name, msg_fixed);
 	} else if (type & GAIM_MESSAGE_SEND) {
-		char *msg = g_strdup(message);
-		if(gaim_message_meify(msg, -1))
+		if(gaim_message_meify(msg_fixed, -1))
 			fprintf(data->file, "<font color=\"#6C2585\">(%s) <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
-					date, from, gc->prpl->info->name, msg);
+					date, from, gc->prpl->info->name, msg_fixed);
 		else
 			fprintf(data->file, "<font color=\"#16569E\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
-					date, from, gc->prpl->info->name, msg);
-		g_free(msg);
+					date, from, gc->prpl->info->name, msg_fixed);
 	}
+	g_free(msg_fixed);
 	fflush(data->file);
 }
 
