@@ -108,7 +108,7 @@ void gaim_gtk_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog);
  * @param w    @c NULL. Used for signal handlers.
  * @param data The array containing the widgets to toggle.
  */
-void gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
+void gaim_gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
 
 /**
  * Toggles the visibility of a widget.

@@ -188,7 +188,7 @@ gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
 }
 
 void
-gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data)
+gaim_gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data)
 {
 	gboolean sensitivity;
 	gpointer element;

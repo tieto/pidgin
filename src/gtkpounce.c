@@ -583,7 +583,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	g_ptr_array_add(exec_widgets,dialog->exec_cmd_browse);
 
 	g_signal_connect(G_OBJECT(dialog->exec_cmd), "clicked",
-					 G_CALLBACK(gtk_toggle_sensitive_array),
+					 G_CALLBACK(gaim_gtk_toggle_sensitive_array),
 					 exec_widgets);
 	g_signal_connect(G_OBJECT(dialog->exec_cmd_browse), "clicked",
 					 G_CALLBACK(filesel),
@@ -595,7 +595,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	g_ptr_array_add(sound_widgets,dialog->play_sound_test);
 
 	g_signal_connect(G_OBJECT(dialog->play_sound), "clicked",
-					 G_CALLBACK(gtk_toggle_sensitive_array),
+					 G_CALLBACK(gaim_gtk_toggle_sensitive_array),
 					 sound_widgets);
 	g_signal_connect(G_OBJECT(dialog->play_sound_browse), "clicked",
 					 G_CALLBACK(filesel),
