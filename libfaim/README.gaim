@@ -67,11 +67,6 @@ KNOWN ISSUES
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.
 
-- Chat works, to a degree. I'm not sure that you can create rooms, but I think
-you can. I'm not sure that you can be in more than one room at once, but I
-think you can. I'm not sure that you can leave the chat room and still have
-gaim be stable, but I think you can.
-
 - The permit list sometimes has problems when you start gaim, but if you change
 to it in the middle of a session there don't seem to be any problems.
 
@@ -79,9 +74,10 @@ to it in the middle of a session there don't seem to be any problems.
 "Allow anyone" works all the time (?) and "Deny some" doesn't work some of the
 time. That's a bug.
 
-- Sometimes signing on doesn't work completely correctly. (If you want a bad
-fix for it, comment out the lines where it imports your buddy list in oscar.c,
-and import it manually.)
+- Sometimes signing on doesn't work completely correctly. I think this is
+because we request chatnav rights when we sign on, but I'm not entirely sure.
+It could also be because of setting up the buddy list and retrieving who's
+online.
 
 - If you receive a message that's too large, gaim segfaults. I haven't watched
 this in gdb or gotten a backtrace on it, so I'm not exactly sure what the
@@ -104,7 +100,7 @@ there.
 
 - Warnings and Dir Info are not in libfaim yet, and so are not in Gaim/Faim yet.
 
-- There are also FIXME's scattered about oscar.c. Grep around for those, figure
+- There are also FIXME's scattered about gaim. Grep around for those, figure
 out what needs to be fixed, do that sort of thing. :) (Fixing the things listed
 in KNOWN ISSUES above, or any other bugs you happen to find, is a very good use
 of your time.) (You didn't hear that from me.)
