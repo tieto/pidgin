@@ -190,7 +190,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	random   = g_strdup_printf("%x", g_random_int());
 	dirname  = gaim_buddy_icons_get_cache_dir();
 	filename = g_build_filename(dirname, random, NULL);
-	old_icon = gaim_buddy_get_setting(buddy, "buddy_icon");
+	old_icon = gaim_blist_node_get_string((GaimBlistNode*)buddy, "buddy_icon");
 
 	g_free(random);
 
@@ -215,7 +215,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	if (old_icon != NULL)
 		unlink(old_icon);
 
-	gaim_buddy_set_setting(buddy, "buddy_icon", filename);
+	gaim_blist_node_set_string((GaimBlistNode*)buddy, "buddy_icon", filename);
 	gaim_blist_save();
 
 	g_free(filename);
