@@ -74,6 +74,9 @@ typedef struct
 	
 	GtkWidget *save_pounce;
 
+	/* Buttons */
+	GtkWidget *save_button;
+
 } GaimGtkPounceDialog;
 
 /**************************************************************************
@@ -319,6 +322,16 @@ pounce_user_menu(GaimGtkPounceDialog *dialog)
 	return opt_menu;
 }
 
+static void
+buddy_changed_cb(GtkEntry *entry, GaimGtkPounceDialog *dialog)
+{
+	if (dialog->save_button == NULL)
+		return;
+
+	gtk_widget_set_sensitive(dialog->save_button,
+			*gtk_entry_get_text(entry) != '\0');
+}
+
 void
 gaim_gtkpounce_dialog_show(struct buddy *buddy,
 						   GaimPounce *cur_pounce)
@@ -410,6 +423,9 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	dialog->buddy_entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_entry, TRUE, TRUE, 0);
 	gtk_widget_show(dialog->buddy_entry);
+
+	g_signal_connect(G_OBJECT(dialog->buddy_entry), "changed",
+			 G_CALLBACK(buddy_changed_cb), dialog);
 
 	if (cur_pounce != NULL) {
 		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry),
@@ -605,12 +621,15 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 					 G_CALLBACK(cancel_cb), dialog);
 
 	/* Save button */
-	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	dialog->save_button = button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 	
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(save_pounce_cb), dialog);
+
+	if (*gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry)) == '\0')
+		gtk_widget_set_sensitive(button, FALSE);
 
 	/* Set the values of stuff. */
 	if (cur_pounce != NULL) {
