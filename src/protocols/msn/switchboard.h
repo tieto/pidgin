@@ -54,7 +54,8 @@ typedef enum
  */
 typedef enum
 {
-	MSN_SB_FLAG_FT = 0x01, /**< This switchboard is being used for file transfer. */
+	MSN_SB_FLAG_IM = 0x01, /**< This switchboard is being used for a conversation. */
+	MSN_SB_FLAG_FT = 0x02, /**< This switchboard is being used for file transfer. */
 
 } MsnSBFlag;
 
@@ -86,6 +87,8 @@ struct _MsnSwitchBoard
 							  ready to be used. */
 	gboolean closed;		/**< A flag that states if the switchboard has
 							  been closed by the user. */
+	gboolean destroying;	/**< A flag that states if the switchboard is
+							  alredy on the process of destruction. */
 
 	int current_users;
 	int total_users;
@@ -205,6 +208,16 @@ void msn_switchboard_disconnect(MsnSwitchBoard *swboard);
  * @param swboard The switchboard to close.
  */
 void msn_switchboard_close(MsnSwitchBoard *swboard);
+
+/**
+ * Release a switchboard from a certain function.
+ *
+ * @param swboard The switchboard to release.
+ * @param flag The flag that states the function.
+ *
+ * @return @c TRUE if the switchboard was closed, @c FALSE otherwise.
+ */
+gboolean msn_switchboard_release(MsnSwitchBoard *swboard, MsnSBFlag flag);
 
 /**
  * Returns whether or not we currently can send a message through this

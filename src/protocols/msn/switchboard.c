@@ -29,6 +29,8 @@
 
 #include "error.h"
 
+/* #define MSN_DEBUG_SWBOARD */
+
 static MsnTable *cbs_table;
 
 static void msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg,
@@ -70,7 +72,16 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	MsnMessage *msg;
 	GList *l;
 
+#ifdef MSN_DEBUG_SWBOARD
+	gaim_debug_info("msn", "switchboard_destroy: swboard(%p)\n", swboard);
+#endif
+
 	g_return_if_fail(swboard != NULL);
+
+	if (swboard->destroying)
+		return;
+
+	swboard->destroying = TRUE;
 
 	/* If it linked us is because its looking for trouble */
 	if (swboard->slplink != NULL)
@@ -210,8 +221,19 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	swboard->current_users++;
 	swboard->empty = FALSE;
 
-	/* gaim_debug_info("msn", "user=[%s], total=%d\n", user,
-	 * swboard->current_users); */
+#ifdef MSN_DEBUG_CHAT
+	gaim_debug_info("msn", "user=[%s], total=%d\n", user,
+					swboard->current_users);
+#endif
+
+	if (!(swboard->flag & MSN_SB_FLAG_IM))
+	{
+		/* This is a helper switchboard. */
+		if (swboard->conv != NULL)
+			gaim_debug_error("msn", "switchboard_add_user: conv != NULL\n");
+
+		return;
+	}
 
 	if ((swboard->conv != NULL) &&
 		(gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
@@ -226,7 +248,10 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 		{
 			GList *l;
 
-			/* gaim_debug_info("msn", "[chat] Switching to chat.\n"); */
+#ifdef MSN_DEBUG_CHAT
+			gaim_debug_info("msn", "[chat] Switching to chat.\n");
+#endif
+
 #if 0
 			/* this is bad - it causes msn_switchboard_close to be called on the
 			 * switchboard we're in the middle of using :( */
@@ -247,14 +272,17 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 				tmp_user = l->data;
 
-				/* gaim_debug_info("msn", "[chat] Adding [%s].\n",
-				 * tmp_user); */
+#ifdef MSN_DEBUG_CHAT
+				gaim_debug_info("msn", "[chat] Adding [%s].\n", tmp_user);
+#endif
 
 				gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
 										tmp_user, NULL, GAIM_CBFLAGS_NONE, TRUE);
 			}
 
-			/* gaim_debug_info("msn", "[chat] We add ourselves.\n"); */
+#ifdef MSN_DEBUG_CHAT
+			gaim_debug_info("msn", "[chat] We add ourselves.\n");
+#endif
 
 			gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
 									gaim_account_get_username(account),
@@ -272,8 +300,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 	else
 	{
-		gaim_debug_warning("msn", "This should not happen!"
-						   "(msn_switchboard_add_user)\n");
+		gaim_debug_warning("msn", "switchboard_add_user: This should not happen!\n");
 	}
 }
 
@@ -356,6 +383,9 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 		msg->nak_cb(msg, msg->ack_data);
 
 	swboard = cmdproc->data;
+
+	/* This is not good, and should be fixed somewhere else. */
+	g_return_if_fail(swboard != NULL);
 
 	if (msg->type == MSN_MSG_TEXT)
 	{
@@ -613,6 +643,20 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	swboard = cmdproc->data;
 	user = cmd->params[0];
 
+#if 0
+	if (!(swboard->flag & MSN_SB_FLAG_IM))
+	{
+		/* TODO: This is a helper switchboard. It would be better if
+		 * swboard->conv is NULL, but it isn't. */
+		/* Umm? I think swboard->conv is NULL for all helper switchboards now? */
+		msn_switchboard_destroy(swboard);
+		return;
+	}
+#else
+	if (!(swboard->flag & MSN_SB_FLAG_IM))
+		gaim_debug_error("msn_switchboard", "bye_cmd: helper bug\n");
+#endif
+
 	if (swboard->conv == NULL)
 	{
 		/* This is a helper switchboard */
@@ -847,21 +891,35 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		body_final = body_enc;
 	}
 
+	swboard->flag |= MSN_SB_FLAG_IM;
+
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&
 		 gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
 	{
+		/* If current_users is always ok as it should then there is no need to
+		 * check if this is a chat. */
+		if (swboard->current_users <= 1)
+			gaim_debug_misc("msn", "plain_msg: current_users(%d)\n",
+							swboard->current_users);
+
 		serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
 						 time(NULL));
 		if (swboard->conv == NULL)
+		{
 			swboard->conv = gaim_find_chat(gc, swboard->chat_id);
+			swboard->flag |= MSN_SB_FLAG_IM;
+		}
 	}
 	else
 	{
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
 		if (swboard->conv == NULL)
+		{
 			swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_IM,
 									passport, gaim_connection_get_account(gc));
+			swboard->flag |= MSN_SB_FLAG_IM;
+		}
 	}
 
 	g_free(body_final);
@@ -1101,9 +1159,6 @@ msn_switchboard_close(MsnSwitchBoard *swboard)
 {
 	g_return_if_fail(swboard != NULL);
 
-	 /* forget any conversation that used to be associated with this swboard */
-	swboard->conv = NULL;
-
 	if (swboard->error != MSN_SB_ERROR_NONE)
 	{
 		msn_switchboard_destroy(swboard);
@@ -1121,6 +1176,27 @@ msn_switchboard_close(MsnSwitchBoard *swboard)
 	{
 		swboard->closed = TRUE;
 	}
+}
+
+gboolean
+msn_switchboard_release(MsnSwitchBoard *swboard, MsnSBFlag flag)
+{
+	g_return_val_if_fail(swboard != NULL, FALSE);
+
+	swboard->flag &= ~flag;
+
+	if (flag == MSN_SB_FLAG_IM)
+		/* Forget any conversation that used to be associated with this
+		 * swboard. */
+		swboard->conv = NULL;
+
+	if (swboard->flag == 0)
+	{
+		msn_switchboard_close(swboard);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /**************************************************************************

@@ -208,7 +208,8 @@ msn_session_find_swboard_with_id(const MsnSession *session, int chat_id)
 }
 
 MsnSwitchBoard *
-msn_session_get_swboard(MsnSession *session, const char *username)
+msn_session_get_swboard(MsnSession *session, const char *username,
+						MsnSBFlag flag)
 {
 	MsnSwitchBoard *swboard;
 
@@ -221,6 +222,8 @@ msn_session_get_swboard(MsnSession *session, const char *username)
 		msn_switchboard_request(swboard);
 		msn_switchboard_request_add_user(swboard, username);
 	}
+
+	swboard->flag |= flag;
 
 	return swboard;
 }

@@ -338,6 +338,7 @@ initiate_chat_cb(GaimBlistNode *node, gpointer data)
 	/* TODO: This might move somewhere else, after USR might be */
 	swboard->chat_id = session->conv_seq++;
 	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
+	swboard->flag = MSN_SB_FLAG_IM;
 
 	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
 							gaim_account_get_username(buddy->account), NULL, GAIM_CBFLAGS_NONE, TRUE);
@@ -738,7 +739,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		MsnSwitchBoard *swboard;
 
 		session = gc->proto_data;
-		swboard = msn_session_get_swboard(session, who);
+		swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
 
 		msn_switchboard_send_msg(swboard, msg, TRUE);
 	}
@@ -798,6 +799,8 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 
 	if (swboard == NULL || !msn_switchboard_can_send(swboard))
 		return 0;
+
+	swboard->flag |= MSN_SB_FLAG_IM;
 
 	msg = msn_message_new(MSN_MSG_TYPING);
 	msn_message_set_content_type(msg, "text/x-msmsgscontrol");
@@ -1096,6 +1099,8 @@ msn_chat_invite(GaimConnection *gc, int id, const char *msg,
 		swboard->conv = gaim_find_chat(gc, id);
 	}
 
+	swboard->flag |= MSN_SB_FLAG_IM;
+
 	msn_switchboard_request_add_user(swboard, who);
 }
 
@@ -1116,7 +1121,7 @@ msn_chat_leave(GaimConnection *gc, int id)
 
 	conv = swboard->conv;
 
-	msn_switchboard_close(swboard);
+	msn_switchboard_release(swboard, MSN_SB_FLAG_IM);
 
 	/* If other switchboards managed to associate themselves with this
 	 * conv, make sure they know it's gone! */
@@ -1146,6 +1151,8 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 
 	if (!swboard->ready)
 		return 0;
+
+	swboard->flag |= MSN_SB_FLAG_IM;
 
 	msn_import_html(message, &msgformat, &msgtext);
 
@@ -1248,10 +1255,7 @@ msn_convo_closed(GaimConnection *gc, const char *who)
 
 	conv = swboard->conv;
 
-	if (!(swboard->flag & MSN_SB_FLAG_FT))
-		msn_switchboard_close(swboard);
-	else
-		swboard->conv = NULL;
+	msn_switchboard_release(swboard, MSN_SB_FLAG_IM);
 
 	/* If other switchboards managed to associate themselves with this
 	 * conv, make sure they know it's gone! */

@@ -192,11 +192,12 @@ MsnSwitchBoard *msn_session_find_swboard_with_id(const MsnSession *session,
  *
  * @param session The MSN session.
  * @param username The username to search for.
+ * @param flag The flag of the switchboard
  *
  * @return The switchboard.
  */
 MsnSwitchBoard *msn_session_get_swboard(MsnSession *session,
-										const char *username);
+										const char *username, MsnSBFlag flag);
 
 /**
  * Sets an error for the MSN session.

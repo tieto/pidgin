@@ -67,6 +67,10 @@ msn_slplink_new(MsnSession *session, const char *username)
 
 	slplink = g_new0(MsnSlpLink, 1);
 
+#ifdef MSN_DEBUG_SLPLINK
+	gaim_debug_info("msn", "slplink_new: slplink(%p)\n", slplink);
+#endif
+
 	slplink->session = session;
 	slplink->slp_seq_id = rand() % 0xFFFFFF00 + 4;
 
@@ -85,6 +89,10 @@ void
 msn_slplink_destroy(MsnSlpLink *slplink)
 {
 	MsnSession *session;
+
+#ifdef MSN_DEBUG_SLPLINK
+	gaim_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
+#endif
 
 	g_return_if_fail(slplink != NULL);
 
@@ -173,11 +181,18 @@ msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
 	slplink->slp_calls = g_list_remove(slplink->slp_calls, slpcall);
 
-	/* The slplink has no slpcalls in it, maybe we should destroy it. */
+	/* The slplink has no slpcalls in it. If no one is using it, we might
+	 * destroy the switchboard, but we should be careful not to use the slplink
+	 * again. */
 	if (slplink->slp_calls == NULL)
 	{
 		if (slplink->swboard != NULL)
-			slplink->swboard->flag &= ~MSN_SB_FLAG_FT;
+		{
+			if (msn_switchboard_release(slplink->swboard, MSN_SB_FLAG_FT))
+				/* I'm not sure this is the best thing to do, but it's better
+				 * than nothing. */
+				slpcall->slplink = NULL;
+		}
 	}
 }
 
@@ -230,7 +245,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		if (slplink->swboard == NULL)
 		{
 			slplink->swboard = msn_session_get_swboard(slplink->session,
-													   slplink->remote_user);
+													   slplink->remote_user, MSN_SB_FLAG_FT);
 
 			if (slplink->swboard == NULL)
 				return;

@@ -27,6 +27,8 @@
 
 #include "slp.h"
 
+/* #define MSN_DEBUG_SLPCALL */
+
 /**************************************************************************
  * Util
  **************************************************************************/
@@ -58,6 +60,10 @@ msn_slp_call_new(MsnSlpLink *slplink)
 
 	slpcall = g_new0(MsnSlpCall, 1);
 
+#ifdef MSN_DEBUG_SLPCALL
+	gaim_debug_info("msn", "slpcall_new: slpcall(%p)\n", slpcall);
+#endif
+
 	slpcall->slplink = slplink;
 
 	msn_slplink_add_slpcall(slplink, slpcall);
@@ -71,6 +77,10 @@ void
 msn_slp_call_destroy(MsnSlpCall *slpcall)
 {
 	GList *e;
+
+#ifdef MSN_DEBUG_SLPCALL
+	gaim_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
+#endif
 
 	g_return_if_fail(slpcall != NULL);
 
@@ -86,17 +96,13 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 	if (slpcall->data_info != NULL)
 		g_free(slpcall->data_info);
 
-	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
-
 	for (e = slpcall->slplink->slp_msgs; e != NULL; )
 	{
 		MsnSlpMessage *slpmsg = e->data;
 		e = e->next;
 
-		g_return_if_fail(slpmsg != NULL);
-
-#if 0
-		gaim_debug_info("msn", "slpcall destroy: trying slp_msg (%p)\n",
+#ifdef MSN_DEBUG_SLPCALL_VERBOSE
+		gaim_debug_info("msn", "slpcall_destroy: trying slpmsg(%p)\n",
 						slpmsg);
 #endif
 
@@ -105,6 +111,8 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 			msn_slpmsg_destroy(slpmsg);
 		}
 	}
+
+	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
 
 	if (slpcall->end_cb != NULL)
 		slpcall->end_cb(slpcall);
@@ -164,6 +172,7 @@ msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
 
 	slpmsg = msn_slpmsg_sip_new(slpcall, 0, header, slpcall->branch,
 								"application/x-msnmsgr-sessionreqbody", content);
+
 #ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP INVITE";
 	slpmsg->text_body = TRUE;
@@ -193,7 +202,9 @@ msn_slp_call_timeout(gpointer data)
 
 	slpcall = data;
 
-	gaim_debug_info("msn", "slpcall timeout (%p)\n", slpcall);
+#ifdef MSN_DEBUG_SLPCALL
+	gaim_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
+#endif
 
 	if (!slpcall->pending && !slpcall->progress)
 	{
@@ -231,12 +242,6 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 				gaim_timeout_remove(slpcall->timer);
 
 			slpcall->cb(slpcall, body, body_len);
-
-			/* TODO: Shall we send a BYE? I don't think so*/
-#if 0
-			send_bye(slpcall, "application/x-msnmsgr-sessionclosebody");
-			msn_slplink_unleash(slpcall->slplink);
-#endif
 
 			slpcall->wasted = TRUE;
 		}
