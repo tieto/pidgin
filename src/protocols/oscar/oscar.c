@@ -3767,7 +3767,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		return 0;
 
 	g_snprintf(who, sizeof(who), "%lu", info->uin);
-	buf = g_strdup_printf(_("<b>UIN:</b> %s"), who);
+	buf = g_strdup_printf("<b>%s</b> %s", _("UIN:"), who);
 	if (info->nick && info->nick[0] && (utf8 = gaim_try_conv_to_utf8(info->nick))) {
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>", _("Nick:"), "</b> ", utf8, NULL);  g_free(tmp); g_free(utf8);
 	}
@@ -3873,7 +3873,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	struct gaim_connection *gc = sess->aux_data;
-	gchar who[16];
+	gchar who[16], *utf8;
 	struct buddy *b;
 	va_list ap;
 	struct aim_icq_info *info;
@@ -3882,13 +3882,14 @@ static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
 
-	if (info->uin && info->nick && info->nick[0]) {
+	if (info->uin && info->nick && info->nick[0] && (utf8 = gaim_try_conv_to_utf8(utf8))) {
 		g_snprintf(who, sizeof(who), "%lu", info->uin);
-		serv_got_alias(gc, who, info->nick);
+		serv_got_alias(gc, who, utf8);
 		if ((b = gaim_find_buddy(gc->account, who))) {
-			gaim_buddy_set_setting(b, "servernick", info->nick);
+			gaim_buddy_set_setting(b, "servernick", utf8);
 			gaim_blist_save();
 		}
+		g_free(utf8);
 	}
 
 	return 1;
