@@ -4,8 +4,6 @@
 #include "debug.h"
 #include "prpl.h"
 
-#include "gaim.h"
-
 #define AUTORECON_PLUGIN_ID "core-autorecon"
 
 #define INITIAL 8000

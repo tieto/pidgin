@@ -12,8 +12,6 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
-#include "gaim.h"
-
 #define TIMESTAMP_PLUGIN_ID "gtk-timestamp"
 
 //Set the default to 5 minutes.

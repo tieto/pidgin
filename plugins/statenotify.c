@@ -4,8 +4,6 @@
 #include "conversation.h"
 #include "debug.h"
 
-#include "gaim.h"
-
 static void
 write_status(GaimConnection *gc, char *who, const char *message)
 {

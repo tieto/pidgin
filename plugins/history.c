@@ -12,8 +12,6 @@
 #include "gtkimhtml.h"
 #include "gtkplugin.h"
 
-#include "gaim.h"
-
 #define HISTORY_PLUGIN_ID "core-history"
 
 #define HISTORY_SIZE (4 * 1024)

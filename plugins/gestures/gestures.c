@@ -27,8 +27,6 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
-#include "gaim.h"
-
 #include "gstroke.h"
 
 #define GESTURES_PLUGIN_ID "gtk-gestures"

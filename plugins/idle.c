@@ -12,8 +12,6 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
-#include "gaim.h"
-
 #define IDLE_PLUGIN_ID "gtk-idle"
 
 static GaimConnection *gc = NULL;

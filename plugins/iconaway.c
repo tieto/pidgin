@@ -5,8 +5,6 @@
 #include "gtkconv.h"
 #include "gtkplugin.h"
 
-#include "gaim.h"
-
 #define ICONAWAY_PLUGIN_ID "gtk-iconaway"
 
 G_MODULE_IMPORT GtkWidget *imaway;

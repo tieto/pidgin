@@ -31,8 +31,6 @@
 #include "gtkblist.h"
 #include "gtkplugin.h"
 
-#include "gaim.h"
-
 #include "gtkticker.h"
 
 #define TICKER_PLUGIN_ID "gtk-ticker"

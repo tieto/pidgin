@@ -42,7 +42,7 @@
 
 #include <gaim-remote/remote.h>
 
-#define REMOTE_PLUGIN_ID "core-remote"
+#define REMOTE_PLUGIN_ID "gtk-remote"
 
 struct UI {
 	GIOChannel *channel;

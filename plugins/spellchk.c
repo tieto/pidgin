@@ -16,8 +16,6 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
-#include "gaim.h"
-
 #define SPELLCHECK_PLUGIN_ID "gtk-spellcheck"
 
 enum {

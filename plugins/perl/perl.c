@@ -85,7 +85,6 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "server.h"
 #include "sound.h"
 
-#include "gaim.h"
 #include "ui.h"
 
 #ifndef call_pv
