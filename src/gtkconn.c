@@ -45,13 +45,25 @@ struct meter_window {
 		GSList *meters;
 } *meter_win = NULL;
 
+static void kill_meter(struct signon_meter *meter, const char *text);
+
 static void cancel_signon(GtkWidget *button, struct signon_meter *meter)
 {
-	if (meter->account->gc == NULL)
-		return;
+	if (meter->account->gc != NULL) {
+		meter->account->gc->wants_to_die = TRUE;
+		gaim_connection_destroy(meter->account->gc);
+	}
+	else {
+		kill_meter(meter, _("Done."));
 
-	meter->account->gc->wants_to_die = TRUE;
-	gaim_connection_destroy(meter->account->gc);
+		if (gaim_connections_get_all() == NULL) {
+			destroy_all_dialogs();
+
+			gaim_blist_destroy();
+
+			show_login();
+		}
+	}
 }
 
 static void cancel_all () {
