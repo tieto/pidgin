@@ -112,6 +112,8 @@ rm -r $RPM_BUILD_ROOT
 - Perl scripts can play Gaim sounds (thanks Andrew Rodland)
 - Internal sounds can be played by commands (thanks Lex Spoon)
 - Auto-login item in applet menu (thanks Chris Boyle)
+- Fixed MSN "Unkown Error Code", "Already there", and "Already in opposite list" errors
+- Changed "Play sound" button to "Mute" button
 
 * Mon May 13 2002 Rob Flynn <rob@marko.net> (0.58 release)
 - Bulgarian translation added (Thanks, Igel Itzo)
