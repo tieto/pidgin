@@ -13,7 +13,7 @@ if PLUGINS
 
 plugindir = $(libdir)/gaim
 
-plugin_DATA = autorecon.so chatlist.so iconaway.so notify.so spellchk.so history.so timestamp.so idle.c
+plugin_DATA = autorecon.so chatlist.so iconaway.so notify.so spellchk.so history.so timestamp.so idle.so
 
 $(plugin_DATA): $(top_srcdir)/src/gaim.h
 
