@@ -4,6 +4,8 @@ Sun May 28 21:33:43 UTC 2000 EWarmenhoven
 	  working before, and so now you can receive messages a lot faster, I
 	  hope.
 	- Chat still isn't working, and I don't know why.
+	- It no longer has me as one of your buddies, and no longer sets your
+	  profile when you don't have one to 'Hello'.
 
 Fri May 26 22:56:00 UTC 2000 EWarmenhoven
 	- Adam explained to me everything I was doing wrong, ridiculed me a bit,
@@ -13,6 +15,7 @@ Fri May 26 22:56:00 UTC 2000 EWarmenhoven
 	- Changed aim_txqueue.c in libfaim to flush the queue after something
 	  was enqueue'd, per Adam's suggestion. This is the only real change I
 	  have made to libfaim in order to get it to work with gaim.
+	- Commented out the permit/deny list stuff (again).
 
 Thu May 25 07:10:34 UTC 2000 EWarmenhoven
 	- Changed around aim.c a bit so that the registering of sounds and

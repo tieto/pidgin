@@ -300,8 +300,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	char *ip;
 	char *cookie;
 
-	char buddies[] = "EWarmenhoven&";
-	char profile[] = "Hello";
+	char buddies[BUF_LONG];
 
 	va_start(ap, command);
 	serviceid = va_arg(ap, int);
@@ -310,9 +309,10 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 
 	switch(serviceid) {
 	case 0x0005: /* Ads */
+		sprintf(buddies, "%s&", current_user->username);
 		aim_bos_setbuddylist(sess, command->conn, buddies);
-		aim_bos_setprofile(sess, command->conn, profile, NULL,
-					gaim_caps);
+		aim_bos_setprofile(sess, command->conn, current_user->user_info,
+					NULL, gaim_caps);
 		
 		aim_seticbmparam(sess, command->conn);
 
