@@ -109,7 +109,7 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 static void
 gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 {
-	char *text;
+	char *text, *title;
 	char aa_color[8];
 	GdkPixbuf *pixbuf;
 
@@ -118,25 +118,29 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		 style->text_aa[GTK_STATE_NORMAL].red >> 8,
 		 style->text_aa[GTK_STATE_NORMAL].green >> 8,
 		 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
-	
+
+	title = status_box->title;
+	if (!title)
+		title = "";
+
 	if (status_box->error) {
 		text = g_strdup_printf("%s\n<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>", 
-				       status_box->title, status_box->error);
+				       title, status_box->error);
 	} else if (status_box->typing) {
 		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>", 
-					       status_box->title, 
+					       title, 
 					       aa_color,
 					       _("Typing"));
 	} else if (status_box->connecting) {
 		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>", 
-				       status_box->title, 
+				       title, 
 				       aa_color,
 				       _("Connecting"));
        	} else if (status_box->desc) {
 		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>", 
-				       status_box->title, aa_color, status_box->desc);
+				       title, aa_color, status_box->desc);
 	} else {
-		text = g_strdup_printf("%s", status_box->title);
+		text = g_strdup_printf("%s", title);
 	}
 		
 	if (status_box->error) 
@@ -151,7 +155,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	gtk_list_store_set(status_box->store, &(status_box->iter),
 			   ICON_COLUMN, pixbuf,
 			   TEXT_COLUMN, text, 
-			   TITLE_COLUMN, status_box->title,
+			   TITLE_COLUMN, title,
 			   DESC_COLUMN, status_box->desc, 
 			   TYPE_COLUMN, NULL, -1);
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), gtk_tree_path_new_from_string("0"));
