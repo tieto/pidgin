@@ -317,7 +317,7 @@ gaim_mime_decode_field(const char *str)
 	const char *charset0 = NULL, *encoding0 = NULL, *encoded_text0 = NULL;
 	char *n, *new;
 
-	/* token can be any CHAR, not necessarily ASCII */
+	/* token can be any CHAR (supposedly ISO8859-1/ISO2022), not just ASCII */
 	#define token_char_p(c) \
 		(c != ' ' && !iscntrl(c) && !strchr("()<>@,;:\"/[]?.=", c))
 
@@ -328,7 +328,12 @@ gaim_mime_decode_field(const char *str)
 	#define RECOVER_MARKED_TEXT strncpy(n, mark, cur - mark + 1); \
 		n += cur - mark + 1
 
-	/* NOTE: Assuming that we need just strlen(str)+1 may be wrong */
+	g_return_val_if_fail(str != NULL, NULL);
+
+	/* NOTE: Assuming that we need just strlen(str)+1 *may* be wrong.
+	 * It would be wrong if one byte (in some unknown encoding) could
+	 * expand to >=4 bytes of UTF-8; I don't know if there are such things.
+	 */
 	n = new = g_malloc(strlen(str) + 1);
 
 	/* Here we will be looking for encoded words and if they seem to be
@@ -358,7 +363,7 @@ gaim_mime_decode_field(const char *str)
 		case state_charset:
 			if (*cur == '?') {
 				state = state_question2;
-			} else if (!token_char_p(*cur)) {
+			} else if (!token_char_p(*cur)) { /* This should never happen */
 				RECOVER_MARKED_TEXT;
 				state = state_start;
 			}
@@ -375,7 +380,7 @@ gaim_mime_decode_field(const char *str)
 		case state_encoding:
 			if (*cur == '?') {
 				state = state_question3;
-			} else if (!token_char_p(*cur)) {
+			} else if (!token_char_p(*cur)) { /* This should never happen */
 				RECOVER_MARKED_TEXT;
 				state = state_start;
 			}
@@ -384,6 +389,9 @@ gaim_mime_decode_field(const char *str)
 			if (encoded_text_char_p(*cur)) {
 				encoded_text0 = cur;
 				state = state_encoded_text;
+			} else if (*cur == '?') { /* empty string */
+				encoded_text0 = cur;
+				state = state_question4;
 			} else { /* This should never happen */
 				RECOVER_MARKED_TEXT;
 				state = state_start;
