@@ -357,8 +357,8 @@ void build_prefs()
 	if (!pd)
                 pd = g_new0(struct prefs_data, 1);
 
-	pd->window = gtk_window_new(GTK_WINDOW_DIALOG);
-        gtk_widget_realize(pd->window);
+	pd->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_widget_realize(pd->window);
 	aol_icon(pd->window->window);
 	gtk_container_border_width(GTK_CONTAINER(pd->window), 10);
 	gtk_window_set_title(GTK_WINDOW(pd->window), _("Gaim - Preferences"));
