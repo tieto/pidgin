@@ -1328,7 +1328,7 @@ GtkWidget *logging_page() {
 				  "/gaim/gtk/logging/log_ims", vbox);
 	prefs_checkbox(_("Log all c_hats"),
 				  "/gaim/gtk/logging/log_chats", vbox);
-
+/*
 	vbox = gaim_gtk_make_frame (ret, _("System Logs"));
 	prefs_checkbox(_("Log when buddies _sign on/sign off"),
 				   "/gaim/gtk/logging/log_signon_signoff", vbox);
@@ -1340,7 +1340,7 @@ GtkWidget *logging_page() {
 				   "/gaim/gtk/logging/log_own_states", vbox);
 	prefs_checkbox(_("I_ndividual log file for each buddy's signons"),
 				   "/gaim/gtk/logging/individual_logs", vbox);
-
+*/
 	gtk_widget_show_all(ret);
 	return ret;
 }

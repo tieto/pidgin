@@ -807,7 +807,8 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	conv->history      = g_string_new("");
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
-	conv->log          = gaim_log_new(GAIM_LOG_IM, name, account, time(NULL));
+	conv->log          = gaim_log_new(type == GAIM_CONV_IM ? GAIM_LOG_IM :
+					  type == GAIM_CONV_CHAT ? GAIM_LOG_CHAT : GAIM_LOG_IM, name, account, time(NULL));
 
 
 	if (type == GAIM_CONV_IM)

@@ -65,7 +65,9 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 	g_return_if_fail(log->logger);
 	g_return_if_fail(log->logger->write);
 
-	(log->logger->write)(log, type, from, time, message);
+	if ( (gaim_prefs_get_bool("/gaim/gtk/logging/log_chats") && log->type == GAIM_LOG_CHAT) || 
+	     (gaim_prefs_get_bool("/gaim/gtk/logging/log_ims") && log->type == GAIM_LOG_IM))
+		(log->logger->write)(log, type, from, time, message);
 }
 
 char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)
@@ -191,6 +193,8 @@ GList *gaim_log_get_logs(const char *name, GaimAccount *account)
 void gaim_log_init(void)
 {
 	gaim_prefs_add_none("/core/logging");
+	gaim_prefs_add_bool("/gaim/gtk/logging/log_ims", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/logging/log_chats", FALSE);
 	gaim_prefs_add_string("/core/logging/format", "txt");
 	gaim_log_logger_add(&html_logger);
 	gaim_log_logger_add(&txt_logger);
@@ -390,11 +394,18 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		/* This log is new */
 		char *ud = gaim_user_dir();
 		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
+		char *chat;
 		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
 			(gaim_find_prpl(gaim_account_get_protocol(log->account)))->list_icon(log->account, NULL);
 		char *dir;
 		char *filename;
 		FILE *file;
+
+		if (log->type == GAIM_LOG_CHAT) {
+			chat = g_strdup_printf("%s.chat", guy);
+			g_free(guy);
+			guy = chat;
+		}
 
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.html", localtime(&log->time));
 
@@ -519,11 +530,17 @@ static void txt_logger_write(GaimLog *log,
 		char *ud = gaim_user_dir();
 		char *filename;
 		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
+		char *chat;
 		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
 			(gaim_find_prpl(gaim_account_get_protocol(log->account)))->list_icon(log->account, NULL);
 		char *dir;
 		FILE *file;
 
+		if (log->type == GAIM_LOG_CHAT) {
+			chat = g_strdup_printf("%s.chat", guy);
+			g_free(guy);
+			guy = chat;
+		}
 		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.txt", localtime(&log->time));
 
 		dir = g_build_filename(ud, "logs", NULL);
