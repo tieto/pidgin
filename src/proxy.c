@@ -623,6 +623,7 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 
 	ret = getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len);
 	if (ret < 0 || error != 0) {
+		if(ret==0) errno = error;
 		close(source);
 		gaim_input_remove(phb->inpa);
 		if(!phb->account || phb->account->gc)
@@ -631,8 +632,7 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 		g_free(phb);
 
 		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
-				   "getsockopt SO_ERROR check: %s\n",
-				   strerror((ret < 0) ? errno : error));
+			   "getsockopt SO_ERROR check: %s\n", strerror(errno));
 		return;
 	}
 	fcntl(source, F_SETFL, 0);
