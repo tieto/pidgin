@@ -90,7 +90,7 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 
 	if (msg->size != strlen(strchr(str, '\n') + 1)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "msn",
-				   "Message size (%d) and string length (%d) "
+				   "Incoming message size (%d) and string length (%d) "
 				   "do not match!\n", msg->size, strlen(str));
 	}
 
@@ -110,8 +110,6 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 	if (msg->incoming) {
 		msg->sender = msn_users_find_with_passport(session->users, field1);
 
-		gaim_debug(GAIM_DEBUG_MISC, "msn", "incoming message: %s, %s\n",
-				   field1, field2);
 		if (msg->sender == NULL)
 			msg->sender = msn_user_new(session, field1, field2);
 		else
@@ -196,6 +194,7 @@ char *
 msn_message_build_string(const MsnMessage *msg)
 {
 	GList *l;
+	char *msg_start;
 	char *str;
 	char buf[MSN_BUF_LEN];
 	int len;
@@ -230,6 +229,8 @@ msn_message_build_string(const MsnMessage *msg)
 
 	g_strlcpy(str, buf, len);
 
+	msg_start = str + strlen(str);
+
 	/* Standard header. */
 	if (msg->charset == NULL) {
 		g_snprintf(buf, sizeof(buf),
@@ -260,6 +261,12 @@ msn_message_build_string(const MsnMessage *msg)
 	g_snprintf(buf, sizeof(buf), "\r\n%s", msn_message_get_body(msg));
 
 	g_strlcat(str, buf, len);
+
+	if (msg->size != strlen(msg_start)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "msn",
+				   "Outgoing message size (%d) and string length (%d) "
+				   "do not match!\n", msg->size, strlen(msg_start));
+	}
 
 	return str;
 }
@@ -442,6 +449,8 @@ msn_message_set_attr(MsnMessage *msg, const char *attr, const char *value)
 		if (temp != NULL) {
 			GList *l;
 
+			msg->size -= strlen(temp) + strlen(attr) + 4;
+
 			for (l = msg->attr_list; l != NULL; l = l->next) {
 				if (!g_ascii_strcasecmp(l->data, attr)) {
 					msg->attr_list = g_list_remove(msg->attr_list, l->data);
@@ -451,8 +460,6 @@ msn_message_set_attr(MsnMessage *msg, const char *attr, const char *value)
 			}
 
 			g_hash_table_remove(msg->attr_table, attr);
-
-			msg->size -= strlen(temp) + strlen(attr) + 4;
 		}
 
 		return;
