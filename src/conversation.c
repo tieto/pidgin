@@ -420,15 +420,16 @@ static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation
 void add_callback(GtkWidget *widget, struct conversation *c)
 {
 	if (find_buddy(c->name) != NULL) {
+		gboolean dispstyle = (display_options & OPT_DISP_CONV_SHOW_TEXT) ? TRUE : FALSE;
 		GtkWidget *parent = c->add_button->parent;
 		sprintf(debug_buff,_("Removing '%s' from buddylist.\n"), c->name);
 		debug_print(debug_buff);
 		remove_buddy(find_group_by_buddy(c->name), find_buddy(c->name));
 		build_edit_tree();
 		gtk_widget_destroy(c->add_button);
-		c->add_button = picture_button2(c->window, _("Add"), gnome_add_xpm, display_options & OPT_DISP_CONV_SHOW_TEXT);
+		c->add_button = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
 		gtk_signal_connect(GTK_OBJECT(c->add_button), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-		gtk_box_pack_end(GTK_BOX(parent), c->add_button, FALSE, FALSE, 0);
+		gtk_box_pack_end(GTK_BOX(parent), c->add_button, dispstyle, dispstyle, 0);
 		gtk_box_reorder_child(GTK_BOX(parent), c->add_button, 1);
 		gtk_widget_show(c->add_button);
 	}
