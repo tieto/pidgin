@@ -1699,6 +1699,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	if ((c->is_chat && (chat_options & OPT_CHAT_POPUP)) ||
 	    (!c->is_chat && (im_options & OPT_IM_POPUP)))
 		gdk_window_show(c->window->window);
+	if (flags & WFLAG_RECV)
+		reset_typing(g_strdup(c->name));
 
 	/* tab highlighting */
 	if (c->is_chat && !(chat_options & OPT_CHAT_ONE_WINDOW)) /* if chat but not tabbed chat */
@@ -1737,7 +1739,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		GList *ws = (c->is_chat ? chats : conversations);
 		GtkWidget *label = gtk_notebook_get_tab_label(notebook,
 							      gtk_notebook_get_nth_page(notebook,
-								      offs + g_list_index(ws, c)));
+											offs + g_list_index(ws, c)));
 		GtkStyle *style;
 		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
@@ -1760,8 +1762,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		gtk_widget_set_style(label, style);
 		gtk_style_unref(style);
 	}
-	if (flags & WFLAG_RECV)
-		reset_typing(g_strdup(c->name));
 }
 
 void update_progress(struct conversation *c, float percent) {
