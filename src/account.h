@@ -162,6 +162,17 @@ void gaim_account_set_remember_password(GaimAccount *account, gboolean value);
 void gaim_account_set_check_mail(GaimAccount *account, gboolean value);
 
 /**
+ * Sets whether or not this account should auto-login for the specified
+ * UI.
+ *
+ * @param account The account.
+ * @param ui      The UI.
+ * @param value   @c TRUE if it should check for mail.
+ */
+void gaim_account_set_auto_login(GaimAccount *account, const char *ui,
+								 gboolean value);
+
+/**
  * Sets the account's proxy information.
  * 
  * @param account The account.
@@ -329,6 +340,18 @@ gboolean gaim_account_get_remember_password(const GaimAccount *account);
 gboolean gaim_account_get_check_mail(const GaimAccount *account);
 
 /**
+ * Returns whether or not this account should auto-login for the
+ * specified UI.
+ *
+ * @param account The account.
+ * @param ui      The UI.
+ *
+ * @return @c TRUE if it should auto-login on this UI.
+ */
+gboolean gaim_account_get_auto_login(const GaimAccount *account,
+									 const char *ui);
+
+/**
  * Returns the account's proxy information.
  *
  * @param account The account.
@@ -437,6 +460,13 @@ void gaim_accounts_add(GaimAccount *account);
  * @param account The account.
  */
 void gaim_accounts_remove(GaimAccount *account);
+
+/**
+ * Auto-logins to all accounts set to auto-login under the specified UI.
+ *
+ * @param ui The UI.
+ */
+void gaim_accounts_auto_login(const char *ui);
 
 /**
  * Reorders an account.

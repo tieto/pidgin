@@ -45,8 +45,8 @@
 enum
 {
 	COLUMN_ICON,
-	COLUMN_PROTOCOL,
 	COLUMN_SCREENNAME,
+	COLUMN_PROTOCOL,
 	COLUMN_ONLINE,
 	COLUMN_AUTOLOGIN,
 	COLUMN_DATA,
@@ -1380,7 +1380,23 @@ static void
 autologin_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 			   gpointer data)
 {
-	
+	AccountsDialog *dialog = (AccountsDialog *)data;
+	GaimAccount *account;
+	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
+	GtkTreeIter iter;
+	gboolean autologin;
+
+	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
+	gtk_tree_model_get(model, &iter,
+					   COLUMN_DATA, &account,
+					   COLUMN_AUTOLOGIN, &autologin,
+					   -1);
+
+	gaim_account_set_auto_login(account, GAIM_GTK_UI, !autologin);
+
+	gtk_list_store_set(dialog->model, &iter,
+					   COLUMN_AUTOLOGIN, !autologin,
+					   -1);
 }
 
 static void
@@ -1389,18 +1405,18 @@ add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 
-	/* Protocol */
+	/* Screen name column */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Screenname"));
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 
-	/* Icon text */
+	/* Icon */
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_add_attribute(column, renderer,
 					   "pixbuf", COLUMN_ICON);
 
-	/* Screennames */
+	/* Screen name */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer,
@@ -1456,11 +1472,15 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 	if (pixbuf != NULL)
 		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
 
+	gaim_debug(GAIM_DEBUG_MISC, "gtkaccount", "auto-login for %s: %d\n",
+			   gaim_account_get_username(account),
+			   gaim_account_get_auto_login(account, GAIM_GTK_UI));
+
 	gtk_list_store_set(store, iter,
 			COLUMN_ICON, scale,
 			COLUMN_SCREENNAME, gaim_account_get_username(account),
 			COLUMN_ONLINE, gaim_account_is_connected(account),
-			COLUMN_AUTOLOGIN, FALSE,
+			COLUMN_AUTOLOGIN, gaim_account_get_auto_login(account, GAIM_GTK_UI),
 			COLUMN_PROTOCOL, proto_name(gaim_account_get_protocol(account)),
 			COLUMN_DATA, account,
 			-1);
@@ -1542,9 +1562,9 @@ create_accounts_list(AccountsDialog *dialog)
 	/* Setup DND. I wanna be an orc! */
 	gtk_tree_view_enable_model_drag_source(
 			GTK_TREE_VIEW(treeview), GDK_BUTTON1_MASK, gte,
-			2, GDK_ACTION_COPY);
+			1, GDK_ACTION_COPY);
 	gtk_tree_view_enable_model_drag_dest(
-			GTK_TREE_VIEW(treeview), gte, 2,
+			GTK_TREE_VIEW(treeview), gte, 1,
 			GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
 	g_signal_connect(G_OBJECT(treeview), "drag-data-received",

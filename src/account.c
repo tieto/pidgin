@@ -136,9 +136,8 @@ gaim_account_new(const char *username, GaimProtocol protocol)
 
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 											  g_free, __delete_setting);
-
 	account->ui_settings = g_hash_table_new_full(g_str_hash, g_str_equal,
-												 g_free, __delete_setting);
+				g_free, (GDestroyNotify)g_hash_table_destroy);
 
 	return account;
 }
@@ -158,6 +157,7 @@ gaim_account_destroy(GaimAccount *account)
 	if (account->protocol_id != NULL) g_free(account->protocol_id);
 
 	g_hash_table_destroy(account->settings);
+	g_hash_table_destroy(account->ui_settings);
 
 	g_free(account);
 }
@@ -303,6 +303,16 @@ gaim_account_set_check_mail(GaimAccount *account, gboolean value)
 }
 
 void
+gaim_account_set_auto_login(GaimAccount *account, const char *ui,
+							gboolean value)
+{
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(ui      != NULL);
+
+	gaim_account_set_ui_bool(account, ui, "auto-login", value);
+}
+
+void
 gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info)
 {
 	g_return_if_fail(account != NULL);
@@ -381,11 +391,28 @@ gaim_account_set_bool(GaimAccount *account, const char *name, gboolean value)
 	schedule_accounts_save();
 }
 
+static GHashTable *
+_get_ui_settings_table(GaimAccount *account, const char *ui)
+{
+	GHashTable *table;
+
+	table = g_hash_table_lookup(account->ui_settings, ui);
+	
+	if (table == NULL) {
+		table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+									  __delete_setting);
+		g_hash_table_insert(account->ui_settings, g_strdup(ui), table);
+	}
+
+	return table;
+}
+
 void
 gaim_account_set_ui_int(GaimAccount *account, const char *ui,
 						const char *name, int value)
 {
 	GaimAccountSetting *setting;
+	GHashTable *table;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(ui      != NULL);
@@ -397,7 +424,9 @@ gaim_account_set_ui_int(GaimAccount *account, const char *ui,
 	setting->ui            = g_strdup(ui);
 	setting->value.integer = value;
 
-	g_hash_table_insert(account->ui_settings, g_strdup(name), setting);
+	table = _get_ui_settings_table(account, ui);
+
+	g_hash_table_insert(table, g_strdup(name), setting);
 
 	schedule_accounts_save();
 }
@@ -407,6 +436,7 @@ gaim_account_set_ui_string(GaimAccount *account, const char *ui,
 						   const char *name, const char *value)
 {
 	GaimAccountSetting *setting;
+	GHashTable *table;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(ui      != NULL);
@@ -418,7 +448,9 @@ gaim_account_set_ui_string(GaimAccount *account, const char *ui,
 	setting->ui           = g_strdup(ui);
 	setting->value.string = g_strdup(value);
 
-	g_hash_table_insert(account->ui_settings, g_strdup(name), setting);
+	table = _get_ui_settings_table(account, ui);
+
+	g_hash_table_insert(table, g_strdup(name), setting);
 
 	schedule_accounts_save();
 }
@@ -428,6 +460,7 @@ gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
 						 const char *name, gboolean value)
 {
 	GaimAccountSetting *setting;
+	GHashTable *table;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(ui      != NULL);
@@ -439,7 +472,9 @@ gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
 	setting->ui         = g_strdup(ui);
 	setting->value.bool = value;
 
-	g_hash_table_insert(account->ui_settings, g_strdup(name), setting);
+	table = _get_ui_settings_table(account, ui);
+
+	g_hash_table_insert(table, g_strdup(name), setting);
 
 	schedule_accounts_save();
 }
@@ -525,6 +560,15 @@ gaim_account_get_check_mail(const GaimAccount *account)
 	return account->check_mail;
 }
 
+gboolean
+gaim_account_get_auto_login(const GaimAccount *account, const char *ui)
+{
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(ui      != NULL, FALSE);
+
+	return gaim_account_get_ui_bool(account, ui, "auto-login", FALSE);
+}
+
 GaimProxyInfo *
 gaim_account_get_proxy_info(const GaimAccount *account)
 {
@@ -583,6 +627,72 @@ gaim_account_get_bool(const GaimAccount *account, const char *name,
 	setting = g_hash_table_lookup(account->settings, name);
 
 	if (setting == NULL)
+		return default_value;
+
+	g_return_val_if_fail(setting->type == GAIM_PREF_BOOLEAN, default_value);
+
+	return setting->value.bool;
+}
+
+int
+gaim_account_get_ui_int(const GaimAccount *account, const char *ui,
+						const char *name, int default_value)
+{
+	GaimAccountSetting *setting;
+	GHashTable *table;
+
+	g_return_val_if_fail(account != NULL, default_value);
+	g_return_val_if_fail(ui      != NULL, default_value);
+	g_return_val_if_fail(name    != NULL, default_value);
+
+	if ((table = g_hash_table_lookup(account->ui_settings, ui)) == NULL)
+		return default_value;
+
+	if ((setting = g_hash_table_lookup(table, name)) == NULL)
+		return default_value;
+
+	g_return_val_if_fail(setting->type == GAIM_PREF_INT, default_value);
+
+	return setting->value.integer;
+}
+
+const char *
+gaim_account_get_ui_string(const GaimAccount *account, const char *ui,
+						   const char *name, const char *default_value)
+{
+	GaimAccountSetting *setting;
+	GHashTable *table;
+
+	g_return_val_if_fail(account != NULL, default_value);
+	g_return_val_if_fail(ui      != NULL, default_value);
+	g_return_val_if_fail(name    != NULL, default_value);
+
+	if ((table = g_hash_table_lookup(account->ui_settings, ui)) == NULL)
+		return default_value;
+
+	if ((setting = g_hash_table_lookup(table, name)) == NULL)
+		return default_value;
+
+	g_return_val_if_fail(setting->type == GAIM_PREF_STRING, default_value);
+
+	return setting->value.string;
+}
+
+gboolean
+gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
+						 const char *name, gboolean default_value)
+{
+	GaimAccountSetting *setting;
+	GHashTable *table;
+
+	g_return_val_if_fail(account != NULL, default_value);
+	g_return_val_if_fail(ui      != NULL, default_value);
+	g_return_val_if_fail(name    != NULL, default_value);
+
+	if ((table = g_hash_table_lookup(account->ui_settings, ui)) == NULL)
+		return default_value;
+
+	if ((setting = g_hash_table_lookup(table, name)) == NULL)
 		return default_value;
 
 	g_return_val_if_fail(setting->type == GAIM_PREF_BOOLEAN, default_value);
@@ -653,8 +763,10 @@ __start_element_handler(GMarkupParseContext *context,
 	else if (!strcmp(element_name, "port"))
 		data->tag = TAG_PORT;
 	else if (!strcmp(element_name, "settings")) {
-		if ((value = g_hash_table_lookup(atts, "ui")) != NULL)
+		if ((value = g_hash_table_lookup(atts, "ui")) != NULL) {
+			gaim_debug(GAIM_DEBUG_INFO, "account", "Found ui: %s\n", value);
 			data->setting_ui = g_strdup(value);
+		}
 	}
 	else if (!strcmp(element_name, "setting")) {
 		data->tag = TAG_SETTING;
@@ -764,6 +876,10 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	}
 	else if (data->tag == TAG_SETTING) {
 		if (data->setting_ui != NULL) {
+			gaim_debug(GAIM_DEBUG_INFO, "account",
+					   "Setting account. UI = %s, setting = %s, buffer = %s\n",
+					   data->setting_ui, data->setting_name, buffer);
+
 			if (data->setting_type == GAIM_PREF_STRING)
 				gaim_account_set_ui_string(data->account, data->setting_ui,
 										   data->setting_name, buffer);
@@ -899,7 +1015,7 @@ gaim_accounts_load()
 }
 
 static void
-__write_setting(gpointer key, gpointer value, gpointer user_data)
+_write_setting(gpointer key, gpointer value, gpointer user_data)
 {
 	GaimAccountSetting *setting;
 	const char *name;
@@ -921,6 +1037,22 @@ __write_setting(gpointer key, gpointer value, gpointer user_data)
 		fprintf(fp, "   <setting name='%s' type='bool'>%d</setting>\n",
 				name, setting->value.bool);
 	}
+}
+
+static void
+_write_ui_setting_list(gpointer key, gpointer value, gpointer user_data)
+{
+	GHashTable *table;
+	const char *ui;
+	FILE *fp;
+
+	table = (GHashTable *)value;
+	ui    = (const char *)key;
+	fp    = (FILE *)user_data;
+
+	fprintf(fp, "  <settings ui='%s'>\n", ui);
+	g_hash_table_foreach(table, _write_setting, fp);
+	fprintf(fp, "  </settings>\n");
 }
 
 static void
@@ -963,8 +1095,10 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 	}
 
 	fprintf(fp, "  <settings>\n");
-	g_hash_table_foreach(account->settings, __write_setting, fp);
+	g_hash_table_foreach(account->settings, _write_setting, fp);
 	fprintf(fp, "  </settings>\n");
+
+	g_hash_table_foreach(account->ui_settings, _write_ui_setting_list, fp);
 
 	if ((proxy_info = gaim_account_get_proxy_info(account)) != NULL &&
 		(proxy_type = gaim_proxy_info_get_type(proxy_info)) != GAIM_PROXY_NONE)
@@ -1076,6 +1210,22 @@ gaim_accounts_remove(GaimAccount *account)
 	accounts = g_list_remove(accounts, account);
 
 	schedule_accounts_save();
+}
+
+void
+gaim_accounts_auto_login(const char *ui)
+{
+	GaimAccount *account;
+	GList *l;
+
+	g_return_if_fail(ui != NULL);
+
+	for (l = gaim_connections_get_all(); l != NULL; l = l->next) {
+		account = l->data;
+
+		if (gaim_account_get_auto_login(account, ui))
+			gaim_account_connect(account);
+	}
 }
 
 void
