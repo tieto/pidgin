@@ -600,12 +600,15 @@ if test "$enable_tcl" = yes; then
 			AC_MSG_RESULT([ok, $TCL_VERSION])
 			eval "TCL_LIB_SPEC=\"$TCL_LIB_SPEC\""
 			AC_MSG_CHECKING([for Tcl linkability])
+			oldCPPFLAGS=$CPPFLAGS
+			CPPFLAGS="$CPPFLAGS $TCL_INCLUDE_SPEC"
 			oldLIBS=$LIBS
 			LIBS="$LIBS $TCL_LIB_SPEC"
 			AC_TRY_LINK([#include <tcl.h>],
 				    [Tcl_Interp *interp; Tcl_Init(interp)],
 		 		    [AC_MSG_RESULT([yes]);enable_tcl=yes],
 		 		    [AC_MSG_RESULT([no]);enable_tcl=no])
+			CPPFLAGS="$oldCPPFLAGS"
 			LIBS="$oldLIBS"
 		fi
 	fi
