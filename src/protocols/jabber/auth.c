@@ -25,11 +25,10 @@
 #include "xmlnode.h"
 #include "jabber.h"
 #include "iq.h"
-#include "sha.h"
 
 #include "debug.h"
-#include "md5.h"
 #include "util.h"
+#include "cipher.h"
 #include "sslconn.h"
 #include "request.h"
 
@@ -227,7 +226,10 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
-			shaBlock((unsigned char *)s, strlen(s), hashval);
+
+			gaim_cipher_digest_region("sha1", (guint8 *)s, strlen(s),
+									  hashval, NULL);
+
 			p = h;
 			for(i=0; i<20; i++, p+=2)
 				snprintf(p, 3, "%02x", hashval[i]);
@@ -300,8 +302,9 @@ static unsigned char*
 generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
-	md5_state_t ctx;
-	md5_byte_t result[16];
+	GaimCipher *cipher;
+	GaimCipherContext *context;
+	guint8 result[16];
 	size_t a1len;
 
 	unsigned char *x, *a1, *ha1, *ha2, *kd, *z, *convnode, *convpasswd;
@@ -315,32 +318,35 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		convpasswd = g_strdup(passwd);
 	}
 
+	cipher = gaim_ciphers_find_cipher("md5");
+	context = gaim_cipher_context_new(cipher, NULL);
+
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd);
-	md5_init(&ctx);
-	md5_append(&ctx, x, strlen(x));
-	md5_finish(&ctx, result);
+	gaim_cipher_context_append(context, x, strlen(x));
+	gaim_cipher_context_digest(context, NULL, result);
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
 	g_memmove(a1, result, 16);
 
-	md5_init(&ctx);
-	md5_append(&ctx, a1, a1len);
-	md5_finish(&ctx, result);
+	gaim_cipher_context_reset(context, NULL);
+	gaim_cipher_context_append(context, a1, a1len);
+	gaim_cipher_context_digest(context, NULL, result);
 
 	ha1 = gaim_base16_encode(result, 16);
 
-	md5_init(&ctx);
-	md5_append(&ctx, a2, strlen(a2));
-	md5_finish(&ctx, result);
+	gaim_cipher_context_reset(context, NULL);
+	gaim_cipher_context_append(context, a2, strlen(a2));
+	gaim_cipher_context_digest(context, NULL, result);
 
 	ha2 = gaim_base16_encode(result, 16);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
-	md5_init(&ctx);
-	md5_append(&ctx, kd, strlen(kd));
-	md5_finish(&ctx, result);
+	gaim_cipher_context_reset(context, NULL);
+	gaim_cipher_context_append(context, kd, strlen(kd));
+	gaim_cipher_context_digest(context, NULL, result);
+	gaim_cipher_context_destroy(context);
 
 	z = gaim_base16_encode(result, 16);
 

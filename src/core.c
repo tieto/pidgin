@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "internal.h"
+#include "cipher.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
@@ -96,6 +97,7 @@ gaim_core_init(const char *ui)
 	gaim_status_init();
 	gaim_savedstatuses_init();
 	gaim_accounts_init();
+	gaim_ciphers_init();
 	gaim_connections_init();
 	gaim_conversations_init();
 	gaim_debug_init();
@@ -133,6 +135,7 @@ gaim_core_quit(void)
 	gaim_ssl_uninit();
 	gaim_pounces_uninit();
 	gaim_blist_uninit();
+	gaim_ciphers_uninit();
 	gaim_conversations_uninit();
 	gaim_connections_uninit();
 	gaim_buddy_icons_uninit();

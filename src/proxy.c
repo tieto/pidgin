@@ -30,12 +30,12 @@
  , 3rd draw women to it like flies to honey */
 
 #include "internal.h"
+#include "cipher.h"
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
 #include "proxy.h"
 #include "util.h"
-#include "md5.h"
 
 static GaimProxyInfo *global_proxy_info = NULL;
 
@@ -1361,20 +1361,23 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 
 static void hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, unsigned char * response)
 {
+	GaimCipher *cipher;
+	GaimCipherContext *ctx;
 	int i;
 	unsigned char Kxoripad[65];
 	unsigned char Kxoropad[65];
-	md5_state_t ctx;
 	int pwlen;
 	char * pwinput;
 	char md5buf[16];
 
+	cipher = gaim_ciphers_find_cipher("md5");
+	ctx = gaim_cipher_context_new(cipher, NULL);
+
 	pwinput=(char *)passwd;
 	pwlen=strlen(passwd);
 	if (pwlen>64) {
-		md5_init(&ctx);
-		md5_append(&ctx, (unsigned char *)passwd, strlen(passwd));
-		md5_finish(&ctx, (unsigned char *)md5buf);
+		gaim_cipher_context_append(ctx, passwd, strlen(passwd));
+		gaim_cipher_context_digest(ctx, NULL, md5buf);
 		pwinput=(char *)md5buf;
 		pwlen=16;
 	}
@@ -1387,15 +1390,18 @@ static void hmacmd5_chap(const unsigned char * challenge, int challen, const cha
 		Kxoripad[i]^=0x36;
 		Kxoropad[i]^=0x5c;
 	}
-	md5_init(&ctx);
-	md5_append(&ctx, Kxoripad, 64);
-	md5_append(&ctx, challenge, challen);
-	md5_finish(&ctx, (unsigned char *)Kxoripad);
 
-	md5_init(&ctx);
-	md5_append(&ctx, Kxoropad, 64);
-	md5_append(&ctx, Kxoripad, 16);
-	md5_finish(&ctx, response);
+	gaim_cipher_context_reset(ctx, NULL);
+	gaim_cipher_context_append(ctx, Kxoripad, 64);
+	gaim_cipher_context_append(ctx, challenge, challen);
+	gaim_cipher_context_digest(ctx, NULL, Kxoripad);
+
+	gaim_cipher_context_reset(ctx, NULL);
+	gaim_cipher_context_append(ctx, Kxoropad, 64);
+	gaim_cipher_context_append(ctx, Kxoripad, 16);
+	gaim_cipher_context_digest(ctx, NULL, response);
+
+	gaim_cipher_context_destroy(ctx);
 }
 
 static void

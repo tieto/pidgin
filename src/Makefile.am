@@ -65,6 +65,7 @@ gaim_coresources = \
 	accountopt.c \
 	blist.c \
 	buddyicon.c \
+	cipher.c \
 	cmds.c \
 	connection.c \
 	conversation.c \
@@ -75,7 +76,6 @@ gaim_coresources = \
 	ft.c \
 	imgstore.c \
 	log.c \
-	md5.c \
 	network.c \
 	notify.c \
 	plugin.c \
@@ -90,7 +90,6 @@ gaim_coresources = \
 	roomlist.c \
 	savedstatuses.c \
 	server.c \
-	sha.c \
 	signals.c \
 	status.c \
 	stringref.c \
@@ -105,6 +104,7 @@ gaim_coreheaders = \
 	accountopt.h \
 	blist.h \
 	buddyicon.h \
+	cipher.h \
 	cmds.h \
 	connection.h \
 	conversation.h \
@@ -115,7 +115,6 @@ gaim_coreheaders = \
 	ft.h \
 	imgstore.h \
 	log.h \
-	md5.h \
 	network.h \
 	notify.h \
 	plugin.h \
@@ -130,7 +129,6 @@ gaim_coreheaders = \
 	roomlist.h \
 	savedstatuses.h \
 	server.h \
-	sha.h \
 	signals.h \
 	status.h \
 	stringref.h \

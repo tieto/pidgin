@@ -20,6 +20,7 @@
  */
 #include "internal.h"
 
+#include "cipher.h"
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
@@ -32,7 +33,6 @@
 #include "presence.h"
 #include "iq.h"
 #include "jutil.h"
-#include "sha.h"
 #include "xmlnode.h"
 
 
@@ -215,7 +215,8 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 					char hash[41], *p;
 					int i;
 
-					shaBlock((unsigned char *)data, size, hashval);
+					gaim_cipher_digest_region("sha1", (guint8 *)data, size,
+											  hashval, NULL);
 					p = hash;
 					for(i=0; i<20; i++, p+=2)
 						snprintf(p, 3, "%02x", hashval[i]);

@@ -19,6 +19,7 @@
  *
  */
 #include "internal.h"
+#include "cipher.h"
 #include "debug.h"
 #include "imgstore.h"
 #include "prpl.h"
@@ -32,8 +33,6 @@
 #include "jabber.h"
 #include "iq.h"
 #include "presence.h"
-#include "sha.h"
-
 
 void jabber_buddy_free(JabberBuddy *jb)
 {
@@ -393,7 +392,10 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 
 				photo = xmlnode_new_child(vc_node, "PHOTO");
 				enc = gaim_base64_encode(avatar_data, avatar_len);
-				shaBlock((unsigned char *)avatar_data, avatar_len, hashval);
+
+				gaim_cipher_digest_region("sha1", (guint8 *)avatar_data,
+										  avatar_len, hashval, NULL);
+
 				p = hash;
 				for(i=0; i<20; i++, p+=2)
 					snprintf(p, 3, "%02x", hashval[i]);
@@ -817,7 +819,8 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				gaim_buddy_icons_set_for_user(js->gc->account, bare_jid,
 						data, size);
 
-				shaBlock((unsigned char *)data, size, hashval);
+				gaim_cipher_digest_region("sha1", (guint8 *)data, size,
+										  hashval, NULL);
 				p = hash;
 				for(i=0; i<20; i++, p+=2)
 					snprintf(p, 3, "%02x", hashval[i]);

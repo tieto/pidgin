@@ -26,6 +26,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
+#include "cipher.h"
 #include "cmds.h"
 #include "debug.h"
 #include "notify.h"
@@ -37,7 +38,6 @@
 #include "util.h"
 #include "version.h"
 
-#include "sha.h"
 #include "yahoo.h"
 #include "yahoo_packet.h"
 #include "yahoo_friend.h"
@@ -46,7 +46,6 @@
 #include "yahoo_auth.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_picture.h"
-#include "md5.h"
 
 extern char *yahoo_crypt(const char *, const char *);
 
@@ -930,13 +929,14 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	 * The new clients use this authentication method.  I warn you in advance, it's
 	 * bizarre, convoluted, inordinately complicated.  It's also no more secure than
 	 * crypt() was.  The only purpose this scheme could serve is to prevent third
-	 * part clients from connecting to their servers.
+	 * party clients from connecting to their servers.
 	 *
 	 * Sorry, Yahoo.
 	 */
 
-	md5_byte_t result[16];
-	md5_state_t ctx;
+	GaimCipher *cipher;
+	GaimCipherContext *context;
+	guint8 digest[16];
 
 	char *crypt_result;
 	char password_hash[25];
@@ -954,16 +954,20 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	sv = seed[15];
 	sv = sv % 8;
 
-	md5_init(&ctx);
-	md5_append(&ctx, pass, strlen(pass));
-	md5_finish(&ctx, result);
-	to_y64(password_hash, result, 16);
+	cipher = gaim_ciphers_find_cipher("md5");
+	context = gaim_cipher_context_new(cipher, NULL);
 
-	md5_init(&ctx);
+	gaim_cipher_context_append(context, pass, strlen(pass));
+	gaim_cipher_context_digest(context, NULL, digest);
+
+	to_y64(password_hash, digest, 16);
+
 	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");
-	md5_append(&ctx, crypt_result, strlen(crypt_result));
-	md5_finish(&ctx, result);
-	to_y64(crypt_hash, result, 16);
+
+	gaim_cipher_context_reset(context, NULL);
+	gaim_cipher_context_append(context, crypt_result, strlen(crypt_result));
+	gaim_cipher_context_digest(context, NULL, digest);
+	to_y64(crypt_hash, digest, 16);
 
 	switch (sv) {
 	case 1:
@@ -1006,15 +1010,16 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 			break;
 	}
 
-	md5_init(&ctx);
-	md5_append(&ctx, hash_string_p, strlen(hash_string_p));
-	md5_finish(&ctx, result);
-	to_y64(result6, result, 16);
+	gaim_cipher_context_reset(context, NULL);
+	gaim_cipher_context_append(context, hash_string_p, strlen(hash_string_p));
+	gaim_cipher_context_digest(context, NULL, digest);
+	to_y64(result6, digest, 16);
 
-	md5_init(&ctx);
-	md5_append(&ctx, hash_string_c, strlen(hash_string_c));
-	md5_finish(&ctx, result);
-	to_y64(result96, result, 16);
+	gaim_cipher_context_reset(context, NULL);
+	gaim_cipher_context_append(context, hash_string_c, strlen(hash_string_c));
+	gaim_cipher_context_digest(context, NULL, digest);
+	gaim_cipher_context_destroy(context);
+	to_y64(result96, digest, 16);
 
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pack, "ssss", 0, name, 6, result6, 96, result96, 1, name);
@@ -1035,11 +1040,13 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	const char *pass = gaim_account_get_password(account);
 	struct yahoo_data *yd = gc->proto_data;
 
-	md5_byte_t			result[16];
-	md5_state_t			ctx;
+	GaimCipher 			*md5_cipher;
+	GaimCipherContext	*md5_ctx;
+	guint8				md5_digest[16];
 
-	SHA_CTX				ctx1;
-	SHA_CTX				ctx2;
+	GaimCipher			*sha1_cipher;
+	GaimCipherContext	*sha1_ctx1;
+	GaimCipherContext	*sha1_ctx2;
 
 	char				*alphabet1			= "FBZDWAGHrJTLMNOPpRSKUVEXYChImkwQ";
 	char				*alphabet2			= "F0E1D2C3B4A59687abcdefghijklmnop";
@@ -1088,6 +1095,13 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	memset(&resp_96, 0, 100);
 	memset(&magic_key_char, 0, 4);
 	memset(&comparison_src, 0, 20);
+
+	md5_cipher = gaim_ciphers_find_cipher("md5");
+	md5_ctx = gaim_cipher_context_new(md5_cipher, NULL);
+
+	sha1_cipher = gaim_ciphers_find_cipher("sha1");
+	sha1_ctx1 = gaim_cipher_context_new(sha1_cipher, NULL);
+	sha1_ctx2 = gaim_cipher_context_new(sha1_cipher, NULL);
 
 	/* 
 	 * Magic: Phase 1.  Generate what seems to be a 30 byte value (could change if base64
@@ -1208,42 +1222,31 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		comparison_src[x++] = bl & 0xff; 
 	} while (x < 20);
 	
-	/* First four bytes are magic key.
-	 */
-	
+	/* First four bytes are magic key. */
 	memcpy(&magic_key_char[0], comparison_src, 4);
 	magic_4 = magic_key_char[0] | (magic_key_char[1]<<8) | (magic_key_char[2]<<16) | (magic_key_char[3]<<24);
-	
+
 	/* 
 	 * Magic: Phase 4.  Determine what function to use later by getting outside/inside
 	 * loop values until we match our previous buffer.
 	 */
-	
 	for (x = 0; x < 65535; x++) {
 		int			leave = 0;
 
 		for (y = 0; y < 5; y++) {
-			md5_byte_t		result[16];
-			md5_state_t		ctx;
-			
 			unsigned char	test[3];
-			
-			memset(&result, 0, 16);
-			memset(&test, 0, 3);
-			
-			/* Calculate buffer.
-			 */
 
+			/* Calculate buffer. */
 			test[0] = x;
 			test[1] = x >> 8;
 			test[2] = y;
 			
-			md5_init(&ctx);
-			md5_append(&ctx, magic_key_char, 4);
-			md5_append(&ctx, test, 3);
-			md5_finish(&ctx, result);
+			gaim_cipher_context_reset(md5_ctx, NULL);
+			gaim_cipher_context_append(md5_ctx, magic_key_char, 4);
+			gaim_cipher_context_append(md5_ctx, test, 3);
+			gaim_cipher_context_digest(md5_ctx, NULL, md5_digest);
 			
-			if (!memcmp(result, comparison_src+4, 16)) {
+			if (!memcmp(md5_digest, comparison_src+4, 16)) {
 				leave = 1;
 				break;
 			}
@@ -1253,41 +1256,35 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 			break;
 	}
 	
-	/* If y != 0, we need some help.
-	 */
-	
+	/* If y != 0, we need some help. */
 	if (y != 0) {
 		unsigned int	updated_key;
-		
-		/* Update magic stuff.   Call it twice because Yahoo's encryption is super bad ass.
+
+		/* Update magic stuff.
+		 * Call it twice because Yahoo's encryption is super bad ass.
 		 */
-		
 		updated_key = yahoo_auth_finalCountdown(magic_4, 0x60, y, x);
 		updated_key = yahoo_auth_finalCountdown(updated_key, 0x60, y, x);
-		
+
 		magic_key_char[0] = updated_key & 0xff;
 		magic_key_char[1] = (updated_key >> 8) & 0xff;
 		magic_key_char[2] = (updated_key >> 16) & 0xff;
 		magic_key_char[3] = (updated_key >> 24) & 0xff;
 	} 
 	
-/* Get password and crypt hashes as per usual.
-	 */
-	
-	md5_init(&ctx);
-	md5_append(&ctx, pass, strlen(pass));
-	md5_finish(&ctx, result);
-	to_y64(password_hash, result, 16);
-	
-	md5_init(&ctx);
-	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");  
-	md5_append(&ctx, crypt_result, strlen(crypt_result));
-	md5_finish(&ctx, result);
-	to_y64(crypt_hash, result, 16);
+	/* Get password and crypt hashes as per usual. */
+	gaim_cipher_context_reset(md5_ctx, NULL);
+	gaim_cipher_context_append(md5_ctx, pass, strlen(pass));
+	gaim_cipher_context_digest(md5_ctx, NULL, md5_digest);
+	to_y64(password_hash, md5_digest, 16);
 
-	/* Our first authentication response is based off of the password hash.
-	 */
-	
+	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");  
+	gaim_cipher_context_reset(md5_ctx, NULL);
+	gaim_cipher_context_append(md5_ctx, crypt_result, strlen(crypt_result));
+	gaim_cipher_context_digest(md5_ctx, NULL, md5_digest);
+	to_y64(crypt_hash, md5_digest, 16);
+
+	/* Our first authentication response is based off of the password hash. */
 	for (x = 0; x < (int)strlen(password_hash); x++) 
 		pass_hash_xor1[cnt++] = password_hash[x] ^ 0x36;
 	
@@ -1302,28 +1299,25 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	if (cnt < 64) 
 		memset(&(pass_hash_xor2[cnt]), 0x5c, 64-cnt);
 	
-	shaInit(&ctx1);
-	shaInit(&ctx2);
-	
 	/* 
 	 * The first context gets the password hash XORed with 0x36 plus a magic value
 	 * which we previously extrapolated from our challenge.
 	 */
 	
-	shaUpdate(&ctx1, pass_hash_xor1, 64);
+	gaim_cipher_context_append(sha1_ctx1, pass_hash_xor1, 64);
 	if (y >= 3)
-		ctx1.sizeLo = 0x1ff;
-	shaUpdate(&ctx1, magic_key_char, 4);
-	shaFinal(&ctx1, digest1);
+		gaim_cipher_context_set_option(sha1_ctx1, "sizeLo", GINT_TO_POINTER(0x1ff));
+	gaim_cipher_context_append(sha1_ctx1, magic_key_char, 4);
+	gaim_cipher_context_digest(sha1_ctx1, NULL, digest1);
 	
 	/* 
 	 * The second context gets the password hash XORed with 0x5c plus the SHA-1 digest
 	 * of the first context.
 	 */
 	
-	shaUpdate(&ctx2, pass_hash_xor2, 64);
-	shaUpdate(&ctx2, digest1, 20);
-	shaFinal(&ctx2, digest2);
+	gaim_cipher_context_append(sha1_ctx2, pass_hash_xor2, 64);
+	gaim_cipher_context_append(sha1_ctx2, digest1, 20);
+	gaim_cipher_context_digest(sha1_ctx2, NULL, digest2);
 	
 	/* 
 	 * Now that we have digest2, use it to fetch characters from an alphabet to construct
@@ -1395,28 +1389,28 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	if (cnt < 64) 
 		memset(&(crypt_hash_xor2[cnt]), 0x5c, 64-cnt);
 	
-	shaInit(&ctx1);
-	shaInit(&ctx2);
+	gaim_cipher_context_reset(sha1_ctx1, NULL);
+	gaim_cipher_context_reset(sha1_ctx2, NULL);
 	
 	/* 
 	 * The first context gets the password hash XORed with 0x36 plus a magic value
 	 * which we previously extrapolated from our challenge.
 	 */
 	
-	shaUpdate(&ctx1, crypt_hash_xor1, 64);
+	gaim_cipher_context_append(sha1_ctx1, crypt_hash_xor1, 64);
 	if (y >= 3)
-		ctx1.sizeLo = 0x1ff;
-	shaUpdate(&ctx1, magic_key_char, 4);
-	shaFinal(&ctx1, digest1);
+		gaim_cipher_context_set_option(sha1_ctx1, "sizeLo", GINT_TO_POINTER(0x1ff));
+	gaim_cipher_context_append(sha1_ctx1, magic_key_char, 4);
+	gaim_cipher_context_digest(sha1_ctx1, NULL, digest1);
 	
 	/* 
 	 * The second context gets the password hash XORed with 0x5c plus the SHA-1 digest
 	 * of the first context.
 	 */
 	
-	shaUpdate(&ctx2, crypt_hash_xor2, 64);
-	shaUpdate(&ctx2, digest1, 20);
-	shaFinal(&ctx2, digest2);
+	gaim_cipher_context_append(sha1_ctx2, crypt_hash_xor2, 64);
+	gaim_cipher_context_append(sha1_ctx2, digest1, 20);
+	gaim_cipher_context_digest(sha1_ctx2, NULL, digest2);
 	
 	/* 
 	 * Now that we have digest2, use it to fetch characters from an alphabet to construct
@@ -1474,6 +1468,10 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		yahoo_packet_hash_int(pack, 192, yd->picture_checksum);
 	
 	yahoo_packet_send_and_free(pack, yd);
+
+	gaim_cipher_context_destroy(md5_ctx);
+	gaim_cipher_context_destroy(sha1_ctx1);
+	gaim_cipher_context_destroy(sha1_ctx2);
 
 	g_free(password_hash);
 	g_free(crypt_hash);
@@ -2174,35 +2172,42 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 	GString *url = g_string_new("GET http://login.yahoo.com/config/login?login=");
 	char md5[33], *hashp = md5, *chal;
 	int i;
-	md5_byte_t result[16];
-	md5_state_t ctx;
+	GaimCipher *cipher;
+	GaimCipherContext *context;
+	guint8 digest[16];
 
 	url = g_string_append(url, sn);
 	url = g_string_append(url, "&passwd=");
 
-	md5_init(&ctx);
-	md5_append(&ctx, pass, strlen(pass));
-	md5_finish(&ctx, result);
+	cipher = gaim_ciphers_find_cipher("md5");
+	context = gaim_cipher_context_new(cipher, NULL);
+
+	gaim_cipher_context_append(context, pass, strlen(pass));
+	gaim_cipher_context_digest(context, NULL, digest);
 	for (i = 0; i < 16; ++i) {
-		g_snprintf(hashp, 3, "%02x", result[i]);
+		g_snprintf(hashp, 3, "%02x", digest[i]);
 		hashp += 2;
 	}
+
 	chal = g_strconcat(md5, g_hash_table_lookup(hash, ".challenge"), NULL);
-	md5_init(&ctx);
-	md5_append(&ctx, chal, strlen(chal));
-	md5_finish(&ctx, result);
+	gaim_cipher_context_reset(context, NULL);
+	gaim_cipher_context_append(context, chal, strlen(chal));
+	gaim_cipher_context_digest(context, NULL, digest);
 	hashp = md5;
 	for (i = 0; i < 16; ++i) {
-		g_snprintf(hashp, 3, "%02x", result[i]);
+		g_snprintf(hashp, 3, "%02x", digest[i]);
 		hashp += 2;
 	}
 	/*
-	md5_init(&ctx);
-	md5_append(&ctx, md5, strlen(md5));
-	md5_finish(&ctx, result);
+	 * I dunno why this is here and commented out.. but in case it's needed
+	 * I updated it..
+
+	gaim_cipher_context_reset(context, NULL);
+	gaim_cipher_context_append(context, md5, strlen(md5));
+	gaim_cipher_context_digest(context, NULL, digest);
 	hashp = md5;
 	for (i = 0; i < 16; ++i) {
-		g_snprintf(hashp, 3, "%02x", result[i]);
+		g_snprintf(hashp, 3, "%02x", digest[i]);
 		hashp += 2;
 	}
 	*/
@@ -2219,6 +2224,8 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 		gaim_connection_error(gc, _("Connection problem"));
 		return;
 	}
+
+	gaim_cipher_context_destroy(context);
 }
 
 static void yahoo_server_check(GaimAccount *account)

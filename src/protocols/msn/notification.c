@@ -403,22 +403,26 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnTransaction *trans;
 	char buf[33];
 	const char *challenge_resp;
-	md5_state_t st;
-	md5_byte_t di[16];
+	GaimCipher *cipher;
+	GaimCipherContext *context;
+	guint8 digest[16];
 	int i;
 
-	md5_init(&st);
-	md5_append(&st, (const md5_byte_t *)cmd->params[1],
-			   strlen(cmd->params[1]));
+	cipher = gaim_ciphers_find_cipher("md5");
+	context = gaim_cipher_context_new(cipher, NULL);
+
+	gaim_cipher_context_append(context, cmd->params[1],
+							   strlen(cmd->params[1]));
 
 	challenge_resp = "VT6PX?UQTM4WM%YR";
 
-	md5_append(&st, (const md5_byte_t *)challenge_resp,
-			   strlen(challenge_resp));
-	md5_finish(&st, di);
+	gaim_cipher_context_append(context, challenge_resp,
+							   strlen(challenge_resp));
+	gaim_cipher_context_digest(context, NULL, digest);
+	gaim_cipher_context_destroy(context);
 
 	for (i = 0; i < 16; i++)
-		g_snprintf(buf + (i*2), 3, "%02x", di[i]);
+		g_snprintf(buf + (i*2), 3, "%02x", digest[i]);
 
 	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", "PROD0038W!61ZTF9");
 
@@ -882,8 +886,9 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	GaimAccount *account;
 	const char *rru;
 	const char *url;
-	md5_state_t st;
-	md5_byte_t di[16];
+	GaimCipher *cipher;
+	GaimCipherContext *context;
+	guint8 digest[16];
 	FILE *fd;
 	char buf[2048];
 	char buf2[3];
@@ -901,15 +906,18 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			   time(NULL) - session->passport_info.sl,
 			   gaim_account_get_password(account));
 
-	md5_init(&st);
-	md5_append(&st, (const md5_byte_t *)buf, strlen(buf));
-	md5_finish(&st, di);
+	cipher = gaim_ciphers_find_cipher("md5");
+	context = gaim_cipher_context_new(cipher, NULL);
+
+	gaim_cipher_context_append(context, buf, strlen(buf));
+	gaim_cipher_context_digest(context, NULL, digest);
+	gaim_cipher_context_destroy(context);
 
 	memset(sendbuf, 0, sizeof(sendbuf));
 
 	for (i = 0; i < 16; i++)
 	{
-		g_snprintf(buf2, sizeof(buf2), "%02x", di[i]);
+		g_snprintf(buf2, sizeof(buf2), "%02x", digest[i]);
 		strcat(sendbuf, buf2);
 	}
 

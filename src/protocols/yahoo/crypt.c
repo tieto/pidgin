@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <glib.h>
 
-#include "md5.h"
+#include "cipher.h"
 
 /* Define our magic string to mark salt for MD5 "encryption"
    replacement.  This is meant to be the same as for other MD5 based
@@ -39,13 +39,13 @@ static const char b64t[64] =
 
 char *yahoo_crypt(const char *key, const char *salt)
 {
+	GaimCipher *cipher;
+	GaimCipherContext *context1, *context2;
+	guint8 digest[16];
 	static char *buffer = NULL;
 	static int buflen = 0;
 	int needed = 3 + strlen (salt) + 1 + 26 + 1;
 
-	md5_byte_t alt_result[16];
-	md5_state_t ctx;
-	md5_state_t alt_ctx;
 	size_t salt_len;
 	size_t key_len;
 	size_t cnt;
@@ -57,8 +57,13 @@ char *yahoo_crypt(const char *key, const char *salt)
 			return NULL;
 	}
 
+	cipher = gaim_ciphers_find_cipher("md5");
+	context1 = gaim_cipher_context_new(cipher, NULL);
+	context2 = gaim_cipher_context_new(cipher, NULL);
+
 	/* Find beginning of salt string.  The prefix should normally always
-	   be present.  Just in case it is not.  */
+	 * be present.  Just in case it is not.
+	 */
 	if (strncmp (md5_salt_prefix, salt, sizeof (md5_salt_prefix) - 1) == 0)
 		/* Skip salt prefix.  */
 		salt += sizeof (md5_salt_prefix) - 1;
@@ -66,90 +71,90 @@ char *yahoo_crypt(const char *key, const char *salt)
 	salt_len = MIN (strcspn (salt, "$"), 8);
 	key_len = strlen (key);
 
-	/* Prepare for the real work.  */
-	md5_init(&ctx);
-
 	/* Add the key string.  */
-	md5_append(&ctx, key, key_len);
+	gaim_cipher_context_append(context1, key, key_len);
 
 	/* Because the SALT argument need not always have the salt prefix we
-	   add it separately.  */
-	md5_append(&ctx, md5_salt_prefix, sizeof (md5_salt_prefix) - 1);
+	 * add it separately.
+	 */
+	gaim_cipher_context_append(context1, md5_salt_prefix,
+							   sizeof(md5_salt_prefix) - 1);
 
 	/* The last part is the salt string.  This must be at most 8
-	   characters and it ends at the first `$' character (for
-	   compatibility which existing solutions).  */
-	md5_append(&ctx, salt, salt_len);
+	 * characters and it ends at the first `$' character (for
+	 * compatibility which existing solutions).
+	 */
+	gaim_cipher_context_append(context1, salt, salt_len);
 
 	/* Compute alternate MD5 sum with input KEY, SALT, and KEY.  The
-	   final result will be added to the first context.  */
-	md5_init(&alt_ctx);
+	 * final result will be added to the first context.
+	 */
 
 	/* Add key.  */
-	md5_append(&alt_ctx, key, key_len);
+	gaim_cipher_context_append(context2, key, key_len);
 
 	/* Add salt.  */
-	md5_append(&alt_ctx, salt, salt_len);
+	gaim_cipher_context_append(context2, salt, salt_len);
 
 	/* Add key again.  */
-	md5_append(&alt_ctx, key, key_len);
+	gaim_cipher_context_append(context2, key, key_len);
 
-	/* Now get result of this (16 bytes) and add it to the other
-	   context.  */
-	md5_finish(&alt_ctx, alt_result);
+	/* Now get result of this (16 bytes) and add it to the other context.  */
+	gaim_cipher_context_digest(context2, NULL, digest);
 
 	/* Add for any character in the key one byte of the alternate sum.  */
 	for (cnt = key_len; cnt > 16; cnt -= 16)
-		md5_append(&ctx, alt_result, 16);
-	md5_append(&ctx, alt_result, cnt);
+		gaim_cipher_context_append(context1, digest, 16);
+	gaim_cipher_context_append(context1, digest, cnt);
 
 	/* For the following code we need a NUL byte.  */
-	alt_result[0] = '\0';
+	digest[0] = '\0';
 
 	/* The original implementation now does something weird: for every 1
-	   bit in the key the first 0 is added to the buffer, for every 0
-	   bit the first character of the key.  This does not seem to be
-	   what was intended but we have to follow this to be compatible.  */
+	 * bit in the key the first 0 is added to the buffer, for every 0
+	 * bit the first character of the key.  This does not seem to be
+	 * what was intended but we have to follow this to be compatible.
+	 */
 	for (cnt = key_len; cnt > 0; cnt >>= 1)
-		md5_append(&ctx, (cnt & 1) != 0 ? alt_result : (md5_byte_t *)key, 1);
+		gaim_cipher_context_append(context1,
+								   (cnt & 1) != 0 ? digest : (guint8 *)key, 1);
 
 	/* Create intermediate result.  */
-	md5_finish(&ctx, alt_result);
+	gaim_cipher_context_digest(context1, NULL, digest);
 
 	/* Now comes another weirdness.  In fear of password crackers here
-	   comes a quite long loop which just processes the output of the
-	   previous round again.  We cannot ignore this here.  */
+	 * comes a quite long loop which just processes the output of the
+	 * previous round again.  We cannot ignore this here.
+	 */
 	for (cnt = 0; cnt < 1000; ++cnt) {
 		/* New context.  */
-		md5_init(&ctx);
+		gaim_cipher_context_reset(context2, NULL);
 
 		/* Add key or last result.  */
 		if ((cnt & 1) != 0)
-			md5_append(&ctx, key, key_len);
+			gaim_cipher_context_append(context2, key, key_len);
 		else
-			md5_append(&ctx, alt_result, 16);
+			gaim_cipher_context_append(context2, digest, 16);
 
 		/* Add salt for numbers not divisible by 3.  */
 		if (cnt % 3 != 0)
-			md5_append(&ctx, salt, salt_len);
+			gaim_cipher_context_append(context2, salt, salt_len);
 
 		/* Add key for numbers not divisible by 7.  */
 		if (cnt % 7 != 0)
-			md5_append(&ctx, key, key_len);
+			gaim_cipher_context_append(context2, key, key_len);
 
 		/* Add key or last result.  */
 		if ((cnt & 1) != 0)
-			md5_append(&ctx, alt_result, 16);
+			gaim_cipher_context_append(context2, digest, 16);
 		else
-			md5_append(&ctx, key, key_len);
+			gaim_cipher_context_append(context2, key, key_len);
 
 		/* Create intermediate result.  */
-		md5_finish(&ctx, alt_result);
+		gaim_cipher_context_digest(context2, NULL, digest);
 	}
 
-	/* Now we can construct the result string.  It consists of three
-	   parts.  */
-
+	/* Now we can construct the result string.  It consists of three parts. */
 	strncpy(buffer, md5_salt_prefix, MAX (0, buflen));
 	cp = buffer + strlen(buffer);
 	buflen -= sizeof (md5_salt_prefix);
@@ -174,12 +179,12 @@ char *yahoo_crypt(const char *key, const char *salt)
 		}\
 	} while (0)
 
-	b64_from_24bit (alt_result[0], alt_result[6], alt_result[12], 4);
-	b64_from_24bit (alt_result[1], alt_result[7], alt_result[13], 4);
-	b64_from_24bit (alt_result[2], alt_result[8], alt_result[14], 4);
-	b64_from_24bit (alt_result[3], alt_result[9], alt_result[15], 4);
-	b64_from_24bit (alt_result[4], alt_result[10], alt_result[5], 4);
-	b64_from_24bit (0, 0, alt_result[11], 2);
+	b64_from_24bit (digest[0], digest[6], digest[12], 4);
+	b64_from_24bit (digest[1], digest[7], digest[13], 4);
+	b64_from_24bit (digest[2], digest[8], digest[14], 4);
+	b64_from_24bit (digest[3], digest[9], digest[15], 4);
+	b64_from_24bit (digest[4], digest[10], digest[5], 4);
+	b64_from_24bit (0, 0, digest[11], 2);
 	if (buflen <= 0) {
 		g_free(buffer);
 		buffer = NULL;
@@ -187,13 +192,14 @@ char *yahoo_crypt(const char *key, const char *salt)
 		*cp = '\0';	/* Terminate the string.  */
 
 	/* Clear the buffer for the intermediate result so that people
-	   attaching to processes or reading core dumps cannot get any
-	   information.  We do it in this way to clear correct_words[]
-	   inside the MD5 implementation as well.  */
-	md5_init(&ctx);
-	md5_finish(&ctx, alt_result);
-	memset (&ctx, '\0', sizeof (ctx));
-	memset (&alt_ctx, '\0', sizeof (alt_ctx));
+	 * attaching to processes or reading core dumps cannot get any
+	 * information.  We do it in this way to clear correct_words[]
+	 * inside the MD5 implementation as well.
+	 */
+	gaim_cipher_context_reset(context1, NULL);
+	gaim_cipher_context_digest(context1, NULL, digest);
+	gaim_cipher_context_destroy(context1);
+	gaim_cipher_context_destroy(context2);
 
 	return buffer;
 }

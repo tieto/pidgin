@@ -23,6 +23,7 @@
 #include <stdio.h>
 
 #include "internal.h"
+#include "cipher.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
@@ -439,6 +440,21 @@ chat_topic_changed_cb(GaimConversation *conv, const char *who,
 					(who) ? who : "unknown");
 }
 /**************************************************************************
+ * Ciphers signal callbacks
+ **************************************************************************/
+static void
+cipher_added_cb(GaimCipher *cipher, void *data) {
+	gaim_debug_misc("signals test", "cipher %s added\n",
+					gaim_cipher_get_name(cipher));
+}
+
+static void
+cipher_removed_cb(GaimCipher *cipher, void *data) {
+	gaim_debug_misc("signals test", "cipher %s removed\n",
+					gaim_cipher_get_name(cipher));
+}
+
+/**************************************************************************
  * Core signal callbacks
  **************************************************************************/
 static void
@@ -458,6 +474,7 @@ plugin_load(GaimPlugin *plugin)
 	void *conn_handle = gaim_connections_get_handle();
 	void *conv_handle = gaim_conversations_get_handle();
 	void *accounts_handle = gaim_accounts_get_handle();
+	void *ciphers_handle = gaim_ciphers_get_handle();
 
 	/* Accounts subsystem signals */
 	gaim_signal_connect(accounts_handle, "account-connecting",
@@ -562,6 +579,12 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(chat_left_cb), NULL);
 	gaim_signal_connect(conv_handle, "chat-topic-changed",
 						plugin, GAIM_CALLBACK(chat_topic_changed_cb), NULL);
+
+	/* Ciphers signals */
+	gaim_signal_connect(ciphers_handle, "cipher-added",
+						plugin, GAIM_CALLBACK(cipher_added_cb), NULL);
+	gaim_signal_connect(ciphers_handle, "cipher-removed",
+						plugin, GAIM_CALLBACK(cipher_removed_cb), NULL);
 
 	/* Core signals */
 	gaim_signal_connect(core_handle, "quitting",

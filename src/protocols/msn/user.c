@@ -176,8 +176,8 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 	}
 	else if ((fp = g_fopen(filename, "rb")) != NULL)
 	{
+		GaimCipherContext *ctx;
 		unsigned char *buf;
-		SHA_CTX ctx;
 		gsize len;
 		unsigned char *base64;
 		unsigned char digest[20];
@@ -203,9 +203,9 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		/* Compute the SHA1D field. */
 		memset(digest, 0, sizeof(digest));
 
-		shaInit(&ctx);
-		shaUpdate(&ctx, buf, st.st_size);
-		shaFinal(&ctx, digest);
+		ctx = gaim_cipher_context_new_by_name("sha1", NULL);
+		gaim_cipher_context_append(ctx, buf, st.st_size);
+		gaim_cipher_context_digest(ctx, NULL, digest);
 		g_free(buf);
 
 		base64 = gaim_base64_encode(digest, sizeof(digest));
@@ -226,9 +226,10 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 
 		memset(digest, 0, sizeof(digest));
 
-		shaInit(&ctx);
-		shaUpdate(&ctx, buf, strlen(buf));
-		shaFinal(&ctx, digest);
+		gaim_cipher_context_reset(ctx, NULL);
+		gaim_cipher_context_append(ctx, buf, strlen(buf));
+		gaim_cipher_context_digest(ctx, NULL, digest);
+		gaim_cipher_context_destroy(ctx);
 		g_free(buf);
 
 		base64 = gaim_base64_encode(digest, sizeof(digest));

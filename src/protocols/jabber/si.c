@@ -22,12 +22,11 @@
 #include "blist.h"
 
 #include "internal.h"
+#include "cipher.h"
 #include "debug.h"
 #include "ft.h"
 #include "network.h"
 #include "notify.h"
-#include "sha.h"
-#include "util.h"
 
 #include "buddy.h"
 #include "disco.h"
@@ -155,7 +154,9 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 
 	dstaddr = g_strdup_printf("%s%s%s@%s/%s", jsx->stream_id, xfer->who, jsx->js->user->node,
 			jsx->js->user->domain, jsx->js->user->resource);
-	shaBlock((unsigned char *)dstaddr, strlen(dstaddr), hashval);
+
+	gaim_cipher_digest_region("sha1", (guint8 *)dstaddr, strlen(dstaddr),
+							  hashval, NULL);
 	g_free(dstaddr);
 	dstaddr = g_malloc(41);
 	p = dstaddr;
@@ -269,7 +270,9 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 	dstaddr = g_strdup_printf("%s%s@%s/%s%s", jsx->stream_id,
 			jsx->js->user->node, jsx->js->user->domain,
 			jsx->js->user->resource, xfer->who);
-	shaBlock((unsigned char *)dstaddr, strlen(dstaddr), hashval);
+
+	gaim_cipher_digest_region("sha1", (guint8 *)dstaddr, strlen(dstaddr),
+							  hashval, NULL);
 	g_free(dstaddr);
 	dstaddr = g_malloc(41);
 	p = dstaddr;
