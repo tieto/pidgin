@@ -346,7 +346,6 @@ static void buddy_page()
 
 	gaim_button(_("Hide IM/Info/Chat buttons"), &display_options, OPT_DISP_NO_BUTTONS, box);
 	gaim_button(_("Show pictures on buttons"), &display_options, OPT_DISP_SHOW_BUTTON_XPM, box);
-	gaim_button(_("Use Daemon pictures"), &display_options, OPT_DISP_DEVIL_PIXMAPS, box);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
