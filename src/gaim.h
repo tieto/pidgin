@@ -296,7 +296,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 156 $"
+#define REVISION "gaim:$Revision: 190 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -364,7 +364,8 @@ extern int general_options;
 #define OPT_GEN_BROWSER_POPUP    0x00000800
 #define OPT_GEN_SAVED_WINDOWS    0x00001000
 #define OPT_GEN_DISCARD_WHEN_AWAY 0x00002000
-        
+#define OPT_GEN_CHECK_VERSIONS	0x00004000
+
 extern int display_options;
 #define OPT_DISP_SHOW_TIME       0x00000001
 #define OPT_DISP_SHOW_GRPNUM     0x00000002
@@ -404,6 +405,7 @@ extern int aim_port;
 extern char login_host[512];
 extern int login_port;
 extern struct save_pos blist_pos;
+extern char latest_ver[25];
 
 /* Functions in about.c */
 extern void show_about(GtkWidget *, void *);
@@ -441,6 +443,7 @@ extern FILE *open_log_file (struct conversation *c);
 extern char *sec_to_text(int);
 extern struct aim_user *find_user(const char *);
 extern char *full_date();
+extern void check_gaim_versions();
 
 /* Functions in server.c */
 /* input to serv */

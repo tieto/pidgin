@@ -51,7 +51,7 @@ char aim_host[512];
 int aim_port;
 char login_host[512];
 int login_port;
-
+char latest_ver[25];
 
 struct parse {
         char option[256];
@@ -446,6 +446,8 @@ static void gaimrc_read_options(FILE *f)
                         sound_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "font_options")) {
 			font_options = atoi(p->value[0]);
+		} else if (!strcmp(p->option, "latest_ver")) {
+			g_snprintf(latest_ver, BUF_LONG, "%s", p->value[0]);
                 } else if (!strcmp(p->option, "report_idle")) {
                         report_idle = atoi(p->value[0]);
                 } else if (!strcmp(p->option, "web_browser")) {
@@ -500,6 +502,7 @@ static void gaimrc_write_options(FILE *f)
         fprintf(f, "\tblist_pos { %d } { %d } { %d } { %d } { %d } { %d }\n",
                 blist_pos.x, blist_pos.y, blist_pos.width, blist_pos.height,
                 blist_pos.xoff, blist_pos.yoff);
+	fprintf(f, "\tlatest_ver { %s }\n", latest_ver);
 	fprintf(f, "}\n");
 }
 
@@ -511,7 +514,8 @@ void set_defaults()
                 OPT_GEN_ENTER_SENDS |
                 OPT_GEN_SAVED_WINDOWS |
                 OPT_GEN_REMEMBER_PASS |
-		OPT_GEN_REGISTERED;
+		OPT_GEN_REGISTERED | 
+		OPT_GEN_CHECK_VERSIONS;
         display_options =
                 OPT_DISP_SHOW_IDLETIME |
                 OPT_DISP_SHOW_TIME |
@@ -536,6 +540,7 @@ void set_defaults()
         blist_pos.y = 0;
         blist_pos.xoff = 0;
         blist_pos.yoff = 0;
+	g_snprintf(latest_ver, BUF_LONG, "%s", VERSION);
 }
 
 
