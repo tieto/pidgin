@@ -3723,14 +3723,6 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 		}
 
 		if (!(flags & WFLAG_NOLOG) && gaim_conversation_is_logging(conv)) {
-/*
-     XXX
-			((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
-			  (logging_options & OPT_LOG_CHATS)) ||
-			 (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
-			  (logging_options & OPT_LOG_CONVOS)) ||
-			 find_log_info(gaim_conversation_get_name(conv)))) {
-*/
 
 			char *t1;
 			char nm[256];
@@ -3887,15 +3879,6 @@ gaim_gtkconv_write_conv(struct gaim_conversation *conv, const char *who,
 
 		/* XXX This needs to be updated for the new length argument. */
 		if (gaim_conversation_is_logging(conv)) {
-/*
-   XXX
-		if ((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
-			 (logging_options & OPT_LOG_CHATS)) ||
-			(gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
-			 (logging_options & OPT_LOG_CONVOS)) ||
-			find_log_info(gaim_conversation_get_name(conv))) {
-*/
-
 			char *t1, *t2;
 			char nm[256];
 
@@ -4444,7 +4427,7 @@ icon_menu(GtkObject *obj, GdkEventButton *e, struct gaim_conversation *conv)
 
 	button = gtk_menu_item_new_with_label(_("Hide Icon"));
 	g_signal_connect_swapped(GTK_OBJECT(button), "activate",
-							 G_CALLBACK(remove_icon), conv);
+							 G_CALLBACK(remove_icon), gtkconv);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
