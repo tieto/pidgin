@@ -614,8 +614,12 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		break;
 	case 301:
 		if (id->in_whois) {
-			id->whois_str = g_string_append(id->whois_str, "<BR><BR>");
-			id->whois_str = g_string_append(id->whois_str, word_eol[4]);
+			id->whois_str = g_string_append(id->whois_str, "<BR><b>Away: </b>");
+
+			if (word_eol[5][0] == ':')
+				id->whois_str = g_string_append(id->whois_str, word_eol[5]+1);
+			else
+				id->whois_str = g_string_append(id->whois_str, word_eol[5]);
 		} else
 			irc_got_im(gc, word[4], word_eol[5], IM_FLAG_AWAY, time(NULL));
 		break;
