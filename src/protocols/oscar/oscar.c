@@ -1115,8 +1115,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT))
 				type |= UC_UNAVAILABLE;
 		}
-		if (caps & AIM_CAPS_EVERYBUDDY)
-			caps ^= AIM_CAPS_EVERYBUDDY;
+		if (caps & AIM_CAPS_ICQ)
+			caps ^= AIM_CAPS_ICQ;
 		debug_printf("icq status: %d\n", info->icqinfo.status);
 	}
 

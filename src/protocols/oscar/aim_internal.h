@@ -151,6 +151,7 @@ struct snacgroup {
 	struct snacgroup *next;
 };
 
+#ifdef FAIM_NEED_CONN_INTERNAL
 struct snacpair {
 	fu16_t group;
 	fu16_t subtype;
@@ -170,6 +171,7 @@ struct rateclass {
 	struct snacpair *members;
 	struct rateclass *next;
 };
+#endif /* FAIM_NEED_CONN_INTERNAL */
 
 /*
  * This is inside every connection.  But it is a void * to anything

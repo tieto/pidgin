@@ -416,12 +416,13 @@ faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu16_t cap);
 #define AIM_FLAG_OSCAR_PAY	0x0008
 #define AIM_FLAG_FREE 		0x0010
 #define AIM_FLAG_AWAY		0x0020
-#define AIM_FLAG_UNKNOWN40	0x0040
+#define AIM_FLAG_ICQ		0x0040
 #define AIM_FLAG_UNKNOWN80	0x0080
 #define AIM_FLAG_UNKNOWN100	0x0100
 #define AIM_FLAG_UNKNOWN200	0x0200
 #define AIM_FLAG_ACTIVEBUDDY    0x0400
 #define AIM_FLAG_UNKNOWN800	0x0800
+#define AIM_FLAG_ABINTERNAL     0x1000
 
 #define AIM_FLAG_ALLUSERS	0x001f
 
@@ -822,7 +823,8 @@ faim_export int aim_oft_getfile_end(aim_session_t *sess, aim_conn_t *conn);
 #define AIM_CAPS_SAVESTOCKS     0x0080
 #define AIM_CAPS_SENDBUDDYLIST  0x0100
 #define AIM_CAPS_GAMES2         0x0200
-#define AIM_CAPS_EVERYBUDDY     0x0400
+#define AIM_CAPS_ICQ            0x0400
+#define AIM_CAPS_ABINTERNAL     0x0800
 #define AIM_CAPS_LAST           0x8000
 
 faim_export int aim_0002_000b(aim_session_t *sess, aim_conn_t *conn, const char *sn);
@@ -880,7 +882,7 @@ faim_export int aim_sendbuddyoffgoing(aim_session_t *sess, aim_conn_t *conn, con
 	AIM_IMPARAM_FLAG_CHANMSGS_ALLOWED | AIM_IMPARAM_FLAG_MISSEDCALLS_ENABLED, \
 	512, /* !! Note how small this is. */ \
 	(99.9)*10, (99.9)*10, \
-	1000 \
+	1000 /* !! And how large this is. */ \
 }
 
 /* This is what most AIM versions use. */

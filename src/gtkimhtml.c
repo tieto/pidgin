@@ -1902,75 +1902,80 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 
 		xflds = g_strsplit (xname, "-", -1);
 
-#define NAME 2
-#define BOLD 3
-#define ITALICS 4
-#define SIZE 6
-#define PTSZ 7
+#define FNDRY 1
+#define FMLY 2
+#define WGHT 3
+#define SLANT 4
+#define SWDTH 5
+#define ADSTYL 6
+#define PXLSZ 7
+#define PTSZ 8
+#define RESX 9
+#define RESY 10
+#define SPC 11
+#define AVGWDTH 12
+#define RGSTRY 13
+#define ENCDNG 14
 
 		for (i = 0; xflds [i]; i++);
 		newvals = g_memdup (xflds, (i + 1) * sizeof (xflds));
+		if (!xflds [ADSTYL][0])
+			newvals [ADSTYL] = "*";
 
 		if (bold)
-			newvals [BOLD] = "bold";
+			newvals [WGHT] = "bold";
 		if (italics)
-			newvals [ITALICS] = "i";
+			newvals [SLANT] = "i";
 		if (fontsize) {
 			g_snprintf (fs, sizeof (fs), "%d", font_sizes [MIN (fontsize, MAX_SIZE) - 1]);
-			newvals [SIZE] = fs;
-			newvals [PTSZ] = "";
+			newvals [PXLSZ] = "*";
+			newvals [PTSZ] = fs;
 		}
 
 		if (name)
 			names = g_strsplit (name, ",", -1);
 		else {
 			names = g_new0 (gchar *, 2);
-			names [0] = g_strdup (xflds [NAME]);
+			names [0] = g_strdup (xflds [FMLY]);
 		}
 
 		for (i = 0; names [i]; i++) {
-			newvals [NAME] = names [i];
+			newvals [FMLY] = names [i];
 			TRY_FONT;
 		}
 
 		for (i = 0; italics && names [i]; i++) {
-			newvals [NAME] = names [i];
+			newvals [FMLY] = names [i];
 
-			newvals [ITALICS] = "o";
+			newvals [SLANT] = "o";
 			TRY_FONT;
 
-			newvals [ITALICS] = xflds [ITALICS];
+			newvals [SLANT] = xflds [SLANT];
 			TRY_FONT;
 		}
 
 		for (i = 0; fontsize && names [i]; i++) {
-			newvals [NAME] = names [i];
+			newvals [FMLY] = names [i];
 
-			if (xflds [PTSZ][0]) {
-				g_snprintf (fs, sizeof (fs), "%d",
-					    font_sizes [MIN (fontsize, MAX_SIZE) - 1] / 10);
-				newvals [PTSZ] = fs;
-				newvals [SIZE] = "";
-				TRY_FONT;
+			g_snprintf (fs, sizeof (fs), "%d",
+				    font_sizes [MIN (fontsize, MAX_SIZE) - 1] / 10);
+			newvals [PXLSZ] = fs;
+			newvals [PTSZ] = "*";
 
-				newvals [PTSZ] = xflds [PTSZ];
-			} else
-				newvals [SIZE] = xflds [SIZE];
+			TRY_FONT;
+
+			newvals [PXLSZ] = xflds [PXLSZ];
+			newvals [PTSZ] = xflds [PTSZ];
+
 			TRY_FONT;
 		}
 
 		for (i = 0; bold && names [i]; i++) {
-			newvals [NAME] = names [i];
+			newvals [FMLY] = names [i];
 
-			newvals [BOLD] = xflds [BOLD];
+			newvals [WGHT] = xflds [WGHT];
 			TRY_FONT;
 		}
-
-#undef NAME
-#undef BOLD
-#undef ITALICS
-#undef SIZE
-#undef PTSZ
 
 		g_free (newvals);
 		g_strfreev (xflds);

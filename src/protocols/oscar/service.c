@@ -4,6 +4,7 @@
  */
 
 #define FAIM_INTERNAL
+#define FAIM_NEED_CONN_INTERNAL
 #include <aim.h>
 
 #include "md5.h"
@@ -288,6 +289,8 @@ static int rateresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		 */
 		if (mod->version >= 3)
 			aimbs_getrawbuf(bs, rc.unknown, sizeof(rc.unknown));
+
+		faimdprintf(sess, 1, "--- Adding rate class %d to connection type %d: window size = %ld, clear = %ld, alert = %ld, limit = %ld, disconnect = %ld, current = %ld, max = %ld\n", rx->conn->type, rc.classid, rc.windowsize, rc.clear, rc.alert, rc.limit, rc.disconnect, rc.current, rc.max);
 
 		rc_addclass(&ins->rates, &rc);
 	}

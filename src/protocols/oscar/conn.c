@@ -7,6 +7,7 @@
  */
 
 #define FAIM_INTERNAL
+#define FAIM_NEED_CONN_INTERNAL
 #include <aim.h> 
 
 #ifndef _WIN32
@@ -127,9 +128,19 @@ static void connkill_rates(struct rateclass **head)
 
 	for (rc = *head; rc; ) {
 		struct rateclass *tmp;
+		struct snacpair *sp;
 
 		tmp = rc->next;
+
+		for (sp = rc->members; sp; ) {
+			struct snacpair *tmpsp;
+
+			tmpsp = sp->next;
+			free(sp);
+			sp = tmpsp;
+		}
 		free(rc);
+
 		rc = tmp;
 	}
 
