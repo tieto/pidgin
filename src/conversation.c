@@ -1307,17 +1307,15 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	font_p = gtk_pixmap_new(font_i, mask);
 	gtk_widget_show(font_p);
 	smiley_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, smile_xpm);
-	/*gdk_pixmap_create_from_xpm_d(win->window, &mask
-			&win->style->white, smile_xpm);*/
 	smiley_p = gtk_pixmap_new(smiley_i, mask);
 	gtk_widget_show(smiley_p);
 
 	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-	                                  GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-					  _("Bold"), _("Bold Text"), _("Bold"), bold_p,
-					  GTK_SIGNAL_FUNC(do_bold), entry);
+						GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
+						_("Bold"), _("Bold Text"), _("Bold"), bold_p,
+						GTK_SIGNAL_FUNC(do_bold), entry);
 	italic = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar), 
-		                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Italics"), _("Italics Text"),
 					    _("Italics"), italic_p, GTK_SIGNAL_FUNC(do_italic), entry);
 	underline = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
@@ -1329,19 +1327,24 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 					    NULL, _("Strike"), _("Strike through Text"),
 					    _("Strike"), strike_p, GTK_SIGNAL_FUNC(do_strike), entry);
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
-	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), _("Small"), _("Decrease font size"), _("Small"), small_p, GTK_SIGNAL_FUNC(do_small), entry);
-	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), _("Normal"), _("Normal font size"), _("Normal"), normal_p, GTK_SIGNAL_FUNC(do_normal), entry);
-	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), _("Big"), _("Increase font size"), _("Big"), big_p, GTK_SIGNAL_FUNC(do_big), entry);
+	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
+						_("Small"), _("Decrease font size"), _("Small"),
+						small_p, GTK_SIGNAL_FUNC(do_small), entry);
+	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
+						_("Normal"), _("Normal font size"), _("Normal"),
+						normal_p, GTK_SIGNAL_FUNC(do_normal), entry);
+	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
+						_("Big"), _("Increase font size"), _("Big"),
+						big_p, GTK_SIGNAL_FUNC(do_big), entry);
 	font = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 						NULL, _("Font"), _("Select Font"),
 						_("Font"), font_p, GTK_SIGNAL_FUNC(toggle_font), c);
-
 	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
 	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-                                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Link"), _("Insert Link"),
-                                            _("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c);                 
+						_("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c);                 
 	palette = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Color"), _("Text Color"),
@@ -1349,24 +1352,24 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Logging"), _("Enable logging"),
-                                          _("Logging"), wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
+						_("Logging"), wood_p, GTK_SIGNAL_FUNC(toggle_loggle), c);
 	smiley = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 						NULL, _("Smiley"), _("Insert smiley face"), _("Smiley"),
 						 smiley_p, GTK_SIGNAL_FUNC(insert_smiley), c);
         speaker = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Sound"), _("Enable sounds"),
 					    _("Sound"), speaker_p, GTK_SIGNAL_FUNC(set_option), &c->makesound);
 	c->makesound=0;
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(speaker), TRUE);
 	
-        state_lock = 1;
+	state_lock = 1;
 	if (find_log_info(c->name))
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(wood), TRUE);
 	else
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(wood), FALSE);
-        state_lock = 0;
+	state_lock = 0;
 
 	/* use a slicker look if the user wants to */
 	if (display_options & OPT_DISP_COOL_LOOK)
@@ -1390,16 +1393,16 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	
 	c->bold = bold;
 	c->strike = strike;
-        c->italic = italic;
+	c->italic = italic;
 	c->underline = underline;
-        c->log_button = wood;
+	c->log_button = wood;
 	c->palette = palette;
 	c->link = link;  
 	c->wood = wood;
 	c->font = font;
 	c->smiley = smiley;
 
-        gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
+	gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
         
 	gtk_widget_set_sensitive(c->bold, ((font_options & OPT_FONT_BOLD)) ? FALSE : TRUE);
 	gtk_widget_set_sensitive(c->italic, ((font_options & OPT_FONT_ITALIC)) ? FALSE : TRUE);
@@ -1413,44 +1416,39 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 void show_conv(struct conversation *c)
 {
 	GtkWidget *win;
-        char buf[256];
-        GtkWidget *text;
-        GtkWidget *sw;
+	char buf[256];
+	GtkWidget *text;
+	GtkWidget *sw;
 	GtkWidget *send;
 	GtkWidget *info;
-        GtkWidget *warn;
-        GtkWidget *block;
-	/* GtkWidget *color; */
+	GtkWidget *warn;
+	GtkWidget *block;
 	GtkWidget *close;
 	GtkWidget *entry;
 	GtkWidget *toolbar;
 	GtkWidget *bbox;
-        GtkWidget *vbox;
+	GtkWidget *vbox;
 	GtkWidget *vbox2;
 	GtkWidget *paned;
-        GtkWidget *add;
+	GtkWidget *add;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 
-        gtk_widget_realize(win);
-        aol_icon(win->window);
- 
+	gtk_widget_realize(win);
+	aol_icon(win->window);
         
-        c->window = win;
+	c->window = win;
         
 	send = gtk_button_new_with_label(_("Send"));
 	info = gtk_button_new_with_label(_("Info"));
 	warn = gtk_button_new_with_label(_("Warn"));
-	/* color = gtk_button_new_with_label("Color"); */
 	close = gtk_button_new_with_label(_("Close"));
-	if (find_buddy(c->name) != NULL) {
-       		add = gtk_button_new_with_label(_("Remove"));
-	}
-	else {
+	if (find_buddy(c->name) != NULL)
+		add = gtk_button_new_with_label(_("Remove"));
+	else
 		add = gtk_button_new_with_label(_("Add"));
-	}
-        block = gtk_button_new_with_label(_("Block"));
+	block = gtk_button_new_with_label(_("Block"));
 
 	/* use a slicker look if the user wants to */
 	if (display_options & OPT_DISP_COOL_LOOK)
@@ -1463,7 +1461,7 @@ void show_conv(struct conversation *c)
 		gtk_button_set_relief(GTK_BUTTON(block), GTK_RELIEF_NONE);
 	}
 	
-        bbox = gtk_hbox_new(TRUE, 0);
+	bbox = gtk_hbox_new(TRUE, 0);
 	vbox = gtk_vbox_new(FALSE, 0);
 	vbox2 = gtk_vbox_new(FALSE, 0);
 	paned = gtk_vpaned_new();
@@ -1478,41 +1476,29 @@ void show_conv(struct conversation *c)
 	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);
 	gtk_object_set_user_data(GTK_OBJECT(entry), c);
 	c->entry = entry;
-
+	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback),c);
+	c->add_button = add;
+		
 	/* Toolbar */
 	toolbar = build_conv_toolbar(c);
-        
 
-        c->add_button = add;
-	
-
-	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback),c);
-
-        /* Text box */
-
-        
-        text = gtk_html_new(NULL, NULL);
-
+	/* Text box */
+	text = gtk_html_new(NULL, NULL);
 	gtk_html_set_editable(GTK_HTML(text), FALSE);
 /*	gtk_html_set_transparent(GTK_HTML(text), (transparent) ? TRUE : FALSE);*/
-        c->text = text;
+	c->text = text;
 
-        sw = gtk_scrolled_window_new (NULL, NULL);
-        gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-                                        GTK_POLICY_NEVER,
-                                        GTK_POLICY_ALWAYS);
-        gtk_widget_show(sw);
-        gtk_container_add(GTK_CONTAINER(sw), text);
-        gtk_widget_show(text);
-        
-
-
-
-        GTK_HTML (text)->hadj->step_increment = 10.0;
-        GTK_HTML (text)->vadj->step_increment = 10.0;
-        gtk_widget_set_usize(sw, 320, 150);
-
-        
+	sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+												GTK_POLICY_NEVER,
+												GTK_POLICY_ALWAYS);
+	gtk_widget_show(sw);
+	gtk_container_add(GTK_CONTAINER(sw), text);
+	gtk_widget_show(text);
+	
+	GTK_HTML (text)->hadj->step_increment = 10.0;
+	GTK_HTML (text)->vadj->step_increment = 10.0;
+	gtk_widget_set_usize(sw, 320, 150);
 
 	/* Ready and pack buttons */
 	gtk_object_set_user_data(GTK_OBJECT(win), c);
@@ -1520,36 +1506,32 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
 	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
 	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-        gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
-        gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
-        gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
-	/* gtk_signal_connect(GTK_OBJECT(color), "clicked", GTK_SIGNAL_FUNC(color_callback), c); */
+	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
+	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
+	gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
        
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
 	gtk_widget_set_usize(entry, 300, 25);
 
 	gtk_box_pack_start(GTK_BOX(bbox), send, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(bbox), info, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(bbox), warn, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(bbox), block, TRUE, TRUE, 5);
-	/* gtk_box_pack_start(GTK_BOX(bbox), color, TRUE, TRUE, 5); */
+	gtk_box_pack_start(GTK_BOX(bbox), warn, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(bbox), block, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(bbox), add, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(bbox), close, TRUE, TRUE, 5);
 	
 	/* pack and fill the rest */
-
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), toolbar, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), entry, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox2), bbox, FALSE, FALSE, 5);
 
 	gtk_widget_show(send);
 	gtk_widget_show(info);
 	gtk_widget_show(warn);
-	/* gtk_widget_show(color); */
 	gtk_widget_show(close);	
-        gtk_widget_show(add);
-        gtk_widget_show(block);
+	gtk_widget_show(add);
+	gtk_widget_show(block);
 	gtk_widget_show(bbox);
 	gtk_widget_show(vbox);
 	gtk_widget_show(entry);

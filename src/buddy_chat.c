@@ -704,13 +704,15 @@ void show_new_buddy_chat(struct conversation *b)
 
 	gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback),b);
 
-
-        gtk_widget_realize(win);
+	if (fontface)
+		strncpy(b->current_fontface, fontface, sizeof(b->current_fontface));
+	if (fontname)
+		strncpy(b->current_fontname, fontname, sizeof(b->current_fontname));
+		
+	gtk_widget_realize(win);
 	aol_icon(win->window);
 
 	gtk_widget_show(win);
-
-	
 }
 
 
