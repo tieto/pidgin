@@ -4781,7 +4781,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	while (retval) {
-		debug_printf("ssi: status is 0x%04hx for a 0x%04hx action with name %s\n", retval->ack,  retval->action, retval->item ? retval->item->name : "no item");
+		debug_printf("ssi: status is 0x%04hx for a 0x%04hx action with name %s\n", retval->ack,  retval->action, retval->item ? (retval->item->name ? retval->item->name : "no name") : "no item");
 
 		if (retval->ack != 0xffff)
 		switch (retval->ack) {
