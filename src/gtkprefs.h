@@ -62,7 +62,7 @@ GtkWidget *gaim_gtk_prefs_checkbox(const char *title, const char *key,
  *              value of a checkbox.
  */
 GtkWidget *gaim_gtk_prefs_labeled_spin_button(GtkWidget *page,
-		const gchar *title, char *key, int min, int max, GtkSizeGroup *sg);
+		const gchar *title, const char *key, int min, int max, GtkSizeGroup *sg);
 
 /**
  * Add a new entry representing a string preference
@@ -77,7 +77,7 @@ GtkWidget *gaim_gtk_prefs_labeled_spin_button(GtkWidget *page,
  *               checkbox.
  */
 GtkWidget *gaim_gtk_prefs_labeled_entry(GtkWidget *page, const gchar *title,
-										char *key, GtkSizeGroup *sg);
+										const char *key, GtkSizeGroup *sg);
 
 /**
  * Add a new dropdown representing a preference of the specified type

@@ -88,7 +88,7 @@ update_spin_value(GtkWidget *w, GtkWidget *spin)
 
 GtkWidget *
 gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
-		char *key, int min, int max, GtkSizeGroup *sg)
+		const char *key, int min, int max, GtkSizeGroup *sg)
 {
 	GtkWidget *hbox;
 	GtkWidget *label;
@@ -109,7 +109,7 @@ gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 
 	adjust = gtk_adjustment_new(val, min, max, 1, 1, 1);
 	spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
-	g_object_set_data(G_OBJECT(spin), "val", key);
+	g_object_set_data(G_OBJECT(spin), "val", (char *)key);
 	if (max < 10000)
 		gtk_widget_set_size_request(spin, 50, -1);
 	else
@@ -133,14 +133,14 @@ gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 
 static void
 entry_set(GtkEntry *entry, gpointer data) {
-	char *key = (char*)data;
+	const char *key = (const char*)data;
 
 	gaim_prefs_set_string(key, gtk_entry_get_text(entry));
 }
 
 GtkWidget *
-gaim_gtk_prefs_labeled_entry(GtkWidget *page, const gchar *title, char *key,
-							 GtkSizeGroup *sg)
+gaim_gtk_prefs_labeled_entry(GtkWidget *page, const gchar *title,
+							 const char *key, GtkSizeGroup *sg)
 {
 	GtkWidget *hbox, *label, *entry;
 	const gchar *value;
