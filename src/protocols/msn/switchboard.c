@@ -271,8 +271,6 @@ __plain_msg(MsnServConn *servconn, const MsnMessage *msg)
 		format = msn_parse_format(value);
 
 		body = g_strdup_printf("%s%s", format, body);
-
-		g_free(format);
 	}
 
 	if (swboard->chat != NULL)
