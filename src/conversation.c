@@ -668,8 +668,8 @@ gaim_window_move_conversation(struct gaim_window *win, unsigned int index,
 		return;
 
 	/* We can't move this past the last index. */
-	if (new_index >= gaim_window_get_conversation_count(win))
-		new_index = gaim_window_get_conversation_count(win) - 1;
+	if (new_index > gaim_window_get_conversation_count(win))
+		new_index = gaim_window_get_conversation_count(win);
 
 	/* Get the list item for this conversation at its current index. */
 	l = g_list_nth(gaim_window_get_conversations(win), index);
