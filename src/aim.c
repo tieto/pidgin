@@ -464,11 +464,13 @@ int main(int argc, char *argv[])
 					_("Signon"),
 					applet_show_login,
 					NULL);
+#ifdef GAIM_PLUGINS
         applet_widget_register_callback(APPLET_WIDGET(applet),
 					"plugins",
 					_("Plugins"),
 					GTK_SIGNAL_FUNC(show_plugins),
 					NULL);
+#endif /* GAIM_PLUGINS */
 
         if((general_options & OPT_GEN_AUTO_LOGIN) &&
            (general_options & OPT_GEN_REMEMBER_PASS)) {
