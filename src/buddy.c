@@ -349,14 +349,19 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			if (GAIM_BLIST_NODE_IS_BUDDY(n)) {
 				struct buddy *b = (struct buddy*)n;
 				if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-					if (position == GTK_TREE_VIEW_DROP_AFTER) {
-						gaim_blist_add_buddy(b, (struct group*)node->parent, node);
-					} else if (position == GTK_TREE_VIEW_DROP_BEFORE) {
-						gaim_blist_add_buddy(b, (struct group*)node->parent, node->prev);
+					switch(position) {
+						case GTK_TREE_VIEW_DROP_AFTER:
+						case GTK_TREE_VIEW_DROP_INTO_OR_AFTER:
+							gaim_blist_add_buddy(b, (struct group*)node->parent, node);
+							break;
+						case GTK_TREE_VIEW_DROP_BEFORE:
+						case GTK_TREE_VIEW_DROP_INTO_OR_BEFORE:
+							gaim_blist_add_buddy(b, (struct group*)node->parent, node->prev);
+							break;
 					}
 				} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 					gaim_blist_add_buddy(b, (struct group*)node, NULL);
-				}	
+				}
 			} else if (GAIM_BLIST_NODE_IS_GROUP(n)) {
 				struct group *g = (struct group*)n;
 				if (GAIM_BLIST_NODE_IS_GROUP(node)) {
