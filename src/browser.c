@@ -632,6 +632,7 @@ static void netscape_command(char *command)
 }
 
 void open_url(GtkWidget *w, char *url) {
+
 	if (web_browser == BROWSER_NETSCAPE) {
                 char *command = g_malloc(1024);
 
@@ -657,6 +658,10 @@ void open_url(GtkWidget *w, char *url) {
 		} else {
 			gtk_timeout_add(1000, (GtkFunction)clean_pid, NULL);
 		}
+#ifdef USE_GNOME
+	} else if (web_browser == BROWSER_GNOME) {
+		gnome_url_show(url);
+#endif /* USE_GNOME */
 	} else if (web_browser == BROWSER_MANUAL) {
 		pid_t pid;
 
@@ -704,6 +709,8 @@ void open_url_nw(GtkWidget *w, char *url) {
 
 		netscape_command(command);
 		g_free(command);
+	} else {
+		open_url(w, url);
 	}
 }
 

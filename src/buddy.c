@@ -67,6 +67,7 @@
 
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
+#include "pixmaps/export_small.xpm"
 #include "pixmaps/close_small.xpm"
 #include "pixmaps/exit_small.xpm"
 
@@ -1850,14 +1851,14 @@ void show_buddy_list()
 	gaim_new_item_with_pixmap(menu, _("Join A Chat"), add_small_xpm, GTK_SIGNAL_FUNC(chat_callback));
         gaim_seperator(menu);
         gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm, GTK_SIGNAL_FUNC(import_callback));
-        gaim_new_item_with_pixmap(menu, _("Export Buddy List"), add_small_xpm,GTK_SIGNAL_FUNC(export_callback));
+        gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,GTK_SIGNAL_FUNC(export_callback));
 	if (!(general_options & OPT_GEN_REGISTERED))
 	{
         	gaim_seperator(menu);
 		gaim_new_item_with_pixmap(menu, _("Register"), add_small_xpm, GTK_SIGNAL_FUNC(gaimreg_callback));
 	}
 	gaim_seperator(menu);
-	gaim_new_item_with_pixmap(menu, _("Signoff"), add_small_xpm, GTK_SIGNAL_FUNC(signoff));
+	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_icon_xpm, GTK_SIGNAL_FUNC(signoff));
 
 #ifndef USE_APPLET
 	gaim_new_item_with_pixmap(menu, _("Quit"), exit_small_xpm, GTK_SIGNAL_FUNC(do_quit));
