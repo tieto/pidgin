@@ -1714,11 +1714,21 @@ syn_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
 	MsnSession *session = servconn->session;
+	GaimConnection *gc = gaim_account_get_connection(session->account);
 
 	if (session->protocol_ver >= 8)
 	{
 		session->total_users  = atoi(params[2]);
 		session->total_groups = atoi(params[3]);
+
+		if (session->total_users == 0)
+		{
+			gaim_connection_set_state(gc, GAIM_CONNECTED);
+			serv_finish_login(gc);
+
+			session->syncing_lists = FALSE;
+			session->lists_synced  = TRUE;
+		}
 	}
 
 	return TRUE;
