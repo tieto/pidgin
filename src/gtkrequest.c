@@ -31,6 +31,12 @@
 #include "stock.h"
 #include "ui.h"
 
+#include <gdk/gdkkeysyms.h>
+
+#if GTK_CHECK_VERSION(2,3,0)
+# define NEW_STYLE_COMPLETION
+#endif
+
 typedef struct
 {
 	GaimRequestType type;
@@ -62,6 +68,16 @@ typedef struct
 	} u;
 
 } GaimGtkRequestData;
+
+#ifndef NEW_STYLE_COMPLETION
+typedef struct
+{
+	GCompletion *completion;
+
+	gboolean completion_started;
+
+} GaimGtkCompletionData;
+#endif
 
 static void
 input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
@@ -460,15 +476,192 @@ req_entry_field_changed_cb(GtkWidget *entry, GaimRequestField *field)
 		gaim_request_fields_all_required_filled(field->group->fields_list));
 }
 
+GList *
+get_online_screennames(void)
+{
+	GList *screennames = NULL;
+	GaimBlistNode *gnode, *cnode, *bnode;
+
+	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
+	{
+		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+
+		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
+		{
+			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+
+			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
+			{
+				GaimBuddy *buddy = (GaimBuddy *)bnode;
+
+				if (!gaim_account_is_connected(buddy->account))
+					continue;
+
+				screennames = g_list_append(screennames, g_strdup(buddy->name));
+			}
+		}
+	}
+
+	return screennames;
+}
+
+#ifndef NEW_STYLE_COMPLETION
+static gboolean
+completion_entry_event(GtkEditable *entry, GdkEventKey *event,
+					   GaimGtkCompletionData *data)
+{
+	int pos, end_pos;
+
+	if (event->type == GDK_KEY_PRESS && event->keyval == GDK_Tab)
+	{
+		gtk_editable_get_selection_bounds(entry, &pos, &end_pos);
+
+		if (data->completion_started &&
+			pos != end_pos && pos > 1 &&
+			end_pos == strlen(gtk_entry_get_text(GTK_ENTRY(entry))))
+		{
+			gtk_editable_select_region(entry, 0, 0);
+			gtk_editable_set_position(entry, -1);
+
+			return TRUE;
+		}
+	}
+	else if (event->type == GDK_KEY_PRESS && event->length > 0)
+	{
+		char *prefix, *nprefix;
+
+		gtk_editable_get_selection_bounds(entry, &pos, &end_pos);
+
+		if (data->completion_started &&
+			pos != end_pos && pos > 1 &&
+			end_pos == strlen(gtk_entry_get_text(GTK_ENTRY(entry))))
+		{
+			char *temp;
+
+			temp = gtk_editable_get_chars(entry, 0, pos);
+			prefix = g_strconcat(temp, event->string, NULL);
+			g_free(temp);
+		}
+		else if (pos == end_pos && pos > 1 &&
+				 end_pos == strlen(gtk_entry_get_text(GTK_ENTRY(entry))))
+		{
+			prefix = g_strconcat(gtk_entry_get_text(GTK_ENTRY(entry)),
+								 event->string, NULL);
+		}
+		else
+			return FALSE;
+
+		pos = strlen(prefix);
+		nprefix = NULL;
+
+		g_completion_complete(data->completion, prefix, &nprefix);
+
+		if (nprefix != NULL)
+		{
+			gtk_entry_set_text(GTK_ENTRY(entry), nprefix);
+			gtk_editable_set_position(entry, pos);
+			gtk_editable_select_region(entry, pos, -1);
+
+			data->completion_started = TRUE;
+
+			g_free(nprefix);
+			g_free(prefix);
+
+			return TRUE;
+		}
+
+		g_free(prefix);
+	}
+
+	return FALSE;
+}
+
+static void
+destroy_completion_data(GtkWidget *w, GaimGtkCompletionData *data)
+{
+	g_list_foreach(data->completion->items, (GFunc)g_free, NULL);
+	g_completion_free(data->completion);
+
+	g_free(data);
+}
+#endif /* !NEW_STYLE_COMPLETION */
+
+static void
+setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
+{
+#ifdef NEW_STYLE_COMPLETION
+	GtkListStore *store;
+	GtkTreeIter iter;
+	GtkEntryCompletion *completion;
+	GList *screennames, *l;
+
+	store = gtk_list_store_new(1, G_TYPE_STRING);
+
+	screennames = get_online_screennames();
+
+	for (l = screennames; l != NULL; l = l->next)
+	{
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter, 0, l->data, -1);
+	}
+
+	g_list_foreach(screennames, (GFunc)g_free, NULL);
+	g_list_free(screennames);
+
+	completion = gtk_entry_completion_new();
+	gtk_entry_set_completion(GTK_ENTRY(entry), completion);
+	g_object_unref(completion);
+
+	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(store));
+	g_object_unref(store);
+
+	gtk_entry_completion_set_text_column(completion, 0);
+
+#else /* !NEW_STYLE_COMPLETION */
+	GaimGtkCompletionData *data;
+	GList *screennames;
+
+	data = g_new0(GaimGtkCompletionData, 1);
+
+	data->completion = g_completion_new(NULL);
+
+	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
+
+	screennames = get_online_screennames();
+
+	g_completion_add_items(data->completion, screennames);
+
+	g_list_free(screennames);
+
+	g_signal_connect(G_OBJECT(entry), "event",
+					 G_CALLBACK(completion_entry_event), data);
+	g_signal_connect(G_OBJECT(entry), "destroy",
+					 G_CALLBACK(destroy_completion_data), data);
+
+#endif /* !NEW_STYLE_COMPLETION */
+}
+
 static void
 setup_entry_field(GtkWidget *entry, GaimRequestField *field)
 {
+	const char *type_hint;
+
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 
 	if (gaim_request_field_is_required(field))
 	{
 		g_signal_connect(G_OBJECT(entry), "changed",
 						 G_CALLBACK(req_entry_field_changed_cb), field);
+	}
+
+	if ((type_hint = gaim_request_field_get_type_hint(field)) != NULL)
+	{
+		if (!strcmp(type_hint, "screenname"))
+		{
+			setup_screenname_autocomplete(entry, field);
+		}
 	}
 }
 

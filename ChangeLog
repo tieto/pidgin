@@ -5,6 +5,8 @@ version 0.76cvs:
 	* WYSIWYG text input
 	* Ability to be invisible on AIM
 	* Chatroom list support (Tim Ringenbach)
+	* Added auto-completion for screen names to the New Instant Message and
+	  Get User Info dialogs.
 	* Non-ascii character support in AIM chats (Uli Luckas and Marco Ziech)
 	* Vastly improved browser opening, with tab support! (Nathan Fredrickson)
 	* Support for Mozilla Firefox (Chris Friesen and Nathan Fredrickson)
