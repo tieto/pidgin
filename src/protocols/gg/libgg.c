@@ -1,4 +1,4 @@
-/* $Id: libgg.c 3850 2002-10-16 19:57:03Z hermanator $ */
+/* $Id: libgg.c 3943 2002-10-25 04:32:23Z chipx86 $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -30,6 +30,7 @@
 #include <fcntl.h>
 #endif
 
+#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -71,7 +72,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 3850 2002-10-16 19:57:03Z hermanator $";
+= "$Id: libgg.c 3943 2002-10-25 04:32:23Z chipx86 $";
 
 #endif 
 
