@@ -4124,10 +4124,11 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		switch (curitem->type) {
 			case 0x0000: { /* Buddy */
 				if (curitem->name) {
-					char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, curitem->name);
+					char *gname = aim_ssi_itemlist_findparentname(sess->ssi.local, curitem->name);
 					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
 					struct buddy *buddy = find_buddy(gc, curitem->name);
 					if (buddy) {
+						/* Get server stored alias */
 						if (alias)
 							strcpy(buddy->alias, alias);
 					} else {
@@ -4205,11 +4206,20 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		cur = gc->groups;
 		while (cur) {
 			GSList *curbud;
-			for (curbud=((struct group*)cur->data)->members; curbud; curbud=curbud->next)
-				if (!aim_ssi_itemlist_exists(sess->ssi.local, ((struct buddy*)curbud->data)->name)) {
+			for (curbud=((struct group*)cur->data)->members; curbud; curbud=curbud->next) {
+				struct buddy *buddy = curbud->data;
+				char *gname = aim_ssi_itemlist_findparentname(sess->ssi.local, buddy->name);
+				char *alias = aim_ssi_getalias(sess->ssi.local, gname, buddy->name);
+				if (aim_ssi_itemlist_exists(sess->ssi.local, buddy->name)) {
+					/* Store local alias on server */
+					if (!alias && buddy->alias[0])
+						aim_ssi_aliasbuddy(sess, od->conn, gname, buddy->name, buddy->alias);
+				} else {
 					debug_printf("ssi: adding buddy %s from local list to server list\n", ((struct buddy*)curbud->data)->name);
-					aim_ssi_addbuddy(od->sess, od->conn, ((struct buddy*)curbud->data)->name, ((struct group*)cur->data)->name, get_buddy_alias_only((struct buddy *)curbud->data), NULL, NULL, 0);
+					aim_ssi_addbuddy(sess, od->conn, buddy->name, ((struct group*)cur->data)->name, get_buddy_alias_only((struct buddy *)curbud->data), NULL, NULL, 0);
 				}
+				free(alias);
+			}
 			cur = g_slist_next(cur);
 		}
 
@@ -4218,7 +4228,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			for (cur=gc->permit; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
 					debug_printf("ssi: adding permit %s from local list to server list\n", (char *)cur->data);
-					aim_ssi_addpermit(od->sess, od->conn, cur->data);
+					aim_ssi_addpermit(sess, od->conn, cur->data);
 				}
 		}
 
@@ -4227,7 +4237,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			for (cur=gc->deny; cur; cur=cur->next)
 				if (!aim_ssi_itemlist_finditem(sess->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
 					debug_printf("ssi: adding deny %s from local list to server list\n", (char *)cur->data);
-					aim_ssi_adddeny(od->sess, od->conn, cur->data);
+					aim_ssi_adddeny(sess, od->conn, cur->data);
 				}
 		}
 

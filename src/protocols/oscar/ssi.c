@@ -1410,17 +1410,17 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 				cur->item = NULL;
 
 			} else if (cur->action == AIM_CB_SSI_MOD) {
-				/* Replace the official item with the item in the local list */
+				/* Replace the local item with the item from the official list */
 				struct aim_ssi_item *cur1;
-				if ((cur1 = aim_ssi_itemlist_find(sess->ssi.local, cur->item->gid, cur->item->bid))) {
-					free(cur1->name);
-					if (cur->item->name) {
-						cur1->name = (char *)malloc((strlen(cur->item->name)+1)*sizeof(char));
-						strcpy(cur1->name, cur->item->name);
+				if ((cur1 = aim_ssi_itemlist_find(sess->ssi.official, cur->item->gid, cur->item->bid))) {
+					free(cur->item->name);
+					if (cur1->name) {
+						cur->item->name = (char *)malloc((strlen(cur1->name)+1)*sizeof(char));
+						strcpy(cur->item->name, cur1->name);
 					} else
-						cur1->name = NULL;
-					aim_freetlvchain(&cur1->data);
-					cur1->data = aim_tlvlist_copy(cur->item->data);
+						cur->item->name = NULL;
+					aim_freetlvchain(&cur->item->data);
+					cur->item->data = aim_tlvlist_copy(cur1->data);
 				}
 
 			} else if (cur->action == AIM_CB_SSI_DEL) {
@@ -1431,11 +1431,11 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		} else {
 			/* Do the exact opposite */
 			if (cur->action == AIM_CB_SSI_ADD) {
-				/* Add the item to the official list */
+				/* Add the local item to the official list */
 				aim_ssi_itemlist_add(&sess->ssi.official, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, cur->item->data);
 
 			} else if (cur->action == AIM_CB_SSI_MOD) {
-				/* Replace the old item with the new item in the items list */
+				/* Replace the official item with the item from the local list */
 				struct aim_ssi_item *cur1;
 				if ((cur1 = aim_ssi_itemlist_find(sess->ssi.official, cur->item->gid, cur->item->bid))) {
 					free(cur1->name);
@@ -1449,7 +1449,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 				}
 
 			} else if (cur->action == AIM_CB_SSI_DEL) {
-				/* Remove the item from the items list */
+				/* Remove the item from the official list */
 				aim_ssi_itemlist_del(&sess->ssi.official, cur->item);
 				cur->item = NULL;
 			}
