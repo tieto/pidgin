@@ -393,19 +393,43 @@ void whisper_callback(GtkWidget *widget, struct conversation *b)
 }
 
 
+static gint insertname(gconstpointer one, gconstpointer two)
+{
+	const char *a = (const char *)one;
+	const char *b = (const char *)two;
+
+	if (*a == '@') {
+		if (*b != '@')
+			return -1;
+		return (strcmp(a + 1, b + 1));
+	} else if (*a == '+') {
+		if (*b == '@')
+			return 1;
+		if (*b != '+')
+			return -1;
+		return (strcmp(a + 1, b + 1));
+	} else {
+		if (*b == '@' || *b == '+')
+			return 1;
+		return strcmp(a, b);
+	}
+}
+
 
 void add_chat_buddy(struct conversation *b, char *buddy)
 {
         char *name = g_strdup(buddy);
 	char tmp[BUF_LONG];
 	GtkWidget *list_item;
+	int pos;
 
 	plugin_event(event_chat_buddy_join, b->gc, b->name, name, 0);
-        b->in_room = g_list_append(b->in_room, name);
+        b->in_room = g_list_insert_sorted(b->in_room, name, insertname);
+	pos = g_list_index(b->in_room, name);
 
         list_item = gtk_list_item_new_with_label(name);
 	gtk_object_set_user_data(GTK_OBJECT(list_item), name);
-	gtk_list_append_items(GTK_LIST(b->list), g_list_append(NULL, list_item));
+	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
 	gtk_widget_show(list_item);
 
 	g_snprintf(tmp, sizeof(tmp), _("%d people in room"), g_list_length(b->in_room));
