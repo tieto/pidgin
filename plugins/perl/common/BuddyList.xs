@@ -76,6 +76,17 @@ gaim_blist_find_chat(account, name)
 	Gaim::Account account
 	const char *name
 
+void
+groups()
+PREINIT:
+	GaimBlistNode *node;
+CODE:
+	for (node = gaim_get_blist()->root; node != NULL; node = node->next)
+	{
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(node,
+			"Gaim::BuddyList::Group")));
+	}
+
 
 ###########################################################################
 MODULE = Gaim::GroupList::Group  PACKAGE = Gaim::GroupList::Group  PREFIX = gaim_group_
@@ -115,6 +126,14 @@ CODE:
 OUTPUT:
 	RETVAL
 
+const char *
+get_name(group)
+	Gaim::BuddyList::Group group
+CODE:
+	RETVAL = group->name;
+OUTPUT:
+	RETVAL
+
 int
 get_online_count(group)
 	Gaim::BuddyList::Group group
@@ -133,6 +152,19 @@ const char *
 gaim_group_get_setting(group, key)
 	Gaim::BuddyList::Group group
 	const char *key
+
+void
+buddies(group)
+	Gaim::BuddyList::Group group
+PREINIT:
+	GaimBlistNode *node;
+	GaimBlistNode *_group = (GaimBlistNode *)group;
+PPCODE:
+	for (node = _group->child; node != NULL; node = node->next)
+	{
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(node,
+			"Gaim::BuddyList::Buddy")));
+	}
 
 
 ###########################################################################
@@ -191,6 +223,22 @@ set_server_alias(buddy, alias)
 	const char *alias
 CODE:
 	gaim_blist_server_alias_buddy(buddy, alias);
+
+const char *
+get_name(buddy)
+	Gaim::BuddyList::Buddy buddy
+CODE:
+	RETVAL = buddy->name;
+OUTPUT:
+	RETVAL
+
+Gaim::Account
+get_account(buddy)
+	Gaim::BuddyList::Buddy buddy
+CODE:
+	RETVAL = buddy->account;
+OUTPUT:
+	RETVAL
 
 const char *
 get_alias_only(buddy)
@@ -262,3 +310,11 @@ const char *
 gaim_chat_get_setting(chat, key)
 	Gaim::BuddyList::Chat chat
 	const char *key
+
+Gaim::Account
+get_account(chat)
+	Gaim::BuddyList::Chat chat
+CODE:
+	RETVAL = chat->account;
+OUTPUT:
+	RETVAL
