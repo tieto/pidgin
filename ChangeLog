@@ -8,6 +8,7 @@ version 0.11.0-pre13:
 	  do not use HTML.  (thanks, faceprint)
 	* Can view/set chat topic in IRC
 	* MSN properly escapes outgoing messages
+	* Much needed updates to the gaim man page (thanks, Sean Egan)
 
 version 0.11.0-pre12 (05/29/2001):
 	* Fixed a funny bug with auto responses when queued messages
