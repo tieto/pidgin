@@ -1,18 +1,23 @@
-#include "gaim.h"
+#include "gtkinternal.h"
+
+#include "conversation.h"
+#include "debug.h"
 #include "prpl.h"
 #include "gtkplugin.h"
+
 #ifdef MAX
-#undef MAX
-#undef MIN
+# undef MAX
+# undef MIN
 #endif
+
 #include "protocols/jabber/jabber.h"
 #include "protocols/msn/session.h"
 
-#define RAW_PLUGIN_ID "raw"
+#define RAW_PLUGIN_ID "gtk-raw"
 
 static GtkWidget *window = NULL;
 static GtkWidget *optmenu = NULL;
-static struct gaim_connection *gc = NULL;
+static GaimConnection *gc = NULL;
 static GaimPlugin *me = NULL;
 
 static int goodbye()
@@ -26,7 +31,7 @@ static void send_it(GtkEntry *entry)
 	const char *txt;
 	if (!gc) return;
 	txt = gtk_entry_get_text(entry);
-	switch (gc->protocol) {
+	switch (gaim_connection_get_protocol(gc)) {
 		case GAIM_PROTO_TOC:
 			{
 				int *a = (int *)gc->proto_data;
@@ -60,16 +65,18 @@ static void send_it(GtkEntry *entry)
 	gtk_entry_set_text(entry, "");
 }
 
-static void set_gc(gpointer d, struct gaim_connection *c)
+static void set_gc(gpointer d, GaimConnection *c)
 {
 	gc = c;
 }
 
-static void redo_optmenu(struct gaim_connection *arg, gpointer x)
+static void redo_optmenu(GaimConnection *arg, gpointer x)
 {
 	GtkWidget *menu;
-	GSList *g = connections;
-	struct gaim_connection *c;
+	GList *g = gaim_connections_get_all();
+	GaimConnection *c;
+	GaimAccount *account;
+	GaimPlugin *plugin;
 
 	menu = gtk_menu_new();
 	gc = NULL;
@@ -77,17 +84,26 @@ static void redo_optmenu(struct gaim_connection *arg, gpointer x)
 	while (g) {
 		char buf[256];
 		GtkWidget *opt;
-		c = (struct gaim_connection *)g->data;
+		c = (GaimConnection *)g->data;
 		g = g->next;
 		if (x && c == arg)
 			continue;
-		if (c->protocol != GAIM_PROTO_TOC && c->protocol != GAIM_PROTO_MSN &&
-		    c->protocol != GAIM_PROTO_IRC && c->protocol != GAIM_PROTO_JABBER)
+		if (gaim_connection_get_protocol(c) != GAIM_PROTO_TOC &&
+			gaim_connection_get_protocol(c) != GAIM_PROTO_MSN &&
+		    gaim_connection_get_protocol(c) != GAIM_PROTO_IRC &&
+			gaim_connection_get_protocol(c) != GAIM_PROTO_JABBER)
 			continue;
 		if (!gc)
 			gc = c;
-		g_snprintf(buf, sizeof buf, "%s (%s)", c->username,
-				   c->prpl->info->name);
+
+		account = gaim_connection_get_account(c);
+
+		plugin = gaim_find_prpl(gaim_account_get_protocol(account));
+
+		g_snprintf(buf, sizeof buf, "%s (%s)",
+				   gaim_account_get_username(account),
+				   plugin->info->name);
+
 		opt = gtk_menu_item_new_with_label(buf);
 		g_signal_connect(G_OBJECT(opt), "activate", G_CALLBACK(set_gc), c);
 		gtk_widget_show(opt);
