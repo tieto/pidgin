@@ -107,7 +107,14 @@ install:
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
 	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
 
-plugins: iconaway.dll spellchk.dll autorecon.dll
+plugins: \
+		autorecon.dll \
+		history.dll \
+	 	iconaway.dll \
+		idle.dll \
+		spellchk.dll \
+		statenotify.dll \
+		timestamp.dll
 
 
 ##
