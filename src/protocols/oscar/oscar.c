@@ -3172,8 +3172,9 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 		/* Check for maximum number of buddies */
 		for (cur=gc->groups, tmp=0; cur; cur=g_slist_next(cur)) {
-			tmp = tmp + g_slist_length(cur->data->members);
-			
+			struct group* gr = (struct group*)cur->data;
+			tmp = tmp + g_slist_length(gr->members);
+		}
 		if (tmp > odata->rights.maxbuddies) {
 			char *dialog_msg = g_strdup_printf(_("The maximum number of buddies allowed in your buddy list is %d, and you have %d."
 							     "  Until you are below the limit, some buddies will not show up as online."), 
@@ -3181,7 +3182,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			do_error_dialog(dialog_msg, _("Gaim - Warning"));
 			g_free(dialog_msg);
 		}
-
+		
 	} /* end if (gc) */
 
 	return 1;
