@@ -186,12 +186,19 @@ void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *p
 	}
 
 	if (who && room) {
-		char *tmp;
+		GaimConversation *conv;
 
-		tmp = g_strdup_printf(_("%s declined your conference invitation to room \"%s\" because \"%s\"."),
-						who, room, msg?msg:"");
-		gaim_notify_info(gc, NULL, _("Invitation Rejected"), tmp);
-		g_free(tmp);
+		conv = gaim_find_conversation_with_account(room, gc->account);
+		/* make sure we're in the room before we process a decline message for it */
+		if(conv && gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+			char *tmp;
+
+			tmp = g_strdup_printf(_("%s declined your conference invitation to room \"%s\" because \"%s\"."),
+							who, room, msg?msg:"");
+			gaim_notify_info(gc, NULL, _("Invitation Rejected"), tmp);
+			g_free(tmp);
+		}
+
 		g_free(room);
 		if (msg)
 			g_free(msg);
@@ -1459,4 +1466,3 @@ void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *catego
 	gaim_roomlist_set_in_progress(list, TRUE);
 	gaim_roomlist_ref(list);
 }
-
