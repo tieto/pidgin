@@ -237,6 +237,31 @@ show_send_to_mobile_cb(GaimConnection *gc, const char *passport)
 					   data);
 }
 
+static void
+initiate_chat_cb(GaimConnection *gc, const char *passport)
+{
+	GaimAccount *account = gaim_connection_get_account(gc);
+	MsnSession *session = gc->proto_data;
+	MsnSwitchBoard *swboard;
+	MsnUser *user;
+
+	if ((swboard = msn_session_open_switchboard(session)) == NULL) {
+		gaim_connection_error(gc, _("Write error"));
+
+		return;
+	}
+
+	user = msn_user_new(session, passport, NULL);
+
+	msn_switchboard_set_user(swboard, user);
+
+	swboard->total_users = 1;
+
+	swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id, "MSN Chat");
+
+	gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+					   gaim_account_get_username(account), NULL);
+}
 
 /**************************************************************************
  * Protocol Plugin ops
@@ -373,6 +398,7 @@ msn_actions(GaimConnection *gc)
 static GList *
 msn_buddy_menu(GaimConnection *gc, const char *who)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	MsnUser *user;
 	struct proto_buddy_menu *pbm;
 	struct buddy *b;
@@ -389,6 +415,14 @@ msn_buddy_menu(GaimConnection *gc, const char *who)
 			pbm->gc       = gc;
 			m = g_list_append(m, pbm);
 		}
+	}
+
+	if (g_ascii_strcasecmp(who, gaim_account_get_username(account))) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label    = _("Initiate Chat");
+		pbm->callback = initiate_chat_cb;
+		pbm->gc       = gc;
+		m = g_list_append(m, pbm);
 	}
 
 	return m;

@@ -151,9 +151,9 @@ iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 	GaimConnection *gc = account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 
-	swboard->total_users = atoi(params[2]);
+	swboard->total_users = atoi(params[2]) + 1;
 
-	if (swboard->total_users > 1) {
+	if (swboard->total_users > 2) {
 		if (swboard->chat == NULL) {
 			GaimConversation *conv;
 
@@ -185,7 +185,7 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	passport = params[0];
 
-	if (swboard->total_users == 1) {
+	if (swboard->total_users == 2 && swboard->chat == NULL) {
 		GaimConversation *conv;
 
 		conv = gaim_find_conversation(msn_user_get_passport(swboard->user));

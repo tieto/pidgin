@@ -27,6 +27,8 @@ version 0.65:
 	* Fixed all known MSN chat bugs
 	* Fixed HTTP redirect handling in smiley retrieval. This fixes the
 	  problems with some smiley themes.
+	* Chats in MSN can now be initiated by right-clicking a buddy and
+	  choosing Initiate Chat.
 	* MSN Alerts and incoming MSN pages no longer pop up several error dialogs
 	* Ability to view iChat "Available" messages for AIM
 	* Stores your buddy icon on the server for AIM
