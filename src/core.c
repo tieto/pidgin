@@ -18,8 +18,4 @@
  *
  */
 
-/*
- * NOTE - I'd like to see this entire file just go away! -- ChipX86
- */
-
 /* DONE! */
