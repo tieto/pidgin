@@ -20,7 +20,7 @@ Gaim uses the standard ./configure ; make. You need to use gmake, BSD
 make probably won't work. Remember, run ./configure --help to see what
 build options are available.
 
-In order to compile Gaim, you need to have GTK+ 1.2.5 installed (as
+In order to compile Gaim, you need to have GTK+ 2.0 installed (as
 well as the development files!). The configure script will fail if you
 don't. You can get it from http://www.gtk.org/.
 
