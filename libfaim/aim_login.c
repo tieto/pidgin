@@ -168,13 +168,12 @@ int aim_send_login (struct aim_session_t *sess,
   curbyte += aimutil_putstr(newpacket->data+curbyte, password_encoded, strlen(password));
   free(password_encoded);
   
-  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, 0x010a /*0x0004*/);
-  
   if (strlen(clientinfo->clientstring)) {
     curbyte += aimutil_put16(newpacket->data+curbyte, 0x0003);
     curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->clientstring));
     curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->clientstring, strlen(clientinfo->clientstring));
   }
+  curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0016, /*0x010a*/ 0x0004);
   curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0017, clientinfo->major /*0x0001*/);
   curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0018, clientinfo->minor /*0x0001*/);
   curbyte += aim_puttlv_16(newpacket->data+curbyte, 0x0019, 0x0001);
@@ -182,15 +181,16 @@ int aim_send_login (struct aim_session_t *sess,
 
   curbyte += aim_puttlv_32(newpacket->data+curbyte, 0x0014, 0x00000055);
 
-  if (strlen(clientinfo->country)) {
-    curbyte += aimutil_put16(newpacket->data+curbyte, 0x000e);
-    curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->country));
-    curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->country, strlen(clientinfo->country));
-  }
   if (strlen(clientinfo->lang)) {
     curbyte += aimutil_put16(newpacket->data+curbyte, 0x000f);
     curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->lang));
     curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->lang, strlen(clientinfo->lang));
+  }
+
+  if (strlen(clientinfo->country)) {
+    curbyte += aimutil_put16(newpacket->data+curbyte, 0x000e);
+    curbyte += aimutil_put16(newpacket->data+curbyte, strlen(clientinfo->country));
+    curbyte += aimutil_putstr(newpacket->data+curbyte, clientinfo->country, strlen(clientinfo->country));
   }
 
 #endif
@@ -218,10 +218,17 @@ int aim_send_login (struct aim_session_t *sess,
 int aim_encode_password(const char *password, u_char *encoded)
 {
   u_char encoding_table[] = {
+#if 0
     0xf3, 0xb3, 0x6c, 0x99,
     0x95, 0x3f, 0xac, 0xb6,
     0xc5, 0xfa, 0x6b, 0x63,
     0x69, 0x6c, 0xc3, 0x9f
+#else
+    0xf3, 0x26, 0x81, 0xc4,
+    0x39, 0x86, 0xdb, 0x92,
+    0x71, 0xa3, 0xb9, 0xe6,
+    0x53, 0x7a, 0x95, 0x7c
+#endif
   };
 
   int i;

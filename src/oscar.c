@@ -114,7 +114,7 @@ static void oscar_callback(gpointer data, gint source,
 int oscar_login(char *username, char *password) {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
-	struct client_info_s info = {"Gaim/Faim", 4, 30, 3141, "us", "en"};
+	struct client_info_s info = {"AOL Instant Messenger (TM), version 2.1.1187/WIN32", 4, 31, 3141, "us", "en"};
 	struct aim_user *u;
 	char buf[256];
 
