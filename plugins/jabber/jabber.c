@@ -684,7 +684,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 							p->from->resource, msg);
 					write_to_conv(jc->b, buf, WFLAG_SYSTEM, NULL, time(NULL));
 				}
-			} else if (msg) {
+			} else if (jc->b && msg) {
 				char buf[8192];
 				g_snprintf(buf, sizeof(buf), "%s", msg);
 				serv_got_chat_in(GJ_GC(j), jc->b->id, p->from->resource, 0, buf, time(NULL));
