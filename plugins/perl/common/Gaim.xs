@@ -11,7 +11,7 @@ timeout_add(plugin, seconds, func, arg)
 	const char *func
 	void *arg
 CODE:
-	gaim_perl_timeout_add(plugin, 1000 * seconds, func, arg);
+	gaim_perl_timeout_add(plugin, seconds, func, arg);
 
 void
 debug(category, string)
