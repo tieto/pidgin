@@ -208,7 +208,7 @@ static void ref_list_callback(gpointer data, char *text)
 
 static void refresh_list(GtkWidget *w, gpointer *m)
 {
-	grab_url("http://www.aol.com/community/chat/allchats.html", ref_list_callback, NULL);
+	grab_url("http://www.aol.com/community/chat/allchats.html", FALSE, ref_list_callback, NULL);
 }
 
 static void add_chat(GtkWidget *w, gpointer *m)

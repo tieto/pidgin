@@ -768,7 +768,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				gc->user->proto_opt[USEROPT_AUTHPORT][0] ?
 					atoi(gc->user->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
 				url);
-		grab_url(tmp, toc_got_info, NULL);
+		grab_url(tmp, FALSE, toc_got_info, NULL);
 	} else if (!strcasecmp(c, "DIR_STATUS")) {
 	} else if (!strcasecmp(c, "ADMIN_NICK_STATUS")) {
 	} else if (!strcasecmp(c, "ADMIN_PASSWD_STATUS")) {

@@ -337,7 +337,7 @@ extern void show_set_info(struct gaim_connection *);
 extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
 /* Functions in html.c */
-extern void grab_url(char *, void (*callback)(gpointer, char *), gpointer);
+extern void grab_url(char *, gboolean, void (*callback)(gpointer, char *), gpointer);
 extern gchar *strip_html(gchar *);
 
 /* Functions in idle.c */

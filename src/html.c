@@ -117,13 +117,15 @@ struct grab_url_data {
 	gpointer data;
 	struct g_url *website;
 	char *url;
+	gboolean full;
 
 	int inpa;
 
 	gboolean sentreq;
+	gboolean newline;
+	gboolean startsaving;
 	char *webdata;
 	int len;
-	gboolean startsaving;
 };
 
 static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
@@ -141,7 +143,8 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 
 	if (!gunk->sentreq) {
 		char buf[256];
-		g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\n\r\n", gunk->website->page);
+		g_snprintf(buf, sizeof(buf), "GET %s%s HTTP/1.0\r\n\r\n", gunk->full ? "" : "/",
+			   gunk->full ? gunk->url : gunk->website->page);
 		debug_printf("Request: %s\n", buf);
 		write(sock, buf, strlen(buf));
 		fcntl(sock, F_SETFL, O_NONBLOCK);
@@ -156,17 +159,22 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 			return;
 		}
 
-		if (!gunk->startsaving && data == '<') {
-			if (gunk->webdata)
-				g_free(gunk->webdata);
-			gunk->webdata = NULL;
-			gunk->len = 0;
-			gunk->startsaving = 1;
+		if (!gunk->startsaving) {
+			if (data == '\r')
+				return;
+			if (data == '\n') {
+				if (gunk->newline)
+					gunk->startsaving = TRUE;
+				else
+					gunk->newline = TRUE;
+				return;
+			}
+			gunk->newline = FALSE;
+		} else {
+			gunk->len++;
+			gunk->webdata = g_realloc(gunk->webdata, gunk->len);
+			gunk->webdata[gunk->len - 1] = data;
 		}
-
-		gunk->len++;
-		gunk->webdata = g_realloc(gunk->webdata, gunk->len);
-		gunk->webdata[gunk->len - 1] = data;
 	} else if (errno != ETIMEDOUT) {
 
 		gunk->webdata = g_realloc(gunk->webdata, gunk->len + 1);
@@ -194,7 +202,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 	}
 }
 
-void grab_url(char *url, void (*callback)(gpointer, char *), gpointer data)
+void grab_url(char *url, gboolean full, void (*callback)(gpointer, char *), gpointer data)
 {
 	int sock;
 	struct grab_url_data *gunk = g_new0(struct grab_url_data, 1);
@@ -203,6 +211,7 @@ void grab_url(char *url, void (*callback)(gpointer, char *), gpointer data)
 	gunk->data = data;
 	gunk->url = g_strdup(url);
 	gunk->website = parse_url(url);
+	gunk->full = full;
 
 	if ((sock = proxy_connect(gunk->website->address, gunk->website->port,
 				  grab_url_callback, gunk)) < 0) {
