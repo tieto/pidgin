@@ -55,10 +55,11 @@ typedef struct
 
 } GaimPluginIpcCommand;
 
-static GList *loaded_plugins = NULL;
-static GList *plugins = NULL;
-static GList *plugin_loaders = NULL;
+static GList *loaded_plugins   = NULL;
+static GList *plugins          = NULL;
+static GList *plugin_loaders   = NULL;
 static GList *protocol_plugins = NULL;
+static GList *load_queue       = NULL;
 
 static size_t search_path_count = 0;
 static char **search_paths = NULL;
@@ -159,6 +160,7 @@ gaim_plugin_probe(const char *filename)
 	GaimPlugin *loader;
 	gboolean (*gaim_init_plugin)(GaimPlugin *);
 
+	gaim_debug_misc("plugins", "probing %s\n", filename);
 	g_return_val_if_fail(filename != NULL, NULL);
 
 	if (!g_file_test(filename, G_FILE_TEST_EXISTS))
@@ -302,10 +304,12 @@ gaim_plugin_load(GaimPlugin *plugin)
 	if (dep_list != NULL)
 		g_list_free(dep_list);
 
-	if (plugin->native_plugin) {
-		if (plugin->info != NULL) {
-			if (plugin->info->load != NULL)
-				plugin->info->load(plugin);
+	if (plugin->native_plugin)
+	{
+		if (plugin->info != NULL && plugin->info->load != NULL)
+		{
+			if (!plugin->info->load(plugin))
+				return FALSE;
 		}
 	}
 	else {
@@ -320,7 +324,10 @@ gaim_plugin_load(GaimPlugin *plugin)
 		loader_info = GAIM_PLUGIN_LOADER_INFO(loader);
 
 		if (loader_info->load != NULL)
-			loader_info->load(plugin);
+		{
+			if (!loader_info->load(plugin))
+				return FALSE;
+		}
 	}
 
 	loaded_plugins = g_list_append(loaded_plugins, plugin);
@@ -437,6 +444,9 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 		gaim_plugin_unload(plugin);
 
 	plugins = g_list_remove(plugins, plugin);
+
+	if (load_queue != NULL)
+		load_queue = g_list_remove(load_queue, plugin);
 
 	if (plugin->info != NULL && plugin->info->dependencies != NULL)
 		g_list_free(plugin->info->dependencies);
@@ -769,6 +779,7 @@ void
 gaim_plugins_probe(const char *ext)
 {
 #ifdef GAIM_PLUGINS
+	GList *l, *l_next;
 	GDir *dir;
 	const gchar *file;
 	gchar *path;
@@ -798,6 +809,68 @@ gaim_plugins_probe(const char *ext)
 		}
 	}
 
+	/* See if we have any plugins waiting to load. */
+	while (load_queue != NULL)
+	{
+		plugin = (GaimPlugin *)load_queue->data;
+
+		load_queue = g_list_remove(load_queue, plugin);
+
+		if (plugin == NULL || plugin->info == NULL)
+			continue;
+
+		if (plugin->info->type == GAIM_PLUGIN_LOADER)
+		{
+			GList *exts;
+
+			/* We'll just load this right now. */
+			if (!gaim_plugin_load(plugin))
+			{
+				gaim_plugin_destroy(plugin);
+
+				continue;
+			}
+
+			plugin_loaders = g_list_append(plugin_loaders, plugin);
+
+			for (exts = GAIM_PLUGIN_LOADER_INFO(plugin)->exts;
+				 exts != NULL;
+				 exts = exts->next)
+			{
+				gaim_plugins_probe(exts->data);
+			}
+		}
+		else if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
+		{
+
+			/* We'll just load this right now. */
+			if (!gaim_plugin_load(plugin))
+			{
+				gaim_plugin_destroy(plugin);
+
+				continue;
+			}
+
+			if (GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol == GAIM_PROTO_ICQ ||
+				gaim_find_prpl(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol))
+			{
+				/* Nothing to see here--move along, move along */
+				gaim_plugin_destroy(plugin);
+
+				continue;
+			}
+
+			protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
+													(GCompareFunc)compare_prpl);
+		}
+	}
+
+	if (load_queue != NULL)
+	{
+		g_list_free(load_queue);
+		load_queue = NULL;
+	}
+
 	if (probe_cb != NULL)
 		probe_cb(probe_cb_data);
 
@@ -812,48 +885,11 @@ gaim_plugin_register(GaimPlugin *plugin)
 	if (g_list_find(plugins, plugin))
 		return TRUE;
 
-	/* Special exception for loader plugins. We want them loaded NOW! */
-	if (plugin->info->type == GAIM_PLUGIN_LOADER) {
-		GList *exts;
-
-		/* We'll just load this right now. */
-		if (!gaim_plugin_load(plugin)) {
-
-			gaim_plugin_destroy(plugin);
-
-			return FALSE;
-		}
-
-		plugin_loaders = g_list_append(plugin_loaders, plugin);
-
-		for (exts = GAIM_PLUGIN_LOADER_INFO(plugin)->exts;
-			 exts != NULL;
-			 exts = exts->next) {
-
-			gaim_plugins_probe(exts->data);
-		}
-	}
-	else if (plugin->info->type == GAIM_PLUGIN_PROTOCOL) {
-
-		/* We'll just load this right now. */
-		if (!gaim_plugin_load(plugin)) {
-
-			gaim_plugin_destroy(plugin);
-
-			return FALSE;
-		}
-	
-		if (GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol == GAIM_PROTO_ICQ ||
-			gaim_find_prpl(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol)) {
-
-			/* Nothing to see here--move along, move along */
-			gaim_plugin_destroy(plugin);
-
-			return FALSE;
-		}
-
-		protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
-												(GCompareFunc)compare_prpl);
+	if (plugin->info->type == GAIM_PLUGIN_LOADER ||
+		plugin->info->type == GAIM_PLUGIN_PROTOCOL)
+	{
+		/* Special exception for loader plugins. We want them loaded NOW! */
+		load_queue = g_list_append(load_queue, plugin);
 	}
 
 	plugins = g_list_append(plugins, plugin);
