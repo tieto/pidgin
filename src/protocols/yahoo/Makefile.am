@@ -11,7 +11,7 @@ st = -DSTATIC
 pkg_LTLIBRARIES =
 noinst_LIBRARIES = libyahoo.a
 
-libyahoo_a_SOURCES = crypt.c md5.c yahoo.c
+libyahoo_a_SOURCES = crypt.c yahoo.c
 
 else
 
@@ -19,6 +19,6 @@ st =
 pkg_LTLIBRARIES = libyahoo.la
 noinst_LIBRARIES =
 
-libyahoo_la_SOURCES = crypt.c md5.c yahoo.c
+libyahoo_la_SOURCES = crypt.c yahoo.c
 
 endif

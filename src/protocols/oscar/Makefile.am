@@ -25,7 +25,6 @@ liboscar_a_SOURCES = 	admin.c		\
 			im.c		\
 			info.c		\
 			invite.c	\
-			md5.c		\
 			meta.c		\
 			misc.c		\
 			msgcookie.c	\
@@ -63,7 +62,6 @@ liboscar_la_SOURCES = 	admin.c		\
 			im.c		\
 			info.c		\
 			invite.c	\
-			md5.c		\
 			meta.c		\
 			misc.c		\
 			msgcookie.c	\
