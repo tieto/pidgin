@@ -570,6 +570,7 @@ static void netscape_command(char *command)
 
 void open_url(GtkWidget *w, char *url)
 {
+	gchar *space_free_url;
 
 	if (web_browser == BROWSER_NETSCAPE) {
 		char *command;
@@ -625,7 +626,8 @@ void open_url(GtkWidget *w, char *url)
 				args[1] = url;
 				args[2] = NULL;
 			} else if (web_browser == BROWSER_MANUAL) {
-				gchar *space_free_url;
+				if(strcmp(web_command,"") == 0)
+					_exit(0);
 				space_free_url = g_strdelimit(url, " ", '+');
 				g_snprintf(command, sizeof(command), web_command, space_free_url);
 				g_free(space_free_url);
