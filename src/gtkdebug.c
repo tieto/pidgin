@@ -105,6 +105,9 @@ debug_window_new(void)
 	height = gaim_prefs_get_int("/gaim/gtk/debug/height");
 
 	GAIM_DIALOG(win->window);
+	gaim_debug(GAIM_DEBUG_INFO, "gtkdebug", "Setting dimensions to %d, %d\n",
+			   width, height);
+
 	gtk_window_set_default_size(GTK_WINDOW(win->window), width, height);
 	gtk_window_set_role(GTK_WINDOW(win->window), "debug");
 	gtk_window_set_title(GTK_WINDOW(win->window), _("Debug Window"));
@@ -193,14 +196,6 @@ debug_enabled_cb(const char *name, GaimPrefType type, gpointer value,
 void
 gaim_gtk_debug_init(void)
 {
-	/* Debug window preferences. */
-	gaim_prefs_add_none("/gaim/gtk/debug");
-	gaim_prefs_add_bool("/gaim/gtk/debug/enabled", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/debug/timestamps", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/debug/toolbar", TRUE);
-	gaim_prefs_add_int("/gaim/gtk/debug/width",  400);
-	gaim_prefs_add_int("/gaim/gtk/debug/height", 150);
-
 	gaim_prefs_connect_callback("/gaim/gtk/debug/enabled",
 								debug_enabled_cb, NULL);
 }

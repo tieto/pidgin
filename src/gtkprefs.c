@@ -2782,6 +2782,20 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/default_height", 160);
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/entry_height", 50);
 
+	/* Debug window preferences. */
+	/*
+	 * NOTE: This must be set before prefs are loaded, and the callbacks
+	 *       set after they are loaded, since prefs sets the enabled
+	 *       preference here and that loads the window, which calls the
+	 *       configure event, which overrrides the width and height! :P
+	 */
+	gaim_prefs_add_none("/gaim/gtk/debug");
+	gaim_prefs_add_bool("/gaim/gtk/debug/enabled", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/debug/timestamps", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/debug/toolbar", TRUE);
+	gaim_prefs_add_int("/gaim/gtk/debug/width",  450);
+	gaim_prefs_add_int("/gaim/gtk/debug/height", 250);
+
 	/* Idle */
 	gaim_prefs_add_none("/gaim/gtk/idle");
 	gaim_prefs_add_string("/gaim/gtk/idle/reporting_method", "system");
