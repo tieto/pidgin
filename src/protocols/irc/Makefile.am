@@ -2,18 +2,20 @@ EXTRA_DIST = PROTOCOL
 
 pkgdir = $(libdir)/gaim
 
-CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
+IRCSOURCES = irc.c
+
+AM_CFLAGS = $(st)
+
 libirc_la_LDFLAGS = -module -avoid-version
 
 if STATIC_IRC
 
 st = -DSTATIC
-pkg_LTLIBRARIES =
 noinst_LIBRARIES = libirc.a
+pkg_LTLIBRARIES =
 
-libirc_a_SOURCES = irc.c
-
-libirc_a_CFLAGS = $(AM_CFLAGS)
+libirc_a_SOURCES = $(IRCSOURCES)
+libirc_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 
@@ -21,6 +23,10 @@ st =
 pkg_LTLIBRARIES = libirc.la
 noinst_LIBRARIES =
 
-libirc_la_SOURCES = irc.c
+libirc_la_SOURCES = $(IRCSOURCES)
 
 endif
+
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/src \
+	$(DEBUG_CFLAGS)

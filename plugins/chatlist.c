@@ -1,4 +1,8 @@
+#include "config.h"
+
+#ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
+#endif
 
 #include "pixmaps/refresh.xpm"
 #include "pixmaps/gnome_add.xpm"

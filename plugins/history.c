@@ -1,7 +1,12 @@
 /* Puts last 4k of log in new conversations a la Everybuddy (and then
  * stolen by Trillian "Pro") */
 
+#include "config.h"
+
+#ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
+#endif
+
 #include "gaim.h"
 #include "gtkimhtml.h"
 #include <sys/stat.h>

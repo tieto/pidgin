@@ -15,6 +15,8 @@
  *   for count of new messages option
  */
 
+#include "config.h"
+
 #ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
 #endif

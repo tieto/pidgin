@@ -1,4 +1,9 @@
+#include "config.h"
+
+#ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
+#endif
+
 #include "gaim.h"
 
 #include <gtk/gtk.h>

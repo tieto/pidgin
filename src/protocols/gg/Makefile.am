@@ -2,31 +2,33 @@ EXTRA_DIST = protocol.txt
 
 pkgdir = $(libdir)/gaim
 
-CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
+GGSOURCES = \
+	libgg.c \
+	libgg.h \
+	common.c \
+	gg.c
+
+AM_CFLAGS = $(st)
+
 libgg_la_LDFLAGS = -module -avoid-version
 
 if STATIC_GG
 
 st = -DSTATIC
-pkg_LTLIBRARIES =
 noinst_LIBRARIES = libgg.a
 
-libgg_a_SOURCES = libgg.c \
-		  libgg.h \
-		  common.c \
-		  gg.c
-
-libgg_a_CFLAGS = $(AM_CFLAGS)
+libgg_a_SOURCES = $(GGSOURCES)
+libgg_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
 pkg_LTLIBRARIES = libgg.la
-noinst_LIBRARIES =
 
-libgg_la_SOURCES = libgg.c \
-		   libgg.h \
-		   common.c \
-		   gg.c
+libgg_la_SOURCES = $(GGSOURCES)
 
 endif
+
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/src \
+	$(DEBUG_CFLAGS)

@@ -3,7 +3,12 @@
  * 40-day idle times.
  */
 
+#include "config.h"
+
+#ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
+#endif
+
 #include "multi.h"
 #include "gaim.h"
 #include <sys/time.h>

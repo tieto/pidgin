@@ -1,26 +1,29 @@
-EXTRA_DIST = md5.h
-
 pkgdir = $(libdir)/gaim
 
-CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
+YAHOOSOURCES = \
+	crypt.c \
+	md5.h \
+	yahoo.c
+
+AM_CFLAGS = $(st)
+
 libyahoo_la_LDFLAGS = -module -avoid-version
 
 if STATIC_YAHOO
 
 st = -DSTATIC
-pkg_LTLIBRARIES =
-noinst_LIBRARIES = libyahoo.a
-
-libyahoo_a_SOURCES = crypt.c yahoo.c
-
-libyahoo_a_CFLAGS = $(AM_CFLAGS)
+noinst_LIBRARIES   = libyahoo.a
+libyahoo_a_SOURCES = $(YAHOOSOURCES)
+libyahoo_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
-pkg_LTLIBRARIES = libyahoo.la
-noinst_LIBRARIES =
-
-libyahoo_la_SOURCES = crypt.c yahoo.c
+pkg_LTLIBRARIES     = libyahoo.la
+libyahoo_la_SOURCES = $(YAHOOSOURCES)
 
 endif
+
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/src \
+	$(DEBUG_CFLAGS)

@@ -1,7 +1,12 @@
 /* iChat-like timestamps by Sean Egan.
  * <INSERT GPL HERE> */
 
+#include "config.h"
+
+#ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
+#endif
+
 #include <time.h>
 #include "gaim.h"
 #include "gtkimhtml.h"

@@ -1,152 +1,96 @@
 pkgdir = $(libdir)/gaim
 
-CFLAGS += -I\$(top_srcdir)/src -I\$(top_srcdir)/src/protocols -DCONFDIR=\"$(confdir)\" $(KRB4_CFLAGS) $(st) $(DEBUG_CFLAGS)
+ZEPHYRSOURCES = \
+	ZAsyncLocate.c \
+	ZCkAuth.c \
+	ZCkIfNot.c \
+	ZClosePort.c \
+	ZCmpUID.c \
+	ZCmpUIDP.c \
+	ZFlsLocs.c \
+	ZFlsSubs.c \
+	ZFmtAuth.c \
+	ZFmtList.c \
+	ZFmtNotice.c \
+	ZFmtRaw.c \
+	ZFmtRawLst.c \
+	ZFmtSmRLst.c \
+	ZFmtSmRaw.c \
+	ZFreeNot.c \
+	ZGetLocs.c \
+	ZGetSender.c \
+	ZGetSubs.c \
+	ZGetWGPort.c \
+	ZIfNotice.c \
+	ZInit.c \
+	ZLocations.c \
+	ZMakeAscii.c \
+	ZMkAuth.c \
+	ZNewLocU.c \
+	ZOpenPort.c \
+	ZParseNot.c \
+	ZPeekIfNot.c \
+	ZPeekNot.c \
+	ZPeekPkt.c \
+	ZPending.c \
+	ZReadAscii.c \
+	ZRecvNot.c \
+	ZRecvPkt.c \
+	ZRetSubs.c \
+	ZSendList.c \
+	ZSendNot.c \
+	ZSendPkt.c \
+	ZSendRLst.c \
+	ZSendRaw.c \
+	ZSetDest.c \
+	ZSetFD.c \
+	ZSetSrv.c \
+	ZSubs.c \
+	ZVariables.c \
+	ZWait4Not.c \
+	ZhmStat.c \
+	Zinternal.c \
+	com_err.h \
+	error_message.c \
+	error_table.h \
+	et_name.c \
+	init_et.c \
+	internal.h \
+	mit-copyright.h \
+	mit-sipb-copyright.h \
+	sysdep.h \
+	zephyr.h \
+	zephyr_err.c \
+	zephyr_err.h \
+	\
+	zephyr.c
 
-LIBS = @LIBS@ $(KRB4_LDFLAGS) $(KRB4_LIBS)
-libzephyr_la_LDFLAGS = 	-module -avoid-version
+AM_CFLAGS = $(st)
+
+ZEPHYRLIBS = $(KRB4_LDFLAGS) $(KRB4_LIBS)
+
+libzephyr_la_LDFLAGS = -module -avoid-version
 
 if STATIC_ZEPHYR
 
 st = -DSTATIC
-pkg_LTLIBRARIES =
 noinst_LIBRARIES = libzephyr.a
-
-libzephyr_a_SOURCES = \
-			ZAsyncLocate.c \
-			ZCkAuth.c \
-			ZCkIfNot.c \
-			ZClosePort.c \
-			ZCmpUID.c \
-			ZCmpUIDP.c \
-			ZFlsLocs.c \
-			ZFlsSubs.c \
-			ZFmtAuth.c \
-			ZFmtList.c \
-			ZFmtNotice.c \
-			ZFmtRaw.c \
-			ZFmtRawLst.c \
-			ZFmtSmRLst.c \
-			ZFmtSmRaw.c \
-			ZFreeNot.c \
-			ZGetLocs.c \
-			ZGetSender.c \
-			ZGetSubs.c \
-			ZGetWGPort.c \
-			ZIfNotice.c \
-			ZInit.c \
-			ZLocations.c \
-			ZMakeAscii.c \
-			ZMkAuth.c \
-			ZNewLocU.c \
-			ZOpenPort.c \
-			ZParseNot.c \
-			ZPeekIfNot.c \
-			ZPeekNot.c \
-			ZPeekPkt.c \
-			ZPending.c \
-			ZReadAscii.c \
-			ZRecvNot.c \
-			ZRecvPkt.c \
-			ZRetSubs.c \
-			ZSendList.c \
-			ZSendNot.c \
-			ZSendPkt.c \
-			ZSendRLst.c \
-			ZSendRaw.c \
-			ZSetDest.c \
-			ZSetFD.c \
-			ZSetSrv.c \
-			ZSubs.c \
-			ZVariables.c \
-			ZWait4Not.c \
-			ZhmStat.c \
-			Zinternal.c \
-			com_err.h \
-			error_message.c \
-			error_table.h \
-			et_name.c \
-			init_et.c \
-			internal.h \
-			mit-copyright.h \
-			mit-sipb-copyright.h \
-			sysdep.h \
-			zephyr.h \
-			zephyr_err.c \
-			zephyr_err.h \
-			\
-			zephyr.c
-
-libzephyr_a_CFLAGS = $(AM_CFLAGS)
+libzephyr_a_SOURCES = $(ZEPHYRSOURCES)
+libzephyr_a_CFLAGS  = $(AM_CFLAGS)
+libzephyr_a_LIBADD  = $(ZEPHYRLIBS)
 
 else
 
 st =
 pkg_LTLIBRARIES = libzephyr.la
-noinst_LIBRARIES =
-
-libzephyr_la_SOURCES = \
-			ZAsyncLocate.c \
-			ZCkAuth.c \
-			ZCkIfNot.c \
-			ZClosePort.c \
-			ZCmpUID.c \
-			ZCmpUIDP.c \
-			ZFlsLocs.c \
-			ZFlsSubs.c \
-			ZFmtAuth.c \
-			ZFmtList.c \
-			ZFmtNotice.c \
-			ZFmtRaw.c \
-			ZFmtRawLst.c \
-			ZFmtSmRLst.c \
-			ZFmtSmRaw.c \
-			ZFreeNot.c \
-			ZGetLocs.c \
-			ZGetSender.c \
-			ZGetSubs.c \
-			ZGetWGPort.c \
-			ZIfNotice.c \
-			ZInit.c \
-			ZLocations.c \
-			ZMakeAscii.c \
-			ZMkAuth.c \
-			ZNewLocU.c \
-			ZOpenPort.c \
-			ZParseNot.c \
-			ZPeekIfNot.c \
-			ZPeekNot.c \
-			ZPeekPkt.c \
-			ZPending.c \
-			ZReadAscii.c \
-			ZRecvNot.c \
-			ZRecvPkt.c \
-			ZRetSubs.c \
-			ZSendList.c \
-			ZSendNot.c \
-			ZSendPkt.c \
-			ZSendRLst.c \
-			ZSendRaw.c \
-			ZSetDest.c \
-			ZSetFD.c \
-			ZSetSrv.c \
-			ZSubs.c \
-			ZVariables.c \
-			ZWait4Not.c \
-			ZhmStat.c \
-			Zinternal.c \
-			com_err.h \
-			error_message.c \
-			error_table.h \
-			et_name.c \
-			init_et.c \
-			internal.h \
-			mit-copyright.h \
-			mit-sipb-copyright.h \
-			sysdep.h \
-			zephyr.h \
-			zephyr_err.c \
-			zephyr_err.h \
-			\
-			zephyr.c
+libzephyr_la_SOURCES = $(ZEPHYRSOURCES)
+libzephyr_la_LIBADD  = $(ZEPHYRLIBS)
 
 endif
+
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/src \
+	-I\$(top_srcdir)/src/protocols \
+	-DCONFDIR=\"$(confdir)\" \
+	$(KRB4_CFLAGS) \
+	$(DEBUG_CFLAGS)

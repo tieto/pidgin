@@ -8,7 +8,12 @@
  * BUGS:
  * 	? I think i fixed them all.
  */
+#include "config.h"
+
+#ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
+#endif
+
 #include "gaim.h"
 
 #include <string.h>

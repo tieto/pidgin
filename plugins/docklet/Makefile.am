@@ -14,7 +14,7 @@ docklet_la_SOURCES = \
 endif
 
 INCLUDES = \
-	-I$(top_srcdir) \
 	-I$(top_srcdir)/src \
 	-DVERSION=\"$(VERSION)\" \
-	-DDATADIR=\"$(datadir)\"
+	-DDATADIR=\"$(datadir)\" \
+	$(DEBUG_CFLAGS)

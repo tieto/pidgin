@@ -2,25 +2,27 @@ EXTRA_DIST = PROTOCOL
 
 pkgdir = $(libdir)/gaim
 
-CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
+TOCSOURCES = toc.c
+
+AM_CFLAGS = $(st)
+
 libtoc_la_LDFLAGS = -module -avoid-version
 
 if STATIC_TOC
 
 st = -DSTATIC
-pkg_LTLIBRARIES =
 noinst_LIBRARIES = libtoc.a
-
-libtoc_a_SOURCES = toc.c
-
-libtoc_a_CFLAGS = $(AM_CFLAGS)
+libtoc_a_SOURCES = $(TOCSOURCES)
+libtoc_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
-pkg_LTLIBRARIES = libtoc.la
-noinst_LIBRARIES =
-
-libtoc_la_SOURCES = toc.c
+pkg_LTLIBRARIES   = libtoc.la
+libtoc_la_SOURCES = $(TOCSOURCES)
 
 endif
+
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/src \
+	$(DEBUG_CFLAGS)
