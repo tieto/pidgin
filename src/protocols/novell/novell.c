@@ -268,7 +268,7 @@ _get_details_resp_setup_buddy(NMUser * user, NMERR_T ret_code,
 								nm_user_record_get_display_id(user_record));
 
 		alias = gaim_buddy_get_alias(buddy);
-		if (alias == NULL || (strcmp(alias, buddy->name) == 0)) {
+		if (alias == NULL || *alias == '\0' || (strcmp(alias, buddy->name) == 0)) {
 			gaim_blist_alias_buddy(buddy,
 								   nm_user_record_get_full_name(user_record));
 
