@@ -216,7 +216,7 @@ static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) 
 
 	while (d) {
 		m = (struct direct_im *)d->data;
-		if (aim_sncmp(who, m->name))
+		if (!aim_sncmp(who, m->name))
 			return m;
 		d = d->next;
 	}
@@ -2012,6 +2012,13 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		memcpy(oft->cookie, args->cookie, 8);
 
 		od->file_transfers = g_slist_append(od->file_transfers, oft);
+
+		if (*(strrchr(args->info.sendfile.filename, '\\') + 1) == '*' ) {
+			/* last char of the ft req is a star, they are sending us a
+			 * directory -- remove the star and trailing slash so we dont save
+			 * directories that look like 'dirname\*'  -- arl */
+			*strrchr(args->info.sendfile.filename, '\\') = '\0';
+		}
 
 		oft->xfer = transfer_in_add(gc, userinfo->sn, 
 				args->info.sendfile.filename,
