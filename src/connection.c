@@ -263,6 +263,9 @@ gaim_connection_disconnect(GaimConnection *gc)
 		gaim_notify_close_with_handle(gc);
 	}
 
+	if (!gaim_account_get_remember_password(account))
+		gaim_account_set_password(account,NULL);
+
 	gaim_connection_destroy(gc);
 }
 
@@ -270,6 +273,10 @@ gboolean
 gaim_connection_disconnect_cb(gpointer data)
 {
 	GaimAccount *account = data;
+
+	if (!gaim_account_get_remember_password(account))
+		gaim_account_set_password(account,NULL);
+
 	GaimConnection *gc = gaim_account_get_connection(account);
 
 	if(gc)
