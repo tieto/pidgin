@@ -351,8 +351,33 @@ static void
 t_msn_xfer_init(GaimXfer *xfer)
 {
 	MsnSlpLink *slplink;
+	const char *filename;
+	FILE *fp;
+
+	filename = gaim_xfer_get_local_filename(xfer);
 
 	slplink = xfer->data;
+
+	if ((fp = fopen(filename, "rb")) == NULL)
+	{
+		GaimAccount *account;
+		GaimConnection *gc;
+		const char *who;
+		char *msg;
+
+		account = slplink->session->account;
+		gc = gaim_account_get_connection(account);
+		who = slplink->remote_user;
+
+		msg = g_strdup_printf(_("Error reading %s: \n%s.\n"),
+							  filename, strerror(errno));
+		gaim_xfer_error(gaim_xfer_get_type(xfer), who, msg);
+		gaim_xfer_cancel_local(xfer);
+		g_free(msg);
+
+		return;
+	}
+	fclose(fp);
 
 	msn_slplink_request_ft(slplink, xfer);
 }
