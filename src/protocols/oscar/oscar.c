@@ -2506,7 +2506,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		d->gc = gc;
 		d->sn = g_strdup(userinfo->sn);
-		strncpy(d->ip, args->verifiedip, sizeof(d->ip));
+		snprintf(d->ip, sizeof(d->ip), "%s:%d", args->verifiedip, args->port);
 		memcpy(d->cookie, args->cookie, 8);
 		g_snprintf(buf, sizeof buf, _("%s has just asked to directly connect to %s"), userinfo->sn, username);
 
