@@ -1818,16 +1818,18 @@ void show_prefs()
 	 gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 	 gtk_container_add (GTK_CONTAINER(vbox), hbox);
 	 gtk_widget_show (hbox); 
+
 #if GTK_CHECK_VERSION(1,3,0)
-	 button = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
+	 button = gtk_button_new_from_stock (GTK_STOCK_OK);
 #else
-	 button =  picture_button(prefs, _("Close"), cancel_xpm);
+	 button  = picture_button(prefs, _("OK"), join_xpm);
 #endif
-	 gtk_signal_connect_object(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), prefs);
+	 gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_cb), prefs); 
 	 gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	 if (misc_options & OPT_MISC_COOL_LOOK)
 		 gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	 gtk_widget_show(button);
+
 #if GTK_CHECK_VERSION(1,3,0) 
 	 button = gtk_button_new_from_stock (GTK_STOCK_APPLY);
 #else
@@ -1839,12 +1841,13 @@ void show_prefs()
 		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	 gtk_widget_show(button);
 	 
+
 #if GTK_CHECK_VERSION(1,3,0)
-	 button = gtk_button_new_from_stock (GTK_STOCK_OK);
+	 button = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
 #else
-	 button  = picture_button(prefs, _("OK"), join_xpm);
+	 button =  picture_button(prefs, _("Close"), cancel_xpm);
 #endif
-	 gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_cb), prefs); 
+	 gtk_signal_connect_object(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), prefs);
 	 gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	 if (misc_options & OPT_MISC_COOL_LOOK)
 		 gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
