@@ -2465,7 +2465,7 @@ static char **oscar_list_icon(int uc) {
 	}
 	if (uc & UC_UNAVAILABLE)
 		return (char **)away_icon_xpm;
-	if ((uc & UC_AB) && (uc & UC_NORMAL))
+	if (uc & UC_AB)
 		return (char **)ab_xpm;
 	if (uc & UC_AOL)
 		return (char **)aol_icon_xpm;
