@@ -1174,11 +1174,7 @@ static inline void new_bit(GtkIMHtml *imhtml, GtkTextIter *iter, GtkIMHtmlBitTyp
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, iter);
 	if (x == NEW_SCALABLE_BIT) {
 		GdkRectangle rect;
-		gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
-		scalable->add_to(scalable, imhtml, iter);
-		scalable->scale(scalable, rect.width, rect.height);
-		imhtml->scalables = g_list_append(imhtml->scalables, scalable);
-		gtk_text_buffer_get_end_iter(imhtml->text_buffer, iter);
+	
 	}
 }
 
@@ -1367,7 +1363,10 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 				case 42:        /* HR (opt) */
 					ws[wpos++] = '\n';
 					scalable = gtk_imhtml_hr_new();
-					//NEW_BIT(NEW_SCALABLE_BIT);
+					gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
+					scalable->add_to(scalable, imhtml, &iter);
+					scalable->scale(scalable, rect.width, rect.height);
+					imhtml->scalables = g_list_append(imhtml->scalables, scalable);
 					ws[wpos++] = '\n';
 					break;
 				case 27:	/* /FONT */
@@ -2166,7 +2165,6 @@ gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 	} else {
 		span = imhtml->edit.bold;
-		printf("Set end\n");		
 		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		imhtml->edit.bold = NULL;
 	}
@@ -2411,14 +2409,15 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	GdkPixbuf *pixbuf = NULL;
 	GdkPixbufAnimation *annipixbuf = NULL;
 	GtkWidget *icon = NULL;
-	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
-	
+	printf("%s %s\n", sml, smiley);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
 	g_object_set_data(G_OBJECT(anchor), "text_tag", smiley);
 
 	annipixbuf = gtk_smiley_tree_image(imhtml, sml, smiley);
 	if(annipixbuf) {
-	if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
+		printf("HERE!\n");
+		if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
 			pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
 			if(pixbuf)
 				icon = gtk_image_new_from_pixbuf(pixbuf);
@@ -2428,6 +2427,7 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	}
 	
 	if (icon) {
+		printf("THERE!\n");
 		gtk_widget_show(icon);
 		gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
 	}
