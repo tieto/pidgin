@@ -175,7 +175,7 @@ int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
                         free(inputline);
                 }
 	        
-                return ret;
+                return 0;
                 break;
         case PROXY_SOCKS4:
 		/* code shamelessly stolen from everybuddy */
