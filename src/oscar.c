@@ -831,6 +831,11 @@ static void cancel_getfile_file(GtkObject *obj, struct ask_getfile *g) {
 	cancel_getfile(w, g);
 }
 
+static void cancel_getfile_cancel(GtkObject *obj, struct ask_getfile *g) {
+	GtkWidget *w = gtk_object_get_user_data(obj);
+	gtk_widget_destroy(w);
+}
+
 static void interrupt_getfile(GtkObject *obj, struct getfile_transfer *gt) {
 	struct gaim_connection *gc = gt->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -1083,7 +1088,7 @@ static int accept_getfile(gpointer w, struct ask_getfile *g) {
 			   GTK_SIGNAL_FUNC(do_getfile), g);
 	gtk_object_set_user_data(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button), window);
 	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(window)->cancel_button), "clicked",
-			   GTK_SIGNAL_FUNC(cancel_getfile_file), g);
+			   GTK_SIGNAL_FUNC(cancel_getfile_cancel), g);
 	gtk_widget_show(window);
 
 	return TRUE;
