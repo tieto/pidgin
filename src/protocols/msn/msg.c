@@ -26,7 +26,7 @@
 	while (*(tmp) && *(tmp) != ' ' && *(tmp) != '\r') \
 		(tmp)++; \
 	if (*(tmp) != '\0') *(tmp)++ = '\0'; \
-	if (*(tmp) == '\n') *(tmp)++; \
+	if (*(tmp) == '\n') (tmp)++; \
 	while (*(tmp) && *(tmp) == ' ') \
 		(tmp)++
 
@@ -34,7 +34,7 @@
 	while (*(tmp) && *(tmp) != '\r') \
 		(tmp)++; \
 	if (*(tmp) != '\0') *(tmp)++ = '\0'; \
-	if (*(tmp) == '\n') *(tmp)++
+	if (*(tmp) == '\n') (tmp)++
 
 /*
  * "MIME-Version: 1.0\r\n" == 19
