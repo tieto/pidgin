@@ -146,11 +146,16 @@ process_multi_line(MsnServConn *servconn, char *buffer)
 
 	if (servconn->multiline_type == MSN_MULTILINE_MSG) {
 		MsnMessage *msg;
+		size_t header_len;
 
 		g_snprintf(msg_str, sizeof(msg_str),
-				   "MSG %s %s %d\r\n%s",
+				   "MSG %s %s %d\r\n",
 				   servconn->msg_passport, servconn->msg_friendly,
-				   servconn->multiline_len, buffer);
+				   servconn->multiline_len);
+
+		header_len = strlen(msg_str);
+
+		memcpy(msg_str + header_len, buffer, servconn->multiline_len);
 
 		gaim_debug(GAIM_DEBUG_MISC, "msn",
 				   "Message: {%s}\n", buffer);

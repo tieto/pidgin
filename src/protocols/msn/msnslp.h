@@ -35,6 +35,7 @@ struct _MsnSlpSession
 
 	MsnSwitchBoard *swboard;
 
+	char *branch;
 	char *call_id;
 
 	long session_id;
@@ -45,6 +46,14 @@ struct _MsnSlpSession
 
 	void *orig_body;
 	size_t orig_len;
+
+	guint send_timer;
+	FILE *send_fp;
+
+	size_t remaining_size;
+
+	MsnUser *receiver;
+	MsnUser *sender;
 
 	MsnMessage *outgoing_msg;
 };

@@ -51,13 +51,123 @@ msn_slp_session_destroy(MsnSlpSession *session)
 	if (session->call_id != NULL)
 		g_free(session->call_id);
 
+	if (session->branch != NULL)
+		g_free(session->branch);
+
 	g_free(session);
+}
+
+static void
+msn_slp_session_send_message(MsnSlpSession *slpsession,
+							 MsnMessage *source_msg,
+							 MsnUser *local_user, MsnUser *remote_user,
+							 const char *header, const char *branch,
+							 int cseq, const char *call_id,
+							 const char *content)
+{
+	MsnMessage *invite_msg;
+	char *body;
+
+	g_return_if_fail(slpsession != NULL);
+	g_return_if_fail(header     != NULL);
+	g_return_if_fail(branch     != NULL);
+	g_return_if_fail(call_id    != NULL);
+
+	if (source_msg != NULL)
+	{
+		if (msn_message_is_incoming(source_msg))
+			remote_user = msn_message_get_sender(source_msg);
+		else
+			remote_user = msn_message_get_receiver(source_msg);
+
+		local_user = slpsession->swboard->servconn->session->user;
+	}
+
+	if (branch == NULL)
+		branch = "null";
+
+	body = g_strdup_printf(
+		"%s\r\n"
+		"To: <msnmsgr:%s>\r\n"
+		"From: <msnmsgr:%s>\r\n"
+		"Via: MSNSLP/1.0/TLP ;branch={%s}\r\n"
+		"CSeq: %d\r\n"
+		"Call-ID: {%s}\r\n"
+		"Max-Forwards: 0\r\n"
+		"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
+		"Content-Length: %d\r\n"
+		"\r\n"
+		"%s"
+		"\r\n\r\n",
+		header,
+		msn_user_get_passport(remote_user),
+		msn_user_get_passport(local_user),
+		branch, cseq, call_id,
+		(content == NULL ? 0  : (int)strlen(content) + 5),
+		(content == NULL ? "" : content));
+
+	gaim_debug_misc("msn", "Message = {%s}\n", body);
+
+	invite_msg = msn_message_new_msnslp();
+
+	msn_message_set_sender(invite_msg, local_user);
+	msn_message_set_receiver(invite_msg, remote_user);
+
+	msn_message_set_body(invite_msg, body);
+
+	g_free(body);
+
+	msn_slp_session_send_msg(slpsession, invite_msg);
+}
+
+static gboolean
+send_error_500(MsnSlpSession *slpsession, const char *call_id, MsnMessage *msg)
+{
+	g_return_val_if_fail(slpsession != NULL, TRUE);
+	g_return_val_if_fail(msg        != NULL, TRUE);
+
+	msn_slp_session_send_message(slpsession, msg, NULL, NULL,
+								 "MSNSLP/1.0 500 Internal Error",
+								 slpsession->branch, 1, call_id, NULL);
+
+	return TRUE;
+}
+
+static gboolean
+send_cb(gpointer user_data)
+{
+	MsnSlpSession *slpsession = (MsnSlpSession *)user_data;
+	MsnMessage *msg;
+	char data[1200];
+	size_t len;
+
+	len = fread(data, 1, 1200, slpsession->send_fp);
+
+	slpsession->remaining_size -= len;
+
+	msg = msn_message_new_msnslp();
+	msn_message_set_sender(msg,   slpsession->receiver);
+	msn_message_set_receiver(msg, slpsession->sender);
+	msn_message_set_bin_data(msg, data, len);
+
+	msn_slp_session_send_msg(slpsession, msg);
+
+	if (slpsession->remaining_size <= 0)
+	{
+		slpsession->send_timer = 0;
+
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 gboolean
 msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 {
 	const char *body;
+	const char *c, *c2;
+	GaimAccount *account;
 
 	g_return_val_if_fail(slpsession != NULL,  TRUE);
 	g_return_val_if_fail(msg != NULL,         TRUE);
@@ -65,12 +175,171 @@ msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 	g_return_val_if_fail(!strcmp(msn_message_get_content_type(msg),
 								 "application/x-msnmsgrp2p"), TRUE);
 
+	account = slpsession->swboard->servconn->session->account;
+
 	body = msn_message_get_body(msg);
 
-	if (strlen(body) == 0)
+	gaim_debug_misc("msn", "MSNSLP Message: {%s}\n", body);
+
+	if (*body == '\0')
 	{
 		/* ACK. Ignore it. */
 		gaim_debug_info("msn", "Received MSNSLP ACK\n");
+
+		return FALSE;
+	}
+
+	if (slpsession->send_fp != NULL && slpsession->remaining_size == 0)
+	{
+		/*
+		 * In theory, if we received something while send_fp is non-NULL,
+		 * but remaining_size is 0, then this is a data ack message.
+		 *
+		 * Say BYE-BYE.
+		 */
+		char *header;
+
+		fclose(slpsession->send_fp);
+		slpsession->send_fp = NULL;
+
+		header = g_strdup_printf("BYE MSNMSGR:%s MSNSLP/1.0",
+			msn_user_get_passport(msn_message_get_sender(msg)));
+
+		msn_slp_session_send_message(slpsession, msg, NULL, NULL, header,
+									 "A0D624A6-6C0C-4283-A9E0-BC97B4B46D32",
+									 0, slpsession->call_id, "");
+
+		g_free(header);
+
+		return TRUE;
+	}
+
+	if (!strncmp(body, "MSNSLP/1.0 ", strlen("MSNSLP/1.0 ")))
+	{
+		/* Make sure this is "OK" */
+		const char *status = body + strlen("MSNSLP/1.0 ");
+
+		if (strncmp(status, "200 OK", 6))
+		{
+			/* It's not valid. Kill this off. */
+			char temp[32];
+			const char *c;
+
+			/* Eww */
+			if ((c = strchr(status, '\r')) || (c = strchr(status, '\n')) ||
+				(c = strchr(status, '\0')))
+			{
+				strncpy(temp, status, c - status);
+				temp[c - status] = '\0';
+			}
+
+			gaim_debug_error("msn", "Received non-OK result: %s\n", temp);
+
+			return TRUE;
+		}
+	}
+	else if (!strncmp(body, "INVITE", strlen("INVITE")))
+	{
+		/* Parse it. Oh this is fun. */
+		char *branch, *call_id, *temp;
+		unsigned int session_id, app_id;
+
+		/* First, branch. */
+		if ((c = strstr(body, ";branch={")) == NULL)
+			return send_error_500(slpsession, NULL, msg);
+
+		c += strlen(";branch={");
+
+		if ((c2 = strchr(c, '}')) == NULL)
+			return send_error_500(slpsession, NULL, msg);
+
+		branch = g_strndup(c, c2 - c);
+
+		if (slpsession->branch != NULL)
+			slpsession->branch = branch;
+
+		/* Second, Call-ID */
+		if ((c = strstr(body, "Call-ID: {")) == NULL)
+			return send_error_500(slpsession, NULL, msg);
+
+		c += strlen("Call-ID: {");
+
+		if ((c2 = strchr(c, '}')) == NULL)
+			return send_error_500(slpsession, NULL, msg);
+
+		call_id = g_strndup(c, c2 - c);
+
+		if (slpsession->call_id != NULL)
+			slpsession->call_id = call_id;
+
+		/* Third, SessionID */
+		if ((c = strstr(body, "SessionID: ")) == NULL)
+			return send_error_500(slpsession, NULL, msg);
+
+		c += strlen("SessionID: ");
+
+		if ((c2 = strchr(c, '\r')) == NULL)
+			return send_error_500(slpsession, NULL, msg);
+
+		temp = g_strndup(c, c2 - c);
+		session_id = atoi(temp);
+		g_free(temp);
+
+		/* Fourth, AppID */
+		if ((c = strstr(body, "AppID: ")) == NULL)
+			return send_error_500(slpsession, NULL, msg);
+
+		c += strlen("AppID: ");
+
+		if ((c2 = strchr(c, '\r')) == NULL)
+			return send_error_500(slpsession, NULL, msg);
+
+		temp = g_strndup(c, c2 - c);
+		app_id = atoi(temp);
+		g_free(temp);
+
+		if (app_id == 1)
+		{
+			MsnMessage *new_msg;
+			char *content;
+			char nil_body[4];
+			struct stat st;
+
+			/* Send the 200 OK message. */
+			content = g_strdup_printf("SessionID: %d", session_id);
+			msn_slp_session_send_ack(slpsession, msg);
+
+			msn_slp_session_send_message(slpsession, msg, NULL, NULL,
+										 "MSNSLP/1.0 200 OK",
+										 branch, 1, call_id, content);
+
+			g_free(content);
+
+			/* Send the Data Preparation message. */
+			memset(nil_body, 0, sizeof(nil_body));
+
+			slpsession->session_id = session_id;
+			slpsession->receiver = msn_message_get_sender(msg);
+			slpsession->sender = slpsession->swboard->servconn->session->user;
+
+			new_msg = msn_message_new_msnslp();
+			msn_message_set_sender(new_msg, slpsession->sender);
+			msn_message_set_receiver(new_msg, slpsession->receiver);
+			msn_message_set_bin_data(new_msg, nil_body, 4);
+			new_msg->msnslp_footer.app_id = 1;
+
+			msn_slp_session_send_msg(slpsession, new_msg);
+
+			slpsession->send_fp =
+				fopen(gaim_account_get_buddy_icon(account), "rb");
+
+			if (stat(gaim_account_get_buddy_icon(account), &st) == 0)
+				slpsession->remaining_size = st.st_size;
+
+			slpsession->send_timer = g_timeout_add(10, send_cb, slpsession);
+		}
+		else
+			return send_error_500(slpsession, call_id, msg);
 
 		return FALSE;
 	}
@@ -207,14 +476,11 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 									 MsnUser *remote_user,
 									 const MsnObject *obj)
 {
-	MsnMessage *invite_msg;
 	long session_id;
 	char *msnobj_data;
 	char *msnobj_base64;
-	char *branch;
+	char *header;
 	char *content;
-	char *body;
-	char *c;
 
 	g_return_if_fail(slpsession  != NULL);
 	g_return_if_fail(local_user  != NULL);
@@ -225,20 +491,23 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 	msnobj_base64 = gaim_base64_encode(msnobj_data, strlen(msnobj_data));
 	g_free(msnobj_data);
 
-	if ((c = strchr(msnobj_base64, '=')) != NULL)
-		*c = '\0';
-
 	session_id = rand() % 0xFFFFFF00 + 4;
 
-	branch = g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
-							 rand() % 0xAAFF + 0x1111,
-							 rand() % 0xAAFF + 0x1111,
-							 rand() % 0xAAFF + 0x1111,
-							 rand() % 0xAAFF + 0x1111,
-							 rand() % 0xAAFF + 0x1111,
-							 rand() % 0xAAFF + 0x1111,
-							 rand() % 0xAAFF + 0x1111,
-							 rand() % 0xAAFF + 0x1111);
+	if (slpsession->branch != NULL)
+		g_free(slpsession->branch);
+
+	slpsession->branch = g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
+										 rand() % 0xAAFF + 0x1111,
+										 rand() % 0xAAFF + 0x1111,
+										 rand() % 0xAAFF + 0x1111,
+										 rand() % 0xAAFF + 0x1111,
+										 rand() % 0xAAFF + 0x1111,
+										 rand() % 0xAAFF + 0x1111,
+										 rand() % 0xAAFF + 0x1111,
+										 rand() % 0xAAFF + 0x1111);
+
+	if (slpsession->call_id != NULL)
+		g_free(slpsession->call_id);
 
 	slpsession->call_id = g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
 										  rand() % 0xAAFF + 0x1111,
@@ -260,44 +529,15 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 
 	g_free(msnobj_base64);
 
-	body = g_strdup_printf(
-		"INVITE MSNMSGR:%s MSNSLP/1.0\r\n"
-		"To: <msnmsgr:%s>\r\n"
-		"From: <msnmsgr:%s>\r\n"
-		"Via: MSNSLP/1.0/TLP ;branch={%s}\r\n"
-		"CSeq: 0\r\n"
-		"Call-ID: {%s}\r\n"
-		"Max-Forwards: 0\r\n"
-		"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
-		"Content-Length: %d\r\n"
-		"\r\n"
-		"%s"
-		"\r\n\r\n",
-		msn_user_get_passport(remote_user),
-		msn_user_get_passport(remote_user),
-		msn_user_get_passport(local_user),
-		branch,
-		slpsession->call_id,
-		(int)strlen(content) + 5,
-		content);
+	header = g_strdup_printf("INVITE MSNMSGR:%s MSNSLP/1.0",
+							 msn_user_get_passport(remote_user));
 
+	msn_slp_session_send_message(slpsession, NULL, local_user, remote_user,
+								 header, slpsession->branch, 0,
+								 slpsession->call_id, content);
+
+	g_free(header);
 	g_free(content);
-	g_free(branch);
-
-	gaim_debug_misc("msn", "Message = {%s}\n", body);
-
-	invite_msg = msn_message_new_msnslp();
-
-	msn_message_set_sender(invite_msg, local_user);
-	msn_message_set_receiver(invite_msg, remote_user);
-
-	msn_message_set_body(invite_msg, body);
-
-	g_free(body);
-
-	msn_slp_session_send_msg(slpsession, invite_msg);
-
-	msn_message_destroy(invite_msg);
 }
 
 gboolean

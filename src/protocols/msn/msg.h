@@ -79,7 +79,7 @@ struct _MsnMessage
 
 	MsnSlpHeader msnslp_header;
 	MsnSlpFooter msnslp_footer;
-	
+
 	MsnMessage *acked_msg;
 
 	GHashTable *attr_table;
