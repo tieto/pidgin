@@ -696,7 +696,7 @@ GtkWidget *proxy_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Proxy Type"));
-	gaim_dropdown(vbox, _("Proxy _type:"), &proxytype, -1,
+	gaim_dropdown(vbox, _("Proxy _type:"), (int*)&proxytype, -1,
 		      _("No proxy"), PROXY_NONE,
 		      "SOCKS 4", PROXY_SOCKS4,
 		      "SOCKS 5", PROXY_SOCKS5,
@@ -2171,7 +2171,7 @@ void dropdown_set(GtkObject *w, int *option)
 		*option = opt;
 	}
 
-	if (option == &proxytype) {
+	if (option == (int*)&proxytype) {
 		if (opt == PROXY_NONE)
 			gtk_widget_set_sensitive(prefs_proxy_frame, FALSE);
 		else
