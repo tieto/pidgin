@@ -939,7 +939,7 @@ static void gaim_gtk_blist_set_visible(struct gaim_buddy_list *list, gboolean sh
 	} else {
 		if (!connections || docklet_count) {
 #ifdef _WIN32
-			wgaim_systray_minimize(blist);
+			wgaim_systray_minimize(gtkblist->window);
 #endif
 			gtk_widget_hide(gtkblist->window);
 		} else {
@@ -957,7 +957,7 @@ void gaim_gtk_blist_docklet_toggle() {
 			gaim_blist_set_visible(GAIM_WINDOW_ICONIFIED(gtkblist->window) || gaim_gtk_blist_obscured);
 		} else {
 #if _WIN32
-			wgaim_systray_maximize(blist);
+			wgaim_systray_maximize(gtkblist->window);
 #endif
 			gaim_blist_set_visible(TRUE);
 		}
