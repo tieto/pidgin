@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2555 2001-10-18 21:44:09Z warmenhoven $
+ * $Id: gg.c 2576 2001-10-21 00:14:41Z robflynn $
  *
  * Copyright (C) 2001, Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -92,8 +92,8 @@ static char *agg_name()
 
 static gchar *charset_convert(const gchar *locstr, char *encsrc, char *encdst)
 {
-	gchar *result = NULL;
 #ifdef HAVE_ICONV
+	gchar *result = NULL;
 	if (iconv_string(encdst, encsrc, locstr, locstr+strlen(locstr)+1, &result, NULL) >= 0)
 		return result;
 #endif
