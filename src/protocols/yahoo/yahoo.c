@@ -967,6 +967,7 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
+	int service;
 	char s[4];
 
 	gc->away = NULL;
@@ -1013,7 +1014,11 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)
 		yd->current_status = YAHOO_STATUS_AVAILABLE;
 	}
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_ISAWAY, yd->current_status, 0);
+	if (yd->current_status == YAHOO_STATUS_AVAILABLE)
+		service = YAHOO_SERVICE_ISBACK;
+	else
+		service = YAHOO_SERVICE_ISAWAY;
+	pkt = yahoo_packet_new(service, yd->current_status, 0);
 	g_snprintf(s, sizeof(s), "%d", yd->current_status);
 	yahoo_packet_hash(pkt, 10, s);
 	if (yd->current_status == YAHOO_STATUS_CUSTOM)
