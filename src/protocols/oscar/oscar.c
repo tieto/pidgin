@@ -21,7 +21,6 @@
  */
 
 /* No, he's right, real men do only communicate by cvs commits.
- * Also, it's father's day, go do something with your father, Luke.
  */
 
 #include "internal.h"
