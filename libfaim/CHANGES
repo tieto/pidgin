@@ -1,6 +1,11 @@
 
 No release numbers
 ------------------
+ - Thu Sep 21 00:24:36 UTC 2000
+   - Add socks5 proxy support (not tested real well, worked the 
+       few times a tried).
+   - Added proxy support to faimtest.
+
  - Tue Sep 19 03:10:07 UTC 2000
    - Add aim_setuserinterests() and aim_setdirectoryinfo()
    - Add ICQ away status

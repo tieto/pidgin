@@ -1045,6 +1045,30 @@ void add_group_callback(GtkWidget *widget, void *dummy)
 	show_add_group();
 }
 
+static void im_callback(GtkWidget *widget, GtkTree *tree)
+{
+	GList *i;
+	struct buddy *b = NULL;
+	struct conversation *c;
+	i = GTK_TREE_SELECTION(tree);
+	if (i) {
+		b = gtk_object_get_user_data(GTK_OBJECT(i->data));
+        } else {
+		show_im_dialog();
+		return;
+        }
+	if (!b->name)
+		return;
+
+        c = find_conversation(b->name);
+	if (c == NULL) {
+		c = new_conversation(b->name);
+	} else {
+		gdk_window_raise(c->window->window);
+	}
+}
+	
+
 static void info_callback(GtkWidget *widget, GtkTree *tree)
 {
 	GList *i;
@@ -1053,6 +1077,7 @@ static void info_callback(GtkWidget *widget, GtkTree *tree)
 	if (i) {
 		b = gtk_object_get_user_data(GTK_OBJECT(i->data));
         } else {
+		show_info_dialog();
 		return;
         }
 	if (!b->name)
@@ -1771,7 +1796,7 @@ void build_imchat_box(gboolean on)
 		gtk_box_pack_start(GTK_BOX(imchatbox), chatbutton, TRUE, TRUE, 0);
 		gtk_container_border_width(GTK_CONTAINER(imchatbox), 10);
 
-		gtk_signal_connect(GTK_OBJECT(imbutton), "clicked", GTK_SIGNAL_FUNC(show_im_dialog), buddies);
+		gtk_signal_connect(GTK_OBJECT(imbutton), "clicked", GTK_SIGNAL_FUNC(im_callback), buddies);
 		gtk_signal_connect(GTK_OBJECT(infobutton), "clicked", GTK_SIGNAL_FUNC(info_callback), buddies);
 		gtk_signal_connect(GTK_OBJECT(chatbutton), "clicked", GTK_SIGNAL_FUNC(chat_callback), buddies);
 

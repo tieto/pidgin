@@ -1,4 +1,9 @@
 
+Fri Sep 22 10:12:37 UTC 2000 EWarmenhoven
+	- yeah, libfaim does socks 5 proxying now. it may be fragile though,
+	  and the necessary call in gaim to get it to work isn't there yet.
+	  be patient. i just don't want to write the UI for it yet.
+
 Wed Sep 20 23:30:32 UTC 2000 EWarmenhoven
 	- libfaim does dir info now
 	- for those wishing to use gaim as an ICQ client, libfaim took one

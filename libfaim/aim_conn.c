@@ -162,6 +162,154 @@ faim_internal struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,
 }
 
 /*
+ * An extrememly quick and dirty SOCKS5 interface. 
+ */
+static int aim_proxyconnect(struct aim_session_t *sess, 
+			    char *host, unsigned short port,
+			    int *statusret)
+{
+  int fd = -1;
+
+  if (strlen(sess->socksproxy.server)) { /* connecting via proxy */
+    int i;
+    unsigned char buf[512];
+    struct sockaddr_in sa;
+    struct hostent *hp;
+    char *proxy;
+    unsigned short proxyport = 1080;
+
+    for(i=0;i<(int)strlen(sess->socksproxy.server);i++) {
+      if (sess->socksproxy.server[i] == ':') {
+	proxyport = atoi(&(sess->socksproxy.server[i+1]));
+	break;
+      }
+    }
+    proxy = (char *)malloc(i+1);
+    strncpy(proxy, sess->socksproxy.server, i);
+    proxy[i] = '\0';
+
+    if (!(hp = gethostbyname(proxy))) {
+      printf("proxyconnect: unable to resolve proxy name\n");
+      *statusret = (h_errno | AIM_CONN_STATUS_RESOLVERR);
+      return -1;
+    }
+    free(proxy);
+
+    memset(&sa.sin_zero, 0, 8);
+    sa.sin_port = htons(proxyport);
+    memcpy(&sa.sin_addr, hp->h_addr, hp->h_length);
+    sa.sin_family = hp->h_addrtype;
+  
+    fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
+    if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
+      printf("proxyconnect: unable to connect to proxy\n");
+      close(fd);
+      return -1;
+    }
+
+    i = 0;
+    buf[0] = 0x05; /* SOCKS version 5 */
+    if (strlen(sess->socksproxy.username)) {
+      buf[1] = 0x02; /* two methods */
+      buf[2] = 0x00; /* no authentication */
+      buf[3] = 0x02; /* username/password authentication */
+      i = 4;
+    } else {
+      buf[1] = 0x01;
+      buf[2] = 0x00;
+      i = 3;
+    }
+
+    if (write(fd, buf, i) < i) {
+      *statusret = errno;
+      close(fd);
+      return -1;
+    }
+
+    if (read(fd, buf, 2) < 2) {
+      *statusret = errno;
+      close(fd);
+      return -1;
+    }
+
+    if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
+      *statusret = EINVAL;
+      close(fd);
+      return -1;
+    }
+
+    /* check if we're doing username authentication */
+    if (buf[1] == 0x02) {
+      i  = aimutil_put8(buf, 0x01); /* version 1 */
+      i += aimutil_put8(buf+i, strlen(sess->socksproxy.username));
+      i += aimutil_putstr(buf+i, sess->socksproxy.username, strlen(sess->socksproxy.username));
+      i += aimutil_put8(buf+i, strlen(sess->socksproxy.password));
+      i += aimutil_putstr(buf+i, sess->socksproxy.password, strlen(sess->socksproxy.password));
+      if (write(fd, buf, i) < i) {
+	*statusret = errno;
+	close(fd);
+	return -1;
+      }
+      if (read(fd, buf, 2) < 2) {
+	*statusret = errno;
+	close(fd);
+	return -1;
+      }
+      if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
+	*statusret = EINVAL;
+	close(fd);
+	return -1;
+      }
+    }
+
+    i  = aimutil_put8(buf, 0x05);
+    i += aimutil_put8(buf+i, 0x01); /* CONNECT */
+    i += aimutil_put8(buf+i, 0x00); /* reserved */
+    i += aimutil_put8(buf+i, 0x03); /* address type: host name */
+    i += aimutil_put8(buf+i, strlen(host));
+    i += aimutil_putstr(buf+i, host, strlen(host));
+    i += aimutil_put16(buf+i, port);
+
+    if (write(fd, buf, i) < i) {
+      *statusret = errno;
+      close(fd);
+      return -1;
+    }
+    if (read(fd, buf, 10) < 10) {
+      *statusret = errno;
+      close(fd);
+      return -1;
+    }
+    if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
+      *statusret = EINVAL;
+      close(fd);
+      return -1;
+    }
+
+  } else { /* connecting directly */
+    struct sockaddr_in sa;
+    struct hostent *hp;
+
+    if (!(hp = gethostbyname(host))) {
+      *statusret = (h_errno | AIM_CONN_STATUS_RESOLVERR);
+      return -1;
+    }
+
+    memset(&sa.sin_zero, 0, 8);
+    sa.sin_port = htons(port);
+    memcpy(&sa.sin_addr, hp->h_addr, hp->h_length);
+    sa.sin_family = hp->h_addrtype;
+  
+    fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
+    if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
+      close(fd);
+      fd = -1;
+    }
+  }
+  return fd;
+}
+
+/*
  * aim_newconn(type, dest)
  *
  * Opens a new connection to the specified dest host of type type.
@@ -214,30 +362,18 @@ faim_export struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
   strncpy(host, dest, i);
   host[i] = '\0';
 
-  hp = gethostbyname(host);
-  free(host);
-
-  if (hp == NULL) {
-    connstruct->status = (h_errno | AIM_CONN_STATUS_RESOLVERR);
-    faim_mutex_unlock(&connstruct->active);
-    return connstruct;
-  }
-
-  memset(&sa.sin_zero, 0, 8);
-  sa.sin_port = htons(port);
-  memcpy(&sa.sin_addr, hp->h_addr, hp->h_length);
-  sa.sin_family = hp->h_addrtype;
-  
-  connstruct->fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
-  ret = connect(connstruct->fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in));
-  if(ret < 0) {
+  if ((ret = aim_proxyconnect(sess, host, port, &connstruct->status)) < 0) {
     connstruct->fd = -1;
     connstruct->status = (errno | AIM_CONN_STATUS_CONNERR);
+    free(host);
     faim_mutex_unlock(&connstruct->active);
     return connstruct;
-  }
+  } else
+    connstruct->fd = ret;
   
   faim_mutex_unlock(&connstruct->active);
+
+  free(host);
 
   return connstruct;
 }
@@ -370,6 +506,32 @@ faim_export int aim_conn_setlatency(struct aim_conn_t *conn, int newval)
   faim_mutex_unlock(&conn->active);
 
   return 0;
+}
+
+/*
+ * Call this with your SOCKS5 proxy server parameters before
+ * the first call to aim_newconn().  If called with all NULL
+ * args, it will clear out a previously set proxy.  
+ *
+ * Set username and password to NULL if not applicable.
+ *
+ */
+faim_export void aim_setupproxy(struct aim_session_t *sess, char *server, char *username, char *password)
+{
+  /* clear out the proxy info */
+  if (!server || !strlen(server)) {
+    memset(sess->socksproxy.server, 0, sizeof(sess->socksproxy.server));
+    memset(sess->socksproxy.username, 0, sizeof(sess->socksproxy.username));
+    memset(sess->socksproxy.password, 0, sizeof(sess->socksproxy.password));
+    return;
+  }
+
+  strncpy(sess->socksproxy.server, server, sizeof(sess->socksproxy.server));
+  if (username && strlen(username)) 
+    strncpy(sess->socksproxy.username, username, sizeof(sess->socksproxy.username));
+  if (password && strlen(password))
+    strncpy(sess->socksproxy.password, password, sizeof(sess->socksproxy.password));
+  return;
 }
 
 faim_export void aim_session_init(struct aim_session_t *sess)

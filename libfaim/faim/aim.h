@@ -331,6 +331,12 @@ struct aim_session_t {
   faim_mutex_t snac_hash_locks[FAIM_SNAC_HASH_SIZE];
   u_long snac_nextid;
 
+  struct {
+    char server[128];
+    char username[128];
+    char password[128];
+  } socksproxy;
+
   struct aim_msgcookie_t *msgcookies;
 };
 
@@ -492,6 +498,7 @@ faim_export struct aim_conn_t *aim_select(struct aim_session_t *, struct timeval
 faim_export int aim_conn_isready(struct aim_conn_t *);
 faim_export int aim_conn_setstatus(struct aim_conn_t *, int);
 faim_export void aim_session_init(struct aim_session_t *);
+faim_export void aim_setupproxy(struct aim_session_t *sess, char *server, char *username, char *password);
 
 /* aim_misc.c */
 
