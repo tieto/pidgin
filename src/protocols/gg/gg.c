@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 11638 2004-12-21 01:48:30Z nosnilmot $
+ * $Id: gg.c 11653 2004-12-24 01:47:59Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -82,6 +82,22 @@ struct agg_http {
 static gchar *charset_convert(const gchar *locstr, const char *encsrc, const char *encdst)
 {
 	return (g_convert (locstr, strlen (locstr), encdst, encsrc, NULL, NULL, NULL));
+
+	gchar *msg;
+	GError *err = NULL;
+
+	msg = g_convert_with_fallback(locstr, strlen(locstr), encdst, encsrc, "?", NULL, NULL, &err);
+	if (err != NULL) {
+		gaim_debug_error("gg", "Error converting from %s to %s: %s\n",
+						 encsrc, encdst, err->message);
+		g_error_free(err);
+	}
+
+	/* Just in case? */
+	if (msg == NULL)
+		msg = g_strdup(locstr);
+
+	return msg;
 }
 
 static gboolean invalid_uin(const char *uin)
