@@ -864,13 +864,6 @@ void parse_toc_buddy_list(char *config, int from_do_import)
 	GList *bud;
 	int how_many = 0;
 
-	/* Clean out the permit/deny list!*/
-	/* why? if we're going to merge things, then these should stay
-g_list_free(permit);
-g_list_free(deny);
-permit = NULL;
-	deny = NULL;
-	*/
 	bud = NULL;
         
 /* skip "CONFIG:" (if it exists)*/
@@ -905,7 +898,6 @@ permit = NULL;
 			} else if (*c == 'p') {
 				GList *d = permit;
 				char *n;
-				name = g_malloc(strlen(c+2) + 2);
 				g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
 				n = g_strdup(normalize(name));
 				while (d) {
@@ -916,7 +908,6 @@ permit = NULL;
 				g_free(n);
 				if (!d)
 					permit = g_list_append(permit, name);
-				g_free(name);
 			} else if (*c == 'd') {
 				GList *d = deny;
 				char *n;
@@ -931,9 +922,16 @@ permit = NULL;
 				g_free(n);
 				if (!d)
 					deny = g_list_append(deny, name);
-				g_free(name);
-			} else if (*c == 't') {
-				sscanf(c + strlen(c) - 2, "%d", &permdeny);
+			} else if (!strncmp("toc", c, 3)) {
+				sscanf(c + strlen(c) - 1, "%d", &permdeny);
+				sprintf(debug_buff, "permdeny: %d\n", permdeny);
+				debug_print(debug_buff);
+				if (permdeny == 0)
+					permdeny = 1;
+			} else if (*c == 'm') {
+				sscanf(c + 2, "%d", &permdeny);
+				sprintf(debug_buff, "permdeny: %d\n", permdeny);
+				debug_print(debug_buff);
 				if (permdeny == 0)
 					permdeny = 1;
 			}

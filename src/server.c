@@ -330,6 +330,7 @@ void serv_add_permit(char *name)
 {
 	permdeny = 3;
 	build_permit_tree();
+	serv_set_permit_deny();
 }
 
 
@@ -338,6 +339,7 @@ void serv_add_deny(char *name)
 {
 	permdeny = 4;
 	build_permit_tree();
+	serv_set_permit_deny();
 }
 
 
