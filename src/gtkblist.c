@@ -2914,17 +2914,6 @@ static void gaim_gtk_blist_new_list(GaimBuddyList *blist)
 	gtkblist = g_new0(GaimGtkBuddyList, 1);
 	blist->ui_data = gtkblist;
 
-	/* Register some of our own. */
-	gaim_signal_register(gtkblist, "drawing-menu",
-			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     gaim_value_new(GAIM_TYPE_BOXED, "GtkMenu"),
-			     gaim_value_new(GAIM_TYPE_SUBTYPE,
-					    GAIM_SUBTYPE_BLIST_BUDDY));
-	gaim_signal_register(gtkblist, "drawing-tooltip",
-			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_BLIST_NODE),
-			     gaim_value_new_outgoing(GAIM_TYPE_STRING));
-
 	/* All of these signal handlers are for the "Raise on Events" option */
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on",
 			gtkblist, GAIM_CALLBACK(raise_on_events_cb), NULL);
@@ -4481,35 +4470,40 @@ void gaim_gtk_blist_init(void)
 						NULL);
 
 	/* Initialize prefs */
-    gaim_prefs_add_none("/gaim/gtk/blist");
+	gaim_prefs_add_none("/gaim/gtk/blist");
 	gaim_prefs_add_bool("/gaim/gtk/blist/auto_expand_contacts", TRUE);
-    gaim_prefs_add_int("/gaim/gtk/blist/button_style", GAIM_BUTTON_TEXT_IMAGE);
-    gaim_prefs_add_bool("/gaim/gtk/blist/grey_idle_buddies", TRUE);
-    gaim_prefs_add_bool("/gaim/gtk/blist/raise_on_events", FALSE);
-    gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
-    gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
-    gaim_prefs_add_bool("/gaim/gtk/blist/show_group_count", TRUE);
-    gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
-    gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
-    gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);
-    gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "");
-    gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
-    gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
-    gaim_prefs_add_int("/gaim/gtk/blist/width", 0);
-    gaim_prefs_add_int("/gaim/gtk/blist/height", 0);
-    gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
+	gaim_prefs_add_int("/gaim/gtk/blist/button_style", GAIM_BUTTON_TEXT_IMAGE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/grey_idle_buddies", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/raise_on_events", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/show_group_count", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);
+	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "");
+	gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
+	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
+	gaim_prefs_add_int("/gaim/gtk/blist/width", 0);
+	gaim_prefs_add_int("/gaim/gtk/blist/height", 0);
+	gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
 
 	/* Register our signals */
 	gaim_signal_register(gtk_blist_handle, "drawing-menu",
-						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-						 gaim_value_new(GAIM_TYPE_BOXED, "GtkMenu"),
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_BLIST_BUDDY));
+			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     gaim_value_new(GAIM_TYPE_BOXED, "GtkMenu"),
+			     gaim_value_new(GAIM_TYPE_SUBTYPE,
+					    GAIM_SUBTYPE_BLIST_BUDDY));
 
 	gaim_signal_register(gtk_blist_handle, "gtkblist-created",
-						 gaim_marshal_VOID__POINTER, NULL, 1,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_BLIST));
+			     gaim_marshal_VOID__POINTER, NULL, 1,
+			     gaim_value_new(GAIM_TYPE_SUBTYPE,
+					    GAIM_SUBTYPE_BLIST));
+
+	gaim_signal_register(gtk_blist_handle, "drawing-tooltip",
+			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_BLIST_NODE),
+			     gaim_value_new_outgoing(GAIM_TYPE_STRING));
 }
 
 void
