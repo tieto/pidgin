@@ -8,7 +8,7 @@
 	the buddy list preferences.  You can sort by name, by status, and even
 	by log file size--putting people you talk to most at the top.  Plugins
 	can even easily add their own sorting methods.  It's all very cool.  I
-	want to thank Luke and Ka-Hing for their initial work on it.  And yes,
+	want to thank Luke and Ha-King for their initial work on it.  And yes,
 	I did make my entire NEWS entry justified on purpose.
 
 	Christian: I have a few new goodies in 0.64, but they're mostly
@@ -18,6 +18,9 @@
 	The friendly name bug is gone. E-mail notifications work again. Yay!
 	We have some big changes in store for 0.65. Careful if you use CVS...
 	Things will break. :)
+
+	Mark: I never really have anything important to add.  I'd just like to 
+	thank Jack Daniels for his exquisite bug reports.  And whiskey.
 
 0.63 (05/16/2003)
 	Rob: Wow, so, what can I say? I've been rather AWOL for the past few
