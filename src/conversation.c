@@ -504,6 +504,7 @@ void remove_tags(GtkWidget *entry, char *tag)
 	while((t = strstr(t, tag))) {
 		if (((t-s) < finish) && ((t-s) >= start)) { 
 			gtk_editable_delete_text(GTK_EDITABLE(entry), (t-s), (t-s) + strlen(tag));
+			t = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
 		}
 		else t++;
 	}
