@@ -222,6 +222,7 @@ static void yahoo_parse_message(struct yahoo_session *sess, struct yahoo_packet 
 			break;
 		*tmp++ = '\0';
 		str_array[2] = tmp;
+		str_array[2][strlen(str_array[2]) - 1] = 0;
 		if (sess->callbacks[YAHOO_HANDLE_MESSAGE].function)
 			(*sess->callbacks[YAHOO_HANDLE_MESSAGE].function)(sess, pkt->nick2,
 									  str_array[0],
