@@ -3569,6 +3569,7 @@ gaim_gtkconv_write_im(struct gaim_conversation *conv, const char *who,
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
+	/* Play a sound, if specified in prefs. */
 	if (gtkconv->make_sound) {
 		if (flags & WFLAG_RECV) {
 			if (gtkconv->u.im->a_virgin &&
@@ -3597,6 +3598,7 @@ gaim_gtkconv_write_chat(struct gaim_conversation *conv, const char *who,
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
+	/* Play a sound, if specified in prefs. */
 	if (gtkconv->make_sound) {
 		if (!(flags & WFLAG_WHISPER) && (flags & WFLAG_SEND))
 			play_sound(SND_CHAT_YOU_SAY);

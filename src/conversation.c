@@ -1546,7 +1546,7 @@ gaim_im_update_typing(struct gaim_im *im)
 
 void
 gaim_im_write(struct gaim_im *im, const char *who, const char *message,
-			  size_t len, int flag, time_t mtime)
+			  size_t len, int flags, time_t mtime)
 {
 	struct gaim_conversation *c;
 
@@ -1555,10 +1555,14 @@ gaim_im_write(struct gaim_im *im, const char *who, const char *message,
 
 	c = gaim_im_get_conversation(im);
 
+	/* Raise the window, if specified in prefs. */
+	if (!(flags & WFLAG_NOLOG) & (im_options & OPT_IM_POPUP))
+		gaim_window_raise(gaim_conversation_get_window(c));
+
 	if (c->ops != NULL && c->ops->write_im != NULL)
-		c->ops->write_im(c, who, message, len, flag, mtime);
+		c->ops->write_im(c, who, message, len, flags, mtime);
 	else
-		gaim_conversation_write(c, who, message, -1, flag, mtime);
+		gaim_conversation_write(c, who, message, -1, flags, mtime);
 }
 
 void
@@ -1743,7 +1747,7 @@ gaim_chat_get_id(const struct gaim_chat *chat)
 
 void
 gaim_chat_write(struct gaim_chat *chat, const char *who,
-				const char *message, int flag, time_t mtime)
+				const char *message, int flags, time_t mtime)
 {
 	struct gaim_conversation *conv;
 	struct gaim_connection *gc;
@@ -1758,7 +1762,11 @@ gaim_chat_write(struct gaim_chat *chat, const char *who,
 	if (gaim_chat_is_user_ignored(chat, who))
 		return;
 
-	if (!(flag & WFLAG_WHISPER)) {
+	/* Raise the window, if specified in prefs. */
+	if (!(flags & WFLAG_NOLOG) & (chat_options & OPT_CHAT_POPUP))
+		gaim_window_raise(gaim_conversation_get_window(conv));
+
+	if (!(flags & WFLAG_WHISPER)) {
 		char *str;
 
 		str = g_strdup(normalize(who));
@@ -1766,13 +1774,13 @@ gaim_chat_write(struct gaim_chat *chat, const char *who,
 		if (!g_strcasecmp(str, normalize(gc->username)) ||
 			!g_strcasecmp(str, normalize(gc->displayname))) {
 
-			flag |= WFLAG_SEND;
+			flags |= WFLAG_SEND;
 		}
 		else {
-			flag |= WFLAG_RECV;
+			flags |= WFLAG_RECV;
 
 			if (find_nick(gc, message))
-				flag |= WFLAG_NICK;
+				flags |= WFLAG_NICK;
 		}
 		
 		g_free(str);
@@ -1780,9 +1788,9 @@ gaim_chat_write(struct gaim_chat *chat, const char *who,
 
 	/* Pass this on to either the ops structure or the default write func. */
 	if (conv->ops != NULL && conv->ops->write_chat != NULL)
-		conv->ops->write_chat(conv, who, message, flag, mtime);
+		conv->ops->write_chat(conv, who, message, flags, mtime);
 	else
-		gaim_conversation_write(conv, who, message, -1, flag, mtime);
+		gaim_conversation_write(conv, who, message, -1, flags, mtime);
 }
 
 void
