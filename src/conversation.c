@@ -2805,8 +2805,8 @@ void show_conv(struct conversation *c)
 
 		gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
 
-		gtk_box_pack_start(GTK_BOX(tabby), c->close, FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(tabby), c->tab_label, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(tabby), c->close, FALSE, FALSE, 0);
 		gtk_widget_show_all(tabby);
 		gtk_notebook_insert_page(GTK_NOTEBOOK(convo_notebook), cont, tabby,
 				g_list_index(conversations, c));
