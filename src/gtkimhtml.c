@@ -2279,8 +2279,8 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				bold++;
 			} else if (!g_strcasecmp (tag, "</B>") || !g_strcasecmp (tag, "</BOLD>")) {
 				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
 				if (bold) {
-					NEW_BIT (NEW_TEXT_BIT);
 					bold--;
 				}
 			} else if (!g_strcasecmp (tag, "<I>") || !g_strcasecmp (tag, "<ITALIC>")) {
@@ -2289,8 +2289,8 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				italics++;
 			} else if (!g_strcasecmp (tag, "</I>") || !g_strcasecmp (tag, "</ITALIC>")) {
 				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
 				if (italics) {
-					NEW_BIT (NEW_TEXT_BIT);
 					italics--;
 				}
 			} else if (!g_strcasecmp (tag, "<U>") || !g_strcasecmp (tag, "<UNDERLINE>")) {
@@ -2299,8 +2299,8 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				underline++;
 			} else if (!g_strcasecmp (tag, "</U>") || !g_strcasecmp (tag, "</UNDERLINE>")) {
 				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
 				if (underline) {
-					NEW_BIT (NEW_TEXT_BIT);
 					underline--;
 				}
 			} else if (!g_strcasecmp (tag, "<S>") || !g_strcasecmp (tag, "<STRIKE>")) {
@@ -2309,29 +2309,34 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				strike++;
 			} else if (!g_strcasecmp (tag, "</S>") || !g_strcasecmp (tag, "</STRIKE>")) {
 				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
 				if (strike) {
-					NEW_BIT (NEW_TEXT_BIT);
 					strike--;
 				}
 			} else if (!g_strcasecmp (tag, "<SUB>")) {
 				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
 				sub++;
 			} else if (!g_strcasecmp (tag, "</SUB>")) {
 				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
 				if (sub) {
 					sub--;
 				}
 			} else if (!g_strcasecmp (tag, "<SUP>")) {
 				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
 				sup++;
 			} else if (!g_strcasecmp (tag, "</SUP>")) {
 				got_tag = TRUE;
+				NEW_BIT (NEW_TEXT_BIT);
 				if (sup) {
 					sup--;
 				}
 			} else if (!g_strcasecmp (tag, "<TITLE>")) {
 				if (options & GTK_IMHTML_NO_TITLE) {
 					got_tag = TRUE;
+					NEW_BIT (NEW_TEXT_BIT);
 					title++;
 				} else {
 					intag = FALSE;
