@@ -198,24 +198,18 @@ void update_all_buddies()
 	GList *mem;
         struct buddy *b;
 	struct group *g;
-	int count;
 
         while(grp) {
 		g = (struct group *)grp->data;
                 mem = g->members;
-		count = 0;
                 while(mem) {
 			b = (struct buddy *)mem->data;
 
                         if (b->present || !GTK_WIDGET_VISIBLE(b->item))
 				set_buddy(b);
 
-			if (b->present) count++;
-                        
                         mem = mem->next;
                 }
-		if (!count && (display_options & OPT_DISP_NO_MT_GRP))
-			gtk_widget_hide(g->item);
                 grp = grp->next;
         }
 
@@ -721,6 +715,8 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
                 
                 update_num_groups();
                 update_show_idlepix();
+		if (b->present)
+			gtk_widget_show(new_g->item);
                 set_buddy(b);
                 
 
@@ -885,6 +881,8 @@ struct group *add_group(char *group)
 			   NULL);
         gtk_object_set_user_data(GTK_OBJECT(g->item), NULL);
 	g->members = NULL;
+	if (display_options & OPT_DISP_NO_MT_GRP)
+		gtk_widget_hide(g->item);
 	
  
 	build_edit_tree();
@@ -1270,6 +1268,7 @@ gint log_timeout(char *name)
 {
 	struct buddy *b;
 	struct group *g;
+	GList *mem;
 	
 	b = find_buddy(name);
 
@@ -1279,8 +1278,20 @@ gint log_timeout(char *name)
         b->log_timer = 0;
 			
 	if (!b->present) {
+		int count = 0;
 		gtk_widget_hide(b->item);
 		g = find_group_by_buddy(name);
+		mem = g->members;
+		while (mem) {
+			b = (struct buddy *)mem->data;
+                        if (b->present) {
+				count++;
+				break;
+			}
+			mem = mem->next;
+		}
+		if (!count && (display_options & OPT_DISP_NO_MT_GRP))
+			gtk_widget_hide(g->item);
 		if (GTK_TREE_ITEM(g->item)->expanded) {
 			gtk_tree_item_collapse(GTK_TREE_ITEM(g->item));
 			gtk_tree_item_expand(GTK_TREE_ITEM(g->item));

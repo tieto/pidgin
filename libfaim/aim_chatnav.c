@@ -291,9 +291,114 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
     case 0x0007: /* search for a room */
       printf("faim: chatnav_parse_info: search results\n");
       break;
-    case 0x0008: /* create room */
-      printf("faim: chatnav_parse_info: response to create room\n");
+    case 0x0008: { /* create room */
+      /*
+	000d 0009 0000 0000 0010 
+	
+	0004 0053 
+	     0004 -- exchange
+	     0c 7a 6f6f 6f6d 7a6f 6f6f 6d34 32 cookie/name
+	     0000 -- instance
+	     02 -- detail level
+	     0007 -- unknown!
+	     006a 000c 7a 6f 6f6f 6d7a 6f6f 6f6d 3432 -- fully qualified name 
+	     00c9 0002 0011 -- flags
+	     00ca 0004 39c0 0883 -- create time
+	     00d1 0002 0200 -- max msg len 
+	     00d2 0002 0018 -- max occupants
+	     00d3 000c -- name
+	          7a6f 6f6f 6d7a 6f6f 6f6d 3432 
+	     00d5 0001 02 -- creation permission
+       */
+      struct aim_tlvlist_t *tlvlist, *innerlist;
+      char *ck = NULL, *fqcn = NULL, *name = NULL;
+      unsigned short exchange, instance, unknown, flags, maxmsglen, maxoccupancy;
+      unsigned long createtime = 0;
+      unsigned char createperms;
+      int i, cklen;
+      struct aim_tlv_t *bigblock, *tmp;
+
+      i = 10;
+      if (!(tlvlist = aim_readtlvchain(command->data+i, command->commandlen-i))) {
+	printf("faim: unable to read top tlv in create room response\n");
+	break;
+      }
+
+      if (!(bigblock = aim_gettlv(tlvlist, 0x0004, 1))) {
+	printf("faim: no bigblock in top tlv in create room response\n");
+	aim_freetlvchain(&tlvlist);
+	break;
+      }
+      i = 0;
+
+      exchange = aimutil_get16(bigblock->value+i);
+      i += 2;
+
+      cklen = aimutil_get8(bigblock->value+i);
+      i++;
+
+      ck = malloc(cklen+1);
+      memcpy(ck, bigblock->value+i, cklen);
+      ck[cklen] = '\0';
+      i += cklen;
+
+      instance = aimutil_get16(bigblock->value+i);
+      i += 2;
+
+      if (aimutil_get8(bigblock->value+i) != 0x02) {
+	printf("faim: unknown detaillevel in create room response (0x%02x)\n", aimutil_get8(bigblock->value+i));
+	aim_freetlvchain(&tlvlist);
+	free(ck);	
+	break;
+      }
+      i += 1;
+      
+      unknown = aimutil_get16(bigblock->value+i);
+      i += 2;
+
+      if (!(innerlist = aim_readtlvchain(bigblock->value+i, bigblock->length-i))) {
+	printf("faim: unable to read inner tlv chain in create room response\n");
+	aim_freetlvchain(&tlvlist);
+	free(ck);
+	break;
+      }
+
+      if (aim_gettlv(innerlist, 0x006a, 1))
+	fqcn = aim_gettlv_str(innerlist, 0x006a, 1);
+
+      if ((tmp = aim_gettlv(innerlist, 0x00c9, 1)))
+	flags = aimutil_get16(tmp->value);
+
+      if ((tmp = aim_gettlv(innerlist, 0x00ca, 1)))
+	createtime = aimutil_get32(tmp->value);
+
+      if ((tmp = aim_gettlv(innerlist, 0x00d1, 1)))
+	maxmsglen = aimutil_get16(tmp->value);
+
+      if ((tmp = aim_gettlv(innerlist, 0x00d2, 1)))
+	maxoccupancy = aimutil_get16(tmp->value);
+
+      if (aim_gettlv(innerlist, 0x00d3, 1))
+	name = aim_gettlv_str(innerlist, 0x00d3, 1);
+
+      if ((tmp = aim_gettlv(innerlist, 0x00d5, 1)))
+	createperms = aimutil_get8(tmp->value);
+
+      if ((userfunc = aim_callhandler(command->conn, 0x000d, 0x0009))) {
+	ret = userfunc(sess, command, snac->type, fqcn, instance, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
+      }
+     
+      if (ck)
+	free(ck);
+      if (name)
+	free(name);
+      if (fqcn)
+	free(fqcn);
+      aim_freetlvchain(&innerlist);
+      aim_freetlvchain(&tlvlist);
+
       break;
+    }
     default: /* unknown */
       printf("faim: chatnav_parse_info: unknown request subtype (%04x)\n", snac->type);
     }
