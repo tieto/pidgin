@@ -761,7 +761,7 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 				hb->account = b->account;
 				hb->group = cnode->parent;
 
-				g_hash_table_remove(gaimbuddylist->buddies, &hb);
+				g_hash_table_remove(gaimbuddylist->buddies, hb);
 
 				hb->group = gnode;
 				g_hash_table_replace(gaimbuddylist->buddies, hb, b);
