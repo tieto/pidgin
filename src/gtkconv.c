@@ -633,11 +633,8 @@ do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 		buddy   = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(info->entry)->entry));
 		message = gtk_entry_get_text(GTK_ENTRY(info->message));
 
-		if (!g_ascii_strcasecmp(buddy, "")) {
-			g_free(info);
-
+		if (!g_ascii_strcasecmp(buddy, ""))
 			return;
-		}
 
 		serv_chat_invite(gaim_conversation_get_gc(info->conv),
 						 gaim_conv_chat_get_id(GAIM_CONV_CHAT(info->conv)),
