@@ -572,6 +572,9 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 		g_free(key);
 	}
 
+	if(buddy->timer > 0)
+		g_source_remove(buddy->timer);
+
 	ops->remove(gaimbuddylist, node);
 	g_hash_table_destroy(buddy->settings);
 	g_free(buddy->name);
