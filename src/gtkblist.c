@@ -3215,10 +3215,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 					_prefs_change_redo_list, NULL)));
 	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
 			GINT_TO_POINTER(
-				gaim_prefs_connect_callback("/gaim/gtk/blist/show_group_count",
-					_prefs_change_redo_list, NULL)));
-	blist_prefs_callbacks = g_slist_prepend(blist_prefs_callbacks,
-			GINT_TO_POINTER(
 				gaim_prefs_connect_callback("/gaim/gtk/blist/show_offline_buddies",
 					_prefs_change_redo_list, NULL)));
 
@@ -3493,13 +3489,9 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 			return;
 
 		esc = g_markup_escape_text(group->name, -1);
-		if(gaim_prefs_get_bool("/gaim/gtk/blist/show_group_count")) {
-			mark = g_strdup_printf("<span weight='bold'>%s</span> (%d/%d)",
-					esc, gaim_blist_get_group_online_count(group),
-					gaim_blist_get_group_size(group, FALSE));
-		} else {
-			mark = g_strdup_printf("<span weight='bold'>%s</span>", esc);
-		}
+		mark = g_strdup_printf("<span weight='bold'>%s</span> (%d/%d)",
+				esc, gaim_blist_get_group_online_count(group),
+				gaim_blist_get_group_size(group, FALSE));
 		g_free(esc);
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
@@ -4477,7 +4469,6 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/blist/raise_on_events", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/blist/show_group_count", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);

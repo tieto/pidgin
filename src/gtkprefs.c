@@ -868,12 +868,6 @@ GtkWidget *list_page() {
 	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
 			"/gaim/gtk/blist/raise_on_events", vbox);
 
-#if 0 /* PREFSLASH04 */
-	  vbox = gaim_gtk_make_frame (ret, _("Group Display"));
-	  gaim_gtk_prefs_checkbox(_("Show _numbers in groups"),
-	  "/gaim/gtk/blist/show_group_count", vbox);
-#endif /* PREFSLASH04 */
-
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Display"));
 	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
 			"/gaim/gtk/blist/show_buddy_icons", vbox);
@@ -2941,6 +2935,7 @@ void gaim_gtk_prefs_update_old() {
 									 "/gaim/gtk/sound/signon");
 
 	/* Remove some no-longer-used prefs */
+	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_colors");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");

@@ -907,8 +907,6 @@ static void gaimrc_read_options(FILE *f)
 			display_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
 					display_options & OPT_DISP_SHOW_TIME);
-			gaim_prefs_set_bool("/gaim/gtk/blist/show_group_count",
-					display_options & OPT_DISP_SHOW_GRPNUM);
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_idle_time",
 					display_options & OPT_DISP_SHOW_IDLETIME);
 			gaim_prefs_set_int("/gaim/gtk/blist/button_style",
@@ -956,8 +954,6 @@ static void gaimrc_read_options(FILE *f)
 					logging_options & OPT_LOG_CHATS);
 		} else if (!strcmp(p->option, "blist_options")) {
 			blist_options = atoi(p->value[0]);
-			gaim_prefs_set_bool("/gaim/gtk/blist/show_group_count",
-					blist_options & OPT_BLIST_SHOW_GRPNUM);
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_idle_time",
 					blist_options & OPT_BLIST_SHOW_IDLETIME);
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_empty_groups",
