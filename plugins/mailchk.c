@@ -1,8 +1,11 @@
-#include "gaim.h"
-#include "gtkplugin.h"
+#include "internal.h"
+
 #include "blist.h"
 #include "gtkblist.h"
+#include "debug.h"
 #include "sound.h"
+#include "gtkplugin.h"
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -53,17 +56,16 @@ static gboolean check_timeout(gpointer data)
 {
 	gint count = check_mail();
 	struct gaim_buddy_list *list = gaim_get_blist();
+
 	if (count == -1)
 		return FALSE;
 
-	if (!list || !GAIM_GTK_BLIST(list))
+	if (!list || !GAIM_IS_GTK_BLIST(list) || !(GAIM_GTK_BLIST(list)->vbox))
 		return TRUE;
 
 	if (!mail) {
 		/* guess we better build it then :P */
-		//GList *tmp = gtk_container_get_children(GTK_CONTAINER(GAIM_GTK_BLIST(list)));
-		//GtkWidget *vbox2 = (GtkWidget *)tmp->data;
-		GtkWidget *vbox = (GtkWidget *)(GAIM_GTK_BLIST(list)->vbox);
+		GtkWidget *vbox = GAIM_GTK_BLIST(list)->vbox;
 
 		mail = gtk_label_new("No mail messages.");
 		gtk_box_pack_start(GTK_BOX(vbox), mail, FALSE, FALSE, 0);
@@ -85,17 +87,19 @@ static gboolean check_timeout(gpointer data)
 	return TRUE;
 }
 
-static void signon_cb(struct gaim_connection *gc)
+static void signon_cb(GaimConnection *gc)
 {
 	struct gaim_buddy_list *list = gaim_get_blist();
-	if (list && GAIM_GTK_BLIST(list) && !timer)
+	if (list && GAIM_IS_GTK_BLIST(list) && !timer) {
+		check_timeout(NULL); /* we want the box to be drawn immediately */
 		timer = g_timeout_add(2000, check_timeout, NULL);
+	}
 }
 
-static void signoff_cb(struct gaim_connection *gc)
+static void signoff_cb(GaimConnection *gc)
 {
 	struct gaim_buddy_list *list = gaim_get_blist();
-	if ((!list || !GAIM_GTK_BLIST(list)) && timer) {
+	if ((!list || !GAIM_IS_GTK_BLIST(list) || !GAIM_GTK_BLIST(list)->vbox) && timer) {
 		g_source_remove(timer);
 		timer = 0;
 	}
@@ -114,7 +118,7 @@ plugin_load(GaimPlugin *plugin)
 		return FALSE;
 	}
 
-	if (list && GAIM_GTK_BLIST(list))
+	if (list && GAIM_IS_GTK_BLIST(list) && GAIM_GTK_BLIST(list)->vbox)
 		timer = g_timeout_add(2000, check_timeout, NULL);
 
 	gaim_signal_connect(plugin, event_signon, signon_cb, NULL);
@@ -138,29 +142,24 @@ plugin_unload(GaimPlugin *plugin)
 
 static GaimPluginInfo info =
 {
-	2,                                                /**< api_version    */
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
-
-	MAILCHK_PLUGIN_ID,                                /**< id             */
-	N_("Mail Checker"),                               /**< name           */
-	VERSION,                                          /**< version        */
-	                                                  /**  summary        */
+	2,
+	GAIM_PLUGIN_STANDARD,
+	GAIM_GTK_PLUGIN_TYPE,
+	0,
+	NULL,
+	GAIM_PRIORITY_DEFAULT,
+	MAILCHK_PLUGIN_ID,
+	N_("Mail Checker"),
+	VERSION,
 	N_("Checks for new local mail."),
-	                                                  /**  description    */
 	N_("Checks for new local mail."),
-	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	WEBSITE,                                          /**< homepage       */
-
-	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	NULL                                              /**< extra_info     */
+	"Eric Warmenhoven <eric@warmenhoven.org>",
+	WEBSITE,
+	plugin_load,
+	plugin_unload,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void
