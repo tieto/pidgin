@@ -22,7 +22,9 @@
  * pluginized- Sean Egan, Summer 2002
  */
 
+#ifndef GAIM_PLUGINS
 #define GAIM_PLUGINS
+#endif
 
 #include <gtk/gtk.h>
 #include "gtkticker.h"
