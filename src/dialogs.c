@@ -154,6 +154,7 @@ struct addbp {
 	GtkWidget *soundentry;
 
 	struct aim_user *user;
+	struct buddy_pounce *buddy_pounce;
 };
 
 struct findbyemail {
@@ -1077,14 +1078,19 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 
 void do_new_bp(GtkWidget *w, struct addbp *b)
 {
-	struct buddy_pounce *bp = g_new0(struct buddy_pounce, 1);
-
+	struct buddy_pounce *bp;
+	
 	if (strlen(gtk_entry_get_text(GTK_ENTRY(b->nameentry))) == 0) {
 		do_error_dialog(_("Please enter a buddy to pounce."), _("Buddy Pounce Error"));
-		g_free(bp);
 		return;
 	}
 
+        if(!b->buddy_pounce)
+		bp = g_new0(struct buddy_pounce, 1);
+	else
+		bp = b->buddy_pounce;
+
+	
 	g_snprintf(bp->name, 80, "%s", gtk_entry_get_text(GTK_ENTRY(b->nameentry)));
 	g_snprintf(bp->message, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->messentry)));
 	g_snprintf(bp->command, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->commentry)));
@@ -1122,7 +1128,8 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 	if (GTK_TOGGLE_BUTTON(b->save)->active)
 		bp->options |= OPT_POUNCE_SAVE;
 
-	buddy_pounces = g_list_append(buddy_pounces, bp);
+	if(!b->buddy_pounce)
+		buddy_pounces = g_list_append(buddy_pounces, bp);
 
 	do_bp_menu();
 
@@ -1179,7 +1186,7 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 }
 
 
-void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away)
+void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, struct buddy_pounce *edit_bp)
 {
 	GtkWidget *label;
 	GtkWidget *bbox;
@@ -1190,7 +1197,14 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away)
 	GtkWidget *optmenu;
 
 	struct addbp *b = g_new0(struct addbp, 1);
-	b->user = gc ? gc->user : aim_users->data;
+	
+	if(edit_bp) {
+		b->buddy_pounce = edit_bp;
+		b->user = find_user(edit_bp->pouncer, edit_bp->protocol);
+	} else {
+		b->user = gc ? gc->user : aim_users->data;
+		b->buddy_pounce = NULL;
+	}
 
 	GAIM_DIALOG(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
@@ -1236,6 +1250,8 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away)
 	gtk_table_attach(GTK_TABLE(table), b->nameentry, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	if (name !=NULL)
 		gtk_entry_set_text(GTK_ENTRY(b->nameentry), name);
+	else if(edit_bp)
+		gtk_entry_set_text(GTK_ENTRY(b->nameentry), edit_bp->name);
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->nameentry);
 	gtk_widget_show(b->nameentry);
 	/* </pounce type="who"> */
@@ -1253,19 +1269,29 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away)
 	gtk_widget_show(table);
 	
 	b->p_signon = gtk_check_button_new_with_label(_("Pounce on sign on"));
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_signon), TRUE);
+	if(edit_bp)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_signon), 
+		                           (edit_bp->options & OPT_POUNCE_SIGNON) ? TRUE : FALSE);
+	else
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_signon), TRUE);
 	gtk_table_attach(GTK_TABLE(table), b->p_signon, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->p_signon);
 
 	b->p_unaway = gtk_check_button_new_with_label(_("Pounce on return from away"));
 	if (away)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unaway), TRUE);
+	else if(edit_bp)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unaway), 
+					   (edit_bp->options & OPT_POUNCE_UNAWAY) ? TRUE : FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->p_unaway, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_widget_show(b->p_unaway);
 
 	b->p_unidle = gtk_check_button_new_with_label(_("Pounce on return from idle"));
 	if (idle)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unidle), TRUE);
+	else if(edit_bp)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->p_unidle), 
+				           (edit_bp->options & OPT_POUNCE_UNIDLE) ? TRUE : FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->p_unidle, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->p_unidle);
 
@@ -1287,59 +1313,95 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away)
 	gtk_widget_show(table);
 	
 	b->openwindow = gtk_check_button_new_with_label(_("Open IM Window"));
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->openwindow), FALSE);
+	if(edit_bp)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->openwindow), 
+			                   (edit_bp->options & OPT_POUNCE_POPUP) ? TRUE : FALSE);
+	else
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->openwindow), FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->openwindow, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->openwindow);
-
+	
 	b->popupnotify = gtk_check_button_new_with_label(_("Popup Notification"));
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->popupnotify), FALSE);
+	if(edit_bp)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->popupnotify), 
+					   (edit_bp->options & OPT_POUNCE_NOTIFY) ? TRUE : FALSE);
+	else
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->popupnotify), FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->popupnotify, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->popupnotify);
 
 	b->sendim = gtk_check_button_new_with_label(_("Send Message"));
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
+	if(edit_bp)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), 
+					   (edit_bp->options & OPT_POUNCE_SEND_IM) ? TRUE : FALSE);
+	else
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sendim), TRUE);
 	gtk_table_attach(GTK_TABLE(table), b->sendim, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->sendim);
 
 	b->messentry = gtk_entry_new();
 	gtk_table_attach(GTK_TABLE(table), b->messentry, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(b->messentry), "activate", GTK_SIGNAL_FUNC(do_new_bp), b);
+	if(edit_bp) {
+		gtk_widget_set_sensitive(GTK_WIDGET(b->messentry), 
+					(edit_bp->options & OPT_POUNCE_SEND_IM) ? TRUE : FALSE);
+		gtk_entry_set_text(GTK_ENTRY(b->messentry), edit_bp->message);
+	}
 	gtk_widget_show(b->messentry);
 
-	gtk_signal_connect(GTK_OBJECT(b->sendim), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), 
-			b->messentry);
+	gtk_signal_connect(GTK_OBJECT(b->sendim), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),	b->messentry);
 
 	b->command = gtk_check_button_new_with_label(_("Execute command on pounce"));
 	gtk_table_attach(GTK_TABLE(table), b->command, 0, 1, 2, 3, GTK_FILL, 0, 0, 0);
+	if(edit_bp)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->command),
+					   (edit_bp->options & OPT_POUNCE_COMMAND) ? TRUE : FALSE);
+	else
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->command), FALSE);
 	gtk_widget_show(b->command);
 
 	b->commentry = gtk_entry_new();
 	gtk_table_attach(GTK_TABLE(table), b->commentry, 1, 2, 2, 3, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(b->commentry), "activate", GTK_SIGNAL_FUNC(do_new_bp), b);
+	if(edit_bp) {
+		gtk_widget_set_sensitive(GTK_WIDGET(b->commentry), 
+					(edit_bp->options & OPT_POUNCE_COMMAND) ? TRUE : FALSE);
+		gtk_entry_set_text(GTK_ENTRY(b->commentry), edit_bp->command);
+	}
+	else
+		gtk_widget_set_sensitive(GTK_WIDGET(b->commentry), FALSE);
 	gtk_widget_show(b->commentry);
-
-	gtk_widget_set_sensitive(b->commentry, FALSE);
-	gtk_signal_connect(GTK_OBJECT(b->command), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),
-			   b->commentry);
-
+	gtk_signal_connect(GTK_OBJECT(b->command), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), b->commentry);
+	
 	b->sound = gtk_check_button_new_with_label(_("Play sound on pounce"));
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sound), FALSE);
+	if(edit_bp)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sound), 
+					   (edit_bp->options & OPT_POUNCE_SOUND) ? TRUE : FALSE);
+	else
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->sound), FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->sound, 0, 1, 3, 4, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->sound);
 
 	b->soundentry = gtk_entry_new();
 	gtk_table_attach(GTK_TABLE(table), b->soundentry, 1, 2, 3, 4, GTK_FILL | GTK_EXPAND, 0, 0, 0);
 	gtk_signal_connect(GTK_OBJECT(b->soundentry), "activate", GTK_SIGNAL_FUNC(do_new_bp), b);
+	if(edit_bp) {
+		gtk_widget_set_sensitive(GTK_WIDGET(b->soundentry), 
+					(edit_bp->options & OPT_POUNCE_SOUND) ? TRUE : FALSE);
+		gtk_entry_set_text(GTK_ENTRY(b->soundentry), edit_bp->sound);
+	} else 
+		gtk_widget_set_sensitive(GTK_WIDGET(b->soundentry), FALSE);
 	gtk_widget_show(b->soundentry);
-
-	gtk_widget_set_sensitive(b->soundentry, FALSE);
-	gtk_signal_connect(GTK_OBJECT(b->sound), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),
-			   b->soundentry);
+	gtk_signal_connect(GTK_OBJECT(b->sound), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), b->soundentry);
 	/* </pounce type="action"> */
 
 	b->save = gtk_check_button_new_with_label(_("Save this pounce after activation"));
 	gtk_container_set_border_width(GTK_CONTAINER(b->save), 7);
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->save), FALSE);
+	if(edit_bp)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->save),
+					   (edit_bp->options & OPT_POUNCE_SAVE) ? TRUE : FALSE);
+	else
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->save), FALSE);
 	gtk_box_pack_start(GTK_BOX(vbox), b->save, FALSE, FALSE, 0);
 	gtk_widget_show(b->save);
 

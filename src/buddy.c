@@ -1538,11 +1538,17 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 static void new_bp_callback(GtkWidget *w, struct buddy *b)
 {
 	if (b)
-		show_new_bp(b->name, b->gc, b->idle, b->uc & UC_UNAVAILABLE);
+		show_new_bp(b->name, b->gc, b->idle, b->uc & UC_UNAVAILABLE, NULL);
 	else
-		show_new_bp(NULL, NULL, 0, 0);
+		show_new_bp(NULL, NULL, 0, 0, NULL);
 }
 
+static void edit_bp_callback(GtkWidget *w, struct buddy_pounce *b)
+{
+  show_new_bp(NULL, NULL, 0, 0, b);
+}
+
+static GtkTooltips *bp_tooltip = NULL;
 void do_bp_menu()
 {
 	GtkWidget *menuitem, *mess, *messmenu;
@@ -1552,6 +1558,10 @@ void do_bp_menu()
 	GList *l;
 	struct buddy_pounce *b;
 	GList *bp = buddy_pounces;
+
+	/* Tooltip for editing bp's */
+	if(!bp_tooltip)
+		bp_tooltip = gtk_tooltips_new();
 
 	l = gtk_container_children(GTK_CONTAINER(bpmenu));
 
@@ -1608,8 +1618,9 @@ void do_bp_menu()
 
 		mess = gtk_menu_item_new_with_label(b->message);
 		gtk_menu_append(GTK_MENU(messmenu), mess);
+		gtk_tooltips_set_tip(bp_tooltip, GTK_WIDGET(mess), _("[Click to edit]"), NULL);
 		gtk_widget_show(mess);
-
+		gtk_signal_connect(GTK_OBJECT(mess), "activate", GTK_SIGNAL_FUNC(edit_bp_callback), b);
 		bp = bp->next;
 
 	}

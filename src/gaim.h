@@ -159,18 +159,6 @@ enum log_event {
 
 #define OPT_POUNCE_NOTIFY	0x200
 
-struct buddy_pounce {
-        char name[80];
-        char message[2048];
-	char command[2048];
-	char sound[2048];
-	
-	char pouncer[80];
-	int protocol;
-
-	int options;
-};
-
 #define CONVERSATION_TITLE "%s - Gaim"
 #define LOG_CONVERSATION_TITLE "%s - Gaim (logged)"
 
