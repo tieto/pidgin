@@ -131,7 +131,14 @@ static void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 		while (pos + 1 < len) {
 			if (data[pos] == 0xc0 && data[pos + 1] == 0x80)
 				break;
+			if (x >= sizeof(key)-1) {
+				x++;
+				continue;
+			}
 			key[x++] = data[pos++];
+		}
+		if (x >= sizeof(key)-1) {
+			x = 0;
 		}
 		key[x] = 0;
 		pos += 2;
@@ -873,12 +880,13 @@ static void yahoo_process_contact(GaimConnection *gc, struct yahoo_packet *pkt)
 static char *yahoo_decode(const char *text)
 {
 	char *converted;
-	char *p, *n, *new;
+	char *p, *n, *new, *end;
 	int i;
 	
 	n = new = g_malloc(strlen (text) + 1);
+	end = text + strlen(text);
 
-	for (p = (char *)text; *p; p++, n++) {
+	for (p = (char *)text; p < end; p++, n++) {
 		if (*p == '\\') {
 			sscanf(p + 1, "%3o\n", &i);
 			*n = (char)i;
@@ -1908,19 +1916,26 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	GaimConnection *gc = data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
-	char buf[1024], buf2[256], *i = buf, *r = buf2;
+	char buf[1024], buf2[256], *i = buf, *r = buf2, *rend;
 	int len, o = 0;
 
-	len = read(source, buf, sizeof(buf));
+	len = read(source, buf, sizeof(buf)-1);
 	if (len <= 0  || strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302"))) {
 		gaim_connection_error(gc, _("Unable to read"));
 		return;
 	}
+	buf[sizeof(buf)-1] = '\0';
+	buf2[0] = '\0';
+	rend = r + sizeof(buf2);
 	
-	while ((i = strstr(i, "Set-Cookie: ")) && 0 < 2) {
+	while ((i = strstr(i, "Set-Cookie: ")) && o < 2) {
 		i += strlen("Set-Cookie: "); 
-		for (;*i != ';'; r++, i++) {
+		for (;*i != ';' && r < rend; r++, i++) {
 			*r = *i;
+		}
+		if (r >= rend-2) {
+			*r = '\0';
+			r = buf2;
 		}
 		*r=';';
 		r++;
@@ -1929,7 +1944,9 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 		o++;
 	}
 	/* Get rid of that "; " */
-	*(r-2) = '\0';
+	if (r > buf2) {
+		*(r-2) = '\0';
+	}
 	yd->auth = g_strdup(buf2);
 	gaim_input_remove(gc->inpa);
 	close(source);
@@ -1976,15 +1993,17 @@ static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
 	const char *c = buf;
 	char *d;
 	char name[64], value[64];
+	int count = sizeof(name)-1;
 	while ((c < (buf + len)) && (c = strstr(c, "<input "))) {
 		c = strstr(c, "name=\"") + strlen("name=\"");
-		for (d = name; *c!='"'; c++, d++) 
+		for (d = name; *c!='"' && count; c++, d++, count--) 
 			*d = *c;
 		*d = '\0';
+		count = sizeof(value)-1;
 		d = strstr(c, "value=\"") + strlen("value=\"");
 		if (strchr(c, '>') < d)
 			break;
-		for (c = d, d = value; *c!='"'; c++, d++)
+		for (c = d, d = value; *c!='"' && count; c++, d++, count--)
 			*d = *c;
 		*d = '\0';
 		g_hash_table_insert(hash, g_strdup(name), g_strdup(value));

@@ -1025,7 +1025,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	char *close;
 	*type = 1;
 
-	
+
 	if (!(close = strchr (string, '>')))
 		return FALSE;
 
@@ -1101,8 +1101,8 @@ gtk_imhtml_is_tag (const gchar *string,
 			*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
 			return TRUE;
 		}
-	} 
-	
+	}
+
 	*type = -1;
 	*len = close - string + 1;
 	*tag = g_strndup(string, *len - 1);
@@ -1168,6 +1168,69 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	return val;
 }
 
+/* Inline CSS Support - Douglas Thrift */
+static gchar*
+gtk_imhtml_get_css_opt (gchar       *style,
+			 const gchar *opt)
+{
+	gchar *t = style;
+	gchar *e, *a;
+	gchar *val;
+	gint len;
+	gchar *c;
+	GString *ret;
+
+	while (g_ascii_strncasecmp (t, opt, strlen (opt))) {
+//		gboolean quote = FALSE;
+		if (*t == '\0') break;
+		while (*t && !((*t == ' ') /*&& !quote*/)) {
+/*			if (*t == '\"')
+				quote = ! quote;*/
+			t++;
+		}
+		while (*t && (*t == ' ')) t++;
+	}
+
+	if (!g_ascii_strncasecmp (t, opt, strlen (opt))) {
+		t += strlen (opt);
+	} else {
+		return NULL;
+	}
+
+/*	if ((*t == '\"') || (*t == '\'')) {
+		e = a = ++t;
+		while (*e && (*e != *(t - 1))) e++;
+		if  (*e == '\0') {
+			return NULL;
+		} else
+			val = g_strndup(a, e - a);
+	} else {
+		e = a = t;
+		while (*e && !isspace ((gint) *e)) e++;
+		val = g_strndup(a, e - a);
+	}*/
+
+	e = a = t;
+	while (*e && *e != ';') e++;
+	val = g_strndup(a, e - a);
+
+	ret = g_string_new("");
+	e = val;
+	while(*e) {
+		if(gtk_imhtml_is_amp_escape(e, &c, &len)) {
+			ret = g_string_append(ret, c);
+			e += len;
+		} else {
+			ret = g_string_append_c(ret, *e);
+			e++;
+		}
+	}
+
+	g_free(val);
+	val = ret->str;
+	g_string_free(ret, FALSE);
+	return val;
+}
 
 GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 					     const gchar      *text,
@@ -1429,7 +1492,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 						gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
 					}
 					break;
-					
+
 				case 29:	/* P */
 				case 30:	/* /P */
 				case 31:	/* H3 */
@@ -1569,7 +1632,100 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 				case 50:	/* CITE */
 				case 51:	/* /CITE */
 				case 56:	/* SPAN (opt) */
+					/* Inline CSS Support - Douglas Thrift
+					 *
+					 * color
+					 * font-family
+					 * font-size
+					 */
+					{
+						gchar *style, *color, *family, *size;
+						GtkIMHtmlFontDetail *font, *oldfont = NULL;
+						style = gtk_imhtml_get_html_opt (tag, "style=");
+
+						if (!style) break;
+
+						color = gtk_imhtml_get_css_opt (style, "color: ");
+						family = gtk_imhtml_get_css_opt (style,
+							"font-family: ");
+						size = gtk_imhtml_get_css_opt (style, "font-size: ");
+
+						if (!(color || family || size)) break;
+
+						if (url)
+							gtk_imhtml_insert_link(imhtml, url, ws);
+						else
+							gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
+						ws[0] = '\0'; wpos = 0;
+						//NEW_BIT (NEW_TEXT_BIT);
+
+						font = g_new0 (GtkIMHtmlFontDetail, 1);
+						if (fonts)
+							oldfont = fonts->data;
+
+						if (color && !(options & GTK_IMHTML_NO_COLOURS))
+							font->fore = color;
+						else if (oldfont && oldfont->fore)
+							font->fore = g_strdup(oldfont->fore);
+
+						if (oldfont && oldfont->back)
+							font->back = g_strdup(oldfont->back);
+
+						if (family && !(options & GTK_IMHTML_NO_FONTS))
+							font->face = family;
+						else if (oldfont && oldfont->face)
+							font->face = g_strdup(oldfont->face);
+						if (font->face && (atoi(font->face) > 100)) {
+							g_free(font->face);
+							font->face = g_strdup("100");
+						}
+
+						if (oldfont && oldfont->sml)
+							font->sml = g_strdup(oldfont->sml);
+
+						if (size && !(options & GTK_IMHTML_NO_SIZES)) {
+							if (g_ascii_strcasecmp(size, "smaller") == 0)
+							{
+								font->size = 2;
+							}
+							else if (g_ascii_strcasecmp(size, "larger") == 0)
+							{
+								font->size = 4;
+							}
+							else
+							{
+								font->size = 3;
+							}
+						} else if (oldfont)
+							font->size = oldfont->size;
+
+						g_free(style);
+						g_free(size);
+						fonts = g_slist_prepend (fonts, font);
+					}
+					break;
 				case 57:	/* /SPAN */
+					/* Inline CSS Support - Douglas Thrift */
+					if (fonts) {
+						GtkIMHtmlFontDetail *font = fonts->data;
+						if (url)
+							gtk_imhtml_insert_link(imhtml, url, ws);
+						else
+							gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
+						ws[0] = '\0'; wpos = 0;
+						//NEW_BIT (NEW_TEXT_BIT);
+						fonts = g_slist_remove (fonts, font);
+						if (font->face)
+							g_free (font->face);
+						if (font->fore)
+							g_free (font->fore);
+						if (font->back)
+							g_free (font->back);
+						if (font->sml)
+							g_free (font->sml);
+						g_free (font);
+					}
+					break;
 				case 60:    /* SPAN */
 					break;
 				case 62:	/* comment */

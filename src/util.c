@@ -250,12 +250,13 @@ gaim_base64_decode(const char *text, char **data, int *size)
 void
 gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 {
-	char *p, *n, *new;
+	char *p, *n, *new, *end;
 	int i;
 
 	n = new = g_malloc(strlen (str) + 1);
+	end = str + strlen(str);
 
-	for (p = (char *)str; *p; p++, n++) {
+	for (p = (char *)str; p < end; p++, n++) {
 		if (*p == '=') {
 			sscanf(p + 1, "%2x\n", &i);
 			*n = (char)i;
@@ -1890,7 +1891,7 @@ gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 			   char **ret_path)
 {
 	char scan_info[255];
-	char port_str[5];
+	char port_str[6];
 	int f;
 	const char *turl;
 	char host[256], path[256];
@@ -1910,14 +1911,14 @@ gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 	}
 
 	g_snprintf(scan_info, sizeof(scan_info),
-			   "%%[%s]:%%[%s]/%%[%s]", addr_ctrl, port_ctrl, page_ctrl);
+			   "%%255[%s]:%%5[%s]/%%255[%s]", addr_ctrl, port_ctrl, page_ctrl);
 
 	f = sscanf(url, scan_info, host, port_str, path);
 
 	if (f == 1)
 	{
 		g_snprintf(scan_info, sizeof(scan_info),
-				   "%%[%s]/%%[%s]",
+				   "%%255[%s]/%%255[%s]",
 				   addr_ctrl, page_ctrl);
 		f = sscanf(url, scan_info, host, path);
 		g_snprintf(port_str, sizeof(port_str), "80");
