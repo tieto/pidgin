@@ -8,7 +8,7 @@ version 0.63:
 	  debug levels and categories.
 	* Support for adding chats to your buddy list.
 	* MSN protocol plugin was rewritten, has experimental buddy icon
-	  support.
+	  support, and MSN Mobile support.
 	* Thanks to all the various people who submitted translation updates.
 	* Speed enhancements (Thanks Ethan Blanton).
 
