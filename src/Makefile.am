@@ -76,6 +76,9 @@ LIBS += $(PERL_LIBS)
 # X screensaver extension
 LIBS += $(XSS_LIBS)
 
+# gettext stuff
+LIBS += $(INTLLIBS)
+
 # any other stuff
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" -DLIBDIR=\"$(libdir)/gaim/\" $(DEBUG_CFLAGS)
 LIBS += $(DEBUG_LIBS)
