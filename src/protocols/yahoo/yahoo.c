@@ -1783,6 +1783,56 @@ static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
 	g_free(decoded_group);
 }
 
+#if 0
+static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	GSList *l = pkt->hash;
+	char *who = NULL;
+	char *base64 = NULL;
+	char *decoded, *escaped;
+	int len;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		switch (pair->key) {
+		case 5:
+			/* our identity */
+			break;
+		case 4:
+			who = pair->value;
+			break;
+		case 1:
+			/* who again, the master identity this time? */
+			break;
+		case 12:
+			base64 = pair->value;
+			/* so, this is an ip address. in base64. decoded it's in ascii.
+			   after strtol, it's in reversed byte order. Who thought this up?*/
+			break;
+		/*
+			TODO: figure these out
+			yahoo: Key: 61          Value: 0
+			yahoo: Key: 2   Value:
+			yahoo: Key: 13          Value: 0
+			yahoo: Key: 49          Value: PEERTOPEER
+			yahoo: Key: 140         Value: 1
+			yahoo: Key: 11          Value: -1786225828
+		*/
+
+		}
+
+		l = l->next;
+	}
+
+	if (0 && base64) {
+		gaim_base64_decode(base64, &decoded, &len);
+		gaim_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, decoded);
+		g_free(decoded);
+	}
+}
+#endif
+
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	switch (pkt->service) {
@@ -1871,6 +1921,11 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_FILETRANSFER:
 		yahoo_process_filetransfer(gc, pkt);
 		break;
+#if 0
+	case YAHOO_SERVICE_PEEPTOPEER:
+		yahoo_process_p2p(gc, pkt);
+		break;
+#endif
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
@@ -2605,6 +2660,10 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 		yahoo_packet_hash(pkt, 97, "1");
 	yahoo_packet_hash(pkt, 14, msg2);
 
+	yahoo_packet_hash(pkt, 63, ";0"); /* IMvironment */
+	yahoo_packet_hash(pkt, 64, "0"); /* no idea */
+	yahoo_packet_hash(pkt, 1002, "1"); /* no idea, Yahoo 6 or later only it seems */
+	yahoo_packet_hash(pkt, 206, "0"); /* 0 = no picture, 2 = picture, maybe 1 = avatar? */
 
 	yahoo_send_packet(yd, pkt);
 
