@@ -565,7 +565,12 @@ static void yahoo_process_mail(struct gaim_connection *gc, struct yahoo_packet *
 		l = l->next;
 	}
 
-	connection_has_mail(gc, count, NULL, NULL, "http://mail.yahoo.com/");
+	if (who && email && subj) {
+		char *from = g_strdup_printf("%s (%s)", who, email);
+		connection_has_mail(gc, -1, from, subj, "http://mail.yahoo.com/");
+		g_free(from);
+	} else
+		connection_has_mail(gc, count, NULL, NULL, "http://mail.yahoo.com/");
 }
 
 static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet *pkt)
