@@ -67,8 +67,7 @@ struct _zephyr_triple {
 #define z_call_r(func)		if (func != ZERR_NONE)\
 					return TRUE;
 #define z_call_s(func, err)	if (func != ZERR_NONE) {\
-					hide_login_progress(zgc, err);\
-					signoff(zgc);\
+					gaim_connection_error(zgc, err);\
 					return;\
 				}
 
@@ -78,7 +77,7 @@ static char *zephyr_normalize(const char *);
  * wouldn't do this. but it is so i will. */
 static guint32 nottimer = 0;
 static guint32 loctimer = 0;
-struct gaim_connection *zgc = NULL;
+GaimConnection *zgc = NULL;
 static GList *pending_zloc_names = NULL;
 static GSList *subscrips = NULL;
 static int last_id = 0;
@@ -589,7 +588,7 @@ static void process_anyone()
 	g_free(filename);
 }
 
-static void zephyr_login(struct gaim_account *account)
+static void zephyr_login(GaimAccount *account)
 {
 	ZSubscription_t sub;
 
@@ -602,7 +601,7 @@ static void zephyr_login(struct gaim_account *account)
 		return;
 	}
 
-	zgc = new_gaim_conn(account);
+	zgc = gaim_account_get_connection(account);
 
 	z_call_s(ZInitialize(), "Couldn't initialize zephyr");
 	z_call_s(ZOpenPort(NULL), "Couldn't open port");
@@ -617,7 +616,7 @@ static void zephyr_login(struct gaim_account *account)
 		debug_printf("Zephyr: Couldn't subscribe to messages!\n");
 	}
 
-	account_online(zgc);
+	gaim_connection_set_state(zgc, GAIM_CONNECTED);
 	serv_finish_login(zgc);
 
 	process_anyone();
@@ -706,7 +705,7 @@ static void write_anyone()
 	g_free(fname);
 }
 
-static void zephyr_close(struct gaim_connection *gc)
+static void zephyr_close(GaimConnection *gc)
 {
 	GList *l;
 	GSList *s;
@@ -739,10 +738,10 @@ static void zephyr_close(struct gaim_connection *gc)
 	z_call(ZClosePort());
 }
 
-static void zephyr_add_buddy(struct gaim_connection *gc, const char *buddy) { }
-static void zephyr_remove_buddy(struct gaim_connection *gc, char *buddy, char *group) { }
+static void zephyr_add_buddy(GaimConnection *gc, const char *buddy) { }
+static void zephyr_remove_buddy(GaimConnection *gc, char *buddy, char *group) { }
 
-static int zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
+static int zephyr_chat_send(GaimConnection *gc, int id, char *im)
 {
 	ZNotice_t notice;
 	zephyr_triple *zt;
@@ -782,7 +781,7 @@ static int zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 	return 0;
 }
 
-static int zephyr_send_im(struct gaim_connection *gc, const char *who, const char *im, int len, int flags) {
+static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, int len, int flags) {
 	ZNotice_t notice;
 	char *buf;
 	const char *sig;
@@ -826,7 +825,7 @@ static char *zephyr_normalize(const char *orig)
 	return buf;
 }
 
-static void zephyr_zloc(struct gaim_connection *gc, const char *who)
+static void zephyr_zloc(GaimConnection *gc, const char *who)
 {
 	ZAsyncLocateData_t ald;
 	
@@ -838,7 +837,7 @@ static void zephyr_zloc(struct gaim_connection *gc, const char *who)
 					g_strdup(zephyr_normalize(who)));
 }
 
-static GList *zephyr_buddy_menu(struct gaim_connection *gc, const char *who)
+static GList *zephyr_buddy_menu(GaimConnection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -852,7 +851,7 @@ static GList *zephyr_buddy_menu(struct gaim_connection *gc, const char *who)
 	return m;
 }
 
-static void zephyr_set_away(struct gaim_connection *gc, char *state, char *msg)
+static void zephyr_set_away(GaimConnection *gc, char *state, char *msg)
 {
 	if (gc->away) {
 		g_free(gc->away);
@@ -868,7 +867,7 @@ static void zephyr_set_away(struct gaim_connection *gc, char *state, char *msg)
 		gc->away = g_strdup(msg);
 }
 
-static GList *zephyr_away_states(struct gaim_connection *gc)
+static GList *zephyr_away_states(GaimConnection *gc)
 {
 	GList *m = NULL;
 
@@ -879,7 +878,7 @@ static GList *zephyr_away_states(struct gaim_connection *gc)
 	return m;
 }
 
-static GList *zephyr_chat_info(struct gaim_connection *gc) {
+static GList *zephyr_chat_info(GaimConnection *gc) {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
 
@@ -901,7 +900,7 @@ static GList *zephyr_chat_info(struct gaim_connection *gc) {
 	return m;
 }
 
-static void zephyr_join_chat(struct gaim_connection *gc, GHashTable *data)
+static void zephyr_join_chat(GaimConnection *gc, GHashTable *data)
 {
 	ZSubscription_t sub;
 	zephyr_triple *zt1, *zt2;
@@ -942,7 +941,7 @@ static void zephyr_join_chat(struct gaim_connection *gc, GHashTable *data)
 	serv_got_joined_chat(gc, zt1->id, zt1->name);
 }
 
-static void zephyr_chat_leave(struct gaim_connection *gc, int id)
+static void zephyr_chat_leave(GaimConnection *gc, int id)
 {
 	zephyr_triple *zt;
 	zt = find_sub_by_id(id);
@@ -952,7 +951,7 @@ static void zephyr_chat_leave(struct gaim_connection *gc, int id)
 	}
 }
 
-static const char *zephyr_list_icon(struct gaim_account *a, struct buddy *b)
+static const char *zephyr_list_icon(GaimAccount *a, struct buddy *b)
 {
 	return "zephyr";
 }
