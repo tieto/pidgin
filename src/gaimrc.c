@@ -146,25 +146,31 @@ static int gaimrc_parse_tag(FILE *f)
 
 void filter_break(char *msg)
 {
-	char *c;
-	int mc;
+        char *c;
+        int mc;
+	int cc;
+	
+        c = g_malloc(strlen(msg)+1);
+	strcpy(c, msg);
 
-	c = g_strdup(msg);
-	mc = 0;
-	while (*c)
-	{
-		if (*c == '\\') {
-			c++;
-			msg[mc] = *c; 
-		}	
-		else {
-			msg[mc] = *c;
-		}
-		mc++;
-		c++;
-	}
-	msg[mc] = 0;
+        mc = 0;
+	cc = 0;
+        while (c[cc] != '\0')
+        {
+                if (c[cc] == '\\') {
+                        cc++;
+                        msg[mc] = c[cc]; 
+                }       
+                else {
+                        msg[mc] = c[cc];
+                }
+                mc++;
+                cc++;
+        }
+        msg[mc] = 0;
+	g_free(c);
 }
+
 
 static void gaimrc_read_away(FILE *f)
 {

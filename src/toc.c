@@ -505,8 +505,10 @@ void toc_callback( gpointer          data,
                         b = NULL;
 		}
 		
-		if (!b)
+		if (!b) {
+			g_free(buf); //FIXME
 			return;
+		}
 
 		
 		if (!strcasecmp(in, "T")) {

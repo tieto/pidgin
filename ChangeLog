@@ -13,9 +13,8 @@ version 0.9.12:
 	* Various GNOME Applet Enhancements (thanks AGAIN to 
 	  Eric.  Someone needs to stop this boy :-) ) 
 	* A lot of random, obscure bugs fixed
-	* About very many memory leaks fixed (yes, we're embarassed)
-	  (Thanks to Peter Teichman, Larry Ewing, and Jeramey
-	   Crawford) 
+	* All of the major and I believe all of the minor memory leaks are now fixed
+	  (Thanks to Peter Teichman, Larry Ewing, Jeramey Crawford, and me :) )
 	
 version 0.9.11:
 	* <STRIKE>Strike Tag Support</STRIKE> :-)
