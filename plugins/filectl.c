@@ -35,18 +35,32 @@ void run_commands() {
 	while (fgets(buffer, sizeof buffer, file)) {
 		if (buffer[strlen(buffer) - 1] == '\n')
 			buffer[strlen(buffer) - 1] = 0;
-		sprintf(debug_buff, "read: %s\n", buffer);
-		debug_print(debug_buff);
+		debug_printf("read: %s\n", buffer);
 		command = getarg(buffer, 0, 0);
-		if        (!strncasecmp(command, "signon", 6)) {
-			if (!blist) {
-				show_login();
-				dologin(NULL, NULL);
+		if (!strncasecmp(command, "signon", 6)) {
+			struct aim_user *u = NULL;
+			GList *userlist = aim_users;
+			arg1 = getarg(buffer, 1, 1);
+			if(arg1) {
+				while(userlist) {
+					struct aim_user *current = userlist->data;
+					if(!strcmp(current->username, arg1)) {
+						u = current;
+						break;
+					}
+					userlist = userlist->next;
+				}
+				free(arg1);
 			}
+			if(u) /* username found */
+				serv_login(u);
 		} else if (!strncasecmp(command, "signoff", 7)) {
 			struct gaim_connection *gc = NULL;
 			arg1 = getarg(buffer, 1, 1);
-			if (arg1) gc = find_gaim_conn_by_name(arg1);
+			if (arg1) {
+				gc = find_gaim_conn_by_name(arg1);
+				free(arg1);
+			}
 			if (gc) signoff(gc);
 			else signoff_all(NULL, NULL);
 		} else if (!strncasecmp(command, "send", 4)) {
@@ -55,7 +69,7 @@ void run_commands() {
 			arg2 = getarg(buffer, 2, 1);
 			c = find_conversation(arg1);
 			if (!c) c = new_conversation(arg1);
-			write_to_conv(c, arg2, WFLAG_SEND, NULL);
+			write_to_conv(c, arg2, WFLAG_SEND, NULL, time(NULL));
 			serv_send_im(c->gc, arg1, arg2, 0);
 			free(arg1);
 			free(arg2);
@@ -85,6 +99,7 @@ char *gaim_plugin_init(GModule *h) {
 	handle = h;
 	init_file();
 	check = gtk_timeout_add(5000, (GtkFunction)check_file, NULL);
+	return NULL;
 }
 
 void gaim_plugin_remove() {
@@ -121,8 +136,7 @@ void check_file() {
 
 	if ((stat (file, &finfo) == 0) && (finfo.st_size > 0))
 		if (mtime != finfo.st_mtime) {
-			sprintf(debug_buff, "control changed, checking\n");
-			debug_print(debug_buff);
+			debug_printf("control changed, checking\n");
 			run_commands();
 		}
 }
