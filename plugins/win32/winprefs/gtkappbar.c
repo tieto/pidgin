@@ -502,8 +502,8 @@ static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
 			SetWindowPos(msg->hwnd, HWND_BOTTOM, 0, 0, 0, 0,
 				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 		} else {
-			SetWindowPos(msg->hwnd, HWND_TOPMOST, 0, 0, 0, 0,
-				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+			SetWindowPos(msg->hwnd, HWND_NOTOPMOST, 0, 0, 0, 0,
+				SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 		}
 
                 break;
