@@ -409,10 +409,13 @@ extern GSList *away_messages;
 extern GList *conversations;
 extern GList *chat_rooms;
 extern GtkWidget *mainwindow;
+int opt_away;
+char *opt_away_arg;
+
 
 /* Globals in away.c */
 extern struct away_message *awaymessage;
-extern int default_away;
+extern struct away_message *default_away;
 extern int auto_away;
 extern GtkWidget *awaymenu;
 
@@ -563,6 +566,7 @@ extern int do_auto_login (char *);
 extern int file_is_dir (char *, GtkWidget *);
 extern char *gaim_user_dir();
 extern void strncpy_withhtml(gchar *, const gchar *, size_t);
+extern void away_on_login(char *);
 
 /* Functions in server.c */
 /* input to serv */

@@ -71,6 +71,9 @@ GList *chat_rooms = NULL;
 
 GtkWidget *mainwindow = NULL;
 
+int opt_away = 0;
+char *opt_away_arg = NULL;
+
 void BuddyTickerCreateWindow(void);
 
 void cancel_logon(void)
@@ -429,6 +432,8 @@ int main(int argc, char *argv[])
 	struct poptOption popt_options[] = {
 		{"acct", 'a', POPT_ARG_NONE, &opt_acct, 'a',
 		 "Display account editor window", NULL},
+		{"away", 'w', POPT_ARG_STRING, NULL, 'w',
+		 "Make away on signon (optional argument MESG specifies name of away message to use)", "[MESG]"},
 		{"login", 'l', POPT_ARG_STRING, NULL, 'l',
 		 "Automatically login (optional argument NAME specifies account(s) to use)", "[NAME]"},
 		{"user", 'u', POPT_ARG_STRING, &opt_user_arg, 'u',
@@ -438,6 +443,7 @@ int main(int argc, char *argv[])
 #else
 	struct option long_options[] = {
 		{"acct", no_argument, NULL, 'a'},
+		{"away", optional_argument, NULL, 'w'},
 		{"help", no_argument, NULL, 'h'},
 		{"login", optional_argument, NULL, 'l'},
 		{"user", required_argument, NULL, 'u'},
@@ -489,6 +495,33 @@ int main(int argc, char *argv[])
 			}
 			strcpy(argv[i], " ");
 		}
+		/* --away option */
+		else if (strstr (argv[i], "--aw") == argv[i]) {
+			char *equals;
+			opt_away = 1;
+			if ((equals = strchr(argv[i], '=')) != NULL) {
+				/* --away=MESG */
+				opt_away_arg = g_strdup (equals+1);
+			} else if (i+1 < argc && argv[i+1][0] != '-') {
+				/* --away MESG */
+				opt_away_arg = g_strdup (argv[i+1]);
+				strcpy (argv[i+1], " ");
+			}
+			strcpy (argv[i], " ");
+		}
+		/* -w option */
+		else if (strstr (argv[i], "-w") == argv[i]) {
+			opt_away = 1;
+			if (strlen (argv[i]) > 2) {
+				/* -wMESG */
+				opt_away_arg = g_strdup (argv[i]+2);
+			} else if (i+1 < argc && argv[i+1][0] != '-') {
+				/* -w MESG */
+				opt_away_arg = g_strdup (argv[i+1]);
+				strcpy (argv[i+1], " ");
+			}
+			strcpy(argv[i], " ");
+		}
 	}
 
 	gnome_init_with_popt_table(PACKAGE, VERSION, argc, argv, popt_options, 0, NULL);
@@ -497,7 +530,7 @@ int main(int argc, char *argv[])
 
 	/* scan command-line options */
 	opterr = 1;
-	while ((opt = getopt_long(argc, argv, /*"ahl::u:v" */ "ahl::u:v",
+	while ((opt = getopt_long(argc, argv, "ahl::w::u:v",
 				  long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'u':	/* set user */
@@ -507,6 +540,10 @@ int main(int argc, char *argv[])
 		case 'l':
 			opt_login = 1;
 			opt_login_arg = g_strdup(optarg);
+			break;
+		case 'w':
+			opt_away = 1;
+			opt_away_arg = g_strdup (optarg);
 			break;
 		case 'a':	/* account editor */
 			opt_acct = 1;

@@ -1103,6 +1103,8 @@ void show_usage(int mode, char *name)
 	case 0:		/* full help text */
 		printf("Usage: %s [OPTION]...\n\n"
 		       "  -a, --acct          display account editor window\n"
+		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
+		       "                      name of away message to use)\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use)\n"
 		       "  -u, --user=NAME     use account NAME\n"
@@ -1269,4 +1271,34 @@ void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
 		} else
 			*dest++ = *src++;
 	}
+}
+
+
+void away_on_login (char *mesg)
+{
+	GSList *awy = away_messages;
+	struct away_message *a, *message = NULL;
+	
+	if (!blist) {
+		return;
+	}
+
+	if (mesg == NULL) {
+		/* Use default message */
+		do_away_message((GtkWidget*)NULL, default_away);
+	} else {
+		/* Use argument */
+		while (awy) {
+			a = (struct away_message *)awy->data;
+			if (strcmp (a->name, mesg) == 0) {
+				message = a;
+				break;
+			}
+			awy = awy->next;
+		}
+		if (message == NULL)
+			message = default_away;
+		do_away_message((GtkWidget*)NULL, message);
+	}
+	return;
 }

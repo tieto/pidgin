@@ -719,6 +719,17 @@ void account_online(struct gaim_connection *gc)
 
 	plugin_event(event_signon, gc, 0, 0, 0);
 
+	/* away option given? */
+	if (opt_away) {
+		away_on_login(opt_away_arg);
+		/* don't do it again */
+		opt_away = 0;
+	}
+	if (opt_away_arg != NULL) {
+		g_free (opt_away_arg);
+		opt_away_arg = NULL;
+	}
+
 	/* everything for the account editor */
 	if (!acctedit)
 		return;

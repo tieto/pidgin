@@ -211,7 +211,8 @@ static void gaimrc_read_away(FILE *f)
 		/* auto { time } { default message } */
 		else if (!strcmp(p->option, "auto")) {
 			auto_away = atoi(p->value[0]);
-			default_away = atoi(p->value[1]);
+			default_away = g_slist_nth_data(away_messages,
+							atoi(p->value[1]));
 		}
 	}
 }
@@ -240,7 +241,8 @@ static void gaimrc_write_away(FILE *f)
 
 			awy = g_slist_next(awy);
 		}
-		fprintf(f, "\tauto { %d } { %d }\n", auto_away, default_away);
+		fprintf(f, "\tauto { %d } { %d }\n", auto_away, 
+			g_slist_index(away_messages, default_away));
 	} else {
 		fprintf(f, "\tmessage { boring default } { %s }\n", BORING_DEFAULT_AWAY_MSG);
 		fprintf(f, "\tauto { 0 } { 0 }\n");
@@ -771,7 +773,7 @@ void set_defaults(int saveinfo)
 		report_idle = IDLE_SCREENSAVER;
 		web_browser = BROWSER_NETSCAPE;
 		auto_away = 10;
-		default_away = 0;
+		default_away = NULL;
 
 		g_snprintf(web_command, sizeof(web_command), "xterm -e lynx %%s");
 		blist_pos.width = 0;

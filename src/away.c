@@ -40,7 +40,7 @@ GtkWidget *imaway = NULL;
 
 GtkWidget *awaymenu = NULL;
 struct away_message *awaymessage = NULL;
-int default_away;
+struct away_message *default_away;
 int auto_away;
 
 static void destroy_im_away()
@@ -101,6 +101,9 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	struct conversation *c;
 
 	if (!blist)
+		return;
+
+	if (!a)
 		return;
 
 #ifdef USE_APPLET
@@ -181,7 +184,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 void rem_away_mess(GtkWidget *w, struct away_message *a)
 {
-	struct away_message *default_msg;
+	int default_index;
 #ifdef USE_APPLET
 	char *awayname;
 	awayname = g_malloc(sizeof(*awayname) * (6 + strlen(a->name)));
@@ -191,11 +194,13 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
 	g_free(awayname);
 #endif
-	default_msg = g_slist_nth_data(away_messages, default_away);
-	away_messages = g_slist_remove(away_messages, a);
-	default_away = g_slist_index(away_messages, default_msg);
-	if (default_away == -1)
-		default_away = 0;
+	default_index = g_slist_index(away_messages, default_away);
+	if (default_index == -1) {
+		if (away_messages != NULL)
+			default_away = away_messages->data;
+		else
+			default_away = NULL;
+	}
 	g_free(a);
 	do_away_menu();
 	save_prefs();

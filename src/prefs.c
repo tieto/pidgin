@@ -325,7 +325,7 @@ static void im_buttons_menu_init(GtkWidget *omenu)
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
 
-	set_default_away(menu, (gpointer)default_away);
+	set_default_away(menu, (gpointer)g_slist_index(away_messages, default_away));
 
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(omenu));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
@@ -1184,11 +1184,11 @@ void set_default_away(GtkWidget *w, gpointer i)
 	int length = g_slist_length(away_messages);
 
 	if (away_messages == NULL)
-		default_away = 0;
+		default_away = NULL;
 	else if ((int)i >= length)
-		default_away = length - 1;
+		default_away = g_slist_nth_data(away_messages, length - 1);
 	else
-		default_away = (int)i;
+		default_away = g_slist_nth_data(away_messages, (int)i);
 }
 
 void default_away_menu_init(GtkWidget *omenu)
@@ -1214,7 +1214,7 @@ void default_away_menu_init(GtkWidget *omenu)
 
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(omenu));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), default_away);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), g_slist_index(away_messages, default_away));
 }
 
 
