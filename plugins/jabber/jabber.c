@@ -800,6 +800,7 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 		debug_printf("jpacket_subtype: %d\n", jpacket_subtype(p));
 
 		if (jpacket_subtype(p) == JPACKET__SET) {
+		} else if (jpacket_subtype(p) == JPACKET__GET) {
 		} else if (jpacket_subtype(p) == JPACKET__RESULT) {
 			xmlnode querynode;
 			char *xmlns, *from;
