@@ -1501,6 +1501,7 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t reason;
+	char *m;
 
 	va_start(ap, fr);
 	reason = (fu16_t)va_arg(ap, unsigned int);
@@ -1508,6 +1509,11 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("snac threw error (reason 0x%04x: %s)\n", reason,
 			(reason < msgerrreasonlen) ? msgerrreason[reason] : "unknown");
+
+	m = g_strdup_printf(_("SNAC threw error: %s\n"),
+			reason < msgerrreasonlen ? msgerrreason[reason] : "Unknown error");
+	do_error_dialog(m, _("Gaim - Oscar SNAC Error"));
+	g_free(m);
 
 	return 1;
 }
