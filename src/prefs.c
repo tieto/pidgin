@@ -441,7 +441,9 @@ void gaim_prefs_set_string(const char *name, const char *value) {
 			return;
 		}
 
-		if(strcmp(pref->value.string, value)) {
+		if((value && !pref->value.string) ||
+				(!value && pref->value.string) ||
+				strcmp(pref->value.string, value)) {
 			g_free(pref->value.string);
 			pref->value.string = g_strdup(value);
 			do_callbacks(name, pref);
