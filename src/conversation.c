@@ -1016,7 +1016,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			gtk_imhtml_clear(GTK_IMHTML(c->text));
 			g_string_free(c->history, TRUE);
 			c->history = g_string_new("");
-		} else if (event->keyval == 'w') {
+		} else if ((event->keyval == 'w') && (convo_options & OPT_CONVO_CTL_W_CLOSES)) {
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			close_callback(c->close, c);
 			c = NULL;

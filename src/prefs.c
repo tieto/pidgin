@@ -681,6 +681,7 @@ static void convo_page()
 	gaim_button(_("Enter sends message"), &convo_options, OPT_CONVO_ENTER_SENDS, vbox);
 	gaim_button(_("Control-Enter sends message"), &convo_options, OPT_CONVO_CTL_ENTER, vbox);
 	gaim_button(_("Escape closes window"), &convo_options, OPT_CONVO_ESC_CAN_CLOSE, vbox);
+	gaim_button(_("Control-W closes window"), &convo_options, OPT_CONVO_CTL_W_CLOSES, vbox);
 
 	vbox = gtk_vbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
