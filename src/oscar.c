@@ -1262,7 +1262,8 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	if (prof == NULL || !strlen(prof)) {
 		/* no info/away message */
 		char buf[1024];
-		sprintf(buf, _("%s has no info/away message."), info->sn);
+		sprintf(buf, _("%s has no %s."), info->sn,
+				(infotype == AIM_GETINFO_GENERALINFO) ? "information" : "away message");
 		do_error_dialog(buf, _("Gaim - Error"));
 		plugin_event(event_error, (void *)977, 0, 0, 0);
 		return 1;
