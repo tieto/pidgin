@@ -118,6 +118,7 @@ src/protocols/msn/httpmethod.c
 src/protocols/msn/msg.c
 src/protocols/msn/msn.c
 src/protocols/msn/notification.c
+src/protocols/msn/servconn.c
 src/protocols/msn/state.c
 src/protocols/msn/switchboard.c
 src/protocols/napster/napster.c
