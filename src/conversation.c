@@ -804,23 +804,22 @@ static void check_spelling( GtkEditable * editable, gchar * new_text,
                                                           gint length, gint * position,
                                                           gpointer data )
 {
-        gtk_signal_handler_block_by_func(GTK_OBJECT(editable),
-        GTK_SIGNAL_FUNC(check_spelling),
-		data);
-        //gtk_editable_insert_text( editable, new_text, length, position );
-        gtk_text_set_point(GTK_TEXT(editable), *position);
-        gtk_text_insert(GTK_TEXT(editable), NULL, &(GTK_WIDGET(editable)->style->fg[0]),
-                                        NULL, new_text, length );
-        if(isspace(new_text[0]))
-        {
-                gtk_text_freeze(GTK_TEXT(editable));
-                spell_check(GTK_WIDGET(editable));
-                gtk_text_thaw(GTK_TEXT(editable));
-        }
-        gtk_signal_handler_unblock_by_func(GTK_OBJECT(editable),
-                                                           GTK_SIGNAL_FUNC(check_spelling),
-                                                           data);
-        gtk_signal_emit_stop_by_name(GTK_OBJECT(editable), "insert-text");
+	if (general_options & OPT_GEN_CHECK_SPELLING)
+	{
+        	gtk_signal_handler_block_by_func(GTK_OBJECT(editable),
+        	GTK_SIGNAL_FUNC(check_spelling), data);
+		gtk_text_set_point(GTK_TEXT(editable), *position);
+		gtk_text_insert(GTK_TEXT(editable), NULL, &(GTK_WIDGET(editable)->style->fg[0]), NULL, new_text, length );
+        	if(isspace(new_text[0]))
+        	{
+                	gtk_text_freeze(GTK_TEXT(editable));
+                	spell_check(GTK_WIDGET(editable));
+                	gtk_text_thaw(GTK_TEXT(editable));
+        	}
+        	gtk_signal_handler_unblock_by_func(GTK_OBJECT(editable),
+				GTK_SIGNAL_FUNC(check_spelling), data);
+        	gtk_signal_emit_stop_by_name(GTK_OBJECT(editable), "insert-text");
+	}
 }
 
 
