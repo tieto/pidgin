@@ -29,7 +29,7 @@
 
 #include "gstroke.h"
 
-#define GESTURES_PLUGIN_ID "gtk-gestures"
+#define GESTURES_PLUGIN_ID "gtk-X11-gestures"
 
 static void
 stroke_close(GtkWidget *widget, void *data)
