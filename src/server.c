@@ -395,7 +395,7 @@ void serv_rename_group(struct gaim_connection *g, struct group *old_group, const
 
 		while (b) {
 			struct buddy *bd = (struct buddy *)b;
-			if (bd->account = g->account)
+			if (bd->account == g->account)
 				tobemoved = g_list_append(tobemoved, bd->name);
 			b = b->next;
 		}
