@@ -447,10 +447,17 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 			remove_chat_buddy(ms->chat, user, NULL);
 		} else {
 			char msgbuf[256];
+			const char *username;
 			struct conversation *cnv;
+			struct buddy *b;
+
+			if ((b = find_buddy(gc, user)) != NULL)
+				username = b->show;
+			else
+				username = user;
 
 			g_snprintf(msgbuf, sizeof(msgbuf),
-					   _("%s has closed the conversation window"), user);
+					   _("%s has closed the conversation window"), username);
 
 			if ((cnv = find_conversation(user)))
 				write_to_conv(cnv, msgbuf, WFLAG_SYSTEM, NULL, time(NULL), -1); 
