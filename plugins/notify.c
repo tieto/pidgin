@@ -36,12 +36,12 @@
  *  -Added apply button to change the denotification methods for
  *   open conversation windows
  *  -Fixed apply to conversations, count now keeps count across applies
- *  -Fixed(?) memory leak, and in the process fixed some stupidities 
+ *  -Fixed(?) memory leak, and in the process fixed some stupidities
  *  -Hit enter when done editing the title string entry box to save it
  *
  * Thanks to Carles Pina i Estany <carles@pinux.info>
  *   for count of new messages option
- * 
+ *
  * From Brian, 20 July 2003:
  *  -Use new xml prefs
  *  -Better handling of notification states tracking
@@ -57,11 +57,11 @@
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
+#include "signals.h"
 
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
-
 
 #include "gtkplugin.h"
 
@@ -151,7 +151,7 @@ static int notify(GaimConversation *c) {
 
 	XGetInputFocus(GDK_WINDOW_XDISPLAY(gtkwin->window->window), &focus_return, &revert_to_return);
 
-	if ((notify_opts & OPT_NOTIFY_IN_FOCUS) || 
+	if ((notify_opts & OPT_NOTIFY_IN_FOCUS) ||
 		(focus_return != GDK_WINDOW_XWINDOW(gtkwin->window->window))) {
 		if (notify_opts & OPT_METHOD_STRING)
 			string_add(gtkwin->window);
@@ -199,36 +199,34 @@ static int unnotify_cb(GtkWidget *widget, gpointer data) {
 	return 0;
 }
 
-static void chat_recv_im(GaimConnection *gc, int id, char **who, char **text) {
-	GaimConversation *c = gaim_find_chat(gc, id);
+static gboolean
+chat_recv_im(GaimAccount *account, GaimConversation *conv, char **who,
+			 char **text)
+{
+	if (conv)
+		notify(conv);
 
-	if (c)
-		notify(c);
-	return;
+	return FALSE;
 }
 
-static void chat_sent_im(GaimConnection *gc, int id, char **text) {
-	GaimConversation *c = gaim_find_chat(gc, id);
-
+static void chat_sent_im(GaimConversation *c, char **text) {
 	if (c)
 		unnotify(c);
-	return;
 }
 
-static int im_recv_im(GaimConnection *gc, char **who, char **what, void *m) {
-	GaimConversation *c = gaim_find_conversation(*who);
+static gboolean
+im_recv_im(GaimAccount *account, GaimConversation *conv, char **who,
+		   char **what, int *flags, void *m)
+{
+	if (conv)
+		notify(conv);
 
-	if (c)
-		notify(c);
-	return 0;
+	return FALSE;
 }
 
-static int im_sent_im(GaimConnection *gc, char *who, char **what, void *m) {
-	GaimConversation *c = gaim_find_conversation(who);
-
-	if (c)
-		unnotify(c);
-	return 0;
+static void im_sent_im(GaimConversation *conv, char **what, void *m) {
+	if (conv)
+		unnotify(conv);
 }
 
 static int attach_signals(GaimConversation *c) {
@@ -258,10 +256,10 @@ static int attach_signals(GaimConversation *c) {
 static void detach_signals(GaimConversation *c) {
 	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *gtkwin;
-	
+
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
-	
+
 	if (notify_opts & OPT_NOTIFY_FOCUS) {
 		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkwin->window), unnotify_cb, NULL);
 	}
@@ -277,8 +275,8 @@ static void detach_signals(GaimConversation *c) {
 	}
 }
 
-static void new_conv(char *who) {
-	GaimConversation *c = gaim_find_conversation(who);
+static void new_conv(GaimConversation *c)
+{
 	GaimGtkWindow *gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
 
 	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTR, GINT_TO_POINTER((guint)0));
@@ -288,8 +286,7 @@ static void new_conv(char *who) {
 		attach_signals(c);
 }
 
-static void chat_join(GaimConnection *gc, int id, char *room) {
-	GaimConversation *c = gaim_find_chat(gc, id);
+static void chat_join(GaimConversation *c) {
 	GaimGtkWindow *gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
 
 	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTR, GINT_TO_POINTER((guint)0));
@@ -358,10 +355,10 @@ static void string_remove(GtkWidget *widget) {
 			strncpy(newtitle+len1, curtitle+len1+strlen(title_string), sizeof(newtitle)-len1);
 		} else if (opts & OPT_METHOD_QUOTE) {
 			g_snprintf(newtitle, sizeof(newtitle), "\"%s", curtitle+strlen(title_string)+1);
-		} else 
+		} else
 			strncpy(newtitle, curtitle+strlen(title_string), sizeof(newtitle));
 		}
-		
+
 		gtk_window_set_title(win, newtitle);
 		gaim_debug(GAIM_DEBUG_INFO, "notify.c", "removed string from window title (title now %s)\n", newtitle);
 }
@@ -534,7 +531,7 @@ static void save_notify_prefs() {
 	gaim_prefs_set_bool("/plugins/gtk/X11/notify/type_chat", notify_opts & OPT_TYPE_CHAT);
 	gaim_prefs_set_bool("/plugins/gtk/X11/notify/type_focused", notify_opts & OPT_NOTIFY_IN_FOCUS);
 	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_focus", notify_opts & OPT_NOTIFY_FOCUS);
-	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_click", notify_opts & OPT_NOTIFY_CLICK);	
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_click", notify_opts & OPT_NOTIFY_CLICK);
 	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_type", notify_opts & OPT_NOTIFY_TYPE);
 	gaim_prefs_set_bool("/plugins/gtk/X11/notify/method_string", notify_opts & OPT_METHOD_STRING);
 	gaim_prefs_set_bool("/plugins/gtk/X11/notify/method_quote", notify_opts & OPT_METHOD_QUOTE);
@@ -546,12 +543,12 @@ static void save_notify_prefs() {
 
 static void load_notify_prefs() {
 	notify_opts = 0;
-	
+
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_im") ? OPT_TYPE_IM : 0);
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_chat") ? OPT_TYPE_CHAT : 0);
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_focused") ? OPT_NOTIFY_IN_FOCUS : 0);
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_focus") ? OPT_NOTIFY_FOCUS : 0);
-	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_click") ? OPT_NOTIFY_CLICK : 0);	
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_click") ? OPT_NOTIFY_CLICK : 0);
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_type") ? OPT_NOTIFY_TYPE : 0);
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_string") ? OPT_METHOD_STRING : 0);
 	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_quote") ? OPT_METHOD_QUOTE : 0);
@@ -625,7 +622,7 @@ static void apply_options(int opt_chng) {
 				(gaim_conversation_get_type(c)==GAIM_CONV_CHAT && (notify_opts & OPT_TYPE_CHAT))) {
 				Window focus_return;
 				int revert_to_return;
-				
+
 				XGetInputFocus(GDK_WINDOW_XDISPLAY(gtkwin->window->window),
 						&focus_return, &revert_to_return);
 				if ((notify_opts & OPT_NOTIFY_IN_FOCUS) ||
@@ -778,17 +775,24 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	GList *cnv = gaim_get_conversations();
+	void *conv_handle = gaim_conversations_get_handle();
 
 	my_plugin = plugin;
 
 	load_notify_prefs();
 
-	gaim_signal_connect(plugin, event_im_recv, im_recv_im, NULL);
-	gaim_signal_connect(plugin, event_chat_recv, chat_recv_im, NULL);
-	gaim_signal_connect(plugin, event_im_send, im_sent_im, NULL);
-	gaim_signal_connect(plugin, event_chat_send, chat_sent_im, NULL);
-	gaim_signal_connect(plugin, event_new_conversation, new_conv, NULL);
-	gaim_signal_connect(plugin, event_chat_join, chat_join, NULL);
+	gaim_signal_connect(conv_handle, "received-im-msg",
+						plugin, GAIM_CALLBACK(im_recv_im), NULL);
+	gaim_signal_connect(conv_handle, "received-chat-msg",
+						plugin, GAIM_CALLBACK(chat_recv_im), NULL);
+	gaim_signal_connect(conv_handle, "sent-im-msg",
+						plugin, GAIM_CALLBACK(im_sent_im), NULL);
+	gaim_signal_connect(conv_handle, "sent-chat-msg",
+						plugin, GAIM_CALLBACK(chat_sent_im), NULL);
+	gaim_signal_connect(conv_handle, "conversation-created",
+						plugin, GAIM_CALLBACK(new_conv), NULL);
+	gaim_signal_connect(conv_handle, "chat-joined",
+						plugin, GAIM_CALLBACK(chat_join), NULL);
 
 	while (cnv) {
 		GaimConversation *c = (GaimConversation *)cnv->data;
@@ -850,7 +854,7 @@ static GaimPluginInfo info =
 	N_("Provides a variety of ways of notifying you of unread messages."),
 	"Etan Reisner <deryni@eden.rutgers.edu>\n\t\t\tBrian Tarricone <bjt23@cornell.edu",
 	                                                  /**< author         */
-	GAIM_WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

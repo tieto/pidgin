@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -30,8 +30,6 @@ typedef struct _GaimPluginInfo GaimPluginInfo;     /**< GaimPluginInfo   */
 typedef struct _GaimPluginLoaderInfo GaimPluginLoaderInfo;
 
 typedef int GaimPluginPriority; /**< Plugin priority. */
-
-#include "event.h"
 
 /**
  * Plugin types.
@@ -93,7 +91,7 @@ struct _GaimPluginLoaderInfo
 	gboolean (*unload)(GaimPlugin *plugin);
 	void     (*destroy)(GaimPlugin *plugin);
 
-	GaimSignalBroadcastFunc broadcast;
+	/* XXX GaimSignalBroadcastFunc broadcast; */
 };
 
 /**

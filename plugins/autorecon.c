@@ -3,6 +3,7 @@
 #include "connection.h"
 #include "debug.h"
 #include "prpl.h"
+#include "signals.h"
 
 #define AUTORECON_PLUGIN_ID "core-autorecon"
 
@@ -72,9 +73,11 @@ free_auto_recon(gpointer data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL, free_auto_recon);
+	hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL,
+								 free_auto_recon);
 
-	gaim_signal_connect(plugin, event_signoff, reconnect, NULL);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						plugin, GAIM_CALLBACK(reconnect), NULL);
 
 	return TRUE;
 }
@@ -82,8 +85,6 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	gaim_signal_disconnect(plugin, event_signoff, reconnect);
-
 	g_hash_table_destroy(hash);
 	hash = NULL;
 
@@ -103,11 +104,11 @@ static GaimPluginInfo info =
 	N_("Auto-Reconnect"),                             /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("When you are kicked offline, this reconnects you."), 
+	N_("When you are kicked offline, this reconnects you."),
 	                                                  /**  description    */
-	N_("When you are kicked offline, this reconnects you."), 
+	N_("When you are kicked offline, this reconnects you."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	GAIM_WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

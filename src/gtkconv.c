@@ -188,7 +188,7 @@ do_check_save_convo(GObject *obj, GtkWidget *wid)
 	else
 		do_save_convo(wid);
 }
-	
+
 static void
 do_insert_image_cb(GObject *obj, GtkWidget *wid)
 {

@@ -40,6 +40,7 @@
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "signals.h"
 #include "util.h"
 
 #include "gtkconv.h"
@@ -887,8 +888,7 @@ static gboolean
 account_menu_destroyed_cb(GtkWidget *optmenu, GdkEvent *event,
 						  void *user_data)
 {
-	gaim_signal_disconnect(optmenu, event_signon,  account_menu_sign_on_off_cb);
-	gaim_signal_disconnect(optmenu, event_signoff, account_menu_sign_on_off_cb);
+	gaim_signals_disconnect_by_handle(optmenu);
 
 	return FALSE;
 }
@@ -908,10 +908,12 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 					 G_CALLBACK(account_menu_destroyed_cb), NULL);
 
 	/* Register the gaim sign on/off event callbacks. */
-	gaim_signal_connect(optmenu, event_signon,
-						account_menu_sign_on_off_cb, optmenu);
-	gaim_signal_connect(optmenu, event_signoff,
-						account_menu_sign_on_off_cb, optmenu);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+						optmenu, GAIM_CALLBACK(account_menu_sign_on_off_cb),
+						optmenu);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						optmenu, GAIM_CALLBACK(account_menu_sign_on_off_cb),
+						optmenu);
 
 	/* Set some data. */
 	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);

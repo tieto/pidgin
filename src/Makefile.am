@@ -55,8 +55,6 @@ CORESOURCES = \
 	core.h \
 	debug.c \
 	debug.h \
-	event.c \
-	event.h \
 	ft.c \
 	ft.h \
 	html.c \
@@ -82,6 +80,8 @@ CORESOURCES = \
 	request.h \
 	server.c \
 	server.h \
+	signals.c \
+	signals.h \
 	status.c \
 	status.h \
 	sound.c \

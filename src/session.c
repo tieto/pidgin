@@ -33,6 +33,7 @@ extern char *opt_rcfile_arg;
 
 #include <X11/ICE/ICElib.h>
 #include <X11/SM/SMlib.h>
+#include <gdk/gdkx.h>
 #include <unistd.h>
 #include <fcntl.h>
 

@@ -38,11 +38,11 @@
 
 #include "accountopt.h"
 #include "debug.h"
-#include "event.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
 #include "request.h"
+#include "signals.h"
 
 #ifdef _WIN32
 # define PLUGIN_EXT ".dll"
@@ -244,16 +244,6 @@ gaim_plugin_load(GaimPlugin *plugin)
 		if (plugin->info != NULL) {
 			if (plugin->info->load != NULL)
 				plugin->info->load(plugin);
-
-			if (plugin->info->type == GAIM_PLUGIN_LOADER) {
-				GaimPluginLoaderInfo *loader_info;
-
-				loader_info = GAIM_PLUGIN_LOADER_INFO(plugin);
-
-				if (loader_info->broadcast != NULL)
-					gaim_signals_register_broadcast_func(loader_info->broadcast,
-														 NULL);
-			}
 		}
 	}
 	else {
@@ -326,14 +316,6 @@ gaim_plugin_unload(GaimPlugin *plugin)
 
 			if (prpl_info->protocol_options != NULL)
 				g_list_free(prpl_info->protocol_options);
-		}
-		else if (plugin->info->type == GAIM_PLUGIN_LOADER) {
-			GaimPluginLoaderInfo *loader_info;
-
-			loader_info = GAIM_PLUGIN_LOADER_INFO(plugin);
-
-			if (loader_info->broadcast != NULL)
-				gaim_signals_unregister_broadcast_func(loader_info->broadcast);
 		}
 	}
 	else {

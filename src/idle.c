@@ -37,6 +37,7 @@
 #include "multi.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "signals.h"
 
 #include "ui.h"
 
@@ -62,7 +63,7 @@ gint check_idle(gpointer data)
 
 	account = gaim_connection_get_account(gc);
 
-	gaim_event_broadcast(event_blist_update);
+	gaim_signal_emit(gaim_blist_get_handle(), "update-idle");
 
 	time(&t);
 

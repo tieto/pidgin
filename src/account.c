@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -25,6 +25,7 @@
 #include "debug.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "signals.h"
 #include "server.h"
 #include "util.h"
 
@@ -1412,4 +1413,38 @@ gaim_accounts_find_with_prpl_id(const char *name, const char *protocol_id)
 	g_free(who);
 
 	return account;
+}
+
+void *
+gaim_accounts_get_handle(void)
+{
+	static int handle;
+
+	return &handle;
+}
+
+void
+gaim_accounts_init(void)
+{
+	void *handle = gaim_accounts_get_handle();
+
+	gaim_signal_register(handle, "account-connecting",
+						 gaim_marshal_VOID__POINTER);
+
+	gaim_signal_register(handle, "account-away",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+
+	gaim_signal_register(handle, "account-setting-info",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "account-set-info",
+						 gaim_marshal_VOID__POINTER_POINTER);
+
+	gaim_signal_register(handle, "account-warned",
+						 gaim_marshal_VOID__POINTER_POINTER_UINT);
+}
+
+void
+gaim_accounts_uninit(void)
+{
+	gaim_signals_unregister_by_instance(gaim_accounts_get_handle());
 }

@@ -113,6 +113,8 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	struct gaim_buddy_list *list = gaim_get_blist();
+	void *conn_handle = gaim_connections_get_handle();
+
 	if (!check_timeout(NULL)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "mailchk", "Could not read $MAIL or /var/spool/mail/$USER");
 		return FALSE;
@@ -121,8 +123,10 @@ plugin_load(GaimPlugin *plugin)
 	if (list && GAIM_IS_GTK_BLIST(list) && GAIM_GTK_BLIST(list)->vbox)
 		timer = g_timeout_add(2000, check_timeout, NULL);
 
-	gaim_signal_connect(plugin, event_signon, signon_cb, NULL);
-	gaim_signal_connect(plugin, event_signoff, signoff_cb, NULL);
+	gaim_signal_connect(conn_handle, "signed-on",
+						plugin, GAIM_CALLBACK(signon_cb), NULL);
+	gaim_signal_connect(conn_handle, "signed-off",
+						plugin, GAIM_CALLBACK(signoff_cb), NULL);
 
 	return TRUE;
 }

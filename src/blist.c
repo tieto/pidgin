@@ -29,6 +29,7 @@
 #include "privacy.h"
 #include "prpl.h"
 #include "server.h"
+#include "signals.h"
 #include "util.h"
 
 #define PATHSIZE 1024
@@ -100,13 +101,15 @@ struct gaim_buddy_list *gaim_blist_new()
 
 	gbl->ui_ops = gaim_get_blist_ui_ops();
 
-	gbl->buddies = g_hash_table_new ((GHashFunc)_gaim_blist_hbuddy_hash, 
+	gbl->buddies = g_hash_table_new ((GHashFunc)_gaim_blist_hbuddy_hash,
 					 (GEqualFunc)_gaim_blist_hbuddy_equal);
 
 	if (gbl->ui_ops != NULL && gbl->ui_ops->new_list != NULL)
 		gbl->ui_ops->new_list(gbl);
 
-	gaim_prefs_connect_callback("/core/buddies/use_server_alias", blist_pref_cb, NULL);
+	gaim_prefs_connect_callback("/core/buddies/use_server_alias",
+								blist_pref_cb, NULL);
+
 
 	return gbl;
 }
@@ -155,9 +158,9 @@ void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 
 	if((status & UC_UNAVAILABLE) != (buddy->uc & UC_UNAVAILABLE)) {
 		if(status & UC_UNAVAILABLE)
-			gaim_event_broadcast(event_buddy_away, buddy->account->gc, buddy->name);
+			gaim_signal_emit(gaim_blist_get_handle(), "buddy-away", buddy);
 		else
-			gaim_event_broadcast(event_buddy_back, buddy->account->gc, buddy->name);
+			gaim_signal_emit(gaim_blist_get_handle(), "buddy-back", buddy);
 	}
 
 	buddy->uc = status;
@@ -196,12 +199,12 @@ void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
 
 	if (!GAIM_BUDDY_IS_ONLINE(buddy) && presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_ON;
-		gaim_event_broadcast(event_buddy_signon, buddy->account->gc, buddy->name);
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-on", buddy);
 		do_timer = TRUE;
 		((struct group *)((GaimBlistNode *)buddy)->parent)->online++;
 	} else if(GAIM_BUDDY_IS_ONLINE(buddy) && !presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_OFF;
-		gaim_event_broadcast(event_buddy_signoff, buddy->account->gc, buddy->name);
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-off", buddy);
 		do_timer = TRUE;
 		((struct group *)((GaimBlistNode *)buddy)->parent)->online--;
 	}
@@ -1792,9 +1795,9 @@ void gaim_blist_load() {
 			g_free(msg);
 		}
 	} else if(g_list_length(gaim_accounts_get_all())) {
+#if 0
 		GMainContext *ctx;
 
-#if 0
 		/* rob wants to inform the user that their buddy lists are
 		 * being converted */
 		msg = g_strdup_printf(_("Gaim is converting your old buddy lists "
@@ -2087,4 +2090,37 @@ int gaim_blist_get_group_online_count(struct group *group) {
 	return group->online;
 }
 
+void *
+gaim_blist_get_handle(void)
+{
+	static int handle;
 
+	return &handle;
+}
+
+void
+gaim_blist_init(void)
+{
+	void *handle = gaim_blist_get_handle();
+
+	gaim_signal_register(handle, "buddy-away", gaim_marshal_VOID__POINTER);
+	gaim_signal_register(handle, "buddy-back", gaim_marshal_VOID__POINTER);
+
+	gaim_signal_register(handle, "buddy-idle",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "buddy-unidle",
+						 gaim_marshal_VOID__POINTER_POINTER);
+
+	gaim_signal_register(handle, "buddy-signed-on",
+						 gaim_marshal_VOID__POINTER);
+	gaim_signal_register(handle, "buddy-signed-off",
+						 gaim_marshal_VOID__POINTER);
+
+	gaim_signal_register(handle, "update-idle", gaim_marshal_VOID);
+}
+
+void
+gaim_blist_uninit(void)
+{
+	gaim_signals_unregister_by_instance(gaim_blist_get_handle());
+}

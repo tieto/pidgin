@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -575,6 +575,30 @@ GaimAccount *gaim_accounts_find(const char *name, GaimProtocol protocol);
  */
 GaimAccount *gaim_accounts_find_with_prpl_id(const char *name,
 											 const char *protocol_id);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Accounts Subsystem                                              */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the accounts subsystem handle.
+ *
+ * @return The accounts subsystem handle.
+ */
+void *gaim_accounts_get_handle(void);
+
+/**
+ * Initializes the accounts subsystem.
+ */
+void gaim_accounts_init(void);
+
+/**
+ * Uninitializes the accounts subsystem.
+ */
+void gaim_accounts_uninit(void);
 
 /*@}*/
 

@@ -2,7 +2,7 @@
  * gaim
  *
  * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -25,6 +25,7 @@
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "signals.h"
 #include "util.h"
 
 /* XXX CORE/UI */
@@ -226,13 +227,12 @@ common_send(GaimConversation *conv, const char *message)
 	else
 		buffy = g_strdup(buf);
 
-	plugin_return = gaim_event_broadcast(
-			(type == GAIM_CONV_IM ? event_im_send : event_chat_send),
-			gc,
+	plugin_return =
+		GPOINTER_TO_INT(gaim_signal_emit_return_1(
+			gaim_conversations_get_handle(),
 			(type == GAIM_CONV_IM
-			 ? gaim_conversation_get_name(conv)
-			 : GINT_TO_POINTER(gaim_chat_get_id(GAIM_CHAT(conv)))),
-			&buffy);
+			 ? "displaying-im-msg" : "displaying-chat-msg"),
+			conv, &buffy));
 
 	if (buffy == NULL) {
 		g_free(buf2);
@@ -250,12 +250,16 @@ common_send(GaimConversation *conv, const char *message)
 	strncpy(buf, buffy, limit);
 	g_free(buffy);
 
+	gaim_signal_emit(gaim_conversations_get_handle(),
+		(type == GAIM_CONV_IM ? "displayed-im-msg" : "displayed-chat-msg"),
+		conv, buffy);
+
 	if (type == GAIM_CONV_IM) {
 		GaimIm *im = GAIM_IM(conv);
 
 		buffy = g_strdup(buf);
-		gaim_event_broadcast(event_im_displayed_sent, gc,
-					 gaim_conversation_get_name(conv), &buffy);
+		gaim_signal_emit(gaim_conversations_get_handle(), "sending-im-msg",
+						 conv, &buffy);
 
 		if (buffy != NULL) {
 			int imflags = 0;
@@ -387,11 +391,26 @@ common_send(GaimConversation *conv, const char *message)
 					gaim_im_write(im, NULL, buf, -1, WFLAG_SEND, time(NULL));
 			}
 
+			gaim_signal_emit(gaim_conversations_get_handle(), "sent-im-msg",
+							 conv, buffy);
+
 			g_free(buffy);
 		}
 	}
 	else {
-		err = serv_chat_send(gc, gaim_chat_get_id(GAIM_CHAT(conv)), buf);
+		buffy = g_strdup(buf);
+
+		gaim_signal_emit(gaim_conversations_get_handle(), "sending-chat-msg",
+						 conv, &buffy);
+
+		if (buffy != NULL) {
+			err = serv_chat_send(gc, gaim_chat_get_id(GAIM_CHAT(conv)), buffy);
+
+			gaim_signal_emit(gaim_conversations_get_handle(), "sent-chat-msg",
+							 conv, buf);
+
+			g_free(buffy);
+		}
 	}
 
 	g_free(buf2);
@@ -747,21 +766,27 @@ void
 gaim_window_switch_conversation(GaimWindow *win, unsigned int index)
 {
 	GaimWindowUiOps *ops;
-	GaimConversation *conv;
+	GaimConversation *old_conv, *conv;
 
 	g_return_if_fail(win != NULL);
 	g_return_if_fail(index >= 0 &&
 					 index < gaim_window_get_conversation_count(win));
+
+	old_conv = gaim_window_get_active_conversation(win);
+	conv = gaim_window_get_conversation_at(win, index);
+
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "conversation-switching", old_conv, conv);
 
 	ops = gaim_window_get_ui_ops(win);
 
 	if (ops != NULL && ops->switch_conversation != NULL)
 		ops->switch_conversation(win, index);
 
-	conv = gaim_window_get_conversation_at(win, index);
 	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
-	gaim_event_broadcast(event_conversation_switch, conv);
 
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "conversation-switched", old_conv, conv);
 }
 
 GaimConversation *
@@ -924,12 +949,14 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 			gaim_prefs_set_string("/core/conversations/placement", "last");
 
 		if (!place_conv)
-			gaim_debug(GAIM_DEBUG_ERROR, "conversation", "This is about to suck.\n");
+			gaim_debug(GAIM_DEBUG_ERROR, "conversation",
+					   "This is about to suck.\n");
 
 		place_conv(conv);
 	}
 
-	gaim_event_broadcast(event_new_conversation, name);
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "conversation-created", conv);
 
 	return conv;
 }
@@ -989,7 +1016,8 @@ gaim_conversation_destroy(GaimConversation *conv)
 		}
 	}
 
-	gaim_event_broadcast(event_del_conversation, conv);
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "deleting-conversation", conv);
 
 	if (conv->name  != NULL) g_free(conv->name);
 	if (conv->title != NULL) g_free(conv->title);
@@ -1908,13 +1936,12 @@ gaim_chat_add_user(GaimChat *chat, const char *user, const char *extra_msg)
 	conv = gaim_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "chat-buddy-joining", conv, user);
+
 	gaim_chat_set_users(chat,
 		g_list_insert_sorted(gaim_chat_get_users(chat), g_strdup(user),
 							 insertname_compare));
-
-	gaim_event_broadcast(event_chat_buddy_join,
-				 gaim_conversation_get_gc(conv), gaim_chat_get_id(chat),
-				 user);
 
 	if (ops != NULL && ops->chat_add_user != NULL)
 		ops->chat_add_user(conv, user);
@@ -1929,6 +1956,9 @@ gaim_chat_add_user(GaimChat *chat, const char *user, const char *extra_msg)
 
 		gaim_conversation_write(conv, NULL, tmp, -1, WFLAG_SYSTEM, time(NULL));
 	}
+
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "chat-buddy-joined", conv, user);
 }
 
 void
@@ -1945,14 +1975,18 @@ gaim_chat_add_users(GaimChat *chat, GList *users)
 	ops  = gaim_conversation_get_ui_ops(conv);
 
 	for (l = users; l != NULL; l = l->next) {
+		const char *user = (const char *)l->data;
+
+		gaim_signal_emit(gaim_conversations_get_handle(),
+						 "chat-buddy-joining", conv, user);
+
 		gaim_chat_set_users(chat,
 				g_list_insert_sorted(gaim_chat_get_users(chat),
 									 g_strdup((char *)l->data),
 									 insertname_compare));
 
-		gaim_event_broadcast(event_chat_buddy_join,
-				gaim_conversation_get_gc(conv), gaim_chat_get_id(chat),
-				(char *)l->data);
+		gaim_signal_emit(gaim_conversations_get_handle(),
+						 "chat-buddy-joined", conv, user);
 	}
 
 	if (ops != NULL && ops->chat_add_users != NULL)
@@ -2022,8 +2056,8 @@ gaim_chat_remove_user(GaimChat *chat, const char *user, const char *reason)
 	conv = gaim_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
-	gaim_event_broadcast(event_chat_buddy_leave, gaim_conversation_get_gc(conv),
-				 gaim_chat_get_id(chat), user);
+	gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-leaving",
+					 conv, user, reason);
 
 	if (ops != NULL && ops->chat_remove_user != NULL)
 		ops->chat_remove_user(conv, user);
@@ -2050,6 +2084,9 @@ gaim_chat_remove_user(GaimChat *chat, const char *user, const char *reason)
 
 		gaim_conversation_write(conv, NULL, tmp, -1, WFLAG_SYSTEM, time(NULL));
 	}
+
+	gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-left",
+					 conv, user, reason);
 }
 
 void
@@ -2067,26 +2104,33 @@ gaim_chat_remove_users(GaimChat *chat, GList *users, const char *reason)
 	ops  = gaim_conversation_get_ui_ops(conv);
 
 	for (l = users; l != NULL; l = l->next) {
-		gaim_event_broadcast(event_chat_buddy_leave,
-							 gaim_conversation_get_gc(conv),
-							 gaim_chat_get_id(chat), l->data);
+		const char *user = (const char *)l->data;
+
+		gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-leaving",
+						 conv, user, reason);
 	}
 
 	if (ops != NULL && ops->chat_remove_users != NULL)
 		ops->chat_remove_users(conv, users);
 
 	for (l = users; l != NULL; l = l->next) {
+		const char *user = (const char *)l->data;
+
 		for (names = gaim_chat_get_users(chat);
 			 names != NULL;
 			 names = names->next) {
 
-			if (!gaim_utf8_strcasecmp((char *)names->data, (char *)l->data)) {
+			if (!gaim_utf8_strcasecmp((char *)names->data, user))
+			{
 				gaim_chat_set_users(chat,
 					g_list_remove(gaim_chat_get_users(chat), names->data));
 
 				break;
 			}
 		}
+
+		gaim_signal_emit(gaim_conversations_get_handle(), "chat-buddy-left",
+						 conv, user, reason);
 	}
 
 	/* NOTE: Don't remove them from ignored in case they re-enter. */
@@ -2142,9 +2186,10 @@ gaim_chat_clear_users(GaimChat *chat)
 
 		l_next = l->next;
 
-		gaim_event_broadcast(event_chat_buddy_leave,
-							 gaim_conversation_get_gc(conv),
-							 gaim_chat_get_id(chat), user);
+		gaim_signal_emit(gaim_conversations_get_handle(),
+						 "chat-buddy-leaving", conv, user, NULL);
+		gaim_signal_emit(gaim_conversations_get_handle(),
+						 "chat-buddy-left", conv, user, NULL);
 
 		g_free(user);
 	}
@@ -2525,9 +2570,21 @@ gaim_get_win_ui_ops(void)
 	return win_ui_ops;
 }
 
-void
-gaim_conversation_init(void)
+void *
+gaim_conversations_get_handle(void)
 {
+	static int handle;
+
+	return &handle;
+}
+
+void
+gaim_conversations_init(void)
+{
+	void *handle = gaim_conversations_get_handle();
+
+	/* Register preferences */
+
 	/* Conversations */
 	gaim_prefs_add_none("/core/conversations");
 	gaim_prefs_add_bool("/core/conversations/send_urls_as_links", TRUE);
@@ -2554,4 +2611,69 @@ gaim_conversation_init(void)
 			update_titles_pref_cb, NULL);
 	gaim_prefs_connect_callback("/core/buddies/use_server_alias",
 			update_titles_pref_cb, NULL);
+
+
+	/* Register signals */
+	gaim_signal_register(handle, "displaying-im-msg",
+						 gaim_marshal_BOOLEAN__POINTER_POINTER);
+	gaim_signal_register(handle, "displayed-im-msg",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "sending-im-msg",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "sent-im-msg",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "received-im-msg",
+			gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER);
+
+	gaim_signal_register(handle, "displaying-chat-msg",
+						 gaim_marshal_BOOLEAN__POINTER_POINTER);
+	gaim_signal_register(handle, "displayed-chat-msg",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "sending-chat-msg",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "sent-chat-msg",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "received-chat-msg",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER);
+
+	gaim_signal_register(handle, "conversation-switching",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "conversation-switched",
+						 gaim_marshal_VOID__POINTER_POINTER);
+
+	gaim_signal_register(handle, "conversation-created",
+						 gaim_marshal_VOID__POINTER);
+	gaim_signal_register(handle, "deleting-conversation",
+						 gaim_marshal_VOID__POINTER);
+
+	gaim_signal_register(handle, "buddy-typing",
+						 gaim_marshal_VOID__POINTER);
+
+	gaim_signal_register(handle, "chat-buddy-joining",
+						 gaim_marshal_VOID__POINTER_POINTER);
+	gaim_signal_register(handle, "chat-buddy-joined",
+						 gaim_marshal_VOID__POINTER_POINTER);
+
+	gaim_signal_register(handle, "chat-buddy-leaving",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+	gaim_signal_register(handle, "chat-buddy-left",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+
+	gaim_signal_register(handle, "chat-inviting-user",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+	gaim_signal_register(handle, "chat-invited-user",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER);
+
+	gaim_signal_register(handle, "chat-invited",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER);
+	gaim_signal_register(handle, "chat-joined",
+						 gaim_marshal_VOID__POINTER);
+	gaim_signal_register(handle, "chat-left",
+						 gaim_marshal_VOID__POINTER);
+}
+
+void
+gaim_conversations_uninit(void)
+{
+	gaim_signals_unregister_by_instance(gaim_conversations_get_handle());
 }

@@ -233,6 +233,23 @@ GList *gaim_connections_get_all(void);
  */
 GList *gaim_connections_get_connecting(void);
 
+/**
+ * Initializes the connections subsystem.
+ */
+void gaim_connections_init(void);
+
+/**
+ * Uninitializes the connections subsystem.
+ */
+void gaim_connections_uninit(void);
+
+/**
+ * Returns the handle to the connections subsystem.
+ *
+ * @return The connections subsystem handle.
+ */
+void *gaim_connections_get_handle(void);
+
 /*@}*/
 
 /**************************************************************************/

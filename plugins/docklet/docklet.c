@@ -1,11 +1,11 @@
-/* 
+/*
  * System tray icon (aka docklet) plugin for Gaim
- * 
+ *
  * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
  * Inspired by a similar plugin by:
  *  John (J5) Palmieri <johnp@martianrock.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
@@ -15,7 +15,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -35,6 +35,7 @@
 #include "core.h"
 #include "debug.h"
 #include "prefs.h"
+#include "signals.h"
 #include "sound.h"
 
 #include "gtkaccount.h"
@@ -372,24 +373,27 @@ gaim_connecting(GaimAccount *account, void *data)
 }
 
 static void
-gaim_away(GaimConnection *gc, char *state, char *message, void *data)
+gaim_away(GaimAccount *account, char *state, char *message, void *data)
 {
 	/* we only support global away. this is the way it is, ok? */
 	docklet_update_status();
 }
 
-static void
-gaim_im_recv(GaimConnection *gc, char **who, char **what, void *data)
+static gboolean
+gaim_im_recv(GaimAccount *account, GaimConversation *conv, char **who,
+			 char **what, int *flags, void *data)
 {
 	/* if message queuing while away is enabled, this event could be the first
 	   message so we need to see if the status (and hence icon) needs changing.
 	   do this when idle so that all message processing is completed, queuing
 	   etc, before we run. */
 	g_idle_add(docklet_update_status, &handle);
+
+	return FALSE;
 }
 
 static void
-gaim_new_conversation(char *who, void *data)
+gaim_new_conversation(GaimConversation *conv, void *data)
 {
 	/* queue a callback here so if the queue is being
 	   flushed, we stop flashing. thanks javabsp. */
@@ -415,6 +419,10 @@ static void gaim_buddy_back(GaimConnection *gc, char *who, void *data) {
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
+	void *conn_handle = gaim_connections_get_handle();
+	void *conv_handle = gaim_conversations_get_handle();
+	void *accounts_handle = gaim_accounts_get_handle();
+
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "plugin loaded\n");
 
 	handle = plugin;
@@ -423,12 +431,19 @@ plugin_load(GaimPlugin *plugin)
 	if (ui_ops->create)
 		ui_ops->create();
 
-	gaim_signal_connect(plugin, event_signon, gaim_signon, NULL);
-	gaim_signal_connect(plugin, event_signoff, gaim_signoff, NULL);
-	gaim_signal_connect(plugin, event_connecting, gaim_connecting, NULL);
-	gaim_signal_connect(plugin, event_away, gaim_away, NULL);
-	gaim_signal_connect(plugin, event_im_recv, gaim_im_recv, NULL);
-	gaim_signal_connect(plugin, event_new_conversation, gaim_new_conversation, NULL);
+	gaim_signal_connect(conn_handle, "signed-on",
+						plugin, GAIM_CALLBACK(gaim_signon), NULL);
+	gaim_signal_connect(conn_handle, "signed-off",
+						plugin, GAIM_CALLBACK(gaim_signoff), NULL);
+	gaim_signal_connect(accounts_handle, "account-connecting",
+						plugin, GAIM_CALLBACK(gaim_connecting), NULL);
+	gaim_signal_connect(accounts_handle, "account-away",
+						plugin, GAIM_CALLBACK(gaim_away), NULL);
+	gaim_signal_connect(conv_handle, "received-im-msg",
+						plugin, GAIM_CALLBACK(gaim_im_recv), NULL);
+	gaim_signal_connect(conv_handle, "conversation-created",
+						plugin, GAIM_CALLBACK(gaim_new_conversation), NULL);
+
 /*	gaim_signal_connect(plugin, event_buddy_signon, gaim_buddy_signon, NULL);
 	gaim_signal_connect(plugin, event_buddy_signoff, gaim_buddy_signoff, NULL);
 	gaim_signal_connect(plugin, event_buddy_away, gaim_buddy_away, NULL);

@@ -31,6 +31,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
+#include "signals.h"
 
 #include "gtkblist.h"
 #include "gtkplugin.h"
@@ -204,7 +205,9 @@ static void buddy_ticker_show()
 	}
 }
 
-void signoff_cb(GaimConnection *gc) {
+static void
+signoff_cb(GaimConnection *gc)
+{
 	TickerData *td;
 	if (!gaim_connections_get_all()) {
 		while (tickerbuds) {
@@ -232,23 +235,26 @@ void signoff_cb(GaimConnection *gc) {
 	}
 }
 
-void buddy_signon_cb(GaimConnection *gc, char *who) {
-	struct buddy *b = gaim_find_buddy(gc->account, who);
+static void
+buddy_signon_cb(struct buddy *b)
+{
 	if(buddy_ticker_find_buddy(b))
 		buddy_ticker_set_pixmap(b);
 	else
 		buddy_ticker_add_buddy(b);
 }
 
-void buddy_signoff_cb(GaimConnection *gc, char *who) {
-	struct buddy *b = gaim_find_buddy(gc->account, who);
+static void
+buddy_signoff_cb(struct buddy *b)
+{
 	buddy_ticker_remove_buddy(b);
 	if(!tickerbuds)
 		gtk_widget_hide(tickerwindow);
 }
 
-void away_cb(GaimConnection *gc, char *who) {
-	struct buddy *b = gaim_find_buddy(gc->account, who);
+static void
+away_cb(struct buddy *b)
+{
 	if(buddy_ticker_find_buddy(b))
 		buddy_ticker_set_pixmap(b);
 	else
@@ -262,11 +268,18 @@ void away_cb(GaimConnection *gc, char *who) {
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_signal_connect(plugin, event_signoff, signoff_cb, NULL);
-	gaim_signal_connect(plugin, event_buddy_signon, buddy_signon_cb, NULL);
-	gaim_signal_connect(plugin, event_buddy_signoff, buddy_signoff_cb, NULL);
-	gaim_signal_connect(plugin, event_buddy_away, away_cb, NULL);
-	gaim_signal_connect(plugin, event_buddy_back, away_cb, NULL);
+	void *blist_handle = gaim_blist_get_handle();
+
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						plugin, GAIM_CALLBACK(signoff_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-signed-on",
+						plugin, GAIM_CALLBACK(buddy_signon_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-signed-off",
+						plugin, GAIM_CALLBACK(buddy_signoff_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-away",
+						plugin, GAIM_CALLBACK(away_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-back",
+						plugin, GAIM_CALLBACK(away_cb), NULL);
 
 	if (gaim_connections_get_all())
 		buddy_ticker_show();

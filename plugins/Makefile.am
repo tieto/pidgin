@@ -46,7 +46,7 @@ EXTRA_DIST = \
 	mailchk.c \
 	gtik.c \
 	raw.c \
-	events.c \
+	signals-test.c \
 	simple.c \
 	gaim.pl \
 	fortuneprofile.pl

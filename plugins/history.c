@@ -6,6 +6,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "prefs.h"
+#include "signals.h"
 #include "util.h"
 
 #include "gtkconv.h"
@@ -16,10 +17,10 @@
 
 #define HISTORY_SIZE (4 * 1024)
 
-void historize (char *name, void *data)
+static void historize(GaimConversation *c)
 {
-	GaimConversation *c = gaim_find_conversation(name);
 	GaimGtkConversation *gtkconv;
+	const char *name = gaim_conversation_get_name(c);
 	struct stat st;
 	FILE *fd;
 	char *userdir = g_strdup(gaim_user_dir());
@@ -30,7 +31,7 @@ void historize (char *name, void *data)
 	int size;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
 
-	if (stat(path, &st) || S_ISDIR(st.st_mode) || st.st_size == 0 || 
+	if (stat(path, &st) || S_ISDIR(st.st_mode) || st.st_size == 0 ||
 	    !(fd = fopen(path, "r"))) {
 		g_free(userdir);
 		g_free(logfile);
@@ -70,7 +71,9 @@ void historize (char *name, void *data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_signal_connect(plugin, event_new_conversation, historize, NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(),
+						"conversation-created",
+						plugin, GAIM_CALLBACK(historize), NULL);
 
 	return TRUE;
 }

@@ -7,12 +7,16 @@
 
 #define GAIMINC_PLUGIN_ID "core-gaiminc"
 
-void echo_hi(void *m) {
+static void
+echo_hi(void *m)
+{
 	/* this doesn't do much, just lets you know who we are :) */
 	show_about(NULL, NULL);
 }
 
-void reverse(struct gaim_connection *gc, char **who, char **message, void *m) {
+static void
+reverse(struct gaim_connection *gc, char **who, char **message, void *m)
+{
 	/* this will drive you insane. whenever you receive a message,
 	 * the text of the message (HTML and all) will be reversed. */
 	int i, l;
@@ -34,7 +38,9 @@ void reverse(struct gaim_connection *gc, char **who, char **message, void *m) {
 	}
 }
 
-void bud(struct gaim_connection *gc, char *who, void *m) {
+static void
+bud(struct gaim_connection *gc, char *who, void *m)
+{
 	/* whenever someone comes online, it sends them a message. if i
 	 * cared more, i'd make it so it popped up on your screen too */
 	serv_send_im(gc, who, "Hello!", -1, 0);
@@ -48,13 +54,16 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	/* this is for doing something fun when we sign on */
-	gaim_signal_connect(plugin, event_signon, echo_hi, NULL);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+						plugin, GAIM_CALLBACK(echo_hi), NULL);
 
 	/* this is for doing something fun when we get a message */
-	gaim_signal_connect(plugin, event_im_recv, reverse, NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(), "received-im",
+						plugin, GAIM_CALLBACK(reverse), NULL);
 
 	/* this is for doing something fun when a buddy comes online */
-	gaim_signal_connect(plugin, event_buddy_signon, bud, NULL);
+	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on",
+						plugin, GAIM_CALLBACK(bud), NULL);
 
 	return TRUE;
 }
@@ -80,10 +89,10 @@ static GaimPluginInfo info =
 	   "- It sends a message to people on your list immediately"
 	   " when they sign on"),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	GAIM_WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
-	NULL,                                    /**< unload         */
+	NULL,                                             /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */

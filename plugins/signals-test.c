@@ -1,0 +1,524 @@
+/*
+ * Signals test plugin.
+ *
+ * Copyright (C) 2003 Christian Hammond.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ * 02111-1307, USA.
+ */
+#define SIGNAL_TEST_PLUGIN_ID "core-signals-test"
+
+#include <stdio.h>
+
+#include "internal.h"
+#include "connection.h"
+#include "conversation.h"
+#include "core.h"
+#include "debug.h"
+#include "signals.h"
+
+/**************************************************************************
+ * Account subsystem signal callbacks
+ **************************************************************************/
+static void
+account_connecting_cb(GaimAccount *account, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test", "account-connecting (%s)\n",
+			   gaim_account_get_username(account));
+}
+
+static void
+account_away_cb(GaimAccount *account, const char *state,
+				const char *message, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "account-away (%s, %s, %s)\n",
+			   gaim_account_get_username(account), state, message);
+}
+
+static void
+account_setting_info_cb(GaimAccount *account, const char *info, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "account-setting-info (%s, %s)\n",
+			   gaim_account_get_username(account), info);
+}
+
+static void
+account_set_info_cb(GaimAccount *account, const char *info, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "account-set-info (%s, %s)\n",
+			   gaim_account_get_username(account), info);
+}
+
+static void
+account_warned_cb(GaimAccount *account, const char *warner, int level,
+				  void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "account-warned (%s, %s, %d)\n",
+			   gaim_account_get_username(account), warner, level);
+}
+
+/**************************************************************************
+ * Buddy List subsystem signal callbacks
+ **************************************************************************/
+static void
+buddy_away_cb(struct buddy *buddy, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "buddy-away (%s)\n", buddy->name);
+}
+
+static void
+buddy_back_cb(struct buddy *buddy, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "buddy-back (%s)\n", buddy->name);
+}
+
+static void
+buddy_idle_cb(struct buddy *buddy, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "buddy-idle (%s)\n", buddy->name);
+}
+
+static void
+buddy_unidle_cb(struct buddy *buddy, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "buddy-unidle (%s)\n", buddy->name);
+}
+
+static void
+buddy_signed_on_cb(struct buddy *buddy, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "buddy-signed-on (%s)\n", buddy->name);
+}
+
+static void
+buddy_signed_off_cb(struct buddy *buddy, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "buddy-signed-off (%s)\n", buddy->name);
+}
+
+/**************************************************************************
+ * Connection subsystem signal callbacks
+ **************************************************************************/
+static void
+signing_on_cb(GaimConnection *gc, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "signing-on (%s)\n",
+			   gaim_account_get_username(gaim_connection_get_account(gc)));
+}
+
+static void
+signed_on_cb(GaimConnection *gc, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "signed-on (%s)\n",
+			   gaim_account_get_username(gaim_connection_get_account(gc)));
+}
+
+static void
+signing_off_cb(GaimConnection *gc, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "signing-off (%s)\n",
+			   gaim_account_get_username(gaim_connection_get_account(gc)));
+}
+
+static void
+signed_off_cb(GaimConnection *gc, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "signed-off (%s)\n",
+			   gaim_account_get_username(gaim_connection_get_account(gc)));
+}
+
+/**************************************************************************
+ * Conversation subsystem signal callbacks
+ **************************************************************************/
+static gboolean
+displaying_im_msg_cb(GaimConversation *conv, char **buffer, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "displaying-im-msg (%s, %s)\n",
+			   gaim_conversation_get_name(conv), *buffer);
+
+	return FALSE;
+}
+
+static void
+displayed_im_msg_cb(GaimConversation *conv, const char *buffer, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "displayed-im-msg (%s, %s)\n",
+			   gaim_conversation_get_name(conv), buffer);
+}
+
+static gboolean
+sending_im_msg_cb(GaimConversation *conv, char **buffer, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "sending-im-msg (%s, %s)\n",
+			   gaim_conversation_get_name(conv), *buffer);
+
+	return FALSE;
+}
+
+static void
+sent_im_msg_cb(GaimConversation *conv, const char *buffer, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "sent-im-msg (%s, %s)\n",
+			   gaim_conversation_get_name(conv), buffer);
+}
+
+static gboolean
+received_im_msg_cb(GaimAccount *account, GaimConversation *conv,
+				   char **sender, char **buffer, int *flags, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "received-im-msg (%s, %s, %s, %s, %d)\n",
+			   gaim_account_get_username(account),
+			   gaim_conversation_get_name(conv), *sender, *buffer, *flags);
+
+	return FALSE;
+}
+
+static gboolean
+displaying_chat_msg_cb(GaimConversation *conv, char **buffer, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "displaying-chat-msg (%s, %s)\n",
+			   gaim_conversation_get_name(conv), *buffer);
+
+	return FALES;
+}
+
+static void
+displayed_chat_msg_cb(GaimConversation *conv, const char *buffer, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "displayed-chat-msg (%s, %s)\n",
+			   gaim_conversation_get_name(conv), buffer);
+}
+
+static gboolean
+sending_chat_msg_cb(GaimConversation *conv, char **buffer, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "sending-chat-msg (%s, %s)\n",
+			   gaim_conversation_get_name(conv), *buffer);
+
+	return FALSE;
+}
+
+static void
+sent_chat_msg_cb(GaimConversation *conv, const char *buffer, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "sent-chat-msg (%s, %s)\n",
+			   gaim_conversation_get_name(conv), buffer);
+}
+
+static gboolean
+received_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
+					 char **sender, char **buffer, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "received-chat-msg (%s, %s, %s, %s)\n",
+			   gaim_account_get_username(account),
+			   gaim_conversation_get_name(conv), *sender, *buffer);
+
+	return FALSE;
+}
+
+static void
+conversation_switching_cb(GaimConversation *old_conv,
+						  GaimConversation *new_conv, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "conversation-switching (%s, %s)\n",
+			   gaim_conversation_get_name(old_conv),
+			   gaim_conversation_get_name(new_conv));
+}
+
+static void
+conversation_switched_cb(GaimConversation *old_conv,
+						 GaimConversation *new_conv, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "conversation-switched (%s, %s)\n",
+			   gaim_conversation_get_name(old_conv),
+			   gaim_conversation_get_name(new_conv));
+}
+
+static void
+conversation_created_cb(GaimConversation *conv, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "conversation-created (%s)\n",
+			   gaim_conversation_get_name(conv));
+}
+
+static void
+deleting_conversation_cb(GaimConversation *conv, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "deleting-conversation (%s)\n",
+			   gaim_conversation_get_name(conv));
+}
+
+static void
+buddy_typing_cb(GaimConversation *conv, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "buddy-typing (%s)\n",
+			   gaim_conversation_get_name(conv));
+}
+
+static void
+chat_buddy_joining_cb(GaimConversation *conv, const char *user, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "chat-buddy-joining (%s, %s)\n",
+			   gaim_conversation_get_name(conv), user);
+}
+
+static void
+chat_buddy_joined_cb(GaimConversation *conv, const char *user, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "chat-buddy-joined (%s, %s)\n",
+			   gaim_conversation_get_name(conv), user);
+}
+
+static void
+chat_buddy_leaving_cb(GaimConversation *conv, const char *user,
+					  const char *reason, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "chat-buddy-leaving (%s, %s, %s)\n",
+			   gaim_conversation_get_name(conv), user, reason);
+}
+
+static void
+chat_buddy_left_cb(GaimConversation *conv, const char *user,
+				   const char *reason, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "chat-buddy-left (%s, %s, %s)\n",
+			   gaim_conversation_get_name(conv), user, reason);
+}
+
+static void
+chat_inviting_user_cb(GaimConversation *conv, const char *name,
+					  const char *reason, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "chat-inviting-user (%s, %s, %s)\n",
+			   gaim_conversation_get_name(conv), name, reason);
+}
+
+static void
+chat_invited_user_cb(GaimConversation *conv, const char *name,
+					  const char *reason, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "chat-invited-user (%s, %s, %s)\n",
+			   gaim_conversation_get_name(conv), name, reason);
+}
+
+static void
+chat_invited_cb(GaimAccount *account, const char *inviter,
+				const char *room_name, const char *message, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "chat-invited (%s, %s, %s, %s)\n",
+			   gaim_account_get_username(account), inviter,
+			   room_name, message);
+}
+
+static void
+chat_joined_cb(GaimConversation *conv, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "chat-joined (%s)\n",
+			   gaim_conversation_get_name(conv));
+}
+
+static void
+chat_left_cb(GaimConversation *conv, void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "chat-left (%s)\n",
+			   gaim_conversation_get_name(conv));
+}
+
+/**************************************************************************
+ * Core signal callbacks
+ **************************************************************************/
+static void
+quitting_cb(void *data)
+{
+	gaim_debug(GAIM_DEBUG_MISC, "signals test",
+			   "quitting ()\n");
+}
+
+/**************************************************************************
+ * Plugin stuff
+ **************************************************************************/
+static gboolean
+plugin_load(GaimPlugin *plugin)
+{
+	void *core_handle = gaim_get_core();
+	void *blist_handle = gaim_blist_get_handle();
+	void *conn_handle = gaim_connections_get_handle();
+	void *conv_handle = gaim_conversations_get_handle();
+	void *accounts_handle = gaim_accounts_get_handle();
+
+	/* Accounts subsystem signals */
+	gaim_signal_connect(accounts_handle, "account-connecting",
+						plugin, GAIM_CALLBACK(account_connecting_cb), NULL);
+	gaim_signal_connect(accounts_handle, "account-away",
+						plugin, GAIM_CALLBACK(account_away_cb), NULL);
+	gaim_signal_connect(accounts_handle, "account-setting-info",
+						plugin, GAIM_CALLBACK(account_setting_info_cb), NULL);
+	gaim_signal_connect(accounts_handle, "account-set-info",
+						plugin, GAIM_CALLBACK(account_set_info_cb), NULL);
+	gaim_signal_connect(accounts_handle, "account-warned",
+						plugin, GAIM_CALLBACK(account_warned_cb), NULL);
+
+	/* Buddy List subsystem signals */
+	gaim_signal_connect(blist_handle, "buddy-away",
+						plugin, GAIM_CALLBACK(buddy_away_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-back",
+						plugin, GAIM_CALLBACK(buddy_back_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-idle",
+						plugin, GAIM_CALLBACK(buddy_idle_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-unidle",
+						plugin, GAIM_CALLBACK(buddy_unidle_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-signed-on",
+						plugin, GAIM_CALLBACK(buddy_signed_on_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-signed-off",
+						plugin, GAIM_CALLBACK(buddy_signed_off_cb), NULL);
+
+	/* Connection subsystem signals */
+	gaim_signal_connect(conn_handle, "signing-on",
+						plugin, GAIM_CALLBACK(signing_on_cb), NULL);
+	gaim_signal_connect(conn_handle, "signed-on",
+						plugin, GAIM_CALLBACK(signed_on_cb), NULL);
+	gaim_signal_connect(conn_handle, "signing-off",
+						plugin, GAIM_CALLBACK(signing_off_cb), NULL);
+	gaim_signal_connect(conn_handle, "signed-off",
+						plugin, GAIM_CALLBACK(signed_off_cb), NULL);
+
+	/* Conversations subsystem signals */
+	gaim_signal_connect(conv_handle, "displaying-im-msg",
+						plugin, GAIM_CALLBACK(displaying_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "displayed-img-msg",
+						plugin, GAIM_CALLBACK(displayed_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "sending-im-msg",
+						plugin, GAIM_CALLBACK(sending_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "sent-im-msg",
+						plugin, GAIM_CALLBACK(sent_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "received-im-msg",
+						plugin, GAIM_CALLBACK(received_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "displaying-chat-msg",
+						plugin, GAIM_CALLBACK(displaying_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "displayed-chat-msg",
+						plugin, GAIM_CALLBACK(displayed_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "sending-chat-msg",
+						plugin, GAIM_CALLBACK(sending_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "sent-chat-msg",
+						plugin, GAIM_CALLBACK(sent_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "received-chat-msg",
+						plugin, GAIM_CALLBACK(received_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "conversation-switching",
+						plugin, GAIM_CALLBACK(conversation_switching_cb), NULL);
+	gaim_signal_connect(conv_handle, "conversation-switched",
+						plugin, GAIM_CALLBACK(conversation_switched_cb), NULL);
+	gaim_signal_connect(conv_handle, "conversation-created",
+						plugin, GAIM_CALLBACK(conversation_created_cb), NULL);
+	gaim_signal_connect(conv_handle, "deleting-conversation",
+						plugin, GAIM_CALLBACK(deleting_conversation_cb), NULL);
+	gaim_signal_connect(conv_handle, "buddy-typing",
+						plugin, GAIM_CALLBACK(buddy_typing_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-buddy-joining",
+						plugin, GAIM_CALLBACK(chat_buddy_joining_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-buddy-joined",
+						plugin, GAIM_CALLBACK(chat_buddy_joined_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-buddy-leaving",
+						plugin, GAIM_CALLBACK(chat_buddy_leaving_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-buddy-left",
+						plugin, GAIM_CALLBACK(chat_buddy_left_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-inviting-user",
+						plugin, GAIM_CALLBACK(chat_inviting_user_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-invited-user",
+						plugin, GAIM_CALLBACK(chat_invited_user_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-invited",
+						plugin, GAIM_CALLBACK(chat_invited_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-joined",
+						plugin, GAIM_CALLBACK(chat_joined_cb), NULL);
+	gaim_signal_connect(conv_handle, "chat-left",
+						plugin, GAIM_CALLBACK(chat_left_cb), NULL);
+
+	/* Core signals */
+	gaim_signal_connect(core_handle, "quitting",
+						plugin, GAIM_CALLBACK(quitting_cb), NULL);
+
+	return TRUE;
+}
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	SIGNAL_TEST_PLUGIN_ID,                            /**< id             */
+	N_("Signals Test"),                               /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("Test to see that all signals are working properly."),
+	                                                  /**  description    */
+	N_("Test to see that all signals are working properly."),
+	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
+	GAIM_WEBSITE,                                     /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	NULL,                                             /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+init_plugin(GaimPlugin *plugin)
+{
+}
+
+GAIM_INIT_PLUGIN(signalstest, init_plugin, info)

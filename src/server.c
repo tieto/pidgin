@@ -28,6 +28,7 @@
 #include "prefs.h"
 #include "prpl.h"
 #include "request.h"
+#include "signals.h"
 #include "server.h"
 #include "sound.h"
 #include "util.h"
@@ -61,7 +62,8 @@ void serv_login(GaimAccount *account)
 				   PACKAGE " " VERSION " logging in %s using %s\n",
 				   account->username, p->info->name);
 
-		gaim_event_broadcast(event_connecting, account);
+		gaim_signal_emit(gaim_accounts_get_handle(),
+						 "account-connecting", account);
 		prpl_info->login(account);
 	}
 }
@@ -356,6 +358,7 @@ void serv_dir_search(GaimConnection *g, const char *first,
 void serv_set_away(GaimConnection *gc, const char *state, const char *message)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimAccount *account;
 
 	if (gc->away_state == NULL && state == NULL &&
 		gc->away == NULL && message == NULL) {
@@ -374,6 +377,8 @@ void serv_set_away(GaimConnection *gc, const char *state, const char *message)
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
+	account = gaim_connection_get_account(gc);
+
 	if (prpl_info && prpl_info->set_away) {
 		if (gc->away_state) {
 			g_free(gc->away_state);
@@ -386,8 +391,8 @@ void serv_set_away(GaimConnection *gc, const char *state, const char *message)
 			gc->away_state = g_strdup(state);
 		}
 
-		gaim_event_broadcast(event_away, gc, state, message);
-
+		gaim_signal_emit(gaim_accounts_get_handle(), "account-away",
+						 account, state, message);
 	}
 
 	/* New away message... Clear out the record of sent autoresponses */
@@ -411,15 +416,24 @@ void serv_set_away_all(const char *message)
 void serv_set_info(GaimConnection *g, const char *info)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimAccount *account;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->set_info) {
-		if (gaim_event_broadcast(event_set_info, g, info))
+	if (prpl_info && g_list_find(gaim_connections_get_all(), g) &&
+		prpl_info->set_info) {
+
+		account = gaim_connection_get_account(g);
+
+		if (gaim_signal_emit_return_1(gaim_accounts_get_handle(),
+									  "account-setting-info", account, info))
 			return;
 
 		prpl_info->set_info(g, info);
+
+		gaim_signal_emit(gaim_accounts_get_handle(),
+						 "account-set-info", account, info);
 	}
 }
 
@@ -678,15 +692,25 @@ void serv_join_chat(GaimConnection *g, GHashTable *data)
 void serv_chat_invite(GaimConnection *g, int id, const char *message, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConversation *conv;
 	char *buffy = message && *message ? g_strdup(message) : NULL;
+
+	conv = gaim_find_chat(g, id);
+
+	if (conv == NULL)
+		return;
 
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	gaim_event_broadcast(event_chat_send_invite, g, id, name, &buffy);
+	gaim_signal_emit(gaim_conversations_get_handle(), "chat-inviting-user",
+					 conv, name, &buffy);
 
 	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->chat_invite)
 		prpl_info->chat_invite(g, id, buffy, name);
+
+	gaim_signal_emit(gaim_conversations_get_handle(), "chat-invited-user",
+					 conv, name, buffy);
 
 	if (buffy)
 		g_free(buffy);
@@ -831,7 +855,11 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		buffy = g_malloc(MAX(strlen(msg) + 1, BUF_LONG));
 		strcpy(buffy, msg);
 		angel = g_strdup(who);
-		plugin_return = gaim_event_broadcast(event_im_recv, gc, &angel, &buffy, &flags);
+
+		plugin_return = GPOINTER_TO_INT(
+			gaim_signal_emit_return_1(gaim_conversations_get_handle(),
+									  "received-im-msg",
+									  cnv, &angel, &buffy, &flags));
 
 		if (!buffy || !angel || plugin_return) {
 			if (buffy)
@@ -1049,7 +1077,6 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		}
 	}
 
-	gaim_event_broadcast(event_im_displayed_rcvd, gc, name, message, flags, mtime);
 	g_free(name);
 	g_free(message);
 }
@@ -1097,11 +1124,11 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 	if (!b->idle && idle) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE);
-		gaim_event_broadcast(event_buddy_idle, gc, b->name);
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", account, b);
 		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
 	} else if (b->idle && !idle) {
 		gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_IDLE_RETURN);
-		gaim_event_broadcast(event_buddy_unidle, gc, b->name);
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", account, b);
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 
@@ -1194,8 +1221,12 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 void serv_got_eviled(GaimConnection *gc, const char *name, int lev)
 {
 	char buf2[1024];
+	GaimAccount *account;
 
-	gaim_event_broadcast(event_warned, gc, name, lev);
+	account = gaim_connection_get_account(gc);
+
+	gaim_signal_emit(gaim_accounts_get_handle(), "account-warned",
+					 account, name, lev);
 
 	if (gc->evil >= lev) {
 		gc->evil = lev;
@@ -1231,7 +1262,7 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 
 	b = gaim_find_buddy(gc->account, name);
 
-	gaim_event_broadcast(event_got_typing, gc, name);
+	gaim_signal_emit(gaim_conversations_get_handle(), "buddy-typing", cnv);
 
 	if (b != NULL) {
 		if (state == GAIM_TYPING)
@@ -1298,7 +1329,8 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 
 	account = gaim_connection_get_account(gc);
 
-	gaim_event_broadcast(event_chat_invited, gc, who, name, message);
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "chat-invited", account, who, name, message);
 
 	if (message)
 		g_snprintf(buf2, sizeof(buf2),
@@ -1321,25 +1353,28 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 											   int id, const char *name)
 {
-	GaimConversation *b;
+	GaimConversation *conv;
 	GaimChat *chat;
+	GaimAccount *account;
 
-	b = gaim_conversation_new(GAIM_CONV_CHAT, gc->account, name);
-	chat = GAIM_CHAT(b);
+	account = gaim_connection_get_account(gc);
 
-	gc->buddy_chats = g_slist_append(gc->buddy_chats, b);
+	conv = gaim_conversation_new(GAIM_CONV_CHAT, account, name);
+	chat = GAIM_CHAT(conv);
+
+	gc->buddy_chats = g_slist_append(gc->buddy_chats, conv);
 
 	gaim_chat_set_id(chat, id);
 
 	/* TODO Move this to UI logging code! */
 	if (gaim_prefs_get_bool("/gaim/gtk/logging/log_chats") ||
-		find_log_info(gaim_conversation_get_name(b))) {
+		find_log_info(gaim_conversation_get_name(conv))) {
 
 		FILE *fd;
 		char *filename;
 
 		filename = (char *)malloc(100);
-		g_snprintf(filename, 100, "%s.chat", gaim_conversation_get_name(b));
+		g_snprintf(filename, 100, "%s.chat", gaim_conversation_get_name(conv));
 
 		fd = open_log_file(filename, TRUE);
 		
@@ -1356,13 +1391,13 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 		free(filename);
 	}
 
-	gaim_window_show(gaim_conversation_get_window(b));
-	gaim_window_switch_conversation(gaim_conversation_get_window(b),
-									gaim_conversation_get_index(b));
+	gaim_window_show(gaim_conversation_get_window(conv));
+	gaim_window_switch_conversation(gaim_conversation_get_window(conv),
+									gaim_conversation_get_index(conv));
 
-	gaim_event_broadcast(event_chat_join, gc, id, name);
+	gaim_signal_emit(gaim_conversations_get_handle(), "chat-joined", conv);
 
-	return b;
+	return conv;
 }
 
 void serv_got_chat_left(GaimConnection *g, int id)
@@ -1370,6 +1405,9 @@ void serv_got_chat_left(GaimConnection *g, int id)
 	GSList *bcs;
 	GaimConversation *conv = NULL;
 	GaimChat *chat = NULL;
+	GaimAccount *account;
+
+	account = gaim_connection_get_account(g);
 
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 		conv = (GaimConversation *)bcs->data;
@@ -1385,7 +1423,7 @@ void serv_got_chat_left(GaimConnection *g, int id)
 	if (!conv)
 		return;
 
-	gaim_event_broadcast(event_chat_leave, g, gaim_chat_get_id(chat));
+	gaim_signal_emit(gaim_conversations_get_handle(), "chat-left", conv);
 
 	gaim_debug(GAIM_DEBUG_INFO, "server", "Leaving room: %s\n",
 			   gaim_conversation_get_name(conv));
@@ -1431,8 +1469,11 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
 	strcpy(buffy, message);
 	angel = g_strdup(who);
-	plugin_return = gaim_event_broadcast(event_chat_recv, g, gaim_chat_get_id(chat),
-								 &angel, &buffy);
+
+	plugin_return = GPOINTER_TO_INT(
+		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
+								  "received-chat-msg",
+								  conv, &angel, &buffy));
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)

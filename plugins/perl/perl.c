@@ -190,6 +190,70 @@ xs_init(pTHX)
 	newXS ("GAIM::play_sound", XS_GAIM_play_sound, "GAIM");
 }
 
+#if 0
+#define COMPARE_EVENT(evt, sig, h) \
+	if (!strcmp(event_name, (evt))) \
+	{ \
+		*signal_name = (sig); \
+		*handle = (h); \
+		return TRUE; \
+	}
+
+static gboolean
+convert_event_to_signal(const char *event_name, const char **signal_name,
+						void **handle)
+{
+	void *conn_handle    = gaim_connections_get_handle();
+	void *account_handle = gaim_accounts_get_handle();
+	void *conv_handle    = gaim_conversations_get_handle();
+	void *blist_handle   = gaim_get_blist();
+
+	COMPARE_EVENT("event_signon",  "signed-on",   conn_handle);
+	COMPARE_EVENT("event_signoff", "signed-off",  conn_handle);
+
+	COMPARE_EVENT("event_away",       "account-away",       account_handle);
+	COMPARE_EVENT("event_back",       "account-back",       account_handle);
+	COMPARE_EVENT("event_warned",     "account-warned",     account_handle);
+	COMPARE_EVENT("event_set_info",   "account-set-info",   account_handle);
+	COMPARE_EVENT("event_connecting", "account-connecting", account_handle);
+
+	COMPARE_EVENT("event_im_recv",          "received-im-msg",   conv_handle);
+	COMPARE_EVENT("event_im_send",          "sent-im-msg",       conv_handle);
+	COMPARE_EVENT("event_chat_invited",     "chat-invited",      conv_handle);
+	COMPARE_EVENT("event_chat_join",        "chat-joined",       conv_handle);
+	COMPARE_EVENT("event_chat_leave",       "chat-left",         conv_handle);
+	COMPARE_EVENT("event_chat_buddy_join",  "chat-buddy-joined", conv_handle);
+	COMPARE_EVENT("event_chat_buddy_leave", "chat-buddy-left",   conv_handle);
+	COMPARE_EVENT("event_chat_recv",        "received-chat-msg", conv_handle);
+	COMPARE_EVENT("event_chat_send",        "sent-chat-msg",     conv_handle);
+	COMPARE_EVENT("event_new_conversation", "conversation-created",
+				  conv_handle);
+	COMPARE_EVENT("event_im_displayed_sent", "sending-im-msg", conv_handle);
+	COMPARE_EVENT("event_im_displayed_rcvd", NULL, NULL);
+	COMPARE_EVENT("event_chat_send_invite", "chat-inviting-user", conv_handle);
+	COMPARE_EVENT("event_got_typing", "buddy-typing", conv_handle);
+	COMPARE_EVENT("event_del_conversation", "deleting-conversation",
+				  conv_handle);
+	COMPARE_EVENT("event_conversation_switch", "conversation-switched",
+				  conv_handle);
+
+	COMPARE_EVENT("event_buddy_signon",  "buddy-signed-on",  blist_handle);
+	COMPARE_EVENT("event_buddy_signoff", "buddy-signed-off", blist_handle);
+	COMPARE_EVENT("event_buddy_away",    "buddy-away",       blist_handle);
+	COMPARE_EVENT("event_buddy_back",    "buddy-back",       blist_handle);
+	COMPARE_EVENT("event_buddy_idle",    "buddy-idle",       blist_handle);
+	COMPARE_EVENT("event_buddy_unidle",  "buddy-unidle",     blist_handle);
+	COMPARE_EVENT("event_blist_update",  "update-idle",      blist_handle);
+
+	COMPARE_EVENT("event_quit", "quitting", gaim_get_core());
+
+	*signal_name = NULL;
+	*handle = NULL;
+
+	return FALSE;
+}
+#endif
+
 static char *
 escape_quotes(const char *buf)
 {
@@ -216,9 +280,9 @@ escape_quotes(const char *buf)
 
 /*
   2003/02/06: execute_perl modified by Mark Doliner <mark@kingant.net>
-		Pass parameters by pushing them onto the stack rather than 
-		passing an array of strings.  This way, perl scripts can 
-		modify the parameters and we can get the changed values 
+		Pass parameters by pushing them onto the stack rather than
+		passing an array of strings.  This way, perl scripts can
+		modify the parameters and we can get the changed values
 		and then shoot ourselves.  I mean, uh, use them.
 
   2001/06/14: execute_perl replaced by Martin Persson <mep@passagen.se>
@@ -227,10 +291,10 @@ escape_quotes(const char *buf)
 
   30/11/2002: execute_perl modified by Eric Timme <timothy@voidnet.com>
 		args changed to char** so that we can have preparsed
-  		arguments again, and many headaches ensued! This essentially 
-		means we replaced one hacked method with a messier hacked 
-		method out of perceived necessity. Formerly execute_perl 
-		required a single char_ptr, and it would insert it into an 
+  		arguments again, and many headaches ensued! This essentially
+		means we replaced one hacked method with a messier hacked
+		method out of perceived necessity. Formerly execute_perl
+		required a single char_ptr, and it would insert it into an
 		array of character pointers and NULL terminate the new array.
 		Now we have to pass in pre-terminated character pointer arrays
 		to accomodate functions that want to pass in multiple arguments.
@@ -238,7 +302,7 @@ escape_quotes(const char *buf)
 		Previously arguments were preparsed because an argument list
 		was constructed in the form 'arg one','arg two' and was
 		executed via a call like &funcname(arglist) (see .59.x), so
-		the arglist was magically pre-parsed because of the method. 
+		the arglist was magically pre-parsed because of the method.
 		With Martin Persson's change to perl_call we now need to
 		use a null terminated list of character pointers for arguments
 		if we wish them to be parsed. Lacking a better way to allow
@@ -255,7 +319,7 @@ escape_quotes(const char *buf)
 		of time.
 */
 
-static int 
+static int
 execute_perl(const char *function, int argc, char **args)
 {
 	int count = 0, i, ret_value = 1;
@@ -263,7 +327,7 @@ execute_perl(const char *function, int argc, char **args)
 	STRLEN na;
 
 	/*
-	 * Set up the perl environment, push arguments onto the 
+	 * Set up the perl environment, push arguments onto the
 	 * perl stack, then call the given function
 	 */
 	dSP;
@@ -351,7 +415,7 @@ perl_unload_file(GaimPlugin *plug)
 			g_free(scp->name);
 			g_free(scp->version);
 			g_free(scp->shutdowncallback);
-			g_free(scp);	
+			g_free(scp);
 
 			break;
 		}
@@ -414,7 +478,7 @@ perl_load_file(char *script_name, GaimPlugin *plugin)
 
 		return 0;
 	}
-	
+
 	return ret;
 }
 
@@ -432,7 +496,7 @@ perl_init(void)
 		   execute the string obtained from the first and holding
 		   the file conents. This allows to have a realy local $/
 		   without introducing temp variables to hold the old
-		   value. Just a question of style:) */ 
+		   value. Just a question of style:) */
 		"sub load_file{"
 		  "my $f_name=shift;"
 		  "local $/=undef;"
@@ -550,7 +614,7 @@ XS (XS_GAIM_register)
 		scp->name = g_strdup(name);
 		scp->version = g_strdup(ver);
 		scp->shutdowncallback = g_strdup(callback);
-		scp->plug = plug; 
+		scp->plug = plug;
 		perl_list = g_list_append(perl_list, scp);
 		XST_mPV(0, plug->path);
 	}
@@ -823,15 +887,15 @@ XS (XS_GAIM_write_to_conv)
 	send = SvIV(ST(1));
 	what = SvPV(ST(2), junk);
 	who = SvPV(ST(3), junk);
-	
+
 	if (!*who) who=NULL;
-	
+
 	switch (send) {
 		case 0: wflags=WFLAG_SEND; break;
 		case 1: wflags=WFLAG_RECV; break;
 		case 2: wflags=WFLAG_SYSTEM; break;
 		default: wflags=WFLAG_RECV;
-	}	
+	}
 
 	c = gaim_find_conversation(nick);
 
@@ -890,14 +954,14 @@ XS (XS_GAIM_print_to_conv)
 	else
 		gaim_conversation_set_account(c, gc->account);
 
-	gaim_conversation_write(c, NULL, what, -1, 
+	gaim_conversation_write(c, NULL, what, -1,
 				(WFLAG_SEND | (isauto ? WFLAG_AUTO : 0)), time(NULL));
 	serv_send_im(gc, nick, what, -1, isauto ? IM_FLAG_AWAY : 0);
 	XSRETURN(0);
 }
 
 
-	
+
 XS (XS_GAIM_print_to_chat)
 {
 	GaimConnection *gc;
@@ -931,6 +995,7 @@ XS (XS_GAIM_print_to_chat)
 	XSRETURN(0);
 }
 
+#if 0
 static int
 perl_event(GaimEvent event, void *unused, va_list args)
 {
@@ -1146,6 +1211,7 @@ perl_event(GaimEvent event, void *unused, va_list args)
 
 	return 0;
 }
+#endif
 
 XS (XS_GAIM_add_event_handler)
 {
@@ -1156,8 +1222,12 @@ XS (XS_GAIM_add_event_handler)
 	GList *p;
 	dXSARGS;
 	items = 0;
-	
+
 	handle = SvPV(ST(0), junk);
+
+	gaim_debug(GAIM_DEBUG_ERROR, "perl",
+			   "Ay, sorry matey. Ye perl scripts are getting "
+			   "events no more. Argh.\n");
 
 	for (p = gaim_plugins_get_all(); p != NULL; p = p->next) {
 		plug = p->data;
@@ -1180,7 +1250,7 @@ XS (XS_GAIM_add_event_handler)
 				   "Invalid handle (%s) registering perl event handler\n",
 				   handle);
 	}
-	
+
 	XSRETURN_EMPTY;
 }
 
@@ -1234,10 +1304,10 @@ XS (XS_GAIM_add_timeout_handler)
 	char *handle;
 	GaimPlugin *plug;
 	GList *p;
-	
+
 	dXSARGS;
 	items = 0;
-	
+
 	handle = SvPV(ST(0), junk);
 
 	for (p = gaim_plugins_get_all(); p != NULL; p = p->next) {
@@ -1293,7 +1363,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 
 	perl_construct(prober);
 	perl_parse(prober, xs_init, 2, argv, NULL);
-	
+
 	{
 		dSP;
 		ENTER;
@@ -1382,8 +1452,7 @@ static GaimPluginLoaderInfo loader_info =
 	probe_perl_plugin,                                /**< probe          */
 	load_perl_plugin,                                 /**< load           */
 	unload_perl_plugin,                               /**< unload         */
-	destroy_perl_plugin,                              /**< destroy        */
-	perl_event                                        /**< broadcast      */
+	destroy_perl_plugin                               /**< destroy        */
 };
 
 static GaimPluginInfo info =

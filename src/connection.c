@@ -29,6 +29,7 @@
 #include "prefs.h"
 #include "request.h"
 #include "server.h"
+#include "signals.h"
 #include "sound.h"
 #include "util.h"
 
@@ -36,6 +37,7 @@ static GList *connections = NULL;
 static GList *connections_connecting = NULL;
 static GaimConnectionUiOps *connection_ui_ops = NULL;
 
+static int connections_handle;
 
 GaimConnection *
 gaim_connection_new(GaimAccount *account)
@@ -151,6 +153,8 @@ gaim_connection_connect(GaimConnection *gc)
 
 	gaim_connection_set_state(gc, GAIM_CONNECTING);
 
+	gaim_signal_emit(gaim_connections_get_handle(), "signing-on", gc);
+
 	gaim_debug(GAIM_DEBUG_INFO, "connection", "Calling serv_login\n");
 
 	connections = g_list_append(connections, gc);
@@ -180,13 +184,16 @@ gaim_connection_disconnect(GaimConnection *gc)
 		if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
 			gaim_blist_remove_account(gaim_connection_get_account(gc));
 
+		gaim_signal_emit(gaim_connections_get_handle(), "signing-off", gc);
+
 		serv_close(gc);
 
 		connections = g_list_remove(connections, gc);
 
 		gaim_connection_set_state(gc, GAIM_DISCONNECTED);
 
-		gaim_event_broadcast(event_signoff, gc);
+		gaim_signal_emit(gaim_connections_get_handle(), "signed-off", gc);
+
 		system_log(log_signoff, gc, NULL,
 				   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
@@ -274,7 +281,8 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 									 GAIM_CONV_ACCOUNT_ONLINE);
 		}
 
-		gaim_event_broadcast(event_signon, gc);
+		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);
+
 		system_log(log_signon, gc, NULL,
 				   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
@@ -447,6 +455,29 @@ gaim_connections_get_connecting(void)
 }
 
 void
+gaim_connections_init(void)
+{
+	void *handle = gaim_connections_get_handle();
+
+	gaim_signal_register(handle, "signing-on",  gaim_marshal_VOID__POINTER);
+	gaim_signal_register(handle, "signed-on",   gaim_marshal_VOID__POINTER);
+	gaim_signal_register(handle, "signing-off", gaim_marshal_VOID__POINTER);
+	gaim_signal_register(handle, "signed-off",  gaim_marshal_VOID__POINTER);
+}
+
+void
+gaim_connections_uninit(void)
+{
+	gaim_signals_unregister_by_instance(gaim_connections_get_handle());
+}
+
+void *
+gaim_connections_get_handle(void)
+{
+	return &connections_handle;
+}
+
+void
 gaim_set_connection_ui_ops(GaimConnectionUiOps *ops)
 {
 	connection_ui_ops = ops;
@@ -457,4 +488,3 @@ gaim_get_connection_ui_ops(void)
 {
 	return connection_ui_ops;
 }
-

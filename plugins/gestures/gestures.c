@@ -2,7 +2,7 @@
  * Mouse gestures plugin for Gaim
  *
  * Copyright (C) 2003 Christian Hammond.
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
@@ -12,7 +12,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -23,6 +23,7 @@
 
 #include "debug.h"
 #include "prefs.h"
+#include "signals.h"
 
 #include "gtkconv.h"
 #include "gtkplugin.h"
@@ -127,16 +128,10 @@ attach_signals(GaimConversation *conv)
 }
 
 static void
-new_conv_cb(char *who)
+new_conv_cb(GaimConversation *conv)
 {
-	GaimConversation *conv;
-
-	conv = gaim_find_conversation(who);
-
-	if (conv == NULL || !GAIM_IS_GTK_CONVERSATION(conv))
-		return;
-
-	attach_signals(conv);
+	if (GAIM_IS_GTK_CONVERSATION(conv))
+		attach_signals(conv);
 }
 
 #if 0
@@ -178,7 +173,9 @@ plugin_load(GaimPlugin *plugin)
 		attach_signals(conv);
 	}
 
-	gaim_signal_connect(plugin, event_new_conversation, new_conv_cb, NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(),
+						"conversation-created",
+						plugin, GAIM_CALLBACK(new_conv_cb), NULL);
 
 	return TRUE;
 }

@@ -31,6 +31,7 @@
 #include "prefs.h"
 #include "privacy.h"
 #include "proxy.h"
+#include "signals.h"
 #include "sound.h"
 
 struct GaimCore
@@ -60,6 +61,11 @@ gaim_core_init(const char *ui)
 
 	ops = gaim_get_core_ui_ops();
 
+	/* The signals subsystem is important and should be first. */
+	gaim_signals_init();
+
+	gaim_signal_register(core, "quitting", gaim_marshal_VOID);
+
 	/* Initialize all static protocols. */
 	static_proto_init();
 
@@ -73,7 +79,10 @@ gaim_core_init(const char *ui)
 			ops->debug_ui_init();
 	}
 
-	gaim_conversation_init();
+	gaim_accounts_init();
+	gaim_connections_init();
+	gaim_conversations_init();
+	gaim_blist_init();
 	gaim_privacy_init();
 	gaim_pounces_init();
 	gaim_proxy_init();
@@ -100,7 +109,7 @@ gaim_core_quit(void)
 		ops->quit();
 
 	/* The self destruct sequence has been initiated */
-	gaim_event_broadcast(event_quit);
+	gaim_signal_emit(gaim_get_core(), "quitting");
 
 	/* Transmission ends */
 	gaim_connections_disconnect_all();
@@ -111,6 +120,13 @@ gaim_core_quit(void)
 
 	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
 	gaim_plugins_destroy_all();
+
+	gaim_blist_uninit();
+	gaim_conversations_uninit();
+	gaim_connections_uninit();
+	gaim_accounts_uninit();
+
+	gaim_signals_uninit();
 
 	if (core->ui != NULL) {
 		g_free(core->ui);

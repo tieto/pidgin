@@ -5,6 +5,7 @@
 #include "internal.h"
 
 #include "debug.h"
+#include "signals.h"
 #include "util.h"
 
 #include "gtkplugin.h"
@@ -24,7 +25,10 @@ static char *have_word(char *, int);
 static void substitute(char **, int, int, const char *);
 static GtkListStore *model;
 
-static void substitute_words(GaimConnection *gc, char *who, char **message, void *m) {
+static void
+substitute_words(GaimAccount *account, GaimConversation *conv,
+				 char **message, void *data)
+{
 	int i, l;
 	int word;
 	char *tmp;
@@ -258,7 +262,7 @@ static void add_selected_row_to_list(GtkTreeModel *model, GtkTreePath *path,
 	GSList **list = (GSList **)data;
 	*list = g_slist_append(*list, gtk_tree_path_copy(path) );
 }
-	
+
 
 static void remove_row(void *data1, gpointer data2)
 {
@@ -328,7 +332,7 @@ static void save_list()
 		g_free(name);
 		return;
 	}
-	rename(tempfilename, name);	
+	rename(tempfilename, name);
 	g_free(name);
 }
 
@@ -368,10 +372,14 @@ static void on_entry_changed(GtkEditable *editable, gpointer data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
+	void *conv_handle = gaim_conversations_get_handle();
+
 	load_conf();
 
-	gaim_signal_connect(plugin, event_im_send, substitute_words, NULL);
-	gaim_signal_connect(plugin, event_chat_send, substitute_words, NULL);
+	gaim_signal_connect(conv_handle, "sending-im-msg",
+						plugin, GAIM_CALLBACK(substitute_words), NULL);
+	gaim_signal_connect(conv_handle, "sending-chat-msg",
+						plugin, GAIM_CALLBACK(substitute_words), NULL);
 
 	return TRUE;
 }
@@ -390,7 +398,7 @@ get_config_frame(GaimPlugin *plugin)
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-	
+
 	vbox = gaim_gtk_make_frame(ret, _("Text Replacements"));
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
 	gtk_widget_set_size_request(vbox, 300, -1);
@@ -408,7 +416,7 @@ get_config_frame(GaimPlugin *plugin)
 	tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
 	/* gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree), TRUE); */
 	gtk_widget_set_size_request(tree, 260,200);
-	
+
 	renderer = gtk_cell_renderer_text_new ();
 	g_object_set (G_OBJECT (renderer),
 		"editable", TRUE,
@@ -459,7 +467,7 @@ get_config_frame(GaimPlugin *plugin)
 	hbox = gtk_hbox_new(FALSE, 2);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
-	
+
 	label = gtk_label_new_with_mnemonic(_("You _type:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 

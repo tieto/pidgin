@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003, Sean Egan <sean.egan@binghamton.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -610,6 +610,30 @@ void gaim_set_blist_ui_ops(struct gaim_blist_ui_ops *ops);
  * @return The UI operations structure.
  */
 struct gaim_blist_ui_ops *gaim_get_blist_ui_ops(void);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Buddy List Subsystem                                            */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the handle for the buddy list subsystem.
+ *
+ * @return The buddy list subsystem handle.
+ */
+void *gaim_blist_get_handle(void);
+
+/**
+ * Initializes the buddy list subsystem.
+ */
+void gaim_blist_init(void);
+
+/**
+ * Uninitializes the buddy list subsystem.
+ */
+void gaim_blist_uninit(void);
 
 /*@}*/
 

@@ -7,6 +7,7 @@
 
 #include "conversation.h"
 #include "debug.h"
+#include "signals.h"
 
 #include "gtkimhtml.h"
 #include "gtkplugin.h"
@@ -19,7 +20,7 @@ static int timestamp = 5 * 60 * 1000;
 
 static GSList *timestamp_timeouts;
 
-gboolean do_timestamp (gpointer data)
+static gboolean do_timestamp (gpointer data)
 {
 	GaimConversation *c = (GaimConversation *)data;
 	char *buf;
@@ -36,24 +37,23 @@ gboolean do_timestamp (gpointer data)
 	return TRUE;
 }
 
-void timestamp_new_convo(char *name)
+static void timestamp_new_convo(GaimConversation *conv)
 {
-	GaimConversation *c = gaim_find_conversation(name);
-	do_timestamp(c);
+	do_timestamp(conv);
 
 	timestamp_timeouts = g_slist_append(timestamp_timeouts,
-			GINT_TO_POINTER(g_timeout_add(timestamp, do_timestamp, c)));
+			GINT_TO_POINTER(g_timeout_add(timestamp, do_timestamp, conv)));
 
 }
 
 static void set_timestamp(GtkWidget *button, GtkWidget *spinner) {
 	int tm;
-       
+
 	tm = 0;
-	
+
 	tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 1, G_MAXINT);
 	gaim_debug(GAIM_DEBUG_MISC, "timestamp", "setting  time to %d mins\n", tm);
-	
+
 	tm = tm * 60 * 1000;
 
 	timestamp = tm;
@@ -67,7 +67,7 @@ get_config_frame(GaimPlugin *plugin)
 	GtkWidget *vbox, *hbox;
 	GtkAdjustment *adj;
 	GtkWidget *spinner, *button;
-	
+
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
@@ -80,21 +80,22 @@ get_config_frame(GaimPlugin *plugin)
 
 	label = gtk_label_new(_("Delay"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	
+
 	adj = (GtkAdjustment *)gtk_adjustment_new(timestamp/(60*1000), 1, G_MAXINT, 1, 0, 0);
 	spinner = gtk_spin_button_new(adj, 0, 0);
-        gtk_box_pack_start(GTK_BOX(hbox), spinner, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), spinner, TRUE, TRUE, 0);
 
-        label = gtk_label_new(_("minutes."));
-        gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	label = gtk_label_new(_("minutes."));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-        hbox = gtk_hbox_new(TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	hbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
-        button = gtk_button_new_with_mnemonic(_("_Apply"));
-        gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(set_timestamp), spinner);
-	
+	button = gtk_button_new_with_mnemonic(_("_Apply"));
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(set_timestamp), spinner);
+
 	gtk_widget_show_all(ret);
 	return ret;
 }
@@ -108,11 +109,12 @@ plugin_load(GaimPlugin *plugin)
 	timestamp_timeouts = NULL;
 	for (cnvs = gaim_get_conversations(); cnvs != NULL; cnvs = cnvs->next) {
 		c = cnvs->data;
-		timestamp_new_convo(c->name);
+		timestamp_new_convo(c);
 	}
 
-	gaim_signal_connect(plugin, event_new_conversation,
-						timestamp_new_convo, NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(),
+						"conversation-created",
+						plugin, GAIM_CALLBACK(timestamp_new_convo), NULL);
 
 	return TRUE;
 }
@@ -152,7 +154,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Adds iChat-style timestamps to conversations every N minutes."),
 	"Sean Egan <bj91704@binghamton.edu>",             /**< author         */
-	GAIM_WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,10 +26,10 @@
 #include "accountopt.h"
 #include "core.h"
 #include "debug.h"
-#include "event.h"
 #include "plugin.h"
 #include "prefs.h"
 #include "request.h"
+#include "signals.h"
 #include "util.h"
 
 #include "gaim-disclosure.h"
@@ -1821,8 +1821,10 @@ gaim_gtk_accounts_window_show(void)
 					 G_CALLBACK(close_accounts_cb), dialog);
 
 	/* Setup some gaim signal handlers. */
-	gaim_signal_connect(dialog, event_signon,  signed_on_off_cb, dialog);
-	gaim_signal_connect(dialog, event_signoff, signed_on_off_cb, dialog);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+						dialog, GAIM_CALLBACK(signed_on_off_cb), dialog);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						dialog, GAIM_CALLBACK(signed_on_off_cb), dialog);
 
 	gtk_widget_show(win);
 }

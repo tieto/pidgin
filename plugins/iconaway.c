@@ -1,6 +1,7 @@
 #include "gtkinternal.h"
 
 #include "conversation.h"
+#include "signals.h"
 
 #include "gtkconv.h"
 #include "gtkplugin.h"
@@ -17,10 +18,14 @@ G_MODULE_IMPORT GtkWidget *imaway;
 extern void applet_destroy_buddy();
 #endif
 
-void iconify_windows(GaimConnection *gc, char *state,
-					 char *message, void *data) {
+static void
+iconify_windows(GaimAccount *account, char *state, char *message, void *data)
+{
 	GaimWindow *win;
 	GList *windows;
+	GaimConnection *gc;
+
+	gc = gaim_account_get_connection(account);
 
 	if (!imaway || !gc->away)
 		return;
@@ -51,7 +56,8 @@ void iconify_windows(GaimConnection *gc, char *state,
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_signal_connect(plugin, event_away, iconify_windows, NULL);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-away",
+						plugin, GAIM_CALLBACK(iconify_windows), NULL);
 
 	return TRUE;
 }
@@ -78,7 +84,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Iconifies the buddy list and your conversations when you go away."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	GAIM_WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	NULL,                                             /**< unload         */

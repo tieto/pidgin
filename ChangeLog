@@ -1,5 +1,9 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
+version 0.68:
+	* Removed the old event system and replaced it with a much better
+	  signal system.
+
 version 0.67 (08/14/2003):
 	* Brought back the message notification plugin (Brian Tarricone)
 	  You'll need to reconfigure your settings for this plugin
