@@ -13,6 +13,8 @@ version 0.71
 	  the information doesn't exist if the profile is empty (parts by
 	  Nathan Poznick)
 	* Added startup notification support for window managers that support it.
+	* The protocol icon for an account in the accounts window will now
+	  "pulse" when signing the account on.
 	* Zephyr formatting fixes (Arun A Tharuvai)
 	* Zephyr can connect to chats (Karsten Huneycutt)
 	* SSL support can now be provided by third party plugins.

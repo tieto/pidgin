@@ -49,6 +49,7 @@ enum
 	COLUMN_AUTOLOGIN,
 	COLUMN_PROTOCOL,
 	COLUMN_DATA,
+	COLUMN_PULSE_DATA,
 	NUM_COLUMNS
 };
 
@@ -131,6 +132,17 @@ typedef struct
 	GtkWidget *proxy_pass_entry;
 
 } AccountPrefsDialog;
+
+typedef struct
+{
+	GdkPixbuf *online_pixbuf;
+	gboolean pulse_to_grey;
+	float pulse_value;
+	int timeout;
+	GaimAccount *account;
+	GtkTreeModel *model;
+
+} GaimGtkPulseData;
 
 
 static AccountsWindow *accounts_window = NULL;
@@ -1291,11 +1303,43 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 /**************************************************************************
  * Accounts Dialog
  **************************************************************************/
+static void
+account_pulse_update(GaimGtkPulseData *pulse_data)
+{
+	GdkPixbuf *pixbuf;
+	GtkTreeIter iter;
+	size_t index = g_list_index(gaim_accounts_get_all(), pulse_data->account);
+
+	if (gtk_tree_model_iter_nth_child(pulse_data->model, &iter, NULL, index))
+	{
+		pixbuf = gdk_pixbuf_copy(pulse_data->online_pixbuf);
+
+		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,
+										 pulse_data->pulse_value, FALSE);
+
+		if (pulse_data->pulse_to_grey)
+			pulse_data->pulse_value += 0.20;
+		else
+			pulse_data->pulse_value -= 0.20;
+
+		if (pulse_data->pulse_value >= 1)
+			pulse_data->pulse_to_grey = FALSE;
+		else if (pulse_data->pulse_value <= 0)
+			pulse_data->pulse_to_grey = TRUE;
+
+		gtk_list_store_set(GTK_LIST_STORE(pulse_data->model), &iter,
+						   COLUMN_ICON, pixbuf, -1);
+
+		if (pixbuf != NULL)
+			g_object_unref(G_OBJECT(pixbuf));
+	}
+}
 
 static void
 signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimGtkPulseData *pulse_data;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf, *scale = NULL;
@@ -1303,6 +1347,19 @@ signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 
 	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index))
 	{
+		gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
+						   COLUMN_PULSE_DATA, &pulse_data, -1);
+
+		if (pulse_data != NULL)
+		{
+			if (pulse_data->timeout > 0)
+				g_source_remove(pulse_data->timeout);
+
+			g_object_unref(G_OBJECT(pulse_data->online_pixbuf));
+
+			g_free(pulse_data);
+		}
+
 		pixbuf = create_prpl_icon(account);
 
 		if (pixbuf != NULL)
@@ -1317,6 +1374,7 @@ signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 		gtk_list_store_set(dialog->model, &iter,
 						   COLUMN_ICON, scale,
 						   COLUMN_ONLINE, gaim_account_is_connected(account),
+						   COLUMN_PULSE_DATA, NULL,
 						   -1);
 
 		if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
@@ -1581,6 +1639,7 @@ online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
 	GaimAccount *account;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
+	GaimGtkPulseData *pulse_data;
 	gboolean online;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
@@ -1589,10 +1648,44 @@ online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
 					   COLUMN_ONLINE, &online,
 					   -1);
 
-	if (online) {
+	if (online)
+	{
 		account->gc->wants_to_die = TRUE;
 		gaim_account_disconnect(account);
-	} else {
+	}
+	else
+	{
+		GdkPixbuf *pixbuf;
+
+		pulse_data = g_new0(GaimGtkPulseData, 1);
+		pulse_data->pulse_to_grey = TRUE;
+		pulse_data->pulse_value   = 0;
+		pulse_data->account       = account;
+		pulse_data->model         = model;
+
+		pixbuf = create_prpl_icon(account);
+
+		if (pixbuf != NULL)
+		{
+			pulse_data->online_pixbuf =
+				gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
+
+			g_object_unref(G_OBJECT(pixbuf));
+		}
+
+		if (pulse_data->online_pixbuf == NULL)
+		{
+			g_free(pulse_data);
+		}
+		else
+		{
+			pulse_data->timeout = g_timeout_add(100,
+					(GSourceFunc)account_pulse_update, pulse_data);
+
+			gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+							   COLUMN_PULSE_DATA, pulse_data);
+		}
+
 		gaim_account_connect(account);
 	}
 }
@@ -1758,7 +1851,8 @@ create_accounts_list(AccountsWindow *dialog)
 	dialog->model = gtk_list_store_new(NUM_COLUMNS,
 									   GDK_TYPE_PIXBUF, G_TYPE_STRING,
 									   G_TYPE_BOOLEAN, G_TYPE_BOOLEAN,
-									   G_TYPE_STRING, G_TYPE_POINTER);
+									   G_TYPE_STRING, G_TYPE_POINTER,
+									   G_TYPE_POINTER);
 
 	/* And now the actual treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
