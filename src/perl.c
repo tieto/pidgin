@@ -28,8 +28,7 @@
 #endif
 #undef PACKAGE
 
-/* #ifdef USE_PERL */
-#if 0
+#if 0 /* #ifdef USE_PERL */
 
 #include <EXTERN.h>
 #ifndef _SEM_SEMUN_UNDEFINED
@@ -51,7 +50,13 @@ struct perlscript {
 	char *shutdowncallback; /* bleh */
 };
 
+struct _perl_timeout_handlers {
+	char *handler_name;
+	gint iotag;
+};
+
 static GList *perl_list = NULL;
+static GList *perl_timeout_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
 
 XS (XS_AIM_register);			/* so far so good */
@@ -64,7 +69,7 @@ XS (XS_AIM_add_timeout_handler);	/* ok, this i can do */
 /* XS (XS_AIM_send_raw);		/* this i can do for toc, but for oscar... ? */
 XS (XS_AIM_command);			/* this should be easier */
 /* XS (XS_AIM_command_with_server);	/* FIXME: this should probably be removed */
-XS (XS_AIM_channel_list);		/* probably return conversation list */
+XS (XS_AIM_channel_list);		/* probably return conversation list (online buddies?) */
 /* XS (XS_AIM_server_list);		/* huh? does this apply? */
 XS (XS_AIM_user_list);			/* return the buddy list */
 /* XS (XS_AIM_user_info);		/* we'll see.... */
@@ -175,6 +180,7 @@ void perl_init(int autoload)
 void perl_end()
 {
 	struct perlscript *scp;
+	struct _perl_timeout_handlers *thn;
 
 	while (perl_list) {
 		scp = perl_list->data;
@@ -185,6 +191,14 @@ void perl_end()
 		g_free(scp->version);
 		g_free(scp->shutdowncallback);
 		g_free(scp);
+	}
+
+	while (perl_timeout_handlers) {
+		thn = perl_timeout_handlers->data;
+		perl_timeout_handlers = g_list_remove(perl_timeout_handlers, thn);
+		gtk_timeout_remove(thn->iotag);
+		g_free(thn->handler_name);
+		g_free(thn);
 	}
 
 	if (my_perl != NULL) {
@@ -221,8 +235,30 @@ XS (XS_AIM_register)
 /* XS (XS_AIM_add_command_handler);	/* once again, um... */
 /* XS (XS_AIM_add_print_handler);	/* can i really do this? */
 
+static int perl_timeout(struct _perl_timeout_handlers *handler)
+{
+	execute_perl(handler->handler_name, "");
+	perl_timeout_handlers = g_list_remove(perl_timeout_handlers, handler);
+	g_free(handler->handler_name);
+	g_free(handler);
+
+	return 0; /* returning zero removes the timeout handler */
+}
+
 XS (XS_AIM_add_timeout_handler)
 {
+	int junk;
+	long timeout;
+	struct _perl_timeout_handlers *handler;
+	dXSARGS;
+	items = 0;
+
+	handler = g_new0(struct _perl_timeout_handlers, 1);
+	timeout = atol(SvPV(ST(0), junk));
+	handler->handler_name = g_strdup(SvPV(ST(1), junk));
+	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
+	handler->iotag = gtk_timeout_add(timeout, (GtkFunction)perl_timeout, handler);
+	XSRETURN_EMPTY;
 }
 
 /* XS (XS_AIM_print);			/* how am i going to do this */
@@ -235,19 +271,19 @@ XS (XS_AIM_command)
 
 /* XS (XS_AIM_command_with_server);	/* FIXME: this should probably be removed */
 
-XS (XS_AIM_channel_list)
+XS (XS_AIM_channel_list)		/* online buddies? */
 {
 }
 
 /* XS (XS_AIM_server_list);		/* huh? does this apply? */
 
-XS (XS_AIM_user_list)
+XS (XS_AIM_user_list)			/* buddy list */
 {
 }
 
 /* XS (XS_AIM_user_info);		/* we'll see.... */
 
-XS (XS_AIM_ignore_list)
+XS (XS_AIM_ignore_list)			/* deny list */
 {
 }
 

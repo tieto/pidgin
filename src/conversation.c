@@ -452,21 +452,44 @@ void info_callback(GtkWidget *w, struct conversation *c)
 
 gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct conversation *c)
 {
-  int pos;
-  if(event->keyval==GDK_Return) {
-    if(!(event->state & GDK_SHIFT_MASK)
-		&& (general_options & OPT_GEN_ENTER_SENDS)) {
-      gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
-      //to stop the putting in of the enter character
-      gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-    } else {
-      gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
-      pos=gtk_editable_get_position(GTK_EDITABLE(entry));
-      gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
-    }
-  }
+	int pos;
+	if(event->keyval==GDK_Return) {
+		if(!(event->state & GDK_SHIFT_MASK)
+		   && (general_options & OPT_GEN_ENTER_SENDS)) {
+			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
+			//to stop the putting in of the enter character
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+		} else {
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			pos=gtk_editable_get_position(GTK_EDITABLE(entry));
+			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
+		}
+	} else if (event->state & GDK_CONTROL_MASK) {
+		switch (event->keyval) {
+		case 'i':
+			quiet_set(c->italic, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->italic)));
+			do_italic(c->italic, c->entry);
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			break;
+		case 'u': /* ctl-u is GDK_Clear, which clears the line */
+			quiet_set(c->underline, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->underline)));
+			do_underline(c->underline, c->entry);
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			break;
+		case 'b': /* ctl-b is GDK_Left, which moves backwards */
+			quiet_set(c->bold, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->bold)));
+			do_bold(c->bold, c->entry);
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			break;
+		case 's':
+			quiet_set(c->strike, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->strike)));
+			do_strike(c->strike, c->entry);
+			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			break;
+		}
+	}
 
-  return TRUE;
+	return TRUE;
 
 }
 
