@@ -96,6 +96,22 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Sep 20 2001 Rob Flynn <rob@marko.net> (0.44 release)
+- More sane scaling of buddy icons (intelligently scale to either 48x48 or 50x50 depending on icon)
+- Have you ever had it happen where you cancel a login and Gaim starts using all the available processing power? I think I fixed that.
+- Temporarily removed Jabber user registration, which wasn't working anyway.
+- Added a spiffy Help button
+- Wrote a plugin for all those people who miss having the chat rooms in their buddy lists (chatlist.so)
+- Updated libfaim
+- Added drop down selection to chat invitation
+- Improved the look of the chat invitation dialog
+- Improved the look of the proxy preferences
+- event_im_recv and event_im_display_rcvd passed whether the message received was auto-response (see SIGNALS)
+- IRC fixes (largly copied from X-Chat)
+- Internal change to how preferences are stored
+- Other bug fixes
+- Option to hide buddy icons
+
 * Thu Sep 06 2001 Rob Flynn <rob@marko.net> (0.43 release)
 - Updated German Translation (thanks Daniel Seifert)
 - Can change friendly name in MSN again
