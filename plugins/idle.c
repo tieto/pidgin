@@ -17,7 +17,7 @@
 static struct gaim_connection *gc = NULL;
 
 char *name() {
-	return "Idle Maker";
+	return "I'dle Mak'er";
 }
 
 char *description() {
