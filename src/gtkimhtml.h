@@ -129,6 +129,10 @@ GString*   gtk_imhtml_append_text      (GtkIMHtml        *imhtml,
 
 void       gtk_imhtml_clear            (GtkIMHtml        *imhtml);
 
+void       gtk_imhtml_page_up          (GtkIMHtml        *imhtml);
+
+void       gtk_imhtml_page_down        (GtkIMHtml        *imhtml);
+
 #ifdef __cplusplus
 }
 #endif

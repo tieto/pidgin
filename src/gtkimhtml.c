@@ -3477,3 +3477,31 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	if (GTK_WIDGET_REALIZED (GTK_WIDGET (imhtml)))
 		gdk_window_clear (GTK_LAYOUT (imhtml)->bin_window);
 }
+
+void
+gtk_imhtml_page_up (GtkIMHtml *imhtml)
+{
+	GtkAdjustment *vadj;
+
+	g_return_if_fail (imhtml != NULL);
+	g_return_if_fail (GTK_IS_IMHTML (imhtml));
+
+	vadj = GTK_LAYOUT (imhtml)->vadjustment;
+	gtk_adjustment_set_value (vadj, MAX (vadj->value - vadj->page_increment,
+					     vadj->lower));
+	gtk_signal_emit_by_name (GTK_OBJECT (vadj), "changed");
+}
+
+void
+gtk_imhtml_page_down (GtkIMHtml *imhtml)
+{
+	GtkAdjustment *vadj;
+
+	g_return_if_fail (imhtml != NULL);
+	g_return_if_fail (GTK_IS_IMHTML (imhtml));
+
+	vadj = GTK_LAYOUT (imhtml)->vadjustment;
+	gtk_adjustment_set_value (vadj, MIN (vadj->value + vadj->page_increment,
+					     vadj->upper - vadj->page_size));
+	gtk_signal_emit_by_name (GTK_OBJECT (vadj), "changed");
+}
