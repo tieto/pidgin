@@ -33,7 +33,7 @@ AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(socket strdup strstr atexit getaddrinfo)
 AC_TRY_COMPILE([#include <sys/types.h>
-#include <sys/socket.h>], typedef unsigned int socklen_t;, AC_DEFINE(NEED_SOCKLEN_T),)
+#include <sys/socket.h>], [socklen_t slen;],,[AC_DEFINE(NEED_SOCKLEN_T)])
 
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long , , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"] ) 
