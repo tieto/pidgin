@@ -2284,10 +2284,10 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	h = MAX(h, 38);
 
 #if GTK_CHECK_VERSION(2,2,0)
-	if( w > mon_size.width )
+	if (w > mon_size.width)
 	  w = mon_size.width - 10;
 
-	if( h > mon_size.height )
+	if (h > mon_size.height)
 	  h = mon_size.height - 10;
 #endif
 
@@ -4741,8 +4741,8 @@ create_prpl_icon(GaimAccount *account)
 	const char *protoname = NULL;
 	char buf[256];
 
-	g_return_val_if_fail( account != NULL, NULL);
-	
+	g_return_val_if_fail(account != NULL, NULL);
+
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
 	if (prpl != NULL) {

@@ -357,10 +357,10 @@ gaim_prpl_get_statuses(GaimAccount *account, GaimPresence *presence)
 	g_return_val_if_fail(presence != NULL, NULL);
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
-	
+
 	if (prpl == NULL)
 		return NULL;
-	
+
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info == NULL || prpl_info->status_types == NULL)
 		return NULL;
