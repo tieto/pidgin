@@ -404,7 +404,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 571 $"
+#define REVISION "gaim:$Revision: 579 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -764,6 +764,7 @@ extern void show_register_dialog();
 extern void show_set_info();
 extern void show_set_dir();
 extern void show_color_dialog(struct conversation *c, GtkWidget *color);
+extern void cancel_color(GtkWidget *widget, struct conversation *c);
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *, GtkWidget *);
@@ -771,6 +772,9 @@ extern void show_change_passwd();
 extern void do_import(GtkWidget *, void *);
 extern int bud_list_cache_exists();
 extern void show_smiley_dialog(struct conversation *, GtkWidget *);
+extern void close_smiley_dialog(GtkWidget *widget, struct conversation *c);
+extern void set_smiley_array(GtkWidget *widget, int smiley_type);
+extern void insert_smiley_text(GtkWidget *widget, struct conversation *c);
 
 extern void show_font_dialog(struct conversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, struct conversation *c);
