@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 3114 2002-03-28 18:22:49Z seanegan $
+ * $Id: gg.c 3358 2002-06-28 01:47:12Z jseymour $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -580,9 +580,9 @@ static void agg_close(struct gaim_connection *gc)
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
 	gg_logoff(gd->sess);
+	gd->own_status = GG_STATUS_NOT_AVAIL;
 	gg_free_session(gd->sess);
 	g_free(gc->proto_data);
-	gd->own_status = GG_STATUS_NOT_AVAIL;
 }
 
 static int agg_send_im(struct gaim_connection *gc, char *who, char *msg, int len, int flags)
