@@ -94,6 +94,8 @@ void serv_touch_idle(struct gaim_connection *gc)
 		serv_set_idle(gc, 0);
 	}
 	time(&gc->lastsent);
+	if (gc->is_auto_away)
+		check_idle(gc);
 }
 
 void serv_finish_login(struct gaim_connection *gc)
