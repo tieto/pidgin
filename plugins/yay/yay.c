@@ -62,6 +62,7 @@ struct yahoo_data {
 	GtkWidget *email_label;
 	char *active_id;
 	GList *conns;
+	gboolean logged_in;
 };
 
 static char *yahoo_name() {
@@ -270,6 +271,7 @@ static int yahoo_online(struct yahoo_session *sess, ...) {
 	account_online(gc);
 	serv_finish_login(gc);
 	yd->active_id = g_strdup(gc->username);
+	yd->logged_in = TRUE;
 }
 
 static void yahoo_pending(gpointer data, gint source, GdkInputCondition condition) {
@@ -444,6 +446,9 @@ static void gyahoo_add_buddy(struct gaim_connection *gc, char *name) {
 	struct group *g = find_group_by_buddy(gc, name);
 	char *group = NULL;
 
+	if (!yd->logged_in)
+		return;
+
 	if (g) {
 		group = g->name;
 	} else if (yd->sess && yd->sess->groups) {
@@ -454,7 +459,7 @@ static void gyahoo_add_buddy(struct gaim_connection *gc, char *name) {
 	}
 
 	if (group)
-		yahoo_add_buddy(yd->sess, yd->active_id, name, group, "");
+		yahoo_add_buddy(yd->sess, yd->active_id, group, name, "");
 }
 
 static void yahoo_add_buddies(struct gaim_connection *gc, GList *buddies) {
@@ -480,7 +485,7 @@ static void gyahoo_remove_buddy(struct gaim_connection *gc, char *name) {
 	}
 
 	if (group)
-		yahoo_remove_buddy(yd->sess, yd->active_id, name, group, "");
+		yahoo_remove_buddy(yd->sess, yd->active_id, group, name, "");
 }
 
 static char **yahoo_list_icon(int uc) {

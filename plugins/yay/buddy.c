@@ -48,7 +48,7 @@ int yahoo_add_buddy(struct yahoo_session *session, const char *active_id,
 		g_free(id);
 		return 0;
 	}
-	if (message && !(msg = yahoo_urlencode(message))) {
+	if (message && strlen(message) && !(msg = yahoo_urlencode(message))) {
 		g_free(grp);
 		g_free(bdy);
 		g_free(id);
@@ -109,7 +109,7 @@ int yahoo_remove_buddy(struct yahoo_session *session, const char *active_id,
 		g_free(id);
 		return 0;
 	}
-	if (message && !(msg = yahoo_urlencode(message))) {
+	if (message && strlen(message) && !(msg = yahoo_urlencode(message))) {
 		g_free(grp);
 		g_free(bdy);
 		g_free(id);
