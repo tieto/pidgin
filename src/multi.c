@@ -90,8 +90,10 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 	}
 	g_free(gc);
 	redo_convo_menus();
+#ifndef USE_APPLET
 	if (!connections && mainwindow)
 		gtk_widget_show(mainwindow);
+#endif
 }
 
 struct gaim_connection *find_gaim_conn_by_name(char *name) {

@@ -60,10 +60,12 @@ static void prefs_build_away(GtkWidget *);
 static void prefs_build_browser(GtkWidget *);
 static gint handle_delete(GtkWidget *, GdkEvent *, void *);
 static void delete_prefs(GtkWidget *, void *);
+void set_default_away(GtkWidget *, gpointer);
 
 static GtkWidget *prefdialog = NULL;
 static GtkWidget *debugbutton = NULL;
 GtkWidget *prefs_away_list = NULL;
+GtkWidget *prefs_away_menu = NULL;
 
 static void destdeb(GtkWidget *m, gpointer n)
 {
@@ -329,6 +331,8 @@ static void im_buttons_menu_init(GtkWidget *omenu)
 	gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_buttons_opt), (void *)OPT_DISP_CONV_BUTTON_TEXT);
 	gtk_widget_show(opt);
 	gtk_menu_append(GTK_MENU(menu), opt);
+
+	set_default_away(menu, (gpointer)default_away);
 
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(omenu));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
@@ -1059,6 +1063,50 @@ static void do_away_mess(GtkWidget *m, gpointer n)
 		do_away_message(NULL, gtk_object_get_user_data(GTK_OBJECT(i->data)));
 }
 
+static void set_auto_away(GtkWidget *w, GtkWidget *spin)
+{
+	auto_away = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spin));
+}
+
+void set_default_away(GtkWidget *w, gpointer i)
+{
+	int length = g_slist_length(away_messages);
+
+	if (away_messages == NULL)
+		default_away = 0;
+	else if ((int)i >= length)
+		default_away = length-1;
+	else
+		default_away = (int)i;
+}
+
+void default_away_menu_init(GtkWidget *omenu)
+{
+	GtkWidget *menu, *opt;
+	int index = 0;
+	GSList *awy = away_messages;
+	struct away_message *a;
+
+	menu = gtk_menu_new();
+
+	while (awy) {
+		a = (struct away_message *)awy->data;
+		opt = gtk_menu_item_new_with_label(a->name);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_default_away), (gpointer)index);
+		gtk_widget_show(opt);
+		gtk_menu_append(GTK_MENU(menu), opt);
+
+		awy = awy->next;
+		index++;
+	}
+
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(omenu));
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), default_away);
+}
+
+	
+
 static void away_page()
 {
 	GtkWidget *parent;
@@ -1072,6 +1120,8 @@ static void away_page()
 	GtkWidget *label;
 	GtkWidget *list_item;
 	GtkWidget *sep;
+	GtkObject *adjust;
+	GtkWidget *spin;
 	GSList *awy = away_messages;
 	struct away_message *a;
 	char buffer[BUF_LONG];
@@ -1177,12 +1227,44 @@ static void away_page()
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
 
-	hbox = gtk_hbox_new(TRUE, 0);
+	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, hbox);
+	gaim_button(_("Ignore new conversations when away   "), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, hbox);
 	gaim_button(_("Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, hbox);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	button = gaim_button(_("Auto Away after"), &general_options, OPT_GEN_AUTO_AWAY, hbox);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), spin);
+
+	adjust = gtk_adjustment_new(auto_away, 1, 1440, 1, 10, 10);
+	spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
+	gtk_widget_set_usize(spin, 50, -1);
+	if (!(general_options & OPT_GEN_AUTO_AWAY))
+		gtk_widget_set_sensitive(GTK_WIDGET(spin), FALSE);
+	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(adjust), "value-changed", GTK_SIGNAL_FUNC(set_auto_away), GTK_WIDGET(spin));
+	gtk_widget_show(spin);
+
+	label = gtk_label_new(_("minutes using"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	prefs_away_menu = gtk_option_menu_new();
+	if (!(general_options & OPT_GEN_AUTO_AWAY))
+		gtk_widget_set_sensitive(GTK_WIDGET(prefs_away_menu), FALSE);
+	default_away_menu_init(prefs_away_menu);
+	gtk_box_pack_start(GTK_BOX(hbox), prefs_away_menu, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), prefs_away_menu);
+	gtk_widget_show(prefs_away_menu);
 
 	gtk_widget_show(prefdialog);
 }
@@ -1477,6 +1559,7 @@ static gint handle_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 	prefs = NULL;
 	prefdialog = NULL;
 	debugbutton = NULL;
+	prefs_away_menu = NULL;
 	
         return FALSE;
 }
@@ -1488,6 +1571,7 @@ static void delete_prefs(GtkWidget *w, void *data)
 		gtk_widget_destroy(prefs);
 	}
 	prefs = NULL;
+	prefs_away_menu = NULL;
 }
       
 

@@ -396,6 +396,8 @@ extern GtkWidget *mainwindow;
 
 /* Globals in away.c */
 extern struct away_message *awaymessage;
+extern int default_away;
+extern int auto_away;
 extern GtkWidget *awaymenu;
 
 /* Globals in buddy.c */
@@ -426,6 +428,7 @@ extern int general_options;
 #define OPT_GEN_TIK_HACK          0x00100000
 #define OPT_GEN_CTL_SMILEYS       0x00200000
 /* #define OPT_GEN_KEEPALIVE         0x00400000 now OPT_USR_KEEPALV */
+#define OPT_GEN_AUTO_AWAY	  0x00800000
 
 extern int display_options;
 #define OPT_DISP_SHOW_TIME        0x00000001
@@ -693,7 +696,10 @@ extern void set_option(GtkWidget *, int *);
 extern void show_prefs();
 extern void show_debug(GtkObject *);
 extern void update_color(GtkWidget *, GtkWidget *);
+extern void set_default_away(GtkWidget *, gpointer);
+extern void default_away_menu_init(GtkWidget *);
 extern GtkWidget *prefs_away_list;
+extern GtkWidget *prefs_away_menu;
 extern GtkWidget *pref_fg_picture;
 extern GtkWidget *pref_bg_picture;
 

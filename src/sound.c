@@ -97,14 +97,18 @@ static void play_audio_file(char *file)
 		return;
 	}
 	fstat(fd, &info);
+	if (info.st_size < 24)
+		return;
 	buf = malloc(info.st_size + 1);
 	read(fd, buf, 24);
 	read(fd, buf, info.st_size - 24);
 	close(fd);
 
 	fd = open("/dev/audio", O_WRONLY | O_EXCL);
-	if (fd < 0)
+	if (fd < 0) {
+		free(buf);
 		return;
+	}
 	write(fd, buf, info.st_size - 24);
 	free(buf);
 	close(fd);
@@ -271,6 +275,31 @@ static int can_play_nas()
         return 0;
 }
 
+static int play_nas_file(char *file)
+{
+	struct stat stat_buf;
+	char *buf;
+	int ret;
+	int fd = open(file, O_RDONLY);
+	if (fd <= 0)
+		return 0;
+
+	if (!can_play_nas())
+		return 0;
+
+	if (stat(file, &stat_buf))
+		return 0;
+
+	if (!stat_buf.st_size)
+		return 0;
+
+	buf = malloc(stat_buf.st_size);
+	read(fd, buf, stat_buf.st_size);
+	ret = play_nas(buf, stat_buf.st_size);
+	free(buf);
+	return ret;
+}
+
 #endif
 
 void play_file(char *filename) {
@@ -296,7 +325,10 @@ void play_file(char *filename) {
 			_exit(0);
 #endif
 
-		/* FIXME : NAS (does anyone use this?) */
+#ifdef NAS_SOUND
+		if (play_nas_file(filenae))
+			_exit(0);
+#endif
 
 		if (can_play_audio()) {
 			play_audio_file(filename);

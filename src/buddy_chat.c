@@ -723,7 +723,7 @@ void show_new_buddy_chat(struct conversation *b)
 void handle_click_chat(GtkWidget *widget, GdkEventButton *event, struct chat_room *cr)
 {
         if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
-		/* FIXME */
+		/* FIXME : double click on chat in buddy list */
                 serv_join_chat(connections->data, cr->exchange, cr->name);
         }
 }

@@ -1180,7 +1180,7 @@ void do_set_dir(GtkWidget *widget, struct set_dir_dlg *b)
 	char *country = gtk_entry_get_text(GTK_ENTRY(b->country));
 
 
-	/* FIXME */
+	/* FIXME : set dir. not important */
         if (connections)
 		serv_set_dir(connections->data, first, middle, last, maiden, city, state, country, web);
 
@@ -1941,7 +1941,7 @@ void do_find_info(GtkWidget *w, struct findbyinfo *b)
 	state = gtk_entry_get_text(GTK_ENTRY(b->stateentry)); 
 	country = gtk_entry_get_text(GTK_ENTRY(b->countryentry)); 
 
-	/* FIXME */
+	/* FIXME : dir search. not sure if even works; not important */
 	if (connections)
 		serv_dir_search(connections->data, first, middle, last, maiden, city, state, country, "");
         destroy_dialog(NULL, b->window);
@@ -1953,7 +1953,7 @@ void do_find_email(GtkWidget *w, struct findbyemail *b)
 
 	email = gtk_entry_get_text(GTK_ENTRY(b->emailentry));
 	
-	/* FIXME */
+	/* FIXME : email search. not sure if even works; not important */
 	if (connections)
 		serv_dir_search(connections->data, "","","","","","","", email);
  
@@ -2799,7 +2799,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 			g_free (first);
 			return;
 		}
-		/* FIXME */
+		/* FIXME : import buddy list file. moderately important */
 		gc = connections->data;
         }
         else {

@@ -1750,7 +1750,8 @@ static void update_idle_time(struct buddy_show *bs) {
 		g_free(sotime);
 		g_free(itime);
 	} else {
-		/* FIXME */
+		/* FIXME : how do we do tooltips and idletime if 2 connections report a buddy?
+		 * keep in mind that we can't assume both connections are the same protocol */
 	}
 }
 

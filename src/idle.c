@@ -36,6 +36,9 @@
 #include "gaim.h"
 
 
+int auto_is_away = 0;
+
+
 gint check_idle(struct gaim_connection *gc)
 {
 	time_t t;
@@ -52,8 +55,6 @@ gint check_idle(struct gaim_connection *gc)
         
 	time(&t);
 
-	if (report_idle == 0)
-                return TRUE;
 
 #ifdef USE_SCREENSAVER
 	if (report_idle == IDLE_SCREENSAVER) {
@@ -67,6 +68,31 @@ gint check_idle(struct gaim_connection *gc)
 	} else
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->lastsent;
+
+	if ((general_options & OPT_GEN_AUTO_AWAY) && 
+	    (idle_time > (60 * auto_away)) &&
+	    (awaymessage == NULL) &&
+	    (auto_is_away == 0)) {
+		struct away_message *a;
+		set_default_away((GtkWidget*)NULL, (gpointer)default_away);
+		a = g_slist_nth_data(away_messages, default_away);
+		do_away_message((GtkWidget*)NULL, a);
+		auto_is_away = 1;
+	} else if (auto_is_away == 1 && awaymessage != NULL &&
+		   idle_time < 60*auto_away) {
+		do_im_back((GtkWidget*)NULL, (GtkWidget*)NULL);
+		auto_is_away = 0;
+	}
+	if (auto_is_away == 1 && awaymessage == NULL)
+		auto_is_away = 0;
+
+
+	/* If we're not reporting idle times to the server, still use Gaim
+	   usage for auto-away, but quit here so we don't report to the 
+	   server */
+	if (report_idle == 0) {
+		return TRUE;
+	}
 
 	if (idle_time > 600 && !gc->is_idle) { /* 10 minutes! */
 		debug_printf("setting %s idle %d seconds\n", gc->username, idle_time);
