@@ -212,7 +212,12 @@ extern GList *plugins;
 extern GList *callbacks;
 #endif
 
+#define EDIT_GC    0
+#define EDIT_GROUP 1
+#define EDIT_BUDDY 2
+
 struct buddy {
+	int edittype;
 	char name[80];
 	char show[80];
         int present;
@@ -222,6 +227,7 @@ struct buddy {
         int uc;
 	gushort caps; /* woohoo! */
 	void *proto_data; /* what a hack */
+	struct gaim_connection *gc; /* the connection it belongs to */
 };
 
 struct buddy_show {
@@ -270,8 +276,10 @@ struct away_message {
 };
 
 struct group {
+	int edittype;
 	char name[80];
 	GSList *members;
+	struct gaim_connection *gc; /* the connection it belongs to */
 };
 
 struct chat_room {

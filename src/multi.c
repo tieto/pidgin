@@ -53,6 +53,7 @@ struct mod_usr_opt {
 struct gaim_connection *new_gaim_conn(struct aim_user *user)
 {
 	struct gaim_connection *gc = g_new0(struct gaim_connection, 1);
+	gc->edittype = EDIT_GC;
 	gc->protocol = user->protocol;
 	gc->prpl = find_prpl(user->protocol);
 	g_snprintf(gc->username, sizeof(gc->username), "%s", user->username);

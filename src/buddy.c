@@ -475,6 +475,52 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 }
 
 
+static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpointer data)
+{
+	GtkCTreeNode *node;
+	GList *i;
+	int *type;
+	int row, column;
+	GtkWidget *menu;
+	GtkWidget *button;
+	
+	if (event->button != 3)
+		return TRUE;
+
+	if (!gtk_clist_get_selection_info(GTK_CLIST(edittree), event->x, event->y, &row, &column))
+		return TRUE;
+
+	node = gtk_ctree_node_nth(GTK_CTREE(edittree), row);
+	type = gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
+	if (*type == EDIT_GROUP) {
+		struct group *group = (struct group *)type;
+		menu = gtk_menu_new();
+
+		button = gtk_menu_item_new_with_label(_("Rename"));
+		/*
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(rename_group), node);
+		*/
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+
+		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+			       event->button, event->time);
+	} else if (*type == EDIT_BUDDY) {
+		struct buddy *b = (struct buddy *)type;
+		menu = gtk_menu_new();
+
+		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate",
+				   GTK_SIGNAL_FUNC(new_bp_callback), b->name);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+
+		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+			       event->button, event->time);
+	}
+}
+
 
 void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy *rem_b)
 {
@@ -587,35 +633,23 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 gboolean edit_drag_compare_func (GtkCTree *ctree, GtkCTreeNode *source_node,
 				 GtkCTreeNode *new_parent, GtkCTreeNode *new_sibling)
 {
-        gboolean leaf;
-	struct gaim_connection *gc, *pc;
-	char *source;
-	char *parent;
+	int *type;
 
-	gtk_ctree_get_node_info (ctree, source_node, &source,
-				 NULL, NULL, NULL, NULL, NULL, &leaf, NULL);
-
-	gc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), source_node);
+	type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), source_node);
 	
-	if (!strcmp(gc->username, source)) {
+	if (*type == EDIT_GC) {
 		if (!new_parent)
 			return TRUE;
-	} else if (leaf) {
+	} else if (*type == EDIT_BUDDY) {
 		if (new_parent) {
-			gtk_ctree_get_node_info (ctree, new_parent, &parent,
-						 NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-			pc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree),
-					new_parent);
-			if (strcmp(parent, pc->username))
+			type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), new_parent);
+			if (*type == EDIT_GROUP)
 				return TRUE;
 		}
 	} else /* group */ {
 		if (g_slist_length(connections) > 1 && new_parent) {
-			gtk_ctree_get_node_info (ctree, new_parent, &parent,
-						 NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-			pc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree),
-					new_parent);
-			if (!strcmp(parent, pc->username))
+			type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), new_parent);
+			if (*type == EDIT_GC)
 				return TRUE;
 		} else if (g_slist_length(connections) == 1 && !new_parent)
 			return TRUE;
@@ -703,101 +737,96 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
                  GtkCTreeNode *sibling, gpointer data)
 {
 	gboolean leaf;
-	char *source = "";
-	char *target1 = "";
-        char *target2 = "";
 	struct gaim_connection *gc, *pc = NULL, *sc = NULL;
+	int *ctype, *ptype, *stype;
 	
-	gc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), child);
+	ctype = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), child);
 	
-	gtk_ctree_get_node_info (ctree, child, &source,
-				 NULL, NULL, NULL, NULL, NULL, &leaf, NULL);
-	if (parent) {
-		gtk_ctree_get_node_info (ctree, parent, &target1,
-					 NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-		pc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), parent);
-	}
+	if (parent)
+		ptype = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), parent);
 
-	if (sibling) {
-		gtk_ctree_get_node_info (ctree, sibling, &target2,
-					 NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-		sc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), sibling);
-	}
+	if (sibling)
+		stype = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), sibling);
 
-	if (!strcmp(source, gc->username)) {
+	if (*ctype == EDIT_GC) {
 		/* not that it particularly matters which order the connections
 		 * are in, but just for debugging sake, i guess.... */
+		gc = (struct gaim_connection *)ctype;
 		connections = g_slist_remove(connections, gc);
 		if (sibling) {
-			int pos = g_slist_index(connections, sc);
+			int pos;
+			sc = (struct gaim_connection *)stype;
+			pos = g_slist_index(connections, sc);
 			if (pos)
 				connections = g_slist_insert(connections, gc, pos);
 			else
 				connections = g_slist_prepend(connections, gc);
 		} else
 			connections = g_slist_append(connections, gc);
-	} else if (leaf) {
+	} else if (*ctype == EDIT_BUDDY) {
 		/* we moved a buddy. hopefully we just changed groups or positions or something.
 		 * if we changed connections, we copy the buddy to the new connection. if the new
 		 * connection already had the buddy in its buddy list but in a different group,
 		 * we change the group that the buddy is in */
-		struct group *new_g, *old_g;
-		struct buddy *b, *s = NULL;
+		struct group *old_g, *new_g = (struct group *)ptype;
+		struct buddy *s = NULL, *buddy = (struct buddy *)ctype;
 		int pos;
 
-		if (gc != pc) {
+		if (buddy->gc != new_g->gc) {
 			/* we changed connections */
 			struct buddy *a;
 
-			a = find_buddy(pc, source);
+			a = find_buddy(new_g->gc, buddy->name);
 
 			if (a) {
 				/* the buddy is in the new connection, so we'll remove it from
 				 * its current group and add it to the proper group below */
 				struct group *og;
-				og = find_group_by_buddy(pc, source);
+				og = find_group_by_buddy(new_g->gc, buddy->name);
 				og->members = g_slist_remove(og->members, a);
 			} else {
 				/* we don't have this buddy yet; let's add him */
-				serv_add_buddy(pc, source);
+				serv_add_buddy(new_g->gc, buddy->name);
 			}
 		}
 
-		b = find_buddy(gc, source);
-		new_g = find_group(pc, target1);
-		old_g = find_group_by_buddy(gc, source);
+		old_g = find_group_by_buddy(buddy->gc, buddy->name);
 
-		if (gc == pc) /* this is the same connection, so we'll remove it from its old group */
-			old_g->members = g_slist_remove(old_g->members, b);
+		if (buddy->gc == new_g->gc)
+			/* this is the same connection, so we'll remove it from its old group */
+			old_g->members = g_slist_remove(old_g->members, buddy);
 
 		if (sibling) {
-			s = find_buddy(sc, target2);
+			s = (struct buddy *)stype;
 			pos = g_slist_index(new_g->members, s);
 			if (pos)
-				new_g->members = g_slist_insert(new_g->members, b, pos);
+				new_g->members = g_slist_insert(new_g->members, buddy, pos);
 			else
-				new_g->members = g_slist_prepend(new_g->members, b);
+				new_g->members = g_slist_prepend(new_g->members, buddy);
 		} else
-			new_g->members = g_slist_append(new_g->members, b);
+			new_g->members = g_slist_append(new_g->members, buddy);
 
-		if (pc != gc)
+		if (buddy->gc != new_g->gc)
 			build_edit_tree();
 	} else /* group */ {
 		/* move the group. if moving connections, copy the group, and each buddy in the
 		 * group. if the buddy exists in the new connection, leave it where it is. */
 
-		struct group *g, *g2;
+		struct group *g, *g2, *group;
 		int pos;
 
+		pc = (struct gaim_connection *)ptype;
+		group = (struct group *)ctype;
+
 		if (g_slist_length(connections) > 1) {
-			g = find_group(pc, source);
+			g = find_group(pc, group->name);
 			if (!g)
-				g = add_group(pc, source);
+				g = add_group(pc, group->name);
 
 			pc->groups = g_slist_remove(pc->groups, g);
 
 			if (sibling) {
-				g2 = find_group(pc, target2);
+				g2 = (struct group *)stype;
 				pos = g_slist_index(pc->groups, g2);
 				if (pos)
 					pc->groups = g_slist_insert(pc->groups, g, pos);
@@ -806,10 +835,10 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 			} else
 				pc->groups = g_slist_append(pc->groups, g);
 
-			if (pc != gc) {
+			if (pc != group->gc) {
 				GSList *mem;
 				struct buddy *b;
-				g2 = find_group(gc, source);
+				g2 = group;
 
 				mem = g2->members;
 				while (mem) {
@@ -822,12 +851,13 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 				build_edit_tree();
 			}
 		} else {
-			g = find_group(gc, source);
+			g = group;
+			gc = g->gc;
 
 			gc->groups = g_slist_remove(gc->groups, g);
 
 			if (sibling) {
-				g2 = find_group(gc, target2);
+				g2 = (struct group *)stype;
 				pos = g_slist_index(gc->groups, g2);
 				if (pos)
 					gc->groups = g_slist_insert(gc->groups, g, pos);
@@ -888,7 +918,7 @@ void build_edit_tree()
 						     NULL, text, 5, NULL, NULL,
 						     NULL, NULL, 0, 1);
 
-			gtk_ctree_node_set_row_data(GTK_CTREE(edittree), p, z);
+			gtk_ctree_node_set_row_data(GTK_CTREE(edittree), p, g);
 
 			n = NULL;
 			
@@ -904,7 +934,7 @@ void build_edit_tree()
 							  NULL, NULL,
 							  NULL, NULL, 1, 1);
 
-				gtk_ctree_node_set_row_data(GTK_CTREE(edittree), n, z);
+				gtk_ctree_node_set_row_data(GTK_CTREE(edittree), n, b);
 
 				mem = mem->next;
 				
@@ -937,6 +967,8 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 	if (!b)
 		return NULL;
 
+	b->edittype = EDIT_BUDDY;
+	b->gc = gc;
 	b->present = 0;
 
 	g_snprintf(b->name, sizeof(b->name), "%s", buddy);
@@ -962,6 +994,8 @@ struct group *add_group(struct gaim_connection *gc, char *group)
 	if (!g)
 		return NULL;
 
+	g->edittype = EDIT_GROUP;
+	g->gc = gc;
 	strncpy(g->name, group, sizeof(g->name));
         gc->groups = g_slist_append(gc->groups, g);
 
@@ -985,27 +1019,20 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 	struct buddy *b;
 	struct group *g;
 	struct gaim_connection *gc;
+	int *type;
 	GList *i;
 	
 	i = GTK_CLIST(edittree)->selection;
 	if (i) {
 		node = i->data;
-		gc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
+		type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
 
-		if (GTK_CTREE_ROW(node)->is_leaf) {
-                        gtk_ctree_get_node_info (GTK_CTREE(edittree), node, &bud,
-						 NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
-			b = find_buddy(gc, bud);
-			g = find_group_by_buddy(gc, bud);
-			remove_buddy(gc, g, b);
-		} else {
-			gtk_ctree_get_node_info (ctree, node, &grp,
-						NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-			if (strcmp(gc->username, grp)) {
-				g = find_group(gc, grp);
-				remove_group(gc, g);
-			}
+		if (*type == EDIT_BUDDY) {
+			b = (struct buddy *)type;
+			g = find_group_by_buddy(b->gc, b->name);
+			remove_buddy(b->gc, g, b);
+		} else if (*type == EDIT_GROUP) {
+			remove_group(((struct group *)type)->gc, (struct group *)type);
                 }
                 
                 build_edit_tree();
@@ -1067,17 +1094,24 @@ void add_buddy_callback(GtkWidget *widget, void *dummy)
 	GtkCTreeNode *node;
 	GList *i;
 	struct gaim_connection *gc = NULL;
+	int *type;
 
 	i = GTK_CLIST(edittree)->selection;
 	if (i) {
 		node = i->data;
-		gc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
+		type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
 
-		if (GTK_CTREE_ROW(node)->is_leaf) {
-			node = GTK_CTREE_ROW(node)->parent;
-		} else if (gc) {
-			gtk_ctree_get_node_info (GTK_CTREE(edittree), node, &grp,
-						 NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		if (*type == EDIT_BUDDY) {
+			struct buddy *b = (struct buddy *)type;
+			struct group *g = find_group_by_buddy(b->gc, b->name);
+			grp = g->name;
+			gc = b->gc;
+		} else if (*type == EDIT_GROUP) {
+			struct group *g = (struct group *)type;
+			grp = g->name;
+			gc = g->gc;
+		} else {
+			gc = (struct gaim_connection *)type;
 		}
 	}
 	show_add_buddy(gc, NULL, grp);
@@ -1089,11 +1123,18 @@ void add_group_callback(GtkWidget *widget, void *dummy)
 	GtkCTreeNode *node;
 	GList *i;
 	struct gaim_connection *gc = NULL;
+	int *type;
 
 	i = GTK_CLIST(edittree)->selection;
 	if (i) {
 		node = i->data;
-		gc = (struct gaim_connection *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
+		type = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
+		if (*type == EDIT_BUDDY)
+			gc = ((struct buddy *)type)->gc;
+		else if (*type == EDIT_GROUP)
+			gc = ((struct group *)type)->gc;
+		else
+			gc = (struct gaim_connection *)type;
 	}
 	show_add_group(gc);
 }
@@ -2300,6 +2341,8 @@ void show_buddy_list()
 	gtk_ctree_set_line_style (GTK_CTREE(edittree), GTK_CTREE_LINES_SOLID);
         gtk_ctree_set_expander_style(GTK_CTREE(edittree), GTK_CTREE_EXPANDER_SQUARE);
 	gtk_clist_set_reorderable(GTK_CLIST(edittree), TRUE);
+	gtk_signal_connect(GTK_OBJECT(edittree), "button_press_event",
+			   GTK_SIGNAL_FUNC(click_edit_tree), NULL);
 
 	gtk_ctree_set_drag_compare_func (GTK_CTREE(edittree),
                                       (GtkCTreeCompareDragFunc)edit_drag_compare_func);

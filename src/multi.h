@@ -27,6 +27,8 @@
 
 /* ok. now the fun begins. first we create a connection structure */
 struct gaim_connection {
+	int edittype;
+
 	/* we need to do either oscar or TOC */
 	/* we make this as an int in case if we want to add more protocols later */
 	int protocol;
