@@ -14,8 +14,6 @@ noinst_LIBRARIES = libgg.a
 libgg_a_SOURCES = libgg.c \
 		  libgg.h \
 		  common.c \
-		  iconv_string.c \
-		  iconv_string.h \
 		  gg.c
 
 libgg_a_CFLAGS = $(AM_CFLAGS)
@@ -29,8 +27,6 @@ noinst_LIBRARIES =
 libgg_la_SOURCES = libgg.c \
 		   libgg.h \
 		   common.c \
-		   iconv_string.c \
-		   iconv_string.h \
 		   gg.c
 
 endif

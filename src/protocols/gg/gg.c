@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 3850 2002-10-16 19:57:03Z hermanator $
+ * $Id: gg.c 4261 2002-12-08 23:29:45Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -42,13 +42,6 @@
 #include <time.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#ifdef HAVE_LANGINFO_CODESET
-#include <langinfo.h>
-#endif
-#ifdef HAVE_ICONV
-#include <iconv.h>
-#include "iconv_string.h"
-#endif
 /* Library from EKG (Eksperymentalny Klient Gadu-Gadu) */
 #include "libgg.h"
 #include "multi.h"
@@ -115,12 +108,7 @@ struct agg_http {
 
 static gchar *charset_convert(const gchar *locstr, const char *encsrc, const char *encdst)
 {
-#ifdef HAVE_ICONV
-	gchar *result = NULL;
-	if (iconv_string(encdst, encsrc, locstr, locstr + strlen(locstr) + 1, &result, NULL) >= 0)
-		return result;
-#endif
-	return g_strdup(locstr);
+	return (g_convert (locstr, strlen (locstr), encdst, encsrc, NULL, NULL, NULL));
 }
 
 static gboolean invalid_uin(const char *uin)
@@ -166,20 +154,6 @@ static gboolean allowed_uin(struct gaim_connection *gc, char *uin)
 		return TRUE;
 		break;
 	}
-}
-
-static const gchar *find_local_charset(void)
-{
-	const gchar *gg_localenc = g_getenv("GG_CHARSET");
-
-	if (gg_localenc == NULL) {
-#ifdef HAVE_LANGINFO_CODESET
-		gg_localenc = nl_langinfo(CODESET);
-#else
-		gg_localenc = "US-ASCII";
-#endif
-	}
-	return gg_localenc;
 }
 
 static char *handle_errcode(struct gaim_connection *gc, int errcode)
@@ -362,7 +336,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			g_snprintf(user, sizeof(user), "%lu", e->event.msg.sender);
 			if (!allowed_uin(gc, user))
 				break;
-			imsg = charset_convert(e->event.msg.message, "CP1250", find_local_charset());
+			imsg = charset_convert(e->event.msg.message, "CP1250", "UTF-8");
 			strip_linefeed(imsg);
 			/* e->event.msg.time - we don't know what this time is for */
 			serv_got_im(gc, user, imsg, 0, time(NULL), -1);
@@ -630,7 +604,7 @@ static int agg_send_im(struct gaim_connection *gc, char *who, char *msg, int len
 	}
 
 	if (strlen(msg) > 0) {
-		imsg = charset_convert(msg, find_local_charset(), "CP1250");
+		imsg = charset_convert(msg, "UTF-8", "CP1250");
 		if (gg_send_message(gd->sess, (flags & IM_FLAG_CHECKBOX)
 				    ? GG_CLASS_MSG : GG_CLASS_CHAT,
 				    strtol(who, (char **)NULL, 10), imsg) < 0)
@@ -709,7 +683,7 @@ static void search_results(struct gaim_connection *gc, gchar *webdata)
 		if (i % 8 == 0)
 			j = 0;
 
-		p = charset_convert(g_strstrip(webdata_tbl[i]), "CP1250", find_local_charset());
+		p = charset_convert(g_strstrip(webdata_tbl[i]), "CP1250", "UTF-8");
 
 		oldibuf = ibuf;
 
@@ -1114,9 +1088,9 @@ static void agg_dir_search(struct gaim_connection *gc, const char *first, const 
 		srch->request = g_strdup_printf("Mode=1&Email=%s", eemail);
 		g_free(eemail);
 	} else {
-		gchar *new_first = charset_convert(first, find_local_charset(), "CP1250");
-		gchar *new_last = charset_convert(last, find_local_charset(), "CP1250");
-		gchar *new_city = charset_convert(city, find_local_charset(), "CP1250");
+		gchar *new_first = charset_convert(first, "UTF-8", "CP1250");
+		gchar *new_last = charset_convert(last, "UTF-8", "CP1250");
+		gchar *new_city = charset_convert(city, "UTF-8", "CP1250");
 
 		gchar *enew_first = gg_urlencode(new_first);
 		gchar *enew_last = gg_urlencode(new_last);
@@ -1220,7 +1194,7 @@ static void agg_get_info(struct gaim_connection *gc, char *who)
 
 	/* If it's invalid uin then maybe it's nickname? */
 	if (invalid_uin(who)) {
-		gchar *new_who = charset_convert(who, find_local_charset(), "CP1250");
+		gchar *new_who = charset_convert(who, "UTF-8", "CP1250");
 		gchar *enew_who = gg_urlencode(new_who);
 		
 		g_free(new_who);
