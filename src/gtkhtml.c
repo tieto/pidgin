@@ -44,7 +44,7 @@
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 #include "pixmaps/dt_icon.xpm"
-#define MAX_SIZE                 7
+#define MAX_SIZE							7
 #define MIN_HTML_WIDTH_LINES     20
 #define MIN_HTML_HEIGHT_LINES    10
 #define BORDER_WIDTH             2
@@ -3076,7 +3076,7 @@ static void gtk_html_add_text(GtkHtml * html,
 
 	if (html->current_x == 0)
 	{
-		html->current_y += height + 3;
+		html->current_y += height + 6;
 		gdk_text_extents(cfont, text, 1, &lb, NULL, NULL, NULL, NULL);
 		html->current_x += (2 - lb);
 	}
