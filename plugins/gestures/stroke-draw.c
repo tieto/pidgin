@@ -57,6 +57,8 @@ record_stroke_segment (GtkWidget *widget)
   gint x, y;
   struct gstroke_metrics *metrics;
 
+  g_return_if_fail( widget != NULL );
+
   gtk_widget_get_pointer (widget, &x, &y);
 
   if (last_mouse_position.invalid)
@@ -95,10 +97,32 @@ record_stroke_segment (GtkWidget *widget)
 static gint
 gstroke_timeout (gpointer data)
 {
+  g_return_val_if_fail(data != NULL, FALSE);
   GtkWidget *widget = GTK_WIDGET (data);
   record_stroke_segment (widget);
 
   return TRUE;
+}
+
+static void gstroke_cancel(GdkEvent *event) 
+{
+	last_mouse_position.invalid = TRUE;
+
+	if (timer_id > 0)
+	    g_source_remove (timer_id);
+
+	timer_id = 0;
+
+	if( event != NULL )
+		gdk_pointer_ungrab (event->button.time);
+
+
+	if (gstroke_draw_strokes() && gstroke_disp != NULL) {
+	    /* get rid of the invisible stroke window */
+	    XUnmapWindow (gstroke_disp, gstroke_window);
+	    XFlush (gstroke_disp);
+	}
+
 }
 
 static gint
@@ -109,8 +133,15 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 
   switch (event->type) {
     case GDK_BUTTON_PRESS:
-      if (event->button.button != gstroke_get_mouse_button())
-        break;
+		if (event->button.button != gstroke_get_mouse_button()) {
+			/* Similar to the bug below catch when any other button is
+			 * clicked after the middle button is clicked (but possibly
+			 * not released)
+			 */
+			gstroke_cancel(event);	
+			original_widget = NULL;
+			break;
+		}
 
       original_widget = widget; /* remeber the widget where
                                    the stroke started */
@@ -133,25 +164,11 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
       if ((event->button.button != gstroke_get_mouse_button())
 	  || (original_widget == NULL)) {
 
-		  /* Nice bug when you hold down one button and press another. */
-		  /* We'll just cancel the gesture instead. */
-		  last_mouse_position.invalid = TRUE;
-		  original_widget = NULL;
-
-		  if (timer_id > 0)
-			  g_source_remove (timer_id);
-
-		  gdk_pointer_ungrab (event->button.time);
-		  timer_id = 0;
-
-		  if (gstroke_draw_strokes() && gstroke_disp != NULL) {
-			  /* get rid of the invisible stroke window */
-			  XUnmapWindow (gstroke_disp, gstroke_window);
-			  XFlush (gstroke_disp);
-		  }
-
-		  break;
-	  
+		/* Nice bug when you hold down one button and press another. */
+		/* We'll just cancel the gesture instead. */
+		gstroke_cancel(event);
+		original_widget = NULL;
+		break;
 	  }
 
       last_mouse_position.invalid = TRUE;

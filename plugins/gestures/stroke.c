@@ -190,6 +190,8 @@ _gstroke_record (gint x, gint y, struct gstroke_metrics *metrics)
   gint delx, dely;
   float ix, iy;
 
+  g_return_if_fail( metrics != NULL );
+
 #if 0
   printf ("%d:%d ", x, y); fflush (stdout);
 #endif
