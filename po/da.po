@@ -39,7 +39,7 @@ msgid "Hide Login Errors"
 msgstr "Skjul loginfejl"
 
 #: plugins/autorecon.c:245
-msgid "Restore Away State On Reconnent"
+msgid "Restore Away State On Reconnect"
 msgstr "Genskab fraværstilstand efter genetablering af forbindelse"
 
 #. *< api_version

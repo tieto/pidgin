@@ -66,7 +66,7 @@ msgid "Hide Login Errors"
 msgstr "Ocultar errores de conexión"
 
 #: plugins/autorecon.c:245
-msgid "Restore Away State On Reconnent"
+msgid "Restore Away State On Reconnect"
 msgstr "Restaurar el estado de ausencia al reconectarse"
 
 #. *< api_version

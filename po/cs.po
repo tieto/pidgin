@@ -31,7 +31,7 @@ msgid "Hide Login Errors"
 msgstr "Skrývat chyby přihlašování"
 
 #: plugins/autorecon.c:245
-msgid "Restore Away State On Reconnent"
+msgid "Restore Away State On Reconnect"
 msgstr "Obnovit stav nepřítomnosti po znovupřipojení"
 
 #. *< api_version

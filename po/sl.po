@@ -32,7 +32,7 @@ msgid "Hide Login Errors"
 msgstr "Skrij napake pri prijavljanju"
 
 #: plugins/autorecon.c:245
-msgid "Restore Away State On Reconnent"
+msgid "Restore Away State On Reconnect"
 msgstr "Ob ponovni povezavi prekini stanje odsotnosti"
 
 #  *< api_version

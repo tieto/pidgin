@@ -29,8 +29,8 @@ msgid "Hide Login Errors"
 msgstr "Hide Login Errors"
 
 #: plugins/autorecon.c:245
-msgid "Restore Away State On Reconnent"
-msgstr "Restore Away State On Reconnent"
+msgid "Restore Away State On Reconnect"
+msgstr "Restore Away State On Reconnect"
 
 #. *< api_version
 #. *< type

@@ -29,7 +29,7 @@ msgid "Hide Login Errors"
 msgstr "隐藏登录错误"
 
 #: plugins/autorecon.c:245
-msgid "Restore Away State On Reconnent"
+msgid "Restore Away State On Reconnect"
 msgstr "重新连接时恢复离开状态"
 
 #. *< api_version

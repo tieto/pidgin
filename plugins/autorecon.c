@@ -242,7 +242,7 @@ static GaimPluginPrefFrame *get_plugin_pref_frame(GaimPlugin *plugin) {
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(OPT_RESTORE_STATE,
-		_("Restore Away State On Reconnent"));
+		_("Restore Away State On Reconnect"));
 	gaim_plugin_pref_frame_add(frame, pref);
 
 	return frame;

@@ -31,7 +31,7 @@ msgid "Hide Login Errors"
 msgstr "Piilota sis‰‰nkirjautumis-virheet"
 
 #: plugins/autorecon.c:245
-msgid "Restore Away State On Reconnent"
+msgid "Restore Away State On Reconnect"
 msgstr "Palauta poissaolotila uudelleenyhdistett‰ess‰"
 
 #. *< api_version
