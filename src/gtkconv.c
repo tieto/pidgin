@@ -117,15 +117,6 @@ typedef struct
 
 static GtkWidget *invite_dialog = NULL;
 
-enum {
-	TARGET_XURL=0,
-	TARGET_URI_LIST,
-	TARGET_BLIST_NODE,
-	TARGET_STRING,
-	TARGET_NETSCAPE_URL,
-	TARGET_PLAIN_TEXT 
-};
-
 /* Prototypes. <-- because Paco-Paco hates this comment. */
 static void check_everything(GtkTextBuffer *buffer);
 static void set_toggle(GtkWidget *tb, gboolean active);
@@ -382,18 +373,14 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
 	char *buf, *buf2;
-	GtkTextIter start_iter, end_iter;
 	int limit;
 	GaimConnection *gc = gaim_conversation_get_gc(conv);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	gtk_text_buffer_get_start_iter(gtkconv->entry_buffer, &start_iter);
-	gtk_text_buffer_get_end_iter(gtkconv->entry_buffer, &end_iter);
-	buf2 = gtk_text_buffer_get_text(gtkconv->entry_buffer,
-									&start_iter, &end_iter, FALSE);
+	buf2 = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 
-	set_toggle(gtkconv->toolbar.bold,        FALSE);
+	/*	set_toggle(gtkconv->toolbar.bold,        FALSE);
 	set_toggle(gtkconv->toolbar.italic,      FALSE);
 	set_toggle(gtkconv->toolbar.underline,   FALSE);
 	set_toggle(gtkconv->toolbar.larger_size, FALSE);
@@ -403,7 +390,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 	set_toggle(gtkconv->toolbar.fgcolor,     FALSE);
 	set_toggle(gtkconv->toolbar.bgcolor,     FALSE);
 	set_toggle(gtkconv->toolbar.link,        FALSE);
-
+	*/
 	gtk_widget_grab_focus(gtkconv->entry);
 
 	limit = 32 * 1024; /* This will be done again in gaim_conv_im_send. *shrug* */
@@ -489,7 +476,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 
 	g_free(buf);
 
-	gtk_text_buffer_set_text(gtkconv->entry_buffer, "", -1);
+	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 }
 
 static void
@@ -2194,33 +2181,21 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 static void
 do_bold(GtkWidget *bold, GaimGtkConversation *gtkconv)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(bold)))
-		gaim_gtk_surround(gtkconv, "<B>", "</B>");
-	else
-		gaim_gtk_advance_past(gtkconv, "<B>", "</B>");
-
+	gtk_imhtml_toggle_bold(GTK_IMHTML(gtkconv->entry));
 	gtk_widget_grab_focus(gtkconv->entry);
 }
 
 static void
 do_italic(GtkWidget *italic, GaimGtkConversation *gtkconv)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(italic)))
-		gaim_gtk_surround(gtkconv, "<I>", "</I>");
-	else
-		gaim_gtk_advance_past(gtkconv, "<I>", "</I>");
-
+	gtk_imhtml_toggle_italic(GTK_IMHTML(gtkconv->entry));
 	gtk_widget_grab_focus(gtkconv->entry);
 }
 
 static void
 do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(underline)))
-		gaim_gtk_surround(gtkconv, "<U>", "</U>");
-	else
-		gaim_gtk_advance_past(gtkconv, "<U>", "</U>");
-
+	gtk_imhtml_toggle_underline(GTK_IMHTML(gtkconv->entry));
 	gtk_widget_grab_focus(gtkconv->entry);
 }
 
@@ -3703,10 +3678,10 @@ setup_im_pane(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-	gtkconv->entry_buffer = gtk_text_buffer_new(NULL);
+	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
+	gtk_imhtml_set_editable(GTK_IMHTML(gtkconv->entry), TRUE);
+	gtkconv->entry_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
-	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
-
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 			MAX(gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"),
@@ -3801,7 +3776,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 {
 	GaimConvWindow *win = conv->window;
 	GaimConversation *c;
-	gchar* uri;
 
 	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE)) {
 		GaimBlistNode *n = NULL;
@@ -3818,64 +3792,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		c = gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
 
 		gaim_conv_window_add_conversation(win, c);
-	}
-	if (info == TARGET_NETSCAPE_URL)
-	{
-		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-		gchar* p=(gchar*) sd->data;
-		gchar* q;
-		gchar* link;
-
-		if (p==NULL)
-			return;
-		g_strchomp(p);
-		q = strchr(p,'\n');
-		if (q==NULL)
-		{
-			link=g_strconcat("<a href=\"",p,"\">",p,"</a>",NULL);
-		}
-		else
-		{
-			uri = g_strndup(p,q-p);
-			q++;
-			link=g_strconcat("<a href=\"",uri,"\">",q,"</a>",NULL);
-			g_free(uri);
-		}
-		gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer), link, -1);
-		g_free(link);
-	}
-	if (info == TARGET_XURL)
-	{
-		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-		gchar* link;
-		uri=g_strdup((gchar*) sd->data);
-		g_strstrip(uri);
-		link=g_strconcat("<a href=\"",uri,"\">",uri,"</a>",NULL);
-		g_free(uri);
-		gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer), link, -1);
-		g_free(link);
-	}
-	if (info == TARGET_URI_LIST && (gchar*)sd->data != NULL 
-	&& g_ascii_strncasecmp((gchar*)sd->data,"file:",5)!=0)
-	{
-		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-		gchar *p, *q, *link;
-		q=g_strdup((gchar*) sd->data);
-		g_strstrip(q);
-		p=strchr(q,'\n');
-		if (p==NULL)
-		{
-			uri=g_strdup(q);	/* strdup'ing this to make it match the else */
-		}
-		else
-		{
-			uri=g_strndup(q,q-p);
-		}
-		g_free(q);
-		link=g_strconcat("<a href=\"",uri,"\">",uri,"</a>",NULL);
-		g_free(uri);
-		gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer), link, -1);
-		g_free(link);
 	}
 }
 
@@ -4025,13 +3941,10 @@ gaim_gtk_switch_conversation(GaimConvWindow *win, unsigned int index)
 
 static const GtkTargetEntry te[] =
 {
-	{"x-url/ftp", 0, TARGET_XURL},
-	{"x-url/http", 0, TARGET_XURL},
-	{"text/uri-list", 0, TARGET_URI_LIST},
-	{"GAIM_BLIST_NODE", 0, TARGET_BLIST_NODE},
-	{"STRING", 0, TARGET_STRING},
-	{"_NETSCAPE_URL", 0, TARGET_NETSCAPE_URL},
-	{"text/plain", 0, TARGET_PLAIN_TEXT}
+	{"text/plain", 0, 0},
+	{"text/uri-list", 0, 1},
+	{"GAIM_BLIST_NODE", 0, 2},
+	{"STRING", 0, 3}
 };
 
 static void
@@ -4105,15 +4018,20 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 				                  GTK_DEST_DEFAULT_DROP,
 						  te, sizeof(te) / sizeof(GtkTargetEntry),
 						  GDK_ACTION_DEFAULT | GDK_ACTION_COPY | GDK_ACTION_MOVE);
-		gtk_drag_dest_set(gtkconv->entry, 0,
-                			          te, sizeof(te) / sizeof(GtkTargetEntry),
-                			          GDK_ACTION_COPY);
+		gtk_drag_dest_set(gtkconv->entry,
+						  GTK_DEST_DEFAULT_MOTION |
+						  GTK_DEST_DEFAULT_DROP,
+						  te, sizeof(te) / sizeof(GtkTargetEntry),
+						  GDK_ACTION_COPY);
+
 		g_signal_connect(G_OBJECT(pane), "drag_data_received",
 						 G_CALLBACK(conv_dnd_recv), conv);
 		g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
 						 G_CALLBACK(conv_dnd_recv), conv);
+#if 0
 		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
 						 G_CALLBACK(conv_dnd_recv), conv);
+#endif
 
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 5);
