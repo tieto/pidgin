@@ -510,7 +510,7 @@ gchar *oscar_caps_to_string(guint caps)
 				break;
 			}
 			if (tmp)
-				g_string_append_printf(str, "%s%s", (bit == 1 ? "" : ", "), tmp);
+				g_string_append_printf(str, "%s%s", (*(str->str) == '\0' ? "" : ", "), tmp);
 		}
 		bit <<= 1;
 	}
@@ -3071,6 +3071,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			char *buf = g_malloc(st.st_size);
 			file = fopen(iconfile, "rb");
 			if (file) {
+				/* XXX - Use g_file_get_contents() */
 				int len = fread(buf, 1, st.st_size, file);
 				gaim_debug_info("oscar",
 						   "Sending buddy icon to %s (%d bytes, "
@@ -4395,6 +4396,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 			char *buf = g_malloc(st.st_size);
 			FILE *file = fopen(iconfile, "rb");
 			if (file) {
+				/* XXX - Use g_file_get_contents()? */
 				fread(buf, 1, st.st_size, file);
 				fclose(file);
 				gaim_debug_info("oscar",
@@ -5200,6 +5202,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			FILE *file = fopen(iconfile, "rb");
 			if (file) {
 				char *buf = g_malloc(st.st_size);
+				/* XXX - Use g_file_get_contents()? */
 				fread(buf, 1, st.st_size, file);
 				fclose(file);
 
@@ -6527,6 +6530,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 						char *buf = g_malloc(st.st_size);
 						FILE *file = fopen(iconfile, "rb");
 						if (file) {
+							/* XXX - Use g_file_get_contents()? */
 							fread(buf, 1, st.st_size, file);
 							fclose(file);
 							gaim_debug_info("oscar",
@@ -7033,6 +7037,7 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 		if (file) {
 			md5_state_t *state;
 			char md5[16];
+			/* XXX - Use g_file_get_contents()? */
 			int len = fread(buf, 1, st.st_size, file);
 			fclose(file);
 			state = g_malloc(sizeof(md5_state_t));
