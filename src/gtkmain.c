@@ -636,6 +636,7 @@ int main(int argc, char *argv[])
 	gaim_set_blist(gaim_blist_new());
 	gaim_blist_load();
 
+	/* TODO: Move prefs loading into gaim_prefs_init() */
 	gaim_prefs_load();
 	gaim_prefs_update_old();
 	gaim_gtk_prefs_update_old();
@@ -643,6 +644,7 @@ int main(int argc, char *argv[])
 	/* load plugins we had when we quit */
 	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
 
+	/* TODO: Move pounces loading into gaim_pounces_init() */
 	gaim_pounces_load();
 
 	ui_main();

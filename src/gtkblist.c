@@ -3128,7 +3128,14 @@ void gaim_gtk_blist_update_columns()
 	}
 }
 
-enum {DRAG_BUDDY, DRAG_ROW, DRAG_VCARD, DRAG_TEXT, DRAG_URI,NUM_TARGETS};
+enum {
+	DRAG_BUDDY,
+	DRAG_ROW,
+	DRAG_VCARD,
+	DRAG_TEXT,
+	DRAG_URI,
+	NUM_TARGETS
+};
 
 static char *
 item_factory_translate_func (const char *path, gpointer func_data)
@@ -3147,14 +3154,54 @@ void gaim_gtk_blist_setup_sort_methods()
 	gaim_gtk_blist_sort_method_set(gaim_prefs_get_string("/gaim/gtk/blist/sort_type"));
 }
 
-static void _prefs_change_redo_list() {
+static void _prefs_change_redo_list()
+{
 	redo_buddy_list(gaim_get_blist(), TRUE);
 }
 
 static void _prefs_change_sort_method(const char *pref_name, GaimPrefType type,
-		gpointer val, gpointer data) {
+		gpointer val, gpointer data)
+{
 	if(!strcmp(pref_name, "/gaim/gtk/blist/sort_type"))
 		gaim_gtk_blist_sort_method_set(val);
+}
+
+/*
+ * "This is so dead sexy."
+ * "Two thumbs up."
+ * "Best movie of the year."
+ *
+ * This is the function that handles CTRL+F searching in the buddy list.
+ * It finds the top-most buddy/group/chat/whatever containing the
+ * entered string.
+ *
+ * It's somewhat ineffecient, because we strip all the HTML from the
+ * "name" column of the buddy list (because the GtkTreeModel does not
+ * contain the screen name in a non-markedup format).  But the alternative
+ * is to add an extra column to the GtkTreeModel.  And this function is
+ * used rarely, so it shouldn't matter TOO much.
+ */
+static gboolean
+_search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *iter, gpointer search_data)
+{
+	gchar *enteredstring;
+	const gchar *withmarkup;
+	gchar *nomarkup;
+	const gchar *normalized;
+	gboolean result;
+
+	gtk_tree_model_get(model, iter, NAME_COLUMN, &withmarkup, -1);
+
+	enteredstring = g_strdup(gaim_normalize(NULL, key));
+	nomarkup = gaim_markup_strip_html(withmarkup);
+	normalized = gaim_normalize(NULL, nomarkup);
+
+	result = (g_strstr_len(normalized, strlen(normalized), enteredstring) == NULL);
+
+	g_free(enteredstring);
+	g_free(nomarkup);
+
+	return result;
 }
 
 static void gaim_gtk_blist_show(GaimBuddyList *list)
@@ -3232,10 +3279,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_widget_set_name(gtkblist->treeview, "gaim_gtkblist_treeview");
 
 	/* Set up selection stuff */
-
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
 	g_signal_connect(G_OBJECT(selection), "changed", G_CALLBACK(gaim_gtk_blist_selection_changed), NULL);
-
 
 	/* Set up dnd */
 	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview),
@@ -3247,7 +3292,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
  	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);
-	
+
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-motion", G_CALLBACK(gaim_gtk_blist_drag_motion_cb), NULL);
 
 	/* Tooltips */
@@ -3302,6 +3347,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* Enable CTRL+F searching */
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(gtkblist->treeview), NAME_COLUMN);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(gtkblist->treeview), _search_func, NULL, NULL);
 
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);

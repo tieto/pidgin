@@ -464,7 +464,11 @@ char *gaim_fd_get_ip(int fd);
  * g_strdup() it. Also, calling normalize() twice in the same line
  * will lead to problems.
  *
- * @param account  The account the string belongs to.
+ * @param account  The account the string belongs to, or NULL if you do
+ *                 not know the account.  If you use NULL, the string
+ *                 will still be normalized, but if the PRPL uses a
+ *                 custom normalization function then the string may
+ *                 not be normalized correctly.
  * @param str      The string to normalize.
  *
  * @return A pointer to the normalized version stored in a static buffer.

@@ -189,7 +189,7 @@ struct _GaimBlistUiOps
 			    gboolean show);            /**< Hides or unhides the buddy list */
 	void (*request_add_buddy)(GaimAccount *account, const char *username,
 							  const char *group, const char *alias);
-	void (*request_add_chat)(GaimAccount *account, GaimGroup *group, 
+	void (*request_add_chat)(GaimAccount *account, GaimGroup *group,
 							 const char *alias, const char *name);
 	void (*request_add_group)(void);
 };
