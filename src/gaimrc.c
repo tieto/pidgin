@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
+#include "prpl.h"
 
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
@@ -458,7 +459,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 
 	u->user_info[0] = 0;
 	u->options = OPT_USR_REM_PASS;
-	u->protocol = 0;	/* PROTO_TOC */
+	u->protocol = PROTO_TOC;
 
 	if (!fgets(buf, sizeof(buf), f))
 		return u;
