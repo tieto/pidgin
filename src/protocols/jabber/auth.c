@@ -150,6 +150,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	const char *pw = gaim_account_get_password(js->gc->account);
 
 	if(!type) {
+		gaim_connection_error(js->gc, _("Invalid response from server"));
 		return;
 	} else if(!strcmp(type, "error")) {
 		/* XXX: still need to handle XMPP-style errors */

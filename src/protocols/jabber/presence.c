@@ -162,7 +162,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jb->error_msg = NULL;
 	}
 
-	if(type && !strcasecmp(type, "error")) {
+	if(type && !strcmp(type, "error")) {
 		const char *code = NULL;
 		char *err_txt = NULL;
 
@@ -177,7 +177,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				_("Unknown Error in presence"));
 		if(err_txt)
 			g_free(err_txt);
-	} else if(type && !strcasecmp(type, "subscribe")) {
+	} else if(type && !strcmp(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
 		char *msg = g_strdup_printf(_("The user %s wants to add you to their buddy list."), from);
 		jap->gc = js->gc;
@@ -188,8 +188,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				_("Deny"), G_CALLBACK(deny_add_cb));
 		g_free(msg);
 		return;
-	} else if(type && (!strcmp(type, "subscribed") ||
-				!strcmp(type, "unsubscribed"))) {
+	} else if(type && !strcmp(type, "subscribed")) {
 		/* we've been allowed to see their presence, but we don't care */
 		return;
 	} else {
@@ -311,7 +310,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
 		}
 
-		if(type && !strcasecmp(type, "unavailable")) {
+		if(type && !strcmp(type, "unavailable")) {
 			if(!strcmp(jid->resource, chat->nick)) {
 				serv_got_chat_left(js->gc, chat->id);
 				jabber_chat_destroy(chat);
@@ -344,7 +343,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if(state == JABBER_STATE_ERROR ||
-				(type && !strcasecmp(type, "unavailable"))) {
+				(type && (!strcmp(type, "unavailable") ||
+						  !strcmp(type, "unsubscribed")))) {
 			jabber_buddy_remove_resource(jb, jid->resource);
 		} else {
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
