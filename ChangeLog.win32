@@ -1,11 +1,11 @@
-version 0.72:
+version 0.72 (10/31/2003):
 	* Fix for bug #808562 - LANG needs to be set before gtk_init, when 
 	  setting text widgets to RTL or LTR.
 	* New dll hell avoidance policies.. hopefully this time as many bases
 	  are covered as can be.
 	* Gtk-wimp is back (version 0.5.1). This version is supposed to be a
 	  lot more stable.
-	* Compatability issues with dropline gtk installers are resolved.
+	* Compatibility issues with dropline gtk installers are resolved.
 
 version 0.71 (10/09/2003):
 	* Gtk-wimp theme removed.
