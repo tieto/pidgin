@@ -284,6 +284,9 @@ void  gaim_blist_add_group (struct group *group, GaimBlistNode *node)
 		return;
 	}
 
+	/* if we're moving to overtop of ourselves, do nothing */
+	if((GaimBlistNode*)group == node)
+		return;
 
 	if (!node)
 		node = gaim_blist_get_last_sibling(gaimbuddylist->root);
