@@ -654,6 +654,7 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
                 imdialog = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_widget_set_usize(imdialog, 255, 105);
 		gtk_container_border_width(GTK_CONTAINER(imdialog), 5);
+		gtk_window_set_policy(GTK_WINDOW(imdialog), FALSE, FALSE, TRUE);
 		gtk_widget_show(imdialog);
 
 		bbox = gtk_hbox_new(TRUE, 10);
@@ -940,6 +941,7 @@ void show_new_bp(char *name)
         struct addbp *b = g_new0(struct addbp, 1);
         
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, FALSE, TRUE);
 	gtk_widget_show(b->window);
         dialogwindows = g_list_prepend(dialogwindows, b->window);
         bbox = gtk_hbox_new(TRUE, 10);
