@@ -94,7 +94,7 @@ faim_internal int aim_parse_locateerr(struct aim_session_t *sess,
 /*
  * Capability blocks.  
  */
-u_char aim_caps[6][16] = {
+u_char aim_caps[8][16] = {
   
   /* Buddy icon */
   {0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1, 
@@ -118,7 +118,15 @@ u_char aim_caps[6][16] = {
   
   /* Send file */
   {0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1, 
-   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}
+   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+
+  /* Saves stock portfolios */
+  {0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
+   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+
+  /* Games */
+  {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
+   0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
 };
 
 faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen)
@@ -126,21 +134,29 @@ faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen)
   u_short ret = 0;
   int y;
   int offset = 0;
+  int identified;
 
   while (offset < buflen) {
+    identified = 0;
     for(y=0; y < (sizeof(aim_caps)/0x10); y++) {
       if (memcmp(&aim_caps[y], capblock+offset, 0x10) == 0) {
 	switch(y) {
-	case 0: ret |= AIM_CAPS_BUDDYICON; break;
-	case 1: ret |= AIM_CAPS_VOICE; break;
-	case 2: ret |= AIM_CAPS_IMIMAGE; break;
-	case 3: ret |= AIM_CAPS_CHAT; break;
-	case 4: ret |= AIM_CAPS_GETFILE; break;
-	case 5: ret |= AIM_CAPS_SENDFILE; break;
-	default: ret |= 0xff00; break;
+	case 0: ret |= AIM_CAPS_BUDDYICON; identified++; break;
+	case 1: ret |= AIM_CAPS_VOICE; identified++; break;
+	case 2: ret |= AIM_CAPS_IMIMAGE; identified++; break;
+	case 3: ret |= AIM_CAPS_CHAT; identified++; break;
+	case 4: ret |= AIM_CAPS_GETFILE; identified++; break;
+	case 5: ret |= AIM_CAPS_SENDFILE; identified++; break;
+	case 6: ret |= AIM_CAPS_GAMES; identified++; break;
+	case 7: ret |= AIM_CAPS_SAVESTOCKS; identified++; break;
 	}
       }
     }
+    if (!identified) {
+      printf("faim: unknown capability!\n");
+      ret |= 0xff00;
+    }
+
     offset += 0x10;
   } 
   return ret;
@@ -176,6 +192,14 @@ faim_internal int aim_putcap(unsigned char *capblock, int buflen, u_short caps)
   if ((caps & AIM_CAPS_SENDFILE) && (offset < buflen)) {
     memcpy(capblock+offset, aim_caps[5], sizeof(aim_caps[5]));
     offset += sizeof(aim_caps[5]);
+  }
+  if ((caps & AIM_CAPS_GAMES) && (offset < buflen)) {
+    memcpy(capblock+offset, aim_caps[6], sizeof(aim_caps[6]));
+    offset += sizeof(aim_caps[6]);
+  }
+  if ((caps & AIM_CAPS_SAVESTOCKS) && (offset < buflen)) {
+    memcpy(capblock+offset, aim_caps[7], sizeof(aim_caps[7]));
+    offset += sizeof(aim_caps[7]);
   }
 
   return offset;

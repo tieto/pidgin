@@ -56,7 +56,8 @@
 #define USEROPT_SOCKSPORT 3
 
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
-		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
+		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON |
+		AIM_CAPS_GAMES | AIM_CAPS_SAVESTOCKS;
 
 struct oscar_data {
 	struct aim_session_t *sess;
@@ -248,6 +249,7 @@ static int gaim_reportinterval   (struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_msgerr     (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_buddyrights(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_locerr     (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_genericerr (struct aim_session_t *, struct command_rx_struct *, ...);
 
 static int gaim_directim_initiate  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_directim_incoming  (struct aim_session_t *, struct command_rx_struct *, ...);
@@ -561,6 +563,9 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_CTN, AIM_CB_CTN_DEFAULT, aim_parse_unknown, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DEFAULT, aim_parse_unknown, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
+	aim_conn_addhandler(sess, bosconn, 0x0001, 0x0001, gaim_parse_genericerr, 0);
+	aim_conn_addhandler(sess, bosconn, 0x0003, 0x0001, gaim_parse_genericerr, 0);
+	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0001, gaim_parse_genericerr, 0);
 
 	aim_auth_sendcookie(sess, bosconn, cookie);
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
@@ -1224,6 +1229,20 @@ int gaim_parse_misses(struct aim_session_t *sess,
 	return 1;
 }
 
+int gaim_parse_genericerr(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	unsigned short reason;
+
+	va_start(ap, command);
+	reason = va_arg(ap, int);
+	va_end(ap);
+
+	debug_printf("snac threw error (reason 0x%04x: %s\n", reason,
+			(reason < msgerrreasonlen) ? msgerrreason[reason] : "unknown");
+
+	return 1;
+}
+
 int gaim_parse_msgerr(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	va_list ap;
@@ -1519,12 +1538,12 @@ int gaim_parse_ratechange(struct aim_session_t *sess, struct command_rx_struct *
 				 "limit cleared"};
 	va_list ap;
 	int code;
-	unsigned long parmid, windowsize, clear, alert, limit, disconnect;
+	unsigned long rateclass, windowsize, clear, alert, limit, disconnect;
 	unsigned long currentavg, maxavg;
 
 	va_start(ap, command); 
 	code = va_arg(ap, int);
-	parmid = va_arg(ap, int);
+	rateclass= va_arg(ap, int);
 	windowsize = va_arg(ap, unsigned long);
 	clear = va_arg(ap, unsigned long);
 	alert = va_arg(ap, unsigned long);
@@ -1537,7 +1556,7 @@ int gaim_parse_ratechange(struct aim_session_t *sess, struct command_rx_struct *
 	debug_printf("rate %s (paramid 0x%04lx): curavg = %ld, maxavg = %ld, alert at %ld, "
 		     "clear warning at %ld, limit at %ld, disconnect at %ld (window size = %ld)\n",
 		     (code < 5) ? codes[code] : codes[0],
-		     parmid,
+		     rateclass,
 		     currentavg, maxavg,
 		     alert, clear,
 		     limit, disconnect,
@@ -1559,14 +1578,16 @@ int gaim_parse_ratechange(struct aim_session_t *sess, struct command_rx_struct *
 
 int gaim_parse_evilnotify(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;
-	char *sn;
+	int newevil;
+	struct aim_userinfo_s *userinfo;
 	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
 	va_start(ap, command);
-	sn = va_arg(ap, char *);
+	newevil = va_arg(ap, int);
+	userinfo = va_arg(ap, struct aim_userinfo_s *);
 	va_end(ap);
 
-	serv_got_eviled(gc, sn, 0);
+	serv_got_eviled(gc, (userinfo && userinfo->sn[0]) ? userinfo->sn : NULL, newevil / 10);
 
 	return 1;
 }

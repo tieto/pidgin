@@ -401,6 +401,7 @@ void Yahoo_init(struct prpl *ret) {
 	ret->name = yahoo_name;
 	ret->list_icon = yahoo_list_icon;
 	ret->action_menu = yahoo_action_menu;
+	ret->user_opts = NULL;
 	ret->login = yahoo_login;
 	ret->close = yahoo_close;
 	ret->send_im = yahoo_send_im;

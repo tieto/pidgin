@@ -128,6 +128,8 @@
  * SNAC Family: Misc BOS Services.
  */ 
 #define AIM_CB_BOS_ERROR 0x0001
+#define AIM_CB_BOS_RIGHTSQUERY 0x0002
+#define AIM_CB_BOS_RIGHTS 0x0003
 #define AIM_CB_BOS_DEFAULT 0xffff
 
 /*

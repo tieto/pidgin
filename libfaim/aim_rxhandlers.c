@@ -480,7 +480,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_DEFAULT, workingPtr);
 	  }
 	  break;
-	case 0x0004: /* Family: Messeging */
+	case 0x0004: /* Family: Messaging */
 	  switch (subtype) {
 	  case 0x0001:
 	    workingPtr->handled = aim_parse_msgerror_middle(sess, workingPtr);
@@ -531,6 +531,10 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x000b, 0x0002, workingPtr);
 	  else
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_STS, AIM_CB_STS_DEFAULT, workingPtr);
+	  break;
+	}
+	case 0x0013: {
+	  printf("lalala: 0x%04x/0x%04x\n", family, subtype);
 	  break;
 	}
 	case AIM_CB_FAM_SPECIAL: 
@@ -655,13 +659,62 @@ faim_internal int aim_parse_msgack_middle(struct aim_session_t *sess, struct com
   return ret;
 }
 
+/*
+ * The Rate Limiting System, An Abridged Guide to Nonsense.
+ *
+ * OSCAR defines several 'rate classes'.  Each class has seperate
+ * rate limiting properties (limit level, alert level, disconnect
+ * level, etc), and a set of SNAC family/type pairs associated with
+ * it.  The rate classes, their limiting properties, and the definitions
+ * of which SNACs are belong to which class, are defined in the
+ * Rate Response packet at login to each host.  
+ *
+ * Logically, all rate offenses within one class count against further
+ * offenses for other SNACs in the same class (ie, sending messages
+ * too fast will limit the number of user info requests you can send,
+ * since those two SNACs are in the same rate class).
+ *
+ * Since the rate classes are defined dynamically at login, the values
+ * below may change. But they seem to be fairly constant.
+ *
+ * Currently, BOS defines five rate classes, with the commonly used
+ * members as follows...
+ *
+ *  Rate class 0x0001:
+ *  	- Everything thats not in any of the other classes
+ *
+ *  Rate class 0x0002:
+ * 	- Buddy list add/remove
+ *	- Permit list add/remove
+ *	- Deny list add/remove
+ *
+ *  Rate class 0x0003:
+ *	- User information requests
+ *	- Outgoing ICBMs
+ *
+ *  Rate class 0x0004:
+ *	- A few unknowns: 2/9, 2/b, and f/2
+ *
+ *  Rate class 0x0005:
+ *	- Chat room create
+ *	- Outgoing chat ICBMs
+ *
+ * The only other thing of note is that class 5 (chat) has slightly looser
+ * limiting properties than class 3 (normal messages).  But thats just a 
+ * small bit of trivia for you.
+ *
+ * The last thing that needs to be learned about the rate limiting
+ * system is how the actual numbers relate to the passing of time.  This
+ * seems to be a big mystery.
+ * 
+ */
 faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command)
 {
   rxcallback_t userfunc = NULL;
   int ret = 1;
   int i;
   int code;
-  unsigned long parmid, windowsize, clear, alert, limit, disconnect;
+  unsigned long rateclass, windowsize, clear, alert, limit, disconnect;
   unsigned long currentavg, maxavg;
 
   i = 10;
@@ -669,7 +722,7 @@ faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct
   code = aimutil_get16(command->data+i);
   i += 2;
 
-  parmid = aimutil_get16(command->data+i);
+  rateclass = aimutil_get16(command->data+i);
   i += 2;
 
   windowsize = aimutil_get32(command->data+i);
@@ -688,7 +741,7 @@ faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct
   i += 4;
 
   if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x000a)))
-    ret =  userfunc(sess, command, code, parmid, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
+    ret =  userfunc(sess, command, code, rateclass, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
 
   return ret;
 }
@@ -696,25 +749,22 @@ faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct
 faim_internal int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_struct *command)
 {
   rxcallback_t userfunc = NULL;
-  int ret = 1, pos;
-  char *sn = NULL;
+  int ret = 1;
+  int i;
+  unsigned short newevil;
+  struct aim_userinfo_s userinfo;
 
-  if(command->commandlen < 12) /* a warning level dec sends this */
-    return 1;
+  i = 10;
+  newevil = aimutil_get16(command->data+10);
+  i += 2;
 
-  if ((pos = aimutil_get8(command->data+ 12)) > MAXSNLEN)
-    return 1;
-
-  if(!(sn = (char *)calloc(1, pos+1)))
-    return 1;
-
-  memcpy(sn, command->data+13, pos);
+  memset(&userinfo, 0, sizeof(struct aim_userinfo_s));
+  if (command->commandlen-i)
+    i += aim_extractuserinfo(command->data+i, &userinfo);
 
   if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0010)))
-    ret = userfunc(sess, command, sn);
+    ret = userfunc(sess, command, newevil, &userinfo);
   
-  free(sn);
-
   return ret;
 }
 
@@ -906,20 +956,22 @@ faim_internal int aim_negchan_middle(struct aim_session_t *sess,
 faim_internal int aim_parse_generalerrs(struct aim_session_t *sess,
 					struct command_rx_struct *command, ...)
 {
-  u_short family;
-  u_short subtype;
+  unsigned short family;
+  unsigned short subtype;
+  int ret = 1;
+  int error = 0;
+  rxcallback_t userfunc = NULL;
   
   family = aimutil_get16(command->data+0);
   subtype= aimutil_get16(command->data+2);
   
-  switch(family)
-    {
-    default:
-      /* Unknown family */
-      return aim_callhandler_noparam(sess, command->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_UNKNOWN, command);
-    }
+  if (command->commandlen > 10)
+    error = aimutil_get16(command->data+10);
 
-  return 1;
+  if ((userfunc = aim_callhandler(command->conn, family, subtype))) 
+    ret = userfunc(sess, command, error);
+
+  return ret;
 }
 
 

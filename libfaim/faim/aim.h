@@ -620,8 +620,10 @@ faim_export struct aim_conn_t *aim_directim_connect(struct aim_session_t *, stru
 #define AIM_CAPS_CHAT 0x08
 #define AIM_CAPS_GETFILE 0x10
 #define AIM_CAPS_SENDFILE 0x20
+#define AIM_CAPS_GAMES 0x40
+#define AIM_CAPS_SAVESTOCKS 0x80
 
-extern u_char aim_caps[6][16];
+extern u_char aim_caps[8][16];
 faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen);
 faim_internal int aim_putcap(unsigned char *capblock, int buflen, u_short caps);
 

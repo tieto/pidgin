@@ -67,7 +67,8 @@ Direct IM (aka IM Image, for sounds and pictures)
 KNOWN ISSUES
 ============
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
-while, evidently). So if you want to "whisper" to someone, just IM them.
+while, evidently). So if you want to "whisper" to someone, just IM them. (TOC
+doesn't either?)
 
 - Gaim/TOC can do some RVOUS actions, and Gaim/Faim can do others. This is not
 because there is any difference in the protocols as far as the actual transfer
@@ -77,11 +78,7 @@ been.
 - What *is* protocol-dependent about the RVOUS stuff is that only Oscar can
 request RVOUS actions, though both can receive them.
 
-- Temporarily removed Direct IM pending a UI change
-
 - Getting Dir Info is not in libfaim yet, and so is not in Gaim/Faim yet.
-
-- Warnings are there now. Yes, I know it says the wrong value.
 
 - There are also FIXME's scattered about gaim. Grep around for those, figure
 out what needs to be fixed, do that sort of thing. :) (Fixing the things listed

@@ -301,79 +301,57 @@ faim_internal int aim_parse_bosrights(struct aim_session_t *sess,
  * 
  * Send Client Ready.  
  *
- * TODO: Dynamisize.
- *
  */
 faim_export unsigned long aim_bos_clientready(struct aim_session_t *sess,
 					      struct aim_conn_t *conn)
 {
-  u_char command_2[] = {
-     /* placeholders for dynamic data */
-     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-     0xff, 0xff, 
-     /* real data */
-     0x00, 0x01,   
-     0x00, 0x03, 
-     0x00, 0x04, 
-     0x06, 0x86, /* the good ones */
-#if 0
-     0x07, 0xda, /* DUPLE OF DEATH! */
-#endif
-
-     0x00, 0x02, 
-     0x00, 0x01,  
-     0x00, 0x04, 
-     0x00, 0x01, 
- 
-     0x00, 0x03, 
-     0x00, 0x01,  
-     0x00, 0x04, 
-     0x00, 0x01,
- 
-     0x00, 0x04, 
-     0x00, 0x01, 
-     0x00, 0x04,
-     0x00, 0x01,
- 
-     0x00, 0x06, 
-     0x00, 0x01, 
-     0x00, 0x04,  
-     0x00, 0x01, 
-     0x00, 0x08, 
-     0x00, 0x01, 
-     0x00, 0x04,
-     0x00, 0x01,
- 
-     0x00, 0x09, 
-     0x00, 0x01, 
-     0x00, 0x04,
-     0x00, 0x01, 
-     0x00, 0x0a, 
-     0x00, 0x01, 
-     0x00, 0x04,
-     0x00, 0x01,
- 
-     0x00, 0x0b,
-     0x00, 0x01, 
-     0x00, 0x04,
-     0x00, 0x01
+#define AIM_TOOL_JAVA   0x0001
+#define AIM_TOOL_MAC    0x0002
+#define AIM_TOOL_WIN16  0x0003
+#define AIM_TOOL_WIN32  0x0004
+#define AIM_TOOL_MAC68K 0x0005
+#define AIM_TOOL_MACPPC 0x0006
+  struct aim_tool_version {
+    unsigned short group;
+    unsigned short version;
+    unsigned short tool;
+    unsigned short toolversion;
+  } tools[] = {
+    {0x0001, 0x0003,    AIM_TOOL_WIN32, 0x0686},
+    {0x0002, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
+    {0x0003, 0x0001,    AIM_TOOL_WIN32, 0x0001},
+    {0x0004, 0x0001,    AIM_TOOL_WIN32, 0x0001},
+    {0x0006, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
+    {0x0008, 0x0001,    AIM_TOOL_WIN32, 0x0001},
+    {0x0009, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
+    {0x000a, 0x0001,    AIM_TOOL_WIN32, 0x0001},
+    {0x000b, 0x0001,    AIM_TOOL_WIN32, 0x0001}
   };
-  int command_2_len = 0x52;
+  int i,j;
   struct command_tx_struct *newpacket;
-  
-  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, command_2_len)))
+  int toolcount = sizeof(tools)/sizeof(struct aim_tool_version);
+
+  if (!(newpacket = aim_tx_new(AIM_FRAMETYPE_OSCAR, 0x0002, conn, 1152)))
     return -1;
 
   newpacket->lock = 1;
 
-  memcpy(newpacket->data, command_2, command_2_len);
-  
-  /* This write over the dynamic parts of the byte block */
-  aim_putsnac(newpacket->data, 0x0001, 0x0002, 0x0000, sess->snac_nextid);
+  i = aim_putsnac(newpacket->data, 0x0001, 0x0002, 0x0000, sess->snac_nextid);
+  aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
+
+  for (j = 0; j < toolcount; j++) {
+    i += aimutil_put16(newpacket->data+i, tools[j].group);
+    i += aimutil_put16(newpacket->data+i, tools[j].version);
+    i += aimutil_put16(newpacket->data+i, tools[j].tool);
+    i += aimutil_put16(newpacket->data+i, tools[j].toolversion);
+  }
+
+  newpacket->commandlen = i;
+  newpacket->lock = 0;
 
   aim_tx_enqueue(sess, newpacket);
 
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }
 
 /* 

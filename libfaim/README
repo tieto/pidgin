@@ -4,7 +4,7 @@ libfaim pre-0.90 or so
 
 This is libfaim, the purpose of which is to implement as much as the
 AOL AIM/OSCAR protocol as possible (which should be all of it).  After
-over a year of development, its still nowhere close.  
+over two years of development, its still nowhere close.  
 
 This is not a full client and never will be.  libfaim only implements
 the routines to implement a client (ie, there's no user interface).  
@@ -16,7 +16,11 @@ I would not recommend using this version of libfaim in any form yet.  It's
 beta-quality and I know it leaks memory quite badly.  It seems fairly
 stable, however.  YMMV, YAYOR, etc.  I suppose I should say regardless of
 that warning, that several clients use it and people use those clients
-on a daily basis (in particular, me).
+on a daily basis (in particular, me).  Also, you're probably reading this 
+from a CVS version, since I haven't made a release in a very long time.  
+The CVS version changes fairly rapidly when I'm in the mood, so a version
+you checked out an hour ago may be better or worse than a version you 
+check out now.  
 
 
 Building

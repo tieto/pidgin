@@ -361,6 +361,14 @@ faim_internal int aim_authparse(struct aim_session_t *sess,
   /*
    * The registration status.  (Not real sure what it means.)
    *   Not available for ICQ logins.
+   *
+   *   1 = No disclosure
+   *   2 = Limited disclosure
+   *   3 = Full disclosure
+   *
+   * This has to do with whether your email address is available
+   * to other users or not.  AFAIK, this feature is no longer used.
+   *
    */
   if (aim_gettlv(tlvlist, 0x0013, 1))
     regstatus = aim_gettlv16(tlvlist, 0x0013, 1);

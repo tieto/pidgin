@@ -1,6 +1,30 @@
 
 No release numbers
 ------------------
+ - Sun Dec 17 07:19:04 UTC 2000
+  - Update the capability block list
+
+ - Sat Dec 16 01:34:19 UTC 2000
+  - Rename paramid to rateclass
+  - Add a long comment about the rate system
+  - Add a few other comments
+  - Clean up aim_bos_clientready().
+
+ - Fri Dec 15 23:35:01 UTC 2000
+  - Add genericerr callback/middle. 
+   - This is for catching the errors that come back, for instance, from
+     sending a SNAC that isn't supported by the host (such as the
+     Watcher Request SNAC).
+
+ - Fri Dec 15 21:51:32 UTC 2000
+  - Add more info to evilnotify callback
+  - Add a few values to aim_cbtypes.h
+
+ - Fri Dec 15 20:41:15 UTC 2000
+  - Revise README
+  - Make aimdebugd compile
+  - Typos
+
  - Fri Dec 15 02:04:12 UTC 2000
   - Parse rate changes *properly*
   - Add sample code to faimtest demonstrating my approximations
