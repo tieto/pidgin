@@ -48,7 +48,39 @@
 /******************************************/
 
 /**
+ * Free a given question
+ *
+ * @param q The question to free.
+ */
+static void
+mdns_free_q(Question *q)
+{
+	g_free(q->name);
+	g_free(q);
+}
+
+/**
+ * Free a given list of questions.
+ *
+ * @param qs The list of questions to free.
+ */
+static void
+mdns_free_qs(GSList *qs)
+{
+	Question *q;
+
+	while (qs != NULL) {
+		q = qs->data;
+		mdns_free_q(q);
+		qs = g_slist_remove(qs, q);
+	}
+}
+
+/**
  * Free the rdata associated with a given resource record.
+ *
+ * @param type The type of the resource record you are freeing.
+ * @param rdata The rdata of the resource record you are freeing.
  */
 static void
 mdns_free_rr_rdata(unsigned short type, void *rdata)
@@ -62,9 +94,17 @@ mdns_free_rr_rdata(unsigned short type, void *rdata)
 				g_free(rdata);
 			break;
 
-			case RENDEZVOUS_RRTYPE_TXT:
-				g_hash_table_destroy(rdata);
-			break;
+			case RENDEZVOUS_RRTYPE_TXT: {
+				GSList *cur = rdata;
+				ResourceRecordRDataTXTNode *node;
+				while (cur != NULL) {
+					node = cur->data;
+					cur = g_slist_remove(cur, node);
+					g_free(node->name);
+					g_free(node->value);
+					g_free(node);
+				}
+			} break;
 
 			case RENDEZVOUS_RRTYPE_SRV:
 				g_free(((ResourceRecordRDataSRV *)rdata)->target);
@@ -74,43 +114,204 @@ mdns_free_rr_rdata(unsigned short type, void *rdata)
 }
 
 /**
- * Free a given question
- */
-static void
-mdns_free_q(Question *q)
-{
-	g_free(q->name);
-}
-
-/**
  * Free a given resource record.
+ *
+ * @param rr The resource record to free.
  */
 void
 mdns_free_rr(ResourceRecord *rr)
 {
 	g_free(rr->name);
 	mdns_free_rr_rdata(rr->type, rr->rdata);
+	g_free(rr);
 }
 
+/**
+ * Free a given list of resource records.
+ *
+ * @param rrs The list of resource records to free.
+ */
+void
+mdns_free_rrs(GSList *rrs)
+{
+	ResourceRecord *rr;
+
+	while (rrs != NULL) {
+		rr = rrs->data;
+		mdns_free_rr(rr);
+		rrs = g_slist_remove(rrs, rr);
+	}
+}
+
+/**
+ * Free a given DNS packet.  This frees all the questions and all
+ * the resource records.
+ *
+ * @param dns The DNS packet to free.
+ */
 void
 mdns_free(DNSPacket *dns)
 {
-	int i;
+	mdns_free_qs(dns->questions);
+	mdns_free_rrs(dns->answers);
+	mdns_free_rrs(dns->authority);
+	mdns_free_rrs(dns->additional);
 
-	for (i = 0; i < dns->header.numquestions; i++)
-		mdns_free_q(&dns->questions[i]);
-	for (i = 0; i < dns->header.numanswers; i++)
-		mdns_free_rr(&dns->answers[i]);
-	for (i = 0; i < dns->header.numauthority; i++)
-		mdns_free_rr(&dns->authority[i]);
-	for (i = 0; i < dns->header.numadditional; i++)
-		mdns_free_rr(&dns->additional[i]);
-
-	g_free(dns->questions);
-	g_free(dns->answers);
-	g_free(dns->authority);
-	g_free(dns->additional);
 	g_free(dns);
+}
+
+/**********************************************/
+/* Functions for duplicating a DNS structure  */
+/**********************************************/
+
+static Question *
+mdns_copy_q(const Question *q)
+{
+	Question *ret;
+
+	if (q == NULL)
+		return NULL;
+
+	ret = g_malloc(sizeof(Question));
+	ret->name = g_strdup(q->name);
+	ret->type = q->type;
+	ret->class = q->class;
+
+	return ret;
+}
+
+static GSList *
+mdns_copy_qs(const GSList *qs)
+{
+	GSList *ret = NULL;
+	GSList *cur;
+	Question *new;
+
+	for (cur = (GSList *)qs; cur != NULL; cur = cur->next) {
+		new = mdns_copy_q(cur->data);
+		ret = g_slist_append(ret, new);
+	}
+
+	return ret;
+}
+
+static void *
+mdns_copy_rr_rdata_txt(const ResourceRecordRDataTXT *rdata)
+{
+	GSList *ret = NULL;
+	GSList *cur;
+	ResourceRecordRDataTXTNode *node, *copy;
+
+	for (cur = (GSList *)rdata; cur != NULL; cur = cur->next) {
+		node = cur->data;
+		copy = g_malloc0(sizeof(ResourceRecordRDataTXTNode));
+		copy->name = g_strdup(node->name);
+		if (node->value != NULL)
+			copy->value = g_strdup(node->value);
+		ret = g_slist_append(ret, copy);
+	}
+
+	return ret;
+}
+
+static void *
+mdns_copy_rr_rdata_srv(const ResourceRecordRDataSRV *rdata)
+{
+	ResourceRecordRDataSRV *ret;
+
+	ret = g_malloc(sizeof(ResourceRecordRDataSRV));
+	ret->priority = rdata->priority;
+	ret->weight = rdata->weight;
+	ret->port = rdata->port;
+	ret->target = g_strdup(rdata->target);
+
+	return ret;
+}
+
+void *
+mdns_copy_rr_rdata(unsigned short type, const void *rdata, unsigned int rdlength)
+{
+	void *ret;
+
+	if (rdata == NULL)
+		return NULL;
+
+	switch (type) {
+		case RENDEZVOUS_RRTYPE_NULL:
+			ret = g_memdup(rdata, rdlength);
+		break;
+
+		case RENDEZVOUS_RRTYPE_PTR:
+			ret = g_memdup(rdata, rdlength);
+		break;
+
+		case RENDEZVOUS_RRTYPE_TXT:
+			ret = mdns_copy_rr_rdata_txt(rdata);
+		break;
+
+		case RENDEZVOUS_RRTYPE_SRV:
+			ret = mdns_copy_rr_rdata_srv(rdata);
+		break;
+	}
+
+	return ret;
+}
+
+ResourceRecord *
+mdns_copy_rr(const ResourceRecord *rr)
+{
+	ResourceRecord *ret;
+
+	if (rr == NULL)
+		return NULL;
+
+	ret = g_malloc(sizeof(ResourceRecord));
+	ret->name = g_strdup(rr->name);
+	ret->type = rr->type;
+	ret->class = rr->class;
+	ret->ttl = rr->ttl;
+	ret->rdlength = rr->rdlength;
+	ret->rdata = mdns_copy_rr_rdata(rr->type, rr->rdata, rr->rdlength);
+
+	return ret;
+}
+
+static GSList *
+mdns_copy_rrs(const GSList *rrs)
+{
+	GSList *ret = NULL;
+	GSList *cur;
+	ResourceRecord *new;
+
+	for (cur = (GSList *)rrs; cur != NULL; cur = cur->next) {
+		new = mdns_copy_rr(cur->data);
+		ret = g_slist_append(ret, new);
+	}
+
+	return ret;
+}
+
+static DNSPacket *
+mdns_copy(const DNSPacket *dns)
+{
+	DNSPacket *ret;
+
+	if (dns == NULL)
+		return NULL;
+
+	ret = g_malloc0(sizeof(DNSPacket));
+	ret->header.id = dns->header.id;
+	ret->header.flags = dns->header.flags;
+	ret->header.numquestions = dns->header.numquestions;
+	ret->header.numanswers = dns->header.numanswers;
+	ret->header.numauthority = dns->header.numauthority;
+	ret->header.numadditional = dns->header.numadditional;
+	ret->questions = mdns_copy_qs(dns->questions);
+	ret->answers = mdns_copy_rrs(dns->answers);
+	ret->authority = mdns_copy_rrs(dns->authority);
+	ret->additional = mdns_copy_rrs(dns->additional);
+
+	return ret;
 }
 
 /******************************************/
@@ -214,14 +415,44 @@ mdns_send_raw(int fd, unsigned int datalen, unsigned char *data)
 /* Functions for sending mDNS messages */
 /***************************************/
 
+/**
+ *
+ */
 static int
 mdns_getlength_name(const void *name)
 {
 	return strlen((const char *)name) + 2;
 }
 
+/**
+ *
+ */
 static int
-mdns_getlength_RR_rdata(unsigned short type, const void *rdata)
+mdns_getlength_q(const Question *q)
+{
+	return mdns_getlength_name(q->name) + 4;
+}
+
+/**
+ *
+ */
+static int
+mdns_getlength_qs(const GSList *qs)
+{
+	int length = 0;
+	GSList *cur;
+
+	for (cur = (GSList *)qs; cur != NULL; cur = cur->next)
+		length += mdns_getlength_q(cur->data);
+
+	return length;
+}
+
+/**
+ *
+ */
+static int
+mdns_getlength_rr_rdata(unsigned short type, const void *rdata)
 {
 	int rdlength = 0;
 
@@ -250,12 +481,55 @@ mdns_getlength_RR_rdata(unsigned short type, const void *rdata)
 	return rdlength;
 }
 
+/**
+ *
+ */
 static int
-mdns_getlength_RR(ResourceRecord *rr)
+mdns_getlength_rr(const ResourceRecord *rr)
 {
 	return mdns_getlength_name(rr->name) + 10 + rr->rdlength;
 }
 
+/**
+ *
+ */
+static int
+mdns_getlength_rrs(const GSList *rrs)
+{
+	int length = 0;
+	GSList *cur;
+
+	for (cur = (GSList *)rrs; cur != NULL; cur = cur->next)
+		length += mdns_getlength_rr(cur->data);
+
+	return length;
+}
+
+/**
+ *
+ */
+static int
+mdns_getlength_dns(const DNSPacket *dns)
+{
+	int length = 0;
+
+	/* Header */
+	length += 12;
+
+	/* Questions */
+	length += mdns_getlength_qs(dns->questions);
+
+	/* Resource records */
+	length += mdns_getlength_rrs(dns->answers);
+	length += mdns_getlength_rrs(dns->authority);
+	length += mdns_getlength_rrs(dns->additional);
+
+	return length;
+}
+
+/**
+ *
+ */
 static int
 mdns_put_name(char *data, unsigned int datalen, unsigned int offset, const char *name)
 {
@@ -276,8 +550,26 @@ mdns_put_name(char *data, unsigned int datalen, unsigned int offset, const char 
 	return i;
 }
 
+/**
+ *
+ */
 static int
-mdns_put_RR(char *data, unsigned int datalen, unsigned int offset, const ResourceRecord *rr)
+mdns_put_q(char *data, unsigned int datalen, unsigned int offset, const Question *q)
+{
+	int i = 0;
+
+	i += mdns_put_name(data, datalen, offset + i, q->name); /* QNAME */
+	i += util_put16(&data[offset + i], q->type); /* QTYPE */
+	i += util_put16(&data[offset + i], q->class); /* QCLASS */
+
+	return i;
+}
+
+/**
+ *
+ */
+static int
+mdns_put_rr(char *data, unsigned int datalen, unsigned int offset, const ResourceRecord *rr)
 {
 	int i = 0;
 
@@ -305,12 +597,12 @@ mdns_put_RR(char *data, unsigned int datalen, unsigned int offset, const Resourc
 			for (cur = (GSList *)rr->rdata; cur != NULL; cur = cur->next) {
 				node = (ResourceRecordRDataTXTNode *)cur->data;
 				mylength = 1 + strlen(node->name);
-				if (node->value)
+				if (node->value != NULL)
 					mylength += 1 + strlen(node->value);
 				i += util_put8(&data[offset + i], mylength - 1);
 				memcpy(&data[offset + i], node->name, strlen(node->name));
 				i += strlen(node->name);
-				if (node->value) {
+				if (node->value != NULL) {
 					data[offset + i] = '=';
 					i++;
 					memcpy(&data[offset + i], node->value, strlen(node->value));
@@ -338,25 +630,10 @@ mdns_send_dns(int fd, const DNSPacket *dns)
 	unsigned int datalen;
 	unsigned char *data;
 	unsigned int offset;
-	int i;
+	GSList *cur;
 
 	/* Calculate the length of the buffer we'll need to hold the DNS packet */
-	datalen = 0;
-
-	/* Header */
-	datalen += 12;
-
-	/* Questions */
-	for (i = 0; i < dns->header.numquestions; i++)
-		datalen += mdns_getlength_name(dns->questions[i].name) + 4;
-
-	/* Resource records */
-	for (i = 0; i < dns->header.numanswers; i++)
-		datalen += mdns_getlength_RR(&dns->answers[i]);
-	for (i = 0; i < dns->header.numauthority; i++)
-		datalen += mdns_getlength_RR(&dns->authority[i]);
-	for (i = 0; i < dns->header.numadditional; i++)
-		datalen += mdns_getlength_RR(&dns->additional[i]);
+	datalen = mdns_getlength_dns(dns);
 
 	/* Allocate a buffer */
 	if (!(data = (unsigned char *)g_malloc(datalen))) {
@@ -374,19 +651,16 @@ mdns_send_dns(int fd, const DNSPacket *dns)
 	offset += util_put16(&data[offset], dns->header.numadditional); /* ARCOUNT */
 
 	/* Questions */
-	for (i = 0; i < dns->header.numquestions; i++) {
-		offset += mdns_put_name(data, datalen, offset, dns->questions[i].name); /* QNAME */
-		offset += util_put16(&data[offset], dns->questions[i].type); /* QTYPE */
-		offset += util_put16(&data[offset], dns->questions[i].class); /* QCLASS */
-	}
+	for (cur = dns->questions; cur != NULL; cur = cur->next)
+		offset += mdns_put_q(data, datalen, offset, cur->data);
 
 	/* Resource records */
-	for (i = 0; i < dns->header.numanswers; i++)
-		offset += mdns_put_RR(data, datalen, offset, &dns->answers[i]);
-	for (i = 0; i < dns->header.numauthority; i++)
-		offset += mdns_put_RR(data, datalen, offset, &dns->authority[i]);
-	for (i = 0; i < dns->header.numadditional; i++)
-		offset += mdns_put_RR(data, datalen, offset, &dns->additional[i]);
+	for (cur = dns->answers; cur != NULL; cur = cur->next)
+		offset += mdns_put_rr(data, datalen, offset, cur->data);
+	for (cur = dns->authority; cur != NULL; cur = cur->next)
+		offset += mdns_put_rr(data, datalen, offset, cur->data);
+	for (cur = dns->additional; cur != NULL; cur = cur->next)
+		offset += mdns_put_rr(data, datalen, offset, cur->data);
 
 	/* Send the datagram */
 	/* Offset can be shorter than datalen because of name compression */
@@ -402,8 +676,9 @@ mdns_query(int fd, const char *domain, unsigned short type)
 {
 	int ret;
 	DNSPacket *dns;
+	Question *q;
 
-	if (strlen(domain) > 255) {
+	if ((domain == NULL) || strlen(domain) > 255) {
 		return -EINVAL;
 	}
 
@@ -415,16 +690,17 @@ mdns_query(int fd, const char *domain, unsigned short type)
 	dns->header.numauthority = 0x0000;
 	dns->header.numadditional = 0x0000;
 
-	dns->questions = (Question *)g_malloc(1 * sizeof(Question));
-	dns->questions[0].name = g_strdup(domain);
-	dns->questions[0].type = type;
-	dns->questions[0].class = 0x0001;
+	q = (Question *)g_malloc(sizeof(Question));
+	q->name = g_strdup(domain);
+	q->type = type;
+	q->class = 0x0001;
+	dns->questions = g_slist_append(NULL, q);
 
 	dns->answers = NULL;
 	dns->authority = NULL;
 	dns->additional = NULL;
 
-	mdns_send_dns(fd, dns);
+	ret = mdns_send_dns(fd, dns);
 
 	mdns_free(dns);
 
@@ -437,6 +713,8 @@ mdns_send_rr(int fd, ResourceRecord *rr)
 	int ret;
 	DNSPacket *dns;
 
+	g_return_val_if_fail(rr != NULL, -1);
+
 	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
 	dns->header.id = 0x0000;
 	dns->header.flags = 0x8400;
@@ -445,15 +723,11 @@ mdns_send_rr(int fd, ResourceRecord *rr)
 	dns->header.numauthority = 0x0000;
 	dns->header.numadditional = 0x0000;
 	dns->questions = NULL;
-	dns->answers = rr;
+	dns->answers = g_slist_append(NULL, mdns_copy_rr(rr));
 	dns->authority = NULL;
 	dns->additional = NULL;
 
-	mdns_send_dns(fd, dns);
-
-	/* The rr should be freed by the caller of this function */
-	dns->header.numanswers = 0x0000;
-	dns->answers = NULL;
+	ret = mdns_send_dns(fd, dns);
 
 	mdns_free(dns);
 
@@ -466,7 +740,7 @@ mdns_advertise_null(int fd, const char *name, const char *rdata, unsigned short 
 	int ret;
 	ResourceRecord *rr;
 
-	if ((strlen(name) > 255)) {
+	if ((name == NULL) || (strlen(name) > 255)) {
 		return -EINVAL;
 	}
 
@@ -476,12 +750,9 @@ mdns_advertise_null(int fd, const char *name, const char *rdata, unsigned short 
 	rr->class = 0x0001;
 	rr->ttl = 0x00001c20;
 	rr->rdlength = rdlength;
-	rr->rdata = (void *)rdata;
+	rr->rdata = mdns_copy_rr_rdata(rr->type, rdata, rr->rdlength);
 
-	mdns_send_rr(fd, rr);
-
-	/* The rdata should be freed by the caller of this function */
-	rr->rdata = NULL;
+	ret = mdns_send_rr(fd, rr);
 
 	mdns_free_rr(rr);
 
@@ -494,7 +765,7 @@ mdns_advertise_ptr(int fd, const char *name, const char *domain)
 	int ret;
 	ResourceRecord *rr;
 
-	if ((strlen(name) > 255) || (strlen(domain) > 255)) {
+	if ((name == NULL) || (strlen(name) > 255) || (domain == NULL) || (strlen(domain) > 255)) {
 		return -EINVAL;
 	}
 
@@ -504,9 +775,9 @@ mdns_advertise_ptr(int fd, const char *name, const char *domain)
 	rr->class = 0x8001;
 	rr->ttl = 0x00001c20;
 	rr->rdata = (void *)g_strdup(domain);
-	rr->rdlength = mdns_getlength_RR_rdata(rr->type, rr->rdata);
+	rr->rdlength = mdns_getlength_rr_rdata(rr->type, rr->rdata);
 
-	mdns_send_rr(fd, rr);
+	ret = mdns_send_rr(fd, rr);
 
 	mdns_free_rr(rr);
 
@@ -519,7 +790,7 @@ mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
 	int ret;
 	ResourceRecord *rr;
 
-	if ((strlen(name) > 255)) {
+	if ((name == NULL) || (strlen(name) > 255)) {
 		return -EINVAL;
 	}
 
@@ -528,13 +799,10 @@ mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
 	rr->type = RENDEZVOUS_RRTYPE_TXT;
 	rr->class = 0x8001;
 	rr->ttl = 0x00001c20;
-	rr->rdata = (void *)rdata;
-	rr->rdlength = mdns_getlength_RR_rdata(rr->type, rr->rdata);
+	rr->rdlength = mdns_getlength_rr_rdata(rr->type, rdata);
+	rr->rdata = mdns_copy_rr_rdata(rr->type, rdata, rr->rdlength);
 
-	mdns_send_rr(fd, rr);
-
-	/* The rdata should be freed by the caller of this function */
-	rr->rdata = NULL;
+	ret = mdns_send_rr(fd, rr);
 
 	mdns_free_rr(rr);
 
@@ -548,7 +816,7 @@ mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *ta
 	ResourceRecord *rr;
 	ResourceRecordRDataSRV *rdata;
 
-	if ((strlen(target) > 255)) {
+	if ((target == NULL) || (strlen(target) > 255)) {
 		return -EINVAL;
 	}
 
@@ -562,9 +830,9 @@ mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *ta
 	rr->class = 0x8001;
 	rr->ttl = 0x00001c20;
 	rr->rdata = rdata;
-	rr->rdlength = mdns_getlength_RR_rdata(rr->type, rr->rdata);
+	rr->rdlength = mdns_getlength_rr_rdata(rr->type, rr->rdata);
 
-	mdns_send_rr(fd, rr);
+	ret = mdns_send_rr(fd, rr);
 
 	mdns_free_rr(rr);
 
@@ -575,7 +843,7 @@ mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *ta
 /* Functions for parsing mDNS messages */
 /***************************************/
 
-/*
+/**
  * Read in a domain name from the given buffer starting at the given
  * offset.  This handles using domain name compression to jump around
  * the data buffer, if needed.
@@ -623,7 +891,7 @@ mdns_read_name(const char *data, int datalen, unsigned int offset)
 	return g_string_free(ret, FALSE);
 }
 
-/*
+/**
  * Determine how many bytes long a portion of the domain name is
  * at the given offset.  This does NOT jump around the data array
  * in the case of domain name compression.
@@ -661,42 +929,63 @@ mdns_read_name_len(const char *data, unsigned int datalen, unsigned int offset)
 	return offset - startoffset + 1;
 }
 
-/*
+/**
  *
  *
  */
 static Question *
+mdns_read_q(const char *data, unsigned int datalen, int *offset)
+{
+	Question *q;
+
+	q = (Question *)g_malloc0(sizeof(Question));
+	q->name = mdns_read_name(data, datalen, *offset);
+	*offset += mdns_read_name_len(data, datalen, *offset);
+	if (*offset + 4 > datalen) {
+		mdns_free_q(q);
+		return NULL;
+	}
+
+	q->type = util_get16(&data[*offset]); /* QTYPE */
+	*offset += 2;
+	q->class = util_get16(&data[*offset]); /* QCLASS */
+	*offset += 2;
+	if (*offset > datalen) {
+		mdns_free_q(q);
+		return NULL;
+	}
+
+	return q;
+}
+
+/**
+ *
+ *
+ */
+static GSList *
 mdns_read_questions(int numquestions, const char *data, unsigned int datalen, int *offset)
 {
-	Question *ret;
+	GSList *ret = NULL;
+	Question *q;
 	int i;
 
-	ret = (Question *)g_malloc0(numquestions * sizeof(Question));
 	for (i = 0; i < numquestions; i++) {
-		ret[i].name = mdns_read_name(data, datalen, *offset);
-		*offset += mdns_read_name_len(data, datalen, *offset);
-		if (*offset + 4 > datalen)
+		q = mdns_read_q(data, datalen, offset);
+		if (q == NULL)
 			break;
-		ret[i].type = util_get16(&data[*offset]); /* QTYPE */
-		*offset += 2;
-		ret[i].class = util_get16(&data[*offset]); /* QCLASS */
-		*offset += 2;
-		if (*offset > datalen)
-			break;
+		ret = g_slist_append(ret, q);
 	}
 
 	/* Malformed packet check */
 	if (i < numquestions) {
-		for (i = 0; i < numquestions; i++)
-			g_free(ret[i].name);
-		g_free(ret);
+		mdns_free_qs(ret);
 		return NULL;
 	}
 
 	return ret;
 }
 
-/*
+/**
  * Read in a chunk of data, probably a buddy icon.
  *
  */
@@ -714,7 +1003,7 @@ mdns_read_rr_rdata_null(const char *data, unsigned int datalen, unsigned int off
 	return ret;
 }
 
-/*
+/**
  * Read in a compressed name.
  *
  */
@@ -724,17 +1013,61 @@ mdns_read_rr_rdata_ptr(const char *data, unsigned int datalen, unsigned int offs
 	return mdns_read_name(data, datalen, offset);
 }
 
-/*
- * Read in a list of name=value pairs into a GHashTable.
+ResourceRecordRDataTXTNode *
+mdns_txt_find(const GSList *ret, const char *name)
+{
+	ResourceRecordRDataTXTNode *node;
+	GSList *cur;
+
+	for (cur = (GSList *)ret; cur != NULL; cur = cur->next) {
+		node = cur->data;
+		if (!strcasecmp(node->name, name))
+			return node;
+	}
+
+	return NULL;
+}
+
+/**
+ *
  *
  */
-static GHashTable *
+GSList *
+mdns_txt_add(GSList *ret, const char *name, const char *value, gboolean replace)
+{
+	ResourceRecordRDataTXTNode *node;
+
+	node = mdns_txt_find(ret, name);
+
+	if (node == NULL) {
+		/* Add a new node */
+		node = g_malloc(sizeof(ResourceRecordRDataTXTNode));
+		node->name = g_strdup(name);
+		node->value = value != NULL ? g_strdup(value) : NULL;
+		ret = g_slist_append(ret, node);
+	} else {
+		/* Replace the value of the old node, or do nothing */
+		if (replace) {
+			g_free(node->value);
+			node->value = value != NULL ? g_strdup(value) : NULL;
+		}
+	}
+
+	return ret;
+}
+
+/**
+ * Read in a list of name=value pairs as a GSList of
+ * ResourceRecordRDataTXTNodes.
+ *
+ */
+static GSList *
 mdns_read_rr_rdata_txt(const char *data, unsigned int datalen, unsigned int offset, unsigned short rdlength)
 {
-	GHashTable *ret = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	GSList *ret = NULL;
 	int endoffset = offset + rdlength;
 	unsigned char tmp;
-	char buf[256], *key, *value;
+	char buf[256], *name, *value;
 
 	while (offset < endoffset) {
 		/* Read in the length of the next name/value pair */
@@ -762,38 +1095,36 @@ mdns_read_rr_rdata_txt(const char *data, unsigned int datalen, unsigned int offs
 			value++;
 		}
 
-		/* Make the key all lowercase */
-		key = g_utf8_strdown(buf, -1);
-		if (!g_hash_table_lookup(ret, key))
-			g_hash_table_insert(ret, key, g_strdup(value));
-		else
-			g_free(key);
+		/* Make the name all lowercase */
+		name = g_utf8_strdown(buf, -1);
+		ret = mdns_txt_add(ret, name, value, FALSE);
+		g_free(name);
 	}
 
 	/* Malformed packet check */
 	if ((offset > datalen) || (offset != endoffset)) {
-		g_hash_table_destroy(ret);
+		mdns_free_rr_rdata(RENDEZVOUS_RRTYPE_TXT, ret);
 		return NULL;
 	}
 
 	return ret;
 }
 
-/*
+/**
  *
  *
  */
-static ResourceRecordSRV *
+static ResourceRecordRDataSRV *
 mdns_read_rr_rdata_srv(const char *data, unsigned int datalen, unsigned int offset, unsigned short rdlength)
 {
-	ResourceRecordSRV *ret = NULL;
+	ResourceRecordRDataSRV *ret = NULL;
 	int endoffset = offset + rdlength;
 
 	/* Malformed packet check */
 	if (offset + 7 > endoffset)
 		return NULL;
 
-	ret = g_malloc(sizeof(ResourceRecordSRV));
+	ret = g_malloc(sizeof(ResourceRecordRDataSRV));
 
 	/* Read in the priority */
 	ret->priority = util_get16(&data[offset]);
@@ -825,94 +1156,115 @@ mdns_read_rr_rdata_srv(const char *data, unsigned int datalen, unsigned int offs
 	return ret;
 }
 
-/*
+/**
  *
  *
  */
 static ResourceRecord *
-mdns_read_rr(int numrecords, const char *data, unsigned int datalen, int *offset)
+mdns_read_rr(const char *data, unsigned int datalen, int *offset)
 {
-	ResourceRecord *ret;
-	int i;
+	ResourceRecord *rr;
 
-	ret = (ResourceRecord *)g_malloc0(numrecords * sizeof(ResourceRecord));
-	for (i = 0; i < numrecords; i++) {
-		/* NAME */
-		ret[i].name = mdns_read_name(data, datalen, *offset);
-		*offset += mdns_read_name_len(data, datalen, *offset);
+	rr = (ResourceRecord *)g_malloc0(sizeof(ResourceRecord));
 
-		/* Malformed packet check */
-		if (*offset + 10 > datalen)
-			break;
+	/* NAME */
+	rr->name = mdns_read_name(data, datalen, *offset);
+	*offset += mdns_read_name_len(data, datalen, *offset);
 
-		/* TYPE */
-		ret[i].type = util_get16(&data[*offset]);
-		*offset += 2;
+	/* Malformed packet check */
+	if (*offset + 10 > datalen) {
+		mdns_free_rr(rr);
+		return NULL;
+	}
 
-		/* CLASS */
-		ret[i].class = util_get16(&data[*offset]);
-		*offset += 2;
+	/* TYPE */
+	rr->type = util_get16(&data[*offset]);
+	*offset += 2;
 
-		/* TTL */
-		ret[i].ttl = util_get32(&data[*offset]);
-		*offset += 4;
+	/* CLASS */
+	rr->class = util_get16(&data[*offset]);
+	*offset += 2;
 
-		/* RDLENGTH */
-		ret[i].rdlength = util_get16(&data[*offset]);
-		*offset += 2;
+	/* TTL */
+	rr->ttl = util_get32(&data[*offset]);
+	*offset += 4;
 
-		/* RDATA */
-		if (ret[i].type == RENDEZVOUS_RRTYPE_NULL) {
-			ret[i].rdata = mdns_read_rr_rdata_null(data, datalen, *offset, ret[i].rdlength);
-			if (ret[i].rdata == NULL)
-				break;
+	/* RDLENGTH */
+	rr->rdlength = util_get16(&data[*offset]);
+	*offset += 2;
 
-		} else if (ret[i].type == RENDEZVOUS_RRTYPE_PTR) {
-			ret[i].rdata = mdns_read_rr_rdata_ptr(data, datalen, *offset);
-			if (ret[i].rdata == NULL)
-				break;
-
-		} else if (ret[i].type == RENDEZVOUS_RRTYPE_TXT) {
-			ret[i].rdata = mdns_read_rr_rdata_txt(data, datalen, *offset, ret[i].rdlength);
-			if (ret[i].rdata == NULL)
-				break;
-
-		} else if (ret[i].type == RENDEZVOUS_RRTYPE_SRV) {
-			ret[i].rdata = mdns_read_rr_rdata_srv(data, datalen, *offset, ret[i].rdlength);
-			if (ret[i].rdata == NULL)
-				break;
-
+	/* RDATA */
+	if (rr->type == RENDEZVOUS_RRTYPE_NULL) {
+		rr->rdata = mdns_read_rr_rdata_null(data, datalen, *offset, rr->rdlength);
+		if (rr->rdata == NULL) {
+			mdns_free_rr(rr);
+			return NULL;
 		}
 
-		/* Malformed packet check */
-		*offset += ret[i].rdlength;
-		if (*offset > datalen)
+	} else if (rr->type == RENDEZVOUS_RRTYPE_PTR) {
+		rr->rdata = mdns_read_rr_rdata_ptr(data, datalen, *offset);
+		if (rr->rdata == NULL) {
+			mdns_free_rr(rr);
+			return NULL;
+		}
+	
+	} else if (rr->type == RENDEZVOUS_RRTYPE_TXT) {
+		rr->rdata = mdns_read_rr_rdata_txt(data, datalen, *offset, rr->rdlength);
+		if (rr->rdata == NULL) {
+			mdns_free_rr(rr);
+			return NULL;
+		}
+
+	} else if (rr->type == RENDEZVOUS_RRTYPE_SRV) {
+		rr->rdata = mdns_read_rr_rdata_srv(data, datalen, *offset, rr->rdlength);
+		if (rr->rdata == NULL) {
+			mdns_free_rr(rr);
+			return NULL;
+		}
+
+	}
+
+	/* Malformed packet check */
+	*offset += rr->rdlength;
+	if (*offset > datalen) {
+		mdns_free_rr(rr);
+		return NULL;
+	}
+
+	return rr;
+}
+
+static GSList *
+mdns_read_rrs(int numrecords, const char *data, unsigned int datalen, int *offset)
+{
+	GSList *ret = NULL;
+	ResourceRecord *rr;
+	int i;
+
+	for (i = 0; i < numrecords; i++) {
+		rr = mdns_read_rr(data, datalen, offset);
+		if (rr == NULL)
 			break;
+		ret = g_slist_append(ret, rr);
 	}
 
 	/* Malformed packet check */
 	if (i < numrecords) {
-		for (i = 0; i < numrecords; i++) {
-			g_free(ret[i].name);
-			mdns_free_rr_rdata(ret[i].type, ret[i].rdata);
-		}
-		g_free(ret);
+		mdns_free_rrs(ret);
 		return NULL;
 	}
 
 	return ret;
 }
 
-/*
+/**
  * If invalid data is encountered at any point when parsing data
  * then the entire packet is discarded and NULL is returned.
- *
  */
 DNSPacket *
 mdns_read(int fd)
 {
-	DNSPacket *ret = NULL;
-	int i;
+	DNSPacket *dns = NULL;
 	int offset; /* Current position in datagram */
 	/* XXX - Find out what to use as a maximum incoming UDP packet size */
 	/* char data[512]; */
@@ -920,6 +1272,7 @@ mdns_read(int fd)
 	unsigned int datalen;
 	struct sockaddr_in addr;
 	socklen_t addrlen;
+	GSList *cur;
 
 	/* Read in an mDNS packet */
 	addrlen = sizeof(struct sockaddr_in);
@@ -928,61 +1281,61 @@ mdns_read(int fd)
 		return NULL;
 	}
 
-	ret = (DNSPacket *)g_malloc0(sizeof(DNSPacket));
+	dns = (DNSPacket *)g_malloc0(sizeof(DNSPacket));
 
 	/* Parse the incoming packet, starting from 0 */
 	offset = 0;
 
 	if (offset + 12 > datalen) {
-		g_free(ret);
+		g_free(dns);
 		return NULL;
 	}
 
 	/* The header section */
-	ret->header.id = util_get16(&data[offset]); /* ID */
+	dns->header.id = util_get16(&data[offset]); /* ID */
 	offset += 2;
 
 	/* For the flags, some bits must be 0 and some must be 1, the rest are ignored */
-	ret->header.flags = util_get16(&data[offset]); /* Flags (QR, OPCODE, AA, TC, RD, RA, Z, AD, CD, and RCODE */
+	dns->header.flags = util_get16(&data[offset]); /* Flags (QR, OPCODE, AA, TC, RD, RA, Z, AD, CD, and RCODE */
 	offset += 2;
-	if ((ret->header.flags & 0x8000) == 0) {
+	if ((dns->header.flags & 0x8000) == 0) {
 		/* QR should be 1 */
-		g_free(ret);
+		g_free(dns);
 		return NULL;
 	}
-	if ((ret->header.flags & 0x7800) != 0) {
+	if ((dns->header.flags & 0x7800) != 0) {
 		/* OPCODE should be all 0's */
-		g_free(ret);
+		g_free(dns);
 		return NULL;
 	}
 
 	/* Read in the number of other things in the packet */
-	ret->header.numquestions = util_get16(&data[offset]);
+	dns->header.numquestions = util_get16(&data[offset]);
 	offset += 2;
-	ret->header.numanswers = util_get16(&data[offset]);
+	dns->header.numanswers = util_get16(&data[offset]);
 	offset += 2;
-	ret->header.numauthority = util_get16(&data[offset]);
+	dns->header.numauthority = util_get16(&data[offset]);
 	offset += 2;
-	ret->header.numadditional = util_get16(&data[offset]);
+	dns->header.numadditional = util_get16(&data[offset]);
 	offset += 2;
 
 	/* Read in all the questions */
-	ret->questions = mdns_read_questions(ret->header.numquestions, data, datalen, &offset);
+	dns->questions = mdns_read_questions(dns->header.numquestions, data, datalen, &offset);
 
 	/* Read in all resource records */
-	ret->answers = mdns_read_rr(ret->header.numanswers, data, datalen, &offset);
+	dns->answers = mdns_read_rrs(dns->header.numanswers, data, datalen, &offset);
 
 	/* Read in all authority records */
-	ret->authority = mdns_read_rr(ret->header.numauthority, data, datalen, &offset);
+	dns->authority = mdns_read_rrs(dns->header.numauthority, data, datalen, &offset);
 
 	/* Read in all additional records */
-	ret->additional = mdns_read_rr(ret->header.numadditional, data, datalen, &offset);
+	dns->additional = mdns_read_rrs(dns->header.numadditional, data, datalen, &offset);
 
 	/* Malformed packet check */
-	if ((ret->header.numquestions > 0 && ret->questions == NULL) ||
-		(ret->header.numanswers > 0 && ret->answers == NULL) ||
-		(ret->header.numauthority > 0 && ret->authority == NULL) ||
-		(ret->header.numadditional > 0 && ret->additional == NULL)) {
+	if ((dns->header.numquestions > 0 && dns->questions == NULL) ||
+		(dns->header.numanswers > 0 && dns->answers == NULL) ||
+		(dns->header.numauthority > 0 && dns->authority == NULL) ||
+		(dns->header.numadditional > 0 && dns->additional == NULL)) {
 		gaim_debug_error("mdns", "Received an invalid DNS packet.\n");
 		return NULL;
 	}
@@ -990,20 +1343,18 @@ mdns_read(int fd)
 	/* We should be at the end of the packet */
 	if (offset != datalen) {
 		gaim_debug_error("mdns", "Finished parsing before end of DNS packet!  Only parsed %d of %d bytes.", offset, datalen);
-		g_free(ret);
+		g_free(dns);
 		return NULL;
 	}
 
-#if 0
-	for (i = 0; i < ret->header.numanswers; i++)
-		mdns_cache_add(&ret->answers[i]);
-	for (i = 0; i < ret->header.numauthority; i++)
-		mdns_cache_add(&ret->authority[i]);
-	for (i = 0; i < ret->header.numadditional; i++)
-		mdns_cache_add(&ret->additional[i]);
-	for (i = 0; i < ret->header.numquestions; i++)
-		mdns_cache_respond(fd, &ret->questions[i]);
-#endif
+	for (cur = dns->answers; cur != NULL; cur = cur->next)
+		mdns_cache_add((ResourceRecord *)cur->data);
+	for (cur = dns->authority; cur != NULL; cur = cur->next)
+		mdns_cache_add((ResourceRecord *)cur->data);
+	for (cur = dns->additional; cur != NULL; cur = cur->next)
+		mdns_cache_add((ResourceRecord *)cur->data);
+	for (cur = dns->questions; cur != NULL; cur = cur->next)
+		mdns_cache_respond(fd, (Question *)cur->data);
 
-	return ret;
+	return dns;
 }

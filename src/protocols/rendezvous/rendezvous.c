@@ -183,14 +183,14 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 {
 	RendezvousData *rd = gc->proto_data;
 	RendezvousBuddy *rb;
-	GHashTable *rdata;
-	gchar *tmp1, *tmp2;
+	GSList *rdata;
+	ResourceRecordRDataTXTNode *node1, *node2;
 
 	rdata = rr->rdata;
 
 	/* Don't do a damn thing if the version is greater than 1 */
-	tmp1 = g_hash_table_lookup(rdata, "version");
-	if ((tmp1 == NULL) || (strcmp(tmp1, "1")))
+	node1 = mdns_txt_find(rdata, "version");
+	if ((node1 == NULL) || (node1->value == NULL) || (strcmp(node1->value, "1")))
 		return;
 
 	rb = g_hash_table_lookup(rd->buddies, name);
@@ -199,19 +199,19 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
 	}
 
-	tmp1 = g_hash_table_lookup(rdata, "1st");
-	tmp2 = g_hash_table_lookup(rdata, "last");
+	node1 = mdns_txt_find(rdata, "1st");
+	node2 = mdns_txt_find(rdata, "last");
 	g_free(rb->firstandlast);
 	rb->firstandlast = g_strdup_printf("%s%s%s",
-							(tmp1 ? tmp1 : ""),
-							(tmp1 && tmp2 ? " " : ""),
-							(tmp2 ? tmp2 : ""));
+							(node1 && node1->value ? node1->value : ""),
+							(node1 && node1->value && node2 && node2->value ? " " : ""),
+							(node2 && node2->value ? node2->value : ""));
 	serv_got_alias(gc, name, rb->firstandlast);
 
-	tmp1 = g_hash_table_lookup(rdata, "aim");
-	if (tmp1 != NULL) {
+	node1 = mdns_txt_find(rdata, "aim");
+	if ((node1 != NULL) && (node1->value != NULL)) {
 		g_free(rb->aim);
-		rb->aim = g_strdup(tmp1);
+		rb->aim = g_strdup(node1->value);
 	}
 
 	/*
@@ -219,32 +219,35 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 	 * is specified in a separate, SRV resource record.
 	 */
 	if (rb->p2pjport == 0) {
-		tmp1 = g_hash_table_lookup(rdata, "port.p2pj");
-		rb->p2pjport = atoi(tmp1);
+		node1 = mdns_txt_find(rdata, "port.p2pj");
+		if ((node1 != NULL) && (node1->value))
+			rb->p2pjport = atoi(node1->value);
 	}
 
-	tmp1 = g_hash_table_lookup(rdata, "status");
-	if (tmp1 != NULL) {
-		if (!strcmp(tmp1, "avail")) {
+	node1 = mdns_txt_find(rdata, "status");;
+	if ((node1 != NULL) && (node1->value != NULL)) {
+		if (!strcmp(node1->value, "avail")) {
 			/* Available */
 			rb->status = 0;
-		} else if (!strcmp(tmp1, "away")) {
+		} else if (!strcmp(node1->value, "away")) {
 			/* Idle */
-			tmp2 = g_hash_table_lookup(rdata, "away");
-			rb->idle = atoi(tmp2);
-			gaim_debug_error("XXX", "User has been idle since %d\n", rb->idle);
+			node2 = mdns_txt_find(rdata, "away");
+			if ((node2 != NULL) && (node2->value)) {
+				rb->idle = atoi(node2->value);
+				gaim_debug_error("XXX", "User has been idle since %d\n", rb->idle);
+			}
 			rb->status = UC_IDLE;
-		} else if (!strcmp(tmp1, "dnd")) {
+		} else if (!strcmp(node1->value, "dnd")) {
 			/* Away */
 			rb->status = UC_UNAVAILABLE;
 		}
 		serv_got_update(gc, name, 1, 0, 0, 0, rb->status);
 	}
 
-	tmp1 = g_hash_table_lookup(rdata, "msg");
-	if (tmp1 != NULL) {
+	node1 = mdns_txt_find(rdata, "msg");
+	if ((node1 != NULL) && (node1->value != NULL)) {
 		g_free(rb->msg);
-		rb->msg = g_strdup(tmp1);
+		rb->msg = g_strdup(node1->value);
 	}
 }
 
@@ -252,7 +255,7 @@ static void rendezvous_handle_rr_srv(GaimConnection *gc, ResourceRecord *rr, con
 {
 	RendezvousData *rd = gc->proto_data;
 	RendezvousBuddy *rb;
-	ResourceRecordSRV *rdata;
+	ResourceRecordRDataSRV *rdata;
 
 	rdata = rr->rdata;
 
@@ -392,7 +395,7 @@ static void rendezvous_callback(gpointer data, gint source, GaimInputCondition c
 	GaimConnection *gc = data;
 	RendezvousData *rd = gc->proto_data;
 	DNSPacket *dns;
-	int i;
+	GSList *cur;
 
 	gaim_debug_misc("rendezvous", "Received rendezvous datagram\n");
 
@@ -401,12 +404,12 @@ static void rendezvous_callback(gpointer data, gint source, GaimInputCondition c
 		return;
 
 	/* Handle the DNS packet */
-	for (i = 0; i < dns->header.numanswers; i++)
-		rendezvous_handle_rr(gc, &dns->answers[i]);
-	for (i = 0; i < dns->header.numauthority; i++)
-		rendezvous_handle_rr(gc, &dns->authority[i]);
-	for (i = 0; i < dns->header.numadditional; i++)
-		rendezvous_handle_rr(gc, &dns->additional[i]);
+	for (cur = dns->answers; cur != NULL; cur = cur->next)
+		rendezvous_handle_rr(gc, cur->data);
+	for (cur = dns->authority; cur != NULL; cur = cur->next)
+		rendezvous_handle_rr(gc, cur->data);
+	for (cur = dns->additional; cur != NULL; cur = cur->next)
+		rendezvous_handle_rr(gc, cur->data);
 
 	mdns_free(dns);
 }

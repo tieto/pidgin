@@ -31,12 +31,24 @@
 
 #include "mdns.h"
 
-void mdns_cache_add(ResourceRecord *rr);
+/**
+ *
+ */
+void mdns_cache_add(const ResourceRecord *rr);
 
+/**
+ *
+ */
 void mdns_cache_remove(ResourceRecord *rr);
 
+/**
+ *
+ */
 void mdns_cache_remove_all();
 
-void mdns_cache_respond(int fd, Question *q);
+/**
+ *
+ */
+void mdns_cache_respond(int fd, const Question *q);
 
 #endif /* _MDNS_CACHE_H_ */

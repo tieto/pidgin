@@ -98,23 +98,18 @@ typedef struct _ResourceRecordRDataTXTNode {
 typedef GSList ResourceRecordRDataTXT;
 
 typedef struct _ResourceRecordRDataSRV {
-	unsigned short port;
-	char *target;
-} ResourceRecordRDataSRV;
-
-typedef struct _ResourceRecordSRV {
 	unsigned int priority;
 	unsigned int weight;
 	unsigned int port;
 	gchar *target;
-} ResourceRecordSRV;
+} ResourceRecordRDataSRV;
 
 typedef struct _DNSPacket {
 	Header header;
-	Question *questions;
-	ResourceRecord *answers;
-	ResourceRecord *authority;
-	ResourceRecord *additional;
+	GSList *questions;
+	GSList *answers;
+	GSList *authority;
+	GSList *additional;
 } DNSPacket;
 
 /*
@@ -179,5 +174,12 @@ DNSPacket *mdns_read(int fd);
  */
 void mdns_free(DNSPacket *dns);
 void mdns_free_rr(ResourceRecord *rr);
+void mdns_free_rrs(GSList *rrs);
+
+ResourceRecord *mdns_copy_rr(const ResourceRecord *rr);
+
+ResourceRecordRDataTXTNode *mdns_txt_find(const GSList *ret, const char *name);
+GSList *mdns_txt_add(GSList *ret, const char *name, const char *value, gboolean replace);
+
 
 #endif /* _MDNS_H_ */

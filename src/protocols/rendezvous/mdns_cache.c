@@ -28,38 +28,46 @@
 
 #include "mdns.h"
 
-GSList *resourcerecords = NULL;
+/* XXX - Make sure this is freed when we sign off */
+GSList *rrs = NULL;
 
-void mdns_cache_add(ResourceRecord *rr)
+void
+mdns_cache_add(const ResourceRecord *rr)
 {
+	ResourceRecord *new;
+
 	g_return_if_fail(rr != NULL);
 
-	resourcerecords = g_slist_prepend(resourcerecords, rr);
+	new = mdns_copy_rr(rr);
+
+	rrs = g_slist_prepend(rrs, new);
 }
 
-void mdns_cache_remove(ResourceRecord *rr)
+void
+mdns_cache_remove(ResourceRecord *rr)
 {
 	g_return_if_fail(rr != NULL);
 
-	resourcerecords = g_slist_remove_all(resourcerecords, rr);
+	rrs = g_slist_remove_all(rrs, rr);
 
 	mdns_free_rr(rr);
 }
 
-void mdns_cache_remove_all()
+void
+mdns_cache_remove_all()
 {
-	while (resourcerecords != NULL)
-		mdns_cache_remove(resourcerecords->data);
+	mdns_free_rrs(rrs);
 }
 
-void mdns_cache_respond(int fd, Question *q)
+void
+mdns_cache_respond(int fd, const Question *q)
 {
 	GSList *slist;
 	ResourceRecord *cur;
 
 	g_return_if_fail(q != NULL);
 
-	for (slist = resourcerecords; slist != NULL; slist = g_slist_next(slist)) {
+	for (slist = rrs; slist != NULL; slist = g_slist_next(slist)) {
 		cur = slist->data;
 		if ((q->type == cur->type) && (!strcmp(q->name, cur->name)))
 			mdns_send_rr(fd, cur);
