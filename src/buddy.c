@@ -642,20 +642,13 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Get _User Info..."), "<CTL>J", show_info_dialog, 0,
 	  "<StockItem>", GAIM_STOCK_INFO },
 	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Buddies/_Show Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
+	{ N_("/Buddies/_Add a Buddy..."), NULL, gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD }, 
+	{ N_("/Buddies/Add a _Group..."), NULL, show_add_group, 0, NULL},
+	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Signoff"), "<CTL>D", signoff_all, 0, NULL },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", do_quit, 0,
 	  "<StockItem>", GTK_STOCK_QUIT },
-
-	/* Edit menu */
-	{ N_("/_Edit"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Edit/_Show Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
-	{ N_("/Edit/_Add a Buddy..."), NULL, gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD }, 
-	{ N_("/Edit/Add a _Group..."), NULL, show_add_group, 0, NULL},
-	{ "/Edit/sep", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Edit/A_ccounts"), "<CTL>A", account_editor, 0, NULL },
-	{ N_("/Edit/Preferences"), "<CTL>P", show_prefs, 0,
-	  "<StockItem>", GTK_STOCK_PREFERENCES },
-	{ N_("/Edit/Pr_ivacy"), NULL, show_privacy_options, 0, NULL },
 
 	/* Tools */ 
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
@@ -667,6 +660,11 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/P_rotocol Actions"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
+	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Tools/A_ccounts"), "<CTL>A", account_editor, 0, NULL },
+	{ N_("/Tools/Preferences"), "<CTL>P", show_prefs, 0,
+	  "<StockItem>", GTK_STOCK_PREFERENCES },
+	{ N_("/Tools/Pr_ivacy"), NULL, show_privacy_options, 0, NULL },
 
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
