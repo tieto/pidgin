@@ -8,6 +8,11 @@ version 0.79:
 	  GaimConvWindowUiOps.
 	* Added: gaim_conversation_has_focus() and gaim_conv_window_has_focus().
 
+	Plugin API: v5
+	* Changed: add_buddy, add_buddies, remove_buddy, remove_buddies,
+	  rename_group and remove_group to take GaimBuddy's and
+	  GaimGroup's consistently.
+
 version 0.78 (05/30/2004):
 	Plugin API: v4
 	* Added: actions - for plugins to add to the new Plugin Actions menu

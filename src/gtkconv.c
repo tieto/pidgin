@@ -4680,7 +4680,7 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", &has_focus, NULL);
 
 	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
-		gaim_prefs_get_bool("/gaim/gtk/conversations/raise_on_events")) {
+		gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events")) {
 
 		gaim_conv_window_raise(gaim_conversation_get_window(conv));
 	}
@@ -4745,7 +4745,7 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 	/* Raise the window, if specified in prefs. */
 	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
 	    /* we may want to change this */
-		gaim_prefs_get_bool("/gaim/gtk/conversations/raise_on_events")) {
+		gaim_prefs_get_bool("/gaim/gtk/conversations/chat/raise_on_events")) {
 
 		gaim_conv_window_raise(gaim_conversation_get_window(conv));
 	}
@@ -4776,7 +4776,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	win = gaim_conversation_get_window(conv);
 
-	if (!(flags & GAIM_MESSAGE_NO_LOG) && gaim_prefs_get_bool("/gaim/gtk/conversations/raise_on_events")) {
+	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
+		((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
+		 gaim_prefs_get_bool("/gaim/gtk/conversations/chat/raise_on_events")) ||
+		(gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
+		 gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events")))) {
 		gaim_conv_window_show(win);
 	}
 
@@ -6029,7 +6033,8 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/tab_side", GTK_POS_TOP);
 	gaim_prefs_add_int("/gaim/gtk/conversations/button_type",
 					   GAIM_BUTTON_TEXT_IMAGE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/raise_on_events", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/im/raise_on_events", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/raise_on_events", FALSE);
 
 
 	/* Conversations -> Chat */

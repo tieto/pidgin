@@ -92,9 +92,10 @@ void show_about(GtkWidget *w, void *data)
 	gaim_setup_imhtml(text);
 
 	gtk_imhtml_append_text(GTK_IMHTML(text),
-			  _("Gaim is a modular Instant Messaging client capable of "
-				  "using AIM, ICQ, Yahoo!, MSN, IRC, Jabber, Napster, "
-				  "Zephyr, and Gadu-Gadu all at once.  It is written using "
+			  _("Gaim is a modular messaging client capable of using "
+				  "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, "
+				  "Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
+				  "all at once.  It is written using "
 				  "Gtk+ and is licensed under the GPL.<BR><BR>"), GTK_IMHTML_NO_SCROLL);
 
 	gtk_imhtml_append_text(GTK_IMHTML(text),

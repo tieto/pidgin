@@ -969,6 +969,9 @@ GtkWidget *conv_page() {
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 #endif /* PREFSLASH04 */
 
+	gaim_gtk_prefs_checkbox(_("Enable \"_slash\" commands"),
+			"/gaim/gtk/conversations/enable_commands", vbox);
+
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
 	gaim_gtk_prefs_checkbox(_("Show _aliases in tabs/titles"),
@@ -977,12 +980,13 @@ GtkWidget *conv_page() {
 			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
 	gaim_gtk_prefs_checkbox(_("Enable buddy ic_on animation"),
 			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
-	gaim_gtk_prefs_checkbox(_("_Raise window on events"),
-			"/gaim/gtk/conversations/raise_on_events", vbox);
 	gaim_gtk_prefs_checkbox(_("_Notify buddies that you are typing to them"),
 			"/core/conversations/im/send_typing", vbox);
-	gaim_gtk_prefs_checkbox(_("Enable \"_slash\" commands"),
-			"/gaim/gtk/conversations/enable_commands", vbox);
+	gaim_gtk_prefs_checkbox(_("_Raise IM window on events"),
+			"/gaim/gtk/conversations/im/raise_on_events", vbox);
+
+	gaim_gtk_prefs_checkbox(_("_Raise chat window on events"),
+			"/gaim/gtk/conversations/chat/raise_on_events", vbox);
 	gaim_gtk_prefs_checkbox(_("Use _multi-colored screen names in chats"),
 			"/gaim/gtk/conversations/chat/color_nicks", vbox);
 
@@ -2725,8 +2729,6 @@ void gaim_gtk_prefs_update_old() {
 
 	gaim_prefs_rename("/gaim/gtk/conversations/im/button_type",
 			"/gaim/gtk/conversations/button_type");
-	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events",
-			"/gaim/gtk/conversations/raise_on_events");
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
@@ -2746,4 +2748,5 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_bgcolor");
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_fgcolor");
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_size");
+	gaim_prefs_remove("/gaim/gtk/conversations/im/hide_on_send");
 }
