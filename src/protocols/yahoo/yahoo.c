@@ -53,9 +53,6 @@
 
 extern char *yahoo_crypt(const char *, const char *);
 
-/* for win32 compatability */
-G_MODULE_IMPORT GSList *connections;
-
 /* #define YAHOO_DEBUG */
 
 #define USEROPT_MAIL 0
@@ -968,7 +965,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 
-	if (!g_slist_find(connections, gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
 	}
