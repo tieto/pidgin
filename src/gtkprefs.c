@@ -2544,7 +2544,7 @@ void destroy_colorsel(GtkWidget *w, gpointer d)
 
 void apply_color_dlg(GtkWidget *w, gpointer d)
 {
-	char buf[8];
+	char buf[14];
 
 	if ((int)d == 1) {
 		GdkColor fgcolor;
@@ -2553,7 +2553,7 @@ void apply_color_dlg(GtkWidget *w, gpointer d)
 						      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel),
 						      &fgcolor);
 
-		g_snprintf(buf, sizeof(buf), "#%02x%02x%02x",
+		g_snprintf(buf, sizeof(buf), "#%04x%04x%04x",
 				   fgcolor.red, fgcolor.green, fgcolor.blue);
 
 		gaim_prefs_set_string("/gaim/gtk/conversations/fgcolor", buf);
@@ -2567,7 +2567,7 @@ void apply_color_dlg(GtkWidget *w, gpointer d)
 						      (GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel),
 						      &bgcolor);
 
-		g_snprintf(buf, sizeof(buf), "#%02x%02x%02x",
+		g_snprintf(buf, sizeof(buf), "#%04x%04x%04x",
 				   bgcolor.red, bgcolor.green, bgcolor.blue);
 
 		gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", buf);

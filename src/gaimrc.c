@@ -191,9 +191,6 @@ guint proxy_info_is_from_gaimrc = 1; /* Only save proxy info if it
 				      * was loaded from the file
 				      * or otherwise explicitly requested */
 
-static GdkColor fgcolor;
-static GdkColor bgcolor;
-
 struct parse {
 	char option[256];
 	char value[MAX_VALUES][4096];
@@ -929,33 +926,18 @@ static void gaimrc_read_options(FILE *f)
 		} else if (!strcmp(p->option, "font_size")) {
 			gaim_prefs_set_int("/gaim/gtk/conversations/font_size", atoi(p->value[0]));
 		} else if (!strcmp(p->option, "foreground")) {
-			char buf[8];
+			char buf[14];
 
-			/*this is totally counter intuitive. why would you read in 2 before 1? 
-			 *because gaim 0.6x stored it badly, and to get the intended color
-			 *we have to read it in equally oddly.
-			 * --luke
-			 */
-
-			fgcolor.red = atoi(p->value[0]);
-			fgcolor.blue = atoi(p->value[2]);
-			fgcolor.green = atoi(p->value[1]);
-
-			g_snprintf(buf, sizeof(buf), "#%03x%03x%03x",
-					   atoi(p->value[0]), atoi(p->value[2]), atoi(p->value[1]));
+			g_snprintf(buf, sizeof(buf), "#%04x%04x%04x",
+					   atoi(p->value[0]), atoi(p->value[1]), atoi(p->value[2]));
 			gaim_prefs_set_string("/gaim/gtk/conversations/fgcolor", buf);
 
 		} else if (!strcmp(p->option, "background")) {
-			char buf[8];
+			char buf[14];
 
-			bgcolor.red = atoi(p->value[0]);
-			bgcolor.blue = atoi(p->value[2]);
-			bgcolor.green = atoi(p->value[1]);
-
-			g_snprintf(buf, sizeof(buf), "#%03x%03x%03x",
-					   atoi(p->value[0]), atoi(p->value[2]), atoi(p->value[1]));
+			g_snprintf(buf, sizeof(buf), "#%04x%04x%04x",
+					   atoi(p->value[0]), atoi(p->value[1]), atoi(p->value[2]));
 			gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", buf);
-			printf("\n\n%s\n\n",buf);
 
 		} else if (!strcmp(p->option, "report_idle")) {
 			switch(atoi(p->value[0])) {
