@@ -124,51 +124,6 @@
 #endif
 #endif
 
-struct aim_user {
-	char username[64];
-	char password[32];
-	char user_info[2048];
-	int options;
-	int protocol;
-	/* prpls can use this to save information about the user,
-	 * like which server to connect to, etc */
-	char proto_opt[7][256];
-
-	/* buddy icon file */
-	char iconfile[256];
-
-	struct gaim_connection *gc;
-	
-	/* CUI: everything below here should be in struct mod_aim_user */
-
-	/* stuff for modify window */
-	GtkWidget *mod;
-	GtkWidget *main;
-	GtkWidget *name;
-	GtkWidget *pwdbox;
-	GtkWidget *pass;
-	GtkWidget *rempass;
-	int tmp_options;
-	int tmp_protocol;
-	GList *opt_entries;
-
-	/* stuff for password prompt */
-	GtkWidget *passprmt;
-	GtkWidget *passentry;
-
-	/* stuff for icon selection */
-	char tmp_iconfile[256];
-	GtkWidget *iconsel;
-	GtkWidget *iconentry;
-	GtkWidget *icondlg;
-
-	/* stuff for mail check prompt */
-	GtkWidget *checkmail;
-
-	/* when you get kicked offline, only show one dialog */
-	GtkWidget *kick_dlg;
-};
-
 #define OPT_USR_AUTO		0x00000001
 /*#define OPT_USR_KEEPALV	0x00000002 this shouldn't be optional */
 #define OPT_USR_REM_PASS	0x00000004
@@ -207,85 +162,6 @@ struct buddy_pounce {
 	int protocol;
 
 	int options;
-};
-
-/* struct buddy_chat went away and got merged with this. */
-struct conversation {
-	struct gaim_connection *gc;
-
-	/* stuff used for both IM and chat */
-	GtkWidget *window;
-	char name[80];
-	GtkWidget *text;
-	GtkWidget *entry;
-	GtkWidget *italic;
-	GtkWidget *bold;
-	GtkWidget *underline;
-	GtkWidget *fgcolorbtn;
-	GtkWidget *bgcolorbtn;
-	GtkWidget *link;
-	GtkWidget *wood;
-	GtkWidget *log_button;
-	GtkWidget *strike;
-	GtkWidget *font;
-	GtkWidget *smiley;
-	GtkWidget *fg_color_dialog;
-	GtkWidget *bg_color_dialog;
-	GtkWidget *font_dialog;
-	GtkWidget *smiley_dialog;
-	GtkWidget *link_dialog;
-	GtkWidget *log_dialog;
-	int makesound;
-	char fontface[128];
-	int hasfont;
-	int fontsize;
-	int hassize;
-	GdkColor bgcol;
-	int hasbg;
-	GdkColor fgcol;
-	int hasfg;
-
-	GString *history;
-
-	GtkWidget *send;
-
-	/* stuff used just for IM */
-	GtkWidget *lbox;
-	GtkWidget *bbox;
-	GtkWidget *sw;
-	GtkWidget *info;
-	GtkWidget *warn;
-	GtkWidget *block;
-	GtkWidget *add;
-	GtkWidget *sep1;
-	GtkWidget *sep2;
-	GtkWidget *menu;
-	GtkWidget *check;
-	gboolean unseen;
-
-#if USE_PIXBUF
-	/* buddy icon stuff. sigh. */
-	GtkWidget *icon;
-	GdkPixbuf *unanim;
-	GdkPixbufAnimation *anim;
-	guint32 icon_timer;
-	int frame;
-#endif
-
-	/* stuff used just for chat */
-        GList *in_room;
-        GList *ignored;
-	char *topic;
-        int id;
-	GtkWidget *count;
-	GtkWidget *list;
-	GtkWidget *whisper;
-	GtkWidget *invite;
-	GtkWidget *close;
-	GtkWidget *topic_text;
-
-	/* something to distinguish */
-	gboolean is_chat;
 };
 
 #define CONVERSATION_TITLE "%s - Gaim"

@@ -41,6 +41,22 @@
 #define UC_NORMAL	8
 #define UC_UNAVAILABLE  16
 
+struct aim_user {
+	char username[64];
+	char password[32];
+	char user_info[2048];
+	int options;
+	int protocol;
+	/* prpls can use this to save information about the user,
+	 * like which server to connect to, etc */
+	char proto_opt[7][256];
+
+	/* buddy icon file */
+	char iconfile[256];
+
+	struct gaim_connection *gc;
+};
+	
 enum gaim_event {
 	event_signon = 0,
 	event_signoff,

@@ -83,6 +83,85 @@ struct window_size {
 	int entry_height;
 };
 
+/* struct buddy_chat went away and got merged with this. */
+struct conversation {
+	struct gaim_connection *gc;
+
+	/* stuff used for both IM and chat */
+	GtkWidget *window;
+	char name[80];
+	GtkWidget *text;
+	GtkWidget *entry;
+	GtkWidget *italic;
+	GtkWidget *bold;
+	GtkWidget *underline;
+	GtkWidget *fgcolorbtn;
+	GtkWidget *bgcolorbtn;
+	GtkWidget *link;
+	GtkWidget *wood;
+	GtkWidget *log_button;
+	GtkWidget *strike;
+	GtkWidget *font;
+	GtkWidget *smiley;
+	GtkWidget *fg_color_dialog;
+	GtkWidget *bg_color_dialog;
+	GtkWidget *font_dialog;
+	GtkWidget *smiley_dialog;
+	GtkWidget *link_dialog;
+	GtkWidget *log_dialog;
+	int makesound;
+	char fontface[128];
+	int hasfont;
+	int fontsize;
+	int hassize;
+	GdkColor bgcol;
+	int hasbg;
+	GdkColor fgcol;
+	int hasfg;
+
+	GString *history;
+
+	GtkWidget *send;
+
+	/* stuff used just for IM */
+	GtkWidget *lbox;
+	GtkWidget *bbox;
+	GtkWidget *sw;
+	GtkWidget *info;
+	GtkWidget *warn;
+	GtkWidget *block;
+	GtkWidget *add;
+	GtkWidget *sep1;
+	GtkWidget *sep2;
+	GtkWidget *menu;
+	GtkWidget *check;
+	gboolean unseen;
+
+#if USE_PIXBUF
+	/* buddy icon stuff. sigh. */
+	GtkWidget *icon;
+	GdkPixbuf *unanim;
+	GdkPixbufAnimation *anim;
+	guint32 icon_timer;
+	int frame;
+#endif
+
+	/* stuff used just for chat */
+        GList *in_room;
+        GList *ignored;
+	char *topic;
+        int id;
+	GtkWidget *count;
+	GtkWidget *list;
+	GtkWidget *whisper;
+	GtkWidget *invite;
+	GtkWidget *close;
+	GtkWidget *topic_text;
+
+	/* something to distinguish */
+	gboolean is_chat;
+};
+
 struct log_conversation {
 	char name[80];
 	char filename[512];
@@ -105,6 +184,33 @@ struct queued_message {
 	time_t tm;
 	struct gaim_connection *gc;
 	int flags;
+};
+
+struct mod_user {
+	struct aim_user *user;
+
+	/* these are temporary */
+	int options;
+	int protocol;
+	char proto_opt[7][256];
+
+	/* stuff for modify window */
+	GtkWidget *mod;
+	GtkWidget *main;
+	GtkWidget *name;
+	GtkWidget *pwdbox;
+	GtkWidget *pass;
+	GtkWidget *rempass;
+	GList *opt_entries;
+
+	/* stuff for icon selection */
+	char iconfile[256];
+	GtkWidget *iconsel;
+	GtkWidget *iconentry;
+	GtkWidget *icondlg;
+
+	/* stuff for mail check prompt */
+	GtkWidget *checkmail;
 };
 
 #define EDIT_GC    0
