@@ -8,6 +8,7 @@ version 0.11.0:
 	* Icons for Yahoo plugin (not-so-blatently stolen from GTKYahoo)
 	* Optionally display warning level next to name in buddy list
 	* Optionally ignore fonts on incoming messages
+	* Command-line option to automatically be away on signon (thanks bmiller)
 
 version 0.11.0-pre2 (12/04/2000):
 	* Fixed a segfault with a bad util.c 
