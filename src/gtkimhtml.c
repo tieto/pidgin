@@ -181,17 +181,14 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 	while (*x) {
 		gchar *pos;
 
-		if (t->image)
-			return len;
-
 		if (!t->values)
-			return 0;
+			break;
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
 			t = t->children [(int) pos - (int) t->values->str];
 		else
-			return 0;
+			break;
 
 		x++; len++;
 	}
