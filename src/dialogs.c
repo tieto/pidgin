@@ -3069,6 +3069,7 @@ alias_dialog_bud(GaimBuddy *b)
 
 	field = gaim_request_field_string_new("screenname", _("_Screenname"),
 										  b->name, FALSE);
+	gaim_request_field_string_set_editable(field, FALSE);
 	gaim_request_field_group_add_field(group, field);
 
 	field = gaim_request_field_string_new("alias", _("_Alias"),
