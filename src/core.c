@@ -92,6 +92,7 @@ static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 
 static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 {
+#ifdef GAIM_PLUGINS
 	guint id;
 	struct gaim_plugin *p;
 
@@ -124,6 +125,7 @@ static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 		debug_printf("unhandled plugin subtype %d\n", subtype);
 		break;
 	}
+#endif
 }
 
 static void user_handler(struct UI *ui, guchar subtype, guchar *data)
