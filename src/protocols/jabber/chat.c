@@ -666,8 +666,8 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
 		char *err = jabber_parse_error(js,packet);
-		gaim_notify_error(js->gc, _("Roomlist Error"),
-				_("Error retreiving roomlist"), err);
+		gaim_notify_error(js->gc, _("Error"),
+				_("Error retreiving room list"), err);
 		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
 		gaim_roomlist_unref(js->roomlist);
 		js->roomlist = NULL;
@@ -677,8 +677,8 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 
 	if(!(query = xmlnode_get_child(packet, "query"))) {
 		char *err = jabber_parse_error(js, packet);
-		gaim_notify_error(js->gc, _("Roomlist Error"),
-				_("Error retreiving roomlist"), err);
+		gaim_notify_error(js->gc, _("Error"),
+				_("Error retreiving room list"), err);
 		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
 		gaim_roomlist_unref(js->roomlist);
 		js->roomlist = NULL;

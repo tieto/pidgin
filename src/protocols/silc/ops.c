@@ -1240,7 +1240,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				break;
 
 			if (!success) {
-				gaim_notify_error(gc, _("Roomlist"), _("Cannot get room list"),
+				gaim_notify_error(gc, _("Error"), _("Error retrieving room list"),
 						  silc_get_status_message(status));
 				gaim_roomlist_set_in_progress(sg->roomlist, FALSE);
 				gaim_roomlist_unref(sg->roomlist);
