@@ -182,7 +182,8 @@ gaim_connection_connect(GaimConnection *gc, GaimStatus *status)
 		escaped = g_markup_escape_text(username, strlen(username));
 		primary = g_strdup_printf(_("Enter password for %s (%s)"), escaped,
 								  gaim_account_get_protocol_name(account));
-		gaim_request_input(gc, NULL, primary, NULL, NULL, FALSE, TRUE, NULL,
+		gaim_request_input(gc, _("Enter Password"), primary, NULL, NULL,
+						   FALSE, TRUE, NULL,
 						   _("OK"), G_CALLBACK(request_pass_ok_cb),
 						   _("Cancel"), NULL, account);
 		g_free(primary);
