@@ -573,11 +573,24 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			g_error_free(error);
 			return NULL;
 		}
+
+		if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
+			gaim_debug_info("buddyicon", "Creating icon cache directory.\n");
+
+			if (mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
+				gaim_debug_error("buddyicon",
+								 "Unable to create directory %s: %s\n",
+								 dirname, strerror(errno));
+				return NULL;
+			}
+		}
+
 		for (i = 0; prpl_formats[i]; i++) {
 			gaim_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
 			/* The gdk-pixbuf documentation is wrong. gdk_pixbuf_save returns TRUE if it was successful,
 			 * FALSE if an error was set. */
-			if (gdk_pixbuf_save (pixbuf, filename, prpl_formats[i], &error, NULL) == TRUE)
+			if (gdk_pixbuf_format_is_writable(format) &&
+				gdk_pixbuf_save(pixbuf, filename, prpl_formats[i], &error, NULL) == TRUE)
 				break;
 		}
 		if (!error) {
