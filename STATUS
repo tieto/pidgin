@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-11-20 20:00:45 -0500 (Mon, 20 Nov 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-12-08 16:28:32 -0500 (Fri, 08 Dec 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -36,21 +36,6 @@ you're signed on as more than one name, the tooltips and idle times for buddies
 won't display correctly.
 
 
-TOC
-===
-
-TOC is working reasonably well. The options to use a proxy got moved to the
-account editor, and are set up on a per-account basis, in case you were
-wondering.
-
-
-Oscar
-=====
-
-Oscar is working reasonably well. Please see gaim/libfaim/README.gaim for more
-details on Oscar.
-
-
 Applet
 ======
 
@@ -72,3 +57,45 @@ Perl
 Perl also got a good reworking, but also has a few more features now. Again,
 porting from 0.10.x to 0.11.0 should be simple, but read the docs to see what's
 going on.
+
+
+TOC
+===
+
+TOC is working reasonably well. The options to use a proxy got moved to the
+account editor, and are set up on a per-account basis, in case you were
+wondering. TOC can be used to sign into ICQ; though you should use the ICQ
+plugin as it offers more functionality.
+
+
+Oscar
+=====
+
+Oscar is working reasonably well. Please see gaim/libfaim/README.gaim for more
+details on Oscar. Oscar can be used to sign into ICQ; though you should use the
+ICQ plugin as it offers more functionality.
+
+
+Yahoo
+=====
+
+Yahoo currently supports signing on/off, changing status (only to user-defined
+so far though), checking other people's status (via right-clicking in the
+buddy list), and sending/receiving messages. Chat support is planned but not
+yet implemented.
+
+
+IRC
+===
+
+Rob, I'll let you fill this one in ;)
+
+
+ICQ
+===
+
+ICQ currently supports signing on/off, changing status (icq-away == aim-idle,
+icq-n/a == aim-away), checking other people's status (but not status message),
+sending/receiving messages, and receiving URLs. Keepalives are sent regardless
+of whether or not you want them; it's necessary since it's a UDP protocol.
+Chat and file transfer are planned but not yet implemented.

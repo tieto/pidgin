@@ -5,6 +5,13 @@
 #include "prpl.h"  /* needed for prpl */
 #include "gaim.h"  /* needed for every other damn thing */
 
+#include "pixmaps/gnomeicu-online.xpm"
+#include "pixmaps/gnomeicu-away.xpm"
+#include "pixmaps/gnomeicu-dnd.xpm"
+#include "pixmaps/gnomeicu-na.xpm"
+#include "pixmaps/gnomeicu-occ.xpm"
+#include "pixmaps/gnomeicu-ffc.xpm"
+
 struct icq_data {
 	ICQLINK *link;
 	int cur_status;
@@ -99,12 +106,16 @@ static void icq_msg_incoming(ICQLINK *link, unsigned long uin, unsigned char hou
 	g_free(tmp);
 }
 
-static void icq_user_online(ICQLINK *link, unsigned long uin, unsigned long status,
+static void icq_user_online(ICQLINK *link, unsigned long uin, unsigned long st,
 				unsigned long ip, unsigned short port, unsigned long real_ip,
 				unsigned char tcp_flags) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
-	char buf[256]; g_snprintf(buf, sizeof buf, "%lu", uin);
-	serv_got_update(gc, buf, 1, 0, 0, 0, (status==STATUS_ONLINE) ? UC_NORMAL : UC_UNAVAILABLE, 0);
+	guint status;
+	char buf[256];
+
+	g_snprintf(buf, sizeof buf, "%lu", uin);
+	status = (st == STATUS_ONLINE) ? UC_NORMAL : UC_UNAVAILABLE | (st << 5);
+	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
 }
 
 static void icq_user_offline(ICQLINK *link, unsigned long uin) {
@@ -113,10 +124,14 @@ static void icq_user_offline(ICQLINK *link, unsigned long uin) {
 	serv_got_update(gc, buf, 0, 0, 0, 0, 0, 0);
 }
 
-static void icq_user_status(ICQLINK *link, unsigned long uin, unsigned long status) {
+static void icq_user_status(ICQLINK *link, unsigned long uin, unsigned long st) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
-	char buf[256]; g_snprintf(buf, sizeof buf, "%lu", uin);
-	serv_got_update(gc, buf, 1, 0, 0, 0, (status==STATUS_ONLINE) ? UC_NORMAL : UC_UNAVAILABLE, 0);
+	guint status;
+	char buf[256];
+
+	g_snprintf(buf, sizeof buf, "%lu", uin);
+	status = (st == STATUS_ONLINE) ? UC_NORMAL : UC_UNAVAILABLE | (st << 5);
+	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
 }
 
 static gint icq_set_timeout_cb(struct icq_data *id) {
@@ -162,6 +177,22 @@ static void icq_invalid_uin(struct icq_link *link) {
 	signoff(gc);
 }
 
+static void icq_info_reply(struct icq_link *link, unsigned long uin, const char *nick,
+			const char *first, const char *last, const char *email, char auth) {
+	char buf[16 * 1024];
+
+	g_snprintf(buf, sizeof buf,
+		   "<B>UIN:</B> %lu<BR>"
+		   "<B>Nick:</B> %s<BR>"
+		   "<B>Name:</B> %s %s<BR>"
+		   "<B>Email:</B> %s\n",
+		   uin,
+		   nick,
+		   first, last,
+		   email);
+	g_show_info_text(buf);
+}
+
 static void icq_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
@@ -179,6 +210,7 @@ static void icq_login(struct aim_user *user) {
 	link->icq_UserOnline = icq_user_online;
 	link->icq_UserOffline = icq_user_offline;
 	link->icq_UserStatusUpdate = icq_user_status;
+	link->icq_InfoReply = icq_info_reply;
 	link->icq_WrongPassword = icq_wrong_passwd;
 	link->icq_InvalidUIN = icq_invalid_uin;
 	link->icq_Log = icq_do_log;
@@ -259,15 +291,58 @@ static void icq_set_away(struct gaim_connection *gc, char *msg) {
 	}
 }
 
+static char **icq_list_icon(int uc) {
+	guint status;
+	if (uc == UC_NORMAL)
+		return icon_online_xpm;
+	status = uc >> 5;
+	if (status & STATUS_NA)
+		return icon_na_xpm;
+	if (status & STATUS_DND)
+		return icon_dnd_xpm;
+	if (status & STATUS_OCCUPIED)
+		return icon_occ_xpm;
+	if (status & STATUS_AWAY)
+		return icon_away_xpm;
+	if (status & STATUS_FREE_CHAT)
+		return icon_ffc_xpm;
+	if (status & STATUS_INVISIBLE)
+		return NULL;
+	return icon_online_xpm;
+}
+
+static void icq_get_info(struct gaim_connection *gc, char *who) {
+	struct icq_data *id = (struct icq_data *)gc->proto_data;
+	icq_SendInfoReq(id->link, atol(who));
+}
+
+static void icq_info(GtkObject *obj, char *who) {
+	serv_get_info(gtk_object_get_user_data(obj), who);
+}
+
+static void icq_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+	GtkWidget *button;
+
+	button = gtk_menu_item_new_with_label(_("Get Info"));
+	gtk_signal_connect(GTK_OBJECT(button), "activate",
+			   GTK_SIGNAL_FUNC(icq_info), who);
+	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	gtk_menu_append(GTK_MENU(menu), button);
+	gtk_widget_show(button);
+}
+
 static void icq_init(struct prpl *ret) {
 	ret->protocol = PROTO_ICQ;
 	ret->name = icq_name;
+	ret->list_icon = icq_list_icon;
+	ret->action_menu = icq_action_menu;
 	ret->login = icq_login;
 	ret->close = icq_close;
 	ret->send_im = icq_send_msg;
 	ret->add_buddy = icq_add_buddy;
 	ret->add_buddies = icq_add_buddies;
 	ret->remove_buddy = icq_rem_buddy;
+	ret->get_info = icq_get_info;
 	ret->set_away = icq_set_away;
 	ret->keepalive = icq_keepalive;
 
