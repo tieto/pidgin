@@ -541,6 +541,7 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 {
 	GSList *grp;
 	GSList *mem;
+	struct group_show *gs;
 	
 	struct group *delg;
 	struct buddy *delb;
@@ -559,6 +560,13 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 	}
 
 	gc->groups = g_slist_remove(gc->groups, delg);
+
+	if ((gs = find_group_show(delg->name)) != NULL) {
+		shows = g_slist_remove(shows, gc);
+		gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
+		g_free(gs->name);
+		g_free(gs);
+	}
 	g_free(delg);
 
         // flush buddy list to cache
