@@ -661,8 +661,6 @@ static gboolean find_nick(struct gaim_connection *gc, char *message)
 	n = strlen(who);
 	g_strdown(who);
 
-	debug_printf("\n%s\n%s\n%s\n\n", gc->username, gc->displayname, message);
-
 	if ((p = strstr(msg, who)) != NULL) {
 		if (((p == msg) || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
 			g_free(who);
@@ -716,16 +714,16 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 				play_sound(SND_CHAT_YOU_SAY);
 			flag |= WFLAG_SEND;
 		} else {
-			if (b->makesound && !(sound_options & OPT_SOUND_CHAT_NICK))
-				play_sound(SND_CHAT_SAY);
-			flag |= WFLAG_RECV;
+		       	flag |= WFLAG_RECV;
 		}
 		g_free(str);
 	}
 
-	if ((flag & WFLAG_RECV) && find_nick(b->gc, message)) {
-		if (b->makesound)
+	if (flag & WFLAG_RECV && b->makesound) {
+	     	if (sound_options & OPT_SOUND_CHAT_NICK)
 			play_sound(SND_CHAT_NICK);
+		else
+			play_sound(SND_CHAT_SAY);
 		flag |= WFLAG_NICK;
 	}
 	write_to_conv(b, message, flag, who, mtime, -1);
