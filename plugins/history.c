@@ -16,7 +16,7 @@ void historize (char *name, void *data)
 	struct conversation *c = find_conversation(name);
 	struct stat st;
 	FILE *fd;
-	char *userdir = gaim_user_dir();
+	char *userdir = g_strdup(gaim_user_dir());
 	char *logfile = g_strdup_printf("%s.log", normalize(name));
 	char *path = g_build_filename(userdir, "logs", logfile, NULL);
 	char buf[HISTORY_SIZE+1];
