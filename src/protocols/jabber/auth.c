@@ -132,9 +132,9 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 	if(!type) {
 		return;
-	} else if(strcmp(type, "error")) {
+	} else if(!strcmp(type, "error")) {
 		/* XXX: handle error */
-	} else if(strcmp(type, "result")) {
+	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
 			digest = TRUE;
