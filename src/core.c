@@ -38,8 +38,10 @@
 #include <string.h>
 
 #include "gaim.h"
+#include "gaim-socket.h"
 
 static gint UI_fd = -1;
+int gaim_session = 0;
 GSList *uis = NULL;
 
 static guchar *UI_build(guint32 *len, guchar type, guchar subtype, va_list args)
@@ -132,6 +134,7 @@ void UI_build_broadcast(guchar type, guchar subtype, ...)
 
 static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 {
+	struct gaim_cui_packet *p;
 	switch (subtype) {
 	case CUI_META_LIST:
 		break;
@@ -150,6 +153,11 @@ static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 		g_io_channel_close(ui->channel);
 		g_source_remove(ui->inpa);
 		g_free(ui);
+		break;
+	case CUI_META_PING:
+		p = cui_packet_new(CUI_TYPE_META, CUI_META_ACK);
+		cui_send_packet(g_io_channel_unix_get_fd(ui->channel), p);
+		cui_packet_free(p);
 		break;
 	default:
 		debug_printf("unhandled meta subtype %d\n", subtype);
@@ -289,6 +297,27 @@ static gint gaim_recv(GIOChannel *source, guchar *buf, gint len)
 	return total;
 }
 
+static void remote_handler(struct UI *ui, guchar subtype, guchar *data, int len)
+{
+	const char *resp;
+	char *send;
+	switch (subtype) {
+	case CUI_REMOTE_CONNECTIONS:
+		break;
+	case CUI_REMOTE_URI:
+		send = g_malloc(len + 1);
+		memcpy(send, data, len);
+		send[len] = 0;
+		resp = handle_uri(send);
+		g_free(send);
+		/* report error */
+		break;
+	default:
+		debug_printf("Unhandled remote subtype %d\n", subtype);
+		break;
+	}
+}
+
 static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 {
 	struct UI *ui = data;
@@ -365,8 +394,11 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		case CUI_TYPE_CHAT:
 			chat_handler(ui, subtype, in);
 			break;
-			*/
-		default:
+			*/   
+	        case CUI_TYPE_REMOTE:
+			remote_handler(ui, subtype, in, len);
+			break; 
+	        default:
 			debug_printf("unhandled type %d\n", type);
 			break;
 	}
@@ -402,18 +434,23 @@ static gint open_socket()
 {
 	struct sockaddr_un saddr;
 	gint fd;
-
+	
+	while (gaim_session_exists(gaim_session))
+		gaim_session++;
+	
+	debug_printf("session: %d\n", gaim_session);
+	
 	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
 		mode_t m = umask(0177);
 		saddr.sun_family = AF_UNIX;
 		g_snprintf(saddr.sun_path, 108, "%s/gaim_%s.%d",
-				g_get_tmp_dir(), g_get_user_name(), getpid());
+			   g_get_tmp_dir(), g_get_user_name(), gaim_session);
 		if (bind(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
 			listen(fd, 100);
 		else {
 			g_log(NULL, G_LOG_LEVEL_CRITICAL,
-				"Failed to assign %s to a socket (Error: %s)",	
-				saddr.sun_path, strerror(errno));
+			      "Failed to assign %s to a socket (Error: %s)",	
+			      saddr.sun_path, strerror(errno));
 			return -1;
 		}
 		umask(m);
@@ -450,7 +487,7 @@ void core_quit()
 {
 	char buf[1024];
 	close(UI_fd);
-	sprintf(buf, "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), getpid());
+	sprintf(buf, "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
 	unlink(buf);
 	debug_printf("Removed core\n");
 }

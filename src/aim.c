@@ -504,7 +504,7 @@ static int ui_main()
 		debug_printf("Failed to load icon from %s/pixmaps/gaim.png\n",DATADIR);
 	}
 
-	g_snprintf(name, sizeof(name), "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), getpid());
+	g_snprintf(name, sizeof(name), "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
 
 	UI_fd = open_socket(name);
 	if (UI_fd < 0)
@@ -770,7 +770,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!opt_acct && !opt_nologin)
+	if (!opt_acct && !opt_nologin && gaim_session == 0)
 		auto_login();
 
 	if (opt_acct) {

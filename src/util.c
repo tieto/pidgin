@@ -32,7 +32,9 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <ctype.h>
+#ifdef HAVE_ICONV
 #include <iconv.h>
+#endif
 #include <math.h>
 #include "gaim.h"
 #include "prpl.h"
@@ -1263,4 +1265,128 @@ FILE *gaim_mkstemp(gchar **fpath)
 	}
 
 	return fp;
+}
+
+/* AIM URI's ARE FUN :-D */
+const char *handle_uri(char *uri) {
+	GString *str;
+	GSList *conn = connections;
+	struct gaim_connection *gc;
+
+	debug_printf("Handling URI: %s\n", uri);
+	
+	/* Well, we'd better check to make sure we have at least one
+	   AIM account connected. */
+	while (gc = conn->data) {
+		if (gc->protocol == PROTO_TOC) {
+			break;
+		}
+		conn = conn->next;
+	}
+
+	if (gc == NULL)
+		return "Not connected to AIM";
+
+ 	/* aim://goim?screenname=screenname&message=message */
+	if (!g_strncasecmp(uri, "aim://goim?", strlen("aim://goim?"))) {
+		char *who, *what;
+		struct conversation *c;
+		uri = uri + strlen("aim://goim?");
+		
+		if (!(who = strstr(uri, "screenname="))) {
+			return "No screenname given.";
+		}
+		/* spaces are encoded as +'s */
+		who = who + strlen("screenname=");
+		str = g_string_new(NULL);
+		while (*who && (*who != '&')) {
+			g_string_append_c(str, *who == '+' ? ' ' : *who);
+			who++;
+		}
+		who = g_strdup(str->str);
+		g_string_free(str, TRUE);
+		
+		what = strstr(uri, "message=");
+		if (what) {
+			what = what + strlen("message=");
+			str = g_string_new(NULL);
+			while (*what && (*what != '&' || !g_strncasecmp(what, "&amp;", 5))) {
+				g_string_append_c(str, *what == '+' ? ' ' : *what);
+				what++;
+			}
+			what = g_strdup(str->str);
+			g_string_free(str, TRUE);
+		}
+		
+		c = new_conversation(who);
+		g_free(who);
+		if (what) {
+			int finish;
+			gtk_editable_insert_text(GTK_EDITABLE(c->entry),
+					 what, strlen(what), &finish);
+			g_free(what);
+		}
+	} else if (!g_strncasecmp(uri, "aim://addbuddy?", strlen("aim://addbuddy?"))) {
+		char *who, *group;
+		uri = uri + strlen("aim://addbuddy?");
+		/* spaces are encoded as +'s */
+		
+		if (!(who = strstr(uri, "screenname="))) {
+			return "No screenname given.";
+		}
+		who = who + strlen("screenname=");
+		str = g_string_new(NULL);
+		while (*who && (*who != '&')) {
+			g_string_append_c(str, *who == '+' ? ' ' : *who);
+			who++;
+		}
+		who = g_strdup(str->str);
+		g_string_free(str, TRUE);
+
+		group = strstr(uri, "group=");
+		if (group) {
+			group = group + strlen("group=");
+			str = g_string_new(NULL);
+			while (*group && (*group != '&' || !g_strncasecmp(group, "&amp;", 5))) {
+				g_string_append_c(str, *group == '+' ? ' ' : *group);
+				group++;
+			}
+			group = g_strdup(str->str);
+			g_string_free(str, TRUE);
+		}
+		debug_printf("who: %s\n", who);
+		show_add_buddy(gc, who, group, NULL);
+		g_free(who);
+		if (group)
+			g_free(group);
+	} else if (!g_strncasecmp(uri, "aim://gochat?", strlen("aim://gochat?"))) {
+		char *room;
+		GList *chat=NULL;
+		int exch = 5;
+		
+		uri = uri + strlen("aim://gochat?");
+		/* spaces are encoded as +'s */
+		
+		if (!(room = strstr(uri, "roomname="))) {
+			return "No roomname given.";
+		}
+		room = room + strlen("roomname=");
+		str = g_string_new(NULL);
+		while (*room && (*room != '&')) {
+			g_string_append_c(str, *room == '+' ? ' ' : *room);
+			room++;
+		}
+		room = g_strdup(str->str);
+		g_string_free(str, TRUE);
+		chat = g_list_append(NULL, room);
+		chat = g_list_append(chat, &exch);
+		serv_join_chat(gc, chat);
+		g_free(room);
+		g_list_free(chat);
+	} else {
+		return "Invalid AIM URI";
+	}
+	
+	
+	return NULL;
 }

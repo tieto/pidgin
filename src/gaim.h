@@ -43,12 +43,19 @@
 #define CUI_TYPE_BUDDY		5	/* BUDDY_LIST, i.e., both groups and buddies */
 #define CUI_TYPE_MESSAGE	6
 #define CUI_TYPE_CHAT		7
+#define CUI_TYPE_REMOTE         8       /* This is used to send commands to other UI's, 
+					 * like "Open new conversation" or "send IM".
+					 * Even though there's much redundancy with the
+					 * other CUI_TYPES, we're better keeping this stuff
+					 * seperate because it's intended use is so different */
 
 #define CUI_META_LIST		1	/* 1 is always list; this is ignored by the core.
 					   If we move to TCP this can be a keepalive */
 #define CUI_META_QUIT		2
 #define CUI_META_DETACH		3	/* you don't need to send this, you can just close
 					   the socket. the core will understand. */
+#define CUI_META_PING           4
+#define CUI_META_ACK            5
 
 #define CUI_PLUGIN_LIST		1
 #define CUI_PLUGIN_LOAD		2
@@ -83,6 +90,19 @@
 #define CUI_CHAT_PART		4
 #define CUI_CHAT_SEND		5
 #define CUI_CHAT_RECV		6
+
+#define CUI_REMOTE_CONNECTIONS  2       /* Get a list of gaim_connections */
+#define CUI_REMOTE_URI          3       /* Have the core handle aim:// URI's */
+#define CUI_REMOTE_BLIST        4       /* Return a copy of the buddy list */
+#define CUI_REMOTE_STATE        5       /* Given a buddy, return his presence. */
+#define CUI_REMOTE_NEW_CONVO    6       /* Must give a user, can give an optional message */
+#define CUI_REMOTE_SEND         7       /* Sends a message, a 'quiet' flag determines whether
+					 * a convo window is displayed or not. */
+#define CUI_REMOTE_ADD_BUDDY    8       /* Adds buddy to list */
+#define CUI_REMOTE_REMOVE_BUDDY 9       /* Removes buddy from list */
+#define CUI_REMOTE_JOIN_CHAT    10       /* Joins a chat. */
+                              /* What else?? */
+
 
 #define IM_FLAG_AWAY     0x01
 #define IM_FLAG_CHECKBOX 0x02
@@ -432,6 +452,7 @@ extern void strip_linefeed(char *);
 extern time_t get_time(int, int, int, int, int, int);
 extern FILE *gaim_mkstemp(gchar **);
 extern char *convert_string(char *, const char *, const char *);
+extern const char *handle_uri(char *);
 
 #ifdef HAVE_LANGINFO_CODESET
 #define utf8_to_str(in) convert_string(in, nl_langinfo(CODESET), "UTF-8");

@@ -1,6 +1,6 @@
 SUBDIRS = protocols
 
-bin_PROGRAMS = gaim
+bin_PROGRAMS = gaim gaim-remote
 gaim_SOURCES =	about.c \
 		aim.c \
 		away.c \
@@ -25,11 +25,14 @@ gaim_SOURCES =	about.c \
 		proxy.c \
 		prpl.c \
 		server.c \
+		socket.c \
 		sound.c \
 		util.c
 gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = @LDADD@ @LIBOBJS@
+
+gaim_remote_SOURCES = gaim-remote.c socket.c
 
 CFLAGS += $(PERL_CFLAGS)
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\" -DLIBDIR=\"$(libdir)/gaim/\" $(DEBUG_CFLAGS) -DDATADIR=\"$(datadir)\"
