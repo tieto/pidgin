@@ -56,7 +56,8 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			winprefs.c
+C_SRC =			winprefs.c \
+			gtkappbar.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
