@@ -452,6 +452,7 @@ void do_remove_buddy(struct buddy *b)
 {
 	struct group *g = find_group_by_buddy(b);
 	struct gaim_conversation *c;
+	gchar *name = g_strdup(b->name); /* b->name is null after remove_buddy */
 
 	if (!b)
 		return;
@@ -459,14 +460,16 @@ void do_remove_buddy(struct buddy *b)
 	g = find_group_by_buddy(b);
 
 	debug_printf(_("Removing '%s' from buddy list.\n"), b->name);
-	serv_remove_buddy(b->user->gc, b->name, g->name);
+	serv_remove_buddy(b->user->gc, name, g->name);
 	remove_buddy(b);
 	gaim_blist_save();
 
-	c = gaim_find_conversation(b->name);
+	c = gaim_find_conversation(name);
 
 	if (c != NULL)
 		gaim_conversation_update(c, GAIM_CONV_UPDATE_REMOVE);
+
+	g_free(name);
 }
 
 void show_confirm_del(struct gaim_connection *gc, gchar *name)

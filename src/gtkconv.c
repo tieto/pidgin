@@ -3501,7 +3501,6 @@ update_convo_add_button(struct gaim_conversation *conv)
 	struct gaim_connection *gc;
 	GaimConversationType type;
 	GtkWidget *parent;
-	gboolean rebuild = FALSE;
 
 	type    = gaim_conversation_get_type(conv);
 	gc      = gaim_conversation_get_gc(conv);
@@ -3509,46 +3508,33 @@ update_convo_add_button(struct gaim_conversation *conv)
 	parent  = gtk_widget_get_parent(gtkconv->u.im->add);
 
 	if (find_buddy(gc->user, gaim_conversation_get_name(conv))) {
-		if (!g_object_get_data(G_OBJECT(gtkconv->u.im->add), "user_data")) {
-			gtkconv->u.im->add =
-				gaim_gtk_change_text(_("Remove"), gtkconv->u.im->add,
-									 GTK_STOCK_REMOVE, type);
-			gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->u.im->add,
-				_("Remove the user from your buddy list"), NULL);
+		gtkconv->u.im->add =
+			gaim_gtk_change_text(_("Remove"), gtkconv->u.im->add,
+								 GTK_STOCK_REMOVE, type);
+		gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->u.im->add,
+			_("Remove the user from your buddy list"), NULL);
 
-			rebuild = TRUE;
-		}
-		
 		gtk_widget_set_sensitive(gtkconv->u.im->add,
 			(gc != NULL && gc->prpl->remove_buddy != NULL));
-
-		g_object_set_data(G_OBJECT(gtkconv->u.im->add), "user_data", conv);
-
 	} else {
-		if (g_object_get_data(G_OBJECT(gtkconv->u.im->add), "user_data")) {
-			gtkconv->u.im->add =
-				gaim_gtk_change_text(_("Add"), gtkconv->u.im->add,
-									 GTK_STOCK_ADD, type);
-			gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->u.im->add,
-				_("Add the user to your buddy list"), NULL);
-
-			rebuild = TRUE;
-		}
+		gtkconv->u.im->add =
+			gaim_gtk_change_text(_("Add"), gtkconv->u.im->add,
+								 GTK_STOCK_ADD, type);
+		gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->u.im->add,
+			_("Add the user to your buddy list"), NULL);
 
 		gtk_widget_set_sensitive(gtkconv->u.im->add,
 			(gc != NULL && gc->prpl->add_buddy != NULL));
 	}
 
-	if (rebuild) {
-		g_signal_connect(G_OBJECT(gtkconv->u.im->add), "clicked",
-						 G_CALLBACK(add_cb), conv);
+	g_signal_connect(G_OBJECT(gtkconv->u.im->add), "clicked",
+					 G_CALLBACK(add_cb), conv);
 
-		gtk_box_pack_start(GTK_BOX(parent), gtkconv->u.im->add,
-						   FALSE, FALSE, 0);
-		gtk_box_reorder_child(GTK_BOX(parent), gtkconv->u.im->add, 3);
-		gtk_button_set_relief(GTK_BUTTON(gtkconv->u.im->add), GTK_RELIEF_NONE);
-		gtk_size_group_add_widget(gtkconv->sg, gtkconv->u.im->add);
-	}
+	gtk_box_pack_start(GTK_BOX(parent), gtkconv->u.im->add,
+					   FALSE, FALSE, 0);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->u.im->add, 3);
+	gtk_button_set_relief(GTK_BUTTON(gtkconv->u.im->add), GTK_RELIEF_NONE);
+	gtk_size_group_add_widget(gtkconv->sg, gtkconv->u.im->add);
 }
 
 struct gaim_window_ops *
@@ -4160,6 +4146,11 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 			 type == GAIM_CONV_ACCOUNT_OFFLINE) {
 
 		generate_send_as_items(win, NULL);
+	}
+	else if(type == GAIM_CONV_UPDATE_ADD ||
+			type == GAIM_CONV_UPDATE_REMOVE) {
+		
+		update_convo_add_button(conv);
 	}
 }
 
