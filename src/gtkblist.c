@@ -1475,11 +1475,19 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 			gaim_prefs_get_bool("/gaim/gtk/blist/auto_expand_contacts")) {
 		GtkTreeIter i;
 		gaim_gtk_blist_expand_contact_cb(NULL, node);
-		tooltip_top = TRUE; /* When the person expands, the new screennames will be below.  We'll draw the tip above
-				       the cursor so that the user can see the included buddies */
-		
+		tooltip_top = TRUE; /* When the person expands, the new screennames will be below.
+							   We'll draw the tip above the cursor so that the user can see
+							   the included buddies */
+
 		while (gtk_events_pending())
 			gtk_main_iteration();
+
+		/* we check to see if we're still supposed to be moving, now that gtk events have
+		 * happened, and the mouse might not still be in the buddy list */
+		if(!gtkblist->timeout) {
+			gaim_gtk_blist_collapse_contact_cb(NULL, node);
+			return FALSE;
+		}
 
 		gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->contact_rect);
 		gdk_drawable_get_size(GDK_DRAWABLE(tv->window), &(gtkblist->contact_rect.width), NULL);
@@ -1600,6 +1608,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, gpointer null)
 {
 	GtkTreePath *path;
+
 	if (gtkblist->timeout) {
 		if ((event->y > gtkblist->tip_rect.y) && ((event->y - gtkblist->tip_rect.height) < gtkblist->tip_rect.y))
 			return FALSE;
@@ -1639,6 +1648,7 @@ static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, 
 
 static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer n)
 {
+
 	if (gtkblist->timeout) {
 		g_source_remove(gtkblist->timeout);
 		gtkblist->timeout = 0;
