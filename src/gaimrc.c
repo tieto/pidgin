@@ -1056,12 +1056,8 @@ void load_prefs()
 	if ((f = fopen(buf, "r"))) {
 		fgets(buf, sizeof(buf), f);
 		sscanf(buf, "# .gaimrc v%d", &ver);
-		if ((ver <= 3) || (buf[0] != '#')) {
-			fclose(f);
+		if ((ver <= 3) || (buf[0] != '#'))
 			set_defaults();
-			save_prefs();
-			return;
-		}
 
 		while (!feof(f)) {
 			switch (gaimrc_parse_tag(f)) {
