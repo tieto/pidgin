@@ -758,11 +758,19 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					g_free(tag->data);
 					tags = g_list_remove(tags, tag->data);
 				} else {
-					/* we tried to close a tag we never opened! escape it
-					 * and move on */
-					xhtml = g_string_append(xhtml, "&lt;");
-					plain = g_string_append_c(plain, '<');
-					c++;
+					/* a closing tag we weren't expecting...
+					 * we'll let it slide, if it's really a tag...if it's
+					 * just a </ we'll escape it properly */
+					const char *end = c+2;
+					while(*end && g_ascii_isalpha(*end))
+						end++;
+					if(*end == '>') {
+						c = end+1;
+					} else {
+						xhtml = g_string_append(xhtml, "&lt;");
+						plain = g_string_append_c(plain, '<');
+						c++;
+					}
 				}
 			} else { /* opening tag */
 				ALLOW_TAG("a");
