@@ -115,21 +115,22 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 10. MSN Protocol
 
-         10.1.  I'm getting lots of "Already in Opposite list" errors on MSN,
+         10.1.  Why are my file transfers so slow?
+         10.2.  I'm getting lots of "Already in Opposite list" errors on MSN,
                 why?
-         10.2.  Is there a way to invite more than one person to an MSN chat?
-         10.3.  Is MSNP9 (MSN6) going to be supported?
+         10.3.  Is there a way to invite more than one person to an MSN chat?
+         10.4.  Is MSNP9 (MSN6) going to be supported?
                 Will I be able to use Gaim for MSN after October 15th 2003?
-         10.4.  (The day they're preventing third party clients from
+         10.5.  (The day they're preventing third party clients from
                 connecting)
-         10.5.  I just upgraded Gaim and the MSN plugin will not load. Why?
-         10.6.  The MSN plugin won't load, but I have Mozilla NSS!
-         10.7.  What does "MSN: S: 911 3" in the debug window mean when I
+         10.6.  I just upgraded Gaim and the MSN plugin will not load. Why?
+         10.7.  The MSN plugin won't load, but I have Mozilla NSS!
+         10.8.  What does "MSN: S: 911 3" in the debug window mean when I
                 cannot connect to MSN?
-         10.8.  How do I set an MSN avatar?
-         10.9.  What does "Has you" in the buddy tooltip mean?
-         10.10. How do I set my MSN Friendly Name (the name other users see)?
-         10.11. What does "Error reading from switchboard server" mean?
+         10.9.  How do I set an MSN avatar?
+         10.10. What does "Has you" in the buddy tooltip mean?
+         10.11. How do I set my MSN Friendly Name (the name other users see)?
+         10.12. What does "Error reading from switchboard server" mean?
 
 11. Gadu-Gadu Protocol
 
@@ -232,7 +233,12 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   toolkit/) and the Gaim SILC plugin. This plugin is generally provided as a
   separate package (such as a gaim-silc RPM). If you're compiling yourself, see
   the ./configure --help for specifying the SILC includes and libs. If you're
-  compiling an SRPM, use "--with silc" to build the gaim-silc RPM.
+  compiling an SRPM, use --with silc to build the gaim-silc RPM.
+
+  In Windows, the SILC toolkit is installed with Gaim.
+
+  Some distributions provide the SILC toolkit and include Gaim's SILC plugin in
+  their Gaim package.
 
 1.5  Is there some way I can compile just Gaim, without all of these protocols?
  
@@ -389,9 +395,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
   MSN (including Hotmail email): Go to http://registernet.passport.com/.
 
-  MSN (using your own email address): Go to https://register.passport.net/
-  reg.srf?lc=1033&id=486&ru=
-  http%3A%2F%2Fwww%2Epassport%2Enet%2FConsumer%2FDefault%2Easp%3Flc%3D1033&sl=1
+  MSN (using your own email address): Go to http://register.passport.net/.
 
   Yahoo: Go to http://edit.yahoo.com/config/eval_register.
 
@@ -415,6 +419,8 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   messages. The display fonts used by the rest of Gaim are those specified by
   GTK. To change this font you need to edit your ~/.gtkrc-2.0 file. If you need
   help you can see our example .gtkrc-2.0 (http://gaim.sf.net/gtkrc-2.0) file.
+  On Windows, this file is located at C:\Documents and Settings\username
+  \.themes\Default\gtk-2.0\gtkrc.
 
   You can also just switch to a different GTK theme. You can find GTK themes
   (and information on using them) by visiting themes.freshmeat.net,
@@ -463,7 +469,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   he's an AOL user is the most important information shown in the icon. The
   consistency is that the user can always look in the same place on the icon to
   find out what he needs to know. Also, importantly, the lower-right corner
-  emblem is the only emblem that shows up when "Small list" is on, and only one
+  emblem is the only emblem that shows up when "Small list" is on, as only one
   emblem would fit.
 
 2.8  How do I get sound to work correctly?
@@ -480,7 +486,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   To compile Gaim with support for libao you need libao-devel and
   audiofile-devel. To use libao you need libao and audiofile. If you do not
   wish to install these packages you can also just change your sound playing
-  method in preferences to Command and use "esdplay %s" or "artsplay %s."
+  method in preferences to Command and use esdplay %s or artsplay %s.
 
 2.9  How do I make Gaim use ALSA or OSS for playing sounds? What does the
      "Automatic" option do?
@@ -492,14 +498,13 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   If you choose "Automatic", you can create a file, either /etc/libao.conf or ~
   /.libao, and put one of the following lines in it:
 
+  default_driver=alsa
 
-     default_driver=alsa
-
-     default_driver=oss
+  default_driver=oss
 
   Other drivers, like alsa09, arts, esd, irix, macosx, and sun might also be
-  supported, depending on your platform, and how libao was compiled. See also
-  'man 5 libao.conf'.
+  supported, depending on your platform and how libao was compiled. See also
+  man 5 libao.conf.
 
 2.10  Why does Gaim use the same WM_CLASS for every window? It makes it
       impossible to control window size and placement for the buddy list
@@ -776,9 +781,15 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
  
   If you are using Linux, your kernel may be using a network option called
   "ECN". It seems that the AOL servers are currently dropping packets marked as
-  "ECN-capable". In order to turn this off, run the command "echo 0 > /proc/sys
-  /net/ipv4/tcp_ecn" as root, or (if your distribution supports it) put the
-  line "net.ipv4.tcp_ecn = 0" in the file /etc/sysctl.conf.
+  "ECN-capable". In order to turn this off, run the command
+
+  echo 0 > /proc/sys/net/ipv4/tcp_ecn
+
+  as root, or (if your distribution supports it) put the line
+
+  net.ipv4.tcp_ecn = 0
+
+  in the file /etc/sysctl.conf.
 
 6.11  English is not my native language, and some of my friends have trouble
       seeing my IMs/I have trouble seeing my friends' IMs. How do I use a
@@ -939,27 +950,27 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
   The list of known country codes for this url is:
 
-  aa => Asia
-  ar => Argentina
-  au => Australia
-  br => Brazil
-  ca => Canada
-  cf => Central African Republic
-  cn => China
-  de => Germany
-  dk => Denmark
-  es => Spain
-  fr => France
-  hk => Hong Kong
-  in => India
-  it => Italy
-  kr => Korea, Republic of
-  mx => Mexico
-  no => Norway
-  se => Sweden
-  sg => Singapore
-  tw => Taiwan
-  uk => United Kingdom
+    • aa => Asia
+    • ar => Argentina
+    • au => Australia
+    • br => Brazil
+    • ca => Canada
+    • cf => Central African Republic
+    • cn => China
+    • de => Germany
+    • dk => Denmark
+    • es => Spain
+    • fr => France
+    • hk => Hong Kong
+    • in => India
+    • it => Italy
+    • kr => Korea, Republic of
+    • mx => Mexico
+    • no => Norway
+    • se => Sweden
+    • sg => Singapore
+    • tw => Taiwan
+    • uk => United Kingdom
 
 9.5  What protocol does Gaim use to connect to Yahoo!?
  
@@ -980,7 +991,14 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 | 10. MSN Protocol
 +------------------------------------------------------------------------------
 
-10.1  I'm getting lots of "Already in Opposite list" errors on MSN, why?
+10.1  Why are my file transfers so slow?
+ 
+  Gaim only supports tranferring files over MSN via the MSN servers. This means
+  all your data is sent to an MSN server and then forwarded to the person at
+  the other end of the transfer. It is unknown whether we will support true
+  peer to peer file transfer over MSN.
+
+10.2  I'm getting lots of "Already in Opposite list" errors on MSN, why?
  
   The reason this happens is because you have a screen name in both your permit
   list and your deny list. There are two ways to fix this: the correct way and
@@ -988,27 +1006,27 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   the list and remove the duplicate entries. The quick way is to remove the
   blist.xml file from the ~/.gaim directory. Be aware that this contains your
   buddy list for all accounts, and also stores the "Contact" grouping of
-  Buddies. Also, the MSN server stores the screen names of your contacts, but
-  does not store what group they are in, so you will have to re-sort your MSN
-  contacts into the appropriate groups.
+  Buddies.
 
-10.2  Is there a way to invite more than one person to an MSN chat?
+10.3  Is there a way to invite more than one person to an MSN chat?
  
-  Not at this time. When the conversation framework gets another rewrite, it is
-  possible that it will be worked on. Until that time, sorry. :)
+  Yes. Right click a buddy on your list and choose "Initiate Chat". In the
+  conversation window that appears, choose "Invite" from the "Conversation"
+  menu to invite another user. When the conversation framework gets another
+  rewrite, it is possible that this will be simplified.
 
-10.3  Is MSNP9 (MSN6) going to be supported?
+10.4  Is MSNP9 (MSN6) going to be supported?
  
   MSNP9 support has existed in Gaim since 0.69. However, at this point,
   features such as custom smileys aren't yet implemented.
 
-10.4  Will I be able to use Gaim for MSN after October 15th 2003? (The day
+10.5  Will I be able to use Gaim for MSN after October 15th 2003? (The day
       they're preventing third party clients from connecting)
  
   Yes. We use MSNP9, which is available in 0.69 and up, and MSNP9 is supported
   after October 15th 2003.
 
-10.5  I just upgraded Gaim and the MSN plugin will not load. Why?
+10.6  I just upgraded Gaim and the MSN plugin will not load. Why?
  
   You did not compile with SSL support, or the SSL plugin failed to load. As of
   protocol version 9, the MSN protocol requires the use of SSL, which Gaim
@@ -1016,7 +1034,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   project. Install one or both of these and recompile Gaim, and see the next
   question.
 
-10.6  The MSN plugin won't load, but I have Mozilla NSS!
+10.7  The MSN plugin won't load, but I have Mozilla NSS!
  
   Some distributions, including Slackware, install Mozilla NSS to a
   non-standard directory. The fix is simple. Edit /etc/ld.so.conf and add /usr/
@@ -1030,28 +1048,28 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
   See http://gaim.sf.net/faq-ssl.php on getting SSL to work with Gaim.
 
-10.7  What does "MSN: S: 911 3" in the debug window mean when I cannot connect
+10.8  What does "MSN: S: 911 3" in the debug window mean when I cannot connect
       to MSN?
  
   See http://gaim.sf.net/911.txt.
 
-10.8  How do I set an MSN avatar?
+10.9  How do I set an MSN avatar?
  
   Gaim calls these Buddy Icons. Go to Tools->Accounts and click to Modify your
   MSN account. You can drag and drop a file to the resulting dialog, or use the
   Open button.
 
-10.9  What does "Has you" in the buddy tooltip mean?
+10.10  What does "Has you" in the buddy tooltip mean?
  
   It shows you if that MSN user has added you to his/her buddy list. "Has you:
   No" does not mean you can't talk to that person.
 
-10.10  How do I set my MSN Friendly Name (the name other users see)?
+10.11  How do I set my MSN Friendly Name (the name other users see)?
  
   In the Buddy List window, go to Tools->Account Actions->account->Set Friendly
   Name.
 
-10.11  What does "Error reading from switchboard server" mean?
+10.12  What does "Error reading from switchboard server" mean?
  
   We haven't fully figured that out yet, but even Microsoft's client seems to
   get similar errors, although with less frequency than we do. See Bug 1060205
@@ -1092,8 +1110,8 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   Your site might require the use of Kerberos 4 for authentication, though few
   prepackaged Gaim binaries use Kerberos. One solution is to compile Gaim with
   the --with-krb4 flag to point to the location of your Kerberos 4 devel files,
-  usually one of /usr, /usr/local, or /usr/athena , e.g. ./configure
-  --with-krb4=/path/to/kerberosIV
+  usually one of /usr, /usr/local, or /usr/athena, e.g. ./configure --with-krb4
+  =/path/to/kerberosIV
 
 12.3  Gaim isn't working, but I never got any other Zephyr client working on
       this machine.
@@ -1124,6 +1142,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   tzc", and set the tzc command to
 
   /path/to/tzc -e "%s"
+
 
 +------------------------------------------------------------------------------
 | 13. SILC Protocol
@@ -1169,19 +1188,13 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   To compile a plugin for Gaim, you must have Gaim's source code. To download
   Gaim's source code, get the most recent tarball from http://
   gaim.sourceforge.net/downloads.php (http://gaim.sf.net/downloads.php) and
-  untar it with the command:
-
-  tar zxvf filename
-
-  where filename is the file you downloaded.
+  untar it with the command: tar zxvf filename where filename is the file you
+  downloaded.
 
   After you have a Gaim source code tree:
 
-   1. Change to the resulting directory and run the command:
-
-      ./configure
-
-      This will create the necessary make files.
+   1. Change to the resulting directory and run the command: ./configure This
+      will create the necessary make files.
    2. Move the plugin you wish to compile into the plugins/ directory in the
       Gaim source code tree.
    3. Change to the plugins/ directory.
@@ -1304,7 +1317,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 17.5  Why are the passwords in accounts.xml not encrypted?
  
   This is a case of a really long answer to a short question. Read our
-  explanation at http://gaim.sf.net/plaintextpasswords.txt.
+  explanation at http://gaim.sf.net/plaintextpasswords.php.
 
 17.6  What is gaim-remote?
  
