@@ -2477,7 +2477,7 @@ void update_convo_font()
 #if USE_PIXBUF
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixbuf-loader.h>
-#define SCALE 48
+#define SCALE 50
 
 static gboolean redraw_icon(gpointer data)
 {
