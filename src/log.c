@@ -382,6 +382,7 @@ static GaimLogLogger xml_logger =  {
 static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		const char *from, time_t time, const char *message)
 {
+	GaimConnection *gc = gaim_account_get_connection(log->account);
 	char date[64];
 	if(!log->logger_data) {
 		/* This log is new */
@@ -436,7 +437,22 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 			log->name, date, gaim_account_get_username(log->account), prpl);
 	}
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
-	fprintf(log->logger_data, "(%s) %s%s %s<br/>\n", date, from ? from : "", from ? ":" : "", message);
+	if (type & GAIM_MESSAGE_SYSTEM)
+		fprintf(log->logger_data, "(%s)<b> %s</b><br/>\n", date, message);
+	else if (type & GAIM_MESSAGE_WHISPER)
+		fprintf(log->logger_data, "<font color=\"#6C2585\">(%s)<b> %s:</b></font> %s<br/>\n",
+			date, from, message);
+	else if (type & GAIM_MESSAGE_AUTO_RESP) {
+		if (type & GAIM_MESSAGE_SEND)
+			fprintf(log->logger_data, _("<font color=\"#16569E\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, message);
+		else if (type & GAIM_MESSAGE_RECV)
+			fprintf(log->logger_data, _("<font color=\"#A82F2F\">(%s) <b>%s <AUTO-REPLY>:</b></font> %s<br/>\n"), date, from, message);
+	} else if (type & GAIM_MESSAGE_RECV)
+		fprintf(log->logger_data, "<font color=\"#A82F2F\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n", 
+			date, from, gc->prpl->info->name, message);
+	else if (type & GAIM_MESSAGE_RECV)
+		fprintf(log->logger_data, "<font color=\"#16569E\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n", 
+			date, from, gc->prpl->info->name, message);
 	fflush(log->logger_data);
 }
 
@@ -546,7 +562,22 @@ static void txt_logger_write(GaimLog *log,
 
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
 	stripped = gaim_markup_strip_html(message);
-	fprintf(log->logger_data, "(%s) %s%s %s\n", date, from ? from : "", from ? ":" : "", stripped);
+	if (type & GAIM_MESSAGE_SEND ||
+	    type & GAIM_MESSAGE_RECV)
+		fprintf(log->logger_data, "(%s) %s: %s\n", date, from, stripped);	
+	else if (type & GAIM_MESSAGE_SYSTEM)
+		fprintf(log->logger_data, "(%s) %s\n", date, stripped);
+	else if (type & GAIM_MESSAGE_AUTO_RESP)
+		fprintf(log->logger_data, _("(%s) %s <AUTO-REPLY>: %s\n"), date, from, stripped);
+	else if (type & GAIM_MESSAGE_NO_LOG) {
+		/* This shouldn't happen */
+		g_free(stripped);
+		return;
+	} else if (type & GAIM_MESSAGE_WHISPER)
+		fprintf(log->logger_data, "(%s) *%s* %s", date, from, stripped);
+	else
+		fprintf(log->logger_data, "(%s) %s%s %s\n", date, from ? from : "", from ? ":" : "", stripped);
+
 	fflush(log->logger_data);
 	g_free(stripped);
 }
