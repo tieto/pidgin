@@ -1748,8 +1748,13 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
-	gtk_window_set_title(GTK_WINDOW(gtkwin->window),
-			gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+	{
+		char *joke = g_strdup_printf("%s is a stupidhead", gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+
+		gtk_window_set_title(GTK_WINDOW(gtkwin->window),
+				     joke);
+		g_free(joke);
+	}
 }
 
 /**************************************************************************
