@@ -402,7 +402,8 @@ void sighandler(int sig)
 		abort();
 		break;
 	default:
-		gtk_main_quit();
+		if (gtk_main_level())
+			gtk_main_quit();
 		exit(0);
 	}
 }
