@@ -51,7 +51,8 @@
 
 gint font_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
 
-#define BORDER_SIZE 3
+#define BORDER_SIZE 2
+#define TOP_BORDER 10
 #define MIN_HEIGHT 20
 #define HR_HEIGHT 2
 #define TOOLTIP_TIMEOUT 500
@@ -236,8 +237,10 @@ gtk_imhtml_realize (GtkWidget *widget)
 					 &attributes, attributes_mask);
 	gdk_window_set_user_data (widget->window, widget);
 
-	attributes.x = 0;
-	attributes.y = 0;
+	attributes.x = widget->style->klass->xthickness + BORDER_SIZE;
+	attributes.y = widget->style->klass->xthickness + BORDER_SIZE;
+	attributes.width = MAX (1, (gint) widget->allocation.width - (gint) attributes.x * 2);
+	attributes.height = MAX (1, (gint) widget->allocation.height - (gint) attributes.y * 2);
 	attributes.event_mask = gtk_widget_get_events (widget)
 				| GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK
 				| GDK_POINTER_MOTION_MASK | GDK_EXPOSURE_MASK | GDK_LEAVE_NOTIFY_MASK;
@@ -250,9 +253,11 @@ gtk_imhtml_realize (GtkWidget *widget)
 
 	gdk_window_set_cursor (widget->window, imhtml->arrow_cursor);
 
-	gdk_window_set_background (widget->window, &widget->style->base [GTK_WIDGET_STATE (widget)]);
+	gdk_window_set_background (widget->window, &widget->style->base [GTK_STATE_NORMAL]);
 	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window,
-				   &widget->style->base [GTK_WIDGET_STATE (widget)]);
+				   &widget->style->base [GTK_STATE_NORMAL]);
+
+	gdk_window_show (GTK_LAYOUT (imhtml)->bin_window);
 }
 
 static gboolean
@@ -473,6 +478,31 @@ draw_line (GtkIMHtml        *imhtml,
 }
 
 static void
+gtk_imhtml_draw_focus (GtkWidget *widget)
+{
+	GtkIMHtml *imhtml;
+	gint x = 0,
+	     y = 0,
+	     w = 0,
+	     h = 0;
+	
+	imhtml = GTK_IMHTML (widget);
+
+	if (!GTK_WIDGET_DRAWABLE (widget))
+		return;
+
+	if (GTK_WIDGET_HAS_FOCUS (widget)) {
+		gtk_paint_focus (widget->style, widget->window, NULL, widget, "text", 0, 0,
+				 widget->allocation.width - 1, widget->allocation.height - 1);
+		x = 1; y = 1; w = 2; h = 2;
+	}
+
+	gtk_paint_shadow (widget->style, widget->window, GTK_STATE_NORMAL,
+			  GTK_SHADOW_IN, NULL, widget, "text", x, y,
+			  widget->allocation.width - w, widget->allocation.height - h);
+}
+
+static void
 gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 {
 	GList *bits;
@@ -484,8 +514,7 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 
 	x = GTK_LAYOUT (imhtml)->hadjustment->value;
 	y = GTK_LAYOUT (imhtml)->vadjustment->value;
-	width = GTK_WIDGET (imhtml)->allocation.width;
-	height = GTK_WIDGET (imhtml)->allocation.height;
+	gdk_window_get_size (GTK_LAYOUT (imhtml)->bin_window, &width, &height);
 
 	bits = imhtml->bits;
 
@@ -530,6 +559,8 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 		}
 		bits = g_list_next (bits);
 	}
+
+	gtk_imhtml_draw_focus (GTK_WIDGET (imhtml));
 }
 
 static void
@@ -570,9 +601,6 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	g_return_val_if_fail (widget != NULL, FALSE);
 	g_return_val_if_fail (GTK_IS_IMHTML (widget), FALSE);
 
-	if (GTK_WIDGET_CLASS (parent_class)->expose_event)
-		(* GTK_WIDGET_CLASS (parent_class)->expose_event) (widget, event);
-
 	imhtml = GTK_IMHTML (widget);
 	gtk_imhtml_draw_exposed (imhtml);
 
@@ -602,8 +630,8 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 		imhtml->urls = g_list_remove (imhtml->urls, imhtml->urls->data);
 	}
 
-	imhtml->x = BORDER_SIZE;
-	imhtml->y = BORDER_SIZE + 10;
+	imhtml->x = 0;
+	imhtml->y = TOP_BORDER;
 	imhtml->llheight = 0;
 	imhtml->llascent = 0;
 
@@ -621,7 +649,11 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 		gtk_imhtml_draw_bit (imhtml, bit);
 	}
 
-	gtk_widget_set_usize (GTK_WIDGET (imhtml), -1, imhtml->y + 5);
+	GTK_LAYOUT (imhtml)->height = imhtml->y;
+	GTK_LAYOUT (imhtml)->vadjustment->upper = imhtml->y;
+	gtk_signal_emit_by_name (GTK_OBJECT (GTK_LAYOUT (imhtml)->vadjustment), "changed");
+
+	gtk_widget_set_usize (GTK_WIDGET (imhtml), -1, imhtml->y);
 	gtk_adjustment_set_value (vadj, vadj->upper * oldvalue);
 
 	if (GTK_LAYOUT (imhtml)->bin_window && (imhtml->y < oldy)) {
@@ -643,6 +675,7 @@ gtk_imhtml_redraw_all (GtkIMHtml *imhtml)
 	}
 
 	gtk_layout_thaw (GTK_LAYOUT (imhtml));
+	gtk_imhtml_draw_focus (GTK_WIDGET (imhtml));
 }
 
 static void
@@ -651,6 +684,7 @@ gtk_imhtml_size_allocate (GtkWidget     *widget,
 {
 	GtkIMHtml *imhtml;
 	GtkLayout *layout;
+	gint new_xsize, new_ysize;
 
 	g_return_if_fail (widget != NULL);
 	g_return_if_fail (GTK_IS_IMHTML (widget));
@@ -661,40 +695,46 @@ gtk_imhtml_size_allocate (GtkWidget     *widget,
 
 	widget->allocation = *allocation;
 
+	new_xsize = MAX (1, (gint) allocation->width -
+			    (gint) (widget->style->klass->xthickness + BORDER_SIZE) * 2);
+	new_ysize = MAX (1, (gint) allocation->height -
+			    (gint) (widget->style->klass->ythickness + BORDER_SIZE) * 2);
+
 	if (GTK_WIDGET_REALIZED (widget)) {
+		gint x = widget->style->klass->xthickness + BORDER_SIZE;
+		gint y = widget->style->klass->ythickness + BORDER_SIZE;
 		gdk_window_move_resize (widget->window,
 					allocation->x, allocation->y,
 					allocation->width, allocation->height);
 		gdk_window_move_resize (layout->bin_window,
-					0, 0,
-					allocation->width, allocation->height);
+					x, y, new_xsize, new_ysize);
 	}
 
-	layout->hadjustment->page_size = allocation->width;
-	layout->hadjustment->page_increment = allocation->width / 2;
+	layout->hadjustment->page_size = new_xsize;
+	layout->hadjustment->page_increment = new_xsize / 2;
 	layout->hadjustment->lower = 0;
-	layout->hadjustment->upper = imhtml->xsize;
+	layout->hadjustment->upper = imhtml->x;
 
-	layout->vadjustment->page_size = allocation->height;
-	layout->vadjustment->page_increment = allocation->height / 2;
+	layout->vadjustment->page_size = new_ysize;
+	layout->vadjustment->page_increment = new_ysize / 2;
 	layout->vadjustment->lower = 0;
-	layout->vadjustment->upper = imhtml->y + 5;
+	layout->vadjustment->upper = imhtml->y;
 
 	gtk_signal_emit_by_name (GTK_OBJECT (layout->hadjustment), "changed");
 	gtk_signal_emit_by_name (GTK_OBJECT (layout->vadjustment), "changed");
 
-	if (allocation->width == imhtml->xsize) {
-		if ((GTK_LAYOUT (imhtml)->vadjustment->value > imhtml->y + 5 - allocation->height)) {
-			if (imhtml->y + 5 > allocation->height)
+	if (new_xsize == imhtml->xsize) {
+		if ((GTK_LAYOUT (imhtml)->vadjustment->value > imhtml->y - new_ysize)) {
+			if (imhtml->y > new_ysize)
 				gtk_adjustment_set_value (GTK_LAYOUT (imhtml)->vadjustment,
-							  imhtml->y + 5 - allocation->height);
+							  imhtml->y - new_ysize);
 			else
 				gtk_adjustment_set_value (GTK_LAYOUT (imhtml)->vadjustment, 0);
 		}
 		return;
 	}
 
-	imhtml->xsize = allocation->width;
+	imhtml->xsize = new_xsize;
 
 	if (GTK_WIDGET_REALIZED (widget))
 		gtk_imhtml_redraw_all (imhtml);
@@ -1058,7 +1098,7 @@ gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 	if (!imhtml->tip_bit)
 		return FALSE;
 
-	gtk_paint_flat_box(style, imhtml->tip_window->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+	gtk_paint_flat_box (style, imhtml->tip_window->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 			   NULL, imhtml->tip_window, "tooltip", 0, 0, -1, -1);
 
 	y = style->font->ascent + 4;
@@ -1380,12 +1420,7 @@ static void
 gtk_imhtml_adjustment_changed (GtkAdjustment *adjustment,
 			       GtkIMHtml     *imhtml)
 {
-	gint dx, dy;
 	GtkLayout *layout = GTK_LAYOUT (imhtml);
-	GtkWidget *widget = GTK_WIDGET (imhtml);
-
-	dx = (gint) layout->hadjustment->value - layout->xoffset;
-	dy = (gint) layout->vadjustment->value - layout->yoffset;
 
 	layout->xoffset = (gint) layout->hadjustment->value;
 	layout->yoffset = (gint) layout->vadjustment->value;
@@ -1396,45 +1431,9 @@ gtk_imhtml_adjustment_changed (GtkAdjustment *adjustment,
 	if (layout->freeze_count)
 		return;
 
-	if (dx > 0) {
-		gdk_window_resize (layout->bin_window,
-				   widget->allocation.width + dx,
-				   widget->allocation.height);
-		gdk_window_move (layout->bin_window, -dx, 0);
-		gdk_window_move_resize (layout->bin_window,
-					0, 0,
-					widget->allocation.width,
-					widget->allocation.height);
-	} else if (dx) {
-		gdk_window_move_resize (layout->bin_window,
-					dx, 0,
-					widget->allocation.width - dx,
-					widget->allocation.height);
-		gdk_window_move (layout->bin_window, 0, 0);
-		gdk_window_resize (layout->bin_window,
-				   widget->allocation.width,
-				   widget->allocation.height);
-	}
-
-	if (dy > 0) {
-		gdk_window_resize (layout->bin_window,
-				   widget->allocation.width,
-				   widget->allocation.height + dy);
-		gdk_window_move (layout->bin_window, 0, -dy);
-		gdk_window_move_resize (layout->bin_window,
-					0, 0,
-					widget->allocation.width,
-					widget->allocation.height);
-	} else if (dy) {
-		gdk_window_move_resize (layout->bin_window,
-					0, dy,
-					widget->allocation.width,
-					widget->allocation.height - dy);
-		gdk_window_move (layout->bin_window, 0, 0);
-		gdk_window_resize (layout->bin_window,
-				   widget->allocation.width,
-				   widget->allocation.height);
-	}
+	if (layout->yoffset < TOP_BORDER)
+		gdk_window_clear_area (layout->bin_window, 0, 0,
+				       imhtml->xsize, TOP_BORDER - layout->yoffset);
 
 	gtk_imhtml_draw_exposed (imhtml);
 }
@@ -1520,6 +1519,7 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 
 	widget_class->realize = gtk_imhtml_realize;
 	widget_class->draw = gtk_imhtml_draw;
+	widget_class->draw_focus = gtk_imhtml_draw_focus;
 	widget_class->style_set = gtk_imhtml_style_set;
 	widget_class->expose_event  = gtk_imhtml_expose_event;
 	widget_class->size_allocate = gtk_imhtml_size_allocate;
@@ -1789,8 +1789,8 @@ gtk_imhtml_new (GtkAdjustment *hadj,
 	imhtml->bits = NULL;
 	imhtml->urls = NULL;
 
-	imhtml->x = BORDER_SIZE;
-	imhtml->y = BORDER_SIZE + 10;
+	imhtml->x = 0;
+	imhtml->y = TOP_BORDER;
 	imhtml->llheight = 0;
 	imhtml->llascent = 0;
 	imhtml->line = NULL;
@@ -1893,8 +1893,8 @@ new_line (GtkIMHtml *imhtml)
 
 	if (last) {
 		li = last->data;
-		if (li->x + li->width != imhtml->xsize - BORDER_SIZE)
-			li->width = imhtml->xsize - BORDER_SIZE - li->x;
+		if (li->x + li->width != imhtml->xsize)
+			li->width = imhtml->xsize - li->x;
 	}
 
 	last = imhtml->line;
@@ -1916,7 +1916,7 @@ new_line (GtkIMHtml *imhtml)
 	g_list_free (imhtml->line);
 	imhtml->line = NULL;
 
-	imhtml->x = BORDER_SIZE;
+	imhtml->x = 0;
 	imhtml->y += imhtml->llheight;
 	imhtml->llheight = 0;
 	imhtml->llascent = 0;
@@ -2058,9 +2058,8 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		height = bit->font->ascent + bit->font->descent;
 		width = gdk_string_width (bit->font, bit->text);
 
-		if ((imhtml->x != BORDER_SIZE) &&
-				((imhtml->x + width + BORDER_SIZE + BORDER_SIZE + 5) > imhtml->xsize)) {
-			gint remain = imhtml->xsize - imhtml->x - BORDER_SIZE - BORDER_SIZE - 5;
+		if ((imhtml->x != 0) && ((imhtml->x + width) > imhtml->xsize)) {
+			gint remain = imhtml->xsize - imhtml->x;
 			while (gdk_text_width (bit->font, copy, pos) < remain) {
 				if (copy [pos] == ' ')
 					seenspace = TRUE;
@@ -2083,9 +2082,9 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 
 		while (pos < strlen (bit->text)) {
 			width = gdk_string_width (bit->font, copy + pos);
-			if (imhtml->x + width + BORDER_SIZE + BORDER_SIZE + 5 > imhtml->xsize) {
+			if (imhtml->x + width > imhtml->xsize) {
 				gint newpos = 0;
-				gint remain = imhtml->xsize - imhtml->x - BORDER_SIZE - BORDER_SIZE - 5;
+				gint remain = imhtml->xsize - imhtml->x;
 				while (gdk_text_width (bit->font, copy + pos, newpos) < remain) {
 					if (copy [pos + newpos] == ' ')
 						seenspace = TRUE;
@@ -2122,8 +2121,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 	} else if ((bit->type == TYPE_SMILEY) || (bit->type == TYPE_IMG)) {
 		gdk_window_get_size (bit->pm, &width, &height);
 
-		if ((imhtml->x != BORDER_SIZE) &&
-				((imhtml->x + width + BORDER_SIZE + BORDER_SIZE + 5) > imhtml->xsize))
+		if ((imhtml->x != 0) && ((imhtml->x + width) > imhtml->xsize))
 			new_line (imhtml);
 		else
 			backwards_update (imhtml, bit, height, 0);
@@ -2140,7 +2138,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		li = g_new0 (struct line_info, 1);
 		li->x = imhtml->x;
 		li->y = imhtml->y;
-		li->width = imhtml->xsize - BORDER_SIZE - BORDER_SIZE;
+		li->width = imhtml->xsize;
 		li->height = HR_HEIGHT * 2;
 		li->ascent = 0;
 		li->text = NULL;
@@ -2152,10 +2150,6 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		new_line (imhtml);
 		add_text_renderer (imhtml, bit, NULL);
 	}
-
-	GTK_LAYOUT (imhtml)->height = imhtml->y + 5;
-	GTK_LAYOUT (imhtml)->vadjustment->upper = imhtml->y + 5;
-	gtk_signal_emit_by_name (GTK_OBJECT (GTK_LAYOUT (imhtml)->vadjustment), "changed");
 }
 
 void
@@ -2441,7 +2435,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 		retval = g_string_new ("");
 
 	vadj = GTK_LAYOUT (imhtml)->vadjustment;
-	if ((vadj->value < imhtml->y + 5 - GTK_WIDGET (imhtml)->allocation.height) &&
+	if ((vadj->value < imhtml->y - GTK_WIDGET (imhtml)->allocation.height) &&
 	    (vadj->upper >= GTK_WIDGET (imhtml)->allocation.height))
 		scrolldown = FALSE;
 
@@ -3173,12 +3167,21 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 		gtk_imhtml_draw_bit (imhtml, bit);
 	}
 
-	gtk_widget_set_usize (GTK_WIDGET (imhtml), -1, imhtml->y + 5);
+	GTK_LAYOUT (imhtml)->height = imhtml->y;
+	GTK_LAYOUT (imhtml)->vadjustment->upper = imhtml->y;
+	gtk_signal_emit_by_name (GTK_OBJECT (GTK_LAYOUT (imhtml)->vadjustment), "changed");
+
+	gtk_widget_set_usize (GTK_WIDGET (imhtml), -1, imhtml->y);
 
 	if (!(options & GTK_IMHTML_NO_SCROLL) &&
 	    scrolldown &&
-	    (imhtml->y + 5 >= GTK_WIDGET (imhtml)->allocation.height))
-		gtk_adjustment_set_value (vadj, imhtml->y + 5 - GTK_WIDGET (imhtml)->allocation.height);
+	    (imhtml->y >= MAX (1,
+			       (GTK_WIDGET (imhtml)->allocation.height -
+				(GTK_WIDGET (imhtml)->style->klass->ythickness + BORDER_SIZE) * 2))))
+		gtk_adjustment_set_value (vadj, imhtml->y -
+					  MAX (1, (GTK_WIDGET (imhtml)->allocation.height - 
+						   (GTK_WIDGET (imhtml)->style->klass->ythickness +
+						    BORDER_SIZE) * 2)));
 
 	if (url) {
 		g_free (url);
@@ -3296,8 +3299,8 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 
 	gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window, imhtml->arrow_cursor);
 
-	imhtml->x = BORDER_SIZE;
-	imhtml->y = BORDER_SIZE + 10;
+	imhtml->x = 0;
+	imhtml->y = TOP_BORDER;
 	imhtml->llheight = 0;
 	imhtml->llascent = 0;
 	imhtml->line = NULL;
