@@ -666,7 +666,7 @@ gboolean gaim_email_is_valid(const char *address);
  *
  * @return The UTF-8 string, or @c NULL if it could not be converted.
  */
-char *gaim_utf8_try_convert(const char *str);
+gchar *gaim_utf8_try_convert(const char *str);
 
 /**
  * Compares two UTF-8 strings.

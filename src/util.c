@@ -2948,11 +2948,11 @@ gaim_email_is_valid(const char *address)
 /**************************************************************************
  * UTF8 String Functions
  **************************************************************************/
-char *
+gchar *
 gaim_utf8_try_convert(const char *str)
 {
 	gsize converted;
-	char *utf8;
+	gchar *utf8;
 
 	g_return_val_if_fail(str != NULL, NULL);
 
@@ -2961,19 +2961,17 @@ gaim_utf8_try_convert(const char *str)
 	}
 
 	utf8 = g_locale_to_utf8(str, -1, &converted, NULL, NULL);
-	if (utf8)
-		return(utf8);
-
-	g_free(utf8);
+	if (utf8 != NULL)
+		return utf8;
 
 	utf8 = g_convert(str, -1, "UTF-8", "ISO-8859-15", &converted, NULL, NULL);
-	if (utf8 && converted == strlen (str)) {
-		return(utf8);
-	} else if (utf8) {
-		g_free(utf8);
-	}
+	if ((utf8 != NULL) && (converted == strlen(str)))
+		return utf8;
 
-	return(NULL);
+	if (utf8 != NULL)
+		g_free(utf8);
+
+	return NULL;
 }
 
 char *
