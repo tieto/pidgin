@@ -139,6 +139,7 @@ static int aim_tx_enqueue__queuebased(aim_session_t *sess, aim_frame_t *fr)
  */
 static int aim_tx_enqueue__immediate(aim_session_t *sess, aim_frame_t *fr)
 {
+	int ret;
 
 	if (!fr->conn) {
 		faimdprintf(sess, 1, "aim_tx_enqueue: ERROR: packet has no connection\n");
@@ -151,11 +152,11 @@ static int aim_tx_enqueue__immediate(aim_session_t *sess, aim_frame_t *fr)
 
 	fr->handled = 0; /* not sent yet */
 
-	aim_tx_sendframe(sess, fr);
+	ret = aim_tx_sendframe(sess, fr);
 
 	aim_frame_destroy(fr);
 
-	return 0;
+	return ret;
 }
 
 faim_export int aim_tx_setenqueue(aim_session_t *sess, int what, int (*func)(aim_session_t *, aim_frame_t *))
@@ -183,7 +184,7 @@ faim_internal int aim_tx_enqueue(aim_session_t *sess, aim_frame_t *fr)
 	 * them to use the queue based version. Otherwise, use whatever they
 	 * want.
 	 */
-	if (fr && fr->conn && 
+	if (fr && fr->conn &&
 			(fr->conn->status & AIM_CONN_STATUS_INPROGRESS)) {
 		return aim_tx_enqueue__queuebased(sess, fr);
 	}
@@ -225,12 +226,10 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 
 	if (count) {
 		/*
-		 * If we're sending a large direct IM (maybe it contains an 
-		 * image or something), then we want to break it up into chunks 
-		 * of 1024 and update the UI between sending each one.  This is 
-		 * kind of ugly.  Ideally, if the client wants to send a large 
-		 * amount of data it should just write to the fd directly--we're 
-		 * not multithreaded and this is just a stop-gap thingy.
+		 * I need to rewrite this. "Updating the UI" doesn't make sense. The program is
+		 * blocked and the UI can't redraw. We're blocking all of Gaim. We need to set
+		 * up an actual txqueue and a GAIM_INPUT_WRITE callback and only write when we
+		 * can. Why is this file called txqueue anyway? Lets rename it to txblock.
 		 */
 		if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) && 
 		    (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)) {
@@ -243,6 +242,8 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 				ret = aim_send(conn->fd, bs->data + bs->offset + wrote, 1024);
 				if (ret > 0)
 					wrote += ret;
+				if (ret < 0)
+					return -1;
 				if ((userfunc=aim_callhandler(conn->sessv, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER)))
 					userfunc(conn->sessv, NULL, sn, count-wrote>1024 ? ((double)wrote / count) : 1);
 			}
