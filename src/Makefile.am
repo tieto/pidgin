@@ -83,6 +83,7 @@ AM_CPPFLAGS = \
 	$(PERL_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
 	$(AUDIOFILE_CFLAGS) \
+	$(AO_CFLAGS) \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DDATADIR=\"$(datadir)\" \
