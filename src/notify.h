@@ -34,7 +34,8 @@ typedef enum
 {
 	GAIM_NOTIFY_MESSAGE = 0, /**< Message notification.         */
 	GAIM_NOTIFY_EMAIL,       /**< Single e-mail notification.   */
-	GAIM_NOTIFY_EMAILS       /**< Multiple e-mail notification. */
+	GAIM_NOTIFY_EMAILS,      /**< Multiple e-mail notification. */
+	GAIM_NOTIFY_FORMATTED    /**< Formatted text.               */
 
 } GaimNotifyType;
 
@@ -64,6 +65,9 @@ typedef struct
 						   const char **subjects, const char **froms,
 						   const char **tos, const char **urls,
 						   GCallback cb, void *user_data);
+	void *(*notify_formatted)(const char *title, const char *primary,
+							  const char *secondary, const char *text,
+							  GCallback cb, void *user_data);
 
 	void (*close_notify)(GaimNotifyType type, void *ui_handle);
 
@@ -138,6 +142,26 @@ void *gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 						 const char **subjects, const char **froms,
 						 const char **tos, const char **urls,
 						 GCallback cb, void *user_data);
+
+/**
+ * Displays a notification with formatted text.
+ *
+ * The text is essentially a stripped-down format of HTML, the same that
+ * IMs may send.
+ *
+ * @param handle    The plugin or connection handle.
+ * @param title     The title of the message.
+ * @param primary   The main point of the message.
+ * @param secondary The secondary information.
+ * @param text      The formatted text.
+ * @param cb        The callback to call when the user closes
+ *                  the notification.
+ *
+ * @return A UI-specific handle.
+ */
+void *gaim_notify_formatted(void *handle, const char *title,
+							const char *primary, const char *secondary,
+							const char *text, GCallback cb, void *user_data);
 
 /**
  * Closes a notification.

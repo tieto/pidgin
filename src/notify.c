@@ -125,6 +125,34 @@ gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 	return NULL;
 }
 
+void *
+gaim_notify_formatted(void *handle, const char *title, const char *primary,
+					  const char *secondary, const char *text,
+					  GCallback cb, void *user_data)
+{
+	GaimNotifyUiOps *ops;
+
+	g_return_val_if_fail(primary != NULL, NULL);
+
+	ops = gaim_get_notify_ui_ops();
+
+	if (ops != NULL && ops->notify_formatted != NULL) {
+		GaimNotifyInfo *info;
+
+		info            = g_new0(GaimNotifyInfo, 1);
+		info->type      = GAIM_NOTIFY_FORMATTED;
+		info->handle    = handle;
+		info->ui_handle = ops->notify_formatted(title, primary, secondary,
+												text, cb, user_data);
+
+		handles = g_list_append(handles, info);
+
+		return info->ui_handle;
+	}
+
+	return NULL;
+}
+
 void
 gaim_notify_close(GaimNotifyType type, void *ui_handle)
 {

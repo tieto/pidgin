@@ -22,11 +22,14 @@
  */
 #include "gtkinternal.h"
 
-#include "debug.h"
 #include "connection.h"
+#include "debug.h"
+#include "prefs.h"
 #include "stock.h"
 
+#include "gtkimhtml.h"
 #include "gtknotify.h"
+#include "gtkutils.h"
 
 #include "ui.h"
 
@@ -249,6 +252,90 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 	return data;
 }
 
+static void *
+gaim_gtk_notify_formatted(const char *title, const char *primary,
+						  const char *secondary, const char *text,
+						  GCallback cb, void *user_data)
+{
+	GtkWidget *window;
+	GtkWidget *vbox;
+	GtkWidget *label;
+	GtkWidget *button;
+	GtkWidget *imhtml;
+	GtkWidget *sw;
+	int options = 0;
+	char label_text[2048];
+
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
+
+	/* Setup the main vbox */
+	vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+	gtk_widget_show(vbox);
+
+	/* Setup the descriptive label */
+	g_snprintf(label_text, sizeof(label_text),
+		   "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s",
+		   primary, (secondary ? secondary : ""));
+
+	label = gtk_label_new(NULL);
+
+	gtk_label_set_markup(GTK_LABEL(label), label_text);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	/* Setup the scrolled window that we're putting the gtkimhtml in. */
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+								   GTK_POLICY_NEVER,
+								   GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+										GTK_SHADOW_IN);
+	gtk_widget_set_size_request(sw, 300, 250);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+	gtk_widget_show(sw);
+
+	/* Now build that gtkimhtml */
+	imhtml = gtk_imhtml_new(NULL, NULL);
+	gtk_container_add(GTK_CONTAINER(sw), imhtml);
+	gtk_widget_show(imhtml);
+	gaim_setup_imhtml(imhtml);
+
+	/* Add the Close button. */
+	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(gtk_widget_destroy), window);
+
+	/* Add the text to the gtkimhtml */
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
+		options ^= GTK_IMHTML_NO_COLOURS;
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_fonts"))
+		options ^= GTK_IMHTML_NO_FONTS;
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_font_sizes"))
+		options ^= GTK_IMHTML_NO_SIZES;
+
+	options ^= GTK_IMHTML_NO_COMMENTS;
+	options ^= GTK_IMHTML_NO_TITLE;
+	options ^= GTK_IMHTML_NO_NEWLINE;
+	options ^= GTK_IMHTML_NO_SCROLL;
+
+	gtk_imhtml_append_text(GTK_IMHTML(imhtml), text, -1, options);
+
+	/* Show the window */
+	gtk_widget_show(window);
+
+	return window;
+}
+
 static void
 gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 {
@@ -269,6 +356,7 @@ static GaimNotifyUiOps ops =
 	gaim_gtk_notify_message,
 	gaim_gtk_notify_email,
 	gaim_gtk_notify_emails,
+	gaim_gtk_notify_formatted,
 	gaim_gtk_close_notify
 };
 
