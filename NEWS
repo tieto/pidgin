@@ -2,11 +2,23 @@
 0.67 (08/14/2003):
 
 	Rob: I live in Georgia.  I don't care about blackouts.  We only
-	have to deal with floods and tornadoes. 
-	
+	have to deal with floods and tornadoes.
+
 	Sean: Fortunately me for me, I live in the only place in New York
 	that still has power tonight!  New features in 0.6@%f)*2.{\
 	NO CARRIER
+
+	Christian: I guess Sean couldn't be here to tell you about all the
+	great new things. New stuff was done! It's simply amazing. Yeah. So,
+	new IRC protocol plugin, tab text is greyed on events (like "So and
+	so has signed off!"), protocol icons on tabs (thanks to Etan Reisner),
+	some dialog rewrites.. Great stuff. Gaim's looking more teh perrty.
+	My big "wow" thing is that the core and UI were split enough for me
+	to remove the remaining UI code and make a patch, and libgaim was born,
+	for experimental purposes. However, using it, I was able to make the
+	second UI ever for Gaim - Gaim for Qtopia (Zaurus and iPaq PDAs).
+	This is viewable at http://qpe-gaim.sf.net/ (shameless plug?). More
+	UIs to come I hope! :) Exciting time in Gaim.
 
 0.66 (07/18/2003):
 	Rob: Oops!!!!  This reminds me of other silly things that we've
