@@ -22,6 +22,7 @@
  */
 #include "gtkaccount.h"
 #include "account.h"
+#include "accountopt.h"
 #include "event.h"
 #include "prefs.h"
 #include "stock.h"
@@ -137,7 +138,7 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GList *user_splits;
 	GList *split_entries = NULL;
 	GList *l, *l2;
-	char *username;
+	char *username = NULL;
 
 	if (dialog->login_frame != NULL)
 		gtk_widget_destroy(dialog->login_frame);
@@ -172,10 +173,6 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Screen Name */
 	dialog->screenname_entry = gtk_entry_new();
 
-	if (dialog->account != NULL)
-		gtk_entry_set_text(GTK_ENTRY(dialog->screenname_entry),
-						   gaim_account_get_username(dialog->account));
-
 	__add_pref_box(dialog, vbox, _("Screenname:"), dialog->screenname_entry);
 
 	/* Do the user split thang */
@@ -188,9 +185,10 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		username = g_strdup(gaim_account_get_username(dialog->account));
 
 	for (l = user_splits; l != NULL; l = l->next) {
+		GaimAccountUserSplit *split = l->data;
 		char *buf;
 
-		buf = g_strdup_printf("%s:", gaim_account_user_split_get_text(buf));
+		buf = g_strdup_printf("%s:", gaim_account_user_split_get_text(split));
 
 		entry = gtk_entry_new();
 
@@ -207,13 +205,12 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		GaimAccountUserSplit *split = l2->data;
 		GtkWidget *entry = l->data;
-		char *value;
+		const char *value = NULL;
 		char *c;
 
-		if (dialog->account == NULL)
-			value = gaim_account_user_split_get_default_value(split);
-		else {
-			c = strrchr(username, gaim_account_user_split_get_sep(split));
+		if (dialog->account != NULL) {
+			c = strrchr(username,
+						gaim_account_user_split_get_separator(split));
 
 			if (c != NULL) {
 				*c = '\0';
@@ -223,8 +220,16 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 			}
 		}
 
+		if (value == NULL)
+			value = gaim_account_user_split_get_default_value(split);
+
 		gtk_entry_set_text(GTK_ENTRY(entry), value);
 	}
+
+	if (username != NULL)
+		gtk_entry_set_text(GTK_ENTRY(dialog->screenname_entry), username);
+
+	g_free(username);
 
 	g_list_free(split_entries);
 }
