@@ -523,6 +523,8 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	gaim_account_set_password(account, p->value[1]);
 	gaim_account_set_remember_password(account, TRUE);
 
+	gaim_accounts_add(account);
+
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
 

@@ -352,6 +352,20 @@ gboolean gaim_accounts_load();
 void gaim_accounts_sync();
 
 /**
+ * Adds an account to the list of accounts.
+ *
+ * @param account The account.
+ */
+void gaim_accounts_add(GaimAccount *account);
+
+/**
+ * Removes an account from the list of accounts.
+ *
+ * @param account The account.
+ */
+void gaim_accounts_remove(GaimAccount *account);
+
+/**
  * Reorders an account.
  *
  * @param account   The account to reorder.

@@ -855,7 +855,8 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 		tmp = g_strconcat(username, sep,
 						  (*value ? value :
-						   gaim_account_user_split_get_default_value(split)));
+						   gaim_account_user_split_get_default_value(split)),
+						  NULL);
 
 		g_free(username);
 		username = tmp;
@@ -948,8 +949,10 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 		__set_account(dialog->accounts_dialog->model, &iter, dialog->account);
 	}
-	else
+	else {
 		__add_account(dialog->accounts_dialog, dialog->account);
+		gaim_accounts_add(dialog->account);
+	}
 
 	/* See if we want to register with a server now. */
 	if (dialog->prpl_info->register_user != NULL &&
@@ -1304,6 +1307,7 @@ __delete_account_cb(GaimAccount *account)
 		gtk_list_store_remove(accounts_dialog->model, &iter);
 	}
 
+	gaim_accounts_remove(account);
 	gaim_account_destroy(account);
 }
 

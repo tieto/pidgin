@@ -129,8 +129,6 @@ gaim_account_new(const char *username, GaimProtocol protocol)
 	account->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 											  g_free, __delete_setting);
 
-	accounts = g_list_append(accounts, account);
-
 	return account;
 }
 
@@ -149,8 +147,6 @@ gaim_account_destroy(GaimAccount *account)
 	if (account->protocol_id != NULL) g_free(account->protocol_id);
 
 	g_hash_table_destroy(account->settings);
-
-	accounts = g_list_remove(accounts, account);
 
 	g_free(account);
 }
@@ -637,6 +633,8 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			data->account = gaim_account_new(buffer, data->protocol);
 			data->account->protocol_id = data->protocol_id;
 
+			gaim_accounts_add(data->account);
+
 			data->protocol_id = NULL;
 		}
 	}
@@ -957,6 +955,26 @@ gaim_accounts_sync(void)
 
 	g_free(filename);
 	g_free(filename_real);
+}
+
+void
+gaim_accounts_add(GaimAccount *account)
+{
+	g_return_if_fail(account != NULL);
+
+	accounts = g_list_append(accounts, account);
+
+	schedule_accounts_save();
+}
+
+void
+gaim_accounts_remove(GaimAccount *account)
+{
+	g_return_if_fail(account != NULL);
+
+	accounts = g_list_remove(accounts, account);
+
+	schedule_accounts_save();
 }
 
 void
