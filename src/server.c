@@ -743,7 +743,7 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 
 	plugin_event(event_warned, gc, name, (void *)lev, 0);
 
-	if (gc->evil > lev) {
+	if (gc->evil >= lev) {
 		gc->evil = lev;
 		return;
 	}
