@@ -1313,7 +1313,7 @@ static GList *irc_user_opts()
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = "Server:";
-	puo->def = "irc.mozilla.org";
+	puo->def = "irc.openprojects.net";
 	puo->pos = USEROPT_SERV;
 	m = g_list_append(m, puo);
 
