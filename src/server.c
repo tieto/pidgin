@@ -543,7 +543,7 @@ void serv_got_alias(GaimConnection *gc, const char *who, const char *alias) {
 		b = buds->data;
 		gaim_blist_server_alias_buddy(b, alias);
 	}
-	g_slist_free(buds);
+	g_slist_free(buddies);
 }
 
 /*
