@@ -1886,7 +1886,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		      gboolean   italics,
 		      gint       fontsize)
 {
-	GdkFont *default_font = GTK_IMHTML_GET_STYLE_FONT (GTK_WIDGET (imhtml)->style);
+	GdkFont *default_font = imhtml->default_font;
 	gchar *default_name;
 	gchar **xflds;
 
