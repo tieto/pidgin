@@ -1206,7 +1206,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 				 "JOIN PART TOPIC<BR>"
 				 "OP DEOP VOICE DEVOICE KICK<BR>"
 				 "NICK ME MSG QUOTE SAY</B>",
-				 WFLAG_SYSTEM, NULL, time(NULL));
+				 WFLAG_NOLOG, NULL, time(NULL));
 	} else {
 		struct conversation *c = NULL;
 		if (is_channel(gc, who)) {
@@ -1216,7 +1216,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		}
 		if (!c)
 			return -EINVAL;
-		write_to_conv(c, "<B>Unknown command</B>", WFLAG_SYSTEM, NULL, time(NULL));
+		write_to_conv(c, "<B>Unknown command</B>", WFLAG_NOLOG, NULL, time(NULL));
 	}
 
 	return 0;
