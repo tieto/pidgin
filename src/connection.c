@@ -107,7 +107,19 @@ gaim_connection_connect(GaimConnection *gc)
 
 	ops = gaim_get_connection_ui_ops();
 
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (gc->prpl != NULL)
+	        prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	else {
+	        gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
+						 gaim_account_get_username(gaim_connection_get_account(gc)));
+
+		gaim_debug(GAIM_DEBUG_ERROR, "connection",
+			   "Could not get prpl info for %p\n", gc);
+		gaim_notify_error(NULL, _("Connection Error"),
+				  message, NULL);
+		g_free(message);
+		return;
+	}
 
 	account = gaim_connection_get_account(gc);
 
