@@ -57,7 +57,7 @@ int  serv_send_im(GaimConnection *, char *, char *, int, int);
 void serv_get_info(GaimConnection *, char *);
 void serv_get_dir(GaimConnection *, char *);
 void serv_set_idle(GaimConnection *, int);
-void serv_set_info(GaimConnection *, char *);
+void serv_set_info(GaimConnection *, const char *);
 void serv_set_away(GaimConnection *, char *, char *);
 void serv_set_away_all(char *);
 int  serv_send_typing(GaimConnection *, char *, int);

@@ -708,12 +708,16 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	core_main();
+
+	return TRUE;
 }
 
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
 	core_quit();
+
+	return TRUE;
 }
 
 static GaimPluginInfo info =

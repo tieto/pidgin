@@ -1884,11 +1884,13 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 	junk = gtk_text_view_get_text(GTK_TEXT_VIEW(b->text), FALSE);
 
 	if (b->account) {
-		strncpy_withhtml(b->account->user_info, junk, sizeof b->account->user_info);
+		gchar *tmp = strdup_withhtml(junk);
+		gaim_account_set_user_info(b->account, junk);
+		g_free(tmp);
 		gc = b->account->gc;
 
 		if (gc)
-			serv_set_info(gc, b->account->user_info);
+			serv_set_info(gc, gaim_account_get_user_info(b->account));
 	}
 	g_free(junk);
 	destroy_dialog(NULL, b->window);
@@ -5018,13 +5020,13 @@ void set_vcard_dialog_ok_clicked(GtkWidget *widget, gpointer  data)
 	/*
 	 * Set the user info and (possibly) send to the server
 	 */
-        if (b->account) {
-                strncpy(b->account->user_info, tmp, sizeof b->account->user_info);
-                gc = b->account->gc;
+	if (b->account) {
+		gaim_account_set_user_info(b->account, tmp);
+		gc = b->account->gc;
 
-                if (gc)
-                        serv_set_info(gc, b->account->user_info);
-        }
+		if (gc)
+			serv_set_info(gc, gaim_account_get_user_info(b->account));
+	}
 
 	g_free(tmp);
 

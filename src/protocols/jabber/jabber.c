@@ -3915,12 +3915,13 @@ static char *tag_for_label(const char *label)
 /*
  * Send vCard info to Jabber server
  */
-static void jabber_set_info(GaimConnection *gc, char *info)
+static void jabber_set_info(GaimConnection *gc, const char *info)
 {
 	xmlnode x, vc_node;
 	char *id;
 	struct jabber_data *jd = gc->proto_data;
 	gjconn gjc = jd->gjc;
+	gchar *info2;
 
 	x = xmlnode_new_tag("iq");
 	xmlnode_put_attrib(x, "type", "set");
@@ -3932,7 +3933,8 @@ static void jabber_set_info(GaimConnection *gc, char *info)
 	/*
 	 * Send only if there's actually any *information* to send
 	 */
-	vc_node = xmlstr2xmlnode(info);
+	info2 = g_strdup(info);
+	vc_node = xmlstr2xmlnode(info2);
 
 	if(vc_node) {
 		if (xmlnode_get_name(vc_node) &&
@@ -3946,6 +3948,7 @@ static void jabber_set_info(GaimConnection *gc, char *info)
 	}
 
 	xmlnode_free(x);
+	g_free(info2);
 }
 
 /*

@@ -147,9 +147,8 @@ void serv_finish_login(GaimConnection *gc)
 	account = gaim_connection_get_account(gc);
 
 	if (gaim_account_get_user_info(account) != NULL) {
-		/* g_malloc(strlen(gc->user->user_info) * 4);
-		   strncpy_withhtml(buf, gc->user->user_info, strlen(gc->user->user_info) * 4); */
-		serv_set_info(gc, (char *)gaim_account_get_user_info(account));
+		/* buf = strdup_withhtml(gc->user->user_info); */
+		serv_set_info(gc, gaim_account_get_user_info(account));
 		/* g_free(buf); */
 	}
 
@@ -358,7 +357,7 @@ void serv_set_away_all(char *message)
 	}
 }
 
-void serv_set_info(GaimConnection *g, char *info)
+void serv_set_info(GaimConnection *g, const char *info)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 

@@ -1084,7 +1084,7 @@ static void toc_set_away(GaimConnection *g, char *state, char *message)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_set_info(GaimConnection *g, char *info)
+static void toc_set_info(GaimConnection *g, const char *info)
 {
 	char buf[BUF_LEN * 2], buf2[BUF_LEN * 2];
 	g_snprintf(buf2, sizeof buf2, "%s", info);

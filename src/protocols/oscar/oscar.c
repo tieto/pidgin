@@ -272,7 +272,7 @@ static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 static gboolean gaim_icon_timerfunc(gpointer data);
 
 /* prpl actions - remove this at some point */
-static void oscar_set_info(GaimConnection *gc, char *text);
+static void oscar_set_info(GaimConnection *gc, const char *text);
 
 static void oscar_free_name_data(struct name_data *data) {
 	g_free(data->name);
@@ -3816,7 +3816,7 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	if (od->icq)
 		aim_bos_setprofile(sess, fr->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
 	else
-		oscar_set_info(gc, gc->account->user_info); /* XXX - unneeded? */
+		oscar_set_info(gc, gc->account->user_info);
 
 	return 1;
 }
@@ -4407,7 +4407,7 @@ static void oscar_set_idle(GaimConnection *gc, int time) {
 	aim_bos_setidle(od->sess, od->conn, time);
 }
 
-static void oscar_set_info(GaimConnection *gc, char *text) {
+static void oscar_set_info(GaimConnection *gc, const char *text) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	fu32_t flags = 0;
 	char *msg = NULL;
