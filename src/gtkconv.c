@@ -2568,6 +2568,9 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	g_return_if_fail(conv != NULL);
 
+	if (gaim_conversation_get_type(conv) != GAIM_CONV_IM)
+		return;
+
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	stop_anim(NULL, conv);
@@ -2611,7 +2614,8 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	 * We pause icons when they are not visible.  If this icon should 
 	 * be animated then start it back up again.lll
 	 */
-	if (gtkconv->u.im->animate)
+	if ((gaim_conversation_get_type(conv) == GAIM_CONV_IM) &&
+		(gtkconv->u.im->animate))
 		start_anim(NULL, conv);
 
 	gtk_widget_grab_focus(gtkconv->entry);
