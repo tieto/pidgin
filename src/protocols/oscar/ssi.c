@@ -590,9 +590,9 @@ faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **
 		return -EINVAL;
 
 	/* Look up the parent group */
-	if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_GROUP))) {
+	if (!(parentgroup = aim_ssi_itemlist_find(sess->ssi.items, 0, 0))) {
 		aim_ssi_addmastergroup(sess, conn);
-		if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_GROUP)))
+		if (!(parentgroup = aim_ssi_itemlist_find(sess->ssi.items, 0, 0)))
 			return -ENOMEM;
 	}
 
@@ -840,7 +840,7 @@ faim_export int aim_ssi_delmastergroup(aim_session_t *sess, aim_conn_t *conn)
 		return -EINVAL;
 
 	/* Make delitem a pointer to the aim_ssi_item to be deleted */
-	if (!(delitem = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_GROUP)))
+	if (!(delitem = aim_ssi_itemlist_find(sess->ssi.items, 0, 0)))
 		return -EINVAL;
 
 	/* Remove delitem from the item list */
@@ -885,7 +885,7 @@ faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **
 		return -EINVAL;
 
 	/* Look up the parent group */
-	if (!(parentgroup = aim_ssi_itemlist_finditem(sess->ssi.items, NULL, NULL, AIM_SSI_TYPE_GROUP)))
+	if (!(parentgroup = aim_ssi_itemlist_find(sess->ssi.items, 0, 0)))
 		return -EINVAL;
 
 	/* Allocate an array of pointers to each of the items to be deleted */
