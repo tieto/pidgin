@@ -38,8 +38,12 @@
 /* Really user states are controlled by the PRPLs now. We just use this for event_away */
 #define UC_UNAVAILABLE  1
 
+/* This is far too long to be practical, but MSN users are probably used to long aliases */
+#define SELF_ALIAS_LEN 400
+
 struct aim_user {
 	char username[64];
+	char alias[SELF_ALIAS_LEN]; 
 	char password[32];
 	char user_info[2048];
 	int options;

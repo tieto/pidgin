@@ -275,6 +275,8 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 	a->protocol = u->protocol;
 	txt = gtk_entry_get_text(GTK_ENTRY(u->name));
 	g_snprintf(a->username, sizeof(a->username), "%s", txt);
+	txt = gtk_entry_get_text(GTK_ENTRY(u->alias));
+	g_snprintf(a->alias, sizeof(a->alias), "%s", txt);
 	txt = gtk_entry_get_text(GTK_ENTRY(u->pass));
 	if (a->options & OPT_USR_REM_PASS)
 		g_snprintf(a->password, sizeof(a->password), "%s", txt);
@@ -553,6 +555,15 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(_("Alias:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	u->alias = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), u->alias, TRUE, TRUE, 0);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new(_("Protocol:"));
@@ -567,6 +578,7 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 
 	if (u->user) {
 		gtk_entry_set_text(GTK_ENTRY(u->name), u->user->username);
+		gtk_entry_set_text(GTK_ENTRY(u->alias), u->user->alias);		
 		gtk_entry_set_text(GTK_ENTRY(u->pass), u->user->password);
 	}
 

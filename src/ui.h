@@ -242,6 +242,7 @@ struct mod_user {
 	GtkWidget *mod;
 	GtkWidget *main;
 	GtkWidget *name;
+	GtkWidget *alias;
 	GtkWidget *pwdbox;
 	GtkWidget *pass;
 	GtkWidget *rempass;
