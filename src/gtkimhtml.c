@@ -63,6 +63,7 @@
 #define TOOLTIP_TIMEOUT 500
 
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
+static gboolean gtk_imhtml_is_amp_escape (const gchar *string, gchar **replace, gint *length);
 void gtk_imhtml_close_tags(GtkIMHtml *imhtml);
 static void gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, guint info, guint t, GtkIMHtml *imhtml);
 
@@ -940,6 +941,8 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 	GtkSmileyTree *t = tree;
 	const gchar *x = text;
 	gint len = 0;
+	gchar *amp;
+	gint alen;
 
 	while (*x) {
 		gchar *pos;
@@ -947,7 +950,14 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 		if (!t->values)
 			break;
 
-		pos = strchr (t->values->str, *x);
+		if(*x == '&' && gtk_imhtml_is_amp_escape(x, &amp, &alen)) {
+		    len += alen - strlen(amp);
+		    x += alen - strlen(amp);
+		    pos = strchr (t->values->str, *amp);
+		}
+		else
+		    pos = strchr (t->values->str, *x);
+
 		if (pos)
 			t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
 		else
@@ -991,7 +1001,6 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	GtkSmileyTree *tree;
 	GtkIMHtmlFontDetail *font;
 	char *sml = NULL;
-	char *unescaped = NULL;
 
 	if (fonts) {
 		font = fonts->data;
@@ -1006,9 +1015,7 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	if (tree == NULL)
 		return FALSE;
 
-	unescaped = gaim_unescape_html(text);
-	*len = gtk_smiley_tree_lookup (tree, unescaped);
-	g_free(unescaped);
+	*len = gtk_smiley_tree_lookup (tree, text);
 	return (*len > 0);
 }
 
@@ -1914,8 +1921,6 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 			GtkIMHtmlFontDetail *fd;
 
 			gchar *sml = NULL;
-			gchar *unescaped = NULL;
-			gint length = 0;
 			if (fonts) {
 				fd = fonts->data;
 				sml = fd->sml;
@@ -1925,27 +1930,15 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 			else {
 				gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 			}
-			unescaped = gaim_unescape_html(c);
-			wpos = g_snprintf (ws, smilelen + 1, "%s", unescaped);
-			g_free(unescaped);
+			wpos = g_snprintf (ws, smilelen + 1, "%s", c);
 
 			gtk_imhtml_insert_smiley(imhtml, sml, ws);
 
 			ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
 
-			while(length < smilelen)
-			{
-			  if(*c == '&' && gtk_imhtml_is_amp_escape (c, &amp, &tlen)) {
-				  c += tlen;
-				  pos += tlen;
-			  } else {
-				  c++;
-				  pos++;
-			  }
-			  length++;
-			}
-
+			c += smilelen;
+			pos += smilelen;
 			wpos = 0;
 			ws[0] = 0;
 		} else if (*c == '&' && gtk_imhtml_is_amp_escape (c, &amp, &tlen)) {
@@ -2916,12 +2909,13 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	GdkPixbufAnimation *annipixbuf = NULL;
 	GtkWidget *icon = NULL;
 	GtkTextChildAnchor *anchor;
+	char *unescaped = gaim_unescape_html(smiley);
 
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
 	anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
-	g_object_set_data(G_OBJECT(anchor), "text_tag", g_strdup(smiley));
+	g_object_set_data(G_OBJECT(anchor), "text_tag", unescaped);
 
-	annipixbuf = gtk_smiley_tree_image(imhtml, sml, smiley);
+	annipixbuf = gtk_smiley_tree_image(imhtml, sml, unescaped);
 	if(annipixbuf) {
 		if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
 			pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
