@@ -84,12 +84,16 @@ static gboolean
 ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 		 size_t param_count)
 {
+#if 0
 	GaimAccount *account = servconn->session->account;
+#endif
 	MsnSwitchBoard *swboard = servconn->data;
 
+#if 0
 	if (swboard->chat != NULL)
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
 						   gaim_account_get_username(account), NULL);
+#endif
 
 	return send_clientcaps(swboard);
 }
@@ -159,9 +163,13 @@ iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 	swboard->total_users = atoi(params[2]);
 
 	if (swboard->total_users > 1) {
-		if (swboard->chat == NULL)
+		if (swboard->chat == NULL) {
 			swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
 												 "MSN Chat");
+
+			gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+							   gaim_account_get_username(account), NULL);
+		}
 
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat), params[3], NULL);
 	}
@@ -185,6 +193,8 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 											 "MSN Chat");
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
 						   msn_user_get_passport(swboard->user), NULL);
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+						   gaim_account_get_username(account), NULL);
 
 		msn_user_unref(swboard->user);
 	}
