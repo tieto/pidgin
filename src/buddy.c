@@ -2609,13 +2609,13 @@ void make_buddy_list()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
-	gaim_new_item_from_stock(menu, _("Add A Buddy"), GTK_STOCK_ADD,
+	gaim_new_item_from_stock(menu, _("_Add A Buddy"), GTK_STOCK_ADD,
 				  GTK_SIGNAL_FUNC(add_buddy_callback), NULL,  'b', GDK_CONTROL_MASK, "Ctl+B");
-	gaim_new_item_from_stock(menu, _("Join A Chat"), GTK_STOCK_JUMP_TO,
+	gaim_new_item_from_stock(menu, _("_Join A Chat"), GTK_STOCK_JUMP_TO,
 				  GTK_SIGNAL_FUNC(chat_callback), NULL, 'c', GDK_CONTROL_MASK, "Ctl+C");
-	gaim_new_item_from_stock(menu, _("New Instant Message"), GTK_STOCK_CONVERT,
+	gaim_new_item_from_stock(menu, _("_New Message"), GTK_STOCK_CONVERT,
 				  GTK_SIGNAL_FUNC(show_im_dialog), NULL, 'i', GDK_CONTROL_MASK, "Ctl+I");
-	gaim_new_item_from_stock(menu, _("Get User Info"), GTK_STOCK_FIND,
+	gaim_new_item_from_stock(menu, _("_Get User Info"), GTK_STOCK_FIND,
 				  GTK_SIGNAL_FUNC(show_info_dialog), NULL, 'j', GDK_CONTROL_MASK, "Ctl+J");
 
 	gaim_separator(menu);
@@ -2651,10 +2651,10 @@ void make_buddy_list()
 	gaim_separator(menu);
 
 #ifndef NO_MULTI
-	gaim_new_item_from_stock(menu, _("Accounts"), NULL,
+	gaim_new_item_from_stock(menu, _("_Accounts..."), NULL,
 				  GTK_SIGNAL_FUNC(account_editor), NULL, 'a', GDK_CONTROL_MASK, "Ctl+A");
 #endif
-	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES,
+	gaim_new_item_from_stock(menu, _("_Preferences..."), GTK_STOCK_PREFERENCES,
 				  GTK_SIGNAL_FUNC(show_prefs), NULL, 'p', GDK_CONTROL_MASK, "Ctl+P");
 
 	gaim_separator(menu);
@@ -2664,10 +2664,10 @@ void make_buddy_list()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), protomenu);
 	do_proto_menu();
 
-	gaim_new_item_from_stock(menu, _("Privacy"), NULL,
+	gaim_new_item_from_stock(menu, _("Pr_ivacy..."), NULL,
 				  GTK_SIGNAL_FUNC(show_privacy_options), NULL, 0, 0, 0);
 
-	gaim_new_item_from_stock(menu, _("View System Log"), NULL,
+	gaim_new_item_from_stock(menu, _("_View System Log..."), NULL,
 				  GTK_SIGNAL_FUNC(show_syslog), NULL, 0, 0, 0);
 
 	menu = gtk_menu_new();
