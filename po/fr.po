@@ -2,16 +2,126 @@
 # Copyright (C) 2002 Free Software Foundation, Inc.
 # FIRST AUTHOR <sebfrance@ifrance.com>, 2001.
 # Stéphane Pontier <stephane.pontier@free.fr>, 2002.
+# Stephane Wirtel <stephane.wirtel@belgacom.net>, 2002.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.20\n"
-"POT-Creation-Date: 2002-04-11 22:46-0700\n"
+"POT-Creation-Date: 2002-06-25 00:10-0400\n"
 "PO-Revision-Date: 2002-03-24 02:00GMT\n"
 "Last-Translator: Stéphane Pontier <stephane.pontier@free.fr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: plugins/chatlist.c:67 src/buddy_chat.c:272
+msgid "Buddy Chat"
+msgstr "Chat"
+
+#: plugins/chatlist.c:166 plugins/chatlist.c:168 plugins/chatlist.c:407
+#: plugins/chatlist.c:409
+#, fuzzy
+msgid "Gaim Chat"
+msgstr "Gaim - Chat"
+
+#: plugins/chatlist.c:339 src/about.c:165 src/aim.c:320 src/buddy.c:2716
+#: src/buddy_chat.c:1322 src/buddy_chat.c:1419 src/buddy_chat.c:1449
+#: src/conversation.c:2864 src/dialogs.c:567 src/dialogs.c:3899
+#: src/multi.c:1069 src/plugins.c:277 src/prefs.c:2547 src/prpl.c:438
+#: src/prpl.c:685 src/server.c:1072
+msgid "Close"
+msgstr "Fermer"
+
+#: plugins/chatlist.c:344
+#, fuzzy
+msgid "Chat Rooms"
+msgstr "Options du Chat"
+
+#: plugins/chatlist.c:363
+msgid "Refresh"
+msgstr "Rafraichir"
+
+#. Put the buttons in the box
+#: plugins/chatlist.c:364 src/buddy.c:492 src/buddy.c:2827
+#: src/buddy_chat.c:1454 src/conversation.c:2389 src/conversation.c:2879
+#: src/dialogs.c:932 src/dialogs.c:1114 src/dialogs.c:2095 src/multi.c:1053
+#: src/prefs.c:2041 src/prefs.c:2383 src/prefs.c:2417
+msgid "Add"
+msgstr "Ajouter"
+
+#: plugins/chatlist.c:365 src/buddy.c:494 src/buddy.c:2829
+#: src/buddy_chat.c:1456 src/conversation.c:2375 src/conversation.c:2876
+#: src/prefs.c:2055 src/prefs.c:2387 src/prefs.c:2421
+msgid "Remove"
+msgstr "Enlever"
+
+#: plugins/chatlist.c:388
+msgid "List of available chats"
+msgstr "Liste des chats disponibles"
+
+#: plugins/chatlist.c:398
+msgid "List of subscribed chats"
+msgstr "Liste des chats souscris"
+
+#: plugins/gtik.c:699
+msgid "Gnome Stock Ticker Properties"
+msgstr ""
+
+#: plugins/gtik.c:711
+msgid "Update Frequency in min"
+msgstr "Update Fréquent en min"
+
+#: plugins/gtik.c:727
+msgid "Enter symbols delimited with \"+\" in the box below."
+msgstr "Saisissez des symboles délimitant avec \"+\" dans la boite suivante"
+
+#. OUTPUT FORMAT and SCROLL DIRECTION
+#: plugins/gtik.c:737
+msgid "Check this box to display only symbols and price:"
+msgstr "Vérifier que cette boite affiche seulement les symboles et les prix:"
+
+#: plugins/gtik.c:738
+msgid "Check this box to scroll left to right:"
+msgstr "Vérifier que cette boite défile de gauche à droite"
+
+#: plugins/gtik.c:974
+#, fuzzy
+msgid "(No"
+msgstr "Non"
+
+#: plugins/gtik.c:975
+#, fuzzy
+msgid "Change"
+msgstr "Changer"
+
+#: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1919
+msgid "Available"
+msgstr "Disponible"
+
+#: src/protocols/gg/gg.c:72
+msgid "Available for friends only"
+msgstr "Disponible pour les amis seulement"
+
+#: src/applet.c:197 src/buddy.c:497 src/buddy.c:2582 src/buddy.c:2727
+#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1118
+msgid "Away"
+msgstr "Absent"
+
+#: src/protocols/gg/gg.c:74
+msgid "Away for friends only"
+msgstr "Absent pour les amis seulement"
+
+#: src/protocols/gg/gg.c:75
+msgid "Invisible"
+msgstr "Invisible"
+
+#: src/protocols/gg/gg.c:76
+msgid "Invisible for friends only"
+msgstr "Invisible pour les amis seulement"
+
+#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1114
+msgid "Unavailable"
+msgstr "Non disponible"
 
 #: src/protocols/gg/gg.c:182
 msgid "Unable to resolve hostname."
@@ -43,7 +153,7 @@ msgstr "Echec de l'authentification"
 msgid "Unknown Error Code."
 msgstr "Code d'Erreur Inconnu"
 
-#: src/protocols/gg/gg.c:302
+#: src/protocols/gg/gg.c:302 src/protocols/msn/msn.c:2050
 #, c-format
 msgid "Status: %s"
 msgstr "Status: %s"
@@ -171,7 +281,7 @@ msgid "Sex"
 msgstr "Sexe"
 
 #. Line 5
-#: src/dialogs.c:1582 src/dialogs.c:2290 src/protocols/gg/gg.c:729
+#: src/dialogs.c:1624 src/dialogs.c:2332 src/protocols/gg/gg.c:729
 msgid "City"
 msgstr "Ville"
 
@@ -250,7 +360,12 @@ msgstr "Changement de Mot de Passe échoué (%s)"
 msgid "Directory Search"
 msgstr "Recherche dans l'annuaire"
 
-#: src/dialogs.c:1699 src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
+#.
+#. } else if (!strcmp(act, _("Set Dir Info"))) {
+#. show_set_dir(gc);
+#.
+#: src/dialogs.c:1741 src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
+#: src/protocols/jabber/jabber.c:3748 src/protocols/jabber/jabber.c:3761
 msgid "Change Password"
 msgstr "Changer de Mot de Passe"
 
@@ -271,8 +386,8 @@ msgid "Send message through server"
 msgstr "Envoyer le message par le serveur"
 
 #: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:1851
-#: src/protocols/jabber/jabber.c:2112 src/protocols/oscar/oscar.c:3436
-#: src/protocols/toc/toc.c:1216
+#: src/protocols/jabber/jabber.c:2860 src/protocols/oscar/oscar.c:3593
+#: src/protocols/toc/toc.c:1219
 msgid "Get Info"
 msgstr "Obtenir des informations"
 
@@ -312,7 +427,7 @@ msgstr ""
 "%s a demandé un chat par connection directe.  Voulez vous etablir la "
 "connection directe?"
 
-#: src/protocols/irc/irc.c:1001
+#: src/protocols/irc/irc.c:1001 src/protocols/msn/msn.c:315
 msgid "Unable to write"
 msgstr "Impossible d'écrire"
 
@@ -339,7 +454,7 @@ msgstr "Sortir D'IRC"
 msgid "Channel:"
 msgstr "Canal:"
 
-#: src/multi.c:547 src/protocols/irc/irc.c:1675
+#: src/multi.c:549 src/protocols/irc/irc.c:1675
 msgid "Password:"
 msgstr "Mot de Passe:"
 
@@ -347,174 +462,225 @@ msgstr "Mot de Passe:"
 msgid "DCC Chat"
 msgstr "Chat (Connection Directe)"
 
-#: src/protocols/jabber/jabber.c:699
-msgid "Unavailable"
-msgstr "Non disponible"
+#: src/protocols/jabber/jabber.c:942
+msgid "Incorrect current password! Password NOT Changed!"
+msgstr "Mot de passe actuel incorrect! Le mot de passe n'a pas changé"
 
-#: src/applet.c:293 src/buddy.c:493 src/buddy.c:2508 src/buddy.c:2644
-#: src/protocols/jabber/jabber.c:703
-msgid "Away"
-msgstr "Absent"
-
-#: src/buddy.c:2801 src/protocols/jabber/jabber.c:705
-#: src/protocols/jabber/jabber.c:723
-msgid "Online"
-msgstr "En Ligne"
-
-#: src/protocols/jabber/jabber.c:707
-msgid "Extended Away"
-msgstr "Absent depuis longtemps"
-
-#: src/protocols/jabber/jabber.c:709
-msgid "Do Not Disturb"
-msgstr "Ne Pas Déranger"
-
-#: src/protocols/jabber/jabber.c:1042
+#: src/protocols/jabber/jabber.c:943 src/protocols/jabber/jabber.c:948
 #, fuzzy
-msgid "No such user"
-msgstr "Pas de tel serveur"
+msgid "Password Change Error!"
+msgstr "Gaim - Changement de mot de passe"
 
-#: src/protocols/jabber/jabber.c:1044
-#, fuzzy
-msgid "Jabber Error"
-msgstr "Erreur de Message"
+#: src/protocols/jabber/jabber.c:947
+msgid "New password same as old password! Password NOT Changed!"
+msgstr "Le nouveau mot de passe est le même que l'ancien! Le mot de passe n'a pas changé"
 
-#: src/dialogs.c:845 src/protocols/jabber/jabber.c:1124
-msgid "Buddies"
-msgstr "Contacts"
-
-#: src/protocols/jabber/jabber.c:1188
-msgid "Authenticating"
-msgstr "Authentication"
-
-#: src/protocols/jabber/jabber.c:1225
-msgid "Unknown login error"
-msgstr "Erreur de Connection Inconnue"
-
-#: src/protocols/jabber/jabber.c:1455 src/protocols/jabber/jabber.c:2903
-msgid "Connection lost"
-msgstr "Connection Perdu"
-
-#: src/protocols/jabber/jabber.c:1457 src/protocols/jabber/jabber.c:1489
-#: src/protocols/jabber/jabber.c:2905 src/protocols/jabber/jabber.c:2951
-msgid "Unable to connect"
-msgstr "Impossible de se connecter"
-
-#: src/protocols/jabber/jabber.c:1463
-msgid "Connected"
-msgstr "Connecté."
-
-#: src/protocols/jabber/jabber.c:1466
-msgid "Requesting Authentication Method"
-msgstr "Requete de Méthode d'authentication"
-
-#. we have no chats yet
-#: src/protocols/jabber/jabber.c:1484
-msgid "Connecting"
-msgstr "Connection"
-
-#: src/protocols/jabber/jabber.c:1783
-msgid "Room:"
-msgstr "Salle:"
-
-#: src/protocols/jabber/jabber.c:1787
-msgid "Server:"
-msgstr "Serveur"
-
-#: src/protocols/jabber/jabber.c:1792
-#, fuzzy
-msgid "Handle:"
-msgstr "Gestionaire:"
-
-#: src/protocols/jabber/jabber.c:2062 src/protocols/jabber/jabber.c:2401
+#: src/protocols/jabber/jabber.c:1092
 #, fuzzy
 msgid "Unknown"
 msgstr "Inconnu ICQ"
 
-#: src/buddy_chat.c:875 src/protocols/jabber/jabber.c:2117
-#: src/protocols/oscar/oscar.c:3443
+#: src/buddy.c:2887 src/protocols/jabber/jabber.c:1120
+#: src/protocols/jabber/jabber.c:1138
+msgid "Online"
+msgstr "En Ligne"
+
+#: src/protocols/jabber/jabber.c:1122
+msgid "Extended Away"
+msgstr "Absent depuis longtemps"
+
+#: src/protocols/jabber/jabber.c:1124
+msgid "Do Not Disturb"
+msgstr "Ne Pas Déranger"
+
+#: src/protocols/jabber/jabber.c:1434
+#, c-format
+msgid "Error %s: %s"
+msgstr "Erreur %s: %s"
+
+#: src/protocols/jabber/jabber.c:1437
+#, fuzzy
+msgid "Unknown Error in presence"
+msgstr "Code d'Erreur Inconnu"
+
+#: src/protocols/jabber/jabber.c:1607
+#, fuzzy, c-format
+msgid "The user %s wants to add you to their buddy list."
+msgstr "L'utilisateur %s veut vous ajouter a sa liste d'amis"
+
+#: src/protocols/jabber/jabber.c:1632
+#, fuzzy
+msgid "No such user"
+msgstr "Pas de tel serveur"
+
+#: src/protocols/jabber/jabber.c:1634 src/protocols/jabber/jabber.c:2341
+#: src/protocols/jabber/jabber.c:2506
+#, fuzzy
+msgid "Jabber Error"
+msgstr "Erreur de Message"
+
+#: src/dialogs.c:887 src/protocols/jabber/jabber.c:1719
+#: src/protocols/msn/msn.c:1110
+msgid "Buddies"
+msgstr "Contacts"
+
+#: src/protocols/jabber/jabber.c:1782
+msgid "Authenticating"
+msgstr "Authentication"
+
+#: src/protocols/jabber/jabber.c:1819
+msgid "Unknown login error"
+msgstr "Erreur de Connection Inconnue"
+
+#: src/protocols/jabber/jabber.c:2010
+#, fuzzy
+msgid "Password successfully changed."
+msgstr "Changement de mot de passe effectué"
+
+#: src/protocols/jabber/jabber.c:2012
+#, fuzzy
+msgid "Password Change"
+msgstr "Gaim - Changement de mot de passe"
+
+#: src/protocols/jabber/jabber.c:2054 src/protocols/jabber/jabber.c:3676
+msgid "Connection lost"
+msgstr "Connection Perdu"
+
+#: src/protocols/jabber/jabber.c:2056 src/protocols/jabber/jabber.c:2088
+#: src/protocols/jabber/jabber.c:3678 src/protocols/jabber/jabber.c:3724
+#: src/protocols/msn/msn.c:1741 src/protocols/msn/msn.c:1770
+msgid "Unable to connect"
+msgstr "Impossible de se connecter"
+
+#: src/protocols/jabber/jabber.c:2062
+msgid "Connected"
+msgstr "Connecté."
+
+#: src/protocols/jabber/jabber.c:2065
+msgid "Requesting Authentication Method"
+msgstr "Requete de Méthode d'authentication"
+
+#. we have no chats yet
+#: src/protocols/jabber/jabber.c:2083 src/protocols/msn/msn.c:1762
+msgid "Connecting"
+msgstr "Connection"
+
+#: src/protocols/jabber/jabber.c:2340 src/protocols/jabber/jabber.c:2505
+#, fuzzy
+msgid "Invalid Jabber I.D."
+msgstr "Nom invalide"
+
+#: src/protocols/jabber/jabber.c:2473
+msgid "Room:"
+msgstr "Salle:"
+
+#: src/protocols/jabber/jabber.c:2477
+msgid "Server:"
+msgstr "Serveur"
+
+#: src/protocols/jabber/jabber.c:2482
+#, fuzzy
+msgid "Handle:"
+msgstr "Gestionaire:"
+
+#: src/protocols/jabber/jabber.c:2539
+#, fuzzy
+msgid "Chats"
+msgstr "Chat"
+
+#: src/protocols/jabber/jabber.c:2854
+#, fuzzy
+msgid "View Error Msg"
+msgstr "Voir les Logs"
+
+#: src/buddy_chat.c:886 src/protocols/jabber/jabber.c:2865
+#: src/protocols/oscar/oscar.c:3606
 msgid "Get Away Msg"
 msgstr "Obtenir le Message d'absence"
 
-#: src/protocols/jabber/jabber.c:2299
+#: src/protocols/jabber/jabber.c:2882
+msgid "Remove From Roster"
+msgstr "Supprimer depuis Roster"
+
+#: src/protocols/jabber/jabber.c:3076
 msgid "Full Name"
 msgstr "Nom Complet"
 
-#: src/protocols/jabber/jabber.c:2300
+#: src/protocols/jabber/jabber.c:3077
 msgid "Family Name"
 msgstr "Nom de Famille"
 
-#: src/protocols/jabber/jabber.c:2301
+#: src/protocols/jabber/jabber.c:3078
 msgid "Given Name"
 msgstr "Nom Donné"
 
-#: src/protocols/jabber/jabber.c:2302
+#: src/protocols/jabber/jabber.c:3079
 msgid "Nickname"
 msgstr "Pseudonyme"
 
-#: src/dialogs.c:2483 src/protocols/jabber/jabber.c:2303
+#: src/dialogs.c:2525 src/protocols/jabber/jabber.c:3080
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/jabber.c:2304
+#: src/protocols/jabber/jabber.c:3081
 msgid "Street Address"
 msgstr "Rue"
 
-#: src/protocols/jabber/jabber.c:2305
+#: src/protocols/jabber/jabber.c:3082
 msgid "Extended Address"
 msgstr "Rue (suite)"
 
-#: src/protocols/jabber/jabber.c:2306
+#: src/protocols/jabber/jabber.c:3083
 msgid "Locality"
 msgstr "Localité"
 
-#: src/protocols/jabber/jabber.c:2307
+#: src/protocols/jabber/jabber.c:3084
 msgid "Region"
 msgstr "Région"
 
-#: src/protocols/jabber/jabber.c:2308
+#: src/protocols/jabber/jabber.c:3085
 msgid "Postal Code"
 msgstr "Code Postal"
 
 #. Line 7
-#: src/dialogs.c:1604 src/dialogs.c:2312 src/protocols/jabber/jabber.c:2309
+#: src/dialogs.c:1646 src/dialogs.c:2354 src/protocols/jabber/jabber.c:3086
 msgid "Country"
 msgstr "Pays"
 
-#: src/protocols/jabber/jabber.c:2310
+#: src/protocols/jabber/jabber.c:3087
 msgid "Telephone"
 msgstr "Téléphone"
 
-#: src/dialogs.c:2388 src/protocols/jabber/jabber.c:2311
+#: src/dialogs.c:2430 src/protocols/jabber/jabber.c:3088
 msgid "Email"
 msgstr "Email"
 
-#: src/protocols/jabber/jabber.c:2312
+#: src/protocols/jabber/jabber.c:3089
 msgid "Organization Name"
 msgstr "Nom de la companie"
 
-#: src/protocols/jabber/jabber.c:2313
+#: src/protocols/jabber/jabber.c:3090
 msgid "Organization Unit"
 msgstr "Département"
 
-#: src/prefs.c:1988 src/protocols/jabber/jabber.c:2314
+#: src/prefs.c:2000 src/protocols/jabber/jabber.c:3091
 msgid "Title"
 msgstr "Titre"
 
-#: src/protocols/jabber/jabber.c:2315
+#: src/protocols/jabber/jabber.c:3092
 msgid "Role"
 msgstr "Rôle"
 
-#: src/protocols/jabber/jabber.c:2316
+#: src/protocols/jabber/jabber.c:3093
 msgid "Birthday"
 msgstr "Anniversaire"
 
 #. Right side: frame with description and the filepath of plugin
-#: src/dialogs.c:2491 src/plugins.c:211 src/protocols/jabber/jabber.c:2317
+#: src/dialogs.c:2533 src/plugins.c:211 src/protocols/jabber/jabber.c:3094
 msgid "Description"
 msgstr "Description"
 
-#: src/protocols/jabber/jabber.c:2342
+#: src/protocols/jabber/jabber.c:3119
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
@@ -522,134 +688,390 @@ msgstr ""
 "Tout les champs sont optionnels. Entrez uniquement les informations que vous "
 "desirez"
 
-#: src/protocols/jabber/jabber.c:2343
+#: src/protocols/jabber/jabber.c:3120
 msgid "User Identity"
 msgstr "Identité de l'utilisateur"
 
-#: src/protocols/jabber/jabber.c:2759
+#: src/protocols/jabber/jabber.c:3532
 msgid "Gaim - Edit Jabber vCard"
 msgstr "Gaim - Editez la carte de visite Jabber"
 
-#: src/protocols/jabber/jabber.c:2833
+#: src/protocols/jabber/jabber.c:3606
 msgid "Server Registration successful!"
 msgstr "Enregistrement auprès du serveur réussi"
 
-#: src/protocols/jabber/jabber.c:2860
+#: src/protocols/jabber/jabber.c:3633
 msgid "Unknown registration error"
 msgstr "Erreur d'enregistrement inconnue"
 
-#: src/protocols/jabber/jabber.c:2969 src/protocols/jabber/jabber.c:2984
+#: src/protocols/jabber/jabber.c:3742 src/protocols/jabber/jabber.c:3757
 msgid "Set User Info"
 msgstr "Editer les Informations sur l'utilisateur"
 
-#: src/protocols/msn/msn.c:719 src/protocols/msn/msn.c:2041
-#: src/protocols/msn/msn.c:2074
+#: src/protocols/msn/msn.c:230
+msgid "Syntax Error (probably a Gaim bug)"
+msgstr "Erreur de Syntaxe (probablement un bug de Gaim)"
+
+#: src/protocols/msn/msn.c:233
+msgid "Invalid Parameter (probably a Gaim bug)"
+msgstr "Paramètre Invalide (probablement un bug de Gaim)"
+
+#: src/protocols/msn/msn.c:236
+#, fuzzy
+msgid "Invalid User"
+msgstr "Nom invalide"
+
+#: src/protocols/msn/msn.c:239
+msgid "Fully Qualified Domain Name missing"
+msgstr ""
+
+#: src/protocols/msn/msn.c:242
+msgid "Already Login"
+msgstr "Déjà loggé"
+
+#: src/protocols/msn/msn.c:245
+#, fuzzy
+msgid "Invalid Username"
+msgstr "Nom invalide"
+
+#: src/protocols/msn/msn.c:248
+#, fuzzy
+msgid "Invalid Friendly Name"
+msgstr "Nom invalide"
+
+#: src/protocols/msn/msn.c:251
+msgid "List Full"
+msgstr "Liste complète"
+
+#: src/protocols/msn/msn.c:254
+msgid "Already there"
+msgstr "Déjà là"
+
+#: src/protocols/msn/msn.c:257
+#, fuzzy
+msgid "Not on list"
+msgstr "Connection Perdu"
+
+#: src/protocols/msn/msn.c:260
+msgid "User is offline"
+msgstr "Utilisateur est hors-ligne"
+
+#: src/protocols/msn/msn.c:263
+msgid "Already in the mode"
+msgstr "Déjà dans le mode"
+
+#: src/protocols/msn/msn.c:266
+msgid "Already in opposite list"
+msgstr "Déjà dans la liste opposée"
+
+#: src/protocols/msn/msn.c:269
+msgid "Switchboard failed"
+msgstr "Echec"
+
+#: src/protocols/msn/msn.c:272
+msgid "Notify Transfer failed"
+msgstr "Notification de transfert échoué"
+
+#: src/protocols/msn/msn.c:276
+msgid "Required fields missing"
+msgstr "Remplissez les champs requis"
+
+#: src/protocols/msn/msn.c:279
+#, fuzzy
+msgid "Not logged in"
+msgstr "%s s'est connecté."
+
+#: src/protocols/msn/msn.c:283
+#, fuzzy
+msgid "Internal server error"
+msgstr "Erreur Interne"
+
+#: src/protocols/msn/msn.c:286
+msgid "Database server error"
+msgstr "Erreur avec le serveur de base de données"
+
+#: src/protocols/msn/msn.c:289
+#, fuzzy
+msgid "File operation error"
+msgstr "erreur interne de connection\n"
+
+#: src/protocols/msn/msn.c:292
+#, fuzzy
+msgid "Memory allocation error"
+msgstr "erreur majeure à la connection!\n"
+
+#: src/protocols/msn/msn.c:296
+#, fuzzy
+msgid "Server busy"
+msgstr "Serveur"
+
+#: src/protocols/msn/msn.c:299
+#, fuzzy
+msgid "Server unavailable"
+msgstr "Non disponible"
+
+#: src/protocols/msn/msn.c:302
+msgid "Peer Notification server down"
+msgstr "Notification du serveur distant est down"
+
+#: src/protocols/msn/msn.c:305
+#, fuzzy
+msgid "Database connect error"
+msgstr "erreur interne de connection\n"
+
+#: src/protocols/msn/msn.c:308
+msgid "Server is going down (abandon ship)"
+msgstr "Le serveur va être down"
+
+#: src/protocols/msn/msn.c:312
+#, fuzzy
+msgid "Error creating connection"
+msgstr "g003: Erreur à l'ouverture de la connection.\n"
+
+#: src/protocols/msn/msn.c:318
+msgid "Session overload"
+msgstr "Surcharge de session"
+
+#: src/protocols/msn/msn.c:321
+msgid "User is too active"
+msgstr "L'utilisateur est déjà actif"
+
+#: src/protocols/msn/msn.c:324
+#, fuzzy
+msgid "Too many sessions"
+msgstr "Trop de réponses"
+
+#: src/protocols/msn/msn.c:327
+msgid "Not expected"
+msgstr "non excepté"
+
+#: src/protocols/msn/msn.c:330
+msgid "Bad friend file"
+msgstr "Mauvais fichier d'ami"
+
+#: src/protocols/msn/msn.c:334
+#, fuzzy
+msgid "Authentication failed"
+msgstr "Echec de l'authentification"
+
+#: src/protocols/msn/msn.c:337
+#, fuzzy
+msgid "Not allowed when offline"
+msgstr "Aucun son lors de votre connection"
+
+#: src/protocols/msn/msn.c:340
+msgid "Not accepting new users"
+msgstr "N'accepte plus de nouveaux utilisateurs"
+
+#: src/protocols/msn/msn.c:343
+msgid "User unverified"
+msgstr "Utilisateur non vérifié"
+
+#: src/protocols/msn/msn.c:346
+#, fuzzy
+msgid "Unknown Error Code"
+msgstr "Code d'Erreur Inconnu"
+
+#: src/protocols/msn/msn.c:351 src/protocols/msn/msn.c:558
+#: src/protocols/msn/msn.c:813 src/protocols/msn/msn.c:2114
+#: src/protocols/msn/msn.c:2283 src/protocols/msn/msn.c:2336
 msgid "MSN Error"
 msgstr "Erreur MSN"
 
-#: src/protocols/msn/msn.c:719
+#: src/protocols/msn/msn.c:558
+msgid "A message may not have been received."
+msgstr "Un message ne peut pas avoir été reçu."
+
+#: src/protocols/msn/msn.c:813
 msgid "Gaim was unable to send a message"
 msgstr "Gaim n'a pas réussi a envoyer le message"
 
-#: src/protocols/msn/msn.c:1069
+#: src/protocols/msn/msn.c:917
+#, c-format
+msgid "The user %s (%s) wants to add %s to his or her buddy list."
+msgstr "L'utilisateur %s (%s) veut ajouter %s a son ou sa liste d'amis."
+
+#: src/protocols/msn/msn.c:1074
+#, c-format
+msgid "The user %s (%s) wants to add you to their buddy list"
+msgstr "L'utilisateur %s (%s) veut vous ajouter a sa liste"
+
+#: src/protocols/msn/msn.c:1175
 msgid "You have been disconnected. You have signed on from another location."
 msgstr ""
 "Vous avez été déconnecté, vous vous êtes connecté depuis un autre endroit"
 
-#: src/protocols/msn/msn.c:2041 src/protocols/msn/msn.c:2074
+#: src/protocols/msn/msn.c:1435 src/protocols/msn/msn.c:1679
+#, fuzzy
+msgid "Error reading from server"
+msgstr "Erreur à la lecture du socket"
+
+#: src/protocols/msn/msn.c:1568
+msgid "Requesting to send password"
+msgstr "Demande pour envoyer le mot de passe"
+
+#: src/protocols/msn/msn.c:1618
+#, fuzzy
+msgid "Unable to send password"
+msgstr "Incapable de lire le socket"
+
+#: src/protocols/msn/msn.c:1623
+#, fuzzy
+msgid "Password sent"
+msgstr "Mot de Passe: "
+
+#: src/protocols/msn/msn.c:1748
+#, fuzzy
+msgid "Unable to write to server"
+msgstr "Incapable de se connecter au server"
+
+#: src/protocols/msn/msn.c:1754
+#, fuzzy
+msgid "Synching with server"
+msgstr "S'enregistrer sur le serveur"
+
+#: src/protocols/msn/msn.c:1920
+msgid "Away From Computer"
+msgstr "Occupé"
+
+#: src/protocols/msn/msn.c:1921
+msgid "Be Right Back"
+msgstr "Revient dans quelques minutes"
+
+#: src/protocols/msn/msn.c:1922
+#, fuzzy
+msgid "Busy"
+msgstr "Contact"
+
+#: src/protocols/msn/msn.c:1923
+msgid "On The Phone"
+msgstr "Au téléphone"
+
+#: src/protocols/msn/msn.c:1924
+msgid "Out To Lunch"
+msgstr "Parti(e) manger"
+
+#: src/protocols/msn/msn.c:1925
+#, fuzzy
+msgid "Hidden"
+msgstr "Cacher l'Icone"
+
+#: src/protocols/msn/msn.c:2041
+msgid "Reset friendly name"
+msgstr "Remettez à l'état initial le nom"
+
+#: src/protocols/msn/msn.c:2114
+msgid "Friendly name too long."
+msgstr "Le nom est trop long."
+
+#: src/protocols/msn/msn.c:2129 src/protocols/msn/msn.c:2150
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Deuxième Prénom"
+
+#: src/protocols/msn/msn.c:2130
+#, fuzzy
+msgid "Set Friendly Name:"
+msgstr "Pseudonyme: "
+
+#: src/protocols/msn/msn.c:2131
+msgid "Reset All Friendly Names"
+msgstr "Remettez à l'état initial tout les noms"
+
+#: src/protocols/msn/msn.c:2283 src/protocols/msn/msn.c:2336
 msgid "Invalid name"
 msgstr "Nom invalide"
 
-#: src/protocols/napster/napster.c:450 src/protocols/oscar/oscar.c:3075
-#: src/protocols/toc/toc.c:1101
+#: src/protocols/napster/napster.c:457 src/protocols/oscar/oscar.c:3209
+#: src/protocols/toc/toc.c:1104
 msgid "Join what group:"
 msgstr "Joindre quel groupe:"
 
-#: src/protocols/oscar/oscar.c:333
+#: src/protocols/oscar/oscar.c:330
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "Connection directe avec %s fermée"
 
-#: src/protocols/oscar/oscar.c:335
+#: src/protocols/oscar/oscar.c:332
 #, c-format
 msgid "Direct IM with %s failed"
 msgstr "Connection directe avec %s echoué"
 
-#: src/protocols/oscar/oscar.c:373
+#: src/protocols/oscar/oscar.c:370
 msgid "connection error (rend)\n"
 msgstr "erreur à la connection(rend)\n"
 
-#: src/protocols/oscar/oscar.c:384
+#: src/protocols/oscar/oscar.c:381
 msgid "major connection error\n"
 msgstr "erreur majeure à la connection!\n"
 
-#: src/protocols/oscar/oscar.c:385 src/protocols/toc/toc.c:511
+#: src/protocols/oscar/oscar.c:382 src/protocols/toc/toc.c:511
 #: src/protocols/toc/toc.c:524 src/protocols/toc/toc.c:590
 msgid "Disconnected."
 msgstr "Déconnecté."
 
-#: src/protocols/oscar/oscar.c:397 src/protocols/toc/toc.c:761
+#: src/protocols/oscar/oscar.c:394 src/protocols/toc/toc.c:761
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Vous avez été déconnecté de la salle du Chat %s."
 
-#: src/protocols/oscar/oscar.c:398
+#: src/protocols/oscar/oscar.c:395
 msgid "Chat Error!"
 msgstr "Erreur de Chat!"
 
-#: src/protocols/oscar/oscar.c:410
+#: src/protocols/oscar/oscar.c:407
 msgid "Chat is currently unavailable"
 msgstr "Le Chat est actuellement inaccessible."
 
-#: src/protocols/oscar/oscar.c:411
+#: src/protocols/oscar/oscar.c:408
 msgid "Gaim - Chat"
 msgstr "Gaim - Chat"
 
-#: src/protocols/oscar/oscar.c:470 src/protocols/oscar/oscar.c:530
+#: src/protocols/oscar/oscar.c:467 src/protocols/oscar/oscar.c:527
 msgid "Couldn't connect to host"
 msgstr "incapable de se connecter a l'hote"
 
-#: src/protocols/oscar/oscar.c:478
+#: src/protocols/oscar/oscar.c:475
 msgid "Password sent, waiting for response\n"
 msgstr "Mot de passe envoyé, en attente de réponse\n"
 
-#: src/protocols/oscar/oscar.c:511
+#: src/protocols/oscar/oscar.c:508
 msgid "internal connection error\n"
 msgstr "erreur interne de connection\n"
 
-#: src/protocols/oscar/oscar.c:512
+#: src/protocols/oscar/oscar.c:509
 msgid "Unable to login to AIM"
 msgstr "Impossible de se connecter à AIM"
 
-#: src/protocols/oscar/oscar.c:517
+#: src/protocols/oscar/oscar.c:514
 #, c-format
 msgid "Signon: %s"
 msgstr "Connection: %s"
 
-#: src/protocols/oscar/oscar.c:589
+#: src/protocols/oscar/oscar.c:586
 msgid "Signed off.\n"
 msgstr "Déconnecté.\n"
 
-#: src/protocols/oscar/oscar.c:608 src/protocols/oscar/oscar.c:732
+#: src/protocols/oscar/oscar.c:605 src/protocols/oscar/oscar.c:730
 msgid "Could Not Connect"
 msgstr "Ne peut se Connecter"
 
-#: src/protocols/oscar/oscar.c:616
+#: src/protocols/oscar/oscar.c:613
 msgid "Connection established, cookie sent"
 msgstr "Connection établie, cookie envoyé"
 
 #. Incorrect nick/password
-#: src/protocols/oscar/oscar.c:642 src/protocols/toc/toc.c:459
+#: src/protocols/oscar/oscar.c:639 src/protocols/toc/toc.c:459
 msgid "Incorrect nickname or password."
 msgstr "Pseudonyme ou Mot de Passe incorrect."
 
 #. Suspended account
-#: src/protocols/oscar/oscar.c:647
+#: src/protocols/oscar/oscar.c:644
 msgid "Your account is currently suspended."
 msgstr "Votre accompte est actuellement suspendu"
 
 #. connecting too frequently
-#: src/protocols/oscar/oscar.c:651
+#: src/protocols/oscar/oscar.c:648
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -659,2478 +1081,217 @@ msgstr ""
 "longtemps."
 
 #. client too old
-#: src/protocols/oscar/oscar.c:656
+#: src/protocols/oscar/oscar.c:653
 msgid "The client version you are using is too old. Please upgrade at "
 msgstr ""
-"La version du client que vous utilisez est trop ancienne. Veillez la mettre "
-"à jour"
-
-#: src/protocols/oscar/oscar.c:660 src/protocols/toc/toc.c:542
-msgid "Authentication Failed"
-msgstr "Echec de l'Authentication"
-
-#: src/protocols/oscar/oscar.c:682
-msgid "Internal Error"
-msgstr "Erreur Interne"
-
-#: src/protocols/oscar/oscar.c:1250 src/protocols/oscar/oscar.c:3286
-#, c-format
-msgid "Direct IM with %s established"
-msgstr "Connection directe avec %s établie"
-
-#: src/protocols/oscar/oscar.c:1496 src/protocols/oscar/oscar.c:2371
-#, c-format
-msgid ""
-"The user %d has denied your request to add them to your contact list for the "
-"following reason:\n"
-"\n"
-msgstr ""
-
-#: src/protocols/oscar/oscar.c:1496 src/protocols/oscar/oscar.c:2371
-#, fuzzy
-msgid "No reason given."
-msgstr "Pas de pseudonyme donné"
-
-#: src/protocols/oscar/oscar.c:1497 src/protocols/oscar/oscar.c:2372
-msgid "Gaim - ICQ Authorization Denied"
-msgstr ""
-
-#: src/protocols/oscar/oscar.c:1503 src/protocols/oscar/oscar.c:2378
-#, c-format
-msgid "The user %d has granted your request to add them to your contact list."
-msgstr ""
-
-#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2379
-msgid "Gaim - ICQ Authorization Granted"
-msgstr ""
-
-#: src/protocols/oscar/oscar.c:1577
-#, c-format
-msgid "You missed %d message from %s because it was invalid."
-msgstr "Vous avez raté %d message de %s car il etait invalide."
-
-#: src/protocols/oscar/oscar.c:1578
-#, c-format
-msgid "You missed %d messages from %s because they were invalid."
-msgstr "Vous avez raté %d messages de %s car ils etaient invalides."
-
-#: src/protocols/oscar/oscar.c:1587
-#, c-format
-msgid "You missed %d message from %s because it was too large."
-msgstr "Vous avez raté %d message de %s car il etait trop volumineux."
-
-#: src/protocols/oscar/oscar.c:1588
-#, c-format
-msgid "You missed %d messages from %s because they were too large."
-msgstr "Vous avez raté %d messages de %s car ils etaient trop volumineux."
-
-#: src/protocols/oscar/oscar.c:1597
-#, c-format
-msgid "You missed %d message from %s because the rate limit has been exceeded."
-msgstr "Vous avez raté %d message de %s car le quota limite a été dépassé."
-
-#: src/protocols/oscar/oscar.c:1598
-#, c-format
-msgid ""
-"You missed %d messages from %s because the rate limit has been exceeded."
-msgstr "Vous avez raté %d messages de %s car le quota limite a été dépassé."
-
-#: src/protocols/oscar/oscar.c:1607
-#, c-format
-msgid "You missed %d message from %s because it was too evil."
-msgstr "Vous avez raté %d message de %s car il a été trop méchant(?)."
-
-#: src/protocols/oscar/oscar.c:1608
-#, c-format
-msgid "You missed %d messages from %s because they are too evil."
-msgstr "Vous avez raté %d messages de %s car ils ont été trop méchants(?)."
-
-#: src/protocols/oscar/oscar.c:1617
-#, c-format
-msgid "You missed %d message from %s because you are too evil."
-msgstr "Vous avez raté %d message de %s car vous avez été trop méchant(?)."
-
-#: src/protocols/oscar/oscar.c:1618
-#, c-format
-msgid "You missed %d messages from %s because you are too evil."
-msgstr "Vous avez raté %d messages de %s car vous avez été trop méchant(?)."
-
-#: src/protocols/oscar/oscar.c:1626
-#, c-format
-msgid "You missed %d message from %s for unknown reasons."
-msgstr "Vous avez raté %d message de %s pour des raisons inconnues."
-
-#: src/protocols/oscar/oscar.c:1627
-#, c-format
-msgid "You missed %d messages from %s for unknown reasons."
-msgstr "Vous avez raté %d messages de %s pour des raisons inconnues."
-
-#: src/dialogs.c:3034 src/dialogs.c:3040 src/protocols/oscar/oscar.c:1632
-#: src/protocols/oscar/oscar.c:1670 src/protocols/oscar/oscar.c:1688
-#: src/protocols/oscar/oscar.c:2141 src/protocols/yahoo/yahoo.c:585
-msgid "Gaim - Error"
-msgstr "Gaim - Erreur"
-
-#: src/protocols/oscar/oscar.c:1649
-#, c-format
-msgid "SNAC threw error: %s\n"
-msgstr "SNAC a envoyé l'erreur: %s\n"
-
-#: src/protocols/oscar/oscar.c:1651
-msgid "Gaim - Oscar SNAC Error"
-msgstr "Gaim - Erreur SNAC d'Oscar"
-
-#: src/protocols/oscar/oscar.c:1668
-#, c-format
-msgid "Your message to %s did not get sent: %s"
-msgstr "Votre message vers %s n'a pas été envoyé: %s"
-
-#: src/protocols/oscar/oscar.c:1669 src/protocols/oscar/oscar.c:1687
-msgid "Reason unknown"
-msgstr "Raison inconnue"
-
-#: src/protocols/oscar/oscar.c:1686
-#, c-format
-msgid "User information for %s unavailable: %s"
-msgstr "Les Informations sur l'utilisateur %s ne sont pas disponibles: %s"
-
-#: src/buddy.c:2060 src/protocols/oscar/oscar.c:1717
-msgid "Buddy Icon"
-msgstr "Icone du contact"
-
-#: src/buddy.c:2063 src/protocols/oscar/oscar.c:1720
-msgid "Voice"
-msgstr "Voix"
-
-#: src/buddy.c:2066 src/protocols/oscar/oscar.c:1723
-msgid "IM Image"
-msgstr "Transfer d'image"
-
-#: src/buddy.c:494 src/buddy.c:2069 src/buddy.c:2507 src/prefs.c:2912
-#: src/protocols/oscar/oscar.c:1726
-msgid "Chat"
-msgstr "Chat"
-
-#: src/buddy.c:2072 src/protocols/oscar/oscar.c:1729
-msgid "Get File"
-msgstr "Recevoir un Fichier"
-
-#: src/buddy.c:2075 src/protocols/oscar/oscar.c:1732
-msgid "Send File"
-msgstr "Envoyer un Fichier"
-
-#: src/buddy.c:2079 src/protocols/oscar/oscar.c:1736
-msgid "Games"
-msgstr "Jeux"
-
-#: src/buddy.c:2082 src/protocols/oscar/oscar.c:1739
-msgid "Stocks"
-msgstr "Bourse"
-
-#: src/buddy.c:2085 src/protocols/oscar/oscar.c:1742
-msgid "Send Buddy List"
-msgstr "Envoyer Liste de contacts"
-
-#: src/buddy.c:2088 src/protocols/oscar/oscar.c:1745
-msgid "EveryBuddy Bug"
-msgstr "Bug d'EveryBuddy"
-
-#: src/buddy.c:2091 src/protocols/oscar/oscar.c:1748
-msgid "AP User"
-msgstr "Utilisateur AP"
-
-#: src/buddy.c:2094 src/protocols/oscar/oscar.c:1751
-msgid "ICQ RTF"
-msgstr "RTF ICQ"
-
-#: src/buddy.c:2097 src/protocols/oscar/oscar.c:1754
-msgid "Nihilist"
-msgstr "Nihiliste"
-
-#: src/buddy.c:2100 src/protocols/oscar/oscar.c:1757
-msgid "ICQ Server Relay"
-msgstr "relai de serveur ICQ"
-
-#: src/buddy.c:2103 src/protocols/oscar/oscar.c:1760
-msgid "ICQ Unknown"
-msgstr "Inconnu ICQ"
-
-#: src/buddy.c:2106 src/protocols/oscar/oscar.c:1763
-msgid "Trillian Encryption"
-msgstr "Encryption Trillian"
-
-#: src/protocols/oscar/oscar.c:1801
-msgid ""
-"<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG "
-"SRC=\"free_icon.gif\"> : Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL "
-"User <br><IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br><IMG "
-"SRC=\"admin_icon.gif\"> : Administrator <br><IMG SRC=\"ab_icon.gif\"> : "
-"ActiveBuddy Interactive Agent<br><IMG SRC=\"wireless_icon.gif\"> : Wireless "
-"Device User<br>"
-msgstr ""
-"<br><BODY BGCOLOR=WHITE><hr><I>Légende:</I><br><br> <IMG SRC=\"free_icon.gif "
-"\"> : Utilisateur normal d'aim<br> <IMG \"SRC=\"aol_icon.gif\"> : "
-"Utilisateur d'AOL <br> <IMG SRC=\"dt_icon.gif\"> : Utilisateur d'aim "
-"(évaluation)<br> <IMG SRC=\"admin_icon.gif \"> : Administrateur <br> <IMG "
-"SRC=\"ab_icon.gif\"> : Agent interactif ActiveBuddy<br> <IMG "
-"SRC=\"wireless_icon.gif\"> : Utilisateur d'appareil Portable<br>"
-
-#: src/protocols/oscar/oscar.c:1829
-msgid ""
-"Username : <B>%s</B>  %s <BR>\n"
-"Warning Level : <B>%d %%</B><BR>\n"
-"%s%s%s<BR>\n"
-"<HR><BR>\n"
-msgstr ""
-"Nom d'utilisateur : <B>%s</B>  %s <BR>\n"
-"Niveau d'Avertissement : <B>%d %%</B><BR>\n"
-"%s%s%s<BR>\n"
-"<HR><BR>\n"
-
-#: src/protocols/oscar/oscar.c:1861
-msgid "<i>User has no away message</i>"
-msgstr "<i>L'utilisateur n'a pas de message d'absence</i>"
-
-#: src/protocols/oscar/oscar.c:1873
-msgid "Client Capabilities: "
-msgstr "Possibilités du client: "
-
-#: src/protocols/oscar/oscar.c:1881
-msgid "<i>No Information Provided</i>"
-msgstr "<i>Pas d'information fournies</i>"
-
-#: src/protocols/oscar/oscar.c:1904
-msgid "Your connection may be lost."
-msgstr "Votre connection risque d'etre coupée"
-
-#: src/protocols/oscar/oscar.c:1905
-msgid "AOL error"
-msgstr "erreur d'AOL"
-
-#: src/protocols/oscar/oscar.c:2140
-msgid ""
-"The last message was not sent because you are over the rate limit. Please "
-"wait 10 seconds and try again."
-msgstr ""
-"Le dernier message n'a pas été envoyé car vous avez depassé le quota limite "
-"Veuillez attendre 10 secondes et réessayez"
-
-#: src/dialogs.c:3563 src/protocols/oscar/oscar.c:2482
-#: src/protocols/oscar/oscar.c:3407 src/protocols/toc/toc.c:1561
-#: src/protocols/toc/toc.c:1578 src/protocols/toc/toc.c:1638
-#: src/protocols/toc/toc.c:1680 src/protocols/toc/toc.c:1799
-#: src/protocols/toc/toc.c:1829 src/protocols/toc/toc.c:1885
-msgid "Error"
-msgstr "Erreur"
-
-#: src/protocols/oscar/oscar.c:3079 src/protocols/toc/toc.c:1105
-msgid "Exchange:"
-msgstr "Echange:"
-
-#: src/protocols/oscar/oscar.c:3407
-msgid "Unable to open Direct IM"
-msgstr "Impossible d'ouvrir une connection directe"
-
-#: src/protocols/oscar/oscar.c:3417
-#, c-format
-msgid ""
-"You have selected to open a Direct IM connection with %s. Doing this will "
-"let them see your IP address, and may be a security risk. Do you wish to "
-"continue?"
-msgstr ""
-"Vous voulez ouvrir une connection directe avec %s. Faire ceci peut leur "
-"permettre de voir votre ip, et résulter en un risque de sécurité. Voulez "
-"vous continuer?"
-
-#: src/protocols/oscar/oscar.c:3450
-msgid "Direct IM"
-msgstr "Connection directe"
-
-#: src/protocols/oscar/oscar.c:3458
-msgid "Get Capabilities"
-msgstr "Obtenir les Possibilités"
-
-#: src/protocols/toc/toc.c:398
-#, c-format
-msgid "Unable to write file %s."
-msgstr "Impossible d'ecrire dans le fichier %s."
-
-#: src/protocols/toc/toc.c:401
-#, c-format
-msgid "Unable to read file %s."
-msgstr "Impossible de lire le fichier %s."
-
-#: src/protocols/toc/toc.c:404
-#, c-format
-msgid "Message too long, last %s bytes truncated."
-msgstr "Message trop long, perte des %s derniers octets."
-
-#: src/protocols/toc/toc.c:407
-#, c-format
-msgid "%s not currently logged in."
-msgstr "%s n'est pas actuellement en ligne."
-
-#: src/protocols/toc/toc.c:410
-#, c-format
-msgid "Warning of %s not allowed."
-msgstr "Les Avertissements de %s ne sont pas permis."
-
-#: src/protocols/toc/toc.c:413
-msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Un message a été perdu, vous dépassez la vitesse limite du serveur."
-
-#: src/protocols/toc/toc.c:416
-#, c-format
-msgid "Chat in %s is not available."
-msgstr "Le Chat %s est inaccessible."
-
-#: src/protocols/toc/toc.c:419
-#, c-format
-msgid "You are sending messages too fast to %s."
-msgstr "Vous envoyez vos messages trop vite à %s."
-
-#: src/protocols/toc/toc.c:422
-#, c-format
-msgid "You missed an IM from %s because it was too big."
-msgstr "Vous avez raté un message de %s parce qu'il était trop volumineux,"
-
-#: src/protocols/toc/toc.c:425
-#, c-format
-msgid "You missed an IM from %s because it was sent too fast."
-msgstr "Vous avez raté un message de %s parce qu'il a été envoyé trop vite."
-
-#: src/protocols/toc/toc.c:428
-msgid "Failure."
-msgstr "Echec"
-
-#: src/protocols/toc/toc.c:431
-msgid "Too many matches."
-msgstr "Trop de réponses"
-
-#: src/protocols/toc/toc.c:434
-msgid "Need more qualifiers."
-msgstr "Besoin de plus de critères."
-
-#: src/protocols/toc/toc.c:437
-msgid "Dir service temporarily unavailable."
-msgstr "Le repertoire est temporairement indisponible."
-
-#: src/protocols/toc/toc.c:440
-msgid "Email lookup restricted."
-msgstr "La recherche par Email est restreinte."
-
-#: src/protocols/toc/toc.c:443
-msgid "Keyword ignored."
-msgstr "Mot clé ignoré."
-
-#: src/protocols/toc/toc.c:446
-msgid "No keywords."
-msgstr "Pas de mot-clé."
-
-#: src/protocols/toc/toc.c:449
-msgid "User has no directory information."
-msgstr "L'utilisateur n'a pas d'information personnelle."
-
-#: src/protocols/toc/toc.c:453
-msgid "Country not supported."
-msgstr "Pays non supporté."
-
-#: src/protocols/toc/toc.c:456
-#, c-format
-msgid "Failure unknown: %s."
-msgstr "Echec inconnu: %s."
-
-#: src/protocols/toc/toc.c:462
-msgid "The service is temporarily unavailable."
-msgstr "Le service est temporairement indisponible."
-
-#: src/protocols/toc/toc.c:465
-msgid "Your warning level is currently too high to log in."
-msgstr ""
-"Votre niveau d'avertissement est actuellement trop élevé pour que vous "
-"puissiez vous connecter"
-
-#: src/protocols/toc/toc.c:468
-msgid ""
-"You have been connecting and disconnecting too frequently.  Wait ten minutes "
-"and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
-"Vous vous êtes connecté/déconnecté trop fréquemment. Attendez 10 minutes et "
-"Réessayez. Si vous continuez d'essayer, il vous faudra attendre encore plus "
-"longtemps."
-
-#: src/protocols/toc/toc.c:471
-#, c-format
-msgid "An unknown signon error has occurred: %s."
-msgstr "Une erreur inconnue est survenue à la connection: %s."
-
-#: src/protocols/toc/toc.c:474
-#, fuzzy, c-format
-msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "Une erreur inconnue, %d, s'est produite. Info: %s"
-
-#: src/protocols/toc/toc.c:491
-msgid "Connection Closed"
-msgstr "Connection Terminée"
-
-#: src/protocols/toc/toc.c:529
-msgid "Waiting for reply..."
-msgstr "En attente d'une réponse..."
-
-#: src/protocols/toc/toc.c:598
-msgid "TOC has come back from its pause. You may now send messages again."
-msgstr ""
-"TOC est revenu de sa pause. Vous pouvez désormais renvoyer des messages à "
-"nouveau."
-
-#: src/protocols/toc/toc.c:599
-msgid "TOC Resume"
-msgstr "TOC retour"
-
-#: src/protocols/toc/toc.c:763
-msgid "Chat Error"
-msgstr "Erreur de Chat"
-
-#: src/protocols/toc/toc.c:782
-#, fuzzy
-msgid "Password Change Successful"
-msgstr "Changement de mot de passe effectué"
-
-#: src/dialogs.c:1688 src/protocols/toc/toc.c:782
-msgid "Gaim - Password Change"
-msgstr "Gaim - Changement de mot de passe"
-
-#: src/protocols/toc/toc.c:785
-msgid ""
-"TOC has sent a PAUSE command. When this happens, TOC ignores any messages "
-"sent to it, and may kick you off if you send a message. Gaim will prevent "
-"anything from going through. This is only temporary, please be patient."
-msgstr ""
-"TOC a envoyé la commande PAUSE. Lorsque ceci arrive TOC ignore tous les "
-"messages envoyés et peux vous déconnecter si vous en envoyer un. Gaim "
-"empèchera ceci. Ce n'est que temporaire, soyez patient."
-
-#: src/protocols/toc/toc.c:788
-msgid "TOC Pause"
-msgstr "TOC en Pause"
-
-#: src/protocols/toc/toc.c:1222
-#, fuzzy
-msgid "Get Dir Info"
-msgstr "Obtenir Info Annuaire"
-
-#: src/protocols/toc/toc.c:1638 src/protocols/toc/toc.c:1680
-#: src/protocols/toc/toc.c:1799 src/protocols/toc/toc.c:1885
-msgid "Could not connect for transfer!"
-msgstr "N'a pu se connecter pour le transfert!"
-
-#: src/protocols/toc/toc.c:1829
-msgid "Could not write file header!"
-msgstr "N'a pu écrire l'en tête du fichier"
-
-#: src/protocols/toc/toc.c:1918
-msgid "Gaim - Save As..."
-msgstr "Gaim - Enregistrer sous..."
-
-#: src/protocols/toc/toc.c:1959
-#, c-format
-msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgstr "%s demande à %s d'accepter %d fichier: %s (%.2f %s)%s%s"
-
-#: src/protocols/toc/toc.c:1960
-#, c-format
-msgid "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr "%s demande à %s d'accepter %d fichiers: %s (%.2f %s)%s%s"
-
-#: src/protocols/toc/toc.c:1965
-#, c-format
-msgid "%s requests you to send them a file"
-msgstr "%s vous demande de leur envoyer un fichier"
-
-#: src/protocols/yahoo/yahoo.c:585
-msgid "Your message did not get sent."
-msgstr "Votre message n'a pas été envoyé."
-
-#: src/protocols/zephyr/zephyr.c:802
-msgid "ZLocate"
-msgstr "Localisation (ZLocate)"
-
-#: src/protocols/zephyr/zephyr.c:839
-msgid "Class:"
-msgstr "Classe:"
-
-#: src/protocols/zephyr/zephyr.c:843
-msgid "Instance:"
-msgstr "Instance:"
-
-#: src/protocols/zephyr/zephyr.c:847
-msgid "Recipient:"
-msgstr "Destinataire:"
-
-#: src/about.c:93
-#, c-format
-msgid "About Gaim v%s"
-msgstr "À propos de Gaim v%s"
-
-#: src/about.c:126
-msgid ""
-"Gaim is a client that supports AOL's Instant Messenger protocol. It is "
-"written\n"
-"using Gtk+ and is licensed under the GPL.\n"
-"\n"
-"URL: "
-msgstr ""
-"Gaim est un client supportant le protocol AIM d'AOL.\n"
-"Il est écrit en Gtk+ et est sous la licence GPL.\n"
-"\n"
-"URL: "
-
-#: src/about.c:137
-msgid ""
-"Active Developers\n"
-"====================\n"
-"Rob Flynn (maintainer) [ rob@marko.net ]\n"
-"Sean Egan (coder)      [ bj91704@binghamton.edu ]\n"
-"\n"
-"Crazy Patch Writers\n"
-"===================\n"
-"Benjamin Miller\n"
-"Decklin Foster\n"
-"Nathan Walp\n"
-"Mark Doliner\n"
-"\n"
-"Retired Developers\n"
-"===================\n"
-"Jim Duchek\n"
-"Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
-"Mark Spencer (original author)   [ markster@marko.net ]"
-msgstr ""
-"Developeurs Actifs\n"
-"====================\n"
-"Rob Flynn (maintaineur) [ rob@marko.net ]\n"
-"Sean Egan (codeur)      [ bj91704@binghamton.edu ]\n"
-"\n"
-"Créateurs des patchs de dingues\n"
-"===================\n"
-"Benjamin Miller\n"
-"Decklin Foster\n"
-"Nathan Walp\n"
-"Mark Doliner\n"
-"\n"
-"Developeurs retirés\n"
-"===================\n"
-"Jim Duchek\n"
-"Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
-"Mark Spencer (auteur original)   [ markster@marko.net ]"
-
-#: src/about.c:155 src/aim.c:318 src/buddy.c:2633 src/buddy_chat.c:1311
-#: src/buddy_chat.c:1408 src/buddy_chat.c:1438 src/conversation.c:2795
-#: src/dialogs.c:568 src/dialogs.c:3858 src/multi.c:1057 src/plugins.c:277
-#: src/prefs.c:2535 src/prpl.c:438 src/prpl.c:679 src/server.c:1050
-msgid "Close"
-msgstr "Fermer"
-
-#. this makes the sizes not work.
-#. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
-#. gtk_widget_grab_default(button);
-#: src/about.c:175
-msgid "Web Site"
-msgstr "Site Web"
-
-#: src/aim.c:151 src/buddy.c:2626
-msgid "Signoff"
-msgstr "Déconnection"
-
-#: src/aim.c:163
-msgid "Please enter your logon"
-msgstr "Entrez votre login"
-
-#: src/aim.c:163 src/multi.c:1388 src/server.c:55
-msgid "Signon Error"
-msgstr "Erreur de connection"
-
-#: src/aim.c:261
-msgid "Gaim - Login"
-msgstr "Gaim - Connection"
-
-#: src/aim.c:279
-msgid "Screen Name: "
-msgstr "Pseudonyme: "
-
-#: src/aim.c:295
-msgid "Password: "
-msgstr "Mot de Passe: "
-
-#: src/aim.c:316 src/buddy.c:2630
-msgid "Quit"
-msgstr "Quitter"
-
-#: src/aim.c:321 src/aim.c:819 src/buddy.c:2656
-msgid "Accounts"
-msgstr "Accomptes"
-
-#: src/aim.c:323 src/multi.c:903
-msgid "Signon"
-msgstr "Connection"
-
-#: src/aim.c:355
-msgid "About"
-msgstr "À Propos"
-
-#: src/aim.c:356 src/prefs.c:1619 src/prefs.c:1893
-msgid "Options"
-msgstr "Options"
-
-#: src/aim.c:358 src/aim.c:822 src/buddy.c:2674
-msgid "Plugins"
-msgstr "Plugins"
-
-#: src/aim.c:816 src/buddy.c:2666
-msgid "Preferences"
-msgstr "Préférences"
-
-#: src/applet.c:199
-msgid "Attempting to sign on...."
-msgstr "Tentative de connection..."
-
-#: src/applet.c:202
-msgid "Offline. Click to bring up login box."
-msgstr "Déconnecté. Cliquer pour ouvrir la fenêtre de connection."
-
-#: src/applet.c:218
-#, c-format
-msgid "Away: %d pending."
-msgstr "Absent: %d en attente"
-
-#: src/applet.c:221
-msgid "Away."
-msgstr "Absent"
-
-#: src/applet.c:296 src/away.c:388
-msgid "New Away Message"
-msgstr "Nouveau Message d'absence"
-
-#: src/applet.c:444
-msgid "Can't create Gaim applet!"
-msgstr "Impossible de créer l'applet Gaim"
-
-#: src/applet.c:465
-msgid "About..."
-msgstr "À Propos..."
-
-#: src/away.c:202
-msgid "Gaim - Away!"
-msgstr "Gaim - Absent!"
-
-#: src/away.c:250
-msgid "I'm Back!"
-msgstr "Je suis de Retour!!"
-
-#: src/away.c:266 src/away.c:346 src/away.c:520
-msgid "Back"
-msgstr "De retour"
-
-#: src/away.c:408
-msgid "Remove Away Message"
-msgstr "Enlever le message d'absence"
-
-#: src/away.c:596
-msgid "Set All Away"
-msgstr "Mettre le message d'absence sur tous les comptes"
-
-#. Put the buttons in the box
-#: src/buddy.c:488 src/buddy.c:2741 src/buddy_chat.c:1443
-#: src/conversation.c:2328 src/conversation.c:2810 src/dialogs.c:890
-#: src/dialogs.c:1072 src/dialogs.c:2053 src/multi.c:1041 src/prefs.c:2029
-#: src/prefs.c:2371 src/prefs.c:2405
-msgid "Add"
-msgstr "Ajouter"
-
-#: src/buddy.c:489 src/buddy.c:2742 src/dialogs.c:900 src/dialogs.c:1047
-msgid "Group"
-msgstr "Groupe"
-
-#: src/buddy.c:490 src/buddy.c:2743 src/buddy_chat.c:1445
-#: src/conversation.c:2314 src/conversation.c:2807 src/prefs.c:2043
-#: src/prefs.c:2375 src/prefs.c:2409
-msgid "Remove"
-msgstr "Enlever"
-
-#: src/buddy.c:495 src/buddy.c:646 src/buddy.c:798 src/buddy.c:2505
-#: src/buddy_chat.c:850 src/buddy_chat.c:1267
-msgid "IM"
-msgstr "IM"
-
-#: src/buddy.c:496 src/buddy.c:2506 src/buddy_chat.c:866 src/buddy_chat.c:1275
-#: src/buddy_chat.c:1451 src/conversation.c:2828
-msgid "Info"
-msgstr "Info"
-
-#. Put the buttons in the box
-#: src/buddy.c:651 src/buddy.c:803 src/dialogs.c:1039 src/dialogs.c:3417
-#: src/dialogs.c:3432
-msgid "Alias"
-msgstr "Alias"
-
-#: src/buddy.c:656 src/buddy.c:822
-msgid "Add Buddy Pounce"
-msgstr "Ajouter une Alerte"
-
-#: src/buddy.c:663 src/buddy.c:828
-msgid "View Log"
-msgstr "Voir les Logs"
-
-#: src/buddy.c:785 src/buddy.c:816
-msgid "Rename"
-msgstr "Renommer"
-
-#: src/buddy.c:810
-msgid "Un-Alias"
-msgstr "Retirer l'alias"
-
-#: src/buddy.c:1581 src/buddy.c:2649
-msgid "Buddy Pounce"
-msgstr "Alerte"
-
-#: src/buddy.c:1661
-msgid "New Buddy Pounce"
-msgstr "Nouvelle Alerte"
-
-#: src/buddy.c:1679
-msgid "Remove Buddy Pounce"
-msgstr "Enlever une Alerte"
-
-#: src/buddy.c:1707
-msgid "[Click to edit]"
-msgstr "[Cliquer pour éditer]"
-
-#: src/buddy.c:2183
-#, c-format
-msgid "Logged in: %s\n"
-msgstr "Connecté: %s\n"
-
-#: src/buddy.c:2195
-msgid "Warnings: %d%%\n"
-msgstr "Attention: %d%%\n"
-
-#: src/buddy.c:2207
-#, c-format
-msgid "Capabilities: %s\n"
-msgstr "Possibilités: %s\n"
-
-#: src/buddy.c:2211
-#, c-format
-msgid ""
-"Alias: %s               \n"
-"Screen Name: %s\n"
-"%s%s%s%s%s%s"
-msgstr ""
-"Alias: %s               \n"
-"Pseudonyme: %s\n"
-"%s%s%s%s%s%s"
-
-#: src/buddy.c:2215
-msgid "Idle: "
-msgstr "Inactif: "
-
-#: src/buddy.c:2286 src/buddy.c:2291
-#, c-format
-msgid "%s logged in."
-msgstr "%s s'est connecté."
-
-#: src/buddy.c:2350 src/buddy.c:2355
-#, c-format
-msgid "%s logged out."
-msgstr "%s s'est déconnecté."
-
-#: src/buddy.c:2540
-msgid "Information on selected Buddy"
-msgstr "Information sur le contact sélectionné"
-
-#: src/buddy.c:2541 src/dialogs.c:697
-msgid "Send Instant Message"
-msgstr "Envoyer un message"
-
-#: src/buddy.c:2542
-msgid "Start/join a Buddy Chat"
-msgstr "Ouvrir/joindre un Chat"
-
-#: src/buddy.c:2543
-msgid "Activate Away Message"
-msgstr "Activer le message d'absence"
-
-#: src/buddy.c:2606
-msgid "File"
-msgstr "Fichier"
-
-#: src/buddy.c:2610
-msgid "Add A Buddy"
-msgstr "Ajouter un Contact"
-
-#: src/buddy.c:2612
-msgid "Join A Chat"
-msgstr "Joindre le Chat"
-
-#: src/buddy.c:2614
-msgid "New Instant Message"
-msgstr "Nouveau message"
-
-#: src/buddy.c:2616 src/dialogs.c:749
-msgid "Get User Info"
-msgstr "Obtenir les Informations Utilisateur"
-
-#: src/buddy.c:2621
-msgid "Import Buddy List"
-msgstr "Importer une Liste de Contacts"
-
-#: src/buddy.c:2639
-msgid "Tools"
-msgstr "Outils"
-
-#: src/buddy.c:2662
-msgid "Protocol Actions"
-msgstr "Actions du Protocol"
-
-#: src/buddy.c:2668
-msgid "View System Log"
-msgstr "Voir les Logs du système"
-
-#: src/buddy.c:2680
-msgid "Perl"
-msgstr "Perl"
-
-#: src/buddy.c:2683
-msgid "Load Script"
-msgstr "Charger un script"
-
-#: src/buddy.c:2687
-msgid "Unload All Scripts"
-msgstr "Décharger tous les scripts"
-
-#: src/buddy.c:2691
-msgid "List Scripts"
-msgstr "Lister les scripts"
-
-#: src/buddy.c:2699
-msgid "Help"
-msgstr "Aide"
-
-#: src/buddy.c:2704
-msgid "About Gaim"
-msgstr "À propos de Gaim"
-
-#: src/buddy.c:2721 src/prefs.c:2891
-msgid "Buddy List"
-msgstr "Liste de Contacts"
-
-#: src/buddy.c:2774
-msgid "Add a new Buddy"
-msgstr "Ajouter un Nouveau Contact"
-
-#: src/buddy.c:2775
-msgid "Add a new Group"
-msgstr "Ajouter un Nouveau Groupe"
-
-#: src/buddy.c:2776
-msgid "Remove selected Buddy/Group"
-msgstr "Supprimer le Contact/Groupe sélectionné"
-
-#: src/buddy.c:2803
-msgid "Edit Buddies"
-msgstr "Editer sa liste de contacts"
-
-#: src/buddy.c:2846
-msgid "Gaim - Buddy List"
-msgstr "Gaim - Liste de Contacts"
-
-#: src/buddy_chat.c:265
-msgid "Join Chat"
-msgstr "Joindre le Chat"
-
-#: src/buddy_chat.c:272
-msgid "Buddy Chat"
-msgstr "Chat"
-
-#: src/buddy_chat.c:283
-msgid "Join Chat As:"
-msgstr "Joindre le Chat en tant que:"
-
-#: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:450
-#: src/dialogs.c:540 src/dialogs.c:715 src/dialogs.c:773 src/dialogs.c:892
-#: src/dialogs.c:1068 src/dialogs.c:1431 src/dialogs.c:1636 src/dialogs.c:1760
-#: src/dialogs.c:1820 src/dialogs.c:2042 src/dialogs.c:2224 src/dialogs.c:2399
-#: src/dialogs.c:2470 src/dialogs.c:3166 src/dialogs.c:3419 src/dialogs.c:3600
-#: src/dialogs.c:3971 src/dialogs.c:4077 src/dialogs.c:4736 src/multi.c:769
-#: src/multi.c:899 src/prpl.c:150 src/prpl.c:224
-msgid "Cancel"
-msgstr "Annuler"
-
-#: src/buddy_chat.c:309
-msgid "Join"
-msgstr "Joindre"
-
-#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1317
-#: src/buddy_chat.c:1407
-msgid "Invite"
-msgstr "Inviter"
-
-#: src/buddy_chat.c:412 src/dialogs.c:1259 src/dialogs.c:3427
-msgid "Buddy"
-msgstr "Contact"
-
-#: src/buddy_chat.c:417 src/prefs.c:1992
-msgid "Message"
-msgstr "Message"
-
-#: src/buddy_chat.c:454
-msgid "Gaim - Invite Buddy Into Chat Room"
-msgstr "Gaim - Inviter le contact dans un salon de Chat"
-
-#: src/buddy_chat.c:857
-msgid "Un-Ignore"
-msgstr "Ne plus Ignorer"
-
-#: src/buddy_chat.c:859 src/buddy_chat.c:1271
-msgid "Ignore"
-msgstr "Ignorer"
-
-#. don't remove them from ignored in case they re-enter
-#: src/buddy_chat.c:922 src/buddy_chat.c:1034 src/buddy_chat.c:1497
-#: src/buddy_chat.c:1530
-#, c-format
-msgid "%d %s in room"
-msgstr "%d %s dans le salon"
-
-#: src/buddy_chat.c:930
-#, c-format
-msgid "%s entered the room."
-msgstr "%s est entré dans le salon."
-
-#: src/buddy_chat.c:996
-#, c-format
-msgid "%s is now known as %s"
-msgstr "%s est désormais connu sous le nom de %s"
-
-#: src/buddy_chat.c:1043
-#, c-format
-msgid "%s left the room (%s)."
-msgstr "%s a quitté le salon (%s)."
-
-#: src/buddy_chat.c:1045
-#, c-format
-msgid "%s left the room."
-msgstr "%s a quitté le salon."
-
-#: src/buddy_chat.c:1144
-msgid "Gaim - Group Chats"
-msgstr "Gaim - groupe de discussion"
-
-#: src/buddy_chat.c:1207
-msgid "Topic:"
-msgstr "Sujet: "
-
-#: src/buddy_chat.c:1248
-msgid "0 people in room"
-msgstr "Personne dans ce Salon"
-
-#: src/buddy_chat.c:1322 src/buddy_chat.c:1406
-msgid "Whisper"
-msgstr "Murmurer"
-
-#: src/buddy_chat.c:1327 src/buddy_chat.c:1404 src/buddy_chat.c:1453
-#: src/conversation.c:2839
-msgid "Send"
-msgstr "Envoyer"
-
-#: src/buddy_chat.c:1447 src/conversation.c:2816
-msgid "Block"
-msgstr "Bloquer"
-
-#: src/buddy_chat.c:1449 src/conversation.c:2822 src/dialogs.c:425
-#: src/dialogs.c:454
-msgid "Warn"
-msgstr "Donner un Avertissement"
-
-#: src/conversation.c:413
-msgid "Gaim - Save Conversation"
-msgstr "Gaim - sauver la Conversation"
-
-#: src/conversation.c:474
-msgid "Gaim - Insert Image"
-msgstr "Gaim - Inserer Image"
-
-#: src/conversation.c:1278
-msgid "Unable to send message: too large"
-msgstr "Impossible d'envoyer le message: trop volumineux"
-
-#: src/conversation.c:1278 src/conversation.c:1282
-msgid "Message Error"
-msgstr "Erreur de Message"
-
-#: src/conversation.c:1282
-msgid "Unable to send message: Unknown reason"
-msgstr "Incapable d'envoyer le message: raison inconnue."
-
-#: src/conversation.c:1501
-#, c-format
-msgid "Currently at %d, "
-msgstr "Actuellement dans %d, "
-
-#: src/conversation.c:1509
-#, c-format
-msgid "Setting position to %d\n"
-msgstr "Positionné à %d\n"
-
-#: src/conversation.c:2110 src/prefs.c:1305
-msgid "Bold Text"
-msgstr "Texte en Gras"
-
-#: src/conversation.c:2110
-msgid "Bold"
-msgstr "Gras"
-
-#: src/conversation.c:2114
-msgid "Italics Text"
-msgstr "Texte en Italique"
-
-#: src/conversation.c:2115
-msgid "Italics"
-msgstr "Italique"
-
-#: src/conversation.c:2118 src/prefs.c:1317
-msgid "Underline Text"
-msgstr "Texte Souligné"
-
-#: src/conversation.c:2119
-msgid "Underline"
-msgstr "Souligné"
-
-#: src/conversation.c:2123 src/prefs.c:1323
-msgid "Strike through Text"
-msgstr "Texte Barré"
-
-#: src/conversation.c:2123
-msgid "Strike"
-msgstr "Barré"
-
-#: src/conversation.c:2129
-msgid "Decrease font size"
-msgstr "Police plus Petite"
-
-#: src/conversation.c:2129
-msgid "Small"
-msgstr "Petit"
-
-#: src/conversation.c:2132
-msgid "Normal font size"
-msgstr "Police Normale"
-
-#: src/conversation.c:2132
-msgid "Normal"
-msgstr "Normal"
-
-#: src/conversation.c:2135
-msgid "Increase font size"
-msgstr "Police plus Grande"
-
-#: src/conversation.c:2135
-msgid "Big"
-msgstr "Grand"
-
-#: src/conversation.c:2142 src/dialogs.c:2841 src/dialogs.c:2865
-msgid "Select Font"
-msgstr "Sectionner une police"
-
-#: src/conversation.c:2143
-msgid "Font"
-msgstr "Police"
-
-#: src/conversation.c:2146 src/prefs.c:1353
-msgid "Text Color"
-msgstr "Couleur de texte"
-
-#: src/conversation.c:2147 src/conversation.c:2151
-msgid "Color"
-msgstr "Couleur"
-
-#: src/conversation.c:2151 src/prefs.c:1371
-msgid "Background Color"
-msgstr "Couleur de fond"
-
-#: src/conversation.c:2158 src/dialogs.c:2464
-msgid "Insert Link"
-msgstr "Insérer un Lien"
-
-#: src/conversation.c:2159
-msgid "Link"
-msgstr "Lien"
-
-#: src/conversation.c:2162
-msgid "Insert smiley face"
-msgstr "Insérer un smiley"
-
-#: src/conversation.c:2162
-msgid "Smiley"
-msgstr "Smiley"
-
-#: src/conversation.c:2165
-msgid "Insert IM Image"
-msgstr "Inserer une d'image"
-
-#: src/conversation.c:2165
-msgid "Image"
-msgstr "Image"
-
-#: src/conversation.c:2172
-msgid "Enable logging"
-msgstr "Activer l'enregistrement(Log)"
-
-#: src/conversation.c:2173 src/prefs.c:254
-msgid "Logging"
-msgstr "Enregistrement"
-
-#: src/conversation.c:2182
-msgid "Save Conversation"
-msgstr "Sauver la conversations"
-
-#: src/conversation.c:2183 src/dialogs.c:1640 src/dialogs.c:1824
-#: src/dialogs.c:3178 src/dialogs.c:3867 src/dialogs.c:4744
-msgid "Save"
-msgstr "Sauvegarder"
-
-#: src/conversation.c:2187
-msgid "Enable sounds"
-msgstr "Activer le son"
-
-#: src/conversation.c:2188
-msgid "Sound"
-msgstr "Son"
-
-#: src/conversation.c:2668
-msgid "Gaim - Conversations"
-msgstr "Gaim - Conversations"
-
-#: src/conversation.c:2755
-msgid "Send message as: "
-msgstr "Envoyer le message en tant que: "
-
-#: src/conversation.c:3373
-msgid "Gaim - Save Icon"
-msgstr "Gaim - Sauvegarder l'icone"
-
-#: src/conversation.c:3400
-msgid "Disable Animation"
-msgstr "Désactiver l'Animation"
-
-#: src/conversation.c:3405
-msgid "Enable Animation"
-msgstr "Activer l'animation"
-
-#: src/conversation.c:3411
-msgid "Hide Icon"
-msgstr "Cacher l'Icone"
-
-#: src/conversation.c:3417
-msgid "Save Icon As..."
-msgstr "Sauvegarder l'Icone sous..."
-
-#: src/dialogs.c:413
-msgid "Gaim - Warn user?"
-msgstr "Gaim - Donner un Avertissement?"
-
-#: src/dialogs.c:433
-#, c-format
-msgid "Do you really want to warn %s?"
-msgstr "Voulez-vous réellement donner un avertissement à %s?"
-
-#: src/dialogs.c:438
-msgid "Warn anonymously?"
-msgstr "Donner un avertissement anonyme?"
-
-#: src/dialogs.c:442
-msgid "Anonymous warnings are less harsh."
-msgstr "Les avertissements anonymes sont moins durs."
-
-#: src/dialogs.c:470
-#, c-format
-msgid "Removing '%s' from buddylist.\n"
-msgstr "Suppression de '%s' de la Liste de contacts\n"
-
-#: src/dialogs.c:495
-#, c-format
-msgid "Gaim - Remove %s?"
-msgstr "Gaim - Enlever %s?"
-
-#: src/dialogs.c:508
-msgid "Remove Buddy"
-msgstr "Enlever un Contact"
-
-#: src/dialogs.c:518
-#, c-format
-msgid ""
-"You are about to remove '%s' from\n"
-"your buddylist. Do you want to continue?"
-msgstr ""
-"Vous êtes sur le point d'enlever '%s'\n"
-"de votre liste de contacts, Voulez vous continer?"
-
-#: src/dialogs.c:530 src/prpl.c:154 src/prpl.c:228
-msgid "Accept"
-msgstr "Accepter"
-
-#. Build OK Button
-#: src/dialogs.c:637 src/dialogs.c:720 src/dialogs.c:778 src/dialogs.c:1435
-#: src/dialogs.c:1764 src/dialogs.c:1915 src/dialogs.c:2223 src/dialogs.c:2403
-#: src/dialogs.c:2469 src/dialogs.c:3976 src/dialogs.c:4082 src/multi.c:774
-msgid "OK"
-msgstr "OK"
-
-#: src/dialogs.c:687
-msgid "Gaim - IM user"
-msgstr "Gaim - Message à Utilisateur"
-
-#: src/dialogs.c:704
-#, fuzzy
-msgid "IM who:"
-msgstr "Envoyer un message à qui:"
-
-#: src/dialogs.c:756
-msgid "User:"
-msgstr "Utilisateur:"
-
-#. Finish up
-#: src/dialogs.c:783
-msgid "Gaim - Get User Info"
-msgstr "Gaim - Obtenir les informations de l'utilisateur"
-
-#: src/dialogs.c:898
-msgid "Add Group"
-msgstr "Ajouter un Groupe"
-
-#: src/dialogs.c:923
-msgid "Gaim - Add Group"
-msgstr "Gaim - Ajouter un Groupe"
-
-#: src/dialogs.c:1007
-msgid "Gaim - Add Buddy"
-msgstr "Gaim - Ajouter un Contact"
-
-#: src/dialogs.c:1019
-msgid "Add Buddy"
-msgstr "Ajouter un Contact"
-
-#: src/dialogs.c:1029
-msgid "Contact"
-msgstr "Contact"
-
-#. Set up stuff for the account box
-#: src/dialogs.c:1055
-msgid "Add To"
-msgstr "Ajouter à"
-
-#: src/dialogs.c:1092
-msgid "Please enter a buddy to pounce."
-msgstr "Entrez un Contact pour la création d'une alerte"
-
-#: src/dialogs.c:1092
-msgid "Buddy Pounce Error"
-msgstr "Erreur d'Alerte"
-
-#: src/dialogs.c:1228
-msgid "Gaim - New Buddy Pounce"
-msgstr "Gaim - Nouvelle Alerte"
-
-#. <pounce type="who">
-#: src/dialogs.c:1239
-msgid "Pounce Who"
-msgstr "Alerter qui"
-
-#: src/dialogs.c:1250
-msgid "Account"
-msgstr "Comptes"
-
-#. </pounce type="who">
-#. <pounce type="when">
-#: src/dialogs.c:1276
-msgid "Pounce When"
-msgstr "Alerter Quand"
-
-#: src/dialogs.c:1286
-msgid "Pounce on sign on"
-msgstr "Alerter à la connection"
-
-#: src/dialogs.c:1295
-msgid "Pounce on return from away"
-msgstr "Alerter lorsque le contact revient"
-
-#: src/dialogs.c:1304
-msgid "Pounce on return from idle"
-msgstr "Alerter lorsque le contact redeviens actif"
-
-#: src/dialogs.c:1313
-msgid "Pounce when buddy is typing to you"
-msgstr "Alerter quand le contact vous écrit"
-
-#. </pounce type="when">
-#. <pounce type="action">
-#: src/dialogs.c:1323
-msgid "Pounce Action"
-msgstr "Action de l'Alerte"
-
-#: src/dialogs.c:1334
-msgid "Open IM Window"
-msgstr "Ouvrir la Fenêtre de message"
-
-#: src/dialogs.c:1343
-msgid "Popup Notification"
-msgstr "faire apparaitre la Notification"
-
-#: src/dialogs.c:1352
-msgid "Send Message"
-msgstr "Envoyer le message"
-
-#: src/dialogs.c:1373
-msgid "Execute command on pounce"
-msgstr "Executer une commande lors d'une alerte"
-
-#: src/dialogs.c:1395
-msgid "Play sound on pounce"
-msgstr "Jouer un son lors d'une alerte"
-
-#. </pounce type="action">
-#: src/dialogs.c:1417
-msgid "Save this pounce after activation"
-msgstr "Sauvegarder cette alerte pour un usage ultérieur"
-
-#: src/dialogs.c:1503
-msgid "Gaim - Set Dir Info"
-msgstr "Gaim - Donner vos informations personnelles"
-
-#: src/dialogs.c:1512
-msgid "Directory Info"
-msgstr "Information de l'annuaire"
-
-#: src/dialogs.c:1534
-msgid "Allow Web Searches To Find Your Info"
-msgstr "Autoriser les recherches sur le web à trouver vos informations"
-
-#. Line 1
-#: src/dialogs.c:1537 src/dialogs.c:2242
-msgid "First Name"
-msgstr "Prénom"
-
-#. Line 2
-#: src/dialogs.c:1548 src/dialogs.c:2254
-msgid "Middle Name"
-msgstr "Deuxième prénom"
-
-#. Line 3
-#: src/dialogs.c:1560 src/dialogs.c:2266
-msgid "Last Name"
-msgstr "Nom"
-
-#. Line 4
-#: src/dialogs.c:1571 src/dialogs.c:2278
-msgid "Maiden Name"
-msgstr "Nom de jeune-fille"
-
-#. Line 6
-#: src/dialogs.c:1593 src/dialogs.c:2301
-msgid "State"
-msgstr "Etat"
-
-#: src/dialogs.c:1658
-msgid "New Passwords Do Not Match"
-msgstr "Les nouveaux password diffèrent"
-
-#: src/dialogs.c:1658 src/dialogs.c:1663
-msgid "Gaim - Change Password Error"
-msgstr "Gaim - Erreur au changement de Mot de Passe"
-
-#: src/dialogs.c:1663
-msgid "Fill out all fields completely"
-msgstr "Remplissez tous les champs"
-
-#: src/dialogs.c:1718
-msgid "Original Password"
-msgstr "Mot de Passe courant"
-
-#: src/dialogs.c:1732
-msgid "New Password"
-msgstr "Nouveau Mot de Passe"
-
-#: src/dialogs.c:1746
-msgid "New Password (again)"
-msgstr "Nouveau Mot de passe (confirmation)"
-
-#: src/dialogs.c:1787
-msgid "Gaim - Set User Info"
-msgstr "Gaim - regler les informations de l'utilisateur"
-
-#: src/dialogs.c:1899
-msgid "Below are the results of your search: "
-msgstr "Voici les résultats de votre recherche: "
-
-#: src/dialogs.c:2032 src/dialogs.c:2039
-msgid "Permit"
-msgstr "Autoriser"
-
-#: src/dialogs.c:2034 src/dialogs.c:2041
-msgid "Deny"
-msgstr "Refuser"
-
-#: src/dialogs.c:2078
-msgid "Gaim - Add Permit"
-msgstr "Gaim - Ajouter Authorisation"
-
-#: src/dialogs.c:2080
-msgid "Gaim - Add Deny"
-msgstr "Gaim - Ajouter Refus"
-
-#: src/dialogs.c:2140
-msgid "Gaim - Log Conversation"
-msgstr "Gaim - Enregistrer la Conversation"
-
-#: src/dialogs.c:2218 src/dialogs.c:2381
-msgid "Search for Buddy"
-msgstr "Rechercher un Contact"
-
-#: src/dialogs.c:2346
-msgid "Gaim - Find Buddy By Info"
-msgstr "Gaim - trouver un Contact d'après ses Infos."
-
-#: src/dialogs.c:2375
-msgid "Gaim - Find Buddy By Email"
-msgstr "Gaim - Trouver un Contact d'après son Email"
-
-#: src/dialogs.c:2515
-msgid "Gaim - Add URL"
-msgstr "Gaim - Ajouter une adresse internet"
-
-#: src/dialogs.c:2666 src/dialogs.c:2687 src/dialogs.c:2741
-msgid "Select Text Color"
-msgstr "Selectionner la couleur de texte"
-
-#: src/dialogs.c:2720
-msgid "Select Background Color"
-msgstr "Selectionner la Couleur de Fond"
-
-#: src/dialogs.c:2942
-msgid "Import to:"
-msgstr "Importer dans:"
-
-#: src/dialogs.c:2966
-msgid "Gaim - Import Buddy List"
-msgstr "Gaim - Importer la liste de Contact"
-
-#. We shouldn't allow a blank title
-#: src/dialogs.c:3033
-msgid "You cannot create an away message with a blank title"
-msgstr "Vous ne pouvez créer un message d'absence avec un titre vide"
-
-#. We shouldn't allow a blank message
-#: src/dialogs.c:3040
-msgid "You cannot create an empty away message"
-msgstr "Vous ne pouvez créer un message d'absence vide"
-
-#: src/dialogs.c:3108
-msgid "Gaim - New away message"
-msgstr "Gaim - Nouveau message d'absence"
-
-#: src/dialogs.c:3118
-msgid "New away message"
-msgstr "Nouveau Message d'absence"
-
-#: src/dialogs.c:3131
-msgid "Away title: "
-msgstr "Titre du Message d'absence: "
-
-#: src/dialogs.c:3170
-msgid "Use"
-msgstr "Utiliser"
-
-#: src/dialogs.c:3174
-msgid "Save & Use"
-msgstr "Sauvegarder et Utiliser"
-
-#. show everything
-#: src/dialogs.c:3372
-msgid "Smile!"
-msgstr "Souriez!"
-
-#: src/dialogs.c:3425
-msgid "Alias Buddy"
-msgstr "surnommer un Contact"
-
-#: src/dialogs.c:3458
-msgid "Gaim - Alias Buddy"
-msgstr "Gaim - surnommer un Contact"
-
-#: src/dialogs.c:3530
-msgid "Gaim - Save Log File"
-msgstr "Gaim - Sauver les fichiers de log"
-
-#: src/dialogs.c:3562
-#, c-format
-msgid "Unable to remove file %s - %s"
-msgstr "Impossible de suprimer le fichier %s - %s"
-
-#: src/dialogs.c:3590
-msgid "Really clear log?"
-msgstr "Effacer les logs?"
-
-#: src/dialogs.c:3605
-msgid "Okay"
-msgstr "Ok"
-
-#: src/dialogs.c:3776
-msgid "Date"
-msgstr "Date"
-
-#: src/dialogs.c:3839
-msgid "Conversation"
-msgstr "Conversation"
-
-#: src/dialogs.c:3862
-msgid "Clear"
-msgstr "Effacer"
-
-#: src/dialogs.c:3940
-msgid "Gaim - Rename Group"
-msgstr "Gaim - Renommer groupe"
-
-#: src/dialogs.c:3950
-msgid "Rename Group"
-msgstr "Renommer un groupe"
-
-#: src/dialogs.c:3957 src/dialogs.c:4063
-msgid "New name:"
-msgstr "Nouveau Nom:"
-
-#: src/dialogs.c:4046
-msgid "Gaim - Rename Buddy"
-msgstr "Gaim - Renommer un Contact"
-
-#: src/dialogs.c:4056
-msgid "Rename Buddy"
-msgstr "Renommer un Contact"
-
-#. Below is basically stolen from plugins.c
-#: src/dialogs.c:4140
-msgid "Gaim - Select Perl Script"
-msgstr "Gaim - Selectionnez un script perl"
-
-#: src/gaimrc.c:1117
-#, c-format
-msgid "Could not open config file %s."
-msgstr "Ne peux ouvrir le fichier de configuration %s."
-
-#: src/gaimrc.c:1118
-msgid "Preferences Error"
-msgstr "Erreur de Préférences"
-
-#: src/html.c:183
-#, fuzzy, c-format
-msgid "Received: '%s'\n"
-msgstr "Reçu: '%s'\n"
-
-#: src/html.c:221
-msgid "g003: Error opening connection.\n"
-msgstr "g003: Erreur à l'ouverture de la connection.\n"
-
-#: src/multi.c:452
-msgid "Gaim - Load Buddy Icon"
-msgstr "Gaim - Charger une icone"
-
-#: src/multi.c:495
-msgid "Buddy Icon File:"
-msgstr "Icone du Contact"
-
-#: src/multi.c:506
-msgid "Browse"
-msgstr "Navigue"
-
-#: src/multi.c:511 src/prefs.c:1545
-msgid "Reset"
-msgstr "Remise à zéro"
-
-#: src/multi.c:538
-msgid "Screenname:"
-msgstr "Pseudonyme:"
-
-#: src/multi.c:558
-msgid "Protocol:"
-msgstr "Protocole:"
-
-#: src/multi.c:563
-msgid "Remember Password"
-msgstr "Mémoriser le mot de passe"
-
-#: src/multi.c:564
-msgid "Auto-Login"
-msgstr "Connection automatique"
-
-#: src/multi.c:604
-msgid "New Mail Notifications"
-msgstr "Nouvelle Notification de Courrier"
-
-#: src/multi.c:694
-msgid "Register with server"
-msgstr "S'enregistrer sur le serveur"
-
-#: src/multi.c:752
-msgid "Gaim - Modify Account"
-msgstr "Gaim - Modifier le Compte"
-
-#: src/multi.c:871
-msgid "Enter Password"
-msgstr "Entrer le Mot de Passe"
-
-#: src/multi.c:935
-msgid ""
-"You cannot log this account in; you do not have the protocol it uses loaded, "
-"or the protocol does not have a login function."
-msgstr ""
-"Vous ne pouvez vous connecter; vous n'avez pas chargé le protocole employé, "
-"ou le protocole n'a pas de fonction permettant la connection."
-
-#: src/multi.c:937
-msgid "Login Error"
-msgstr "Erreur de Connection"
-
-#: src/multi.c:966
-#, c-format
-msgid "Are you sure you want to delete %s?"
-msgstr "Etes vous sur de vouloir effacer %s?"
-
-#: src/multi.c:1003
-msgid "Gaim - Account Editor"
-msgstr "Gaim - Liste des Comptes"
-
-#: src/multi.c:1022
-msgid "Select All"
-msgstr "Selectionner tous"
-
-#: src/multi.c:1027
-msgid "Select Autos"
-msgstr "Sectionner les connections automatiques"
-
-#: src/multi.c:1031
-msgid "Select None"
-msgstr "Sectionner aucun"
-
-#: src/multi.c:1045
-msgid "Modify"
-msgstr "Modifier"
-
-#: src/multi.c:1049
-msgid "Sign On/Off"
-msgstr "Connection/Déconnection"
-
-#: src/multi.c:1053
-msgid "Delete"
-msgstr "Effacer"
-
-#: src/multi.c:1368
-#, c-format
-msgid ""
-"%s\n"
-"%s: %s"
-msgstr ""
-"%s\n"
-"%s: %s"
-
-#: src/multi.c:1387
-#, c-format
-msgid "%s was unable to sign on"
-msgstr "%s n'a pas pu se connecter"
-
-#: src/multi.c:1398
-msgid "Notice"
-msgstr "Notification"
-
-#: src/multi.c:1408
-#, c-format
-msgid "%s has been signed off"
-msgstr "%s a été déconnecté"
-
-#: src/multi.c:1409
-msgid "Connection Error"
-msgstr "Erreur de Connection"
-
-#: src/perl.c:856
-msgid "Perl Scripts"
-msgstr "Scripts Perl"
-
-#: src/plugins.c:113
-msgid "Gaim - Plugin List"
-msgstr "Gaim - Liste des Plugins"
-
-#: src/plugins.c:178
-msgid "Gaim - Plugins"
-msgstr "Gaim - Plugins"
-
-#. Left side: frame with list of plugin file names
-#: src/plugins.c:192
-msgid "Loaded Plugins"
-msgstr "Plugins Chargés"
-
-#: src/plugins.c:238
-msgid "Filepath:"
-msgstr "Chemin du Fichier:"
-
-#: src/plugins.c:256
-msgid "Load"
-msgstr "Charger"
-
-#: src/plugins.c:259
-msgid "Load a plugin from a file"
-msgstr "Charger un plugin à partir du fichier"
-
-#: src/plugins.c:261
-msgid "Configure"
-msgstr "Configurer"
-
-#: src/plugins.c:264
-msgid "Configure settings of the selected plugin"
-msgstr "Configure les options du plugin sélectionné"
-
-#: src/plugins.c:266
-msgid "Reload"
-msgstr "Recharger"
-
-#: src/plugins.c:270
-msgid "Reload the selected plugin"
-msgstr "Recharger le plugin sélectionné"
-
-#: src/plugins.c:272
-msgid "Unload"
-msgstr "Décharger"
-
-#: src/plugins.c:275
-msgid "Unload the selected plugin"
-msgstr "Décharger le Plugin sélectionné"
-
-#: src/plugins.c:280
-msgid "Close this window"
-msgstr "Fermer cette fenêtre"
-
-#: src/prefs.c:192
-msgid "General Options"
-msgstr "Options Générales"
-
-#: src/prefs.c:200 src/prefs.c:383 src/prefs.c:551 src/prefs.c:665
-#: src/prefs.c:918 src/prefs.c:1068 src/prefs.c:1293 src/prefs.c:1615
-#: src/prefs.c:1889 src/prefs.c:2322
-msgid "All options take effect immediately unless otherwise noted."
-msgstr ""
-"Toutes les options sont prises en compte immédiatement sauf précision du cas "
-"contraire."
-
-#: src/prefs.c:212
-msgid "Miscellaneous"
-msgstr "Autres"
-
-#: src/prefs.c:220
-msgid "Use borderless buttons"
-msgstr "Utiliser des boutons sans bordures"
-
-#: src/prefs.c:224
-msgid "Show Buddy Ticker"
-msgstr "Afficher la barre de Contact (Ticker)"
-
-#: src/prefs.c:229
-msgid "Show Debug Window"
-msgstr "Afficher la fenetre de debug"
-
-#. Preferences should be positive
-#: src/prefs.c:233
-msgid "Notify buddies that you are typing to them"
-msgstr "Notifier les contacts que vous êtes en train de leur écrire"
-
-#: src/prefs.c:240
-msgid "Report Idle Times"
-msgstr "Afficher les durées d'inactivité"
-
-#: src/prefs.c:248
-msgid "None"
-msgstr "Aucune"
-
-#: src/prefs.c:249
-msgid "Gaim Use"
-msgstr "Utilisation de Gaim"
-
-#: src/prefs.c:251
-msgid "X Use"
-msgstr "Utilisation de X"
-
-#: src/prefs.c:262
-msgid "Log all conversations"
-msgstr "Enregistrer toutes les conversations"
-
-#: src/prefs.c:263
-msgid "Strip HTML from logs"
-msgstr "Enlever l'HTML des journaux"
-
-#: src/prefs.c:269
-msgid "Log when buddies sign on/sign off"
-msgstr "Enregistrer les connections/déconnection des contacts"
-
-#: src/prefs.c:271
-msgid "Log when buddies become idle/un-idle"
-msgstr "Enregistrer lorsque les contacts deviennent actif/inactif"
-
-#: src/prefs.c:273
-msgid "Log when buddies go away/come back"
-msgstr "Enregistrer lorsque les contacts sont absent/de retour"
-
-#: src/prefs.c:274
-msgid "Log your own signons/idleness/awayness"
-msgstr "Enregistrer vos propres connections, inactivités, absences"
-
-#: src/prefs.c:276
-msgid "Individual log file for each buddy's signons"
-msgstr "Journal individuel pour chaque contact"
-
-#: src/prefs.c:279
-msgid "Browser"
-msgstr "Navigateur"
-
-#: src/prefs.c:291
-msgid "KFM"
-msgstr "KFM"
-
-#: src/prefs.c:292
-msgid "Opera"
-msgstr "Opera"
-
-#: src/prefs.c:293
-msgid "Netscape"
-msgstr "Netscape"
-
-#: src/prefs.c:296
-msgid "Pop up new window by default"
-msgstr "Afficher une nouvelle fenêtre par défaut"
-
-#: src/prefs.c:303
-msgid "GNOME URL Handler"
-msgstr "Programme de gestion d'adresses Gnome"
-
-#: src/prefs.c:305
-msgid "Galeon"
-msgstr "Galeon"
-
-#: src/prefs.c:306
-msgid "Manual"
-msgstr "Manuel"
-
-#: src/prefs.c:375
-msgid "Proxy Options"
-msgstr "Options du proxy"
-
-#: src/prefs.c:387
-msgid ""
-"Not all protocols can use these proxy options. Please see the README file "
-"for details."
-msgstr ""
-"Les protocoles ne peuvent pas tous utiliser les options de proxy. Veuillez "
-"lire le fichier READMEpour plus d'informations."
-
-#: src/prefs.c:392
-msgid "Proxy Type"
-msgstr "Type de Proxy"
-
-#: src/prefs.c:404
-msgid "Proxy Server"
-msgstr "Serveur de Proxy"
-
-#: src/prefs.c:407
-msgid "No Proxy"
-msgstr "pas de Proxy"
-
-#: src/prefs.c:419
-msgid "SOCKS 4"
-msgstr "SOCKS 4"
-
-#: src/prefs.c:429
-msgid "SOCKS 5"
-msgstr "SOCKS 5"
-
-#: src/prefs.c:438
-msgid "HTTP"
-msgstr "HTTP"
-
-#: src/prefs.c:462
-msgid "Host"
-msgstr "Hôte"
-
-#: src/prefs.c:478
-msgid "Port"
-msgstr "Port"
-
-#: src/prefs.c:495
-msgid "User"
-msgstr "Utilisateur"
-
-#: src/prefs.c:511
-msgid "Password"
-msgstr "Mot de Passe"
-
-#: src/prefs.c:543
-msgid "Buddy List Options"
-msgstr "Options de la Liste de Contacts"
-
-#: src/prefs.c:555
-msgid "Buddy List Window"
-msgstr "Fenêtre de la Liste de Contacts"
-
-#: src/prefs.c:568
-msgid "Tab Placement:"
-msgstr "Placement des onglets"
-
-#: src/prefs.c:572 src/prefs.c:1001 src/prefs.c:1151
-msgid "Top"
-msgstr "Haut"
-
-#: src/prefs.c:573 src/prefs.c:1003 src/prefs.c:1153
-msgid "Bottom"
-msgstr "Bas"
-
-#: src/prefs.c:585
-msgid "Hide IM/Info/Chat buttons"
-msgstr "Cacher Message/Infos/Bouttons du Chat"
-
-#: src/prefs.c:587
-msgid "Automatically show buddy list on sign on"
-msgstr "Afficher la liste des Contact automatiquement"
-
-#: src/prefs.c:589
-msgid "Display Buddy List near applet"
-msgstr "Positionner la Liste des Contact près de l'applet"
-
-#: src/prefs.c:592
-msgid "Save Window Size/Position"
-msgstr "Mémoriser la Taille/Position des fenêtres"
-
-#: src/prefs.c:595
-msgid "Show pictures on buttons"
-msgstr "Afficher les images sur les boutons"
-
-#: src/prefs.c:600
-msgid "Group Displays"
-msgstr "Affichage des groupes"
-
-#: src/prefs.c:612
-msgid "Hide groups with no online buddies"
-msgstr "Cacher les groupes ne contenant aucun contact connecté"
-
-#: src/prefs.c:618
-msgid "Show numbers in groups"
-msgstr "Afficher le nombre de contacts dans les groupes"
-
-#: src/prefs.c:620
-msgid "Buddy Displays"
-msgstr "Liste de Contacts"
-
-#: src/prefs.c:632
-msgid "Show buddy type icons"
-msgstr "afficher les icones des contacts"
-
-#: src/prefs.c:633
-msgid "Show warning levels"
-msgstr "Afficher le niveau d'Avertissement"
-
-#: src/prefs.c:639
-msgid "Show idle times"
-msgstr "Afficher les temps d'inactivité"
-
-#: src/prefs.c:640
-msgid "Grey idle buddies"
-msgstr "Griser les contacts inactifs"
-
-#: src/prefs.c:657
-msgid "Conversation Options"
-msgstr "Option de Conversation"
-
-#: src/prefs.c:669
-msgid "Keyboard Options"
-msgstr "Options du Clavier"
-
-#: src/prefs.c:681
-msgid "Enter sends message"
-msgstr "La touche Entrer envoie les messages"
-
-#: src/prefs.c:682
-msgid "Control-Enter sends message"
-msgstr "Ctrl-Entrée envoie les messages"
-
-#: src/prefs.c:683
-msgid "Escape closes window"
-msgstr "Echap ferme la fenêtre"
-
-#: src/prefs.c:689
-msgid "Control-{B/I/U/S} inserts HTML tags"
-msgstr "Ctrl-{B/I/U/S} insert des balises HTML"
-
-#: src/prefs.c:690
-msgid "Control-(number) inserts smileys"
-msgstr "Ctrl-(nombre) insert un smiley"
-
-#: src/prefs.c:691
-msgid "F2 toggles timestamp display"
-msgstr "F2 affiche/cache l'affichage de l'heure"
-
-#: src/prefs.c:693
-msgid "Display and General Options"
-msgstr "Options générales et d'affichage"
-
-#: src/prefs.c:705
-msgid "Show graphical smileys"
-msgstr "Afficher graphiquement les smileys"
-
-#: src/prefs.c:706
-msgid "Show timestamp on messages"
-msgstr "Afficher l'heure sur les messages"
-
-#: src/prefs.c:707
-msgid "Show URLs as links"
-msgstr "Envoyer les URL comme des liens"
-
-#: src/prefs.c:708
-msgid "Highlight misspelled words"
-msgstr "Surligner les mots mal orthographiés"
-
-#: src/prefs.c:709 src/prefs.c:1911
-msgid "Sending messages removes away status"
-msgstr "L'envoi de message change le statut d'absence"
-
-#: src/prefs.c:710 src/prefs.c:1924
-msgid "Queue new messages when away"
-msgstr "messages mis en attente lors d'une absence"
-
-#: src/prefs.c:716
-msgid "Ignore colors"
-msgstr "Ignorer les couleurs"
-
-#: src/prefs.c:717
-msgid "Ignore font faces"
-msgstr "Ignorer les polices"
-
-#: src/prefs.c:718
-msgid "Ignore font sizes"
-msgstr "Ignorer la taille des Polices"
-
-#: src/prefs.c:719
-msgid "Ignore TiK Automated Messages"
-msgstr "Ignorer les messages automatiques TiK"
-
-#: src/prefs.c:720 src/prefs.c:1909
-msgid "Ignore new conversations when away"
-msgstr "Ignorer les nouvelles conversations lors des absences"
-
-#: src/prefs.c:909
-msgid "IM Options"
-msgstr "Options de Message"
-
-#: src/prefs.c:922 src/prefs.c:2907
-msgid "IM Window"
-msgstr "Fenêtre de message"
-
-#: src/prefs.c:938 src/prefs.c:1088
-msgid "Show buttons as: "
-msgstr "Afficher les boutons sous la forme:"
-
-#: src/prefs.c:942 src/prefs.c:1093
-msgid "Pictures And Text"
-msgstr "Images et textes"
-
-#: src/prefs.c:943 src/prefs.c:1095
-msgid "Pictures"
-msgstr "Images"
-
-#: src/prefs.c:944 src/prefs.c:1096
-msgid "Text"
-msgstr "Texte"
-
-#: src/prefs.c:955
-msgid "Show all conversations in one tabbed window"
-msgstr "Afficher toutes les conversations dans une fenêtre avec des onglets"
-
-#: src/prefs.c:957
-msgid "Show chats in the same tabbed window"
-msgstr "Afficher les Chats dans la même fenêtre avec onglets"
-
-#: src/prefs.c:964 src/prefs.c:1116
-msgid "Raise windows on events"
-msgstr "Montrer les fenêtres recevant un message"
-
-#: src/prefs.c:965
-msgid "Show logins in window"
-msgstr "Afficher les connections dans la fenêtre"
-
-#: src/prefs.c:966
-msgid "Show aliases in tabs/titles"
-msgstr "Montre les alias dans les onglets/titres"
-
-#: src/prefs.c:967
-msgid "Hide window on send"
-msgstr "cacher la fenêtre lors de l'envoi"
-
-#: src/prefs.c:969 src/prefs.c:1119
-msgid "Window Sizes"
-msgstr "Tailles des Fenêtres"
-
-#: src/prefs.c:977 src/prefs.c:1127
-msgid "New window width:"
-msgstr "Largeur de la nouvelle fenêtre"
-
-#: src/prefs.c:978 src/prefs.c:1128
-msgid "New window height:"
-msgstr "Hauteur de la nouvelle fenêtre"
-
-#: src/prefs.c:979 src/prefs.c:1129
-msgid "Entry widget height:"
-msgstr "Hauteur de la zone de texte (à envoyer)"
-
-#: src/prefs.c:981 src/prefs.c:1131
-msgid "Tab Placement"
-msgstr "Placement des onglets"
-
-#: src/prefs.c:1010 src/prefs.c:1160
-msgid "Left"
-msgstr "Gauche"
-
-#: src/prefs.c:1012 src/prefs.c:1162
-msgid "Right"
-msgstr "Droite"
-
-#: src/prefs.c:1016
-msgid "Buddy Icons"
-msgstr "Icones du contact"
-
-#: src/prefs.c:1028
-msgid "Hide Buddy Icons"
-msgstr "Cacher l'Icone du Contact"
-
-#: src/prefs.c:1034
-msgid "Disable Buddy Icon Animation"
-msgstr "Désactiver l'animation de l'icone du Contact"
-
-#: src/prefs.c:1060
-msgid "Chat Options"
-msgstr "Options du Chat"
-
-#: src/prefs.c:1072
-msgid "Group Chat Window"
-msgstr "Fenêtre de discution en groupe"
-
-#: src/prefs.c:1107
-msgid "Show all chats in one tabbed window"
-msgstr "Afficher tous les chats dans une fenêtre avec onglets"
-
-#: src/prefs.c:1109
-msgid "Show conversations in the same tabbed window"
-msgstr "Afficher les conversations dans la même fenêtre avec des onglets"
-
-#: src/prefs.c:1117
-msgid "Show people joining/leaving in window"
-msgstr "Afficher les arrivée/départ dans la fenêtre"
-
-#: src/prefs.c:1165
-msgid "Tab Completion"
-msgstr "Complétion de mots"
-
-#: src/prefs.c:1177
-msgid "Tab-Complete Nicks"
-msgstr "Complétion des Pseudos"
-
-#: src/prefs.c:1183
-msgid "Old-Style Tab Completion"
-msgstr "Complétion de mots (ancien style)"
-
-#: src/prefs.c:1285 src/prefs.c:2917
-msgid "Font Options"
-msgstr "Options de police"
-
-#: src/prefs.c:1311
-msgid "Italic Text"
-msgstr "Texte en Italique"
-
-#: src/prefs.c:1355 src/prefs.c:1373 src/prefs.c:1395
-msgid "Select"
-msgstr "Sectionner"
-
-#: src/prefs.c:1393
-msgid "Font Face for Text"
-msgstr "Police pour le Texte"
-
-#: src/prefs.c:1408
-msgid "Font Size for Text"
-msgstr "Taille de la police pour le Texte"
-
-#: src/prefs.c:1505
-msgid "Gaim - Sound Configuration"
-msgstr "Gaim - Configuration Sonore"
-
-#: src/prefs.c:1540
-msgid "Test"
-msgstr "Tester"
-
-#: src/prefs.c:1550
-msgid "Choose..."
-msgstr "Choisir..."
-
-#: src/prefs.c:1607
-msgid "Sound Options"
-msgstr "Options sonores"
-
-#: src/prefs.c:1635
-msgid "No sounds when you log in"
-msgstr "Aucun son lors de votre connection"
-
-#: src/prefs.c:1641 src/prefs.c:1910
-msgid "Sounds while away"
-msgstr "Jouer les sons même lorsque vous êtes absent"
-
-#: src/prefs.c:1651
-msgid "Sound method"
-msgstr "Methode Utilisée"
-
-#: src/prefs.c:1725
-#, c-format
-msgid ""
-"Sound command\n"
-"(%s for filename)"
-msgstr ""
-"Commande à utiliser\n"
-"(%s pour le nom de fichier)"
-
-#: src/prefs.c:1737
-msgid "Sound played when:"
-msgstr "Son joué quand:"
-
-#: src/prefs.c:1881 src/prefs.c:2939
-msgid "Away Messages"
-msgstr "Messages d'absence"
-
-#: src/prefs.c:1918
-msgid "Don't send auto-response"
-msgstr "Ne pas envoyer de réponse automatique"
-
-#: src/prefs.c:1919
-msgid "Only send auto-response when idle"
-msgstr "envoyer la réponse automatique uniquement lors de l'inactivité"
-
-#: src/prefs.c:1934
-msgid "Time between sending auto-responses (in seconds):"
-msgstr "Delai avant d'envoyer les réponses automatiques (en secondes)"
-
-#: src/prefs.c:1949
-msgid "Auto Away after"
-msgstr "Passer automatiquement en mode absent après"
-
-#: src/prefs.c:1963
-msgid "minutes using"
-msgstr "minutes en utilisant"
-
-#: src/prefs.c:1976
-msgid "Messages"
-msgstr "Messages"
-
-#: src/prefs.c:2033
-msgid "Edit"
-msgstr "Editer"
-
-#: src/prefs.c:2037
-msgid "Make Away"
-msgstr "Etre absent maintenant"
-
-#: src/prefs.c:2314
-msgid "Privacy Options"
-msgstr "Options d'Intimité"
-
-#: src/prefs.c:2330
-msgid "Set privacy for:"
-msgstr "Mettre en place un filtre pour:"
-
-#: src/prefs.c:2349
-msgid "Allow all users to contact me"
-msgstr "Permettre à tous les utiliseurs de me contacter"
-
-#: src/prefs.c:2350
-msgid "Allow only the users below"
-msgstr "Permettre aux utiliseurs ci dessous"
-
-#: src/prefs.c:2352
-msgid "Allow List"
-msgstr "List de Permission"
-
-#: src/prefs.c:2383
-msgid "Deny all users"
-msgstr "Interdire à tous"
-
-#: src/prefs.c:2384
-msgid "Block the users below"
-msgstr "Bloquer les utilisateurs ci dessous"
-
-#: src/prefs.c:2386
-msgid "Block List"
-msgstr "Bloquer la liste"
-
-#: src/prefs.c:2481
-msgid "Gaim - Preferences"
-msgstr "Gaim - Préférences"
-
-#: src/prefs.c:2564
-msgid "Gaim debug output window"
-msgstr "fenêtre de debug Gaim"
-
-#: src/prefs.c:2873
-msgid "General"
-msgstr "Géneral"
-
-#: src/prefs.c:2878
-msgid "Proxy"
-msgstr "Proxy"
-
-#: src/prefs.c:2902
-msgid "Conversations"
-msgstr "Conversations"
-
-#: src/prefs.c:2928
-msgid "Sounds"
-msgstr "Sons"
-
-#: src/prefs.c:2950
-msgid "Privacy"
-msgstr "Filtre"
-
-#: src/prpl.c:70
-msgid ""
-"You have attempted to load a protocol which was not compiled from the same "
-"version of the source as this application was. Unfortunately, because it is "
-"not the same version I cannot safely tell you which one it was. Needless to "
-"say, it was not successfully loaded."
-msgstr ""
-"Vous avez essayé de charger un protocole qui n'a pas été compilé à partir de "
-"la même version des sources que cette application. Malheureusement, à cause "
-"de cette différence Je ne peux vous dire laquelle c'était. Evidement, le "
-"chargement a échoué."
-
-#: src/prpl.c:74
-msgid "Protocol Error"
-msgstr "Erreur de Protocole"
-
-#: src/prpl.c:93
-#, c-format
-msgid "%s was using %s, which got removed. %s is now offline."
-msgstr "%s utilisait %s, qui a été enlevé. %s est maintenant hors ligne."
-
-#: src/prpl.c:96
-msgid "Disconnect"
-msgstr "Déconnecter"
-
-#: src/prpl.c:133
-msgid "Accept?"
-msgstr "Accepter?"
-
-#: src/prpl.c:199
-#, fuzzy
-msgid "Gaim - Prompt"
-msgstr "Gaim - Prompt"
-
-#: src/prpl.c:419
-msgid "Gaim - New Mail"
-msgstr "Gaim - Nouveau Courrier"
-
-#: src/prpl.c:445
-msgid "Open Mail"
-msgstr "Ouvrir le courrier"
-
-#: src/prpl.c:564
-#, c-format
-msgid "%s%s%s%s has made %s their buddy%s%s%s"
-msgstr "%s%s%s%s a fait de %s leur contact%s%s%s"
-
-#: src/prpl.c:572
-msgid ""
-"\n"
-"\n"
-"Do you wish to add them to your buddy list?"
-msgstr ""
-"\n"
-"\n"
-"Voulez vous les ajouter a votre liste de contacts?"
-
-#: src/prpl.c:615
-msgid ""
-"You do not currently have any protocols available that are able to register "
-"new accounts."
-msgstr ""
-"Vous n'avez pas de protocole disponible vous permettant de créer de nouveaux "
-"comptes"
-
-#: src/prpl.c:652
-msgid "Gaim - Registration"
-msgstr "Gaim - Enregistrement d'un nouvel utilisateur"
-
-#: src/prpl.c:667
-msgid "Registration Information"
-msgstr "Information d'enregistrement"
-
-#: src/prpl.c:684
-msgid "Register"
-msgstr "S'enregistrer"
-
-#: src/server.c:55
-msgid "Please enter your password"
-msgstr "Entrez votre mot de passe"
-
-#: src/server.c:585
-#, c-format
-msgid "(%d messages)"
-msgstr "(%d messages)"
-
-#: src/server.c:591
-msgid "(1 message)"
-msgstr "(1 message)"
-
-#: src/server.c:783
-msgid "Warned"
-msgstr "Avertit"
-
-#: src/server.c:876
-msgid "Yes"
-msgstr "Oui"
-
-#: src/server.c:877
-msgid "No"
-msgstr "Non"
-
-#: src/server.c:1054
-msgid "More Info"
-msgstr "Plus d'informations"
-
-#~ msgid "Available"
-#~ msgstr "Disponible"
-
-#~ msgid "Available for friends only"
-#~ msgstr "Disponible pour les amis seulement"
-
-#~ msgid "Away for friends only"
-#~ msgstr "Absent pour les amis seulement"
-
-#~ msgid "Invisible"
-#~ msgstr "Invisible"
-
-#~ msgid "Invisible for friends only"
-#~ msgstr "Invisible pour les amis seulement"
-
-#~ msgid ""
-#~ "\n"
-#~ "\n"
-#~ "IRC: #gaim on irc.openprojects.net"
-#~ msgstr ""
-#~ "\n"
-#~ "\n"
-#~ "IRC: #gaim sur irc.openprojects.net"
+"La version du client que vo\È][\Ù^ˆ\İ›Ü[˜ÚY[›™Kˆ™Z[^ˆHY]™H‚ˆ¸›İ\ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎMÈÜ˜ËÜ›İØÛÛËİØËİØË˜ÎM‚›\ÙÚY]][XØ][Ûˆ˜Z[Y‚›\ÙÜİˆ‘XÚXÈH	Ğ]][XØ][Ûˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎÎB›\ÙÚY’[\›˜[\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆ[\›™H‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒLÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÍŒˆËËY›Ü›X]›\ÙÚY‘\™XİSHÚ]	\È\İX›\ÚY‚›\ÙÜİˆÛÛ›™Xİ[Ûˆ\™XİH]™XÈ	\È:]X›YH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒML
+Ü˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒ
+M‚ˆËËY›Ü›X]›\ÙÚYˆ‚ˆ•H\Ù\ˆ	[H\È[šYY[İ\ˆ™\]Y\İÈY[HÈ[İ\ˆÛÛXİ\İ›Üˆ‚ˆH›ÛİÚ[™È™X\ÛÛ—ˆ‚ˆ‰\È‚›\ÙÜİˆˆ‚ˆ“	İ][\Ø]]\ˆ	[HH™Y\úH›İ™H™\]Y]HHÉØZ›İ]\ˆ8›İ™H\İHHÛÛXİİ\ˆH˜Z\ÛÛˆİZ]˜[N—ˆ‚ˆ‰\È‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒML
+Ü˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒ
+M‚ˆË^B›\ÙÚY“›È™X\ÛÛˆÚ]™[‹ˆ‚›\ÙÜİˆ”\ÈHÙ]YÛ[YHÛ›ºH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒML
+HÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒ
+MÂ›\ÙÚY‘ØZ[HHPÔH]]Üš^˜][Ûˆ[šYY‚›\ÙÜİˆ‘ØZ[HH]]Üš\Ø][ÛˆPÔH™Y\úYH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMLLHÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒ
+ŒÂˆËËY›Ü›X]›\ÙÚY•H\Ù\ˆ	[H\ÈÜ˜[Y[İ\ˆ™\]Y\İÈY[HÈ[İ\ˆÛÛXİ\İˆ‚›\ÙÜİˆ“	İ][\Ø]]\ˆ	[HHXØÛÜ™:H›İ™H™\]Y]HHH˜Z›İ]\ˆ8›İ™H\İHHÛÛXİˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMLLˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒ
+›\ÙÚY‘ØZ[HHPÔH]]Üš^˜][ÛˆÜ˜[Y‚›\ÙÜİˆ‘ØZ[HH]]Üš\Ø][ÛˆXØÛÜ™:YH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMN
+BˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙHœ›ÛH	\È™XØ]\ÙH]Ø\È[˜[Yˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙHH	\ÈØ\ˆ[]Z][˜[YKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMN
+‚ˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙ\Èœ›ÛH	\È™XØ]\ÙH^HÙ\™H[˜[Yˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙ\ÈH	\ÈØ\ˆ[È]ZY[[˜[Y\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMNMBˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙHœ›ÛH	\È™XØ]\ÙH]Ø\ÈÛÈ\™ÙKˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙHH	\ÈØ\ˆ[]Z]›Ü›Û[Z[™]^ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMNM‚ˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙ\Èœ›ÛH	\È™XØ]\ÙH^HÙ\™HÛÈ\™ÙKˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙ\ÈH	\ÈØ\ˆ[È]ZY[›Ü›Û[Z[™]^ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMŒ
+BˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙHœ›ÛH	\È™XØ]\ÙHH˜]H[Z]\È™Y[ˆ^ÙYYYˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙHH	\ÈØ\ˆH][İH[Z]HH:]:H:\\ÜúKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMŒ
+‚ˆËËY›Ü›X]›\ÙÚYˆ‚ˆ–[İHZ\ÜÙY	YY\ÜØYÙ\Èœ›ÛH	\È™XØ]\ÙHH˜]H[Z]\È™Y[ˆ^ÙYYYˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙ\ÈH	\ÈØ\ˆH][İH[Z]HH:]:H:\\ÜúKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMŒMBˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙHœ›ÛH	\È™XØ]\ÙH]Ø\ÈÛÈ]š[ˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙHH	\ÈØ\ˆ[H:]:H›ÜzXÚ[
+ÊKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMŒM‚ˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙ\Èœ›ÛH	\È™XØ]\ÙH^H\™HÛÈ]š[ˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙ\ÈH	\ÈØ\ˆ[ÈÛ:]:H›ÜzXÚ[ÊÊKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMŒBˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙHœ›ÛH	\È™XØ]\ÙH[İH\™HÛÈ]š[ˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙHH	\ÈØ\ˆ›İ\È]™^ˆ:]:H›ÜzXÚ[
+ÊKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMŒ‚ˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙ\Èœ›ÛH	\È™XØ]\ÙH[İH\™HÛÈ]š[ˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙ\ÈH	\ÈØ\ˆ›İ\È]™^ˆ:]:H›ÜzXÚ[
+ÊKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMŒÍˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙHœ›ÛH	\È›Üˆ[šÛ›İÛˆ™X\ÛÛœËˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙHH	\Èİ\ˆ\È˜Z\ÛÛœÈ[˜ÛÛ›Y\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMŒÍBˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY	YY\ÜØYÙ\Èœ›ÛH	\È›Üˆ[šÛ›İÛˆ™X\ÛÛœËˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H	YY\ÜØYÙ\ÈH	\Èİ\ˆ\È˜Z\ÛÛœÈ[˜ÛÛ›Y\Ëˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌ
+ÍˆÜ˜ËÙX[ÙÜË˜ÎŒÌˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÍMHÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÍÌÂˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒŒŒˆÜ˜ËÜ›İØÛÛËŞXZÛËŞXZÛË˜ÎNM›\ÙÚY‘ØZ[HH\œ›Üˆ‚›\ÙÜİˆ‘ØZ[HH\œ™]\ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÌÂˆËËY›Ü›X]›\ÙÚY•RSĞˆ	\Ï””İ]\ÎĞˆ	\Ï””‰\Ï”ˆ‚›\ÙÜİˆ•RSĞˆ	\Ï””İ]\ÎĞˆ	\Ï””‰\Ï”ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÌ
+BˆËËY›Ü›X]›\ÙÚY”İ]\ÎĞˆ	\Ï””‰\Ï”ˆ‚›\ÙÜİˆ”İ]\ÎĞˆ	\Ï””‰\Ï”ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÌÍˆËËY›Ü›X]›\ÙÚY”ÓPÈ™]È\œ›Üˆ	\×ˆ‚›\ÙÜİˆ”ÓPÈH[›ŞzH	Ù\œ™]\ˆ	\×ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÌÍ‚›\ÙÚY‘ØZ[HHÜØØ\ˆÓPÈ\œ›Üˆ‚›\ÙÜİˆ‘ØZ[HH\œ™]\ˆÓPÈ	ÓÜØØ\ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÍLÂˆËËY›Ü›X]›\ÙÚY–[İ\ˆY\ÜØYÙHÈ	\ÈY›İÙ]Ù[ˆ	\È‚›\ÙÜİˆ•›İ™HY\ÜØYÙH™\œÈ	\È‰ØH\È:]:H[›ŞzNˆ	\È‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÍMÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÍÌ‚›\ÙÚY”™X\ÛÛˆ[šÛ›İÛˆ‚›\ÙÜİˆ”˜Z\ÛÛˆ[˜ÛÛ›YH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒMÍÌBˆËËY›Ü›X]›\ÙÚY•\Ù\ˆ[™›Ü›X][Ûˆ›Üˆ	\È[˜]˜Z[X›Nˆ	\È‚›\ÙÜİˆ“\È[™›Ü›X][ÛœÈİ\ˆ	İ][\Ø]]\ˆ	\È™HÛÛ\È\ÜÛšX›\Îˆ	\È‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒLÌHÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒN‚›\ÙÚYYHXÛÛˆ‚›\ÙÜİˆ’XÛÛ™HHÛÛXİ‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒLÍÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒN
+B›\ÙÚY•›ÚXÙH‚›\ÙÜİˆ•›Ú^‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒLÍÈÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒN›\ÙÚY’SH[XYÙH‚›\ÙÜİˆ•˜[œÙ™\ˆ	Ú[XYÙH‚‚ˆÎˆÜ˜ËØYK˜ÎNÜ˜ËØYK˜ÎŒŒMÜ˜ËØYK˜ÎŒNHÜ˜ËÜ™YœË˜ÎŒL‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNLB›\ÙÚYÚ]‚›\ÙÜİˆÚ]‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMÈÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNM›\ÙÚY‘Ù]š[H‚›\ÙÜİˆ”™XÙ]›Ú\ˆ[ˆšXÚY\ˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒM
+ˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNMÂ›\ÙÚY”Ù[™š[H‚›\ÙÜİˆ‘[›ŞY\ˆ[ˆšXÚY\ˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMLÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNŒB›\ÙÚY‘Ø[Y\È‚›\ÙÜİˆ’™]^‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMLÈÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒN›\ÙÚY”İØÚÜÈ‚›\ÙÜİˆ›İ\œÙH‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMMˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNÂ›\ÙÚY”Ù[™YH\İ‚›\ÙÜİˆ‘[›ŞY\ˆ\İHHÛÛXİÈ‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMNHÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNÌ›\ÙÚY‘]™\PYHYÈ‚›\ÙÜİˆYÈ	Ñ]™\PYH‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMŒˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNÌÂ›\ÙÚYT\Ù\ˆ‚›\ÙÜİˆ•][\Ø]]\ˆT‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMHÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNÍ‚›\ÙÚY’PÔH•ˆ‚›\ÙÜİˆ”•ˆPÔH‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNÎB›\ÙÚY“šZ[\İ‚›\ÙÜİˆ“šZ[\İH‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMÌHÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒN
+‚›\ÙÚY’PÔHÙ\™\ˆ™[^H‚›\ÙÜİˆœ™[ZHHÙ\™]\ˆPÔH‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMÍÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒN
+
+B›\ÙÚY’PÔH[šÛ›İÛˆ‚›\ÙÜİˆ’[˜ÛÛ›HPÔH‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMÍÈÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒN
+›\ÙÚY•š[X[ˆ[˜Ü\[Ûˆ‚›\ÙÜİˆ‘[˜Ü\[Ûˆš[X[ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒN
+‚›\ÙÚYˆ‚ˆœ“ÑH‘ĞÓÓÔUÒUOO“YÙ[™ÒOœœSQÈÔÏW™œ™YWÚXÛÛ‹™ÚYˆ‚ˆ—ˆˆ›Ü›X[RSH\Ù\œSQÈÔÏW˜[ÛÚXÛÛ‹™ÚY—ˆˆSÓ\Ù\ˆœSQÈÔÏH‚ˆ—™ÚXÛÛ‹™ÚY—ˆˆšX[RSH\Ù\ˆœSQÈÔÏW˜YZ[—ÚXÛÛ‹™ÚY—ˆˆ‚ˆYZ[š\İ˜]ÜˆœSQÈÔÏW˜X—ÚXÛÛ‹™ÚY—ˆˆXİ]™PYH[\˜Xİ]™H‚ˆYÙ[œSQÈÔÏWÚ\™[\Ü×ÚXÛÛ‹™ÚY—ˆˆÚ\™[\ÜÈ]šXÙH\Ù\œˆ‚›\ÙÜİˆˆ‚ˆœ“ÑH‘ĞÓÓÔUÒUOO“:YÙ[™NÒOœœˆSQÈÔÏW™œ™YWÚXÛÛ‹™ÚYˆ‚ˆ—ˆˆ][\Ø]]\ˆ›Ü›X[	ØZ[OœˆSQÈ”ÔÏW˜[ÛÚXÛÛ‹™ÚY—ˆˆ‚ˆ•][\Ø]]\ˆ	ĞSÓœˆSQÈÔÏW™ÚXÛÛ‹™ÚY—ˆˆ][\Ø]]\ˆ	ØZ[H‚ˆŠ:]˜[X][ÛŠOœˆSQÈÔÏW˜YZ[—ÚXÛÛ‹™ÚYˆˆˆYZ[š\İ˜]]\ˆœˆSQÈ‚ˆ”ÔÏW˜X—ÚXÛÛ‹™ÚY—ˆˆYÙ[[\˜XİYˆXİ]™PYOœˆSQÈÔÏH‚ˆ—Ú\™[\Ü×ÚXÛÛ‹™ÚY—ˆˆ][\Ø]]\ˆ	Ø\\™Z[ÜX›Oœˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNLMˆËËY›Ü›X]›\ÙÚYˆ‚ˆ•\Ù\›˜[YHˆ‰\ÏĞˆ	\È”—ˆ‚ˆ•Ø\›š[™È]™[ˆ‰Y	IOĞ”—ˆ‚ˆ‰\É\É\Ï”—ˆ‚ˆ”—ˆ‚›\ÙÜİˆˆ‚ˆ“›ÛH	İ][\Ø]]\ˆˆ‰\ÏĞˆ	\È”—ˆ‚ˆ“š]™X]H	Ğ]™\\ÜÙ[Y[ˆ‰Y	IOĞ”—ˆ‚ˆ‰\É\É\Ï”—ˆ‚ˆ”—ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNM
+‚›\ÙÚYO•\Ù\ˆ\È›È]Ø^HY\ÜØYÙOÚOˆ‚›\ÙÜİˆO“	İ][\Ø]]\ˆ‰ØH\ÈHY\ÜØYÙH	ØXœÙ[˜ÙOÚOˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNMN›\ÙÚYÛY[Ø\Xš[]Y\Îˆ‚›\ÙÜİˆ”ÜÜÚXš[]:\ÈHÛY[ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNM‚›\ÙÚYO“›È[™›Ü›X][Ûˆ›İšYYÚOˆ‚›\ÙÜİˆO”\È	Ú[™›Ü›X][Ûˆ›İ\›šY\ÏÚOˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNNB›\ÙÚY–[İ\ˆÛÛ›™Xİ[ÛˆX^H™HÜİˆ‚›\ÙÜİˆ•›İ™HÛÛ›™Xİ[Ûˆš\Ü]YH	Ù]™HÛİ\:YH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNNL›\ÙÚYSÓ\œ›Üˆ‚›\ÙÜİˆ™\œ™]\ˆ	ĞSÓ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒŒŒB›\ÙÚYˆ‚ˆ•H\İY\ÜØYÙHØ\È›İÙ[™XØ]\ÙH[İH\™Hİ™\ˆH˜]H[Z]ˆX\ÙH‚ˆØZ]LÙXÛÛ™È[™HYØZ[‹ˆ‚›\ÙÜİˆˆ‚ˆ“H\›šY\ˆY\ÜØYÙH‰ØH\È:]:H[›ŞzHØ\ˆ›İ\È]™^ˆ\\ÜúHH][İH[Z]H‚ˆ•™]Z[^ˆ][™™HLÙXÛÛ™\È]ºY\ÜØ^Y^ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍŒ
+Ü˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒNBˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÍMHÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒMMˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒMNHÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒMBˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒMÈÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒN‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒNÌˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒN›\ÙÚY‘\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÌNL‚ˆËËY›Ü›X]›\ÙÚYˆ‚ˆ•HX^[][H[X™\ˆÙˆYY\È[İÙY[ˆ[İ\ˆYH\İ\È	Y[™[İH]™H‚ˆ‰Yˆ[[[İH\™H™[İÈH[Z]ÛÛYHYY\ÈÚ[›İÚİÈ\\ÈÛ›[™Kˆ‚›\ÙÜİˆˆ‚ˆ“H›ÛXœ™HX^[][H	Ø[Z\È\›Z\È[œÈ›İ™H\İH	Ø[Z\È\İ	Y]›İ\È]™^ˆ‚ˆ‰Yˆ\Ü]IøÙH]YH›İ\ÈÛŞY^ˆ[ˆ\ÜÛİ\ÈHH[Z]KÙ\Z[œÈ[Z\È™HÉØY™šXÚ\›Û\ÈÛ›[™H‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÌNMBˆË^B›\ÙÚY‘ØZ[HHØ\›š[™È‚›\ÙÜİˆ‘ØZ[HHÛ›™\ˆ[ˆ]™\\ÜÙ[Y[È‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÌŒLÈÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒLL›\ÙÚY‘^Ú[™ÙNˆ‚›\ÙÜİˆ‘XÚ[™ÙNˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÍMB›\ÙÚY•[˜X›HÈÜ[ˆ\™XİSH‚›\ÙÜİˆ’[\ÜÜÚX›H	Ûİ]œš\ˆ[™HÛÛ›™Xİ[Ûˆ\™XİH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÍMLBˆËËY›Ü›X]›\ÙÚYˆ‚ˆ–[İH]™HÙ[XİYÈÜ[ˆH\™XİSHÛÛ›™Xİ[ÛˆÚ]	\ËˆÚ[™È\ÈÚ[‚ˆ›][HÙYH[İ\ˆTY™\ÜË[™X^H™HHÙXİ\š]Hš\ÚËˆÈ[İHÚ\ÚÈ‚ˆ˜ÛÛ[YOÈ‚›\ÙÜİˆˆ‚ˆ•›İ\È›İ[^ˆİ]œš\ˆ[™HÛÛ›™Xİ[Ûˆ\™XİH]™XÈ	\Ëˆ˜Z\™HÙXÚH]]]\ˆ‚ˆœ\›Y]™HH›Ú\ˆ›İ™H\]º\İ[\ˆ[ˆ[ˆš\Ü]YHHúXİ\š]:Kˆ›İ[^ˆ‚ˆ›İ\ÈÛÛ[Y\È‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÍMˆËËY›Ü›X]›\ÙÚYˆ‚ˆ•RSĞˆ	\Ï””İ]\ÎĞˆ	\Ï””O”™[[İHÛY[Ù\È›İ‚ˆœİ\ÜÙ[™[™Èİ]\ÈY\ÜØYÙ\ËÒO”ˆ‚›\ÙÜİˆ•RSĞˆ	\Ï””İ]\ÎĞˆ	\Ï””O“HÛY[\İ[™Hİ\ÜH\È	Ù[›ÚHHY\ÜØYÙKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÍMÍBˆËËY›Ü›X]›\ÙÚYˆ‚ˆ•RSĞˆ	\Ï””İ]\ÎĞˆ	\Ï””O•\Ù\ˆ\È›Èİ]\ÈY\ÜØYÙKˆ‚ˆÒO”ˆ‚›\ÙÜİˆˆ‚ˆ•RSĞˆ	\Ï””İ]\ÎĞˆ	\Ï””O“	İ][\Ø]]\ˆ‰ØH\ÈHY\ÜØYÙHHİ]\Ëˆ‚ˆÒO”ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÍŒˆË^B›\ÙÚY‘Ù]İ]\È\ÙÈ‚›\ÙÜİˆ“Ø[š\ˆHY\ÜØYÙH	ØXœÙ[˜ÙH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÍŒLÂ›\ÙÚY‘\™XİSH‚›\ÙÜİˆÛÛ›™Xİ[Ûˆ\™XİH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËÛÜØØ\‹ÛÜØØ\‹˜ÎŒÍŒŒB›\ÙÚY‘Ù]Ø\Xš[]Y\È‚›\ÙÜİˆ“Ø[š\ˆ\ÈÜÜÚXš[]:\È‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒÎNˆËËY›Ü›X]›\ÙÚY•[˜X›HÈÜš]Hš[H	\Ëˆ‚›\ÙÜİˆ’[\ÜÜÚX›H	ÙXÜš\™H[œÈHšXÚY\ˆ	\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎBˆËËY›Ü›X]›\ÙÚY•[˜X›HÈ™XYš[H	\Ëˆ‚›\ÙÜİˆ’[\ÜÜÚX›HH\™HHšXÚY\ˆ	\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+ˆËËY›Ü›X]›\ÙÚY“Y\ÜØYÙHÛÈÛ™Ë\İ	\È]\È[˜Ø]Yˆ‚›\ÙÜİˆ“Y\ÜØYÙH›ÜÛ™Ë\H\È	\È\›šY\œÈØİ]Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+ÂˆËËY›Ü›X]›\ÙÚY‰\È›İİ\œ™[HÙÙÙY[‹ˆ‚›\ÙÜİˆ‰\È‰Ù\İ\ÈXİY[[Y[[ˆYÛ™Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎLˆËËY›Ü›X]›\ÙÚY•Ø\›š[™ÈÙˆ	\È›İ[İÙYˆ‚›\ÙÜİˆ“\È]™\\ÜÙ[Y[ÈH	\È™HÛÛ\È\›Z\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎLÂ›\ÙÚYHY\ÜØYÙH\È™Y[ˆ›ÜY[İH\™H^ÙYY[™ÈHÙ\™\ˆÜYY[Z]ˆ‚›\ÙÜİˆ•[ˆY\ÜØYÙHH:]:H\™K›İ\È:\\ÜÙ^ˆHš]\ÜÙH[Z]HHÙ\™]\‹ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎM‚ˆËËY›Ü›X]›\ÙÚYÚ][ˆ	\È\È›İ]˜Z[X›Kˆ‚›\ÙÜİˆ“HÚ]	\È\İ[˜XØÙ\ÜÚX›Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎNBˆËËY›Ü›X]›\ÙÚY–[İH\™HÙ[™[™ÈY\ÜØYÙ\ÈÛÈ˜\İÈ	\Ëˆ‚›\ÙÜİˆ•›İ\È[›ŞY^ˆ›ÜÈY\ÜØYÙ\È›Üš]H8	\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒ‚ˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY[ˆSHœ›ÛH	\È™XØ]\ÙH]Ø\ÈÛÈšYËˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H[ˆY\ÜØYÙHH	\È\˜ÙH]IÚ[:]Z]›Ü›Û[Z[™]^‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎBˆËËY›Ü›X]›\ÙÚY–[İHZ\ÜÙY[ˆSHœ›ÛH	\È™XØ]\ÙH]Ø\ÈÙ[ÛÈ˜\İˆ‚›\ÙÜİˆ•›İ\È]™^ˆ˜]:H[ˆY\ÜØYÙHH	\È\˜ÙH]IÚ[H:]:H[›ŞzH›Üš]Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î›\ÙÚY‘˜Z[\™Kˆ‚›\ÙÜİˆ‘XÚXÈ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎÌB›\ÙÚY•ÛÈX[HX]Ú\Ëˆ‚›\ÙÜİˆ•›ÜHº\ÛœÙ\È‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎÍ›\ÙÚY“™YY[Ü™H]X[YšY\œËˆ‚›\ÙÜİˆ™\ÛÚ[ˆH\ÈHÜš]:™\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎÍÂ›\ÙÚY‘\ˆÙ\šXÙH[\Ü˜\š[H[˜]˜Z[X›Kˆ‚›\ÙÜİˆ“H™\\Ú\™H\İ[\Ü˜Z\™[Y[[™\ÜÛšX›Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+›\ÙÚY‘[XZ[ÛÚİ\™\İšXİYˆ‚›\ÙÜİˆ“H™XÚ\˜ÚH\ˆ[XZ[\İ™\İ™Z[Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+Â›\ÙÚY’Ù^]ÛÜ™YÛ›Ü™Yˆ‚›\ÙÜİˆ“[İÛ:HYÛ›ÜºKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+
+‚›\ÙÚY“›ÈÙ^]ÛÜ™Ëˆ‚›\ÙÜİˆ”\ÈH[İXÛ:Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+B›\ÙÚY•\Ù\ˆ\È›È\™XİÜH[™›Ü›X][Û‹ˆ‚›\ÙÜİˆ“	İ][\Ø]]\ˆ‰ØH\È	Ú[™›Ü›X][Ûˆ\œÛÛ›™[Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+LÂ›\ÙÚYÛİ[H›İİ\ÜYˆ‚›\ÙÜİˆ”^\È›Ûˆİ\Ü:Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+M‚ˆËËY›Ü›X]›\ÙÚY‘˜Z[\™H[šÛ›İÛˆ	\Ëˆ‚›\ÙÜİˆ‘XÚXÈ[˜ÛÛ›Nˆ	\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+Œ‚›\ÙÚY•HÙ\šXÙH\È[\Ü˜\š[H[˜]˜Z[X›Kˆ‚›\ÙÜİˆ“HÙ\šXÙH\İ[\Ü˜Z\™[Y[[™\ÜÛšX›Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+B›\ÙÚY–[İ\ˆØ\›š[™È]™[\Èİ\œ™[HÛÈYÚÈÙÈ[‹ˆ‚›\ÙÜİˆˆ‚ˆ•›İ™Hš]™X]H	Ø]™\\ÜÙ[Y[\İXİY[[Y[›Ü:[]ºHİ\ˆ]YH›İ\È‚ˆœZ\ÜÚY^ˆ›İ\ÈÛÛ›™Xİ\ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+›\ÙÚYˆ‚ˆ–[İH]™H™Y[ˆÛÛ›™Xİ[™È[™\ØÛÛ›™Xİ[™ÈÛÈœ™\]Y[KˆØZ][ˆZ[]\È‚ˆ˜[™HYØZ[‹ˆYˆ[İHÛÛ[YHÈK[İHÚ[™YYÈØZ]]™[ˆÛ™Ù\‹ˆ‚›\ÙÜİˆˆ‚ˆ•›İ\È›İ\È:\ÈÛÛ›™Xİ:KÙ:XÛÛ›™Xİ:H›Üœº\]Y[[Y[ˆ][™^ˆLZ[]\È]‚ˆ”ºY\ÜØ^Y^‹ˆÚH›İ\ÈÛÛ[Y^ˆ	Ù\ÜØ^Y\‹[›İ\È˜]Y˜H][™™H[˜ÛÜ™H\È‚ˆ›Û™İ[\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+ÌBˆËËY›Ü›X]›\ÙÚY[ˆ[šÛ›İÛˆÚYÛ›Ûˆ\œ›Üˆ\ÈØØİ\œ™Yˆ	\Ëˆ‚›\ÙÜİˆ•[™H\œ™]\ˆ[˜ÛÛ›YH\İİ\™[YH8HÛÛ›™Xİ[Ûˆ	\Ëˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜Î
+ÍˆË^KËY›Ü›X]›\ÙÚY[ˆ[šÛ›İÛˆ\œ›Ü‹	Y\ÈØØİ\œ™Yˆ[™›Îˆ	\È‚›\ÙÜİˆ•[™H\œ™]\ˆ[˜ÛÛ›YK	YÉÙ\İ›ÙZ]Kˆ[™›Îˆ	\È‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎLB›\ÙÚYÛÛ›™Xİ[ÛˆÛÜÙY‚›\ÙÜİˆÛÛ›™Xİ[Ûˆ\›Z[ºYH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎLB›\ÙÚY•ØZ][™È›Üˆ™\K‹‹ˆ‚›\ÙÜİˆ‘[ˆ][H	İ[™Hº\ÛœÙK‹‹ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎNN›\ÙÚY•ĞÈ\ÈÛÛYH˜XÚÈœ›ÛH]È]\ÙKˆ[İHX^H›İÈÙ[™Y\ÜØYÙ\ÈYØZ[‹ˆ‚›\ÙÜİˆˆ‚ˆ•ĞÈ\İ™]™[HHØH]\ÙKˆ›İ\Èİ]™^ˆ:\ÛÜ›XZ\È™[›ŞY\ˆ\ÈY\ÜØYÙ\È8‚ˆ››İ]™X]Kˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎNNB›\ÙÚY•ĞÈ™\İ[YH‚›\ÙÜİˆ•ĞÈ™]İ\ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎÍŒÂ›\ÙÚYÚ]\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆHÚ]‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎÎ‚ˆË^B›\ÙÚY”\ÜİÛÜ™Ú[™ÙHİXØÙ\ÜÙ[‚›\ÙÜİˆÚ[™Ù[Y[H[İH\ÜÙHY™™XİzH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMÌÌÜ˜ËÜ›İØÛÛËİØËİØË˜ÎÎ‚›\ÙÚY‘ØZ[HH\ÜİÛÜ™Ú[™ÙH‚›\ÙÜİˆ‘ØZ[HHÚ[™Ù[Y[H[İH\ÜÙH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎÎ
+B›\ÙÚYˆ‚ˆ•ĞÈ\ÈÙ[HUTÑHÛÛ[X[™ˆÚ[ˆ\È\[œËĞÈYÛ›Ü™\È[HY\ÜØYÙ\È‚ˆœÙ[È][™X^HÚXÚÈ[İHÙ™ˆYˆ[İHÙ[™HY\ÜØYÙKˆØZ[HÚ[™]™[‚ˆ˜[][™Èœ›ÛHÛÚ[™È›İYÚˆ\È\ÈÛ›H[\Ü˜\KX\ÙH™H]Y[ˆ‚›\ÙÜİˆˆ‚ˆ•ĞÈH[›ŞzHHÛÛ[X[™HUTÑKˆÜœÜ]YHÙXÚH\œš]™HĞÈYÛ›Ü™Hİ\È\È‚ˆ›Y\ÜØYÙ\È[›Şz\È]]^›İ\È:XÛÛ›™Xİ\ˆÚH›İ\È[ˆ[›ŞY\ˆ[‹ˆØZ[H‚ˆ™[\:Ú\˜HÙXÚKˆÙH‰Ù\İ]YH[\Ü˜Z\™KÛŞY^ˆ]Y[ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎÎ›\ÙÚY•ĞÈ]\ÙH‚›\ÙÜİˆ•ĞÈ[ˆ]\ÙH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒLŒBˆË^B›\ÙÚY‘Ù]\ˆ[™›È‚›\ÙÜİˆ“Ø[š\ˆ[™›È[›XZ\™H‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒMHÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒMÂˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒNˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒN›\ÙÚYÛİ[›İÛÛ›™Xİ›Üˆ˜[œÙ™\ˆH‚›\ÙÜİˆ“‰ØHHÙHÛÛ›™Xİ\ˆİ\ˆH˜[œÙ™\H‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒNÌ‚›\ÙÚYÛİ[›İÜš]Hš[HXY\ˆH‚›\ÙÜİˆ“‰ØHH:XÜš\™H	Ù[ˆ:HHšXÚY\ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒNLŒB›\ÙÚY‘ØZ[HHØ]™H\Ë‹‹ˆ‚›\ÙÜİˆ‘ØZ[HH[œ™YÚ\İ™\ˆÛİ\Ë‹‹ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒNMŒ‚ˆËËY›Ü›X]›\ÙÚY‰\È™\]Y\İÈ	\ÈÈXØÙ\	Yš[Nˆ	\È
+	KŒ™ˆ	\ÊI\É\È‚›\ÙÜİˆ‰\È[X[™H8	\È	ØXØÙ\\ˆ	YšXÚY\ˆ	\È
+	KŒ™ˆ	\ÊI\É\È‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒNMŒÂˆËËY›Ü›X]›\ÙÚY‰\È™\]Y\İÈ	\ÈÈXØÙ\	Yš[\Îˆ	\È
+	KŒ™ˆ	\ÊI\É\È‚›\ÙÜİˆ‰\È[X[™H8	\È	ØXØÙ\\ˆ	YšXÚY\œÎˆ	\È
+	KŒ™ˆ	\ÊI\É\È‚‚ˆÎˆÜ˜ËÜ›İØÛÛËİØËİØË˜ÎŒNMˆËËY›Ü›X]›\ÙÚY‰\È™\]Y\İÈ[İHÈÙ[™[HHš[H‚›\ÙÜİˆ‰\È›İ\È[X[™HH]\ˆ[›ŞY\ˆ[ˆšXÚY\ˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËŞXZÛËŞXZÛË˜ÎNM›\ÙÚY–[İ\ˆY\ÜØYÙHY›İÙ]Ù[ˆ‚›\ÙÜİˆ•›İ™HY\ÜØYÙH‰ØH\È:]:H[›ŞzKˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËŞ™\\‹Ş™\\‹˜Î
+›\ÙÚY–“ØØ]H‚›\ÙÜİˆ“ØØ[\Ø][Ûˆ
+“ØØ]JH‚‚ˆÎˆÜ˜ËÜ›İØÛÛËŞ™\\‹Ş™\\‹˜Î
+ÍÂ›\ÙÚYÛ\ÜÎˆ‚›\ÙÜİˆÛ\ÜÙNˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËŞ™\\‹Ş™\\‹˜ÎB›\ÙÚY’[œİ[˜ÙNˆ‚›\ÙÜİˆ’[œİ[˜ÙNˆ‚‚ˆÎˆÜ˜ËÜ›İØÛÛËŞ™\\‹Ş™\\‹˜Î
+B›\ÙÚY”™XÚ\Y[ˆ‚›\ÙÜİˆ‘\İ[˜]Z\™Nˆ‚‚ˆÎˆÜ˜ËØX›İ]˜ÎŒL‚ˆËËY›Ü›X]›\ÙÚYX›İ]ØZ[H‰\È‚›\ÙÜİˆ°›ÜÜÈHØZ[H‰\È‚‚ˆÎˆÜ˜ËØX›İ]˜ÎŒLÍBˆË^B›\ÙÚYˆ‚ˆ‘ØZ[H\ÈH[Ù[\ˆ[œİ[Y\ÜØYÚ[™ÈÛY[Ø\X›HÙˆ\Ú[™ÈRSKPÔKˆ‚ˆ–XZÛÈKTÓ‹TË˜X˜™\‹˜\İ\‹™\\‹[™ØYKQØYH[]Û˜ÙK—ˆ‚ˆ’]\ÈÜš][ˆ\Ú[™ÈİÊÈ[™\ÈXÙ[œÙY[™\ˆHÔ—ˆ‚ˆ—ˆ‚ˆ•T“ˆ‚›\ÙÜİˆˆ‚ˆ‘ØZ[H\İ[ˆÛY[İ\Ü[H›İØÛÛRSH	ĞSÓ—ˆ‚ˆ’[\İ:XÜš][ˆİÊÈ]\İÛİ\ÈHXÙ[˜ÙHÔ—ˆ‚ˆ—ˆ‚ˆ•T“ˆ‚‚ˆÎˆÜ˜ËØX›İ]˜ÎŒLÍÂ›\ÙÚYˆ‚ˆ—ˆ‚ˆ—ˆ‚ˆ’TÎˆÙØZ[HÛˆ\˜Ë›Ü[œ›Ú™XİË›™]‚›\ÙÜİˆˆ‚ˆ—ˆ‚ˆ—ˆ‚ˆ’TÎˆÙØZ[Hİ\ˆ\˜Ë›Ü[œ›Ú™XİË›™]‚‚ˆÎˆÜ˜ËØX›İ]˜ÎŒM
+Â›\ÙÚYˆ‚ˆXİ]™H]™[Ü\œ×ˆ‚ˆOOOOOOOOOOOOOOOOOOOWˆ‚ˆ”›Øˆ›[›ˆ
+XZ[Z[™\ŠHÈ›ØX\šÛË›™]Wˆ‚ˆ”ÙX[ˆYØ[ˆ
+ÛÙ\ŠHÈšLMÌ
+š[™Ú[]Û‹™YHWˆ‚ˆ—ˆ‚ˆÜ˜^H]ÚÜš]\œ×ˆ‚ˆOOOOOOOOOOOOOOOOOOWˆ‚ˆ™[š˜[Z[ˆZ[\—ˆ‚ˆ‘XÚÛ[ˆ›Üİ\—ˆ‚ˆ“˜][ˆØ[ˆ‚ˆ“X\šÈÛ[™\—ˆ‚ˆ—ˆ‚ˆ”™]\™Y]™[Ü\œ×ˆ‚ˆOOOOOOOOOOOOOOOOOOWˆ‚ˆ’š[HXÚZ×ˆ‚ˆ‘\šXÈØ\›Y[šİ™[ˆÈØ\›Y[šİ™[XZÛË˜ÛÛHWˆ‚ˆ“X\šÈÜ[˜Ù\ˆ
+ÜšYÚ[˜[]]ÜŠHÈX\šÜİ\X\šÛË›™]H‚›\ÙÜİˆˆ‚ˆ‘]™[Ü]\œÈXİYœ×ˆ‚ˆOOOOOOOOOOOOOOOOOOOWˆ‚ˆ”›Øˆ›[›ˆ
+XZ[Z[™]\ŠHÈ›ØX\šÛË›™]Wˆ‚ˆ”ÙX[ˆYØ[ˆ
+ÛÙ]\ŠHÈšLMÌ
+š[™Ú[]Û‹™YHWˆ‚ˆ—ˆ‚ˆÜºX]]\œÈ\È]ÚÈH[™İY\×ˆ‚ˆOOOOOOOOOOOOOOOOOOWˆ‚ˆ™[š˜[Z[ˆZ[\—ˆ‚ˆ‘XÚÛ[ˆ›Üİ\—ˆ‚ˆ“˜][ˆØ[ˆ‚ˆ“X\šÈÛ[™\—ˆ‚ˆ—ˆ‚ˆ‘]™[Ü]\œÈ™]\º\×ˆ‚ˆOOOOOOOOOOOOOOOOOOWˆ‚ˆ’š[HXÚZ×ˆ‚ˆ‘\šXÈØ\›Y[šİ™[ˆÈØ\›Y[šİ™[XZÛË˜ÛÛHWˆ‚ˆ“X\šÈÜ[˜Ù\ˆ
+]]]\ˆÜšYÚ[˜[
+HÈX\šÜİ\X\šÛË›™]H‚‚ˆËˆ\ÈXZÙ\ÈHÚ^™\È›İÛÜšË‚ˆËˆÕ×ÕÒQÑUÔÑUÑ“QÔÊ]Û‹Õ×ĞĞS—ÑQUS
+NÂˆËˆİ×İÚYÙ]ÙÜ˜X—ÙY˜][
+]ÛŠNÂˆÎˆÜ˜ËØX›İ]˜ÎŒN
+B›\ÙÚY•ÙXˆÚ]H‚›\ÙÜİˆ”Ú]HÙXˆ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒMLÈÜ˜ËØYK˜ÎŒÌB›\ÙÚY”ÚYÛ›Ù™ˆ‚›\ÙÜİˆ‘:XÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒMB›\ÙÚY”X\ÙH[\ˆ[İ\ˆÙÛÛˆ‚›\ÙÜİˆ‘[™^ˆ›İ™HÙÚ[ˆ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒMHÜ˜ËÛ][K˜ÎŒMÜ˜ËÜÙ\™\‹˜ÎMB›\ÙÚY”ÚYÛ›Ûˆ\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆHÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒŒÂ›\ÙÚY‘ØZ[HHÙÚ[ˆ‚›\ÙÜİˆ‘ØZ[HHÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒB›\ÙÚY”ØÜ™Y[ˆ˜[YNˆ‚›\ÙÜİˆ”Ù]YÛ[YNˆ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒMÂ›\ÙÚY”\ÜİÛÜ™ˆ‚›\ÙÜİˆ“[İH\ÜÙNˆ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒÌNÜ˜ËØYK˜ÎŒÌLÂ›\ÙÚY”]Z]‚›\ÙÜİˆ”]Z]\ˆ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒÌŒÈÜ˜ËØZ[K˜ÎÌHÜ˜ËØYK˜ÎŒÌÎB›\ÙÚYXØÛİ[È‚›\ÙÜİˆXØÛÛ\\È‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒÌHÜ˜ËÛ][K˜ÎLMB›\ÙÚY”ÚYÛ›Ûˆ‚›\ÙÜİˆÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒÍMÂ›\ÙÚYX›İ]‚›\ÙÜİˆ°›ÜÜÈ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒÍNÜ˜ËÜ™YœË˜ÎŒMŒÌÈÜ˜ËÜ™YœË˜ÎŒNL
+B›\ÙÚY“Ü[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈ‚‚ˆÎˆÜ˜ËØZ[K˜ÎŒÍŒÜ˜ËØZ[K˜ÎÍÜ˜ËØYK˜ÎŒÍMÂ›\ÙÚY”YÚ[œÈ‚›\ÙÜİˆ”YÚ[œÈ‚‚ˆÎˆÜ˜ËØZ[K˜ÎÜ˜ËØYK˜ÎŒÍB›\ÙÚY”™Y™\™[˜Ù\È‚›\ÙÜİˆ”ºYº\™[˜Ù\È‚‚ˆÎˆÜ˜ËØZ[K˜ÎÎÜ˜ËÛ][K˜ÎŒM
+Ì‚ˆË^B›\ÙÚY]]Ë[ÙÚ[ˆ‚›\ÙÜİˆÛÛ›™Xİ[Ûˆ]]ÛX]\]YH‚‚ˆÎˆÜ˜ËØ\]˜ÎŒLB›\ÙÚY][\[™ÈÈÚYÛˆÛ‹‹‹‹ˆ‚›\ÙÜİˆ•[]]™HHÛÛ›™Xİ[Û‹‹‹ˆ‚‚ˆÎˆÜ˜ËØ\]˜ÎŒLL‚›\ÙÚY“Ù™›[™KˆÛXÚÈÈœš[™È\ÙÚ[ˆ›Şˆ‚›\ÙÜİˆ‘:XÛÛ›™Xİ:KˆÛ\]Y\ˆİ\ˆİ]œš\ˆH™[º™HHÛÛ›™Xİ[Û‹ˆ‚‚ˆÎˆÜ˜ËØ\]˜ÎŒLˆËËY›Ü›X]›\ÙÚY]Ø^Nˆ	Y[™[™Ëˆ‚›\ÙÜİˆXœÙ[ˆ	Y[ˆ][H‚‚ˆÎˆÜ˜ËØ\]˜ÎŒLÌB›\ÙÚY]Ø^Kˆ‚›\ÙÜİˆXœÙ[‚‚ˆÎˆÜ˜ËØ\]˜ÎŒŒÜ˜ËØ]Ø^K˜ÎŒÎ›\ÙÚY“™]È]Ø^HY\ÜØYÙH‚›\ÙÜİˆ“›İ]™X]HY\ÜØYÙH	ØXœÙ[˜ÙH‚‚ˆÎˆÜ˜ËØ\]˜ÎŒÍ›\ÙÚYØ[‰İÜ™X]HØZ[H\]H‚›\ÙÜİˆ’[\ÜÜÚX›HHÜºY\ˆ	Ø\]ØZ[H‚‚ˆÎˆÜ˜ËØ\]˜ÎŒÍ›\ÙÚYX›İ]‹‹ˆ‚›\ÙÜİˆ°›ÜÜË‹‹ˆ‚‚ˆÎˆÜ˜ËØ]Ø^K˜ÎŒŒ‚›\ÙÚY‘ØZ[HH]Ø^HH‚›\ÙÜİˆ‘ØZ[HHXœÙ[H‚‚ˆÎˆÜ˜ËØ]Ø^K˜ÎŒL›\ÙÚY’IÛH˜XÚÈH‚›\ÙÜİˆ’™HİZ\ÈH™]İ\ˆHH‚‚ˆÎˆÜ˜ËØ]Ø^K˜ÎŒˆÜ˜ËØ]Ø^K˜ÎŒÍ
+ˆÜ˜ËØ]Ø^K˜ÎLŒ›\ÙÚY˜XÚÈ‚›\ÙÜİˆ‘H™]İ\ˆ‚‚ˆÎˆÜ˜ËØ]Ø^K˜Î›\ÙÚY”™[[İ™H]Ø^HY\ÜØYÙH‚›\ÙÜİˆ‘[›]™\ˆHY\ÜØYÙH	ØXœÙ[˜ÙH‚‚ˆÎˆÜ˜ËØ]Ø^K˜ÎNM‚›\ÙÚY”Ù][]Ø^H‚›\ÙÜİˆ“Y]™HHY\ÜØYÙH	ØXœÙ[˜ÙHİ\ˆİ\È\ÈÛÛ\\È‚‚ˆÎˆÜ˜ËØYK˜ÎLÈÜ˜ËØYK˜ÎŒÜ˜ËÙX[ÙÜË˜ÎMˆÜ˜ËÙX[ÙÜË˜ÎŒLB›\ÙÚY‘Ü›İ\‚›\ÙÜİˆ‘Ü›İ\H‚‚ˆÎˆÜ˜ËØYK˜ÎNHÜ˜ËØYK˜ÎÜ˜ËØYK˜ÎÍÜ˜ËØYK˜ÎŒMÎBˆÎˆÜ˜ËØYWØÚ]˜Î
+ŒHÜ˜ËØYWØÚ]˜ÎŒLÎ›\ÙÚY’SH‚›\ÙÜİˆ’SH‚‚ˆÎˆÜ˜ËØYK˜ÎLÜ˜ËØYK˜ÎŒNÜ˜ËØYWØÚ]˜Î
+ÍÈÜ˜ËØYWØÚ]˜ÎŒL
+‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒM
+ŒˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒMÂ›\ÙÚY’[™›È‚›\ÙÜİˆ’[™›È‚‚ˆËˆ]H]ÛœÈ[ˆH›ŞˆÎˆÜ˜ËØYK˜ÎHÜ˜ËØYK˜ÎÎHÜ˜ËÙX[ÙÜË˜ÎŒLHÜ˜ËÙX[ÙÜË˜ÎŒÍ
+NˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍ
+ÌÂ›\ÙÚY[X\È‚›\ÙÜİˆ[X\È‚‚ˆÎˆÜ˜ËØYK˜ÎÍÜ˜ËØYK˜Î
+N›\ÙÚYYYHİ[˜ÙH‚›\ÙÜİˆZ›İ]\ˆ[™H[\H‚‚ˆÎˆÜ˜ËØYK˜ÎHÜ˜ËØYK˜Î
+›\ÙÚY•šY]ÈÙÈ‚›\ÙÜİˆ•›Ú\ˆ\ÈÙÜÈ‚‚ˆÎˆÜ˜ËØYK˜ÎŒHÜ˜ËØYK˜Î
+L‚›\ÙÚY”™[˜[YH‚›\ÙÜİˆ”™[›Û[Y\ˆ‚‚ˆÎˆÜ˜ËØYK˜Î
+
+‚›\ÙÚY•[‹P[X\È‚›\ÙÜİˆ”™]\™\ˆ	Ø[X\È‚‚ˆÎˆÜ˜ËØYK˜ÎŒM
+HÜ˜ËØYK˜ÎŒÌÌ‚›\ÙÚYYHİ[˜ÙH‚›\ÙÜİˆ[\H‚‚ˆÎˆÜ˜ËØYK˜ÎŒMÌB›\ÙÚY“™]ÈYHİ[˜ÙH‚›\ÙÜİˆ“›İ]™[H[\H‚‚ˆÎˆÜ˜ËØYK˜ÎŒMÍÂ›\ÙÚY”™[[İ™HYHİ[˜ÙH‚›\ÙÜİˆ‘[›]™\ˆ[™H[\H‚‚ˆÎˆÜ˜ËØYK˜ÎŒMÍÌB›\ÙÚY–ĞÛXÚÈÈY]H‚›\ÙÜİˆ–ĞÛ\]Y\ˆİ\ˆ:Y]\—H‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMˆËËY›Ü›X]›\ÙÚY“ÙÙÙY[ˆ	\×ˆ‚›\ÙÜİˆÛÛ›™Xİ:Nˆ	\×ˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒ‚ˆËËY›Ü›X]›\ÙÚY•Ø\›š[™ÜÎˆ	Y	IWˆ‚›\ÙÜİˆ][[Ûˆ	Y	IWˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒÎˆËËY›Ü›X]›\ÙÚYØ\Xš[]Y\Îˆ	\×ˆ‚›\ÙÜİˆ”ÜÜÚXš[]:\Îˆ	\×ˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒ‚ˆËËY›Ü›X]›\ÙÚYˆ‚ˆ[X\Îˆ	\Èˆ‚ˆ”ØÜ™Y[ˆ˜[YNˆ	\×ˆ‚ˆ‰\É\É\É\É\É\È‚›\ÙÜİˆˆ‚ˆ[X\Îˆ	\Èˆ‚ˆ”Ù]YÛ[YNˆ	\×ˆ‚ˆ‰\É\É\É\É\É\È‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒ
+‚›\ÙÚY’YNˆ‚›\ÙÜİˆ’[˜XİYˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒÍNHÜ˜ËØYK˜ÎŒŒÍˆËËY›Ü›X]›\ÙÚY‰\ÈÙÙÙY[‹ˆ‚›\ÙÜİˆ‰\ÈÉÙ\İÛÛ›™Xİ:Kˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒÜ˜ËØYK˜ÎŒBˆËËY›Ü›X]›\ÙÚY‰\ÈÙÙÙYİ]ˆ‚›\ÙÜİˆ‰\ÈÉÙ\İ:XÛÛ›™Xİ:Kˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒM›\ÙÚY’[™›Ü›X][ÛˆÛˆÙ[XİYYH‚›\ÙÜİˆ’[™›Ü›X][Ûˆİ\ˆHÛÛXİú[Xİ[Û›ºH‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMHÜ˜ËÙX[ÙÜË˜ÎMÂ›\ÙÚY”Ù[™[œİ[Y\ÜØYÙH‚›\ÙÜİˆ‘[›ŞY\ˆ[ˆY\ÜØYÙH‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒM‚›\ÙÚY”İ\Ú›Ú[ˆHYHÚ]‚›\ÙÜİˆ“İ]œš\‹Ú›Ú[™™H[ˆÚ]‚‚ˆÎˆÜ˜ËØYK˜ÎŒŒMÂ›\ÙÚYXİ]˜]H]Ø^HY\ÜØYÙH‚›\ÙÜİˆXİ]™\ˆHY\ÜØYÙH	ØXœÙ[˜ÙH‚‚ˆÎˆÜ˜ËØYK˜ÎŒB›\ÙÚY‘š[H‚›\ÙÜİˆ‘šXÚY\ˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒLÂ›\ÙÚYYHYH‚›\ÙÜİˆZ›İ]\ˆ[ˆÛÛXİ‚‚ˆÎˆÜ˜ËØYK˜ÎŒMB›\ÙÚY’›Ú[ˆHÚ]‚›\ÙÜİˆ’›Ú[™™HHÚ]‚‚ˆÎˆÜ˜ËØYK˜ÎŒMÂ›\ÙÚY“™]È[œİ[Y\ÜØYÙH‚›\ÙÜİˆ“›İ]™X]HY\ÜØYÙH‚‚ˆÎˆÜ˜ËØYK˜ÎŒNHÜ˜ËÙX[ÙÜË˜ÎÍNB›\ÙÚY‘Ù]\Ù\ˆ[™›È‚›\ÙÜİˆ“Ø[š\ˆ\È[™›Ü›X][ÛœÈ][\Ø]]\ˆ‚‚ˆÎˆÜ˜ËØYK˜ÎŒÌ
+›\ÙÚY’[\ÜYH\İ‚›\ÙÜİˆ’[\Ü\ˆ[™H\İHHÛÛXİÈ‚‚ˆÎˆÜ˜ËØYK˜ÎŒÌŒ‚›\ÙÚY•ÛÛÈ‚›\ÙÜİˆ“İ][È‚‚ˆÎˆÜ˜ËØYK˜ÎŒÍ
+B›\ÙÚY”›İØÛÛXİ[ÛœÈ‚›\ÙÜİˆXİ[ÛœÈH›İØÛÛ‚‚ˆÎˆÜ˜ËØYK˜ÎŒÍLB›\ÙÚY•šY]ÈŞ\İ[HÙÈ‚›\ÙÜİˆ•›Ú\ˆ\ÈÙÜÈHŞ\İ:YH‚‚ˆÎˆÜ˜ËØYK˜ÎŒÍŒÂ›\ÙÚY”\›‚›\ÙÜİˆ”\›‚‚ˆÎˆÜ˜ËØYK˜ÎŒÍ‚›\ÙÚY“ØYØÜš\‚›\ÙÜİˆÚ\™Ù\ˆ[ˆØÜš\‚‚ˆÎˆÜ˜ËØYK˜ÎŒÍÌ›\ÙÚY•[›ØY[ØÜš\È‚›\ÙÜİˆ‘:XÚ\™Ù\ˆİ\È\ÈØÜš\È‚‚ˆÎˆÜ˜ËØYK˜ÎŒÍÍ›\ÙÚY“\İØÜš\È‚›\ÙÜİˆ“\İ\ˆ\ÈØÜš\È‚‚ˆÎˆÜ˜ËØYK˜ÎŒÎ‚›\ÙÚY’[‚›\ÙÜİˆZYH‚‚ˆÎˆÜ˜ËØYK˜ÎŒÎ
+ÂˆË^B›\ÙÚY“Û›[™H[‚›\ÙÜİˆ‘[ˆYÛ™H‚‚ˆÎˆÜ˜ËØYK˜ÎŒÎˆË^B›\ÙÚY‘XYÈÚ[™İÈ‚›\ÙÜİˆY™šXÚ\ˆH™[™]™HHXYÈ‚‚ˆÎˆÜ˜ËØYK˜ÎŒÎB›\ÙÚYX›İ]ØZ[H‚›\ÙÜİˆ°›ÜÜÈHØZ[H‚‚ˆÎˆÜ˜ËØYK˜ÎŒ
+ÈÜ˜ËÜ™YœË˜ÎŒL
+B›\ÙÚYYH\İ‚›\ÙÜİˆ“\İHHÛÛXİÈ‚‚ˆÎˆÜ˜ËØYK˜ÎŒ
+Œ›\ÙÚYYH™]ÈYH‚›\ÙÜİˆZ›İ]\ˆ[ˆ›İ]™X]HÛÛXİ‚‚ˆÎˆÜ˜ËØYK˜ÎŒ
+ŒB›\ÙÚYYH™]ÈÜ›İ\‚›\ÙÜİˆZ›İ]\ˆ[ˆ›İ]™X]HÜ›İ\H‚‚ˆÎˆÜ˜ËØYK˜ÎŒ
+Œ‚›\ÙÚY”™[[İ™HÙ[XİYYKÑÜ›İ\‚›\ÙÜİˆ”İ\š[Y\ˆHÛÛXİÑÜ›İ\Hú[Xİ[Û›ºH‚‚ˆÎˆÜ˜ËØYK˜ÎŒB›\ÙÚY‘Y]YY\È‚›\ÙÜİˆ‘Y]\ˆØH\İHHÛÛXİÈ‚‚ˆÎˆÜ˜ËØYK˜ÎŒLÌ‚›\ÙÚY‘ØZ[HHYH\İ‚›\ÙÜİˆ‘ØZ[HH\İHHÛÛXİÈ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒB›\ÙÚY’›Ú[ˆÚ]‚›\ÙÜİˆ’›Ú[™™HHÚ]‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒÂ›\ÙÚY’›Ú[ˆÚ]\Îˆ‚›\ÙÜİˆ’›Ú[™™HHÚ][ˆ[]YNˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒÌ
+Ü˜ËØYWØÚ]˜ÎŒÎLˆÜ˜ËÙX[ÙÜË˜Î
+BˆÎˆÜ˜ËÙX[ÙÜË˜ÎLÎHÜ˜ËÙX[ÙÜË˜ÎÌMHÜ˜ËÙX[ÙÜË˜ÎMˆÜ˜ËÙX[ÙÜË˜ÎLÍˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLLLÜ˜ËÙX[ÙÜË˜ÎŒM
+ÌÈÜ˜ËÙX[ÙÜË˜ÎŒMÎÜ˜ËÙX[ÙÜË˜ÎŒN‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒN
+ŒˆÜ˜ËÙX[ÙÜË˜ÎŒŒ
+Ü˜ËÙX[ÙÜË˜ÎŒŒˆÜ˜ËÙX[ÙÜË˜ÎŒ
+BˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLLˆÜ˜ËÙX[ÙÜË˜ÎŒÌŒÜ˜ËÙX[ÙÜË˜ÎŒÍ
+ŒÜ˜ËÙX[ÙÜË˜ÎŒÍBˆÎˆÜ˜ËÙX[ÙÜË˜ÎLˆÜ˜ËÙX[ÙÜË˜ÎLNÜ˜ËÙX[ÙÜË˜Î
+ÍÍÈÜ˜ËÛ][K˜ÎÎBˆÎˆÜ˜ËÛ][K˜ÎLLHÜ˜ËÜœ˜ÎŒMLÜ˜ËÜœ˜ÎŒŒ›\ÙÚYØ[˜Ù[‚›\ÙÜİˆ[›[\ˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒÌB›\ÙÚY’›Ú[ˆ‚›\ÙÜİˆ’›Ú[™™H‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒÎLÈÜ˜ËØYWØÚ]˜ÎŒÎMˆÜ˜ËØYWØÚ]˜ÎŒLÌˆÎˆÜ˜ËØYWØÚ]˜ÎŒMN›\ÙÚY’[š]H‚›\ÙÜİˆ’[š]\ˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎLˆÜ˜ËÙX[ÙÜË˜ÎŒLÌHÜ˜ËÙX[ÙÜË˜ÎŒÍ
+›\ÙÚYYH‚›\ÙÜİˆÛÛXİ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎMÈÜ˜ËÜ™YœË˜ÎŒŒ
+›\ÙÚY“Y\ÜØYÙH‚›\ÙÜİˆ“Y\ÜØYÙH‚‚ˆÎˆÜ˜ËØYWØÚ]˜Î
+M›\ÙÚY‘ØZ[HH[š]HYH[ÈÚ]›ÛÛH‚›\ÙÜİˆ‘ØZ[HH[š]\ˆHÛÛXİ[œÈ[ˆØ[ÛˆHÚ]‚‚ˆÎˆÜ˜ËØYWØÚ]˜Î
+›\ÙÚY•[‹RYÛ›Ü™H‚›\ÙÜİˆ“™H\ÈYÛ›Ü™\ˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜Î
+ÌÜ˜ËØYWØÚ]˜ÎŒL‚›\ÙÚY’YÛ›Ü™H‚›\ÙÜİˆ’YÛ›Ü™\ˆ‚‚ˆËˆÛ‰İ™[[İ™H[Hœ›ÛHYÛ›Ü™Y[ˆØ\ÙH^H™KY[\‚ˆÎˆÜ˜ËØYWØÚ]˜ÎLÌÈÜ˜ËØYWØÚ]˜ÎŒL
+
+HÜ˜ËØYWØÚ]˜ÎŒMLˆÎˆÜ˜ËØYWØÚ]˜ÎŒMMBˆËËY›Ü›X]›\ÙÚY‰Y	\È[ˆ›ÛÛH‚›\ÙÜİˆ‰Y	\È[œÈHØ[Ûˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎMBˆËËY›Ü›X]›\ÙÚY‰\È[\™YH›ÛÛKˆ‚›\ÙÜİˆ‰\È\İ[ºH[œÈHØ[Û‹ˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒL
+ÂˆËËY›Ü›X]›\ÙÚY‰\È\È›İÈÛ›İÛˆ\È	\È‚›\ÙÜİˆ‰\È\İ:\ÛÜ›XZ\ÈÛÛ›HÛİ\ÈH›ÛHH	\È‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒL
+MˆËËY›Ü›X]›\ÙÚY‰\ÈYH›ÛÛH
+	\ÊKˆ‚›\ÙÜİˆ‰\ÈH]Z]:HHØ[Ûˆ
+	\ÊKˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒL
+M‚ˆËËY›Ü›X]›\ÙÚY‰\ÈYH›ÛÛKˆ‚›\ÙÜİˆ‰\ÈH]Z]:HHØ[Û‹ˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒLMMB›\ÙÚY‘ØZ[HHÜ›İ\Ú]È‚›\ÙÜİˆ‘ØZ[HHÜ›İ\HH\Øİ\ÜÚ[Ûˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒLŒN›\ÙÚY•ÜXÎˆ‚›\ÙÜİˆ”İZ™]ˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒLNB›\ÙÚYŒ[ÜH[ˆ›ÛÛH‚›\ÙÜİˆ”\œÛÛ›™H[œÈÙHØ[Ûˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒLÌÌÈÜ˜ËØYWØÚ]˜ÎŒMMÂ›\ÙÚY•Ú\Ü\ˆ‚›\ÙÜİˆ“]\›]\™\ˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒLÌÎÜ˜ËØYWØÚ]˜ÎŒMMHÜ˜ËØYWØÚ]˜ÎŒM
+ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒL›\ÙÚY”Ù[™‚›\ÙÜİˆ‘[›ŞY\ˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒM
+NÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒ
+B›\ÙÚY›ØÚÈ‚›\ÙÜİˆ›Ü]Y\ˆ‚‚ˆÎˆÜ˜ËØYWØÚ]˜ÎŒM
+ŒÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒLHÜ˜ËÙX[ÙÜË˜ÎˆÎˆÜ˜ËÙX[ÙÜË˜Î
+LÂ›\ÙÚY•Ø\›ˆ‚›\ÙÜİˆ‘Û›™\ˆ[ˆ]™\\ÜÙ[Y[‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎÌB›\ÙÚY‘ØZ[HHØ]™HÛÛ™\œØ][Ûˆ‚›\ÙÜİˆ‘ØZ[HHØ]]™\ˆHÛÛ™\œØ][Ûˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎL‚›\ÙÚY‘ØZ[HH[œÙ\[XYÙH‚›\ÙÜİˆ‘ØZ[HH[œÙ\™\ˆ[XYÙH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒLÌÍ‚›\ÙÚY•[˜X›HÈÙ[™Y\ÜØYÙNˆÛÈ\™ÙH‚›\ÙÜİˆ’[\ÜÜÚX›H	Ù[›ŞY\ˆHY\ÜØYÙNˆ›Ü›Û[Z[™]^‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒLÌÍˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒLÍ›\ÙÚY“Y\ÜØYÙH\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆHY\ÜØYÙH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒLÍ›\ÙÚY•[˜X›HÈÙ[™Y\ÜØYÙNˆ[šÛ›İÛˆ™X\ÛÛˆ‚›\ÙÜİˆ’[˜Ø\X›H	Ù[›ŞY\ˆHY\ÜØYÙNˆ˜Z\ÛÛˆ[˜ÛÛ›YKˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒMMNBˆËËY›Ü›X]›\ÙÚYİ\œ™[H]	Y‚›\ÙÜİˆXİY[[Y[[œÈ	Y‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒMMÂˆËËY›Ü›X]›\ÙÚY”Ù][™ÈÜÚ][ÛˆÈ	Yˆ‚›\ÙÜİˆ”ÜÚ][Û›ºH8	Yˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒMÌÜ˜ËÜ™YœË˜ÎŒLÌ›\ÙÚY›Û^‚›\ÙÜİˆ•^H[ˆÜ˜\È‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒMÌ›\ÙÚY›Û‚›\ÙÜİˆ‘Ü˜\È‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒMÍ›\ÙÚY’][XÜÈ^‚›\ÙÜİˆ•^H[ˆ][\]YH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒMÍB›\ÙÚY’][XÜÈ‚›\ÙÜİˆ’][\]YH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒMÎÜ˜ËÜ™YœË˜ÎŒLÌŒ›\ÙÚY•[™\›[™H^‚›\ÙÜİˆ•^HÛİ[YÛºH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒMÎB›\ÙÚY•[™\›[™H‚›\ÙÜİˆ”Ûİ[YÛºH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒNÈÜ˜ËÜ™YœË˜ÎŒLÌ‚›\ÙÚY”İšZÙH›İYÚ^‚›\ÙÜİˆ•^H˜\œºH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒNÂ›\ÙÚY”İšZÙH‚›\ÙÜİˆ˜\œºH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒNB›\ÙÚY‘XÜ™X\ÙH›ÛÚ^™H‚›\ÙÜİˆ”ÛXÙH\È]]H‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒNB›\ÙÚY”ÛX[‚›\ÙÜİˆ”]]‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒNL‚›\ÙÚY“›Ü›X[›ÛÚ^™H‚›\ÙÜİˆ”ÛXÙH›Ü›X[H‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒNL‚›\ÙÚY“›Ü›X[‚›\ÙÜİˆ“›Ü›X[‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒNMB›\ÙÚY’[˜Ü™X\ÙH›ÛÚ^™H‚›\ÙÜİˆ”ÛXÙH\ÈÜ˜[™H‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒNMB›\ÙÚYšYÈ‚›\ÙÜİˆ‘Ü˜[™‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒˆÜ˜ËÙX[ÙÜË˜ÎŒÈÜ˜ËÙX[ÙÜË˜ÎŒL
+Â›\ÙÚY”Ù[Xİ›Û‚›\ÙÜİˆ”ÙXİ[Û›™\ˆ[™HÛXÙH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒÂ›\ÙÚY‘›Û‚›\ÙÜİˆ”ÛXÙH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒ
+ˆÜ˜ËÜ™YœË˜ÎŒLÍM‚›\ÙÚY•^ÛÛÜˆ‚›\ÙÜİˆÛİ[]\ˆH^H‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒ
+ÈÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒLB›\ÙÚYÛÛÜˆ‚›\ÙÜİˆÛİ[]\ˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒLHÜ˜ËÜ™YœË˜ÎŒLÍÍ›\ÙÚY˜XÚÙÜ›İ[™ÛÛÜˆ‚›\ÙÜİˆÛİ[]\ˆH›Û™‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒNÜ˜ËÙX[ÙÜË˜ÎŒL
+‚›\ÙÚY’[œÙ\[šÈ‚›\ÙÜİˆ’[œú\™\ˆ[ˆY[ˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒNB›\ÙÚY“[šÈ‚›\ÙÜİˆ“Y[ˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒŒ‚›\ÙÚY’[œÙ\ÛZ[^H˜XÙH‚›\ÙÜİˆ’[œú\™\ˆ[ˆÛZ[^H‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒŒ‚›\ÙÚY”ÛZ[^H‚›\ÙÜİˆ”ÛZ[^H‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒB›\ÙÚY’[œÙ\SH[XYÙH‚›\ÙÜİˆ’[œÙ\™\ˆ[™H	Ú[XYÙH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒB›\ÙÚY’[XYÙH‚›\ÙÜİˆ’[XYÙH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒÌ‚›\ÙÚY‘[˜X›HÙÙÚ[™È‚›\ÙÜİˆXİ]™\ˆ	Ù[œ™YÚ\İ™[Y[
+ÙÊH‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒŒÌÈÜ˜ËÜ™YœË˜ÎŒM›\ÙÚY“ÙÙÚ[™È‚›\ÙÜİˆ‘[œ™YÚ\İ™[Y[‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒ‚›\ÙÚY”Ø]™HÛÛ™\œØ][Ûˆ‚›\ÙÜİˆ”Ø]]™\ˆHÛÛ™\œØ][ÛœÈ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒÈÜ˜ËÙX[ÙÜË˜ÎŒMˆÜ˜ËÙX[ÙÜË˜ÎŒN
+‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌŒŒÜ˜ËÙX[ÙÜË˜ÎŒÎLÜ˜ËÙX[ÙÜË˜Î
+Î
+B›\ÙÚY”Ø]™H‚›\ÙÜİˆ”Ø]]™YØ\™\ˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒ
+ÈÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒŒ›\ÙÚY”Ûİ[™‚›\ÙÜİˆ”ÛÛˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒÌB›\ÙÚY‘ØZ[HHÛÛ™\œØ][ÛœÈ‚›\ÙÜİˆ‘ØZ[HHÛÛ™\œØ][ÛœÈ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒM‚›\ÙÚY”Ù[™Y\ÜØYÙH\Îˆ‚›\ÙÜİˆ‘[›ŞY\ˆHY\ÜØYÙH[ˆ[]YNˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒÍ
+LÂ›\ÙÚY‘ØZ[HHØ]™HXÛÛˆ‚›\ÙÜİˆ‘ØZ[HHØ]]™YØ\™\ˆ	ÚXÛÛ™H‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒÍ
+Â›\ÙÚY‘\ØX›H[š[X][Ûˆ‚›\ÙÜİˆ‘:\ØXİ]™\ˆ	Ğ[š[X][Ûˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒÍL‚›\ÙÚY‘[˜X›H[š[X][Ûˆ‚›\ÙÜİˆXİ]™\ˆ	Ø[š[X][Ûˆ‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒÍN›\ÙÚY’YHXÛÛˆ‚›\ÙÜİˆØXÚ\ˆ	ÒXÛÛ™H‚‚ˆÎˆÜ˜ËØÛÛ™\œØ][Û‹˜ÎŒÍL
+›\ÙÚY”Ø]™HXÛÛˆ\Ë‹‹ˆ‚›\ÙÜİˆ”Ø]]™YØ\™\ˆ	ÒXÛÛ™HÛİ\Ë‹‹ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎL‚›\ÙÚY‘ØZ[HHØ\›ˆ\Ù\È‚›\ÙÜİˆ‘ØZ[HHÛ›™\ˆ[ˆ]™\\ÜÙ[Y[È‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎÌ‚ˆËËY›Ü›X]›\ÙÚY‘È[İH™X[HØ[ÈØ\›ˆ	\ÏÈ‚›\ÙÜİˆ•›İ[^‹]›İ\ÈºY[[Y[Û›™\ˆ[ˆ]™\\ÜÙ[Y[8	\ÏÈ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎÍÂ›\ÙÚY•Ø\›ˆ[›Û[[İ\ÛOÈ‚›\ÙÜİˆ‘Û›™\ˆ[ˆ]™\\ÜÙ[Y[[›Û[YOÈ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜Î
+B›\ÙÚY[›Û[[İ\ÈØ\›š[™ÜÈ\™H\ÜÈ\œÚˆ‚›\ÙÜİˆ“\È]™\\ÜÙ[Y[È[›Û[Y\ÈÛÛ[Ú[œÈ\œËˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜Î
+BˆËËY›Ü›X]›\ÙÚY”™[[İš[™È	É\ÉÈœ›ÛHY[\İ—ˆ‚›\ÙÜİˆ”İ\™\ÜÚ[ÛˆH	É\ÉÈHH\İHHÛÛXİ×ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎMˆËËY›Ü›X]›\ÙÚY‘ØZ[HH™[[İ™H	\ÏÈ‚›\ÙÜİˆ‘ØZ[HH[›]™\ˆ	\ÏÈ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎL
+Â›\ÙÚY”™[[İ™HYH‚›\ÙÜİˆ‘[›]™\ˆ[ˆÛÛXİ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎLMÂˆËËY›Ü›X]›\ÙÚYˆ‚ˆ–[İH\™HX›İ]È™[[İ™H	É\ÉÈœ›ÛWˆ‚ˆ[İ\ˆY[\İˆÈ[İHØ[ÈÛÛ[YOÈ‚›\ÙÜİˆˆ‚ˆ•›İ\È:\Èİ\ˆHÚ[	Ù[›]™\ˆ	É\É×ˆ‚ˆ™H›İ™H\İHHÛÛXİË›İ[^ˆ›İ\ÈÛÛ[™\È‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎLHÜ˜ËÜœ˜ÎŒMMÜ˜ËÜœ˜ÎŒŒ›\ÙÚYXØÙ\‚›\ÙÜİˆXØÙ\\ˆ‚‚ˆËˆZ[ÒÈ]Û‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍHÜ˜ËÙX[ÙÜË˜ÎÌŒÜ˜ËÙX[ÙÜË˜ÎŒHÜ˜ËÙX[ÙÜË˜ÎŒM
+ÍÂˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒN
+ˆÜ˜ËÙX[ÙÜË˜ÎŒNMMÈÜ˜ËÙX[ÙÜË˜ÎŒŒHÜ˜ËÙX[ÙÜË˜ÎŒ
+
+BˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLLHÜ˜ËÙX[ÙÜË˜ÎMÈÜ˜ËÙX[ÙÜË˜ÎLŒÈÜ˜ËÛ][K˜ÎÎ
+‚›\ÙÚY“ÒÈ‚›\ÙÜİˆ“ÒÈ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜Î
+Â›\ÙÚY‘ØZ[HHSH\Ù\ˆ‚›\ÙÜİˆ‘ØZ[HHY\ÜØYÙH8][\Ø]]\ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎÌ
+ˆË^B›\ÙÚY’SHÚÎˆ‚›\ÙÜİˆ‘[›ŞY\ˆ[ˆY\ÜØYÙH8]ZNˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎÍ›\ÙÚY•\Ù\ˆ‚›\ÙÜİˆ•][\Ø]]\ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎÍÍÂˆË^B›\ÙÚYXØÛİ[ˆ‚›\ÙÜİˆÛÛ\\È‚‚ˆËˆš[š\Ú\ˆÎˆÜ˜ËÙX[ÙÜË˜Î‚›\ÙÚY‘ØZ[HHÙ]\Ù\ˆ[™›È‚›\ÙÜİˆ‘ØZ[HHØ[š\ˆ\È[™›Ü›X][ÛœÈH	İ][\Ø]]\ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎM›\ÙÚYYÜ›İ\‚›\ÙÜİˆZ›İ]\ˆ[ˆÜ›İ\H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎMB›\ÙÚY‘ØZ[HHYÜ›İ\‚›\ÙÜİˆ‘ØZ[HHZ›İ]\ˆ[ˆÜ›İ\H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒL
+B›\ÙÚY‘ØZ[HHYYH‚›\ÙÜİˆ‘ØZ[HHZ›İ]\ˆ[ˆÛÛXİ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒL
+ŒB›\ÙÚYYYH‚›\ÙÜİˆZ›İ]\ˆ[ˆÛÛXİ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒL
+ÌB›\ÙÚYÛÛXİ‚›\ÙÜİˆÛÛXİ‚‚ˆËˆÙ]\İY™ˆ›ÜˆHXØÛİ[›ŞˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLMÂ›\ÙÚYYÈ‚›\ÙÜİˆZ›İ]\ˆ8‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLLÍ›\ÙÚY”X\ÙH[\ˆHYHÈİ[˜ÙKˆ‚›\ÙÜİˆ‘[™^ˆ[ˆÛÛXİİ\ˆHÜºX][Ûˆ	İ[™H[\H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLLÍ›\ÙÚYYHİ[˜ÙH\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆ	Ğ[\H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÌ›\ÙÚY‘ØZ[HH™]ÈYHİ[˜ÙH‚›\ÙÜİˆ‘ØZ[HH›İ]™[H[\H‚‚ˆËˆİ[˜ÙH\OHÚÈ‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLB›\ÙÚY”İ[˜ÙHÚÈ‚›\ÙÜİˆ[\\ˆ]ZH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLL‚›\ÙÚYXØÛİ[‚›\ÙÜİˆÛÛ\\È‚‚ˆËˆÜİ[˜ÙH\OHÚÈ‚ˆËˆİ[˜ÙH\OHÚ[ˆ‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÌN›\ÙÚY”İ[˜ÙHÚ[ˆ‚›\ÙÜİˆ[\\ˆ]X[™‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÌ›\ÙÚY”İ[˜ÙHÛˆÚYÛˆÛˆ‚›\ÙÜİˆ[\\ˆ8HÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÌÍÂ›\ÙÚY”İ[˜ÙHÛˆ™]\›ˆœ›ÛH]Ø^H‚›\ÙÜİˆ[\\ˆÜœÜ]YHHÛÛXİ™]šY[‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÍ
+‚›\ÙÚY”İ[˜ÙHÛˆ™]\›ˆœ›ÛHYH‚›\ÙÜİˆ[\\ˆÜœÜ]YHHÛÛXİ™Y]šY[œÈXİYˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÍMB›\ÙÚY”İ[˜ÙHÚ[ˆYH\È\[™ÈÈ[İH‚›\ÙÜİˆ[\\ˆ]X[™HÛÛXİ›İ\È:XÜš]‚‚ˆËˆÜİ[˜ÙH\OHÚ[ˆ‚ˆËˆİ[˜ÙH\OH˜Xİ[Ûˆ‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÍB›\ÙÚY”İ[˜ÙHXİ[Ûˆ‚›\ÙÜİˆXİ[ÛˆH	Ğ[\H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÍÍ‚›\ÙÚY“Ü[ˆSHÚ[™İÈ‚›\ÙÜİˆ“İ]œš\ˆH™[º™HHY\ÜØYÙH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÎ
+B›\ÙÚY”Ü\›İYšXØ][Ûˆ‚›\ÙÜİˆ™˜Z\™H\\˜Z]™HH›İYšXØ][Ûˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒLÎM›\ÙÚY”Ù[™Y\ÜØYÙH‚›\ÙÜİˆ‘[›ŞY\ˆHY\ÜØYÙH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMMB›\ÙÚY‘^Xİ]HÛÛ[X[™Ûˆİ[˜ÙH‚›\ÙÜİˆ‘^Xİ]\ˆ[™HÛÛ[X[™HÜœÈ	İ[™H[\H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMÍÂ›\ÙÚY”^HÛİ[™Ûˆİ[˜ÙH‚›\ÙÜİˆ’›İY\ˆ[ˆÛÛˆÜœÈ	İ[™H[\H‚‚ˆËˆÜİ[˜ÙH\OH˜Xİ[Ûˆ‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒM
+NB›\ÙÚY”Ø]™H\Èİ[˜ÙHY\ˆXİ]˜][Ûˆ‚›\ÙÜİˆ”Ø]]™YØ\™\ˆÙ]H[\Hİ\ˆ[ˆ\ØYÙH[:\šY]\ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMM
+B›\ÙÚY‘ØZ[HHÙ]\ˆ[™›È‚›\ÙÜİˆ‘ØZ[HHÛ›™\ˆ›ÜÈ[™›Ü›X][ÛœÈ\œÛÛ›™[\È‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMMM›\ÙÚY‘\™XİÜH[™›È‚›\ÙÜİˆ’[™›Ü›X][ÛˆH	Ø[›XZ\™H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMMÍ‚›\ÙÚY[İÈÙXˆÙX\˜Ú\ÈÈš[™[İ\ˆ[™›È‚›\ÙÜİˆ]]Üš\Ù\ˆ\È™XÚ\˜Ú\Èİ\ˆHÙXˆ8›İ]™\ˆ›ÜÈ[™›Ü›X][ÛœÈ‚‚ˆËˆ[™HBˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMMÎHÜ˜ËÙX[ÙÜË˜ÎŒŒ
+›\ÙÚY‘š\œİ˜[YH‚›\ÙÜİˆ”º[›ÛH‚‚ˆËˆ[™H‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMNLÜ˜ËÙX[ÙÜË˜ÎŒŒM‚›\ÙÚY“ZYH˜[YH‚›\ÙÜİˆ‘]^zYHº[›ÛH‚‚ˆËˆ[™HÂˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMŒˆÜ˜ËÙX[ÙÜË˜ÎŒŒÌ›\ÙÚY“\İ˜[YH‚›\ÙÜİˆ“›ÛH‚‚ˆËˆ[™H
+ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMŒLÈÜ˜ËÙX[ÙÜË˜ÎŒŒÌŒ›\ÙÚY“XZY[ˆ˜[YH‚›\ÙÜİˆ“›ÛHH™][™KYš[H‚‚ˆËˆ[™H
+‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMŒÍHÜ˜ËÙX[ÙÜË˜ÎŒŒÍÂ›\ÙÚY”İ]H‚›\ÙÜİˆ‘]]‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMÌ›\ÙÚY“™]È\ÜİÛÜ™ÈÈ›İX]Ú‚›\ÙÜİˆ“\È›İ]™X]^\ÜİÛÜ™Y™º™[‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMÌÜ˜ËÙX[ÙÜË˜ÎŒMÌ
+B›\ÙÚY‘ØZ[HHÚ[™ÙH\ÜİÛÜ™\œ›Üˆ‚›\ÙÜİˆ‘ØZ[HH\œ™]\ˆ]HÚ[™Ù[Y[H[İH\ÜÙH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMÌ
+B›\ÙÚY‘š[İ][šY[ÈÛÛ\][H‚›\ÙÜİˆ”™[\\ÜÙ^ˆİ\È\ÈÚ[\È‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMÍŒ›\ÙÚY“ÜšYÚ[˜[\ÜİÛÜ™‚›\ÙÜİˆ“[İH\ÜÙHÛİ\˜[‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMÍÍ›\ÙÚY“™]È\ÜİÛÜ™‚›\ÙÜİˆ“›İ]™X]H[İH\ÜÙH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMÎ›\ÙÚY“™]È\ÜİÛÜ™
+YØZ[ŠH‚›\ÙÜİˆ“›İ]™X]H[İH\ÜÙH
+ÛÛ™š\›X][ÛŠH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒNB›\ÙÚY‘ØZ[HHÙ]\Ù\ˆ[™›È‚›\ÙÜİˆ‘ØZ[HH™YÛ\ˆ\È[™›Ü›X][ÛœÈH	İ][\Ø]]\ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒNMB›\ÙÚY™[İÈ\™HH™\İ[ÈÙˆ[İ\ˆÙX\˜Úˆ‚›\ÙÜİˆ•›ÚXÚH\Èº\İ[]ÈH›İ™H™XÚ\˜ÚNˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒŒ
+ÍÜ˜ËÙX[ÙÜË˜ÎŒŒB›\ÙÚY”\›Z]‚›\ÙÜİˆ]]Üš\Ù\ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒŒ
+ÍˆÜ˜ËÙX[ÙÜË˜ÎŒŒÂ›\ÙÚY‘[H‚›\ÙÜİˆ”™Y\Ù\ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒŒLŒ›\ÙÚY‘ØZ[HHY\›Z]‚›\ÙÜİˆ‘ØZ[HHZ›İ]\ˆ]]Üš\Ø][Ûˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒŒLŒ‚›\ÙÚY‘ØZ[HHY[H‚›\ÙÜİˆ‘ØZ[HHZ›İ]\ˆ™Y\È‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒŒN‚›\ÙÚY‘ØZ[HHÙÈÛÛ™\œØ][Ûˆ‚›\ÙÜİˆ‘ØZ[HH[œ™YÚ\İ™\ˆHÛÛ™\œØ][Ûˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒŒŒÜ˜ËÙX[ÙÜË˜ÎŒŒÂ›\ÙÚY”ÙX\˜Ú›ÜˆYH‚›\ÙÜİˆ”™XÚ\˜Ú\ˆ[ˆÛÛXİ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒŒÎ›\ÙÚY‘ØZ[HHš[™YHH[™›È‚›\ÙÜİˆ‘ØZ[HH›İ]™\ˆ[ˆÛÛXİ	Ø\ºÈÙ\È[™›ÜËˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMÂ›\ÙÚY‘ØZ[HHš[™YHH[XZ[‚›\ÙÜİˆ‘ØZ[HH›İ]™\ˆ[ˆÛÛXİ	Ø\ºÈÛÛˆ[XZ[‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒMMÂ›\ÙÚY‘ØZ[HHYT“‚›\ÙÜİˆ‘ØZ[HHZ›İ]\ˆ[™HY™\ÜÙH[\›™]‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌÜ˜ËÙX[ÙÜË˜ÎŒÌHÜ˜ËÙX[ÙÜË˜ÎŒÎÂ›\ÙÚY”Ù[Xİ^ÛÛÜˆ‚›\ÙÜİˆ”Ù[Xİ[Û›™\ˆHÛİ[]\ˆH^H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍŒ‚›\ÙÚY”Ù[Xİ˜XÚÙÜ›İ[™ÛÛÜˆ‚›\ÙÜİˆ”Ù[Xİ[Û›™\ˆHÛİ[]\ˆH›Û™‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒN
+›\ÙÚY’[\ÜÎˆ‚›\ÙÜİˆ’[\Ü\ˆ[œÎˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌ›\ÙÚY‘ØZ[HH[\ÜYH\İ‚›\ÙÜİˆ‘ØZ[HH[\Ü\ˆH\İHHÛÛXİ‚‚ˆËˆÙHÚİ[‰İ[İÈH›[šÈ]BˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌ
+ÍB›\ÙÚY–[İHØ[››İÜ™X]H[ˆ]Ø^HY\ÜØYÙHÚ]H›[šÈ]H‚›\ÙÜİˆ•›İ\È™Hİ]™^ˆÜºY\ˆ[ˆY\ÜØYÙH	ØXœÙ[˜ÙH]™XÈ[ˆ]™HšYH‚‚ˆËˆÙHÚİ[‰İ[İÈH›[šÈY\ÜØYÙBˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌ‚›\ÙÚY–[İHØ[››İÜ™X]H[ˆ[\H]Ø^HY\ÜØYÙH‚›\ÙÜİˆ•›İ\È™Hİ]™^ˆÜºY\ˆ[ˆY\ÜØYÙH	ØXœÙ[˜ÙHšYH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌML›\ÙÚY‘ØZ[HH™]È]Ø^HY\ÜØYÙH‚›\ÙÜİˆ‘ØZ[HH›İ]™X]HY\ÜØYÙH	ØXœÙ[˜ÙH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌMŒ›\ÙÚY“™]È]Ø^HY\ÜØYÙH‚›\ÙÜİˆ“›İ]™X]HY\ÜØYÙH	ØXœÙ[˜ÙH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌMÌÂ›\ÙÚY]Ø^H]Nˆ‚›\ÙÜİˆ•]™HHY\ÜØYÙH	ØXœÙ[˜ÙNˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌŒL‚›\ÙÚY•\ÙH‚›\ÙÜİˆ•][\Ù\ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÌŒM‚›\ÙÚY”Ø]™H	ˆ\ÙH‚›\ÙÜİˆ”Ø]]™YØ\™\ˆ]][\Ù\ˆ‚‚ˆËˆÚİÈ]™\][™ÂˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍLÂ›\ÙÚY”ÛZ[HH‚›\ÙÜİˆ”Ûİ\šY^ˆH‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍ
+‚›\ÙÚY[X\ÈYH‚›\ÙÜİˆœİ\››Û[Y\ˆ[ˆÛÛXİ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍNB›\ÙÚY‘ØZ[HH[X\ÈYH‚›\ÙÜİˆ‘ØZ[HHİ\››Û[Y\ˆ[ˆÛÛXİ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍMÌB›\ÙÚY‘ØZ[HHØ]™HÙÈš[H‚›\ÙÜİˆ‘ØZ[HHØ]]™\ˆ\ÈšXÚY\œÈHÙÈ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍŒÂˆËËY›Ü›X]›\ÙÚY•[˜X›HÈ™[[İ™Hš[H	\ÈH	\È‚›\ÙÜİˆ’[\ÜÜÚX›HHİ\š[Y\ˆHšXÚY\ˆ	\ÈH	\È‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍŒÌB›\ÙÚY”™X[HÛX\ˆÙÏÈ‚›\ÙÜİˆ‘Y™˜XÙ\ˆ\ÈÙÜÏÈ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÍ
+‚›\ÙÚY“ÚØ^H‚›\ÙÜİˆ“ÚÈ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÎMÂ›\ÙÚY‘]H‚›\ÙÜİˆ‘]H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÎ›\ÙÚYÛÛ™\œØ][Ûˆ‚›\ÙÜİˆÛÛ™\œØ][Ûˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÎLÂ›\ÙÚYÛX\ˆ‚›\ÙÜİˆ‘Y™˜XÙ\ˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÎNB›\ÙÚY‘ØZ[HH™[˜[YHÜ›İ\‚›\ÙÜİˆ‘ØZ[HH™[›Û[Y\ˆÜ›İ\H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÎNLB›\ÙÚY”™[˜[YHÜ›İ\‚›\ÙÜİˆ”™[›Û[Y\ˆ[ˆÜ›İ\H‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎŒÎNNÜ˜ËÙX[ÙÜË˜ÎL
+›\ÙÚY“™]È˜[YNˆ‚›\ÙÜİˆ“›İ]™X]H›ÛNˆ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜Î
+Â›\ÙÚY‘ØZ[HH™[˜[YHYH‚›\ÙÜİˆ‘ØZ[HH™[›Û[Y\ˆ[ˆÛÛXİ‚‚ˆÎˆÜ˜ËÙX[ÙÜË˜ÎMÂ›\ÙÚY”™[˜[YHYH‚›\ÙÜİˆ”™[›Û[Y\ˆ[ˆÛÛXİ‚‚ˆËˆ™[İÈ\È˜\ÚXØ[HİÛ[ˆœ›ÛHYÚ[œË˜ÂˆÎˆÜ˜ËÙX[ÙÜË˜ÎNB›\ÙÚY‘ØZ[HHÙ[Xİ\›ØÜš\‚›\ÙÜİˆ‘ØZ[HHÙ[Xİ[Û›™^ˆ[ˆØÜš\\›‚‚ˆÎˆÜ˜ËÙØZ[\˜Ë˜ÎŒLLÍ‚ˆËËY›Ü›X]›\ÙÚYÛİ[›İÜ[ˆÛÛ™šYÈš[H	\Ëˆ‚›\ÙÜİˆ“™H]^İ]œš\ˆHšXÚY\ˆHÛÛ™šYİ\˜][Ûˆ	\Ëˆ‚‚ˆÎˆÜ˜ËÙØZ[\˜Ë˜ÎŒLLÍÂ›\ÙÚY”™Y™\™[˜Ù\È\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆHºYº\™[˜Ù\È‚‚ˆÎˆÜ˜ËÚ[˜ÎŒNÂˆË^KËY›Ü›X]›\ÙÚY”™XÙZ]™Yˆ	É\É×ˆ‚›\ÙÜİˆ”™yİNˆ	É\É×ˆ‚‚ˆÎˆÜ˜ËÚ[˜ÎŒŒŒB›\ÙÚY™ÌÎˆ\œ›ÜˆÜ[š[™ÈÛÛ›™Xİ[Û‹—ˆ‚›\ÙÜİˆ™ÌÎˆ\œ™]\ˆ8	Ûİ]™\\™HHHÛÛ›™Xİ[Û‹—ˆ‚‚ˆÎˆÜ˜ËÛ[Ù[K˜ÎŒL
+ˆÜ˜ËÛ[Ù[K˜ÎŒLLˆÜ˜ËÛ[Ù[K˜ÎŒLŒ‚ˆË^B›\ÙÚY”YÚ[ˆ\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆHÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËÛ][K˜Î
+M›\ÙÚY‘ØZ[HHØYYHXÛÛˆ‚›\ÙÜİˆ‘ØZ[HHÚ\™Ù\ˆ[™HXÛÛ™H‚‚ˆÎˆÜ˜ËÛ][K˜ÎMÂ›\ÙÚYYHXÛÛˆš[Nˆ‚›\ÙÜİˆ’XÛÛ™HHÛÛXİ‚‚ˆÎˆÜ˜ËÛ][K˜ÎL›\ÙÚYœ›İÜÙH‚›\ÙÜİˆ“˜]šYİYH‚‚ˆÎˆÜ˜ËÛ][K˜ÎLLÈÜ˜ËÜ™YœË˜ÎŒMM›\ÙÚY”™\Ù]‚›\ÙÜİˆ”™[Z\ÙH8º\›È‚‚ˆÎˆÜ˜ËÛ][K˜ÎM›\ÙÚY”ØÜ™Y[›˜[YNˆ‚›\ÙÜİˆ”Ù]YÛ[YNˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎMNBˆË^B›\ÙÚY[X\Îˆ‚›\ÙÜİˆ[X\È‚‚ˆÎˆÜ˜ËÛ][K˜ÎMB›\ÙÚY”›İØÛÛˆ‚›\ÙÜİˆ”›İØÛÛNˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎMÍ›\ÙÚY”™[Y[X™\ˆ\ÜİÛÜ™‚›\ÙÜİˆ“z[[Üš\Ù\ˆH[İH\ÜÙH‚‚ˆÎˆÜ˜ËÛ][K˜ÎMÍB›\ÙÚY]]ËSÙÚ[ˆ‚›\ÙÜİˆÛÛ›™Xİ[Ûˆ]]ÛX]\]YH‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒM‚›\ÙÚY“™]ÈXZ[›İYšXØ][ÛœÈ‚›\ÙÜİˆ“›İ]™[H›İYšXØ][ÛˆHÛİ\œšY\ˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎÌ
+‚›\ÙÚY”™YÚ\İ\ˆÚ]Ù\™\ˆ‚›\ÙÜİˆ”ÉÙ[œ™YÚ\İ™\ˆİ\ˆHÙ\™]\ˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎÍ›\ÙÚY‘ØZ[HH[ÙYHXØÛİ[‚›\ÙÜİˆ‘ØZ[HH[ÙYšY\ˆHÛÛ\H‚‚ˆÎˆÜ˜ËÛ][K˜ÎÂ›\ÙÚY‘[\ˆ\ÜİÛÜ™‚›\ÙÜİˆ‘[™\ˆH[İH\ÜÙH‚‚ˆÎˆÜ˜ËÛ][K˜ÎM
+Â›\ÙÚYˆ‚ˆ–[İHØ[››İÙÈ\ÈXØÛİ[[È[İHÈ›İ]™HH›İØÛÛ]\Ù\ÈØYY‚ˆ›ÜˆH›İØÛÛÙ\È›İ]™HHÙÚ[ˆ[˜İ[Û‹ˆ‚›\ÙÜİˆˆ‚ˆ•›İ\È™Hİ]™^ˆ›İ\ÈÛÛ›™Xİ\È›İ\È‰Ø]™^ˆ\ÈÚ\™úHH›İØÛÛH[\ŞzK‚ˆ›İHH›İØÛÛH‰ØH\ÈH›Û˜İ[Ûˆ\›Y][HÛÛ›™Xİ[Û‹ˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎMB›\ÙÚY“ÙÚ[ˆ\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆHÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎMÎˆËËY›Ü›X]›\ÙÚY\™H[İHİ\™H[İHØ[È[]H	\ÏÈ‚›\ÙÜİˆ‘]\È›İ\Èİ\ˆH›İ[Ú\ˆY™˜XÙ\ˆ	\ÏÈ‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒLMB›\ÙÚY‘ØZ[HHXØÛİ[Y]Üˆ‚›\ÙÜİˆ‘ØZ[HH\İH\ÈÛÛ\\È‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒLÍ›\ÙÚY”Ù[Xİ[‚›\ÙÜİˆ”Ù[Xİ[Û›™\ˆİ\È‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒLÎB›\ÙÚY”Ù[Xİ]]ÜÈ‚›\ÙÜİˆ”ÙXİ[Û›™\ˆ\ÈÛÛ›™Xİ[ÛœÈ]]ÛX]\]Y\È‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒL
+Â›\ÙÚY”Ù[Xİ›Û™H‚›\ÙÜİˆ”ÙXİ[Û›™\ˆ]Xİ[ˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒL
+MÂ›\ÙÚY“[ÙYH‚›\ÙÜİˆ“[ÙYšY\ˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒL
+ŒB›\ÙÚY”ÚYÛˆÛ‹ÓÙ™ˆ‚›\ÙÜİˆÛÛ›™Xİ[Û‹Ñ:XÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒL
+B›\ÙÚY‘[]H‚›\ÙÜİˆ‘Y™˜XÙ\ˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒLÎˆËËY›Ü›X]›\ÙÚYˆ‚ˆ‰\×ˆ‚ˆ‰\Îˆ	\È‚›\ÙÜİˆˆ‚ˆ‰\×ˆ‚ˆ‰\Îˆ	\È‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒLÎNBˆËËY›Ü›X]›\ÙÚY‰\ÈØ\È[˜X›HÈÚYÛˆÛˆ‚›\ÙÜİˆ‰\È‰ØH\ÈHÙHÛÛ›™Xİ\ˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒML›\ÙÚY“›İXÙH‚›\ÙÜİˆ“›İYšXØ][Ûˆ‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒMŒˆËËY›Ü›X]›\ÙÚY‰\È\È™Y[ˆÚYÛ™YÙ™ˆ‚›\ÙÜİˆ‰\ÈH:]:H:XÛÛ›™Xİ:H‚‚ˆÎˆÜ˜ËÛ][K˜ÎŒMŒB›\ÙÚYÛÛ›™Xİ[Ûˆ\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆHÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËÜ\›˜Î
+ÍB›\ÙÚY”\›ØÜš\È‚›\ÙÜİˆ”ØÜš\È\›‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒLLÂ›\ÙÚY‘ØZ[HHYÚ[ˆ\İ‚›\ÙÜİˆ‘ØZ[HH\İH\ÈYÚ[œÈ‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒMÎ›\ÙÚY‘ØZ[HHYÚ[œÈ‚›\ÙÜİˆ‘ØZ[HHYÚ[œÈ‚‚ˆËˆYÚYNˆœ˜[YHÚ]\İÙˆYÚ[ˆš[H˜[Y\ÂˆÎˆÜ˜ËÜYÚ[œË˜ÎŒNL‚›\ÙÚY“ØYYYÚ[œÈ‚›\ÙÜİˆ”YÚ[œÈÚ\™ú\È‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒŒÎ›\ÙÚY‘š[\]ˆ‚›\ÙÜİˆÚ[Z[ˆHšXÚY\ˆ‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒM‚›\ÙÚY“ØY‚›\ÙÜİˆÚ\™Ù\ˆ‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒNB›\ÙÚY“ØYHYÚ[ˆœ›ÛHHš[H‚›\ÙÜİˆÚ\™Ù\ˆ[ˆYÚ[ˆ8\\ˆHšXÚY\ˆ‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒŒB›\ÙÚYÛÛ™šYİ\™H‚›\ÙÜİˆÛÛ™šYİ\™\ˆ‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒ›\ÙÚYÛÛ™šYİ\™HÙ][™ÜÈÙˆHÙ[XİYYÚ[ˆ‚›\ÙÜİˆÛÛ™šYİ\™H\ÈÜ[ÛœÈHYÚ[ˆú[Xİ[Û›ºH‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒ‚›\ÙÚY”™[ØY‚›\ÙÜİˆ”™XÚ\™Ù\ˆ‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒÌ›\ÙÚY”™[ØYHÙ[XİYYÚ[ˆ‚›\ÙÜİˆ”™XÚ\™Ù\ˆHYÚ[ˆú[Xİ[Û›ºH‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒÌ‚›\ÙÚY•[›ØY‚›\ÙÜİˆ‘:XÚ\™Ù\ˆ‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒÍB›\ÙÚY•[›ØYHÙ[XİYYÚ[ˆ‚›\ÙÜİˆ‘:XÚ\™Ù\ˆHYÚ[ˆú[Xİ[Û›ºH‚‚ˆÎˆÜ˜ËÜYÚ[œË˜ÎŒ›\ÙÚYÛÜÙH\ÈÚ[™İÈ‚›\ÙÜİˆ‘™\›Y\ˆÙ]H™[º™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒNL‚›\ÙÚY‘Ù[™\˜[Ü[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈú[º\˜[\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÜ˜ËÜ™YœË˜ÎŒÎ
+Ü˜ËÜ™YœË˜ÎMLˆÜ˜ËÜ™YœË˜ÎÂˆÎˆÜ˜ËÜ™YœË˜ÎLŒHÜ˜ËÜ™YœË˜ÎŒL
+ÌHÜ˜ËÜ™YœË˜ÎŒLMˆÜ˜ËÜ™YœË˜ÎŒMŒBˆÎˆÜ˜ËÜ™YœË˜ÎŒNLHÜ˜ËÜ™YœË˜ÎŒŒÌÍ›\ÙÚY[Ü[ÛœÈZÙHY™™Xİ[[YYX][H[›\ÜÈİ\Ú\ÙH›İYˆ‚›\ÙÜİˆˆ‚ˆ•İ]\È\ÈÜ[ÛœÈÛÛš\Ù\È[ˆÛÛ\H[[zYX][Y[Ø]YˆºXÚ\Ú[ÛˆHØ\È‚ˆ˜ÛÛ˜Z\™Kˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒL‚›\ÙÚY“Z\ØÙ[[™[İ\È‚›\ÙÜİˆ]]™\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒŒ›\ÙÚY•\ÙH›Ü™\›\ÜÈ]ÛœÈ‚›\ÙÜİˆ•][\Ù\ˆ\È›İ]ÛœÈØ[œÈ›Ü™\™\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒ›\ÙÚY”ÚİÈYHXÚÙ\ˆ‚›\ÙÜİˆY™šXÚ\ˆH˜\œ™HHÛÛXİ
+XÚÙ\ŠH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒB›\ÙÚY”ÚİÈXYÈÚ[™İÈ‚›\ÙÜİˆY™šXÚ\ˆH™[™]™HHXYÈ‚‚ˆËˆ™Y™\™[˜Ù\ÈÚİ[™HÜÚ]]™BˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÌÂ›\ÙÚY“›İYHYY\È][İH\™H\[™ÈÈ[H‚›\ÙÜİˆ“›İYšY\ˆ\ÈÛÛXİÈ]YH›İ\È:\È[ˆ˜Z[ˆH]\ˆ:XÜš\™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒ›\ÙÚY”™\ÜYH[Y\È‚›\ÙÜİˆY™šXÚ\ˆ\È\ºY\È	Ú[˜Xİ]š]:H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒ›\ÙÚY“›Û™H‚›\ÙÜİˆ]Xİ[™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒB›\ÙÚY‘ØZ[H\ÙH‚›\ÙÜİˆ•][\Ø][ÛˆHØZ[H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLB›\ÙÚY–\ÙH‚›\ÙÜİˆ•][\Ø][ÛˆH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒ‚›\ÙÚY“ÙÈ[ÛÛ™\œØ][ÛœÈ‚›\ÙÜİˆ‘[œ™YÚ\İ™\ˆİ]\È\ÈÛÛ™\œØ][ÛœÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÂ›\ÙÚY”İš\Sœ›ÛHÙÜÈ‚›\ÙÜİˆ‘[›]™\ˆ	ÒS\È›İ\›˜]^‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒB›\ÙÚY“ÙÈÚ[ˆYY\ÈÚYÛˆÛ‹ÜÚYÛˆÙ™ˆ‚›\ÙÜİˆ‘[œ™YÚ\İ™\ˆ\ÈÛÛ›™Xİ[ÛœËÙ:XÛÛ›™Xİ[Ûˆ\ÈÛÛXİÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÌB›\ÙÚY“ÙÈÚ[ˆYY\È™XÛÛYHYKİ[‹ZYH‚›\ÙÜİˆ‘[œ™YÚ\İ™\ˆÜœÜ]YH\ÈÛÛXİÈ]šY[›™[XİY‹Ú[˜XİYˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÌÂ›\ÙÚY“ÙÈÚ[ˆYY\ÈÛÈ]Ø^KØÛÛYH˜XÚÈ‚›\ÙÜİˆ‘[œ™YÚ\İ™\ˆÜœÜ]YH\ÈÛÛXİÈÛÛXœÙ[ÙH™]İ\ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÍ›\ÙÚY“ÙÈ[İ\ˆİÛˆÚYÛ›ÛœËÚY[™\ÜËØ]Ø^[™\ÜÈ‚›\ÙÜİˆ‘[œ™YÚ\İ™\ˆ›ÜÈ›Ü™\ÈÛÛ›™Xİ[ÛœË[˜Xİ]š]:\ËXœÙ[˜Ù\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÍ‚›\ÙÚY’[™]šYX[ÙÈš[H›ÜˆXXÚYIÜÈÚYÛ›ÛœÈ‚›\ÙÜİˆ’›İ\›˜[[™]šYY[İ\ˆÚ\]YHÛÛXİ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÎB›\ÙÚYœ›İÜÙ\ˆ‚›\ÙÜİˆ“˜]šYØ]]\ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLB›\ÙÚY’ÛÛœ]Y\›Üˆ‚›\ÙÜİˆ’ÛÛœ]Y\›Üˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒL‚›\ÙÚY“Ü\˜H‚›\ÙÜİˆ“Ü\˜H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLÂ›\ÙÚY“™]ØØ\H‚›\ÙÜİˆ“™]ØØ\H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒM›\ÙÚY“[Şš[H‚›\ÙÜİˆ“[Şš[H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMÂ›\ÙÚY”Ü\™]ÈÚ[™İÈHY˜][‚›\ÙÜİˆY™šXÚ\ˆ[™H›İ]™[H™[º™H\ˆ:Y˜]]‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÌ
+›\ÙÚY‘Ó“ÓQHT“[™\ˆ‚›\ÙÜİˆ”›ÙÜ˜[[YHHÙ\İ[Ûˆ	ØY™\ÜÙ\ÈÛ›ÛYH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÌ
+‚›\ÙÚY‘Ø[[Ûˆ‚›\ÙÜİˆ‘Ø[[Ûˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÌ
+ÂˆËËY›Ü›X]›\ÙÚY“X[X[
+	\È›ÜˆT“
+H‚›\ÙÜİˆ“X[Y[
+	\Èİ\ˆT“
+H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÍÍ‚›\ÙÚY”›ŞHÜ[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈH›ŞH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÎ›\ÙÚYˆ‚ˆ“›İ[›İØÛÛÈØ[ˆ\ÙH\ÙH›ŞHÜ[ÛœËˆX\ÙHÙYHH‘PQQHš[H‚ˆ™›Üˆ]Z[Ëˆ‚›\ÙÜİˆˆ‚ˆ“\È›İØÛÛ\È™H]]™[\Èİ\È][\Ù\ˆ\ÈÜ[ÛœÈH›ŞKˆ™]Z[^ˆ‚ˆ›\™HHšXÚY\ˆ‘PQQ\İ\ˆ\È	Ú[™›Ü›X][ÛœËˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÎLÂ›\ÙÚY”›ŞH\H‚›\ÙÜİˆ•\HH›ŞH‚‚ˆÎˆÜ˜ËÜ™YœË˜Î
+B›\ÙÚY”›ŞHÙ\™\ˆ‚›\ÙÜİˆ”Ù\™]\ˆH›ŞH‚‚ˆÎˆÜ˜ËÜ™YœË˜Î›\ÙÚY“›È›ŞH‚›\ÙÜİˆœ\ÈH›ŞH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒ›\ÙÚY”ÓĞÒÔÈ
+‚›\ÙÜİˆ”ÓĞÒÔÈ
+‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌ›\ÙÚY”ÓĞÒÔÈ
+H‚›\ÙÜİˆ”ÓĞÒÔÈ
+H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÎB›\ÙÚY’‚›\ÙÜİˆ’‚‚ˆÎˆÜ˜ËÜ™YœË˜Î
+ŒÂ›\ÙÚY’Üİ‚›\ÙÜİˆ’=H‚‚ˆÎˆÜ˜ËÜ™YœË˜Î
+ÎB›\ÙÚY”Ü‚›\ÙÜİˆ”Ü‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎM‚›\ÙÚY•\Ù\ˆ‚›\ÙÜİˆ•][\Ø]]\ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎLL‚›\ÙÚY”\ÜİÛÜ™‚›\ÙÜİˆ“[İH\ÜÙH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎM
+›\ÙÚYYH\İÜ[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈHH\İHHÛÛXİÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMM‚›\ÙÚYYH\İÚ[™İÈ‚›\ÙÜİˆ‘™[º™HHH\İHHÛÛXİÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMB›\ÙÚY•XˆXÙ[Y[ˆ‚›\ÙÜİˆ”XÙ[Y[\ÈÛ™Û]È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMÌÈÜ˜ËÜ™YœË˜ÎŒL
+Ü˜ËÜ™YœË˜ÎŒLMM›\ÙÚY•Ü‚›\ÙÜİˆ’]]‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMÍÜ˜ËÜ™YœË˜ÎŒL
+ˆÜ˜ËÜ™YœË˜ÎŒLMM‚›\ÙÚY›İÛH‚›\ÙÜİˆ˜\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎN
+‚›\ÙÚY’YHSKÒ[™›ËĞÚ]]ÛœÈ‚›\ÙÜİˆØXÚ\ˆY\ÜØYÙKÒ[™›ÜËĞ›İ]ÛœÈHÚ]‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎN›\ÙÚY]]ÛX]XØ[HÚİÈYH\İÛˆÚYÛˆÛˆ‚›\ÙÜİˆY™šXÚ\ˆH\İH\ÈÛÛXİ]]ÛX]\]Y[Y[‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎNL›\ÙÚY‘\Ü^HYH\İ™X\ˆ\]‚›\ÙÜİˆ”ÜÚ][Û›™\ˆH\İH\ÈÛÛXİºÈH	Ø\]‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎNLÂ›\ÙÚY”Ø]™HÚ[™İÈÚ^™KÔÜÚ][Ûˆ‚›\ÙÜİˆ“z[[Üš\Ù\ˆHZ[KÔÜÚ][Ûˆ\È™[º™\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎNM‚›\ÙÚY”ÚİÈXİ\™\ÈÛˆ]ÛœÈ‚›\ÙÜİˆY™šXÚ\ˆ\È[XYÙ\Èİ\ˆ\È›İ]ÛœÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒ›\ÙÚY”˜Z\ÙHYH\İÛˆÚYÛ›ÛœÈ[™ÚYÛ›Ù™œÈ‚›\ÙÜİˆ“\İH\ÈÛÜZ[œÈ]ZHÙHÛÛ›™Xİ[İHÙH:XÛÛ›™Xİ[‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒ‚›\ÙÚY‘Ü›İ\\Ü^\È‚›\ÙÜİˆY™šXÚYÙH\ÈÜ›İ\\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒM›\ÙÚY’YHÜ›İ\ÈÚ]›ÈÛ›[™HYY\È‚›\ÙÜİˆØXÚ\ˆ\ÈÜ›İ\\È™HÛÛ[˜[]Xİ[ˆÛÛXİÛÛ›™Xİ:H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒ›\ÙÚY”ÚİÈ[X™\œÈ[ˆÜ›İ\È‚›\ÙÜİˆY™šXÚ\ˆH›ÛXœ™HHÛÛXİÈ[œÈ\ÈÜ›İ\\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒ‚›\ÙÚYYH\Ü^\È‚›\ÙÜİˆ“\İHHÛÛXİÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÍ›\ÙÚY”ÚİÈYH\HXÛÛœÈ‚›\ÙÜİˆ˜Y™šXÚ\ˆ\ÈXÛÛ™\È\ÈÛÛXİÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒÍB›\ÙÚY”ÚİÈØ\›š[™È]™[È‚›\ÙÜİˆY™šXÚ\ˆHš]™X]H	Ğ]™\\ÜÙ[Y[‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎB›\ÙÚY”ÚİÈYH[Y\È‚›\ÙÜİˆY™šXÚ\ˆ\È[\È	Ú[˜Xİ]š]:H‚‚ˆÎˆÜ˜ËÜ™YœË˜Î‚›\ÙÚY‘Ü™^HYHYY\È‚›\ÙÜİˆ‘Üš\Ù\ˆ\ÈÛÛXİÈ[˜XİYœÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎNB›\ÙÚYÛÛ™\œØ][ÛˆÜ[ÛœÈ‚›\ÙÜİˆ“Ü[ÛˆHÛÛ™\œØ][Ûˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌB›\ÙÚY’Ù^X›Ø\™Ü[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈHÛ]šY\ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÂ›\ÙÚY‘[\ˆÙ[™ÈY\ÜØYÙH‚›\ÙÜİˆ“HİXÚH[™\ˆ[›ÚYH\ÈY\ÜØYÙ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜Î
+›\ÙÚYÛÛ›ÛQ[\ˆÙ[™ÈY\ÜØYÙH‚›\ÙÜİˆİ›Q[ºYH[›ÚYH\ÈY\ÜØYÙ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜Î
+B›\ÙÚY‘\ØØ\HÛÜÙ\ÈÚ[™İÈ‚›\ÙÜİˆ‘XÚ\™\›YHH™[º™H‚‚ˆÎˆÜ˜ËÜ™YœË˜Î
+‚ˆË^B›\ÙÚYÛÛ›ÛUÈÛÜÙ\ÈÚ[™İÈ‚›\ÙÜİˆ‘XÚ\™\›YHH™[º™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎL‚›\ÙÚYÛÛ›Û^Ğ‹ÒKÕKÔßH[œÙ\ÈSYÜÈ‚›\ÙÜİˆİ›^Ğ‹ÒKÕKÔßH[œÙ\\È˜[\Ù\ÈS‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎLÂ›\ÙÚYÛÛ›ÛJ[X™\ŠH[œÙ\ÈÛZ[^\È‚›\ÙÜİˆİ›J›ÛXœ™JH[œÙ\[ˆÛZ[^H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎM›\ÙÚY‘ŒˆÙÙÛ\È[Y\İ[\\Ü^H‚›\ÙÜİˆ‘ŒˆY™šXÚKØØXÚH	ØY™šXÚYÙHH	Ú]\™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎM‚›\ÙÚY‘\Ü^H[™Ù[™\˜[Ü[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈú[º\˜[\È]	ØY™šXÚYÙH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌ›\ÙÚY”ÚİÈÜ˜\XØ[ÛZ[^\È‚›\ÙÜİˆY™šXÚ\ˆÜ˜\\]Y[Y[\ÈÛZ[^\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌB›\ÙÚY”ÚİÈ[Y\İ[\ÛˆY\ÜØYÙ\È‚›\ÙÜİˆY™šXÚ\ˆ	Ú]\™Hİ\ˆ\ÈY\ÜØYÙ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌL›\ÙÚY”ÚİÈT“È\È[šÜÈ‚›\ÙÜİˆ‘[›ŞY\ˆ\ÈT“ÛÛ[YH\ÈY[œÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌLB›\ÙÚY’YÚYÚZ\ÜÜ[YÛÜ™È‚›\ÙÜİˆ”İ\›YÛ™\ˆ\È[İÈX[ÜÙÜ˜\z\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌLˆÜ˜ËÜ™YœË˜ÎŒNLŒÂ›\ÙÚY”Ù[™[™ÈY\ÜØYÙ\È™[[İ™\È]Ø^Hİ]\È‚›\ÙÜİˆ“	Ù[›ÚHHY\ÜØYÙHÚ[™ÙHHİ]]	ØXœÙ[˜ÙH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌLÈÜ˜ËÜ™YœË˜ÎŒNLÍ‚›\ÙÚY”]Y]YH™]ÈY\ÜØYÙ\ÈÚ[ˆ]Ø^H‚›\ÙÜİˆ›Y\ÜØYÙ\ÈZ\È[ˆ][HÜœÈ	İ[™HXœÙ[˜ÙH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌNB›\ÙÚY’YÛ›Ü™HÛÛÜœÈ‚›\ÙÜİˆ’YÛ›Ü™\ˆ\ÈÛİ[]\œÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌŒ›\ÙÚY’YÛ›Ü™H›Û˜XÙ\È‚›\ÙÜİˆ’YÛ›Ü™\ˆ\ÈÛXÙ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌŒB›\ÙÚY’YÛ›Ü™H›ÛÚ^™\È‚›\ÙÜİˆ’YÛ›Ü™\ˆHZ[H\ÈÛXÙ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌŒ‚›\ÙÚY’YÛ›Ü™HRÈ]]ÛX]YY\ÜØYÙ\È‚›\ÙÜİˆ’YÛ›Ü™\ˆ\ÈY\ÜØYÙ\È]]ÛX]\]Y\ÈRÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎÌŒÈÜ˜ËÜ™YœË˜ÎŒNLŒB›\ÙÚY’YÛ›Ü™H™]ÈÛÛ™\œØ][ÛœÈÚ[ˆ]Ø^H‚›\ÙÜİˆ’YÛ›Ü™\ˆ\È›İ]™[\ÈÛÛ™\œØ][ÛœÈÜœÈ\ÈXœÙ[˜Ù\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎLL‚›\ÙÚY’SHÜ[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈHY\ÜØYÙH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎLHÜ˜ËÜ™YœË˜ÎŒLŒB›\ÙÚY’SHÚ[™İÈ‚›\ÙÜİˆ‘™[º™HHY\ÜØYÙH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMHÜ˜ËÜ™YœË˜ÎŒLLB›\ÙÚY”ÚİÈ]ÛœÈ\Îˆ‚›\ÙÜİˆY™šXÚ\ˆ\È›İ]ÛœÈÛİ\ÈH›Ü›YNˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎM
+HÜ˜ËÜ™YœË˜ÎŒLM‚›\ÙÚY”Xİ\™\È[™^‚›\ÙÜİˆ’[XYÙ\È]^\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎM
+ˆÜ˜ËÜ™YœË˜ÎŒLN›\ÙÚY”Xİ\™\È‚›\ÙÜİˆ’[XYÙ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎM
+ÈÜ˜ËÜ™YœË˜ÎŒLNB›\ÙÚY•^‚›\ÙÜİˆ•^H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMN›\ÙÚY”ÚİÈ[ÛÛ™\œØ][ÛœÈ[ˆÛ™HX˜™YÚ[™İÈ‚›\ÙÜİˆY™šXÚ\ˆİ]\È\ÈÛÛ™\œØ][ÛœÈ[œÈ[™H™[º™H]™XÈ\ÈÛ™Û]È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMŒ›\ÙÚY”ÚİÈÚ]È[ˆHØ[YHX˜™YÚ[™İÈ‚›\ÙÜİˆY™šXÚ\ˆ\ÈÚ]È[œÈHz›YH™[º™H]™XÈÛ™Û]È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMÈÜ˜ËÜ™YœË˜ÎŒLLNB›\ÙÚY”˜Z\ÙHÚ[™İÜÈÛˆ]™[È‚›\ÙÜİˆ“[Û™\ˆ\È™[º™\È™XÙ]˜[[ˆY\ÜØYÙH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎM›\ÙÚY”ÚİÈÙÚ[œÈ[ˆÚ[™İÈ‚›\ÙÜİˆY™šXÚ\ˆ\ÈÛÛ›™Xİ[ÛœÈ[œÈH™[º™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMBˆË^B›\ÙÚY”ÚİÈ[X\Ù\È[ˆXœËİ]\ËİXÚÙ\ˆ‚›\ÙÜİˆ“[Û™H\È[X\È[œÈ\ÈÛ™Û]Ëİ]™\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMÌ›\ÙÚY’YHÚ[™İÈÛˆÙ[™‚›\ÙÜİˆ˜ØXÚ\ˆH™[º™HÜœÈH	Ù[›ÚH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎMÌˆÜ˜ËÜ™YœË˜ÎŒLLŒ‚›\ÙÚY•Ú[™İÈÚ^™\È‚›\ÙÜİˆ•Z[\È\È™[º™\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎNÜ˜ËÜ™YœË˜ÎŒLLÌ›\ÙÚY“™]ÈÚ[™İÈÚYˆ‚›\ÙÜİˆ“\™Ù]\ˆHH›İ]™[H™[º™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎNHÜ˜ËÜ™YœË˜ÎŒLLÌB›\ÙÚY“™]ÈÚ[™İÈZYÚˆ‚›\ÙÜİˆ’]]]\ˆHH›İ]™[H™[º™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎNˆÜ˜ËÜ™YœË˜ÎŒLLÌ‚›\ÙÚY‘[HÚYÙ]ZYÚˆ‚›\ÙÜİˆ’]]]\ˆHH›Û™HH^H
+8[›ŞY\ŠH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎN
+Ü˜ËÜ™YœË˜ÎŒLLÍ›\ÙÚY•XˆXÙ[Y[‚›\ÙÜİˆ”XÙ[Y[\ÈÛ™Û]È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLLÈÜ˜ËÜ™YœË˜ÎŒLMŒÂ›\ÙÚY“Y‚›\ÙÜİˆ‘Ø]XÚH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLMHÜ˜ËÜ™YœË˜ÎŒLMB›\ÙÚY”šYÚ‚›\ÙÜİˆ‘›Ú]H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLNB›\ÙÚYYHXÛÛœÈ‚›\ÙÜİˆ’XÛÛ™\ÈHÛÛXİ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLÌB›\ÙÚY’YHYHXÛÛœÈ‚›\ÙÜİˆØXÚ\ˆ	ÒXÛÛ™HHÛÛXİ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLÍÂ›\ÙÚY‘\ØX›HYHXÛÛˆ[š[X][Ûˆ‚›\ÙÜİˆ‘:\ØXİ]™\ˆ	Ø[š[X][ÛˆH	ÚXÛÛ™HHÛÛXİ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒL
+ŒÂ›\ÙÚYÚ]Ü[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈHÚ]‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒL
+ÍB›\ÙÚY‘Ü›İ\Ú]Ú[™İÈ‚›\ÙÜİˆ‘™[º™HH\Øİ][Ûˆ[ˆÜ›İ\H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLLL›\ÙÚY”ÚİÈ[Ú]È[ˆÛ™HX˜™YÚ[™İÈ‚›\ÙÜİˆY™šXÚ\ˆİ\È\ÈÚ]È[œÈ[™H™[º™H]™XÈÛ™Û]È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLLL‚›\ÙÚY”ÚİÈÛÛ™\œØ][ÛœÈ[ˆHØ[YHX˜™YÚ[™İÈ‚›\ÙÜİˆY™šXÚ\ˆ\ÈÛÛ™\œØ][ÛœÈ[œÈHz›YH™[º™H]™XÈ\ÈÛ™Û]È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLLŒ›\ÙÚY”ÚİÈ[ÜH›Ú[š[™ËÛX]š[™È[ˆÚ[™İÈ‚›\ÙÜİˆY™šXÚ\ˆ\È\œš]ºYKÙ:\\[œÈH™[º™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLM›\ÙÚY•XˆÛÛ\][Ûˆ‚›\ÙÜİˆÛÛ\:][ÛˆH[İÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLN›\ÙÚY•X‹PÛÛ\]HšXÚÜÈ‚›\ÙÜİˆÛÛ\:][Ûˆ\ÈÙ]YÜÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLN
+‚›\ÙÚY“ÛTİ[HXˆÛÛ\][Ûˆ‚›\ÙÜİˆÛÛ\:][ÛˆH[İÈ
+[˜ÚY[ˆİ[JH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLÜ˜ËÜ™YœË˜ÎŒLÌB›\ÙÚY‘›ÛÜ[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈHÛXÙH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLÌM›\ÙÚY’][XÈ^‚›\ÙÜİˆ•^H[ˆ][\]YH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLÍNÜ˜ËÜ™YœË˜ÎŒLÍÍˆÜ˜ËÜ™YœË˜ÎŒLÎN›\ÙÚY”Ù[Xİ‚›\ÙÜİˆ”ÙXİ[Û›™\ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLÎM‚›\ÙÚY‘›Û˜XÙH›Üˆ^‚›\ÙÜİˆ”ÛXÙHİ\ˆH^H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMLB›\ÙÚY‘›ÛÚ^™H›Üˆ^‚›\ÙÜİˆ•Z[HHHÛXÙHİ\ˆH^H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒML›\ÙÚY‘ØZ[HHÛİ[™ÛÛ™šYİ\˜][Ûˆ‚›\ÙÜİˆ‘ØZ[HHÛÛ™šYİ\˜][ÛˆÛÛ›Ü™H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMMÂ›\ÙÚY•\İ‚›\ÙÜİˆ•\İ\ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMMLÂ›\ÙÚYÚÛÜÙK‹‹ˆ‚›\ÙÜİˆÚÚ\Ú\‹‹‹ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMŒŒB›\ÙÚY”Ûİ[™Ü[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈÛÛ›Ü™\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMB›\ÙÚY“›ÈÛİ[™ÈÚ[ˆ[İHÙÈ[ˆ‚›\ÙÜİˆ]Xİ[ˆÛÛˆÜœÈH›İ™HÛÛ›™Xİ[Ûˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMMHÜ˜ËÜ™YœË˜ÎŒNLŒ‚›\ÙÚY”Ûİ[™ÈÚ[H]Ø^H‚›\ÙÜİˆ’›İY\ˆ\ÈÛÛœÈz›YHÜœÜ]YH›İ\È:\ÈXœÙ[‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMB›\ÙÚY”Ûİ[™Y]Ù‚›\ÙÜİˆ“Y]ÙH][\úYH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMÌÎBˆËËY›Ü›X]›\ÙÚYˆ‚ˆ”Ûİ[™ÛÛ[X[™ˆ‚ˆŠ	\È›Üˆš[[˜[YJH‚›\ÙÜİˆˆ‚ˆÛÛ[X[™H8][\Ù\—ˆ‚ˆŠ	\Èİ\ˆH›ÛHHšXÚY\ŠH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMÍLB›\ÙÚY”Ûİ[™^YYÚ[ˆ‚›\ÙÜİˆ”ÛÛˆ›İzH]X[™ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒNLÈÜ˜ËÜ™YœË˜ÎŒMLÂ›\ÙÚY]Ø^HY\ÜØYÙ\È‚›\ÙÜİˆ“Y\ÜØYÙ\È	ØXœÙ[˜ÙH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒNLÌ›\ÙÚY‘Û‰İÙ[™]]Ë\™\ÜÛœÙH‚›\ÙÜİˆ“™H\È[›ŞY\ˆHº\ÛœÙH]]ÛX]\]YH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒNLÌB›\ÙÚY“Û›HÙ[™]]Ë\™\ÜÛœÙHÚ[ˆYH‚›\ÙÜİˆ™[›ŞY\ˆHº\ÛœÙH]]ÛX]\]YH[š\]Y[Y[ÜœÈH	Ú[˜Xİ]š]:H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒNM
+‚›\ÙÚY•[YH™]ÙY[ˆÙ[™[™È]]Ë\™\ÜÛœÙ\È
+[ˆÙXÛÛ™ÊNˆ‚›\ÙÜİˆ‘[ZH]˜[	Ù[›ŞY\ˆ\Èº\ÛœÙ\È]]ÛX]\]Y\È
+[ˆÙXÛÛ™\ÊH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒNMŒB›\ÙÚY]]È]Ø^HY\ˆ‚›\ÙÜİˆ”\ÜÙ\ˆ]]ÛX]\]Y[Y[[ˆ[ÙHXœÙ[\ºÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒNMÍB›\ÙÚY›Z[]\È\Ú[™È‚›\ÙÜİˆ›Z[]\È[ˆ][\Ø[‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒNN›\ÙÚY“Y\ÜØYÙ\È‚›\ÙÜİˆ“Y\ÜØYÙ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒ
+
+B›\ÙÚY‘Y]‚›\ÙÜİˆ‘Y]\ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒ
+B›\ÙÚY“XZÙH]Ø^H‚›\ÙÜİˆ‘]™HXœÙ[XZ[[˜[‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÌ‚›\ÙÚY”š]˜XŞHÜ[ÛœÈ‚›\ÙÜİˆ“Ü[ÛœÈ	Ò[[Z]:H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÍ‚›\ÙÚY”Ù]š]˜XŞH›Üˆ‚›\ÙÜİˆ“Y]™H[ˆXÙH[ˆš[™Hİ\ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÍŒB›\ÙÚY[İÈ[\Ù\œÈÈÛÛXİYH‚›\ÙÜİˆ”\›Y]™H8İ\È\È][\Ù]\œÈHYHÛÛXİ\ˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÍŒ‚›\ÙÚY[İÈÛ›HH\Ù\œÈ™[İÈ‚›\ÙÜİˆ”\›Y]™H]^][\Ù]\œÈÚH\ÜÛİ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÍ›\ÙÚY[İÈ\İ‚›\ÙÜİˆ“\İH\›Z\ÜÚ[Ûˆ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÎMB›\ÙÚY‘[H[\Ù\œÈ‚›\ÙÜİˆ’[\™\™H8İ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÎM‚›\ÙÚY›ØÚÈH\Ù\œÈ™[İÈ‚›\ÙÜİˆ›Ü]Y\ˆ\È][\Ø]]\œÈÚH\ÜÛİ\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒŒÎN›\ÙÚY›ØÚÈ\İ‚›\ÙÜİˆ›Ü]Y\ˆH\İH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLÂ›\ÙÚY‘ØZ[HH™Y™\™[˜Ù\È‚›\ÙÜİˆ‘ØZ[HHºYº\™[˜Ù\È‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒMÍ‚›\ÙÚY‘ØZ[HXYÈİ]]Ú[™İÈ‚›\ÙÜİˆ™™[º™HHXYÈØZ[H‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒ
+Â›\ÙÚY‘Ù[™\˜[‚›\ÙÜİˆ‘ú[™\˜[‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒL‚›\ÙÚY”›ŞH‚›\ÙÜİˆ”›ŞH‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒLM‚›\ÙÚYÛÛ™\œØ][ÛœÈ‚›\ÙÜİˆÛÛ™\œØ][ÛœÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒM‚›\ÙÚY”Ûİ[™È‚›\ÙÜİˆ”ÛÛœÈ‚‚ˆÎˆÜ˜ËÜ™YœË˜ÎŒM›\ÙÚY”š]˜XŞH‚›\ÙÜİˆ‘š[™H‚‚ˆÎˆÜ˜ËÜœ˜ÎÌ›\ÙÚYˆ‚ˆ–[İH]™H][\YÈØYH›İØÛÛÚXÚØ\È›İÛÛ\[Yœ›ÛHHØ[YH‚ˆ™\œÚ[ÛˆÙˆHÛİ\˜ÙH\È\È\XØ][ÛˆØ\Ëˆ[™›Ü[˜][K™XØ]\ÙH]\È‚ˆ››İHØ[YH™\œÚ[ÛˆHØ[››İØY™[H[[İHÚXÚÛ™H]Ø\Ëˆ™YY\ÜÈÈ‚ˆœØ^K]Ø\È›İİXØÙ\ÜÙ[HØYYˆ‚›\ÙÜİˆˆ‚ˆ•›İ\È]™^ˆ\ÜØ^zHHÚ\™Ù\ˆ[ˆ›İØÛÛH]ZH‰ØH\È:]:HÛÛ\[:H8\\ˆH‚ˆ›Hz›YH™\œÚ[Ûˆ\ÈÛİ\˜Ù\È]YHÙ]H\XØ][Û‹ˆX[]\™]\Ù[Y[8Ø]\ÙH‚ˆ™HÙ]HY™º\™[˜ÙH™H™H]^›İ\È\™H\]Y[HÉú]Z]ˆ]šY[Y[H‚ˆ˜Ú\™Ù[Y[H:XÚİzKˆ‚‚ˆÎˆÜ˜ËÜœ˜ÎÍ›\ÙÚY”›İØÛÛ\œ›Üˆ‚›\ÙÜİˆ‘\œ™]\ˆH›İØÛÛH‚‚ˆÎˆÜ˜ËÜœ˜ÎLÂˆËËY›Ü›X]›\ÙÚY‰\ÈØ\È\Ú[™È	\ËÚXÚÛİ™[[İ™Yˆ	\È\È›İÈÙ™›[™Kˆ‚›\ÙÜİˆ‰\È][\ØZ]	\Ë]ZHH:]:H[›]ºKˆ	\È\İXZ[[˜[ÜœÈYÛ™Kˆ‚‚ˆÎˆÜ˜ËÜœ˜ÎM‚›\ÙÚY‘\ØÛÛ›™Xİ‚›\ÙÜİˆ‘:XÛÛ›™Xİ\ˆ‚‚ˆÎˆÜ˜ËÜœ˜ÎŒLÌÂ›\ÙÚYXØÙ\È‚›\ÙÜİˆXØÙ\\È‚‚ˆÎˆÜ˜ËÜœ˜ÎŒNNBˆË^B›\ÙÚY‘ØZ[HH›Û\‚›\ÙÜİˆ‘ØZ[HH›Û\‚‚ˆÎˆÜ˜ËÜœ˜ÎNB›\ÙÚY‘ØZ[HH™]ÈXZ[‚›\ÙÜİˆ‘ØZ[HH›İ]™X]HÛİ\œšY\ˆ‚‚ˆÎˆÜ˜ËÜœ˜Î
+
+B›\ÙÚY“Ü[ˆXZ[‚›\ÙÜİˆ“İ]œš\ˆHÛİ\œšY\ˆ‚‚ˆÎˆÜ˜ËÜœ˜ÎMÌˆË^KËY›Ü›X]›\ÙÚY‰\É\É\É\È\ÈXYH	\È\ÈÜˆ\ˆYI\É\É\È‚›\ÙÜİˆ‰\É\É\É\ÈH˜Z]H	\È]\ˆÛÛXİ	\É\É\È‚‚ˆÎˆÜ˜ËÜœ˜ÎMÎˆË^B›\ÙÚYˆ‚ˆ—ˆ‚ˆ—ˆ‚ˆ‘È[İHÚ\ÚÈY[HÜˆ\ˆÈ[İ\ˆYH\İÈ‚›\ÙÜİˆˆ‚ˆ—ˆ‚ˆ—ˆ‚ˆ•›İ[^ˆ›İ\È\ÈZ›İ]\ˆH›İ™H\İHHÛÛXİÏÈ‚‚ˆÎˆÜ˜ËÜœ˜ÎŒŒB›\ÙÚYˆ‚ˆ–[İHÈ›İİ\œ™[H]™H[H›İØÛÛÈ]˜Z[X›H]\™HX›HÈ™YÚ\İ\ˆ‚ˆ›™]ÈXØÛİ[Ëˆ‚›\ÙÜİˆˆ‚ˆ•›İ\È‰Ø]™^ˆ\ÈH›İØÛÛH\ÜÛšX›H›İ\È\›Y][HÜºY\ˆH›İ]™X]^‚ˆ˜ÛÛ\\È‚‚ˆÎˆÜ˜ËÜœ˜ÎN›\ÙÚY‘ØZ[HH™YÚ\İ˜][Ûˆ‚›\ÙÜİˆ‘ØZ[HH[œ™YÚ\İ™[Y[	İ[ˆ›İ]™[][\Ø]]\ˆ‚‚ˆÎˆÜ˜ËÜœ˜ÎÌÂ›\ÙÚY”™YÚ\İ˜][Ûˆ[™›Ü›X][Ûˆ‚›\ÙÜİˆ’[™›Ü›X][Ûˆ	Ù[œ™YÚ\İ™[Y[‚‚ˆÎˆÜ˜ËÜœ˜ÎL›\ÙÚY”™YÚ\İ\ˆ‚›\ÙÜİˆ”ÉÙ[œ™YÚ\İ™\ˆ‚‚ˆÎˆÜ˜ËÜÙ\™\‹˜ÎMB›\ÙÚY”X\ÙH[\ˆ[İ\ˆ\ÜİÛÜ™‚›\ÙÜİˆ‘[™^ˆ›İ™H[İH\ÜÙH‚‚ˆÎˆÜ˜ËÜÙ\™\‹˜ÎN
+BˆËËY›Ü›X]›\ÙÚYŠ	YY\ÜØYÙ\ÊH‚›\ÙÜİˆŠ	YY\ÜØYÙ\ÊH‚‚ˆÎˆÜ˜ËÜÙ\™\‹˜ÎNLB›\ÙÚYŠHY\ÜØYÙJH‚›\ÙÜİˆŠHY\ÜØYÙJH‚‚ˆÎˆÜ˜ËÜÙ\™\‹˜ÎÎÂ›\ÙÚY•Ø\›™Y‚›\ÙÜİˆ]™\]‚‚ˆÎˆÜ˜ËÜÙ\™\‹˜Î
+Í‚›\ÙÚY–Y\È‚›\ÙÜİˆ“İZH‚‚ˆÎˆÜ˜ËÜÙ\™\‹˜Î
+ÍÂ›\ÙÚY“›È‚›\ÙÜİˆ“›Ûˆ‚‚ˆÎˆÜ˜ËÜÙ\™\‹˜ÎŒL
+Í‚›\ÙÚY“[Ü™H[™›È‚›\ÙÜİˆ”\È	Ú[™›Ü›X][ÛœÈ‚‚ˆÎˆÜ˜ËÜÛİ[™˜ÎŒÂˆË^B›\ÙÚYYHÙÜÈ[ˆ‚›\ÙÜİˆ’XÛÛ™HHÛÛXİ‚‚ˆÎˆÜ˜ËÜÛİ[™˜ÎˆË^B›\ÙÚYYHÙÜÈİ]‚›\ÙÜİˆ“\İHHÛÛXİÈ‚‚ˆÎˆÜ˜ËÜÛİ[™˜ÎBˆË^B›\ÙÚY“Y\ÜØYÙH™XÙZ]™Y‚›\ÙÜİˆ‘\œ™]\ˆHY\ÜØYÙH‚‚ˆÎˆÜ˜ËÜÛİ[™˜Î‚›\ÙÚY“Y\ÜØYÙH™XÙZ]™Y™YÚ[œÈÛÛ™\œØ][Ûˆ‚›\ÙÜİˆ‘:X]HHÛÛ™\œØ][Ûˆ‚‚ˆÎˆÜ˜ËÜÛİ[™˜ÎÂˆË^B›\ÙÚY“Y\ÜØYÙHÙ[‚›\ÙÜİˆ“Y\ÜØYÙ\È‚‚ˆÎˆÜ˜ËÜÛİ[™˜Î›\ÙÚY”\œÛÛˆ[\œÈÚ]‚›\ÙÜİˆ“H\œÛÛ›™H[™H[œÈHÚ]‚‚ˆÎˆÜ˜ËÜÛİ[™˜ÎB›\ÙÚY”\œÛÛˆX]™\ÈÚ]‚›\ÙÜİˆ“H\œÛÛ›™H]Z]HHÚ]‚‚ˆÎˆÜ˜ËÜÛİ[™˜ÎÌ›\ÙÚY–[İH[È[ˆÚ]‚›\ÙÜİˆ•›İ\È\›^ˆ[œÈHÚ]‚‚ˆÎˆÜ˜ËÜÛİ[™˜ÎÌB›\ÙÚY“İ\œÈ[È[ˆÚ]‚›\ÙÜİˆ‘	Ø]]™\È\›[[œÈHÚ]‚‚ˆÎˆÜ˜ËÜÛİ[™˜ÎÍ›\ÙÚY”ÛÛY[Û™HØ^\È[İ\ˆ˜[YH[ˆÚ]‚›\ÙÜİˆ”]Y[]Iİ[ˆ]›İ™HÙ]YÈ[œÈHÚ]‚‚ˆßˆ\ÙÚY‘[˜X›HÛİ[™È‚ˆßˆ\ÙÜİˆXİ]™\ˆHÛÛˆ‚‚ˆßˆ\ÙÚY’Ñ“H‚ˆßˆ\ÙÜİˆ’Ñ“H‚‚ˆßˆ\ÙÚY“X[X[‚ˆßˆ\ÙÜİˆ“X[Y[
