@@ -386,7 +386,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	GAIM_DIALOG(b->window);
 	gtk_window_set_resizable(GTK_WINDOW(b->window), TRUE);
 	gtk_window_set_role(GTK_WINDOW(b->window), "new_bp");
-	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - New Buddy Pounce"));
+	gtk_window_set_title(GTK_WINDOW(b->window), _("New Buddy Pounce"));
 	g_signal_connect(GTK_OBJECT(b->window), "destroy", G_CALLBACK(gtk_widget_destroy), b->window);
 	gtk_widget_realize(b->window);
 

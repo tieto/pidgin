@@ -1209,7 +1209,7 @@ static void do_pass_dlg(struct gaim_account *account)
 	p->account = account;
 	passes = g_slist_append(passes, p);
 
-	p->win = gtk_dialog_new_with_buttons("", NULL, 0, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+	p->win = gtk_dialog_new_with_buttons("Gaim", NULL, 0, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 						_("_Login"), GTK_RESPONSE_YES, NULL);
 
 	gtk_dialog_set_default_response (GTK_DIALOG(p->win), GTK_RESPONSE_YES);
