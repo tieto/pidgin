@@ -178,7 +178,7 @@ set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
 {
 	if ((dialog->plugin = gaim_find_prpl(protocol)) != NULL) {
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
-		dialog->protocol    = dialog->prpl_info->protocol;
+		dialog->protocol  = dialog->prpl_info->protocol;
 
 		if (dialog->protocol_id != NULL)
 			g_free(dialog->protocol_id);

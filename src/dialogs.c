@@ -84,13 +84,6 @@ struct addbuddy {
 	GaimConnection *gc;
 };
 
-struct addperm {
-	GtkWidget *window;
-	GtkWidget *entry;
-	GaimConnection *gc;
-	gboolean permit;
-};
-
 struct findbyemail {
 	GtkWidget *window;
 	GtkWidget *emailentry;
@@ -122,6 +115,14 @@ struct getuserinfo {
 	GtkWidget *account;
 	GaimConnection *gc; 
 };
+
+typedef struct
+{
+	char *username;
+	gboolean block;
+	GaimConnection *gc;
+
+} GaimGtkBlockData;
 
 static GSList *info_dlgs = NULL;
 
@@ -379,13 +380,15 @@ void show_warn_dialog(GaimConnection *gc, char *who)
 	gtk_widget_show_all(w->window);
 }
 
-void do_remove_chat(struct chat *chat)
+static void
+do_remove_chat(struct chat *chat)
 {
 	gaim_blist_remove_chat(chat);
 	gaim_blist_save();
 }
 
-void do_remove_buddy(struct buddy *b)
+static void
+do_remove_buddy(struct buddy *b)
 {
 	struct group *g;
 	GaimConversation *c;
@@ -2318,101 +2321,78 @@ void g_show_info_text(GaimConnection *gc, const char *who, int away, const char 
 /*  The dialog for adding to permit/deny                                  */
 /*------------------------------------------------------------------------*/
 
-
-static void do_add_perm(GtkWidget *w, struct addperm *p)
+static void
+destroy_block_data_cb(GaimGtkBlockData *data)
 {
+	g_free(data->username);
+	g_free(data);
+}
 
-	const char *who;
+static void
+block_unblock_cb(GaimGtkBlockData *data)
+{
+	GaimAccount *account;
 
-	who = gtk_entry_get_text(GTK_ENTRY(p->entry));
+	account = gaim_connection_get_account(data->gc);
 
-	if (!p->permit) {
-		if (gaim_privacy_deny_add(p->gc->account, who)) {
-			serv_add_deny(p->gc, who);
+	if (data->block) {
+		if (gaim_privacy_deny_add(account, data->username)) {
+			serv_add_deny(data->gc, data->username);
 			build_block_list();
 			gaim_blist_save();
 		}
-	} else {
-		if (gaim_privacy_permit_add(p->gc->account, who)) {
-			serv_add_permit(p->gc, who);
+	}
+	else {
+		if (gaim_privacy_permit_add(account, data->username)) {
+			serv_add_permit(data->gc, data->username);
 			build_allow_list();
 			gaim_blist_save();
 		}
 	}
 
-	destroy_dialog(NULL, p->window);
+	destroy_block_data_cb(data);
 }
 
-
-
-void show_add_perm(GaimConnection *gc, char *who, gboolean permit)
+void
+show_add_perm(GaimConnection *gc, char *who, gboolean permit)
 {
-	GtkWidget *cancel;
-	GtkWidget *add;
-	GtkWidget *label;
-	GtkWidget *bbox;
-	GtkWidget *vbox;
-	GtkWidget *topbox;
+	char *primary, *secondary;
+	GaimGtkBlockData *data;
 
-	struct addperm *p = g_new0(struct addperm, 1);
-	p->gc = gc;
-	p->permit = permit;
+	data = g_new0(GaimGtkBlockData, 1);
 
-	GAIM_DIALOG(p->window);
-	gtk_container_set_border_width(GTK_CONTAINER(p->window), 5);
-	gtk_window_set_resizable(GTK_WINDOW(p->window), FALSE);
-	gtk_widget_realize(p->window);
+	data->gc       = gc;
+	data->block    = !permit;
+	data->username = g_strdup(who);
 
-	dialogwindows = g_list_prepend(dialogwindows, p->window);
+	if (permit) {
+		primary = g_strdup_printf(_("Unblock %s?"), who);
+		secondary = g_strdup_printf(
+				_("You are about to unblock %s. This will allow %s "
+				  "to speak to you again. Do you want to continue?"),
+				who, who);
 
-	bbox = gtk_hbox_new(FALSE, 5);
-	topbox = gtk_hbox_new(FALSE, 5);
-	vbox = gtk_vbox_new(FALSE, 5);
-	p->entry = gtk_entry_new();
-
-	/* Build Add Button */
-
-	if (permit)
-		add = gaim_pixbuf_button_from_stock(_("Permit"), GTK_STOCK_ADD, GAIM_BUTTON_HORIZONTAL);
+		gaim_request_action(gc, _("Unblock User"), primary, secondary,
+							0, data, 2,
+							_("Unblock"), G_CALLBACK(block_unblock_cb),
+							_("Cancel"), G_CALLBACK(destroy_block_data_cb));
+	}
 	else
-		add = gaim_pixbuf_button_from_stock(_("Deny"), GTK_STOCK_ADD, GAIM_BUTTON_HORIZONTAL);
-	cancel = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
+	{
+		primary = g_strdup_printf(_("Block %s?"), who);
+		secondary = g_strdup_printf(
+				_("You are about to block %s. This will prevent %s "
+				  "from speaking to you again. Do you want to continue?"),
+				who, who);
 
-	/* End of Cancel Button */
-	if (who != NULL)
-		gtk_entry_set_text(GTK_ENTRY(p->entry), who);
+		gaim_request_action(gc, _("Unblock User"), primary, secondary,
+							0, data, 2,
+							_("Block"), G_CALLBACK(block_unblock_cb),
+							_("Cancel"), G_CALLBACK(destroy_block_data_cb));
+	}
 
-	/* Put the buttons in the box */
-
-	gtk_box_pack_end(GTK_BOX(bbox), add, FALSE, FALSE, 5);
-	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
-
-	label = gtk_label_new(_("Add"));
-	gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(topbox), p->entry, FALSE, FALSE, 5);
-	/* And the boxes in the box */
-	gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
-	topbox=gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(topbox), vbox, FALSE, FALSE, 5);
-
-
-	/* Handle closes right */
-	g_signal_connect(G_OBJECT(p->window), "destroy", G_CALLBACK(destroy_dialog), p->window);
-	g_signal_connect(G_OBJECT(cancel), "clicked", G_CALLBACK(destroy_dialog), p->window);
-	g_signal_connect(G_OBJECT(add), "clicked", G_CALLBACK(do_add_perm), p);
-	g_signal_connect(G_OBJECT(p->entry), "activate", G_CALLBACK(do_add_perm), p);
-
-	/* Finish up */
-	if (permit)
-		gtk_window_set_title(GTK_WINDOW(p->window), _("Add Permit"));
-	else
-		gtk_window_set_title(GTK_WINDOW(p->window), _("Add Deny"));
-	gtk_window_set_focus(GTK_WINDOW(p->window), p->entry);
-	gtk_container_add(GTK_CONTAINER(p->window), topbox);
-	gtk_widget_realize(p->window);
-
-	gtk_widget_show_all(p->window);
+	g_free(primary);
+	g_free(secondary);
 }
 
 

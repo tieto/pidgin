@@ -165,16 +165,18 @@ multifield_cancel_cb(GtkWidget *button, GaimGtkRequestData *data)
 static const char *
 text_to_stock(const char *text)
 {
-	STOCK_ITEMIZE(_("Yes"),    GTK_STOCK_YES);
-	STOCK_ITEMIZE(_("No"),     GTK_STOCK_NO);
-	STOCK_ITEMIZE(_("OK"),     GTK_STOCK_OK);
-	STOCK_ITEMIZE(_("Cancel"), GTK_STOCK_CANCEL);
-	STOCK_ITEMIZE(_("Apply"),  GTK_STOCK_APPLY);
-	STOCK_ITEMIZE(_("Close"),  GTK_STOCK_CLOSE);
-	STOCK_ITEMIZE(_("Delete"), GTK_STOCK_DELETE);
-	STOCK_ITEMIZE(_("Add"),    GTK_STOCK_ADD);
-	STOCK_ITEMIZE(_("Remove"), GTK_STOCK_REMOVE);
-	STOCK_ITEMIZE(_("Save"),   GTK_STOCK_SAVE);
+	STOCK_ITEMIZE(_("Yes"),     GTK_STOCK_YES);
+	STOCK_ITEMIZE(_("No"),      GTK_STOCK_NO);
+	STOCK_ITEMIZE(_("OK"),      GTK_STOCK_OK);
+	STOCK_ITEMIZE(_("Cancel"),  GTK_STOCK_CANCEL);
+	STOCK_ITEMIZE(_("Apply"),   GTK_STOCK_APPLY);
+	STOCK_ITEMIZE(_("Close"),   GTK_STOCK_CLOSE);
+	STOCK_ITEMIZE(_("Delete"),  GTK_STOCK_DELETE);
+	STOCK_ITEMIZE(_("Add"),     GTK_STOCK_ADD);
+	STOCK_ITEMIZE(_("Remove"),  GTK_STOCK_REMOVE);
+	STOCK_ITEMIZE(_("Save"),    GTK_STOCK_SAVE);
+	STOCK_ITEMIZE(_("Block"),   GAIM_STOCK_BLOCK);
+	STOCK_ITEMIZE(_("Unblock"), GTK_STOCK_REMOVE);
 
 	return text;
 }
