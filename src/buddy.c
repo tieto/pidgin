@@ -1304,17 +1304,24 @@ void do_pounce(char *name)
         
         struct buddy_pounce *b;
 	struct conversation *c;
+	struct aim_user *u;
 
 	GList *bp = buddy_pounces;
         
 	who = g_strdup(normalize(name));
 
-	/* FIXME: we should decide somewhere who we're pouncing as */
 	while(bp) {
-		b = (struct buddy_pounce *)bp->data;;
+		b = (struct buddy_pounce *)bp->data;
 		bp = bp->next; /* increment the list here because rem_bp can make our handle bad */
 
-                if (!strcasecmp(who, normalize(b->name))) {
+		u = find_user(b->pouncer, b->protocol); /* find our user */
+		if (u == NULL) continue;
+
+                if (!strcasecmp(who, normalize(b->name))) { /* find someone to pounce */
+			/* check and see if we're signed on as the pouncer */
+
+			if (u->gc == NULL) continue;
+			
 			if (b->popup == 1)
 			{
 				c = find_conversation(name);
@@ -1328,8 +1335,7 @@ void do_pounce(char *name)
                                 	c = new_conversation(name);
 
                         	write_to_conv(c, b->message, WFLAG_SEND, NULL);
-
-                                serv_send_im(c->gc, name, b->message, 0);
+                                serv_send_im(u->gc, name, b->message, 0);
 			}
                         
                         rem_bp(NULL, b);

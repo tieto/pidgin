@@ -279,20 +279,21 @@ static void gaimrc_read_pounce(FILE *f)
 		{
 			b = g_new0(struct buddy_pounce, 1);
 
-			g_snprintf(b->name, sizeof(b->name),  "%s", p->value[1]);
-			g_snprintf(b->message, sizeof(b->message), "%s", p->value[2]);
-			g_snprintf(b->pouncer, sizeof(b->pouncer), "%s", p->value[0]);
+			g_snprintf(b->name, sizeof(b->name),  "%s", p->value[0]);
+			g_snprintf(b->message, sizeof(b->message), "%s", p->value[1]);
 
-			b->popup = atoi(p->value[3]);
-			b->sendim = atoi(p->value[4]);
+			b->popup = atoi(p->value[2]);
+			b->sendim = atoi(p->value[3]);
 
 			/* Let's check our version and see what's going on here */
-			if ((p->value[5]) && (strlen(p->value[5]) > 0))
+			if ((p->value[4]) && (strlen(p->value[4]) > 0))
 			{
 				/* If we have data, lets use it */
-				b->signon = atoi(p->value[5]);		
-				b->unaway = atoi(p->value[6]);		
-				b->unidle = atoi(p->value[7]);		
+				g_snprintf(b->pouncer, sizeof(b->pouncer), "%s", p->value[4]);
+				b->protocol = atoi(p->value[5]);
+				b->signon = atoi(p->value[6]);		
+				b->unaway = atoi(p->value[7]);		
+				b->unidle = atoi(p->value[8]);		
 			}
 			else
 			{
@@ -330,7 +331,7 @@ static void gaimrc_write_pounce(FILE *f)
 				str2[0] = 0;
 			}
 
-			fprintf(f, "\tentry { %s } { %s } { %s } { %d } { %d } { %d } { %d } { %d }\n", b->pouncer, str1, str2, b->popup, b->sendim, b->signon, b->unaway, b->unidle);
+			fprintf(f, "\tentry { %s } { %s } { %d } { %d } { %s } { %d } { %d } { %d } { %d }\n", str1, str2, b->popup, b->sendim, b->pouncer, b->protocol, b->signon, b->unaway, b->unidle);
 
 			/* escape_text2 uses malloc(), so we don't want to g_free these */
 			free(str1);

@@ -1050,6 +1050,8 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 	g_snprintf(bp->message, 2048, "%s", gtk_entry_get_text(GTK_ENTRY(b->messentry)));
 	g_snprintf(bp->pouncer, 80, "%s", b->user->username);
 
+	bp->protocol = b->user->protocol;
+
 	if (GTK_TOGGLE_BUTTON(b->openwindow)->active)
 		bp->popup = 1;
 	else
