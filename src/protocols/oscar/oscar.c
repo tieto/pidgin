@@ -2058,7 +2058,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
  * methods of authorization (SSI and old-school channel 4 ICBM)
  */
 /* When you ask other people for authorization */
-static void gaim_auth_request(struct name_data *data) {
+static void gaim_auth_request(struct name_data *data, char *msg) {
 	struct gaim_connection *gc = data->gc;
 
 	if (g_slist_find(connections, gc)) {
@@ -2067,13 +2067,15 @@ static void gaim_auth_request(struct name_data *data) {
 		struct group *group = find_group_by_buddy(gc, data->name);
 		if (buddy && group) {
 			debug_printf("ssi: adding buddy %s to group %s\n", buddy->name, group->name);
-			aim_ssi_sendauthrequest(od->sess, od->conn, data->name, "Please authorize me so I can add you to my buddy list.");
+			aim_ssi_sendauthrequest(od->sess, od->conn, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
 			if (!aim_ssi_itemlist_finditem(od->sess->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))
 				aim_ssi_addbuddy(od->sess, od->conn, buddy->name, group->name, get_buddy_alias_only(buddy), NULL, NULL, 1);
 		}
 	}
+}
 
-	gaim_free_name_data(data);
+static void gaim_auth_request_msgprompt(struct name_data *data) {
+	do_prompt_dialog(_("Authorization Request Message:"), _("Please authorize me!"), data, gaim_auth_request, gaim_free_name_data);
 }
 
 static void gaim_auth_dontrequest(struct name_data *data) {
@@ -2102,7 +2104,7 @@ static void gaim_auth_sendrequest(struct gaim_connection *gc, char *name) {
 	data->gc = gc;
 	data->name = g_strdup(name);
 	data->nick = NULL;
-	do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request, _("Cancel"), gaim_auth_dontrequest, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+	do_ask_dialog(_("Request Authorization"), dialog_msg, data, _("Request Authorization"), gaim_auth_request_msgprompt, _("Cancel"), gaim_auth_dontrequest, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -2130,22 +2132,21 @@ static void gaim_auth_grant(struct name_data *data) {
 }
 
 /* When other people ask you for authorization */
-static void gaim_auth_dontgrant(struct name_data *data) {
+static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
 	struct gaim_connection *gc = data->gc;
 
 	if (g_slist_find(connections, gc)) {
 		struct oscar_data *od = gc->proto_data;
-		gchar *message;
-		message = g_strdup_printf(_("No reason given."));
 #ifdef NOSSI
-		aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, message);
+		aim_send_im_ch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, msg ? msg : _("No reason given."));
 #else
-		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x00, message);
+		aim_ssi_sendauthreply(od->sess, od->conn, data->name, 0x00, msg ? msg : _("No reason given."));
 #endif
-		g_free(message);
 	}
+}
 
-	gaim_free_name_data(data);
+static void gaim_auth_dontgrant_msgprompt(struct name_data *data) {
+	do_prompt_dialog(_("Authorization Denied Message:"), _("No reason given."), data, gaim_auth_dontgrant, gaim_free_name_data);
 }
 
 /* When someone sends you contacts  */
@@ -2208,12 +2209,12 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x06: { /* Someone requested authorization */
 			if (i >= 6) {
 				struct name_data *data = g_new(struct name_data, 1);
-				gchar *dialog_msg = g_strdup_printf(_("The user %lu wants to add you to their buddy list for the following reason: %s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
+				gchar *dialog_msg = g_strdup_printf(_("The user %lu wants to add you to their buddy list for the following reason:\n%s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
 				debug_printf("Received an authorization request from UIN %lu\n", args->uin);
 				data->gc = gc;
 				data->name = g_strdup_printf("%lu", args->uin);
 				data->nick = NULL;
-				do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+				do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant_msgprompt, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 				g_free(dialog_msg);
 			}
 		} break;
@@ -4358,12 +4359,12 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	else
 		nombre = g_strdup(sn);
 
-	dialog_msg = g_strdup_printf(_("The user %s wants to add you to their buddy list for the following reason: %s"), nombre, msg ? msg : _("No reason given."));
+	dialog_msg = g_strdup_printf(_("The user %s wants to add you to their buddy list for the following reason:\n%s"), nombre, msg ? msg : _("No reason given."));
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
 	data->name = g_strdup(sn);
 	data->nick = NULL;
-	do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
+	do_ask_dialog(_("Authorization Request"), dialog_msg, data, _("Authorize"), gaim_auth_grant, _("Deny"), gaim_auth_dontgrant_msgprompt, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
 
 	g_free(dialog_msg);
 	g_free(nombre);
@@ -5190,7 +5191,7 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 				if (get_buddy_alias_only(buddy))
 					nombre = g_strdup_printf(" %s (%s)", buddy->name, get_buddy_alias_only(buddy));
 				else
-					nombre = g_strdup(buddy->name);
+					nombre = g_strdup_printf(" %s", buddy->name);
 				tmp = g_strdup_printf("%s<BR>%s", text, nombre);
 				g_free(text);
 				text = tmp;
