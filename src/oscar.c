@@ -47,6 +47,7 @@
 static int inpa = -1;
 static int paspa = -1;
 static int cnpa = -1;
+static int keepalive = -1;
 struct aim_session_t *gaim_sess;
 struct aim_conn_t    *gaim_conn;
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
@@ -229,6 +230,9 @@ void oscar_close() {
 	if (inpa > 0)
 		gdk_input_remove(inpa);
 	inpa = -1;
+	if (keepalive > 0)
+		gtk_timeout_remove(keepalive);
+	keepalive = -1;
 	aim_logoff(gaim_sess);
 	g_free(gaim_sess);
 	debug_print(_("Signed off.\n"));
@@ -384,6 +388,12 @@ int gaim_server_ready(struct aim_session_t *sess,
 	return 1;
 }
 
+static int oscar_keepalive(gpointer d) {
+	debug_print("oscar: sending nop (keepalive)\n");
+	aim_bos_nop(gaim_sess, gaim_conn);
+	return 1;
+}
+
 int gaim_handle_redirect(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	va_list ap;
@@ -431,6 +441,8 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 
 		aim_bos_clientready(sess, command->conn);
 		debug_print("Roger that, all systems go\n");
+
+		keepalive = gtk_timeout_add(30000, (GtkFunction)oscar_keepalive, NULL);
 
 		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
 
