@@ -461,7 +461,7 @@ void createPendingPopup(){
 
 
 void createAwayPopup(){
-     applet_draw_open = FALSE;
+     createOnlinePopup();
 }
 
 
@@ -488,7 +488,7 @@ void closePendingPopup(){
 
 
 void closeAwayPopup(){
-     applet_draw_open = FALSE;
+	closeOnlinePopup();
 }
 
 void AppletClicked( GtkWidget *sender, gpointer data ){
