@@ -273,7 +273,8 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		char *realm;
 		char *nonce;
 
-		cnonce = g_strdup_printf("%p%u%p", js, (int)time(NULL), packet);
+		cnonce = g_strdup_printf("%x%u%x", g_random_int(), (int)time(NULL),
+				g_random_int());
 		nonce = g_hash_table_lookup(parts, "nonce");
 		realm = g_hash_table_lookup(parts, "realm");
 
