@@ -288,8 +288,10 @@ gint linkify_text(char *text)
 
 			while (flag) {
 				if (badchar(*t)) {
-					if (*(t - 1) == '.')
+					if (*(t - 1) == '.') {
+						url_buf[t-c] = '\0';
 						t--;
+					}
 					cnt += g_snprintf(&text[cnt], 1024,
 							  "<A HREF=\"mailto:%s\">%s</A>", url_buf,
 							  url_buf);
