@@ -1,5 +1,7 @@
 version 0.81cvs:
 	* Napster joins binary release (Thanks Kevin)
+	* Gaim's gtkspell build now makes use of pango's squigly underline
+          (Thanks Nathan Fredrickson and Daniel Atallah)
 
 version 0.80 (07/15/2004):
 	* idletrack.dll now unloads properly when you quit Gaim in Windows
