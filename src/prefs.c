@@ -1977,8 +1977,16 @@ static void set_blist_option(GtkWidget *w, int option)
 	
 	if (option == OPT_BLIST_NO_BUTTONS || option == OPT_BLIST_NO_BUTTONS)
 		gaim_gtk_blist_update_toolbar();
-	else
+	else if (option == OPT_BLIST_SHOW_WARN ||
+		 option == OPT_BLIST_SHOW_IDLETIME)
+		gaim_gtk_blist_update_columns();
+	else if (option == OPT_BLIST_SHOW_ICONS) {
 		gaim_gtk_blist_refresh(gaim_get_blist());
+		gaim_gtk_blist_update_columns();
+	} else
+		gaim_gtk_blist_refresh(gaim_get_blist());
+
+	
 
 }
 

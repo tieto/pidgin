@@ -874,26 +874,26 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	g_object_set(rend, "ypad", 0.0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
-	column = gtk_tree_view_column_new_with_attributes("Warning", rend, "markup", WARNING_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
+	gtkblist->warning_column = gtk_tree_view_column_new_with_attributes("Warning", rend, "markup", WARNING_COLUMN, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->warning_column);
 	g_object_set(rend, "xalign", 1.0, "ypad", 0.0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
-	column = gtk_tree_view_column_new_with_attributes("Idle", rend, "markup", IDLE_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
+	gtkblist->idle_column = gtk_tree_view_column_new_with_attributes("Idle", rend, "markup", IDLE_COLUMN, NULL);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->idle_column);
 	g_object_set(rend, "xalign", 1.0, "ypad", 0.0, NULL);
 
 	rend = gtk_cell_renderer_pixbuf_new();
-	column = gtk_tree_view_column_new_with_attributes("Buddy Icon", rend, "pixbuf", BUDDY_ICON_COLUMN, NULL);
+	gtkblist->buddy_icon_column = gtk_tree_view_column_new_with_attributes("Buddy Icon", rend, "pixbuf", BUDDY_ICON_COLUMN, NULL);
 	g_object_set(rend, "xalign", 1.0, "ypad", 0.0, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->buddy_icon_column);
 
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-activated", G_CALLBACK(gtk_blist_row_activated_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "button-press-event", G_CALLBACK(gtk_blist_button_press_cb), NULL);
 
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
-	
+	gaim_gtk_blist_update_columns();
 	/**************************** Button Box **************************************/
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
@@ -993,6 +993,19 @@ void gaim_gtk_blist_update_toolbar() {
 		gtk_widget_show_all(gtkblist->bbox);
 }
 
+void gaim_gtk_blist_update_columns() 
+{
+	if (blist_options & OPT_BLIST_SHOW_ICONS) {
+		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, TRUE);
+		gtk_tree_view_column_set_visible(gtkblist->idle_column, FALSE);
+		gtk_tree_view_column_set_visible(gtkblist->warning_column, FALSE);
+	} else {
+		gtk_tree_view_column_set_visible(gtkblist->idle_column, blist_options & OPT_BLIST_SHOW_IDLETIME);
+		gtk_tree_view_column_set_visible(gtkblist->warning_column, blist_options & OPT_BLIST_SHOW_WARN);
+		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, FALSE);
+	}
+}					 
+
 static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
 	struct gaim_gtk_blist_node *gtknode;
@@ -1087,8 +1100,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		avatar = gaim_gtk_blist_get_buddy_icon((struct buddy*)node);
 		mark   = gaim_gtk_blist_get_name_markup((struct buddy*)node);
 
-		if ((((struct buddy*)node)->idle > 0) &&
-		    (!(blist_options & OPT_BLIST_SHOW_ICONS) && (blist_options & OPT_BLIST_SHOW_IDLETIME))) {
+		if (((struct buddy*)node)->idle > 0) {
 			time_t t;
 			int ihrs, imin;
 			time(&t);
@@ -1100,10 +1112,9 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 				idle = g_strdup_printf("(%d)", imin);
 		}
 
-		if ((((struct buddy*)node)->evil > 0) &&
-		    (!(blist_options & OPT_BLIST_SHOW_ICONS) && (blist_options & OPT_BLIST_SHOW_WARN))) {
+		if (((struct buddy*)node)->evil > 0)
 			warning = g_strdup_printf("%d%%", ((struct buddy*)node)->evil);
-		}
+		
 
 		if((blist_options & OPT_BLIST_GREY_IDLERS)
 				&& ((struct buddy *)node)->idle) {

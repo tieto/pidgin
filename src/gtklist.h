@@ -51,7 +51,11 @@ struct gaim_gtk_buddy_list {
 
 	GtkWidget *treeview;            /**< It's a treeview... d'uh. */
 	GtkTreeStore *treemodel;        /**< This is the treemodel.  */
-			
+		
+	GtkTreeViewColumn *idle_column, 
+		*warning_column, 
+		*buddy_icon_column;
+	
 	GtkWidget *bbox;                /**< A Button Box. */
 
 	guint      timeout;              /**< The timeout for the tooltip. */
@@ -113,4 +117,6 @@ void gaim_gtk_blist_update_toolbar();
 void gaim_gtk_blist_docklet_toggle();
 void gaim_gtk_blist_docklet_add();
 void gaim_gtk_blist_docklet_remove();
+void gaim_gtk_blist_update_colums();
+
 #endif /* _GAIM_GTK_LIST_H_ */
