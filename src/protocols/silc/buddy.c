@@ -1020,7 +1020,7 @@ silcgaim_add_buddy_ask_pk_cb(SilcGaimBuddyRes r, gint id)
 	}
 
 	/* Open file selector to select the public key. */
-	gaim_request_file(NULL, _("Open..."), "", FALSE,
+	gaim_request_file(NULL, _("Open..."), NULL, FALSE,
 			  G_CALLBACK(silcgaim_add_buddy_ask_import),
 			  G_CALLBACK(silcgaim_add_buddy_ask_pk_cancel), r);
 }
