@@ -140,13 +140,15 @@ void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 		return;
 
 	ops = gaimbuddylist->ui_ops;
+
+	if((status & UC_UNAVAILABLE) != (buddy->uc & UC_UNAVAILABLE)) {
+		if(status & UC_UNAVAILABLE)
+			gaim_event_broadcast(event_buddy_away, buddy->account->gc, buddy->name);
+		else
+			gaim_event_broadcast(event_buddy_back, buddy->account->gc, buddy->name);
+	}
+
 	buddy->uc = status;
-
-	if(!(status & UC_UNAVAILABLE))
-		gaim_event_broadcast(event_buddy_back, buddy->account->gc, buddy->name);
-	else
-		gaim_event_broadcast(event_buddy_away, buddy->account->gc, buddy->name);
-
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
