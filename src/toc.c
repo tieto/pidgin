@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1163 $"
+#define REVISION "gaim:$Revision: 1192 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -477,11 +477,30 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 
 		serv_got_chat_invite(gc, name, id, who, message);
 	} else if (!strcasecmp(c, "CHAT_LEFT")) {
+		GSList *bcs = gc->buddy_chats;
+		struct conversation *b = NULL;
 		int id;
 
 		sscanf(strtok(NULL, ":"), "%d", &id);
 
-		serv_got_chat_left(gc, id);
+		while (bcs) {
+			b = (struct conversation *)bcs->data;
+			if (id == b->id)
+				break;
+			b = NULL;
+			bcs = bcs->next;
+		}
+
+		if (!b)
+			return;
+
+		if (b->window) {
+			char error_buf[BUF_LONG];
+			b->gc = NULL;
+			g_snprintf(error_buf, sizeof error_buf, _("You have been disconnected"
+						" from chat room %s."), b->name);
+		} else
+			serv_got_chat_left(gc, id);
 	} else if (!strcasecmp(c, "GOTO_URL")) {
 		char *name, *url, tmp[256];
 
@@ -881,9 +900,27 @@ static void toc_chat_invite(struct gaim_connection *g, int id, char *message, ch
 }
 
 static void toc_chat_leave(struct gaim_connection *g, int id) {
+	GSList *bcs = g->buddy_chats;
+	struct conversation *b = NULL;
 	char buf[256];
-	g_snprintf(buf, 255, "toc_chat_leave %d",  id);
-	sflap_send(g, buf, -1, TYPE_DATA);
+
+	while (bcs) {
+		b = (struct conversation *)bcs->data;
+		if (id == b->id)
+			break;
+		b = NULL;
+		bcs = bcs->next;
+	}
+
+	if (!b)
+		return; /* can this happen? */
+
+	if (!b->gc) /* TOC already kicked us out of this room */
+		serv_got_chat_left(g, id);
+	else {
+		g_snprintf(buf, 255, "toc_chat_leave %d",  id);
+		sflap_send(g, buf, -1, TYPE_DATA);
+	}
 }
 
 static void toc_chat_whisper(struct gaim_connection *g, int id, char *who, char *message) {
