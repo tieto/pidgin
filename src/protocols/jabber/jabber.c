@@ -284,6 +284,29 @@ static void gjab_reqroster(gjconn j)
 	xmlnode_free(x);
 }
 
+static void gjab_reqauth(gjconn j)
+{
+	xmlnode x, y, z;
+	char *user;
+
+	if (!j)
+		return;
+
+	x = jutil_iqnew(JPACKET__GET, NS_AUTH);
+	xmlnode_put_attrib(x, "id", IQID_AUTH);
+	y = xmlnode_get_tag(x, "query");
+
+	user = j->user->user;
+
+	if (user) {
+		z = xmlnode_insert_tag(y, "username");
+		xmlnode_insert_cdata(z, user, -1);
+	}
+
+	gjab_send(j, x);
+	xmlnode_free(x);
+}
+
 static void gjab_auth(gjconn j)
 {
 	xmlnode x, y, z;
@@ -307,6 +330,7 @@ static void gjab_auth(gjconn j)
 	xmlnode_insert_cdata(z, j->user->resource, -1);
 
 	if (j->sid) {
+		debug_printf("digest authentication (sid %s)\n", j->sid);
 		z = xmlnode_insert_tag(y, "digest");
 		hash = pmalloc(x->p, strlen(j->sid) + strlen(j->pass) + 1);
 		strcpy(hash, j->sid);
@@ -361,7 +385,7 @@ static void startElement(void *userdata, const char *name, const char **attribs)
 		if (strcmp(name, "stream:stream") == 0) {
 			/* special case: name == stream:stream */
 			/* id attrib of stream is stored for digest auth */
-			j->sid = xmlnode_get_attrib(x, "id");
+			j->sid = g_strdup(xmlnode_get_attrib(x, "id"));
 			/* STATE_EVT(JCONN_STATE_AUTH) */
 			xmlnode_free(x);
 		} else {
@@ -929,7 +953,8 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 	xmlnode_free(x);
 }
 
-static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
+static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from)
+{
 	struct gaim_connection *gc = GJ_GC(j);
 	char buf[1024];
 	char *fn, *url, *email, *nickname, *status, *desc;
@@ -972,17 +997,27 @@ static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 static void jabber_handleauthresp(gjconn j, jpacket p)
 {
 	if (jpacket_subtype(p) == JPACKET__RESULT) {
-		debug_printf("auth success\n");
+		if (xmlnode_has_children(p->x)) {
+			xmlnode query = xmlnode_get_tag(p->x, "query");
+			set_login_progress(GJ_GC(j), 4, "Authenticating");
+			if (!xmlnode_get_tag(query, "digest")) {
+				g_free(j->sid);
+				j->sid = NULL;
+			}
+			gjab_auth(j);
+		} else {
+			debug_printf("auth success\n");
 
-		account_online(GJ_GC(j));
-		serv_finish_login(GJ_GC(j));
+			account_online(GJ_GC(j));
+			serv_finish_login(GJ_GC(j));
 
-		if (bud_list_cache_exists(GJ_GC(j)))
-			do_import(GJ_GC(j), NULL);
+			if (bud_list_cache_exists(GJ_GC(j)))
+				do_import(GJ_GC(j), NULL);
 
-		((struct jabber_data *)GJ_GC(j)->proto_data)->did_import = TRUE;
+			((struct jabber_data *)GJ_GC(j)->proto_data)->did_import = TRUE;
 
-		gjab_reqroster(j);
+			gjab_reqroster(j);
+		}
 	} else {
 		xmlnode xerr;
 		char *errmsg = NULL;
@@ -1088,6 +1123,7 @@ static void jabber_handlelast(gjconn j, xmlnode iqnode) {
 
 static void jabber_handlepacket(gjconn j, jpacket p)
 {
+	char *id;
 	switch (p->type) {
 	case JPACKET_MESSAGE:
 		jabber_handlemessage(j, p);
@@ -1098,16 +1134,16 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 	case JPACKET_IQ:
 		debug_printf("jpacket_subtype: %d\n", jpacket_subtype(p));
 
-		if (xmlnode_get_attrib(p->x, "id") && (strcmp(xmlnode_get_attrib(p->x, "id"), IQID_AUTH) == 0)) {
+		if (((id = xmlnode_get_attrib(p->x, "id")) != NULL) && !strcmp(id, IQID_AUTH)) {
 			jabber_handleauthresp(j, p);
-			break; /* I'm not sure if you like this style, Eric. */
+			break;
 		}
 
 		if (jpacket_subtype(p) == JPACKET__SET) {
 		} else if (jpacket_subtype(p) == JPACKET__GET) {
 		   	xmlnode querynode;
 			querynode = xmlnode_get_tag(p->x, "query");
-		   	if(NSCHECK(querynode, NS_VERSION)) {
+		   	if (NSCHECK(querynode, NS_VERSION)) {
 			   	jabber_handleversion(j, p->x);
 			} else if (NSCHECK(querynode, NS_TIME)) {
 			   	jabber_handletime(j, p->x);
@@ -1176,11 +1212,11 @@ static void jabber_handlestate(gjconn j, int state)
 		signoff(GJ_GC(j));
 		break;
 	case JCONN_STATE_CONNECTED:
-		set_login_progress(GJ_GC(j), 3, "Connected");
+		set_login_progress(GJ_GC(j), 2, "Connected");
 		break;
 	case JCONN_STATE_ON:
-		set_login_progress(GJ_GC(j), 5, "Logging in...");
-		gjab_auth(j);
+		set_login_progress(GJ_GC(j), 3, "Requesting Authentication Method");
+		gjab_reqauth(j);
 		break;
 	default:
 		debug_printf("state change: %d\n", state);
@@ -1234,6 +1270,7 @@ static void jabber_close(struct gaim_connection *gc)
 	close(jd->jc->fd);
 	g_timeout_add(50, jabber_free, jd->jc);
 	xmlnode_free(jd->jc->current);
+	g_free(jd->jc->sid);
 	jd->jc = NULL;
 	g_free(jd);
 	gc->proto_data = NULL;
