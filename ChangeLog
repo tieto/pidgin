@@ -9,6 +9,9 @@ version 0.11.0:
 	* Optionally display warning level next to name in buddy list
 	* Optionally ignore fonts on incoming messages
 	* Command-line option to automatically be away on signon (thanks bmiller)
+	* Buddy list backups now stored in ~/.gaim/SN.protocol.blist (gaim will
+	  move the old file for you). Needed for when you have the same name on
+	  two different protocols.
 
 version 0.11.0-pre2 (12/04/2000):
 	* Fixed a segfault with a bad util.c 
