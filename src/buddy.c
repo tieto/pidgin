@@ -370,7 +370,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, s
 	gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, pixbuf,
 			0, 0, 4, 4, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 #else
-	gdk_pixbuf_render_to_drawable(pixbuf, NULL, GDK_DRAWABLE(gtkblist->tipwindow->window), 0, 0, 4, 4, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+	gdk_pixbuf_render_to_drawable(pixbuf, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 4, 4, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
 
 	gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, TRUE,
