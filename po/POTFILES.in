@@ -96,7 +96,6 @@ src/protocols/msn/switchboard.c
 src/protocols/napster/napster.c
 src/protocols/novell/novell.c
 src/protocols/oscar/oscar.c
-src/protocols/rendezvous/rendezvous.c
 src/protocols/silc/buddy.c
 src/protocols/silc/chat.c
 src/protocols/silc/ft.c
