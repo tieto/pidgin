@@ -443,7 +443,7 @@ gaim_signal_emit_vargs(void *instance, const char *signal, va_list args)
 
 		/* This is necessary because a va_list may only be
 		 * evaluated once */
-		va_copy(tmp, args);
+		G_VA_COPY(tmp, args);
 
 		if (handler_data->use_vargs)
 		{
@@ -511,7 +511,7 @@ gaim_signal_emit_vargs_return_1(void *instance, const char *signal,
 
 		handler_data = (GaimSignalHandlerData *)l->data;
 
-		va_copy(tmp, args);
+		G_VA_COPY(tmp, args);
 		if (handler_data->use_vargs)
 		{
 			ret_val = ((void *(*)(va_list, void *))handler_data->cb)(
