@@ -6267,6 +6267,11 @@ static void oscar_show_setavailmsg(GaimConnection *gc)
 }
 #endif
 
+static void oscar_show_set_info(GaimConnection *gc)
+{
+	gaim_account_request_change_user_info(gaim_connection_get_account(gc));
+}
+
 static void oscar_change_pass(GaimConnection *gc)
 {
 	gaim_account_request_change_password(gaim_connection_get_account(gc));
@@ -6326,7 +6331,7 @@ static GList *oscar_actions(GaimConnection *gc)
 
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Set User Info");
-	pam->callback = show_set_info;
+	pam->callback = oscar_show_set_info;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 

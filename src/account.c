@@ -277,7 +277,6 @@ change_password_cb(GaimAccount *account, GaimRequestFields *fields)
 	serv_change_passwd(gaim_account_get_connection(account),
 					   orig_pass, new_pass_1);
 	gaim_account_set_password(account, new_pass_1);
-
 }
 
 void
@@ -325,6 +324,39 @@ gaim_account_request_change_password(GaimAccount *account)
 						_("OK"), G_CALLBACK(change_password_cb),
 						_("Cancel"), NULL,
 						account);
+}
+
+static void
+set_user_info_cb(GaimAccount *account, const char *user_info)
+{
+	GaimConnection *gc;
+
+	gaim_account_set_user_info(account, user_info);
+
+	gc = gaim_account_get_connection(account);
+
+	if (gc != NULL)
+		serv_set_info(gaim_account_get_connection(account), user_info);
+}
+
+void
+gaim_account_request_change_user_info(GaimAccount *account)
+{
+	char primary[256];
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(gaim_account_is_connected(account));
+
+	g_snprintf(primary, sizeof(primary),
+			   _("Change user information for %s"),
+			   gaim_account_get_username(account));
+
+	gaim_request_input(gaim_account_get_connection(account),
+					   NULL, primary, NULL,
+					   gaim_account_get_user_info(account),
+					   TRUE, FALSE,
+					   _("Save"), G_CALLBACK(set_user_info_cb),
+					   _("Cancel"), NULL, account);
 }
 
 void

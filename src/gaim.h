@@ -40,7 +40,6 @@ extern GSList *away_time_queue;
 extern void show_set_dir(GaimConnection *);
 extern void show_find_email(GaimConnection *);
 extern void show_find_info(GaimConnection *);
-extern void show_set_info(GaimConnection *);
 extern void show_confirm_del(GaimBuddy *);
 extern void show_confirm_del_group(GaimGroup *);
 extern void show_confirm_del_blist_chat(GaimBlistChat *);

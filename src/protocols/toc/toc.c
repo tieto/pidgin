@@ -1515,6 +1515,12 @@ static GList *toc_away_states(GaimConnection *gc)
 }
 
 static void
+show_set_info(GaimConnection *gc)
+{
+	gaim_account_request_change_user_info(gaim_connection_get_account(gc));
+}
+
+static void
 change_pass(GaimConnection *gc)
 {
 	gaim_account_request_change_password(gaim_connection_get_account(gc));

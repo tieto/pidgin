@@ -151,6 +151,14 @@ void gaim_account_notify_added(GaimAccount *account, const char *remote_user,
 void gaim_account_request_change_password(GaimAccount *account);
 
 /**
+ * Requests information from the user to change the account's
+ * user information.
+ *
+ * @param account The account to change the user information on.
+ */
+void gaim_account_request_change_user_info(GaimAccount *account);
+
+/**
  * Sets the account's username.
  *
  * @param account  The account.
