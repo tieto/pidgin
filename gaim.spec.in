@@ -1,7 +1,7 @@
 Summary:    A Gtk+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
 Version:    @VERSION@
-Release:    1
+Release:    0
 Epoch:      1
 License:    GPL
 Group:      Applications/Internet
