@@ -159,9 +159,9 @@ send_to_mobile(GaimConnection *gc, const char *who, const char *entry)
 	page = msn_page_new();
 	msn_page_set_body(page, entry);
 
-	trans = msn_transaction_new("PGD", "%s 1 %d", who, page->size);
-
 	payload = msn_page_gen_payload(page, &payload_len);
+
+	trans = msn_transaction_new("PGD", "%s 1 %d", who, payload_len);
 
 	msn_transaction_set_payload(trans, payload, payload_len);
 

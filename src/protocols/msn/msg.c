@@ -474,7 +474,12 @@ msn_message_gen_payload(const MsnMessage *msg, size_t *ret_size)
 	}
 
 	if (ret_size != NULL)
+	{
 		*ret_size = len - 1;
+
+		if (*ret_size > 1664)
+			*ret_size = 1664;
+	}
 
 	return str;
 }

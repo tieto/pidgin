@@ -26,6 +26,43 @@
 static void read_cb(gpointer data, gint source, GaimInputCondition cond);
 
 static void
+show_error(MsnServConn *servconn)
+{
+	GaimConnection *gc;
+	char *tmp;
+	char *cmd;
+
+	const char *names[] = { "Notification", "Switchboard" };
+	const char *name;
+	
+	gc = gaim_account_get_connection(servconn->session->account);
+	name = names[servconn->type];
+
+	switch (servconn->cmdproc->error)
+	{
+		case MSN_ERROR_CONNECT:
+			tmp = g_strdup_printf(_("Unable to connect to %s server"),
+								  name);
+			break;
+		case MSN_ERROR_WRITE:
+			tmp = g_strdup_printf(_("Error writing to %s server"), name);
+			break;
+		case MSN_ERROR_READ:
+			cmd = servconn->cmdproc->last_trans;
+			tmp = g_strdup_printf(_("Error reading from %s server"), name);
+			gaim_debug_info("msn", "Last command was: %s\n", cmd);
+			break;
+		default:
+			tmp = g_strdup_printf(_("Unknown error from %s server"), name);
+			break;
+	}
+
+	gaim_connection_error(gc, tmp);
+	
+	g_free(tmp);
+}
+
+static void
 connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *servconn = data;
@@ -43,8 +80,8 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 	else
 	{
-		GaimConnection *gc = servconn->session->account->gc;
-		gaim_connection_error(gc, _("Unable to connect."));
+		servconn->cmdproc->error = MSN_ERROR_CONNECT;
+		show_error(servconn);
 	}
 }
 
@@ -189,46 +226,6 @@ msn_servconn_set_disconnect_cb(MsnServConn *servconn,
 	g_return_if_fail(servconn != NULL);
 
 	servconn->disconnect_cb = disconnect_cb;
-}
-
-static void
-show_error(MsnServConn *servconn)
-{
-	GaimConnection *gc;
-	char *tmp;
-	char *cmd;
-
-	const char *names[] = { "Notification", "Switchboard" };
-	const char *name;
-
-	gc = gaim_account_get_connection(servconn->session->account);
-	name = names[servconn->type];
-
-	switch (servconn->cmdproc->error)
-	{
-		case MSN_ERROR_CONNECT:
-			tmp = g_strdup_printf(_("Unable to connect to %s server"),
-								  name);
-			break;
-		case MSN_ERROR_WRITE:
-			tmp = g_strdup_printf(_("Error writing to %s server"), name);
-			break;
-		case MSN_ERROR_READ:
-			cmd = servconn->cmdproc->last_trans;
-			tmp = g_strdup_printf(_("Error reading from %s server. Last"
-									"command was:\n %s"), name, cmd);
-			break;
-		default:
-			tmp = g_strdup_printf(_("Unknown error from %s server"), name);
-			break;
-	}
-
-	if (servconn->type != MSN_SERVER_SB)
-		gaim_connection_error(gc, tmp);
-	else
-		gaim_notify_error(gc, NULL, tmp, NULL);
-
-	g_free(tmp);
 }
 
 static void

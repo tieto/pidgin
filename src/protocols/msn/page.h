@@ -35,8 +35,6 @@ struct _MsnPage
 	char *from_location;
 	char *from_phone;
 
-	size_t size;
-
 	char *body;
 };
 

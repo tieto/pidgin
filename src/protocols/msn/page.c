@@ -22,36 +22,12 @@
 #include "msn.h"
 #include "page.h"
 
-#define GET_NEXT(tmp) \
-	while (*(tmp) && *(tmp) != ' ' && *(tmp) != '\r') \
-		(tmp)++; \
-	if (*(tmp) != '\0') *(tmp)++ = '\0'; \
-	if (*(tmp) == '\n') *(tmp)++; \
-	while (*(tmp) && *(tmp) == ' ') \
-		(tmp)++
-
-#define GET_NEXT_LINE(tmp) \
-	while (*(tmp) && *(tmp) != '\r') \
-		(tmp)++; \
-	if (*(tmp) != '\0') *(tmp)++ = '\0'; \
-	if (*(tmp) == '\n') *(tmp)++
-
-/*
- * <TEXT xml:space="preserve" enc="utf-8"> == 39
- * </TEXT>                                 ==  7
- *                                           ----
- *                                            46
- */
-#define MSN_PAGE_BASE_SIZE 46
-
 MsnPage *
 msn_page_new(void)
 {
 	MsnPage *page;
 
 	page = g_new0(MsnPage, 1);
-
-	page->size = MSN_PAGE_BASE_SIZE;
 
 	return page;
 }
@@ -84,15 +60,8 @@ msn_page_gen_payload(const MsnPage *page, size_t *ret_size)
 		g_strdup_printf("<TEXT xml:space=\"preserve\" enc=\"utf-8\">%s</TEXT>",
 						msn_page_get_body(page));
 
-	if (page->size != strlen(str))
-	{
-		gaim_debug(GAIM_DEBUG_ERROR, "msn",
-				   "Outgoing page size (%d) and string length (%d) "
-				   "do not match!\n", page->size, strlen(str));
-	}
-
 	if (ret_size != NULL)
-		*ret_size = page->size - 1;
+		*ret_size = strlen(str);
 
 	return str;
 }
@@ -104,14 +73,9 @@ msn_page_set_body(MsnPage *page, const char *body)
 	g_return_if_fail(body != NULL);
 
 	if (page->body != NULL)
-	{
-		page->size -= strlen(page->body);
 		g_free(page->body);
-	}
 
 	page->body = g_strdup(body);
-
-	page->size += strlen(body);
 }
 
 const char *
@@ -121,4 +85,3 @@ msn_page_get_body(const MsnPage *page)
 
 	return page->body;
 }
-

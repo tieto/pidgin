@@ -37,6 +37,8 @@ version 0.78cvs
 	  which was due to case-sensitive string comparisons (Gudmundur Olafsson)
 	* Fixed an MSN HTTP method bug where MSN would queue data indefinitely.
 	  (Andrew Wellington)
+	* Overly long messages and paging cell phones in MSN no longer cause
+	  disconnects (Felipe Contreras)
 	* Several bug fixes for MSN's MSNSLP and MSNObject support (Finlay Dobbie)
 	* ALT-F works correctly in the System Log Viewer (Stu Tomlinson)
 	* New tabs should scroll correctly again (Tim Ringenbach)
