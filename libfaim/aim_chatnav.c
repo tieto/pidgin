@@ -207,7 +207,6 @@ faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct comm
 		tmptlv = aim_gettlv(innerlist, 0x00d5, 1);
 		createperms = aimutil_get8(tmptlv->value);
 		
-		printf("faim: creation permissions %x\n", createperms);
 	      }
 
 	      /*
