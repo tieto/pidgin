@@ -751,7 +751,6 @@ static time_t iso8601_to_time(char *timestamp)
          retval -= timezone;
 #     endif
 #endif
-	      ;
    }
    return retval;
 }

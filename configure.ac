@@ -260,6 +260,20 @@ fi
 AC_SUBST(XSS_LIBS)
 
 
+AC_DEFUN(GC_TM_GMTOFF,
+[AC_REQUIRE([AC_STRUCT_TM])dnl
+AC_CACHE_CHECK([for tm_gmtoff in struct tm], ac_cv_struct_tm_gmtoff,
+[AC_TRY_COMPILE([#include <sys/types.h>
+#include <$ac_cv_struct_tm>], [struct tm tm; tm.tm_gmtoff;],
+  ac_cv_struct_tm_gmtoff=yes, ac_cv_struct_tm_gmtoff=no)])
+if test "$ac_cv_struct_tm_gmtoff" = yes; then
+  AC_DEFINE(HAVE_TM_GMTOFF)
+fi
+])
+
+GC_TM_GMTOFF
+
+
 
 dnl This was taken straight from X-Chat.
 dnl X-Chat is the greatest application ever, not only
