@@ -13,7 +13,8 @@ version 0.44:
 	  chat rooms in their buddy lists (chatlist.so)
 	* Updated libfaim
 	* Added drop down selection to chat invitation
-	* Improved the looks of the chat invitation dialog
+	* Improved the look of the chat invitation dialog
+	* Improved the look of the proxy preferences
 
 version 0.43 (09/06/2001):
 	* Updated German Translation (thanks Daniel Seifert)
