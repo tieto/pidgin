@@ -378,8 +378,6 @@ void show_login()
 	}
 
 	gtk_widget_show(mainwindow);
-
-	SetTickerPrefs();
 }
 
 extern void show_debug(GtkObject *);
@@ -577,6 +575,7 @@ int main(int argc, char *argv[])
 
 	set_defaults(FALSE);
 	load_prefs();
+	SetTickerPrefs();
 
 	/* set the default username */
 	if (opt_user_arg != NULL) {
