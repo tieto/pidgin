@@ -354,7 +354,7 @@ static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	if ((len = read(irc->fd, irc->inbuf + irc->inbufused, IRC_INITIAL_BUFSIZE - 1)) < 0) {
-		gaim_connection_error(gc, "Read error");
+		gaim_connection_error(gc, _("Read error"));
 		return;
 	} else if (len == 0) {
 		/* Remote closed the connection, probably */
