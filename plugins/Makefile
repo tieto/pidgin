@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall `gnome-config --cflags gtk` -I../src -g
 LDFLAGS = -ggdb `gnome-config --libs gtk` -shared -lpthread
 
-all: simple.so gaiminc.so autorecon.so spellchk.so chkmail.so \
+all: simple.so gaiminc.so autorecon.so spellchk.so \
 	filectl.so iconaway.so
 
 .SUFFIXES: .c .so
