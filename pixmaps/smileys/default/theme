@@ -1,7 +1,9 @@
 Name=Default
 Description=Emoticons from each protocol's official client.
 Icon=smile.png
-Author=Penguin Pimps
+
+# RIP Penguin Pimps.  20 November, 2004.
+Author=Various
 
 [default]
 ! luke.png			C:-) C:)
