@@ -156,7 +156,6 @@ gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 static void
 dropdown_set(GObject *w, const char *key)
 {
-	const char *bool_key;
 	const char *str_value;
 	int int_value;
 	GaimPrefType type;
@@ -174,13 +173,8 @@ dropdown_set(GObject *w, const char *key)
 		gaim_prefs_set_string(key, str_value);
 	}
 	else if (type == GAIM_PREF_BOOLEAN) {
-		bool_key = (const char *)g_object_get_data(w, "value");
-
-		if (!strcmp(key, bool_key))
-			return;
-
-		gaim_prefs_set_bool(key, FALSE);
-		gaim_prefs_set_bool(bool_key, TRUE);
+		gaim_prefs_set_bool(key,
+				GPOINTER_TO_INT(g_object_get_data(w, "value")));
 	}
 }
 
@@ -192,7 +186,6 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	GtkWidget  *label;
 	GtkWidget  *hbox;
 	gchar      *text;
-	const char *bool_key   = NULL;
 	const char *stored_str = NULL;
 	int         stored_int = 0;
 	int         int_value  = 0;
@@ -247,9 +240,8 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 			g_object_set_data(G_OBJECT(opt), "value", (char *)str_value);
 		}
 		else if (type == GAIM_PREF_BOOLEAN) {
-			bool_key = (const char *)menuitems->data;
-
-			g_object_set_data(G_OBJECT(opt), "value", (char *)bool_key);
+			g_object_set_data(G_OBJECT(opt), "value",
+					menuitems->data);
 		}
 
 		g_signal_connect(G_OBJECT(opt), "activate",
@@ -261,7 +253,8 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 		if ((type == GAIM_PREF_INT && stored_int == int_value) ||
 			(type == GAIM_PREF_STRING && stored_str != NULL &&
 			 !strcmp(stored_str, str_value)) ||
-			(type == GAIM_PREF_BOOLEAN && gaim_prefs_get_bool(bool_key))) {
+			(type == GAIM_PREF_BOOLEAN &&
+			 (gaim_prefs_get_bool(key) == GPOINTER_TO_INT(menuitems->data)))) {
 
 			gtk_menu_set_active(GTK_MENU(menu), o);
 		}
@@ -290,12 +283,15 @@ gaim_gtk_prefs_dropdown(GtkWidget *box, const gchar *title, GaimPrefType type,
 	int int_value;
 	const char *str_value;
 
+	g_return_val_if_fail(type == GAIM_PREF_BOOLEAN || type == GAIM_PREF_INT ||
+			type == GAIM_PREF_STRING, NULL);
+
 	va_start(ap, key);
 	while ((name = va_arg(ap, char *)) != NULL) {
 
 		menuitems = g_list_prepend(menuitems, name);
 
-		if (type == GAIM_PREF_INT) {
+		if (type == GAIM_PREF_INT || type == GAIM_PREF_BOOLEAN) {
 			int_value = va_arg(ap, int);
 			menuitems = g_list_prepend(menuitems, GINT_TO_POINTER(int_value));
 		}
