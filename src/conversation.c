@@ -1915,6 +1915,7 @@ gaim_chat_rename_user(struct gaim_chat *chat, const char *old_user,
 	struct gaim_conversation *conv;
 	struct gaim_conversation_ui_ops *ops;
 	char tmp[BUF_LONG];
+	GList *names;
 
 	if (chat == NULL || old_user == NULL || new_user == NULL)
 		return;
@@ -1929,8 +1930,16 @@ gaim_chat_rename_user(struct gaim_chat *chat, const char *old_user,
 	if (ops != NULL && ops->chat_rename_user != NULL)
 		ops->chat_rename_user(conv, old_user, new_user);
 
-	gaim_chat_set_users(chat, g_list_remove(gaim_chat_get_users(chat),
-											old_user));
+	for (names = gaim_chat_get_users(chat);
+		 names != NULL;
+		 names = names->next) {
+
+		if (!g_strcasecmp((char *)names->data, old_user)) {
+			gaim_chat_set_users(chat,
+					g_list_remove(gaim_chat_get_users(chat), names->data));
+			break;
+		}
+	}
 
 	if (gaim_chat_is_user_ignored(chat, old_user)) {
 		gaim_chat_unignore(chat, old_user);
