@@ -894,7 +894,9 @@ static void process_anyone()
 static void zephyr_login(GaimAccount * account)
 {
 	ZSubscription_t sub;
-
+	unsigned short port = 0;
+	FILE* wgfile;
+	char* wgfilename;
 	if (zgc) {
 		gaim_notify_error(account->gc, NULL,
 						  _("Already logged in with Zephyr"), _("Because Zephyr uses your system username, you " "are unable to have multiple accounts on it " "when logged in as the same user."));
@@ -906,19 +908,24 @@ static void zephyr_login(GaimAccount * account)
 	gaim_connection_update_progress(zgc, _("Connecting"), 0, 2);
 
 	z_call_s(ZInitialize(), "Couldn't initialize zephyr");
-	z_call_s(ZOpenPort(NULL), "Couldn't open port");
+	z_call_s(ZOpenPort(&port), "Couldn't open port");
 	z_call_s(ZSetLocation((char *)
 						  gaim_account_get_string(zgc->account, "exposure_level", EXPOSE_REALMVIS)), "Couldn't set location");
 
 	sub.zsub_class = "MESSAGE";
 	sub.zsub_classinst = "PERSONAL";
 	sub.zsub_recipient = (char *)gaim_zephyr_get_sender();
-
+	
 	/* we don't care if this fails. i'm lying right now. */
 	if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
 		gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "Couldn't subscribe to messages!\n");
 	}
 
+	wgfile = gaim_mkstemp_template(&wgfilename,"gaimwgXXXXXX");
+	if (wgfile) {
+		fprintf(wgfile,"%d\n",port);
+		fclose(wgfile);
+	}
 	gaim_connection_set_state(zgc, GAIM_CONNECTED);
 	serv_finish_login(zgc);
 
