@@ -1564,6 +1564,7 @@ void save_prefs()
 	filename_temp = g_strdup_printf("%s.save", filename);
 
 	if ((f = fopen(filename_temp, "w"))) {
+		chmod(filename_temp, S_IRUSR | S_IWUSR);
 		is_saving_prefs = 1;
 		fprintf(f, "# .gaimrc v%d\n", 4);
 		gaimrc_write_users(f);
@@ -1576,7 +1577,6 @@ void save_prefs()
 #endif
 		gaimrc_write_proxy(f);
 		fclose(f);
-		chmod(filename, S_IRUSR | S_IWUSR);
 		if (rename(filename_temp, filename) < 0)
 			debug_printf("error renaming %s to %s\n", filename_temp, filename);
 		is_saving_prefs = 0;
