@@ -1,23 +1,25 @@
 A lot of people have tried to hack gaim, but haven't been able to because
 the code is just so horrid. Well, the code isn't getting better anytime
-soon, so to help all you would-be hackers help out gaim, here's a brief
-tutorial on how gaim works. I'll quickly describe the logical flow of
-things, then what you'll find in each of the source files. As an added
-bonus, I'll try and describe as best I can how multiple connections and
-multiple protocols work. Hopefully that's enough to get most of you going.
+soon (I hate GNU indent), so to help all you would-be hackers help out
+gaim, here's a brief tutorial on how gaim works. I'll quickly describe
+the logical flow of things, then what you'll find in each of the source
+files. As an added bonus, I'll try and describe as best I can how multiple
+connections and multiple protocols work. Depending on how much I want
+to avoid my final tomorrow I may even describe other parts of gaim that
+I particularly want to brag about. Hopefully that's enough to get most
+of you going.
 
 If you're going to hack gaim, PLEASE, PLEASE PLEASE PLEASE send patches
 against the absolute latest CVS. I get really annoyed when I get patches
-against the last released version, especially since I don't usually have
-a copy of it on my computer, and gaim tends to change a lot between
+against the last released version, especially since I don't usually
+have a copy of it on my computer, and gaim tends to change a lot between
 versions. (I sometimes get annoyed when they're against CVS from 3 days
 ago, but can't complain because it's usually my fault that I haven't
 looked at the patch yet.) To get gaim from CVS (if you haven't already),
 run the following commands:
 
 $ export CVSROOT=:pserver:anonymous@cvs.gaim.sourceforge.net:/cvsroot/gaim
-$ cvs login
-(hit enter as the password)
+$ cvs login (hit enter as the password)
 $ cvs co gaim
 (you'll see it getting all of the files)
 $ cd gaim
@@ -25,7 +27,10 @@ $ ./gen
 
 You'll now have your normal gaim tree with ./configure and all. (If you
 want to make your life really simple, learn how CVS works. CVS is your
-friend.)
+friend.) To make a patch, just edit the files right there in that tree
+(don't bother with two trees, or even two copies of the same file). Then
+when you're ready to make your patch, simply run 'cvs diff -u >my.patch'
+and send it off.
 
 There's one little thing that's just a pet peeve, and it's really stupid.
 In ./configure there's an --enable-debug option. This does two things:
@@ -35,7 +40,8 @@ on in the preferences) whether or not --enable-debug was selected. Most
 of the information that's printed is useless anyway though; so the
 --enable-debug option really doesn't do a whole lot.
 
-This file was last modified by $Author: warmenhoven $ on $Date: 2000-11-16 02:35:58 -0500 (Thu, 16 Nov 2000) $.
+This file was last modified by $Author: warmenhoven $ on
+$Date: 2000-12-12 07:56:53 -0500 (Tue, 12 Dec 2000) $.
 
 
 PROGRAM FLOW
@@ -47,24 +53,25 @@ parsing command-line options. It then draws the login window by calling
 show_login, and waits for input.
 
 At the login window, when "Accounts" is clicked, account_editor() is
-called. This then displays all of the users and various information about
-them. If the user clicks the "Signon" button instead, serv_login is called.
+called. This then displays all of the users and various information
+about them. If the user clicks the "Signon" button instead, serv_login
+is called.
 
 When the "Sign on/off" button is clicked, serv_login is passed the
 username and the password for the account. If the password length is
-zero (the password field is a character array rather than pointer so
-it will not be NULL) then the Signon callback will prompt for the
-password before calling serv_login. serv_login then signs in the user
-using the appropriate protocol. We'll assume TOC for the rest of this
-discussion; Oscar has a lot of bad hacks to get it working that I don't
-even want to think about.
+zero (the password field is a character array rather than pointer so it
+will not be NULL) then the Signon callback will prompt for the password
+before calling serv_login. serv_login then signs in the user using the
+appropriate protocol. We'll assume TOC for the rest of this discussion;
+even the libfaim guys get scared by oscar.c, and I'll talk about the
+PRPLs later.
 
 After you're signed in (I'll skip that discussion - I doubt many people
 are going to change the login process, since it pretty much just follows
 PROTOCOL), Gaim draws the buddy list by calling show_buddy_list, and
-waits for input from two places: the server and the user. The first place
-it gets input from after signon is usually the server, when the server
-tells Gaim which buddies are signed on.
+waits for input from two places: the server and the user. The first
+place it gets input from after signon is usually the server, when the
+server tells Gaim which buddies are signed on.
 
 When there is information ready to be read from the server, toc_callback
 is called (by GDK) to parse the incoming information. On an UPDATE,
@@ -72,12 +79,19 @@ serv_got_update is called, which takes care of things like notifying
 conversation windows of the update if need be; notifying the plugins;
 and finally, calling set_buddy.
 
-New connections happen the exact same way as described above. Each aim_user
-can have one gaim_connection associated with it. aim_user and gaim_connection
-both have a protocol field; gaim_connection's should be constant once it is
-set in the appropriate (protocol)_login function. There are lots of details
-that are connected with multiple connections that are best explained by
-reading the code.
+set_buddy is responsible for a lot of stuff, but most of it is done
+implicitly. It's responsible for the sounds (which is just a call to
+play_sound), but the biggest thing it does is call new_group_show and
+new_buddy_show if necessary. There's only one group_show per group name,
+even between connections, and only one buddy_show per group_show per
+buddy name, even between connections. (If that's not confusing enough,
+wait until I really start describing how the buddy list works.)
+
+New connections happen the exact same way as described above. Each
+aim_user can have one gaim_connection associated with it. aim_user and
+gaim_connection both have a protocol field; gaim_connection's should
+be constant once it is set. (I'll talk about the gaim_connection struct
+more later.)
 
 When the user opens a new conversation window, new_conversation is called.
 That's easy enough. If there isn't a conversation with the person already
@@ -99,23 +113,26 @@ about.c:
 aim.c:
   This is where the main() function is. It takes care of a lot of the
   initialization stuff, and showing the login window. It's pretty tiny
-  and there's not really much to edit in it. Watch out for bad Oscar
-  sign in hacks.
+  and there's not really much to edit in it. This has some of the most
+  pointless functions, like gaim_setup, which optionally turns off sounds
+  on signon. A lot of this file should actually be part of other files.
 
 away.c:
   This takes care of most of the away stuff: setting the away message
-  (do_im_away); coming back (do_im_back); drawing the away window;
-  etc. To be honest I haven't looked at this file in months.
+  (do_away_message); coming back (do_im_back); drawing the away window;
+  etc.
 
 browser.c:
   Code for opening a browser window. Most of the code is trying to deal
   with Netscape. The most important function here is open_url. Have fun.
+  (This file may give you problems with GTK 2.0, because it uses parts
+  of GDK that it's not supposed to know about.)
 
 buddy.c:
-  This takes care of not only nearly everything buddy-related (the buddy
-  list, the permit/deny lists, and the window), but also a lot of the
-  code flow and util functions. Look for good things like find_buddy,
-  set_buddy, and signoff() here.
+  This takes care of not only nearly everything buddy-related (the
+  buddy lists, the window, etc.), but also a lot of the code flow and
+  util functions. Look for good things like find_buddy, set_buddy,
+  and signoff here.
 
 buddy_chat.c:
   This takes care of the buddy chat stuff. This used to be a lot bigger
@@ -129,15 +146,16 @@ conversation.c:
   are hidden. It tries to abstract things as much as possible, but doesn't
   do a very good job. This is also where things like "Enter sends" and
   "Ctrl-{B/I/U/S}" options get carried out (look for send_callback). The
-  chat and IM toolbar (with the B/I/U/S buttons) are both built from the
-  same function, build_conv_toolbar.
+  chat and IM toolbar (with the B/I/U/S buttons) are both built from
+  the same function, build_conv_toolbar.
 
 dialogs.c:
-  A massive file with a lot of little utility functions. This is where
-  all of those little dialog windows are created. Things like the warn
-  dialog and the add buddy dialog are here. Not all of the dialogs in
-  gaim are in this file, though. But most of them are. This is also
-  where do_import is housed, to import buddy lists.
+  A massive file with a lot of little utility functions. This is where all
+  of those little dialog windows are created. Things like the warn dialog
+  and the add buddy dialog are here. Not all of the dialogs in gaim are in
+  this file, though. But most of them are. This is also where do_import
+  is housed, to import buddy lists. (The actual buddy list parsing code
+  is in util.c for winaim lists and toc.c for gaim's own lists.)
 
 gaimrc.c:
   This controls everything about the .gaimrc file. There's not really much
@@ -145,19 +163,24 @@ gaimrc.c:
   to follow files in gaim. The important functions are towards the bottom.
 
 gnome_applet_mgr.c:
-  A hideous creation from the days before I started working on gaim. Most
-  of it works, but it has functionsLikeThis. I hate looking at this
-  file, but I'm too lazy to change the functions. The best functions
-  are things like set_applet_draw_open, whose sole purpose is to set a
-  global variable to TRUE. [ note 8/22/00 - I finally changed this file. ]
+  This controls most things that are related to the applet. I don't like
+  looking at this file because it still has functionsLikeThis. But at
+  least it doesn't have many of them anymore. Anyway, this file isn't
+  very big because there's really not much difference between the panel
+  version and the app version.
 
 gtkhtml.c:
-  This is really just one big hack. It started off as an HTML widget that
-  was written for Gnome as far as I can tell. The current version is
-  huge, requires way too many libs, and is too hard to upgrade to. But
-  we've managed to hack this poor old version into basically what we
-  need it for. I recommend not looking at this file if you want to save
-  your sanity.
+  This is really just one big hack. I recommend not looking at this
+  file if you want to save your sanity. (It's going to be replaced
+  eventually anyway.)  People have asked why we don't replace this with
+  GNOME's GtkHTML, or embed mozilla (yes, they were serious). There
+  are two reasons. The first is that doing that would cause gaim to
+  require 6 extra libraries that nobody needs or wants or has. The
+  second is that we really don't need, or even want, a full-fledged
+  HTML viewer. We don't even want a normal HTML viewer because the text
+  that gets sent gets parsed and displayed different than normal HTML.
+  (Try inserting a newline and you'll see what I mean.) We should only
+  support about 12 tags, not the 50 that normal HTML supports.
 
 gtkticker.c:
   Syd, our resident GTK God, wrote a GtkWidget, GtkTicker. This is that
@@ -172,17 +195,14 @@ idle.c:
   This file used to be entirely #if 0'd out of existance. However, thanks
   to some very generous people who submitted patches, this takes care of
   reporting idle time (imagine that). It's a pretty straight-forward file.
+  This also takes care of the auto-away stuff.
 
 multi.c:
   This is the file that tries to take care of most of the major issues
   with multiple connections. The best function in here by far is the
-  account_editor(). auto_login() is also in here (I'm just reading
-  multi.h now...); auto_login has problems. Someone please fix it.
-  account_editor is really the only function that the UI needs to be
-  concerned with. If you want to remove multiconnectivity from gaim,
-  all you would really need to do is comment out any lines that make
-  reference to this function (there are only two - one in aim.c and one
-  in buddy.c). Or you could just run ./configure --disable-multi.
+  account_editor(). auto_login() is also in here (I'm just reading multi.h
+  now...). account_editor is really the only function that the UI needs
+  to be concerned with.
 
 oscar.c:
   One big hack of copied code. This is supposed to be the libfaim tie-in
@@ -211,38 +231,41 @@ prefs.c:
   gaim_button probably 30 or 40 times. (I don't really wanna run grep
   | wc to count.) This is where you add the toggle button for gaim
   preferences. It's very simple, and if you look at a couple of the
-  calls to gaim_button you'll figure it out right away.
+  calls to gaim_button you'll figure it out right away. The new prefs
+  window uses a CList instead of a Notebook, and there's a pretty bad
+  hack to get it to work. I won't tell you what though.
 
 prpl.c:
-  This file is what lets gaim dynamically load protocols, sort of. All of
-  the actual dlopen(), dlsym() stuff is in plugins.c. But this contains
-  all of the functions that the protocol plugin needs to call, and manages
-  all of the protocols. It's a pretty simple file actually.
+  This file is what lets gaim dynamically load protocols, sort of. All
+  of the actual dlopen(), dlsym() stuff is in plugins.c. But this
+  contains all of the functions that the protocol plugin needs to call,
+  and manages all of the protocols. It's a pretty simple file actually.
 
 proxy.c:
-  Adam (of libfaim glory) got bored one day and rewrote this file, so now
-  everything actually works. The main function is proxy_connect, which
-  figures out which proxy you want to use (if you want to use one at all)
-  and passes off the data to the appropriate function. This file should be
-  pretty straight-forward.
+  Adam (of libfaim glory) got bored one day and rewrote this file, so
+  now everything actually works. The main function is proxy_connect,
+  which figures out which proxy you want to use (if you want to use one
+  at all) and passes off the data to the appropriate function. This file
+  should be pretty straight-forward.
 
 rvous.c:
   This was originally going to be the stuff for all of the Buddy Icon
   and Voice Chat stuff, but I got really sick of protocol hacking really
   quick.  Now it only houses the file transfer stuff, which only works
-  for TOC.
+  for TOC. ("Works" being a very subjective statement. This file needs
+  to be rewritten.)
 
 server.c:
-  This is where all of the differentiation between TOC and Oscar is
-  done.  Nearly everything that's network related goes through here
+  This is where all of the differentiation between the different protocols
+  is done.  Nearly everything that's network related goes through here
   at one point or another. This has good things like serv_send_im and
   serv_got_update. Most of it should be pretty self-explanatory.
 
 sound.c:
   The main function in this file is play_sound, which plays one of 8
-  (maybe 9?) sounds based on preferences. All that the rest of the
-  code should have to do is call play_sound(BUDDY_ARRIVE), for example,
-  and this file will take care of determining if a sound should be played
+  (maybe 9?) sounds based on preferences. All that the rest of the code
+  should have to do is call play_sound(BUDDY_ARRIVE), for example, and
+  this file will take care of determining if a sound should be played
   and which file should be played.
 
 ticker.c:
@@ -256,7 +279,11 @@ ticker.c:
 toc.c:
   This handles everything TOC-related, including parsing gaim's buddy
   list.  Most of this file is toc_callback, which parses the incoming
-  information from the server. I really don't like TOC though.
+  information from the server. I really don't like TOC though. (I've spent
+  waaayyyy too much time with TOC. I rewrote the signon process for this
+  file at one point, so that read was only called when data was pending.
+  Since then the TOC server has been blocking my IP (probably my own
+  stupid fault, sending bad strings or some such).)
 
 util.c:
   There's not really a lot of cohesion to this file; it's just a lot of
@@ -265,56 +292,167 @@ util.c:
   like the name says.
 
 
+HOW THE BUDDY LIST WORKS
+========================
+
+The buddy list is a pain in the ass. Let me start off by saying that. The
+most difficult part about getting gaim to do multiple connections was
+the buddy list. In its current state it's very much like the UI for
+0.10.x and earlier, which is what I was aiming for. However, the code
+is completely different. And not much better.
+
+All of the buddy list stuff is in buddy.c, so you'll only have to have
+that one file open (and possibly gaim.h for the struct definitions). There
+are two sets of functions: those that deal with the buddy lists, and
+those that deal with the window. (I say lists because each connection
+has their own buddy list, independent of the others, even though the UI
+merges them.)
+
+The buddy list functions work pretty much the same way they did before;
+except now that each buddy and group belongs to a connection, things
+like find_buddy take an additional argument, the connection you want to
+search for the buddy in.  Read gaim.h for a good list of them: find_buddy,
+find_group, add_buddy, remove_buddy, remove_group.
+
+The window is a lot more fun. There's really only one function that
+does anything interesting, and that's set_buddy. (There's also things
+like build_edit_tree, but that's boring.) set_buddy is called by
+serv_got_update (and should only be called by that function) any time
+a user signs on, signs off, goes away, comes back, goes idle, etc, etc,
+etc. Various things happen depending on the new state of the buddy.
+
+struct buddy has a member, present, which is set to either 0, 1, or
+2. You can check if the buddy is online with "if (b->present)". This
+becomes important. present is set to either 0 or 1 by serv_got_update,
+or is not set at all. When the buddy is passed to set_buddy, if present
+is 1 then set_buddy plays the BUDDY_ARRIVE sound, and sets present to 2,
+to indicate it has already received notification of arrival. It then
+does other signin-related stuff: setting the pixmap to the login icon;
+updating the conversation windows; etc.
+
+The most important thing it does though, if a buddy is present, is it
+checks for the existance of the appropriate group_show and buddy_show for
+that buddy.  Each buddy must belong to a group. group_shows are based on
+name; there can only be one group_show for each group name. buddy_shows
+are based both on name and on group_show; there can only be one buddy_show
+in a group_show for each name. However, there can be two buddy_shows
+with the same name as long as they have different group_shows.
+
+Each buddy_show has a GList of connections that has registered its related
+buddy as being online. set_buddy makes sure that the connection that it's
+being passed is part of the connlist for the buddy_show associated with
+the struct buddy that it's passed (it helps to know your data structures).
+
+If a buddy logs off (b->present == 0), and a buddy_show exists for
+that buddy, then set_buddy will play the logoff sound, change the icon,
+remove the connection from the connlist for the buddy_show, etc.
+
+And that's how that works. For the buddy lists, connections own buddies;
+for the window, the buddies own the connections. When the buddy_show
+connlist count drops to zero it disappears from existance.
+
+
+PLUGINS
+=======
+
+OK, so you want to load a plugin. You go through whatever UI (you
+can read all about the UI in plugins.c or whereever). You finally get
+to load_plugin, the meat of the plugins stuff (plugins can actually
+call load_plugin themselves to load other plugins). load_plugin
+is passed the full path to the plugin you want to load
+(e.g. /usr/local/lib/gaim/irc.so).
+
+load_plugin does a few things with that filename. The first is to see
+if you've already loaded that plugin. If you have, load_plugin unloads
+the one that is currently loaded. You might wonder why; it's because
+the same plugin can't be loaded twice. If you call g_module_open on a
+filename twice, both times it will return the same pointer, and both times
+increment the reference count on the GModule * that it returns. This
+means you really do have the same plugin twice, which fucks up the
+callback system to no end.  So it's better that you can only have it
+loaded once at any given time.
+
+Now that we're assured that we don't have this particular plugin loaded
+yet, we better load it. g_module_open, baby. Much more portable than
+dlopen().  In fact, for Linux it actually is the equivalent of dlopen()
+(you can read the gmodule source and see for yourself). There's only one
+quirk. It always logically ORs the options you pass with RTLD_GLOBAL,
+which means that plugins share symbols. I haven't figured out yet if
+this means just functions or variables too; but in either case make every
+function and variable in your plugin static except for gaim_plugin_*(),
+name(), and description().  It's good coding practice anyway.
+
+So, assuming we didn't get NULL back from g_module_open, we then make sure
+it's a valid gaim plugin by looking for and calling gaim_plugin_init,
+courtesy g_module_symbol (g_module_symbol is actually what's portable
+about gmodule as opposed to dl*; some BSD's require '_' prepended to
+symbol names and g_module_symbol guarantees we do The Right Thing).
+
+Assuming we've found gaim_plugin_init and it hasn't returned non-NULL
+to us, we then add it to our list of plugins and go merrily about our way.
+
+So when do the callbacks happen?! plugin_event, baby, plugin_event. Any
+time you want to trigger a plugin event simply call plugin_even with the
+parameters to be passed to any event handlers and you're set. plugin_event
+then makes sure that any plugins waiting for the event get passed the
+arguments properly and passes it on to perl.
+
+Speaking of perl. If you really want to know how this works, you're
+better off reading X-Chat's documentation of it, because it's better
+than what I could provide.
+
+
 MULTIPLE CONNECTIONS AND PRPLS
 ==============================
 
 OK, let's start with the basics. There are users. Each user is contained
 in an aim_user struct, and kept track of in the aim_users GList (GSList?).
 Each aim_user has certain features: a username, a password, and user_info.
-It also has certain options, and the protocol it uses to sign on (kept as
-an int which is #define'd in prpl.h). The way the management of the users
-works is, there will (hopefully) only be one user for a given screenname/
-protocol pair (i.e. you may have two user warmenhoven's, but they'll both
-have a different protocol number).
+It also has certain options, and the protocol it uses to sign on (kept
+as an int which is #define'd in prpl.h). The way the management of the
+users works is, there will (hopefully) only be one user for a given
+screenname/ protocol pair (i.e. you may have two user warmenhoven's,
+but they'll both have a different protocol number).
 
-Now then, there are protocols that gaim knows about. Each protocol is in
-a prpl struct and kept track of in the protocols GSList. The way the
-management of the protocols is, there will only ever be one prpl per numeric
-protocol. Each prpl defines a basic set of functions: login, logout, send_im,
-etc. The prpl is responsible not only for handling these functions, but also
-for calling the appropriate serv_got functions (e.g. serv_got_update when a
-buddy comes online/goes offline/goes idle/etc). It handles each of these on
-a per-connection basis.
+Now then, there are protocols that gaim knows about. Each protocol is
+in a prpl struct and kept track of in the protocols GSList. The way the
+management of the protocols is, there will only ever be one prpl per
+numeric protocol. Each prpl defines a basic set of functions: login,
+logout, send_im, etc. The prpl is responsible not only for handling
+these functions, but also for calling the appropriate serv_got functions
+(e.g. serv_got_update when a buddy comes online/goes offline/goes
+idle/etc). It handles each of these on a per-connection basis.
 
-So why's it called a PRPL? It stands for PRotocol PLugin. That means that
-it's possible to dynamically add new protocols to gaim. However, all protocols
-must be implemented the same way: by using a prpl struct and being loaded,
-regardless of whether they are static or dynamic.
+So why's it called a PRPL? It stands for PRotocol PLugin. That means
+that it's possible to dynamically add new protocols to gaim. However,
+all protocols must be implemented the same way: by using a prpl struct
+and being loaded, regardless of whether they are static or dynamic.
 
-Here's how struct gaim_connection fits into all of this. At some point the
-User (capitalized to indicate a person and not a name) will try to sign on
-one of Their users. serv_login is then called for that user. It searches for
-the prpl that is assigned to that user, and calls that prpl's login function,
-passing it the aim_user struct that is attempting to sign on. The prpl is then
-responsible for seeing that the gaim_connection is created (by calling
-new_gaim_connection), and registering it as being online (by calling
-account_online and passing it the aim_user and gaim_connection structs). At
-that point, the aim_user and gaim_connection structs have pointers to each
-other, and the gaim_connection struct has a pointer to the prpl struct that
-it is using. The gaim_connections are stored in the connections GSList.
-The way connection management works is, there will always only be one
-gaim_connection per user, and the prpl that the gaim_connection uses will be
-constant for the gaim_connection's life.
+Here's how struct gaim_connection fits into all of this. At some point
+the User (capitalized to indicate a person and not a name) will try to
+sign on one of Their users. serv_login is then called for that user. It
+searches for the prpl that is assigned to that user, and calls that prpl's
+login function, passing it the aim_user struct that is attempting to sign
+on. The prpl is then responsible for seeing that the gaim_connection
+is created (by calling new_gaim_connection), and registering it as
+being online (by calling account_online and passing it the aim_user and
+gaim_connection structs). At that point, the aim_user and gaim_connection
+structs have pointers to each other, and the gaim_connection struct has
+a pointer to the prpl struct that it is using. The gaim_connections are
+stored in the connections GSList.  The way connection management works is,
+there will always only be one gaim_connection per user, and the prpl that
+the gaim_connection uses will be constant for the gaim_connection's life.
 
-So at certain points the User is going to want to do certain things, like
-send a message. They must send the message on a connection. So the UI figures
-out which gaim_connection the User want to send a message on (for our example),
-and calls serv_send_im, telling it which gaim_connection to use, and the
-necessary information (who to send it to, etc). The serv_ function then
-calls the handler of the prpl of the connection for that event (that was way
-too many prepositions). OK, each prpl has a send_im function. Each connection
-has a prpl. so you call gc->prpl->send_im and pass it the connection and all
-the necessary info. And that's how things get done.
+So at certain points the User is going to want to do certain things,
+like send a message. They must send the message on a connection. So the UI
+figures out which gaim_connection the User want to send a message on (for
+our example), and calls serv_send_im, telling it which gaim_connection to
+use, and the necessary information (who to send it to, etc). The serv_
+function then calls the handler of the prpl of the connection for that
+event (that was way too many prepositions). OK, each prpl has a send_im
+function. Each connection has a prpl. so you call gc->prpl->send_im and
+pass it the connection and all the necessary info. And that's how things
+get done.
 
 I hope some of that made sense. Looking back at it it makes absolutely no
 sense to me. Thank god I wrote the code; otherwise I'm sure I'd be lost.
