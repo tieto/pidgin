@@ -1315,6 +1315,8 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_container_add(GTK_CONTAINER(sw), text);
 	if (convo_options & OPT_CONVO_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
+	else
+		gtk_imhtml_show_comments(GTK_IMHTML(text), FALSE);
 	gaim_setup_imhtml(text);
 	gtk_widget_show(text);
 

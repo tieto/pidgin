@@ -692,7 +692,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event, struct conversa
 		if(!(event->state & GDK_CONTROL_MASK))
 			gtk_imhtml_page_down(GTK_IMHTML(c->text));
 	} else if ((event->keyval == GDK_F2) && (convo_options & OPT_CONVO_F2_TOGGLES)) {
-		gtk_imhtml_show_comments(GTK_IMHTML(c->text), !GTK_IMHTML(c->text)->comments);
+		gtk_imhtml_show_comments(GTK_IMHTML(c->text), !GTK_IMHTML(c->text)->show_comments);
 	} else if ((event->keyval == GDK_Return) || (event->keyval == GDK_KP_Enter)) {
 		if ((event->state & GDK_CONTROL_MASK) && (convo_options & OPT_CONVO_CTL_ENTER)) {
 			send_callback(NULL, c);
@@ -2681,6 +2681,8 @@ void show_conv(struct conversation *c)
 	gtk_container_add(GTK_CONTAINER(sw), text);
 	if (convo_options & OPT_CONVO_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
+	else
+		gtk_imhtml_show_comments(GTK_IMHTML(text), FALSE);
 	gaim_setup_imhtml(text);
 	gtk_widget_show(text);
 
