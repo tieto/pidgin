@@ -1,5 +1,10 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 0.81cvs:
+	New Features:
+	* The autorecon plugin will somewhat remember state information(Yosef
+	  Radchenko)
+
 version 0.80 (07/15/2004):
 	New Features:
 	* Ability to send files from the conversation window (Daniel Atallah)
