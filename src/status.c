@@ -636,19 +636,13 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 
 		for (l = gaim_presence_get_statuses(presence); l != NULL; l = l->next)
 		{
-			GaimStatusType *temp_type = l->data;
-			GaimStatus *temp_status = NULL;
+			GaimStatus *temp_status = l->data;
+			GaimStatusType *temp_type;
 
-			if  (!gaim_status_compare(temp_status, status))
-				continue;
+			temp_type = gaim_status_get_type(temp_status);
 
 			if (gaim_status_type_is_independent(temp_type))
 				continue;
-
-
-			temp_status = (GaimStatus *)g_hash_table_lookup(
-												presence->status_table,
-												gaim_status_type_get_id(temp_type));
 
 			if (gaim_status_is_active(temp_status))
 			{
