@@ -333,6 +333,7 @@ struct conversation {
 	GtkWidget *send;
 
 	/* stuff used just for IM */
+	GtkWidget *sw;
 	GtkWidget *info;
 	GtkWidget *warn;
 	GtkWidget *block;
@@ -473,6 +474,7 @@ extern int display_options;
 #define OPT_DISP_SHOW_WARN        0x00200000
 #define OPT_DISP_IGNORE_FONTS     0x00400000
 #define OPT_DISP_IGNORE_SIZES     0x00800000
+#define OPT_DISP_ONE_WINDOW       0x01000000
 
 extern int sound_options;
 #define OPT_SOUND_LOGIN          0x00000001

@@ -506,6 +506,7 @@ static void im_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
+	gaim_button(_("Show all conversations in one tabbed window"), &display_options, OPT_DISP_ONE_WINDOW, box);
 	gaim_button(_("Show logins in window"), &display_options, OPT_DISP_SHOW_LOGON, box);
 
 	hbox = gtk_hbox_new(FALSE, 0);
@@ -2127,6 +2128,9 @@ void set_display_option(GtkWidget *w, int *option)
 
 	if ((int)option == OPT_DISP_SHOW_TIME)
 		toggle_timestamps();
+
+	if ((int)option == OPT_DISP_ONE_WINDOW)
+		tabize();
 
 #ifdef USE_APPLET
 	update_pixmaps();

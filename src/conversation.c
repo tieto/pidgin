@@ -61,6 +61,9 @@ int state_lock = 0;
 GdkPixmap *dark_icon_pm = NULL;
 GdkBitmap *dark_icon_bm = NULL;
 
+static GtkWidget *all_convos = NULL;
+static GtkWidget *convo_notebook = NULL;
+
 char fontface[64];
 int fontsize = 3;
 extern GdkColor bgcolor;
@@ -130,8 +133,8 @@ struct conversation *new_conversation(char *name)
 	if (connections)
 		c->gc = (struct gaim_connection *)connections->data;
 	c->history = g_string_new("");
-	show_conv(c);
 	conversations = g_list_append(conversations, c);
+	show_conv(c);
 	plugin_event(event_new_conversation, name, 0, 0, 0);
 	return c;
 }
@@ -176,7 +179,8 @@ void rm_log(struct log_conversation *a)
 			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, cnv->name);
 		else
 			g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, cnv->name);
-		gtk_window_set_title(GTK_WINDOW(cnv->window), buf);
+		if (!(display_options & OPT_DISP_ONE_WINDOW))
+			gtk_window_set_title(GTK_WINDOW(cnv->window), buf);
 	}
 }
 
@@ -383,9 +387,21 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	if (general_options & OPT_GEN_CHECK_SPELLING)
 		gtkspell_detach(GTK_TEXT(c->entry));
 
-	if (c->window)
-		gtk_widget_destroy(c->window);
-	c->window = NULL;
+	if ((display_options & OPT_DISP_ONE_WINDOW) && (!c->is_chat)) {
+		if (g_list_length(conversations) > 1) {
+			gtk_notebook_remove_page(GTK_NOTEBOOK(convo_notebook),
+					g_list_index(conversations, c));
+		} else {
+			if (c->window)
+				gtk_widget_destroy(c->window);
+			c->window = NULL;
+			all_convos = NULL;
+		}
+	} else {
+		if (c->window)
+			gtk_widget_destroy(c->window);
+		c->window = NULL;
+	}
 
 	if (c->fg_color_dialog)
 		gtk_widget_destroy(c->fg_color_dialog);
@@ -445,6 +461,15 @@ void set_font_face(char *newfont, struct conversation *c)
 
 	if (alloc)
 		g_free(pre_fontface);
+}
+
+static gint delete_all_convo(GtkWidget *w, GdkEventAny *e, gpointer d)
+{
+	while (conversations) {
+		struct conversation *c = conversations->data;
+		close_callback(c->close, c);
+	}
+	return FALSE;
 }
 
 static gint delete_event_convo(GtkWidget *w, GdkEventAny * e, struct conversation *c)
@@ -1368,6 +1393,24 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	    (!c->is_chat && (general_options & OPT_GEN_POPUP_WINDOWS)))
 		    gdk_window_show(c->window->window);
 
+	if ((flags & WFLAG_RECV) && !c->is_chat && (display_options & OPT_DISP_ONE_WINDOW) &&
+			(gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook))
+			 != g_list_index(conversations, c))) {
+		GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook),
+				gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook),
+					g_list_index(conversations, c)));
+		GtkStyle *style = gtk_style_new();
+		if (!GTK_WIDGET_REALIZED(label))
+			gtk_widget_realize(label);
+		gdk_font_unref(style->font);
+		style->font = label->style->font;
+		style->fg[0].red = 0xcccc;
+		style->fg[0].green = 0x0000;
+		style->fg[0].blue = 0x0000;
+		gtk_widget_set_style(label, style);
+		gtk_style_unref(style);
+	}
+
 	g_free(smiley);
 	g_free(buf);
 }
@@ -1759,10 +1802,31 @@ void update_buttons_by_protocol(struct conversation *c)
 	}
 }
 
+static void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointer data)
+{
+	GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook),
+			gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook), page_num));
+	GtkStyle *style;
+	struct conversation *c = g_list_nth_data(conversations, page_num);
+	if (c && c->window && c->entry)
+		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
+	if (!GTK_WIDGET_REALIZED(label))
+		return;
+	style = gtk_style_new();
+	gdk_font_unref(style->font);
+	style->font = label->style->font;
+	style->fg[0].red = 0x0000;
+	style->fg[0].green = 0x0000;
+	style->fg[0].blue = 0x0000;
+	gtk_widget_set_style(label, style);
+	gtk_style_unref(style);
+}
+
 
 void show_conv(struct conversation *c)
 {
 	GtkWidget *win;
+	GtkWidget *cont;
 	char buf[256];
 	GtkWidget *text;
 	GtkWidget *sw;
@@ -1797,24 +1861,51 @@ void show_conv(struct conversation *c)
 	c->fgcol = fgcolor;
 	c->hasfg = 0;
 
-	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	c->window = win;
-	gtk_object_set_user_data(GTK_OBJECT(win), c);
-	gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
-	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
-	gtk_container_border_width(GTK_CONTAINER(win), 10);
-	gtk_widget_realize(win);
-	aol_icon(win->window);
-	if ((find_log_info(c->name)) || ((logging_options & OPT_LOG_ALL)))
-		 g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, c->name);
-	else
-		g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, c->name);
-	gtk_window_set_title(GTK_WINDOW(win), buf);
-	gtk_signal_connect(GTK_OBJECT(win), "delete_event", GTK_SIGNAL_FUNC(delete_event_convo), c);
+	if (display_options & OPT_DISP_ONE_WINDOW) {
+		if (!all_convos) {
+			win = all_convos = c->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+			gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
+			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+			gtk_container_border_width(GTK_CONTAINER(win), 0);
+			gtk_widget_realize(win);
+			aol_icon(win->window);
+			gtk_window_set_title(GTK_WINDOW(win), _("Gaim - Conversations"));
+			gtk_signal_connect(GTK_OBJECT(win), "delete_event",
+					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
+
+			convo_notebook = gtk_notebook_new();
+			gtk_container_add(GTK_CONTAINER(win), convo_notebook);
+			gtk_signal_connect(GTK_OBJECT(convo_notebook), "switch-page",
+					   GTK_SIGNAL_FUNC(convo_switch), NULL);
+			gtk_widget_show(convo_notebook);
+		} else
+			win = c->window = all_convos;
+
+		cont = gtk_vbox_new(FALSE, 5);
+		gtk_container_set_border_width(GTK_CONTAINER(cont), 5);
+		gtk_notebook_append_page(GTK_NOTEBOOK(convo_notebook), cont, gtk_label_new(c->name));
+		gtk_widget_show(cont);
+	} else {
+		cont = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		c->window = win;
+		gtk_object_set_user_data(GTK_OBJECT(win), c);
+		gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
+		gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+		gtk_container_border_width(GTK_CONTAINER(win), 10);
+		gtk_widget_realize(win);
+		aol_icon(win->window);
+		if ((find_log_info(c->name)) || ((logging_options & OPT_LOG_ALL)))
+			 g_snprintf(buf, sizeof(buf), LOG_CONVERSATION_TITLE, c->name);
+		else
+			g_snprintf(buf, sizeof(buf), CONVERSATION_TITLE, c->name);
+		gtk_window_set_title(GTK_WINDOW(win), buf);
+		gtk_signal_connect(GTK_OBJECT(win), "delete_event",
+				   GTK_SIGNAL_FUNC(delete_event_convo), c);
+	}
 
 	paned = gtk_vpaned_new();
 	gtk_paned_set_gutter_size(GTK_PANED(paned), 15);
-	gtk_container_add(GTK_CONTAINER(win), paned);
+	gtk_container_add(GTK_CONTAINER(cont), paned);
 	gtk_widget_show(paned);
 
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -1822,6 +1913,7 @@ void show_conv(struct conversation *c)
 	gtk_widget_show(vbox);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
+	c->sw = sw;
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	gtk_widget_set_usize(sw, 320, 175);
@@ -2035,5 +2127,47 @@ void toggle_smileys()
 			cht = cht->next;
 		}
 		con = con->next;
+	}
+}
+
+void tabize()
+{
+	/* evil, evil i tell you! evil! */
+	if (display_options & OPT_DISP_ONE_WINDOW) {
+		GList *x = conversations;
+		while (x) {
+			struct conversation *c = x->data;
+			GtkWidget *imhtml, *win;
+
+			imhtml = c->text;
+			win = c->window;
+			show_conv(c);
+			gtk_widget_destroy(c->text);
+			gtk_widget_reparent(imhtml, c->sw);
+			c->text = imhtml;
+			gtk_widget_destroy(win);
+
+			x = x->next;
+		}
+	} else {
+		GList *x, *m;
+		x = m = conversations;
+		conversations = NULL;
+		while (x) {
+			struct conversation *c = x->data;
+			GtkWidget *imhtml;
+
+			imhtml = c->text;
+			show_conv(c);
+			gtk_widget_destroy(c->text);
+			gtk_widget_reparent(imhtml, c->sw);
+			c->text = imhtml;
+
+			x = x->next;
+		}
+		if (all_convos)
+			gtk_widget_destroy(all_convos);
+		all_convos = NULL;
+		conversations = m;
 	}
 }
