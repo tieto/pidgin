@@ -3930,10 +3930,10 @@ gaim_gtk_show(GaimConvWindow *win)
 	gtk_widget_show(gtkwin->window);
 
 #ifdef _WIN32
-	/* I believe this to work around a win32 gtk+ bug, where it can't
-	 * handle creating the button correctly before the window is
-	 * shown.  That's why we get the appearance of a button, without
-	 * all the normal button-like properties, like being able to click
+	/* This works around a win32 gtk+ bug, where it can't handle
+	 * creating the button correctly before the window is shown.
+	 * That's why we get the appearance of a button, without all
+	 * the normal button-like properties, like being able to click
 	 * it. ;-)  --Nathan */
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/close_on_tabs")) {
 		GaimConversation *conv;
@@ -3942,6 +3942,7 @@ gaim_gtk_show(GaimConvWindow *win)
 		conv = gaim_conv_window_get_conversation_at(win, 0);
 		if(conv) {
 			gtkconv = GAIM_GTK_CONVERSATION(conv);
+			gtk_widget_hide(gtkconv->close);
 			gtk_widget_show_all(gtkconv->close);
 		}
 	}
