@@ -782,7 +782,7 @@ void remove_tags(GtkWidget *entry, char *tag)
 
 void surround(GtkWidget *entry, char *pre, char *post)
 {
-	int pos = GTK_EDITABLE(entry)->current_pos;
+	int temp, pos = GTK_EDITABLE(entry)->current_pos;
 	int dummy;
 	int start, finish;
 	if (GTK_EDITABLE(entry)->has_selection) {
@@ -801,10 +801,20 @@ void surround(GtkWidget *entry, char *pre, char *post)
 		gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &dummy);
 		gtk_editable_select_region(GTK_EDITABLE(entry), start, finish + strlen(pre) + strlen(post));
 	} else {
+		temp = pos;
 		gtk_editable_insert_text(GTK_EDITABLE(entry), pre, strlen(pre), &pos);
-		dummy = pos;
-		gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &dummy);
-		gtk_editable_set_position(GTK_EDITABLE(entry), pos);
+		if (temp == pos)
+		{
+			dummy = pos + strlen(pre);
+			gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &dummy);
+			gtk_editable_set_position(GTK_EDITABLE(entry), dummy);
+		}
+		else
+		{
+			dummy = pos;
+			gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &dummy);
+			gtk_editable_set_position(GTK_EDITABLE(entry), pos);
+		}
 	}
 	gtk_widget_grab_focus(entry);
 }
