@@ -2880,7 +2880,7 @@ void show_buddy_list()
 	/* The edit tree */
 	gtk_container_add(GTK_CONTAINER(tbox), edittree);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(tbox),
-				       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 
 	gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
