@@ -282,6 +282,10 @@ void signoff(struct gaim_connection *gc)
 	update_keepalive(gc, FALSE);
 	serv_close(gc);
 	redo_buddy_list();
+#ifdef USE_APPLET
+	if (connections)
+		set_user_state(online);
+#endif
 
 	if (connections) return;
 

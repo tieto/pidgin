@@ -861,7 +861,7 @@ void irc_login(struct aim_user *user) {
 	host = gethostbyname(user->proto_opt[0]);
 	if (!host) {
 		hide_login_progress(gc, "Unable to resolve hostname");
-		destroy_gaim_conn(gc);
+		signoff(gc);
 		return;
 	}
 
@@ -872,13 +872,13 @@ void irc_login(struct aim_user *user) {
 	fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (fd < 0) {
 		hide_login_progress(gc, "Unable to create socket");
-		destroy_gaim_conn(gc);
+		signoff(gc);
 		return;
 	}
 
 	if (connect(fd, (struct sockaddr *)&site, sizeof(site)) < 0) {
 		hide_login_progress(gc, "Unable to connect.");
-		destroy_gaim_conn(gc);
+		signoff(gc);
 		return;
 	}
 

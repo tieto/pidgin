@@ -851,13 +851,4 @@ void hide_login_progress(struct gaim_connection *gc, char *why)
 	if (gc->meter)
 		gtk_widget_destroy(gc->meter);
 	gc->meter = NULL;
-#ifdef USE_APPLET
-	if (g_slist_length(connections) > 1) {
-		/* we still have connections left, we can still be online */
-		set_user_state(online);
-	} else {
-		/* this connection is about to be destroyed, so let's go offline */
-		set_user_state(offline);
-	}
-#endif
 }
