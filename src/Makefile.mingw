@@ -32,7 +32,7 @@ CFLAGS =
 
 DEFINES =
 
-LDFLAGS = -mconsole -mwindows
+LDFLAGS = -mwindows
 
 #-mconsole
 #-mwindows
