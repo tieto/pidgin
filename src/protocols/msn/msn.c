@@ -86,7 +86,7 @@ static char *msn_normalize(const char *s)
 
 static int msn_write(int fd, void *data, int len)
 {
-	debug_printf("C: %s", data);
+	debug_printf("MSN C: %s", data);
 	return write(fd, data, len);
 }
 
@@ -371,7 +371,7 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 		msn_kill_switch(ms);
 		return;
 	}
-	debug_printf("S: %s", buf);
+	debug_printf("MSN S: %s", buf);
 	g_strchomp(buf);
 
 	if (!g_strncasecmp(buf, "ACK", 3)) {
