@@ -1800,6 +1800,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gs = new_group_show(g->name);
 		if ((bs = find_buddy_show(gs, b->name)) == NULL)
 			bs = new_buddy_show(gs, b, (char **)login_icon_xpm);
+		if (!g_slist_find(bs->connlist, gc))
+			bs->connlist = g_slist_append(bs->connlist, gc);
 		if (b->present == 1) {
 			play_sound(BUDDY_ARRIVE);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
@@ -1814,10 +1816,6 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gdk_pixmap_unref(pm);
 			gdk_bitmap_unref(bm);
 			b->present = 2;
-			if (!g_slist_find(bs->connlist, gc))
-				bs->connlist = g_slist_append(bs->connlist, gc);
-			else
-				debug_printf("already got signon for %s from %s\n", b->name, gc->username);
 			if (bs->log_timer > 0)
 				gtk_timeout_remove(bs->log_timer);
 			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
