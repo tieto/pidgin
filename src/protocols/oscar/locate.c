@@ -249,9 +249,9 @@ static void aim_locate_dorequest(aim_session_t *sess) {
 	aim_locate_getinfoshort(sess, cur->sn, 0x00000003);
 }
 
-/*
+/**
  * Remove this screen name from our queue.  If this info was resquested 
- * by our info request queue, then pop off the next element of the queue.
+ * by our info request queue, then pop the next element off of the queue.
  *
  * @param sess The aim session.
  * @param sn Screen name of the info we just received.

@@ -209,9 +209,10 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 		(gaim_find_prpl(gaim_account_get_protocol(account)))->list_icon(account, NULL);
 	char *path = g_build_filename(gaim_user_dir(), "logs", prpl, me, gaim_normalize(account, screenname), NULL);
 
+	g_free(me);
+
 	if (!(dir = g_dir_open(path, 0, NULL))) {
 		g_free(path);
-		g_free(me);
 		return NULL;
 	}
 	while ((filename = g_dir_read_name(dir))) {
@@ -253,6 +254,7 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 		}
 	}
 	g_dir_close(dir);
+	g_free(path);
 	return list;
 }
 
@@ -302,6 +304,7 @@ static void xml_logger_write(GaimLog *log,
 		dir = g_build_filename(ud, "logs",
 				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_free(guy);
 
 		char *filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
@@ -405,6 +408,7 @@ static void txt_logger_write(GaimLog *log,
 		dir = g_build_filename(ud, "logs",
 				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_free(guy);
 
 		char *filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
@@ -420,6 +424,7 @@ static void txt_logger_write(GaimLog *log,
 			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
 			return;
 		}
+		g_free(filename);
 		strftime(date, sizeof(date), "%F %T", localtime(&log->time));
 		fprintf(log->logger_data, "Conversation with %s at %s on %s (%s)\n",
 			log->name, date, gaim_account_get_username(log->account), prpl);
@@ -495,11 +500,15 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	char *path = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
 	char *newlog;
 
+	g_free(logfile);
+
 	GaimLog *log = NULL;
 	GList *list = NULL;
 
-	if (!(file = fopen(path, "r")))
+	if (!(file = fopen(path, "r"))) {
+		g_free(path);
 		return NULL;
+	}
 
 	while (fgets(buf, BUF_LONG, file)) {
 		if ((newlog = strstr(buf, "---- New C"))) {

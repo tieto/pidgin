@@ -4716,6 +4716,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		g_free(t2); */
 
 		g_free(with_font_tag);
+		g_free(new_message);
 	}
 
 
