@@ -35,7 +35,9 @@
 #define PROTO_JABBER	8
 #define PROTO_NAPSTER	9
 
-#define OPT_PROTO_HTML  0x00000001
+#define OPT_PROTO_HTML         0x00000001
+#define OPT_PROTO_CORRECT_TIME 0x00000002
+#define OPT_PROTO_NORMALIZE    0x00000004
 /* there should be more here eventually... These should all be stuff that other
  * plugins can't do (for example, TOC and Oscar and Jabber can do HTML in messages,
  * but IRC etc can't, so TOC/Oscar/Jabber have _HTML set but not IRC. */
