@@ -1187,7 +1187,7 @@ gaim_user_dir(void)
 	return NULL;
 }
 
-int gaim_build_dir (char *path, int mode)
+int gaim_build_dir (const char *path, int mode)
 {
 	struct stat st;
 	char *dir, **components, delim[] = { G_DIR_SEPARATOR, '\0' };
@@ -1197,10 +1197,13 @@ int gaim_build_dir (char *path, int mode)
 		return -1;
 
 	dir = g_new0(char, strlen(path) + 1);
-	components = g_strsplit(path + 1, delim, -1);
+	components = g_strsplit(path, delim, -1);
 	len = 0;
 	for (cur = 0; components[cur] != NULL; cur++) {
-		dir[len++] = G_DIR_SEPARATOR;
+		if(*components[cur] == '\0')
+			continue;
+		if(cur != 0)
+			dir[len++] = G_DIR_SEPARATOR;
 		strcpy(dir + len, components[cur]);
 		len += strlen(components[cur]);
 		if (stat(dir, &st) == 0) {
