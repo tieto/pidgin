@@ -7,6 +7,7 @@ version 0.11.0-pre14:
 	* Some MSN changes
 	* Some HTML widget changes
 	* Can specify hosts/ports for Yahoo (thanks Jeremy Brooks)
+	* Many many bugfixes
 
 version 0.11.0-pre13 (06/06/2001):
 	* Can view/set chat topic in Jabber (thanks faceprint)
