@@ -1490,7 +1490,7 @@ void show_privacy_options() {
 	g_signal_connect(GTK_OBJECT(pwin), "destroy", G_CALLBACK(destroy_privacy), NULL);
 	gtk_widget_realize(pwin);
 
-	gtk_widget_set_size_request(pwin, 0, 400);
+	gtk_widget_set_size_request(pwin, -1, 400);
 
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
