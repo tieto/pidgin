@@ -36,6 +36,7 @@
 #include "prefs.h"
 #include "prpl.h"
 #include "util.h"
+#include "gaim.h"
 
 typedef enum
 {

@@ -5461,7 +5461,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	char *md5 = NULL;
 	fu16_t type;
-	fu8_t length, cached;
+	fu8_t length = 0, cached = 0;
 	va_list ap;
 	va_start(ap, fr);
 	type = va_arg(ap, int);

@@ -684,6 +684,8 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 		gaim_proxy_info_set_port(info, atoi(p->value[2]));
 		gaim_proxy_info_set_username(info, p->value[3]);
 		gaim_proxy_info_set_password(info, p->value[4]);
+
+		gaim_account_set_proxy_info(account, info);
 	}
 
 	return account;

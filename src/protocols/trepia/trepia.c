@@ -142,20 +142,6 @@ trepia_write(int fd, const char *data, size_t len)
 }
 
 static void
-_remove_user_fnc(gpointer key, gpointer value, gpointer user_data)
-{
-	TrepiaSession *session;
-	TrepiaProfile *profile;
-	const char *name;
-
-	name    = (const char *)key;
-	profile = (TrepiaProfile *)value;
-	session = (TrepiaSession *)user_data;
-
-	gaim_blist_remove_buddy(profile->buddy);
-}
-
-static void
 __clear_user_list(TrepiaSession *session)
 {
 	GaimBlistNode *gnode, *bnode;
