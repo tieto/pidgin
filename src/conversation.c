@@ -681,17 +681,20 @@ void warn_callback(GtkWidget *widget, struct conversation *c)
 void info_callback(GtkWidget *w, struct conversation *c)
 {
 	if (c->is_chat) {
-		char *name;
-		GList *i;
+		GtkTreeIter iter;
+		GtkTreeModel *mod = gtk_tree_view_get_model(GTK_TREE_VIEW(c->list));
+		GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(c->list));
+		gchar *name;
 
-		i = GTK_LIST(c->list)->selection;
-		if (i) {
-			name = (char *)gtk_object_get_user_data(GTK_OBJECT(i->data));
+		if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
+			gtk_tree_model_get(GTK_TREE_MODEL(mod), &iter, 1, &name, -1);
 		} else {
 			return;
 		}
 
 		serv_get_info(c->gc, name);
+
+		g_free(name);
 	} else {
 		serv_get_info(c->gc, c->name);
 		gtk_widget_grab_focus(c->entry);

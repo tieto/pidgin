@@ -63,6 +63,7 @@ GtkWidget *chat_notebook = NULL;
 static char *ignored(struct conversation *b, char *who)
 {
 	GList *ignore = b->ignored;
+
 	while (ignore) {
 		char *ign = ignore->data;
 		if (!g_strcasecmp(who, ign))
@@ -646,7 +647,7 @@ gboolean meify(char *message, int len)
 		c++;		/* i really don't like c++ either */
 		len--;
 	}
-	/* k, so now we've gotten past all the HTML crap. */
+	/* k, so now we've gotten past all the HTML who. */
 	if (!*c)
 		return FALSE;
 	if (!g_strncasecmp(c, "/me ", 4)) {
@@ -777,7 +778,6 @@ static void chat_press_im(GtkObject *obj, struct conversation *b)
 
 static void chat_press_ign(GtkWidget *obj, struct conversation *b)
 {
-	gtk_list_select_child(GTK_LIST(b->list), gtk_object_get_user_data(GTK_OBJECT(obj)));
 	ignore_callback(obj, b);
 }
 
@@ -826,10 +826,32 @@ static void chat_press_add(GtkObject *obj, struct conversation *c)
 
 static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conversation *b)
 {
-	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
+	GtkTreePath *path;
+	int x;
+	int y;
+	GtkTreeIter iter;
+	GtkTreeModel *mod;
+	GtkTreeViewColumn *column;
+	gchar *who;
+
+	
+	mod = gtk_tree_view_get_model(GTK_TREE_VIEW(b->list));
+	
+	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(b->list), event->x, event->y, &path, &column, &x, &y);
+	
+	if (path == NULL)
+			return;
+
+	gtk_tree_selection_select_path(GTK_TREE_SELECTION(gtk_tree_view_get_selection(GTK_TREE_VIEW(b->list))), path);
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(mod), &iter, path);
+	gtk_tree_model_get(GTK_TREE_MODEL(mod), &iter, 1, &who, -1);
+
+	if ((event->button == 1) && (event->type == GDK_2BUTTON_PRESS)) {
 		struct conversation *c;
-		if ((c = find_conversation(gtk_object_get_user_data(obj))) == NULL)
-			c = new_conversation(gtk_object_get_user_data(obj));
+
+		if ((c = find_conversation(who)) == NULL)
+			c = new_conversation(who);
+
 		set_convo_gc(c, b->gc);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		static GtkWidget *menu = NULL;
@@ -839,6 +861,7 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 		 * If a menu already exists, destroy it before creating a new one,
 		 * thus freeing-up the memory it occupied.
 		 */
+
 		if(menu)
 			gtk_widget_destroy(menu);
 
@@ -846,7 +869,7 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 
 		button = gtk_menu_item_new_with_label(_("IM"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(chat_press_im), b);
-		gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(obj));
+		gtk_object_set_user_data(GTK_OBJECT(button), who);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -856,7 +879,7 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 			button = gtk_menu_item_new_with_label(_("Ignore"));
 		
 		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(chat_press_ign), b);
-		gtk_object_set_user_data(GTK_OBJECT(button), obj);
+		gtk_object_set_user_data(GTK_OBJECT(button), who);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -864,7 +887,7 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 			button = gtk_menu_item_new_with_label(_("Info"));
 			gtk_signal_connect(GTK_OBJECT(button), "activate",
 					   GTK_SIGNAL_FUNC(chat_press_info), b);
-			gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(obj));
+			gtk_object_set_user_data(GTK_OBJECT(button), who);
 			gtk_menu_append(GTK_MENU(menu), button);
 			gtk_widget_show(button);
 		}
@@ -873,29 +896,31 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 			button = gtk_menu_item_new_with_label(_("Get Away Msg"));
 			gtk_signal_connect(GTK_OBJECT(button), "activate",
 					   GTK_SIGNAL_FUNC(chat_press_away), b);
-			gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(obj));
+			gtk_object_set_user_data(GTK_OBJECT(button), who);
 			gtk_menu_append(GTK_MENU(menu), button);
 			gtk_widget_show(button);
 		}
 
 		/* Added by Jonas <jonas@birme.se> */
 		if (b->gc) {
-			if (find_buddy(b->gc, gtk_object_get_user_data(obj)))
+			if (find_buddy(b->gc, who))
 				button = gtk_menu_item_new_with_label(_("Remove"));
 			else
 				button = gtk_menu_item_new_with_label(_("Add"));
 			gtk_signal_connect(GTK_OBJECT(button), "activate",
 					   GTK_SIGNAL_FUNC(chat_press_add), b);
 			gtk_object_set_user_data(GTK_OBJECT(button), 
-						 gtk_object_get_user_data(obj));
+						 who);
 			gtk_menu_append(GTK_MENU(menu), button);
 			gtk_widget_show(button);
 		}
 		/* End Jonas */
 		
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
+
 		return TRUE;
 	}
+
 	return TRUE;
 }
 
@@ -905,19 +930,16 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 static void add_chat_buddy_common(struct conversation *b, char *name, int pos)
 {
         char tmp[BUF_LONG];
-        GtkWidget *list_item;
+		char ign[1];
+		GtkTreeIter iter;
+		GtkListStore *ls;
 
-        if (ignored(b, name)) {
-                g_snprintf(tmp, sizeof(tmp), "X %s", name);
-                list_item = gtk_list_item_new_with_label(tmp);
-        } else
-                list_item = gtk_list_item_new_with_label(name);
 
-        gtk_object_set_user_data(GTK_OBJECT(list_item), name);
-        gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
-                           GTK_SIGNAL_FUNC(right_click_chat), b);
-        gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
-        gtk_widget_show(list_item);
+		ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(b->list)));
+
+		gtk_list_store_append(ls, &iter);
+		gtk_list_store_set(ls, &iter, 0, ignored(b, name) ? "X" : " ", 1, name, -1);
+		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), 1, GTK_SORT_ASCENDING);
 }
 
 void add_chat_buddy(struct conversation *b, char *buddy, char *extra_msg)
@@ -953,26 +975,39 @@ void add_chat_buddy(struct conversation *b, char *buddy, char *extra_msg)
 void rename_chat_buddy(struct conversation *b, char *old, char *new)
 {
 	GList *names = b->in_room;
-	GList *items = GTK_LIST(b->list)->children;
-
 	char *name = g_strdup(new);
 	char *ign;
 	int pos;
-
 	char tmp[BUF_LONG];
+	GtkTreeIter iter;
+	GtkTreePath *path;
+	GtkTreeModel *mod;
+	int f = 1;
 
 	while (names) {
 		if (!g_strcasecmp((char *)names->data, old)) {
 			char *tmp2 = names->data;
 			b->in_room = g_list_remove(b->in_room, names->data);
-			while (items) {
-				if (tmp2 == gtk_object_get_user_data(items->data)) {
-					gtk_list_remove_items(GTK_LIST(b->list),
-							      g_list_append(NULL, items->data));
-					break;
-				}
-				items = items->next;
+			
+			mod = gtk_tree_view_get_model(GTK_TREE_VIEW(b->list));	
+			
+			if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mod), &iter))
+				break;
+
+			while (f != 0) {
+				gchar *val;
+
+				gtk_tree_model_get(GTK_TREE_MODEL(mod), &iter, 1, &val, -1);
+
+			
+				if (!g_strcasecmp(old, val)) 
+					gtk_list_store_remove(GTK_LIST_STORE(mod), &iter);
+
+				f = gtk_tree_model_iter_next(GTK_TREE_MODEL(mod), &iter);
+
+				g_free(val);
 			}
+
 			g_free(tmp2);
 			break;
 		}
@@ -1019,9 +1054,12 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 {
 	GList *names = b->in_room;
-	GList *items = GTK_LIST(b->list)->children;
-
 	char tmp[BUF_LONG];
+	GtkTreeIter iter;
+	GtkTreePath *path;
+	GtkTreeModel *mod;
+	int f = 1;
+	int i = 0;
 
 	plugin_event(event_chat_buddy_leave, b->gc, b->id, buddy);
 
@@ -1029,17 +1067,29 @@ void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 		if (!g_strcasecmp((char *)names->data, buddy)) {
 			char *tmp = names->data;
 			b->in_room = g_list_remove(b->in_room, names->data);
-			while (items) {
-				if (tmp == gtk_object_get_user_data(items->data)) {
-					gtk_list_remove_items(GTK_LIST(b->list),
-							      g_list_append(NULL, items->data));
-					break;
-				}
-				items = items->next;
+
+			mod = gtk_tree_view_get_model(GTK_TREE_VIEW(b->list));	
+			
+			if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mod), &iter))
+				break;
+
+			while (f != 0) {
+				gchar *val;
+
+				gtk_tree_model_get(GTK_TREE_MODEL(mod), &iter, 1, &val, -1);
+
+			
+				if (!g_strcasecmp(buddy, val)) 
+					gtk_list_store_remove(GTK_LIST_STORE(mod), &iter);
+
+				f = gtk_tree_model_iter_next(GTK_TREE_MODEL(mod), &iter);
+
+				g_free(val);
 			}
-			g_free(tmp);
+
 			break;
 		}
+
 		names = names->next;
 	}
 
@@ -1047,7 +1097,6 @@ void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 		return;
 
 	/* don't remove them from ignored in case they re-enter */
-
 	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room),
 		   g_list_length(b->in_room) == 1 ? "person" : "people");
 	gtk_label_set_text(GTK_LABEL(b->count), tmp);
@@ -1067,13 +1116,15 @@ void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 
 void im_callback(GtkWidget *w, struct conversation *b)
 {
-	char *name;
+	gchar *name;
 	GList *i;
 	struct conversation *c;
+	GtkTreeIter iter;
+	GtkTreeModel *mod = gtk_tree_view_get_model(GTK_TREE_VIEW(b->list));
+	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(b->list));
 
-	i = GTK_LIST(b->list)->selection;
-	if (i) {
-		name = (char *)gtk_object_get_user_data(GTK_OBJECT(i->data));
+	if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(mod), &iter, 1, &name, -1);
 	} else {
 		return;
 	}
@@ -1092,23 +1143,27 @@ void im_callback(GtkWidget *w, struct conversation *b)
 	}
 
 	set_convo_gc(c, b->gc);
+
+	g_free(name);
 }
 
 void ignore_callback(GtkWidget *w, struct conversation *b)
 {
+	GtkTreeIter iter;
+	GtkTreeModel *mod = gtk_tree_view_get_model(GTK_TREE_VIEW(b->list));
+	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(b->list));
 	char *name;
-	GList *i;
 	char *ign;
 	int pos;
 
-	i = GTK_LIST(b->list)->selection;
-	if (i) {
-		name = (char *)gtk_object_get_user_data(GTK_OBJECT(i->data));
+	if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(mod), &iter, 1, &name, -1);
+		gtk_list_store_remove(GTK_LIST_STORE(mod), &iter);
 	} else {
 		return;
 	}
 
-	pos = gtk_list_child_position(GTK_LIST(b->list), i->data);
+	pos = g_list_index(b->in_room, name);
 
 	ign = ignored(b, name);
 
@@ -1119,8 +1174,9 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 		b->ignored = g_list_append(b->ignored, g_strdup(name));
 	}
 
-	gtk_widget_destroy(i->data);
 	add_chat_buddy_common(b, name, pos);
+
+	g_free(name);
 }
 
 void show_new_buddy_chat(struct conversation *b)
@@ -1128,8 +1184,6 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *win;
 	GtkWidget *cont;
 	GtkWidget *text;
-	GtkWidget *list;
-	/*GtkWidget *close;*/
 	GtkWidget *chatentry;
 	GtkWidget *lbox;
 	GtkWidget *bbox;
@@ -1142,6 +1196,12 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *hpaned;
 	GtkWidget *toolbar;
 	GtkWidget *sep;
+	GtkListStore *ls;
+	GtkWidget *list;
+	GtkCellRenderer *rend;
+	GtkTreeViewColumn *col;
+	GtkTreeSelection *sel;
+	GtkTreeIter *iter;
 
 	char buf[BUF_LONG];
 
@@ -1275,11 +1335,30 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_box_pack_start(GTK_BOX(lbox), sw2, TRUE, TRUE, 0);
 	gtk_widget_show(sw2);
 
-	list = gtk_list_new();
-	b->list = list;
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list);
+	ls = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls), 1, GTK_SORT_ASCENDING);
+	list = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ls));
+
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes(NULL, rend, "text", 0, NULL);
+	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(col), TRUE);
+	gtk_signal_connect(GTK_OBJECT(list), "button_press_event",
+		GTK_SIGNAL_FUNC(right_click_chat), b);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
+
+	col = gtk_tree_view_column_new_with_attributes(NULL, rend, "text", 1, NULL);
+	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(col), TRUE);
+	gtk_signal_connect(GTK_OBJECT(list), "button_press_event",
+		GTK_SIGNAL_FUNC(right_click_chat), b);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
+
 	gtk_widget_set_usize(list, 150, -1);
+
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list), FALSE);
 	gtk_widget_show(list);
+	b->list = list;
+	
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), list);
 
 	bbox2 = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(lbox), bbox2, FALSE, FALSE, 0);
