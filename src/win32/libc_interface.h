@@ -37,11 +37,11 @@ extern int wgaim_connect(int socket, struct sockaddr *addr, u_long length);
 #define connect( socket, addr, length ) \
 wgaim_connect( socket, addr, length )
 
-extern int wgaim_getsockopt(int socket, int level, int optname, void *optval, unsigned int *optlenptr);
+extern int wgaim_getsockopt(int socket, int level, int optname, void *optval, socklen_t *optlenptr);
 #define getsockopt( args... ) \
 wgaim_getsockopt( args )
 
-extern int wgaim_setsockopt(int socket, int level, int optname, void *optval, unsigned int *optlenptr);
+extern int wgaim_setsockopt(int socket, int level, int optname, void *optval, socklen_t *optlenptr);
 #define setsockopt( args... ) \
 wgaim_setsockopt( args )
 
