@@ -142,7 +142,7 @@ gaim_base64_encode(const unsigned char *in, size_t inlen)
 	g_return_val_if_fail(in != NULL, NULL);
 	g_return_val_if_fail(inlen > 0,  NULL);
 
-	rv = out = g_malloc((4 * (inlen + 1)) / 3 + 1);
+	rv = out = g_malloc(((inlen/3)+1)*4 + 1);
 
 	for (; inlen >= 3; inlen -= 3)
 	{
