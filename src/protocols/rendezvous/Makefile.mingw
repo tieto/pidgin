@@ -69,6 +69,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##
 
 C_SRC =			mdns.c \
+				mdns_cache.c \
 				rendezvous.c
 
 

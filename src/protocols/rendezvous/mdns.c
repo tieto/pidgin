@@ -31,13 +31,16 @@
 
 /*
  * XXX - This entire file could use another pair of eyes to audit for 
- * any possible buffer overflow exploits.
+ * any possible buffer overflow exploits.  It doesn't even HAVE to be
+ * a pair, neither--one eye would suffice.  Oh, snap, somebody call
+ * One Eyed Willie.
  */
 
 #include "internal.h"
 #include "debug.h"
 
 #include "mdns.h"
+#include "mdns_cache.h"
 #include "util.h"
 
 /******************************************/
@@ -82,7 +85,7 @@ mdns_free_q(Question *q)
 /**
  * Free a given resource record.
  */
-static void
+void
 mdns_free_rr(ResourceRecord *rr)
 {
 	g_free(rr->name);
@@ -429,14 +432,10 @@ mdns_query(int fd, const char *domain, unsigned short type)
 }
 
 int
-mdns_advertise_null(int fd, const char *name, const char *rdata, unsigned short rdlength)
+mdns_send_rr(int fd, ResourceRecord *rr)
 {
 	int ret;
 	DNSPacket *dns;
-
-	if ((strlen(name) > 255)) {
-		return -EINVAL;
-	}
 
 	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
 	dns->header.id = 0x0000;
@@ -446,24 +445,45 @@ mdns_advertise_null(int fd, const char *name, const char *rdata, unsigned short 
 	dns->header.numauthority = 0x0000;
 	dns->header.numadditional = 0x0000;
 	dns->questions = NULL;
-
-	dns->answers = (ResourceRecord *)g_malloc(1 * sizeof(ResourceRecord));
-	dns->answers[0].name = g_strdup(name);
-	dns->answers[0].type = RENDEZVOUS_RRTYPE_NULL;
-	dns->answers[0].class = 0x0001;
-	dns->answers[0].ttl = 0x00001c20;
-	dns->answers[0].rdlength = rdlength;
-	dns->answers[0].rdata = (void *)rdata;
-
+	dns->answers = rr;
 	dns->authority = NULL;
 	dns->additional = NULL;
 
 	mdns_send_dns(fd, dns);
 
-	/* The rdata should be freed by the caller of this function */
-	dns->answers[0].rdata = NULL;
+	/* The rr should be freed by the caller of this function */
+	dns->header.numanswers = 0x0000;
+	dns->answers = NULL;
 
 	mdns_free(dns);
+
+	return ret;
+}
+
+int
+mdns_advertise_null(int fd, const char *name, const char *rdata, unsigned short rdlength)
+{
+	int ret;
+	ResourceRecord *rr;
+
+	if ((strlen(name) > 255)) {
+		return -EINVAL;
+	}
+
+	rr = (ResourceRecord *)g_malloc(sizeof(ResourceRecord));
+	rr->name = g_strdup(name);
+	rr->type = RENDEZVOUS_RRTYPE_NULL;
+	rr->class = 0x0001;
+	rr->ttl = 0x00001c20;
+	rr->rdlength = rdlength;
+	rr->rdata = (void *)rdata;
+
+	mdns_send_rr(fd, rr);
+
+	/* The rdata should be freed by the caller of this function */
+	rr->rdata = NULL;
+
+	mdns_free_rr(rr);
 
 	return ret;
 }
@@ -472,35 +492,23 @@ int
 mdns_advertise_ptr(int fd, const char *name, const char *domain)
 {
 	int ret;
-	DNSPacket *dns;
+	ResourceRecord *rr;
 
 	if ((strlen(name) > 255) || (strlen(domain) > 255)) {
 		return -EINVAL;
 	}
 
-	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
-	dns->header.id = 0x0000;
-	dns->header.flags = 0x8400;
-	dns->header.numquestions = 0x0000;
-	dns->header.numanswers = 0x0001;
-	dns->header.numauthority = 0x0000;
-	dns->header.numadditional = 0x0000;
-	dns->questions = NULL;
+	rr = (ResourceRecord *)g_malloc(sizeof(ResourceRecord));
+	rr->name = g_strdup(name);
+	rr->type = RENDEZVOUS_RRTYPE_PTR;
+	rr->class = 0x8001;
+	rr->ttl = 0x00001c20;
+	rr->rdata = (void *)g_strdup(domain);
+	rr->rdlength = mdns_getlength_RR_rdata(rr->type, rr->rdata);
 
-	dns->answers = (ResourceRecord *)g_malloc(1 * sizeof(ResourceRecord));
-	dns->answers[0].name = g_strdup(name);
-	dns->answers[0].type = RENDEZVOUS_RRTYPE_PTR;
-	dns->answers[0].class = 0x8001;
-	dns->answers[0].ttl = 0x00001c20;
-	dns->answers[0].rdata = (void *)g_strdup(domain);
-	dns->answers[0].rdlength = mdns_getlength_RR_rdata(dns->answers[0].type, dns->answers[0].rdata);
+	mdns_send_rr(fd, rr);
 
-	dns->authority = NULL;
-	dns->additional = NULL;
-
-	mdns_send_dns(fd, dns);
-
-	mdns_free(dns);
+	mdns_free_rr(rr);
 
 	return ret;
 }
@@ -509,38 +517,26 @@ int
 mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
 {
 	int ret;
-	DNSPacket *dns;
+	ResourceRecord *rr;
 
 	if ((strlen(name) > 255)) {
 		return -EINVAL;
 	}
 
-	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
-	dns->header.id = 0x0000;
-	dns->header.flags = 0x8400;
-	dns->header.numquestions = 0x0000;
-	dns->header.numanswers = 0x0001;
-	dns->header.numauthority = 0x0000;
-	dns->header.numadditional = 0x0000;
-	dns->questions = NULL;
+	rr = (ResourceRecord *)g_malloc(sizeof(ResourceRecord));
+	rr->name = g_strdup(name);
+	rr->type = RENDEZVOUS_RRTYPE_TXT;
+	rr->class = 0x8001;
+	rr->ttl = 0x00001c20;
+	rr->rdata = (void *)rdata;
+	rr->rdlength = mdns_getlength_RR_rdata(rr->type, rr->rdata);
 
-	dns->answers = (ResourceRecord *)g_malloc(1 * sizeof(ResourceRecord));
-	dns->answers[0].name = g_strdup(name);
-	dns->answers[0].type = RENDEZVOUS_RRTYPE_TXT;
-	dns->answers[0].class = 0x8001;
-	dns->answers[0].ttl = 0x00001c20;
-	dns->answers[0].rdata = (void *)rdata;
-	dns->answers[0].rdlength = mdns_getlength_RR_rdata(dns->answers[0].type, dns->answers[0].rdata);
-
-	dns->authority = NULL;
-	dns->additional = NULL;
-
-	mdns_send_dns(fd, dns);
+	mdns_send_rr(fd, rr);
 
 	/* The rdata should be freed by the caller of this function */
-	dns->answers[0].rdata = NULL;
+	rr->rdata = NULL;
 
-	mdns_free(dns);
+	mdns_free_rr(rr);
 
 	return ret;
 }
@@ -549,7 +545,7 @@ int
 mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *target)
 {
 	int ret;
-	DNSPacket *dns;
+	ResourceRecord *rr;
 	ResourceRecordRDataSRV *rdata;
 
 	if ((strlen(target) > 255)) {
@@ -560,29 +556,17 @@ mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *ta
 	rdata->port = port;
 	rdata->target = g_strdup(target);
 
-	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
-	dns->header.id = 0x0000;
-	dns->header.flags = 0x8400;
-	dns->header.numquestions = 0x0000;
-	dns->header.numanswers = 0x0000;
-	dns->header.numauthority = 0x0001;
-	dns->header.numadditional = 0x0000;
-	dns->questions = NULL;
-	dns->answers = NULL;
+	rr = (ResourceRecord *)g_malloc(sizeof(ResourceRecord));
+	rr->name = g_strdup(name);
+	rr->type = RENDEZVOUS_RRTYPE_SRV;
+	rr->class = 0x8001;
+	rr->ttl = 0x00001c20;
+	rr->rdata = rdata;
+	rr->rdlength = mdns_getlength_RR_rdata(rr->type, rr->rdata);
 
-	dns->authority = (ResourceRecord *)g_malloc(1 * sizeof(ResourceRecord));
-	dns->authority[0].name = g_strdup(name);
-	dns->authority[0].type = RENDEZVOUS_RRTYPE_SRV;
-	dns->authority[0].class = 0x8001;
-	dns->authority[0].ttl = 0x00001c20;
-	dns->authority[0].rdata = rdata;
-	dns->authority[0].rdlength = mdns_getlength_RR_rdata(dns->authority[0].type, dns->authority[0].rdata);
+	mdns_send_rr(fd, rr);
 
-	dns->additional = NULL;
-
-	mdns_send_dns(fd, dns);
-
-	mdns_free(dns);
+	mdns_free_rr(rr);
 
 	return ret;
 }
@@ -928,6 +912,7 @@ DNSPacket *
 mdns_read(int fd)
 {
 	DNSPacket *ret = NULL;
+	int i;
 	int offset; /* Current position in datagram */
 	/* XXX - Find out what to use as a maximum incoming UDP packet size */
 	/* char data[512]; */
@@ -1008,6 +993,17 @@ mdns_read(int fd)
 		g_free(ret);
 		return NULL;
 	}
+
+#if 0
+	for (i = 0; i < ret->header.numanswers; i++)
+		mdns_cache_add(&ret->answers[i]);
+	for (i = 0; i < ret->header.numauthority; i++)
+		mdns_cache_add(&ret->authority[i]);
+	for (i = 0; i < ret->header.numadditional; i++)
+		mdns_cache_add(&ret->additional[i]);
+	for (i = 0; i < ret->header.numquestions; i++)
+		mdns_cache_respond(fd, &ret->questions[i]);
+#endif
 
 	return ret;
 }

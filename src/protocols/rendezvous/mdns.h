@@ -156,6 +156,7 @@ int mdns_send_dns(int fd, const DNSPacket *dns);
  */
 int mdns_query(int fd, const char *domain, unsigned short type);
 
+int mdns_send_rr(int fd, ResourceRecord *rr);
 int mdns_advertise_null(int fd, const char *name, const char *data, unsigned short rdlength);
 int mdns_advertise_ptr(int fd, const char *name, const char *domain);
 int mdns_advertise_txt(int fd, const char *name, const GSList *txt);
@@ -177,5 +178,6 @@ DNSPacket *mdns_read(int fd);
  * @param dns The DNSPacket that you want to free.
  */
 void mdns_free(DNSPacket *dns);
+void mdns_free_rr(ResourceRecord *rr);
 
 #endif /* _MDNS_H_ */
