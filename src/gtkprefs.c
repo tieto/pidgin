@@ -1699,7 +1699,7 @@ GtkWidget *away_page() {
 		GAIM_PREF_STRING, "/core/away/auto_reply",
 		_("Never"), "never",
 		_("When away"), "away",
-		_("When away and idle"), "awayidle",
+		_("if (away && idle)"), "awayidle",
 		NULL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Idle"));
