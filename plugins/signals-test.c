@@ -435,7 +435,7 @@ plugin_load(GaimPlugin *plugin)
 	/* Conversations subsystem signals */
 	gaim_signal_connect(conv_handle, "displaying-im-msg",
 						plugin, GAIM_CALLBACK(displaying_im_msg_cb), NULL);
-	gaim_signal_connect(conv_handle, "displayed-img-msg",
+	gaim_signal_connect(conv_handle, "displayed-im-msg",
 						plugin, GAIM_CALLBACK(displayed_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "sending-im-msg",
 						plugin, GAIM_CALLBACK(sending_im_msg_cb), NULL);

@@ -19,7 +19,7 @@ write_status(struct buddy *buddy, const char *message)
 
 	who = gaim_get_buddy_alias(buddy);
 
-	g_snprintf(buf, sizeof(buf), "%s %s", who, message);
+	g_snprintf(buf, sizeof(buf), message, who);
 
 	gaim_conversation_write(conv, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
 }
@@ -27,25 +27,25 @@ write_status(struct buddy *buddy, const char *message)
 static void
 buddy_away_cb(struct buddy *buddy, void *data)
 {
-	write_status(buddy, _("has gone away."));
+	write_status(buddy, _("%s has gone away."));
 }
 
 static void
 buddy_unaway_cb(struct buddy *buddy, void *data)
 {
-	write_status(buddy, _("is no longer away."));
+	write_status(buddy, _("%s is no longer away."));
 }
 
 static void
 buddy_idle_cb(struct buddy *buddy, void *data)
 {
-	write_status(buddy, _("has become idle."));
+	write_status(buddy, _("%s has become idle."));
 }
 
 static void
 buddy_unidle_cb(struct buddy *buddy, void *data)
 {
-	write_status(buddy, _("is no longer idle."));
+	write_status(buddy, _("%s is no longer idle."));
 }
 
 static gboolean
