@@ -2443,9 +2443,8 @@ generate_send_as_items(GaimConvWindow *win, GaimConversation *deleted_conv)
 	gtk_widget_show(gtkwin->menu.send_as);
 
 	menu = gtk_menu_new();
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(gtkwin->menu.menubar),
-						  gtkwin->menu.send_as);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(gtkwin->menu.menubar),
+						  gtkwin->menu.send_as, 2);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(gtkwin->menu.send_as), menu);
 
 	gtk_widget_show(menu);
