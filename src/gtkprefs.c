@@ -2708,7 +2708,7 @@ gaim_gtk_prefs_init(void)
 
 	/* Smiley Themes */
 	gaim_prefs_add_none("/gaim/gtk/smileys");
-	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "");
+	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "default");
 
 	/* Smiley Callbacks */
 	gaim_prefs_connect_callback("/gaim/gtk/smileys/theme",
