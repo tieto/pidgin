@@ -1975,25 +1975,33 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 		gtk_text_iter_forward_chars(iter, len);
 		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &bold, iter);
 	}
-	
+
 	if ((span = imhtml->edit.italic)) {
 		GtkTextIter italic;
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &italic, span->start);
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &italic, iter);
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &italic,
+				iter);
 	}
-	
+
+	if ((span = imhtml->edit.underline)) {
+		GtkTextIter underline;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &underline, span->start);
+		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &underline,
+				iter);
+	}
+
 	if ((span = imhtml->edit.forecolor)) {
 		GtkTextIter fore;
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &fore, span->start);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer, span->tag, &fore, iter);
 	}
-	
+
 	if ((span = imhtml->edit.backcolor)) {
 		GtkTextIter back;
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &back, span->start);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer, span->tag, &back, iter);
 	}
-	
+
 	if ((span = imhtml->edit.fontface)) {
 		GtkTextIter face;
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &face, span->start);
