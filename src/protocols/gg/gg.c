@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10230 2004-06-27 18:19:09Z lschiere $
+ * $Id: gg.c 10236 2004-06-28 21:20:36Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -225,23 +225,25 @@ static void agg_set_away(GaimConnection *gc, const char *state, const char *msg)
 	    gg_change_status(gd->sess, status);
 }
 
+#if 0
 static void agg_get_away(GaimConnection *gc, const char *who)
 {
     GaimBuddy *buddy;
     char *dialog_msg, **splitmsg;
 
     if (invalid_uin(who))
-	return;
+		return;
     
     buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
     if (buddy->proto_data) {
-	/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
-	splitmsg = g_strsplit(buddy->proto_data, "\r\n", 0);
+		/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+		splitmsg = g_strsplit(buddy->proto_data, "\r\n", 0);
     
-	dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, (char *)buddy->proto_data, g_strjoinv("<BR>", splitmsg));
-	gaim_notify_formatted(gc, NULL, _("Buddy Information"), buddy->proto_data, dialog_msg, NULL, (char *)who);
+		dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, (char *)buddy->proto_data, g_strjoinv("<BR>", splitmsg));
+		gaim_notify_formatted(gc, NULL, _("Buddy Information"), buddy->proto_data, dialog_msg, NULL, (char *)who);
     }
 }
+#endif
 
 static gchar *get_away_text(int uc)
 {
