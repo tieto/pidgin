@@ -415,9 +415,7 @@ void show_login()
 
 
 		gtk_widget_grab_focus(signon);
-	} else
-		gtk_widget_grab_focus(name);
-
+	}
 
 
 	gtk_signal_connect(GTK_OBJECT(remember), "clicked", GTK_SIGNAL_FUNC(set_general_option), (int *)OPT_GEN_REMEMBER_PASS);
