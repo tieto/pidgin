@@ -2402,6 +2402,9 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							font->face = g_strdup(oldfont->face);
 						if (font->face && (atoi(font->face) > 100)) {
 							/* WTF is this? */
+							/* Maybe it sets a max size on the font face?  I seem to 
+							 * remember bad things happening if the font size was 
+							 * 2 billion */
 							g_free(font->face);
 							font->face = g_strdup("100");
 						}
@@ -2748,7 +2751,6 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 #if GTK_CHECK_VERSION(2,2,0)
 	GSList *formats = gdk_pixbuf_get_formats();
 #else
-	GtkIMHtmlImage *image = g_object_get_data(G_OBJECT(sel), "GtkIMHtmlImage");
 	char *basename = g_path_get_basename(filename);
 	char *ext = strrchr(basename, '.');
 #endif

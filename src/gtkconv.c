@@ -5391,8 +5391,14 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 			gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
 							   CHAT_USERS_NAME_COLUMN, &val, -1);
 
-			if (!gaim_utf8_strcasecmp((char *)l->data, val))
+			if (!gaim_utf8_strcasecmp((char *)l->data, val)) {
+#if GTK_CHECK_VERSION(2,2,0)
 				f = gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+#else
+				gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+				f = gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
+#endif
+			}
 			else
 				f = gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
 

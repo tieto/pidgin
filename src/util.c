@@ -1690,8 +1690,8 @@ gaim_escape_html(const char *html) {
 		escaped = ret->str;
 		g_string_free(ret, FALSE);
 	}
-	return escaped;
 
+	return escaped;
 }
 
 char *
