@@ -4782,13 +4782,12 @@ update_tab_icon(GaimConversation *conv)
 	account = gaim_conversation_get_account(conv);
 	b = gaim_find_buddy(account, name);
 
-	if (b != NULL)
-	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon),
-								gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
-																							 GAIM_STATUS_ICON_SMALL));
-	else {
-		g_object_unref(gtkconv->icon);
-		gtkconv->icon = gtk_image_new();
+	if (b != NULL) {
+		gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon),
+				gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
+					GAIM_STATUS_ICON_SMALL));
+	} else {
+		gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), NULL);
 	}
 }
 
@@ -4816,6 +4815,9 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 
 		smiley_themeize(gtkconv->imhtml);
+
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
+			update_tab_icon(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_TYPING ||
 			 type == GAIM_CONV_UPDATE_UNSEEN) {
