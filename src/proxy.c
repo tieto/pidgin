@@ -332,7 +332,6 @@ static int proxy_connect_http(char *host, unsigned short port, struct PHB *phb)
 {
 	struct sockaddr_in *sin;
 	int fd = -1;
-	u_long imode;
 
 	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", host, port, proxyhost, proxyport);
 

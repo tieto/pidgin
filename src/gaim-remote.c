@@ -21,6 +21,7 @@
 
 #include "gaim.h"
 #include <getopt.h>
+#include <unistd.h>
 #include "gaim-socket.h"
 
 void show_remote_usage(char *name) 
@@ -151,7 +152,10 @@ int command_quit() {
 	return 0;
 }
 
-int command_info(){}
+int command_info(){
+	fprintf(stderr, "Info not yet implemented\n");
+    return 1;
+}
 
 int main (int argc, char *argv[])
 {

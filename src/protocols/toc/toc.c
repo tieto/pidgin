@@ -1101,7 +1101,7 @@ static void toc_remove_buddy(struct gaim_connection *g, char *name, char *group)
 	toc_set_config(g);
 }
 
-static void toc_remove_buddies(struct gaim_connection *g, GList *buddies, char *group)
+static void toc_remove_buddies(struct gaim_connection *g, GList *buddies, const char *group)
 {
 	char buf[BUF_LEN * 2];
 	int n;
@@ -1919,6 +1919,17 @@ static void cancel_callback(gpointer a, struct file_transfer *ft) {
 	}
 }
 
+static void toc_reject_ft(struct ft_request *ft) {
+	g_free(ft->user);
+	g_free(ft->filename);
+	g_free(ft->ip);
+	g_free(ft->cookie);
+	if (ft->message)
+		g_free(ft->message);
+	g_free(ft);
+}
+
+
 static void toc_accept_ft(struct ft_request *fr) {
 	GtkWidget *window;
 	char buf[BUF_LEN];
@@ -1947,17 +1958,7 @@ static void toc_accept_ft(struct ft_request *fr) {
 				   GTK_SIGNAL_FUNC(toc_get_file), ft);
 
 	gtk_widget_show(window);
-	toc_reject_ft(ft);
-}
-
-static void toc_reject_ft(struct ft_request *ft) {
-	g_free(ft->user);
-	g_free(ft->filename);
-	g_free(ft->ip);
-	g_free(ft->cookie);
-	if (ft->message)
-		g_free(ft->message);
-	g_free(ft);
+	toc_reject_ft(fr);
 }
 
 static void accept_file_dialog(struct ft_request *ft) {

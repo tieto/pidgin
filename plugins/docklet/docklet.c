@@ -30,10 +30,13 @@
     - support blinking the icon when messages are pending */
 
 /* includes */
-#define GAIM_PLUGINS
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "eggtrayicon.h"
+
+#ifndef GAIM_PLUGINS
+#define GAIM_PLUGINS
+#endif
 
 /* types */
 enum docklet_status {
@@ -50,7 +53,6 @@ static void docklet_create();
 static void docklet_update_status();
 
 /* globals */
-static GtkWidget *configwin;
 static EggTrayIcon *docklet = NULL;
 static GtkWidget *icon;
 static enum docklet_status status;
@@ -199,7 +201,7 @@ static void docklet_update_icon() {
 		case connecting:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "connect.png", NULL);
 			break;
-		case offline:
+		default:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "offline.png", NULL);
 	}
 

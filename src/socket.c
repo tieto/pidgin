@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <unistd.h>
 #include "gaim.h"
 #include "gaim-socket.h"
 
@@ -102,19 +103,19 @@ struct gaim_cui_packet *cui_read_packet(int fd) {
 	struct gaim_cui_packet *p = g_new0(struct gaim_cui_packet, 1);
 	char *data = NULL;
 
-	if (!(read(fd, p->type, sizeof(p->type)))) {
+	if (!(read(fd, &p->type, sizeof(p->type)))) {
 		g_free(p);
 		return NULL;
 	}
 	
 	
-	if (!(read(fd, p->subtype, sizeof(p->subtype)))) {
+	if (!(read(fd, &p->subtype, sizeof(p->subtype)))) {
 		g_free(p);
 		return NULL;
 	}
 	
 	
-	if (!(read(fd, p->length, sizeof(p->length)))) {
+	if (!(read(fd, &p->length, sizeof(p->length)))) {
 		g_free(p);
 		return NULL;
 	}
@@ -127,6 +128,7 @@ struct gaim_cui_packet *cui_read_packet(int fd) {
 		}
 	}
 	p->data = data;
+	return p;
 }
 
 /* copied directly from xmms_connect_to_session */

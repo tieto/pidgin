@@ -133,14 +133,6 @@ static void des_win(GtkWidget *a, GtkWidget *b)
 	gtk_widget_destroy(b);
 }
 
-static void rem_win(GtkWidget *a, GtkWidget *b)
-{
-	void *d = gtk_object_get_user_data(GTK_OBJECT(a));
-	if (d)
-		gtk_signal_disconnect_by_data(GTK_OBJECT(b), d);
-	gtk_widget_destroy(b);
-}
-
 struct doaskstruct {
 	void (*yesfunc)(gpointer);
 	void (*nofunc)(gpointer);

@@ -48,6 +48,7 @@
 #include <ctype.h>
 #include "prpl.h"
 #include "gaim.h"
+#include "gaim-socket.h"
 #if HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -56,11 +57,6 @@
 
 #ifdef _WIN32
 #include "win32dep.h"
-#endif
-
-#ifndef _WIN32
-static gchar *aspell_cmd[] = { "aspell", "--sug-mode=fast","-a", NULL };
-static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
 #endif
 
 static GtkWidget *name;

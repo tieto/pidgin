@@ -63,9 +63,6 @@
 #include "pixmaps/download.xpm"
 #include "pixmaps/farted.xpm"
 
-static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
-static gchar *aspell_cmd[] = { "aspell", "--sug-mode=fast","-a", NULL };
-
 int state_lock = 0;
 
 GdkPixmap *dark_icon_pm = NULL;
@@ -194,7 +191,7 @@ struct conversation *new_conversation(char *name)
 	update_checkbox(c);
 	update_smilies(c);
 	plugin_event(event_new_conversation, name);
-	gtk_imhtml_to_bottom(c->text);
+	gtk_imhtml_to_bottom(GTK_IMHTML(c->text));
 	return c;
 }
 
@@ -1050,6 +1047,7 @@ gboolean stop_rclick_callback(GtkWidget *widget, GdkEventButton *event, gpointer
 		g_signal_stop_emission_by_name(G_OBJECT(widget), "button_press_event");
 		return TRUE;
 	}
+	return FALSE;
 }
 
 static void got_typing_keypress(struct conversation *c, gboolean first) {
@@ -2617,7 +2615,7 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 
 	update_convo_status(c);
 
-	gtk_imhtml_to_bottom(c->text);
+	gtk_imhtml_to_bottom(GTK_IMHTML(c->text));
 }
 
 void update_convo_status(struct conversation *c) {

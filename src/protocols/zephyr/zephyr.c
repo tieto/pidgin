@@ -961,7 +961,7 @@ void zephyr_init(struct prpl *ret)
 
 #ifndef STATIC
 
-void *gaim_prpl_init(struct prpl *prpl)
+G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
 {
 	zephyr_init(prpl);
 	prpl->plug->desc.api_version = PLUGIN_API_VERSION;

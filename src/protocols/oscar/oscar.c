@@ -1985,7 +1985,7 @@ static void gaim_icq_authdeny(struct channel4_data *data) {
 static void gaim_icq_authask(struct gaim_connection *gc, fu32_t uin, char *msg) {
 	struct channel4_data *data = g_new(struct channel4_data, 1);
 	/* The first 6 chars of the message are some type of alien gibberish, so skip them */
-	char *dialog_msg = g_strdup_printf("The user %lu wants to add you to their buddy list for the following reason:", uin, (msg && strlen(msg)>6) ? msg+6 : "No reason given.");
+	char *dialog_msg = g_strdup_printf("The user %lu wants to add you to their buddy list for the following reason: %s", uin, (msg && strlen(msg)>6) ? msg+6 : "No reason given.");
 	debug_printf("Received an authorization request from UIN %lu\n", uin);
 	data->gc = gc;
 	data->uin = g_strdup_printf("%lu", uin);
@@ -3701,7 +3701,7 @@ static void oscar_add_buddies(struct gaim_connection *g, GList *buddies) {
 	}
 }
 
-static void oscar_move_buddy(struct gaim_connection *g, char *name, char *old_group, char *new_group) {
+static void oscar_move_buddy(struct gaim_connection *g, const char *name, const char *old_group, const char *new_group) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	if (!odata->icq)
 		if (odata->sess->ssi.received_data) {
@@ -3723,7 +3723,7 @@ static void oscar_remove_buddy(struct gaim_connection *g, char *name, char *grou
 	}
 }
 
-static void oscar_remove_buddies(struct gaim_connection *g, GList *buddies, char *group) {
+static void oscar_remove_buddies(struct gaim_connection *g, GList *buddies, const char *group) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	if (odata->icq) {
 		GList *cur;
@@ -3753,7 +3753,7 @@ static void oscar_remove_buddies(struct gaim_connection *g, GList *buddies, char
 	}
 }
 
-static void oscar_rename_group(struct gaim_connection *g, char *old_group, char *new_group, GList *members) {
+static void oscar_rename_group(struct gaim_connection *g, const char *old_group, const char *new_group, GList *members) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	if (!odata->icq)
 		if (odata->sess->ssi.received_data) {

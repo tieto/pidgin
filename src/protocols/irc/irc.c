@@ -36,6 +36,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include <time.h>
 #include <sys/stat.h>
 #include <ctype.h>
@@ -1571,6 +1572,7 @@ irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
                }
                r = r->next;
        }
+	   return TRUE;
 }
 
 static void 
@@ -2519,7 +2521,7 @@ irc_ctcp_ping(struct gaim_connection *gc, char *who)
 {
 	char buf[IRC_BUF_LEN];
 
-	g_snprintf (buf, sizeof(buf), "\001PING %ul\001", time(NULL));
+	g_snprintf (buf, sizeof(buf), "\001PING %ld\001", time(NULL));
 	irc_send_privmsg(gc, who, buf, FALSE);
 }
 

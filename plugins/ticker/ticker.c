@@ -22,9 +22,6 @@
  * pluginized- Sean Egan, Summer 2002
  */
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
-#endif
 
 #include <gtk/gtk.h>
 #include "gtkticker.h"
@@ -35,6 +32,10 @@
 #include "pixmaps/no_icon.xpm"
 #ifdef _WIN32
 #include "win32dep.h"
+#endif
+
+#ifndef GAIM_PLUGINS
+#define GAIM_PLUGINS
 #endif
 
 static GtkWidget *tickerwindow = NULL;

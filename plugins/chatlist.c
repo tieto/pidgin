@@ -1,6 +1,5 @@
 #define GAIM_PLUGINS
 
-#include "pixmaps/cancel.xpm"
 #include "pixmaps/refresh.xpm"
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
@@ -286,13 +285,6 @@ static void remove_chat(GtkWidget *w, gpointer *m)
 
 	setup_buddy_chats();
 	save_chat_prefs();
-}
-
-static void parent_destroy()
-{
-	if (parent)
-		gtk_widget_destroy(parent);
-	parent = NULL;
 }
 
 G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()

@@ -2489,15 +2489,15 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
  * If "alias" or "group" are NULL, gets them from Gaim's current buddylist values
  * for the buddy.
  */
-static void jabber_roster_update(struct gaim_connection *gc, char *name, char *alias, char *group)
+static void jabber_roster_update(struct gaim_connection *gc, const char *name, const char *alias, const char *group)
 {
 	xmlnode x, y;
 	char *realwho;
 	gjconn gjc;
 	struct buddy *buddy = NULL;
 	struct group *buddy_group = NULL;
-	char *my_alias = NULL;
-	char *my_group = NULL;
+	const char *my_alias = NULL;
+	const char *my_group = NULL;
 
 	if(gc && gc->proto_data && ((struct jabber_data *)gc->proto_data)->gjc && name) {
 		gaim_jid gjid;
@@ -2574,7 +2574,7 @@ static void jabber_alias_buddy(struct gaim_connection *gc, char *name)
 /*
  * Change buddy's group on server roster
  */
-static void jabber_group_change(struct gaim_connection *gc, char *name, char *old_group, char *new_group)
+static void jabber_group_change(struct gaim_connection *gc, const char *name, const char *old_group, const char *new_group)
 {
 	if(old_group && new_group && strcmp(old_group, new_group))
 		jabber_roster_update(gc, name, NULL, new_group);
@@ -2588,8 +2588,8 @@ static void jabber_group_change(struct gaim_connection *gc, char *name, char *ol
  * the group attribute for each of them.
  */
 static void jabber_rename_group(struct gaim_connection *gc,
-				char *old_group,
-				char *new_group,
+				const char *old_group,
+				const char *new_group,
 				GList *members)
 {
 	if(old_group && new_group && strcmp(old_group, new_group))

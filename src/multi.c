@@ -26,15 +26,8 @@
 #include "multi.h"
 #include "gaim.h"
 
-#include "pixmaps/gnome_add.xpm"
-#include "pixmaps/gnome_preferences.xpm"
-#include "pixmaps/join.xpm"
-#include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/ok.xpm"
-#include "pixmaps/tb_redo.xpm"
-#include "pixmaps/tb_undo.xpm"
-#include "pixmaps/tb_refresh.xpm"
 /*#include "pixmaps/no_icon.xpm"*/
 
 #define LOGIN_STEPS 5
@@ -928,8 +921,6 @@ static void mod_acct_func(GtkTreeModel *model, GtkTreePath *path,
 static void mod_acct(GtkWidget *w, gpointer d)
 {
 	GtkTreeSelection *selection;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
@@ -1055,7 +1046,6 @@ static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
 {
 	GtkTreeModel *model = (GtkTreeModel *)d;
 	GtkTreeIter iter;
-	GtkTreePath *path = gtk_tree_path_new_from_string(path_str);
 
 	struct aim_user *u = NULL;
 	struct prpl *p = NULL;
@@ -1094,12 +1084,10 @@ static void acct_signin(GtkCellRendererToggle *cell, gchar *path_str,
 static void acct_autologin(GtkCellRendererToggle *cell, gchar *path_str,
 						   gpointer d)
 {
- 	GtkTreeModel *model = (GtkTreeModel *)d;
- 	GtkTreeIter iter;
- 	GtkTreePath *path = gtk_tree_path_new_from_string(path_str);
+	GtkTreeModel *model = (GtkTreeModel *)d;
+	GtkTreeIter iter;
 
 	struct aim_user *u = NULL;
-	struct prpl *p = NULL;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
 	gtk_tree_model_get(model, &iter, COLUMN_DATA, &u, -1);
@@ -1148,8 +1136,6 @@ static void del_acct_func(GtkTreeModel *model, GtkTreePath *path,
 static void del_acct(GtkWidget *w, gpointer d)
 {
 	GtkTreeSelection *selection;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
@@ -1179,7 +1165,6 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	/* please kill me */
 	GtkWidget *vbox;
 	GtkWidget *hbox;
-	GtkWidget *vbox2;
 	GtkWidget *sw;
 	GtkWidget *button;	/* used for many things */
 	GtkWidget *sep;
@@ -1324,7 +1309,6 @@ void kill_meter(struct signon_meter *meter) {
 
 void account_online(struct gaim_connection *gc)
 {
-	int i;
 	struct signon_meter *meter = find_signon_meter(gc);
 	GtkTreeIter iter;
 

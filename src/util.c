@@ -864,7 +864,7 @@ GSList *message_split(char *message, int limit)
 	}
 }
 
-gchar *gaim_home_dir()
+const gchar *gaim_home_dir()
 {
 	if(g_get_home_dir())
 		return g_get_home_dir();
@@ -1246,13 +1246,14 @@ FILE *gaim_mkstemp(gchar **fpath)
 const char *handle_uri(char *uri) {
 	GString *str;
 	GSList *conn = connections;
-	struct gaim_connection *gc;
+	struct gaim_connection *gc = NULL;
 
 	debug_printf("Handling URI: %s\n", uri);
 	
 	/* Well, we'd better check to make sure we have at least one
 	   AIM account connected. */
-	while (gc = conn->data) {
+	while (conn) {
+		gc = conn->data;
 		if (gc->protocol == PROTO_TOC) {
 			break;
 		}
@@ -1297,7 +1298,6 @@ const char *handle_uri(char *uri) {
 		set_convo_gc(c, gc);
 		g_free(who);
 		if (what) {
-			int finish;
 			gtk_text_buffer_insert_at_cursor(c->entry_buffer, what, -1);
 			g_free(what);
 		}
@@ -1410,8 +1410,10 @@ GdkPixbuf *gaim_pixbuf(char *subdir, char *iconfile) {
 GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
+	/*
 	GtkWidget *hbox;
 	GtkWidget *label;
+	*/
 	GtkWidget *image;
 
 	if (icon == NULL)
@@ -1429,12 +1431,13 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char
 		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU);
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 	}
-
+/* FIXME: this isn't right
 	if (mod) {
 		label = gtk_label_new(mod);
 		gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 2);
 		gtk_widget_show(label);
 	}
+*/
 /*
 	if (accel_key) {
 		gtk_widget_add_accelerator(menuitem, "activate", accel, accel_key,
@@ -1450,8 +1453,10 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char
 GtkWidget *gaim_new_item_from_pixbuf(GtkWidget *menu, const char *str, char *iconname, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
+	/*
 	GtkWidget *hbox;
 	GtkWidget *label;
+	*/
 	GtkWidget *image;
 
 	if (iconname == NULL)
@@ -1474,12 +1479,13 @@ GtkWidget *gaim_new_item_from_pixbuf(GtkWidget *menu, const char *str, char *ico
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 		g_free(filename);
 	}
-
+/* FIXME: this isn't right either
 	if (mod) {
 		label = gtk_label_new(mod);
 		gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 2);
 		gtk_widget_show(label);
 	}
+*/
 /*
 	if (accel_key) {
 		gtk_widget_add_accelerator(menuitem, "activate", accel, accel_key,

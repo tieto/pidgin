@@ -690,7 +690,7 @@ faim_export int aim_ssi_addpord(aim_session_t *sess, aim_conn_t *conn, const cha
  * @param sn The name of the buddy to be moved.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *oldgn, char *newgn, char *sn)
+faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn, const char *sn)
 {
 	struct aim_ssi_item **groups, *buddy, *cur;
 	fu16_t i;
@@ -766,7 +766,7 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, char *o
  * @param newgn The new group name.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, char *oldgn, char *newgn)
+faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn)
 {
 	struct aim_ssi_item *group;
 
@@ -805,7 +805,7 @@ faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, char
  * @param num The number of screen names you are deleting (size of the sn array).
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num)
+faim_export int aim_ssi_delbuddies(aim_session_t *sess, aim_conn_t *conn, const char *gn, char **sn, unsigned int num)
 {
 	struct aim_ssi_item *cur, *parentgroup, **delitems;
 	int i;
