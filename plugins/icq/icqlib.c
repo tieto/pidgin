@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: icqlib.c 1477 2001-02-04 07:34:46Z warmenhoven $
+$Id: icqlib.c 1508 2001-02-22 23:07:34Z warmenhoven $
 $Log$
-Revision 1.4  2001/02/04 07:34:46  warmenhoven
-updates to icqlib and gtkspell. also added catch case for when BYTE_ORDER wasn't defined.
+Revision 1.5  2001/02/22 23:07:34  warmenhoven
+updating icqlib
+
+Revision 1.51  2001/02/22 05:37:39  bills
+new timeout manager code, correct compilation warnings
 
 Revision 1.50  2001/02/03 17:04:16  mwh
 Add an icq_UserData field to the ICQLINK struct.
@@ -66,8 +69,6 @@ removed unnecessary functions
 int icq_Russian = FALSE;
 BYTE icq_LogLevel = 0;
 
-void (*icq_SocketNotify)(int socket, int type, int status);
-
 DWORD icq_SendMessage(ICQLINK *link, DWORD uin, const char *text, BYTE thruSrv)
 {
   if(thruSrv==ICQ_SEND_THRUSERVER)
@@ -123,9 +124,17 @@ ICQLINK *icq_ICQLINKNew(DWORD uin, const char *password, const char *nick,
   link->d = (ICQLINK_private*)malloc(sizeof(ICQLINK_private));
 
   srand(time(0L));
-  /* initialize icq_SocketList on first call */
+
+  /* initialize internal lists, if necessary */
   if (!icq_SocketList)
     icq_SocketList = list_new();
+
+  if (!icq_TimeoutList)
+  {
+    icq_TimeoutList = list_new();
+    icq_TimeoutList->compare_function =
+      (icq_ListCompareFunc)icq_TimeoutCompare;
+  }
 
   /* Initialize all callbacks */
   link->icq_Logged = 0L;
@@ -151,7 +160,6 @@ ICQLINK *icq_ICQLINKNew(DWORD uin, const char *password, const char *nick,
   link->icq_SrvAck = 0L;
   link->icq_RequestNotify = 0L;
   link->icq_NewUIN = 0L;
-  link->icq_SetTimeout = 0L;
   link->icq_MetaUserFound = 0L;
   link->icq_MetaUserInfo = 0L;
   link->icq_MetaUserWork = 0L;
@@ -439,10 +447,10 @@ int icq_Connect(ICQLINK *link, const char *hostname, int port)
 
   /* sockets are ready to receive data - install handlers */
   icq_SocketSetHandler(link->icq_UDPSok, ICQ_SOCKET_READ,
-    icq_HandleServerResponse, link);
+    (icq_SocketHandler)icq_HandleServerResponse, link);
   if (link->icq_UseProxy)
     icq_SocketSetHandler(link->icq_ProxySok, ICQ_SOCKET_READ,
-      icq_HandleProxyResponse, link);
+      (icq_SocketHandler)icq_HandleProxyResponse, link);
   return link->icq_UDPSok;
 }
 

@@ -220,7 +220,6 @@ typedef struct icq_link
   void (*icq_ChatNotify)(icq_ChatSession *session, int type, int arg,
        void *data);
   void (*icq_NewUIN)(struct icq_link *link, unsigned long uin);
-  void (*icq_SetTimeout)(struct icq_link *link, long interval);
   void (*icq_MetaUserFound)(struct icq_link *link, unsigned short seq2,
        unsigned long uin, const char *nick, const char *first,
        const char *last, const char *email, char auth);
@@ -283,7 +282,6 @@ int icq_GetSok(ICQLINK *link);
 int icq_GetProxySok(ICQLINK *link);
 void icq_HandleServerResponse(ICQLINK *link);
 void icq_HandleProxyResponse(ICQLINK *link);
-void icq_HandleTimeout(ICQLINK *link);
 void icq_Main(ICQLINK *link);
 unsigned short icq_KeepAlive(ICQLINK *link);
 void icq_Login(ICQLINK *link, unsigned long status);
@@ -599,6 +597,12 @@ void icq_FileSessionSetFiles(icq_FileSession *p, char **files);
 extern void (*icq_SocketNotify)(int socket, int type, int status);
 
 void icq_HandleReadySocket(int socket, int type);
+
+/* Timeout Manager */
+
+extern void (*icq_SetTimeout)(long interval);
+
+void icq_HandleTimeout();
 
 #ifdef __cplusplus
 }

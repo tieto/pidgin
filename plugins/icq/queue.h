@@ -8,22 +8,22 @@
 
 #include "icq.h"
 #include "icqpacket.h"
+#include "timeout.h"
 
 typedef struct udp_item
 {
   unsigned char attempts;
-  unsigned long expire;
+  icq_Timeout *timeout;
   icq_Packet *pack;
+  ICQLINK *icqlink;
 } icq_UDPQueueItem;
 
 void icq_UDPQueueNew(ICQLINK*);
 void icq_UDPQueueFree(ICQLINK*);
-void icq_UDPQueuePut(ICQLINK*, icq_Packet*, int);
-icq_Packet *icq_UDPQueueGet(ICQLINK*);
-icq_Packet *icq_UDPQueuePeek(ICQLINK*);
+void icq_UDPQueuePut(ICQLINK*, icq_Packet*);
 void icq_UDPQueueDelete(ICQLINK*);
 void icq_UDPQueueFree(ICQLINK*);
 void icq_UDPQueueDelSeq(ICQLINK*, WORD);
-long icq_UDPQueueInterval(ICQLINK *);
+void icq_UDPQueueItemResend(icq_UDPQueueItem *pitem);
 
 #endif

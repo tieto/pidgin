@@ -21,6 +21,7 @@ tcpchathandle.lo
 tcpfilehandle.lo
 tcphandle.lo
 tcplink.lo
+timeout.lo
 udp.lo
 udphandle.lo
 util.lo

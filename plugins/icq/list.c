@@ -1,9 +1,13 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: list.c 1442 2001-01-28 01:52:27Z warmenhoven $
+$Id: list.c 1508 2001-02-22 23:07:34Z warmenhoven $
 $Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
+Revision 1.4  2001/02/22 23:07:34  warmenhoven
+updating icqlib
+
+Revision 1.15  2001/02/22 05:38:45  bills
+added sorted list capability - see list_insert_sorted and new
+compare_function list struct member
 
 Revision 1.14  2000/07/10 01:44:20  bills
 i really don't learn - removed LIST_TRACE define
@@ -14,37 +18,8 @@ argh - last list buglet fixed, removed free(node) call from list_free
 Revision 1.12  2000/07/10 01:31:17  bills
 oops - removed #define LIST_TRACE and #define QUEUE_DEBUG
 
-Revision 1.11  2000/07/10 01:26:30  bills
-added more trace messages, added list_remove_node call in list_free...
-fixes list corruption bug introduced during last commit
-
-Revision 1.10  2000/07/09 22:04:45  bills
-recoded list_free function - this was working very incorrectly!  it was
-only freeing the first node of the list, and then ending.  fixes a memory
-leak.
-
-Revision 1.9  2000/05/10 18:48:56  denis
-list_free() was added to free but do not dispose the list.
-Memory leak with destroying the list was fixed.
-
-Revision 1.8  2000/05/03 18:19:15  denis
-Bug with empty contact list was fixed.
-
-Revision 1.7  2000/01/16 21:26:54  bills
-fixed serious bug in list_remove
-
-Revision 1.6  2000/01/16 03:59:10  bills
-reworked list code so list_nodes don't need to be inside item structures,
-removed strlist code and replaced with generic list calls
-
-Revision 1.5  1999/09/29 19:59:30  bills
-cleanups
-
-Revision 1.4  1999/07/16 11:59:46  denis
-list_first(), list_last(), list_at() added.
-Cleaned up.
-
 */
+
 /*
  * linked list functions
  */
@@ -90,6 +65,22 @@ void list_free(list *plist, void (*item_free_f)(void *))
     (*item_free_f)((void *)ptemp->item);
     list_remove_node(plist, ptemp);
   }
+}
+
+void list_insert_sorted(list *plist, void *pitem)
+{
+  list_node *i=plist->head;
+  int done;
+
+  while (i && !done)
+  {
+    if ((*plist->compare_function)(pitem, i->item)<0)
+      done = 1;
+    else
+      i=i->next;
+  }
+
+  list_insert(plist, i, pitem);
 }
 
 void list_insert(list *plist, list_node *pnode, void *pitem)
@@ -195,7 +186,9 @@ void *list_traverse(list *plist, int (*item_f)(void *, va_list), ...)
     if(!(f=(*item_f)(i->item, ap)))
       i=pnext;
   }
+
   va_end(ap);
+
   if (i)
     return i->item;
   else

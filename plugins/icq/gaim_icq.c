@@ -18,8 +18,9 @@
 struct icq_data {
 	ICQLINK *link;
 	int cur_status;
-	int ack_timer;
 };
+
+static guint ack_timer = 0;
 
 static struct gaim_connection *find_gaim_conn_by_icq_link(ICQLINK *link) {
 	GSList *c = connections;
@@ -152,22 +153,19 @@ static void icq_user_status(ICQLINK *link, unsigned long uin, unsigned long st) 
 	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
 }
 
-static gint icq_set_timeout_cb(struct icq_data *id) {
-	icq_HandleTimeout(id->link);
-	id->ack_timer = -1;
+static gint icq_set_timeout_cb() {
+	icq_HandleTimeout();
+	ack_timer = 0;
 	return FALSE;
 }
 
-static void icq_set_timeout(ICQLINK *link, long interval) {
-	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
-	struct icq_data *id = (struct icq_data *)gc->proto_data;
-
+static void icq_set_timeout(long interval) {
 	debug_printf("icq_SetTimeout: %ld\n", interval);
-	if (interval > 0 && id->ack_timer < 1)
-		id->ack_timer = gtk_timeout_add(interval * 1000, (GtkFunction)icq_set_timeout_cb, id);
-	else if (id->ack_timer > 0) {
-		gtk_timeout_remove(id->ack_timer);
-		id->ack_timer = -1;
+	if (interval > 0 && ack_timer == 0)
+		ack_timer = gtk_timeout_add(interval * 1000, (GtkFunction)icq_set_timeout_cb, NULL);
+	else if (ack_timer > 0) {
+		gtk_timeout_remove(ack_timer);
+		ack_timer = 0;
 	}
 }
 
@@ -258,7 +256,6 @@ static void icq_login(struct aim_user *user) {
 	link->icq_WrongPassword = icq_wrong_passwd;
 	link->icq_InvalidUIN = icq_invalid_uin;
 	link->icq_Log = icq_do_log;
-	link->icq_SetTimeout = icq_set_timeout;
 
 	icq_ContactClear(id->link);
 	if (bud_list_cache_exists(gc))
@@ -479,6 +476,7 @@ static void icq_init(struct prpl *ret) {
 
 char *gaim_plugin_init(GModule *handle) {
 	icq_SocketNotify = icq_sock_notify;
+	icq_SetTimeout = icq_set_timeout;
 	load_protocol(icq_init, sizeof(struct prpl));
 	return NULL;
 }

@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcplink.c 1442 2001-01-28 01:52:27Z warmenhoven $
+$Id: tcplink.c 1508 2001-02-22 23:07:34Z warmenhoven $
 $Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
+Revision 1.4  2001/02/22 23:07:34  warmenhoven
+updating icqlib
+
+Revision 1.44  2001/02/22 05:40:04  bills
+port tcp connect timeout code and UDP queue to new timeout manager
 
 Revision 1.43  2001/01/27 22:48:01  bills
 fix bugs related to TCP and new socket manager: implemented accepting TCP
@@ -211,6 +214,7 @@ icq_TCPLink *icq_TCPLinkNew(ICQLINK *link)
   p->remote_version=0;
   p->flags=0;
   p->proxy_status = 0;
+  p->connect_timeout = NULL;
 
   if(p)
     list_enqueue(link->d->icq_TCPLinks, p);
@@ -267,6 +271,11 @@ void icq_TCPLinkDelete(void *pv)
   if (p->socket > -1)
   {
     icq_SocketDelete(p->socket);
+  }
+
+  if (p->connect_timeout)
+  {
+    icq_TimeoutDelete(p->connect_timeout);
   }
 
   free(p);
@@ -583,8 +592,6 @@ int icq_TCPLinkConnect(icq_TCPLink *plink, DWORD uin, int port)
 
   plink->remote_uin=uin;
 
-  plink->connect_time=time(0L);
-
   /* Send the hello packet */
   p=icq_TCPCreateInitPacket(plink);
   icq_TCPLinkSend(plink, p);
@@ -595,6 +602,8 @@ int icq_TCPLinkConnect(icq_TCPLink *plink, DWORD uin, int port)
 
   icq_SocketSetHandler(plink->socket, ICQ_SOCKET_WRITE,
     icq_TCPLinkOnConnect, plink);
+  plink->connect_timeout=icq_TimeoutNew(TCP_LINK_CONNECT_TIMEOUT,
+    (icq_TimeoutHandler)icq_TCPLinkClose, plink);
   
   return 1;
 }
@@ -843,6 +852,9 @@ void icq_TCPLinkOnConnect(icq_TCPLink *plink)
 #endif
   int error;
   
+  icq_TimeoutDelete(plink->connect_timeout);
+  plink->connect_timeout = NULL;
+
   /* check getsockopt */
   len=sizeof(error);
 

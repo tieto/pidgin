@@ -1,3 +1,35 @@
+2001-02-22  Bill Soudan  <soudan@kde.org>
+
+	Note the icq_SetTimeout callback has been moved outside of
+	the ICQLINK structure, and icq_HandleTimeout no longer 
+	requires an ICQLINK parameter.  TCP connect timeouts should
+	work once again.
+
+	* icqlib/filesession.c: fixed initialization bug that may
+	cause a crash on file session deletion
+
+	* icqlib/Makefile.am, icqlib/timeout.c, icqlib/timeout.h,
+	icqlib/icq.h.in, icqlib/icqlib.c: new timeout manager code,
+	correct compilation warnings
+
+	* icqlib/list.c, icqlib/list.h: added sorted list capability -
+	see list_insert_sorted and new compare_function list struct
+	member
+
+	* icqlib/queue.c, icqlib/queue.h, icqlib/tcp.c, icqlib/tcplink.c,
+	icqlib/tcplink.h, icqlib/udp.c, icqlib/udphandle.c:
+	port tcp connect timeout code and UDP queue to new timeout
+	manager
+
+	* icqlib/socketmanager.c: move icq_SocketHandler declaration
+	here, instead of declaring it in icqlib.c.  fix bug with
+	icq_SocketPoll/icq_SocketMain, as reported by Michael Hudson.
+
+	* bindings/python/icqlibmodule.c: ported to new timeout
+	interface - remove SetTimeout callback and HandleTimeout 
+	methods from PyICQLink class, add icqlib.InstallTimeoutHandler 
+	and icqlib.HandleTimeout methods.
+	
 2001-01-27  Bill Soudan  <soudan@kde.org>
 
 	* icqlib/socketmanager.c, icqlib/socketmanager.h, 

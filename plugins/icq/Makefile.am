@@ -46,6 +46,8 @@ libgaimicq_la_SOURCES =	chatsession.c \
 			tcphandle.c \
 			tcplink.c \
 			tcplink.h \
+			timeout.c \
+			timeout.h \
 			udp.c \
 			udp.h \
 			udphandle.c \

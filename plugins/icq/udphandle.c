@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: udphandle.c 1442 2001-01-28 01:52:27Z warmenhoven $
+$Id: udphandle.c 1508 2001-02-22 23:07:34Z warmenhoven $
 $Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
+Revision 1.4  2001/02/22 23:07:34  warmenhoven
+updating icqlib
+
+Revision 1.31  2001/02/22 05:40:04  bills
+port tcp connect timeout code and UDP queue to new timeout manager
 
 Revision 1.30  2001/01/15 06:17:35  denis
 Applied patch from Andrey Chernomyrdin <andrey@excom.spb.su> to
@@ -742,8 +745,6 @@ void icq_ServerResponse(ICQLINK *link, icq_Packet *p)
           (*link->icq_RequestNotify)(link, seq, ICQ_NOTIFY_SUCCESS, 0, 0);
         }
         icq_UDPQueueDelSeq(link, seq);
-        if(link->icq_SetTimeout)
-          link->icq_SetTimeout(link, icq_UDPQueueInterval(link));
         break;
       case UDP_SRV_MULTI_PACKET:
         icq_HandleMultiPacket(link, p);

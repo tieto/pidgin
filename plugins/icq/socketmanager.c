@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
-  $Id: socketmanager.c 1442 2001-01-28 01:52:27Z warmenhoven $
+  $Id: socketmanager.c 1508 2001-02-22 23:07:34Z warmenhoven $
 */
 
 #include "socketmanager.h"
@@ -46,6 +46,8 @@
 list *icq_SocketList = NULL;
 fd_set icq_FdSets[ICQ_SOCKET_MAX];
 int icq_MaxSocket;
+
+void (*icq_SocketNotify)(int socket, int type, int status);
 
 /**
  * Creates a new socket using the operating system's socket creation
@@ -143,7 +145,6 @@ void icq_SocketSetHandler(int socket, int type, icq_SocketHandler handler,
     s->handlers[type] = handler;
     if (icq_SocketNotify)
       (*icq_SocketNotify)(socket, type, handler ? 1 : 0);
-    icq_SocketBuildFdSets();
   }
 }
 
@@ -170,11 +171,11 @@ int _icq_SocketBuildFdSets(void *p, va_list data)
   int i;
 
   for (i=0; i<ICQ_SOCKET_MAX; i++)
-    if (s->handlers[i])
-      FD_SET(s->socket, &icq_FdSets[i]);
-
-  if (s->socket > icq_MaxSocket)
-    icq_MaxSocket = s->socket;
+    if (s->handlers[i]) {
+      FD_SET(s->socket, &(icq_FdSets[i]));
+      if (s->socket > icq_MaxSocket)
+        icq_MaxSocket = s->socket;
+    }
 
   return 0; /* traverse entire list */
 }
@@ -182,10 +183,10 @@ int _icq_SocketBuildFdSets(void *p, va_list data)
 void icq_SocketBuildFdSets()
 {
   int i;
-  
+
   /* clear fdsets */
   for (i=0; i<ICQ_SOCKET_MAX; i++)
-    FD_ZERO(&icq_FdSets[i]);
+    FD_ZERO(&(icq_FdSets[i]));
 
   icq_MaxSocket = 0;
   
@@ -199,8 +200,9 @@ int _icq_SocketHandleReady(void *p, va_list data)
   int i;
 
   for (i=0; i<ICQ_SOCKET_MAX; i++)
-    if (FD_ISSET(s->socket, &icq_FdSets[i]))
+    if (FD_ISSET(s->socket, &(icq_FdSets[i]))) {
       icq_SocketReady(s, i);
+    }
 
   return 0; /* traverse entire list */
 }
@@ -211,10 +213,13 @@ void icq_SocketPoll()
   int max_socket = 0;
   int i;
 
-  tv.tv_sec = 0; tv.tv_usec = 0;
+  icq_SocketBuildFdSets();
   
+  tv.tv_sec = 0; tv.tv_usec = 0;
+    
   /* determine which sockets require maintenance */
-  select(icq_MaxSocket+1, &icq_FdSets[0], &icq_FdSets[1], NULL, &tv);
+  select(icq_MaxSocket+1, &(icq_FdSets[ICQ_SOCKET_READ]),
+    &(icq_FdSets[ICQ_SOCKET_WRITE]), NULL, &tv);
 
   /* handle ready sockets */
   (void)list_traverse(icq_SocketList, _icq_SocketHandleReady);

@@ -27,6 +27,7 @@ icq_FileSession *icq_FileSessionNew(ICQLINK *icqlink)
     p->status=0;
     p->id=0L;
     p->icqlink=icqlink;
+    p->tcplink=NULL;
     p->current_fd=-1;
     p->current_file_num=0;
     p->current_file_progress=0;

@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: tcp.c 1442 2001-01-28 01:52:27Z warmenhoven $
+$Id: tcp.c 1508 2001-02-22 23:07:34Z warmenhoven $
 $Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
+Revision 1.4  2001/02/22 23:07:34  warmenhoven
+updating icqlib
+
+Revision 1.39  2001/02/22 05:40:04  bills
+port tcp connect timeout code and UDP queue to new timeout manager
 
 Revision 1.38  2001/01/17 01:29:17  bills
 Rework chat and file session interfaces; implement socket notifications.
@@ -191,16 +194,6 @@ void icq_TCPDone(ICQLINK *link)
   list_delete(link->d->icq_ChatSessions, icq_ChatSessionDelete);
   list_delete(link->d->icq_FileSessions, icq_FileSessionDelete);
 }
-
-/* need to do this somehow...
-
-    if((time(0L) - plink->connect_time) > TCP_LINK_CONNECT_TIMEOUT)
-    {
-      icq_TCPLinkClose(plink);
-      return 0;
-    }
-  }
-*/
 
 icq_TCPLink *icq_TCPCheckLink(ICQLINK *link, DWORD uin, int type)
 {

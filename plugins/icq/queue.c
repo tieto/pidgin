@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: queue.c 1442 2001-01-28 01:52:27Z warmenhoven $
+$Id: queue.c 1508 2001-02-22 23:07:34Z warmenhoven $
 $Log$
-Revision 1.4  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
+Revision 1.5  2001/02/22 23:07:34  warmenhoven
+updating icqlib
+
+Revision 1.13  2001/02/22 05:40:04  bills
+port tcp connect timeout code and UDP queue to new timeout manager
 
 Revision 1.12  2000/12/19 06:00:07  bills
 moved members from ICQLINK to ICQLINK_private struct
@@ -61,45 +64,23 @@ void icq_UDPQueueNew(ICQLINK *link)
   link->icq_UDPExpireInterval = 15; /* expire interval = 15 sec */
 }
 
-void icq_UDPQueuePut(ICQLINK *link, icq_Packet *p, int attempt)
+void icq_UDPQueuePut(ICQLINK *link, icq_Packet *p)
 {
   icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)malloc(sizeof(icq_UDPQueueItem));
 #ifdef QUEUE_DEBUG
   printf("icq_UDPQueuePut(seq=0x%04X, cmd=0x%04X)\n", icq_PacketReadUDPOutSeq1(p),
          icq_PacketReadUDPOutCmd(p));
 #endif
-  ptr->attempts = attempt;
-  ptr->expire = time(0L)+link->icq_UDPExpireInterval;
+  ptr->attempts = 1;
+  ptr->timeout = icq_TimeoutNew(link->icq_UDPExpireInterval, 
+    (icq_TimeoutHandler)icq_UDPQueueItemResend, ptr);
+  ptr->timeout->single_shot = 0;
   ptr->pack = p;
+  ptr->icqlink = link;
 #ifdef QUEUE_DEBUG
   printf("enqueuing queueitem %p\n", ptr);
 #endif
   list_enqueue(link->d->icq_UDPQueue, ptr);
-}
-
-icq_Packet *icq_UDPQueueGet(ICQLINK *link)
-{
-  icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)list_first(link->d->icq_UDPQueue);
-  icq_Packet *pack = 0L;
-  if(ptr)
-  {
-    pack = ptr->pack;
-    list_remove(link->d->icq_UDPQueue, (list_node*)ptr);
-  }
-#ifdef QUEUE_DEBUG
-  if(pack)
-    printf("icq_UDPQueueGet(cmd=0x%04X)\n", icq_PacketReadUDPOutCmd(pack));
-#endif
-  return pack;
-}
-
-icq_Packet *icq_UDPQueuePeek(ICQLINK *link)
-{
-  icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)list_first(link->d->icq_UDPQueue);
-  if(ptr)
-    return ptr->pack;
-  else
-    return 0L;
 }
 
 void _icq_UDPQueueItemFree(void *p)
@@ -112,6 +93,9 @@ void _icq_UDPQueueItemFree(void *p)
 
   if (pitem->pack)
     icq_PacketDelete(pitem->pack);
+
+  if (pitem->timeout)
+    icq_TimeoutDelete(pitem->timeout);
 
   free(p);
 }
@@ -165,14 +149,16 @@ void icq_UDPQueueDelSeq(ICQLINK *link, WORD seq)
 #endif
 }
 
-long icq_UDPQueueInterval(ICQLINK *link)
+void icq_UDPQueueItemResend(icq_UDPQueueItem *p)
 {
-  long interval;
-  icq_UDPQueueItem *ptr = (icq_UDPQueueItem*)list_first(link->d->icq_UDPQueue);
-  if(ptr)
+  p->attempts++;
+  if (p->attempts > 6)
   {
-    interval = ptr->expire - time(0L);
-    return interval>=0?interval:0;
+    icq_Disconnect(p->icqlink);
+    invoke_callback(p->icqlink, icq_Disconnected)(p->icqlink);
+    return;
   }
-  return -1;
+
+  icq_UDPSockWriteDirect(p->icqlink, p->pack);
 }
+

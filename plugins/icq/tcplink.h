@@ -18,7 +18,7 @@
 
 #include "icq.h"
 #include "icqpacket.h"
-#include "list.h"
+#include "timeout.h"
 
 /* link mode bitfield values */
 #define TCP_LINK_MODE_RAW             1
@@ -68,8 +68,8 @@ struct icq_TCPLink_s {
    unsigned long remote_uin;
    char flags;
 
-   /* connect timer */
-   time_t connect_time;
+   /* timeout for connect operation */
+   icq_Timeout *connect_timeout;
 
 };
 
@@ -85,6 +85,7 @@ int icq_TCPLinkListen(icq_TCPLink *plink);
 void icq_TCPLinkOnDataReceived(icq_TCPLink *plink);
 void icq_TCPLinkOnPacketReceived(icq_TCPLink *plink, icq_Packet *p);
 void icq_TCPLinkOnConnect(icq_TCPLink *plink);
+void icq_TCPLinkOnConnectTimeout(icq_TCPLink *plink);
 
 unsigned long icq_TCPLinkSendSeq(icq_TCPLink *plink, icq_Packet *p,
   unsigned long sequence);

@@ -16,6 +16,7 @@
 
 typedef struct list_node_s list_node;
 typedef struct list_s list;
+typedef int (*icq_ListCompareFunc)(void *o1, void *o2);
 
 struct list_node_s
 {
@@ -29,11 +30,13 @@ struct list_s
   list_node *head;
   list_node *tail;
   int count;
+  icq_ListCompareFunc compare_function;
 };
 
 list *list_new(void);
 void list_delete(list *plist, void (*item_free_f)(void *));
 void list_free(list *plist, void (*item_free_f)(void *));
+void list_insert_sorted(list *plist, void *pitem);
 void list_insert(list *plist, list_node *pnode, void *pitem);
 void *list_remove(list *plist, void *pitem);
 void *list_traverse(list *plist, int (*item_f)(void *, va_list), ...);

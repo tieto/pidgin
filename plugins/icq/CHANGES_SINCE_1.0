@@ -73,4 +73,6 @@ This mechanism is completely optional - you can simply set up a timer to
 call icq_Main every 1/10 of a second or so.  This has the disadvantage of 
 wasting CPU cycles and poor TCP file transfer performance, though.
 
- 
+2001-02-20: The icq_SetTimeout callback has been moved outside of the 
+ICQLINK structure, and icq_HandleTimeout no longer requires an ICQLINK 
+parameter.
