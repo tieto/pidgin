@@ -3885,26 +3885,6 @@ static xmlnode insert_tag_to_parent_tag(xmlnode start, const char *parent_tag, c
 }
 
 /*
- * Find the tag name for a label
- *
- * Returns NULL on not found
- */
-static char *tag_for_label(const char *label)
-{
-	struct vcard_template *vc_tp = vcard_template_data;
-	char *p = NULL;
-
-	for(vc_tp = vcard_template_data; vc_tp->label != NULL; ++vc_tp) {
-		if(strcmp(label, vc_tp->label) == 0) {
-			p = vc_tp->tag;
-			break;
-		}
-	}
-
-	return(p);
-}
-
-/*
  * Send vCard info to Jabber server
  */
 static void jabber_set_info(GaimConnection *gc, const char *info)

@@ -48,7 +48,7 @@ static void *gaim_gtk_notify_emails(size_t count, gboolean detailed,
 static void
 message_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
 {
-	gaim_notify_close(GAIM_NOTIFY_MESSAGE, data);
+	gaim_notify_close(GAIM_NOTIFY_MESSAGE, widget);
 }
 
 static void
