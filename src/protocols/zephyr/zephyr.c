@@ -4,8 +4,8 @@
  *
  * Copyright (C) 1998-2001, Mark Spencer <markster@marko.net>
  * Some code borrowed from GtkZephyr, by
- * 	Jag/Sean Dilda <agrajag@linuxpower.org>/<smdilda@unity.ncsu.edu>
- * 	http://gtkzephyr.linuxpower.org/
+ * Jag/Sean Dilda <agrajag@linuxpower.org>/<smdilda@unity.ncsu.edu>
+ * http://gtkzephyr.linuxpower.org/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,6 @@
 #include "util.h"
 
 #include "zephyr/zephyr.h"
-
-#include "gaim.h"
 
 extern Code_t ZGetLocations(ZLocations_t *, int *);
 extern Code_t ZSetLocation(char *);

@@ -40,11 +40,6 @@
 #include "yahoochat.h"
 #include "md5.h"
 
-/* XXX */
-#include "gtkinternal.h"
-#include "gaim.h"
-#include "ui.h"
-
 extern char *yahoo_crypt(const char *, const char *);
 
 /* #define YAHOO_DEBUG */

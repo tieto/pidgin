@@ -32,9 +32,6 @@
 #include "util.h"
 #include "html.h"
 
-/* XXX */
-#include "gaim.h"
-
 static GaimPlugin *my_protocol = NULL;
 
 #define REVISION "penguin"
