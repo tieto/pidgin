@@ -46,9 +46,9 @@ as plugins:
 
 They are installed in $libdir/gaim, which usually is either /usr/lib/gaim
 or /usr/local/lib/gaim, and should have a somewhat descriptive name (e.g.
-libyahoo.so or irc.so). Load those plugins using the normal plugin dialog.
-Then in the account editor, add a new account; the Protocol option menu
-should now have another option for the protocol that you loaded. Then
+libyahoo.so or libirc.so). Load those plugins using the normal plugin
+dialog.  Then in the account editor, add a new account; the Protocol option
+menu should now have another option for the protocol that you loaded. Then
 you can sign that account on.
 
 Read below for protocol-specific information.
