@@ -174,7 +174,10 @@ static void gaim_gtk_sound_play_file(const char *filename)
 			return;
 		}
 
-		command = g_strdup_printf(sound_cmd, filename);
+		if(strstr(sound_cmd, "%s"))
+			command = gaim_strreplace(sound_cmd, "%s", filename);
+		else
+			command = g_strdup_printf("%s %s", sound_cmd, filename);
 
 		if(!g_spawn_command_line_async(command, &error)) {
 			char *tmp = g_strdup_printf(_("Unable to play sound because the configured sound command could not be launched: %s"), error->message);
