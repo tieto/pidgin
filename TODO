@@ -232,7 +232,6 @@ Yahoo:
 	auto reply on away
 	privacy options (block, unblock)
 	voice chat
-	ability to disable typing. (i don't think the pref works)
 
 MSN:
 	typing notification is broken in gtk1-stable
