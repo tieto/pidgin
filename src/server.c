@@ -296,34 +296,35 @@ void serv_add_buddy(char *name)
 void serv_add_buddies(GList *buddies)
 {
 	if (!USE_OSCAR) {
-	char buf[MSG_LEN];
-        int n, num = 0;
+		char buf[MSG_LEN];
+	        int n, num = 0;
 
-        n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
-        while(buddies) {
-                if (num == 20) {
-                        sflap_send(buf, -1, TYPE_DATA);
-                        n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
-                        num = 0;
-                }
-                ++num;
-                n += g_snprintf(buf + n, sizeof(buf) - n, " %s", normalize(buddies->data));
-                buddies = buddies->next;
-        }
-	sflap_send(buf, -1, TYPE_DATA);
+	        n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
+	        while(buddies) {
+			/* i don't know why we choose 8, it just seems good */
+	                if (strlen(normalize(buddies->data)) > MSG_LEN - n - 8) {
+	                        sflap_send(buf, -1, TYPE_DATA);
+	                        n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
+	                        num = 0;
+	                }
+	                ++num;
+	                n += g_snprintf(buf + n, sizeof(buf) - n, " %s", normalize(buddies->data));
+	                buddies = buddies->next;
+	        }
+		sflap_send(buf, -1, TYPE_DATA);
 	} else {
-	char buf[MSG_LEN];
-	int n = 0;
-	while(buddies) {
-		if (n > MSG_LEN - 18) {
-			aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
-			n = 0;
+		char buf[MSG_LEN];
+		int n = 0;
+		while(buddies) {
+			if (n > MSG_LEN - 18) {
+				aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
+				n = 0;
+			}
+			n += g_snprintf(buf + n, sizeof(buf) - n, "%s&",
+					(char *)buddies->data);
+			buddies = buddies->next;
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&",
-				(char *)buddies->data);
-		buddies = buddies->next;
-	}
-	aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
+		aim_bos_setbuddylist(gaim_sess, gaim_conn, buf);
 	}
 }
 

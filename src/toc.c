@@ -891,7 +891,7 @@ void parse_toc_buddy_list(char *config, int from_do_import)
 			strncpy(current,c+2, sizeof(current));
 			add_group(current);
 			how_many++;
-		} else if (*c == 'b') {
+		} else if (*c == 'b' && !find_buddy(c+2)) {
 			add_buddy(current, c+2);
 			how_many++;
 			bud = g_list_append(bud, c+2);
@@ -913,7 +913,7 @@ void parse_toc_buddy_list(char *config, int from_do_import)
 	fprintf(stdout, "Sending message '%s'\n",buf);
 #endif
       
-	serv_add_buddies(bud);
+	if (bud != NULL) serv_add_buddies(bud);
         serv_set_permit_deny();
 	if (blist) {
 		build_edit_tree();
