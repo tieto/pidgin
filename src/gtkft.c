@@ -1,5 +1,5 @@
 /**
- * @file gtkft.c GTK+ file transfer UI
+ * @file gtkft.c GTK+ File Transfer UI
  * @ingroup gtkui
  *
  * gaim

@@ -1,5 +1,5 @@
 /**
- * @file gtkaccount.h Account Editor dialog
+ * @file gtkaccount.h GTK+ Account Editor UI
  * @ingroup gtkui
  *
  * gaim

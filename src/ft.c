@@ -1,5 +1,5 @@
 /**
- * @file ft.c The file transfer interface.
+ * @file ft.c File Transfer API
  *
  * gaim
  *

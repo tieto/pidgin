@@ -2036,8 +2036,8 @@ initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 			while (*file && *file == '/')
 				++file;
 			url = g_strconcat ("file:///", file, 0);
-			gaim_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
-							   &passport, &url, NULL, NULL);
+			gaim_notify_emails(gc, count, FALSE, NULL, NULL,
+							   &passport, (const char **)&url, NULL, NULL);
 			g_free (url);
 		}
 	}

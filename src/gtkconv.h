@@ -87,7 +87,7 @@ struct _GaimGtkWindow
 };
 
 /**
- * GTK+ Instant Message panes.
+ * A GTK+ Instant Message pane.
  */
 struct _GaimGtkImPane
 {

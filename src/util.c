@@ -281,12 +281,14 @@ gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
  **************************************************************************/
 #define OUT_CHARSET "utf-8"
 
-char *
+static char *
 gaim_mime_decode_word(const char *charset, const char *encoding, const char *str)
 {
-	/* TODO: We need to check for nulls */
 	char *decoded, *converted;
 	int len = 0;
+
+	if ((charset == NULL) || (encoding == NULL) || (str == NULL))
+		return NULL;
 
 	if (g_ascii_strcasecmp(encoding, "Q") == 0)
 		gaim_quotedp_decode(str, &decoded, &len);
@@ -304,6 +306,57 @@ gaim_mime_decode_word(const char *charset, const char *encoding, const char *str
 char *
 gaim_mime_decode_field(const char *str)
 {
+	GString *donedeal;
+	char *orig, *start, *end, *end_of_last, *tmp;
+	char **encoded_word;
+	char *charset, *encoding, *word;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	orig = g_strdup(str);
+	donedeal = g_string_sized_new(strlen(orig));
+
+	/* One iteration per encoded-word */
+	end_of_last = orig;
+	while ((start = strstr(end_of_last, "=?")) && (end = strstr(start, "?="))) {
+		/* Append everything from the end of the last encoded-word to the beginning of the next */
+		tmp = g_strndup(end_of_last, (start - end_of_last));
+		donedeal = g_string_append(donedeal, tmp);
+		g_free(tmp);
+
+		/* Split the encoded word */
+		tmp = g_strndup(start + 2, end - start - 4);
+		encoded_word = g_strsplit(tmp, "?", 3);
+		g_free(tmp);
+		charset = encoded_word[0];
+		encoding = charset != NULL ? encoded_word[1] : NULL;
+		word = encoding != NULL ? encoded_word[2] : NULL;
+		g_strfreev(encoded_word);
+
+		/* Convert the decoded word to utf8 and append it */
+		tmp = gaim_mime_decode_word(charset, encoding, word);
+		donedeal = g_string_append(donedeal, tmp);
+		g_free(tmp);
+
+		g_free(charset);
+		g_free(encoding);
+		g_free(word);
+	}
+
+	/* Append everything from the end of the last encoded-word to the end of the string */
+	tmp = g_strndup(end_of_last, ((orig + strlen(orig)) - end_of_last));
+	donedeal = g_string_append(donedeal, tmp);
+	g_free(tmp);
+
+	/* Free at last, free at last... */
+	tmp = donedeal->str;
+	g_string_free(donedeal, FALSE);
+	g_free(orig);
+
+	return tmp;
+
+#if 0
+	/* This is revo/shx's version, and it caused coredumps for me */
 	char *cur, *mark;
 	char *unencoded_start, *unencoded_end;
 	char *charset, *encoding, *word, *decoded;
@@ -312,13 +365,14 @@ gaim_mime_decode_field(const char *str)
 	n = new = g_malloc(strlen(str));
 	charset = word = NULL;
 
+gaim_debug(GAIM_DEBUG_ERROR, "XXX", "new is %d\n", new);
 	/* Here we will be looking for encoded words and if they seem to be
 	 * valid then decode them */
 
-	for (	unencoded_start = cur = (char *)str;
-			(unencoded_end = cur = strstr(cur, "=?"));
-			unencoded_start = cur)
-	{
+	for (unencoded_start = cur = str;
+		 (unencoded_end = cur = strstr(cur, "=?"));
+		 unencoded_start = cur)	{
+
 		int len;
 		char *token;
 		GQueue *tokens = g_queue_new();
@@ -343,6 +397,7 @@ gaim_mime_decode_field(const char *str)
 		}
 
 		cur += 2;
+gaim_debug(GAIM_DEBUG_ERROR, "XXX", "new is %d, this is probably different than above, that's bad\n", new);
 
 		if ((tokens->length == 3) && (*mark == '=')) {
 			len = unencoded_end - unencoded_start;
@@ -378,6 +433,7 @@ gaim_mime_decode_field(const char *str)
 		n = strcpy(n, unencoded_start);
 
 	return new;
+#endif
 }
 
 /**************************************************************************

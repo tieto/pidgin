@@ -1,5 +1,5 @@
 /**
- * @file ft.h The file transfer interface
+ * @file ft.h File Transfer API
  * @ingroup core
  *
  * gaim
