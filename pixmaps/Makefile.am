@@ -73,6 +73,7 @@ EXTRA_DIST =	about_small.xpm			\
 		msg_pending.xpm			\
 		msn_away.xpm			\
 		msn_online.xpm			\
+		napster.xpm			\
 		no_icon.xpm			\
 		normal.xpm			\
 		offline.xpm			\

@@ -37,6 +37,7 @@
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
+#include "pixmaps/napster.xpm"
 
 #define NAP_BUF_LEN 4096
 
@@ -521,13 +522,18 @@ static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
 	}
 }
 
+static char** nap_list_icon(int uc)
+{
+	return napster_xpm;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void nap_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_NAPSTER;
 	ret->name = nap_name;
-	ret->list_icon = NULL;
+	ret->list_icon = nap_list_icon;
 	ret->action_menu = NULL;
 	ret->user_opts = NULL;
 	ret->login = nap_login;

@@ -419,6 +419,8 @@ void msn_callback(gpointer data, gint fd, GdkInputCondition condition)
 
 		if (strcasecmp("hotmail", resps[1]) == 0) {
 
+			/* FIXME: Eventually remove the following printf() */
+			printf("---READ---\n%s\n---END---\n", buf2);
 			if (strstr(buf2, "Content-Type: text/x-msmsgsemailnotification")) {
 				g_snprintf(buf, sizeof(buf), "%s has new hotmail", gc->username);
 				do_error_dialog(buf, "Gaim: MSN New Mail");
