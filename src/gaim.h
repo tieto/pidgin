@@ -432,6 +432,7 @@ extern char *str_to_utf8(unsigned char *);
 extern char *add_cr(char *);
 extern void strip_linefeed(char *);
 extern time_t get_time(int, int, int, int, int, int);
+extern FILE *gaim_mkstemp(gchar **);
 
 /*------------------------------------------------------------------------*/
 /*  Multi-Entry dialog and vCard dialog support                           */

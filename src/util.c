@@ -1266,3 +1266,50 @@ time_t get_time(int year, int month, int day, int hour, int min, int sec)
 	tm.tm_sec = sec >= 0 ? sec : time(NULL) % 60;
 	return mktime(&tm);
 }
+
+/*
+ * Like mkstemp() but returns a file pointer, uses a pre-set template,
+ * uses the semantics of tempnam() for the directory to use and allocates
+ * the space for the filepath.
+ *
+ * Caller is responsible for closing the file and removing it when done,
+ * as well as freeing the space pointed-to by "path" with g_free().
+ *
+ * Returns NULL on failure and cleans up after itself if so.
+ */
+static const char *gaim_mkstemp_templ = {"gaimXXXXXX"};
+
+FILE *gaim_mkstemp(gchar **fpath)
+{
+	static char *tmpdir = NULL;
+	int fd;
+	FILE *fp = NULL;
+
+	if(!tmpdir) {
+		if((tmpdir = tempnam(NULL, NULL)) == NULL) {
+			fprintf(stderr, "tempnam() failed, error: %d\n", errno);
+		} else {
+			char *t = strrchr(tmpdir, '/');
+			*t = '\0';
+		}
+	}
+
+	if(tmpdir) {
+		if((*fpath = g_strdup_printf("%s/%s", tmpdir, gaim_mkstemp_templ)) != NULL) {
+			if((fd = mkstemp(*fpath)) == -1) {
+				fprintf(stderr, "Couldn't make \"%s\", error: %d\n", *fpath, errno);
+			} else {
+				if((fp = fdopen(fd, "r+")) == NULL) {
+					close(fd);
+					fprintf(stderr, "Couldn't fdopen(), error: %d\n", errno);
+				}
+			}
+			if(!fp) {
+				g_free(*fpath);
+				*fpath = NULL;
+			}
+		}
+	}
+
+	return fp;
+}
