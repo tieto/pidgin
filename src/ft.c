@@ -66,6 +66,9 @@ gaim_xfer_destroy(GaimXfer *xfer)
 
 	g_return_if_fail(xfer != NULL);
 
+	/* Close the file browser, if it's open */
+	gaim_request_close_with_handle(xfer);
+
 	if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_STARTED)
 		gaim_xfer_cancel_local(xfer);
 
@@ -193,7 +196,7 @@ gaim_xfer_ask_recv(GaimXfer *xfer)
 				      size_buf);
 		g_free(size_buf);
 
-		gaim_request_accept_cancel(NULL, NULL, buf, NULL, 0, xfer,
+		gaim_request_accept_cancel(xfer, NULL, buf, NULL, 0, xfer,
 					   G_CALLBACK(gaim_xfer_choose_file),
 					   G_CALLBACK(cancel_recv_cb));
 		g_free(buf);
@@ -232,7 +235,7 @@ gaim_xfer_ask_accept(GaimXfer *xfer)
 					 "Remote host: %s\nRemote port: %d"),
 				       gaim_xfer_get_remote_ip(xfer),
 				       gaim_xfer_get_remote_port(xfer));
-	gaim_request_accept_cancel(NULL, NULL, buf, buf2, 0, xfer,
+	gaim_request_accept_cancel(xfer, NULL, buf, buf2, 0, xfer,
 				   G_CALLBACK(ask_accept_ok),
 				   G_CALLBACK(ask_accept_cancel));
 	g_free(buf);
