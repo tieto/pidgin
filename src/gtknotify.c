@@ -27,7 +27,6 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "connection.h"
-#include "debug.h"
 #include "prefs.h"
 #include "stock.h"
 #include "util.h"
@@ -444,7 +443,6 @@ uri_command(const char *command, const gboolean sync)
 		}
 	}
 
-	printf("command: %d = %s\n", ret, command);
 	return ret;
 }
 #endif
