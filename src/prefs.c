@@ -2588,6 +2588,9 @@ static void set_blist_option(GtkWidget *w, int option)
 
 	if (option == OPT_BLIST_GREY_IDLERS)
 		update_idle_times();
+
+	if (option == OPT_BLIST_SHOW_IDLETIME)
+		update_idle_times();
 }
 
 static void set_convo_option(GtkWidget *w, int option)
