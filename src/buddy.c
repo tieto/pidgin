@@ -96,6 +96,7 @@ void destroy_buddy()
 	if (blist)
 		gtk_widget_destroy(blist);
 	blist=NULL;
+	imchatbox = NULL;
 #ifdef USE_APPLET
 	buddy_created = FALSE;
 #endif
@@ -1205,8 +1206,8 @@ static void log_callback(GtkWidget *w, char *name)
 	}
 	else
 	{
-		show_log_dialog(c);
 		if (c) {
+			show_log_dialog(c);
 			set_state_lock(1);
 			gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->log_button), TRUE);
 			set_state_lock(0);

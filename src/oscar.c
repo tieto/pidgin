@@ -127,14 +127,8 @@ static void oscar_callback(gpointer data, gint source,
 					}
 					aim_conn_kill(gaim_sess, &conn);
 				} else if (conn->type = AIM_CONN_TYPE_CHAT) {
-					struct chat_connection *c = find_oscar_chat(conn->priv);
-					if (c) {
-						struct conversation *cnv = find_chat(c->name);
-						char closebuf[128];
-						close_callback(NULL, cnv);
-						sprintf(closebuf, _("You have been disconnected from %s"), cnv->name);
-						do_error_dialog(closebuf, _("Disconnected"));
-					}
+					/* FIXME: we got disconnected from a chat room, but
+					 * libfaim won't tell us which room */
 				} else if (conn->type == AIM_CONN_TYPE_BOS) {
 					debug_print(_("major connection error\n"));
 					signoff();
