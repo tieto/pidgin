@@ -86,6 +86,7 @@ SetDateSave on
 ;--------------------------------
 ;Pages
   
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE		preWelcomePage
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE			"./COPYING"
   !insertmacro MUI_PAGE_COMPONENTS
@@ -541,6 +542,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
     Delete "$INSTDIR\plugins\perl.dll"
+    Delete "$INSTDIR\plugins\relnot.dll"
     Delete "$INSTDIR\plugins\spellchk.dll"
     Delete "$INSTDIR\plugins\ssl-nss.dll"
     Delete "$INSTDIR\plugins\ssl.dll"
@@ -975,20 +977,11 @@ Function .onInit
 
   Call ParseParameters
 
-  ; If this installer dosn't have GTK, check whether we need it.
-  !ifndef WITH_GTK
-    Call DoWeNeedGtk
-    Pop $0
-    Pop $GTK_FOLDER
-
-    StrCmp $0 "0" have_gtk need_gtk
-    need_gtk:
-      IfSilent skip_mb
-      MessageBox MB_OK $(GTK_INSTALLER_NEEDED) IDOK
-      skip_mb:
-      Quit
-    have_gtk:
-  !endif
+  ; Select Language
+  IntCmp $LANG_IS_SET 1 skip_lang
+    ; Display Language selection dialog
+    !insertmacro MUI_LANGDLL_DISPLAY
+    skip_lang:
 
   ; If install path was set on the command, use it.
   StrCmp $INSTDIR "" 0 instdir_done
@@ -1009,10 +1002,6 @@ Function .onInit
 
   instdir_done:
 
-  IntCmp $LANG_IS_SET 1 skip_lang
-    ; Display Language selection dialog
-    !insertmacro MUI_LANGDLL_DISPLAY
-    skip_lang:
 FunctionEnd
 
 Function un.onInit
@@ -1073,6 +1062,25 @@ Function .onSelChange
 FunctionEnd
 
 ; Page enter and exit functions..
+
+Function preWelcomePage
+  ; If this installer dosn't have GTK, check whether we need it.
+  ; We do this here an not in .onInit because language change in
+  ; .onInit doesn't take effect until it is finished.
+  !ifndef WITH_GTK
+    Call DoWeNeedGtk
+    Pop $0
+    Pop $GTK_FOLDER
+
+    StrCmp $0 "0" have_gtk need_gtk
+    need_gtk:
+      IfSilent skip_mb
+      MessageBox MB_OK $(GTK_INSTALLER_NEEDED) IDOK
+      skip_mb:
+      Quit
+    have_gtk:
+  !endif
+FunctionEnd
 
 !ifdef WITH_GTK
 Function preGtkDirPage

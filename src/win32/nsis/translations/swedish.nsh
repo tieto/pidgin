@@ -5,10 +5,15 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Tore Lundqvist <tlt@mima.x.se>, 2003.
+;;  Version 2
 ;;
 
 ; Startup GTK+ check
 !define GTK_INSTALLER_NEEDED			"$\"GTK+ runtime environment$\" saknas eller behöver uppgraderas$\rInstallera v${GTK_VERSION} eller högre av GTK+."
+
+; License Page
+!define GAIM_LICENSE_BUTTON			"Nästa >"
+!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) är utgiven med GPL (GNU General Public License). Licensen visas här endast för att informera. $_CLICK"
 
 ; Components Page
 !define GAIM_SECTION_TITLE			"Gaim-snabbmeddelandeklient (obligatorisk)"
@@ -28,6 +33,9 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"En äldre version av GTK+ runtime hittades, vill du uppgradera den?$\rOBS! Gaim kommer kanske inte att fungera om du inte uppgraderar."
+
+; Installer Finish Page
+!define GAIM_FINISH_VISIT_WEB_SITE		"Besök Windows-Gaims hemsida"
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (enbart för avinstallation)"

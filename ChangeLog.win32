@@ -1,9 +1,9 @@
-version 0.73:
+version 0.73 (11/21/2003):
 	* Fix the close button on the first tab in each window.
 	* Fix for carriage return pileups in userinfo.
 	* Window flashing is back.
 	* Fix for gaim settings move bug (#838621).
-	* Update to latest NSIS cvs snapshot.
+	* Update to NSIS v2.0 b4 final release.
 	* Ability to perform unattended installations.
 	* Installer translations for: Spanish.
 

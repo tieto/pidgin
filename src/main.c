@@ -839,7 +839,7 @@ int main(int argc, char *argv[])
 
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();
-	plugin_search_paths[2] = g_strdup_printf("%s/plugins", gaim_user_dir());
+	plugin_search_paths[2] = g_build_filename(gaim_user_dir(), "plugins", NULL);
 
 	gaim_plugins_set_search_paths(sizeof(plugin_search_paths) /
 								  sizeof(*plugin_search_paths),
