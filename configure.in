@@ -235,11 +235,11 @@ AC_SUBST(UI_LIBS)
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
 	old_LIBS="$LIBS"
-	LIBS="$LIBS $UI_LIBS"
+	LIBS="$LIBS $UI_LIBS -L$x_libraries"
 	XSS_LIBS="no"
 	XSS_HEADERS="no"
-	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS=""],[],[-lX11 -lXext -lm])
-	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-lXss"],[],[-lX11 -lXext -lm])
+	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])
+	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-L%x_libraries -lXss"],[],[-lX11 -lXext -lm])
 	if test \! "$XSS_LIBS" = "no"; then
 		AC_TRY_COMPILE([
 #include <X11/extensions/scrnsaver.h>
