@@ -165,6 +165,7 @@ void show_about(GtkWidget *w, void *data)
 				"  <b>", _("Danish"), " (da)</b> - Morten Brix Pedersen &lt;<a href=\"mailto: morten@wtf.dk\">morten@wtf.dk</a>&gt;<br>"
 				"  <b>", _("German"), " (de)</b> - Björn Voigt &lt;<a href=\"mailto: bjoern@cs.tu-berlin.de\">bjoern@cs.tu-berlin.de</a>&gt;<br>"
 				"  <b>", _("Spanish"), " (es)</b> - Javier Fernández-Sanguino Peña &lt;<a href=\"mailto: jfs@debian.org\">jfs@debian.org</a>&gt;<br>"
+				"  <b>", _("Finnish"), " (fi)</b> - Arto Alakulju &lt;<a href=\"mailto: arto@alakulju.net\">arto@alakulju.net</a>&gt;<br>"
 				"  <b>", _("French"), " (fr)</b> - Éric Boumaour &lt;<a href=\"mailto: zongo_fr@users.sourceforge.net\">zongo_fr@users.sourceforge.net</a>&gt;<br>"
 				"  <b>", _("Hindi"), " (hi)</b> - Guntupalli Karunakar &lt;<a href=\"mailto: karunakar@freedomink.org\">karunakar@freedomink.org</a>&gt;<br>"
 				"  <b>", _("Hungarian"), " (hu)</b> - Zoltan Sutto &lt;<a href=\"mailto: suttozoltan@chello.hu\">suttozoltan@chello.hu</a>&gt;<br>"
