@@ -5763,7 +5763,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_size", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/show_urls_as_links", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "last");
 	gaim_prefs_add_string("/gaim/gtk/conversations/bgcolor", "#FFFFFF");
