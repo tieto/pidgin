@@ -40,9 +40,16 @@
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
+#include "proxy.h"
 #include "pixmaps/napster.xpm"
 
 #define NAP_BUF_LEN 4096
+
+#define USEROPT_PROXYHOST 2
+#define USEROPT_PROXYPORT 3
+#define USEROPT_PROXYTYPE 4
+#define USEROPT_USER      5
+#define USEROPT_PASS      6
 
 GSList *nap_connections = NULL;
 
@@ -85,6 +92,7 @@ struct nap_file_request {
 	GtkWidget *progress;
 	GtkWidget *ok;
 	GtkWidget *cancel;
+	struct gaim_connection *gc;
 };
 
 struct nap_data {
@@ -116,7 +124,7 @@ char *description()
 
 
 /* FIXME: Make this use va_arg stuff */
-void nap_write_packet(struct gaim_connection *gc, unsigned short command, char *message)
+static void nap_write_packet(struct gaim_connection *gc, unsigned short command, char *message)
 {
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	unsigned short size;
@@ -128,7 +136,7 @@ void nap_write_packet(struct gaim_connection *gc, unsigned short command, char *
 
 }
 
-void nap_send_download_req(struct gaim_connection *gc, char *who, char *file)
+static void nap_send_download_req(struct gaim_connection *gc, char *who, char *file)
 {
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	gchar buf[NAP_BUF_LEN];
@@ -143,23 +151,22 @@ void nap_send_download_req(struct gaim_connection *gc, char *who, char *file)
 // FIXME: These next two windows should really be together
 // and should use the same clist style look too.  
 
-void nap_handle_download(GtkCList *clist, gint row, gint col, GdkEventButton *event, gpointer user_data)
+static void nap_handle_download(GtkCList *clist, gint row, gint col, GdkEventButton *event, gpointer user_data)
 {
-	gchar **results;
+	gchar *results;
 	struct browse_window *bw = (struct browse_window *)user_data;
 
-	gtk_clist_get_text(GTK_CLIST(clist), row, 0, results);	
+	gtk_clist_get_text(GTK_CLIST(clist), row, 0, &results);	
 
-	nap_send_download_req(bw->gc, bw->name, results[0]);
+	nap_send_download_req(bw->gc, bw->name, results);
 
 }
 
-void nap_handle_download_search(GtkCList *clist, gint row, gint col, GdkEventButton *event, gpointer user_data)
+static void nap_handle_download_search(GtkCList *clist, gint row, gint col, GdkEventButton *event, gpointer user_data)
 {
 	gchar *filename;
 	gchar *nick;
 	
-	int i = 0;
 	struct gaim_connection *gc = (struct gaim_connection *)user_data;
 	
 	filename = (gchar *)gtk_clist_get_row_data(GTK_CLIST(clist), row);
@@ -170,7 +177,7 @@ void nap_handle_download_search(GtkCList *clist, gint row, gint col, GdkEventBut
 	nap_send_download_req(gc, nick, filename);
 }
 
-struct browse_window *browse_window_new(struct gaim_connection *gc, char *name)
+static struct browse_window *browse_window_new(struct gaim_connection *gc, char *name)
 {
 	struct browse_window *browse = g_new0(struct browse_window, 1);
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
@@ -190,9 +197,11 @@ struct browse_window *browse_window_new(struct gaim_connection *gc, char *name)
 	gtk_signal_connect(GTK_OBJECT(browse->list), "select-row", GTK_SIGNAL_FUNC(nap_handle_download), browse);
 
 	ndata->browses = g_slist_append(ndata->browses, browse);
+
+	return browse;
 }
 
-void browse_window_add_file(struct browse_window *bw, char *name)
+static void browse_window_add_file(struct browse_window *bw, char *name)
 {
 	char *fn[1];
 	fn[0] = strdup(name);
@@ -226,7 +235,6 @@ static struct browse_window *find_browse_window_by_name(struct gaim_connection *
 
 static void nap_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 {
-	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	gchar buf[NAP_BUF_LEN];
 
 	g_snprintf(buf, NAP_BUF_LEN, "%s %s", who, message);
@@ -277,7 +285,6 @@ static struct nap_channel *find_channel_by_id(struct gaim_connection *gc, int id
 
 static struct conversation *find_conversation_by_id(struct gaim_connection *gc, int id)
 {
-	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	GSList *bc = gc->buddy_chats;
 	struct conversation *b = NULL;
 
@@ -290,15 +297,11 @@ static struct conversation *find_conversation_by_id(struct gaim_connection *gc, 
 		b = NULL;
 	}
 
-	if (!b) {
-		return NULL;
-	}
-
 	return b;
 }
 
 /* This is a strange function.  I smoke too many bad bad things :-) */
-struct nap_file_request * find_request_by_fd(struct gaim_connection *gc, int fd)
+static struct nap_file_request * find_request_by_fd(struct gaim_connection *gc, int fd)
 {
 	struct nap_file_request *req;
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
@@ -326,8 +329,6 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 	struct nap_file_request *req;
 	unsigned char *buf;
 	int i = 0;
-	gchar *c;
-	int len;
 
 	req = find_request_by_fd(gc, source);
 	if (!req) /* Something bad happened */
@@ -480,52 +481,63 @@ static void nap_ctc_callback(gpointer data, gint source, GdkInputCondition condi
 	}
 }
 
-void nap_get_file(struct gaim_connection *gc, gchar *user, gchar *file, unsigned long host, unsigned int port)
+static void nap_get_file_connect(gpointer data, gint source, GdkInputCondition cond)
 {
-	int fd;
-	struct sockaddr_in site;
 	char buf[NAP_BUF_LEN];
-	int inpa;
-	struct nap_file_request *req = g_new0(struct nap_file_request, 1);
+	struct nap_file_request *req = data;
+	struct gaim_connection *gc = req->gc;
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 
-
-	site.sin_family = AF_INET;
-	site.sin_addr.s_addr = host;
-	site.sin_port = htons(port);
-
-	fd = socket(AF_INET, SOCK_STREAM, 0);
-
-	if (fd < 0) {
+	if (source < 0) {
 		do_error_dialog("Error connecting to user", "Gaim: Napster error");
+		g_free(req->name);
+		g_free(req->file);
+		g_free(req);
 		return;
 	}
 
-	/* Make a connection with the server */
-	if (connect(fd, (struct sockaddr *)&site, sizeof(site)) < 0) {
-		do_error_dialog("Error connecting to user", "Gaim: Napster error");
-		return;
-	 }
-	
-	req->fd = fd;
-	req->name = g_strdup(user);
-	req->file = g_strdup(file);
-	req->size = 0;
-	req->status = 0;
-	req->total = 0;
+	if (req->fd != source)
+		req->fd = source;
 
-	send(fd, "GET", 3, 0);
+	send(req->fd, "GET", 3, 0);
 
 	/* Send our request to the user */
-	g_snprintf(buf, sizeof(buf), "%s \"%s\" 0",gc->username, file);
+	g_snprintf(buf, sizeof(buf), "%s \"%s\" 0", gc->username, req->file);
 
-	send(fd, buf, strlen(buf), 0);
+	send(req->fd, buf, strlen(buf), 0);
 
 	/* Add our request */
 	ndata->requests = g_slist_append(ndata->requests, req);
 
 	/* And start monitoring */
-	req->inpa = gdk_input_add(fd, GDK_INPUT_READ, nap_ctc_callback, gc);
+	req->inpa = gdk_input_add(req->fd, GDK_INPUT_READ, nap_ctc_callback, gc);
+}
+
+static void nap_get_file(struct gaim_connection *gc, gchar *user, gchar *file, gchar *host, unsigned int port)
+{
+	struct nap_file_request *req = g_new0(struct nap_file_request, 1);
+
+	req->name = g_strdup(user);
+	req->file = g_strdup(file);
+	req->size = 0;
+	req->status = 0;
+	req->total = 0;
+	req->gc = gc;
+
+	/* Make a connection with the server */
+	req->fd = proxy_connect(host, port,
+				gc->user->proto_opt[USEROPT_PROXYHOST],
+				atoi(gc->user->proto_opt[USEROPT_PROXYPORT]),
+				atoi(gc->user->proto_opt[USEROPT_PROXYTYPE]),
+				gc->user->proto_opt[USEROPT_USER],
+				gc->user->proto_opt[USEROPT_PASS],
+				nap_get_file_connect, req);
+	if (req->fd < 0) {
+		do_error_dialog("Error connecting to user", "Gaim: Napster error");
+		g_free(req->name);
+		g_free(req->file);
+		g_free(req);
+	}
 }
 
 static void nap_callback(gpointer data, gint source, GdkInputCondition condition)
@@ -534,7 +546,6 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 	struct nap_data *ndata = gc->proto_data;
 	gchar *buf;
 	unsigned short header[2];
-	int i = 0;
 	int len;
 	int command;
 	gchar **res;
@@ -578,7 +589,6 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 
 	if (command == 0x195) {
 		struct nap_channel *channel;
-		int id;		
 	
 		channel = find_channel_by_name(gc, buf);
 
@@ -834,7 +844,7 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 		file[j] = 0;
 
 		/* Aaight.  We dont need nuttin' else. Let's download the file */
-		nap_get_file(gc, user, file, atol(hoststr), atoi(portstr));
+		nap_get_file(gc, user, file, hoststr, atoi(portstr));
 
 		free(buf);
 
@@ -853,7 +863,6 @@ static void nap_login_callback(gpointer data, gint source, GdkInputCondition con
 	struct nap_data *ndata = gc->proto_data;
 	gchar buf[NAP_BUF_LEN];
 	unsigned short header[2];
-	int i = 0;
 	int len;
 	int command;
 
@@ -885,61 +894,49 @@ static void nap_login_callback(gpointer data, gint source, GdkInputCondition con
 }
 
 
-
-static void nap_login(struct aim_user *user)
+static void nap_login_connect(gpointer data, gint source, GdkInputCondition cond)
 {
-	int fd;
-	struct hostent *host;
-	struct sockaddr_in site;
-	struct gaim_connection *gc = new_gaim_conn(user);
-	struct nap_data *ndata = gc->proto_data = g_new0(struct nap_data, 1);
+	struct gaim_connection *gc = data;
+	struct nap_data *ndata = gc->proto_data;
 	char buf[NAP_BUF_LEN];
-	char c;
-	char z[4];
-	int i;
-	int status;
 
-	host = gethostbyname("64.124.41.187");
-
-	if (!host) {
-		hide_login_progress(gc, "Unable to resolve hostname");
+	if (source < 0) {
+		hide_login_progress(gc, "Unable to connect");
 		signoff(gc);
 		return;
 	}
 
-	site.sin_family = AF_INET;
-	site.sin_addr.s_addr = *(long *)(host->h_addr);
-	site.sin_port = htons(8888);
+	if (ndata->fd != source)
+		ndata->fd = source;
 
-	fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (fd < 0) {
-		hide_login_progress(gc, "Unable to create socket");
-		signoff(gc);
-		return;
-	}
-
-	/* Make a connection with the server */
-	if (connect(fd, (struct sockaddr *)&site, sizeof(site)) < 0) {
-		hide_login_progress(gc, "Unable to connect.");
-		signoff(gc);
-		 return;
-	 }
-
-	ndata->fd = fd;
-	
 	/* And write our signon data */
 	g_snprintf(buf, NAP_BUF_LEN, "%s %s 0 \"gaimster\" 0", gc->username, gc->password);
 	nap_write_packet(gc, 0x02, buf);
 	
 	/* And set up the input watcher */
 	ndata->inpa = gdk_input_add(ndata->fd, GDK_INPUT_READ, nap_login_callback, gc);
+}
 
 
+static void nap_login(struct aim_user *user)
+{
+	struct gaim_connection *gc = new_gaim_conn(user);
+	struct nap_data *ndata = gc->proto_data = g_new0(struct nap_data, 1);
+
+	ndata->fd = proxy_connect("64.124.41.187", 8888,
+				  user->proto_opt[USEROPT_PROXYHOST],
+				  atoi(user->proto_opt[USEROPT_PROXYPORT]),
+				  atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+				  user->proto_opt[USEROPT_USER], user->proto_opt[USEROPT_PASS],
+				  nap_login_connect, gc);
+	if (ndata->fd < 0) {
+		hide_login_progress(gc, "Unable to connect");
+		signoff(gc);
+	}
 }
 
 static void nap_join_chat(struct gaim_connection *gc, int id, char *name)
 {
-	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	gchar buf[NAP_BUF_LEN];
 
 	/* Make sure the name has a # preceeding it */
@@ -955,7 +952,6 @@ static void nap_chat_leave(struct gaim_connection *gc, int id)
 {
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	struct nap_channel *channel = NULL;
-	GSList *channels = ndata->channels;
 	
 	channel = find_channel_by_id(gc, id);
 
@@ -972,7 +968,6 @@ static void nap_chat_leave(struct gaim_connection *gc, int id)
 
 static void nap_chat_send(struct gaim_connection *gc, int id, char *message)
 {
-	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	struct nap_channel *channel = NULL;
 	gchar buf[NAP_BUF_LEN];
 	
@@ -1001,12 +996,9 @@ static void nap_remove_buddy(struct gaim_connection *gc, char *name)
 static void nap_close(struct gaim_connection *gc)
 {
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
-	gchar buf[NAP_BUF_LEN];
 	struct nap_channel *channel;
 	struct browse_window *browse;
 	struct nap_file_request *req;
-	GSList *channels = ndata->channels;
-	GSList *requests = ndata->requests;
 	
 	if (gc->inpa)
 		gdk_input_remove(gc->inpa);
@@ -1043,10 +1035,6 @@ static void nap_close(struct gaim_connection *gc)
 
 static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
 {
-	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
-	gchar buf[NAP_BUF_LEN];
-	int n = 0;
-
 	while (buddies) {
 		nap_write_packet(gc, 0xd0, (char *)buddies->data);
 		buddies = buddies -> next;
@@ -1065,17 +1053,16 @@ static void nap_draw_new_user(GtkWidget *box)
 }
 
 
-void nap_send_browse(GtkObject *w, char *who)
+static void nap_send_browse(GtkObject *w, char *who)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
-	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	gchar buf[NAP_BUF_LEN];
 
 	g_snprintf(buf, NAP_BUF_LEN, "%s", who);
 	nap_write_packet(gc, 0xd3, buf);
 }
 
-void nap_find_callback(GtkObject *w, GtkWidget *entry)
+static void nap_find_callback(GtkObject *w, GtkWidget *entry)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
 	gchar *search;
@@ -1087,12 +1074,12 @@ void nap_find_callback(GtkObject *w, GtkWidget *entry)
 	nap_write_packet(gc, 0xc8, buf);
 }
 
-void destroy_window(GtkObject *w, GtkWidget *win)
+static void destroy_window(GtkObject *w, GtkWidget *win)
 {
 	gtk_widget_destroy(win);
 }
 
-void nap_show_search(GtkObject *w, void *omit)
+static void nap_show_search(GtkObject *w, void *omit)
 {
 	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
 
@@ -1198,15 +1185,176 @@ static char** nap_list_icon(int uc)
 	return napster_xpm;
 }
 
+static void nap_print_option(GtkEntry *entry, struct aim_user *user)
+{
+	int entrynum;
+
+	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	if (entrynum == USEROPT_PROXYHOST) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYHOST],
+			sizeof(user->proto_opt[USEROPT_PROXYHOST]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PROXYPORT) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYPORT],
+			sizeof(user->proto_opt[USEROPT_PROXYPORT]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_USER) {
+		g_snprintf(user->proto_opt[USEROPT_USER],
+			   sizeof(user->proto_opt[USEROPT_USER]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PASS) {
+		g_snprintf(user->proto_opt[USEROPT_PASS],
+			   sizeof(user->proto_opt[USEROPT_PASS]), "%s", gtk_entry_get_text(entry));
+	}
+}
+
+static void nap_print_optionrad(GtkRadioButton * entry, struct aim_user *user)
+{
+	int entrynum;
+
+	entrynum = (int)gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	g_snprintf(user->proto_opt[USEROPT_PROXYTYPE],
+			sizeof(user->proto_opt[USEROPT_PROXYTYPE]), "%d", entrynum);
+}
+
+static void nap_user_opts(GtkWidget * book, struct aim_user *user)
+{
+	/* so here, we create the new notebook page */
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+	GtkWidget *first, *opt;
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("Napster Options"));
+	gtk_widget_show(vbox);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	first = gtk_radio_button_new_with_label(NULL, "No proxy");
+	gtk_box_pack_start(GTK_BOX(hbox), first, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
+	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(nap_print_optionrad), user);
+	gtk_widget_show(first);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(nap_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	opt =
+	    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(nap_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
+	gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(nap_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Host:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYHOST);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(nap_print_option), user);
+	if (user->proto_opt[USEROPT_PROXYHOST][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYHOST]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYHOST]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYPORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(nap_print_option), user);
+	if (user->proto_opt[USEROPT_PROXYPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYPORT]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy User:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_USER);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(nap_print_option), user);
+	if (user->proto_opt[USEROPT_USER][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_USER]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_USER]);
+	}
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Password:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PASS);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(nap_print_option), user);
+	if (user->proto_opt[USEROPT_PASS][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PASS]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PASS]);
+	}
+	gtk_widget_show(entry);
+}
+
 static struct prpl *my_protocol = NULL;
 
-void nap_init(struct prpl *ret)
+static void nap_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_NAPSTER;
 	ret->name = nap_name;
 	ret->list_icon = nap_list_icon;
 	ret->buddy_menu = nap_buddy_menu;
-	ret->user_opts = NULL;
+	ret->user_opts = nap_user_opts;
 	ret->login = nap_login;
 	ret->close = nap_close;
 	ret->send_im = nap_send_im;

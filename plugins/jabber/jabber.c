@@ -891,11 +891,13 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 						b = add_buddy(GJ_GC(j), groupname, buddyname,
 							      name ? name : buddyname);
 						do_export(GJ_GC(j));
+					/*
 					} else if (b) {
 						debug_printf("updating buddy: %s/%s\n", buddyname, name);
 						g_snprintf(b->name, sizeof(b->name), "%s", buddyname);
 						g_snprintf(b->show, sizeof(b->show), "%s",
 							   name ? name : buddyname);
+					*/
 					}
 					g_free(buddyname);
 				}
