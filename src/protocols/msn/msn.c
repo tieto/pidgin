@@ -2112,7 +2112,7 @@ static void msn_act_id(gpointer data, char *entry)
 	char buf[MSN_BUF_LEN];
 	char *alias;
 
-	if (!entry) 
+	if (!entry || *entry == NULL) 
 		entry = gc->username;
 	
 	alias = str_to_utf8(url_encode(entry));
