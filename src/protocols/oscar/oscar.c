@@ -6624,6 +6624,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE,
 	NULL,
 	NULL,
+	NULL,
 	oscar_list_icon,
 	oscar_list_emblems,
 	oscar_status_text,

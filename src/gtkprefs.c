@@ -32,6 +32,7 @@
 #include "prpl.h"
 #include "sound.h"
 #include "util.h"
+#include "multi.h"
 
 #include "gtkblist.h"
 #include "gtkconv.h"
@@ -1545,6 +1546,96 @@ GtkWidget *away_page() {
 	return ret;
 }
 
+static GtkWidget *
+protocol_page() {
+	GtkWidget *ret;
+	
+	ret = gtk_label_new(NULL);
+	gtk_widget_show(ret);
+	
+	return ret;
+}
+
+static gboolean 
+protocol_pref_entry_cb(GtkWidget *entry, GdkEventFocus *event, gpointer data) {
+	char *pref = data;
+	
+	gaim_prefs_set_string(pref, gtk_entry_get_text(GTK_ENTRY(entry)));
+	
+	return FALSE;
+}
+
+static GtkWidget *
+protocol_pref_page(GaimPluginProtocolInfo *prpl_info) {
+	GtkWidget *ret, *parent, *frame, *hbox, *label, *misc;
+	GtkSizeGroup *sg;
+	GList *pp = NULL;
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	gtk_widget_show(ret);
+	
+	parent = ret;
+
+	for(pp = prpl_info->protocol_prefs; pp != NULL; pp = pp->next) {
+		struct proto_pref *pref = pp->data;
+		
+		if(pref->key != NULL) {
+			switch(gaim_prefs_get_type(pref->key)) {
+				case GAIM_PREF_BOOLEAN:
+					misc = gaim_gtk_prefs_checkbox(pref->label,
+												   pref->key,
+												   parent);
+					break;
+				case GAIM_PREF_INT:
+					misc = gaim_gtk_prefs_labeled_spin_button(parent,
+															  pref->label,
+															  pref->key,
+															  pref->min,
+															  pref->max,
+															  sg);
+					break;
+				case GAIM_PREF_STRING:
+					hbox = gtk_hbox_new(FALSE, 6);
+					gtk_widget_show(hbox);
+					gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
+
+					label = gtk_label_new_with_mnemonic(pref->label);
+					gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+					gtk_size_group_add_widget(sg, label);
+					gtk_widget_show(label);
+					gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+					misc = gtk_entry_new();
+					gtk_entry_set_text(GTK_ENTRY(misc),
+									   gaim_prefs_get_string(pref->key));
+					g_signal_connect(G_OBJECT(misc), "focus-out-event", 
+									 G_CALLBACK(protocol_pref_entry_cb),
+									 (gpointer)pref->key);
+					gtk_label_set_mnemonic_widget(GTK_LABEL(label), misc);
+					gtk_widget_show(misc);
+					gtk_box_pack_start(GTK_BOX(hbox), misc, FALSE, FALSE, 0);
+
+					break;
+				case GAIM_PREF_NONE: /* XXX No use for this, if you want a
+										frame, set key to NULL */
+				case GAIM_PREF_STRING_LIST: /*XXX No one should need this */
+				default:
+					break;
+			}
+		} else {
+			frame = gaim_gtk_make_frame(ret, pref->label);
+			gtk_widget_show(frame);
+
+			parent = frame;
+		}
+	}
+
+	return ret;
+}
+
 static GtkWidget *plugin_description=NULL, *plugin_details=NULL;
 
 static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model) 
@@ -2290,6 +2381,21 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, notebook_page++);
+
+	prefs_notebook_add_page(_("Protocols"), NULL, protocol_page(), &p, NULL, notebook_page++);
+	for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
+		plug = l->data;
+
+		if (GAIM_IS_PROTOCOL_PLUGIN(plug)) {
+			GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plug);
+
+			if (prpl_info->protocol_prefs != NULL) {
+				prefs_notebook_add_page(_(plug->info->name), NULL,
+										protocol_pref_page(prpl_info), &c,
+										&p, notebook_page++);
+			}
+		}
+	}
 
 	if (gaim_plugins_enabled()) {
 		prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);

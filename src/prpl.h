@@ -204,6 +204,7 @@ struct _GaimPluginProtocolInfo
 
 	GList *user_splits;      /* A GList of GaimAccountUserSplit */
 	GList *protocol_options; /* A GList of GaimAccountOption    */
+	GList *protocol_prefs;   /* protocol specific options */
 
 	/**
 	 * Returns the base icon name for the given buddy and account.
@@ -327,6 +328,7 @@ struct _GaimPluginProtocolInfo
 	struct _GaimRoomlist *(*roomlist_get_list)(GaimConnection *gc);
 	void (*roomlist_cancel)(struct _GaimRoomlist *list);
 	void (*roomlist_expand_catagory)(struct _GaimRoomlist *list, struct _GaimRoomlistRoom *catagory);
+
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

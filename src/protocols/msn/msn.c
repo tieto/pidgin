@@ -1571,6 +1571,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK /* | OPT_PROTO_BUDDY_ICON */,
 	NULL,
 	NULL,
+	NULL,
 	msn_list_icon,
 	msn_list_emblems,
 	msn_status_text,

@@ -1168,7 +1168,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
-	if (gc && prpl_info->get_info) {
+	if (gc && (prpl_info->get_info || prpl_info->get_cb_info)) {
 		button = gtk_menu_item_new_with_label(_("Info"));
 		g_signal_connect(G_OBJECT(button), "activate",
 							 G_CALLBACK(menu_chat_info_cb), conv);
@@ -1186,6 +1186,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 		gtk_widget_show(button);
 	}
 
+	/* XXX: jabber can only add buddies from here in certain circumstances */
 	/* Added by Jonas <jonas@birme.se> */
 	if (gc) {
 		if (gaim_find_buddy(gc->account, who))

@@ -1255,6 +1255,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_BUDDY_ICON,
 	NULL,
 	NULL,
+	NULL,
 	trepia_list_icon,
 	trepia_list_emblems,
 	trepia_status_text,

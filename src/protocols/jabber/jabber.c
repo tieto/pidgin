@@ -1120,6 +1120,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
 	NULL,
 	NULL,
+	NULL,
 	jabber_list_icon,
 	jabber_list_emblems,
 	jabber_status_text,
@@ -1208,6 +1209,7 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountUserSplit *split;
 	GaimAccountOption *option;
+	struct proto_pref *ppref;
 
 	split = gaim_account_user_split_new(_("Server"), "jabber.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
@@ -1243,6 +1245,16 @@ init_plugin(GaimPlugin *plugin)
 
 	gaim_prefs_add_none("/plugins/prpl/jabber");
 	gaim_prefs_add_bool("/plugins/prpl/jabber/hide_os", FALSE);
+
+	ppref = g_new0(struct proto_pref, 1);
+	ppref->key = NULL;
+	ppref->label = _("Privacy");
+	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
+
+	ppref = g_new0(struct proto_pref, 1);
+	ppref->key = "/plugins/prpl/jabber/hide_os";
+	ppref->label = _("Hide Operating System"); /* XXX: come up with a better name for this */
+	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
 }
 
 GAIM_INIT_PLUGIN(jabber, init_plugin, info);
