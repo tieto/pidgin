@@ -13,8 +13,9 @@ version 0.47:
 	  or idle.
 	* Add Opera to the available browsers (thanks Brian Enigma)
 	* Improved log viewer (thanks to Ben Miller)
-	* Double clicking a name unqueue's away messages for that buddy
-	  (thanks to Sean Egan)
+	* When you are queueing away messages, double clicking on
+	  a buddy's name will cause the messages for that name to be
+	  unqueued.
 
 version 0.46 (10/18/2001):
 	* New applet icons (courtesy David Raeman)
