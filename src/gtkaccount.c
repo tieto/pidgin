@@ -1215,6 +1215,9 @@ __accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsDialog *dialog)
 	g_free(accounts_dialog);
 	accounts_dialog = NULL;
 
+	gaim_signal_disconnect(NULL, event_signon,  __signed_on_off_cb);
+	gaim_signal_disconnect(NULL, event_signoff, __signed_on_off_cb);
+
 	/* See if we're the main window here. */
 	if (GAIM_GTK_BLIST(gaim_get_blist())->window == NULL &&
 		mainwindow == NULL && gaim_connections_get_all() == NULL) {
