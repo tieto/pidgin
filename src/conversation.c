@@ -2005,10 +2005,10 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 						m = m % NUM_NICK_COLORS;
 						strcpy(colour, nick_colors[m]);
 					} else {
-						strcpy(colour, "#ff0000");
+						strcpy(colour, "#a82f2f");
 					}
 				} else if (flags & WFLAG_SEND)
-					strcpy(colour, "#0000ff");
+					strcpy(colour, "#6b839e");
 			}
 		}
 
