@@ -2575,6 +2575,9 @@ static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 	GaimConnection *gc;
 	struct yahoo_data *yd;
 	YahooFriend *f;
+	GaimPresence *presence;
+	GaimStatus *status;
+	const char *status_id;
 
 	if (!b || !(account = b->account) || !(gc = gaim_account_get_connection(account)) ||
 	  				     !(yd = gc->proto_data))
@@ -2586,7 +2589,11 @@ static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 		return;
 	}
 
-	if (b->present == GAIM_BUDDY_OFFLINE) {
+	presence = gaim_buddy_get_presence(b);
+	status = gaim_presence_get_active_status(presence);
+	status_id = gaim_status_get_id(status);
+
+	if (gaim_presence_is_online(presence) == FALSE) {
 		*se = "offline";
 		return;
 	} else {
