@@ -862,7 +862,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	GtkTargetEntry gte[] = {{"GAIM_BUDDY", GTK_TARGET_SAME_APP, DRAG_ROW},
 				{"application/x-im-contact", 0, DRAG_BUDDY}};
 
-	if (gtkblist) {
+	if (gtkblist && gtkblist->window) {
 		gtk_widget_show(gtkblist->window);
 		return;
 	}
@@ -1206,6 +1206,17 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 {
 	gtk_widget_destroy(gtkblist->window);
+
+	gtkblist->window = gtkblist->vbox = gtkblist->treeview = NULL;
+	gtkblist->treemodel = NULL;
+	gtkblist->idle_column = NULL;
+	gtkblist->warning_column = gtkblist->buddy_icon_column = NULL;
+	gtkblist->bbox = gtkblist->tipwindow = NULL;
+	protomenu = NULL;
+	awaymenu = NULL;
+	bpmenu = NULL;
+
+	gtkblist->timeout = 0;
 }
 
 static void gaim_gtk_blist_set_visible(struct gaim_buddy_list *list, gboolean show)
@@ -1270,7 +1281,7 @@ void gaim_gtk_blist_docklet_remove()
 	if (!docklet_count) {
 		if (connections) {
 			gaim_blist_set_visible(TRUE);
-		} else {
+		} else if(gtkblist && gtkblist->window) {
 			gtk_window_present(GTK_WINDOW(gtkblist->window));
 		}
 	}

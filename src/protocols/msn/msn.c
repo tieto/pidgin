@@ -1639,12 +1639,12 @@ static void msn_ask_send_file(struct gaim_connection *gc, char *destsn)
 #endif
 static char *msn_status_text(struct buddy *b) {
 	if (b->uc & UC_UNAVAILABLE)
-		return strip_html(msn_get_away_text(b->uc >> 1));
+		return g_strdup(msn_get_away_text(b->uc >> 1));
 	return NULL;
 }
 
 static char *msn_tooltip_text(struct buddy *b) {
-	return strip_html(msn_get_away_text(b->uc >> 1));
+	return g_strdup_printf(_("<b>Status:</b> %s"), msn_get_away_text(b->uc >> 1));
 }
 
 static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)

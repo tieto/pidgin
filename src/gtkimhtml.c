@@ -302,15 +302,15 @@ gboolean tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter 
 			g_signal_emit(arg1, signals[URL_CLICKED], 0, url);
 			return FALSE;
 		} else if(event_button->button == 3) {
-			GtkWidget *img, *item, *label, *menu;
+			GtkWidget *img, *item, *menu;
 			struct url_data *tempdata = g_new(struct url_data, 1);
 			tempdata->object = g_object_ref(arg1);
 			tempdata->url = g_strdup(url);
-		
+
 			menu = gtk_menu_new();
-			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 
+			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 							event_button->button, event_button->time);
-			
+
 			/* buttons and such */
 			img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
 			item = gtk_image_menu_item_new_with_mnemonic(_("_Copy Link Location"));
@@ -326,7 +326,7 @@ gboolean tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter 
 					tempdata);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 			gtk_widget_show_all(menu);
-			
+
 			return TRUE;
 		}
 	}

@@ -1136,18 +1136,28 @@ static char *jabber_lookup_away(gjconn gjc, char *name)
 {
 	jab_res_info jri = jabber_find_resource(GJ_GC(gjc), name);
 
-	if(!jri || !jri->away_msg)
+	if(!jri)
 		return _("Unknown");
 
 	return jri->away_msg;
 }
+static const char *jabber_get_state_string(int s) {
+	switch(s) {
+		case UC_AWAY:
+			return _("Away");
+		case UC_CHAT:
+			return _("Chatty");
+		case UC_XA:
+			return _("Extended Away");
+		case UC_DND:
+			return _("Do Not Disturb");
+		default:
+			return _("Available");
+	}
+}
 
 static void jabber_track_away(gjconn gjc, jpacket p, char *type)
 {
-	char *show;
-	char *vshow = NULL;
-	char *status = NULL;
-	char *msg = NULL;
 	jab_res_info jri = NULL;
 
 	if(!p || !p->from || !p->from->user)
@@ -1158,40 +1168,10 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *type)
 	if(!jri)
 		return;
 
-	if (type && (strcasecmp(type, "unavailable") == 0)) {
-		vshow = _("Unavailable");
-	} else {
-		if((show = xmlnode_get_tag_data(p->x, "show")) != NULL) {
-			if (!strcasecmp(show, "away")) {
-				vshow = _("Away");
-			} else if (!strcasecmp(show, "chat")) {
-				vshow = _("Online");
-			} else if (!strcasecmp(show, "xa")) {
-				vshow = _("Extended Away");
-			} else if (!strcasecmp(show, "dnd")) {
-				vshow = _("Do Not Disturb");
-			}
-		}
-	}
-
-	status = g_strdup(xmlnode_get_tag_data(p->x, "status"));
-
-	if(vshow != NULL || status != NULL ) {
-		/* kinda hokey, but it works :-) */
-		msg = g_strdup_printf("%s%s%s",
-			(vshow == NULL? "" : vshow),
-			(vshow == NULL || status == NULL? "" : ": "),
-			(status == NULL? "" : status));
-	} else {
-		msg = g_strdup(_("Online"));
-	}
-
-	g_free(status);
-
 	if(jri->away_msg)
 		g_free(jri->away_msg);
 
-	jri->away_msg = msg;
+	jri->away_msg = g_strdup(xmlnode_get_tag_data(p->x, "status"));
 }
 
 static void jabber_convo_closed(struct gaim_connection *gc, char *name)
@@ -3155,7 +3135,7 @@ static void jabber_get_away_msg(struct gaim_connection *gc, char *who) {
 		realwho = g_strdup_printf("%s/%s", buddy, jri->name);
 		status = strdup_withhtml(jabber_lookup_away(gjc, realwho));
 		*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", realwho);
-		*ap++ = g_strdup_printf("<B>Status:</B> %s<BR>\n", status);
+		*ap++ = g_strdup_printf("<B>Status:</B> %s%s%s<BR>\n", jabber_get_state_string(jri->state), status ? ": " : "", status ? status : "");
 		g_free(status);
 		g_free(realwho);
 		resources = resources->next;
@@ -3204,18 +3184,32 @@ static void jabber_get_cb_away_msg(struct gaim_connection *gc, int cid, char *wh
 
 static char *jabber_tooltip_text(struct buddy *b)
 {
-	struct jabber_data *jd = b->account->gc->proto_data;
-	char *text = jabber_lookup_away(jd->gjc, b->name);
-	if (text)
-		return strip_html(text);
+	jab_res_info jri = jabber_find_resource(b->account->gc, b->name);
+	if(jri) {
+		char *text = strip_html(jabber_lookup_away(GC_GJ(b->account->gc),
+					b->name));
+		char *ret = g_strdup_printf(_("<b>Status:</b> %s%s%s"),
+				jabber_get_state_string(jri->state), text ? ": " : "",
+				text ? text : "");
+
+		if(text)
+			g_free(text);
+		return ret;
+	}
 	return NULL;
 }
 
 static char *jabber_status_text(struct buddy *b)
 {
-	struct jabber_data *jd = b->account->gc->proto_data;
 	if (b->uc & UC_UNAVAILABLE) {
-			return strip_html(jabber_lookup_away(jd->gjc, b->name));
+		char *ret = strip_html(jabber_lookup_away(GC_GJ(b->account->gc),
+					b->name));
+		if(!ret) {
+			jab_res_info jri = jabber_find_resource(b->account->gc, b->name);
+			if(jri)
+				ret = g_strdup(jabber_get_state_string(jri->state));
+		}
+		return ret;
 	}
 	return NULL;
 }
@@ -3541,10 +3535,14 @@ static void jabber_handlevcard(gjconn gjc, xmlnode querynode, char *from)
 	gchar **ap = str_arr;
 	gchar *buddy, *final;
 
+	jab_res_info jri;
+
 	if((buddy = get_realwho(gjc, from, TRUE, NULL)) == NULL) {
 		g_strfreev(str_arr);
 		return;
 	}
+
+	jri = jabber_find_resource(GJ_GC(gjc), buddy);
 
 	*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", buddy);
 
@@ -3569,8 +3567,11 @@ static void jabber_handlevcard(gjconn gjc, xmlnode querynode, char *from)
 		}
 	}
 
+
 	status = strdup_withhtml(jabber_lookup_away(gjc, buddy));
-	*ap++ = g_strdup_printf("<B>Status:</B> %s<BR>\n", status);
+	*ap++ = g_strdup_printf("<B>Status:</B> %s%s%s<BR>\n",
+			jri ? jabber_get_state_string(jri->state) : "",
+			jri && status ? ": " : "", status ? status : "");
 	g_free(status);
 
 	/*
