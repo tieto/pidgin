@@ -24,8 +24,11 @@
 #ifndef _YAHOO_PICTURE_H_
 #define _YAHOO_PICTURE_H_
 
-void yahoo_send_buddy_icon_request(GaimConnection *gc, const char *who);
+void yahoo_send_picture_request(GaimConnection *gc, const char *who);
 void yahoo_send_picture_info(GaimConnection *gc, const char *who);
+void yahoo_send_picture_checksum(GaimConnection *gc);
+void yahoo_send_picture_update(GaimConnection *gc, int type);
+void yahoo_send_picture_update_to_user(GaimConnection *gc, const char *who, int type);
 
 void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt);
 void yahoo_process_picture_update(GaimConnection *gc, struct yahoo_packet *pkt);

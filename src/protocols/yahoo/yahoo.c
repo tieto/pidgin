@@ -453,7 +453,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			b = gaim_find_buddy(gc->account, name);
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
 			if (cksum != gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY))
-				yahoo_send_buddy_icon_request(gc, name);
+				yahoo_send_picture_request(gc, name);
 
 			break;
 		}
@@ -806,7 +806,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		if ((f = yahoo_friend_find(gc, im->from)) && im->buddy_icon == 2) {
 			if (yahoo_friend_get_buddy_icon_need_request(f)) {
-				yahoo_send_buddy_icon_request(gc, im->from);
+				yahoo_send_picture_request(gc, im->from);
 				yahoo_friend_set_buddy_icon_need_request(f, FALSE);
 			}
 		}

@@ -42,6 +42,8 @@ struct yahoo_fetch_picture_data {
 	int checksum;
 };
 
+
+
 void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t len)
 {
 	struct yahoo_fetch_picture_data *d = user_data;
@@ -167,7 +169,7 @@ void yahoo_process_picture_update(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	if (who) {
 		if (icon == 2)
-			yahoo_send_buddy_icon_request(gc, who);
+			yahoo_send_picture_request(gc, who);
 		else if (icon == 0)
 			gaim_buddy_icons_set_for_user(gc->account, who, NULL, 0);
 	}
@@ -199,7 +201,7 @@ void yahoo_process_picture_checksum(GaimConnection *gc, struct yahoo_packet *pkt
 	if (who) {
 		GaimBuddy *b = gaim_find_buddy(gc->account, who);
 		if (b && (checksum != gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
-			yahoo_send_buddy_icon_request(gc, who);
+			yahoo_send_picture_request(gc, who);
 	}
 }
 
@@ -234,11 +236,13 @@ void yahoo_process_picture_upload(GaimConnection *gc, struct yahoo_packet *pkt)
 		yd->picture_url = g_strdup(url);
 		gaim_account_set_string(account, YAHOO_PICURL_SETTING, url);
 		gaim_account_set_int(account, YAHOO_PICCKSUM_SETTING, yd->picture_checksum);
+		yahoo_send_picture_update(gc, 2);
+		yahoo_send_picture_checksum(gc);
 	}
 }
 
 
-void yahoo_send_buddy_icon_request(GaimConnection *gc, const char *who)
+void yahoo_send_picture_request(GaimConnection *gc, const char *who)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -249,6 +253,63 @@ void yahoo_send_buddy_icon_request(GaimConnection *gc, const char *who)
 	yahoo_packet_hash(pkt, 13, "1"); /* 1 = request, 2 = reply */
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
+}
+
+void yahoo_send_picture_checksum(GaimConnection *gc)
+{
+	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_packet *pkt;
+	char *cksum = g_strdup_printf("%d", yd->picture_checksum);
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_CHECKSUM, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash(pkt, 212, "1");
+	yahoo_packet_hash(pkt, 192, cksum);
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+	g_free(cksum);
+}
+
+void yahoo_send_picture_update_to_user(GaimConnection *gc, const char *who, int type)
+{
+	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_packet *pkt;
+	char *typestr = g_strdup_printf("%d", type);
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash(pkt, 5, who);
+	yahoo_packet_hash(pkt, 206, typestr);
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+
+	g_free(typestr);
+}
+
+struct yspufe {
+	GaimConnection *gc;
+	int type;
+};
+
+static void yahoo_send_picture_update_foreach(gpointer key, gpointer value, gpointer data)
+{
+	char *who = key;
+	YahooFriend *f = value;
+	struct yspufe *d = data;
+
+	if (f->status != YAHOO_STATUS_OFFLINE)
+		yahoo_send_picture_update_to_user(d->gc, who, d->type);
+}
+
+void yahoo_send_picture_update(GaimConnection *gc, int type)
+{
+	struct yahoo_data *yd = gc->proto_data;
+	struct yspufe data;
+
+	data.gc = gc;
+	data.type = type;
+
+	g_hash_table_foreach(yd->friends, yahoo_send_picture_update_foreach, &data);
 }
 
 void yahoo_buddy_icon_upload_data_free(struct yahoo_buddy_icon_upload_data *d)
@@ -410,6 +471,8 @@ void yahoo_set_buddy_icon(GaimConnection *gc, const char *iconfile)
 		gaim_account_set_string(account, YAHOO_PICURL_SETTING, NULL);
 		gaim_account_set_int(account, YAHOO_PICCKSUM_SETTING, 0);
 		gaim_account_set_int(account, YAHOO_PICEXPIRE_SETTING, 0);
+		if (yd->logged_in)
+			yahoo_send_picture_update(gc, 0);
 		/* TODO: check if we're connected and tell everyone we ain't not one no more */
 	} else if (!stat(iconfile, &st)) {
 		file = fopen(iconfile, "rb");
