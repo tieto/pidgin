@@ -504,8 +504,8 @@ gaim_time_build(int year, int month, int day, int hour, int min, int sec)
 time_t
 gaim_str_to_time(const char *timestamp, gboolean utc)
 {
-	struct tm *t;
 	time_t retval = 0;
+	struct tm *t;
 	char buf[32];
 	char *c;
 	int tzoff = 0;

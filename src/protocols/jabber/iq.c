@@ -170,6 +170,7 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *query;
 	time_t now_t;
 	struct tm *now;
+
 	time(&now_t);
 	now = localtime(&now_t);
 
