@@ -2846,6 +2846,8 @@ void show_conv(struct conversation *c)
 			     MAX(conv_size.entry_height, 
 				 gdk_char_height(gtk_widget_get_default_style()->font, '0') +
 				 gtk_widget_get_default_style()->font->ascent + 1));
+#else
+	gtk_widget_set_usize(entry, conv_size.width - 20, MAX(conv_size.entry_height, 25));
 #endif
 
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback), c);
