@@ -1947,17 +1947,17 @@ static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 	} else if (state) {
 		gc->away = "";
 
-		if (!strcmp(state, "Away From Computer"))
+		if (!strcmp(state, _("Away From Computer")))
 			away = "AWY";
-		else if (!strcmp(state, "Be Right Back"))
+		else if (!strcmp(state, _("Be Right Back")))
 			away = "BRB";
-		else if (!strcmp(state, "Busy"))
+		else if (!strcmp(state, _("Busy")))
 			away = "BSY";
-		else if (!strcmp(state, "On The Phone"))
+		else if (!strcmp(state, _("On The Phone")))
 			away = "PHN";
-		else if (!strcmp(state, "Out To Lunch"))
+		else if (!strcmp(state, _("Out To Lunch")))
 			away = "LUN";
-		else if (!strcmp(state, "Hidden"))
+		else if (!strcmp(state, _("Hidden")))
 			away = "HDN";
 		else {
 			gc->away = NULL;
