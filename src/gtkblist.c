@@ -4319,6 +4319,9 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 	if (alias != NULL)
 		gtk_entry_set_text(GTK_ENTRY(data->entry_for_alias), alias);
 
+	if (username != NULL)
+		gtk_widget_grab_focus(GTK_WIDGET(data->entry_for_alias));
+
 	gtk_entry_set_activates_default (GTK_ENTRY(data->entry_for_alias), TRUE);
 	gaim_set_accessible_label (data->entry_for_alias, label);
 
