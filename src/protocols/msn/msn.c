@@ -871,8 +871,8 @@ msn_set_permit_deny(GaimConnection *gc)
 	char buf[MSN_BUF_LEN];
 	GSList *s, *t = NULL;
 
-	if (account->perm_deny == PERMIT_ALL ||
-		account->perm_deny == DENY_SOME) {
+	if (account->perm_deny == GAIM_PRIVACY_ALLOW_ALL ||
+		account->perm_deny == GAIM_PRIVACY_DENY_USERS) {
 
 		strcpy(buf, "AL");
 	}

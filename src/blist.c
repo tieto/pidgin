@@ -1594,13 +1594,13 @@ void gaim_blist_parse_toc_buddy_list(GaimAccount *account, char *config)
 				gaim_debug(GAIM_DEBUG_MISC, "toc blist",
 						   "permdeny: %d\n", account->perm_deny);
 				if (account->perm_deny == 0)
-					account->perm_deny = 1;
+					account->perm_deny = GAIM_PRIVACY_ALLOW_ALL;
 			} else if (*c == 'm') {
 				sscanf(c + 2, "%d", &account->perm_deny);
 				gaim_debug(GAIM_DEBUG_MISC, "toc blist",
 						   "permdeny: %d\n", account->perm_deny);
 				if (account->perm_deny == 0)
-					account->perm_deny = 1;
+					account->perm_deny = GAIM_PRIVACY_ALLOW_ALL;
 			}
 		} while ((c = strtok(NULL, "\n")));
 

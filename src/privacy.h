@@ -27,6 +27,18 @@
 
 #include "account.h"
 
+/**
+ * Privacy data types.
+ */
+typedef enum _GaimPrivacyType
+{
+	GAIM_PRIVACY_ALLOW_ALL = 1,
+	GAIM_PRIVACY_DENY_ALL,
+	GAIM_PRIVACY_ALLOW_USERS,
+	GAIM_PRIVACY_DENY_USERS,
+	GAIM_PRIVACY_ALLOW_BUDDYLIST
+} GaimPrivacyType;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

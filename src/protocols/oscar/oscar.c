@@ -4918,6 +4918,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				}
 			}
 		}
+
 		while (cur != NULL) {
 			b = cur->data;
 			cur = g_slist_remove(cur, b);
@@ -6061,13 +6062,13 @@ static void oscar_set_permit_deny(GaimConnection *gc) {
 	int at;
 
 	switch(account->perm_deny) {
-	case 1: 
+	case GAIM_PRIVACY_ALLOW_ALL: 
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, gaim_account_get_username(account));
 		break;
-	case 2:
+	case GAIM_PRIVACY_DENY_ALL:
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, gaim_account_get_username(account));
 		break;
-	case 3:
+	case GAIM_PRIVACY_ALLOW_USERS:
 		list = account->permit;
 		at = 0;
 		while (list) {
@@ -6076,7 +6077,7 @@ static void oscar_set_permit_deny(GaimConnection *gc) {
 		}
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, buf);
 		break;
-	case 4:
+	case GAIM_PRIVACY_DENY_USERS:
 		list = account->deny;
 		at = 0;
 		while (list) {
@@ -6089,8 +6090,28 @@ static void oscar_set_permit_deny(GaimConnection *gc) {
 		break;
 	}
 #else
-	if (od->sess->ssi.received_data)
-		aim_ssi_setpermdeny(od->sess, account->perm_deny, 0xffffffff);
+	if (od->sess->ssi.received_data) {
+		switch (account->perm_deny) {
+			case GAIM_PRIVACY_ALLOW_ALL:
+				aim_ssi_setpermdeny(od->sess, 0x01, 0xffffffff);
+				break;
+			case GAIM_PRIVACY_ALLOW_BUDDYLIST:
+				aim_ssi_setpermdeny(od->sess, 0x05, 0xffffffff);
+				break;
+			case GAIM_PRIVACY_ALLOW_USERS:
+				aim_ssi_setpermdeny(od->sess, 0x03, 0xffffffff);
+				break;
+			case GAIM_PRIVACY_DENY_ALL:
+				aim_ssi_setpermdeny(od->sess, 0x02, 0xffffffff);
+				break;
+			case GAIM_PRIVACY_DENY_USERS:
+				aim_ssi_setpermdeny(od->sess, 0x04, 0xffffffff);
+				break;
+			default:
+				aim_ssi_setpermdeny(od->sess, 0x01, 0xffffffff);
+				break;
+		}
+	}
 #endif
 }
 

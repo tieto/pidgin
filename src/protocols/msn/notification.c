@@ -623,7 +623,7 @@ blp_cmd(MsnServConn *servconn, const char *command, const char **params,
 		 *
 		 * In other words, deny some.
 		 */
-		gc->account->perm_deny = DENY_SOME;
+		gc->account->perm_deny = GAIM_PRIVACY_DENY_USERS;
 	}
 	else {
 		/* If the current setting is BL, only messages from people
@@ -631,7 +631,7 @@ blp_cmd(MsnServConn *servconn, const char *command, const char **params,
 		 *
 		 * In other words, permit some.
 		 */
-		gc->account->perm_deny = PERMIT_SOME;
+		gc->account->perm_deny = GAIM_PRIVACY_ALLOW_USERS;
 	}
 
 	return TRUE;

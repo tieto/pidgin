@@ -33,16 +33,6 @@
 #include "gtkprivacy.h"
 #include "gtkutils.h"
 
-typedef enum
-{
-	GAIM_GTK_PRIVACY_ALLOW_ALL = 0,
-	GAIM_GTK_PRIVACY_ALLOW_BUDDYLIST,
-	GAIM_GTK_PRIVACY_ALLOW_USERS,
-	GAIM_GTK_PRIVACY_DENY_ALL,
-	GAIM_GTK_PRIVACY_DENY_USERS
-
-} GaimGtkPrivacyType;
-
 typedef struct
 {
 	GtkWidget *win;
@@ -84,11 +74,11 @@ static struct
 
 } menu_entries[] =
 {
-	{ N_("Allow all users to contact me"),         1 },
-	{ N_("Allow only the users on my buddy list"), 5 },
-	{ N_("Allow only the users below"),            3 },
-	{ N_("Block all users"),                       2 },
-	{ N_("Block the users below"),                 4 }
+	{ N_("Allow all users to contact me"),         GAIM_PRIVACY_ALLOW_ALL },
+	{ N_("Allow only the users on my buddy list"), GAIM_PRIVACY_ALLOW_BUDDYLIST },
+	{ N_("Allow only the users below"),            GAIM_PRIVACY_ALLOW_USERS },
+	{ N_("Block all users"),                       GAIM_PRIVACY_DENY_ALL },
+	{ N_("Block only the users below"),            GAIM_PRIVACY_DENY_USERS }
 };
 
 static size_t menu_entry_count = sizeof(menu_entries) / sizeof(*menu_entries);
@@ -260,12 +250,12 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 	gtk_widget_hide(dialog->block_widget);
 	gtk_widget_hide(dialog->button_box);
 
-	if (new_type == 2) {
+	if (new_type == GAIM_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = TRUE;
 	}
-	else if (new_type == 4) {
+	else if (new_type == GAIM_PRIVACY_DENY_USERS) {
 		gtk_widget_show(dialog->block_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
@@ -487,12 +477,12 @@ privacy_dialog_new(void)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(close_cb), dialog);
 
-	if (dialog->account->perm_deny == 2) {
+	if (dialog->account->perm_deny == GAIM_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = TRUE;
 	}
-	else if (dialog->account->perm_deny == 4) {
+	else if (dialog->account->perm_deny == GAIM_PRIVACY_DENY_USERS) {
 		gtk_widget_show(dialog->block_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
