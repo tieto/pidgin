@@ -38,8 +38,7 @@
 
 enum gaim_user_states MRI_user_status; 
 
-gboolean buddy_created = FALSE;
-gboolean applet_draw_open = FALSE;
+gboolean applet_buddy_show = FALSE;
 GtkWidget *applet_popup = NULL;
 
 gchar GAIM_GNOME_OFFLINE_ICON[255] = GAIM_GNOME_PENGUIN_OFFLINE;
@@ -67,34 +66,11 @@ GdkPixmap *icon_away_pm=NULL;
 GdkPixmap *icon_away_bm=NULL;
 
 static GtkAllocation get_applet_pos(gboolean);
-
 gint sizehint=48;
 
-/***************************************************************
-**
-** function load_applet_icon
-** visibility - private
-**
-** input:
-**	name - the name of the file to load
-**	height, width - the height and width 
-**					  that the icon should be
-**					 scaled to.
-**
-** output:
-**	TRUE - success
-**      FALSE - failure
-**	pm - a GdkPixmap structure that the icon is loaded into
-**      bm - a GdkBitmap structure that the icon's transparancy
-**		mask is loaded into
-**
-** description - loads an icon from 
-**                    /usr/share/pixmap/gaim/gnome/
-**                    and scales it using imlib
-**
-****************************************************************/
-
-gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **pm, GdkBitmap **bm ){
+static gboolean load_applet_icon(const char *name, int height, int width,
+				 GdkPixmap **pm, GdkBitmap **bm)
+{
 	gboolean result = TRUE;
 	char *path;
 	GdkImlibImage *im;
@@ -121,88 +97,52 @@ gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **
 	free(path);
 	return result;
 }
-/***************************************************************
-**
-** function applet_change_pixel_size
-** visibility - private
-**
-** input:
-**	w - applet that called the signal
-**	size - size of panel
-**	data - extra data (in this case NULL)
-**
-** description - changes the size of the applet when the panel size
-**	changes
-**
-***************************************************************/
+
 #ifdef HAVE_PANEL_PIXEL_SIZE
-void applet_change_pixel_size(GtkWidget *w, int size, gpointer data)
+static void applet_change_pixel_size(GtkWidget *w, int size, gpointer data)
 {
 	sizehint = size;
 	update_pixmaps();
 }
 #endif
 
-/***************************************************************
-**
-** function update_applet
-** visibility - private
-**
-** input:
-**	ap - if not NULL, was called from update_pixmaps, and
-**		should update them
-**
-** description - takes care of swapping status icons and 
-**			  updating the status label
-**
-****************************************************************/ 
+static gboolean update_applet(gboolean force_update){
+	static enum gaim_user_states old_user_status = offline;
 
-gboolean update_applet( gpointer *ap ){
-     static enum gaim_user_states old_user_status = offline;
-     
-     if( MRI_user_status != old_user_status || ap){
+	if( MRI_user_status != old_user_status || force_update) {
 
-         switch( MRI_user_status ){
-      		case offline:
-      			gtk_pixmap_set( GTK_PIXMAP(icon),
-                           icon_offline_pm,
-                           icon_offline_bm );
-         	       gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
-		       applet_set_tooltips(_("Offilne. Click to bring up login box."));
-      		break;
-      		case signing_on:
-      			gtk_pixmap_set( GTK_PIXMAP(icon),
-                           icon_connect_pm,
-                           icon_connect_bm );   
-      			gtk_label_set( GTK_LABEL(status_label), _MSG_CONNECT_ );
+		switch( MRI_user_status ){
+		case offline:
+			gtk_pixmap_set( GTK_PIXMAP(icon),
+					icon_offline_pm,
+					icon_offline_bm );
+			gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
+			applet_set_tooltips(_("Offilne. Click to bring up login box."));
+			break;
+		case signing_on:
+			gtk_pixmap_set( GTK_PIXMAP(icon),
+					icon_connect_pm,
+					icon_connect_bm );   
+			gtk_label_set( GTK_LABEL(status_label), _MSG_CONNECT_ );
 			applet_set_tooltips(_("Attempting to sign on...."));
-      		break;
-      		case online:
-      			gtk_pixmap_set( GTK_PIXMAP(icon),
-                           icon_online_pm,
-                           icon_online_bm );                
-                   
-                	gtk_label_set( GTK_LABEL(status_label), _MSG_ONLINE_ );
+			break;
+		case online:
+			gtk_pixmap_set( GTK_PIXMAP(icon),
+					icon_online_pm,
+					icon_online_bm );                
+			gtk_label_set( GTK_LABEL(status_label), _MSG_ONLINE_ );
 			update_num_groups();
-      		break;
-      
-      		case unread_message_pending:
-      			gtk_pixmap_set( GTK_PIXMAP(icon),
-                           icon_msg_pending_pm,
-                           icon_msg_pending_bm );   
-      			gtk_label_set( GTK_LABEL(status_label), "msg" );
-      		break;
-      		case away:
-      			gtk_pixmap_set( GTK_PIXMAP(icon),
-                           icon_online_pm,
-                           icon_online_bm );   
-      			gtk_label_set( GTK_LABEL(status_label), _("Away") );
-      		break;
-      	}
-      	old_user_status = MRI_user_status;
-      }
-      return TRUE;
-
+			break;
+		case away:
+			gtk_pixmap_set( GTK_PIXMAP(icon),
+					icon_online_pm,
+					icon_online_bm );   
+			gtk_label_set( GTK_LABEL(status_label), _("Away") );
+			break;
+		}
+		old_user_status = MRI_user_status;
+	}
+	return TRUE;
 }
 
 void update_pixmaps() {
@@ -221,44 +161,11 @@ void update_pixmaps() {
 			&icon_connect_pm, &icon_connect_bm );
 	load_applet_icon( GAIM_GNOME_ONLINE_ICON, (sizehint-16), (sizehint-12),
 			&icon_online_pm, &icon_online_bm );
-	update_applet((gpointer *)applet);
+	update_applet(TRUE);
 	gtk_widget_set_usize(appletframe, sizehint, sizehint);
 }
 
 
-/***************************************************************
-**
-** function make_buddy
-** visibility - private
-**
-** description - If buddylist is not created create it
-**                    else show the buddy list
-**
-****************************************************************/ 
-void make_buddy(void) {
-        set_applet_draw_open();        
-	if( !buddy_created ){
-		show_buddy_list();
-		buddy_created = TRUE;
-	} else {
-		gnome_buddy_show();
-	}	
-	build_edit_tree();
-	build_permit_tree();
-	
-}
-
-/***************************************************************
-**
-** function applet_show_login
-** visibility - private
-**
-** input:
-**
-**
-** description - I guess it shows the login dialog
-**
-****************************************************************/
 extern GtkWidget *mainwindow;
 void applet_show_login(AppletWidget *widget, gpointer data) {
         show_login();
@@ -269,7 +176,7 @@ void applet_show_login(AppletWidget *widget, gpointer data) {
 }
 
 void applet_do_signon(AppletWidget *widget, gpointer data) {
-	show_login();
+	applet_show_login(NULL, 0);
 	if (general_options & OPT_GEN_REMEMBER_PASS)
 		dologin(0, 0);
 }
@@ -329,17 +236,7 @@ void remove_applet_away() {
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
 }
 
-/***************************************************************
-**
-** function applet_show_about
-** visibility - public
-**
-**
-** description - takes care of creating and
-**                    displaying the about box
-**
-****************************************************************/
-void applet_show_about(AppletWidget *widget, gpointer data) {
+static void applet_show_about(AppletWidget *widget, gpointer data) {
   
   const gchar *authors[] = {"Mark Spencer <markster@marko.net>",
                             "Jim Duchek <jimduchek@ou.edu>",
@@ -357,175 +254,84 @@ void applet_show_about(AppletWidget *widget, gpointer data) {
   gtk_widget_show(about);
 }
 
-/***************************************************************
-**
-** function AppletCancelLogin (name should be changed to 
-**									applet_cancel_login)
-** visibility - public
-**
-** description - called when user cancels login
-**
-****************************************************************/ 
-void AppletCancelLogon(){
-  applet_widget_unregister_callback(APPLET_WIDGET(applet),"signoff");
-  applet_widget_register_callback(APPLET_WIDGET(applet),
-				  "signon",
-				  _("Signon"),
-				  applet_do_signon,
-				  NULL);
-}
+static GtkAllocation get_applet_pos(gboolean for_blist) {
+	gint x,y,pad;
+	GtkRequisition buddy_req, applet_req;
+	GtkAllocation result;
+	GNOME_Panel_OrientType orient = applet_widget_get_panel_orient( APPLET_WIDGET(applet) );
+	pad = 5;
 
-/***************************************************************
-**
-** function get_applet_pos
-** visibility - private
-**
-** output:
-**	GtKAllocation - a Gtk struct that holds the 
-**						position of the dialog
-**
-** description - returns the x,y position the buddy list should
-** 				should be placed based on the position
-**                      of the applet and the orientation
-**				of the Gnome panel.
-**
-****************************************************************/ 
-GtkAllocation get_applet_pos(gboolean for_blist) {
-    gint x,y,pad;
-    GtkRequisition buddy_req, applet_req;
-    GtkAllocation result;
-    GNOME_Panel_OrientType orient = applet_widget_get_panel_orient( APPLET_WIDGET(applet) );
-    pad = 5;
-    gdk_window_get_position(gtk_widget_get_parent_window(appletframe), &x, &y);
-    if (for_blist)
-	    buddy_req = gnome_buddy_get_dimentions();
-    else
-	    buddy_req = mainwindow->requisition;
-    applet_req = appletframe->requisition;
-   switch( orient ){
-   	case ORIENT_UP:
-   		result.x=x;
-   		result.y=y-(buddy_req.height+pad);
-   	break;
+	gdk_window_get_position(gtk_widget_get_parent_window(appletframe), &x, &y);
+	if (for_blist) {
+	        if (general_options & OPT_GEN_SAVED_WINDOWS) {
+			buddy_req.width = blist_pos.width;
+			buddy_req.height = blist_pos.height;
+		} else {
+			buddy_req = blist->requisition;
+		}
+	} else {
+		buddy_req = mainwindow->requisition;
+	}
+	applet_req = appletframe->requisition;
+
+	/* FIXME : we need to be smarter here */
+	switch( orient ){
+	case ORIENT_UP:
+		result.x=x;
+		result.y=y-(buddy_req.height+pad);
+		break;
 	case ORIENT_DOWN:
-   		result.x=x; 
-   		result.y=y+applet_req.height+pad; 
-   	
-   	break;
-   	case ORIENT_LEFT:
-   		result.x=x-(buddy_req.width + pad );
-   		result.y=y;
-   	break;
-   	case ORIENT_RIGHT:
-   		result.x=x+applet_req.width+pad;
-   		result.y=y;
-   	break;
-   } 
-   
-   
-   return result;
+		result.x=x; 
+		result.y=y+applet_req.height+pad; 
+		break;
+	case ORIENT_LEFT:
+		result.x=x-(buddy_req.width + pad );
+		result.y=y;
+		break;
+	case ORIENT_RIGHT:
+		result.x=x+applet_req.width+pad;
+		result.y=y;
+		break;
+	} 
+	return result;
 }
-
-
-
-void createOfflinePopup(){
-	applet_show_login( APPLET_WIDGET(applet), NULL );
-}
-
-
-void createSignonPopup(){
-	applet_draw_open = FALSE;
-}
-
 
 void createOnlinePopup(){
-    GtkAllocation al;
-    make_buddy();
-    al  = get_applet_pos(TRUE);  
-    gnome_buddy_set_pos(  al.x, al.y );
-}
-
-
-void createPendingPopup(){
-    applet_draw_open = FALSE;
-}
-
-
-void createAwayPopup(){
-     createOnlinePopup();
-}
-
-
-void closeOfflinePopup(){
-	cancel_logon();
-	set_applet_draw_closed();
-}
-
-
-void closeSignonPopup(){
-
-}
-
-
-void closeOnlinePopup(){
-    set_applet_draw_closed();
-    applet_destroy_buddy(0, 0, 0);
-}
-
-
-void closePendingPopup(){
-    applet_draw_open = FALSE;
-}
-
-
-void closeAwayPopup(){
-	closeOnlinePopup();
+	GtkAllocation al;
+	if (blist) gtk_widget_show(blist);
+	al  = get_applet_pos(TRUE);  
+        if (general_options & OPT_GEN_NEAR_APPLET)
+                gtk_widget_set_uposition ( blist, al.x, al.y );
+        else if (general_options & OPT_GEN_SAVED_WINDOWS)
+                gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff, blist_pos.y - blist_pos.yoff);
 }
 
 void AppletClicked( GtkWidget *sender, GdkEventButton *ev, gpointer data ){
 	if (!ev || ev->button != 1 || ev->type != GDK_BUTTON_PRESS)
 		return;
         
-	if( applet_draw_open ){
+	if(applet_buddy_show) {
+		applet_buddy_show = FALSE;
 	  	switch( MRI_user_status ){
 			case offline:
-				closeOfflinePopup();
-			break;
-			case signing_on:
-				closeSignonPopup();
-			break;
+				gtk_widget_hide(mainwindow);
+				break;
 			case online:
-				closeOnlinePopup();
-				
-			break;
-			case unread_message_pending:
-				closePendingPopup();
-			break;
 			case away:
-				closeAwayPopup();
-			break;
+				applet_destroy_buddy(0, 0, 0);
+				break;
 		}     
 	} else {
-		set_applet_draw_open();
+		applet_buddy_show = TRUE;
 		switch( MRI_user_status ){
 			case offline:
-				createOfflinePopup();
-			break;
-			case signing_on:
-				createSignonPopup();
-			break;
+				applet_show_login( APPLET_WIDGET(applet), NULL );
+				break;
 			case online:
-				createOnlinePopup();
-			break;
-			case unread_message_pending:
-				createPendingPopup();
-			break;
 			case away:
-				createAwayPopup();
-			break;
+				createOnlinePopup();
+				break;
 		}
-		
-				
 	}
 }
 
@@ -577,8 +383,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
 		
 	icon=gtk_pixmap_new(icon_offline_pm,icon_offline_bm);
 	
-	update_applet(NULL);
-	gtk_timeout_add( 1500, (GtkFunction)update_applet, NULL );
+	update_applet(FALSE);
 	
 	vbox = gtk_vbox_new(FALSE,0);
 	
@@ -629,21 +434,9 @@ gint init_applet_mgr(int argc, char *argv[]) {
         return 0;
 }
 
-void setUserState( enum gaim_user_states state ){
+void set_user_state( enum gaim_user_states state ){
 	MRI_user_status = state; 
-	update_applet(NULL);
-}
-
-enum gaim_user_states getUserState(){
-	return MRI_user_status;
-}
-
-void set_applet_draw_open(){
-	applet_draw_open = TRUE;
-}
-
-void set_applet_draw_closed(){
-	applet_draw_open = FALSE;
+	update_applet(FALSE);
 }
 
 void applet_set_tooltips(char *msg) {

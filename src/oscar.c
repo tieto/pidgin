@@ -102,8 +102,6 @@ static void oscar_callback(gpointer data, gint source,
 	if (condition & GDK_INPUT_EXCEPTION) {
 		signoff();
 		hide_login_progress(_("Disconnected."));
-		aim_logoff(gaim_sess);
-		gdk_input_remove(inpa);
 		auth_failed();
 		return;
 	}
@@ -170,14 +168,14 @@ int oscar_login(char *username, char *password) {
 	if (conn == NULL) {
 		debug_print(_("internal connection error\n"));
 #ifdef USE_APPLET
-		setUserState(offline);
+		set_user_state(offline);
 #endif
 		set_state(STATE_OFFLINE);
 		hide_login_progress(_("Unable to login to AIM"));
 		return -1;
 	} else if (conn->fd == -1) {
 #ifdef USE_APPLET
-		setUserState(offline);
+		set_user_state(offline);
 #endif
 		set_state(STATE_OFFLINE);
 		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
@@ -232,7 +230,7 @@ int oscar_login(char *username, char *password) {
 
 void oscar_close() {
 #ifdef USE_APPLET
-	setUserState(offline);
+	set_user_state(offline);
 #endif
 	set_state(STATE_OFFLINE);
 	if (inpa > 0)
@@ -272,12 +270,12 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 				sess->logininfo.errorurl);
 		debug_print(debug_buff);
 #ifdef USE_APPLET
-		setUserState(offline);
+		set_user_state(offline);
 #endif
 		set_state(STATE_OFFLINE);
-		hide_login_progress(_("Authentication Failed"));
 		gdk_input_remove(inpa);
-		aim_conn_kill(sess, &command->conn);
+		hide_login_progress(_("Authentication Failed"));
+		signoff();
 		auth_failed();
 		return 0;
 	}
@@ -293,7 +291,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, sess->logininfo.BOSIP);
 	if (bosconn == NULL) {
 #ifdef USE_APPLET
-		setUserState(offline);
+		set_user_state(offline);
 #endif
 		set_state(STATE_OFFLINE);
 		hide_login_progress(_("Internal Error"));
@@ -301,7 +299,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		return -1;
 	} else if (bosconn->status != 0) {
 #ifdef USE_APPLET
-		setUserState(offline);
+		set_user_state(offline);
 #endif
 		set_state(STATE_OFFLINE);
 		hide_login_progress(_("Could Not Connect"));
@@ -434,23 +432,22 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		aim_seticbmparam(sess, command->conn);
 		aim_conn_setlatency(command->conn, 1);
 
-#ifdef USE_APPLET
-		make_buddy();
-		if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
-			gnome_buddy_show();
-			createOnlinePopup();
-			set_applet_draw_open();
-		} else {
-			gnome_buddy_hide();
-			set_applet_draw_closed();
-		}
-		setUserState(online);
-		gtk_widget_hide(mainwindow);
-#else
 		gtk_widget_hide(mainwindow);
 		show_buddy_list();
+#ifdef USE_APPLET
+		if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
+			refresh_buddy_window();
+			createOnlinePopup();
+			applet_buddy_show = TRUE;
+		} else {
+			gtk_widget_hide(blist);
+			applet_buddy_show = FALSE;
+		}
+		set_user_state(online);
+#else
 		refresh_buddy_window();
 #endif
+
 		serv_finish_login();
 		gaim_setup();
 		if (bud_list_cache_exists())
@@ -458,6 +455,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 
 		aim_bos_clientready(sess, command->conn);
 		debug_print("Roger that, all systems go\n");
+
 		aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
 
 		break;

@@ -44,7 +44,6 @@ enum gaim_user_states {
 	offline = 0,
 	signing_on,
 	online,
-	unread_message_pending,
 	away
 };
 
@@ -68,13 +67,7 @@ extern void make_buddy();
 extern void cancel_logon();
 extern gint applet_destroy_buddy(GtkWidget *, GdkEvent *, gpointer *);
 
-extern void setUserState( enum gaim_user_states state );
-extern enum gaim_user_states getUserState();
-
-extern void AppletCancelLogon();
-
-extern void set_applet_draw_open();
-extern void set_applet_draw_closed();
+extern void set_user_state( enum gaim_user_states state );
 
 extern void insert_applet_away();
 extern void remove_applet_away();
@@ -82,6 +75,8 @@ extern void remove_applet_away();
 extern void update_pixmaps();
 extern void applet_set_tooltips(char *);
 extern void dologin(GtkWidget *, GtkWidget *);
+
+extern gboolean applet_buddy_show;
 
 #endif /*USE_APPLET*/
 #endif /*_GAIMGNOMEAPPLETMGR_H_*/

@@ -85,8 +85,8 @@ gboolean running = FALSE; /* whether or not we're currently trying to sign on */
 void cancel_logon(void)
 {
 #ifdef USE_APPLET
-        set_applet_draw_closed();
-        AppletCancelLogon();
+	applet_buddy_show = FALSE;
+	signoff();
         gtk_widget_hide(mainwindow);
 #else
 #ifdef GAIM_PLUGINS
@@ -199,8 +199,7 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 		g_screenname[i] = toupper( g_screenname[i] );
 
 #ifdef USE_APPLET
-	set_applet_draw_closed();
-	setUserState(signing_on);
+	set_user_state(signing_on);
 #endif /* USE_APPLET */
 
 	if (running) return;
@@ -231,28 +230,28 @@ void gaim_setup() {
 	}
 
 #ifdef USE_APPLET
-	 setUserState(online);
-	 applet_widget_unregister_callback(APPLET_WIDGET(applet),"signon");
-	 applet_widget_register_callback(APPLET_WIDGET(applet),
-			 "signoff",
-			 _("Signoff"),
-			 signoff,
-			 NULL);
+	set_user_state(online);
+	applet_widget_unregister_callback(APPLET_WIDGET(applet),"signon");
+	applet_widget_register_callback(APPLET_WIDGET(applet),
+			"signoff",
+			_("Signoff"),
+			signoff,
+			NULL);
 #endif /* USE_APPLET */
 
 #ifdef GAIM_PLUGINS
 	 {
-		 GList *c = callbacks;
-		 struct gaim_callback *g;
-		 void (*function)(void *);
-		 while (c) {
-			 g = (struct gaim_callback *)c->data;
-			 if (g->event == event_signon && g->function != NULL) {
-				 function = g->function;
-				 (*function)(g->data);
-			 }
-			 c = c->next;
-		 }
+		GList *c = callbacks;
+		struct gaim_callback *g;
+		void (*function)(void *);
+		while (c) {
+			g = (struct gaim_callback *)c->data;
+			if (g->event == event_signon && g->function != NULL) {
+				function = g->function;
+				(*function)(g->data);
+			}
+			c = c->next;
+		}
 	 }
 #endif /* GAIM_PLUGINS */
 

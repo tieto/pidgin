@@ -37,9 +37,6 @@
 #include "pixmaps/join.xpm"
 
 GtkWidget *imaway=NULL;
-#ifdef USE_APPLET
-extern enum gaim_user_states MRI_user_status;
-#endif
 
 GtkWidget *awaymenu = NULL;
 struct away_message *awaymessage = NULL;
@@ -54,9 +51,9 @@ static void destroy_im_away()
 void do_im_back(GtkWidget *w, GtkWidget *x)
 {
 #ifdef USE_APPLET
-  applet_widget_unregister_callback(APPLET_WIDGET(applet),"away");
-  MRI_user_status = online;
-  insert_applet_away();
+	applet_widget_unregister_callback(APPLET_WIDGET(applet),"away");
+	set_user_state(online);
+	insert_applet_away();
 #endif /* USE_APPLET */
 	if (imaway) {
 		gtk_widget_destroy(imaway);
@@ -104,8 +101,8 @@ void do_away_message(GtkWidget *w, struct away_message *a)
                                         "away",
                                         _("Back"),
                                         (AppletCallbackFunc) do_im_back,
-                                        NULL);
-	MRI_user_status = away;
+                                        NULL);				
+	set_user_state(away);
 #endif
 
 	if (!imaway) {

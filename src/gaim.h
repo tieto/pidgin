@@ -401,7 +401,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 746 $"
+#define REVISION "gaim:$Revision: 756 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -416,7 +416,6 @@ struct signon {
 
 
 #ifdef USE_APPLET
-extern gboolean buddy_created;
 extern GtkWidget *applet;
 #endif /* USE_APPLET */
 
@@ -724,9 +723,6 @@ extern void gaim_setup();
 #ifdef USE_APPLET
 extern void createOnlinePopup();
 extern void applet_show_login(AppletWidget *, gpointer);
-extern void gnome_buddy_show();
-extern void gnome_buddy_hide();
-extern void gnome_buddy_set_pos( gint x, gint y );
 GtkRequisition gnome_buddy_get_dimentions();
 #endif
 

@@ -103,9 +103,6 @@ void destroy_buddy()
 		gtk_widget_destroy(blist);
 	blist=NULL;
 	imchatbox = NULL;
-#ifdef USE_APPLET
-	buddy_created = FALSE;
-#endif
 }
 
 void update_num_groups()
@@ -277,41 +274,14 @@ void update_button_pix()
 
 #ifdef USE_APPLET
 gint applet_destroy_buddy( GtkWidget *widget, GdkEvent *event,gpointer *data ) {
-	set_applet_draw_closed();
-	gnome_buddy_hide();
+	applet_buddy_show = FALSE;
+	gtk_widget_hide(blist);
 	return (TRUE);
-}
-
-void gnome_buddy_show(){
-	gtk_widget_show( blist );
-}
-
-void gnome_buddy_hide(){
-	gtk_widget_hide( blist );
-}
-
-void gnome_buddy_set_pos( gint x, gint y ){
-	if (general_options & OPT_GEN_NEAR_APPLET)
-		gtk_widget_set_uposition ( blist, x, y );
-	else if (general_options & OPT_GEN_SAVED_WINDOWS)
-		gtk_widget_set_uposition(blist, blist_pos.x - blist_pos.xoff, blist_pos.y - blist_pos.yoff);
-}
-
-GtkRequisition gnome_buddy_get_dimentions(){
-	if (general_options & OPT_GEN_SAVED_WINDOWS) {
-		GtkRequisition r;
-		r.width = blist_pos.width;
-		r.height = blist_pos.height;
-		return r;
-	} else {
-		return blist->requisition;
-	}
 }
 
 #endif
 
 
-extern enum gaim_user_states MRI_user_status;
 void signoff()
 {
 	GList *mem;
@@ -345,8 +315,8 @@ void signoff()
         destroy_buddy();
         hide_login_progress("");
 #ifdef USE_APPLET
-	MRI_user_status = offline;
-        set_applet_draw_closed();
+	set_user_state(offline);
+	applet_buddy_show = FALSE;
         applet_widget_unregister_callback(APPLET_WIDGET(applet),"signoff");
 	remove_applet_away();
         applet_widget_register_callback(APPLET_WIDGET(applet),

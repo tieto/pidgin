@@ -350,6 +350,9 @@ static void buddy_page()
 	gtk_widget_show(sep);
 
 	gaim_button(_("Save Window Size/Position"), &general_options, OPT_GEN_SAVED_WINDOWS, box);
+#ifdef USE_APPLET
+	gaim_button(_("Automatically show buddy list on sign on"), &general_options, OPT_GEN_APP_BUDDY_SHOW, box);
+#endif
 
 	gtk_widget_show(prefdialog);
 }

@@ -69,7 +69,7 @@ int toc_login(char *username, char *password)
 	if (!sin) {
 	        
 #ifdef USE_APPLET
-		setUserState(offline);
+		set_user_state(offline);
 #endif /* USE_APPLET */
                 set_state(STATE_OFFLINE);
 		g_snprintf(buf, sizeof(buf), "Unable to lookup %s", aim_host);
@@ -88,7 +88,7 @@ int toc_login(char *username, char *password)
 
         if (toc_fd < 0) {
 #ifdef USE_APPLET
-		setUserState(offline);
+		set_user_state(offline);
 #endif /* USE_APPLET */
                 set_state(STATE_OFFLINE);
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed",
@@ -105,7 +105,7 @@ int toc_login(char *username, char *password)
 	
 	if (toc_signon(username, password) < 0) {
 #ifdef USE_APPLET
-		setUserState(offline);
+		set_user_state(offline);
 #endif /* USE_APPLET */
                 set_state(STATE_OFFLINE);
 		hide_login_progress("Disconnected.");
@@ -116,7 +116,7 @@ int toc_login(char *username, char *password)
 	set_login_progress(4, buf);
 	if (toc_wait_signon() < 0) {
 #ifdef USE_APPLET
-		setUserState(offline);
+		set_user_state(offline);
 #endif /* USE_APPLET */
                 set_state(STATE_OFFLINE);
 		hide_login_progress("Authentication Failed");
@@ -143,37 +143,27 @@ int toc_login(char *username, char *password)
 	config = toc_wait_config();
 	state = STATE_ONLINE;
 
-#ifdef USE_APPLET
-	make_buddy();
-	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
-                gnome_buddy_show();
-		if (config != NULL)
-			parse_toc_buddy_list(config, 0);
-		else
-			do_import(0, 0);
-		createOnlinePopup();
-                set_applet_draw_open();
-        } else {
-                gnome_buddy_hide();
-		if (config != NULL)
-			parse_toc_buddy_list(config, 0);
-		else
-			do_import(0, 0);
-                set_applet_draw_closed();
-        }
-
-       
-	setUserState(online);
-	gtk_widget_hide(mainwindow);
-#else
         gtk_widget_hide(mainwindow);
 	show_buddy_list();
+#ifdef USE_APPLET
+	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
+		refresh_buddy_window();
+		createOnlinePopup();
+                applet_buddy_show = TRUE;
+        } else {
+                gtk_widget_hide(blist);
+                applet_buddy_show = FALSE;
+        }
+
+	set_user_state(online);
+#else
+	refresh_buddy_window();
+#endif
 	if (config != NULL)
 		parse_toc_buddy_list(config, 0);
 	else
 		do_import(0, 0);
         refresh_buddy_window();
-#endif
         
         
 	g_snprintf(buf2, sizeof(buf2), "toc_init_done");
@@ -191,7 +181,7 @@ int toc_login(char *username, char *password)
 void toc_close()
 {
 #ifdef USE_APPLET
-	setUserState(offline);
+	set_user_state(offline);
 #endif /* USE_APPLET */
         seqno = 0;
         state = STATE_OFFLINE;
