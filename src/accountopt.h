@@ -45,6 +45,7 @@ typedef struct
 		gboolean boolean;   /**< The default boolean value.             */
 		int integer;        /**< The default integer value.             */
 		char *string;       /**< The default string value.              */
+		GList *list;        /**< The default list value.                */
 
 	} default_value;
 
@@ -125,6 +126,25 @@ GaimAccountOption *gaim_account_option_string_new(const char *text,
 												  const char *default_value);
 
 /**
+ * Creates a new list account option.
+ *
+ * The list passed will be owned by the account option, and the
+ * strings inside will be freed automatically.
+ *
+ * The list is in key, value pairs. The key is the ID stored and used
+ * internally, and the value is the label displayed.
+ *
+ * @param text      The text of the option.
+ * @param pref_name The account preference name for the option.
+ * @param list      The key, value list.
+ *
+ * @return The account option.
+ */
+GaimAccountOption *gaim_account_option_list_new(const char *text,
+												const char *pref_name,
+												GList *list);
+
+/**
  * Destroys an account option.
  *
  * @param option The option to destroy.
@@ -157,6 +177,30 @@ void gaim_account_option_set_default_int(GaimAccountOption *option,
  */
 void gaim_account_option_set_default_string(GaimAccountOption *option,
 											const char *value);
+
+/**
+ * Sets the list values for an account option.
+ *
+ * The list passed will be owned by the account option, and the
+ * strings inside will be freed automatically.
+ *
+ * The list is in key, value pairs. The key is the ID stored and used
+ * internally, and the value is the label displayed.
+ *
+ * @param option The account option.
+ * @param values The default list value.
+ */
+void gaim_account_option_set_list(GaimAccountOption *option, GList *values);
+
+/**
+ * Adds an item to a list account option.
+ *
+ * @param option The account option.
+ * @param key    The key.
+ * @param value  The value.
+ */
+void gaim_account_option_add_list_item(GaimAccountOption *option,
+									   const char *key, const char *value);
 
 /**
  * Returns the specified account option's type.
@@ -211,7 +255,16 @@ int gaim_account_option_get_default_int(const GaimAccountOption *option);
  * @return The default string value.
  */
 const char *gaim_account_option_get_default_string(
-		const GaimAccountOption *option);
+	const GaimAccountOption *option);
+
+/**
+ * Returns the list values for an account option.
+ *
+ * @param option The account option.
+ *
+ * @return The list values.
+ */
+const GList *gaim_account_option_get_list(const GaimAccountOption *option);
 
 /*@}*/
 

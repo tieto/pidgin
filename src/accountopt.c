@@ -30,12 +30,9 @@ gaim_account_option_new(GaimPrefType type, const char *text,
 {
 	GaimAccountOption *option;
 
-	g_return_val_if_fail(type == GAIM_PREF_BOOLEAN ||
-						 type == GAIM_PREF_INT ||
-						 type == GAIM_PREF_STRING,
-						 NULL);
-	g_return_val_if_fail(text != NULL, NULL);
-	g_return_val_if_fail(pref_name != NULL, NULL);
+	g_return_val_if_fail(type      != GAIM_PREF_NONE, NULL);
+	g_return_val_if_fail(text      != NULL,           NULL);
+	g_return_val_if_fail(pref_name != NULL,           NULL);
 
 	option = g_new0(GaimAccountOption, 1);
 
@@ -95,6 +92,22 @@ gaim_account_option_string_new(const char *text, const char *pref_name,
 	return option;
 }
 
+GaimAccountOption *
+gaim_account_option_list_new(const char *text, const char *pref_name,
+							 GList *list)
+{
+	GaimAccountOption *option;
+
+	option = gaim_account_option_new(GAIM_PREF_STRING_LIST, text, pref_name);
+
+	if (option == NULL)
+		return NULL;
+
+	option->default_value.list = list;
+
+	return option;
+}
+
 void
 gaim_account_option_destroy(GaimAccountOption *option)
 {
@@ -106,10 +119,18 @@ gaim_account_option_destroy(GaimAccountOption *option)
 	if (option->pref_name != NULL)
 		g_free(option->pref_name);
 
-	if (option->type == GAIM_PREF_STRING &&
-		option->default_value.string != NULL) {
-
-		g_free(option->default_value.string);
+	if (option->type == GAIM_PREF_STRING)
+	{
+		if (option->default_value.string != NULL)
+			g_free(option->default_value.string);
+	}
+	else if (option->type == GAIM_PREF_STRING_LIST)
+	{
+		if (option->default_value.list != NULL)
+		{
+			g_list_foreach(option->default_value.list, (GFunc)g_free, NULL);
+			g_list_free(option->default_value.list);
+		}
 	}
 
 	g_free(option);
@@ -145,6 +166,36 @@ gaim_account_option_set_default_string(GaimAccountOption *option,
 		g_free(option->default_value.string);
 
 	option->default_value.string = (value == NULL ? NULL : g_strdup(value));
+}
+
+void
+gaim_account_option_set_list(GaimAccountOption *option, GList *values)
+{
+	g_return_if_fail(option != NULL);
+	g_return_if_fail(option->type == GAIM_PREF_STRING_LIST);
+
+	if (option->default_value.list != NULL)
+	{
+		g_list_foreach(option->default_value.list, (GFunc)g_free, NULL);
+		g_list_free(option->default_value.list);
+	}
+
+	option->default_value.list = values;
+}
+
+void
+gaim_account_option_add_list_item(GaimAccountOption *option,
+								  const char *key, const char *value)
+{
+	g_return_if_fail(option != NULL);
+	g_return_if_fail(key    != NULL);
+	g_return_if_fail(value  != NULL);
+	g_return_if_fail(option->type == GAIM_PREF_STRING_LIST);
+
+	option->default_value.list = g_list_append(option->default_value.list,
+											   g_strdup(key));
+	option->default_value.list = g_list_append(option->default_value.list,
+											   g_strdup(value));
 }
 
 GaimPrefType
@@ -198,7 +249,18 @@ gaim_account_option_get_default_string(const GaimAccountOption *option)
 	return option->default_value.string;
 }
 
+const GList *
+gaim_account_option_get_list(const GaimAccountOption *option)
+{
+	g_return_val_if_fail(option != NULL, NULL);
+	g_return_val_if_fail(option->type == GAIM_PREF_STRING_LIST, NULL);
 
+	return option->default_value.list;
+}
+
+/**************************************************************************
+ * Account User Split API
+ **************************************************************************/
 GaimAccountUserSplit *
 gaim_account_user_split_new(const char *text, const char *default_value,
 							char sep)
