@@ -70,6 +70,7 @@ gaim_coresources = \
 	conversation.c \
 	core.c \
 	debug.c \
+	desktopitem.c \
 	eventloop.c \
 	ft.c \
 	imgstore.c \
@@ -107,6 +108,7 @@ gaim_coreheaders = \
 	conversation.h \
 	core.h \
 	debug.h \
+	desktopitem.h \
 	eventloop.h \
 	ft.h \
 	imgstore.h \
