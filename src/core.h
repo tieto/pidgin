@@ -40,9 +40,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <glib.h>
-#ifdef GAIM_PLUGINS
 #include <gmodule.h>
-#endif
 
 struct gaim_account;
 struct group;

@@ -140,6 +140,8 @@ __find_loader_for_plugin(const GaimPlugin *plugin)
 	return NULL;
 }
 
+#endif /* GAIM_PLUGINS */
+
 static gint
 compare_prpl(GaimPlugin *a, GaimPlugin *b)
 {
@@ -149,8 +151,6 @@ compare_prpl(GaimPlugin *a, GaimPlugin *b)
 			((GAIM_IS_PROTOCOL_PLUGIN(b)
 			 ? GAIM_PLUGIN_PROTOCOL_INFO(b)->protocol : -1)));
 }
-
-#endif /* GAIM_PLUGINS */
 
 GaimPlugin *
 gaim_plugin_new(gboolean native, const char *path)
@@ -298,7 +298,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 	return TRUE;
 
 #else
-	return FALSE;
+	return TRUE;
 #endif /* !GAIM_PLUGINS */
 }
 
@@ -383,6 +383,8 @@ gaim_plugin_unload(GaimPlugin *plugin)
 		unload_cb(plugin, unload_cb_data);
 
 	return TRUE;
+#else
+	return TRUE;
 #endif /* GAIM_PLUGINS */
 }
 
@@ -401,13 +403,14 @@ gaim_plugin_reload(GaimPlugin *plugin)
 
 	return TRUE;
 #else
-	return NULL;
+	return TRUE;
 #endif /* !GAIM_PLUGINS */
 }
 
 void
 gaim_plugin_destroy(GaimPlugin *plugin)
 {
+#ifdef GAIM_PLUGINS
 	g_return_if_fail(plugin != NULL);
 
 	if (gaim_plugin_is_loaded(plugin))
@@ -468,6 +471,7 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 	if (plugin->error != NULL) g_free(plugin->error);
 
 	g_free(plugin);
+#endif /* !GAIM_PLUGINS */
 }
 
 gboolean
@@ -568,7 +572,6 @@ gaim_plugins_probe(const char *ext)
 gboolean
 gaim_plugin_register(GaimPlugin *plugin)
 {
-#ifdef GAIM_PLUGINS
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	if (g_list_find(plugins, plugin))
@@ -621,9 +624,6 @@ gaim_plugin_register(GaimPlugin *plugin)
 	plugins = g_list_append(plugins, plugin);
 
 	return TRUE;
-#else
-	return FALSE;
-#endif /* !GAIM_PLUGINS */
 }
 
 gboolean

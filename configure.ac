@@ -94,8 +94,8 @@ extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
 	STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib$i.a"
-	extern_init="$extern_init extern void ${i}_init(struct prpl *);"
-	load_proto="$load_proto load_protocol(${i}_init);"
+	extern_init="$extern_init extern gboolean gaim_init_${i}_plugin();"
+	load_proto="$load_proto gaim_init_${i}_plugin();"
 	case $i in
 		gg) static_gg=yes ;;
 		irc) static_irc=yes ;;
