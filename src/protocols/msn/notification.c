@@ -212,6 +212,8 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (!g_ascii_strcasecmp(params[1], "OK")) {
 		/* OK */
 
+		session->syncing_lists = TRUE;
+
 		if (!msn_servconn_send_command(servconn, "SYN", "0")) {
 			hide_login_progress(gc, _("Unable to write"));
 			signoff(gc);
@@ -581,7 +583,7 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 	passport  = params[5];
 	friend    = msn_url_decode(params[6]);
 
-	if (session->lists_synced)
+	if (session->syncing_lists && session->lists_synced)
 		return TRUE;
 
 	if (!g_ascii_strcasecmp(type, "FL") && user_num != 0) {
@@ -655,18 +657,30 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 		if (user_num != num_users)
 			return TRUE; /* This isn't the last one in the RL. */
 
-		if (!msn_servconn_send_command(servconn, "CHG", "NLN")) {
-			hide_login_progress(gc, _("Unable to write"));
-			signoff(gc);
+		/* Now we're at the last one, so we can do final work. */
+		if (!session->lists_synced) {
+			if (!msn_servconn_send_command(servconn, "CHG", "NLN")) {
+				hide_login_progress(gc, _("Unable to write"));
+				signoff(gc);
 
-			return FALSE;
+				return FALSE;
+			}
+
+			account_online(gc);
+			serv_finish_login(gc);
 		}
 
-		account_online(gc);
-		serv_finish_login(gc);
+		if (session->lists.allow == NULL)
+			session->lists.allow = g_slist_copy(gc->account->permit);
+		else
+			session->lists.allow = g_slist_concat(session->lists.allow,
+												  gc->account->permit);
 
-		session->lists.allow = g_slist_copy(gc->account->permit);
-		session->lists.block = g_slist_copy(gc->account->deny);
+		if (session->lists.block == NULL)
+			session->lists.block = g_slist_copy(gc->account->deny);
+		else
+			session->lists.block = g_slist_concat(session->lists.block,
+												  gc->account->deny);
 
 		while (session->lists.forward != NULL) {
 			MsnUser *user = session->lists.forward->data;
@@ -720,7 +734,8 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 						   (char *)msn_user_get_name(user));
 		}
 
-		session->lists_synced = TRUE;
+		session->syncing_lists = FALSE;
+		session->lists_synced  = TRUE;
 	}
 
 	return TRUE;

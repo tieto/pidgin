@@ -71,6 +71,7 @@ struct _MsnSession
 	/* You have no idea how much I hate all that is below. */
 	GaimPlugin *prpl;
 
+	gboolean syncing_lists;
 	gboolean lists_synced;
 
 	/* For moving buddies from one group to another. Ugh. */
