@@ -179,7 +179,6 @@ static char *extract_name(char *name) {
 static struct chat_connection *find_oscar_chat(struct gaim_connection *gc, int id) {
 	GSList *g = ((struct oscar_data *)gc->proto_data)->oscar_chats;
 	struct chat_connection *c = NULL;
-	if (gc->protocol != PROTO_OSCAR) return NULL;
 
 	while (g) {
 		c = (struct chat_connection *)g->data;
@@ -445,7 +444,8 @@ static void oscar_login(struct aim_user *user) {
 		odata->icq = TRUE;
 		/* this is odd but it's necessary for a proper do_import and do_export */
 		gc->protocol = PROTO_ICQ;
-	}
+	} else
+		gc->protocol = PROTO_TOC;
 
 	sess = g_new0(aim_session_t, 1);
 
@@ -488,7 +488,6 @@ static void oscar_login(struct aim_user *user) {
 
 static void oscar_close(struct gaim_connection *gc) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-	if (gc->protocol != PROTO_OSCAR) return;
 	
 	while (odata->oscar_chats) {
 		struct chat_connection *n = odata->oscar_chats->data;

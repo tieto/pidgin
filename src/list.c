@@ -634,8 +634,7 @@ gboolean bud_list_cache_exists(struct gaim_connection *gc)
 
 	file = gaim_user_dir();
 	if (file != (char *)NULL) {
-		g_snprintf(path, sizeof path, "%s/%s.%d.blist", file, g_screenname,
-			   (gc->protocol == PROTO_OSCAR) ? PROTO_TOC : gc->protocol);
+		g_snprintf(path, sizeof path, "%s/%s.%d.blist", file, g_screenname, gc->protocol);
 		if (!stat(path, &sbuf)) {
 			debug_printf("%s exists.\n", path);
 			ret = TRUE;
@@ -675,8 +674,7 @@ void do_import(struct gaim_connection *gc, char *filename)
 
 		file = gaim_user_dir();
 		if (file != (char *)NULL) {
-			sprintf(path, "%s/%s.%d.blist", file, g_screenname,
-				(gc->protocol == PROTO_OSCAR) ? PROTO_TOC : gc->protocol);
+			sprintf(path, "%s/%s.%d.blist", file, g_screenname, gc->protocol);
 			g_free(file);
 			g_free(g_screenname);
 		} else {
@@ -763,8 +761,7 @@ void do_export(struct gaim_connection *g)
 
 	g_screenname = get_screenname_filename(g->username);
 
-	sprintf(path, "%s/%s.%d.blist", file, g_screenname,
-		(g->protocol == PROTO_OSCAR) ? PROTO_TOC : g->protocol);
+	sprintf(path, "%s/%s.%d.blist", file, g_screenname, g->protocol);
 	if ((f = fopen(path, "w"))) {
 		debug_printf("writing %s\n", path);
 		toc_build_config(g, buf, 8192 - 1, TRUE);
