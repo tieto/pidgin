@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Gaim
 Comment=Client for AOL IM
-Exec=Gaim 
+Exec=gaim 
 Icon=gaim.xpm
 Info=Gaim
 Terminal=0
