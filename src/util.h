@@ -73,14 +73,14 @@ void frombase64(const char *str, char **ret_str, int *ret_len);
  *
  * @see frombase16()
  */
-char *tobase16(const char *str, int len);
+unsigned char *tobase16(const unsigned char *str, int len);
 
 /**
  * Converts a string back from its base-16 equivalent.
  *
  * @param str     The string to convert back.
  * @param ret_str The returned, non-base-16 string.
- * 
+ *
  * @return The length of the returned string.
  *
  * @see tobase16()

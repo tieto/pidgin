@@ -2199,7 +2199,7 @@ static GtkTreeIter sort_method_status(GaimBlistNode *node, struct gaim_buddy_lis
 {
 	GtkTreeIter more_z, iter;
 	GaimBlistNode *n;
-	GtkTreePath *newpath, *expand;
+	GtkTreePath *newpath, *expand = NULL;
 	GValue val = {0,};
 	struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
 	char *collapsed = gaim_group_get_setting((struct group *)node->parent, "collapsed");

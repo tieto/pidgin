@@ -288,7 +288,7 @@ void gaim_prefs_set_int(const char *name, int value) {
 	}
 }
 
-void gaim_prefs_set_string(const char *name, char *value) {
+void gaim_prefs_set_string(const char *name, const char *value) {
 	struct gaim_pref *pref = find_pref(name);
 
 	g_return_if_fail(pref != NULL);

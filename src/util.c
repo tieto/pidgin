@@ -467,7 +467,7 @@ void frombase64(const char *text, char **data, int *size)
 /*
  * Converts raw data to a pretty, null-terminated base16 string.
  */
-char *tobase16(const char *data, int length)
+unsigned char *tobase16(const unsigned char *data, int length)
 {
 	int i;
 	unsigned char *ascii = NULL;

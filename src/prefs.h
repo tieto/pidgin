@@ -125,7 +125,7 @@ void gaim_prefs_set_int(const char *name, int value);
  * @param name  The name of the pref
  * @param value The value to set
  */
-void gaim_prefs_set_string(const char *name, char *value);
+void gaim_prefs_set_string(const char *name, const char *value);
 
 /**
  * Get boolean pref value
