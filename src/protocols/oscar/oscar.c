@@ -7043,7 +7043,6 @@ static void oscar_show_find_email(GaimPluginAction *action)
 					   _("Cancel"), NULL, gc);
 }
 
-#if 0
 static void oscar_setavailmsg(GaimConnection *gc, char *text) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
@@ -7051,8 +7050,9 @@ static void oscar_setavailmsg(GaimConnection *gc, char *text) {
 	aim_srv_setavailmsg(od->sess, text);
 }
 
-static void oscar_show_setavailmsg(GaimConnection *gc)
+static void oscar_show_setavailmsg(GaimPluginAction *action)
 {
+	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_input(gc, NULL, _("Available Message:"), NULL,
 					   _("I'm doing work and hoping for a distraction--IM me!"), 
 					   TRUE, FALSE, NULL,
@@ -7060,7 +7060,6 @@ static void oscar_show_setavailmsg(GaimConnection *gc)
 					   _("Cancel"), NULL,
 					   gc);
 }
-#endif
 
 static void oscar_show_set_info(GaimPluginAction *action)
 {
@@ -7146,11 +7145,11 @@ static GList *oscar_actions(GaimPlugin *plugin, gpointer context)
 		m = g_list_append(m, act);
 	}
 
-#if 0
-	act = gaim_plugin_action_new(_("Set Available Message..."),
-			oscar_show_setavailmsg);
-	m = g_list_append(m, act);
-#endif
+	if (!od->icq) {
+		act = gaim_plugin_action_new(_("Set Available Message..."),
+				oscar_show_setavailmsg);
+		m = g_list_append(m, act);
+	}
 
 	act = gaim_plugin_action_new(_("Change Password..."),
 			oscar_change_pass);

@@ -797,7 +797,7 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
 	aim_tlvlist_t *tl = NULL;
 	fu32_t data;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_MSG)))
 		return -EINVAL;
 
 	data = AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_WEBAWARE | status; /* yay for error checking ;^) */
@@ -832,7 +832,7 @@ faim_export int aim_srv_setavailmsg(aim_session_t *sess, char *msg)
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0001)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
 
 	if (msg != NULL) {
