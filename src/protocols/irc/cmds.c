@@ -79,7 +79,7 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	if (!args || !args[0] || !gc)
 		return 0;
 
-	action = g_malloc(strlen(args[0]) + 9);
+	action = g_malloc(strlen(args[0]) + 10);
 
 	sprintf(action, "\001ACTION ");
 
