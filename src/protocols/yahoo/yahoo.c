@@ -375,8 +375,10 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			name = pair->value;
 			if (name && g_utf8_validate(name, -1, NULL))
 				f = yahoo_friend_find_or_new(gc, name);
-			else
-				f = name = NULL;
+			else {
+				f = NULL;
+				name = NULL;
+			}
 			break;
 		case 10: /* state */
 			if (!f)
@@ -1661,6 +1663,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	yahoo_packet_hash(pack, 6, resp_6);
 	yahoo_packet_hash(pack, 96, resp_96);
 	yahoo_packet_hash(pack, 1, name);
+	yahoo_packet_hash(pack, 135, "6,0,0,1710");
 	if (yd->picture_checksum) {
 		char *cksum = g_strdup_printf("%d", yd->picture_checksum);
 		yahoo_packet_hash(pack, 192, cksum);
