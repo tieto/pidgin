@@ -1,4 +1,4 @@
-EXTRA_DIST = config.rpath gaim.spec.in gaim.desktop \
+EXTRA_DIST = gaim.spec.in gaim.desktop \
 	HACKING gaim2blt.pl licq2gaim.pl setup-gettext
 
 pixmapdir = $(datadir)/gnome/apps/Internet
