@@ -851,7 +851,8 @@ void  gaim_blist_add_group (GaimGroup *group, GaimBlistNode *node)
 			node->next->prev = gnode;
 		node->next = gnode;
 	} else {
-		gaimbuddylist->root->prev = gnode;
+		if(gaimbuddylist->root)
+			gaimbuddylist->root->prev = gnode;
 		gnode->next = gaimbuddylist->root;
 		gnode->prev = NULL;
 		gaimbuddylist->root = gnode;
