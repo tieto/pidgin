@@ -3705,7 +3705,8 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 	/* Remove anything else in our parent */
 	children = gtk_container_get_children(GTK_CONTAINER(parent));
 	while (children != NULL) {
-		gtk_container_remove(GTK_CONTAINER(parent), children->data);
+		if(children->data != gtkim->icon_container)
+			gtk_container_remove(GTK_CONTAINER(parent), children->data);
 		children = g_list_remove(children, children->data);
 	}
 
@@ -5620,7 +5621,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	GdkPixbuf *buf;
 
-	GtkWidget *vbox;
 	GtkWidget *event;
 	GtkWidget *frame;
 	GdkPixbuf *scale;
@@ -5650,8 +5650,9 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
 	/* Remove the current icon stuff */
-	if (gtkconv->u.im->icon != NULL)
-		gtk_widget_destroy(gtkconv->u.im->icon->parent->parent->parent);
+	if (gtkconv->u.im->icon_container != NULL)
+		gtk_widget_destroy(gtkconv->u.im->icon_container);
+	gtkconv->u.im->icon_container = NULL;
 
 	if (gtkconv->u.im->anim != NULL)
 		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
@@ -5669,8 +5670,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	if (gaim_conversation_get_gc(conv) == NULL)
 		return;
-
-
 
 	icon = gaim_conv_im_get_icon(GAIM_CONV_IM(conv));
 
@@ -5695,7 +5694,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	gtkconv->u.im->anim = gdk_pixbuf_animation_new_from_file(filename, &err);
 	/* make sure we remove the file as soon as possible */
 	unlink(filename);
-
 
 	if (err) {
 		gaim_debug(GAIM_DEBUG_ERROR, "gtkconv",
@@ -5730,12 +5728,13 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	g_object_unref(G_OBJECT(scale));
 
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	gtkconv->u.im->icon_container = gtk_vbox_new(FALSE, 0);
 
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame),
 							  (bm ? GTK_SHADOW_NONE : GTK_SHADOW_IN));
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkconv->u.im->icon_container), frame,
+					   FALSE, FALSE, 0);
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(frame), event);
@@ -5757,14 +5756,17 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	/* the button seems to get its size before the box, so... */
 	gtk_widget_size_request(gtkconv->send, &requisition);
 	if (button_type == GAIM_BUTTON_NONE || requisition.height * 1.5 < scale_height) {
-		gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox), vbox, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox),
+						   gtkconv->u.im->icon_container, FALSE, FALSE, 0);
 /*		gtk_box_reorder_child(GTK_BOX(gtkconv->lower_hbox), vbox, 0); */
 	} else {
-		gtk_box_pack_start(GTK_BOX(gtkconv->bbox), vbox, FALSE, FALSE, 0);
-		gtk_box_reorder_child(GTK_BOX(gtkconv->bbox), vbox, 0);
+		gtk_box_pack_start(GTK_BOX(gtkconv->bbox),
+						   gtkconv->u.im->icon_container, FALSE, FALSE, 0);
+		gtk_box_reorder_child(GTK_BOX(gtkconv->bbox),
+							  gtkconv->u.im->icon_container, 0);
 	}
 
-	gtk_widget_show(vbox);
+	gtk_widget_show(gtkconv->u.im->icon_container);
 	gtk_widget_show(frame);
 
 	/* The buddy icon code needs badly to be fixed. */

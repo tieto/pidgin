@@ -114,6 +114,7 @@ struct _GaimGtkImPane
 	gboolean a_virgin;
 
 	/* Buddy icon stuff */
+	GtkWidget *icon_container;
 	GtkWidget *icon;
 	gboolean show_icon;
 	gboolean animate;
