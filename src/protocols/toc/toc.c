@@ -1514,6 +1514,12 @@ static GList *toc_away_states(GaimConnection *gc)
 	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
 }
 
+static void
+change_pass(GaimConnection *gc)
+{
+	gaim_account_request_change_password(gaim_connection_get_account(gc));
+}
+
 static GList *toc_actions(GaimConnection *gc)
 {
 	GList *m = NULL;
@@ -1533,7 +1539,7 @@ static GList *toc_actions(GaimConnection *gc)
 
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Change Password");
-	pam->callback = show_change_passwd;
+	pam->callback = change_pass;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 

@@ -23,8 +23,10 @@
 #include "internal.h"
 #include "account.h"
 #include "debug.h"
+#include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "request.h"
 #include "signals.h"
 #include "server.h"
 #include "util.h"
@@ -246,6 +248,83 @@ gaim_account_notify_added(GaimAccount *account, const char *remote_user,
 
 	if (ui_ops != NULL && ui_ops->notify_added != NULL)
 		ui_ops->notify_added(account, remote_user, id, alias, message);
+}
+
+static void
+change_password_cb(GaimAccount *account, GaimRequestFields *fields)
+{
+	const char *orig_pass, *new_pass_1, *new_pass_2;
+
+	orig_pass  = gaim_request_fields_get_string(fields, "password");
+	new_pass_1 = gaim_request_fields_get_string(fields, "new_password_1");
+	new_pass_2 = gaim_request_fields_get_string(fields, "new_password_2");
+
+	if (g_utf8_collate(new_pass_1, new_pass_2))
+	{
+		gaim_notify_error(NULL, NULL,
+						  _("New passwords do not match."), NULL);
+
+		return;
+	}
+
+	if (*orig_pass == '\0' || *new_pass_1 == '\0' || *new_pass_2 == '\0')
+	{
+		gaim_notify_error(NULL, NULL,
+						  _("Fill out all fields completely."), NULL);
+		return;
+	}
+
+	serv_change_passwd(gaim_account_get_connection(account),
+					   orig_pass, new_pass_1);
+	gaim_account_set_password(account, new_pass_1);
+
+}
+
+void
+gaim_account_request_change_password(GaimAccount *account)
+{
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+	char primary[256];
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(gaim_account_is_connected(account));
+
+	fields = gaim_request_fields_new();
+
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_string_new("password", _("Original password"),
+										  NULL, FALSE);
+	gaim_request_field_string_set_masked(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("new_password_1",
+										  _("New password"),
+										  NULL, FALSE);
+	gaim_request_field_string_set_masked(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("new_password_2",
+										  _("New password (again)"),
+										  NULL, FALSE);
+	gaim_request_field_string_set_masked(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	g_snprintf(primary, sizeof(primary), _("Change password for %s"),
+			   gaim_account_get_username(account));
+
+	gaim_request_fields(gaim_account_get_connection(account),
+						NULL,
+						primary,
+						_("Please enter your current password and your "
+						  "new password."),
+						fields,
+						_("OK"), G_CALLBACK(change_password_cb),
+						_("Cancel"), NULL,
+						account);
 }
 
 void

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 7626 2003-09-30 06:43:17Z chipx86 $
+ * $Id: gg.c 7627 2003-09-30 07:47:38Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -33,9 +33,6 @@
 #include "prpl.h"
 #include "server.h"
 #include "util.h"
-
-#warning Replace show_change_passwd and remove #include <gaim.h>
-#include "gaim.h"
 
 #define GG_CONNECT_STEPS 5
 
@@ -728,6 +725,12 @@ static void search_results(GaimConnection *gc, gchar *webdata)
 	g_free(buf);
 }
 
+static void
+change_pass(GaimConnection *gc)
+{
+	gaim_account_request_change_password(gaim_connection_get_account(gc));
+}
+
 static void import_buddies_server_results(GaimConnection *gc, gchar *webdata)
 {
 	gchar *ptr;
@@ -1199,7 +1202,7 @@ static GList *agg_actions(GaimConnection *gc)
 
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Change Password");
-	pam->callback = show_change_passwd;
+	pam->callback = change_pass;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 

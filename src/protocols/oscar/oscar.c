@@ -6267,6 +6267,11 @@ static void oscar_show_setavailmsg(GaimConnection *gc)
 }
 #endif
 
+static void oscar_change_pass(GaimConnection *gc)
+{
+	gaim_account_request_change_password(gaim_connection_get_account(gc));
+}
+
 static void oscar_show_chpassurl(GaimConnection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
@@ -6335,7 +6340,7 @@ static GList *oscar_actions(GaimConnection *gc)
 
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Change Password");
-	pam->callback = show_change_passwd;
+	pam->callback = oscar_change_pass;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
