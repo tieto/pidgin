@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Gaim
 Comment=Multi-protocol Instant Messaging Client
+Comment[es]=Cliente de mensajería instantánea multiprotocolo
 Exec=gaim
 Icon=gaim.png
 Terminal=false
