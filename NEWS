@@ -8,6 +8,13 @@
 	from Gaim to keep myself from failing again, especially Christian and
 	Nathan.
 
+	Luke: Okay, this is NOT a bug fix release, at least for those of you
+	who use MSN. Christian put in a TON of effort rewritting the MSN prpl,
+	mega props to him on this release. In other news, we have alot of bugs
+	fixed, and a goodly number of the translations are more up to date 
+	than they were in earlier releases. There are some other significant
+	changes, but they are mostly backend stuff, yay for core/ui splits ;-)
+
 0.62 (04/23/2003):
 	Sean: This is just another standard bi-weekly Gaim release.  Nothing
 	really interesting, but it has some good bugfixes.  Personally, I've
