@@ -13,6 +13,7 @@ src/protocols/icq/gaim_icq.c
 src/protocols/irc/irc.c
 src/protocols/jabber/jabber.c
 src/protocols/msn/msn.c
+src/protocols/msn/switchboard.c
 src/protocols/napster/napster.c
 src/protocols/oscar/oscar.c
 src/protocols/toc/toc.c
@@ -20,13 +21,17 @@ src/protocols/yahoo/yahoo.c
 src/protocols/zephyr/zephyr.c
 src/about.c
 src/away.c
+src/browser.c
 src/buddy.c
 src/buddy_chat.c
 src/conversation.c
 src/dialogs.c
 src/ft.c
+src/gaim-remote.c
 src/gaimrc.c
 src/gtkconv.c
+src/gtkft.c
+src/gtkimhtml.c
 src/gtkutils.c
 src/html.c
 src/list.c

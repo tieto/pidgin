@@ -405,7 +405,7 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 	g_free(filename);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	w->window = gtk_dialog_new_with_buttons("", GTK_WINDOW(c->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, _("_Warn"), GTK_RESPONSE_OK, NULL);
+	w->window = gtk_dialog_new_with_buttons(_("Gaim - Warn User"), GTK_WINDOW(c->window), GTK_DIALOG_MODAL, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, _("_Warn"), GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(w->window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(w->window), "response", G_CALLBACK(do_warn), w);
 
@@ -4025,6 +4025,7 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 
 	GAIM_DIALOG(window);
 	gtk_window_set_role(GTK_WINDOW(window), "dialog");
+	gtk_window_set_title(GTK_WINDOW(window), _("Gaim - Clear Log"));
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
 	g_signal_connect(GTK_OBJECT(window), "delete_event", G_CALLBACK(destroy_dialog), window);

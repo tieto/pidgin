@@ -38,8 +38,8 @@ make your patch, simply run 'cvs diff -u >my.patch' and send it off;
 either post it on sf.net/projects/gaim in the patches section, or email it
 to gaim@marko.net.
 
-This file was last modified by $Author: faceprint $ on
-$Date: 2003-01-31 08:03:47 -0500 (Fri, 31 Jan 2003) $. Do not expect any information contained
+This file was last modified by $Author: lschiere $ on
+$Date: 2003-02-18 09:36:15 -0500 (Tue, 18 Feb 2003) $. Do not expect any information contained
 within to be current or correct.
 
 Here's something new. Someone requested that I comment the code. No. I'm a
@@ -143,20 +143,6 @@ SOURCE FILES
 about.c:
   Not much to say here, just a few basic functions.
 
-aim.c:
-  This is where the main() function is. It takes care of a lot of the
-  initialization stuff, and showing the login window. It's pretty tiny
-  and there's not really much to edit in it. This has some of the most
-  pointless functions, like gaim_setup, which optionally turns off sounds
-  on signon. A lot of this file should actually be part of other files.
-
-applet.c:
-  This controls most things that are related to the applet. I don't like
-  looking at this file because it still has functionsLikeThis. But at
-  least it doesn't have many of them anymore. Anyway, this file isn't
-  very big because there's really not much difference between the panel
-  version and the app version.
-
 away.c:
   This takes care of most of the away stuff: setting the away message
   (do_away_message); coming back (do_im_back); drawing the away window;
@@ -210,17 +196,6 @@ gtkimhtml.c:
   use any of gaim's code) and is actually a separate project from gaim
   (but is maintained by Eric).
 
-gtkspell.c:
-  This controls spell checking. It's not a widget per se but it does have
-  some influence over the GtkText widget. It's a separate project from
-  gaim; if you have a patch for this file send it to the author (the
-  contact info is in the file).
-
-gtkticker.c:
-  Syd, our resident GTK God, wrote a GtkWidget, GtkTicker. This is that
-  widget. It's cool, and it's tiny. This is actually a really good example
-  widget for those of you looking to write your own.
-
 html.c:
   Don't ask my why this is called html.c. Most of it is just grab_url,
   which does like the name says; it downloads a URL to show in the
@@ -236,6 +211,13 @@ list.c:
   This file contains all of the routines for managing buddy lists,
   including importing them from a file, saving them, adding and removing
   buddies and groups, etc.
+
+main.c:
+  This is where the main() function is. It takes care of a lot of the
+  initialization stuff, and showing the login window. It's pretty tiny
+  and there's not really much to edit in it. This has some of the most
+  pointless functions, like gaim_setup, which optionally turns off sounds
+  on signon. A lot of this file should actually be part of other files.
 
 md5.c:
   Oscar, Yahoo, and MSN all require md5 hashing, so better to put it in
@@ -261,9 +243,6 @@ perl.c:
   idea of what's going on in it, but I couldn't tell you exactly. The
   top half sets up perl and tells it what's going on and the bottom half
   implements the AIM module.
-
-plugins.c:
-  This contains the UI for the plugins dialog. It's mostly GTK.
 
 prefs.c:
   The important function in here is build_prefs, but the most useful
@@ -301,19 +280,24 @@ sound.c:
   this file will take care of determining if a sound should be played
   and which file should be played.
 
-ticker.c:
+util.c:
+  There's not really a lot of cohesion to this file; it's just a lot of
+  stuff that happened to be thrown into it for no apparent reason. None
+  of it is particularly tasty; it's all just utility functions. Just
+  like the name says.
+
+plugins/ticker/gtkticker.c:
+  Syd, our resident GTK God, wrote a GtkWidget, GtkTicker. This is that
+  widget. It's cool, and it's tiny. This is actually a really good example
+  widget for those of you looking to write your own.
+
+plugins/ticker/ticker.c:
   Syd is just so cool. I really can't get over it. He let me come
   visit him at Netscape one day, and I got to see all of their toys
   (don't worry, I'm under an NDA). Anyway, this file is for the buddy
   ticker. This is also a damn cool file because it's got all of the
   functions that you'd want right up at the top. Someday I want to be
   as cool as Syd.
-
-util.c:
-  There's not really a lot of cohesion to this file; it's just a lot of
-  stuff that happened to be thrown into it for no apparent reason. None
-  of it is particularly tasty; it's all just utility functions. Just
-  like the name says.
 
 For the PRPLs, the only protocol whose "main" gaim file isn't the same as
 the name of the protocol is ICQ; for that it's gaim_icq.c. But ICQ is
