@@ -34,11 +34,40 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "proxy.h"
 
-static int proxy_connect_none(char *host, unsigned short port)
+struct PHB {
+	GdkInputFunction func;
+	gpointer data;
+	char *host;
+	int port;
+	gint inpa;
+};
+
+static void no_one_calls(gpointer data, gint source, GdkInputCondition cond)
+{
+	struct PHB *phb = data;
+	int len, error = ETIMEDOUT;
+	debug_printf("Connected\n");
+	len = sizeof(error);
+	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+		close(source);
+		gdk_input_remove(phb->inpa);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb);
+		return;
+	}
+	fcntl(source, F_SETFL, 0);
+	gdk_input_remove(phb->inpa);
+	phb->func(phb->data, source, GDK_INPUT_READ);
+	g_free(phb);
+}
+
+static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 {
 	struct sockaddr_in sin;
 	struct hostent *hp;
@@ -46,20 +75,43 @@ static int proxy_connect_none(char *host, unsigned short port)
 
 	debug_printf("connecting to %s:%d with no proxy\n", host, port);
 
-	if (!(hp = gethostbyname(host)))
+	if (!(hp = gethostbyname(host))) {
+		g_free(phb);
 		return -1;
+	}
 
 	memset(&sin, 0, sizeof(struct sockaddr_in));
 	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
 	sin.sin_family = hp->h_addrtype;
 	sin.sin_port = htons(port);
 
-	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0)
+	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0) {
+		g_free(phb);
 		return -1;
+	}
 
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
-		close(fd);
-		return -1;
+		if ((errno == EINPROGRESS) || (errno == EINTR)) {
+			debug_printf("Connect would have blocked\n");
+			phb->inpa = gdk_input_add(fd, GDK_INPUT_WRITE, no_one_calls, phb);
+		} else {
+			close(fd);
+			g_free(phb);
+			return -1;
+		}
+	} else {
+		int len, error = ETIMEDOUT;
+		debug_printf("Connect didn't block\n");
+		len = sizeof(error);
+		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+			close(fd);
+			g_free(phb);
+			return -1;
+		}
+		fcntl(fd, F_SETFL, 0);
+		phb->func(phb->data, fd, GDK_INPUT_READ);
+		g_free(phb);
 	}
 
 	return fd;
@@ -68,153 +120,305 @@ static int proxy_connect_none(char *host, unsigned short port)
 #define HTTP_GOODSTRING "HTTP/1.0 200 Connection established"
 #define HTTP_GOODSTRING2 "HTTP/1.1 200 Connection established"
 
-static int proxy_connect_http(char *host, unsigned short port, char *proxyhost, unsigned short proxyport)
+static void http_canread(gpointer data, gint source, GdkInputCondition cond)
 {
-	struct hostent *hp;
-	struct sockaddr_in sin;
-	int fd = -1;
-	char cmd[384];
-	char inputline[8192];
 	int nlc = 0;
 	int pos = 0;
+	struct PHB *phb = data;
+	char inputline[8192];
 
-	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", host, port, proxyhost, proxyport);
+	gdk_input_remove(phb->inpa);
 
-	if (!(hp = gethostbyname(proxyhost)))
-		return -1;
-
-	memset(&sin, 0, sizeof(struct sockaddr_in));
-	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
-	sin.sin_family = hp->h_addrtype;
-	sin.sin_port = htons(proxyport);
-
-	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0)
-		return -1;
-
-	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
-		close(fd);
-		return -1;
-	}
-
-	snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\n\r\n", host, port);
-
-	if (send(fd, cmd, strlen(cmd), 0) < 0) {
-		close(fd);
-		return -1;
-	}
-	while ((nlc != 2) && (read(fd, &inputline[pos++], 1) == 1)) {
+	while ((nlc != 2) && (read(source, &inputline[pos++], 1) == 1)) {
 		if (inputline[pos-1] == '\n')
 			nlc++;
 		else if (inputline[pos-1] != '\r')
 			nlc = 0;
 	}
+	inputline[pos] = '\0';
 
 	debug_printf("Proxy says: %s\n", inputline);
 
-	if ((memcmp(HTTP_GOODSTRING, inputline, strlen(HTTP_GOODSTRING)) == 0) ||
-	     (memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2)) == 0)) {
-		return fd;
+	if ((memcmp(HTTP_GOODSTRING , inputline, strlen(HTTP_GOODSTRING )) == 0) ||
+	    (memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2)) == 0)) {
+		phb->func(phb->data, source, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
 	}
 
-	close(fd);
-	return -1;
+	close(source);
+	phb->func(phb->data, -1, GDK_INPUT_READ);
+	g_free(phb->host);
+	g_free(phb);
+	return;
 }
 
-static int proxy_connect_socks4(char *host, unsigned short port,
-				char *proxyhost, unsigned short proxyport)
+static void http_canwrite(gpointer data, gint source, GdkInputCondition cond)
 {
-	struct sockaddr_in sin;
-	unsigned char packet[12];
+	char cmd[384];
+	struct PHB *phb = data;
+	int len, error = ETIMEDOUT;
+	debug_printf("Connected\n");
+	if (phb->inpa > 0)
+		gdk_input_remove(phb->inpa);
+	len = sizeof(error);
+	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+	fcntl(source, F_SETFL, 0);
+
+	snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\n\r\n", phb->host, phb->port);
+	if (send(source, cmd, strlen(cmd), 0) < 0) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+
+	phb->inpa = gdk_input_add(source, GDK_INPUT_READ, http_canread, phb);
+}
+
+static int proxy_connect_http(char *host, unsigned short port,
+			      char *proxyhost, unsigned short proxyport,
+			      struct PHB *phb)
+{
 	struct hostent *hp;
+	struct sockaddr_in sin;
 	int fd = -1;
 
-	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", host, port, proxyhost, proxyport);
+	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", host, port, proxyhost, proxyport);
 
-	if (!(hp = gethostbyname(proxyhost)))
+	if (!(hp = gethostbyname(proxyhost))) {
+		g_free(phb);
 		return -1;
+	}
 
 	memset(&sin, 0, sizeof(struct sockaddr_in));
 	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
 	sin.sin_family = hp->h_addrtype;
 	sin.sin_port = htons(proxyport);
 
-	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0)
-		return -1;
-
-	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
-		close(fd);
+	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0) {
+		g_free(phb);
 		return -1;
 	}
 
+	phb->host = g_strdup(host);
+	phb->port = port;
+
+	fcntl(fd, F_SETFL, O_NONBLOCK);
+	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+		if ((errno == EINPROGRESS) || (errno == EINTR)) {
+			debug_printf("Connect would have blocked\n");
+			phb->inpa = gdk_input_add(fd, GDK_INPUT_WRITE, http_canwrite, phb);
+		} else {
+			close(fd);
+			g_free(phb->host);
+			g_free(phb);
+			return -1;
+		}
+	} else {
+		int len, error = ETIMEDOUT;
+		debug_printf("Connect didn't block\n");
+		len = sizeof(error);
+		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+			close(fd);
+			g_free(phb->host);
+			g_free(phb);
+			return -1;
+		}
+		fcntl(fd, F_SETFL, 0);
+		http_canwrite(phb, fd, GDK_INPUT_WRITE);
+	}
+
+	return fd;
+}
+
+static void s4_canread(gpointer data, gint source, GdkInputCondition cond)
+{
+	unsigned char packet[12];
+	struct PHB *phb = data;
+
+	gdk_input_remove(phb->inpa);
+
+	memset(packet, 0, sizeof(packet));
+	if (read(source, packet, 9) >= 4 && packet[1] == 90) {
+		phb->func(phb->data, source, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+
+	close(source);
+	phb->func(phb->data, -1, GDK_INPUT_READ);
+	g_free(phb->host);
+	g_free(phb);
+}
+
+static void s4_canwrite(gpointer data, gint source, GdkInputCondition cond)
+{
+	unsigned char packet[12];
+	struct hostent *hp;
+	struct PHB *phb = data;
+	int len, error = ETIMEDOUT;
+	debug_printf("Connected\n");
+	if (phb->inpa > 0)
+		gdk_input_remove(phb->inpa);
+	len = sizeof(error);
+	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+	fcntl(source, F_SETFL, 0);
+
 	/* XXX does socks4 not support host name lookups by the proxy? */
-	if (!(hp = gethostbyname(host)))
-		return -1;
+	if (!(hp = gethostbyname(phb->host))) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
 
 	packet[0] = 4;
 	packet[1] = 1;
-	packet[2] = port >> 8;
-	packet[3] = port & 0xff;
+	packet[2] = phb->port >> 8;
+	packet[3] = phb->port & 0xff;
 	packet[4] = (unsigned char)(hp->h_addr_list[0])[0];
 	packet[5] = (unsigned char)(hp->h_addr_list[0])[1];
 	packet[6] = (unsigned char)(hp->h_addr_list[0])[2];
 	packet[7] = (unsigned char)(hp->h_addr_list[0])[3];
 	packet[8] = 0;
-	if (write(fd, packet, 9) == 9) {
-		memset(packet, 0, sizeof(packet));
-		if (read(fd, packet, 9) >= 4 && packet[1] == 90)
-			return fd;
+	if (write(source, packet, 9) != 9) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
 	}
-	close(fd);
 
-	return -1;
+	phb->inpa = gdk_input_add(source, GDK_INPUT_READ, s4_canread, phb);
 }
 
-static int proxy_connect_socks5(char *host, unsigned short port,
-				char *proxyhost, unsigned short proxyport)
+static int proxy_connect_socks4(char *host, unsigned short port,
+				char *proxyhost, unsigned short proxyport,
+				struct PHB *phb)
 {
-	int i, fd = -1;
-	unsigned char buf[512];
 	struct sockaddr_in sin;
 	struct hostent *hp;
-	int hlen = strlen(host);
+	int fd = -1;
 
-	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", host, port, proxyhost, proxyport);
+	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", host, port, proxyhost, proxyport);
 
-	if (!(hp = gethostbyname(proxyhost)))
+	if (!(hp = gethostbyname(proxyhost))) {
+		g_free(phb);
 		return -1;
+	}
 
 	memset(&sin, 0, sizeof(struct sockaddr_in));
 	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
 	sin.sin_family = hp->h_addrtype;
 	sin.sin_port = htons(proxyport);
 
-	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0)
+	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0) {
+		g_free(phb);
 		return -1;
+	}
 
+	phb->host = g_strdup(host);
+	phb->port = port;
+
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
-		close(fd);
-		return -1;
+		if ((errno == EINPROGRESS) || (errno == EINTR)) {
+			debug_printf("Connect would have blocked\n");
+			phb->inpa = gdk_input_add(fd, GDK_INPUT_WRITE, s4_canwrite, phb);
+		} else {
+			close(fd);
+			g_free(phb->host);
+			g_free(phb);
+			return -1;
+		}
+	} else {
+		int len, error = ETIMEDOUT;
+		debug_printf("Connect didn't block\n");
+		len = sizeof(error);
+		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+			close(fd);
+			g_free(phb->host);
+			g_free(phb);
+			return -1;
+		}
+		fcntl(fd, F_SETFL, 0);
+		s4_canwrite(phb, fd, GDK_INPUT_WRITE);
 	}
 
-	i = 0;
-	buf[0] = 0x05;		/* SOCKS version 5 */
-	buf[1] = 0x01;
-	buf[2] = 0x00;
-	i = 3;
+	return fd;
+}
 
-	if (write(fd, buf, i) < i) {
-		close(fd);
-		return -1;
+static void s5_canread_again(gpointer data, gint source, GdkInputCondition cond)
+{
+	unsigned char buf[512];
+	struct PHB *phb = data;
+
+	gdk_input_remove(phb->inpa);
+	debug_printf("able to read again\n");
+
+	if (read(source, buf, 10) < 10) {
+		debug_printf("or not...\n");
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
+		debug_printf("bad data\n");
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
 	}
 
-	if (read(fd, buf, 2) < 2) {
-		close(fd);
-		return -1;
+	phb->func(phb->data, source, GDK_INPUT_READ);
+	g_free(phb->host);
+	g_free(phb);
+	return;
+}
+
+static void s5_canread(gpointer data, gint source, GdkInputCondition cond)
+{
+	unsigned char buf[512];
+	struct PHB *phb = data;
+	int hlen = strlen(phb->host);
+
+	gdk_input_remove(phb->inpa);
+	debug_printf("able to read\n");
+
+	if (read(source, buf, 2) < 2) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
 	}
 
 	if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
-		close(fd);
-		return -1;
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
 	}
 
 	buf[0] = 0x05;
@@ -222,38 +426,138 @@ static int proxy_connect_socks5(char *host, unsigned short port,
 	buf[2] = 0x00;		/* reserved */
 	buf[3] = 0x03;		/* address type -- host name */
 	buf[4] = hlen;
-	memcpy(buf + 5, host, hlen);
-	buf[5 + strlen(host)] = port >> 8;
-	buf[5 + strlen(host) + 1] = port & 0xff;
+	memcpy(buf + 5, phb->host, hlen);
+	buf[5 + strlen(phb->host)] = phb->port >> 8;
+	buf[5 + strlen(phb->host) + 1] = phb->port & 0xff;
 
-	if (write(fd, buf, (5 + strlen(host) + 2)) < (5 + strlen(host) + 2)) {
-		close(fd);
+	if (write(source, buf, (5 + strlen(phb->host) + 2)) < (5 + strlen(phb->host) + 2)) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+
+	phb->inpa = gdk_input_add(source, GDK_INPUT_READ, s5_canread_again, phb);
+}
+
+static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
+{
+	unsigned char buf[512];
+	int i;
+	struct PHB *phb = data;
+	int len, error = ETIMEDOUT;
+	debug_printf("Connected\n");
+	if (phb->inpa > 0)
+		gdk_input_remove(phb->inpa);
+	len = sizeof(error);
+	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+	fcntl(source, F_SETFL, 0);
+
+	i = 0;
+	buf[0] = 0x05;		/* SOCKS version 5 */
+	buf[1] = 0x01;
+	buf[2] = 0x00;
+	i = 3;
+
+	if (write(source, buf, i) < i) {
+		debug_printf("unable to write\n");
+		close(source);
+		phb->func(phb->data, -1, GDK_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
+		return;
+	}
+
+	phb->inpa = gdk_input_add(source, GDK_INPUT_READ, s5_canread, phb);
+}
+
+static int proxy_connect_socks5(char *host, unsigned short port,
+				char *proxyhost, unsigned short proxyport,
+				struct PHB *phb)
+{
+	int fd = -1;
+	struct sockaddr_in sin;
+	struct hostent *hp;
+
+	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", host, port, proxyhost, proxyport);
+
+	if (!(hp = gethostbyname(proxyhost))) {
+		g_free(phb);
 		return -1;
 	}
-	if (read(fd, buf, 10) < 10) {
-		close(fd);
+
+	memset(&sin, 0, sizeof(struct sockaddr_in));
+	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+	sin.sin_family = hp->h_addrtype;
+	sin.sin_port = htons(proxyport);
+
+	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0) {
+		g_free(phb);
 		return -1;
 	}
-	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
-		close(fd);
-		return -1;
+
+	phb->host = g_strdup(host);
+	phb->port = port;
+
+	fcntl(fd, F_SETFL, O_NONBLOCK);
+	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+		if ((errno == EINPROGRESS) || (errno == EINTR)) {
+			debug_printf("Connect would have blocked\n");
+			phb->inpa = gdk_input_add(fd, GDK_INPUT_WRITE, s5_canwrite, phb);
+		} else {
+			close(fd);
+			g_free(phb->host);
+			g_free(phb);
+			return -1;
+		}
+	} else {
+		int len, error = ETIMEDOUT;
+		debug_printf("Connect didn't block\n");
+		len = sizeof(error);
+		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+			close(fd);
+			g_free(phb->host);
+			g_free(phb);
+			return -1;
+		}
+		fcntl(fd, F_SETFL, 0);
+		s5_canwrite(phb, fd, GDK_INPUT_WRITE);
 	}
 
 	return fd;
 }
 
-int proxy_connect(char *host, int port, char *proxyhost, int proxyport, int proxytype)
+int proxy_connect(char *host, int port,
+		  char *proxyhost, int proxyport, int proxytype,
+		  GdkInputFunction func, gpointer data)
 {
-	if (!host || !port || (port == -1))
+	struct PHB *phb = g_new0(struct PHB, 1);
+	phb->func = func;
+	phb->data = data;
+
+	if (!host || !port || (port == -1) || !func) {
+		g_free(phb);
 		return -1;
-	else if ((proxytype == PROXY_NONE) ||
+	}
+
+	if ((proxytype == PROXY_NONE) ||
 		 !proxyhost || !proxyhost[0] ||
-		 !proxyport || (proxyport == -1)) return proxy_connect_none(host, port);
+		 !proxyport || (proxyport == -1))
+		return proxy_connect_none(host, port, phb);
 	else if (proxytype == PROXY_HTTP)
-		return proxy_connect_http(host, port, proxyhost, proxyport);
+		return proxy_connect_http(host, port, proxyhost, proxyport, phb);
 	else if (proxytype == PROXY_SOCKS4)
-		return proxy_connect_socks4(host, port, proxyhost, proxyport);
+		return proxy_connect_socks4(host, port, proxyhost, proxyport, phb);
 	else if (proxytype == PROXY_SOCKS5)
-		return proxy_connect_socks5(host, port, proxyhost, proxyport);
+		return proxy_connect_socks5(host, port, proxyhost, proxyport, phb);
+
+	g_free(phb);
 	return -1;
 }

@@ -841,15 +841,18 @@ struct chat_page {
 
 static struct chat_page *cp = NULL;
 
-static void refresh_list(GtkWidget *w, gpointer *m)
-{
-	char *text = grab_url(NULL, "http://www.aol.com/community/chat/allchats.html");
+static void ref_list_callback(gpointer data, char *text) {
 	char *c;
-	int len = strlen(text);
+	int len;
 	GtkWidget *item;
 	GList *items = GTK_LIST(cp->list1)->children;
 	struct chat_room *cr;
 	c = text;
+
+	if (!text)
+		return;
+
+	len = strlen(text);
 
 	while (items) {
 		g_free(gtk_object_get_user_data(GTK_OBJECT(items->data)));
@@ -907,6 +910,11 @@ static void refresh_list(GtkWidget *w, gpointer *m)
 	}
 	gtk_list_append_items(GTK_LIST(cp->list1), items);
 	g_free(text);
+}
+
+static void refresh_list(GtkWidget *w, gpointer *m)
+{
+	grab_url(NULL, "http://www.aol.com/community/chat/allchats.html", ref_list_callback, NULL);
 }
 
 static void add_chat(GtkWidget *w, gpointer *m)

@@ -30,12 +30,15 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <gtk/gtk.h>
 
 #define PROXY_NONE 0
 #define PROXY_HTTP 1
 #define PROXY_SOCKS4 2
 #define PROXY_SOCKS5 3
 
-extern int proxy_connect(char *host, int port, char *proxyhost, int proxyport, int proxytype);
+extern int proxy_connect(char *host, int port,
+			 char *proxyhost, int proxyport, int proxytype,
+			 GdkInputFunction func, gpointer data);
 
 #endif

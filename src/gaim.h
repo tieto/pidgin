@@ -590,7 +590,7 @@ extern void do_join_chat();
 
 /* Functions in html.c */
 extern struct g_url parse_url(char *);
-extern char *grab_url(struct aim_user *, char *);
+extern void grab_url(struct aim_user *, char *, void (*callback)(gpointer, char *), gpointer);
 extern gchar *strip_html(gchar *);
 
 /* Functions in idle.c */
@@ -838,8 +838,7 @@ extern void show_log(char *);
 extern void show_log_dialog(struct conversation *);
 extern void show_find_email(struct gaim_connection *gc);
 extern void show_find_info();
-extern void g_show_info (struct aim_user *, char *);
-extern void g_show_info_text (char *);
+extern void g_show_info_text(char *);
 extern void show_set_info(struct gaim_connection *);
 extern void show_set_dir();
 extern void show_fgcolor_dialog(struct conversation *c, GtkWidget *color);

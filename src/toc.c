@@ -115,13 +115,14 @@ struct signon {
 /* constants to identify proto_opts */
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
-#define USEROPT_SOCKSHOST 2
-#define USEROPT_SOCKSPORT 3
+#define USEROPT_PROXYHOST 2
+#define USEROPT_PROXYPORT 3
 #define USEROPT_PROXYTYPE 4
 
 static GtkWidget *join_chat_spin = NULL;
 static GtkWidget *join_chat_entry = NULL;
 
+static void toc_login_callback(gpointer, gint, GdkInputCondition);
 static void toc_callback(gpointer, gint, GdkInputCondition);
 static unsigned char *roast_password(char *);
 static void accept_file_dialog(struct ft_request *);
@@ -140,28 +141,41 @@ static void toc_login(struct aim_user *user)
 
 	g_snprintf(buf, sizeof buf, "Looking up %s",
 		   user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST);
-	/* this is such a hack */
 	set_login_progress(gc, 1, buf);
-	while (gtk_events_pending())
-		gtk_main_iteration();
-	if (!g_slist_find(connections, gc))
-		return;
-
-	tdt->toc_fd =
-	    proxy_connect(user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST,
-			  user->proto_opt[USEROPT_AUTHPORT][0] ? atoi(user->
-								      proto_opt[USEROPT_AUTHPORT]) :
-			  TOC_PORT, user->proto_opt[USEROPT_SOCKSHOST],
-			  atoi(user->proto_opt[USEROPT_SOCKSPORT]),
-			  atoi(user->proto_opt[USEROPT_PROXYTYPE]));
 
 	debug_printf("* Client connects to TOC\n");
+	tdt->toc_fd =
+	    proxy_connect(user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST,
+			  user->proto_opt[USEROPT_AUTHPORT][0] ?
+				  atoi(user->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
+			  user->proto_opt[USEROPT_PROXYHOST],
+			  atoi(user->proto_opt[USEROPT_PROXYPORT]),
+			  atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+			  toc_login_callback, gc);
+
 	if (tdt->toc_fd < 0) {
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed", user->proto_opt[USEROPT_AUTH]);
 		hide_login_progress(gc, buf);
 		signoff(gc);
 		return;
 	}
+}
+
+static void toc_login_callback(gpointer data, gint source, GdkInputCondition cond)
+{
+	struct gaim_connection *gc = data;
+	struct toc_data *tdt = gc->proto_data;
+	char buf[80];
+
+	if (source == -1) {
+		/* we didn't successfully connect. tdt->toc_fd is valid here */
+		hide_login_progress(gc, "Unable to connect.");
+		signoff(gc);
+		return;
+	}
+
+	if (tdt->toc_fd == 0)
+		tdt->toc_fd = source;
 
 	debug_printf("* Client sends \"FLAPON\\r\\n\\r\\n\"\n");
 	if (write(tdt->toc_fd, FLAPON, strlen(FLAPON)) < 0) {
@@ -278,6 +292,14 @@ static unsigned char *roast_password(char *pass)
 		pos += sprintf(&rp[pos], "%02x", pass[x] ^ roast[x % strlen(roast)]);
 	rp[pos] = '\0';
 	return rp;
+}
+
+static void toc_got_info(gpointer data, char *url_text)
+{
+	if (!url_text)
+		return;
+
+	g_show_info_text(url_text);
 }
 
 static void toc_callback(gpointer data, gint source, GdkInputCondition condition)
@@ -557,8 +579,13 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		name = strtok(NULL, ":");
 		url = strtok(NULL, ":");
 
-		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s", TOC_HOST, TOC_PORT, url);
-		g_show_info(gc->user, tmp);
+		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s",
+				gc->user->proto_opt[USEROPT_AUTH][0] ?
+					gc->user->proto_opt[USEROPT_AUTH] : TOC_HOST,
+				gc->user->proto_opt[USEROPT_AUTHPORT][0] ?
+					atoi(gc->user->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
+				url);
+		grab_url(gc->user, tmp, toc_got_info, NULL);
 	} else if (!strcasecmp(c, "DIR_STATUS")) {
 	} else if (!strcasecmp(c, "ADMIN_NICK_STATUS")) {
 	} else if (!strcasecmp(c, "ADMIN_PASSWD_STATUS")) {
@@ -993,12 +1020,12 @@ static void toc_print_option(GtkEntry * entry, struct aim_user *user)
 	} else if (entrynum == USEROPT_AUTHPORT) {
 		g_snprintf(user->proto_opt[USEROPT_AUTHPORT],
 			   sizeof(user->proto_opt[USEROPT_AUTHPORT]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_SOCKSHOST) {
-		g_snprintf(user->proto_opt[USEROPT_SOCKSHOST],
-			   sizeof(user->proto_opt[USEROPT_SOCKSHOST]), "%s", gtk_entry_get_text(entry));
-	} else if (entrynum == USEROPT_SOCKSPORT) {
-		g_snprintf(user->proto_opt[USEROPT_SOCKSPORT],
-			   sizeof(user->proto_opt[USEROPT_SOCKSPORT]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PROXYHOST) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYHOST],
+			   sizeof(user->proto_opt[USEROPT_PROXYHOST]), "%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_PROXYPORT) {
+		g_snprintf(user->proto_opt[USEROPT_PROXYPORT],
+			   sizeof(user->proto_opt[USEROPT_PROXYPORT]), "%s", gtk_entry_get_text(entry));
 	}
 }
 
@@ -1078,11 +1105,11 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 
 	entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSHOST);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYHOST);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(toc_print_option), user);
-	if (user->proto_opt[USEROPT_SOCKSHOST][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SOCKSHOST]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SOCKSHOST]);
+	if (user->proto_opt[USEROPT_PROXYHOST][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYHOST]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYHOST]);
 	}
 	gtk_widget_show(entry);
 
@@ -1097,11 +1124,11 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 
 	entry = gtk_entry_new();
 	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSPORT);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PROXYPORT);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(toc_print_option), user);
-	if (user->proto_opt[USEROPT_SOCKSPORT][0]) {
-		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SOCKSPORT]);
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SOCKSPORT]);
+	if (user->proto_opt[USEROPT_PROXYPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_PROXYPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PROXYPORT]);
 	}
 	gtk_widget_show(entry);
 
@@ -1375,6 +1402,7 @@ struct file_transfer {
 	char *ip;
 	int port;
 	long size;
+	struct stat st;
 
 	GtkWidget *window;
 	int files;
@@ -1521,6 +1549,23 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 	}
 }
 
+static void toc_send_file_connect(gpointer data, gint src, GdkInputCondition cond)
+{
+	struct file_transfer *ft = data;
+
+	if (src == -1) {
+		do_error_dialog(_("Could not connect for transfer!"), _("Error"));
+		g_free(ft->filename);
+		g_free(ft->cookie);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft);
+		return;
+	}
+
+	ft->inpa = gdk_input_add(src, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_send_file_callback, ft);
+}
+
 static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
@@ -1550,9 +1595,10 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 
 	fd =
 	    proxy_connect(ft->ip, ft->port,
-			  user->proto_opt[USEROPT_SOCKSHOST],
-			  atoi(user->proto_opt[USEROPT_SOCKSPORT]),
-			  atoi(user->proto_opt[USEROPT_PROXYTYPE]));
+			  user->proto_opt[USEROPT_PROXYHOST],
+			  atoi(user->proto_opt[USEROPT_PROXYPORT]),
+			  atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+			  toc_send_file_connect, ft);
 	if (fd < 0) {
 		do_error_dialog(_("Could not connect for transfer!"), _("Error"));
 		g_free(ft->filename);
@@ -1562,8 +1608,6 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 		g_free(ft);
 		return;
 	}
-
-	ft->inpa = gdk_input_add(fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_send_file_callback, ft);
 }
 
 static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition cond)
@@ -1683,15 +1727,63 @@ static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition 
 	}
 }
 
+static void toc_get_file_connect(gpointer data, gint src, GdkInputCondition cond)
+{
+	struct file_transfer *ft = data;
+	struct file_header *hdr;
+	char *buf;
+
+	if (src == -1) {
+		do_error_dialog(_("Could not connect for transfer!"), _("Error"));
+		fclose(ft->file);
+		g_free(ft->filename);
+		g_free(ft->cookie);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft);
+		return;
+	}
+
+	hdr = (struct file_header *)ft;
+	hdr->magic[0] = 'O'; hdr->magic[1] = 'F'; hdr->magic[2] = 'T'; hdr->magic[3] = '2';
+	hdr->hdrlen = htons(256);
+	hdr->hdrtype = htons(0x1108);
+	buf = frombase64(ft->cookie);
+	g_snprintf(hdr->bcookie, 8, "%s", buf);
+	g_free(buf);
+	hdr->totfiles = htons(1); hdr->filesleft = htons(1);
+	hdr->totparts = htons(1); hdr->partsleft = htons(1);
+	hdr->totsize = htonl((long)ft->st.st_size); /* combined size of all files */
+	/* size = strlen("mm/dd/yyyy hh:mm sizesize 'name'\r\n") */
+	hdr->size = htonl(28 + strlen(g_basename(ft->filename))); /* size of listing.txt */
+	hdr->modtime = htonl(ft->st.st_mtime);
+	hdr->checksum = htonl(0x89f70000); /* uh... */
+	g_snprintf(hdr->idstring, 32, "OFT_Windows ICBMFT V1.1 32");
+	hdr->flags = 0x02;
+	hdr->lnameoffset = 0x1A;
+	hdr->lsizeoffset = 0x10;
+	g_snprintf(hdr->name, 64, "listing.txt");
+	if (write(src, hdr, 256) < 0) {
+		do_error_dialog(_("Could not write file header!"), _("Error"));
+		fclose(ft->file);
+		g_free(ft->filename);
+		g_free(ft->cookie);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft);
+		return;
+	}
+
+	ft->inpa = gdk_input_add(src, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_get_file_callback, ft);
+}
+
 static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
-	struct file_header *hdr;
 	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
 	int fd;
 	struct aim_user *user;
 	char *buf, buf2[BUF_LEN * 2];
-	struct stat st;
 
 	if (file_is_dir(dirname, old_ft->window))
 		return;
@@ -1706,7 +1798,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 		g_free(ft);
 		return;
 	}
-	if (stat(dirname, &st)) {
+	if (stat(dirname, &ft->st)) {
 		buf = g_strdup_printf("Unable to examine %s!", dirname);
 		do_error_dialog(buf, "Error");
 		g_free(buf);
@@ -1727,9 +1819,10 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 
 	fd =
 	    proxy_connect(ft->ip, ft->port,
-			  user->proto_opt[USEROPT_SOCKSHOST],
-			  atoi(user->proto_opt[USEROPT_SOCKSPORT]),
-			  atoi(user->proto_opt[USEROPT_PROXYTYPE]));
+			  user->proto_opt[USEROPT_PROXYHOST],
+			  atoi(user->proto_opt[USEROPT_PROXYPORT]),
+			  atoi(user->proto_opt[USEROPT_PROXYTYPE]),
+			  toc_get_file_connect, ft);
 	if (fd < 0) {
 		do_error_dialog(_("Could not connect for transfer!"), _("Error"));
 		fclose(ft->file);
@@ -1740,38 +1833,6 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 		g_free(ft);
 		return;
 	}
-
-	hdr = (struct file_header *)ft;
-	hdr->magic[0] = 'O'; hdr->magic[1] = 'F'; hdr->magic[2] = 'T'; hdr->magic[3] = '2';
-	hdr->hdrlen = htons(256);
-	hdr->hdrtype = htons(0x1108);
-	buf = frombase64(ft->cookie);
-	g_snprintf(hdr->bcookie, 8, "%s", buf);
-	g_free(buf);
-	hdr->totfiles = htons(1); hdr->filesleft = htons(1);
-	hdr->totparts = htons(1); hdr->partsleft = htons(1);
-	hdr->totsize = htonl((long)st.st_size); /* combined size of all files */
-	/* size = strlen("mm/dd/yyyy hh:mm sizesize 'name'\r\n") */
-	hdr->size = htonl(28 + strlen(g_basename(ft->filename))); /* size of listing.txt */
-	hdr->modtime = htonl(st.st_mtime);
-	hdr->checksum = htonl(0x89f70000); /* uh... */
-	g_snprintf(hdr->idstring, 32, "OFT_Windows ICBMFT V1.1 32");
-	hdr->flags = 0x02;
-	hdr->lnameoffset = 0x1A;
-	hdr->lsizeoffset = 0x10;
-	g_snprintf(hdr->name, 64, "listing.txt");
-	if (write(fd, hdr, 256) < 0) {
-		do_error_dialog(_("Could not write file header!"), _("Error"));
-		fclose(ft->file);
-		g_free(ft->filename);
-		g_free(ft->cookie);
-		g_free(ft->user);
-		g_free(ft->ip);
-		g_free(ft);
-		return;
-	}
-
-	ft->inpa = gdk_input_add(fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_get_file_callback, ft);
 }
 
 static void cancel_callback(gpointer a, struct file_transfer *ft) {
