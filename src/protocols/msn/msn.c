@@ -1416,7 +1416,7 @@ char *name()
 
 char *description()
 {
-	return "Allows gaim to use the MSN protocol.";
+	return PRPL_DESC("MSN");
 }
 
 #endif

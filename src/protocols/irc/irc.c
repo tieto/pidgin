@@ -2111,7 +2111,7 @@ char *name()
 
 char *description()
 {
-	return "Allows gaim to use the IRC protocol";
+	return PRPL_DESC("IRC");
 }
 
 #endif

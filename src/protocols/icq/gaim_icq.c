@@ -567,7 +567,7 @@ char *name()
 
 char *description()
 {
-	return "Allows gaim to use the ICQ protocol";
+	return PRPL_DESC("ICQ");
 }
 
 #endif

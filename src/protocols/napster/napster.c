@@ -1234,7 +1234,7 @@ char *name()
 
 char *description()
 {
-	return "Allows gaim to use the Napster protocol.  Yes, kids, drugs are bad.";
+	return PRPL_DESC("Napster");
 }
 
 #endif

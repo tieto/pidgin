@@ -39,6 +39,13 @@
 /* DON'T TAKE AN UNASSIGNED NUMBER! Talk to Eric or Rob if you'd like
  * to create a new PRPL. */
 
+#define PRPL_DESC(x)	"Allows gaim to use the " x " protocol.\n\n" \
+			"Now that you have loaded this protocol, use the " \
+			"Account Editor to add an account that uses this " \
+			"protocol. You can access the Account Editor from " \
+			"the \"Accounts\" button on the login window or " \
+			"in the \"Tools\" menu in the buddy list window."
+
 #define DEFAULT_PROTO   PROTO_OSCAR
 
 /* These should all be stuff that some plugins can do and others can't */

@@ -3309,7 +3309,7 @@ char *name()
 
 char *description()
 {
-	return "Allows gaim to use the Oscar protocol.";
+	return PRPL_DESC("Oscar");
 }
 
 #endif

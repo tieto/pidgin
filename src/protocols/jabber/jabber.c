@@ -2041,7 +2041,7 @@ char *name()
 
 char *description()
 {
-	return "Allows gaim to use the Jabber protocol";
+	return PRPL_DESC("Jabber");
 }
 
 #endif

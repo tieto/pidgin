@@ -973,7 +973,7 @@ char *name()
 
 char *description()
 {
-	return "Allows gaim to use the Zephyr protocol";
+	return PRPL_DESC("Zephyr");
 }
 
 #endif

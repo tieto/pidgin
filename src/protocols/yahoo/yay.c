@@ -806,7 +806,7 @@ char *name()
 
 char *description()
 {
-	return "Allows gaim to use the Yahoo protocol";
+	return PRPL_DESC("Yahoo");
 }
 
 #endif

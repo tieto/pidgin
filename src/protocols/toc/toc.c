@@ -1276,7 +1276,7 @@ char *name()
 
 char *description()
 {
-	return "Allows gaim to use the TOC protocol.";
+	return PRPL_DESC("TOC");
 }
 
 #endif
