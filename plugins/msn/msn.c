@@ -490,6 +490,8 @@ void msn_login(struct aim_user *user) {
 	
 	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
 	set_login_progress(gc, 2, buf);
+	while (gtk_events_pending())
+		gtk_main_iteration();
 
 	/* This is where we will attempt to sign on */
 	g_snprintf(buf, 4096, "VER %d %s\n", trId, mdata->protocol);
@@ -603,6 +605,9 @@ void msn_login(struct aim_user *user) {
 
 	}
 	set_login_progress(gc, 3, "Getting Config");
+	while (gtk_events_pending())
+		gtk_main_iteration();
+
 	g_snprintf(buf, 4096, "SYN %d 0\n", trId);
 	write(mdata->fd, buf, strlen(buf));
 
