@@ -132,8 +132,44 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 	printf("MSN ==> %s\n", buf);
 
-	/* Check to see what was just sent back to us.  We should be seeing a VER tag. */
-	if (!strncmp("LST ", buf, 4))
+	if (!strncmp("NLN ", buf, 4) || !strncmp("ILN ", buf, 4))
+	{
+		int status;
+		int query;
+		char **res;
+
+		res = g_strsplit(buf, " ", 0);
+
+		if (!strcmp(res[0], "NLN"))
+			query = 1;
+		else
+			query = 2;
+
+		if (!strcasecmp(res[query], "NLN"))
+			status = UC_NORMAL;
+		else if (!strcasecmp(res[query], "BSY"))
+			status = UC_NORMAL | (MSN_BUSY << 5);
+		else if (!strcasecmp(res[query], "IDL"))
+			status = UC_NORMAL | (MSN_IDLE << 5);
+		else if (!strcasecmp(res[query], "BRB"))
+			status = UC_NORMAL | (MSN_BRB << 5);
+		else if (!strcasecmp(res[query], "AWY"))
+			status = UC_UNAVAILABLE;
+		else if (!strcasecmp(res[query], "PHN"))
+			status = UC_NORMAL | (MSN_PHONE << 5);
+		else if (!strcasecmp(res[query], "LUN"))
+			status = UC_NORMAL | (MSN_LUNCH << 5);
+		else
+			status = UC_NORMAL;
+
+		serv_got_update(gc, res[query+1], 1, 0, 0, 0, status, 0);
+
+		g_strfreev(res);
+
+		return;
+
+	}
+	else if (!strncmp("LST ", buf, 4))
 	{
 		char **res;
 
