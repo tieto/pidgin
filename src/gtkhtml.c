@@ -2698,12 +2698,12 @@ void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit, int newline)
 
 	/* make sure pixmaps drop down a line after a <BR> */
 	if (last_hb->newline)
-		html->current_y += private->height + 2;
+		html->current_y += private->height + 5;
 
 	/* wrap pixmaps */
 	gdk_window_get_size(html->html_area, &width, &height);
 	if ((html->current_x + private->width) >= width) {
-		html->current_y += private->height + 2;
+		html->current_y += private->height + 5;
 		html->current_x = 0;
 	}
 			
@@ -2729,8 +2729,8 @@ void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit, int newline)
 
 	if (html->current_x == BORDER_WIDTH)
 	{
-		html->current_y += hb->height;
-		hb->y += hb->height;
+		html->current_y += hb->height + 3;
+		hb->y += hb->height + 3;
 	}
 
 
@@ -2824,7 +2824,7 @@ static void gtk_html_add_text(GtkHtml * html,
 		if (html->current_x > 0)
 			html->current_x = 0;
 		else
-			html->current_y += cfont->ascent + cfont->descent + 2;
+			html->current_y += cfont->ascent + cfont->descent + 5;
 		return;
 	}
 
@@ -2933,7 +2933,7 @@ static void gtk_html_add_text(GtkHtml * html,
 
 	if (html->current_x == 0)
 	{
-		html->current_y += height;
+		html->current_y += height + 3;
 		gdk_text_extents(cfont, text, 1, &lb, NULL, NULL, NULL, NULL);
 		html->current_x += (2 - lb);
 	}
