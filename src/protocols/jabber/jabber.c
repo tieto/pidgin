@@ -1111,12 +1111,14 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 			querynode = xmlnode_get_tag(p->x, "query");
 			xmlns = xmlnode_get_attrib(querynode, "xmlns");
 			vcard = xmlnode_get_tag(p->x, "vCard");
+			if (!vcard)
+				vcard = xmlnode_get_tag(p->x, "VCARD");
 
 			if (NSCHECK(querynode, NS_ROSTER)) {
 				jabber_handleroster(j, querynode);
 			} else if (NSCHECK(querynode, NS_VCARD)) {
 			   	jabber_handlevcard(j, querynode, from);
-			} else if(vcard) {
+			} else if (vcard) {
 				jabber_handlevcard(j, vcard, from);
 			} else {
 				/* debug_printf("jabber:iq:query: %s\n", xmlns); */
