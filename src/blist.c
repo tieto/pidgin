@@ -134,7 +134,6 @@ void gaim_contact_compute_priority_buddy(GaimContact *contact)
 			bnode = bnode->next)
 	{
 		GaimBuddy *buddy;
-		GaimPresence *presence;
 
 		if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 			continue;
@@ -149,13 +148,11 @@ void gaim_contact_compute_priority_buddy(GaimContact *contact)
  		{
  			int cmp;
  
- 			presence = gaim_buddy_get_presence(buddy);
- 
- 			cmp = gaim_presence_compare(gaim_buddy_get_presence(new_priority),
-					gaim_buddy_get_presence(buddy));
+			cmp = gaim_presence_compare(gaim_buddy_get_presence(new_priority),
+			                            gaim_buddy_get_presence(buddy));
 
  			if (cmp > 0 || (cmp == 0 &&
-						gaim_prefs_get_bool("/core/contact/last_match")))
+			                gaim_prefs_get_bool("/core/contact/last_match")))
  			{
  				new_priority = buddy;
  			}
