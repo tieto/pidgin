@@ -1,10 +1,10 @@
 
 # Define 'timezone', 'altzone' and 'daylight'
 # http://www.gnu.org/software/ac-archive/Miscellaneous/ac_var_timezone_externals.html
-# Use instead of `AC_STRUCT_TIMEZONE' to determine whether the
-# the external timezone variables `timezone', `altzone' and `daylight' exist,
-# defining `HAVE_TIMEZONE', `HAVE_ALTZONE' and `HAVE_DAYLIGHT' respectively
-# (as well as gaining the macros defined by `AC_STRUCT_TIMEZONE').
+# Use instead of 'AC_STRUCT_TIMEZONE' to determine whether the
+# the external timezone variables 'timezone', 'altzone' and 'daylight' exist,
+# defining 'HAVE_TIMEZONE', 'HAVE_ALTZONE' and 'HAVE_DAYLIGHT' respectively
+# (as well as gaining the macros defined by 'AC_STRUCT_TIMEZONE').
 # Mark R.Bannister <markb@freedomware.co.uk>
 AC_DEFUN([AC_VAR_TIMEZONE_EXTERNALS],
 [  AC_REQUIRE([AC_STRUCT_TIMEZONE])dnl
@@ -25,14 +25,14 @@ AC_DEFUN([AC_VAR_TIMEZONE_EXTERNALS],
    ])
    if test $mb_cv_var_timezone = yes; then
       AC_DEFINE([HAVE_TIMEZONE], 1,
-              [Define if you have the external `timezone' variable.])
+              [Define if you have the external 'timezone' variable.])
    fi
    if test $mb_cv_var_altzone = yes; then
       AC_DEFINE([HAVE_ALTZONE], 1,
-              [Define if you have the external `altzone' variable.])
+              [Define if you have the external 'altzone' variable.])
    fi
    if test $mb_cv_var_daylight = yes; then
       AC_DEFINE([HAVE_DAYLIGHT], 1,
-              [Define if you have the external `daylight' variable.])
+              [Define if you have the external 'daylight' variable.])
    fi
 ])
