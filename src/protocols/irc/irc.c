@@ -229,7 +229,7 @@ static void irc_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	struct irc_conn *irc;
-	char *buf, **userparts;
+	char **userparts;
 	const char *username = gaim_account_get_username(account);
 	int err;
 
@@ -256,9 +256,7 @@ static void irc_login(GaimAccount *account, GaimStatus *status)
 	irc->msgs = g_hash_table_new(g_str_hash, g_str_equal);
 	irc_msg_table_build(irc);
 
-	buf = g_strdup_printf(_("Logging in: %s"), username);
-	gaim_connection_update_progress(gc, buf, 1, 2);
-	g_free(buf);
+	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
 
 	if (gaim_account_get_bool(account, "ssl", FALSE)) {
 		if (gaim_ssl_is_supported()) {
