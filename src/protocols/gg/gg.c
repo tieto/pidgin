@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2514 2001-10-14 11:36:36Z warmenhoven $
+ * $Id: gg.c 2531 2001-10-16 23:24:35Z warmenhoven $
  *
  * Copyright (C) 2001, Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -523,7 +523,8 @@ static void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		account_online(gc);
 		serv_finish_login(gc);
 
-		do_import(gc, NULL);
+		if (bud_list_cache_exists(gc))
+			do_import(gc, NULL);
 		break;
 	case GG_EVENT_CONN_FAILED:
 		gaim_input_remove(gc->inpa);

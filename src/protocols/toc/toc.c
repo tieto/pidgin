@@ -551,7 +551,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		account_online(gc);
 		serv_finish_login(gc);
 
-		do_import(gc, NULL);
+		if (bud_list_cache_exists(gc))
+			do_import(gc, NULL);
 
 		/* Client sends TOC toc_init_done message */
 		debug_printf("* Client sends TOC toc_init_done message\n");
@@ -586,7 +587,8 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				signoff(gc);
 				return;
 			}
-			do_import(gc, NULL);
+			if (bud_list_cache_exists(gc))
+				do_import(gc, NULL);
 			g_snprintf(snd, sizeof snd, "toc_init_done");
 			sflap_send(gc, snd, -1, TYPE_DATA);
 			do_error_dialog(_("TOC has come back from its pause. You may now send"
