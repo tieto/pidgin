@@ -4646,6 +4646,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 	GtkWidget *tabby, *menu_tabby;
+	GtkWidget *close_image;
 	gboolean new_ui;
 	GaimConversationType conv_type;
 	const char *name;
@@ -4751,9 +4752,9 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	gtkconv->close = gtk_button_new();
 	gtk_widget_set_size_request(GTK_WIDGET(gtkconv->close), 16, 16);
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->close), GTK_RELIEF_NONE);
-	gtk_container_add(GTK_CONTAINER(gtkconv->close),
-			  gtk_image_new_from_stock(GTK_STOCK_CLOSE,
-			  GTK_ICON_SIZE_MENU));
+	close_image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	gtk_widget_show(close_image);
+	gtk_container_add(GTK_CONTAINER(gtkconv->close), close_image);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
 						 _("Close conversation"), NULL);
 
@@ -4796,7 +4797,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/close_on_tabs"))
-		gtk_widget_show_all(gtkconv->close);
+		gtk_widget_show(gtkconv->close);
 
 	gtk_widget_show(tabby);
 	gtk_widget_show(menu_tabby);
