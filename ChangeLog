@@ -121,7 +121,7 @@ version 0.60:
 		- i18n capable text input widget (Thanks Ethan Blanton, 
 		  David Odin, etc)
 		- Privacy dialog
-		- Various Dialogs (Send New Message, Add Buddy)
+		- Various Dialogs (Send New Message, Add Buddy, Rename Group)
 	* Read proxy environment variables. (Thanks, Christian Hammond)
 	* Fixed security vulnerability with manual browser option (Thanks,
 	  Robert McQueen)

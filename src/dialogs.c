@@ -955,7 +955,7 @@ void show_add_group(struct gaim_connection *gc)
 	g_free(filename);
 	a->gc = gc;
 
-	a->window =  gtk_dialog_new_with_buttons("", GTK_WINDOW(blist), GTK_DIALOG_MODAL, 
+	a->window =  gtk_dialog_new_with_buttons(_("Gaim - Add Group"), GTK_WINDOW(blist), GTK_DIALOG_MODAL, 
 						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_ADD, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(a->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(a->window), 6);
@@ -1118,9 +1118,11 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	a->entry = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), a->entry, 1, 2, 0, 1);
 	gtk_widget_grab_focus(a->entry);
+	
 	if (buddy != NULL)
 		gtk_entry_set_text(GTK_ENTRY(a->entry), buddy);
-	g_signal_connect(GTK_OBJECT(a->entry), "activate", G_CALLBACK(do_add_buddy), a);
+
+	gtk_entry_set_activates_default (GTK_ENTRY(a->entry), TRUE);
 
 	label = gtk_label_new(_("Alias"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -1130,6 +1132,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	gtk_table_attach_defaults(GTK_TABLE(table), a->entry_for_alias, 1, 2, 1, 2);
 	if (alias != NULL)
 		gtk_entry_set_text(GTK_ENTRY(a->entry_for_alias), alias);
+	gtk_entry_set_activates_default (GTK_ENTRY(a->entry_for_alias), TRUE);
 
 	label = gtk_label_new(_("Group"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -4301,36 +4304,39 @@ void show_log(char *nm)
 /*  The dialog for renaming groups                                        */
 /*------------------------------------------------------------------------*/
 
-static void do_rename_group(GtkObject *obj, GtkWidget *entry)
+static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 {
 	const char *new_name;
 	struct group *g;
 	struct group *orig;
 	struct gaim_connection *gc;
 
-	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
-	g = gtk_object_get_user_data(obj);
+	if (resp == GTK_RESPONSE_OK) {
 
-	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
-		char *prevname;
-		gc = g->gc;
+		new_name = gtk_entry_get_text(GTK_ENTRY(entry));
+		g = gtk_object_get_user_data(GTK_OBJECT(entry));
 
-		if ((orig = find_group(g->gc, new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
-			orig->members = g_slist_concat(orig->members, g->members);
-			handle_group_rename(orig, g->name);
-			g->gc->groups = g_slist_remove(g->gc->groups, g);
-			/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
-			serv_rename_group(gc, g, new_name);
-			g_free(g);
-		} else {
-			prevname = g_strdup(g->name);
-			serv_rename_group(gc, g, new_name);
-			g_snprintf(g->name, sizeof(g->name), "%s", new_name);
-			handle_group_rename(g, prevname);
-			/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
-			g_free(prevname);
+		if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
+			char *prevname;
+			gc = g->gc;
+	
+			if ((orig = find_group(g->gc, new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
+				orig->members = g_slist_concat(orig->members, g->members);
+				handle_group_rename(orig, g->name);
+				g->gc->groups = g_slist_remove(g->gc->groups, g);
+				/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
+				serv_rename_group(gc, g, new_name);
+				g_free(g);
+			} else {
+				prevname = g_strdup(g->name);
+				serv_rename_group(gc, g, new_name);
+				g_snprintf(g->name, sizeof(g->name), "%s", new_name);
+				handle_group_rename(g, prevname);
+				/* FIXME, i don't like calling this. it's sloppy. */ build_edit_tree();
+				g_free(prevname);
+			}
+			do_export(gc);
 		}
-		do_export(gc);
 	}
 
 	destroy_dialog(rename_dialog, rename_dialog);
@@ -4338,62 +4344,59 @@ static void do_rename_group(GtkObject *obj, GtkWidget *entry)
 
 void show_rename_group(GtkWidget *unused, struct group *g)
 {
-	GtkWidget *mainbox;
-	GtkWidget *frame;
-	GtkWidget *fbox;
-	GtkWidget *bbox;
-	GtkWidget *button;
-	GtkWidget *name_entry;
+
+	GtkWidget *hbox, *vbox;
 	GtkWidget *label;
+	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+	GtkWidget *img = gtk_image_new_from_file(filename);
+	GtkWidget *name_entry;
+
+	g_free(filename);
 
 	if (!rename_dialog) {
-		GAIM_DIALOG(rename_dialog);
-		gtk_window_set_role(GTK_WINDOW(rename_dialog), "rename_dialog");
-		gtk_window_set_policy(GTK_WINDOW(rename_dialog), FALSE, TRUE, TRUE);
-		gtk_window_set_title(GTK_WINDOW(rename_dialog), _("Gaim - Rename Group"));
-		g_signal_connect(GTK_OBJECT(rename_dialog), "destroy",
-				   G_CALLBACK(destroy_dialog), rename_dialog);
-		gtk_widget_realize(rename_dialog);
+		rename_dialog =  gtk_dialog_new_with_buttons(_("Gaim - Rename Group"), GTK_WINDOW(blist), GTK_DIALOG_MODAL, 
+						 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+		gtk_dialog_set_default_response (GTK_DIALOG(rename_dialog), GTK_RESPONSE_OK);
+		gtk_container_set_border_width (GTK_CONTAINER(rename_dialog), 6);
+		gtk_window_set_resizable(GTK_WINDOW(rename_dialog), FALSE);
+		gtk_dialog_set_has_separator(GTK_DIALOG(rename_dialog), FALSE);
+		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(rename_dialog)->vbox), 12);
+		gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(rename_dialog)->vbox), 6);
+		
+		hbox = gtk_hbox_new(FALSE, 12);
+		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(rename_dialog)->vbox), hbox);
+		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-		mainbox = gtk_vbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
-		gtk_container_add(GTK_CONTAINER(rename_dialog), mainbox);
-
-		frame = gtk_frame_new(_("Rename Group"));
-		gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
-
-		fbox = gtk_hbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-		gtk_container_add(GTK_CONTAINER(frame), fbox);
-
-		label = gtk_label_new(_("New name:"));
-		gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
-
+		vbox = gtk_vbox_new(FALSE, 0);
+		gtk_container_add(GTK_CONTAINER(hbox), vbox);
+		
+		label = gtk_label_new(_("Please enter a new name for the selected group.\n"));
+		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+		
+		hbox = gtk_hbox_new(FALSE, 6);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		
+		label = gtk_label_new(NULL);
+		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Group:"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+			
 		name_entry = gtk_entry_new();
-		gtk_box_pack_start(GTK_BOX(fbox), name_entry, TRUE, TRUE, 0);
+		gtk_entry_set_activates_default (GTK_ENTRY(name_entry), TRUE);
 		gtk_object_set_user_data(GTK_OBJECT(name_entry), g);
 		gtk_entry_set_text(GTK_ENTRY(name_entry), g->name);
-		g_signal_connect(GTK_OBJECT(name_entry), "activate",
-				   G_CALLBACK(do_rename_group), name_entry);
-		gtk_widget_grab_focus(name_entry);
-
-		bbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
-
-		button = picture_button(rename_dialog, _("OK"), ok_xpm);
-		gtk_object_set_user_data(GTK_OBJECT(button), g);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(button), "clicked",
-				   G_CALLBACK(do_rename_group), name_entry);
-
-		button = picture_button(rename_dialog, _("Cancel"), cancel_xpm);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(button), "clicked",
-				   G_CALLBACK(destroy_dialog), rename_dialog);
+		gtk_box_pack_start(GTK_BOX(hbox), name_entry, FALSE, FALSE, 0);
+		gtk_entry_set_activates_default (GTK_ENTRY(name_entry), TRUE);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(name_entry));
+	
+		g_signal_connect(G_OBJECT(rename_dialog), "response", G_CALLBACK(do_rename_group), name_entry);
 
 	}
 
 	gtk_widget_show_all(rename_dialog);
+	gtk_widget_grab_focus(GTK_WIDGET(name_entry));
 }
 
 
