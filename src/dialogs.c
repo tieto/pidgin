@@ -2083,7 +2083,7 @@ void do_export(GtkWidget *w, void *dummy)
 		file = getenv( "HOME" );
 		if ( file != (char *) NULL ) {
 			FILE *dir;
-			sprintf(buf, "%s/.gaim/");
+			sprintf(buf, "%s/.gaim/", file);
 			dir = fopen(buf, "r");
 			if (!dir)
 				mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
