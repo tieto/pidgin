@@ -2896,15 +2896,28 @@ static void gtk_html_add_text(GtkHtml * html,
 	 */
 
 	if ((maxwidth == (hwidth - 8) && gdk_text_measure(cfont, text, num) > maxwidth) || gdk_text_measure(cfont, text, num) < 0) {
+		/* so here's how it works. we divide it in half. we look for the next whitespace char.
+		 * we print the first half up to the whitespace char, then the second half. if we
+		 * didn't find a whitespace char, we search backwards for one. if we still don't find
+		 * one, we just print the two halves; it would have wrapped anyway */
+		/* FIXME: we should probably look for the previous whitespace character first, but eh. */
 		char *tmp1, *tmp2;
+		int pos = num / 2;
 		static int count = 0;
 		count ++;
-		tmp1 = g_malloc(num / 2 + 1);
-		tmp2 = g_malloc(num / 2 + 2);
-		g_snprintf(tmp1, num / 2 + 1, "%s", text);
-		g_snprintf(tmp2, num / 2 + 2, "%s", text + num / 2);
-		gtk_html_add_text(html, cfont, fore, back, tmp1, num / 2 + 1, uline, strike, url);
-		gtk_html_add_text(html, cfont, fore, back, tmp2, num / 2 + 2, uline, strike, url);
+		while (pos < num && !isspace(text[pos])) pos++;
+		if (pos == num) {
+			pos = num/2;
+			while (pos > 0 && !isspace(text[pos])) pos--;
+			if (!pos) pos = num / 2;
+		}
+		tmp1 = g_malloc(pos + 1);
+		tmp2 = g_malloc(num - pos + 1);
+		g_snprintf(tmp1, pos + 1, "%s", text);
+		g_snprintf(tmp2, num - pos + 1, "%s", text + pos + 1);
+		gtk_html_add_text(html, cfont, fore, back, tmp1, pos + 1, uline, strike, url);
+		gtk_html_add_text(html, cfont, fore, back, text + pos, 1, uline, strike, url);
+		gtk_html_add_text(html, cfont, fore, back, tmp2, num - pos + 1, uline, strike, url);
 		g_free(tmp1);
 		g_free(tmp2);
 		g_free(text);
