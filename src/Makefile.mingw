@@ -100,6 +100,7 @@ DLL_C_SRC =		about.c \
 			gtkdebug.c \
 			gtkft.c \
 			gtkimhtml.c \
+			gtklog.c \
 			gtknotify.c \
 			gtkplugin.c \
 			gtkpounce.c \
