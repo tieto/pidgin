@@ -4354,6 +4354,8 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	{
 		GaimBlistNode *n = NULL;
 		GaimBuddy *b;
+		unsigned int index;
+
 		memcpy(&n, sd->data, sizeof(n));
 
 		if (GAIM_BLIST_NODE_IS_CONTACT(n))
@@ -4363,9 +4365,28 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		else
 			return;
 
-		c = gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
+		/*
+		 * If we already have an open conversation with this buddy, then
+		 * just move the conv to this window.  Otherwise, create a new
+		 * conv and add it to this window.
+		 */
+		c = gaim_find_conversation(b->name);
+		if (c != NULL) {
+			GaimConvWindow *oldwin;
+			oldwin = gaim_conversation_get_window(c);
+			index = gaim_conversation_get_index(c);
+			if (oldwin != win) {
+				gaim_conv_window_remove_conversation(oldwin, index);
+				gaim_conv_window_add_conversation(win, c);
+			}
+		} else {
+			c = gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
+			gaim_conv_window_add_conversation(win, c);
+		}
 
-		gaim_conv_window_add_conversation(win, c);
+		/* Make this conversation the active conversation */
+		index = gaim_conversation_get_index(c);
+		gaim_conv_window_switch_conversation(win, index);
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
