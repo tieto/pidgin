@@ -315,7 +315,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 	icon =  create_prpl_icon(gaim_connection_get_account(gc));
 	scale = gdk_pixbuf_scale_simple(icon, 16, 16, GDK_INTERP_BILINEAR);
 
-	label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">%s has been disconencted.</span>\n\n%s\n%s",
+	label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">%s has been disconnected.</span>\n\n%s\n%s",
 				     gaim_account_get_username(gaim_connection_get_account(gc)), gaim_date_full(), 
 				     text ? text : _("Reason Unknown."));
 	
@@ -390,6 +390,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		gtk_container_add(GTK_CONTAINER(disconnect_window->sw), disconnect_window->treeview);
 		
 		sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (disconnect_window->treeview));
+		gtk_widget_set_size_request(disconnect_window->treeview, -1, 96);
 		g_signal_connect (G_OBJECT (sel), "changed",
 				  G_CALLBACK (disconnect_tree_cb), list_store);
 	} else {
