@@ -1884,16 +1884,17 @@ static void parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
 	GaimAccount *account;
 	GaimBuddy *buddy;
 	char *name = NULL, *alias = NULL;
-	const char *acct_name, *proto;
+	const char *acct_name, *proto, *protocol;
 	xmlnode *x;
 
 	acct_name = xmlnode_get_attrib(bnode, "account");
-	proto = xmlnode_get_attrib(bnode, "protocol");
+	protocol = xmlnode_get_attrib(bnode, "protocol");
+	proto = xmlnode_get_attrib(bnode, "proto");
 
-	if(!acct_name || !proto)
+	if(!acct_name || (!proto && !protocol))
 		return;
 
-	account = gaim_accounts_find(acct_name, proto);
+	account = gaim_accounts_find(acct_name, proto ? proto : protocol);
 
 	if(!account)
 		return;
@@ -1950,18 +1951,19 @@ static void parse_chat(GaimGroup *group, xmlnode *cnode)
 {
 	GaimChat *chat;
 	GaimAccount *account;
-	const char *acct_name, *proto;
+	const char *acct_name, *proto, *protocol;
 	xmlnode *x;
 	char *alias = NULL;
 	GHashTable *components;
 
 	acct_name = xmlnode_get_attrib(cnode, "account");
-	proto = xmlnode_get_attrib(cnode, "protocol");
+	protocol = xmlnode_get_attrib(cnode, "protocol");
+	proto = xmlnode_get_attrib(cnode, "proto");
 
-	if(!acct_name || !proto)
+	if(!acct_name || (!proto && !protocol))
 		return;
 
-	account = gaim_accounts_find(acct_name, proto);
+	account = gaim_accounts_find(acct_name, proto ? proto : protocol);
 
 	if(!account)
 		return;
@@ -2065,16 +2067,17 @@ static gboolean gaim_blist_read(const char *filename) {
 		for(anode = privacy->child; anode; anode = anode->next) {
 			xmlnode *x;
 			GaimAccount *account;
-			const char *acct_name, *proto, *mode;
+			const char *acct_name, *proto, *mode, *protocol;
 
 			acct_name = xmlnode_get_attrib(anode, "name");
-			proto = xmlnode_get_attrib(anode, "protocol");
+			protocol = xmlnode_get_attrib(anode, "protocol");
+			proto = xmlnode_get_attrib(anode, "proto");
 			mode = xmlnode_get_attrib(anode, "mode");
 
-			if(!acct_name || !proto || !mode)
+			if(!acct_name || (!proto && !protocol) || !mode)
 				continue;
 
-			account = gaim_accounts_find(acct_name, proto);
+			account = gaim_accounts_find(acct_name, proto ? proto : protocol);
 
 			if(!account)
 				continue;
@@ -2246,12 +2249,15 @@ static void print_buddy(FILE *file, GaimBuddy *buddy) {
 	char *bud_name = g_markup_escape_text(buddy->name, -1);
 	char *bud_alias = NULL;
 	char *acct_name = g_markup_escape_text(buddy->account->username, -1);
+	int proto_num = gaim_account_get_protocol(buddy->account);
 	if(buddy->alias)
 		bud_alias= g_markup_escape_text(buddy->alias, -1);
-	fprintf(file, "\t\t\t\t<buddy protocol=\"%s\" "
-			"account=\"%s\">\n",
-			gaim_account_get_protocol_id(buddy->account),
-			acct_name);
+	fprintf(file, "\t\t\t\t<buddy account=\"%s\" proto=\"%s\"", acct_name,
+			gaim_account_get_protocol_id(buddy->account));
+	if(proto_num != -1)
+		fprintf(file, " protocol=\"%d\"", proto_num);
+	fprintf(file, ">\n");
+
 	fprintf(file, "\t\t\t\t\t<name>%s</name>\n", bud_name);
 	if(bud_alias) {
 		fprintf(file, "\t\t\t\t\t<alias>%s</alias>\n", bud_alias);
@@ -2307,9 +2313,14 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 					GaimChat *chat = (GaimChat *)cnode;
 					if(!exp_acct || chat->account == exp_acct) {
 						char *acct_name = g_markup_escape_text(chat->account->username, -1);
-						fprintf(file, "\t\t\t<chat protocol=\"%s\" account=\"%s\">\n",
+						int proto_num = gaim_account_get_protocol(chat->account);
+						fprintf(file, "\t\t\t<chat proto=\"%s\" account=\"%s\"",
 								gaim_account_get_protocol_id(chat->account),
 								acct_name);
+						if(proto_num != -1)
+							fprintf(file, " protocol=\"%d\"", proto_num);
+						fprintf(file, ">\n");
+
 						if(chat->alias) {
 							char *chat_alias = g_markup_escape_text(chat->alias, -1);
 							fprintf(file, "\t\t\t\t<alias>%s</alias>\n", chat_alias);
@@ -2338,10 +2349,15 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
 
 		GaimAccount *account = accounts->data;
 		char *acct_name = g_markup_escape_text(account->username, -1);
+		int proto_num = gaim_account_get_protocol(account);
 		if(!exp_acct || account == exp_acct) {
-			fprintf(file, "\t\t<account protocol=\"%s\" name=\"%s\" "
-					"mode=\"%d\">\n", gaim_account_get_protocol_id(account),
+			fprintf(file, "\t\t<account proto=\"%s\" name=\"%s\" "
+					"mode=\"%d\"", gaim_account_get_protocol_id(account),
 					acct_name, account->perm_deny);
+			if(proto_num != -1)
+				fprintf(file, " protocol=\"%d\"", proto_num);
+			fprintf(file, ">\n");
+
 			for(buds = account->permit; buds; buds = buds->next) {
 				char *bud_name = g_markup_escape_text(buds->data, -1);
 				fprintf(file, "\t\t\t<permit>%s</permit>\n", bud_name);
