@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-28 20:21-0400\n"
-"PO-Revision-Date: 2004-04-28 20:21-0400\n"
+"POT-Creation-Date: 2004-05-03 17:05-0400\n"
+"PO-Revision-Date: 2004-05-03 20:21-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: en_CA <adamw@FreeBSD.org>\n"
 "MIME-Version: 1.0\n"
@@ -973,7 +973,7 @@ msgstr "SSL"
 msgid "Provides a wrapper around SSL support libraries."
 msgstr "Provides a wrapper around SSL support libraries."
 
-#: plugins/statenotify.c:30 src/gtkpounce.c:909
+#: plugins/statenotify.c:30 src/gtkpounce.c:910
 #, c-format
 msgid "%s has gone away."
 msgstr "%s has gone away."
@@ -1276,11 +1276,11 @@ msgstr "hacker and designated driver [lazy bum]"
 msgid "Current Translators"
 msgstr "Current Translators"
 
-#: src/about.c:164 src/about.c:200
+#: src/about.c:164 src/about.c:201
 msgid "Catalan"
 msgstr "Catalan"
 
-#: src/about.c:165 src/about.c:201
+#: src/about.c:165 src/about.c:202
 msgid "Czech"
 msgstr "Czech"
 
@@ -1292,123 +1292,127 @@ msgstr "Danish"
 msgid "British English"
 msgstr "British English"
 
-#: src/about.c:168 src/about.c:202
+#: src/about.c:168
+msgid "Canadian English"
+msgstr "Canadian English"
+
+#: src/about.c:169 src/about.c:203
 msgid "German"
 msgstr "German"
 
-#: src/about.c:169 src/about.c:203
+#: src/about.c:170 src/about.c:204
 msgid "Spanish"
 msgstr "Spanish"
 
-#: src/about.c:170 src/about.c:204
+#: src/about.c:171 src/about.c:205
 msgid "Finnish"
 msgstr "Finnish"
 
-#: src/about.c:171 src/about.c:205
+#: src/about.c:172 src/about.c:206
 msgid "French"
 msgstr "French"
 
-#: src/about.c:172
+#: src/about.c:173
 msgid "Hebrew"
 msgstr "Hebrew"
 
-#: src/about.c:173
+#: src/about.c:174
 msgid "Hindi"
 msgstr "Hindi"
 
-#: src/about.c:174
+#: src/about.c:175
 msgid "Hungarian"
 msgstr "Hungarian"
 
-#: src/about.c:175 src/about.c:206
+#: src/about.c:176 src/about.c:207
 msgid "Italian"
 msgstr "Italian"
 
-#: src/about.c:176 src/about.c:208
+#: src/about.c:177 src/about.c:209
 msgid "Korean"
 msgstr "Korean"
 
-#: src/about.c:177
+#: src/about.c:178
 msgid "Dutch; Flemish"
 msgstr "Dutch; Flemish"
 
-#: src/about.c:178
+#: src/about.c:179
 msgid "Macedonian"
 msgstr "Macedonian"
 
-#: src/about.c:179
+#: src/about.c:180
 msgid "Norwegian"
 msgstr "Norwegian"
 
-#: src/about.c:180 src/about.c:209
+#: src/about.c:181 src/about.c:210
 msgid "Polish"
 msgstr "Polish"
 
-#: src/about.c:181
+#: src/about.c:182
 msgid "Portuguese"
 msgstr "Portuguese"
 
-#: src/about.c:182
+#: src/about.c:183
 msgid "Portuguese-Brazil"
 msgstr "Portuguese-Brazil"
 
-#: src/about.c:183
+#: src/about.c:184
 msgid "Romanian"
 msgstr "Romanian"
 
-#: src/about.c:184 src/about.c:210
+#: src/about.c:185 src/about.c:211
 msgid "Russian"
 msgstr "Russian"
 
-#: src/about.c:185
+#: src/about.c:186
 msgid "Serbian"
 msgstr "Serbian"
 
-#: src/about.c:186
+#: src/about.c:187
 msgid "Slovenian"
 msgstr "Slovenian"
 
-#: src/about.c:187 src/about.c:212
+#: src/about.c:188 src/about.c:213
 msgid "Swedish"
 msgstr "Swedish"
 
-#: src/about.c:188
+#: src/about.c:189
 msgid "Vietnamese"
 msgstr "Vietnamese"
 
-#: src/about.c:188
+#: src/about.c:189
 msgid "Gnome Vi Team"
 msgstr "Gnome Vi Team"
 
-#: src/about.c:189
+#: src/about.c:190
 msgid "Simplified Chinese"
 msgstr "Simplified Chinese"
 
-#: src/about.c:190
+#: src/about.c:191
 msgid "Traditional Chinese"
 msgstr "Traditional Chinese"
 
-#: src/about.c:197
+#: src/about.c:198
 msgid "Past Translators"
 msgstr "Past Translators"
 
-#: src/about.c:198
+#: src/about.c:199
 msgid "Amharic"
 msgstr "Amharic"
 
-#: src/about.c:199
+#: src/about.c:200
 msgid "Bulgarian"
 msgstr "Bulgarian"
 
-#: src/about.c:207
+#: src/about.c:208
 msgid "Japanese"
 msgstr "Japanese"
 
-#: src/about.c:211
+#: src/about.c:212
 msgid "Slovak"
 msgstr "Slovak"
 
-#: src/about.c:213
+#: src/about.c:214
 msgid "Chinese"
 msgstr "Chinese"
 
@@ -1452,7 +1456,7 @@ msgstr "Please enter your current password and your new password."
 #: src/protocols/oscar/oscar.c:2840 src/protocols/oscar/oscar.c:6489
 #: src/protocols/oscar/oscar.c:6585 src/protocols/oscar/oscar.c:6634
 #: src/protocols/oscar/oscar.c:6716 src/protocols/yahoo/yahoo.c:2504
-#: src/protocols/yahoo/yahoo.c:2512 src/request.h:1240
+#: src/protocols/yahoo/yahoo.c:2512 src/request.h:1242
 msgid "OK"
 msgstr "OK"
 
@@ -1475,7 +1479,7 @@ msgstr "OK"
 #: src/protocols/oscar/oscar.c:6586 src/protocols/oscar/oscar.c:6635
 #: src/protocols/oscar/oscar.c:6700 src/protocols/oscar/oscar.c:6717
 #: src/protocols/trepia/trepia.c:347 src/protocols/yahoo/yahoo.c:2505
-#: src/protocols/yahoo/yahoo.c:2513 src/request.h:1240 src/request.h:1250
+#: src/protocols/yahoo/yahoo.c:2513 src/request.h:1242 src/request.h:1252
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -2163,7 +2167,7 @@ msgstr ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 
-#: src/gtkblist.c:848 src/gtkpounce.c:430 src/gtkroomlist.c:365
+#: src/gtkblist.c:848 src/gtkpounce.c:431 src/gtkroomlist.c:365
 msgid "_Account:"
 msgstr "_Account:"
 
@@ -2226,7 +2230,7 @@ msgstr "_Collapse"
 msgid "_Expand"
 msgstr "_Expand"
 
-#: src/gtkblist.c:1964 src/gtkconv.c:3940 src/gtkpounce.c:332
+#: src/gtkblist.c:1964 src/gtkconv.c:3943 src/gtkpounce.c:333
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -2291,8 +2295,8 @@ msgid "/Tools/Buddy _Pounce"
 msgstr "/Tools/Buddy _Pounce"
 
 #: src/gtkblist.c:2330
-msgid "/Tools/P_rotocol Actions"
-msgstr "/Tools/P_rotocol Actions"
+msgid "/Tools/Account Ac_tions"
+msgstr "/Tools/Account Ac_tions"
 
 #: src/gtkblist.c:2332
 msgid "/Tools/A_ccounts"
@@ -2357,8 +2361,12 @@ msgstr ""
 "<b>Account:</b> %s"
 
 #: src/gtkblist.c:2453
-msgid "<b>Status:</b> Offline"
-msgstr "<b>Status:</b> Offline"
+msgid ""
+"\n"
+"<b>Status:</b> Offline"
+msgstr ""
+"\n"
+"<b>Status:</b> Offline"
 
 #: src/gtkblist.c:2468
 #, c-format
@@ -2473,8 +2481,9 @@ msgid "/Tools/Buddy Pounce"
 msgstr "/Tools/Buddy Pounce"
 
 #: src/gtkblist.c:3031
-msgid "/Tools/Protocol Actions"
-msgstr "/Tools/Protocol Actions"
+#, fuzzy
+msgid "/Tools/Account Actions"
+msgstr "/Tools/A_ccounts"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -2861,7 +2870,7 @@ msgstr "Add the user to your buddy list"
 msgid "Remove the user from your buddy list"
 msgstr "Remove the user from your buddy list"
 
-#: src/gtkconv.c:3349 src/gtkconv.c:3687
+#: src/gtkconv.c:3349 src/gtkconv.c:3690
 msgid "Get the user's information"
 msgstr "Get the user's information"
 
@@ -2882,35 +2891,35 @@ msgstr "Add the chat to your buddy list"
 msgid "Remove the chat from your buddy list"
 msgstr "Remove the chat from your buddy list"
 
-#: src/gtkconv.c:3548
+#: src/gtkconv.c:3551
 msgid "Topic:"
 msgstr "Topic:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3609
+#: src/gtkconv.c:3612
 msgid "0 people in room"
 msgstr "0 people in room"
 
-#: src/gtkconv.c:3664
+#: src/gtkconv.c:3667
 msgid "IM the user"
 msgstr "IM the user"
 
-#: src/gtkconv.c:3676
+#: src/gtkconv.c:3679
 msgid "Ignore the user"
 msgstr "Ignore the user"
 
-#: src/gtkconv.c:4231
+#: src/gtkconv.c:4234
 msgid "Close conversation"
 msgstr "Close conversation"
 
-#: src/gtkconv.c:4776 src/gtkconv.c:4808 src/gtkconv.c:4929 src/gtkconv.c:4996
+#: src/gtkconv.c:4779 src/gtkconv.c:4811 src/gtkconv.c:4932 src/gtkconv.c:4999
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d person in room"
 msgstr[1] "%d people in room"
 
-#: src/gtkconv.c:5529 src/gtkconv.c:5532
+#: src/gtkconv.c:5532 src/gtkconv.c:5535
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Conversation/Close"
 
@@ -3075,7 +3084,7 @@ msgstr "_Copy Link Location"
 msgid "_Open Link in Browser"
 msgstr "_Open Link in Browser"
 
-#: src/gtkimhtml.c:2645
+#: src/gtkimhtml.c:2646
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
@@ -3083,16 +3092,16 @@ msgstr ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
 
-#: src/gtkimhtml.c:2653
+#: src/gtkimhtml.c:2654
 #, c-format
 msgid "Error saving image: %s"
 msgstr "Error saving image: %s"
 
-#: src/gtkimhtml.c:2662
+#: src/gtkimhtml.c:2663
 msgid "Save Image"
 msgstr "Save Image"
 
-#: src/gtkimhtml.c:2685
+#: src/gtkimhtml.c:2686
 msgid "_Save Image..."
 msgstr "_Save Image..."
 
@@ -3248,151 +3257,151 @@ msgid ""
 msgstr ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 
-#: src/gtkpounce.c:143
+#: src/gtkpounce.c:144
 msgid "Select a file"
 msgstr "Select a file"
 
-#: src/gtkpounce.c:192
+#: src/gtkpounce.c:193
 msgid "Please enter a buddy to pounce."
 msgstr "Please enter a buddy to pounce."
 
 #. "New Buddy Pounce"
-#: src/gtkpounce.c:405 src/gtkpounce.c:845
+#: src/gtkpounce.c:406 src/gtkpounce.c:846
 msgid "New Buddy Pounce"
 msgstr "New Buddy Pounce"
 
-#: src/gtkpounce.c:405
+#: src/gtkpounce.c:406
 msgid "Edit Buddy Pounce"
 msgstr "Edit Buddy Pounce"
 
 #. Create the "Pounce Who" frame.
-#: src/gtkpounce.c:423
+#: src/gtkpounce.c:424
 msgid "Pounce Who"
 msgstr "Pounce Who"
 
-#: src/gtkpounce.c:450
+#: src/gtkpounce.c:451
 msgid "_Buddy name:"
 msgstr "_Buddy name:"
 
 #. Create the "Pounce When" frame.
-#: src/gtkpounce.c:474
+#: src/gtkpounce.c:475
 msgid "Pounce When"
 msgstr "Pounce When"
 
-#: src/gtkpounce.c:482
+#: src/gtkpounce.c:483
 msgid "_Sign on"
 msgstr "_Sign on"
 
-#: src/gtkpounce.c:484
+#: src/gtkpounce.c:485
 msgid "Sign _off"
 msgstr "Sign _off"
 
-#: src/gtkpounce.c:486
+#: src/gtkpounce.c:487
 msgid "A_way"
 msgstr "A_way"
 
-#: src/gtkpounce.c:488
+#: src/gtkpounce.c:489
 msgid "Re_turn from away"
 msgstr "Re_turn from away"
 
-#: src/gtkpounce.c:490
+#: src/gtkpounce.c:491
 msgid "_Idle"
 msgstr "_Idle"
 
-#: src/gtkpounce.c:492
+#: src/gtkpounce.c:493
 msgid "Retur_n from idle"
 msgstr "Retur_n from idle"
 
-#: src/gtkpounce.c:494
+#: src/gtkpounce.c:495
 msgid "Buddy starts _typing"
 msgstr "Buddy starts _typing"
 
-#: src/gtkpounce.c:496
+#: src/gtkpounce.c:497
 msgid "Buddy stops t_yping"
 msgstr "Buddy stops t_yping"
 
 #. Create the "Pounce Action" frame.
-#: src/gtkpounce.c:525
+#: src/gtkpounce.c:526
 msgid "Pounce Action"
 msgstr "Pounce Action"
 
-#: src/gtkpounce.c:532
+#: src/gtkpounce.c:533
 msgid "Op_en an IM window"
 msgstr "Op_en an IM window"
 
-#: src/gtkpounce.c:533
+#: src/gtkpounce.c:534
 msgid "_Popup notification"
 msgstr "_Popup notification"
 
-#: src/gtkpounce.c:534
+#: src/gtkpounce.c:535
 msgid "Send a _message"
 msgstr "Send a _message"
 
-#: src/gtkpounce.c:535
+#: src/gtkpounce.c:536
 msgid "E_xecute a command"
 msgstr "E_xecute a command"
 
-#: src/gtkpounce.c:536
+#: src/gtkpounce.c:537
 msgid "P_lay a sound"
 msgstr "P_lay a sound"
 
-#: src/gtkpounce.c:540
+#: src/gtkpounce.c:541
 msgid "B_rowse..."
 msgstr "B_rowse..."
 
-#: src/gtkpounce.c:542
+#: src/gtkpounce.c:543
 msgid "Bro_wse..."
 msgstr "Bro_wse..."
 
-#: src/gtkpounce.c:543
+#: src/gtkpounce.c:544
 msgid "Pre_view"
 msgstr "Pre_view"
 
-#: src/gtkpounce.c:626
+#: src/gtkpounce.c:627
 msgid "Sav_e this pounce after activation"
 msgstr "Sav_e this pounce after activation"
 
 #. "Remove Buddy Pounce"
-#: src/gtkpounce.c:852
+#: src/gtkpounce.c:853
 msgid "Remove Buddy Pounce"
 msgstr "Remove Buddy Pounce"
 
-#: src/gtkpounce.c:902
+#: src/gtkpounce.c:903
 #, c-format
 msgid "%s has started typing to you"
 msgstr "%s has started typing to you"
 
-#: src/gtkpounce.c:903
+#: src/gtkpounce.c:904
 #, c-format
 msgid "%s has signed on"
 msgstr "%s has signed on"
 
-#: src/gtkpounce.c:904
+#: src/gtkpounce.c:905
 #, c-format
 msgid "%s has returned from being idle"
 msgstr "%s has returned from being idle"
 
-#: src/gtkpounce.c:905
+#: src/gtkpounce.c:906
 #, c-format
 msgid "%s has returned from being away"
 msgstr "%s has returned from being away"
 
-#: src/gtkpounce.c:906
+#: src/gtkpounce.c:907
 #, c-format
 msgid "%s has stopped typing to you"
 msgstr "%s has stopped typing to you"
 
-#: src/gtkpounce.c:907
+#: src/gtkpounce.c:908
 #, c-format
 msgid "%s has signed off"
 msgstr "%s has signed off"
 
-#: src/gtkpounce.c:908
+#: src/gtkpounce.c:909
 #, c-format
 msgid "%s has become idle"
 msgstr "%s has become idle"
 
-#: src/gtkpounce.c:910
+#: src/gtkpounce.c:911
 msgid "Unknown pounce event. Please report this!"
 msgstr "Unknown pounce event. Please report this!"
 
@@ -3879,6 +3888,15 @@ msgstr "_Send auto-response"
 msgid "_Only send auto-response when idle"
 msgstr "_Only send auto-response when idle"
 
+#.
+#. gaim_gtk_prefs_checkbox(_("Send auto-response in _active conversations"),
+#. "/core/away/auto_response/in_active_conv", vbox);
+#. if (!gaim_prefs_get_bool("/core/away/auto_response/enabled"))
+#. gtk_widget_set_sensitive(hbox, FALSE);
+#.
+#. auto_resp_pref_id = gaim_prefs_connect_callback("/core/away/auto_response/enabled",
+#. auto_resp_changed_cb, hbox);
+#.
 #: src/gtkprefs.c:1634 src/protocols/msn/state.c:30
 #: src/protocols/novell/novell.c:2155 src/protocols/oscar/oscar.c:3377
 #: src/protocols/yahoo/yahoo.c:2295
@@ -4137,12 +4155,12 @@ msgstr "Are you sure you want to block %s?"
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
 #: src/gtkrequest.c:233 src/protocols/gg/gg.c:858
-#: src/protocols/novell/novell.c:1318 src/request.h:1231
+#: src/protocols/novell/novell.c:1318 src/request.h:1233
 msgid "Yes"
 msgstr "Yes"
 
 #: src/gtkrequest.c:234 src/protocols/gg/gg.c:858
-#: src/protocols/novell/novell.c:1319 src/request.h:1231
+#: src/protocols/novell/novell.c:1319 src/request.h:1233
 msgid "No"
 msgstr "No"
 
@@ -5409,7 +5427,7 @@ msgstr "E-Mail"
 #: src/protocols/oscar/oscar.c:4274 src/protocols/trepia/trepia.c:335
 #: src/protocols/trepia/trepia.c:413
 msgid "State"
-msgstr "State"
+msgstr "Province/Territory"
 
 #: src/protocols/jabber/jabber.c:641
 msgid "Phone"
@@ -7373,7 +7391,7 @@ msgstr "Home Address"
 
 #: src/protocols/oscar/oscar.c:4267 src/protocols/oscar/oscar.c:4275
 msgid "Zip Code"
-msgstr "Zip Code"
+msgstr "Postal Code"
 
 #: src/protocols/oscar/oscar.c:4271
 msgid "Work Address"
@@ -8587,7 +8605,7 @@ msgstr "Custom"
 #. *
 #. * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
 #.
-#: src/request.h:1250
+#: src/request.h:1252
 msgid "Accept"
 msgstr "Accept"
 
