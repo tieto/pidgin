@@ -85,6 +85,7 @@ DISCUSSION:
 
 
 IN GENERAL:
+	Do we still want 'import'?  If so, it should be under 'tools', not 'file'
 	add a way for a plugin to store/retrive config values (fixed?)
 	segfault on pressing back with messages in queue if coming back
 		for the second time in a given instance of gaim
