@@ -115,6 +115,7 @@ faim_export int aim_icq_getallinfo(aim_session_t *sess, const char *uin)
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	int bslen;
+	struct aim_icq_info *info;
 
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
@@ -142,6 +143,13 @@ faim_export int aim_icq_getallinfo(aim_session_t *sess, const char *uin)
 	aimbs_putle32(&fr->data, atoi(uin));
 
 	aim_tx_enqueue(sess, fr);
+
+	/* Keep track of this request and the ICQ number and request ID */
+	info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
+	info->reqid = snacid;
+	info->uin = atoi(sess->sn);
+	info->next = sess->icq_info;
+	sess->icq_info = info;
 
 	return 0;
 }
@@ -221,6 +229,36 @@ faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
 	return 0;
 }
 
+static void aim_icq_freeinfo(struct aim_icq_info *info) {
+	if (!info)
+		return;
+	free(info->nick);
+	free(info->first);
+	free(info->last);
+	free(info->email);
+	free(info->homecity);
+	free(info->homestate);
+	free(info->homephone);
+	free(info->homefax);
+	free(info->homeaddr);
+	free(info->mobile);
+	free(info->homezip);
+	free(info->personalwebpage);
+	free(info->email2);
+	free(info->workcity);
+	free(info->workstate);
+	free(info->workphone);
+	free(info->workfax);
+	free(info->workaddr);
+	free(info->workzip);
+	free(info->workcompany);
+	free(info->workdivision);
+	free(info->workposition);
+	free(info->workwebpage);
+	free(info->info);
+	free(info);
+}
+
 /**
  * Subtype 0x0003 - Response to 0x0015/0x002, contains an ICQesque packet.
  */
@@ -282,45 +320,58 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		aim_rxcallback_t userfunc;
 
 		subtype = aimbs_getle16(&qbs);
-		info = (struct aim_icq_info *)malloc(sizeof(struct aim_icq_info));
-		memset(info, 0, sizeof(struct aim_icq_info));
 		aim_bstream_advance(&qbs, 1); /* 0x0a */
+
+		/* find other data from the same request */
+		for (info = sess->icq_info; info && (info->reqid != reqid); info = info->next);
+		if (!info) {
+			info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
+			info->reqid = reqid;
+			info->next = sess->icq_info;
+			sess->icq_info = info;
+		}
 
 		switch (subtype) {
 		case 0x00aa: { /* password change status */
 			aimbs_getle8(&qbs); /* 0x000a for success */
 		} break;
 
-		case 0x00c8: { /* info summary (useful stuff) */
+		case 0x00c8: { /* general and "home" information */
 			info->nick = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->first = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->last = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			aim_bstream_advance(&qbs, aimbs_getle16(&qbs));
+			info->email = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->homecity = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->homestate = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			aim_bstream_advance(&qbs, aimbs_getle16(&qbs));
-			aim_bstream_advance(&qbs, aimbs_getle16(&qbs));
+			info->homephone = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			info->homefax = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->homeaddr = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			aim_bstream_advance(&qbs, aimbs_getle16(&qbs));
+			info->mobile = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->homezip = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->homecountry = aimbs_getle16(&qbs);
+			/* 1 byte timezone */
+			/* 1 byte hide email flag */
 		} break;
 
-		case 0x00dc: { /* personal web page */
-			aim_bstream_advance(&qbs, 3);
+		case 0x00dc: { /* personal information */
+			info->age = aimbs_getle8(&qbs);
+			info->unknown = aimbs_getle8(&qbs);
+			info->gender = aimbs_getle8(&qbs);
 			info->personalwebpage = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			info->birthyear = aimbs_getle16(&qbs);
+			info->birthmonth = aimbs_getle8(&qbs);
+			info->birthday = aimbs_getle8(&qbs);
+			info->language1 = aimbs_getle8(&qbs);
+			info->language2 = aimbs_getle8(&qbs);
+			info->language3 = aimbs_getle8(&qbs);
 		} break;
 
-		case 0x00eb: { /* email address(es) */
-			aim_bstream_advance(&qbs, 2); /* Number of email addresses? */
-			info->email = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-		} break;
-
+		/* XXX - Look into the webpage thing for this, too */
 		case 0x00d2: { /* work information */
 			info->workcity = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->workstate = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			aim_bstream_advance(&qbs, aimbs_getle16(&qbs));
-			aim_bstream_advance(&qbs, aimbs_getle16(&qbs));
+			info->workphone = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			info->workfax = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->workaddr = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->workzip = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 			info->workcountry = aimbs_getle16(&qbs);
@@ -332,7 +383,13 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		} break;
 
 		case 0x00e6: { /* additional personal information */
-			info->info = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			info->info = aimbs_getstr(&qbs, aimbs_getle16(&qbs)-1);
+		} break;
+
+		/* XXX - Find out the structure of this.  Probably make a 2d array of strings */
+		case 0x00eb: { /* email address(es) */
+			info->numaddresses = aimbs_getle16(&qbs);
+			info->email2 = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
 		} break;
 
 		case 0x00f0: { /* personal interests */
@@ -355,33 +412,20 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		} break;
 		} /* End switch statement */
 
-		if (subtype == 0x019a) {
-			if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_SIMPLEINFO)))
+		if (!(snac->flags & 0x0001)) {
+			if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_INFO)))
 				ret = userfunc(sess, rx, info);
-		 } else {
-			if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_ALLINFO)))
-				ret = userfunc(sess, rx, info);
-		}
 
-		free(info->nick);
-		free(info->first);
-		free(info->last);
-		free(info->email);
-		free(info->personalwebpage);
-		free(info->info);
-		free(info->homecity);
-		free(info->homestate);
-		free(info->homeaddr);
-		free(info->homezip);
-		free(info->workcity);
-		free(info->workstate);
-		free(info->workaddr);
-		free(info->workzip);
-		free(info->workcompany);
-		free(info->workdivision);
-		free(info->workposition);
-		free(info->workwebpage);
-		free(info);
+			if (sess->icq_info == info) {
+				sess->icq_info = info->next;
+			} else {
+				struct aim_icq_info *cur;
+				for (cur=sess->icq_info; (cur->next && (cur->next!=info)); cur=cur->next);
+				if (cur->next)
+					cur->next = cur->next->next;
+			}
+			aim_icq_freeinfo(info);
+		}
 	}
 
 	aim_freetlvchain(&tl);

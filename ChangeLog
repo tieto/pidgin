@@ -37,15 +37,16 @@ version 0.60:
 	* Fortune profile added to source.
 
 	AIM/ICQ:
-	* Server-stored buddy lists for ICQ with full support for 
-	  authorization (Thanks, Mark Doliner)
 	* TOC no longer compiles statically by default--use OSCAR.
 	* ICQ plugin no longer gets built--use OSCAR.
+	* Server-stored buddy lists for ICQ with full support for 
+	  authorization (Thanks, Mark Doliner)
 	* File send/receive support for Aim over Oscar (Thanks, William T. 
 	  Mahan and Mark Doliner)
 	* Non-direct connect typing notification for AIM over OSCAR.
 	  (Thanks, Mark Doliner)
 	* Allow only people in buddy list privacy option added for AIM.
+	* Full ICQ info reading support. (Thanks, Vincas Ciziunas)
 	* Support for synchronizing group renames on server.  Group
 	  rename server synchronization for AIM.  Server-side
 	  synchronization for moving individual AIM buddy to new

@@ -109,13 +109,23 @@ static int consumesnac(aim_session_t *sess, aim_frame_t *rx)
 	snac.id = aimbs_get32(&rx->data);
 
 	/* SNAC flags are apparently uniform across all SNACs, so we handle them here */
+	if (snac.flags & 0x0001) {
+		/*
+		 * This means the SNAC will be followed by another SNAC with 
+		 * related information.  We don't need to do anything about 
+		 * this here.
+		 */
+	}
 	if (snac.flags & 0x8000) {
-		/* This contains the version of the family that this SNAC is in.  
-		 * You get this when your SSI module is version 2 or higher.  
+		/*
+		 * This packet contains the version of the family that this SNAC is 
+		 * in.  You get this when your SSI module is version 2 or higher.  
 		 * For now we have no need for this, but you could always save 
 		 * it as a part of aim_modnsac_t, or something.  The format is...
-		 * 2 byte length of total mini-header, then TLV of  type 0x0001, 
-		 * length 0x0002, value is the 2 byte version number */
+		 * 2 byte length of total mini-header (which is 6 bytes), then TLV 
+		 * of  type 0x0001, length 0x0002, value is the 2 byte version 
+		 * number
+		 */
 		aim_bstream_advance(&rx->data, aimbs_get16(&rx->data));
 	}
 

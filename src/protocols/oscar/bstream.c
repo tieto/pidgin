@@ -230,6 +230,11 @@ faim_internal char *aimbs_getstr(aim_bstream_t *bs, int len)
 		free(ob);
 		return NULL;
 	}
+
+	if (ob[0] == '\0') {
+		free(ob);
+		return NULL;
+	}
 	
 	ob[len] = '\0';
 

@@ -593,8 +593,7 @@ static int gaim_memrequest       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_selfinfo         (aim_session_t *, aim_frame_t *, ...);
 static int gaim_offlinemsg       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_offlinemsgdone   (aim_session_t *, aim_frame_t *, ...);
-static int gaim_icqsimpleinfo    (aim_session_t *, aim_frame_t *, ...);
-static int gaim_icqallinfo       (aim_session_t *, aim_frame_t *, ...);
+static int gaim_icqinfo          (aim_session_t *, aim_frame_t *, ...);
 static int gaim_popup            (aim_session_t *, aim_frame_t *, ...);
 #ifndef NOSSI
 static int gaim_ssi_parserights  (aim_session_t *, aim_frame_t *, ...);
@@ -1102,8 +1101,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG, gaim_offlinemsg, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSGCOMPLETE, gaim_offlinemsgdone, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_POP, 0x0002, gaim_popup, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_SIMPLEINFO, gaim_icqsimpleinfo, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_ALLINFO, gaim_icqallinfo, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_INFO, gaim_icqinfo, 0);
 #ifndef NOSSI
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RIGHTSINFO, gaim_ssi_parserights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_LIST, gaim_ssi_parselist, 0);
@@ -2053,7 +2051,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT) {
 		char *who = normalize(userinfo->sn);
 		if (!g_hash_table_lookup(od->supports_tn, who))
-			g_hash_table_insert(od->supports_tn, who, who);
+			g_hash_table_insert(od->supports_tn, who, (gpointer)1);
 	}
 
 	/* strip_linefeed(tmp); */
@@ -2747,8 +2745,6 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 	type2 = (fu16_t) va_arg(ap, unsigned int);
 	va_end(ap);
 
-	debug_printf("Received an mtn from %s.  Type1 is 0x%04hx and type2 is 0x%04hx.\n", sn, type1, type2);
-
 	switch (type2) {
 		case 0x0000: { /* Text has been cleared */
 			serv_got_typing_stopped(gc, sn);
@@ -2763,7 +2759,7 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} break;
 
 		default: {
-			printf("Received unknown typing notification type.\n");
+			printf("Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", sn, type1, type2);
 		} break;
 	}
 
@@ -3510,126 +3506,103 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
 	return 1;
 }
 
-static int gaim_icqsimpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
+static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	struct gaim_connection *gc = sess->aux_data;
-	struct buddy *budlight;
-	va_list ap;
-	struct aim_icq_info *info;
 	gchar *buf, *tmp;
 	gchar who[16];
+	va_list ap;
+	struct aim_icq_info *info;
 
 	va_start(ap, fr);
 	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
 
-	if (!info || !info->uin)
-		return 1;
-
 	g_snprintf(who, sizeof(who), "%lu", info->uin);
-	buf = g_strdup_printf("<b>UIN:</b> %s<br>", who);
+	buf = g_strdup_printf("<b>UIN:</b> %s", who);
 	if (info->nick) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<b>Nick:</b> ", info->nick, "<br>\n", NULL);
-		g_free(tmp);
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Nick:</b> ", info->nick, NULL);  g_free(tmp);
 		serv_got_alias(gc, who, info->nick);
 	}
 	if (info->first) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<b>First Name:</b> ", info->first, "<br>\n", NULL);
-		g_free(tmp);
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>First Name:</b> ", info->first, NULL);  g_free(tmp);
 	}
 	if (info->last) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<b>Last Name:</b> ", info->last, "<br>\n", NULL);
-		g_free(tmp);
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Last Name:</b> ", info->last, NULL);  g_free(tmp);
 	}
 	if (info->email) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<b>Email Address:</b> ", info->email, "<br>\n", NULL);
-		g_free(tmp);
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Email Address:</b> ", info->email, NULL);  g_free(tmp);
 	}
-
-	/* If the contact is away, then we also want to get their status message
-	 * and show it in the same window as info.  g_show_info_text gets the status 
-	 * message if the third arg is 0 (this seems really gross to me).  The 
-	 * parse-icq-status-message function knows if it is putting it's message in 
-	 * an info window because the name will _not_ be in od->evilhack.  For getting 
-	 * only the away message the contact's UIN is put in od->evilhack. */
-	if ((budlight = find_buddy(gc->account, who))) {
-		if ((budlight->uc >> 16) & (AIM_ICQ_STATE_AWAY || AIM_ICQ_STATE_DND || AIM_ICQ_STATE_OUT || AIM_ICQ_STATE_BUSY || AIM_ICQ_STATE_CHAT)) {
-			if (budlight->caps & AIM_CAPS_ICQSERVERRELAY)
-				g_show_info_text(gc, who, 0, buf, NULL);
-			else {
-				char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-				g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, "<HR>\n<I>Remote client does not support sending status messages.</I><BR>\n", NULL);
-				free(state_msg);
-			}
-		} else {
-			char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-			g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, NULL);
-			free(state_msg);
-		}
-	} else
-		g_show_info_text(gc, who, 2, buf, NULL);
-
-	g_free(buf);
-
-	return 1;
-}
-
-static int gaim_icqallinfo(aim_session_t *sess, aim_frame_t *fr, ...)
-{
-	struct gaim_connection *gc = sess->aux_data;
-	va_list ap;
-	struct aim_icq_info *info;
-	gchar *buf, *tmp;
-	gchar who[16];
-
-	va_start(ap, fr);
-	info = va_arg(ap, struct aim_icq_info *);
-	va_end(ap);
-
-	if (!info || !info->uin)
-		return 1;
-
-	g_snprintf(who, sizeof(who), "%lu", info->uin);
-	buf = g_strdup_printf("<b>UIN:</b> %s<br>", who);
-	if (info->nick) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<b>Nick:</b> ", info->nick, "<br>\n", NULL);
-		g_free(tmp);
-		serv_got_alias(gc, who, info->nick);
+	if (info->mobile) {
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Mobile:</b> ", info->mobile, NULL);  g_free(tmp);
 	}
-	if (info->first) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<b>First Name:</b> ", info->first, "<br>\n", NULL);
-		g_free(tmp);
+	if (info->birthyear || info->birthmonth || info->birthday) {
+		char date[15];
+		snprintf(date, sizeof(date), "%hhd/%hhd/%hd", info->birthday, info->birthmonth, info->birthyear);
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Birthday:</b> ", date, NULL);  g_free(tmp);
 	}
-	if (info->last) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<b>Last Name:</b> ", info->last, "<br>\n", NULL);
-		g_free(tmp);
+	if (info->age) {
+		char age[5];
+		snprintf(age, sizeof(age), "%hhd", info->age);
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Age:</b> ", age, NULL);  g_free(tmp);
 	}
-	if (info->email) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<b>Email Address:</b> ", info->email, "<br>\n", NULL);
-		g_free(tmp);
+	if (info->gender) {
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Age:</b> ", info->gender ? "Male" : "Female", NULL);  g_free(tmp);
 	}
 	if (info->personalwebpage) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<b>Personal Webpage:</b> ", info->personalwebpage, "<br>\n", NULL);
-		g_free(tmp);
+		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Personal Web Page:</b> <a href=\"", info->personalwebpage, "\">", info->personalwebpage, "</a>", NULL);  g_free(tmp);
 	}
 	if (info->info) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<br><b>Additional Information:</b><br>", info->info, "<hr>\n", NULL);
-		g_free(tmp);
+		tmp = buf;  buf = g_strconcat(tmp, "<hr><b>Additional Information:</b><br>", info->info, NULL);  g_free(tmp);
 	}
-	if (info->homecity && info->homestate && info->homeaddr && info->homezip) {
-		tmp = buf;
-		buf = g_strconcat(tmp, "<br><b>Home Address:</b><br>\n", info->homeaddr, "<br>\n", info->homecity, ", ", info->homestate, " ", info->homezip, "<hr>\n", NULL);
-		g_free(tmp);
+	tmp = buf;  buf = g_strconcat(tmp, "<hr>\n", NULL);  g_free(tmp);
+	if (info->homeaddr || info->homecity || info->homestate || info->homezip) {
+		tmp = buf;  buf = g_strconcat(tmp, "<b>Home Address:</b>", NULL);  g_free(tmp);
+		if (info->homeaddr) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Address:</b> ", info->homeaddr, NULL);  g_free(tmp);
+		}
+		if (info->homecity) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>City:</b> ", info->homecity,  NULL);  g_free(tmp);
+		}
+		if (info->homestate) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>State:</b> ", info->homestate, NULL);  g_free(tmp);
+		}
+		if (info->homezip) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Zip Code:</b> ", info->homezip, NULL);  g_free(tmp);
+		}
+		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
+	}
+	if (info->workaddr || info->workcity || info->workstate || info->workzip) {
+		tmp = buf;  buf = g_strconcat(tmp, "<b>Work Address:</b>", NULL);  g_free(tmp);
+		if (info->workaddr) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Address:</b> ", info->workaddr, NULL);  g_free(tmp);
+		}
+		if (info->workcity) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>City:</b> ", info->workcity, NULL);  g_free(tmp);
+		}
+		if (info->workstate) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>State:</b> ", info->workstate, NULL);  g_free(tmp);
+		}
+		if (info->workzip) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Zip Code:</b> ", info->workzip, NULL);  g_free(tmp);
+		}
+		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
+	}
+	if (info->workcompany || info->workdivision || info->workposition || info->workwebpage) {
+		tmp = buf;  buf = g_strconcat(tmp, "<b>Work Information:</b>", NULL);  g_free(tmp);
+		if (info->workcompany) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Company:</b> ", info->workcompany, NULL);  g_free(tmp);
+		}
+		if (info->workdivision) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Division:</b> ", info->workdivision, NULL);  g_free(tmp);
+		}
+		if (info->workposition) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Position:</b> ", info->workposition, NULL);  g_free(tmp);
+		}
+		if (info->workwebpage) {
+			tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Web Page:</b> <a href=\"", info->workwebpage, "\">", info->workwebpage, "</a>", NULL);  g_free(tmp);
+		}
+		tmp = buf; buf = g_strconcat(tmp, "\n<hr>\n", NULL); g_free(tmp);
 	}
 
 	g_show_info_text(gc, who, 2, buf, NULL);
@@ -3915,7 +3888,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 static void oscar_get_info(struct gaim_connection *g, char *name) {
 	struct oscar_data *od = (struct oscar_data *)g->proto_data;
 	if (od->icq)
-		aim_icq_getsimpleinfo(od->sess, name);
+		aim_icq_getallinfo(od->sess, name);
 	else
 		/* people want the away message on the top, so we get the away message
 		 * first and then get the regular info, since it's too difficult to
@@ -5130,11 +5103,13 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	m = g_list_append(m, pbm);
 
 	if (od->icq) {
+#if 0
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Get Status Msg");
 		pbm->callback = oscar_get_away_msg;
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
+#endif
 	} else {
 		struct buddy *b = find_buddy(gc->account, who);
 

@@ -430,6 +430,7 @@ typedef struct aim_session_s {
 	void (*debugcb)(struct aim_session_s *sess, int level, const char *format, va_list va); /* same as faim_debugging_callback_t */
 
 	aim_msgcookie_t *msgcookies;
+	struct aim_icq_info *icq_info;
 
 	void *modlistv;
 } aim_session_t;
@@ -1219,6 +1220,17 @@ faim_export int aim_ssi_setpresence(aim_session_t *sess, aim_conn_t *conn, fu32_
 
 
 /* icq.c */
+#define AIM_ICQ_INFO_SIMPLE	0x001
+#define AIM_ICQ_INFO_SUMMARY	0x002
+#define AIM_ICQ_INFO_EMAIL	0x004
+#define AIM_ICQ_INFO_PERSONAL	0x008
+#define AIM_ICQ_INFO_ADDITIONAL	0x010
+#define AIM_ICQ_INFO_WORK	0x020
+#define AIM_ICQ_INFO_INTERESTS	0x040
+#define AIM_ICQ_INFO_ORGS	0x080
+#define AIM_ICQ_INFO_UNKNOWN	0x100
+#define AIM_ICQ_INFO_HAVEALL	0x1ff
+
 struct aim_icq_offlinemsg {
 	fu32_t sender;
 	fu16_t year;
@@ -1230,20 +1242,44 @@ struct aim_icq_offlinemsg {
 };
 
 struct aim_icq_info {
+	fu16_t reqid;
+
+	/* simple */
 	fu32_t uin;
+
+	/* general and "home" information (0x00c8) */
 	char *nick;
 	char *first;
 	char *last;
 	char *email;
-	char *personalwebpage;
-	char *info;
 	char *homecity;
 	char *homestate;
+	char *homephone;
+	char *homefax;
 	char *homeaddr;
+	char *mobile;
 	char *homezip;
 	fu16_t homecountry;
+/*	fu8_t timezone;
+	fu8_t hideemail; */
+
+	/* personal (0x00dc) */
+	fu8_t age;
+	fu8_t unknown;
+	fu8_t gender;
+	char *personalwebpage;
+	fu16_t birthyear;
+	fu8_t birthmonth;
+	fu8_t birthday;
+	fu8_t language1;
+	fu8_t language2;
+	fu8_t language3;
+
+	/* work (0x00d2) */
 	char *workcity;
 	char *workstate;
+	char *workphone;
+	char *workfax;
 	char *workaddr;
 	char *workzip;
 	fu16_t workcountry;
@@ -1251,6 +1287,16 @@ struct aim_icq_info {
 	char *workdivision;
 	char *workposition;
 	char *workwebpage;
+
+	/* additional personal information (0x00e6) */
+	char *info;
+
+	/* email (0x00eb) */
+	fu16_t numaddresses;
+	char *email2;
+
+	/* we keep track of these in a linked list because we're 1337 */
+	struct aim_icq_info *next;
 };
 
 faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess);
