@@ -124,7 +124,6 @@ static GtkWidget *invite_dialog = NULL;
 
 /* Prototypes. <-- because Paco-Paco hates this comment. */
 static void set_toggle(GtkWidget *tb, gboolean active);
-static void move_next_tab(GaimConversation *conv);
 static void do_bold(GtkWidget *bold, GaimGtkConversation *gtkconv);
 static void do_italic(GtkWidget *italic, GaimGtkConversation *gtkconv);
 static void do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv);
@@ -1322,16 +1321,30 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				return TRUE;
 				break;
 
-			case GDK_Page_Up:
-				if (curconv > 0)
-					gaim_conv_window_switch_conversation(win, curconv - 1);
+			case GDK_Page_Down:
+			case '[':
+				gaim_conv_window_switch_conversation(win,  (curconv + numconvs - 1) % numconvs);
 
 				return TRUE;
 				break;
 
-			case GDK_Page_Down:
-				if (curconv + 1 < numconvs)
-					gaim_conv_window_switch_conversation(win,  curconv + 1);
+			case GDK_Page_Up:
+			case ']':
+			case GDK_Tab:
+				gaim_conv_window_switch_conversation(win,  (curconv + 1) % numconvs);
+
+				return TRUE;
+				break;
+
+			case 'l':
+				gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+				g_string_free(conv->history, TRUE);
+
+				return TRUE;
+				break;
+
+			case 'z':
+				gtk_window_iconify(GTK_WINDOW(gtkwin->window));
 
 				return TRUE;
 				break;
@@ -1340,6 +1353,24 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts")) {
 			switch (event->keyval) {
+				case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
+				case 'B':
+					set_toggle(gtkconv->toolbar.bold,
+						!gtk_toggle_button_get_active(
+							GTK_TOGGLE_BUTTON(gtkconv->toolbar.bold)));
+
+					return TRUE;
+					break;
+
+				case 'f':
+				case 'F':
+					set_toggle(gtkconv->toolbar.font,
+						!gtk_toggle_button_get_active(
+							GTK_TOGGLE_BUTTON(gtkconv->toolbar.font)));
+
+					return TRUE;
+					break;
+
 				case 'i':
 				case 'I':
 					set_toggle(gtkconv->toolbar.italic,
@@ -1354,15 +1385,6 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					set_toggle(gtkconv->toolbar.underline,
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.underline)));
-
-					return TRUE;
-					break;
-
-				case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
-				case 'B':
-					set_toggle(gtkconv->toolbar.bold,
-						!gtk_toggle_button_get_active(
-							GTK_TOGGLE_BUTTON(gtkconv->toolbar.bold)));
 
 					return TRUE;
 					break;
@@ -1393,15 +1415,6 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					return TRUE;
 					break;
 #endif
-
-				case 'f':
-				case 'F':
-					set_toggle(gtkconv->toolbar.font,
-						!gtk_toggle_button_get_active(
-							GTK_TOGGLE_BUTTON(gtkconv->toolbar.font)));
-
-					return TRUE;
-					break;
 			}
 		} /* End of switch */
 
@@ -1435,38 +1448,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			}
 		}
 
-		if (event->keyval == 'l') {
-			gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
-			g_string_free(conv->history, TRUE);
-			conv->history = g_string_new("");
-
-			return TRUE;
-		}
-		else if (event->keyval == 'z') {
-			gtk_window_iconify(GTK_WINDOW(gtkwin->window));
-
-			return TRUE;
-		}
-		else if (event->keyval == '[') {
-			gaim_conv_window_switch_conversation(win,
-				gaim_conversation_get_index(conv) - 1);
-
-			return TRUE;
-		}
-		else if (event->keyval == ']') {
-			gaim_conv_window_switch_conversation(win,
-				gaim_conversation_get_index(conv) + 1);
-
-			return TRUE;
-		}
-		else if (event->keyval == GDK_Tab) {
-			move_next_tab(conv);
-
-			return TRUE;
-		}
-
-		return FALSE;
-	}
+	} else
 
 	/* If ALT (or whatever) was held down... */
 	if (event->state & GDK_MOD1_MASK) {
@@ -1478,9 +1460,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 			return TRUE;
 		}
-
-		return FALSE;
-	}
+	} else
 
 	/* If neither CTRL nor ALT were held down... */
 	switch (event->keyval) {
@@ -3860,60 +3840,6 @@ setup_im_pane(GaimConversation *conv)
 	setup_im_buttons(conv, gtkconv->bbox);
 
 	return paned;
-}
-
-static void
-move_next_tab(GaimConversation *conv)
-{
-	GaimConversation *next_conv = NULL;
-	GaimConvWindow *win;
-	GList *l;
-	int index, i;
-
-	win   = gaim_conversation_get_window(conv);
-	index = gaim_conversation_get_index(conv);
-
-	/* First check the tabs after this position. */
-	for (l = g_list_nth(gaim_conv_window_get_conversations(win), index);
-		 l != NULL;
-		 l = l->next) {
-
-		next_conv = (GaimConversation *)l->data;
-
-		if (gaim_conversation_get_unseen(next_conv) > 0)
-			break;
-
-		next_conv = NULL;
-	}
-
-	if (next_conv == NULL) {
-
-		/* Now check before this position. */
-		for (l = gaim_conv_window_get_conversations(win), i = 0;
-			 l != NULL && i < index;
-			 l = l->next) {
-
-			next_conv = (GaimConversation *)l->data;
-
-			if (gaim_conversation_get_unseen(next_conv) > 0)
-				break;
-
-			next_conv = NULL;
-		}
-
-		if (next_conv == NULL) {
-			/* Okay, just grab the next conversation tab. */
-			if (index == gaim_conv_window_get_conversation_count(win) - 1)
-				next_conv = gaim_conv_window_get_conversation_at(win, 0);
-			else
-				next_conv = gaim_conv_window_get_conversation_at(win, index + 1);
-		}
-	}
-
-	if (next_conv != NULL && next_conv != conv) {
-		gaim_conv_window_switch_conversation(win,
-			gaim_conversation_get_index(next_conv));
-	}
 }
 
 static void
