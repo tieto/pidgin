@@ -1770,9 +1770,6 @@ faim_internal int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *co
 		return ret;
 	}
 
-	/* Shouldn't happen for now. --wtm */
-	return -1;
-
 	if (hdrtype == 0x0001)
 		ret = handlehdr_directim(sess, conn, hdr);
 	else if (hdrtype == 0x1108) /* getfile listing.txt incoming tx->rx */
