@@ -1,5 +1,4 @@
 --- STUFF FOR 0.10.1 RELEASE ---
-	Apply/Cancel/OK in Prefs instead of just "Close" (I don't want this...)
 	Allow users to select sounds for various events
 	Execute Command on Buddy Pounce
 	Have a page in the prefs for the Applet

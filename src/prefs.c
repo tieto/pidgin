@@ -1764,8 +1764,8 @@ void set_display_option(GtkWidget *w, int *option)
 
 	if (blist) update_button_pix();
 
-	update_chat_button_pix();
-	update_im_button_pix();
+	if ((int)option == OPT_DISP_CHAT_SHOW_TEXT) update_chat_button_pix();
+	if ((int)option == OPT_DISP_CONV_SHOW_TEXT) update_im_button_pix();
 
 #ifdef USE_APPLET
 	update_pixmaps();
