@@ -269,18 +269,6 @@ GaimAccount *gaim_gtk_account_option_menu_get_selected(GtkWidget *optmenu);
 gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel);
 
 /**
- * Parses a message to find \<IMG\> tags with valid ID attributes that
- * refer to images in Gaim's image store, and load them into a list
- * of GdkPixbufs. Image tags with missing ID paramaters, or those that
- * refer to images that are not in the store will have a corresponding
- * NULL entry on the list.
- *
- * @param message The message to parse for image tags.
- * @param list    A pointer to the GSList of GdkPixbufs that will be created.
- */
-void gaim_gtk_find_images(const char *message, GSList **list);
-
-/**
  * Sets up GtkSpell for the given GtkTextView, reporting errors
  * if encountered.
  *

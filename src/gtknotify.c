@@ -303,7 +303,6 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	GtkWidget *button;
 	GtkWidget *imhtml;
 	GtkWidget *sw;
-	GSList *images = NULL;
 	int options = 0;
 	char label_text[2048];
 	char *linked_text;
@@ -376,28 +375,11 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	options ^= GTK_IMHTML_NO_NEWLINE;
 	options ^= GTK_IMHTML_NO_SCROLL;
 
-	gaim_gtk_find_images(text, &images);
-
 	/* Make sure URLs are clickable */
 	linked_text = gaim_markup_linkify(text);
-	gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), linked_text,
-									   options, images);
+	gtk_imhtml_append_text(GTK_IMHTML(imhtml), linked_text,
+									   options);
 	g_free(linked_text);
-
-	if (images)
-	{
-		GSList *tmp;
-
-		for (tmp = images; tmp; tmp = tmp->next)
-		{
-			GdkPixbuf *pixbuf = tmp->data;
-
-			if (pixbuf != NULL)
-				g_object_unref(pixbuf);
-		}
-
-		g_slist_free(images);
-	}
 
 	/* Show the window */
 	gtk_widget_show(window);

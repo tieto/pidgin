@@ -26,17 +26,8 @@
 #ifndef _GAIM_CONV_IMGSTORE_H_
 #define _GAIM_CONV_IMGSTORE_H_
 
-/**
- * Stored image
- *
- * Represents a single IM image awaiting display and/or transmission.
- */
-typedef struct
-{
-	char *data;		/**< The image data.		*/
-	size_t size;		/**< The image data's size.	*/
-	char *filename;		/**< The filename (for the UI)	*/
-} GaimStoredImage;
+struct _GaimStoredImage;
+typedef struct _GaimStoredImage GaimStoredImage;
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,6 +55,36 @@ int gaim_imgstore_add(const void *data, size_t size, const char *filename);
  * @return A pointer to the requested image, or NULL if it was not found.
  */
 GaimStoredImage *gaim_imgstore_get(int id);
+
+/**
+ * Retrieves a pointer to the image's data.
+ *
+ * @param i	The Image
+ *
+ * @return A pointer to the data, which must not
+ *         be freed or modified.
+ */
+gpointer gaim_imgstore_get_data(GaimStoredImage *i);
+
+/**
+ * Retrieves the length of the image's data.
+ *
+ * @param i	The Image
+ *
+ * @return The size of the data that the pointer returned by
+ *         gaim_imgstore_get_data points to.
+ */
+size_t gaim_imgstore_get_size(GaimStoredImage *i);
+
+/**
+ * Retrieves a pointer to the image's filename.
+ *
+ * @param i	The Image
+ *
+ * @return A pointer to the filename, which must not
+ *         be freed or modified.
+ */
+const char *gaim_imgstore_get_filename(GaimStoredImage *i);
 
 /**
  * Increment the reference count for an image in the store. The

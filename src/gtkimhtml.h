@@ -48,6 +48,7 @@ typedef struct _GtkIMHtmlSmiley		GtkIMHtmlSmiley;
 typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
 typedef struct _GtkIMHtmlImage		GtkIMHtmlImage;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
+typedef struct _GtkIMHtmlFuncs		GtkIMHtmlFuncs;
 
 typedef enum {
 	GTK_IMHTML_BOLD =      1 << 0,
@@ -111,6 +112,9 @@ struct _GtkIMHtml {
 
 	char *clipboard_text_string;
 	char *clipboard_html_string;
+
+	GSList *im_images;
+	GtkIMHtmlFuncs *funcs;
 };
 
 struct _GtkIMHtmlClass {
@@ -159,6 +163,7 @@ struct _GtkIMHtmlImage {
 	gchar *filename;
 	int width;
 	int height;
+	int id;
 };
 
 struct _GtkIMHtmlHr {
@@ -178,6 +183,23 @@ typedef enum {
 	GTK_IMHTML_USE_POINTSIZE = 1 << 8
 } GtkIMHtmlOptions;
 
+typedef gpointer    (*GtkIMHtmlGetImageFunc)        (int id);
+typedef gpointer    (*GtkIMHtmlGetImageDataFunc)    (gpointer i);
+typedef size_t      (*GtkIMHtmlGetImageSizeFunc)    (gpointer i);
+typedef const char *(*GtkIMHtmlGetImageFilenameFunc)(gpointer i);
+typedef void        (*GtkIMHtmlImageRefFunc)        (int id);
+typedef void        (*GtkIMHtmlImageUnrefFunc)      (int id);
+
+struct _GtkIMHtmlFuncs {
+	GtkIMHtmlGetImageFunc image_get;
+	GtkIMHtmlGetImageDataFunc image_get_data;
+	GtkIMHtmlGetImageSizeFunc image_get_size;
+	GtkIMHtmlGetImageFilenameFunc image_get_filename;
+	GtkIMHtmlImageRefFunc image_ref;
+	GtkIMHtmlImageUnrefFunc image_unref;
+};
+
+
 GtkType    gtk_imhtml_get_type         (void);
 GtkWidget* gtk_imhtml_new              (void *, void *);
 
@@ -189,6 +211,8 @@ void       gtk_imhtml_associate_smiley (GtkIMHtml *imhtml,
 					gchar *sml, GtkIMHtmlSmiley *smiley);
 
 void       gtk_imhtml_remove_smileys   (GtkIMHtml *imhtml);
+
+void       gtk_imhtml_set_funcs        (GtkIMHtml *imhtml, GtkIMHtmlFuncs *f);
 
 void       gtk_imhtml_show_comments    (GtkIMHtml *imhtml, gboolean show);
 
@@ -217,7 +241,7 @@ void       gtk_imhtml_page_down        (GtkIMHtml *imhtml);
 void gtk_imhtml_font_zoom(GtkIMHtml *imhtml, double zoom);
 
 GtkIMHtmlScalable *gtk_imhtml_scalable_new();
-GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename);
+GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id);
 void gtk_imhtml_image_free(GtkIMHtmlScalable *);
 void gtk_imhtml_image_scale(GtkIMHtmlScalable *, int, int);
 void gtk_imhtml_image_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
@@ -248,6 +272,7 @@ void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url);
 void gtk_imhtml_insert_link(GtkIMHtml *imhtml, GtkTextMark *mark, const char *url, const char *text);
 void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley);
 void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *smiley, GtkTextIter *iter);
+void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *iter);
 void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size);
 void gtk_imhtml_font_shrink(GtkIMHtml *imhtml);
 void gtk_imhtml_font_grow(GtkIMHtml *imhtml);

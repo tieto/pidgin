@@ -31,6 +31,20 @@
 static GSList *imgstore = NULL;
 static int nextid = 0;
 
+/**
+ * Stored image
+ *
+ * Represents a single IM image awaiting display and/or transmission.
+ * Now that this type is basicly private too, these two structs could
+ * probably be combined.
+ */
+struct _GaimStoredImage
+{
+	char *data;		/**< The image data.		*/
+	size_t size;		/**< The image data's size.	*/
+	char *filename;		/**< The filename (for the UI)	*/
+};
+
 typedef struct
 {
 	int id;
@@ -115,6 +129,18 @@ GaimStoredImage *gaim_imgstore_get(int id) {
 	gaim_debug(GAIM_DEBUG_INFO, "imgstore", "retrieved image id %d\n", priv->id);
 
 	return priv->img;
+}
+
+gpointer gaim_imgstore_get_data(GaimStoredImage *i) {
+	return i->data;
+}
+
+size_t gaim_imgstore_get_size(GaimStoredImage *i) {
+	return i->size;
+}
+
+const char *gaim_imgstore_get_filename(GaimStoredImage *i) {
+	return i->filename;
 }
 
 void gaim_imgstore_ref(int id) {

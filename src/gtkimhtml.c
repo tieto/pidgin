@@ -905,6 +905,7 @@ gtk_imhtml_finalize (GObject *object)
 {
 	GtkIMHtml *imhtml = GTK_IMHTML(object);
 	GList *scalables;
+	GSList *l;
 
 	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
@@ -923,12 +924,20 @@ gtk_imhtml_finalize (GObject *object)
 		scale->free(scale);
 	}
 
+	for (l = imhtml->im_images; l; l = l->next) {
+		int id;
+		id = GPOINTER_TO_INT(l->data);
+		if (imhtml->funcs->image_unref)
+			imhtml->funcs->image_unref(id);
+	}
+
 	if (imhtml->clipboard_text_string) {
 		g_free(imhtml->clipboard_text_string);
 		g_free(imhtml->clipboard_html_string);
 	}
 
 	g_list_free(imhtml->scalables);
+	g_slist_free(imhtml->im_images);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -2167,34 +2176,18 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 46:	/* IMG (opt) */
 				case 59:	/* IMG */
 					{
-#if 0
-/* disabling this for now, it's easy to add it back... */
-						GdkPixbuf *img = NULL;
-						const gchar *filename = NULL;
+						const char *id;
+
+						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+						ws[0] = '\0'; wpos = 0;
 
 						if (!(imhtml->format_functions & GTK_IMHTML_IMAGE))
 							break;
 
-						if (images && images->data) {
-							img = images->data;
-							images = images->next;
-							filename = g_object_get_data(G_OBJECT(img), "filename");
-							g_object_ref(G_OBJECT(img));
-						} else {
-							img = gtk_widget_render_icon(GTK_WIDGET(imhtml),
-							    GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_BUTTON,
-							    "gtkimhtml-missing-image");
-						}
+						id = gtk_imhtml_get_html_opt(tag, "ID=");
 
-						scalable = gtk_imhtml_image_new(img, filename);
-						/* NEW_BIT(NEW_SCALABLE_BIT); */
-						gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
-						scalable->add_to(scalable, imhtml, iter);
-						scalable->scale(scalable, rect.width, rect.height);
-						imhtml->scalables = g_list_append(imhtml->scalables, scalable);
-
-						g_object_unref(G_OBJECT(img));
-#endif
+						gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
+						break;
 					}
 				case 47:	/* P (opt) */
 				case 48:	/* H3 (opt) */
@@ -2486,7 +2479,7 @@ void       gtk_imhtml_smiley_shortcuts (GtkIMHtml        *imhtml,
 	imhtml->smiley_shortcuts = allow;
 }
 
-void 
+void
 gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, gchar *protocol_name) {
 	imhtml->protocol_name = protocol_name;
 }
@@ -2538,7 +2531,7 @@ void gtk_imhtml_page_down (GtkIMHtml *imhtml)
 }
 
 /* GtkIMHtmlScalable, gtk_imhtml_image, gtk_imhtml_hr */
-GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename)
+GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id)
 {
 	GtkIMHtmlImage *im_image = g_malloc(sizeof(GtkIMHtmlImage));
 	GtkImage *image = GTK_IMAGE(gtk_image_new_from_pixbuf(img));
@@ -2553,6 +2546,7 @@ GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename)
 	im_image->height = gdk_pixbuf_get_height(img);
 	im_image->mark = NULL;
 	im_image->filename = filename ? g_strdup(filename) : NULL;
+	im_image->id = id;
 
 	g_object_ref(img);
 	return GTK_IMHTML_SCALABLE(im_image);
@@ -2733,12 +2727,17 @@ void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTex
 {
 	GtkIMHtmlImage *image = (GtkIMHtmlImage *)scale;
 	GtkWidget *box = gtk_event_box_new();
+	char *tag;
 	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
 
 	gtk_container_add(GTK_CONTAINER(box), GTK_WIDGET(image->image));
 
 	gtk_widget_show(GTK_WIDGET(image->image));
 	gtk_widget_show(box);
+
+	tag = g_strdup_printf("<IMG ID=\"%d\">", image->id);
+	g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", tag, g_free);
+	g_object_set_data(G_OBJECT(anchor), "gtkimhtml_plaintext", "[Image]");
 
 	gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), box, anchor);
 	g_signal_connect(G_OBJECT(box), "event", G_CALLBACK(gtk_imhtml_image_clicked), image);
@@ -3513,6 +3512,61 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	g_free(unescaped);
 }
 
+void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *iter)
+{
+	GdkPixbuf *pixbuf = NULL;
+	const char *filename = NULL;
+	gpointer image;
+	GdkRectangle rect;
+	GtkIMHtmlScalable *scalable = NULL;
+	int minus;
+
+	if (!imhtml->funcs || !imhtml->funcs->image_get ||
+	    !imhtml->funcs->image_get_size || !imhtml->funcs->image_get_data ||
+	    !imhtml->funcs->image_get_filename || !imhtml->funcs->image_ref ||
+	    !imhtml->funcs->image_unref)
+		return;
+
+	image = imhtml->funcs->image_get(id);
+
+	if (image) {
+		gpointer data;
+		size_t len;
+
+		data = imhtml->funcs->image_get_data(image);
+		len = imhtml->funcs->image_get_size(image);
+
+		if (data && len) {
+			GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+			gdk_pixbuf_loader_write(loader, data, len, NULL);
+			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+			if (pixbuf)
+				g_object_ref(G_OBJECT(pixbuf));
+			gdk_pixbuf_loader_close(loader, NULL);
+		}
+
+	}
+
+	if (pixbuf) {
+		filename = imhtml->funcs->image_get_filename(image);
+		imhtml->funcs->image_ref(id);
+		imhtml->im_images = g_slist_prepend(imhtml->im_images, GINT_TO_POINTER(id));
+	} else {
+		pixbuf = gtk_widget_render_icon(GTK_WIDGET(imhtml), GTK_STOCK_MISSING_IMAGE,
+						GTK_ICON_SIZE_BUTTON, "gtkimhtml-missing-image");
+	}
+
+	scalable = gtk_imhtml_image_new(pixbuf, filename, id);
+	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
+	scalable->add_to(scalable, imhtml, iter);
+	minus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(imhtml)) +
+		gtk_text_view_get_right_margin(GTK_TEXT_VIEW(imhtml));
+	scalable->scale(scalable, rect.width - minus, rect.height);
+	imhtml->scalables = g_list_append(imhtml->scalables, scalable);
+
+	g_object_unref(G_OBJECT(pixbuf));
+}
+
 static const gchar *tag_to_html_start(GtkTextTag *tag)
 {
 	const gchar *name;
@@ -3795,4 +3849,10 @@ char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *st
 	}
 
 	return g_string_free(str, FALSE);
+}
+
+void gtk_imhtml_set_funcs(GtkIMHtml *imhtml, GtkIMHtmlFuncs *f)
+{
+	g_return_if_fail(imhtml != NULL);
+	imhtml->funcs = f;
 }

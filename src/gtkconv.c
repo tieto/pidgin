@@ -334,7 +334,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 		return;
 
 	buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
-	clean = gaim_markup_strip_html(buf);
+	clean = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
@@ -4532,7 +4532,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	GaimConvWindow *win;
 	GaimConnection *gc;
 	int gtk_font_options = 0;
-	GSList *images = NULL;
 	char buf[BUF_LONG];
 	char buf2[BUF_LONG];
 	char mdate[64];
@@ -4555,9 +4554,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		gaim_conv_window_show(win);
 	}
-
-	if (flags & GAIM_MESSAGE_IMAGES)
-		gaim_gtk_find_images(message, &images);
 
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
@@ -4595,8 +4591,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
 			   sml_attrib, mdate, message);
 
-		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
-										   buf2, 0, images);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
 
 		/* Add the message to a conversations scrollback buffer */
 		conv->history = g_string_append(conv->history, buf);
@@ -4613,9 +4608,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
 			   sml_attrib, mdate, message);
 		
-		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
-						   buf2, 0, images);
-		
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
+
 		/* Add the message to a conversations scrollback buffer */
 		conv->history = g_string_append(conv->history, buf);
 		conv->history = g_string_append(conv->history, "<BR>\n");
@@ -4624,8 +4618,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B>",
 			   sml_attrib, message);
 
-		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
-										   buf, 0, images);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf, 0);
 	}
 	else {
 		char *new_message = g_memdup(message, length);
@@ -4706,8 +4699,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		g_free(str);
 
-		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
-										   buf2, 0, images);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
+										   buf2, 0);
 
 		if(gc){
 			char *pre = g_strdup_printf("<font %s>", sml_attrib ? sml_attrib : "");
@@ -4727,8 +4720,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		else
 			with_font_tag = g_memdup(new_message, length);
 
-		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),
-							 with_font_tag, gtk_font_options, images);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
+							 with_font_tag, gtk_font_options);
 
 		conv->history = g_string_append(conv->history, buf);
 		conv->history = g_string_append(conv->history, new_message);
@@ -4741,18 +4734,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	if(sml_attrib)
 		g_free(sml_attrib);
-
-	if (images) {
-		GSList *tmp;
-
-		for (tmp = images; tmp; tmp = tmp->next) {
-			GdkPixbuf *pixbuf = tmp->data;
-			if(pixbuf)
-				g_object_unref(pixbuf);
-		}
-
-		g_slist_free(images);
-	}
 }
 
 static void

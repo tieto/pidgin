@@ -4524,15 +4524,18 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
 		ret = gaim_odc_send_im(od->sess, dim->conn, message, imflags);
-	} else if (imflags & GAIM_CONV_IM_IMAGES) {
-		/* Trying to send an IM image outside of a direct connection. */
-		oscar_ask_direct_im(gc, name);
-		ret = -ENOTCONN;
 	} else {
 		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
 		struct stat st;
 		gsize len;
+		GaimConversation *conv = gaim_find_conversation_with_account(name, gaim_connection_get_account(gc));
+
+		if (strstr(message, "<IMG "))
+			gaim_conversation_write(conv, "",
+			                        _("Your IM Image was not sent. "
+			                        "You must be Direct Connected to send IM Images."),
+			                        GAIM_MESSAGE_ERROR, time(NULL));
 
 		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(gc->account, name));
 		if (!bi) {
@@ -5632,6 +5635,12 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 	buf = gaim_strdup_withhtml(message);
 	len = strlen(buf);
 
+	if (strstr(buf, "<IMG "))
+		gaim_conversation_write(conv, "",
+		                        _("Your IM Image was not sent. "
+		                        "You cannot send IM Images in AIM chats."),
+		                        GAIM_MESSAGE_ERROR, time(NULL));
+
 	encoding = oscar_encoding_check(buf);
 	if (encoding & AIM_IMFLAGS_UNICODE) {
 		gaim_debug_info("oscar", "Sending Unicode chat\n");
@@ -5929,8 +5938,8 @@ static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 /*
- * This is called when each chunk of an image is received.  It can be used to 
- * update a progress bar, or to eat lots of dry cat food.  Wet cat food is 
+ * This is called when each chunk of an image is received.  It can be used to
+ * update a progress bar, or to eat lots of dry cat food.  Wet cat food is
  * nasty, you sicko.
  */
 static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -5947,7 +5956,7 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	percent = va_arg(ap, double);
 	va_end(ap);
 
-	if (!(dim = find_direct_im(od, sn)))
+	if (!sn || !(dim = find_direct_im(od, sn)))
 		return 1;
 	if (dim->watcher) {
 		gaim_input_remove(dim->watcher);   /* Otherwise, the callback will callback */
@@ -6146,75 +6155,73 @@ static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *m
 	char *buf;
 	size_t len;
 	int ret;
+	GString *msg = g_string_new("");
+	GString *data = g_string_new("<BINARY>");
+	GData *attribs;
+	const char *start, *end, *last;
+	int oscar_id = 0;
 
-	if (imflags & GAIM_CONV_IM_IMAGES) {
-		GString *msg = g_string_new("");
-		GString *data = g_string_new("<BINARY>");
-		GData *attribs;
-		const char *tmp, *start, *end, *last = NULL;
-		int oscar_id = 0;
+	last = message;
 
-		tmp = message;
+	/* for each valid IMG tag... */
+	while (last && *last && gaim_markup_find_tag("img", last, &start, &end, &attribs)) {
+		GaimStoredImage *image = NULL;
+		const char *id;
 
-		/* for each valid IMG tag... */
-		while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs)) {
-			GaimStoredImage *image = NULL;
-			const char *id;
-
-			last = end;
-			id = g_datalist_get_data(&attribs, "id");
-
-			/* ... if it refers to a valid gaim image ... */
-			if (id && (image = gaim_imgstore_get(atoi(id)))) {
-				/* ... append the message from start to the tag ... */
-				msg = g_string_append_len(msg, tmp, start - tmp);
-				oscar_id++;
-
-				/* ... insert a new img tag with the oscar id ... */
-				if (image->filename)
-					g_string_append_printf(msg,
-						"<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
-						image->filename, oscar_id, (int)image->size);
-				else
-					g_string_append_printf(msg,
-						"<IMG ID=\"%d\" DATASIZE=\"%d\">",
-						oscar_id, (int)image->size);
-
-				/* ... and append the data to the binary section ... */
-				g_string_append_printf(data, "<DATA ID=\"%d\" SIZE=\"%d\">",
-					oscar_id, (int)image->size);
-				data = g_string_append_len(data, image->data, image->size);
-				data = g_string_append(data, "</DATA>");
-			} else {
-				/* ... otherwise, allow the possibly invalid img tag through. */
-				/* should we do something else? */
-				msg = g_string_append_len(msg, tmp, (end + 1) - tmp);
-			}
-
-			g_datalist_clear(&attribs);
-
-			/* continue from the end of the tag */
-			tmp = end + 1;
+		if (start - last) {
+			g_string_append_len(msg, last, start - last);
 		}
 
-		/* append any remaining message data (without the > :-) */
-		if (last++ && *last)
-			msg = g_string_append(msg, last);
+		id = g_datalist_get_data(&attribs, "id");
 
-		/* if we inserted any images in the binary section, append it */
-		if (oscar_id) {
-			msg = g_string_append_len(msg, data->str, data->len);
-			msg = g_string_append(msg, "</BINARY>");
+		/* ... if it refers to a valid gaim image ... */
+		if (id && (image = gaim_imgstore_get(atoi(id)))) {
+			/* ... append the message from start to the tag ... */
+			size_t size = gaim_imgstore_get_size(image);
+			const char *filename = gaim_imgstore_get_filename(image);
+			gpointer imgdata = gaim_imgstore_get_data(image);
+
+			oscar_id++;
+
+			/* ... insert a new img tag with the oscar id ... */
+			if (filename)
+				g_string_append_printf(msg,
+					"<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%zu\">",
+					filename, oscar_id, size);
+			else
+				g_string_append_printf(msg,
+					"<IMG ID=\"%d\" DATASIZE=\"%zu\">",
+					oscar_id, size);
+
+			/* ... and append the data to the binary section ... */
+			g_string_append_printf(data, "<DATA ID=\"%d\" SIZE=\"%zu\">",
+				oscar_id, size);
+			data = g_string_append_len(data, imgdata, size);
+			data = g_string_append(data, "</DATA>");
 		}
+			/* If the tag is invalid, skip it, thus no else here */
 
-		len = msg->len;
-		buf = msg->str;
-		g_string_free(msg, FALSE);
-		g_string_free(data, TRUE);
-	} else {
-		len = strlen(message);
-		buf = g_memdup(message, len+1);
+		g_datalist_clear(&attribs);
+
+		/* continue from the end of the tag */
+		last = end + 1;
 	}
+
+	/* append any remaining message data (without the > :-) */
+	if (last && *last)
+		msg = g_string_append(msg, last);
+
+	/* if we inserted any images in the binary section, append it */
+	if (oscar_id) {
+		msg = g_string_append_len(msg, data->str, data->len);
+		msg = g_string_append(msg, "</BINARY>");
+	}
+
+	len = msg->len;
+	buf = msg->str;
+	g_string_free(msg, FALSE);
+	g_string_free(data, TRUE);
+
 
 	/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
 	if (imflags & GAIM_CONV_IM_AUTO_RESP)

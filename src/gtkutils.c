@@ -70,6 +70,15 @@ url_clicked_cb(GtkWidget *w, const char *uri)
 	g_idle_add(url_clicked_idle_cb, g_strdup(uri));
 }
 
+GtkIMHtmlFuncs gtkimhtml_cbs = {
+	(GtkIMHtmlGetImageFunc)gaim_imgstore_get,
+	(GtkIMHtmlGetImageDataFunc)gaim_imgstore_get_data,
+	(GtkIMHtmlGetImageSizeFunc)gaim_imgstore_get_size,
+	(GtkIMHtmlGetImageFilenameFunc)gaim_imgstore_get_filename,
+	gaim_imgstore_ref,
+	gaim_imgstore_unref,
+};
+
 void
 gaim_setup_imhtml(GtkWidget *imhtml)
 {
@@ -80,6 +89,8 @@ gaim_setup_imhtml(GtkWidget *imhtml)
 					 G_CALLBACK(url_clicked_cb), NULL);
 
 	smiley_themeize(imhtml);
+
+	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 }
 
 void
@@ -921,62 +932,6 @@ char *stylize(const gchar *text, int length)
 
 	g_free(tmp);
 	return buf;
-}
-
-void
-gaim_gtk_find_images(const char *message, GSList **list)
-{
-	GData *attribs;
-	const char *tmp, *start, *end;
-
-	g_return_if_fail(message != NULL);
-	g_return_if_fail(   list != NULL);
-
-	tmp = message;
-	while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs)) {
-		GaimStoredImage *image = NULL;
-		GdkPixbufLoader *loader = NULL;
-		GdkPixbuf *pixbuf = NULL;
-		GError *error = NULL;
-		char *id = g_datalist_get_data(&attribs, "id");
-
-		tmp = end + 1;
-
-		if (id)
-			image = gaim_imgstore_get(atoi(id));
-
-		g_datalist_clear(&attribs);
-
-		if (!image) {
-			*list = g_slist_append(*list, NULL);
-			continue;
-		}
-
-		loader = gdk_pixbuf_loader_new();
-
-		if (gdk_pixbuf_loader_write(loader, image->data, image->size, &error)
-			&& (pixbuf = gdk_pixbuf_loader_get_pixbuf(loader))) {
-
-			if (image->filename)
-				g_object_set_data_full(G_OBJECT(pixbuf), "filename",
-					g_strdup(image->filename), g_free);
-			g_object_ref(G_OBJECT(pixbuf));
-			*list = g_slist_append(*list, pixbuf);
-		} else {
-			if (error) {
-				gaim_debug(GAIM_DEBUG_ERROR, "gtkutils",
-						"Failed to make pixbuf from image store: %s\n",
-						error->message);
-				g_error_free(error);
-			} else {
-				gaim_debug(GAIM_DEBUG_ERROR, "gtkutils",
-						"Failed to make pixbuf from image store: unknown reason\n");
-			}
-			*list = g_slist_append(*list, NULL);
-		}
-
-		gdk_pixbuf_loader_close(loader, NULL);
-	}
 }
 
 void

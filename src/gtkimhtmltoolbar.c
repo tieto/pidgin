@@ -413,6 +413,8 @@ do_insert_image_cb(GtkWidget *widget, int resp, GtkIMHtmlToolbar *toolbar)
 	size_t size;
 	GError *error = NULL;
 	int id;
+	GtkTextIter iter;
+	GtkTextMark *ins;
 
 	if (resp != GTK_RESPONSE_OK) {
 		//set_toggle(toolbar->image, FALSE);
@@ -461,12 +463,12 @@ do_insert_image_cb(GtkWidget *widget, int resp, GtkIMHtmlToolbar *toolbar)
 		return;
 	}
 
-	//im->images = g_slist_append(im->images, GINT_TO_POINTER(id));
-
-	/*buf = g_strdup_printf("<IMG ID=\"%d\" SRC=\"file://%s\">", id, filename);
-	gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer), buf, -1);
-	g_free(buf);
-	*/
+	ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)));
+	gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)),
+	                                 &iter, ins);
+	gtk_imhtml_insert_image_at_iter(GTK_IMHTML(toolbar->imhtml), id, &iter);
+	gaim_imgstore_unref(id);
+	
 	g_free(name);
 }
 
@@ -986,9 +988,6 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show(sep);
 	toolbar->sml = NULL;
 	gtk_widget_show_all(hbox);
-
-	/* XXX - IMIMAGE - Fix IM images then remove the following line */
-	gtk_widget_hide(toolbar->image);
 }
 
 GtkWidget *gtk_imhtmltoolbar_new()
