@@ -1046,6 +1046,11 @@ __initial_email_msg(MsnServConn *servconn, const MsnMessage *msg)
 		return TRUE;
 	}
 
+	if (session->passport_info.file == NULL) {
+		msn_servconn_send_command(servconn, "URL", "INBOX");
+		return TRUE;
+	}
+
 	table = msn_message_get_hashtable_from_body(msg);
 
 	unread = g_hash_table_lookup(table, "Inbox-Unread");
@@ -1069,6 +1074,11 @@ __email_msg(MsnServConn *servconn, const MsnMessage *msg)
 
 	if (strcmp(servconn->msg_passport, "Hotmail")) {
 		/* This isn't an official message. */
+		return TRUE;
+	}
+
+	if (session->passport_info.file == NULL) {
+		msn_servconn_send_command(servconn, "URL", "INBOX");
 		return TRUE;
 	}
 
