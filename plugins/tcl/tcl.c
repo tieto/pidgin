@@ -137,10 +137,6 @@ static Tcl_Interp *tcl_create_interp()
 		return NULL;
 	}
 
-#ifdef HAVE_TK
-	Tcl_StaticPackage(interp, "Tk", Tk_Init, Tk_SafeInit);
-#endif /* HAVE_TK */
-
 	if (tcl_init_interp(interp)) {
 		Tcl_DeleteInterp(interp);
 		return NULL;
@@ -311,6 +307,10 @@ static gboolean tcl_load(GaimPlugin *plugin)
 	tcl_glib_init();
 	tcl_signal_init();
 	tcl_plugins = g_hash_table_new(g_direct_hash, g_direct_equal);
+
+#ifdef HAVE_TK
+	Tcl_StaticPackage(NULL, "Tk", Tk_Init, Tk_SafeInit);
+#endif /* HAVE_TK */
 
 	return TRUE;
 }
