@@ -6,6 +6,7 @@ admin.lo
 adverts.lo
 auth.lo
 bos.lo
+bstream.lo
 buddylist.lo
 chat.lo
 chatnav.lo
@@ -20,6 +21,7 @@ md5.lo
 meta.lo
 misc.lo
 msgcookie.lo
+newsearch.lo
 oscar.lo
 rxhandlers.lo
 rxqueue.lo

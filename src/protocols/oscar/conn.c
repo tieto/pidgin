@@ -1,4 +1,3 @@
-
 /*
  * conn.c
  *
@@ -920,10 +919,11 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	aim__registermodule(sess, translate_modfirst);
 	aim__registermodule(sess, chatnav_modfirst);
 	aim__registermodule(sess, chat_modfirst);
-	/* missing 0x0f - 0x12 */
+	aim__registermodule(sess, newsearch_modfirst);
+	/* missing 0x10 - 0x12 */
 	aim__registermodule(sess, ssi_modfirst);
 	/* missing 0x14 */
-	aim__registermodule(sess, icq_modfirst);
+	aim__registermodule(sess, icq_modfirst); /* XXX - Make sure this isn't sent for AIM */
 	/* missing 0x16 */
 	aim__registermodule(sess, auth_modfirst);
 	aim__registermodule(sess, email_modfirst);
@@ -1066,14 +1066,13 @@ faim_export int aim_logoff(aim_session_t *sess)
 	aim_connrst(sess);  /* in case we want to connect again */
 
 	return 0;
-
 }
 
 /*
  * aim_flap_nop()
  *
  * No-op.  WinAIM 4.x sends these _every minute_ to keep
- * the connection alive.  
+ * the connection alive.
  */
 faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn)
 {
@@ -1086,5 +1085,3 @@ faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn)
 
 	return 0;
 }
-
-

@@ -1,5 +1,5 @@
 /*
- *  aim_txqueue.c
+ * txqueue.c
  *
  * Herein lies all the mangement routines for the transmit (Tx) queue.
  *
@@ -63,8 +63,7 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 
 	} else if (fr->hdrtype == AIM_FRAMETYPE_OFT) {
 
-		fr->hdr.oft.type = chan;
-		fr->hdr.oft.hdr2len = 0; /* this will get setup by caller */
+		fr->hdr.rend.type = chan;
 
 	} else 
 		faimdprintf(sess, 0, "tx_new: unknown framing\n");
@@ -316,50 +315,37 @@ static int sendframe_flap(aim_session_t *sess, aim_frame_t *fr)
 	return err;
 }
 
-static int sendframe_oft(aim_session_t *sess, aim_frame_t *fr)
+static int sendframe_rendezvous(aim_session_t *sess, aim_frame_t *fr)
 {
-	aim_bstream_t hbs;
-	fu8_t *hbs_raw;
-	int hbslen;
+	aim_bstream_t bs;
+	fu8_t *bs_raw;
 	int err = 0;
-	
-	hbslen = 8 + fr->hdr.oft.hdr2len;
-	if (!(hbs_raw = malloc(hbslen)))
+	int totlen = 8 + aim_bstream_curpos(&fr->data);
+
+	if (!(bs_raw = malloc(totlen)))
 		return -1;
 
-	aim_bstream_init(&hbs, hbs_raw, hbslen);
+	aim_bstream_init(&bs, bs_raw, totlen);
 
-	aimbs_putraw(&hbs, fr->hdr.oft.magic, 4);
-	aimbs_put16(&hbs, fr->hdr.oft.hdr2len + 8);
-	aimbs_put16(&hbs, fr->hdr.oft.type);
-	aimbs_putraw(&hbs, fr->hdr.oft.hdr2, fr->hdr.oft.hdr2len);
+	aimbs_putraw(&bs, fr->hdr.rend.magic, 4);
+	aimbs_put16(&bs, 8 + fr->hdr.rend.hdrlen);
+	aimbs_put16(&bs, fr->hdr.rend.type);
 
-	aim_bstream_rewind(&hbs);
-	
-	
-	if (aim_bstream_send(&hbs, fr->conn, hbslen) != hbslen) {
+	/* payload */
+	aim_bstream_rewind(&fr->data);
+	aimbs_putbs(&bs, &fr->data, totlen - 8);
 
+	aim_bstream_rewind(&bs);
+
+	if (aim_bstream_send(&bs, fr->conn, totlen) != totlen)
 		err = -errno;
-		
-	} else if (aim_bstream_curpos(&fr->data)) {
-		int len;
 
-		len = aim_bstream_curpos(&fr->data);
-		aim_bstream_rewind(&fr->data);
-		
-		if (aim_bstream_send(&fr->data, fr->conn, len) != len)
-			err = -errno;
-	}
-
-	free(hbs_raw); /* XXX aim_bstream_free */
+	free(bs_raw); /* XXX aim_bstream_free */
 
 	fr->handled = 1;
 	fr->conn->lastactivity = time(NULL);
 
-
 	return err;
-
-
 }
 
 faim_internal int aim_tx_sendframe(aim_session_t *sess, aim_frame_t *fr)
@@ -367,7 +353,7 @@ faim_internal int aim_tx_sendframe(aim_session_t *sess, aim_frame_t *fr)
 	if (fr->hdrtype == AIM_FRAMETYPE_FLAP)
 		return sendframe_flap(sess, fr);
 	else if (fr->hdrtype == AIM_FRAMETYPE_OFT)
-		return sendframe_oft(sess, fr);
+		return sendframe_rendezvous(sess, fr);
 	return -1;
 }
 
@@ -443,7 +429,7 @@ faim_export void aim_tx_purgequeue(aim_session_t *sess)
  * disappear without warning.
  *
  */
-faim_export void aim_tx_cleanqueue(aim_session_t *sess, aim_conn_t *conn)
+faim_internal void aim_tx_cleanqueue(aim_session_t *sess, aim_conn_t *conn)
 {
 	aim_frame_t *cur;
 
@@ -454,5 +440,3 @@ faim_export void aim_tx_cleanqueue(aim_session_t *sess, aim_conn_t *conn)
 
 	return;
 }
-
-

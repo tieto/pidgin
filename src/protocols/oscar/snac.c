@@ -129,7 +129,6 @@ faim_internal faim_shortfunc void aim_cleansnac(aim_session_t *sess, aim_snac_t 
 				break;
 		}
 		free(d->data);
-		free(d);
 	}
 
 	free(snac->data);

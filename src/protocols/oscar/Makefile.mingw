@@ -71,6 +71,7 @@ C_SRC =			admin.c		\
 			adverts.c	\
 			auth.c 		\
 			bos.c 		\
+			bstream.c	\
 			buddylist.c	\
 			chat.c		\
 			chatnav.c	\
@@ -84,6 +85,7 @@ C_SRC =			admin.c		\
 			meta.c		\
 			misc.c		\
 			msgcookie.c	\
+			newsearch.c	\
 			popups.c	\
 			rxhandlers.c	\
 			rxqueue.c	\

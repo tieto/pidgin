@@ -23,6 +23,7 @@
 #define AIM_CB_FAM_TRN 0x000c
 #define AIM_CB_FAM_CTN 0x000d /* ChatNav */
 #define AIM_CB_FAM_CHT 0x000e /* Chat */
+#define AIM_CB_FAM_SCH 0x000f /* "New" search */
 #define AIM_CB_FAM_SSI 0x0013 /* Server stored information */
 #define AIM_CB_FAM_ICQ 0x0015
 #define AIM_CB_FAM_ATH 0x0017
@@ -174,6 +175,15 @@
 #define AIM_CB_CHT_OUTGOINGMSG 0x0005
 #define AIM_CB_CHT_INCOMINGMSG 0x0006
 #define AIM_CB_CHT_DEFAULT 0xffff
+
+/*
+ * SNAC Family: "New" Search
+ *
+ * Most of these are actually special.
+ */ 
+#define AIM_CB_SCH_ERROR 0x0001
+#define AIM_CB_SCH_SEARCH 0x0002
+#define AIM_CB_SCH_RESULTS 0x0003
 
 /*
  * SNAC Family: ICQ

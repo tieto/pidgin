@@ -216,6 +216,7 @@ struct client_info_s {
 #define AIM_CONN_TYPE_BOS           0x0002
 #define AIM_CONN_TYPE_CHAT          0x000e
 #define AIM_CONN_TYPE_CHATNAV       0x000d
+#define AIM_CONN_TYPE_SEARCH        0x000f
 #define AIM_CONN_TYPE_EMAIL         0x0018
 
 /* they start getting arbitrary in rendezvous stuff =) */
@@ -287,11 +288,10 @@ typedef struct aim_frame_s {
 			flap_seqnum_t seqnum;     
 		} flap;
 		struct {
-			fu16_t type;
 			fu8_t magic[4]; /* ODC2 OFT2 */
-			fu16_t hdr2len;
-			fu8_t *hdr2; /* rest of bloated header */
-		} oft;
+			fu16_t hdrlen;
+			fu16_t type;
+		} rend;
 	} hdr;
 	aim_bstream_t data;	/* payload stream */
 	fu8_t handled;		/* 0 = new, !0 = been handled */
@@ -496,6 +496,7 @@ faim_internal int aim_puttlv_raw(fu8_t *buf, const fu16_t t, const fu16_t l, con
 
 /* TLV list handling. */
 faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs);
+faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num);
 faim_internal void aim_freetlvchain(aim_tlvlist_t **list);
 faim_internal aim_tlv_t *aim_gettlv(aim_tlvlist_t *, fu16_t t, const int n);
 faim_internal char *aim_gettlv_str(aim_tlvlist_t *, const fu16_t t, const int n);
@@ -885,7 +886,7 @@ faim_export int aim_send_im(aim_session_t *, const char *destsn, unsigned short 
 faim_export int aim_send_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen);
 faim_export int aim_send_typing(aim_session_t *sess, aim_conn_t *conn, int typing);
-faim_export int aim_send_im_direct(aim_session_t *, aim_conn_t *, const char *msg, int len);
+faim_export int aim_send_im_direct(aim_session_t *, aim_conn_t *, const char *msg, int len, int encoding);
 faim_export const char *aim_directim_getsn(aim_conn_t *conn);
 faim_export aim_conn_t *aim_directim_initiate(aim_session_t *, const char *destsn);
 faim_export aim_conn_t *aim_directim_connect(aim_session_t *, const char *sn, const char *addr, const fu8_t *cookie);
@@ -1019,12 +1020,36 @@ faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t 
 faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail);
 faim_export int aim_admin_setnick(aim_session_t *sess, aim_conn_t *conn, const char *newnick);
 
-/* aim_buddylist.c */
+/* buddylist.c */
 faim_export int aim_add_buddy(aim_session_t *, aim_conn_t *, const char *);
 faim_export int aim_remove_buddy(aim_session_t *, aim_conn_t *, const char *);
 
-/* aim_search.c */
+/* search.c */
 faim_export int aim_usersearch_address(aim_session_t *, aim_conn_t *, const char *);
+
+/* newsearch.c */
+struct aim_usersearch {
+	char *first;
+	char *last;
+	char *middle;
+	char *maiden;
+	char *email;
+	char *country;
+	char *state;
+	char *city;
+	char *sn;
+	char *interest;
+	char *nick;
+	char *zip;
+	char *region;
+	char *address;
+	struct aim_usersearch *next;
+};
+
+faim_export int aim_usersearch_email(aim_session_t *, const char *, const char *);
+faim_export int aim_usersearch_name(aim_session_t *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
+faim_export int aim_usersearch_interest(aim_session_t *, const char *, const char *);
+
 
 /* These apply to exchanges as well. */
 #define AIM_CHATROOM_FLAG_EVILABLE 0x0001

@@ -20,19 +20,19 @@
  */ 
 faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t info)
 {
-	aim_frame_t *tx;
+	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 14)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 14)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0007, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&tx->data, 0x0007, 0x0002, 0x0000, snacid);
+	aim_putsnac(&fr->data, 0x0007, 0x0002, 0x0000, snacid);
 
-	aimbs_put16(&tx->data, info);
-	aimbs_put16(&tx->data, 0x0000);
+	aimbs_put16(&fr->data, info);
+	aimbs_put16(&fr->data, 0x0000);
 
-	aim_tx_enqueue(sess, tx);
+	aim_tx_enqueue(sess, fr);
 
 	return 0;
 }
@@ -100,22 +100,22 @@ static int infochange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  */
 faim_export int aim_admin_setnick(aim_session_t *sess, aim_conn_t *conn, const char *newnick)
 {
-	aim_frame_t *tx;
+	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newnick))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newnick))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&tx->data, 0x0007, 0x0004, 0x0000, snacid);
+	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
 	aim_addtlvtochain_raw(&tl, 0x0001, strlen(newnick), newnick);
 	
-	aim_writetlvchain(&tx->data, &tl);
+	aim_writetlvchain(&fr->data, &tl);
 	aim_freetlvchain(&tl);
 	
-	aim_tx_enqueue(sess, tx);
+	aim_tx_enqueue(sess, fr);
 
 
 	return 0;
@@ -127,15 +127,15 @@ faim_export int aim_admin_setnick(aim_session_t *sess, aim_conn_t *conn, const c
  */
 faim_export int aim_admin_changepasswd(aim_session_t *sess, aim_conn_t *conn, const char *newpw, const char *curpw)
 {
-	aim_frame_t *tx;
+	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
 	aim_snacid_t snacid;
 
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+strlen(curpw)+4+strlen(newpw))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+strlen(curpw)+4+strlen(newpw))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&tx->data, 0x0007, 0x0004, 0x0000, snacid);
+	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
 	/* new password TLV t(0002) */
 	aim_addtlvtochain_raw(&tl, 0x0002, strlen(newpw), newpw);
@@ -143,10 +143,10 @@ faim_export int aim_admin_changepasswd(aim_session_t *sess, aim_conn_t *conn, co
 	/* current password TLV t(0012) */
 	aim_addtlvtochain_raw(&tl, 0x0012, strlen(curpw), curpw);
 
-	aim_writetlvchain(&tx->data, &tl);
+	aim_writetlvchain(&fr->data, &tl);
 	aim_freetlvchain(&tl);
 
-	aim_tx_enqueue(sess, tx);
+	aim_tx_enqueue(sess, fr);
 
 	return 0;
 }
@@ -157,22 +157,22 @@ faim_export int aim_admin_changepasswd(aim_session_t *sess, aim_conn_t *conn, co
  */
 faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail)
 {
-	aim_frame_t *tx;
+	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newemail))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newemail))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&tx->data, 0x0007, 0x0004, 0x0000, snacid);
+	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
 	aim_addtlvtochain_raw(&tl, 0x0011, strlen(newemail), newemail);
 	
-	aim_writetlvchain(&tx->data, &tl);
+	aim_writetlvchain(&fr->data, &tl);
 	aim_freetlvchain(&tl);
 	
-	aim_tx_enqueue(sess, tx);
+	aim_tx_enqueue(sess, fr);
 
 	return 0;
 }

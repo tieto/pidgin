@@ -16,6 +16,7 @@ liboscar_a_SOURCES = 	admin.c		\
 			adverts.c	\
 			auth.c 		\
 			bos.c 		\
+			bstream.c 	\
 			buddylist.c	\
 			chat.c		\
 			chatnav.c	\
@@ -29,6 +30,7 @@ liboscar_a_SOURCES = 	admin.c		\
 			meta.c		\
 			misc.c		\
 			msgcookie.c	\
+			newsearch.c	\
 			popups.c	\
 			rxhandlers.c	\
 			rxqueue.c	\
@@ -55,6 +57,7 @@ liboscar_la_SOURCES = 	admin.c		\
 			adverts.c	\
 			auth.c 		\
 			bos.c 		\
+			bstream.c 	\
 			buddylist.c	\
 			chat.c		\
 			chatnav.c	\
@@ -68,6 +71,7 @@ liboscar_la_SOURCES = 	admin.c		\
 			meta.c		\
 			misc.c		\
 			msgcookie.c	\
+			newsearch.c	\
 			popups.c	\
 			rxhandlers.c	\
 			rxqueue.c	\

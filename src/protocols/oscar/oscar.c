@@ -347,10 +347,10 @@ static int gaim_parse_evilnotify (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_searcherror(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_searchreply(aim_session_t *, aim_frame_t *, ...);
 static int gaim_bosrights        (aim_session_t *, aim_frame_t *, ...);
-static int conninitdone_bos      (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_admin    (aim_session_t *, aim_frame_t *, ...);
-static int conninitdone_chat     (aim_session_t *, aim_frame_t *, ...);
+static int conninitdone_bos      (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chatnav  (aim_session_t *, aim_frame_t *, ...);
+static int conninitdone_chat     (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_email    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_msgerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_mtn        (aim_session_t *, aim_frame_t *, ...);
@@ -411,8 +411,11 @@ static char *msgerrreason[] = {
 };
 static int msgerrreasonlen = 25;
 
-static void oscar_file_transfer_disconnect(aim_session_t *sess,
-		aim_conn_t *conn) {
+/*
+ * This is called to clean up whenever a file transfer is no longer in progress, 
+ * whether because it finished sucessfully, it was canceled, or there was an error.
+ */
+static void oscar_file_transfer_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct oscar_file_transfer *oft = find_oft_by_conn(gc,
@@ -1485,6 +1488,11 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 				      oscar_callback, dim->conn);
 }
 
+/*
+ * This is called every time we are finished sending a file and the receiving buddy 
+ * has sent back an acknowledgement; we start the next file or tear down the 
+ * connection as appropriate.
+ */
 static int oscar_sendfile_out_done(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
@@ -1514,12 +1522,17 @@ static int oscar_sendfile_request(aim_session_t *sess,
 	int size;
 
 	transfer_get_file_info(oft->xfer, &size, &name);
+	/* AAA convert the name to UCS-2 if necessary, and pass the encoding to the call below */
 	aim_oft_sendfile_request(sess, oft->conn, name, oft->filesdone,
 			oft->totfiles, size, oft->totsize);
 
 	return 0;
 }
 
+/*
+ * This is called when sending a file and a direct connection has been set up with 
+ * the buddy; we can now transmit the appropriate headers describing the transfer.
+ */
 static int oscar_sendfile_accepted(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -1555,6 +1568,10 @@ static int oscar_sendfile_accepted(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 0;
 }
 
+/*
+ * This is called when we requested to send a file to a buddy, but he or she didn't 
+ * respond; we need to clean up.
+ */
 static int oscar_sendfile_timeout(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
@@ -1607,6 +1624,10 @@ static void oscar_file_transfer_out(struct gaim_connection *gc,
 			oscar_callback, oft->conn);
 }
 
+/*
+ * This is called after a chunk of data has been sent out or received; it is used 
+ * to update the checksum.
+ */
 static void oscar_file_transfer_data_chunk(struct gaim_connection *gc,
 		struct file_transfer *xfer, const char *buf, int len)
 {
@@ -1617,6 +1638,7 @@ static void oscar_file_transfer_data_chunk(struct gaim_connection *gc,
 		aim_update_checksum(sess, oft->conn, buf, len);
 }
 
+/* Called once at the beginning of an incoming transfer session. */
 static void oscar_file_transfer_in(struct gaim_connection *gc,
 		struct file_transfer *xfer, int offset) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -1628,6 +1650,7 @@ static void oscar_file_transfer_in(struct gaim_connection *gc,
 			oft->port,
 			AIM_CAPS_SENDFILE);
 	if (!oft->conn) {
+		/* XXX implement reverse connections for receiving from behind a firewall */
 		char *buf = g_strdup_printf("Couldn't connect to remote host");
 		do_error_dialog(buf, NULL, GAIM_ERROR);
 		g_free(buf);
@@ -1642,8 +1665,10 @@ static void oscar_file_transfer_in(struct gaim_connection *gc,
 			oscar_callback, oft->conn);
 }
 
-static void oscar_file_transfer_cancel(struct gaim_connection *gc,
-		struct file_transfer *xfer) {
+/*
+ * This is called when the user began a file transfer, but subsequently canceled.
+ */
+static void oscar_file_transfer_cancel(struct gaim_connection *gc, struct file_transfer *xfer) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
 
@@ -1912,6 +1937,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			return 0;
 		}
 
+		/* Someone wants to send a file (or files) to us */
 		debug_printf("%s (%s) requests to send a file to %s\n",
 				userinfo->sn, args->verifiedip, gc->username);
 
@@ -2012,8 +2038,7 @@ static void gaim_icq_contactdontadd(struct channel4_data *data) {
 static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args) {
 	struct gaim_connection *gc = sess->aux_data;
 
-	switch (args->type) 
-		{
+	switch (args->type) {
 		case 0x0001: { /* An almost-normal instant message.  Mac ICQ sends this.  It's peculiar. */
 			gchar *uin, *message;
 			uin = g_strdup_printf("%lu", args->uin);
@@ -2267,55 +2292,54 @@ static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 	who = va_arg(ap, char *);
 	reason = (fu16_t)va_arg(ap, unsigned int);
 
-	if (chan == 2) {
+	if (chan == 0x0002) { /* File transfer declined */
 		char *cookie = va_arg(ap, char *);
-		va_end(ap);
+		return gaim_parse_clientauto_rend(sess, who, reason, cookie);
+	} else if (chan == 0x0004) { /* ICQ message */
+		switch(reason) {
+			case 0x0003: { /* Reply from an ICQ status message request */
+				int state = (int)va_arg(ap, fu32_t);
+				char *msg = va_arg(ap, char *);
+				char *status_msg = gaim_icq_status(state);
+				char *dialog_msg, **splitmsg;
+				struct oscar_data *od = gc->proto_data;
+				GSList *l = od->evilhack;
+				gboolean evilhack = FALSE;
 
-		return gaim_parse_clientauto_rend(sess, who, reason,
-				cookie);
-	}
+				/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+				splitmsg = g_strsplit(msg, "\r\n", 0);
 
-	switch(reason) {
-		case 0x0003: { /* Reply from an ICQ status message request */
-			int state = (int)va_arg(ap, fu32_t);
-			char *msg = va_arg(ap, char *);
-			char *status_msg = gaim_icq_status(state);
-			char *dialog_msg, **splitmsg;
-			struct oscar_data *od = gc->proto_data;
-			GSList *l = od->evilhack;
-			gboolean evilhack = FALSE;
-
-			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
-			splitmsg = g_strsplit(msg, "\r\n", 0);
-
-			/* If who is in od->evilhack, then we're just getting the away message, otherwise this 
-			 * will just get appended to the info box (which is already showing). */
-			while (l) {
-				char *x = l->data;
-				if (!strcmp(x, normalize(who))) {
-					evilhack = TRUE;
-					g_free(x);
-					od->evilhack = g_slist_remove(od->evilhack, x);
-					break;
+				/* If who is in od->evilhack, then we're just getting the away message, otherwise this 
+				 * will just get appended to the info box (which is already showing). */
+				while (l) {
+					char *x = l->data;
+					if (!strcmp(x, normalize(who))) {
+						evilhack = TRUE;
+						g_free(x);
+						od->evilhack = g_slist_remove(od->evilhack, x);
+						break;
+					}
+					l = l->next;
 				}
-				l = l->next;
-			}
 
-			if (evilhack)
-				dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR>%s<BR>"), who, status_msg, g_strjoinv("<BR>", splitmsg));
-			else
-				dialog_msg = g_strdup_printf(_("<B>Status:</B> %s<BR><HR><BR>%s<BR>"), status_msg, g_strjoinv("<BR>", splitmsg));
-			g_show_info_text(gc, who, 2, dialog_msg, NULL);
+				if (evilhack)
+					dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR>%s<BR>"), who, status_msg, g_strjoinv("<BR>", splitmsg));
+				else
+					dialog_msg = g_strdup_printf(_("<B>Status:</B> %s<BR><HR>%s<BR>"), status_msg, g_strjoinv("<BR>", splitmsg));
+				g_show_info_text(gc, who, 2, dialog_msg, NULL);
 
-			g_free(status_msg);
-			g_free(dialog_msg);
-			g_strfreev(splitmsg);
-		} break;
+				g_free(status_msg);
+				g_free(dialog_msg);
+				g_strfreev(splitmsg);
+			} break;
 
-		default: {
-			debug_printf("Received an unknown client auto-response from %s.  Type 0x%04x\n", who, reason);
-		} break;
-	}
+			default: {
+				debug_printf("Received an unknown client auto-response from %s.  Type 0x%04x\n", who, reason);
+			} break;
+		} /* end of switch */
+
+	} /* end of if */
+
 	va_end(ap);
 
 	return 1;
@@ -2530,7 +2554,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (!od->icq) {
 		g_snprintf(legend, sizeof legend,
-				_("<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
+				_("<BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
 				"<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
 				"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
 				"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
@@ -2563,7 +2587,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"%s"
 			"%s"
 			"%s<BR>\n"
-			"<HR><BR>\n"),
+			"<HR>\n"),
 			info->sn, images(info->flags),
 			info->warnlevel/10,
 			onlinesince ? onlinesince : "",
@@ -2596,7 +2620,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_show_info_text(gc, info->sn, 0,
 					 header,
 					 (prof && *prof) ? away_subs(prof, gc->username) : NULL,
-					 (prof && *prof) ? "<BR><HR><BR>" : NULL,
+					 (prof && *prof) ? "<BR><HR>" : NULL,
 					 NULL);
 		}
 	} else if (infotype == AIM_GETINFO_CAPABILITIES) {
@@ -3090,6 +3114,9 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	aim_clientready(sess, fr->conn);
 
+	/* XXX - Should call aim_bos_setidle with 0x0000 */
+
+	/* XXX - Should only call reqofflinemsgs when using ICQ? */
 	aim_icq_reqofflinemsgs(sess);
 
 	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
@@ -3198,7 +3225,7 @@ static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 				g_show_info_text(gc, who, 0, buf, NULL);
 			else {
 				char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-				g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, "<BR>\n<HR><BR><I>Remote client does not support sending status messages.</I><BR>\n", NULL);
+				g_show_info_text(gc, who, 2, buf, "<B>Status:</B> ", state_msg, "<BR>\n<HR><I>Remote client does not support sending status messages.</I><BR>\n", NULL);
 				free(state_msg);
 			}
 		} else {
@@ -3390,7 +3417,8 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 
 	if (dim) {
 		if (dim->connected) {  /* If we're not connected yet, send through server */
-			ret =  aim_send_im_direct(odata->sess, dim->conn, message, len == -1 ? strlen(message) : len);
+			/* AAA - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
+			ret =  aim_send_im_direct(odata->sess, dim->conn, message, len == -1 ? strlen(message) : len, 0);
 			if (ret == 0)
 				return 1;
 			else return ret;
@@ -4185,6 +4213,10 @@ static char **oscar_list_icon(int uc) {
 	return NULL;
 }
 
+/*
+ * This is called after the raw data for a file has been transferred (whether 
+ * we are sending or receiving), but there are other files remaining.
+ */
 void oscar_file_transfer_nextfile(struct gaim_connection *gc,
 		struct file_transfer *xfer) {
 	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
@@ -4206,6 +4238,11 @@ void oscar_file_transfer_nextfile(struct gaim_connection *gc,
 		aim_oft_end(sess, conn);
 }
 
+/*
+ * This is called after the raw data for a file has been transferred (whether 
+ * we are sending or receiving), and it is the last file in the set, so we 
+ * can tear down the connection.
+ */
 void oscar_file_transfer_done(struct gaim_connection *gc,
 		struct file_transfer *xfer) {
 	struct oscar_file_transfer *oft = find_oft_by_xfer(gc, xfer);
@@ -4224,6 +4261,10 @@ void oscar_file_transfer_done(struct gaim_connection *gc,
 	}
 }
 
+/*
+ * This is called when there is raw data ready to be sent or received; all the 
+ * protocol details have been taken care of.
+ */
 static int oscar_file_transfer_do(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
@@ -4244,8 +4285,8 @@ static int oscar_file_transfer_do(aim_session_t *sess, aim_frame_t *fr, ...) {
 	oft->watcher = 0;
 
 	if (oft->type == OFT_SENDFILE_IN) {
-		err = transfer_in_do(oft->xfer, conn->fd,
-				fh->name, fh->size);
+		/* AAA convert fh->name from UCS-2 to UTF-8 if (fh->nencode == 0x0002) */
+		err = transfer_in_do(oft->xfer, conn->fd, fh->name, fh->size);
 	}
 	else {
 		err = transfer_out_do(oft->xfer, conn->fd, fh->nrecvd);
@@ -4340,17 +4381,19 @@ static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_directim_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	char *msg, *sn;
-	int len;
+	int len, encoding;
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
 	msg = va_arg(ap, char *);
 	len = va_arg(ap, int);
+	encoding = va_arg(ap, int);
 	va_end(ap);
 
 	debug_printf("Got DirectIM message from %s\n", sn);
 
+	/* AAA - I imagine Paco-Paco will want to do some voodoo with the encoding here */
 	serv_got_im(gc, sn, msg, 0, time(NULL), len);
 
 	return 1;
@@ -4439,14 +4482,14 @@ static void oscar_get_away_msg(struct gaim_connection *gc, char *who) {
 					aim_send_im_ch2_geticqmessage(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
 				else {
 					char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-					char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not support sending status messages.</I><BR>"), who, state_msg);
+					char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>Remote client does not support sending status messages.</I><BR>"), who, state_msg);
 					g_show_info_text(gc, who, 2, dialog_msg, NULL);
 					free(state_msg);
 					free(dialog_msg);
 				}
 			else {
 				char *state_msg = gaim_icq_status((budlight->uc & 0xffff0000) >> 16);
-				char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message.</I><BR>"), who, state_msg);
+				char *dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><I>User has no status message.</I><BR>"), who, state_msg);
 				g_show_info_text(gc, who, 2, dialog_msg, NULL);
 				free(state_msg);
 				free(dialog_msg);

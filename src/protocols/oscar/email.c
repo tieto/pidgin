@@ -86,10 +86,10 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	for (new=sess->emailinfo; (new && strncmp(cookie16, new->cookie16, 16)); new=new->next);
 	if (new) {
 		/* Free some of the old info, if existant */
-		if (new->cookie8) free(new->cookie8);
-		if (new->cookie16) free(new->cookie16);
-		if (new->url) free(new->url);
-		if (new->domain) free(new->domain);
+		free(new->cookie8);
+		free(new->cookie16);
+		free(new->url);
+		free(new->domain);
 	} else {
 		/* We don't already have info, so create a new struct for it */
 		if (!(new = malloc(sizeof(struct aim_emailinfo))))
@@ -102,8 +102,7 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	new->cookie8 = cookie8;
 	new->cookie16 = cookie16;
 
-	aimbs_get16(bs); /* Number of TLVs to follow */
-	tlvlist = aim_readtlvchain(bs);
+	tlvlist = aim_readtlvchain_num(bs, aimbs_get16(bs));
 
 	tmp = aim_gettlv16(tlvlist, 0x0080, 1);
 	if (tmp) {
@@ -177,10 +176,10 @@ static void email_shutdown(aim_session_t *sess, aim_module_t *mod)
 	while (sess->emailinfo) {
 		struct aim_emailinfo *tmp = sess->emailinfo;
 		sess->emailinfo = sess->emailinfo->next;
-		if (tmp->cookie16) free(tmp->cookie16);
-		if (tmp->cookie8) free(tmp->cookie8);
-		if (tmp->url) free(tmp->url);
-		if (tmp->domain) free(tmp->domain);
+		free(tmp->cookie16);
+		free(tmp->cookie8);
+		free(tmp->url);
+		free(tmp->domain);
 		free(tmp);
 	}
 
