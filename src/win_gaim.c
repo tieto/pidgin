@@ -172,23 +172,29 @@ static void dll_prep() {
 static char* wgaim_lcid_to_posix(LCID lcid) {
         switch(lcid) {
         case 1026: return "bg"; /* bulgarian */
+        case 2125: return "my_MM"; /* burmese (Myanmar) */
         case 1027: return "ca"; /* catalan */
-        case 1050: return "hr"; /* croation */
+        case 1050: return "hr"; /* croatian */
         case 1029: return "cs"; /* czech */
         case 1030: return "da"; /* danish */
         case 1043: return "nl"; /* dutch - netherlands */
         case 1033: return "en"; /* english - us */
+        case 3081: return "en_AU"; /* english - australia */
+        case 4105: return "en_CA"; /* english - canada */
+        case 2057: return "en_GB"; /* english - great britain */
         case 1035: return "fi"; /* finnish */
         case 1036: return "fr"; /* french - france */
         case 1031: return "de"; /* german - germany */
         case 1032: return "el"; /* greek */
         case 1037: return "he"; /* hebrew */
+        case 1081: return "hi"; /* hindi */
         case 1038: return "hu"; /* hungarian */
         case 1040: return "it"; /* italian - italy */
         case 1041: return "ja"; /* japanese */
         case 1042: return "ko"; /* korean */
         case 1063: return "lt"; /* lithuanian */
         case 1071: return "mk"; /* macedonian */
+        case 1044: return "no"; /* norwegian */
         case 1045: return "pl"; /* polish */
         case 2070: return "pt"; /* portuguese - portugal */
         case 1046: return "pt_BR"; /* portuguese - brazil */
@@ -206,6 +212,7 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
         case 1028: return "zh_TW"; /* chinese - taiwan (traditional) */
         case 1055: return "tr"; /* turkish */
         case 1058: return "uk"; /* ukrainian */
+        case 1066: return "vi"; /* vietnamese */
         default:
                 return NULL;
         }
