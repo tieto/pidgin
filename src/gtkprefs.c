@@ -85,6 +85,8 @@ static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
 static GtkTreeIter plugin_iter;
 
+static guint browser_pref_id = 0;
+
 /*
  * PROTOTYPES
  */
@@ -266,8 +268,6 @@ prefs_dropdown_from_list(GtkWidget *box, const gchar *title, GaimPrefType type,
 		menuitems = g_list_next(menuitems);
 		g_return_val_if_fail(menuitems != NULL, NULL);
 
-		menuitems = g_list_next(menuitems);
-
 		opt = gtk_menu_item_new_with_label(text);
 
 		g_object_set_data(G_OBJECT(opt), "type", GINT_TO_POINTER(type));
@@ -300,6 +300,8 @@ prefs_dropdown_from_list(GtkWidget *box, const gchar *title, GaimPrefType type,
 
 			gtk_menu_set_active(GTK_MENU(menu), o);
 		}
+
+		menuitems = g_list_next(menuitems);
 
 		o++;
 	}
@@ -370,6 +372,9 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 		gtk_widget_destroy(sounddialog);
 	g_object_unref(G_OBJECT(prefs_away_store));
 	prefs_away_store = NULL;
+
+	/* Unregister callbacks. */
+	gaim_prefs_disconnect_callback(browser_pref_id);
 
 	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
 		plug = l->data;
@@ -722,7 +727,7 @@ GtkWidget *font_page() {
 	prefs_checkbox(_("_Bold"),
 				  "/gaim/gtk/conversations/send_bold", vbox);
 	prefs_checkbox(_("_Italics"),
-				  "/gaim/gtk/conversations/send_italics", vbox);
+				  "/gaim/gtk/conversations/send_italic", vbox);
 	prefs_checkbox(_("_Underline"),
 				  "/gaim/gtk/conversations/send_underline", vbox);
 	prefs_checkbox(_("_Strikethrough"),
@@ -976,7 +981,7 @@ GtkWidget *conv_page() {
 									"/gaim/gtk/conversations/close_on_tabs",
 									vbox);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(close_checkbox), FALSE);
 	}
 
@@ -1026,7 +1031,7 @@ GtkWidget *im_page() {
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Icons"));
 	prefs_checkbox(_("Show buddy _icons"),
-				  "/gaim/gtk/conversations/show_buddy_icons", vbox);
+				  "/gaim/gtk/conversations/im/show_buddy_icons", vbox);
 	prefs_checkbox(_("Enable buddy icon a_nimation"),
 				  "/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
 
@@ -1225,17 +1230,28 @@ static GList *get_available_browsers()
 	GList *browsers = NULL;
 	int i = 0;
 
-	browsers = g_list_prepend(browsers, GINT_TO_POINTER(BROWSER_MANUAL));
+	browsers = g_list_prepend(browsers, "custom");
 	browsers = g_list_prepend(browsers, _("Manual"));
+
 	for (i = 0; i < num_possible_browsers; i++) {
 		if (program_is_valid(possible_browsers[i].command)) {
 			browsers = g_list_prepend(browsers, 
 									  possible_browsers[i].command);
-			browsers = g_list_prepend(browsers, possible_browsers[i].name);
+			browsers = g_list_prepend(browsers, _(possible_browsers[i].name));
 		}
 	}
 
 	return browsers;
+}
+
+static void
+browser_changed_cb(const char *name, GaimPrefType type, gpointer value,
+				   gpointer data)
+{
+	GtkWidget *hbox = data;
+	const char *browser = value;
+
+	gtk_widget_set_sensitive(hbox, !strcmp(browser, "custom"));
 }
 
 GtkWidget *browser_page() {
@@ -1281,6 +1297,9 @@ GtkWidget *browser_page() {
 					   gaim_prefs_get_string("/gaim/gtk/browsers/command"));
 	g_signal_connect(G_OBJECT(browser_entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
+
+	browser_pref_id = gaim_prefs_connect_callback("/gaim/gtk/browsers/browser",
+												  browser_changed_cb, hbox);
 
 	if (browsers != NULL) {
 		vbox = gaim_gtk_make_frame (ret, _("Browser Options"));
@@ -1423,7 +1442,7 @@ GtkWidget *away_page() {
 	prefs_checkbox(_("_Sending messages removes away status"),
 				  "/core/conversations/away_back_on_send", vbox);
 	prefs_checkbox(_("_Queue new messages when away"),
-				  "/core/away/queue_messages", vbox);
+				  "/plugins/gtk/docklet/queue_messages", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Auto-response"));
 	hbox = gtk_hbox_new(FALSE, 0);
@@ -2328,6 +2347,7 @@ void gaim_gtk_prefs_show(void)
 
 	prefs_notebook_init();
 
+	/* Show everything. */
 	gtk_tree_view_expand_all (GTK_TREE_VIEW(tree_v));
 	gtk_widget_show(prefs);
 }

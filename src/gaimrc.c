@@ -541,7 +541,7 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 		}
 	}
 
-	if ((i = strlen(account->user_info)))
+	if ((i = strlen(user_info)))
 		user_info[i - 1] = '\0';
 
 	gaim_account_set_user_info(account, user_info);
