@@ -152,6 +152,8 @@ gaim_SOURCES = \
 	gtkft.h \
 	gtkimhtml.c \
 	gtkimhtml.h \
+	gtkimhtmltoolbar.c \
+	gtkimhtmltoolbar.h \
 	gtkinternal.h \
 	gtklog.c \
 	gtklog.h \

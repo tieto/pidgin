@@ -159,36 +159,10 @@ struct _GaimGtkConversation
 	GtkWidget *bbox;
 	GtkWidget *sw;
 
-	struct
-	{
-		GtkWidget *toolbar;
-
-		GtkWidget *bold;
-		GtkWidget *italic;
-		GtkWidget *underline;
-
-		GtkWidget *larger_size;
-		GtkWidget *normal_size;
-		GtkWidget *smaller_size;
-
-		GtkWidget *font;
-		GtkWidget *fgcolor;
-		GtkWidget *bgcolor;
-
-		GtkWidget *image;
-		GtkWidget *link;
-		GtkWidget *smiley;
-		GtkWidget *log;
-
-	} toolbar;
+	GtkWidget *toolbar;
 
 	struct
 	{
-		GtkWidget *fg_color;
-		GtkWidget *bg_color;
-		GtkWidget *font;
-		GtkWidget *smiley;
-		void *link;
 		GtkWidget *image;
 		GtkWidget *log;
 		GtkWidget *search;

@@ -351,23 +351,101 @@ gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
  * It's supposed to be fixed in gtk2.2.  You can view the bug report at
  * http://bugzilla.gnome.org/show_bug.cgi?id=107939
  */
-gboolean gtk_key_pressed_cb(GtkWidget *imhtml, GdkEventKey *event, gpointer data)
-{
+
+/*
+ * I'm adding some keyboard shortcuts too.
+ */
+
+gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data)
+{	
+	char buf[7];
+	buf[0] = '\0';
+
 	if (event->state & GDK_CONTROL_MASK)
 		switch (event->keyval) {
-			case 'a':
-				return TRUE;
-				break;
+		case 'a':
+			return TRUE;
+			break;
+			
+		case GDK_Home:
+			return TRUE;
+			break;
 
-			case GDK_Home:
-				return TRUE;
-				break;
-
-			case GDK_End:
-				return TRUE;
-				break;
+		case GDK_End:
+			return TRUE;
+			break;
+		
+		case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
+		case 'B':
+			gtk_imhtml_toggle_bold(imhtml);
+			return TRUE;
+			break;
+			
+		case 'f':
+		case 'F':
+			/*set_toggle(gtkconv->toolbar.font,
+			  !gtk_toggle_button_get_active(
+			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.font)));*/
+			
+			return TRUE;
+			break;
+			
+		case 'i':
+		case 'I':
+			/*set_toggle(gtkconv->toolbar.italic,
+			  !gtk_toggle_button_get_active(
+			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.italic)));*/
+			gtk_imhtml_toggle_italic(imhtml);
+			return TRUE;
+			break;
+			
+		case 'u':  /* ctrl-u is GDK_Clear, which clears the line. */
+		case 'U':
+			/*set_toggle(gtkconv->toolbar.underline,
+			  !gtk_toggle_button_get_active(
+			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.underline)));*/
+			gtk_imhtml_toggle_underline(imhtml);
+			return TRUE;
+			break;
+			
+		case '-':
+			/*set_toggle(gtkconv->toolbar.smaller_size,
+			  !gtk_toggle_button_get_active(
+			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.smaller_size)));*/
+			gtk_imhtml_font_shrink(imhtml);
+			return TRUE;
+			break;
+			
+		case '=':
+		case '+':
+			/*set_toggle(gtkconv->toolbar.larger_size,
+			  !gtk_toggle_button_get_active(
+			  GTK_TOGGLE_BUTTON(gtkconv->toolbar.larger_size)));*/
+			gtk_imhtml_font_grow(imhtml);
+			return TRUE;
+			break;
+			
+		case '1': strcpy(buf, ":-)");  break;
+		case '2': strcpy(buf, ":-(");  break;
+		case '3': strcpy(buf, ";-)");  break;
+		case '4': strcpy(buf, ":-P");  break;
+		case '5': strcpy(buf, "=-O");  break;
+		case '6': strcpy(buf, ":-*");  break;
+		case '7': strcpy(buf, ">:o");  break;
+		case '8': strcpy(buf, "8-)");  break;
+		case '!': strcpy(buf, ":-$");  break;
+		case '@': strcpy(buf, ":-!");  break;
+		case '#': strcpy(buf, ":-[");  break;
+		case '$': strcpy(buf, "O:-)"); break;
+		case '%': strcpy(buf, ":-/");  break;
+		case '^': strcpy(buf, ":'(");  break;
+		case '&': strcpy(buf, ":-X");  break;
+		case '*': strcpy(buf, ":-D");  break;
 		}
-
+	if (*buf) {
+		gtk_imhtml_insert_smiley(imhtml, NULL, buf);//->account->protocol_id, buf);
+		return TRUE;
+	}	
 	return FALSE;
 }
 
@@ -1757,6 +1835,11 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 					break;
 				case 62:	/* comment */
 					/* NEW_BIT (NEW_TEXT_BIT); */
+					ws[wpos] = '\0';
+					if (url)
+						gtk_imhtml_insert_link(imhtml, url, ws);
+					else
+						gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
 					if (imhtml->show_comments)
 						wpos = g_snprintf (ws, len, "%s", tag);
 					/* NEW_BIT (NEW_COMMENT_BIT); */

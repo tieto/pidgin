@@ -34,6 +34,7 @@
 #include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkimhtml.h"
+#include "gtkimhtmltoolbar.h"
 #include "gtkprefs.h"
 #include "gtkutils.h"
 #include "stock.h"
@@ -57,6 +58,7 @@ struct confirm_del {
 
 struct create_away {
 	GtkWidget *window;
+	GtkWidget *toolbar;
 	GtkWidget *entry;
 	GtkWidget *text;
 	struct away_message *mess;
@@ -112,7 +114,7 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, GaimConversation *
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
-	if (GTK_IS_COLOR_SELECTION_DIALOG(w)) {
+	/*if (GTK_IS_COLOR_SELECTION_DIALOG(w)) {
 		if (w == gtkconv->dialogs.fg_color) {
 			gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(gtkconv->toolbar.fgcolor), FALSE);
@@ -134,7 +136,7 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, GaimConversation *
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->toolbar.log),
 									   FALSE);
 		gtkconv->dialogs.log = NULL;
-	}
+		}*/
 
 	dialogwindows = g_list_remove(dialogwindows, w);
 	gtk_widget_destroy(w);
@@ -574,92 +576,6 @@ show_info_dialog(void)
 GtkWidget *fgcseld = NULL;
 GtkWidget *bgcseld = NULL;
 
-void cancel_fgcolor(GtkWidget *widget, GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	if (gtkconv->toolbar.fgcolor && widget) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.fgcolor),
-									FALSE);
-	}
-
-	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.fg_color);
-	gtk_widget_destroy(gtkconv->dialogs.fg_color);
-	gtkconv->dialogs.fg_color = NULL;
-}
-
-void cancel_bgcolor(GtkWidget *widget, GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	if (gtkconv->toolbar.bgcolor && widget) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.bgcolor),
-									FALSE);
-	}
-
-	dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.bg_color);
-	gtk_widget_destroy(gtkconv->dialogs.bg_color);
-	gtkconv->dialogs.bg_color = NULL;
-}
-
-void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
-{
-	GdkColor text_color;
-	GaimConversation *c;
-	GaimGtkConversation *gtkconv;
-	char *open_tag;
-
-	open_tag = g_malloc(30);
-
-	gtk_color_selection_get_current_color(colorsel, &text_color);
-
-	c = g_object_get_data(G_OBJECT(colorsel), "gaim_conversation");
-	/* GTK_IS_EDITABLE(c->entry); huh? */
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	gtkconv->fg_color = text_color;
-	g_snprintf(open_tag, 23, "#%02X%02X%02X",
-			   text_color.red / 256,
-			   text_color.green / 256,
-			   text_color.blue / 256);
-	gtk_imhtml_toggle_forecolor(GTK_IMHTML(gtkconv->entry), open_tag);
-
-	g_free(open_tag);
-	cancel_fgcolor(NULL, c);
-}
-
-void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
-{
-	GdkColor text_color;
-	GaimConversation *c;
-	GaimGtkConversation *gtkconv;
-	char *open_tag;
-
-	open_tag = g_malloc(30);
-
-	gtk_color_selection_get_current_color(colorsel, &text_color);
-
-	c = g_object_get_data(G_OBJECT(colorsel), "gaim_conversation");
-	/* GTK_IS_EDITABLE(c->entry); huh? */
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	gtkconv->bg_color = text_color;
-	g_snprintf(open_tag, 25, "#%02X%02X%02X",
-			   text_color.red / 256,
-			   text_color.green / 256,
-			   text_color.blue / 256);
-	gtk_imhtml_toggle_backcolor(GTK_IMHTML(gtkconv->entry), open_tag);
-	
-	g_free(open_tag);
-	cancel_bgcolor(NULL, c);
-}
-
 void show_fgcolor_dialog(GaimConversation *c, GtkWidget *color)
 {
 	GaimGtkConversation *gtkconv;
@@ -671,45 +587,22 @@ void show_fgcolor_dialog(GaimConversation *c, GtkWidget *color)
 	gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
 					&fgcolor);
 
-	if (color == NULL) {	/* we came from the prefs */
-		if (fgcseld)
-			return;
-
-		fgcseld = gtk_color_selection_dialog_new(_("Select Text Color"));
-		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION
-					      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), &fgcolor);
-		g_signal_connect(G_OBJECT(fgcseld), "delete_event",
-				   G_CALLBACK(destroy_colorsel), (void *)1);
-		g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->cancel_button),
-				   "clicked", G_CALLBACK(destroy_colorsel), (void *)1);
-		g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->ok_button), "clicked",
-				   G_CALLBACK(apply_color_dlg), (void *)1);
-		gtk_widget_realize(fgcseld);
-		gtk_widget_show(fgcseld);
-		gdk_window_raise(fgcseld->window);
+	if (fgcseld)
 		return;
-	}
-
-	if (!gtkconv->dialogs.fg_color) {
-
-		gtkconv->dialogs.fg_color = gtk_color_selection_dialog_new(_("Select Text Color"));
-		colorsel = GTK_COLOR_SELECTION_DIALOG(gtkconv->dialogs.fg_color)->colorsel;
-		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
-		g_object_set_data(G_OBJECT(colorsel), "gaim_conversation", c);
-
-		g_signal_connect(G_OBJECT(gtkconv->dialogs.fg_color), "delete_event",
-				   G_CALLBACK(delete_event_dialog), c);
-		g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(gtkconv->dialogs.fg_color)->ok_button),
-				   "clicked", G_CALLBACK(do_fgcolor), colorsel);
-		g_signal_connect(G_OBJECT
-				   (GTK_COLOR_SELECTION_DIALOG(gtkconv->dialogs.fg_color)->cancel_button),
-				   "clicked", G_CALLBACK(cancel_fgcolor), c);
-
-		gtk_widget_realize(gtkconv->dialogs.fg_color);
-	}
-
-	gtk_widget_show(gtkconv->dialogs.fg_color);
-	gdk_window_raise(gtkconv->dialogs.fg_color->window);
+	
+	fgcseld = gtk_color_selection_dialog_new(_("Select Text Color"));
+	gtk_color_selection_set_current_color(GTK_COLOR_SELECTION
+					      (GTK_COLOR_SELECTION_DIALOG(fgcseld)->colorsel), &fgcolor);
+	g_signal_connect(G_OBJECT(fgcseld), "delete_event",
+			 G_CALLBACK(destroy_colorsel), (void *)1);
+	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->cancel_button),
+			 "clicked", G_CALLBACK(destroy_colorsel), (void *)1);
+	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->ok_button), "clicked",
+			 G_CALLBACK(apply_color_dlg), (void *)1);
+	gtk_widget_realize(fgcseld);
+	gtk_widget_show(fgcseld);
+	gdk_window_raise(fgcseld->window);
+	return;
 }
 
 void show_bgcolor_dialog(GaimConversation *c, GtkWidget *color)
@@ -723,93 +616,29 @@ void show_bgcolor_dialog(GaimConversation *c, GtkWidget *color)
 	gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
 					&bgcolor);
 
-	if (color == NULL) {	/* we came from the prefs */
-		if (bgcseld)
-			return;
-
-		bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
-		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION
-					      (GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), &bgcolor);
-		g_signal_connect(G_OBJECT(bgcseld), "delete_event",
-				   G_CALLBACK(destroy_colorsel), NULL);
-		g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->cancel_button),
-				   "clicked", G_CALLBACK(destroy_colorsel), NULL);
-		g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->ok_button), "clicked",
-				   G_CALLBACK(apply_color_dlg), (void *)2);
-		gtk_widget_realize(bgcseld);
-		gtk_widget_show(bgcseld);
-		gdk_window_raise(bgcseld->window);
+	if (bgcseld)
 		return;
-	}
-
-	if (!gtkconv->dialogs.bg_color) {
-
-		gtkconv->dialogs.bg_color = gtk_color_selection_dialog_new(_("Select Background Color"));
-		colorsel = GTK_COLOR_SELECTION_DIALOG(gtkconv->dialogs.bg_color)->colorsel;
-		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
-		g_object_set_data(G_OBJECT(colorsel), "gaim_conversation", c);
-
-		g_signal_connect(G_OBJECT(gtkconv->dialogs.bg_color), "delete_event",
-				   G_CALLBACK(delete_event_dialog), c);
-		g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(gtkconv->dialogs.bg_color)->ok_button),
-				   "clicked", G_CALLBACK(do_bgcolor), colorsel);
-		g_signal_connect(G_OBJECT
-				   (GTK_COLOR_SELECTION_DIALOG(gtkconv->dialogs.bg_color)->cancel_button),
-				   "clicked", G_CALLBACK(cancel_bgcolor), c);
-
-		gtk_widget_realize(gtkconv->dialogs.bg_color);
-	}
-
-	gtk_widget_show(gtkconv->dialogs.bg_color);
-	gdk_window_raise(gtkconv->dialogs.bg_color->window);
+	
+	bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
+	gtk_color_selection_set_current_color(GTK_COLOR_SELECTION
+					      (GTK_COLOR_SELECTION_DIALOG(bgcseld)->colorsel), &bgcolor);
+	g_signal_connect(G_OBJECT(bgcseld), "delete_event",
+			 G_CALLBACK(destroy_colorsel), NULL);
+	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->cancel_button),
+			 "clicked", G_CALLBACK(destroy_colorsel), NULL);
+	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->ok_button), "clicked",
+			 G_CALLBACK(apply_color_dlg), (void *)2);
+	gtk_widget_realize(bgcseld);
+	gtk_widget_show(bgcseld);
+	gdk_window_raise(bgcseld->window);
+	return;
 }
 
-/*------------------------------------------------------------------------*/
+
+/*------------------------  ----------------------------------------------*/
 /*  Font Selection Dialog                                                 */
 /*------------------------------------------------------------------------*/
 
-void cancel_font(GtkWidget *widget, GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	if (gtkconv->toolbar.font && widget) {
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(gtkconv->toolbar.font), FALSE);
-	}
-
-	if (gtkconv->dialogs.font) {
-		dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.font);
-		gtk_widget_destroy(gtkconv->dialogs.font);
-		gtkconv->dialogs.font = NULL;
-	}
-}
-
-void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
-{
-	/* this could be expanded to include font size, weight, etc.
-	   but for now only works with font face */
-	char *fontname;
-	char *space;
-	GaimConversation *c = g_object_get_data(G_OBJECT(fontsel),
-			"gaim_conversation");
-
-	if(!c)
-		return;
-
-	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
-
-	space = strrchr(fontname, ' ');
-	if(space && isdigit(*(space+1)))
-		*space = '\0';
-
-	gaim_gtk_set_font_face(GAIM_GTK_CONVERSATION(c), fontname);
-
-	g_free(fontname);
-
-	cancel_font(NULL, c);
-}
 
 void destroy_fontsel(GtkWidget *w, gpointer d)
 {
@@ -825,62 +654,34 @@ void show_font_dialog(GaimConversation *c, GtkWidget *font)
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
-	if (!font) {		/* we came from the prefs dialog */
-		if (fontseld)
-			return;
 
-		fontseld = gtk_font_selection_dialog_new(_("Select Font"));
-
-		fontface = gaim_prefs_get_string("/gaim/gtk/conversations/font_face");
-
-		if (fontface != NULL && *fontface != '\0') {
-			g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontface);
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
-								fonttif);
-		} else {
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
-								DEFAULT_FONT_FACE " 12");
-		}
-
-		g_signal_connect(G_OBJECT(fontseld), "delete_event",
-				   G_CALLBACK(destroy_fontsel), NULL);
-		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->cancel_button),
-				   "clicked", G_CALLBACK(destroy_fontsel), NULL);
-		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->ok_button), "clicked",
-				   G_CALLBACK(apply_font_dlg), fontseld);
-		gtk_widget_realize(fontseld);
-		gtk_widget_show(fontseld);
-		gdk_window_raise(fontseld->window);
+	if (fontseld)
 		return;
+	
+	fontseld = gtk_font_selection_dialog_new(_("Select Font"));
+	
+	fontface = gaim_prefs_get_string("/gaim/gtk/conversations/font_face");
+	
+	if (fontface != NULL && *fontface != '\0') {
+		g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontface);
+		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
+							fonttif);
+	} else {
+		gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(fontseld),
+							DEFAULT_FONT_FACE " 12");
 	}
+	
+	g_signal_connect(G_OBJECT(fontseld), "delete_event",
+			 G_CALLBACK(destroy_fontsel), NULL);
+	g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->cancel_button),
+			 "clicked", G_CALLBACK(destroy_fontsel), NULL);
+	g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->ok_button), "clicked",
+			 G_CALLBACK(apply_font_dlg), fontseld);
+	gtk_widget_realize(fontseld);
+	gtk_widget_show(fontseld);
+	gdk_window_raise(fontseld->window);
+	return;
 
-	if (!gtkconv->dialogs.font) {
-		gtkconv->dialogs.font = gtk_font_selection_dialog_new(_("Select Font"));
-
-		g_object_set_data(G_OBJECT(gtkconv->dialogs.font), "gaim_conversation", c);
-
-		if (gtkconv->fontface[0]) {
-			g_snprintf(fonttif, sizeof(fonttif), "%s 12", gtkconv->fontface);
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(gtkconv->dialogs.font),
-							       fonttif);
-		} else {
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(gtkconv->dialogs.font),
-								DEFAULT_FONT_FACE);
-		}
-
-		g_signal_connect(G_OBJECT(gtkconv->dialogs.font), "delete_event",
-				   G_CALLBACK(delete_event_dialog), c);
-		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(gtkconv->dialogs.font)->ok_button),
-				   "clicked", G_CALLBACK(apply_font), gtkconv->dialogs.font);
-		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(gtkconv->dialogs.font)->cancel_button),
-				   "clicked", G_CALLBACK(cancel_font), c);
-
-		gtk_widget_realize(gtkconv->dialogs.font);
-
-	}
-
-	gtk_widget_show(gtkconv->dialogs.font);
-	gdk_window_raise(gtkconv->dialogs.font->window);
 }
 
 /*------------------------------------------------------------------------*/
@@ -899,7 +700,7 @@ static struct away_message *save_away_message(struct create_away *ca)
 	}
 
 	g_snprintf(am->name, sizeof(am->name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
-	away_message = gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE);
+	away_message = gtk_imhtml_get_markup(GTK_IMHTML(ca->text));
 
 	g_snprintf(am->message, sizeof(am->message), "%s", away_message);
 	g_free(away_message);
@@ -926,7 +727,7 @@ int check_away_mess(struct create_away *ca, int type)
 		return 0;
 	}
 
-	msg = gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE);
+	msg = gtk_imhtml_get_markup(GTK_IMHTML(ca->text));
 
 	if (!msg && (type <= 1)) {
 		/* We shouldn't allow a blank message */
@@ -959,7 +760,7 @@ void use_away_mess(GtkWidget *widget, struct create_away *ca)
 		return;
 
 	g_snprintf(am.name, sizeof(am.name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
-	away_message = gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE);
+	away_message = gtk_imhtml_get_markup(GTK_IMHTML(ca->text));
 
 	g_snprintf(am.message, sizeof(am.message), "%s", away_message);
 	g_free(away_message);
@@ -1022,6 +823,10 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gaim_set_accessible_label (ca->entry, label);
 	gtk_widget_grab_focus(ca->entry);
 
+	/* Toolbar */
+	ca->toolbar = gtk_imhtmltoolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox), ca->toolbar, FALSE, FALSE, 0);
+
 	/* Away message text */
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
@@ -1029,11 +834,13 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
-	ca->text = gtk_text_view_new();
+	ca->text = gtk_imhtml_new(NULL, NULL);
+	gtk_imhtml_set_editable(ca->text, TRUE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD_CHAR);
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(ca->text));
+	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(ca->toolbar), ca->text);
 
 	gtk_container_add(GTK_CONTAINER(sw), ca->text);
 
@@ -1052,10 +859,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 		gtk_tree_model_get_value (GTK_TREE_MODEL(ls), &iter, 1, &val);
 		amt = g_value_get_pointer (&val);
 		gtk_entry_set_text(GTK_ENTRY(ca->entry), amt->name);
-		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ca->text));
-		gtk_text_buffer_get_iter_at_offset(buffer, &start, pos);
-		gtk_text_buffer_insert(buffer, &start, amt->message, strlen(amt->message));
-
+		gtk_imhtml_append_text_with_images(GTK_IMHTML(ca->text), amt->message, 0, NULL);
 		ca->mess = amt;
 	}
 
@@ -1079,143 +883,6 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(ca->window);
-}
-
-/* smiley dialog */
-
-void close_smiley_dialog(GtkWidget *widget, GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	if (gtkconv->toolbar.smiley) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
-									FALSE);
-	}
-	if(gtkconv->dialogs.smiley) {
-		dialogwindows = g_list_remove(dialogwindows, gtkconv->dialogs.smiley);
-		gtk_widget_destroy(gtkconv->dialogs.smiley);
-		gtkconv->dialogs.smiley = NULL;
-	}
-}
-
-void insert_smiley_text(GtkWidget *widget, GaimConversation *c)
-{
-	GaimGtkConversation *gtkconv;
-	char *smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
-	GaimPlugin *proto = gaim_find_prpl(gaim_account_get_protocol_id(gaim_conversation_get_account(c)));
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	gtk_imhtml_insert_smiley(GTK_IMHTML(gtkconv->entry), proto->info->name, smiley_text);
-
-	close_smiley_dialog(NULL, c);
-}
-
-static void add_smiley(GaimConversation *c, GtkWidget *table, int row, int col, char *filename, char *face)
-{
-	GtkWidget *image;
-	GtkWidget *button;
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	image = gtk_image_new_from_file(filename);
-	button = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(button), image);
-	g_object_set_data(G_OBJECT(button), "smiley_text", face);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(insert_smiley_text), c);
-
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, face, NULL);
-
-	gtk_table_attach_defaults(GTK_TABLE(table), button, col, col+1, row, row+1);
-
-	/* these look really weird with borders */
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-
-	gtk_widget_show(button);
-}
-
-static gboolean smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley) {
-	while(list) {
-		GtkIMHtmlSmiley *cur = list->data;
-		if(!strcmp(cur->file, smiley->file))
-			return FALSE;
-		list = list->next;
-	}
-	return TRUE;
-}
-
-void show_smiley_dialog(GaimConversation *c, GtkWidget *widget)
-{
-	GaimGtkConversation *gtkconv;
-	GtkWidget *dialog;
-	GtkWidget *smiley_table = NULL;
-	GSList *smileys, *unique_smileys = NULL;
-	int width;
-	int row = 0, col = 0;
-
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	if (gtkconv->dialogs.smiley)
-		return;
-
-	if(c->account)
-		smileys = get_proto_smileys(
-			gaim_account_get_protocol_id(gaim_conversation_get_account(c)));
-	else
-		smileys = get_proto_smileys(GAIM_PROTO_DEFAULT);
-
-	while(smileys) {
-		GtkIMHtmlSmiley *smiley = smileys->data;
-		if(!smiley->hidden) {
-			if(smiley_is_unique(unique_smileys, smiley))
-					unique_smileys = g_slist_append(unique_smileys, smiley);
-		}
-		smileys = smileys->next;
-	}
-
-
-	width = floor(sqrt(g_slist_length(unique_smileys)));
-
-	GAIM_DIALOG(dialog);
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
-	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
-
-	smiley_table = gtk_table_new(width, width, TRUE);
-
-	/* pack buttons */
-
-	while(unique_smileys) {
-		GtkIMHtmlSmiley *smiley = unique_smileys->data;
-		if(!smiley->hidden) {
-			add_smiley(c, smiley_table, row, col, smiley->file, smiley->smile);
-			if(++col >= width) {
-				col = 0;
-				row++;
-			}
-		}
-		unique_smileys = unique_smileys->next;
-	}
-
-	gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
-
-	gtk_widget_show(smiley_table);
-
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
-
-	/* connect signals */
-	g_object_set_data(G_OBJECT(dialog), "dialog_type", "smiley dialog");
-	g_signal_connect(G_OBJECT(dialog), "delete_event",
-					 G_CALLBACK(delete_event_dialog), c);
-
-	/* show everything */
-	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
-	gtk_widget_show_all(dialog);
-
-	gtkconv->dialogs.smiley = dialog;
-
-	return;
 }
 
 static void

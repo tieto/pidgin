@@ -52,6 +52,7 @@
 #include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkimhtml.h"
+#include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
 #include "gtkpounce.h"
 #include "gtkprivacy.h"
@@ -123,15 +124,6 @@ typedef struct
 static GtkWidget *invite_dialog = NULL;
 
 /* Prototypes. <-- because Paco-Paco hates this comment. */
-static void set_toggle(GtkWidget *tb, gboolean active);
-static void do_bold(GtkWidget *bold, GaimGtkConversation *gtkconv);
-static void do_italic(GtkWidget *italic, GaimGtkConversation *gtkconv);
-static void do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv);
-static void do_small(GtkWidget *smalltb, GaimGtkConversation *gtkconv);
-static void do_big(GtkWidget *large, GaimGtkConversation *gtkconv);
-static void toggle_font(GtkWidget *font, GaimConversation *conv);
-static void toggle_fg_color(GtkWidget *color, GaimConversation *conv);
-static void toggle_bg_color(GtkWidget *color, GaimConversation *conv);
 static void got_typing_keypress(GaimConversation *conv, gboolean first);
 static GList *generate_invite_user_names(GaimConnection *gc);
 static void add_chat_buddy_common(GaimConversation *conv,
@@ -191,72 +183,6 @@ do_check_save_convo(GObject *obj, GtkWidget *wid)
 		do_save_convo(wid);
 }
 
-static void
-do_insert_image_cb(GtkWidget *widget, int resp, gpointer data)
-{
-	GaimConversation *conv = data;
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	GaimConvIm *im = GAIM_CONV_IM(conv);
-	char *name, *filename;
-	char *buf, *filedata;
-	size_t size;
-	GError *error = NULL;
-	int id;
-
-	if (resp != GTK_RESPONSE_OK) {
-		set_toggle(gtkconv->toolbar.image, FALSE);
-		return;
-	}
-
-	name = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget)));
-
-	if (!name) {
-		set_toggle(gtkconv->toolbar.image, FALSE);
-		return;
-	}
-
-	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(widget))) {
-		g_free(name);
-		set_toggle(gtkconv->toolbar.image, FALSE);
-		return;
-	}
-
-	set_toggle(gtkconv->toolbar.image, FALSE);
-
-	if (!g_file_get_contents(name, &filedata, &size, &error)) {
-		gaim_notify_error(NULL, NULL, error->message, NULL);
-
-		g_error_free(error);
-		g_free(name);
-
-		return;
-	}
-
-	filename = name;
-	while (strchr(filename, '/'))
-		filename = strchr(filename, '/') + 1;
-
-	id = gaim_imgstore_add(filedata, size, filename);
-	g_free(filedata);
-
-	if (!id) {
-		buf = g_strdup_printf(_("Failed to store image: %s\n"), name);
-		gaim_notify_error(NULL, NULL, buf, NULL);
-
-		g_free(buf);
-		g_free(name);
-
-		return;
-	}
-
-	im->images = g_slist_append(im->images, GINT_TO_POINTER(id));
-
-	buf = g_strdup_printf("<IMG ID=\"%d\" SRC=\"file://%s\">", id, filename);
-	gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(gtkconv->entry_buffer), buf, -1);
-	g_free(buf);
-
-	g_free(name);
-}
 
 static gint
 close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
@@ -284,139 +210,6 @@ tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
 {
 	if (GTK_WIDGET_STATE(widget) == GTK_STATE_ACTIVE)
 		gtk_widget_set_state(widget, GTK_STATE_NORMAL);
-}
-
-static void
-insert_image_cb(GtkWidget *save, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-	char buf[BUF_LONG];
-	GtkWidget *window;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image))) {
-		window = gtk_file_selection_new(_("Insert Image"));
-		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
-
-		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_OK);
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)),
-				"response", G_CALLBACK(do_insert_image_cb), conv);
-
-		gtk_widget_show(window);
-		gtkconv->dialogs.image = window;
-	} else {
-		gtk_widget_destroy(gtkconv->dialogs.image);
-		gtkconv->dialogs.image = NULL;
-	}
-}
-
-static void
-do_insert_link_cb(GaimConversation *conv, GaimRequestFields *fields)
-{
-	GaimGtkConversation *gtkconv;
-	const char *url, *description;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	url         = gaim_request_fields_get_string(fields, "url");
-	description = gaim_request_fields_get_string(fields, "description");
-
-	if (description == NULL)
-		description = url;
-
-	gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry), url, description);
-	gaim_gtk_advance_past(gtkconv, "<A HREF>", "</A>");
-
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
-								 FALSE);
-
-	gtkconv->dialogs.link = NULL;
-}
-
-static void
-cancel_link_cb(GaimConversation *conv, GaimRequestFields *fields)
-{
-	GAIM_GTK_CONVERSATION(conv)->dialogs.link = NULL;
-}
-
-static void
-show_link_dialog(GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	fields = gaim_request_fields_new();
-
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
-
-	field = gaim_request_field_string_new("url", _("_URL"), NULL, FALSE);
-	gaim_request_field_set_required(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
-
-	field = gaim_request_field_string_new("description", _("_Description"),
-										  NULL, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	gtkconv->dialogs.link =
-		gaim_request_fields(conv, _("Insert Link"),
-							NULL,
-							_("Please enter the URL and description of the "
-							  "link that you want to insert. The description "
-							  "is optional."),
-							fields,
-							_("_Insert"), G_CALLBACK(do_insert_link_cb),
-							_("Cancel"), G_CALLBACK(cancel_link_cb),
-							conv);
-}
-
-static void
-close_link_dialog(GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	if (gtkconv->dialogs.link != NULL)
-	{
-		gaim_request_close(GAIM_REQUEST_FIELDS, gtkconv->dialogs.link);
-
-		gtkconv->dialogs.link = NULL;
-	}
-}
-
-static void
-insert_link_cb(GtkWidget *w, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link)))
-		show_link_dialog(conv);
-	else
-		close_link_dialog(conv);
-
-	gtk_widget_grab_focus(gtkconv->entry);
-}
-
-static void
-insert_smiley_cb(GtkWidget *smiley, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley)))
-		show_smiley_dialog(conv, smiley);
-	else if (gtkconv->dialogs.smiley)
-		close_smiley_dialog(smiley, conv);
-
-	gtk_widget_grab_focus(gtkconv->entry);
 }
 
 static void default_formatize(GaimConversation *conv) {
@@ -885,7 +678,7 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 	gaim_gtkpounce_dialog_show(gaim_conversation_get_account(conv),
 							   gaim_conversation_get_name(conv), NULL);
 }
-
+/*
 static void
 menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 {
@@ -911,7 +704,7 @@ menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
 		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image)));
 }
-
+*/
 static void
 menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
 {
@@ -1035,9 +828,9 @@ menu_toolbar_cb(gpointer data, guint action, GtkWidget *widget)
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
 
 	if (gtkconv->show_formatting_toolbar)
-		gtk_widget_show(gtkconv->toolbar.toolbar);
+		gtk_widget_show(gtkconv->toolbar);
 	else
-		gtk_widget_hide(gtkconv->toolbar.toolbar);
+		gtk_widget_hide(gtkconv->toolbar);
 }
 
 static void
@@ -1532,102 +1325,24 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 		} /* End of switch */
 
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts")) {
+		/*	if (gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts")) {
 			switch (event->keyval) {
-				case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
-				case 'B':
-					set_toggle(gtkconv->toolbar.bold,
-						!gtk_toggle_button_get_active(
-							GTK_TOGGLE_BUTTON(gtkconv->toolbar.bold)));
+			
 
-					return TRUE;
-					break;
-
-				case 'f':
-				case 'F':
-					set_toggle(gtkconv->toolbar.font,
-						!gtk_toggle_button_get_active(
-							GTK_TOGGLE_BUTTON(gtkconv->toolbar.font)));
-
-					return TRUE;
-					break;
-
-				case 'i':
-				case 'I':
-					set_toggle(gtkconv->toolbar.italic,
-						!gtk_toggle_button_get_active(
-							GTK_TOGGLE_BUTTON(gtkconv->toolbar.italic)));
-
-					return TRUE;
-					break;
-
-				case 'u':  /* ctrl-u is GDK_Clear, which clears the line. */
-				case 'U':
-					set_toggle(gtkconv->toolbar.underline,
-						!gtk_toggle_button_get_active(
-							GTK_TOGGLE_BUTTON(gtkconv->toolbar.underline)));
-
-					return TRUE;
-					break;
-
-				case '-':
-					set_toggle(gtkconv->toolbar.smaller_size,
-							!gtk_toggle_button_get_active(
-								GTK_TOGGLE_BUTTON(gtkconv->toolbar.smaller_size)));
-
-					return TRUE;
-					break;
-
-				case '=':
-				case '+':
-					set_toggle(gtkconv->toolbar.larger_size,
-							!gtk_toggle_button_get_active(
-								GTK_TOGGLE_BUTTON(gtkconv->toolbar.larger_size)));
-
-					return TRUE;
-					break;
-
-#if 0
-				case '0':
-					set_toggle(gtkconv->toolbar.normal_size,
-						!gtk_toggle_button_get_active(
-							GTK_TOGGLE_BUTTON(gtkconv->toolbar.normal_size)));
-
-					return TRUE;
-					break;
-#endif
 			}
-		} /* End of switch */
+			} */ /* End of switch */
 
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts")) {
+		/*		if (gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts")) {
 			char buf[7];
 
 			*buf = '\0';
 
 			switch (event->keyval) {
-				case '1': strcpy(buf, ":-)");  break;
-				case '2': strcpy(buf, ":-(");  break;
-				case '3': strcpy(buf, ";-)");  break;
-				case '4': strcpy(buf, ":-P");  break;
-				case '5': strcpy(buf, "=-O");  break;
-				case '6': strcpy(buf, ":-*");  break;
-				case '7': strcpy(buf, ">:o");  break;
-				case '8': strcpy(buf, "8-)");  break;
-				case '!': strcpy(buf, ":-$");  break;
-				case '@': strcpy(buf, ":-!");  break;
-				case '#': strcpy(buf, ":-[");  break;
-				case '$': strcpy(buf, "O:-)"); break;
-				case '%': strcpy(buf, ":-/");  break;
-				case '^': strcpy(buf, ":'(");  break;
-				case '&': strcpy(buf, ":-X");  break;
-				case '*': strcpy(buf, ":-D");  break;
+				
 			}
 
-			if (*buf) {
-				gtk_imhtml_insert_smiley(GTK_IMHTML(gtkconv->entry), conv->account->protocol_id, buf);
-				return TRUE;
-			}
-		}
+			
+			}*/
 
 	} else
 
@@ -2476,7 +2191,7 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkconv->u.im->block);
 
 		/* Deal with the toolbar */
-		gtk_widget_show(gtkconv->toolbar.image);
+		//gtk_widget_show(gtkconv->toolbar.image);
 
 		/* Deal with menu items */
 		gtk_widget_show(gtkwin->menu.view_log);
@@ -2511,7 +2226,7 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkconv->u.chat->invite);
 
 		/* Deal with the toolbar */
-		gtk_widget_hide(gtkconv->toolbar.image);
+		//		gtk_widget_hide(gtkconv->toolbar.image);
 
 		/* Deal with menu items */
 		gtk_widget_hide(gtkwin->menu.view_log);
@@ -2566,20 +2281,20 @@ gray_stuff_out(GaimConversation *conv)
 		}
 
 		/* Deal with the toolbar */
-		gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
+		/*gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
 		gtk_widget_set_sensitive(gtkconv->toolbar.image,
 								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
 		gtk_widget_set_sensitive(gtkconv->toolbar.bgcolor,
 								 !(gc->flags & GAIM_CONNECTION_NO_BGCOLOR));
 
-		/* Deal with menu items */
+		/* Deal with menu items 
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.get_info, (prpl_info->get_info != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.warn, (prpl_info->warn != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.invite,
 								 (prpl_info->chat_invite != NULL));
-
+*/
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			if (gaim_find_buddy(gaim_conversation_get_account(conv),
 					    gaim_conversation_get_name(conv)) == NULL)
@@ -2617,8 +2332,8 @@ gray_stuff_out(GaimConversation *conv)
 		}
 
 		/* Deal with the toolbar */
-		gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
-		gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
+		//gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
+		//gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
 
 		/* Then deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
@@ -2719,86 +2434,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 /**************************************************************************
  * Utility functions
  **************************************************************************/
-static void
-do_bold(GtkWidget *bold, GaimGtkConversation *gtkconv)
-{
-	gtk_imhtml_toggle_bold(GTK_IMHTML(gtkconv->entry));
-	gtk_widget_grab_focus(gtkconv->entry);
-}
-
-static void
-do_italic(GtkWidget *italic, GaimGtkConversation *gtkconv)
-{
-	gtk_imhtml_toggle_italic(GTK_IMHTML(gtkconv->entry));
-	gtk_widget_grab_focus(gtkconv->entry);
-}
-
-static void
-do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv)
-{
-	gtk_imhtml_toggle_underline(GTK_IMHTML(gtkconv->entry));
-	gtk_widget_grab_focus(gtkconv->entry);
-}
-
-static void
-do_small(GtkWidget *smalltb, GaimGtkConversation *gtkconv)
-{
-	gtk_imhtml_font_shrink(GTK_IMHTML(gtkconv->entry));
-	gtk_widget_grab_focus(gtkconv->entry);
-}
-
-static void
-do_big(GtkWidget *large, GaimGtkConversation *gtkconv)
-{
-	gtk_imhtml_font_grow(GTK_IMHTML(gtkconv->entry));
-	gtk_widget_grab_focus(gtkconv->entry);
-}
-
-static void
-toggle_font(GtkWidget *font, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	show_font_dialog(conv, font);
-}
-
-static void
-toggle_fg_color(GtkWidget *color, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color)))
-		show_fgcolor_dialog(conv, color);
-	else if (gtkconv->dialogs.fg_color != NULL)
-		cancel_fgcolor(color, conv);
-	else
-		gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>");
-}
-
-static void
-toggle_bg_color(GtkWidget *color, GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color)))
-		show_bgcolor_dialog(conv, color);
-	else if (gtkconv->dialogs.bg_color != NULL)
-		cancel_bgcolor(color, conv);
-	else
-		gaim_gtk_advance_past(gtkconv, "<BODY BGCOLOR>", "</BODY>");
-}
-
-static void
-set_toggle(GtkWidget *tb, gboolean active)
-{
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(tb), active);
-}
 
 static void
 got_typing_keypress(GaimConversation *conv, gboolean first)
@@ -3438,9 +3073,9 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>" },
 
-	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
+	{ N_("/Conversation/Insert Lin_k..."), NULL, NULL, 0, //menu_insert_link_cb, 0,
 	  "<StockItem>", GAIM_STOCK_LINK },
-	{ N_("/Conversation/Insert Imag_e..."), NULL, menu_insert_image_cb, 0,
+	{ N_("/Conversation/Insert Imag_e..."), NULL, NULL, 0, //menu_insert_image_cb, 0,
 	  "<StockItem>", GAIM_STOCK_IMAGE },
 
 	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>" },
@@ -3738,190 +3373,6 @@ setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
 					 G_CALLBACK(send_cb), conv);
 }
 
-static GtkWidget *
-build_conv_toolbar(GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *button;
-	GtkWidget *sep;
-	GtkSizeGroup *sg;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-
-	hbox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	/* Bold */
-	button = gaim_pixbuf_toolbar_button_from_stock(GTK_STOCK_BOLD);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("Bold"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(do_bold), gtkconv);
-
-	gtkconv->toolbar.bold = button;
-
-	/* Italic */
-	button = gaim_pixbuf_toolbar_button_from_stock(GTK_STOCK_ITALIC);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("Italic"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(do_italic), gtkconv);
-
-	gtkconv->toolbar.italic = button;
-
-	/* Underline */
-	button = gaim_pixbuf_toolbar_button_from_stock(GTK_STOCK_UNDERLINE);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("Underline"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(do_underline), gtkconv);
-
-	gtkconv->toolbar.underline = button;
-
-	/* Sep */
-	sep = gtk_vseparator_new();
-	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
-
-	/* Increase font size */
-	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_TEXT_BIGGER);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button,
-						 _("Larger font size"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(do_big), gtkconv);
-
-	gtkconv->toolbar.larger_size = button;
-
-	/* Normal font size 
-	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_TEXT_NORMAL);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button,
-						 _("Normal font size"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(do_normal), gtkconv);
-
-	gtkconv->toolbar.normal_size = button;
-	*/
-
-	/* Decrease font size */
-	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_TEXT_SMALLER);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button,
-						 _("Smaller font size"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(do_small), gtkconv);
-
-	gtkconv->toolbar.smaller_size = button;
-
-	/* Sep */
-	sep = gtk_vseparator_new();
-	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
-
-	/* Font Face */
-
-	button = gaim_pixbuf_toolbar_button_from_stock(GTK_STOCK_SELECT_FONT);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button,
-			_("Font Face"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-			G_CALLBACK(toggle_font), conv);
-
-	gtkconv->toolbar.font = button;
-
-	/* Foreground Color */
-	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_FGCOLOR);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button,
-						 _("Foreground font color"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(toggle_fg_color), conv);
-
-	gtkconv->toolbar.fgcolor = button;
-
-	/* Background Color */
-	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_BGCOLOR);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button,
-						 _("Background color"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(toggle_bg_color), conv);
-
-	gtkconv->toolbar.bgcolor = button;
-
-	/* Sep */
-	sep = gtk_vseparator_new();
-	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
-
-	/* Insert Link */
-	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_LINK);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("Insert link"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(insert_link_cb), conv);
-
-	gtkconv->toolbar.link = button;
-
-	/* Insert IM Image */
-	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_IMAGE);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("Insert image"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(insert_image_cb), conv);
-
-	gtkconv->toolbar.image = button;
-
-	/* Insert Smiley */
-	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_SMILEY);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("Insert smiley"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(insert_smiley_cb), conv);
-
-	gtkconv->toolbar.smiley = button;
-
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(vbox);
-
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"))
-		gtk_widget_hide(vbox);
-
-	return vbox;
-}
 
 static void topic_callback(GtkWidget *w, GaimConversation *conv)
 {
@@ -4141,9 +3592,8 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, FALSE);
 	gtk_widget_show(vbox);
 
-	gtkconv->toolbar.toolbar = build_conv_toolbar(conv);
-	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->toolbar.toolbar,
-					   FALSE, FALSE, 0);
+	gtkconv->toolbar = gtk_imhtmltoolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->toolbar, FALSE, FALSE, 0);
 
 	/* Setup the entry widget.
 	 * We never show the horizontal scrollbar because it was causing weird
@@ -4175,6 +3625,7 @@ setup_chat_pane(GaimConversation *conv)
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
+	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), gtkconv->entry);
 
 	gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(gtkconv->entry));
 	gtk_widget_show(gtkconv->entry);
@@ -4248,9 +3699,8 @@ setup_im_pane(GaimConversation *conv)
 	gtk_widget_show(vbox2);
 
 	/* Build the toolbar. */
-	gtkconv->toolbar.toolbar = build_conv_toolbar(conv);
-	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->toolbar.toolbar,
-					   FALSE, FALSE, 0);
+	gtkconv->toolbar = gtk_imhtmltoolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->toolbar, FALSE, FALSE, 0);
 
 	/* Setup the entry widget.
 	 * We never show the horizontal scrollbar because it was causing weird
@@ -4290,6 +3740,7 @@ setup_im_pane(GaimConversation *conv)
 
 	gtk_container_add(GTK_CONTAINER(sw), GTK_WIDGET(gtkconv->entry));
 	gtk_widget_show(gtkconv->entry);
+	gtk_imhtmltoolbar_attach(gtkconv->toolbar, gtkconv->entry);
 
 	gtkconv->bbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->bbox, FALSE, FALSE, 0);
@@ -4803,7 +4254,7 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	if (gtkconv->dialogs.fg_color != NULL)
+	/*	if (gtkconv->dialogs.fg_color != NULL)
 		gtk_widget_destroy(gtkconv->dialogs.fg_color);
 
 	if (gtkconv->dialogs.bg_color != NULL)
@@ -4817,9 +4268,9 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 
 	if (gtkconv->dialogs.smiley != NULL)
 		gtk_widget_destroy(gtkconv->dialogs.smiley);
-
-	if (gtkconv->dialogs.link != NULL)
-		close_link_dialog(conv);
+	*/
+	//if (gtkconv->dialogs.link != NULL)
+	//	close_link_dialog(conv);
 
 	if (gtkconv->dialogs.log != NULL)
 		gtk_widget_destroy(gtkconv->dialogs.log);
@@ -6047,9 +5498,9 @@ show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
 				gtkconv->show_formatting_toolbar);
 
 		if (gtkconv->show_formatting_toolbar)
-			gtk_widget_show(gtkconv->toolbar.toolbar);
+			gtk_widget_show(gtkconv->toolbar);
 		else
-			gtk_widget_hide(gtkconv->toolbar.toolbar);
+			gtk_widget_hide(gtkconv->toolbar);
 	}
 }
 
