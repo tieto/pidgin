@@ -6,4 +6,6 @@ EXTRA_DIST = \
 	CREDITS \
 	FAQ \
 	PERL-HOWTO.dox \
+	gaim.1.in \
+	gaim-remote.1.in \
 	$(man_MANS)

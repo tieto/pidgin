@@ -916,34 +916,36 @@ AC_VAR_TIMEZONE_EXTERNALS
 AC_OUTPUT([Makefile
 	       Doxyfile
            doc/Makefile
-	   intl/Makefile
+		   doc/gaim.1
+		   doc/gaim-remote.1
+		   intl/Makefile
            pixmaps/Makefile
-	   pixmaps/smileys/Makefile
-	   pixmaps/smileys/default/Makefile
-	   pixmaps/status/Makefile
-	   pixmaps/status/default/Makefile
-	   plugins/Makefile
-	   plugins/docklet/Makefile
-	   plugins/gaim-remote/Makefile
-	   plugins/gestures/Makefile
-	   plugins/perl/Makefile
-	   plugins/perl/common/Makefile.PL
-	   plugins/tcl/Makefile
-	   plugins/ticker/Makefile
-	   po/Makefile.in
-           sounds/Makefile
-	   src/Makefile
-	   src/protocols/Makefile
-	   src/protocols/gg/Makefile
-	   src/protocols/irc/Makefile
-	   src/protocols/jabber/Makefile
-	   src/protocols/msn/Makefile
-	   src/protocols/napster/Makefile
-	   src/protocols/oscar/Makefile
-	   src/protocols/toc/Makefile
-	   src/protocols/yahoo/Makefile
-	   src/protocols/zephyr/Makefile
-	   gaim.spec
+		   pixmaps/smileys/Makefile
+		   pixmaps/smileys/default/Makefile
+		   pixmaps/status/Makefile
+		   pixmaps/status/default/Makefile
+		   plugins/Makefile
+		   plugins/docklet/Makefile
+		   plugins/gaim-remote/Makefile
+		   plugins/gestures/Makefile
+		   plugins/perl/Makefile
+		   plugins/perl/common/Makefile.PL
+		   plugins/tcl/Makefile
+		   plugins/ticker/Makefile
+		   po/Makefile.in
+		   sounds/Makefile
+		   src/Makefile
+		   src/protocols/Makefile
+		   src/protocols/gg/Makefile
+		   src/protocols/irc/Makefile
+		   src/protocols/jabber/Makefile
+		   src/protocols/msn/Makefile
+		   src/protocols/napster/Makefile
+		   src/protocols/oscar/Makefile
+		   src/protocols/toc/Makefile
+		   src/protocols/yahoo/Makefile
+		   src/protocols/zephyr/Makefile
+		   gaim.spec
           ])
 
 echo
