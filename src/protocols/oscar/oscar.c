@@ -166,6 +166,7 @@ struct buddyinfo {
 	unsigned long ico_csum;
 	time_t ico_time;
 	gboolean ico_need;
+	gboolean ico_sent;
 };
 
 struct name_data {
@@ -2193,7 +2194,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	if ((iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc))) && 
-	    (args->icbmflags & AIM_IMFLAGS_BUDDYREQ)) {
+	    (args->icbmflags & AIM_IMFLAGS_BUDDYREQ) && !bi->ico_sent && bi->ico_informed) {
 		FILE *file;
 		struct stat st;
 
@@ -4326,8 +4327,10 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 				args.iconsum   = aimutil_iconsum(buf, st.st_size);
 				args.iconstamp = st.st_mtime;
 
-				if ((args.iconlen != bi->ico_me_len) || (args.iconsum != bi->ico_me_csum) || (args.iconstamp != bi->ico_me_time))
+				if ((args.iconlen != bi->ico_me_len) || (args.iconsum != bi->ico_me_csum) || (args.iconstamp != bi->ico_me_time)) {
 					bi->ico_informed = FALSE;
+					bi->ico_sent     = FALSE;
+				}
 
 				if (!bi->ico_informed) {
 					gaim_debug(GAIM_DEBUG_INFO, "oscar",
