@@ -48,6 +48,7 @@ src/gtkconv.c
 src/gtkdebug.c
 src/gtkft.c
 src/gtkimhtml.c
+src/gtklog.c
 src/gtknotify.c
 src/gtkpounce.c
 src/gtkprefs.c
