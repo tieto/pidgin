@@ -1447,8 +1447,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   _("You missed %d message%s from %s because %s invalid."),
 				   nummissed,
 				   nummissed == 1 ? "" : "s",
-				   nummissed == 1 ? "it was" : "they were",
-				   userinfo->sn);
+				   userinfo->sn,
+				   nummissed == 1 ? "it was" : "they were");
 			break;
 		case 1:
 			/* Message too large */
@@ -1457,8 +1457,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   _("You missed %d message%s from %s because %s too large."),
 				   nummissed,
 				   nummissed == 1 ? "" : "s",
-				   nummissed == 1 ? "it was" : "they were",
-				   userinfo->sn);
+				   userinfo->sn,
+				   nummissed == 1 ? "it was" : "they were");
 			break;
 		case 2:
 			/* Rate exceeded */
