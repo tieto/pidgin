@@ -144,7 +144,7 @@ struct smiley_theme *load_smiley_theme(char *file, gboolean load)
 			char *file = NULL;
 			GtkIMHtmlSmiley *smiley = g_new0(GtkIMHtmlSmiley, 1);
 			
-			if (*i == '!' && *i + 1 == ' ') {
+			if (*i == '!' && *(i + 1) == ' ') {
 				hidden = TRUE;
 				i = i + 2;
 			}
