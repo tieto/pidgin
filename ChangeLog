@@ -8,6 +8,8 @@ version 0.76cvs:
 	* Improved accessibility in conversation windows (Nathan Fredrickson)
 	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
 	* TCL Plugin API changed
+	* Tabs now stay green when they are supposed to (Etan Reisner)
+	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
 	* Catalan translation updated (Xan (DXpublica))
 	* English (British) translation updated (Luke Ross (lukeross))
 	* Hebrew translation had 1 character removed (Ambrose C. LI)

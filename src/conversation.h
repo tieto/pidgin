@@ -68,14 +68,14 @@ typedef enum
 typedef enum
 {
 	GAIM_CONV_UPDATE_ADD = 0, /**< The buddy associated with the conversation
-							       was added.   */
+	                               was added.   */
 	GAIM_CONV_UPDATE_REMOVE,  /**< The buddy associated with the conversation
-								   was removed. */
+	                               was removed. */
 	GAIM_CONV_UPDATE_ACCOUNT, /**< The gaim_account was changed. */
 	GAIM_CONV_UPDATE_TYPING,  /**< The typing state was updated. */
 	GAIM_CONV_UPDATE_UNSEEN,  /**< The unseen state was updated. */
 	GAIM_CONV_UPDATE_LOGGING, /**< Logging for this conversation was
-								   enabled or disabled. */
+	                               enabled or disabled. */
 	GAIM_CONV_UPDATE_TOPIC,   /**< The topic for a chat was updated. */
 
 	/*
@@ -85,7 +85,8 @@ typedef enum
 	GAIM_CONV_ACCOUNT_ONLINE,  /**< One of the user's accounts went online.  */
 	GAIM_CONV_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
 	GAIM_CONV_UPDATE_AWAY,     /**< The other user went away.                */
-	GAIM_CONV_UPDATE_ICON      /**< The other user's buddy icon changed.     */
+	GAIM_CONV_UPDATE_ICON,     /**< The other user's buddy icon changed.     */
+	GAIM_CONV_UPDATE_TITLE
 
 } GaimConvUpdateType;
 
@@ -144,7 +145,7 @@ struct _GaimConvWindowUiOps
 	void (*add_conversation)(GaimConvWindow *win, GaimConversation *conv);
 	void (*remove_conversation)(GaimConvWindow *win, GaimConversation *conv);
 	void (*move_conversation)(GaimConvWindow *win, GaimConversation *conv,
-							  unsigned int newIndex);
+	                          unsigned int newIndex);
 	int (*get_active_index)(const GaimConvWindow *win);
 };
 
@@ -158,23 +159,22 @@ struct _GaimConversationUiOps
 {
 	void (*destroy_conversation)(GaimConversation *conv);
 	void (*write_chat)(GaimConversation *conv, const char *who,
-					   const char *message, GaimMessageFlags flags,
-					   time_t mtime);
+	                   const char *message, GaimMessageFlags flags,
+	                   time_t mtime);
 	void (*write_im)(GaimConversation *conv, const char *who,
-					 const char *message, GaimMessageFlags flags,
-					 time_t mtime);
+	                 const char *message, GaimMessageFlags flags,
+	                 time_t mtime);
 	void (*write_conv)(GaimConversation *conv, const char *who,
-					   const char *message, GaimMessageFlags flags,
-					   time_t mtime);
+	                   const char *message, GaimMessageFlags flags,
+	                   time_t mtime);
 
 	void (*chat_add_user)(GaimConversation *conv, const char *user);
 	void (*chat_add_users)(GaimConversation *conv, GList *users);
 	void (*chat_rename_user)(GaimConversation *conv,
-							 const char *old_name, const char *new_name);
+	                         const char *old_name, const char *new_name);
 	void (*chat_remove_user)(GaimConversation *conv, const char *user);
 	void (*chat_remove_users)(GaimConversation *conv, GList *users);
 
-	void (*set_title)(GaimConversation *conv, const char *title);
 	void (*update_progress)(GaimConversation *conv, float percent);
 
 	/* Events */

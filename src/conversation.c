@@ -1089,8 +1089,8 @@ gaim_conversation_set_title(GaimConversation *conv, const char *title)
 
 	ops = gaim_conversation_get_ui_ops(conv);
 
-	if (ops != NULL && ops->set_title != NULL)
-		ops->set_title(conv, conv->title);
+	if (ops != NULL && ops->updated != NULL)
+		ops->updated(conv, GAIM_CONV_UPDATE_TITLE);
 }
 
 const char *

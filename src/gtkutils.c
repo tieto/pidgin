@@ -823,14 +823,18 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
 
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
-										"default", buf, NULL);
+			                            "default", buf, NULL);
 			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 			g_free(filename);
 
 			if (pixbuf != NULL) {
 				/* Scale and insert the image */
 				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-												GDK_INTERP_BILINEAR);
+				                                GDK_INTERP_BILINEAR);
+
+				if (!gaim_account_is_connected(account))
+					gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
+
 				image = gtk_image_new_from_pixbuf(scale);
 
 				g_object_unref(G_OBJECT(pixbuf));

@@ -5038,24 +5038,6 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 }
 
 static void
-gaim_gtkconv_set_title(GaimConversation *conv, const char *title)
-{
-	GaimGtkConversation *gtkconv;
-	GaimConvWindow *win;
-	GaimGtkWindow *gtkwin;
-
-	win = gaim_conversation_get_window(conv);
-	gtkwin = GAIM_GTK_WINDOW(win);
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
-	gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
-
-	if(conv == gaim_conv_window_get_active_conversation(win))
-		gtk_window_set_title(GTK_WINDOW(gtkwin->window), title);
-}
-
-static void
 update_tab_icon(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
@@ -5110,7 +5092,8 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		update_tab_icon(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_TYPING ||
-			 type == GAIM_CONV_UPDATE_UNSEEN)
+	         type == GAIM_CONV_UPDATE_UNSEEN ||
+	         type == GAIM_CONV_UPDATE_TITLE)
 	{
 		const char *title;
 		GaimConvIm *im = NULL;
@@ -5152,7 +5135,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 			char *label;
 
 			label = g_strdup_printf("<span color=\"%s\">%s</span>",
-									color, title);
+			                        color, title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);
 		}
@@ -5161,6 +5144,12 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 		if (conv == gaim_conv_window_get_active_conversation(win))
 			update_typing_icon(conv);
+
+		if (type == GAIM_CONV_UPDATE_TITLE) {
+			gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
+			if (conv == gaim_conv_window_get_active_conversation(win))
+				gtk_window_set_title(GTK_WINDOW(gtkwin->window), title);
+		}
 	}
 	else if (type == GAIM_CONV_UPDATE_TOPIC)
 	{
@@ -5172,7 +5161,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text),topic);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->topic_text,
-							 topic, NULL);
+		                     topic, NULL);
 	}
 	else if (type == GAIM_CONV_ACCOUNT_ONLINE ||
 			 type == GAIM_CONV_ACCOUNT_OFFLINE)
@@ -5208,7 +5197,6 @@ static GaimConversationUiOps conversation_ui_ops =
 	gaim_gtkconv_chat_rename_user,   /* chat_rename_user     */
 	gaim_gtkconv_chat_remove_user,   /* chat_remove_user     */
 	gaim_gtkconv_chat_remove_users,  /* chat_remove_users    */
-	gaim_gtkconv_set_title,          /* set_title            */
 	NULL,                            /* update_progress      */
 	gaim_gtkconv_updated             /* updated              */
 };
