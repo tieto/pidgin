@@ -975,6 +975,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	int y;
 	int i;
 	char *smiley = g_malloc(7);
+	gboolean add_space = FALSE;
 
 	if (!who) {
 		if (flags & WFLAG_SEND)
@@ -1068,9 +1069,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 					gtk_html_add_pixmap(GTK_HTML(c->text), face, 0);
 					y = 0;
 					i += len - 1;
+					add_space = TRUE;
 				} else {
 	               			buf2[y] = what[i];
 	               			y++;
+					add_space = FALSE;
 
 				}
         		}
@@ -1079,7 +1082,10 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			{
 				buf2[y] = 0;
 				gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+				add_space = FALSE;
 			}				
+			if (add_space)
+				gtk_html_append_text(GTK_HTML(c->text), " ", (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 		}
 		else
 		{
