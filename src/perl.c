@@ -74,6 +74,7 @@ struct _perl_event_handlers {
 
 struct _perl_timeout_handlers {
 	char *handler_name;
+	char *handler_args;
 	gint iotag;
 };
 
@@ -260,6 +261,7 @@ void perl_end()
 		thn = perl_timeout_handlers->data;
 		perl_timeout_handlers = g_list_remove(perl_timeout_handlers, thn);
 		g_source_remove(thn->iotag);
+		g_free(thn->handler_args);
 		g_free(thn->handler_name);
 		g_free(thn);
 	}
@@ -804,8 +806,9 @@ XS (XS_GAIM_add_event_handler)
 static int perl_timeout(gpointer data)
 {
 	struct _perl_timeout_handlers *handler = data;
-	execute_perl(handler->handler_name, "");
+	execute_perl(handler->handler_name, escape_quotes(handler->handler_args));
 	perl_timeout_handlers = g_list_remove(perl_timeout_handlers, handler);
+	g_free(handler->handler_args);
 	g_free(handler->handler_name);
 	g_free(handler);
 
@@ -824,6 +827,7 @@ XS (XS_GAIM_add_timeout_handler)
 	timeout = 1000 * SvIV(ST(0));
 	debug_printf("Adding timeout for %d seconds.\n", timeout/1000);
 	handler->handler_name = g_strdup(SvPV(ST(1), junk));
+	handler->handler_args = g_strdup(SvPV(ST(2), junk));
 	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
 	handler->iotag = g_timeout_add(timeout, perl_timeout, handler);
 	XSRETURN_EMPTY;

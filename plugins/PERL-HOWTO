@@ -136,6 +136,8 @@ GAIM::add_event_handler(event, function)
 	and the event itself to never happen (i.e. the user won't see it happen,
 	and _send events won't actually send).
 
-GAIM::add_timeout_handler(integer, function)
+GAIM::add_timeout_handler(integer, function, args)
 	This calls function after integer number of seconds. It only calls function
 	once, so if you want to keep calling function, keep readding the handler.
+	Args is a string that you'd like to have passed to your timeout handler; it's
+	optional.
