@@ -58,8 +58,8 @@ typedef enum
  */
 typedef enum
 {
-	GAIM_INPUT_READ  = 1 << 0,
-	GAIM_INPUT_WRITE = 1 << 1
+	GAIM_INPUT_READ  = 1 << 0,  /**< A read condition.  */
+	GAIM_INPUT_WRITE = 1 << 1   /**< A write condition. */
 
 } GaimInputCondition;
 
