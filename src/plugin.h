@@ -411,6 +411,15 @@ GaimPlugin *gaim_plugins_find_with_name(const char *name);
 GaimPlugin *gaim_plugins_find_with_filename(const char *filename);
 
 /**
+ * Finds a plugin with the specified base filename.
+ *
+ * @param basename The base plugin filename.
+ *
+ * @return The plugin if found, or @c NULL if not found.
+ */
+GaimPlugin *gaim_plugins_find_with_basename(const char *basename);
+
+/**
  * Finds a plugin with the specified plugin ID.
  *
  * @param id The plugin ID.

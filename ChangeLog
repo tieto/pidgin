@@ -1,10 +1,13 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.71
-	* Display AIM away messages in the tooltip for buddies when 
+	* Display AIM away messages in the tooltip for buddies when
 	  they are away.
 	* Re-write of Jabber protocol plugin
 	* SSL support can now be provided by third party plugins.
+	* Multiple copies of gaim installed at different locations no
+	  longer attempt to load the same, possibly incompatible plugins
+	  (Robert McQueen)
 
 version 0.70 (09/28/2003):
 	* Implemented Yahoo's new authentication method (Cerulean Studios)

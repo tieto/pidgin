@@ -765,8 +765,28 @@ gaim_plugins_load_saved(const char *key)
 
 	files = gaim_prefs_get_string_list(key);
 
-	for (f = files; f; f = f->next) {
-		gaim_plugin_load(gaim_plugin_probe(f->data));
+	for (f = files; f; f = f->next)
+	{
+		char *filename = g_path_get_basename(f->data);
+		GaimPlugin *plugin = NULL;
+
+		if (filename != NULL)
+		{
+			if ((plugin = gaim_plugins_find_with_basename(filename)) != NULL)
+			{
+				gaim_debug_info("plugins", "Loading saved plugin %s\n",
+								filename);
+				gaim_plugin_load(plugin);
+			}
+			else
+			{
+				gaim_debug_error("plugins", "Unable to find saved plugin %s\n",
+								 filename);
+			}
+
+			g_free(filename);
+		}
+
 		g_free(f->data);
 	}
 
@@ -983,6 +1003,33 @@ gaim_plugins_find_with_filename(const char *filename)
 
 		if (plugin->path != NULL && !strcmp(plugin->path, filename))
 			return plugin;
+	}
+
+	return NULL;
+}
+
+GaimPlugin *
+gaim_plugins_find_with_basename(const char *basename)
+{
+	GaimPlugin *plugin;
+	GList *l;
+
+	g_return_val_if_fail(basename != NULL, NULL);
+
+	for (l = plugins; l != NULL; l = l->next)
+	{
+		char *tmp;
+
+		plugin = (GaimPlugin *)l->data;
+
+		if (plugin->path != NULL &&
+			(tmp = g_strrstr(plugin->path, basename)) != NULL)
+		{
+			tmp += strlen(basename);
+
+			if (*tmp == '\0')
+				return plugin;
+		}
 	}
 
 	return NULL;
