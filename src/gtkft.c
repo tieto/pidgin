@@ -79,7 +79,6 @@ struct _GaimGtkXferDialog
 
 typedef struct
 {
-	GtkWidget *filesel;
 	GtkTreeIter iter;
 	time_t start_time;
 	time_t end_time;
@@ -1015,83 +1014,18 @@ gaim_gtkxfer_destroy(GaimXfer *xfer)
 	}
 }
 
-static gboolean
-choose_file_close_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-	GaimXfer *xfer = (GaimXfer *)user_data;
-	GaimGtkXferUiData *data;
-
-	data = GAIM_GTKXFER(xfer);
-	data->filesel = NULL;
-	gaim_xfer_request_denied(xfer);
-
-	return FALSE;
-}
-
 static void
-choose_file_cancel_cb(GtkButton *button, gpointer user_data)
-{
-	GaimXfer *xfer = (GaimXfer *)user_data;
-	GaimGtkXferUiData *data;
-
-	data = GAIM_GTKXFER(xfer);
-	gtk_widget_destroy(data->filesel);
-	data->filesel = NULL;
-	gaim_xfer_request_denied(xfer);
-}
-
-static int
-do_overwrite_cb(GaimXfer *xfer)
-{
-	GaimGtkXferUiData *data;
-
-	data = GAIM_GTKXFER(xfer);
-
-	gaim_xfer_request_accepted(xfer, data->name);
-
-	g_free(data->name);
-	data->name = NULL;
-
-	gaim_xfer_unref(xfer);
-	return 0;
-}
-
-static int
-dont_overwrite_cb(GaimXfer *xfer)
-{
-	GaimGtkXferUiData *data;
-
-	data = GAIM_GTKXFER(xfer);
-
-	g_free(data->name);
-	data->name = NULL;
-
-	choose_file(xfer);
-
-	return 0;
-}
-
-static void
-choose_file_ok_cb(GtkButton *button, gpointer user_data)
+choose_file_ok_cb(void *user_data, const char *filename)
 {
 	GaimXfer *xfer;
-	GaimGtkXferUiData *data;
 	struct stat st;
-	const char *name;
 
 	xfer = (GaimXfer *)user_data;
-	data = GAIM_GTKXFER(xfer);
 
-	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->filesel));
-
-	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->filesel))) {
-		return;
-	}
-
-	if (stat(name, &st) != 0) {
+	if (stat(filename, &st) != 0) {
 		/* File not found. */
 		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-			gaim_xfer_request_accepted(xfer, g_strdup(name));
+			gaim_xfer_request_accepted(xfer, filename);
 		}
 		else {
 			gaim_notify_error(NULL, NULL,
@@ -1114,63 +1048,31 @@ choose_file_ok_cb(GtkButton *button, gpointer user_data)
 			gaim_xfer_request_denied(xfer);
 		}
 		else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-			data->name = g_strdup(name);
-			gaim_xfer_ref(xfer);
-
-			gaim_request_yes_no(NULL, NULL,
-								_("That file already exists."),
-								_("Would you like to overwrite it?"),
-								1, xfer,
-								G_CALLBACK(do_overwrite_cb),
-								G_CALLBACK(dont_overwrite_cb));
+			gaim_xfer_request_accepted(xfer, filename);
 		}
 		else {
-			gaim_xfer_request_accepted(xfer, name);
+			gaim_xfer_request_accepted(xfer, filename);
 		}
 	}
 
-	gtk_widget_destroy(data->filesel);
-	data->filesel = NULL;
 	gaim_xfer_unref(xfer);
+}
+
+static void
+choose_file_cancel_cb(void *user_data, const char *filename)
+{
+	GaimXfer *xfer = (GaimXfer *)user_data;
+
+	gaim_xfer_request_denied(xfer);
 }
 
 static int
 choose_file(GaimXfer *xfer)
 {
-	char *cur_dir, *init_str;
-	GaimGtkXferUiData *data;
-
-	data = GAIM_GTKXFER(xfer);
-	cur_dir = g_get_current_dir();
-
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
-		data->filesel = gtk_file_selection_new(_("Open..."));
-	else
-		data->filesel = gtk_file_selection_new(_("Save As..."));
-
-	if (gaim_xfer_get_filename(xfer) == NULL)
-		init_str = g_strdup_printf("%s" G_DIR_SEPARATOR_S, cur_dir);
-	else
-		init_str = g_build_filename(cur_dir, gaim_xfer_get_filename(xfer),
-									NULL);
-
-	g_free(cur_dir);
-
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(data->filesel),
-									init_str);
-
-	g_free(init_str);
-
-	g_signal_connect(G_OBJECT(data->filesel), "delete_event",
-					 G_CALLBACK(choose_file_close_cb), xfer);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(data->filesel)->cancel_button),
-					 "clicked",
-					 G_CALLBACK(choose_file_cancel_cb), xfer);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(data->filesel)->ok_button),
-					 "clicked",
-					 G_CALLBACK(choose_file_ok_cb), xfer);
-
-	gtk_widget_show(data->filesel);
+	gaim_request_file(xfer, NULL, gaim_xfer_get_filename(xfer),
+					  (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE),
+					  G_CALLBACK(choose_file_ok_cb),
+					  G_CALLBACK(choose_file_cancel_cb), xfer);
 
 	return 0;
 }
@@ -1213,6 +1115,7 @@ static int
 ask_accept_ok(GaimXfer *xfer)
 {
 	gaim_xfer_request_accepted(xfer, NULL);
+	gaim_xfer_unref(xfer);
 	return 0;
 }
 
