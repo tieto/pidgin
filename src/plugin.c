@@ -244,6 +244,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 {
 #ifdef GAIM_PLUGINS
 	g_return_val_if_fail(plugin != NULL, FALSE);
+	g_return_val_if_fail(plugin->error != NULL, FALSE);
 
 	if (gaim_plugin_is_loaded(plugin))
 		return TRUE;
