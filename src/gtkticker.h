@@ -27,6 +27,7 @@
 
 #include <gdk/gdk.h>
 #include <gtk/gtkcontainer.h>
+#include <gtk/gtkmain.h>
 
 
 #ifdef __cplusplus

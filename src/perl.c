@@ -460,7 +460,7 @@ XS (XS_GAIM_user_info)
 	GSList *c = connections;
 	struct gaim_connection *gc;
 	int junk;
-	struct buddy *buddy;
+	struct buddy *buddy = NULL;
 	char *nick;
 	dXSARGS;
 	items = 0;

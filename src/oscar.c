@@ -771,9 +771,9 @@ static void cancel_getfile(gpointer w, struct ask_getfile *g) {
 }
 
 static int accept_getfile(gpointer w, struct ask_getfile *g) {
+	/*
 	struct gaim_connection *gc = g->gc;
 
-	/*
 	if ((newconn = aim_accepttransfer(od->sess, od->conn, g->sn, g->cookie, g->ip, od->sess->oft.listing, AIM_CAPS_GETFILE)) == NULL) {
 		cancel_getfile(w, g);
 		return;

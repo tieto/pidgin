@@ -466,7 +466,6 @@ gtk_ticker_draw (GtkWidget    *widget,
 {
   GtkTicker *ticker;
   GtkTickerChild *child;
-  GdkRectangle child_area;
   GList *children;
 
   g_return_if_fail (widget != NULL);

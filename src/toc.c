@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1123 $"
+#define REVISION "gaim:$Revision: 1124 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -99,6 +99,7 @@ struct signon {
 
 static void toc_callback(gpointer, gint, GdkInputCondition);
 static unsigned char *roast_password(char *);
+int sflap_send(struct gaim_connection *, char *, int, int);
 
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
@@ -386,7 +387,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		c = strtok(NULL, ":"); /* name */
 		l = strtok(NULL, ":"); /* online */
 		sscanf(strtok(NULL, ":"), "%d", &evil);
-		sscanf(strtok(NULL, ":"), "%d", &signon);
+		sscanf(strtok(NULL, ":"), "%ld", &signon);
 		sscanf(strtok(NULL, ":"), "%d", &idle);
 		uc = strtok(NULL, ":");
 

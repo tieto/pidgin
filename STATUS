@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-11-04 06:05:17 -0500 (Sat, 04 Nov 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-11-20 20:00:45 -0500 (Mon, 20 Nov 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -9,13 +9,12 @@ times.
 OVERALL
 =======
 
-The current CVS tree is completely broken. You can still use it to sign in and
-converse with users as normal. If you only have one account signed in then all
-of the old functions still work perfectly (or as well as they did before The
-Change (multiple connections)).
+The current CVS tree is more or less back to "normal". It seems to be stable,
+and allows multiple connections (which should also be stable).
 
-There are a lot of things that are probably going to be very buggy over the
-next month or so. Please bear with us.
+There have been a lot of changes in the past month; I think all of the bugs
+have been worked out but I'm sure there are still a lot remaining. Please, if
+you get bored one day, go on a big bug hunt.
 
 
 MULTIPLE CONNECTIONS
@@ -24,25 +23,25 @@ MULTIPLE CONNECTIONS
 I'm impressed that this is working. It took a major restructuring of the
 internals of gaim. Everything had been based around one connection, and that
 connection used one protocol or the other. Now, there are many connections, and
-each connection may be using a different protocol. Most of the functionality is
-complete but the UI hasn't been updated to reflect all of the different users.
-This change isn't going to be complete for quite some time so just bear with us
-as we try to get things operational again.
+each connection may be using a different protocol. This change should be nearing
+completion now; most things are working and there are very few FIXME's related
+to multiple connections left.
 
 
 BUDDY LIST
 ==========
 
-The buddy list is more or less working, to an extent. Idle times are back, but
-the tooltips indicating status isn't. Also, editing your buddy list may have
-adverse affects on gaim, so watch out for that. Other than that it should be
-more or less back to how it was, save a feature or two.
+The buddy list should now be stable. The only thing that'll be missing is if
+you're signed on as more than one name, the tooltips and idle times for buddies
+won't display correctly.
 
 
 TOC
 ===
 
-TOC is working reasonably well.
+TOC is working reasonably well. The options to use a proxy got moved to the
+account editor, and are set up on a per-account basis, in case you were
+wondering.
 
 
 Oscar
@@ -55,23 +54,21 @@ details on Oscar.
 Applet
 ======
 
-The applet made a comeback sooner than I expected, mostly because I got chat
-working. (This means that I'll be using current CVS as my "permanent" gaim,
-and I prefer having gaim as an applet.) Anyway, the UI is still shakey (as is
-the rest of gaim) but it is at least functional now.
+The applet should be stable and completely functional now (as far as the applet
+part of it goes).
 
 
 Plugins
 =======
 
-Plugins are more or less done. There may be some back-end reworking, but if you
-want to start porting plugins from 0.10 to 0.11 then now's a good time to start
-that. I don't think it's going to change much (if at all).
+The plugin system got a good reworking. It's got a few more features now. Nearly
+every plugin is going to need to be rewritten.  Have fun porting from 0.10.x to
+0.11.0 (it's actually very simple).
 
 
 Perl
 ====
 
-Perl doesn't work at all right now. You can still load and unload perl scripts, but
-they won't be able to do very much, unfortunately. I'll get it sorted out as soon as
-I figure out how to :-P
+Perl also got a good reworking, but also has a few more features now. Again,
+porting from 0.10.x to 0.11.0 should be simple, but read the docs to see what's
+going on.

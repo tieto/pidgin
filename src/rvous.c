@@ -77,6 +77,7 @@ struct file_header {
 
 static void do_send_file(GtkWidget *, struct file_transfer *);
 static void do_get_file (GtkWidget *, struct file_transfer *);
+extern int sflap_send(struct gaim_connection *, char *, int, int);
 
 static int snpa = -1;
 
@@ -372,7 +373,6 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	fw = NULL;
 
 	if (!cont) {
-		char *tmp = frombase64(ft->cookie);
 		g_snprintf(tmp_buf, MSG_LEN, "toc_rvous_cancel %s %s %s", ft->user, ft->cookie, ft->UID);
 		sflap_send(ft->gc, tmp_buf, -1, TYPE_DATA);
 		close(ft->fd);
@@ -507,7 +507,6 @@ static void send_file_callback(gpointer data, gint source,
 	fw = NULL;
 
 	if (!cont) {
-		char *tmp = frombase64(ft->cookie);
 		char tmp_buf[MSG_LEN];
 		g_snprintf(tmp_buf, MSG_LEN, "toc_rvous_cancel %s %s %s", ft->user, ft->cookie, ft->UID);
 		sflap_send(ft->gc, tmp_buf, -1, TYPE_DATA);
