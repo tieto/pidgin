@@ -26,6 +26,7 @@ gaim_applet_SOURCES =	about.c \
 			ticker.c \
 			toc.c \
 			util.c
+gaim_applet_DEPENDENCIES = ../libfaim/libfaim.a
 else
 bin_PROGRAMS = gaim
 gaim_SOURCES =	about.c \
@@ -54,6 +55,7 @@ gaim_SOURCES =	about.c \
 		ticker.c \
 		toc.c \
 		util.c
+gaim_DEPENDENCIES = ../libfaim/libfaim.a
 endif
 
 CFLAGS += -DLOCALEDIR=\"$(datadir)/locale\"

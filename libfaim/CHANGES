@@ -1,6 +1,10 @@
 
 No release numbers
 ------------------
+ - Thu Aug 31 23:40:23 UTC 2000
+   - Threw in aim_select modification from nicolas
+   - Remove stray debugging printf in aim_tlv
+
  - Mon Aug 28 03:11:15 GMT 2000
    - Adds lots of comments
    - Add AIM_CLASS_ALLUSERS constant for setgrouppermmask()

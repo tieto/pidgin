@@ -323,10 +323,13 @@ struct aim_conn_t *aim_select(struct aim_session_t *sess,
 	return cur;
       }
     }
-  }
+    *status = 0; /* shouldn't happen */
+  } else if ((i == -1) && (errno == EINTR)) /* treat interrupts as a timeout */
+    *status = 0;
+  else
+    *status = i; /* can be 0 or -1 */
 
   faim_mutex_unlock(&sess->connlistlock);
-  *status = i; /* may be 0 or -1 */
   return NULL;  /* no waiting or error, return */
 }
 
