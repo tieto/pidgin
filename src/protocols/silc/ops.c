@@ -334,6 +334,8 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				   client_entry->nickname, channel->channel_name, tmp);
 			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), client_entry->nickname,
 					     buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo),
+									 client_entry->nickname, tmp);
 		} else if (idtype == SILC_ID_SERVER) {
 			server_entry = (SilcServerEntry)entry;
 			g_snprintf(buf, sizeof(buf),
@@ -341,6 +343,8 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				   server_entry->server_name, channel->channel_name, tmp);
 			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), server_entry->server_name,
 					     buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo),
+									 server_entry->server_name, tmp);
 		} else if (idtype == SILC_ID_CHANNEL) {
 			channel = (SilcChannelEntry)entry;
 			g_snprintf(buf, sizeof(buf),
@@ -348,9 +352,11 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				   channel->channel_name, channel->channel_name, tmp);
 			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), channel->channel_name,
 					     buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo),
+									 channel->channel_name, tmp);
+		} else {
+			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, tmp);
 		}
-
-		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, tmp);
 
 		break;
 

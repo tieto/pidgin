@@ -270,17 +270,19 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!convo) {
 		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a topic for %s, which doesn't exist\n", chan);
 	}
-	gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, topic);
+
 	/* If this is an interactive update, print it out */
 	tmp = gaim_escape_html(topic);
 	if (!strcmp(name, "topic")) {
 		nick = irc_mask_nick(from);
+		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), nick, topic);
 		msg = g_strdup_printf(_("%s has changed the topic to: %s"), nick, tmp);
 		g_free(nick);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), from, msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	} else {
 		msg = g_strdup_printf(_("The topic for %s is: %s"), chan, tmp);
+		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, topic);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 	}
