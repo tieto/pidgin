@@ -1974,7 +1974,7 @@ void create_mess(GtkWidget *widget, struct create_away *ca)
 	away_message = gtk_editable_get_chars(GTK_EDITABLE(ca->text), 0, text_len);
 
 	g_snprintf(b->message, sizeof(b->message), "%s", away_message);
-
+	g_free(away_message);
 	is_checked = GTK_TOGGLE_BUTTON(ca->checkbx)->active;
 	
 	if (is_checked) do_away_message(NULL, b);
