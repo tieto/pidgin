@@ -30,7 +30,7 @@ void *handle;
 GtkWidget *lagbox;
 GtkWidget *my_lagometer;
 struct timeval my_lag_tv;
-int check_timeout;
+int check_timeout = -1;
 guint delay = 10;
 static GtkWidget *confdlg;
 
@@ -71,7 +71,7 @@ void update_lag(int us) {
 
 void check_lag(char **who, char **message, void *m) {
 	char *name = g_strdup(normalize(*who));
-	if (!strcasecmp(current_user->username, name) &&
+	if (!strcasecmp(normalize(current_user->username), name) &&
 	    !strcmp(*message, MY_LAG_STRING)) {
 		struct timeval tv;
 		int ms;
@@ -94,7 +94,8 @@ void send_lag() {
 }
 
 void gaim_plugin_remove() {
-	gtk_timeout_remove(check_timeout);
+	if (check_timeout != -1)
+		gtk_timeout_remove(check_timeout);
 	if (confdlg)
 		gtk_widget_destroy(confdlg);
 	confdlg = NULL;
@@ -122,7 +123,8 @@ void adjust_timeout(GtkWidget *button, GtkWidget *spinner) {
 				GTK_SPIN_BUTTON(spinner)), 0, 3600);
 	sprintf(debug_buff, "new updates: %d\n", delay);
 	debug_print(debug_buff);
-	gtk_timeout_remove(check_timeout);
+	if (check_timeout >= 0)
+		gtk_timeout_remove(check_timeout);
 	check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, NULL);
 	gtk_widget_destroy(confdlg);
 	confdlg = NULL;
