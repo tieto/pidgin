@@ -1260,7 +1260,7 @@ static GList *irc_chat_info(struct gaim_connection *gc)
 	struct proto_chat_entry *pce;
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Room:");
+	pce->label = _("Channel:");
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
