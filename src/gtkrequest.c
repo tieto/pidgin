@@ -211,7 +211,6 @@ gaim_gtk_request_input(const char *title, const char *primary,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
 					   void *user_data)
-
 {
 	GaimGtkRequestData *data;
 	GtkWidget *dialog;

@@ -540,7 +540,7 @@ static GList *nap_chat_info(GaimConnection *gc)
 	struct proto_chat_entry *pce;
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Join what group:");
+	pce->label = _("_Group:");
 	pce->identifier = "group";
 	m = g_list_append(m, pce);
 
