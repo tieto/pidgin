@@ -329,6 +329,8 @@ struct _GaimPluginProtocolInfo
 	void (*roomlist_cancel)(struct _GaimRoomlist *list);
 	void (*roomlist_expand_category)(struct _GaimRoomlist *list, struct _GaimRoomlistRoom *category);
 
+	/* Chat specific menu in the buddy list */
+	GList *(*chat_menu)(GaimConnection *, GHashTable *);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

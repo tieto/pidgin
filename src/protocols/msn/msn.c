@@ -1648,7 +1648,14 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_convo_closed,
 	msn_normalize,
 	msn_set_buddy_icon,
-	msn_remove_group
+	msn_remove_group,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL
 };
 
 static GaimPluginInfo info =

@@ -3275,6 +3275,7 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_roomlist_get_list,
 	yahoo_roomlist_cancel,
 	yahoo_roomlist_expand_category,
+        NULL
 };
 
 static GaimPluginInfo info =

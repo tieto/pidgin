@@ -1376,7 +1376,12 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	zephyr_chat_set_topic
+	zephyr_chat_set_topic,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL
 };
 
 static GaimPluginInfo info =

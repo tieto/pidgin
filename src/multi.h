@@ -39,6 +39,12 @@ struct proto_buddy_menu {
 	GaimConnection *gc;
 };
 
+struct proto_chat_menu {
+	char *label;
+	void (*callback)(GaimConnection *, GHashTable *);
+	GaimConnection *gc;
+};
+
 struct proto_chat_entry {
 	char *label;
 	char *identifier;

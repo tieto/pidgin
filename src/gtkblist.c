@@ -1168,10 +1168,22 @@ create_group_menu (GaimBlistNode *node)
 	return menu;
 }
 
+static void gaim_proto_chat_menu_cb(GtkMenuItem *item, GaimChat *c)
+{
+	struct proto_chat_menu *pcm = g_object_get_data(G_OBJECT(item), "gaimcallback");
+	if (pcm->callback)
+		pcm->callback(pcm->gc, c->components);
+}
+
 static GtkWidget *
-create_chat_menu (GaimBlistNode *node)
+create_chat_menu (GaimBlistNode *node,
+		  GaimChat *c,
+		  GaimPlugin *prpl,
+		  GaimPluginProtocolInfo *prpl_info)
 {
 	GtkWidget *menu;
+	GList *list;
+	GtkWidget *menuitem;
 	gboolean autojoin = (gaim_blist_node_get_bool(node,
 						     "gtk-autojoin") || (gaim_blist_node_get_string(node,
 									 "gtk-autojoin") != NULL));
@@ -1182,10 +1194,28 @@ create_chat_menu (GaimBlistNode *node)
 	gaim_new_check_item(menu, _("Auto-Join"),
 			    G_CALLBACK(gtk_blist_menu_autojoin_cb), node,
 				autojoin);
+
+	if (prpl_info && prpl_info->chat_menu) {
+		list = prpl_info->chat_menu(c->account->gc, c->components);
+		while (list) {
+			struct proto_chat_menu *pcm = list->data;
+			menuitem = gtk_menu_item_new_with_mnemonic(pcm->label);
+			g_object_set_data(G_OBJECT(menuitem), "gaimcallback", pcm);
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+					 G_CALLBACK(gaim_proto_chat_menu_cb), c);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+			list = list->next;
+		}
+	}
+	gaim_signal_emit(GAIM_GTK_BLIST(gaim_get_blist()),
+			"drawing-menu", menu, c);
+
+	gaim_separator(menu);
 	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
+
 	return menu;
 }
 
@@ -1289,7 +1319,13 @@ gaim_gtk_blist_show_context_menu(GaimBlistNode *node,
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		menu = create_group_menu(node);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
-		menu = create_chat_menu(node);
+		GaimChat *c = (GaimChat *)node;
+		GaimPlugin *prpl = NULL;
+		GaimPluginProtocolInfo *prpl_info = NULL;
+		prpl = gaim_find_prpl(gaim_account_get_protocol_id(c->account));
+		if (prpl != NULL)
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+		menu = create_chat_menu(node, c, prpl, prpl_info);
 	} else if ((GAIM_BLIST_NODE_IS_CONTACT(node)) && (gtknode->contact_expanded)) {
 		menu = create_contact_menu(node);
 	} else if (GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_BUDDY(node)) {
