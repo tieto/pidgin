@@ -58,6 +58,7 @@ version 0.60:
 	* event_del_conversation for plugins (Thanks Bill Tompkins)
 	* Code cleanups and fixes (Thanks Federico Mena Quintero)
 	* aim:// URI's supported with gaim-remote command
+	* Quit Gaim remotely with gaim-remote (Thanks John Silvestri)
 	* Don't auto-login if an existing Gaim session is already
 	  running.
 	* Login all auto-login accounts from login window (Thanks
