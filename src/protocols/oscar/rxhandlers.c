@@ -131,7 +131,7 @@ static int consumesnac(aim_session_t *sess, aim_frame_t *rx)
 
 	for (cur = (aim_module_t *)sess->modlistv; cur; cur = cur->next) {
 
-		if (!(cur->flags & AIM_MODFLAG_MULTIFAMILY) && 
+		if (!(cur->flags & AIM_MODFLAG_MULTIFAMILY) &&
 				(cur->family != snac.family))
 			continue;
 
@@ -154,7 +154,7 @@ static int consumenonsnac(aim_session_t *sess, aim_frame_t *rx, fu16_t family, f
 
 	for (cur = (aim_module_t *)sess->modlistv; cur; cur = cur->next) {
 
-		if (!(cur->flags & AIM_MODFLAG_MULTIFAMILY) && 
+		if (!(cur->flags & AIM_MODFLAG_MULTIFAMILY) &&
 				(cur->family != snac.family))
 			continue;
 

@@ -63,7 +63,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 
 	aim_tlvlist_free(&tlvlist);
 
-	return ret;  
+	return ret;
 }
 
 /*
@@ -193,7 +193,7 @@ faim_export int aim_buddylist_oncoming(aim_session_t *sess, aim_conn_t *conn, ai
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0003, 0x000b, 0x0000, NULL, 0);
-	
+
 	aim_putsnac(&fr->data, 0x0003, 0x000b, 0x0000, snacid);
 	aim_putuserinfo(&fr->data, info);
 
@@ -220,7 +220,7 @@ faim_export int aim_buddylist_offgoing(aim_session_t *sess, aim_conn_t *conn, co
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0003, 0x000c, 0x0000, NULL, 0);
-	
+
 	aim_putsnac(&fr->data, 0x0003, 0x000c, 0x0000, snacid);
 	aimbs_put8(&fr->data, strlen(sn));
 	aimbs_putraw(&fr->data, sn, strlen(sn));

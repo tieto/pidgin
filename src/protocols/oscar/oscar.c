@@ -2881,6 +2881,9 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
+	g_return_val_if_fail(info != NULL, 1);
+	g_return_val_if_fail(info->sn != NULL, 1);
+
 	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
 		caps = info->capabilities;
 
@@ -4071,7 +4074,8 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gaim_debug_error("oscar",
-			   "Message error with data %s and reason %hu\n", data, reason);
+			   "Message error with data %s and reason %hu\n",
+				(data != NULL ? data : ""), reason);
 
 /* BBB */
 #if 0
@@ -4736,7 +4740,9 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gaim_debug_info("oscar",
-			   "Disconnected.  Code is 0x%04x and msg is %s\n", code, msg);
+			   "Disconnected.  Code is 0x%04x and msg is %s\n", code,
+				(msg != NULL ? msg : ""));
+
 	if ((fr) && (fr->conn) && (fr->conn->type == AIM_CONN_TYPE_BOS)) {
 		if (code == 0x0001) {
 			gc->wants_to_die = TRUE;
