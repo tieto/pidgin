@@ -100,6 +100,8 @@ field_string_focus_out_cb(GtkWidget *entry, GdkEventFocus *event,
 {
 	const char *value;
 
+	gaim_debug(GAIM_DEBUG_MISC, "gtkrequest", "field_string_focus_out_cb\n");
+
 	if (gaim_request_field_string_is_multiline(field)) {
 		GtkTextBuffer *buffer;
 		GtkTextIter start_iter, end_iter;
@@ -114,6 +116,8 @@ field_string_focus_out_cb(GtkWidget *entry, GdkEventFocus *event,
 	else
 		value = gtk_entry_get_text(GTK_ENTRY(entry));
 
+	gaim_debug(GAIM_DEBUG_MISC, "gtkrequest", "'%s' = '%s'\n",
+			   gaim_request_field_get_id(field), value);
 	gaim_request_field_string_set_value(field,
 			(*value == '\0' ? NULL : value));
 
@@ -567,11 +571,6 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 				type = gaim_request_field_get_type(field);
 
-				gaim_debug(GAIM_DEBUG_INFO, "gtkrequest",
-						   "Adding %s (%d, %d - %d, %d)\n",
-						   gaim_request_field_get_label(field),
-						   row_num, col_num, rows, cols);
-
 				if (type != GAIM_REQUEST_FIELD_BOOLEAN) {
 					text = g_strdup_printf("%s:",
 							gaim_request_field_get_label(field));
@@ -635,17 +634,21 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 							gtk_text_buffer_set_text(buffer, value, -1);
 						}
+
+						g_signal_connect(G_OBJECT(textview), "focus-out-event",
+										 G_CALLBACK(field_string_focus_out_cb),
+										 field);
 					}
 					else {
 						widget = gtk_entry_new();
 
 						if (value != NULL)
 							gtk_entry_set_text(GTK_ENTRY(widget), value);
-					}
 
-					g_signal_connect(G_OBJECT(widget), "focus-out-event",
-									 G_CALLBACK(field_string_focus_out_cb),
-									 field);
+						g_signal_connect(G_OBJECT(widget), "focus-out-event",
+										 G_CALLBACK(field_string_focus_out_cb),
+										 field);
+					}
 				}
 				else if (type == GAIM_REQUEST_FIELD_INTEGER) {
 					int value;
@@ -769,210 +772,6 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 				field->ui_data = widget;
 			}
 		}
-
-#if 0
-		for (col_num = 0, fl = field_list;
-			 col_num < cols && fl != NULL;
-			 col_num++) {
-
-			for (row_num = 0;
-				 row_num < rows && fl != NULL;
-				 row_num++, fl = fl->next) {
-
-				size_t col_offset = col_num * 2;
-				GaimRequestFieldType type;
-				GtkWidget *widget = NULL;
-
-				field = fl->data;
-
-				type = gaim_request_field_get_type(field);
-
-				gaim_debug(GAIM_DEBUG_INFO, "gtkrequest",
-						   "Adding %s (%d, %d - %d, %d)\n",
-						   gaim_request_field_get_label(field),
-						   row_num, col_num, rows, cols);
-
-				if (type != GAIM_REQUEST_FIELD_BOOLEAN) {
-					text = g_strdup_printf("%s:",
-							gaim_request_field_get_label(field));
-
-					label = gtk_label_new(NULL);
-					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text);
-					g_free(text);
-
-					gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-
-					gtk_size_group_add_widget(sg, label);
-
-					if (type == GAIM_REQUEST_FIELD_STRING &&
-						gaim_request_field_string_is_multiline(field)) {
-
-						gtk_table_attach_defaults(GTK_TABLE(table), label,
-												  0, 2 * cols,
-												  row_num, row_num + 1);
-
-						row_num++;
-					}
-					else {
-						gtk_table_attach_defaults(GTK_TABLE(table), label,
-												  col_offset, col_offset + 1,
-												  row_num, row_num + 1);
-					}
-
-					gtk_widget_show(label);
-				}
-
-				if (type == GAIM_REQUEST_FIELD_STRING) {
-					const char *value;
-
-					value = gaim_request_field_string_get_default_value(field);
-
-					if (gaim_request_field_string_is_multiline(field)) {
-						widget = gtk_text_view_new();
-
-						if (value != NULL) {
-							GtkTextBuffer *buffer;
-							
-							buffer = gtk_text_view_get_buffer(
-								GTK_TEXT_VIEW(widget));
-
-							gtk_text_buffer_set_text(buffer, value, -1);
-						}
-					}
-					else {
-						widget = gtk_entry_new();
-
-						if (value != NULL)
-							gtk_entry_set_text(GTK_ENTRY(widget), value);
-					}
-
-					g_signal_connect(G_OBJECT(widget), "focus-out-event",
-									 G_CALLBACK(field_string_focus_out_cb),
-									 field);
-				}
-				else if (type == GAIM_REQUEST_FIELD_INTEGER) {
-					int value;
-
-					widget = gtk_entry_new();
-
-					value = gaim_request_field_int_get_default_value(field);
-
-					if (value != 0) {
-						char buf[32];
-
-						g_snprintf(buf, sizeof(buf), "%d", value);
-
-						gtk_entry_set_text(GTK_ENTRY(widget), buf);
-					}
-
-					g_signal_connect(G_OBJECT(widget), "focus-out-event",
-									 G_CALLBACK(field_int_focus_out_cb),
-									 field);
-				}
-				else if (type == GAIM_REQUEST_FIELD_BOOLEAN) {
-					widget = gtk_check_button_new_with_label(
-						gaim_request_field_get_label(field));
-
-					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-						gaim_request_field_bool_get_default_value(field));
-
-					g_signal_connect(G_OBJECT(widget), "toggled",
-									 G_CALLBACK(field_bool_cb), field);
-				}
-				else if (type == GAIM_REQUEST_FIELD_CHOICE) {
-					GList *labels;
-					GList *l;
-
-					labels = gaim_request_field_choice_get_labels(field);
-
-					if (g_list_length(labels) > 5) {
-						GtkWidget *menu;
-						GtkWidget *item;
-
-						widget = gtk_option_menu_new();
-
-						menu = gtk_menu_new();
-
-						gtk_option_menu_set_menu(GTK_OPTION_MENU(widget), menu);
-
-						for (l = labels; l != NULL; l = l->next) {
-							const char *text = l->data;
-
-							item = gtk_menu_item_new_with_label(text);
-
-							gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-						}
-
-						g_signal_connect(G_OBJECT(widget), "changed",
-										 G_CALLBACK(field_choice_menu_cb),
-										 field);
-					}
-					else {
-						GtkWidget *box;
-						GtkWidget *first_radio = NULL;
-						GtkWidget *radio;
-
-						if (g_list_length(labels) == 2)
-							box = gtk_hbox_new(FALSE, 6);
-						else
-							box = gtk_vbox_new(FALSE, 0);
-
-						widget = box;
-
-						for (l = labels; l != NULL; l = l->next) {
-							const char *text = l->data;
-
-							radio =
-								gtk_radio_button_new_with_label_from_widget(
-									GTK_RADIO_BUTTON(first_radio), text);
-
-							if (first_radio == NULL)
-								first_radio = radio;
-
-							gtk_box_pack_start(GTK_BOX(box), radio,
-											   TRUE, TRUE, 0);
-							gtk_widget_show(radio);
-
-							g_signal_connect(G_OBJECT(radio), "toggled",
-											 G_CALLBACK(field_choice_option_cb),
-											 field);
-						}
-					}
-				}
-
-				if (type != GAIM_REQUEST_FIELD_BOOLEAN) {
-					gtk_table_attach(GTK_TABLE(table), widget,
-									 col_offset + 1, col_offset + 2,
-									 row_num, row_num + 1,
-									 GTK_FILL | GTK_EXPAND,
-									 GTK_FILL | GTK_EXPAND,
-									 5, 0);
-				}
-				else if (type == GAIM_REQUEST_FIELD_STRING &&
-						 gaim_request_field_string_is_multiline(field)) {
-
-					gtk_table_attach(GTK_TABLE(table), widget,
-									 0, 2 * cols,
-									 row_num, row_num + 1,
-									 GTK_FILL | GTK_EXPAND,
-									 GTK_FILL | GTK_EXPAND,
-									 5, 0);
-				}
-				else {
-					gtk_table_attach(GTK_TABLE(table), widget,
-									 col_offset, col_offset + 1,
-									 row_num, row_num + 1,
-									 GTK_FILL | GTK_EXPAND,
-									 GTK_FILL | GTK_EXPAND,
-									 5, 0);
-				}
-
-				gtk_widget_show(widget);
-
-				field->ui_data = widget;
-			}
-		}
-#endif
 	}
 
 	g_object_unref(sg);
