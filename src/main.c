@@ -475,7 +475,7 @@ static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer 
 	debug_printf("Core says: ");
 	g_io_channel_read_chars(source, &type, sizeof(type), &x, &error);
 	if(error)
-		g_free(error);
+		g_error_free(error);
 	if (x == 0) {
 		debug_printf("CORE IS GONE!\n");
 		g_io_channel_shutdown(source, TRUE, &error);
@@ -486,23 +486,23 @@ static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer 
 	debug_printf("%d ", type);
 	g_io_channel_read_chars(source, &subtype, sizeof(subtype), &x, &error);
 	if(error)
-		g_free(error);
+		g_error_free(error);
 	if (x == 0) {
 		debug_printf("CORE IS GONE!\n");
 		g_io_channel_shutdown(source, TRUE, &error);
 		if(error)
-			g_free(error);
+			g_error_free(error);
 		return FALSE;
 	}
 	debug_printf("%d ", subtype);
 	g_io_channel_read_chars(source, (guchar *)&len, sizeof(len), &x, &error);
 	if(error)
-		g_free(error);
+		g_error_free(error);
 	if (x == 0) {
 		debug_printf("CORE IS GONE!\n");
 		g_io_channel_shutdown(source, TRUE, &error);
 		if(error)
-			g_free(error);
+			g_error_free(error);
 		return FALSE;
 	}
 	debug_printf("(%d bytes)\n", len);
@@ -510,13 +510,13 @@ static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer 
 	data = g_malloc(len);
 	g_io_channel_read_chars(source, data, len, &x, &error);
 	if(error)
-		g_free(error);
+		g_error_free(error);
 	if (x != len) {
 		debug_printf("CORE IS GONE! (read %d/%d bytes)\n", x, len);
 		g_free(data);
 		g_io_channel_shutdown(source, TRUE, &error);
 		if(error)
-			g_free(error);
+			g_error_free(error);
 		return FALSE;
 	}
 

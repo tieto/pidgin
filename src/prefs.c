@@ -2218,6 +2218,7 @@ static gboolean program_is_valid(const char *program)
 
 	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
 		debug_printf("Could not parse program '%s': ", error->message);
+		g_error_free(error);
 		return FALSE;
 	}
 

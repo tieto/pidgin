@@ -100,7 +100,7 @@ gint UI_write(struct UI *ui, guchar *data, gint len)
 	gint sent;
 	/* we'll let the write silently fail because the read will pick it up as dead */
 	g_io_channel_write_chars(ui->channel, data, len, &sent, &error);
-	g_free(error);
+	g_error_free(error);
 	return sent;
 }
 
@@ -182,7 +182,7 @@ static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 	}
 
 	if(error)
-		g_free(error);
+		g_error_free(error);
 }
 
 static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
@@ -298,11 +298,11 @@ static gint gaim_recv(GIOChannel *source, guchar *buf, gint len)
 	gint total = 0;
 	gint cur;
 
-	GError *error;
+	GError *error = NULL;
 
 	while (total < len) {
 		if (g_io_channel_read_chars(source, buf + total, len - total, &cur, &error) != G_IO_STATUS_NORMAL) {
-			g_free(error);
+			g_error_free(error);
 			return -1;
 		}
 		if (cur == 0)
@@ -352,7 +352,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		if(error)
-			g_free(error);
+			g_error_free(error);
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		return FALSE;
@@ -363,7 +363,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		if(error)
-			g_free(error);
+			g_error_free(error);
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		return FALSE;
@@ -374,7 +374,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		if(error)
-			g_free(error);
+			g_error_free(error);
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		return FALSE;
@@ -387,7 +387,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 			uis = g_slist_remove(uis, ui);
 			g_io_channel_shutdown(ui->channel, TRUE, &error);
 			if(error)
-				g_free(error);
+				g_error_free(error);
 			g_source_remove(ui->inpa);
 			g_free(ui);
 			return FALSE;

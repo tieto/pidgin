@@ -2035,6 +2035,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		if (err) {
 			debug_printf("Unicode IM conversion: %s\n", err->message);
 			tmp = strdup(_("(There was an error receiving this message)"));
+			g_error_free(err);
 		}
 	} else {
 		/* This will get executed for both AIM_IMFLAGS_ISO_8859_1 and
@@ -2054,6 +2055,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		if (err) {
 			debug_printf("ISO-8859-1 IM conversion: %s\n", err->message);
 			tmp = strdup(_("(There was an error receiving this message)"));
+			g_error_free(err);
 		}
 	}
 
@@ -2325,8 +2327,10 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	for (i=0; msg1[i]; i++) {
 		strip_linefeed(msg1[i]);
 		msg2[i] = g_convert(msg1[i], strlen(msg1[i]), "UTF-8", "ISO-8859-1", NULL, NULL, &err);
-		if (err)
+		if (err) {
 			debug_printf("Error converting a string from ISO-8859-1 to UTF-8 in oscar ICBM channel 4 parsing\n");
+			g_error_free(err);
+		}
 	}
 	msg2[i] = NULL;
 
@@ -3967,6 +3971,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				debug_printf("This really shouldn't happen!\n");
 				/* We really shouldn't try to send the
 				 * IM now, but I'm not sure what to do */
+				g_error_free(err);
 			}
 		} else if (args.flags & AIM_IMFLAGS_ISO_8859_1) {
 			debug_printf("Sending ISO-8859-1 IM\n");
@@ -3978,9 +3983,11 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				debug_printf("Someone tell Ethan his 8859-1 detection is wrong\n");
 				args.flags ^= AIM_IMFLAGS_ISO_8859_1 | AIM_IMFLAGS_UNICODE;
 				len = strlen(message);
+				g_error_free(err);
 				args.msg = g_convert(message, len, "UCS-2BE", "UTF8", NULL, &len, &err);
 				if (err) {
 					debug_printf("Error in unicode fallback: %s\n", err->message);
+					g_error_free(err);
 				}
 			}
 		} else {
