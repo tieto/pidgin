@@ -62,6 +62,8 @@ PIXMAPS_DIALOGS =	$(GAIM_PIXMAPS)/gaim_error.png \
 			$(GAIM_PIXMAPS)/gaim_warning.png \
 			$(GAIM_PIXMAPS)/gaim_question.png
 
+PIXMAPS_MENUS =	$(GAIM_PIXMAPS)/insert-image-small.png
+
 PIXMAPS_BUTTONS =	$(GAIM_PIXMAPS)/edit.png \
 			$(GAIM_PIXMAPS)/accounts.png \
 			$(GAIM_PIXMAPS)/preferences.png \
@@ -126,6 +128,7 @@ install: all
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 	cp $(PIXMAPS_DIALOGS) $(GAIM_INSTALL_DIR)/pixmaps/gaim/dialogs
 	cp $(PIXMAPS_BUTTONS) $(GAIM_INSTALL_DIR)/pixmaps/gaim/buttons
+	cp $(PIXMAPS_MENUS) $(GAIM_INSTALL_DIR)/pixmaps/gaim/menus
 	cp $(PIXMAPS) $(GAIM_INSTALL_DIR)/pixmaps/gaim
 	mkdir -p $(GAIM_INSTALL_DIR)/lib/gtk-2.0
 	cp -R $(GTK_LIBS)/gtk-2.0/2.0.0 $(GAIM_INSTALL_DIR)/lib/gtk-2.0
