@@ -106,7 +106,7 @@ static void blist_pref_cb(const char *name, GaimPrefType typ, gpointer value, gp
 	}
 }
 
-static GaimContact *gaim_buddy_get_contact(GaimBuddy *buddy)
+GaimContact *gaim_buddy_get_contact(GaimBuddy *buddy)
 {
 	return (GaimContact*)((GaimBlistNode*)buddy)->parent;
 }
@@ -775,7 +775,13 @@ void gaim_contact_set_alias(GaimContact* contact, const char *alias)
 
 const char *gaim_contact_get_alias(GaimContact* contact)
 {
-	return contact ? contact->alias : NULL;
+	if(!contact)
+		return NULL;
+
+	if(contact->alias)
+		return contact->alias;
+
+	return gaim_get_buddy_alias(contact->priority);
 }
 
 GaimGroup *gaim_group_new(const char *name)

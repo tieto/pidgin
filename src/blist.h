@@ -378,6 +378,15 @@ void gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon);
 GaimBuddyIcon *gaim_buddy_get_icon(const GaimBuddy *buddy);
 
 /**
+ * Returns a buddy's contact.
+ *
+ * @param buddy The buddy.
+ *
+ * @return The buddy's contact.
+ */
+GaimContact *gaim_buddy_get_contact(GaimBuddy *buddy);
+
+/**
  * Adds a new buddy to the buddy list.
  *
  * The buddy will be inserted right after node or prepended to the
