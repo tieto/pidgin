@@ -856,42 +856,50 @@ static void gaimrc_read_options(FILE *f)
 		} else if (!strcmp(p->option, "misc_options")) {
 			misc_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/gaim/gtk/debug/enabled",
-								misc_options & OPT_MISC_DEBUG);
+					misc_options & OPT_MISC_DEBUG);
 			gaim_prefs_set_bool("/gaim/gtk/browsers/new_window",
-								misc_options & OPT_MISC_BROWSER_POPUP);
+					misc_options & OPT_MISC_BROWSER_POPUP);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/im/send_typing",
-								!(misc_options & OPT_MISC_STEALTH_TYPING));
+					!(misc_options & OPT_MISC_STEALTH_TYPING));
 			gaim_prefs_set_bool("/gaim/gtk/buddies/use_server_alias",
-								misc_options & OPT_MISC_USE_SERVER_ALIAS);
+					misc_options & OPT_MISC_USE_SERVER_ALIAS);
 		} else if (!strcmp(p->option, "logging_options")) {
 			logging_options = atoi(p->value[0]);
 			read_logging = TRUE;
 			gaim_prefs_set_bool("/gaim/gtk/logging/log_ims",
-								logging_options & OPT_LOG_CONVOS);
+					logging_options & OPT_LOG_CONVOS);
 			gaim_prefs_set_bool("/gaim/gtk/logging/strip_html",
-								logging_options & OPT_LOG_STRIP_HTML);
+					logging_options & OPT_LOG_STRIP_HTML);
 			gaim_prefs_set_bool("/gaim/gtk/logging/individual_logs",
-								logging_options & OPT_LOG_INDIVIDUAL);
+					logging_options & OPT_LOG_INDIVIDUAL);
 			gaim_prefs_set_bool("/gaim/gtk/logging/log_chats",
-								logging_options & OPT_LOG_CHATS);
+					logging_options & OPT_LOG_CHATS);
+			gaim_prefs_set_bool("/gaim/gtk/logging/log_signon_signoff",
+					logging_options & OPT_LOG_BUDDY_SIGNON);
+			gaim_prefs_set_bool("/gaim/gtk/logging/log_idle_state",
+					logging_options & OPT_LOG_BUDDY_IDLE);
+			gaim_prefs_set_bool("/gaim/gtk/logging/log_away_state",
+					logging_options & OPT_LOG_BUDDY_AWAY);
+			gaim_prefs_set_bool("/gaim/gtk/logging/log_own_states",
+					logging_options & OPT_LOG_MY_SIGNON);
 		} else if (!strcmp(p->option, "blist_options")) {
 			blist_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_group_count",
-								blist_options & OPT_BLIST_SHOW_GRPNUM);
+					blist_options & OPT_BLIST_SHOW_GRPNUM);
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_idle_time",
-								blist_options & OPT_BLIST_SHOW_IDLETIME);
+					blist_options & OPT_BLIST_SHOW_IDLETIME);
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_empty_groups",
-								!(blist_options & OPT_BLIST_NO_MT_GRP));
+					!(blist_options & OPT_BLIST_NO_MT_GRP));
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_warning_level",
-								blist_options & OPT_BLIST_SHOW_WARN);
+					blist_options & OPT_BLIST_SHOW_WARN);
 			gaim_prefs_set_bool("/gaim/gtk/blist/grey_idle_buddies",
-								blist_options & OPT_BLIST_GREY_IDLERS);
+					blist_options & OPT_BLIST_GREY_IDLERS);
 			gaim_prefs_set_bool("/gaim/gtk/blist/raise_on_events",
-								blist_options & OPT_BLIST_POPUP);
+					blist_options & OPT_BLIST_POPUP);
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_buddy_icons",
-								blist_options & OPT_BLIST_SHOW_ICONS);
+					blist_options & OPT_BLIST_SHOW_ICONS);
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_offline_buddies",
-								blist_options & OPT_BLIST_SHOW_OFFLINE);
+					blist_options & OPT_BLIST_SHOW_OFFLINE);
 			gaim_prefs_set_int("/gaim/gtk/blist/button_style",
 					((blist_options & OPT_BLIST_SHOW_BUTTON_XPM)
 					 ? ((blist_options & OPT_BLIST_NO_BUTTON_TEXT)
@@ -901,35 +909,35 @@ static void gaimrc_read_options(FILE *f)
 		} else if (!strcmp(p->option, "convo_options")) {
 			convo_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/enter_sends",
-								convo_options & OPT_CONVO_ENTER_SENDS);
+					convo_options & OPT_CONVO_ENTER_SENDS);
 			gaim_prefs_set_bool("/core/conversations/send_urls_as_links",
-								convo_options & OPT_CONVO_SEND_LINKS);
+					convo_options & OPT_CONVO_SEND_LINKS);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/spellcheck",
-								convo_options & OPT_CONVO_CHECK_SPELLING);
+					convo_options & OPT_CONVO_CHECK_SPELLING);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/html_shortcuts",
-								convo_options & OPT_CONVO_CTL_CHARS);
+					convo_options & OPT_CONVO_CTL_CHARS);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/smiley_shortcuts",
-								convo_options & OPT_CONVO_CTL_SMILEYS);
+					convo_options & OPT_CONVO_CTL_SMILEYS);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/escape_closes",
-								convo_options & OPT_CONVO_ESC_CAN_CLOSE);
+					convo_options & OPT_CONVO_ESC_CAN_CLOSE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ctrl_enter_sends",
-								convo_options & OPT_CONVO_CTL_ENTER);
+					convo_options & OPT_CONVO_CTL_ENTER);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
-								convo_options & OPT_CONVO_SHOW_TIME);
+					convo_options & OPT_CONVO_SHOW_TIME);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_colors",
-								convo_options & OPT_CONVO_IGNORE_COLOUR);
+					convo_options & OPT_CONVO_IGNORE_COLOUR);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/show_smileys",
-								convo_options & OPT_CONVO_SHOW_SMILEY);
+					convo_options & OPT_CONVO_SHOW_SMILEY);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_fonts",
-								convo_options & OPT_CONVO_IGNORE_FONTS);
+					convo_options & OPT_CONVO_IGNORE_FONTS);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_font_sizes",
-								convo_options & OPT_CONVO_IGNORE_SIZES);
+					convo_options & OPT_CONVO_IGNORE_SIZES);
 			gaim_prefs_set_bool("/core/conversations/combine_chat_im",
-								convo_options & OPT_CONVO_COMBINE);
+					convo_options & OPT_CONVO_COMBINE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/ctrl_w_closes",
-								convo_options & OPT_CONVO_CTL_W_CLOSES);
+					convo_options & OPT_CONVO_CTL_W_CLOSES);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/close_on_tabs",
-								!(convo_options & OPT_CONVO_NO_X_ON_TAB));
+					!(convo_options & OPT_CONVO_NO_X_ON_TAB));
 		} else if (!strcmp(p->option, "im_options")) {
 			im_options = atoi(p->value[0]);
 
@@ -986,21 +994,21 @@ static void gaimrc_read_options(FILE *f)
 			font_options = atoi(p->value[0]);
 
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_bold",
-								font_options & OPT_FONT_BOLD);
+					font_options & OPT_FONT_BOLD);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_italic",
-								font_options & OPT_FONT_ITALIC);
+					font_options & OPT_FONT_ITALIC);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_underline",
-								font_options & OPT_FONT_UNDERLINE);
+					font_options & OPT_FONT_UNDERLINE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_strikethrough",
-								font_options & OPT_FONT_STRIKE);
+					font_options & OPT_FONT_STRIKE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_font",
-								font_options & OPT_FONT_FACE);
+					font_options & OPT_FONT_FACE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_size",
-								font_options & OPT_FONT_SIZE);
+					font_options & OPT_FONT_SIZE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_fgcolor",
-								font_options & OPT_FONT_FGCOL);
+					font_options & OPT_FONT_FGCOL);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_bgcolor",
-								font_options & OPT_FONT_BGCOL);
+					font_options & OPT_FONT_BGCOL);
 
 		} else if (!strcmp(p->option, "sound_options")) {
 			sound_options = atoi(p->value[0]);
@@ -1158,11 +1166,11 @@ static void gaimrc_read_options(FILE *f)
 		if (!read_logging) {
 			logging_options = 0;
 			gaim_prefs_set_bool("/gaim/gtk/logging/log_ims",
-								general_options & OPT_GEN_LOG_ALL);
+					general_options & OPT_GEN_LOG_ALL);
 			gaim_prefs_set_bool("/gaim/gtk/logging/log_chats",
-								general_options & OPT_GEN_LOG_ALL);
+					general_options & OPT_GEN_LOG_ALL);
 			gaim_prefs_set_bool("/gaim/gtk/logging/strip_html",
-								general_options & OPT_GEN_STRIP_HTML);
+					general_options & OPT_GEN_STRIP_HTML);
 		}
 	}
 
@@ -1183,7 +1191,7 @@ static void gaimrc_read_options(FILE *f)
 		}
 
 		misc_options &= ~OPT_MISC_BUDDY_TICKER;
-	} 
+	}
 }
 
 static void gaimrc_read_sounds(FILE *f)
