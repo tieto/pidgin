@@ -66,7 +66,7 @@ endif
 
 # libfaim stuff. should be here instead of configure.in, since plugins/prpls shouldn't
 # rely on libfaim (the only file that should depend on it is oscar.c)
-CFLAGS += -I\$(top_srcdir)/libfaim
+CFLAGS += -I$(top_srcdir)/libfaim
 LIBS += -L../libfaim -lfaim
 
 # Perl stuff. plugins shouldn't need this either (right?)
