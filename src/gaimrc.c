@@ -433,9 +433,7 @@ static void gaimrc_write_plugins(FILE *f)
 		p = (struct gaim_plugin *)pl->data;
 
 		path = escape_text2(p->path);
-			
 		fprintf(f, "\tplugin { %s }\n", path);
-
 		free(path);
 
 		pl = pl->next;
@@ -462,9 +460,6 @@ static void gaimrc_read_plugins(FILE *f)
 
 		p = parse_line(buf, &parse_buffer);
 		if (!strcmp(p->option, "plugin")) {
-#ifndef _WIN32
-			filter_break(p->value[0]);
-#endif
 			load = g_slist_append(load, g_strdup(p->value[0]));
 		}
 	}
@@ -961,8 +956,17 @@ static void gaimrc_write_sounds(FILE *f)
 	int i;
 	fprintf(f, "sound_files {\n");
 	for (i = 0; i < NUM_SOUNDS; i++)
-		if (sound_file[i])
+		if (sound_file[i]) {
+#ifndef _WIN32
 			fprintf(f, "\tsound%c { %s }\n", i + 'A', sound_file[i]);
+#else
+			/* Make sure windows dir speparators arn't swallowed up when
+			   path is read back in from resource file */
+			char* tmp=wgaim_escape_dirsep(sound_file[i]);
+			fprintf(f, "\tsound%c { %s }\n", i + 'A', tmp);
+			g_free(tmp);
+#endif
+		}
 		else
 			fprintf(f, "\tsound%c {  }\n", i + 'A');
 #ifndef _WIN32
