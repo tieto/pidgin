@@ -928,6 +928,7 @@ GdkPixbuf *gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSiz
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node) &&
 			((struct buddy *)node)->present != GAIM_BUDDY_SIGNING_OFF &&
+			((struct buddy *)node)->present != GAIM_BUDDY_OFFLINE &&
 			prpl_info->list_emblems) {
 		prpl_info->list_emblems((struct buddy*)node, &se, &sw, &nw, &ne);
 	}
