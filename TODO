@@ -11,7 +11,7 @@ THE CORE:
 			dialog in account editor
 		OPT_PROTO_OFFLINE to allow sending offline messages... checkbox on
 			the convo window? need to decide UI for switching between
-			offline/ normal message. uh... maybe this isn't the best
+			offline/normal message. uh... maybe this isn't the best
 			idea, but we need something that gives us this functionality....
 			prpl->send_im_offline?
 		OPT_PROTO_CHAT_TOPIC (for IRC/Jabber chatroom topics)

@@ -5,6 +5,7 @@ version 0.11.0-pre12:
 	  are enabled.
 	* Redesigned the Font Options preference page
 	* Improved Jabber chat support (it whispers now, too)
+	* Zephyr can do Subscriptions now (thanks to nsanch)
 
 version 0.11.0-pre11 (04/30/2001):
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
