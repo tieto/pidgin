@@ -1361,7 +1361,7 @@ silcgaim_register_commands(void)
 	gaim_cmd_register("cmode", "wws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_cmode,
-			_("cmode &lt;channel&gt; [+|-&lt;modes&gt]; [arguments]:  Change or display channel modes"));
+			_("cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display channel modes"));
 	gaim_cmd_register("cumode", "wws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
