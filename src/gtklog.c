@@ -331,6 +331,8 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 	button = gtk_button_new_from_stock(GTK_STOCK_FIND);
 	g_signal_connect (GTK_BUTTON (button), "activate",
 			  G_CALLBACK (search_cb), lv);
+	g_signal_connect (GTK_BUTTON (button), "clicked",
+			  G_CALLBACK (search_cb), lv);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gaim_set_accessible_label (lv->treeview, label);
 
@@ -438,6 +440,9 @@ void gaim_gtk_syslog_show()
 			  syslog_viewer);
 	button = gtk_button_new_from_stock(GTK_STOCK_FIND);
 	g_signal_connect (GTK_BUTTON (button), "activate",
+			  G_CALLBACK (search_cb),
+			  syslog_viewer);
+	g_signal_connect (GTK_BUTTON (button), "clicked",
 			  G_CALLBACK (search_cb),
 			  syslog_viewer);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
