@@ -322,6 +322,28 @@ char *gaim_fd_get_ip(int fd);
 const char *gaim_normalize(const GaimAccount *account, const char *str);
 
 /**
+ * Compares two strings to see if the first contains the second as
+ * a proper prefix.
+ * 
+ * @param s  The string to check.
+ * @param p  The prefix in question.
+ * 
+ * @return   TRUE if p is a prefix of s, otherwise FALSE.
+ */
+gboolean gaim_str_has_prefix(const char *s, const char *p);
+
+/**
+ * Compares two strings to see if the second is a proper suffix
+ * of the first.
+ * 
+ * @param s  The string to check.
+ * @param x  The suffix in question.
+ * 
+ * @return   TRUE if x is a a suffix of s, otherwise FALSE.
+ */
+gboolean gaim_str_has_suffix(const char *s, const char *x);
+
+/**
  * Looks for %n, %d, or %t in a string, and replaces them with the
  * specified name, date, and time, respectively.
  *

@@ -1532,6 +1532,26 @@ gaim_strdup_withhtml(const char *src)
 	return dest;
 }
 
+gboolean
+gaim_str_has_prefix(const char *s, const char *p)
+{
+	if (!strncmp(s, p, strlen(p)))
+		return TRUE;
+
+	return FALSE;
+}
+
+gboolean
+gaim_str_has_suffix(const char *s, const char *x)
+{
+	int off = strlen(s) - strlen(x);
+
+	if (off >= 0 && !strcmp(s + off, x))
+		return TRUE;
+
+	return FALSE;
+}
+
 char *
 gaim_str_add_cr(const char *text)
 {

@@ -1132,7 +1132,7 @@ static void send_file_accept (struct send_file_data *data)
 	s = uris;
 
 	do {
-		if (g_str_has_prefix(*s, "file://")) {
+		if (gaim_str_has_prefix(*s, "file://")) {
 			char *file = g_strstrip(*s + strlen ("file://"));
 
 			serv_send_file(buddy->account->gc, buddy->name, file); 
@@ -1193,7 +1193,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 
 			/* Count how many files the user is trying to send */
 			do {
-				if (g_str_has_prefix (*s, "file://"))
+				if (gaim_str_has_prefix (*s, "file://"))
 					n++;
 			} while (*(++s));
 			
