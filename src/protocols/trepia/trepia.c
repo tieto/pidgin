@@ -651,6 +651,7 @@ __parse_data(TrepiaSession *session, char *buf)
 	const char *value;
 	char *username;
 	int *int_p;
+	GMainContext *ctx;
 
 	account = gaim_connection_get_account(session->gc);
 
@@ -889,6 +890,11 @@ __parse_data(TrepiaSession *session, char *buf)
 
 					serv_got_update(session->gc, username, 1, 0, 0, 0, 0);
 				}
+
+				ctx = g_main_context_default();
+
+				while (g_main_context_pending(ctx))
+					g_main_context_iteration(ctx, FALSE);
 
 				g_free(username);
 
