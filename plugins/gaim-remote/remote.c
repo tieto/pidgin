@@ -35,6 +35,7 @@
 #include "core.h"
 #include "debug.h"
 #include "prpl.h"
+#include "notify.h"
 
 /* XXX */
 #include "gtkconv.h"
@@ -628,7 +629,7 @@ socket_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 }
 
 static gint
-open_socket()
+open_socket(char **error)
 {
 	struct sockaddr_un saddr;
 	gint fd;
@@ -647,6 +648,8 @@ open_socket()
 		if (bind(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
 			listen(fd, 100);
 		else {
+			*error = g_strdup_printf(_("Failed to assign %s to a socket:\n%s"),
+					   saddr.sun_path, strerror(errno));
 			g_log(NULL, G_LOG_LEVEL_CRITICAL,
 			      "Failed to assign %s to a socket (Error: %s)",	
 			      saddr.sun_path, strerror(errno));
@@ -665,9 +668,13 @@ plugin_load(GaimPlugin *plugin)
 {
 #ifndef _WIN32
 	GIOChannel *channel;
+	char *buf;
 
-	if ((UI_fd = open_socket()) < 0)
+	if ((UI_fd = open_socket(&buf)) < 0) {
+		gaim_notify_error(NULL, NULL, _("Unable to open socket"), buf);
+		g_free(buf);
 		return FALSE;
+	}
 
 	channel = g_io_channel_unix_new(UI_fd);
 	watcher = g_io_add_watch(channel, G_IO_IN, socket_readable, NULL);
