@@ -5,6 +5,7 @@
 
 #include "conversation.h"
 #include "debug.h"
+#include "log.h"
 #include "prefs.h"
 #include "signals.h"
 #include "util.h"
@@ -21,57 +22,24 @@ static void historize(GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
 	const char *name = gaim_conversation_get_name(c);
-	struct stat st;
-	FILE *fd;
-	char *userdir = g_strdup(gaim_user_dir());
-	char *logfile = g_strdup_printf("%s.log", gaim_normalize(c->account, name));
-	char *path = g_build_filename(userdir, "logs", logfile, NULL);
-	char buf[HISTORY_SIZE+1];
-	char *tmp, *tmp2;
-	int size;
+	char *history = NULL;
+	int flags;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
 	GtkTextIter end;
-
-	if (stat(path, &st) || S_ISDIR(st.st_mode) || st.st_size == 0 ||
-	    !(fd = fopen(path, "r"))) {
-		g_free(userdir);
-		g_free(logfile);
-		g_free(path);
+	GList *logs = gaim_log_get_logs(gaim_conversation_get_name(c), gaim_conversation_get_account(c));
+	if (!logs)
 		return;
-	}
-
-	fseek(fd, st.st_size > HISTORY_SIZE ? st.st_size - HISTORY_SIZE : 0, SEEK_SET);
-	size = fread(buf, 1, HISTORY_SIZE, fd);
-	tmp = buf;
-	tmp[size] = 0;
-
-	/* start the history at a newline */
-	while (*tmp && *tmp != '\n')
-		tmp++;
-
-	if (*tmp) tmp++;
-
-	if(*tmp == '<')
-		options |= GTK_IMHTML_NO_NEWLINE;
-
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links"))
-		tmp2 = gaim_markup_linkify(tmp);
-	else
-		tmp2 = g_strdup(tmp);
-
+	history = gaim_log_read((GaimLog*)logs->data, &flags);
 	gtkconv = GAIM_GTK_CONVERSATION(c);
-
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), tmp2, options);
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<br>", options);
+	if (flags & GAIM_LOG_READ_NO_NEWLINE)
+		options |= GTK_IMHTML_NO_NEWLINE;
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), history, options);
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
 	gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->imhtml)->text_buffer,
 			&end);
 	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(gtkconv->imhtml), &end, 0,
 			TRUE, 0, 0);
-
-	g_free(tmp2);
-	g_free(userdir);
-	g_free(logfile);
-	g_free(path);
+	g_free(history);
 }
 
 static gboolean
