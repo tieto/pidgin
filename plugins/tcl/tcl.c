@@ -228,7 +228,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 					info->name = g_strdup(Tcl_GetString(listitems[0]));
 					info->version = g_strdup(Tcl_GetString(listitems[1]));
 					info->summary = g_strdup(Tcl_GetString(listitems[2]));
-					info->description = g_strdup(Tcl_GetString(listitems[3]));;
+					info->description = g_strdup(Tcl_GetString(listitems[3]));
 					info->author = g_strdup(Tcl_GetString(listitems[5]));
 					info->homepage = g_strdup(Tcl_GetString(listitems[5]));
 

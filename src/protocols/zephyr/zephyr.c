@@ -1074,9 +1074,9 @@ static void write_zsubs(zephyr_account *zephyr)
 		
 		/* deal with classes */
 		if (!g_ascii_strcasecmp(triple[0],zephyr->ourhost)) {
-			zclass = g_strdup("%host%");;
+			zclass = g_strdup("%host%");
 		} else if (!g_ascii_strcasecmp(triple[0],zephyr->ourhostcanon)) {
-			zclass = g_strdup("%canon%");;
+			zclass = g_strdup("%canon%");
 		} else {
 			zclass = g_strdup(triple[0]);
 		}
@@ -1084,9 +1084,9 @@ static void write_zsubs(zephyr_account *zephyr)
 		/* deal with instances */
 
 		if (!g_ascii_strcasecmp(triple[1],zephyr->ourhost)) {
-			zinst = g_strdup("%host%");;
+			zinst = g_strdup("%host%");
 		} else if (!g_ascii_strcasecmp(triple[1],zephyr->ourhostcanon)) {
-			zinst = g_strdup("%canon%");;
+			zinst = g_strdup("%canon%");
 			} else {
 			zinst = g_strdup(triple[1]);
 			}

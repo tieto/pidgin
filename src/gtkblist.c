@@ -4640,7 +4640,7 @@ void gaim_gtk_blist_sort_method_reg(const char *id, const char *name, gaim_gtk_b
 	struct gaim_gtk_blist_sort_method *method = g_new0(struct gaim_gtk_blist_sort_method, 1);
 	method->id = g_strdup(id);
 	method->name = g_strdup(name);
-	method->func = func;;
+	method->func = func;
 	gaim_gtk_blist_sort_methods = g_slist_append(gaim_gtk_blist_sort_methods, method);
 }
 

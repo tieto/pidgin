@@ -111,7 +111,7 @@ msn_slpmsg_show(MsnMessage *msg)
 
 	text = FALSE;
 
-	flags = GUINT32_TO_LE(msg->msnslp_header.flags);;
+	flags = GUINT32_TO_LE(msg->msnslp_header.flags);
 
 	switch (flags)
 	{

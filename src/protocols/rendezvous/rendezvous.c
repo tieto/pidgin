@@ -245,7 +245,7 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 			rb->p2pjport = atoi(node1->value);
 	}
 
-	node1 = mdns_txt_find(rdata, "status");;
+	node1 = mdns_txt_find(rdata, "status");
 	if ((node1 != NULL) && (node1->value != NULL)) {
 		if (!strcmp(node1->value, "avail")) {
 			/* Available */

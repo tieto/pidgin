@@ -292,7 +292,7 @@ msn_user_set_object(MsnUser *user, MsnObject *obj)
 		const char *username;
 
 		account  = user->userlist->session->account;
-		username = msn_object_get_creator(obj);;
+		username = msn_object_get_creator(obj);
 
 		if (gaim_find_conversation_with_account(username, account) != NULL)
 			msn_request_buddy_icon(account->gc, username);
