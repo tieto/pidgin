@@ -65,9 +65,10 @@ void serv_login(GaimAccount *account)
 			return;
 		}
 
-		gaim_debug(GAIM_DEBUG_INFO, "server",
-				   PACKAGE " " VERSION " logging in %s using %s\n",
-				   account->username, p->info->name);
+		gaim_debug_info("server", PACKAGE " " VERSION
+						" logging in %s using %s\n",
+						gaim_account_get_username(account),
+						gaim_account_get_protocol_name(account));
 
 		gaim_signal_emit(gaim_accounts_get_handle(),
 						 "account-connecting", account);
