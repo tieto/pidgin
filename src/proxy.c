@@ -323,13 +323,13 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 	rc=read(req->fd_out, &err, sizeof(err));
 	if((rc==4) && (err!=0)) {
 		char message[1024];
-		g_snprintf(message, sizeof(message), "DNS error: %s (pid=%d)",
 #if HAVE_GETADDRINFO
-			gai_strerror(err),
+		g_snprintf(message, sizeof(message), "DNS error: %s (pid=%d)",
+				   gai_strerror(err), req->dns_pid);
 #else
-			hstrerror(err),
+		g_snprintf(message, sizeof(message), "DNS error: %d (pid=%d)",
+				   err, req->dns_pid);
 #endif
-			req->dns_pid);
 		gaim_debug(GAIM_DEBUG_ERROR, "dns", "%s\n", message);
 		req->callback(NULL, req->data, message);
 		release_dns_child(req);
@@ -566,7 +566,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 						write(child_out[1], &h_errno, sizeof(int));
 						close(child_out[1]);
 						if(opt_debug)
-							fprintf(stderr,"DNS Error: %s\n",hstrerror(h_errno));
+							fprintf(stderr,"DNS Error: %d\n", h_errno);
 						_exit(0);
 					}
 					memset(&sin, 0, sizeof(struct sockaddr_in));
@@ -642,8 +642,8 @@ gaim_gethostbyname_async(const char *hostname, int port,
 		struct hostent *hp;
 		if(!(hp = gethostbyname(hostname))) {
 			gaim_debug(GAIM_DEBUG_ERROR, "dns",
-					   "gaim_gethostbyname(\"%s\", %d) failed: %s\n",
-					   hostname, port, hstrerror(h_errno));
+					   "gaim_gethostbyname(\"%s\", %d) failed: %d\n",
+					   hostname, port, h_errno);
 			return -1;
 		}
 		memset(&sin, 0, sizeof(struct sockaddr_in));
