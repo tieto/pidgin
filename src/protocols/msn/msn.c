@@ -75,8 +75,8 @@ struct msn_file_transfer {
 	char ip[16];
 	int port;
 
-	unsigned long cookie;
-	unsigned long authcookie;
+	uint32_t cookie;
+	uint32_t authcookie;
 
 	int len;
 
@@ -89,7 +89,7 @@ struct msn_file_transfer {
 
 struct msn_data {
 	int fd;
-	int trId;
+	uint32_t trId;
 	int inpa;
 
 	char *rxqueue;
@@ -126,7 +126,7 @@ struct msn_switchboard {
 
 	char *sessid;
 	char *auth;
-	int trId;
+	uint32_t trId;
 	int total;
 	char *user;
 	GSList *txqueue;
@@ -358,7 +358,7 @@ static void handle_hotmail(struct gaim_connection *gc, char *data)
 		return;
 
 	if (!md->passport) {
-		g_snprintf(buf, sizeof(buf), "URL %d INBOX\r\n", ++md->trId);
+		g_snprintf(buf, sizeof(buf), "URL %u INBOX\r\n", ++md->trId);
 
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			return;
@@ -534,7 +534,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 		ms->total++;
 		while (ms->txqueue) {
 			char *send = add_cr(ms->txqueue->data);
-			g_snprintf(sendbuf, sizeof(sendbuf), "MSG %d N %d\r\n%s%s", ++ms->trId,
+			g_snprintf(sendbuf, sizeof(sendbuf), "MSG %u N %d\r\n%s%s", ++ms->trId,
 					strlen(MIME_HEADER) + strlen(send),
 					MIME_HEADER, send);
 			g_free(ms->txqueue->data);
@@ -575,7 +575,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 		if (!ms)
 			return 0;
 
-		g_snprintf(sendbuf, sizeof(sendbuf), "CAL %d %s\r\n", ++ms->trId, ms->user);
+		g_snprintf(sendbuf, sizeof(sendbuf), "CAL %u %s\r\n", ++ms->trId, ms->user);
 		if (msn_write(ms->fd, sendbuf, strlen(sendbuf)) < 0) {
 			msn_kill_switch(ms);
 			return 0;
@@ -620,7 +620,7 @@ static char *msn_parse_format(char *mime)
 	cur = strstr(mime, "CO=");
 	if (cur && (*(cur = cur + 3) != ';')) {
 		if (sscanf (cur, "%x;", &colorbuf) == 1) {
-			char tag[MSN_BUF_LEN];
+			char tag[64];
 			g_snprintf(tag, sizeof(tag), "<FONT COLOR=\"#%02hhx%02hhx%02hhx\">", colors[0], colors[1], colors[2]);
 			ret = g_string_append(ret, tag);
 		}
@@ -639,8 +639,8 @@ static int msn_process_msnftp(struct msn_file_transfer *mft, char *buf)
 	if (!g_strncasecmp(buf, "VER MSNFTP", 10)) {
 
 		/* Send the USR string. */
-		g_snprintf(sendbuf, sizeof(sendbuf), "USR %s %ld\r\n",
-				   gc->username, mft->authcookie);
+		g_snprintf(sendbuf, sizeof(sendbuf), "USR %s %lu\r\n",
+				   gc->username, (unsigned long)mft->authcookie);
 
 		if (msn_write(mft->fd, sendbuf, strlen(sendbuf)) < 0) {
 			/* TODO: Clean up */
@@ -830,7 +830,7 @@ static void msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 
 			strncpy(mft->ip, ip, 16);
 			mft->port = atoi(port_s);
-			mft->authcookie = atoi(authcookie_s);
+			mft->authcookie = atol(authcookie_s);
 
 			mft->fd = proxy_connect(mft->ip, mft->port, msn_msnftp_connect, mft);
 
@@ -1017,7 +1017,7 @@ static void msn_rng_connect(gpointer data, gint source, GaimInputCondition cond)
 	if (ms->fd != source)
 		ms->fd = source;
 
-	g_snprintf(buf, sizeof(buf), "ANS %d %s %s %s\r\n", ++ms->trId, gc->username, ms->auth, ms->sessid);
+	g_snprintf(buf, sizeof(buf), "ANS %u %s %s %s\r\n", ++ms->trId, gc->username, ms->auth, ms->sessid);
 	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
 		close(ms->fd);
 		g_free(ms->sessid);
@@ -1050,7 +1050,7 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GaimInputCondition co
 	if (ms->fd != source)
 		ms->fd = source;
 
-	g_snprintf(buf, sizeof(buf), "USR %d %s %s\r\n", ++ms->trId, gc->username, ms->auth);
+	g_snprintf(buf, sizeof(buf), "USR %u %s %s\r\n", ++ms->trId, gc->username, ms->auth);
 	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
 		g_free(ms->auth);
 		g_free(ms);
@@ -1072,7 +1072,7 @@ static void msn_accept_add(struct msn_add_permit *map)
 		struct msn_data *md = map->gc->proto_data;
 		char buf[MSN_BUF_LEN];
 
-		g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
+		g_snprintf(buf, sizeof(buf), "ADD %u AL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
 
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(map->gc, _("Write error"));
@@ -1095,7 +1095,7 @@ static void msn_cancel_add(struct msn_add_permit *map)
 		struct msn_data *md = map->gc->proto_data;
 		char buf[MSN_BUF_LEN];
 
-		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
+		g_snprintf(buf, sizeof(buf), "ADD %u BL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(map->gc, _("Write error"));
 			signoff(map->gc);
@@ -1189,7 +1189,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		md5_append(&st, (const md5_byte_t *)"Q1P7W2E4J9R8U3S5", strlen("Q1P7W2E4J9R8U3S5"));
 		md5_finish(&st, di);
 
-		g_snprintf(sendbuf, sizeof(sendbuf), "QRY %d msmsgs@msnmsgr.com 32\r\n", ++md->trId);
+		g_snprintf(sendbuf, sizeof(sendbuf), "QRY %u msmsgs@msnmsgr.com 32\r\n", ++md->trId);
 		for (i = 0; i < 16; i++) {
 			g_snprintf(buf2, sizeof(buf2), "%02x", di[i]);
 			strcat(sendbuf, buf2);
@@ -1306,7 +1306,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			if (pos != tot) 
 				return 1; /* this isn't the last one in the RL, so return. */
 
-			g_snprintf(sendbuf, sizeof(sendbuf), "CHG %d NLN\r\n", ++md->trId);
+			g_snprintf(sendbuf, sizeof(sendbuf), "CHG %u NLN\r\n", ++md->trId);
 			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 				hide_login_progress(gc, _("Unable to write"));
 				signoff(gc);
@@ -1322,7 +1322,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			if (bud_list_cache_exists(gc))
 				do_import(gc, NULL);
 			else {
-				g_snprintf(sendbuf, sizeof(sendbuf), "BLP %d AL\r\n", ++md->trId);
+				g_snprintf(sendbuf, sizeof(sendbuf), "BLP %u AL\r\n", ++md->trId);
 				if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 					hide_login_progress(gc, _("Unable to write"));
 					signoff(gc);
@@ -1486,15 +1486,15 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		}
 
 		if( (fd = gaim_mkstemp(&(md->passport))) == NULL ) {
-		  debug_printf("Error opening temp file\n"); 
+		  debug_printf("Error opening temp file: %s\n", strerror(errno)); 
 		}
 		else {
-		        fprintf(fd, "<html>\n");
-		        fprintf(fd, "<head>\n");
-		        fprintf(fd, "<noscript>\n");
-		        fprintf(fd, "<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n");
-		        fprintf(fd, "</noscript>\n");
-		        fprintf(fd, "</head>\n\n");
+			fputs("<html>\n"
+				"<head>\n"
+				"<noscript>\n"
+				"<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n"
+				"</noscript>\n"
+				"</head>\n\n", fd);
 		
 		        fprintf(fd, "<body onload=\"document.pform.submit(); \">\n");
 		        fprintf(fd, "<form name=\"pform\" action=\"%s\" method=\"POST\">\n\n", passport);
@@ -1512,7 +1512,11 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			fprintf(fd, "<input type=\"hidden\" name=\"js\" value=\"yes\">\n");
 			fprintf(fd, "</form></body>\n");
 			fprintf(fd, "</html>\n");
-			fclose(fd);
+			if (fclose(fd)) {
+				debug_printf("Error closing temp file: %s\n", strerror(errno)); 
+				unlink(md->passport);
+				g_free(md->passport);
+			}
 		}
 	} else if (!g_strncasecmp(buf, "SYN", 3)) {
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
@@ -1548,24 +1552,26 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		}
 
 		if (switchboard) {
+			int rc;
 			struct msn_switchboard *ms = msn_find_writable_switch(gc);
 			if (!ms)
 				return 1;
 
 			GET_NEXT(tmp);
 
-			ms->fd = proxy_connect(host, port, msn_ss_xfr_connect, ms);
-			if (ms->fd < 0) {
+			rc = proxy_connect(host, port, msn_ss_xfr_connect, ms);
+			if (rc < 0) {
 				msn_kill_switch(ms);
 				return 1;
 			}
 			ms->auth = g_strdup(tmp);
 		} else {
+			int rc;
 			close(md->fd);
 			gaim_input_remove(md->inpa);
 			md->inpa = 0;
-			md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
-			if (md->fd < 0) {
+			rc = proxy_connect(host, port, msn_login_xfr_connect, gc);
+			if (rc < 0) {
 				hide_login_progress(gc, _("Error transfering"));
 				signoff(gc);
 				return 0;
@@ -1739,7 +1745,7 @@ static void msn_login_xfr_connect(gpointer data, gint source, GaimInputCondition
 		return;
 	}
 
-	g_snprintf(buf, sizeof(buf), "VER %d MSNP5\r\n", ++md->trId);
+	g_snprintf(buf, sizeof(buf), "VER %u MSNP5\r\n", ++md->trId);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Unable to talk to Notification Server"));
 		signoff(gc);
@@ -1762,7 +1768,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 			return 0;
 		}
 
-		g_snprintf(sendbuf, sizeof(sendbuf), "INF %d\r\n", ++md->trId);
+		g_snprintf(sendbuf, sizeof(sendbuf), "INF %u\r\n", ++md->trId);
 		if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 			hide_login_progress(gc, _("Unable to request INF\n"));
 			signoff(gc);
@@ -1776,7 +1782,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 			return 0;
 		}
 
-		g_snprintf(sendbuf, sizeof(sendbuf), "USR %d MD5 I %s\r\n", ++md->trId, gc->username);
+		g_snprintf(sendbuf, sizeof(sendbuf), "USR %u MD5 I %s\r\n", ++md->trId, gc->username);
 		if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 			hide_login_progress(gc, _("Unable to send USR\n"));
 			signoff(gc);
@@ -1799,7 +1805,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		if (!g_strcasecmp(resp, "OK")) {
 			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
 
-			g_snprintf(sendbuf, sizeof(sendbuf), "SYN %d 0\r\n", ++md->trId);
+			g_snprintf(sendbuf, sizeof(sendbuf), "SYN %u 0\r\n", ++md->trId);
 			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 				hide_login_progress(gc, _("Unable to write"));
 				signoff(gc);
@@ -1821,7 +1827,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 			md5_append(&st, (const md5_byte_t *)buf2, strlen(buf2));
 			md5_finish(&st, di);
 
-			g_snprintf(sendbuf, sizeof(sendbuf), "USR %d MD5 S ", ++md->trId);
+			g_snprintf(sendbuf, sizeof(sendbuf), "USR %u MD5 S ", ++md->trId);
 			for (i = 0; i < 16; i++) {
 				g_snprintf(buf2, sizeof(buf2), "%02x", di[i]);
 				strcat(sendbuf, buf2);
@@ -1956,7 +1962,7 @@ static void msn_login_connect(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
-	g_snprintf(buf, sizeof(buf), "VER %d MSNP5\r\n", ++md->trId);
+	g_snprintf(buf, sizeof(buf), "VER %u MSNP5\r\n", ++md->trId);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Unable to write to server"));
 		signoff(gc);
@@ -2020,7 +2026,7 @@ static int msn_send_typing(struct gaim_connection *gc, char *who, int typing) {
 	char buf [MSN_BUF_LEN];
 	if (!ms || !typing)
 		return 0;
-	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s\r\n\r\n\r\n",
+	g_snprintf(buf, sizeof(buf), "MSG %u N %d\r\n%s%s\r\n\r\n\r\n",
 		   ++ms->trId,
 		   strlen(header) + strlen("\r\n\r\n\r\n") + strlen(gc->username),
 		   header, gc->username);
@@ -2086,11 +2092,11 @@ static void msn_file_transfer_cancel(struct gaim_connection *gc,
 			   "MIME-Version: 1.0\r\n"
 			   "Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n\r\n"
 			   "Invitation-Command: CANCEL\r\n"
-			   "Invitation-Cookie: %ld\r\n"
+			   "Invitation-Cookie: %lu\r\n"
 			   "Cancel-Code: REJECT\r\n",
-			   mft->cookie);
+			   (unsigned long)mft->cookie);
 
-	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s\r\n\r\n",
+	g_snprintf(buf, sizeof(buf), "MSG %u N %d\r\n%s\r\n\r\n",
 			   ++ms->trId, strlen(header) + strlen("\r\n\r\n"),
 			   header);
 
@@ -2121,12 +2127,12 @@ static void msn_file_transfer_in(struct gaim_connection *gc,
 			   "MIME-Version: 1.0\r\n"
 			   "Content-Type: text/x-msmsgsinvite; charset=UTF-8\r\n\r\n"
 			   "Invitation-Command: ACCEPT\r\n"
-			   "Invitation-Cookie: %ld\r\n"
+			   "Invitation-Cookie: %lu\r\n"
 			   "Launch-Application: FALSE\r\n"
 			   "Request-Data: IP-Address:\r\n",
-			   mft->cookie);
+			   (unsigned long)mft->cookie);
 
-	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s\r\n\r\n",
+	g_snprintf(buf, sizeof(buf), "MSG %u N %d\r\n%s\r\n\r\n",
 			   ++ms->trId, strlen(header) + strlen("\r\n\r\n"),
 			   header);
 
@@ -2157,7 +2163,7 @@ static void msn_file_transfer_out(struct gaim_connection *gc,
 	if (stat(name, &sb) == -1)
 		return;
 
-	mft->cookie = 1 + (int)(sizeof(unsigned long) * rand() / (RAND_MAX + 1.0));
+	mft->cookie = 1 + (uint32_t)(4294967295.0 * rand() / (RAND_MAX + 1.0));
 
 	g_snprintf(header, sizeof(header),
 		"MIME-Version: 1.0\r\n"
@@ -2165,12 +2171,12 @@ static void msn_file_transfer_out(struct gaim_connection *gc,
 		"Application-Name: File Transfer\r\n"
 		"Application-GUID: {5D3E02AB-6190-11d3-BBBB-00C04F795683}\r\n"
 		"Invitation-Command: INVITE\r\n"
-		"Invitation-Cookie: %ld\r\n"
+		"Invitation-Cookie: %lu\r\n"
 		"Application-File: %s\r\n"
 		"Application-FileSize: %ld\r\n",
-		mft->cookie, name, sb.st_size);
+		(unsigned long)mft->cookie, name, sb.st_size);
 
-	g_snprintf(buf, sizeof(buf), "MSG %d A %d\r\n%s\r\n\r\n",
+	g_snprintf(buf, sizeof(buf), "MSG %u A %d\r\n%s\r\n\r\n",
 			   ++ms->trId,
 			   strlen(header) + strlen("\r\n\r\n"),
 			   header);
@@ -2243,7 +2249,7 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 		}
 
 		send = add_cr(message);
-		g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
+		g_snprintf(buf, sizeof(buf), "MSG %u N %d\r\n%s%s", ++ms->trId,
 				strlen(MIME_HEADER) + strlen(send),
 				MIME_HEADER, send);
 		g_free(send);
@@ -2251,7 +2257,7 @@ static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int
 			msn_kill_switch(ms);
 		debug_printf("\n");
 	} else if (strcmp(who, gc->username)) {
-		g_snprintf(buf, MSN_BUF_LEN, "XFR %d SB\r\n", ++md->trId);
+		g_snprintf(buf, MSN_BUF_LEN, "XFR %u SB\r\n", ++md->trId);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, _("Write error"));
 			signoff(gc);
@@ -2280,7 +2286,7 @@ static int msn_chat_send(struct gaim_connection *gc, int id, char *message)
 		return -EINVAL;
 
 	send = add_cr(message);
-	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
+	g_snprintf(buf, sizeof(buf), "MSG %u N %d\r\n%s%s", ++ms->trId,
 			strlen(MIME_HEADER) + strlen(send),
 			MIME_HEADER, send);
 	g_free(send);
@@ -2301,7 +2307,7 @@ static void msn_chat_invite(struct gaim_connection *gc, int id, const char *msg,
 	if (!ms)
 		return;
 
-	g_snprintf(buf, sizeof(buf), "CAL %d %s\r\n", ++ms->trId, who);
+	g_snprintf(buf, sizeof(buf), "CAL %u %s\r\n", ++ms->trId, who);
 	if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 		msn_kill_switch(ms);
 }
@@ -2338,7 +2344,7 @@ static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 {
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
-	char *away;
+	const char *away;
 
 	if (gc->away) {
 		g_free(gc->away);
@@ -2373,7 +2379,7 @@ static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 	else
 		away = "NLN";
 
-	g_snprintf(buf, sizeof(buf), "CHG %d %s\r\n", ++md->trId, away);
+	g_snprintf(buf, sizeof(buf), "CHG %u %s\r\n", ++md->trId, away);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
@@ -2384,14 +2390,12 @@ static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
 static void msn_set_idle(struct gaim_connection *gc, int idle)
 {
 	struct msn_data *md = gc->proto_data;
-	char buf[MSN_BUF_LEN];
+	char buf[64];
 
 	if (gc->away)
 		return;
-	if (idle)
-		g_snprintf(buf, sizeof(buf), "CHG %d IDL\r\n", ++md->trId);
-	else
-		g_snprintf(buf, sizeof(buf), "CHG %d NLN\r\n", ++md->trId);
+	g_snprintf(buf, sizeof(buf),
+		idle ? "CHG %d IDL\r\n" : "CHG %u NLN\r\n", ++md->trId);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
@@ -2496,7 +2500,7 @@ static void msn_add_buddy(struct gaim_connection *gc, const char *name)
 	if (l)
 		return;
 
-	g_snprintf(buf, sizeof(buf), "ADD %d FL %s %s\r\n", ++md->trId, who, who);
+	g_snprintf(buf, sizeof(buf), "ADD %u FL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
@@ -2509,7 +2513,7 @@ static void msn_rem_buddy(struct gaim_connection *gc, char *who, char *group)
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	g_snprintf(buf, sizeof(buf), "REM %d FL %s\r\n", ++md->trId, who);
+	g_snprintf(buf, sizeof(buf), "REM %u FL %s\r\n", ++md->trId, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
@@ -2534,7 +2538,7 @@ static void msn_act_id(gpointer data, char *entry)
 		return;
 	}
 	
-	g_snprintf(buf, sizeof(buf), "REA %d %s %s\r\n", ++md->trId, gc->username, url_encode(alias));
+	g_snprintf(buf, sizeof(buf), "REA %u %s %s\r\n", ++md->trId, gc->username, url_encode(alias));
 	g_free(alias);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
@@ -2594,9 +2598,9 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 	GSList *s, *t = NULL;
 
 	if (gc->permdeny == PERMIT_ALL || gc->permdeny == DENY_SOME)
-		g_snprintf(buf, sizeof(buf), "BLP %d AL\r\n", ++md->trId);
+		g_snprintf(buf, sizeof(buf), "BLP %u AL\r\n", ++md->trId);
 	else
-		g_snprintf(buf, sizeof(buf), "BLP %d BL\r\n", ++md->trId);
+		g_snprintf(buf, sizeof(buf), "BLP %u BL\r\n", ++md->trId);
 
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
@@ -2632,7 +2636,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 				t = g_slist_append(t, who);
 				continue;
 			}
-			g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
+			g_snprintf(buf, sizeof(buf), "ADD %u AL %s %s\r\n", ++md->trId, who, who);
 			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 				hide_login_progress(gc, _("Write error"));
 				signoff(gc);
@@ -2666,7 +2670,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 				t = g_slist_append(t, who);
 				continue;
 			}
-			g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
+			g_snprintf(buf, sizeof(buf), "ADD %u BL %s %s\r\n", ++md->trId, who, who);
 			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 				hide_login_progress(gc, _("Write error"));
 				signoff(gc);
@@ -2707,14 +2711,14 @@ static void msn_add_permit(struct gaim_connection *gc, char *who)
 					(GCompareFunc)strcmp))) {
 		debug_printf("MSN: Moving %s from BL to AL\n", who);
 		gc->deny = g_slist_remove(gc->deny, dupl);
-		g_snprintf(buf, sizeof(buf), "REM %d BL %s\r\n", ++md->trId, who);
+		g_snprintf(buf, sizeof(buf), "REM %u BL %s\r\n", ++md->trId, who);
 			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 				hide_login_progress(gc, _("Write error"));
 				signoff(gc);
 				return;
 			}
 	}
-	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
+	g_snprintf(buf, sizeof(buf), "ADD %u AL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
@@ -2727,7 +2731,7 @@ static void msn_rem_permit(struct gaim_connection *gc, char *who)
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	g_snprintf(buf, sizeof(buf), "REM %d AL %s\r\n", ++md->trId, who);
+	g_snprintf(buf, sizeof(buf), "REM %u AL %s\r\n", ++md->trId, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
@@ -2735,7 +2739,7 @@ static void msn_rem_permit(struct gaim_connection *gc, char *who)
 	}
 	
 	g_slist_append(gc->deny, who);
-	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
+	g_snprintf(buf, sizeof(buf), "ADD %u BL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
@@ -2764,7 +2768,7 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 					(GCompareFunc)strcmp))) {
 		debug_printf("MSN: Moving %s from AL to BL\n", who);
 		gc->permit = g_slist_remove(gc->permit, dupl);
-		g_snprintf(buf, sizeof(buf), "REM %d AL %s\r\n", ++md->trId, who);
+		g_snprintf(buf, sizeof(buf), "REM %u AL %s\r\n", ++md->trId, who);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, _("Write error"));
 			signoff(gc);
@@ -2773,7 +2777,7 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 	}
 		
 
-	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
+	g_snprintf(buf, sizeof(buf), "ADD %u BL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
@@ -2786,7 +2790,7 @@ static void msn_rem_deny(struct gaim_connection *gc, char *who)
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
 
-	g_snprintf(buf, sizeof(buf), "REM %d BL %s\r\n", ++md->trId, who);
+	g_snprintf(buf, sizeof(buf), "REM %u BL %s\r\n", ++md->trId, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
@@ -2794,7 +2798,7 @@ static void msn_rem_deny(struct gaim_connection *gc, char *who)
 	}
 	
 	g_slist_append(gc->permit, who);
-	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
+	g_snprintf(buf, sizeof(buf), "ADD %u AL %s %s\r\n", ++md->trId, who, who);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, _("Write error"));
 		signoff(gc);
