@@ -316,6 +316,7 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 	lv->imhtml = gtk_imhtml_new(NULL, NULL);
+	gtk_widget_set_name(lv->imhtml, "gaim_gtklog_imhtml");
 	gtk_container_add(GTK_CONTAINER(sw), lv->imhtml);
 	gaim_setup_imhtml(lv->imhtml);
 	gtk_widget_set_size_request(lv->imhtml, 320, 200);
@@ -412,7 +413,7 @@ void gaim_gtk_syslog_show()
 	g_signal_connect (G_OBJECT (sel), "changed",
 			  G_CALLBACK (log_select_cb),
 			  syslog_viewer);
-		
+
 	/* Viewer ************/
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_paned_add2(GTK_PANED(pane), vbox);
@@ -421,10 +422,11 @@ void gaim_gtk_syslog_show()
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 	syslog_viewer->imhtml = gtk_imhtml_new(NULL, NULL);
+	gtk_widget_set_name(syslog_viewer->imhtml, "gaim_gtklog_imhtml");
 	gtk_container_add(GTK_CONTAINER(sw), syslog_viewer->imhtml);
 	gaim_setup_imhtml(syslog_viewer->imhtml);
 	gtk_widget_set_size_request(syslog_viewer->imhtml, 400, 200);
-		
+
 	/* Search box **********/
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);

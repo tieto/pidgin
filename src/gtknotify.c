@@ -348,6 +348,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 
 	/* Now build that gtkimhtml */
 	imhtml = gtk_imhtml_new(NULL, NULL);
+	gtk_widget_set_name(imhtml, "gaim_gtknotify_imhtml");
 	gtk_container_add(GTK_CONTAINER(sw), imhtml);
 	gtk_widget_show(imhtml);
 	gaim_setup_imhtml(imhtml);

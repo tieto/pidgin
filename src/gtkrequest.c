@@ -344,6 +344,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 		/* GtkIMHtml */
 		entry = gtk_imhtml_new(NULL, NULL);
+		gtk_widget_set_name(entry, "gaim_gtkrequest_imhtml");
 		gtk_imhtml_set_editable(GTK_IMHTML(entry), TRUE);
 
 		gtk_imhtml_smiley_shortcuts(GTK_IMHTML(entry), gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));

@@ -3587,7 +3587,7 @@ setup_chat_pane(GaimConversation *conv)
 
 	/* Setup gtkihmtml. */
 	gtkconv->imhtml = gtk_imhtml_new(NULL, NULL);
-	gtk_widget_set_name(gtkconv->imhtml, "gtkconv_imhtml");
+	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
 	gtk_container_add(GTK_CONTAINER(gtkconv->sw), gtkconv->imhtml);
 
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
@@ -3722,7 +3722,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
-	gtk_widget_set_name(gtkconv->entry, "gtkconv_entry");
+	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
 	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry),
 			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
 	gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
@@ -3809,7 +3809,7 @@ setup_im_pane(GaimConversation *conv)
 	gtk_widget_show(gtkconv->sw);
 
 	gtkconv->imhtml = gtk_imhtml_new(NULL, NULL);
-	gtk_widget_set_name(gtkconv->imhtml, "gtkconv_imhtml");
+	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
 	gtk_container_add(GTK_CONTAINER(gtkconv->sw), gtkconv->imhtml);
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
@@ -3851,7 +3851,7 @@ setup_im_pane(GaimConversation *conv)
 	gtk_widget_show(sw);
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
-	gtk_widget_set_name(gtkconv->entry, "gtkconv_entry");
+	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
 
 	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry),
 			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
