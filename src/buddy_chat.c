@@ -635,7 +635,7 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_widget_show(list);
 
 
-	gtk_widget_set_usize(list, 150, 150);
+	gtk_widget_set_usize(list, 150, -1);
 
 
 	/* Ready and pack buttons */
