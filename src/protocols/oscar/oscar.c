@@ -3507,8 +3507,11 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				if (t) { /* This is an offline message */
 					/* The timestamp is UTC-ish, so we need to get the offset */
 #ifdef HAVE_TM_GMTOFF
-					struct tm tm;
-					t += tm.tm_gmtoff;
+					time_t now;
+					struct tm *tm;
+					now = time(NULL);
+					tm = localtime(&now);
+					t += tm->tm_gmtoff;
 #else
 #	ifdef HAVE_TIMEZONE
 					tzset();
