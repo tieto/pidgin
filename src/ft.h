@@ -96,7 +96,8 @@ struct gaim_xfer
 		size_t (*read)(char **buffer, struct gaim_xfer *xfer);
 		size_t (*write)(const char *buffer, size_t size,
 						struct gaim_xfer *xfer);
-		void (*ack)(struct gaim_xfer *xfer);
+		void (*ack)(struct gaim_xfer *xfer, const char *buffer, 
+						size_t size);
 
 	} ops;
 

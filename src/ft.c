@@ -437,7 +437,8 @@ gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
 
 		r = read(xfer->fd, *buffer, s);
 
-		if (r == 0)
+		if ((r == 0) || ((gaim_xfer_get_size > 0) &&
+			((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer))))
 			gaim_xfer_set_completed(xfer, TRUE);
 	}
 
@@ -492,15 +493,15 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 		}
 	}
 
-	g_free(buffer);
-
 	if (gaim_xfer_get_size(xfer) > 0)
 		xfer->bytes_remaining -= r;
 
 	xfer->bytes_sent += r;
 
 	if (xfer->ops.ack != NULL)
-		xfer->ops.ack(xfer);
+		xfer->ops.ack(xfer, buffer, r);
+
+	g_free(buffer);
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 

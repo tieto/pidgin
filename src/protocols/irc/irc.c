@@ -1257,7 +1257,7 @@ irc_xfer_cancel(struct gaim_xfer *xfer)
 }
 
 static void
-irc_xfer_ack(struct gaim_xfer *xfer)
+irc_xfer_ack(struct gaim_xfer *xfer, const char *buffer, size_t size)
 {
 	guint32 pos;
 
