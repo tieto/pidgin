@@ -3131,7 +3131,7 @@ static char *caps_string(guint caps)
 static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	GString *text;
-	char *info_utf8 = NULL, *away_utf8 = NULL;
+	gchar *info_utf8 = NULL, *away_utf8 = NULL, *final = NULL;
 	va_list ap;
 	aim_userinfo_t *userinfo;
 
@@ -3174,8 +3174,10 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	}
 
-	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, text->str, NULL, NULL);
+	final = away_subs(text->str, gaim_connection_get_display_name(gc));
 	g_string_free(text, TRUE);
+	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, final, NULL, NULL);
+	g_free(final);
 
 	return 1;
 }
@@ -5412,14 +5414,16 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 			gchar *away_utf8 = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
 			if (away_utf8 != NULL) {
-				gchar *withcr, *nohtml;
-				withcr = gaim_strreplace(away_utf8, "<BR>", "\n");
-				nohtml = strip_html(withcr);
-				g_free(withcr);
+				gchar *tmp1, *tmp2;
+				tmp1 = gaim_strreplace(away_utf8, "<BR>", "\n");
+				tmp2 = strip_html(tmp1);
+				g_free(tmp1);
+				tmp1 = away_subs(tmp2, gaim_connection_get_display_name(gc));
+				g_free(tmp2);
 				tmp = ret;
-				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), nohtml, "\n", NULL);
+				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), tmp1, "\n", NULL);
 				free(tmp);
-				g_free(nohtml);
+				g_free(tmp1);
 				g_free(away_utf8);
 			}
 		}
