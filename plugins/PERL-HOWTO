@@ -63,7 +63,7 @@ GAIM::command(command, ...)
 		 especially evil since it warns the person from every 
 		 connection.  The third argument is 1 if you want to warn
 		 anonymously.  If 0 or ommitted, it will warn normally.
-	"setinfo" - the second arg is what you want to set your profile to.
+	"info" - the second arg is what you want to set your profile to.
 
 GAIM::user_info(nick)
 	Returns 8 data items:

@@ -20,6 +20,8 @@ version 0.11.0-pre11:
 	* Redesigned Preferences pages (design by DennisR)
 	* Can select where tabs are for tabbed IM/Chat windows
 	* Option to queue away messages while away
+	* Oh yes, and Oscar works, yet again. (gee... that's what, 4
+	  releases that have "fixed" it now?)
 
 version 0.11.0-pre10 (04/13/2001):
 	* Many, many bug fixes
