@@ -309,6 +309,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 		if(type && !strcmp(type, "unavailable")) {
 			gboolean nick_change = FALSE;
+
+			jabber_buddy_remove_resource(jb, jid->resource);
 			if(chat->muc) {
 				xmlnode *x;
 				for(x = packet->child; x; x = x->next) {
@@ -346,6 +348,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				}
 			}
 		} else {
+			jabber_buddy_track_resource(jb, jid->resource, priority, state,
+					status);
+
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
 				gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
 						real_jid);
