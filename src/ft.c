@@ -384,8 +384,9 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 		gaim_xfer_set_local_filename(xfer, filename);
 	}
 
-	xfer->ops.init(xfer);
 	gaim_xfer_add(xfer);
+	xfer->ops.init(xfer);
+
 }
 
 void
