@@ -1,5 +1,6 @@
 EXTRA_DIST = \
 		COPYRIGHT \
+		ChangeLog.API \
 		Doxyfile.in \
 		gaim.spec.in \
 		gaim.desktop \
