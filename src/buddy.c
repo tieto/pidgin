@@ -322,8 +322,11 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 	if (sd->target == gdk_atom_intern("GAIM_BUDDY", FALSE)) {
 		struct buddy *b = NULL;
 		GtkTreePath *path = NULL;
+		GtkTreeViewDropPosition position;
 		memcpy(&b, sd->data, sizeof(b));
-		gtk_tree_view_get_dest_row_at_pos(widget, x, y, &path, GTK_TREE_VIEW_DROP_INTO_OR_AFTER);
+		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
+			/* if we're here, I think it means the drop is ok */
+		}
 	}
 }
 
@@ -649,15 +652,15 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 						 G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
-	
+
 	/* Set up dnd */
 	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview), GDK_BUTTON1_MASK, gte,
 					       2, GDK_ACTION_COPY);
-	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview), gte, 2, 
+	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview), gte, 2,
 					     GDK_ACTION_COPY | GDK_ACTION_MOVE);
-	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", gaim_gtk_blist_drag_data_rcv_cb, NULL);
-	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", gaim_gtk_blist_drag_data_get_cb, NULL);
-	
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);
+
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(gtkblist->treeview), FALSE);
 
