@@ -2235,13 +2235,13 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 			/* Build the file transfer handle */
 			xfer = gaim_xfer_new(gc->account, GAIM_XFER_RECEIVE, userinfo->sn);
-			xfer->remote_ip = g_strdup(args->clientip);
+			xfer->remote_ip = g_strdup(args->verifiedip);
 			xfer->remote_port = args->port;
 			gaim_xfer_set_filename(xfer, args->info.sendfile.filename);
 			gaim_xfer_set_size(xfer, args->info.sendfile.totsize);
 
 			/* Create the oscar-specific data */
-			oft_info = aim_oft_createinfo(od->sess, args->cookie, userinfo->sn, xfer->remote_ip, xfer->remote_port, 0, 0, NULL);
+			oft_info = aim_oft_createinfo(od->sess, args->cookie, userinfo->sn, args->clientip, xfer->remote_port, 0, 0, NULL);
 			if (args->proxyip)
 				oft_info->proxyip = g_strdup(args->proxyip);
 			if (args->verifiedip)
