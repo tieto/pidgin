@@ -561,7 +561,7 @@ GtkWidget *hotkeys_page() {
 	gaim_button(_("E_scape closes window"), &convo_options, OPT_CONVO_ESC_CAN_CLOSE, vbox);
 	gaim_button(_("Control-_W closes window"), &convo_options, OPT_CONVO_CTL_W_CLOSES, vbox);
 
-	vbox = make_frame(ret, "Insertions");
+	vbox = make_frame(ret, _("Insertions"));
 	gaim_button(_("Control-{B/I/U/S} inserts _HTML tags"), &convo_options, OPT_CONVO_CTL_CHARS, vbox);
 	gaim_button(_("Control-(number) inserts _smileys"), &convo_options, OPT_CONVO_CTL_SMILEYS, vbox);
 
