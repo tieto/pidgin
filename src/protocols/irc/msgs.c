@@ -593,7 +593,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	userhost = irc_mask_userhost(from);
-	gaim_conv_chat_add_user(GAIM_CONV_CHAT(convo), nick, userhost, GAIM_CBFLAGS_NONE);
+	gaim_conv_chat_add_user(GAIM_CONV_CHAT(convo), nick, userhost, GAIM_CBFLAGS_NONE, TRUE);
 
 	if ((ib = g_hash_table_lookup(irc->buddies, nick)) != NULL) {
 		ib->flag = TRUE;

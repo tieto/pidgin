@@ -652,7 +652,8 @@ _join_conf_resp_cb(NMUser * user, NMERR_T ret_code,
 				ur = nm_conference_get_participant(conference, i);
 				if (ur) {
 					name = nm_user_record_get_display_id(ur);
-					gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat), name, NULL, GAIM_CBFLAGS_NONE);
+					gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat), name, NULL, 
+											GAIM_CBFLAGS_NONE, TRUE);
 				}
 			}
 		}
@@ -1921,7 +1922,8 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 					nm_conference_set_data(conference, (gpointer) chat);
 
 					name = nm_user_record_get_display_id(ur);
-					gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat), name, NULL, GAIM_CBFLAGS_NONE);
+					gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat), name, NULL, 
+											GAIM_CBFLAGS_NONE, TRUE);
 
 				}
 			}
@@ -1932,7 +1934,8 @@ _evt_conference_joined(NMUser * user, NMEvent * event)
 			if (ur) {
 				name = nm_user_record_get_display_id(ur);
 				if (!gaim_conv_chat_find_user(GAIM_CONV_CHAT(chat), name)) {
-					gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat), name, NULL, GAIM_CBFLAGS_NONE);
+					gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat), name, NULL, 
+											GAIM_CBFLAGS_NONE, TRUE);
 				}
 			}
 		}

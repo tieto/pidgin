@@ -272,7 +272,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		g_snprintf(buf, sizeof(buf), "%s@%s",
 			   client_entry->username, client_entry->hostname);
 		gaim_conv_chat_add_user(GAIM_CONV_CHAT(convo),
-					g_strdup(client_entry->nickname), buf, GAIM_CBFLAGS_NONE);
+					g_strdup(client_entry->nickname), buf, GAIM_CBFLAGS_NONE, TRUE);
 
 		break;
 

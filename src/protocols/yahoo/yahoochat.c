@@ -76,7 +76,7 @@ void yahoo_chat_add_users(GaimConvChat *chat, GList *newusers)
 	for (i = newusers; i; i = i->next) {
 		if (gaim_conv_chat_find_user(chat, i->data))
 			continue;
-		gaim_conv_chat_add_user(chat, i->data, NULL, GAIM_CBFLAGS_NONE);
+		gaim_conv_chat_add_user(chat, i->data, NULL, GAIM_CBFLAGS_NONE, TRUE);
 	}
 }
 
@@ -85,7 +85,7 @@ void yahoo_chat_add_user(GaimConvChat *chat, const char *user, const char *reaso
 	if (gaim_conv_chat_find_user(chat, user))
 		return;
 
-	gaim_conv_chat_add_user(chat, user, reason, GAIM_CBFLAGS_NONE);
+	gaim_conv_chat_add_user(chat, user, reason, GAIM_CBFLAGS_NONE, TRUE);
 }
 
 static GaimConversation *yahoo_find_conference(GaimConnection *gc, const char *name)
@@ -663,7 +663,7 @@ static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const ch
 			if (!strcmp(memarr[i], "") || !strcmp(memarr[i], dn))
 					continue;
 			yahoo_packet_hash(pkt, 3, memarr[i]);
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), memarr[i], NULL, GAIM_CBFLAGS_NONE);
+			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), memarr[i], NULL, GAIM_CBFLAGS_NONE, TRUE);
 		}
 	}
 	yahoo_send_packet(yd, pkt);

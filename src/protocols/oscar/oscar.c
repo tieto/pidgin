@@ -4305,7 +4305,7 @@ static int gaim_conv_chat_join(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 
 	for (i = 0; i < count; i++)
-		gaim_conv_chat_add_user(GAIM_CONV_CHAT(c->conv), info[i].sn, NULL, GAIM_CBFLAGS_NONE);
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(c->conv), info[i].sn, NULL, GAIM_CBFLAGS_NONE, TRUE);
 
 	return 1;
 }

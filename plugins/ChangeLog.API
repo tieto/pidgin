@@ -38,6 +38,9 @@ version 0.82cvs:
 	* Added: conversation-updated for any update to the data associated
 	  with the conversation (topic, icon, adding to buddy list, etc.)
 
+	Conversation API:
+	* Changed: gaim_conv_chat_add_user() (added new_arrival parameter)
+
 version 0.81 (08/05/2004):
 	Commands API:
 	* Most functions now have a void *data argument.

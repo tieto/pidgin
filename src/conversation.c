@@ -1923,7 +1923,7 @@ gaim_conv_chat_send(GaimConvChat *chat, const char *message)
 
 void
 gaim_conv_chat_add_user(GaimConvChat *chat, const char *user, const char *extra_msg,
-						GaimConvChatBuddyFlags flags)
+						GaimConvChatBuddyFlags flags, gboolean new_arrival)
 {
 	GaimConversation *conv;
 	GaimConversationUiOps *ops;
@@ -1946,9 +1946,9 @@ gaim_conv_chat_add_user(GaimConvChat *chat, const char *user, const char *extra_
 		g_list_append(gaim_conv_chat_get_users(chat), cb));
 
 	if (ops != NULL && ops->chat_add_user != NULL)
-		ops->chat_add_user(conv, user);
+		ops->chat_add_user(conv, user, new_arrival);
 
-	if (!quiet) {
+	if (!quiet && new_arrival) {
 		if (extra_msg == NULL)
 			g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), user);
 		else

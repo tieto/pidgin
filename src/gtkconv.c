@@ -5184,7 +5184,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 }
 
 static void
-gaim_gtkconv_chat_add_user(GaimConversation *conv, const char *user)
+gaim_gtkconv_chat_add_user(GaimConversation *conv, const char *user, gboolean new_arrival)
 {
 	GaimConvChat *chat;
 	GaimGtkConversation *gtkconv;
@@ -5205,7 +5205,7 @@ gaim_gtkconv_chat_add_user(GaimConversation *conv, const char *user)
 
 	gtk_label_set_text(GTK_LABEL(gtkchat->count), tmp);
 
-	if (gtkconv->make_sound)
+	if (gtkconv->make_sound && new_arrival)
 		gaim_sound_play_event(GAIM_SOUND_CHAT_JOIN);
 
 	add_chat_buddy_common(conv, user);

@@ -68,7 +68,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 	if ((swboard->conv != NULL) && (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
 	{
-		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv), user, NULL, GAIM_CBFLAGS_NONE);
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv), user, NULL, GAIM_CBFLAGS_NONE, TRUE);
 	}
 	else if (swboard->current_users > 1 || swboard->total_users > 1)
 	{
@@ -99,14 +99,14 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 				 * tmp_user); */
 
 				gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
-										tmp_user, NULL, GAIM_CBFLAGS_NONE);
+										tmp_user, NULL, GAIM_CBFLAGS_NONE, TRUE);
 			}
 
 			/* gaim_debug_info("msn", "[chat] We add ourselves.\n"); */
 
 			gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
 									gaim_account_get_username(account),
-									NULL, GAIM_CBFLAGS_NONE);
+									NULL, GAIM_CBFLAGS_NONE, TRUE);
 
 			g_free(swboard->im_user);
 			swboard->im_user = NULL;

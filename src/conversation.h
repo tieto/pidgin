@@ -183,7 +183,7 @@ struct _GaimConversationUiOps
 	                   const char *message, GaimMessageFlags flags,
 	                   time_t mtime);
 
-	void (*chat_add_user)(GaimConversation *conv, const char *user);
+	void (*chat_add_user)(GaimConversation *conv, const char *user, gboolean new_arrival);
 	void (*chat_add_users)(GaimConversation *conv, GList *users);
 	void (*chat_rename_user)(GaimConversation *conv,
 	                         const char *old_name, const char *new_name);
@@ -1192,7 +1192,8 @@ void gaim_conv_chat_send(GaimConvChat *chat, const char *message);
  * @param flags     The users flags
  */
 void gaim_conv_chat_add_user(GaimConvChat *chat, const char *user,
-							 const char *extra_msg, GaimConvChatBuddyFlags flags);
+							 const char *extra_msg, GaimConvChatBuddyFlags flags,
+							 gboolean new_arrival);
 
 /**
  * Adds a list of users to a chat.

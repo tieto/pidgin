@@ -207,6 +207,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
 	GaimConvChatBuddyFlags flags = GAIM_CBFLAGS_NONE;
+	gboolean delayed = FALSE;
 	GaimBuddy *b;
 	char *buddy_name;
 	int state = 0;
@@ -272,7 +273,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			}
 		} else if(!strcmp(y->name, "x")) {
 			const char *xmlns = xmlnode_get_attrib(y, "xmlns");
-			if(xmlns && !strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
+			if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
+				delayed = TRUE;
+			} else if(xmlns && !strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
 				xmlnode *z;
 
 				muc = TRUE;
@@ -413,7 +416,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
 				gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
-						real_jid, flags);
+						real_jid, flags, !delayed);
 			else
 				gaim_conv_chat_user_set_flags(GAIM_CONV_CHAT(chat->conv), jid->resource,
 						flags);

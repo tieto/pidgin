@@ -340,7 +340,7 @@ initiate_chat_cb(GaimBlistNode *node, gpointer data)
 	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 
 	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
-							gaim_account_get_username(buddy->account), NULL, GAIM_CBFLAGS_NONE);
+							gaim_account_get_username(buddy->account), NULL, GAIM_CBFLAGS_NONE, TRUE);
 }
 
 static void

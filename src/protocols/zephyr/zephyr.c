@@ -736,7 +736,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice, struct sockaddr_
                                                                         (unsigned char)addrs[1], (unsigned char)addrs[2], 
                                                                         (unsigned char) addrs[3]);
                                         
-                                        gaim_conv_chat_add_user(gcc, sendertmp, ipaddr, GAIM_CBFLAGS_NONE);
+                                        gaim_conv_chat_add_user(gcc, sendertmp, ipaddr, GAIM_CBFLAGS_NONE, TRUE);
                                         g_free(ipaddr); /* fix memory leak? */
                                         
                                 }
