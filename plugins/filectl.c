@@ -52,7 +52,7 @@ void run_commands() {
 			arg2 = getarg(buffer, 2, 1);
 			c = find_conversation(arg1);
 			if (!c) c = new_conversation(arg1);
-			write_to_conv(c, arg2, WFLAG_SEND);
+			write_to_conv(c, arg2, WFLAG_SEND, NULL);
 			serv_send_im(arg1, arg2, 0);
 			free(arg1);
 			free(arg2);
