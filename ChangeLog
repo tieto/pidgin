@@ -1,6 +1,6 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.9.12:
+version 0.9.12 (03/25/2000):
 	* Segfault fix for PPC/Alpha/etc machines with log(0)
 	  Thanks to Todd Cohen for this one.
 	* Small internal change to the way prefs work
@@ -13,10 +13,11 @@ version 0.9.12:
 	* Various GNOME Applet Enhancements (thanks AGAIN to 
 	  Eric.  Someone needs to stop this boy :-) ) 
 	* A lot of random, obscure bugs fixed
-	* All of the major and I believe all of the minor memory leaks are now fixed
-	  (Thanks to Peter Teichman, Larry Ewing, Jeramey Crawford, and me :) )
+	* All of the major and I believe all of the minor memory leaks are 
+	  now fixed
+	  (Thanks to Peter Teichman, Larry Ewing, Jeramey Crawford, and me :))
 	
-version 0.9.11:
+version 0.9.11 (03/22/2000):
 	* <STRIKE>Strike Tag Support</STRIKE> :-)
 	* Another memory leak fix
 	* New .gaimrc format

@@ -1,19 +1,10 @@
---- STUFF FOR 0.9.9 RELEASE ---
+--- STUFF FOR 0.9.13 RELEASE ---
         Gaim 95? 
 	KDE Awareness?
 	plugins
-	SSL
 	Smilie Faces
 	File Transfers
 	Locale Support
 	Make Buddy Chat Prettier
-	Icons for buddy list
+	Icons for buddy list (I forget what this was)
 	Eventually incorporate BUDDYTRANS script into C code
-	auto-away and extended-away
-	scheduled away msgs
-	macro away msgs
-	away by user
-	iconize away msgs option
-	local storage of config
-	I'm a little teapot
-	I'm a little teapot, too
