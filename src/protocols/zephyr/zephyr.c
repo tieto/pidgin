@@ -387,7 +387,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					/* If the person is in the default Realm, then strip the 
 					   Realm from the sender field */
 					sendertmp = g_strdup_printf("%s",notice.z_sender);
-					if (realmptr = strchr(sendertmp,'@')) {
+					if ((realmptr = strchr(sendertmp,'@')) != NULL) {
 						realmptr++;
 						if (!g_strcasecmp(realmptr,ZGetRealm())) {
 							realmptr--;
