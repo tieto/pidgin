@@ -417,7 +417,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer data)
 {
 	struct sockaddr_un saddr;
-	gint len;
+	gint len = sizeof(saddr);
 	gint fd;
 
 	struct UI *ui;
