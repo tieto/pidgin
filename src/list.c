@@ -923,6 +923,8 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		}
 		g_free(blist_parser_setting_name);
 		g_free(blist_parser_setting_value);
+		blist_parser_setting_name = NULL;
+		blist_parser_setting_value = NULL;
 		blist_parser_current_tag = BLIST_TAG_BUDDY;
 	} else if(!strcmp(element_name, "privacy")) {
 		blist_parser_current_tag = BLIST_TAG_GAIM;
