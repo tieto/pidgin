@@ -1,6 +1,6 @@
 
 EXTRA_DIST = gaim.spec.in gaim_applet.gnorba gaim.desktop gaim_applet.desktop gaim.soundlist \
-	buddytrans buddytrans2 README.plugins
+	buddytrans buddytrans2 README.plugins HACKING
 
 if GNOMEAPPLET
 

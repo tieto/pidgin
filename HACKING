@@ -1,0 +1,228 @@
+A lot of people have tried to hack gaim, but haven't been able to because
+the code is just so horrid. Well, the code isn't getting better anytime
+soon, so to help all you would-be hackers help out gaim, here's a brief
+tutorial on how gaim works. I'll quickly describe the logical flow of
+things, then what you'll find in each of the source files. Hopefully
+that's enough to get most of you going.
+
+There's one little thing that's just a pet peeve, and it's really stupid.
+In ./configure there's and --enable-debug option. This does two things:
+compiles with -Wall, and prints debugging information to stdout. The
+debugging information is printed to the debug window (which can be turned
+on in the preferences) whether or not --enable-debug was selected. Most
+of the information that's printed is useless anyway though; so the
+--enable-debug option really doesn't do a whole lot.
+
+
+PROGRAM FLOW
+============
+
+Before gaim does anything you can see, it initializes itself, which is
+mostly just reading .gaimrc (handled by the functions in gaimrc.c). It
+then draws the login window by calling show_login, and waits for input.
+
+At the login window, when "signon" is clicked, dologin() is called. This
+in turn calls serv_login, which checks to see if you want to use Oscar or
+TOC, and calls oscar_login or toc_login appropriately. We'll assume TOC
+for the rest of this discussion; Oscar has a lot of bad hacks to get it
+working that I don't even want to think about.
+
+After you're signed in (I'll skip that discussion - I doubt many people
+are going to change the login process, since it pretty much just folows
+PROTOCOL), Gaim draws the buddy list by calling show_buddy_list, and
+waits for input from two places: the server and the user. The first place
+it gets input from after signon is invariably the server, when the server
+tells Gaim which buddies are signed on.
+
+When there is information ready to be read from the server, toc_callback
+is called (by GDK) to parse the incoming information. On an UPDATE,
+serv_got_update is called, which takes care of things like notifying
+conversation windows of the update if need be; notifying the plugins;
+and finally, calling set_buddy.
+
+set_buddy is one of the most frequently called functions in gaim, one of
+the largest functions in gaim, and probably one of the buggiest functions
+in gaim. It is responsible for updating the pixmaps in the buddy list;
+notifying plugins of various events; updating the tooltips for buddies;
+making sounds; and updating the ticker. It's also called once per online
+buddy every 20 seconds (by GTK through update_all_buddies).
+
+When the user opens a new conversation window, new_conversation is called.
+That's easy enough. If there isn't a conversation with the person already
+open (checked by calling find_conversation), show_conv is called to
+create the new window. All sorts of neat things happen there, but it's
+mostly drawing the window. show_conv is the best place to edit the UI. Be
+prepared for some incredibly bad GTK programming. (Rob's fixing this as
+we speak no doubt.)
+
+That's pretty much it for the quick tutorial. I know it wasn't much but
+it's enough to get you started. Make sure you know GTK before you get too
+involved. Most of the back-end stuff is pretty basic; most of gaim is GTK.
+
+
+SOURCE FILES
+============
+
+about.c:
+  Not much to say here, just a few basic functions.
+
+aim.c:
+  This is where the main() function is. It takes care of a lot of the
+  initialization stuff, and showing the login window. It's pretty tiny
+  and there's not really much to edit in it. Watch out for bad Oscar
+  sign in hacks.
+
+away.c:
+  This takes care of most of the away stuff: setting the away message
+  (do_im_away); coming back (do_im_back); drawing the away window;
+  etc. To be honest I haven't looked at this file in months.
+
+browser.c:
+  Code for opening a browser window. Most of the code is trying to deal
+  with Netscape. The most important function here is open_url. Have fun.
+
+buddy.c:
+  This takes care of not only nearly everything buddy-related (the buddy
+  list, the permit/deny lists, and the window), but also a lot of the
+  code flow and util functions. Look for good things like find_buddy,
+  set_buddy, and signoff() here.
+
+buddy_chat.c:
+  This takes care of the buddy chat stuff. This used to be a lot bigger
+  until the chat and IM windows got merged in the code. Now it mostly
+  just takes care of chat-specific stuff, like ignoring people and
+  keeping track of who's in the room. This is also where the chat window
+  is created.
+
+conversation.c:
+  This is where most of the functions dealing with the IM and chat windows
+  are hidden. It tries to abstract things as much as possible, but doesn't
+  do a very good job. This is also where things like "Enter sends" and
+  "Ctrl-{B/I/U/S}" options get carried out (look for send_callback). The
+  chat and IM toolbar (with the B/I/U/S buttons) are both built from the
+  same function, build_conv_toolbar.
+
+dialogs.c:
+  A massive file with a lot of little utility functions. This is where
+  all of those little dialog windows are created. Things like the warn
+  dialog and the add buddy dialog are here. Not all of the dialogs in
+  gaim are in this file, though. But most of them are. This is also
+  where do_import is housed, to import buddy lists.
+
+gaimrc.c:
+  This controls everything about the .gaimrc file. There's not really much
+  to say about it; this is probably one of the better designed and easier
+  to follow files in gaim. The important functions are towards the bottom.
+
+gnome_applet_mgr.c:
+  A hideous creation from the days before I started working on gaim. Most
+  of it works, but it has functionsLikeThis. I hate looking at this
+  file, but I'm too lazy to change the functions. The best functions
+  are things like set_applet_draw_open, whose sole purpose is to set a
+  global variable to TRUE.
+
+gtkhtml.c:
+  This is really just one big hack. It started off as an HTML widget that
+  was written for Gnome as far as I can tell. The current version is
+  huge, requires way too many libs, and is too hard to upgrade to. But
+  we've managed to hack this poor old version into basically what we
+  need it for. I recommend not looking at this file if you want to save
+  your sanity.
+
+gtkticker.c:
+  Syd, our resident GTK God, wrote a GtkWidget, GtkTicker. This is that
+  widget. It's cool, and it's tiny.
+
+html.c:
+  Don't ask my why this is called html.c. Most of it is just grab_url,
+  which does like the name says; it downloads a URL to show in the
+  GtkHTML widget.  http.c would be a more appropriate name, but that's OK.
+
+idle.c:
+  There is a very good reason why this file is still on version 1.1
+  in CVS.  The entire thing is #if 0'd out. I haven't ever really taken
+  a good look at it, but I think what it was supposed to have done is
+  set you as being away when a screensaver came on.
+
+network.c:
+  This has two functions: get_address and connect_address, both of which
+  call proxy functions. If you want to see how these are used, look at
+  toc.c and/or rvous.c. These are really just front-ends to the proxy
+  stuff; use these instead of calling the proxy functions.
+
+oscar.c:
+  One big hack of copied code. This is supposed to be the libfaim tie-in
+  in gaim. Most of it is just copied straight from faimtest, the small
+  program that comes with libfaim. I'm not even sure how half of it works,
+  if that makes you feel any better.
+
+perl.c:
+  This was basically copied straight from X-Chat through the power of
+  the GPL.  Perl is the biggest, most confusing piece of C code I've ever
+  seen in my life (and keep in mind I'm a gaim hacker). I have a basic
+  idea of what's going on in it, but I couldn't tell you exactly. The
+  top half sets up perl and tells it what's going on and the bottom half
+  implements the AIM module.
+
+plugins.c:
+  This is the "plugin plug", as the file states. This file is probably
+  the only file in all of gaim that at the top has all of the functions
+  and global and static variables named out for you. It makes reading
+  it a little easier, but not by much. A lot of the code in here deals
+  with the plugin window rather than the plugins themselves.
+
+prefs.c:
+  The important function in here is build_prefs, but the most useful
+  function is gaim_button. build_prefs draws the window, and calls
+  gaim_button probably 30 or 40 times. (I don't really wanna run grep
+  | wc to count.) This is where you add the toggle button for gaim
+  preferences. It's very simple, and if you look at a couple of the
+  calls to gaim_button you'll figure it out right away.
+
+proxy.c:
+  This is where the bulk of the actual networking code is done. The big
+  function here is proxy_connect, which will connect through the proxy
+  setup you've chosen (most of which don't work...) or just regularly.
+
+rvous.c:
+  This was originally going to be the stuff for all of the Buddy Icon
+  and Voice Chat stuff, but I got really sick of protocol hacking really
+  quick.  Now it only houses the file transfer stuff, which only works
+  for TOC.
+
+server.c:
+  This is where all of the differentiation between TOC and Oscar is
+  done.  Nearly everything that's network related goes through here
+  at one point or another. This has good things like serv_send_im and
+  serv_got_update. Most of it should be pretty self-explanatory.
+
+sound.c:
+  The big important function is play_sound, which plays one of 4 (actually
+  6) sounds. One of the sounds is called in 3 different events, which
+  is why there are actually 6 sounds. This then calls play which then
+  checks for esd, then nas if that's not available, then falls back
+  to /dev/audio.
+
+ticker.c:
+  Syd is just so cool. I really can't get over it. He let me come
+  visit him at Netscape one day, and I got to see all of their toys
+  (don't worry, I'm under an NDA). Anyway, this file is for the buddy
+  ticker. This is also a damn cool file because it's got all of the
+  functions that you'd want right up at the top. Someday I want to be
+  as cool as Syd.
+
+toc.c:
+  This handles everything TOC-related, including parsing gaim's buddy
+  list.  Most of this file is toc_callback, which parses the incoming
+  information from the server. I really don't like TOC though.
+
+util.c:
+  There's not really a lot of cohesion to this file; it's just a lot of
+  stuff that happened to be thrown into it for no apparent reason. None
+  of it is particularly tasty; it's all just utility functions. Just
+  like the name says.
+
+
+So that's our little tour of the internals of Gaim. It's really not
+difficult to figure out if you've spent any time with GTK. I'm looking
+forward to getting all of your patches :)
