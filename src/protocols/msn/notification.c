@@ -426,14 +426,14 @@ add_cmd(MsnServConn *servconn, const char *command, const char **params,
 	char msg[MSN_BUF_LEN];
 
 	list = params[1];
-	passport = params[3];
+	passport = params[2];
 
-	friend = msn_url_decode(params[4]);
+	friend = msn_url_decode(params[3]);
 
 	if (!g_ascii_strcasecmp(list, "FL")) {
 		user = msn_user_new(session, passport, NULL);
 
-		msn_user_set_group_id(user, atoi(params[5]));
+		msn_user_set_group_id(user, atoi(params[4]));
 
 		add_buddy(servconn, user);
 
