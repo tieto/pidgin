@@ -1,0 +1,975 @@
+2000-07-30  Denis V. Dmitrienko  <denis@null.net>
+
+	* ChangeLog, icqlib-0.2.0.lsm, icqlib-1.0.0.lsm, README, TODO,
+	VERSION, Win32.zip:
+	Updated version for 1.0.0 release.
+
+2000-07-25  Denis V. Dmitrienko  <denis@null.net>
+
+	* README: Description was changed a little.
+
+	* icqlib/icq.h.in: Cleanups.
+
+2000-07-23  Bill Soudan  <soudan@kde.org>
+
+	* README: added description
+
+	* icqlib/icq.h.in, icqlib/icqlib.c, icqlib/tcpchathandle.c,
+	icqlib/tcpfilehandle.c: added support for real nickname during
+	TCP transactions like file and chat, instead of using Bill
+	all the time (hmm, where'd I get that from? :)
+
+2000-07-22  Denis V. Dmitrienko  <denis@null.net>
+
+	* AUTHORS, DEVEL, icqlib-0.1.3.lsm, icqlib-0.2.0.lsm, README, TODO:
+	Text files in root directory were changed to reflect latest changes.
+
+2000-07-22  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/util.c: Trinidad and Tobago country was added.
+
+	* icqlib/icq.h.in: Cleanups.
+
+2000-07-21  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/util.c: All languages, possible in original icq were added.
+	Occupation array fixed.
+
+2000-07-20  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/util.c:
+	Occupation table corrected to comply with original ICQ.
+
+2000-07-09  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/list.c: added more trace messages, added list_remove_node
+	call in list_free... fixes list corruption bug introduced
+	during last commit
+
+	* icqlib/queue.c: added more trace messages, reworked packet
+	delete handling: now happens during _icq_UDEQueueItemFree rather
+	than during icq_UDPQueueDelSeq - fixes memory leak
+
+2000-07-09  Bill Soudan  <soudan@kde.org>
+
+	Cleanups, and nasty memory bug fixes.  Hopefully this will
+	correct the strange crashes Denis is having after the icq_Done
+	call!
+
+	The major problem was: icq_TCPLinkDelete and icq_FileSessionDelete
+	were calling list_remove to remove themselves from the global
+	TCPLink and FileSession lists kept in ICQLINK.  But, these
+	functions were being called from a list_delete call also,
+	in icq_TCPDone, so what was happening is the list_nodes were
+	getting free()ed twice!
+
+	This problem was circumvented by removing the list_remove
+	from the *Delete functions, and creating new Close functions
+	that do the list_remove and then call the corresponding 
+	Delete function.
+
+	* icqlib/chatsession.c, icqlib/chatsession.h, icqlib/filesession.c,
+ 	icqlib/tcp.c, icqlib/tcpchathandle.c, icqlib/tcpfilehandle.c,
+	icqlib/tcplink.c, icqlib/tcplink.h, icqlib/udp.c,
+	icqlib/stdpackets.h: adding new *Close functions, use *Close
+	functions instead of *Delete where correct, and misc cleanups
+
+	* icqlib/icq.h.in: removed unnecessary members from ICQLINK
+
+	* icqlib/icqlib.c, icqlib/icqlib.h: removed unnecessary
+	functions
+
+	* icqlib/list.c, icqlib/list.h: recoded list_free function - this
+	was working very incorrectly!  it was only freeing the first
+	node of the list, and then ending.  fixes a memory leak.
+
+	* icqlib/queue.c: use new list_free 
+
+	* icqlib/tcp.c: use Close functions, misc cleanups
+
+2000-07-09  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/icq.h.in: Cleanups.
+
+	* icqlib/icqlib.c:
+	Initial memset() in icq_Init() replaced by callback's clearance.
+
+	* icqlib/udp.c:
+	icq_UpdateNewUserInfo() now returns seq1 instead of seq2 since it
+	isn't META function.
+
+2000-07-07  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/icqpacket.c:
+	"icq_Packet data overflow" log message temporarily commented out.
+
+2000-07-04  Paul Cadach          <paul@odt.east.telecom.kz>
+	* icqlib/utilc:
+	icq_FmtLog() crashed when it receives NULL at link argument.
+
+2000-06-30  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/util.c: Slovak Republic country code fixed.
+
+2000-06-25  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/udphandle.c:
+	icq_HandleMetaUserInfo() handles all (!) available in original icq2k
+	Meta User Info packets along with other useful Meta* packets. (WOW! ;)
+
+	* icqlib/icq.h.in:
+	New callbacks (we really need an event-driven model later):
+	icq_MetaUserFound, icq_MetaUserInfo, icq_MetaUserWork,
+	icq_MetaUserMore, icq_MetaUserAbout, icq_MetaUserInterests,
+	icq_MetaUserAffiliations, icq_MetaUserHomePageCategory
+	New functions-companions for Meta User Info:
+	icq_GetMetaOccupationName(), icq_GetMetaBackgroundName(),
+	icq_GetMetaAffiliationName(), icq_GetMetaLanguageName()
+	New function to request Meta User Info icq_SendMetaInfoReq()
+	COUNTRY_CODE was "generalized" to icq_ArrayType. Note: this is
+	source incompatible change!
+
+	* icqlib/util.c: icq_MetaOccupation[], icq_MetaPastBackgrounds[],
+	icq_MetaAffiliations[] and icq_MetaLanguages[] arrays were added along
+	with icq_GetMetaOccupationName(), icq_GetMetaBackgroundName(),
+	icq_GetMetaAffiliationName() and icq_GetMetaLanguageName() functions
+	to access them.
+
+	* icqlib/udp.h: Some META* defines changed/added.
+	USER_INFO structure which is never been used now removed.
+
+	* icqlib/udp.c: icq_SendMetaInfoReq() was added.
+	All icq_*Meta*() functions now returns sequence number 2 because their
+	replies from the server are synced with it.
+
+	* icqlib/tcphandle.c, icqlib/tcpfilehandle.c, icqlib/eventhandle.c:
+	'\n' was added at the end of log messages.
+
+	* icqlib/queue.c:
+	Some sanity checks were added to icq_UDPQueueDelete() and
+	icq_UDPQueueFree()
+
+	* icqlib/icqpacket.c: icq_PacketUDPDump() tweaked a little.
+
+2000-06-17  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/contacts.c, icqlib/icq.h.in:
+	New parameter was added in icq_ContactSetVis() for setting/resetting
+	'Visible to User' status.
+	Port's type was changed to unsigned short in icq_UserOnline callback.
+
+2000-06-15  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/icqevent.c, icqlib/icqevent.h, icqlib/eventhandle.c,
+	icqlib/eventhandle.h: committed for safekeeping, not used yet.
+	this code will soon replace stdpackets.c and tcphandle.c, as
+	well as reducing code duplication in many other places.  hopefully
+	it can eventually be extended to manage udp events as well, as
+	it's written in pseudo-object-oriented style.
+
+2000-06-14  Bill Soudan  <soudan@kde.org>
+
+	Bugfixes and code cleanups.
+
+	* icqlib/filesession.c, icqlib/filesession.h: added id arg to
+	icq_FindFileSession to allow searches for specific file session
+
+	* icqlib/icq.h.in: removed *Seq functions, renamed chat req functions
+	to be consistent with file req functions, added Cancel and Refuse
+	functions for chat and file reqs
+
+	* icqlib/queue.h: added proto for icq_UDPQueueInterval
+
+	* icqlib/stdpackets.c, icqlib/stdpackets.h: added creation
+	functions for cancel and refuse operations
+
+	* icqlib/tcp.c, icqlib/tcp.h: added Cancel and Refuse functions
+	for chat and file reqs, changed packet sending code to use new
+	icq_TCPLinkSendSeq function to elimitane duplicate code, removed
+	*Seq functions, renamed chat req functions
+
+	* icqlib/tcpfilehandle.c: fixed bug: sending file sessions would
+	freeze if remote side changed speed
+
+	* icqlib/tcplink.c, icqlib/tcplink.h: added icq_TCPLinkSendSeq
+	function
+
+	* icqlib/icqlib.c, icqlib/udp.c: removed *Seq functions
+
+2000-05-21  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/util.c: Bulgaria country code was added. Thanks to
+	"Napalm Death" <napalmbox@hotmail.com>
+
+	* icqlib/cyrillic.c: Applied patch for russian letters IO and io by
+	Vladimir Eltchinov <elik@design.ru>
+
+2000-05-10  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/icq.h.in, icqlib/icqlib.c, icqlib/queue.c,
+	icqlib/queue.h, icqlib/udp.c:
+	UDP outgoing packet queue was implemented.
+
+	* icqlib/udphandle.c, icqlib/proxy.c:
+	icq_Disconnect() now called before icq_Disconnected callback to
+	prevent high CPU usage in kicq's "reconnect on disconnect" code.
+
+	* icqlib/list.c, icqlib/list.h:
+	list_free() was added to free but do not dispose the list.
+	Memory leak with destroying the list was fixed.
+
+2000-05-05  Denis V. Dmitrienko  <denis@null.net>
+
+	* Win32.zip:
+	Automatically generated icq.h repackaged for Win32 portability.
+
+2000-05-04  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/tcp.h: undefined TCP debug trace constants in preparation
+	for release.
+
+	* icqlib/stdpackets.c: warning cleanups.
+
+	* icqlib/icq.h.in: changed FILE_STATUS_* defines, removed
+	many ICQ_NOTIFY_FILE* defines, added new direction member
+	to icq_FileSession, removed unnecessary uin arg from
+	icq_FileSessionSetSpeed.
+
+	* icqlib/tcpchathandle.c, icqlib/tcpfilehandle.c, icqlib/tcphandle.c,
+	icqlib/tcplink.c, icqlib/filesession.c, icqlib/tcp.c:
+	Reworked file transfer notification, small bugfixes,
+	and cleanups.
+
+2000-05-03  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/udp.c: icq_UpdateNewUserInfo() was added.
+	All icq_UpdateMetaInfo*() now return their sequence number.
+
+	* icqlib/chatsession.c, icqlib/filesession.c, icqlib/icq.h.in,
+	icqlib/Makefile.am, icqlib/proxy.c, icqlib/tcpchathandle.c,
+	icqlib/tcpfilehandle.c, icqlib/tcphandle.c, icqlib/tcplink.c,
+	icqlib/udphandle.c, icqlib/util.c, icqlib/callbacks.c:
+	Callbacks have been moved to the ICQLINK structure.
+
+	* icqlib/icqpacket.c, icqlib/icqpacket.h:
+	icq_PacketReadUDPInUIN() was added.
+
+	* icqlib/list.c: Bug with empty contact list was fixed.
+
+	* icqlib/icqlib.c: Unfinished UDP queue was commented out.
+
+2000-04-13  Denis V. Dmitrienko  <denis@null.net>
+
+	* README.Win32, VC5.zip, Win32.zip:
+	icq.h header file which is automatically generated on Unix is packaged
+	in Win32.zip archive along with the Visual C++ 5.0 project file.
+
+2000-04-10  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/chatsession.h, icqlib/filesession.h, icqlib/stdpackets.c,
+	icqlib/tcp.c, icqlib/tcpfilehandle.c, icqlib/tcplink.c:
+	ANSI cleanups.
+
+	* icqlib/filesession.c, icqlib/icqlib.c, icqlib/stdpackets.h,
+	icqlib/tcp.c, icqlib/tcpfilehandle.c, icqlib/tcp.h,
+	icqlib/tcplink.c, icqlib/udp.c, icqlib/udp.h, icqlib/util.c,
+	VC5.zip:
+	Some more Win32 compatibility from Guillaume Rosanis <grs@mail.com>
+
+2000-04-06  Herbert Valerio Riedel  <hvr@gnu.org>
+
+	* icqlib/icq.h.in, icqlib/udp.c (icq_KeepAlive,icq_SendAuthMsg):
+	return sequence number
+
+2000-04-06  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/icq.h.in, icqlib/icqlib.c, icqlib/stdpackets.c, icqlib/tcp.c:
+	icq_*Send*Seq() functions with specified sequence number were added.
+
+	* icqlib/udp.c:
+	So called "Online List problem" bug with Long Contact List was fixed.
+	icq_*Send*Seq() functions with specified sequence number were added.
+
+2000-04-05  Denis V. Dmitrienko  <denis@null.net>
+
+	* README.Win32, VC5.zip, icqlib/icqbyteorder.h, icqlib/icq.h.in,
+	icqlib/icqlib.c, icqlib/icqlib.h, icqlib/icqpacket.c,
+	icqlib/icqtypes.h, icqlib/proxy.c, icqlib/tcp.c,
+	icqlib/tcpchathandle.c, icqlib/tcpfilehandle.c,
+	icqlib/tcphandle.c, icqlib/tcplink.c, icqlib/tcplink.h,
+	icqlib/udp.c, icqlib/util.c, icqlib/util.h:
+	Applied patch from "Guillaume R." <grs@mail.com> for basic Win32
+	compatibility.
+
+2000-03-31  Igor S. Petrenko <nofate@europe.com>
+
+	* icqlib/util.c: remove static variable
+
+2000-03-30  Denis V. Dmitrienko  <denis@null.net>
+
+	* am_edit, configure.in, libtool.m4.in, ltconfig, ltmain.sh,
+	missing, mkinstalldirs, acinclude.m4.in, Makefile.cvs:
+	New autoconf/automake stuff from KDE2.
+
+	* icqlib/queue.c: Fixed FreeBSD warning about obsolete malloc.h
+	header.
+
+2000-02-14  Bill Soudan  <soudan@kde.org>
+
+	Applied patch from Paul Cadach <paul@odt.east.telecom.kz>.
+
+	* icqlib/icq.h.in: added icq_TCPSendChatData_n
+
+	* icqlib/tcp.c: use new icq_ChatRusConv_n function in
+	icq_TCPSendChatData, new icq_TCPSendChatData_n function
+
+	* icqlib/tcplink.c, tcplink.h: new icq_ChatRusConv_n function
+
+2000-02-06  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/tcpchathandle.c: warning cleanups.
+
+2000-02-06  Bill Soudan  <soudan@kde.org>
+
+	Applied patch from Paul Cadach <paul@odt.east.telecom.kz>.  
+	Thanks Paul!
+
+	Paul's change list:
+
+	1) Modified TCP link code to allow non-blocking TCP connects over 
+	SOCKS5 proxy
+	2) Added missed Cyrillic translating for Chat subject, URL subject, 
+	File transfer subject (both directions);    
+	3) Fix a bug in TCPLinkProxyConnect code (remote address was random 
+	due to using local variable instead of plink's remote_address).  
+
+	* icqlib/cyrillic.c, icqlib/icqlib.h: added icq_RusConv_n
+
+	* icqlib/stdpackets.c: slightly modified chat packets
+
+	* icqlib/tcp.c: new code for SOCKS connections, more cyrillic
+	translations
+
+	* icqlib/tcpchathandle.c: new code for special chat functions
+	(background, fonts, etc)
+
+	* icqlib/tcplink.c: implemented non-blocking TCP connects
+	over SOCKS, cyrillic translation for chat
+
+	* icqlib/tcplink.h: new defines for SOCKS5 code
+
+	* icqlib/udphandle.c: changed log message in HandleUserOnline
+	
+2000-02-03  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/icqlib.h: line 33, fixed minor compile bug, changed
+	u_int32_t declaration to unsigned long.  This was causing a 
+	problem compiling on SunOS, as reported by Longwen
+	<longwen@mail.com>
+
+2000-01-20  Bill Soudan  <soudan@kde.org>
+
+	Worked more on file send implementation.  icqlib will now also 
+	handle sending file requests to clients.
+
+	* icqlib/filesession.c, filesession.h, icq.h.in, stdpackets.c
+	stdpackets.h, tcp.c, tcpfilehandle.c, tcphandle.c:
+	first implementation of sending file requests
+
+	* icqlib/tcplink.c: fixed bug in icq_TCPLinkConnect that caused
+	file/chat connection attempts to go to the wrong port
+
+2000-01-16  Bill Soudan  <soudan@kde.org>
+
+	Exported icq_FileSession structure to library clients;
+	fixed a serious list bug.  Oops. :)
+
+	* icqlib/filesession.c, filesession.h: added new public functions,
+	icq_FileSessionSetSpeed, icq_FileSessionClose,
+	icq_FileSessionSetWorkingDir, moved icq_FileSession interface to
+	icq.h.in
+	
+	* icqlib/icq.h.in: added definition for icq_FileSession and new
+	public functions
+
+	* icqlib/list.c: fixed serious bug in list_remove
+
+	* icqlib/tcp.c: renamed icq_TCPAcceptFileReq to
+	icq_AcceptFileRequest, moved file request functions to new
+	file session code
+
+	* icqlib/tcpfilehandle.c: added code so icq_FileSessions now
+	keep track of the tcplink to which they are attached
+
+	* icqlib/tcplink.h: removed list_node from icq_TCPLink
+
+2000-01-15  Bill Soudan  <soudan@kde.org>
+
+	Reworked list routines so list_node's don't need to be
+	inside item structures.  Note this made the strlist code
+	unnecessary - strlist code was replaced with generic list
+	commands.
+
+	* icqlib/Makefile.am: strlist.c, strlist.h removed
+
+	* chatsession.c, chatsession.h, contacts.c, contacts.h,
+	filesession.c, filesession.h, icqlib.c, icqpacket.c, icqpacket.h,
+	list.c, list.h, queue.c, queue.h, tcp.c, tcplink.c, tcplink.h,
+	udphandle.c: reworked list code, removed strlist code
+
+	* strlist.c, strlist.h: removed
+
+1999-12-27  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/icq.h.in: added proto for icq_TCPFileSetSpeed
+
+	* icqlib/icqlib.c: cleanups
+
+	* icqlib/tcp.c: fixed bug in icq_TCPAcceptFileReq, added
+	icq_TCPFileSetSpeed
+
+	* icqlib/tcplink.c: fixed bug in icq_TCPOnDataReceived,
+	removed flags variable ;) 
+
+1999-12-27  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/udphandle.c, icqlib/udp.h, icqlib/udp.c, icqlib/icq.h.in:
+	icq_UpdateMetaInfoSecurity() added for setting "My authorization is
+	required", "Web Aware" and "IP Publishing".
+
+	* icqlib/tcplink.c: Unused "flags" variable commented out.
+
+1999-12-20  Bill Soudan  <soudan@kde.org>
+
+	Worked more on file transfer.  icqlib will now write received
+	files to disk, and handles all transfer details accordingly
+	after icq_TCPAcceptFileReq is called.  Note currently
+	files are always saved in current directory.  Receiving a
+	single file is working 100% as best I can tell - receiving
+	multiple files hasn't been tested well but should work.
+
+	Also reworked icq_TCPLinkOnDataRecevied to handle quick, large
+	streams of data (processing 1 packet every main loop call
+	just didn't cut it :), and at the same time fixed a bug where
+	received packets would not get processed if the remote end
+	closed the connection immediately after sending one.  This had
+	the result that the tcp sockets stay in non-blocking mode
+	for their entire life, instead of just during connect
+	as before.
+
+	Resume is currently off-by-one I think.  Don't rely on it.
+
+	* icqlib/filesession.[ch]: added file open/close logic, changed
+	icq_FileSession struct a bit
+
+	* icqlib/icq.h.in: removed unnecessary icq_TCPSendFile??Packet
+	functions, user programs do not use these
+
+	* icqlib/tcp.[ch]: moved _process_packet logic into tcplink::
+	icq_TCPLinkProcessReceived, removed unnecessary
+	icq_TCPSendFile??Packet functions
+
+	* icqlib/tcpfilehandle.c: added more file transfer logic to
+	write file to disk
+
+	* icqlib/tcplink.c: added icq_TCPLinkProcessReceived to
+	support processing receive queue before delete (packets used
+	to get dropped in this instance, oops), reworked 
+	icq_TCPLinkOnDataReceived to handle quick, large streams
+	of data, changed icq_TCPLinkOnConnect and *Accept to
+        make all sockets non-blocking.
+
+1999-12-13  Bill Soudan  <soudan@kde.org>
+
+	Implemeted SF task #10224, use real_ip when our IP and remote
+	IP are same, and task #10203, connect timeout for tcp requests.
+
+	Fixed bug #100312, double freeing of list item.
+
+	NOTE: masq hack in udphandle.c::icq_HandleUserOnline is now gone!
+        Updated connect logic _should_ automatically do that for us now.
+
+	* icqlib/contacts.h: added remote_real_ip member to icq_ContactItem 
+	struct 
+
+	* icqlib/tcp.c: fixed double delete bug in _handle_ready_sockets,
+	added code to implement connect timeout
+	
+	* icqlib/tcplink.c: icq_TCPLinkConnect now uses real_ip when
+	our IP is same as remote IP to make connection, added
+	code to implement connect timeout
+
+	* icqlib/tcplink.h: added TCP_LINK_CONNECT_TIMEOUT constant,
+	added connect_time to icq_TCPLink struct
+
+	* icqlib/udphandle.c: removed old real_ip->ip masq hack,
+        added store to remote_real_ip in icq_ContactItem 
+
+1999-12-12  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/udphandle.c: Authorization Request packet handling fixed.
+
+	* Makefile.am: DEVEL file included
+
+1999-12-02  Bill Soudan  <soudan@kde.org>
+
+	commited missing filesession.c and filesession.h files.  Sorry
+	'bout that :)
+
+1999-11-30  Bill Soudan  <soudan@kde.org>
+
+	More file xfer support added.  icqlib tcp will now 'go through the
+	motions' for receiving a file.  file data is not written to 
+	disk, yet.
+	
+	* icqlib/Makefile.am: added filesession.[ch]
+
+	* icqlib/icq.h.in: new notify constant (ICQ_NOTIFY_FILE),
+	new icq_FileSessions member in icqlink struct, new AcceptFileReq
+	prototype
+
+	* icqlib/icqpacket.h: ICQ_PACKET_DATA_SIZE increased to 4096
+	to support file transfer packets
+
+	* icqlib/tcp.c: added file session logic
+
+	* icqlib/tcpfilehandle.c: added icq_HandleFileHello
+
+	* icqlib/tcphandle.c: more file xfer logic added
+
+	* icqlib/tcplink.c, tcplink.h: buffer overflow check added,
+	tcplinks will now close if buffer overflows.  increased
+	icq_TCPLinkBufferSize to 4096 to support file transfer packets
+
+1999-11-29  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib/udphandle.c: icq_DoMsg() redone using string lists.
+
+	* icqlib/strlist.c, icqlib/strlist.h:
+	General interface for string lists added.
+
+	* icqlib/tcplink.c: Absence of socklen_t type fixed.
+
+	* icqlib/icq.h.in, icqlib/callbacks.c:
+	icq_RecvMailExpress callback added.
+
+	* icqlib/Makefile.am: strlist.[ch] added.
+
+1999-10-14  Denis V. Dmitrienko  <denis@null.net>
+
+	* icq.h.in, udp.c: icq_UpdateMetaInfo* functions added.
+
+1999-10-07  Denis V. Dmitrienko  <denis@null.net>
+
+	* icq.h.in, tcp.h: Internal/external functions declarations
+	unified a little.
+
+	* kicq/Makefile.am, proxy.c, udp.c: proxy.h file removed.
+
+1999-10-06  Denis V. Dmitrienko  <denis@null.net>
+
+	* DEVEL: Added the "developers' hint guide". Please read it
+	carefully.
+
+1999-09-29  Bill Soudan  <soudan@kde.org>
+
+        Check out my spiffy new email address! :)
+
+        Renamed all tcp_link* functions to icq_TCPLink*.
+
+        Forgot to note: fixed memory leak in tcp.c (tcp packets were not
+        being deleted after use... oops :)
+
+	* chatsession.c, tcpchathandle.c, tcpfilehandle.c, tcphandle.c,
+        chatsession.h: reworked chat/file handling.  fixed chat. (it's
+        been broke since I put non-blocking connects in)
+
+        * Makefile.am: added new files
+
+        * icq.h.in: changed some notification values, added support for
+        chat sessions to icqlink
+
+        * icqlib.h, udp.h: moved a bunch of udp-only defines to udp.h
+
+	* icqpacket.c, list.c: cleanups
+
+        * tcp.c: cleanups, moved connect logic from _handle_ready_sockets
+        to icq_TCPLinkOnConnect, tcp_link->icq_TCPLink
+
+        * tcplink.c, tcplink.h: renamed tcp_link* to icq_TCPLink*.  many
+        cleanups, added icq_TCPLinkOnConnect
+
+        * stdpackets.c, stdpackets.h, tcp.h: tcp_link*->icq_TCPLink*
+
+	* udp.c: tcp port wasn't being sent properly in login packet
+
+1999-09-29  Denis V. Dmitrienko  <denis@null.net>
+
+	Show must go on! Hopefully fixed CVS problems.
+
+	* icqlib.c: Host/network/icq byteorder systemized.
+	icq_Init() cleaned up.
+
+	* acconfig.h, configure.in, icqlib.m4.in,
+	icqlib/icqbyteorder.[ch]: More optimized byteswap stuff.
+
+	* icqlib.h: LOGIN_*_TCP defines added.
+
+	* icqpacket.[ch]: icq_PacketAppend16n() added for network-ordered
+	word appending.
+
+	* queue.[ch]: ICQLINK compatibility added.
+
+	* stdpackets.c: Host/network byteorder cleanups.
+
+	* tcplink.c: TCP code SOCKS-ification. Not finished.
+
+	* udp.c: Webaware functions enabled without success even with
+	UDP v5 - need more investigations.
+
+	* udphandle.c: MailExpress message handler started.
+
+1999-07-18  Bill Soudan          <wes0472@rit.edu>
+
+	fixed tcp problems, changed icq_ContactItem structure to use
+	list.c and moved to contacts.c, removed old byte swap macros
+        in favor of new functions in icqbyteorder.c, and added better
+        log messages
+
+	* Makefile.am: added contacts.c, contacts.h
+
+	* contacts.c, contacts.h: added
+
+	* icq.h.in: moved icq_ContactItem struct to contacts.h,
+        removed old *Sok members, renamed icq_Cont* functions
+
+	* icqlib.c, icqlib.h: changed to use new byte-order functions &
+	contact list functions
+
+	* icqpacket.c: changed to use new byte-order functions
+
+	* tcp.c: added better log messages
+
+	* tcplink.c: fixed fail notification bug introduced during ICQLINK
+        changes, changed to use new byte-order functions & contact list
+        functions, added better log messages 
+
+	* udp.c: changed to use new byte-order functions &
+        contact list functions
+
+	* udphandle.c: fixed tcp port bug in icq_HandleUserOnline, changed
+        to use new byte-order & contact list functions
+
+	* util.c, util.h: removed old byte order and contact list
+        functions
+
+1999-07-16  Denis V. Dmitrienko  <denis@null.net>
+
+	Version changed to 0.2.0
+
+	* udp.c, udp.h, udphandle.c: ICQ UDP v5 implemented.
+ 	Encription for ICQ UDP v5 implemented.
+ 	icq_Packet* unified interface for UDP packets implemented.
+	Multipacket support of ICQ UDP v5 added.
+
+	* util.[ch]: Status support changed to support early unsupported
+	combined (ORed) statuses.
+
+	* Makefile.am, icqlib/Makefile.am: Remove automatically generated
+	files by "make maintainer-clean"
+
+1999-07-02  Vadim Zaliva  <lord@crocodile.org>
+
+	* icqlib/udphandle.c (icq_HandleUserOnline): using icqtohl macros
+	to convert parameters of callback (IP addresses, port #) to host
+	order.
+
+	* icqlib/icqbyteorder.h: added (per Bill suggestion) defenitions
+	of icqtohs, icqtons, ntociqs, htociqs macros.
+
+	* icqlib/tcppacket.c: some system header files included to avoid
+	compilation warnings.
+
+	* icqlib/tcplink.c: some system header files included to avoid
+	compilation warnings.
+
+	* icqlib/tcp.h: icq_TCPProcessFilePacket prototype added to avoid
+	compilation warnings.
+
+	* icqlib/tcp.c: add includes to avoid compilation warning for
+	getsockopt() and some other functions.
+
+	* configure.in: add detection of headers used on Solaris, Linux,
+	FreeBSD to detect edianness.
+
+	* icqlib/icqbyteorder.h: defenition of icqtohl, icqtonl, ntociql,
+	htociql macros.
+
+1999-07-02  Bill Soudan          <wes0472@rit.edu>
+
+	icq_SendMessage and icq_SendURL now accept a 3 choice thruSrv arg:
+        ICQ_SEND_THRUSERVER, ICQ_SEND_DIRECT, or ICQ_SEND_BESTWAY.
+        added support to icq_ContactItem structure and udphandle.c.
+
+	* icq.h: added new ICQ_SEND_* constants
+
+	* icqlib.c: added new code to support thruSrv arg to SendMessage
+	and SendURL
+
+	* util.h: added tcp_flag member to icq_ContactItem struct
+
+	* udphandle.c: added code to HandleUserOnline to update tcp_flag
+
+1999-06-30  Bill Soudan          <wes0472@rit.edu>
+
+	implemented non-blocking connects, including checking for failed
+        connects.  failed sends/other networking calls still to do.
+
+	* icq.h: renamed ICQ_NOTIFY_CONNECTFAILED to ICQ_NOTIFY_FAILED
+
+        * list.h, list.c: changed list_traverse to use va_list
+
+	* tcpprocess.c: cleanups
+
+	* tcp.c, tcplink.c, tcplink.h: implemented non-blocking connects
+c
+1999-05-03  Bill Soudan          <wes0472@rit.edu>
+
+	* tcplink.c: removed exit calls
+
+        * callbacks.c, icq.h, tcp.c, tcp.h, tcppackets.c, tcppackets.h,
+        tcpprocess.c: initial file xfer support added- untested
+
+1999-04-29  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib.h, udp.c, udp.h, udphandle.c: Unsuccessful attempt to
+	implement web presence (webaware) feature - doesn't seems to work
+	in ICQ v2.
+
+	* list.c, tcp.c, tcplink.c, tcpprocess.c: Cleanups, warning
+	removed
+
+	* Makefile.in, acinclude.m4, aclocal.m4, config.h.in, configure,
+	stamp-h.in, icqlib/Makefile.in: Removed automake/autoconf
+	generated tools from CVS - "make -f Makefile.cvs" to generate them 
+	after checkout.
+
+1999-04-17  Bill Soudan          <wes0472@rit.edu>
+
+	reworked tcp system significantly- tcp links are now kept as a
+        seperate list instead of in icq_ContactItem.  chat requests can now be
+        both sent and received successfully.
+
+	* util.c, util.h, udphandle.c: removed *_link entries from
+        icq_ContactItem, including cleaup/init code
+
+	* icqlib.c, icq.h: modified Send* functions to return DWORD
+        instead of WORD
+
+	* tcp.c: _major_ restructuring.  all tcp sockets (including 
+        listening sockets) are kept in global linked list, icq_TCPLinks.
+        accept and listen functions moved to tcplink.c.  changed return
+        values of Send* functions to DWORD.
+
+	* tcp.h: changed return values of Send* functions to DWORD.
+
+	* tcplink.c, tcplink.h: fixed bug in tcp_link_on_data_received,
+        multiple packets that come in on one recv call are now handled
+        correctly.  added tcp_link_accept and tcp_link_listen.  started
+        using mode and type structure entries.  added icq_TCPLinks list
+        and find_tcp_link function.  changed received_queue and send_queue
+        to lists.
+
+	* tcppacket.c, tcppacket.h: added tcp_packet_node_delete function
+        and changed structure to include list_node for new list routines.
+
+	* tcppackets.c, tcppackets.h: added new functions to create
+        chat packets. removed unnecessary code.  added new function to
+        create URL ack packet.
+
+	* tcpprocess.c: reworked code to use tcp_links instead of
+        icq_ContactItem entries.  modified ProcessChatPacket to negotiate
+        both sending and receiving chat requests properly.
+
+	* list.c, list.h: new list functions- replaces packetqueue
+        and handles new list of tcp_links
+
+	* packetqueue.c, packetqueue.h: removed, list.c now used for
+	queues
+
+	* Makefile.am: removed packetqueue.c, added list.c
+
+1999-04-14  Denis V. Dmitrienko  <denis@null.net>
+
+	* tcpprocess.c: icq_ContactItem parameter added to function
+	icq_TCPOnMessageReceived(). Segfault fixed on spoofed messages.
+
+	* icqlib.c, proxy.c, packetqueue.c, icqlib.h, tcp.c, tcp.h,
+	tcplink.c, udp.c, udp.h, udphandle.c, util.c, util.h, tcppacket.c,
+	tcppackets.c, tcpprocess.c, tcppackets.h: Cleanups for "strict"
+	compiling (-ansi -pedantic)
+
+	* icqlib.c, proxy.c, udp.c, udphandle.c, cyrillic.c: Switched from
+	icq_Log callback to icq_FmtLog function.
+
+	* tcp.h: Some declarations added
+
+	* tcp.c: Parameter port added to icq_TCPCreateListeningSocket()
+	function.
+
+	* icq.h: Added icq_FmtLog()
+
+	* configure: Added AC_CHECK_COMPILERS to allow --enable-debug and
+	--enable-strict configure options.
+
+1999-04-05  Bill Soudan          <wes0472@rit.edu>
+
+        icqlib will now create and listen on the chat socket when
+        necessary, and will perform negotiation for _receiving_ remote
+        chat requests only.          
+
+	* callbacks.c icq.h tcp.c tcp.h tcplink.c tcplink.h tcppacket.c       
+        tcppackets.c tcppackets.h tcpprocess.c udphandle.c util.c
+        util.h: added initial chat support
+
+1999-04-05  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib.c: Send messages and URLs to 'not in list' users fixed.
+
+1999-03-30  Bill Soudan           <wes0472@rit.edu>
+
+        tcp messages and urls completely functional!
+        unsuccessful connects not handled yet, however, plus connect
+        is currently blocking (yuck)
+
+	* util.c: cleaned up old TCPLog function
+	* udphandle.c: added tcpflag handling to UserOnline
+	* icq.h: added icq_TCPSendURL and modified icq_UserOnline to
+          handle tcpflag
+	* icqlib.c: added tcp support to SendURL
+	* icqlib.h: modified LOGIN_X2_DEF to 0x04 instead of 0x06- we're
+          ready to accept tcp packets now!  removed duplicate LOGIN_X*
+          definitions
+	* packetqueue.c tcp.c tcp.h tcplink.c tcppacket.c tcppackets.c
+	  tcppackets.h tcpprocess.c: wrapped up many tcp details-  code
+	  now handles incoming and outgoing tcp messages and urls!
+
+1999-03-30  Vadim Zaliva  <lorda@crocodile.org>
+
+	* icqlib/util.c (icq_GetCountryName): function prototype now takes
+	'unsigned short' as country code.
+	Country codes list now prorerly sorted, thus no need to sort it
+	using qsort.
+
+1999-03-29  Vadim Zaliva  <lord@crocodile.org>
+
+	* icqlib/util.c (icq_ConvertStatus2Str): this function now accepts
+	ulong as sttatus argument, since we use unsigned long for status
+	everywhere.
+	(icq_TCPXlateStatus): This function now use unsigned long as
+	'udp_status' parameter type.
+	(icq_GetCountryName): Optimized country code search.
+	(icq_TCPXlateStatus): cleanup.
+
+	* icqlib/icq.h: Change state constants to long.
+
+1999-03-27  Bill Soudan          <wes0472@rit.edu>
+
+        preliminary tcp support added and functional!
+        tcp messages will send to and from remote client when kicq
+        initiates the connection- remote clients will not try a tcp
+        connection to kicq yet
+
+	* icq.h: added extern TCP function prototypes
+        * icqlib.c: added TCP support to icq_SendMessage
+	* packetqueue.c: cleaned up, fixed bugs, finished packet_queue_dump
+	* tcp.c: added icq_TCPSendMessage and socket close/process logic
+	* tcplink.c: fixed tcp_link_connect so it really connects to
+          remote client instead of always to my local test computer O:)
+	* tcppacket.c: added code to handle null string in 
+          tcp_packet_append_string
+	* tcppackets.c,h: CreateStdPacket actually puts IP and port info
+	  in now, added CreateStdAck and CreateMessageAck
+	* udphandle.c: fixed bug in HandleUserOnline (remote_ip and
+          remote_real_ip were not evaluating correctly), added hack
+          so I can test using local network, fixed function names
+          so icqlib compiles
+	* tcpprocess.c: added code to handle received messages,
+          finished process ack function
+	* util.c: removed static from Country_Codes so regwin.cpp
+          from kicq can use it
+
+1999-03-26  Bill Soudan          <wes0472@rit.edu>
+
+	* tcp.c, tcp.h: finished select logic
+	* tcplink.c: fixed C++ comments, cleaned up
+	* tcpprocess.c: added icq_TCPProcessHello
+	* packetqueue.c: moved packet_queue_find_queue from tcp.c
+	* util.c: rewrote icq_TCPLog
+
+1999-03-25  Bill Soudan          <wes0472@rit.edu>
+
+	* tcplink.c, tcplink.h: added
+	* Makefile.am: added tcplink.c
+	* icqlib.c: added #include "util.h"
+	* tcp.c, tcp.h: moved many functions into tcplink.c
+	* tcpprocess.c: changed types to standard
+	* udphandle.c: modified HandleUserOnline & Offline for new message_link
+	* util.c: ContItem functions modified for message_link
+	* util.h: message_link added to ContactItem struct, moved types to
+          seperate file
+	* icqtypes.h: added
+	* tcppacket.h: cleaned up
+
+1999-03-24  Denis V. Dmitrienko  <denis@null.net>
+
+	* Makefile.am, Makefile.in, callbacks.c, cyrillic.c, icq.h,
+	icqlib.c, icqlib.h, packetqueue.c, packetqueue.h, proxy.c,
+	proxy.h, tcp.c, tcp.h, tcppacket.c, tcppacket.h, tcppackets.c,
+	tcppackets.h, tcpprocess.c, udp.c, udp.h, udphandle.c, util.c,
+	util.h:
+ 	Underscored files with TCP stuff renamed.
+	TCP stuff cleaned up
+	Function names changed to corresponding names.
+	icqlib.c splitted to many small files by subject.
+	C++ comments changed to ANSI C comments.
+
+	* Makefile.cvs, Makefile.in, acconfig.h, acinclude.m4,
+	acinclude.m4.in, aclocal.m4, config.guess, config.h.in,
+	config.sub, configure, configure.in, install-sh, libtool.m4.in,
+	ltconfig, ltmain.sh, mkinstalldirs, stamp-h.in: Updated
+	autoconf/automake/libtool configuration tools
+
+1999-03-22  Bill Soudan          <wes0472@rit.edu>
+
+	* Makefile.am: added new files
+
+	* icqlib.h, icqlib.c: added additional struct entries in
+          icq_ContactItem for tcp code, added code in
+	  icq_HandleUserOnline and icq_HandleUserOffline for setup/cleanup
+
+	* added many files for tcp implementation:
+	  icq_tcp.c icq_tcp.h icq_tcp_packets.c icq_tcp_packets.h
+          icq_tcp_process.c packet_queue.c packet_queue.h
+          tcp_packet.c tcp_packet.h util.c
+
+1999-03-05  Denis V. Dmitrienko  <denis@null.net>
+
+	* icqlib.h, icqlib.c, icq.h: Some cosmetic changes...
+
+Version 0.1.3 (08 Dec 1998)
+  SOCKS5 proxy support.
+  icq_RecvMessage now returns sending message time not receiving.
+  Visible list support changed.
+  Handle icq99a statuses.
+
+Version 0.1.2 (05 Oct 1998)
+  Search by UIN added.
+  SunOS port (Thanks to Joe Avila <joe@avilate.com>).
+
+Version 0.1.1 (21 Sep 1998)
+  Renamed from libicq to icqlib - there is another libicq on the net.
+  Little changes to allow UI call select() itself.
+
+Version 0.1.0 (18 Sep 1998)
+  Initial public version.

@@ -1,0 +1,85 @@
+icqlib v1.0.0
+Denis V. Dmitrienko <denis@null.net>
+Bill Soudan <soudan@kde.org>
+
+DESCRIPTION
+-----------
+icqlib is the most feature complete, open source, library implementation
+of Mirabilis' ICQ protocol available on the Internet. icqlib currently
+supports approximately 90% of the ICQ UDP v5 protocol and 80% of the
+ICQ TCP v2 protocol, including new UIN registration, chat, and file
+transfer.
+
+Features:
+* written in C for portability - compiles on most Unices
+* supports multiple simultaneous connections to ICQ servers - more
+  than one UIN can log in and receive events
+* SOCKS5 firewall support for both UDP and TCP protocols
+* event driven, non-blocking interface
+* supports Russian language - automatically performs conversion from
+  Windows 1251 encoding to unix koi8 encoding
+
+DOWNLOAD
+--------
+Home page:
+      http://kicq.sourceforge.net/icqlib.shtml
+Direct download:
+      http://download.sourceforge.net/icqlib/icqlib-1.0.0.tar.gz
+      ftp://ftp.kde.org/pub/kde/unstable/apps/network/icqlib-1.0.0.tar.gz
+
+INSTALL
+-------
+This is very basic:
+      ./configure
+      make
+      su -c "make install"
+
+If you want to install in other place:
+      ./configure --prefix=/place/to/install/icqlib
+      make
+      make install
+
+You should have permissions to write in /place/to/install/icqlib or should
+install it from root:
+      su -c "make install"
+
+For more details read INSTALL file.
+
+BUGS
+----
+If you find one that isn't listed, submit your bugreport here:
+http://sourceforge.net/bugs/?group_id=384
+And if you have a fix for it, so much the better! Submit your patch
+here:
+http://sourceforge.net/patch/?group_id=384
+
+PARTICIPATION
+-------------
+You can participate in icqlib project in any way here:
+http://sourceforge.net/projects/icqlib
+Send your feature requests here:
+http://sourceforge.net/support/?group_id=384
+
+Please try to avoid abusing developers with direct email messages,
+especially if your question could be already answered somewhere in
+the project forums or mailing lists. Please use provided above web
+forms to submit your reports and requests. And of course, any kind of
+contributions and propositions are very appreciated and welcomed, and
+could be sent directly. Thank you for your understanding and patience.
+
+THANKS
+------
+To
+- Matthew Smith, Magnus Ihse, Jeremy Wise, Henrik Isaksson and other
+  people from ICQDev <icq-devel@lists.realminfo.com> and
+  micq <micq@phantom.iquest.net> mailing lists for their contribution
+  in icq protocol research
+- K Desktop Environment developers
+- icqlib and kicq users
+
+And finally
+- Linus Torvalds, Alan Cox and other Linux programmers for great OS
+
+--
+Enjoy!
+icqlib development team.

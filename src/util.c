@@ -828,7 +828,7 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	return button;
 }
 
-static GtkTooltips *tips = NULL;
+static GtkTooltips *button_tips = NULL;
 GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short dispstyle)
 {
 	GtkWidget *button;
@@ -838,7 +838,7 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 	GtkWidget *pixmap;
 	GtkWidget *label;
 	
-	if (!tips) tips = gtk_tooltips_new();
+	if (!button_tips) button_tips = gtk_tooltips_new();
 	button = gtk_button_new();
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
@@ -869,7 +869,7 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 		gtk_box_pack_end(GTK_BOX(button_box_2), label, FALSE, FALSE, 0);
 	}
 
-	gtk_tooltips_set_tip(tips, button, text, "Gaim");	
+	gtk_tooltips_set_tip(button_tips, button, text, "Gaim");	
 	gtk_widget_show(button);
 	return button;
 }

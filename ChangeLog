@@ -2,7 +2,10 @@ GAIM: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.11.0:
 	* Multiple connections
-	* Protocol plugins (IRC (plugins/irc.c), Yahoo (plugins/yay))
+	* Protocol plugins:
+		IRC (plugins/irc.c)
+		Yahoo (plugins/yay)
+		ICQ (plugins/icq)
 	* Logs now stored to ~/.gaim/logs rather than ~/.gaim/SN/
 	* User configurable sounds
 	* Scroll bar now functions properly in chat room user lists

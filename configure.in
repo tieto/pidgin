@@ -197,6 +197,7 @@ AC_OUTPUT([Makefile
            sounds/Makefile
 	   plugins/Makefile
 	   plugins/yay/Makefile
+	   plugins/icq/Makefile
            pixmaps/Makefile
            libfaim/Makefile
 	   po/Makefile.in
