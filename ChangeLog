@@ -34,6 +34,9 @@ version 2.0.0
 	  with the same name (Andrew Hart)
 	* Improved buddy list searching with CTRL+F
 	* Correctly show the time when incoming Gadu-Gadu messages were sent
+	* Limit animated buddy icon frame rates to 10 frames per second
+	  (Nathan Conrad)
+
 
 	Preference changes:
 	* Removed "Dim idle buddies" buddy list preference, default to "Yes."
