@@ -1676,7 +1676,6 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 					     NULL, _("Sound"), _("Enable sounds"),
 					     _("Sound"), speaker_p, GTK_SIGNAL_FUNC(set_option),
 					     &c->makesound);
-	c->makesound = 0;
 	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(speaker), TRUE);
 
 	/* use a slicker look if the user wants to */

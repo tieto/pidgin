@@ -96,7 +96,7 @@ static int proxy_connect_http(char *host, unsigned short port, char *proxyhost, 
 		return -1;
 	}
 
-	snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\n\r\n\r", host, port);
+	snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\r\n\r\n", host, port);
 
 	if (send(fd, cmd, strlen(cmd), 0) < 0) {
 		close(fd);
@@ -108,6 +108,8 @@ static int proxy_connect_http(char *host, unsigned short port, char *proxyhost, 
 		else if (inputline[pos-1] != '\r')
 			nlc = 0;
 	}
+
+	debug_printf("Proxy says: %s\n", inputline);
 
 	if ((memcmp(HTTP_GOODSTRING, inputline, strlen(HTTP_GOODSTRING)) == 0) ||
 	     (memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2)) == 0)) {
