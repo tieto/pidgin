@@ -86,6 +86,14 @@ install-exec-local:
 		cd ..; \
 	done
 
+# Evil Hack (TM)
+uninstall-local:
+	@for dir in $(perl_dirs); do \
+		cd $$dir && \
+		`$(MAKE) uninstall | grep unlink | sed -e 's#/usr#${prefix}#' -e 's#unlink#rm -f#'` && \
+		cd ..; \
+	done
+
 clean-generic:
 	@for dir in $(perl_dirs); do \
 		cd $$dir; \
@@ -101,6 +109,16 @@ distclean-generic:
 		rm -f Makefile; \
 		cd ..; \
 	done
+
+	@rm -f Makefile
+	@rm -f common/const-c.inc common/const-xs.inc
+
+	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
+		for f in ${common_sources}; do \
+			${LN_S} -f ../${srcdir}/$$f $$f; \
+		done; \
+	fi
+
 
 AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \
