@@ -296,6 +296,8 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		dialog = (GaimGtkPounceDialog *)data;
 
 		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), buddy->name);
+		dialog->account = buddy->account;
+		gaim_gtk_account_option_menu_set_selected(dialog->account_menu, buddy->account);
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
@@ -319,6 +321,8 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 				dialog = (GaimGtkPounceDialog *)data;
 
 				gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), username);
+				dialog->account = account;
+				gaim_gtk_account_option_menu_set_selected(dialog->account_menu, account);
 			}
 		}
 

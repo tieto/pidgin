@@ -661,6 +661,33 @@ account_menu_destroyed_cb(GtkWidget *optmenu, GdkEvent *event,
 	return FALSE;
 }
 
+void
+gaim_gtk_account_option_menu_set_selected(GtkWidget *optmenu, GaimAccount *account)
+{
+	GtkWidget *menu;
+	GtkWidget *item;
+	gboolean show_all;
+	GaimAccount *curaccount;
+	GaimFilterAccountFunc filter_func;
+
+	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
+	item = gtk_menu_get_active(GTK_MENU(menu));
+	curaccount = g_object_get_data(G_OBJECT(item), "account");
+
+	if (account == curaccount)
+		return;
+
+	show_all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(optmenu),
+												 "show_all"));
+
+	filter_func = g_object_get_data(G_OBJECT(optmenu),
+										   "filter_func");
+
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
+
+	create_account_menu(optmenu, account, filter_func, show_all);
+}
+
 GtkWidget *
 gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 								 gboolean show_all, GCallback cb,

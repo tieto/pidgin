@@ -222,6 +222,15 @@ GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 GaimAccount *gaim_gtk_account_option_menu_get_selected(GtkWidget *optmenu);
 
 /**
+ * Sets the currently selected account for an account drop down box.
+ *
+ * @param optmenu The GtkOptionMenu created by
+ *        gaim_gtk_account_option_menu_new.
+ * @param account The GaimAccount to select.
+ */
+void gaim_gtk_account_option_menu_set_selected(GtkWidget *optmenu, GaimAccount *account);
+
+/**
  * Check if the given path is a directory or not.  If it is, then modify
  * the given GtkFileSelection dialog so that it displays the given path.
  * If the given path is not a directory, then do nothing.
