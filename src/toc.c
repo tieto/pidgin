@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1155 $"
+#define REVISION "gaim:$Revision: 1156 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -344,11 +344,19 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 			debug_printf("got SIGN_ON but not PAUSE!\n");
 		else {
 			tdt->state = STATE_ONLINE;
-			do_error_dialog(_("TOC has come back from its pause. You may now send"
-					" messages again."), _("TOC Resume"));
+			g_snprintf(snd, sizeof snd, "toc_signon %s %d %s %s %s \"%s\"",
+					AUTH_HOST, AUTH_PORT, normalize(gc->username),
+					roast_password(gc->password), LANGUAGE, REVISION);
+			if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
+				hide_login_progress(gc, _("Disconnected."));
+				signoff(gc);
+				return;
+			}
 			do_import(0, gc);
 			g_snprintf(snd, sizeof snd, "toc_init_done");
 			sflap_send(gc, snd, -1, TYPE_DATA);
+			do_error_dialog(_("TOC has come back from its pause. You may now send"
+					" messages again."), _("TOC Resume"));
 		}
 	} else if (!strcasecmp(c, "CONFIG")) {
 		c = strtok(NULL, ":");
