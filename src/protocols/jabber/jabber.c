@@ -2311,7 +2311,7 @@ static void jabber_login(struct aim_user *user)
 {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
-	char *loginname = create_valid_jid(user->username, DEFAULT_SERVER, "GAIM");
+	char *loginname = create_valid_jid(user->username, DEFAULT_SERVER, "Gaim");
 
 	jd->buddies = g_hash_table_new(g_str_hash, g_str_equal);
 	jd->chats = NULL;	/* we have no chats yet */
@@ -4116,7 +4116,7 @@ void jabber_register_user(struct aim_user *au)
 {
 	struct gaim_connection *gc = new_gaim_conn(au);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
-	char *loginname = create_valid_jid(au->username, DEFAULT_SERVER, "GAIM");
+	char *loginname = create_valid_jid(au->username, DEFAULT_SERVER, "Gaim");
 
 	/*
 	 * These do nothing during registration
