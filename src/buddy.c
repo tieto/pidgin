@@ -1254,7 +1254,8 @@ static void info_callback(GtkWidget *widget, GtkTree *tree)
         }
 	if (!b->name)
 		return;
-        serv_get_info(b->connlist->data, b->name);
+	if (b->connlist)
+		serv_get_info(b->connlist->data, b->name);
 }
 
 
