@@ -28,16 +28,16 @@ Install LIBs, DLLs and headers used by GAIM
   atk-1.0.3-20020821.zip            
   atk-dev-1.0.3-20020821.zip        
   gettext-dev-0.10.40-20020904.zip 
-  glib-2.0.7-20021201.zip
-  glib-dev-2.0.7-20021201.zip
-  gtk+-2.0.9-20021201.zip
-  gtk+-dev-2.0.9-20021201.zip
+  glib-2.0.6-20020802.zip
+  glib-dev-2.0.6-20020802.zip
+  gtk+-2.0.6-20020921.zip
+  gtk+-dev-2.0.6-20020921.zip
   libiconv-1.7-w32.bin.zip
   libintl-0.10.40-tml-20020904.zip
   libjpeg-6b-bin.zip
   libpng-1.2.4-1-bin.zip
-  pango-1.0.5-20021201.zip
-  pango-dev-1.0.5-20021201.zip
+  pango-1.0.4-20020921.zip
+  pango-dev-1.0.4-20020921.zip
   tiff-3.5.7-bin.zip
   zlib-1.1.4-bin.zip
 
@@ -45,7 +45,7 @@ Install LIBs, DLLs and headers used by GAIM
   executable permissions (e.g. "chmod 755 iconv.dll"):
 
   $ cd ~/win32-dev/gtk_2_0/zips
-  $ unzip -d .. *.zip
+  $ unzip -d .. "*.zip"
   $ cd ..
   $ cp lib/libintl-1.dll ./bin
   $ cd libiconv-1.7-w32.bin
@@ -79,10 +79,10 @@ Install LIBs, DLLs and headers used by GAIM
   Download the dev package (aspell-15.tar.gz) from http://gaim.sf.net/win32,
   and untar it under ~/win32-dev.
 
-  Gtkspell 2.0.2
+  Gtkspell 2.0.3
   --------------
 
-  Download the dev package (gtkspell-2.0.2-20021212.tar.gz) from 
+  Download the dev package (gtkspell-2.0.3-20021223.tar.gz) from 
   http://gaim.sf.net/win32, and untar it under ~/win32-dev. 
 
 Build Gaim
