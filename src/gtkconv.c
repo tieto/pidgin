@@ -679,6 +679,80 @@ do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 }
 
 static void
+invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
+				GtkSelectionData *sd, guint inf, guint t, gpointer data)
+{
+	InviteBuddyInfo *info = (InviteBuddyInfo *)data;
+	const char *convprotocol;
+
+	convprotocol = gaim_account_get_protocol_id(gaim_conversation_get_account(info->conv));
+
+	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE))
+	{
+		GaimBlistNode *node = NULL;
+		GaimBuddy *buddy;
+
+		memcpy(&node, sd->data, sizeof(node));
+
+		if (GAIM_BLIST_NODE_IS_CONTACT(node))
+			buddy = gaim_contact_get_priority_buddy((GaimContact *)node);
+		else if (GAIM_BLIST_NODE_IS_BUDDY(node))
+			buddy = (GaimBuddy *)node;
+		else
+			return;
+
+		if (strcmp(convprotocol, gaim_account_get_protocol_id(buddy->account)))
+		{
+			gaim_notify_error(NULL, NULL,
+							  _("That buddy is not on the same protocol as this "
+								"chat"), NULL);
+		}
+		else
+			gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(info->entry)->entry), buddy->name);
+
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+	}
+	else if (sd->target == gdk_atom_intern("application/x-im-contact", FALSE))
+	{
+		char *protocol = NULL;
+		char *username = NULL;
+		GaimAccount *account;
+
+		if (gaim_gtk_parse_x_im_contact(sd->data, FALSE, &account,
+										&protocol, &username, NULL))
+		{
+			if (account == NULL)
+			{
+				gaim_notify_error(NULL, NULL,
+					_("You are not currently signed on with an account that "
+					  "can invite that buddy."), NULL);
+			}
+			else if (strcmp(convprotocol, gaim_account_get_protocol_id(account)))
+			{
+				gaim_notify_error(NULL, NULL,
+								  _("That buddy is not on the same protocol as this "
+									"chat"), NULL);
+			}
+			else
+			{
+				gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(info->entry)->entry), username);
+			}
+		}
+
+		if (username != NULL) g_free(username);
+		if (protocol != NULL) g_free(protocol);
+
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+	}
+}
+
+static const GtkTargetEntry dnd_targets[] =
+{
+	{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, 0},
+	{"application/x-im-contact", 0, 1}
+};
+
+static void
 invite_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	InviteBuddyInfo *info = NULL;
@@ -714,6 +788,8 @@ invite_cb(GtkWidget *widget, GaimConversation *conv)
 		gtk_container_set_border_width(GTK_CONTAINER(invite_dialog), 6);
 		gtk_window_set_resizable(GTK_WINDOW(invite_dialog), FALSE);
 		gtk_dialog_set_has_separator(GTK_DIALOG(invite_dialog), FALSE);
+
+		info->window = GTK_WIDGET(invite_dialog);
 
 		/* Setup the outside spacing. */
 		vbox = GTK_DIALOG(invite_dialog)->vbox;
@@ -788,6 +864,25 @@ invite_cb(GtkWidget *widget, GaimConversation *conv)
 		/* Connect the signals. */
 		g_signal_connect(G_OBJECT(invite_dialog), "response",
 						 G_CALLBACK(do_invite), info);
+		/* Setup drag-and-drop */
+		gtk_drag_dest_set(info->window,
+						  GTK_DEST_DEFAULT_MOTION |
+						  GTK_DEST_DEFAULT_DROP,
+						  dnd_targets,
+						  sizeof(dnd_targets) / sizeof(GtkTargetEntry),
+						  GDK_ACTION_COPY);
+		gtk_drag_dest_set(info->entry,
+						  GTK_DEST_DEFAULT_MOTION |
+						  GTK_DEST_DEFAULT_DROP,
+						  dnd_targets,
+						  sizeof(dnd_targets) / sizeof(GtkTargetEntry),
+						  GDK_ACTION_COPY);
+
+		g_signal_connect(G_OBJECT(info->window), "drag_data_received",
+						 G_CALLBACK(invite_dnd_recv), info);
+		g_signal_connect(G_OBJECT(info->entry), "drag_data_received",
+						 G_CALLBACK(invite_dnd_recv), info);
+
 	}
 
 	gtk_widget_show_all(invite_dialog);
@@ -2598,7 +2693,7 @@ gray_stuff_out(GaimConversation *conv)
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gc      = gaim_conversation_get_gc(conv);
-	account = gaim_connection_get_account(gc);
+	account = gaim_conversation_get_account(conv);
 
 	if (gc != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);

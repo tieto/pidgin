@@ -2900,7 +2900,7 @@ gaim_conversations_init(void)
 										GAIM_SUBTYPE_CONVERSATION));
 
 	gaim_signal_register(handle, "conversation-updated",
-						 gaim_marshal_VOID__POINTER_UINT, NULL, 1,
+						 gaim_marshal_VOID__POINTER_UINT, NULL, 2,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new(GAIM_TYPE_UINT));
@@ -3003,8 +3003,7 @@ gaim_conversations_init(void)
 void
 gaim_conversations_uninit(void)
 {
-	
-	gaim_signals_unregister_by_instance(gaim_conversations_get_handle());
-	while (conversations) 
+	while (conversations)
 		gaim_conversation_destroy((GaimConversation*)conversations->data);
+	gaim_signals_unregister_by_instance(gaim_conversations_get_handle());
 }
