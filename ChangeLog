@@ -5,6 +5,7 @@ version 0.69
 	* Updated MSN support to the MSN Protocol version 9.
 	* Yahoo now shows people using the java chat client (Tim Ringenbach)
 	* Yahoo chat and conference (Tim Rigenbach)
+	* Added support for gettext 0.12.x.
 	* Korean translation updated (Kyung-uk Son)
 	* Swedish translation updated (Tore Lundqvist (luntor))
 
