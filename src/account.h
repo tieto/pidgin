@@ -35,9 +35,9 @@ typedef struct _GaimAccount      GaimAccount;
 typedef gboolean (*GaimFilterAccountFunc)(GaimAccount *account);
 
 #include "connection.h"
+#include "log.h"
 #include "proxy.h"
 #include "prpl.h"
-#include "log.h"
 
 struct _GaimAccountUiOps
 {

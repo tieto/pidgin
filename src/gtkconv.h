@@ -25,9 +25,9 @@
 #ifndef _GAIM_GTKCONVERSATION_H_
 #define _GAIM_GTKCONVERSATION_H_
 
-#include "conversation.h"
-
 #include "gtkinternal.h"
+
+#include "conversation.h"
 
 enum {
 	CHAT_USERS_ICON_COLUMN,

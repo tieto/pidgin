@@ -33,6 +33,7 @@
 
 #include "account.h"
 #include "conversation.h"
+#include "prpl.h"
 
 #ifdef __cplusplus
 extern "C" {

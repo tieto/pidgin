@@ -25,10 +25,10 @@
 #ifndef _GAIM_GTKDIALOGS_H_
 #define _GAIM_GTKDIALOGS_H_
 
+#include "gtkinternal.h"
+
 #include "account.h"
 #include "conversation.h"
-
-#include "gtkinternal.h"
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
 void gaim_gtkdialogs_im();

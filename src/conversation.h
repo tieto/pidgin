@@ -133,8 +133,8 @@ typedef enum
 } GaimConvChatBuddyFlags;
 
 #include "account.h"
-#include "log.h"
 #include "buddyicon.h"
+#include "log.h"
 #include "server.h"
 
 /**
