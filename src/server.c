@@ -83,7 +83,7 @@ static gint check_idle()
 
         gettimeofday(&lag_tv, NULL);
 	if (general_options & OPT_GEN_SHOW_LAGMETER)
-		serv_send_im(current_user->username, LAGOMETER_STR, 0);
+		serv_send_im(current_user->username, LAGOMETER_STR, 1);
 
 	if (report_idle != IDLE_GAIM)
                 return TRUE;
