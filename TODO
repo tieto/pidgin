@@ -64,18 +64,3 @@ Then, of course, are all the Bugs that need to be fixed
 and the Feature Requests. SourceForge should really allow users
 to vote on feature requests and bugs.....
 	http://sourceforge.net/tracker/?atid=350235&group_id=235&func=browse
-
-----------
-	This is how buddy lists should work. This needs to be added to struct
-	prpl:
-		char *(*normalize)(char *)
-	This is mostly for Jabber/MSN. E.g. for Jabber, passing "warmenhoven"
-	gets you "warmenhoven@jabber.org", passing "warmenhoven@jabber.org/GAIM"
-	gets you "warmenhoven@jabber.org". For AIM, "EWarmenhoven" returns
-	"ewarmenhoven" and "Rob Flynn" returns "robflynn" (i.e. the names are
-	normalized). Then finding buddies (in your buddy list and such) should
-	work based off of that. Adding buddies similarly, you get the real name
-	before you complete the adding process. Returning NULL will be for an
-	invalid name (such as a non-numeric name in ICQ).  It will also be handy
-	in IRC for removing the @ and + from the front of ops and those with +V
-	status.

@@ -1041,6 +1041,7 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 	struct buddy *b;
 	struct group *g;
 	struct group_show *gs = find_group_show(group);
+	char *good;
 
 	if ((b = find_buddy(gc, buddy)) != NULL)
                 return b;
@@ -1059,8 +1060,13 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 	b->gc = gc;
 	b->present = 0;
 
-	g_snprintf(b->name, sizeof(b->name), "%s", buddy);
-	g_snprintf(b->show, sizeof(b->show), "%s", show ? (show[0] ? show : buddy) : buddy);
+	if (gc->prpl->normalize)
+		good = (*gc->prpl->normalize)(buddy);
+	else
+		good = buddy;
+
+	g_snprintf(b->name, sizeof(b->name), "%s", good);
+	g_snprintf(b->show, sizeof(b->show), "%s", show ? (show[0] ? show : good) : good);
 		
         g->members = g_slist_append(g->members, b);
 
@@ -1348,11 +1354,15 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 	struct buddy *b;
 	GSList *grp;
 	GSList *mem;
-        char *whoname = g_malloc(strlen(who) + 1);
+	char *whoname;
+	char *(*norm)(const char *);
 
-	strcpy(whoname, normalize(who));
-	
 	if (gc) {
+		if (gc->prpl->normalize)
+			norm = gc->prpl->normalize;
+		else
+			norm = normalize;
+		whoname = g_strdup((*norm)(who));
 		grp = gc->groups;
 		while(grp) {
 			g = (struct group *)grp->data;
@@ -1360,7 +1370,7 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 			mem = g->members;
 			while(mem) {
 				b = (struct buddy *)mem->data;
-				if (!strcasecmp(normalize(b->name), whoname)) {
+				if (!strcmp((*norm)(b->name), whoname)) {
 					g_free(whoname);
 					return g;
 				}
@@ -1375,6 +1385,11 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 		struct gaim_connection *z;
 		while (c) {
 			z = (struct gaim_connection *)c->data;
+			if (z->prpl->normalize)
+				norm = z->prpl->normalize;
+			else
+				norm = normalize;
+			whoname = g_strdup((*norm)(who));
 			grp = z->groups;
 			while(grp) {
 				g = (struct group *)grp->data;
@@ -1382,7 +1397,7 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 				mem = g->members;
 				while(mem) {
 					b = (struct buddy *)mem->data;
-					if (!strcasecmp(normalize(b->name), whoname)) {
+					if (!strcmp((*norm)(b->name), whoname)) {
 						g_free(whoname);
 						return g;
 					}
@@ -1391,8 +1406,8 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 				grp = g_slist_next(grp);
 			}
 			c = c->next;
+			g_free(whoname);
 		}
-		g_free(whoname);
 		return NULL;
 	}
 }
@@ -1406,10 +1421,15 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 	GSList *c;
 	struct gaim_connection *z;
 	GSList *mem;
-        char *whoname = g_malloc(strlen(who) + 1);
+	char *whoname;
+	char *(*norm)(const char *);
 
-	strcpy(whoname, normalize(who));
 	if (gc) {
+		if (gc->prpl->normalize)
+			norm = gc->prpl->normalize;
+		else
+			norm = normalize;
+		whoname = g_strdup((*norm)(who));
 		grp = gc->groups;
 		while(grp) {
 			g = (struct group *)grp->data;
@@ -1417,7 +1437,7 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 			mem = g->members;
 			while(mem) {
 				b = (struct buddy *)mem->data;
-				if (!strcasecmp(normalize(b->name), whoname)) {
+				if (!strcmp((*norm)(b->name), whoname)) {
 					g_free(whoname);
 					return b;
 				}
@@ -1431,6 +1451,11 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 		c = connections;
 		while (c) {
 			z = (struct gaim_connection *)c->data;
+			if (z->prpl->normalize)
+				norm = z->prpl->normalize;
+			else
+				norm = normalize;
+			whoname = g_strdup((*norm)(who));
 			grp = z->groups;
 			while(grp) {
 				g = (struct group *)grp->data;
@@ -1438,7 +1463,7 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 				mem = g->members;
 				while(mem) {
 					b = (struct buddy *)mem->data;
-					if (!strcasecmp(normalize(b->name), whoname)) {
+					if (!strcmp((*norm)(b->name), whoname)) {
 						g_free(whoname);
 						return b;
 					}
@@ -1447,8 +1472,8 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 				grp = g_slist_next(grp);
 			}
 			c = c->next;
+			g_free(whoname);
 		}
-		g_free(whoname);
 		return NULL;
 	}
 }

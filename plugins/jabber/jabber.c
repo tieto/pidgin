@@ -1354,6 +1354,35 @@ static void jabber_do_new_user()
 	reginpa = gdk_input_add(jab_getfd(regjconn), GDK_INPUT_READ, regjcall, NULL);
 }
 
+static char *jabber_normalize(const char *s)
+{
+	static char buf[BUF_LEN];
+	char *t, *u;
+	int x = 0;
+
+	g_return_val_if_fail((s != NULL), NULL);
+
+	u = t = g_strdup(s);
+
+	g_strdown(t);
+
+	while (*t && (x < BUF_LEN - 1)) {
+		if (*t != ' ')
+			buf[x++] = *t;
+		t++;
+	}
+	buf[x] = '\0';
+	g_free(u);
+
+	if (!strchr(buf, '@')) {
+		strcat(buf, "@jabber.org"); /* this isn't always right, but eh */
+	} else if ((u = strchr(strchr(buf, '@'), '/')) != NULL) {
+		*u = '\0';
+	}
+
+	return buf;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void Jabber_init(struct prpl *ret)
@@ -1394,6 +1423,7 @@ void Jabber_init(struct prpl *ret)
 	ret->chat_whisper = NULL;
 	ret->chat_send = jabber_chat_send;
 	ret->keepalive = NULL;
+	ret->normalize = jabber_normalize;
 
 	my_protocol = ret;
 }
