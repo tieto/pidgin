@@ -3398,6 +3398,7 @@ static int gaim_icqsimpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tmp = buf;
 		buf = g_strconcat(tmp, "<b>Nick:</b> ", info->nick, "<br>\n", NULL);
 		g_free(tmp);
+		serv_got_alias(gc, who, info->nick);
 	}
 	if (info->first) {
 		tmp = buf;
@@ -3461,6 +3462,7 @@ static int gaim_icqallinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tmp = buf;
 		buf = g_strconcat(tmp, "<b>Nick:</b> ", info->nick, "<br>\n", NULL);
 		g_free(tmp);
+		serv_got_alias(gc, who, info->nick);
 	}
 	if (info->first) {
 		tmp = buf;
