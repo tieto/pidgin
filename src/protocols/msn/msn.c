@@ -538,6 +538,10 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 	int cont = 1;
 	int len;
 
+	/* This is really stupid and I hate to put this here. */
+	if (ms->fd != source)
+		ms->fd = source;
+
 	len = read(ms->fd, buf, sizeof(buf));
 
 	if (len <= 0) {
