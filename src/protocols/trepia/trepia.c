@@ -35,6 +35,7 @@
 /* XXX */
 #include "gaim.h"
 #include "multi.h"
+#include "ui.h" /* XXX for open_url */
 
 #ifndef _WIN32
 # include <sys/socket.h>
@@ -485,6 +486,15 @@ trepia_tooltip_text(struct buddy *b)
 		text = tmp2;
 	}
 
+	if ((value = trepia_profile_get_homepage(profile)) != NULL) {
+		tmp = g_strdup_printf("<b>Homepage:</b> %s\n", value);
+
+		tmp2 = g_strconcat(text, tmp, NULL);
+		g_free(tmp);
+		g_free(text);
+		text = tmp2;
+	}
+
 	if ((value = trepia_profile_get_profile(profile)) != NULL) {
 		char *escaped_val = g_markup_escape_text(value, -1);
 
@@ -514,6 +524,43 @@ trepia_actions(GaimConnection *gc)
 	pam->callback = set_profile;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
+
+	return m;
+}
+
+static void
+trepia_visit_homepage(GaimConnection *gc, const char *who)
+{
+	TrepiaProfile *profile;
+	struct buddy *b;
+	const char *value;
+
+	b = gaim_find_buddy(gaim_connection_get_account(gc), who);
+	profile = b->proto_data;
+
+	if ((value = trepia_profile_get_homepage(profile)) != NULL)
+		open_url(NULL, value);
+}
+
+static GList *
+trepia_buddy_menu(GaimConnection *gc, const char *who)
+{
+	TrepiaProfile *profile;
+	struct buddy *b;
+	const char *value = NULL;
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
+
+	b = gaim_find_buddy(gaim_connection_get_account(gc), who);
+	profile = b->proto_data;
+
+	if ((value = trepia_profile_get_homepage(profile)) != NULL) {
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Visit Homepage");
+		pbm->callback = trepia_visit_homepage;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
+	}
 
 	return m;
 }
@@ -574,7 +621,12 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	buffer = g_string_free(data->buffer, FALSE);
 	data->buffer = NULL;
 
-	g_hash_table_insert(data->keys, data->tag, buffer);
+	if (buffer != NULL) {
+		if (*buffer != '\0')
+			g_hash_table_insert(data->keys, data->tag, buffer);
+		else
+			free(buffer);
+	}
 
 	data->tag = NULL;
 }
@@ -1242,7 +1294,7 @@ static GaimPluginProtocolInfo prpl_info =
 	trepia_tooltip_text,
 	NULL,
 	trepia_actions,
-	NULL,
+	trepia_buddy_menu,
 	NULL,
 	trepia_login,
 	trepia_close,
