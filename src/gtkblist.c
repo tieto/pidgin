@@ -3642,9 +3642,10 @@ static void gaim_gtk_blist_remove(GaimBuddyList *list, GaimBlistNode *node)
 	 * valgrind found several reasons why it's good. If this causes problems
 	 * comment it out again. Stu */
 	/* Of course it still causes problems - this breaks dragging buddies into
-	 * contacts, the dragged buddy mysteriously 'disappears'. Stu.
+	 * contacts, the dragged buddy mysteriously 'disappears'. Stu. */
+	/* I think it's fixed now. Stu. */
 	g_free(node->ui_data);
-	node->ui_data = NULL; */
+	node->ui_data = NULL;
 }
 
 static gboolean do_selection_changed(GaimBlistNode *new_selection)
@@ -3684,7 +3685,7 @@ static gboolean insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIte
 	struct _gaim_gtk_blist_node *gtknode = node->ui_data;
 	GtkTreePath *newpath;
 
-	if(!gtknode || !iter)
+	if(!iter)
 		return FALSE;
 
 	if(node->parent && !get_iter_from_node(node->parent, &parent_iter))
@@ -3699,7 +3700,17 @@ static gboolean insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIte
 		*iter = sort_method_none(node, list, parent_iter, curptr);
 	}
 
-	gtk_tree_row_reference_free(gtknode->row);
+	if(gtknode != NULL) {
+		gtk_tree_row_reference_free(gtknode->row);
+	} else {
+		gaim_gtk_blist_new_node(node);
+		gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
+		/* If the node is a contact, and gtknode was NULL, it's because it was dragged.
+		 * It *must* have been expanded in order for it to be dragged. */
+		if(GAIM_BLIST_NODE_IS_CONTACT(node))
+			gtknode->contact_expanded = TRUE;
+	}
+
 	newpath = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel),
 			iter);
 	gtknode->row =
@@ -3859,7 +3870,6 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 	/* First things first, update the group */
 	gaim_gtk_blist_update_group(list, node->parent);
 
-	gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
 	contact = (GaimContact*)node;
 	buddy = gaim_contact_get_priority_buddy(contact);
 
@@ -3872,6 +3882,8 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 
 		if(!insert_node(list, node, &iter))
 			return;
+
+		gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
 
 		if(gtknode->contact_expanded) {
 			GdkPixbuf *status;
