@@ -222,7 +222,7 @@ join_chat()
 
 	data->window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
 											   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-											   GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+											   "Join", GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width(GTK_CONTAINER(data->window), 6);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
