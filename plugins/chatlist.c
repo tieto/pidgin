@@ -404,9 +404,9 @@ G_MODULE_EXPORT void gaim_plugin_remove()
 struct gaim_plugin_description desc; 
 struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("Chat List");
+	desc.name = g_strdup(_("Chat List"));
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Allows you to add chat rooms to your buddy list.");
+	desc.description = g_strdup(_("Allows you to add chat rooms to your buddy list."));
 	desc.authors = g_strdup("Eric Warmenhoven &lt;eric@warmenhoven.org>");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
@@ -414,11 +414,11 @@ struct gaim_plugin_description *gaim_plugin_desc() {
 
 G_MODULE_EXPORT char *name()
 {
-	return "Chat List";
+	return _("Chat List");
 }
 
 G_MODULE_EXPORT char *description()
 {
-	return "Allows you to add chat rooms to your buddy list. Click the configure button to choose"
-		" which rooms.";
+	return _("Allows you to add chat rooms to your buddy list. Click the configure button to choose"
+		" which rooms.");
 }

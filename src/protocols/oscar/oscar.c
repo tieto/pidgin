@@ -3660,7 +3660,7 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 	if (sn) {
-		char *dialog_msg = g_strdup_printf(_("Your screen name is currently formated as follows:\n%s"), sn);
+		char *dialog_msg = g_strdup_printf(_("Your screen name is currently formatted as follows:\n%s"), sn);
 		do_error_dialog(_("Account Info"), dialog_msg, GAIM_INFO);
 		g_free(dialog_msg);
 	}

@@ -45,7 +45,7 @@ Gaim is NOT affiliated with or endorsed by AOL.
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./configure %{CONFIG_FLAGS} --disable-artsc
+CFLAGS="$RPM_OPT_FLAGS" ./configure %{CONFIG_FLAGS}
 make
 
 %install

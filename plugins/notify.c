@@ -583,21 +583,20 @@ void gaim_plugin_remove() {
 struct gaim_plugin_description desc; 
 struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("Message Notification");
+	desc.name = g_strdup(_("Message Notification"));
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Provides a variety of ways of notifying you of unread messages.");
+	desc.description = g_strdup(_("Provides a variety of ways of notifying you of unread messages."));
 	desc.authors = g_strdup("Etan Reisner &lt;deryni@eden.rutgers.edu>");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
 }
 
 char *name() {
-	return "Visual Notification";
+	return _("Message Notification");
 }
 
 char *description() {
-	return "Puts an asterisk in the title bar of all conversations"
-		" where you have not responded to a message yet.";
+	return _("Provides a variety of ways of notifying you of unread messages.");
 }
 
 GtkWidget *gaim_plugin_config_gtk() {

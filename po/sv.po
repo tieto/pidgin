@@ -2,7 +2,7 @@
 # Copyright (C) 2001, 2002 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2001.
 #
-# $Id: sv.po 4558 2003-01-12 02:20:28Z lschiere $
+# $Id: sv.po 4869 2003-02-17 15:22:21Z lschiere $
 #
 msgid ""
 msgstr ""
@@ -2045,7 +2045,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:3521
 #, c-format
 msgid ""
-"Your screen name is currently formated as follows:\n"
+"Your screen name is currently formatted as follows:\n"
 "%s"
 msgstr ""
 

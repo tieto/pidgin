@@ -74,7 +74,7 @@ G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
 }
  
 G_MODULE_EXPORT char *name() {
-	return _("Iconify On Away");
+	return _("Iconify on away");
 }
 
 G_MODULE_EXPORT char *description() {

@@ -2058,7 +2058,7 @@ msgstr "Error 0x%04x: Error desconocido."
 #: src/protocols/oscar/oscar.c:3621
 #, c-format
 msgid ""
-"Your screen name is currently formated as follows:\n"
+"Your screen name is currently formatted as follows:\n"
 "%s"
 msgstr ""
 "El formato de su nombre de usuario es actualmente el siguiente:\n"

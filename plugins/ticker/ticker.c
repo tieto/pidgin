@@ -411,11 +411,11 @@ void away_cb(struct gaim_connection *gc, char *who) {
  */
 
 G_MODULE_EXPORT char *name() {
-	return "Buddy Ticker";
+	return _("Buddy Ticker");
 }
 
 G_MODULE_EXPORT char *description() {
-	return "Scrolls online buddies from your buddy list.";
+	return _("A horizontal scrolling version of the buddy list");
 }
 
 G_MODULE_EXPORT char *gaim_plugin_init(GModule *h) {
@@ -437,9 +437,9 @@ G_MODULE_EXPORT void gaim_plugin_remove() {
 struct gaim_plugin_description desc; 
 G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("Ticker");
+	desc.name = g_strdup(_("Buddy Ticker"));
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("A horizontal scrolling version of the buddy list.");
+	desc.description = g_strdup(_("A horizontal scrolling version of the buddy list."));
 	desc.authors = g_strdup("Syd Logan");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;

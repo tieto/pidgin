@@ -2024,7 +2024,7 @@ msgstr "エラー 0x%04x: 不明なエラー。"
 #: src/protocols/oscar/oscar.c:3595
 #, c-format
 msgid ""
-"Your screen name is currently formated as follows:\n"
+"Your screen name is currently formatted as follows:\n"
 "%s"
 msgstr ""
 "あなたのスクリーン名は、現在次のように整形されています:\n"

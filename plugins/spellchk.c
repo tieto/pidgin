@@ -392,20 +392,20 @@ G_MODULE_EXPORT void gaim_plugin_remove() {
 struct gaim_plugin_description desc; 
 G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("Text replacement");
+	desc.name = g_strdup(_("Text replacement"));
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Replaces text in outgoing messages according to user-defined rules.");
+	desc.description = g_strdup(_("Replaces text in outgoing messages according to user-defined rules."));
 	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
 }
  
 G_MODULE_EXPORT char *name() {
-	return "IM Spell Check";
+	return _("Text replacement");
 }
 
 G_MODULE_EXPORT char *description() {
-	return "Watches outgoing IM text and corrects common spelling errors.";
+	return _("Replaces text in outgoing messages according to user-defined rules.");
 }
 
 G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk()

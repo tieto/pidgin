@@ -2104,7 +2104,7 @@ msgstr "Fout 0x%04x: Onbekende fout."
 #: src/protocols/oscar/oscar.c:3663
 #, c-format
 msgid ""
-"Your screen name is currently formated as follows:\n"
+"Your screen name is currently formatted as follows:\n"
 "%s"
 msgstr ""
 "Uw gebruikersnaam wordt op het moment als volgt weergegeven:\n"
