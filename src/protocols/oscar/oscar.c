@@ -296,7 +296,7 @@ static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const 
 /* remove these at some point? */
 /* Because I don't like forward declarations?  I think that was why... */
 static void oscar_set_info(GaimConnection *gc, const char *text);
-static void oscar_set_away(GaimConnection *gc, const char *state, const char *message);
+static void oscar_set_status(GaimConnection *gc, const char *state, const char *message);
 
 static void recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data);
 
@@ -679,7 +679,8 @@ static char *oscar_icqstatus(int state) {
 		return g_strdup_printf(_("Online"));
 }
 
-static void oscar_string_append(GString *str, char *newline, char *name, char *value)
+static void
+oscar_string_append(GString *str, const char *newline, const char *name, const char *value)
 {
 	gchar *utf8;
 
@@ -689,7 +690,7 @@ static void oscar_string_append(GString *str, char *newline, char *name, char *v
 	}
 }
 
-static void oscar_string_append_info(GaimConnection *gc, GString *str, char *newline, GaimBuddy *b, aim_userinfo_t *userinfo)
+static void oscar_string_append_info(GaimConnection *gc, GString *str, const char *newline, GaimBuddy *b, aim_userinfo_t *userinfo)
 {
 	OscarData *od = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
@@ -4989,16 +4990,6 @@ static size_t my_strftime(char *s, size_t max, const char  *fmt,
 }
 #endif
 
-static void oscar_string_append(GString *str, char *name, char *value)
-{
-	gchar *utf8;
-
-	if (value && value[0] && (utf8 = gaim_utf8_try_convert(value))) {
-		g_string_append_printf(str, "\n<br><b>%s:</b> %s", name, utf8);
-		g_free(utf8);
-	}
-}
-
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
@@ -5532,7 +5523,7 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	return;
 }
 
-static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *state, const char *text)
+static void oscar_set_status_aim(GaimConnection *gc, OscarData *od, const char *state, const char *text)
 {
 	int charset = 0;
 	gchar *text_html = NULL;
@@ -5612,7 +5603,7 @@ static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *st
 	return;
 }
 
-static void oscar_set_away_icq(GaimConnection *gc, OscarData *od, const char *state, const char *message)
+static void oscar_set_status_icq(GaimConnection *gc, OscarData *od, const char *state, const char *message)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	if (gc->away) {
@@ -5659,14 +5650,14 @@ static void oscar_set_away_icq(GaimConnection *gc, OscarData *od, const char *st
 	return;
 }
 
-static void oscar_set_away(GaimConnection *gc, const char *state, const char *message)
+static void oscar_set_status(GaimConnection *gc, const char *state, const char *message)
 {
 	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (od->icq)
-		oscar_set_away_icq(gc, od, state, message);
+		oscar_set_status_icq(gc, od, state, message);
 	else
-		oscar_set_away_aim(gc, od, state, message);
+		oscar_set_status_aim(gc, od, state, message);
 
 	return;
 }
@@ -6083,7 +6074,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 								   "ssi: changing permdeny from %d to %hhu\n", account->perm_deny, permdeny);
 						account->perm_deny = permdeny;
 						if (od->icq && account->perm_deny == 0x03) {
-							serv_set_away(gc, "Invisible", "");
+							serv_set_status(gc, "Invisible", "");
 						}
 					}
 				}
@@ -6814,10 +6805,12 @@ static void oscar_rem_deny(GaimConnection *gc, const char *who) {
 #endif
 }
 
-static GList *oscar_away_states(GaimConnection *gc)
+static GList *oscar_status_types(GaimAccount *account)
 {
 	OscarData *od = gc->proto_data;
 	GList *m = NULL;
+
+	g_return_val_if_fail(account != NULL, NULL);
 
 	if (od->icq) {
 		m = g_list_append(m, _("Online"));
@@ -7351,7 +7344,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_list_emblems,		/* list_emblems */
 	oscar_status_text,		/* status_text */
 	oscar_tooltip_text,		/* tooltip_text */
-	oscar_away_states,		/* away_states */
+	oscar_status_types,		/* status_types */
 	oscar_blist_node_menu,	/* blist_node_menu */
 	oscar_chat_info,		/* chat_info */
 	oscar_chat_info_defaults, /* chat_info_defaults */
@@ -7361,7 +7354,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_set_info,			/* set_info */
 	oscar_send_typing,		/* send_typing */
 	oscar_get_info,			/* get_info */
-	oscar_set_away,			/* set_away */
+	oscar_set_status,		/* set_status */
 	oscar_set_idle,			/* set_idle */
 	oscar_change_passwd,	/* change_passwd */
 	oscar_add_buddy,		/* add_buddy */
@@ -7376,7 +7369,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_warn,				/* warn */
 	oscar_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
-	oscar_get_chat_name,		/* get_chat_name */
+	oscar_get_chat_name,	/* get_chat_name */
 	oscar_chat_invite,		/* chat_invite */
 	oscar_chat_leave,		/* chat_leave */
 	NULL,					/* chat_whisper */
