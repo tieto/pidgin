@@ -392,20 +392,20 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		 gl != NULL;
 		 gl = gl->next) {
 
-		GList *fields;
+		GList *field_list;
 		size_t field_count = 0;
 		size_t cols = 1;
 		size_t rows;
 		size_t col_num;
 		size_t row_num;
 
-		group  = gl->data;
-		fields = gaim_request_field_group_get_fields(group);
+		group      = gl->data;
+		field_list = gaim_request_field_group_get_fields(group);
 
 		frame = gaim_gtk_make_frame(vbox,
 									gaim_request_field_group_get_title(group));
 
-		field_count = g_list_length(fields);
+		field_count = g_list_length(field_list);
 
 		if (field_count > 9) {
 			rows = field_count / 2;
@@ -421,7 +421,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		gtk_container_add(GTK_CONTAINER(frame), table);
 		gtk_widget_show(table);
 
-		for (col_num = 0, fl = fields;
+		for (col_num = 0, fl = field_list;
 			 col_num < cols && fl != NULL;
 			 col_num++) {
 
