@@ -1082,6 +1082,7 @@ static void event_page()
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new(_("Command to play sound files (%s for filename; internal if empty):"));
+
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
@@ -1817,7 +1818,7 @@ void show_prefs()
 	gtk_widget_realize(prefs);
 	aol_icon(prefs->window);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
-	gtk_widget_set_usize(prefs, 650, 540);
+	gtk_widget_set_usize(prefs, 690, 540);
 	gtk_signal_connect(GTK_OBJECT(prefs), "destroy",
 			   GTK_SIGNAL_FUNC(delete_prefs), NULL);
 
