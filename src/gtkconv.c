@@ -444,7 +444,7 @@ add_cb(GtkWidget *widget, GaimConversation *conv)
 	b    = gaim_find_buddy(gc->account, name);
 
 	if (b != NULL)
-		show_confirm_del(gc, (char *)name);
+		show_confirm_del(b);
 	else if (gc != NULL)
 		show_add_buddy(gc, (char *)name, NULL, NULL);
 
@@ -981,7 +981,7 @@ menu_chat_add_cb(GtkWidget *w, GaimConversation *conv)
 	b    = gaim_find_buddy(gc->account, name);
 
 	if (b != NULL)
-		show_confirm_del(gc, name);
+		show_confirm_del(b);
 	else if (gc != NULL)
 		show_add_buddy(gc, name, NULL, NULL);
 

@@ -5853,7 +5853,10 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 #endif
 	} else {
 		struct buddy *b = gaim_find_buddy(gc->account, who);
-		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
+		struct buddyinfo *bi;
+
+		if (b)
+			bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 
 		if (b && bi && aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), who) && GAIM_BUDDY_IS_ONLINE(b)) {
 			if (bi->caps & AIM_CAPS_IMIMAGE) {
@@ -6014,6 +6017,7 @@ static void oscar_show_awaitingauth(GaimConnection *gc)
 	g_free(text);
 }
 
+#if 0
 static void oscar_setavailmsg(GaimConnection *gc, char *text) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 
@@ -6028,6 +6032,7 @@ static void oscar_show_setavailmsg(GaimConnection *gc)
 					   _("Cancel"), NULL,
 					   gc);
 }
+#endif
 
 static void oscar_show_chpassurl(GaimConnection *gc)
 {

@@ -440,16 +440,15 @@ void do_remove_group(struct group *g)
 	gaim_blist_save();
 }
 
-void show_confirm_del(GaimConnection *gc, gchar *name)
+void show_confirm_del(struct buddy *b)
 {
-	struct buddy *bd = gaim_find_buddy(gc->account, name);
 	char *text;
-	if (!bd)
+	if (!b)
 		return;
 
-	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"), name);
+	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"), b->name);
 
-	gaim_request_action(NULL, NULL, _("Remove Buddy"), text, -1, bd, 2,
+	gaim_request_action(NULL, NULL, _("Remove Buddy"), text, -1, b, 2,
 						_("Remove Buddy"), G_CALLBACK(do_remove_buddy),
 						_("Cancel"), NULL);
 

@@ -46,7 +46,7 @@ extern void show_set_dir(GaimConnection *);
 extern void show_find_email(GaimConnection *);
 extern void show_find_info(GaimConnection *);
 extern void show_set_info(GaimConnection *);
-extern void show_confirm_del(GaimConnection *, gchar *);
+extern void show_confirm_del(struct buddy *);
 extern void show_confirm_del_group(struct group *);
 extern void show_confirm_del_chat(struct chat *);
 
