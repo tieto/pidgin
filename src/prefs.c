@@ -1050,7 +1050,7 @@ GtkWidget *away_page() {
 	gaim_labeled_spin_button(hbox, _("Seconds before resending:"),
 				 &away_resend_new, 1, 24 * 60 * 60);
        	gtk_widget_show(hbox);
-	gaim_button(_("Don't send auto-response"), &away_options, OPT_AWAY_NO_AUTO_RESP, vbox);
+	gaim_button(_("Don't send auto-response"), &away_options_new, OPT_AWAY_NO_AUTO_RESP, vbox);
 	gaim_button(_("Only send auto-response when idle"), &away_options_new, OPT_AWAY_IDLE_RESP, vbox);
 
 	if (away_options_new & OPT_AWAY_NO_AUTO_RESP)
