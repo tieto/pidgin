@@ -199,7 +199,7 @@ static void toc_login(struct gaim_account *account)
 	set_login_progress(gc, 1, buf);
 
 	debug_printf("* Client connects to TOC\n");
-	if (proxy_connect(account->proto_opt[USEROPT_AUTH][0] ?
+	if (proxy_connect(account, account->proto_opt[USEROPT_AUTH][0] ?
 				account->proto_opt[USEROPT_AUTH] : TOC_HOST,
 				account->proto_opt[USEROPT_AUTHPORT][0] ?
 				atoi(account->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
@@ -1700,7 +1700,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	g_snprintf(buf, sizeof(buf), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
 	sflap_send(ft->gc, buf, -1, TYPE_DATA);
 
-	if (proxy_connect(ft->ip, ft->port, toc_send_file_connect, ft) != 0) {
+	if (proxy_connect(account, ft->ip, ft->port, toc_send_file_connect, ft) != 0) {
 		do_error_dialog(_("Could not connect for transfer."), NULL, GAIM_ERROR);
 		g_free(ft->filename);
 		g_free(ft->cookie);
@@ -1902,7 +1902,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	g_snprintf(buf2, sizeof(buf2), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
 	sflap_send(ft->gc, buf2, -1, TYPE_DATA);
 
-	if (proxy_connect(ft->ip, ft->port, toc_get_file_connect, ft) < 0) {
+	if (proxy_connect(account, ft->ip, ft->port, toc_get_file_connect, ft) < 0) {
 		do_error_dialog(_("Could not connect for transfer."), NULL, GAIM_ERROR);
 		fclose(ft->file);
 		g_free(ft->filename);

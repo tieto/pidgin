@@ -383,7 +383,7 @@ debug_printf("in oscar_xfer_init\n");
 			if (xfer_data->conn) {
 				xfer_data->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
 				aim_conn_addhandler(od->sess, xfer_data->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
-				xfer_data->conn->fd = xfer->fd = proxy_connect(xfer->remote_ip, xfer->remote_port, oscar_sendfile_connected, xfer);
+				xfer_data->conn->fd = xfer->fd = proxy_connect(gc->account, xfer->remote_ip, xfer->remote_port, oscar_sendfile_connected, xfer);
 				if (xfer->fd == -1) {
 					do_error_dialog(_("File Transfer Aborted"), _("Unable to establish file descriptor."), GAIM_ERROR);
 					/* gaim_xfer_cancel? */
@@ -851,7 +851,7 @@ static void oscar_login(struct gaim_account *account) {
 	aim_conn_addhandler(sess, conn, 0x0017, 0x0003, gaim_parse_auth_resp, 0);
 
 	conn->status |= AIM_CONN_STATUS_INPROGRESS;
-	if (proxy_connect(account->proto_opt[USEROPT_AUTH][0] ?
+	if (proxy_connect(account, account->proto_opt[USEROPT_AUTH][0] ?
 				account->proto_opt[USEROPT_AUTH] : FAIM_LOGIN_SERVER,
 				account->proto_opt[USEROPT_AUTHPORT][0] ?
 				atoi(account->proto_opt[USEROPT_AUTHPORT]) : FAIM_LOGIN_PORT,
@@ -1122,7 +1122,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 	host = g_strndup(info->bosip, i);
 	bosconn->status |= AIM_CONN_STATUS_INPROGRESS;
-	rc = proxy_connect(host, port, oscar_bos_connect, gc);
+	rc = proxy_connect(gc->account, host, port, oscar_bos_connect, gc);
 	g_free(host);
 	if (rc < 0) {
 		hide_login_progress(gc, _("Could Not Connect"));
@@ -1270,7 +1270,7 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	pos->len = len;
 	pos->modname = modname ? g_strdup(modname) : NULL;
 
-	if (proxy_connect("gaim.sourceforge.net", 80, straight_to_hell, pos) != 0) {
+	if (proxy_connect(pos->gc->account, "gaim.sourceforge.net", 80, straight_to_hell, pos) != 0) {
 		char buf[256];
 		if (pos->modname)
 			g_free(pos->modname);
@@ -1509,7 +1509,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		if (proxy_connect(host, port, oscar_auth_connect, gc) != 0) {
+		if (proxy_connect(account, host, port, oscar_auth_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to reconnect with authorizer\n");
 			g_free(host);
@@ -1528,7 +1528,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_chatnav, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		if (proxy_connect(host, port, oscar_chatnav_connect, gc) != 0) {
+		if (proxy_connect(account, host, port, oscar_chatnav_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to chatnav server\n");
 			g_free(host);
@@ -1557,9 +1557,9 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		ccon->exchange = redir->chat.exchange;
 		ccon->instance = redir->chat.instance;
 		ccon->show = extract_name(redir->chat.room);
-		
+
 		ccon->conn->status |= AIM_CONN_STATUS_INPROGRESS;
-		if (proxy_connect(host, port, oscar_chat_connect, ccon) != 0) {
+		if (proxy_connect(account, host, port, oscar_chat_connect, ccon) != 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to chat server\n");
 			g_free(host);
@@ -1581,7 +1581,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_email, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
-		if (proxy_connect(host, port, oscar_email_connect, gc) != 0) {
+		if (proxy_connect(account, host, port, oscar_email_connect, gc) != 0) {
 			aim_conn_kill(sess, &tstconn);
 			debug_printf("unable to connect to email server\n");
 			g_free(host);
@@ -1935,7 +1935,7 @@ static void accept_direct_im(struct ask_direct *d) {
 	}
 	host = g_strndup(d->ip, i);
 	dim->conn->status |= AIM_CONN_STATUS_INPROGRESS;
-	rc = proxy_connect(host, port, oscar_odc_callback, dim);
+	rc = proxy_connect(gc->account, host, port, oscar_odc_callback, dim);
 	g_free(host);
 	if (rc < 0) {
 		aim_conn_kill(od->sess, &dim->conn);

@@ -546,6 +546,29 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 
 	g_snprintf(account->alias, sizeof(account->alias), "%s", p->value[0]);
 
+	if (!fgets(buf, sizeof(buf), f))
+		return account;
+
+	if (!strcmp(buf, "\t}"))
+		return account;
+
+	p = parse_line(buf, &parse_buffer);
+
+	if (strcmp(p->option, "proxy_opts"))
+		return account;
+
+	if(atoi(p->value[0]) != PROXY_USE_GLOBAL) {
+		account->gpi = g_new0(struct gaim_proxy_info, 1);
+		account->gpi->proxytype = atoi(p->value[0]);
+		g_snprintf(account->gpi->proxyhost, sizeof(account->gpi->proxyhost),
+				"%s", p->value[1]);
+		account->gpi->proxyport = atoi(p->value[2]);
+		g_snprintf(account->gpi->proxyuser, sizeof(account->gpi->proxyuser),
+				"%s", p->value[3]);
+		g_snprintf(account->gpi->proxypass, sizeof(account->gpi->proxypass),
+				"%s", p->value[4]);
+	}
+
 	return account;
 
 }
@@ -596,6 +619,16 @@ static void gaimrc_write_user(FILE *f, struct gaim_account *account)
 	}
 #endif
 	fprintf(f, "\t\talias { %s }\n", account->alias);
+	fprintf(f, "\t\tproxy_opts ");
+	if(account->gpi) {
+		fprintf(f, "{ %d } { %s } { %d } { %s } { %s }\n",
+				account->gpi->proxytype, account->gpi->proxyhost,
+				account->gpi->proxyport, account->gpi->proxyuser,
+				(c = escape_text2(account->gpi->proxypass)));
+		free(c);
+	} else {
+		fprintf(f, "{ %d }\n", PROXY_USE_GLOBAL);
+	}
 }
 
 static void gaimrc_read_users(FILE *f)
@@ -988,7 +1021,7 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 	len = c - proxy;
 
 	if (!strncmp(proxy, "http://", len + 3))
-		proxytype = PROXY_HTTP;
+		global_proxy_info.proxytype = PROXY_HTTP;
 	else
 		return FALSE;
 
@@ -1042,24 +1075,25 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 
 	/* NOTE: HTTP_PROXY takes precendence. */
 	if (host[0])
-		strcpy(proxyhost, host);
+		strcpy(global_proxy_info.proxyhost, host);
 	else
-		*proxyhost = '\0';
+		*global_proxy_info.proxyhost = '\0';
 
 	if (user[0])
-		strcpy(proxyuser, user);
+		strcpy(global_proxy_info.proxyuser, user);
 	else
-		*proxyuser = '\0';
+		*global_proxy_info.proxyuser = '\0';
 
 	if (pass[0])
-		strcpy(proxypass, pass);
+		strcpy(global_proxy_info.proxypass, pass);
 	else
-		*proxypass = '\0';
-	
-	proxyport = port;
+		*global_proxy_info.proxypass = '\0';
+
+	global_proxy_info.proxyport = port;
 
 	debug_printf("host '%s'\nuser '%s'\npassword '%s'\nport %d\n",
-		proxyhost, proxyuser, proxypass, proxyport);
+		global_proxy_info.proxyhost, global_proxy_info.proxyuser,
+		global_proxy_info.proxypass, global_proxy_info.proxyport);
 
 	return TRUE;
 }
@@ -1071,7 +1105,7 @@ static void gaimrc_read_proxy(FILE *f)
 	struct parse *p;
 
 	buf[0] = 0;
-	proxyhost[0] = 0;
+	global_proxy_info.proxyhost[0] = 0;
 	debug_printf("gaimrc_read_proxy\n");
 
 	while (buf[0] != '}') {
@@ -1084,73 +1118,80 @@ static void gaimrc_read_proxy(FILE *f)
 		p = parse_line(buf, &parse_buffer);
 
 		if (!strcmp(p->option, "host")) {
-			g_snprintf(proxyhost, sizeof(proxyhost), "%s",
-				   p->value[0]);
-			debug_printf("set proxyhost %s\n", proxyhost);
+			g_snprintf(global_proxy_info.proxyhost,
+					sizeof(global_proxy_info.proxyhost), "%s", p->value[0]);
+			debug_printf("set proxyhost %s\n", global_proxy_info.proxyhost);
 		} else if (!strcmp(p->option, "port")) {
-			proxyport = atoi(p->value[0]);
+			global_proxy_info.proxyport = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "type")) {
-			proxytype = atoi(p->value[0]);
+			global_proxy_info.proxytype = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "user")) {
-			g_snprintf(proxyuser, sizeof(proxyuser), "%s",
-				   p->value[0]);
+			g_snprintf(global_proxy_info.proxyuser,
+					sizeof(global_proxy_info.proxyuser), "%s", p->value[0]);
 		} else if (!strcmp(p->option, "pass")) {
-			g_snprintf(proxypass, sizeof(proxypass), "%s",
-				   p->value[0]);
+			g_snprintf(global_proxy_info.proxypass,
+					sizeof(global_proxy_info.proxypass), "%s", p->value[0]);
 		}
 	}
-	if (proxyhost[0])
+	if (global_proxy_info.proxyhost[0])
 		proxy_info_is_from_gaimrc = 1;
-	else if (!proxyhost[0]) {
-	  
+	else {
 		gboolean getVars = TRUE;
 		proxy_info_is_from_gaimrc = 0;
-		
-		if (g_getenv("HTTP_PROXY"))
-			g_snprintf(proxyhost, sizeof(proxyhost), "%s",
-				   g_getenv("HTTP_PROXY"));
-		else if (g_getenv("http_proxy"))
-			g_snprintf(proxyhost, sizeof(proxyhost), "%s",
-				   g_getenv("http_proxy"));
-		else if (g_getenv("HTTPPROXY"))
-			g_snprintf(proxyhost, sizeof(proxyhost), "%s",
-				   g_getenv("HTTPPROXY"));
 
-		if (*proxyhost != '\0')
-			getVars = !gaimrc_parse_proxy_uri(proxyhost);
+		if (g_getenv("HTTP_PROXY"))
+			g_snprintf(global_proxy_info.proxyhost,
+					sizeof(global_proxy_info.proxyhost), "%s",
+					g_getenv("HTTP_PROXY"));
+		else if (g_getenv("http_proxy"))
+			g_snprintf(global_proxy_info.proxyhost,
+					sizeof(global_proxy_info.proxyhost), "%s",
+					g_getenv("http_proxy"));
+		else if (g_getenv("HTTPPROXY"))
+			g_snprintf(global_proxy_info.proxyhost,
+					sizeof(global_proxy_info.proxyhost), "%s",
+					g_getenv("HTTPPROXY"));
+
+		if (*global_proxy_info.proxyhost != '\0')
+			getVars = !gaimrc_parse_proxy_uri(global_proxy_info.proxyhost);
 
 		if (getVars)
 		{
 			if (g_getenv("HTTP_PROXY_PORT"))
-				proxyport = atoi(g_getenv("HTTP_PROXY_PORT"));
+				global_proxy_info.proxyport = atoi(g_getenv("HTTP_PROXY_PORT"));
 			else if (g_getenv("http_proxy_port"))
-				proxyport = atoi(g_getenv("http_proxy_port"));
+				global_proxy_info.proxyport = atoi(g_getenv("http_proxy_port"));
 			else if (g_getenv("HTTPPROXYPORT"))
-				proxyport = atoi(g_getenv("HTTPPROXYPORT"));
+				global_proxy_info.proxyport = atoi(g_getenv("HTTPPROXYPORT"));
 
 			if (g_getenv("HTTP_PROXY_USER"))
-				g_snprintf(proxyuser, sizeof(proxyuser), "%s",
-					   g_getenv("HTTP_PROXY_USER"));
+				g_snprintf(global_proxy_info.proxyuser,
+						sizeof(global_proxy_info.proxyuser), "%s",
+						g_getenv("HTTP_PROXY_USER"));
 			else if (g_getenv("http_proxy_user"))
-				g_snprintf(proxyuser, sizeof(proxyuser), "%s",
-					   g_getenv("http_proxy_user"));
+				g_snprintf(global_proxy_info.proxyuser,
+						sizeof(global_proxy_info.proxyuser), "%s",
+						g_getenv("http_proxy_user"));
 			else if (g_getenv("HTTPPROXYUSER"))
-				g_snprintf(proxyuser, sizeof(proxyuser), "%s",
-					   g_getenv("HTTPPROXYUSER"));
+				g_snprintf(global_proxy_info.proxyuser,
+						sizeof(global_proxy_info.proxyuser), "%s",
+						g_getenv("HTTPPROXYUSER"));
 
 			if (g_getenv("HTTP_PROXY_PASS"))
-				g_snprintf(proxypass, sizeof(proxypass), "%s",
-					   g_getenv("HTTP_PROXY_PASS"));
+				g_snprintf(global_proxy_info.proxypass,
+						sizeof(global_proxy_info.proxypass), "%s",
+						g_getenv("HTTP_PROXY_PASS"));
 			else if (g_getenv("http_proxy_pass"))
-				g_snprintf(proxypass, sizeof(proxypass), "%s",
-					   g_getenv("http_proxy_pass"));
+				g_snprintf(global_proxy_info.proxypass,
+						sizeof(global_proxy_info.proxypass), "%s",
+						g_getenv("http_proxy_pass"));
 			else if (g_getenv("HTTPPROXYPASS"))
-				g_snprintf(proxypass, sizeof(proxypass), "%s",
-					   g_getenv("HTTPPROXYPASS"));
+				g_snprintf(global_proxy_info.proxypass,
+						sizeof(global_proxy_info.proxypass), "%s",
+						g_getenv("HTTPPROXYPASS"));
 
-			
-			if (proxyhost[0])
-				proxytype = PROXY_HTTP;
+			if (global_proxy_info.proxyhost[0])
+				global_proxy_info.proxytype = PROXY_HTTP;
 		}
 	}
 }
@@ -1161,11 +1202,12 @@ static void gaimrc_write_proxy(FILE *f)
 
 	fprintf(f, "proxy {\n");
 	if (proxy_info_is_from_gaimrc) {
-		fprintf(f, "\thost { %s }\n", proxyhost);
-		fprintf(f, "\tport { %d }\n", proxyport);
-		fprintf(f, "\ttype { %d }\n", proxytype);
-		fprintf(f, "\tuser { %s }\n", proxyuser);
-		fprintf(f, "\tpass { %s }\n", (str = escape_text2(proxypass)));
+		fprintf(f, "\thost { %s }\n", global_proxy_info.proxyhost);
+		fprintf(f, "\tport { %d }\n", global_proxy_info.proxyport);
+		fprintf(f, "\ttype { %d }\n", global_proxy_info.proxytype);
+		fprintf(f, "\tuser { %s }\n", global_proxy_info.proxyuser);
+		fprintf(f, "\tpass { %s }\n",
+				(str = escape_text2(global_proxy_info.proxypass)));
 		free(str);
 	} else {
 		fprintf(f, "\thost { %s }\n", "");

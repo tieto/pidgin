@@ -442,7 +442,7 @@ static void nap_login(struct gaim_account *account)
 	struct gaim_connection *gc = new_gaim_conn(account);
 	gc->proto_data = g_new0(struct nap_data, 1);
 
-	if (proxy_connect(account->proto_opt[USEROPT_NAPSERVER][0] ?
+	if (proxy_connect(account, account->proto_opt[USEROPT_NAPSERVER][0] ?
 				account->proto_opt[USEROPT_NAPSERVER] : NAP_SERVER,
 				account->proto_opt[USEROPT_NAPPORT][0] ?
 				atoi(account->proto_opt[USEROPT_NAPPORT]) : NAP_PORT,

@@ -131,13 +131,13 @@ static void set_away_option();
 static void proxy_print_option(GtkEntry *entry, int entrynum)
 {
 	if (entrynum == PROXYHOST)
-		g_snprintf(proxyhost, sizeof(proxyhost), "%s", gtk_entry_get_text(entry));
+		g_snprintf(global_proxy_info.proxyhost, sizeof(global_proxy_info.proxyhost), "%s", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPORT)
-		proxyport = atoi(gtk_entry_get_text(entry));
+		global_proxy_info.proxyport = atoi(gtk_entry_get_text(entry));
 	else if (entrynum == PROXYUSER)
-		g_snprintf(proxyuser, sizeof(proxyuser), "%s", gtk_entry_get_text(entry));
+		g_snprintf(global_proxy_info.proxyuser, sizeof(global_proxy_info.proxyuser), "%s", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPASS)
-		g_snprintf(proxypass, sizeof(proxypass), "%s", gtk_entry_get_text(entry));
+		g_snprintf(global_proxy_info.proxypass, sizeof(global_proxy_info.proxypass), "%s", gtk_entry_get_text(entry));
 	proxy_info_is_from_gaimrc = 1; /* If the user specifies it, we want
 					  to save it */
 }
@@ -164,7 +164,6 @@ GtkWidget *make_frame(GtkWidget *ret, char *text) {
 }
 
 /* OK, Apply and Cancel */
-
 
 static void pref_nb_select(GtkTreeSelection *sel, GtkNotebook *nb) {
 	GtkTreeIter   iter;
@@ -736,7 +735,7 @@ GtkWidget *proxy_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Proxy Type"));
-	gaim_dropdown(vbox, _("Proxy _type:"), (int*)&proxytype, -1,
+	gaim_dropdown(vbox, _("Proxy _type:"), (int*)&global_proxy_info.proxytype, -1,
 		      _("No proxy"), PROXY_NONE,
 		      "SOCKS 4", PROXY_SOCKS4,
 		      "SOCKS 5", PROXY_SOCKS5,
@@ -750,7 +749,7 @@ GtkWidget *proxy_page() {
 	vbox = make_frame(ret, _("Proxy Server"));
 	prefs_proxy_frame = vbox;
 
-	if (proxytype == PROXY_NONE)
+	if (global_proxy_info.proxytype == PROXY_NONE)
 		gtk_widget_set_sensitive(GTK_WIDGET(vbox), FALSE);
 
 	table = gtk_table_new(2, 4, FALSE);
@@ -769,7 +768,7 @@ GtkWidget *proxy_page() {
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
 	g_signal_connect(GTK_OBJECT(entry), "changed",
 			   G_CALLBACK(proxy_print_option), (void *)PROXYHOST);
-	gtk_entry_set_text(GTK_ENTRY(entry), proxyhost);
+	gtk_entry_set_text(GTK_ENTRY(entry), global_proxy_info.proxyhost);
 
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -784,9 +783,9 @@ GtkWidget *proxy_page() {
 	g_signal_connect(GTK_OBJECT(entry), "changed",
 			   G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
 
-	if (proxyport) {
+	if (global_proxy_info.proxyport) {
 		char buf[128];
-		g_snprintf(buf, sizeof(buf), "%d", proxyport);
+		g_snprintf(buf, sizeof(buf), "%d", global_proxy_info.proxyport);
 		gtk_entry_set_text(GTK_ENTRY(entry), buf);
 	}
 
@@ -799,7 +798,7 @@ GtkWidget *proxy_page() {
 	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 2, 3, GTK_FILL, 0, 0, 0);
 	g_signal_connect(GTK_OBJECT(entry), "changed",
 			   G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
-	gtk_entry_set_text(GTK_ENTRY(entry), proxyuser);
+	gtk_entry_set_text(GTK_ENTRY(entry), global_proxy_info.proxyuser);
 
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -814,7 +813,7 @@ GtkWidget *proxy_page() {
 	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 	g_signal_connect(GTK_OBJECT(entry), "changed",
 			   G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
-	gtk_entry_set_text(GTK_ENTRY(entry), proxypass);
+	gtk_entry_set_text(GTK_ENTRY(entry), global_proxy_info.proxypass);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -2290,7 +2289,7 @@ void dropdown_set(GtkObject *w, int *option)
 		*option = opt;
 	}
 
-	if (option == (int*)&proxytype) {
+	if (option == (int*)&global_proxy_info.proxytype) {
 		if (opt == PROXY_NONE)
 			gtk_widget_set_sensitive(prefs_proxy_frame, FALSE);
 		else

@@ -646,7 +646,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			port = 1863;
 
 		ms = g_new0(struct msn_switchboard, 1);
-		if (proxy_connect(ssaddr, port, msn_rng_connect, ms) != 0) {
+		if (proxy_connect(gc->account, ssaddr, port, msn_rng_connect, ms) != 0) {
 			g_free(ms);
 			return 1;
 		}
@@ -784,7 +784,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			close(md->fd);
 			gaim_input_remove(md->inpa);
 			md->inpa = 0;
-			if (proxy_connect(host, port, msn_login_xfr_connect, gc) != 0) {
+			if (proxy_connect(gc->account, host, port, msn_login_xfr_connect, gc) != 0) {
 				hide_login_progress(gc, _("Error transferring"));
 				signoff(gc);
 				return 0;
@@ -1080,7 +1080,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		md->inpa = 0;
 		md->fd = 0;
 		md->sl = time(NULL);
-		if (proxy_connect(host, port, msn_login_xfr_connect, gc) != 0) {
+		if (proxy_connect(gc->account, host, port, msn_login_xfr_connect, gc) != 0) {
 			hide_login_progress(gc, _("Unable to transfer"));
 			signoff(gc);
 		}
@@ -1194,7 +1194,7 @@ static void msn_login(struct gaim_account *account)
 
 	g_snprintf(gc->username, sizeof(gc->username), "%s", msn_normalize(gc->username));
 
-	if (proxy_connect(account->proto_opt[USEROPT_MSNSERVER][0] ?
+	if (proxy_connect(account, account->proto_opt[USEROPT_MSNSERVER][0] ?
 				account->proto_opt[USEROPT_MSNSERVER] : MSN_SERVER,
 				account->proto_opt[USEROPT_MSNPORT][0] ?
 				atoi(account->proto_opt[USEROPT_MSNPORT]) : MSN_PORT,

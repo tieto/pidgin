@@ -449,7 +449,7 @@ msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 
 			strncpy(ip_s, ip, sizeof(ip_s));
 
-			if (proxy_connect(ip_s, atoi(port_s),
+			if (proxy_connect(xfer->account, ip_s, atoi(port_s),
 							  msn_msnftp_connect, xfer) != 0) {
 
 				gaim_xfer_cancel(xfer);

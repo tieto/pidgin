@@ -973,7 +973,7 @@ static void yahoo_login(struct gaim_account *account) {
 	}
 
 
-	if (proxy_connect(account->proto_opt[USEROPT_PAGERHOST][0] ?
+	if (proxy_connect(account, account->proto_opt[USEROPT_PAGERHOST][0] ?
 				account->proto_opt[USEROPT_PAGERHOST] : YAHOO_PAGER_HOST,
 				account->proto_opt[USEROPT_PAGERPORT][0] ?
 				atoi(account->proto_opt[USEROPT_PAGERPORT]) : YAHOO_PAGER_PORT,

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4896 2003-02-24 00:29:54Z faceprint $
+ * $Id: gg.c 4941 2003-03-02 18:48:02Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -470,13 +470,13 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		{
 			struct in_addr ip;
 			char buf[256];
-			
+
 			/* Remove watch on initial socket - now that we have ip and port of login server */
 			gaim_input_remove(gc->inpa);
 
 			ip.s_addr = gd->sess->server_ip;
-			
-			if (proxy_connect(inet_ntoa(ip), gd->sess->port, login_callback, gc) < 0) {
+
+			if (proxy_connect(gc->account, inet_ntoa(ip), gd->sess->port, login_callback, gc) < 0) {
 				g_snprintf(buf, sizeof(buf), _("Connect to %s failed"), inet_ntoa(ip));
 				hide_login_progress(gc, buf);
 				signoff(gc);
@@ -572,7 +572,7 @@ static void agg_login(struct gaim_account *account)
 	gd->sess->state = GG_STATE_CONNECTING;
 	gd->sess->check = GG_CHECK_WRITE;
 	gd->sess->async = 1;
-	if (proxy_connect(GG_APPMSG_HOST, GG_APPMSG_PORT, login_callback, gc) < 0) {
+	if (proxy_connect(account, GG_APPMSG_HOST, GG_APPMSG_PORT, login_callback, gc) < 0) {
 		g_snprintf(buf, sizeof(buf), _("Connect to %s failed"), GG_APPMSG_HOST);
 		hide_login_progress(gc, buf);
 		signoff(gc);
@@ -988,7 +988,7 @@ static void import_buddies_server(struct gaim_connection *gc)
 	g_free(u);
 	g_free(p);
 
-	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, hi) < 0) {
+	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, hi) < 0) {
 		do_error_dialog(_("Unable to import Gadu-Gadu buddy list"), 
 				_("Gaim was unable to connect to the Gadu-Gadu buddy list "
 				  "server.  Please try again later."), GAIM_ERROR);
@@ -1055,7 +1055,7 @@ static void export_buddies_server(struct gaim_connection *gc)
 		gr = g_slist_next(gr);
 	}
 
-	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
+	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
 		do_error_dialog(_("Couldn't export buddy list"), 
 				_("Gaim was unable to connect to the buddy list server.  "
 				  "Please try again later."), GAIM_ERROR);
@@ -1077,7 +1077,7 @@ static void delete_buddies_server(struct gaim_connection *gc)
 	he->host = GG_PUBDIR_HOST;
 	he->request = g_strdup_printf("FmNum=%s&Pass=%s&Delete=1", u, p);
 
-	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
+	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
 		do_error_dialog(_("Unable to delete Gadu-Gadu buddy list"), 
 				_("Gaim was unable to connect to the buddy list server.  "
 				  "Please try again later."), GAIM_ERROR);
@@ -1125,7 +1125,7 @@ static void agg_dir_search(struct gaim_connection *gc, const char *first, const 
 		g_free(enew_city);
 	}
 
-	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
+	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
 		do_error_dialog(_("Unable to access directory"), 
 				_("Gaim was unable to search the Directory because it "
 				  "was unable to connect to the directory server.  Please try "
@@ -1158,7 +1158,7 @@ static void agg_change_passwd(struct gaim_connection *gc, const char *old, const
 	g_free(enew);
 	g_free(eold);
 
-	if (proxy_connect(GG_REGISTER_HOST, GG_REGISTER_PORT, http_req_callback, hpass) < 0) {
+	if (proxy_connect(gc->account, GG_REGISTER_HOST, GG_REGISTER_PORT, http_req_callback, hpass) < 0) {
 	       	do_error_dialog(_("Unable to change Gadu-Gadu password"), 
 				_("Gaim was unable to change your password due to an error connecting "
 				  "to the Gadu-Gadu server.  Please try again later."), GAIM_ERROR);
@@ -1233,7 +1233,7 @@ static void agg_get_info(struct gaim_connection *gc, char *who)
 	} else
 		srch->request = g_strdup_printf("Mode=3&UserId=%s", who);
 
-	if (proxy_connect(GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
+	if (proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
 		do_error_dialog(_("Unable to access user profile."), 
 				_("Gaim was unable to access this user's profile due to an error "
 				  "connecting to the directory server.  Please try again later."), GAIM_ERROR);

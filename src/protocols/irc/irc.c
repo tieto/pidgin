@@ -1221,7 +1221,7 @@ handle_privmsg(struct gaim_connection *gc, char *to, char *nick, char *msg)
 static void 
 dcc_chat_init(struct dcc_chat *data) {
 	if (g_slist_find(connections, data->gc)) {
-		proxy_connect(data->ip_address, data->port, dcc_chat_callback, data);
+		proxy_connect(data->gc->account, data->ip_address, data->port, dcc_chat_callback, data);
 	} else {
 		g_free(data);
 	}
@@ -1816,7 +1816,7 @@ irc_login(struct gaim_account *account)
 	idata->str = g_string_new("");
 	idata->fd = -1;
 
-	rc = proxy_connect(account->proto_opt[USEROPT_SERV],
+	rc = proxy_connect(account, account->proto_opt[USEROPT_SERV],
 				  account->proto_opt[USEROPT_PORT][0] ?
 				  atoi(account->proto_opt[USEROPT_PORT]) : 6667,
 				  irc_login_callback, gc);
@@ -2603,7 +2603,7 @@ irc_file_transfer_in(struct gaim_connection *gc,
 	struct irc_file_transfer *ift = find_ift_by_xfer(gc, xfer);
 
 	ift->xfer = xfer;
-	proxy_connect(ift->ip, ift->port, dcc_recv_callback, ift);
+	proxy_connect(gc->account, ift->ip, ift->port, dcc_recv_callback, ift);
 }
 #endif
 

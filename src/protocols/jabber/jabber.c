@@ -818,7 +818,7 @@ static void gjab_start(gjconn gjc)
 	XML_SetElementHandler(gjc->parser, startElement, endElement);
 	XML_SetCharacterDataHandler(gjc->parser, charData);
 
-	rc = proxy_connect(server, port, gjab_connected, GJ_GC(gjc));
+	rc = proxy_connect(account, server, port, gjab_connected, GJ_GC(gjc));
 	if (!account->gc || (rc != 0)) {
 		STATE_EVT(JCONN_STATE_OFF)
 		return;

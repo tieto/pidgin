@@ -525,7 +525,8 @@ msn_switchboard_connect(struct gaim_connection *gc, const char *host, int port)
 	if (ms == NULL)
 		return NULL;
 
-	if (proxy_connect((char *)host, port, msn_ss_xfr_connect, ms) != 0) {
+	if (proxy_connect(gc->account, (char *)host, port, msn_ss_xfr_connect,
+				ms) != 0) {
 		msn_kill_switch(ms);
 
 		return NULL;

@@ -19,6 +19,7 @@
  *
  */
 
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <gtk/gtk.h>
@@ -84,6 +85,15 @@ struct mod_account {
 
 	/* stuff for register with server */
 	GtkWidget *register_user;
+
+	/* stuff for proxy options */
+	GtkWidget *proxy_frame;
+	GtkWidget *proxy_host_box;
+	GtkWidget *proxytype_menu;
+	GtkWidget *proxyhost_entry;
+	GtkWidget *proxyport_entry;
+	GtkWidget *proxyuser_entry;
+	GtkWidget *proxypass_entry;
 };
 
 
@@ -351,6 +361,7 @@ static void ok_mod(GtkWidget *w, struct mod_account *ma)
 	struct gaim_account *a;
 	struct prpl *p;
 	GtkTreeIter iter;
+	int proxytype;
 
 	if (!ma->account) {
 		txt = gtk_entry_get_text(GTK_ENTRY(ma->name));
@@ -402,6 +413,23 @@ static void ok_mod(GtkWidget *w, struct mod_account *ma)
 	if (ma->icondlg)
 		gtk_widget_destroy(ma->icondlg);
 	ma->icondlg = NULL;
+
+	if(ma->account->gpi)
+		g_free(ma->account->gpi);
+	ma->account->gpi = NULL;
+
+	proxytype = (int)gtk_object_get_user_data(GTK_OBJECT(gtk_menu_get_active(GTK_MENU(ma->proxytype_menu))));
+
+	if(proxytype != PROXY_USE_GLOBAL) {
+		struct gaim_proxy_info *gpi = g_new0(struct gaim_proxy_info, 1);
+		gpi->proxytype = proxytype;
+		g_snprintf(gpi->proxyhost, sizeof(gpi->proxyhost), "%s", gtk_entry_get_text(GTK_ENTRY(ma->proxyhost_entry)));
+		gpi->proxyport = atoi(gtk_entry_get_text(GTK_ENTRY(ma->proxyport_entry)));
+		g_snprintf(gpi->proxyuser, sizeof(gpi->proxyuser), "%s", gtk_entry_get_text(GTK_ENTRY(ma->proxyuser_entry)));
+		g_snprintf(gpi->proxypass, sizeof(gpi->proxypass), "%s", gtk_entry_get_text(GTK_ENTRY(ma->proxypass_entry)));
+
+		ma->account->gpi = gpi;
+	}
 
 	/*
 	 * See if user registration is supported/required
@@ -826,6 +854,178 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 
 }
 
+static void proxy_dropdown_set(GtkObject *w, struct mod_account *ma) {
+	int opt = (int)gtk_object_get_user_data(w);
+	gtk_widget_set_sensitive(ma->proxy_host_box, (opt != PROXY_NONE && opt != PROXY_USE_GLOBAL));
+}
+
+static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
+	GtkWidget *frame;
+	GtkWidget *hbox;
+	GtkWidget *vbox;
+	GtkWidget *label;
+	GtkWidget *menu;
+	GtkWidget *dropdown;
+	GtkWidget *opt;
+	GtkWidget *entry;
+	GtkWidget *vbox2;
+
+	struct gaim_proxy_info *gpi = NULL;
+
+	if(ma->account)
+		gpi = ma->account->gpi;
+
+	frame = make_frame(box, _("Proxy Options"));
+	ma->proxy_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+	gtk_widget_show_all(ma->proxy_frame);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_widget_show(vbox);
+
+	/* make the dropdown w/o the benefit of the easy helper funcs in prefs.c */
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new_with_mnemonic(_("Proxy _Type"));
+	gtk_size_group_add_widget(ma->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+
+	dropdown = gtk_option_menu_new();
+	menu = gtk_menu_new();
+
+	opt = gtk_menu_item_new_with_label("Use Global Proxy Settings");
+	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_USE_GLOBAL);
+	g_signal_connect(G_OBJECT(opt), "activate",
+			G_CALLBACK(proxy_dropdown_set), ma);
+	gtk_widget_show(opt);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
+	if(!gpi)
+		gtk_menu_set_active(GTK_MENU(menu), 0);
+
+	opt = gtk_menu_item_new_with_label("No Proxy");
+	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_NONE);
+	g_signal_connect(G_OBJECT(opt), "activate",
+			G_CALLBACK(proxy_dropdown_set), ma);
+	gtk_widget_show(opt);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
+	if(gpi && gpi->proxytype == PROXY_NONE)
+		gtk_menu_set_active(GTK_MENU(menu), 1);
+
+	opt = gtk_menu_item_new_with_label("SOCKS 4");
+	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_SOCKS4);
+	g_signal_connect(G_OBJECT(opt), "activate",
+			G_CALLBACK(proxy_dropdown_set), ma);
+	gtk_widget_show(opt);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
+	if(gpi && gpi->proxytype == PROXY_SOCKS4)
+		gtk_menu_set_active(GTK_MENU(menu), 2);
+
+	opt = gtk_menu_item_new_with_label("SOCKS 5");
+	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_SOCKS5);
+	g_signal_connect(G_OBJECT(opt), "activate",
+			G_CALLBACK(proxy_dropdown_set), ma);
+	gtk_widget_show(opt);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
+	if(gpi && gpi->proxytype == PROXY_SOCKS5)
+		gtk_menu_set_active(GTK_MENU(menu), 3);
+
+	opt = gtk_menu_item_new_with_label("HTTP");
+	gtk_object_set_user_data(GTK_OBJECT(opt), (gpointer)PROXY_HTTP);
+	g_signal_connect(G_OBJECT(opt), "activate",
+			G_CALLBACK(proxy_dropdown_set), ma);
+	gtk_widget_show(opt);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
+	if(gpi && gpi->proxytype == PROXY_HTTP)
+		gtk_menu_set_active(GTK_MENU(menu), 4);
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
+	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
+	gtk_widget_show(dropdown);
+
+	ma->proxytype_menu = menu;
+
+
+	vbox2 = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(vbox), vbox2);
+	gtk_widget_show(vbox2);
+	ma->proxy_host_box = vbox2;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new_with_mnemonic(_("_Host:"));
+	gtk_size_group_add_widget(ma->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+	entry = gtk_entry_new();
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_entry_set_text(GTK_ENTRY(entry), gpi ? gpi->proxyhost : "");
+	gtk_widget_show(entry);
+	ma->proxyhost_entry = entry;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new_with_mnemonic(_("Port:"));
+	gtk_size_group_add_widget(ma->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+	entry = gtk_entry_new();
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	if(gpi && gpi->proxyport) {
+		char buf[128];
+		g_snprintf(buf, sizeof(buf), "%d", gpi->proxyport);
+		gtk_entry_set_text(GTK_ENTRY(entry), buf);
+	}
+	gtk_widget_show(entry);
+	ma->proxyport_entry = entry;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new_with_mnemonic(_("_User:"));
+	gtk_size_group_add_widget(ma->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+	entry = gtk_entry_new();
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_entry_set_text(GTK_ENTRY(entry), gpi ? gpi->proxyuser : "");
+	gtk_widget_show(entry);
+	ma->proxyuser_entry = entry;
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new_with_mnemonic(_("Pa_ssword:"));
+	gtk_size_group_add_widget(ma->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_widget_show(label);
+	entry = gtk_entry_new();
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_entry_set_text(GTK_ENTRY(entry), gpi ? gpi->proxypass : "");
+	gtk_widget_show(entry);
+	ma->proxypass_entry = entry;
+
+	gtk_widget_set_sensitive(vbox2, !(gpi == NULL || gpi->proxytype == PROXY_NONE));
+}
+
 static void show_acct_mod(struct gaim_account *a)
 {
 	/* This is the fucking modify account dialog. I've fucking seperated it into
@@ -896,6 +1096,7 @@ static void show_acct_mod(struct gaim_account *a)
 	generate_login_options(ma, ma->main);
 	generate_user_options(ma, ma->main);
 	generate_protocol_options(ma, ma->main);
+	generate_proxy_options(ma, ma->main);
 
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);

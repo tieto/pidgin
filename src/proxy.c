@@ -55,11 +55,7 @@
 #define GAIM_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
 #define GAIM_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
-char proxyhost[128] = { 0 };
-int proxyport = 0;
-proxytype_t proxytype = PROXY_NONE;
-char proxyuser[128] = { 0 };
-char proxypass[128] = { 0 };
+struct gaim_proxy_info global_proxy_info;
 
 struct PHB {
 	GaimInputFunction func;
@@ -67,7 +63,7 @@ struct PHB {
 	char *host;
 	int port;
 	gint inpa;
-	proxytype_t proxytype;
+	struct gaim_proxy_info *gpi;
 };
 
 typedef struct _GaimIOClosure {
@@ -728,9 +724,9 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	request_len = g_snprintf(request, sizeof(request), "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n", phb->host, phb->port,
 		   phb->host, phb->port);
 
-	if (proxyuser) {
+	if (phb->gpi->proxyuser) {
 		char *t1, *t2;
-		t1 = g_strdup_printf("%s:%s", proxyuser, proxypass);
+		t1 = g_strdup_printf("%s:%s", phb->gpi->proxyuser, phb->gpi->proxypass);
 		t2 = tobase64(t1);
 		g_free(t1);
 		g_return_if_fail(request_len < sizeof(request));
@@ -757,7 +753,7 @@ static int proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t 
 {
 	int fd = -1;
 
-	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", phb->host, phb->port, proxyhost, proxyport);
+	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", phb->host, phb->port, phb->gpi->proxyhost, phb->gpi->proxyport);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
 		g_free(phb->host);
@@ -873,7 +869,7 @@ static int proxy_connect_socks4(struct PHB *phb, struct sockaddr *addr, socklen_
 {
 	int fd = -1;
 
-	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", phb->host, phb->port, proxyhost, proxyport);
+	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", phb->host, phb->port, phb->gpi->proxyhost, phb->gpi->proxyport);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
 		g_free(phb->host);
@@ -1020,12 +1016,12 @@ static void s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	if (buf[1] == 0x02) {
-		unsigned int i = strlen(proxyuser), j = strlen(proxypass);
+		unsigned int i = strlen(phb->gpi->proxyuser), j = strlen(phb->gpi->proxypass);
 		buf[0] = 0x01;	/* version 1 */
 		buf[1] = i;
-		memcpy(buf + 2, proxyuser, i);
+		memcpy(buf + 2, phb->gpi->proxyuser, i);
 		buf[2 + i] = j;
-		memcpy(buf + 2 + i + 1, proxypass, j);
+		memcpy(buf + 2 + i + 1, phb->gpi->proxypass, j);
 
 		if (write(source, buf, 3 + i + j) < 3 + i + j) {
 			close(source);
@@ -1064,7 +1060,7 @@ static void s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 	i = 0;
 	buf[0] = 0x05;		/* SOCKS version 5 */
-	if (proxyuser[0]) {
+	if (phb->gpi->proxyuser[0]) {
 		buf[1] = 0x02;	/* two methods */
 		buf[2] = 0x00;	/* no authentication */
 		buf[3] = 0x02;	/* username/password authentication */
@@ -1091,7 +1087,7 @@ static int proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_
 {
 	int fd = -1;
 
-	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", phb->host, phb->port, proxyhost, proxyport);
+	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", phb->host, phb->port, phb->gpi->proxyhost, phb->gpi->proxyport);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
 		g_free(phb->host);
@@ -1132,14 +1128,14 @@ static int proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_
 static void connection_host_resolved(struct sockaddr *addr, size_t addrlen, gpointer data, const char *error_message)
 {
 	struct PHB *phb = (struct PHB*)data;
-	
+
 	if(!addr)
 	{
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		return;
 	}
 
-	switch(phb->proxytype)
+	switch(phb->gpi->proxytype)
 	{
 		case PROXY_NONE:
 			proxy_connect_none(phb, addr, addrlen);
@@ -1157,16 +1153,19 @@ static void connection_host_resolved(struct sockaddr *addr, size_t addrlen, gpoi
 }
 
 int
-proxy_connect(char *host, int port, GaimInputFunction func, gpointer data)
+proxy_connect(struct gaim_account *account, char *host, int port, GaimInputFunction func, gpointer data)
 {
 	char *connecthost = host;
 	int connectport = port;
 	struct PHB *phb = g_new0(struct PHB, 1);
+	if(!account || !account->gpi)
+		phb->gpi = &global_proxy_info;
+	else
+		phb->gpi = account->gpi;
 	phb->func = func;
 	phb->data = data;
 	phb->host = g_strdup(host);
 	phb->port = port;
-	phb->proxytype = proxytype;
 
 	if (!host || !port || (port == -1) || !func) {
 		if(host)
@@ -1175,18 +1174,18 @@ proxy_connect(char *host, int port, GaimInputFunction func, gpointer data)
 		return -1;
 	}
 
-	if ((phb->proxytype!=PROXY_NONE) && (!proxyhost || !proxyhost[0] || !proxyport || (proxyport == -1)))
-		phb->proxytype=PROXY_NONE;
+	if ((phb->gpi->proxytype!=PROXY_NONE) && (!phb->gpi->proxyhost || !phb->gpi->proxyhost[0] || !phb->gpi->proxyport || (phb->gpi->proxyport == -1)))
+		phb->gpi->proxytype=PROXY_NONE;
 
-	switch(phb->proxytype)
+	switch(phb->gpi->proxytype)
 	{
 		case PROXY_NONE:
 			break;
 		case PROXY_HTTP:
 		case PROXY_SOCKS4:
 		case PROXY_SOCKS5:
-			connecthost=proxyhost;
-			connectport=proxyport;
+			connecthost=phb->gpi->proxyhost;
+			connectport=phb->gpi->proxyport;
 			break;
 		default:
 			g_free(phb->host);

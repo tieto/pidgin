@@ -71,6 +71,8 @@ struct gaim_account {
 	/* buddy icon file */
 	char iconfile[256];
 
+	struct gaim_proxy_info *gpi;
+
 	struct gaim_connection *gc;
 	gboolean connecting;
 

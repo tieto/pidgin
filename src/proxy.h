@@ -39,18 +39,25 @@
 
 #include <glib.h>
 
+#include "core.h"
+
 typedef enum {
+	PROXY_USE_GLOBAL = -1,
 	PROXY_NONE = 0,
 	PROXY_HTTP,
 	PROXY_SOCKS4,
 	PROXY_SOCKS5,
 } proxytype_t;
 
-extern char proxyhost[128];
-extern int  proxyport;
-extern proxytype_t  proxytype;
-extern char proxyuser[128];
-extern char proxypass[128];
+struct gaim_proxy_info {
+	int proxytype;
+	char proxyhost[128];
+	proxytype_t proxyport;
+	char proxyuser[128];
+	char proxypass[128];
+};
+
+extern struct gaim_proxy_info global_proxy_info;
 extern guint proxy_info_is_from_gaimrc;
 
 typedef enum {
@@ -62,6 +69,6 @@ typedef void (*GaimInputFunction)(gpointer, gint, GaimInputCondition);
 extern gint gaim_input_add(int, GaimInputCondition, GaimInputFunction, gpointer);
 extern void gaim_input_remove(gint);
 
-extern int proxy_connect(char *host, int port, GaimInputFunction func, gpointer data);
+extern int proxy_connect(struct gaim_account *account, char *host, int port, GaimInputFunction func, gpointer data);
 
 #endif /* _PROXY_H_ */

@@ -307,8 +307,12 @@ static void icq_auth_req(icq_Link *link, unsigned long uin, unsigned char hour, 
 static void icq_login(struct gaim_account *account) {
 	struct gaim_connection *gc = new_gaim_conn(account);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
+	struct gaim_proxy_info *gpi = account->gpi;
 	icq_Link *link;
 	char ps[9];
+
+	if(!gpi)
+		gpi = &global_proxy_info;
 
 	gc->checkbox = _("Send message through server");
 
@@ -338,8 +342,8 @@ static void icq_login(struct gaim_account *account) {
 	link->icq_RequestNotify = icq_req_not;
 	link->icq_UserData = gc;
 
-	if (proxytype == PROXY_SOCKS5)
-		icq_SetProxy(link, proxyhost, proxyport, proxyuser[0], proxyuser, proxypass);
+	if (gpi->proxytype == PROXY_SOCKS5)
+		icq_SetProxy(link, gpi->proxyhost, gpi->proxyport, gpi->proxyuser[0], gpi->proxyuser, gpi->proxypass);
 
 	icq_ContactClear(id->link);
 
