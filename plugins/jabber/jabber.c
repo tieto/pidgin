@@ -509,7 +509,6 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			}
 
 			g_snprintf(m, sizeof(m), "%s", msg);
-			/* FIXME EWIC */
 			serv_got_im(GJ_GC(j), from, m, 0, time((time_t)NULL));
 
 			if (!same)
@@ -568,7 +567,6 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			} else if (msg) {
 				char buf[8192];
 				g_snprintf(buf, sizeof(buf), "%s", msg);
-				/* FIXME EWIC */
 				serv_got_chat_in(GJ_GC(j), b->id, p->from->resource, 0, buf, time((time_t)NULL));
 			}
 		/*
