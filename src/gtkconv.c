@@ -4635,17 +4635,18 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	}
 	else {
 		char *new_message = g_memdup(message, length);
+		char *who_escaped = g_markup_escape_text(who, strlen(who));
 
 		if (flags & GAIM_MESSAGE_WHISPER) {
 			str = g_malloc(1024);
 
 			/* If we're whispering, it's not an autoresponse. */
 			if (gaim_message_meify(new_message, length)) {
-				g_snprintf(str, 1024, "***%s", who);
+				g_snprintf(str, 1024, "***%s", who_escaped);
 				strcpy(color, "#6C2585");
 			}
 			else {
-				g_snprintf(str, 1024, "*%s*:", who);
+				g_snprintf(str, 1024, "*%s*:", who_escaped);
 				strcpy(color, "#00FF00");
 			}
 		}
@@ -4654,9 +4655,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				str = g_malloc(1024);
 
 				if (flags & GAIM_MESSAGE_AUTO_RESP)
-					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, who);
+					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, who_escaped);
 				else
-					g_snprintf(str, 1024, "***%s", who);
+					g_snprintf(str, 1024, "***%s", who_escaped);
 
 				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
@@ -4666,9 +4667,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			else {
 				str = g_malloc(1024);
 				if (flags & GAIM_MESSAGE_AUTO_RESP)
-					g_snprintf(str, 1024, "%s %s", who, AUTO_RESPONSE);
+					g_snprintf(str, 1024, "%s %s", who_escaped, AUTO_RESPONSE);
 				else
-					g_snprintf(str, 1024, "%s:", who);
+					g_snprintf(str, 1024, "%s:", who_escaped);
 				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
 				else if (flags & GAIM_MESSAGE_RECV) {
@@ -4689,6 +4690,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				else if (flags & GAIM_MESSAGE_SEND)
 					strcpy(color, SEND_COLOR);
 			}
+
+			if(who_escaped)
+				g_free(who_escaped);
 		}
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
