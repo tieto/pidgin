@@ -193,37 +193,38 @@ do_check_save_convo(GObject *obj, GtkWidget *wid)
 }
 
 static void
-do_insert_image_cb(GObject *obj, GtkWidget *wid)
+do_insert_image_cb(GtkWidget *widget, int resp, gpointer data)
 {
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-	GaimConvIm *im;
+	GaimConversation *conv = data;
+	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+	GaimConvIm *im = GAIM_CONV_IM(conv);
 	char *name, *filename;
-	char *buf, *data;
+	char *buf, *filedata;
 	size_t size;
-	GError *error;
+	GError *error = NULL;
 	int id;
 
-	conv    = g_object_get_data(G_OBJECT(wid), "user_data");
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	im      = GAIM_CONV_IM(conv);
-	name    = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid)));
+	if (resp != GTK_RESPONSE_OK) {
+		set_toggle(gtkconv->toolbar.image, FALSE);
+		return;
+	}
+
+	name = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(widget)));
 
 	if (!name) {
-		gtk_widget_destroy(gtkconv->dialogs.image);
-		gtkconv->dialogs.image = NULL;
+		set_toggle(gtkconv->toolbar.image, FALSE);
 		return;
 	}
 
-	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(wid))) {
+	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(widget))) {
 		g_free(name);
+		set_toggle(gtkconv->toolbar.image, FALSE);
 		return;
 	}
 
-	gtk_widget_destroy(gtkconv->dialogs.image);
-	gtkconv->dialogs.image = NULL;
+	set_toggle(gtkconv->toolbar.image, FALSE);
 
-	if (!g_file_get_contents(name, &data, &size, &error)) {
+	if (!g_file_get_contents(name, &filedata, &size, &error)) {
 		gaim_notify_error(NULL, NULL, error->message, NULL);
 
 		g_error_free(error);
@@ -236,8 +237,8 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 	while (strchr(filename, '/'))
 		filename = strchr(filename, '/') + 1;
 
-	id = gaim_imgstore_add(data, size, filename);
-	g_free(data);
+	id = gaim_imgstore_add(filedata, size, filename);
+	g_free(filedata);
 
 	if (!id) {
 		buf = g_strdup_printf(_("Failed to store image: %s\n"), name);
@@ -256,8 +257,6 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 	g_free(buf);
 
 	g_free(name);
-
-	set_toggle(gtkconv->toolbar.image, FALSE);
 }
 
 static gint
@@ -289,18 +288,6 @@ tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
 }
 
 static void
-cancel_insert_image_cb(GtkWidget *unused, GaimGtkConversation *gtkconv)
-{
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.image),
-								 FALSE);
-
-	if (gtkconv->dialogs.image)
-		gtk_widget_destroy(gtkconv->dialogs.image);
-
-	gtkconv->dialogs.image = NULL;
-}
-
-static void
 insert_image_cb(GtkWidget *save, GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
@@ -314,18 +301,14 @@ insert_image_cb(GtkWidget *save, GaimConversation *conv)
 		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S, gaim_home_dir());
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 
-		g_object_set_data(G_OBJECT(window), "user_data", conv);
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->ok_button),
-				"clicked", G_CALLBACK(do_insert_image_cb), window);
-		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)->cancel_button),
-						 "clicked", G_CALLBACK(cancel_insert_image_cb), gtkconv);
+		gtk_dialog_set_default_response(GTK_DIALOG(window), GTK_RESPONSE_OK);
+		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(window)),
+				"response", G_CALLBACK(do_insert_image_cb), conv);
 
 		gtk_widget_show(window);
 		gtkconv->dialogs.image = window;
 	} else {
-		gtk_widget_grab_focus(gtkconv->entry);
-		if(gtkconv->dialogs.image)
-			gtk_widget_destroy(gtkconv->dialogs.image);
+		gtk_widget_destroy(gtkconv->dialogs.image);
 		gtkconv->dialogs.image = NULL;
 	}
 }
@@ -338,11 +321,9 @@ insert_link_cb(GtkWidget *w, GaimConversation *conv)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link)))
-		show_insert_link(gtkconv->toolbar.link, conv);
-	else if (gtkconv->dialogs.link)
-		cancel_link(gtkconv->toolbar.link, conv);
+		dialog_link_show(conv);
 	else
-		gaim_gtk_advance_past(gtkconv, "<A HREF>", "</A>");
+		dialog_link_destroy(conv);
 
 	gtk_widget_grab_focus(gtkconv->entry);
 }
@@ -769,12 +750,14 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
     GtkWidget *table;
     GtkWidget *labelbox, *bbox;
-    GtkWidget *button, *align;
+    GtkWidget *button;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	GtkWidget *label, *entry;
 	struct _search *s;
+/*
 	gint signal_id;
 	GClosure *closure;
+*/
 
 	if (gtkconv->dialogs.search) {
 		gtk_window_present(GTK_WINDOW(gtkconv->dialogs.search));
@@ -867,7 +850,8 @@ menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
 	conv    = gaim_conv_window_get_active_conversation(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	show_insert_link(gtkconv->toolbar.link, conv);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
+		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link)));
 }
 
 static void
@@ -3479,17 +3463,6 @@ build_conv_toolbar(GaimConversation *conv)
 	sep = gtk_vseparator_new();
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
 
-	/* Insert IM Image */
-	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_IMAGE);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("Insert image"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(insert_image_cb), conv);
-
-	gtkconv->toolbar.image = button;
-
 	/* Insert Link */
 	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_LINK);
 	gtk_size_group_add_widget(sg, button);
@@ -3500,6 +3473,17 @@ build_conv_toolbar(GaimConversation *conv)
 					 G_CALLBACK(insert_link_cb), conv);
 
 	gtkconv->toolbar.link = button;
+
+	/* Insert IM Image */
+	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_IMAGE);
+	gtk_size_group_add_widget(sg, button);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("Insert image"), NULL);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(insert_image_cb), conv);
+
+	gtkconv->toolbar.image = button;
 
 	/* Insert Smiley */
 	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_SMILEY);

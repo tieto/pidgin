@@ -80,7 +80,6 @@ struct linkdlg {
 	GtkWidget *window;
 	GtkWidget *url;
 	GtkWidget *text;
-	GtkWidget *toggle;
 	GtkWidget *entry;
 	GaimConversation *c;
 };
@@ -234,7 +233,6 @@ void show_warn_dialog(GaimConnection *gc, const char *who)
 	img = gtk_image_new_from_stock(GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_MENU);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	labeltext = _("<b>Anonymous warnings are less severe.</b>");
-	/* labeltext = _("Anonymous warnings are less severe."); */
 	label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), labeltext);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
@@ -678,66 +676,49 @@ void show_info_dialog()
 }
 
 
-static void
-free_dialog(GtkWidget *w, void *data)
-{
-	g_free(data);
-}
-
 /*------------------------------------------------------*/
 /* Link Dialog                                          */
 /*------------------------------------------------------*/
 
-void cancel_link(GtkWidget *widget, GaimConversation *c)
+void dialog_link_destroy(GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
-	GtkWidget *link_dialog;
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
-	if (gtkconv->toolbar.link) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
-									FALSE);
-	}
-
-	link_dialog = gtkconv->dialogs.link;
+	gtk_widget_destroy(gtkconv->dialogs.link);
 	gtkconv->dialogs.link = NULL;
-	destroy_dialog(NULL, link_dialog);
 }
 
-void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
+static void do_insert_link(GtkWidget *w, int resp, struct linkdlg *a)
 {
 	GaimGtkConversation *gtkconv;
-	char *open_tag;
 	const char *urltext, *showtext;
 
-	gtkconv = GAIM_GTK_CONVERSATION(b->c);
+	gtkconv = GAIM_GTK_CONVERSATION(a->c);
 
 	if (resp == GTK_RESPONSE_OK) {
-
-		open_tag = g_malloc(2048);
-
-		urltext = gtk_entry_get_text(GTK_ENTRY(b->url));
-		showtext = gtk_entry_get_text(GTK_ENTRY(b->text));
+		urltext = gtk_entry_get_text(GTK_ENTRY(a->url));
+		showtext = gtk_entry_get_text(GTK_ENTRY(a->text));
 
 		if (!strlen(showtext))
 			showtext = urltext;
 
 		gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry), urltext, showtext);
-
-		g_free(open_tag);
+		gaim_gtk_advance_past(gtkconv, "<A HREF>", "</A>");
 	}
 
-	if (gtkconv->toolbar.link) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link),
-									FALSE);
-	}
-
-	gtkconv->dialogs.link = NULL;
-	destroy_dialog(NULL, b->window);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link), FALSE);
 }
 
-void show_insert_link(GtkWidget *linky, GaimConversation *c)
+static void dialog_link_freedata(GtkWidget *w, gpointer user_data)
+{
+	struct linkdlg *a = user_data;
+
+	g_free(a);
+}
+
+void dialog_link_show(GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *gtkwin;
@@ -745,82 +726,78 @@ void show_insert_link(GtkWidget *linky, GaimConversation *c)
 	GtkWidget *label;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
+	struct linkdlg *a;
+	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
 
-	if (gtkconv->dialogs.link == NULL) {
-		struct linkdlg *a = g_new0(struct linkdlg, 1);
-		GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+	a = g_new0(struct linkdlg, 1);
 
-		a->c = c;
-		a->window = gtk_dialog_new_with_buttons(_("Insert Link"),
-				GTK_WINDOW(gtkwin->window), 0, GTK_STOCK_CANCEL,
-				GTK_RESPONSE_CANCEL, _("_Insert"), GTK_RESPONSE_OK, NULL);
-		gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
-		g_signal_connect(G_OBJECT(a->window), "response",
-						 G_CALLBACK(do_insert_link), a);
+	a->c = c;
+	a->window = gtk_dialog_new_with_buttons(_("Insert Link"),
+			GTK_WINDOW(gtkwin->window), 0, GTK_STOCK_CANCEL,
+			GTK_RESPONSE_CANCEL, _("_Insert"), GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
+	g_signal_connect(G_OBJECT(a->window), "response",
+					 G_CALLBACK(do_insert_link), a);
+	g_signal_connect(G_OBJECT(a->window), "destroy",
+					 G_CALLBACK(dialog_link_freedata), a);
 
-		gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
-		gtk_container_set_border_width(GTK_CONTAINER(a->window), 6);
-		gtk_window_set_resizable(GTK_WINDOW(a->window), FALSE);
-		gtk_dialog_set_has_separator(GTK_DIALOG(a->window), FALSE);
-		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(a->window)->vbox), 12);
-		gtk_container_set_border_width(
-			GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), 6);
-		gtk_window_set_role(GTK_WINDOW(a->window), "insert_link");
-		gtk_dialog_set_response_sensitive(GTK_DIALOG(a->window), GTK_RESPONSE_OK, FALSE);
+	gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
+	gtk_container_set_border_width(GTK_CONTAINER(a->window), 6);
+	gtk_window_set_resizable(GTK_WINDOW(a->window), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(a->window), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(a->window)->vbox), 12);
+	gtk_container_set_border_width(
+		GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), 6);
+	gtk_window_set_role(GTK_WINDOW(a->window), "insert_link");
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(a->window), GTK_RESPONSE_OK, FALSE);
 
-		hbox = gtk_hbox_new(FALSE, 12);
-		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), hbox);
-		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-		vbox = gtk_vbox_new(FALSE, 0);
-		gtk_container_add(GTK_CONTAINER(hbox), vbox);
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
-		label = gtk_label_new(_("Please enter the URL and description of "
-								"the link that you want to insert.  The "
-								"description is optional.\n"));
-		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	label = gtk_label_new(_("Please enter the URL and description of "
+							"the link that you want to insert.  The "
+							"description is optional.\n"));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-		table = gtk_table_new(2, 2, FALSE);
-		gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-		gtk_table_set_col_spacings(GTK_TABLE(table), 6);
-		gtk_container_set_border_width(GTK_CONTAINER(table), 0);
-		gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
+	table = gtk_table_new(2, 2, FALSE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
+	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
-		label = gtk_label_new_with_mnemonic(_("_URL:"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
+	label = gtk_label_new_with_mnemonic(_("_URL:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
-		a->url = gtk_entry_new();
-		gtk_table_attach_defaults(GTK_TABLE(table), a->url, 1, 2, 0, 1);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->url));
-		gtk_widget_grab_focus(a->url);
+	a->url = gtk_entry_new();
+	gtk_table_attach_defaults(GTK_TABLE(table), a->url, 1, 2, 0, 1);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->url));
+	gtk_widget_grab_focus(a->url);
 
-		gtk_entry_set_activates_default (GTK_ENTRY(a->url), TRUE);
-		g_signal_connect(G_OBJECT(a->url), "changed",
-				G_CALLBACK(gaim_gtk_set_sensitive_if_input), a->window);
+	gtk_entry_set_activates_default (GTK_ENTRY(a->url), TRUE);
+	g_signal_connect(G_OBJECT(a->url), "changed",
+			G_CALLBACK(gaim_gtk_set_sensitive_if_input), a->window);
 
-		label = gtk_label_new_with_mnemonic(_("_Description:"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
+	label = gtk_label_new_with_mnemonic(_("_Description:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
 
-		a->text = gtk_entry_new();
-		gtk_table_attach_defaults(GTK_TABLE(table), a->text, 1, 2, 1, 2);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->text));
-		gtk_entry_set_activates_default (GTK_ENTRY(a->text), TRUE);
+	a->text = gtk_entry_new();
+	gtk_table_attach_defaults(GTK_TABLE(table), a->text, 1, 2, 1, 2);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(a->text));
+	gtk_entry_set_activates_default (GTK_ENTRY(a->text), TRUE);
 
-		g_signal_connect(G_OBJECT(a->window), "destroy",
-						 G_CALLBACK(free_dialog), a);
-		dialogwindows = g_list_prepend(dialogwindows, a->window);
-
-		a->toggle = linky;
-		gtkconv->dialogs.link = a->window;
-	}
+	gtkconv->dialogs.link = a->window;
 
 	gtk_widget_show_all(gtkconv->dialogs.link);
 	gdk_window_raise(gtkconv->dialogs.link->window);

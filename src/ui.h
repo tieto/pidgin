@@ -131,12 +131,12 @@ extern void show_bgcolor_dialog(GaimConversation *c, GtkWidget *color);
 extern void cancel_fgcolor(GtkWidget *widget, GaimConversation *c);
 extern void cancel_bgcolor(GtkWidget *widget, GaimConversation *c);
 extern void create_away_mess(GtkWidget *, void *);
-extern void show_insert_link(GtkWidget *,GaimConversation *);
+extern void dialog_link_show(GaimConversation *);
+extern void dialog_link_destroy(GaimConversation *);
 extern void show_smiley_dialog(GaimConversation *, GtkWidget *);
 extern void close_smiley_dialog(GtkWidget *widget, GaimConversation *c);
 extern void set_smiley_array(GtkWidget *widget, int smiley_type);
 extern void insert_smiley_text(GtkWidget *widget, GaimConversation *c);
-extern void cancel_link(GtkWidget *, GaimConversation *);
 extern void show_font_dialog(GaimConversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, GaimConversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
@@ -145,6 +145,7 @@ extern void join_chat();
 
 /* Functions in server.c */
 /* server.c is in desperate need need of a split */
+/* pizza pizza */
 extern int find_queue_total_by_name(char *);
 
 /* Functions in session.c */
