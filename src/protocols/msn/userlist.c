@@ -80,9 +80,21 @@ got_new_entry(GaimConnection *gc, const char *passport,
 	pa->who = g_strdup(passport);
 	pa->gc  = gc;
 
-	msg = g_strdup_printf(
-			   _("The user %s (%s) wants to add %s to his or her buddy list."),
-			   passport, friendly, gaim_account_get_username(gc->account));
+	if (friendly != NULL)
+	{
+		msg = g_strdup_printf(
+				   _("The user %s (%s) wants to add %s to his or her "
+					 "buddy list."),
+				   passport, friendly,
+				   gaim_account_get_username(gc->account));
+	}
+	else
+	{
+		msg = g_strdup_printf(
+				   _("The user %s wants to add %s to his or "
+					 "her buddy list."),
+				   passport, gaim_account_get_username(gc->account));
+	}
 
 	gaim_request_action(gc, NULL, msg, NULL, 0, pa, 2,
 						_("Authorize"), G_CALLBACK(msn_accept_add_cb),
