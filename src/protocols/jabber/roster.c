@@ -251,6 +251,7 @@ void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
 	char *who;
 	GSList *groups = NULL;
 	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
 
 	if(!js->roster_parsed)
 		return;
@@ -268,6 +269,8 @@ void jabber_roster_add_buddy(GaimConnection *gc, const char *name,
 
 	if(!jb || !(jb->subscription & JABBER_SUB_TO))
 		jabber_presence_subscription_set(js, who, "subscribe");
+	else if((jbr =jabber_buddy_find_resource(jb, NULL)))
+		serv_got_update(gc, who, 1, 0, 0, 0, jbr->state);
 
 	g_free(who);
 }
