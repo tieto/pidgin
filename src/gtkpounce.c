@@ -25,6 +25,7 @@
  */
 #include "gtkinternal.h"
 
+#include "account.h"
 #include "conversation.h"
 #include "debug.h"
 #include "notify.h"
@@ -698,6 +699,10 @@ fill_menu(GtkWidget *menu, GCallback cb)
 		pounce = (GaimPounce *)bp->data;
 		buddy = gaim_pounce_get_pouncee(pounce);
 
+		/* Check if account is online, if not skip it */
+		if(!gaim_account_is_connected(pounce->pouncer))
+			continue;
+		
 		/* Build the menu item */
 		item = gtk_image_menu_item_new_with_label(buddy);
 
@@ -737,7 +742,8 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 
 		gtk_widget_destroy(GTK_WIDGET(l->data));
 	}
-
+	g_list_free(l);
+	
 	/* "New Buddy Pounce" */
 	item = gtk_menu_item_new_with_label(_("New Buddy Pounce"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);

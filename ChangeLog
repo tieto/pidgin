@@ -7,7 +7,7 @@ version 0.76cvs:
 	  accessibility tools (Marc Mulcahy)
 	* Improved accessibility in conversation windows (Nathan Fredrickson)
 	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
-	* Non-ascii character support in AIM chats (Uli Luckas)
+	* Non-ascii character support in AIM chats (Uli Luckas and Marco Ziech)
 	* Improved local IP address detection (Tim Ringenbach)
 	* Local IP address information can be changed in Preferences
 	  (Tim Ringenbach)
@@ -16,6 +16,9 @@ version 0.76cvs:
 	* Tabs now stay green when they are supposed to (Etan Reisner)
 	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
 	* Gadu-Gadu might actually connect again (Ignacy Gawedzki)
+	* Buddy pounces for an account are removed when the account is
+	  deleted (Gary Kramlich)
+	* Various bug and memory leak fixes (Gary Kramlich)
 	* Catalan translation updated (Xan (DXpublica))
 	* Danish translation updated (Morten Brix Pedersen (mbrix))
 	* English (British) translation updated (Luke Ross (lukeross))

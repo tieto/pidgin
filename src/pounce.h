@@ -104,6 +104,13 @@ GaimPounce *gaim_pounce_new(const char *ui_type, GaimAccount *pouncer,
 void gaim_pounce_destroy(GaimPounce *pounce);
 
 /**
+ * Destroys all buddy pounces for the account
+ *
+ * @param account The account to remove all pounces from.
+ */
+void gaim_pounce_destroy_all_by_account(GaimAccount *account);
+
+/**
  * Sets the events a pounce should watch for.
  *
  * @param pounce The buddy pounce.

@@ -1160,8 +1160,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	account_win_destroy_cb(NULL, NULL, dialog);
 
-	gaim_accounts_sync();
-
 	return ret;
 }
 

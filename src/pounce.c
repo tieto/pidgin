@@ -172,6 +172,26 @@ gaim_pounce_destroy(GaimPounce *pounce)
 }
 
 void
+gaim_pounce_destroy_all_by_account(GaimAccount *account)
+{
+	GaimAccount *pouncer;
+	GaimPounce *pounce;
+	GList *l, *l_next;
+
+	
+	g_return_if_fail(account != NULL);
+	
+	for (l = gaim_pounces_get_all(); l != NULL; l = l_next) {
+		pounce = (GaimPounce *)l->data;
+		l_next = l->next;
+		
+		pouncer = gaim_pounce_get_pouncer(pounce);
+		if (pouncer == account)
+			gaim_pounce_destroy(pounce);
+	}
+}
+
+void
 gaim_pounce_set_events(GaimPounce *pounce, GaimPounceEvent events)
 {
 	g_return_if_fail(pounce != NULL);
@@ -987,5 +1007,11 @@ gaim_pounces_init(void)
 void
 gaim_pounces_uninit()
 {
+	if (pounces_save_timer != 0) {
+		g_source_remove(pounces_save_timer);
+		pounces_save_timer = 0;
+		gaim_pounces_sync();
+	}
+
 	gaim_signals_disconnect_by_handle(gaim_pounces_get_handle());
 }

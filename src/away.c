@@ -364,6 +364,7 @@ void do_away_menu()
 			l = l->next;
 		}
 
+		g_list_free(l);
 
 		remmenu = gtk_menu_new();
 

@@ -120,13 +120,10 @@ gaim_core_quit(void)
 	/* Transmission ends */
 	gaim_connections_disconnect_all();
 
-	/* Record what we have before we blow it away... */
-	gaim_prefs_sync();
-	gaim_accounts_sync();
-
 	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
 	gaim_plugins_destroy_all();
 
+	/* Save .xml files, remove signals, etc. */
 	gaim_ssl_uninit();
 	gaim_pounces_uninit();
 	gaim_blist_uninit();
@@ -134,6 +131,7 @@ gaim_core_quit(void)
 	gaim_connections_uninit();
 	gaim_buddy_icons_uninit();
 	gaim_accounts_uninit();
+	gaim_prefs_uninit();
 
 	gaim_signals_uninit();
 

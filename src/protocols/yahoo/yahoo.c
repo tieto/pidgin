@@ -2083,6 +2083,8 @@ static void yahoo_login(GaimAccount *account) {
 
 	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
 
+	gaim_connection_set_display_name(gc, gaim_account_get_username(account));
+
 	yd->fd = -1;
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->confs = NULL;

@@ -2524,7 +2524,10 @@ static void gaim_gtk_blist_hide_node(GaimBuddyList *list, GaimBlistNode *node)
 static void
 signed_on_off_cb(GaimConnection *gc, GaimBuddyList *blist)
 {
+	GaimGtkBuddyList *gtkblist = blist->ui_data;
+	
 	gaim_gtk_blist_update_protocol_actions();
+	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 }
 
 /* this is called on all sorts of signals, and we have no reason to pass

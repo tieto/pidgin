@@ -63,6 +63,11 @@ extern "C" {
 void gaim_prefs_init();
 
 /**
+ * Uninitializes the prefs subsystem.
+ */
+void gaim_prefs_uninit(void);
+
+/**
  * Add a new typeless pref.
  *
  * @param name  The name of the pref

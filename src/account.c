@@ -26,6 +26,7 @@
 #include "account.h"
 #include "debug.h"
 #include "notify.h"
+#include "pounce.h"
 #include "prefs.h"
 #include "prpl.h"
 #include "request.h"
@@ -1443,6 +1444,7 @@ gaim_accounts_delete(GaimAccount *account)
 
 	gaim_accounts_remove(account);
 
+	/* Remove this account's buddies */
 	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next) {
 		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
@@ -1464,8 +1466,10 @@ gaim_accounts_delete(GaimAccount *account)
 			}
 		}
 	}
-
 	gaim_blist_save();
+
+	/* Remove this account's pounces */
+	gaim_pounce_destroy_all_by_account(account);
 
 	gaim_account_destroy(account);
 }
@@ -1654,5 +1658,11 @@ gaim_accounts_init(void)
 void
 gaim_accounts_uninit(void)
 {
+	if (accounts_save_timer != 0) {
+		g_source_remove(accounts_save_timer);
+		accounts_save_timer = 0;
+		gaim_accounts_sync();
+	}
+
 	gaim_signals_unregister_by_instance(gaim_accounts_get_handle());
 }

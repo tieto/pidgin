@@ -571,7 +571,8 @@ void gaim_accounts_remove(GaimAccount *account);
  * Deletes an account.
  *
  * This will remove any buddies from the buddy list that belong to this
- * account, and will also destroy @a account.
+ * account, buddy pounces that belong to this account, and will also 
+ * destroy @a account.
  *
  * @param account The account.
  */
