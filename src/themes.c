@@ -22,11 +22,11 @@
 #include "gaim.h"
 #include "ui.h"
 #include "gtkimhtml.h"
+#include "prpl.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <sys/stat.h>
-#include "gaim.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -149,7 +149,7 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 			theme->author = g_strdup(i + strlen("Author="));
 			theme->author[strlen(theme->author)-1] = 0;
 		} else if (load && list) {
-			gboolean hidden;
+			gboolean hidden = FALSE;
 			char *sfile = NULL;
 
 			if (*i == '!' && *(i + 1) == ' ') {
@@ -169,6 +169,7 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 					l[li] = 0;
 					smiley->file = sfile;
 					smiley->smile = g_strdup(l);
+					smiley->hidden = hidden;
 					list->smileys = g_slist_append(list->smileys, smiley);
 				}
 				while (isspace(*i))
@@ -226,4 +227,25 @@ void smiley_theme_probe()
 		}	
 		g_free(probedirs[l]);
 	}
+}
+
+GSList *get_proto_smileys(int protocol) {
+	struct prpl *proto = find_prpl(protocol);
+	struct smiley_list *list, *def;
+
+	if(!current_smiley_theme)
+		return NULL;
+
+	def = list = current_smiley_theme->list;
+
+	while(list) {
+		if(!strcmp(list->sml, "default"))
+			def = list;
+		else if(proto && !strcmp(proto->name, list->sml))
+			break;
+
+		list = list->next;
+	}
+
+	return list ? list->smileys : def->smileys;
 }

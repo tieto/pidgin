@@ -509,6 +509,7 @@ extern void session_end();
 extern void smiley_themeize(GtkWidget *);
 extern void smiley_theme_probe();
 extern struct smiley_theme *load_smiley_theme(const char *file, gboolean load);
+extern GSList *get_proto_smileys(int protocol);
 
 /* Fucnctions in util.c */
 extern GtkWidget *gaim_pixmap(char *, char *);
