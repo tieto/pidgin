@@ -296,13 +296,21 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 
-	GaimBlistNode *node = (GaimBlistNode*)buddy;
-	
+	GaimBlistNode *gnode, *node = (GaimBlistNode*)buddy;
+	struct group *group;
+
+	gnode = node->parent;
+	group = (struct group *)gnode;
+
+	if(gnode->child == node)
+		gnode->child = node->next;
 	if (node->prev)
 		node->prev->next = node->next;
 	if (node->next)
 		node->next->prev = node->prev;
-	
+
+	group->members = g_slist_remove(group->members, buddy);
+
 	ops->remove(gaimbuddylist, node);
 	g_free(buddy->name);
 	g_free(buddy->alias);

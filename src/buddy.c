@@ -192,8 +192,10 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
 
-	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
+	if (!GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		gtk_tree_path_free(path);
 		return FALSE;
+	}
 
 	menu = gtk_menu_new();
 
@@ -237,6 +239,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	  * the event propoagates down and somehow gets interpreted as the start of a drag event. */
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
 	gtk_tree_selection_select_path(sel, path);
+	gtk_tree_path_free(path);
 	return TRUE;
 #endif
 }
@@ -312,8 +315,10 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 						8, /* bits */
 						(void*)&node,
 						sizeof (node));
+
+		gtk_tree_path_free(sourcerow);
 	}
-		
+
 }
 
 static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
@@ -326,6 +331,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		memcpy(&b, sd->data, sizeof(b));
 		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
 			/* if we're here, I think it means the drop is ok */
+			gtk_tree_path_free(path);
 		}
 	}
 }
@@ -872,6 +878,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 						     * we expand the group node */
 					GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter);
 					gtk_tree_view_expand_row(GTK_TREE_VIEW(gtkblist->treeview), path, TRUE);
+					gtk_tree_path_free(path);
 				}
 			}
 		}
