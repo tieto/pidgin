@@ -495,6 +495,14 @@ static void generate_prpl_options(struct aim_user *u, GtkWidget *book)
 
 		char buf[256];
 
+		if (u && u->opt_entries) {
+			g_list_free(u->opt_entries);
+			u->opt_entries = NULL;
+		} else if (!u && tmpusr.opt_entries) {
+			g_list_free(tmpusr.opt_entries);
+			tmpusr.opt_entries = NULL;
+		}
+
 		vbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 		g_snprintf(buf, sizeof(buf), "%s Options", (*p->name)());
