@@ -122,7 +122,7 @@ version 0.60:
 	* Switch the .desktop file to the new KDE/GNOME common vfolder 
 	  format (Thanks, Robert McQueen)
 	* Removed all deprecated GTK calls.  Now 100% GTK 2. (Thanks Nathan
-	  Walp, Christian Hammond, Ari Pollak, Ethan Blanton)
+	  Walp, Christian Hammond, Ari Pollak, Ethan Blanton, Robert McQueen)
 	* Read proxy environment variables. (Thanks, Christian Hammond)
 	* Fixed security vulnerability with manual browser option (Thanks,
 	  Robert McQueen)
