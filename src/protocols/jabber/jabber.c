@@ -1226,7 +1226,11 @@ static char *jabber_get_convo_thread(gjconn gjc, char *name)
 		if(jri->thread_id)
 			ct = g_strdup(jri->thread_id);
 	}
-
+	if(!ct) {
+		char buf[1024];
+		snprintf(buf, sizeof(buf), "%s%d", name, (int)time(NULL));
+		ct = g_strdup(shahash(buf));
+	}
 	return ct;
 }
 
@@ -1268,9 +1272,11 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 	char m[BUF_LONG * 2];
 
 	type = xmlnode_get_attrib(p->x, "type");
- 
+
 	if ((y = xmlnode_get_tag(p->x, "thread")))
 		thread_id = xmlnode_get_data(y);
+	if(!thread_id)
+		thread_id = "";
 
 	y = xmlnode_get_firstchild(p->x);
 
@@ -1321,16 +1327,14 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 					time_sent);
 			else {
 				int flags = 0;
-				jab_res_info jri = jabber_find_resource(GJ_GC(gjc), jid_full(p->from));
+				jab_res_info jri = jabber_find_resource(GJ_GC(gjc), from);
 				if(jri && typing)
 					jri->has_composing = TRUE;
 				if (xmlnode_get_tag(p->x, "gaim"))
 					flags = IM_FLAG_GAIMUSER;
-				if ((y = xmlnode_get_tag(p->x, "thread")))
-					jabber_track_convo_thread(gjc, jid_full(p->from),
-						xmlnode_get_data(y));
-				if (find_conversation(jid_full(p->from)))
-					serv_got_im(GJ_GC(gjc), jid_full(p->from), m, flags,
+				jabber_track_convo_thread(gjc, from, thread_id);
+				if (find_conversation(from))
+					serv_got_im(GJ_GC(gjc), from, m, flags,
 						time_sent, -1);
 				else {
 					if(p->from->user) {
@@ -2448,12 +2452,14 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
 
 	x = xmlnode_new_tag("message");
 	xmlnode_put_attrib(x, "to", realwho);
-	
+
 	thread_id = jabber_get_convo_thread(gjc, realwho);
 	if(thread_id)
 	{
-		y = xmlnode_insert_tag(x, "thread");
-		xmlnode_insert_cdata(y, thread_id, -1);
+		if(strcmp(thread_id, "")) {
+			y = xmlnode_insert_tag(x, "thread");
+			xmlnode_insert_cdata(y, thread_id, -1);
+		}
 		g_free(thread_id);
 	}
 
