@@ -18,7 +18,6 @@ src/protocols/toc/toc.c
 src/protocols/yahoo/yahoo.c
 src/protocols/zephyr/zephyr.c
 src/about.c
-src/aim.c
 src/away.c
 src/buddy.c
 src/buddy_chat.c
@@ -31,6 +30,7 @@ src/gtkutils.c
 src/html.c
 src/list.c
 src/log.c
+src/main.c
 src/module.c
 src/multi.c
 src/perl.c
