@@ -35,6 +35,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "prpl.h"
+#include "gtkimhtml.h"
 #include "pixmaps/join.xpm"
 
 GtkWidget *imaway = NULL;
@@ -136,10 +137,10 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 {
 	GtkWidget *back;
 	GtkWidget *awaytext;
-	GtkWidget *vscrollbar;
+	GtkWidget *sw;
 	GtkWidget *vbox;
 	char *buf2;
-	char buf[BUF_LONG];
+	char *buf;
 
 	if (!blist)
 		return;
@@ -150,64 +151,55 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	if (!imaway) {
 		imaway = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_window_set_wmclass(GTK_WINDOW(imaway), "imaway", "Gaim");
+		if (strlen(a->name))
+			gtk_window_set_title(GTK_WINDOW(imaway), a->name);
+		else
+			gtk_window_set_title(GTK_WINDOW(imaway), _("Gaim - Away!"));
+		gtk_signal_connect(GTK_OBJECT(imaway), "destroy", GTK_SIGNAL_FUNC(do_im_back), imaway);
 		gtk_widget_realize(imaway);
 		aol_icon(imaway->window);
-		back = picture_button(imaway, _("I'm Back!"), join_xpm);
+
 		vbox = gtk_vbox_new(FALSE, 5);
+		gtk_container_add(GTK_CONTAINER(imaway), vbox);
 		gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+		gtk_widget_show(vbox);
 
-		awaytext = gtk_text_new(NULL, NULL);
+		sw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+		gtk_widget_set_usize(sw, 245, 120);
+		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+		gtk_widget_show(sw);
 
-		/* rcg10312000 Convert basic HTML (<BR>, etc) to plain text.
-		   g_snprintf(buf, sizeof(buf), "%s", a->message);
-		 */
-		strncpy_nohtml(buf, a->message, sizeof(buf));
-
-		vscrollbar = gtk_vscrollbar_new(GTK_TEXT(awaytext)->vadj);
-		gtk_widget_show(vscrollbar);
-		gtk_widget_set_usize(awaytext, 245, 120);
-		gtk_text_set_word_wrap(GTK_TEXT(awaytext), TRUE);
+		awaytext = gtk_imhtml_new(NULL, NULL);
+		gtk_container_add(GTK_CONTAINER(sw), awaytext);
+		gaim_setup_imhtml(awaytext);
 		gtk_widget_show(awaytext);
-		gtk_text_freeze(GTK_TEXT(awaytext));
-		gtk_text_insert(GTK_TEXT(awaytext), NULL, NULL, NULL, buf, -1);
-		gtk_widget_show(awaytext);
-
-		if (display_options & OPT_DISP_COOL_LOOK)
-			gtk_button_set_relief(GTK_BUTTON(back), GTK_RELIEF_NONE);
+		buf = stylize(a->message, BUF_LONG);
+		gtk_imhtml_append_text(GTK_IMHTML(awaytext), buf, GTK_IMHTML_NO_TITLE |
+								  GTK_IMHTML_NO_COMMENTS |
+								  GTK_IMHTML_NO_NEWLINE |
+								  GTK_IMHTML_NO_SCROLL);
+		g_free(buf);
 
 		clistqueuesw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(clistqueuesw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+		gtk_box_pack_start(GTK_BOX(vbox), clistqueuesw, TRUE, TRUE, 0);
 
 		clistqueue = gtk_clist_new(2);
 		gtk_clist_set_column_width(GTK_CLIST(clistqueue), 0, 100);
 		gtk_widget_set_usize(GTK_WIDGET(clistqueue), -1, 50);
 		gtk_container_add(GTK_CONTAINER(clistqueuesw), clistqueue);
 
-		/* Put the buttons in the box */
-		gtk_box_pack_start(GTK_BOX(vbox), awaytext, TRUE, TRUE, 0);
-		
-		gtk_box_pack_start(GTK_BOX(vbox), clistqueuesw, TRUE, TRUE, 0);
-		
-		gtk_box_pack_start(GTK_BOX(vbox), back, FALSE, FALSE, 0);
-
-		/* Handle closes right */
-		gtk_signal_connect(GTK_OBJECT(imaway), "destroy", GTK_SIGNAL_FUNC(do_im_back), imaway);
-		gtk_signal_connect(GTK_OBJECT(back), "clicked", GTK_SIGNAL_FUNC(do_im_back), imaway);
-
-		/* Finish up */
 		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY) {
 			gtk_widget_show(clistqueuesw);
 			gtk_widget_show(clistqueue);
 		}
 
-		gtk_widget_show(back);
-		gtk_widget_show(vbox);
-		if (strlen(a->name))
-			gtk_window_set_title(GTK_WINDOW(imaway), a->name);
-		else
-			gtk_window_set_title(GTK_WINDOW(imaway), _("Gaim - Away!"));
+		back = picture_button(imaway, _("I'm Back!"), join_xpm);
+		gtk_box_pack_start(GTK_BOX(vbox), back, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(back), "clicked", GTK_SIGNAL_FUNC(do_im_back), imaway);
 		gtk_window_set_focus(GTK_WINDOW(imaway), back);
-		gtk_container_add(GTK_CONTAINER(imaway), vbox);
+
 		awaymessage = a;
 
 	} else {
