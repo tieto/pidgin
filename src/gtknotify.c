@@ -112,7 +112,7 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	}
 
 	dialog = gtk_dialog_new_with_buttons(title ? title : GAIM_ALERT_TITLE,
-					     NULL, 0, GTK_STOCK_OK,
+					     NULL, 0, GTK_STOCK_CLOSE,
 					     GTK_RESPONSE_ACCEPT, NULL);
 
 	gtk_window_set_role(GTK_WINDOW(dialog), "notify_dialog");

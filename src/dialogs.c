@@ -389,7 +389,7 @@ static gboolean show_ee_dialog(const char *ee)
 	if (strlen(gtk_label_get_label(GTK_LABEL(label))) <= 0)
 		return FALSE;
 
-	window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, NULL, 0, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, NULL, 0, GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(gtk_widget_destroy), NULL);
 
