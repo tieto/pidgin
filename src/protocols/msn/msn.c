@@ -30,9 +30,6 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-/* for win32 compatability */
-G_MODULE_IMPORT GSList *connections;
-
 static char *msn_normalize(const char *str);
 
 typedef struct

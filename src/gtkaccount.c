@@ -98,9 +98,11 @@ gaim_gtk_account_dialog_show(void)
 	gtk_widget_show(vbox);
 
 	/* Setup the scrolled window that will contain the list of accounts. */
+#if 0
 	sw = __create_accounts_list();
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
+#endif
 
 	/* Separator... */
 	sep = gtk_hseparator_new();

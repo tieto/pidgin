@@ -869,13 +869,14 @@ GtkWidget *list_page() {
 	GtkWidget *vbox;
 	GtkWidget *button, *warn_checkbox, *idle_checkbox;
 	GList *l= NULL;
-	GSList *sl = gaim_gtk_blist_sort_methods;
+	GSList *sl;
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 	
 	
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Sorting"));
-	while (sl) {
+
+	for (sl = gaim_gtk_blist_sort_methods; sl != NULL; sl = sl->next) {
 		char *name = ((struct gaim_gtk_blist_sort_method*)sl->data)->name;
 
 		l = g_list_append(l, name);
@@ -2673,6 +2674,8 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
 
 	/* Accounts Dialog */
+	gaim_prefs_add_none("/gaim/gtk/accounts");
+	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  550);
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 250);
 

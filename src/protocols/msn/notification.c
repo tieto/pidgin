@@ -34,7 +34,6 @@ typedef struct
 
 static GHashTable *notification_commands  = NULL;
 static GHashTable *notification_msg_types = NULL;
-G_MODULE_IMPORT GSList *connections;
 
 /**************************************************************************
  * Utility functions
@@ -115,7 +114,7 @@ __add_buddy(MsnServConn *servconn, MsnUser *user)
 static void
 msn_accept_add_cb(MsnPermitAdd *pa)
 {
-	if (g_slist_find(connections, pa->gc) != NULL) {
+	if (g_list_find(gaim_connections_get_all(), pa->gc) != NULL) {
 		MsnSession *session = pa->gc->proto_data;
 		char outparams[MSN_BUF_LEN];
 
@@ -144,7 +143,7 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 static void
 msn_cancel_add_cb(MsnPermitAdd *pa)
 {
-	if (g_slist_find(connections, pa->gc) != NULL) {
+	if (g_list_find(gaim_connections_get_all(), pa->gc) != NULL) {
 		MsnSession *session = pa->gc->proto_data;
 		char outparams[MSN_BUF_LEN];
 
