@@ -33,6 +33,9 @@
 #include "pixmaps/tb_search.xpm"
 #include "pixmaps/block.xpm"
 
+extern GtkWidget *convo_notebook;
+extern GtkWidget *chat_notebook;
+
 /* we declare all of the global functions for chat and IM windows here, so
  * that it's easy to keep them merged. */
 
@@ -66,6 +69,9 @@ extern void insert_smiley(GtkWidget *, struct conversation *);
 extern gboolean keypress_callback(GtkWidget *, GdkEventKey *, struct conversation *);
 extern void check_spelling( GtkEditable *, gchar *, gint, gint *, gpointer);
 extern int entry_key_pressed(GtkWidget *, GtkWidget *);
+
+extern void convo_switch(GtkNotebook *, GtkWidget *, gint, gpointer);
+extern gint delete_all_convo(GtkWidget *, GdkEventAny *, gpointer);
 
 extern GtkWidget *build_conv_toolbar(struct conversation *);
 

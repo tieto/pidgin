@@ -766,16 +766,30 @@ static GtkWidget *am_radio(char *label, int which, GtkWidget *box, GtkWidget *se
 static void set_tab_opt(GtkWidget *w, int data)
 {
 	int mask;
-	if (data & 0x1) {	/* set the first bit if we're affecting chat buttons */
+	if (convo_options & OPT_CONVO_COMBINE) {
+		/* through an amazing coincidence (this wasn't planned), we're able to do this,
+		 * since the two sets of options end up having the same value. isn't that great. */
 		mask = (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB);
 		chat_options &= ~(mask);
 		chat_options |= (data & mask);
-		update_chat_tabs();
-	} else {
+
 		mask = (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB);
 		im_options &= ~(mask);
 		im_options |= (data & mask);
+
 		update_im_tabs();
+	} else {
+		if (data & 0x1) {	/* set the first bit if we're affecting chat buttons */
+			mask = (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB);
+			chat_options &= ~(mask);
+			chat_options |= (data & mask);
+			update_chat_tabs();
+		} else {
+			mask = (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB);
+			im_options &= ~(mask);
+			im_options |= (data & mask);
+			update_im_tabs();
+		}
 	}
 
 	save_prefs();
@@ -840,6 +854,13 @@ static void gaim_labeled_spin_button(GtkWidget *box, const gchar *title, int *va
 	gtk_widget_show(spin);
 }
 
+static gboolean current_is_im = FALSE;
+
+static void not_im()
+{
+	current_is_im = FALSE;
+}
+
 static void im_page()
 {
 	GtkWidget *parent;
@@ -858,8 +879,11 @@ static void im_page()
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
 
+	current_is_im = TRUE;
+
 	prefdialog = gtk_frame_new(_("IM Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+	gtk_signal_connect(GTK_OBJECT(prefdialog), "destroy", GTK_SIGNAL_FUNC(not_im), NULL);
 
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
@@ -905,6 +929,13 @@ static void im_page()
 	button =
 	    gaim_button(_("Show all conversations in one tabbed window"), &im_options, OPT_IM_ONE_WINDOW,
 			vbox2);
+	opt = gaim_button(_("Show chats in the same tabbed window"), &convo_options, OPT_CONVO_COMBINE, vbox2);
+	if (chat_options & OPT_CHAT_ONE_WINDOW) {
+		if (!(im_options & OPT_IM_ONE_WINDOW))
+			gtk_widget_set_sensitive(opt, FALSE);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+	} else
+		gtk_widget_set_sensitive(opt, FALSE);
 	gaim_button(_("Raise windows on events"), &im_options, OPT_IM_POPUP, vbox2);
 	gaim_button(_("Show logins in window"), &im_options, OPT_IM_LOGON, vbox2);
 	gaim_button(_("Show aliases in tabs/titles"), &im_options, OPT_IM_ALIAS_TAB, vbox2);
@@ -1044,6 +1075,13 @@ static void chat_page()
 	button =
 	    gaim_button(_("Show all chats in one tabbed window"), &chat_options, OPT_CHAT_ONE_WINDOW,
 			vbox2);
+	opt = gaim_button(_("Show conversations in the same tabbed window"), &convo_options, OPT_CONVO_COMBINE, vbox2);
+	if (im_options & OPT_IM_ONE_WINDOW) {
+		if (!(chat_options & OPT_CHAT_ONE_WINDOW))
+			gtk_widget_set_sensitive(opt, FALSE);
+		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
+	} else
+		gtk_widget_set_sensitive(opt, FALSE);
 	gaim_button(_("Raise windows on events"), &chat_options, OPT_CHAT_POPUP, vbox2);
 	gaim_button(_("Show people joining/leaving in window"), &chat_options, OPT_CHAT_LOGON, vbox2);
 
@@ -1775,8 +1813,6 @@ void default_away_menu_init(GtkWidget *omenu)
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
 	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), g_slist_index(away_messages, default_away));
 }
-
-
 
 static void away_page()
 {
@@ -2622,6 +2658,20 @@ static void set_convo_option(GtkWidget *w, int option)
 	if (option == OPT_CONVO_CHECK_SPELLING)
 		toggle_spellchk();
 
+	if (option == OPT_CONVO_COMBINE) {
+		/* (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB) == (OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB) */
+		if (current_is_im) {
+			int set = im_options & (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB);
+			chat_options &= ~(OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB);
+			chat_options |= set;
+		} else {
+			int set = chat_options & (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB);
+			im_options &= ~(OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB);
+			im_options |= set;
+		}
+		convo_tabize();
+	}
+
 	save_prefs();
 }
 
@@ -2630,7 +2680,7 @@ static void set_im_option(GtkWidget *w, int option)
 	im_options ^= option;
 
 	if (option == OPT_IM_ONE_WINDOW)
-		tabize();
+		im_tabize();
 
 	if (option == OPT_IM_HIDE_ICONS)
 		set_hide_icons();

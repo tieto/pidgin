@@ -143,7 +143,7 @@ static GdkPixmap *get_applet_icon(const char *name)
 	GdkPixmap *cache;
 	GdkGC *gc;
 	char *path;
-	GdkPixbuf *pb, *scale;
+	GdkPixbuf *pb, *scale = NULL;
 	guchar *dst;
 	double affine[6];
 
@@ -156,7 +156,8 @@ static GdkPixmap *get_applet_icon(const char *name)
 	gdk_gc_copy(gc, applet->style->bg_gc[GTK_WIDGET_STATE(applet)]);
 
 	path = gnome_pixmap_file(name);
-	scale = gdk_pixbuf_new_from_file(path);
+	if (path)
+		scale = gdk_pixbuf_new_from_file(path);
 	g_free(path);
 	if (!scale)
 		return NULL;

@@ -255,14 +255,12 @@ extern GtkWidget *bpmenu;
 extern GtkWidget *blist;
 
 /* Globals in buddy_chat.c */
-/* it is very important that you don't use this for anything.
- * its sole purpose is to allow all group chats to be in one
- * window. use struct gaim_connection's buddy_chats instead. */
-extern GList *chats;
-/* these are ok to use */
+extern GList *chats;	/* list of all chats (only use for tabbing!) */
 extern GtkWidget *all_chats;
-extern GtkWidget *chat_notebook;
 extern GtkWidget *joinchat;
+
+/* Globals in conversation.c */
+extern GtkWidget *all_convos;
 
 /* Globals in dialog.c */
 extern char fontface[128];
@@ -370,8 +368,9 @@ extern void update_buttons_by_protocol(struct conversation *);
 extern void toggle_smileys();
 extern void toggle_timestamps();
 extern void update_pixmaps();
-extern void tabize();
+extern void im_tabize();
 extern void chat_tabize();
+extern void convo_tabize();
 extern void update_convo_color();
 extern void update_convo_font();
 extern void set_hide_icons();

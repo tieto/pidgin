@@ -1074,35 +1074,6 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 			   GTK_SIGNAL_FUNC(right_click_chat), b);
 }
 
-static gint delete_all_chats(GtkWidget *w, GdkEventAny *e, gpointer d)
-{
-	while (chats) {
-		struct conversation *c = chats->data;
-		close_callback(c->close, c);
-	}
-	return FALSE;
-}
-
-static void chat_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointer data)
-{
-	GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(chat_notebook),
-						      gtk_notebook_get_nth_page(GTK_NOTEBOOK
-										(chat_notebook),
-										page_num));
-	GtkStyle *style;
-	struct conversation *b = g_list_nth_data(chats, page_num);
-	if (b && b->window && b->entry)
-		gtk_window_set_focus(GTK_WINDOW(b->window), b->entry);
-	if (!GTK_WIDGET_REALIZED(label))
-		return;
-	style = gtk_style_new();
-	gdk_font_unref(gtk_style_get_font(style));
-	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
-	gtk_widget_set_style(label, style);
-	gtk_style_unref(style);
-	b->unseen = 0;
-}
-
 void show_new_buddy_chat(struct conversation *b)
 {
 	GtkWidget *win;
@@ -1131,6 +1102,8 @@ void show_new_buddy_chat(struct conversation *b)
 	if (chat_options & OPT_CHAT_ONE_WINDOW) {
 		if (!all_chats) {
 			win = all_chats = b->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+			if ((convo_options & OPT_CONVO_COMBINE) && (im_options & OPT_IM_ONE_WINDOW))
+				all_convos = all_chats;
 			gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
 			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 			gtk_container_border_width(GTK_CONTAINER(win), 0);
@@ -1138,9 +1111,11 @@ void show_new_buddy_chat(struct conversation *b)
 			aol_icon(win->window);
 			gtk_window_set_title(GTK_WINDOW(win), _("Gaim - Group Chats"));
 			gtk_signal_connect(GTK_OBJECT(win), "delete_event",
-					   GTK_SIGNAL_FUNC(delete_all_chats), NULL);
+					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
 
 			chat_notebook = gtk_notebook_new();
+			if ((convo_options & OPT_CONVO_COMBINE) && (im_options & OPT_IM_ONE_WINDOW))
+				convo_notebook = chat_notebook;
 			if (chat_options & OPT_CHAT_SIDE_TAB) {
 				if (chat_options & OPT_CHAT_BR_TAB) {
 					gtk_notebook_set_tab_pos(GTK_NOTEBOOK(chat_notebook),
@@ -1162,7 +1137,7 @@ void show_new_buddy_chat(struct conversation *b)
 			gtk_notebook_popup_enable(GTK_NOTEBOOK(chat_notebook));
 			gtk_container_add(GTK_CONTAINER(win), chat_notebook);
 			gtk_signal_connect(GTK_OBJECT(chat_notebook), "switch-page",
-					   GTK_SIGNAL_FUNC(chat_switch), NULL);
+					   GTK_SIGNAL_FUNC(convo_switch), NULL);
 			gtk_widget_show(chat_notebook);
 		} else
 			win = b->window = all_chats;
@@ -1461,9 +1436,14 @@ void update_im_button_pix()
 void chat_tabize()
 {
 	int pos = 0;
+	char tmp[BUF_LONG];
 	/* evil, evil i tell you! evil! */
 	if (chat_options & OPT_CHAT_ONE_WINDOW) {
 		GList *x = chats;
+		if ((convo_options & OPT_CONVO_COMBINE) && (im_options & OPT_IM_ONE_WINDOW)) {
+			all_chats = all_convos;
+			chat_notebook = convo_notebook;
+		}
 		while (x) {
 			struct conversation *c = x->data;
 			GtkWidget *imhtml, *win;
@@ -1481,6 +1461,10 @@ void chat_tabize()
 
 			if (c->topic)
 				gtk_entry_set_text(GTK_ENTRY(c->topic_text), c->topic);
+
+			g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(c->in_room),
+				   g_list_length(c->in_room) == 1 ? "person" : "people");
+			gtk_label_set_text(GTK_LABEL(c->count), tmp);
 
 			while (r) {
 				char *name = r->data;
@@ -1524,6 +1508,10 @@ void chat_tabize()
 			if (c->topic)
 				gtk_entry_set_text(GTK_ENTRY(c->topic_text), c->topic);
 
+			g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(c->in_room),
+				   g_list_length(c->in_room) == 1 ? "person" : "people");
+			gtk_label_set_text(GTK_LABEL(c->count), tmp);
+
 			while (r) {
 				char *name = r->data;
 				GtkWidget *list_item;
@@ -1548,10 +1536,17 @@ void chat_tabize()
 
 			x = x->next;
 		}
-		if (all_chats)
+		chats = m;
+		if ((convo_options & OPT_CONVO_COMBINE) &&
+		    (im_options & OPT_IM_ONE_WINDOW) && conversations) {
+			while (m) {
+				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
+							 g_list_length(conversations));
+				m = m->next;
+			}
+		} else if (all_chats)
 			gtk_widget_destroy(all_chats);
 		all_chats = NULL;
 		chat_notebook = NULL;
-		chats = m;
 	}
 }

@@ -612,7 +612,7 @@ static void reset_reg_dlg()
 	}
 
 	if (!P) {
-		GtkWidget *no = gtk_label_new(_("You do not currently have any plugins loaded"
+		GtkWidget *no = gtk_label_new(_("You do not currently have any protocols available"
 						" that are able to register new accounts."));
 		gtk_box_pack_start(GTK_BOX(reg_area), no, FALSE, FALSE, 5);
 		gtk_widget_show(no);
@@ -620,6 +620,18 @@ static void reset_reg_dlg()
 		gtk_widget_set_sensitive(reg_reg, FALSE);
 
 		return;
+	}
+
+	gtk_widget_set_sensitive(reg_reg, TRUE);
+
+	while (P) {	/* we can safely ignore all the previous ones */
+		struct prpl *p = P->data;
+		P = P->next;
+
+		if (!p->register_user)
+			continue;
+
+		/* do stuff */
 	}
 }
 
