@@ -913,7 +913,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 static void yahoo_process_sysmessage(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
-	char *prim, *me = NULL, *msg = NULL;
+	char *prim, *me = NULL, *msg = NULL, *escmsg = NULL;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -926,13 +926,16 @@ static void yahoo_process_sysmessage(GaimConnection *gc, struct yahoo_packet *pk
 		l = l->next;
 	}
 
-	if (!msg)
+	if (!msg || !g_utf8_validate(msg, -1, NULL))
 		return;
+
+	escmsg = gaim_escape_html(msg);
 
 	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
 	                       me?me:gaim_connection_get_display_name(gc));
-	gaim_notify_info(NULL, NULL, prim, msg);
+	gaim_notify_info(NULL, NULL, prim, escmsg);
 	g_free(prim);
+	g_free(escmsg);
 }
 
 static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
