@@ -3097,7 +3097,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
-		gtk_widget_show(gtkblist->window);
+		if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible") || docklet_count == 0)
+			gtk_widget_show(gtkblist->window);
 		return;
 	}
 
@@ -3250,9 +3251,11 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 		gtk_widget_set_sensitive(gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Mute Sounds")), FALSE); 
 
 	/* OK... let's show this bad boy. */
-	gaim_gtk_blist_refresh(list);
-	gaim_gtk_blist_restore_position();
-	gtk_widget_show(gtkblist->window);
+	if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible") || docklet_count == 0) {
+		gaim_gtk_blist_refresh(list);
+		gaim_gtk_blist_restore_position();
+		gtk_widget_show(gtkblist->window);
+	}
 
 	/* start the refresh timer */
 	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") ||
@@ -3803,7 +3806,9 @@ static void gaim_gtk_blist_set_visible(GaimBuddyList *list, gboolean show)
 {
 	if (!(gtkblist && gtkblist->window))
 		return;
-
+	
+	gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", show);
+	
 	if (show) {
 		gaim_gtk_blist_restore_position();
 		gtk_window_present(GTK_WINDOW(gtkblist->window));
@@ -4531,6 +4536,7 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/list_visible", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "alphabetical");
 	gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
 	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
