@@ -165,7 +165,12 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 
 	u = find_user(username);
 	if (!u) {
-		/* FIXME : add user */
+		u = g_new0(struct aim_user, 1);
+		g_snprintf(u->username, sizeof(u->username), "%s", username);
+		g_snprintf(u->password, sizeof(u->password), "%s", password);
+		u->protocol = PROTO_TOC;
+		u->options = OPT_USR_REM_PASS;
+		aim_users = g_list_append(aim_users, u);
 	}
 	g_snprintf(u->password, sizeof u->password, "%s", password);
 	save_prefs();
