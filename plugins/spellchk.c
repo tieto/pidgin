@@ -214,16 +214,14 @@ static char *have_word(char *m, int pos) {
 
 static void substitute(char **mes, int pos, int m, const char *text) {
 	char *new = g_malloc(strlen(*mes) + strlen(text) + 1);
-	char *tmp;
 	new[0] = 0;
 
 	strncat(new, *mes, pos);
 	strcat(new, text);
 
 	strcat(new, &(*mes)[pos + m]);
-	tmp = *mes;
+	g_free(*mes);
 	*mes = new;
-	g_free(tmp);
 }
 
 static GtkWidget *tree;
@@ -389,6 +387,8 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(conv_handle, "writing-im-msg",
 						plugin, GAIM_CALLBACK(substitute_words), NULL);
 	gaim_signal_connect(conv_handle, "writing-chat-msg",
+						plugin, GAIM_CALLBACK(substitute_words), NULL);
+	gaim_signal_connect(conv_handle, "sending-im-msg",
 						plugin, GAIM_CALLBACK(substitute_words), NULL);
 
 	return TRUE;
