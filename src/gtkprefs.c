@@ -62,10 +62,7 @@ static GtkWidget *tree_v = NULL;
 
 
 static int sound_row_sel = 0;
-static GtkWidget *preflabel;
 static GtkWidget *prefsnotebook;
-static GtkTreeStore *prefstree;
-
 
 static GtkWidget *sound_entry = NULL;
 static GtkWidget *away_text = NULL;
@@ -423,24 +420,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	}
 }
 
-static void pref_nb_select(GtkTreeSelection *sel, GtkNotebook *nb) {
-	GtkTreeIter   iter;
-	char text[128];
-	GValue val = { 0, };
-	GtkTreeModel *model = GTK_TREE_MODEL(prefstree);
-
-	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
-		return;
-	gtk_tree_model_get_value (model, &iter, 1, &val);
-	g_snprintf(text, sizeof(text), "<span weight=\"bold\" size=\"larger\">%s</span>",
-		   g_value_get_string(&val));
-	gtk_label_set_markup (GTK_LABEL(preflabel), text);
-	g_value_unset (&val);
-	gtk_tree_model_get_value (model, &iter, 2, &val);
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (prefsnotebook), g_value_get_int (&val));
-
-	g_value_unset(&val);
-}
 
 /* These are the pages in the preferences notebook */
 GtkWidget *interface_page() {
@@ -2007,21 +1986,8 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 			if (config_frame != NULL) {
 				ui_info->iter = g_new0(GtkTreeIter, 1);
 				prefs_notebook_add_page(_(plug->info->name), NULL,
-										config_frame, ui_info->iter,
-										&plugin_iter, notebook_page++);
-
-				if (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(prefstree),
-												   &plugin_iter) == 1) {
-
-					/* Expand the tree for the first plugin added */
-					GtkTreePath *path2;
-
-					path2 = gtk_tree_model_get_path(GTK_TREE_MODEL(prefstree),
-													&plugin_iter);
-					gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_v),
-											 path2, TRUE);
-					gtk_tree_path_free(path2);
-				}
+							config_frame, ui_info->iter,
+							&plugin_iter, notebook_page++);
 			}
 		}
 
@@ -2044,15 +2010,6 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 				prefs_notebook_add_page(_(plug->info->name), NULL,
 										pref_frame, prefs_info->iter,
 										&iter, notebook_page++);
-
-				if(gtk_tree_model_iter_n_children(GTK_TREE_MODEL(prefstree), &iter) == 1)
-				{
-					GtkTreePath *path2;
-
-					path2 = gtk_tree_model_get_path(GTK_TREE_MODEL(prefstree), &iter);
-					gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_v), path2, TRUE);
-					gtk_tree_path_free(path2);
-				}
 			}
 		}
 	}
@@ -2063,7 +2020,6 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 			ui_info = GAIM_GTK_PLUGIN_UI_INFO(plug);
 
 			if (ui_info != NULL && ui_info->iter != NULL) {
-				gtk_tree_store_remove(GTK_TREE_STORE(prefstree), ui_info->iter);
 				g_free(ui_info->iter);
 				ui_info->iter = NULL;
 			}
@@ -2081,7 +2037,6 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 				}
 
 				if(prefs_info->iter != NULL) {
-					gtk_tree_store_remove(GTK_TREE_STORE(prefstree), prefs_info->iter);
 					g_free(prefs_info->iter);
 					prefs_info->iter = NULL;
 				}
@@ -2459,9 +2414,6 @@ GtkTreeIter *prefs_notebook_add_page(const char *text,
 	if (pixbuf)
 		icon = gdk_pixbuf_scale_simple (pixbuf, 18, 18, GDK_INTERP_BILINEAR);
 
-	gtk_tree_store_append (prefstree, iter, parent);
-	gtk_tree_store_set (prefstree, iter, 0, icon, 1, text, 2, ind, -1);
-
 	if (pixbuf)
 		g_object_unref(pixbuf);
 	if (icon)
@@ -2542,16 +2494,9 @@ void prefs_notebook_init() {
 
 void gaim_gtk_prefs_show(void)
 {
-	GtkWidget *vbox, *vbox2;
-	GtkWidget *hbox;
+	GtkWidget *vbox;
 	GtkWidget *bbox;
-	GtkWidget *frame;
-	GtkWidget *scrolled_window;
-	GtkTreeViewColumn *column;
-	GtkCellRenderer *cell;
-	GtkTreeSelection *sel;
 	GtkWidget *notebook;
-	GtkWidget *sep;
 	GtkWidget *button;
 
 	if (prefs) {
@@ -2578,78 +2523,13 @@ void gaim_gtk_prefs_show(void)
 	gtk_container_add(GTK_CONTAINER(prefs), vbox);
 	gtk_widget_show(vbox);
 
-	hbox = gtk_hbox_new (FALSE, 6);
-	gtk_container_add (GTK_CONTAINER(vbox), hbox);
-	gtk_widget_show (hbox);
-
-	frame = gtk_frame_new (NULL);
-	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
-	gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
-	gtk_widget_show (frame);
-
-	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
-								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
-	gtk_widget_show(scrolled_window);
-
-	/* The tree -- much inspired by the Gimp */
-	prefstree = gtk_tree_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_INT);
-	tree_v = gtk_tree_view_new_with_model (GTK_TREE_MODEL (prefstree));
-	gtk_container_add(GTK_CONTAINER(scrolled_window), tree_v);
-
-	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tree_v), FALSE);
-	gtk_widget_show(tree_v);
-	/* icons */
-	/* XXX: to be used at a later date
-	cell = gtk_cell_renderer_pixbuf_new ();
-	column = gtk_tree_view_column_new_with_attributes ("icons", cell, "pixbuf", 0, NULL);
-	*/
-
-	/* text */
-	cell = gtk_cell_renderer_text_new ();
-	column = gtk_tree_view_column_new_with_attributes ("text", cell, "text", 1, NULL);
-
-	gtk_tree_view_append_column (GTK_TREE_VIEW (tree_v), column);
-
-	/* The right side */
-	frame = gtk_frame_new (NULL);
-	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
-	gtk_box_pack_start (GTK_BOX (hbox), frame, TRUE, TRUE, 0);
-	gtk_widget_show (frame);
-
-	vbox2 = gtk_vbox_new (FALSE, 4);
-	gtk_container_add (GTK_CONTAINER (frame), vbox2);
-	gtk_widget_show (vbox2);
-
-	frame = gtk_frame_new (NULL);
-	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_OUT);
-	gtk_box_pack_start (GTK_BOX (vbox2), frame, FALSE, TRUE, 0);
-	gtk_widget_show (frame);
-
-	hbox = gtk_hbox_new (FALSE, 4);
-	gtk_container_set_border_width (GTK_CONTAINER (hbox), 4);
-	gtk_container_add (GTK_CONTAINER (frame), hbox);
-	gtk_widget_show (hbox);
-
-	preflabel = gtk_label_new(NULL);
-	gtk_box_pack_end (GTK_BOX (hbox), preflabel, FALSE, FALSE, 0);
-	gtk_widget_show (preflabel);
-
 	/* The notebook */
 	prefsnotebook = notebook = gtk_notebook_new ();
-	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), FALSE);
+	gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_LEFT);
+	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (notebook), TRUE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
-	gtk_box_pack_start (GTK_BOX (vbox2), notebook, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), notebook, FALSE, FALSE, 0);
 
-	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_v));
-	g_signal_connect (G_OBJECT (sel), "changed",
-			   G_CALLBACK (pref_nb_select),
-			   notebook);
-	gtk_widget_show(notebook);
-	sep = gtk_hseparator_new();
-	gtk_widget_show(sep);
-	gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
 
 	/* The buttons to press! */
 	bbox = gtk_hbutton_box_new();
@@ -2668,7 +2548,7 @@ void gaim_gtk_prefs_show(void)
 
 	/* Show everything. */
 	gtk_tree_view_expand_all (GTK_TREE_VIEW(tree_v));
-	gtk_widget_show(prefs);
+	gtk_widget_show_all(prefs);
 }
 
 static void
