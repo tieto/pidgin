@@ -21,16 +21,16 @@ InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" ""
 DirShow show ; (make this hide to not let the user change it)
 DirText "Select the directory to install Gaim in:"
 
-Section "Aspell"
-  SetOutPath $OUTDIR
-  File ..\win32-dev\aspell-15\bin\aspell-0.50.2.exe
-  ExecWait "$OUTDIR\aspell-0.50.2.exe"
-SectionEnd
-
 Section "" ; (default section)
+  ; Install Aspell
+  SetOutPath "$INSTDIR"
+  File ..\win32-dev\aspell-15\bin\aspell-0.50.2.exe
+  ExecWait "$INSTDIR\aspell-0.50.2.exe"
+
   SetOutPath "$INSTDIR"
   ; Gaim files
   File /r .\win32-install-dir\*.*
+
   ; Gaim Registry Settings
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "" "$INSTDIR"
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "DisplayName" "Gaim (remove only)"
@@ -46,19 +46,19 @@ Section "" ; (default section)
   Push "C:\Program Files\aspell\pspell-15.dll"
   Call AddSharedDLL
 
-  ; write out uninstaller
-  WriteUninstaller "$INSTDIR\gaim-uninst.exe"
-SectionEnd ; end of default section
-
-Section "Gaim Start Menu Group"
+  ; Set Start Menu icons
   SetOutPath "$SMPROGRAMS\Gaim"
   CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" \
                  "$INSTDIR\gaim.exe"
   CreateShortCut "$SMPROGRAMS\Gaim\Unistall.lnk" \
                  "$INSTDIR\gaim-uninst.exe"
-SectionEnd
 
+  ; write out uninstaller
+  WriteUninstaller "$INSTDIR\gaim-uninst.exe"
 
+  ; cleanup aspell installer file
+  Delete "$INSTDIR\aspell-0.50.2.exe"
+SectionEnd ; end of default section
 
 ; begin uninstall settings/section
 UninstallText "This will uninstall Gaim from your system"
@@ -67,13 +67,6 @@ Section Uninstall
   ; Delete Gaim Dir
   RMDir /r "$INSTDIR"
   RMDir /r "$SMPROGRAMS\Gaim"
-
-  ; Delete Aspell Files
-  ;RMDir /r $PROGRAMFILES\aspell\data
-  ;RMDir /r $PROGRAMFILES\aspell\dict
-  ;Delete $PROGRAMFILES\aspell\aspell-15.dll
-  ;Delete $PROGRAMFILES\aspell\aspell-common-0-50-2.dll
-  ;Delete $PROGRAMFILES\aspell\pspell-15.dll
 
   ; Delete Gaim Registry Settings
   DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Gaim"
@@ -87,10 +80,14 @@ Section Uninstall
   Call un.RemoveSharedDLL
   Push "C:\Program Files\aspell\pspell-15.dll"
   Call un.RemoveSharedDLL
+
   ; Delete aspell dir if its empty
   RMDir "C:\Program Files\aspell"
 SectionEnd ; end of uninstall section
 
+;;;
+;;; FUNCTIONS
+;;;
 
 ; AddSharedDLL
 ;
