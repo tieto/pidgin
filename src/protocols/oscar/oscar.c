@@ -5258,13 +5258,13 @@ static int oscar_chat_send(GaimConnection *g, int id, char *message) {
 
 static const char *oscar_list_icon(GaimAccount *a, struct buddy *b) {
 	if (!b || (b && b->name && b->name[0] == '+')) {
-		if (isdigit(a->username[0]))
+		if (a != NULL && isdigit(*gaim_account_get_username(a)))
 			return "icq";
 		else
 			return "aim";
 	}
-				
-	if (isdigit(b->name[0]))
+
+	if (b != NULL && isdigit(b->name[0]))
 		return "icq";
 	return "aim";
 }

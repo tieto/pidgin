@@ -339,8 +339,11 @@ gaim_plugin_unload(GaimPlugin *plugin)
 			for (l = prpl_info->protocol_options; l != NULL; l = l->next)
 				gaim_account_option_destroy(l->data);
 
-			g_list_free(prpl_info->user_splits);
-			g_list_free(prpl_info->protocol_options);
+			if (prpl_info->user_splits != NULL)
+				g_list_free(prpl_info->user_splits);
+
+			if (prpl_info->protocol_options != NULL)
+				g_list_free(prpl_info->protocol_options);
 		}
 		else if (plugin->info->type == GAIM_PLUGIN_LOADER) {
 			GaimPluginLoaderInfo *loader_info;

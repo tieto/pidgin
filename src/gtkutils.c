@@ -532,9 +532,14 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *item;
+	GtkWidget *image;
+	GdkPixbuf *pixbuf;
+	GdkPixbuf *scale;
 	GList *p;
-	int i;
-	int selected_index = -1;
+	char *filename;
+	const char *proto_name;
+	char buf[256];
+	int i, selected_index = -1;
 
 	optmenu = gtk_option_menu_new();
 	gtk_widget_show(optmenu);
@@ -549,7 +554,28 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 		plugin = (GaimPlugin *)p->data;
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 
-		item = gtk_menu_item_new_with_label(plugin->info->name);
+		/* Create the item. */
+		item = gtk_image_menu_item_new_with_label(plugin->info->name);
+
+		/* Load the image. */
+		proto_name = prpl_info->list_icon(NULL, NULL);
+		g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
+
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
+									"default", buf, NULL);
+		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		g_free(filename);
+
+		if (pixbuf != NULL) {
+			/* Scale and insert the image */
+			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+											GDK_INTERP_BILINEAR);
+			image = gtk_image_new_from_pixbuf(scale);
+			g_object_unref(G_OBJECT(pixbuf));
+			g_object_unref(G_OBJECT(scale));
+			gtk_widget_show(image);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
+		}
 
 		g_object_set_data(G_OBJECT(item), "user_data", user_data);
 
