@@ -713,7 +713,7 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			idletime = g_strdup_printf(_("%dm"), imin);
 	}
 
-	if(b->alias)
+	if(b->alias && b->alias[0])
 		aliastext = g_markup_escape_text(b->alias, -1);
 
 	if(b->server_alias)
