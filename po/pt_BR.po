@@ -2,18 +2,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
-"POT-Creation-Date: 2003-07-13 22:05-0700\n"
-"PO-Revision-Date: 2003-07-09 22:18-0300\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-07-14 22:44-0300\n"
+"PO-Revision-Date: 2003-07-14 22:50-0300\n"
 "Last-Translator: Maurício de Lemos Rodrigues Collares Neto "
 "<mauricioc@myrealbox.com>\n"
 "Language-Team: pt_BR <pt_BR@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: plugins/docklet/docklet.c:110 src/gtkaccount.c:444 src/gtkaccount.c:1599
+#: plugins/docklet/docklet.c:110 src/gtkaccount.c:437 src/gtkaccount.c:1582
 msgid "Auto-login"
 msgstr "Auto-conectar"
 
@@ -34,7 +34,7 @@ msgstr "Novo..."
 #: src/protocols/jabber/jabber.c:3437 src/protocols/jabber/jabber.c:3491
 #: src/protocols/oscar/oscar.c:2825 src/protocols/oscar/oscar.c:4548
 #: src/protocols/oscar/oscar.c:5447 src/protocols/oscar/oscar.c:5841
-#: src/gtkblist.c:1589 src/gtkpounce.c:460 src/gtkprefs.c:1491
+#: src/gtkblist.c:1589 src/gtkpounce.c:460 src/gtkprefs.c:1492
 msgid "Away"
 msgstr "Ausente"
 
@@ -51,11 +51,11 @@ msgid "File Transfers"
 msgstr "Transferências de arquivos"
 
 #. And now for the buttons
-#: plugins/docklet/docklet.c:169 src/gtkaccount.c:1750 src/main.c:415
+#: plugins/docklet/docklet.c:169 src/gtkaccount.c:1733 src/main.c:415
 msgid "Accounts"
 msgstr "Contas"
 
-#: plugins/docklet/docklet.c:170 src/gtkprefs.c:2337 src/main.c:425
+#: plugins/docklet/docklet.c:170 src/gtkprefs.c:2338 src/main.c:425
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -95,7 +95,6 @@ msgstr "Exibe um ícone do Gaim na bandeja do sistema."
 
 #. *  description
 #: plugins/docklet/docklet.c:445
-#, fuzzy
 msgid ""
 "Interacts with a Notification Area applet (in GNOME, KDE or Windows for "
 "example) to display the current status of Gaim, allow fast access to "
@@ -103,11 +102,11 @@ msgid ""
 "window. Also allows messages to be queued until the icon is clicked, similar "
 "to ICQ."
 msgstr ""
-"Interage com um applet Área de Notificação (no GNOME ou KDE, por exemplo) "
-"para exibir o status atual do Gaim, permitir acesso rápido para funções "
-"comumenteutilizadas, e para exibir ou ocultar a lista de contatos ou a tela "
-"de login. Permitetambém que mensagens fiquem ocultas até que o ícone seja "
-"clicado, como no ICQ."
+"Interage com um applet Área de Notificação (no GNOME, KDE ou no Windows, por "
+"exemplo) para exibir o status atual do Gaim, permitir acesso rápido para "
+"funções comumente utilizadas, e para exibir ou ocultar a lista de contatos "
+"ou a tela de login. Permite também que mensagens fiquem ocultas até que o "
+"ícone seja clicado, como no ICQ."
 
 #. *< api_version
 #. *< type
@@ -254,7 +253,7 @@ msgid ""
 "the last conversation into the current conversation."
 msgstr ""
 "Quando uma nova conversa é aberta este plugin irá inserir as últimas XXX "
-"linhas daúltima conversa na conversa atual"
+"linhas daúltima conversa na conversa atual."
 
 #. *< api_version
 #. *< type
@@ -404,7 +403,7 @@ msgstr "Notificação de mensagens"
 #. *  summary
 #: plugins/notify.c:702 plugins/notify.c:704
 msgid "Provides a variety of ways of notifying you of unread messages."
-msgstr "Oferece diversas maneiras de lhe notificar sobre mensagens não lidas"
+msgstr "Oferece diversas maneiras de lhe notificar sobre mensagens não lidas."
 
 #: plugins/raw.c:152
 msgid "Raw"
@@ -420,7 +419,7 @@ msgid ""
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Permite enviar entrada pura para protocolos (Jabber, MSN, IRC, TOC) baseados "
-"em texto. Pressione 'Enter' na caixa de entrada para enviar. Verifiquea "
+"em texto. Pressione 'Enter' na caixa de entrada para enviar. Verifique a "
 "janela de debug"
 
 #. *< api_version
@@ -612,14 +611,14 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/ticker/ticker.c:68 plugins/ticker/ticker.c:280
+#: plugins/ticker/ticker.c:72 plugins/ticker/ticker.c:312
 msgid "Buddy Ticker"
 msgstr "Monitor de contatos"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/ticker/ticker.c:283 plugins/ticker/ticker.c:285
+#: plugins/ticker/ticker.c:315 plugins/ticker/ticker.c:317
 msgid "A horizontal scrolling version of the buddy list."
 msgstr "Uma versão da lista de contatos que rola horizontalmente."
 
@@ -643,7 +642,7 @@ msgid "_Show slider bar in IM window"
 msgstr "_Mostrar slider na janela de MI"
 
 #. Buddy List trans options
-#: plugins/win32/transparency/win2ktrans.c:376 src/gtkprefs.c:845
+#: plugins/win32/transparency/win2ktrans.c:376 src/gtkprefs.c:846
 msgid "Buddy List Window"
 msgstr "Janela da lista de contatos"
 
@@ -1084,7 +1083,7 @@ msgstr "Adicionar"
 #: src/buddy_chat.c:375 src/dialogs.c:459 src/dialogs.c:471 src/dialogs.c:484
 #: src/dialogs.c:2092 src/dialogs.c:2207 src/dialogs.c:2273 src/dialogs.c:2441
 #: src/dialogs.c:2626 src/dialogs.c:2775 src/dialogs.c:3447 src/dialogs.c:3941
-#: src/dialogs.c:4883 src/gtkaccount.c:1488 src/gtkconn.c:146
+#: src/dialogs.c:4883 src/gtkaccount.c:1471 src/gtkconn.c:146
 #: src/gtkrequest.c:171 src/prpl.c:313 src/request.h:813 src/request.h:823
 msgid "Cancel"
 msgstr "Cancelar"
@@ -1364,7 +1363,7 @@ msgstr "<B>Comando desconhecido</B>"
 msgid "Channel:"
 msgstr "Canal:"
 
-#: src/protocols/irc/irc.c:2478 src/gtkaccount.c:426 src/main.c:399
+#: src/protocols/irc/irc.c:2478 src/gtkaccount.c:419 src/main.c:399
 msgid "Password:"
 msgstr "Senha:"
 
@@ -1389,7 +1388,7 @@ msgstr "Plugin do protocolo IRC"
 #. Account Options
 #: src/protocols/irc/irc.c:3034 src/protocols/jabber/jabber.c:4425
 #: src/protocols/msn/msn.c:1223 src/protocols/napster/napster.c:644
-#: src/protocols/trepia/trepia.c:1377 src/gtkprefs.c:1142
+#: src/protocols/trepia/trepia.c:1377 src/gtkprefs.c:1143
 msgid "Port"
 msgstr "Porta"
 
@@ -1445,7 +1444,7 @@ msgstr ""
 "A nova senha que você digitou é igual a sua senha atual. Sua senha permanece "
 "a mesma."
 
-#: src/protocols/jabber/jabber.c:1169 src/blist.c:794 src/gtkaccount.c:148
+#: src/protocols/jabber/jabber.c:1169 src/blist.c:794 src/gtkaccount.c:141
 #: src/gtkpounce.c:307
 msgid "Unknown"
 msgstr "Desconhecido"
@@ -1612,7 +1611,7 @@ msgstr "Re-requisitar autorização"
 #: src/protocols/oscar/oscar.c:2831 src/protocols/oscar/oscar.c:4546
 #: src/protocols/oscar/oscar.c:5840 src/protocols/yahoo/yahoo.c:1075
 #: src/protocols/zephyr/zephyr.c:866 src/protocols/zephyr/zephyr.c:876
-#: src/gtkaccount.c:1588
+#: src/gtkaccount.c:1571
 msgid "Online"
 msgstr "Conectado"
 
@@ -1690,8 +1689,8 @@ msgstr "Função"
 msgid "Birthday"
 msgstr "Data de nascimento"
 
-#: src/protocols/jabber/jabber.c:3643 src/dialogs.c:2906 src/gtkprefs.c:601
-#: src/gtkprefs.c:1821
+#: src/protocols/jabber/jabber.c:3643 src/dialogs.c:2906 src/gtkprefs.c:602
+#: src/gtkprefs.c:1822
 msgid "Description"
 msgstr "Descrição"
 
@@ -2182,7 +2181,7 @@ msgstr ""
 "Depois que a manutenção terminar, você poderá conectar com sucesso."
 
 #: src/protocols/msn/state.c:30 src/protocols/yahoo/yahoo.c:1073
-#: src/gtkpounce.c:464 src/gtkprefs.c:1513
+#: src/gtkpounce.c:464 src/gtkprefs.c:1514
 msgid "Idle"
 msgstr "Inativo"
 
@@ -2716,7 +2715,7 @@ msgstr "Sua mensagem para %s não foi enviada:"
 msgid "User information for %s unavailable:"
 msgstr "Informação do usuário %s indisponível:"
 
-#: src/protocols/oscar/oscar.c:3070 src/gtkaccount.c:281
+#: src/protocols/oscar/oscar.c:3070 src/gtkaccount.c:274
 msgid "Buddy Icon"
 msgstr "Ícone do contato"
 
@@ -3918,7 +3917,7 @@ msgstr "Remover mensagem de away"
 msgid "Set All Away"
 msgstr "Definir todos como ausente"
 
-#: src/blist.c:427 src/gtkprefs.c:2273
+#: src/blist.c:427 src/gtkprefs.c:2274
 msgid "Chats"
 msgstr "Chats"
 
@@ -4216,7 +4215,7 @@ msgstr ""
 msgid "Account:"
 msgstr "Conta:"
 
-#: src/dialogs.c:1391 src/gtkaccount.c:431
+#: src/dialogs.c:1391 src/gtkaccount.c:424
 msgid "Alias:"
 msgstr "Apelido:"
 
@@ -4407,7 +4406,7 @@ msgstr "Usar"
 #. show everything
 #: src/dialogs.c:3592
 msgid "Smile!"
-msgstr "Sorria!"
+msgstr "Emoticon!"
 
 #: src/dialogs.c:3638
 msgid "Alias Chat"
@@ -4616,7 +4615,7 @@ msgstr "Padrão chato"
 msgid "Could not open config file %s."
 msgstr "Não foi possível abrir o arquivo de configuração %s."
 
-#: src/gtkaccount.c:256
+#: src/gtkaccount.c:249
 #, c-format
 msgid ""
 "<b>File:</b> %s\n"
@@ -4628,58 +4627,63 @@ msgstr ""
 "<b>Dimensões da imagem:</b> %dx%d"
 
 #. Build the login options frame.
-#: src/gtkaccount.c:331
+#: src/gtkaccount.c:324
 msgid "Login Options"
 msgstr "Opções de conexão"
 
-#: src/gtkaccount.c:348
+#: src/gtkaccount.c:341
 msgid "Protocol:"
 msgstr "Protocolo:"
 
-#: src/gtkaccount.c:353
+#: src/gtkaccount.c:346
 msgid "Screenname:"
 msgstr "Nome de usuário:"
 
-#: src/gtkaccount.c:435
+#: src/gtkaccount.c:428
 msgid "Remember password"
 msgstr "Lembrar senha"
 
 #. Build the user options frame.
-#: src/gtkaccount.c:489
+#: src/gtkaccount.c:482
 msgid "User Options"
 msgstr "Opções de usuário"
 
-#: src/gtkaccount.c:502
+#: src/gtkaccount.c:495
 msgid "New mail notifications"
 msgstr "Novas notificações de email"
 
-#: src/gtkaccount.c:511
+#: src/gtkaccount.c:504
 msgid "Buddy icon file:"
 msgstr "Arquivo do ícone de contato:"
 
-#: src/gtkaccount.c:520
+#: src/gtkaccount.c:513
 msgid "_Browse"
 msgstr "_Procurar"
 
-#: src/gtkaccount.c:526
+#: src/gtkaccount.c:519
 msgid "_Reset"
 msgstr "_Redefinir"
 
 #. Build the protocol options frame.
-#: src/gtkaccount.c:587
+#: src/gtkaccount.c:580
 #, c-format
 msgid "%s Options"
 msgstr "Opções de %s"
 
 #. Use Global Proxy Settings
-#: src/gtkaccount.c:708
+#: src/gtkaccount.c:701
 msgid "Use Global Proxy Settings"
 msgstr "Usr configuração global de proxy"
 
 #. No Proxy
-#: src/gtkaccount.c:715
+#: src/gtkaccount.c:708
 msgid "No Proxy"
 msgstr "Nenhum proxy"
+
+#. HTTP
+#: src/gtkaccount.c:715
+msgid "HTTP"
+msgstr "HTTP"
 
 #. SOCKS 4
 #: src/gtkaccount.c:722
@@ -4691,79 +4695,74 @@ msgstr "SOCKS 4"
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
-#. HTTP
-#: src/gtkaccount.c:736
-msgid "HTTP"
-msgstr "HTTP"
-
-#: src/gtkaccount.c:768
+#: src/gtkaccount.c:761
 msgid "you can see the butterflies mating"
 msgstr "você pode ver as borboletas acasalando-se"
 
-#: src/gtkaccount.c:772
+#: src/gtkaccount.c:765
 msgid "If you look real closely"
 msgstr "se você olhar bem de perto"
 
-#: src/gtkaccount.c:788
+#: src/gtkaccount.c:781
 msgid "Proxy Options"
 msgstr "Opções de proxy"
 
-#: src/gtkaccount.c:804 src/gtkprefs.c:1097
+#: src/gtkaccount.c:797 src/gtkprefs.c:1098
 msgid "Proxy _type:"
 msgstr "_Tipo de proxy:"
 
-#: src/gtkaccount.c:813
+#: src/gtkaccount.c:806
 msgid "_Host:"
 msgstr "_Host:"
 
-#: src/gtkaccount.c:817
+#: src/gtkaccount.c:810
 msgid "_Port:"
 msgstr "_Porta:"
 
-#: src/gtkaccount.c:825
+#: src/gtkaccount.c:818
 msgid "_Username:"
 msgstr "_Nome de usuário:"
 
-#: src/gtkaccount.c:830
+#: src/gtkaccount.c:823
 msgid "Pa_ssword:"
 msgstr "_Senha:"
 
-#: src/gtkaccount.c:1141
+#: src/gtkaccount.c:1136
 msgid "Add Account"
 msgstr "Adicionar conta"
 
-#: src/gtkaccount.c:1143
+#: src/gtkaccount.c:1138
 msgid "Modify Account"
 msgstr "Modificar conta"
 
 #. Add the disclosure
-#: src/gtkaccount.c:1167
+#: src/gtkaccount.c:1162
 msgid "Show more options"
 msgstr "Mostrar mais opções"
 
-#: src/gtkaccount.c:1168
+#: src/gtkaccount.c:1163
 msgid "Show fewer options"
 msgstr "Mostrar menos opções"
 
 #. Register button
-#: src/gtkaccount.c:1196
+#: src/gtkaccount.c:1191
 msgid "Register"
 msgstr "Registrar"
 
-#: src/gtkaccount.c:1483
+#: src/gtkaccount.c:1466
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Você tem certeza de que deseja deletar %s?"
 
-#: src/gtkaccount.c:1487 src/gtkrequest.c:174
+#: src/gtkaccount.c:1470 src/gtkrequest.c:174
 msgid "Delete"
 msgstr "Deletar"
 
-#: src/gtkaccount.c:1565
+#: src/gtkaccount.c:1548
 msgid "Screenname"
 msgstr "Nome do usuário"
 
-#: src/gtkaccount.c:1606
+#: src/gtkaccount.c:1589
 msgid "Protocol"
 msgstr "Protocolo"
 
@@ -4813,7 +4812,7 @@ msgstr "Adicionar notificação de _contato"
 
 #: src/gtkblist.c:455
 msgid "View _Log"
-msgstr "Ver _Log"
+msgstr "Ver _log"
 
 #. Buddies menu
 #: src/gtkblist.c:780
@@ -4904,11 +4903,11 @@ msgstr "/_Ajuda"
 
 #: src/gtkblist.c:809
 msgid "/Help/Online _Help"
-msgstr "/Ajuda/_Ajuda Online"
+msgstr "/Ajuda/_Ajuda online"
 
 #: src/gtkblist.c:810
 msgid "/Help/_Debug Window"
-msgstr "/Ajuda/Janela de _Debug"
+msgstr "/Ajuda/Janela de _debug"
 
 #: src/gtkblist.c:811
 msgid "/Help/_About"
@@ -5011,7 +5010,7 @@ msgstr "Alertado (%d%%) "
 msgid "Offline "
 msgstr "Desconectado "
 
-#: src/gtkblist.c:1391 src/gtkprefs.c:842 src/gtkprefs.c:1516
+#: src/gtkblist.c:1391 src/gtkprefs.c:843 src/gtkprefs.c:1517
 msgid "None"
 msgstr "Nenhuma"
 
@@ -5027,7 +5026,7 @@ msgstr "Por status"
 msgid "By log size"
 msgstr "Por tamanho do log"
 
-#: src/gtkblist.c:1430 src/gtkprefs.c:2270
+#: src/gtkblist.c:1430 src/gtkprefs.c:2271
 msgid "Buddy List"
 msgstr "Lista de contatos"
 
@@ -5041,7 +5040,7 @@ msgstr "/Ferramentas/Notificação de contatos"
 
 #: src/gtkblist.c:1460
 msgid "/Tools/Protocol Actions"
-msgstr "/Ferramentas/Ações de Protocolo"
+msgstr "/Ferramentas/Ações de protocolo"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -5131,7 +5130,7 @@ msgstr "_Mensagem:"
 msgid "Un-Ignore"
 msgstr "Des-Ignorar"
 
-#: src/gtkconv.c:1082 src/gtkprefs.c:774
+#: src/gtkconv.c:1082 src/gtkprefs.c:775
 msgid "Ignore"
 msgstr "Ignorar"
 
@@ -5226,15 +5225,15 @@ msgstr "/_Opções"
 
 #: src/gtkconv.c:2825
 msgid "/Options/Enable _Logging"
-msgstr "/OpçÕes/Gravar _Log"
+msgstr "/OpçÕes/Gravar _log"
 
 #: src/gtkconv.c:2826
 msgid "/Options/Enable _Sounds"
-msgstr "/Opções/Atiar _Sons"
+msgstr "/Opções/Ativar _sons"
 
 #: src/gtkconv.c:2866
 msgid "/Conversation/View Log..."
-msgstr "/Conversa/Ver Log"
+msgstr "/Conversa/Ver log"
 
 #: src/gtkconv.c:2871
 msgid "/Conversation/Add Buddy Pounce..."
@@ -5398,12 +5397,12 @@ msgstr "Ignorar o usuário"
 #: src/gtkconv.c:3911 src/server.c:1298
 #, c-format
 msgid "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"
-msgstr ""
+msgstr "<HR><BR><H3 Align=Center> ---- Nova conversa em %s ----</H3><BR>\n"
 
 #: src/gtkconv.c:3915 src/server.c:1301
-#, fuzzy, c-format
+#, c-format
 msgid "---- New Conversation @ %s ----\n"
-msgstr "Conversas com %s"
+msgstr "---- Nova conversa em %s ----\n"
 
 #: src/gtkconv.c:3947
 msgid "Close conversation"
@@ -5529,15 +5528,15 @@ msgstr "Gaim - Abrir..."
 msgid "%s wants to send you %s (%s)"
 msgstr "%s deseja lhe enviar %s (%s)"
 
-#: src/gtkimhtml.c:530
+#: src/gtkimhtml.c:529
 msgid "_Copy Link Location"
 msgstr "_Copiar endereço do link"
 
-#: src/gtkimhtml.c:537
+#: src/gtkimhtml.c:536
 msgid "_Open Link in Browser"
 msgstr "_Abrir link no browser"
 
-#: src/gtkimhtml.c:1642
+#: src/gtkimhtml.c:1632
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
@@ -5545,16 +5544,16 @@ msgstr ""
 "Não foi possível descobrir o tipo de imagem baseando-se na extensão "
 "fornecida.  O padrão (PNG) vai ser usado."
 
-#: src/gtkimhtml.c:1650
+#: src/gtkimhtml.c:1640
 #, c-format
 msgid "Error saving image: %s"
 msgstr "Erro ao salvar imagem: %s"
 
-#: src/gtkimhtml.c:1659
+#: src/gtkimhtml.c:1649
 msgid "Save Image"
 msgstr "Salvar imagem"
 
-#: src/gtkimhtml.c:1681
+#: src/gtkimhtml.c:1671
 msgid "_Save Image..."
 msgstr "_Salvar imagem"
 
@@ -5681,7 +5680,7 @@ msgstr "Tocar um som"
 msgid "Browse"
 msgstr "Procurar"
 
-#: src/gtkpounce.c:517 src/gtkprefs.c:2097
+#: src/gtkpounce.c:517 src/gtkprefs.c:2098
 msgid "Test"
 msgstr "Testar"
 
@@ -5738,15 +5737,15 @@ msgstr "%s está ausente."
 msgid "Unknown pounce event. Please report this!"
 msgstr "Evento de notificação desconhecido. Por favor reporte isso!"
 
-#: src/gtkprefs.c:378
+#: src/gtkprefs.c:379
 msgid "Interface Options"
 msgstr "Opções da interface"
 
-#: src/gtkprefs.c:380
+#: src/gtkprefs.c:381
 msgid "D_isplay remote nicknames if no alias is set"
 msgstr "E_xibir apelidos remotos se nenhum apelido estiver definido"
 
-#: src/gtkprefs.c:561
+#: src/gtkprefs.c:562
 msgid ""
 "Select a smiley theme that you would like to use from the list below. New "
 "themes can be installed by dragging and dropping them onto the theme list."
@@ -5754,359 +5753,359 @@ msgstr ""
 "Selecione um tema de emoticons que você gostaria de usar da lista abaixo. "
 "Novos temas podem ser instalados arrastando e soltando-os na lista de temas."
 
-#: src/gtkprefs.c:594
+#: src/gtkprefs.c:595
 msgid "Icon"
 msgstr "Ícone"
 
-#: src/gtkprefs.c:668
+#: src/gtkprefs.c:669
 msgid "Style"
 msgstr "Estilo"
 
-#: src/gtkprefs.c:669
+#: src/gtkprefs.c:670
 msgid "_Bold"
 msgstr "_Negrito"
 
-#: src/gtkprefs.c:671
+#: src/gtkprefs.c:672
 msgid "_Italics"
 msgstr "_Itálico"
 
-#: src/gtkprefs.c:673
+#: src/gtkprefs.c:674
 msgid "_Underline"
 msgstr "_Sublinhado"
 
-#: src/gtkprefs.c:675
+#: src/gtkprefs.c:676
 msgid "_Strikethrough"
 msgstr "_Tachado"
 
-#: src/gtkprefs.c:678
+#: src/gtkprefs.c:679
 msgid "Face"
 msgstr "Fonte"
 
-#: src/gtkprefs.c:681
+#: src/gtkprefs.c:682
 msgid "Use custo_m face"
 msgstr "Usar fonte _customizada"
 
-#: src/gtkprefs.c:698
+#: src/gtkprefs.c:699
 msgid "Use custom si_ze"
 msgstr "Usar tamanho cu_stomizado"
 
-#: src/gtkprefs.c:711
+#: src/gtkprefs.c:712
 msgid "Color"
 msgstr "Cor"
 
-#: src/gtkprefs.c:715
+#: src/gtkprefs.c:716
 msgid "_Text color"
 msgstr "_Cor do texto"
 
-#: src/gtkprefs.c:734
+#: src/gtkprefs.c:735
 msgid "Bac_kground color"
 msgstr "Cor de _fundo"
 
-#: src/gtkprefs.c:762 src/gtkprefs.c:994 src/gtkprefs.c:1047
+#: src/gtkprefs.c:763 src/gtkprefs.c:995 src/gtkprefs.c:1048
 msgid "Display"
 msgstr "Exibir"
 
-#: src/gtkprefs.c:763
+#: src/gtkprefs.c:764
 msgid "Show graphical _smileys"
 msgstr "Exibir emoticons _gráficos"
 
-#: src/gtkprefs.c:765
+#: src/gtkprefs.c:766
 msgid "Show _timestamp on messages"
 msgstr "Exibir _marcações de tempo nas mensagens"
 
-#: src/gtkprefs.c:767
+#: src/gtkprefs.c:768
 msgid "Show _URLs as links"
 msgstr "Mostrar _URLs como links"
 
-#: src/gtkprefs.c:771
+#: src/gtkprefs.c:772
 msgid "_Highlight misspelled words"
 msgstr "Destacar palavras mal grafadas"
 
-#: src/gtkprefs.c:775
+#: src/gtkprefs.c:776
 msgid "Ignore c_olors"
 msgstr "Ignorar c_ores"
 
-#: src/gtkprefs.c:777
+#: src/gtkprefs.c:778
 msgid "Ignore font _faces"
 msgstr "Ignorar _fontes"
 
-#: src/gtkprefs.c:779
+#: src/gtkprefs.c:780
 msgid "Ignore font si_zes"
 msgstr "Ignorar _tamanhos de fonte"
 
-#: src/gtkprefs.c:792
+#: src/gtkprefs.c:793
 msgid "Send Message"
 msgstr "Enviar mensagem"
 
-#: src/gtkprefs.c:793
+#: src/gtkprefs.c:794
 msgid "Enter _sends message"
 msgstr "Enter _envia mensagem"
 
-#: src/gtkprefs.c:795
+#: src/gtkprefs.c:796
 msgid "C_ontrol-Enter sends message"
 msgstr "C_ontrol-Enter envia mensagem"
 
-#: src/gtkprefs.c:798
+#: src/gtkprefs.c:799
 msgid "Window Closing"
 msgstr "Fechar janelas"
 
-#: src/gtkprefs.c:799
+#: src/gtkprefs.c:800
 msgid "_Escape closes window"
 msgstr "_ESC fecha janela"
 
-#: src/gtkprefs.c:802
+#: src/gtkprefs.c:803
 msgid "Insertions"
 msgstr "Inserções"
 
-#: src/gtkprefs.c:803
+#: src/gtkprefs.c:804
 msgid "Control-{B/I/U} inserts _HTML tags"
 msgstr "Control-{B/I/U} insere tags _HTML"
 
-#: src/gtkprefs.c:805
+#: src/gtkprefs.c:806
 msgid "Control-(number) _inserts smileys"
 msgstr "Control-{number} _insere emoticons"
 
-#: src/gtkprefs.c:822
+#: src/gtkprefs.c:823
 msgid "Buddy List Sorting"
 msgstr "Classificação da lista de contatos"
 
-#: src/gtkprefs.c:831
+#: src/gtkprefs.c:832
 msgid "Sorting:"
 msgstr "Classificação:"
 
-#: src/gtkprefs.c:836
+#: src/gtkprefs.c:837
 msgid "Buddy List Toolbar"
 msgstr "Barra de ferramentas da lista de contatos"
 
-#: src/gtkprefs.c:837 src/gtkprefs.c:964 src/gtkprefs.c:1020
+#: src/gtkprefs.c:838 src/gtkprefs.c:965 src/gtkprefs.c:1021
 msgid "Show _buttons as:"
 msgstr "Mostrar _botões como:"
 
-#: src/gtkprefs.c:839 src/gtkprefs.c:966 src/gtkprefs.c:1022
+#: src/gtkprefs.c:840 src/gtkprefs.c:967 src/gtkprefs.c:1023
 msgid "Pictures"
 msgstr "Figuras"
 
-#: src/gtkprefs.c:840 src/gtkprefs.c:967 src/gtkprefs.c:1023
+#: src/gtkprefs.c:841 src/gtkprefs.c:968 src/gtkprefs.c:1024
 msgid "Text"
 msgstr "Texto"
 
-#: src/gtkprefs.c:841 src/gtkprefs.c:968 src/gtkprefs.c:1024
+#: src/gtkprefs.c:842 src/gtkprefs.c:969 src/gtkprefs.c:1025
 msgid "Pictures and text"
 msgstr "Figuras e texto"
 
-#: src/gtkprefs.c:846
+#: src/gtkprefs.c:847
 msgid "_Raise window on events"
 msgstr "_Colocar janela no topo quando ocorrerem eventos"
 
-#: src/gtkprefs.c:849
+#: src/gtkprefs.c:850
 msgid "Group Display"
 msgstr "Exibição de grupos"
 
 #. prefs_checkbox(_("Show _groups with no online buddies"), "/gaim/gtk/blist/show_empty_groups", vbox);
-#: src/gtkprefs.c:851
+#: src/gtkprefs.c:852
 msgid "Show _numbers in groups"
 msgstr "Mostrar _números em grupos"
 
-#: src/gtkprefs.c:854
+#: src/gtkprefs.c:855
 msgid "Buddy Display"
 msgstr "Exibição de contatos"
 
-#: src/gtkprefs.c:855 src/gtkprefs.c:989
+#: src/gtkprefs.c:856 src/gtkprefs.c:990
 msgid "Show buddy _icons"
 msgstr "Mostrar í_cones de contatos"
 
-#: src/gtkprefs.c:857
+#: src/gtkprefs.c:858
 msgid "Show _warning levels"
 msgstr "Mostrar _níveis de alerta"
 
-#: src/gtkprefs.c:860
+#: src/gtkprefs.c:861
 msgid "Show idle _times"
 msgstr "Mostrar _tempo de inatividade"
 
-#: src/gtkprefs.c:874
+#: src/gtkprefs.c:875
 msgid "Dim i_dle buddies"
 msgstr "Turvar contatos in_ativos"
 
-#: src/gtkprefs.c:894 src/gtkprefs.c:2271
+#: src/gtkprefs.c:895 src/gtkprefs.c:2272
 msgid "Conversations"
 msgstr "Conversas"
 
-#: src/gtkprefs.c:898
+#: src/gtkprefs.c:899
 msgid "_Placement:"
 msgstr "_Posição:"
 
-#: src/gtkprefs.c:907
+#: src/gtkprefs.c:908
 msgid "Send _URLs as Links"
 msgstr "Enviar _URLs como links"
 
-#: src/gtkprefs.c:910
+#: src/gtkprefs.c:911
 msgid "Tab Options"
 msgstr "Opções de abas"
 
-#: src/gtkprefs.c:913 src/gtkprefs.c:924
+#: src/gtkprefs.c:914 src/gtkprefs.c:925
 msgid "Top"
 msgstr "Cima"
 
-#: src/gtkprefs.c:915 src/gtkprefs.c:925
+#: src/gtkprefs.c:916 src/gtkprefs.c:926
 msgid "Bottom"
 msgstr "Baixo"
 
-#: src/gtkprefs.c:917 src/gtkprefs.c:926
+#: src/gtkprefs.c:918 src/gtkprefs.c:927
 msgid "Left"
 msgstr "Esquerda"
 
-#: src/gtkprefs.c:919 src/gtkprefs.c:927
+#: src/gtkprefs.c:920 src/gtkprefs.c:928
 msgid "Right"
 msgstr "Direita"
 
-#: src/gtkprefs.c:922
+#: src/gtkprefs.c:923
 msgid "_Tab Placement:"
 msgstr "_Posição das abas:"
 
-#: src/gtkprefs.c:933
+#: src/gtkprefs.c:934
 msgid "Show IMs and chats in _tabbed windows"
 msgstr "Mostrar MIs e chats em janelas com _abas"
 
-#: src/gtkprefs.c:936
+#: src/gtkprefs.c:937
 msgid "Show _close button on tabs."
 msgstr "Mostrar o botão de _fechar nas abas."
 
-#: src/gtkprefs.c:963 src/gtkprefs.c:1019
+#: src/gtkprefs.c:964 src/gtkprefs.c:1020
 msgid "Window"
 msgstr "Janela"
 
-#: src/gtkprefs.c:973 src/gtkprefs.c:1029
+#: src/gtkprefs.c:974 src/gtkprefs.c:1030
 msgid "New window _width:"
 msgstr "_Largura de novas janelas:"
 
-#: src/gtkprefs.c:976 src/gtkprefs.c:1032
+#: src/gtkprefs.c:977 src/gtkprefs.c:1033
 msgid "New window _height:"
 msgstr "_Altura de novas janelas:"
 
-#: src/gtkprefs.c:979 src/gtkprefs.c:1035
+#: src/gtkprefs.c:980 src/gtkprefs.c:1036
 msgid "_Entry field height:"
 msgstr "_Altura do campo de entrada:"
 
-#: src/gtkprefs.c:982 src/gtkprefs.c:1038
+#: src/gtkprefs.c:983 src/gtkprefs.c:1039
 msgid "_Raise windows on events"
 msgstr "_Colocar janela no topo quando ocorrerem eventos"
 
-#: src/gtkprefs.c:984
+#: src/gtkprefs.c:985
 msgid "Hide window on _send"
 msgstr "Ocultar janela ao _enviar"
 
-#: src/gtkprefs.c:988
+#: src/gtkprefs.c:989
 msgid "Buddy Icons"
 msgstr "Ícones de contatos"
 
-#: src/gtkprefs.c:991
+#: src/gtkprefs.c:992
 msgid "Enable buddy icon a_nimation"
 msgstr "Ativr animação nos ícones de contato"
 
-#: src/gtkprefs.c:995
+#: src/gtkprefs.c:996
 msgid "Show _logins in window"
 msgstr "Mostrar _entradas de usuários na janela"
 
-#: src/gtkprefs.c:997
+#: src/gtkprefs.c:998
 msgid "Show a_liases in tabs/titles"
 msgstr "Mostrar apelidos em abas/títulos"
 
-#: src/gtkprefs.c:1000
+#: src/gtkprefs.c:1001
 msgid "Typing Notification"
 msgstr "Notificação de digitação"
 
-#: src/gtkprefs.c:1001
+#: src/gtkprefs.c:1002
 msgid "Notify buddies that you are _typing to them"
 msgstr "Notificar contatos de que você está _digitando para eles"
 
-#: src/gtkprefs.c:1041
+#: src/gtkprefs.c:1042
 msgid "Tab Completion"
 msgstr "Completar com TAB"
 
-#: src/gtkprefs.c:1042
+#: src/gtkprefs.c:1043
 msgid "_Tab-complete nicks"
 msgstr "_Completar nicks com TAB"
 
-#: src/gtkprefs.c:1044
+#: src/gtkprefs.c:1045
 msgid "_Old-style tab completion"
 msgstr "Completar nicks da maneira _antiga"
 
-#: src/gtkprefs.c:1048
+#: src/gtkprefs.c:1049
 msgid "_Show people joining in window"
 msgstr "_Mostrar pessoas ingressando na janela"
 
-#: src/gtkprefs.c:1050
+#: src/gtkprefs.c:1051
 msgid "_Show people leaving in window"
 msgstr "M_ostrar pessoas saindo na janela"
 
-#: src/gtkprefs.c:1052
+#: src/gtkprefs.c:1053
 msgid "Co_lorize screennames"
 msgstr "Co_lorizar nomes de usuários"
 
-#: src/gtkprefs.c:1096
+#: src/gtkprefs.c:1097
 msgid "Proxy Type"
 msgstr "Tipo de proxy"
 
-#: src/gtkprefs.c:1099
+#: src/gtkprefs.c:1100
 msgid "No proxy"
 msgstr "Nenhum proxy"
 
-#: src/gtkprefs.c:1105
+#: src/gtkprefs.c:1106
 msgid "Proxy Server"
 msgstr "Servidor proxy"
 
-#: src/gtkprefs.c:1125
+#: src/gtkprefs.c:1126
 msgid "_Host"
 msgstr "_Host"
 
-#: src/gtkprefs.c:1160
+#: src/gtkprefs.c:1161
 msgid "_User"
 msgstr "_Usuário"
 
-#: src/gtkprefs.c:1177
+#: src/gtkprefs.c:1178
 msgid "Pa_ssword"
 msgstr "_Senha"
 
-#: src/gtkprefs.c:1233
+#: src/gtkprefs.c:1234
 #, c-format
 msgid "The entered manual browser '%s' is not valid. Hyperlinks will not work."
 msgstr ""
 "O browser digitado manualmente, '%s', não é válido. Hiperlinks não "
 "funcionarão."
 
-#: src/gtkprefs.c:1253
+#: src/gtkprefs.c:1254
 msgid "Opera"
 msgstr "Opera"
 
-#: src/gtkprefs.c:1254
+#: src/gtkprefs.c:1255
 msgid "Netscape"
 msgstr "Netscape"
 
-#: src/gtkprefs.c:1255
+#: src/gtkprefs.c:1256
 msgid "Mozilla"
 msgstr "Mozilla"
 
-#: src/gtkprefs.c:1256
+#: src/gtkprefs.c:1257
 msgid "Konqueror"
 msgstr "Konqueror"
 
-#: src/gtkprefs.c:1257
+#: src/gtkprefs.c:1258
 msgid "Galeon"
 msgstr "Galeon"
 
-#: src/gtkprefs.c:1266
+#: src/gtkprefs.c:1267
 msgid "Manual"
 msgstr "Manual"
 
-#: src/gtkprefs.c:1307
+#: src/gtkprefs.c:1308
 msgid "Browser Selection"
 msgstr "Seleção do browser"
 
-#: src/gtkprefs.c:1311
+#: src/gtkprefs.c:1312
 msgid "_Browser:"
 msgstr "_Browser:"
 
-#: src/gtkprefs.c:1321
+#: src/gtkprefs.c:1322
 #, c-format
 msgid ""
 "_Manual:\n"
@@ -6115,87 +6114,87 @@ msgstr ""
 "_Manual:\n"
 "(%s para URL)"
 
-#: src/gtkprefs.c:1342
+#: src/gtkprefs.c:1343
 msgid "Browser Options"
 msgstr "Opções do browser"
 
-#: src/gtkprefs.c:1343
+#: src/gtkprefs.c:1344
 msgid "Open new _window by default"
 msgstr "Abrir nova _janela por padrão"
 
-#: src/gtkprefs.c:1358
+#: src/gtkprefs.c:1359
 msgid "Message Logs"
 msgstr "Logs de conversas"
 
-#: src/gtkprefs.c:1359
+#: src/gtkprefs.c:1360
 msgid "_Log all instant messages"
 msgstr "_Gravar todas as mensagens instantâneas"
 
-#: src/gtkprefs.c:1361
+#: src/gtkprefs.c:1362
 msgid "Log all c_hats"
 msgstr "Gravar todos os _chats"
 
-#: src/gtkprefs.c:1363
+#: src/gtkprefs.c:1364
 msgid "Strip _HTML from logs"
 msgstr "Remover _HTML dos logs"
 
-#: src/gtkprefs.c:1366
+#: src/gtkprefs.c:1367
 msgid "System Logs"
 msgstr "Logs do sistema"
 
-#: src/gtkprefs.c:1367
+#: src/gtkprefs.c:1368
 msgid "Log when buddies _sign on/sign off"
 msgstr "Gravar quando contatos conectam/desconectam"
 
-#: src/gtkprefs.c:1369
+#: src/gtkprefs.c:1370
 msgid "Log when buddies become _idle/un-idle"
 msgstr "Gravar quando usuários se tornam/saem do estado 'Inativo'"
 
-#: src/gtkprefs.c:1371
+#: src/gtkprefs.c:1372
 msgid "Log when buddies go away/come _back"
 msgstr "Gravar quando usuários se ausentam/voltam"
 
-#: src/gtkprefs.c:1373
+#: src/gtkprefs.c:1374
 msgid "Log your _own signons/idleness/awayness"
 msgstr "Gravar suas próprias conexões/inatividades/ausências"
 
-#: src/gtkprefs.c:1375
+#: src/gtkprefs.c:1376
 msgid "I_ndividual log file for each buddy's signons"
 msgstr "_Arquivo de log individual para cada conexão de contatos"
 
-#: src/gtkprefs.c:1418
+#: src/gtkprefs.c:1419
 msgid "Sound Options"
 msgstr "Opções de som"
 
-#: src/gtkprefs.c:1419
+#: src/gtkprefs.c:1420
 msgid "_No sounds when you log in"
 msgstr "_Nenhum som ao conectar"
 
-#: src/gtkprefs.c:1421
+#: src/gtkprefs.c:1422
 msgid "_Sounds while away"
 msgstr "_Sons enquanto ausente"
 
-#: src/gtkprefs.c:1425
+#: src/gtkprefs.c:1426
 msgid "Sound Method"
 msgstr "Método para reproduzir o som"
 
-#: src/gtkprefs.c:1426
+#: src/gtkprefs.c:1427
 msgid "_Method:"
 msgstr "_Método:"
 
-#: src/gtkprefs.c:1428
+#: src/gtkprefs.c:1429
 msgid "Console beep"
 msgstr "Beep do console"
 
-#: src/gtkprefs.c:1430
+#: src/gtkprefs.c:1431
 msgid "Automatic"
 msgstr "Automático"
 
-#: src/gtkprefs.c:1437
+#: src/gtkprefs.c:1438
 msgid "Command"
 msgstr "Comando"
 
-#: src/gtkprefs.c:1447
+#: src/gtkprefs.c:1448
 #, c-format
 msgid ""
 "Sound c_ommand:\n"
@@ -6204,67 +6203,67 @@ msgstr ""
 "C_omando do som:\n"
 "(%s para nome do arquivo)"
 
-#: src/gtkprefs.c:1492
+#: src/gtkprefs.c:1493
 msgid "_Sending messages removes away status"
 msgstr "_Enviar mensagens remove o status de ausente"
 
-#: src/gtkprefs.c:1494
+#: src/gtkprefs.c:1495
 msgid "_Queue new messages when away"
 msgstr "_Ocultar novas mensagens quando ausente"
 
-#: src/gtkprefs.c:1497
+#: src/gtkprefs.c:1498
 msgid "Auto-response"
 msgstr "Auto-resposta"
 
-#: src/gtkprefs.c:1500
+#: src/gtkprefs.c:1501
 msgid "Seconds before _resending:"
 msgstr "Segundos antes de _re-enviar:"
 
-#: src/gtkprefs.c:1503
+#: src/gtkprefs.c:1504
 msgid "_Send auto-response"
 msgstr "_Enviar auto-resposta"
 
-#: src/gtkprefs.c:1505
+#: src/gtkprefs.c:1506
 msgid "_Only send auto-response when idle"
 msgstr "_Apenas enviar auto-resposta quando inativo"
 
-#: src/gtkprefs.c:1507
+#: src/gtkprefs.c:1508
 msgid "Send auto-response in active conversations"
 msgstr "Enviar auto-resposta em conversas ativas"
 
-#: src/gtkprefs.c:1514
+#: src/gtkprefs.c:1515
 msgid "Idle _time reporting:"
 msgstr "Inatividade reportada em relação a:"
 
-#: src/gtkprefs.c:1517
+#: src/gtkprefs.c:1518
 msgid "Gaim usage"
 msgstr "Utilização do Gaim"
 
-#: src/gtkprefs.c:1520
+#: src/gtkprefs.c:1521
 msgid "X usage"
 msgstr "Utilização do X"
 
-#: src/gtkprefs.c:1522
+#: src/gtkprefs.c:1523
 msgid "Windows usage"
 msgstr "Utilização do Windows"
 
-#: src/gtkprefs.c:1530
+#: src/gtkprefs.c:1531
 msgid "Auto-away"
 msgstr "Auto-away"
 
-#: src/gtkprefs.c:1531
+#: src/gtkprefs.c:1532
 msgid "Set away _when idle"
 msgstr "Definir status de 'Ausente' _quanto inativo"
 
-#: src/gtkprefs.c:1533
+#: src/gtkprefs.c:1534
 msgid "_Minutes before setting away:"
 msgstr "_Minutos antes de setar o status de 'Ausente':"
 
-#: src/gtkprefs.c:1540
+#: src/gtkprefs.c:1541
 msgid "Away m_essage:"
 msgstr "Mensagem de away:"
 
-#: src/gtkprefs.c:1602
+#: src/gtkprefs.c:1603
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -6279,7 +6278,7 @@ msgstr ""
 "<span weight=\"bold\">Página da web:</span>\t\t%s\n"
 "<span weight=\"bold\">Nome do arquivo:</span>\t%s"
 
-#: src/gtkprefs.c:1607
+#: src/gtkprefs.c:1608
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -6294,96 +6293,96 @@ msgstr ""
 "<span weight=\"bold\">URL:</span>  %s\n"
 "<span weight=\"bold\">Nome do arquivo:</span>  %s"
 
-#: src/gtkprefs.c:1785
+#: src/gtkprefs.c:1786
 msgid "Load"
 msgstr "Carregar"
 
-#: src/gtkprefs.c:1792
+#: src/gtkprefs.c:1793
 msgid "Name"
 msgstr "Nome"
 
-#: src/gtkprefs.c:1839
+#: src/gtkprefs.c:1840
 msgid "Details"
 msgstr "Detalhes"
 
-#: src/gtkprefs.c:1964
+#: src/gtkprefs.c:1965
 msgid "Sound Selection"
 msgstr "Seleção de som"
 
-#: src/gtkprefs.c:2071
+#: src/gtkprefs.c:2072
 msgid "Play"
 msgstr "Tocar"
 
-#: src/gtkprefs.c:2078
+#: src/gtkprefs.c:2079
 msgid "Event"
 msgstr "Evento"
 
-#: src/gtkprefs.c:2101
+#: src/gtkprefs.c:2102
 msgid "Reset"
 msgstr "Redefinir"
 
-#: src/gtkprefs.c:2105
+#: src/gtkprefs.c:2106
 msgid "Choose..."
 msgstr "Escolher..."
 
-#: src/gtkprefs.c:2229
+#: src/gtkprefs.c:2230
 msgid "_Edit"
 msgstr "_Editar"
 
-#: src/gtkprefs.c:2265
+#: src/gtkprefs.c:2266
 msgid "Interface"
 msgstr "Interface"
 
-#: src/gtkprefs.c:2266
+#: src/gtkprefs.c:2267
 msgid "Smiley Themes"
 msgstr "Temas de emoticons"
 
-#: src/gtkprefs.c:2267
+#: src/gtkprefs.c:2268
 msgid "Fonts"
 msgstr "Fontes"
 
-#: src/gtkprefs.c:2268
+#: src/gtkprefs.c:2269
 msgid "Message Text"
 msgstr "Texto das mensagens"
 
-#: src/gtkprefs.c:2269
+#: src/gtkprefs.c:2270
 msgid "Shortcuts"
 msgstr "Atalhos"
 
-#: src/gtkprefs.c:2272
+#: src/gtkprefs.c:2273
 msgid "IMs"
 msgstr "MIs"
 
-#: src/gtkprefs.c:2274
+#: src/gtkprefs.c:2275
 msgid "Proxy"
 msgstr "Proxy"
 
 #. We use the registered default browser in windows
-#: src/gtkprefs.c:2277
+#: src/gtkprefs.c:2278
 msgid "Browser"
 msgstr "Browser"
 
-#: src/gtkprefs.c:2279
+#: src/gtkprefs.c:2280
 msgid "Logging"
 msgstr "Gravando"
 
-#: src/gtkprefs.c:2280
+#: src/gtkprefs.c:2281
 msgid "Sounds"
 msgstr "Sons"
 
-#: src/gtkprefs.c:2281
+#: src/gtkprefs.c:2282
 msgid "Sound Events"
 msgstr "Eventos de som"
 
-#: src/gtkprefs.c:2282
+#: src/gtkprefs.c:2283
 msgid "Away / Idle"
 msgstr "Ausente / Inativo"
 
-#: src/gtkprefs.c:2283
+#: src/gtkprefs.c:2284
 msgid "Away Messages"
 msgstr "Mensagens de away"
 
-#: src/gtkprefs.c:2286
+#: src/gtkprefs.c:2287
 msgid "Plugins"
 msgstr "Plugins"
 
@@ -6790,56 +6789,9 @@ msgid "Debug Window"
 msgstr "Janela de debug"
 
 #: src/gtkdebug.c:182
-#, fuzzy
 msgid "Pause"
-msgstr "_Pausar"
+msgstr "Pausar"
 
 #: src/gtkdebug.c:188
 msgid "Timestamps"
 msgstr "Marcações de tempo"
-
-#~ msgid "Enter your password."
-#~ msgstr "Digite sua senha."
-
-#~ msgid ""
-#~ "%s\n"
-#~ "%s: %s"
-#~ msgstr ""
-#~ "%s\n"
-#~ "%s: %s"
-
-#~ msgid "%s was unable to sign on"
-#~ msgstr "%s não pôde se conectar"
-
-#~ msgid "Signon Error"
-#~ msgstr "Erro ao se conectar"
-
-#~ msgid "Notice"
-#~ msgstr "Aviso"
-
-#~ msgid "%s has been signed off"
-#~ msgstr "%s foi desconectado"
-
-#~ msgid "Connection Error"
-#~ msgstr "Erro de conexão"
-
-#~ msgid "Gaim Instant Messenger"
-#~ msgstr "Gaim Instant Messenger"
-
-#~ msgid "Gaim Instant Messenger - Signed off"
-#~ msgstr "Gaim Instant Messenger - Desconectado"
-
-#~ msgid "Gaim Instant Messenger - Away"
-#~ msgstr "Gaim Instant Messenger - Ausente"
-
-#~ msgid "New"
-#~ msgstr "Nova"
-
-#~ msgid "Set Away Message"
-#~ msgstr "Definir mensagem de away"
-
-#~ msgid "I'm Back"
-#~ msgstr "Estou de volta"
-
-#~ msgid "Exit"
-#~ msgstr "Sair"
