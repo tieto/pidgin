@@ -43,13 +43,14 @@ char *normalize(const char *str);
 /**
  * Converts a string to its base-64 equivalent.
  *
- * @param str The string to convert.
+ * @param buf The data to convert.
+ * @param len The length of the data, or -1 if it's a NULL-terminated string.
  *
  * @return The base-64 version of @a str.
  *
  * @see frombase64()
  */
-char *tobase64(const char *str);
+char *tobase64(const unsigned char *buf, size_t len);
 
 /**
  * Converts a string back from its base-64 equivalent.

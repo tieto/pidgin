@@ -1244,40 +1244,72 @@ static char *jabber_get_convo_thread(gjconn gjc, const char *name)
 }
 
 
-static time_t iso8601_to_time(char *timestamp)
+static time_t str_to_time(char *timestamp)
 {
-	struct tm t;
-	time_t retval = 0;
-	char tz[6] = "";
-	localtime_r(NULL, &t);
+    struct tm t;
+    time_t retval = 0;
+	char buf[32];
+	char *c;
+	int tzoff = 0;
 
-	if(sscanf(timestamp, "%04d%02d%02dT%02d:%02d:%02d%5s",
-		&t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec, tz))
-	{
-		t.tm_year -= 1900;
-		t.tm_mon -= 1;
-		retval = mktime(&t);
-#		ifdef HAVE_TM_GMTOFF
-			retval += t.tm_gmtoff;
-#		else
-#		        ifdef HAVE_TIMEZONE
-				tzset();	/* making sure */
-				retval -= timezone;
-#		        endif
-#		endif
+	time(&retval);
+	localtime_r(&retval, &t);
 
-		if(tz[0] == '+' || tz[0] == '-') {
-			int hr, min;
-			if(sscanf(tz+1, "%2d%2d", &hr, &min)) {
-				if(tz[0] == '+')
-					retval -= (hr*60 + min)*60;
-				else
-					retval += (hr*60 + min)*60;
+	snprintf(buf, sizeof(buf), "%s", timestamp);
+	c = buf;
+
+	/* 4 digit year */
+	if(!sscanf(c, "%04d", &t.tm_year)) return 0;
+	c+=4;
+	if(*c == '-')
+		c++;
+
+	t.tm_year -= 1900;
+
+	/* 2 digit month */
+	if(!sscanf(c, "%02d", &t.tm_mon)) return 0;
+	c+=2;
+	if(*c == '-')
+		c++;
+
+	t.tm_mon -= 1;
+
+	/* 2 digit day */
+	if(!sscanf(c, "%02d", &t.tm_mday)) return 0;
+	c+=2;
+
+	if(*c == 'T') { /* we have more than a date, keep going */
+		c++; /* skip the "T" */
+
+		/* 2 digit hour */
+		if(sscanf(c, "%02d:%02d:%02d", &t.tm_hour, &t.tm_min, &t.tm_sec)) {
+			int tzhrs, tzmins;
+			c+=8;
+			if(*c == '.') /* dealing with precision we don't care about */
+				c += 4;
+
+			if((*c == '+' || *c == '-') &&
+					sscanf(c+1, "%02d:%02d", &tzhrs, &tzmins)) {
+				tzoff = tzhrs*60*60 + tzmins*60;
+				if(*c == '+')
+					tzoff *= -1;
 			}
+
+#ifdef HAVE_TM_GMTOFF
+				tzoff += t.tm_gmtoff;
+#else
+#	ifdef HAVE_TIMEZONE
+				tzset();    /* making sure */
+				tzoff -= timezone;
+#	endif
+#endif
 		}
 	}
+	retval = mktime(&t);
 
-	return retval;
+	retval += tzoff;
+
+    return retval;
 }
 
 static void jabber_handlemessage(gjconn gjc, jpacket p)
@@ -1302,7 +1334,8 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 	while(y) {
 		if(NSCHECK(y, NS_DELAY)) {
 			char *timestamp = xmlnode_get_attrib(y, "stamp");
-			time_sent = iso8601_to_time(timestamp);
+			if(timestamp)
+				time_sent = str_to_time(timestamp);
 		} else if(NSCHECK(y, "jabber:x:event")) {
 			if(xmlnode_get_tag(y, "composing"))
 				typing = TRUE;
@@ -1856,7 +1889,7 @@ static void jabber_handleroster(gjconn gjc, xmlnode querynode)
 		x = xmlnode_get_nextsibling(x);
 	}
 
-	x = jutil_presnew(0, NULL, "Online");
+	x = xmlnode_new_tag("presence");
 	gjab_send(gjc, x);
 	xmlnode_free(x);
 }

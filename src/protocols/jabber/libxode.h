@@ -194,7 +194,7 @@ typedef unsigned int uint32;
 int sha_hash(int *data, int *hash);
 int sha_init(int *hash);
 char *shahash(char *str);	/* NOT THREAD SAFE */
-void shahash_r(const char* str, char hashbuf[40]); /* USE ME */
+void shahash_r(const char* str, char hashbuf[41]); /* USE ME */
 
 int strprintsha(char *dest, int *hashval);
 

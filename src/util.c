@@ -350,59 +350,52 @@ static const char alphabet[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	"0123456789+/";
 
-/* XXX Find bug */
-char *tobase64(const char *text)
+/* This was borrowed from the Kame source, and then tweaked to our needs */
+char *tobase64(const unsigned char *buf, size_t len)
 {
-	char *out = NULL;
-	const char *c;
-	unsigned int tmp = 0;
-	int len = 0, n = 0;
+	char *s, *rv;
+	unsigned tmp;
 
-	c = text;
+	if(len < 0)
+		len = strlen(buf);
 
-	while (*c) {
-		tmp = tmp << 8;
-		tmp += *c;
-		n++;
+	s = g_malloc((4 * (len + 1)) / 3 + 1);
 
-		if (n == 3) {
-			out = g_realloc(out, len + 4);
-			out[len] = alphabet[(tmp >> 18) & 0x3f];
-			out[len + 1] = alphabet[(tmp >> 12) & 0x3f];
-			out[len + 2] = alphabet[(tmp >> 6) & 0x3f];
-			out[len + 3] = alphabet[tmp & 0x3f];
-			len += 4;
-			tmp = 0;
-			n = 0;
-		}
-		c++;
+	rv = s;
+	while (len >= 3) {
+		tmp = buf[0] << 16 | buf[1] << 8 | buf[2];
+		s[0] = alphabet[tmp >> 18];
+		s[1] = alphabet[(tmp >> 12) & 077];
+		s[2] = alphabet[(tmp >> 6) & 077];
+		s[3] = alphabet[tmp & 077];
+		len -= 3;
+		buf += 3;
+		s += 4;
 	}
-	switch (n) {
 
-	case 2:
-		tmp <<= 8;
-		out = g_realloc(out, len + 5);
-		out[len] = alphabet[(tmp >> 18) & 0x3f];
-		out[len + 1] = alphabet[(tmp >> 12) & 0x3f];
-		out[len + 2] = alphabet[(tmp >> 6) & 0x3f];
-		out[len + 3] = '=';
-		out[len + 4] = 0;
-		break;
-	case 1:
-		tmp <<= 16;
-		out = g_realloc(out, len + 5);
-		out[len] = alphabet[(tmp >> 18) & 0x3f];
-		out[len + 1] = alphabet[(tmp >> 12) & 0x3f];
-		out[len + 2] = '=';
-		out[len + 3] = '=';
-		out[len + 4] = 0;
-		break;
-	case 0:
-		out = g_realloc(out, len + 1);
-		out[len] = 0;
-		break;
+	/* RFC 1521 enumerates these three possibilities... */
+	switch(len) {
+		case 2:
+			tmp = buf[0] << 16 | buf[1] << 8;
+			s[0] = alphabet[(tmp >> 18) & 077];
+			s[1] = alphabet[(tmp >> 12) & 077];
+			s[2] = alphabet[(tmp >> 6) & 077];
+			s[3] = '=';
+			s[4] = '\0';
+			break;
+		case 1:
+			tmp = buf[0] << 16;
+			s[0] = alphabet[(tmp >> 18) & 077];
+			s[1] = alphabet[(tmp >> 12) & 077];
+			s[2] = s[3] = '=';
+			s[4] = '\0';
+			break;
+		case 0:
+			s[0] = '\0';
+			break;
 	}
-	return out;
+
+	return rv;
 }
 
 
