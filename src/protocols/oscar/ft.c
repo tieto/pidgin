@@ -663,7 +663,7 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 			ret = userfunc(sess, &fr, snptr, 0);
 	}
 
-	if (payloadlength) {
+	if ((payloadlength != 0) && (payloadlength + 1 != 0)) {
 		char *msg;
 		int recvd = 0;
 		int i, isawaymsg;
