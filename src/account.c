@@ -143,8 +143,14 @@ gaim_account_destroy(GaimAccount *account)
 {
 	g_return_if_fail(account != NULL);
 
+	gaim_debug(GAIM_DEBUG_INFO, "account",
+			   "Destroying account %p\n", account);
+
 	if (account->gc != NULL)
 		gaim_connection_destroy(account->gc);
+
+	gaim_debug(GAIM_DEBUG_INFO, "account",
+			   "Continuing to destroy account %p\n", account);
 
 	if (account->username    != NULL) g_free(account->username);
 	if (account->alias       != NULL) g_free(account->alias);
@@ -168,6 +174,9 @@ gaim_account_connect(GaimAccount *account)
 
 	gc = gaim_connection_new(account);
 
+	gaim_debug(GAIM_DEBUG_INFO, "account",
+			   "Connecting to account %p. gc = %p\n", account, gc);
+
 	gaim_connection_connect(gc);
 
 	return gc;
@@ -180,6 +189,9 @@ gaim_account_disconnect(GaimAccount *account)
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(gaim_account_is_connected(account));
+
+	gaim_debug(GAIM_DEBUG_INFO, "account",
+			   "Disconnecting account %p\n", account);
 
 	gc = gaim_account_get_connection(account);
 
@@ -487,7 +499,7 @@ gaim_account_is_connected(const GaimAccount *account)
 	g_return_val_if_fail(account != NULL, FALSE);
 
 	return (account->gc != NULL &&
-			gaim_connection_get_state(account->gc) == GAIM_CONNECTED);
+			gaim_connection_get_state(account->gc) != GAIM_DISCONNECTED);
 }
 
 const char *

@@ -66,6 +66,9 @@ gaim_connection_destroy(GaimConnection *gc)
 		return;
 	}
 
+	gaim_debug(GAIM_DEBUG_INFO, "connection",
+			   "Destroying connection %p\n", gc);
+
 	account = gaim_connection_get_account(gc);
 	gaim_account_set_connection(account, NULL);
 
@@ -90,6 +93,9 @@ gaim_connection_connect(GaimConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
+	gaim_debug(GAIM_DEBUG_INFO, "connection",
+			   "Connecting. gc = %p\n", gc);
+
 	ops = gaim_get_connection_ui_ops();
 
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
@@ -100,7 +106,7 @@ gaim_connection_connect(GaimConnection *gc)
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL) &&
 		gaim_account_get_password(account) == NULL) {
 
-		gaim_debug(GAIM_DEBUG_INFO, "connection", "Requestin password\n");
+		gaim_debug(GAIM_DEBUG_INFO, "connection", "Requesting password\n");
 
 		if (ops != NULL && ops->request_pass != NULL)
 			ops->request_pass(gc);
@@ -131,6 +137,9 @@ gaim_connection_disconnect(GaimConnection *gc)
 		gaim_account_disconnect(account);
 		return;
 	}
+
+	gaim_debug(GAIM_DEBUG_INFO, "connection",
+			   "Disconnecting connection %p\n", gc);
 
 	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
 		if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
