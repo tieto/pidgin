@@ -676,6 +676,7 @@ __add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Password */
 	dialog->proxy_pass_entry = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(dialog->proxy_pass_entry), FALSE);
 	__add_pref_box(dialog, vbox2, _("Pa_ssword:"), dialog->proxy_pass_entry);
 
 	if (dialog->account != NULL &&
