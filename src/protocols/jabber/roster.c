@@ -152,7 +152,9 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 
 		jb = jabber_buddy_find(js, jid, TRUE);
 
-		if(!strcmp(subscription, "to"))
+		if(!subscription)
+			jb->subscription = JABBER_SUB_NONE;
+		else if(!strcmp(subscription, "to"))
 			jb->subscription = JABBER_SUB_TO;
 		else if(!strcmp(subscription, "from"))
 			jb->subscription = JABBER_SUB_FROM;
