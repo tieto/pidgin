@@ -1701,6 +1701,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 	}
 }
 
+#ifndef YAHOO_WEBMESSENGER
 static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
@@ -1729,6 +1730,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
+#endif
 
 #ifdef YAHOO_WEBMESSENGER
 static void yahoo_got_web_connected(gpointer data, gint source, GaimInputCondition cond)
@@ -1834,7 +1836,8 @@ static void yahoo_login_page_hash_iter(const char *key, const char *val, GString
 static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
 {
 	GHashTable *hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	const char *c = buf, *d;
+	const char *c = buf;
+	char *d;
 	char name[64], value[64];
 	while ((c < (buf + len)) && (c = strstr(c, "<input "))) {
 		c = strstr(c, "name=\"") + strlen("name=\"");
@@ -1852,8 +1855,9 @@ static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
 	return hash;
 }
 
-static void yahoo_login_page_cb(GaimConnection *gc, const char *buf, size_t len)
+static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 {
+	GaimConnection *gc = (GaimConnection *)user_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	const char *sn = gaim_account_get_username(account);
@@ -1897,7 +1901,7 @@ static void yahoo_login_page_cb(GaimConnection *gc, const char *buf, size_t len)
 	g_free(chal);
 	
 	url = g_string_append(url, md5);
-	g_hash_table_foreach(hash, yahoo_login_page_hash_iter, url);
+	g_hash_table_foreach(hash, (GHFunc)yahoo_login_page_hash_iter, url);
 	
 	url = g_string_append(url, "&.hash=1&.md5=1 HTTP/1.1\r\n"
 			      "Host: login.yahoo.com\r\n\r\n");
@@ -1933,7 +1937,8 @@ static void yahoo_login(GaimAccount *account) {
 		return;
 	}
 #else
-	gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE, yahoo_login_page_cb, gc);
+	gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE,
+	               yahoo_login_page_cb, gc);
 #endif
 
 }
