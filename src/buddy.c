@@ -243,6 +243,9 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 	GtkCTreeNode *c;
 	char buf[256];
 
+	/* well you shouldn't be calling this if nothing changed. duh. */
+	do_export(b->gc);
+
 	c = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, b);
 	if (strcmp(b->show, b->name))
 		g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, b->show);

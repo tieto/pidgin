@@ -102,6 +102,8 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 		h = m->members;
 		while (h) {
 			n = (struct buddy *)h->data;
+			if (gc->prpl->buddy_free)
+				(*gc->prpl->buddy_free)(n);
 			h = g_slist_remove(h, n);
 			g_free(n);
 		}

@@ -688,9 +688,6 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 		g_snprintf(b->name, sizeof(b->name), "%s", name);
 		handle_buddy_rename(b, who);
 		g_free(who);
-
-		/* okay lets save the new config... */
-
 	}
 
 	if (!b->idle && idle) {

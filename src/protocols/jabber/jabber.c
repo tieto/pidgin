@@ -1733,6 +1733,14 @@ static GList *jabber_user_opts()
 	return m;
 }
 
+static void jabber_buddy_free(struct buddy *b)
+{
+	while (b->proto_data) {
+		g_free(((GSList *)b->proto_data)->data);
+		b->proto_data = g_slist_remove(b->proto_data, ((GSList *)b->proto_data)->data);
+	}
+}
+
 static struct prpl *my_protocol = NULL;
 
 void jabber_init(struct prpl *ret)
@@ -1773,6 +1781,7 @@ void jabber_init(struct prpl *ret)
 	ret->chat_send = jabber_chat_send;
 	ret->keepalive = jabber_keepalive;
 	ret->normalize = jabber_normalize;
+	ret->buddy_free = jabber_buddy_free;
 
 	my_protocol = ret;
 }

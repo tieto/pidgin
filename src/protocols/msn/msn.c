@@ -724,7 +724,8 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 	} else if (!g_strncasecmp(buf, "GTC", 3)) {
 	} else if (!g_strncasecmp(buf, "INF", 3)) {
 	} else if (!g_strncasecmp(buf, "ILN", 3)) {
-		char *state, *user, *tmp = buf;
+		char *state, *user, *friend, *tmp = buf;
+		struct buddy *b;
 		int status = 0;
 
 		GET_NEXT(tmp);
@@ -736,6 +737,13 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		user = tmp;
 
 		GET_NEXT(tmp);
+		friend = url_decode(tmp);
+
+		if ((b = find_buddy(gc, user)) != NULL) {
+			if (b->proto_data)
+				g_free(b->proto_data);
+			b->proto_data = g_strdup(friend);
+		}
 
 		if (!g_strcasecmp(state, "BSY")) {
 			status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
@@ -867,7 +875,8 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		g_free(utf);
 		g_free(msg);
 	} else if (!g_strncasecmp(buf, "NLN", 3)) {
-		char *state, *user, *tmp = buf;
+		char *state, *user, *friend, *tmp = buf;
+		struct buddy *b;
 		int status = 0;
 
 		GET_NEXT(tmp);
@@ -877,6 +886,13 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		user = tmp;
 
 		GET_NEXT(tmp);
+		friend = url_decode(tmp);
+
+		if ((b = find_buddy(gc, user)) != NULL) {
+			if (b->proto_data)
+				g_free(b->proto_data);
+			b->proto_data = g_strdup(friend);
+		}
 
 		if (!g_strcasecmp(state, "BSY")) {
 			status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
@@ -1432,12 +1448,27 @@ static char *msn_get_away_text(int s)
 	}
 }
 
+static void msn_reset_friend(struct gaim_connection *gc, char *who)
+{
+	struct buddy *b = find_buddy(gc, who);
+	if (!b || !b->proto_data)
+		return;
+	g_snprintf(b->show, sizeof(b->show), "%s", (char *)b->proto_data);
+	handle_buddy_rename(b, b->name);
+}
+
 static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 	struct buddy *b = find_buddy(gc, who);
 	static char buf[MSN_BUF_LEN];
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = "Reset friendly name";
+	pbm->callback = msn_reset_friend;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
 	if (!b || !(b->uc >> 1))
 		return m;
@@ -1656,6 +1687,12 @@ static void msn_rem_deny(struct gaim_connection *gc, char *who)
 	}
 }
 
+static void msn_buddy_free(struct buddy *b)
+{
+	if (b->proto_data)
+		g_free(b->proto_data);
+}
+
 static struct prpl *my_protocol = NULL;
 
 void msn_init(struct prpl *ret)
@@ -1686,6 +1723,7 @@ void msn_init(struct prpl *ret)
 	ret->rem_permit = msn_rem_permit;
 	ret->add_deny = msn_add_deny;
 	ret->rem_deny = msn_rem_deny;
+	ret->buddy_free = msn_buddy_free;
 
 	my_protocol = ret;
 }

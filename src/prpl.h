@@ -142,6 +142,8 @@ struct prpl {
 	int  (* chat_send)	(struct gaim_connection *, int id, char *message);
 	void (* keepalive)	(struct gaim_connection *);
 
+	void (* buddy_free)	(struct buddy *);
+
 	/* this is really bad. */
 	void (* convo_closed)   (struct gaim_connection *, char *who);
 
