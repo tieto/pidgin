@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10838 2004-09-03 21:35:52Z lschiere $
+ * $Id: gg.c 10846 2004-09-04 05:36:32Z marv_sf $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -161,70 +161,59 @@ static char *handle_errcode(GaimConnection *gc, int errcode)
 	return msg;
 }
 
-static void agg_set_away(GaimConnection *gc, const char *state, const char *msg)
+static void agg_set_status(GaimAccount *account, GaimStatus *status)
 {
+	GaimConnection *gc = gaim_account_get_connection(account);
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
-	int status = gd->own_status;
+	int status_num = gd->own_status;
+	const char *status_id;
+	char *msg = NULL;
+  
+	status_id = gaim_status_get_id(status);
+  
+	if (!strcmp(status_id, "available"))
+		status_num = GG_STATUS_AVAIL;
+	else if (!strcmp(status_id, "available-friends"))
+		status_num = GG_STATUS_AVAIL | GG_STATUS_FRIENDS_MASK;
+	else if (!strcmp(status_id, "away"))
+		status_num = GG_STATUS_BUSY;
+	else if (!strcmp(status_id, "away-friends"))
+		status_num = GG_STATUS_BUSY | GG_STATUS_FRIENDS_MASK;
+	else if (!strcmp(status_id, "invisible"))
+		status_num = GG_STATUS_INVISIBLE;
+	else if (!strcmp(status_id, "invisible-friends"))
+		status_num = GG_STATUS_INVISIBLE | GG_STATUS_FRIENDS_MASK;
+	else if (!strcmp(status_id, "unavailable"))
+		status_num = GG_STATUS_NOT_AVAIL;
+	else
+		g_assert_not_reached();
 
-	if (gc->away) {
-		g_free(gc->away);
-		gc->away = NULL;
-	}
-
-	if (!gaim_utf8_strcasecmp(state, AGG_STATUS_AVAIL))
-		status = GG_STATUS_AVAIL;
-	else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_AVAIL_FRIENDS)) {
-		status = GG_STATUS_AVAIL | GG_STATUS_FRIENDS_MASK;
-		gc->away = g_strdup("");
-	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_BUSY)) {
-		status = GG_STATUS_BUSY;
-		gc->away = g_strdup("");
-	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_BUSY_FRIENDS)) {
-		status =  GG_STATUS_BUSY | GG_STATUS_FRIENDS_MASK;
-		gc->away = g_strdup("");
-	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_INVISIBLE)) {
-		status = GG_STATUS_INVISIBLE;
-		gc->away = g_strdup("");
-	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_INVISIBLE_FRIENDS)) {
-		status = GG_STATUS_INVISIBLE | GG_STATUS_FRIENDS_MASK;
-		gc->away = g_strdup("");
-	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_NOT_AVAIL)) {
-		status = GG_STATUS_NOT_AVAIL;
-		gc->away = g_strdup("");
-	} else if (!gaim_utf8_strcasecmp(state, GAIM_AWAY_CUSTOM)) {
-		if (msg) {
-			status = GG_STATUS_BUSY;
-			gc->away = g_strdup("");
-		} else
-			status = GG_STATUS_AVAIL;
-
-		if (gd->own_status & GG_STATUS_FRIENDS_MASK)
-			status |= GG_STATUS_FRIENDS_MASK;
-	}
-	
+	/* XXX: this was added between the status_rewrite and now and needs to be fixed */
 	if (msg) {
-	    switch (status) {
+	    switch (status_num) {
 		case GG_STATUS_AVAIL:
-		    status = GG_STATUS_AVAIL_DESCR;
+		    status_num = GG_STATUS_AVAIL_DESCR;
 		    break;
 		case GG_STATUS_BUSY:
-		    status = GG_STATUS_BUSY_DESCR;
+		    status_num = GG_STATUS_BUSY_DESCR;
 		    break;
 		case GG_STATUS_INVISIBLE:
-		    status = GG_STATUS_INVISIBLE_DESCR;
+		    status_num = GG_STATUS_INVISIBLE_DESCR;
 		    break;
 		case GG_STATUS_NOT_AVAIL:
-		    status = GG_STATUS_NOT_AVAIL_DESCR;
+		    status_num = GG_STATUS_NOT_AVAIL_DESCR;
 		    break;
 	    }
 	}
 
-	gd->own_status = status;
+	gd->own_status = status_num;
+
 	if (msg)
-	    gg_change_status_descr(gd->sess, status, msg);
+	    gg_change_status_descr(gd->sess, status_num, msg);
 	else
-	    gg_change_status(gd->sess, status);
+	    gg_change_status(gd->sess, status_num);
 }
+
 
 #if 0
 static void agg_get_away(GaimConnection *gc, const char *who)
@@ -246,42 +235,85 @@ static void agg_get_away(GaimConnection *gc, const char *who)
 }
 #endif
 
-static gchar *get_away_text(int uc)
+static gchar *get_away_text(GaimBuddy *buddy)
 {
-	if (uc == UC_UNAVAILABLE)
-		return AGG_STATUS_NOT_AVAIL;
-	uc = uc >> 5;
-	switch (uc) {
-	case GG_STATUS_AVAIL:
-	default:
+	GaimPresence *presence = gaim_buddy_get_presence(buddy);
+
+	if (gaim_presence_is_status_active(presence, "available"))
 		return AGG_STATUS_AVAIL;
-	case GG_STATUS_AVAIL | GG_STATUS_FRIENDS_MASK:
+	else if (gaim_presence_is_status_active(presence, "available-friends"))
 		return AGG_STATUS_AVAIL_FRIENDS;
-	case GG_STATUS_BUSY:
+	else if (gaim_presence_is_status_active(presence, "away"))
 		return AGG_STATUS_BUSY;
-	case GG_STATUS_BUSY | GG_STATUS_FRIENDS_MASK:
+	else if (gaim_presence_is_status_active(presence, "away-friends"))
 		return AGG_STATUS_BUSY_FRIENDS;
-	case GG_STATUS_INVISIBLE:
-		return AGG_STATUS_INVISIBLE;
-	case GG_STATUS_INVISIBLE | GG_STATUS_FRIENDS_MASK:
-		return AGG_STATUS_INVISIBLE_FRIENDS;
-	case GG_STATUS_NOT_AVAIL:
+	else if (gaim_presence_is_status_active(presence, "invisible"))
+  		return AGG_STATUS_INVISIBLE;
+	else if (gaim_presence_is_status_active(presence, "invisible-friends"))
+  		return AGG_STATUS_INVISIBLE_FRIENDS;
+	else if (gaim_presence_is_status_active(presence, "unavailable"))
 		return AGG_STATUS_NOT_AVAIL;
-	}
+
+	return AGG_STATUS_AVAIL;
 }
 
-static GList *agg_away_states(GaimConnection *gc)
-{
-	GList *m = NULL;
 
-	m = g_list_append(m, AGG_STATUS_AVAIL);
-	m = g_list_append(m, AGG_STATUS_BUSY);
-	m = g_list_append(m, AGG_STATUS_INVISIBLE);
-	m = g_list_append(m, AGG_STATUS_AVAIL_FRIENDS);
-	m = g_list_append(m, AGG_STATUS_BUSY_FRIENDS);
-	m = g_list_append(m, AGG_STATUS_INVISIBLE_FRIENDS);
-	m = g_list_append(m, AGG_STATUS_NOT_AVAIL);
-	return m;
+static GList *agg_status_types(GaimAccount *account)
+{
+	GaimStatusType *type;
+	GList *types = NULL;
+
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, "offline",
+								_("Offline"), FALSE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_ONLINE, "online",
+								_("Online"), FALSE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(
+		GAIM_STATUS_AVAILABLE, "available", AGG_STATUS_AVAIL,
+		TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(
+		GAIM_STATUS_AWAY, "away", AGG_STATUS_BUSY,
+		TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(
+		GAIM_STATUS_HIDDEN, "invisible", AGG_STATUS_INVISIBLE,
+		TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(
+		GAIM_STATUS_AVAILABLE, "available-friends", AGG_STATUS_AVAIL_FRIENDS,
+		TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(
+		GAIM_STATUS_AWAY, "away-friends", AGG_STATUS_BUSY_FRIENDS,
+		TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(
+		GAIM_STATUS_HIDDEN, "invisible-friends", AGG_STATUS_INVISIBLE,
+		TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_with_attrs(
+		GAIM_STATUS_UNAVAILABLE, "unavailable", AGG_STATUS_NOT_AVAIL,
+		TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING));
+	types = g_list_append(types, type);
+
+	return types;
 }
 
 /* Enhance these functions, more options and such stuff */
@@ -291,7 +323,7 @@ static GList *agg_buddy_menu(GaimBuddy *buddy)
 	GaimBlistNodeAction *act;
 
 	static char buf[AGG_BUF_LEN];
-	g_snprintf(buf, sizeof(buf), _("Status: %s"), get_away_text(buddy->uc));
+	g_snprintf(buf, sizeof(buf), _("Status: %s"), get_away_text(buddy));
 
 	/* um... this seems silly. since in this pass, I'm only converting
 	   over the menu building, I'm not going to mess with it though */
@@ -491,26 +523,34 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 		{
 			gchar user[20];
 			struct gg_notify_reply *n = e->event.notify;
-			guint status;
+			const char *status_id;
 
 			while (n->uin) {
 				switch (n->status) {
-				case GG_STATUS_NOT_AVAIL:
-					status = UC_UNAVAILABLE;
-					break;
-				case GG_STATUS_AVAIL:
-				case GG_STATUS_BUSY:
-				case GG_STATUS_INVISIBLE:
-					status = UC_NORMAL | (n->status << 5);
-					break;
-				default:
-					status = UC_NORMAL;
-					break;
+					case GG_STATUS_NOT_AVAIL:
+						status_id = "unavailable";
+						break;
+
+					case GG_STATUS_AVAIL:
+						status_id = "available";
+						break;
+
+					case GG_STATUS_BUSY:
+						status_id = "away";
+						break;
+
+					case GG_STATUS_INVISIBLE:
+						status_id = "invisible";
+						break;
+
+					default:
+						status_id = "available";
+						break;
+
 				}
 
 				g_snprintf(user, sizeof(user), "%lu", n->uin);
-				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? FALSE : TRUE, 0, 0,
-					       0, status);
+				gaim_prpl_got_user_status(account, user, status_id, NULL);
 				n++;
 			}
 		}
@@ -518,7 +558,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	case GG_EVENT_NOTIFY60:
 		{
 			gchar user[20];
-			guint status;
+			const char *status_id;
 			guint i = 0;
 
 			for (i = 0; e->event.notify60[i].uin; i++) {
@@ -533,29 +573,36 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 				}
 			
 				switch (e->event.notify60[i].status) {
-				case GG_STATUS_NOT_AVAIL:
-				case GG_STATUS_NOT_AVAIL_DESCR:
-					status = UC_UNAVAILABLE;
-					break;
-				case GG_STATUS_AVAIL:
-				case GG_STATUS_AVAIL_DESCR:
-				case GG_STATUS_BUSY:
-				case GG_STATUS_BUSY_DESCR:
-				case GG_STATUS_INVISIBLE:
-				case GG_STATUS_INVISIBLE_DESCR:
-					status = UC_NORMAL | (e->event.notify60[i].status << 5);
-					break;
-				default:
-					status = UC_NORMAL;
-					break;
+					case GG_STATUS_NOT_AVAIL:
+					case GG_STATUS_NOT_AVAIL_DESCR:
+						status_id = "unavailable";
+						break;
+
+					case GG_STATUS_AVAIL:
+					case GG_STATUS_AVAIL_DESCR:
+						status_id = "available";
+						break;
+
+					case GG_STATUS_BUSY:
+					case GG_STATUS_BUSY_DESCR:
+						status_id = "away";
+						break;
+
+					case GG_STATUS_INVISIBLE:
+					case GG_STATUS_INVISIBLE_DESCR:
+						status_id = "invisible";
+						break;
+
+					default:
+						status_id = "available";
+						break;
 				}
 				
 				if (buddy && e->event.notify60[i].descr != NULL) {
 					buddy->proto_data = g_strdup(e->event.notify60[i].descr);
 				}
 
-				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? FALSE : TRUE, 0, 0,
-					       0, status);
+				gaim_prpl_got_user_status(account, user, status_id, NULL);
 				i++;
 			}
 		}
@@ -563,31 +610,38 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	case GG_EVENT_STATUS:
 		{
 			gchar user[20];
-			guint status;
+			const char *status_id;
 
 			switch (e->event.status.status) {
-			case GG_STATUS_NOT_AVAIL:
-				status = UC_UNAVAILABLE;
-				break;
-			case GG_STATUS_AVAIL:
-			case GG_STATUS_BUSY:
-			case GG_STATUS_INVISIBLE:
-				status = UC_NORMAL | (e->event.status.status << 5);
-				break;
-			default:
-				status = UC_NORMAL;
-				break;
+ 				case GG_STATUS_NOT_AVAIL:
+					status_id = "unavailable";
+					break;
+
+				case GG_STATUS_AVAIL:
+					status_id = "available";
+					break;
+
+				case GG_STATUS_BUSY:
+					status_id = "away";
+					break;
+
+				case GG_STATUS_INVISIBLE:
+					status_id = "invisible";
+					break;
+
+				default:
+					status_id = "available";
+					break;
 			}
 
 			g_snprintf(user, sizeof(user), "%lu", e->event.status.uin);
-			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? FALSE : TRUE, 0, 0,
-					0, status);
+			gaim_prpl_got_user_status(account, user, status_id, NULL);
 		}
 		break;
 	case GG_EVENT_STATUS60:
 		{
 			gchar user[20];
-			guint status;
+			const char *status_id;
 
 			GaimBuddy *buddy;
 				
@@ -600,29 +654,36 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			}
 
 			switch (e->event.status60.status) {
-			case GG_STATUS_NOT_AVAIL:
-			case GG_STATUS_NOT_AVAIL_DESCR:
-				status = UC_UNAVAILABLE;
-				break;
-			case GG_STATUS_AVAIL:
-			case GG_STATUS_AVAIL_DESCR:
-			case GG_STATUS_BUSY:
-			case GG_STATUS_BUSY_DESCR:
-			case GG_STATUS_INVISIBLE:
-			case GG_STATUS_INVISIBLE_DESCR:
-				status = UC_NORMAL | (e->event.status60.status << 5);
-				break;
-			default:
-				status = UC_NORMAL;
-				break;
+				case GG_STATUS_NOT_AVAIL_DESCR:
+				case GG_STATUS_NOT_AVAIL:
+					status_id = "unavailable";
+					break;
+
+				case GG_STATUS_AVAIL:
+				case GG_STATUS_AVAIL_DESCR:
+					status_id = "available";
+					break;
+
+				case GG_STATUS_BUSY:
+				case GG_STATUS_BUSY_DESCR:
+					status_id = "away";
+					break;
+
+				case GG_STATUS_INVISIBLE:
+				case GG_STATUS_INVISIBLE_DESCR:
+					status_id = "invisible";
+					break;
+
+				default:
+					status_id = "available";
+					break;
 			}
-    
+ 
 			if (buddy && e->event.status60.descr != NULL) {
 				buddy->proto_data = g_strdup(e->event.status60.descr);
 			}
-			    
-			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? FALSE : TRUE, 0, 0,
-					0, status);
+
+			gaim_prpl_got_user_status(account, user, status_id, NULL);
 		}
 		break;
 	case GG_EVENT_ACK:
@@ -1616,27 +1677,27 @@ static GaimPluginProtocolInfo prpl_info =
 	0,
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
-	NO_BUDDY_ICONS,				/* icon_spec */
-	agg_list_icon,				/* list_icon */
-	agg_list_emblems,			/* list_emblems */
+	NO_BUDDY_ICONS,			/* icon_spec */
+	agg_list_icon,			/* list_icon */
+	agg_list_emblems,		/* list_emblems */
 	NULL,						/* status_text */
 	NULL,						/* tooltip_text */
-	agg_away_states,			/* away_states */
+	agg_status_types,		/* status_types */
 	agg_blist_node_menu,		/* blist_node_menu */
 	NULL,						/* chat_info */
 	NULL,						/* chat_info_defaults */
-	agg_login,					/* login */
-	agg_close,					/* close */
-	agg_send_im,				/* send_im */
+	agg_login,			/* login */
+	agg_close,			/* close */
+	agg_send_im,			/* send_im */
 	NULL,						/* set_info */
 	NULL,						/* send_typing */
-	agg_get_info,				/* get_info */
-	agg_set_away,				/* set_away */
+	agg_get_info,			/* get_info */
+	agg_set_status,			/* set_away */
 	NULL,						/* set_idle */
-	agg_change_passwd,			/* change_passwd */
-	agg_add_buddy,				/* add_buddy */
-	agg_add_buddies,			/* add_buddies */
-	agg_rem_buddy,				/* remove_buddy */
+	agg_change_passwd,		/* change_passwd */
+	agg_add_buddy,			/* add_buddy */
+	agg_add_buddies,		/* add_buddies */
+	agg_rem_buddy,			/* remove_buddy */
 	NULL,						/* remove_buddies */
 	agg_permit_deny_dummy,		/* add_permit */
 	agg_permit_deny_dummy,		/* add_deny */
@@ -1651,14 +1712,14 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,						/* chat_leave */
 	NULL,						/* chat_whisper */
 	NULL,						/* chat_send */
-	agg_keepalive,				/* keepalive */
+	agg_keepalive,			/* keepalive */
 	NULL,						/* register_user */
 	NULL,						/* get_cb_info */
 	NULL,						/* get_cb_away */
 	NULL,						/* alias_buddy */
-	agg_group_buddy,			/* group_buddy */
-	agg_rename_group,			/* rename_group */
-	agg_buddy_free,				/* buddy_free */
+	agg_group_buddy,		/* group_buddy */
+	agg_rename_group,		/* rename_group */
+	agg_buddy_free,			/* buddy_free */
 	NULL,						/* convo_closed */
 	NULL,						/* normalize */
 	NULL,						/* set_buddy_icon */

@@ -220,7 +220,7 @@ struct _GaimPluginProtocolInfo
 	 */
 	char *(*tooltip_text)(GaimBuddy *buddy);
 
-	GList *(*status_types)(GaimConnection *gc);
+	GList *(*status_types)(GaimAccount *account);
 
 	GList *(*blist_node_menu)(GaimBlistNode *node);
 	GList *(*chat_info)(GaimConnection *);

@@ -140,7 +140,7 @@ struct _GtkIMHtmlFontDetail {
 	gchar *fore;
 	gchar *back;
 	gchar *sml;
-    gboolean underline;
+	gboolean underline;
 };
 
 struct _GtkSmileyTree {
