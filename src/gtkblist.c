@@ -845,15 +845,9 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			statustext = g_strdup(_("<b>Status:</b> Offline"));
 
 		if (b->idle > 0) {
-			int ihrs, imin;
 			time_t t;
 			time(&t);
-			ihrs = (t - b->idle) / 3600;
-			imin = ((t - b->idle) / 60) % 60;
-			if (ihrs)
-				idletime = g_strdup_printf(_("%dh%02dm"), ihrs, imin);
-			else
-				idletime = g_strdup_printf(_("%dm"), imin);
+			idletime = g_strdup(sec_to_text(t-b->idle));
 		}
 
 		if(b->alias && b->alias[0])
