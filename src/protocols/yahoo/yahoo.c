@@ -685,11 +685,11 @@ static void yahoo_process_mail(struct gaim_connection *gc, struct yahoo_packet *
 		l = l->next;
 	}
 
-	if (who && email && subj) {
+	if (who && subj && email && *email) {
 		char *from = g_strdup_printf("%s (%s)", who, email);
 		connection_has_mail(gc, -1, from, subj, "http://mail.yahoo.com/");
 		g_free(from);
-	} else
+	} else if (count > 0)
 		connection_has_mail(gc, count, NULL, NULL, "http://mail.yahoo.com/");
 }
 /* This is the y64 alphabet... it's like base64, but has a . and a _ */

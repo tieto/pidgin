@@ -450,7 +450,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 
 	if (count < 0) {
 		if (from && subject)
-			g_snprintf(buf, sizeof buf, "%s has mail from %s: %s", gc->username, from, subject);
+			g_snprintf(buf, sizeof buf, "%s has mail from %s: %s", gc->username, from, *subject ? subject : _("No Subject"));
 		else
 			g_snprintf(buf, sizeof buf, "%s has new mail.", gc->username);
 	} else if (count > 0) {
