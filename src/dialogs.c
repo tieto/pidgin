@@ -1161,6 +1161,7 @@ void show_new_bp(char *name)
         b->nameentry = gtk_entry_new();
         b->messentry = gtk_entry_new();
 
+
 	/* Build OK Button */
 
 	button = picture_button(b->window, _("OK"), ok_xpm);
@@ -1176,10 +1177,8 @@ void show_new_bp(char *name)
 	/* Pounce as menu */
 	pounce_user_menu(b, vbox);
 	
-
 	hbox = gtk_hbox_new(FALSE, 5);
-	
-        label = gtk_label_new(_("Buddy To Pounce:"));
+        label = gtk_label_new(_("Buddy:"));
         gtk_widget_show(label);
 	gtk_widget_show(hbox);
         gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -1187,7 +1186,9 @@ void show_new_bp(char *name)
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 	
 
-	label = gtk_label_new(_("Events:"));
+	label = gtk_label_new(_("Events"));
+	// gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	// I was left aligning these but I dunno if Like it -- Rob
 	
 	/* Set up the different options */
 	b->p_signon = gtk_check_button_new_with_label(_("Sign On"));
@@ -1208,7 +1209,9 @@ void show_new_bp(char *name)
 	gtk_box_pack_start(GTK_BOX(vbox), b->p_unidle, FALSE, FALSE, 0);
 
 
-	label = gtk_label_new(_("Actions:"));
+	label = gtk_label_new(_("Actions"));
+	// gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	// I was left aligning these but I dunno if Like it -- Rob
 
 	/* And now the other stuff */	
 	b->openwindow = gtk_check_button_new_with_label(_("Open IM window on pounce"));
@@ -1225,11 +1228,11 @@ void show_new_bp(char *name)
 	gtk_box_pack_start(GTK_BOX(vbox), b->openwindow, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), b->sendim, FALSE, FALSE, 0);
 
-        label = gtk_label_new(_("Message to send:"));
+        label = gtk_label_new(_("Message:"));
         gtk_widget_show(label);
+
         gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox), b->messentry, FALSE, FALSE, 0);
-
 
         /* And the boxes in the box */
         gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
