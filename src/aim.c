@@ -492,7 +492,7 @@ static int ui_main()
 
 	smiley_theme_probe();
 	if (current_smiley_theme == NULL && smiley_themes)
-		load_smiley_theme(smiley_themes->data);
+		load_smiley_theme(smiley_themes->data, TRUE);
 
 	/* use the nice PNG icon for all the windows */
 	icon = gdk_pixbuf_new_from_file(DATADIR G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "gaim.png",NULL);
