@@ -1131,6 +1131,10 @@ GaimGroup *gaim_find_buddys_group(GaimBuddy *buddy)
 {
 	if (!buddy)
 		return NULL;
+
+	if (((GaimBlistNode *)buddy)->parent == NULL)
+		return NULL;
+
 	return (GaimGroup *)(((GaimBlistNode*)buddy)->parent->parent);
 }
 
