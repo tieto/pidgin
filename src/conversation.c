@@ -1172,6 +1172,8 @@ gaim_conversation_set_name(GaimConversation *conv, const char *name)
 		g_free(conv->name);
 
 	conv->name = (name == NULL ? NULL : g_strdup(name));
+
+	gaim_conversation_autoset_title(conv);
 }
 
 const char *
