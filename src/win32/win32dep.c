@@ -214,7 +214,8 @@ static BOOL CreateDirectoryR(char *dest) {
         return ret;
 }
 
-BOOL move_folder(char *src, char* dest, char* copytitle, BOOL overwrite) {
+#if 0
+static BOOL move_folder(char *src, char* dest, char* copytitle, BOOL overwrite) {
         char *tsrc, *tdest;
         SHFILEOPSTRUCT dirmove;
         BOOL ret = FALSE;
@@ -263,6 +264,7 @@ BOOL move_folder(char *src, char* dest, char* copytitle, BOOL overwrite) {
         g_free(tdest);
         return ret;
 }
+#endif
 
 static void wgaim_debug_print(GaimDebugLevel level, const char *category, const char *format, va_list args) {
         char *str = g_strdup_vprintf(format, args);
