@@ -17,14 +17,14 @@
 #define USEROPT_NICK 0
 
 struct icq_data {
-	ICQLINK *link;
+	icq_Link *link;
 	int cur_status;
 	GSList *thru_serv;
 };
 
 static guint ack_timer = 0;
 
-static struct gaim_connection *find_gaim_conn_by_icq_link(ICQLINK *link) {
+static struct gaim_connection *find_gaim_conn_by_icq_link(icq_Link *link) {
 	GSList *c = connections;
 	struct gaim_connection *gc = NULL;
 	struct icq_data *id;
@@ -47,7 +47,7 @@ static char *icq_name() {
 	return "ICQ";
 }
 
-static void icq_do_log(ICQLINK *link, time_t time, unsigned char level, const char *log) {
+static void icq_do_log(icq_Link *link, time_t time, unsigned char level, const char *log) {
 	debug_printf("ICQ debug %d: %s", level, log);
 }
 
@@ -96,7 +96,7 @@ static void icq_sock_notify(int socket, int type, int status) {
 	}
 }
 
-static void icq_online(ICQLINK *link) {
+static void icq_online(icq_Link *link) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	debug_printf("%s is now online.\n", gc->username);
@@ -107,7 +107,7 @@ static void icq_online(ICQLINK *link) {
 	icq_ChangeStatus(id->link, STATUS_ONLINE);
 }
 
-static void icq_logged_off(ICQLINK *link) {
+static void icq_logged_off(icq_Link *link) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 
@@ -121,7 +121,7 @@ static void icq_logged_off(ICQLINK *link) {
 	id->cur_status = STATUS_ONLINE;
 }
 
-static void icq_msg_incoming(ICQLINK *link, unsigned long uin, unsigned char hour, unsigned char minute,
+static void icq_msg_incoming(icq_Link *link, unsigned long uin, unsigned char hour, unsigned char minute,
 			unsigned char day, unsigned char month, unsigned short year, const char *data) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	char buf[256], *tmp = g_malloc(BUF_LONG);
@@ -131,7 +131,7 @@ static void icq_msg_incoming(ICQLINK *link, unsigned long uin, unsigned char hou
 	g_free(tmp);
 }
 
-static void icq_user_online(ICQLINK *link, unsigned long uin, unsigned long st,
+static void icq_user_online(icq_Link *link, unsigned long uin, unsigned long st,
 				unsigned long ip, unsigned short port, unsigned long real_ip,
 				unsigned char tcp_flags) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
@@ -143,13 +143,13 @@ static void icq_user_online(ICQLINK *link, unsigned long uin, unsigned long st,
 	serv_got_update(gc, buf, 1, 0, 0, 0, status, 0);
 }
 
-static void icq_user_offline(ICQLINK *link, unsigned long uin) {
+static void icq_user_offline(icq_Link *link, unsigned long uin) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	char buf[256]; g_snprintf(buf, sizeof buf, "%lu", uin);
 	serv_got_update(gc, buf, 0, 0, 0, 0, 0, 0);
 }
 
-static void icq_user_status(ICQLINK *link, unsigned long uin, unsigned long st) {
+static void icq_user_status(icq_Link *link, unsigned long uin, unsigned long st) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	guint status;
 	char buf[256];
@@ -175,7 +175,7 @@ static void icq_set_timeout(long interval) {
 	}
 }
 
-static void icq_url_incoming(struct icq_link *link, unsigned long uin, unsigned char hour,
+static void icq_url_incoming(icq_Link *link, unsigned long uin, unsigned char hour,
 				unsigned char minute, unsigned char day, unsigned char month,
 				unsigned short year, const char *url, const char *descr) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
@@ -186,19 +186,19 @@ static void icq_url_incoming(struct icq_link *link, unsigned long uin, unsigned 
 	g_free(msg);
 }
 
-static void icq_wrong_passwd(struct icq_link *link) {
+static void icq_wrong_passwd(icq_Link *link) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	hide_login_progress(gc, "Invalid password.");
 	signoff(gc);
 }
 
-static void icq_invalid_uin(struct icq_link *link) {
+static void icq_invalid_uin(icq_Link *link) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	hide_login_progress(gc, "Invalid UIN.");
 	signoff(gc);
 }
 
-static void icq_info_reply(struct icq_link *link, unsigned long uin, const char *nick,
+static void icq_info_reply(icq_Link *link, unsigned long uin, const char *nick,
 			const char *first, const char *last, const char *email, char auth) {
 	char buf[16 * 1024];
 
@@ -214,7 +214,7 @@ static void icq_info_reply(struct icq_link *link, unsigned long uin, const char 
 	g_show_info_text(buf);
 }
 
-static void icq_web_pager(struct icq_link *link, unsigned char hour, unsigned char minute,
+static void icq_web_pager(icq_Link *link, unsigned char hour, unsigned char minute,
 		unsigned char day, unsigned char month, unsigned short year, const char *nick,
 		const char *email, const char *msg) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
@@ -226,7 +226,7 @@ static void icq_web_pager(struct icq_link *link, unsigned char hour, unsigned ch
 	g_free(what);
 }
 
-static void icq_mail_express(struct icq_link *link, unsigned char hour, unsigned char minute,
+static void icq_mail_express(icq_Link *link, unsigned char hour, unsigned char minute,
 		unsigned char day, unsigned char month, unsigned short year, const char *nick,
 		const char *email, const char *msg) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
@@ -238,7 +238,7 @@ static void icq_mail_express(struct icq_link *link, unsigned char hour, unsigned
 	g_free(what);
 }
 
-static void icq_req_not(struct icq_link *link, unsigned long id, int type, int arg, void *data) {
+static void icq_req_not(icq_Link *link, unsigned long id, int type, int arg, void *data) {
 	if (type == ICQ_NOTIFY_FAILED)
 		do_error_dialog("Failure in sending packet", "ICQ error");
 	return;
@@ -247,7 +247,7 @@ static void icq_req_not(struct icq_link *link, unsigned long id, int type, int a
 static void icq_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct icq_data *id = gc->proto_data = g_new0(struct icq_data, 1);
-	ICQLINK *link;
+	icq_Link *link;
 	char ps[9];
 
 	icq_LogLevel = ICQ_LOG_MESSAGE;

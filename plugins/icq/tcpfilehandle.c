@@ -1,70 +1,24 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
 /*
-$Id: tcpfilehandle.c 1442 2001-01-28 01:52:27Z warmenhoven $
-$Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
-
-Revision 1.16  2001/01/17 01:29:17  bills
-Rework chat and file session interfaces; implement socket notifications.
-
-Revision 1.15  2000/07/24 03:10:08  bills
-added support for real nickname during TCP transactions like file and
-chat, instead of using Bill all the time (hmm, where'd I get that from? :)
-
-Revision 1.14  2000/07/09 22:19:35  bills
-added new *Close functions, use *Close functions instead of *Delete
-where correct, and misc cleanup
-
-Revision 1.13  2000/06/25 16:35:08  denis
-'\n' was added at the end of log messages.
-
-Revision 1.12  2000/06/15 01:52:59  bills
-fixed bug: sending file sessions would freeze if remote side changed speed
-
-Revision 1.11  2000/05/04 15:57:20  bills
-Reworked file transfer notification, small bugfixes, and cleanups.
-
-Revision 1.10  2000/05/03 18:29:15  denis
-Callbacks have been moved to the ICQLINK structure.
-
-Revision 1.9  2000/04/10 18:11:45  denis
-ANSI cleanups.
-
-Revision 1.8  2000/04/10 16:36:04  denis
-Some more Win32 compatibility from Guillaume Rosanis <grs@mail.com>
-
-Revision 1.7  2000/04/05 14:37:02  denis
-Applied patch from "Guillaume R." <grs@mail.com> for basic Win32
-compatibility.
-
-Revision 1.6  2000/01/20 20:06:00  bills
-removed debugging printfs
-
-Revision 1.5  2000/01/20 19:59:15  bills
-first implementation of sending file requests
-
-Revision 1.4  2000/01/16 21:29:31  bills
-added code so icq_FileSessions now keep track of the tcplink to which
-they are attached
-
-Revision 1.3  1999/12/21 00:30:15  bills
-added more file transfer logic to write file to disk
-
-Revision 1.2  1999/11/30 09:47:04  bills
-added icq_HandleFileHello
-
-Revision 1.1  1999/09/29 19:47:21  bills
-reworked chat/file handling.  fixed chat. (it's been broke since I put
-non-blocking connects in)
-
-*/
-
-#include <time.h>
-
-#ifndef _WIN32
-#include <unistd.h>
-#endif
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
 
 #ifdef _MSVC_
 #include <io.h>
@@ -76,44 +30,37 @@ non-blocking connects in)
 
 #include <errno.h>
 
-#include "icqtypes.h"
-#include "icq.h"
 #include "icqlib.h"
 
 #include "tcp.h"
-#include "icqpacket.h"
 #include "stdpackets.h"
-#include "tcplink.h"
 #include "filesession.h"
 
-void icq_TCPOnFileReqReceived(ICQLINK *link, DWORD uin, const char *message, 
+void icq_TCPOnFileReqReceived(icq_Link *icqlink, DWORD uin, const char *message, 
    const char *filename, unsigned long filesize, DWORD id)
 {
+  /* use the current system time for time received */
+  time_t t=time(0);
+  struct tm *ptime=localtime(&t);
+
 #ifdef TCP_PACKET_TRACE
   printf("file request packet received from %lu { sequence=%lx, message=%s }\n",
      uin, id, message);
 #endif
 
-  if(link->icq_RecvFileReq) {
+  invoke_callback(icqlink,icq_RecvFileReq)(icqlink, uin, ptime->tm_hour, 
+    ptime->tm_min, ptime->tm_mday, ptime->tm_mon+1, ptime->tm_year+1900,
+    message, filename, filesize, id);
 
-    /* use the current system time for time received */
-    time_t t=time(0);
-    struct tm *ptime=localtime(&t);
-
-    (*link->icq_RecvFileReq)(link, uin, ptime->tm_hour, ptime->tm_min,
-       ptime->tm_mday, ptime->tm_mon+1, ptime->tm_year+1900, message, 
-       filename, filesize, id);
-
-    /* don't send an acknowledgement to the remote client!
-     * GUI is responsible for sending acknowledgement once user accepts
-     * or denies using icq_TCPSendFileAck */
-  }
+  /* don't send an acknowledgement to the remote client!
+   * GUI is responsible for sending acknowledgement once user accepts
+   * or denies using icq_TCPSendFileAck */
 }
 
 void icq_TCPProcessFilePacket(icq_Packet *p, icq_TCPLink *plink)
 {
   icq_FileSession *psession=(icq_FileSession *)plink->session;
-  ICQLINK *icqlink = plink->icqlink;
+  icq_Link *icqlink = plink->icqlink;
   BYTE type;
   DWORD num_files;
   DWORD total_bytes;

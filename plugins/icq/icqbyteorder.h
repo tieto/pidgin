@@ -1,6 +1,4 @@
 /*
- * $Id: icqbyteorder.h 1477 2001-02-04 07:34:46Z warmenhoven $
- *
  * This header defines macros to handle ICQ protocol byte order conversion.
  *
  * Vadim Zaliva <lord@crocodile.org>
@@ -49,14 +47,21 @@
 # include <byteswap.h>
 #endif
 
-/* bsd way */
+/* BSD way */
 #ifdef HAVE_MACHINE_ENDIAN_H
 # include <machine/endian.h>
 #endif
 
-/* hpux way */
+/* HP-UX way */
 #ifdef hpux
-#include <arpa/nameser.h>
+# ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h>
+# endif
+#endif
+
+/* Cygwin way */
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h>
 #endif
 
 /*
@@ -89,13 +94,7 @@ extern unsigned short bswap_16(unsigned short v);
 #else
 
 #ifndef BYTE_ORDER
-/*#   error "Unknown byte order!"*/
-/* I probably shouldn't be doing this, but eh. -EWarmenhoven */
-#   warning "Unknown byte order! Using GLib defines"
-#   include <glib.h>
-#   define BYTE_ORDER G_BYTE_ORDER
-#   define BIG_ENDIAN G_BIG_ENDIAN
-#   define LITTLE_ENDIAN G_LITTLE_ENDIAN
+#   error "Unknown byte order!"
 #endif
 
 #if BYTE_ORDER == BIG_ENDIAN

@@ -1,24 +1,24 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: icqevent.h 1442 2001-01-28 01:52:27Z warmenhoven $
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
  *
- * $Log$
- * Revision 1.2  2001/01/28 01:52:27  warmenhoven
- * icqlib 1.1.5
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- * Revision 1.2  2000/06/15 18:54:09  bills
- * added time attribute and handleEvent function pointer to icq_Event,
- * renamed icq_ChatEvent to icq_ChatRequestEvent, renamed icq_FileEvent to
- * icq_FileRequestEvent, added icq_URLEvent and related methods
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Revision 1.1  2000/06/15 15:27:39  bills
- * committed for safekeeping - this code will soon replace stdpackets.c and
- * greatly simplify tcphandle.c, as well as reducing code duplication in many
- * places.  it provides a much more flexible framework for managing events
- * and parsing and creating packets
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
-*/
+ */
 
 #ifndef _ICQEVENT_H
 #define _ICQEVENT_H
@@ -55,7 +55,8 @@ typedef struct icq_Event_s {
   time_t time;
 
   icq_Packet *(*createPacket)(struct icq_Event_s *, icq_TCPLink *);
-  void (*handleEvent)(struct icq_Event_s *, ICQLINK *);
+  void *(*parsePacket)(struct icq_Event_s *, icq_Packet *);
+  void (*handleEvent)(struct icq_Event_s *, icq_Link *);
 
 #ifdef EVENT_DEBUG
   const char *(*eventName)(struct icq_Event_s *);

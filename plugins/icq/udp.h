@@ -1,4 +1,25 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
+/*
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
+
 #ifndef _UDP_H_
 #define _UDP_H_
 
@@ -123,22 +144,22 @@
 #define LOGIN_SNDRCV_TCP  0x04
 #define LOGIN_NO_TCP      0x06
 
-void icq_SendGotMessages(ICQLINK *link);
-void icq_SendLogin1(ICQLINK *link);
-void icq_StatusUpdate(ICQLINK *link, icq_Packet*);
-void icq_AckSrv(ICQLINK *link, int seq);
-void icq_HandleUserOffline(ICQLINK *link, icq_Packet*);
-void icq_HandleUserOnline(ICQLINK *link, icq_Packet*);
-void icq_DoMsg(ICQLINK *link, DWORD type, WORD len, char *data, DWORD uin,
+void icq_SendGotMessages(icq_Link *icqlink);
+void icq_SendLogin1(icq_Link *icqlink);
+void icq_StatusUpdate(icq_Link *icqlink, icq_Packet*);
+void icq_AckSrv(icq_Link *icqlink, int seq);
+void icq_HandleUserOffline(icq_Link *icqlink, icq_Packet*);
+void icq_HandleUserOnline(icq_Link *icqlink, icq_Packet*);
+void icq_DoMsg(icq_Link *icqlink, DWORD type, WORD len, char *data, DWORD uin,
                BYTE hour, BYTE minute, BYTE day, BYTE month, WORD year);
-int icq_UDPSockWriteDirect(ICQLINK *link, icq_Packet*);
-int icq_UDPSockWrite(ICQLINK *link, icq_Packet*);
-int icq_UDPSockRead(ICQLINK *link, icq_Packet*);
-void icq_ServerResponse(ICQLINK *link, icq_Packet*);
-void icq_HandleMultiPacket(ICQLINK *link, icq_Packet*);
+int icq_UDPSockWriteDirect(icq_Link *icqlink, icq_Packet*);
+int icq_UDPSockWrite(icq_Link *icqlink, icq_Packet*);
+int icq_UDPSockRead(icq_Link *icqlink, icq_Packet*);
+void icq_ServerResponse(icq_Link *icqlink, icq_Packet*);
+void icq_HandleMultiPacket(icq_Link *icqlink, icq_Packet*);
 
-void icq_UDPAck(ICQLINK *link, int seq);
-WORD icq_UDPSendMessage(ICQLINK *link, DWORD uin, const char *text);
-WORD icq_UDPSendURL(ICQLINK *link, DWORD uin, const char *url, const char *descr);
+void icq_UDPAck(icq_Link *icqlink, int seq);
+WORD icq_UDPSendMessage(icq_Link *icqlink, DWORD uin, const char *text);
+WORD icq_UDPSendURL(icq_Link *icqlink, DWORD uin, const char *url, const char *descr);
 
 #endif /* _UDP_H_ */

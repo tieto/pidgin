@@ -1,10 +1,24 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
-  $Id: socketmanager.c 1539 2001-03-03 12:56:25Z warmenhoven $
-*/
-
-#include "socketmanager.h"
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
 
 /**
  * The icqlib socket manager is a simple socket abstraction layer, which
@@ -26,32 +40,23 @@
  *
  */
 
-/* need to track:
- *   socket wants read notification
- *   socket no longer wants read notification
- *   socket wants write notification
- *   socket no longer wants write notification
- */
+#include <stdlib.h>
 
-#include <sys/types.h>
-
-#ifndef _WIN32
-#include <unistd.h>
-#include <sys/time.h>
-#include <sys/socket.h>
-#else
+#ifdef _WIN32
 #include <winsock.h>
 #endif
 
-list *icq_SocketList = NULL;
+#include "socketmanager.h"
+
+icq_List *icq_SocketList = NULL;
 fd_set icq_FdSets[ICQ_SOCKET_MAX];
 int icq_MaxSocket;
 
-void (*icq_SocketNotify)(int socket, int type, int status);
+void (*icq_SocketNotify)(int socket_fd, int type, int status);
 
 /**
  * Creates a new socket using the operating system's socket creation
- * facitily.
+ * facility.
  */
 int icq_SocketNew(int domain, int type, int protocol)
 {
@@ -67,7 +72,7 @@ int icq_SocketNew(int domain, int type, int protocol)
  * Creates a new socket by accepting a connection from a listening
  * socket.
  */
-int icq_SocketAccept(int listens, struct sockaddr *addr, int *addrlen)
+int icq_SocketAccept(int listens, struct sockaddr *addr, socklen_t *addrlen)
 {
   int s = accept(listens, addr, addrlen);
 
@@ -91,7 +96,7 @@ void icq_SocketAlloc(int s)
     for (i=0; i<ICQ_SOCKET_MAX; i++)
       psocket->handlers[i] = NULL;
 
-    list_enqueue(icq_SocketList, psocket);
+    icq_ListEnqueue(icq_SocketList, psocket);
   }
 }  
 
@@ -100,17 +105,17 @@ void icq_SocketAlloc(int s)
  * through the icq_SocketNotify callback if the socket had an installed
  * read or write handler.
  */
-int icq_SocketDelete(int socket)
+int icq_SocketDelete(int socket_fd)
 {
 #ifdef _WIN32
-  int result = closesocket(socket);
+  int result = closesocket(socket_fd);
 #else
-  int result = close(socket);
+  int result = close(socket_fd);
 #endif
 
   if (result != -1)
   {
-    icq_Socket *s = icq_FindSocket(socket);
+    icq_Socket *s = icq_FindSocket(socket_fd);
     int i;
 
     /* uninstall all handlers - this will take care of notifing library
@@ -121,7 +126,7 @@ int icq_SocketDelete(int socket)
         icq_SocketSetHandler(s->socket, i, NULL, NULL);
     }
 
-    list_remove(icq_SocketList, s);
+    icq_ListRemove(icq_SocketList, s);
     free(s);
   }
 
@@ -135,16 +140,16 @@ int icq_SocketDelete(int socket)
  * addition, user data can be passed to the callback function through
  * the data member.
  */
-void icq_SocketSetHandler(int socket, int type, icq_SocketHandler handler, 
+void icq_SocketSetHandler(int socket_fd, int type, icq_SocketHandler handler, 
   void *data)
 {
-  icq_Socket *s = icq_FindSocket(socket);
+  icq_Socket *s = icq_FindSocket(socket_fd);
   if (s)
   {
     s->data[type] = data;
     s->handlers[type] = handler;
     if (icq_SocketNotify)
-      (*icq_SocketNotify)(socket, type, handler ? 1 : 0);
+      (*icq_SocketNotify)(socket_fd, type, handler ? 1 : 0);
   }
 }
 
@@ -160,16 +165,17 @@ void icq_SocketReady(icq_Socket *s, int type)
   }
 }
 
-void icq_HandleReadySocket(int socket, int type)
+void icq_HandleReadySocket(int socket_fd, int type)
 {
-  icq_SocketReady(icq_FindSocket(socket), type);
+  icq_SocketReady(icq_FindSocket(socket_fd), type);
 }
   
 int _icq_SocketBuildFdSets(void *p, va_list data)
 {
   icq_Socket *s = p;
   int i;
-
+  (void)data;
+  
   for (i=0; i<ICQ_SOCKET_MAX; i++)
     if (s->handlers[i]) {
       FD_SET(s->socket, &(icq_FdSets[i]));
@@ -177,7 +183,7 @@ int _icq_SocketBuildFdSets(void *p, va_list data)
         icq_MaxSocket = s->socket;
     }
 
-  return 0; /* traverse entire list */
+  return 0; /* traverse entire icq_List */
 }
 
 void icq_SocketBuildFdSets()
@@ -191,27 +197,26 @@ void icq_SocketBuildFdSets()
   icq_MaxSocket = 0;
   
   /* build fd lists for open sockets */
-  (void)list_traverse(icq_SocketList, _icq_SocketBuildFdSets);
+  (void)icq_ListTraverse(icq_SocketList, _icq_SocketBuildFdSets);
 }
 
 int _icq_SocketHandleReady(void *p, va_list data)
 {
   icq_Socket *s = p;
   int i;
-
+  (void)data;
+  
   for (i=0; i<ICQ_SOCKET_MAX; i++)
     if (FD_ISSET(s->socket, &(icq_FdSets[i]))) {
       icq_SocketReady(s, i);
     }
 
-  return 0; /* traverse entire list */
+  return 0; /* traverse entire icq_List */
 }
       
 void icq_SocketPoll()
 {
   struct timeval tv;
-  int max_socket = 0;
-  int i;
 
   icq_SocketBuildFdSets();
   
@@ -222,18 +227,18 @@ void icq_SocketPoll()
     &(icq_FdSets[ICQ_SOCKET_WRITE]), NULL, &tv);
 
   /* handle ready sockets */
-  (void)list_traverse(icq_SocketList, _icq_SocketHandleReady);
+  (void)icq_ListTraverse(icq_SocketList, _icq_SocketHandleReady);
 }
 
 int _icq_FindSocket(void *p, va_list data)
 {
-  int socket = va_arg(data, int);
-  return (((icq_Socket *)p)->socket == socket);
+  int socket_fd = va_arg(data, int);
+  return (((icq_Socket *)p)->socket == socket_fd);
 }
 
-icq_Socket *icq_FindSocket(int socket)
+icq_Socket *icq_FindSocket(int socket_fd)
 {
-  return list_traverse(icq_SocketList, _icq_FindSocket, socket);
+  return icq_ListTraverse(icq_SocketList, _icq_FindSocket, socket_fd);
 }
 
 

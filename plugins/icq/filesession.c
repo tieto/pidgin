@@ -1,7 +1,27 @@
+/* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
+/*
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
+
 #include <stdlib.h>
 #include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/stat.h>
 
 #ifdef _MSVC_
@@ -14,11 +34,9 @@
 
 #include "icqlib.h"
 #include "filesession.h"
-#include "list.h"
-#include "icqpacket.h"
 #include "stdpackets.h"
 
-icq_FileSession *icq_FileSessionNew(ICQLINK *icqlink)
+icq_FileSession *icq_FileSessionNew(icq_Link *icqlink)
 {
   icq_FileSession *p=(icq_FileSession *)malloc(sizeof(icq_FileSession));
 
@@ -39,7 +57,7 @@ icq_FileSession *icq_FileSessionNew(ICQLINK *icqlink)
     p->total_transferred_bytes=0;
     p->working_dir[0]=0;
     p->user_data=NULL;
-    list_insert(icqlink->d->icq_FileSessions, 0, p);
+    icq_ListInsert(icqlink->d->icq_FileSessions, 0, p);
   }
 	
   return p;
@@ -77,10 +95,10 @@ int _icq_FindFileSession(void *p, va_list data)
 
 }
 
-icq_FileSession *icq_FindFileSession(ICQLINK *icqlink, DWORD uin,
+icq_FileSession *icq_FindFileSession(icq_Link *icqlink, DWORD uin,
   unsigned long id)
 {
-  return list_traverse(icqlink->d->icq_FileSessions, _icq_FindFileSession, 
+  return icq_ListTraverse(icqlink->d->icq_FileSessions, _icq_FindFileSession, 
     uin, id);
 }
 
@@ -228,7 +246,7 @@ void icq_FileSessionClose(icq_FileSession *p)
 
   icq_FileSessionDelete(p);
 
-  list_remove(p->icqlink->d->icq_FileSessions, p);		
+  icq_ListRemove(p->icqlink->d->icq_FileSessions, p);		
 }   
 
 void icq_FileSessionSetWorkingDir(icq_FileSession *p, const char *dir)

@@ -1,119 +1,39 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
 /*
-$Id: tcphandle.c 1442 2001-01-28 01:52:27Z warmenhoven $
-$Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
-
-Revision 1.16  2001/01/24 05:11:14  bills
-applied patch from Robin Ericsson <lobbin@localhost.nu> which implements
-receiving contact lists.  See new icq_RecvContactList callback.
-
-Revision 1.15  2001/01/17 01:31:47  bills
-Rework chat and file interfaces; implement socket notifications.
-
-Revision 1.14  2000/12/06 05:15:45  denis
-Handling for mass TCP messages has been added based on patch by
-Konstantin Klyagin <konst@konst.org.ua>
-
-Revision 1.13  2000/08/13 19:44:41  denis
-Cyrillic recoding on received URL description added.
-
-Revision 1.12  2000/07/09 22:19:35  bills
-added new *Close functions, use *Close functions instead of *Delete
-where correct, and misc cleanup
-
-Revision 1.11  2000/06/25 16:36:16  denis
-'\n' was added at the end of log messages.
-
-Revision 1.10  2000/05/04 15:57:20  bills
-Reworked file transfer notification, small bugfixes, and cleanups.
-
-Revision 1.9  2000/05/03 18:29:15  denis
-Callbacks have been moved to the ICQLINK structure.
-
-Revision 1.8  2000/04/05 14:37:02  denis
-Applied patch from "Guillaume R." <grs@mail.com> for basic Win32
-compatibility.
-
-Revision 1.7  2000/01/20 20:06:00  bills
-removed debugging printfs
-
-Revision 1.6  2000/01/20 19:59:15  bills
-first implementation of sending file requests
-
-Revision 1.5  1999/11/30 09:51:42  bills
-more file xfer logic added
-
-Revision 1.4  1999/11/11 15:10:30  guruz
-- Added Base for Webpager Messages. Please type "make fixme"
-- Removed Segfault when kicq is started the first time
-
-Revision 1.3  1999/10/01 02:28:51  bills
-icq_TCPProcessHello returns something now :)
-
-Revision 1.2  1999/10/01 00:49:20  lord
-some compilation problems are fixed.
-
-Revision 1.1  1999/09/29 19:47:21  bills
-reworked chat/file handling.  fixed chat. (it's been broke since I put
-non-blocking connects in)
-
-Revision 1.15  1999/07/16 15:45:59  denis
-Cleaned up.
-
-Revision 1.14  1999/07/16 12:10:10  denis
-tcp_packet* functions renamed to icq_Packet*
-Cleaned up.
-
-Revision 1.13  1999/07/12 15:13:41  cproch
-- added definition of ICQLINK to hold session-specific global variabled
-  applications which have more than one connection are now possible
-- changed nearly every function defintion to support ICQLINK parameter
-
-Revision 1.12  1999/06/30 13:51:25  bills
-cleanups
-
-Revision 1.11  1999/05/03 21:41:30  bills
-initial file xfer support added- untested
-
-Revision 1.10  1999/04/29 09:36:06  denis
-Cleanups, warning removed
-
-Revision 1.9  1999/04/17 19:40:33  bills
-reworked code to use icq_TCPLinks instead of icq_ContactItem entries.
-modified ProcessChatPacket to negotiate both sending and receiving chat
-requests properly.
-
-Revision 1.8  1999/04/14 15:12:02  denis
-Cleanups for "strict" compiling (-ansi -pedantic)
-icq_ContactItem parameter added to function icq_TCPOnMessageReceived()
-Segfault fixed on spoofed messages.
-
-*/
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
 
 #include <stdlib.h>
-#include <time.h>
 
-#ifndef _WIN32
-#include <unistd.h>
-#endif
-
-#include "icqtypes.h"
-#include "icq.h"
 #include "icqlib.h"
 
 #include "tcp.h"
 #include "stdpackets.h"
-#include "tcplink.h"
 
-void icq_TCPOnMessageReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id, icq_TCPLink *plink);
-void icq_TCPOnURLReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id);
-void icq_TCPOnContactListReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id);
-void icq_TCPOnChatReqReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id);
-void icq_TCPOnFileReqReceived(ICQLINK *link, DWORD uin, const char *message, 
+void icq_TCPOnMessageReceived(icq_Link *icqlink, DWORD uin, const char *message, DWORD id, icq_TCPLink *plink);
+void icq_TCPOnURLReceived(icq_Link *icqlink, DWORD uin, const char *message, DWORD id);
+void icq_TCPOnContactListReceived(icq_Link *icqlink, DWORD uin, const char *message, DWORD id);
+void icq_TCPOnChatReqReceived(icq_Link *icqlink, DWORD uin, const char *message, DWORD id);
+void icq_TCPOnFileReqReceived(icq_Link *icqlink, DWORD uin, const char *message, 
    const char *filename, unsigned long filesize, DWORD id);
-void icq_TCPProcessAck(ICQLINK *link, icq_Packet *p);
+void icq_TCPProcessAck(icq_Link *icqlink, icq_Packet *p);
 void icq_HandleChatAck(icq_TCPLink *plink, icq_Packet *p, int port);
 void icq_HandleChatHello(icq_TCPLink *plink);
 void icq_HandleFileHello(icq_TCPLink *plink);
@@ -312,117 +232,113 @@ int icq_TCPProcessHello(icq_Packet *p, icq_TCPLink *plink)
   return 1;
 }
 
-void icq_TCPOnMessageReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id, icq_TCPLink *plink)
+void icq_TCPOnMessageReceived(icq_Link *icqlink, DWORD uin, const char *message, DWORD id, icq_TCPLink *plink)
 {
-  char data[512] ;
+  char data[512];
+
+  /* use the current system time for time received */
+  time_t t=time(0);
+  struct tm *ptime=localtime(&t);
+  icq_Packet *pack;
+
 #ifdef TCP_PACKET_TRACE
   printf("tcp message packet received from %lu { sequence=%x }\n",
          uin, (int)id);
 #endif
 
-  if(link->icq_RecvMessage)
-  {
-    /* use the current system time for time received */
-    time_t t=time(0);
-    struct tm *ptime=localtime(&t);
-    icq_Packet *pack;
-    icq_TCPLink *preallink=icq_FindTCPLink(link, uin, TCP_LINK_MESSAGE);
+  strncpy(data,message,512) ;
+  icq_RusConv("wk",data) ;
 
-    strncpy(data,message,512) ;
-    icq_RusConv("wk",data) ;
+  invoke_callback(icqlink,icq_RecvMessage)(icqlink, uin, ptime->tm_hour, 
+    ptime->tm_min, ptime->tm_mday, ptime->tm_mon+1, ptime->tm_year+1900, data);
 
-    (*link->icq_RecvMessage)(link, uin, ptime->tm_hour, ptime->tm_min,
-      ptime->tm_mday, ptime->tm_mon+1, ptime->tm_year+1900, data);
+  /*
+  icq_TCPLink *preallink=icq_FindTCPLink(icqlink, uin, TCP_LINK_MESSAGE);
+  if(plink != preallink)
+    invoke_callback(icqlink,icq_SpoofedMessage)(uin, ...)
+  */
 
-    if(plink != preallink)
-    {
-/*      if(icq_SpoofedMessage)
-        (*icq_SpoofedMessage(uin, ...));*/
-    }
-
-    if(plink)
-    {
-      /* send an acknowledgement to the remote client */
-      pack=icq_TCPCreateMessageAck(plink,0);
-      icq_PacketAppend32(pack, id);
-      icq_PacketSend(pack, plink->socket);
+  /* send an acknowledgement to the remote client */
+  pack=icq_TCPCreateMessageAck(plink,0);
+  icq_PacketAppend32(pack, id);
+  icq_PacketSend(pack, plink->socket);
 #ifdef TCP_PACKET_TRACE
-      printf("tcp message ack sent to uin %lu { sequence=%lx }\n", uin, id);
+  printf("tcp message ack sent to uin %lu { sequence=%lx }\n", uin, id);
 #endif
-      icq_PacketDelete(pack);
-    }
-  }
+  icq_PacketDelete(pack);
 }
 
-void icq_TCPOnURLReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id)
+void icq_TCPOnURLReceived(icq_Link *icqlink, DWORD uin, const char *message, DWORD id)
 {
+  /* use the current system time for time received */
+  time_t t=time(0);
+  struct tm *ptime=localtime(&t);
+  icq_Packet *pack;
+  char *pfe;
+  icq_TCPLink *plink=icq_FindTCPLink(icqlink, uin, TCP_LINK_MESSAGE);
+
 #ifdef TCP_PACKET_TRACE
   printf("tcp url packet received from %lu { sequence=%lx }\n",
      uin, id);
 #endif /*TCP_PACKET_TRACE*/
 
-  if(link->icq_RecvURL)
-  {
-    /* use the current system time for time received */
-    time_t t=time(0);
-    struct tm *ptime=localtime(&t);
-    icq_Packet *pack;
-    char *pfe;
-    icq_TCPLink *plink=icq_FindTCPLink(link, uin, TCP_LINK_MESSAGE);
+  /* the URL is split from the description by 0xFE */
+  pfe=strchr(message, '\xFE');
+  *pfe=0;
+  icq_RusConv("wk", (char*)message);
 
-    /* the URL is split from the description by 0xFE */
-    pfe=strchr(message, '\xFE');
-    *pfe=0;
-    icq_RusConv("wk", (char*)message);
-    (*link->icq_RecvURL)(link, uin, ptime->tm_hour, ptime->tm_min,
-       ptime->tm_mday, ptime->tm_mon+1, ptime->tm_year+1900, pfe+1, message);
+  invoke_callback(icqlink,icq_RecvURL)(icqlink, uin, ptime->tm_hour, 
+    ptime->tm_min, ptime->tm_mday, ptime->tm_mon+1, ptime->tm_year+1900, 
+    pfe+1, message);
 
-    /* send an acknowledgement to the remote client */
-    pack=icq_TCPCreateURLAck(plink,0);
-    icq_PacketAppend32(pack, id);
-    icq_PacketSend(pack, plink->socket);
+  /* send an acknowledgement to the remote client */
+  pack=icq_TCPCreateURLAck(plink,0);
+  icq_PacketAppend32(pack, id);
+  icq_PacketSend(pack, plink->socket);
 #ifdef TCP_PACKET_TRACE
-    printf("tcp message ack sent to %lu { sequence=%lx }\n", uin, id);
+  printf("tcp message ack sent to %lu { sequence=%lx }\n", uin, id);
 #endif
-    icq_PacketDelete(pack);
-  }
+  icq_PacketDelete(pack);
 }
 
-void icq_TCPOnContactListReceived(ICQLINK *link, DWORD uin, const char *message, DWORD id)
+void icq_TCPOnContactListReceived(icq_Link *icqlink, DWORD uin, const char *message, DWORD id)
 {
+  /* use the current system time for time received */
+  time_t t=time(0);
+  struct tm *ptime=localtime(&t);
+  icq_Packet *pack;
+  icq_List *strList = icq_ListNew();
+  int i, k, nr = icq_SplitFields(strList, message);
+  const char **contact_uin  = (const char **)malloc((nr - 2) /2);
+  const char **contact_nick = (const char **)malloc((nr - 2) /2);
+  icq_TCPLink *plink=icq_FindTCPLink(icqlink, uin, TCP_LINK_MESSAGE);
+
 #ifdef TCP_PACKET_TRACE
   printf("tcp contactlist packet received from %lu { sequence=%lx }\n", uin, id);
 #endif /* TCP_PACKET_TRACE */
 
-  if (link->icq_RecvContactList) {
-    /* use the current system time for time received */
-    time_t t=time(0);
-    struct tm *ptime=localtime(&t);
-    icq_Packet *pack;
-    list *strList = list_new();
-    int i, k, nr = icq_SplitFields(strList, message);
-    char *contact_uin[(nr - 2) /2], *contact_nick[(nr - 2) /2];
-    icq_TCPLink *plink=icq_FindTCPLink(link, uin, TCP_LINK_MESSAGE);
-
-    /* split message */
-    for (i = 1, k = 0; i < (nr - 1); k++)
-    {
-      contact_uin[k]  = list_at(strList, i);
-      contact_nick[k] = list_at(strList, i + 1);
-      i += 2;
-    }
-
-    (*link->icq_RecvContactList)(link, uin, k, (const char **) 
-      contact_uin, (const char **) contact_nick);
-    /* send an acknowledement to the remote client */
-    pack=icq_TCPCreateContactListAck(plink, 0);
-    icq_PacketAppend32(pack, id);
-    icq_PacketSend(pack, plink->socket);
-#ifdef TCP_PACKET_TRACE
-    printf("tcp message ack sent to %lu { sequence=%lx }\n", uin, id);
-#endif /* TCP_PACKE_TRACE */
-    icq_PacketDelete(pack);
-
-    list_delete(strList, free);
+  /* split message */
+  for (i = 1, k = 0; i < (nr - 1); k++)
+  {
+    contact_uin[k]  = icq_ListAt(strList, i);
+    contact_nick[k] = icq_ListAt(strList, i + 1);
+    i += 2;
   }
+
+  invoke_callback(icqlink,icq_RecvContactList)(icqlink, uin, 
+    ptime->tm_hour, ptime->tm_min, ptime->tm_mday, ptime->tm_mon+1, 
+    ptime->tm_year+1900, k, contact_uin, contact_nick);
+
+  /* send an acknowledement to the remote client */
+  pack=icq_TCPCreateContactListAck(plink, 0);
+  icq_PacketAppend32(pack, id);
+  icq_PacketSend(pack, plink->socket);
+#ifdef TCP_PACKET_TRACE
+  printf("tcp message ack sent to %lu { sequence=%lx }\n", uin, id);
+#endif /* TCP_PACKE_TRACE */
+  icq_PacketDelete(pack);
+
+  free(contact_nick);
+  free(contact_uin);
+  icq_ListDelete(strList, free);
 }

@@ -1,4 +1,25 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
+/*
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
+
 #ifndef _ICQLIB_H_
 #define _ICQLIB_H_
 
@@ -17,13 +38,11 @@
 #undef __USE_BSD
 #endif
 
-#include <sys/types.h>
-
+#include "icq.h"
 #include "util.h"
-#include "contacts.h"
 
-BOOL icq_GetServMess(ICQLINK *link, WORD num);
-void icq_SetServMess(ICQLINK *link, WORD num);
+BOOL icq_GetServMess(icq_Link *icqlink, WORD num);
+void icq_SetServMess(icq_Link *icqlink, WORD num);
 void icq_RusConv(const char to[4], char *t_in);
 void icq_RusConv_n(const char to[4], char *t_in, int len);
 
@@ -46,9 +65,9 @@ extern char *strdup(const char *s);
  * icqlib, but must be contained in the per-connection ICQLINK
  * struct.
  */
-typedef struct icq_link_private {
-
-  void *icq_ContactList;
+struct icq_LinkPrivate_s
+{
+  icq_List *icq_ContactList;
 
   /* 65536 seqs max, 1 bit per seq -> 65536/8 = 8192 */
   unsigned char icq_UDPServMess[8192]; 
@@ -56,14 +75,13 @@ typedef struct icq_link_private {
   unsigned short icq_UDPSeqNum1, icq_UDPSeqNum2;
   unsigned long icq_UDPSession;
   
-  void *icq_UDPQueue;
+  icq_List *icq_UDPQueue;
 
   int icq_TCPSequence;
-  void *icq_TCPLinks;
-  void *icq_ChatSessions;
-  void *icq_FileSessions;
-
-} ICQLINK_private;
+  icq_List *icq_TCPLinks;
+  icq_List *icq_ChatSessions;
+  icq_List *icq_FileSessions;
+};
 
 #define invoke_callback(plink, callback) \
    if (plink->callback) (*(plink->callback))

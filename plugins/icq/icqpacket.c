@@ -1,67 +1,30 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
 /*
-$Id: icqpacket.c 1442 2001-01-28 01:52:27Z warmenhoven $
-$Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
-
-Revision 1.10  2000/07/07 15:26:35  denis
-"icq_Packet data overflow" log message temporarily commented out.
-
-Revision 1.9  2000/06/25 16:26:36  denis
-icq_PacketUDPDump() tweaked a little.
-
-Revision 1.8  2000/05/03 18:20:40  denis
-icq_PacketReadUDPInUIN() was added.
-
-Revision 1.7  2000/04/05 14:37:02  denis
-Applied patch from "Guillaume R." <grs@mail.com> for basic Win32
-compatibility.
-
-Revision 1.6  2000/01/16 03:59:10  bills
-reworked list code so list_nodes don't need to be inside item structures,
-removed strlist code and replaced with generic list calls
-
-Revision 1.5  1999/09/29 19:58:20  bills
-cleanup
-
-Revision 1.4  1999/09/29 16:56:10  denis
-Cleanups.
-
-Revision 1.3  1999/07/18 20:18:43  bills
-changed to use new byte-order functions
-
-Revision 1.2  1999/07/16 15:45:05  denis
-Cleaned up.
-
-Revision 1.1  1999/07/16 12:11:36  denis
-UDP packet support added.
-tcp_packet* functions renamed to icq_Packet*
-
-Revision 1.8  1999/07/12 15:13:38  cproch
-- added definition of ICQLINK to hold session-specific global variabled
-  applications which have more than one connection are now possible
-- changed nearly every function defintion to support ICQLINK parameter
-
-Revision 1.7  1999/07/03 06:33:52  lord
-. byte order conversion macros added
-. some compilation warnings removed
-
-Revision 1.6  1999/04/17 19:36:50  bills
-added tcp_packet_node_delete function and changed structure to include
-list_node for new list routines.
-
-Revision 1.5  1999/04/14 15:08:04  denis
-Cleanups for "strict" compiling (-ansi -pedantic)
-
-*/
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
 
 /*
  * ICQ packet abstraction
  */
 
 #include <stdlib.h>
-#include <sys/types.h>
 
 #ifdef _WIN32
 #include <winsock.h>
@@ -69,14 +32,9 @@ Cleanups for "strict" compiling (-ansi -pedantic)
 #include <sys/socket.h>
 #endif
 
-#include "icqtypes.h"
-#include "icq.h"
 #include "icqlib.h"
-#include "icqpacket.h"
 #include "tcp.h"
-#include "util.h"
 #include "icqbyteorder.h"
-#include "list.h"
 
 icq_Packet *icq_PacketNew()
 {
@@ -371,11 +329,11 @@ WORD icq_PacketPos(icq_Packet *p)
   return p->cursor;
 }
 
-int icq_PacketSend(icq_Packet *p, int socket)
+int icq_PacketSend(icq_Packet *p, int socket_fd)
 {
   int result;
 
-  result=send(socket, (const char*)&(p->length), p->length+sizeof(WORD), 0);
+  result=send(socket_fd, (const char*)&(p->length), p->length+sizeof(WORD), 0);
 
 #ifdef TCP_RAW_TRACE
   printf("%d bytes sent on socket %d, result %d\n", 

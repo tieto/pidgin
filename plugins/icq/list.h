@@ -1,4 +1,25 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
+/*
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
+
 #ifndef _LIST_H
 #define _LIST_H
 
@@ -8,43 +29,43 @@
 
 #include <stdarg.h>
 
-#define list_enqueue(plist, p) \
-   list_insert(plist, 0, p)
+#define icq_ListEnqueue(plist, p) \
+   icq_ListInsert(plist, 0, p)
 
-#define list_dequeue(plist) \
-  list_remove_node(plist, plist->head)
+#define icq_ListDequeue(plist) \
+  icq_ListRemoveNode(plist, plist->head)
 
-typedef struct list_node_s list_node;
-typedef struct list_s list;
+typedef struct icq_ListNode_s icq_ListNode;
+typedef struct icq_List_s icq_List;
 typedef int (*icq_ListCompareFunc)(void *o1, void *o2);
 
-struct list_node_s
+struct icq_ListNode_s
 {
-  list_node *next;
-  list_node *previous;
+  icq_ListNode *next;
+  icq_ListNode *previous;
   void *item;
 };
 
-struct list_s
+struct icq_List_s
 {
-  list_node *head;
-  list_node *tail;
+  icq_ListNode *head;
+  icq_ListNode *tail;
   int count;
   icq_ListCompareFunc compare_function;
 };
 
-list *list_new(void);
-void list_delete(list *plist, void (*item_free_f)(void *));
-void list_free(list *plist, void (*item_free_f)(void *));
-void list_insert_sorted(list *plist, void *pitem);
-void list_insert(list *plist, list_node *pnode, void *pitem);
-void *list_remove(list *plist, void *pitem);
-void *list_traverse(list *plist, int (*item_f)(void *, va_list), ...);
-int list_dump(list *plist);
-void *list_first(list *plist);
-void *list_last(list *plist);
-void *list_at(list *plist, int num);
-list_node *list_find(list *plist, void *pitem);
-void *list_remove_node(list *plist, list_node *p);
+icq_List *icq_ListNew(void);
+void icq_ListDelete(icq_List *plist, void (*item_free_f)(void *));
+void icq_ListFree(icq_List *plist, void (*item_free_f)(void *));
+void icq_ListInsertSorted(icq_List *plist, void *pitem);
+void icq_ListInsert(icq_List *plist, icq_ListNode *pnode, void *pitem);
+void *icq_ListRemove(icq_List *plist, void *pitem);
+void *icq_ListTraverse(icq_List *plist, int (*item_f)(void *, va_list), ...);
+int icq_ListDump(icq_List *plist);
+void *icq_ListFirst(icq_List *plist);
+void *icq_ListLast(icq_List *plist);
+void *icq_ListAt(icq_List *plist, int num);
+icq_ListNode *icq_ListFind(icq_List *plist, void *pitem);
+void *icq_ListRemoveNode(icq_List *plist, icq_ListNode *p);
 
 #endif /* _LIST_H */

@@ -1,19 +1,24 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
-/* 
- * $Id: eventhandle.c 1442 2001-01-28 01:52:27Z warmenhoven $
+/*
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
  *
- * $Log$
- * Revision 1.2  2001/01/28 01:52:27  warmenhoven
- * icqlib 1.1.5
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- * Revision 1.3  2000/12/19 06:00:07  bills
- * moved members from ICQLINK to ICQLINK_private struct
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Revision 1.1  2000/06/15 18:50:03  bills
- * committed for safekeeping - this code will soon replace tcphandle.c 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
-*/
+ */
 
 #include <time.h>
 
@@ -29,14 +34,14 @@
 
 #include "eventhandle.h"
 
-void icq_TCPProcessPacket2(icq_Packet *p, icq_TCPLink *plink)
+void icq_TCPProcessPacket2(icq_Packet *p, icq_TCPLink *tcplink)
 {
   icq_MessageEvent *pevent=(icq_MessageEvent *)icq_ParsePacket(p);
   icq_Event *pbase=(icq_Event *)pevent;
 
-  ICQLINK *icqlink=plink->icqlink;
+  icq_Link *icqlink=tcplink->icqlink;
 
-  if (pbase->uin != plink->remote_uin)
+  if (pbase->uin != tcplink->remote_uin)
   {
     /* TODO: spoofed packet! */
   }
@@ -46,7 +51,7 @@ void icq_TCPProcessPacket2(icq_Packet *p, icq_TCPLink *plink)
   /* notify library client than the ack was received from remote client */
   if (pbase->subtype==ICQ_EVENT_ACK)
   {
-    icq_FmtLog(plink->icqlink, ICQ_LOG_MESSAGE, "received ack %d\n", p->id);
+    icq_FmtLog(tcplink->icqlink, ICQ_LOG_MESSAGE, "received ack %d\n", p->id);
     if(icqlink->icq_RequestNotify)
     {
       (*icqlink->icq_RequestNotify)(icqlink, pbase->id,
@@ -57,7 +62,7 @@ void icq_TCPProcessPacket2(icq_Packet *p, icq_TCPLink *plink)
   }    
 }
 
-void icq_HandleMessageEvent(icq_Event *pbase, ICQLINK *icqlink)
+void icq_HandleMessageEvent(icq_Event *pbase, icq_Link *icqlink)
 {
   icq_MessageEvent *pevent=(icq_MessageEvent *)pbase;
   struct tm *ptime=localtime(&(pbase->time));
@@ -72,7 +77,7 @@ void icq_HandleMessageEvent(icq_Event *pbase, ICQLINK *icqlink)
 
 }
 
-void icq_HandleURLEvent(icq_Event *pbase, ICQLINK *icqlink) 
+void icq_HandleURLEvent(icq_Event *pbase, icq_Link *icqlink) 
 {
   icq_URLEvent *pevent=(icq_URLEvent *)pbase;
   struct tm *ptime=localtime(&(pbase->time));
@@ -86,7 +91,7 @@ void icq_HandleURLEvent(icq_Event *pbase, ICQLINK *icqlink)
   }
 }
 
-void icq_HandleChatRequestEvent(icq_Event *pbase, ICQLINK *icqlink)
+void icq_HandleChatRequestEvent(icq_Event *pbase, icq_Link *icqlink)
 {
   icq_ChatRequestEvent *pevent=(icq_ChatRequestEvent *)pbase;
   icq_MessageEvent *pmsgevent=(icq_MessageEvent *)pmsgevent;
@@ -116,7 +121,7 @@ void icq_HandleChatRequestEvent(icq_Event *pbase, ICQLINK *icqlink)
   }
 }
 
-void icq_HandleChatRequestAck(icq_Event *pbase, ICQLINK *icqlink)
+void icq_HandleChatRequestAck(icq_Event *pbase, icq_Link *icqlink)
 {
   icq_ChatRequestEvent *pevent=(icq_ChatRequestEvent *)pbase;
   icq_TCPLink *pchatlink;
@@ -151,7 +156,7 @@ void icq_HandleChatRequestAck(icq_Event *pbase, ICQLINK *icqlink)
 }
 
 
-void icq_HandleFileRequestEvent(icq_Event *pbase, ICQLINK *icqlink)
+void icq_HandleFileRequestEvent(icq_Event *pbase, icq_Link *icqlink)
 {
   icq_FileRequestEvent *pevent=(icq_FileRequestEvent *)pbase;
   icq_MessageEvent *pmsgevent=(icq_MessageEvent *)pmsgevent;
@@ -180,7 +185,7 @@ void icq_HandleFileRequestEvent(icq_Event *pbase, ICQLINK *icqlink)
   }
 }
 
-void icq_HandleFileRequestAck(icq_Event *pbase, ICQLINK *icqlink)
+void icq_HandleFileRequestAck(icq_Event *pbase, icq_Link *icqlink)
 {
   icq_FileRequestEvent *pevent=(icq_FileRequestEvent *)pbase;
   icq_TCPLink *pfilelink;

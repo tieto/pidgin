@@ -1,24 +1,24 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
 /*
-$Id: list.c 1508 2001-02-22 23:07:34Z warmenhoven $
-$Log$
-Revision 1.4  2001/02/22 23:07:34  warmenhoven
-updating icqlib
-
-Revision 1.15  2001/02/22 05:38:45  bills
-added sorted list capability - see list_insert_sorted and new
-compare_function list struct member
-
-Revision 1.14  2000/07/10 01:44:20  bills
-i really don't learn - removed LIST_TRACE define
-
-Revision 1.13  2000/07/10 01:43:48  bills
-argh - last list buglet fixed, removed free(node) call from list_free
-
-Revision 1.12  2000/07/10 01:31:17  bills
-oops - removed #define LIST_TRACE and #define QUEUE_DEBUG
-
-*/
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
 
 /*
  * linked list functions
@@ -29,9 +29,9 @@ oops - removed #define LIST_TRACE and #define QUEUE_DEBUG
 
 #include "list.h"
 
-list *list_new()
+icq_List *icq_ListNew()
 {
-  list *plist=(list *)malloc(sizeof(list));
+  icq_List *plist=(icq_List *)malloc(sizeof(icq_List));
 
   plist->head=0;
   plist->tail=0;
@@ -41,36 +41,37 @@ list *list_new()
 }
 
 /* Frees all list nodes and list itself */
-void list_delete(list *plist, void (*item_free_f)(void *))
+void icq_ListDelete(icq_List *plist, void (*item_free_f)(void *))
 {
-  list_free(plist, item_free_f);
+  if (item_free_f)
+    icq_ListFree(plist, item_free_f);
   free(plist);
 }
 
 /* Only frees the list nodes */
-void list_free(list *plist, void (*item_free_f)(void *))
+void icq_ListFree(icq_List *plist, void (*item_free_f)(void *))
 {
-  list_node *p=plist->head;
+  icq_ListNode *p=plist->head;
 
 #ifdef LIST_TRACE
-  printf("list_free(%p)\n", plist);
-  list_dump(plist);
+  printf("icq_ListFree(%p)\n", plist);
+  icq_ListDump(plist);
 #endif
 
   while(p)
   {
-    list_node *ptemp=p;
+    icq_ListNode *ptemp=p;
 
     p=p->next;
     (*item_free_f)((void *)ptemp->item);
-    list_remove_node(plist, ptemp);
+    icq_ListRemoveNode(plist, ptemp);
   }
 }
 
-void list_insert_sorted(list *plist, void *pitem)
+void icq_ListInsertSorted(icq_List *plist, void *pitem)
 {
-  list_node *i=plist->head;
-  int done;
+  icq_ListNode *i=plist->head;
+  int done = 0;
 
   while (i && !done)
   {
@@ -80,12 +81,12 @@ void list_insert_sorted(list *plist, void *pitem)
       i=i->next;
   }
 
-  list_insert(plist, i, pitem);
+  icq_ListInsert(plist, i, pitem);
 }
 
-void list_insert(list *plist, list_node *pnode, void *pitem)
+void icq_ListInsert(icq_List *plist, icq_ListNode *pnode, void *pitem)
 {
-  list_node *pnew=(list_node *)malloc(sizeof(list_node));
+  icq_ListNode *pnew=(icq_ListNode *)malloc(sizeof(icq_ListNode));
   pnew->item=pitem;
 
 #ifdef LIST_TRACE
@@ -94,7 +95,7 @@ void list_insert(list *plist, list_node *pnode, void *pitem)
  
   plist->count++;
 
-  /* null source node signifies insert at end of list */
+  /* null source node signifies insert at end of icq_List */
   if(!pnode) 
   {
     pnew->previous=plist->tail;
@@ -122,11 +123,11 @@ void list_insert(list *plist, list_node *pnode, void *pitem)
   }
 
 #ifdef LIST_TRACE
-  list_dump(plist);
+  icq_ListDump(plist);
 #endif
 }
 
-void *list_remove_node(list *plist, list_node *p)
+void *icq_ListRemoveNode(icq_List *plist, icq_ListNode *p)
 {
   void *pitem;
 
@@ -155,7 +156,7 @@ void *list_remove_node(list *plist, list_node *p)
   p->previous=0;
 
 #ifdef LIST_TRACE
-  list_dump(plist);
+  icq_ListDump(plist);
 #endif
 
   pitem=p->item;
@@ -165,15 +166,15 @@ void *list_remove_node(list *plist, list_node *p)
   return pitem;
 }
 
-void *list_traverse(list *plist, int (*item_f)(void *, va_list), ...)
+void *icq_ListTraverse(icq_List *plist, int (*item_f)(void *, va_list), ...)
 {
-  list_node *i=plist->head;
+  icq_ListNode *i=plist->head;
   int f=0;
   va_list ap;
 
 #ifdef LIST_TRACE
-  printf("list_traverse(%p)\n", plist);
-  list_dump(plist);
+  printf("icq_ListTraverse(%p)\n", plist);
+  icq_ListDump(plist);
 #endif
   va_start(ap, item_f);
 
@@ -181,7 +182,7 @@ void *list_traverse(list *plist, int (*item_f)(void *, va_list), ...)
    * function returns 0 */
   while(i && !f)
   {
-    list_node *pnext=i->next;
+    icq_ListNode *pnext=i->next;
 
     if(!(f=(*item_f)(i->item, ap)))
       i=pnext;
@@ -195,9 +196,9 @@ void *list_traverse(list *plist, int (*item_f)(void *, va_list), ...)
     return 0;
 }
 
-int list_dump(list *plist)
+int icq_ListDump(icq_List *plist)
 {
-  list_node *p=plist->head;
+  icq_ListNode *p=plist->head;
 
   printf("list %x { head=%x, tail=%x, count=%d }\ncontents: ",
          (int)plist, (int)plist->head, (int)plist->tail, plist->count);
@@ -212,7 +213,7 @@ int list_dump(list *plist)
   return 0;
 }
 
-void *list_first(list *plist)
+void *icq_ListFirst(icq_List *plist)
 {
   if(plist->head)
     return plist->head->item;
@@ -220,7 +221,7 @@ void *list_first(list *plist)
     return 0;
 }
 
-void *list_last(list *plist)
+void *icq_ListLast(icq_List *plist)
 {
   if(plist->tail)
     return plist->tail->item;
@@ -228,9 +229,9 @@ void *list_last(list *plist)
     return 0;
 }
 
-void *list_at(list *plist, int num)
+void *icq_ListAt(icq_List *plist, int num)
 {
-  list_node *ptr = plist->head;
+  icq_ListNode *ptr = plist->head;
   while(ptr && num)
   {
     num--;
@@ -242,9 +243,9 @@ void *list_at(list *plist, int num)
     return 0L;
 }
 
-list_node *list_find(list *plist, void *pitem)
+icq_ListNode *icq_ListFind(icq_List *plist, void *pitem)
 {
-  list_node *p=plist->head;
+  icq_ListNode *p=plist->head;
 
   while(p)
   {
@@ -255,12 +256,12 @@ list_node *list_find(list *plist, void *pitem)
   return 0;
 }
 
-void *list_remove(list *plist, void *pitem)
+void *icq_ListRemove(icq_List *plist, void *pitem)
 {
-  list_node *p=list_find(plist, pitem);
+  icq_ListNode *p=icq_ListFind(plist, pitem);
 
   if(p)
-    return list_remove_node(plist, p);
+    return icq_ListRemoveNode(plist, p);
   else
     return 0;
 }

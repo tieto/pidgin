@@ -1,4 +1,25 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
+/*
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
+
 #ifndef _ICQ_H_
 #define _ICQ_H_
 
@@ -67,22 +88,27 @@ typedef struct
 } icq_ArrayType;
 
 /* dummy forward declarations */
-struct icq_link_private;
+typedef struct icq_LinkPrivate_s icq_LinkPrivate;
 typedef struct icq_TCPLink_s icq_TCPLink;
 typedef struct icq_FileSession_s icq_FileSession;
 typedef struct icq_ChatSession_s icq_ChatSession;
+typedef struct icq_Link_s icq_Link;
+
+/* Legacy compatibility - remove for icqlib 2.0.0 */
+typedef struct icq_Link_s ICQLINK;
+#define icq_ICQLINKNew icq_LinkNew
+#define icq_ICQLINKDelete icq_LinkDelete
 
 /**
- * The ICQLINK structure represents a single connection to the ICQ  servers.
+ * The icq_Link structure represents a single connection to the ICQ servers.
  * It is returned as the result of an icq_ICQLINKNew function, and contains
  * connection-specific parameters such as uin, sockets, current status, etc.
  *
  * This structure should be considered read-only.  Modifying it will cause
  * undefined results.
  */
-typedef struct icq_link
+struct icq_Link_s
 {
-
   /* General parameters */
   
   /** User Identification Number.  This is your ICQ 'account' number. */
@@ -124,7 +150,7 @@ typedef struct icq_link
   unsigned short icq_TCPSrvPort;
   
   /** Has TCP been enabled for this connection?
-   * @see icq_NewICQLINK */
+   * @see icq_Newicq_Link */
   unsigned char icq_UseTCP;
   
   /* SOCKS5 Proxy stuff */
@@ -143,7 +169,7 @@ typedef struct icq_link
   unsigned short icq_ProxyPort;
   
   /** What's this? :) */
-  int  icq_ProxyAuth;
+  int icq_ProxyAuth;
   
   /** Username used when logging into the proxy. */
   char *icq_ProxyName;
@@ -158,205 +184,215 @@ typedef struct icq_link
   unsigned long icq_ProxyDestIP;    /* HOST byteorder */
   unsigned short icq_ProxyDestPort; /* HOST byteorder */
 
-  /*** Callbacks ***/
-  void (*icq_Logged)(struct icq_link *link);
-  void (*icq_Disconnected)(struct icq_link *link);
-  void (*icq_RecvMessage)(struct icq_link *link, unsigned long uin,
+  /* Begin Callbacks */
+  void (*icq_Logged)(icq_Link *icqlink);
+  void (*icq_Disconnected)(icq_Link *icqlink);
+  void (*icq_RecvMessage)(icq_Link *icqlink, unsigned long uin,
        unsigned char hour, unsigned char minute, unsigned char day,
        unsigned char month, unsigned short year, const char *msg);
-  void (*icq_RecvURL)(struct icq_link *link, unsigned long uin,
+  void (*icq_RecvURL)(icq_Link *icqlink, unsigned long uin,
        unsigned char hour, unsigned char minute, unsigned char day,
        unsigned char month, unsigned short year, const char *url,
        const char *descr);
-  void (*icq_RecvContactList)(struct icq_link *link, unsigned long uin,
-       int nr, const char **contact_uin, const char **contact_nick);
-  void (*icq_RecvWebPager)(struct icq_link *link,unsigned char hour,
+  void (*icq_RecvContactList)(icq_Link *icqlink, unsigned long uin,
+       unsigned char hour, unsigned char minute, unsigned char day,
+       unsigned char month, unsigned short year, int nr,
+       const char **contact_uin, const char **contact_nick);
+  void (*icq_RecvWebPager)(icq_Link *icqlink,unsigned char hour,
        unsigned char minute, unsigned char day, unsigned char month,
        unsigned short year, const char *nick, const char *email,
        const char *msg);
-  void (*icq_RecvMailExpress)(struct icq_link *link,unsigned char hour,
+  void (*icq_RecvMailExpress)(icq_Link *icqlink,unsigned char hour,
        unsigned char minute, unsigned char day, unsigned char month,
        unsigned short year, const char *nick, const char *email,
        const char *msg);
-  void (*icq_RecvChatReq)(struct icq_link *link, unsigned long uin,
+  void (*icq_RecvChatReq)(icq_Link *icqlink, unsigned long uin,
        unsigned char hour, unsigned char minute, unsigned char day,
        unsigned char month, unsigned short year, const char *descr,
        unsigned long seq);
-  void (*icq_RecvFileReq)(struct icq_link *link, unsigned long uin,
+  void (*icq_RecvFileReq)(icq_Link *icqlink, unsigned long uin,
        unsigned char hour, unsigned char minute, unsigned char day,
        unsigned char month, unsigned short year, const char *descr,
        const char *filename, unsigned long filesize, unsigned long seq);
-  void (*icq_RecvAdded)(struct icq_link *link, unsigned long uin,
+  void (*icq_RecvAdded)(icq_Link *icqlink, unsigned long uin,
        unsigned char hour, unsigned char minute, unsigned char day,
        unsigned char month, unsigned short year, const char *nick,
        const char *first, const char *last, const char *email);
-  void (*icq_RecvAuthReq)(struct icq_link *link, unsigned long uin,
+  void (*icq_RecvAuthReq)(icq_Link *icqlink, unsigned long uin,
        unsigned char hour, unsigned char minute, unsigned char day,
        unsigned char month, unsigned short year, const char *nick,
        const char *first, const char *last, const char *email,
        const char *reason);
-  void (*icq_UserFound)(struct icq_link *link, unsigned long uin,
+  void (*icq_UserFound)(icq_Link *icqlink, unsigned long uin,
        const char *nick, const char *first, const char *last,
        const char *email, char auth);
-  void (*icq_SearchDone)(struct icq_link *link);
-  void (*icq_UserOnline)(struct icq_link *link, unsigned long uin,
+  void (*icq_SearchDone)(icq_Link *icqlink);
+  void (*icq_UserOnline)(icq_Link *icqlink, unsigned long uin,
        unsigned long status, unsigned long ip, unsigned short port,
        unsigned long real_ip, unsigned char tcp_flag );
-  void (*icq_UserOffline)(struct icq_link *link, unsigned long uin);
-  void (*icq_UserStatusUpdate)(struct icq_link *link, unsigned long uin,
+  void (*icq_UserOffline)(icq_Link *icqlink, unsigned long uin);
+  void (*icq_UserStatusUpdate)(icq_Link *icqlink, unsigned long uin,
        unsigned long status);
-  void (*icq_InfoReply)(struct icq_link *link, unsigned long uin,
+  void (*icq_InfoReply)(icq_Link *icqlink, unsigned long uin,
        const char *nick, const char *first, const char *last,
        const char *email, char auth);
-  void (*icq_ExtInfoReply)(struct icq_link *link, unsigned long uin,
+  void (*icq_ExtInfoReply)(icq_Link *icqlink, unsigned long uin,
        const char *city, unsigned short country_code, char country_stat,
        const char *state, unsigned short age, char gender,
        const char *phone, const char *hp, const char *about);
-  void (*icq_WrongPassword)(struct icq_link *link);
-  void (*icq_InvalidUIN)(struct icq_link *link);
-  void (*icq_Log)(struct icq_link *link, time_t time, unsigned char level,
+  void (*icq_WrongPassword)(icq_Link *icqlink);
+  void (*icq_InvalidUIN)(icq_Link *icqlink);
+  void (*icq_Log)(icq_Link *icqlink, time_t log_time, unsigned char level,
        const char *str);
-  void (*icq_SrvAck)(struct icq_link *link, unsigned short seq);
-  void (*icq_RequestNotify)(struct icq_link *link, unsigned long id, 
+  void (*icq_SrvAck)(icq_Link *icqlink, unsigned short seq);
+  void (*icq_RequestNotify)(icq_Link *icqlink, unsigned long id, 
        int type, int arg, void *data);
   void (*icq_FileNotify)(icq_FileSession *session, int type, int arg,
        void *data);
   void (*icq_ChatNotify)(icq_ChatSession *session, int type, int arg,
        void *data);
-  void (*icq_NewUIN)(struct icq_link *link, unsigned long uin);
-  void (*icq_MetaUserFound)(struct icq_link *link, unsigned short seq2,
+  void (*icq_NewUIN)(icq_Link *icqlink, unsigned long uin);
+  void (*icq_MetaUserFound)(icq_Link *icqlink, unsigned short seq2,
        unsigned long uin, const char *nick, const char *first,
        const char *last, const char *email, char auth);
-  void (*icq_MetaUserInfo)(struct icq_link *link, unsigned short seq2,
+  void (*icq_MetaUserInfo)(icq_Link *icqlink, unsigned short seq2,
        const char *nick, const char *first, const char *last,
        const char *pri_eml, const char *sec_eml, const char *old_eml,
        const char *city, const char *state, const char *phone, const char *fax,
        const char *street, const char *cellular, unsigned long zip,
        unsigned short country, unsigned char timezone, unsigned char auth,
        unsigned char webaware, unsigned char hideip);
-  void (*icq_MetaUserWork)(struct icq_link *link, unsigned short seq2,
+  void (*icq_MetaUserWork)(icq_Link *icqlink, unsigned short seq2,
        const char *wcity, const char *wstate, const char *wphone,
        const char *wfax, const char *waddress, unsigned long wzip,
        unsigned short wcountry, const char *company, const char *department,
        const char *job, unsigned short occupation, const char *whomepage);
-  void (*icq_MetaUserMore)(struct icq_link *link, unsigned short seq2,
+  void (*icq_MetaUserMore)(icq_Link *icqlink, unsigned short seq2,
        unsigned short age, unsigned char gender, const char *homepage,
        unsigned char byear, unsigned char bmonth, unsigned char bday,
        unsigned char lang1, unsigned char lang2, unsigned char lang3);
-  void (*icq_MetaUserAbout)(struct icq_link *link, unsigned short seq2,
+  void (*icq_MetaUserAbout)(icq_Link *icqlink, unsigned short seq2,
        const char *about);
-  void (*icq_MetaUserInterests)(struct icq_link *link, unsigned short seq2,
+  void (*icq_MetaUserInterests)(icq_Link *icqlink, unsigned short seq2,
        unsigned char num, unsigned short icat1, const char *int1,
        unsigned short icat2, const char *int2, unsigned short icat3,
        const char *int3, unsigned short icat4, const char *int4);
-  void (*icq_MetaUserAffiliations)(struct icq_link *link, unsigned short seq2,
+  void (*icq_MetaUserAffiliations)(icq_Link *icqlink, unsigned short seq2,
        unsigned char anum, unsigned short acat1, const char *aff1,
        unsigned short acat2, const char *aff2, unsigned short acat3,
        const char *aff3, unsigned short acat4, const char *aff4,
        unsigned char bnum, unsigned short bcat1, const char *back1,
        unsigned short bcat2, const char *back2, unsigned short bcat3,
        const char *back3, unsigned short bcat4, const char *back4);
-  void (*icq_MetaUserHomePageCategory)(struct icq_link *link,
+  void (*icq_MetaUserHomePageCategory)(icq_Link *icqlink,
        unsigned short seq2, unsigned char num, unsigned short hcat1,
        const char *htext1);
+  /* End Callbacks */
        
   /** Private data pointer. */
-  struct icq_link_private *d;
+  icq_LinkPrivate *d;
   
   /** Space for user data */
   void *icq_UserData;
-} ICQLINK;
+};
 
 extern int icq_Russian;
 extern unsigned char icq_LogLevel;
 extern icq_ArrayType icq_Countries[];
 extern icq_ArrayType icq_Genders[];
 
-void icq_SetProxy(ICQLINK *link, const char *phost, unsigned short pport,
-     int pauth, const char *pname, const char *ppass);
-void icq_UnsetProxy(ICQLINK *link);
-
-ICQLINK *icq_ICQLINKNew(unsigned long uin, const char *password,
+icq_Link *icq_LinkNew(unsigned long uin, const char *password,
   const char *nick, unsigned char useTCP);
-void icq_ICQLINKDelete(ICQLINK *link);
-  
-int icq_Connect(ICQLINK *link, const char *hostname, int port);
-void icq_Disconnect(ICQLINK *link);
-int icq_GetSok(ICQLINK *link);
-int icq_GetProxySok(ICQLINK *link);
-void icq_HandleServerResponse(ICQLINK *link);
-void icq_HandleProxyResponse(ICQLINK *link);
-void icq_Main(ICQLINK *link);
-unsigned short icq_KeepAlive(ICQLINK *link);
-void icq_Login(ICQLINK *link, unsigned long status);
-void icq_Logout(ICQLINK *link);
-void icq_SendContactList(ICQLINK *link);
-void icq_SendVisibleList(ICQLINK *link);
-void icq_SendInvisibleList(ICQLINK *link);
-void icq_SendNewUser(ICQLINK * link, unsigned long uin);
-unsigned long icq_SendMessage(ICQLINK *link, unsigned long uin,
-     const char *text, unsigned char thruSrv);
-unsigned long icq_SendURL(ICQLINK *link, unsigned long uin, const char *url,
-     const char *descr, unsigned char thruSrv);
-void icq_ChangeStatus(ICQLINK *link, unsigned long status);
-unsigned short icq_SendInfoReq(ICQLINK *link, unsigned long uin);
-unsigned short icq_SendExtInfoReq(ICQLINK *link, unsigned long uin);
-unsigned short icq_SendAuthMsg(ICQLINK *link, unsigned long uin);
-void icq_SendSearchReq(ICQLINK *link, const char *email, const char *nick,
-     const char* first, const char* last);
-void icq_SendSearchUINReq(ICQLINK *link, unsigned long uin);
+void icq_LinkInit(icq_Link *icqlink, unsigned long uin, const char *password,
+  const char *nick, unsigned char useTCP);
+void icq_LinkDestroy(icq_Link *icqlink);
+void icq_LinkDelete(icq_Link *icqlink);
 
+void icq_Main(void);
 const char *icq_GetCountryName(unsigned short code);
 const char *icq_GetMetaOccupationName(unsigned short code);
 const char *icq_GetMetaBackgroundName(unsigned short code);
 const char *icq_GetMetaAffiliationName(unsigned short code);
 const char *icq_GetMetaLanguageName(unsigned short code);
-void icq_RegNewUser(ICQLINK *link, const char *pass);
-unsigned short icq_UpdateUserInfo(ICQLINK *link, const char *nick,
+
+/* Begin icq_Link methods */  
+void icq_SetProxy(icq_Link *icqlink, const char *phost, unsigned short pport,
+     int pauth, const char *pname, const char *ppass);
+void icq_UnsetProxy(icq_Link *icqlink);
+
+int icq_Connect(icq_Link *icqlink, const char *hostname, int port);
+void icq_Disconnect(icq_Link *icqlink);
+int icq_GetSok(icq_Link *icqlink);
+int icq_GetProxySok(icq_Link *icqlink);
+void icq_HandleServerResponse(icq_Link *icqlink);
+void icq_HandleProxyResponse(icq_Link *icqlink);
+unsigned short icq_KeepAlive(icq_Link *icqlink);
+void icq_Login(icq_Link *icqlink, unsigned long status);
+void icq_Logout(icq_Link *icqlink);
+void icq_SendContactList(icq_Link *icqlink);
+void icq_SendVisibleList(icq_Link *icqlink);
+void icq_SendInvisibleList(icq_Link *icqlink);
+void icq_SendNewUser(icq_Link *icqlink, unsigned long uin);
+unsigned long icq_SendMessage(icq_Link *icqlink, unsigned long uin,
+     const char *text, unsigned char thruSrv);
+unsigned long icq_SendURL(icq_Link *icqlink, unsigned long uin, const char *url,
+     const char *descr, unsigned char thruSrv);
+void icq_ChangeStatus(icq_Link *icqlink, unsigned long status);
+unsigned short icq_SendInfoReq(icq_Link *icqlink, unsigned long uin);
+unsigned short icq_SendExtInfoReq(icq_Link *icqlink, unsigned long uin);
+unsigned short icq_SendAuthMsg(icq_Link *icqlink, unsigned long uin);
+void icq_SendSearchReq(icq_Link *icqlink, const char *email, const char *nick,
+     const char* first, const char* last);
+void icq_SendSearchUINReq(icq_Link *icqlink, unsigned long uin);
+
+void icq_RegNewUser(icq_Link *icqlink, const char *pass);
+unsigned short icq_UpdateUserInfo(icq_Link *icqlink, const char *nick,
      const char *first, const char *last, const char *email);
-unsigned short icq_UpdateAuthInfo(ICQLINK *link, unsigned long auth);
-unsigned short icq_UpdateMetaInfoSet(ICQLINK *link, const char *nick,
+unsigned short icq_UpdateAuthInfo(icq_Link *icqlink, unsigned long auth);
+unsigned short icq_UpdateMetaInfoSet(icq_Link *icqlink, const char *nick,
      const char *first, const char *last, const char *email,
      const char *email2, const char *email3, const char *city,
      const char *state, const char *phone, const char *fax, const char *street,
      const char *cellular, unsigned long zip, unsigned short cnt_code,
      unsigned char cnt_stat, unsigned char emailhide);
-unsigned short icq_UpdateMetaInfoHomepage(ICQLINK *link, unsigned char age,
+unsigned short icq_UpdateMetaInfoHomepage(icq_Link *icqlink, unsigned char age,
      const char *homepage, unsigned char year, unsigned char month,
      unsigned char day, unsigned char lang1, unsigned char lang2,
      unsigned char lang3);
-unsigned short icq_UpdateMetaInfoAbout(ICQLINK *link, const char *about);
-unsigned short icq_UpdateMetaInfoSecurity(ICQLINK *link, unsigned char reqauth,
+unsigned short icq_UpdateMetaInfoAbout(icq_Link *icqlink, const char *about);
+unsigned short icq_UpdateMetaInfoSecurity(icq_Link *icqlink, unsigned char reqauth,
      unsigned char webpresence, unsigned char pubip);
-unsigned short icq_UpdateNewUserInfo(ICQLINK *link, const char *nick,
+unsigned short icq_UpdateNewUserInfo(icq_Link *icqlink, const char *nick,
      const char *first, const char *last, const char *email);
-unsigned short icq_SendMetaInfoReq(ICQLINK *link, unsigned long uin);
+unsigned short icq_SendMetaInfoReq(icq_Link *icqlink, unsigned long uin);
 
-void icq_FmtLog(ICQLINK *link, int level, const char *fmt, ...);
+void icq_FmtLog(icq_Link *icqlink, int level, const char *fmt, ...);
 
-void icq_ContactAdd(ICQLINK *link, unsigned long cuin);
-void icq_ContactRemove(ICQLINK *link, unsigned long cuin);
-void icq_ContactClear(ICQLINK *link );
-void icq_ContactSetVis(ICQLINK *link, unsigned long cuin, unsigned char vu);
-void icq_ContactSetInvis(ICQLINK *link, unsigned long cuin, unsigned char vu);
+void icq_ContactAdd(icq_Link *icqlink, unsigned long cuin);
+void icq_ContactRemove(icq_Link *icqlink, unsigned long cuin);
+void icq_ContactClear(icq_Link *icqlink );
+void icq_ContactSetVis(icq_Link *icqlink, unsigned long cuin, unsigned char vu);
+void icq_ContactSetInvis(icq_Link *icqlink, unsigned long cuin, unsigned char vu);
 
 /*** TCP ***/
-void icq_TCPMain(ICQLINK *link);
+void icq_TCPMain(icq_Link *icqlink);
 
-void icq_TCPProcessReceived(ICQLINK *link);
+void icq_TCPProcessReceived(icq_Link *icqlink);
 
-unsigned long icq_TCPSendMessage(ICQLINK *link, unsigned long uin,
+unsigned long icq_TCPSendMessage(icq_Link *icqlink, unsigned long uin,
      const char *message);
-unsigned long icq_TCPSendURL(ICQLINK *link, unsigned long uin,
+unsigned long icq_TCPSendURL(icq_Link *icqlink, unsigned long uin,
      const char *message, const char *url);
-unsigned long icq_SendChatRequest(ICQLINK *link, unsigned long uin,
+unsigned long icq_SendChatRequest(icq_Link *icqlink, unsigned long uin,
      const char *message);
-void icq_AcceptChatRequest(ICQLINK *link, unsigned long uin, unsigned long seq);
+void icq_AcceptChatRequest(icq_Link *icqlink, unsigned long uin, unsigned long seq);
 
-void icq_CancelChatRequest(ICQLINK *link, unsigned long uin, 
+void icq_CancelChatRequest(icq_Link *icqlink, unsigned long uin, 
      unsigned long sequence);
-void icq_RefuseChatRequest(ICQLINK *link, unsigned long uin,
+void icq_RefuseChatRequest(icq_Link *icqlink, unsigned long uin,
      unsigned long sequence, const char *reason);
+
+/* End icq_Link Methods */
 
 /*** TCP ***/
 
@@ -509,7 +545,7 @@ struct icq_ChatSession_s {
   int status;
   
   /** ICQLINK that spawned this chat session. */
-  ICQLINK *icqlink;
+  icq_Link *icqlink;
   
   /** For internal icqlib use only. */
   icq_TCPLink *tcplink;
@@ -556,7 +592,7 @@ struct icq_FileSession_s {
 
   unsigned long id;
   int status;
-  ICQLINK *icqlink;
+  icq_Link *icqlink;
   icq_TCPLink *tcplink;
 
   int direction;
@@ -582,13 +618,13 @@ struct icq_FileSession_s {
   void *user_data;
 };
           
-icq_FileSession *icq_AcceptFileRequest(ICQLINK *link, unsigned long uin,
+icq_FileSession *icq_AcceptFileRequest(icq_Link *icqlink, unsigned long uin,
                  unsigned long sequence);
-unsigned long icq_SendFileRequest(ICQLINK *link, unsigned long uin,
+unsigned long icq_SendFileRequest(icq_Link *icqlink, unsigned long uin,
               const char *message, char **files);
-void icq_CancelFileRequest(ICQLINK *link, unsigned long uin, 
+void icq_CancelFileRequest(icq_Link *icqlink, unsigned long uin, 
      unsigned long sequence);
-void icq_RefuseFileRequest(ICQLINK *link, unsigned long uin,
+void icq_RefuseFileRequest(icq_Link *icqlink, unsigned long uin,
      unsigned long sequence, const char *reason);
 
 void icq_FileSessionSetSpeed(icq_FileSession *p, int speed);
@@ -602,15 +638,15 @@ void icq_FileSessionSetFiles(icq_FileSession *p, char **files);
 #define ICQ_SOCKET_WRITE 1
 #define ICQ_SOCKET_MAX   2
 
-extern void (*icq_SocketNotify)(int socket, int type, int status);
+extern void (*icq_SocketNotify)(int socket_fd, int type, int status);
 
-void icq_HandleReadySocket(int socket, int type);
+void icq_HandleReadySocket(int socket_fd, int type);
 
 /* Timeout Manager */
 
 extern void (*icq_SetTimeout)(long interval);
 
-void icq_HandleTimeout();
+void icq_HandleTimeout(void);
 
 #ifdef __cplusplus
 }

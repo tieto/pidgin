@@ -1,49 +1,32 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
 /*
-$Id: cyrillic.c 1442 2001-01-28 01:52:27Z warmenhoven $
-$Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
 
-Revision 1.7  2000/05/21 17:41:14  denis
-Applied patch for russian letters IO and io by
-Vladimir Eltchinov <elik@design.ru>
-
-Revision 1.6  2000/02/07 02:31:37  bills
-added icq_RusConv_n
-
-Revision 1.5  1999/09/29 16:45:26  denis
-Cleanups
-
-Revision 1.4  1999/07/16 12:08:20  denis
-Cleaned up.
-
-Revision 1.3  1999/07/12 15:13:29  cproch
-- added definition of ICQLINK to hold session-specific global variabled
-  applications which have more than one connection are now possible
-- changed nearly every function defintion to support ICQLINK parameter
-
-Revision 1.2  1999/04/14 14:44:30  denis
-Switched from icq_Log callback to icq_FmtLog function.
-
-Revision 1.1  1999/03/24 11:37:35  denis
-Underscored files with TCP stuff renamed.
-TCP stuff cleaned up
-Function names changed to corresponding names.
-icqlib.c splitted to many small files by subject.
-C++ comments changed to ANSI C comments.
-
-*/
-
-#include "icqtypes.h"
 #include "icq.h"
 #include "icqlib.h"
-#include "util.h"
 
 BYTE kw[] = {128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
              144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
-             160,161,162,184,164,165,166,167,168,169,170,171,172,173,174,175,
-             176,177,178,168,180,181,182,183,184,185,186,187,188,189,190,191,
+             160,161,162,184,186,165,179,191,168,169,170,171,172,180,174,175,
+             176,177,178,168,170,181,178,175,184,185,170,187,188,165,190,169,
              254,224,225,246,228,229,244,227,245,232,233,234,235,236,237,238,
              239,255,240,241,242,243,230,226,252,251,231,248,253,249,247,250,
              222,192,193,214,196,197,212,195,213,200,201,202,203,204,205,206,
@@ -51,8 +34,8 @@ BYTE kw[] = {128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
 
 BYTE wk[] = {128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
              144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
-             160,161,162,163,164,165,166,167,179,169,170,171,172,173,174,175,
-             176,177,178,179,180,181,182,183,163,185,186,187,188,189,190,191,
+             160,161,162,163,164,189,166,167,179,191,180,171,172,173,174,183,
+             176,177,182,166,173,181,182,183,163,185,164,187,188,189,190,167,
              225,226,247,231,228,229,246,250,233,234,235,236,237,238,239,240,
              242,243,244,245,230,232,227,254,251,253,255,249,248,252,224,241,
              193,194,215,199,196,197,214,218,201,202,203,204,205,206,207,208,

@@ -1,98 +1,30 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
 /*
-$Id: util.c 1442 2001-01-28 01:52:27Z warmenhoven $
-$Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
-
-Revision 1.33  2000/08/13 19:26:50  denis
-icq_Genders[] array have been added.
-
-Revision 1.32  2000/07/22 16:49:32  denis
-Trinidad and Tobago country was added.
-
-Revision 1.31  2000/07/21 16:51:20  denis
-All languages, possible in original icq were added.
-Occupation array fixed.
-
-Revision 1.30  2000/07/20 09:58:59  denis
-Occupation table corrected to comply with original ICQ.
-
-Revision 1.29  2000/07/04 07:25:29  pcadach
-icq_FmtLog() crashed when it receives NULL at link argument.
-
-Revision 1.28  2000/06/30 13:59:43  denis
-Slovak Republic country code fixed.
-
-Revision 1.27  2000/06/25 17:00:32  denis
-icq_MetaOccupation[], icq_MetaPastBackgrounds[],
-icq_MetaAffiliations[] and icq_MetaLanguages[] arrays were added along
-with icq_GetMetaOccupationName(), icq_GetMetaBackgroundName(),
-icq_GetMetaAffiliationName() and icq_GetMetaLanguageName() functions
-to access them.
-
-Revision 1.26  2000/05/21 17:42:51  denis
-Bulgaria country code was added. Thanks to
-"Napalm Death" <napalmbox@hotmail.com>
-
-Revision 1.25  2000/05/03 18:29:15  denis
-Callbacks have been moved to the ICQLINK structure.
-
-Revision 1.24  2000/04/10 16:36:04  denis
-Some more Win32 compatibility from Guillaume Rosanis <grs@mail.com>
-
-Revision 1.23  2000/04/05 14:37:02  denis
-Applied patch from "Guillaume R." <grs@mail.com> for basic Win32
-compatibility.
-
-Revision 1.22  2000/03/31 12:49:15  nofate
-remove static variable
-
-Revision 1.21  1999/11/11 15:10:33  guruz
-- Added Base for Webpager Messages. Please type "make fixme"
-- Removed Segfault when kicq is started the first time
-
-Revision 1.20  1999/10/07 18:01:40  denis
-Cleanups.
-
-Revision 1.19  1999/09/29 17:16:45  denis
-Cleanups.
-
-Revision 1.18  1999/07/18 20:24:27  bills
-removed old byte order and contact list functions
-
-Revision 1.17  1999/07/16 15:46:03  denis
-Cleaned up.
-
-Revision 1.16  1999/07/16 12:04:49  denis
-Status support changed.
-
-Revision 1.15  1999/07/12 15:13:46  cproch
-- added definition of ICQLINK to hold session-specific global variabled
-  applications which have more than one connection are now possible
-- changed nearly every function defintion to support ICQLINK parameter
-
-Revision 1.14  1999/04/17 19:20:35  bills
-removed *_link entries from icq_ContactItem, including cleanup/init code
-
-Revision 1.13  1999/04/14 15:06:51  denis
-Cleanups for "strict" compiling (-ansi -pedantic)
-
-*/
+ * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
+ *                          Bill Soudan <soudan@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ */
 
 #include <stdlib.h>
 #include <ctype.h>
 
-#ifndef _WIN32
-#include <unistd.h>
-#endif
-
-#include "icqtypes.h"
-#include "icq.h"
 #include "icqlib.h"
 #include "stdpackets.h"
-#include "util.h"
-#include "stdarg.h"
 
 /*
  * This list of countries should be sorted according to country code.
@@ -439,13 +371,13 @@ long icq_TCPXlateStatus(unsigned long udp_status)
   return 0;
 }
 
-void icq_FmtLog(ICQLINK *link, int level, const char *fmt, ...)
+void icq_FmtLog(icq_Link *icqlink, int level, const char *fmt, ...)
 {
   char buffer[2048];
   va_list ap;
   va_start(ap, fmt);
   
-  if(!link)
+  if(!icqlink)
     return;
 #ifdef _MSVC_
   _vsnprintf(buffer, 1024, fmt, ap);
@@ -454,8 +386,8 @@ void icq_FmtLog(ICQLINK *link, int level, const char *fmt, ...)
 #endif
   va_end(ap);
 
-  if(link->icq_Log && icq_LogLevel>=level)
-    (*link->icq_Log)(link, time(0L), level, buffer);
+  if(icqlink->icq_Log && icq_LogLevel>=level)
+    (*icqlink->icq_Log)(icqlink, time(0L), level, buffer);
 }
 
 /**
@@ -547,4 +479,33 @@ const char *icq_ConvertStatus2Str(unsigned long status)
     return "Online";
   else
     return "Error";
+}
+
+int icq_SplitFields(icq_List *strList, const char *str)
+{
+  char *tmpBuf, *tmp, *ptr;
+  int count = 0;
+ 
+  tmpBuf = (char*)malloc(strlen(str)+1);
+  strcpy(tmpBuf, str);
+  ptr = tmpBuf;
+ 
+  while(ptr)
+  {
+    char *p;
+    tmp = strchr(ptr, 0xFE);
+    if(tmp != 0L)
+    {
+      *tmp = 0;
+      tmp++;
+    }
+    count++;
+    p = (char *)malloc(strlen(ptr)+1);
+    strcpy(p, ptr);
+    icq_ListEnqueue(strList, p);
+    ptr = tmp;
+  }
+ 
+  free(tmpBuf);
+  return count;
 }
