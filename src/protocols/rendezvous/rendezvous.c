@@ -448,6 +448,8 @@ static void rendezvous_send_icon(GaimConnection *gc)
 	myname = g_strdup_printf("%s._presence._tcp.local", gaim_account_get_username(account));
 	mdns_advertise_null(rd->fd, myname, rdata, rdlength);
 	g_free(myname);
+
+	g_free(rdata);
 }
 
 static void rendezvous_send_online(GaimConnection *gc)
