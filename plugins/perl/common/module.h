@@ -18,7 +18,10 @@ typedef struct group *Gaim__Group;
 
 typedef GaimAccount *     Gaim__Account;
 typedef GaimConnection *  Gaim__Connection;
+typedef GaimConversation *Gaim__Conversation;
 typedef GaimPlugin *      Gaim__Plugin;
 typedef struct buddy *    Gaim__BuddyList__Buddy;
 typedef struct chat *     Gaim__BuddyList__Chat;
 typedef struct group *    Gaim__BuddyList__Group;
+
+typedef GaimDebugLevel Gaim__DebugLevel;

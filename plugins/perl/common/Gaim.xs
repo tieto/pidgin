@@ -1,8 +1,12 @@
 #include "module.h"
 #include "../perl-handlers.h"
 
-MODULE = Gaim  PACKAGE = Gaim
+#include "const-c.inc"
+
+MODULE = Gaim  PACKAGE = Gaim  PREFIX = gaim_
 PROTOTYPES: ENABLE
+
+INCLUDE: const-xs.inc
 
 void
 timeout_add(plugin, seconds, callback, data)
@@ -32,23 +36,10 @@ CODE:
 	gaim_perl_signal_disconnect(plugin, instance, signal);
 
 void
-debug(level, category, string)
-	const char *level
+gaim_debug(level, category, string)
+	Gaim::DebugLevel level
 	const char *category
 	const char *string
-CODE:
-	if (!strcmp(level, "misc"))
-		gaim_debug(GAIM_DEBUG_MISC, category, string);
-	else if (!strcmp(level, "info"))
-		gaim_debug(GAIM_DEBUG_INFO, category, string);
-	else if (!strcmp(level, "warning"))
-		gaim_debug(GAIM_DEBUG_WARNING, category, string);
-	else if (!strcmp(level, "error"))
-		gaim_debug(GAIM_DEBUG_ERROR, category, string);
-	else if (!strcmp(level, "fatal"))
-		gaim_debug(GAIM_DEBUG_FATAL, category, string);
-	else
-		croak("Unknown debug level type '%s'", level);
 
 void
 debug_misc(category, string)

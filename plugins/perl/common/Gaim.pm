@@ -3,8 +3,10 @@ package Gaim;
 use 5.008;
 use strict;
 use warnings;
+use Carp;
 
 require Exporter;
+use AutoLoader;
 
 our @ISA = qw(Exporter);
 
@@ -26,6 +28,25 @@ our @EXPORT = qw(
 );
 
 our $VERSION = '0.01';
+
+sub AUTOLOAD {
+	# This AUTOLOAD is used to 'autoload' constants from the constant()
+	# XS function.
+
+	my $constname;
+	our $AUTOLOAD;
+	($constname = $AUTOLOAD) =~ s/.*:://;
+	croak "&Gaim::constant not defined" if $constname eq 'constant';
+	my ($error, $val) = constant($constname);
+	if ($error) { croak $error; }
+	{
+		no strict 'refs';
+
+		*$AUTOLOAD = sub { $val };
+	}
+
+	goto &$AUTOLOAD;
+}
 
 require XSLoader;
 XSLoader::load('Gaim', $VERSION);
@@ -79,7 +100,7 @@ If you have a web site set up for your module, mention it here.
 
 =head1 AUTHOR
 
-Christian Hammond, E<lt>chipx86@localdomainE<gt>
+Christian Hammond, E<lt>chipx86@gnupdate.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

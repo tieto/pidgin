@@ -14,3 +14,15 @@ WriteMakefile(
     'INC'		=> '-I. -I@top_srcdir@ -I@top_srcdir@/src @GLIB_CFLAGS@', # e.g., '-I. -I/usr/include/other'
     'OBJECT'		=> '$(O_FILES)', # link all the C files too
 );
+
+if (eval {require ExtUtils::Constant; 1}) {
+	foreach (qw(GAIM_DEBUG_ALL GAIM_DEBUG_MISC GAIM_DEBUG_INFO
+	            GAIM_DEBUG_WARNING GAIM_DEBUG_ERROR GAIM_DEBUG_FATAL)) {
+		push @names, {name => $_, type => "IV", macro => 1};
+	}
+
+	ExtUtils::Constant::WriteConstants(
+		NAME  => 'Gaim::DebugLevel',
+		NAMES => \@names
+	);
+}
