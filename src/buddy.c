@@ -506,7 +506,9 @@ void update_button_pix()
 void set_blist_tab()
 {
 	GtkWidget *blist_notebook;
-
+	if (!buddypane)
+		return;
+	
 	blist_notebook = buddypane->parent;  /* The "Online" Page */
 
 	debug_printf("blist_options = %d\n", blist_options);
