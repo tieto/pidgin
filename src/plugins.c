@@ -51,6 +51,7 @@ static GList     *plugins = NULL;
 
 static GtkWidget *pluglist;
 static GtkWidget *plugtext;
+static GtkWidget *plugwindow;
 
 /* --------------- Function Declarations -------------------- */
 
@@ -62,6 +63,8 @@ static void destroy_plugins  (GtkWidget *, gpointer);
 static void load_which_plugin(GtkWidget *, gpointer);
 static void unload           (GtkWidget *, gpointer);
 static void list_clicked     (GtkWidget *, struct gaim_plugin *);
+static void update_show_plugins();
+static void hide_plugins     (GtkWidget *, gpointer);
 
 /* ------------------ Code Below ---------------------------- */
 
@@ -108,12 +111,11 @@ void load_which_plugin(GtkWidget *w, gpointer data) {
 	struct gaim_plugin *plug;
 	void (*gaim_plugin_init)();
 	char *(*cfunc)();
-	int (*nfunc)();
 	char *error;
 
 	plug = g_malloc(sizeof *plug);
-	plug->filename = gtk_file_selection_get_filename(
-					GTK_FILE_SELECTION(plugin_dialog));
+	plug->filename = g_strdup(gtk_file_selection_get_filename(
+					GTK_FILE_SELECTION(plugin_dialog)));
 	/* do NOT OR with RTLD_GLOBAL, otherwise plugins may conflict
 	 * (it's really just a way to work around other people's bad
 	 * programming, by not using RTLD_GLOBAL :P ) */
@@ -151,6 +153,8 @@ void load_which_plugin(GtkWidget *w, gpointer data) {
 		plug->description = (*cfunc)();
 	else
 		plug->description = NULL;
+
+	update_show_plugins();
 }
 
 void unload_plugin(GtkWidget *w, gpointer data) {
@@ -159,7 +163,6 @@ void unload_plugin(GtkWidget *w, gpointer data) {
 
 void show_plugins(GtkWidget *w, gpointer data) {
 	/* most of this code was shamelessly stolen from prefs.c */
-	GtkWidget *window;
 	GtkWidget *page;
 	GtkWidget *topbox;
 	GtkWidget *botbox;
@@ -173,11 +176,16 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	struct gaim_plugin *p;
 	gchar buffer[1024];
 
-	window = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_widget_realize(window);
-	aol_icon(window->window);
-	gtk_container_border_width(GTK_CONTAINER(window), 10);
-	gtk_window_set_title(GTK_WINDOW(window), "Gaim - Plugins");
+	if (plugwindow) return;
+
+	plugwindow = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_widget_realize(plugwindow);
+	aol_icon(plugwindow->window);
+	gtk_container_border_width(GTK_CONTAINER(plugwindow), 10);
+	gtk_window_set_title(GTK_WINDOW(plugwindow), "Gaim - Plugins");
+	gtk_widget_set_usize(plugwindow, 400, 250);
+	gtk_signal_connect(GTK_OBJECT(plugwindow), "destroy",
+			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
 
 	page = gtk_vbox_new(FALSE, 0);
 	topbox = gtk_hbox_new(FALSE, 0);
@@ -237,6 +245,8 @@ void show_plugins(GtkWidget *w, gpointer data) {
 
 		plugs = plugs->next;
 	}
+	if (plugins != NULL)
+		gtk_list_select_item(GTK_LIST(pluglist), 0);
 
 	gtk_widget_show(page);
 	gtk_widget_show(topbox);
@@ -248,8 +258,40 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_widget_show(add);
 	gtk_widget_show(remove);
 
-	gtk_container_add(GTK_CONTAINER(window), page);
-	gtk_widget_show(window);
+	gtk_container_add(GTK_CONTAINER(plugwindow), page);
+	gtk_widget_show(plugwindow);
+}
+
+void update_show_plugins() {
+	GList *plugs = plugins;
+	struct gaim_plugin *p;
+	GtkWidget *label;
+	GtkWidget *list_item;
+
+	if (pluglist == NULL) return;
+
+	gtk_list_clear_items(GTK_LIST(pluglist), 0, -1);
+	while (plugs) {
+		p = (struct gaim_plugin *)plugs->data;
+		label = gtk_label_new(p->filename);
+		list_item = gtk_list_item_new();
+		gtk_container_add(GTK_CONTAINER(list_item), label);
+		gtk_signal_connect(GTK_OBJECT(list_item), "select",
+				   GTK_SIGNAL_FUNC(list_clicked), p);
+		gtk_object_set_user_data(GTK_OBJECT(list_item), p);
+
+		gtk_widget_show(label);
+		gtk_container_add(GTK_CONTAINER(pluglist), list_item);
+		gtk_widget_show(list_item);
+		plugs = plugs->next;
+	}
+	if (plugins != NULL)
+		gtk_list_select_item(GTK_LIST(pluglist), 0);
+	else {
+		gtk_text_set_point(GTK_TEXT(plugtext), 0);
+		gtk_text_forward_delete(GTK_TEXT(plugtext),
+			gtk_text_get_length(GTK_TEXT(plugtext)));
+	}
 }
 
 void unload(GtkWidget *w, gpointer data) {
@@ -260,15 +302,18 @@ void unload(GtkWidget *w, gpointer data) {
 
 	i = GTK_LIST(pluglist)->selection;
 
-	p = gtk_object_get_user_data(GTK_OBJECT(i->data));
+	if (i == NULL) return;
 
-	g_list_remove(plugins, p);
+	p = gtk_object_get_user_data(GTK_OBJECT(i->data));
 
 	gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
 	if ((error = dlerror()) == NULL)
 		(*gaim_plugin_remove)();
 	dlclose(p->handle);
+
+	plugins = g_list_remove(plugins, p);
 	g_free(p);
+	update_show_plugins();
 }
 
 void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
@@ -281,6 +326,12 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 
 	g_snprintf(buffer, sizeof buffer, "%s\n%s", p->name, p->description);
 	gtk_text_insert(GTK_TEXT(plugtext), NULL, NULL, NULL, buffer, -1);
+}
+
+void hide_plugins(GtkWidget *w, gpointer data) {
+	if (plugwindow)
+		gtk_widget_destroy(plugwindow);
+	plugwindow = NULL;
 }
 
 #endif /* GAIM_PLUGINS */

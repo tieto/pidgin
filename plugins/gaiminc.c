@@ -5,6 +5,8 @@
 #include "gaim.h"
 
 void gaim_plugin_init() {
-	show_about(NULL, NULL);
-	play_sound(RECEIVE);
+}
+
+void write_to_conv(struct conversation *c, char *what, int flags) {
+	printf("this got called\n");
 }
