@@ -294,8 +294,7 @@ void show_login()
 
 	/* Register opens the right URL */
 	gtk_signal_connect(GTK_OBJECT(reg), "clicked",
-			   GTK_SIGNAL_FUNC(open_url),
-			   "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no");
+			   GTK_SIGNAL_FUNC(register_user), NULL);
 	/* Enter in the username clears the password and sets
 	   the pointer in the password field */
 	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "activate",

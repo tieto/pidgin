@@ -43,11 +43,15 @@ struct prpl {
 
 	/* returns the XPM associated with the given user class */
 	char **(* list_icon)(int);
-	/* returns a GtkMenu * for use in the buddy list */
-	void (* action_menu)(GtkWidget *, struct gaim_connection *, char *);
-	/* fuck UI plugins */
-	void (* user_opts)(GtkWidget *, struct aim_user *);
 
+	/* when UI plugins come, these will have to be reconciled by returning
+	 * structs indicating what kinds of information they want displayed. */
+	void (* action_menu)(GtkWidget *, struct gaim_connection *, char *);
+	void (* user_opts)(GtkWidget *, struct aim_user *);
+	void (* draw_new_user)(GtkWidget *);
+	void (* do_new_user)();
+
+	/* all the server-related functions */
 	void (* login)		(struct aim_user *);
 	void (* close)		(struct gaim_connection *);
 	void (* send_im)	(struct gaim_connection *, char *who, char *message, int away);
@@ -89,7 +93,6 @@ struct prpl {
 	void (* chat_leave)	(struct gaim_connection *, int id);
 	void (* chat_whisper)	(struct gaim_connection *, int id, char *who, char *message);
 	void (* chat_send)	(struct gaim_connection *, int id, char *message);
-
 	void (* keepalive)	(struct gaim_connection *);
 };
 
@@ -103,6 +106,8 @@ void load_protocol(proto_init);
 void unload_protocol(struct prpl *);
 
 struct prpl *find_prpl(int);
+
+void register_user(gpointer, gpointer);
 
 void do_ask_dialog(const char *, void *, void *, void *);
 #endif

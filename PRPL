@@ -1,45 +1,88 @@
 Protocol Plugins. What EveryBuddy should have been.
 
-Each PRPL needs to have a unique identifier. In the pre-PRPL system TOC was 0 and Oscar was 1.
-This identifier can be found in prpl.h. They are pre-assigned. PROTO_TOC is still 0, PROTO_OSCAR
-is still 1. The protocol_init function is expected to set the struct's protocol member to the
-appropriate value. If you want to write a new PRPL for gaim, please email one of the maintainers
-with the name of the protocol. We'll then reserve a number for it. Please do not use a number
-that has not been assigned to your protocol.
+Each PRPL needs to have a unique identifier. In the pre-PRPL system TOC
+was 0 and Oscar was 1.  This identifier can be found in prpl.h. They
+are pre-assigned. PROTO_TOC is still 0, PROTO_OSCAR is still 1. The
+protocol_init function is expected to set the struct's protocol member to
+the appropriate value. If you want to write a new PRPL for gaim, please
+email one of the maintainers with the name of the protocol. We'll then
+reserve a number for it. Please do not use a number that has not been
+assigned to your protocol.
 
-The addition of PRPL to gaim means that gaim now supports multiple connections and multiple (and
-dynamically loadable) protocols.
+The addition of PRPL to gaim means that gaim now supports multiple
+connections and multiple (and dynamically loadable) protocols.
 
 ======
 
 I guess I should document how to write a PRPL.
 
-The first thing to do is to write your init function. It should be delcared
+The first thing to do is to write your init function. It should be
+delcared
 
 void my_proto_init(struct prpl *p);
 
 You then fill in the members of the struct. See prpl.h for what they are.
 
-If you're going to load your protocol dynamically, put the function gaim_plugin_init(void *) in the
-file, and have it call
+If you're going to load your protocol dynamically, put the function
+gaim_plugin_init(void *) in the file, and have it call
 
 	load_protocol(my_proto_init);
 
-and return NULL. Then compile as a plugin, load the .so file, and you're set. If you're going to
-load it statically, extern the my_proto_init function, and in prpl.c, call load_protocol.
+and return NULL. Then compile as a plugin, load the .so file, and you're
+set. If you're going to load it statically, extern the my_proto_init
+function, and in prpl.c, call load_protocol.
 
-Your PRPL needs to have a login function, which ideally should set up a gdk_input watcher. When you
-want to indicate that the account is online, simply call account_online(struct gaim_connection *).
-When there is information from the server, you should call the appropriate serv_got function (see
-gaim.h for a (partial?) list).
+Your PRPL needs to have a login function, which ideally should set up a
+gdk_input watcher. When you want to indicate that the account is online,
+simply call account_online(struct gaim_connection *).  When there is
+information from the server, you should call the appropriate serv_got
+function (see gaim.h for a (partial?) list).
 
-When the UI wants to send something via the server, it will call the appropriate function that you set
-in your PRPL, if it's non-NULL. The only function that is absolutely critical is name. Without name
-gaim will probably crash. You don't even need login, just name. (You need login to do anything useful
-though.)
+When the UI wants to send something via the server, it will call the
+appropriate function that you set in your PRPL, if it's non-NULL. The
+only function that is absolutely critical is name. Without name gaim
+will probably crash. You don't even need login, just name. (You need
+login to do anything useful though.)
 
-The best example to copy is probably Rob's IRC plugin, in plugins/irc.c. The most important functions
-for gaim interaction are at the bottom (irc_init, gaim_plugin_init, and gaim_plugin_remove). The
-rest of it is the protocol implementation.
+======
 
-Sorry for the formatting. My Eterm is 105 characters wide.
+Erg. Now the fun part. The part that you would have never guessed if you
+weren't me. (I know that you wouldn't have guessed this stuff because
+it isn't painfully obvious to me. Use the Source, Luke.)
+
+Let's start with the basics. PRPLs shouldn't use GTK at all. That said,
+they have to in no fewer than three functions: action_menu, user_opts, and
+draw_new_user (probably do_new_user too). Fortunately, all of these are
+optional. Unfortunatly, all of these are so incredibly useful that they
+probably aren't optional.  If you use GTK (other than gdk_input_add/remove
+for the connections) in any function other than these three I will hunt
+you down like the dog you are and kill you. (Oscar and TOC are excused
+temporarily because they existed long before all the other PRPLs.)
+
+You're probably wondering how you can do certain things without GTK. Well,
+you're just going to have to make do. Rely on the UI, that's why it's
+there.	A PRPL should have absolutely ZERO interaction with the user,
+it should all be handled by the UI. So far, about the only thing that's
+been added to gaim to aid in this goal is do_ask_dialog. But at least
+it's a start.
+
+do_ask_dialogs is one of the worst creations ever to come from my ass. It
+must have been very late in the morning, just before I went to sleep,
+when I coded it. That's my excuse.
+
+You pass it the question you want to ask, what to do on Yes, what to
+do on No, and optional data. The logic actually isn't like that at
+all. Given you call do_ask_dialog("Wanna?", mydata, yes_func, no_func),
+the logic is:
+
+if (clicked_yes)
+	yes_func();
+no_func();
+
+i.e. no_func() gets called regardless of what's clicked. So
+it's best to use it for freeing mydata, and not freeing mydata in
+yes_func. To be quite honest, I'm not sure no_func is needed. (I
+also seem to think that yes_func isn't entirely necessary either,
+except for the little part about it being the point of do_ask_dialog.)
+
+Um. So that was interesting.

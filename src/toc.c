@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1320 $"
+#define REVISION "gaim:$Revision: 1343 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -654,147 +654,6 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 	}
 }
 
-void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean show)
-{
-	GSList *grp = gc->groups;
-	GSList *mem;
-	struct group *g;
-	struct buddy *b;
-	GSList *plist = gc->permit;
-	GSList *dlist = gc->deny;
-
-	int pos = 0;
-
-	if (!gc->permdeny)
-		gc->permdeny = 1;
-
-	pos += g_snprintf(&s[pos], len - pos, "m %d\n", gc->permdeny);
-	while (grp) {
-		g = (struct group *)grp->data;
-		pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
-		mem = g->members;
-		while (mem) {
-			b = (struct buddy *)mem->data;
-			pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
-					  show ? ":" : "", show ? b->show : "");
-			mem = mem->next;
-		}
-		grp = g_slist_next(grp);
-	}
-
-	while (plist) {
-		pos += g_snprintf(&s[pos], len - pos, "p %s\n", (char *)plist->data);
-		plist = plist->next;
-	}
-
-	while (dlist) {
-		pos += g_snprintf(&s[pos], len - pos, "d %s\n", (char *)dlist->data);
-		dlist = dlist->next;
-	}
-}
-
-void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_import)
-{
-	char *c;
-	char current[256];
-	char *name;
-	GList *bud;
-	int how_many = 0;
-
-	bud = NULL;
-
-	if (config != NULL) {
-
-		/* skip "CONFIG:" (if it exists) */
-		c = strncmp(config + sizeof(struct sflap_hdr), "CONFIG:", strlen("CONFIG:")) ?
-		    strtok(config, "\n") :
-		    strtok(config + sizeof(struct sflap_hdr) + strlen("CONFIG:"), "\n");
-		do {
-			if (c == NULL)
-				break;
-			if (*c == 'g') {
-				strncpy(current, c + 2, sizeof(current));
-				add_group(gc, current);
-				how_many++;
-			} else if (*c == 'b' && !find_buddy(gc, c + 2)) {
-				char nm[80], sw[80], *tmp = c + 2;
-				int i = 0;
-				while (*tmp != ':' && *tmp)
-					nm[i++] = *tmp++;
-				if (*tmp == ':')
-					*tmp++ = '\0';
-				nm[i] = '\0';
-				i = 0;
-				while (*tmp)
-					sw[i++] = *tmp++;
-				sw[i] = '\0';
-				if (!find_buddy(gc, nm))
-					add_buddy(gc, current, nm, sw);
-				how_many++;
-
-				bud = g_list_append(bud, c + 2);
-			} else if (*c == 'p') {
-				GSList *d = gc->permit;
-				char *n;
-				name = g_malloc(strlen(c + 2) + 2);
-				g_snprintf(name, strlen(c + 2) + 1, "%s", c + 2);
-				n = g_strdup(normalize(name));
-				while (d) {
-					if (!strcasecmp(n, normalize(d->data)))
-						break;
-					d = d->next;
-				}
-				g_free(n);
-				if (!d)
-					gc->permit = g_slist_append(gc->permit, name);
-			} else if (*c == 'd') {
-				GSList *d = gc->deny;
-				char *n;
-				name = g_malloc(strlen(c + 2) + 2);
-				g_snprintf(name, strlen(c + 2) + 1, "%s", c + 2);
-				n = g_strdup(normalize(name));
-				while (d) {
-					if (!strcasecmp(n, normalize(d->data)))
-						break;
-					d = d->next;
-				}
-				g_free(n);
-				if (!d)
-					gc->deny = g_slist_append(gc->deny, name);
-			} else if (!strncmp("toc", c, 3)) {
-				sscanf(c + strlen(c) - 1, "%d", &gc->permdeny);
-				debug_printf("permdeny: %d\n", gc->permdeny);
-				if (gc->permdeny == 0)
-					gc->permdeny = 1;
-			} else if (*c == 'm') {
-				sscanf(c + 2, "%d", &gc->permdeny);
-				debug_printf("permdeny: %d\n", gc->permdeny);
-				if (gc->permdeny == 0)
-					gc->permdeny = 1;
-			}
-		} while ((c = strtok(NULL, "\n")));
-#if 0
-		fprintf(stdout, "Sending message '%s'\n", buf);
-#endif
-
-		if (bud != NULL)
-			serv_add_buddies(gc, bud);
-		serv_set_permit_deny(gc);
-		if (blist) {
-			build_edit_tree();
-		}
-	}
-
-	/* perhaps the server dropped the buddy list, try importing from
-	   cache */
-
-	if (how_many == 0 && !from_do_import) {
-		do_import((GtkWidget *)NULL, gc);
-	} else if (gc && (bud_list_cache_exists(gc) == FALSE)) {
-		do_export((GtkWidget *)NULL, 0);
-	}
-}
-
 static char *toc_name()
 {
 	return "TOC";
@@ -1293,6 +1152,23 @@ static void toc_rem_deny(struct gaim_connection *gc, char *who)
 	toc_set_permit_deny(gc);
 }
 
+static void toc_draw_new_user(GtkWidget *box)
+{
+	GtkWidget *label;
+
+	label = gtk_label_new(_("Unfortunately, currently TOC only allows new user registration by "
+				"going to http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no"
+				". Clicking the Register button will open the URL for you."));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+}
+
+static void toc_do_new_user()
+{
+	open_url(NULL, "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no");
+}
+
 void toc_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_TOC;
@@ -1300,6 +1176,8 @@ void toc_init(struct prpl *ret)
 	ret->list_icon = toc_list_icon;
 	ret->action_menu = toc_action_menu;
 	ret->user_opts = toc_user_opts;
+	ret->draw_new_user = toc_draw_new_user;
+	ret->do_new_user = toc_do_new_user;
 	ret->login = toc_login;
 	ret->close = toc_close;
 	ret->send_im = toc_send_im;
