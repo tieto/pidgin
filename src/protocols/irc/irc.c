@@ -866,7 +866,9 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 			nick[ex - pdibuf] = 0; /* cut the buffer at the '!' */
 	}
 
-	if (!strcmp(cmd, "INVITE")) { /* */
+	if (!strcmp(cmd, "INVITE")) {
+		char *chan = g_strdup(word[4]);
+		serv_got_chat_invite(gc, chan + 1, nick, NULL, g_list_append(NULL, chan));
 	} else if (!strcmp(cmd, "JOIN")) {
 		char *chan = *word[3] == ':' ? word[3] + 1 : word[3];
 		if (!g_strcasecmp(gc->displayname, nick)) {
@@ -1282,6 +1284,10 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		g_snprintf(buf, sizeof(buf), "PRIVMSG %s :\001ACTION %s\001\r\n", who, word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 		return 1;
+	} else if (!g_strcasecmp(pdibuf, "INVITE")) {
+		char buf[IRC_BUF_LEN];
+		g_snprintf(buf, sizeof(buf), "INVITE %s\r\n", word_eol[2]);
+		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "TOPIC")) {
 		if (!*word_eol[2])
 			return -EINVAL;
@@ -1367,9 +1373,10 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		if (!c)
 			return -EINVAL;
 		write_to_conv(c, "<B>Currently supported commands:<BR>"
-				 "JOIN PART LIST TOPIC WHOIS<BR>"
-				 "OP DEOP VOICE DEVOICE KICK<BR>"
-				 "NICK ME MSG QUOTE SAY</B>",
+				 "WHOIS INVITE NICK LIST<BR>"
+				 "JOIN PART TOPIC KICK<BR>"
+				 "OP DEOP VOICE DEVOICE<BR>"
+				 "ME MSG QUOTE SAY</B>",
 				 WFLAG_NOLOG, NULL, time(NULL));
 	} else {
 		struct conversation *c = NULL;
@@ -1406,6 +1413,14 @@ static int send_msg(struct gaim_connection *gc, char *who, char *what)
 		return ret;
 	} else
 		return handle_command(gc, who, what);
+}
+
+static void irc_chat_invite(struct gaim_connection *gc, int idn, char *message, char *name) {
+	char buf[IRC_BUF_LEN]; 
+	struct irc_data *id = gc->proto_data;
+	struct conversation *c = irc_find_chat_by_id(gc, idn);
+	g_snprintf(buf, sizeof(buf), "INVITE %s %s\r\n", name, c->name);
+	irc_write(id->fd, buf, strlen(buf));
 }
 
 static int irc_send_im(struct gaim_connection *gc, char *who, char *what, int flags)
@@ -1550,6 +1565,7 @@ void irc_init(struct prpl *ret)
 	ret->set_away = irc_set_away;
 	ret->get_info = irc_get_info;
 	ret->buddy_menu = irc_buddy_menu;
+	ret->chat_invite = irc_chat_invite;
 	my_protocol = ret;
 }
 
