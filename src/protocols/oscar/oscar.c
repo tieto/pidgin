@@ -858,29 +858,10 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int server_ready_auth(aim_session_t *sess, aim_frame_t *fr, ...) {
-	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_data *od = gc->proto_data;
 
 	aim_auth_setversions(sess, fr->conn);
 	aim_bos_reqrate(sess, fr->conn);
 	debug_printf("done with AUTH ServerReady\n");
-	if (od->chpass) {
-		debug_printf("changing password\n");
-		aim_auth_changepasswd(sess, fr->conn, od->newp, od->oldp);
-		g_free(od->oldp);
-		g_free(od->newp);
-		od->chpass = FALSE;
-	}
-	if (od->conf) {
-		debug_printf("confirming account\n");
-		aim_auth_reqconfirm(sess, fr->conn);
-		od->conf = FALSE;
-	}
-	if (od->reqemail) {
-		debug_printf("requesting email\n");
-		aim_auth_getinfo(sess, fr->conn, 0x0011);
-		od->reqemail = FALSE;
-	}
 
 	return 1;
 }
@@ -893,10 +874,22 @@ static int server_ready_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int server_ready_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
-	debug_printf("chatnav: got server ready\n");
-	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CTN, AIM_CB_CTN_INFO, gaim_chatnav_info, 0);
-	aim_bos_reqrate(sess, fr->conn);
+static int rateresp_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct chat_connection *chatcon;
+	static int id = 1;
+
+	aim_bos_ackrateresp(sess, fr->conn);
+	aim_chat_clientready(sess, fr->conn);
+	chatcon = find_oscar_chat_by_conn(gc, fr->conn);
+	chatcon->id = id;
+	chatcon->cnv = serv_got_joined_chat(gc, id++, chatcon->show);
+
+	return 1;
+}
+
+static int rateresp_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
+
 	aim_bos_ackrateresp(sess, fr->conn);
 	aim_chatnav_clientready(sess, fr->conn);
 	aim_chatnav_reqrights(sess, fr->conn);
@@ -904,22 +897,24 @@ static int server_ready_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+static int server_ready_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
+	debug_printf("chatnav: got server ready\n");
+	aim_conn_addhandler(sess, fr->conn, 0x0001, 0x0007, rateresp_chatnav, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CTN, AIM_CB_CTN_INFO, gaim_chatnav_info, 0);
+	aim_bos_reqrate(sess, fr->conn);
+
+	return 1;
+}
+
 static int server_ready_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
-	struct gaim_connection *gc = sess->aux_data;
-	struct chat_connection *chatcon;
-	static int id = 1;
 
 	debug_printf("chat: got server ready\n");
+	aim_conn_addhandler(sess, fr->conn, 0x0001, 0x0007, rateresp_chat, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
 	aim_bos_reqrate(sess, fr->conn);
-	aim_bos_ackrateresp(sess, fr->conn);
-	aim_chat_clientready(sess, fr->conn);
-	chatcon = find_oscar_chat_by_conn(gc, fr->conn);
-	chatcon->id = id;
-	chatcon->cnv = serv_got_joined_chat(gc, id++, chatcon->show);
 
 	return 1;
 }
@@ -1965,9 +1960,30 @@ static int rateresp_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int rateresp_auth(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+
 	aim_bos_ackrateresp(sess, fr->conn);
 	aim_auth_clientready(sess, fr->conn);
 	debug_printf("connected to auth (admin)\n");
+
+	if (od->chpass) {
+		debug_printf("changing password\n");
+		aim_auth_changepasswd(sess, fr->conn, od->newp, od->oldp);
+		g_free(od->oldp);
+		g_free(od->newp);
+		od->chpass = FALSE;
+	}
+	if (od->conf) {
+		debug_printf("confirming account\n");
+		aim_auth_reqconfirm(sess, fr->conn);
+		od->conf = FALSE;
+	}
+	if (od->reqemail) {
+		debug_printf("requesting email\n");
+		aim_auth_getinfo(sess, fr->conn, 0x0011);
+		od->reqemail = FALSE;
+	}
 
 	return 1;
 }
