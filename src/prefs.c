@@ -1712,7 +1712,7 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &p2, &p, notebook_page++);
+	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &p2, NULL, notebook_page++);
 	prefs_notebook_add_page(_("IMs"), NULL, im_page(), &c, &p2, notebook_page++);
 	prefs_notebook_add_page(_("Chats"), NULL, chat_page(), &c, &p2, notebook_page++);
 	prefs_notebook_add_page(_("Tabs"), NULL, tab_page(), &c, &p2, notebook_page++);
