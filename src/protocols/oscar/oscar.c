@@ -544,7 +544,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					signoff(gc);
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);
-					char buf[BUF_LONG];
+					char *buf;
 					gaim_debug(GAIM_DEBUG_INFO, "oscar",
 							   "disconnected from chat room %s\n", c->name);
 					c->conn = NULL;
@@ -553,8 +553,9 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					c->inpa = 0;
 					c->fd = -1;
 					aim_conn_kill(od->sess, &conn);
-					snprintf(buf, sizeof(buf), _("You have been disconnected from chat room %s."), c->name);
+					buf = g_strdup_printf(_("You have been disconnected from chat room %s."), c->name);
 					do_error_dialog(buf, NULL, GAIM_ERROR);
+					g_free(buf);
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
 					if (od->cnpa > 0)
 						gaim_input_remove(od->cnpa);
@@ -1241,26 +1242,25 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 
 static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond) {
 	struct pieceofcrap *pos = data;
-	char buf[BUF_LONG];
+	gchar *buf;
 
 	pos->fd = source;
 
 	if (source < 0) {
-		char buf[256];
-		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
+		buf = g_strdup_printf(_("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), WEBSITE);
-		do_error_dialog(_("Gaim was Unable to get a valid AIM login hash."),
-				buf, GAIM_WARNING);
+		do_error_dialog(_("Gaim was Unable to get a valid AIM login hash."), buf, GAIM_WARNING);
+		g_free(buf);
 		if (pos->modname)
 			g_free(pos->modname);
 		g_free(pos);
 		return;
 	}
 
-	g_snprintf(buf, sizeof(buf), "GET " AIMHASHDATA
-			"?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
+	buf = g_strdup_printf("GET " AIMHASHDATA "?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
 			pos->offset, pos->len, pos->modname ? pos->modname : "");
 	write(pos->fd, buf, strlen(buf));
+	g_free(buf);
 	if (pos->modname)
 		g_free(pos->modname);
 	pos->inpa = gaim_input_add(pos->fd, GAIM_INPUT_READ, damn_you, pos);
@@ -2692,10 +2692,10 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
+	char *buf;
 	va_list ap;
 	fu16_t chan, nummissed, reason;
 	aim_userinfo_t *userinfo;
-	char buf[1024];
 
 	va_start(ap, fr);
 	chan = (fu16_t)va_arg(ap, unsigned int);
@@ -2705,55 +2705,45 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	switch(reason) {
-		case 0:
-			/* Invalid (0) */
-			g_snprintf(buf,
-				   sizeof(buf),
-				   ngettext( 
+		case 0: /* Invalid (0) */
+			buf = g_strdup_printf(
+				   ngettext(
 				   "You missed %hu message from %s because it was invalid.",
 				   "You missed %hu messages from %s because they were invalid.",
 				   nummissed),
 				   nummissed,
 				   userinfo->sn);
 			break;
-		case 1:
-			/* Message too large */
-			g_snprintf(buf,
-				   sizeof(buf),
-				   ngettext( 
+		case 1: /* Message too large */
+			buf = g_strdup_printf(
+				   ngettext(
 				   "You missed %hu message from %s because it was too large.",
 				   "You missed %hu messages from %s because they were too large.",
 				   nummissed),
 				   nummissed,
 				   userinfo->sn);
 			break;
-		case 2:
-			/* Rate exceeded */
-			g_snprintf(buf,
-				   sizeof(buf),
-				   ngettext( 
+		case 2: /* Rate exceeded */
+			buf = g_strdup_printf(
+				   ngettext(
 				   "You missed %hu message from %s because the rate limit has been exceeded.",
 				   "You missed %hu messages from %s because the rate limit has been exceeded.",
 				   nummissed),
 				   nummissed,
 				   userinfo->sn);
 			break;
-		case 3:
-			/* Evil Sender */
-			g_snprintf(buf,
-				   sizeof(buf),
-				   ngettext( 
+		case 3: /* Evil Sender */
+			buf = g_strdup_printf(
+				   ngettext(
 				   "You missed %hu message from %s because he/she was too evil.",
 				   "You missed %hu messages from %s because he/she was too evil.",
 				   nummissed),
 				   nummissed,
 				   userinfo->sn);
 			break;
-		case 4:
-			/* Evil Receiver */
-			g_snprintf(buf,
-				   sizeof(buf),
-				   ngettext( 
+		case 4: /* Evil Receiver */
+			buf = g_strdup_printf(
+				   ngettext(
 				   "You missed %hu message from %s because you are too evil.",
 				   "You missed %hu messages from %s because you are too evil.",
 				   nummissed),
@@ -2761,9 +2751,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 				   userinfo->sn);
 			break;
 		default:
-			g_snprintf(buf,
-				   sizeof(buf),
-				   ngettext( 
+			buf = g_strdup_printf(
+				   ngettext(
 				   "You missed %hu message from %s for an unknown reason.",
 				   "You missed %hu messages from %s for an unknown reason.",
 				   nummissed),
@@ -2772,6 +2761,7 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			break;
 	}
 	do_error_dialog(buf, NULL, GAIM_ERROR);
+	g_free(buf);
 
 	return 1;
 }
@@ -2987,18 +2977,19 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
+	char *buf;
 	va_list ap;
-	char *destn;
 	fu16_t reason;
-	char buf[1024];
+	char *destn;
 
 	va_start(ap, fr);
 	reason = (fu16_t) va_arg(ap, unsigned int);
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
-	snprintf(buf, sizeof(buf), _("User information for %s unavailable:"), destn);
+	buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
 	do_error_dialog(buf, (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
+	g_free(buf);
 
 	return 1;
 }
@@ -3097,7 +3088,7 @@ static char *caps_string(guint caps)
 static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
-	char header[BUF_LONG];
+	gchar *header;
 	GSList *l = od->evilhack;
 	gboolean evilhack = FALSE;
 	gchar *membersince = NULL, *onlinesince = NULL, *idle = NULL;
@@ -3140,8 +3131,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} else
 		idle = g_strdup(_("Idle: <b>Active</b>"));
 
-	g_snprintf(header, sizeof header,
-			_("Username : <b>%s</b>  %s <br>\n"
+	header = g_strdup_printf(_("Username : <b>%s</b>  %s <br>\n"
 			"Warning Level : <b>%d %%</b><br>\n"
 			"%s"
 			"%s"
@@ -3194,6 +3184,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 				 NULL);
 	}
 
+	g_free(header);
 	g_free(utf8);
 
 	return 1;
@@ -4010,11 +4001,11 @@ static int gaim_popup(aim_session_t *sess, aim_frame_t *fr, ...)
 }
 
 static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
+	GString *buf;
+	int at = 0, len;
 	va_list ap;
 	char *address, *SNs;
 	int i, num;
-	char *buf;
-	int at = 0, len;
 
 	va_start(ap, fr);
 	address = va_arg(ap, char *);
@@ -4022,13 +4013,12 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	SNs = va_arg(ap, char *);
 	va_end(ap);
 
-	len = num * (MAXSNLEN + 1) + 1024;
-	buf = g_malloc(len);
-	at += g_snprintf(buf + at, len - at, _("<B>%s has the following screen names:</B><BR>"), address);
+	buf = g_string_new("");
+	g_string_printf(buf, _("<B>%s has the following screen names:</B><BR>"), address);
 	for (i = 0; i < num; i++)
-		at += g_snprintf(buf + at, len - at, "%s<BR>", &SNs[i * (MAXSNLEN + 1)]);
-	g_show_info_text(NULL, NULL, 2, buf, NULL);
-	g_free(buf);
+		g_string_append_printf(buf, "%s<br>", &SNs[i * (MAXSNLEN + 1)]);
+	g_show_info_text(NULL, NULL, 2, buf->str, NULL);
+	g_string_free(buf, TRUE);
 
 	return 1;
 }
@@ -4036,14 +4026,15 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_searcherror(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	char *address;
-	char buf[BUF_LONG];
+	char *buf;
 
 	va_start(ap, fr);
 	address = va_arg(ap, char *);
 	va_end(ap);
 
-	g_snprintf(buf, sizeof(buf), _("No results found for email address %s"), address);
+	buf = g_strdup_printf(_("No results found for email address %s"), address);
 	do_error_dialog(buf, NULL, GAIM_ERROR);
+	g_free(buf);
 
 	return 1;
 }
@@ -5536,12 +5527,13 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 }
 
 static void oscar_ask_direct_im(struct gaim_connection *gc, const char *who) {
-	char buf[BUF_LONG];
+	gchar *buf;
 	struct ask_do_dir_im *data = g_new0(struct ask_do_dir_im, 1);
 	data->who = g_strdup(who);
 	data->gc = gc;
-	g_snprintf(buf, sizeof(buf),  _("You have selected to open a Direct IM connection with %s."), who);
+	buf = g_strdup_printf(_("You have selected to open a Direct IM connection with %s."), who);
 	do_ask_dialog(buf, _("Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"), data, _("Connect"), oscar_direct_im, _("Cancel"), oscar_cancel_direct_im, my_protocol->handle, FALSE);
+	g_free(buf);
 }
 
 static void oscar_set_permit_deny(struct gaim_connection *gc) {

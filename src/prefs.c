@@ -1132,7 +1132,7 @@ static GtkWidget *plugin_description=NULL, *plugin_details=NULL;
 
 static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model) 
 {
-	gchar buf[1024];
+	gchar *buf, *pname, *perr, *pdesc, *pauth, *pweb;
 	GtkTreeIter  iter;
 	GValue val = { 0, };
 	GaimPlugin *plug;
@@ -1142,26 +1142,28 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	plug = g_value_get_pointer(&val);
 	
+	pname = g_markup_escape_text(_(plug->info->name), -1);
+	pdesc = g_markup_escape_text(_(plug->info->description), -1);
+	pauth = g_markup_escape_text(_(plug->info->author), -1);
+	pweb = g_markup_escape_text(_(plug->info->homepage), -1);
 	if (plug->error != NULL) {
-		g_snprintf(buf, sizeof(buf),
-				   "<span size=\"larger\">%s %s</span>\n\n"
-				   "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
-				   "%s",
-				   g_markup_escape_text(_(plug->info->name), -1),
-				   plug->info->version,
-				   g_markup_escape_text(plug->error, -1),
-				   g_markup_escape_text(_(plug->info->description), -1));
+		perr = g_markup_escape_text(_(plug->error), -1);
+		buf = g_strdup_printf(
+				"<span size=\"larger\">%s %s</span>\n\n"
+				"<span weight=\"bold\" color=\"red\">%s</span>\n\n"
+				"%s",
+				pname, plug->info->version, perr, pdesc);
+		g_free(perr);
 	}
 	else {
-		g_snprintf(buf, sizeof(buf),
-				   "<span size=\"larger\">%s %s</span>\n\n%s",
-				   g_markup_escape_text(_(plug->info->name), -1),
-				   plug->info->version,
-				   g_markup_escape_text(_(plug->info->description), -1));
+		buf = g_strdup_printf(
+				"<span size=\"larger\">%s %s</span>\n\n%s",
+				pname, plug->info->version, pdesc);
 	}
-
 	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
-	g_snprintf(buf, sizeof(buf), 
+	g_free(buf);
+
+	buf = g_strdup_printf(
 #ifndef _WIN32
 		   _("<span size=\"larger\">%s %s</span>\n\n"
 		     "<span weight=\"bold\">Written by:</span>\t%s\n"
@@ -1173,14 +1175,15 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		     "<span weight=\"bold\">URL:</span>  %s\n"
 		     "<span weight=\"bold\">File name:</span>  %s"),
 #endif
-		   g_markup_escape_text(_(plug->info->name), -1),
-		   plug->info->version,
-		   g_markup_escape_text(_(plug->info->author), -1),
-		   g_markup_escape_text(plug->info->homepage, -1),
-		   plug->path);
+		   pname, plug->info->version, pauth, pweb, plug->path);
 
 	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
-	g_value_unset (&val);
+	g_value_unset(&val);
+	g_free(buf);
+	g_free(pname);
+	g_free(pdesc);
+	g_free(pauth);
+	g_free(pweb);
 }
 
 static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
