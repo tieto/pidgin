@@ -294,6 +294,7 @@ struct conversation {
         GList *ignored;
         int id;
 	GtkWidget *list;
+	GtkWidget *close;
 
 	/* something to distinguish */
 	gboolean is_chat;
@@ -402,7 +403,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 818 $"
+#define REVISION "gaim:$Revision: 824 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

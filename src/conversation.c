@@ -350,6 +350,16 @@ void insert_smiley(GtkWidget *smiley, struct conversation *c)
 
 int close_callback(GtkWidget *widget, struct conversation *c)
 {
+	if (c->is_chat && (widget == c->close)) {
+		GtkWidget *tmp = c->window;
+		debug_print("chat clicked close button\n");
+		c->window = NULL;
+		gtk_widget_destroy(tmp);
+		return;
+	}
+
+	debug_print("conversation close callback\n");
+
 	if (c->window)
 	        gtk_widget_destroy(c->window);
 	c->window = NULL;
