@@ -1276,10 +1276,10 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 		if (colorv != -1) {
 			sprintf(buf2, "<BODY BGCOLOR=\"#%x\">", colorv);
-			gtk_html_append_text(GTK_HTML(c->text), buf2, 0);
+			gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 		}
 
-		gtk_html_append_text(GTK_HTML(c->text), buf, 0);
+		gtk_html_append_text(GTK_HTML(c->text), buf, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 
 		if (display_options & OPT_DISP_SHOW_SMILEY)
 		{
@@ -1291,9 +1291,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		}
 
 		if (colorv != -1) {
-			gtk_html_append_text(GTK_HTML(c->text), "</BODY>", 0);
+			gtk_html_append_text(GTK_HTML(c->text), "</BODY>", (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 		}
-                gtk_html_append_text(GTK_HTML(c->text), "<BR>", 0);
+                gtk_html_append_text(GTK_HTML(c->text), "<BR>", (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 
 
                 if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {

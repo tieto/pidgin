@@ -1691,7 +1691,7 @@ void g_show_info_text(char *info)
 	if (display_options & OPT_DISP_SHOW_SMILEY)
 		write_html_with_smileys(b->window, b->text, info);
 	else
-		gtk_html_append_text(GTK_HTML(b->text), info, 0);
+		gtk_html_append_text(GTK_HTML(b->text), info, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 	gtk_html_append_text(GTK_HTML(b->text), "</BODY>", 0);
 
 	gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
