@@ -915,6 +915,14 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	else
 		__add_account(dialog->accounts_dialog, dialog->account);
 
+	/* See if we want to register with a server now. */
+	if (dialog->prpl_info->register_user != NULL &&
+		gtk_toggle_button_get_active(
+				GTK_TOGGLE_BUTTON(dialog->register_check))) {
+
+		dialog->prpl_info->register_user(dialog->account);
+	}
+
 	gtk_widget_destroy(dialog->window);
 
 	__account_win_destroy_cb(NULL, NULL, dialog);
