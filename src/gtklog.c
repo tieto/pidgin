@@ -119,8 +119,7 @@ static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht
 	while (lv->logs) {
 		GaimLog *log = lv->logs->data;
 		GList *logs2;
-		g_free(log->name);
-		g_free(log);
+		gaim_log_free(log);
 		logs2 = lv->logs->next;
 		g_list_free_1(lv->logs);
 		lv->logs = logs2;

@@ -100,8 +100,7 @@ int gaim_log_get_total_size(const char *name, GaimAccount *account)
 		GList *logs2 = logs->next;
 		GaimLog *log = (GaimLog*)(logs->data);
 		size += gaim_log_get_size(log);
-		g_free(log->name);
-		g_free(log);
+		gaim_log_free(log);
 		g_list_free_1(logs);
 		logs = logs2;
 	}

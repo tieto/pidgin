@@ -44,8 +44,7 @@ static void historize(GaimConversation *c)
 	while (logs) {
 		GaimLog *log = logs->data;
 		GList *logs2;
-		g_free(log->name);
-		g_free(log);
+	    gaim_log_free(log);
 		logs2 = logs->next;
 		g_list_free_1(logs);
 		logs = logs2;
