@@ -1,7 +1,8 @@
 EXTRA_DIST = \
 		getopt.c \
 		getopt.h \
-		getopt1.c
+		getopt1.c \
+		win_gaim.c
 
 SUBDIRS = protocols
 
