@@ -258,8 +258,21 @@ msn_import_html(const char *html, char **attributes, char **message)
 
 				c++;
 			}
-		}
-		else
+		} else if (*c == '&') {
+			if (!g_ascii_strncasecmp(c, "&lt;", 4)) {
+				msg[retcount++] = '<';
+				c += 4;
+			} else if (!g_ascii_strncasecmp(c, "&gt;", 4)) {
+				msg[retcount++] = '>';
+				c += 4;
+			} else if (!g_ascii_strncasecmp(c, "&quot;", 6)) {
+				msg[retcount++] = '"';
+				c += 6;
+			} else if (!g_ascii_strncasecmp(c, "&amp;", 5)) {
+				msg[retcount++] = '&';
+				c += 5;
+			}
+		} else
 			msg[retcount++] = *c++;
 	}
 
