@@ -138,24 +138,6 @@ void serv_send_im(char *name, char *message, int away)
 {
 	char buf[MSG_LEN - 7];
 
-#ifdef GAIM_PLUGINS
-	GList *c = callbacks;
-	struct gaim_callback *g;
-	void (*function)(char **, char **, void *);
-	while (c) {
-		g = (struct gaim_callback *)c->data;
-		if (g->event == event_im_send && g->function != NULL) {
-			function = g->function;
-			/* I can guarantee you this is wrong */
-			(*function)(&name, &message, g->data);
-		}
-		c = c->next;
-	}
-	/* make sure no evil plugin is trying to crash gaim */
-	if (message == NULL)
-		return;
-#endif
-
 #ifndef USE_OSCAR
         g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
                    message, ((away) ? " auto" : ""));

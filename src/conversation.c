@@ -325,7 +325,7 @@ gboolean user_keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct co
 
 static void send_callback(GtkWidget *widget, struct conversation *c)
 {
-        char buf[BUF_LEN*4];
+        char *buf = g_malloc(BUF_LEN * 4);
 	char *buf2;
 	gchar *buf4;
         int hdrlen;
@@ -372,6 +372,22 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
                 g_snprintf(buf2, BUF_LONG, "<STRIKE>%s</STRIKE>", buf);
                 strcpy(buf, buf2);
         }
+
+#ifdef GAIM_PLUGINS
+	{
+		GList *ca = callbacks;
+		struct gaim_callback *g;
+		void (*function)(char *, char **, void *);
+		while (ca) {
+			g = (struct gaim_callback *)(ca->data);
+			if (g->event == event_im_send && g->function != NULL) {
+				function = g->function;
+				(*function)(c->name, &buf, g->data);
+			}
+			ca = ca->next;
+		}
+	}
+#endif
         
 	write_to_conv(c, buf, WFLAG_SEND);
 
@@ -402,7 +418,7 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 	gtk_widget_grab_focus(c->entry);
 
         g_free(buf2);
-
+	g_free(buf);
 }
 
 static int
