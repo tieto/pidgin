@@ -2585,6 +2585,9 @@ static void set_blist_option(GtkWidget *w, int option)
 
 	if (option == OPT_BLIST_SHOW_PIXMAPS)
 		toggle_buddy_pixmaps();
+
+	if (option == OPT_BLIST_GREY_IDLERS)
+		update_idle_times();
 }
 
 static void set_convo_option(GtkWidget *w, int option)
