@@ -3,6 +3,13 @@ version 0.83:
 	Bug Fixes:
 	* Compile with gtk 2.5.x (Gary Kramlich)
 
+version 0.82.1 (08/27/2004):
+	Bug Fixes:
+	* Fix a crash when changing the preference for how to display buttons
+	  on conversation windows
+	* Remove a stray printf() when beginning new conversations and logging
+	  is enabled
+
 version 0.82 (08/26/2004):
 	New Features:
 	* Ability to set available messages for AIM
