@@ -37,7 +37,6 @@ extern "C" {
 #define GTK_IS_IMHTML(obj)         (GTK_CHECK_TYPE ((obj), GTK_TYPE_IMHTML))
 #define GTK_IS_IMHTML_CLASS(klass) (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_IMHTML))
 #define GTK_IMHTML_SCALABLE(obj)   ((GtkIMHtmlScalable *)obj)
-#define GTK_IMHTML_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_IMHTML, GtkIMHtmlClass))
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
