@@ -190,7 +190,7 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message, int len,
 	}
 
 	if (cnv && cnv->type_again_timeout)
-		gtk_timeout_remove(cnv->type_again_timeout);
+		g_source_remove(cnv->type_again_timeout);
 
 	return val;
 }
@@ -881,9 +881,9 @@ void serv_got_typing(struct gaim_connection *gc, char *name, int timeout, int st
 	 do_pounce(gc, name, OPT_POUNCE_TYPING);
 	 if (timeout > 0) {
 		 if (cnv->typing_timeout)
-			 gtk_timeout_remove (cnv->typing_timeout);
-		 cnv->typing_timeout = gtk_timeout_add(timeout * 1000,(GtkFunction)reset_typing,
-						       g_strdup(name));
+			 g_source_remove (cnv->typing_timeout);
+		 cnv->typing_timeout = g_timeout_add_full(G_PRIORITY_DEFAULT_IDLE,
+				 timeout * 1000, reset_typing, g_strdup(name), g_free);
 	 }
 }
 
@@ -892,7 +892,8 @@ void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
 	if(!c)
 		return;
 	if (c->typing_timeout) {
-		gtk_timeout_remove (c->typing_timeout);
+		g_source_remove(c->typing_timeout);
+		c->typing_timeout=0;
 	}
 	c->typing_state = NOT_TYPING;
 	update_convo_status(c);

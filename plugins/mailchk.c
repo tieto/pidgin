@@ -84,13 +84,13 @@ static gboolean check_timeout(gpointer data)
 static void mail_signon(struct gaim_connection *gc)
 {
 	if (blist && !timer)
-		timer = gtk_timeout_add(2000, check_timeout, NULL);
+		timer = g_timeout_add(2000, check_timeout, NULL);
 }
 
 static void mail_signoff(struct gaim_connection *gc)
 {
 	if (!blist && timer) {
-		gtk_timeout_remove(timer);
+		g_source_remove(timer);
 		timer = 0;
 	}
 }
@@ -100,7 +100,7 @@ char *gaim_plugin_init(GModule *m)
 	if (!check_timeout(NULL))
 		return "Could not read $MAIL or /var/spool/mail/$USER";
 	if (blist)
-		timer = gtk_timeout_add(2000, check_timeout, NULL);
+		timer = g_timeout_add(2000, check_timeout, NULL);
 	gaim_signal_connect(m, event_signon, mail_signon, NULL);
 	gaim_signal_connect(m, event_signoff, mail_signoff, NULL);
 	return NULL;
@@ -109,7 +109,7 @@ char *gaim_plugin_init(GModule *m)
 void gaim_plugin_remove()
 {
 	if (timer)
-		gtk_timeout_remove(timer);
+		g_source_remove(timer);
 	timer = 0;
 	if (mail)
 		gtk_widget_destroy(mail);

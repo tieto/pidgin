@@ -486,8 +486,9 @@ static int mozilla_remote_command(GdkWindow * window, const char *command, Bool 
 }
 
 
-gint check_netscape(char *msg)
+gboolean check_netscape(gpointer data)
 {
+	char *msg = data;
 	int status;
 	GdkWindow *window;
 
@@ -561,7 +562,7 @@ static void netscape_command(char *command)
 			_exit(0);
 		} else {
 			char *tmp = g_strdup(command);
-			gtk_timeout_add(200, (GtkFunction)check_netscape, tmp);
+			g_timeout_add(200, check_netscape, tmp);
 		}
 	}
 

@@ -72,7 +72,7 @@ static gboolean flash_window_cb(gpointer data) {
 static void halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, WGAIM_FLASH_INFO *finfo) {
 	/* Stop flashing and remove filter */
 	debug_printf("Removing timeout\n");
-	gtk_timeout_remove(finfo->t_handle);
+	g_source_remove(finfo->t_handle);
 	debug_printf("Disconnecting signal handler\n");
 	g_signal_handler_disconnect(G_OBJECT(widget),finfo->sig_handler);
 	debug_printf("done\n");
@@ -200,7 +200,7 @@ void wgaim_im_blink(GtkWidget *window) {
 		WGAIM_FLASH_INFO *finfo = g_new0(WGAIM_FLASH_INFO, 1);
 
 		/* Start Flashing window */
-		finfo->t_handle = gtk_timeout_add(1000, flash_window_cb, GDK_WINDOW_HWND(window->window));
+		finfo->t_handle = g_timeout_add(1000, flash_window_cb, GDK_WINDOW_HWND(window->window));
 		finfo->sig_handler = g_signal_connect(G_OBJECT(window), "focus-in-event", G_CALLBACK(halt_flash_filter), finfo);
 	}
 }

@@ -111,9 +111,9 @@ BuddyTickerCreateWindow()
         */
 	gtk_ticker_start_scroll( GTK_TICKER( ticker ) );
 
-	gtk_timeout_add( 60000, BuddyTickerMessageRemove, (gpointer)  NULL );
+	g_timeout_add( 60000, BuddyTickerMessageRemove, NULL);
 
-        gtk_widget_show_all (ticker);
+	gtk_widget_show_all (ticker);
 
 }
 

@@ -229,8 +229,7 @@ gtk_ticker_start_scroll(GtkTicker *ticker)
   	g_return_if_fail (GTK_IS_TICKER (ticker));
 	if ( ticker->timer != 0 )
 		return;
-	ticker->timer = gtk_timeout_add(ticker->interval, 
-		ticker_timeout, ticker);
+	ticker->timer = g_timeout_add(ticker->interval, ticker_timeout, ticker);
 }
 
 void       
@@ -240,7 +239,7 @@ gtk_ticker_stop_scroll(GtkTicker *ticker)
   	g_return_if_fail (GTK_IS_TICKER (ticker));
 	if ( ticker->timer == 0 )
 		return;
-	gtk_timeout_remove( ticker->timer );
+	g_source_remove(ticker->timer);
 	ticker->timer = 0;
 	
 }

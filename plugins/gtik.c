@@ -136,8 +136,8 @@
 	void remove_self(GtkWidget *w, void *handle)
 	{
 		gtk_signal_disconnect(GTK_OBJECT(applet), destroycb);
-		if (drawTimeID > 0) { gtk_timeout_remove(drawTimeID); }
-		if (updateTimeID >0) { gtk_timeout_remove(updateTimeID); }
+		if (drawTimeID > 0) { g_source_remove(drawTimeID); }
+		if (updateTimeID >0) { g_source_remove(updateTimeID); }
 		gtk_widget_destroy(applet);
 		gaim_plugin_unload(handle);
 	}
@@ -892,9 +892,9 @@
 
 
 		/* KEEPING TIMER ID FOR CLEANUP IN DESTROY */
-		drawTimeID   = gtk_timeout_add(2,Repaint,drawing_area);
-		updateTimeID = gtk_timeout_add(props.timeout * 60000,
-				   (gpointer)updateOutput,"NULL");
+		drawTimeID   = g_timeout_add(2,Repaint,drawing_area);
+		updateTimeID = g_timeout_add(props.timeout * 60000,
+				   updateOutput,"NULL");
 
 
 		return NULL;
@@ -918,8 +918,8 @@
 	/*-----------------------------------------------------------------*/
 	void gaim_plugin_remove() {
 		gtk_signal_disconnect(GTK_OBJECT(applet), destroycb);
-		if (drawTimeID > 0) { gtk_timeout_remove(drawTimeID); }
-		if (updateTimeID >0) { gtk_timeout_remove(updateTimeID); }
+		if (drawTimeID > 0) { g_source_remove(drawTimeID); }
+		if (updateTimeID >0) { g_source_remove(updateTimeID); }
 		gtk_widget_destroy(applet);
 	}
 

@@ -429,7 +429,7 @@ extern void set_hide_icons();
 extern void set_convo_titles();
 extern void update_progress(struct conversation *, float);
 extern void update_convo_status(struct conversation *);
-extern gboolean reset_typing(char *);
+extern gboolean reset_typing(gpointer);
 extern void set_anim();
 
 /* Functions in dialogs.c */

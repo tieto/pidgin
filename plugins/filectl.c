@@ -110,12 +110,12 @@ void run_commands() {
 char *gaim_plugin_init(GModule *h) {
 	handle = h;
 	init_file();
-	check = gtk_timeout_add(5000, (GtkFunction)check_file, NULL);
+	check = g_timeout_add(5000, check_file, NULL);
 	return NULL;
 }
 
 void gaim_plugin_remove() {
-	gtk_timeout_remove(check);
+	g_source_remove(check);
 }
 
 struct gaim_plugin_description desc; 

@@ -364,9 +364,9 @@ void delete_conversation(struct conversation *c)
 	}
 	g_list_free(c->send_history);
 	if (c->typing_timeout)
-		gtk_timeout_remove(c->typing_timeout);
+		g_source_remove(c->typing_timeout);
 	if (c->type_again_timeout)
-		gtk_timeout_remove(c->type_again_timeout);
+		g_source_remove(c->type_again_timeout);
 	g_string_free(c->history, TRUE);
 	g_free(c);
 }
@@ -1138,8 +1138,8 @@ static void got_typing_keypress(struct conversation *c, gboolean first) {
 	/* we know we got something, so we at least have to make sure we don't send
 	 * TYPED any time soon */
 	if(c->type_again_timeout)
-		gtk_timeout_remove(c->type_again_timeout);
-	c->type_again_timeout = gtk_timeout_add(SEND_TYPED_TIMEOUT, send_typed, c);
+		g_source_remove(c->type_again_timeout);
+	c->type_again_timeout = g_timeout_add(SEND_TYPED_TIMEOUT, send_typed, c);
 
 	/* we send typed if this is the first character typed, or if we're due
 	 * to send another one */
@@ -1162,8 +1162,10 @@ void delete_text_callback(GtkTextBuffer *textbuffer, GtkTextIter *start_pos, Gtk
 		return;
 
 	if(gtk_text_iter_is_start(start_pos) && gtk_text_iter_is_end(end_pos)) {
-		if(c->type_again_timeout)
-			gtk_timeout_remove(c->type_again_timeout);
+		if(c->type_again_timeout) {
+			g_source_remove(c->type_again_timeout);
+			c->type_again_timeout = 0;
+		}
 		serv_send_typing(c->gc, c->name, NOT_TYPING);
 	} else {
 		/* we're deleting, but not all of it, so it counts as typing */
@@ -2777,18 +2779,16 @@ void update_convo_status(struct conversation *c) {
 }
 
 /* This returns a boolean, so that it can timeout */
-gboolean reset_typing(char *name) {
+gboolean reset_typing(gpointer data) {
+	char *name = data;
 	struct conversation *c = find_conversation(name);
-	if (!c) {
-		g_free(name);
+	if (!c)
 		return FALSE;
-	}
 
 	/* Reset the title (if necessary) */
 	c->typing_state = NOT_TYPING;
 	update_convo_status(c);
 
-	g_free(name);
 	c->typing_timeout = 0;
 	return FALSE;
 }
@@ -3517,14 +3517,14 @@ static gboolean redraw_icon(gpointer data)
 		gdk_bitmap_unref(bm);
 	delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter) / 10;
 
-	c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+	c->icon_timer = g_timeout_add(delay * 10, redraw_icon, c);
 	return FALSE;
 }
 
 static void stop_anim(GtkObject *obj, struct conversation *c)
 {
 	if (c->icon_timer)
-		gtk_timeout_remove(c->icon_timer);
+		g_source_remove(c->icon_timer);
 	c->icon_timer = 0;
 }
 
@@ -3533,7 +3533,7 @@ static void start_anim(GtkObject *obj, struct conversation *c)
 	int delay;
 	delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter) / 10;
 	if (c->anim)
-	    c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+	    c->icon_timer = g_timeout_add(delay * 10, redraw_icon, c);
 }
 
 static int des_save_icon(GtkObject *obj, GdkEvent *e, struct conversation *c)
@@ -3652,7 +3652,7 @@ void remove_icon(struct conversation *c)
 		gdk_pixbuf_animation_unref(c->anim);
 	c->anim = NULL;
 	if (c->icon_timer)
-		gtk_timeout_remove(c->icon_timer);
+		g_source_remove(c->icon_timer);
 	c->icon_timer = 0;
 	if(c->iter)
 		g_object_unref(G_OBJECT(c->iter));
@@ -3730,7 +3730,7 @@ void update_icon(struct conversation *c)
 						GDK_INTERP_NEAREST);
 	
 	if (delay)
-		c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+		c->icon_timer = g_timeout_add(delay * 10, redraw_icon, c);
 	
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);

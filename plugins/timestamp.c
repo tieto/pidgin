@@ -31,10 +31,9 @@ void timestamp_new_convo(char *name)
 {
 	struct conversation *c = find_conversation(name);
 	do_timestamp(c);
-	
+
 	timestamp_timeouts = g_slist_append(timestamp_timeouts,
-			GINT_TO_POINTER(gtk_timeout_add(TIMESTAMP_DELAY,
-				(GtkFunction)do_timestamp, c)));
+			GINT_TO_POINTER(g_timeout_add(TIMESTAMP_DELAY, do_timestamp, c)));
 
 }
 char *gaim_plugin_init(GModule *h) {
@@ -56,7 +55,7 @@ void gaim_plugin_remove() {
 	GSList *to;
 	to = timestamp_timeouts;
 	while (to) {
-		gtk_timeout_remove(GPOINTER_TO_INT(to->data));
+		g_source_remove(GPOINTER_TO_INT(to->data));
 		to = to->next;
 	}
 	g_slist_free(timestamp_timeouts);

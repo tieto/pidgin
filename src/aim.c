@@ -136,10 +136,11 @@ void do_quit()
 
 static int snd_tmout;
 int logins_not_muted = 1;
-static void sound_timeout()
+static gboolean sound_timeout(gpointer data)
 {
 	logins_not_muted = 1;
-	gtk_timeout_remove(snd_tmout);
+	g_source_remove(snd_tmout);
+	return FALSE;
 }
 
 /* we need to do this for Oscar because serv_login only starts the login
@@ -149,7 +150,7 @@ void gaim_setup(struct gaim_connection *gc)
 {
 	if ((sound_options & OPT_SOUND_LOGIN) && (sound_options & OPT_SOUND_SILENT_SIGNON)) {
 		logins_not_muted = 0;
-		snd_tmout = gtk_timeout_add(10000, (GtkFunction)sound_timeout, NULL);
+		snd_tmout = g_timeout_add(10000, sound_timeout, NULL);
 	}
 }
 

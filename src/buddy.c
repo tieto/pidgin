@@ -145,7 +145,7 @@ void handle_group_rename(struct group *g, char *prevname)
 				if (!bs->connlist) {
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
-						gtk_timeout_remove(bs->log_timer);
+						g_source_remove(bs->log_timer);
 					bs->log_timer = 0;
 					remove_buddy_show(gs, bs);
 					g_free(bs->show);
@@ -199,7 +199,7 @@ void handle_group_rename(struct group *g, char *prevname)
 					if (!bs->connlist) {
 						gs->members = g_slist_remove(gs->members, bs);
 						if (bs->log_timer > 0)
-							gtk_timeout_remove(bs->log_timer);
+							g_source_remove(bs->log_timer);
 						bs->log_timer = 0;
 						remove_buddy_show(gs, bs);
 						g_free(bs->show);
@@ -274,7 +274,7 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 		if (!bs->connlist) {
 			gs->members = g_slist_remove(gs->members, bs);
 			if (bs->log_timer > 0)
-				gtk_timeout_remove(bs->log_timer);
+				g_source_remove(bs->log_timer);
 			bs->log_timer = 0;
 			remove_buddy_show(gs, bs);
 			g_free(bs->show);
@@ -303,7 +303,7 @@ void destroy_buddy()
 			debug_printf("buddy_show still exists: %s\n", b->name);
 			m = g_slist_remove(m, b);
 			if (b->log_timer > 0)
-				gtk_timeout_remove(b->log_timer);
+				g_source_remove(b->log_timer);
 			b->log_timer = 0;
 			gtk_tree_remove_item(GTK_TREE(g->tree), b->item);
 			g_free(b->show);
@@ -904,7 +904,7 @@ void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct bud
 				if (!g_slist_length(bs->connlist)) {
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
-						gtk_timeout_remove(bs->log_timer);
+						g_source_remove(bs->log_timer);
 					bs->log_timer = 0;
 					remove_buddy_show(gs, bs);
 					g_free(bs->show);
@@ -1012,7 +1012,7 @@ void redo_buddy_list()
 			bs = (struct buddy_show *)m->data;
 			m = g_slist_remove(m, bs);
 			if (bs->log_timer > 0)
-				gtk_timeout_remove(bs->log_timer);
+				g_source_remove(bs->log_timer);
 			g_free(bs->show);
 			g_free(bs->name);
 			g_free(bs);
@@ -2099,8 +2099,9 @@ void docklet_toggle() {
 	}
 }
 
-static gint log_timeout(struct buddy_show *b)
+static gboolean log_timeout(gpointer data)
 {
+	struct buddy_show *b = data;
 	/* this part is really just a bad hack because of a bug I can't find */
 	GSList *s = shows;
 	while (s) {
@@ -2116,7 +2117,7 @@ static gint log_timeout(struct buddy_show *b)
 		s = s->next;
 	}
 	if (!s)
-		return 0;
+		return FALSE;
 
 	/* this is the real part. */
 	if (!b->connlist) {
@@ -2133,7 +2134,7 @@ static gint log_timeout(struct buddy_show *b)
 			g_free(g->name);
 			g_free(g);
 		}
-		gtk_timeout_remove(b->log_timer);
+		g_source_remove(b->log_timer);
 		b->log_timer = 0;
 		g_free(b->name);
 		g_free(b->show);
@@ -2157,11 +2158,11 @@ static gint log_timeout(struct buddy_show *b)
 			gtk_widget_hide(b->pix);
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
-		gtk_timeout_remove(b->log_timer);
+		g_source_remove(b->log_timer);
 		b->log_timer = 0;
 		b->sound = 0;
 	}
-	return 0;
+	return FALSE;
 }
 
 static char *caps_string(guint caps)
@@ -2390,8 +2391,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gdk_bitmap_unref(bm);
 			b->present = 2;
 			if (bs->log_timer > 0)
-				gtk_timeout_remove(bs->log_timer);
-			bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
+				g_source_remove(bs->log_timer);
+			bs->log_timer = g_timeout_add(10000, log_timeout, bs);
 			if ((bs->sound != 2) && (im_options & OPT_IM_LOGON)) {
 				struct conversation *c = find_conversation(b->name);
 				if (c) {
@@ -2443,8 +2444,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		bs->connlist = g_slist_remove(bs->connlist, gc);
 		update_num_group(gs);
 		if (bs->log_timer > 0)
-			gtk_timeout_remove(bs->log_timer);
-		bs->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, bs);
+			g_source_remove(bs->log_timer);
+		bs->log_timer = g_timeout_add(10000, log_timeout, bs);
 		pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, logout_icon_xpm);
 		gtk_widget_hide(bs->pix);
 		gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);

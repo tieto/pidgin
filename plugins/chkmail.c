@@ -145,7 +145,7 @@ void gaim_plugin_init(void *h) {
 	gaim_signal_connect(handle, event_blist_update, setup_mail_list, NULL);
 	setup_mail_list();
 	
-	mytimer = gtk_timeout_add(30000, (GtkFunction)check_mail, NULL);
+	mytimer = g_timeout_add(30000, check_mail, NULL);
 }
 
 void check_mail() {
@@ -167,7 +167,7 @@ void update_mail () {
 	int newnum;
 
 	printf("um\n");
-	gtk_timeout_remove(mytimer);
+	g_source_remove(mytimer);
 
 	printf("nm1\n");
 	newnum = num_msgs();
@@ -184,7 +184,7 @@ void update_mail () {
 	}
 
 	lastnum = newnum;
-	mytimer = gtk_timeout_add(30000, (GtkFunction)check_mail, NULL);
+	mytimer = g_timeout_add(30000, check_mail, NULL);
 	printf("sml1\n");
 	setup_mail_list();
 	printf("sml2\n");
@@ -193,7 +193,7 @@ void update_mail () {
 
 
 void gaim_plugin_remove() {
-	gtk_timeout_remove(mytimer);
+	g_source_remove(mytimer);
 	while (state == 1) { }
 	destroy_mail_list();
 	handle = NULL;
