@@ -1222,7 +1222,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		dialog->new_proxy_type = type;
 #if GTK_CHECK_VERSION(2,4,0)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
-				type - 1);
+				type + 1);
 #else
 		gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->proxy_dropdown),
 				(int)type + 1);
