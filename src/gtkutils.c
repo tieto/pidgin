@@ -167,14 +167,6 @@ gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **to
 }
 
 void
-toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
-{
-	gboolean sensitivity = GTK_WIDGET_IS_SENSITIVE(to_toggle);
-
-	gtk_widget_set_sensitive(to_toggle, !sensitivity);
-}
-
-void
 gaim_gtk_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog)
 {
 	const char *text = gtk_entry_get_text(GTK_ENTRY(entry));

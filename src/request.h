@@ -1276,7 +1276,7 @@ void *gaim_request_file(void *handle, const char *title, const char *filename,
 /*@}*/
 
 /**************************************************************************/
-/** @name UI Operations API                                               */
+/** @name UI Registration Functions                                       */
 /**************************************************************************/
 /*@{*/
 

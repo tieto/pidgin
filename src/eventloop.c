@@ -71,5 +71,3 @@ gaim_eventloop_get_ui_ops(void)
 
 	return eventloop_ui_ops;
 }
-
-

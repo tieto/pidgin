@@ -89,8 +89,9 @@ typedef enum
 /**************************************************************************/
 
 /**
- * A Buddy list node.  This can represent a group, a buddy, or anything else.  This is a base class for struct buddy and
- * struct group and for anything else that wants to put itself in the buddy list. */
+ * A Buddy list node.  This can represent a group, a buddy, or anything else.
+ * This is a base class for struct buddy and struct group and for anything
+ * else that wants to put itself in the buddy list. */
 struct _GaimBlistNode {
 	GaimBlistNodeType type;             /**< The type of node this is       */
 	GaimBlistNode *prev;                /**< The sibling before this buddy. */
@@ -517,7 +518,6 @@ gboolean gaim_contact_on_account(GaimContact *contact, GaimAccount *account);
  * gaim_contact_get_priority_buddy recomputes it.
  *
  * @param contact  The contact
- * @return The highest priority buddy
  */
 void gaim_contact_invalidate_priority_buddy(GaimContact *contact);
 /**

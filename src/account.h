@@ -117,7 +117,7 @@ void gaim_account_destroy(GaimAccount *account);
  *
  * @return The gaim connection.
  */
-	GaimConnection *gaim_account_connect(GaimAccount *account, GaimStatus *status);
+GaimConnection *gaim_account_connect(GaimAccount *account, GaimStatus *status);
 
 /**
  * Registers an account.

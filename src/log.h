@@ -112,175 +112,175 @@ struct _GaimLog {
 extern "C" {
 #endif
 
-	/***************************************/
-	/** @name Log Functions                */
-	/***************************************/
-	/*@{*/
+/***************************************/
+/** @name Log Functions                */
+/***************************************/
+/*@{*/
 
-	/**
-	 * Creates a new log
-	 *
-	 * @param type        The type of log this is.
-	 * @param name        The name of this conversation (Screenname, chat name,
-	 *                    etc.)
-	 * @param account     The account the conversation is occurring on
-	 * @param time        The time this conversation started
-	 * @return            The new log
-	 */
-	GaimLog *gaim_log_new(GaimLogType type, const char *name,
-			GaimAccount *account, time_t time);
+/**
+ * Creates a new log
+ *
+ * @param type        The type of log this is.
+ * @param name        The name of this conversation (Screenname, chat name,
+ *                    etc.)
+ * @param account     The account the conversation is occurring on
+ * @param time        The time this conversation started
+ * @return            The new log
+ */
+GaimLog *gaim_log_new(GaimLogType type, const char *name,
+		GaimAccount *account, time_t time);
 
-	/**
-	 * Frees a log
-	 *
-	 * @param log         The log to destroy
-	 */
-	void gaim_log_free(GaimLog *log);
+/**
+ * Frees a log
+ *
+ * @param log         The log to destroy
+ */
+void gaim_log_free(GaimLog *log);
 
-	/**
-	 * Writes to a log file. Assumes you have checked preferences already.
-	 *
-	 * @param log          The log to write to
-	 * @param type         The type of message being logged
-	 * @param from         Whom this message is coming from, or NULL for
-	 *                     system messages
-	 * @param time         A timestamp in UNIX time
-	 * @param message      The message to log
-	 */
-	void gaim_log_write(GaimLog *log,
-			    GaimMessageFlags type,
-			    const char *from,
-			    time_t time,
-			    const char *message);
+/**
+ * Writes to a log file. Assumes you have checked preferences already.
+ *
+ * @param log          The log to write to
+ * @param type         The type of message being logged
+ * @param from         Whom this message is coming from, or NULL for
+ *                     system messages
+ * @param time         A timestamp in UNIX time
+ * @param message      The message to log
+ */
+void gaim_log_write(GaimLog *log,
+		    GaimMessageFlags type,
+		    const char *from,
+		    time_t time,
+		    const char *message);
 
-	/**
-	 * Reads from a log
-	 *
-	 * @param log   The log to read from
-	 * @param flags The returned logging flags.
-	 *
-	 * @return The contents of this log in Gaim Markup.
-	 */
-	char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags);
+/**
+ * Reads from a log
+ *
+ * @param log   The log to read from
+ * @param flags The returned logging flags.
+ *
+ * @return The contents of this log in Gaim Markup.
+ */
+char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags);
 
-	/**
-	 * Returns a list of all available logs
-	 *
-	 * @param type                The type of the log
-	 * @param name                The name of the log
-	 * @param account             The account
-	 * @return                    A sorted list of GaimLogs
-	 */
-	GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *account);
+/**
+ * Returns a list of all available logs
+ *
+ * @param type                The type of the log
+ * @param name                The name of the log
+ * @param account             The account
+ * @return                    A sorted list of GaimLogs
+ */
+GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *account);
 
-	/**
-	 * Returns a list of all available system logs
-	 *
-	 * @param account The account
-	 * @return		A sorted list of GaimLogs
-	 */
-	GList *gaim_log_get_system_logs(GaimAccount *account);
+/**
+ * Returns a list of all available system logs
+ *
+ * @param account The account
+ * @return		A sorted list of GaimLogs
+ */
+GList *gaim_log_get_system_logs(GaimAccount *account);
 
-	/**
-	 * Returns the size of a log 
-	 *
-	 * @param log                 The log
-	 * @return                    The size of the log, in bytes
-	 */
-	int gaim_log_get_size(GaimLog *log);
+/**
+ * Returns the size of a log 
+ *
+ * @param log                 The log
+ * @return                    The size of the log, in bytes
+ */
+int gaim_log_get_size(GaimLog *log);
 
-	/**
-	 * Returns the size, in bytes, of all available logs in this conversation
-	 *
-	 * @param type                The type of the log
-	 * @param name                The name of the log
-	 * @param account             The account
-	 * @return                    The size in bytes
-	 */
-	 int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *account);
+/**
+ * Returns the size, in bytes, of all available logs in this conversation
+ *
+ * @param type                The type of the log
+ * @param name                The name of the log
+ * @param account             The account
+ * @return                    The size in bytes
+ */
+int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *account);
 
-	/**
-	 * Implements GCompareFunc
-	 *
-	 * @param y				   A GaimLog
-	 * @param z				   Another GaimLog
-	 * @return					A value as specified by GCompareFunc
-	 */
-	 gint gaim_log_compare(gconstpointer y, gconstpointer z);
-	/*@}*/
+/**
+ * Implements GCompareFunc
+ *
+ * @param y				   A GaimLog
+ * @param z				   Another GaimLog
+ * @return					A value as specified by GCompareFunc
+ */
+gint gaim_log_compare(gconstpointer y, gconstpointer z);
+/*@}*/
 
-	/******************************************/
-	/** @name Logger Functions                */
-	/******************************************/
-	/*@{*/
+/******************************************/
+/** @name Logger Functions                */
+/******************************************/
+/*@{*/
 
-	/**
-	 * Creates a new logger
-	 *
-	 * @param create   The logger's new function.
-	 * @param write    The logger's write function.
-	 * @param finalize The logger's finalize function.
-	 * @param list     The logger's list function.
-	 * @param read     The logger's read function.
-	 * @param size     The logger's size function.
-	 *
-	 * @return The new logger
-	 */
-	GaimLogLogger *gaim_log_logger_new(
-					void(*create)(GaimLog *),
-					void(*write)(GaimLog *, GaimMessageFlags, const char *, time_t, const char *),
-					void(*finalize)(GaimLog *),
-					GList*(*list)(GaimLogType type, const char*, GaimAccount*),
-					char*(*read)(GaimLog*, GaimLogReadFlags*),
-					int(*size)(GaimLog*));
-	/**
-	 * Frees a logger
-	 *
-	 * @param logger       The logger to free
-	 */
-	void gaim_log_logger_free(GaimLogLogger *logger);
+/**
+ * Creates a new logger
+ *
+ * @param create   The logger's new function.
+ * @param write    The logger's write function.
+ * @param finalize The logger's finalize function.
+ * @param list     The logger's list function.
+ * @param read     The logger's read function.
+ * @param size     The logger's size function.
+ *
+ * @return The new logger
+ */
+GaimLogLogger *gaim_log_logger_new(
+				void(*create)(GaimLog *),
+				void(*write)(GaimLog *, GaimMessageFlags, const char *, time_t, const char *),
+				void(*finalize)(GaimLog *),
+				GList*(*list)(GaimLogType type, const char*, GaimAccount*),
+				char*(*read)(GaimLog*, GaimLogReadFlags*),
+				int(*size)(GaimLog*));
+/**
+ * Frees a logger
+ *
+ * @param logger       The logger to free
+ */
+void gaim_log_logger_free(GaimLogLogger *logger);
 
-	/**
-	 * Adds a new logger
-	 *
-	 * @param logger       The new logger to add
-	 */
-	void gaim_log_logger_add (GaimLogLogger *logger);
+/**
+ * Adds a new logger
+ *
+ * @param logger       The new logger to add
+ */
+void gaim_log_logger_add (GaimLogLogger *logger);
 
-	/**
-	 *
-	 * Removes a logger
-	 *
-	 * @param logger       The logger to remove
-	 */
-	void gaim_log_logger_remove (GaimLogLogger *logger);
+/**
+ *
+ * Removes a logger
+ *
+ * @param logger       The logger to remove
+ */
+void gaim_log_logger_remove (GaimLogLogger *logger);
 
-	/**
-	 *
-	 * Sets the current logger
-	 *
-	 * @param logger       The logger to set
-	 */
-	void gaim_log_logger_set (GaimLogLogger *logger);
+/**
+ *
+ * Sets the current logger
+ *
+ * @param logger       The logger to set
+ */
+void gaim_log_logger_set (GaimLogLogger *logger);
 
-	/**
-	 *
-	 * Returns the current logger
-	 *
-	 * @return logger      The current logger
-	 */
-	GaimLogLogger *gaim_log_logger_get (void);
+/**
+ *
+ * Returns the current logger
+ *
+ * @return logger      The current logger
+ */
+GaimLogLogger *gaim_log_logger_get (void);
 
-	/**
-	 * Returns a GList containing the IDs and Names of the registered log
-	 * loggers.
-	 *
-	 * @return The list of IDs and names.
-	 */
-	GList *gaim_log_logger_get_options(void);
+/**
+ * Returns a GList containing the IDs and Names of the registered log
+ * loggers.
+ *
+ * @return The list of IDs and names.
+ */
+GList *gaim_log_logger_get_options(void);
 
-	void gaim_log_init(void);
-	/*@}*/
+void gaim_log_init(void);
+/*@}*/
 
 
 #ifdef __cplusplus
