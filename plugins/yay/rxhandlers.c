@@ -115,8 +115,6 @@ static void yahoo_parse_status(struct yahoo_session *sess, struct yahoo_packet *
 	char **strs;
 	int i;
 
-	YAHOO_PRINT(sess, YAHOO_LOG_DEBUG, pkt->content);
-
 	if (strstr(pkt->content, "was not AWAY"))
 		return;
 
@@ -184,7 +182,7 @@ static void yahoo_parse_message(struct yahoo_session *sess, struct yahoo_packet 
 			(*sess->callbacks[YAHOO_HANDLE_BOUNCE].function)(sess);
 		break;
 	default:
-		g_snprintf(buf, sizeof(buf), "unhandled message type %d: %s", type, pkt->content);
+		g_snprintf(buf, sizeof(buf), "unhandled message type %d", type);
 		YAHOO_PRINT(sess, YAHOO_LOG_WARNING, buf);
 		break;
 	}
@@ -196,7 +194,8 @@ static void yahoo_parse_packet(struct yahoo_session *sess,
 	char buf[256];
 	int service = yahoo_makeint(pkt->service);
 	conn->magic_id = yahoo_makeint(pkt->magic_id);
-	g_snprintf(buf, sizeof(buf), "Service %d (msgtype %d)", service, yahoo_makeint(pkt->msgtype));
+	g_snprintf(buf, sizeof(buf), "Service %d (msgtype %d): %s", service,
+			yahoo_makeint(pkt->msgtype), pkt->content);
 	YAHOO_PRINT(sess, YAHOO_LOG_DEBUG, buf);
 	switch(service) {
 	case YAHOO_SERVICE_LOGON:
@@ -233,7 +232,7 @@ static void yahoo_parse_packet(struct yahoo_session *sess,
 									  atoi(pkt->content) : 0);
 		break;
 	default:
-		g_snprintf(buf, sizeof(buf), "unhandled service type %d: %s", service, pkt->content);
+		g_snprintf(buf, sizeof(buf), "unhandled service type %d", service);
 		YAHOO_PRINT(sess, YAHOO_LOG_WARNING, buf);
 		break;
 	}
