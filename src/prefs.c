@@ -1313,6 +1313,12 @@ static GtkWidget *browser_radio(char *label, int which, GtkWidget *box, GtkWidge
 	return opt;
 }
 
+static void brentdes(GtkWidget *m, gpointer n)
+{
+	browser_entry = NULL;
+	new_window = NULL;
+}
+
 static void browser_page()
 {
 	GtkWidget *parent;
@@ -1347,6 +1353,7 @@ static void browser_page()
 	gtk_box_pack_start(GTK_BOX(box), browser_entry, FALSE, FALSE, 0);
 	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command);
 	gtk_signal_connect(GTK_OBJECT(browser_entry), "focus_out_event", GTK_SIGNAL_FUNC(manualentry_key_pressed), NULL);
+	gtk_signal_connect(GTK_OBJECT(browser_entry), "destroy", GTK_SIGNAL_FUNC(brentdes), NULL);
 	gtk_widget_show(browser_entry);
 
 	new_window = gaim_button(_("Pop up new window by default"), &general_options, OPT_GEN_BROWSER_POPUP, box);
