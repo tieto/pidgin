@@ -15,6 +15,7 @@ Group:		Applications/Internet
 Vendor:		Pimpin' Penguins
 Url:		http://www.marko.net/gaim/
 Source:		%{name}-%{version}.tar.gz
+Packager:	Rob Flynn <rob@tgflinux.com>
 BuildRoot:	/var/tmp/%{name}-%{version}-root
 Requires:	gtk+ >= 1.2.3
 
@@ -27,6 +28,10 @@ stored on AOL's servers and can be retrieved from anywhere.
 
 It contains many of the same features as AOL's IM client while at
 the same time incorporating many new features.
+
+Gaim also contains a multiple connection feature which consists of 
+protocol plugins.  These plugins allow you to use gaim to connect 
+to other chat services such as Yahoo!, ICQ, and IRC.
 
 %package applet
 Summary:	A Gnome client compatible with AOL's 'Instant Messenger'
@@ -42,6 +47,10 @@ stored on AOL's servers and can be retrieved from anywhere.
 
 It contains many of the same features as AOL's IM client while at
 the same time incorporating many new features.
+
+Gaim also contains a multiple connection feature which consists of 
+protocol plugins.  These plugins allow you to use gaim to connect 
+to other chat services such as Yahoo!, ICQ, and IRC.
 
 The applet sits in your Gnome panel. It has all the same functionality
 as the regular application but takes less desktop space.
