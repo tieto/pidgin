@@ -48,7 +48,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1479 $"
+#define REVISION "gaim"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -320,7 +320,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 		}
 
 		debug_printf("* Client sends TOC \"toc_signon\" message\n");
-		g_snprintf(snd, sizeof snd, "toc_signon %s %d %s %s %s \"%s\"",
+		g_snprintf(snd, sizeof snd, "toc_signon %s %d  %s %s %s \"%s\"",
 			   AUTH_HOST, AUTH_PORT, normalize(gc->username),
 			   roast_password(gc->password), LANGUAGE, REVISION);
 		if (sflap_send(gc, snd, -1, TYPE_DATA) < 0) {
