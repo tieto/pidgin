@@ -257,7 +257,7 @@ static struct prpl *my_protocol = NULL;
 
 static void icq_send_msg(struct gaim_connection *gc, char *who, char *msg, int away) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
-	icq_SendMessage(id->link, atol(who), msg, !away);
+	icq_SendMessage(id->link, atol(who), msg, ICQ_SEND_BESTWAY);
 }
 
 static void icq_keepalive(struct gaim_connection *gc) {
