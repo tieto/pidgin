@@ -483,8 +483,13 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		group      = gl->data;
 		field_list = gaim_request_field_group_get_fields(group);
 
-		frame = gaim_gtk_make_frame(vbox,
-									gaim_request_field_group_get_title(group));
+		if (gaim_request_field_group_get_title(group) != NULL) {
+			frame = gaim_gtk_make_frame(vbox,
+				gaim_request_field_group_get_title(group));
+		}
+		else {
+			frame = vbox;
+		}
 
 		field_count = g_list_length(field_list);
 
@@ -524,8 +529,10 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 				if (type != GAIM_REQUEST_FIELD_BOOLEAN) {
 					text = g_strdup_printf("%s:",
-										   gaim_request_field_get_label(field));
-					label = gtk_label_new(text);
+							gaim_request_field_get_label(field));
+
+					label = gtk_label_new(NULL);
+					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text);
 					g_free(text);
 
 					gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -668,10 +675,12 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 	g_object_unref(sg);
 
+#if 0
 	/* Separator */
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
+#endif
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();
