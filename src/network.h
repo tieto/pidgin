@@ -88,10 +88,10 @@ const char *gaim_network_get_local_system_ip(int fd);
 const char *gaim_network_get_ip_for_account(const GaimAccount *account, int fd);
 
 /**
- * Attempts to open a listening port ONLY on the specified port number.  
- * You probably want to use gaim_network_listen_range() instead of this.  
- * This function is useful, for example, if you wanted to write a telnet 
- * server as a Gaim plugin, and you had to listen on port 23.  Why anyone 
+ * Attempts to open a listening port ONLY on the specified port number.
+ * You probably want to use gaim_network_listen_range() instead of this.
+ * This function is useful, for example, if you wanted to write a telnet
+ * server as a Gaim plugin, and you HAD to listen on port 23.  Why anyone
  * would want to do that is beyond me.
  *
  * This opens a listening port. The caller will want to set up a watcher
@@ -100,18 +100,18 @@ const char *gaim_network_get_ip_for_account(const GaimAccount *account, int fd);
  * the listening socket, and add a new watcher on the new socket accept
  * returned.
  *
- * @param port The port number to bind to.
+ * @param port The port number to bind to.  Must be greater than 0.
  *
  * @return The file descriptor of the listening socket, or -1 if
  *         no socket could be established.
  */
-int gaim_network_listen(short port);
+int gaim_network_listen(unsigned short port);
 
 /**
- * Opens a listening port selected from a range of ports.  The range of 
+ * Opens a listening port selected from a range of ports.  The range of
  * ports used is chosen in the following manner:
  * If a range is specified in preferences, these values are used.
- * If a non-0 values are passed to the function as parameters, these 
+ * If a non-0 values are passed to the function as parameters, these
  * values are used.
  * Otherwise a port is chosen at random by the kernel.
  *
@@ -126,10 +126,11 @@ int gaim_network_listen(short port);
  * @param end The highest possible port in the range of ports to listen on,
  *            or 0 to pick a random port.  Users are allowed to override this
  *            arg in prefs.
+ *
  * @return The file descriptor of the listening socket, or -1 if
  *         no socket could be established.
  */
-int gaim_network_listen_range(short start, short end);
+int gaim_network_listen_range(unsigned short start, unsigned short end);
 
 /**
  * Gets a port number from a file descriptor.

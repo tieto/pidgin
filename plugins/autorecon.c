@@ -53,9 +53,9 @@ static void reconnect(GaimConnection *gc, void *m) {
 			info->delay = INITIAL;
 		} else {
 			info->delay = MIN(2 * info->delay, MAXTIME);
+			if (info->timeout != 0)
+				g_source_remove(info->timeout);
 		}
-		if (info->timeout != 0)
-			g_source_remove(info->timeout);
 		info->timeout = g_timeout_add(info->delay, do_signon, account);
 	} else if (info != NULL) {
 		g_hash_table_remove(hash, account);

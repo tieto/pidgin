@@ -2428,7 +2428,7 @@ void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
 		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 	}
 	if (size != -1) {
-		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+		span = g_malloc0(sizeof(GtkIMHtmlFormatSpan));
 		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		span->end = NULL;
 		span->buffer = imhtml->text_buffer;
@@ -2458,7 +2458,7 @@ void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
 		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 	}
 
-	span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	span = g_malloc0(sizeof(GtkIMHtmlFormatSpan));
 	span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 	span->end = NULL;
 	span->buffer = imhtml->text_buffer;
@@ -2487,7 +2487,7 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 	}
 
-	span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	span = g_malloc0(sizeof(GtkIMHtmlFormatSpan));
 	span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 	span->end = NULL;
 	span->tag = NULL;

@@ -375,8 +375,8 @@ static fu32_t oscar_encoding_parse(const char *encoding)
 		return AIM_IMFLAGS_UNICODE;
 	} else {
 		gaim_debug(GAIM_DEBUG_WARNING, "oscar",
-				   "Unrecognized character encoding '%s', falling back to ASCII\n", encoding);
-		return 0;
+				   "Unrecognized character encoding '%s', attempting to convert to utf8 anyway\n", encoding);
+		return 99;
 	}
 }
 
@@ -387,13 +387,19 @@ gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textle
 
 	switch (flags) {
 	case 0:
-		utf8 = g_strndup(text, textlen);
+		utf8 = g_convert(text, textlen, "UTF-8", "UTF-8", NULL, NULL, NULL);
 		break;
 	case AIM_IMFLAGS_ISO_8859_1:
 		utf8 = g_convert(text, textlen, "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
 		break;
 	case AIM_IMFLAGS_UNICODE:
 		utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
+		break;
+	case 99:
+		utf8 = g_convert(text, textlen, "UTF-8", encoding, NULL, NULL, NULL);
+		if (utf8 == NULL) {
+			utf8 = g_convert(text, textlen, "UTF-8", "UTF-8", NULL, NULL, NULL);
+		}
 		break;
 	}
 
