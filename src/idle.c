@@ -33,7 +33,7 @@
 #include <X11/extensions/scrnsaver.h>
 #include <gdk/gdkx.h>
 #else
-#include "IdleTracker.h"
+#include "idletrack.h"
 #endif
 #endif /* USE_SCREENSAVER */
 
@@ -41,6 +41,7 @@
 #include "gaim.h"
 #include "prpl.h"
 
+#define IDLEMARK 600   	/* 10 minutes! */
 
 gint check_idle(gpointer data)
 {
@@ -74,8 +75,7 @@ gint check_idle(gpointer data)
 		} else
 			idle_time = 0;
 #else
-		/* IdleTracker monitors usage of all other apps by setting a hook function */
-		idle_time = (GetTickCount() - IdleTrackerGetLastTickCount()) / 1000;
+		idle_time = (GetTickCount() - wgaim_get_lastactive()) / 1000;
 #endif
 	} else
 #endif /* USE_SCREENSAVER */
@@ -119,12 +119,12 @@ gint check_idle(gpointer data)
 		return TRUE;
 	}
 
-	if (idle_time > 600 && !gc->is_idle) {	/* 10 minutes! */
+	if (idle_time > IDLEMARK && !gc->is_idle) {
 		debug_printf("setting %s idle %d seconds\n", gc->username, idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
 		system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
-	} else if (idle_time < 600 && gc->is_idle) {
+	} else if (idle_time < IDLEMARK && gc->is_idle) {
 		debug_printf("setting %s unidle\n", gc->username);
 		serv_touch_idle(gc);
 		system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
