@@ -245,7 +245,12 @@ int yahoo_send_packet(struct yahoo_data *yd, struct yahoo_packet *pkt)
 	data = g_malloc0(len + 1);
 
 	memcpy(data + pos, "YMSG", 4); pos += 4;
-	pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
+
+	if (yd->wm)
+		pos += yahoo_put16(data + pos, YAHOO_WEBMESSENGER_PROTO_VER);
+	else
+		pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
+
 	pos += yahoo_put16(data + pos, 0x0000);
 	pos += yahoo_put16(data + pos, pktlen);
 	pos += yahoo_put16(data + pos, pkt->service);
@@ -278,7 +283,9 @@ int yahoo_send_packet_special(int fd, struct yahoo_packet *pkt, int pad)
 	data = g_malloc0(len + 1);
 
 	memcpy(data + pos, "YMSG", 4); pos += 4;
+
 	pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
+
 	pos += yahoo_put16(data + pos, 0x0000);
 	pos += yahoo_put16(data + pos, pktlen + pad);
 	pos += yahoo_put16(data + pos, pkt->service);

@@ -193,11 +193,10 @@ struct yahoo_packet {
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (48)
 
-#ifdef YAHOO_WEBMESSENGER
-#define YAHOO_PROTO_VER 0x0065
-#else
+
+#define YAHOO_WEBMESSENGER_PROTO_VER 0x0065
 #define YAHOO_PROTO_VER 0x000b
-#endif
+
 
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
 
