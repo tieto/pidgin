@@ -90,7 +90,9 @@ gaim_SOURCES = \
 	gtkutils.h \
 	html.c \
 	idle.c \
+	internal.h \
 	log.c \
+	log.h \
 	main.c \
 	md5.c \
 	md5.h \
@@ -114,11 +116,12 @@ gaim_LDADD = \
 	$(GTKSPELL_LIBS)
 
 gaim_remote_SOURCES = \
-	gaim-remote.c \
-	$(top_srcdir)/plugins/gaim-remote/remote-socket.c
+	gaim-remote.c
 
 gaim_remote_DEPENDENCIES = @LIBOBJS@
-gaim_remote_LDADD = @LIBOBJS@ $(GLIB_LIBS) $(INTLLIBS)
+gaim_remote_LDADD = \
+	@LIBOBJS@ $(GLIB_LIBS) $(INTLLIBS) \
+	-L$(top_builddir)/plugins/gaim-remote -lgaim-remote
 
 AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \

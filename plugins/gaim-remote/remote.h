@@ -96,7 +96,4 @@
 #define CUI_REMOTE_JOIN_CHAT    10       /* Joins a chat. */
                               /* What else?? */
 
-
-const char *gaim_remote_handle_uri(const char *uri);
-
 #endif /* _GAIM_REMOTE_H_ */

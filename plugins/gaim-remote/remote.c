@@ -56,7 +56,7 @@ static int gaim_session = 0;
 static GSList *uis = NULL;
 
 /* AIM URI's ARE FUN :-D */
-const char *
+static const char *
 gaim_remote_handle_uri(const char *uri)
 {
 	const char *username;
