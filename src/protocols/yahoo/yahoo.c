@@ -58,7 +58,7 @@ extern char *yahoo_crypt(const char *, const char *);
 
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
 
-static void yahoo_add_buddy(GaimConnection *gc, const char *who);
+static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *);
 
 static struct yahoo_friend *yahoo_friend_new()
 {
