@@ -950,6 +950,7 @@ if test "$enable_tcl" = yes; then
 	AM_CONDITIONAL(USE_TCL, true)
 	TCL_LIBS=$TCL_LIB_SPEC
 	AC_SUBST(TCL_LIBS)
+	AC_DEFINE(HAVE_TCL, [1], [Compile with support for the Tcl toolkit])
 	TCL_CFLAGS="$TCL_INCLUDE_SPEC -I$TCL_PREFIX/include"
 	if test "x$GCC" = "xyes"; then
 		TCL_CFLAGS="$TCL_CFLAGS -fno-strict-aliasing"
