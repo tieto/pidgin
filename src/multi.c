@@ -1141,6 +1141,7 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_entry_set_text(GTK_ENTRY(entry), gpi ? gpi->proxypass : "");
+	gtk_entry_set_visibility(GTK_ENTRY(entry),FALSE); /*show *'s for passwd*/
 	gtk_widget_show(entry);
 	ma->proxypass_entry = entry;
 
