@@ -1004,7 +1004,10 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
                                 		smiley[state+1] = 0;
                                 		buf2[y - state - 1] = 0;
                                 		y = 0;
-						face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_happy_xpm);	
+						if (!strcasecmp(smiley, ";)"))
+							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_wink_xpm);	
+						else
+							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_happy_xpm);	
 						gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 						gtk_html_add_pixmap(GTK_HTML(c->text), face, 0);			
                                 		state = 0;
