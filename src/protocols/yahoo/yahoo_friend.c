@@ -22,6 +22,7 @@
  */
 
 #include "prpl.h"
+#include "util.h"
 
 #include "yahoo_friend.h"
 
@@ -33,6 +34,41 @@ YahooFriend *yahoo_friend_new(void)
 	ret->status = YAHOO_STATUS_OFFLINE;
 
 	return ret;
+}
+
+YahooFriend *yahoo_friend_find(GaimConnection *gc, const char *name)
+{
+	struct yahoo_data *yd;
+	const char *norm;
+
+	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_val_if_fail(gc->proto_data != NULL, NULL);
+
+	yd = gc->proto_data;
+	norm = gaim_normalize(gaim_connection_get_account(gc), name);
+
+	return g_hash_table_lookup(yd->friends, norm);
+}
+
+YahooFriend *yahoo_friend_find_or_new(GaimConnection *gc, const char *name)
+{
+	YahooFriend *f;
+	struct yahoo_data *yd;
+	const char *norm;
+
+	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_val_if_fail(gc->proto_data != NULL, NULL);
+
+	yd = gc->proto_data;
+	norm = gaim_normalize(gaim_connection_get_account(gc), name);
+
+	f = g_hash_table_lookup(yd->friends, norm);
+	if (!f) {
+		f = yahoo_friend_new();
+		g_hash_table_insert(yd->friends, g_strdup(norm), f);
+	}
+
+	return f;
 }
 
 void yahoo_friend_free(gpointer p)

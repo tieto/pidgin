@@ -272,7 +272,6 @@ static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFrien
 static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = gc->proto_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
 	GSList *l = pkt->hash;
 	YahooFriend *f = NULL;
 	char *name = NULL;
@@ -313,11 +312,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 7: /* the current buddy */
 			name = pair->value;
-			f = g_hash_table_lookup(yd->friends, gaim_normalize(account, name));
-			if (!f) {
-				f = yahoo_friend_new();
-				g_hash_table_insert(yd->friends, g_strdup(gaim_normalize(account, name)), f);
-			}
+			f = yahoo_friend_find_or_new(gc, name);
 			break;
 		case 10: /* state */
 			if (!f)
@@ -591,10 +586,8 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 			buddies = g_strsplit(split[1], ",", -1);
 			for (bud = buddies; bud && *bud; bud++) {
 				norm_bud = g_strdup(gaim_normalize(account, *bud));
-				if (!(f = g_hash_table_lookup(yd->friends, norm_bud))) {
-					f = yahoo_friend_new();
-					g_hash_table_insert(yd->friends, g_strdup(norm_bud), f);
-				}
+				f = yahoo_friend_find_or_new(gc, norm_bud);
+
 				if (!(b = gaim_find_buddy(account, norm_bud))) {
 					if (!(g = gaim_find_group(grp))) {
 						g = gaim_group_new(grp);
@@ -650,8 +643,6 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *game = NULL;
 	YahooFriend *f = NULL;
 	GSList *l = pkt->hash;
-	GaimAccount *account = gaim_connection_get_account(gc);
-	struct yahoo_data *yd = (struct yahoo_data*) gc->proto_data;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -683,7 +674,7 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 					   "you to know.\n", from);
 		}
 
-		f = g_hash_table_lookup(yd->friends, gaim_normalize(account, from));
+		f = yahoo_friend_find(gc, from);
 		if (!f)
 			return; /* if they're not on the list, don't bother */
 
@@ -1755,7 +1746,6 @@ static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *decoded_group;
 	char *buf;
 	YahooFriend *f;
-	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 
 	while (l) {
@@ -1782,11 +1772,8 @@ static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
 		group = "";
 
 	if (!err || (err == 2)) { /* 0 = ok, 2 = already on serv list */
-		if (!g_hash_table_lookup(yd->friends, gaim_normalize(gaim_connection_get_account(gc), who))) {
-			f = yahoo_friend_new();
-			g_hash_table_insert(yd->friends, g_strdup(gaim_normalize(gaim_connection_get_account(gc), who)), f);
-			yahoo_update_status(gc, who, f);
-		}
+		f = yahoo_friend_find_or_new(gc, who);
+		yahoo_update_status(gc, who, f);
 		return;
 	}
 
@@ -2329,7 +2316,7 @@ static void yahoo_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 	  				     !(yd = gc->proto_data))
 		return;
 
-	f = g_hash_table_lookup(yd->friends, b->name);
+	f = yahoo_friend_find(gc, b->name);
 	if (!f) {
 		*se = "notauthorized";
 		return;
@@ -2428,7 +2415,7 @@ static void yahoo_game(GaimBlistNode *node, gpointer data) {
 	gc = gaim_account_get_connection(buddy->account);
 	yd = (struct yahoo_data *) gc->proto_data;
 
-	f = g_hash_table_lookup(yd->friends, buddy->name);
+	f = yahoo_friend_find(gc, buddy->name);
 	if (!f)
 		return;
 
@@ -2447,10 +2434,9 @@ static void yahoo_game(GaimBlistNode *node, gpointer data) {
 
 static char *yahoo_status_text(GaimBuddy *b)
 {
-	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
 	YahooFriend *f = NULL;
 
-	f = g_hash_table_lookup(yd->friends, b->name);
+	f = yahoo_friend_find(b->account->gc, b->name);
 	if (!f)
 		return g_strdup(_("Not on server list"));
 
@@ -2473,11 +2459,10 @@ static char *yahoo_status_text(GaimBuddy *b)
 
 char *yahoo_tooltip_text(GaimBuddy *b)
 {
-	struct yahoo_data *yd = (struct yahoo_data*)b->account->gc->proto_data;
 	YahooFriend *f;
 	char *escaped, *status, *ret;
 
-	f = g_hash_table_lookup(yd->friends, b->name);
+	f = yahoo_friend_find(b->account->gc, b->name);
 	if (!f)
 		status = g_strdup_printf("\n%s", _("Not on server list"));
 	else
@@ -2554,11 +2539,10 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 	GaimBlistNodeAction *act;
 
 	GaimConnection *gc = gaim_account_get_connection(buddy->account);
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	static char buf2[1024];
 	YahooFriend *f;
 
-	f = g_hash_table_lookup(yd->friends, buddy->name);
+	f = yahoo_friend_find(gc, buddy->name);
 
 	if (!f) {
 		act = gaim_blist_node_action_new(_("Add Buddy"),
@@ -2922,7 +2906,7 @@ static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *
 	gboolean remove = TRUE;
 	char *cg;
 
-	if (!(f = g_hash_table_lookup(yd->friends, who)))
+	if (!(f = yahoo_friend_find(gc, who)))
 		return;
 
 	buddies = gaim_find_buddies(gaim_connection_get_account(gc), who);
@@ -3028,7 +3012,7 @@ static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
 	/* Step 0:  If they aren't on the server list anyway,
 	 *          don't bother letting the server know.
 	 */
-	if (!g_hash_table_lookup(yd->friends, who))
+	if (!yahoo_friend_find(gc, who))
 		return;
 
 	/* If old and new are the same, we would probably

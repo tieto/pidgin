@@ -43,6 +43,8 @@ typedef struct _YahooFriend {
 } YahooFriend;
 
 YahooFriend *yahoo_friend_new(void);
+YahooFriend *yahoo_friend_find(GaimConnection *gc, const char *name);
+YahooFriend *yahoo_friend_find_or_new(GaimConnection *gc, const char *name);
 void yahoo_friend_free(gpointer p);
 
 #endif /* _YAHOO_FRIEND_H_ */
