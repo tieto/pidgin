@@ -51,7 +51,7 @@ typedef enum
 	GAIM_XFER_STATUS_STARTED,       /**< gaim_xfer_start has been called. */
 	GAIM_XFER_STATUS_DONE,          /**< The xfer completed successfully. */
 	GAIM_XFER_STATUS_CANCEL_LOCAL,  /**< The xfer was canceled by us. */
-	GAIM_XFER_STATUS_CANCEL_REMOTE /**< The xfer was canceled by the other end, or we couldn't connect. */
+	GAIM_XFER_STATUS_CANCEL_REMOTE  /**< The xfer was canceled by the other end, or we couldn't connect. */
 } GaimXferStatusType;
 
 /**
@@ -78,7 +78,7 @@ typedef struct
  */
 struct _GaimXfer
 {
-	guint ref;                    /**<The reference count.                 */
+	guint ref;                    /**< The reference count.                 */
 	GaimXferType type;            /**< The type of transfer.               */
 
 	GaimAccount *account;         /**< The account.                        */

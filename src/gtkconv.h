@@ -52,17 +52,17 @@ struct _GaimGtkWindow
 		GtkWidget *view_log;
 
 		GtkWidget *add_pounce;
-		GtkWidget *alias;
 		GtkWidget *get_info;
+		GtkWidget *warn;
 		GtkWidget *invite;
 
-		GtkWidget *insert_link;
-		GtkWidget *insert_image;
-
-		GtkWidget *warn;
+		GtkWidget *alias;
 		GtkWidget *block;
 		GtkWidget *add;
 		GtkWidget *remove;
+
+		GtkWidget *insert_link;
+		GtkWidget *insert_image;
 
 		GtkWidget *logging;
 		GtkWidget *sounds;
@@ -116,7 +116,6 @@ struct _GaimGtkChatPane
 {
 	GtkWidget *count;
 	GtkWidget *list;
-	GtkWidget *whisper;
 	GtkWidget *invite;
 	GtkWidget *topic_text;
 };

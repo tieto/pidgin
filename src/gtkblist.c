@@ -1678,7 +1678,7 @@ static GtkItemFactoryEntry blist_menu[] =
 {
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Buddies/New _Instant Message..."), "<CTL>I", show_im_dialog, 0, "<StockItem>", GAIM_STOCK_IM },
+	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", show_im_dialog, 0, "<StockItem>", GAIM_STOCK_IM },
 	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", join_chat, 0, "<StockItem>", GAIM_STOCK_CHAT },
 	{ N_("/Buddies/Get _User Info..."), "<CTL>J", show_info_dialog, 0, "<StockItem>", GAIM_STOCK_INFO },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
@@ -3204,8 +3204,15 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 		gaim_blist_add_buddy(b, NULL, g, NULL);
 		serv_add_buddy(gaim_account_get_connection(data->account), who, g);
 
+		/*
+		 * It really seems like it would be better if the call to serv_add_buddy() 
+		 * and gaim_conversation_update() were done in blist.c, possibly in the 
+		 * gaim_blist_add_buddy() function.  Maybe serv_add_buddy() should be 
+		 * renamed to gaim_blist_add_new_buddy() or something, and have it call 
+		 * gaim_blist_add_buddy() after it creates it.  --Mark
+		 */
+
 		if (c != NULL) {
-			/* This should be in blist.c somewhere... */
 			gaim_buddy_icon_update(gaim_conv_im_get_icon(GAIM_CONV_IM(c)));
 			gaim_conversation_update(c, GAIM_CONV_UPDATE_ADD);
 		}

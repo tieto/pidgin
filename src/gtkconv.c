@@ -2061,110 +2061,220 @@ static GdkPixbuf *get_tab_icon(GaimConversation *conv)
 	return status;
 }
 
+/*
+ * Makes sure all the menu items and all the buttons are hidden/shown and 
+ * sensitive/insensitve.  This is called after changing tabs and when an 
+ * account signs on or off.
+ */
 static void
-switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
-				gpointer user_data)
+gray_stuff_out(GaimConversation *conv)
 {
-	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConvWindow *win;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *gtkwin;
+	GaimGtkConversation *gtkconv;
 	GaimConnection *gc;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	GdkPixbuf *window_icon = NULL;
 
-	win = (GaimConvWindow *)user_data;
-
-	conv = gaim_conv_window_get_conversation_at(win, page_num);
-
-	g_return_if_fail(conv != NULL);
-
-	gc      = gaim_conversation_get_gc(conv);
+	win     = gaim_conversation_get_window(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
+	gc      = gaim_conversation_get_gc(conv);
 
 	if (gc != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	/* Update the menubar */
+	if (gtkwin->menu.send_as != NULL)
+		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
+
+	/*
+	 * Handle hiding and showing stuff based on what type of conv this is.
+	 */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+		/* Show stuff that applies to IMs, hide stuff that applies to chats */
+
+		/* Deal with buttons */
+		gtk_widget_show(gtkconv->info);
+		gtk_widget_show(gtkconv->send);
+		gtk_widget_show(gtkconv->u.im->warn);
+		gtk_widget_show(gtkconv->u.im->block);
+		gtk_widget_show(gtkconv->u.im->add);
+
+		/* Deal with the toolbar */
+		gtk_widget_show(gtkconv->toolbar.image);
+
+		/* Deal with menu items */
 		gtk_widget_show(gtkwin->menu.view_log);
 		gtk_widget_show(gtkwin->menu.add_pounce);
 		gtk_widget_show(gtkwin->menu.get_info);
-		gtk_widget_hide(gtkwin->menu.invite);
-
-		gtk_widget_show(gtkwin->menu.insert_link);
-
-		gtk_widget_show(gtkwin->menu.insert_image);
-		if (gc && prpl_info->options & OPT_PROTO_IM_IMAGE)
-			gtk_widget_set_sensitive(gtkwin->menu.insert_image, TRUE);
-		else
-			gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE);
-
 		gtk_widget_show(gtkwin->menu.warn);
-		if (gc && prpl_info->warn != NULL)
-			gtk_widget_set_sensitive(gtkwin->menu.warn, TRUE);
-		else
-			gtk_widget_set_sensitive(gtkwin->menu.warn, FALSE);
-
+		gtk_widget_hide(gtkwin->menu.invite);
+		gtk_widget_show(gtkwin->menu.alias);
 		gtk_widget_show(gtkwin->menu.block);
 
 		if (gaim_find_buddy(gaim_conversation_get_account(conv),
 				    gaim_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
-			gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
 		} else {
 			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkwin->menu.add);
-			gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
 		}
-		gtk_widget_set_sensitive(gtkwin->menu.add,    TRUE);
-		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
 
-		if (gtkwin->menu.send_as != NULL)
-			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
+		gtk_widget_show(gtkwin->menu.insert_link);
+		gtk_widget_show(gtkwin->menu.insert_image);
+	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		/* Show stuff that applies to IMs, hide stuff that applies to chats */
 
-		if (gtkconv->u.im->anim) {
-			window_icon = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
-			g_object_ref(window_icon);
-		} else {
-			window_icon = get_tab_icon(conv);
-		}
-	}
-	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		/* Deal with buttons */
+		gtk_widget_hide(gtkconv->info);
+		gtk_widget_show(gtkconv->send);
+		gtk_widget_show(gtkconv->u.chat->invite);
+
+		/* Deal with the toolbar */
+		gtk_widget_hide(gtkconv->toolbar.image);
+
+		/* Deal with menu items */
 		gtk_widget_hide(gtkwin->menu.view_log);
 		gtk_widget_hide(gtkwin->menu.add_pounce);
 		gtk_widget_hide(gtkwin->menu.get_info);
-		gtk_widget_show(gtkwin->menu.invite);
-
-		gtk_widget_show(gtkwin->menu.insert_link);
-
-		gtk_widget_hide(gtkwin->menu.insert_image);
-		gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
-
 		gtk_widget_hide(gtkwin->menu.warn);
+		gtk_widget_show(gtkwin->menu.invite);
+		gtk_widget_show(gtkwin->menu.alias);
 		gtk_widget_hide(gtkwin->menu.block);
 
 		if (gaim_blist_find_chat(gaim_conversation_get_account(conv),
 								 gaim_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
-			gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
 		} else {
 			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkwin->menu.add);
-			gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
 		}
-		gtk_widget_set_sensitive(gtkwin->menu.add,    TRUE);
-		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
 
-		if (gtkwin->menu.send_as != NULL)
-			g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
+		gtk_widget_show(gtkwin->menu.insert_link);
+		gtk_widget_hide(gtkwin->menu.insert_image);
+	}
+
+	/*
+	 * Handle graying stuff out based on whether an account is connected 
+	 * and what features that account supports.
+	 */
+	if (gc != NULL) {
+		/* Account is online */
+
+		/* Deal with buttons */
+		gtk_widget_set_sensitive(gtkconv->info, (prpl_info->get_info != NULL));
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+			gtk_widget_set_sensitive(gtkconv->send, TRUE);
+			gtk_widget_set_sensitive(gtkconv->u.im->warn,
+									 (prpl_info->warn != NULL));
+			gtk_widget_set_sensitive(gtkconv->u.im->block,
+									 (prpl_info->add_deny != NULL));
+			gtk_widget_set_sensitive(gtkconv->u.im->add, TRUE);
+		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+			gtk_widget_set_sensitive(gtkconv->send, (prpl_info->chat_send != NULL));
+			gtk_widget_set_sensitive(gtkconv->u.chat->invite,
+									 (prpl_info->chat_invite != NULL));
+		}
+
+		/* Deal with the toolbar */
+		gtk_widget_set_sensitive(gtkconv->toolbar.image,
+								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
+
+		/* Deal with menu items */
+		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.get_info, (prpl_info->get_info != NULL));
+		gtk_widget_set_sensitive(gtkwin->menu.warn, (prpl_info->warn != NULL));
+		gtk_widget_set_sensitive(gtkwin->menu.invite,
+								 (prpl_info->chat_invite != NULL));
+
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+			if (gaim_find_buddy(gaim_conversation_get_account(conv),
+					    gaim_conversation_get_name(conv)) == NULL)
+				gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
+			else
+				gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
+		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+			if (gaim_blist_find_chat(gaim_conversation_get_account(conv),
+									 gaim_conversation_get_name(conv)) == NULL)
+				gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
+			else
+				gtk_widget_set_sensitive(gtkwin->menu.alias, TRUE);
+		}
+
+		gtk_widget_set_sensitive(gtkwin->menu.block, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.add, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.remove, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.insert_image,
+								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
+	} else {
+		/* Account is offline */
+
+		/* Deal with buttons */
+		gtk_widget_set_sensitive(gtkconv->info, FALSE);
+		gtk_widget_set_sensitive(gtkconv->send, FALSE);
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+			gtk_widget_set_sensitive(gtkconv->u.im->warn, FALSE);
+			gtk_widget_set_sensitive(gtkconv->u.im->block, FALSE);
+			gtk_widget_set_sensitive(gtkconv->u.im->add, FALSE);
+		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+			gtk_widget_set_sensitive(gtkconv->u.chat->invite, FALSE);
+		}
+
+		/* Deal with the toolbar */
+		gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
+
+		/* Then deal with menu items */
+		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
+		gtk_widget_set_sensitive(gtkwin->menu.get_info, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.warn, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.invite, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.block, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.add, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.remove, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.insert_link, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE);
+	}
+
+	/*
+	 * Update the window's icon
+	 */
+	if ((gaim_conversation_get_type(conv) == GAIM_CONV_IM) && (gtkconv->u.im->anim)) {
+		window_icon = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		g_object_ref(window_icon);
+	} else {
 		window_icon = get_tab_icon(conv);
 	}
+	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), window_icon);
+	g_object_unref(G_OBJECT(window_icon));
+}
+
+static void
+switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
+				gpointer user_data)
+{
+	GaimConvWindow *win;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
+
+	win = (GaimConvWindow *)user_data;
+	conv = gaim_conv_window_get_conversation_at(win, page_num);
+
+	g_return_if_fail(conv != NULL);
+
+	gtkwin  = GAIM_GTK_WINDOW(win);
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
+
+	/* Update the menubar */
+	gray_stuff_out(conv);
 
 	update_typing_icon(conv);
 
@@ -2180,8 +2290,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
-	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), window_icon);
-	g_object_unref(G_OBJECT(window_icon));
 	gtk_window_set_title(GTK_WINDOW(gtkwin->window),
 			     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 }
@@ -2891,7 +2999,7 @@ static GtkItemFactoryEntry menu_items[] =
 	/* Conversation menu */
 	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>" },
 
-	{ N_("/Conversation/New _Instant Message..."), "<CTL>I", menu_new_conv_cb,
+	{ N_("/Conversation/New Instant _Message..."), "<CTL>M", menu_new_conv_cb,
 	  0, "<StockItem>", GAIM_STOCK_IM },
 
 	{ "/Conversation/sep0", NULL, NULL, 0, "<Separator>" },
@@ -5466,98 +5574,15 @@ gaim_gtkconv_update_font_face(GaimConversation *conv)
 void
 gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv)
 {
-	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConvWindow *win;
-	GaimGtkWindow *gtkwin = NULL;
-	GaimGtkConversation *gtkconv;
-	GaimConnection *gc;
 
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
 
-	gc      = gaim_conversation_get_gc(conv);
-	win     = gaim_conversation_get_window(conv);
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	win = gaim_conversation_get_window(conv);
 
-	if (win != NULL)
-		gtkwin = GAIM_GTK_WINDOW(win);
-
-	if (gc == NULL) {
-		gtk_widget_set_sensitive(gtkconv->send, FALSE);
-
-		if (win != NULL && gaim_conv_window_get_active_conversation(win) == conv) {
-			gtk_widget_set_sensitive(gtkwin->menu.insert_link, FALSE);
-		}
-	}
-	else {
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-		gtk_widget_set_sensitive(gtkconv->send, TRUE);
-
-		if (win != NULL)
-			gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
-
-		gtk_widget_set_sensitive(gtkconv->toolbar.bgcolor,
-				!(gc->flags & GAIM_CONNECTION_NO_BGCOLOR));
-	}
-
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-		if (gc == NULL) {
-			gtk_widget_set_sensitive(gtkconv->info,        FALSE);
-			gtk_widget_set_sensitive(gtkconv->u.im->warn,  FALSE);
-			gtk_widget_set_sensitive(gtkconv->u.im->block, FALSE);
-			gtk_widget_set_sensitive(gtkconv->u.im->add,   FALSE);
-
-			if (win != NULL &&
-				gaim_conv_window_get_active_conversation(win) == conv) {
-
-				gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE);
-			}
-
-			return;
-		}
-
-		gtk_widget_set_sensitive(gtkconv->info,
-								 (prpl_info->get_info != NULL));
-
-		gtk_widget_set_sensitive(gtkconv->toolbar.image,
-								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
-
-		if (win != NULL && gaim_conv_window_get_active_conversation(win) == conv) {
-			gtk_widget_set_sensitive(gtkwin->menu.insert_image,
-									 (prpl_info->options & OPT_PROTO_IM_IMAGE));
-		}
-
-		gtk_widget_set_sensitive(gtkconv->u.im->warn,
-								 (prpl_info->warn != NULL));
-
-		gtk_widget_set_sensitive(gtkconv->u.im->block,
-								 (prpl_info->add_deny != NULL));
-
-		update_convo_add_button(conv);
-	}
-	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
-		if (gc == NULL) {
-			if (gtkconv->u.chat->whisper != NULL)
-				gtk_widget_set_sensitive(gtkconv->u.chat->whisper, FALSE);
-
-			gtk_widget_set_sensitive(gtkconv->u.chat->invite,  FALSE);
-
-			return;
-		}
-
-		gtk_widget_set_sensitive(gtkconv->send, (prpl_info->chat_send != NULL));
-
-		gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
-		/* gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE); */
-
-		if (gtkconv->u.chat->whisper != NULL)
-			gtk_widget_set_sensitive(gtkconv->u.chat->whisper,
-									 (prpl_info->chat_whisper != NULL));
-
-		gtk_widget_set_sensitive(gtkconv->u.chat->invite,
-								 (prpl_info->chat_invite != NULL));
-	}
+	if (win != NULL && gaim_conv_window_get_active_conversation(win) == conv)
+		gray_stuff_out(conv);
 }
 
 GaimConvWindow *
