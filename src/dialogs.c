@@ -1163,7 +1163,7 @@ static void set_deny_mode(GtkWidget *w, int data)
 	do_export(current_deny_gc);
 }
 
-static GtkWidget *deny_opt(char *label, int which, GtkWidget *box, GtkWidget *set)
+static GtkWidget *deny_opt(char *label, int which, GtkWidget *set)
 {
 	GtkWidget *opt;
 
@@ -1173,7 +1173,7 @@ static GtkWidget *deny_opt(char *label, int which, GtkWidget *box, GtkWidget *se
 		opt =
 		    gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)),
 						    label);
-	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
+
 	g_signal_connect(GTK_OBJECT(opt), "toggled", G_CALLBACK(set_deny_mode), (void *)which);
 	gtk_widget_show(opt);
 	if (current_deny_gc->permdeny == which)
@@ -1443,6 +1443,7 @@ void show_privacy_options() {
 	GtkWidget *list;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
+	GtkWidget *table;
 
 	current_deny_gc = connections->data;	/* this is safe because this screen will only be
 						   available when there are connections */
@@ -1482,24 +1483,27 @@ void show_privacy_options() {
 
 	build_deny_menu();
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, TRUE, TRUE, 5);
-	gtk_widget_show(hbox);
+	table = gtk_table_new(5, 2, FALSE);
+	gtk_box_pack_start(GTK_BOX(box), table, TRUE, TRUE, 0);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 7);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+	gtk_widget_show(table);
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
-	gtk_widget_show(vbox);
+	deny_type = deny_opt(_("Allow all users to contact me"), 1, NULL);
+	gtk_size_group_add_widget(sg1, deny_type);
+	gtk_table_attach(GTK_TABLE(table), deny_type, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
+	
+	deny_type = deny_opt(_("Allow only users on my buddy list"), 5, deny_type);
+	gtk_size_group_add_widget(sg1, deny_type);
+	gtk_table_attach(GTK_TABLE(table), deny_type, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 
-	deny_type = deny_opt(_("Allow all users to contact me"), 1, vbox, NULL);
+	deny_type = deny_opt(_("Allow only the users below"), 3, deny_type);
 	gtk_size_group_add_widget(sg1, deny_type);
-	deny_type = deny_opt(_("Allow only the users below"), 3, vbox, deny_type);
-	gtk_size_group_add_widget(sg1, deny_type);
-	deny_type = deny_opt(_("Allow only users on my buddy list"), 5, vbox, deny_type);
-	gtk_size_group_add_widget(sg1, deny_type);
+	gtk_table_attach(GTK_TABLE(table), deny_type, 0, 1, 2, 3, GTK_FILL, 0, 0, 0);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+	gtk_table_attach(GTK_TABLE(table), sw, 0, 1, 3, 4, GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
 	gtk_widget_show(sw);
 
 	allow_store = gtk_list_store_new(1, G_TYPE_STRING);
@@ -1516,8 +1520,8 @@ void show_privacy_options() {
 	build_allow_list();
 
 	bbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
 	gtk_widget_show(bbox);
+	gtk_table_attach(GTK_TABLE(table), bbox, 0, 1, 4, 5, GTK_FILL, 0, 0, 0);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	gtk_size_group_add_widget(sg2, button);
@@ -1531,22 +1535,17 @@ void show_privacy_options() {
 	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_rem), (void *)TRUE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
-	gtk_widget_show(vbox);
+	deny_type = deny_opt(_("Deny all users"), 2, deny_type);
+	gtk_size_group_add_widget(sg1, deny_type);
+	gtk_table_attach(GTK_TABLE(table), deny_type, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
 
-	label = gtk_label_new("");
-	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5); /* FIXME: Bad temporary hack */
-	
-	deny_type = deny_opt(_("Deny all users"), 2, vbox, deny_type);
+	deny_type = deny_opt(_("Block the users below"), 4, deny_type);
 	gtk_size_group_add_widget(sg1, deny_type);
-	deny_type = deny_opt(_("Block the users below"), 4, vbox, deny_type);
-	gtk_size_group_add_widget(sg1, deny_type);
+	gtk_table_attach(GTK_TABLE(table), deny_type, 1, 2, 2, 3, GTK_FILL, 0, 0, 0);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+	gtk_table_attach(GTK_TABLE(table), sw, 1, 2, 3, 4, GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
 	gtk_widget_show(sw);
 
 	block_store = gtk_list_store_new(1, G_TYPE_STRING);
@@ -1563,7 +1562,7 @@ void show_privacy_options() {
 	build_block_list();
 
 	bbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_table_attach(GTK_TABLE(table), bbox, 1, 2, 4, 5, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(bbox);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
@@ -1582,157 +1581,18 @@ void show_privacy_options() {
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
 
-	hbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, TRUE, 0);
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
+
 	close_button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_widget_show(close_button);
 	gtk_box_pack_end(GTK_BOX(hbox), close_button, FALSE, FALSE, 0);
 	g_signal_connect_swapped(GTK_OBJECT(close_button), "clicked", G_CALLBACK(gtk_widget_destroy), pwin);
+	gtk_widget_show(close_button);
 
 	gtk_widget_show(pwin);
 	
 }
-
-void show_privacy_options_old()
-{
-	GtkWidget *pwin;
-	GtkWidget *box;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *vbox;
-	GtkWidget *sw;
-	GtkWidget *bbox;
-	GtkWidget *button;
-	GtkWidget *sep;
-	GtkWidget *close_button;
-
-	current_deny_gc = connections->data;	/* this is safe because this screen will only be
-						   available when there are connections */
-	current_is_deny = TRUE;
-
-	
-	privacy_win = pwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_policy(GTK_WINDOW(pwin), FALSE, TRUE, TRUE);
-	gtk_window_set_role(GTK_WINDOW(pwin), "privacy");
-	gtk_window_set_title(GTK_WINDOW(pwin), _("Gaim - Privacy"));
-	g_signal_connect(GTK_OBJECT(pwin), "destroy", G_CALLBACK(destroy_privacy), NULL);
-	gtk_widget_realize(pwin);
-
-	gtk_widget_set_usize(pwin, 0, 400);
-
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(box), 5);
-	gtk_container_add(GTK_CONTAINER(pwin), box);
-	gtk_widget_show(box);
-
-	label = gtk_label_new(_("Privacy settings are affected immediately."));
-	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	deny_conn_hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), deny_conn_hbox, FALSE, FALSE, 0);
-	gtk_widget_show(deny_conn_hbox);
-
-	label = gtk_label_new(_("Set privacy for:"));
-	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	deny_opt_menu = gtk_option_menu_new();
-	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), deny_opt_menu, FALSE, FALSE, 5);
-	g_signal_connect(GTK_OBJECT(deny_opt_menu), "destroy", G_CALLBACK(des_deny_opt), NULL);
-	gtk_widget_show(deny_opt_menu);
-
-	build_deny_menu();
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, TRUE, TRUE, 5);
-	gtk_widget_show(hbox);
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
-	gtk_widget_show(vbox);
-
-	deny_type = deny_opt(_("Allow all users to contact me"), 1, vbox, NULL);
-	deny_type = deny_opt(_("Allow only the users below"), 3, vbox, deny_type);
-	deny_type = deny_opt(_("Allow only users on my buddy list"), 5, vbox, deny_type);
-
-	label = gtk_label_new(_("Allow List"));
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
-	gtk_widget_show(sw);
-
-	allow_list = gtk_list_new();
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), allow_list);
-	gtk_widget_show(allow_list);
-
-	build_allow_list();
-
-	bbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
-	gtk_widget_show(bbox);
-
-	button = picture_button(pwin, _("Add"), gnome_add_xpm);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_add), (void *)TRUE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
-
-	button = picture_button(pwin, _("Remove"), gnome_remove_xpm);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_rem), (void *)TRUE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
-	gtk_widget_show(vbox);
-
-	deny_type = deny_opt(_("Deny all users"), 2, vbox, deny_type);
-	deny_type = deny_opt(_("Block the users below"), 4, vbox, deny_type);
-
-	label = gtk_label_new(_("Block List"));
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
-
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
-	gtk_widget_show(sw);
-
-	block_list = gtk_list_new();
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), block_list);
-	gtk_widget_show(block_list);
-
-	build_block_list();
-
-	bbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
-	gtk_widget_show(bbox);
-
-	button = picture_button(pwin, _("Add"), gnome_add_xpm);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_add), FALSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
-
-	button = picture_button(pwin, _("Remove"), gnome_remove_xpm);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pref_deny_rem), FALSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
-	gtk_widget_show(sep);
-
-	hbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
-	close_button = picture_button(pwin, _("Close"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), close_button, FALSE, FALSE, 5);
-	g_signal_connect_swapped(GTK_OBJECT(close_button), "clicked", G_CALLBACK(gtk_widget_destroy), pwin);
-
-	gtk_widget_show(pwin);
-}
-
- 
 
 /*------------------------------------------------------------------------*/
 /*  The dialog for new buddy pounces                                      */

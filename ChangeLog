@@ -120,6 +120,7 @@ version 0.60:
 		- About Dialog (Nathan Walp)
 		- i18n capable text input widget (Thanks Ethan Blanton, 
 		  David Odin, etc)
+		- Privacy dialog
 	* Read proxy environment variables. (Thanks, Christian Hammond)
 	* Fixed security vulnerability with manual browser option (Thanks,
 	  Robert McQueen)
