@@ -2311,7 +2311,9 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	gaim_debug(GAIM_DEBUG_MISC, "oscar",
-			   "Character set is %hu %hu\n", args->charset, args->charsubset);
+			   "Received message from %s with charset %hu %hu\n",
+			   userinfo->sn, args->charset, args->charsubset);
+
 	if (args->icbmflags & AIM_IMFLAGS_UNICODE) {
 		/* This message is marked as UNICODE, so we have to
 		 * convert it to utf-8 before handing it to the gaim core.
