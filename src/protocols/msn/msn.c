@@ -1288,8 +1288,8 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 		user = b->proto_data;
 
 		g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Has you"),
-							   (user->list_op & (1 << MSN_LIST_RL)) ? 
-							   _("yes") : _("no"));
+							   (user->list_op & (1 << MSN_LIST_RL)) ?
+							   _("Yes") : _("No"));
 	}
 
 	return g_string_free(s, FALSE);
