@@ -49,7 +49,7 @@ AC_ARG_ENABLE(nas,     [  --enable-nas            Enable NAS (Network Audio Syst
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile with out plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
-AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without  X screensaver extension],,enable_xss=yes)
+AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
 AM_CONDITIONAL(PLUGINS, test "x$enable_plugins" = "xyes")
 AC_ARG_ENABLE(,,,)
 
