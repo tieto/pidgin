@@ -41,7 +41,7 @@ of the information that's printed is useless anyway though; so the
 --enable-debug option really doesn't do a whole lot.
 
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-03-10 04:34:31 -0500 (Sat, 10 Mar 2001) $.
+$Date: 2001-03-19 17:40:07 -0500 (Mon, 19 Mar 2001) $.
 
 
 PROGRAM FLOW
@@ -129,7 +129,7 @@ away.c:
   (do_away_message); coming back (do_im_back); drawing the away window;
   etc. Away messages work really oddly due to multiple connections and
   multiple protocols; I think there are really only two or three people
-  who know it all they work and I don't think any of us know why it works
+  who know how it works and I don't think any of us know why it works
   that way.
 
 browser.c:
