@@ -41,11 +41,6 @@ struct _prompt {
 	void *data;
 };
 
-//struct _prpl_smiley {
-//	char *key;
-//	char *xpm; 
-//};
-
 struct prpl *find_prpl(int prot)
 {
 	GSList *e = protocols;
