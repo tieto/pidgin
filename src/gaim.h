@@ -28,6 +28,9 @@
 
 #include "core.h"
 #include "ui.h"
+
+#define XPATCH BAD /* Because Kalla Said So */
+
 /* XXX CUI: when this is done being split, the only things below should be things
  * both the core and the uis depend on e.g. the protocol definitions, etc, and
  * it won't include core.h or ui.h (i.e. it'll mostly be #define's) */
