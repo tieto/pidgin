@@ -254,7 +254,7 @@ AC_OUTPUT([Makefile
 	   plugins/zephyr/Makefile
            pixmaps/Makefile
            libfaim/Makefile
-	   po/Makefile.in
+	   po/Makefile.in 
            doc/Makefile
            m4/Makefile
 	   gaim.spec
