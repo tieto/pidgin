@@ -136,14 +136,13 @@ msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
 	MsnSlpMessage *slpmsg;
 	char *header;
 	char *content;
-	char *branch;
 
 	g_return_if_fail(slpcall != NULL);
 	g_return_if_fail(context != NULL);
 
 	slplink = slpcall->slplink;
 
-	branch = rand_guid();
+	slpcall->branch = rand_guid();
 
 	content = g_strdup_printf(
 		"EUF-GUID: {%s}\r\n"
@@ -158,7 +157,7 @@ msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
 	header = g_strdup_printf("INVITE MSNMSGR:%s MSNSLP/1.0",
 							 slplink->remote_user);
 
-	slpmsg = msn_slpmsg_sip_new(slpcall, 0, header, branch,
+	slpmsg = msn_slpmsg_sip_new(slpcall, 0, header, slpcall->branch,
 								"application/x-msnmsgr-sessionreqbody", content);
 #ifdef DEBUG_SLP
 	slpmsg->info = "SLP INVITE";
@@ -169,8 +168,6 @@ msn_slp_call_invite(MsnSlpCall *slpcall, const char *euf_guid,
 
 	g_free(header);
 	g_free(content);
-
-	g_free(branch);
 }
 
 void
