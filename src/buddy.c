@@ -54,6 +54,7 @@
 #include "pixmaps/im.xpm"
 #include "pixmaps/info.xpm"
 #include "pixmaps/away_icon.xpm"
+#include "pixmaps/away_small.xpm"
 
 #include "pixmaps/daemon-buddyadd.xpm"
 #include "pixmaps/daemon-buddydel.xpm"
@@ -1802,7 +1803,7 @@ void show_buddy_list()
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
 	awaymenu = gtk_menu_new();
-	menuitem = gaim_new_item(menu, _("Away"), NULL);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Away"), away_small_xpm, NULL);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), awaymenu);
         do_away_menu();
 

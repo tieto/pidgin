@@ -7,6 +7,7 @@ EXTRA_DIST =	add.xpm				\
 		aol_icon.xpm			\
 		away.xpm			\
 		away_icon.xpm			\
+		away_small.xpm			\
 		bgcolor.xpm			\
 		big.xpm				\
 		bigsmile.xpm			\
