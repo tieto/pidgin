@@ -350,7 +350,10 @@ static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount 
 	/* does this seem like a bad way to get this component of the path to anyone else? --Nathan */
 	prpl = GAIM_PLUGIN_PROTOCOL_INFO
 		(gaim_find_prpl(gaim_account_get_protocol_id(account)))->list_icon(account, NULL);
-	path = g_build_filename(gaim_user_dir(), "logs", prpl, me, gaim_normalize(account, name), NULL);
+	if(type == GAIM_LOG_SYSTEM)
+		path = g_build_filename(gaim_user_dir(),"logs", prpl, me, name, NULL);
+	else
+		path = g_build_filename(gaim_user_dir(),"logs", prpl, me, gaim_normalize(account, name), NULL);
 	g_free(me);
 
 	if (!(dir = g_dir_open(path, 0, NULL))) {
