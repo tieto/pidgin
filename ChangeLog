@@ -49,12 +49,12 @@ version 0.79cvs:
 	* The disconnected UI op was called twice on connection errors. Now
 	  it is only called once. (Evan Schoenberg)
 	* Dragging into conversation windows works better
-	* Protocol-specific settings for accounts were being removed whenever the
-	  account was modified. Now they're only removed when the protocol type
-	  changes, as it should be.
+	* Protocol-specific settings for accounts were being removed whenever
+	  the account was modified. Now they're only removed when the protocol
+	  type changes, as it should be.
 	* Zepher bug fixes and memory leak plugs (Arun A Tharuvai)
-	* Rewrite of MSN buddylist support, which fixed a known syncronization bug
-	  and some others (Felipe Contreras)
+	* Rewrite of MSN buddylist support, which fixed a known syncronization
+	  bug and some others (Felipe Contreras)
 
 version 0.78 (05/30/2004):
 	New Features:
@@ -69,8 +69,8 @@ version 0.78 (05/30/2004):
 	* Menu item to view conversation logs (Tom Samstag)
 	* Conversation and chat sizes automatically saved (Stu Tomlinson)
 	* Added support for Novell privacy settings (Mike Stoddard of Novell)
-	* Added ability to initiate multi-user conferences (chats) in Novell (Mike
-	  Stoddard of Novell)
+	* Added ability to initiate multi-user conferences (chats) in Novell
+	  (Mike Stoddard of Novell)
 	* Find and Save buttons on the debug window (Stu Tomlinson)
 	* Plugin Actions menu (Christopher (siege) O'Brien)
 	* Plugins can now add entries to the right-click menu of a group or chat
@@ -90,13 +90,15 @@ version 0.78 (05/30/2004):
 	* Massive rewrite of MSN support, which should fix a number of issues
 	  and make errors easier to interpret (Felipe Contreras)
 	* Fixed a privacy-related bug in MSN that affected blocking/permitting,
-	  which was due to case-sensitive string comparisons (Gudmundur Olafsson)
+	  which was due to case-sensitive string comparisons (Gudmundur
+	  Olafsson)
 	* Fixed an MSN HTTP method bug where MSN would queue data indefinitely.
 	  (Andrew Wellington)
 	* All known MSN formatting bugs were fixed.
 	* Overly long messages and paging cell phones in MSN no longer cause
 	  disconnects (Felipe Contreras)
-	* Several bug fixes for MSN's MSNSLP and MSNObject support (Finlay Dobbie)
+	* Several bug fixes for MSN's MSNSLP and MSNObject support (Finlay
+	  Dobbie)
 	* ALT-F works correctly in the System Log Viewer (Stu Tomlinson)
 	* New tabs should scroll correctly again (Tim Ringenbach)
 	* Dialogs opened from a conversation window are now closed when
@@ -123,15 +125,16 @@ version 0.78 (05/30/2004):
 	* Removed "Send URLs as links," default to yes (in protocols that
 	  support HTML)
 	* Removed "Show URLs as links," default to yes
-	* Removed New window height & width and Entry field height for Chats & IMs,
-	  sizes are now saved automatically
+	* Removed New window height & width and Entry field height for Chats &
+	  IMs, sizes are now saved automatically
 	* Removed "Tab-complete nicks" default to yes
 	* Removed "Old-style tab completion", no longer supported
 	* Removed "Sending message removes away status", default to no
 	* Removed "Show numbers in groups", default to yes
 	* Removed "Icons on tabs", default to yes
 	* Removed "Sounds when you log in", default to no
-	* Removed "Seconds before resending autoresponse", default to 600 seconds
+	* Removed "Seconds before resending autoresponse", default to 600
+          seconds
 	* Removed "Send autoresponse in active conversations", default to no
 	* Removed "Show people joining in window", default to yes
 	* Removed "Show people leaving in window", default to yes
@@ -141,8 +144,9 @@ version 0.77 (04/22/2004):
 	* The System Log returns (Ka-Hing Cheung)
 	* Added a conversation-drag-ended signal (Etan Reisner)
 	* Reorganized and cleaned up the MSN protocol plugin (Felipe Contreras)
-	* Added the -c option to specify location of the .gaim directory, removed
-	  the outdated -f option that no longer had any effect (Daniel Atallah)
+	* Added the -c option to specify location of the .gaim directory,
+	  removed the outdated -f option that no longer had any effect (Daniel
+	  Atallah)
 	* Novell GroupWise protocol support added (Novell)
 	* WYSIWYG improvements (Tim Ringenbach)
 	* WYSIWYG editing for user info (Jon Oberheide)
@@ -173,20 +177,23 @@ version 0.77 (04/22/2004):
 
 version 0.76 (04/01/2004):
 	New Features:
-	* WYSIWYG text input (with much help from Gary Kramlich and Kevin Stange)
+	* WYSIWYG text input (with much help from Gary Kramlich and Kevin
+	  Stange)
 	* Ability to be invisible on AIM
 	* Chatroom list support (Tim Ringenbach)
 	* Added auto-completion for screen names to the New Instant Message and
 	  Get User Info dialogs.
 	* Non-ascii character support in AIM chats (Uli Luckas and Marco Ziech)
-	* Vastly improved browser opening, with tab support! (Nathan Fredrickson)
+	* Vastly improved browser opening, with tab support! (Nathan
+	  Fredrickson)
 	* Added support for connecting to MSN using the port 80 method.
 	* Support for Mozilla Firefox (Chris Friesen and Nathan Fredrickson)
 	* Added protocol-specific preferences (Gary Kramlich)
 	* Local IP address information can be changed in Preferences
 	  (Tim Ringenbach)
 	* Improved local IP address detection (Tim Ringenbach)
-	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
+	* Offline accounts in account drop-down lists are now greyed (Etan
+	  Reisner)
 	* Improved accessibility support for screen readers and other
 	  accessibility tools (Marc Mulcahy)
 	* Improved accessibility in conversation windows (Nathan Fredrickson)
@@ -254,7 +261,8 @@ version 0.75 (01/09/2004):
 	* Improved i18n support for MSN email notification (Felipe Contreras)
 	* Jabber SASL PLAIN support
 	* Improved Jabber MUC (Chat) support
-	* Fixed an MSN login bug some people likely experienced (Felipe Contreras)
+	* Fixed an MSN login bug some people likely experienced (Felipe
+	  Contreras)
 	* Touch-up various dialogs to follow the Gnome Human Interface
 	  Guidelines more closely (Steven Garrity, Nathan Fredrickson, and
 	  Ka-Hing Cheung)
@@ -313,7 +321,7 @@ version 0.71 (10/09/2003):
 	* Get User Info in MSN and Yahoo now return an error indicating that
 	  the information doesn't exist if the profile is empty (parts by
 	  Nathan Poznick)
-	* Added startup notification support for window managers that support it.
+	* Added startup notification support for window managers that support it
 	* The protocol icon for an account in the accounts window will now
 	  "pulse" when signing the account on.
 	* Zephyr formatting fixes (Arun A. Tharuvai)
@@ -424,11 +432,13 @@ version 0.65 (07/16/2003):
 	  problems with some smiley themes.
 	* Chats in MSN can now be initiated by right-clicking a buddy and
 	  choosing Initiate Chat.
-	* MSN Alerts and incoming MSN pages no longer pop up several error dialogs
+	* MSN Alerts and incoming MSN pages no longer pop up several error
+	  dialogs
 	* Ability to view iChat "Available" messages for AIM
 	* Stores your buddy icon on the server for AIM
 	* Support for non-ascii characters with Yahoo! Messenger
-	* Focus returns to the input box when you click elsewhere, like it used to
+	* Focus returns to the input box when you click elsewhere, like it used
+	  to
 	* New typing notification icons from Ximian
 
 version 0.64 (05/29/2003):
