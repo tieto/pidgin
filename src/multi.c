@@ -164,6 +164,18 @@ static char *proto_name(int proto)
 		return "Unknown";
 }
 
+
+static void reorder_list(GtkCList *cl, int from, int to, void *p)
+{
+	struct aim_user *au;
+	if (from == to)
+		return; /* This shouldn't happen, but just in case */
+	au = (struct aim_user*)g_slist_nth_data(aim_users, from);
+	aim_users = g_slist_remove (aim_users, au);
+	aim_users = g_slist_insert(aim_users, au, to);
+	save_prefs();
+}
+
 void regenerate_user_list()
 {
 	char *titles[4];
@@ -201,11 +213,15 @@ static GtkWidget *generate_list()
 	gtk_clist_set_column_width(GTK_CLIST(list), 0, 90);
 	gtk_clist_set_selection_mode(GTK_CLIST(list), GTK_SELECTION_EXTENDED);
 	gtk_clist_column_titles_passive(GTK_CLIST(list));
+	
 	gtk_container_add(GTK_CONTAINER(win), list);
 	gtk_widget_show(list);
 
 	regenerate_user_list();
-
+	gtk_clist_set_reorderable (GTK_CLIST(list), TRUE);
+	gtk_clist_set_use_drag_icons (GTK_CLIST(list), TRUE);
+	gtk_signal_connect(GTK_OBJECT(list), "row-move", GTK_SIGNAL_FUNC(reorder_list), NULL);
+		
 	gtk_widget_show(win);
 	return win;
 }
@@ -923,7 +939,7 @@ static void acct_signin(GtkWidget *w, gpointer d)
 		l = l->next;
 	}
 }
-
+	
 static void do_del_acct(gpointer w, struct aim_user *u)
 {
 	if (u->gc) {
