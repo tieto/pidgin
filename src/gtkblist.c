@@ -2100,6 +2100,14 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 	g_object_unref(G_OBJECT(loader));
 
 	if (buf) {
+		GaimAccount *account = gaim_buddy_get_account(buddy);
+		GaimPluginProtocolInfo *prpl_info = NULL;
+		int orig_width, orig_height;
+		int scale_width, scale_height;
+
+		if(account && account->gc)
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+
 		if (greyed) {
 			GaimPresence *presence = gaim_buddy_get_presence(buddy);
 			if (!GAIM_BUDDY_IS_ONLINE(buddy))
@@ -2108,22 +2116,30 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 				gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.25, FALSE);
 		}
 
+		/* i'd use the gaim_gtk_buddy_icon_get_scale_size() thing,
+		 * but it won't tell me the original size, which I need for scaling
+		 * purposes */
+		scale_width = orig_width = gdk_pixbuf_get_width(buf);
+		scale_height = orig_height = gdk_pixbuf_get_height(buf);
+
+		gaim_buddy_icon_get_scale_size(prpl_info ? &prpl_info->icon_spec : NULL, &scale_width, &scale_height);
+
 		if (scaled) {
-			ret = gdk_pixbuf_scale_simple(buf,30,30, GDK_INTERP_BILINEAR);
-			g_object_unref(G_OBJECT(buf));
+			if(scale_height > scale_width) {
+				scale_width = 30.0 * (double)scale_width / (double)scale_height;
+				scale_height = 30;
+			} else {
+				scale_height = 30.0 * (double)scale_height / (double)scale_width;
+				scale_width = 30;
+			}
+
+			ret = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 30, 30);
+			gdk_pixbuf_fill(ret, 0x00000000);
+			gdk_pixbuf_scale(buf, ret, (30-scale_width)/2, (30-scale_height)/2, scale_width, scale_height, (30-scale_width)/2, (30-scale_height)/2, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
 		} else {
-			GaimAccount *account = gaim_buddy_get_account(buddy);
-			int scale_width, scale_height;
-			GaimPluginProtocolInfo *prpl_info = NULL;
-
-			if(account && account->gc)
-				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
-
-			gaim_gtk_buddy_icon_get_scale_size(buf, prpl_info ? &prpl_info->icon_spec : NULL, &scale_width, &scale_height);
-
 			ret = gdk_pixbuf_scale_simple(buf,scale_width,scale_height, GDK_INTERP_BILINEAR);
-			g_object_unref(G_OBJECT(buf));
 		}
+		g_object_unref(G_OBJECT(buf));
 	}
 
 	return ret;
@@ -3415,7 +3431,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 										 dte, 5,
 										 GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
- 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);
 
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-motion", G_CALLBACK(gaim_gtk_blist_drag_motion_cb), NULL);
