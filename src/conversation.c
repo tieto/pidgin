@@ -699,7 +699,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	if (general_options & OPT_GEN_BACK_ON_IM) {
 		if (awaymessage != NULL) {
 			do_im_back();
-		} else {
+		} else if (c->gc->away) {
 			serv_set_away(c->gc, GAIM_AWAY_CUSTOM, NULL);
 		}
 	}
