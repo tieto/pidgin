@@ -1961,6 +1961,7 @@ static void msn_login_connect(gpointer data, gint source, GaimInputCondition con
 static void msn_login(struct aim_user *user)
 {
 	struct gaim_connection *gc = new_gaim_conn(user);
+	struct msn_data *md = gc->proto_data = g_new0(struct msn_data, 1);
 
 	set_login_progress(gc, 1, _("Connecting"));
 
