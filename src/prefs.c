@@ -2366,7 +2366,7 @@ void show_prefs()
 {
 	GtkWidget *vbox;
 	GtkWidget *hpaned;
-	GtkWidget *scroll;
+	/* GtkWidget *scroll; */
 	GtkWidget *container;
 	GtkWidget *hbox;
 	GtkWidget *close;
@@ -2393,18 +2393,22 @@ void show_prefs()
 	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
 	gtk_widget_show(hpaned);
 
+	/*
 	scroll = gtk_scrolled_window_new(NULL, NULL);
 	gtk_paned_pack1(GTK_PANED(hpaned), scroll, FALSE, FALSE);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 	gtk_widget_set_usize(scroll, 125, -1);
 	gtk_widget_show(scroll);
+	*/
 
 	preftree = gtk_ctree_new(1, 0);
 	gtk_ctree_set_line_style(GTK_CTREE(preftree), GTK_CTREE_LINES_SOLID);
 	gtk_ctree_set_expander_style(GTK_CTREE(preftree), GTK_CTREE_EXPANDER_TRIANGLE);
 	gtk_clist_set_reorderable(GTK_CLIST(preftree), FALSE);
-	gtk_container_add(GTK_CONTAINER(scroll), preftree);
+	/* gtk_container_add(GTK_CONTAINER(scroll), preftree); */
+	gtk_paned_pack1(GTK_PANED(hpaned), preftree, FALSE, FALSE);
 	gtk_signal_connect(GTK_OBJECT(preftree), "tree_select_row", GTK_SIGNAL_FUNC(try_me), NULL);
+	gtk_widget_set_usize(preftree, 125, -1);
 	gtk_widget_show(preftree);
 
 	container = gtk_frame_new(NULL);
