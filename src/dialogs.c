@@ -415,7 +415,8 @@ void do_remove_buddy(struct buddy *b)
 	g = gaim_find_buddys_group(b);
 	name = g_strdup(b->name); /* b->name is null after remove_buddy */
 
-	debug_printf(_("Removing '%s' from buddy list.\n"), b->name);
+	gaim_debug(GAIM_DEBUG_INFO, "blist",
+			   "Removing '%s' from buddy list.\n", b->name);
 	serv_remove_buddy(b->account->gc, name, g->name);
 	gaim_blist_remove_buddy(b);
 	gaim_blist_save();
@@ -1191,7 +1192,8 @@ static void set_deny_mode(GtkWidget *w, int data)
 {
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		return;
-	debug_printf("setting deny mode %d\n", data);
+
+	gaim_debug(GAIM_DEBUG_INFO, "privacy", "Setting deny mode %d\n", data);
 	current_deny_gc->account->permdeny = data;
 	serv_set_permit_deny(current_deny_gc);
 	gaim_blist_save();
@@ -2702,10 +2704,11 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 			   text_color.green / 256,
 			   text_color.blue / 256);
 	gaim_gtk_surround(gtkconv, open_tag, "</FONT>");
-	debug_printf("#%02X%02X%02X\n",
-				 text_color.red / 256,
-				 text_color.green / 256,
-				 text_color.blue / 256);
+
+	gaim_debug(GAIM_DEBUG_MISC, "fgcolor dialog", "#%02X%02X%02X\n",
+			   text_color.red / 256,
+			   text_color.green / 256,
+			   text_color.blue / 256);
 	g_free(open_tag);
 	cancel_fgcolor(NULL, c);
 }
@@ -2732,10 +2735,11 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 			   text_color.green / 256,
 			   text_color.blue / 256);
 	gaim_gtk_surround(gtkconv, open_tag, "</BODY>");
-	debug_printf("#%02X%02X%02X\n",
-				 text_color.red / 256,
-				 text_color.green / 256,
-				 text_color.blue / 256);
+	gaim_debug(GAIM_DEBUG_MISC, "bgcolor dialog", "#%02X%02X%02X\n",
+			   text_color.red / 256,
+			   text_color.green / 256,
+			   text_color.blue / 256);
+
 	g_free(open_tag);
 	cancel_bgcolor(NULL, c);
 }
@@ -4126,7 +4130,8 @@ GtkWidget *gaim_pixbuf_button(char *text, char *iconfile, GaimButtonStyle style)
 	if (iconfile) {
 		char *filename;
 		filename = g_build_filename (DATADIR, "pixmaps", "gaim", "buttons", iconfile, NULL);
-		debug_printf("Loading: %s\n", filename);
+		gaim_debug(GAIM_DEBUG_MISC, "gaim_pixbuf_button",
+				   "Loading: %s\n", filename);
 		image = gtk_image_new_from_file(filename);
 		gtk_box_pack_end(GTK_BOX(ibox), image, FALSE, FALSE, 0);
 		g_free(filename);

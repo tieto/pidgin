@@ -163,7 +163,7 @@ send_typed(gpointer data)
 		/* XXX Somebody add const stuff! */
 		serv_send_typing(gc, (char *)name, TYPED);
 
-		debug_printf("typed...\n");
+		gaim_debug(GAIM_DEBUG_MISC, "conversation", "typed...\n");
 	}
 
 	return FALSE;
@@ -269,8 +269,10 @@ common_send(struct gaim_conversation *conv, const char *message)
 					id++;
 
 					if (stat(img_filename, &st) != 0) {
-						debug_printf("Could not stat %s\n",
-									 (char *)img_filename);
+						gaim_debug(GAIM_DEBUG_ERROR, "conversation",
+								   "Could not stat image %s\n",
+								   img_filename);
+
 						continue;
 					}
 
@@ -290,7 +292,8 @@ common_send(struct gaim_conversation *conv, const char *message)
 							   filename, id, (int)st.st_size);
 
 					if (strstr(buffy, imgtag) == 0) {
-						debug_printf("Not sending image: %s\n", img_filename);
+						gaim_debug(GAIM_DEBUG_ERROR, "conversation",
+								   "Not sending image: %s\n", img_filename);
 						continue;
 					}
 
@@ -314,7 +317,8 @@ common_send(struct gaim_conversation *conv, const char *message)
 					bigbuf = g_realloc(bigbuf, length + 1);
 
 					if ((imgfile = fopen(img_filename, "r")) == NULL) {
-						debug_printf("Could not open %s\n", img_filename);
+						gaim_debug(GAIM_DEBUG_ERROR, "conversation",
+								   "Could not open image %s\n", img_filename);
 						continue;
 					}
 
@@ -394,14 +398,18 @@ common_send(struct gaim_conversation *conv, const char *message)
 	g_free(buf);
 
 	if (err < 0) {
-		if (err == -E2BIG)
+		if (err == -E2BIG) {
 			do_error_dialog(_("Unable to send message. "
 							  "The message is too large."), NULL,
 							GAIM_ERROR);
-		else if (err == -ENOTCONN)
-			debug_printf("Not yet connected.\n");
-		else
+		}
+		else if (err == -ENOTCONN) {
+			gaim_debug(GAIM_DEBUG_ERROR, "conversation",
+					   "Not yet connected.\n");
+		}
+		else {
 			do_error_dialog(_("Unable to send message."), NULL, GAIM_ERROR);
+		}
 	}
 	else {
 		if (err > 0 && (away_options & OPT_AWAY_BACK_ON_IM)) {
@@ -693,7 +701,8 @@ gaim_window_move_conversation(struct gaim_window *win, unsigned int index,
 
 	if (l == NULL) {
 		/* Should never happen. */
-		debug_printf("Misordered conversations list in window %p\n", win);
+		gaim_debug(GAIM_DEBUG_ERROR, "conversation",
+				   "Misordered conversations list in window %p\n", win);
 
 		return;
 	}

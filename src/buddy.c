@@ -1720,7 +1720,9 @@ void gaim_gtk_blist_docklet_toggle() {
 		} else {
 			/* we're logging in or something... do nothing */
 			/* or should I make the blist? */
-			debug_printf("docklet_toggle called with connections but no blist!\n");
+			gaim_debug(GAIM_DEBUG_WARNING, "blist",
+					   "docklet_toggle called with connections "
+					   "but no blist!\n");
 		}
 	} else if (mainwindow) {
 		if (GTK_WIDGET_VISIBLE(mainwindow)) {

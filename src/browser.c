@@ -261,16 +261,18 @@ static GdkWindow *mozilla_remote_find_window()
 	}
 
 	if (!XQueryTree(gdk_display, root, &root2, &parent, &kids, &nkids)) {
-		debug_printf("%s: XQueryTree failed on display %s\n", progname,
-			     DisplayString(gdk_display));
+		gaim_debug(GAIM_DEBUG_ERROR, "browser",
+				   "%s: XQueryTree failed on display %s\n",
+				   progname, DisplayString(gdk_display));
 		return NULL;
 	}
 
 	/* root != root2 is possible with virtual root WMs. */
 
 	if (!(kids && nkids)) {
-		debug_printf("%s: root window has no children on display %s\n",
-			     progname, DisplayString(gdk_display));
+		gaim_debug(GAIM_DEBUG_ERROR, "browser",
+				   "%s: root window has no children on display %s\n",
+				   progname, DisplayString(gdk_display));
 		return NULL;
 	}
 
@@ -298,23 +300,27 @@ static GdkWindow *mozilla_remote_find_window()
 	XFree(kids);
 
 	if (result && tenative) {
-		debug_printf("%s: warning: both version %s (0x%x) and version\n"
-			     "\t%s (0x%x) are running.  Using version %s.\n",
-			     progname, tenative_version, (unsigned int)tenative,
-			     expected_mozilla_version, (unsigned int)result, expected_mozilla_version);
+		gaim_debug(GAIM_DEBUG_WARNING, "browser",
+				   "%s: both version %s (0x%x) and version %s (%0x%x) "
+				   "are running. Using version %s.\n",
+				   progname, tenative_version, (unsigned int)tenative,
+				   expected_mozilla_version, (unsigned int)result,
+				   expected_mozilla_version);
 		XFree(tenative_version);
 		return gdk_window_foreign_new(result);
 	} else if (tenative) {
-		debug_printf("%s: warning: expected version %s but found version\n"
-			     "\t%s (0x%x) instead.\n",
-			     progname, expected_mozilla_version,
-			     tenative_version, (unsigned int)tenative);
+		gaim_debug(GAIM_DEBUG_WARNING, "browser",
+				   "%s: expected version %s but found version %s (0x%x) "
+				   "instead.\n",
+				   progname, expected_mozilla_version,
+				   tenative_version, (unsigned int)tenative);
 		XFree(tenative_version);
 		return gdk_window_foreign_new(tenative);
 	} else if (result) {
 		return gdk_window_foreign_new(result);
 	} else {
-		debug_printf("%s: not running on display %s\n", progname, DisplayString(gdk_display));
+		gaim_debug(GAIM_DEBUG_ERROR, "%s: not running on display %s\n",
+				   progname, DisplayString(gdk_display));
 		return NULL;
 	}
 }
@@ -352,18 +358,20 @@ static void mozilla_remote_obtain_lock(GdkWindow * window)
 				  &actual_type, &actual_format, &nitems, &data)) {
 
 			/* It's not now locked - lock it. */
-		debug_printf("%s: (writing " MOZILLA_LOCK_PROP " \"%s\" to 0x%x)\n", 
-					 progname, lock_data, (unsigned int) window);
+		gaim_debug(GAIM_DEBUG_MISC, "browser",
+				   "%s: writing " MOZILLA_LOCK_PROP " \"%s\" to 0x%x\n",
+				   progname, lock_data, (unsigned int)window);
 
-			gdk_property_change(window, GDKA_MOZILLA_LOCK, 
-					    gdk_x11_xatom_to_atom (XA_STRING),
-					    8, PropModeReplace,
-					    (unsigned char *)lock_data, strlen(lock_data));
-			locked = True;
-		}
+		gdk_property_change(window, GDKA_MOZILLA_LOCK,
+							gdk_x11_xatom_to_atom (XA_STRING),
+							8, PropModeReplace,
+							(unsigned char *)lock_data, strlen(lock_data));
+		locked = True;
+	}
 
-			if (data)
-				g_free(data);
+	if (data)
+		g_free(data);
+
 	gdk_x11_ungrab_server();
 }
 
@@ -377,8 +385,9 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 	unsigned char *data = 0;
 	const char *lock_data = get_lock_data();
 
-	debug_printf("%s: (deleting " MOZILLA_LOCK_PROP
-		     " \"%s\" from 0x%x)\n", progname, lock_data, (unsigned int)window);
+	gaim_debug(GAIM_DEBUG_MISC, "browser",
+			   "%s: deleting " MOZILLA_LOCK_PROP " \"%s\" from 0x%x\n",
+			   progname, lock_data, (unsigned int)window);
 
 	result = gdk_property_get(window, GDKA_MOZILLA_LOCK, 
 				  gdk_x11_xatom_to_atom (XA_STRING),
@@ -386,15 +395,19 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 				  1, &actual_type, &actual_format, &nitems, &data);
 
 	if (result != TRUE) {
-		debug_printf("%s: unable to read and delete " MOZILLA_LOCK_PROP " property\n", progname);
+		gaim_debug(GAIM_DEBUG_ERROR, "browser",
+				   "%s: Unable to read and delete " MOZILLA_LOCK_PROP
+				   " property\n", progname);
 		return;
 	} else if (!data || !*data) {
-		debug_printf("%s: invalid data on " MOZILLA_LOCK_PROP
-			     " of window 0x%x.\n", progname, (unsigned int)window);
+		gaim_debug(GAIM_DEBUG_ERROR, "browser",
+				   "%s: Invalid data on " MOZILLA_LOCK_PROP
+				   " of wnidow 0x%x\n", progname, (unsigned int)window);
 		return;
 	} else if (strcmp((char *)data, lock_data)) {
-		debug_printf("%s: " MOZILLA_LOCK_PROP
-			     " was stolen!  Expected \"%s\", saw \"%s\"!\n", progname, lock_data, data);
+		gaim_debug(GAIM_DEBUG_ERROR, "browser",
+				   "%s: " MOZILLA_LOCK_PROP " was stolen! Expected \"%s\", "
+				   "saw \"%s\"!\n", progname, lock_data, data);
 		return;
 	}
 
@@ -412,7 +425,8 @@ static GdkFilterReturn netscape_response_cb(XEvent *event, GdkEvent *translated,
 	if (window == NULL || GDK_WINDOW_OBJECT(window)->destroyed) {
 		do_error_dialog(_("Communication with the browser failed.  Please close all "
 					      "windows and try again."), NULL, GAIM_ERROR);
-		debug_printf("netscape_response_cb called with NULL window.\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "browser",
+				   "netscape_response_cb called with NULL window.\n");
 		return GDK_FILTER_CONTINUE;
 	}
 
@@ -442,13 +456,15 @@ static GdkFilterReturn netscape_response_cb(XEvent *event, GdkEvent *translated,
 
     if (data[0] == '1') {
 		/* Netscape isn't ready yet */
-		debug_printf("Remote Netscape window isn't ready yet.\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "browser",
+				   "Remote Netscape window isn't ready yet.\n");
 		return GDK_FILTER_REMOVE;
 	} 
 	
 	if (data[0] == '2') {
 		/* Yay! It worked */ 
-		debug_printf("Successfully sent command to remote Netscape window.\n");
+		gaim_debug(GAIM_DEBUG_INFO, "browser",
+				   "Successfully sent command to remote Netscape window.\n");
 	}
 
 	gdk_window_remove_filter(window, (GdkFilterFunc) netscape_response_cb, window); 
@@ -476,8 +492,9 @@ static void mozilla_remote_command(GdkWindow * window, const char *command, Bool
 		command = new_command;
 	}
 
-	debug_printf("%s: (writing " MOZILLA_COMMAND_PROP " \"%s\" to 0x%x)\n",
-		     progname, command, (unsigned int)window);
+	gaim_debug(GAIM_DEBUG_MISC, "browser",
+			   "%s: Writing " MOZILLA_COMMAND_PROP " \"%s\" to 0x%x\n",
+			   progname, command, (unsigned int)window);
 
 	gdk_property_change(window, GDKA_MOZILLA_COMMAND, 
 			    gdk_x11_xatom_to_atom (XA_STRING), 
@@ -491,7 +508,8 @@ static gboolean netscape_command(const char *command)
  	GdkWindow *window = NULL;
  
  	if (netscape_lock) {
- 		debug_printf("netscape_command() is currently in use.\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "browser",
+				   "netscape_command() is currently in use.\n");
 		return FALSE;
 	}
 
@@ -501,7 +519,8 @@ static gboolean netscape_command(const char *command)
 	window = mozilla_remote_find_window();
 
 	if (window == NULL || (GDK_WINDOW_OBJECT(window)->destroyed == TRUE)) {
- 		debug_printf("Remote window absent or unsuitable.\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "browser",
+				   "Remote window absent or unsuitable.\n");
 		netscape_lock = 0;
 		return FALSE;
 	}

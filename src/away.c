@@ -65,7 +65,8 @@ static void dequeue_message(GtkTreeIter *iter)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(awayqueuestore), iter, 0, &name, -1);
 
-	debug_printf("Unqueueing messages from %s.\n", name);
+	gaim_debug(GAIM_DEBUG_INFO, "away", "Unqueueing messages from %s.\n",
+			   name);
 
 	templist = message_queue;
 

@@ -178,7 +178,8 @@ static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 		cui_packet_free(p);
 		break;
 	default:
-		debug_printf("unhandled meta subtype %d\n", subtype);
+		gaim_debug(GAIM_DEBUG_WARNING, "cui",
+				   "Unhandled meta subtype %d\n", subtype);
 		break;
 	}
 
@@ -208,7 +209,8 @@ static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
 		}
 		break;
 	default:
-		debug_printf("unhandled plugin subtype %d\n", subtype);
+		gaim_debug(GAIM_DEBUG_WARNING, "cui",
+				   "Unhandled plugin subtype %d\n", subtype);
 		break;
 	}
 #endif
@@ -240,7 +242,8 @@ static void user_handler(struct UI *ui, guchar subtype, guchar *data)
 		/* don't need to do anything here because the UI will get updates from other handlers */
 		break;
 	default:
-		debug_printf("unhandled user subtype %d\n", subtype);
+		gaim_debug(GAIM_DEBUG_WARNING, "cui",
+				   "Unhandled user subtype %d\n", subtype);
 		break;
 	}
 }
@@ -287,7 +290,8 @@ static void message_handler(struct UI *ui, guchar subtype, guchar *data)
 	case CUI_MESSAGE_RECV:
 		break;
 	default:
-		debug_printf("unhandled message subtype %d\n", subtype);
+		gaim_debug(GAIM_DEBUG_WARNING, "cui",
+				   "Unhandled message subtype %d\n", subtype);
 		break;
 	}
 }
@@ -329,7 +333,8 @@ static void remote_handler(struct UI *ui, guchar subtype, guchar *data, int len)
 		/* report error */
 		break;
 	default:
-		debug_printf("Unhandled remote subtype %d\n", subtype);
+		gaim_debug(GAIM_DEBUG_WARNING, "cui",
+				   "Unhandled remote subtype %d\n", subtype);
 		break;
 	}
 }
@@ -348,7 +353,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 
 	/* no byte order worries! this'll change if we go to TCP */
 	if (gaim_recv(source, &type, sizeof(type)) != sizeof(type)) {
-		debug_printf("UI has abandoned us!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		if(error) {
@@ -361,7 +366,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 	}
 
 	if (gaim_recv(source, &subtype, sizeof(subtype)) != sizeof(subtype)) {
-		debug_printf("UI has abandoned us!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		if(error) {
@@ -374,7 +379,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 	}
 
 	if (gaim_recv(source, (guchar *)&len, sizeof(len)) != sizeof(len)) {
-		debug_printf("UI has abandoned us!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
 		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		if(error) {
@@ -389,7 +394,7 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 	if (len) {
 		in = g_new0(guchar, len);
 		if (gaim_recv(source, in, len) != len) {
-			debug_printf("UI has abandoned us!\n");
+			gaim_debug(GAIM_DEBUG_ERROR, "cui", "UI has abandoned us!\n");
 			uis = g_slist_remove(uis, ui);
 			g_io_channel_shutdown(ui->channel, TRUE, &error);
 			if(error) {
@@ -432,8 +437,9 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 	        case CUI_TYPE_REMOTE:
 			remote_handler(ui, subtype, in, len);
 			break; 
-	        default:
-			debug_printf("unhandled type %d\n", type);
+        default:
+			gaim_debug(GAIM_DEBUG_WARNING, "cui",
+					   "Unhandled type %d\n", type);
 			break;
 	}
 
@@ -460,7 +466,7 @@ static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer 
 	ui->inpa = g_io_add_watch(ui->channel, G_IO_IN | G_IO_HUP | G_IO_ERR, UI_readable, ui);
 	g_io_channel_unref(ui->channel);
 
-	debug_printf("got one\n");
+	gaim_debug(GAIM_DEBUG_MISC, "cui", "Got one\n");
 	return TRUE;
 }
 
@@ -472,7 +478,7 @@ static gint open_socket()
 	while (gaim_session_exists(gaim_session))
 		gaim_session++;
 	
-	debug_printf("session: %d\n", gaim_session);
+	gaim_debug(GAIM_DEBUG_MISC, "cui", "Session: %d\n", gaim_session);
 	
 	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
 		mode_t m = umask(0177);
@@ -530,12 +536,13 @@ void core_quit()
 {
 	/* don't save prefs after plugins are gone... */
 #ifndef _WIN32
-	{
 	char buf[1024];
 	close(UI_fd);
-	sprintf(buf, "%s" G_DIR_SEPARATOR_S "gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
+	sprintf(buf, "%s" G_DIR_SEPARATOR_S "gaim_%s.%d",
+			g_get_tmp_dir(), g_get_user_name(), gaim_session);
+
 	unlink(buf);
-	debug_printf("Removed core\n");
-	}
+
+	gaim_debug(GAIM_DEBUG_MISC, "core", "Removed core\n");
 #endif
 }
