@@ -86,6 +86,7 @@ static void destroy_plugins(GtkWidget *w, gpointer data) {
 static void load_file(GtkWidget *w, gpointer data)
 {
 	char *buf = g_malloc(BUF_LEN);
+	FILE *fd;
  
 	if (plugin_dialog) {
 		g_free(buf);
@@ -99,13 +100,15 @@ static void load_file(GtkWidget *w, gpointer data)
 	gtk_file_selection_hide_fileop_buttons(
 					GTK_FILE_SELECTION(plugin_dialog));
 
-	if(getenv("PLUGIN_DIR") == NULL) {
-		g_snprintf(buf, BUF_LEN - 1, "%s/%s", getenv("HOME"), PLUGIN_DIR);
-	} else {
-		g_snprintf(buf, BUF_LEN - 1, "%s/", getenv("PLUGIN_DIR"));
-	}
+	g_snprintf(buf, BUF_LEN - 1, "%s/%s", getenv("HOME"), PLUGIN_DIR);
+	fd = fopen(buf, "r");
+	if (!fd)
+		mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
+	else
+		fclose(fd);
 
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(plugin_dialog), buf);
+	gtk_file_selection_complete(GTK_FILE_SELECTION(plugin_dialog), "*.so");
 	gtk_signal_connect(GTK_OBJECT(plugin_dialog), "destroy",
 			GTK_SIGNAL_FUNC(destroy_plugins), plugin_dialog);
 
@@ -135,8 +138,15 @@ void load_plugin(char *filename) {
 	char *(*cfunc)();
 	char *error;
 
+	if (filename == NULL) return;
 	plug = g_malloc(sizeof *plug);
-	plug->filename = g_strdup(filename);
+	if (filename[0] != '/') {
+		char *buf = g_malloc(BUF_LEN);
+		g_snprintf(buf, BUF_LEN - 1, "%s/%s", getenv("HOME"), PLUGIN_DIR);
+		plug->filename = g_malloc(strlen(buf) + strlen(filename) + 1);
+		sprintf(plug->filename, "%s%s", buf, filename);
+	} else
+		plug->filename = g_strdup(filename);
 	/* do NOT OR with RTLD_GLOBAL, otherwise plugins may conflict
 	 * (it's really just a way to work around other people's bad
 	 * programming, by not using RTLD_GLOBAL :P ) */
@@ -172,6 +182,7 @@ void load_plugin(char *filename) {
 		plug->description = NULL;
 
 	update_show_plugins();
+	save_prefs();
 }
 
 void show_plugins(GtkWidget *w, gpointer data) {
