@@ -732,6 +732,7 @@ silcgaim_view_motd(GaimPluginAction *action)
 static GList *
 silcgaim_actions(GaimPlugin *plugin, gpointer context)
 {
+	GaimConnection *gc = context;
 	GList *list = NULL;
 	GaimPluginAction *act;
 

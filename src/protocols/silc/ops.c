@@ -737,7 +737,7 @@ silc_command(SilcClient client, SilcClientConnection conn,
 	}
 }
 
-
+#if 0
 static void
 silcgaim_whois_more(SilcClientEntry client_entry, gint id)
 {
@@ -823,6 +823,7 @@ silcgaim_whois_more(SilcClientEntry client_entry, gint id)
 			 buf);
 	g_free(buf);
 }
+#endif
 
 /* Command reply handler. This function is called always in the command reply
    function. If error occurs it will be called as well. Normal scenario
