@@ -60,7 +60,12 @@ GETTEXT_VER=`gettextize --version | sed -n 's/^.*[0-9]\+\.\([0-9]\+\)\..*$/\1/p'
 if [ $GETTEXT_VER -eq 11 ]; then
 	mv -f m4 m4~
 
-	echo n | gettextize --copy --force --intl --no-changelog || abort
+	# Gettext is pure evil. It DEMANDS that we press Return no matter
+	# what. This gets rid of their happy "feature" of doom.
+	sed 's:read < /dev/tty::' `which gettextize` > gaim-gettextize
+	chmod +x gaim-gettextize
+	echo n | ./gaim-gettextize --copy --force --intl --no-changelog || abort
+	rm gaim-gettextize
 
 	# Now restore the things that brain-dead gettext modified.
 	[ -e configure.in~ ] && mv -f configure.in~ configure.in
