@@ -466,7 +466,7 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 
 	type = xmlnode_get_attrib(p->x, "type");
 
-	if (!type || !strcmp(type, "normal")) {
+	if (!type || !strcmp(type, "normal") || !strcmp(type, "chat")) {
 		from = jid_full(p->from);
 		if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
