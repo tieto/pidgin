@@ -301,18 +301,6 @@ common_send(GaimConversation *conv, const char *message)
 			gaim_notify_error(NULL, NULL, _("Unable to send message."), NULL);
 		}
 	}
-	else {
-		if (err > 0 &&
-			gaim_prefs_get_bool("/core/conversations/away_back_on_send")) {
-
-			if (awaymessage != NULL) {
-				do_im_back(NULL, NULL);
-			}
-			else if (gc->away) {
-				serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
-			}
-		}
-	}
 
 	g_free(displayed);
 	g_free(sent);
@@ -2608,7 +2596,6 @@ gaim_conversations_init(void)
 
 	/* Conversations */
 	gaim_prefs_add_none("/core/conversations");
-	gaim_prefs_add_bool("/core/conversations/away_back_on_send", TRUE);
 	gaim_prefs_add_bool("/core/conversations/use_alias_for_title", TRUE);
 	gaim_prefs_add_bool("/core/conversations/combine_chat_im", FALSE);
 

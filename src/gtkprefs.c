@@ -1612,10 +1612,6 @@ GtkWidget *away_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Away"));
-#if 0 /* PREFSLASH04 */
-	  gaim_gtk_prefs_checkbox(_("_Sending messages removes away status"),
-	  "/core/conversations/away_back_on_send", vbox);
-#endif /* PREFSLASH04 */
 	gaim_gtk_prefs_checkbox(_("_Queue new messages when away"),
 				   "/gaim/gtk/away/queue_messages", vbox);
 

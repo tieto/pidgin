@@ -889,8 +889,6 @@ static void gaimrc_read_options(FILE *f)
 					general_options & OPT_GEN_CHECK_SPELLING);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/raise_on_events",
 					general_options & OPT_GEN_POPUP_CHAT);
-			gaim_prefs_set_bool("/core/conversations/away_back_on_send",
-					general_options & OPT_GEN_BACK_ON_IM);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/html_shortcuts",
 					general_options & OPT_GEN_CTL_CHARS);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/smiley_shortcuts",
@@ -1132,8 +1130,6 @@ static void gaimrc_read_options(FILE *f)
 			}
 		} else if (!strcmp(p->option, "away_options")) {
 			away_options = atoi(p->value[0]);
-			gaim_prefs_set_bool("/core/conversations/away_back_on_send",
-					away_options & OPT_AWAY_BACK_ON_IM);
 			gaim_prefs_set_bool("/core/away/away_when_idle",
 					away_options & OPT_AWAY_AUTO);
 			gaim_prefs_set_bool("/core/away/auto_response/enabled",
