@@ -240,9 +240,13 @@ WinMain (struct HINSTANCE__ *hInstance,
         if((hmod=LoadLibrary("gaim.dll"))) {
                 gaim_main = (void*)GetProcAddress(hmod, "gaim_main");
         }
+        else
+                
 
         if(!gaim_main) {
-                MessageBox(NULL, "Error loading gaim.dll entry point.", NULL, MB_OK | MB_TOPMOST);
+                char errbuf[256];
+                sprintf(errbuf, "Error loading gaim.dll entry point. Error: %d", GetLastError());
+                MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
                 return 0;
         }
         else
