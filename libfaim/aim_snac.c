@@ -109,11 +109,12 @@ faim_internal struct aim_snac_t *aim_remsnac(struct aim_session_t *sess,
 faim_internal int aim_cleansnacs(struct aim_session_t *sess,
 				 int maxage)
 {
-  struct aim_snac_t *cur, *next, *prev = NULL;
-  time_t curtime;
   int i;
 
   for (i = 0; i < FAIM_SNAC_HASH_SIZE; i++) {
+    struct aim_snac_t *cur = NULL, *next = NULL, *prev = NULL;
+    time_t curtime;
+
     faim_mutex_lock(&sess->snac_hash_locks[i]);
     if (!sess->snac_hash[i]) {
       faim_mutex_unlock(&sess->snac_hash_locks[i]);
