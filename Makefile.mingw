@@ -40,7 +40,7 @@ NEEDED_DLLS = 		$(GTK_LIBS)/libgdk-win32-2.0-0.dll \
 			$(GTK_LIBS)/libpangoft2-1.0-0.dll \
 			$(GTK_LIBS)/libpangowin32-1.0-0.dll \
 			$(GTK_LIBS)/libatk-1.0-0.dll \
-			$(PERL_TOP)/perl56.dll
+			$(PERL_TOP)/perl56.dll \
 
 # For Gtk 2.0.3
 #			$(GTK_LIBS)/libjpeg6b.dll \
@@ -65,7 +65,8 @@ PIXMAPS_DIALOGS =	$(GAIM_PIXMAPS)/gaim_error.png \
 PIXMAPS_MENUS =	$(GAIM_PIXMAPS)/about_menu.png \
 			$(GAIM_PIXMAPS)/accounts-menu.png \
 			$(GAIM_PIXMAPS)/import-menu.png \
-			$(GAIM_PIXMAPS)/insert-image-small.png
+			$(GAIM_PIXMAPS)/insert-image-small.png \
+			$(GAIM_PIXMAPS)/insert-link-small.png
 
 PIXMAPS_BUTTONS =	$(GAIM_PIXMAPS)/edit.png \
 			$(GAIM_PIXMAPS)/accounts.png \
