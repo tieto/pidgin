@@ -228,6 +228,8 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	if(js->gsc) {
 		ret = gaim_ssl_write(js->gsc, data, len == -1 ? strlen(data) : len);
 	} else {
+		if(js->fd < 0)
+			return;
 		ret = write(js->fd, data, len == -1 ? strlen(data) : len);
 	}
 
@@ -371,6 +373,7 @@ jabber_login(GaimAccount *account)
 	gc->flags |= GAIM_CONNECTION_HTML;
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
+	js->fd = -1;
 	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
