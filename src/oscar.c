@@ -1625,6 +1625,7 @@ static gboolean redraw_anim(gpointer data)
 					gdk_pixbuf_frame_get_x_offset(frame),
 					gdk_pixbuf_frame_get_y_offset(frame),
 					-1, -1);
+			gdk_pixmap_unref(src);
 			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
 			gtk_widget_queue_draw(ir->pix);
 			gdk_gc_unref(gc);
@@ -1641,6 +1642,8 @@ static gboolean redraw_anim(gpointer data)
 			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
 			break;
 	}
+	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(bm);
 	ir->curframe = (ir->curframe + 1) % g_list_length(frames);
 	delay = gdk_pixbuf_frame_get_delay_time(frame);
 	ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
@@ -1810,6 +1813,8 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 				gtk_widget_set_usize(ir->pix, gdk_pixbuf_animation_get_width(ir->anim),
 							gdk_pixbuf_animation_get_height(ir->anim));
 			gtk_widget_show(ir->pix);
+			gdk_pixmap_unref(pm);
+			gdk_bitmap_unref(bm);
 
 			gdk_pixbuf_loader_close(load);
 
@@ -1946,7 +1951,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	va_end(ap);
 
 	if (info->membersince)
-		asc = g_strdup_printf("Member Since : <B>%s</B>\n",
+		asc = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
 				asctime(localtime(&info->membersince)));
 	else
 		asc = g_strdup("");
@@ -3204,6 +3209,8 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 		gtk_widget_set_usize(ir->pix, gdk_pixbuf_animation_get_width(ir->anim),
 					gdk_pixbuf_animation_get_height(ir->anim));
 	gtk_widget_show(ir->pix);
+	gdk_pixmap_unref(pm);
+	gdk_bitmap_unref(bm);
 
 	gdk_pixbuf_loader_close(load);
 #endif
