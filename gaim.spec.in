@@ -61,13 +61,13 @@ as the regular application but takes less desktop space.
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-gnome
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-gnome --disable-artsc
 make
 if [ -d $RPM_BUILD_ROOT ]; then rm -r $RPM_BUILD_ROOT; fi;
 mkdir -p $RPM_BUILD_ROOT%{prefix}
 make prefix=$RPM_BUILD_ROOT%{prefix} install
 make -C src mostlyclean-compile
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --sysconfdir=%{sysconfdir} --enable-distrib
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --sysconfdir=%{sysconfdir} --enable-distrib --disable-artsc
 make -C src gaim_applet
 
 %install
