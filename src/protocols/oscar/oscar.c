@@ -2793,8 +2793,9 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
-		idle = g_strdup_printf("Idle : <B>%hu minutes</B>",
-					info->idletime);
+		gchar *itime = sec_to_text(info->idletime*60);
+		idle = g_strdup_printf("Idle : <B>%s</B>", itime);
+		g_free(itime);
 	} else
 		idle = g_strdup("Idle: <B>Active</B>");
 
