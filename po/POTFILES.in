@@ -42,6 +42,7 @@ plugins/ticker/ticker.c
 plugins/win32/transparency/win2ktrans.c
 plugins/win32/winprefs/winprefs.c
 src/protocols/gg/common.c
+plugins/chkmail.c
 src/protocols/gg/gg.c
 src/protocols/gg/libgg.c
 src/protocols/icq/chatsession.c
@@ -239,3 +240,6 @@ src/win32/systray.c
 src/win32/untar.c
 src/win32/win32dep.c
 src/win32/wspell.c
+src/pounce.c
+src/win_gaim.c
+src/gtkpounce.c

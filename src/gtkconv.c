@@ -2556,10 +2556,15 @@ static GtkWidget *
 setup_menubar(struct gaim_window *win)
 {
 	struct gaim_gtk_window *gtkwin;
+	GtkAccelGroup *accel_group;
 	gtkwin = GAIM_GTK_WINDOW(win);
 
+        accel_group = gtk_accel_group_new ();
+        gtk_window_add_accel_group (GTK_WINDOW (gtkwin->window), accel_group);
+        g_object_unref (accel_group);
+
 	gtkwin->menu.item_factory = gtk_item_factory_new(GTK_TYPE_MENU_BAR,
-			"<main>", NULL);
+			"<main>", accel_group);
 
 	gtk_item_factory_set_translate_func (gtkwin->menu.item_factory,
 					     item_factory_translate_func,

@@ -86,7 +86,7 @@ void destroy_mail_list()
 
         while (list) {
                 w = (GtkWidget *)list->data;
-                if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, "Mail Server")) {
+                if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, _("Mail Server"))) {
                         gtk_tree_remove_items(GTK_TREE(buddies), list);
 			list = GTK_TREE(buddies)->children;
                         if (!list)
@@ -109,7 +109,7 @@ void setup_mail_list()
 
 	while (list) {
 		w = (GtkWidget *)list->data;
-		if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, "Mail Server")) {
+		if (!strcmp(GTK_LABEL(GTK_BIN(w)->child)->label, _("Mail Server"))) {
 			gtk_tree_remove_items(GTK_TREE(buddies), list);
 			list = GTK_TREE(buddies)->children;
 			if (!list)
@@ -118,7 +118,7 @@ void setup_mail_list()
 		list = list->next;
 	}
 
-	item = gtk_tree_item_new_with_label("Mail Server");
+	item = gtk_tree_item_new_with_label(_("Mail Server"));
 	tree = gtk_tree_new();
 	gtk_widget_show(item);
 	gtk_widget_show(tree);
@@ -128,7 +128,7 @@ void setup_mail_list()
 
 	buf = g_malloc(BUF_LONG);
 
-	g_snprintf(buf, BUF_LONG, "%s (%d new/%d total)", mailhost, lastnum - orig, lastnum);
+	g_snprintf(buf, BUF_LONG, _("%s (%d new/%d total)"), mailhost, lastnum - orig, lastnum);
 	item = gtk_tree_item_new_with_label(buf);
 	g_free(buf);
 
@@ -200,9 +200,9 @@ void gaim_plugin_remove() {
 }
 
 char *name() {
-	return "Check Mail";
+	return _("Check Mail");
 }
 
 char *description() {
-	return "Check email every X seconds.\n";
+	return _("Check email every X seconds.\n");
 }

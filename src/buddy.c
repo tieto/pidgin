@@ -731,7 +731,7 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
 			       !GAIM_BUDDY_IS_ONLINE(b) ? _("\n<b>Status:</b> Offline") : "",
 			       statustext ? "\n" : "", statustext ? statustext : "",
-				   !g_ascii_strcasecmp(b->name, "robflynn") ? "\n<b>Description:</b> Spooky" : "");
+				   !g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") : "");
 	
 	if(warning)
 		g_free(warning);

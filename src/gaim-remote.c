@@ -132,7 +132,7 @@ int command_uri() {
 	struct gaim_cui_packet *p = NULL;
 	fd = gaim_connect_to_session(0);
 	if (!fd) {
-		fprintf(stderr, "Gaim not running (on session 0)\n");
+		fprintf(stderr, _("Gaim not running (on session 0)\n"));
 		return 1;
 	}
 	p = cui_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_URI);
@@ -148,7 +148,7 @@ int command_quit() {
 	struct gaim_cui_packet *p = NULL;
 	fd = gaim_connect_to_session(0);
 	if (!fd) {
-		fprintf(stderr, "Gaim not running (on session 0)\n");
+		fprintf(stderr, _("Gaim not running (on session 0)\n"));
 		return 1;
 	}
 	p = cui_packet_new(CUI_TYPE_META, CUI_META_QUIT);
@@ -158,27 +158,33 @@ int command_quit() {
 	return 0;
 }
 
-void show_longhelp_uri(){
-	printf ("\n"
-
-	"Using AIM: URIs:\n"
-	"Sending an IM to a screenname:\n"
-	"	gaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
-	"In this case, 'Penguin' is the screenname we wish to IM, and 'hello world'\n"
-	"is the message to be sent.  '+' must be used in place of spaces.\n"
-	"Please note the quoting used above - if you run this from a shell the '&'\n"
-	"needs to be escaped, or the command will stop at that point.\n"
-	"Also,the following will just open a conversation window to a screenname,\n"
-	"with no message:\n"
-	"	gaim-remote uri aim:goim?screenname=Penguin\n\n"
-	"Joining a chat:\n"
-	"	gaim-remote uri aim:gochat?roomname=PenguinLounge\n"
-	"...joins the 'PenguinLounge' chat room.\n\n"
-	"Adding a buddy to your buddy list:\n"
-	"	gaim-remote uri aim:addbuddy?screenname=Penguin\n"
-	"...prompts you to add 'Penguin' to your buddy list.\n"
-	);
-	return;
+void show_longhelp_uri( char *name, char *command){
+	if(!strcmp(command, "uri")) {
+		printf (_("\n"
+			  "Using AIM: URIs:\n"
+			  "Sending an IM to a screenname:\n"
+			  "	gaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+			  "In this case, 'Penguin' is the screenname we wish to IM, and 'hello world'\n"
+			  "is the message to be sent.  '+' must be used in place of spaces.\n"
+			  "Please note the quoting used above - if you run this from a shell the '&'\n"
+			  "needs to be escaped, or the command will stop at that point.\n"
+			  "Also,the following will just open a conversation window to a screenname,\n"
+			  "with no message:\n"
+			  "	gaim-remote uri aim:goim?screenname=Penguin\n\n"
+			  "Joining a chat:\n"
+			  "	gaim-remote uri aim:gochat?roomname=PenguinLounge\n"
+			  "...joins the 'PenguinLounge' chat room.\n\n"
+			  "Adding a buddy to your buddy list:\n"
+			  "	gaim-remote uri aim:addbuddy?screenname=Penguin\n"
+			  "...prompts you to add 'Penguin' to your buddy list.\n")
+			);
+	}
+	else if(!strcmp(command, "quit")) {
+		printf (_("\nClose running copy of Gaim\n"));
+	}
+	else {
+		show_remote_usage(name);
+	}
 }
 
 /* Work in progress - JBS
@@ -190,6 +196,13 @@ int command_info(){
 int main (int argc, char *argv[])
 {
 
+#ifdef ENABLE_NLS
+	setlocale (LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset(PACKAGE, "UTF-8");
+	textdomain(PACKAGE);
+#endif
+
 	if (get_options(argc, argv)) {
 		show_remote_usage(argv[0]);
 		return 0;
@@ -198,14 +211,18 @@ int main (int argc, char *argv[])
 	
 	if (!strcmp(opts.command, "uri")) {
 		if(opts.help){
-			show_longhelp_uri();
+			show_longhelp_uri(argv[0], "uri");
 		}else{
 			return command_uri();
 		}
 /*	} else if (!strcmp(opts.command, "info")) {
 		return command_info();*/
 	} else if (!strcmp(opts.command, "quit")) {
-		return command_quit();
+		if(opts.help){
+			show_longhelp_uri(argv[0], "quit");
+		}else{
+			return command_quit();
+		}
 	} else {
 		show_remote_usage(argv[0]);
 		return 1;
