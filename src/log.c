@@ -514,6 +514,7 @@ static void html_logger_finalize(GaimLog *log)
 			fclose(data->file);
 		}
 		g_free(data->path);
+		g_free(data);
 	}
 }
 
@@ -648,6 +649,7 @@ static void txt_logger_finalize(GaimLog *log)
 			fclose(data->file);
 		if(data->path)
 			g_free(data->path);
+		g_free(data);
 	}
 }
 
