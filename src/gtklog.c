@@ -32,6 +32,7 @@
 #include "log.h"
 
 static GHashTable *log_viewers = NULL;
+static void populate_log_tree(GaimGtkLogViewer *lv);
 
 struct log_viewer_hash_t {
 	char *screenname;
@@ -61,17 +62,67 @@ static gint log_viewer_equal(gconstpointer y, gconstpointer z)
 	return ret;
 }
 
+static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
+{
+	const char *search_term = gtk_entry_get_text(GTK_ENTRY(lv->entry));
+	GList *logs;
+	GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+	
+	if (lv->search)
+		g_free(lv->search);
+	
+       	gtk_tree_store_clear(lv->treestore);
+	if (strlen(search_term) == 0) {/* reset the tree */
+		populate_log_tree(lv);
+		lv->search = NULL;
+		gtk_imhtml_search_clear(lv->imhtml);
+		return;
+	}
+	
+	lv->search = g_strdup(search_term);
+	
+	gdk_window_set_cursor(lv->window->window, cursor);
+	while (gtk_events_pending())
+		gtk_main_iteration();
+	gdk_cursor_unref(cursor);
+	
+	for (logs = lv->logs; logs != NULL; logs = logs->next) {
+		char *read = gaim_log_read((GaimLog*)logs->data, NULL);
+		if (gaim_strcasestr(read, search_term)) {
+			GtkTreeIter iter;
+			GaimLog *log = logs->data;
+			char title[64];
+			strftime(title, sizeof(title), "%c", localtime(&log->time));
+			gtk_tree_store_append (lv->treestore, &iter, NULL);
+			gtk_tree_store_set(lv->treestore, &iter,
+					   0, title,
+					   1, log, -1);	
+		}
+	}
+	
+	
+	cursor = gdk_cursor_new(GDK_LEFT_PTR);
+	gdk_window_set_cursor(lv->window->window, cursor);
+	gdk_cursor_unref(cursor);
+}
+
 static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 	GaimGtkLogViewer *lv = g_hash_table_lookup(log_viewers, ht);
 
 	g_hash_table_remove(log_viewers, ht);
 	g_free(ht->screenname);
 	g_free(ht);
-	for (;lv->logs;lv->logs = lv->logs->next) {
+	while (lv->logs) {
 		GaimLog *log = lv->logs->data;
+		GList *logs2;
 		g_free(log->name);
 		g_free(log);
+		logs2 = lv->logs->next;
+		g_list_free_1(lv->logs);
+		lv->logs = logs2;
 	}
+	if (lv->search)
+		g_free(lv->search);
 	g_free(lv);		
 	gtk_widget_destroy(w);
 
@@ -107,6 +158,10 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
        	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read, 
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL | 
 			       ((flags & GAIM_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
+
+	if (viewer->search)
+		gtk_imhtml_search_find(viewer->imhtml, viewer->search);
+	
 	g_free(read);
 	g_free(title);
 }
@@ -235,6 +290,9 @@ void gaim_gtk_log_show(const char *screenname, GaimAccount *account) {
 	lv->entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), lv->entry, TRUE, TRUE, 0);
 	button = gtk_button_new_from_stock(GTK_STOCK_FIND);
+	g_signal_connect (G_OBJECT (button), "pressed",
+			  G_CALLBACK (search_cb),
+			  lv);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(lv->window);

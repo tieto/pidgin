@@ -42,6 +42,7 @@ struct _GaimGtkLogViewer {
 	GtkWidget    *entry;       /**< The search entry, in which search terms are
 				    *   entered                                  */
 	GaimLogReadFlags flags;     /**< The most recently used log flags         */
+	char *search;              /**< The string currently being searched for */
 };
 
 
