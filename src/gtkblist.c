@@ -1253,7 +1253,7 @@ create_chat_menu (GaimBlistNode *node,
 			list = list->next;
 		}
 	}
-	gaim_signal_emit(GAIM_GTK_BLIST(gaim_get_blist()),
+	gaim_signal_emit(gaim_gtk_blist_get_handle(),
 			"drawing-menu", menu, c);
 
 	gaim_separator(menu);
@@ -2508,7 +2508,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		if(accounttext)
 			g_free(accounttext);
 	}
-	gaim_signal_emit(GAIM_GTK_BLIST(gaim_get_blist()),
+	gaim_signal_emit(gaim_gtk_blist_get_handle(),
 			 "drawing-tooltip", node, &text);
 	return text;
 }
