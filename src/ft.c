@@ -121,11 +121,6 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 			gaim_xfer_request_accepted(xfer, filename);
 		}
 		else {
-			/*
-			 * XXX - I believe this will never happen when using
-			 * gaim_request_file() because filename is always an
-			 * existing file.  Someone verify that.  --Mark
-			 */
 			gaim_notify_error(NULL, NULL,
 							  _("That file does not exist."), NULL);
 
