@@ -344,11 +344,20 @@ static void oscar_callback(gpointer data, gint source,
 				GdkInputCondition condition) {
 	struct aim_conn_t *conn = (struct aim_conn_t *)data;
 	struct gaim_connection *gc = find_gaim_conn_by_oscar_conn(conn);
-	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	struct oscar_data *odata;
+
+	if (!gc) {
+	  /* gc is null. we return, else we seg SIGSEG on next line. */
+	  debug_printf("oscar callback for closed connection (1).\n");
+	  return;
+	}
+      
+	odata = (struct oscar_data *)gc->proto_data;
+
 	if (!g_slist_find(connections, gc)) {
-		/* oh boy. this is probably bad. i guess the only thing we can really do
-		 * is return? */
-		debug_printf("oscar callback for closed connection.\n");
+		/* oh boy. this is probably bad. i guess the only thing we 
+		 * can really do is return? */
+		debug_printf("oscar callback for closed connection (2).\n");
 		return;
 	}
 
