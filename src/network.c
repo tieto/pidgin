@@ -154,7 +154,7 @@ gaim_network_do_listen(unsigned short port)
 #if HAVE_GETADDRINFO
 	int errnum;
 	struct addrinfo hints, *res, *next;
-	char serv[5];
+	char serv[6];
 
 	/*
 	 * Get a list of addresses on this machine.
