@@ -17,7 +17,7 @@ plugindir = $(libdir)/gaim
 
 if PRPLS
 
-SUBDIRS = yay icq msn jabber
+SUBDIRS = yay icq msn jabber zephyr
 
 prpls = irc.so napster.so
 

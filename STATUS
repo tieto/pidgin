@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-03-27 16:01:29 -0500 (Tue, 27 Mar 2001) $ by
+STATUS of GAIM CVS tree. Last modified $Date: 2001-04-12 05:21:16 -0400 (Thu, 12 Apr 2001) $ by
 $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
@@ -145,3 +145,13 @@ people to your hotlist (buddylist) as well as chat privately and in chat rooms.
 You can search for files and browse a list of other user's files.  You can
 currently download files as long as the person you're retrieving files from
 is not firewalled.
+
+
+Zephyr (Eric)
+======
+Let me start off by saying how much I really despise Zephyr. They do a lot of
+things that make me realize why this never caught on. For those of you who are
+unfortunate enough to feel compelling need to use this, gaim now has a Zephyr
+plugin. It can currently sign on/off, handles presence/buddy lists (it even
+imports your .anyone file!), and can send/receive personal messages. A lot of
+stuff is missing, this is just a real rough first stab at it.
