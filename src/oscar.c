@@ -1634,7 +1634,8 @@ static gboolean redraw_anim(gpointer data)
 			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
 			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
 			gdk_pixmap_unref(pm);
-			gdk_bitmap_unref(bm);
+			if (bm)
+				gdk_bitmap_unref(bm);
 			break;
 		case GDK_PIXBUF_FRAME_REVERT:
 			frame = frames->data;
@@ -1642,7 +1643,8 @@ static gboolean redraw_anim(gpointer data)
 			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
 			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
 			gdk_pixmap_unref(pm);
-			gdk_bitmap_unref(bm);
+			if (bm)
+				gdk_bitmap_unref(bm);
 			break;
 	}
 	ir->curframe = (ir->curframe + 1) % g_list_length(frames);
@@ -3212,7 +3214,8 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 					gdk_pixbuf_animation_get_height(ir->anim));
 	gtk_widget_show(ir->pix);
 	gdk_pixmap_unref(pm);
-	gdk_bitmap_unref(bm);
+	if (bm)
+		gdk_bitmap_unref(bm);
 
 	gdk_pixbuf_loader_close(load);
 #endif
