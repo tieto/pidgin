@@ -52,9 +52,10 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 9  Development
 	9.1  Where should I report bugs?
-	9.2  Did you guys reverse engineer it?
-	9.3  Will Gaim be ported to Windows 95/98/Me/2000/XP?
-	9.4  Will there be a QT dock app?
+	9.2  Where should I submit patches?
+	9.3  Did you guys reverse engineer it?
+	9.4  Will Gaim be ported to Windows 95/98/Me/2000/XP?
+	9.5  Will there be a QT dock app?
 
 10  Misc. Questions
 	10.1  Does AOL's attempts at blocking Trillian affect Gaim?
@@ -447,21 +448,26 @@ mv ~/.gaim/SCREENNAME.0.blist ~/
   http://gaim.sf.net/bug.php
 
 
-9.2  Did you guys reverse engineer it?
+9.2  Where should I submit patches?
+
+  http://gaim.sf.net/patches.php
+
+
+9.3  Did you guys reverse engineer it?
 
   TOC, Jabber, MSN, Napster, and IRC are published protocols, so we didn't
   have to reverse engineer those. Oscar, ICQ, and Yahoo are not published,
   and were reverse engineered by other people.
 
 
-9.3  Will Gaim be ported to Windows 95/98/Me/2000/XP?
+9.4  Will Gaim be ported to Windows 95/98/Me/2000/XP?
 
   When GTK+ 2.0 comes out and compiles well against Cygwin, and Gaim has
   been ported to it, Gaim should work. It will not happen before GTK+ 2.0
   is ported to Windows, though.
 
 
-9.4  Will there be a QT dock app?
+9.5  Will there be a QT dock app?
 
   Right now Gaim, is done entirely in C and GTK+, so a QT dock app is not
   in planned. You can either write a patch to do this yourself, or wait
