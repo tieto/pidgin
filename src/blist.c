@@ -754,8 +754,8 @@ void  gaim_blist_remove_group (struct group *group)
 									   "removed.\n", 
 									   "%d buddies from group %s were not "
 									   "removed because their accounts were "
-									   " not logged in.  These buddies and "
-									    "the group were not removed.\n", count),
+									   "not logged in.  These buddies and "
+									   "the group were not removed.\n", count),
 							  count, group->name);
 		gaim_notify_error(NULL, NULL, _("Group not removed"), buf);
 		g_free(buf);
