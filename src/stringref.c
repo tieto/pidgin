@@ -71,7 +71,7 @@ void gaim_stringref_unref(GaimStringref *stringref)
 		g_free(stringref);
 }
 
-const char *gaim_stringref_value(GaimStringref *stringref)
+const char *gaim_stringref_value(const GaimStringref *stringref)
 {
 	return (stringref == NULL ? NULL : stringref->value);
 }

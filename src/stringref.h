@@ -93,6 +93,6 @@ void gaim_stringref_unref(GaimStringref *stringref);
  *
  * @return The contents of the string reference.
  */
-const char *gaim_stringref_value(GaimStringref *stringref);
+const char *gaim_stringref_value(const GaimStringref *stringref);
 
 #endif /* _GAIM_STRINGREF_H_ */
