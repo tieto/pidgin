@@ -1110,7 +1110,8 @@ GList *gaim_conv_placement_get_options(void);
  * @param name The name of the function.
  * @param fnc  A pointer to the function.
  */
-void gaim_conv_placement_add_fnc(const char *id, const char *name, GaimConvPlacementFunc fnc);
+void gaim_conv_placement_add_fnc(const char *id, const char *name,
+								 GaimConvPlacementFunc fnc);
 
 /**
  * Removes a conversation placement function from the list of possible
