@@ -1,8 +1,6 @@
 
 EXTRA_DIST = gaim.spec gaim_applet.gnorba gaim_applet.desktop gaim_applet.soundlist \
-	buddytrans plugins/CRAZY plugins/HOWTO plugins/Makefile plugins/SIGNALS \
-	plugins/autorecon.c plugins/chkmail.c plugins/filectl.c plugins/gaiminc.c \
-	plugins/iconaway.c plugins/simple.c plugins/spellchk.c README.plugins
+	buddytrans README.plugins
 
 if GNOMEAPPLET
 
@@ -23,5 +21,5 @@ gaimsound_DATA = $(gaim_SOUND)
 
 endif
 
-SUBDIRS = m4 libfaim sounds pixmaps doc src
+SUBDIRS = m4 libfaim sounds plugins pixmaps doc src
 ACLOCAL_AMFLAGS = -I m4

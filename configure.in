@@ -96,6 +96,7 @@ AC_SUBST(LIBFAIM_DO)
 AC_OUTPUT([Makefile
 	   src/Makefile
            sounds/Makefile
+	   plugins/Makefile
            pixmaps/Makefile
            libfaim/Makefile
            doc/Makefile
