@@ -55,7 +55,8 @@ void (*displayed_im_msg)(GaimAccount *account, const char *message);
 
  @signaldef sending-im-msg
   @signalproto
-void (*sending_im_msg)(GaimAccount *account, const char *receiver, char **message);
+void (*sending_im_msg)(GaimAccount *account, const char *receiver,
+                       char **message);
   @endsignalproto
   @signaldesc
    Emitted before sending an IM to a user. @a message is a pointer to the
@@ -69,7 +70,8 @@ void (*sending_im_msg)(GaimAccount *account, const char *receiver, char **messag
 
  @signaldef sent-im-msg
   @signalproto
-void (*sent_im_msg)(GaimAccount *account, const char *receiver, const char *message);
+void (*sent_im_msg)(GaimAccount *account, const char *receiver,
+                    const char *message);
   @endsignalproto
   @signaldesc
    Emitted after sending an IM to a user.
@@ -80,7 +82,8 @@ void (*sent_im_msg)(GaimAccount *account, const char *receiver, const char *mess
 
  @signaldef received-im-msg
   @signalproto
-gboolean (*received_im_msg)(GaimAccount *account, char **sender, char **message, int *flags);
+gboolean (*received_im_msg)(GaimAccount *account, char **sender,
+                            char **message, int *flags);
   @endsignalproto
   @signaldesc
    Emitted when an IM is received. The callback can replace the name of the
@@ -148,7 +151,8 @@ void (*sent_chat_msg)(GaimAccount *account, const char *message, int id);
 
  @signaldef received-chat-msg
   @signalproto
-gboolean (*received_chat_msg)(GaimAccount *account, char **sender, char **message, int id);
+gboolean (*received_chat_msg)(GaimAccount *account, char **sender,
+                              char **message, int id);
   @endsignalproto
   @signaldesc
    Emitted when a chat message is received. The callback can replace the
@@ -166,7 +170,8 @@ gboolean (*received_chat_msg)(GaimAccount *account, char **sender, char **messag
 
  @signaldef conversation-switching
   @signalproto
-void (*conversation_switching)(GaimConversation *old_conv, GaimConversation *new_conv);
+void (*conversation_switching)(GaimConversation *old_conv,
+                               GaimConversation *new_conv);
   @endsignalproto
   @signaldesc
    Emitted when a window is about to switch from one conversation to
@@ -177,7 +182,8 @@ void (*conversation_switching)(GaimConversation *old_conv, GaimConversation *new
 
  @signaldef conversation-switched
   @signalproto
-void (*conversation_switched)(GaimConversation *old_conv, GaimConversation *new_conv);
+void (*conversation_switched)(GaimConversation *old_conv,
+                              GaimConversation *new_conv);
   @endsignalproto
   @signaldesc
    Emitted when a window switched from one conversation to another.
@@ -234,7 +240,8 @@ void (*chat_buddy_joined)(GaimConversation *conv, const char *name);
 
  @signaldef chat-buddy-leaving
   @signalproto
-void (*chat_buddy_leaving)(GaimConversation *conv, const char *name, const char *reason);
+void (*chat_buddy_leaving)(GaimConversation *conv, const char *name,
+                           const char *reason);
   @endsignalproto
   @signaldesc
    Emitted when a user is leaving a chat, before the user list is updated.
@@ -246,7 +253,8 @@ void (*chat_buddy_leaving)(GaimConversation *conv, const char *name, const char 
 
  @signaldef chat-buddy-left
   @signalproto
-void (*chat_buddy_left)(GaimConversation *conv, const char *name, const char *reason);
+void (*chat_buddy_left)(GaimConversation *conv, const char *name,
+                        const char *reason);
   @endsignalproto
   @signaldesc
    Emitted when a user leaves a chat, after the user list is updated.
@@ -258,7 +266,8 @@ void (*chat_buddy_left)(GaimConversation *conv, const char *name, const char *re
 
  @signaldef chat-inviting-user
   @signalproto
-void (*chat_inviting_user)(GaimConversation *conv, const char *name, char **invite_message);
+void (*chat_inviting_user)(GaimConversation *conv, const char *name,
+                           char **invite_message);
   @endsignalproto
   @signaldesc
    Emitted when a user is being invited to the chat. The callback can
@@ -274,38 +283,45 @@ void (*chat_inviting_user)(GaimConversation *conv, const char *name, char **invi
 
  @signaldef chat-invited-user
   @signalproto
-void (*chat-invited-user)(GaimConversation *conv);
+void (*chat-invited-user)(GaimConversation *conv, const char *name,
+                          const char *invite_message);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when a user invited another user to a chat.
+  @param conv           The chat conversation.
+  @param conv           The name of the user that was invited.
+  @param invite_message The message to be sent to the user when invited.
  @endsignaldef
 
  @signaldef chat-invited
   @signalproto
-void (*chat-invited)(GaimConversation *conv);
+void (*chat-invited)(GaimAccount *account, const char *inviter,
+                     const char *invite, const char *invite_message);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when an account was invited to a chat.
+  @param account        The account being invited.
+  @param inviter        The username of the person inviting the account.
+  @param invitee        The username of the account being invited.
+  @param invite_message The optional invite message.
  @endsignaldef
 
  @signaldef chat-joined
   @signalproto
 void (*chat-joined)(GaimConversation *conv);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when an account joins a chat room.
+  @param conv The conversation that joined the chat room.
  @endsignaldef
 
  @signaldef chat-left
   @signalproto
 void (*chat-left)(GaimConversation *conv);
   @endsignalproto
-  @param conv The conversation.
   @signaldesc
-   
+   Emitted when an account leaves a chat room.
+  @param conv The conversation that left the chat room.
  @endsignaldef
 
 */
