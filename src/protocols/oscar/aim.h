@@ -846,7 +846,8 @@ faim_export int aim_oft_getfile_end(aim_session_t *sess, aim_conn_t *conn);
 #define AIM_CAPS_EMPTY		0x00002000
 #define AIM_CAPS_ICQSERVERRELAY 0x00004000
 #define AIM_CAPS_ICQUNKNOWN     0x00008000
-#define AIM_CAPS_LAST           0x00010000
+#define AIM_CAPS_TRILLIANCRYPT  0x00010000
+#define AIM_CAPS_LAST           0x00020000
 
 faim_export int aim_0002_000b(aim_session_t *sess, aim_conn_t *conn, const char *sn);
 
@@ -857,6 +858,7 @@ faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, unsigned
 
 #define AIM_GETINFO_GENERALINFO 0x00001
 #define AIM_GETINFO_AWAYMESSAGE 0x00003
+#define AIM_GETINFO_CAPABILITIES 0x0004
 
 struct aim_invite_priv {
 	char *sn;

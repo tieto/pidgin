@@ -1894,12 +1894,12 @@ static gint log_timeout(struct buddy_show *b)
 	return 0;
 }
 
-static char *caps_string(gushort caps)
+static char *caps_string(guint caps)
 {
 	static char buf[256], *tmp;
 	int count = 0, i = 0;
-	gushort bit = 1;
-	while (bit <= 0x800) {
+	guint bit = 1;
+	while (bit <= 0x10000) {
 		if (bit & caps) {
 			switch (bit) {
 			case 0x1:
@@ -1927,11 +1927,29 @@ static char *caps_string(gushort caps)
 			case 0x80:
 				tmp = _("Stocks");
 				break;
+			case 0x100:
+				tmp = _("Send Buddy List");
+				break;
 			case 0x400:
 				tmp = _("EveryBuddy Bug");
 				break;
 			case 0x800:
 				tmp = _("AP User");
+				break;
+			case 0x1000:
+				tmp = _("ICQ RTF");
+				break;
+			case 0x2000:
+				tmp = _("Nihilist");
+				break;
+			case 0x4000:
+				tmp = _("ICQ Server Relay");
+				break;
+			case 0x8000:
+				tmp = _("ICQ Unknown");
+				break;
+			case 0x10000:
+				tmp = _("Trillian Encryption");
 				break;
 			default:
 				tmp = NULL;

@@ -23,9 +23,6 @@ faim_export int aim_getinfo(aim_session_t *sess, aim_conn_t *conn, const char *s
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
-	if ((infotype != AIM_GETINFO_GENERALINFO) && (infotype != AIM_GETINFO_AWAYMESSAGE))
-		return -EINVAL;
-
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 12+1+strlen(sn))))
 		return -ENOMEM;
 
@@ -209,6 +206,10 @@ static const struct {
 	 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 
+	{AIM_CAPS_TRILLIANCRYPT,
+	 {0xf2, 0xe7, 0xc7, 0xf4, 0xfe, 0xad, 0x4d, 0xfb,
+	  0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
+
 	{AIM_CAPS_LAST}
 };
 
@@ -238,8 +239,15 @@ faim_internal fu32_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len)
 			}
 		}
 
-		if (!identified)
-			faimdprintf(sess, 0, "unknown capability!\n");
+		if (!identified) {
+			faimdprintf(sess, 0, "unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
+					cap[0], cap[1], cap[2], cap[3],
+					cap[4], cap[5],
+					cap[6], cap[7],
+					cap[8], cap[9],
+					cap[10], cap[11], cap[12], cap[13],
+					cap[14], cap[15]);
+		}
 
 		free(cap);
 	}
@@ -601,7 +609,8 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	inforeq = (struct aim_priv_inforeq *)origsnac->data;
 
 	if ((inforeq->infotype != AIM_GETINFO_GENERALINFO) &&
-			(inforeq->infotype != AIM_GETINFO_AWAYMESSAGE)) {
+			(inforeq->infotype != AIM_GETINFO_AWAYMESSAGE) &&
+			(inforeq->infotype != AIM_GETINFO_CAPABILITIES)) {
 		faimdprintf(sess, 0, "parse_userinfo_middle: unknown infotype in request! (0x%04x)\n", inforeq->infotype);
 		return 0;
 	}
@@ -614,18 +623,30 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	 * Depending on what informational text was requested, different
 	 * TLVs will appear here.
 	 *
-	 * Profile will be 1 and 2, away message will be 3 and 4.
+	 * Profile will be 1 and 2, away message will be 3 and 4, caps
+	 * will be 5.
 	 */
-	if (aim_gettlv(tlvlist, 0x0001, 1)) {
+	if (inforeq->infotype == AIM_GETINFO_GENERALINFO) {
 		text_encoding = aim_gettlv_str(tlvlist, 0x0001, 1);
 		text = aim_gettlv_str(tlvlist, 0x0002, 1);
-	} else if (aim_gettlv(tlvlist, 0x0003, 1)) {
+	} else if (inforeq->infotype == AIM_GETINFO_AWAYMESSAGE) {
 		text_encoding = aim_gettlv_str(tlvlist, 0x0003, 1);
 		text = aim_gettlv_str(tlvlist, 0x0004, 1);
+	} else if (inforeq->infotype == AIM_GETINFO_CAPABILITIES) {
+		aim_tlv_t *ct;
+
+		if ((ct = aim_gettlv(tlvlist, 0x0005, 1))) {
+			aim_bstream_t cbs;
+
+			aim_bstream_init(&cbs, ct->value, ct->length);
+
+			userinfo.capabilities = aim_getcap(sess, &cbs, ct->length);
+			userinfo.capspresent = 1;
+		}
 	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, &userinfo, text_encoding, text, inforeq->infotype);
+		ret = userfunc(sess, rx, &userinfo, inforeq->infotype, text_encoding, text);
 
 	free(text_encoding);
 	free(text);

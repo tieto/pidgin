@@ -1570,6 +1570,78 @@ static char *images(int flags) {
 	return buf;
 }
 
+/* XXX This is horribly copied from ../../buddy.c. */
+static char *caps_string(guint caps)
+{
+	static char buf[512], *tmp;
+	int count = 0, i = 0;
+	guint bit = 1;
+	while (bit <= 0x10000) {
+		if (bit & caps) {
+			switch (bit) {
+			case 0x1:
+				tmp = _("Buddy Icon");
+				break;
+			case 0x2:
+				tmp = _("Voice");
+				break;
+			case 0x4:
+				tmp = _("IM Image");
+				break;
+			case 0x8:
+				tmp = _("Chat");
+				break;
+			case 0x10:
+				tmp = _("Get File");
+				break;
+			case 0x20:
+				tmp = _("Send File");
+				break;
+			case 0x40:
+			case 0x200:
+				tmp = _("Games");
+				break;
+			case 0x80:
+				tmp = _("Stocks");
+				break;
+			case 0x100:
+				tmp = _("Send Buddy List");
+				break;
+			case 0x400:
+				tmp = _("EveryBuddy Bug");
+				break;
+			case 0x800:
+				tmp = _("AP User");
+				break;
+			case 0x1000:
+				tmp = _("ICQ RTF");
+				break;
+			case 0x2000:
+				tmp = _("Nihilist");
+				break;
+			case 0x4000:
+				tmp = _("ICQ Server Relay");
+				break;
+			case 0x8000:
+				tmp = _("ICQ Unknown");
+				break;
+			case 0x10000:
+				tmp = _("Trillian Encryption");
+				break;
+			default:
+				tmp = NULL;
+				break;
+			}
+			if (tmp)
+				i += g_snprintf(buf + i, sizeof(buf) - i, "%s%s", (count ? ", " : ""),
+						tmp);
+			count++;
+		}
+		bit <<= 1;
+	}
+	return buf;
+}
+
 static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_userinfo_t *info;
 	char *prof_enc = NULL, *prof = NULL;
@@ -1580,15 +1652,14 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *od = gc->proto_data;
 	GSList *l = od->evilhack;
 	gboolean evilhack = FALSE;
-	gboolean away;
 	va_list ap;
 	char *asc;
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
+	infotype = (fu16_t)va_arg(ap, unsigned int);
 	prof_enc = va_arg(ap, char *);
 	prof = va_arg(ap, char *);
-	infotype = (fu16_t)va_arg(ap, unsigned int);
 	va_end(ap);
 
 	g_snprintf(legend, sizeof legend,
@@ -1597,8 +1668,6 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
 			"<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
 			"<IMG SRC=\"admin_icon.gif\"> : Administrator"));
-
-	away = infotype != AIM_GETINFO_GENERALINFO;
 
 	if (info->membersince)
 		asc = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
@@ -1629,7 +1698,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 		l = l->next;
 	}
 
-	if (away) {
+	if (infotype == AIM_GETINFO_AWAYMESSAGE) {
 		if (evilhack) {
 			g_show_info_text(gc, info->sn, 2,
 					 header,
@@ -1643,6 +1712,14 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 					 (prof && *prof) ? "<BR><HR><BR>" : NULL,
 					 NULL);
 		}
+	} else if (infotype == AIM_GETINFO_CAPABILITIES) {
+		g_show_info_text(gc, info->sn, 2,
+				header,
+				"<i>", _("Client Capabilities: "),
+				caps_string(info->capabilities),
+				"</i>",
+				legend,
+				NULL);
 	} else {
 		g_show_info_text(gc, info->sn, 1,
 				 (prof && *prof) ? away_subs(prof, gc->username) :
@@ -2324,6 +2401,11 @@ static void oscar_get_away(struct gaim_connection *g, char *name) {
 		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_GENERALINFO);
 }
 
+static void oscar_get_caps(struct gaim_connection *g, char *name) {
+	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
+	aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_CAPABILITIES);
+}
+
 static void oscar_set_dir(struct gaim_connection *g, char *first, char *middle, char *last,
 			  char *maiden, char *city, char *state, char *country, int web) {
 	/* FIXME : some of these things are wrong, but i'm lazy */
@@ -2774,6 +2856,13 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			m = g_list_append(m, pbm);
 		}
 	}
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Capabilities");
+	pbm->callback = oscar_get_caps;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
 	g_free(n);
 
 	return m;

@@ -118,7 +118,7 @@ struct buddy {
 	time_t signon;
 	time_t idle;
         int uc;
-	gushort caps; /* woohoo! */
+	guint caps; /* woohoo! */
 	void *proto_data; /* what a hack */
 	struct gaim_connection *gc; /* the connection it belongs to */
 };
@@ -190,7 +190,7 @@ extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
 extern char *event_name(enum gaim_event);
 
 /* Functions in server.c */
-extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);
+extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, guint);
 extern void serv_got_im(struct gaim_connection *, char *, char *, guint32, time_t, gint);
 extern void serv_got_eviled(struct gaim_connection *, char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, char *, char *, GList *);

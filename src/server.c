@@ -650,7 +650,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 
 
 void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int evil, time_t signon,
-		     time_t idle, int type, gushort caps)
+		     time_t idle, int type, guint caps)
 {
 	struct buddy *b = find_buddy(gc, name);
 
