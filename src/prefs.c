@@ -793,8 +793,8 @@ static void manual_browser_set(GtkButton *button, GtkEntry *entry) {
 	const char *program = gtk_entry_get_text(entry);
 	if (!program_is_valid(program)) {
 		char *error = g_strdup_printf(_("The entered manual browser "
-					                    "'%s' is not valid. Hyperlinks will "
-										"not work."), program); 
+						"'%s' is not valid. Hyperlinks will "
+						"not work."), program); 
 		do_error_dialog(error, NULL, GAIM_WARNING);
 	}
 
@@ -804,13 +804,12 @@ static void manual_browser_set(GtkButton *button, GtkEntry *entry) {
 static void manual_browser_reset(GtkButton *button, GtkEntry *entry) {
 	gtk_entry_set_text(entry, web_command);
 }
-#endif
 
 static GList *get_available_browsers() 
 {
 	struct browser {
 		char *name;
-        char *command;
+		char *command;
 		int id; 
 	};
 
@@ -828,10 +827,10 @@ static GList *get_available_browsers()
 
 	browsers = g_list_prepend(browsers, GINT_TO_POINTER(BROWSER_MANUAL));
 	browsers = g_list_prepend(browsers, _("Manual"));
-    for (i = 0; i < num_possible_browsers; i++) {
+	for (i = 0; i < num_possible_browsers; i++) {
 		if (program_is_valid(possible_browsers[i].command)) {
 			browsers = g_list_prepend(browsers, 
-									  GINT_TO_POINTER(possible_browsers[i].id));
+						  GINT_TO_POINTER(possible_browsers[i].id));
 			browsers = g_list_prepend(browsers, possible_browsers[i].name);
 		}
 	}
@@ -842,9 +841,7 @@ static GList *get_available_browsers()
 GtkWidget *browser_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
-#ifndef _WIN32
 	GtkWidget *hbox;
-#endif
 	GtkWidget *label;
 	GtkSizeGroup *sg;
 	GList *browsers = NULL;
@@ -853,16 +850,14 @@ GtkWidget *browser_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-#ifndef _WIN32
-	/* Registered default browser is used by Windows */
 	vbox = make_frame (ret, _("Browser Selection"));
 
 	browsers = get_available_browsers();
 	if (browsers != NULL) {
 		label = gaim_dropdown_from_list(vbox,_("_Browser"), &web_browser, -1, 
-				                        browsers);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_size_group_add_widget(sg, label);
+						browsers);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_size_group_add_widget(sg, label);
 	}
 
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -879,30 +874,25 @@ GtkWidget *browser_page() {
 
 	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command);
 	g_signal_connect_swapped(GTK_OBJECT(browser_entry), "activate",
-					   G_CALLBACK(manual_browser_set), NULL);
+				 G_CALLBACK(manual_browser_set), NULL);
 	label = gtk_button_new_with_label(_("Set"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(label), "clicked", 
-					   G_CALLBACK(manual_browser_set), browser_entry);
+			 G_CALLBACK(manual_browser_set), browser_entry);
 	label = gtk_button_new_with_label(_("Reset"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	g_signal_connect(GTK_OBJECT(label), "clicked", 
-					   G_CALLBACK(manual_browser_reset), browser_entry);
+			 G_CALLBACK(manual_browser_reset), browser_entry);
 
 	if (browsers != NULL) {
-	vbox = make_frame (ret, _("Browser Options"));
-
-	label = gaim_button(_("Open new _window by default"), &misc_options, OPT_MISC_BROWSER_POPUP, vbox);
+		vbox = make_frame (ret, _("Browser Options"));
+		label = gaim_button(_("Open new _window by default"), &misc_options, OPT_MISC_BROWSER_POPUP, vbox);
 	}
-#else
-	/* For windows, we need to implement the ability for URLs to be opened 
-	 * in new windows. Currently, existing open windows are being used.
-	 */
-#endif /*_WIN32*/
 
 	gtk_widget_show_all(ret);
 	return ret;
 }
+#endif /*_WIN32*/
 
 GtkWidget *logging_page() {
 	GtkWidget *ret;
@@ -1691,8 +1681,10 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Chat Window"), NULL, chat_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Tabs"), NULL, tab_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Proxy"), NULL, proxy_page(), &p, NULL, notebook_page++);
+#ifndef _WIN32
+	/* We use the registered default browser in windows */
 	prefs_notebook_add_page(_("Browser"), NULL, browser_page(), &p, NULL, notebook_page++);
-
+#endif
 	prefs_notebook_add_page(_("Logging"), NULL, logging_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Sound Events"), NULL, sound_events_page(), &c, &p, notebook_page++);
