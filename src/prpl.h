@@ -79,6 +79,8 @@
 
 typedef void (*proto_init)(struct prpl *);
 
+struct file_transfer;
+
 struct _prpl_smiley {
 	char *key;
 	char **xpm;
@@ -180,6 +182,14 @@ struct prpl {
 	void (* convo_closed)   (struct gaim_connection *, char *who);
 
 	char *(* normalize)(const char *);
+
+	/* transfer files */
+	void (* file_transfer_cancel)    (struct gaim_connection *, struct file_transfer *);
+	void (* file_transfer_in)  (struct gaim_connection *, struct file_transfer *, int);
+	void (* file_transfer_out) (struct gaim_connection *, struct file_transfer *, const char *, int, int);
+	void (* file_transfer_nextfile)  (struct gaim_connection *, struct file_transfer *);
+	void (* file_transfer_data_chunk)(struct gaim_connection *, struct file_transfer *, const char *, int);
+	void (* file_transfer_done)      (struct gaim_connection *, struct file_transfer *);
 };
 
 extern GSList *protocols;
@@ -209,5 +219,19 @@ extern void set_icon_data(struct gaim_connection *, char *, void *, int);
 extern void *get_icon_data(struct gaim_connection *, char *, int *);
 
 extern GSList *add_smiley(GSList *, char *, char **, int) ;
+
+/* file transfer stuff */
+extern struct file_transfer *transfer_in_add(struct gaim_connection *gc,
+		const char *who, const char *filename, int totsize,
+		int totfiles, const char *msg);
+extern struct file_transfer *transfer_out_add(struct gaim_connection *gc,
+		const char *who);
+extern int transfer_abort(struct file_transfer *xfer, const char *why);
+extern int transfer_out_do(struct file_transfer *xfer, int fd,
+		int offset);
+extern int transfer_in_do(struct file_transfer *xfer, int fd,
+		const char *filename, int size);
+int transfer_get_file_info(struct file_transfer *xfer, int *size,
+		char **name);
 
 #endif /* _PRPL_H_ */

@@ -10,6 +10,7 @@ gaim_SOURCES =	about.c \
 		conversation.c \
 		core.c \
 		dialogs.c \
+		ft.c \
 		gaimrc.c \
 		gtkimhtml.c \
 		gtkspell.c \
