@@ -1246,11 +1246,8 @@ gaim_accounts_auto_login(const char *ui)
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		account = l->data;
 
-		if (gaim_account_get_auto_login(account, ui) &&
-			gaim_account_get_remember_password(account)) {
-
+		if (gaim_account_get_auto_login(account, ui))
 			gaim_account_connect(account);
-		}
 	}
 }
 

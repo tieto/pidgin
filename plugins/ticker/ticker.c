@@ -1,4 +1,7 @@
-/* GTK - The GIMP Toolkit
+/*
+ * Gaim Ticker Plugin
+ * The line below doesn't apply at all, does it?  It should be Syd, Sean, and 
+ * maybe Nathan, I believe.
  * Copyright (C) 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
  *
  * This library is free software; you can redistribute it and/or
@@ -43,6 +46,7 @@ typedef struct {
 	GtkWidget *ebox;
 	GtkWidget *label;
 	GtkWidget *icon;
+	guint timeout;
 } TickerData;
 
 GList *tickerbuds = NULL;
@@ -112,6 +116,16 @@ static void buddy_ticker_set_pixmap(struct buddy *b) {
 	g_object_unref(G_OBJECT(pixbuf));
 }
 
+static gboolean buddy_ticker_set_pixmap_cb(gpointer data) {
+	TickerData *td = data;
+
+gaim_debug(GAIM_DEBUG_ERROR, "XXX", "we're updating the pixmap, you bitch\n");
+	buddy_ticker_set_pixmap(td->buddy);
+	td->timeout = 0;
+
+	return FALSE;
+}
+
 static void buddy_ticker_add_buddy(struct buddy *b) {
 	GtkWidget *hbox;
 	TickerData *td;
@@ -121,7 +135,7 @@ static void buddy_ticker_add_buddy(struct buddy *b) {
 	if (!ticker)
 		return;
 
-	if(buddy_ticker_find_buddy(b))
+	if (buddy_ticker_find_buddy(b))
 		return;
 
 	td = g_new0(TickerData, 1);
@@ -143,6 +157,12 @@ static void buddy_ticker_add_buddy(struct buddy *b) {
 
 	gtk_widget_show_all(td->ebox);
 	gtk_widget_show(tickerwindow);
+
+	/*
+	 * Update the icon in a few seconds (after the open door icon has
+	 * changed).  This is somewhat ugly.
+	 */
+	td->timeout = g_timeout_add(11000, buddy_ticker_set_pixmap_cb, td);
 }
 
 static void buddy_ticker_remove_buddy(struct buddy *b) {
@@ -156,6 +176,8 @@ static void buddy_ticker_remove_buddy(struct buddy *b) {
 
 	gtk_ticker_remove(GTK_TICKER(ticker), td->ebox);
 	tickerbuds = g_list_remove(tickerbuds, td);
+	if (td->timeout != 0)
+		g_source_remove(td->timeout);
 	g_free(td);
 }
 
@@ -181,7 +203,35 @@ static void buddy_ticker_show()
 	}
 }
 
-void signon_cb(GaimConnection *gc, char *who) {
+void signoff_cb(GaimConnection *gc) {
+	TickerData *td;
+	if (!gaim_connections_get_all()) {
+		while (tickerbuds) {
+			td = tickerbuds->data;
+			tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
+			if (td->timeout != 0)
+				g_source_remove(td->timeout);
+			g_free(td);
+		}
+		gtk_widget_destroy(tickerwindow);
+		tickerwindow = NULL;
+		ticker = NULL;
+	} else {
+		GList *t = tickerbuds;
+		while (t) {
+			td = t->data;
+			t = t->next;
+			if (td->buddy->account == gc->account) {
+				tickerbuds = g_list_remove(tickerbuds, td);
+				if (td->timeout != 0)
+					g_source_remove(td->timeout);
+				g_free(td);
+			}
+		}
+	}
+}
+
+void buddy_signon_cb(GaimConnection *gc, char *who) {
 	struct buddy *b = gaim_find_buddy(gc->account, who);
 	if(buddy_ticker_find_buddy(b))
 		buddy_ticker_set_pixmap(b);
@@ -189,31 +239,8 @@ void signon_cb(GaimConnection *gc, char *who) {
 		buddy_ticker_add_buddy(b);
 }
 
-void signoff_cb(GaimConnection *gc) {
-	if (!gaim_connections_get_all()) {
-		while(tickerbuds) {
-			g_free(tickerbuds->data);
-			tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
-		}
-		gtk_widget_destroy(tickerwindow);
-		tickerwindow = NULL;
-		ticker = NULL;
-	} else {
-		GList *t = tickerbuds;
-		while(t) {
-			TickerData *td = t->data;
-			t = t->next;
-			if(td->buddy->account == gc->account) {
-				g_free(td);
-				tickerbuds = g_list_remove(tickerbuds, td);
-			}
-		}
-	}
-}
-
 void buddy_signoff_cb(GaimConnection *gc, char *who) {
 	struct buddy *b = gaim_find_buddy(gc->account, who);
-
 	buddy_ticker_remove_buddy(b);
 	if(!tickerbuds)
 		gtk_widget_hide(tickerwindow);
@@ -234,8 +261,8 @@ void away_cb(GaimConnection *gc, char *who) {
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_signal_connect(plugin, event_buddy_signon, signon_cb, NULL);
 	gaim_signal_connect(plugin, event_signoff, signoff_cb, NULL);
+	gaim_signal_connect(plugin, event_buddy_signon, buddy_signon_cb, NULL);
 	gaim_signal_connect(plugin, event_buddy_signoff, buddy_signoff_cb, NULL);
 	gaim_signal_connect(plugin, event_buddy_away, away_cb, NULL);
 	gaim_signal_connect(plugin, event_buddy_back, away_cb, NULL);
@@ -249,9 +276,14 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	while(tickerbuds) {
-		g_free(tickerbuds->data);
+	TickerData *td;
+
+	while (tickerbuds) {
+		td = tickerbuds->data;
 		tickerbuds = g_list_delete_link(tickerbuds, tickerbuds);
+		if (td->timeout != 0)
+			g_source_remove(td->timeout);
+		g_free(td);
 	}
 
 	if (tickerwindow != NULL) {

@@ -128,10 +128,10 @@ process_single_line(MsnServConn *servconn, char *str)
 			g_free(servconn->msg_passport);
 			g_free(servconn->msg_friendly);
 
+			msn_servconn_unqueue_message(servconn, entry->msg);
+
 			msn_message_destroy(msg);
 			entry->msg = NULL;
-
-			msn_servconn_unqueue_message(servconn, entry->msg);
 		}
 	}
 

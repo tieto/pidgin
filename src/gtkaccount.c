@@ -711,6 +711,13 @@ make_proxy_dropdown(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	gtk_widget_show(item);
 
+	/* HTTP */
+	item = gtk_menu_item_new_with_label(_("HTTP"));
+	g_object_set_data(G_OBJECT(item), "proxytype",
+					  GINT_TO_POINTER(GAIM_PROXY_HTTP));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+
 	/* SOCKS 4 */
 	item = gtk_menu_item_new_with_label(_("SOCKS 4"));
 	g_object_set_data(G_OBJECT(item), "proxytype",
@@ -722,13 +729,6 @@ make_proxy_dropdown(void)
 	item = gtk_menu_item_new_with_label(_("SOCKS 5"));
 	g_object_set_data(G_OBJECT(item), "proxytype",
 					  GINT_TO_POINTER(GAIM_PROXY_SOCKS5));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	/* HTTP */
-	item = gtk_menu_item_new_with_label(_("HTTP"));
-	g_object_set_data(G_OBJECT(item), "proxytype",
-					  GINT_TO_POINTER(GAIM_PROXY_HTTP));
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	gtk_widget_show(item);
 
