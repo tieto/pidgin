@@ -35,7 +35,7 @@ following arguments:
 
 void *, enum gaim_event, void *, void *
 
-The first arg is the handle that was passed to gaim_signal_init. You did
+The first arg is the handle that was passed to gaim_plugin_init. You did
 	save it, right?
 The second arg is hopefully obvious.
 The third arg is a pointer to a function that takes various args
