@@ -150,11 +150,24 @@ AC_PATH_PROG(gaimpath, gaim)
 CFLAGS="$CFLAGS $GTK_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 
 AC_PATH_XTRA
+# We can't assume that $x_libraries will be set, because autoconf does not
+# set it in the case when the X libraries are in a standard place.
+# Ditto for $x_includes
+if test X"$x_libraries" = X"" ; then
+	x_libpath_add=
+else
+	x_libpath_add="-L$x_libraries"
+fi
+if test X"$x_includes" = X"" ; then
+	x_incpath_add=
+else
+	x_incpath_add="-I$x_includes"
+fi
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
 	old_LIBS="$LIBS"
-	LIBS="$LIBS $GTK_LIBS -L$x_libraries"
+	LIBS="$LIBS $GTK_LIBS $x_libpath_add"
 	XSS_LIBS="no"
 	XSS_HEADERS="no"
 	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_EXTRA_LIBS"],[],[-lX11 -lXext -lm])
@@ -181,9 +194,9 @@ AC_SUBST(XSS_LIBS)
 dnl Check for X session management libs
 if test "x$enable_sm" = "xyes"; then
 	enable_sm=no
-	AC_CHECK_LIB(SM, SmcSaveYourselfDone, found_sm_lib=true, , [-L$x_libraries -lICE])
+	AC_CHECK_LIB(SM, SmcSaveYourselfDone, found_sm_lib=true, , [$x_libpath_add -lICE])
 	if test "$found_sm_lib" = "true"; then
-		AC_CHECK_HEADERS(X11/SM/SMlib.h, SM_LIBS="-L$x_libraries -lSM -lICE" enable_sm=yes)
+		AC_CHECK_HEADERS(X11/SM/SMlib.h, SM_LIBS="$x_libpath_add -lSM -lICE" enable_sm=yes)
 	fi
 else
 	SM_LIBS=""
