@@ -626,13 +626,12 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 
                 c = find_conversation(b->name);
 
-                if (c != NULL) {
+                if (c != NULL)
                         gdk_window_show(c->window->window);
-                } else {
+                else
                         c = new_conversation(b->name);
 
-			set_convo_gc(c, b->connlist->data);
-                }
+		set_convo_gc(c, b->connlist->data);
 		if (display_options & OPT_DISP_ONE_WINDOW)
 			raise_convo_tab(c);
 	} else if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
