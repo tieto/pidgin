@@ -37,6 +37,10 @@ dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long , , [LIBOBJS="$LIBOBJS getopt.o getopt1.o"] ) 
 AC_SUBST(LIBOBJS)
 
+dnl Check for inet_aton
+AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, , 
+				         [AC_ERROR(inet_aton not found)])])
+
 dnl This is a bad, bad hack.  I am a bad, bad man.
 CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include -I\$(top_srcdir)"
 
