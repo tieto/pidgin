@@ -778,6 +778,7 @@ struct aim_incomingim_ch2_args {
 			fu8_t *icon;
 		} icon;
 		struct {
+			fu8_t junk;
 		} voice;
 		struct {
 			fu8_t ip[22]; /* xxx.xxx.xxx.xxx:xxxxx\0 */
@@ -793,6 +794,7 @@ struct aim_incomingim_ch2_args {
 			unsigned char *cookie;
 		} getfile;
 		struct {
+			fu8_t junk;
 		} sendfile;
 	} info;
 };

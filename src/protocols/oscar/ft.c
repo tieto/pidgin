@@ -99,7 +99,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 			ret = userfunc(sess, NULL, newconn, cur);
 #endif
 	} else { 
-		faimdprintf(sess, 1,"Got a Connection on a listener that's not Rendezvous(??!) Closing conn.\n");
+		faimdprintf(sess, 1, "Got a Connection on a listener that's not Rendezvous.\n");
 		aim_conn_close(newconn);
 		ret = -1;
 	}
