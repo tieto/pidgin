@@ -190,8 +190,9 @@ common_send(GaimConversation *conv, const char *message)
 	int err = 0;
 	GList *first;
 
-	if ((gc = gaim_conversation_get_gc(conv)) == NULL)
-		return;
+	gc = gaim_conversation_get_gc(conv);
+
+	g_return_if_fail(gc != NULL);
 
 	type = gaim_conversation_get_type(conv);
 	ops  = gaim_conversation_get_ui_ops(conv);
@@ -468,8 +469,7 @@ gaim_window_destroy(GaimWindow *win)
 	GaimWindowUiOps *ops;
 	GList *node;
 
-	if (win == NULL)
-		return;
+	g_return_if_fail(win != NULL);
 
 	ops = gaim_window_get_ui_ops(win);
 
@@ -513,8 +513,7 @@ gaim_window_show(GaimWindow *win)
 {
 	GaimWindowUiOps *ops;
 
-	if (win == NULL)
-		return;
+	g_return_if_fail(win != NULL);
 
 	ops = gaim_window_get_ui_ops(win);
 
@@ -529,8 +528,7 @@ gaim_window_hide(GaimWindow *win)
 {
 	GaimWindowUiOps *ops;
 
-	if (win == NULL)
-		return;
+	g_return_if_fail(win != NULL);
 
 	ops = gaim_window_get_ui_ops(win);
 
@@ -545,8 +543,7 @@ gaim_window_raise(GaimWindow *win)
 {
 	GaimWindowUiOps *ops;
 
-	if (win == NULL)
-		return;
+	g_return_if_fail(win != NULL);
 
 	ops = gaim_window_get_ui_ops(win);
 
@@ -561,8 +558,7 @@ gaim_window_flash(GaimWindow *win)
 {
 	GaimWindowUiOps *ops;
 
-	if (win == NULL)
-		return;
+	g_return_if_fail(win != NULL);
 
 	ops = gaim_window_get_ui_ops(win);
 
@@ -578,7 +574,9 @@ gaim_window_set_ui_ops(GaimWindow *win, GaimWindowUiOps *ops)
 	GaimConversationUiOps *conv_ops = NULL;
 	GList *l;
 
-	if (win == NULL || win->ui_ops == ops)
+	g_return_if_fail(win != NULL);
+
+	if (win->ui_ops == ops)
 		return;
 
 	if (ops != NULL && ops->get_conversation_ui_ops != NULL)
@@ -608,8 +606,7 @@ gaim_window_set_ui_ops(GaimWindow *win, GaimWindowUiOps *ops)
 GaimWindowUiOps *
 gaim_window_get_ui_ops(const GaimWindow *win)
 {
-	if (win == NULL)
-		return NULL;
+	g_return_val_if_fail(win != NULL, NULL);
 
 	return win->ui_ops;
 }
@@ -619,8 +616,8 @@ gaim_window_add_conversation(GaimWindow *win, GaimConversation *conv)
 {
 	GaimWindowUiOps *ops;
 
-	if (win == NULL || conv == NULL)
-		return -1;
+	g_return_val_if_fail(win  != NULL, -1);
+	g_return_val_if_fail(conv != NULL, -1);
 
 	if (gaim_conversation_get_window(conv) != NULL) {
 		gaim_window_remove_conversation(
@@ -655,8 +652,8 @@ gaim_window_remove_conversation(GaimWindow *win, unsigned int index)
 	GaimConversation *conv;
 	GList *node;
 
-	if (win == NULL || index >= gaim_window_get_conversation_count(win))
-		return NULL;
+	g_return_val_if_fail(win != NULL, NULL);
+	g_return_val_if_fail(index < gaim_window_get_conversation_count(win), NULL);
 
 	ops = gaim_window_get_ui_ops(win);
 
@@ -692,9 +689,9 @@ gaim_window_move_conversation(GaimWindow *win, unsigned int index,
 	GaimConversation *conv;
 	GList *l;
 
-	if (win == NULL || index >= gaim_window_get_conversation_count(win) ||
-		index == new_index)
-		return;
+	g_return_if_fail(win != NULL);
+	g_return_if_fail(index < gaim_window_get_conversation_count(win));
+	g_return_if_fail(index != new_index);
 
 	/* We can't move this past the last index. */
 	if (new_index > gaim_window_get_conversation_count(win))
@@ -734,8 +731,10 @@ gaim_window_move_conversation(GaimWindow *win, unsigned int index,
 GaimConversation *
 gaim_window_get_conversation_at(const GaimWindow *win, unsigned int index)
 {
-	if (win == NULL || index >= gaim_window_get_conversation_count(win))
-		return NULL;
+	g_return_val_if_fail(win != NULL, NULL);
+	g_return_val_if_fail(index >= 0 &&
+						 index < gaim_window_get_conversation_count(win),
+						 NULL);
 
 	return (GaimConversation *)g_list_nth_data(
 		gaim_window_get_conversations(win), index);
@@ -744,8 +743,7 @@ gaim_window_get_conversation_at(const GaimWindow *win, unsigned int index)
 size_t
 gaim_window_get_conversation_count(const GaimWindow *win)
 {
-	if (win == NULL)
-		return 0;
+	g_return_val_if_fail(win != NULL, 0);
 
 	return win->conversation_count;
 }
@@ -755,9 +753,8 @@ gaim_window_switch_conversation(GaimWindow *win, unsigned int index)
 {
 	GaimWindowUiOps *ops;
 
-	if (win == NULL || index < 0 ||
-		index >= gaim_window_get_conversation_count(win))
-		return;
+	g_return_if_fail(win != NULL);
+	g_return_if_fail(index >= 0 &&gaim_window_get_conversation_count(win));
 
 	ops = gaim_window_get_ui_ops(win);
 
@@ -773,8 +770,7 @@ gaim_window_get_active_conversation(const GaimWindow *win)
 {
 	GaimWindowUiOps *ops;
 
-	if (win == NULL)
-		return NULL;
+	g_return_val_if_fail(win != NULL, NULL);
 
 	ops = gaim_window_get_ui_ops(win);
 
@@ -787,8 +783,7 @@ gaim_window_get_active_conversation(const GaimWindow *win)
 GList *
 gaim_window_get_conversations(const GaimWindow *win)
 {
-	if (win == NULL)
-		return NULL;
+	g_return_val_if_fail(win != NULL, NULL);
 
 	return win->conversations;
 }
@@ -946,8 +941,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 	const char *name;
 	GList *node;
 
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	win  = gaim_conversation_get_window(conv);
 	ops  = gaim_conversation_get_ui_ops(conv);
@@ -1070,8 +1064,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 GaimConversationType
 gaim_conversation_get_type(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return GAIM_CONV_UNKNOWN;
+	g_return_val_if_fail(conv != NULL, GAIM_CONV_UNKNOWN);
 
 	return conv->type;
 }
@@ -1080,7 +1073,9 @@ void
 gaim_conversation_set_ui_ops(GaimConversation *conv,
 							 GaimConversationUiOps *ops)
 {
-	if (conv == NULL || conv->ui_ops == ops)
+	g_return_if_fail(conv != NULL);
+
+	if (conv->ui_ops == ops)
 		return;
 
 	if (conv->ui_ops != NULL && conv->ui_ops->destroy_conversation != NULL)
@@ -1094,8 +1089,7 @@ gaim_conversation_set_ui_ops(GaimConversation *conv,
 GaimConversationUiOps *
 gaim_conversation_get_ui_ops(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	return conv->ui_ops;
 }
@@ -1103,7 +1097,9 @@ gaim_conversation_get_ui_ops(const GaimConversation *conv)
 void
 gaim_conversation_set_account(GaimConversation *conv, GaimAccount *account)
 {
-	if (conv == NULL || account == gaim_conversation_get_account(conv))
+	g_return_if_fail(conv != NULL);
+
+	if (account == gaim_conversation_get_account(conv))
 		return;
 
 	conv->account = account;
@@ -1114,8 +1110,7 @@ gaim_conversation_set_account(GaimConversation *conv, GaimAccount *account)
 GaimAccount *
 gaim_conversation_get_account(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	return conv->account;
 }
@@ -1125,8 +1120,7 @@ gaim_conversation_get_gc(const GaimConversation *conv)
 {
 	GaimAccount *account;
 
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	account = gaim_conversation_get_account(conv);
 
@@ -1141,8 +1135,8 @@ gaim_conversation_set_title(GaimConversation *conv, const char *title)
 {
 	GaimConversationUiOps *ops;
 
-	if (conv == NULL || title == NULL)
-		return;
+	g_return_if_fail(conv  != NULL);
+	g_return_if_fail(title != NULL);
 
 	if (conv->title != NULL)
 		g_free(conv->title);
@@ -1158,8 +1152,7 @@ gaim_conversation_set_title(GaimConversation *conv, const char *title)
 const char *
 gaim_conversation_get_title(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	return conv->title;
 }
@@ -1171,8 +1164,7 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 	struct buddy *b;
 	const char *text, *name;
 
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	account = gaim_conversation_get_account(conv);
 	name = gaim_conversation_get_name(conv);
@@ -1191,8 +1183,7 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 int
 gaim_conversation_get_index(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return 0;
+	g_return_val_if_fail(conv != NULL, 0);
 
 	return conv->conversation_pos;
 }
@@ -1200,8 +1191,7 @@ gaim_conversation_get_index(const GaimConversation *conv)
 void
 gaim_conversation_set_unseen(GaimConversation *conv, GaimUnseenState state)
 {
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	conv->unseen = state;
 
@@ -1214,8 +1204,7 @@ gaim_conversation_foreach(void (*func)(GaimConversation *conv))
 	GaimConversation *conv;
 	GList *l;
 
-	if (func == NULL)
-		return;
+	g_return_if_fail(func != NULL);
 
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
 		conv = (GaimConversation *)l->data;
@@ -1227,8 +1216,7 @@ gaim_conversation_foreach(void (*func)(GaimConversation *conv))
 GaimUnseenState
 gaim_conversation_get_unseen(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return 0;
+	g_return_val_if_fail(conv != NULL, 0);
 
 	return conv->unseen;
 }
@@ -1236,8 +1224,7 @@ gaim_conversation_get_unseen(const GaimConversation *conv)
 const char *
 gaim_conversation_get_name(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	return conv->name;
 }
@@ -1245,8 +1232,7 @@ gaim_conversation_get_name(const GaimConversation *conv)
 void
 gaim_conversation_set_logging(GaimConversation *conv, gboolean log)
 {
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	conv->logging = log;
 
@@ -1256,8 +1242,7 @@ gaim_conversation_set_logging(GaimConversation *conv, gboolean log)
 gboolean
 gaim_conversation_is_logging(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return FALSE;
+	g_return_val_if_fail(conv != NULL, FALSE);
 
 	return conv->logging;
 }
@@ -1265,8 +1250,7 @@ gaim_conversation_is_logging(const GaimConversation *conv)
 GList *
 gaim_conversation_get_send_history(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	return conv->send_history;
 }
@@ -1274,8 +1258,7 @@ gaim_conversation_get_send_history(const GaimConversation *conv)
 void
 gaim_conversation_set_history(GaimConversation *conv, GString *history)
 {
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	conv->history = history;
 }
@@ -1283,8 +1266,7 @@ gaim_conversation_set_history(GaimConversation *conv, GString *history)
 GString *
 gaim_conversation_get_history(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	return conv->history;
 }
@@ -1292,8 +1274,7 @@ gaim_conversation_get_history(const GaimConversation *conv)
 GaimWindow *
 gaim_conversation_get_window(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	return conv->window;
 }
@@ -1301,8 +1282,7 @@ gaim_conversation_get_window(const GaimConversation *conv)
 GaimIm *
 gaim_conversation_get_im_data(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	if (gaim_conversation_get_type(conv) != GAIM_CONV_IM)
 		return NULL;
@@ -1313,8 +1293,7 @@ gaim_conversation_get_im_data(const GaimConversation *conv)
 GaimChat *
 gaim_conversation_get_chat_data(const GaimConversation *conv)
 {
-	if (conv == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT)
 		return NULL;
@@ -1326,8 +1305,8 @@ void
 gaim_conversation_set_data(GaimConversation *conv, const char *key,
 						   gpointer data)
 {
-	if (conv == NULL || key == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
+	g_return_if_fail(key  != NULL);
 
 	g_hash_table_replace(conv->data, g_strdup(key), data);
 }
@@ -1335,8 +1314,8 @@ gaim_conversation_set_data(GaimConversation *conv, const char *key,
 gpointer
 gaim_conversation_get_data(GaimConversation *conv, const char *key)
 {
-	if (conv == NULL || key == NULL)
-		return NULL;
+	g_return_val_if_fail(conv != NULL, NULL);
+	g_return_val_if_fail(key  != NULL, NULL);
 
 	return g_hash_table_lookup(conv->data, key);
 }
@@ -1366,8 +1345,7 @@ gaim_find_conversation(const char *name)
 	char *cuser;
 	GList *cnv;
 
-	if (name == NULL)
-		return NULL;
+	g_return_val_if_fail(name != NULL, NULL);
 
 	cuser = g_strdup(normalize(name));
 
@@ -1393,8 +1371,7 @@ gaim_find_conversation_with_account(const char *name,
 	char *cuser;
 	GList *cnv;
 
-	if (name == NULL)
-		return NULL;
+	g_return_val_if_fail(name != NULL, NULL);
 
 	cuser = g_strdup(normalize(name));
 
@@ -1430,8 +1407,8 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	GaimUnseenState unseen;
 	/* int logging_font_options = 0; */
 
-	if (conv == NULL || message == NULL)
-		return;
+	g_return_if_fail(conv    != NULL);
+	g_return_if_fail(message != NULL);
 
 	ops = gaim_conversation_get_ui_ops(conv);
 
@@ -1519,14 +1496,11 @@ gaim_conversation_update_progress(GaimConversation *conv, float percent)
 {
 	GaimConversationUiOps *ops;
 
-	if (conv == NULL)
-		return;
-
-	if (percent < 0)
-		percent = 0;
+	g_return_if_fail(conv != NULL);
+	g_return_if_fail(percent >= 0 && percent <= 1);
 
 	/*
-	 * NOTE: A percent >= 1 indicates that the progress bar should be
+	 * NOTE: A percent == 1 indicates that the progress bar should be
 	 *       closed.
 	 */
 	ops = gaim_conversation_get_ui_ops(conv);
@@ -1540,8 +1514,7 @@ gaim_conversation_update(GaimConversation *conv, GaimConvUpdateType type)
 {
 	GaimConversationUiOps *ops;
 
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	ops = gaim_conversation_get_ui_ops(conv);
 
@@ -1555,8 +1528,7 @@ gaim_conversation_update(GaimConversation *conv, GaimConvUpdateType type)
 GaimConversation *
 gaim_im_get_conversation(const GaimIm *im)
 {
-	if (im == NULL)
-		return NULL;
+	g_return_val_if_fail(im != NULL, NULL);
 
 	return im->conv;
 }
@@ -1564,8 +1536,7 @@ gaim_im_get_conversation(const GaimIm *im)
 void
 gaim_im_set_typing_state(GaimIm *im, int state)
 {
-	if (im == NULL)
-		return;
+	g_return_if_fail(im != NULL);
 
 	im->typing_state = state;
 }
@@ -1573,8 +1544,7 @@ gaim_im_set_typing_state(GaimIm *im, int state)
 int
 gaim_im_get_typing_state(const GaimIm *im)
 {
-	if (im == NULL)
-		return 0;
+	g_return_val_if_fail(im != NULL, 0);
 
 	return im->typing_state;
 }
@@ -1585,8 +1555,7 @@ gaim_im_start_typing_timeout(GaimIm *im, int timeout)
 	GaimConversation *conv;
 	const char *name;
 
-	if (im == NULL)
-		return;
+	g_return_if_fail(im != NULL);
 
 	if (im->typing_timeout > 0)
 		gaim_im_stop_typing_timeout(im);
@@ -1601,8 +1570,7 @@ gaim_im_start_typing_timeout(GaimIm *im, int timeout)
 void
 gaim_im_stop_typing_timeout(GaimIm *im)
 {
-	if (im == NULL)
-		return;
+	g_return_if_fail(im != NULL);
 
 	if (im->typing_timeout == 0)
 		return;
@@ -1614,8 +1582,7 @@ gaim_im_stop_typing_timeout(GaimIm *im)
 guint
 gaim_im_get_typing_timeout(const GaimIm *im)
 {
-	if (im == NULL)
-		return 0;
+	g_return_val_if_fail(im != NULL, 0);
 
 	return im->typing_timeout;
 }
@@ -1623,8 +1590,7 @@ gaim_im_get_typing_timeout(const GaimIm *im)
 void
 gaim_im_set_type_again(GaimIm *im, time_t val)
 {
-	if (im == NULL)
-		return;
+	g_return_if_fail(im != NULL);
 
 	im->type_again = val;
 }
@@ -1632,8 +1598,7 @@ gaim_im_set_type_again(GaimIm *im, time_t val)
 time_t
 gaim_im_get_type_again(const GaimIm *im)
 {
-	if (im == NULL)
-		return 0;
+	g_return_val_if_fail(im != NULL, 0);
 
 	return im->type_again;
 }
@@ -1641,8 +1606,7 @@ gaim_im_get_type_again(const GaimIm *im)
 void
 gaim_im_start_type_again_timeout(GaimIm *im)
 {
-	if (im == NULL)
-		return;
+	g_return_if_fail(im != NULL);
 
 	im->type_again_timeout = g_timeout_add(SEND_TYPED_TIMEOUT, send_typed,
 										   gaim_im_get_conversation(im));
@@ -1651,8 +1615,7 @@ gaim_im_start_type_again_timeout(GaimIm *im)
 void
 gaim_im_stop_type_again_timeout(GaimIm *im)
 {
-	if (im == NULL)
-		return;
+	g_return_if_fail(im != NULL);
 
 	if (im->type_again_timeout == 0)
 		return;
@@ -1664,8 +1627,7 @@ gaim_im_stop_type_again_timeout(GaimIm *im)
 guint
 gaim_im_get_type_again_timeout(const GaimIm *im)
 {
-	if (im == NULL)
-		return 0;
+	g_return_val_if_fail(im != NULL, 0);
 
 	return im->type_again_timeout;
 }
@@ -1673,8 +1635,7 @@ gaim_im_get_type_again_timeout(const GaimIm *im)
 void
 gaim_im_update_typing(GaimIm *im)
 {
-	if (im == NULL)
-		return;
+	g_return_if_fail(im != NULL);
 
 	gaim_conversation_update(gaim_im_get_conversation(im),
 							 GAIM_CONV_UPDATE_TYPING);
@@ -1686,8 +1647,8 @@ gaim_im_write(GaimIm *im, const char *who, const char *message,
 {
 	GaimConversation *c;
 
-	if (im == NULL || message == NULL)
-		return;
+	g_return_if_fail(im != NULL);
+	g_return_if_fail(message != NULL);
 
 	c = gaim_im_get_conversation(im);
 
@@ -1701,8 +1662,8 @@ gaim_im_write(GaimIm *im, const char *who, const char *message,
 void
 gaim_im_send(GaimIm *im, const char *message)
 {
-	if (im == NULL || message == NULL)
-		return;
+	g_return_if_fail(im != NULL);
+	g_return_if_fail(message != NULL);
 
 	common_send(gaim_im_get_conversation(im), message);
 }
@@ -1714,8 +1675,7 @@ gaim_im_send(GaimIm *im, const char *message)
 GaimConversation *
 gaim_chat_get_conversation(const GaimChat *chat)
 {
-	if (chat == NULL)
-		return NULL;
+	g_return_val_if_fail(chat != NULL, NULL);
 
 	return chat->conv;
 }
@@ -1723,8 +1683,7 @@ gaim_chat_get_conversation(const GaimChat *chat)
 GList *
 gaim_chat_set_users(GaimChat *chat, GList *users)
 {
-	if (chat == NULL)
-		return NULL;
+	g_return_val_if_fail(chat != NULL, NULL);
 
 	chat->in_room = users;
 
@@ -1734,8 +1693,7 @@ gaim_chat_set_users(GaimChat *chat, GList *users)
 GList *
 gaim_chat_get_users(const GaimChat *chat)
 {
-	if (chat == NULL)
-		return NULL;
+	g_return_val_if_fail(chat != NULL, NULL);
 
 	return chat->in_room;
 }
@@ -1743,8 +1701,8 @@ gaim_chat_get_users(const GaimChat *chat)
 void
 gaim_chat_ignore(GaimChat *chat, const char *name)
 {
-	if (chat == NULL || name == NULL)
-		return;
+	g_return_if_fail(chat != NULL);
+	g_return_if_fail(name != NULL);
 
 	/* Make sure the user isn't already ignored. */
 	if (gaim_chat_is_user_ignored(chat, name))
@@ -1759,8 +1717,8 @@ gaim_chat_unignore(GaimChat *chat, const char *name)
 {
 	GList *item;
 
-	if (chat == NULL || name == NULL)
-		return;
+	g_return_if_fail(chat != NULL);
+	g_return_if_fail(name != NULL);
 
 	/* Make sure the user is actually ignored. */
 	if (!gaim_chat_is_user_ignored(chat, name))
@@ -1779,8 +1737,7 @@ gaim_chat_unignore(GaimChat *chat, const char *name)
 GList *
 gaim_chat_set_ignored(GaimChat *chat, GList *ignored)
 {
-	if (chat == NULL)
-		return NULL;
+	g_return_val_if_fail(chat != NULL, NULL);
 
 	chat->ignored = ignored;
 
@@ -1790,8 +1747,7 @@ gaim_chat_set_ignored(GaimChat *chat, GList *ignored)
 GList *
 gaim_chat_get_ignored(const GaimChat *chat)
 {
-	if (chat == NULL)
-		return NULL;
+	g_return_val_if_fail(chat != NULL, NULL);
 
 	return chat->ignored;
 }
@@ -1801,8 +1757,8 @@ gaim_chat_get_ignored_user(const GaimChat *chat, const char *user)
 {
 	GList *ignored;
 
-	if (chat == NULL || user == NULL)
-		return NULL;
+	g_return_val_if_fail(chat != NULL, NULL);
+	g_return_val_if_fail(user != NULL, NULL);
 
 	for (ignored = gaim_chat_get_ignored(chat);
 		 ignored != NULL;
@@ -1829,8 +1785,8 @@ gaim_chat_get_ignored_user(const GaimChat *chat, const char *user)
 gboolean
 gaim_chat_is_user_ignored(const GaimChat *chat, const char *user)
 {
-	if (chat == NULL || user == NULL)
-		return FALSE;
+	g_return_val_if_fail(chat != NULL, FALSE);
+	g_return_val_if_fail(user != NULL, FALSE);
 
 	return (gaim_chat_get_ignored_user(chat, user) != NULL);
 }
@@ -1838,8 +1794,7 @@ gaim_chat_is_user_ignored(const GaimChat *chat, const char *user)
 void
 gaim_chat_set_topic(GaimChat *chat, const char *who, const char *topic)
 {
-	if (chat == NULL)
-		return;
+	g_return_if_fail(chat != NULL);
 
 	if (chat->who   != NULL) free(chat->who);
 	if (chat->topic != NULL) free(chat->topic);
@@ -1854,8 +1809,7 @@ gaim_chat_set_topic(GaimChat *chat, const char *who, const char *topic)
 const char *
 gaim_chat_get_topic(const GaimChat *chat)
 {
-	if (chat == NULL)
-		return NULL;
+	g_return_val_if_fail(chat != NULL, NULL);
 
 	return chat->topic;
 }
@@ -1863,8 +1817,7 @@ gaim_chat_get_topic(const GaimChat *chat)
 void
 gaim_chat_set_id(GaimChat *chat, int id)
 {
-	if (chat == NULL)
-		return;
+	g_return_if_fail(chat != NULL);
 
 	chat->id = id;
 }
@@ -1872,8 +1825,7 @@ gaim_chat_set_id(GaimChat *chat, int id)
 int
 gaim_chat_get_id(const GaimChat *chat)
 {
-	if (chat == NULL)
-		return -1;
+	g_return_val_if_fail(chat != NULL, -1);
 
 	return chat->id;
 }
@@ -1886,8 +1838,9 @@ gaim_chat_write(GaimChat *chat, const char *who, const char *message,
 	GaimConversation *conv;
 	GaimConnection *gc;
 
-	if (chat == NULL || who == NULL || message == NULL)
-		return;
+	g_return_if_fail(chat != NULL);
+	g_return_if_fail(who != NULL);
+	g_return_if_fail(message != NULL);
 
 	conv    = gaim_chat_get_conversation(chat);
 	gc      = gaim_conversation_get_gc(conv);
@@ -1927,8 +1880,8 @@ gaim_chat_write(GaimChat *chat, const char *who, const char *message,
 void
 gaim_chat_send(GaimChat *chat, const char *message)
 {
-	if (chat == NULL || message == NULL)
-		return;
+	g_return_if_fail(chat != NULL);
+	g_return_if_fail(message != NULL);
 
 	common_send(gaim_chat_get_conversation(chat), message);
 }
@@ -1940,8 +1893,8 @@ gaim_chat_add_user(GaimChat *chat, const char *user, const char *extra_msg)
 	GaimConversationUiOps *ops;
 	char tmp[BUF_LONG];
 
-	if (chat == NULL || user == NULL)
-		return;
+	g_return_if_fail(chat != NULL);
+	g_return_if_fail(user != NULL);
 
 	conv = gaim_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
@@ -1978,8 +1931,9 @@ gaim_chat_rename_user(GaimChat *chat, const char *old_user,
 	char tmp[BUF_LONG];
 	GList *names;
 
-	if (chat == NULL || old_user == NULL || new_user == NULL)
-		return;
+	g_return_if_fail(chat != NULL);
+	g_return_if_fail(old_user != NULL);
+	g_return_if_fail(new_user != NULL);
 
 	conv = gaim_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
@@ -2025,8 +1979,8 @@ gaim_chat_remove_user(GaimChat *chat, const char *user, const char *reason)
 	char tmp[BUF_LONG];
 	GList *names;
 
-	if (chat == NULL || user == NULL)
-		return;
+	g_return_if_fail(chat != NULL);
+	g_return_if_fail(user != NULL);
 
 	conv = gaim_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
@@ -2255,8 +2209,8 @@ ensure_default_funcs(void)
 int
 gaim_conv_placement_add_fnc(const char *name, GaimConvPlacementFunc fnc)
 {
-	if (name == NULL || fnc == NULL)
-		return -1;
+	g_return_val_if_fail(name != NULL, -1);
+	g_return_val_if_fail(fnc  != NULL, -1);
 
 	if (conv_placement_fncs == NULL)
 		ensure_default_funcs();
