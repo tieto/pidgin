@@ -1862,22 +1862,6 @@ void do_log(GtkWidget *w, struct conversation *c)
         cancel_log(NULL, c);
 } 
 
-/*
-static void cancel_log(GtkWidget *w, char *name)
-{
-	
-	struct conversation *c = gtk_object_get_user_data(GTK_OBJECT(logdialog));
-
-	if (c != NULL)
-        {
-        set_state_lock(1);
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->log_button), FALSE);
-        set_state_lock(0);
-        }
-	destroy_dialog(NULL, logdialog);
-}
-*/
-
 void show_log_dialog(struct conversation *c)
 {
 	char *buf = g_malloc(BUF_LEN);
