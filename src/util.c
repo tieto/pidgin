@@ -252,7 +252,7 @@ gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 {
 	char *p, *n, *new;
 
-	n = new = g_malloc(strlen (str));
+	n = new = g_malloc(strlen (str) + 1);
 
 	for (p = (char *)str; *p; p++, n++) {
 		if (*p == '=') {
