@@ -964,12 +964,6 @@ static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 	g_free(buddy);
 }
 
-static gboolean jabber_disconnect(gpointer data)
-{
-	signoff(data);
-	return FALSE;
-}
-
 static void jabber_handleauthresp(gjconn j, jpacket p)
 {
 	if (jpacket_subtype(p) == JPACKET__RESULT) {
@@ -1004,7 +998,7 @@ static void jabber_handleauthresp(gjconn j, jpacket p)
 			hide_login_progress(GJ_GC(j), "Unknown login error");
 		}
 
-		gtk_timeout_add(50, jabber_disconnect, GJ_GC(j));
+		signoff(GJ_GC(j));
 	}
 }
 
@@ -1216,13 +1210,20 @@ static gboolean jabber_destroy_hash(gpointer key, gpointer val, gpointer data) {
 	return TRUE;
 }
 
+static gboolean jabber_free(gpointer data)
+{
+	gjab_delete(data);
+	return FALSE;
+}
+
 static void jabber_close(struct gaim_connection *gc)
 {
 	struct jabber_data *jd = gc->proto_data;
 	g_hash_table_foreach_remove(jd->hash, jabber_destroy_hash, NULL);
 	g_hash_table_destroy(jd->hash);
 	gdk_input_remove(gc->inpa);
-	gjab_delete(jd->jc);
+	close(jd->jc->fd);
+	gtk_timeout_add(50, jabber_free, jd->jc);
 	jd->jc = NULL;
 	g_free(jd);
 	gc->proto_data = NULL;
