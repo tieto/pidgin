@@ -7,7 +7,7 @@
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -94,7 +94,6 @@ struct _GaimXfer
 
 	FILE *dest_fp;                /**< The destination file pointer.       */
 
-	char *local_ip;               /**< The local IP address.               */
 	char *remote_ip;              /**< The remote IP address.              */
 	int local_port;               /**< The local port.                     */
 	int remote_port;              /**< The remote port.                    */
@@ -116,8 +115,8 @@ struct _GaimXfer
 		void (*end)(GaimXfer *xfer);
 		void (*cancel_send)(GaimXfer *xfer);
 		void (*cancel_recv)(GaimXfer *xfer);
-		size_t (*read)(char **buffer, GaimXfer *xfer);
-		size_t (*write)(const char *buffer, size_t size, GaimXfer *xfer);
+		ssize_t (*read)(char **buffer, GaimXfer *xfer);
+		ssize_t (*write)(const char *buffer, size_t size, GaimXfer *xfer);
 		void (*ack)(GaimXfer *xfer, const char *buffer, size_t size);
 
 	} ops;
@@ -296,15 +295,6 @@ size_t gaim_xfer_get_size(const GaimXfer *xfer);
 double gaim_xfer_get_progress(const GaimXfer *xfer);
 
 /**
- * Returns the local IP address in the file transfer.
- *
- * @param xfer The file transfer.
- *
- * @return The IP address on this end.
- */
-const char *gaim_xfer_get_local_ip(const GaimXfer *xfer);
-
-/**
  * Returns the local port number in the file transfer.
  *
  * @param xfer The file transfer.
@@ -379,7 +369,7 @@ GaimXferUiOps *gaim_xfer_get_ui_ops(const GaimXfer *xfer);
  * @param fnc  The read function.
  */
 void gaim_xfer_set_read_fnc(GaimXfer *xfer,
-		size_t (*fnc)(char **, GaimXfer *));
+		ssize_t (*fnc)(char **, GaimXfer *));
 
 /**
  * Sets the write function for the file transfer.
@@ -388,7 +378,7 @@ void gaim_xfer_set_read_fnc(GaimXfer *xfer,
  * @param fnc  The write function.
  */
 void gaim_xfer_set_write_fnc(GaimXfer *xfer,
-		size_t (*fnc)(const char *, size_t, GaimXfer *));
+		ssize_t (*fnc)(const char *, size_t, GaimXfer *));
 
 /**
  * Sets the acknowledge function for the file transfer.
@@ -457,9 +447,9 @@ void gaim_xfer_set_cancel_recv_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *));
  * @param xfer   The file transfer.
  * @param buffer The buffer that will be created to contain the data.
  *
- * @return The number of bytes read.
+ * @return The number of bytes read, or -1.
  */
-size_t gaim_xfer_read(GaimXfer *xfer, char **buffer);
+ssize_t gaim_xfer_read(GaimXfer *xfer, char **buffer);
 
 /**
  * Writes data to a file transfer stream.
@@ -468,9 +458,9 @@ size_t gaim_xfer_read(GaimXfer *xfer, char **buffer);
  * @param buffer The buffer to read the data from.
  * @param size   The number of bytes to write.
  *
- * @return The number of bytes written.
+ * @return The number of bytes written, or -1.
  */
-size_t gaim_xfer_write(GaimXfer *xfer, const char *buffer, size_t size);
+ssize_t gaim_xfer_write(GaimXfer *xfer, const char *buffer, size_t size);
 
 /**
  * Starts a file transfer.
@@ -520,62 +510,6 @@ void gaim_xfer_cancel_remote(GaimXfer *xfer);
  * @param msg  The message to display.
  */
 void gaim_xfer_error(GaimXferType type, const char *who, const char *msg);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name File Transfer Subsystem API                                     */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Sets the IP address of the local system in preferences.
- *
- * @param ip The local IP address.
- */
-void gaim_xfers_set_local_ip(const char *ip);
-
-/**
- * Returns the IP address of the local system set in preferences.
- *
- * @return The local IP address set in preferences.
- */
-const char *gaim_xfers_get_local_ip(void);
-
-/**
- * Returns the IP address of the local system.
- *
- * @note The returned string is a pointer to a static buffer. If this
- *       function is called twice, it may be important to make a copy
- *       of the returned string.
- *
- * @return The local IP address.
- */
-const char *gaim_xfers_get_local_system_ip(void);
-
-/**
- * Returns the IP address that should be used for the specified account.
- *
- * First, the IP associated with @a account is tried, via a call to
- * gaim_account_get_local_ip().
- *
- * If that IP is not set, the IP set in preferences is tried.
- *
- * If that IP is not set, the system's local IP is tried, via a call to
- * gaim_xfers_get_local_ip().
- *
- * @note The returned string is a pointer to a static buffer. If this
- *       function is called twice, it may be important to make a copy
- *       of the returned string.
- *
- * @return The local IP address to be used.
- */
-const char *gaim_xfers_get_ip_for_account(const GaimAccount *account);
-
-/**
- * Initializes the file transfer subsystem.
- */
-void gaim_xfers_init(void);
 
 /*@}*/
 

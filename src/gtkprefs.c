@@ -33,6 +33,7 @@
 #include "sound.h"
 #include "util.h"
 #include "multi.h"
+#include "network.h"
 
 #include "gtkblist.h"
 #include "gtkconv.h"
@@ -1045,6 +1046,81 @@ GtkWidget *chat_page() {
 			"/core/conversations/chat/show_leave", vbox);
 	gaim_gtk_prefs_checkbox(_("Co_lorize screen names"),
 			"/gaim/gtk/conversations/chat/color_nicks", vbox);
+
+	gtk_widget_show_all(ret);
+	return ret;
+}
+
+static void network_ip_changed(GtkEntry *entry, gpointer data)
+{
+	gaim_prefs_set_string("/core/network/public_ip", gtk_entry_get_text(entry));
+}
+
+GtkWidget *network_page() {
+	GtkWidget *ret;
+	GtkWidget *vbox, *entry;
+	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
+	GtkSizeGroup *sg;
+
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+
+	vbox = gaim_gtk_make_frame (ret, _("IP Address"));
+
+	auto_ip_checkbox = gaim_gtk_prefs_checkbox(_("_Autodetect IP Address"),
+			"/core/network/auto_ip", vbox);
+
+	table = gtk_table_new(2, 1, FALSE);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 10);
+	gtk_container_add(GTK_CONTAINER(vbox), table);
+
+	label = gtk_label_new_with_mnemonic(_("Public _IP:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
+
+	entry = gtk_entry_new();
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
+	gtk_table_attach(GTK_TABLE(table), entry, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
+	g_signal_connect(G_OBJECT(entry), "changed",
+					 G_CALLBACK(network_ip_changed), NULL);
+
+	if (gaim_network_get_local_ip() != NULL)
+		gtk_entry_set_text(GTK_ENTRY(entry),
+		                   gaim_network_get_local_ip());
+
+	gaim_set_accessible_label (entry, label);
+
+
+	if (gaim_prefs_get_bool("/core/network/auto_ip")) {
+		gtk_widget_set_sensitive(GTK_WIDGET(table), FALSE);
+	}
+
+	g_signal_connect(G_OBJECT(auto_ip_checkbox), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), table);
+
+
+
+	vbox = gaim_gtk_make_frame (ret, _("Ports"));
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	ports_checkbox = gaim_gtk_prefs_checkbox(_("_Manually specify range of ports to listen on"),
+			"/core/network/ports_range_use", vbox);
+
+	spin_button = gaim_gtk_prefs_labeled_spin_button(vbox, _("_Start Port:"),
+			"/core/network/ports_range_start", 0, 65535, sg);
+	if (!gaim_prefs_get_bool("/core/network/ports_range_use"))
+		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
+	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), spin_button);
+
+	spin_button = gaim_gtk_prefs_labeled_spin_button(vbox, _("_End Port:"),
+			"/core/network/ports_range_end", 0, 65535, sg);
+	if (!gaim_prefs_get_bool("/core/network/ports_range_use"))
+		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
+	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), spin_button);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -2373,6 +2449,7 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &p2, NULL, notebook_page++);
 	prefs_notebook_add_page(_("IMs"), NULL, im_page(), &c, &p2, notebook_page++);
 	prefs_notebook_add_page(_("Chats"), NULL, chat_page(), &c, &p2, notebook_page++);
+	/* XXX */prefs_notebook_add_page(_("Network"), NULL, network_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Proxy"), NULL, proxy_page(), &p, NULL, notebook_page++);
 #ifndef _WIN32
 	/* We use the registered default browser in windows */

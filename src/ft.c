@@ -24,6 +24,7 @@
  */
 #include "internal.h"
 #include "ft.h"
+#include "network.h"
 #include "notify.h"
 #include "prefs.h"
 #include "proxy.h"
@@ -47,8 +48,6 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 	xfer->account = account;
 	xfer->who     = g_strdup(who);
 	xfer->ui_ops  = gaim_xfers_get_ui_ops();
-
-	xfer->local_ip = g_strdup(gaim_xfers_get_ip_for_account(account));
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
@@ -77,7 +76,6 @@ gaim_xfer_destroy(GaimXfer *xfer)
 	g_free(xfer->filename);
 
 	if (xfer->remote_ip != NULL) g_free(xfer->remote_ip);
-	if (xfer->local_ip  != NULL) g_free(xfer->local_ip);
 
 	if (xfer->local_filename != NULL)
 		g_free(xfer->local_filename);
@@ -280,14 +278,6 @@ gaim_xfer_get_progress(const GaimXfer *xfer)
 			(double)gaim_xfer_get_size(xfer));
 }
 
-const char *
-gaim_xfer_get_local_ip(const GaimXfer *xfer)
-{
-	g_return_val_if_fail(xfer != NULL, NULL);
-
-	return xfer->local_ip;
-}
-
 unsigned int
 gaim_xfer_get_local_port(const GaimXfer *xfer)
 {
@@ -394,7 +384,7 @@ void gaim_xfer_set_request_denied_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 }
 
 void
-gaim_xfer_set_read_fnc(GaimXfer *xfer, size_t (*fnc)(char **, GaimXfer *))
+gaim_xfer_set_read_fnc(GaimXfer *xfer, ssize_t (*fnc)(char **, GaimXfer *))
 {
 	g_return_if_fail(xfer != NULL);
 
@@ -403,7 +393,7 @@ gaim_xfer_set_read_fnc(GaimXfer *xfer, size_t (*fnc)(char **, GaimXfer *))
 
 void
 gaim_xfer_set_write_fnc(GaimXfer *xfer,
-						size_t (*fnc)(const char *, size_t, GaimXfer *))
+						ssize_t (*fnc)(const char *, size_t, GaimXfer *))
 {
 	g_return_if_fail(xfer != NULL);
 
@@ -451,10 +441,10 @@ gaim_xfer_set_cancel_recv_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 	xfer->ops.cancel_recv = fnc;
 }
 
-size_t
+ssize_t
 gaim_xfer_read(GaimXfer *xfer, char **buffer)
 {
-	size_t s, r;
+	ssize_t s, r;
 
 	g_return_val_if_fail(xfer   != NULL, 0);
 	g_return_val_if_fail(buffer != NULL, 0);
@@ -478,10 +468,10 @@ gaim_xfer_read(GaimXfer *xfer, char **buffer)
 	return r;
 }
 
-size_t
+ssize_t
 gaim_xfer_write(GaimXfer *xfer, const char *buffer, size_t size)
 {
-	size_t r, s;
+	ssize_t r, s;
 
 	g_return_val_if_fail(xfer   != NULL, 0);
 	g_return_val_if_fail(buffer != NULL, 0);
@@ -489,10 +479,13 @@ gaim_xfer_write(GaimXfer *xfer, const char *buffer, size_t size)
 
 	s = MIN(gaim_xfer_get_bytes_remaining(xfer), size);
 
-	if (xfer->ops.write != NULL)
+	if (xfer->ops.write != NULL) {
 		r = (xfer->ops.write)(buffer, s, xfer);
-	else
+	} else {
 		r = write(xfer->fd, buffer, s);
+		if ((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer))
+			gaim_xfer_set_completed(xfer, TRUE);
+	}
 
 	return r;
 }
@@ -507,8 +500,12 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 
 	if (condition & GAIM_INPUT_READ) {
 		r = gaim_xfer_read(xfer, &buffer);
-		if (r > 0)
+		if (r > 0) {
 			fwrite(buffer, 1, r, xfer->dest_fp);
+		} else {
+			gaim_xfer_cancel_remote(xfer);
+			return;
+		}
 	}
 	else {
 		size_t s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
@@ -520,7 +517,11 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 		/* Write as much as we're allowed to. */
 		r = gaim_xfer_write(xfer, buffer, s);
 
-		if (r < s) {
+		if (r == -1) {
+			gaim_xfer_cancel_remote(xfer);
+			g_free(buffer);
+			return;
+		} else if (r < s) {
 			/* We have to seek back in the file now. */
 			fseek(xfer->dest_fp, r - s, SEEK_CUR);
 		}
@@ -765,72 +766,6 @@ gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
 /**************************************************************************
  * File Transfer Subsystem API
  **************************************************************************/
-void
-gaim_xfers_set_local_ip(const char *ip)
-{
-	g_return_if_fail(ip != NULL);
-
-	gaim_prefs_set_string("/core/ft/public_ip", ip);
-}
-
-const char *
-gaim_xfers_get_local_ip(void)
-{
-	const char *ip;
-
-	ip = gaim_prefs_get_string("/core/ft/public_ip");
-
-	if (ip == NULL || *ip == '\0')
-		return NULL;
-
-	return ip;
-}
-
-const char *
-gaim_xfers_get_local_system_ip(void)
-{
-	struct hostent *host;
-	char localhost[129];
-	long unsigned add;
-	static char ip[46];
-
-	if (gethostname(localhost, 128) < 0)
-		return NULL;
-
-	if ((host = gethostbyname(localhost)) == NULL)
-		return NULL;
-
-	memcpy(&add, host->h_addr_list[0], 4);
-	add = htonl(add);
-
-	g_snprintf(ip, 16, "%lu.%lu.%lu.%lu",
-			   ((add >> 24) & 255),
-			   ((add >> 16) & 255),
-			   ((add >>  8) & 255),
-			   add & 255);
-
-	return ip;
-}
-
-const char *
-gaim_xfers_get_ip_for_account(const GaimAccount *account)
-{
-	g_return_val_if_fail(account != NULL, NULL);
-
-	if (gaim_account_get_public_ip(account) != NULL)
-		return gaim_account_get_public_ip(account);
-	else if (gaim_xfers_get_local_ip() != NULL)
-		return gaim_xfers_get_local_ip();
-	else
-		return gaim_xfers_get_local_system_ip();
-}
-
-void
-gaim_xfers_init(void)
-{
-	gaim_prefs_add_none("/core/ft");
-	gaim_prefs_add_string("/core/ft/public_ip", "");
-}
 
 void
 gaim_xfers_set_ui_ops(GaimXferUiOps *ops)

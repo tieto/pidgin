@@ -35,6 +35,7 @@
 #include "ft.h"
 #include "imgstore.h"
 #include "multi.h"
+#include "network.h"
 #include "notify.h"
 #include "privacy.h"
 #include "prpl.h"
@@ -1032,8 +1033,10 @@ static GaimXfer *oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
 
 static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 	OscarData *od = (OscarData *)gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
+	const char *ip;
 
 	/* You want to send a file to someone else, you're so generous */
 
@@ -1042,7 +1045,8 @@ static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 	xfer->local_port = 5190;
 
 	/* Create the oscar-specific data */
-	oft_info = aim_oft_createinfo(od->sess, NULL, destsn, xfer->local_ip, xfer->local_port, 0, 0, NULL);
+	ip = gaim_network_get_ip_for_account(account, od->conn?od->conn->fd:-1);
+	oft_info = aim_oft_createinfo(od->sess, NULL, destsn, ip, xfer->local_port, 0, 0, NULL);
 	xfer->data = oft_info;
 
 	 /* Setup our I/O op functions */

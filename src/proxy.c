@@ -1763,7 +1763,6 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 									connection_host_resolved, phb);
 }
 
-
 static void
 proxy_pref_cb(const char *name, GaimPrefType type, gpointer value,
 			  gpointer data)

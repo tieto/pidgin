@@ -79,6 +79,8 @@ CORESOURCES = \
 	md5.c \
 	md5.h \
 	multi.h \
+	network.c \
+	network.h \
 	notify.c \
 	notify.h \
 	plugin.c \

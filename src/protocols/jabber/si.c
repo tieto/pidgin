@@ -21,6 +21,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "ft.h"
+#include "network.h"
 #include "notify.h"
 #include "util.h"
 
@@ -69,6 +70,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	GaimXfer *xfer;
 	JabberSIXfer *jsx;
 	xmlnode *si, *feature, *x, *field, *value;
+	GaimAccount *account = gaim_connection_get_account(js->gc);
 
 	si = xmlnode_get_child(packet, "si");
 
@@ -130,7 +132,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 		streamhost = xmlnode_new_child(query, "streamhost");
 		xmlnode_set_attrib(streamhost, "jid",
 				gaim_account_get_username(js->gc->account));
-		xmlnode_set_attrib(streamhost, "host", xfer->local_ip);
+		xmlnode_set_attrib(streamhost, "host", gaim_network_get_ip_for_account(account, js->fd));
 		buf = g_strdup_printf("%d", xfer->local_port);
 		xmlnode_set_attrib(streamhost, "port", buf);
 		g_free(buf);
