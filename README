@@ -14,12 +14,16 @@ for the stock version.  ./configure --help to see what option you can get.
 You need GTK 1.2.3.  I don't wanna hear about it, if you can't get it to
 work under a lower version.
 
+Gaim will try to compile with Gnome features if you have Gnome on your
+system. If you don't have them, it will settle for simply GTK. If you
+don't want Gnome bits, ./configure --disable-gnome
+
 Run:
 
 type "./gaim"
 
 If you want to build as a GNOME applet:
-./configure --enable-gnome ; make
+./configure --enable-panel ; make
 then su to root and run "make install". 
 Afterwards panel->Add applet->Network->Gaim should be there.
 
@@ -27,6 +31,7 @@ Notes:
 
 This should now compile under Solaris, Digital Unix, Irix, etc w/o a
 problem.
+
 This compiles without warnings on Linux-x86 2.2.10 glibc2.1, GTK 1.2.3 system.
 If you get warnings on something else, let me know and I'll check it out.
 If you get errors, upgrade to the latest GTK-1.2 before bothering me.

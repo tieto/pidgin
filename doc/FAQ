@@ -25,17 +25,17 @@ II. The Client
 	4. Why no AOL logo?
 	5. Where are my log files stored?
 	6. Can I use my Windows 95 Buddylist with Gaim?
-        7. I'm not a native English speaker and I would like a translated
-           version of gaim.
+	7. I'm not a native English speaker and I would like a translated
+	   version of gaim.
         8. I've got a proxy, and I'd like to use GAIM.
-	
+
 III. Problems
-        1. WAAAAAH!  My sound doesn't work!
+	1. WAAAAAH!  My sound doesn't work!
 	2. My buddy list disappeared!
 	3. I click on URLs, but Netscape doesn't popup!
 	4. I don't use Netscape.
 	5. I'm using the GNOME client.  I have a bug. 
-        6. I have a bug not described here.
+	6. I have a bug not described here.
 	7. I have Mandrake 6.0 and GAIM doesnt work!
 
 IV. Programming
@@ -44,11 +44,11 @@ IV. Programming
 	3. Can you teach me how to program GTK?
 
 V. Miscellaneous
-        1. Can I talk to you on IM?
-        2. I want to write an IM client.  Will you help me?
-        3. I have money.  I need some software written.  Can you help?
+	1. Can I talk to you on IM?
+	2. I want to write an IM client.  Will you help me?
+	3. I have money.  I need some software written.  Can you help?
 	4. I have hardware here that's not being used, or money.  Can 
-           you use it?
+	   you use it?
 	5. I would like to send you beer.
 	6. Are you going to port this thing to Windows?
 	7. Why the GPL?
@@ -58,8 +58,8 @@ V. Miscellaneous
        11. Speaking of the penguin, I heard a rumour you have a tattoo of
 	   it.  Is that true?
        12. What Window Manager do you use?  What distribution do you use?
-           What other stupid things can you ask me that don't really matter
-           but ya'll ask me anyway?
+	   What other stupid things can you ask me that don't really matter
+	   but ya'll ask me anyway?
        13. Is XX a good Harddrive, YY a good monitor and ZZ a good CPU?
        14. Who designed the new logo?	
        15. I want to contribute to the effort.  Where can I send beer to?
@@ -99,8 +99,9 @@ II. The Client
 Girls, Godzilla, GTK, graham crackers, whatever.
 
 	2. How do I make multiple groups?
-		When adding a new buddy, you just type in a new group name.
-Future versions intend to handle this and renaming groups better.
+		There are two ways: Click the "Group" button in the Edit Buddies
+tab of the buddy list; or click the "Add" button and simply enter a new group
+name.
 
 	3. How come there's no file transfer?
 		There is, it's just that you can't request for the transfer to
@@ -117,28 +118,20 @@ under $HOME/.gaim/YourScreenName/.  If your screen name is Zilding then you
 will find your logs under: $HOME/.gaim/Zilding/.  This will eventually become
 configurable.
 	
-       6. Can I use my Windows 95 buddylist with Gaim?
-		Well, you are in luck.  As of the 0.9.5 release there is a 
-small perl script called 'buddytrans' that is included with the distribution.
-If you installed the RPM copy of GAIM then you can find the script in
-/usr/bin/buddytrans.  The correct script syntax is: 
-buddytrans buddy.lst gaim.list.  You can then import `gaim.list' from inside
-gaim.  This will eventually be fully incorporated into GAIM and the script
-will no longer be needed.
+	6. Can I use my Windows 95 buddylist with Gaim?
+		Yes. Thanks to a couple great people (S D Erle and BMiller),
+gaim can import your Win95 buddylist. Simply select "Import Buddy List" from
+the buddy list window.
 
         7. I'm not a native English speaker and I would like a translated   
            version of gaim.
-		By all means, IM me at 'Zilding' or email me at
-jimduchek@ou.edu.  I'm working on standard GNU locale support for the next
-version of gaim, and I'm going to need translations.  If you can do a
+		There are a few translations of gaim. If you can do a
 translation for us, I'd greatly appreciate it!  Just let me know and I'll
 give you detailed instructions on how to do it.
  
 	8. I'm behind a proxy, and I'd like to use GAIM.
-		I *think* HTTP and SOCKS v4 proxy support is completely working.
-But since I don't have a SOCKS proxy to test it on, I really couldn't tell you.
-If it doesn't work, a temporary solution is to try setting the TOC port to 21,
-since a lot of proxies will allow that to pass.
+		HTTP, Socks 4, and Socks 5 proxying should be working now.
+None of them support authentication yet though.
 
 
 III. Problems
@@ -148,10 +141,6 @@ libraries.  If you have them it _WILL_ compile with them, if not it won't.
 If it compiles with them, you don't need to be running the ESD daemon, it'll
 automatically fallback to using /dev/dsp.  Make sure that gaim has proper
 permissions to talk to /dev/dsp and /dev/audio though!
-		The GNOME client now goes through GNOME for its sounds. If
-sounds aren't playing, make sure you've got them turned on in the GNOME
-control center. (The reason this was done was to make it more easily
-configurable.)
 
 	2. My buddy list disappeared!
 		You didn't back up your buddy list, did you?  You never back
@@ -179,9 +168,7 @@ you ask the other guys about it, they'll just point you at him.
 		Well, it could be a few things.  Firstly, you MUST HAVE GTK+
 VERSION 1.2.3 installed!  Please state in any bug report that you ARE using
 1.2.3, otherwise you have a chance of being ignored.  With that said ;)
-email me at jimduchek@ou.edu, I would like to hear your bug reports (but
-please, not your problems installing GTK). Also, sourceforge.net has a bug
-tracking system for us at <http://sourceforge.net/bugs/?group_id=235>.
+head over to our page on Sourceforge, http://sourceforge.net/projects/gaim/.
 
 	7. I have Mandrake 6.0 and GAIM doesnt work!
 
@@ -262,7 +249,6 @@ an insomniac (probably because I'm such a mean bastard ;), I'm likely to
 make fun of you, or more likely ignore you completely.  I don't require
 perfect English but it'd be nice.
 
-
 	2. I want to write an IM client.  Will you help me?
 		No, unless you're writing one commercially.  Email me for
 rates -- I'm not all that expensive. :)
@@ -288,6 +274,9 @@ now, as of 7/20.  However, the Win32 port of GTK has some issues that need
 to be resolved before I can even attempt to release this.  Some of my WIN32
 patches are included in this release, usually under an #ifdef _WIN32 (which
 cygwin and I think other windows compilers set).  
+		Update, 8/16/2000, more than one year later: No. The simple
+answer is this will never be ported to Windows. I simply dislike windows
+too greatly.
 
 	7. Why the GPL?
 		I like the GPL.  
@@ -338,4 +327,4 @@ send us some hardware we'll use it though and tell you how good it is *wink*
 	       A good guy named Naru Sundar.
 
       15. I want to contribute to the effort.  Where can I send beer to?
-               IM Zilding or email him at jimduchek@ou.edu.
+               IM RobFlynn or email him at rflynn@blueridge.net

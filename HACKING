@@ -6,7 +6,7 @@ things, then what you'll find in each of the source files. Hopefully
 that's enough to get most of you going.
 
 There's one little thing that's just a pet peeve, and it's really stupid.
-In ./configure there's and --enable-debug option. This does two things:
+In ./configure there's an --enable-debug option. This does two things:
 compiles with -Wall, and prints debugging information to stdout. The
 debugging information is printed to the debug window (which can be turned
 on in the preferences) whether or not --enable-debug was selected. Most
@@ -31,7 +31,7 @@ for the rest of this discussion; Oscar has a lot of bad hacks to get it
 working that I don't even want to think about.
 
 After you're signed in (I'll skip that discussion - I doubt many people
-are going to change the login process, since it pretty much just folows
+are going to change the login process, since it pretty much just follows
 PROTOCOL), Gaim draws the buddy list by calling show_buddy_list, and
 waits for input from two places: the server and the user. The first place
 it gets input from after signon is invariably the server, when the server
