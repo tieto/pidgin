@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 10116 2004-06-19 04:57:43Z seanegan $
+ * $Id: gg.c 10230 2004-06-27 18:19:09Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -200,9 +200,47 @@ static void agg_set_away(GaimConnection *gc, const char *state, const char *msg)
 		if (gd->own_status & GG_STATUS_FRIENDS_MASK)
 			status |= GG_STATUS_FRIENDS_MASK;
 	}
+	
+	if (msg) {
+	    switch (status) {
+		case GG_STATUS_AVAIL:
+		    status = GG_STATUS_AVAIL_DESCR;
+		    break;
+		case GG_STATUS_BUSY:
+		    status = GG_STATUS_BUSY_DESCR;
+		    break;
+		case GG_STATUS_INVISIBLE:
+		    status = GG_STATUS_INVISIBLE_DESCR;
+		    break;
+		case GG_STATUS_NOT_AVAIL:
+		    status = GG_STATUS_NOT_AVAIL_DESCR;
+		    break;
+	    }
+	}
 
 	gd->own_status = status;
-	gg_change_status(gd->sess, status);
+	if (msg)
+	    gg_change_status_descr(gd->sess, status, msg);
+	else
+	    gg_change_status(gd->sess, status);
+}
+
+static void agg_get_away(GaimConnection *gc, const char *who)
+{
+    GaimBuddy *buddy;
+    char *dialog_msg, **splitmsg;
+
+    if (invalid_uin(who))
+	return;
+    
+    buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
+    if (buddy->proto_data) {
+	/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+	splitmsg = g_strsplit(buddy->proto_data, "\r\n", 0);
+    
+	dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, (char *)buddy->proto_data, g_strjoinv("<BR>", splitmsg));
+	gaim_notify_formatted(gc, NULL, _("Buddy Information"), buddy->proto_data, dialog_msg, NULL, (char *)who);
+    }
 }
 
 static gchar *get_away_text(int uc)
@@ -476,28 +514,45 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	case GG_EVENT_NOTIFY60:
 		{
 			gchar user[20];
-			struct gg_notify_reply60 *n = (void *)e->event.notify60;
 			guint status;
+			guint i = 0;
 
-			while (n->uin) {
-				switch (n->status) {
+			for (i = 0; e->event.notify60[i].uin; i++) {
+				GaimBuddy *buddy;
+				
+				g_snprintf(user, sizeof(user), "%lu", (long unsigned int)e->event.notify60[i].uin);
+
+				buddy = gaim_find_buddy(gaim_connection_get_account(gc), user);
+				if (buddy && buddy->proto_data != NULL) {
+					g_free(buddy->proto_data);
+					buddy->proto_data = NULL;
+				}
+			
+				switch (e->event.notify60[i].status) {
 				case GG_STATUS_NOT_AVAIL:
+				case GG_STATUS_NOT_AVAIL_DESCR:
 					status = UC_UNAVAILABLE;
 					break;
 				case GG_STATUS_AVAIL:
+				case GG_STATUS_AVAIL_DESCR:
 				case GG_STATUS_BUSY:
+				case GG_STATUS_BUSY_DESCR:
 				case GG_STATUS_INVISIBLE:
-					status = UC_NORMAL | (n->status << 5);
+				case GG_STATUS_INVISIBLE_DESCR:
+					status = UC_NORMAL | (e->event.notify60[i].status << 5);
 					break;
 				default:
 					status = UC_NORMAL;
 					break;
 				}
+				
+				if (buddy && e->event.notify60[i].descr != NULL) {
+					buddy->proto_data = g_strdup(e->event.notify60[i].descr);
+				}
 
-				g_snprintf(user, sizeof(user), "%lu", (long unsigned int)n->uin);
 				serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
 						status);
-				n++;
+				i++;
 			}
 		}
 		break;
@@ -530,21 +585,38 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 			gchar user[20];
 			guint status;
 
+			GaimBuddy *buddy;
+				
+			g_snprintf(user, sizeof(user), "%lu", e->event.status60.uin);
+
+			buddy = gaim_find_buddy(gaim_connection_get_account(gc), user);
+			if (buddy && buddy->proto_data != NULL) {
+				g_free(buddy->proto_data);
+				buddy->proto_data = NULL;
+			}
+
 			switch (e->event.status60.status) {
 			case GG_STATUS_NOT_AVAIL:
+			case GG_STATUS_NOT_AVAIL_DESCR:
 				status = UC_UNAVAILABLE;
 				break;
 			case GG_STATUS_AVAIL:
+			case GG_STATUS_AVAIL_DESCR:
 			case GG_STATUS_BUSY:
+			case GG_STATUS_BUSY_DESCR:
 			case GG_STATUS_INVISIBLE:
+			case GG_STATUS_INVISIBLE_DESCR:
 				status = UC_NORMAL | (e->event.status60.status << 5);
 				break;
 			default:
 				status = UC_NORMAL;
 				break;
 			}
-
-			g_snprintf(user, sizeof(user), "%lu", e->event.status60.uin);
+    
+			if (buddy && e->event.status60.descr != NULL) {
+				buddy->proto_data = g_strdup(e->event.status60.descr);
+			}
+			    
 			serv_got_update(gc, user, (status == UC_UNAVAILABLE) ? 0 : 1, 0, 0, 0,
 					status);
 		}
@@ -821,6 +893,14 @@ static void agg_add_buddies(GaimConnection *gc, GList *buddies, GList *groups)
 	}
 
 	agg_save_buddy_list(gc, NULL);
+}
+
+static void agg_buddy_free (GaimBuddy *buddy)
+{
+    if (buddy->proto_data) {
+	g_free(buddy->proto_data);
+	buddy->proto_data = NULL;
+    }
 }
 
 static void search_results(GaimConnection *gc, gchar *webdata)
@@ -1573,7 +1653,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	agg_group_buddy,
 	agg_rename_group,
-	NULL,
+	agg_buddy_free,
 	NULL,
 	NULL,
 	NULL,

@@ -1,4 +1,4 @@
-/* $Id: libgg.h 10064 2004-06-11 03:58:48Z eblanton $ */
+/* $Id: libgg.h 10230 2004-06-27 18:19:09Z lschiere $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -162,6 +162,7 @@ void gg_free_session(struct gg_session *sess);
 void gg_logoff(struct gg_session *sess);
 int gg_write(struct gg_session *sess, const char *buf, int length);
 int gg_change_status(struct gg_session *sess, int status);
+int gg_change_status_descr(struct gg_session *sess, int status, const char *descr);
 int gg_send_message(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message);
 int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipient, const unsigned char *message, const unsigned char *format, int formatlen);
 int gg_ping(struct gg_session *sess);
@@ -530,6 +531,8 @@ __attribute__ ((packed))
 #define GG_STATUS_BLOCKED 0x0006		/* zablokowany */
 
 #define GG_STATUS_FRIENDS_MASK 0x8000		/* tylko dla znajomych (4.6) */
+
+#define GG_STATUS_DESCR_MAXSIZE 70
 
 /* GG_S() stan bez uwzglêdnienia trybu tylko dla znajomych */
 #define GG_S(x) ((x) & ~GG_STATUS_FRIENDS_MASK)

@@ -1,4 +1,4 @@
-/* $Id: libgg.c 10064 2004-06-11 03:58:48Z eblanton $ */
+/* $Id: libgg.c 10230 2004-06-27 18:19:09Z lschiere $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -73,7 +73,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 10064 2004-06-11 03:58:48Z eblanton $";
+= "$Id: libgg.c 10230 2004-06-27 18:19:09Z lschiere $";
 
 #endif 
 
@@ -589,6 +589,38 @@ int gg_change_status(struct gg_session *sess, int status)
 	p.status = fix32(status);
 
 	return gg_send_packet(sess, GG_NEW_STATUS, &p, sizeof(p), NULL, 0);
+}
+
+/*
+ * gg_change_status_descr()
+ *
+ * zmienia status uøytkownika na opisowy.
+ *
+ *  - sess - opis sesji
+ *  - status - nowy status uøytkownika
+ *  - descr - opis statusu
+ *
+ * 0, -1.
+ */
+int gg_change_status_descr(struct gg_session *sess, int status, const char *descr)
+{
+	struct gg_new_status p;
+
+	gg_debug(GG_DEBUG_FUNCTION, "** gg_change_status_descr(%p, %d, \"%s\");\n", sess, status, descr);
+
+	if (!sess || !descr) {
+		errno = EFAULT;
+		return -1;
+	}
+
+	if (sess->state != GG_STATE_CONNECTED) {
+		errno = ENOTCONN;
+		return -1;
+	}
+
+	p.status = fix32(status);
+
+	return gg_send_packet(sess, GG_NEW_STATUS, &p, sizeof(p), descr, (strlen(descr) > GG_STATUS_DESCR_MAXSIZE) ? GG_STATUS_DESCR_MAXSIZE : strlen(descr), NULL);
 }
 
 /*
