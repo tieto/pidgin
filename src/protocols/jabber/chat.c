@@ -192,8 +192,10 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);
 
+	/*
 	x = xmlnode_new_child(presence, "x");
 	xmlnode_set_attrib(x, "xmlns", "http://jabber.org/protocol/muc");
+	*/
 
 	if(passwd && *passwd) {
 		xmlnode *password = xmlnode_new_child(x, "password");
