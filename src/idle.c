@@ -42,8 +42,8 @@ gint check_idle(struct gaim_connection *gc)
 #ifdef USE_SCREENSAVER
 	static XScreenSaverInfo *mit_info = NULL;
 	static Display *d = NULL;
-	time_t idle_time;
 #endif
+	time_t idle_time;
 
         /* Not idle, really...  :) */
 	update_idle_times();
