@@ -3,6 +3,7 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 version 0.79cvs
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Czech translation updated (Miloslav Trmac)
 	* Danish translation updated (Morten Brix Pedersen (mbrix))
 	* English (British) translation updated (Luke Ross (lukeross))
 	* English (Canadian) translation updated (Adam Weinberger)
@@ -13,8 +14,8 @@ version 0.79cvs
 	* gaim.desktop updated for Danish translation ((Morten Brix Pedersen
 	  (mbrix))
 	* gaim.desktop updated for French translation (Eric Boumaour)
-	 gaim.desktop updated for Portuguese translation (Duarte Serrano Goncalves
-	 Henriques)
+	* gaim.desktop updated for Portuguese translation (Duarte Serrano Goncalves
+	  Henriques)
 
 version 0.78 (05/30/2004):
 	* Bulgarian translation updated (Alexander Shopov)
