@@ -812,7 +812,7 @@ msn_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
-	if (group != NULL)
+	if (group != NULL && group->name != NULL)
 		gaim_debug_info("msn", "msn_add_buddy: %s, %s\n", who, group->name);
 	else
 		gaim_debug_info("msn", "msn_add_buddy: %s\n", who);
