@@ -743,7 +743,8 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 					groupname = xmlnode_get_data(xmlnode_get_firstchild(g));
 					if (groupname == NULL)
 						groupname = "Buddies";
-					if (!(b = find_buddy(GJ_GC(j), buddyname))) {
+					if (strcasecmp(sub, "from") &&
+							!(b = find_buddy(GJ_GC(j), buddyname))) {
 						debug_printf("adding buddy: %s\n", buddyname);
 						b =
 						    add_buddy(GJ_GC(j), groupname, buddyname,
@@ -770,7 +771,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 				continue;
 			}
 			buddyname = g_strdup_printf("%s@%s", who->user, who->server);
-			if (!(b = find_buddy(GJ_GC(j), buddyname))) {
+			if (strcasecmp(sub, "from") && !(b = find_buddy(GJ_GC(j), buddyname))) {
 				b = add_buddy(GJ_GC(j), "Buddies", buddyname, name ? name : Jid);
 				build_edit_tree();
 				do_export(0, 0);
