@@ -1,7 +1,7 @@
 /*
  * gaim
  *
- * Copyright (C) 2002, Sean Egan <bj91704@binghamton.edu>
+ * Copyright (C) 1998-2002, Mark Spencer <markster@marko.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1362,7 +1362,7 @@ void show_prefs()
 	proxytype_new = proxytype;
 	g_snprintf(sound_cmd_new, sizeof(sound_cmd_new), "%s", sound_cmd);
 	g_snprintf(web_command_new, sizeof(web_command_new), "%s", 
-		   web_command ? web_command : "xterm -e lynx \"%%s\"");
+		   web_command ? web_command : "xterm -e lynx %%s");
 	g_snprintf(fontface_new, sizeof(fontface_new), fontface);
 #if !GTK_CHECK_VERSION(1,3,0)
 	g_snprintf(fontxfld_new, sizeof(fontxfld_new), fontxfld);
