@@ -2,6 +2,12 @@ version 0.82cvs:
 	* Selecting away messages using the system tray icon works
 	  (Thanks François Gagné)
 	* Transparency plugin will save your settings again (Kevin Stange)
+	* Updated gtk-wimp to 0.6.2
+	* Updated libpng to 1.2.6 (major security update)
+	* Updated GTK+ to 2.4.7 (rev a)
+		- GTK+ 2.4.7
+		- GLib 2.4.5
+		- Pango 1.4.1
 
 version 0.81 (08/05/2004):
 	* Napster joins binary release (Thanks Kevin)
