@@ -954,35 +954,29 @@ static struct pass_prompt *find_pass_prompt(struct aim_user *u)
 	return NULL;
 }
 
-static void pass_des(GtkWidget *w, struct pass_prompt *p)
+static void pass_callback(GtkDialog *d, gint resp, struct pass_prompt *p)
 {
+	if (resp == GTK_RESPONSE_YES) {	
+		const char *txt = gtk_entry_get_text(GTK_ENTRY(p->entry));
+		g_snprintf(p->u->password, sizeof(p->u->password), "%s", txt);
+		serv_login(p->u);
+	}
 	passes = g_slist_remove(passes, p);
+	gtk_widget_destroy(p->win);
 	g_free(p);
-}
-
-static void pass_cancel(GtkWidget *w, struct pass_prompt *p)
-{
-	gtk_widget_destroy(p->win);
-}
-
-static void pass_signon(GtkWidget *w, struct pass_prompt *p)
-{
-	const char *txt = gtk_entry_get_text(GTK_ENTRY(p->entry));
-	g_snprintf(p->u->password, sizeof(p->u->password), "%s", txt);
-	serv_login(p->u);
-	gtk_widget_destroy(p->win);
 }
 
 static void do_pass_dlg(struct aim_user *u)
 {
 	/* we can safely assume that u is not NULL */
-	GtkWidget *frame;
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	char buf[96];
-	GtkWidget *label;
-	GtkWidget *button;
 	struct pass_prompt *p = find_pass_prompt(u);
+	GtkWidget *label;
+	GtkWidget *hbox, *vbox;
+	char *labeltext=NULL;
+ 	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_auth.png", NULL);
+	GtkWidget *img = gtk_image_new_from_file(filename);
+	g_free(filename);
+	
 
 	if (p) {
 		gtk_widget_show(p->win);
@@ -993,48 +987,44 @@ static void do_pass_dlg(struct aim_user *u)
 	p->u = u;
 	passes = g_slist_append(passes, p);
 
-	GAIM_DIALOG(p->win);
-	gtk_window_set_role(GTK_WINDOW(p->win), "password");
-	gtk_container_border_width(GTK_CONTAINER(p->win), 5);
-	g_signal_connect(GTK_OBJECT(p->win), "destroy", G_CALLBACK(pass_des), p);
-	gtk_widget_realize(p->win);
+	p->win = gtk_dialog_new_with_buttons("", NULL, 0, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, 
+						_("_Login"), GTK_RESPONSE_YES, NULL);
 
-	vbox = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
-	frame = make_frame(vbox, _("Enter Password"));
-	gtk_widget_show(frame);
+	gtk_dialog_set_default_response (GTK_DIALOG(p->win), GTK_RESPONSE_YES);
+	g_signal_connect(G_OBJECT(p->win), "response", G_CALLBACK(pass_callback), p);
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	gtk_widget_show(vbox);
+	gtk_container_set_border_width (GTK_CONTAINER(p->win), 6);
+	gtk_window_set_resizable(GTK_WINDOW(p->win), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(p->win), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(p->win)->vbox), 12);
+	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(p->win)->vbox), 6);
 
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(p->win)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);	
+
+	labeltext = g_strdup_printf(_("Please enter your password for %s.\n\n"), u->username);
+	label = gtk_label_new(labeltext);
+	g_free(labeltext);
+
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
-
-	g_snprintf(buf, sizeof(buf), _("Password for %s:"), u->username);
-	label = gtk_label_new(buf);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	label = gtk_label_new_with_mnemonic(_("_Password"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
 
 	p->entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(p->entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), p->entry, FALSE, FALSE, 5);
-	g_signal_connect(GTK_OBJECT(p->entry), "activate", G_CALLBACK(pass_signon), p);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), p->entry);
 	gtk_widget_grab_focus(p->entry);
-	gtk_widget_show(p->entry);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
-
-	button = picture_button(p->win, _("Cancel"), cancel_xpm);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pass_cancel), p);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-
-	button = picture_button(p->win, _("Signon"), ok_xpm);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(pass_signon), p);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 
 	gtk_widget_show_all(p->win);
 }
