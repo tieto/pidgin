@@ -106,10 +106,12 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 			b = gaim_buddy_new(account,
 							   msn_user_get_passport(user), NULL);
 
+			b->proto_data = user;
+
 			gaim_blist_add_buddy(b, NULL, g, NULL);
 		}
-
-		b->proto_data = user;
+		else
+			b->proto_data = user;
 	}
 
 	/* Find all occurrences of this buddy in the wrong place. */
