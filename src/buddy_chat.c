@@ -1004,7 +1004,7 @@ void im_callback(GtkWidget *w, struct conversation *b)
 		c = new_conversation(name);
 	}
 
-
+	set_convo_gc(c, b->gc);
 }
 
 void ignore_callback(GtkWidget *w, struct conversation *b)
