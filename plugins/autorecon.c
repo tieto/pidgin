@@ -18,6 +18,8 @@ typedef struct {
 static GHashTable *hash = NULL;
 
 static gboolean do_signon(gpointer data) {
+	g_return_val_if_fail(hash != NULL, FALSE);
+       	
 	GaimAccount *account = data;
 	GaimAutoRecon *info;
 
@@ -85,6 +87,9 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
+	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-off",
+			plugin, GAIM_CALLBACK(reconnect));
+	
 	g_hash_table_destroy(hash);
 	hash = NULL;
 

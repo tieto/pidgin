@@ -1917,7 +1917,7 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	GaimConnection *gc = data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
-	char buf[1024], *i = buf;
+	char buf[2048], *i = buf;
 	int len;
 	GString *s;
 
@@ -1933,7 +1933,7 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 
 	while ((i = strstr(i, "Set-Cookie: "))) {
 		i += strlen("Set-Cookie: ");
-		for (;*i != ';'; i++)
+		for (;*i != ';' && *i != '\0'; i++)
 			g_string_append_c(s, *i);
 
 		g_string_append(s, "; ");
