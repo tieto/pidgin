@@ -50,7 +50,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --includedir=%{_includedir} \
                                     --libdir=%{_libdir} \
                                     --mandir=%{_mandir} \
-                                    --sysconfdir=%{_sysconfdir}
+                                    --sysconfdir=%{_sysconfdir} \
+                                    --with-perl-lib=%{buildroot}%{_prefix}
 make %{?_smp_mflags}
 
 %install
@@ -72,6 +73,7 @@ rm -rf %{buildroot}
 %doc doc/the_penguin.txt doc/CREDITS doc/FAQ NEWS COPYING AUTHORS
 %doc README ChangeLog
 %doc %{_mandir}/man1/*
+%doc %{_mandir}/man3/*
 
 %dir %{_libdir}/gaim
 %attr(755, root, root) %{_libdir}/gaim/*

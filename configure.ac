@@ -301,7 +301,7 @@ if test "$enable_perl" = yes ; then
 				PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=`perl -e 'use Config; print $Config{prefix}'`"
 			fi
 		else
-			PERL_MM_PARAMS="INSTALLDIRS=vendor LIB=$withval"
+			PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$withval"
 		fi
 	])
 
