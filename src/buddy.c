@@ -525,6 +525,12 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	awaymenu = gtk_item_factory_get_widget(ift, "/Tools/Away");
 	do_away_menu();
 
+	bpmenu = gtk_item_factory_get_widget(ift, "/Tools/Buddy Pounce");
+	do_bp_menu();
+
+	protomenu = gtk_item_factory_get_widget(ift, "/Tools/Protocol Actions");
+	do_proto_menu();
+
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);

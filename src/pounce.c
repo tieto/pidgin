@@ -33,7 +33,7 @@ GtkWidget *bpmenu = NULL;
 void rem_bp(GtkWidget *w, struct buddy_pounce *b)
 {
 	buddy_pounces = g_list_remove(buddy_pounces, b);
-	//do_bp_menu();
+	do_bp_menu();
 	save_prefs();
 }
 
@@ -156,7 +156,7 @@ static void edit_bp_callback(GtkWidget *w, struct buddy_pounce *b)
   show_new_bp(NULL, NULL, 0, 0, b);
 }
 
-/*static GtkTooltips *bp_tooltip = NULL;
+static GtkTooltips *bp_tooltip = NULL;
 void do_bp_menu()
 {
 	GtkWidget *menuitem, *mess, *messmenu;
@@ -167,11 +167,11 @@ void do_bp_menu()
 	struct buddy_pounce *b;
 	GList *bp = buddy_pounces;
 
-	/* Tooltip for editing bp's 
+	/* Tooltip for editing bp's */
 	if(!bp_tooltip)
 		bp_tooltip = gtk_tooltips_new();
 
-	l = gtk_container_children(GTK_CONTAINER(bpmenu));
+	l = gtk_container_get_children(GTK_CONTAINER(bpmenu));
 
 	while (l) {
 		gtk_widget_destroy(GTK_WIDGET(l->data));
@@ -181,7 +181,7 @@ void do_bp_menu()
 	remmenu = gtk_menu_new();
 
 	menuitem = gtk_menu_item_new_with_label(_("New Buddy Pounce"));
-	gtk_menu_shell_append(GTK_MENU(bpmenu), menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(bpmenu), menuitem);
 	gtk_widget_show(menuitem);
 	g_signal_connect(GTK_OBJECT(menuitem), "activate", G_CALLBACK(new_bp_callback), NULL);
 
@@ -190,7 +190,7 @@ void do_bp_menu()
 
 		b = (struct buddy_pounce *)bp->data;
 		remitem = gtk_menu_item_new_with_label(b->name);
-		gtk_menu_shell_append(GTK_MENU(remmenu), remitem);
+		gtk_menu_shell_append(GTK_MENU_SHELL(remmenu), remitem);
 		gtk_widget_show(remitem);
 		g_signal_connect(GTK_OBJECT(remitem), "activate", G_CALLBACK(rem_bp), b);
 
@@ -199,14 +199,14 @@ void do_bp_menu()
 	}
 
 	menuitem = gtk_menu_item_new_with_label(_("Remove Buddy Pounce"));
-	gtk_menu_shell_append(GTK_MENU(bpmenu), menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(bpmenu), menuitem);
 	gtk_widget_show(menuitem);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), remmenu);
 	gtk_widget_show(remmenu);
 
 	sep = gtk_hseparator_new();
 	menuitem = gtk_menu_item_new();
-	gtk_menu_shell_append(GTK_MENU(bpmenu), menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(bpmenu), menuitem);
 	gtk_container_add(GTK_CONTAINER(menuitem), sep);
 	gtk_widget_set_sensitive(menuitem, FALSE);
 	gtk_widget_show(menuitem);
@@ -219,7 +219,7 @@ void do_bp_menu()
 		b = (struct buddy_pounce *)bp->data;
 
 		menuitem = gtk_menu_item_new_with_label(b->name);
-		gtk_menu_shell_append(GTK_MENU(bpmenu), menuitem);
+		gtk_menu_shell_append(GTK_MENU_SHELL(bpmenu), menuitem);
 		messmenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), messmenu);
 		gtk_widget_show(menuitem);
@@ -228,7 +228,7 @@ void do_bp_menu()
 			mess = gtk_menu_item_new_with_label(b->message);
 		else
 			mess = gtk_menu_item_new_with_label(_("[no message]"));
-		gtk_menu_shell_append(GTK_MENU(messmenu), mess);
+		gtk_menu_shell_append(GTK_MENU_SHELL(messmenu), mess);
 		gtk_tooltips_set_tip(bp_tooltip, GTK_WIDGET(mess), _("[Click to edit]"), NULL);
 		gtk_widget_show(mess);
 		g_signal_connect(GTK_OBJECT(mess), "activate", G_CALLBACK(edit_bp_callback), b);
@@ -237,7 +237,7 @@ void do_bp_menu()
 	}
 
 }
-*/
+
 /*------------------------------------------------------------------------*/
 /*  The dialog for new buddy pounces                                      */
 /*------------------------------------------------------------------------*/
@@ -301,7 +301,7 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 	if(!b->buddy_pounce)
 		buddy_pounces = g_list_append(buddy_pounces, bp);
 
-	//	do_bp_menu();
+	do_bp_menu();
 
 	gtk_widget_destroy(b->window);
 
@@ -605,7 +605,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 
 	button = gaim_pixbuf_button_from_stock(_("C_ancel"), "gtk-cancel", GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
-	g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(gtk_widget_destroy), b->window);
+	g_signal_connect_swapped(GTK_OBJECT(button), "clicked", G_CALLBACK(gtk_widget_destroy), b->window);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 

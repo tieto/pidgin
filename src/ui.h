@@ -277,6 +277,9 @@ extern int smiley_array[FACE_TOTAL];
 extern GtkWidget *fgcseld;
 extern GtkWidget *bgcseld;
 
+/* Globals in pounce.c */
+extern GtkWidget *bpmenu;
+
 /* Globals in prefs.c */
 extern GtkWidget *prefs;
 extern struct debug_window *dw;
