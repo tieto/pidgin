@@ -70,10 +70,8 @@ static GtkWidget *editpane;
 static GtkWidget *buddypane;
 static GtkWidget *permitpane;
 static GtkWidget *edittree;
-static GtkWidget *permtree;
 static GtkWidget *imbutton, *infobutton, *chatbutton;
 static GtkWidget *addbutton, *groupbutton, *rembutton;
-static GtkWidget *addpermbutton, *rempermbutton;
 
 static int last_lag_us;
 
@@ -241,25 +239,25 @@ void update_button_pix()
 		adjust_pic(chatbutton, _("Chat"), (gchar **)daemon_buddychat_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)daemon_im_xpm);
 	        adjust_pic(infobutton, _("Info"), (gchar **)daemon_info_xpm);
-	        adjust_pic(addpermbutton, _("Add"), (gchar **)daemon_permadd_xpm);
+/*	        adjust_pic(addpermbutton, _("Add"), (gchar **)daemon_permadd_xpm);
 	        adjust_pic(rempermbutton, _("Remove"), (gchar **)daemon_permdel_xpm);
-	} else {
+*/	} else {
 	        adjust_pic(addbutton, _("Add"), (gchar **)buddyadd_xpm);
 	        adjust_pic(groupbutton, _("Group"), NULL);
 		adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
 		adjust_pic(chatbutton, _("Chat"), (gchar **)buddychat_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)im_xpm);
 	        adjust_pic(infobutton, _("Info"), (gchar **)info_xpm);
-	        adjust_pic(addpermbutton, _("Add"), (gchar **)permadd_xpm);
+/*	        adjust_pic(addpermbutton, _("Add"), (gchar **)permadd_xpm);
 	        adjust_pic(rempermbutton, _("Remove"), (gchar **)permdel_xpm);
-	}
+*/	}
 	gtk_widget_hide(addbutton->parent);
 	gtk_widget_show(addbutton->parent);
 	gtk_widget_hide(chatbutton->parent);
 	gtk_widget_show(chatbutton->parent);
-	gtk_widget_hide(addpermbutton->parent);
+/*	gtk_widget_hide(addpermbutton->parent);
 	gtk_widget_show(addpermbutton->parent);
-}
+*/}
 
 
 
@@ -554,48 +552,6 @@ void remove_group(struct group *rem_g)
 
 
 
-void build_permit_tree()
-{
-	GtkWidget *ti;
-        GtkWidget *sub;
-        GList *plist = permit;
-        GList *dlist = deny;
-
-        gtk_tree_clear_items(GTK_TREE(permtree), 0, -1);
-
-        ti = gtk_tree_item_new_with_label(_("Permit"));
-        sub = gtk_tree_new();
-        gtk_widget_show(ti);
-        gtk_widget_show(sub);
-        gtk_tree_prepend(GTK_TREE(permtree), ti);
-        gtk_tree_item_set_subtree(GTK_TREE_ITEM(ti), sub);
-        gtk_tree_item_expand(GTK_TREE_ITEM(ti));
-        
-        while(plist) {
-                ti = gtk_tree_item_new_with_label((char *)plist->data);
-                gtk_widget_show(ti);
-                gtk_tree_prepend(GTK_TREE(sub), ti);
-                plist = plist->next;
-        }
-
-
-        ti = gtk_tree_item_new_with_label(_("Deny"));
-        sub = gtk_tree_new();
-        gtk_widget_show(ti);
-        gtk_widget_show(sub);
-        gtk_tree_prepend(GTK_TREE(permtree), ti);
-        gtk_tree_item_set_subtree(GTK_TREE_ITEM(ti), sub);
-        gtk_tree_item_expand(GTK_TREE_ITEM(ti));
-        
-        while(dlist) {
-                ti = gtk_tree_item_new_with_label((char *)dlist->data);
-                gtk_widget_show(ti);
-                gtk_tree_prepend(GTK_TREE(sub), ti);
-                dlist = dlist->next;
-        }
-
-	
-}
 
 
 gboolean edit_drag_compare_func (GtkCTree *ctree, GtkCTreeNode *source_node,
@@ -988,66 +944,6 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
         update_num_groups();
 }
 
-static void do_del_perm(GtkWidget *w, GtkTree *permtree)
-{
-	GtkLabel *label, *plabel;
-	GtkWidget *item, *pitem;
-	char *c, *d;
-	GList *i;
-	
-        GList *plist;
-        GList *dlist;
-	int level;
-
-        plist = permit;
-        dlist = deny;
-        
-	i = GTK_TREE_SELECTION(permtree);
-	if (i) {
-		item = GTK_WIDGET(i->data);
-		gtk_tree_unselect_child(GTK_TREE(permtree), item);
-		label = GTK_LABEL(GTK_BIN(item)->child);
-		gtk_label_get(label, &c);
-		level = GTK_TREE(item->parent)->level;
-		if (level > 0) {
-			pitem = GTK_WIDGET(GTK_TREE(item->parent)->tree_owner);
-			plabel = GTK_LABEL(GTK_BIN(pitem)->child);
-			gtk_label_get(plabel, &d);
-                        if (!strcasecmp(d, _("Permit"))) {
-                                while(plist) {
-                                        if (!strcasecmp((char *)(plist->data), c)) {
-                                                permit = g_list_remove(permit, plist->data);
-                                                break;
-                                        }
-
-                                        plist = plist->next;
-                                }
-
-                        } else {
-                                while(dlist) {
-                                        if (!strcasecmp((char *)(dlist->data), c)) {
-                                                deny = g_list_remove(deny, dlist->data);
-                                                
-                                                break;
-                                        }
-                                        dlist = dlist->next;
-                                }
-
-                        }
-
-                        
-                } else {
-                        /* Can't delete groups here! :) */
-                        return;
-                }
-                serv_set_permit_deny();
-		gtk_tree_clear_items(GTK_TREE(permtree), 0, -1);
-                build_permit_tree();
-                serv_save_config();
-	}
-}
-
-
 
 void gaimreg_callback(GtkWidget *widget)
 {
@@ -1131,12 +1027,6 @@ void add_group_callback(GtkWidget *widget, void *dummy)
 {
 	show_add_group();
 }
-
-void add_perm_callback(GtkWidget *widget, void *dummy)
-{
-        show_add_perm(NULL);
-}
-
 
 static void info_callback(GtkWidget *widget, GtkTree *tree)
 {
@@ -1737,18 +1627,6 @@ void set_buddy(struct buddy *b)
 }
 
 
-static void set_permit(GtkWidget *w, int *data)
-{
-	permdeny = (int)data;
-/*	printf("BLAH BLAH %d %d", permdeny, (int) data); */
-	/* We don't save this 'at home', it's on the server.
-         * So, we gotta resend the config to the server. */
-        serv_save_config();
-	/* we do this here because we can :) */
-	serv_set_permit_deny();
-}
-
-
 static void move_blist_window(GtkWidget *w, GdkEventConfigure *e, void *dummy)
 {
         int x, y, width, height;
@@ -1830,8 +1708,6 @@ void show_buddy_list()
         GtkWidget *bbox;
         GtkWidget *permopt;
         GtkWidget *tbox;
-        GtkWidget *xbox;
-        GtkWidget *pbox;
 
 
 #ifdef USE_APPLET
@@ -2060,78 +1936,13 @@ void show_buddy_list()
 	gtk_widget_show(editpane);
 
 
-	/* Permit/Deny */
-
-	permitpane = gtk_vbox_new(FALSE, 0);
-
-        permopt = gtk_radio_button_new_with_label(NULL, _("Allow anyone"));
-        gtk_box_pack_start(GTK_BOX(permitpane), permopt, FALSE, FALSE, 0);
-        gtk_signal_connect(GTK_OBJECT(permopt), "clicked", GTK_SIGNAL_FUNC(set_permit), (void *)1);
-	gtk_widget_show(permopt);
-	if (permdeny == 1)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(permopt), TRUE);
-
-        permopt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(permopt)), _("Permit some"));
-        gtk_box_pack_start(GTK_BOX(permitpane), permopt, FALSE, FALSE, 0);
-        gtk_signal_connect(GTK_OBJECT(permopt), "clicked", GTK_SIGNAL_FUNC(set_permit), (void *)3);
-	gtk_widget_show(permopt);
-	if (permdeny == 3)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(permopt), TRUE);
-
-
-        permopt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(permopt)), _("Deny some"));
-        gtk_box_pack_start(GTK_BOX(permitpane), permopt, FALSE, FALSE, 0);
-        gtk_signal_connect(GTK_OBJECT(permopt), "clicked", GTK_SIGNAL_FUNC(set_permit), (void *)4);
-        gtk_widget_show(permopt);
-	if (permdeny == 4)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(permopt), TRUE);
-
-
-
-        addpermbutton = gtk_button_new_with_label(_("Add"));
-        rempermbutton = gtk_button_new_with_label(_("Remove"));
-        
-	if (display_options & OPT_DISP_COOL_LOOK)
-	{
-		gtk_button_set_relief(GTK_BUTTON(addpermbutton), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(rempermbutton), GTK_RELIEF_NONE);
-	}
 	
-       	permtree = gtk_tree_new();
-	build_permit_tree();
-       	pbox = gtk_hbox_new(TRUE, 10);
-       	xbox = gtk_scrolled_window_new(NULL, NULL);
-       	/* Put the buttons in the box */
-       	gtk_box_pack_start(GTK_BOX(pbox), addpermbutton, TRUE, TRUE, 10);
-        gtk_box_pack_start(GTK_BOX(pbox), rempermbutton, TRUE, TRUE, 10);
-        
-
-	gtk_tooltips_set_tip(tips, addpermbutton, _("Add buddy to permit/deny"), "Penguin");
-	gtk_tooltips_set_tip(tips, rempermbutton, _("Remove buddy from permit/deny"), "Penguin");
-       	/* And the boxes in the box */
-       	gtk_box_pack_start(GTK_BOX(permitpane), xbox, TRUE, TRUE, 5);
-       	gtk_box_pack_start(GTK_BOX(permitpane), pbox, FALSE, FALSE, 5);
-
-	/* Handle closes right */
-
-	
-
-       	/* Finish up */
-       	gtk_widget_show(addpermbutton);
-        gtk_widget_show(rempermbutton);
-       	gtk_widget_show(permtree);
-       	gtk_widget_show(xbox);
-       	gtk_widget_show(pbox);
-	gtk_widget_show(permitpane);
-
 
 
         label = gtk_label_new(_("Online"));
         gtk_notebook_append_page(GTK_NOTEBOOK(notebook), buddypane, label);
         label = gtk_label_new(_("Edit Buddies"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), editpane, label);
-	label = gtk_label_new(_("Permit"));
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), permitpane, label);
 
         gtk_widget_show_all(notebook);
 
@@ -2149,8 +1960,6 @@ void show_buddy_list()
        	gtk_signal_connect(GTK_OBJECT(rembutton), "clicked", GTK_SIGNAL_FUNC(do_del_buddy), edittree);
        	gtk_signal_connect(GTK_OBJECT(addbutton), "clicked", GTK_SIGNAL_FUNC(add_buddy_callback), NULL);
        	gtk_signal_connect(GTK_OBJECT(groupbutton), "clicked", GTK_SIGNAL_FUNC(add_group_callback), NULL);
-        gtk_signal_connect(GTK_OBJECT(addpermbutton), "clicked", GTK_SIGNAL_FUNC(add_perm_callback), NULL);
-        gtk_signal_connect(GTK_OBJECT(rempermbutton), "clicked", GTK_SIGNAL_FUNC(do_del_perm), permtree);
         gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), notebook, TRUE, TRUE, 0);
 
@@ -2172,11 +1981,6 @@ void show_buddy_list()
                                        GTK_POLICY_NEVER,GTK_POLICY_AUTOMATIC);
 
 
-        /* The permit tree */
-       	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(xbox), permtree);
-       	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(xbox),
-                                       GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);
-
         gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
 
         if (general_options & OPT_GEN_SAVED_WINDOWS) {
@@ -2192,7 +1996,7 @@ void refresh_buddy_window()
         setup_buddy_chats();
  
         build_edit_tree();
-        build_permit_tree();
+	build_permit_tree();
         
         update_button_pix();
         gtk_widget_show(blist);

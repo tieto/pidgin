@@ -829,38 +829,40 @@ char *toc_wait_config()
 
 void toc_build_config(char *s, int len)
 {
-    GList *grp = groups;
-    GList *mem;
-    struct group *g;
-        struct buddy *b;
-        GList *plist = permit;
-        GList *dlist = deny;
+	GList *grp = groups;
+	GList *mem;
+	struct group *g;
+	struct buddy *b;
+	GList *plist = permit;
+	GList *dlist = deny;
 
-    int pos=0;
+	int pos=0;
 
-    if (!permdeny)
-                permdeny = 1;
-    pos += g_snprintf(&s[pos], len - pos, "m %d\n", permdeny);
-    while(grp) {
-        g = (struct group *)grp->data;
-        pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
-        mem = g->members;
-        while(mem) {
-            b = (struct buddy *)mem->data;
-            pos += g_snprintf(&s[pos], len - pos, "b %s\n", b->name);
-            mem = mem->next;
-        }
-        grp = grp ->next;
-        }
-        while(plist) {
-                pos += g_snprintf(&s[pos], len - pos, "p %s\n", (char *)plist->data);
-                plist=plist->next;
+	if (!permdeny)
+		permdeny = 1;
 
-        }
-        while(dlist) {
-                pos += g_snprintf(&s[pos], len - pos, "d %s\n", (char *)dlist->data);
-                dlist=dlist->next;
-        }
+	pos += g_snprintf(&s[pos], len - pos, "m %d\n", permdeny);
+	while(grp) {
+		g = (struct group *)grp->data;
+		pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
+		mem = g->members;
+		while(mem) {
+			b = (struct buddy *)mem->data;
+			pos += g_snprintf(&s[pos], len - pos, "b %s\n", b->name);
+			mem = mem->next;
+		}
+		grp = grp ->next;
+	}
+
+	while(plist) {
+		pos += g_snprintf(&s[pos], len - pos, "p %s\n", (char *)plist->data);
+		plist=plist->next;
+	}
+
+	while(dlist) {
+		pos += g_snprintf(&s[pos], len - pos, "d %s\n", (char *)dlist->data);
+		dlist=dlist->next;
+	}
 }
 
 void parse_toc_buddy_list(char *config, int from_do_import)

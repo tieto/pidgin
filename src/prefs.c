@@ -59,6 +59,12 @@ static GtkWidget *prefdialog = NULL;
 static GtkWidget *debugbutton = NULL;
 GtkWidget *prefs_away_list = NULL;
 
+static void destdeb(GtkWidget *m, gpointer n)
+{
+	gtk_widget_destroy(debugbutton);
+	debugbutton = NULL;
+}
+
 static void general_page()
 {
 	GtkWidget *parent;
@@ -69,8 +75,6 @@ static void general_page()
 	
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("General Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -96,6 +100,7 @@ static void general_page()
 		general_options = general_options ^ OPT_GEN_DEBUG;
 	debugbutton = gaim_button(_("Show Debug Window"), &general_options, OPT_GEN_DEBUG, box);
 	gtk_signal_connect_object(GTK_OBJECT(debugbutton), "clicked", GTK_SIGNAL_FUNC(show_debug), 0);
+	gtk_signal_connect(GTK_OBJECT(debugbutton), "destroy", GTK_SIGNAL_FUNC(destdeb), 0);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
@@ -181,8 +186,6 @@ static void connect_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Connection Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -309,8 +312,6 @@ static void buddy_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Buddy List Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -332,6 +333,241 @@ static void buddy_page()
 	gtk_widget_show(prefdialog);
 }
 
+static GtkWidget *permtree = NULL;
+
+void build_permit_tree()
+{
+	GtkWidget *ti;
+        GtkWidget *sub;
+        GList *plist = permit;
+        GList *dlist = deny;
+
+	if (!permtree) return;
+
+        gtk_tree_clear_items(GTK_TREE(permtree), 0, -1);
+
+        ti = gtk_tree_item_new_with_label(_("Permit"));
+        sub = gtk_tree_new();
+        gtk_widget_show(ti);
+        gtk_widget_show(sub);
+        gtk_tree_prepend(GTK_TREE(permtree), ti);
+        gtk_tree_item_set_subtree(GTK_TREE_ITEM(ti), sub);
+        gtk_tree_item_expand(GTK_TREE_ITEM(ti));
+        
+        while(plist) {
+                ti = gtk_tree_item_new_with_label((char *)plist->data);
+                gtk_widget_show(ti);
+                gtk_tree_prepend(GTK_TREE(sub), ti);
+                plist = plist->next;
+        }
+
+
+        ti = gtk_tree_item_new_with_label(_("Deny"));
+        sub = gtk_tree_new();
+        gtk_widget_show(ti);
+        gtk_widget_show(sub);
+        gtk_tree_prepend(GTK_TREE(permtree), ti);
+        gtk_tree_item_set_subtree(GTK_TREE_ITEM(ti), sub);
+        gtk_tree_item_expand(GTK_TREE_ITEM(ti));
+        
+        while(dlist) {
+                ti = gtk_tree_item_new_with_label((char *)dlist->data);
+                gtk_widget_show(ti);
+                gtk_tree_prepend(GTK_TREE(sub), ti);
+                dlist = dlist->next;
+        }
+}
+
+static void do_del_perm(GtkWidget *w, GtkTree *ptree)
+{
+	GtkLabel *label, *plabel;
+	GtkWidget *item, *pitem;
+	char *c, *d;
+	GList *i;
+	
+        GList *plist;
+        GList *dlist;
+	int level;
+
+        plist = permit;
+        dlist = deny;
+        
+	i = GTK_TREE_SELECTION(ptree);
+	if (i) {
+		item = GTK_WIDGET(i->data);
+		gtk_tree_unselect_child(GTK_TREE(ptree), item);
+		label = GTK_LABEL(GTK_BIN(item)->child);
+		gtk_label_get(label, &c);
+		level = GTK_TREE(item->parent)->level;
+		if (level > 0) {
+			pitem = GTK_WIDGET(GTK_TREE(item->parent)->tree_owner);
+			plabel = GTK_LABEL(GTK_BIN(pitem)->child);
+			gtk_label_get(plabel, &d);
+                        if (!strcasecmp(d, _("Permit"))) {
+                                while(plist) {
+                                        if (!strcasecmp((char *)(plist->data), c)) {
+                                                permit = g_list_remove(permit, plist->data);
+                                                break;
+                                        }
+
+                                        plist = plist->next;
+                                }
+
+                        } else {
+                                while(dlist) {
+                                        if (!strcasecmp((char *)(dlist->data), c)) {
+                                                deny = g_list_remove(deny, dlist->data);
+                                                
+                                                break;
+                                        }
+                                        dlist = dlist->next;
+                                }
+
+                        }
+
+                        
+                } else {
+                        /* Can't delete groups here! :) */
+                        return;
+                }
+                serv_set_permit_deny();
+		gtk_tree_clear_items(GTK_TREE(ptree), 0, -1);
+                build_permit_tree();
+                serv_save_config();
+	}
+}
+
+
+static void set_permit(GtkWidget *w, int *data)
+{
+	permdeny = (int)data;
+        if (blist) {
+		/* We don't save this 'at home', it's on the server.
+		 * So, we gotta resend the config to the server. */
+		serv_save_config();
+		/* we do this here because we can :) */
+		serv_set_permit_deny();
+	}
+}
+
+static GtkWidget *deny_radio(char *label, int which, GtkWidget *box, GtkWidget *set)
+{
+	GtkWidget *opt;
+
+	if (!set)
+		opt = gtk_radio_button_new_with_label(NULL, label);
+	else
+		opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)), label);
+	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_permit), (void *)which);
+	gtk_widget_show(opt);
+	if (permdeny == which)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	return opt;
+}
+
+static void permdest(GtkWidget *m, gpointer n)
+{
+	gtk_widget_destroy(permtree);
+	permtree = NULL;
+}
+
+static void add_perm_callback(GtkWidget *widget, void *dummy)
+{
+	if (!blist)
+		do_error_dialog(_("Please sign on before editing the permit/deny lists."),
+				_("Please sign on"));
+	else
+	        show_add_perm(NULL);
+}
+
+static void deny_page()
+{
+	GtkWidget *parent;
+	GtkWidget *box;
+	GtkWidget *label;
+	GtkWidget *sep;
+	GtkWidget *hbox;
+	GtkWidget *vbox;
+	GtkWidget *xbox;
+	GtkWidget *opt;
+	GtkWidget *button;
+
+	parent = prefdialog->parent;
+	gtk_widget_destroy(prefdialog);
+
+	prefdialog = gtk_frame_new(_("Permit/Deny List Options"));
+	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(prefdialog), box);
+	gtk_widget_show(box);
+
+	label = gtk_label_new(_("All options take effect immediately unless otherwise noted."));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
+	gtk_widget_show(sep);
+
+	label = gtk_label_new(_("The permit/deny configuration will change between users,\n"
+				"and changes while you are signed off will not be saved."));
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 5);
+	gtk_widget_show(vbox);
+
+	opt = deny_radio(_("Allow Anyone"), PERMIT_ALL, vbox, NULL);
+#if 0
+	/* This doesn't work because TOC doesn't have a PERMIT_BUDDY setting
+	 * and merging the two would be very difficult at best, most likely
+	 * impossible. If we can guarantee only Oscar than this is easy */
+	opt = deny_radio(_("Allow only users on Buddy List"), PERMIT_BUDDY, vbox, opt);
+#endif
+	opt = deny_radio(_("Allow only the users in \"Permit\""), PERMIT_SOME, vbox, opt);
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 5);
+	gtk_widget_show(vbox);
+
+	opt = deny_radio(_("Block all users"), PERMIT_NONE, vbox, opt);
+	opt = deny_radio(_("Block the users in \"Deny\""), DENY_SOME, vbox, opt);
+
+	xbox = gtk_scrolled_window_new(NULL, NULL);
+	gtk_box_pack_start(GTK_BOX(box), xbox, TRUE, TRUE, 5);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(xbox),
+					GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+	gtk_widget_show(xbox);
+
+	permtree = gtk_tree_new();
+	build_permit_tree();
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(xbox), permtree);
+	gtk_signal_connect(GTK_OBJECT(permtree), "destroy", GTK_SIGNAL_FUNC(permdest), 0);
+	gtk_widget_show(permtree);
+
+	hbox = gtk_hbox_new(TRUE, 10);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	button = picture_button(prefs, _("Add"), gnome_add_xpm);
+	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 10);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(add_perm_callback), NULL);
+
+	button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
+	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 10);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_del_perm), permtree);
+
+	gtk_widget_show(prefdialog);
+}
+
 static void convo_page()
 {
 	GtkWidget *parent;
@@ -341,8 +577,6 @@ static void convo_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Conversation Window Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -386,8 +620,6 @@ static void im_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("IM Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -415,8 +647,6 @@ static void chat_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Chat Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -603,8 +833,6 @@ static void room_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Chat Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -713,8 +941,6 @@ static void font_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Font Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -796,8 +1022,6 @@ static void sound_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Sound Options"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -828,8 +1052,6 @@ static void event_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Sound Events"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -902,6 +1124,12 @@ void remove_away_message(GtkWidget *widget, void *dummy)
         rem_away_mess(NULL, a);
 }
 
+static void paldest(GtkWidget *m, gpointer n)
+{
+	gtk_widget_destroy(prefs_away_list);
+	prefs_away_list = NULL;
+}
+
 static void away_page()
 {
 	GtkWidget *parent;
@@ -919,8 +1147,6 @@ static void away_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
-	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Away Messages"));
 	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
@@ -941,6 +1167,7 @@ static void away_page()
 
 	prefs_away_list = gtk_list_new();
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), prefs_away_list);
+	gtk_signal_connect(GTK_OBJECT(prefs_away_list), "destroy", GTK_SIGNAL_FUNC(paldest), 0);
 	gtk_widget_show(prefs_away_list);
 
 	sw2 = gtk_scrolled_window_new(NULL, NULL);
@@ -1051,7 +1278,6 @@ static void browser_page()
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
-	debugbutton = NULL;
 	prefs_away_list = NULL;
 
 	prefdialog = gtk_frame_new(_("Browser Options"));
@@ -1344,13 +1570,19 @@ void prefs_build_connect(GtkWidget *preftree)
 
 void prefs_build_buddy(GtkWidget *preftree)
 {
-	GtkCTreeNode *parent;
+	GtkCTreeNode *parent, *node;
 	char *text[1];
 
 	text[0] = _("Buddy List");
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 					text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, buddy_page);
+
+	/* FIXME ! We shouldn't be showing this if we're not signed on */
+	text[0] = _("Permit/Deny");
+	node = gtk_ctree_insert_node(GTK_CTREE(preftree), parent, NULL,
+					text, 5, NULL, NULL, NULL, NULL, 0, 1);
+	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, deny_page);
 }
 
 void prefs_build_convo(GtkWidget *preftree)

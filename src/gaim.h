@@ -55,6 +55,13 @@
 #define BROWSER_MANUAL                2
 #define BROWSER_INTERNAL              3
 
+#define PERMIT_ALL	1
+#define PERMIT_NONE	2
+#define PERMIT_SOME	3
+#define DENY_SOME	4
+#define PERMIT_BUDDY	5 /* TOC doesn't have this,
+			     but we can fake it */
+
 #define UC_AOL		1
 #define UC_ADMIN 	2
 #define UC_UNCONFIRMED	4
@@ -386,7 +393,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 677 $"
+#define REVISION "gaim:$Revision: 688 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -675,7 +682,6 @@ extern struct person *add_person(char *, char *);
 extern struct group *add_group(char *);
 extern void add_category(char *);
 extern void build_edit_tree();
-extern void build_permit_tree();
 extern void remove_person(struct group *, struct buddy *);
 extern void remove_category(struct group *);
 extern void do_pounce(char *);
@@ -729,6 +735,7 @@ extern void set_general_option(GtkWidget *, int *);
 extern void set_option(GtkWidget *, int *);
 extern void show_prefs();
 extern void show_debug(GtkObject *);
+extern void build_permit_tree();
 extern GtkWidget *prefs_away_list;
 
 /* Functions in gaimrc.c */
