@@ -75,7 +75,7 @@ static GaimPluginInfo info =
 	N_("History"),
 	VERSION,
 	N_("Shows recently logged conversations in new conversations."),
-	N_("When a new conversation is opened this plugin will insert the last XXX of the last conversation into the current conversation."),
+	N_("When a new conversation is opened this plugin will insert the last conversation into the current conversation."),
 	"Sean Egan <bj91704@binghamton.edu>",
 	GAIM_WEBSITE,
 	plugin_load,
