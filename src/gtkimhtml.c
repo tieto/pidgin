@@ -1373,13 +1373,11 @@ gtk_imhtml_selection_get (GtkWidget        *widget,
 	g_return_if_fail (imhtml->selected_text != NULL);
 	g_return_if_fail (imhtml->selected_text->str != NULL);
 
-	if (imhtml->selected_text->len <= 0) {
-		string = NULL;
-		length = 0;
-	} else {
-		string = g_strdup (imhtml->selected_text->str);
-		length = strlen (string);
-	}
+	if (imhtml->selected_text->len <= 0)
+		return;
+
+	string = g_strdup (imhtml->selected_text->str);
+	length = strlen (string);
 
 	if (sel_info == TARGET_STRING) {
 		gtk_selection_data_set (sel_data,
@@ -1398,8 +1396,7 @@ gtk_imhtml_selection_get (GtkWidget        *widget,
 		gdk_free_compound_text (text);
 	}
 
-	if (string)
-		g_free (string);
+	g_free (string);
 }
 
 static gint
