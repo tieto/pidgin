@@ -567,6 +567,10 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 * random crap containing the IP address,
 			 * apparently a port number, and some Other Stuff.
 			 *
+			 * Format is:
+			 * 4 bytes - Our IP address, 0xc0 a8 01 2b for 192.168.1.43
+			 * 
+			 *
 			 */
 			aimbs_getrawbuf(bs, outinfo->icqinfo.crap, 0x25);
 			outinfo->present |= AIM_USERINFO_PRESENT_ICQDATA;

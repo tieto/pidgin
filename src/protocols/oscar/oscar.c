@@ -1947,7 +1947,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		if (!args->cookie || !args->verifiedip || !args->port ||
 		    !args->info.sendfile.filename || !args->info.sendfile.totsize ||
-		    !args->info.sendfile.totfiles || !args->msg || !args->reqclass)
+		    !args->info.sendfile.totfiles || !args->reqclass)
 			return 1;
 		if ((oft = find_oft_by_cookie(sess->aux_data, args->cookie)))
 		{
@@ -2425,21 +2425,21 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 static char *gaim_icq_status(int state) {
 	/* Make a cute little string that shows the status of the dude or dudet */
 	if (state & AIM_ICQ_STATE_CHAT)
-		return g_strdup_printf("Free For Chat");
+		return g_strdup_printf(_("Free For Chat"));
 	else if (state & AIM_ICQ_STATE_DND)
-		return g_strdup_printf("Do Not Disturb");
+		return g_strdup_printf(_("Do Not Disturb"));
 	else if (state & AIM_ICQ_STATE_OUT)
-		return g_strdup_printf("Not Available");
+		return g_strdup_printf(_("Not Available"));
 	else if (state & AIM_ICQ_STATE_BUSY)
-		return g_strdup_printf("Occupied");
+		return g_strdup_printf(_("Occupied"));
 	else if (state & AIM_ICQ_STATE_AWAY)
-		return g_strdup_printf("Away");
+		return g_strdup_printf(_("Away"));
 	else if (state & AIM_ICQ_STATE_WEBAWARE)
-		return g_strdup_printf("Web Aware");
+		return g_strdup_printf(_("Web Aware"));
 	else if (state & AIM_ICQ_STATE_INVISIBLE)
-		return g_strdup_printf("Invisible");
+		return g_strdup_printf(_("Invisible"));
 	else
-		return g_strdup_printf("Online");
+		return g_strdup_printf(_("Online"));
 }
 
 static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_t reason, const char *cookie) {
@@ -2577,7 +2577,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* If this was a file transfer request, data is a cookie. */
 	if ((oft = find_oft_by_cookie(gc, data))) {
 		transfer_abort(oft->xfer,
-				(reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason was given."));
+				(reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason given."));
 
 		oscar_file_transfer_disconnect(sess, oft->conn);
 		return 1;
@@ -2585,7 +2585,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* Data is assumed to be the destination sn. */
 	snprintf(buf, sizeof(buf), _("Your message to %s did not get sent:"), data);
-	do_error_dialog(buf, (reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason was given."), GAIM_ERROR);
+	do_error_dialog(buf, (reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
 
 	return 1;
 }
@@ -2637,7 +2637,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	snprintf(buf, sizeof(buf), _("User information for %s unavailable:"), destn);
-	do_error_dialog(buf, (reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason was given."), GAIM_ERROR);
+	do_error_dialog(buf, (reason < msgerrreasonlen) ? gettext(msgerrreason[reason]) : _("No reason given."), GAIM_ERROR);
 
 	return 1;
 }
@@ -3908,24 +3908,32 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 		gc->away = NULL;
 	}
 
-	if (!strcmp(state, "Online"))
+	if (strcmp(state, _("Invisible"))) {
+		if (aim_ssi_getpermdeny(od->sess->ssi.local) != gc->permdeny)
+			aim_ssi_setpermdeny(od->sess, od->conn, gc->permdeny, 0xffffffff);
+	} else {
+		if (aim_ssi_getpermdeny(od->sess->ssi.local) != 0x03)
+			aim_ssi_setpermdeny(od->sess, od->conn, 0x03, 0xffffffff);
+	}
+
+	if (!strcmp(state, _("Online")))
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
-	else if (!strcmp(state, "Away")) {
+	else if (!strcmp(state, _("Away"))) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY);
 		gc->away = g_strdup("");
-	} else if (!strcmp(state, "Do Not Disturb")) {
+	} else if (!strcmp(state, _("Do Not Disturb"))) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY);
 		gc->away = g_strdup("");
-	} else if (!strcmp(state, "Not Available")) {
+	} else if (!strcmp(state, _("Not Available"))) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
 		gc->away = g_strdup("");
-	} else if (!strcmp(state, "Occupied")) {
+	} else if (!strcmp(state, _("Occupied"))) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY);
 		gc->away = g_strdup("");
-	} else if (!strcmp(state, "Free For Chat")) {
+	} else if (!strcmp(state, _("Free For Chat"))) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_CHAT);
 		gc->away = g_strdup("");
-	} else if (!strcmp(state, "Invisible")) {
+	} else if (!strcmp(state, _("Invisible"))) {
 		aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_INVISIBLE);
 		gc->away = g_strdup("");
 	} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
@@ -4119,12 +4127,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi: syncing local list and server list\n");
 
-	/* Activate SSI */
-	/* Sending the enable causes other people to be able to see you */
-	/* Maybe send it after merging the lists? */
-	debug_printf("ssi: activating server-stored buddy list\n");
-	aim_ssi_enable(sess, fr->conn);
-
 	/* Clean the buddy list */
 	aim_ssi_cleanlist(sess, fr->conn);
 
@@ -4191,6 +4193,9 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					if ((permdeny = aim_ssi_getpermdeny(sess->ssi.local)) && (permdeny != gc->permdeny)) {
 						debug_printf("ssi: changing permdeny from %d to %hhu\n", gc->permdeny, permdeny);
 						gc->permdeny = permdeny;
+						if (od->icq && gc->permdeny == 0x03) {
+							serv_set_away(gc, "Invisible", "");
+						}
 						tmp++;
 					}
 				}
@@ -4266,6 +4271,12 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 		
 	} /* end if (gc) */
+
+	/* Activate SSI */
+	/* Sending the enable causes other people to be able to see you, and you to see them */
+	/* Make sure your privacy setting/invisibility is set how you want it before this! */
+	debug_printf("ssi: activating server-stored buddy list\n");
+	aim_ssi_enable(sess, fr->conn);
 
 	return 1;
 }
@@ -4813,9 +4824,9 @@ static int gaim_directim_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (typing) {
 		/* I had to leave this. It's just too funny. It reminds me of my sister. */
 		debug_printf("ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
-		serv_got_typing(gc,sn,0, TYPING);
+		serv_got_typing(gc, sn, 0, TYPING);
 	} else
-		serv_got_typing_stopped(gc,sn);
+		serv_got_typing_stopped(gc, sn);
 	return 1;
 }
 

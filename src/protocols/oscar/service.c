@@ -729,6 +729,8 @@ static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
  *
  * Currently only works if using ICQ.
  *
+ * These are the same TLVs seen in user info.  You can 
+ * also set 0x0008 and 0x000c.
  */
 faim_export int aim_setextstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t status)
 {
@@ -737,7 +739,7 @@ faim_export int aim_setextstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t s
 	aim_tlvlist_t *tl = NULL;
 	fu32_t data;
 
-	data = 0x00030000 | status; /* yay for error checking ;^) */
+	data = AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_WEBAWARE | status; /* yay for error checking ;^) */
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 8)))
 		return -ENOMEM;
