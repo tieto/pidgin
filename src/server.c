@@ -558,24 +558,33 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 
 static void close_invite(GtkWidget *w, GtkWidget *w2)
 {
+	char *str = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
+
+	if (str)
+		g_free(str);
+
 	gtk_widget_destroy(w2);
 }
 
 static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 {
 	struct gaim_connection *g = (struct gaim_connection *)
-	    gtk_object_get_user_data(GTK_OBJECT(GTK_DIALOG(w2)->vbox));
-	if (g->protocol == PROTO_TOC) {
-		int i = (int)gtk_object_get_user_data(GTK_OBJECT(w2));
-		serv_accept_chat(g, i);
-		gtk_widget_destroy(w2);
-	} else if (g->protocol == PROTO_OSCAR) {
-		char *i = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
-		int id = (int)gtk_object_get_user_data(GTK_OBJECT(w));
-		serv_join_chat(g, id, i);
-		g_free(i);
-		gtk_widget_destroy(w2);
-	}
+					gtk_object_get_user_data(GTK_OBJECT(GTK_DIALOG(w2)->vbox));
+	int id;
+	char *str;
+
+	id = (int)gtk_object_get_user_data(GTK_OBJECT(w));
+	str = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
+
+	if (g->prpl && g->prpl->accept_chat)
+		serv_accept_chat(g, id);
+	else
+		serv_join_chat(g, id, str);
+
+	if (str)
+		g_free(str);
+
+	gtk_widget_destroy(w2);
 }
 
 
@@ -614,13 +623,9 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, int id, char *w
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), nobtn, FALSE, FALSE, 5);
 
 	gtk_object_set_user_data(GTK_OBJECT(GTK_DIALOG(d)->vbox), g);
-	if (g->protocol == PROTO_TOC) {
-		gtk_object_set_user_data(GTK_OBJECT(d), (void *)id);
-		gtk_object_set_user_data(GTK_OBJECT(GTK_DIALOG(d)->vbox), g);
-	} else if (g->protocol == PROTO_OSCAR) {
+	if (name)
 		gtk_object_set_user_data(GTK_OBJECT(d), (void *)g_strdup(name));
-		gtk_object_set_user_data(GTK_OBJECT(yesbtn), (void *)id);
-	}
+	gtk_object_set_user_data(GTK_OBJECT(yesbtn), (void *)id);
 
 
 	gtk_window_set_title(GTK_WINDOW(d), "Buddy chat invite");
