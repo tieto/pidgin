@@ -14,8 +14,3 @@ install:
 	    $(MAKE) -C $$subdir -f Makefile.mingw install; \
 	  done; \
 	fi;
-	if test '$(EXTRA_DIST)'; then \
-	  mkdir -p $(INSTALL_DIR); \
-	  cp $(EXTRA_DIST) $(INSTALL_DIR); \
-	fi;
-
