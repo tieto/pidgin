@@ -45,7 +45,6 @@ struct _GaimAccountUiOps
 	void (*notify_added)(GaimAccount *account, const char *remote_user,
 						 const char *id, const char *alias,
 						 const char *message);
-	void (*request_change_pass)(GaimAccount *account);
 };
 
 struct _GaimAccount
