@@ -181,7 +181,7 @@ void show_about(GtkWidget *w, void *data)
 				"  <b>", _("Russian"), "(ru)</b> = Alexandre Prokoudine &lt;<a href=\"mailto: avp@altlinux.ru\">avp@altlinux.ru</a>&gt;<br>"
 				"  <b>", _("Serbian"), " (sr)</b> - Danilo Šegan &lt;<a href=\"mailto: dsegan@gmx.net\">dsegan@gmx.net</a>&gt;, Aleksandar Urosevic &lt;<a href=\"mailto: urke@users.sourceforge.net\">urke@users.sourceforge.net</a>&gt;<br>"
 				"  <b>", _("Swedish"), " (sv)</b> - Tore Lundqvist &lt;<a href=\"mailto: tlt@mima.x.se\">tlt@mima.x.se</a>&gt;<br>"
-				"  <b>", _("Vietnamese"), "(vi)</b> - T.M.Thanh,M.D:", _("Gnome Vi Team"), ". &lt;<a href=\"mailto: gnomevi-list@lists.sf.net\">gnomevi-list@lists.sf.net</a>&gt;<br>"
+				"  <b>", _("Vietnamese"), "(vi)</b> - T.M.Thanh, ", _("Gnome Vi Team"), ". &lt;<a href=\"mailto: gnomevi-list@lists.sf.net\">gnomevi-list@lists.sf.net</a>&gt;<br>"
 				"  <b>", _("Simplified Chinese"), " (zh_CN)</b> - Funda Wang &lt;<a href=\"mailto: fundawang@linux.net.cn\">fundawang@linux.net.cn</a>&gt;<br>"
 				"  <b>", _("Traditional Chinese"), " (zh_TW)</b> - Ambrose C. Li &lt;<a href=\"mailto: acli@ada.dhs.org\">acli@ada.dhs.org</a>&gt;, Paladin R. Liu &lt;<a href=\"mailto: paladin@ms1.hinet.net\">paladin@ms1.hinet.net</a>&gt;<br>"
 				"<BR>", NULL);
