@@ -77,6 +77,9 @@ static gboolean gtk_imhtml_is_amp_escape (const gchar *string, gchar **replace, 
 void gtk_imhtml_close_tags(GtkIMHtml *imhtml, GtkTextIter *iter);
 static void gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, guint info, guint t, GtkIMHtml *imhtml);
 static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *mark, GtkIMHtml *imhtml);
+static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data);
+static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *selection_data, gpointer data);
+static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *text, gpointer data);
 
 /* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
@@ -541,6 +544,31 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 	return FALSE;
 }
 
+static void paste_unformatted_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
+{
+	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
+
+	gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
+
+}
+
+static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
+{
+	GtkWidget *menuitem;
+
+	menuitem = gtk_menu_item_new_with_mnemonic(_("Pa_ste As Text"));
+	gtk_widget_show(menuitem);
+	gtk_widget_set_sensitive(menuitem,
+	                        (imhtml->editable &&
+	                        gtk_clipboard_wait_is_text_available(
+	                        gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD))));
+	/* put it after "Paste" */
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 3);
+
+	g_signal_connect(G_OBJECT(menuitem), "activate",
+					 G_CALLBACK(paste_unformatted_cb), imhtml);
+}
+
 static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *selection_data, guint info, GtkIMHtml *imhtml) {
 	char *text;
 	gboolean primary;
@@ -686,56 +714,44 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 	g_signal_stop_emission_by_name(imhtml, "cut-clipboard");
 }
 
+static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean plaintext)
+{
+	GtkTextIter iter;
+	GtkIMHtmlOptions flags = plaintext ? 0 : GTK_IMHTML_NO_NEWLINE;
+
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, gtk_text_buffer_get_insert(imhtml->text_buffer));
+	if (!imhtml->wbfo && !plaintext)
+		gtk_imhtml_close_tags(imhtml, &iter);
+
+	gtk_imhtml_insert_html_at_iter(imhtml, text, flags, &iter);
+	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
+	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(imhtml), gtk_text_buffer_get_insert(imhtml->text_buffer),
+	                             0, FALSE, 0.0, 0.0);
+}
+
+static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *text, gpointer data)
+{
+	char *tmp;
+
+	if (text == NULL)
+		return;
+
+	tmp = gaim_escape_html(text);
+	imhtml_paste_insert(data, tmp, TRUE);
+	g_free(tmp);
+}
+
 static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *selection_data, gpointer data)
 {
 	char *text;
 	GtkIMHtml *imhtml = data;
-	GtkTextIter iter;
-	GtkIMHtmlOptions flags = GTK_IMHTML_NO_NEWLINE;
-	gboolean plaintext = FALSE;
 
 	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
 		return;
 
-#ifdef _WIN32
-	/* If we're on windows, let's see if we can get data from the HTML Format
-	   clipboard before we try to paste from the GTK buffer */
-	HGLOBAL hdata;
-	DWORD err;
-	char *buffer;
-	if (IsClipboardFormatAvailable(win_html_fmt)) {
-		OpenClipboard(NULL);
-		hdata = GetClipboardData(win_html_fmt);
-		if (hdata == NULL) {
-		    err = GetLastError();
-			gaim_debug_info("html clipboard", "error number %u!  See http://msdn.microsoft.com/library/en-us/debug/base/system_error_codes.asp\n", err);
-			CloseClipboard();
-			return;
-		}
-		buffer = GlobalLock(hdata);
-		if (buffer == NULL) {
-			err = GetLastError();
-			gaim_debug_info("html clipboard", "error number %u!  See http://msdn.microsoft.com/library/en-us/debug/base/system_error_codes.asp\n", err);
-			CloseClipboard();
-			return;
-		}
-		text = clipboard_win32_to_html(buffer);
-		GlobalUnlock(hdata);
-		CloseClipboard();
-	} else
-#endif
 	if (selection_data->length < 0) {
-		char *tmp;
-		text = gtk_clipboard_wait_for_text(clipboard);
-		flags = 0;
-		plaintext = TRUE;
-
-		if (text == NULL)
-			return;
-
-		tmp = gaim_escape_html(text);
-		g_free(text);
-		text = tmp;
+		gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
+		return;
 	} else {
 #if 0
 		/* Here's some debug code, for figuring out what sent to us over the clipboard. */
@@ -781,22 +797,53 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		return;
 	}
 
-	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, gtk_text_buffer_get_insert(imhtml->text_buffer));
-	if (!imhtml->wbfo && !plaintext)
-		gtk_imhtml_close_tags(imhtml, &iter);
-	gtk_imhtml_insert_html_at_iter(imhtml, text, flags, &iter);
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
-	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(imhtml), gtk_text_buffer_get_insert(imhtml->text_buffer),
-	                             0, FALSE, 0.0, 0.0);
+	imhtml_paste_insert(imhtml, text, FALSE);
 	g_free(text);
 }
 
 static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 {
+#ifdef _WIN32
+	/* If we're on windows, let's see if we can get data from the HTML Format
+	   clipboard before we try to paste from the GTK buffer */
+	HGLOBAL hdata;
+	DWORD err;
+	char *buffer;
+	char *text;
 
+	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
+		return;
+
+	if (IsClipboardFormatAvailable(win_html_fmt)) {
+		OpenClipboard(NULL);
+		hdata = GetClipboardData(win_html_fmt);
+		if (hdata == NULL) {
+		    err = GetLastError();
+			gaim_debug_info("html clipboard", "error number %u!  See http://msdn.microsoft.com/library/en-us/debug/base/system_error_codes.asp\n", err);
+			CloseClipboard();
+			return;
+		}
+		buffer = GlobalLock(hdata);
+		if (buffer == NULL) {
+			err = GetLastError();
+			gaim_debug_info("html clipboard", "error number %u!  See http://msdn.microsoft.com/library/en-us/debug/base/system_error_codes.asp\n", err);
+			CloseClipboard();
+			return;
+		}
+		text = clipboard_win32_to_html(buffer);
+		GlobalUnlock(hdata);
+		CloseClipboard();
+
+		imhtml_paste_insert(imhtml, text, FALSE);
+		g_free(text);
+	} else {
+#endif
 	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_request_contents(clipboard, gdk_atom_intern("text/html", FALSE),
 				       paste_received_cb, imhtml);
+#ifdef _WIN32
+	}
+#endif
 	g_signal_stop_emission_by_name(imhtml, "paste-clipboard");
 }
 
@@ -1026,6 +1073,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 	gtk_imhtml_set_editable(imhtml, FALSE);
 
+	g_signal_connect(G_OBJECT(imhtml), "populate-popup", 
+					 G_CALLBACK(hijack_menu_cb), NULL);
+
 #ifdef _WIN32
 	/* Register HTML Format as desired clipboard format */
 	win_html_fmt = RegisterClipboardFormat("HTML Format");
@@ -1083,10 +1133,10 @@ static void url_open(GtkWidget *w, struct url_data *data) {
 static void url_copy(GtkWidget *w, gchar *url) {
 	GtkClipboard *clipboard;
 
-	clipboard = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_PRIMARY);
 	gtk_clipboard_set_text(clipboard, url, -1);
 
-	clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+	clipboard = gtk_widget_get_clipboard(w, GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_set_text(clipboard, url, -1);
 }
 
