@@ -456,7 +456,7 @@ static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 		return;
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	filename = g_value_get_string(&val);
-	load_smiley_theme(filename, TRUE);
+	gaim_prefs_set_string("/gaim/gtk/smileys/theme", filename);
 	g_value_unset (&val);
 }
 
@@ -2748,6 +2748,13 @@ void apply_font_dlg(GtkWidget *w, GtkWidget *f)
 	gaim_conversation_foreach(gaim_gtkconv_update_font_face);
 }
 
+static void
+smiley_theme_pref_cb(const char *name, GaimPrefType type, gpointer value,
+					 gpointer data)
+{
+	load_smiley_theme((const char *)value, TRUE);
+}
+
 void
 gaim_gtk_prefs_init(void)
 {
@@ -2809,7 +2816,10 @@ gaim_gtk_prefs_init(void)
 
 	/* Smiley Themes */
 	gaim_prefs_add_none("/gaim/gtk/smileys");
-	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "");
+	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "default");
 
+	/* Smiley Callbacks */
+	gaim_prefs_connect_callback("/gaim/gtk/smileys/theme",
+								smiley_theme_pref_cb, NULL);
 }
 
