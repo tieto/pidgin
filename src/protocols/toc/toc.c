@@ -143,7 +143,7 @@ static void toc_login(struct aim_user *user)
 
 	gc = new_gaim_conn(user);
 	gc->proto_data = tdt = g_new0(struct toc_data, 1);
-	gc->flags |= OPT_CONN_HTML | OPT_CONN_SHOW_HTML;
+	gc->flags |= OPT_CONN_HTML;
 
 	g_snprintf(buf, sizeof buf, "Looking up %s",
 		   user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST);

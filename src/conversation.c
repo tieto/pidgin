@@ -1151,43 +1151,6 @@ void remove_tags(GtkWidget *entry, char *tag)
 	g_free(s);
 }
 
-static char *escape_html(char *w, int *l)
-{
-	int c = 0;
-	char *r;
-	int i, x = 0;
-	if (*l == -1) {
-		*l = strlen(w);
-		x = 1;
-	}
-	r = g_malloc(*l * 5 + 1);
-
-	for (i = 0; i < *l; i++) {
-		if (w[i] == '<') {
-			r[c++] = '&';
-			r[c++] = 'l';
-			r[c++] = 't';
-			r[c++] = ';';
-		} else if (w[i] == '&') {
-			r[c++] = '&';
-			r[c++] = 'a';
-			r[c++] = 'm';
-			r[c++] = 'p';
-			r[c++] = ';';
-		} else {
-			r[c++] = w[i];
-		}
-	}
-	r[c] = 0;
-
-	r = g_realloc(r, c + 1);
-	if (x)
-		*l = -1;
-	else
-		*l = c;
-	return r;
-}
-
 static char *html_logize(char *p)
 {
 
@@ -1592,10 +1555,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		g_snprintf(buf, BUF_LONG, "<B><FONT COLOR=\"#777777\">%s</FONT></B><BR>", what);
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf, -1, 0);
 	} else {
-		if (c->gc->flags & OPT_CONN_SHOW_HTML)
-			what = g_memdup(what, length == -1 ? strlen(what) + 1 : length);
-		else
-			what = escape_html(what, &length);
 		if (flags & WFLAG_WHISPER) {
 			/* if we're whispering, it's not an autoresponse */
 			if (meify(what, length)) {
@@ -1702,8 +1661,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			g_free(t2);
 			g_free(nm);
 		}
-
-		g_free(what);
 	}
 
 	if ((c->is_chat && (chat_options & OPT_CHAT_POPUP)) ||

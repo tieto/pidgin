@@ -707,8 +707,6 @@ static void yahoo_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 
-	gc->flags = OPT_CONN_HTML | OPT_CONN_SHOW_HTML; /* it does to an extent.... */
-
 	set_login_progress(gc, 1, "Connecting");
 
 	yd->fd = -1;
