@@ -44,7 +44,8 @@ struct prpl *find_prpl(int prot)
 	return NULL;
 }
 
-static gint proto_compare(struct prpl *a, struct prpl *b) {
+static gint proto_compare(struct prpl *a, struct prpl *b)
+{
 	/* neg if a before b, 0 if equal, pos if a after b */
 	return a->protocol - b->protocol;
 }
@@ -59,7 +60,8 @@ void load_protocol(proto_init pi)
 	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);
 }
 
-void unload_protocol(struct prpl *p) {
+void unload_protocol(struct prpl *p)
+{
 	GSList *c = connections;
 	struct gaim_connection *g;
 	while (c) {
@@ -67,8 +69,8 @@ void unload_protocol(struct prpl *p) {
 		if (g->prpl == p) {
 			char buf[256];
 			g_snprintf(buf, sizeof buf, _("%s was using %s, which got removed."
-							" %s is now offline."), g->username,
-							(*p->name)(), g->username);
+						      " %s is now offline."), g->username,
+				   (*p->name)(), g->username);
 			do_error_dialog(buf, _("Disconnect"));
 			signoff(g);
 			c = connections;
@@ -87,11 +89,13 @@ void static_proto_init()
 #endif
 }
 
-static void des_win(GtkWidget *a, GtkWidget *b) {
+static void des_win(GtkWidget *a, GtkWidget *b)
+{
 	gtk_widget_destroy(b);
 }
 
-static int rem_win(GtkObject *a, GtkWidget *b) {
+static int rem_win(GtkObject * a, GtkWidget *b)
+{
 	gpointer d = gtk_object_get_user_data(a);
 	gtk_signal_disconnect_by_data(GTK_OBJECT(b), d);
 	gtk_widget_destroy(b);
@@ -109,14 +113,14 @@ void do_ask_dialog(const char *text, void *data, void *doit, void *dont)
 	window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(window), "accept", "Gaim");
 	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
-        gtk_window_set_title(GTK_WINDOW(window), _("Accept?"));
+	gtk_window_set_title(GTK_WINDOW(window), _("Accept?"));
 	gtk_widget_realize(window);
 	aol_icon(window->window);
 	if (dont)
 		gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(dont), data);
 
 	vbox = gtk_vbox_new(FALSE, 5);
-        gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
 	label = gtk_label_new(text);

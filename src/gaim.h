@@ -710,6 +710,7 @@ extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
 
 /* Functions in prefs.c */
 extern void debug_printf( char * fmt, ... );
+#define debug_print(x) debug_printf(x);
 extern void set_general_option(GtkWidget *, int *);
 extern void set_option(GtkWidget *, int *);
 extern void show_prefs();

@@ -50,7 +50,7 @@
 
 /* ------------------ Global Variables ----------------------- */
 
-GList *plugins   = NULL;
+GList *plugins = NULL;
 GList *callbacks = NULL;
 
 /* ------------------ Local Variables ------------------------ */
@@ -67,25 +67,26 @@ static char *last_dir = NULL;
 
 /* --------------- Function Declarations --------------------- */
 
-       void show_plugins (GtkWidget *, gpointer);
-       void load_plugin  (char *);
+void show_plugins(GtkWidget *, gpointer);
+void load_plugin(char *);
 
-       void gaim_signal_connect   (GModule *, enum gaim_event, void *, void *);
-       void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
-       void gaim_plugin_unload    (GModule *);
+void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
+void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
+void gaim_plugin_unload(GModule *);
 
-static void destroy_plugins  (GtkWidget *, gpointer);
-static void load_file        (GtkWidget *, gpointer);
+static void destroy_plugins(GtkWidget *, gpointer);
+static void load_file(GtkWidget *, gpointer);
 static void load_which_plugin(GtkWidget *, gpointer);
-static void unload           (GtkWidget *, gpointer);
-static void unload_immediate (GModule *);
-static void list_clicked     (GtkWidget *, struct gaim_plugin *);
+static void unload(GtkWidget *, gpointer);
+static void unload_immediate(GModule *);
+static void list_clicked(GtkWidget *, struct gaim_plugin *);
 static void update_show_plugins();
-static void hide_plugins     (GtkWidget *, gpointer);
+static void hide_plugins(GtkWidget *, gpointer);
 
 /* ------------------ Code Below ---------------------------- */
 
-static void destroy_plugins(GtkWidget *w, gpointer data) {
+static void destroy_plugins(GtkWidget *w, gpointer data)
+{
 	if (plugin_dialog)
 		gtk_widget_destroy(plugin_dialog);
 	plugin_dialog = NULL;
@@ -94,7 +95,7 @@ static void destroy_plugins(GtkWidget *w, gpointer data) {
 static void load_file(GtkWidget *w, gpointer data)
 {
 	gchar *buf;
- 
+
 	if (plugin_dialog) {
 		gtk_widget_show(plugin_dialog);
 		gdk_window_raise(plugin_dialog->window);
@@ -103,8 +104,7 @@ static void load_file(GtkWidget *w, gpointer data)
 
 	plugin_dialog = gtk_file_selection_new(_("Gaim - Plugin List"));
 
-	gtk_file_selection_hide_fileop_buttons(
-					GTK_FILE_SELECTION(plugin_dialog));
+	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(plugin_dialog));
 
 	if (!last_dir)
 		buf = g_strdup(LIBDIR);
@@ -114,24 +114,24 @@ static void load_file(GtkWidget *w, gpointer data)
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(plugin_dialog), buf);
 	gtk_file_selection_complete(GTK_FILE_SELECTION(plugin_dialog), "*.so");
 	gtk_signal_connect(GTK_OBJECT(plugin_dialog), "destroy",
-			GTK_SIGNAL_FUNC(destroy_plugins), plugin_dialog);
+			   GTK_SIGNAL_FUNC(destroy_plugins), plugin_dialog);
 
 	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(plugin_dialog)->ok_button),
-			"clicked", GTK_SIGNAL_FUNC(load_which_plugin), NULL);
-    
+			   "clicked", GTK_SIGNAL_FUNC(load_which_plugin), NULL);
+
 	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(plugin_dialog)->cancel_button),
-			"clicked", GTK_SIGNAL_FUNC(destroy_plugins), NULL);
+			   "clicked", GTK_SIGNAL_FUNC(destroy_plugins), NULL);
 
 	g_free(buf);
 	gtk_widget_show(plugin_dialog);
-	gdk_window_raise(plugin_dialog->window);   
+	gdk_window_raise(plugin_dialog->window);
 }
 
-static void load_which_plugin(GtkWidget *w, gpointer data) {
+static void load_which_plugin(GtkWidget *w, gpointer data)
+{
 	char *file;
 
-	file = gtk_file_selection_get_filename(
-		                   GTK_FILE_SELECTION(plugin_dialog));
+	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(plugin_dialog));
 	if (file_is_dir(file, plugin_dialog)) {
 		return;
 	}
@@ -143,7 +143,8 @@ static void load_which_plugin(GtkWidget *w, gpointer data) {
 	plugin_dialog = NULL;
 }
 
-void load_plugin(char *filename) {
+void load_plugin(char *filename)
+{
 	struct gaim_plugin *plug;
 	GList *c = plugins;
 	char *(*gaim_plugin_init)(GModule *);
@@ -151,15 +152,19 @@ void load_plugin(char *filename) {
 	char *error;
 	char *retval;
 
-	if (!g_module_supported()) return;
-	if (filename == NULL) return;
-	if (strlen(filename) == 0) return;
+	if (!g_module_supported())
+		return;
+	if (filename == NULL)
+		return;
+	if (strlen(filename) == 0)
+		return;
 
 	while (c) {
 		plug = (struct gaim_plugin *)c->data;
 		if (!strcmp(filename, g_module_name(plug->handle))) {
 			void (*gaim_plugin_remove)();
-			if (g_module_symbol(plug->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
+			if (g_module_symbol(plug->handle, "gaim_plugin_remove",
+					    (gpointer *)&gaim_plugin_remove))
 				(*gaim_plugin_remove)();
 
 			unload_immediate(plug->handle);
@@ -229,7 +234,8 @@ void load_plugin(char *filename) {
 	save_prefs();
 }
 
-void show_plugins(GtkWidget *w, gpointer data) {
+void show_plugins(GtkWidget *w, gpointer data)
+{
 	/* most of this code was shamelessly stolen from prefs.c */
 	GtkWidget *page;
 	GtkWidget *topbox;
@@ -241,10 +247,11 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	GtkWidget *add;
 	GtkWidget *remove;
 	GtkWidget *close;
-	GList     *plugs = plugins;
+	GList *plugs = plugins;
 	struct gaim_plugin *p;
 
-	if (plugwindow) return;
+	if (plugwindow)
+		return;
 
 	plugwindow = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(plugwindow), "plugins", "Gaim");
@@ -253,8 +260,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_container_border_width(GTK_CONTAINER(plugwindow), 5);
 	gtk_window_set_title(GTK_WINDOW(plugwindow), _("Gaim - Plugins"));
 	gtk_widget_set_usize(plugwindow, 400, 250);
-	gtk_signal_connect(GTK_OBJECT(plugwindow), "destroy",
-			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
+	gtk_signal_connect(GTK_OBJECT(plugwindow), "destroy", GTK_SIGNAL_FUNC(hide_plugins), NULL);
 
 	page = gtk_vbox_new(FALSE, 5);
 	topbox = gtk_hbox_new(FALSE, 5);
@@ -263,8 +269,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	/* Left side: list of plugin file names */
 	sw2 = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
-				       GTK_POLICY_AUTOMATIC,
-				       GTK_POLICY_AUTOMATIC);
+				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	pluglist = gtk_list_new();
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), pluglist);
@@ -273,8 +278,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	/* Right side: the text description of the plugin */
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				       GTK_POLICY_AUTOMATIC,
-				       GTK_POLICY_AUTOMATIC);
+				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	plugtext = gtk_text_new(NULL, NULL);
 	gtk_container_add(GTK_CONTAINER(sw), plugtext);
@@ -284,8 +288,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 
 	/* Build the bottom button bar */
 	add = gtk_button_new_with_label(_("Load Plugin"));
-	gtk_signal_connect(GTK_OBJECT(add), "clicked",
-			   GTK_SIGNAL_FUNC(load_file), NULL);
+	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(load_file), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), add, TRUE, TRUE, 0);
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
@@ -297,15 +300,13 @@ void show_plugins(GtkWidget *w, gpointer data) {
 		gtk_button_set_relief(GTK_BUTTON(config), GTK_RELIEF_NONE);
 
 	remove = gtk_button_new_with_label(_("Unload Plugin"));
-	gtk_signal_connect(GTK_OBJECT(remove), "clicked",
-			   GTK_SIGNAL_FUNC(unload), pluglist);
+	gtk_signal_connect(GTK_OBJECT(remove), "clicked", GTK_SIGNAL_FUNC(unload), pluglist);
 	gtk_box_pack_start(GTK_BOX(botbox), remove, TRUE, TRUE, 0);
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(remove), GTK_RELIEF_NONE);
 
 	close = gtk_button_new_with_label(_("Close"));
-	gtk_signal_connect(GTK_OBJECT(close), "clicked",
-			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
+	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(hide_plugins), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), close, TRUE, TRUE, 0);
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
@@ -318,8 +319,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 		label = gtk_label_new(g_module_name(p->handle));
 		list_item = gtk_list_item_new();
 		gtk_container_add(GTK_CONTAINER(list_item), label);
-		gtk_signal_connect(GTK_OBJECT(list_item), "select",
-				   GTK_SIGNAL_FUNC(list_clicked), p);
+		gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(list_clicked), p);
 		gtk_object_set_user_data(GTK_OBJECT(list_item), p);
 
 		gtk_widget_show(label);
@@ -328,7 +328,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 
 		plugs = g_list_next(plugs);
 	}
-	
+
 	/* Make the first item selected */
 	if (plugins != NULL)
 		gtk_list_select_item(GTK_LIST(pluglist), 0);
@@ -349,13 +349,15 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_widget_show(plugwindow);
 }
 
-void update_show_plugins() {
+void update_show_plugins()
+{
 	GList *plugs = plugins;
 	struct gaim_plugin *p;
 	GtkWidget *label;
 	GtkWidget *list_item;
 
-	if (plugwindow == NULL) return;
+	if (plugwindow == NULL)
+		return;
 
 	gtk_list_clear_items(GTK_LIST(pluglist), 0, -1);
 	while (plugs) {
@@ -363,8 +365,7 @@ void update_show_plugins() {
 		label = gtk_label_new(g_module_name(p->handle));
 		list_item = gtk_list_item_new();
 		gtk_container_add(GTK_CONTAINER(list_item), label);
-		gtk_signal_connect(GTK_OBJECT(list_item), "select",
-				   GTK_SIGNAL_FUNC(list_clicked), p);
+		gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(list_clicked), p);
 		gtk_object_set_user_data(GTK_OBJECT(list_item), p);
 
 		gtk_widget_show(label);
@@ -376,19 +377,20 @@ void update_show_plugins() {
 		gtk_list_select_item(GTK_LIST(pluglist), 0);
 	else {
 		gtk_text_set_point(GTK_TEXT(plugtext), 0);
-		gtk_text_forward_delete(GTK_TEXT(plugtext),
-			gtk_text_get_length(GTK_TEXT(plugtext)));
+		gtk_text_forward_delete(GTK_TEXT(plugtext), gtk_text_get_length(GTK_TEXT(plugtext)));
 	}
 }
 
-void unload(GtkWidget *w, gpointer data) {
+void unload(GtkWidget *w, gpointer data)
+{
 	GList *i;
 	struct gaim_plugin *p;
 	void (*gaim_plugin_remove)();
 
 	i = GTK_LIST(pluglist)->selection;
 
-	if (i == NULL) return;
+	if (i == NULL)
+		return;
 
 	p = gtk_object_get_user_data(GTK_OBJECT(i->data));
 
@@ -399,7 +401,8 @@ void unload(GtkWidget *w, gpointer data) {
 	unload_immediate(p->handle);
 }
 
-static void unload_for_real(void *handle) {
+static void unload_for_real(void *handle)
+{
 	GList *i;
 	struct gaim_plugin *p = NULL;
 	GList *c = callbacks;
@@ -438,27 +441,32 @@ static void unload_for_real(void *handle) {
 
 	plugins = g_list_remove(plugins, p);
 	g_free(p);
-	if (config) gtk_widget_set_sensitive(config, 0);
+	if (config)
+		gtk_widget_set_sensitive(config, 0);
 	update_show_plugins();
 	save_prefs();
 }
 
-void unload_immediate(GModule *handle) {
+void unload_immediate(GModule *handle)
+{
 	unload_for_real(handle);
 	g_module_close(handle);
 }
 
-static gint unload_timeout(GModule *handle) {
+static gint unload_timeout(GModule *handle)
+{
 	g_module_close(handle);
 	return FALSE;
 }
 
-void gaim_plugin_unload(GModule *handle) {
+void gaim_plugin_unload(GModule *handle)
+{
 	unload_for_real(handle);
 	gtk_timeout_add(5000, (GtkFunction)unload_timeout, handle);
 }
 
-void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
+void list_clicked(GtkWidget *w, struct gaim_plugin *p)
+{
 	gchar *temp;
 	guint text_len;
 	void (*gaim_plugin_config)();
@@ -476,7 +484,7 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 	/* Find out if this plug-in has a configuration function */
 	if (g_module_symbol(p->handle, "gaim_plugin_config", (gpointer *)&gaim_plugin_config)) {
 		confighandle = gtk_signal_connect(GTK_OBJECT(config), "clicked",
-				   GTK_SIGNAL_FUNC(gaim_plugin_config), NULL);
+						  GTK_SIGNAL_FUNC(gaim_plugin_config), NULL);
 		gtk_widget_set_sensitive(config, 1);
 	} else {
 		confighandle = 0;
@@ -484,7 +492,8 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 	}
 }
 
-void hide_plugins(GtkWidget *w, gpointer data) {
+void hide_plugins(GtkWidget *w, gpointer data)
+{
 	if (plugwindow)
 		gtk_widget_destroy(plugwindow);
 	plugwindow = NULL;
@@ -492,8 +501,8 @@ void hide_plugins(GtkWidget *w, gpointer data) {
 	confighandle = 0;
 }
 
-void gaim_signal_connect(GModule *handle, enum gaim_event which,
-			 void *func, void *data) {
+void gaim_signal_connect(GModule *handle, enum gaim_event which, void *func, void *data)
+{
 	struct gaim_callback *call = g_new0(struct gaim_callback, 1);
 	call->handle = handle;
 	call->event = which;
@@ -504,7 +513,8 @@ void gaim_signal_connect(GModule *handle, enum gaim_event which,
 	debug_printf("Adding callback %d\n", g_list_length(callbacks));
 }
 
-void gaim_signal_disconnect(GModule *handle, enum gaim_event which, void *func) {
+void gaim_signal_disconnect(GModule *handle, enum gaim_event which, void *func)
+{
 	GList *c = callbacks;
 	struct gaim_callback *g = NULL;
 
@@ -514,7 +524,8 @@ void gaim_signal_disconnect(GModule *handle, enum gaim_event which, void *func) 
 			callbacks = g_list_remove(callbacks, c->data);
 			g_free(g);
 			c = callbacks;
-			if (c == NULL) break;
+			if (c == NULL)
+				break;
 		}
 		c = g_list_next(c);
 	}
@@ -525,87 +536,88 @@ void gaim_signal_disconnect(GModule *handle, enum gaim_event which, void *func) 
 char *event_name(enum gaim_event event)
 {
 	static char buf[128];
-	switch(event) {
-		case event_signon:
-			sprintf(buf, "event_signon");
-			break;
-		case event_signoff:
-			sprintf(buf, "event_signoff");
-			break;
-		case event_away:
-			sprintf(buf, "event_away");
-			break;
-		case event_back:
-			sprintf(buf, "event_back");
-			break;
-		case event_im_recv:
-			sprintf(buf, "event_im_recv");
-			break;
-		case event_im_send:
-			sprintf(buf, "event_im_send");
-			break;
-		case event_buddy_signon:
-			sprintf(buf, "event_buddy_signon");
-			break;
-		case event_buddy_signoff:
-			sprintf(buf, "event_buddy_signoff");
-			break;
-		case event_buddy_away:
-			sprintf(buf, "event_buddy_away");
-			break;
-		case event_buddy_back:
-			sprintf(buf, "event_buddy_back");
-			break;
-		case event_buddy_idle:
-			sprintf(buf, "event_buddy_idle");
-			break;
-		case event_buddy_unidle:
-			sprintf(buf, "event_buddy_unidle");
-			break;
-		case event_blist_update:
-			sprintf(buf, "event_blist_update");
-			break;
-		case event_chat_invited:
-			sprintf(buf, "event_chat_invited");
-			break;
-		case event_chat_join:
-			sprintf(buf, "event_chat_join");
-			break;
-		case event_chat_leave:
-			sprintf(buf, "event_chat_leave");
-			break;
-		case event_chat_buddy_join:
-			sprintf(buf, "event_chat_buddy_join");
-			break;
-		case event_chat_buddy_leave:
-			sprintf(buf, "event_chat_buddy_leave");
-			break;
-		case event_chat_recv:
-			sprintf(buf, "event_chat_recv");
-			break;
-		case event_chat_send:
-			sprintf(buf, "event_chat_send");
-			break;
-		case event_warned:
-			sprintf(buf, "event_warned");
-			break;
-		case event_error:
-			sprintf(buf, "event_error");
-			break;
-		case event_quit:
-			sprintf(buf, "event_quit");
-			break;
-		case event_new_conversation:
-			sprintf(buf, "event_new_conversaion");
-			break;
-		default:
-			sprintf(buf, "event_unknown");
-			break;
+	switch (event) {
+	case event_signon:
+		sprintf(buf, "event_signon");
+		break;
+	case event_signoff:
+		sprintf(buf, "event_signoff");
+		break;
+	case event_away:
+		sprintf(buf, "event_away");
+		break;
+	case event_back:
+		sprintf(buf, "event_back");
+		break;
+	case event_im_recv:
+		sprintf(buf, "event_im_recv");
+		break;
+	case event_im_send:
+		sprintf(buf, "event_im_send");
+		break;
+	case event_buddy_signon:
+		sprintf(buf, "event_buddy_signon");
+		break;
+	case event_buddy_signoff:
+		sprintf(buf, "event_buddy_signoff");
+		break;
+	case event_buddy_away:
+		sprintf(buf, "event_buddy_away");
+		break;
+	case event_buddy_back:
+		sprintf(buf, "event_buddy_back");
+		break;
+	case event_buddy_idle:
+		sprintf(buf, "event_buddy_idle");
+		break;
+	case event_buddy_unidle:
+		sprintf(buf, "event_buddy_unidle");
+		break;
+	case event_blist_update:
+		sprintf(buf, "event_blist_update");
+		break;
+	case event_chat_invited:
+		sprintf(buf, "event_chat_invited");
+		break;
+	case event_chat_join:
+		sprintf(buf, "event_chat_join");
+		break;
+	case event_chat_leave:
+		sprintf(buf, "event_chat_leave");
+		break;
+	case event_chat_buddy_join:
+		sprintf(buf, "event_chat_buddy_join");
+		break;
+	case event_chat_buddy_leave:
+		sprintf(buf, "event_chat_buddy_leave");
+		break;
+	case event_chat_recv:
+		sprintf(buf, "event_chat_recv");
+		break;
+	case event_chat_send:
+		sprintf(buf, "event_chat_send");
+		break;
+	case event_warned:
+		sprintf(buf, "event_warned");
+		break;
+	case event_error:
+		sprintf(buf, "event_error");
+		break;
+	case event_quit:
+		sprintf(buf, "event_quit");
+		break;
+	case event_new_conversation:
+		sprintf(buf, "event_new_conversaion");
+		break;
+	default:
+		sprintf(buf, "event_unknown");
+		break;
 	}
 	return buf;
 }
 
-int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4) {
+int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4)
+{
 #ifdef USE_PERL
 	char buf[BUF_LONG];
 	char *tmp;
@@ -616,19 +628,20 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 
 	while (c) {
 		g = (struct gaim_callback *)c->data;
-		if (g->event == event && g->function != NULL) {
-			switch(event) {
+		if (g->event == event && g->function !=NULL) {
+			switch (event) {
 
-			/* struct gaim_connection * */
+				/* struct gaim_connection * */
 			case event_signon:
 			case event_signoff:
 				{
-					void (*function)(struct gaim_connection *, void *) = g->function;
+					void (*function) (struct gaim_connection *, void *) =
+					    g->function;
 					(*function)(arg1, g->data);
 				}
 				break;
 
-			/* no args */
+				/* no args */
 			case event_away:
 			case event_back:
 			case event_blist_update:
@@ -639,26 +652,26 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 				}
 				break;
 
-			/* struct gaim_connection *, char **, char ** */
+				/* struct gaim_connection *, char **, char ** */
 			case event_im_recv:
 				{
 					void (*function)(struct gaim_connection *, char **, char **,
-							void *) = g->function;
+							  void *) = g->function;
 					(*function)(arg1, arg2, arg3, g->data);
 				}
 				break;
 
-			/* struct gaim_connection *, char *, char ** */
+				/* struct gaim_connection *, char *, char ** */
 			case event_im_send:
 			case event_chat_send:
 				{
 					void (*function)(struct gaim_connection *, char *, char **,
-							void *) = g->function;
+							  void *) = g->function;
 					(*function)(arg1, arg2, arg3, g->data);
 				}
 				break;
 
-			/* struct gaim_connection *, char * */
+				/* struct gaim_connection *, char * */
 			case event_chat_join:
 			case event_chat_leave:
 			case event_buddy_signon:
@@ -669,12 +682,12 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_buddy_unidle:
 				{
 					void (*function)(struct gaim_connection *, char *, void *) =
-										g->function;
+					    g->function;
 					(*function)(arg1, arg2, g->data);
 				}
 				break;
 
-			/* char * */
+				/* char * */
 			case event_new_conversation:
 				{
 					void (*function)(char *, void *) = g->function;
@@ -682,27 +695,27 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 				}
 				break;
 
-			/* struct gaim_connection *, char *, char *, char * */
+				/* struct gaim_connection *, char *, char *, char * */
 			case event_chat_invited:
 			case event_chat_recv:
 				{
 					void (*function)(struct gaim_connection *, char *, char *,
-							char *, void *) = g->function;
+							  char *, void *) = g->function;
 					(*function)(arg1, arg2, arg3, arg4, g->data);
 				}
 				break;
 
-			/* struct gaim_connection *, char *, char * */
+				/* struct gaim_connection *, char *, char * */
 			case event_chat_buddy_join:
 			case event_chat_buddy_leave:
 				{
 					void (*function)(struct gaim_connection *, char *, char *,
-							void *) = g->function;
+							  void *) = g->function;
 					(*function)(arg1, arg2, arg3, g->data);
 				}
 				break;
 
-			/* char *, int */
+				/* char *, int */
 			case event_warned:
 				{
 					void (*function)(char *, int, void *) = g->function;
@@ -710,7 +723,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 				}
 				break;
 
-			/* int */
+				/* int */
 			case event_error:
 				{
 					void (*function)(int, void *) = g->function;
@@ -728,80 +741,84 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 #endif /* GAIM_PLUGINS */
 #ifdef USE_PERL
 	switch (event) {
-		case event_signon:
-			g_snprintf(buf, sizeof buf, "\"%s\"", ((struct gaim_connection *)arg1)->username);
-			break;
-		case event_signoff:
-			g_snprintf(buf, sizeof buf, "\"%s\"", ((struct gaim_connection *)arg1)->username);
-			break;
-		case event_away:
-			buf[0] = 0;
-			break;
-		case event_back:
-			buf[0] = 0;
-			break;
-		case event_im_recv:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", ((struct gaim_connection *)arg1)->username, *(char **)arg2, *(char **)arg3);
-			break;
-		case event_im_send:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", ((struct gaim_connection *)arg1)->username, (char *)arg2, *(char **)arg3);
-			break;
-		case event_buddy_signon:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
-			break;
-		case event_buddy_signoff:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
-			break;
-		case event_buddy_away:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
-			break;
-		case event_buddy_back:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
-			break;
-		case event_buddy_idle:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
-			break;
-		case event_buddy_unidle:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
-			break;
-		case event_blist_update:
-			buf[0] = 0;
-			break;
-		case event_chat_invited:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg2, (char *)arg3, (char *)arg4);
-			break;
-		case event_chat_join:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
-			break;
-		case event_chat_leave:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
-			break;
-		case event_chat_buddy_join:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\"", (char *)arg2, (char *)arg3);
-			break;
-		case event_chat_buddy_leave:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\"", (char *)arg2, (char *)arg3);
-			break;
-		case event_chat_recv:
-			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg2, (char *)arg3, (char *)arg4);
-			break;
-		case event_chat_send:
-			g_snprintf(buf, sizeof buf, "\"%s\" %s", (char *)arg2, *(char **)arg3);
-			break;
-		case event_warned:
-			g_snprintf(buf, sizeof buf, "\"%s\" %d", (char *)arg1, (int)arg2);
-			break;
-		case event_error:
-			g_snprintf(buf, sizeof buf, "%d", (int)arg1);
-			break;
-		case event_quit:
-			buf[0] = 0;
-			break;
-		case event_new_conversation:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
-			break;
-		default:
-			break;
+	case event_signon:
+		g_snprintf(buf, sizeof buf, "\"%s\"", ((struct gaim_connection *)arg1)->username);
+		break;
+	case event_signoff:
+		g_snprintf(buf, sizeof buf, "\"%s\"", ((struct gaim_connection *)arg1)->username);
+		break;
+	case event_away:
+		buf[0] = 0;
+		break;
+	case event_back:
+		buf[0] = 0;
+		break;
+	case event_im_recv:
+		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s",
+			   ((struct gaim_connection *)arg1)->username, *(char **)arg2, *(char **)arg3);
+		break;
+	case event_im_send:
+		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s",
+			   ((struct gaim_connection *)arg1)->username, (char *)arg2, *(char **)arg3);
+		break;
+	case event_buddy_signon:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
+		break;
+	case event_buddy_signoff:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
+		break;
+	case event_buddy_away:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
+		break;
+	case event_buddy_back:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
+		break;
+	case event_buddy_idle:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
+		break;
+	case event_buddy_unidle:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
+		break;
+	case event_blist_update:
+		buf[0] = 0;
+		break;
+	case event_chat_invited:
+		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg2, (char *)arg3,
+			   (char *)arg4);
+		break;
+	case event_chat_join:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
+		break;
+	case event_chat_leave:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
+		break;
+	case event_chat_buddy_join:
+		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\"", (char *)arg2, (char *)arg3);
+		break;
+	case event_chat_buddy_leave:
+		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\"", (char *)arg2, (char *)arg3);
+		break;
+	case event_chat_recv:
+		g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg2, (char *)arg3,
+			   (char *)arg4);
+		break;
+	case event_chat_send:
+		g_snprintf(buf, sizeof buf, "\"%s\" %s", (char *)arg2, *(char **)arg3);
+		break;
+	case event_warned:
+		g_snprintf(buf, sizeof buf, "\"%s\" %d", (char *)arg1, (int)arg2);
+		break;
+	case event_error:
+		g_snprintf(buf, sizeof buf, "%d", (int)arg1);
+		break;
+	case event_quit:
+		buf[0] = 0;
+		break;
+	case event_new_conversation:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+		break;
+	default:
+		break;
 	}
 	tmp = event_name(event);
 	debug_printf("%s: %s\n", tmp, buf);
