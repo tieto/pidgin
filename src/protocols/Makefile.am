@@ -1,6 +1,8 @@
+DIST_SUBDIRS = gg icq irc jabber msn napster oscar toc yahoo zephyr
+
 if PRPLS
 
-SUBDIRS = gg icq irc jabber msn napster oscar toc yahoo zephyr
+SUBDIRS = $(DIST_SUBDIRS)
 
 else
 
