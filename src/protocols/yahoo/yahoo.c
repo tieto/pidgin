@@ -2889,11 +2889,12 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_group,
 	yahoo_packet_free(pkt);
 }
 
+#if 0
 static gboolean yahoo_has_send_file(GaimConnection *gc, const char *who)
 {
 	return TRUE;
 }
-
+#endif
 
 static GaimPlugin *my_protocol = NULL;
 
