@@ -5,6 +5,7 @@ version 0.73:
 	* Fix for gaim settings move bug (#838621).
 	* Update to latest NSIS cvs snapshot.
 	* Ability to perform unattended installations.
+	* Installer translations for: Spanish.
 
 version 0.72 (10/31/2003):
 	* Fix for bug #808562 - LANG needs to be set before gtk_init, when 
