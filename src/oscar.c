@@ -712,6 +712,9 @@ int gaim_parse_misses(struct aim_session_t *sess,
 	family  = aimutil_get16(command->data+0);
 	subtype = aimutil_get16(command->data+2);
 
+	sprintf(debug_buff, "parse_misses: family = %d, subtype = %d\n", family, subtype);
+	debug_print(debug_buff);
+
 	switch (family) {
 	case 0x0001:
 		if (subtype == 0x000a) {
