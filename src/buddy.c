@@ -57,8 +57,9 @@
 #include "pixmaps/search_small.xpm"
 #ifdef USE_APPLET
 #include "pixmaps/close_small.xpm"
-#endif
+#else
 #include "pixmaps/exit_small.xpm"
+#endif
 #include "pixmaps/pounce_small.xpm"
 #include "pixmaps/about_small.xpm"
 
@@ -496,7 +497,6 @@ static void un_alias(GtkWidget *a, struct buddy *b)
 static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
 	GtkCTreeNode *node;
-	GList *i;
 	int *type;
 	int row, column;
 	GtkWidget *menu;
@@ -511,7 +511,7 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	node = gtk_ctree_node_nth(GTK_CTREE(edittree), row);
 	type = gtk_ctree_node_get_row_data(GTK_CTREE(edittree), node);
 	if (*type == EDIT_GROUP) {
-		struct group *group = (struct group *)type;
+		/*struct group *group = (struct group *)type;*/
 		menu = gtk_menu_new();
 
 		button = gtk_menu_item_new_with_label(_("Rename"));
@@ -551,6 +551,8 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 			       event->button, event->time);
 	}
+
+	return TRUE;
 }
 
 
@@ -768,9 +770,8 @@ static void redo_buddy_list() {
 static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *parent,
                  GtkCTreeNode *sibling, gpointer data)
 {
-	gboolean leaf;
 	struct gaim_connection *gc, *pc = NULL, *sc = NULL;
-	int *ctype, *ptype, *stype;
+	int *ctype, *ptype = NULL, *stype = NULL;
 	
 	ctype = (int *)gtk_ctree_node_get_row_data(GTK_CTREE(ctree), child);
 	
@@ -1051,10 +1052,8 @@ struct group *add_group(struct gaim_connection *gc, char *group)
 static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 {
 	GtkCTreeNode *node;
-        char *bud, *grp;
 	struct buddy *b;
 	struct group *g;
-	struct gaim_connection *gc;
 	int *type;
 	GList *i;
 	

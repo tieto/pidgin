@@ -219,24 +219,6 @@ void remove_applet_away() {
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
 }
 
-static void applet_show_about(AppletWidget *widget, gpointer data) {
-  
-  const gchar *authors[] = {"Mark Spencer <markster@marko.net>",
-                            "Jim Duchek <jimduchek@ou.edu>",
-                            "Rob Flynn <rflynn@blueridge.net>",
-			    "Eric Warmenhoven <warmenhoven@yahoo.com>",
-			    "Syd Logan",
-                            NULL};
-
-  GtkWidget *about=gnome_about_new(_("GAIM"),
-				   _(VERSION),
-				   _(""),
-				   authors,
-				   "",
-				   NULL);
-  gtk_widget_show(about);
-}
-
 static GtkAllocation get_applet_pos(gboolean for_blist) {
 	gint x,y,pad;
 	GtkRequisition buddy_req, applet_req;
@@ -390,7 +372,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
 					      "about",
 					      GNOME_STOCK_MENU_ABOUT,
 					      _("About..."),
-					      applet_show_about,
+					      (AppletCallbackFunc)show_about,
 					      NULL);
 					      
 	gtk_signal_connect( GTK_OBJECT(applet), "button_press_event", GTK_SIGNAL_FUNC( AppletClicked), NULL);

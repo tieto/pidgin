@@ -1122,7 +1122,6 @@ void check_everything(GtkWidget *entry)
 void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 {
 	char *buf = g_malloc(BUF_LONG);
-	char buf2[1024];
 	char *str;
 	FILE *fd;
 	char colour[10];

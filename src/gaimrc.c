@@ -480,7 +480,7 @@ static struct aim_user *gaimrc_read_user(FILE *f)
 		}
 	}
 
-	if (i = strlen(u->user_info)) {
+	if ((i = strlen(u->user_info))) {
 		u->user_info[i-1] = '\0';
 	}
 

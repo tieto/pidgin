@@ -602,7 +602,7 @@ extern void serv_get_dir(struct gaim_connection *, char *);
 extern void serv_set_idle(struct gaim_connection *, int);
 extern void serv_set_info(struct gaim_connection *, char *);
 extern void serv_set_away(struct gaim_connection *, char *, char *);
-extern void serv_set_all_away(char *);
+extern void serv_set_away_all(char *);
 extern void serv_change_passwd(struct gaim_connection *, char *, char *);
 extern void serv_add_buddy(struct gaim_connection *, char *);
 extern void serv_add_buddies(struct gaim_connection *, GList *);
@@ -661,6 +661,9 @@ extern void set_font_face(char *, struct conversation *);
 extern void redo_convo_menus();
 extern void toggle_spellchk();
 extern void update_buttons_by_protocol(struct conversation *);
+extern void toggle_smileys();
+extern void toggle_timestamps();
+extern void update_pixmaps();
 
 /* Functions in toc.c */
 extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
@@ -763,7 +766,8 @@ extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
 gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
 /* Functions in dialogs.c */
-extern void alias_dialog(struct buddy_show *);
+extern void alias_dialog_bs(struct buddy_show *);
+extern void alias_dialog_bud(struct buddy *);
 extern void do_export(GtkWidget *, void *);
 extern void show_warn_dialog(struct gaim_connection *, char *);
 extern void do_error_dialog(char *, char *);

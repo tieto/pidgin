@@ -956,10 +956,10 @@ gtk_imhtml_button_release_event (GtkWidget      *widget,
 	GtkAdjustment *hadj = GTK_LAYOUT (widget)->hadjustment;
 	gint x, y;
 
-	if ((event->button == 1) && imhtml->selection) {
-		x = event->x + hadj->value;
-		y = event->y + vadj->value;
+	x = event->x + hadj->value;
+	y = event->y + vadj->value;
 
+	if ((event->button == 1) && imhtml->selection) {
 		if ((x == imhtml->sel_startx) && (y == imhtml->sel_starty)) {
 			imhtml->sel_startx = imhtml->sel_starty = 0;
 			imhtml->selection = FALSE;

@@ -1255,7 +1255,6 @@ void show_new_bp(char *name)
 void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 {
 	gchar *junk;
-	char *buf;
 	struct gaim_connection *gc;
 
 	junk = gtk_editable_get_chars(GTK_EDITABLE(b->text), 0, -1);
@@ -2814,7 +2813,6 @@ bud_list_cache_exists(struct gaim_connection *gc)
 	char *file;
 	struct stat sbuf;
 	char *g_screenname;
-	int i;
 
 	g_screenname = get_screenname_filename(gc->username);
 
@@ -2876,7 +2874,6 @@ void do_export(GtkWidget *w, void *dummy)
 		GSList *c = connections;
 		struct gaim_connection *g;
 		char *g_screenname;
-		int i;
 
 		file = gaim_user_dir();
 		if ( file != (char *) NULL ) {
@@ -2958,7 +2955,6 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 	char *file;
 	char path[PATHSIZE];
 	char *g_screenname;
-	int i;
 	int len;
         FILE *f;
 	gboolean from_dialog = FALSE;

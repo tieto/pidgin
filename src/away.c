@@ -216,7 +216,7 @@ void do_away_menu()
 	GSList *awy = away_messages;
 	struct away_message *a;
 	GSList *con = connections;
-	struct gaim_connection *gc;
+	struct gaim_connection *gc = NULL;
 	int count = 0;
 
 #ifdef USE_APPLET
