@@ -37,9 +37,9 @@ static const char *color_prefs_set[] = {
 	"/plugins/gtk/gaimrc/set/color/GtkIMHtml::hyperlink-color"
 };
 static const char *color_names[] = {
-	_("Cursor Color"),
-	_("Secondary Cursor Color"),
-	_("Hyperlink Color")
+	N_("Cursor Color"),
+	N_("Secondary Cursor Color"),
+	N_("Hyperlink Color")
 };
 static GtkWidget *color_widgets[G_N_ELEMENTS(color_prefs)];
 
@@ -50,7 +50,7 @@ static const char *widget_size_prefs_set[] = {
 	"/plugins/gtk/gaimrc/set/size/GtkTreeView::expander_size"
 };
 static const char *widget_size_names[] = {
-	_("GtkTreeView Expander Size")
+	N_("GtkTreeView Expander Size")
 };
 static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
 
@@ -69,11 +69,11 @@ static const char *font_prefs_set[] = {
 	"/plugins/gtk/gaimrc/set/font/*gaim_gtknotify_imhtml",
 };
 static const char *font_names[] = {
-	_("Conversation Entry"),
-	_("Conversation History"),
-	_("Log Viewer"),
-	_("Request Dialog"),
-	_("Notify Dialog")
+	N_("Conversation Entry"),
+	N_("Conversation History"),
+	N_("Log Viewer"),
+	N_("Request Dialog"),
+	N_("Notify Dialog")
 };
 static GtkWidget *font_widgets[G_N_ELEMENTS(font_prefs)];
 
@@ -397,7 +397,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	}
 
 	frame = gaim_gtk_make_frame(ret, "Widget Sizes");
-	/* imhtml font stuff */
+	/* widget size stuff */
 	for (i = 0; i < G_N_ELEMENTS(widget_size_prefs); i++) {
 		hbox = gtk_hbox_new(FALSE, 18);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
