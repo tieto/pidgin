@@ -204,7 +204,7 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 	g_free(rb->firstandlast);
 	rb->firstandlast = g_strdup_printf("%s%s%s",
 							(tmp1 ? tmp1 : ""),
-							(tmp1 || tmp2 ? " " : ""),
+							(tmp1 && tmp2 ? " " : ""),
 							(tmp2 ? tmp2 : ""));
 	serv_got_alias(gc, name, rb->firstandlast);
 
@@ -408,8 +408,8 @@ static void rendezvous_callback(gpointer data, gint source, GaimInputCondition c
 
 static void rendezvous_add_to_txt(RendezvousData *rd, const char *name, const char *value)
 {
-	ResourceRecordTXTRDataNode *node;
-	node = g_malloc(sizeof(ResourceRecordTXTRDataNode));
+	ResourceRecordRDataTXTNode *node;
+	node = g_malloc(sizeof(ResourceRecordRDataTXTNode));
 	node->name = g_strdup(name);
 	node->value = value != NULL ? g_strdup(value) : NULL;
 	rd->mytxtdata = g_slist_append(rd->mytxtdata, node);
@@ -419,21 +419,40 @@ static void rendezvous_send_online(GaimConnection *gc)
 {
 	RendezvousData *rd = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
+	const char *me;
+	char *myname, *mycomp;
 
-	mdns_advertise_ptr(rd->fd, "_presence._tcp.local", "mark@diverge._presence._tcp.local");
+	me = gaim_account_get_username(account);
+	myname = g_strdup_printf("%s._presence._tcp.local", me);
+	mycomp = g_strdup_printf("%s.local", strchr(me, '@') + 1);
+
+	mdns_advertise_ptr(rd->fd, "_presence._tcp.local", myname);
+	mdns_advertise_srv(rd->fd, myname, 5298, mycomp);
 
 	rendezvous_add_to_txt(rd, "txtvers", "1");
 	rendezvous_add_to_txt(rd, "status", "avail");
+	/* rendezvous_add_to_txt(rd, "vc", "A!"); */
+	/* rendezvous_add_to_txt(rd, "phsh", "96f15dec163cf4a8cfa0cf08109cc9766f7bd5a0"); */
 	rendezvous_add_to_txt(rd, "1st", gaim_account_get_string(account, "first", "Gaim"));
-	rendezvous_add_to_txt(rd, "AIM", "markdoliner");
+	if (gaim_account_get_bool(account, "shareaim", FALSE)) {
+		GList *l;
+		GaimAccount *cur;
+		for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
+			cur = (GaimAccount *)l->data;
+			if (!strcmp(gaim_account_get_protocol_id(cur), "prpl-oscar")) {
+				rendezvous_add_to_txt(rd, "AIM", gaim_account_get_username(cur));
+				break;
+			}
+		}
+	}
 	rendezvous_add_to_txt(rd, "version", "1");
+	rendezvous_add_to_txt(rd, "msg", "Groovin'");
 	rendezvous_add_to_txt(rd, "port.p2pj", "5298");
 	rendezvous_add_to_txt(rd, "last", gaim_account_get_string(account, "last", _("User")));
-	mdns_advertise_txt(rd->fd, "mark@diverge._presence._tcp.local", rd->mytxtdata);
+	mdns_advertise_txt(rd->fd, myname, rd->mytxtdata);
 
-#if 0
-	mdns_advertise_srv(rd->fd, "mark@diverge._presence._tcp.local", port 5298, IP?);
-#endif
+	g_free(myname);
+	g_free(mycomp);
 }
 
 static void rendezvous_prpl_login(GaimAccount *account)
@@ -465,7 +484,7 @@ static void rendezvous_prpl_login(GaimAccount *account)
 static void rendezvous_prpl_close(GaimConnection *gc)
 {
 	RendezvousData *rd = (RendezvousData *)gc->proto_data;
-	ResourceRecordTXTRDataNode *node;
+	ResourceRecordRDataTXTNode *node;
 
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
@@ -591,9 +610,15 @@ static void init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountUserSplit *split;
 	GaimAccountOption *option;
+	char hostname[255];
+
+	if (gethostname(hostname, 255) != 0) {
+		gaim_debug_warning("rendezvous", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
+		strcpy(hostname, "localhost");
+	}
 
 	/* Try to avoid making this configurable... */
-	split = gaim_account_user_split_new(_("Host Name"), "localhost", '@');
+	split = gaim_account_user_split_new(_("Host Name"), hostname, '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	option = gaim_account_option_string_new(_("First Name"), "first", "Gaim");
@@ -604,7 +629,7 @@ static void init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = gaim_account_option_bool_new(_("Share AIM screen name"), "shareaim", TRUE);
+	option = gaim_account_option_bool_new(_("Share AIM screen name"), "shareaim", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

@@ -89,14 +89,17 @@ typedef struct _ResourceRecord {
 	void *rdata;
 } ResourceRecord;
 
-typedef struct _ResourceRecordTXTRDataNode {
+typedef struct _ResourceRecordRDataTXTNode {
 	char *name;
 	char *value;
-} ResourceRecordTXTRDataNode;
+} ResourceRecordRDataTXTNode;
 
-typedef GSList ResourceRecordTXTRData;
+typedef GSList ResourceRecordRDataTXT;
 
-typedef GHashTable ResourceRecordTXT;
+typedef struct _ResourceRecordRDataSRV {
+	unsigned short port;
+	const char *target;
+} ResourceRecordRDataSRV;
 
 typedef struct _ResourceRecordSRV {
 	unsigned int priority;
@@ -154,6 +157,7 @@ int mdns_query(int fd, const char *domain);
 
 int mdns_advertise_ptr(int fd, const char *name, const char *domain);
 int mdns_advertise_txt(int fd, const char *name, const GSList *txt);
+int mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *target);
 
 /**
  * Read a UDP packet from the given file descriptor and parse it

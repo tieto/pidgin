@@ -76,7 +76,7 @@ mdns_establish_socket()
 		return -1;
 	}
 
-	/* Ensure loopback is enabled (it should be enabled by default, by let's be sure) */
+	/* Ensure loopback is enabled (it should be enabled by default, but let's be sure) */
 	loop = 1;
 	if (setsockopt(fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(unsigned char)) == -1) {
 		gaim_debug_error("mdns", "Error calling setsockopt for IP_MULTICAST_LOOP\n");
@@ -135,39 +135,51 @@ mdns_send_raw(int fd, unsigned int datalen, unsigned char *data)
 /***************************************/
 
 static int
-mdns_getlength_RR_txt(void *rdata)
+mdns_getlength_name(const void *name)
 {
-	GSList *cur;
-	ResourceRecordTXTRDataNode *node;
+	return strlen((const char *)name) + 2;
+}
+
+static int
+mdns_getlength_RR_rdata(unsigned short type, const void *rdata)
+{
 	int rdlength = 0;
 
-	for (cur = (GSList *)rdata; cur != NULL; cur = cur->next) {
-		node = (ResourceRecordTXTRDataNode *)cur->data;
-		rdlength += 1 + strlen(node->name);
-		if (node->value != NULL)
-			rdlength += 1 + strlen(node->value);
+	switch (type) {
+		case RENDEZVOUS_RRTYPE_PTR:
+			rdlength = mdns_getlength_name(rdata);
+		break;
+
+		case RENDEZVOUS_RRTYPE_TXT: {
+			GSList *cur;
+			ResourceRecordRDataTXTNode *node;
+
+			for (cur = (GSList *)rdata; cur != NULL; cur = cur->next) {
+				node = (ResourceRecordRDataTXTNode *)cur->data;
+				rdlength += 1 + strlen(node->name);
+				if (node->value != NULL)
+					rdlength += 1 + strlen(node->value);
+			}
+		} break;
+
+		case RENDEZVOUS_RRTYPE_SRV:
+			rdlength = 6 + mdns_getlength_name(((const ResourceRecordRDataSRV *)rdata)->target);
+		break;
 	}
 
 	return rdlength;
 }
 
 static int
-mdns_getlength_RR(const ResourceRecord *rr)
+mdns_getlength_RR(ResourceRecord *rr)
 {
 	int ret = 0;
 
+	rr->rdlength = mdns_getlength_RR_rdata(rr->type, rr->rdata);
+
 	ret += strlen(rr->name) + 2;
 	ret += 10;
-
-	switch (rr->type) {
-		case RENDEZVOUS_RRTYPE_PTR:
-			ret += strlen((const char *)rr->rdata) + 2;
-		break;
-
-		case RENDEZVOUS_RRTYPE_TXT:
-			ret += mdns_getlength_RR_txt(rr->rdata);
-		break;
-	}
+	ret += rr->rdlength;
 
 	return ret;
 }
@@ -201,22 +213,20 @@ mdns_put_RR(char *data, int datalen, int offset, const ResourceRecord *rr)
 	i += util_put16(&data[offset + i], rr->type);
 	i += util_put16(&data[offset + i], rr->class);
 	i += util_put32(&data[offset + i], rr->ttl);
+	i += util_put16(&data[offset + i], rr->rdlength);
 
 	switch (rr->type) {
 		case RENDEZVOUS_RRTYPE_PTR:
-			i += util_put16(&data[offset + i], strlen((const char *)rr->rdata) + 2);
 			i += mdns_put_name(data, datalen, offset + i, (const char *)rr->rdata);
 		break;
 
 		case RENDEZVOUS_RRTYPE_TXT: {
 			GSList *cur;
-			ResourceRecordTXTRDataNode *node;
-			int rdlength = mdns_getlength_RR_txt(rr->rdata);
+			ResourceRecordRDataTXTNode *node;
 			int mylength;
 
-			i += util_put16(&data[offset + i], rdlength);
 			for (cur = (GSList *)rr->rdata; cur != NULL; cur = cur->next) {
-				node = (ResourceRecordTXTRDataNode *)cur->data;
+				node = (ResourceRecordRDataTXTNode *)cur->data;
 				mylength = 1 + strlen(node->name);
 				if (node->value)
 					mylength += 1 + strlen(node->value);
@@ -230,6 +240,14 @@ mdns_put_RR(char *data, int datalen, int offset, const ResourceRecord *rr)
 					i += strlen(node->value);
 				}
 			}
+		} break;
+
+		case RENDEZVOUS_RRTYPE_SRV: {
+			ResourceRecordRDataSRV *srv = rr->rdata;
+			i += util_put16(&data[offset + i], 0);
+			i += util_put16(&data[offset + i], 0);
+			i += util_put16(&data[offset + i], srv->port);
+			i += mdns_put_name(data, datalen, offset + i, srv->target);
 		} break;
 	}
 
@@ -253,7 +271,7 @@ mdns_send_dns(int fd, const DNSPacket *dns)
 
 	/* Questions */
 	for (i = 0; i < dns->header.numquestions; i++)
-		datalen += strlen(dns->questions[i].name) + 2 + 4;
+		datalen += mdns_getlength_name(dns->questions[i].name) + 4;
 
 	/* Resource records */
 	for (i = 0; i < dns->header.numanswers; i++)
@@ -357,7 +375,7 @@ mdns_advertise_ptr(int fd, const char *name, const char *domain)
 	dns->answers = (ResourceRecord *)g_malloc(1 * sizeof(ResourceRecord));
 	dns->answers[0].name = g_strdup(name);
 	dns->answers[0].type = RENDEZVOUS_RRTYPE_PTR;
-	dns->answers[0].class = 0x0001;
+	dns->answers[0].class = 0x8001;
 	dns->answers[0].ttl = 0x00001c20;
 	dns->answers[0].rdlength = 0x0000; /* Set automatically */
 	dns->answers[0].rdata = (void *)g_strdup(domain);
@@ -394,7 +412,7 @@ mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
 	dns->answers = (ResourceRecord *)g_malloc(1 * sizeof(ResourceRecord));
 	dns->answers[0].name = g_strdup(name);
 	dns->answers[0].type = RENDEZVOUS_RRTYPE_TXT;
-	dns->answers[0].class = 0x0001;
+	dns->answers[0].class = 0x8001;
 	dns->answers[0].ttl = 0x00001c20;
 	dns->answers[0].rdlength = 0x0000; /* Set automatically */
 	dns->answers[0].rdata = (void *)rdata;
@@ -404,7 +422,52 @@ mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
 
 	mdns_send_dns(fd, dns);
 
-	/* The hash table should be freed by the caller of this function */
+	/* The rdata should be freed by the caller of this function */
+	dns->answers[0].rdata = NULL;
+
+	mdns_free(dns);
+
+	return ret;
+}
+
+int
+mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *target)
+{
+	int ret;
+	DNSPacket *dns;
+	ResourceRecordRDataSRV *rdata;
+
+	if ((strlen(target) > 255)) {
+		return -EINVAL;
+	}
+
+	rdata = g_malloc(sizeof(ResourceRecordRDataSRV));
+	rdata->port = port;
+	rdata->target = target;
+
+	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
+	dns->header.id = 0x0000;
+	dns->header.flags = 0x8400;
+	dns->header.numquestions = 0x0000;
+	dns->header.numanswers = 0x0001;
+	dns->header.numauthority = 0x0000;
+	dns->header.numadditional = 0x0000;
+	dns->questions = NULL;
+
+	dns->answers = (ResourceRecord *)g_malloc(1 * sizeof(ResourceRecord));
+	dns->answers[0].name = g_strdup(name);
+	dns->answers[0].type = RENDEZVOUS_RRTYPE_SRV;
+	dns->answers[0].class = 0x8001;
+	dns->answers[0].ttl = 0x00001c20;
+	dns->answers[0].rdlength = 0x0000; /* Set automatically */
+	dns->answers[0].rdata = rdata;
+
+	dns->authority = NULL;
+	dns->additional = NULL;
+
+	mdns_send_dns(fd, dns);
+
+	g_free(dns->answers[0].rdata);
 	dns->answers[0].rdata = NULL;
 
 	mdns_free(dns);
@@ -418,6 +481,7 @@ mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
 
 /*
  * XXX - Needs bounds checking!
+ * XXX - Also make sure you don't backtrack and infinitely loop.
  *
  * Read in a domain name from the given buffer starting at the given
  * offset.  This handles using domain name compression to jump around
@@ -803,7 +867,8 @@ static void
 mdns_free_rr(ResourceRecord *rr)
 {
 	g_free(rr->name);
-	mdns_free_rr_rdata(rr->type, rr->rdata);
+	if (rr->rdata != NULL)
+		mdns_free_rr_rdata(rr->type, rr->rdata);
 }
 
 void
