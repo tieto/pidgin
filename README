@@ -87,7 +87,7 @@ person that originally wrote it). Their name will be next to the protocol;
 they're the people to complain to when something doesn't work ;).
 
 
-TOC (Rob)
+TOC (Mark)
 ===
 
 You shouldn't use TOC, you should use Oscar instead. TOC can sync your
@@ -143,7 +143,7 @@ With MSN you can join a conversation with several people, but you can't
 invite people from the IM window yet.
 
 
-ICQ (Eric)
+ICQ (Mark)
 ===
 
 The ICQ plugin is deprecated and will probably be removed soon. The
@@ -160,11 +160,11 @@ transport already subscribed Gaim will use it (you can't add or remove
 transports though). In order to use a server other than jabber.org, set
 your username to include the server, e.g. warmenhoven@mycompany.com. This
 is the actual format of the Jabber ID anyway; Jabber is email with online
-notification. You'll need to use a different client to register a Jabber
-account if you don't have one yet.
+notification. You can register a new Jabber account by checking the
+appropriate box in the account editor for your Jabber account.
 
 
-Napster (Rob)
+Napster (Mark)
 =======
 
 Heh.  Ok, so I (Rob) am on crack!  Gaim can sign on/off of Napster,
@@ -174,7 +174,7 @@ user's files.  You can currently download files as long as the person
 you're retrieving files from is not firewalled.
 
 
-Zephyr (Eric)
+Zephyr (Sean)
 ======
 
 Let me start off by saying how much I really despise Zephyr. They do a
@@ -186,7 +186,7 @@ send/receive personal messages. A lot of stuff is missing, this is just
 a real rough first stab at it.
 
 
-Gadu-Gadu (Eric)
+Gadu-Gadu (Sean)
 =========
 
 I really shouldn't be taking credit for Gadu-Gadu, I'm just the person who
@@ -195,4 +195,3 @@ system most similar to ICQ that is quite popular in Poland. It can manage
 your server-side buddy list through the Protocol Actions menu. You'll need
 to use a different client to register a new account if you don't have one
 yet.
-
