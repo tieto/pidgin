@@ -43,7 +43,7 @@
 #include "pixmaps/big.xpm"
 #include "pixmaps/fontface.xpm"
 #include "pixmaps/speaker.xpm"
-/* #include "pixmaps/aimicon2.xpm" */
+#include "pixmaps/smile_icon.xpm"
 #include "pixmaps/wood.xpm"
 #include "pixmaps/palette.xpm"
 #include "pixmaps/link.xpm"
@@ -1319,7 +1319,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	underline_p = gtk_pixmap_new(underline_i, mask);
 	gtk_widget_show(underline_p);
 	small_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-             &win->style->white, bold_xpm );
+             &win->style->white, small_xpm );
 	small_p = gtk_pixmap_new(small_i, mask);
 	gtk_widget_show(small_p);
 	normal_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
@@ -1327,14 +1327,14 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	normal_p = gtk_pixmap_new(normal_i, mask);
 	gtk_widget_show(normal_p);
 	big_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
-             &win->style->white, bold_xpm );
+             &win->style->white, big_xpm );
 	big_p = gtk_pixmap_new(big_i, mask);
 	gtk_widget_show(big_p);
 	font_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
 			&win->style->white, bold_xpm );
 	font_p = gtk_pixmap_new(font_i, mask);
 	gtk_widget_show(font_p);
-	smiley_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, bold_xpm);
+	smiley_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, smile_icon_xpm);
 	smiley_p = gtk_pixmap_new(smiley_i, mask);
 	gtk_widget_show(smiley_p);
 
