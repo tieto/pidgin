@@ -1438,6 +1438,9 @@ static void irc_close(struct gaim_connection *gc)
 	if (idata->rxqueue)
 		g_free(idata->rxqueue);
 
+	idata->rxqueue = NULL;
+	idata->rxlen = 0;
+
 	/* Kill any existing transfers */
 	while (idata->file_transfers) {
 			struct irc_file_transfer *ift = (struct irc_file_transfer *)idata->file_transfers->data;
@@ -1450,9 +1453,8 @@ static void irc_close(struct gaim_connection *gc)
 
 			idata->file_transfers = idata->file_transfers->next;
 	}
+	idata->file_transfers = NULL;
 
-	idata->rxqueue = NULL;
-	idata->rxlen = 0;
 
 	g_free(idata->chantypes);
 	g_free(idata->chanmodes);
