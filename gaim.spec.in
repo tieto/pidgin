@@ -20,42 +20,36 @@ BuildRoot:	/var/tmp/%{name}-%{version}-root
 Requires:	gtk+ >= 1.2.5
 
 %description
+Gaim allows you to talk to anyone using a variety of messaging 
+protocols, including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, 
+MSN Messenger, Jabber, Gadu-Gadu, Napster, and Zephyr.  These 
+protocols are implemented using a modular, easy to use design.  
+To use a protocol, just load the plugin for it.
+
+Gaim supports many common features of other clients, as well as many 
+unique features, such as perl scripting and C plugins.
+
 Gaim is NOT affiliated with or endorsed by AOL.
 
-Gaim allows you to talk to anyone using AOL's 
-Instant Messenger service (you can sign up at http://www.aim.aol.com).  
-
-It uses the TOC version of the AOL protocol, so your buddy list is 
-stored on AOL's servers and can be retrieved from anywhere.
-
-It contains many of the same features as AOL's IM client while at
-the same time incorporating many new features.
-
-Gaim also contains a multiple connection feature which consists of 
-protocol plugins.  These plugins allow you to use gaim to connect 
-to other chat services such as Yahoo!, ICQ, and IRC.
-
 %package applet
-Summary:	A Gnome client compatible with AOL's 'Instant Messenger'
+Summary:	A Gnome based multiprotocol instant messaging applet
 Group:		Applications/Internet
 Requires:	gtk+ >= 1.2.5
 
 %description applet
-Gaim allows you to talk to anyone using AOL's 
-Instant Messenger service (you can sign up at http://www.aim.aol.com).  
+Gaim allows you to talk to anyone using a variety of messaging 
+protocols, including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, 
+MSN Messenger, Jabber, Gadu-Gadu, Napster, and Zephyr.  These 
+protocols are implemented using a modular, easy to use design.  
+To use a protocol, just load the plugin for it.
 
-It uses the TOC version of the AOL protocol, so your buddy list is 
-stored on AOL's servers and can be retrieved from anywhere.
-
-It contains many of the same features as AOL's IM client while at
-the same time incorporating many new features.
-
-Gaim also contains a multiple connection feature which consists of 
-protocol plugins.  These plugins allow you to use gaim to connect 
-to other chat services such as Yahoo!, ICQ, and IRC.
+Gaim supports many common features of other clients, as well as many 
+unique features, such as perl scripting and C plugins.
 
 The applet sits in your Gnome panel. It has all the same functionality
 as the regular application but takes less desktop space.
+
+Gaim is NOT affiliated with or endorsed by AOL.
 
 %prep
 %setup
