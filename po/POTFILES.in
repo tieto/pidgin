@@ -13,6 +13,5 @@ src/oscar.c
 src/perl.c
 src/plugins.c
 src/prefs.c
-src/rvous.c
 src/server.c
 src/toc.c
