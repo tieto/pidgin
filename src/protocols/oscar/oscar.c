@@ -498,10 +498,11 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	const gchar *charsetstr;
 	gsize msglen;
 
+	*charset = oscar_charset_check(from);
+
 	/* Attempt to send as ASCII */
-	*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, &msglen, NULL);
-	if (*msg != NULL) {
-		*charset = AIM_CHARSET_ASCII;
+	if (*charset == AIM_CHARSET_ASCII) {
+		*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, &msglen, NULL);
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
 		return;
@@ -532,6 +533,10 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	if ((destsn != NULL) && aim_sn_is_icq(destsn))
 		charsetstr = gaim_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 
+	/*
+	 * XXX - We need a way to only attempt to convert if we KNOW "from"
+	 * can be converted to "charsetstr"
+	 */
 	*msg = g_convert(from, strlen(from), charsetstr, "UTF-8", NULL, &msglen, NULL);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_CUSTOM;
@@ -5499,7 +5504,7 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 		aim_locate_setprofile(od->sess, NULL, "", 0, NULL, NULL, 0);
 		return;
 	}
-		
+
 	text_html = gaim_strdup_withhtml(text);
 	charset = oscar_charset_check(text_html);
 	if (charset == AIM_CHARSET_UNICODE) {
@@ -5616,7 +5621,7 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 		gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
 		g_free(errstr);
 	}
-	
+
 	g_free(text_html);
 
 	return;
