@@ -149,10 +149,8 @@ gint linkify_text(char *text)
 						t--;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
-					cnt +=
-					    g_snprintf(&text[cnt++], 1024, "<A HREF=\"%s\">%s</A>",
-						       url_buf, url_buf);
-					cnt--;
+					cnt += g_snprintf(&text[cnt], 1024, "<A HREF=\"%s\">%s</A>",
+							  url_buf, url_buf);
 					c = t;
 					break;
 				}
@@ -179,11 +177,9 @@ gint linkify_text(char *text)
 							t--;
 						strncpy(url_buf, c, t - c);
 						url_buf[t - c] = 0;
-						cnt +=
-						    g_snprintf(&text[cnt++], 1024,
-							       "<A HREF=\"http://%s\">%s</A>", url_buf,
-							       url_buf);
-						cnt--;
+						cnt += g_snprintf(&text[cnt], 1024,
+								 "<A HREF=\"http://%s\">%s</A>", url_buf,
+								 url_buf);
 						c = t;
 						break;
 					}
@@ -200,10 +196,8 @@ gint linkify_text(char *text)
 						t--;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
-					cnt +=
-					    g_snprintf(&text[cnt++], 1024, "<A HREF=\"%s\">%s</A>",
-						       url_buf, url_buf);
-					cnt--;
+					cnt += g_snprintf(&text[cnt], 1024, "<A HREF=\"%s\">%s</A>",
+							  url_buf, url_buf);
 					c = t;
 					break;
 				}
@@ -224,11 +218,9 @@ gint linkify_text(char *text)
 							t--;
 						strncpy(url_buf, c, t - c);
 						url_buf[t - c] = 0;
-						cnt +=
-						    g_snprintf(&text[cnt++], 1024,
-							       "<A HREF=\"ftp://%s\">%s</A>", url_buf,
-							       url_buf);
-						cnt--;
+						cnt += g_snprintf(&text[cnt], 1024,
+								  "<A HREF=\"ftp://%s\">%s</A>", url_buf,
+								  url_buf);
 						c = t;
 						break;
 					}
@@ -245,10 +237,8 @@ gint linkify_text(char *text)
 						t--;
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
-					cnt +=
-					    g_snprintf(&text[cnt++], 1024, "<A HREF=\"%s\">%s</A>",
-						       url_buf, url_buf);
-					cnt--;
+					cnt += g_snprintf(&text[cnt], 1024, "<A HREF=\"%s\">%s</A>",
+							  url_buf, url_buf);
 					c = t;
 					break;
 				}
@@ -299,13 +289,12 @@ gint linkify_text(char *text)
 				if (badchar(*t)) {
 					if (*(t - 1) == '.')
 						t--;
-					cnt +=
-					    g_snprintf(&text[cnt++], 1024,
-						       "<A HREF=\"mailto:%s\">%s</A>", url_buf, url_buf);
+					cnt += g_snprintf(&text[cnt], 1024,
+							  "<A HREF=\"mailto:%s\">%s</A>", url_buf,
+							  url_buf);
 					text[cnt] = 0;
 
 
-					cnt--;
 					c = t;
 
 					break;
