@@ -85,23 +85,23 @@ xmlnode_insert_child(xmlnode *parent, xmlnode *child)
 }
 
 void
-xmlnode_insert_data(xmlnode *parent, const char *data, size_t size)
+xmlnode_insert_data(xmlnode *node, const char *data, size_t size)
 {
-	xmlnode *node;
+	xmlnode *child;
 	size_t real_size;
 
-	g_return_if_fail(parent != NULL);
+	g_return_if_fail(node != NULL);
 	g_return_if_fail(data != NULL);
 	g_return_if_fail(size != 0);
 
 	real_size = size == -1 ? strlen(data) : size;
 
-	node = new_node(NULL, XMLNODE_TYPE_DATA);
+	child = new_node(NULL, XMLNODE_TYPE_DATA);
 
-	node->data = g_memdup(data, real_size);
-	node->data_sz = real_size;
+	child->data = g_memdup(data, real_size);
+	child->data_sz = real_size;
 
-	xmlnode_insert_child(parent, node);
+	xmlnode_insert_child(node, child);
 }
 
 void
@@ -243,7 +243,7 @@ xmlnode_get_data(xmlnode *node)
 	return g_string_free(str, FALSE);
 }
 
-static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
+static gchar *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 {
 	GString *text = g_string_new("");
 	xmlnode *c;
@@ -297,9 +297,9 @@ static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting,
 
 		if(tab && pretty)
 			text = g_string_append(text, tab);
-		g_string_append_printf(text, "</%s>%s", node_name, pretty ? newline : "");
+		g_string_append_printf(text, "</%s>%s", node_name, formatting ? newline : "");
 	} else {
-		g_string_append_printf(text, "/>%s", pretty ? newline : "");
+		g_string_append_printf(text, "/>%s", formatting ? newline : "");
 	}
 
 	g_free(node_name);
@@ -313,12 +313,19 @@ static char *xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting,
 	return g_string_free(text, FALSE);
 }
 
-char *xmlnode_to_str(xmlnode *node, int *len) {
+gchar *xmlnode_to_str(xmlnode *node, int *len) {
 	return xmlnode_to_str_helper(node, len, FALSE, 0);
 }
 
-char *xmlnode_to_formatted_str(xmlnode *node, int *len) {
-	return xmlnode_to_str_helper(node, len, TRUE, 0);
+gchar *xmlnode_to_formatted_str(xmlnode *node, int *len) {
+	gchar *xml, *xml_with_declaration;
+
+	xml = xmlnode_to_str_helper(node, len, TRUE, 0);
+	xml_with_declaration =
+		g_strdup_printf("<?xml version='1.0' encoding='UTF-8' ?>\n\n%s", xml);
+	g_free(xml);
+
+	return xml_with_declaration;
 }
 
 struct _xmlnode_parser_data {

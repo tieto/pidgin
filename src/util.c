@@ -1935,12 +1935,12 @@ int gaim_build_dir (const char *path, int mode)
  * people's settings if there is a problem writing the new values.
  */
 gboolean
-gaim_util_write_xml_file(const char *filename, const char *data)
+gaim_util_write_data_to_file(const char *filename, const char *data, size_t size)
 {
 	const char *user_dir = gaim_user_dir();
 	gchar *filename_temp, *filename_full;
 	FILE *file;
-	size_t datalen, byteswritten;
+	size_t real_size, byteswritten;
 	struct stat st;
 
 	g_return_val_if_fail(user_dir != NULL, FALSE);
@@ -1959,7 +1959,7 @@ gaim_util_write_xml_file(const char *filename, const char *data)
 		}
 	}
 
-	filename_full = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s.xml", user_dir, filename);
+	filename_full = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", user_dir, filename);
 	filename_temp = g_strdup_printf("%s.save", filename_full);
 
 	/* Remove an old temporary file, if one exists */
@@ -1984,8 +1984,8 @@ gaim_util_write_xml_file(const char *filename, const char *data)
 	}
 
 	/* Write to file */
-	datalen = strlen(data);
-	byteswritten = fwrite(data, 1, datalen, file);
+	real_size = (size == -1) ? strlen(data) : size;
+	byteswritten = fwrite(data, 1, real_size, file);
 
 	/* Close file */
 	if (fclose(file) != 0)
@@ -1998,17 +1998,17 @@ gaim_util_write_xml_file(const char *filename, const char *data)
 	}
 
 	/* Ensure the file is the correct size */
-	if (byteswritten != datalen)
+	if (byteswritten != real_size)
 	{
 		gaim_debug_error("util", "Error writing to file %s: Wrote %z bytes "
 						 "but should have written %z; is your disk full?\n",
-						 filename_temp, byteswritten, datalen);
+						 filename_temp, byteswritten, real_size);
 		g_free(filename_full);
 		g_free(filename_temp);
 		return FALSE;
 	}
 	/* Use stat to be absolutely sure. */
-	if ((stat(filename_temp, &st) == -1) || (st.st_size != datalen))
+	if ((stat(filename_temp, &st) == -1) || (st.st_size != real_size))
 	{
 		gaim_debug_error("util", "Error writing data to file %s: "
 						 "Incomplete file written; is your disk full?\n",

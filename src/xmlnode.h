@@ -109,11 +109,12 @@ xmlnode *xmlnode_get_next_twin(xmlnode *node);
 /**
  * Inserts data into a node.
  *
- * @param parent The node to insert data into.
+ * @param node   The node to insert data into.
  * @param data   The data to insert.
- * @param size   The size of the data to insert.
+ * @param size   The size of the data to insert.  If data is
+ *               null-terminated you can pass in -1.
  */
-void xmlnode_insert_data(xmlnode *parent, const char *data, size_t size);
+void xmlnode_insert_data(xmlnode *node, const char *data, size_t size);
 
 /**
  * Gets data from a node.
@@ -157,9 +158,10 @@ void xmlnode_remove_attrib(xmlnode *node, const char *attr);
  * @param node The starting node to output.
  * @param len  Address for the size of the string.
  *
- * @return The node repersented as a string.
+ * @return The node repersented as a string.  You must
+ *         g_free this string when finished using it.
  */
-char *xmlnode_to_str(xmlnode *node, int *len);
+gchar *xmlnode_to_str(xmlnode *node, int *len);
 
 /**
  * Returns the node in a string of human readable xml.
@@ -168,9 +170,10 @@ char *xmlnode_to_str(xmlnode *node, int *len);
  * @param len  Address for the size of the string.
  *
  * @return The node as human readable string including
- *          tab and new line characters.
+ *         tab and new line characters.  You must
+ *         g_free this string when finished using it.
  */
-char *xmlnode_to_formatted_str(xmlnode *node, int *len);
+gchar *xmlnode_to_formatted_str(xmlnode *node, int *len);
 
 /**
  * Creates a node from a string of XML.  Calling this on the

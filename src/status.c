@@ -166,6 +166,7 @@ static int primitive_scores[] =
 
 static GHashTable *buddy_presences = NULL;
 static GList *saved_statuses = NULL;
+gboolean have_read_saved_statuses = FALSE;
 
 #define SCORE_IDLE      5
 #define SCORE_IDLE_TIME 6
@@ -2000,6 +2001,8 @@ gaim_statuses_load(void)
 
 	g_return_if_fail(user_dir != NULL);
 
+	have_read_saved_statuses = TRUE;
+
 	filename = g_build_filename(user_dir, "status.xml", NULL);
 
 	if (g_file_test(filename, G_FILE_TEST_EXISTS))
@@ -2018,10 +2021,60 @@ gaim_statuses_load(void)
 	g_free(filename);
 }
 
+static xmlnode *
+gaim_status_get_as_xmlnode(GaimStatusSaved *status)
+{
+	xmlnode *node, *child;
+
+	node = xmlnode_new("status");
+	xmlnode_set_attrib(node, "name", status->title);
+
+	child = xmlnode_new("state");
+	xmlnode_insert_data(child, primitive_names[status->type], -1);
+	xmlnode_insert_child(node, child);
+
+	child = xmlnode_new("message");
+	xmlnode_insert_data(child, status->message, -1);
+	xmlnode_insert_child(node, child);
+
+	/* TODO: Add substatuses to the tree */
+
+	return node;
+}
+
+static xmlnode *
+gaim_statuses_get_as_xmlnode()
+{
+	xmlnode *node, *child;
+	GList *cur;
+
+	node = xmlnode_new("statuses");
+	xmlnode_set_attrib(node, "version", "1");
+
+	for (cur = saved_statuses; cur != NULL; cur = cur->next)
+	{
+		child = gaim_status_get_as_xmlnode(cur->data);
+		xmlnode_insert_child(node, child);
+	}
+
+	return node;
+}
+
 void
 gaim_statuses_sync(void)
 {
-	/* TODO: Only attempt to write if we've already read the file. */
+	xmlnode *statuses;
+	char *data;
 
-	//gaim_util_write_xml_file("status.xml", data);
+	if (!have_read_saved_statuses) {
+		gaim_debug_error("status", "Attempted to save statuses before they "
+						 "were read!\n");
+		return;
+	}
+
+	statuses = gaim_statuses_get_as_xmlnode();
+	data = xmlnode_to_formatted_str(statuses, NULL);
+	gaim_util_write_data_to_file("status.xml", data, -1);
+	g_free(data);
+	xmlnode_free(statuses);
 }
