@@ -966,6 +966,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	GaimGtkRequestData *data;
 	GtkWidget *win;
 	GtkWidget *vbox;
+	GtkWidget *vbox2;
 	GtkWidget *hbox;
 	GtkWidget *bbox;
 	GtkWidget *frame;
@@ -973,11 +974,13 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	GtkWidget *table;
 	GtkWidget *button;
 	GtkWidget *img;
+	GtkWidget *sw;
 	GtkSizeGroup *sg;
 	GList *gl, *fl;
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
 	char *label_text;
+	int total_fields = 0;
 
 	data            = g_new0(GaimGtkRequestData, 1);
 	data->type      = GAIM_REQUEST_FIELDS;
@@ -1023,17 +1026,9 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	if (primary != NULL || secondary != NULL)
-	{
+	if(primary) {
 		label_text = g_strdup_printf(
-			(primary
-			 ? "<span weight=\"bold\" size=\"larger\">"
-			   "%s</span>%s%s"
-			 : "%s%s%s"),
-			(primary ? primary : ""),
-			((primary && secondary) ? "\n\n" : ""),
-			(secondary ? secondary : ""));
-
+				"<span weight=\"bold\" size=\"larger\">%s</span>", primary);
 		label = gtk_label_new(NULL);
 
 		gtk_label_set_markup(GTK_LABEL(label), label_text);
@@ -1041,8 +1036,38 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 		gtk_widget_show(label);
-
 		g_free(label_text);
+	}
+
+	for (gl = gaim_request_fields_get_groups(fields); gl != NULL;
+			gl = gl->next)
+		total_fields += g_list_length(gaim_request_field_group_get_fields(gl->data));
+
+	if(total_fields > 9) {
+		sw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+				GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+				GTK_SHADOW_NONE);
+		gtk_widget_set_size_request(sw, -1, 200);
+		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+		gtk_widget_show(sw);
+
+		vbox2 = gtk_vbox_new(FALSE, 12);
+		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), vbox2);
+		gtk_widget_show(vbox2);
+	} else {
+		vbox2 = vbox;
+	}
+
+	if (secondary) {
+		label = gtk_label_new(NULL);
+
+		gtk_label_set_markup(GTK_LABEL(label), secondary);
+		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_box_pack_start(GTK_BOX(vbox2), label, TRUE, TRUE, 0);
+		gtk_widget_show(label);
 	}
 
 	for (gl = gaim_request_fields_get_groups(fields);
@@ -1061,20 +1086,21 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 		if (gaim_request_field_group_get_title(group) != NULL)
 		{
-			frame = gaim_gtk_make_frame(vbox,
+			frame = gaim_gtk_make_frame(vbox2,
 				gaim_request_field_group_get_title(group));
 		}
 		else
-			frame = vbox;
+			frame = vbox2;
 
 		field_count = g_list_length(field_list);
-
+/*
 		if (field_count > 9)
 		{
 			rows = field_count / 2;
 			cols++;
 		}
 		else
+		*/
 			rows = field_count;
 
 		col_num = 0;
