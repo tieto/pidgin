@@ -99,6 +99,20 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Nov 29 2001 Rob Flynn <rob@marko.net> (0.49 release)
+- Can compile against GTK+ 2.0 (version 1.3.10/1.3.11)
+- Confirm before removing buddies
+- Updated Russian translation (thanks Grigory Bakunov)
+- Updated Korean translation (thanks Ho-seok Lee, also for resized ICQ icons)
+- Updated Dutch translation (thanks Floris Eshuis)
+- Yahoo updates (thanks Brian Macke)
+- Jabber updates
+- Zephyr updates (thanks Arun A Tharuvai)
+- Gadu-Gadu updates (thanks Arkadiusz Miskiewicz)
+- Option to show aliases in conversation tabs
+- Option to hide windows after sending messages
+- licq2gaim.pl conversion script (thanks Arturo Cisneros, Jr.)
+
 * Thu Nov 18 2001 Rob Flynn <rob@marko.net> (0.48 release)
 - Right-click on links to open/copy URL
 - Yahoo changes
