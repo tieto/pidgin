@@ -553,11 +553,7 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 						gboolean active, ...)
 {
 	GaimStatus *status;
-	gboolean changed = FALSE;
 	va_list args;
-	const char *id, *string_data;
-	int int_data;
-	gboolean boolean_data;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(status_id != NULL);
@@ -573,62 +569,9 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 		return;
 	}
 
-	if (!active && gaim_status_is_exclusive(status))
-	{
-		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
-				   "Cannot deactivate an exclusive status.\n");
-		return;
-	}
-
-	if (gaim_status_is_active(status) != active)
-		changed = TRUE;
-
-	/* Set any attributes */
 	va_start(args, active);
-	while ((id = va_arg(args, const char *)) != NULL)
-	{
-		GaimValue *value;
-		value = gaim_status_get_attr_value(status, id);
-		if (value->type == GAIM_TYPE_STRING)
-		{
-			string_data = va_arg(args, const char *);
-			if (((string_data == NULL) && (value->data.string_data == NULL)) ||
-				((string_data != NULL) && (value->data.string_data != NULL) &&
-				!strcmp(string_data, value->data.string_data)))
-			{
-				continue;
-			}
-			gaim_status_set_attr_string(status, id, string_data);
-			changed = TRUE;
-		}
-		else if (value->type == GAIM_TYPE_INT)
-		{
-			int_data = va_arg(args, int);
-			if (int_data == value->data.int_data)
-				continue;
-			gaim_status_set_attr_int(status, id, int_data);
-			changed = TRUE;
-		}
-		else if (value->type == GAIM_TYPE_BOOLEAN)
-		{
-			boolean_data = va_arg(args, gboolean);
-			if (boolean_data == value->data.boolean_data)
-				continue;
-			gaim_status_set_attr_int(status, id, boolean_data);
-			changed = TRUE;
-		}
-		else
-		{
-			/* We don't know what the data is--skip over it */
-			va_arg(args, void *);
-		}
-	}
+	gaim_status_set_active_with_attrs(status, active, args);
 	va_end(args);
-
-	if (!changed)
-		return;
-
-	gaim_status_set_active(status, active);
 }
 
 void

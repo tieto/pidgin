@@ -628,50 +628,40 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 	}
 }
 
-void
-gaim_status_set_active(GaimStatus *status, gboolean active)
+static void
+status_has_changed(GaimStatus *status)
 {
-	GaimStatusType *status_type;
 	GaimPresence *presence;
 	GaimStatus *old_status;
-
-	g_return_if_fail(status != NULL);
-
-	if (status->active == active)
-		return;
-
-	status_type = gaim_status_get_type(status);
-
-	if (!active && gaim_status_type_is_exclusive(status_type))
-	{
-		gaim_debug_error("status",
-				   "Cannot deactivate an exclusive status (%s).\n",
-				   gaim_status_type_get_id(status_type));
-		return;
-	}
 
 	presence   = gaim_status_get_presence(status);
 	old_status = gaim_presence_get_active_status(presence);
 
-	if (gaim_status_type_is_exclusive(status_type))
+	/*
+	 * If this status is exclusive, then we must be setting it to "active."
+	 * Since we are setting it to active, we want to set the currently
+	 * active status to "inactive."
+	 */
+	if (gaim_status_is_exclusive(status))
 	{
 		const GList *l;
 
 		for (l = gaim_presence_get_statuses(presence); l != NULL; l = l->next)
 		{
 			GaimStatus *temp_status = l->data;
-			GaimStatusType *temp_type;
 
-			temp_type = gaim_status_get_type(temp_status);
+			if (temp_status == status)
+				continue;
 
-			if (gaim_status_type_is_independent(temp_type))
+			if (gaim_status_is_independent(temp_status))
 				continue;
 
 			if (gaim_status_is_active(temp_status))
 			{
 				/*
-				 * Since we don't want an infinite loop, we have to set
-				 * the active variable ourself.
+				 * Since we don't want infinite recursion, we have to set
+				 * the active variable ourself instead of calling
+				 * gaim_status_set_active().
 				 */
 				temp_status->active = FALSE;
 
@@ -682,9 +672,95 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 		}
 	}
 
+	notify_status_update(presence, old_status, status);
+}
+
+void
+gaim_status_set_active(GaimStatus *status, gboolean active)
+{
+	if (!active && gaim_status_is_exclusive(status))
+	{
+		gaim_debug_error("status",
+				   "Cannot deactivate an exclusive status (%s).\n",
+				   gaim_status_get_id(status));
+		return;
+	}
+
+	g_return_if_fail(status != NULL);
+
+	if (status->active == active)
+		return;
+
 	status->active = active;
 
-	notify_status_update(presence, old_status, status);
+	status_has_changed(status);
+}
+
+void
+gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list args)
+{
+	gboolean changed = FALSE;
+	const gchar *id;
+
+	if (!active && gaim_status_is_exclusive(status))
+	{
+		gaim_debug_error("status",
+				   "Cannot deactivate an exclusive status (%s).\n",
+				   gaim_status_get_id(status));
+		return;
+	}
+
+	g_return_if_fail(status != NULL);
+
+	if (status->active != active)
+		changed = TRUE;
+
+	status->active = active;
+
+	/* Set any attributes */
+	while ((id = va_arg(args, const char *)) != NULL)
+	{
+		GaimValue *value;
+		value = gaim_status_get_attr_value(status, id);
+		if (value->type == GAIM_TYPE_STRING)
+		{
+			const gchar *string_data = va_arg(args, const char *);
+			if (((string_data == NULL) && (value->data.string_data == NULL)) ||
+				((string_data != NULL) && (value->data.string_data != NULL) &&
+				!strcmp(string_data, value->data.string_data)))
+			{
+				continue;
+			}
+			gaim_status_set_attr_string(status, id, string_data);
+			changed = TRUE;
+		}
+		else if (value->type == GAIM_TYPE_INT)
+		{
+			int int_data = va_arg(args, int);
+			if (int_data == value->data.int_data)
+				continue;
+			gaim_status_set_attr_int(status, id, int_data);
+			changed = TRUE;
+		}
+		else if (value->type == GAIM_TYPE_BOOLEAN)
+		{
+			gboolean boolean_data = va_arg(args, gboolean);
+			if (boolean_data == value->data.boolean_data)
+				continue;
+			gaim_status_set_attr_int(status, id, boolean_data);
+			changed = TRUE;
+		}
+		else
+		{
+			/* We don't know what the data is--skip over it */
+			va_arg(args, void *);
+		}
+	}
+
+	if (!changed)
+		return;
+
+	status_has_changed(status);
 }
 
 void
