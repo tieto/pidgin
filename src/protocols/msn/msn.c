@@ -1515,7 +1515,7 @@ static int msn_chat_send(struct gaim_connection *gc, int id, char *message)
 	utf8 = str_to_utf8(send);
 	g_free(send);
 	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
-			strlen(MIME_HEADER) + strlen(message),
+			strlen(MIME_HEADER) + strlen(utf8),
 			MIME_HEADER, utf8);
 	g_free(utf8);
 	if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
