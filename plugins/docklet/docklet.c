@@ -20,13 +20,12 @@
  */
 
 /* todo (in order of importance):
-    - don't crash when the plugin gets unloaded (may be a libegg bug,
-       see #101467 in gnome bugzilla)
-    - handle and update tooltips to show your current accounts ?
+    - check removing the icon factory actually frees the icons
+    - unify the queue so we can have a global away without the dialog
+    - handle and update tooltips to show your current accounts/queued messages?
+    - show a count of queued messages in the unified queue
     - dernyi's account status menu in the right click
-    - store icons in gtk2 stock icon thing (needs doing for the whole prog)
-    - optional pop up notices when GNOME2's system-tray-applet supports it
-    - support blinking the icon when messages are pending */
+    - optional pop up notices when GNOME2's system-tray-applet supports it */
 
 /* includes */
 #include <gtk/gtk.h>
@@ -55,10 +54,11 @@ void gaim_plugin_remove();
 
 /* globals */
 static EggTrayIcon *docklet = NULL;
-static GtkWidget *icon;
-static enum docklet_status status;
+static GtkWidget *image = NULL;
 static GtkIconFactory *icon_factory = NULL;
-static GtkIconSize icon_size;
+static enum docklet_status status;
+static enum docklet_status icon;
+static guint blinker = 0;
 
 static void docklet_toggle_mute(GtkWidget *toggle, void *data) {
 	mute_sounds = GTK_CHECK_MENU_ITEM(toggle)->active;
@@ -188,11 +188,10 @@ static void docklet_clicked(GtkWidget *button, GdkEventButton *event, void *data
 	}
 }
 
-static void docklet_update_icon()
-{
+static void docklet_update_icon() {
 	const gchar *icon_name = NULL;
 
-	switch (status) {
+	switch (icon) {
 		case offline:
 			icon_name = "gaim-docklet-offline";
 			break;
@@ -214,9 +213,36 @@ static void docklet_update_icon()
 			break;
 	}
 
-	gtk_image_set_from_stock(GTK_IMAGE(icon), icon_name, icon_size);
+	gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
 
-	debug_printf("Tray Icon: updated icon to '%s'\n",icon_name);
+	debug_printf("Tray Icon: updated icon to '%s'\n", icon_name);
+}
+
+static gboolean docklet_blink_icon() {
+	if (status == online_pending) {
+		if (status == icon) {
+			/* last icon was the right one... let's change it */
+			icon = online;
+		} else {
+			/* last icon was the wrong one, change it back */
+			icon = online_pending;
+		}
+	} else if (status == away_pending) {
+		if (status == icon) {
+			/* last icon was the right one... let's change it */
+			icon = away;
+		} else {
+			/* last icon was the wrong one, change it back */
+			icon = away_pending;
+		}
+	} else {
+		/* no messages, stop blinking */
+		return FALSE;
+	}
+
+	docklet_update_icon();
+
+	return TRUE; /* keep blinking */
 }
 
 static gboolean docklet_update_status() {
@@ -246,8 +272,15 @@ static gboolean docklet_update_status() {
 		}
 	}
 
+	/* update the icon if we changed status */
 	if (status != oldstatus) {
+		icon = status;
 		docklet_update_icon();
+
+		/* and schedule the blinker function if messages are pending */
+		if (status == online_pending || status == away_pending) {
+			blinker = g_timeout_add(500, docklet_blink_icon, NULL);
+		}
 	}
 
 	return FALSE; /* for when we're called by the glib idle handler */
@@ -264,6 +297,11 @@ static void docklet_destroyed(GtkWidget *widget, void *data) {
 	docklet_remove();
 
 	docklet_flush_queue();
+
+	if (blinker) {
+		g_source_remove(blinker);
+		blinker = 0;
+	}
 
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
@@ -284,13 +322,13 @@ static gboolean docklet_create(void *data) {
 
 	docklet = egg_tray_icon_new("Gaim");
 	box = gtk_event_box_new();
-	icon = gtk_image_new();
+	image = gtk_image_new();
 
 	g_signal_connect(G_OBJECT(docklet), "embedded", G_CALLBACK(docklet_embedded), NULL);
 	g_signal_connect(G_OBJECT(docklet), "destroy", G_CALLBACK(docklet_destroyed), NULL);
 	g_signal_connect(G_OBJECT(box), "button-press-event", G_CALLBACK(docklet_clicked), NULL);
 
-	gtk_container_add(GTK_CONTAINER(box), icon);
+	gtk_container_add(GTK_CONTAINER(box), image);
 	gtk_container_add(GTK_CONTAINER(docklet), box);
 	gtk_widget_show_all(GTK_WIDGET(docklet));
 
@@ -365,13 +403,9 @@ static void docklet_register_icon_factory() {
 	docklet_register_icon("gaim-docklet-msgpend", "msgpend.png");
 
 	gtk_icon_factory_add_default(icon_factory);
-	
-	icon_size = gtk_icon_size_register("gaim-docklet-size", 24, 24);
 }
 
 static void docklet_unregister_icon_factory() {
-	/* does this actually free anything? it's a moot point seeing as
-	   unloading the docklet crashes gaim, but it needs to be checked */
 	gtk_icon_factory_remove_default(icon_factory);
 }
 
@@ -400,6 +434,11 @@ void gaim_plugin_remove() {
 	}
 
 	docklet_flush_queue();
+
+	if (blinker) {
+		g_source_remove(blinker);
+		blinker = 0;
+	}
 
 	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_destroyed), NULL);
 	gtk_widget_destroy(GTK_WIDGET(docklet));

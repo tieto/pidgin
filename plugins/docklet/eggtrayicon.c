@@ -31,6 +31,8 @@ static GtkPlugClass *parent_class = NULL;
 static void egg_tray_icon_init (EggTrayIcon *icon);
 static void egg_tray_icon_class_init (EggTrayIconClass *klass);
 
+static void egg_tray_icon_unrealize (GtkWidget *widget);
+
 static void egg_tray_icon_update_manager_window (EggTrayIcon *icon);
 
 GType
@@ -57,6 +59,10 @@ egg_tray_icon_get_type (void)
 
       our_type = g_type_register_static (GTK_TYPE_PLUG, "EggTrayIcon", &our_info, 0);
     }
+  else if (parent_class == NULL) {
+    /* we're reheating the old class from a previous instance -  engage ugly hack =( */
+    egg_tray_icon_class_init((EggTrayIconClass *)g_type_class_peek(our_type));
+  }
 
   return our_type;
 }
@@ -72,7 +78,11 @@ egg_tray_icon_init (EggTrayIcon *icon)
 static void
 egg_tray_icon_class_init (EggTrayIconClass *klass)
 {
+  GtkWidgetClass *widget_class = (GtkWidgetClass *)klass;
+
   parent_class = g_type_class_peek_parent (klass);
+
+  widget_class->unrealize = egg_tray_icon_unrealize;
 }
 
 static GdkFilterReturn
@@ -96,6 +106,38 @@ egg_tray_icon_manager_filter (GdkXEvent *xevent, GdkEvent *event, gpointer user_
     }
   
   return GDK_FILTER_CONTINUE;
+}
+
+static void
+egg_tray_icon_unrealize (GtkWidget *widget)
+{
+  EggTrayIcon *icon = EGG_TRAY_ICON (widget);
+  GdkWindow *root_window;
+
+  if (icon->manager_window != None)
+    {
+      GdkWindow *gdkwin;
+
+#if HAVE_GTK_MULTIHEAD
+      gdkwin = gdk_window_lookup_for_display (gtk_widget_get_display (widget),
+                                              icon->manager_window);
+#else
+      gdkwin = gdk_window_lookup (icon->manager_window);
+#endif
+
+      gdk_window_remove_filter (gdkwin, egg_tray_icon_manager_filter, icon);
+    }
+
+#if HAVE_GTK_MULTIHEAD
+  root_window = gdk_screen_get_root_window (gtk_widget_get_screen (widget));
+#else
+  root_window = gdk_window_lookup (gdk_x11_get_default_root_xwindow ());
+#endif
+
+  gdk_window_remove_filter (root_window, egg_tray_icon_manager_filter, icon);
+
+  if (GTK_WIDGET_CLASS (parent_class)->unrealize)
+    (* GTK_WIDGET_CLASS (parent_class)->unrealize) (widget);
 }
 
 static void
@@ -158,7 +200,7 @@ egg_tray_icon_update_manager_window (EggTrayIcon *icon)
       GdkWindow *gdkwin;
 
 #if HAVE_GTK_MULTIHEAD
-      gdkwin = gdk_window_lookup_for_display (display,
+      gdkwin = gdk_window_lookup_for_display (gtk_widget_get_display (GTK_WIDGET (icon)),
 					      icon->manager_window);
 #else
       gdkwin = gdk_window_lookup (icon->manager_window);
@@ -210,6 +252,10 @@ egg_tray_icon_new_for_xscreen (Screen *xscreen, const char *name)
   gtk_window_set_title (GTK_WINDOW (icon), name);
 
 #if HAVE_GTK_MULTIHEAD
+  /* FIXME: this code does not compile, screen is undefined. Now try
+   * getting the GdkScreen from xscreen (:. Dunno how to solve this
+   * (there is prolly some easy way I cant think of right now)
+   */
   gtk_plug_construct_for_display (GTK_PLUG (icon),
 				  gdk_screen_get_display (screen), 0);
 #else
@@ -235,7 +281,7 @@ egg_tray_icon_new_for_xscreen (Screen *xscreen, const char *name)
   egg_tray_icon_update_manager_window (icon);
 
 #if HAVE_GTK_MULTIHEAD
-  root_window = gdk_screen_get_root_window (screen);
+  root_window = gdk_screen_get_root_window (gtk_widget_get_screen (screen));
 #else
   root_window = gdk_window_lookup (gdk_x11_get_default_root_xwindow ());
 #endif

@@ -16,9 +16,11 @@ version 0.60:
 	  Robert McQueen)
 
 	Plugins:
-	* Docklet plugin--replaces the old GNOME applet.  You'll need the
-	  Panel Notification Area applet for GNOME 2, or the kicker for
-	  KDE 3.1. (Thanks, Robert McQueen, Ari Pollak, Patrick Aussems)
+	* Tray icon plugin--replaces the old GNOME applet. You'll need 
+	  the panel Notification Area applet (aka system-tray-applet) 
+	  for GNOME 2, or the Kicker for KDE 3.1. (Thanks, Robert 
+	  McQueen, Nicolás Lichtmaier, Kristian Rietveld, Ari Pollak &
+	  Patrick Aussems)
 	* Added GAIM::remove_event_handler and made set_info short
 	  circuitable in perl. (Thanks, Ryan McCabe)
 	* event_del_conversation for plugins. (Thanks, Bill Tompkins)
