@@ -2903,7 +2903,6 @@ raise_on_events_cb()
 	}
 }
 
-
 /**********************************************************************************
  * Public API Functions                                                           *
  **********************************************************************************/
@@ -2913,13 +2912,6 @@ static void gaim_gtk_blist_new_list(GaimBuddyList *blist)
 
 	gtkblist = g_new0(GaimGtkBuddyList, 1);
 	blist->ui_data = gtkblist;
-
-	/* Register some of our own. */
-	gaim_signal_register(gtkblist, "drawing-menu",
-						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-						 gaim_value_new(GAIM_TYPE_BOXED, "GtkMenu"),
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_BLIST_BUDDY));
 
 	/* All of these signal handlers are for the "Raise on Events" option */
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on",
@@ -3254,6 +3246,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 						gtkblist, GAIM_CALLBACK(signed_on_off_cb), list);
 	gaim_signal_connect(gaim_connections_get_handle(), "signing-off",
 						gtkblist, GAIM_CALLBACK(signed_on_off_cb), list);
+
+	/* emit our created signal */
+	gaim_signal_emit(gaim_gtk_blist_get_handle(), "gtkblist-created", list);
 }
 
 /* XXX: does this need fixing? */
@@ -4458,13 +4453,19 @@ static void account_signon_cb(GaimConnection *gc, gpointer z)
 	}
 }
 
+void *
+gaim_gtk_blist_get_handle() {
+	static int handle;
+
+	return &handle;
+}
+
 void gaim_gtk_blist_init(void)
 {
-	/* XXX */
-	static int gtk_blist_handle;
+	void *gtk_blist_handle = gaim_gtk_blist_get_handle();
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						&gtk_blist_handle, GAIM_CALLBACK(account_signon_cb),
+						gtk_blist_handle, GAIM_CALLBACK(account_signon_cb),
 						NULL);
 
 	/* Initialize prefs */
@@ -4486,9 +4487,23 @@ void gaim_gtk_blist_init(void)
     gaim_prefs_add_int("/gaim/gtk/blist/height", 0);
     gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
 
+	/* Register our signals */
+	gaim_signal_register(gtk_blist_handle, "drawing-menu",
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_BOXED, "GtkMenu"),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
+
+	gaim_signal_register(gtk_blist_handle, "gtkblist-created",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST));
 }
 
-
+void
+gaim_gtk_blist_uninit(void) {
+	gaim_signals_unregister_by_instance(gaim_gtk_blist_get_handle());
+}
 
 /*********************************************************************
  * Public utility functions                                          *

@@ -97,9 +97,21 @@ typedef struct {
  **************************************************************************/
 
 /**
+ * Get the handle for the GTK+ blist system.
+ *
+ * @return the handle to the blist system
+ */
+void *gaim_gtk_blist_get_handle();
+
+/**
  * Initializes the GTK+ blist system.
  */
 void gaim_gtk_blist_init(void);
+
+/**
+ * Uninitializes the GTK+ blist system.
+ */
+void gaim_gtk_blist_uninit(void);
 
 /**
  * Returns the UI operations structure for the buddy list.
