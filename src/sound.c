@@ -425,6 +425,9 @@ void play_file(char *filename)
 #ifndef _WIN32
 	int pid;
 #endif
+	if (awaymessage && !(sound_options & OPT_SOUND_WHEN_AWAY))
+		return; /* check here in case a buddy pounce plays a file while away */
+	
 	if (sound_options & OPT_SOUND_BEEP) {
 		gdk_beep();
 		return;
