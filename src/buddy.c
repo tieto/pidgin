@@ -1782,7 +1782,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 					write_to_conv(c, tmp, WFLAG_SYSTEM, NULL);
 				}
 			}
-		} else {
+		} else if (bs->log_timer <= 0) {
 			if (gc->prpl->list_icon)
 				xpm = (*gc->prpl->list_icon)(b->uc);
 			if (xpm == NULL)
@@ -1802,6 +1802,9 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		if (!gs) return;
 		bs = find_buddy_show(gs, b->name);
 		if (!bs) return;
+		if (!bs->connlist) return; /* we won't do signoff updates for
+					      buddies that have already signed
+					      off */
 		play_sound(BUDDY_LEAVE);
 		bs->connlist = g_slist_remove(bs->connlist, gc);
 		update_num_group(gs);
