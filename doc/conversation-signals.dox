@@ -157,7 +157,7 @@ void (*sent_chat_msg)(GaimAccount *account, const char *message, int id);
  @signaldef received-chat-msg
   @signalproto
 gboolean (*received_chat_msg)(GaimAccount *account, char **sender,
-                              char **message, int id);
+                              char **message, GaimConversation *conv);
   @endsignalproto
   @signaldesc
    Emitted when a chat message is received. The callback can replace the
@@ -170,7 +170,7 @@ gboolean (*received_chat_msg)(GaimAccount *account, char **sender,
   @param account The account the message was received on.
   @param sender  A pointer to the username of the sender.
   @param message A pointer to the message that was sent.
-  @param id      The ID of the chat.
+  @param conv    The chat conversation.
  @endsignaldef
 
  @signaldef conversation-switching
