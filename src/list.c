@@ -1211,6 +1211,7 @@ void gaim_blist_save() {
 	FILE *file;
 	char *user_dir = gaim_user_dir();
 	char *filename;
+	char *filename_real;
 
 	if(!user_dir)
 		return;
@@ -1225,7 +1226,7 @@ void gaim_blist_save() {
 	else
 		fclose(file);
 
-	filename = g_build_filename(user_dir, "blist.xml", NULL);
+	filename = g_build_filename(user_dir, "blist.xml.save", NULL);
 
 	if((file = fopen(filename, "w"))) {
 		gaim_blist_write(file, NULL);
@@ -1235,7 +1236,14 @@ void gaim_blist_save() {
 		debug_printf("unable to write %s\n", filename);
 	}
 
+	filename_real = g_build_filename(user_dir, "blist.xml", NULL);
+
+	if(rename(filename, filename_real) < 0)
+		debug_printf("error renaming %s to %s\n", filename, filename_real);
+
+
 	g_free(filename);
+	g_free(filename_real);
 }
 
 gboolean gaim_privacy_permit_add(struct gaim_account *account, const char *who) {
