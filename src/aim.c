@@ -78,6 +78,40 @@ void cancel_logon(void)
         AppletCancelLogon();
         gtk_widget_hide(mainwindow);
 #else
+#ifdef GAIM_PLUGINS
+	GList *c;
+	struct gaim_callback *g;
+	struct gaim_plugin *p;
+	void (*function)(void *);
+	void (*gaim_plugin_remove)();
+	char *error;
+
+	/* first we tell those who have requested it we're quitting */
+	c = callbacks;
+	while (c) {
+		g = (struct gaim_callback *)c->data;
+		if (g->event == event_quit && g->function != NULL) {
+			function = g->function;
+			(*function)(g->data);
+		}
+		c = c->next;
+	}
+
+	/* then we remove everyone in a mass suicide */
+	c = plugins;
+	while (c) {
+		p = (struct gaim_plugin *)c->data;
+		gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
+		if ((error = (char *)dlerror()) == NULL)
+			(*gaim_plugin_remove)();
+		/* we don't need to worry about removing callbacks since
+		 * there won't be any more chance to call them back :) */
+		dlclose(p->handle);
+		g_free(p->filename); /* why do i bother? */
+		g_free(p);
+	}
+#endif /* GAIM_PLUGINS */
+
 	exit(0);
 #endif /* USE_APPLET */
 }

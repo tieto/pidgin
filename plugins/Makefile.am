@@ -1,18 +1,28 @@
-SUFFIXES = .c .so
 if GNOMEAPPLET
 CFLAGS += $(GTK_CFLAGS) $(GNOME_INCLUDEDIR) -I../src -DUSE_APPLET
 else
 CFLAGS += $(GTK_CFLAGS) -I../src
 endif
+
+
+
 LDFLAGS += -ggdb $(GTK_LIBS) -shared
+SUFFIXES = .c .so
 .c.so:
-	$(CC) $(CFLAGS) -fPIC -DPIC -o $@ $< $(LDFLAGS)
+	$(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -fPIC -DPIC -o $@ $< $(LDFLAGS)
+
+
+
 if PLUGINS
 plugin_DATA = autorecon.so iconaway.so notify.so spellchk.so
 plugindir = $(libdir)/gaim
+
 clean distclean clean-recursive distclean-recursive:
 	$(RM) $(plugin_DATA)
 endif
+
+
+
 EXTRA_DIST = ChangeLog CRAZY HOWTO SIGNALS autorecon.c error.c filectl.c \
 	gaiminc.c iconaway.c lagmeter.c notify.c simple.c spellchk.c \
 	toc_commands.c

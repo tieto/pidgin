@@ -180,5 +180,9 @@ event_error:
 event_quit:
 	(none)
 
-	Called when gaim quits normally. If gaim dies or is killed, this won't
-	be called. It's not my fault, it's Seg's.
+	Called when gaim quits normally.  This can be called from either the
+	signed on state or the signed off state (from either the Cancel button
+	in the login window or the Quit option in the File menu on the buddy
+	list). Note that for the applet, this will never be called. If gaim
+	dies or is murdered, this won't be called. It's not my fault, it's
+	Seg's.

@@ -211,13 +211,19 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	if (sess->logininfo.errorcode) {
 		switch (sess->logininfo.errorcode) {
 		case 0x18:
-			do_error_dialog(_("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."), _("Gaim - Error"));
+			/* connecting too frequently */
+			strtok("983:", ":");
+			show_error_dialog("983");
 			break;
 		case 0x05:
-			do_error_dialog(_("Incorrect nickname or password."), _("Gaim - Error"));
+			/* Incorrect nick/password */
+			strtok("980:", ":");
+			show_error_dialog("980");
 			break;
 		case 0x1c:
-			do_error_dialog(_("AOL has decided your client is too old. Please download a newer version from http://www.marko.net/gaim/"), _("Gaim - Error"));
+			/* client too old */
+			strtok("981:", ":");
+			show_error_dialog("981");
 			break;
 		}
 		sprintf(debug_buff, "Login Error Code 0x%04x\n",
@@ -582,32 +588,38 @@ int gaim_parse_misses(struct aim_session_t *sess,
 	u_short family;
 	u_short subtype;
 
-	char buf[2048], buf2[256];
-	sprintf(buf2, _("Gaim - Error"));
-	buf[0] = 0;
-
 	family  = aimutil_get16(command->data+0);
 	subtype = aimutil_get16(command->data+2);
 
 	switch (family) {
 	case 0x0001:
-		if (subtype == 0x000a)
-			sprintf(buf, _("You are sending messages too fast."));
+		if (subtype == 0x000a) {
+			/* sending messages too fast */
+			/* this also gets sent to us when our warning level
+			 * changes, don't ask me why or how to interpret it */
+			strtok("960:someone", ":");
+			show_error_dialog("960");
+		}
 		break;
 	case 0x0002:
-		if (subtype == 0x0001)
-			sprintf(buf, _("Unknown SNAC error (I'm hungry)"));
+		if (subtype == 0x0001) {
+			/* unknown SNAC error */
+			strtok("970:", ":");
+			show_error_dialog("970");
+		}
 		break;
 	case 0x0004:
-		if (subtype == 0x0001)
-			sprintf(buf, _("User is not online."));
-		else if (subtype == 0x000a)
-			sprintf(buf, _("A message has been dropped."));
+		if (subtype == 0x0001) {
+			/* user is not logged in */
+			strtok("901:User", ":");
+			show_error_dialog("901");
+		} else if (subtype == 0x000a) {
+			/* message has been dropped */
+			strtok("903:", ":");
+			show_error_dialog("903");
+		}
 		break;
 	}
-
-	if (buf[0] != 0)
-		do_error_dialog(buf, buf2);
 
 	return 1;
 }
@@ -628,8 +640,9 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	va_end(ap);
 
 	if (prof == NULL || !strlen(prof)) {
-		do_error_dialog(_("User has no info/away message."),
-				_("Gaim - User Info"));
+		/* no info/away message */
+		strtok("977:", ":");
+		show_error_dialog("977");
 		return 1;
 	}
 
