@@ -129,8 +129,8 @@ void gaim_input_remove(gint tag)
 }
 
 
-typedef void (*dns_callback_t)(struct sockaddr *addr, size_t addrlen,
-	gpointer data, const char *error_message);
+typedef void (*dns_callback_t)(GSList *hosts, gpointer data,
+		const char *error_message);
 
 #ifdef __unix__
 
@@ -248,6 +248,7 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 {
 	pending_dns_request_t *req = (pending_dns_request_t*)data;
 	int rc, err;
+	GSList *hosts = NULL;
 	struct sockaddr *addr = NULL;
 	socklen_t addrlen;
 
@@ -265,42 +266,50 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 #endif
 			req->dns_pid);
 		debug_printf("%s\n",message);
-		req->callback(NULL, 0, req->data, message);
-		release_dns_child(req);	
+		req->callback(NULL, req->data, message);
+		release_dns_child(req);
 		return;
 	}
 	if(rc>0) {
-		rc=read(req->fd_out, &addrlen, sizeof(addrlen));
-		if(rc>0) {
-			addr=g_malloc(addrlen);
-			rc=read(req->fd_out, addr, addrlen);
+		while(rc > 0) {
+			rc=read(req->fd_out, &addrlen, sizeof(addrlen));
+			if(rc>0 && addrlen > 0) {
+				addr=g_malloc(addrlen);
+				rc=read(req->fd_out, addr, addrlen);
+				hosts = g_slist_append(hosts, GINT_TO_POINTER(addrlen));
+				hosts = g_slist_append(hosts, addr);
+			} else {
+				break;
+			}
 		}
-	}
-	if(rc==-1) {
+	} else if(rc==-1) {
 		char message[1024];
 		g_snprintf(message, sizeof(message), "Error reading from DNS child: %s",strerror(errno));
 		debug_printf("%s\n",message);
-		req->callback(NULL, 0, req->data, message);
+		req->callback(NULL, req->data, message);
 		req_free(req);
 		return;
-	}
-	if(rc==0) {
+	} else if(rc==0) {
 		char message[1024];
 		g_snprintf(message, sizeof(message), "EOF reading from DNS child");
 		close(req->fd_out);
 		debug_printf("%s\n",message);
-		req->callback(NULL, 0, req->data, message);
+		req->callback(NULL, req->data, message);
 		req_free(req);
 		return;
 	}
 
 /*	wait4(req->dns_pid, NULL, WNOHANG, NULL); */
 
-	req->callback(addr, addrlen, req->data, NULL);
-	
-	g_free(addr);
+	req->callback(hosts, req->data, NULL);
 
-	release_dns_child(req);	
+	while(hosts) {
+		hosts = g_slist_remove(hosts, hosts->data);
+		g_free(hosts->data);
+		hosts = g_slist_remove(hosts, hosts->data);
+	}
+
+	release_dns_child(req);
 }
 
 static void trap_gdb_bug()
@@ -397,7 +406,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 			int rc;
 
 #ifdef HAVE_GETADDRINFO
-			struct addrinfo hints, *res;
+			struct addrinfo hints, *res, *tmp;
 			char servname[20];
 #else
 			struct sockaddr_in sin;
@@ -468,9 +477,14 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 					continue;
 				}
 				write(child_out[1], &zero, sizeof(zero));
-				write(child_out[1], &(res->ai_addrlen), sizeof(res->ai_addrlen));
-				write(child_out[1], res->ai_addr, res->ai_addrlen);
-				freeaddrinfo(res);
+				while(res) {
+					write(child_out[1], &(res->ai_addrlen), sizeof(res->ai_addrlen));
+					write(child_out[1], res->ai_addr, res->ai_addrlen);
+					tmp = res;
+					res = res->ai_next;
+					freeaddrinfo(tmp);
+				}
+				write(child_out[1], &zero, sizeof(zero));
 #else
 				if (!inet_aton(hostname, &sin.sin_addr)) {
 					struct hostent *hp;
@@ -490,6 +504,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 				write(child_out[1], &zero, sizeof(zero));
 				write(child_out[1], &addrlen, sizeof(addrlen));
 				write(child_out[1], &sin, addrlen);
+				write(child_out[1], &zero, sizeof(zero));
 #endif
 				dns_params.hostname[0] = '\0';
 			}
@@ -529,7 +544,11 @@ typedef struct {
 static gboolean host_resolved(gpointer data)
 {
 	pending_dns_request_t *req = (pending_dns_request_t*)data;
-	req->callback(req->addr, req->addrlen, req->data, NULL);
+	GSList *hosts = NULL;
+	hosts = g_slist_append(hosts, GINT_TO_POINTER(req->addrlen));
+	hosts = g_slist_append(hosts, req->addr);
+	req->callback(hosts, req->data, NULL);
+	g_slist_free(hosts);
 	g_free(req->addr);
 	g_free(req);
 	return FALSE;
@@ -614,8 +633,6 @@ static int proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t 
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
 		debug_printf("unable to create socket: %s\n", strerror(errno));
-		g_free(phb->host);
-		g_free(phb);
 		return -1;
 	}
 	fcntl(fd, F_SETFL, O_NONBLOCK);
@@ -627,8 +644,6 @@ static int proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t 
 		} else {
 			debug_printf("connect failed (errno %d)\n", errno);
 			close(fd);
-			g_free(phb->host);
-			g_free(phb);
 			return -1;
 		}
 	} else {
@@ -639,8 +654,6 @@ static int proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t 
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			debug_printf("getsockopt failed\n");
 			close(fd);
-			g_free(phb->host);
-			g_free(phb);
 			return -1;
 		}
 		fcntl(fd, F_SETFL, 0);
@@ -761,8 +774,6 @@ static int proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t 
 	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", phb->host, phb->port, phb->gpi->proxyhost, phb->gpi->proxyport);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
-		g_free(phb->host);
-		g_free(phb);
 		return -1;
 	}
 
@@ -774,8 +785,6 @@ static int proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t 
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, http_canwrite, phb);
 		} else {
 			close(fd);
-			g_free(phb->host);
-			g_free(phb);
 			return -1;
 		}
 	} else {
@@ -786,8 +795,6 @@ static int proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t 
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
-			g_free(phb->host);
-			g_free(phb);
 			return -1;
 		}
 		fcntl(fd, F_SETFL, 0);
@@ -877,8 +884,6 @@ static int proxy_connect_socks4(struct PHB *phb, struct sockaddr *addr, socklen_
 	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", phb->host, phb->port, phb->gpi->proxyhost, phb->gpi->proxyport);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
-		g_free(phb->host);
-		g_free(phb);
 		return -1;
 	}
 
@@ -889,8 +894,6 @@ static int proxy_connect_socks4(struct PHB *phb, struct sockaddr *addr, socklen_
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, s4_canwrite, phb);
 		} else {
 			close(fd);
-			g_free(phb->host);
-			g_free(phb);
 			return -1;
 		}
 	} else {
@@ -901,8 +904,6 @@ static int proxy_connect_socks4(struct PHB *phb, struct sockaddr *addr, socklen_
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
-			g_free(phb->host);
-			g_free(phb);
 			return -1;
 		}
 		fcntl(fd, F_SETFL, 0);
@@ -1095,8 +1096,6 @@ static int proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_
 	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", phb->host, phb->port, phb->gpi->proxyhost, phb->gpi->proxyport);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
-		g_free(phb->host);
-		g_free(phb);
 		return -1;
 	}
 
@@ -1107,8 +1106,6 @@ static int proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, s5_canwrite, phb);
 		} else {
 			close(fd);
-			g_free(phb->host);
-			g_free(phb);
 			return -1;
 		}
 	} else {
@@ -1119,8 +1116,6 @@ static int proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
-			g_free(phb->host);
-			g_free(phb);
 			return -1;
 		}
 		fcntl(fd, F_SETFL, 0);
@@ -1130,30 +1125,41 @@ static int proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_
 	return fd;
 }
 
-static void connection_host_resolved(struct sockaddr *addr, size_t addrlen, gpointer data, const char *error_message)
+static void connection_host_resolved(GSList *hosts, gpointer data, const char *error_message)
 {
 	struct PHB *phb = (struct PHB*)data;
+	size_t addrlen;
+	struct sockaddr *addr;
+	int ret = -1;
 
-	if(!addr)
-	{
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
-		return;
+	while(hosts) {
+		addrlen = GPOINTER_TO_INT(hosts->data);
+		hosts = hosts->next;
+		addr = hosts->data;
+		hosts = hosts->next;
+
+		switch(phb->gpi->proxytype)
+		{
+			case PROXY_NONE:
+				ret = proxy_connect_none(phb, addr, addrlen);
+				break;
+			case PROXY_HTTP:
+				ret = proxy_connect_http(phb, addr, addrlen);
+				break;
+			case PROXY_SOCKS4:
+				ret = proxy_connect_socks4(phb, addr, addrlen);
+				break;
+			case PROXY_SOCKS5:
+				ret = proxy_connect_socks5(phb, addr, addrlen);
+				break;
+		}
+		if (ret > 0)
+			break;
 	}
-
-	switch(phb->gpi->proxytype)
-	{
-		case PROXY_NONE:
-			proxy_connect_none(phb, addr, addrlen);
-			break;
-		case PROXY_HTTP:
-			proxy_connect_http(phb, addr, addrlen);
-			break;
-		case PROXY_SOCKS4:
-			proxy_connect_socks4(phb, addr, addrlen);
-			break;
-		case PROXY_SOCKS5:
-			proxy_connect_socks5(phb, addr, addrlen);
-			break;
+	if(ret < 0) {
+		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		g_free(phb->host);
+		g_free(phb);
 	}
 }
 
