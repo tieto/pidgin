@@ -36,6 +36,7 @@ typedef enum _GaimPrefType
 	GAIM_PREF_INT,
 	GAIM_PREF_STRING,
 	GAIM_PREF_STRING_LIST
+
 } GaimPrefType;
 
 /**
@@ -44,6 +45,10 @@ typedef enum _GaimPrefType
 
 typedef void (*GaimPrefCallback) (const char *name, GaimPrefType type,
 		gpointer val, gpointer data);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**************************************************************************/
 /** @name Prefs API                                                       */
@@ -205,5 +210,9 @@ gboolean gaim_prefs_load();
 void gaim_prefs_sync();
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _PREFS_H_ */

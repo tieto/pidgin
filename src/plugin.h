@@ -22,29 +22,28 @@
  */
 #ifndef _GAIM_PLUGIN_H_
 #define _GAIM_PLUGIN_H_
+
 #include <gmodule.h>
 
-typedef enum   _GaimPluginType GaimPluginType;     /**< GaimPluginType   */
 typedef struct _GaimPlugin     GaimPlugin;         /**< GaimPlugin       */
 typedef struct _GaimPluginInfo GaimPluginInfo;     /**< GaimPluginInfo   */
 typedef struct _GaimPluginLoaderInfo GaimPluginLoaderInfo;
 
 typedef int GaimPluginPriority; /**< Plugin priority. */
 
-/* XXX */
-#include "config.h"
 #include "event.h"
 
 /**
  * Plugin types.
  */
-enum _GaimPluginType
+typedef enum
 {
 	GAIM_PLUGIN_UNKNOWN  = -1,  /**< Unknown type.    */
 	GAIM_PLUGIN_STANDARD = 0,   /**< Standard plugin. */
 	GAIM_PLUGIN_LOADER,         /**< Loader plugin.   */
 	GAIM_PLUGIN_PROTOCOL        /**< Protocol plugin. */
-};
+
+} GaimPluginType;
 
 #define GAIM_PRIORITY_DEFAULT     0
 #define GAIM_PRIORITY_HIGHEST  9999
@@ -134,8 +133,12 @@ struct _GaimPlugin
 	}
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
-/** @name Plugin namespace                                                */
+/** @name Plugin API                                                      */
 /**************************************************************************/
 /*@{*/
 
@@ -226,7 +229,7 @@ gboolean gaim_plugin_is_loaded(const GaimPlugin *plugin);
 /*@}*/
 
 /**************************************************************************/
-/** @name Plugins namespace                                               */
+/** @name Plugins API                                                     */
 /**************************************************************************/
 /*@{*/
 
@@ -367,5 +370,9 @@ GList *gaim_plugins_get_protocols(void);
 GList *gaim_plugins_get_all(void);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_PLUGIN_H_ */

@@ -63,6 +63,15 @@ struct _GaimAccount
 	int perm_deny;              /**< The permit/deny setting.    */
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**************************************************************************/
+/** @name Account API                                                     */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Creates a new account.
  *
@@ -462,6 +471,13 @@ const char *gaim_account_get_ui_string(const GaimAccount *account,
 gboolean gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
 								  const char *name, gboolean default_value);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name Accounts API                                                    */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Loads the accounts.
  */
@@ -528,5 +544,11 @@ GaimAccount *gaim_accounts_find(const char *name, GaimProtocol protocol);
  */
 GaimAccount *gaim_accounts_find_with_prpl_id(const char *name,
 											 const char *protocol_id);
+
+/*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_ACCOUNTS_H_ */

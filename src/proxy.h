@@ -68,6 +68,10 @@ typedef void (*GaimInputFunction)(gpointer, gint, GaimInputCondition);
 
 #include "account.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
 /** @name Proxy structure API                                             */
 /**************************************************************************/
@@ -248,5 +252,9 @@ int gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 					   GaimInputFunction func, gpointer data);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_PROXY_H_ */

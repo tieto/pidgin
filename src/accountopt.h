@@ -62,6 +62,10 @@ typedef struct
 
 } GaimAccountUserSplit;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
 /** @name Account Option API                                              */
 /**************************************************************************/
@@ -264,5 +268,9 @@ const char *gaim_account_user_split_get_default_value(
 char gaim_account_user_split_get_separator(const GaimAccountUserSplit *split);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_ACCOUNT_OPT_H_ */

@@ -154,6 +154,10 @@ struct gaim_blist_ui_ops
 
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
 /** @name Buddy List API                                                  */
 /**************************************************************************/
@@ -563,5 +567,9 @@ void gaim_set_blist_ui_ops(struct gaim_blist_ui_ops *ops);
 struct gaim_blist_ui_ops *gaim_get_blist_ui_ops(void);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LIST_H_ */

@@ -28,9 +28,6 @@
 
 typedef struct _GaimConnection GaimConnection;
 
-#include "account.h"
-#include "plugin.h"
-
 #define OPT_CONN_HTML		0x00000001
 /* set this flag on a gc if you want serv_got_im to autoreply when away */
 #define OPT_CONN_AUTO_RESP	0x00000002
@@ -42,6 +39,9 @@ typedef enum
 	GAIM_CONNECTING        /**< Connecting.   */
 
 } GaimConnectionState;
+
+#include "account.h"
+#include "plugin.h"
 
 typedef struct
 {
@@ -85,6 +85,14 @@ struct _GaimConnection
 
 	gboolean wants_to_die;	     /**< Wants to Die state.                */
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**************************************************************************/
+/** @name Connection API                                                  */
+/**************************************************************************/
 
 /**
  * Creates a connection to the specified account.
@@ -198,6 +206,13 @@ void gaim_connection_notice(GaimConnection *gc, const char *text);
  */
 void gaim_connection_error(GaimConnection *gc, const char *reason);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name Connections API                                                 */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Disconnects from all connections.
  */
@@ -216,6 +231,8 @@ GList *gaim_connections_get_all(void);
  * @return A list of connecting connections.
  */
 GList *gaim_connections_get_connecting(void);
+
+/*@}*/
 
 /**************************************************************************/
 /** @name UI Operations API                                               */
@@ -237,5 +254,9 @@ void gaim_set_connection_ui_ops(GaimConnectionUiOps *ops);
 GaimConnectionUiOps *gaim_get_connection_ui_ops(void);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_CONNECTION_H_ */

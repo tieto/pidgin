@@ -46,6 +46,7 @@ typedef enum _GaimSoundEventID
 	GAIM_SOUND_POUNCE_DEFAULT,   /**< Default sound for a buddy pounce.     */
 	GAIM_SOUND_CHAT_NICK,        /**< Someone says your name in a chat.     */
 	GAIM_NUM_SOUNDS              /**< Total number of sounds.               */
+
 } GaimSoundEventID;
 
 typedef struct _GaimSoundUiOps
@@ -56,6 +57,10 @@ typedef struct _GaimSoundUiOps
 	void (*play_event)(GaimSoundEventID event);
 
 } GaimSoundUiOps;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**************************************************************************/
 /** @name Sound API                                                       */
@@ -101,5 +106,9 @@ void gaim_sound_play_file(const char *filename);
 void gaim_sound_play_event(GaimSoundEventID event);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_SOUND_H_ */

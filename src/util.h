@@ -28,6 +28,10 @@
 
 #include "account.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Normalizes a string, so that it is suitable for comparison.
  *
@@ -299,10 +303,15 @@ gchar *gaim_strreplace(const gchar *string, const gchar *delimiter,
 					   const gchar *replacement);
 
 /**
- * Returns a string representing a filesize in the appropriate units (MB, KB, GB, etc.)
+ * Returns a string representing a filesize in the appropriate
+ * units (MB, KB, GB, etc.)
  *
  * @param size The size
  */
 char *gaim_get_size_string(size_t size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_UTIL_H_ */

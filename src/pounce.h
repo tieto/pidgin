@@ -72,6 +72,15 @@ struct _GaimPounce
 	void *data;                   /**< Pounce-specific data.      */
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**************************************************************************/
+/** @name Buddy Pounce API                                                */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Creates a new buddy pounce.
  *
@@ -243,6 +252,13 @@ void *gaim_pounce_get_data(const GaimPounce *pounce);
 void gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 						 GaimPounceEvent events);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name Buddy Pounces API                                               */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Finds a pounce with the specified event(s) and buddy.
  *
@@ -263,6 +279,8 @@ void gaim_pounces_init(void);
 
 /**
  * Loads the pounces.
+ *
+ * @return @c TRUE if the pounces could be loaded.
  */
 gboolean gaim_pounces_load(void);
 
@@ -296,5 +314,11 @@ void gaim_pounces_unregister_handler(const char *ui);
  * @return The list of buddy pounces.
  */
 GList *gaim_pounces_get_all(void);
+
+/*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_POUNCE_H_ */

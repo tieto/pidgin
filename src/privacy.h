@@ -18,8 +18,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#ifndef _GAIM_PRIVACY_H_
+#define _GAIM_PRIVACY_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 gboolean gaim_privacy_permit_add(GaimAccount *account, const char *name);
 gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name);
 gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name);
 gboolean gaim_privacy_permit_remove(GaimAccount *account, const char *name);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _GAIM_PRIVACY_H_ */

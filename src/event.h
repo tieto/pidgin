@@ -69,6 +69,14 @@ typedef enum gaim_event
 typedef int (*GaimSignalBroadcastFunc)(GaimEvent event, void *data,
 									   va_list args);
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**************************************************************************/
+/** @name  Signal API                                                     */
+/**************************************************************************/
 /**
  * Connects a signal handler to a gaim event.
  *
@@ -142,5 +150,11 @@ int gaim_event_broadcast(GaimEvent event, ...);
  * @return A human-readable string of the name.
  */
 const char *gaim_event_get_name(GaimEvent event);
+
+/*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_EVENT_H_ */

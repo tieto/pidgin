@@ -49,6 +49,13 @@ typedef struct
 
 } GaimDebugUiOps;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**************************************************************************/
+/** @name Debug API                                                       */
+/**************************************************************************/
 /**
  * Outputs debug information.
  *
@@ -86,6 +93,13 @@ void gaim_debug(GaimDebugLevel level, const char *category,
  */
 void debug_printf(const char *fmt, ...);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name UI Registration Functions                                       */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Sets the UI operations structure to be used when outputting debug
  * information.
@@ -101,5 +115,11 @@ void gaim_set_debug_ui_ops(GaimDebugUiOps *ops);
  * @return The UI operations structure in use.
  */
 GaimDebugUiOps *gaim_get_debug_ui_ops(void);
+
+/*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_DEBUG_H_ */

@@ -160,6 +160,10 @@ typedef void (*GaimRequestInputCb)(void *, const char *);
 typedef void (*GaimRequestActionCb)(void *, int);
 typedef void (*GaimRequestFieldsCb)(void *, GaimRequestFields *fields);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
 /** @name Field List API                                                  */
 /**************************************************************************/
@@ -840,5 +844,9 @@ void gaim_set_request_ui_ops(GaimRequestUiOps *ops);
 GaimRequestUiOps *gaim_get_request_ui_ops(void);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_REQUEST_H_ */

@@ -28,10 +28,6 @@
 /** Data Structures                                                       */
 /**************************************************************************/
 
-typedef enum   _GaimConversationType  GaimConversationType;
-typedef enum   _GaimUnseenState       GaimUnseenState;
-typedef enum   _GaimConvUpdateType    GaimConvUpdateType;
-typedef enum   _GaimTypingState       GaimTypingState;
 typedef struct _GaimWindowUiOps       GaimWindowUiOps;
 typedef struct _GaimWindow            GaimWindow;
 typedef struct _GaimConversationUiOps GaimConversationUiOps;
@@ -42,28 +38,30 @@ typedef struct _GaimChat              GaimChat;
 /**
  * A type of conversation.
  */
-enum _GaimConversationType
+typedef enum
 {
 	GAIM_CONV_UNKNOWN = 0, /**< Unknown conversation type. */
 	GAIM_CONV_IM,          /**< Instant Message.           */
 	GAIM_CONV_CHAT,        /**< Chat room.                 */
 	GAIM_CONV_MISC         /**< A misc. conversation.      */
-};
+
+} GaimConversationType;
 
 /**
  * Unseen text states.
  */
-enum _GaimUnseenState
+typedef enum
 {
 	GAIM_UNSEEN_NONE = 0,  /**< No unseen text in the conversation. */
 	GAIM_UNSEEN_TEXT,      /**< Unseen text in the conversation.    */
 	GAIM_UNSEEN_NICK,      /**< Unseen text and the nick was said.  */
-};
+
+} GaimUnseenState;
 
 /**
  * Conversation update type.
  */
-enum _GaimConvUpdateType
+typedef enum
 {
 	GAIM_CONV_UPDATE_ADD = 0, /**< The buddy associated with the conversation
 							       was added.   */
@@ -83,22 +81,22 @@ enum _GaimConvUpdateType
 	GAIM_CONV_ACCOUNT_ONLINE,  /**< One of the user's accounts went online.  */
 	GAIM_CONV_ACCOUNT_OFFLINE, /**< One of the user's accounts went offline. */
 	GAIM_CONV_UPDATE_AWAY      /**< The other user went away.                */
-};
+
+} GaimConvUpdateType;
 
 /**
  * The typing state of a user.
  */
-enum _GaimTypingState
+typedef enum
 {
 	GAIM_NOT_TYPING = 0,  /**< Not typing.                 */
 	GAIM_TYPING,          /**< Currently typing.           */
 	GAIM_TYPED            /**< Stopped typing momentarily. */
-};
 
+} GaimTypingState;
 
 #include "account.h"
 #include "server.h"
-
 
 /**
  * Conversation window operations.
@@ -237,6 +235,10 @@ struct _GaimConversation
 };
 
 typedef void (*GaimConvPlacementFunc)(GaimConversation *);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**************************************************************************/
 /** @name Conversation Window API                                         */
@@ -1177,5 +1179,9 @@ GaimWindowUiOps *gaim_get_win_ui_ops(void);
 void gaim_conversation_init(void);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_CONVERSATION_H_ */

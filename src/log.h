@@ -50,6 +50,10 @@ struct log_conversation {
         struct log_conversation *next;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern GList *log_conversations;
 
 FILE *open_log_file (const char *, int);
@@ -58,5 +62,9 @@ void rm_log(struct log_conversation *);
 struct log_conversation *find_log_info(const char *);
 void update_log_convs();
 char *html_logize(const char *p);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_LOG_H_ */

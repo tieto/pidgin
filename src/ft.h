@@ -112,6 +112,10 @@ struct gaim_xfer
 	void *data;                       /**< prpl-specific data.     */
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
 /** @name File Transfer API                                               */
 /**************************************************************************/
@@ -487,5 +491,9 @@ void gaim_set_xfer_ui_ops(struct gaim_xfer_ui_ops *ops);
 struct gaim_xfer_ui_ops *gaim_get_xfer_ui_ops(void);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_FT_H_ */

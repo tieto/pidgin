@@ -304,6 +304,11 @@ struct _GaimPluginProtocolInfo
 #define GAIM_PLUGIN_PROTOCOL_INFO(plugin) \
 	((GaimPluginProtocolInfo *)(plugin)->info->extra_info)
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Returns the plugin ID for a protocol number.
  *
@@ -362,5 +367,9 @@ void set_icon_data(GaimConnection *gc, const char *who, void *data, int len);
  * @return The buddy icon data.
  */
 void *get_icon_data(GaimConnection *gc, const char *who, int *len);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _PRPL_H_ */
