@@ -70,7 +70,7 @@ static char *nap_name()
 
 
 /* FIXME: Make this use va_arg stuff */
-static void nap_write_packet(struct gaim_connection *gc, unsigned short command, char *message)
+static void nap_write_packet(struct gaim_connection *gc, unsigned short command, const char *message)
 {
 	struct nap_data *ndata = (struct nap_data *)gc->proto_data;
 	unsigned short size;
@@ -514,7 +514,7 @@ static int nap_chat_send(struct gaim_connection *gc, int id, char *message)
 	return 0;
 }
 
-static void nap_add_buddy(struct gaim_connection *gc, char *name)
+static void nap_add_buddy(struct gaim_connection *gc, const char *name)
 {
 	nap_write_packet(gc, 0xCF, name);
 }

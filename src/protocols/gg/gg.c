@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 3453 2002-08-25 10:51:24Z seanegan $
+ * $Id: gg.c 3516 2002-08-29 01:47:15Z seanegan $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -104,7 +104,7 @@ static char *agg_name()
 	return "Gadu-Gadu";
 }
 
-static gchar *charset_convert(const gchar *locstr, char *encsrc, char *encdst)
+static gchar *charset_convert(const gchar *locstr, const char *encsrc, const char *encdst)
 {
 #ifdef HAVE_ICONV
 	gchar *result = NULL;
@@ -114,7 +114,7 @@ static gchar *charset_convert(const gchar *locstr, char *encsrc, char *encdst)
 	return g_strdup(locstr);
 }
 
-static gboolean invalid_uin(char *uin)
+static gboolean invalid_uin(const char *uin)
 {
 	unsigned long int res = strtol(uin, (char **)NULL, 10);
 	if (res == LONG_MIN || res == LONG_MAX || res == 0)
@@ -159,9 +159,9 @@ static gboolean allowed_uin(struct gaim_connection *gc, char *uin)
 	}
 }
 
-static gchar *find_local_charset(void)
+static const gchar *find_local_charset(void)
 {
-	gchar *gg_localenc = g_getenv("GG_CHARSET");
+	const gchar *gg_localenc = g_getenv("GG_CHARSET");
 
 	if (gg_localenc == NULL) {
 #ifdef HAVE_LANGINFO_CODESET
@@ -607,7 +607,7 @@ static int agg_send_im(struct gaim_connection *gc, char *who, char *msg, int len
 	return 1;
 }
 
-static void agg_add_buddy(struct gaim_connection *gc, char *who)
+static void agg_add_buddy(struct gaim_connection *gc, const char *who)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (invalid_uin(who))
@@ -1066,9 +1066,9 @@ static void delete_buddies_server(struct gaim_connection *gc)
 	}
 }
 
-static void agg_dir_search(struct gaim_connection *gc, char *first, char *middle,
-			   char *last, char *maiden, char *city, char *state,
-			   char *country, char *email)
+static void agg_dir_search(struct gaim_connection *gc, const char *first, const char *middle,
+			   const char *last, const char *maiden, const char *city, const char *state,
+			   const char *country, const char *email)
 {
 	struct agg_http *srch = g_new0(struct agg_http, 1);
 	srch->gc = gc;
@@ -1115,7 +1115,7 @@ static void agg_dir_search(struct gaim_connection *gc, char *first, char *middle
 	}
 }
 
-static void agg_change_passwd(struct gaim_connection *gc, char *old, char *new)
+static void agg_change_passwd(struct gaim_connection *gc, const char *old, const char *new)
 {
 	struct agg_http *hpass = g_new0(struct agg_http, 1);
 	gchar *u = gg_urlencode(gc->username);

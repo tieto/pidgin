@@ -36,7 +36,7 @@
  * @param type The type of the item, 0x0001 for a contact, 0x0002 for a group, etc.
  * @return The newly created item.
  */
-static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, struct aim_ssi_item *parent, char *name, fu16_t type)
+static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, struct aim_ssi_item *parent, const char *name, fu16_t type)
 {
 	int i;
 	struct aim_ssi_item *cur, *newitem;
@@ -192,7 +192,7 @@ faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list
  * @param type The type of the desired item.
  * @return Return a pointer to the item if found, else return NULL;
  */
-faim_export struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, char *gn, char *sn, fu16_t type)
+faim_export struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const char *gn, const char *sn, fu16_t type)
 {
 	struct aim_ssi_item *cur;
 	if (!list)
@@ -490,7 +490,7 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
  * @param num The number of screen names you are adding (size of the sn array).
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, char *gn, char **sn, unsigned int num)
+faim_export int aim_ssi_addbuddies(aim_session_t *sess, aim_conn_t *conn, const char *gn, const char **sn, unsigned int num)
 {
 	struct aim_ssi_item *parentgroup, **newitems;
 	fu16_t i;
@@ -644,7 +644,7 @@ faim_export int aim_ssi_addgroups(aim_session_t *sess, aim_conn_t *conn, char **
  *        #defines in aim.h.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_addpord(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num, fu16_t type)
+faim_export int aim_ssi_addpord(aim_session_t *sess, aim_conn_t *conn, const char **sn, unsigned int num, fu16_t type)
 {
 	struct aim_ssi_item **newitems;
 	fu16_t i;
@@ -992,7 +992,7 @@ faim_export int aim_ssi_delgroups(aim_session_t *sess, aim_conn_t *conn, char **
  * @param num The number of items you are deleting (size of the sn array).
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_delpord(aim_session_t *sess, aim_conn_t *conn, char **sn, unsigned int num, fu16_t type) {
+faim_export int aim_ssi_delpord(aim_session_t *sess, aim_conn_t *conn, const char **sn, unsigned int num, fu16_t type) {
 	struct aim_ssi_item *cur, **delitems;
 	int i;
 

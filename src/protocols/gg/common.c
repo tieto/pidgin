@@ -1,4 +1,4 @@
-/* $Id: common.c 2859 2001-12-05 09:48:56Z warmenhoven $ */
+/* $Id: common.c 3516 2002-08-29 01:47:15Z seanegan $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -41,6 +41,7 @@
 #endif
 #include "libgg.h"
 #include "config.h"
+#include <glib.h>
 
 /*
  * gg_debug()
@@ -255,21 +256,22 @@ void gg_chomp(char *line)
  * zwraca zaalokowany bufor, który wypada³oby kiedy¶ zwolniæ albo NULL
  * w przypadku b³êdu.
  */
-char *gg_urlencode(char *str)
+char *gg_urlencode(const char *str)
 {
-	char *p, *q, *buf, hex[] = "0123456789abcdef";
+	const char *p, hex[] = "0123456789abcdef";
+	char *q, *buf;
+
 	int size = 0;
 
 	if (!str)
-		str = strdup("");
+		str = "";
 
 	for (p = str; *p; p++, size++) {
 		if (!((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9')))
 			size += 2;
 	}
 
-	if (!(buf = malloc(size + 1)))
-		return NULL;
+	buf = g_new(char, size + 1);
 
 	for (p = str, q = buf; *p; p++, q++) {
 		if ((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9'))
@@ -298,7 +300,7 @@ char *gg_urlencode(char *str)
  * manipulacjach w³asnego wpisu w katalogu publicznym.
  */
 
-int gg_http_hash(unsigned char *email, unsigned char *password)
+int gg_http_hash(const unsigned char *email, const unsigned char *password)
 {
 	unsigned int a, c;
 	int b, i;

@@ -31,6 +31,7 @@ version 0.60:
 		- Buddy Icons
 		- IM Images
 		- Alert Dialogs
+		- GtkIMHtml tooltips Pangonated
 	* Notify.c plugin rewritten; check its configure dialog (Thanks,
 	  Etan Reisner)
 	* TOC no longer compiles statically by default--use OSCAR
@@ -51,11 +52,12 @@ version 0.60:
 	  circuitable in perl.  (Thanks Ryan McCabe)
 	* Improved MSN internationalization (Thanks A Lee)
 	* Can get info for ICQ and Jabber users from the "Edit
-	  Buddies" tab (Thanks click81)
+	  Buddies" tab (Thanks Brian Bernas)
 	* Option to log IMs and Chats seperately.  (Thanks Etan
 	  Reisner)
 	* Nice Oscar changes--mostly internal (Thanks Mark Doliner)
 	* event_del_conversation for plugins (Thanks Bill Tompkins)
+	* Code cleanups and fixes (Thanks Federico Mena Quintero)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

@@ -1494,7 +1494,7 @@ static void im_callback(GtkWidget *widget, GtkTree *tree)
 	GList *i;
 	struct buddy_show *b = NULL;
 	struct conversation *c;
-	i = GTK_TREE_SELECTION(tree);
+	i = GTK_TREE_SELECTION_OLD(tree);
 	if (i) {
 		b = gtk_object_get_user_data(GTK_OBJECT(i->data));
 	}
@@ -1520,7 +1520,7 @@ static void info_callback(GtkWidget *widget, GtkTree *tree)
 {
 	GList *i;
 	struct buddy_show *b = NULL;
-	i = GTK_TREE_SELECTION(tree);
+	i = GTK_TREE_SELECTION_OLD(tree);
 	if (i) {
 		b = gtk_object_get_user_data(GTK_OBJECT(i->data));
 	}
@@ -2017,23 +2017,15 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 }
 
 void hide_buddy_list() {
-#ifdef USE_APPLET
-	applet_destroy_buddy(NULL, NULL, NULL);
-#else
-	XIconifyWindow(GDK_DISPLAY(),
-			GDK_WINDOW_XWINDOW(blist->window),
-			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
-#endif
+	if (blist)
+		XIconifyWindow(GDK_DISPLAY(),
+			       GDK_WINDOW_XWINDOW(blist->window),
+			       ((_XPrivDisplay)GDK_DISPLAY())->default_screen);
 }
 
 void unhide_buddy_list() {
-#ifdef USE_APPLET
-	if (!applet_buddy_show) {
-		applet_buddy_show = TRUE;
-		createOnlinePopup();
-	}
-#endif /* USE_APPLET */
-	gdk_window_show(blist->window);
+	if (blist)
+		gdk_window_show(blist->window);
 }
 
 static gint log_timeout(struct buddy_show *b)
@@ -2483,7 +2475,7 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 	gtk_container_add(GTK_CONTAINER(menuitem), label);
 	gtk_widget_show(label);
 
-	gtk_widget_add_accelerator(menuitem, "activate-item", accel, str[0],
+	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
 				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
 	gtk_widget_lock_accelerators(menuitem);
 
@@ -2652,7 +2644,7 @@ void show_buddy_list()
 	gtk_window_set_policy(GTK_WINDOW(blist), TRUE, TRUE, TRUE);
 
 	accel = gtk_accel_group_new();
-	gtk_accel_group_attach(accel, GTK_OBJECT(blist));
+	gtk_accel_group_attach(accel, G_OBJECT(blist));
 
 	menubar = gtk_menu_bar_new();
 

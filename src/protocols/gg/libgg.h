@@ -1,4 +1,4 @@
-/* $Id: libgg.h 2897 2001-12-14 18:24:10Z warmenhoven $ */
+/* $Id: libgg.h 3516 2002-08-29 01:47:15Z seanegan $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -375,8 +375,8 @@ char *gg_get_line(char **ptr);
 int gg_connect(void *addr, int port, int async);
 void gg_read_line(int sock, char *buf, int length);
 void gg_chomp(char *line);
-char *gg_urlencode(char *str);
-int gg_http_hash(unsigned char *email, unsigned char *password);
+char *gg_urlencode(const char *str);
+int gg_http_hash(const unsigned char *email, const unsigned char *password);
 
 #define GG_APPMSG_HOST "appmsg.gadu-gadu.pl"
 #define GG_APPMSG_PORT 80

@@ -1892,7 +1892,7 @@ static int msn_chat_send(struct gaim_connection *gc, int id, char *message)
 	return 0;
 }
 
-static void msn_chat_invite(struct gaim_connection *gc, int id, char *msg, char *who)
+static void msn_chat_invite(struct gaim_connection *gc, int id, const char *msg, const char *who)
 {
 	struct msn_switchboard *ms = msn_find_switch_by_id(gc, id);
 	char buf[MSN_BUF_LEN];
@@ -2062,7 +2062,7 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 	return m;
 }
 
-static void msn_add_buddy(struct gaim_connection *gc, char *name)
+static void msn_add_buddy(struct gaim_connection *gc, const char *name)
 {
 	struct msn_data *md = gc->proto_data;
 	char *who = msn_normalize(name);
@@ -2114,7 +2114,7 @@ static void msn_act_id(gpointer data, char *entry)
 	char buf[MSN_BUF_LEN];
 	char *alias;
 
-	if (!entry || *entry == NULL) 
+	if (!entry || *entry == '\0') 
 		alias = g_strdup("");
 	else
 		alias = str_to_utf8(entry);

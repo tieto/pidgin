@@ -100,11 +100,11 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 	 * mostly. remove_group is only called from one place, so we'll let it handle it. */
 }
 
-struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, char *show)
+struct buddy *add_buddy(struct gaim_connection *gc, const char *group, const char *buddy, const char *show)
 {
 	struct buddy *b;
 	struct group *g;
-	char *good;
+	const char *good;
 
 	if (!g_slist_find(connections, gc))
 		return NULL;
@@ -143,7 +143,7 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 	return b;
 }
 
-struct group *add_group(struct gaim_connection *gc, char *group)
+struct group *add_group(struct gaim_connection *gc, const char *group)
 {
 	struct group *g = find_group(gc, group);
 	if (g)
@@ -165,7 +165,7 @@ struct group *add_group(struct gaim_connection *gc, char *group)
 	return g;
 }
 
-struct group *find_group(struct gaim_connection *gc, char *group)
+struct group *find_group(struct gaim_connection *gc, const char *group)
 {
 	struct group *g;
 	GSList *grp;
@@ -209,7 +209,7 @@ struct group *find_group(struct gaim_connection *gc, char *group)
 	}
 }
 
-struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
+struct group *find_group_by_buddy(struct gaim_connection *gc, const char *who)
 {
 	struct group *g;
 	struct buddy *b;
@@ -273,7 +273,7 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 	}
 }
 
-struct buddy *find_buddy(struct gaim_connection *gc, char *who)
+struct buddy *find_buddy(struct gaim_connection *gc, const char *who)
 {
 	struct group *g;
 	struct buddy *b;
@@ -690,7 +690,7 @@ gboolean bud_list_cache_exists(struct gaim_connection *gc)
 	return ret;
 }
 
-void do_import(struct gaim_connection *gc, char *filename)
+void do_import(struct gaim_connection *gc, const char *filename)
 {
 	GString *buf = NULL;
 	char first[64];

@@ -198,7 +198,7 @@ struct conversation *new_conversation(char *name)
 }
 
 
-struct conversation *find_conversation(char *name)
+struct conversation *find_conversation(const char *name)
 {
 	char *cuser = g_malloc(1024);
 	struct conversation *c;
@@ -417,20 +417,17 @@ void toggle_sound(GtkWidget *widget, struct conversation *c)
 static void do_save_convo(GtkObject *obj, GtkWidget *wid)
 {
 	struct conversation *c = gtk_object_get_user_data(obj);
-	char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
+	const char *filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
 	FILE *f;
 	if (file_is_dir(filename, wid))
 		return;
-	if ((!c->is_chat && g_list_find(conversations, c)) ||
-	    (c->is_chat && g_slist_find(connections, c->gc) && g_slist_find(c->gc->buddy_chats, c)))
-		filename = g_strdup(filename);
-	else
-		filename = NULL;
+	if (!((!c->is_chat && g_list_find(conversations, c)) ||
+	      (c->is_chat && g_slist_find(connections, c->gc) && g_slist_find(c->gc->buddy_chats, c))))
+ 		filename = NULL;
 	gtk_widget_destroy(wid);
 	if (!filename)
 		return;
 	f = fopen(filename, "w+");
-	g_free(filename);
 	if (!f)
 		return;
 	fprintf(f, "%s", c->history->str);
@@ -454,18 +451,16 @@ void save_convo(GtkWidget *save, struct conversation *c)
 static void do_insert_image(GtkObject *obj, GtkWidget *wid)
 {
 	struct conversation *c = gtk_object_get_user_data(obj);
-	char *name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
-	char *filename;
+	const char *name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(wid));
+	const char *filename;
 	int pos;
-	char buf[512];
+	char *buf;
 	struct stat st;
 	int id = g_slist_length(c->images) + 1;
 	
 	if (file_is_dir(name, wid))
 		return;
-	if ((!c->is_chat && g_list_find(conversations, c)))
-		name = g_strdup(name);
-	else
+	if (!(!c->is_chat && g_list_find(conversations, c)))
 		name = NULL;
 	gtk_widget_destroy(wid);
 	if (!name)
@@ -480,10 +475,8 @@ static void do_insert_image(GtkObject *obj, GtkWidget *wid)
 	while (strchr(filename, '/')) 
 		filename = strchr(filename, '/') + 1;
 		
-	g_snprintf(buf, sizeof(buf),
-		   "<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
-		   filename, id, (int)st.st_size);
-	
+	buf = g_strdup_printf ("<IMG SRC=\"file://%s\" ID=\"%d\" DATASIZE=\"%d\">",
+			       filename, id, (int)st.st_size);
 	c->images = g_slist_append(c->images, g_strdup(name));
 
 	if (GTK_OLD_EDITABLE(c->entry)->has_selection) {
@@ -495,7 +488,7 @@ static void do_insert_image(GtkObject *obj, GtkWidget *wid)
 		gtk_editable_insert_text(GTK_EDITABLE(c->entry),
 					 buf, strlen(buf), &pos);
 	}
-	g_free(name);
+	g_free(buf);
 }
 
 void insert_image(GtkWidget *save, struct conversation *c)
@@ -3373,17 +3366,10 @@ static gboolean redraw_icon(gpointer data)
 {
 	struct conversation *c = data;
 
-	GList *frames;
-	GdkPixbufFrame *frame;
 	GdkPixbuf *buf;
 	GdkPixbuf *scale;
-	GdkPixmap *src;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
-#if GTK_CHECK_VERSION(1,3,0)
-	GdkPixbufAnimationIter *iter;
-#endif
-	GdkGC *gc;
 	gint delay;
 
 	if (!g_list_find(conversations, c)) {
@@ -3391,7 +3377,6 @@ static gboolean redraw_icon(gpointer data)
 		return FALSE;
 	}
 
-#if GTK_CHECK_VERSION(1,3,0)
 	gdk_pixbuf_animation_iter_advance(c->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(c->iter);
 	scale = gdk_pixbuf_scale_simple(buf,
@@ -3408,75 +3393,6 @@ static gboolean redraw_icon(gpointer data)
 	if (bm)
 		gdk_bitmap_unref(bm);
 	delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter) / 10;
-#else
-	frames = gdk_pixbuf_animation_get_frames(c->anim);
-	frame = g_list_nth_data(frames, c->frame);
-	switch (gdk_pixbuf_frame_get_action(frame)) {
-	case GDK_PIXBUF_FRAME_RETAIN:
-		buf = gdk_pixbuf_frame_get_pixbuf(frame);
-		scale = gdk_pixbuf_scale_simple(buf,
-						MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
-						    gdk_pixbuf_animation_get_width(c->anim), 1),
-						MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
-						    gdk_pixbuf_animation_get_height(c->anim), 1),
-						GDK_INTERP_NEAREST);
-		gdk_pixbuf_render_pixmap_and_mask(scale, &src, &bm, 100);
-		gdk_pixbuf_unref(scale);
-		gtk_pixmap_get(GTK_PIXMAP(c->icon), &pm, NULL);
-		gc = gdk_gc_new(pm);
-		gdk_gc_set_clip_mask(gc, bm);
-
-		gdk_gc_set_clip_origin(gc, gdk_pixbuf_frame_get_x_offset(frame) *
-				       SCALE(c->anim)/gdk_pixbuf_animation_get_width(c->anim),  
-				       gdk_pixbuf_frame_get_y_offset(frame) *
-				       SCALE(c->anim)/gdk_pixbuf_animation_get_height(c->anim));   
-		gdk_draw_pixmap(pm, gc, src, 0, 0, gdk_pixbuf_frame_get_x_offset(frame)*
-				SCALE(c->anim)/gdk_pixbuf_animation_get_width(c->anim),
-				gdk_pixbuf_frame_get_y_offset(frame) * 
-				SCALE(c->anim)/gdk_pixbuf_animation_get_height(c->anim),-1,-1);
-		
-		gdk_pixmap_unref(src);
-		if (bm)
-			gdk_bitmap_unref(bm);
-		gtk_widget_queue_draw(c->icon);
-		gdk_gc_unref(gc);
-		break;
-	case GDK_PIXBUF_FRAME_DISPOSE:
-		buf = gdk_pixbuf_frame_get_pixbuf(frame);
-		scale = gdk_pixbuf_scale_simple(buf,
-						MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
-						    gdk_pixbuf_animation_get_width(c->anim), 1),
-						MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
-						    gdk_pixbuf_animation_get_height(c->anim), 1),
-						GDK_INTERP_NEAREST);
-		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
-		gdk_pixbuf_unref(scale);
-		gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
-		gdk_pixmap_unref(pm);
-		if (bm)
-			gdk_bitmap_unref(bm);
-		break;
-	case GDK_PIXBUF_FRAME_REVERT:
-		frame = frames->data;
-		buf = gdk_pixbuf_frame_get_pixbuf(frame);
-		scale = gdk_pixbuf_scale_simple(buf,
-						MAX(gdk_pixbuf_get_width(buf) * SCALE(c->anim) /
-						    gdk_pixbuf_animation_get_width(c->anim), 1),
-						MAX(gdk_pixbuf_get_height(buf) * SCALE(c->anim) /
-						    gdk_pixbuf_animation_get_height(c->anim), 1),
-						GDK_INTERP_NEAREST);
-		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
-		gdk_pixbuf_unref(scale);
-		gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
-		gdk_pixmap_unref(pm);
-		if (bm)
-			gdk_bitmap_unref(bm);
-		break;
-	}
-
-	c->frame = (c->frame + 1) % g_list_length(frames);
-	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
-#endif
 
 	c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 	return FALSE;
@@ -3491,16 +3407,8 @@ static void stop_anim(GtkObject *obj, struct conversation *c)
 
 static void start_anim(GtkObject *obj, struct conversation *c)
 {
-	GList *frames;
-	GdkPixbufFrame *frame;
 	int delay;
-#if GTK_CHECK_VERSION(1,3,0)
 	delay = gdk_pixbuf_animation_iter_get_delay_time(c->iter) / 10;
-#else
-	frames = gdk_pixbuf_animation_get_frames(c->anim);
-	frame = g_list_nth_data(frames, c->frame);
-	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
-#endif
 	if (c->anim)
 	    c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 }
@@ -3515,7 +3423,7 @@ static int des_save_icon(GtkObject *obj, GdkEvent *e, struct conversation *c)
 static void do_save_icon(GtkObject *obj, struct conversation *c)
 {
 	FILE *file;
-	char *f = gtk_file_selection_get_filename(GTK_FILE_SELECTION(c->save_icon));
+	const char *f = gtk_file_selection_get_filename(GTK_FILE_SELECTION(c->save_icon));
 	if (file_is_dir(f, c->save_icon))
 		return;
 
@@ -3666,16 +3574,13 @@ void update_smilies(struct conversation *c)
 
 void update_icon(struct conversation *c)
 {
-#if USE_PIXBUF || GTK_CHECK_VERSION(1,3,0)
 	char filename[256];
 	FILE *file;
-#if GTK_CHECK_VERSION(1,3,0)
 	GError *err = NULL;
-#endif
+
 	void *data;
 	int len, delay;
 
-	GList *frames;
 	GdkPixbuf *buf;
 
 	GtkWidget *event;
@@ -3709,22 +3614,17 @@ void update_icon(struct conversation *c)
 	fwrite(data, 1, len, file);
 	fclose(file);
 
-#if GTK_CHECK_VERSION(1,3,0)
 	c->anim = gdk_pixbuf_animation_new_from_file(filename, &err);
 	if (err) {
 		debug_printf("Buddy icon error: %s\n", err->message);
 		g_error_free(err);
 	}
-#else
-	c->anim = gdk_pixbuf_animation_new_from_file(filename);
-#endif
 	/* make sure we remove the file as soon as possible */
 	unlink(filename);
 
 	if (!c->anim)
 		return;
 
-#if GTK_CHECK_VERSION(1,3,0)
 	if (gdk_pixbuf_animation_is_static_image(c->anim)) {
 		c->iter = NULL;
 		delay = 0;
@@ -3743,23 +3643,6 @@ void update_icon(struct conversation *c)
 						    gdk_pixbuf_animation_get_height(c->anim), 1),
 						GDK_INTERP_NEAREST);
 	
-#else
-		c->frame = 1;
-		frames = gdk_pixbuf_animation_get_frames(c->anim);
-		buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
-		sf = SCALE(c->anim);
-		scale = gdk_pixbuf_scale_simple(buf,
-						MAX(gdk_pixbuf_get_width(buf) * sf /
-						    gdk_pixbuf_animation_get_width(c->anim), 1),
-						MAX(gdk_pixbuf_get_height(buf) * sf /
-						    gdk_pixbuf_animation_get_height(c->anim), 1),
-						GDK_INTERP_NEAREST);
-		if (gdk_pixbuf_animation_get_num_frames(c->anim) > 1) {
-			delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
-		} else { 
-			delay = 0;
-		}
-#endif
 	if (delay)
 		c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
 	
@@ -3786,7 +3669,6 @@ void update_icon(struct conversation *c)
 	gdk_pixmap_unref(pm);
 	if (bm)
 		gdk_bitmap_unref(bm);
-#endif
 	
 }
 

@@ -710,7 +710,6 @@ static void handle_mode(struct gaim_connection *gc, char *word[], char *word_eol
 static void handle_version(struct gaim_connection *gc, char *word[], char *word_eol[], int num)
 {
 	struct irc_data *id = gc->proto_data;
-	char buf[IRC_BUF_LEN];
 	GString *str;
 
 	id->liststr = g_string_new("");
@@ -1754,7 +1753,7 @@ static int send_msg(struct gaim_connection *gc, char *who, char *what)
 		return handle_command(gc, who, what);
 }
 
-static void irc_chat_invite(struct gaim_connection *gc, int idn, char *message, char *name) {
+static void irc_chat_invite(struct gaim_connection *gc, int idn, const char *message, const char *name) {
 	char buf[IRC_BUF_LEN]; 
 	struct irc_data *id = gc->proto_data;
 	struct conversation *c = irc_find_chat_by_id(gc, idn);
@@ -1770,7 +1769,7 @@ static int irc_send_im(struct gaim_connection *gc, char *who, char *what, int le
 }
 
 /* IRC doesn't have a buddy list, but we can still figure out who's online with ISON */
-static void irc_add_buddy(struct gaim_connection *gc, char *who) {}
+static void irc_add_buddy(struct gaim_connection *gc, const char *who) {}
 static void irc_remove_buddy(struct gaim_connection *gc, char *who, char *group) {}
 
 static GList *irc_chat_info(struct gaim_connection *gc)

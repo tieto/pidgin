@@ -188,7 +188,7 @@ static struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum ya
 	return pkt;
 }
 
-static void yahoo_packet_hash(struct yahoo_packet *pkt, int key, char *value)
+static void yahoo_packet_hash(struct yahoo_packet *pkt, int key, const char *value)
 {
 	struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
 	pair->key = key;
@@ -1321,7 +1321,7 @@ static void yahoo_keepalive(struct gaim_connection *gc)
 	yahoo_packet_free(pkt);
 }
 
-static void yahoo_add_buddy(struct gaim_connection *gc, char *who)
+static void yahoo_add_buddy(struct gaim_connection *gc, const char *who)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;

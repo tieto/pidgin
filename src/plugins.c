@@ -144,7 +144,7 @@ static void load_file(GtkWidget *w, gpointer data)
 
 static void load_which_plugin(GtkWidget *w, gpointer data)
 {
-	char *file;
+	const char *file;
 	struct gaim_plugin *p;
 	
 	file = (char *)gtk_file_selection_get_filename(GTK_FILE_SELECTION(plugin_dialog));
@@ -539,8 +539,8 @@ static void hide_plugins(GtkWidget *w, gpointer data)
 static const gchar *plugin_makelistname(GModule *module)
 {
 	static gchar filename[PATHSIZE];
-	gchar *filepath = (char *)g_module_name(module);
-	char *cp;
+	const gchar *filepath = (char *)g_module_name(module);
+	const char *cp;
 
 	if (filepath == NULL || strlen(filepath) == 0)
 		return NULL;

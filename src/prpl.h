@@ -119,26 +119,26 @@ struct prpl {
 	void (* get_info)	(struct gaim_connection *, char *who);
 	void (* set_away)	(struct gaim_connection *, char *state, char *message);
 	void (* get_away)       (struct gaim_connection *, char *who);
-	void (* set_dir)	(struct gaim_connection *, char *first,
-							   char *middle,
-							   char *last,
-							   char *maiden,
-							   char *city,
-							   char *state,
-							   char *country,
+	void (* set_dir)	(struct gaim_connection *, const char *first,
+							   const char *middle,
+							   const char *last,
+							   const char *maiden,
+							   const char *city,
+							   const char *state,
+							   const char *country,
 							   int web);
 	void (* get_dir)	(struct gaim_connection *, char *who);
-	void (* dir_search)	(struct gaim_connection *, char *first,
-							   char *middle,
-							   char *last,
-							   char *maiden,
-							   char *city,
-							   char *state,
-							   char *country,
-							   char *email);
+	void (* dir_search)	(struct gaim_connection *, const char *first,
+							   const char *middle,
+							   const char *last,
+							   const char *maiden,
+							   const char *city,
+							   const char *state,
+							   const char *country,
+							   const char *email);
 	void (* set_idle)	(struct gaim_connection *, int idletime);
-	void (* change_passwd)	(struct gaim_connection *, char *old, char *new);
-	void (* add_buddy)	(struct gaim_connection *, char *name);
+	void (* change_passwd)	(struct gaim_connection *, const char *old, const char *new);
+	void (* add_buddy)	(struct gaim_connection *, const char *name);
 	void (* add_buddies)	(struct gaim_connection *, GList *buddies);
 	void (* remove_buddy)	(struct gaim_connection *, char *name, char *group);
 	void (* remove_buddies)	(struct gaim_connection *, GList *buddies, char *group);
@@ -149,7 +149,7 @@ struct prpl {
 	void (* set_permit_deny)(struct gaim_connection *);
 	void (* warn)		(struct gaim_connection *, char *who, int anonymous);
 	void (* join_chat)	(struct gaim_connection *, GList *data);
-	void (* chat_invite)	(struct gaim_connection *, int id, char *who, char *message);
+	void (* chat_invite)	(struct gaim_connection *, int id, const char *who, const char *message);
 	void (* chat_leave)	(struct gaim_connection *, int id);
 	void (* chat_whisper)	(struct gaim_connection *, int id, char *who, char *message);
 	int  (* chat_send)	(struct gaim_connection *, int id, char *message);

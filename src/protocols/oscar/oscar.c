@@ -1818,7 +1818,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
-	sprintf(buf, _("Your message to %s did not get sent: %s"), destn);
+	sprintf(buf, _("Your message to %s did not get sent:"), destn);
 	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
 
 	return 1;
@@ -1835,7 +1835,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
-	sprintf(buf, _("User information for %s unavailable: %s"), destn);
+	sprintf(buf, _("User information for %s unavailable:"), destn);
 	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
 
 	return 1;
@@ -2843,8 +2843,8 @@ static void oscar_get_caps(struct gaim_connection *g, char *name) {
 	aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_CAPABILITIES);
 }
 
-static void oscar_set_dir(struct gaim_connection *g, char *first, char *middle, char *last,
-			  char *maiden, char *city, char *state, char *country, int web) {
+static void oscar_set_dir(struct gaim_connection *g, const char *first, const char *middle, const char *last,
+			  const char *maiden, const char *city, const char *state, const char *country, int web) {
 	/* FIXME : some of these things are wrong, but i'm lazy */
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	aim_setdirectoryinfo(odata->sess, odata->conn, first, middle, last,
@@ -2975,14 +2975,14 @@ static void oscar_warn(struct gaim_connection *g, char *name, int anon) {
 	aim_send_warning(odata->sess, odata->conn, name, anon ? AIM_WARN_ANON : 0);
 }
 
-static void oscar_dir_search(struct gaim_connection *g, char *first, char *middle, char *last,
-			     char *maiden, char *city, char *state, char *country, char *email) {
+static void oscar_dir_search(struct gaim_connection *g, const char *first, const char *middle, const char *last,
+			     const char *maiden, const char *city, const char *state, const char *country, const char *email) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	if (strlen(email))
 		aim_usersearch_address(odata->sess, odata->conn, email);
 }
 
-static void oscar_add_buddy(struct gaim_connection *g, char *name) {
+static void oscar_add_buddy(struct gaim_connection *g, const char *name) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	if (odata->icq) {
 		aim_add_buddy(odata->sess, odata->conn, name);
@@ -3124,7 +3124,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct aim_ssi_item *curitem;
 	int tmp;
-	char **sns;
+	const char **sns;
 
 	debug_printf("ssi: syncing local list and server list\n");
 
@@ -3218,7 +3218,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, ((struct buddy*)curbud->data)->name, 0x0000))
 					tmp++;
 			if (tmp) {
-				sns = (char **)malloc(tmp*sizeof(char*));
+				sns = malloc(tmp*sizeof(char*));
 				tmp = 0;
 				for (curbud=((struct group*)cur->data)->members; curbud; curbud=curbud->next)
 					if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, ((struct buddy*)curbud->data)->name, 0x0000)) {
@@ -3239,7 +3239,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0002))
 					tmp++;
 			if (tmp) {
-				sns = (char **)malloc(tmp*sizeof(char*));
+				sns = malloc(tmp*sizeof(char*));
 				tmp = 0;
 				for (cur=gc->permit; cur; cur=cur->next)
 					if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0002)) {
@@ -3259,7 +3259,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 				if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0003))
 					tmp++;
 			if (tmp) {
-				sns = (char **)malloc(tmp*sizeof(char*));
+				sns = malloc(tmp*sizeof(char*));
 				tmp = 0;
 				for (cur=gc->deny; cur; cur=cur->next)
 					if (!aim_ssi_itemlist_finditem(sess->ssi.items, NULL, cur->data, 0x0003)) {
@@ -3340,7 +3340,7 @@ static void oscar_join_chat(struct gaim_connection *g, GList *data) {
 	}
 }
 
-static void oscar_chat_invite(struct gaim_connection *g, int id, char *message, char *name) {
+static void oscar_chat_invite(struct gaim_connection *g, int id, const char *message, const char *name) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	struct chat_connection *ccon = find_oscar_chat(g, id);
 	
@@ -3809,7 +3809,7 @@ static void oscar_add_permit(struct gaim_connection *gc, char *who) {
 	} else {
 		debug_printf("ssi: About to add a permit\n");
 		if (od->sess->ssi.received_data)
-			aim_ssi_addpord(od->sess, od->conn, &who, 1, AIM_SSI_TYPE_PERMIT);
+			aim_ssi_addpord(od->sess, od->conn, (const char **) &who, 1, AIM_SSI_TYPE_PERMIT);
 	}
 }
 
@@ -3821,7 +3821,7 @@ static void oscar_add_deny(struct gaim_connection *gc, char *who) {
 	} else {
 		debug_printf("ssi: About to add a deny\n");
 		if (od->sess->ssi.received_data)
-			aim_ssi_addpord(od->sess, od->conn, &who, 1, AIM_SSI_TYPE_DENY);
+			aim_ssi_addpord(od->sess, od->conn, (const char **) &who, 1, AIM_SSI_TYPE_DENY);
 	}
 }
 
@@ -3946,7 +3946,7 @@ static GList *oscar_actions()
 	return m;
 }
 
-static void oscar_change_passwd(struct gaim_connection *gc, char *old, char *new)
+static void oscar_change_passwd(struct gaim_connection *gc, const char *old, const char *new)
 {
 	struct oscar_data *od = gc->proto_data;
 	if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH)) {

@@ -429,7 +429,7 @@ static void des_icon_sel(GtkWidget *w, struct mod_user *u)
 static void set_icon(GtkWidget *w, struct mod_user *u)
 {
 	GtkWidget *sel = u->icondlg;
-	char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sel));
+	const char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sel));
 
 	if (file_is_dir(file, sel))
 		return;

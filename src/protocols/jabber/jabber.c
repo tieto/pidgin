@@ -380,7 +380,7 @@ static gaim_jid gaim_jid_new(char *name)
  * reponsible for freeing that via gaim_jid_free() when done
  * with it.
  */
-static gchar *get_realwho(gjconn gjc, char *who, int incl_resource, gaim_jid *gjid)
+static gchar *get_realwho(gjconn gjc, const char *who, int incl_resource, gaim_jid *gjid)
 {
 	gaim_jid my_gjid;
 	gchar *my_who;
@@ -927,7 +927,7 @@ static gboolean find_chat_buddy(struct conversation *b, char *name)
 /*
  * Remove a buddy from the (gaim) buddylist (if he's on it)
  */
-static void jabber_remove_gaim_buddy(struct gaim_connection *gc, char *buddyname)
+static void jabber_remove_gaim_buddy(struct gaim_connection *gc, const char *buddyname)
 {
 	struct buddy *b;
 
@@ -941,7 +941,7 @@ static void jabber_remove_gaim_buddy(struct gaim_connection *gc, char *buddyname
 	}
 }
 
-static void jabber_change_passwd(struct gaim_connection *gc, char *old, char *new)
+static void jabber_change_passwd(struct gaim_connection *gc, const char *old, const char *new)
 {
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
 
@@ -2395,7 +2395,7 @@ static void jabber_rename_group(struct gaim_connection *gc,
 		}
 }
 
-static void jabber_add_buddy(struct gaim_connection *gc, char *name)
+static void jabber_add_buddy(struct gaim_connection *gc, const char *name)
 {
 	xmlnode x;
 	char *realwho;
@@ -2726,7 +2726,7 @@ static void jabber_join_chat(struct gaim_connection *gc, GList *data)
 	g_free(realwho);
 }
 
-static void jabber_chat_invite(struct gaim_connection *gc, int id, char *message, char *name)
+static void jabber_chat_invite(struct gaim_connection *gc, int id, const char *message, const char *name)
 {
 	xmlnode x, y;
 	struct jabber_data *jd = gc->proto_data;

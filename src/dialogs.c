@@ -551,11 +551,10 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 /*  The dialog for getting an error                                       */
 /*------------------------------------------------------------------------*/
 
-GtkWidget *do_error_dialog(char *primary, char *secondary, int type)
+GtkWidget *do_error_dialog(const char *primary, const char *secondary, int type)
 {
 	GtkWidget *d;
 	GtkWidget *label;
-	GtkWidget *close;
 	GtkWidget *img = NULL;
 	GtkWidget *hbox;
 	char labeltext[1024 * 2];
@@ -878,7 +877,7 @@ extern void add_callback(GtkWidget *, struct conversation *);
 
 void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 {
-	char *grp, *who, *whoalias;
+	const char *grp, *who, *whoalias;
 	struct conversation *c;
 
 	who = gtk_entry_get_text(GTK_ENTRY(a->entry));
@@ -901,7 +900,7 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 
 void do_add_group(GtkWidget *w, struct addbuddy *a)
 {
-	char *grp;
+	const char *grp;
 
 	grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
 
@@ -1936,14 +1935,14 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 
 void do_set_dir(GtkWidget *widget, struct set_dir_dlg *b)
 {
-	char *first = gtk_entry_get_text(GTK_ENTRY(b->first));
+	const char *first = gtk_entry_get_text(GTK_ENTRY(b->first));
 	int web = GTK_TOGGLE_BUTTON(b->web)->active;
-	char *middle = gtk_entry_get_text(GTK_ENTRY(b->middle));
-	char *last = gtk_entry_get_text(GTK_ENTRY(b->last));
-	char *maiden = gtk_entry_get_text(GTK_ENTRY(b->maiden));
-	char *city = gtk_entry_get_text(GTK_ENTRY(b->city));
-	char *state = gtk_entry_get_text(GTK_ENTRY(b->state));
-	char *country = gtk_entry_get_text(GTK_ENTRY(b->country));
+	const char *middle = gtk_entry_get_text(GTK_ENTRY(b->middle));
+	const char *last = gtk_entry_get_text(GTK_ENTRY(b->last));
+	const char *maiden = gtk_entry_get_text(GTK_ENTRY(b->maiden));
+	const char *city = gtk_entry_get_text(GTK_ENTRY(b->city));
+	const char *state = gtk_entry_get_text(GTK_ENTRY(b->state));
+	const char *country = gtk_entry_get_text(GTK_ENTRY(b->country));
 
 	serv_set_dir(b->gc, first, middle, last, maiden, city, state, country, web);
 
@@ -2116,7 +2115,7 @@ void show_set_dir(struct gaim_connection *gc)
 
 void do_change_password(GtkWidget *widget, struct passwddlg *b)
 {
-	gchar *orig, *new1, *new2;
+	const gchar *orig, *new1, *new2;
 
 	orig = gtk_entry_get_text(GTK_ENTRY(b->original));
 	new1 = gtk_entry_get_text(GTK_ENTRY(b->new1));
@@ -2420,7 +2419,7 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 static void do_add_perm(GtkWidget *w, struct addperm *p)
 {
 
-	char *who;
+	const char *who;
 	char *name;
 
 
@@ -2575,7 +2574,7 @@ void do_log(GtkWidget *w, struct conversation *c)
 {
 	struct log_conversation *l;
 	char buf[128];
-	char *file;
+	const char *file;
 	char path[PATHSIZE];
 
 	if (!find_log_info(c->name)) {
@@ -2632,13 +2631,13 @@ void show_log_dialog(struct conversation *c)
 
 void do_find_info(GtkWidget *w, struct findbyinfo *b)
 {
-	char *first;
-	char *middle;
-	char *last;
-	char *maiden;
-	char *city;
-	char *state;
-	char *country;
+	const char *first;
+	const char *middle;
+	const char *last;
+	const char *maiden;
+	const char *city;
+	const char *state;
+	const char *country;
 
 	first = gtk_entry_get_text(GTK_ENTRY(b->firstentry));
 	middle = gtk_entry_get_text(GTK_ENTRY(b->middleentry));
@@ -2654,7 +2653,7 @@ void do_find_info(GtkWidget *w, struct findbyinfo *b)
 
 void do_find_email(GtkWidget *w, struct findbyemail *b)
 {
-	char *email;
+	const char *email;
 
 	email = gtk_entry_get_text(GTK_ENTRY(b->emailentry));
 
@@ -2893,7 +2892,7 @@ void cancel_link(GtkWidget *widget, struct conversation *c)
 void do_add_link(GtkWidget *widget, struct linkdlg *b)
 {
 	char *open_tag;
-	char *urltext, *showtext;
+	const char *urltext, *showtext;
 	open_tag = g_malloc(2048);
 
 
@@ -3310,7 +3309,7 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 
 static void do_import_dialog(GtkWidget *w, struct gaim_connection *gc)
 {
-	char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
+	const char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
 	if (file_is_dir(file, importdialog)) {
 		return;
 	}
@@ -3563,7 +3562,6 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_widget_show(ca->text);
 
        
-#if GTK_CHECK_VERSION(1,3,0)
 	if (dummy) {
 		struct away_message *amt;
 		GtkTreeIter iter;
@@ -3581,18 +3579,6 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 					 strlen(amt->message), &pos);
 		ca->mess = amt;
 	}
-#else
-	if (dummy && GTK_LIST(prefs_away_list)->selection) {	
-		GtkWidget *item = GTK_LIST(prefs_away_list)->selection->data;
-		struct away_message *amt = gtk_object_get_user_data(GTK_OBJECT(item));
-		int pos = 0;
-		gtk_entry_set_text(GTK_ENTRY(ca->entry), amt->name);
-		gtk_editable_insert_text(GTK_EDITABLE(ca->text), amt->message,
-					 strlen(amt->message), &pos);
-		ca->mess = amt;
-	}
-#endif	
-	
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(tbox), hbox, FALSE, FALSE, 0);
@@ -3813,7 +3799,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 
 static void do_alias_bud(GtkWidget *w, struct buddy *b)
 {
-	char *al = gtk_entry_get_text(GTK_ENTRY(aliasname));
+	const char *al = gtk_entry_get_text(GTK_ENTRY(aliasname));
 	g_snprintf(b->show, sizeof(b->show), "%s", (al && strlen(al)) ? al : b->name);
 	handle_buddy_rename(b, b->name);
 	serv_alias_buddy(b);
@@ -4328,7 +4314,7 @@ void show_log(char *nm)
 
 static void do_rename_group(GtkObject *obj, GtkWidget *entry)
 {
-	char *new_name;
+	const char *new_name;
 	struct group *g;
 	struct group *orig;
 	struct gaim_connection *gc;
@@ -4428,7 +4414,7 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 
 static void do_rename_buddy(GtkObject *obj, GtkWidget *entry)
 {
-	char *new_name;
+	const char *new_name;
 	struct buddy *b;
 	GSList *gr;
 

@@ -376,7 +376,7 @@ static void icq_keepalive(struct gaim_connection *gc) {
 	icq_KeepAlive(id->link);
 }
 
-static void icq_add_buddy(struct gaim_connection *gc, char *who) {
+static void icq_add_buddy(struct gaim_connection *gc, const char *who) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	icq_ContactAdd(id->link, atol(who));
 	icq_ContactSetVis(id->link, atol(who), TRUE);

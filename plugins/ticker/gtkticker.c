@@ -33,10 +33,6 @@ static void gtk_ticker_size_request  (GtkWidget        *widget,
 				     GtkRequisition   *requisition);
 static void gtk_ticker_size_allocate (GtkWidget        *widget,
 				     GtkAllocation    *allocation);
-static void gtk_ticker_paint         (GtkWidget        *widget,
-				     GdkRectangle     *area);
-static void gtk_ticker_draw          (GtkWidget        *widget,
-				     GdkRectangle     *area);
 static gint gtk_ticker_expose        (GtkWidget        *widget,
 				     GdkEventExpose   *event);
 static void gtk_ticker_add_real      (GtkContainer     *container,
@@ -95,9 +91,6 @@ gtk_ticker_class_init (GtkTickerClass *class)
   widget_class->realize = gtk_ticker_realize;
   widget_class->size_request = gtk_ticker_size_request;
   widget_class->size_allocate = gtk_ticker_size_allocate;
-#if ! GTK_CHECK_VERSION(1,3,0)
-  widget_class->draw = gtk_ticker_draw;
-#endif
   widget_class->expose_event = gtk_ticker_expose;
 
   container_class->add = gtk_ticker_add_real;
@@ -450,45 +443,6 @@ gtk_ticker_size_allocate (GtkWidget     *widget,
     }
 }
 
-static void
-gtk_ticker_paint (GtkWidget    *widget,
-		 GdkRectangle *area)
-{
-  g_return_if_fail (widget != NULL);
-  g_return_if_fail (GTK_IS_TICKER (widget));
-  g_return_if_fail (area != NULL);
-
-  if (GTK_WIDGET_DRAWABLE (widget))
-    gdk_window_clear_area (widget->window, 0, 0, widget->allocation.width, 
-	widget->allocation.height);
-}
-
-static void
-gtk_ticker_draw (GtkWidget    *widget,
-		GdkRectangle *area)
-{
-  GtkTicker *ticker;
-  GtkTickerChild *child;
-  GList *children;
-
-  g_return_if_fail (widget != NULL);
-  g_return_if_fail (GTK_IS_TICKER (widget));
-
-  if (GTK_WIDGET_DRAWABLE (widget))
-    {
-      ticker = GTK_TICKER (widget);
-      gtk_ticker_paint (widget, area);
-
-      children = ticker->children;
-      while (children)
-	{
-	  child = children->data;
-	  children = children->next;
-	    gtk_widget_draw (child->widget, NULL);
-	}
-    }
-}
-
 static gint
 gtk_ticker_expose (GtkWidget *widget, GdkEventExpose *event)
 {
@@ -522,6 +476,7 @@ gtk_ticker_expose (GtkWidget *widget, GdkEventExpose *event)
 
   return FALSE;
 }
+
 
 void       
 gtk_ticker_add(GtkTicker *ticker, GtkWidget *widget)

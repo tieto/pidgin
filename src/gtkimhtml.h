@@ -46,6 +46,7 @@ struct _GtkIMHtml {
 	GtkLayout layout;
 
 	GdkFont *default_font;
+	//	PangoFontDescription *default_font;
 	GdkColor *default_fg_color;
 	GdkColor *default_bg_color;
 	GdkColor *default_hl_color;
@@ -109,10 +110,11 @@ void       gtk_imhtml_set_adjustments  (GtkIMHtml        *imhtml,
 					GtkAdjustment    *hadj,
 					GtkAdjustment    *vadj);
 
-void       gtk_imhtml_set_defaults     (GtkIMHtml        *imhtml,
-					GdkFont          *font,
-					GdkColor         *fg_color,
-					GdkColor         *bg_color);
+void       gtk_imhtml_set_defaults     (GtkIMHtml            *imhtml,
+					GdkFont *font,
+					//PangoFontDescription *font,
+					GdkColor             *fg_color,
+					GdkColor             *bg_color);
 
 void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
 					GtkIMHtmlImage    handler);

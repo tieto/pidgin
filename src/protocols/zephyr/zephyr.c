@@ -732,7 +732,7 @@ static void zephyr_close(struct gaim_connection *gc)
 	z_call(ZClosePort());
 }
 
-static void zephyr_add_buddy(struct gaim_connection *gc, char *buddy) { }
+static void zephyr_add_buddy(struct gaim_connection *gc, const char *buddy) { }
 static void zephyr_remove_buddy(struct gaim_connection *gc, char *buddy, char *group) { }
 
 static int zephyr_chat_send(struct gaim_connection *gc, int id, char *im)

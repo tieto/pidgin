@@ -70,7 +70,8 @@ BuddyTickerDestroyWindow( GtkWidget *window )
 	userclose = TRUE;
 }
 
-static char *msg = "Welcome to Gaim " VERSION ", brought to you by Rob Flynn (maintainer), Eric Warmenhoven, Mark Spencer, Jeramey Crawford, Jim Duchek, Syd Logan, and Sean Egan"; 
+/* static char *msg = "Welcome to Gaim " VERSION ", brought to you by Rob Flynn (maintainer), Eric Warmenhoven, Mark Spencer, Jeramey Crawford, Jim Duchek, Syd Logan, and Sean Egan"; 
+ */
 
 void
 BuddyTickerCreateWindow()
@@ -112,7 +113,7 @@ gint
 ButtonPressCallback( GtkWidget *widget, GdkEvent *event, gpointer callback_data ) 
 {
 	TickerData *p = (TickerData *) callback_data;
-	struct conversation *conv = new_conversation(p->buddy);
+	new_conversation(p->buddy);
 	
 	return TRUE;
 }

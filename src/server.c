@@ -179,15 +179,15 @@ void serv_get_dir(struct gaim_connection *g, char *name)
 		g->prpl->get_dir(g, name);
 }
 
-void serv_set_dir(struct gaim_connection *g, char *first, char *middle, char *last, char *maiden,
-		  char *city, char *state, char *country, int web)
+void serv_set_dir(struct gaim_connection *g, const char *first, const char *middle, const char *last, const char *maiden,
+		  const char *city, const char *state, const char *country, int web)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->set_dir)
 		g->prpl->set_dir(g, first, middle, last, maiden, city, state, country, web);
 }
 
-void serv_dir_search(struct gaim_connection *g, char *first, char *middle, char *last, char *maiden,
-		     char *city, char *state, char *country, char *email)
+void serv_dir_search(struct gaim_connection *g, const char *first, const char *middle, const char *last, const char *maiden,
+		     const char *city, const char *state, const char *country, const char *email)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->dir_search)
 		g->prpl->dir_search(g, first, middle, last, maiden, city, state, country, email);
@@ -238,13 +238,13 @@ void serv_set_info(struct gaim_connection *g, char *info)
 	}
 }
 
-void serv_change_passwd(struct gaim_connection *g, char *orig, char *new)
+void serv_change_passwd(struct gaim_connection *g, const char *orig, const char *new)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->change_passwd)
 		g->prpl->change_passwd(g, orig, new);
 }
 
-void serv_add_buddy(struct gaim_connection *g, char *name)
+void serv_add_buddy(struct gaim_connection *g, const char *name)
 {
 	if (g && g_slist_find(connections, g) && g->prpl && g->prpl->add_buddy)
 		g->prpl->add_buddy(g, name);
@@ -319,7 +319,7 @@ void serv_move_buddy(struct buddy *b, struct group *og, struct group *ng)
 /*
  * Rename a group on server roster/list.
  */
-void serv_rename_group(struct gaim_connection *g, struct group *old_group, char *new_name)
+void serv_rename_group(struct gaim_connection *g, struct group *old_group, const char *new_name)
 {
 	if (g && g->prpl && old_group && new_name) {
 		GList *tobemoved = NULL;
@@ -393,7 +393,7 @@ void serv_join_chat(struct gaim_connection *g, GList *data)
 		g->prpl->join_chat(g, data);
 }
 
-void serv_chat_invite(struct gaim_connection *g, int id, char *message, char *name)
+void serv_chat_invite(struct gaim_connection *g, int id, const char *message, const char *name)
 {
 	char *buffy = message && *message ? g_strdup(message) : NULL;
 	plugin_event(event_chat_send_invite, g, (void *)id, name, &buffy);

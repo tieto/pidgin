@@ -60,10 +60,10 @@ static const char *expected_mozilla_version = "1.1";
 #define MOZILLA_COMMAND_PROP   "_MOZILLA_COMMAND"
 #define MOZILLA_RESPONSE_PROP  "_MOZILLA_RESPONSE"
 
-static GdkAtom XA_MOZILLA_VERSION = 0;
-static GdkAtom XA_MOZILLA_LOCK = 0;
-static GdkAtom XA_MOZILLA_COMMAND = 0;
-static GdkAtom XA_MOZILLA_RESPONSE = 0;
+static GdkAtom GDKA_MOZILLA_VERSION = 0;
+static GdkAtom GDKA_MOZILLA_LOCK = 0;
+static GdkAtom GDKA_MOZILLA_COMMAND = 0;
+static GdkAtom GDKA_MOZILLA_RESPONSE = 0;
 
 
 static int netscape_lock;
@@ -188,14 +188,14 @@ Atom WM_STATE;
 
 static void mozilla_remote_init_atoms()
 {
-	if (!XA_MOZILLA_VERSION)
-		XA_MOZILLA_VERSION = gdk_atom_intern(MOZILLA_VERSION_PROP, 0);
-	if (!XA_MOZILLA_LOCK)
-		XA_MOZILLA_LOCK = gdk_atom_intern(MOZILLA_LOCK_PROP, 0);
-	if (!XA_MOZILLA_COMMAND)
-		XA_MOZILLA_COMMAND = gdk_atom_intern(MOZILLA_COMMAND_PROP, 0);
-	if (!XA_MOZILLA_RESPONSE)
-		XA_MOZILLA_RESPONSE = gdk_atom_intern(MOZILLA_RESPONSE_PROP, 0);
+	if (!GDKA_MOZILLA_VERSION)
+		GDKA_MOZILLA_VERSION = gdk_atom_intern(MOZILLA_VERSION_PROP, 0);
+	if (!GDKA_MOZILLA_LOCK)
+		GDKA_MOZILLA_LOCK = gdk_atom_intern(MOZILLA_LOCK_PROP, 0);
+	if (!GDKA_MOZILLA_COMMAND)
+		GDKA_MOZILLA_COMMAND = gdk_atom_intern(MOZILLA_COMMAND_PROP, 0);
+	if (!GDKA_MOZILLA_RESPONSE)
+		GDKA_MOZILLA_RESPONSE = gdk_atom_intern(MOZILLA_RESPONSE_PROP, 0);
 }
 
 static GdkWindow *mozilla_remote_find_window()
@@ -228,7 +228,8 @@ static GdkWindow *mozilla_remote_find_window()
 		unsigned long nitems, bytesafter;
 		unsigned char *version = 0;
 		Window w = GClientWindow(gdk_display, kids[i]);
-		int status = XGetWindowProperty(gdk_display, w, XA_MOZILLA_VERSION,
+		int status = XGetWindowProperty(gdk_display, w, 
+						gdk_x11_atom_to_xatom(GDKA_MOZILLA_VERSION),
 						0, (65536 / sizeof(long)),
 						False, XA_STRING,
 						&type, &format, &nitems, &bytesafter,
@@ -295,8 +296,8 @@ static void mozilla_remote_obtain_lock(GdkWindow * window)
 		gint nitems;
 		unsigned char *data = 0;
 
-		result = gdk_property_get(window, XA_MOZILLA_LOCK,
-					  XA_STRING, 0,
+		result = gdk_property_get(window, GDKA_MOZILLA_LOCK,
+					  gdk_x11_xatom_to_atom (XA_STRING), 0,
 					  (65536 / sizeof(long)), 0,
 					  &actual_type, &actual_format, &nitems, &data);
 		if (result != Success || actual_type == None) {
@@ -304,7 +305,8 @@ static void mozilla_remote_obtain_lock(GdkWindow * window)
 			debug_printf("%s: (writing " MOZILLA_LOCK_PROP
 				     " \"%s\" to 0x%x)\n", progname, lock_data, (unsigned int)window);
 
-			gdk_property_change(window, XA_MOZILLA_LOCK, XA_STRING,
+			gdk_property_change(window, GDKA_MOZILLA_LOCK, 
+					    gdk_x11_xatom_to_atom (XA_STRING),
 					    8, PropModeReplace,
 					    (unsigned char *)lock_data, strlen(lock_data));
 			locked = True;
@@ -333,7 +335,8 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 	debug_printf("%s: (deleting " MOZILLA_LOCK_PROP
 		     " \"%s\" from 0x%x)\n", progname, lock_data, (unsigned int)window);
 
-	result = gdk_property_get(window, XA_MOZILLA_LOCK, XA_STRING,
+	result = gdk_property_get(window, GDKA_MOZILLA_LOCK, 
+				  gdk_x11_xatom_to_atom (XA_STRING),
 				  0, (65536 / sizeof(long)),
 				  1, &actual_type, &actual_format, &nitems, &data);
 	if (result != Success) {
@@ -378,8 +381,9 @@ static int mozilla_remote_command(GdkWindow * window, const char *command, Bool 
 	debug_printf("%s: (writing " MOZILLA_COMMAND_PROP " \"%s\" to 0x%x)\n",
 		     progname, command, (unsigned int)window);
 
-	gdk_property_change(window, XA_MOZILLA_COMMAND, XA_STRING, 8,
-			    GDK_PROP_MODE_REPLACE, (unsigned char *)command, strlen(command));
+	gdk_property_change(window, GDKA_MOZILLA_COMMAND, 
+			    gdk_x11_xatom_to_atom (XA_STRING), 
+			    8, GDK_PROP_MODE_REPLACE, (unsigned char *)command, strlen(command));
 
 	while (!done) {
 		GdkEvent *event;
@@ -403,13 +407,13 @@ static int mozilla_remote_command(GdkWindow * window, const char *command, Bool 
 		} else if (event->type == GDK_PROPERTY_NOTIFY &&
 			   event->property.state == GDK_PROPERTY_NEW_VALUE &&
 			   event->property.window == window &&
-			   event->property.atom == XA_MOZILLA_RESPONSE) {
+			   event->property.atom == GDKA_MOZILLA_RESPONSE) {
 			GdkAtom actual_type;
 			gint actual_format, nitems;
 			unsigned char *data = 0;
 
-			result = gdk_property_get(window, XA_MOZILLA_RESPONSE,
-						  XA_STRING, 0,
+			result = gdk_property_get(window, GDKA_MOZILLA_RESPONSE,
+						  gdk_x11_xatom_to_atom (XA_STRING), 0,
 						  (65536 / sizeof(long)),
 						  1, &actual_type, &actual_format, &nitems, &data);
 
@@ -464,7 +468,7 @@ static int mozilla_remote_command(GdkWindow * window, const char *command, Bool 
 		} else if (event->type == GDK_PROPERTY_NOTIFY &&
 			   event->property.window == window &&
 			   event->property.state == GDK_PROPERTY_DELETE &&
-			   event->property.atom == XA_MOZILLA_COMMAND) {
+			   event->property.atom == GDKA_MOZILLA_COMMAND) {
 			debug_printf("%s: (server 0x%x has accepted "
 				     MOZILLA_COMMAND_PROP ".)\n", progname, (unsigned int)window);
 		}
@@ -585,7 +589,7 @@ void open_url(GtkWidget *w, char *url)
 			/* args will be allocated below but we don't bother
 			 * freeing it since we're just going to exec and
 			 * exit */
-			char **args;
+			char **args=NULL;
 			char command[1024];
 
 			if (web_browser == BROWSER_OPERA) {

@@ -154,15 +154,15 @@ extern GList *plugins;
 extern GList *callbacks;
 
 /* Functions in buddy.c */
-extern struct buddy *find_buddy(struct gaim_connection *, char *);
-extern struct group *find_group(struct gaim_connection *, char *);
-extern struct group *find_group_by_buddy(struct gaim_connection *, char *);
-extern struct buddy *add_buddy(struct gaim_connection *, char *, char *, char *);
+extern struct buddy *find_buddy(struct gaim_connection *, const char *);
+extern struct group *find_group(struct gaim_connection *, const char *);
+extern struct group *find_group_by_buddy(struct gaim_connection *, const char *);
+extern struct buddy *add_buddy(struct gaim_connection *, const char *, const char *, const char *);
 extern void remove_buddy(struct gaim_connection *, struct group *, struct buddy *);
-extern struct group *add_group(struct gaim_connection *, char *);
+extern struct group *add_group(struct gaim_connection *, const char *);
 extern void remove_group(struct gaim_connection *, struct group *);
 extern void do_export(struct gaim_connection *);
-extern void do_import(struct gaim_connection *, char *);
+extern void do_import(struct gaim_connection *, const char *);
 extern int bud_list_cache_exists(struct gaim_connection *);
 extern void toc_build_config(struct gaim_connection *, char *, int len, gboolean);
 extern void parse_toc_buddy_list(struct gaim_connection *, char *);
@@ -194,7 +194,7 @@ extern void list_perl_scripts();
 
 /* Functions in plugins.c */
 #ifdef GAIM_PLUGINS
-extern struct gaim_plugin *load_plugin(char *);
+extern struct gaim_plugin *load_plugin(const char *);
 extern void unload_plugin(struct gaim_plugin *);
 extern struct gaim_plugin *reload_plugin(struct gaim_plugin *);
 extern void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);

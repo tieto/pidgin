@@ -316,8 +316,8 @@ void join_chat()
 
 static void do_invite(GtkWidget *w, struct conversation *b)
 {
-	char *buddy;
-	char *mess;
+	const char *buddy;
+	const char *mess;
 
 	if (!b->is_chat) {
 		debug_printf("do_invite: expecting chat, got IM\n");

@@ -271,7 +271,6 @@ static void pref_nb_select(GtkTreeSelection *sel, GtkNotebook *nb) {
 /* These are the pages in the preferences notebook */
 GtkWidget *interface_page() {
 	GtkWidget *ret;
-	GtkWidget *frame;
 	GtkWidget *vbox;
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);

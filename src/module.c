@@ -57,7 +57,7 @@ char *last_dir = NULL;
 
 /* --------------- Function Declarations --------------------- */
 
-struct gaim_plugin *  load_plugin(char *);
+struct gaim_plugin *  load_plugin(const char *);
               void  unload_plugin(struct gaim_plugin *p);
 struct gaim_plugin *reload_plugin(struct gaim_plugin *p);
 
@@ -71,7 +71,7 @@ static void plugin_remove_callbacks(GModule *);
 
 /* ------------------ Code Below ---------------------------- */
 
-struct gaim_plugin *load_plugin(char *filename)
+struct gaim_plugin *load_plugin(const char *filename)
 {
 	struct gaim_plugin *plug;
 	GList *c = plugins;

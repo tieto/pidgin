@@ -1238,7 +1238,7 @@ static const char *gaim_mkstemp_templ = {"gaimXXXXXX"};
 
 FILE *gaim_mkstemp(gchar **fpath)
 {
-	gchar *tmpdir;
+	const gchar *tmpdir;
 	int fd;
 	FILE *fp = NULL;
 

@@ -36,7 +36,7 @@ GtkWidget *protomenu = NULL;
 struct _prompt {
 	GtkWidget *window;
 	GtkWidget *entry;
-	void (*doit)(void *, char *);
+	void (*doit)(void *, const char *);
 	void (*dont)(void *);
 	void *data;
 };

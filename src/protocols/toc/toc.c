@@ -974,8 +974,8 @@ static void toc_get_dir(struct gaim_connection *g, char *name)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_set_dir(struct gaim_connection *g, char *first, char *middle, char *last,
-			char *maiden, char *city, char *state, char *country, int web)
+static void toc_set_dir(struct gaim_connection *g, const char *first, const char *middle, const char *last,
+			const char *maiden, const char *city, const char *state, const char *country, int web)
 {
 	char buf2[BUF_LEN * 4], buf[BUF_LEN];
 	g_snprintf(buf2, sizeof(buf2), "%s:%s:%s:%s:%s:%s:%s:%s", first,
@@ -985,8 +985,8 @@ static void toc_set_dir(struct gaim_connection *g, char *first, char *middle, ch
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_dir_search(struct gaim_connection *g, char *first, char *middle, char *last,
-			   char *maiden, char *city, char *state, char *country, char *email)
+static void toc_dir_search(struct gaim_connection *g, const char *first, const char *middle, const char *last,
+			   const char *maiden, const char *city, const char *state, const char *country, const char *email)
 {
 	char buf[BUF_LONG];
 	g_snprintf(buf, sizeof(buf) / 2, "toc_dir_search %s:%s:%s:%s:%s:%s:%s:%s", first, middle,
@@ -1023,14 +1023,14 @@ static void toc_set_info(struct gaim_connection *g, char *info)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_change_passwd(struct gaim_connection *g, char *orig, char *new)
+static void toc_change_passwd(struct gaim_connection *g, const char *orig, const char *new)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
 	sflap_send(g, buf, strlen(buf), TYPE_DATA);
 }
 
-static void toc_add_buddy(struct gaim_connection *g, char *name)
+static void toc_add_buddy(struct gaim_connection *g, const char *name)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
@@ -1136,7 +1136,7 @@ static void toc_join_chat(struct gaim_connection *g, GList *data)
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_chat_invite(struct gaim_connection *g, int id, char *message, char *name)
+static void toc_chat_invite(struct gaim_connection *g, int id, const char *message, const char *name)
 {
 	char buf[BUF_LONG];
 	g_snprintf(buf, sizeof(buf) / 2, "toc_chat_invite %d \"%s\" %s", id,
