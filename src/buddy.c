@@ -215,6 +215,34 @@ static void gtk_blist_button_away_cb(GtkWidget *w, gpointer data)
 	gtk_menu_popup(GTK_MENU(awaymenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
+static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
+	GaimBlistNode *node;
+	GValue val = {0,};
+
+	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &val);
+
+	node = g_value_get_pointer(&val);
+
+	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+		gaim_group_set_setting((struct group *)node, "collapsed", NULL);
+		gaim_blist_save();
+	}
+}
+
+static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
+	GaimBlistNode *node;
+	GValue val = {0,};
+
+	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &val);
+
+	node = g_value_get_pointer(&val);
+
+	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+		gaim_group_set_setting((struct group *)node, "collapsed", "true");
+		gaim_blist_save();
+	}
+}
+
 static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data) {
 	GaimBlistNode *node;
 	GtkTreeIter iter;
@@ -1232,6 +1260,8 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->buddy_icon_column);
 
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-activated", G_CALLBACK(gtk_blist_row_activated_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-expanded", G_CALLBACK(gtk_blist_row_expanded_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-collapsed", G_CALLBACK(gtk_blist_row_collapsed_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "button-press-event", G_CALLBACK(gtk_blist_button_press_cb), NULL);
 
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
@@ -1483,6 +1513,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 				GtkTreeIter groupiter;
 				GaimBlistNode *oldersibling;
 				GtkTreeIter oldersiblingiter;
+				char *collapsed = gaim_group_get_setting((struct group *)node->parent, "collapsed");
 
 				if(node->parent &&
 						!get_iter_from_node(node->parent, &groupiter)) {
@@ -1490,8 +1521,10 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 					 * We do that here */
 					make_a_group(node->parent, &groupiter);
 				}
-				if(!gtk_tree_model_iter_has_child(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter))
+				if(!collapsed)
 					expand = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter);
+				else
+					g_free(collapsed);
 
 				oldersibling = node->prev;
 				while (oldersibling && !get_iter_from_node(oldersibling, &oldersiblingiter)) {

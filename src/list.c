@@ -300,6 +300,8 @@ struct group *gaim_group_new(const char *name)
 		struct gaim_blist_ui_ops *ops;
 		g= g_new0(struct group, 1);
 		g->name = g_strdup(name);
+		g->settings = g_hash_table_new_full(g_str_hash, g_str_equal,
+				g_free, g_free);
 		((GaimBlistNode*)g)->type = GAIM_BLIST_GROUP_NODE;
 
 		ops = gaim_get_blist_ui_ops();
@@ -901,8 +903,10 @@ static char *blist_parser_buddy_alias = NULL;
 static char *blist_parser_setting_name = NULL;
 static char *blist_parser_setting_value = NULL;
 static GHashTable *blist_parser_buddy_settings = NULL;
+static GHashTable *blist_parser_group_settings = NULL;
 static int blist_parser_privacy_mode = 0;
-static enum {
+static GList *tag_stack = NULL;
+enum {
 	BLIST_TAG_GAIM,
 	BLIST_TAG_BLIST,
 	BLIST_TAG_GROUP,
@@ -916,7 +920,7 @@ static enum {
 	BLIST_TAG_PERMIT,
 	BLIST_TAG_BLOCK,
 	BLIST_TAG_IGNORE
-} blist_parser_current_tag;
+};
 static gboolean blist_parser_error_occurred = FALSE;
 
 static void blist_start_element_handler (GMarkupParseContext *context,
@@ -928,11 +932,11 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 	int i;
 
 	if(!strcmp(element_name, "gaim")) {
-		blist_parser_current_tag = BLIST_TAG_GAIM;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_GAIM));
 	} else if(!strcmp(element_name, "blist")) {
-		blist_parser_current_tag = BLIST_TAG_BLIST;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_BLIST));
 	} else if(!strcmp(element_name, "group")) {
-		blist_parser_current_tag = BLIST_TAG_GROUP;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_GROUP));
 		for(i=0; attribute_names[i]; i++) {
 			if(!strcmp(attribute_names[i], "name")) {
 				g_free(blist_parser_group_name);
@@ -944,7 +948,7 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 			gaim_blist_add_group(g,NULL);
 		}
 	} else if(!strcmp(element_name, "person")) {
-		blist_parser_current_tag = BLIST_TAG_PERSON;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_PERSON));
 		for(i=0; attribute_names[i]; i++) {
 			if(!strcmp(attribute_names[i], "name")) {
 				g_free(blist_parser_person_name);
@@ -952,7 +956,7 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 			}
 		}
 	} else if(!strcmp(element_name, "buddy")) {
-		blist_parser_current_tag = BLIST_TAG_BUDDY;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_BUDDY));
 		for(i=0; attribute_names[i]; i++) {
 			if(!strcmp(attribute_names[i], "account")) {
 				g_free(blist_parser_account_name);
@@ -962,11 +966,11 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 			}
 		}
 	} else if(!strcmp(element_name, "name")) {
-		blist_parser_current_tag = BLIST_TAG_NAME;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_NAME));
 	} else if(!strcmp(element_name, "alias")) {
-		blist_parser_current_tag = BLIST_TAG_ALIAS;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_ALIAS));
 	} else if(!strcmp(element_name, "setting")) {
-		blist_parser_current_tag = BLIST_TAG_SETTING;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_SETTING));
 		for(i=0; attribute_names[i]; i++) {
 			if(!strcmp(attribute_names[i], "name")) {
 				g_free(blist_parser_setting_name);
@@ -974,9 +978,9 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 			}
 		}
 	} else if(!strcmp(element_name, "privacy")) {
-		blist_parser_current_tag = BLIST_TAG_PRIVACY;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_PRIVACY));
 	} else if(!strcmp(element_name, "account")) {
-		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_ACCOUNT));
 		for(i=0; attribute_names[i]; i++) {
 			if(!strcmp(attribute_names[i], "protocol"))
 				blist_parser_account_protocol = atoi(attribute_values[i]);
@@ -988,25 +992,32 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 			}
 		}
 	} else if(!strcmp(element_name, "permit")) {
-		blist_parser_current_tag = BLIST_TAG_PERMIT;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_PERMIT));
 	} else if(!strcmp(element_name, "block")) {
-		blist_parser_current_tag = BLIST_TAG_BLOCK;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_BLOCK));
 	} else if(!strcmp(element_name, "ignore")) {
-		blist_parser_current_tag = BLIST_TAG_IGNORE;
+		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_IGNORE));
 	}
 }
 
 static void blist_end_element_handler(GMarkupParseContext *context,
 		const gchar *element_name, gpointer user_data, GError **error) {
 	if(!strcmp(element_name, "gaim")) {
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "blist")) {
-		blist_parser_current_tag = BLIST_TAG_GAIM;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "group")) {
-		blist_parser_current_tag = BLIST_TAG_BLIST;
+		if(blist_parser_group_settings) {
+			struct group *g = gaim_find_group(blist_parser_group_name);
+			g_hash_table_destroy(g->settings);
+			g->settings = blist_parser_group_settings;
+		}
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
+		blist_parser_group_settings = NULL;
 	} else if(!strcmp(element_name, "person")) {
-		blist_parser_current_tag = BLIST_TAG_GROUP;
 		g_free(blist_parser_person_name);
 		blist_parser_person_name = NULL;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "buddy")) {
 		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
@@ -1019,7 +1030,6 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 				b->settings = blist_parser_buddy_settings;
 			}
 		}
-		blist_parser_current_tag = BLIST_TAG_PERSON;
 		g_free(blist_parser_buddy_name);
 		blist_parser_buddy_name = NULL;
 		g_free(blist_parser_buddy_alias);
@@ -1027,62 +1037,74 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		g_free(blist_parser_account_name);
 		blist_parser_account_name = NULL;
 		blist_parser_buddy_settings = NULL;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "name")) {
-		blist_parser_current_tag = BLIST_TAG_BUDDY;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "alias")) {
-		blist_parser_current_tag = BLIST_TAG_BUDDY;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "setting")) {
-		if(!blist_parser_buddy_settings)
-			blist_parser_buddy_settings = g_hash_table_new_full(g_str_hash,
-					g_str_equal, g_free, g_free);
-		if(blist_parser_setting_name && blist_parser_setting_value) {
-			g_hash_table_replace(blist_parser_buddy_settings,
-					g_strdup(blist_parser_setting_name),
-					g_strdup(blist_parser_setting_value));
+		if(GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_BUDDY) {
+			if(!blist_parser_buddy_settings)
+				blist_parser_buddy_settings = g_hash_table_new_full(g_str_hash,
+						g_str_equal, g_free, g_free);
+			if(blist_parser_setting_name && blist_parser_setting_value) {
+				g_hash_table_replace(blist_parser_buddy_settings,
+						g_strdup(blist_parser_setting_name),
+						g_strdup(blist_parser_setting_value));
+			}
+		} else if(GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_GROUP) {
+			if(!blist_parser_group_settings)
+				blist_parser_group_settings = g_hash_table_new_full(g_str_hash,
+						g_str_equal, g_free, g_free);
+			if(blist_parser_setting_name && blist_parser_setting_value) {
+				g_hash_table_replace(blist_parser_group_settings,
+						g_strdup(blist_parser_setting_name),
+						g_strdup(blist_parser_setting_value));
+			}
 		}
 		g_free(blist_parser_setting_name);
 		g_free(blist_parser_setting_value);
 		blist_parser_setting_name = NULL;
 		blist_parser_setting_value = NULL;
-		blist_parser_current_tag = BLIST_TAG_BUDDY;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "privacy")) {
-		blist_parser_current_tag = BLIST_TAG_GAIM;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "account")) {
 		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			account->permdeny = blist_parser_privacy_mode;
 		}
-		blist_parser_current_tag = BLIST_TAG_PRIVACY;
 		g_free(blist_parser_account_name);
 		blist_parser_account_name = NULL;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "permit")) {
 		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			gaim_privacy_permit_add(account, blist_parser_buddy_name);
 		}
-		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
 		g_free(blist_parser_buddy_name);
 		blist_parser_buddy_name = NULL;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "block")) {
 		struct gaim_account *account = gaim_account_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			gaim_privacy_deny_add(account, blist_parser_buddy_name);
 		}
-		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
 		g_free(blist_parser_buddy_name);
 		blist_parser_buddy_name = NULL;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "ignore")) {
 		/* we'll apparently do something with this later */
-		blist_parser_current_tag = BLIST_TAG_ACCOUNT;
+		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	}
 }
 
 static void blist_text_handler(GMarkupParseContext *context, const gchar *text,
 		gsize text_len, gpointer user_data, GError **error) {
-	switch(blist_parser_current_tag) {
+	switch(GPOINTER_TO_INT(tag_stack->data)) {
 		case BLIST_TAG_NAME:
 			blist_parser_buddy_name = g_strndup(text, text_len);
 			break;
@@ -1198,6 +1220,24 @@ void gaim_blist_load() {
 	g_free(filename);
 }
 
+static void blist_print_group_settings(gpointer key, gpointer data,
+		gpointer user_data) {
+	char *key_val;
+	char *data_val;
+	FILE *file = user_data;
+
+	if(!key || !data)
+		return;
+
+	key_val = g_markup_escape_text(key, -1);
+	data_val = g_markup_escape_text(data, -1);
+
+	fprintf(file, "\t\t\t<setting name=\"%s\">%s</setting>\n", key_val,
+			data_val);
+	g_free(key_val);
+	g_free(data_val);
+}
+
 static void blist_print_buddy_settings(gpointer key, gpointer data,
 		gpointer user_data) {
 	char *key_val;
@@ -1232,6 +1272,7 @@ static void gaim_blist_write(FILE *file, struct gaim_account *exp_acct) {
 		if(!exp_acct || gaim_group_on_account(group, exp_acct)) {
 			char *group_name = g_markup_escape_text(group->name, -1);
 			fprintf(file, "\t\t<group name=\"%s\">\n", group_name);
+			g_hash_table_foreach(group->settings, blist_print_group_settings, file);
 			for(bnode = gnode->child; bnode; bnode = bnode->next) {
 				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
@@ -1399,6 +1440,19 @@ gboolean gaim_privacy_deny_remove(struct gaim_account *account, const char *who)
 		return TRUE;
 	}
 	return FALSE;
+}
+
+void gaim_group_set_setting(struct group *g, const char *key,
+		const char *value) {
+	if(!g)
+		return;
+	g_hash_table_replace(g->settings, g_strdup(key), g_strdup(value));
+}
+
+char *gaim_group_get_setting(struct group *g, const char *key) {
+	if(!g)
+		return NULL;
+	return g_strdup(g_hash_table_lookup(g->settings, key));
 }
 
 void gaim_buddy_set_setting(struct buddy *b, const char *key,

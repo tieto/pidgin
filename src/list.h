@@ -94,6 +94,7 @@ struct buddy {
 struct group {
 	GaimBlistNode node;                    /**< The node that this group inherits from */
 	char *name;                            /**< The name of this group. */
+	GHashTable *settings;                  /**< per-group settings from the XML buddy list, set by plugins and the likes. */
 };
 
 
@@ -414,6 +415,25 @@ void parse_toc_buddy_list(struct gaim_account *account, char *config);
  * Loads the buddy list from ~/.gaim/blist.xml.
  */
 void gaim_blist_load();
+
+/**
+ * Associates some data with the group in the xml buddy list
+ *
+ * @param g      The group the data is associated with
+ * @param key    The key used to retrieve the data
+ * @param value  The data to set
+ */
+void gaim_group_set_setting(struct group *g, const char *key, const char *value);
+
+/**
+ * Retrieves data from the XML buddy list set by gaim_group_set_setting())
+ *
+ * @param g      The group to retrieve data from
+ * @param key    The key to retrieve the data with
+ * @return       The associated data or NULL if no data is associated
+ */
+char *gaim_group_get_setting(struct group *g, const char *key);
+
 
 /**
  * Associates some data with the buddy in the xml buddy list
