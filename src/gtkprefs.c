@@ -433,6 +433,7 @@ static void pref_nb_select(GtkTreeSelection *sel, GtkNotebook *nb) {
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (prefsnotebook), g_value_get_int (&val));
 
+	g_value_unset(&val);
 }
 
 /* These are the pages in the preferences notebook */
@@ -650,6 +651,9 @@ gint gaim_sort_smileys (GtkTreeModel	*model,
 		/* Neither string is "none", default to normal sort */
 		ret = g_utf8_collate(name1,name2);
 	}
+
+	g_free(name1);
+	g_free(name2);
 
 	return ret;
 }
