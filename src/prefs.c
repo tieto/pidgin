@@ -793,7 +793,7 @@ void build_prefs()
 	font_face_for_text = gaim_button(_("Font Face for Text"), &font_options, OPT_FONT_FACE, fontbox);
 		
 	/* Build font button */
-	select_font = picture_button(pd->window, _("Select Font Face"), fontface2_xpm);
+	select_font = picture_button(pd->window, _("Select Font"), fontface2_xpm);
 	gtk_box_pack_start(GTK_BOX(fontbox), select_font, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(select_font), "clicked", GTK_SIGNAL_FUNC(show_font_dialog), NULL);
 	if (display_options & OPT_DISP_COOL_LOOK)

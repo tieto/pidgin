@@ -1626,6 +1626,7 @@ void g_show_info_text(char *info)
         GtkWidget *label;
 	GtkWidget *text;
         GtkWidget *bbox;
+        GtkWidget *button_box;
         GtkWidget *sw;
 
         struct info_dlg *b = g_new0(struct info_dlg, 1);
@@ -1635,8 +1636,9 @@ void g_show_info_text(char *info)
         gtk_container_border_width(GTK_CONTAINER(b->window), 5);
         bbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(b->window), bbox);
-
-        ok = gtk_button_new_with_label(_("OK"));
+		button_box = gtk_hbox_new(FALSE, 5);
+		gtk_widget_realize(GTK_WIDGET(b->window));
+        ok = picture_button(b->window, _("OK"), ok_xpm);
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
         gtk_signal_connect(GTK_OBJECT(ok), "clicked",
@@ -1661,9 +1663,9 @@ void g_show_info_text(char *info)
 
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(bbox), ok, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, FALSE, 0);
+/*	gtk_box_pack_start(GTK_BOX(button_box), ok, FALSE, FALSE, 0);*/
 
-	gtk_widget_realize(b->window);
 	aol_icon(b->window->window);
 	gtk_widget_show_all(b->window);
 

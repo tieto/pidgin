@@ -45,6 +45,11 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
+#include "pixmaps/gnome_add.xpm"
+#include "pixmaps/gnome_close.xpm"
+#include "pixmaps/gnome_preferences.xpm"
+#include "pixmaps/gnome_remove.xpm"
+#include "pixmaps/ok.xpm"
 
 #include <dlfcn.h>
 
@@ -125,7 +130,8 @@ static void load_file(GtkWidget *w, gpointer data)
 			"clicked", GTK_SIGNAL_FUNC(destroy_plugins), NULL);
 
 	g_free(buf);
-	gtk_widget_show(plugin_dialog);
+
+	gtk_widget_show(GTK_FILE_SELECTION(plugin_dialog)->ok_button);
 	gdk_window_raise(plugin_dialog->window);   
 }
 
@@ -262,7 +268,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	aol_icon(plugwindow->window);
 	gtk_container_border_width(GTK_CONTAINER(plugwindow), 10);
 	gtk_window_set_title(GTK_WINDOW(plugwindow), _("Gaim - Plugins"));
-	gtk_widget_set_usize(plugwindow, 400, 250);
+	gtk_widget_set_usize(plugwindow, -1, 250);
 	gtk_signal_connect(GTK_OBJECT(plugwindow), "destroy",
 			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
 
@@ -290,33 +296,33 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_text_set_word_wrap(GTK_TEXT(plugtext), TRUE);
 	gtk_text_set_editable(GTK_TEXT(plugtext), FALSE);
 
-	add = gtk_button_new_with_label(_("Load Plugin"));
+	add = picture_button(plugwindow, _("Add Plugin"), gnome_add_xpm);
 	gtk_signal_connect(GTK_OBJECT(add), "clicked",
 			   GTK_SIGNAL_FUNC(load_file), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), add, TRUE, FALSE, 5);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
 
-	config = gtk_button_new_with_label(_("Configure Plugin"));
+	config = picture_button(plugwindow, _("Configure Plugin"), gnome_preferences_xpm);
 	gtk_widget_set_sensitive(config, 0);
 	gtk_box_pack_start(GTK_BOX(botbox), config, TRUE, FALSE, 5);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(config), GTK_RELIEF_NONE);
 
-	remove = gtk_button_new_with_label(_("Unload Plugin"));
+	remove = picture_button(plugwindow, _("Remove Plugin"), gnome_remove_xpm);
 	gtk_signal_connect(GTK_OBJECT(remove), "clicked",
 			   GTK_SIGNAL_FUNC(unload), pluglist);
 	gtk_box_pack_start(GTK_BOX(botbox), remove, TRUE, FALSE, 5);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(remove), GTK_RELIEF_NONE);
 
-	close = gtk_button_new_with_label(_("Close"));
+	close = picture_button(plugwindow, _("Close"), gnome_close_xpm);
 	gtk_signal_connect(GTK_OBJECT(close), "clicked",
 			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), close, TRUE, FALSE, 5);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(config), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(remove), GTK_RELIEF_NONE);		
+		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
+	}
+					
 	gtk_box_pack_start(GTK_BOX(page), topbox, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(page), botbox, FALSE, FALSE, 0);
 

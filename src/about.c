@@ -30,6 +30,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 #include "pixmaps/logo.xpm"
+#include "pixmaps/gnome_close.xpm"
 
 static GtkWidget *about=NULL;
 
@@ -116,7 +117,7 @@ void show_about(GtkWidget *w, void *null)
 				   GTK_SIGNAL_FUNC(about_click), NULL);
 		gdk_window_set_cursor(eventbox->window, gdk_cursor_new(GDK_HAND2));
 		
-		button = gtk_button_new_with_label(_("Close"));
+		button = picture_button(about, _("Close"), gnome_close_xpm);
 		if (null == NULL) /* there's a mindtrip */
 			gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
         	                                  GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));

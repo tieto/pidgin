@@ -15,7 +15,6 @@ EXTRA_DIST =	add.xpm				\
 		buddydel.xpm			\
 		burp.xpm			\
 		cancel.xpm			\
-		close.xpm			\
 		crossedlips.xpm			\
 		cry.xpm				\
 		daemon-buddyadd.xpm		\
@@ -30,7 +29,12 @@ EXTRA_DIST =	add.xpm				\
 		embarrassed.xpm			\
 		fontface.xpm			\
 		free_icon.xpm			\
-		gaim.xpm			\
+		gaim.xpm				\
+		gnome_add.xpm		\
+		gnome_close.xpm		\
+		gnome_preferences.xpm	\
+		gnome_refresh.xpm	\
+		gnome_remove.xpm 	\
 		gnome/devil-connect.png		\
 		gnome/devil-offline.png		\
 		gnome/devil-online.png		\
