@@ -903,8 +903,8 @@ create_list_field(GaimRequestField *field)
 	/* Create the scrolled window */
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_ALWAYS);
+				       GTK_POLICY_AUTOMATIC,
+				       GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 										GTK_SHADOW_IN);
 	gtk_widget_show(sw);
@@ -1134,7 +1134,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 				type = gaim_request_field_get_type(field);
 
-				if (type != GAIM_REQUEST_FIELD_BOOLEAN)
+				if (type != GAIM_REQUEST_FIELD_BOOLEAN &&
+				    gaim_request_field_get_label(field))
 				{
 					char *text;
 

@@ -806,7 +806,6 @@ gaim_request_field_list_new(const char *id, const char *text)
 	GaimRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
-	g_return_val_if_fail(text != NULL, NULL);
 
 	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_LIST);
 

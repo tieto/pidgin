@@ -38,6 +38,8 @@ version 0.76cvs:
 	* Conversation placement by account now works correctly with both
 	  chats and IMs, and takes the Combine Chats and IMs option into
 	  consideration.
+	* Minor tweaks to the list box in the multi-field request dialogs
+	  so they work without a label and scrollbar (Pekka Riikonen)
 	* The Disconnect dialog no longer raises and gains focus each time
 	  a disconnected account is added (Ka-Hing Cheung)
 	* Added new MSN error codes and fixed an incorrect one (Stu Tomlinson)
