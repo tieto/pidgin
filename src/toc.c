@@ -611,6 +611,10 @@ void toc_callback( gpointer          data,
                 }
                 
                 tmp = frombase64(strtok(NULL, ":"));
+		sprintf(debug_buff, "%d %d %d %d %d %d %d %d %s\n", tmp[0],
+				tmp[1], tmp[2], tmp[3], tmp[4], tmp[5], tmp[6],
+				tmp[7], tmp + 8);
+		debug_print(debug_buff);
 
 		if (!strcmp(uuid, FILE_SEND_UID)) {
 			/* we're getting a file */

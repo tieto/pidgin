@@ -31,7 +31,7 @@ int get_word(char *, int);
 char *have_word(char *, int);
 void substitute(char **, int, int, char *);
 
-void spell_check(char *who, char **message, void *m) {
+void substitute_words(char *who, char **message, void *m) {
 	int i, l;
 	int word;
 	GList *w;
@@ -139,7 +139,7 @@ void load_conf() {
 void gaim_plugin_init(void *handle) {
 	load_conf();
 
-	gaim_signal_connect(handle, event_im_send, spell_check, NULL);
+	gaim_signal_connect(handle, event_im_send, substitute_words, NULL);
 }
 
 void gaim_plugin_remove() {
