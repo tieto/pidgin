@@ -95,31 +95,6 @@ enum
 /**************************************************************************
  * Utility Functions
  **************************************************************************/
-static char *
-get_size_string(size_t size)
-{
-	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
-	float size_mag;
-	int size_index = 0;
-
-	if (size == -1) {
-		return g_strdup(_("Calculating..."));
-	}
-	else if (size == 0) {
-		return g_strdup(_("Unknown."));
-	}
-	else {
-		size_mag = (float)size;
-
-		while ((size_index < 4) && (size_mag > 1024)) {
-			size_mag /= 1024;
-			size_index++;
-		}
-
-		return g_strdup_printf("%.2f %s", size_mag, size_str[size_index]);
-	}
-}
-
 static void
 get_xfer_info_strings(struct gaim_xfer *xfer,
 					  char **kbsec, char **time_elapsed,
@@ -778,8 +753,8 @@ gaim_gtkxfer_dialog_add_xfer(struct gaim_gtkxfer_dialog *dialog,
 
 	type = gaim_xfer_get_type(xfer);
 
-	size_str      = get_size_string(gaim_xfer_get_size(xfer));
-	remaining_str = get_size_string(gaim_xfer_get_bytes_remaining(xfer));
+	size_str      = gaim_get_size_string(gaim_xfer_get_size(xfer));
+	remaining_str = gaim_get_size_string(gaim_xfer_get_bytes_remaining(xfer));
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
 									(type == GAIM_XFER_RECEIVE
@@ -896,8 +871,8 @@ gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
 	if (!(data = GAIM_GTKXFER(xfer)))
 		return;
 
-	size_str      = get_size_string(gaim_xfer_get_size(xfer));
-	remaining_str = get_size_string(gaim_xfer_get_bytes_remaining(xfer));
+	size_str      = gaim_get_size_string(gaim_xfer_get_size(xfer));
+	remaining_str = gaim_get_size_string(gaim_xfer_get_bytes_remaining(xfer));
 
 	gtk_list_store_set(xfer_dialog->model, &data->iter,
 					   COLUMN_PROGRESS, gaim_xfer_get_progress(xfer),
@@ -1117,7 +1092,7 @@ gaim_gtkxfer_ask_recv(struct gaim_xfer *xfer)
 
 	size = gaim_xfer_get_size(xfer);
 
-	size_buf = get_size_string(size);
+	size_buf = gaim_get_size_string(size);
 
 	buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
 						  xfer->who, gaim_xfer_get_filename(xfer), size_buf);

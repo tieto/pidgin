@@ -344,4 +344,11 @@ gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b);
  */
 gchar *gaim_strreplace(const gchar *string, const gchar *delimiter, const gchar *replacement);
 
+/**
+ * Returns a string representing a filesize in the appropriate units (MB, KB, GB, etc.)
+ *
+ * @param size The size
+ */
+char *gaim_get_size_string(size_t size);
+
 #endif /* _GAIM_UTIL_H_ */

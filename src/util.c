@@ -1205,3 +1205,27 @@ gchar *gaim_strreplace(const gchar *string, const gchar *delimiter, const gchar 
 
 	return ret;
 }
+
+char *gaim_get_size_string(size_t size)
+{
+	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
+	float size_mag;
+	int size_index = 0;
+
+	if (size == -1) {
+		return g_strdup(_("Calculating..."));
+	}
+	else if (size == 0) {
+		return g_strdup(_("Unknown."));
+	}
+	else {
+		size_mag = (float)size;
+
+		while ((size_index < 4) && (size_mag > 1024)) {
+			size_mag /= 1024;
+			size_index++;
+		}
+
+		return g_strdup_printf("%.2f %s", size_mag, size_str[size_index]);
+	}
+}
