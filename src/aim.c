@@ -50,6 +50,8 @@
 #include "pixmaps/logo.xpm"
 #endif /* USE_APPLET */
 
+#include "gtkticker.h"
+
 static GtkWidget *name;
 static GtkWidget *pass;
 static GtkWidget *signon;
@@ -68,6 +70,8 @@ GList *conversations = NULL;
 GList *chat_rooms = NULL;
 
 GtkWidget *mainwindow = NULL;
+
+void BuddyTickerCreateWindow( void );
 
 char toc_addy[16];
 char *quad_addr = NULL;
@@ -335,7 +339,7 @@ void show_login()
                 gtk_widget_show(mainwindow);
                 return;
         }
-        
+       
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         signon   = gtk_button_new_with_label(_("Signon"));
 	cancel   = gtk_button_new_with_label(_("Cancel"));

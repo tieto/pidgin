@@ -84,6 +84,8 @@ GtkWidget *bpmenu;
 GtkWidget *buddies;
 int permdeny;
 
+void BuddyTickerLogonTimeout( gpointer data );
+void BuddyTickerLogoutTimeout( gpointer data );
 
 /* Predefine some functions */
 static void new_bp_callback(GtkWidget *w, char *name);
@@ -908,7 +910,7 @@ struct buddy *add_buddy(char *group, char *buddy)
 
 	gtk_signal_connect(GTK_OBJECT(b->item), "button_press_event",
 			   GTK_SIGNAL_FUNC(handle_click_buddy), b);
-	
+
 	return b;
 }
 
@@ -1507,6 +1509,11 @@ void set_buddy(struct buddy *b)
                         if (display_options & OPT_DISP_SHOW_PIXMAPS)
 				gtk_widget_show(b->pix);
 
+			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
+				NULL, (gchar **)login_icon_xpm);
+
+			BuddyTickerAddUser( b->name, pm, bm );	
+
 			if (display_options & OPT_DISP_SHOW_LOGON) {
 				struct conversation *c = find_conversation(b->name);
 				if (c) {
@@ -1527,6 +1534,7 @@ void set_buddy(struct buddy *b)
 			gtk_widget_show(b->item);
 			gtk_widget_show(b->label);
                         b->log_timer = gtk_timeout_add(10000, (GtkFunction) log_timeout, b->name);
+                        gtk_timeout_add(10000, (GtkFunction) BuddyTickerLogonTimeout, b->name);
                         update_num_groups();
                         update_show_idlepix();
                         setup_buddy_chats();
@@ -1555,26 +1563,44 @@ void set_buddy(struct buddy *b)
                                 pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
                                                                   NULL, (gchar **)away_icon_xpm);
                                 gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
+                                pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
+                                                                  NULL, (gchar **)away_icon_xpm);
+                                BuddyTickerSetPixmap(b->name, pm, bm);
                         } else if (b->uc & UC_AOL) {
                                 pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
                                                                   NULL, (gchar **)aol_icon_xpm);
                                 gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
+                                pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
+                                                                  NULL, (gchar **)aol_icon_xpm);
+                                BuddyTickerSetPixmap(b->name, pm, bm);
                         } else if (b->uc & UC_NORMAL) {
                                 pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
                                                                   NULL, (gchar **)free_icon_xpm);
                                 gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
+                                pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
+                                                                  NULL, (gchar **)free_icon_xpm);
+                                BuddyTickerSetPixmap(b->name, pm, bm);
                         } else if (b->uc & UC_ADMIN) {
                                 pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
                                                                   NULL, (gchar **)admin_icon_xpm);
                                 gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
+                                pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
+                                                                  NULL, (gchar **)admin_icon_xpm);
+                                BuddyTickerSetPixmap(b->name, pm, bm);
                         } else if (b->uc & UC_UNCONFIRMED) {
                                 pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
                                                                   NULL, (gchar **)dt_icon_xpm);
                                 gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
+                                pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
+                                                                  NULL, (gchar **)dt_icon_xpm);
+                                BuddyTickerSetPixmap(b->name, pm, bm);
                         } else {
                                 pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
                                                                   NULL, (gchar **)no_icon_xpm);
                                 gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
+                                pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
+                                                                  NULL, (gchar **)no_icon_xpm);
+                                BuddyTickerSetPixmap(b->name, pm, bm);
                         }
                         if (display_options & OPT_DISP_SHOW_PIXMAPS)
                                 gtk_widget_show(b->pix);
@@ -1603,6 +1629,9 @@ void set_buddy(struct buddy *b)
 				NULL, (gchar **)logout_icon_xpm);
 			gtk_widget_hide(b->pix);
 			gtk_pixmap_set(GTK_PIXMAP(b->pix), pm, bm);
+			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
+				NULL, (gchar **)logout_icon_xpm);
+			BuddyTickerSetPixmap( b->name, pm, bm );
                         if (display_options & OPT_DISP_SHOW_PIXMAPS)
 				gtk_widget_show(b->pix);
 			if (display_options & OPT_DISP_SHOW_LOGON) {
@@ -1621,6 +1650,7 @@ void set_buddy(struct buddy *b)
 				}
 			}
                         b->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, b->name);
+                        gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogoutTimeout, b->name);
                         update_num_groups();
                         update_show_idlepix();
 		}
