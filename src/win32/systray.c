@@ -23,9 +23,10 @@
 #define MAX_AWY_MESSAGES 50
 
 enum _SYSTRAY_STATE {
-	SYSTRAY_STATE_CONN,
-	SYSTRAY_STATE_CONNECTING,
-	SYSTRAY_STATE_DISCONN,
+	SYSTRAY_STATE_ONLINE,
+	SYSTRAY_STATE_ONLINE_CONNECTING,
+	SYSTRAY_STATE_OFFLINE,
+	SYSTRAY_STATE_OFFLINE_CONNECTING,
 	SYSTRAY_STATE_AWAY,
 	SYSTRAY_STATE_COUNT
 };
@@ -52,7 +53,7 @@ static HICON sysicon_disconn=0;
 static HICON sysicon_conn=0;
 static HICON sysicon_away=0;
 static NOTIFYICONDATA wgaim_nid;
-static SYSTRAY_STATE st_state=SYSTRAY_STATE_DISCONN;
+static SYSTRAY_STATE st_state=SYSTRAY_STATE_OFFLINE;
 static HMENU systray_menu=0;
 static HMENU systray_away_menu=0;
 
@@ -232,6 +233,7 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 	case WM_TRAYMESSAGE:
 	{
 		if( lparam == WM_LBUTTONDBLCLK ) {
+			/* Double Click */
 			/* Either hide or show current window (login or buddy) */
 			docklet_toggle();
 			/* if away.. hide/show I'm back win too */
@@ -247,15 +249,18 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 			debug_printf("Systray got double click\n");
 		}
 		if( lparam == WM_RBUTTONUP ) {
+			/* Right Click */
 			POINT mpoint;
 			GetCursorPos(&mpoint);
-			/* Are we connected ? */
-			if(st_state == SYSTRAY_STATE_CONNECTING)
-				break; /* no menu when connecting */
-			if(st_state == SYSTRAY_STATE_DISCONN)
+
+			switch(st_state) {
+			case SYSTRAY_STATE_OFFLINE:
+			case SYSTRAY_STATE_OFFLINE_CONNECTING:
 				systray_show_menu(mpoint.x, mpoint.y, 0);
-			else
+				break;
+			default:
 				systray_show_menu(mpoint.x, mpoint.y, 1);
+			}
 		}
 		break;
 	}
@@ -332,12 +337,13 @@ static void systray_remove_nid(void) {
 
 static void systray_update_icon() {
 	switch(st_state) {
-	case SYSTRAY_STATE_CONN:
+	case SYSTRAY_STATE_ONLINE:
 		systray_change_icon(sysicon_conn, GAIM_SYSTRAY_HINT);
 		break;
-	case SYSTRAY_STATE_CONNECTING:
+	case SYSTRAY_STATE_ONLINE_CONNECTING:
+	case SYSTRAY_STATE_OFFLINE_CONNECTING:
 		break;
-	case SYSTRAY_STATE_DISCONN:
+	case SYSTRAY_STATE_OFFLINE:
 		systray_change_icon(sysicon_disconn, GAIM_SYSTRAY_DISCONN_HINT);
 		break;
 	case SYSTRAY_STATE_AWAY:
@@ -353,15 +359,19 @@ static void systray_update_status() {
 		if(awaymessage) {
 			st_state = SYSTRAY_STATE_AWAY;
 		} else if(connecting_count) {
-			st_state = SYSTRAY_STATE_CONNECTING;
+			st_state = SYSTRAY_STATE_ONLINE_CONNECTING;
 		} else {
-			st_state = SYSTRAY_STATE_CONN;
+			st_state = SYSTRAY_STATE_ONLINE;
 		}
 	} else {
 		if(connecting_count) {
-			st_state = SYSTRAY_STATE_CONNECTING;
+			/* Don't rely on this state.. signoff in multi.c sends
+			   event_signoff before decrementing connecting_count
+			   for a reason unknown to me..
+			*/
+			st_state = SYSTRAY_STATE_OFFLINE_CONNECTING;
 		} else {
-			st_state = SYSTRAY_STATE_DISCONN;
+			st_state = SYSTRAY_STATE_OFFLINE;
 		}
 	}
 	if(st_state != old_state) {
