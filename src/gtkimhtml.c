@@ -357,15 +357,6 @@ gboolean gtk_key_pressed_cb(GtkWidget *imhtml, GdkEventKey *event, gpointer data
 }
 
 #if GTK_CHECK_VERSION(2,2,0)
-static GtkIMHtmlCopyable *gtk_imhtml_copyable_new(GtkIMHtml *imhtml, GtkTextMark *mark, const gchar *text) 
-{
-	GtkIMHtmlCopyable *copy = g_malloc(sizeof(GtkIMHtmlCopyable));
-	copy->mark = mark;
-	copy->text = g_strdup(text);
-	imhtml->copyables = g_slist_append(imhtml->copyables, copy);
-	return copy;
-}
-
 static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *selection_data, guint info, GtkIMHtml *imhtml) {
 	GtkTextIter start, end;
 	GtkTextMark *sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
@@ -393,25 +384,40 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 
 static void gtk_imhtml_clipboard_clear(GtkClipboard *clipboard, GtkIMHtml *imhtml)
 {
+	GtkTextIter insert;
+	GtkTextIter selection_bound;
+	
+	gtk_text_buffer_get_iter_at_mark (imhtml->text_buffer, &insert,
+					  gtk_text_buffer_get_mark (imhtml->text_buffer, "insert"));
+	gtk_text_buffer_get_iter_at_mark (imhtml->text_buffer, &selection_bound,
+					  gtk_text_buffer_get_mark (imhtml->text_buffer, "selection_bound"));
+	
+	if (!gtk_text_iter_equal (&insert, &selection_bound))
+		gtk_text_buffer_move_mark (imhtml->text_buffer,
+					   gtk_text_buffer_get_mark (imhtml->text_buffer, "selection_bound"),
+					   &insert);
 }
 
 static void copy_clipboard_cb(GtkIMHtml *imhtml, GtkClipboard *clipboard)
 {
-	gtk_clipboard_set_with_owner(clipboard ? clipboard :  
-				     gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD), 
+	gtk_clipboard_set_with_owner(gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD), 
 				     selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry), 
 				     (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
-				     (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, G_OBJECT(imhtml));
+				     (GtkClipboardClearFunc)NULL, G_OBJECT(imhtml));
 
 	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
 }
 
 static gboolean button_release_cb(GtkIMHtml *imhtml, GdkEventButton event, gpointer the_foibles_of_man)
 {
-	GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (imhtml),
-							    GDK_SELECTION_PRIMARY);
-	gtk_text_buffer_remove_selection_clipboard (imhtml->text_buffer, clipboard);	
-	copy_clipboard_cb(imhtml, gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY));
+	GtkClipboard *clipboard;
+	if ((clipboard = gtk_widget_get_clipboard (GTK_WIDGET (imhtml),
+						   GDK_SELECTION_PRIMARY)))
+		gtk_text_buffer_remove_selection_clipboard (imhtml->text_buffer, clipboard);	
+	gtk_clipboard_set_with_owner(gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY), 
+				     selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry), 
+				     (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
+				     (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, G_OBJECT(imhtml));
 	return FALSE;
 }
 #endif
@@ -431,9 +437,6 @@ gtk_imhtml_finalize (GObject *object)
 {
 	GtkIMHtml *imhtml = GTK_IMHTML(object);
 	GList *scalables;
-#if GTK_CHECK_VERSION(2,2,0)
-	GSList *copyables;
-#endif
 	
 	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
@@ -451,13 +454,6 @@ gtk_imhtml_finalize (GObject *object)
 		scale->free(scale);
 	}
 	
-#if GTK_CHECK_VERSION(2,2,0)
-	for (copyables = imhtml->copyables; copyables; copyables = copyables->next) {
-		GtkIMHtmlCopyable *copy = GTK_IMHTML_COPYABLE(copyables->data);
-		g_free(copy->text);
-		g_free(copy);
-	}
-#endif
 	g_list_free(imhtml->scalables);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
@@ -543,9 +539,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->format_spans = NULL;
 	
 	imhtml->scalables = NULL;
-#if GTK_CHECK_VERSION(2,2,0)
-	imhtml->copyables = NULL;
-#endif
+
 	gtk_imhtml_set_editable(imhtml, FALSE);
 	
 }
@@ -1512,11 +1506,6 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 			if (icon) {
 				gtk_widget_show(icon);
 				gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
-#if GTK_CHECK_VERSION(2,2,0)
-				gtk_imhtml_copyable_new(imhtml, 
-							gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE), 
-							ws);
-#endif
 			}
 			
 			copy = iter;
@@ -2311,11 +2300,6 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	if (icon) {
 		gtk_widget_show(icon);
 		gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
-#if GTK_CHECK_VERSION(2,2,0)
-		gtk_imhtml_copyable_new(imhtml, 
-					gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE), 
-					smiley);
-#endif
 	}
 }
 
