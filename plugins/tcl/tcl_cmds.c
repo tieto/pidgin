@@ -36,6 +36,7 @@
 #include "tcl_gaim.h"
 
 static gboolean tcl_validate_account(GaimAccount *account, Tcl_Interp *interp);
+static gboolean tcl_validate_conversation(GaimConversation *convo, Tcl_Interp *interp);
 static gboolean tcl_validate_gc(GaimConnection *gc);
 
 static gboolean tcl_validate_account(GaimAccount *account, Tcl_Interp *interp)
@@ -862,9 +863,9 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	const char *cmds[] = { "connect", "disconnect", NULL };
 	enum { CMD_SIGNAL_CONNECT, CMD_SIGNAL_DISCONNECT } cmd;
 	struct tcl_signal_handler *handler;
-	Tcl_Obj **elems, *result = Tcl_GetObjResult(interp);
+	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	void *instance;
-	int error, nelems, i;
+	int error;
 
 	if (objc < 2) {
 		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
@@ -880,24 +881,14 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 			Tcl_WrongNumArgs(interp, 2, objv, "instance signal args proc");
 			return TCL_ERROR;
 		}
-		if ((error = Tcl_ListObjGetElements(interp, objv[4], &nelems, &elems)) != TCL_OK)
-			return error;
 		handler = g_new0(struct tcl_signal_handler, 1);
 		if ((error = Tcl_GetIntFromObj(interp, objv[2], (int *)&handler->instance)) != TCL_OK) {
 			g_free(handler);
 			return error;
 		}
-		handler->signal = g_strdup(Tcl_GetString(objv[3]));
-		if (nelems) {
-			handler->argnames = g_new0(char *, nelems);
-			for (i = 0; i < nelems; i++) {
-				handler->argnames[i] = g_strdup(Tcl_GetString(elems[i]));
-			}
-		}
-		handler->nnames = nelems;
-		handler->proc = Tcl_NewStringObj("namespace eval ::gaim::_callback { ", -1);
-		Tcl_AppendStringsToObj(handler->proc, Tcl_GetString(objv[5]), " }", NULL);
-		Tcl_IncrRefCount(handler->proc);
+		handler->signal = objv[3];
+		handler->args = objv[4];
+		handler->proc = objv[5];
 		handler->interp = interp;
 		if (!tcl_signal_connect(handler)) {
 			tcl_signal_handler_free(handler);

@@ -30,13 +30,14 @@
 #include "value.h"
 
 struct tcl_signal_handler {
-	char *signal;
+	Tcl_Obj *signal;
 	Tcl_Interp *interp;
 
 	void *instance;
+	Tcl_Obj *namespace;
+	/* These following two are temporary during setup */
+	Tcl_Obj *args;
 	Tcl_Obj *proc;
-	int nnames;
-	char **argnames;
 
 	GaimValue *returntype;
 	int nargs;

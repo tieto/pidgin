@@ -35,6 +35,7 @@
 static GList *tcl_callbacks;
 
 static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handler);
+static Tcl_Obj *new_cb_namespace ();
 
 void tcl_signal_init()
 {
@@ -43,18 +44,11 @@ void tcl_signal_init()
 
 void tcl_signal_handler_free(struct tcl_signal_handler *handler)
 {
-	int i;
-
 	if (handler == NULL)
 		return;
 
-	g_free(handler->signal);
-    if (handler->argnames != NULL) {
-		for (i = 0; i < handler->nnames; i++)
-			g_free(handler->argnames[i]);
-		g_free(handler->argnames);
-	}
-	Tcl_DecrRefCount(handler->proc);
+	Tcl_DecrRefCount(handler->signal);
+	Tcl_DecrRefCount(handler->namespace);
 	g_free(handler);
 }
 
@@ -75,17 +69,37 @@ void tcl_signal_cleanup(Tcl_Interp *interp)
 
 gboolean tcl_signal_connect(struct tcl_signal_handler *handler)
 {
-	gaim_signal_get_values(handler->instance, handler->signal, &handler->returntype,
-			       &handler->nargs, &handler->argtypes);
+	GString *proc;
 
-	if (handler->nargs != handler->nnames)
+	gaim_signal_get_values(handler->instance,
+			       Tcl_GetString(handler->signal),
+			       &handler->returntype, &handler->nargs,
+			       &handler->argtypes);
+
+	tcl_signal_disconnect(handler->interp, Tcl_GetString(handler->signal),
+			      handler->interp);
+
+	if (!gaim_signal_connect_vargs(handler->instance,
+				       Tcl_GetString(handler->signal),
+				       (void *)handler->interp,
+				       GAIM_CALLBACK(tcl_signal_callback),
+				       (void *)handler))
 		return FALSE;
 
-	tcl_signal_disconnect(handler->interp, handler->signal, handler->interp);
-
-	if (!gaim_signal_connect_vargs(handler->instance, handler->signal, (void *)handler->interp,
-				       GAIM_CALLBACK(tcl_signal_callback), (void *)handler))
+	Tcl_IncrRefCount(handler->signal);
+	handler->namespace = new_cb_namespace ();
+	Tcl_IncrRefCount(handler->namespace);
+	proc = g_string_new("");
+	g_string_append_printf(proc, "namespace eval %s { proc cb { %s } { %s } }",
+			       Tcl_GetString(handler->namespace),
+			       Tcl_GetString(handler->args),
+	                       Tcl_GetString(handler->proc));
+	if (Tcl_Eval(handler->interp, proc->str) != TCL_OK) {
+		Tcl_DecrRefCount(handler->namespace);
+		g_string_free(proc, TRUE);
 		return FALSE;
+	}
+	g_string_free(proc, TRUE);
 
 	tcl_callbacks = g_list_append(tcl_callbacks, (gpointer)handler);
 
@@ -97,14 +111,20 @@ void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *inter
 	GList *cur;
 	struct tcl_signal_handler *handler;
 	gboolean found = FALSE;
+	GString *cmd;
 
 	for (cur = tcl_callbacks; cur != NULL; cur = g_list_next(cur)) {
 		handler = cur->data;
 		if (handler->interp == interp && handler->instance == instance 
-		    && !strcmp(signal, handler->signal)) {
+		    && !strcmp(signal, Tcl_GetString(handler->signal))) {
 			gaim_signal_disconnect(instance, signal, handler->interp,
 					       GAIM_CALLBACK(tcl_signal_callback));
+			cmd = g_string_sized_new(64);
+			g_string_printf(cmd, "namespace delete %s",
+					Tcl_GetString(handler->namespace));
+			Tcl_EvalEx(interp, cmd->str, -1, TCL_EVAL_GLOBAL);
 			tcl_signal_handler_free(handler);
+			g_string_free(cmd, TRUE);
 			cur->data = NULL;
 			found = TRUE;
 			break;
@@ -116,25 +136,32 @@ void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *inter
 
 static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handler)
 {
-	struct var {
-		void *val;
-		char *str;
-	} *vars;
-	GString *val, *name;
+	GString *name, *val;
 	GaimBlistNode *node;
 	int error, i;
 	void *retval = NULL;
-	Tcl_Obj *result;
+	Tcl_Obj *cmd, *arg, *result;
+	void **vals; /* Used for inout parameters */
+	char ***strs;
 
-	vars = g_new0(struct var, handler->nargs);
-	val = g_string_sized_new(32);
+	vals = g_new0(void *, handler->nargs);
+	strs = g_new0(char **, handler->nargs);
 	name = g_string_sized_new(32);
+	val = g_string_sized_new(32);
+
+	cmd = Tcl_NewListObj(0, NULL);
+	Tcl_IncrRefCount(cmd);
+
+	arg = Tcl_DuplicateObj(handler->namespace);
+	Tcl_AppendStringsToObj(arg, "::cb", NULL);
+	Tcl_ListObjAppendElement(handler->interp, cmd, arg);
 
 	for (i = 0; i < handler->nargs; i++) {
-		g_string_printf(name, "::gaim::_callback::%s", handler->argnames[i]);
+		if (gaim_value_is_outgoing(handler->argtypes[i]))
+			g_string_printf(name, "%s::arg%d",
+					Tcl_GetString(handler->namespace), i);
 
 		switch(gaim_value_get_type(handler->argtypes[i])) {
-		default: /* Yes, at the top */
 		case GAIM_TYPE_UNKNOWN:	/* What?  I guess just pass the word ... */
 			/* treat this as a pointer, but complain first */
 			gaim_debug(GAIM_DEBUG_ERROR, "tcl", "unknown GaimValue type %d\n",
@@ -144,22 +171,22 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 		case GAIM_TYPE_BOXED:
 			/* These are all "pointer" types to us */
 			if (gaim_value_is_outgoing(handler->argtypes[i])) {
-				vars[i].val = va_arg(args, void **);
-				Tcl_LinkVar(handler->interp, name->str, vars[i].val, TCL_LINK_INT);
+				vals[i] = va_arg(args, void **);
+				Tcl_LinkVar(handler->interp, name->str,
+					    vals[i], TCL_LINK_INT);
+				arg = Tcl_NewStringObj(name->str, -1);
 			} else {
-				vars[i].val = va_arg(args, void *);
-				Tcl_LinkVar(handler->interp, name->str, (char *)&vars[i].val,
-					    TCL_LINK_INT|TCL_LINK_READ_ONLY);
+				arg = Tcl_NewIntObj((int)va_arg(args, void *));
 			}
 			break;
 		case GAIM_TYPE_BOOLEAN:
 			if (gaim_value_is_outgoing(handler->argtypes[i])) {
-				vars[i].val = va_arg(args, gboolean *);
-				Tcl_LinkVar(handler->interp, name->str, vars[i].val, TCL_LINK_BOOLEAN);
+				vals[i] = va_arg(args, gboolean *);
+				Tcl_LinkVar(handler->interp, name->str,
+					    (char *)&vals[i], TCL_LINK_BOOLEAN);
+				arg = Tcl_NewStringObj(name->str, -1);
 			} else {
-				vars[i].val = (void *)va_arg(args, gboolean);
-				Tcl_LinkVar(handler->interp, name->str, (char *)&vars[i].val,
-					    TCL_LINK_BOOLEAN|TCL_LINK_READ_ONLY);
+				arg = Tcl_NewBooleanObj(va_arg(args, gboolean));
 			}
 			break;
 		case GAIM_TYPE_CHAR:
@@ -171,41 +198,47 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 		case GAIM_TYPE_LONG:
 		case GAIM_TYPE_ULONG:
 		case GAIM_TYPE_ENUM:
-			/* These next two are totally bogus */
-		case GAIM_TYPE_INT64:
-		case GAIM_TYPE_UINT64:
 			/* I should really cast these individually to
 			 * preserve as much information as possible ...
 			 * but heh */
 			if (gaim_value_is_outgoing(handler->argtypes[i])) {
-				vars[i].val = (void *)va_arg(args, int *);
-				Tcl_LinkVar(handler->interp, name->str, vars[i].val, TCL_LINK_INT);
+				vals[i] = va_arg(args, int *);
+				Tcl_LinkVar(handler->interp, name->str,
+					    vals[i], TCL_LINK_INT);
+				arg = Tcl_NewStringObj(name->str, -1);
 			} else {
-				vars[i].val = (void *)va_arg(args, int);
-				Tcl_LinkVar(handler->interp, name->str, (char *)&vars[i].val,
-					    TCL_LINK_INT|TCL_LINK_READ_ONLY);
+				arg = Tcl_NewIntObj(va_arg(args, int));
+			}
+		case GAIM_TYPE_INT64:
+		case GAIM_TYPE_UINT64:
+			if (gaim_value_is_outgoing(handler->argtypes[i])) {
+				vals[i] = (void *)va_arg(args, guint64 *);
+				Tcl_LinkVar(handler->interp, name->str,
+					    vals[i], TCL_LINK_WIDE_INT);
+				arg = Tcl_NewStringObj(name->str, -1);
+			} else {
+				arg = Tcl_NewWideIntObj(va_arg(args, guint64));
 			}
 			break;
 		case GAIM_TYPE_STRING:
 			if (gaim_value_is_outgoing(handler->argtypes[i])) {
-				vars[i].val = (void *)va_arg(args, char **);
-				if (vars[i].val != NULL && *(char **)vars[i].val != NULL) {
-					vars[i].str = (char *)ckalloc(strlen(*(char **)vars[i].val) + 1);
-					strcpy(vars[i].str, *(char **)vars[i].val);
+				strs[i] = va_arg(args, char **);
+				if (strs[i] == NULL || *strs[i] == NULL) {
+					vals[i] = ckalloc(1);
+					*(char *)vals[i] = '\0';
 				} else {
-					vars[i].str = (char *)ckalloc(1);
-					*vars[i].str = '\0';
+					vals[i] = ckalloc(strlen(*strs[i]) + 1);
+					strcpy(vals[i], *strs[i]);
 				}
-				Tcl_LinkVar(handler->interp, name->str, (char *)&vars[i].str, TCL_LINK_STRING);
+				Tcl_LinkVar(handler->interp, name->str,
+					    (char *)&vals[i], TCL_LINK_STRING);
+				arg = Tcl_NewStringObj(name->str, -1);
 			} else {
-				vars[i].val = (void *)va_arg(args, char *);
-				Tcl_LinkVar(handler->interp, name->str, (char *)&vars[i].val,
-					    TCL_LINK_STRING|TCL_LINK_READ_ONLY);
+				arg = Tcl_NewStringObj(va_arg(args, char *), -1);
 			}
 			break;
 		case GAIM_TYPE_SUBTYPE:
 			switch (gaim_value_get_subtype(handler->argtypes[i])) {
-			default:
 			case GAIM_SUBTYPE_UNKNOWN:
 				gaim_debug(GAIM_DEBUG_ERROR, "tcl", "subtype unknown\n");
 			case GAIM_SUBTYPE_ACCOUNT:
@@ -215,12 +248,12 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			case GAIM_SUBTYPE_PLUGIN:
 				/* pointers again */
 				if (gaim_value_is_outgoing(handler->argtypes[i])) {
-					vars[i].val = va_arg(args, void **);
-					Tcl_LinkVar(handler->interp, name->str, vars[i].val, TCL_LINK_INT);
+					vals[i] = va_arg(args, void **);
+					Tcl_LinkVar(handler->interp, name->str,
+						    vals[i], TCL_LINK_INT);
+					arg = Tcl_NewStringObj(name->str, -1);
 				} else {
-					vars[i].val = va_arg(args, void *);
-					Tcl_LinkVar(handler->interp, name->str, (char *)&vars[i].val,
-						    TCL_LINK_INT|TCL_LINK_READ_ONLY);
+					arg = Tcl_NewIntObj((int)va_arg(args, void *));
 				}
 				break;
 			case GAIM_SUBTYPE_BLIST:
@@ -251,16 +284,15 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					g_string_printf(val, "other");
 					break;
 				}
-				vars[i].str = g_strdup(val->str);
-				Tcl_LinkVar(handler->interp, name->str, (char *)&vars[i].str,
-					    TCL_LINK_STRING|TCL_LINK_READ_ONLY);
+				arg = Tcl_NewStringObj(val->str, -1);
 				break;
 			}
 		}
+		Tcl_ListObjAppendElement(handler->interp, cmd, arg);
 	}
 
 	/* Call the friggin' procedure already */
-	if ((error = Tcl_EvalObjEx(handler->interp, handler->proc, TCL_EVAL_GLOBAL)) != TCL_OK) {
+	if ((error = Tcl_EvalObjEx(handler->interp, cmd, TCL_EVAL_GLOBAL)) != TCL_OK) {
 		gaim_debug(GAIM_DEBUG_ERROR, "tcl", "error evaluating callback: %s\n",
 			   Tcl_GetString(Tcl_GetObjResult(handler->interp)));
 	} else {
@@ -281,31 +313,20 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 
 	/* And finally clean up */
 	for (i = 0; i < handler->nargs; i++) {
-		g_string_printf(name, "::gaim::_callback::%s", handler->argnames[i]);
-		Tcl_UnlinkVar(handler->interp, name->str);
-		/* We basically only have to deal with strings and buddies
-		 * on the way out */
+		g_string_printf(name, "%s::arg%d",
+				Tcl_GetString(handler->namespace), i);
+		if (gaim_value_is_outgoing(handler->argtypes[i]))
+			Tcl_UnlinkVar(handler->interp, name->str);
+		/* We basically only have to deal with strings on the
+		 * way out */
 		switch (gaim_value_get_type(handler->argtypes[i])) {
 		case GAIM_TYPE_STRING:
 			if (gaim_value_is_outgoing(handler->argtypes[i])) {
-				if (vars[i].val != NULL && *(char **)vars[i].val != NULL) {
-					g_free(*(char **)vars[i].val);
-					*(char **)vars[i].val = g_strdup(vars[i].str);
+				if (vals[i] != NULL && *(char **)vals[i] != NULL) {
+					g_free(*strs[i]);
+					*strs[i] = g_strdup(vals[i]);
 				}
-				ckfree(vars[i].str);
-			}
-			break;
-		case GAIM_TYPE_SUBTYPE:
-			switch(gaim_value_get_subtype(handler->argtypes[i])) {
-			case GAIM_SUBTYPE_BLIST:
-			case GAIM_SUBTYPE_BLIST_BUDDY:
-			case GAIM_SUBTYPE_BLIST_GROUP:
-			case GAIM_SUBTYPE_BLIST_CHAT:
-				g_free(vars[i].str);
-				break;
-			default:
-				/* nothing */
-				;
+				ckfree(vals[i]);
 			}
 			break;
 		default:
@@ -316,7 +337,18 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 
 	g_string_free(name, TRUE);
 	g_string_free(val, TRUE);
-	g_free(vars);
+	g_free(vals);
+	g_free(strs);
+	
 
 	return retval;
+}
+
+static Tcl_Obj *new_cb_namespace ()
+{
+	static int cbnum;
+	char name[32];
+
+	g_snprintf (name, sizeof(name), "::gaim::_callback::cb_%d", cbnum++);
+	return Tcl_NewStringObj (name, -1);
 }

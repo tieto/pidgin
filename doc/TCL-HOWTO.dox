@@ -2,6 +2,8 @@
 
 @section Intoduction
 
+NOTA BENE: This documentation is badly out of date for 2.x.
+
 The Gaim Tcl interface provides a Tcl API for many useful gaim
 functions.  Like the perl API, the Tcl API does not provide
 access to every corner of gaim exposed by the @e C interface.  It does,
