@@ -1484,7 +1484,7 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 
 void
 gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
-			     gchar           *sml,
+			     const gchar     *sml,
 			     GtkIMHtmlSmiley *smiley)
 {
 	GtkSmileyTree *tree;

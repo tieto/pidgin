@@ -5207,28 +5207,28 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 		g_object_ref(G_OBJECT(smiley->icon));
 
 	gtk_imhtml_associate_smiley(GTK_IMHTML(gtkconv->imhtml), sml, smiley);
-	
+
 	return TRUE;
 }
 
-static void 
+static void
 gaim_gtkconv_custom_smiley_write(GaimConversation *conv, const char *smile,
                                       const char * data, gint64 size)
 {
 	GaimGtkConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;
-	GdkPixbufLoader *loader;	
+	GdkPixbufLoader *loader;
 	const char *sml;
 
 	sml = gaim_account_get_protocol_name(conv->account);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
 
-	if (!smiley) 
+	if (!smiley)
 		return;
-	
+
 	loader = smiley->loader;
-	if (!loader) 
+	if (!loader)
 		return;
 
 	gdk_pixbuf_loader_write(loader, data, size, NULL);
@@ -5249,14 +5249,14 @@ gaim_gtkconv_custom_smiley_close(GaimConversation *conv, const char *smile)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
 
-	if (!smiley) 
+	if (!smiley)
 		return;
 
 	loader = smiley->loader;
 
-	if (!loader) 
+	if (!loader)
 		return;
-	
+
 	gaim_debug_info("gtkconv", "About to close the smiley pixbuf\n");
 
 	gdk_pixbuf_loader_close(loader, NULL);

@@ -265,7 +265,7 @@ GtkIMHtmlSmiley *gtk_imhtml_smiley_get(GtkIMHtml * imhtml,
  * @param sml    The name of the smiley category.
  * @param smiley The GtkIMSmiley to associate.
  */
-void gtk_imhtml_associate_smiley(GtkIMHtml *imhtml, gchar *sml, GtkIMHtmlSmiley *smiley);
+void gtk_imhtml_associate_smiley(GtkIMHtml *imhtml, const gchar *sml, GtkIMHtmlSmiley *smiley);
 
 /**
  * Removes all smileys associated with a GTK IM/HTML.
