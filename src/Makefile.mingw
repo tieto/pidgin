@@ -124,6 +124,7 @@ DLL_C_SRC =		about.c \
 			prpl.c \
 			request.c \
 			server.c \
+			sha.c \
 			signals.c \
 			sound.c \
 			sslconn.c \
