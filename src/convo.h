@@ -56,6 +56,8 @@ extern void toggle_loggle(GtkWidget *, struct conversation *);
 extern void insert_smiley(GtkWidget *, struct conversation *);
 /* sound is handled by set_option */
 extern gboolean keypress_callback(GtkWidget *, GdkEventKey *, struct conversation *);
+extern void check_spelling( GtkEditable *, gchar *, gint, gint *, gpointer);
+extern int entry_key_pressed(GtkWidget *, GtkWidget *);
 
 extern GtkWidget *build_conv_toolbar(struct conversation *);
 

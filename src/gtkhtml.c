@@ -2089,7 +2089,6 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	}
 	else if (hb->type == HTML_BIT_SEP)
 	{
-
 		gdk_draw_line(html->html_area, gc, hb->x + 2,
 					  hb->y - html->yoffset - (hb->height / 2 - 1),
 					  hb->x + hb->width,
@@ -2098,6 +2097,11 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	}
 	else if (hb->type == HTML_BIT_PIXMAP)
 	{
+		area.x = hb->x - html->xoffset;
+		area.y = hb->y - hb->height + 5 - html->yoffset;
+		area.width = hb->width + 2;
+		area.height = hb->height;
+		clear_area(html, &area);
 		gdk_gc_set_background(gc, &widget->style->base[GTK_STATE_NORMAL]);
 		gdk_draw_pixmap(html->html_area, gc, hb->pm, 0, 0, hb->x,
 						hb->y - html->yoffset - (hb->height) + 4, -1, -1);

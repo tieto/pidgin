@@ -722,8 +722,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	g_free(buf);
 }
 
-static int
-entry_key_pressed(GtkWidget *w, GtkWidget *entry)
+int entry_key_pressed(GtkWidget *w, GtkWidget *entry)
 {
         check_everything(w);
         return TRUE;
@@ -1374,7 +1373,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 
 
-static void check_spelling( GtkEditable * editable, gchar * new_text,
+void check_spelling( GtkEditable * editable, gchar * new_text,
                                                           gint length, gint * position,
                                                           gpointer data )
 {

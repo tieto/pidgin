@@ -679,6 +679,8 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_window_set_focus(GTK_WINDOW(win), chatentry);
 
 	gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback),b);
+	gtk_signal_connect(GTK_OBJECT(chatentry), "insert-text", GTK_SIGNAL_FUNC(check_spelling), chatentry);
+	gtk_signal_connect(GTK_OBJECT(chatentry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed), chatentry);
 
 	b->font_dialog = NULL;
 	b->fg_color_dialog = NULL;	
