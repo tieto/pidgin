@@ -63,7 +63,7 @@ static struct developer developers[] = {
 	{"Rob Flynn",					N_("maintainer"), "gaim@robflynn.com"},
 	{"Sean Egan",					N_("lead developer"), "sean.egan@binghamton.edu"},
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
-	{"Herman Bloggs",				N_("win32 port"), "hermanator12002@yahoo.com"},
+	{"Herman Bloggs",				N_("win32 port"), "herman@bluedigits.com"},
 	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},

@@ -200,6 +200,7 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
         case 1051: return "sk"; /* slovak */
         case 1060: return "sl"; /* slovenian */
         case 1034: return "es"; /* spanish */
+        case 1052: return "sq"; /* albanian */
         case 1053: return "sv"; /* swedish */
         case 1054: return "th"; /* thai */
         case 1028: return "zh_TW"; /* chinese - taiwan (traditional) */

@@ -27,6 +27,7 @@ EXTRA_DIST = \
 		win32/nsis/gaim-header.bmp \
 		win32/nsis/gaim-intro.bmp \
 		win32/nsis/langmacros.nsh \
+		win32/nsis/translations/albanian.nsh \
 		win32/nsis/translations/bulgarian.nsh \
 		win32/nsis/translations/catalan.nsh \
 		win32/nsis/translations/czech.nsh \
