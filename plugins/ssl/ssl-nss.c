@@ -220,6 +220,9 @@ ssl_nss_close(GaimSslConnection *gsc)
 {
 	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
 
+	if(!nss_data)
+		return;
+
 	if (nss_data->in) PR_Close(nss_data->in);
 	/* if (nss_data->fd) PR_Close(nss_data->fd); */
 
@@ -238,6 +241,9 @@ static size_t
 ssl_nss_write(GaimSslConnection *gsc, const void *data, size_t len)
 {
 	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
+
+	if(!nss_data)
+		return 0;
 
 	return PR_Write(nss_data->in, data, len);
 }
