@@ -1780,7 +1780,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	gtk_widget_grab_focus(gtkconv->entry);
 
 	gtk_window_set_title(GTK_WINDOW(gtkwin->window),
-			     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+						 gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 }
 
 /**************************************************************************
@@ -4746,6 +4746,7 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	char filename[256];
 	FILE *file;
 	GError *err = NULL;
+	gboolean animate = TRUE;
 
 	struct buddy *buddy;
 
@@ -4768,6 +4769,9 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	}
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	if (gtkconv->u.im->icon_timer == 0 && gtkconv->u.im->icon != NULL)
+		animate = FALSE;
 
 	remove_icon(gtkconv);
 
@@ -4870,7 +4874,7 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	gtk_container_add(GTK_CONTAINER(event), gtkconv->u.im->icon);
 	gtk_widget_show(gtkconv->u.im->icon);
 
-	if(im_options & OPT_IM_NO_ANIMATION)
+	if ((im_options & OPT_IM_NO_ANIMATION) || animate == FALSE)
 		stop_anim(NULL, conv);
 
 	g_object_unref(G_OBJECT(pm));
