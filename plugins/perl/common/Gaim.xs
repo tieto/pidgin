@@ -99,4 +99,5 @@ BOOT:
 	GAIM_PERL_BOOT(BuddyList__Group);
 	GAIM_PERL_BOOT(BuddyList__Buddy);
 	GAIM_PERL_BOOT(BuddyList__Chat);
+	GAIM_PERL_BOOT(Connection);
 
