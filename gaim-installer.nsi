@@ -91,6 +91,7 @@ SetDateSave on
   !insertmacro MUI_LANGUAGE "French"
   !insertmacro MUI_LANGUAGE "SimpChinese"
   !insertmacro MUI_LANGUAGE "Serbian"
+  !insertmacro MUI_LANGUAGE "PortugueseBR"
 
 ;--------------------------------
 ;Translations
@@ -101,6 +102,7 @@ SetDateSave on
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\french.nsh"
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\simp-chinese.nsh"
   !include "${GAIM_NSIS_INCLUDE_PATH}\translations\serbian-latin.nsh"
+  !include "${GAIM_NSIS_INCLUDE_PATH}\translations\portuguese-br.nsh"
 
 ;--------------------------------
 ;Data
