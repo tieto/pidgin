@@ -896,7 +896,7 @@ static void gjab_start(gjconn gjc)
 	XML_SetElementHandler(gjc->parser, startElement, endElement);
 	XML_SetCharacterDataHandler(gjc->parser, charData);
 
-	if(gaim_account_get_bool(account, "ssl", FALSE)
+	if(gaim_account_get_bool(account, "old_ssl", FALSE)
 			&& gaim_ssl_is_supported()) {
 		gjc->gsc = gaim_ssl_connect(account, server, port,
 				gjab_ssl_connected, GJ_GC(gjc));
@@ -4520,7 +4520,7 @@ init_plugin(GaimPlugin *plugin)
 	/* Account Options */
 
 	if(gaim_ssl_is_supported()) {
-		option = gaim_account_option_bool_new(_("Use SSL"), "ssl", FALSE);
+		option = gaim_account_option_bool_new(_("Use SSL"), "old_ssl", FALSE);
 		prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 				option);
 	}
