@@ -371,6 +371,7 @@ struct g_url {
 
 extern void grab_url(char *, gboolean, void (*callback)(gpointer, char *, unsigned long), gpointer);
 extern gchar *strip_html(const gchar *);
+extern char *html_to_xhtml(const char *);
 struct g_url *parse_url(char *url);
 
 /* Functions in idle.c */

@@ -139,7 +139,7 @@ gchar *sec_to_text(guint sec)
 
 gint linkify_text(char *text)
 {
-	char *c, *t;
+	char *c, *t, *q = NULL;
 	char *cpy = g_malloc(strlen(text) * 3 + 1);
 	char url_buf[BUF_LEN * 4];
 	int cnt = 0;
@@ -149,7 +149,12 @@ gint linkify_text(char *text)
 	cpy[strlen(text)] = 0;
 	c = cpy;
 	while (*c) {
-		if (!g_ascii_strncasecmp(c, "<A", 2)) {
+		if(!q && (*c == '\"' || *c == '\'')) {
+			q = c;
+		} else if(q) {
+			if(*c == *q)
+				q = NULL;
+		} else if (!g_ascii_strncasecmp(c, "<A", 2)) {
 			while (1) {
 				if (!g_ascii_strncasecmp(c, "/A>", 3)) {
 					break;

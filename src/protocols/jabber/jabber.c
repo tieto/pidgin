@@ -192,6 +192,7 @@ typedef struct jabber_resource_info {
 	char *away_msg;
 	char *thread_id;
 	gboolean has_composing;
+	gboolean has_xhtml;
 } *jab_res_info;
 
 /*
@@ -1106,6 +1107,7 @@ static void jabber_track_resource(struct gaim_connection *gc,
 			jri = g_new0(struct jabber_resource_info, 1);
 			jri->name = g_strdup(res);
 			jri->away_msg = NULL;
+			jri->has_xhtml = TRUE;
 			jbd->resources = g_slist_append(jbd->resources, jri);
 		}
 		jri->priority = priority;
@@ -1256,6 +1258,7 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 	xmlnode y, subj;
 	time_t time_sent = time(NULL);
 	gboolean typing = FALSE;
+	gboolean has_xhtml = TRUE;
 
 	char *from = NULL, *msg = NULL, *type = NULL, *topic = NULL;
 	char *thread_id = NULL;
@@ -1287,13 +1290,11 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 	if (!type || !strcasecmp(type, "normal") || !strcasecmp(type, "chat")) {
 
 		from = jid_full(p->from);
-		/*
 		if ((y = xmlnode_get_tag(p->x, "html"))) {
+			msg = xmlnode2str(y);
+		} else if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
-		} else
-		*/
-		if ((y = xmlnode_get_tag(p->x, "body"))) {
-			msg = xmlnode_get_data(y);
+			has_xhtml = FALSE;
 		}
 
 		if (!from)
@@ -1320,8 +1321,11 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 			else {
 				int flags = 0;
 				jab_res_info jri = jabber_find_resource(GJ_GC(gjc), from);
-				if(jri && typing)
-					jri->has_composing = TRUE;
+				if(jri) {
+					if(typing)
+						jri->has_composing = TRUE;
+					jri->has_xhtml = has_xhtml;
+				}
 				if (xmlnode_get_tag(p->x, "gaim"))
 					flags = IM_FLAG_GAIMUSER;
 				jabber_track_convo_thread(gjc, from, thread_id);
@@ -1365,12 +1369,9 @@ static void jabber_handlemessage(gjconn gjc, jpacket p)
 		struct jabber_chat *jc;
 		static int i = 0;
 
-		/*
 		if ((y = xmlnode_get_tag(p->x, "html"))) {
-			msg = xmlnode_get_data(y);
-		} else
-		*/
-		if ((y = xmlnode_get_tag(p->x, "body"))) {
+			msg = xmlnode2str(y);
+		} else if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
 		}
 
@@ -2421,11 +2422,36 @@ static int jabber_send_typing(struct gaim_connection *gc, char *who, int typing)
 	return JABBER_TYPING_NOTIFY_INT;
 }
 
+static void insert_message(xmlnode x, const char *message, gboolean use_xhtml) {
+	xmlnode y;
+	char *buf = strip_html(message);
+	y = xmlnode_insert_tag(x, "body");
+	xmlnode_insert_cdata(y, buf, -1);
+	g_free(buf);
+
+	if(use_xhtml) {
+		char *buf2 = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body>%s</body></html>", message);
+		buf = html_to_xhtml(buf2);
+		g_free(buf2);
+
+		y = xmlnode_str(buf, strlen(buf));
+		if(y) {
+			xmlnode_insert_tag_node(x, y);
+			xmlnode_free(y);
+		} else {
+			debug_printf("holy cow, html_to_xhtml didn't work right!\n");
+			debug_printf("the invalid XML: %s\n", buf);
+		}
+		g_free(buf);
+	}
+}
+
 static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, int len, int flags)
 {
 	xmlnode x, y;
 	char *thread_id = NULL;
 	gjconn gjc = ((struct jabber_data *)gc->proto_data)->gjc;
+	jab_res_info jri = jabber_find_resource(gc, who);
 
 	if (!who || !message)
 		return 0;
@@ -2452,8 +2478,7 @@ static int jabber_send_im(struct gaim_connection *gc, char *who, char *message, 
 	xmlnode_insert_tag(y, "composing");
 
 	if (message && strlen(message)) {
-		y = xmlnode_insert_tag(x, "body");
-		xmlnode_insert_cdata(y, message, -1);
+		insert_message(x, message, jri ? jri->has_xhtml : TRUE);
 	}
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
@@ -2968,8 +2993,7 @@ static void jabber_chat_invite(struct gaim_connection *gc, int id, const char *m
 	g_free(subject);
 
 	if (message && strlen(message)) {
-		y = xmlnode_insert_tag(x, "body");
-		xmlnode_insert_cdata(y, message, -1);
+		insert_message(x, message, FALSE);
 	}
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
@@ -3024,8 +3048,7 @@ static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 		g_snprintf(buf, sizeof(buf), "/me has changed the subject to: %s", message + strlen("/topic"));
 		xmlnode_insert_cdata(y, buf, -1);
 	} else if (message && strlen(message)) {
-		y = xmlnode_insert_tag(x, "body");
-		xmlnode_insert_cdata(y, message, -1);
+		insert_message(x, message, FALSE);
 	}
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);
@@ -3035,7 +3058,7 @@ static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 
 static void jabber_chat_whisper(struct gaim_connection *gc, int id, char *who, char *message)
 {
-	xmlnode x, y;
+	xmlnode x;
 	struct jabber_chat *jc = NULL;
 	char *chatname;
 
@@ -3051,8 +3074,7 @@ static void jabber_chat_whisper(struct gaim_connection *gc, int id, char *who, c
 	xmlnode_put_attrib(x, "type", "normal");
 
 	if (message && strlen(message)) {
-		y = xmlnode_insert_tag(x, "body");
-		xmlnode_insert_cdata(y, message, -1);
+		insert_message(x, message, FALSE);
 	}
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->gjc, x);

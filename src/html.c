@@ -322,3 +322,138 @@ void grab_url(char *url, gboolean full, void callback(gpointer, char *, unsigned
 		callback(data, g_strdup(_("g003: Error opening connection.\n")), 0);
 	}
 }
+
+#define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
+						char *o = strchr(c+1, '<'); \
+						char *p = strchr(c+1, '>'); \
+						if(p && (!o || p < o)) { \
+							if(*(p-1) != '/') \
+								tags = g_list_prepend(tags, y); \
+							xhtml = g_string_append(xhtml, "<" y); \
+							c += strlen("<" x ); \
+							xhtml = g_string_append_len(xhtml, c, (p - c) + 1); \
+							c = p + 1; \
+						} else { \
+							xhtml = g_string_append(xhtml, "&lt;"); \
+						} \
+						continue; \
+					} \
+						if(!g_ascii_strncasecmp(c, "<" x, strlen("<" x)) && \
+								(*(c+strlen("<" x)) == '>' || \
+								 !g_ascii_strncasecmp(c+strlen("<" x), "/>", 2))) { \
+							xhtml = g_string_append(xhtml, "<" y); \
+							c += strlen("<" x); \
+							if(*c != '/') \
+								tags = g_list_prepend(tags, y); \
+							continue; \
+						}
+#define ALLOW_TAG(x) ALLOW_TAG_ALT(x, x)
+
+char *html_to_xhtml(const char *html) {
+	GString *xhtml = g_string_new("");
+	GList *tags = NULL, *tag;
+	const char *q = NULL, *c = html;
+	char *ret;
+	while(*c) {
+		if(!q && (*c == '\"' || *c == '\'')) {
+			q = c;
+			xhtml = g_string_append_c(xhtml, *c);
+			c++;
+		} else if(q) {
+			if(*c == *q) {
+				q = NULL;
+			} else if(*c == '\\') {
+				xhtml = g_string_append_c(xhtml, *c);
+				c++;
+			}
+			xhtml = g_string_append_c(xhtml, *c);
+			c++;
+		} else if(*c == '<') {
+			if(*(c+1) == '/') { /* closing tag */
+				tag = tags;
+				while(tag) {
+					if(!g_ascii_strncasecmp((c+2), tag->data, strlen(tag->data)) && *(c+strlen(tag->data)+2) == '>') {
+						c += strlen(tag->data) + 3;
+						break;
+					}
+					tag = tag->next;
+				}
+				if(tag) {
+					while(tags) {
+						g_string_append_printf(xhtml, "</%s>", (char *)tags->data);
+						if(tags == tag)
+							break;
+						tags = g_list_remove(tags, tags->data);
+					}
+					tags = g_list_remove(tags, tag->data);
+				} else {
+					/* we tried to close a tag we never opened! escape it
+					 * and move on */
+					xhtml = g_string_append(xhtml, "&lt;");
+					c++;
+				}
+			} else { /* opening tag */
+				ALLOW_TAG("a");
+				ALLOW_TAG("b");
+				ALLOW_TAG("blockquote");
+				ALLOW_TAG("body");
+				ALLOW_TAG_ALT("bold", "b");
+				ALLOW_TAG("br");
+				ALLOW_TAG("cite");
+				ALLOW_TAG("div");
+				ALLOW_TAG("em");
+				ALLOW_TAG("font");
+				ALLOW_TAG("h1");
+				ALLOW_TAG("h2");
+				ALLOW_TAG("h3");
+				ALLOW_TAG("h4");
+				ALLOW_TAG("h5");
+				ALLOW_TAG("h6");
+				ALLOW_TAG("head");
+				ALLOW_TAG("hr");
+				ALLOW_TAG("html");
+				ALLOW_TAG("i");
+				ALLOW_TAG_ALT("italic", "i");
+				ALLOW_TAG("li");
+				ALLOW_TAG("ol");
+				ALLOW_TAG("p");
+				ALLOW_TAG("pre");
+				ALLOW_TAG("q");
+				ALLOW_TAG_ALT("s", "strike");
+				ALLOW_TAG("span");
+				ALLOW_TAG("strike");
+				ALLOW_TAG("strong");
+				ALLOW_TAG("sub");
+				ALLOW_TAG("sup");
+				ALLOW_TAG("title");
+				ALLOW_TAG("u");
+				ALLOW_TAG_ALT("underline","u");
+				ALLOW_TAG("ul");
+
+				if(!g_ascii_strncasecmp(c, "<!--", strlen("<!--"))) {
+					char *p = strstr(c + strlen("<!--"), "-->");
+					if(p) {
+						xhtml = g_string_append(xhtml, "<!--");
+						c += strlen("<!--");
+						continue;
+					}
+				}
+
+				xhtml = g_string_append(xhtml, "&lt;");
+				c++;
+			}
+		} else {
+			xhtml = g_string_append_c(xhtml, *c);
+			c++;
+		}
+	}
+	tag = tags;
+	while(tag) {
+		g_string_append_printf(xhtml, "</%s>", (char *)tag->data);
+		tag = tag->next;
+	}
+	g_list_free(tags);
+	ret = g_strdup(xhtml->str);
+	g_string_free(xhtml, TRUE);
+	return ret;
+}

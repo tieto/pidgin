@@ -632,6 +632,9 @@ gtk_imhtml_is_amp_escape (const gchar *string,
 	} else if (!g_ascii_strncasecmp (string, "&reg;", 5)) {
 		*replace = '®'; /* was: 'Â®' */
 		*length = 5;
+	} else if (!g_ascii_strncasecmp (string, "&apos;", 6)) {
+		*replace = '\'';
+		*length = 6;
 	} else if (*(string + 1) == '#') {
 		guint pound = 0;
 		if ((sscanf (string, "&#%u;", &pound) == 1) && pound != 0) {
@@ -703,7 +706,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	VALID_TAG ("/HEAD");
 	VALID_TAG ("BINARY");
 	VALID_TAG ("/BINARY");
-	
+
 	VALID_OPT_TAG ("HR");
 	VALID_OPT_TAG ("FONT");
 	VALID_OPT_TAG ("BODY");
@@ -711,6 +714,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	VALID_OPT_TAG ("IMG");
 	VALID_OPT_TAG ("P");
 	VALID_OPT_TAG ("H3");
+	VALID_OPT_TAG ("HTML");
 
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
@@ -1170,8 +1174,9 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					}
 				case 47:	/* P (opt) */
 				case 48:	/* H3 (opt) */
+				case 49:	/* HTML (opt) */
 					break;
-				case 49:	/* comment */
+				case 50:	/* comment */
 					NEW_BIT (NEW_TEXT_BIT);
 					if (imhtml->show_comments)
 						wpos = g_snprintf (ws, len, "%s", tag);
