@@ -66,24 +66,26 @@ static GList *perl_timeout_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
 
 /* dealing with gaim */
-XS(XS_AIM_register);
-XS(XS_AIM_get_info);
+XS(XS_AIM_register); /* set up hooks for script */
+XS(XS_AIM_get_info); /* version, last to attempt signon, protocol */
 XS(XS_AIM_print); /* lemme figure this one out... */
 
 /* list stuff */
-XS(XS_AIM_buddy_list);
-XS(XS_AIM_online_list);
+XS(XS_AIM_buddy_list); /* all buddies */
+XS(XS_AIM_online_list); /* online buddies */
 XS(XS_AIM_deny_list); /* also returns permit list */
 
 /* server stuff */
-XS(XS_AIM_command);
+XS(XS_AIM_command); /* send command to server */
 XS(XS_AIM_user_info); /* given name, return struct buddy members */
 
 /* handler commands */
-XS(XS_AIM_add_message_handler);
-XS(XS_AIM_add_command_handler);
-XS(XS_AIM_add_timeout_handler);
+XS(XS_AIM_add_message_handler); /* when people talk */
+XS(XS_AIM_add_command_handler); /* when servers talk */
+XS(XS_AIM_add_timeout_handler); /* figure it out */
 
+/* cool stuff */
+XS(XS_AIM_print_to_conv); /* send message to someone */
 
 void xs_init()
 {
@@ -240,6 +242,14 @@ XS (XS_AIM_get_info)
 	case 1:
 		XST_mPV(0, current_user->username);
 		break;
+	case 2:
+		if (!blist)
+			XST_mPV(0, "Offline");
+		else if (!USE_OSCAR)
+			XST_mPV(0, "TOC");
+		else
+			XST_mPV(0, "Oscar");
+		break;
 	/* FIXME */
 	default:
 		XST_mPV(0, "Error2");
@@ -378,6 +388,11 @@ XS (XS_AIM_add_timeout_handler)
 	perl_timeout_handlers = g_list_append(perl_timeout_handlers, handler);
 	handler->iotag = gtk_timeout_add(timeout, (GtkFunction)perl_timeout, handler);
 	XSRETURN_EMPTY;
+}
+
+XS (XS_AIM_print_to_conv)
+{
+	/* FIXME */
 }
 
 #endif /* USE_PERL */

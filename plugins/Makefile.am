@@ -1,15 +1,7 @@
-if GNOMEAPPLET
-CFLAGS += $(GTK_CFLAGS) $(GNOME_INCLUDEDIR) -I../src -DUSE_APPLET
-else
-CFLAGS += $(GTK_CFLAGS) -I../src -I../libfaim/faim -I../libfaim
-endif
-
-
-
-LDFLAGS += -ggdb $(GTK_LIBS) -shared
+LDFLAGS += $(LIBS) -ggdb -shared
 SUFFIXES = .c .so
 .c.so:
-	$(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -fPIC -DPIC -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
+	$(CC) $(CFLAGS) -I../src -DVERSION=\"$(VERSION)\" -fPIC -DPIC -o $@ $< $(LDFLAGS) $(PLUGIN_LIBS)
 
 
 
