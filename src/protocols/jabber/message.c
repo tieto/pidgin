@@ -506,6 +506,8 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 	} else if(!strncmp(msg, "/part", 5)) {
 		jabber_chat_part(chat, strlen(msg) > 6 ? msg+6 : NULL);
 		return 1;
+	} else if(!strncmp(msg, "/ban", 4)) {
+	} else if(!strncmp(msg, "/kick", 5)) {
 	}
 
 	jm = g_new0(JabberMessage, 1);

@@ -688,7 +688,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	}
 }
 
-static void jabber_register_start(JabberStream *js)
+void jabber_register_start(JabberStream *js)
 {
 	JabberIq *iq;
 
@@ -812,10 +812,12 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_AUTHENTICATING:
 			gaim_connection_update_progress(js->gc, _("Authenticating"),
 					js->gsc ? 6 : 3, JABBER_CONNECT_STEPS);
-			if(js->registration)
-				jabber_register_start(js);
-			else if(js->protocol_version == JABBER_PROTO_0_9)
-				jabber_auth_start_old(js);
+			if(js->protocol_version == JABBER_PROTO_0_9)  {
+				if(js->registration)
+					jabber_register_start(js);
+				else
+					jabber_auth_start_old(js);
+			}
 			break;
 		case JABBER_STREAM_REINITIALIZING:
 			gaim_connection_update_progress(js->gc, _("Re-initializing Stream"),

@@ -54,6 +54,11 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		}
 	}
 
+	if(js->registration) {
+		jabber_register_start(js);
+		return;
+	}
+
 	mechs = xmlnode_get_child(packet, "mechanisms");
 
 	if(!mechs) {

@@ -87,6 +87,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len);
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state);
 
 void jabber_register_parse(JabberStream *js, xmlnode *packet);
+void jabber_register_start(JabberStream *js);
 
 char *jabber_get_next_id(JabberStream *js);
 
