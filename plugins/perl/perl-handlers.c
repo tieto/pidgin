@@ -71,7 +71,7 @@ perl_signal_cb(va_list args, void *data)
 	int value_count;
 	GaimValue *ret_value, **values;
 	SV **sv_args;
-	STRLEN na;
+	void **copy_args;
 
 	dSP;
 	ENTER;
@@ -81,15 +81,14 @@ perl_signal_cb(va_list args, void *data)
 	gaim_signal_get_values(handler->instance, handler->signal,
 						   &ret_value, &value_count, &values);
 
-	sv_args = g_new(SV *, value_count);
+	sv_args   = g_new(SV *,   value_count);
+	copy_args = g_new(void *, value_count);
 
 	for (i = 0; i < value_count; i++)
 	{
-		SV *sv = gaim_perl_sv_from_vargs(values[i], args);
+		sv_args[i] = gaim_perl_sv_from_vargs(values[i], &args, &copy_args[i]);
 
-		sv_args[i] = sv;
-
-		XPUSHs(sv);
+		XPUSHs(sv_args[i]);
 	}
 
 	XPUSHs((SV *)handler->data);
@@ -105,55 +104,7 @@ perl_signal_cb(va_list args, void *data)
 		if (count != 1)
 			croak("Uh oh! call_sv returned %i != 1", i);
 		else
-		{
-			SV *temp_ret_val = POPs;
-
-			switch (gaim_value_get_type(ret_value))
-			{
-				case GAIM_TYPE_BOOLEAN:
-					ret_val = (void *)SvIV(temp_ret_val);
-					break;
-
-				case GAIM_TYPE_INT:
-					ret_val = (void *)SvIV(temp_ret_val);
-					break;
-
-				case GAIM_TYPE_UINT:
-					ret_val = (void *)SvUV(temp_ret_val);
-					break;
-
-				case GAIM_TYPE_LONG:
-					ret_val = (void *)SvIV(temp_ret_val);
-					break;
-
-				case GAIM_TYPE_ULONG:
-					ret_val = (void *)SvUV(temp_ret_val);
-					break;
-
-				case GAIM_TYPE_INT64:
-					ret_val = (void *)SvIV(temp_ret_val);
-					break;
-
-				case GAIM_TYPE_UINT64:
-					ret_val = (void *)SvUV(temp_ret_val);
-					break;
-
-				case GAIM_TYPE_STRING:
-					ret_val = (void *)SvPV(temp_ret_val, na);
-					break;
-
-				case GAIM_TYPE_POINTER:
-					ret_val = (void *)SvIV(temp_ret_val);
-					break;
-
-				case GAIM_TYPE_BOXED:
-					ret_val = (void *)SvIV(temp_ret_val);
-					break;
-
-				default:
-					ret_val = NULL;
-			}
-		}
+			ret_val = gaim_perl_data_from_sv(ret_value, POPs);
 	}
 	else
 		call_sv(handler->callback, G_SCALAR);
@@ -163,55 +114,8 @@ perl_signal_cb(va_list args, void *data)
 	{
 		if (gaim_value_is_outgoing(values[i]))
 		{
-			switch (gaim_value_get_type(values[i]))
-			{
-				case GAIM_TYPE_BOOLEAN:
-					*va_arg(args, gboolean *) = SvIV(sv_args[i]);
-					break;
-
-				case GAIM_TYPE_INT:
-					*va_arg(args, int *) = SvIV(sv_args[i]);
-					break;
-
-				case GAIM_TYPE_UINT:
-					*va_arg(args, unsigned int *) = SvUV(sv_args[i]);
-					break;
-
-				case GAIM_TYPE_LONG:
-					*va_arg(args, long *) = SvIV(sv_args[i]);
-					break;
-
-				case GAIM_TYPE_ULONG:
-					*va_arg(args, unsigned long *) = SvUV(sv_args[i]);
-					break;
-
-				case GAIM_TYPE_INT64:
-					*va_arg(args, gint64 *) = SvIV(sv_args[i]);
-					break;
-
-				case GAIM_TYPE_UINT64:
-					*va_arg(args, guint64 *) = SvUV(sv_args[i]);
-					break;
-
-				case GAIM_TYPE_STRING:
-					/* XXX Memory leak! */
-					*va_arg(args, char **) = SvPV(sv_args[i], na);
-					break;
-
-				case GAIM_TYPE_POINTER:
-					/* XXX Possible memory leak! */
-					*va_arg(args, void **) = (void *)SvIV(sv_args[i]);
-					break;
-
-				case GAIM_TYPE_BOXED:
-					/* Uh.. I dunno. Try this? Likely won't work. Heh. */
-					/* XXX Possible memory leak! */
-					*va_arg(args, void **) = (void *)SvIV(sv_args[i]);
-					break;
-
-				default:
-					return FALSE;
-			}
+			*((void **)copy_args[i]) = gaim_perl_data_from_sv(values[i],
+															  sv_args[i]);
 		}
 	}
 
@@ -219,6 +123,7 @@ perl_signal_cb(va_list args, void *data)
 	LEAVE;
 
 	g_free(sv_args);
+	g_free(copy_args);
 
 	gaim_debug_misc("perl", "ret_val = %p\n", ret_val);
 

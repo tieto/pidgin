@@ -356,6 +356,31 @@ gaim_perl_sv_from_value(const GaimValue *value, va_list list)
 }
 #endif
 
+void *
+gaim_perl_data_from_sv(GaimValue *value, SV *sv)
+{
+	STRLEN na;
+
+	switch (gaim_value_get_type(value))
+	{
+		case GAIM_TYPE_BOOLEAN: return (void *)SvIV(sv);
+		case GAIM_TYPE_INT:     return (void *)SvIV(sv);
+		case GAIM_TYPE_UINT:    return (void *)SvUV(sv);
+		case GAIM_TYPE_LONG:    return (void *)SvIV(sv);
+		case GAIM_TYPE_ULONG:   return (void *)SvUV(sv);
+		case GAIM_TYPE_INT64:   return (void *)SvIV(sv);
+		case GAIM_TYPE_UINT64:  return (void *)SvUV(sv);
+		case GAIM_TYPE_STRING:  return (void *)SvPV(sv, na);
+		case GAIM_TYPE_POINTER: return (void *)SvIV(sv);
+		case GAIM_TYPE_BOXED:   return (void *)SvIV(sv);
+
+		default:
+			return NULL;
+	}
+
+	return NULL;
+}
+
 static SV *
 gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 {
@@ -381,46 +406,80 @@ gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 }
 
 SV *
-gaim_perl_sv_from_vargs(const GaimValue *value, va_list args)
+gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
+						void **copy_arg)
 {
 	if (gaim_value_is_outgoing(value))
 	{
 		switch (gaim_value_get_type(value))
 		{
 			case GAIM_TYPE_SUBTYPE:
-				return gaim_perl_sv_from_subtype(value, *va_arg(args, void **));
+				if ((*copy_arg = va_arg(*args, void **)) == NULL)
+					return &PL_sv_undef;
+
+				return gaim_perl_sv_from_subtype(value, *(void **)*copy_arg);
 
 			case GAIM_TYPE_BOOLEAN:
-				return newSViv(*va_arg(args, gboolean *));
+				if ((*copy_arg = va_arg(*args, gboolean *)) == NULL)
+					return &PL_sv_undef;
+
+				return newSViv(*(gboolean *)*copy_arg);
 
 			case GAIM_TYPE_INT:
-				return newSViv(*va_arg(args, int *));
+				if ((*copy_arg = va_arg(*args, int *)) == NULL)
+					return &PL_sv_undef;
+
+				return newSViv(*(int *)*copy_arg);
 
 			case GAIM_TYPE_UINT:
-				return newSVuv(*va_arg(args, unsigned int *));
+				if ((*copy_arg = va_arg(*args, unsigned int *)) == NULL)
+					return &PL_sv_undef;
+
+				return newSVuv(*(unsigned int *)*copy_arg);
 
 			case GAIM_TYPE_LONG:
-				return newSViv(*va_arg(args, long *));
+				if ((*copy_arg = va_arg(*args, long *)) == NULL)
+					return &PL_sv_undef;
+
+				return newSViv(*(long *)*copy_arg);
 
 			case GAIM_TYPE_ULONG:
-				return newSVuv(*va_arg(args, unsigned long *));
+				if ((*copy_arg = va_arg(*args, unsigned long *)) == NULL)
+					return &PL_sv_undef;
+
+				return newSVuv(*(unsigned long *)*copy_arg);
 
 			case GAIM_TYPE_INT64:
-				return newSViv(*va_arg(args, gint64 *));
+				if ((*copy_arg = va_arg(*args, gint64 *)) == NULL)
+					return &PL_sv_undef;
+
+				return newSViv(*(gint64 *)*copy_arg);
 
 			case GAIM_TYPE_UINT64:
-				return newSVuv(*va_arg(args, guint64 *));
+				if ((*copy_arg = va_arg(*args, guint64 *)) == NULL)
+					return &PL_sv_undef;
+
+				return newSVuv(*(guint64 *)*copy_arg);
 
 			case GAIM_TYPE_STRING:
-				return newSVGChar(*va_arg(args, char **));
+				if ((*copy_arg = va_arg(*args, char **)) == NULL)
+					return &PL_sv_undef;
+
+				return newSVGChar(*(char **)*copy_arg);
 
 			case GAIM_TYPE_POINTER:
-				return newSViv((IV)*va_arg(args, void **));
+				if ((*copy_arg = va_arg(*args, void **)) == NULL)
+					return &PL_sv_undef;
+
+				return newSViv((IV)*(void **)*copy_arg);
 
 			case GAIM_TYPE_BOXED:
 				/* Uh.. I dunno. Try this? */
+				if ((*copy_arg = va_arg(*args, void **)) == NULL)
+					return &PL_sv_undef;
+
 				return sv_2mortal(gaim_perl_bless_object(
-						va_arg(args, void **),
+						*(void **)*copy_arg,
 						gaim_value_get_specific_type(value)));
 
 			default:
@@ -433,39 +492,72 @@ gaim_perl_sv_from_vargs(const GaimValue *value, va_list args)
 		switch (gaim_value_get_type(value))
 		{
 			case GAIM_TYPE_SUBTYPE:
-				return gaim_perl_sv_from_subtype(value, va_arg(args, void *));
+				if ((*copy_arg = va_arg(*args, void *)) == NULL)
+					return &PL_sv_undef;
+
+				return gaim_perl_sv_from_subtype(value, *copy_arg);
 
 			case GAIM_TYPE_BOOLEAN:
-				return newSViv(va_arg(args, gboolean));
+				*copy_arg = (void *)va_arg(*args, gboolean);
+
+				return newSViv((gboolean)*copy_arg);
 
 			case GAIM_TYPE_INT:
-				return newSViv(va_arg(args, int));
+				*copy_arg = (void *)va_arg(*args, int);
+
+				return newSViv((int)*copy_arg);
 
 			case GAIM_TYPE_UINT:
-				return newSVuv(va_arg(args, unsigned int));
+				*copy_arg = (void *)va_arg(*args, unsigned int);
+
+				return newSVuv((unsigned int)*copy_arg);
 
 			case GAIM_TYPE_LONG:
-				return newSViv(va_arg(args, long));
+				*copy_arg = (void *)va_arg(*args, long);
+
+				return newSViv((long)*copy_arg);
 
 			case GAIM_TYPE_ULONG:
-				return newSVuv(va_arg(args, unsigned long));
+				*copy_arg = (void *)va_arg(*args, unsigned long);
+
+				return newSVuv((unsigned long)*copy_arg);
 
 			case GAIM_TYPE_INT64:
-				return newSViv(va_arg(args, gint64));
+#if 0
+				/* XXX This yells and complains. */
+				*copy_arg = va_arg(*args, gint64);
+
+				return newSViv(*copy_arg);
+#endif
+				break;
 
 			case GAIM_TYPE_UINT64:
-				return newSVuv(va_arg(args, guint64));
+				/* XXX This also yells and complains. */
+#if 0
+				*copy_arg = (void *)va_arg(*args, guint64);
+
+				return newSVuv(*copy_arg);
+#endif
+				break;
 
 			case GAIM_TYPE_STRING:
-				return newSVGChar(va_arg(args, char *));
+				if ((*copy_arg = (void *)va_arg(*args, char *)) == NULL)
+					return &PL_sv_undef;
+
+				return newSVGChar(*copy_arg);
 
 			case GAIM_TYPE_POINTER:
-				return newSViv((IV)va_arg(args, void *));
+				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
+					return &PL_sv_undef;
+
+				return newSViv((IV)*copy_arg);
 
 			case GAIM_TYPE_BOXED:
 				/* Uh.. I dunno. Try this? */
-				return sv_2mortal(gaim_perl_bless_object(
-						va_arg(args, void *),
+				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
+					return &PL_sv_undef;
+
+				return sv_2mortal(gaim_perl_bless_object(*copy_arg,
 						gaim_value_get_specific_type(value)));
 
 			default:
@@ -473,4 +565,6 @@ gaim_perl_sv_from_vargs(const GaimValue *value, va_list args)
 				return NULL;
 		}
 	}
+
+	return NULL;
 }

@@ -38,6 +38,8 @@ gboolean gaim_perl_value_from_sv(GaimValue *value, SV *sv);
 SV *gaim_perl_sv_from_value(const GaimValue *value);
 #endif
 
-SV *gaim_perl_sv_from_vargs(const GaimValue *value, va_list args);
+void *gaim_perl_data_from_sv(GaimValue *value, SV *sv);
+SV *gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
+							void **copy_arg);
 
 #endif /* _GAIM_PERL_COMMON_H_ */
