@@ -100,7 +100,9 @@ static void check_lag(struct gaim_connection *gc, char **who, char **message, vo
 static gint send_lag(struct gaim_connection *gc) {
 	gettimeofday(&my_lag_tv, NULL);
 	if (g_slist_find(connections, gc)) {
-		serv_send_im(gc, gc->username, MY_LAG_STRING, 1);
+		char *m = g_strdup(MY_LAG_STRING);
+		serv_send_im(gc, gc->username, m, 1);
+		g_free(m);
 		return TRUE;
 	} else {
 		debug_printf("LAGMETER: send_lag called for connection that no longer exists\n");
