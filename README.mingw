@@ -83,6 +83,12 @@ Install LIBs, DLLs and headers used by GAIM
   Download the dev package (gtkspell-2.0.2.tar.gz) from http://gaim.sf.net/win32,
   and untar it under ~/win32-dev.
 
+  Gtkrc
+  -----
+
+  Download the dev package (gtkrc.tar.gz) from http://gaim.sf.net/win32, and
+  untar it under ~/win32-dev
+
 Build Gaim
 ----------
 
