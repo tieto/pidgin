@@ -92,7 +92,6 @@ DLL_C_SRC =		about.c \
 			eventloop.c \
 			ft.c \
 			gaim-disclosure.c \
-			gaimrc.c \
 			gtkaccount.c \
 			gtkblist.c \
 			gtkconn.c \
