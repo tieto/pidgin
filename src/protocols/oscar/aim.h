@@ -913,7 +913,8 @@ struct aim_incomingim_ch2_args {
 
 struct aim_incomingim_ch4_args {
 	fu32_t uin; /* Of the sender of the ICBM */
-	fu16_t type;
+	fu8_t type;
+	fu8_t flags;
 	char *msg; /* Reason for auth request, deny, or accept */
 	int msglen;
 };
@@ -1170,7 +1171,8 @@ struct aim_icq_offlinemsg {
 	fu32_t sender;
 	fu16_t year;
 	fu8_t month, day, hour, minute;
-	fu16_t type;
+	fu8_t type;
+	fu8_t flags;
 	char *msg;
 	int msglen;
 };

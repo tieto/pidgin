@@ -221,7 +221,8 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		msg.day = aimbs_getle8(&qbs);
 		msg.hour = aimbs_getle8(&qbs);
 		msg.minute = aimbs_getle8(&qbs);
-		msg.type = aimbs_getle16(&qbs);
+		msg.type = aimbs_getle8(&qbs);
+		msg.flags = aimbs_getle8(&qbs);
 		msg.msglen = aimbs_getle16(&qbs);
 		msg.msg = aimbs_getstr(&qbs, msg.msglen);
 

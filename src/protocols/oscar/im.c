@@ -1860,7 +1860,8 @@ static int incomingim_ch4(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	aim_bstream_init(&meat, block->value, block->length);
 
 	args.uin = aimbs_getle32(&meat);
-	args.type = aimbs_getle16(&meat);
+	args.type = aimbs_getle8(&meat);
+	args.flags = aimbs_getle8(&meat);
 	args.msglen = aimbs_getle16(&meat);
 	args.msg = aimbs_getraw(&meat, args.msglen);
 

@@ -2078,7 +2078,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	debug_printf("Received a channel 4 message of type %d.\n", args->type);
 
 	/* Split up the message at the delimeter character, then convert each string to UTF-8 */
-	msg1 = g_strsplit(args->msg, "\177", 0);
+	msg1 = g_strsplit(args->msg, "\376", 0);
 	msg2 = (gchar **)g_malloc(10*sizeof(gchar *)); /* AAA */
 	for (i=0; msg1[i]; i++) {
 		strip_linefeed(msg1[i]);
@@ -2089,7 +2089,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	msg2[i] = NULL;
 
 	switch (args->type) {
-		case 0x0001: { /* MacICQ message or basic offline message */
+		case 0x01: { /* MacICQ message or basic offline message */
 			if (i >= 1) {
 				gchar *uin = g_strdup_printf("%lu", args->uin);
 				if (t) { /* This is an offline message */
@@ -2102,7 +2102,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 		} break;
 
-		case 0x0004: { /* Someone sent you a URL */
+		case 0x04: { /* Someone sent you a URL */
 			if (i >= 2) {
 				gchar *uin = g_strdup_printf("%lu", args->uin);
 				gchar *message = g_strdup_printf("<A HREF=\"%s\">%s</A>", msg2[1], msg2[0]);
@@ -2112,7 +2112,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 		} break;
 
-		case 0x0006: { /* Someone requested authorization */
+		case 0x06: { /* Someone requested authorization */
 			if (i >= 6) {
 				struct channel4_data *data = g_new(struct channel4_data, 1);
 				char *dialog_msg = g_strdup_printf(_("The user %lu wants to add you to their buddy list for the following reason: %s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
@@ -2124,7 +2124,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 		} break;
 
-		case 0x0007: { /* Someone has denied you authorization */
+		case 0x07: { /* Someone has denied you authorization */
 			if (i >= 1) {
 				char *dialog_msg = g_strdup_printf(_("The user %lu has denied your request to add them to your contact list for the following reason:\n%s"), args->uin, msg2[0] ? msg2[0] : _("No reason given."));
 				do_error_dialog(_("ICQ authorization denied."), dialog_msg, GAIM_ERROR);
@@ -2132,13 +2132,13 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 		} break;
 
-		case 0x0008: { /* Someone has granted you authorization */
+		case 0x08: { /* Someone has granted you authorization */
 			char *dialog_msg = g_strdup_printf(_("The user %lu has granted your request to add them to your contact list."), args->uin);
 			do_error_dialog("ICQ authorization accepted.", dialog_msg, GAIM_INFO);
 			g_free(dialog_msg);
 		} break;
 
-		case 0x000d: { /* Someone has sent you a pager message from http://www.icq.com/your_uin */
+		case 0x0d: { /* Someone has sent you a pager message from http://www.icq.com/your_uin */
 			if (i >= 6) {
 				char *dialog_msg = g_strdup_printf(_("You have received an ICQ page\n\nFrom: %s [%s]\n%s"), msg2[0], msg2[3], msg2[5]);
 				do_error_dialog("ICQ Page", dialog_msg, GAIM_INFO);
@@ -2146,7 +2146,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 		} break;
 
-		case 0x000e: { /* Someone has emailed you at your_uin@pager.icq.com */
+		case 0x0e: { /* Someone has emailed you at your_uin@pager.icq.com */
 			if (i >= 6) {
 				char *dialog_msg = g_strdup_printf(_("You have received an ICQ email\n\n1=%s\n2=%s\n3=%s\n4=%s\n5=%s\n6=%s\n"), msg2[0], msg2[1], msg2[2], msg2[3], msg2[4], msg2[5]);
 				do_error_dialog("ICQ Email", dialog_msg, GAIM_INFO);
@@ -2154,14 +2154,15 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 		} break;
 
-		case 0x0012: {
+		case 0x12: {
 			/* Ack for authorizing/denying someone.  Or possibly an ack for sending any system notice */
+			/* Someone added you to their contact list? */
 		} break;
 
-		case 0x0013: { /* Someone has sent you some ICQ contacts */
+		case 0x13: { /* Someone has sent you some ICQ contacts */
 			int i, num;
 			gchar **text;
-			text = g_strsplit(args->msg, "\177", 0);
+			text = g_strsplit(args->msg, "\376", 0);
 			if (text) {
 				num = 0;
 				for (i=0; i<strlen(text[0]); i++)
@@ -2179,12 +2180,12 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 		} break;
 
-		case 0x001a: { /* Someone has sent you a greeting card or requested contacts? */
+		case 0x1a: { /* Someone has sent you a greeting card or requested contacts? */
 			/* This is boring and silly. */
 		} break;
 
 		default: {
-			debug_printf("Received a channel 4 message of unknown type (type 0x%04d).\n", args->type);
+			debug_printf("Received a channel 4 message of unknown type (type 0x%02d).\n", args->type);
 		} break;
 	}
 
@@ -3268,6 +3269,7 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("Received offline message.  Converting to channel 4 ICBM...\n");
 	args.uin = msg->sender;
 	args.type = msg->type;
+	args.flags = msg->flags;
 	args.msglen = msg->msglen;
 	args.msg = msg->msg;
 	t = get_time(msg->year, msg->month, msg->day, msg->hour, msg->minute, 0);
