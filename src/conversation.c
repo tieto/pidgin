@@ -1920,6 +1920,7 @@ void show_conv(struct conversation *c)
 					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
 
 			convo_notebook = gtk_notebook_new();
+			gtk_notebook_set_scrollable(GTK_NOTEBOOK(convo_notebook), TRUE);
 			gtk_container_add(GTK_CONTAINER(win), convo_notebook);
 			gtk_signal_connect(GTK_OBJECT(convo_notebook), "switch-page",
 					   GTK_SIGNAL_FUNC(convo_switch), NULL);
