@@ -19,7 +19,6 @@ gtk2/new prefs
 	on away tab, if you set the time between responces, you 
 		reset the type of idle time reporting. similar
 		problems may exist in other combinations.
-	selecting debug window in prefs doesn't stick (isn't saved). (is this fixed?)
 	when auto-away (by idle time) is activated, away message window 
 		does not pop up.
 	pressing save on new away message dialog does not immediately add 
