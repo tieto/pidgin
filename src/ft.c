@@ -41,6 +41,7 @@ gaim_xfer_new(struct gaim_account *account, GaimXferType type,
 			  const char *who)
 {
 	struct gaim_xfer *xfer;
+	struct gaim_xfer_ui_ops *ui_ops;
 
 	if (account == NULL || type == GAIM_XFER_UNKNOWN || who == NULL)
 		return NULL;
@@ -51,6 +52,11 @@ gaim_xfer_new(struct gaim_account *account, GaimXferType type,
 	xfer->account = account;
 	xfer->who     = g_strdup(who);
 	xfer->ui_ops  = gaim_get_xfer_ui_ops();
+
+	ui_ops = gaim_xfer_get_ui_ops(xfer);
+
+	if (ui_ops != NULL && ui_ops->new != NULL)
+		ui_ops->new(xfer);
 
 	return xfer;
 }

@@ -917,6 +917,16 @@ gaim_gtkxfer_dialog_update_xfer(struct gaim_gtkxfer_dialog *dialog,
  * File Transfer UI Ops
  **************************************************************************/
 static void
+gaim_gtkxfer_new(struct gaim_xfer *xfer)
+{
+	struct gaim_gtkxfer_ui_data *data;
+
+	/* This is where we're setting xfer->ui_data for the first time. */
+	data = g_malloc0(sizeof(struct gaim_gtkxfer_ui_data));
+	xfer->ui_data = data;
+}
+
+static void
 gaim_gtkxfer_destroy(struct gaim_xfer *xfer)
 {
 	gaim_gtkxfer_dialog_remove_xfer(xfer_dialog, xfer);
@@ -1037,11 +1047,8 @@ choose_file(struct gaim_xfer *xfer)
 	char *cur_dir, *init_str;
 	struct gaim_gtkxfer_ui_data *data;
 
+	data = GAIM_GTKXFER(xfer);
 	cur_dir = g_get_current_dir();
-
-	/* This is where we're setting xfer->ui_data for the first time. */
-	data = g_malloc0(sizeof(struct gaim_gtkxfer_ui_data));
-	xfer->ui_data = data;
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
 		data->filesel = gtk_file_selection_new(_("Gaim - Open..."));
@@ -1158,6 +1165,7 @@ gaim_gtkxfer_cancel_remote(struct gaim_xfer *xfer)
 
 struct gaim_xfer_ui_ops ops =
 {
+	gaim_gtkxfer_new,
 	gaim_gtkxfer_destroy,
 	gaim_gtkxfer_request_file,
 	gaim_gtkxfer_ask_cancel,

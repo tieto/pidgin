@@ -47,6 +47,7 @@ typedef enum
  */
 struct gaim_xfer_ui_ops
 {
+	void (*new)(struct gaim_xfer *xfer);
 	void (*destroy)(struct gaim_xfer *xfer);
 	void (*request_file)(struct gaim_xfer *xfer);
 	void (*ask_cancel)(struct gaim_xfer *xfer);
