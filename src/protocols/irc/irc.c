@@ -29,6 +29,7 @@
 #include "multi.h"
 #include "prpl.h"
 #include "conversation.h"
+#include "notify.h"
 #include "debug.h"
 #include "blist.h"
 #include "util.h"
@@ -39,6 +40,7 @@ static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
 static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b);
 static void irc_blist_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne);
 static GList *irc_away_states(GaimConnection *gc);
+static GList *irc_actions(GaimConnection *gc);
 /* static GList *irc_chat_info(GaimConnection *gc); */
 static void irc_login(GaimAccount *account);
 static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond);
@@ -47,6 +49,25 @@ static int irc_im_send(GaimConnection *gc, const char *who, const char *what, Ga
 static int irc_chat_send(GaimConnection *gc, int id, const char *what);
 static void irc_chat_join (GaimConnection *gc, GHashTable *data);
 static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond);
+
+static void irc_view_motd(GaimConnection *gc)
+{
+	struct irc_conn *irc;
+	char *title;
+
+	if (gc == NULL || gc->proto_data == NULL) {
+		gaim_debug(GAIM_DEBUG_ERROR, "irc", "got MOTD request for NULL gc\n");
+		return;
+	}
+	irc = gc->proto_data;
+	if (irc->motd == NULL) {
+		gaim_notify_error(gc, _("Error displaying MOTD"), _("No MOTD available"),
+				  _("There is no MOTD associated with this connection."));
+		return;
+	}
+	title = g_strdup_printf(_("MOTD for %s"), irc->server);
+	gaim_notify_formatted(gc, title, title, NULL, irc->motd->str, NULL, NULL);
+}
 
 static guint irc_nick_hash(const char *nick);
 static gboolean irc_nick_equal(const char *nick1, const char *nick2);
@@ -105,6 +126,21 @@ static void irc_blist_emblems(GaimBuddy *b, char **se, char **sw, char **nw, cha
 static GList *irc_away_states(GaimConnection *gc)
 {
 	return g_list_append(NULL, (gpointer)GAIM_AWAY_CUSTOM);
+}
+
+static GList *irc_actions(GaimConnection *gc)
+{
+	struct irc_conn *irc = gc->proto_data;
+	struct proto_actions_menu *pam;
+	GList *list = NULL;
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("View MOTD");
+	pam->callback = irc_view_motd;
+	pam->gc = gc;
+	list = g_list_append(list, pam);
+
+	return list;
 }
 
 static GList *irc_buddy_menu(GaimConnection *gc, const char *who)
@@ -437,7 +473,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	irc_away_states,
-	NULL,
+	irc_actions,
 	irc_buddy_menu,
 	irc_chat_join_info,
 	irc_login,
