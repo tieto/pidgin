@@ -1,6 +1,15 @@
 -=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
-0.11.0:
+0.11.0-pre1 (12/03/2000):
+	Rob: Hey guys!  Guess what!?  Yup, you're correct!  It's the pre1 release of 0.11.0.
+	We have all sorts of goodies in this release!  Check out the ChangeLog file.  As always
+	if you find any bugs, please report them on www.sourceforge.net/projects/gaim/
+	You may find several as this is still a prerelease.  
+
+	You may want to note that my IRC plugin does not have full functionality as of yet.  All
+	of the important / commands will be added before the final release. Also, if someone could
+	send me some good buddylist pixmaps for the irc plugin then I'd much appreciate it.  
+
 
 0.10.3 (10/09/2000):
 	Rob: I am dumb.

@@ -1,7 +1,10 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: queue.c 1162 2000-11-28 02:22:42Z warmenhoven $
+$Id: queue.c 1202 2000-12-04 06:22:48Z robflynn $
 $Log$
+Revision 1.2  2000/12/04 06:22:48  robflynn
+Da numba one stunna!
+
 Revision 1.1  2000/11/28 02:22:42  warmenhoven
 icq. whoop de doo
 
@@ -130,7 +133,7 @@ void icq_UDPQueueFree(ICQLINK *link)
 
 int icq_UDPQueueFindSeq(void *p, va_list data)
 {
-  WORD seq=va_arg(data, WORD);
+  WORD seq=va_arg(data, int);
   return icq_PacketReadUDPOutSeq1(((icq_UDPQueueItem *)p)->pack) == seq;
 }
 
