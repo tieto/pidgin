@@ -991,6 +991,7 @@ static void edit_tree_move(GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *p
 				connections = g_slist_prepend(connections, gc);
 		} else
 			connections = g_slist_append(connections, gc);
+		redo_convo_menus(); /* this is evil */
 	} else if (*ctype == EDIT_BUDDY) {
 		/* we moved a buddy. hopefully we just changed groups or positions or something.
 		 * if we changed connections, we copy the buddy to the new connection. if the new
