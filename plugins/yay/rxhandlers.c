@@ -170,10 +170,12 @@ static void yahoo_parse_message(struct yahoo_session *sess, struct yahoo_packet 
 	char **str_array;
 	switch(type) {
 	case YAHOO_MESSAGE_NORMAL:
-		str_array = g_strsplit(pkt->content, ",,", 2);
+		str_array = g_strsplit(pkt->content, ",", 3);
 		if (sess->callbacks[YAHOO_HANDLE_MESSAGE].function)
 			(*sess->callbacks[YAHOO_HANDLE_MESSAGE].function)(sess, pkt->nick2,
-									  str_array[0], str_array[1]);
+									  str_array[0],
+									  atol(str_array[1]),
+									  str_array[2]);
 		g_strfreev(str_array);
 		break;
 	case YAHOO_MESSAGE_BOUNCE:

@@ -135,6 +135,7 @@ static int yahoo_message(struct yahoo_session *sess, ...) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	char buf[BUF_LEN * 4];
 	char *tmp, *c, *e;
+	time_t tm;
 	int at = 0;
 
 	va_list ap;
@@ -143,6 +144,7 @@ static int yahoo_message(struct yahoo_session *sess, ...) {
 	va_start(ap, sess);
 	id = va_arg(ap, char *);
 	nick = va_arg(ap, char *);
+	tm = va_arg(ap, time_t);
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
