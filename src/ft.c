@@ -112,6 +112,30 @@ gaim_xfer_set_status(GaimXfer *xfer, GaimXferStatusType status)
 	xfer->status = status;
 }
 
+static void
+gaim_xfer_conversation_write(GaimXfer *xfer, char *message, gboolean is_error)
+{
+	GaimConversation *conv = NULL;
+	GString *gs_message = NULL;
+	GaimMessageFlags flags = GAIM_MESSAGE_SYSTEM;
+
+	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(message != NULL);
+
+	conv = gaim_find_conversation_with_account(xfer->who, gaim_xfer_get_account(xfer));
+
+	if (conv == NULL)
+		return;
+
+	gs_message = g_string_new(message);
+
+	if (is_error)
+		flags = GAIM_MESSAGE_ERROR;
+
+	gaim_conversation_write(conv, NULL, gs_message->str, flags, time(NULL));
+	g_string_free(gs_message, TRUE);
+}
+
 static void gaim_xfer_show_file_error(GaimXfer *xfer, const char *filename)
 {
 	gchar *msg = NULL;
@@ -132,6 +156,7 @@ static void gaim_xfer_show_file_error(GaimXfer *xfer, const char *filename)
 			break;
 		}
 
+	gaim_xfer_conversation_write(xfer, msg, TRUE);
 	gaim_xfer_error(xfer_type, xfer->who, msg);
 	g_free(msg);
 }
@@ -315,16 +340,15 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 	}
 
 	if (type == GAIM_XFER_SEND) {
+		char *msg;
+
 		/* Check the filename. */
 		if (g_strrstr(filename, "..")) {
-			char *msg;
 
-			msg = g_strdup_printf(_("%s is not a valid filename.\n"),
-								  filename);
-
+			msg = g_strdup_printf(_("%s is not a valid filename.\n"), filename);
 			gaim_xfer_error(type, xfer->who, msg);
-
 			g_free(msg);
+
 			gaim_xfer_unref(xfer);
 			return;
 		}
@@ -337,6 +361,11 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 
 		gaim_xfer_set_local_filename(xfer, filename);
 		gaim_xfer_set_size(xfer, st.st_size);
+		
+		msg = g_strdup_printf(_("Offering to send %s to %s"),
+							  filename, xfer->who);
+		gaim_xfer_conversation_write(xfer, msg, FALSE);
+		g_free(msg);
 	}
 	else {
 		xfer->status = GAIM_XFER_STATUS_ACCEPTED;
@@ -802,6 +831,8 @@ gaim_xfer_start(GaimXfer *xfer, int fd, const char *ip,
 void
 gaim_xfer_end(GaimXfer *xfer)
 {
+	char *msg = NULL;
+
 	g_return_if_fail(xfer != NULL);
 
 	/* See if we are actually trying to cancel this. */
@@ -809,6 +840,11 @@ gaim_xfer_end(GaimXfer *xfer)
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
+
+	msg = g_strdup_printf(_("Transfer of %s complete"),
+						  gaim_xfer_get_filename(xfer));
+	gaim_xfer_conversation_write(xfer, msg, FALSE);
+	g_free(msg);
 
 	if (xfer->ops.end != NULL)
 		xfer->ops.end(xfer);
@@ -846,10 +882,16 @@ void
 gaim_xfer_cancel_local(GaimXfer *xfer)
 {
 	GaimXferUiOps *ui_ops;
+	char *msg = NULL;
 
 	g_return_if_fail(xfer != NULL);
 
 	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_LOCAL);
+
+	msg = g_strdup_printf(_("You canceled the transfer of %s"),
+						  gaim_xfer_get_filename(xfer));
+	gaim_xfer_conversation_write(xfer, msg, FALSE);
+	g_free(msg);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
 	{
@@ -894,13 +936,13 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 	g_return_if_fail(xfer != NULL);
 
 	gaim_request_close_with_handle(xfer);
+	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_REMOTE);
 
 	msg = g_strdup_printf(_("%s canceled the transfer of %s"),
-					xfer->who, gaim_xfer_get_filename(xfer));
+						  xfer->who, gaim_xfer_get_filename(xfer));
+	gaim_xfer_conversation_write(xfer, msg, TRUE);
 	gaim_xfer_error(gaim_xfer_get_type(xfer), xfer->who, msg);
 	g_free(msg);
-
-	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_REMOTE);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND)
 	{
