@@ -146,7 +146,7 @@ account.[ch]:
 	This controls the GaimAccount struct, which stores information
 	on each account a user registers with gaim. Usernames, pass-
 	words, user info, alias, user specific options, and everything
-	else controled from within the account editor (and then some)
+	else controlled from within the account editor (and then some)
 	are handled via this code.
 
 accountopt.[ch]:
@@ -165,7 +165,7 @@ blist.[ch]:
 	This takes care of the buddy list backend, the blist.xml file,
 	importing old buddy list files, and related things like
 	finding buddies and groups. buddies, contacts, and groups
-	are controled from these files.
+	are controlled from these files.
 
 buddy_chat.c:
   This takes care of the buddy chat stuff. This used to be a lot bigger
