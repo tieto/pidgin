@@ -20,6 +20,7 @@ EXTRA_DIST =	ab.xpm				\
 		bigsmile.xpm			\
 		block.xpm			\
 		bold.xpm			\
+		broken.xpm			\
 		burp.xpm			\
 		cancel.xpm			\
 		close.xpm			\
