@@ -481,7 +481,7 @@ static gboolean find_nick(struct gaim_connection *gc, char *message)
 	g_strdown(who);
 
 	if ((p = strstr(msg, who)) != NULL) {
-		if ((p == msg) || (!isalnum(*(p - 1)) && !isalnum(*(p + n)))) {
+		if (((p == msg) || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
 			g_free(who);
 			g_free(msg);
 			return TRUE;
@@ -499,7 +499,7 @@ static gboolean find_nick(struct gaim_connection *gc, char *message)
 	g_strdown(who);
 
 	if ((p = strstr(msg, who)) != NULL) {
-		if ((p == msg) || (!isalnum(*(p - 1)) && !isalnum(*(p + n)))) {
+		if (((p == msg) || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
 			g_free(who);
 			g_free(msg);
 			return TRUE;
