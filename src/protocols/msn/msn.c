@@ -1995,7 +1995,7 @@ static void msn_set_permit_deny(struct gaim_connection *gc)
 			t = g_slist_append(t, who);
 			continue;
 		}
-		g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, who, who);
+		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, who, who);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(gc, "Write error");
 			signoff(gc);
