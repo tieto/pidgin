@@ -1788,18 +1788,18 @@ void show_prefs()
 	gtk_window_set_wmclass(GTK_WINDOW(prefs), "preferences", "Gaim");
 	gtk_widget_realize(prefs);
 	aol_icon(prefs->window);
-	gtk_container_border_width(GTK_CONTAINER(prefs), 10);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
-	gtk_widget_set_usize(prefs, 670, 550);
+	gtk_widget_set_usize(prefs, 650, 540);
 	gtk_signal_connect(GTK_OBJECT(prefs), "destroy",
 			   GTK_SIGNAL_FUNC(delete_prefs), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_container_add(GTK_CONTAINER(prefs), vbox);
 	gtk_widget_show(vbox);
 
 	hpaned = gtk_hpaned_new();
-	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
 	gtk_widget_show(hpaned);
 	
        	scroll = gtk_scrolled_window_new(NULL, NULL);
@@ -1838,11 +1838,11 @@ void show_prefs()
 	//general_page();
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	close = picture_button(prefs, _("Close"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), close, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), close, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(handle_delete), NULL);
 
 	gtk_widget_show(prefs);

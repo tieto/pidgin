@@ -258,15 +258,15 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_window_set_wmclass(GTK_WINDOW(plugwindow), "plugins", "Gaim");
 	gtk_widget_realize(plugwindow);
 	aol_icon(plugwindow->window);
-	gtk_container_border_width(GTK_CONTAINER(plugwindow), 10);
+	gtk_container_border_width(GTK_CONTAINER(plugwindow), 5);
 	gtk_window_set_title(GTK_WINDOW(plugwindow), _("Gaim - Plugins"));
 	gtk_widget_set_usize(plugwindow, 400, 250);
 	gtk_signal_connect(GTK_OBJECT(plugwindow), "destroy",
 			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
 
-	page = gtk_vbox_new(FALSE, 0);
-	topbox = gtk_hbox_new(FALSE, 0);
-	botbox = gtk_hbox_new(FALSE, 0);
+	page = gtk_vbox_new(FALSE, 5);
+	topbox = gtk_hbox_new(FALSE, 5);
+	botbox = gtk_hbox_new(FALSE, 5);
 
 	/* Left side: list of plugin file names */
 	sw2 = gtk_scrolled_window_new(NULL, NULL);
@@ -294,27 +294,27 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	add = gtk_button_new_with_label(_("Load Plugin"));
 	gtk_signal_connect(GTK_OBJECT(add), "clicked",
 			   GTK_SIGNAL_FUNC(load_file), NULL);
-	gtk_box_pack_start(GTK_BOX(botbox), add, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(botbox), add, TRUE, TRUE, 0);
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
 
 	config = gtk_button_new_with_label(_("Configure Plugin"));
 	gtk_widget_set_sensitive(config, 0);
-	gtk_box_pack_start(GTK_BOX(botbox), config, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(botbox), config, TRUE, TRUE, 0);
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(config), GTK_RELIEF_NONE);
 
 	remove = gtk_button_new_with_label(_("Unload Plugin"));
 	gtk_signal_connect(GTK_OBJECT(remove), "clicked",
 			   GTK_SIGNAL_FUNC(unload), pluglist);
-	gtk_box_pack_start(GTK_BOX(botbox), remove, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(botbox), remove, TRUE, TRUE, 0);
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(remove), GTK_RELIEF_NONE);
 
 	close = gtk_button_new_with_label(_("Close"));
 	gtk_signal_connect(GTK_OBJECT(close), "clicked",
 			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
-	gtk_box_pack_start(GTK_BOX(botbox), close, TRUE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(botbox), close, TRUE, TRUE, 0);
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
 

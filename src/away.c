@@ -117,11 +117,11 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	if (!imaway) {
 		imaway = gtk_window_new(GTK_WINDOW_DIALOG);
                 gtk_window_set_wmclass(GTK_WINDOW(imaway), "imaway", "Gaim");
-                gtk_container_set_border_width(GTK_CONTAINER(imaway), 5);
 		gtk_widget_realize(imaway);
 		aol_icon(imaway->window);
 		back = picture_button(imaway, _("I'm Back!"), join_xpm);
                 vbox = gtk_vbox_new(FALSE, 5);
+                gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 
 		awaytext = gtk_text_new(NULL, NULL);
 
@@ -132,7 +132,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
                 vscrollbar = gtk_vscrollbar_new(GTK_TEXT(awaytext)->vadj);
 		gtk_widget_show(vscrollbar);
-		gtk_widget_set_usize(awaytext, 225, 75);
+		gtk_widget_set_usize(awaytext, 225, 100);
                 gtk_text_set_word_wrap(GTK_TEXT(awaytext), TRUE);
                 gtk_widget_show(awaytext);
 		gtk_text_freeze(GTK_TEXT(awaytext));
