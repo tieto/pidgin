@@ -304,7 +304,7 @@ event::sender, and event::buffer, respectively.  Therefore a callback
 which notifies the user of an incoming IM containing the word 'shizzle'
 might look like this:
 
-gaim::add_event_handler received-im-msg {
+gaim::signal connect [gaim::conversation handle] received-im-msg {
 	if {[ string match "*shizzle*" $event::buffer ]} {
 		gaim::notify -info "tcl plugin" "Fo' shizzle" \
 			"$event::sender is down with the shizzle"
