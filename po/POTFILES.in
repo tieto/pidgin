@@ -1,11 +1,12 @@
 plugins/docklet/docklet.c
+plugins/autorecon.c
 plugins/chatlist.c
 plugins/gtik.c
-plugins/notify.c
-plugins/autorecon.c
-plugins/timestamp.c
 plugins/history.c
 plugins/iconaway.c
+plugins/idle.c
+plugins/notify.c
+plugins/timestamp.c
 src/protocols/gg/gg.c
 src/protocols/icq/gaim_icq.c
 src/protocols/irc/irc.c
@@ -26,6 +27,8 @@ src/dialogs.c
 src/ft.c
 src/gaimrc.c
 src/html.c
+src/list.c
+src/log.c
 src/module.c
 src/multi.c
 src/perl.c
@@ -33,3 +36,4 @@ src/prefs.c
 src/prpl.c
 src/server.c
 src/sound.c
+src/util.c
