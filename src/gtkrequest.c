@@ -95,8 +95,10 @@ action_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 static void
 field_string_focus_out_cb(GtkEntry *entry, GaimRequestField *field)
 {
+	const char *value = gtk_entry_get_text(entry);
+
 	gaim_request_field_string_set_value(field,
-			gtk_entry_get_text(entry));
+			(*value == '\0' ? NULL : value));
 }
 
 static void
