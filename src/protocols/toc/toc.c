@@ -120,36 +120,6 @@ struct signon {
 static void toc_login_callback(gpointer, gint, GaimInputCondition);
 static void toc_callback(gpointer, gint, GaimInputCondition);
 
-/* The following were added for win32 port - Herman */
-
-int toc_write(int fd, const void *buffer, int len)
-{
-#ifndef _WIN32
-	return write(fd, buffer, len);
-#else
-	return send(fd, buffer, len, 0);
-#endif
-}
-
-int toc_read(int fd, void *buffer, int size)
-{
-#ifndef _WIN32
-	return read(fd, buffer, size);
-#else
-	return recv(fd, buffer, size, 0);
-#endif
-}
-
-int toc_soc_close( int fd )
-{
-#ifndef _WIN32
-	return close(fd);
-#else
-	return closesocket(fd);
-#endif
-}
-
-
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
  * on success. */
@@ -189,7 +159,7 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 	socklen_t namelen;
 
 	if (!g_list_find(gaim_connections_get_all(), data)) {
-		toc_soc_close(source);
+		close(source);
 		return;
 	}
 
@@ -214,7 +184,7 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 
 	gaim_debug(GAIM_DEBUG_INFO, "toc",
 			   "Client sends \"FLAPON\\r\\n\\r\\n\"\n");
-	if (toc_write(tdt->toc_fd, FLAPON, strlen(FLAPON)) < 0) {
+	if (write(tdt->toc_fd, FLAPON, strlen(FLAPON)) < 0) {
 		gaim_connection_error(gc, _("Disconnected."));
 		return;
 	}
@@ -234,7 +204,7 @@ static void toc_close(GaimConnection *gc)
 	if (gc->inpa > 0)
 		gaim_input_remove(gc->inpa);
 	gc->inpa = 0;
-	toc_soc_close(((struct toc_data *)gc->proto_data)->toc_fd);
+	close(((struct toc_data *)gc->proto_data)->toc_fd);
 	g_free(gc->proto_data);
 }
 
@@ -434,7 +404,7 @@ static int sflap_send(GaimConnection *gc, const char *buf, int olen, int type)
 		slen += 1;
 	}
 
-	ret = toc_write(tdt->toc_fd, obuf, slen);
+	ret = write(tdt->toc_fd, obuf, slen);
 	free(obuf);
 	g_free(escaped);
 
@@ -447,7 +417,7 @@ static int wait_reply(GaimConnection *gc, char *buffer, size_t buflen)
 	struct sflap_hdr *hdr;
 	int ret;
 
-	if (toc_read(tdt->toc_fd, buffer, sizeof(struct sflap_hdr)) < 0) {
+	if (read(tdt->toc_fd, buffer, sizeof(struct sflap_hdr)) < 0) {
 		gaim_debug(GAIM_DEBUG_ERROR, "toc", "Couldn't read flap header\n");
 		return -1;
 	}
@@ -467,7 +437,7 @@ static int wait_reply(GaimConnection *gc, char *buffer, size_t buflen)
 		ret = 0;
 		do {
 			count += ret;
-			ret = toc_read(tdt->toc_fd,
+			ret = read(tdt->toc_fd,
 				   buffer + sizeof(struct sflap_hdr) + count, ntohs(hdr->len) - count);
 		} while (count + ret < ntohs(hdr->len) && ret > 0);
 		buffer[sizeof(struct sflap_hdr) + count + ret] = '\0';
@@ -1673,8 +1643,8 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 		char *buf;
 		frombase64(ft->cookie, &buf, NULL);
 
-		toc_read(source, ft, 8);
-		toc_read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 
 		ft->hdr.hdrtype = 0x202;
@@ -1682,7 +1652,7 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 		g_free(buf);
 		ft->hdr.encrypt = 0; ft->hdr.compress = 0;
 		debug_header(ft);
-		toc_write(source, ft, 256);
+		write(source, ft, 256);
 
 		if (ft->files == 1) {
 			ft->file = fopen(ft->filename, "w");
@@ -1691,7 +1661,7 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 				gaim_notify_error(ft->gc, NULL, buf, strerror(errno));
 				g_free(buf);
 				gaim_input_remove(ft->inpa);
-				toc_soc_close(source);
+				close(source);
 				g_free(ft->filename);
 				g_free(ft->user);
 				g_free(ft->ip);
@@ -1708,7 +1678,7 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 				gaim_notify_error(ft->gc, NULL, buf, strerror(errno));
 				g_free(buf);
 				gaim_input_remove(ft->inpa);
-				toc_soc_close(source);
+				close(source);
 				g_free(ft->filename);
 				g_free(ft->user);
 				g_free(ft->ip);
@@ -1720,13 +1690,13 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 		return;
 	}
 
-	rt = toc_read(source, buf, MIN(ntohl(ft->hdr.size) - ft->recvsize, 1024));
+	rt = read(source, buf, MIN(ntohl(ft->hdr.size) - ft->recvsize, 1024));
 	if (rt < 0) {
 		gaim_notify_error(ft->gc, NULL,
 						  _("File transfer failed; other side probably "
 							"canceled."), NULL);
 		gaim_input_remove(ft->inpa);
-		toc_soc_close(source);
+		close(source);
 		g_free(ft->user);
 		g_free(ft->ip);
 		g_free(ft->cookie);
@@ -1746,13 +1716,13 @@ static void toc_send_file_callback(gpointer data, gint source, GaimInputConditio
 		ft->hdr.recvcsum = ft->hdr.checksum; /* uh... */
 		ft->hdr.nrecvd = htons(ntohs(ft->hdr.nrecvd) + 1);
 		ft->hdr.flags = 0;
-		toc_write(source, ft, 256);
+		write(source, ft, 256);
 		debug_header(ft);
 		ft->recvsize = 0;
 		fclose(ft->file);
 		if (ft->hdr.filesleft == 0) {
 			gaim_input_remove(ft->inpa);
-			toc_soc_close(source);
+			close(source);
 			g_free(ft->filename);
 			g_free(ft->user);
 			g_free(ft->ip);
@@ -1829,7 +1799,7 @@ static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition
 		int i;
 		for (i = 0; i < remain; i++)
 			fscanf(ft->file, "%c", &buf[i]);
-		toc_write(source, buf, remain);
+		write(source, buf, remain);
 		ft->recvsize += remain;
 		if (ft->recvsize == ntohl(ft->hdr.totsize)) {
 			gaim_input_remove(ft->inpa);
@@ -1844,8 +1814,8 @@ static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition
 		struct stat st;
 		char *basename;
 
-		toc_read(source, ft, 8);
-		toc_read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 
 		stat(ft->filename, &st);
@@ -1855,28 +1825,28 @@ static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition
 				fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
 				fortime->tm_hour + 1, fortime->tm_min + 1, (long)st.st_size,
 				basename);
-		toc_write(source, buf, ntohl(ft->hdr.size));
+		write(source, buf, ntohl(ft->hdr.size));
 		g_free(basename);
 		return;
 	}
 
 	if (ft->hdr.hdrtype == htons(0x1209)) {
-		toc_read(source, ft, 8);
-		toc_read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 		return;
 	}
 
 	if (ft->hdr.hdrtype == htons(0x120b)) {
-		toc_read(source, ft, 8);
-		toc_read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 
 		if (ft->hdr.hdrtype != htons(0x120c)) {
 			g_snprintf(buf, sizeof(buf), "%s decided to cancel the transfer", ft->user);
 			gaim_notify_error(ft->gc, NULL, buf, NULL);
 			gaim_input_remove(ft->inpa);
-			toc_soc_close(source);
+			close(source);
 			g_free(ft->filename);
 			g_free(ft->user);
 			g_free(ft->ip);
@@ -1890,13 +1860,13 @@ static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition
 		ft->hdr.hdrtype = 0x0101;
 		ft->hdr.totfiles = htons(1); ft->hdr.filesleft = htons(1);
 		ft->hdr.flags = 0x20;
-		toc_write(source, ft, 256);
+		write(source, ft, 256);
 		return;
 	}
 
 	if (ft->hdr.hdrtype == 0x0101) {
-		toc_read(source, ft, 8);
-		toc_read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 
 		gaim_input_remove(ft->inpa);
@@ -1906,12 +1876,12 @@ static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition
 	}
 
 	if (ft->hdr.hdrtype == 0x0202) {
-		toc_read(source, ft, 8);
-		toc_read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
 		debug_header(ft);
 
 		gaim_input_remove(ft->inpa);
-		toc_soc_close(source);
+		close(source);
 		g_free(ft->filename);
 		g_free(ft->user);
 		g_free(ft->ip);
@@ -1963,7 +1933,7 @@ static void toc_get_file_connect(gpointer data, gint src, GaimInputCondition con
 	hdr->lnameoffset = 0x1A;
 	hdr->lsizeoffset = 0x10;
 	g_snprintf(hdr->name, 64, "listing.txt");
-	if (toc_write(src, hdr, 256) < 0) {
+	if (write(src, hdr, 256) < 0) {
 		gaim_notify_error(ft->gc, NULL,
 						  _("Could not write file header.  The file will "
 							"not be transferred."), NULL);
