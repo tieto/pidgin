@@ -43,6 +43,7 @@
 #include "pixmaps/msn_online.xpm"
 #include "pixmaps/msn_away.xpm"
 #include "pixmaps/ok.xpm"
+#include "pixmaps/cancel.xpm"
 
 #define MIME_HEADER "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nX-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; CO=0; CS=0; PF=0\r\n\r\n"
 
@@ -84,6 +85,15 @@ struct msn_data {
 	int status;
 	int away;
 	time_t last_trid;
+};
+
+struct msn_name_dlg {
+	GtkWidget *window;
+	GtkWidget *menu;
+	struct aim_user *user;
+	GtkWidget *entry;
+	GtkWidget *ok;
+	GtkWidget *cancel;
 };
 
 struct msn_conn {
@@ -165,6 +175,8 @@ char *url_decode(char *text)
 			buf[j++] = tochar(hex);
 		}
 	}
+
+	buf[j] = 0;
 
 	for (i = 0; i < strlen(buf); i++)
 		newtext[i] = buf[i];
@@ -295,6 +307,7 @@ void msn_add_request(struct gaim_connection *gc, char *buf)
 		snprintf(buf, MSN_BUF_LEN, "The user %s (%s) wants to add you to their buddylist.", res[4], res[5]);
 
 		ap->user = g_strdup(res[4]);
+
 		ap->friendly = g_strdup(url_decode(res[5]));
 		ap->gc = gc;
 
@@ -460,6 +473,22 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		return;
 
 	}
+	else if (!strncmp("REA ", buf, 4))
+	{
+		char **res;
+
+		res = g_strsplit(buf, " ", 0);
+
+		// Kill the old one
+		g_free(md->friendly);
+
+		// Set the new one
+		md->friendly = g_strdup(res[4]);
+
+		// And free up some memory.  That's all, folks.
+		g_strfreev(res);
+	}
+	
 	else if (!strncmp("BYE ", buf, 4))
 	{
 		char **res;
@@ -835,7 +864,9 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 			}
 			else
 			{
+				debug_printf("Before: %s\n", res[4]);
 				md->friendly = g_strdup(url_decode(res[4]));
+				debug_printf("After: %s\n", md->friendly);
 
 				/* Ok, ok.  Your account is FINALLY online.  Ya think Microsoft
 				 * could have had any more steps involved? */
@@ -1357,6 +1388,106 @@ static char *msn_normalize(const char *s)
 	return buf;
 }
 
+void do_change_name(GtkWidget *w, struct msn_name_dlg *b)
+{
+	struct gaim_connection *gc = b->user->gc;
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+	gchar *newname;
+
+	newname = gtk_entry_get_text(GTK_ENTRY(b->entry));
+	
+	snprintf(buf, MSN_BUF_LEN, "REA %ld %s %s\n", trId(md), gc->username, newname);
+
+	msn_write(md->fd, buf);
+
+	msn_des_win(NULL, b->window);
+
+	return;
+}
+
+void show_change_name(struct gaim_connection *gc)
+{
+	GtkWidget *label;
+	GtkWidget *vbox;
+	GtkWidget *buttons;
+	GtkWidget *hbox;
+	struct aim_user *tmp;
+	gchar *buf;
+	struct msn_data *md;
+
+	struct msn_name_dlg *b = g_new0(struct msn_name_dlg, 1);
+	if (!g_slist_find(connections, gc))
+		gc = connections->data;
+
+	tmp = gc->user;
+	b->user = tmp;
+
+	md = (struct msn_data *)gc->proto_data;
+
+	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_window_set_wmclass(GTK_WINDOW(b->window), "msn_change_name", "Gaim");
+
+	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Change MSN Name"));
+	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(msn_des_win), b->window);
+	gtk_widget_realize(b->window);
+	aol_icon(b->window->window);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(b->window), vbox);
+	gtk_widget_show(vbox);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+	buf = g_malloc(256);
+	g_snprintf(buf, 256, "New name for %s (%s):", tmp->username, md->friendly);
+	label = gtk_label_new(buf);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+	g_free(buf);
+
+	b->entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), b->entry, FALSE, FALSE, 5);
+	gtk_widget_show(b->entry);
+
+	buttons = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), buttons, FALSE, FALSE, 0);
+	gtk_widget_show(buttons);
+
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(buttons), b->cancel, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(msn_des_win), b->window);
+
+	b->ok = picture_button(b->window, _("Ok"), ok_xpm);
+	gtk_box_pack_end(GTK_BOX(buttons), b->ok, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(b->ok), "clicked", GTK_SIGNAL_FUNC(do_change_name), b);
+
+
+	gtk_widget_show(b->window);
+	
+
+}
+
+static void msn_do_action(struct gaim_connection *gc, char *act)
+{
+	if (!strcmp(act, "Change Name"))
+	{
+		show_change_name(gc);
+	}
+}
+
+static GList *msn_actions()
+{
+	GList *m = NULL;
+
+	m = g_list_append(m, "Change Name");
+
+	return m;
+}
 
 static char **msn_list_icon(int uc)
 {
@@ -1405,6 +1536,8 @@ void msn_init(struct prpl *ret)
 	ret->chat_whisper = NULL;
 	ret->chat_send = NULL;
 	ret->keepalive = NULL;
+	ret->actions = msn_actions;
+	ret->do_action = msn_do_action;
 	ret->normalize = msn_normalize;
 
 	my_protocol = ret;
