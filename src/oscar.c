@@ -1510,11 +1510,15 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	infotype = (u_short)va_arg(ap, u_int);
 	va_end(ap);
 
-	asc = g_strdup(asctime(localtime(&info->membersince)));
+	if (info->membersince)
+		asc = g_strdup_printf("Member Since : <B>%s</B>\n",
+				asctime(localtime(&info->membersince)));
+	else
+		asc = g_strdup("");
 
 	g_snprintf(buf, sizeof buf,
 			_("Username : <B>%s</B>  %s <BR>\n"
-			"Member Since : <B>%s</B>\n"
+			"%s"
 			"Warning Level : <B>%d %%</B><BR>\n"
 			"Online Since : <B>%s</B><BR>\n"
 			"Idle Minutes : <B>%d</B>\n<BR>\n<HR><BR>\n"
