@@ -128,7 +128,6 @@ void serv_close(struct gaim_connection *gc)
 		debug_printf("Prpl %s is now being used by %d accounts\n", prpl->name, prpl_accounts[prpl->protocol]);
 		if (prpl_accounts[prpl->protocol] == 0) { /* We don't need this protocol anymore */
 			debug_printf("Throwing out prpl %s\n", prpl->name);
-			unload_protocol(prpl);
 			g_timeout_add(0,delayed_unload, prpl->plug->handle);
 			prpl->plug->handle = NULL;
 		}
