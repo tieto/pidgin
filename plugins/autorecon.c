@@ -19,8 +19,8 @@ typedef struct {
 
 /*
    I use a struct here, but the visible/invisible isn't yet supported
-   in this plugin, so this is more for future implementation of those 
-   features 
+   in this plugin, so this is more for future implementation of those
+   features
 */
 typedef struct {
 	const char *state;
@@ -121,31 +121,31 @@ static void reconnect(GaimConnection *gc, void *m) {
 }
 
 static void save_state(GaimAccount *account, const char *state, const char *message) {
-	//Saves whether the account is back/away/visible/invisible
+	/* Saves whether the account is back/away/visible/invisible */
 
-        GaimAwayState *info;
+	GaimAwayState *info;
 
 	if (!strcmp(state,GAIM_AWAY_CUSTOM)) {
-        	info = g_new0(GaimAwayState, 1);
-        	info->state = state;
-        	info->message = message;
+		info = g_new0(GaimAwayState, 1);
+		info->state = state;
+		info->message = message;
 
-        	g_hash_table_insert(awayStates, account, info);
+		g_hash_table_insert(awayStates, account, info);
 	} else if(!strcmp(state,"Back")) 
 		g_hash_table_remove(awayStates, account);
 }
 
 static void restore_state(GaimConnection *gc, void *m) {
-	//Restore the state to what it was before the disconnect
-        GaimAwayState *info;
-        GaimAccount *account;
+	/* Restore the state to what it was before the disconnect */
+	GaimAwayState *info;
+	GaimAccount *account;
 
-        g_return_if_fail(gc != NULL && gaim_prefs_get_bool(OPT_RESTORE_STATE));
-        account = gaim_connection_get_account(gc);
+	g_return_if_fail(gc != NULL && gaim_prefs_get_bool(OPT_RESTORE_STATE));
+	account = gaim_connection_get_account(gc);
 
-        info = g_hash_table_lookup(awayStates, account);
-        if (info)
-                serv_set_away(gc, info->state, info->message);
+	info = g_hash_table_lookup(awayStates, account);
+	if (info)
+		serv_set_away(gc, info->state, info->message);
 }
 
 static void
@@ -211,7 +211,7 @@ plugin_unload(GaimPlugin *plugin)
 	
 	gaim_signal_disconnect(gaim_accounts_get_handle(), "account-away",
 			plugin, GAIM_CALLBACK(save_state));
-	
+
 	g_hash_table_destroy(hash);
 	hash = NULL;
 
@@ -231,7 +231,7 @@ static GaimPluginPrefFrame *get_plugin_pref_frame(GaimPlugin *plugin) {
 	GaimPluginPref *pref;
 
 	pref = gaim_plugin_pref_new_with_label(_("Error Message Suppression"));
-        gaim_plugin_pref_frame_add(frame, pref);
+	gaim_plugin_pref_frame_add(frame, pref);
 
 	pref = gaim_plugin_pref_new_with_name_and_label(OPT_HIDE_CONNECTED,
 		_("Hide Disconnect Errors"));
