@@ -2,7 +2,12 @@ version 0.69
 	* Perl plugin loader is back (now using perl58).
 	* Gaim now performs 'dll hell' check on startup.
 	* Using SHGetFolderPath to determine Gaim's app data directory.
-	* Installer translation for Korean added.
+	* Installer translations for: Korean and Romanian.
+	* WinME installer bug fixed.
+	* Moving to GTK 2.2.4: Dead keysyms handled on the US-International
+	  keyboard. Caps Lock bug fixed. Option to disable move/resize patch
+	  (This is known to be buggy on XP).
+	* Gtk-wimp updated to 0.4.3
 
 version 0.68: (09/01/2003):
 	* Installer translations for: Bulgarian and Traditional Chinese.
