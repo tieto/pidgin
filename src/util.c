@@ -303,13 +303,32 @@ char *
 gaim_mime_decode_field(const char *str)
 {
 	/*
-	 * This is revo/shx's version.  It has had some problems with 
-	 * crashing, but it's probably a better implementation.
+	 * This is wing's version, partially based on revo/shx's version
+	 * See RFC2047 [which apparently obsoletes RFC1342]
 	 */
+	typedef enum {
+		state_start, state_equal1, state_question1,
+		state_charset, state_question2,
+		state_encoding, state_question3,
+		state_encoded_text, state_question4, state_equal2 = state_start
+	} encoded_word_state_t;
+	encoded_word_state_t state = state_start;
 	const char *cur, *mark;
-	const char *unencoded, *encoded;
+	const char *charset0 = NULL, *encoding0 = NULL, *encoded_text0 = NULL;
 	char *n, *new;
 
+	/* token can be any CHAR, not necessarily ASCII */
+	#define token_char_p(c) \
+		(c != ' ' && !iscntrl(c) && !strchr("()<>@,;:\"/[]?.=", c))
+
+	/* But encoded-text must be ASCII; alas, isascii() may not exist */
+	#define encoded_text_char_p(c) \
+		((c & 0x80) == 0 && c != '?' && c != ' ' && isgraph(c))
+
+	#define RECOVER_MARKED_TEXT strncpy(n, mark, cur - mark + 1); \
+		n += cur - mark + 1
+
+	/* NOTE: Assuming that we need just strlen(str)+1 may be wrong */
 	n = new = g_malloc(strlen(str) + 1);
 
 	/* Here we will be looking for encoded words and if they seem to be
@@ -317,85 +336,116 @@ gaim_mime_decode_field(const char *str)
 	 * They are of this form: =?charset?encoding?text?=
 	 */
 
-	for (unencoded = cur = str; (encoded = cur = strstr(cur, "=?")); unencoded = cur) {
-		gboolean found_word = FALSE;
-		int i, num, dec_len;
-		gsize len;
-		char *decoded, *converted;
-		char *tokens[3];
-
-		/* Let's look for tokens, they are between ?'s */
-		for (cur += 2, mark = cur, num = 0; *cur; cur++) {
+	for (cur = str, mark = NULL; *cur; cur += 1) {
+		switch (state) {
+		case state_equal1:
 			if (*cur == '?') {
-				if (num > 2)
-					/* No more than 3 tokens. */
-					break;
-
-				tokens[num++] = g_strndup(mark, cur - mark);
-
-				mark = (cur + 1);
-
-				if (*mark == '=') {
-					found_word = TRUE;
-					break;
-				}
+				state = state_question1;
+			} else {
+				RECOVER_MARKED_TEXT;
+				state = state_start;
 			}
-#if 0
-			/* I think this is rarely going to happen, if at all */
-			else if ((num < 2) && (strchr("()<>@,;:/[]", *cur)))
-				/* There can't be these characters in the first two tokens. */
-				break;
-			else if ((num == 2) && (*cur == ' '))
-				/* There can't be spaces in the third token. */
-				break;
-#endif
-		}
-
-		cur += 2;
-
-		if (found_word) {
-			/* We found an encoded word. */
-			/* =?charset?encoding?text?= */
-
-			/* Some unencoded text. */
-			len = encoded - unencoded;
-			n = strncpy(n, unencoded, len) + len;
-
-			if (g_ascii_strcasecmp(tokens[1], "Q") == 0)
-				gaim_quotedp_decode(tokens[2], &decoded, &dec_len);
-			else if (g_ascii_strcasecmp(tokens[1], "B") == 0)
-				gaim_base64_decode(tokens[2], &decoded, &dec_len);
-			else
-				decoded = NULL;
-
-			if (decoded) {
-				converted = g_convert(decoded, dec_len, "utf-8", tokens[0], NULL, &len, NULL);
-
-				if (converted) {
-					n = strncpy(n, converted, len) + len;
-					g_free(converted);
-				} else if (len) {
-					converted = g_convert(decoded, len, "utf-8", tokens[0], NULL, &len, NULL);
-					n = strncpy(n, converted, len) + len;
-					g_free(converted);
-				}
-				g_free(decoded);
+			break;
+		case state_question1:
+			if (token_char_p(*cur)) {
+				charset0 = cur;
+				state = state_charset;
+			} else { /* This should never happen */
+				RECOVER_MARKED_TEXT;
+				state = state_start;
 			}
-		} else {
-			/* Some unencoded text. */
-			len = cur - unencoded;
-			n = strncpy(n, unencoded, len) + len;
-		}
+			break;
+		case state_charset:
+			if (*cur == '?') {
+				state = state_question2;
+			} else if (!token_char_p(*cur)) {
+				RECOVER_MARKED_TEXT;
+				state = state_start;
+			}
+			break;
+		case state_question2:
+			if (token_char_p(*cur)) {
+				encoding0 = cur;
+				state = state_encoding;
+			} else { /* This should never happen */
+				RECOVER_MARKED_TEXT;
+				state = state_start;
+			}
+			break;
+		case state_encoding:
+			if (*cur == '?') {
+				state = state_question3;
+			} else if (!token_char_p(*cur)) {
+				RECOVER_MARKED_TEXT;
+				state = state_start;
+			}
+			break;
+		case state_question3:
+			if (encoded_text_char_p(*cur)) {
+				encoded_text0 = cur;
+				state = state_encoded_text;
+			} else { /* This should never happen */
+				RECOVER_MARKED_TEXT;
+				state = state_start;
+			}
+			break;
+		case state_encoded_text:
+			if (*cur == '?') {
+				state = state_question4;
+			} else if (!encoded_text_char_p(*cur)) {
+				RECOVER_MARKED_TEXT;
+				state = state_start;
+			}
+			break;
+		case state_question4:
+			if (*cur == '=') { /* Got the whole encoded-word */
+				char *charset = g_strndup(charset0, encoding0 - charset0 - 1);
+				char *encoding = g_strndup(encoding0, encoded_text0 - encoding0 - 1);
+				char *encoded_text = g_strndup(encoded_text0, cur - encoded_text0 - 1);
+				char *decoded = NULL;
+				int dec_len;
+				if (g_ascii_strcasecmp(encoding, "Q") == 0)
+					gaim_quotedp_decode(encoded_text, &decoded, &dec_len);
+				else if (g_ascii_strcasecmp(encoding, "B") == 0)
+					gaim_base64_decode(encoded_text, &decoded, &dec_len);
+				else
+					decoded = NULL;
+				if (decoded) {
+					gsize len;
+					char *converted = g_convert(decoded, dec_len, "utf-8", charset, NULL, &len, NULL);
 
-		for (i = 0; i < num; i++)
-			g_free(tokens[i]);
+					if (converted) {
+						n = strncpy(n, converted, len) + len;
+						g_free(converted);
+					}
+					g_free(decoded);
+				}
+				g_free(charset);
+				g_free(encoding);
+				g_free(encoded_text);
+				state = state_equal2; /* Restart the FSM */
+			} else { /* This should never happen */
+				RECOVER_MARKED_TEXT;
+				state = state_start;
+			}
+			break;
+		default:
+			if (*cur == '=') {
+				mark = cur;
+				state = state_equal1;
+			} else {
+				/* Some unencoded text. */
+				*n = *cur;
+				n += 1;
+			}
+			break;
+		} /* switch */
+	} /* for */
+
+	if (state != state_start) {
+		RECOVER_MARKED_TEXT;
 	}
-
 	*n = '\0';
-
-	/* There is unencoded text at the end. */
-	if (*unencoded)
-		n = strcpy(n, unencoded);
 
 	return new;
 }
