@@ -251,7 +251,10 @@ msn_import_html(const char *html, char **attributes, char **message)
 					end = strchr(c, '\"');
 					comma = strchr(c, ',');
 
-					namelen = (unsigned int)((comma != NULL ? comma : end) - c);
+					if (comma == NULL || comma > end)
+						namelen = (unsigned int)(end - c);
+					else
+						namelen = (unsigned int)(comma - c);
 
 					fontface = g_strndup(c, namelen);
 					c = end + 2;
