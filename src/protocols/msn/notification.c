@@ -1174,7 +1174,7 @@ not_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
 	servconn->payload_cb  = NULL;
-	servconn->payload_len = atoi(params[2]);
+	servconn->payload_len = atoi(params[1]);
 
 	return TRUE;
 }
