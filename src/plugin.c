@@ -183,11 +183,13 @@ gaim_plugin_probe(const char *filename)
 	plugin = gaim_plugin_new(is_so_file(filename, PLUGIN_EXT), filename);
 
 	if (plugin->native_plugin) {
+		char *error;
 		plugin->handle = g_module_open(filename, 0);
 
 		if (plugin->handle == NULL) {
+			error = g_module_error();
 			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: %s\n",
-					   plugin->path, g_module_error());
+					   plugin->path, error ? error : "Unknown error.");
 
 			gaim_plugin_destroy(plugin);
 
@@ -199,8 +201,9 @@ gaim_plugin_probe(const char *filename)
 			g_module_close(plugin->handle);
 			plugin->handle = NULL;
 
+			error = g_module_error();
 			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: %s\n",
-					   plugin->path, g_module_error());
+					   plugin->path, error ? error : "Unknown error.");
 
 			gaim_plugin_destroy(plugin);
 
