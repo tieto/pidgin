@@ -273,6 +273,10 @@ do_save_icon(GtkObject *obj, GaimConversation *c)
 	GaimGtkConversation *gtkconv;
 	FILE *file;
 	const char *f;
+	GaimBuddyIcon *icon;
+	size_t len;
+	const void *data;
+
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
@@ -282,9 +286,8 @@ do_save_icon(GtkObject *obj, GaimConversation *c)
 	if (gaim_gtk_check_if_dir(f, GTK_FILE_SELECTION(gtkconv->u.im->save_icon)))
 		return;
 
-	GaimBuddyIcon *icon = gaim_conv_im_get_icon(GAIM_CONV_IM(c));
-	size_t len;
-	const void *data = gaim_buddy_icon_get_data(icon, &len);
+	icon = gaim_conv_im_get_icon(GAIM_CONV_IM(c));
+	data = gaim_buddy_icon_get_data(icon, &len);
 
 	if ((len > 0) && (data != NULL) && (file = fopen(f, "wb")) != NULL) {
 		fwrite(data, 1, len, file);
