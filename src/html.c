@@ -413,13 +413,11 @@ char *html_to_xhtml(const char *html) {
 				ALLOW_TAG("a");
 				ALLOW_TAG_ALT("b", "strong");
 				ALLOW_TAG("blockquote");
-				ALLOW_TAG("body");
 				ALLOW_TAG_ALT("bold", "strong");
 				ALLOW_TAG("br");
 				ALLOW_TAG("cite");
 				ALLOW_TAG("div");
 				ALLOW_TAG("em");
-				ALLOW_TAG("font"); /* FIXME: not valid, need to translate */
 				ALLOW_TAG("h1");
 				ALLOW_TAG("h2");
 				ALLOW_TAG("h3");
@@ -475,6 +473,95 @@ char *html_to_xhtml(const char *html) {
 					xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
 					continue;
 				}
+				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
+					const char *p = c;
+					GString *style = g_string_new("");
+					struct gaim_parse_tag *pt;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "color=", strlen("color="))) {
+							const char *q = p + strlen("color=");
+							GString *color = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								color = g_string_append_c(color, *q);
+								q++;
+							}
+							g_string_append_printf(style, "color: %s; ", color->str);
+							g_string_free(color, TRUE);
+							p = q;
+						} else if(!g_ascii_strncasecmp(p, "face=", strlen("face="))) {
+							const char *q = p + strlen("face=");
+							gboolean space_allowed = FALSE;
+							GString *face = g_string_new("");
+							if(*q == '\'' || *q == '\"') {
+								space_allowed = TRUE;
+								q++;
+							}
+							while(*q && *q != '\"' && *q != '\'' && (space_allowed || *q != ' ')) {
+								face = g_string_append_c(face, *q);
+								q++;
+							}
+							g_string_append_printf(style, "font-family: %s; ", face->str);
+							g_string_free(face, TRUE);
+							p = q;
+						} else if(!g_ascii_strncasecmp(p, "size=", strlen("size="))) {
+							const char *q = p + strlen("size=");
+							int sz;
+							const char *size = "medium";
+							if(*q == '\'' || *q == '\"')
+								q++;
+							sz = atoi(q);
+							if(sz < 3)
+								size = "smaller";
+							else if(sz > 3)
+								size = "larger";
+							g_string_append_printf(style, "font-size: %s; ", size);
+							p = q;
+						}
+						p++;
+					}
+					c = strchr(c, '>') + 1;
+					pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = "font";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					xhtml = g_string_append(xhtml, "<span");
+					if(style->len)
+						g_string_append_printf(xhtml, " style='%s'", style->str);
+					xhtml = g_string_append_c(xhtml, '>');
+					g_string_free(style, TRUE);
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<body ", 6)) {
+					const char *p = c;
+					gboolean did_something = FALSE;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "bgcolor=", strlen("bgcolor="))) {
+							const char *q = p + strlen("bgcolor=");
+							struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+							GString *color = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								color = g_string_append_c(color, *q);
+								q++;
+							}
+							g_string_append_printf(xhtml, "<span style='background: %s;'>", color->str);
+							g_string_free(color, TRUE);
+							c = strchr(c, '>') + 1;
+							pt->src_tag = "body";
+							pt->dest_tag = "span";
+							tags = g_list_prepend(tags, pt);
+							did_something = TRUE;
+							break;
+						}
+						p++;
+					}
+					if(did_something) continue;
+				}
+				/* this has to come after the special case for bgcolor */
+				ALLOW_TAG("body");
 				if(!g_ascii_strncasecmp(c, "<!--", strlen("<!--"))) {
 					char *p = strstr(c + strlen("<!--"), "-->");
 					if(p) {
