@@ -888,19 +888,19 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 	if (idata->fd != source)
 		idata->fd = source;
 
-	g_snprintf(buf, sizeof(buf), "NICK %s\r\n", gc->username);
-	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
-		hide_login_progress(gc, "Write error");
-		signoff(gc);
-		return;
-	}
-
 	gethostname(hostname, sizeof(hostname) - 1);
 	hostname[sizeof(hostname) - 1] = 0;
 	if (!*hostname)
 		g_snprintf(hostname, sizeof(hostname), "localhost");
 	g_snprintf(buf, sizeof(buf), "USER %s %s %s :Gaim (%s)\r\n",
 		   g_get_user_name(), hostname, gc->user->proto_opt[USEROPT_SERV], WEBSITE);
+	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+
+	g_snprintf(buf, sizeof(buf), "NICK %s\r\n", gc->username);
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
