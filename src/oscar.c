@@ -866,7 +866,7 @@ int gaim_parse_motd(struct aim_session_t *sess,
 				_("AOL error"));
 
 	if (keepalv < 0)
-		update_keepalive(TRUE);
+		update_keepalive(general_options & OPT_GEN_KEEPALIVE);
 
 	return 1;
 }
@@ -927,7 +927,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			createtime = va_arg(ap, unsigned long);
 			maxmsglen = (u_short)va_arg(ap, u_int);
 			maxoccupancy = (u_short)va_arg(ap, u_int);
-			createperms = va_arg(ap, unsigned char);
+			createperms = (unsigned char)va_arg(ap, int);
 			unknown = (u_short)va_arg(ap, u_int);
 			name = va_arg(ap, char *);
 			ck = va_arg(ap, char *);
@@ -1274,7 +1274,7 @@ void send_keepalive(gpointer d) {
 }
 
 void update_keepalive(gboolean on) {
-	if (on && keepalv < 0 && blist && (general_options & OPT_GEN_KEEPALIVE)) {
+	if (on && keepalv < 0 && blist) {
 		debug_print("allowing NOP\n");
 		keepalv = gtk_timeout_add(60000, (GtkFunction)send_keepalive, 0);
 	} else if (!on && keepalv > -1) {
