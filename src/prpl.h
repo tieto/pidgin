@@ -36,11 +36,21 @@
 #define PROTO_NAPSTER	9
 #define PROTO_ZEPHYR   10
 
-#define OPT_PROTO_HTML         0x00000001
-#define OPT_PROTO_CORRECT_TIME 0x00000002
-/* there should be more here eventually... These should all be stuff that other
- * plugins can't do (for example, TOC and Oscar and Jabber can do HTML in messages,
- * but IRC etc can't, so TOC/Oscar/Jabber have _HTML set but not IRC. */
+/* These should all be stuff that some plugins can do and others can't */
+/* TOC/Oscar send HTML-encoded messages; most other protocols don't */
+#define OPT_PROTO_HTML            0x00000001
+/* TOC/Oscar have signon time, and the server's time needs to be adjusted to match
+ * your computer's time. We wouldn't need this if everyone used NTP. */
+#define OPT_PROTO_CORRECT_TIME    0x00000002
+/* Jabber lets you choose what name you want for chat. So it shouldn't be pulling
+ * the alias for when you're in chat; it gets annoying. */
+#define OPT_PROTO_UNIQUE_CHATNAME 0x00000004
+/* IRC, Jabber let you have chat room topics */
+#define OPT_PROTO_CHAT_TOPIC      0x00000008
+/* IRC and Zephyr don't require passwords, so there's no need for a password prompt */
+#define OPT_PROTO_NO_PASSWORD     0x00000010
+/* ICQ, Yahoo, others? let you send offline messages */
+#define OPT_PROTO_OFFLINE         0x00000020
 
 #define GAIM_AWAY_CUSTOM "Custom"
 

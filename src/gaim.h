@@ -532,7 +532,7 @@ extern int logging_options;
 #define OPT_LOG_INDIVIDUAL       0x00000040
 
 #define OPT_USR_AUTO		0x00000001
-#define OPT_USR_KEEPALV		0x00000002
+/*#define OPT_USR_KEEPALV	0x00000002 this shouldn't be optional */
 #define OPT_USR_REM_PASS	0x00000004
 
 #define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."

@@ -386,7 +386,7 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 
 	acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
 	acct_button(_("Auto-Login"), u, OPT_USR_AUTO, vbox);
-	acct_button(_("Send KeepAlive packet (6 bytes/second)"), u, OPT_USR_KEEPALV, vbox);
+	/*acct_button(_("Send KeepAlive packet (6 bytes/second)"), u, OPT_USR_KEEPALV, vbox);*/
 
 	if (u) {
 		u->name = name;

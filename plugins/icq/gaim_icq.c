@@ -99,7 +99,7 @@ static void icq_online(ICQLINK *link) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 	debug_printf("%s is now online.\n", gc->username);
 	account_online(gc);
-	gc->options |= OPT_USR_KEEPALV;
+	/*gc->options |= OPT_USR_KEEPALV; this is always-on now */
 	serv_finish_login(gc);
 
 	icq_ChangeStatus(id->link, STATUS_ONLINE);

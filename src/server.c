@@ -113,7 +113,7 @@ void serv_finish_login(struct gaim_connection *gc)
 
 	time(&gc->login_time);
 
-	update_keepalive(gc, gc->options & OPT_USR_KEEPALV);
+	update_keepalive(gc, TRUE);
 }
 
 

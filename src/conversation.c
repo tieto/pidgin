@@ -1296,24 +1296,26 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	if (!(logging_options & OPT_LOG_STRIP_HTML))
 		gtk_font_options = gtk_font_options ^ GTK_IMHTML_RETURN_LOG;
 
-	if (!who) {
-		if (flags & WFLAG_SEND) {
-			b = find_buddy(c->gc, c->gc->username);
-			if (b)
-				who = b->show;
-			else
-				who = c->gc->username;
+	if (!c->is_chat || !(c->gc->prpl->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		if (!who) {
+			if (flags & WFLAG_SEND) {
+				b = find_buddy(c->gc, c->gc->username);
+				if (b)
+					who = b->show;
+				else
+					who = c->gc->username;
+			} else {
+				b = find_buddy(c->gc, c->name);
+				if (b)
+					who = b->show;
+				else
+					who = c->name;
+			}
 		} else {
-			b = find_buddy(c->gc, c->name);
+			b = find_buddy(c->gc, who);
 			if (b)
 				who = b->show;
-			else
-				who = c->name;
 		}
-	} else {
-		b = find_buddy(c->gc, who);
-		if (b)
-			who = b->show;
 	}
 
 	
