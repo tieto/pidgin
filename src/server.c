@@ -423,6 +423,13 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 {
 	struct buddy *b = find_buddy(gc, name);
 
+	if (gc->prpl->options & OPT_PROTO_CORRECT_TIME) {
+		char *tmp = g_strdup(normalize(name));
+		if (!strcasecmp(tmp, normalize(gc->username)))
+			gc->correction_time = (int)(signon - gc->login_time);
+		g_free(tmp);
+	}
+
 	if (!b) {
 		debug_printf("Error, no such buddy %s\n", name);
 		return;

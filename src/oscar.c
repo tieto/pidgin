@@ -2286,7 +2286,7 @@ static GList *oscar_away_states()
 
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
-	ret->options = OPT_PROTO_HTML;
+	ret->options = OPT_PROTO_HTML | OPT_PROTO_CORRECT_TIME;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;

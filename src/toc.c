@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1422 $"
+#define REVISION "gaim:$Revision: 1445 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -1182,7 +1182,7 @@ static GList *toc_away_states()
 void toc_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_TOC;
-	ret->options = OPT_PROTO_HTML;
+	ret->options = OPT_PROTO_HTML | OPT_PROTO_CORRECT_TIME;
 	ret->name = toc_name;
 	ret->list_icon = toc_list_icon;
 	ret->away_states = toc_away_states;
