@@ -38,6 +38,10 @@ struct _GaimGtkStatusSelectorPrivate
 	GtkWidget *entry;
 	GtkWidget *frame;
 
+	GtkWidget *optmenu;
+	GtkWidget *menu;
+	GtkSizeGroup *sg;
+
 	GtkListStore *model;
 
 	guint entry_timer;
@@ -51,15 +55,16 @@ enum
 	NUM_COLUMNS
 };
 
+#define GAIM_SELECTOR_TEXT "gaim-text"
+#define GAIM_SELECTOR_STATUS_TYPE_ID "gaim-status-type-id"
+
 static void gaim_gtk_status_selector_class_init(GaimGtkStatusSelectorClass *klass);
 static void gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector);
 static void gaim_gtk_status_selector_finalize(GObject *obj);
 static void gaim_gtk_status_selector_destroy(GtkObject *obj);
-#if GTK_CHECK_VERSION (2,4,0)
 static void status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector);
 static gboolean key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer user_data);
 static void signed_on_off_cb(GaimConnection *gc, GaimGtkStatusSelector *selector);
-#endif
 static void rebuild_list(GaimGtkStatusSelector *selector);
 
 static GtkVBox *parent_class = NULL;
@@ -112,17 +117,19 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 {
 #if GTK_CHECK_VERSION(2,4,0)
 	GtkWidget *combo;
+	GtkCellRenderer *renderer;
+#else
+	GtkWidget *optmenu;
+#endif
 	GtkWidget *entry;
 	GtkWidget *toolbar;
 	GtkWidget *frame;
-	GtkCellRenderer *renderer;
-#endif
 
 	selector->priv = g_new0(GaimGtkStatusSelectorPrivate, 1);
 
 #if GTK_CHECK_VERSION(2,4,0)
 	selector->priv->model = gtk_list_store_new(NUM_COLUMNS, G_TYPE_POINTER,
-											   GDK_TYPE_PIXBUF, G_TYPE_STRING);
+	                        GDK_TYPE_PIXBUF, G_TYPE_STRING);
 
 	combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(selector->priv->model));
 	selector->priv->combo = combo;
@@ -150,6 +157,23 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 	gtk_widget_show(combo);
 	gtk_box_pack_start(GTK_BOX(selector), combo, FALSE, FALSE, 0);
 
+
+#else /* GTK < 2.4.0 */
+	selector->priv->optmenu = optmenu = gtk_option_menu_new();
+	gtk_widget_show(optmenu);
+
+	selector->priv->menu = gtk_menu_new();
+	gtk_widget_show(selector->priv->menu);
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), selector->priv->menu);
+
+	selector->priv->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	g_signal_connect(G_OBJECT(optmenu), "changed",
+	                 G_CALLBACK(status_switched_cb), selector);
+
+	gtk_box_pack_start(GTK_BOX(selector), optmenu, FALSE, FALSE, 0);
+#endif
+
 	frame = gaim_gtk_create_imhtml(TRUE, &entry, &toolbar);
 	selector->priv->entry = entry;
 	selector->priv->frame = frame;
@@ -158,17 +182,16 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 	gtk_widget_hide(toolbar);
 
 	g_signal_connect(G_OBJECT(entry), "key_press_event",
-					 G_CALLBACK(key_press_cb), selector);
+	                 G_CALLBACK(key_press_cb), selector);
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						selector, GAIM_CALLBACK(signed_on_off_cb),
-						selector);
+	                    selector, GAIM_CALLBACK(signed_on_off_cb),
+	                    selector);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
-						selector, GAIM_CALLBACK(signed_on_off_cb),
-						selector);
+	                    selector, GAIM_CALLBACK(signed_on_off_cb),
+	                    selector);
 
 	rebuild_list(selector);
-#endif /* GTK < 2.4.0 */
 }
 
 static void
@@ -180,6 +203,11 @@ gaim_gtk_status_selector_finalize(GObject *obj)
 	g_return_if_fail(GAIM_GTK_IS_STATUS_SELECTOR(obj));
 
 	selector = GAIM_GTK_STATUS_SELECTOR(obj);
+
+	if (selector->priv->sg) {
+		g_object_unref(selector->priv->sg);
+		selector->priv->sg = NULL;
+	}
 
 	g_free(selector->priv);
 
@@ -205,24 +233,44 @@ gaim_gtk_status_selector_destroy(GtkObject *obj)
 		GTK_OBJECT_CLASS(parent_class)->destroy(obj);
 }
 
+static gboolean
+get_selected_data(GaimGtkStatusSelector *selector, const char **text, const char **status_type_id)
+{
 #if GTK_CHECK_VERSION(2,4,0)
+	GtkTreeIter iter;
+
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(selector->priv->combo),
+	    &iter))
+		return FALSE;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(selector->priv->model), &iter,
+	                   COLUMN_NAME, text,
+	                   COLUMN_STATUS_TYPE_ID, status_type_id,
+	                   -1);
+	return TRUE;
+#else
+	GtkWidget *item;
+	int i;
+	GList *l;
+
+	i = gtk_option_menu_get_history(GTK_OPTION_MENU(selector->priv->optmenu));
+	l = GTK_MENU_SHELL(selector->priv->menu)->children;
+	item = g_list_nth_data(l, i);
+	*text = g_object_get_data(G_OBJECT(item), GAIM_SELECTOR_TEXT);
+	*status_type_id = g_object_get_data(G_OBJECT(item), GAIM_SELECTOR_STATUS_TYPE_ID);
+	return TRUE;
+#endif
+	return FALSE;
+}
+
 static void
 status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 {
-	GtkTreeIter iter;
-	const char *status_type_id;
-	const char *text;
+	const char *status_type_id = NULL;
+	const char *text = NULL;
 
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(selector->priv->combo),
-									  &iter))
-	{
+	if (!get_selected_data(selector, &text, &status_type_id))
 		return;
-	}
-
-	gtk_tree_model_get(GTK_TREE_MODEL(selector->priv->model), &iter,
-					   COLUMN_NAME, &text,
-					   COLUMN_STATUS_TYPE_ID, &status_type_id,
-					   -1);
 
 	if (status_type_id == NULL)
 	{
@@ -280,27 +328,16 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 			gtk_widget_hide(selector->priv->frame);
 	}
 }
-#endif
 
 static gboolean
 insert_text_timeout_cb(gpointer data)
 {
-#if GTK_CHECK_VERSION(2,4,0)
 	GaimGtkStatusSelector *selector = (GaimGtkStatusSelector *)data;
-	GtkTreeIter iter;
 	const char *status_type_id;
 	const char *text;
 
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(selector->priv->combo),
-									  &iter))
-	{
+	if (!get_selected_data(selector, &text, &status_type_id))
 		return FALSE;
-	}
-
-	gtk_tree_model_get(GTK_TREE_MODEL(selector->priv->model), &iter,
-					   COLUMN_NAME, &text,
-					   COLUMN_STATUS_TYPE_ID, &status_type_id,
-					   -1);
 
 	if (status_type_id == NULL)
 	{
@@ -323,7 +360,7 @@ insert_text_timeout_cb(gpointer data)
 			GaimStatusType *status_type;
 
 			status_type = gaim_account_get_status_type(account,
-													   status_type_id);
+			              status_type_id);
 
 			if (status_type == NULL)
 				continue;
@@ -331,13 +368,12 @@ insert_text_timeout_cb(gpointer data)
 			if (gaim_status_type_get_attr(status_type, "message") != NULL)
 			{
 				gaim_account_set_status(account,
-										status_type_id, TRUE,
-										"message", message,
-										NULL);
+				                        status_type_id, TRUE,
+				                        "message", message,
+				                        NULL);
 			}
 		}
 	}
-#endif
 
 	return FALSE;
 }
@@ -407,6 +443,7 @@ static void
 add_item(GaimGtkStatusSelector *selector, const char *status_type_id,
 		 const char *text, GdkPixbuf *pixbuf)
 {
+#if GTK_CHECK_VERSION(2,4,0)
 	GtkTreeIter iter;
 
 	gtk_list_store_append(selector->priv->model, &iter);
@@ -415,10 +452,42 @@ add_item(GaimGtkStatusSelector *selector, const char *status_type_id,
 					   COLUMN_ICON, pixbuf,
 					   COLUMN_NAME, text,
 					   -1);
+#else
+	GtkWidget *image = gtk_image_new_from_pixbuf(pixbuf);
+	GtkWidget *item, *hbox, *label;
+
+	/* Create the item. */
+	item = gtk_menu_item_new();
+
+	/* Create the hbox. */
+	hbox = gtk_hbox_new(FALSE, 4);
+	gtk_container_add(GTK_CONTAINER(item), hbox);
+	gtk_widget_show(hbox);
+
+	gtk_size_group_add_widget(selector->priv->sg, image);
+
+	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
+	gtk_widget_show(image);
+
+	/* Create the label. */
+	label = gtk_label_new(text);
+	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+	gtk_widget_show(label);
+
+	g_object_set_data_full(G_OBJECT(item), GAIM_SELECTOR_TEXT, g_strdup(text), g_free);
+	g_object_set_data_full(G_OBJECT(item), GAIM_SELECTOR_STATUS_TYPE_ID, g_strdup(status_type_id), g_free);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(selector->priv->menu), item);
+	gtk_widget_show(item);
+	gaim_set_accessible_label(item, label);
+#endif
 
 	if (pixbuf != NULL)
 		g_object_unref(G_OBJECT(pixbuf));
 }
+
 
 static void
 rebuild_list(GaimGtkStatusSelector *selector)
@@ -431,7 +500,14 @@ rebuild_list(GaimGtkStatusSelector *selector)
 	g_return_if_fail(selector != NULL);
 	g_return_if_fail(GAIM_GTK_IS_STATUS_SELECTOR(selector));
 
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_list_store_clear(selector->priv->model);
+#else
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(selector->priv->optmenu));
+	/* XXX this automaticly destroys the menu, right? */
+	selector->priv->menu = gtk_menu_new();
+	gtk_widget_show(selector->priv->menu);
+#endif
 
 	/*
 	 * If the user only has one IM account or one type of IM account
@@ -495,8 +571,11 @@ rebuild_list(GaimGtkStatusSelector *selector)
 	/* TODO: Add saved statuses here? */
 
 	add_item(selector, NULL, _("New Status"),
-			 gtk_widget_render_icon(GTK_WIDGET(selector), GTK_STOCK_NEW,
-									GTK_ICON_SIZE_MENU, NULL));
+		 gtk_widget_render_icon(GTK_WIDGET(selector), GTK_STOCK_NEW,
+		 GTK_ICON_SIZE_MENU, NULL));
+#if !GTK_CHECK_VERSION(2,4,0)
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(selector->priv->optmenu), selector->priv->menu);
+#endif
 }
 
 GtkWidget *
