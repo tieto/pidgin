@@ -361,6 +361,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, s
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
 	pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
 	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
+	pango_layout_set_width(layout, 300000);
 	style = gtkblist->tipwindow->style;
 
 	gtk_paint_flat_box (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
@@ -409,6 +410,8 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		gtk_widget_ensure_style (gtkblist->tipwindow);
 
 		layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
+		pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
+		pango_layout_set_width(layout, 300000);
 		pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
 		scr_w = gdk_screen_width();
 		scr_h = gdk_screen_height();
