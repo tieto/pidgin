@@ -1,66 +1,66 @@
 #include "module.h"
 
-MODULE = Gaim::ConvWindow  PACKAGE = Gaim::ConvWindow  PREFIX = gaim_window_
+MODULE = Gaim::ConvWindow  PACKAGE = Gaim::ConvWindow  PREFIX = gaim_conv_window_
 PROTOTYPES: ENABLE
 
 Gaim::ConvWindow
-gaim_window_new()
+gaim_conv_window_new()
 
 void
 DESTROY(win)
 	Gaim::ConvWindow win
 CODE:
-	gaim_window_destroy(win);
+	gaim_conv_window_destroy(win);
 
 
 void
-gaim_window_show(win)
+gaim_conv_window_show(win)
 	Gaim::ConvWindow win
 
 void
-gaim_window_hide(win)
+gaim_conv_window_hide(win)
 	Gaim::ConvWindow win
 
 void
-gaim_window_raise(win)
+gaim_conv_window_raise(win)
 	Gaim::ConvWindow win
 
 void
-gaim_window_flash(win)
+gaim_conv_window_flash(win)
 	Gaim::ConvWindow win
 
 int
-gaim_window_add_conversation(win, conv)
+gaim_conv_window_add_conversation(win, conv)
 	Gaim::ConvWindow win
 	Gaim::Conversation conv
 
 Gaim::Conversation
-gaim_window_remove_conversation(win, index)
+gaim_conv_window_remove_conversation(win, index)
 	Gaim::ConvWindow win
 	unsigned int index
 
 void
-gaim_window_move_conversation(win, index, new_index)
+gaim_conv_window_move_conversation(win, index, new_index)
 	Gaim::ConvWindow win
 	unsigned int index
 	unsigned int new_index
 
 Gaim::Conversation
-gaim_window_get_conversation_at(win, index)
+gaim_conv_window_get_conversation_at(win, index)
 	Gaim::ConvWindow win
 	unsigned int index
 
 size_t
-gaim_window_get_conversation_count(win)
+gaim_conv_window_get_conversation_count(win)
 	Gaim::ConvWindow win
 
 void
-gaim_window_switch_conversation(win, index)
+gaim_conv_window_switch_conversation(win, index)
 	Gaim::ConvWindow win
 	unsigned int index
 
 Gaim::Conversation
-gaim_window_get_active_conversation(win)
+gaim_conv_window_get_active_conversation(win)
 	Gaim::ConvWindow win
 
 void
@@ -69,7 +69,7 @@ conversations(win)
 PREINIT:
 	GList *l;
 CODE:
-	for (l = gaim_window_get_conversations(win); l != NULL; l = l->next)
+	for (l = gaim_conv_window_get_conversations(win); l != NULL; l = l->next)
 	{
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data,
 			"Gaim::Conversation")));

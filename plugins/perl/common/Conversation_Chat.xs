@@ -1,6 +1,6 @@
 #include "module.h"
 
-MODULE = Gaim::Conversation::Chat  PACKAGE = Gaim::Conversation::Chat  PREFIX = gaim_chat_
+MODULE = Gaim::Conversation::Chat  PACKAGE = Gaim::Conversation::Chat  PREFIX = gaim_conv_chat_
 PROTOTYPES: ENABLE
 
 Gaim::Conversation::Chat
@@ -8,7 +8,7 @@ new(account, name)
 	Gaim::Account account
 	const char *name
 CODE:
-	RETVAL = GAIM_CHAT(gaim_conversation_new(GAIM_CONV_CHAT, account, name));
+	RETVAL = GAIM_CONV_CHAT(gaim_conversation_new(GAIM_CONV_CHAT, account, name));
 OUTPUT:
 	RETVAL
 
@@ -16,11 +16,11 @@ void
 DESTROY(chat)
 	Gaim::Conversation::Chat chat
 CODE:
-	gaim_conversation_destroy(gaim_chat_get_conversation(chat));
+	gaim_conversation_destroy(gaim_conv_chat_get_conversation(chat));
 
 
 Gaim::Conversation
-gaim_chat_get_conversation(chat)
+gaim_conv_chat_get_conversation(chat)
 	Gaim::Conversation::Chat chat
 
 void
@@ -29,18 +29,18 @@ users(chat)
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_chat_get_users(chat); l != NULL; l = l->next)
+	for (l = gaim_conv_chat_get_users(chat); l != NULL; l = l->next)
 	{
 		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
 
 void
-gaim_chat_ignore(chat, name)
+gaim_conv_chat_ignore(chat, name)
 	Gaim::Conversation::Chat chat
 	const char *name
 
 void
-gaim_chat_unignore(chat, name)
+gaim_conv_chat_unignore(chat, name)
 	Gaim::Conversation::Chat chat
 	const char *name
 
@@ -50,28 +50,28 @@ ignored_users(chat)
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_chat_get_ignored(chat); l != NULL; l = l->next)
+	for (l = gaim_conv_chat_get_ignored(chat); l != NULL; l = l->next)
 	{
 		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
 
 gboolean
-gaim_chat_is_user_ignored(chat, user)
+gaim_conv_chat_is_user_ignored(chat, user)
 	Gaim::Conversation::Chat chat
 	const char *user
 
 void
-gaim_chat_set_topic(chat, who, topic)
+gaim_conv_chat_set_topic(chat, who, topic)
 	Gaim::Conversation::Chat chat
 	const char *who
 	const char *topic
 
 const char *
-gaim_chat_get_topic(chat)
+gaim_conv_chat_get_topic(chat)
 	Gaim::Conversation::Chat chat
 
 int
-gaim_chat_get_id(chat)
+gaim_conv_chat_get_id(chat)
 	Gaim::Conversation::Chat chat
 
 void
@@ -81,10 +81,10 @@ write(chat, who, message, flags)
 	const char *message
 	int flags
 CODE:
-	gaim_chat_write(chat, who, message, flags, time(NULL));
+	gaim_conv_chat_write(chat, who, message, flags, time(NULL));
 
 void
-gaim_chat_send(chat, message)
+gaim_conv_chat_send(chat, message)
 	Gaim::Conversation::Chat chat
 	const char *message
 
