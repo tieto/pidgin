@@ -5,7 +5,8 @@ version 0.80cvs:
 
 version 0.79 (06/24/2004)
 	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Chinese (Traditional) translation updated (Ambrose C. Li, Paladin R.
+	  Liu)
 	* Czech translation updated (Miloslav Trmac)
 	* Danish translation updated (Morten Brix Pedersen (mbrix))
 	* English (British) translation updated (Luke Ross (lukeross))
@@ -19,14 +20,14 @@ version 0.79 (06/24/2004)
 	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
 	  Rodrigues Collares Neto)
 	* Russian translation updated (Dmitry Beloglazov)
-	* gaim.desktop updated for Danish translation ((Morten Brix Pedersen
+	* gaim.desktop updated for Danish translation (Morten Brix Pedersen
 	  (mbrix))
 	* gaim.desktop updated for French translation (Eric Boumaour)
 	* gaim.desktop updated for German translation (Bjoern Voigt)
 	* gaim.desktop updated for Italian translation (Claudio Satriano)
 	* gaim.desktop updated for Polish translation (Emil Nowak)
-	* gaim.desktop updated for Portuguese translation (Duarte Serrano Goncalves
-	  Henriques)
+	* gaim.desktop updated for Portuguese translation (Duarte Serrano
+	  Goncalves Henriques)
 	* gaim.desktop updated for Portuguese (Brazilian) translation (Mauricio
 	  de Lemos Rodrigues Collares Neto)
 
@@ -51,7 +52,8 @@ version 0.78 (05/30/2004):
 
 version 0.77 (04/22/2004):
 	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Ambrose C. Li, Paladin R. Liu)
+	* Chinese (Traditional) translation updated (Ambrose C. Li, Paladin R.
+	  Liu)
 	* Czech translation updated (Miloslav Trmac)
 	* Danish translation updated (Morten Brix Pedersen (mbrix))
 	* Dutch translation updated (Vincent van Adrighem)
@@ -189,7 +191,7 @@ version 0.68 (09/01/2003):
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
 	* Danish translation updated (Morten Brix Pedersen (mbrix))
-	* Finish translation updated (Ambrose C. LI (acli))
+	* Finnish translation updated (Ambrose C. LI (acli))
 	* German translation updated (Bjoern Voigt)
 	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
 	  Rodrigues Collares Neto)
@@ -225,7 +227,8 @@ version 0.66 (07/18/2003):
 
 version 0.65 (07/16/2003):
 	* French translation updated (Eric (Zongo) Boumaour)
-	* Portuguese (Brazilian) translation added (Mauricio de Lemos Rodrigues Collares Neto)
+	* Portuguese (Brazilian) translation added (Mauricio de Lemos Rodrigues
+	  Collares Neto)
 	* Korean translation updated (Kyung-uk Son)
 	* Japanese translation updated (Junichi Uekawa)
 	* Hebrew translation added (Pavel Bibergal)
@@ -251,7 +254,8 @@ version 0.60 (04/04/2003):
 	  Sebastian Carpe, and David Odin)
 	* Polish translation updated. (Thanks, Przemyslaw Sulek)
 	* Finnish translation updated. (Thanks, Tero Kuusela)
-	* Spanish translation updated. (Thanks, Lars Goldschlager, Nicolas Lichtmaier) 
+	* Spanish translation updated. (Thanks, Lars Goldschlager,
+	  Nicolas Lichtmaier) 
 	* Traditional Chinese translation updated. (Thanks, Paladin Liu)
 	* Japanese translation updated. (Thanks, Junichi Uekawa)
 	* Korean translation updated. (Thanks, A Lee)
