@@ -804,6 +804,16 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 	} else if (!g_strncasecmp(buf, "OUT", 3)) {
 	} else if (!g_strncasecmp(buf, "PRP", 3)) {
 	} else if (!g_strncasecmp(buf, "QRY", 3)) {
+	} else if (!g_strncasecmp(buf, "REA", 3)) {
+		char *friend, *tmp = buf;
+
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		friend = tmp;
+
+		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
 	} else if (!g_strncasecmp(buf, "REM", 3)) {
 	} else if (!g_strncasecmp(buf, "RNG", 3)) {
 		struct msn_switchboard *ms;
@@ -987,11 +997,10 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
 		friend = tmp;
-
-		debug_printf("resp: %s; friend: %s\n", resp, friend);
+		GET_NEXT(tmp);
 
 		/* so here, we're either getting the challenge or the OK */
-		if (strstr(buf, "OK")) {
+		if (!g_strcasecmp(resp, "OK")) {
 			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
 
 			g_snprintf(buf, sizeof(buf), "SYN %d 0\n", ++md->trId);
@@ -1020,24 +1029,13 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 
 			gaim_input_remove(md->inpa);
 			md->inpa = gaim_input_add(md->fd, GAIM_INPUT_READ, msn_callback, gc);
-		} else if (strstr(buf, "MD5")) {
-			char *challenge = buf;
+		} else if (!g_strcasecmp(resp, "MD5")) {
 			char buf2[MSN_BUF_LEN];
 			md5_state_t st;
 			md5_byte_t di[16];
-			int spaces = 4;
 			int i;
 
-			while (spaces) {
-				if (isspace(*challenge)) {
-					spaces--;
-					while (isspace(challenge[1]))
-						challenge++;
-				}
-				challenge++;
-			}
-
-			g_snprintf(buf2, sizeof(buf2), "%s%s", challenge, gc->password);
+			g_snprintf(buf2, sizeof(buf2), "%s%s", friend, gc->password);
 
 			md5_init(&st);
 			md5_append(&st, (const md5_byte_t *)buf2, strlen(buf2));
@@ -1395,6 +1393,36 @@ static void msn_rem_buddy(struct gaim_connection *gc, char *who)
 	}
 }
 
+static void msn_act_id(gpointer data, char *entry)
+{
+	struct gaim_connection *gc = data;
+	struct msn_data *md = gc->proto_data;
+	char buf[MSN_BUF_LEN];
+
+	g_snprintf(buf, sizeof(buf), "REA %d %s %s\n", ++md->trId, gc->username, entry);
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+}
+
+static void msn_do_action(struct gaim_connection *gc, char *act)
+{
+	if (!strcmp(act, "Set Friendly Name")) {
+		do_prompt_dialog("Set Friendly Name:", gc, msn_act_id, NULL);
+	}
+}
+
+static GList *msn_actions()
+{
+	GList *m = NULL;
+
+	m = g_list_append(m, "Set Friendly Name");
+
+	return m;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void msn_init(struct prpl *ret)
@@ -1416,6 +1444,8 @@ void msn_init(struct prpl *ret)
 	ret->chat_invite = msn_chat_invite;
 	ret->chat_leave = msn_chat_leave;
 	ret->normalize = msn_normalize;
+	ret->do_action = msn_do_action;
+	ret->actions = msn_actions;
 
 	my_protocol = ret;
 }
