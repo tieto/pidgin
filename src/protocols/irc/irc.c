@@ -742,7 +742,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 					word[3], *word_eol[5] == ':' ? word_eol[5] + 1: word_eol[5]);
 			do_error_dialog(outbuf, _("IRC Error"));
 		} else
-			irc_rem_chat_bud(gc, nick);
+			irc_rem_chat_bud(gc, word[4]);
 	} else if (!strcmp(cmd, "KILL")) { /* */
 	} else if (!strcmp(cmd, "MODE")) {
 		handle_mode(gc, word, word_eol, FALSE);
@@ -1224,12 +1224,10 @@ static void irc_join_chat(struct gaim_connection *gc, GList *data)
 	if (!data)
 		return;
 	name = data->data;
-	if (data->next)
+	if (data->next) {
 		pass = data->next->data;
-
-	if (data->next)
 		g_snprintf(buf, sizeof(buf), "JOIN %s %s\r\n", name, pass);
-	else
+	} else
 		g_snprintf(buf, sizeof(buf), "JOIN %s\r\n", name);
 	irc_write(id->fd, buf, strlen(buf));
 }
