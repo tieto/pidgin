@@ -78,5 +78,5 @@ event_buddy_signoff:
 event_blist_update:
 	(none)
 	
-	This event is called when the buddylist is updated (automatically every 20 seconds)
-	
+	This event is called when the buddylist is updated (automatically every
+	20 seconds)
