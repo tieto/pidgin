@@ -1,4 +1,8 @@
-version 0.60 alpha 2 (10/9/02)
+version 0.60 alpha 3:
+	* Improved UI
+	* Plugin for transparent conversation windows
+
+version 0.60 alpha 2 (10/9/02):
 	* Perl functionality added
 	* PNGs work
 	* Path issues fixed for Win9x
@@ -14,5 +18,5 @@ version 0.60 alpha 2 (10/9/02)
 	* Gaim now minimizes to the system tray.
 	* Various other feature updates from the Gaim crew. Read ChangeLog :)
 
-version 0.60 alpha 1 (9/13/2002)
+version 0.60 alpha 1 (9/13/2002):
 	* Initial alpha release
