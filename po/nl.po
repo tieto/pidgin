@@ -3143,7 +3143,7 @@ msgstr "_Contactnaam:"
 #. Create the "Pounce When" frame.
 #: src/gtkpounce.c:404
 msgid "Pounce When"
-msgstr "Wanneer Alermeren"
+msgstr "Wanneer Alarmeren"
 
 #: src/gtkpounce.c:412
 msgid "_Sign on"
