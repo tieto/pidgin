@@ -2,7 +2,7 @@
 Name=Gaim
 Comment=Multi-protocol Instant Messaging Client 
 Exec=gaim 
-Icon=gaim.xpm
+Icon=gaim.png
 Info=Gaim
 Terminal=0
 Type=Application
