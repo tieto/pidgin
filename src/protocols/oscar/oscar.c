@@ -4899,11 +4899,12 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 							if (aim_ssi_itemlist_exists(sess->ssi.local, b->name)) {
 								/* If the buddy is an ICQ user then load his nickname */
 								const char *servernick = gaim_blist_node_get_string((GaimBlistNode*)b, "servernick");
+								char *alias;
 								if (servernick)
 									serv_got_alias(gc, b->name, servernick);
 
 								/* Store local alias on server */
-								char *alias = aim_ssi_getalias(sess->ssi.local, g->name, b->name);
+								alias = aim_ssi_getalias(sess->ssi.local, g->name, b->name);
 								if (!alias && b->alias && strlen(b->alias))
 									aim_ssi_aliasbuddy(sess, g->name, b->name, b->alias);
 								free(alias);
