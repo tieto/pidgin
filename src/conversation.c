@@ -1102,17 +1102,12 @@ static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len, GdkColor *tran
 
 	if (strlen(m) < 2) return face;
 	*len = 2;
-	if (	   !strncmp(m, ":)", 2) ||
-		   !strncmp(m, "=)", 2)) {
+	if (	   !strncmp(m, ":)", 2)) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, smile_xpm);
-	} else if (!strncmp(m, ":(", 2) ||
-		   !strncmp(m, "=(", 2)) {
+	} else if (!strncmp(m, ":(", 2)) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, sad_xpm);
 	} else if (!strncmp(m, ";)", 2)) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, wink_xpm);
-	} else if (!strncmp(m, ":p", 2) ||
-		   !strncmp(m, ":P", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, tongue_xpm);
 	}
 
 	if (face || strlen(m) < 3) return face;
