@@ -362,7 +362,11 @@ static struct mail_notify *find_mail_notify(struct gaim_connection *gc)
 
 static void des_email_win(GtkWidget *w, struct mail_notify *mn)
 {
-	gtk_widget_destroy(mn->email_win);
+	if (w != mn->email_win) {
+		gtk_widget_destroy(mn->email_win);
+		return;
+	}
+	debug_printf("removing mail notification\n");
 	mailnots = g_slist_remove(mailnots, mn);
 	g_free(mn);
 }
