@@ -384,8 +384,8 @@ void  gaim_blist_remove_group (struct group *group)
 		return;
 	}
 
-	if(node->parent && node->parent->child == node)
-		node->parent->child = node->next;
+	if(gaimbuddylist->root == node)
+		gaimbuddylist->root = node->next;
 	if (node->prev)
 		node->prev->next = node->next;
 	if (node->next)
