@@ -76,8 +76,6 @@ version 0.78 (05/30/2004):
 	* Removed "Tab-complete nicks" default to yes
 	* Removed "Old-style tab completion", no longer supported
 	* Removed "Sending message removes away status", default to no
-	* Replaced "Ignore colors", "Ignore font faces" and "Ignore font sizes"
-	  with "Ignore formatting on incoming messages"
 	* Removed "Show numbers in groups", default to yes
 	* Removed "Icons on tabs", default to yes
 	* Removed "Sounds when you log in", default to no
