@@ -803,7 +803,11 @@ gaim_xfers_get_local_system_ip(void)
 	memcpy(&add, host->h_addr_list[0], 4);
 	add = htonl(add);
 
-	g_snprintf(ip, 11, "%lu", add);
+	g_snprintf(ip, 16, "%lu.%lu.%lu.%lu",
+			   ((add >> 24) & 255),
+			   ((add >> 16) & 255),
+			   ((add >>  8) & 255),
+			   add & 255);
 
 	return ip;
 }
