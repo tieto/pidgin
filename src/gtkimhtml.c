@@ -870,8 +870,6 @@ static void mark_set_so_update_selection_cb(GtkTextBuffer *buffer, GtkTextIter *
 	}
 }
 
-/* does this go in the #ifdef too? I need to keep track of which functions are 2.2 only */
-/* adapted from gtktextview.c */
 static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton *event, gpointer unused)
 {
 	if (event->button == 2) {
@@ -1003,7 +1001,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	/*gtk_text_view_set_justification(GTK_TEXT_VIEW(imhtml), GTK_JUSTIFY_FILL);*/
 
 	/* These tags will be used often and can be reused--we create them on init and then apply them by name
-	 * other tags (color, size, face, etc.) will have to be created and applied dynamically */
+	 * other tags (color, size, face, etc.) will have to be created and applied dynamically
+	 * Note that even though we created STRIKE, SUB, SUP, and PRE tags here, we don't really
+	 * apply them anywhere yet. */
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "BOLD", "weight", PANGO_WEIGHT_BOLD, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "ITALICS", "style", PANGO_STYLE_ITALIC, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "UNDERLINE", "underline", PANGO_UNDERLINE_SINGLE, NULL);
@@ -1043,7 +1043,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "cut-clipboard", G_CALLBACK(cut_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
-	//g_signal_connect_after(G_OBJECT(imhtml), "button-release-event", G_CALLBACK(button_release_cb), imhtml);
 	g_signal_connect_after(G_OBJECT(imhtml), "realize", G_CALLBACK(imhtml_realized_remove_primary), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "unrealize", G_CALLBACK(imhtml_destroy_add_primary), NULL);
 
@@ -2445,47 +2444,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		if (font->sml)
 			g_free (font->sml);
 		g_free (font);
-		//if (str)
-		//	str = g_string_append (str, "</FONT>");
 	}
-#if 0
-	if (str) {
-		while (bold) {
-		//	str = g_string_append (str, "</B>");
-			bold--;
-		}
-		while (italics) {
-		//	str = g_string_append (str, "</I>");
-			italics--;
-		}
-		while (underline) {
-			//str = g_string_append (str, "</U>");
-			underline--;
-		}
-		while (strike) {
-			//str = g_string_append (str, "</S>");
-			strike--;
-		}
-		while (sub) {
-			//str = g_string_append (str, "</SUB>");
-			sub--;
-		}
-		while (sup) {
-			//str = g_string_append (str, "</SUP>");
-			sup--;
-		}
-		while (title) {
-			//str = g_string_append (str, "</TITLE>");
-			title--;
-		}
-		while (pre) {
-			//str = g_string_append (str, "</PRE>");
-			pre--;
-		}
-	}
-#endif
-	g_free (ws);
-	if(bg)
+
+	g_free(ws);
+	if (bg)
 		g_free(bg);
 
 	if (!imhtml->wbfo)
