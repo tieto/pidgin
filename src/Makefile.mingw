@@ -96,8 +96,8 @@ DLL_C_SRC =		about.c \
 			gtkimhtml.c \
 			gtknotify.c \
 			gtkplugin.c \
-			gtkprefs.c \
 			gtkpounce.c \
+			gtkprefs.c \
 			gtkutils.c \
 			html.c \
 			idle.c \
