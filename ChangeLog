@@ -31,6 +31,7 @@ version 0.82:
 	* Better parsing of URLs containing special characters
 	* All users are shown when joining a Yahoo! conference (Bleeter Yaluser)
 	* You now leave all Yahoo! conferences when you log out of Yahoo!
+	* Buddy Icon updating bug fixed (Felipe Contreras)
 
 version 0.81 (08/05/2004):
 	New Features:

@@ -2460,6 +2460,7 @@ toggle_icon_animate_cb(GtkWidget *w, GaimConversation *conv)
 	else
 		stop_anim(NULL, conv);
 }
+
 static void
 remove_icon(GaimGtkConversation *gtkconv)
 {
@@ -5648,16 +5649,26 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	if(account && account->gc)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
-	remove_icon(gtkconv);
+	/* Remove the current icon stuff */
+	if (gtkconv->u.im->icon != NULL)
+		gtk_widget_destroy(gtkconv->u.im->icon->parent->parent->parent);
+
+	if (gtkconv->u.im->anim != NULL)
+		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
+
+	if (gtkconv->u.im->icon_timer != 0)
+		g_source_remove(gtkconv->u.im->icon_timer);
+
+	gtkconv->u.im->icon_timer = 0;
+
+	if (gtkconv->u.im->iter != NULL)
+		g_object_unref(G_OBJECT(gtkconv->u.im->iter));
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
 		return;
 
 	if (gaim_conversation_get_gc(conv) == NULL)
 		return;
-
-	if (gtkconv->u.im->anim)
-		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
 
 
 
@@ -5694,9 +5705,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	if (!gtkconv->u.im->anim)
 		return;
-
-	if(gtkconv->u.im->iter)
-		g_object_unref(G_OBJECT(gtkconv->u.im->iter));
 
 	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)) {
 		gtkconv->u.im->iter = NULL;
