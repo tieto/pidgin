@@ -751,14 +751,14 @@ void show_add_buddy(char *buddy, char *group)
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_label(GTK_FRAME(frame), "Add Buddy");
 
-        label = gtk_label_new("Add");
+        label = gtk_label_new("Buddy");
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
         gtk_box_pack_start(GTK_BOX(topbox), a->entry, FALSE, FALSE, 5);
         if (buddy != NULL)
                 gtk_entry_set_text(GTK_ENTRY(a->entry), buddy);
 
-        label = gtk_label_new("to group");
+        label = gtk_label_new("Group");
         gtk_widget_show(label);
         gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
         gtk_box_pack_start(GTK_BOX(topbox), a->combo, FALSE, FALSE, 5);
