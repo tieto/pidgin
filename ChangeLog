@@ -9,6 +9,7 @@ version 0.11.0-pre9 (03/26/2001):
 	* Jabber compiles better on Solaris?
 	* Gaim works with Oscar Again (Huge thanks to Adam Fritzler of
 	  libfaim)
+
 version 0.11.0-pre8 (03/23/2001):
 	* Fixed a problem with MSN not detecting signoffs and buddy updates.
 	* Implemented away options in MSN

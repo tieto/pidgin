@@ -32,16 +32,8 @@ friend.) To make a patch, just edit the files right there in that tree
 when you're ready to make your patch, simply run 'cvs diff -u >my.patch'
 and send it off.
 
-There's one little thing that's just a pet peeve, and it's really stupid.
-In ./configure there's an --enable-debug option. This does two things:
-compiles with -Wall, and prints debugging information to stdout. The
-debugging information is printed to the debug window (which can be turned
-on in the preferences) whether or not --enable-debug was selected. Most
-of the information that's printed is useless anyway though; so the
---enable-debug option really doesn't do a whole lot.
-
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-03-19 17:40:07 -0500 (Mon, 19 Mar 2001) $.
+$Date: 2001-03-27 16:01:29 -0500 (Tue, 27 Mar 2001) $.
 
 
 PROGRAM FLOW
@@ -292,6 +284,40 @@ util.c:
   stuff that happened to be thrown into it for no apparent reason. None
   of it is particularly tasty; it's all just utility functions. Just
   like the name says.
+
+PRPL sources:
+-------------
+
+plugins/yay: Yahoo
+  All of the files in here were written by Eric. All of the .c and .h
+  files except yay.c are part of a library that Eric wrote, libyay.
+  yay.c is what interacts with gaim.
+
+plugins/icq: ICQ (UDP v5)
+  All of the .c and .h files in here, with the exception of gaim_icq.c,
+  are part of ICQLib, by Bill Soudan and others. gaim_icq.c is what
+  interacts with gaim, and Eric wrote it. ICQLib is a fairly complete
+  implementation of the ICQ protocol, so if you want to add a new
+  feature you're probably going to be adding it to gaim_icq.c and not
+  to ICQLib.
+
+plugins/msn: MSN
+  Rob wrote msn.c, and md5.c is a standard file. MSN doesn't use its
+  own library; all of the networking code is included inside of msn.c.
+
+plugins/irc.c: IRC
+  Rob wrote irc.c, and since it is only one file it stands by itself.
+  All of the networking code is contained inside this file, as well as
+  the parts that interact with gaim.
+
+plugins/jabber: Jabber
+  jabber.c was written by Adam Fritzler (the guy that wrote libfaim),
+  and is maintained by Eric. The other .c and .h files belong to
+  libxode and libjabber, which were written by the Jabber developers.
+
+plugins/napster.c: Napster
+  Rob wrote napster.c, and since it is only one file it stands by
+  itself.
 
 
 HOW THE BUDDY LIST WORKS

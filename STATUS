@@ -1,4 +1,5 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-03-23 07:15:02 -0500 (Fri, 23 Mar 2001) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2001-03-27 16:01:29 -0500 (Tue, 27 Mar 2001) $ by
+$Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -20,6 +21,13 @@ and allows multiple connections (which should also be stable).
 There have been a lot of changes since 0.10.x; I think all of the bugs have
 been worked out but I'm sure there are still a lot remaining. Please, if you
 get bored one day, go on a big bug hunt.
+
+There always seems to be some iffy-ness by a lot of people about whether to
+use the CVS version or stick with a stable release. Use the CVS version. If
+you need a version that you know is reliable, then keep your favorite one in
+case of an emergency. But for the most part, gaim is not mission-critical
+software, and if you can help us find a few bugs before we release, all the
+better.
 
 
 Buddy List
@@ -70,8 +78,9 @@ being worked on.
 Oscar (Eric)
 =====
 
-Oscar is working reasonably well.  Oscar can be used to sign into ICQ; though
-you should use the ICQ plugin as it offers more functionality.
+Oscar is currently being blocked, off and on, by AOL. CVS may or may not work.
+Releases most likely do not. Hopefully this will stop soon. AOL seems to have
+the upper hand in this one though.
 
 Oscar can get people's away messages, so you should use it if that's what's
 important to you. Oscar also supports requesting and accepting Direct IM
@@ -107,6 +116,7 @@ MSN (Rob)
 
 MSN currently supports signing on/off, sending and receiving messages, adding
 and removing people to your permit/deny list and going away / idle.
+
 
 ICQ (Eric)
 ===
