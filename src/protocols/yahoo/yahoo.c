@@ -1464,7 +1464,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		sprintf(byte, "%c", delimit_lookup[lookup]);
 		strcat(resp_96, byte);
 	}
-	printf("yahoo status : %d\n", yd->current_status);	
+	gaim_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	yd->current_status, 0);
 	yahoo_packet_hash(pack, "sssss", 0, name, 6, resp_6, 96, resp_96, 1,
 	                  name, 135, "6,0,0,1710");
