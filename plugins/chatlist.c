@@ -324,7 +324,6 @@ void gaim_plugin_config()
 	gtk_window_set_title(GTK_WINDOW(parent), "Chat Rooms");
 	gtk_window_set_wmclass(GTK_WINDOW(parent), "chatlist", "Gaim");
 	gtk_widget_realize(parent);
-	aol_icon(parent->window);
 	gtk_signal_connect(GTK_OBJECT(parent), "destroy",
 			   GTK_SIGNAL_FUNC(parent_destroy), NULL);
 
