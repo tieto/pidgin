@@ -1,7 +1,6 @@
 plugins/docklet/docklet.c
 plugins/docklet/eggtrayicon.c
 plugins/autorecon.c
-plugins/chatlist.c
 plugins/chkmail.c
 plugins/events.c
 plugins/filectl.c
