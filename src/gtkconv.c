@@ -1629,6 +1629,12 @@ entry_stop_rclick_cb(GtkWidget *widget, GdkEventButton *event, gpointer data)
 	return FALSE;
 }
 
+/*
+ * If someone tries to type into the conversation backlog of a
+ * conversation window then we yank focus from the conversation backlog
+ * and give it to the text entry box so that people can type
+ * all the live long day and it will get entered into the entry box.
+ */
 static gboolean
 refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
@@ -3672,6 +3678,16 @@ setup_chat_pane(GaimConversation *conv)
 
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 5);
 		gtk_widget_show(gtkchat->topic_text);
+
+		/*
+		 * We probably shouldn't need this.  When switching tabs to a chat 
+		 * window focus is supposed to go to the entry box, but for some 
+		 * reason it's going to the topic entry box.
+		 */
+		g_signal_connect(G_OBJECT(gtkchat->topic_text), "key_press_event",
+							   G_CALLBACK(refocus_entry_cb), gtkconv);
+		g_signal_connect(G_OBJECT(gtkchat->topic_text), "key_release_event",
+							   G_CALLBACK(refocus_entry_cb), gtkconv);
 	}
 
 	/* Setup the horizontal pane. */
