@@ -2345,9 +2345,10 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 	g_return_if_fail (GTK_IS_IMHTML (imhtml));
 	g_return_if_fail (bit != NULL);
 
-	if ( (bit->type == TYPE_TEXT) ||
+	if ( ((bit->type == TYPE_TEXT) ||
 	    ((bit->type == TYPE_SMILEY) && !imhtml->smileys) ||
-	    ((bit->type == TYPE_COMMENT) && imhtml->comments)) {
+	    ((bit->type == TYPE_COMMENT) && imhtml->comments)) &&
+	     bit->text) {
 		gchar *copy = g_strdup (bit->text);
 		gint pos = 0;
 		gboolean seenspace = FALSE;
@@ -2764,7 +2765,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	VALID_OPT_TAG ("H3");
 
 	if (!g_strncasecmp(string, "!--", strlen ("!--"))) {
-		gchar *e = strstr (string, "-->");
+		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
 			*len = e - string + strlen ("-->");
 			*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
