@@ -266,6 +266,9 @@ faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, c
 	fu8_t buf[16*16]; /* icky fixed length buffer */
 	aim_bstream_t bs;
 
+	if (!caps)
+		return 0; /* nothing there anyway */
+
 	aim_bstream_init(&bs, buf, sizeof(buf));
 
 	aim_putcap(&bs, caps);
@@ -273,7 +276,7 @@ faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, c
 	return aim_addtlvtochain_raw(list, t, aim_bstream_curpos(&bs), buf);
 }
 
-faim_internal int aim_addtlvtochain_userinfo(aim_tlvlist_t **list, fu16_t type, struct aim_userinfo_s *ui)
+faim_internal int aim_addtlvtochain_userinfo(aim_tlvlist_t **list, fu16_t type, aim_userinfo_t *ui)
 {
 	fu8_t buf[1024]; /* bleh */
 	aim_bstream_t bs;

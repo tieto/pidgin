@@ -13,7 +13,7 @@
  */
 static int buddychange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	struct aim_userinfo_s userinfo;
+	aim_userinfo_t userinfo;
 	aim_rxcallback_t userfunc;
 
 	aim_extractuserinfo(sess, bs, &userinfo);

@@ -825,7 +825,7 @@ static int listenestablish(fu16_t portnum)
 		return -1;
 	}
 
-	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on) != 0)) {
+	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) != 0) {
 		perror("setsockopt(listenfd)");
 		close(listenfd);
 		return -1;

@@ -1384,6 +1384,9 @@ void update_chat_button_pix()
 					   GTK_SIGNAL_FUNC(invite_callback), c);
 			gtk_signal_connect(GTK_OBJECT(c->whisper), "clicked",
 					   GTK_SIGNAL_FUNC(whisper_callback), c);
+
+			update_buttons_by_protocol(c);
+
 			bcs = bcs->next;
 		}
 		C = C->next;

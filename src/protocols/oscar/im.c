@@ -794,7 +794,7 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, fu8_t *data, int len, s
  * 		0101 000b 0000 0000 3c2f 4854 4d4c 3e   another ASCII part
  *
  */
-static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, fu16_t channel, struct aim_userinfo_s *userinfo, aim_bstream_t *bs, fu8_t *cookie)
+static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, fu16_t channel, aim_userinfo_t *userinfo, aim_bstream_t *bs, fu8_t *cookie)
 {
 	fu16_t type, length;
 	aim_rxcallback_t userfunc;
@@ -893,7 +893,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	return ret;
 }
 
-static int incomingim_ch2_buddylist(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
+static int incomingim_ch2_buddylist(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
 {
 	aim_rxcallback_t userfunc;
 	int ret = 0;
@@ -955,7 +955,7 @@ static int incomingim_ch2_buddylist(aim_session_t *sess, aim_module_t *mod, aim_
 	return ret;
 }
 
-static int incomingim_ch2_buddyicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
+static int incomingim_ch2_buddyicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
 {
 	aim_rxcallback_t userfunc;
 	int ret = 0;
@@ -979,7 +979,7 @@ static int incomingim_ch2_buddyicon(aim_session_t *sess, aim_module_t *mod, aim_
 	return ret;
 }
 
-static int incomingim_ch2_voice(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
+static int incomingim_ch2_voice(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
 {
 	aim_msgcookie_t *cachedcook;
 	int ret = 0;
@@ -1005,7 +1005,7 @@ static int incomingim_ch2_voice(aim_session_t *sess, aim_module_t *mod, aim_fram
 	return ret;
 }
 
-static int incomingim_ch2_chat(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
+static int incomingim_ch2_chat(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
 {
 	aim_tlv_t *miscinfo;
 	aim_bstream_t tbs;
@@ -1038,7 +1038,7 @@ static int incomingim_ch2_chat(aim_session_t *sess, aim_module_t *mod, aim_frame
 	return ret;
 }
 
-static int incomingim_ch2_getfile(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
+static int incomingim_ch2_getfile(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
 {
 	char ip[30];
 	aim_msgcookie_t *cachedcook;
@@ -1083,7 +1083,7 @@ static int incomingim_ch2_getfile(aim_session_t *sess, aim_module_t *mod, aim_fr
 	return ret;
 }
 
-static int incomingim_ch2_sendfile(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
+static int incomingim_ch2_sendfile(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
 {
 #if 0
 	char ip[30];
@@ -1145,7 +1145,7 @@ static int incomingim_ch2_sendfile(aim_session_t *sess, aim_module_t *mod, aim_f
 	return 0;
 }
 
-static int incomingim_ch2_imimage(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
+static int incomingim_ch2_imimage(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_tlvlist_t *list2)
 {
 	aim_rxcallback_t userfunc;
 	int ret = 0;
@@ -1204,7 +1204,7 @@ static int incomingim_ch2_imimage(aim_session_t *sess, aim_module_t *mod, aim_fr
 }
 
 /* XXX Ugh.  I think its obvious. */
-static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, fu16_t channel, struct aim_userinfo_s *userinfo, aim_tlvlist_t *tlvlist, fu8_t *cookie)
+static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, fu16_t channel, aim_userinfo_t *userinfo, aim_tlvlist_t *tlvlist, fu8_t *cookie)
 {
 	aim_tlv_t *block1;
 	aim_tlvlist_t *list2;
@@ -1357,9 +1357,9 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	int i, ret = 0;
 	fu8_t cookie[8];
 	fu16_t channel;
-	struct aim_userinfo_s userinfo;
+	aim_userinfo_t userinfo;
 
-	memset(&userinfo, 0x00, sizeof(struct aim_userinfo_s));
+	memset(&userinfo, 0x00, sizeof(aim_userinfo_t));
 
 	/*
 	 * Read ICBM Cookie.  And throw away.
@@ -1542,7 +1542,7 @@ static int missedcall(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	fu16_t channel, nummissed, reason;
-	struct aim_userinfo_s userinfo;
+	aim_userinfo_t userinfo;
 
 	while (aim_bstream_empty(bs)) {	
 

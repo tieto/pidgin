@@ -1121,7 +1121,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
-	struct aim_userinfo_s *info;
+	aim_userinfo_t *info;
 	time_t time_idle;
 	int type = 0;
 	struct gaim_connection *gc = sess->aux_data;
@@ -1129,7 +1129,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	va_list ap;
 	va_start(ap, fr);
-	info = va_arg(ap, struct aim_userinfo_s *);
+	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
 	if (info->flags & AIM_FLAG_ACTIVEBUDDY)
@@ -1163,12 +1163,12 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
-	struct aim_userinfo_s *info;
+	aim_userinfo_t *info;
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, fr);
-	info = va_arg(ap, struct aim_userinfo_s *);
+	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
 	serv_got_update(gc, info->sn, 0, 0, 0, 0, 0, 0);
@@ -1267,7 +1267,7 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	return TRUE;
 }
 
-static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch1_args *args) {
+static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
 	char *tmp = g_malloc(BUF_LONG);
 	struct gaim_connection *gc = sess->aux_data;
 	int flags = 0;
@@ -1351,7 +1351,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 	return 1;
 }
 
-static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, struct aim_userinfo_s *userinfo, struct aim_incomingim_ch2_args *args) {
+static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args) {
 	struct gaim_connection *gc = sess->aux_data;
 
 	if (args->reqclass & AIM_CAPS_CHAT) {
@@ -1398,12 +1398,12 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 
 static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 	int channel, ret = 0;
-	struct aim_userinfo_s *userinfo;
+	aim_userinfo_t *userinfo;
 	va_list ap;
 
 	va_start(ap, fr);
 	channel = va_arg(ap, int);
-	userinfo = va_arg(ap, struct aim_userinfo_s *);
+	userinfo = va_arg(ap, aim_userinfo_t *);
 
 	/* channel 1: standard message */
 	if (channel == 1) {
@@ -1429,12 +1429,12 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t chan, nummissed, reason;
-	struct aim_userinfo_s *userinfo;
+	aim_userinfo_t *userinfo;
 	char buf[1024];
 
 	va_start(ap, fr);
 	chan = (fu16_t)va_arg(ap, unsigned int);
-	userinfo = va_arg(ap, struct aim_userinfo_s *);
+	userinfo = va_arg(ap, aim_userinfo_t *);
 	nummissed = (fu16_t)va_arg(ap, unsigned int);
 	reason = (fu16_t)va_arg(ap, unsigned int);
 	va_end(ap);
@@ -1562,7 +1562,7 @@ static char *images(int flags) {
 }
 
 static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
-	struct aim_userinfo_s *info;
+	aim_userinfo_t *info;
 	char *prof_enc = NULL, *prof = NULL;
 	fu16_t infotype;
 	char buf[BUF_LONG];
@@ -1572,7 +1572,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *asc;
 
 	va_start(ap, fr);
-	info = va_arg(ap, struct aim_userinfo_s *);
+	info = va_arg(ap, aim_userinfo_t *);
 	prof_enc = va_arg(ap, char *);
 	prof = va_arg(ap, char *);
 	infotype = (fu16_t)va_arg(ap, unsigned int);
@@ -1712,14 +1712,14 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_chat_join(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	int count, i;
-	struct aim_userinfo_s *info;
+	aim_userinfo_t *info;
 	struct gaim_connection *g = sess->aux_data;
 
 	struct chat_connection *c = NULL;
 
 	va_start(ap, fr);
 	count = va_arg(ap, int);
-	info  = va_arg(ap, struct aim_userinfo_s *);
+	info  = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
 	c = find_oscar_chat_by_conn(g, fr->conn);
@@ -1735,14 +1735,14 @@ static int gaim_chat_join(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_chat_leave(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	int count, i;
-	struct aim_userinfo_s *info;
+	aim_userinfo_t *info;
 	struct gaim_connection *g = sess->aux_data;
 
 	struct chat_connection *c = NULL;
 
 	va_start(ap, fr);
 	count = va_arg(ap, int);
-	info  = va_arg(ap, struct aim_userinfo_s *);
+	info  = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
 	c = find_oscar_chat_by_conn(g, fr->conn);
@@ -1757,7 +1757,7 @@ static int gaim_chat_leave(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
-	struct aim_userinfo_s *userinfo;
+	aim_userinfo_t *userinfo;
 	struct aim_chat_roominfo *roominfo;
 	char *roomname;
 	int usercount;
@@ -1771,7 +1771,7 @@ static int gaim_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...) {
 	roominfo = va_arg(ap, struct aim_chat_roominfo *);
 	roomname = va_arg(ap, char *);
 	usercount= va_arg(ap, int);
-	userinfo = va_arg(ap, struct aim_userinfo_s *);
+	userinfo = va_arg(ap, aim_userinfo_t *);
 	roomdesc = va_arg(ap, char *);
 	unknown_c9 = (fu16_t)va_arg(ap, int);
 	creationtime = (fu32_t)va_arg(ap, unsigned long);
@@ -1792,14 +1792,14 @@ static int gaim_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_chat_incoming_msg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
-	struct aim_userinfo_s *info;
+	aim_userinfo_t *info;
 	char *msg;
 	struct gaim_connection *gc = sess->aux_data;
 	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, fr->conn);
 	char *tmp;
 
 	va_start(ap, fr);
-	info = va_arg(ap, struct aim_userinfo_s *);
+	info = va_arg(ap, aim_userinfo_t *);
 	msg  = va_arg(ap, char *);
 
 	tmp = g_malloc(BUF_LONG);
@@ -1879,12 +1879,12 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t newevil;
-	struct aim_userinfo_s *userinfo;
+	aim_userinfo_t *userinfo;
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, fr);
 	newevil = (fu16_t)va_arg(ap, unsigned int);
-	userinfo = va_arg(ap, struct aim_userinfo_s *);
+	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
 	serv_got_eviled(gc, (userinfo && userinfo->sn[0]) ? userinfo->sn : NULL, newevil / 10);

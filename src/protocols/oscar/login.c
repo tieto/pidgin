@@ -617,9 +617,9 @@ static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 {
 	aim_rxcallback_t userfunc;
 	fu16_t newevil;
-	struct aim_userinfo_s userinfo;
+	aim_userinfo_t userinfo;
 
-	memset(&userinfo, 0, sizeof(struct aim_userinfo_s));
+	memset(&userinfo, 0, sizeof(aim_userinfo_t));
 	
 	newevil = aimbs_get16(bs);
 

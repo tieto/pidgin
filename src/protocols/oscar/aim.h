@@ -375,21 +375,31 @@ typedef struct aim_session_s {
 /*
  * AIM User Info, Standard Form.
  */
-struct aim_userinfo_s {
+typedef struct {
 	char sn[MAXSNLEN+1];
 	fu16_t warnlevel;
 	fu16_t idletime;
 	fu16_t flags;
 	fu32_t membersince;
 	fu32_t onlinesince;
-	fu32_t sessionlen;  
+	fu32_t sessionlen; 
+	int capspresent;
 	fu16_t capabilities;
 	struct {
 		fu16_t status;
 		fu32_t ipaddr;
 		fu8_t crap[0x25]; /* until we figure it out... */
 	} icqinfo;
-};
+} aim_userinfo_t;
+
+faim_export const char *aim_userinfo_sn(aim_userinfo_t *ui);
+faim_export fu16_t aim_userinfo_flags(aim_userinfo_t *ui);
+faim_export fu16_t aim_userinfo_idle(aim_userinfo_t *ui);
+faim_export float aim_userinfo_warnlevel(aim_userinfo_t *ui);
+faim_export time_t aim_userinfo_membersince(aim_userinfo_t *ui);
+faim_export time_t aim_userinfo_onlinesince(aim_userinfo_t *ui);
+faim_export fu32_t aim_userinfo_sessionlen(aim_userinfo_t *ui);
+faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu16_t cap);
 
 #define AIM_FLAG_UNCONFIRMED 	0x0001 /* "damned transients" */
 #define AIM_FLAG_ADMINISTRATOR	0x0002
@@ -449,7 +459,7 @@ faim_internal int aim_addtlvtochain32(aim_tlvlist_t **list, const fu16_t type, c
 faim_internal int aim_addtlvtochain_raw(aim_tlvlist_t **list, const fu16_t t, const fu16_t l, const fu8_t *v);
 faim_internal int aim_addtlvtochain_caps(aim_tlvlist_t **list, const fu16_t t, const fu16_t caps);
 faim_internal int aim_addtlvtochain_noval(aim_tlvlist_t **list, const fu16_t type);
-faim_internal int aim_addtlvtochain_userinfo(aim_tlvlist_t **list, fu16_t type, struct aim_userinfo_s *ui);
+faim_internal int aim_addtlvtochain_userinfo(aim_tlvlist_t **list, fu16_t type, aim_userinfo_t *ui);
 faim_internal int aim_addtlvtochain_frozentlvlist(aim_tlvlist_t **list, fu16_t type, aim_tlvlist_t **tl);
 faim_internal int aim_counttlvchain(aim_tlvlist_t **list);
 faim_internal int aim_sizetlvchain(aim_tlvlist_t **list);
@@ -835,7 +845,7 @@ faim_export int aim_denytransfer(aim_session_t *sess, aim_conn_t *conn, const ch
 faim_export aim_conn_t *aim_accepttransfer(aim_session_t *sess, aim_conn_t *conn, const char *sn, const fu8_t *cookie, const fu8_t *ip, fu16_t listingfiles, fu16_t listingtotsize, fu16_t listingsize, fu32_t listingchecksum, fu16_t rendid);
 
 faim_export int aim_getinfo(aim_session_t *, aim_conn_t *, const char *, unsigned short);
-faim_export int aim_sendbuddyoncoming(aim_session_t *sess, aim_conn_t *conn, struct aim_userinfo_s *info);
+faim_export int aim_sendbuddyoncoming(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *info);
 faim_export int aim_sendbuddyoffgoing(aim_session_t *sess, aim_conn_t *conn, const char *sn);
 
 #define AIM_IMPARAM_FLAG_CHANMSGS_ALLOWED	0x00000001

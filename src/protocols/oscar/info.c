@@ -43,6 +43,79 @@ faim_export int aim_getinfo(aim_session_t *sess, aim_conn_t *conn, const char *s
 	return 0;
 }
 
+faim_export const char *aim_userinfo_sn(aim_userinfo_t *ui)
+{
+
+	if (!ui)
+		return NULL;
+
+	return ui->sn;
+}
+
+faim_export fu16_t aim_userinfo_flags(aim_userinfo_t *ui)
+{
+
+	if (!ui)
+		return 0;
+
+	return ui->flags;
+}
+
+faim_export fu16_t aim_userinfo_idle(aim_userinfo_t *ui)
+{
+
+	if (!ui)
+		return 0;
+
+	return ui->idletime;
+}
+
+faim_export float aim_userinfo_warnlevel(aim_userinfo_t *ui)
+{
+
+	if (!ui)
+		return 0.00;
+
+	return (ui->warnlevel / 10);
+}
+
+faim_export time_t aim_userinfo_membersince(aim_userinfo_t *ui)
+{
+
+	if (!ui)
+		return 0;
+
+	return (time_t)ui->membersince;
+}
+
+faim_export time_t aim_userinfo_onlinesince(aim_userinfo_t *ui)
+{
+
+	if (!ui)
+		return 0;
+
+	return (time_t)ui->onlinesince;
+}
+
+faim_export fu32_t aim_userinfo_sessionlen(aim_userinfo_t *ui)
+{
+
+	if (!ui)
+		return 0;
+
+	return ui->sessionlen;
+}
+
+faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu16_t cap)
+{
+
+	if (!ui || !ui->capspresent)
+		return -1;
+
+	return !!(ui->capabilities & cap);
+}
+
+
 /*
  * Capability blocks.  
  */
@@ -158,7 +231,7 @@ faim_internal int aim_putcap(aim_bstream_t *bs, fu16_t caps)
  * AIM is fairly regular about providing user info.  This is a generic 
  * routine to extract it in its standard form.
  */
-faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, struct aim_userinfo_s *outinfo)
+faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *outinfo)
 {
 	int curtlv, tlvcnt;
 	fu8_t snlen;
@@ -167,7 +240,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, st
 		return -EINVAL;
 
 	/* Clear out old data first */
-	memset(outinfo, 0x00, sizeof(struct aim_userinfo_s));
+	memset(outinfo, 0x00, sizeof(aim_userinfo_t));
 
 	/*
 	 * Screen name.  Stored as an unterminated string prepended with a 
@@ -283,6 +356,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, st
 			 *
 			 */
 			outinfo->capabilities = aim_getcap(sess, bs, length);
+			outinfo->capspresent = 1;
 
 		} else if (type == 0x000e) {
 			/*
@@ -337,7 +411,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, st
 /*
  * Inverse of aim_extractuserinfo()
  */
-faim_internal int aim_putuserinfo(aim_bstream_t *bs, struct aim_userinfo_s *info)
+faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
 {
 	aim_tlvlist_t *tlvlist = NULL;
 
@@ -373,7 +447,7 @@ faim_internal int aim_putuserinfo(aim_bstream_t *bs, struct aim_userinfo_s *info
 	return 0;
 }
 
-faim_export int aim_sendbuddyoncoming(aim_session_t *sess, aim_conn_t *conn, struct aim_userinfo_s *info)
+faim_export int aim_sendbuddyoncoming(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *info)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -469,7 +543,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 
 static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	struct aim_userinfo_s userinfo;
+	aim_userinfo_t userinfo;
 	char *text_encoding = NULL, *text = NULL;
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;

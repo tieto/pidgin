@@ -160,8 +160,8 @@ faim_internal int aim_freecookie(aim_session_t *sess, aim_msgcookie_t *cookie);
 faim_internal int aim_msgcookie_gettype(int reqclass);
 faim_internal int aim_cookie_free(aim_session_t *sess, aim_msgcookie_t *cookie);
 
-faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, struct aim_userinfo_s *);
-faim_internal int aim_putuserinfo(aim_bstream_t *bs, struct aim_userinfo_s *info);
+faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *);
+faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info);
 
 faim_internal int aim_chat_readroominfo(aim_bstream_t *bs, struct aim_chat_roominfo *outinfo);
 

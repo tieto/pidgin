@@ -389,7 +389,7 @@ faim_export int aim_chat_invite(aim_session_t *sess, aim_conn_t *conn, const cha
  */
 static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	struct aim_userinfo_s *userinfo = NULL;
+	aim_userinfo_t *userinfo = NULL;
 	aim_rxcallback_t userfunc;
 	int ret = 0;
 	int usercount = 0;
@@ -443,7 +443,7 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		tmptlv = aim_gettlv(tlvlist, 0x0073, 1);
 
 		/* Allocate enough userinfo structs for all occupants */
-		userinfo = calloc(usercount, sizeof(struct aim_userinfo_s));
+		userinfo = calloc(usercount, sizeof(aim_userinfo_t));
 
 		aim_bstream_init(&occbs, tmptlv->value, tmptlv->length);
 
@@ -551,13 +551,13 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 
 static int userlistchange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	struct aim_userinfo_s *userinfo = NULL;
+	aim_userinfo_t *userinfo = NULL;
 	aim_rxcallback_t userfunc;
 	int curcount = 0, ret = 0;
 
 	while (aim_bstream_empty(bs)) {
 		curcount++;
-		userinfo = realloc(userinfo, curcount * sizeof(struct aim_userinfo_s));
+		userinfo = realloc(userinfo, curcount * sizeof(aim_userinfo_t));
 		aim_extractuserinfo(sess, bs, &userinfo[curcount-1]);
 	}
 
@@ -594,7 +594,7 @@ static int userlistchange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
  */
 static int incomingmsg(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	struct aim_userinfo_s userinfo;
+	aim_userinfo_t userinfo;
 	aim_rxcallback_t userfunc;	
 	int ret = 0;
 	fu8_t *cookie;
@@ -603,7 +603,7 @@ static int incomingmsg(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	char *msg = NULL;
 	aim_msgcookie_t *ck;
 
-	memset(&userinfo, 0, sizeof(struct aim_userinfo_s));
+	memset(&userinfo, 0, sizeof(aim_userinfo_t));
 
 	/*
 	 * ICBM Cookie.  Uncache it.
