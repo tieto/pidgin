@@ -12,6 +12,7 @@ gevolution_la_SOURCES = \
 	add_buddy_dialog.c \
 	assoc-buddy.c \
 	gevolution.c \
+	gevolution.h \
 	gevo-util.c \
 	new_person_dialog.c
 
