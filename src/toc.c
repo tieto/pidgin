@@ -868,83 +868,82 @@ void toc_build_config(char *s, int len)
 void parse_toc_buddy_list(char *config, int from_do_import)
 {
 	char *c;
-        char current[256];
+	char current[256];
 	char *name;
 	GList *bud;
 	int how_many = 0;
 
-        /* Clean out the permit/deny list!*/
+	/* Clean out the permit/deny list!*/
 	/* why? if we're going to merge things, then these should stay
-        g_list_free(permit);
-        g_list_free(deny);
-        permit = NULL;
+g_list_free(permit);
+g_list_free(deny);
+permit = NULL;
 	deny = NULL;
 	*/
 	bud = NULL;
         
-        /* skip "CONFIG:" (if it exists)*/
+/* skip "CONFIG:" (if it exists)*/
 
 	if (config != NULL) {
 
-        c = strncmp(config + sizeof(struct sflap_hdr),"CONFIG:",strlen("CONFIG:"))?
+		c = strncmp(config + sizeof(struct sflap_hdr),"CONFIG:",strlen("CONFIG:"))?
 			strtok(config, "\n"):
 			strtok(config + sizeof(struct sflap_hdr)+strlen("CONFIG:"), "\n");
-     do {
-		if (c == NULL) 
-			break;
-		if (*c == 'g') {
-			strncpy(current,c+2, sizeof(current));
-			add_group(current);
-			how_many++;
-		} else if (*c == 'b' && !find_buddy(c+2)) {
-			add_buddy(current, c+2);
-			how_many++;
-			bud = g_list_append(bud, c+2);
-        } else if (*c == 'p') {
-	    GList *d = permit;
-	    char *n;
-            name = g_malloc(strlen(c+2) + 2);
-            g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
-	    n = g_strdup(normalize(name));
-	    while (d) {
-	    	if (!strcasecmp(n, normalize(d->data)))
-			break;
-		d = d->next;
-	    }
-	    g_free(n);
-	    if (!d)
-	            permit = g_list_append(permit, name);
-        } else if (*c == 'd') {
-	    GList *d = deny;
-	    char *n;
-            name = g_malloc(strlen(c+2) + 2);
-            g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
-	    n = g_strdup(normalize(name));
-	    while (d) {
-	    	if (!strcasecmp(n, normalize(d->data)))
-			break;
-		d = d->next;
-	    }
-	    g_free(n);
-	    if (!d)
-		    deny = g_list_append(deny, name);
-        } else if (*c == 'm') {
-        	sscanf(c + strlen(c) - 1, "%d", &permdeny);
-        	if (permdeny == 0)
-			permdeny = 1;
-	   	}
-	}while((c=strtok(NULL,"\n"))); 
+		do {
+			if (c == NULL) 
+				break;
+			if (*c == 'g') {
+				strncpy(current,c+2, sizeof(current));
+				add_group(current);
+				how_many++;
+			} else if (*c == 'b' && !find_buddy(c+2)) {
+				add_buddy(current, c+2);
+				how_many++;
+				bud = g_list_append(bud, c+2);
+			} else if (*c == 'p') {
+				GList *d = permit;
+				char *n;
+				name = g_malloc(strlen(c+2) + 2);
+				g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
+				n = g_strdup(normalize(name));
+				while (d) {
+					if (!strcasecmp(n, normalize(d->data)))
+						break;
+					d = d->next;
+				}
+				g_free(n);
+				if (!d)
+				permit = g_list_append(permit, name);
+			} else if (*c == 'd') {
+				GList *d = deny;
+				char *n;
+				name = g_malloc(strlen(c+2) + 2);
+				g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
+				n = g_strdup(normalize(name));
+				while (d) {
+					if (!strcasecmp(n, normalize(d->data)))
+						break;
+					d = d->next;
+				}
+				g_free(n);
+				if (!d)
+					deny = g_list_append(deny, name);
+			} else if (*c == 't') {
+				sscanf(c + strlen(c) - 2, "%d", &permdeny);
+				if (permdeny == 0)
+					permdeny = 1;
+			}
+		} while((c=strtok(NULL,"\n"))); 
 #if 0
-	fprintf(stdout, "Sending message '%s'\n",buf);
+		fprintf(stdout, "Sending message '%s'\n",buf);
 #endif
-      
-	if (bud != NULL) serv_add_buddies(bud);
-        serv_set_permit_deny();
-	if (blist) {
-		build_edit_tree();
-		build_permit_tree();
-	}
-
+				      
+		if (bud != NULL) serv_add_buddies(bud);
+		serv_set_permit_deny();
+		if (blist) {
+			build_edit_tree();
+			build_permit_tree();
+		}
 	}
 
 	/* perhaps the server dropped the buddy list, try importing from
