@@ -63,12 +63,20 @@ static void handle_chat(JabberMessage *jm)
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jabber_get_resource(jm->from));
 
-	if(gaim_find_conversation_with_account(jm->from, jm->js->gc->account))
+	if(gaim_find_conversation_with_account(jm->from, jm->js->gc->account)) {
 		from = g_strdup(jm->from);
-	else if(jid->node)
+	} else  if(jid->node) {
+		GaimConversation *conv;
+
 		from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-	else
+		conv = gaim_find_conversation_with_account(from, jm->js->gc->account);
+		if(conv)
+			gaim_conversation_set_name(conv, jm->from);
+		g_free(from);
+		from = g_strdup(jm->from);
+	} else {
 		from = g_strdup(jid->domain);
+	}
 
 	if(!jm->xhtml && !jm->body) {
 		if(jm->events & JABBER_MESSAGE_EVENT_COMPOSING)
