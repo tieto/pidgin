@@ -52,7 +52,7 @@ static void historize(GaimConversation *c)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 	if (flags & GAIM_LOG_READ_NO_NEWLINE)
 		options |= GTK_IMHTML_NO_NEWLINE;
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), <br>, options);
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<br>", options);
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), history, options);
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
 	g_object_ref(G_OBJECT(gtkconv->imhtml));
