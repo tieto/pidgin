@@ -82,7 +82,7 @@ faim_internal void aim_frame_destroy(aim_frame_t *frame)
 /*
  * Read a FLAP header from conn into fr, and return the number of bytes in the payload.
  */
-static faim_shortfunc int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *fr)
+static int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *fr)
 {
 	fu8_t flaphdr_raw[6];
 	aim_bstream_t flaphdr;

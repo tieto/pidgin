@@ -40,10 +40,6 @@
  */
 
 #define FAIM_INTERNAL
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 #include <aim.h>
 
 #ifndef _WIN32

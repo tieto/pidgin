@@ -46,12 +46,6 @@ typedef fu16_t flap_seqnum_t;
 #define gethostbyname(x) gethostbyname2(x, AF_INET) 
 #endif
 
-#if defined(_WIN32) || defined(STRICT_ANSI)
-#define faim_shortfunc
-#else
-#define faim_shortfunc inline
-#endif
-
 #if defined(_WIN32) && !defined(WIN32_STATIC)
 /*
  * For a win32 DLL, we define WIN32_INDLL if this file
