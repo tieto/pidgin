@@ -65,10 +65,20 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 
 	if (slpmsg->msg != NULL)
 	{
-		if (slpmsg->msg->trans != NULL)
+		MsnTransaction *trans;
+
+		trans = slpmsg->msg->trans;
+
+		if (trans != NULL)
 		{
-			slpmsg->msg->trans->callbacks = NULL;
-			slpmsg->msg->trans->data = NULL;
+			/* Something is pointing to this slpmsg, so we should remove that
+			 * pointer to prevent a crash. */
+
+			if (trans->callbacks != NULL && trans->has_custom_callbacks)
+				g_hash_table_destroy(trans->callbacks);
+			
+			trans->callbacks = NULL;
+			trans->data = NULL;
 		}
 	}
 

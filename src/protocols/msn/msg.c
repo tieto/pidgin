@@ -121,11 +121,13 @@ msn_message_parse_payload(MsnMessage *msg,
 
 	g_return_if_fail(payload != NULL);
 
-	tmp_base = tmp = g_memdup(payload, payload_len + 1);
-	tmp[payload_len] = '\0';
+	tmp_base = tmp = g_memdup(payload, payload_len);
 
 	/* Parse the attributes. */
 	end = strstr(tmp, "\r\n\r\n");
+	/* TODO? some clients use \r delimiters instead of \r\n, the official client
+	 * doesn't send such messages, but does handle receiving them. We'll just
+	 * avoid crashing for now */
 	g_return_if_fail(end != NULL);
 	*end = '\0';
 
@@ -141,7 +143,10 @@ msn_message_parse_payload(MsnMessage *msg,
 		value = tokens[1];
 
 		if (!strcmp(key, "MIME-Version"))
+		{
+			g_strfreev(tokens);
 			continue;
+		}
 
 		if (!strcmp(key, "Content-Type"))
 		{
@@ -214,7 +219,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	else
 	{
 		msg->body_len = payload_len - (tmp - tmp_base);
-		msg->body = g_memdup(tmp, msg->body_len + 1);
+		msg->body = g_memdup(tmp, msg->body_len);
 	}
 
 	g_free(tmp_base);
@@ -582,18 +587,21 @@ GHashTable *
 msn_message_get_hashtable_from_body(const MsnMessage *msg)
 {
 	GHashTable *table;
+	size_t body_len;
 	const char *body;
-	char **elems, **cur, **tokens;
+	char **elems, **cur, **tokens, *body_str;
 
 	g_return_val_if_fail(msg != NULL, NULL);
 
 	table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
-	body = msn_message_get_bin_data(msg, NULL);
+	body = msn_message_get_bin_data(msg, &body_len);
 
 	g_return_val_if_fail(body != NULL, NULL);
 
-	elems = g_strsplit(body, "\r\n", 0);
+	body_str = g_strndup(body, body_len);
+	elems = g_strsplit(body_str, "\r\n", 0);
+	g_free(body_str);
 
 	for (cur = elems; *cur != NULL; cur++)
 	{

@@ -351,6 +351,8 @@ msn_slplink_release_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 	msg->ack_data = slpmsg;
 
 	msn_slplink_send_msgpart(slplink, slpmsg);
+
+	msn_message_destroy(msg);
 }
 
 void

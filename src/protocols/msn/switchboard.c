@@ -280,6 +280,9 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	msn_message_parse_payload(msg, payload, len);
 	/* msn_message_show_readable(msg, "SB RECV", FALSE); */
 
+	if (msg->remote_user != NULL)
+		g_free (msg->remote_user);
+
 	msg->remote_user = g_strdup(cmd->params[0]);
 	msn_cmdproc_process_msg(cmdproc, msg);
 
@@ -526,7 +529,9 @@ msg_ack (MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msg = cmd->trans->data;
 
-	msg->ack_cb (msg->ack_data);
+	msg->ack_cb(msg->ack_data);
+
+	msn_message_unref(msg);
 }
 
 void
@@ -551,6 +556,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 
 	/* Data for callbacks */
 	msn_transaction_set_data(trans, msg);
+	msn_message_ref(msg);
 
 	if (msg->ack_cb != NULL)
 	{

@@ -235,7 +235,6 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	msn_message_parse_payload(msg, payload, len);
 	/* msn_message_show_readable(msg, "Notification", TRUE); */
 
-	msg->remote_user = g_strdup(cmd->params[0]);
 	msn_cmdproc_process_msg(cmdproc, msg);
 
 	msn_message_destroy(msg);
@@ -947,16 +946,36 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		return;
 
 	if ((value = msn_message_get_attr(msg, "kv")) != NULL)
+	{
+		if (session->passport_info.kv != NULL)
+			g_free(session->passport_info.kv);
+
 		session->passport_info.kv = g_strdup(value);
+	}
 
 	if ((value = msn_message_get_attr(msg, "sid")) != NULL)
+	{
+		if (session->passport_info.sid != NULL)
+			g_free(session->passport_info.sid);
+
 		session->passport_info.sid = g_strdup(value);
+	}
 
 	if ((value = msn_message_get_attr(msg, "MSPAuth")) != NULL)
+	{
+		if (session->passport_info.mspauth != NULL)
+			g_free(session->passport_info.mspauth);
+
 		session->passport_info.mspauth = g_strdup(value);
+	}
 
 	if ((value = msn_message_get_attr(msg, "ClientIP")) != NULL)
+	{
+		if (session->passport_info.client_ip != NULL)
+			g_free(session->passport_info.client_ip);
+
 		session->passport_info.client_ip = g_strdup(value);
+	}
 
 	if ((value = msn_message_get_attr(msg, "ClientPort")) != NULL)
 		session->passport_info.client_port = ntohs(atoi(value));
@@ -1158,8 +1177,9 @@ connect_cb(MsnServConn *servconn)
 	if (cmdproc->error)
 		return;
 
-	session->user = msn_user_new(session->userlist,
-								 gaim_account_get_username(account), NULL);
+	if (session->user == NULL)
+		session->user = msn_user_new(session->userlist,
+									 gaim_account_get_username(account), NULL);
 
 #if 0
 	gaim_connection_update_progress(gc, _("Syncing with server"),

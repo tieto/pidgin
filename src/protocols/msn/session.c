@@ -87,6 +87,9 @@ msn_session_destroy(MsnSession *session)
 	if (session->passport_info.mspauth != NULL)
 		g_free(session->passport_info.mspauth);
 
+	if (session->passport_info.client_ip != NULL)
+		g_free(session->passport_info.client_ip);
+
 	if (session->passport_info.file != NULL)
 	{
 		unlink(session->passport_info.file);

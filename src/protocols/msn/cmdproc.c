@@ -116,6 +116,9 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 
 	data = msn_transaction_to_string(trans);
 
+	if (cmdproc->last_trans != NULL)
+		g_free(cmdproc->last_trans);
+
 	cmdproc->last_trans = g_strdup(data);
 
 	len = strlen(data);

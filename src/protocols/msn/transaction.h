@@ -49,6 +49,7 @@ struct _MsnTransaction
 
 	void *data; /* The data to be used on the different callbacks */
 	GHashTable *callbacks;
+	gboolean has_custom_callbacks;
 	MsnErrorCb error_cb;
 	MsnTimeoutCb timeout_cb;
 

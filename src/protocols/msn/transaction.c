@@ -75,6 +75,9 @@ msn_transaction_destroy(MsnTransaction *trans)
 	}
 #endif
 
+	if (trans->callbacks != NULL && trans->has_custom_callbacks)
+		g_hash_table_destroy(trans->callbacks);
+
 	if (trans->timer)
 		gaim_timeout_remove(trans->timer);
 
@@ -167,7 +170,13 @@ msn_transaction_add_cb(MsnTransaction *trans, char *answer,
 	g_return_if_fail(answer != NULL);
 
 	if (trans->callbacks == NULL)
-		trans->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
+	{
+		trans->has_custom_callbacks = TRUE;
+		trans->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
+												 NULL);
+	}
+	else if (trans->has_custom_callbacks != TRUE)
+		g_return_if_reached ();
 
 	g_hash_table_insert(trans->callbacks, answer, cb);
 }
