@@ -68,6 +68,11 @@ gchar *strip_html(const gchar *text)
 			visible = 1;
 			continue;
 		}
+		if (text2[i] == '&' && strncasecmp(text2+i,"&quot;",6) == 0) {
+		    text2[j++] = '\"';
+		    i = i+5;
+		    continue;
+		}
 		if (visible) {
 			text2[j++] = text2[i];
 		}
