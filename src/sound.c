@@ -1,6 +1,7 @@
 /*
  * gaim
  *
+ * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -211,6 +212,8 @@ void gaim_sound_play_file(char *filename)
 						break;
 				}
 				ao_close(device);
+			} else {
+				debug_printf("error opening audio device!\n");
 			}
 			afCloseFile(file);
 		}

@@ -146,4 +146,4 @@ char *gaim_sound_get_command();
 
 /*@}*/
 
-#endif /* _CONVERSATION_H_ */
+#endif /* _SOUND_H_ */
