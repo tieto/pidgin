@@ -75,7 +75,7 @@ const char *
 get_alias_only(buddy)
 	Gaim::BuddyList::Buddy buddy
 CODE:
-	RETVAL = gaim_get_buddy_alias_only(buddy);
+	RETVAL = gaim_buddy_get_alias_only(buddy);
 OUTPUT:
 	RETVAL
 
@@ -83,7 +83,7 @@ const char *
 get_alias(buddy)
 	Gaim::BuddyList::Buddy buddy
 CODE:
-	RETVAL = gaim_get_buddy_alias(buddy);
+	RETVAL = gaim_buddy_get_alias(buddy);
 OUTPUT:
 	RETVAL
 
