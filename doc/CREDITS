@@ -18,8 +18,11 @@ Adam Fritzler (mid)
 	Oscar go through a proxy, and wrote the beginnings of the
 	Jabber plugin..
 
-Thanks to Torrey Searle for the spell checking code that
-accompanies the gtk_text box :)
+Much thanks to Evan Martin <martine@cs.washington.edu> for writing 
+GtkSpell <http://gtkspell.sourceforge.net> responsible for the 
+"Highlight misspelled words" feature and for gtk-nativewin
+<http://bunny.darktech.org/cvs/gtk-nativewin/> the default GTK+-2.0
+engine used in our win32 port.
 
 ** LOGO DESIGNED BY: Naru Sundar **
 
