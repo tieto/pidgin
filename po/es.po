@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2000-06-16 02:36-0700\n"
+"POT-Creation-Date: 2000-06-19 09:33-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgid "About GAIM v%s"
 msgstr "Sobre GAIM v%s"
 
 #. color = gtk_button_new_with_label("Color");
-#: src/about.c:93 src/buddy.c:1766 src/buddy_chat.c:694
+#: src/about.c:93 src/buddy.c:1766 src/buddy_chat.c:711
 #: src/conversation.c:1107 src/dialogs.c:434 src/plugins.c:294 src/prefs.c:811
 msgid "Close"
 msgstr "Cerrar"
@@ -60,7 +60,7 @@ msgstr "Opciones"
 
 #: src/aim.c:344 src/aim.c:551 src/buddy.c:1823
 msgid "Plugins"
-msgstr ""
+msgstr "Aditivos"
 
 #: src/aim.c:407
 msgid "Screen Name: "
@@ -125,12 +125,12 @@ msgid "Chat"
 msgstr "Hablar"
 
 #: src/buddy.c:276 src/buddy.c:284 src/buddy.c:437 src/buddy.c:1867
-#: src/buddy_chat.c:699
+#: src/buddy_chat.c:716
 msgid "IM"
 msgstr "Mensaje"
 
 #: src/buddy.c:277 src/buddy.c:285 src/buddy.c:443 src/buddy.c:1868
-#: src/buddy_chat.c:701 src/conversation.c:1104 src/rvous.c:631
+#: src/buddy_chat.c:718 src/conversation.c:1104 src/rvous.c:631
 msgid "Info"
 msgstr "Información"
 
@@ -332,7 +332,7 @@ msgstr "Unirse a que grupo:"
 msgid "Join Chat"
 msgstr "Unirse a conversación"
 
-#: src/buddy_chat.c:179 src/buddy_chat.c:695
+#: src/buddy_chat.c:179 src/buddy_chat.c:712
 msgid "Invite"
 msgstr "Invitar"
 
@@ -348,124 +348,124 @@ msgstr "Con el mensaje:"
 msgid "Invite to Buddy Chat"
 msgstr "Invitar un Amigo a la conversación"
 
-#: src/buddy_chat.c:696
+#: src/buddy_chat.c:713
 msgid "Whisper"
 msgstr "Susurrar"
 
-#: src/buddy_chat.c:697 src/conversation.c:1103 src/dialogs.c:1289
+#: src/buddy_chat.c:714 src/conversation.c:1103 src/dialogs.c:1289
 msgid "Send"
 msgstr "Mandar"
 
-#: src/buddy_chat.c:700
+#: src/buddy_chat.c:717
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: src/buddy_chat.c:786 src/conversation.c:1188
+#: src/buddy_chat.c:803 src/conversation.c:1188
 msgid "Bold"
 msgstr "Negritas"
 
-#: src/buddy_chat.c:786 src/conversation.c:1188 src/prefs.c:780
+#: src/buddy_chat.c:803 src/conversation.c:1188 src/prefs.c:780
 msgid "Bold Text"
 msgstr "Texto en Negritas"
 
-#: src/buddy_chat.c:790 src/buddy_chat.c:791 src/conversation.c:1192
+#: src/buddy_chat.c:807 src/buddy_chat.c:808 src/conversation.c:1192
 #: src/conversation.c:1193
 msgid "Italics"
 msgstr "Inclinados"
 
-#: src/buddy_chat.c:790 src/conversation.c:1192 src/prefs.c:781
+#: src/buddy_chat.c:807 src/conversation.c:1192 src/prefs.c:781
 msgid "Italics Text"
 msgstr "Texto Inclinado"
 
-#: src/buddy_chat.c:794 src/buddy_chat.c:795 src/conversation.c:1196
+#: src/buddy_chat.c:811 src/buddy_chat.c:812 src/conversation.c:1196
 #: src/conversation.c:1197
 msgid "Underline"
 msgstr "Subrayar"
 
-#: src/buddy_chat.c:794 src/conversation.c:1196
+#: src/buddy_chat.c:811 src/conversation.c:1196
 msgid "Underline Text"
 msgstr "Subrayar Texto"
 
-#: src/buddy_chat.c:798 src/buddy_chat.c:799 src/conversation.c:1200
+#: src/buddy_chat.c:815 src/buddy_chat.c:816 src/conversation.c:1200
 #: src/conversation.c:1201
 msgid "Strike"
 msgstr "Cruzar"
 
-#: src/buddy_chat.c:798 src/conversation.c:1200
+#: src/buddy_chat.c:815 src/conversation.c:1200
 msgid "Strike through Text"
 msgstr "Cruzar el Texto"
 
-#: src/buddy_chat.c:801 src/conversation.c:1203
+#: src/buddy_chat.c:818 src/conversation.c:1203
 msgid "Small"
 msgstr "Pequeño"
 
-#: src/buddy_chat.c:801 src/conversation.c:1203
+#: src/buddy_chat.c:818 src/conversation.c:1203
 msgid "Decrease font size"
 msgstr "Hacer texto mas pequeño"
 
-#: src/buddy_chat.c:802 src/conversation.c:1204
+#: src/buddy_chat.c:819 src/conversation.c:1204
 msgid "Normal"
 msgstr "Normal"
 
-#: src/buddy_chat.c:802 src/conversation.c:1204
+#: src/buddy_chat.c:819 src/conversation.c:1204
 msgid "Normal font size"
 msgstr "Texto normal"
 
-#: src/buddy_chat.c:803 src/conversation.c:1205
+#: src/buddy_chat.c:820 src/conversation.c:1205
 msgid "Big"
 msgstr "Grande"
 
-#: src/buddy_chat.c:803 src/conversation.c:1205
+#: src/buddy_chat.c:820 src/conversation.c:1205
 msgid "Increase font size"
 msgstr "Hacer el texto mas grande "
 
-#: src/buddy_chat.c:806 src/buddy_chat.c:807 src/conversation.c:1208
+#: src/buddy_chat.c:823 src/buddy_chat.c:824 src/conversation.c:1208
 #: src/conversation.c:1209
 msgid "Font"
 msgstr "Texto"
 
-#: src/buddy_chat.c:806 src/conversation.c:1208 src/dialogs.c:2074
+#: src/buddy_chat.c:823 src/conversation.c:1208 src/dialogs.c:2074
 #: src/dialogs.c:2093 src/prefs.c:786
 msgid "Select Font"
 msgstr "Seleccionar un Texto"
 
-#: src/buddy_chat.c:812 src/buddy_chat.c:813 src/conversation.c:1216
+#: src/buddy_chat.c:829 src/buddy_chat.c:830 src/conversation.c:1216
 #: src/conversation.c:1217
 msgid "Link"
 msgstr "Dirección"
 
-#: src/buddy_chat.c:812 src/conversation.c:1216
+#: src/buddy_chat.c:829 src/conversation.c:1216
 msgid "Insert Link"
 msgstr "Insertar una Dirección"
 
-#: src/buddy_chat.c:816 src/buddy_chat.c:817 src/conversation.c:1220
+#: src/buddy_chat.c:833 src/buddy_chat.c:834 src/conversation.c:1220
 #: src/conversation.c:1221
 msgid "Color"
 msgstr "Color"
 
-#: src/buddy_chat.c:816 src/conversation.c:1220
+#: src/buddy_chat.c:833 src/conversation.c:1220
 msgid "Text Color"
 msgstr "Color del texto"
 
-#: src/buddy_chat.c:821 src/buddy_chat.c:822 src/conversation.c:1224
+#: src/buddy_chat.c:838 src/buddy_chat.c:839 src/conversation.c:1224
 #: src/conversation.c:1225
 msgid "Logging"
 msgstr "Diario"
 
-#: src/buddy_chat.c:821 src/conversation.c:1224
+#: src/buddy_chat.c:838 src/conversation.c:1224
 msgid "Enable logging"
 msgstr "Usar Diario"
 
-#: src/buddy_chat.c:827 src/buddy_chat.c:828 src/conversation.c:1228
+#: src/buddy_chat.c:844 src/buddy_chat.c:845 src/conversation.c:1228
 #: src/conversation.c:1229
 msgid "Sound"
 msgstr "Sonido"
 
-#: src/buddy_chat.c:827 src/conversation.c:1228
+#: src/buddy_chat.c:844 src/conversation.c:1228
 msgid "Enable sounds"
 msgstr "Usar Sonidos"
 
-#: src/buddy_chat.c:979 src/buddy_chat.c:991
+#: src/buddy_chat.c:996 src/buddy_chat.c:1008
 msgid "Buddy Chat"
 msgstr "Conversación de Amigos"
 
@@ -553,7 +553,9 @@ msgstr "Advertencias para %s estan prohibidas."
 
 #: src/dialogs.c:496
 msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "El mensaje ha sido borrado, usted esta excediendo el limite de velocidad del servidor."
+msgstr ""
+"El mensaje ha sido borrado, usted esta excediendo el limite de velocidad del "
+"servidor."
 
 #: src/dialogs.c:499
 #, c-format
@@ -573,8 +575,7 @@ msgstr "Usted perdió un mensaje de %s porque fue demasiado largo."
 #: src/dialogs.c:508
 #, c-format
 msgid "You missed an IM from %s because it was sent too fast."
-msgstr ""
-"Usted perdio un mensaje %s porque fue mandado demasiado rapidamente."
+msgstr "Usted perdio un mensaje %s porque fue mandado demasiado rapidamente."
 
 #: src/dialogs.c:511
 msgid "Failure."
@@ -634,9 +635,8 @@ msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
 msgstr ""
-"Usted se ha conectado y desconectado demasiadas veces.  Espere diez"
-"minutos e intente de nuveo.  Si sigue intentando, necesitara esperar"
-"mas tiempo."
+"Usted se ha conectado y desconectado demasiadas veces.  Espere diezminutos e "
+"intente de nuveo.  Si sigue intentando, necesitara esperarmas tiempo."
 
 #: src/dialogs.c:554
 #, c-format
@@ -1260,8 +1260,8 @@ msgstr "Ignorar los colores de los amigos"
 #: src/prefs.c:775
 msgid "Show logon/logoffs in conversation windows"
 msgstr ""
-"Demostrar cuando los amigos se conectan/desconectan en las"
-"ventanas de las conversaciones"
+"Demostrar cuando los amigos se conectan/desconectan en lasventanas de las "
+"conversaciones"
 
 #: src/prefs.c:776
 msgid "Use devil icons"
