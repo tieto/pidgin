@@ -149,15 +149,14 @@ static char *extract_name(char *name) {
 	tmp = g_strdup(++x);
 
 	for (i = 0, j = 0; x[i]; i++) {
-		if (x[i] != '%')
+		char hex[3];
+		if (x[i] != '%') {
 			tmp[j++] = x[i];
-		else {
-			char hex[3];
-			hex[0] = x[++i];
-			hex[1] = x[++i];
-			hex[2] = 0;
-			sscanf(hex, "%x", (int *)&tmp[j++]);
+			continue;
 		}
+		strncpy(hex, x + ++i, 2); hex[2] = 0;
+		i++;
+		tmp[j++] = strtol(hex, NULL, 16);
 	}
 
 	tmp[j] = 0;
