@@ -2810,6 +2810,20 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 				str = g_string_append(str, sspan->start_tag);
 				closers = g_list_insert_sorted(closers, sspan, (GCompareFunc)span_compare_end);
 				espan = (GtkIMHtmlFormatSpan*)closers->data;
+				/*
+				 * When sending an IM, the following line causes the following warning:
+				 *   Gtk: file gtktextbuffer.c: line 1794
+				 *     (gtk_text_buffer_get_iter_at_mark): assertion `GTK_IS_TEXT_MARK (mark)' failed
+				 *
+				 * The callback path thingy to get here is:
+				 * gtkconv.c, send(), "buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));"
+				 * gtkimhtml.c, gtk_imthml_get_markup(), "return gtk_imhtml_get_markup_range(imhtml, &start, &end);"
+				 *
+				 * I don't really know anything about gtkimhtml, but it almost seems like
+				 * the line above this comments expects to find a closing html tag, but
+				 * can't, for some reason.  The warning depends on how much HTML I send
+				 * in my message, kind of.
+				 */
 				gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &eiter, espan->end);
 			}
 			sspan = (GtkIMHtmlFormatSpan*)starters->data;
