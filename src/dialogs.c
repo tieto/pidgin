@@ -1721,7 +1721,6 @@ void g_show_info_text(char *info, ...)
 	va_start(ap, info);
 
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
-        dialogwindows = g_list_prepend(dialogwindows, b->window);
 	gtk_window_set_title(GTK_WINDOW(b->window), "Gaim");
         gtk_container_border_width(GTK_CONTAINER(b->window), 5);
         bbox = gtk_vbox_new(FALSE, 5);
