@@ -78,6 +78,9 @@ msn_act_id(GaimConnection *gc, const char *entry)
 	{
 		gaim_notify_error(gc, NULL,
 						  _("Your new MSN friendly name is too long."), NULL);
+
+		g_free(alias);
+
 		return;
 	}
 
