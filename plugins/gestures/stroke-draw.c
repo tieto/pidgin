@@ -105,10 +105,12 @@ static gint
 process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 {
   static GtkWidget *original_widget = NULL;
+  static GdkCursor *cursor = NULL;
+
   switch (event->type) {
     case GDK_BUTTON_PRESS:
       if (event->button.button != gstroke_get_mouse_button())
-	break;
+        break;
 
       original_widget = widget; /* remeber the widget where
                                    the stroke started */
@@ -117,8 +119,11 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 
       record_stroke_segment (widget);
 
+	  if (cursor == NULL)
+		  cursor = gdk_cursor_new(GDK_PENCIL);
+
       gdk_pointer_grab (widget->window, FALSE,
-			GDK_BUTTON_RELEASE_MASK, NULL, NULL,
+			GDK_BUTTON_RELEASE_MASK, NULL, cursor,
 			event->button.time);
       timer_id = gtk_timeout_add (GSTROKE_TIMEOUT_DURATION,
 				  gstroke_timeout, widget);
