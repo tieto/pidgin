@@ -796,6 +796,7 @@ static void gaim_prefs_write(FILE *f, struct gaim_pref *pref, int depth) {
 
 void gaim_prefs_sync() {
 	FILE *file;
+	struct stat st;
 	const char *user_dir = gaim_user_dir();
 	char *filename;
 	char *filename_real;
@@ -826,6 +827,13 @@ void gaim_prefs_sync() {
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "prefs", "Unable to write %s\n",
 				filename);
+		g_free(filename);
+		return;
+	}
+
+	if (stat(filename, &st) || (st.st_size == 0)) {
+		gaim_debug_error("prefs", "Failed to save prefs\n");
+		unlink(filename);
 		g_free(filename);
 		return;
 	}

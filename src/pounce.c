@@ -846,6 +846,7 @@ void
 gaim_pounces_sync(void)
 {
 	FILE *fp;
+	struct stat st;
 	const char *user_dir = gaim_user_dir();
 	char *filename;
 	char *filename_real;
@@ -888,6 +889,13 @@ gaim_pounces_sync(void)
 	else {
 		gaim_debug(GAIM_DEBUG_ERROR, "pounces", "Unable to write %s\n",
 				   filename);
+		g_free(filename);
+		return;
+	}
+
+	if (stat(filename, &st) || (st.st_size == 0)) {
+		gaim_debug_error("pounces", "Failed to save pounces\n");
+		unlink(filename);
 		g_free(filename);
 		return;
 	}

@@ -2384,6 +2384,7 @@ static void gaim_blist_write(FILE *file, GaimAccount *exp_acct)
 void gaim_blist_sync()
 {
 	FILE *file;
+	struct stat st;
 	const char *user_dir = gaim_user_dir();
 	char *filename;
 	char *filename_real;
@@ -2416,12 +2417,18 @@ void gaim_blist_sync()
 		return;
 	}
 
+	if (stat(filename, &st) || (st.st_size == 0)) {
+		gaim_debug_error("blist", "Failed to save blist\n");
+		unlink(filename);
+		g_free(filename);
+		return;
+	}
+
 	filename_real = g_build_filename(user_dir, "blist.xml", NULL);
 
 	if (rename(filename, filename_real) < 0)
 		gaim_debug(GAIM_DEBUG_ERROR, "blist save",
 				   "Error renaming %s to %s\n", filename, filename_real);
-
 
 	g_free(filename);
 	g_free(filename_real);
