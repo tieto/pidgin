@@ -2682,55 +2682,6 @@ void gaim_gtk_prefs_show(void)
 	gtk_widget_show(prefs);
 }
 
-#if 0
-static void set_logging_option(GtkWidget *w, int option)
-{
-	logging_options ^= option;
-
-	if (option == OPT_LOG_CONVOS || option == OPT_LOG_CHATS)
-		update_log_convs();
-}
-
-static void set_convo_option(GtkWidget *w, int option)
-{
-	convo_options ^= option;
-
-	if (option == OPT_CONVO_SHOW_SMILEY)
-		gaim_gtkconv_toggle_smileys();
-
-	if (option == OPT_CONVO_SHOW_TIME)
-		gaim_gtkconv_toggle_timestamps();
-}
-
-static void set_im_option(GtkWidget *w, int option)
-{
-	im_options ^= option;
-
-#if 0
-	if (option == OPT_IM_ONE_WINDOW)
-		im_tabize();
-#endif
-}
-
-static void set_chat_option(GtkWidget *w, int option)
-{
-	chat_options ^= option;
-
-#if 0
-	if (option == OPT_CHAT_ONE_WINDOW)
-		chat_tabize();
-#endif
-}
-
-static void set_away_option(GtkWidget *w, int option)
-{
-	away_options ^= option;
-
-	if (option == OPT_AWAY_QUEUE)
-		toggle_away_queue();
-}
-#endif
-
 static void
 set_bool_pref(GtkWidget *w, const char *key)
 {
