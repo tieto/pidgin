@@ -203,7 +203,6 @@ AC_OUTPUT([Makefile
 	   plugins/yay/Makefile
 	   plugins/icq/Makefile
 	   plugins/msn/Makefile
-	   plugins/msn/pixmaps/Makefile
            pixmaps/Makefile
            libfaim/Makefile
 	   po/Makefile.in
