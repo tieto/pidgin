@@ -164,7 +164,7 @@ void handle_group_rename(struct group *g, char *prevname)
 					g_free(bs);
 				}
 				if ((bs = find_buddy_show(new_gs, b->name)) == NULL) {
-					if (*g->gc->prpl->list_icon) {
+					if (g->gc->prpl->list_icon) {
 						bs = new_buddy_show(new_gs, b,
 								    (*g->gc->prpl->list_icon)(b->uc));
 					} else {
@@ -217,7 +217,7 @@ void handle_group_rename(struct group *g, char *prevname)
 						g_free(bs->name);
 						g_free(bs);
 					}
-					if (*g->gc->prpl->list_icon) {
+					if (g->gc->prpl->list_icon) {
 						bs = new_buddy_show(new_gs, b,
 								    (*g->gc->prpl->list_icon)(b->uc));
 					} else {
