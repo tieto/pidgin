@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1414 $"
+#define REVISION "gaim:$Revision: 1422 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -269,7 +269,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 	}
 
 	/* there's data waiting to be read, so read it. */
-	if (wait_reply(gc, buf, 8 * 1024) < 0) {
+	if (wait_reply(gc, buf, 8 * 1024) <= 0) {
 		hide_login_progress(gc, _("Connection Closed"));
 		signoff(gc);
 		return;
@@ -672,7 +672,7 @@ static void toc_set_config(struct gaim_connection *gc)
 {
 	char buf[MSG_LEN], snd[MSG_LEN];
 	toc_build_config(gc, buf, MSG_LEN, FALSE);
-	g_snprintf(snd, MSG_LEN, "toc_set_config \"%s\"", buf);
+	g_snprintf(snd, MSG_LEN, "toc_set_config {%s}", buf);
 	sflap_send(gc, snd, -1, TYPE_DATA);
 }
 
