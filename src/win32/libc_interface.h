@@ -50,6 +50,10 @@ wgaim_strerror( errno )
 #define strerror( errornum ) \
 wgaim_strerror( ## errornum ## )
 
+extern char* wgaim_strsep(char **stringp, const char *delim);
+#define strsep( stringp, delim ) \
+wgaim_strsep( ## stringp ##, ## delim ## )
+
 #define bzero( dest, size ) memset( ## dest ##, 0, ## size ## )
 
 /* unistd.h */
