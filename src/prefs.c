@@ -118,7 +118,7 @@ void delete_prefs(GtkWidget *asdf, void *gdsa) {
 	
 	 prefs = NULL;
 	 for (v = 0; v < NUM_SOUNDS; v++) {
-		if (sound_file_new[v])
+		if (sound_file_new[v] && (sound_file_new[v] != sound_file[v]))
 			g_free(sound_file_new[v]);
 		sound_file_new[v] = NULL;
 	 }
