@@ -591,7 +591,7 @@ char *tobase64(char *text)
 
 	c = text;
 
-	while (c) {
+	while (*c) {
 		tmp = tmp << 8;
 		tmp += *c;
 		n++;
@@ -611,17 +611,19 @@ char *tobase64(char *text)
 	switch (n) {
 
 	case 2:
+		tmp <<= 8;
 		out = g_realloc(out, len + 5);
-		out[len] = alphabet[(tmp >> 12) & 0x3f];
-		out[len + 1] = alphabet[(tmp >> 6) & 0x3f];
-		out[len + 2] = alphabet[tmp & 0x3f];
+		out[len] = alphabet[(tmp >> 18) & 0x3f];
+		out[len + 1] = alphabet[(tmp >> 12) & 0x3f];
+		out[len + 2] = alphabet[(tmp >> 6) & 0x3f];
 		out[len + 3] = '=';
 		out[len + 4] = 0;
 		break;
 	case 1:
+		tmp <<= 16;
 		out = g_realloc(out, len + 4);
-		out[len] = alphabet[(tmp >> 6) & 0x3f];
-		out[len + 1] = alphabet[tmp & 0x3f];
+		out[len] = alphabet[(tmp >> 12) & 0x3f];
+		out[len + 1] = alphabet[(tmp >> 6) & 0x3f];
 		out[len + 2] = '=';
 		out[len + 3] = 0;
 		break;
