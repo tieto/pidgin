@@ -2305,9 +2305,7 @@ static GtkWidget *gaim_dropdown(GtkWidget *box, const gchar *title, int *option,
 	}
 	va_end(ap);
 
-	if (menuitems == NULL) {
-		return;
-	}
+	g_return_val_if_fail(menuitems != NULL, NULL);
 
 	menuitems = g_list_reverse(menuitems);
 
