@@ -1502,13 +1502,14 @@ static void away_page()
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
 
-	hbox = gtk_hbox_new(FALSE, 0);
+	hbox = gtk_hbox_new(FALSE, 30);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	gaim_button(_("Ignore new conversations when away   "), &general_options,
+	gaim_button(_("Ignore new conversations when away"), &general_options,
 		    OPT_GEN_DISCARD_WHEN_AWAY, hbox);
 	gaim_button(_("Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, hbox);
+	gaim_button(_("Don't send auto-response"), &general_options, OPT_GEN_NO_AUTO_RESP, hbox);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
