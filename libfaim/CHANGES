@@ -1,0 +1,63 @@
+
+No release numbers
+------------------
+ - Sun Aug  1 03:02:17 UTC 1999
+   - Added aimutil_*()s in aim_util.c for raw byte placement
+   - Cleaned up aim_im.c, aim_auth.c, and aim_login.c using aimutil_*
+   - Added AIM_IMFLAGS, flags option to aim_send_im(), removed
+       aim_send_im_away()
+   - Added client_info parameter to aim_send_login()
+   - Tweaked aim_send_im() (AOL changed a few things, there's some more
+       changes left to do)
+   - Some Chat stuff changed, still no where near functional
+   - Finally remembered to switch the license to LGPL (from GPL)
+   - Released a snapshot
+
+ - Sat Jul 31 05:28:38 UTC 1999
+   - Changed aim_bos_setdeny() to aim_bos_changevisibility() and actually
+       did the implementation.  
+
+ - Fri Jul 23 17:45:22 UTC 1999
+   - Work around for the AOL change in IP syntax (thanks to Eric Peyton)
+   - Released snapshot
+
+ - Sun Apr 25 23:31:44 UTC 1999
+   - Fixed stupid off-by-one bug in aim_logoff()
+
+ - Sun Apr 25 22:43:31 UTC 1999
+   - Renamed/reclassified missed IM errors (now all callbacks -- no backend handling)
+   - Killed aim_login() -- all connections now opened in frontend
+   - aim_conn_close() will not close fd's < 3
+   - Released snapshot.
+
+ - Sat Apr 10 22:44:07 UTC 1999
+   - Changed how rx_command->handled works; now uses return value from callback
+   - Changed the if's in the dispatcher (aim_rxhandlers.c) to switch()es
+
+ - Sat Apr 10 03:51:21 UTC 1999
+   - Started CHANGES
+   - Put in n's aim_snac.c.
+   - Updated aim_{add,remove}_buddy() to use aim_conn
+   - Updated aim_usersearch_address() to use aim_conn
+   - Cleaned up aim.h a bit (removed old *phase* protos)
+   - Changed gethostbyname() to gethostbyname2() (for MacOS X)
+   - Changed aim_newconn() to pass connection errors in connstruct->status
+     - Updated faimtest.c to detect connection errors
+   - Fixed a small typo in aim_im::aim_parse_incoming_im_middle()
+   - Added free()s in that function and to userinfo counterpart (fewer leaks)
+   - Released snapshot
+
+ - Sat Apr  3 06:43:14 UTC 1999
+   - Released snapshot
+
+ - Wed Dec 30 01:20:59 MST 1998
+   - Released snapshot
+
+ - Mon Dec  7 16:57:57 MST 1998
+   - Released snapshot
+
+ - Sat Dec  5 00:01:53 MST 1998
+   - Released snapshot
+ 
+ - Thu Nov 26 17:50:02 MST 1998
+   -  Released snapshot

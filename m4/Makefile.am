@@ -1,0 +1,3 @@
+EXTRA_DIST = gnome-x-checks.m4 gnome-gnorba-check.m4 \
+             gnome-pthread-check.m4 gnome.m4 gnome-orbit-check.m4 \
+             esd.m4
