@@ -2358,10 +2358,15 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		}
 	}
 
-	/* If the message came from an ICQ user then escape any HTML */
+	/*
+	 * If the message came from an ICQ user then escape any HTML, because
+	 * HTML should not be sent over ICQ as a means to format a message.
+	 * SIM is the only client we know of that sends HTML, everything else
+	 * (ie. official clients) use RTF.  Please let us know if this is
+	 * incorrect.
+	 */
 	if (isdigit(userinfo->sn[0])) {
-		gchar *tmp2;
-		gaim_markup_html_to_xhtml(tmp, &tmp2, NULL);
+		gchar *tmp2 = gaim_escape_html(tmp);
 		g_free(tmp);
 		tmp = tmp2;
 	}
