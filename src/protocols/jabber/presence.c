@@ -127,9 +127,6 @@ static void deny_add_cb(struct _jabber_add_permit *jap)
 	if(g_list_find(gaim_connections_get_all(), jap->gc)) {
 		jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
 				"unsubscribed");
-
-		if(!gaim_find_buddy(jap->gc->account, jap->who))
-			gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
 	}
 
 	g_free(jap->who);
