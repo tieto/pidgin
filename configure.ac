@@ -524,6 +524,8 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 		else
 			AC_MSG_CHECKING(for Mozilla nspr4 includes)
 			AC_MSG_RESULT(no)
+
+			enable_nss="no"
 		fi
 
 		have_nspr_libs="no"
@@ -540,6 +542,8 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 						[Static linkage requested, but path to nspr libraries not set.]
 						[Please specify the path to libnspr4.a]
 						[Example: --with-nspr-libs=/usr/lib])
+
+					enable_nss="no"
 				else
 					nsprlibs="-ldl $with_nspr_libs/libplc4.a $with_nspr_libs/libplds4.a $with_nspr_libs/libnspr4.a $PTHREAD_LIB"
 				fi
@@ -574,6 +578,7 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 				NSPR_LIBS="-L$with_nspr_libs $nsprlibs"
 			else
 				NSPR_CFLAGS=""
+				enable_nss="no"
 			fi
 		else
 			AC_MSG_CHECKING(for Mozilla nspr4 libraries)
@@ -612,6 +617,7 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 		else
 			AC_MSG_CHECKING(for Mozilla nss3 includes)
 			AC_MSG_RESULT(no)
+			enable_nss="no"
 		fi
 
 		if test "x$with_nss_libs"     != "xno" -a \
@@ -625,6 +631,7 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 						[Static linkage requested, but path to nss libraries not set.]
 						[Please specify the path to libnss3.a]
 						[Example: --with-nspr-libs=/usr/lib/mozilla])
+					enable_nss="no"
 				else
 					nsslibs="-ldb1 $with_nss_libs/libnssckfw.a $with_nss_libs/libasn1.a $with_nss_libs/libcrmf.a $with_nss_libs/libswfci.a $with_nss_libs/libjar.a $with_nss_libs/libpkcs12.a $with_nss_libs/libpkcs7.a $with_nss_libs/libpki1.a $with_nss_libs/libsmime.a $with_nss_libs/libssl.a $with_nss_libs/libnss.a $with_nss_libs/libpk11wrap.a $with_nss_libs/libsoftokn.a $with_nss_libs/libfreebl.a $with_nss_libs/libnsspki.a $with_nss_libs/libnssdev.a $with_nss_libs/libcryptohi.a $with_nss_libs/libcerthi.a $with_nss_libs/libcertdb.a $with_nss_libs/libsecutil.a $with_nss_libs/libnssb.a"
 
@@ -677,6 +684,7 @@ if test "x$enable_nss" != "xno" -a "x$enable_gnutls" = "xno"; then
 				NSS_CFLAGS=""
 				NSPR_CFLAGS=""
 				NSPR_LIBS=""
+				enable_nss="no"
 			fi
 		else
 			AC_MSG_CHECKING(for Mozilla nss libraries)
