@@ -535,9 +535,14 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 
 static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packet *pkt)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	char *id = NULL;
 	char *who = NULL;
 	char *msg = NULL;
+	char *name = NULL;
+	int state = YAHOO_STATUS_AVAILABLE;
+	int online = FALSE;
+
 	GSList *l = pkt->hash;
 
 	while (l) {
@@ -548,11 +553,33 @@ static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packe
 			who = pair->value;
 		else if (pair->key == 14)
 			msg = pair->value;
+		else if (pair->key == 7)
+			name = pair->value;
+		else if (pair->key == 10)
+			state = strtol(pair->value, NULL, 10);
+		else if (pair->key == 13)
+			online = strtol(pair->value, NULL, 10);
 		l = l->next;
 	}
 
 	if (id)
 		show_got_added(gc, id, who, NULL, msg);
+	if (name) {
+		if (state == YAHOO_STATUS_AVAILABLE)
+			serv_got_update(gc, name, 1, 0, 0, 0, 0, 0);
+		else if (state == YAHOO_STATUS_IDLE)
+			serv_got_update(gc, name, 1, 0, 0, time(NULL) - 600, (state << 1), 0);
+		else
+			serv_got_update(gc, name, 1, 0, 0, 0, (state << 1) | UC_UNAVAILABLE, 0);
+		if (state == YAHOO_STATUS_CUSTOM) {
+			gpointer val = g_hash_table_lookup(yd->hash, name);
+			if (val) {
+				g_free(val);
+				g_hash_table_insert(yd->hash, name, g_strdup(msg));
+			} else
+				g_hash_table_insert(yd->hash, g_strdup(name), g_strdup(msg));
+		}
+	}
 }
 
 static void yahoo_process_mail(struct gaim_connection *gc, struct yahoo_packet *pkt)
