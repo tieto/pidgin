@@ -38,16 +38,8 @@
 #include "gaim.h"
 #include "proxy.h"
 
-
-/* static int proxy_inited=0; */
-int proxy_type = 0;
-char proxy_host[256];
-int proxy_port = 3128;
-char *proxy_realhost = NULL;
-
 /* this code is borrowed from cvs 1.10 */
-static int
-proxy_recv_line (int sock, char **resultp)
+static int proxy_recv_line (int sock, char **resultp)
 {
     int c;
     char *result;
@@ -93,183 +85,222 @@ proxy_recv_line (int sock, char **resultp)
     return input_index;
 }
 
-
-struct hostent *proxy_gethostbyname(char *host)
+static int proxy_connect_none(char *host, unsigned short port)
 {
-    
-        if (proxy_type == PROXY_NONE)
-                return (gethostbyname(host));
+	struct sockaddr_in sin;
+	struct hostent *hp;
+	int fd = -1;
 
-        if (proxy_realhost != NULL)
-                g_free(proxy_realhost);
+	debug_printf("connecting to %s:%d with no proxy\n", host, port);
 
-        /* we keep the real host name for the Connect command */
-        proxy_realhost = (char *) strdup(host);
-        
-        return (gethostbyname(proxy_host));
-    
-}
+	if (!(hp = gethostbyname(host))) 
+		return -1;
 
+	memset(&sin, 0, sizeof(struct sockaddr_in));
+	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+	sin.sin_family = hp->h_addrtype;
+	sin.sin_port = htons(port);
 
-int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
-                  addrlen )
-{
-        struct sockaddr_in name;
-        int ret;
+	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0)
+		return -1;
 
-        switch (proxy_type) {
-        case PROXY_NONE:
-                /* normal use */
-                return (connect(sockfd,serv_addr,addrlen));
-                break;
-        case PROXY_HTTP:  /* Http proxy */
-                /* do the  tunneling */
-                /* step one : connect to  proxy */
-                {
-                        struct hostent *hostinfo;
-                        unsigned short shortport = proxy_port;
-
-                        memset (&name, 0, sizeof (name));
-                        name.sin_family = AF_INET;
-                        name.sin_port = htons (shortport);
-                        hostinfo = gethostbyname (proxy_host);
-                        if (hostinfo == NULL) {
-                                fprintf (stderr, "Unknown host %s.\n", proxy_host);
-                                return (-1);
-                        }
-                        name.sin_addr = *(struct in_addr *) hostinfo->h_addr;
-                }
-                sprintf(debug_buff,"Trying to connect ...\n");
-                debug_print(debug_buff);
-                if ((ret = connect(sockfd,(struct sockaddr *)&name,sizeof(name)))<0)
-                        return(ret);
-    
-                /* step two : do  proxy tunneling init */
-                {
-                        char cmd[80];
-                        char *inputline;
-                        unsigned short realport=ntohs(((struct sockaddr_in *)serv_addr)->sin_port);
-                        sprintf(cmd,"CONNECT %s:%d HTTP/1.1\n\r\n\r",proxy_realhost,realport);
-                        sprintf(debug_buff,"<%s>\n",cmd);
-                        debug_print(debug_buff);
-                        if (send(sockfd,cmd,strlen(cmd),0)<0)
-                                return(-1);
-                        if (proxy_recv_line(sockfd,&inputline) < 0) {
-                                return(-1);
-                        }
-                        sprintf(debug_buff,"<%s>\n",inputline);
-                        debug_print(debug_buff);
-                        if (memcmp("HTTP/1.0 200 Connection established",inputline,35))
-                                if (memcmp("HTTP/1.1 200 Connection established",inputline,35)) {
-                                        free(inputline);
-                                        return(-1);
-                                }
-
-                        while (strlen(inputline)>1) {
-                                free(inputline);
-                                if (proxy_recv_line(sockfd,&inputline) < 0) {
-                                        return(-1);
-                                }
-                                sprintf(debug_buff,"<%s>\n",inputline);
-                                debug_print(debug_buff);
-                        }
-                        free(inputline);
-                }
-	        
-                return 0;
-                break;
-        case PROXY_SOCKS4:
-		/* code shamelessly stolen from everybuddy */
-	{
-		struct sockaddr_in sa;
-		unsigned char packet[12];
-		struct hostent *hp;
-
-		debug_print("connecting with socks4.\n");
-
-		if (!(hp = gethostbyname(proxy_host)))
-			return -1;
-
-		bzero(&sa, sizeof(sa));
-		sa.sin_family = AF_INET;
-		sa.sin_port = htons(proxy_port);
-		bcopy(hp->h_addr, (char *) &sa.sin_addr, hp->h_length);
-
-		if (connect(sockfd, (struct sockaddr *) &sa, sizeof (sa)) != -1) {
-			unsigned short realport = htons(((struct sockaddr_in *)serv_addr)->sin_port);
-			
-			if (!(hp = gethostbyname(proxy_realhost)))
-				return -1;
-			packet[0] = 4;
-			packet[1] = 1;
-			packet[2] = (((unsigned short) realport) >> 8);
-			packet[3] = (((unsigned short) realport) & 0xff);
-			packet[4] = (unsigned char) (hp->h_addr_list[0])[0];
-			packet[5] = (unsigned char) (hp->h_addr_list[0])[1];
-			packet[6] = (unsigned char) (hp->h_addr_list[0])[2];
-			packet[7] = (unsigned char) (hp->h_addr_list[0])[3];
-			packet[8] = 0;
-			if (write(sockfd, packet, 9) == 9) {
-				bzero(packet, sizeof(packet));
-				if (read(sockfd, packet, 9) >= 4 && packet[1] == 90)
-					return 0;
-			}
-			close(sockfd);
-		}
+	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+		close(fd);
 		return -1;
 	}
-		break;
-	case PROXY_SOCKS5:
-	{
-		struct sockaddr_in sin;
-		struct hostent *hostinfo;
-		char buff[11];
 
-		sethostent(0);
-		hostinfo = gethostbyname(proxy_host);
-		if (!hostinfo) return -1;
-
-		sin.sin_addr.s_addr = atol(hostinfo->h_addr);
-		sin.sin_family = AF_INET;
-		sin.sin_port = htons(proxy_port);
-
-		if (connect(sockfd, (struct sockaddr *)&sin, sizeof(sin)) < 0)
-			return -1;
-
-		buff[0] = 5;
-		buff[1] = 1;
-		buff[2] = 0;
-
-		write(sockfd, buff, 3);
-		read(sockfd, buff, 2);
-
-		if (buff[1]) return -1;
-
-		hostinfo = gethostbyname(proxy_realhost);
-		if (!hostinfo) return -1;
-
-		buff[0] = 5;
-		buff[1] = 1;
-		buff[2] = 0;
-		buff[3] = 1;
-		buff[4] = (unsigned char) (hostinfo->h_addr_list[0])[0];
-		buff[5] = (unsigned char) (hostinfo->h_addr_list[0])[1];
-		buff[6] = (unsigned char) (hostinfo->h_addr_list[0])[2];
-		buff[7] = (unsigned char) (hostinfo->h_addr_list[0])[3];
-		memcpy(buff+8, &((struct sockaddr_in *)serv_addr)->sin_port, 2);
-
-		write(sockfd, buff, 10);
-		read(sockfd, buff, 10);
-
-		if (buff[1]) return -1;
-
-		return 0;
-	}
-		break;
-        default:
-                fprintf(stderr,"Unknown proxy type : %d.\n",proxy_type);
-                break;
-        }
-        return(-1);
+	return fd;
 }
 
+#define HTTP_GOODSTRING "HTTP/1.0 200 Connection established"
+#define HTTP_GOODSTRING2 "HTTP/1.1 200 Connection established"
+
+static int proxy_connect_http(char *host, unsigned short port,
+                              char *proxyhost, unsigned short proxyport)
+{
+	struct hostent *hp;
+	struct sockaddr_in sin;
+	int fd = -1;
+	char cmd[384];
+	char *inputline;
+
+	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", host, port, proxyhost, proxyport);
+
+	if (!(hp = gethostbyname(proxyhost))) 
+		return -1;
+
+	memset(&sin, 0, sizeof(struct sockaddr_in));
+	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+	sin.sin_family = hp->h_addrtype;
+	sin.sin_port = htons(proxyport);
+
+	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0)
+		return -1;
+
+	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+		close(fd);
+		return -1;
+	}
+
+	snprintf(cmd, sizeof(cmd), "CONNECT %s:%d HTTP/1.1\n\r\n\r", host, port);
+
+	if (send(fd, cmd, strlen(cmd),0) < 0)
+		return -1;
+	if (proxy_recv_line(fd, &inputline) < 0)
+		return -1;
+
+	if ((memcmp(HTTP_GOODSTRING, inputline, strlen(HTTP_GOODSTRING) == 0) ||
+			(memcmp(HTTP_GOODSTRING2, inputline, strlen(HTTP_GOODSTRING2) == 0)))) {
+		while (strlen(inputline) > 1) {
+			free(inputline);
+			if (proxy_recv_line(fd, &inputline) < 0)
+				return -1;
+		}
+		free(inputline);
+		return fd;
+	}
+
+	free(inputline);
+
+	close(fd);
+
+	return -1;
+}
+
+static int proxy_connect_socks4(char *host, unsigned short port,
+                                char *proxyhost, unsigned short proxyport)
+{
+	struct sockaddr_in sin;
+	unsigned char packet[12];
+	struct hostent *hp;
+	int fd = -1;
+
+	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", host, port, proxyhost, proxyport);
+
+	if (!(hp = gethostbyname(proxyhost))) 
+		return -1;
+
+	memset(&sin, 0, sizeof(struct sockaddr_in));
+	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+	sin.sin_family = hp->h_addrtype;
+	sin.sin_port = htons(proxyport);
+
+	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0)
+		return -1;
+
+	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+		close(fd);
+		return -1;
+	}
+
+	/* XXX does socks4 not support host name lookups by the proxy? */
+	if (!(hp = gethostbyname(host)))
+		return -1;
+
+	packet[0] = 4;
+	packet[1] = 1;
+	packet[2] = (((unsigned short) htons(port)) >> 8);
+	packet[3] = (((unsigned short) htons(port)) & 0xff);
+	packet[4] = (unsigned char) (hp->h_addr_list[0])[0];
+	packet[5] = (unsigned char) (hp->h_addr_list[0])[1];
+	packet[6] = (unsigned char) (hp->h_addr_list[0])[2];
+	packet[7] = (unsigned char) (hp->h_addr_list[0])[3];
+	packet[8] = 0;
+	if (write(fd, packet, 9) == 9) {
+		memset(packet, 0, sizeof(packet));
+		if (read(fd, packet, 9) >= 4 && packet[1] == 90)
+			return fd;
+	}
+	close(fd);
+
+	return -1;
+}
+
+static int proxy_connect_socks5(char *host, unsigned short port,
+                                char *proxyhost, unsigned short proxyport)
+{
+	int i, fd = -1;
+	unsigned char buf[512];
+	struct sockaddr_in sin;
+	struct hostent *hp;
+
+	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", host, port, proxyhost, proxyport);
+
+	if (!(hp = gethostbyname(proxyhost))) 
+		return -1;
+
+	memset(&sin, 0, sizeof(struct sockaddr_in));
+	memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+	sin.sin_family = hp->h_addrtype;
+	sin.sin_port = htons(proxyport);
+
+	if ((fd = socket(hp->h_addrtype, SOCK_STREAM, 0)) < 0)
+		return -1;
+
+	if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+		close(fd);
+		return -1;
+	}
+
+	i = 0;
+	buf[0] = 0x05; /* SOCKS version 5 */
+	buf[1] = 0x01;
+	buf[2] = 0x00;
+	i = 3;
+
+	if (write(fd, buf, i) < i) {
+		close(fd);
+		return -1;
+	}
+
+	if (read(fd, buf, 2) < 2) {
+		close(fd);
+		return -1;
+	}
+
+	if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
+		close(fd);
+		return -1;
+	}
+
+	buf[0] = 0x05;
+	buf[1] = 0x01; /* CONNECT */
+	buf[2] = 0x00; /* reserved */
+	buf[3] = 0x03; /* address type -- host name */
+	buf[4] = strlen(host);
+	memcpy(buf+5, host, strlen(host));
+	buf[5+strlen(host)] = htons(port) >> 8;
+	buf[5+strlen(host)+1] = htons(port) & 0xff;
+
+	if (write(fd, buf, (5+strlen(host)+2)) < (5+strlen(host)+2)) {
+		close(fd);
+		return -1;
+	}
+	if (read(fd, buf, 10) < 10) {
+		close(fd);
+		return -1;
+	}
+	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
+		close(fd);
+		return -1;
+	}
+
+	return fd;
+}
+
+int proxy_connect(char *host, int port, char *proxyhost, int proxyport, int proxytype)
+{
+	if (!host || !port || (port == -1))
+		return -1;
+	else if ((proxytype == PROXY_NONE) || 
+			!proxyhost || !proxyhost[0] ||
+			!proxyport || (proxyport == -1))
+		return proxy_connect_none(host, port);
+	else if (proxytype == PROXY_HTTP)
+		return proxy_connect_http(host, port, proxyhost, proxyport);
+	else if (proxytype == PROXY_SOCKS4)
+		return proxy_connect_socks4(host, port, proxyhost, proxyport);
+	else if (proxytype == PROXY_SOCKS5)
+		return proxy_connect_socks5(host, port, proxyhost, proxyport);
+	return -1;
+}

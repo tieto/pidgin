@@ -100,7 +100,7 @@ struct g_url parse_url(char *url)
 	return test;
 }
 
-char *grab_url(char *url)
+char *grab_url(struct aim_user *user, char *url)
 {
 	struct g_url website;
 	char *webdata = NULL;
@@ -116,10 +116,14 @@ char *grab_url(char *url)
 
         website = parse_url(url);
 
-	host = (struct in_addr *)get_address(website.address);
-	if (!host) { return g_strdup(_("g001: Error resolving host\n")); }
-	if ((sock = connect_address(host->s_addr, website.port)) < 0)
-		return g_strdup(_("g003: Error opening connection.\n"));
+	if (user) {
+		if ((sock = proxy_connect(website.address, website.port, user->proto_opt[2],
+					user->proto_opt[3], atoi(user->proto_opt[4]))) < 0)
+			return g_strdup(_("g003: Error opening connection.\n"));
+	} else {
+		if ((sock = proxy_connect(website.address, website.port, NULL, NULL, -1)) < 0)
+			return g_strdup(_("g003: Error opening connection.\n"));
+	}
 
 	g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\n\r\n", website.page);
 	g_snprintf(debug_buff, sizeof(debug_buff), "Request: %s\n", buf);

@@ -36,16 +36,6 @@
 #define PROXY_SOCKS4 2
 #define PROXY_SOCKS5 3
 
-/* masking gethostbyname function */
-extern struct hostent * proxy_gethostbyname(char *host) ;
-
-/* masking connect function */
-extern int proxy_connect(int  sockfd, struct sockaddr *serv_addr, int
-			 addrlen ) ;
-
-extern int proxy_type;
-extern char proxy_host[256];
-extern int proxy_port;
-extern char *proxy_realhost;
+extern int proxy_connect(char *host, int port, char *proxyhost, int proxyport, int proxytype);
 
 #endif

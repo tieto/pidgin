@@ -33,7 +33,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include "gaim.h"
-#include "proxy.h"
 
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG "sorry, i ran out for a while. bbl"
@@ -49,8 +48,6 @@ struct save_pos blist_pos;
 char web_command[2048];
 char aim_host[512];
 int aim_port;
-char login_host[512];
-int login_port;
 char latest_ver[25];
 char *sound_file[NUM_SOUNDS];
 
@@ -630,20 +627,6 @@ static void gaimrc_read_options(FILE *f)
                         web_browser = atoi(p->value[0]);
                 } else if (!strcmp(p->option, "web_command")) {
                         strcpy(web_command, p->value[0]);
-                } else if (!strcmp(p->option, "proxy_type")) {
-                        proxy_type = atoi(p->value[0]);
-                } else if (!strcmp(p->option, "proxy_host")) {
-                        strcpy(proxy_host, p->value[0]);
-                } else if (!strcmp(p->option, "proxy_port")) {
-                        proxy_port = atoi(p->value[0]);
-                } else if (!strcmp(p->option, "aim_host")) {
-                        strcpy(aim_host, p->value[0]);
-                } else if (!strcmp(p->option, "aim_port")) {
-                        aim_port = atoi(p->value[0]);
-                } else if (!strcmp(p->option, "login_host")) {
-                        strcpy(login_host, p->value[0]);
-                } else if (!strcmp(p->option, "login_port")) {
-                        login_port = atoi(p->value[0]);
                 } else if (!strcmp(p->option, "blist_pos")) {
                         blist_pos.x = atoi(p->value[0]);
                         blist_pos.y = atoi(p->value[1]);
@@ -672,13 +655,6 @@ static void gaimrc_write_options(FILE *f)
         fprintf(f, "\treport_idle { %d }\n", report_idle);
         fprintf(f, "\tweb_browser { %d }\n", web_browser);
         fprintf(f, "\tweb_command { %s }\n", web_command);
-        fprintf(f, "\tproxy_type { %d }\n", proxy_type);
-        fprintf(f, "\tproxy_host { %s }\n", proxy_host);
-        fprintf(f, "\tproxy_port { %d }\n", proxy_port);
-        fprintf(f, "\taim_host { %s }\n", aim_host);
-        fprintf(f, "\taim_port { %d }\n", aim_port);
-        fprintf(f, "\tlogin_host { %s }\n", login_host);
-        fprintf(f, "\tlogin_port { %d }\n", login_port);
         fprintf(f, "\tblist_pos { %d } { %d } { %d } { %d } { %d } { %d }\n",
                 blist_pos.x, blist_pos.y, blist_pos.width, blist_pos.height,
                 blist_pos.xoff, blist_pos.yoff);
@@ -783,14 +759,7 @@ void set_defaults(int saveinfo)
         	sound_options = OPT_SOUND_LOGIN | OPT_SOUND_LOGOUT | OPT_SOUND_RECV | OPT_SOUND_SEND | OPT_SOUND_SILENT_SIGNON;
         	report_idle = IDLE_SCREENSAVER;
         	web_browser = BROWSER_NETSCAPE;
-        	proxy_type = PROXY_NONE;
         
-		aim_port = TOC_PORT;
-		login_port = AUTH_PORT;
-		g_snprintf(aim_host, sizeof(aim_host), "%s", TOC_HOST);
-    		g_snprintf(login_host, sizeof(login_host), "%s", AUTH_HOST);
-        	proxy_host[0] = 0;
-        	proxy_port = 0;
         	g_snprintf(web_command, sizeof(web_command), "xterm -e lynx %%s");
         	blist_pos.width = 0;
         	blist_pos.height = 0;

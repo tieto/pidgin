@@ -234,8 +234,9 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	ft->window = NULL;
 	serv_rvous_accept(ft->gc, ft->user, ft->cookie, ft->UID);
 
-	
-	ft->fd = connect_address(inet_addr(ft->ip), ft->port);
+
+	/* XXX is ft->port in host order or network order? */
+	ft->fd = proxy_connect(ft->ip, ft->port, NULL, NULL, -1);
 
 	if (ft->fd <= -1) {
 		fclose(ft->f);
@@ -513,8 +514,8 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	serv_rvous_accept(ft->gc, ft->user, ft->cookie, ft->UID);
 
 
-
-	ft->fd = connect_address(inet_addr(ft->ip), ft->port);
+	/* XXX is ft->port in host order or network order? */
+	ft->fd = proxy_connect(ft->ip, ft->port, NULL, NULL, -1);
 
 	if (ft->fd <= -1) {
 		free_ft(ft);

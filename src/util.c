@@ -730,39 +730,6 @@ struct aim_user *find_user(const char *name, int protocol)
         return NULL;
 }
 
-void check_gaim_versions()
-{
-	char *cur_ver;
-	char *tmp;
-
-	tmp = (char *)malloc(BUF_LONG);
-
-	cur_ver = (char *)grab_url("http://www.marko.net/gaim/latest-gaim");
-
-	if (!strncasecmp(cur_ver, "g00", 3))
-	{
-		g_free(cur_ver);
-		g_free(tmp);
-		return;
-	}
-
-	g_snprintf(tmp, BUF_LONG, "%s", strstr(cur_ver, "plain")+9);
-	g_strchomp(tmp);
-
-	if (strcmp(tmp, latest_ver))
-	{
-		g_snprintf(cur_ver, BUF_LONG, "GAIM v%s is now available.\n\nDownload it at http://www.marko.net/gaim\n", tmp);
-	
-		do_error_dialog(cur_ver, "GAIM - New Version!");
-		strcpy(latest_ver, tmp);
-		save_prefs();
-	}
-
-	free(tmp);
-	free(cur_ver);
-}
-
-
 /*  
 
 This function was taken from EveryBuddy and was written by

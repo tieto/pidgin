@@ -39,6 +39,7 @@
 #include "multi.h"
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
+#include "proxy.h"
 
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/aol_icon.xpm"
@@ -46,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1061 $"
+#define REVISION "gaim:$Revision: 1097 $"
 
 struct toc_data {
 	int toc_fd;
@@ -62,7 +63,12 @@ static int win32_r;
 
 static int toc_signon(struct gaim_connection *);
 
-
+/* constants to identify proto_opts */
+#define USEROPT_AUTH      0
+#define USEROPT_AUTHPORT  1
+#define USEROPT_SOCKSHOST 2
+#define USEROPT_SOCKSPORT 3
+#define USEROPT_PROXYTYPE 4
 
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
@@ -70,7 +76,6 @@ static int toc_signon(struct gaim_connection *);
 void toc_login(struct aim_user *user)
 {
 	char *config;
-        struct in_addr *sin;
 	struct gaim_connection *gc;
 	struct toc_data *tdt;
 	char buf[80];
@@ -84,34 +89,20 @@ void toc_login(struct aim_user *user)
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
-	sin = (struct in_addr *)get_address(aim_host);
-	if (!sin) {
-		g_snprintf(buf, sizeof(buf), "Unable to lookup %s", aim_host);
-		hide_login_progress(gc, buf);
-		destroy_gaim_conn(gc);
-		return;
-	}
-	
-	g_snprintf(toc_addy, sizeof(toc_addy), "%s", inet_ntoa(*sin));
-	g_snprintf(buf, sizeof(buf), "Connecting to %s", inet_ntoa(*sin));
-	set_login_progress(gc, 2, buf);
-	while (gtk_events_pending())
-		gtk_main_iteration();
-	
-
-
-	tdt->toc_fd = connect_address(sin->s_addr, aim_port);
+	tdt->toc_fd = proxy_connect(
+		user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST,
+		user->proto_opt[USEROPT_AUTHPORT][0] ? atoi(user->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
+		user->proto_opt[USEROPT_SOCKSHOST], atoi(user->proto_opt[USEROPT_SOCKSPORT]),
+		atoi(user->proto_opt[USEROPT_PROXYTYPE]));
 
         if (tdt->toc_fd < 0) {
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed",
-			 inet_ntoa(*sin));
+			 user->proto_opt[USEROPT_AUTH]);
 		hide_login_progress(gc, buf);
 		destroy_gaim_conn(gc);
 		return;
         }
 
-        g_free(sin);
-	
 	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
 	set_login_progress(gc, 3, buf);
 	while (gtk_events_pending())
@@ -462,9 +453,7 @@ void toc_callback( gpointer          data,
 
 
 		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s", toc_addy, aim_port, url);
-/*		fprintf(stdout, "Name: %s\n%s\n", name, url);
-		printf("%s", grab_url(tmp));*/
-		g_show_info(tmp);
+		g_show_info(gc->user, tmp);
         } else if (!strcasecmp(c, "EVILED")) {
                 int lev;
 		char *name = NULL;
@@ -729,7 +718,8 @@ int toc_signon(struct gaim_connection *gc)
 	
 	g_snprintf(buf, sizeof(buf), 
 		"toc_signon %s %d %s %s %s \"%s\"",
-		login_host, login_port, normalize(gc->username), roast_password(gc->password), LANGUAGE, REVISION);
+		AUTH_HOST, AUTH_PORT, normalize(gc->username), roast_password(gc->password),
+		LANGUAGE, REVISION);
 
         sprintf(debug_buff,"Send: %s\n", buf);
 		debug_print(debug_buff);
@@ -1142,11 +1132,176 @@ static void toc_action_menu(GtkWidget *menu, struct gaim_connection *gc, char *w
 	gtk_widget_show(button);
 }
 
+static void toc_print_option(GtkEntry *entry, struct aim_user *user) {
+	int entrynum;
+
+	entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	if (entrynum == USEROPT_AUTH) {
+		g_snprintf(user->proto_opt[USEROPT_AUTH],
+				sizeof(user->proto_opt[USEROPT_AUTH]), 
+				"%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_AUTHPORT) {
+		g_snprintf(user->proto_opt[USEROPT_AUTHPORT], 
+				sizeof(user->proto_opt[USEROPT_AUTHPORT]), 
+				"%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_SOCKSHOST) {
+		g_snprintf(user->proto_opt[USEROPT_SOCKSHOST], 
+				sizeof(user->proto_opt[USEROPT_SOCKSHOST]), 
+				"%s", gtk_entry_get_text(entry));
+	} else if (entrynum == USEROPT_SOCKSPORT) {
+		g_snprintf(user->proto_opt[USEROPT_SOCKSPORT], 
+				sizeof(user->proto_opt[USEROPT_SOCKSPORT]), 
+				"%s", gtk_entry_get_text(entry));
+	} 
+}
+
+static void toc_print_optionrad(GtkRadioButton *entry, struct aim_user *user) {
+	int entrynum;
+
+	entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
+
+	g_snprintf(user->proto_opt[USEROPT_PROXYTYPE],
+			sizeof(user->proto_opt[USEROPT_PROXYTYPE]),
+			"%d", entrynum);
+}
+
+static void toc_user_opts(GtkWidget *book, struct aim_user *user) {
+	/* so here, we create the new notebook page */
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *entry;
+	GtkWidget *first, *opt;
+
+	vbox = gtk_vbox_new(FALSE, 0);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
+			gtk_label_new("TOC Options"));
+	gtk_widget_show(vbox);
+
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("TOC Host:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTH);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(toc_print_option), user);
+	if (user->proto_opt[USEROPT_AUTH][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTH]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTH]);
+	} else
+		gtk_entry_set_text(GTK_ENTRY(entry), "toc.oscar.aol.com");
+	gtk_widget_show(entry);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+
+	label = gtk_label_new("TOC Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)1);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(toc_print_option), user);
+	if (user->proto_opt[USEROPT_AUTHPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_AUTHPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_AUTHPORT]);
+	} else
+		gtk_entry_set_text(GTK_ENTRY(entry), "9898");
+
+	gtk_widget_show(entry);
+
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Host:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSHOST);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(toc_print_option), user);
+	if (user->proto_opt[USEROPT_SOCKSHOST][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SOCKSHOST]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SOCKSHOST]);
+	}
+	gtk_widget_show(entry);
+
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new("Proxy Port:");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSPORT);
+	gtk_signal_connect(GTK_OBJECT(entry), "changed",
+			   GTK_SIGNAL_FUNC(toc_print_option), user);
+	if (user->proto_opt[USEROPT_SOCKSPORT][0]) {
+		debug_printf("setting text %s\n", user->proto_opt[USEROPT_SOCKSPORT]);
+		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SOCKSPORT]);
+	}
+	gtk_widget_show(entry);
+
+	
+	first = gtk_radio_button_new_with_label(NULL, "No proxy");
+	gtk_box_pack_start(GTK_BOX(vbox), first, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(first), (void *)PROXY_NONE);
+	gtk_signal_connect(GTK_OBJECT(first), "clicked", GTK_SIGNAL_FUNC(toc_print_optionrad), user);
+	gtk_widget_show(first);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_NONE)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(first), TRUE);
+
+	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 4");
+	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS4);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(toc_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS4)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "SOCKS 5");
+	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_SOCKS5);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(toc_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_SOCKS5)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+
+	opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(first)), "HTTP");
+	gtk_box_pack_start(GTK_BOX(vbox), opt, FALSE, FALSE, 0);
+	gtk_object_set_user_data(GTK_OBJECT(opt), (void *)PROXY_HTTP);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(toc_print_optionrad), user);
+	gtk_widget_show(opt);
+	if (atoi(user->proto_opt[USEROPT_PROXYTYPE]) == PROXY_HTTP)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+}
+
 void toc_init(struct prpl *ret) {
         ret->protocol = PROTO_TOC;
         ret->name = toc_name;
 	ret->list_icon = toc_list_icon;
 	ret->action_menu = toc_action_menu;
+	ret->user_opts = toc_user_opts;
         ret->login = toc_login;
         ret->close = toc_close;
         ret->send_im = toc_send_im;

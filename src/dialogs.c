@@ -1701,8 +1701,8 @@ void g_show_info_text(char *info)
 	gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
 }
 
-void g_show_info(char *url) {
-	char *url_text = grab_url(url);
+void g_show_info(struct aim_user *user, char *url) {
+	char *url_text = grab_url(user, url);
 	if (connections)
 		g_show_info_text(away_subs(url_text,
 					((struct gaim_connection *)connections->data)->username));

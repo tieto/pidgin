@@ -685,8 +685,6 @@ void open_url(GtkWidget *w, char *url) {
 		} else {
 			gtk_timeout_add(1000, (GtkFunction)clean_pid, NULL);
 		}
-        } else if (web_browser == BROWSER_INTERNAL) {
-                g_show_info(url);
         }
 }
 

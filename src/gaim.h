@@ -57,7 +57,7 @@
 #define BROWSER_NETSCAPE              0
 #define BROWSER_KFM                   1
 #define BROWSER_MANUAL                2
-#define BROWSER_INTERNAL              3
+/*#define BROWSER_INTERNAL              3*/
 #define BROWSER_GNOME                 4
 
 #define PERMIT_ALL	1
@@ -574,8 +574,6 @@ extern char web_command[2048];
 extern char debug_buff[BUF_LONG];
 extern char aim_host[512];
 extern int aim_port;
-extern char login_host[512];
-extern int login_port;
 extern struct save_pos blist_pos;
 extern char latest_ver[25];
 
@@ -599,7 +597,7 @@ extern void update_idle_times();
 /* Functions in html.c */
 extern char *fix_url(char *);
 extern struct g_url parse_url(char *);
-extern char *grab_url(char *);
+extern char *grab_url(struct aim_user *, char *);
 extern gchar *strip_html(gchar *);
 
 /* Functions in idle.c */
@@ -830,7 +828,7 @@ extern void show_new_bp();
 extern void show_log_dialog(struct conversation *);
 extern void show_find_email();
 extern void show_find_info();
-extern void g_show_info (char *);
+extern void g_show_info (struct aim_user *, char *);
 extern void g_show_info_text (char *);
 extern void show_set_info();
 extern void show_set_dir();
