@@ -287,8 +287,10 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 
 	/* Setup the descriptive label */
 	g_snprintf(label_text, sizeof(label_text),
-		   "<span weight=\"bold\" size=\"larger\">%s</span>\n%s",
-		   primary, (secondary ? secondary : ""));
+		   "<span weight=\"bold\" size=\"larger\">%s</span>%s%s",
+		   primary,
+		   (secondary ? "\n" : ""),
+		   (secondary ? secondary : ""));
 
 	label = gtk_label_new(NULL);
 
