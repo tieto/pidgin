@@ -28,6 +28,8 @@
 
 #ifdef HAVE_NSS
 
+#undef HAVE_LONG_LONG /* Make Mozilla less angry. If angry, Mozilla SMASH! */
+
 #include <nspr.h>
 #include <private/pprio.h>
 #include <nss.h>
