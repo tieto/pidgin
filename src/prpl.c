@@ -377,6 +377,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	if (!(mn = find_mail_notify(gc))) {
 		mn = g_new0(struct mail_notify, 1);
 		mn->gc = gc;
+		mailnots = g_slist_append(mailnots, mn);
 	}
 
 	if (count < 0 && from && subject) {

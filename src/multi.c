@@ -1029,6 +1029,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 
 		meter = g_new0(struct signon_meter, 1);
 		meter->gc = gc;
+		meters = g_slist_append(meters, meter);
 
 		meter->window = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_window_set_policy(GTK_WINDOW(meter->window), 0, 0, 1);
