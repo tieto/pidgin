@@ -48,7 +48,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim"
+#define REVISION "penguin"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
