@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/stat.h>
 #include "gaim.h"
 
 #ifdef _WIN32
@@ -226,7 +227,9 @@ void smiley_theme_probe()
 				g_free(path);
 			}
 			g_dir_close(dir);
-		}
+		} else if (l == 1) {
+			mkdir(probedirs[l], S_IRUSR | S_IWUSR | S_IXUSR);
+		}	
 		g_free(probedirs[l]);
 	}
 	
