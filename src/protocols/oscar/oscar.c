@@ -1002,14 +1002,11 @@ static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
-	aim_conn_t *conn;
 
 	/* You want to send a file to someone else, you're so generous */
 
 	/* Build the file transfer handle */
 	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, destsn);
-	if ((conn = aim_conn_findbygroup(od->sess, 0x0004)))
-		xfer->local_ip = gaim_getip_from_fd(conn->fd);
 	xfer->local_port = 5190;
 
 	/* Create the oscar-specific data */
