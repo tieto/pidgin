@@ -6,7 +6,7 @@
     <note priority="high" time="1036029816">
         UI stuff
         <note priority="veryhigh" time="1035996049">
-            kicking someone in #name-extention causes a kick to display in #name as well and vice-versa
+            kicking someone in #name-extension causes a kick to display in #name as well and vice-versa
         </note>
         <note priority="veryhigh" time="1036028214">
             SEARCH FUNCTION FOR LOG FILES
@@ -17,7 +17,7 @@
         <note priority="veryhigh" time="1036876495">
             gtkimhtml
             <note priority="veryhigh" time="1036876610">
-                default possition
+                default position
                 <note priority="veryhigh" time="1036876633">
                     conversations open scrolled up
                 </note>
@@ -72,7 +72,7 @@
             new tab often (always for some users) steals focus from current tab
         </note>
         <note priority="medium" time="1035995857">
-            lots of font troubles. esp in picking good fonts to use when the theme doesn't have an installed one.
+            lots of font troubles. esp. in picking good fonts to use when the theme doesn't have an installed one.
         </note>
         <note priority="medium" time="1035996189">
             resizing text entry area below default doesn't work well.
@@ -90,7 +90,7 @@
             right click on url gives browser choice (preference option)
         </note>
         <note priority="medium" time="1036039904">
-            prpl specfic smiles in group chats.
+            prpl specific smilies in group chats.
         </note>
         <note priority="medium" time="1036039928">
             make output of /list searchable
@@ -131,10 +131,10 @@
         <note priority="medium" time="1036361367">
             do not automatically resize windows that have been manually resized.
             <note priority="medium" time="1036361397">
-                when a buddy icon is recieved
+                when a buddy icon is received
             </note>
             <note priority="medium" time="1036361407">
-                when an im image is recieved
+                when an im image is received
             </note>
             <note priority="medium" time="1036361428">
                 when a new tab is created
@@ -165,7 +165,7 @@
             blist short cuts apparently not working
         </note>
         <note priority="low" time="1036633142">
-            save blist colapsation state
+            save blist collapsation state
         </note>
         <note priority="low" time="1037467312">
             option to have both text and pictures on buttons in blist just like conversations currently allow
@@ -198,7 +198,7 @@
             add a way for a plugin to store/retrieve config values
         </note>
         <note priority="high" time="1036027042">
-            check to make sure gaimrc properly unescapes things like a " in a password as the .gaimrc file is read in. (reports indicate this may be a problem, esp for \ and / )
+            check to make sure gaimrc properly unescapes things like a " in a password as the .gaimrc file is read in. (reports indicate this may be a problem, esp. for \ and / )
         </note>
         <note priority="high" time="1036265535">
             sound player preference not saved
@@ -207,7 +207,7 @@
             preference to set logfile path. (i think there is a patch to add this)
         </note>
         <note priority="medium" time="1037924557">
-            add support for plugin key/value storage/retreival
+            add support for plugin key/value storage/retrieval
         </note>
         <note priority="low" time="1035996008">
             pressing save on new away message dialog does not immediately add away message to list of away messages.
@@ -267,7 +267,7 @@
             Cancelable proxy_connect
         </note>
         <note priority="low" time="1036038499">
-            GPG Encryption of messages (gaim-e plugin included with gaim would satify this)
+            GPG Encryption of messages (gaim-e plugin included with gaim would satisfy this)
         </note>
     </note>
     <note priority="high" time="1036038522">
@@ -346,7 +346,7 @@
                     current main should be moved mostly to core
                 </note>
                 <note priority="high" time="1036039210">
-                    GTK main should connect to cor
+                    GTK main should connect to core
                 </note>
             </note>
             <note priority="high" time="1036039222">
@@ -381,7 +381,7 @@
     <note priority="high" time="1036978099">
         gtk1-stable
         <note priority="medium" time="1036978230">
-            with option to not report idle times set, gaim does not come back from auto-away. this is i most likely an issue for cvs also.
+            with the option to not report idle times set, gaim does not come back from auto-away. this is most likely an issue for cvs also.
         </note>
     </note>
     <note priority="medium" time="1036029726">
@@ -420,7 +420,7 @@
             gzip storage of logs
         </note>
         <note priority="medium" time="1036028352">
-            throw-away away message (unsaved) for single account (vrs set all away)
+            throwaway away message (unsaved) for single account (vs. set all away)
         </note>
         <note priority="medium" time="1036039588">
             person support
@@ -435,7 +435,7 @@
             add session management &amp; fix stupid broken usage of gtk_window_set_wmclass
         </note>
         <note priority="medium" time="1037924699">
-            add support for remote aliases (both for other people and yourself. may just require looking at this guy's patch and bugging someone to merge it, or hacking on it a bit, or re-doing it, or whatever)
+            add support for remote aliases (both for other people and yourself. may just require looking at this guy's patch and bugging someone to merge it, or hacking on it a bit, or redoing it, or whatever)
         </note>
         <note priority="low" time="1036027367">
             adding and removing buddies needs cleaned up. basically, add_buddy should be calling ui_add_buddy and serv_add_buddy as needed (require an extra arg to add_buddy to tell it what needs done) and the various ways a buddy can come to be needing added should be calling some type of request_add_buddy (this would be part of both the core&lt;-&gt;ui interface and the core&lt;-&gt;prpl interface)
@@ -476,7 +476,7 @@
         <note priority="medium" time="1036040405">
             AIM
             <note priority="high" time="1036040899">
-                option to ignore chat room invitations. (this is something you could vary concievably want to be done per account, so perhaps a protocol action would be best)
+                option to ignore chat room invitations. (this is something you could vary conceivably want to be done per account, so perhaps a protocol action would be best)
             </note>
             <note priority="low" time="1036040945">
                 idle time display in get_info displays in minutes instead of computing hours and days as the blist does
@@ -515,7 +515,7 @@
                 color support
             </note>
             <note priority="high" time="1036041251">
-                set status message and of course when gaim can set them, it needs to be able to get the ones it sets. (yes this is redundent. its a reflection of my current mood)
+                set status message and of course when gaim can set them, it needs to be able to get the ones it sets. (yes this is redundant. its a reflection of my current mood)
             </note>
             <note priority="high" time="1037575155">
                 ssi (server side buddy lists and other server stored info)
@@ -552,7 +552,7 @@
             </note>
         </note>
         <note priority="medium" time="1036040870">
-            groups are read off server in a different order from winaim. this is a problem for people who use both and want thier list to be in a certain order. along the same lines, because we don't read in the same order i'd bet, we don't write to the server in a way that would cause winaim to produce the ordering gaim has.
+            groups are read off server in a different order from winaim. this is a problem for people who use both and want their list to be in a certain order. along the same lines, because we don't read in the same order i'd bet, we don't write to the server in a way that would cause winaim to produce the ordering gaim has.
         </note>
     </note>
     <note priority="medium" time="1036040446">
@@ -621,7 +621,7 @@
             /names
         </note>
         <note priority="medium" time="1036041695">
-            CTCP version generates an autoreply when person is away or idle. the error box used vy it also binds the focus (like all other error popups). i'm not sure there is a way around this second issue. (fixed?)
+            CTCP version generates an autoreply when person is away or idle. the error box used by it also binds the focus (like all other error popups). i'm not sure there is a way around this second issue. (fixed?)
         </note>
         <note priority="medium" time="1036041722">
             multi word remove messages
@@ -636,10 +636,10 @@
     <note priority="medium" time="1036040675">
         MSN
         <note priority="high" time="1036042035">
-            bug: some people recieve blank messages. clicking to ignore font faces font when the requested font isn't found.
+            bug: some people receive blank messages. clicking to ignore font faces font when the requested font isn't found.
         </note>
         <note priority="high" time="1036042159">
-            bug: doesn't save blist to file on read from server as this could be introducing new people, esp if there is no existing file, it should
+            bug: doesn't save blist to file on read from server as this could be introducing new people, esp. if there is no existing file, it should
         </note>
         <note priority="high" time="1036982924">
             group support
@@ -672,7 +672,7 @@
             font face and color send support
         </note>
         <note priority="medium" time="1036042780">
-            International freindly name support
+            International friendly name support
         </note>
         <note priority="medium" time="1036042939">
             Need some way of indicating "invite" in IM window
@@ -714,7 +714,7 @@
             Browsing
         </note>
         <note priority="medium" time="1036044216">
-            Bug: Opening/closing/re-opening conferences (to the same "room"?) and changing conf. rm. nicks results in wrong nick re-appearing (to other clients) and crash on close of conference dialog.
+            Bug: Opening/closing/reopening conferences (to the same "room"?) and changing conf. room nicks results in wrong nick reappearing (to other clients) and crash on close of conference dialog.
         </note>
         <note priority="medium" time="1036044416">
             Server Admin operations (messages, etc.)
@@ -750,7 +750,7 @@
             a populate roster from local blist. most useful if you want to migrate a blist from one account to another, also useful if something freaky happens and the server blist is lost.
         </note>
         <note priority="medium" time="1036046422">
-            conferenceing needs straightening out in general
+            conferencing needs straightening out in general
             <note priority="medium" time="1036046528">
                 some s2s issues, maybe
             </note>
@@ -771,7 +771,7 @@
             SSL support (priority 4 because its not really doable right now)
         </note>
         <note priority="low" time="1038267843">
-            offline messages should have full timestamp, ie should show date not just time
+            offline messages should have full timestamp, i.e. should show date not just time
         </note>
         <note priority="verylow" time="1036043981">
             *sigh* file transfer (do we really need/want this?)
@@ -813,7 +813,7 @@
     <note priority="low" time="1036030063">
         i18n/portability stuff
         <note priority="medium" time="1036028041">
-            sounds/Makefile needs to use host CC, not target (thats the only part that seems broken for cross-compiling --Disconnect)
+            sounds/Makefile needs to use host CC, not target (that's the only part that seems broken for cross-compiling --Disconnect)
         </note>
         <note priority="low" time="1035996506">
             i18n: icq i18n
@@ -843,7 +843,7 @@
             the privacy dialog has five different options now.  this looks rather ugly.  When we redesign the dialog, perhaps we should change the privacy setting to a combobox?
         </note>
         <note priority="verylow" time="1036026484">
-            protocol action to log into webmail for those that support such (aim, yahoo, msn)  maybe a r-click option to send to user(yahoo, msn)
+            protocol action to log into webmail for those that support such (aim, yahoo, msn)  maybe a right-click option to send to user(yahoo, msn)
         </note>
         <note priority="verylow" time="1036026538">
             show alias in list of people in chat
@@ -858,10 +858,10 @@
             sorting of conversation tabs, if the ordering of left-to-right order by opening isn't good enough for you
         </note>
         <note priority="verylow" time="1036026772">
-            option to disable close for x seconds after recieve im. this would short circuit missing messages as you close the window. make it an option that's off by default.
+            option to disable close for x seconds after receive im. this would short circuit missing messages as you close the window. make it an option that's off by default.
         </note>
         <note priority="verylow" time="1036026845">
-            options on key bindings. (differnet window managers map different things.
+            options on key bindings. (different window managers map different things).
             <note priority="verylow" time="1036026870">
                 make the control key switchable with the alt key or similar)
             </note>
@@ -870,7 +870,7 @@
             </note>
         </note>
         <note priority="verylow" time="1036028335">
-            make the option to have escape close a window be global (error messages, account editor, ect)
+            make the option to have escape close a window be global (error messages, account editor, etc.)
         </note>
     </note>
     <note priority="verylow" time="1036027143">
