@@ -53,7 +53,7 @@
  * But they get it to compile.
  */
 #define faim_mutex_t char
-#define faim_mutex_init(x, y) *x = 0
+#define faim_mutex_init(x) *x = 0
 #define faim_mutex_lock(x) *x = 1;
 #define faim_mutex_unlock(x) *x = 0;
 #define faim_mutex_destroy(x) *x = 0;

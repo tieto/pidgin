@@ -548,6 +548,18 @@ GdkFont *getfont(const char *font, int bold, int italic, int fixed, int size)
 		size += 10;
 	}
 
+	/* whoops, couldn't do any of those. maybe they have a default outgoing
+	 * font? maybe we can use that. */
+	if (fontface[0]) {
+		/* woohoo! */
+		size = 120;
+		while (size <= 720) {
+			if (load_font_with_cache(fontface, "medium", 'r', size, &my_font))
+				return my_font;
+			size += 10;
+		}
+	}
+
 	/* ok, now we're in a pickle. if we can't do any of the above, let's
 	 * try doing the most boring font we can find. */
 	size = 120;
