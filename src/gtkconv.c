@@ -3647,6 +3647,7 @@ setup_menubar(GaimConvWindow *win)
 	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(box_item), TRUE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(gtkwin->menu.menubar), box_item);
 	gtk_widget_show(box_item);
+	gtk_widget_set_size_request(box_item, -1, 16);
 
 	gtkwin->menu.menubox = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(box_item), gtkwin->menu.menubox);
