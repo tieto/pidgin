@@ -1397,6 +1397,7 @@ gaim_set_accessible_label (GtkWidget *w, GtkWidget *l)
 	g_object_unref (relation);
 }
 
+#if GTK_CHECK_VERSION(2,2,0)
 static void
 gaim_gtk_menu_position_func(GtkMenu *menu,
 							gint *x,
@@ -1546,6 +1547,8 @@ gaim_gtk_menu_position_func(GtkMenu *menu,
 	}
 }
 
+#endif
+
 void
 gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
 										   gint *x,
@@ -1566,5 +1569,7 @@ gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
 
 	*x += rect.x+rect.width;
 	*y += rect.y+rect.height+ythickness;
+#if GTK_CHECK_VERSION(2,2,0)
 	gaim_gtk_menu_position_func (menu, x, y, push_in, data);
+#endif
 }
