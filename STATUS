@@ -1,9 +1,14 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-12-21 08:56:59 -0500 (Thu, 21 Dec 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2001-01-04 19:32:19 -0500 (Thu, 04 Jan 2001) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
 relatively stable (we use it all the time), but has tendencies to be quirky at
 times.
+
+Each protocol is hacked by both Rob and Eric, though there is one person that
+kind of "owns" a protocol (mostly indicating that they were the person that
+originally wrote it). Their name will be next to the protocol; they're the
+people to complain to when something doesn't work ;).
 
 
 OVERALL
@@ -12,23 +17,12 @@ OVERALL
 The current CVS tree is more or less back to "normal". It seems to be stable,
 and allows multiple connections (which should also be stable).
 
-There have been a lot of changes in the past month; I think all of the bugs
-have been worked out but I'm sure there are still a lot remaining. Please, if
-you get bored one day, go on a big bug hunt.
+There have been a lot of changes since 0.10.x; I think all of the bugs have
+been worked out but I'm sure there are still a lot remaining. Please, if you
+get bored one day, go on a big bug hunt.
 
 
-MULTIPLE CONNECTIONS
-====================
-
-I'm impressed that this is working. It took a major restructuring of the
-internals of gaim. Everything had been based around one connection, and that
-connection used one protocol or the other. Now, there are many connections, and
-each connection may be using a different protocol. This change should be nearing
-completion now; most things are working and there are very few FIXME's related
-to multiple connections left.
-
-
-BUDDY LIST
+Buddy List
 ==========
 
 The buddy list should now be stable. The only thing that'll be missing is if
@@ -59,7 +53,7 @@ porting from 0.10.x to 0.11.0 should be simple, but read the docs to see what's
 going on.
 
 
-TOC
+TOC (Rob)
 ===
 
 TOC is working reasonably well. The options to use a proxy got moved to the
@@ -68,7 +62,7 @@ wondering. TOC can be used to sign into ICQ; though you should use the ICQ
 plugin as it offers more functionality.
 
 
-Oscar
+Oscar (Eric)
 =====
 
 Oscar is working reasonably well. Please see gaim/libfaim/README.gaim for more
@@ -76,7 +70,7 @@ details on Oscar. Oscar can be used to sign into ICQ; though you should use the
 ICQ plugin as it offers more functionality.
 
 
-Yahoo
+Yahoo (Eric)
 =====
 
 Yahoo currently supports signing on/off, changing status (only to user-defined
@@ -85,7 +79,7 @@ buddy list), and sending/receiving messages. Chat support is planned but not
 yet implemented.
 
 
-IRC
+IRC (Rob)
 ===
 
 IRC currently supports signing on/off, sending and receiving messages,
@@ -95,7 +89,7 @@ by right clicking their name.  /me support is also added.  Other commands
 and functionality are planned but not yet implemented.
 
 
-MSN
+MSN (Rob)
 ===
 
 MSN currently supports signing on/off, sending and receiving messages.  The
@@ -107,7 +101,7 @@ small delay.  It  will appear as if the client has frozen.  This will not
 always be the case.   I have a fix that I havent taken the time to write yet.
 
 
-ICQ
+ICQ (Eric)
 ===
 
 ICQ currently supports signing on/off, changing status (icq-away == aim-idle,
@@ -117,18 +111,18 @@ of whether or not you want them; it's necessary since it's a UDP protocol.
 Chat and file transfer are planned but not yet implemented.
 
 
-Jabber
+Jabber (Eric)
 ======
 
 Jabber can sign on/off, send/receive messages, and add/remove buddies. All good
 things. If you have a registered transport then you can still use that; however
 you won't see it on your buddy list yet; and you can't add or remove transports
-yet. To use it, set your username to be name@server/resource; the reason for
+yet. To use Jabber, set your username to be name@server/resource; the reason for
 this is so that your resource becomes a part of your name and you can sign in
 to jabber using the same account more than once.
 
 
-Napster
+Napster (Rob)
 =======
 
 Heh.  Ok, so I (Rob) am on crack!  Gaim can sign on/off of Napster, add/remove
