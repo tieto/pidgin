@@ -1764,20 +1764,24 @@ static void away_page()
 
 	while (awy) {
 		a = (struct away_message *)awy->data;
-		label = gtk_label_new(a->name);
 		list_item = gtk_list_item_new();
-		gtk_container_add(GTK_CONTAINER(list_item), label);
-		gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(away_list_clicked),
-				   a);
-/*		gtk_signal_connect(GTK_OBJECT(list_item), "deselect", GTK_SIGNAL_FUNC(away_list_unclicked), a);*/
-		gtk_object_set_user_data(GTK_OBJECT(list_item), a);
-
-		gtk_widget_show(label);
 		gtk_container_add(GTK_CONTAINER(prefs_away_list), list_item);
+		gtk_signal_connect(GTK_OBJECT(list_item), "select", GTK_SIGNAL_FUNC(away_list_clicked), a);
+		gtk_object_set_user_data(GTK_OBJECT(list_item), a);
 		gtk_widget_show(list_item);
+
+		hbox = gtk_hbox_new(FALSE, 5);
+		gtk_container_add(GTK_CONTAINER(list_item), hbox);
+		gtk_widget_show(hbox);
+
+		label = gtk_label_new(a->name);
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+		gtk_widget_show(label);
 
 		awy = awy->next;
 	}
+	if (away_messages != NULL)
+		gtk_list_select_item(GTK_LIST(prefs_away_list), 0);
 
 	gtk_widget_show(prefdialog);
 }
