@@ -4,6 +4,7 @@ version 0.60
 	  installer.  Gaim will function with or without aspell installation.
 	* Gaim installer no longer installs GTK+ runtime dlls. Gaim now
  	  requires gtk-win installation (http://www.sf.net/projects/gtk-win)
+	* Updated Gaim installer to use modern UI.
 
 version 0.60 alpha 5 (2/8/03)
 	* Buddy Icons no longer corrupted.
@@ -17,7 +18,7 @@ version 0.60 alpha 5 (2/8/03)
 	* Fixed MSN mail open.
 
 version 0.60 alpha 4.1: (1/22/03)
-	* Bub fix for release for the smiley redraw bug.
+	* This was a bug fix release for the smiley redraw bug.
 
 version 0.60 alpha 4: (12/29/02)
 	* Feature improvements for transparency plugin.
