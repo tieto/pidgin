@@ -466,17 +466,6 @@ uri_command(const char *command, gboolean sync)
 }
 #endif /* _WIN32 */
 
-gboolean 
-running_gnome(void)
-{
-	if (g_getenv("GNOME_DESKTOP_SESSION_ID") && g_find_program_in_path("gnome-open") != NULL)
-	{
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 static void *
 gaim_gtk_notify_uri(const char *uri)
 {
@@ -490,10 +479,10 @@ gaim_gtk_notify_uri(const char *uri)
 	place = gaim_prefs_get_int("/gaim/gtk/browsers/place");
 
 	/* if they are running gnome, use the gnome web browser */
-	if (running_gnome() == TRUE)
+	if (gaim_running_gnome() == TRUE)
 	{
 		command = g_strdup_printf("gnome-open \"%s\"", uri);
-	} 
+	}
 	else if (!strcmp(web_browser, "epiphany") ||
 		!strcmp(web_browser, "galeon"))
 	{

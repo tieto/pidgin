@@ -334,4 +334,11 @@ void gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
 												gboolean *push_in,
 												gpointer user_data);
 
+/**
+ * Check if running Gnome.
+ *
+ * @return TRUE if running Gnome, FALSE otherwise.
+ */
+gboolean gaim_running_gnome(void);
+
 #endif /* _GAIM_GTKUTILS_H_ */

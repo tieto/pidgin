@@ -2456,7 +2456,7 @@ void prefs_notebook_init() {
 #ifndef _WIN32
 	/* We use the registered default browser in windows */
 	/* if the user is running gnome 2.x, hide the browsers tab */
-	if (running_gnome() == FALSE) {
+	if (gaim_running_gnome() == FALSE) {
 		prefs_notebook_add_page(_("Browser"), NULL, browser_page(), &p, NULL, notebook_page++);
 	}
 #endif

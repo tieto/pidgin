@@ -1227,7 +1227,7 @@ gaim_gtk_menu_position_func(GtkMenu *menu,
 			*y = *y - ythickness;
 		else
 			*y = *y + ythickness - requisition.height + 1;
-	  
+ 
 		*y = CLAMP (*y, monitor.y,
 			   monitor.y + monitor.height - requisition.height);
 	}
@@ -1269,4 +1269,16 @@ gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
 #if GTK_CHECK_VERSION(2,2,0)
 	gaim_gtk_menu_position_func (menu, x, y, push_in, data);
 #endif
+}
+
+gboolean
+gaim_running_gnome(void)
+{
+	if ((g_getenv("GNOME_DESKTOP_SESSION_ID") != NULL) &&
+		(g_find_program_in_path("gnome-open") != NULL))
+	{
+		return TRUE;
+	}
+
+	return FALSE;
 }
