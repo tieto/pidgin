@@ -79,7 +79,6 @@ static void remove_icon(struct conversation *);
 static void update_checkbox(struct conversation *);
 static void remove_checkbox(struct conversation *);
 
-static void update_smilies(struct conversation *c);
 
 
 /*------------------------------------------------------------------------*/
@@ -254,7 +253,6 @@ struct conversation *new_conversation(char *name)
 	show_conv(c);
 	update_icon(c);
 	update_checkbox(c);
-	update_smilies(c);
 	plugin_event(event_new_conversation, name);
 	/*gtk_imhtml_to_bottom(c->text);*/
 	return c;
@@ -2382,7 +2380,6 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 
 	update_icon(cnv);
 	update_checkbox(cnv);
-	update_smilies(cnv);
 	gaim_setup_imhtml_smileys(cnv->text);
 }
 
@@ -2543,7 +2540,6 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 
 	update_icon(c);
 	update_checkbox(c);
-	update_smilies(c);
 	gaim_setup_imhtml_smileys(c->text);
 }
 
@@ -3616,32 +3612,6 @@ void remove_icon(struct conversation *c)
 	c->icon_timer = 0;
 	if(c->iter)
 		g_object_unref(G_OBJECT(c->iter));
-}
-
-void update_smilies(struct conversation *c)
-{
-	GSList *smilies;
-
-	if (!c)
-		return;
-
-	if (!c->gc)
-		return;
-
-	if (c->gc->prpl->smiley_list) {
-		gtk_imhtml_remove_smileys(GTK_IMHTML(c->text));
-		smilies = c->gc->prpl->smiley_list();
-
-		while (smilies) {
-			struct _prpl_smiley *smile =
-				(struct _prpl_smiley *)smilies->data;
-
-			//gtk_imhtml_associate_smiley(GTK_IMHTML(c->text), smile->key, smile->xpm);
-			smilies = g_slist_next(smilies);
-		}
-	} else {
-		gtk_imhtml_reset_smileys(GTK_IMHTML(c->text));
-	}
 }
 
 void update_icon(struct conversation *c)

@@ -61,34 +61,6 @@ G_MODULE_IMPORT GSList *connections;
 #include "pixmaps/status-idle.xpm"
 #include "pixmaps/status-game.xpm"
 
-/* Yahoo Smilies go here */
-#include "pixmaps/protocols/yahoo/yahoo_alien.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_angel.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_angry.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_bigsmile.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_blush.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_bye.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_clown.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_cow.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_cowboy.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_cry.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_devil.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_flower.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_ghost.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_glasses.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_laughloud.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_love.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_mean.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_neutral.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_ooooh.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_question.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_sad.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_sleep.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_smiley.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_sunglas.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_tongue.xpm"
-#include "pixmaps/protocols/yahoo/yahoo_wink.xpm"
-
 #define YAHOO_DEBUG
 
 #define USEROPT_MAIL 0
@@ -1358,76 +1330,6 @@ static void yahoo_remove_buddy(struct gaim_connection *gc, char *who, char *grou
 	yahoo_packet_free(pkt);
 }
 
-
-GSList *yahoo_smiley_list() 
-{ 
-	GSList *smilies = NULL;
-
-	smilies = add_smiley(smilies, "=:)", yahoo_alien, 1);
-	smilies = add_smiley(smilies, "=:-)", yahoo_alien, 0);
-	smilies = add_smiley(smilies, "o:)", yahoo_angel, 0);
-	smilies = add_smiley(smilies, "o:-)", yahoo_angel, 0);
-	smilies = add_smiley(smilies, "0:)", yahoo_angel, 0);
-	smilies = add_smiley(smilies, "0:-)", yahoo_angel, 0);
-	smilies = add_smiley(smilies, "X-(", yahoo_angry, 1);
-	smilies = add_smiley(smilies, "X(", yahoo_angry, 0);
-	smilies = add_smiley(smilies, "x-(", yahoo_angry, 0);
-	smilies = add_smiley(smilies, "x(", yahoo_angry, 0);
-	smilies = add_smiley(smilies, ":D", yahoo_bigsmile, 1);
-	smilies = add_smiley(smilies, ":-D", yahoo_bigsmile, 0);
-	smilies = add_smiley(smilies, ":\">", yahoo_blush, 1);
-	smilies = add_smiley(smilies, "=;", yahoo_bye, 1);
-	smilies = add_smiley(smilies, ":o)", yahoo_clown, 1);
-	smilies = add_smiley(smilies, ":0)", yahoo_clown, 0);
-	smilies = add_smiley(smilies, ":O)", yahoo_clown, 0);
-	smilies = add_smiley(smilies, "<@:)", yahoo_clown, 0);
-	smilies = add_smiley(smilies, "3:-0", yahoo_cow, 1);
-	smilies = add_smiley(smilies, "3:-o", yahoo_cow, 0);
-	smilies = add_smiley(smilies, "3:-O", yahoo_cow, 0);
-	smilies = add_smiley(smilies, "3:O", yahoo_cow, 0);
-	smilies = add_smiley(smilies, "<):)", yahoo_cowboy, 1);
-	smilies = add_smiley(smilies, ":((", yahoo_cry, 1);
-	smilies = add_smiley(smilies, ":-((", yahoo_cry, 0);
-	smilies = add_smiley(smilies, ">:)", yahoo_devil, 1);
-	smilies = add_smiley(smilies, "@};-", yahoo_flower, 1);
-	smilies = add_smiley(smilies, "8-X", yahoo_ghost, 1);
-	smilies = add_smiley(smilies, ":B", yahoo_glasses, 1);
-	smilies = add_smiley(smilies, ":-B", yahoo_glasses, 0);
-	smilies = add_smiley(smilies, ":))", yahoo_laughloud, 1);
-	smilies = add_smiley(smilies, ":-))", yahoo_laughloud, 0);
-	smilies = add_smiley(smilies, ":x", yahoo_love, 1);
-	smilies = add_smiley(smilies, ":-x", yahoo_love, 0);
-	smilies = add_smiley(smilies, ":X", yahoo_love, 0);
-	smilies = add_smiley(smilies, ":-X", yahoo_love, 0);
-	smilies = add_smiley(smilies, ":>", yahoo_mean, 1);
-	smilies = add_smiley(smilies, ":->", yahoo_mean, 0);
-	smilies = add_smiley(smilies, ":|", yahoo_neutral, 1);
-	smilies = add_smiley(smilies, ":-|", yahoo_neutral, 0);
-	smilies = add_smiley(smilies, ":O", yahoo_ooooh, 1);
-	smilies = add_smiley(smilies, ":-O", yahoo_ooooh, 0);
-	smilies = add_smiley(smilies, ":-\\", yahoo_question, 1);
-	smilies = add_smiley(smilies, ":-/", yahoo_question, 0);
-	smilies = add_smiley(smilies, ":(", yahoo_sad, 1);
-	smilies = add_smiley(smilies, ":-(", yahoo_sad, 0);
-	smilies = add_smiley(smilies, "I-)", yahoo_sleep, 1);
-	smilies = add_smiley(smilies, "|-)", yahoo_sleep, 0);
-	smilies = add_smiley(smilies, "I-|", yahoo_sleep, 0);
-	smilies = add_smiley(smilies, ":)", yahoo_smiley, 1);
-	smilies = add_smiley(smilies, ":-)", yahoo_smiley, 0);
-	smilies = add_smiley(smilies, "(:", yahoo_smiley, 0);
-	smilies = add_smiley(smilies, "(-:", yahoo_smiley, 0);
-	smilies = add_smiley(smilies, "B-)", yahoo_sunglas, 1);
-	smilies = add_smiley(smilies, ":-p", yahoo_tongue, 1);
-	smilies = add_smiley(smilies, ":p", yahoo_tongue, 0);
-	smilies = add_smiley(smilies, ":P", yahoo_tongue, 0);
-	smilies = add_smiley(smilies, ":-P", yahoo_tongue, 0);
-	smilies = add_smiley(smilies, ";)", yahoo_wink, 1);
-	smilies = add_smiley(smilies, ";-)", yahoo_wink, 0);
-
-
-	return smilies;
-}
-
 static struct prpl *my_protocol = NULL;
 
 G_MODULE_EXPORT void yahoo_init(struct prpl *ret) {
@@ -1449,7 +1351,6 @@ G_MODULE_EXPORT void yahoo_init(struct prpl *ret) {
 	ret->add_buddy = yahoo_add_buddy;
 	ret->remove_buddy = yahoo_remove_buddy;
 	ret->send_typing = yahoo_send_typing;
-	ret->smiley_list = yahoo_smiley_list;
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Pager Host:");

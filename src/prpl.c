@@ -752,19 +752,6 @@ void register_dialog()
 	gtk_widget_show(regdlg);
 }
 
-GSList *add_smiley(GSList *list, char *key, char **xpm, int show) 
-{
-	struct _prpl_smiley *smiley;
-
-	smiley = (struct _prpl_smiley *)g_new0(struct _prpl_smiley, 1);
-	smiley->key = g_strdup(key);
-	smiley->xpm = xpm;
-	smiley->show = show;
-	list = g_slist_append(list, smiley);
-
-	return list;
-}
-
 static gboolean delayed_unload(void *handle) {
 	g_module_close(handle);
 	return FALSE;

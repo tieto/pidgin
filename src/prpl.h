@@ -84,12 +84,6 @@ typedef void (*proto_init)(struct prpl *);
 
 struct file_transfer;
 
-struct _prpl_smiley {
-	char *key;
-	char **xpm;
-	int show;
-};
-
 struct prpl {
 	int protocol;
 	int options;
@@ -109,8 +103,6 @@ struct prpl {
 	GList *(* buddy_menu)(struct gaim_connection *, char *);
 	GList *(* edit_buddy_menu)(struct gaim_connection *, char *);
 	GList *(* chat_info)(struct gaim_connection *);
-
-	GSList *(* smiley_list)();
 
 	/* all the server-related functions */
 
@@ -220,8 +212,6 @@ extern void connection_has_mail(struct gaim_connection *, int, const char *, con
 
 extern void set_icon_data(struct gaim_connection *, char *, void *, int);
 extern void *get_icon_data(struct gaim_connection *, char *, int *);
-
-extern GSList *add_smiley(GSList *, char *, char **, int) ;
 
 /* file transfer stuff */
 extern struct file_transfer *transfer_in_add(struct gaim_connection *gc,

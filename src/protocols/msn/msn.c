@@ -26,55 +26,6 @@
 #include "pixmaps/protocols/msn/msn_away.xpm"
 #include "pixmaps/protocols/msn/msn_occ.xpm"
 
-/* MSN Smiley Faces */
-#include "pixmaps/protocols/msn/msn_angry.xpm"
-#include "pixmaps/protocols/msn/msn_bat.xpm"
-#include "pixmaps/protocols/msn/msn_beer.xpm"
-#include "pixmaps/protocols/msn/msn_boy.xpm"
-#include "pixmaps/protocols/msn/msn_brheart.xpm"
-#include "pixmaps/protocols/msn/msn_cake.xpm"
-#include "pixmaps/protocols/msn/msn_cat.xpm"
-#include "pixmaps/protocols/msn/msn_coffee.xpm"
-#include "pixmaps/protocols/msn/msn_cry.xpm"
-#include "pixmaps/protocols/msn/msn_deadflower.xpm"
-#include "pixmaps/protocols/msn/msn_drink.xpm"
-#include "pixmaps/protocols/msn/msn_email.xpm"
-#include "pixmaps/protocols/msn/msn_flower.xpm"
-#include "pixmaps/protocols/msn/msn_gift.xpm"
-#include "pixmaps/protocols/msn/msn_girl.xpm"
-#include "pixmaps/protocols/msn/msn_handcuffs.xpm"
-#include "pixmaps/protocols/msn/msn_heart.xpm"
-#include "pixmaps/protocols/msn/msn_hot.xpm"
-#include "pixmaps/protocols/msn/msn_icon.xpm"
-#include "pixmaps/protocols/msn/msn_idea.xpm"
-#include "pixmaps/protocols/msn/msn_kiss.xpm"
-#include "pixmaps/protocols/msn/msn_laugh.xpm"
-#include "pixmaps/protocols/msn/msn_neutral.xpm"
-#include "pixmaps/protocols/msn/msn_note.xpm"
-#include "pixmaps/protocols/msn/msn_ooooh.xpm"
-#include "pixmaps/protocols/msn/msn_phone.xpm"
-#include "pixmaps/protocols/msn/msn_photo.xpm"
-#include "pixmaps/protocols/msn/msn_question.xpm"
-#include "pixmaps/protocols/msn/msn_run.xpm"
-#include "pixmaps/protocols/msn/msn_runback.xpm"
-#include "pixmaps/protocols/msn/msn_sad.xpm"
-#include "pixmaps/protocols/msn/msn_sleep.xpm"
-#include "pixmaps/protocols/msn/msn_smiley.xpm"
-#include "pixmaps/protocols/msn/msn_star.xpm"
-#include "pixmaps/protocols/msn/msn_tongue.xpm"
-#include "pixmaps/protocols/msn/msn_thumbdown.xpm"
-#include "pixmaps/protocols/msn/msn_thumbup.xpm"
-#include "pixmaps/protocols/msn/msn_weird.xpm"
-#include "pixmaps/protocols/msn/msn_embarrassed.xpm"
-#include "pixmaps/protocols/msn/msn_angel.xpm"
-#include "pixmaps/protocols/msn/msn_film.xpm"
-#include "pixmaps/protocols/msn/msn_dog.xpm"
-#include "pixmaps/protocols/msn/msn_clock.xpm"
-#include "pixmaps/protocols/msn/msn_sun.xpm"
-#include "pixmaps/protocols/msn/msn_rainbow.xpm"
-#include "pixmaps/protocols/msn/msn_devil.xpm"
-#include "pixmaps/protocols/msn/msn_wink.xpm"
-
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
@@ -2385,108 +2336,6 @@ static void msn_buddy_free(struct buddy *b)
 		g_free(b->proto_data);
 }
 
-GSList *msn_smiley_list() 
-{ 
-	GSList *smilies = NULL;
-
-	smilies = add_smiley(smilies, "(a)", msn_angel, 1);
-	smilies = add_smiley(smilies, "(A)", msn_angel, 0);
-	smilies = add_smiley(smilies, ":-@", msn_angry, 1);
-	smilies = add_smiley(smilies, ":@", msn_angry, 0);
-	smilies = add_smiley(smilies, ":-[", msn_bat, 1);
-	smilies = add_smiley(smilies, ":[", msn_bat, 0);
-	smilies = add_smiley(smilies, "(B)", msn_beer, 1);
-	smilies = add_smiley(smilies, "(b)", msn_beer, 0);
-	smilies = add_smiley(smilies, "(Z)", msn_boy, 1);
-	smilies = add_smiley(smilies, "(z)", msn_boy, 0);
-	smilies = add_smiley(smilies, "(U)", msn_brheart, 1);
-	smilies = add_smiley(smilies, "(u)", msn_brheart, 0);
-	smilies = add_smiley(smilies, "(@)", msn_cat, 1);
-	smilies = add_smiley(smilies, "(^)", msn_cake, 1);
-	smilies = add_smiley(smilies, "(o)", msn_clock, 1);
-	smilies = add_smiley(smilies, "(O)", msn_clock, 0);
-	smilies = add_smiley(smilies, "(C)", msn_coffee, 1);
-	smilies = add_smiley(smilies, "(c)", msn_coffee, 0);
-	smilies = add_smiley(smilies, ":'(", msn_cry, 1);
-	smilies = add_smiley(smilies, ":`(", msn_cry, 0);
-	smilies = add_smiley(smilies, "(W)", msn_deadflower, 1);
-	smilies = add_smiley(smilies, "(w)", msn_deadflower, 0);
-	smilies = add_smiley(smilies, "(6)", msn_devil, 1);
-	smilies = add_smiley(smilies, "(&)", msn_dog, 1);
-	smilies = add_smiley(smilies, "(D)", msn_drink, 1);
-	smilies = add_smiley(smilies, "(d)", msn_drink, 0);
-	smilies = add_smiley(smilies, "(E)", msn_email, 1);
-	smilies = add_smiley(smilies, "(e)", msn_email, 0);
-	smilies = add_smiley(smilies, "(~)", msn_film, 1);
-	smilies = add_smiley(smilies, "(F)", msn_flower, 1);
-	smilies = add_smiley(smilies, "(f)", msn_flower, 0);
-	smilies = add_smiley(smilies, "(G)", msn_gift, 1);
-	smilies = add_smiley(smilies, "(g)", msn_gift, 0);
-	smilies = add_smiley(smilies, "(X)", msn_girl, 1);
-	smilies = add_smiley(smilies, "(x)", msn_girl, 0);
-	smilies = add_smiley(smilies, "(%)", msn_handcuffs, 1);
-	smilies = add_smiley(smilies, "(L)", msn_heart, 1);
-	smilies = add_smiley(smilies, "(l)", msn_heart, 0);
-	smilies = add_smiley(smilies, "(H)", msn_hot, 1);
-	smilies = add_smiley(smilies, "(h)", msn_hot, 0);
-	smilies = add_smiley(smilies, "(M)", msn_icon, 1);
-	smilies = add_smiley(smilies, "(m)", msn_icon, 0);
-	smilies = add_smiley(smilies, "(I)", msn_idea, 1);
-	smilies = add_smiley(smilies, "(i)", msn_idea, 0);
-	smilies = add_smiley(smilies, "(K)", msn_kiss, 1);
-	smilies = add_smiley(smilies, "(k)", msn_kiss, 0);
-	smilies = add_smiley(smilies, ":-D", msn_laugh, 1);
-	smilies = add_smiley(smilies, ":D", msn_laugh, 0);
-	smilies = add_smiley(smilies, ":-d", msn_laugh, 0);
-	smilies = add_smiley(smilies, ":d", msn_laugh, 0);
-	smilies = add_smiley(smilies, ":->", msn_laugh, 0);
-	smilies = add_smiley(smilies, ":>", msn_laugh, 0);
-	smilies = add_smiley(smilies, ":-|", msn_neutral, 1);
-	smilies = add_smiley(smilies, ":|", msn_neutral, 0);
-	smilies = add_smiley(smilies, "(8)", msn_note, 1);
-	smilies = add_smiley(smilies, ":-O", msn_ooooh, 1);
-	smilies = add_smiley(smilies, ":O", msn_ooooh, 0);
-	smilies = add_smiley(smilies, ":-o", msn_ooooh, 0);
-	smilies = add_smiley(smilies, ":o", msn_ooooh, 0);
-	smilies = add_smiley(smilies, "(T)", msn_phone, 1);
-	smilies = add_smiley(smilies, "(t)", msn_phone, 0);
-	smilies = add_smiley(smilies, "(P)", msn_photo, 1);
-	smilies = add_smiley(smilies, "(p)", msn_photo, 0);
-	smilies = add_smiley(smilies, "(?)", msn_question, 1);
-	smilies = add_smiley(smilies, "(r)", msn_rainbow, 1);
-	smilies = add_smiley(smilies, "(R)", msn_rainbow, 0);
-	smilies = add_smiley(smilies, "({)", msn_run, 1);
-	smilies = add_smiley(smilies, "(})", msn_runback, 1);
-	smilies = add_smiley(smilies, ":-(", msn_sad, 1);
-	smilies = add_smiley(smilies, ":(", msn_sad, 0);
-	smilies = add_smiley(smilies, ":-<", msn_sad, 0);
-	smilies = add_smiley(smilies, "(S)", msn_sleep, 1);
-	smilies = add_smiley(smilies, "(s)", msn_sleep, 0);
-	smilies = add_smiley(smilies, ":-)", msn_smiley, 1);
-	smilies = add_smiley(smilies, ":)", msn_smiley, 0);
-	smilies = add_smiley(smilies, "(*)", msn_star, 1);
-	smilies = add_smiley(smilies, "(#)", msn_sun, 1);
-	smilies = add_smiley(smilies, "(N)", msn_thumbdown, 1);
-	smilies = add_smiley(smilies, "(n)", msn_thumbdown, 0);
-	smilies = add_smiley(smilies, "(Y)", msn_thumbup, 1);
-	smilies = add_smiley(smilies, "(y)", msn_thumbup, 0);
-	smilies = add_smiley(smilies, ":-P", msn_tongue, 1);
-	smilies = add_smiley(smilies, ":P", msn_tongue, 0);
-	smilies = add_smiley(smilies, ":-p", msn_tongue, 0);
-	smilies = add_smiley(smilies, ":p", msn_tongue, 0);
-	smilies = add_smiley(smilies, ":-S", msn_weird, 1);
-	smilies = add_smiley(smilies, ":S", msn_weird, 0);
-	smilies = add_smiley(smilies, ":-s", msn_weird, 0);
-	smilies = add_smiley(smilies, ":s", msn_weird, 0);
-	smilies = add_smiley(smilies, ";-)", msn_wink, 1);
-	smilies = add_smiley(smilies, ";)", msn_wink, 0);
-	smilies = add_smiley(smilies, ":S-", msn_wink, 0);
-	smilies = add_smiley(smilies, ":-$", msn_embarrassed, 1);
-	smilies = add_smiley(smilies, ":$", msn_embarrassed, 0);
-	
-	return smilies;
-}
-
 static struct prpl *my_protocol = NULL;
 
 G_MODULE_EXPORT void msn_init(struct prpl *ret)
@@ -2520,7 +2369,6 @@ G_MODULE_EXPORT void msn_init(struct prpl *ret)
 	ret->add_deny = msn_add_deny;
 	ret->rem_deny = msn_rem_deny;
 	ret->buddy_free = msn_buddy_free;
-	ret->smiley_list = msn_smiley_list;
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup("Server:");

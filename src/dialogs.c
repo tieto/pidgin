@@ -3594,28 +3594,6 @@ void insert_smiley_text(GtkWidget *widget, struct conversation *c)
 	close_smiley_dialog(NULL, c);
 }
 
-static void toolbar_add_smiley_xpm(struct conversation *c, GtkWidget *bar, char **xpm, GtkWidget *win,
-			       char *face)
-{
-	GtkWidget *tpm;
-	GdkBitmap *mask;
-	GdkPixmap *dpm;
-	GtkWidget *button;
-
-	dpm = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, xpm);
-	tpm = gtk_pixmap_new(dpm, mask);
-	gtk_widget_show(tpm);
-	gdk_pixmap_unref(dpm);
-	gdk_bitmap_unref(mask);
-	button =
-	    gtk_toolbar_append_element(GTK_TOOLBAR(bar), GTK_TOOLBAR_CHILD_BUTTON, NULL, NULL, NULL,
-				       NULL, tpm, GTK_SIGNAL_FUNC(set_smiley), (char *)face);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(insert_smiley_text), c);
-
-	/* these look really weird with borders */
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-}
-
 static void toolbar_add_smiley(struct conversation *c, GtkWidget *bar, char *filename, char *face)
 {
 	GtkWidget *tpm;
@@ -3660,111 +3638,38 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	/* setup buttons */
 
 	/* pack buttons */
-	if (c->gc->prpl->smiley_list == NULL) {
-		char *filename;
-		smiley_box = gtk_toolbar_new();
-		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
-		
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "angel.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, "O:-)");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "bigsmile.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":-D");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "burp.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":-!");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "crossedlips.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":-X");
-		g_free(filename);
-		
-		smiley_box = gtk_toolbar_new();
-		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
-
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "cry.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":'(");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "embarrassed.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":-[");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "kiss.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":-*");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "moneymouth.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":-$");
-		g_free(filename);
-
-		smiley_box = gtk_toolbar_new();
-		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
-
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "sad.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":-(");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "scream.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, "=-O");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "smile.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":-)");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "cool.png", NULL);	
-		toolbar_add_smiley(c, smiley_box, filename, "8-)");
-		g_free(filename);
-
-		smiley_box = gtk_toolbar_new();
-		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
-
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "think.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ":-/");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "tongue.png", NULL);	
-		toolbar_add_smiley(c, smiley_box, filename, ":-P");
-	       	g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "wink.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ";-)");
-		g_free(filename);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", "default", "yell.png", NULL);
-		toolbar_add_smiley(c, smiley_box, filename, ">:o");
-		g_free(filename);
-	} else {
-
-		smilies = c->gc->prpl->smiley_list();
-
-		while (smilies) {
-			struct _prpl_smiley *smile =
-				(struct _prpl_smiley *)smilies->data;
-
-			if (smile->show) {
-				total_count++;
-			}
-
-			smilies = g_slist_next(smilies);
-		}
-
-		smilies = c->gc->prpl->smiley_list();
-
-		smiley_box = gtk_toolbar_new();
-		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
-
-		while (smilies) {
-			struct _prpl_smiley *smile =
-				(struct _prpl_smiley *)smilies->data;
-
-			if (smile->show) {
-
-				if ((!(smiley_count % ((int)(sqrt(total_count))))) && (smiley_count > 0)) {
-					smiley_box = gtk_toolbar_new();
-					gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
-				}
-			
-				toolbar_add_smiley_xpm(c, smiley_box, smile->xpm, win, smile->key);
-				smiley_count++;
-			}
-
-			smilies = g_slist_next(smilies);
-
-		}
-	}
 	
+	smiley_box = gtk_toolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
+#define GDS G_DIR_SEPARATOR_S	
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "angel.png", "O:-)");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "bigsmile.png", ":-D");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "burp.png", ":-!");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "crossedlips.png", ":-X");
+
+	smiley_box = gtk_toolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
+       
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "cry.png", ":'(");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "embarrassed.png", ":-[");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "kiss.png", ":-*");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "moneymouth.png", ":-$");
+
+	smiley_box = gtk_toolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
+	
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "sad.png", ":-(");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "scream.png", "=-O");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "smile.png", ":-)");
+      	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "cool.png", "8-)");
+
+	smiley_box = gtk_toolbar_new();
+	gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
+
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "think.png", ":-/");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "tongue.png", ":-P");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "wink.png", ";-)");
+	toolbar_add_smiley(c, smiley_box, DATADIR GDS "pixmaps" GDS "gaim" GDS "smileys" GDS "default" GDS "yell.png", ">:o");
 
 	gtk_container_add(GTK_CONTAINER(dialog), vbox);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
