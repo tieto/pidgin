@@ -377,7 +377,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	if(type && (!strcmp(type, "result") || !strcmp(type, "error")) && id
 			&& *id && (jcd = g_hash_table_lookup(js->callbacks, id))) {
 		jcd->callback(js, packet, jcd->data);
-		g_free(jcd);
+		g_hash_table_remove(js->callbacks, id);
 	}
 }
 
