@@ -628,7 +628,12 @@ dnl Check for Tk
 if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 	AC_MSG_CHECKING([for tkConfig.sh])
 	TKCONFIG=no
-	for dir in $with_tkconfig /usr/lib /usr/local/lib; do
+	TKCONFIGDIRS="/usr/lib \
+	              /usr/lib/tk8.4 \
+		      /usr/lib/tk8.3 \
+		      /usr/lib/tk8.2 \
+		      /usr/local/lib"
+	for dir in $with_tkconfig $TKCONFIGDIRS; do
 		if test -f $dir/tkConfig.sh; then
 			TKCONFIG=$dir/tkConfig.sh
 			AC_MSG_RESULT([yes ($TKCONFIG)])
