@@ -1286,6 +1286,7 @@ create_buddy_menu (GaimBlistNode *node,
 
 			for(bnode = node->child; bnode; bnode = bnode->next) {
 				GaimBuddy *buddy = (GaimBuddy*)bnode;
+				GdkPixbuf *buf;
 				GtkWidget *submenu;
 				GtkWidget *image;
 
@@ -1297,9 +1298,10 @@ create_buddy_menu (GaimBlistNode *node,
 					continue;
 
 				menuitem = gtk_image_menu_item_new_with_label(buddy->name);
-				image = gtk_image_new_from_pixbuf(
-					gaim_gtk_blist_get_status_icon(bnode,
-								       GAIM_STATUS_ICON_SMALL));
+				buf = gaim_gtk_blist_get_status_icon(bnode,
+										GAIM_STATUS_ICON_SMALL);
+				image = gtk_image_new_from_pixbuf(buf);
+				g_object_unref(G_OBJECT(buf));
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem),
 							      image);
 				gtk_widget_show(image);
