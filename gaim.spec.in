@@ -99,6 +99,19 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Sun Feb 17 2002 Rob Flynn <rob@marko.net> (0.52 release)
+- Better buddy icon transparency (thanks SeanEgan)
+- Updated Polish Translation (thanks Przemyslaw Sulek)
+- Fixed a little bug with connecting via proxy (thanks for reminding me of this, Manish Singh)
+- Updated Simplified Chinese Translation (Thanks Rocky S. Lee)
+- Updated German Translation (Thanks Karsten Weiss)
+- Yahoo! Messenger works again
+- MSN Works again
+- Can register a new user with a Jabber Server (JSeymour)
+- Can now set Jabber vCards (JSeymour)
+- Jabber vCards are now shown in their entirety (JSeymour)
+- Various jabber bug fixes/enhancements (JSeymour)
+
 * Thu Jan 24 2002 Rob Flynn <rob@marko.net> (0.51 release)
 - Arrow buttons in log viewer and some other dialogs work (thanks Ben Miller)
 - Option to only send auto-response while idle (thanks Sean Egan)
