@@ -2337,15 +2337,15 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	/* make create button */
 	create = gtk_button_new_with_label ("Create new message");
-	gtk_box_pack_start(GTK_BOX(bbox), create, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(bbox), create, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(create), "clicked", GTK_SIGNAL_FUNC(create_mess), ca);
 
 	/* Checkbox for showing away msg */
 	ca->checkbx = gtk_check_button_new_with_label("Make away now");
 
 	/* pack boxes where they belong */
-	gtk_box_pack_start(GTK_BOX(tbox), titlebox, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(tbox), bbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(tbox), titlebox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(tbox), bbox, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(tbox), ca->checkbx, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(ca->window), tbox);
 
