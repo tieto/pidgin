@@ -1753,7 +1753,7 @@ void update_buttons_by_protocol(struct conversation *c)
 	
 	if (c->gc->prpl->set_info == NULL && c->info)
 		gtk_widget_set_sensitive(c->info, FALSE);
-	else
+	else if (c->info)
 		gtk_widget_set_sensitive(c->info, TRUE);
 
 	if (c->gc->prpl->send_im == NULL && c->send)
@@ -1763,12 +1763,12 @@ void update_buttons_by_protocol(struct conversation *c)
 
 	if (c->gc->prpl->warn == NULL && c->warn)
 		gtk_widget_set_sensitive(c->warn, FALSE);
-	else
+	else if (c->warn)
 		gtk_widget_set_sensitive(c->warn, TRUE);
 
 	if (c->gc->prpl->add_permit == NULL && c->block)
 		gtk_widget_set_sensitive(c->block, FALSE);
-	else
+	else if (c->block)
 		gtk_widget_set_sensitive(c->block, TRUE);
 
 	if (c->add)

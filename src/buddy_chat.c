@@ -433,6 +433,67 @@ static gint insertname(gconstpointer one, gconstpointer two)
 	}
 }
 
+static void chat_press_im(GtkObject *obj, struct conversation *b)
+{
+	struct conversation *c;
+
+	c = find_conversation(gtk_object_get_user_data(obj));
+
+	if (c != NULL)
+		gdk_window_show(c->window->window);
+	else {
+		c = new_conversation(gtk_object_get_user_data(obj));
+		c->gc = b->gc;
+		gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu), g_slist_index(connections, b->gc));
+		update_buttons_by_protocol(c);
+	}
+}
+
+static void chat_press_ign(GtkWidget *obj, struct conversation *b)
+{
+	gtk_list_select_child(GTK_LIST(b->list), gtk_object_get_user_data(GTK_OBJECT(obj)));
+	ignore_callback(obj, b);
+}
+
+static void chat_press_info(GtkObject *obj, struct conversation *b)
+{
+	(*b->gc->prpl->get_info)(b->gc, gtk_object_get_user_data(obj));
+}
+
+static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conversation *b)
+{
+	if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
+		GtkWidget *menu;
+		GtkWidget *button;
+
+		menu = gtk_menu_new();
+
+		button = gtk_menu_item_new_with_label(_("IM"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(chat_press_im), b);
+		gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(obj));
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+
+		button = gtk_menu_item_new_with_label(_("Ignore"));
+		gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(chat_press_ign), b);
+		gtk_object_set_user_data(GTK_OBJECT(button), obj);
+		gtk_menu_append(GTK_MENU(menu), button);
+		gtk_widget_show(button);
+
+		if (b->gc->prpl->get_info) {
+			button = gtk_menu_item_new_with_label(_("Info"));
+			gtk_signal_connect(GTK_OBJECT(button), "activate",
+					   GTK_SIGNAL_FUNC(chat_press_info), b);
+			gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(obj));
+			gtk_menu_append(GTK_MENU(menu), button);
+			gtk_widget_show(button);
+		}
+
+		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
+		return TRUE;
+	}
+	return TRUE;
+}
 
 void add_chat_buddy(struct conversation *b, char *buddy)
 {
@@ -460,6 +521,8 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 		list_item = gtk_list_item_new_with_label(name);
 
 	gtk_object_set_user_data(GTK_OBJECT(list_item), name);
+	gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
+			   GTK_SIGNAL_FUNC(right_click_chat), b);
 	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
 	gtk_widget_show(list_item);
 
