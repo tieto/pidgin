@@ -952,7 +952,7 @@ cancel_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	account_win_destroy_cb(NULL, NULL, dialog);
 }
 
-static void
+static GaimAccount*
 ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
 	GaimProxyInfo *proxy_info = NULL;
@@ -962,6 +962,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	char *tmp;
 	size_t index;
 	GtkTreeIter iter;
+	GaimAccount *ret;
 
 	if (dialog->account == NULL) {
 		const char *screenname;
@@ -1161,17 +1162,21 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	gtk_widget_destroy(dialog->window);
 
+	ret = dialog->account;
+
 	account_win_destroy_cb(NULL, NULL, dialog);
 
 	gaim_accounts_sync();
+
+	return ret;
 }
 
 static void
 register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	ok_account_prefs_cb(NULL, dialog);
+	GaimAccount *account = ok_account_prefs_cb(NULL, dialog);
 
-	gaim_account_register(dialog->account);
+	gaim_account_register(account);
 }
 
 void
