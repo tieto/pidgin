@@ -747,7 +747,7 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 	g_snprintf(buf2, sizeof(buf2), "%s has just been warned by %s.\nYour new warning level is %d%%",
 		   gc->username, ((name == NULL)? "an anonymous person" : name), lev);
 
-	do_error_dialog(_("Warned"), buf2);
+	do_error_dialog(buf2, _("Warned"));
 }
 
 
