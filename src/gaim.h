@@ -635,6 +635,7 @@ extern void strncpy_withhtml(gchar *, const gchar *, size_t);
 extern void away_on_login(char *);
 extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
 extern unsigned char *utf8_to_str(unsigned char *);
+extern char *str_to_utf8(unsigned char *);
 
 /* Functions in server.c */
 /* input to serv */

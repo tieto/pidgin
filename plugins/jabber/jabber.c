@@ -1236,8 +1236,10 @@ static void jabber_send_im(struct gaim_connection *gc, char *who, char *message,
 	xmlnode_put_attrib(x, "type", "chat");
 
 	if (message && strlen(message)) {
+		char *utf8 = str_to_utf8(message);
 		y = xmlnode_insert_tag(x, "body");
-		xmlnode_insert_cdata(y, message, -1);
+		xmlnode_insert_cdata(y, utf8, -1);
+		g_free(utf8);
 	}
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
@@ -1397,8 +1399,10 @@ static void jabber_chat_invite(struct gaim_connection *gc, int id, char *message
 	g_free(subject);
 
 	if (message && strlen(message)) {
+		char *utf8 = str_to_utf8(message);
 		y = xmlnode_insert_tag(x, "body");
-		xmlnode_insert_cdata(y, message, -1);
+		xmlnode_insert_cdata(y, utf8, -1);
+		g_free(utf8);
 	}
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
@@ -1479,8 +1483,10 @@ static void jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 	xmlnode_put_attrib(x, "type", "groupchat");
 
 	if (message && strlen(message)) {
+		char *utf8 = str_to_utf8(message);
 		y = xmlnode_insert_tag(x, "body");
-		xmlnode_insert_cdata(y, message, -1);
+		xmlnode_insert_cdata(y, utf8, -1);
+		g_free(utf8);
 	}
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
@@ -1524,11 +1530,13 @@ static void jabber_chat_set_topic(struct gaim_connection *gc, int id, char *topi
 	xmlnode_put_attrib(x, "type", "groupchat");
 
 	if (topic && strlen(topic)) {
+		char *utf8 = str_to_utf8(topic);
 		y = xmlnode_insert_tag(x, "subject");
-		xmlnode_insert_cdata(y, topic, -1);
+		xmlnode_insert_cdata(y, utf8, -1);
 		y = xmlnode_insert_tag(x, "body");
-		g_snprintf(buf, sizeof(buf), "/me has changed the subject to: %s", topic);
+		g_snprintf(buf, sizeof(buf), "/me has changed the subject to: %s", utf8);
 		xmlnode_insert_cdata(y, buf, -1);
+		g_free(utf8);
 	}
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
@@ -1571,8 +1579,10 @@ static void jabber_chat_whisper(struct gaim_connection *gc, int id, char *who, c
 	xmlnode_put_attrib(x, "type", "normal");
 
 	if (message && strlen(message)) {
+		char *utf8 = str_to_utf8(message);
 		y = xmlnode_insert_tag(x, "body");
-		xmlnode_insert_cdata(y, message, -1);
+		xmlnode_insert_cdata(y, utf8, -1);
+		g_free(utf8);
 	}
 
 	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);

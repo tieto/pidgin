@@ -415,9 +415,11 @@ static void msn_switchboard_callback(gpointer data, gint source, GdkInputConditi
 			add_chat_buddy(ms->chat, user);
 		ms->total++;
 		if (ms->txqueue) {
+			char *utf8 = str_to_utf8(ms->txqueue);
 			g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
-					strlen(MIME_HEADER) + strlen(ms->txqueue),
-					MIME_HEADER, ms->txqueue);
+					strlen(MIME_HEADER) + strlen(utf8),
+					MIME_HEADER, utf8);
+			g_free(utf8);
 			g_free(ms->txqueue);
 			ms->txqueue = NULL;
 			if (msn_write(ms->fd, buf, strlen(buf)) < 0)
@@ -1125,9 +1127,11 @@ static void msn_send_im(struct gaim_connection *gc, char *who, char *message, in
 	char buf[MSN_BUF_LEN];
 
 	if (ms) {
+		char *utf8 = str_to_utf8(message);
 		g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
-				strlen(MIME_HEADER) + strlen(message),
-				MIME_HEADER, message);
+				strlen(MIME_HEADER) + strlen(utf8),
+				MIME_HEADER, utf8);
+		g_free(utf8);
 		if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 			msn_kill_switch(ms);
 		debug_printf("\n");

@@ -1560,10 +1560,50 @@ unsigned char *utf8_to_str(unsigned char *in)
 				n += 5;
 		}
 		n++;
-    }
-    result[i] = '\0';
+	}
+	result[i] = '\0';
 
-    return result;
+	return result;
+}
+
+char *str_to_utf8(unsigned char *in)
+{
+	int n = 0,i = 0;
+	int inlen;
+	char *result = NULL;
+
+	if (!in)
+		return NULL;
+
+	inlen = strlen(in);
+
+	result = g_malloc(inlen * 2 + 1);
+
+	while (n < inlen) {
+		long c = (long)in[n];
+		if (c == 27) {
+			n += 2;
+			if (in[n] == 'x')
+				n++;
+			if (in[n] == '3')
+				n++;
+			n += 2;
+			continue;
+		}
+		if ((c == 0x0D) || (c == 0x0A)) {
+			n++; continue;
+		}
+		if (c < 128)
+			result[i++] = (char)c;
+		else {
+			result[i++] = (char)((c>>6)|192);
+			result[i++] = (char)((c&63)|128);
+		}
+		n++;
+	}
+	result[i] = '\0';
+
+	return result;
 }
 
 time_t get_time(int year, int month, int day, int hour, int min, int sec)
