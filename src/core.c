@@ -90,6 +90,42 @@ static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 	}
 }
 
+static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
+{
+	guint id;
+	struct gaim_plugin *p;
+
+	switch (subtype) {
+		/*
+	case CUI_PLUGIN_LIST:
+		break;
+		*/
+	case CUI_PLUGIN_LOAD:
+		p = load_plugin(data);
+		/* XXX need to broadcast to UIs that plugin has been loaded */
+		break;
+	case CUI_PLUGIN_UNLOAD:
+		memcpy(&id, data, sizeof(id));
+		p = g_list_nth_data(plugins, id);
+		if (p) {
+			unload_plugin(p);
+			/* XXX need to broadcast to UIs that plugin has been unloaded */
+		}
+		break;
+	case CUI_PLUGIN_RELOAD:
+		memcpy(&id, data, sizeof(id));
+		p = g_list_nth_data(plugins, id);
+		if (p) {
+			p = reload_plugin(p);
+			/* XXX need to broadcast to UIs that plugin has been reloaded */
+		}
+		break;
+	default:
+		debug_printf("unhandled plugin subtype %d\n", subtype);
+		break;
+	}
+}
+
 static void user_handler(struct UI *ui, guchar subtype, guchar *data)
 {
 	guint id;
@@ -117,6 +153,53 @@ static void user_handler(struct UI *ui, guchar subtype, guchar *data)
 		break;
 	default:
 		debug_printf("unhandled user subtype %d\n", subtype);
+		break;
+	}
+}
+
+static void message_handler(struct UI *ui, guchar subtype, guchar *data)
+{
+	switch (subtype) {
+	case CUI_MESSAGE_LIST:
+		break;
+	case CUI_MESSAGE_SEND:
+		if (!data)
+			return;
+		{
+			guint id;
+			struct gaim_connection *gc;
+			guint len;
+			char *who, *msg;
+			gint flags;
+			int pos = 0;
+
+			memcpy(&id, data + pos, sizeof(id));
+			pos += sizeof(id);
+			gc = g_slist_nth_data(connections, id);
+			if (!gc)
+				return;
+
+			memcpy(&len, data + pos, sizeof(len));
+			pos += sizeof(len);
+			who = g_strndup(data + pos, len + 1);
+			pos += len;
+
+			memcpy(&len, data + pos, sizeof(len));
+			pos += sizeof(len);
+			msg = g_strndup(data + pos, len + 1);
+			pos += len;
+
+			memcpy(&flags, data + pos, sizeof(flags));
+			serv_send_im(gc, who, msg, flags);
+
+			g_free(who);
+			g_free(msg);
+		}
+		break;
+	case CUI_MESSAGE_RECV:
+		break;
+	default:
+		debug_printf("unhandled message subtype %d\n", subtype);
 		break;
 	}
 }

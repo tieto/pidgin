@@ -187,7 +187,6 @@ extern void gaim_plugin_unload(GModule *);
 extern void remove_all_plugins();
 #endif
 extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
-extern void plugin_handler(struct UI *, guchar, guchar *);
 
 /* Functions in server.c */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);
