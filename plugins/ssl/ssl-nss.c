@@ -195,7 +195,8 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 							(void *)CERT_GetDefaultCertDB());
 	SSL_BadCertHook(nss_data->in, (SSLBadCertHandler)ssl_bad_cert, NULL);
 
-	SSL_SetURL(nss_data->in, gsc->host);
+	if(gsc->host)
+		SSL_SetURL(nss_data->in, gsc->host);
 
 	SSL_ResetHandshake(nss_data->in, PR_FALSE);
 

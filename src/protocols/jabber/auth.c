@@ -41,11 +41,15 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 	gboolean digest_md5 = FALSE;
 
-	if(gaim_ssl_is_supported() &&
-			(starttls = xmlnode_get_child(packet, "starttls"))) {
-		jabber_send_raw(js,
-				"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>");
-		return;
+	if((starttls = xmlnode_get_child(packet, "starttls"))) {
+		if(gaim_ssl_is_supported()) {
+			jabber_send_raw(js,
+					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>");
+			return;
+		} else if(xmlnode_get_child(starttls, "required")) {
+			gaim_connection_error(js->gc, _("Server requires SSL for login"));
+			return;
+		}
 	}
 
 	mechs = xmlnode_get_child(packet, "mechanisms");
