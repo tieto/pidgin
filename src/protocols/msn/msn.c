@@ -2549,7 +2549,6 @@ static GList *msn_actions()
 	GList *m = NULL;
 
 	m = g_list_append(m, _("Set Friendly Name"));
-	m = g_list_append(m, _("Reset All Friendly Names"));
 
 	return m;
 }
