@@ -2059,7 +2059,7 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 			/*end my stuff*/
 
 
-			if (hb->back != NULL) {
+			if (hb->back != NULL && selected_state != GTK_STATE_SELECTED) {
 				int wid = gdk_string_width(hb->font, hb->text),
 				    hei = gdk_text_height(hb->font, "C", 1);
 				gdk_gc_set_foreground(gc, hb->back);
