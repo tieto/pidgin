@@ -78,6 +78,7 @@
 /* #define DEBUG 1 */
 #define GAIM_PLUGINS 1
 #define USE_PERL 1
+#define USE_GTKSPELL 1
 /* #undef NAS_SOUND */
 /* #undef ESD_SOUND */
 /* #undef ARTSC_SOUND */
