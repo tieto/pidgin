@@ -898,6 +898,10 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 	save_prefs();
 
         buf = g_malloc(strlen(current_user->user_info) * 4);
+	if (!buf) {
+		buf = g_malloc(1);
+		buf[0] = 0;
+	}
         g_snprintf(buf, strlen(current_user->user_info) * 2, "%s", current_user->user_info);
         escape_text(buf);
         serv_set_info(buf);
