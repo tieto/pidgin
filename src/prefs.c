@@ -771,6 +771,7 @@ void build_prefs()
 	gaim_button(_("Show logon/logoffs in conversation windows"), &display_options, OPT_DISP_SHOW_LOGON, appbox );
 	gaim_button(_("Use devil icons"), &display_options, OPT_DISP_DEVIL_PIXMAPS, appbox );
 	gaim_button(_("Show graphical smileys (experimental)"), &display_options, OPT_DISP_SHOW_SMILEY, appbox );
+	gaim_button(_("Show Buddy Ticker after restart"), &display_options, OPT_DISP_SHOW_BUDDYTICKER, appbox );
 	
 	
 	gaim_button(_("Bold Text"), &font_options, OPT_FONT_BOLD, fontbox);

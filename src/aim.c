@@ -507,6 +507,8 @@ void show_login()
 
         
         gtk_widget_show(mainwindow);
+
+	SetTickerPrefs();
 	
         if((general_options & OPT_GEN_AUTO_LOGIN) &&
            (general_options & OPT_GEN_REMEMBER_PASS)) {

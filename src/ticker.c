@@ -48,6 +48,18 @@ void BuddyTickerSignOff( void );
 GList * BuddyTickerFindUser( char *name );
 int BuddyTickerMessageRemove( gpointer data );
 
+// this pref is startup only, so make a shadow here of settings at startup
+// code uses this variable, not display_prefs
+
+extern int display_options;
+int ticker_prefs;
+
+void
+SetTickerPrefs( void ) 
+{
+	ticker_prefs = display_options;
+}
+
 void
 BuddyTickerDestroyWindow( GtkWidget *window )
 {
@@ -95,11 +107,13 @@ BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm )
 
 	if ( userclose == TRUE )
 		return;
+
+	BuddyTickerCreateWindow();
+
 	q = (GList *) BuddyTickerFindUser( name );
 	if ( q != (GList *) NULL )
 		return;
 
-	BuddyTickerCreateWindow();
 	p = (TickerData *) malloc( sizeof( TickerData ) );
 	p->hbox = (GtkWidget *) NULL;
 	p->label = (GtkWidget *) NULL;
@@ -144,7 +158,10 @@ BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm )
 	if ( userclose == TRUE )
 		return;
 	p = (GList *) BuddyTickerFindUser( name );
-	data = (TickerData *) p->data;
+	if ( p )
+		data = (TickerData *) p->data;
+	else
+		return;
 	if ( data->pix == (GtkWidget *) NULL ) {
 		data->pix = gtk_pixmap_new( pm, bm );
 		gtk_box_pack_start_defaults( GTK_BOX( data->hbox ), data->pix );
@@ -204,7 +221,8 @@ BuddyTickerSignoff( void )
 
 	while ( p ) {
 		q = (TickerData *) p->data;
-		BuddyTickerRemoveUser( q->buddy ); 
+		if ( q )
+			BuddyTickerRemoveUser( q->buddy ); 
 		p = tickerbuds;
 	}
 	userclose = FALSE;
@@ -215,12 +233,9 @@ void
 BuddyTickerClearList( void )
 {
 	GList *p = tickerbuds;
-	TickerData *q;
 
-	while ( p ) {
-		q = (TickerData *) p->data;
+	while ( p ) 
 		p = g_list_remove( p, p->data );
-	}
 	tickerbuds = (GList *) NULL;
 }
 
