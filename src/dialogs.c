@@ -3316,8 +3316,6 @@ alias_dialog_bud(struct buddy *b)
 		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(alias_dialog)->vbox), 12);
 		gtk_container_set_border_width(
 				GTK_CONTAINER(GTK_DIALOG(alias_dialog)->vbox), 6);
-		gtk_dialog_set_response_sensitive(GTK_DIALOG(alias_dialog),
-										  GTK_RESPONSE_OK, FALSE);
 
 		/* The main hbox container. */
 		hbox = gtk_hbox_new(FALSE, 12);
@@ -3367,9 +3365,6 @@ alias_dialog_bud(struct buddy *b)
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->name_entry);
 		gtk_entry_set_text(GTK_ENTRY(info->name_entry), info->buddy->name);
 
-		g_signal_connect(G_OBJECT(info->name_entry), "changed",
-						 G_CALLBACK(dialog_set_ok_sensitive), alias_dialog);
-
 		/* The "Alias:" label. */
 		label = gtk_label_new(NULL);
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Alias:"));
@@ -3386,9 +3381,6 @@ alias_dialog_bud(struct buddy *b)
 		if (info->buddy->alias != NULL)
 			gtk_entry_set_text(GTK_ENTRY(info->alias_entry),
 							   info->buddy->alias);
-
-		g_signal_connect(G_OBJECT(info->alias_entry), "changed",
-						 G_CALLBACK(dialog_set_ok_sensitive), alias_dialog);
 
 		g_signal_connect(G_OBJECT(alias_dialog), "response",
 						 G_CALLBACK(do_alias_buddy), info);
