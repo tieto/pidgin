@@ -64,7 +64,7 @@ int yahoo_send_login(struct yahoo_session *session, const char *name, const char
 
 int yahoo_finish_logon(struct yahoo_session *session, enum yahoo_status status)
 {
-	char *buf = NULL;
+	char *buf = NULL, *tmp = NULL;
 	int ret;
 	struct yahoo_conn *conn;
 
@@ -74,11 +74,21 @@ int yahoo_finish_logon(struct yahoo_session *session, enum yahoo_status status)
 	if (!(conn = yahoo_getconn_type(session, YAHOO_CONN_TYPE_MAIN)))
 		return 0;
 
-	if (!(buf = g_strconcat(session->login_cookie, "\001", session->name, NULL)))
+	if (session->identities) {
+		if (!(tmp = g_strjoinv(",", session->identities)))
+			return 0;
+	} else
+		tmp = "";
+
+	if (!(buf = g_strconcat(session->login_cookie, "\001", session->name, tmp, NULL))) {
+		g_free(tmp);
 		return 0;
+	}
 
 	ret = yahoo_write_cmd(session, conn, YAHOO_SERVICE_LOGON, session->name, buf, status);
 	g_free(buf);
+	if (session->identities)
+		g_free(tmp);
 
 	return ret;
 }
