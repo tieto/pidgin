@@ -2313,7 +2313,7 @@ show_rename_group(GtkWidget *unused, GaimGroup *g)
 {
 	gaim_request_input(NULL, _("Rename Group"), _("New group name"),
 					   _("Please enter a new name for the selected group."),
-					   g->name, FALSE, FALSE,
+					   g->name, FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(rename_group_cb),
 					   _("Cancel"), NULL, g);
 }
@@ -4298,7 +4298,7 @@ gaim_gtk_blist_request_add_group(void)
 {
 	gaim_request_input(NULL, _("Add Group"), NULL,
 					   _("Please enter the name of the group to be added."),
-					   NULL, FALSE, FALSE,
+					   NULL, FALSE, FALSE, NULL,
 					   _("Add"), G_CALLBACK(add_group_cb),
 					   _("Cancel"), NULL, NULL);
 }

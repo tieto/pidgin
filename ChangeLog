@@ -9,6 +9,7 @@ version 0.77cvs
 	  the outdated -f option that no longer had any effect (Daniel Atallah)
 	* Novell GroupWise protocol support added (Novell)
 	* WYSIWYG improvements (Tim Ringenbach)
+	* WYSIWYG editing for user info (Jon Oberheide)
 	* Rich-text copy and paste
 	
 	Bug Fixes:

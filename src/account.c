@@ -362,10 +362,13 @@ set_user_info_cb(GaimAccount *account, const char *user_info)
 void
 gaim_account_request_change_user_info(GaimAccount *account)
 {
+	GaimConnection *gc;
 	char primary[256];
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(gaim_account_is_connected(account));
+
+	gc = gaim_account_get_connection(account);
 
 	g_snprintf(primary, sizeof(primary),
 			   _("Change user information for %s"),
@@ -374,7 +377,8 @@ gaim_account_request_change_user_info(GaimAccount *account)
 	gaim_request_input(gaim_account_get_connection(account),
 					   NULL, primary, NULL,
 					   gaim_account_get_user_info(account),
-					   TRUE, FALSE,
+					   TRUE, FALSE, ((gc != NULL) &&
+					   (gc->flags & GAIM_CONNECTION_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL, account);
 }

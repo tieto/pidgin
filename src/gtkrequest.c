@@ -30,6 +30,8 @@
 #include "gtkutils.h"
 #include "stock.h"
 #include "ui.h"
+#include "gtkimhtml.h"
+#include "gtkimhtmltoolbar.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -56,6 +58,7 @@ typedef struct
 			GtkWidget *entry;
 
 			gboolean multiline;
+			gchar *hint;
 
 		} input;
 
@@ -93,8 +96,12 @@ input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 		gtk_text_buffer_get_start_iter(buffer, &start_iter);
 		gtk_text_buffer_get_end_iter(buffer, &end_iter);
 
-		multiline_value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
+		if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html")))
+			multiline_value = gtk_imhtml_get_markup(GTK_IMHTML(data->u.input.entry));
+		else
+			multiline_value = gtk_text_buffer_get_text(buffer, &start_iter, &end_iter,
 										 FALSE);
+
 		value = multiline_value;
 	}
 	else
@@ -241,7 +248,7 @@ text_to_stock(const char *text)
 static void *
 gaim_gtk_request_input(const char *title, const char *primary,
 					   const char *secondary, const char *default_value,
-					   gboolean multiline, gboolean masked,
+					   gboolean multiline, gboolean masked, gchar *hint,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
 					   void *user_data)
@@ -317,8 +324,9 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 	/* Entry field. */
 	data->u.input.multiline = multiline;
+	data->u.input.hint = (hint == NULL ? NULL : g_strdup(hint));
 
-	if (multiline) {
+	if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html"))) {
 		GtkWidget *sw;
 
 		sw = gtk_scrolled_window_new(NULL, NULL);
@@ -329,36 +337,76 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 		gtk_widget_set_size_request(sw, 320, 130);
 
-		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+		/* Toolbar */
+		GtkWidget *toolbar;
+		toolbar = gtk_imhtmltoolbar_new();
+		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
-		entry = gtk_text_view_new();
-		gtk_text_view_set_editable(GTK_TEXT_VIEW(entry), TRUE);
+		/* GtkIMHtml */
+		entry = gtk_imhtml_new(NULL, NULL);
+		gtk_imhtml_set_editable(GTK_IMHTML(entry), TRUE);
+
+		gtk_imhtml_smiley_shortcuts(GTK_IMHTML(entry), gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
+		gtk_imhtml_html_shortcuts(GTK_IMHTML(entry), gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
+		gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(toolbar), entry);
+
+		if (default_value != NULL)
+			gtk_imhtml_append_text(GTK_IMHTML(entry), default_value, GTK_IMHTML_NO_SCROLL);
+
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(entry), GTK_WRAP_WORD_CHAR);
+
+		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 			gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(entry));
 
 		gtk_container_add(GTK_CONTAINER(sw), entry);
-
-		if (default_value != NULL) {
-			GtkTextBuffer *buffer;
-
-			buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(entry));
-			gtk_text_buffer_set_text(buffer, default_value, -1);
-		}
 	}
 	else {
-		entry = gtk_entry_new();
+		if (multiline) {
+			GtkWidget *sw;
 
-		gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+			sw = gtk_scrolled_window_new(NULL, NULL);
+			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+										   GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+			gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+												GTK_SHADOW_IN);
 
-		gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 0);
+			gtk_widget_set_size_request(sw, 320, 130);
 
-		if (default_value != NULL)
-			gtk_entry_set_text(GTK_ENTRY(entry), default_value);
+			/* GtkTextView */
+			entry = gtk_text_view_new();
+			gtk_text_view_set_editable(GTK_TEXT_VIEW(entry), TRUE);
 
-		if (masked)
-			gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+			if (default_value != NULL) {
+				GtkTextBuffer *buffer;
+
+				buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(entry));
+				gtk_text_buffer_set_text(buffer, default_value, -1);
+			}
+
+			gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(entry), GTK_WRAP_WORD_CHAR);
+
+			gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
+
+			if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+				gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(entry));
+
+			gtk_container_add(GTK_CONTAINER(sw), entry);
+		}
+		else {
+			entry = gtk_entry_new();
+
+			gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+
+			gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 0);
+
+			if (default_value != NULL)
+				gtk_entry_set_text(GTK_ENTRY(entry), default_value);
+
+			if (masked)
+				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+		}
 	}
 
 	gaim_set_accessible_label (entry, label);

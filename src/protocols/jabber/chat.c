@@ -689,7 +689,8 @@ GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc)
 	gaim_request_input(gc, _("Enter a Conference Server"), _("Enter a Conference Server"),
 			_("Select a conference server to query"),
 			js->chat_servers ? js->chat_servers->data : "conference.jabber.org",
-			FALSE, FALSE, _("Find Rooms"), G_CALLBACK(roomlist_ok_cb), _("Cancel"), NULL, js);
+			FALSE, FALSE, NULL,
+			_("Find Rooms"), G_CALLBACK(roomlist_ok_cb), _("Cancel"), NULL, js);
 
 	return js->roomlist;
 }

@@ -2558,7 +2558,7 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 
 static void gaim_auth_request_msgprompt(struct name_data *data) {
 	gaim_request_input(data->gc, NULL, _("Authorization Request Message:"),
-					   NULL, _("Please authorize me!"), TRUE, FALSE,
+					   NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(gaim_auth_request),
 					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
@@ -2639,7 +2639,7 @@ static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
 
 static void gaim_auth_dontgrant_msgprompt(struct name_data *data) {
 	gaim_request_input(data->gc, NULL, _("Authorization Denied Message:"),
-					   NULL, _("No reason given."), TRUE, FALSE,
+					   NULL, _("No reason given."), TRUE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(gaim_auth_dontgrant),
 					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
@@ -6444,7 +6444,7 @@ static void oscar_buddycb_edit_comment(GaimConnection *gc, const char *name) {
 	data->nick = NULL;
 
 	gaim_request_input(gc, NULL, _("Buddy Comment:"), NULL,
-					   comment_utf8, TRUE, FALSE,
+					   comment_utf8, TRUE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(oscar_ssi_editcomment),
 					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
@@ -6540,7 +6540,7 @@ static void oscar_format_screenname(GaimConnection *gc, const char *nick) {
 static void oscar_show_format_screenname(GaimConnection *gc)
 {
 	gaim_request_input(gc, NULL, _("New screen name formatting:"), NULL,
-					   gaim_connection_get_display_name(gc), FALSE, FALSE,
+					   gaim_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(oscar_format_screenname),
 					   _("Cancel"), NULL,
 					   gc);
@@ -6589,7 +6589,7 @@ static void oscar_change_email(GaimConnection *gc, const char *email)
 static void oscar_show_change_email(GaimConnection *gc)
 {
 	gaim_request_input(gc, NULL, _("Change Address To:"), NULL, NULL,
-					   FALSE, FALSE,
+					   FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(oscar_change_email),
 					   _("Cancel"), NULL,
 					   gc);
@@ -6654,7 +6654,7 @@ static void oscar_show_find_email(GaimConnection *gc)
 					   _("Search for a buddy by e-mail address"),
 					   _("Type the e-mail address of the buddy you are "
 						 "searching for."),
-					   NULL, FALSE, FALSE,
+					   NULL, FALSE, FALSE, NULL,
 					   _("Search"), G_CALLBACK(search_by_email_cb),
 					   _("Cancel"), NULL, gc);
 }
@@ -6671,7 +6671,7 @@ static void oscar_show_setavailmsg(GaimConnection *gc)
 {
 	gaim_request_input(gc, NULL, _("Available Message:"), NULL,
 					   _("I'm doing work and hoping for a distraction--IM me!"), 
-					   TRUE, FALSE,
+					   TRUE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(oscar_setavailmsg),
 					   _("Cancel"), NULL,
 					   gc);

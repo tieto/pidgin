@@ -190,7 +190,7 @@ msn_show_set_friendly_name(GaimConnection *gc)
 	gaim_request_input(gc, NULL, _("Set your friendly name."),
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
-					   gaim_connection_get_display_name(gc), FALSE, FALSE,
+					   gaim_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_act_id),
 					   _("Cancel"), NULL, gc);
 }
@@ -201,7 +201,7 @@ msn_show_set_home_phone(GaimConnection *gc)
 	MsnSession *session = gc->proto_data;
 
 	gaim_request_input(gc, NULL, _("Set your home phone number."), NULL,
-					   msn_user_get_home_phone(session->user), FALSE, FALSE,
+					   msn_user_get_home_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_home_phone_cb),
 					   _("Cancel"), NULL, gc);
 }
@@ -212,7 +212,7 @@ msn_show_set_work_phone(GaimConnection *gc)
 	MsnSession *session = gc->proto_data;
 
 	gaim_request_input(gc, NULL, _("Set your work phone number."), NULL,
-					   msn_user_get_work_phone(session->user), FALSE, FALSE,
+					   msn_user_get_work_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_work_phone_cb),
 					   _("Cancel"), NULL, gc);
 }
@@ -223,7 +223,7 @@ msn_show_set_mobile_phone(GaimConnection *gc)
 	MsnSession *session = gc->proto_data;
 
 	gaim_request_input(gc, NULL, _("Set your mobile phone number."), NULL,
-					   msn_user_get_mobile_phone(session->user), FALSE, FALSE,
+					   msn_user_get_mobile_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_mobile_phone_cb),
 					   _("Cancel"), NULL, gc);
 }
@@ -255,7 +255,7 @@ show_send_to_mobile_cb(GaimConnection *gc, const char *passport)
 	data->passport = passport;
 
 	gaim_request_input(gc, NULL, _("Send a mobile message."), NULL,
-					   NULL, TRUE, FALSE,
+					   NULL, TRUE, FALSE, NULL,
 					   _("Page"), G_CALLBACK(send_to_mobile_cb),
 					   _("Close"), G_CALLBACK(close_mobile_page_cb),
 					   data);
