@@ -7,6 +7,7 @@
 #undef USE_APPLET
 #undef DEBUG
 #undef GAIM_PLUGINS
+#undef USE_PERL
 #undef NAS_SOUND
 #undef ESD_SOUND
 #undef _REENTRANT
