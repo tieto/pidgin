@@ -186,6 +186,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
+	imhtml->show_smileys = TRUE;
+	imhtml->show_comments = TRUE;
+
 	imhtml->smiley_data = g_hash_table_new (g_str_hash, g_str_equal);
 	imhtml->default_smilies = gtk_smiley_tree_new();
 }
@@ -897,7 +900,8 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					break;
 				case 49:	/* comment */
 					NEW_BIT (NEW_TEXT_BIT);
-					wpos = g_snprintf (ws, len, "%s", tag);
+					if (imhtml->show_comments)
+						wpos = g_snprintf (ws, len, "%s", tag);
 					NEW_BIT (NEW_COMMENT_BIT);
 					break;
 				default:
@@ -919,7 +923,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			}
 			c++;
 			pos++;
-		} else if (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen)) {
+		} else if (imhtml->show_smileys && (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen))) {
 			FontDetail *fd;
 			gchar *sml = NULL;
 			if (fonts) {
@@ -1011,10 +1015,16 @@ void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
 
 void       gtk_imhtml_remove_smileys   (GtkIMHtml        *imhtml){}
 void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
-	gboolean          show){}
+					gboolean          show)
+{
+	imhtml->show_smileys = show;
+}
 
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
-	gboolean          show){}
+					gboolean          show)
+{
+	imhtml->show_comments = show;
+}
 
 void
 gtk_imhtml_clear (GtkIMHtml *imhtml)
