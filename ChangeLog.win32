@@ -6,6 +6,7 @@ version 0.60 alpha 3: (11/8/02)
 	* Gtkspell/aspell working
 	* IdleTracker added for Windows idle reporting.
 	* Nativewin gtk theme (using native windows fonts)
+	* New gaim and gaim-installer icons (Thanks Tux Racer)
 
 version 0.60 alpha 2 (10/9/02):
 	* Perl functionality added
