@@ -1,0 +1,6 @@
+Makefile
+Makefile.in
+POTFILES
+cat-id-tbl.c
+de.gmo
+stamp-cat-id

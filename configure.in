@@ -8,6 +8,8 @@ AM_PROG_LIBTOOL
 AC_PROG_CC
 AC_PROG_INSTALL
 
+ALL_LINGUAS="de"
+AM_GNU_GETTEXT
 
 AC_CYGWIN
 
@@ -95,10 +97,12 @@ AC_SUBST(LIBFAIM_DO)
 
 AC_OUTPUT([Makefile
 	   src/Makefile
+	   intl/Makefile
            sounds/Makefile
 	   plugins/Makefile
            pixmaps/Makefile
            libfaim/Makefile
+	   po/Makefile.in
            doc/Makefile
            m4/Makefile
 	   gaim.spec

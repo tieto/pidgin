@@ -24,5 +24,5 @@ endif
 pixmapdir = $(datadir)/gnome/apps/Internet
 pixmap_DATA = gaim.desktop
 
-SUBDIRS = m4 libfaim sounds plugins pixmaps doc src
+SUBDIRS = m4 libfaim sounds plugins pixmaps doc po intl src
 ACLOCAL_AMFLAGS = -I m4

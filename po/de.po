@@ -1,2 +1,18 @@
+# German Translations for GAIM
+# Copyright (C) 2000 Free Software Foundation, Inc.
+# Rob Flynn <rob@linuxpimps.com>, 2000.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gaim 0.9.19\n"
+"POT-Creation-Date: 2000-04-11 12:22+1000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Rob Flynn <rob@linuxpimps.com>\n"
+"Language-Team: AOL Germany <help@aol.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 msgid "About GAIM v%s"
 msgstr "Über GAIM v%s"
