@@ -167,7 +167,7 @@ void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext,
 	GtkWidget *hbox;
 	GtkWidget *label;
 	char labeltext[1024 * 2];
-	char filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+	char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
 	GtkWidget *img = gtk_image_new_from_file(filename);
 	struct doaskstruct *doask = g_new0(struct doaskstruct, 1);
 
