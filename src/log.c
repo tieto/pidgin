@@ -2,6 +2,15 @@
  * Function to remove a log file entry
  * ---------------------------------------------------
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+#include <string.h>
+
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
 #include "gaim.h"
 #include "core.h"
 #include "multi.h"
@@ -331,70 +340,70 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 	if (why & OPT_LOG_MY_SIGNON) {
 		switch (what) {
 		case log_signon:
-			g_snprintf(text, sizeof(text), "+++ %s (%s) signed on @ %s",
+			g_snprintf(text, sizeof(text), _("+++ %s (%s) signed on @ %s"),
 				   gc->username, gc->prpl->name, full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
-			g_snprintf(text, sizeof(text), "+++ %s (%s) signed off @ %s",
+			g_snprintf(text, sizeof(text), _("+++ %s (%s) signed off @ %s"),
 				   gc->username, gc->prpl->name, full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
-			g_snprintf(text, sizeof(text), "+++ %s (%s) changed away state @ %s",
+			g_snprintf(text, sizeof(text), _("+++ %s (%s) changed away state @ %s"),
 				   gc->username, gc->prpl->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
-			g_snprintf(text, sizeof(text), "+++ %s (%s) came back @ %s",
+			g_snprintf(text, sizeof(text), _("+++ %s (%s) came back @ %s"),
 				   gc->username, gc->prpl->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
-			g_snprintf(text, sizeof(text), "+++ %s (%s) became idle @ %s",
+			g_snprintf(text, sizeof(text), _("+++ %s (%s) became idle @ %s"),
 				   gc->username, gc->prpl->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
-			g_snprintf(text, sizeof(text), "+++ %s (%s) returned from idle @ %s",
+			g_snprintf(text, sizeof(text), _("+++ %s (%s) returned from idle @ %s"),
 				   gc->username, gc->prpl->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_quit:
-			g_snprintf(text, sizeof(text), "+++ Program exit @ %s", full_date());
+			g_snprintf(text, sizeof(text), _("+++ Program exit @ %s"), full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		}
 	} else if (strcmp(who->name, who->show)) {
 		switch (what) {
 		case log_signon:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) signed on @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) signed on @ %s"),
 				   gc->username, gc->prpl->name, who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) signed off @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) signed off @ %s"),
 				   gc->username, gc->prpl->name, who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) went away @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) went away @ %s"),
 				   gc->username, gc->prpl->name, who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) came back @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) came back @ %s"),
 				   gc->username, gc->prpl->name, who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s (%s) became idle @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s (%s) became idle @ %s"),
 				   gc->username, gc->prpl->name, who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
 			g_snprintf(text, sizeof(text),
-				   "%s (%s) reported that %s (%s) returned from idle @ %s", gc->username,
+				   _("%s (%s) reported that %s (%s) returned from idle @ %s"), gc->username,
 				   gc->prpl->name, who->show, who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
@@ -406,33 +415,33 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 	} else {
 		switch (what) {
 		case log_signon:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s signed on @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s signed on @ %s"),
 				   gc->username, gc->prpl->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<B>%s</B>", text);
 			break;
 		case log_signoff:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s signed off @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s signed off @ %s"),
 				   gc->username, gc->prpl->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<I><FONT COLOR=GRAY>%s</FONT></I>", text);
 			break;
 		case log_away:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s went away @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s went away @ %s"),
 				   gc->username, gc->prpl->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=OLIVE>%s</FONT>", text);
 			break;
 		case log_back:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s came back @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s came back @ %s"),
 				   gc->username, gc->prpl->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
 		case log_idle:
-			g_snprintf(text, sizeof(text), "%s (%s) reported that %s became idle @ %s",
+			g_snprintf(text, sizeof(text), _("%s (%s) reported that %s became idle @ %s"),
 				   gc->username, gc->prpl->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "<FONT COLOR=GRAY>%s</FONT>", text);
 			break;
 		case log_unidle:
 			g_snprintf(text, sizeof(text),
-				   "%s (%s) reported that %s returned from idle @ %s", gc->username,
+				   _("%s (%s) reported that %s returned from idle @ %s"), gc->username,
 				   gc->prpl->name, who->name, full_date());
 			g_snprintf(html, sizeof(html), "%s", text);
 			break;
