@@ -445,15 +445,19 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 		while (cnv) {
 			cv = (struct conversation *)cnv->data;
 			if (!strcasecmp(who, normalize(cv->name))) {
-				g_snprintf(cv->name, sizeof(cv->name), "%s", name);
-				if (find_log_info(name) || (logging_options & OPT_LOG_ALL))
-					 g_snprintf(who, 63, LOG_CONVERSATION_TITLE, name);
-				else
-					g_snprintf(who, 63, CONVERSATION_TITLE, name);
-				gtk_window_set_title(GTK_WINDOW(cv->window), who);
-				/* was g_free(buf), but break gives us that
-				 * and freeing twice is not good --Sumner */
-				break;
+				if (display_options & OPT_DISP_ONE_WINDOW) {
+					set_convo_tab_label(cv, b->name);
+				} else {
+					g_snprintf(cv->name, sizeof(cv->name), "%s", name);
+					if (find_log_info(name) || (logging_options & OPT_LOG_ALL))
+						 g_snprintf(who, 63, LOG_CONVERSATION_TITLE, name);
+					else
+						g_snprintf(who, 63, CONVERSATION_TITLE, name);
+						gtk_window_set_title(GTK_WINDOW(cv->window), who);
+					/* was g_free(buf), but break gives us that
+					 * and freeing twice is not good --Sumner */
+					break;
+				}
 			}
 			cnv = cnv->next;
 		}

@@ -352,6 +352,7 @@ struct conversation {
 	GtkWidget *sep2;
  	time_t sent_away;
 	GtkWidget *menu;
+	gboolean unseen;
 
 	/* stuff used just for chat */
         GList *in_room;

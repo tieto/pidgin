@@ -644,10 +644,33 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
+		if (display_options & OPT_DISP_ONE_WINDOW) {
+			if (event->keyval == GDK_Left) {
+				gtk_notebook_prev_page(GTK_NOTEBOOK(convo_notebook));
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			} else if (event->keyval == GDK_Right) {
+				gtk_notebook_next_page(GTK_NOTEBOOK(convo_notebook));
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			} else if (event->keyval == GDK_Tab) {
+				GList *cnv = conversations;
+				struct conversation *c;
+				while (cnv) {
+					c = cnv->data;
+					if (c->unseen)
+						break;
+					cnv = cnv->next;
+					c = NULL;
+				}
+				if (c) {
+					gtk_notebook_set_page(GTK_NOTEBOOK(convo_notebook),
+							g_list_index(conversations, c));
+				}
+				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
+			}
+		}
 	}
 
 	return TRUE;
-
 }
 
 
@@ -1403,13 +1426,13 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
 		gdk_font_unref(style->font);
-		style->font = label->style->font;
-		gdk_font_ref(style->font);
+		style->font = gdk_font_ref(label->style->font);
 		style->fg[0].red = 0xcccc;
 		style->fg[0].green = 0x0000;
 		style->fg[0].blue = 0x0000;
 		gtk_widget_set_style(label, style);
 		gtk_style_unref(style);
+		c->unseen = TRUE;
 	}
 
 	g_free(smiley);
@@ -1815,10 +1838,10 @@ static void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, 
 		return;
 	style = gtk_style_new();
 	gdk_font_unref(style->font);
-	style->font = label->style->font;
-	gdk_font_ref(style->font);
+	style->font = gdk_font_ref(label->style->font);
 	gtk_widget_set_style(label, style);
 	gtk_style_unref(style);
+	c->unseen = FALSE;
 }
 
 
@@ -2168,4 +2191,11 @@ void tabize()
 		all_convos = NULL;
 		conversations = m;
 	}
+}
+
+void set_convo_tab_label(struct conversation *c, char *text)
+{
+	gtk_label_set_text(GTK_LABEL(gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook),
+					gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook),
+						g_list_index(conversations, c)))), text);
 }
