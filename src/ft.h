@@ -470,6 +470,20 @@ void gaim_xfer_error(GaimXferType type, const char *who, const char *msg);
 /*@{*/
 
 /**
+ * Sets the IP address of the local system in preferences.
+ *
+ * @param ip The local IP address.
+ */
+void gaim_xfers_set_local_ip(const char *ip);
+
+/**
+ * Returns the IP address of the local system set in preferences.
+ *
+ * @return The local IP address set in preferences.
+ */
+const char *gaim_xfers_get_local_ip(void);
+
+/**
  * Returns the IP address of the local system.
  *
  * @note The returned IP address must be g_free()'d when no longer
@@ -477,7 +491,27 @@ void gaim_xfer_error(GaimXferType type, const char *who, const char *msg);
  *
  * @return The local IP address.
  */
-char *gaim_xfers_get_local_ip(void);
+char *gaim_xfers_get_local_system__ip(void);
+
+/**
+ * Returns the IP address that should be used for the specified account.
+ *
+ * First, the IP associated with @a account is tried, via a call to
+ * gaim_account_get_local_ip().
+ *
+ * If that IP is not set, the IP set in preferences is tried.
+ *
+ * If that IP is not set, the system's local IP is tried, via a call to
+ * gaim_xfers_get_local_ip().
+ *
+ * @note The returned IP address must be g_free()'d when no longer
+ *       in use.
+ *
+ * @param account The account the IP is going to be used with.
+ *
+ * @return The local IP address to be used.
+ */
+char *gaim_xfers_get_ip_for_account(const GaimAccount *account);
 
 /**
  * Initializes the file transfer subsystem.

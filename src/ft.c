@@ -31,7 +31,6 @@ static GaimXferUiOps *xfer_ui_ops = NULL;
 GaimXfer *
 gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 {
-	const char *ip;
 	GaimXfer *xfer;
 	GaimXferUiOps *ui_ops;
 
@@ -46,13 +45,7 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 	xfer->who     = g_strdup(who);
 	xfer->ui_ops  = gaim_get_xfer_ui_ops();
 
-	if ((ip = gaim_account_get_public_ip(account)) != NULL)
-		ip = gaim_prefs_get_string("/core/ft/public_ip");
-
-	if (ip != NULL && *ip != '\0')
-		xfer->local_ip = g_strdup(ip);
-	else
-		xfer->local_ip = gaim_xfers_get_local_ip();
+	xfer->local_ip = gaim_xfers_get_ip_for_account(account);
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
@@ -709,8 +702,29 @@ gaim_xfer_error(GaimXferType type, const char *who, const char *msg)
 /**************************************************************************
  * File Transfer Subsystem API
  **************************************************************************/
-char *
+void
+gaim_xfers_set_local_ip(const char *ip)
+{
+	g_return_if_fail(ip != NULL);
+
+	gaim_prefs_set_string("/core/ft/public_ip", ip);
+}
+
+const char *
 gaim_xfers_get_local_ip(void)
+{
+	const char *ip;
+
+	ip = gaim_prefs_get_string("/core/ft/public_ip");
+
+	if (ip == NULL || *ip == '\0')
+		return NULL;
+
+	return ip;
+}
+
+char *
+gaim_xfers_get_local_system_ip(void)
 {
 	struct hostent *host;
 	char localhost[129];
@@ -729,6 +743,19 @@ gaim_xfers_get_local_ip(void)
 	g_snprintf(ip, 11, "%lu", add);
 
 	return g_strdup(ip);
+}
+
+char *
+gaim_xfers_get_ip_for_account(const GaimAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	if (gaim_account_get_public_ip(account) != NULL)
+		return g_strdup(gaim_account_get_public_ip(account));
+	else if (gaim_xfers_get_local_ip() != NULL)
+		return g_strdup(gaim_xfers_get_local_ip());
+	else
+		return gaim_xfers_get_local_system_ip();
 }
 
 void
