@@ -352,7 +352,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
 						   gaim_account_get_username(account), gc->login_time,
 						   msg);
-			g_free(msg);						   
+			g_free(msg);
 		}
 
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);

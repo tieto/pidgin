@@ -218,7 +218,7 @@ gaim_gtk_stock_init(void)
 	gtk_widget_destroy(win);
 
 	/* register logo icon size */
-	gtk_icon_size_register(GAIM_ICON_SIZE_LOGO, 210, 150);
+	gtk_icon_size_register(GAIM_ICON_SIZE_LOGO, 330, 90);
 
 	g_object_unref(G_OBJECT(icon_factory));
 
