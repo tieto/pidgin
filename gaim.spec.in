@@ -4,6 +4,16 @@
 %define prefix     /usr
 %define sysconfdir /etc
 
+# This stuff makes things install into the directories that LFS wants.
+# Ugly, and I don't know why rpm doesn't put them in the right places,
+# but whatever.
+%{expand:%%define share %(if [ -d %{prefix}/share/man ]; then echo /share ; else echo %%{nil} ; fi)}
+%ifos linux
+%define CONFIG_FLAGS --prefix=%prefix --infodir='%{prefix}%{share}/info' --mandir='%{prefix}%{share}/man'
+%else
+%define CONFIG_FLAGS --prefix=%prefix
+%endif
+
 Summary:    A Gtk+ based multiprotocol instant messaging client
 Name:       %{name}
 Version:    %{version}
@@ -35,7 +45,7 @@ Gaim is NOT affiliated with or endorsed by AOL.
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-artsc
+CFLAGS="$RPM_OPT_FLAGS" ./configure %{CONFIG_FLAGS} --disable-artsc
 make
 
 %install
