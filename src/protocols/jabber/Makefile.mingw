@@ -69,28 +69,17 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			jabber.c \
-			expat.c \
-			genhash.c \
-			hashtable.c \
-			jconn.c \
-			jid.c \
-			jpacket.c \
+C_SRC =		auth.c \
+			buddy.c \
+			chat.c \
+			iq.c \
+			jabber.c \
 			jutil.c \
-			karma.c \
-			log.c \
-			pool.c \
-			pproxy.c \
-			rate.c \
-			sha.c \
-			socket.c \
-			str.c \
-			xhash.c \
+			message.c \
+			parser.c \
+			presence.c \
+			roster.c \
 			xmlnode.c \
-			xmlparse.c \
-			xmlrole.c \
-			xmltok.c \
-			xstream.c \
 			win32/posix.uname.c
 
 
