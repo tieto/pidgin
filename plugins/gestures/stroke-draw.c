@@ -107,6 +107,7 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
   static GtkWidget *original_widget = NULL;
   switch (event->type) {
     case GDK_BUTTON_PRESS:
+		debug_printf("Button press: %d\n", event->button.button);
       if (event->button.button != gstroke_get_mouse_button())
 	break;
 
@@ -126,9 +127,28 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 
     case GDK_BUTTON_RELEASE:
       if ((event->button.button != gstroke_get_mouse_button())
-	  || (original_widget == NULL))
-        /* the stroke probably did not start here... */
-	break;
+	  || (original_widget == NULL)) {
+
+		  /* Nice bug when you hold down one button and press another. */
+		  /* We'll just cancel the gesture instead. */
+		  last_mouse_position.invalid = TRUE;
+		  original_widget = NULL;
+
+		  if (timer_id > 0)
+			  gtk_timeout_remove (timer_id);
+
+		  gdk_pointer_ungrab (event->button.time);
+		  timer_id = 0;
+
+		  if (gstroke_draw_strokes()) {
+			  /* get rid of the invisible stroke window */
+			  XUnmapWindow (gstroke_disp, gstroke_window);
+			  XFlush (gstroke_disp);
+		  }
+
+		  break;
+	  
+	  }
 
       last_mouse_position.invalid = TRUE;
       original_widget = NULL;
@@ -314,11 +334,11 @@ gstroke_invisible_window_init (GtkWidget *widget)
   col_background = WhitePixel (gstroke_disp, screen);
 
   /* no border for the window */
-#ifdef DEBUG
+#if 0
   border_width = 5;
-#else
-  border_width = 0;
 #endif
+  border_width = 0;
+
   col_border = BlackPixel (gstroke_disp, screen);
 
   gstroke_window = XCreateSimpleWindow (gstroke_disp, wind,
