@@ -260,6 +260,12 @@ WinMain (struct HINSTANCE__ *hInstance,
         char gaimdir[MAX_PATH];
         HMODULE hmod;
 
+        /* If debug flag used, create console for output */
+        if(strstr(lpszCmdLine, "-d")) {
+                if(AllocConsole())
+                        freopen ("CONOUT$", "w", stdout);
+        }
+
         /* Load exception handler if we have it */
         if(GetModuleFileName(NULL, gaimdir, MAX_PATH) != 0) {
                 char *tmp = gaimdir;
