@@ -117,19 +117,35 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 {
 	xmlnode *query, *item, *group;
 	const char *from = xmlnode_get_attrib(packet, "from");
-	char *me1, *me2;
 
-	me1 = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	me2 = g_strdup_printf("%s/%s", me1, js->user->resource);
+	if(from) {
+		char *me, *from_norm;
+		JabberID *from_jid = jabber_id_new(from);
+		gboolean invalid;
 
-	if(from && strcmp(from, me1) && strcmp(from, me2)) {
-		g_free(me1);
-		g_free(me2);
-		return;
+		if(!from_jid)
+			return;
+
+		from_norm = g_strdup_printf("%s@%s%s%s",
+				from_jid->node ? from_jid->node : "",
+				from_jid->domain,
+				from_jid->resource ? "/" : "",
+				from_jid->resource ? from_jid->resource : "");
+
+		if(from_jid->resource)
+			me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
+					js->user->resource);
+		else
+			me = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+
+		invalid = g_utf8_collate(from_norm, me);
+		g_free(from_norm);
+		g_free(me);
+		jabber_id_free(from_jid);
+
+		if(invalid)
+			return;
 	}
-
-	g_free(me1);
-	g_free(me2);
 
 	query = xmlnode_get_child(packet, "query");
 	if(!query)

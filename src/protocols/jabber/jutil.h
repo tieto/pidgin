@@ -42,4 +42,8 @@ const char *jabber_get_state_string(int state);
 
 const char *jabber_normalize(const char *in);
 
+gboolean jabber_nodeprep_validate(const char *);
+gboolean jabber_nameprep_validate(const char *);
+gboolean jabber_resourceprep_validate(const char *);
+
 #endif /* _GAIM_JABBER_JID_H_ */

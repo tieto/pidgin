@@ -111,13 +111,80 @@ const char *jabber_get_state_string(int s) {
 	}
 }
 
+gboolean jabber_nodeprep_validate(const char *str)
+{
+	const char *c;
+
+	if(!str)
+		return TRUE;
+
+	if(strlen(str) > 1023)
+		return FALSE;
+
+	c = str;
+	while(c && *c) {
+		gunichar ch = g_utf8_get_char(c);
+		if(ch == '\"' || ch == '&' || ch == '\'' || ch == '/' || ch == ':' ||
+				ch == '<' || ch == '>' || ch == '@' || !g_unichar_isgraph(ch)) {
+			return FALSE;
+		}
+		c = g_utf8_next_char(c);
+	}
+
+	return TRUE;
+}
+
+gboolean jabber_nameprep_validate(const char *str)
+{
+	const char *c;
+
+	if(!str)
+		return TRUE;
+
+	if(strlen(str) > 1023)
+		return FALSE;
+
+	c = str;
+	while(c && *c) {
+		gunichar ch = g_utf8_get_char(c);
+		if(!g_unichar_isgraph(ch))
+			return FALSE;
+
+		c = g_utf8_next_char(c);
+	}
+
+
+	return TRUE;
+}
+
+gboolean jabber_resourceprep_validate(const char *str)
+{
+	const char *c;
+
+	if(!str)
+		return TRUE;
+
+	if(strlen(str) > 1023)
+		return FALSE;
+
+	c = str;
+	while(c && *c) {
+		gunichar ch = g_utf8_get_char(c);
+		if(!g_unichar_isgraph(ch))
+			return FALSE;
+
+		c = g_utf8_next_char(c);
+	}
+
+	return TRUE;
+}
+
+
 JabberID*
 jabber_id_new(const char *str)
 {
 	char *at;
 	char *slash;
-	char *c;
-
 	JabberID *jid;
 
 	if(!str || !g_utf8_validate(str, -1, NULL))
@@ -146,46 +213,11 @@ jabber_id_new(const char *str)
 	}
 
 
-	/* check lengths */
-	if((jid->node && strlen(jid->node) > 1023) ||
-			(jid->domain && strlen(jid->domain) > 1023) ||
-			(jid->resource && strlen(jid->resource) > 1023)) {
+	if(!jabber_nodeprep_validate(jid->node) ||
+			!jabber_nameprep_validate(jid->domain) ||
+			!jabber_resourceprep_validate(jid->resource)) {
 		jabber_id_free(jid);
 		return NULL;
-	}
-
-	/* nodeprep */
-	c = jid->node;
-	while(c && *c) {
-		gunichar ch = g_utf8_get_char(c);
-		if(ch == '\"' || ch == '&' || ch == '\'' || ch == '/' || ch == ':' ||
-				ch == '<' || ch == '>' || ch == '@' || !g_unichar_isgraph(ch)) {
-			jabber_id_free(jid);
-			return NULL;
-		}
-		c = g_utf8_next_char(c);
-	}
-
-	/* nameprep */
-	c = jid->domain;
-	while(c && *c) {
-		gunichar ch = g_utf8_get_char(c);
-		if(!g_unichar_isgraph(ch)) {
-			jabber_id_free(jid);
-			return NULL;
-		}
-		c = g_utf8_next_char(c);
-	}
-
-	/* resourceprep */
-	c = jid->resource;
-	while(c && *c) {
-	gunichar ch = g_utf8_get_char(c);
-		if(!g_unichar_isgraph(ch)) {
-			jabber_id_free(jid);
-			return NULL;
-		}
-		c = g_utf8_next_char(c);
 	}
 
 	return jid;
@@ -240,6 +272,10 @@ const char *jabber_normalize(const char *in)
 	char *tmp;
 
 	tmp = jabber_get_bare_jid(in);
+
+	if(!tmp)
+		return NULL;
+
 	g_snprintf(buf, sizeof(buf), "%s", tmp);
 	g_free(tmp);
 	return buf;

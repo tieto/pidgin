@@ -209,6 +209,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
+	if(!(jid = jabber_id_new(from)))
+		return;
+
 	for(y = packet->child; y; y = y->next) {
 		if(y->type != NODE_TYPE_TAG)
 			continue;
@@ -232,7 +235,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-	jid = jabber_id_new(from);
 
 	if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
 		static int i = 0;
@@ -262,6 +264,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			g_free(buf);
 
 			jabber_chat_destroy(chat);
+			jabber_id_free(jid);
 			return;
 		}
 

@@ -21,6 +21,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "multi.h" /* for proto_chat_entry */
+#include "notify.h"
 
 #include "chat.h"
 #include "message.h"
@@ -170,6 +171,24 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 
 	if(!room || !server || !handle)
 		return;
+
+	if(!jabber_nodeprep_validate(room)) {
+		char *buf = g_strdup_printf(_("%s is not a valid room name"), room);
+		gaim_notify_error(gc, _("Invalid Room Name"), _("Invalid Room Name"),
+				buf);
+		g_free(buf);
+		return;
+	} else if(!jabber_nameprep_validate(server)) {
+		char *buf = g_strdup_printf(_("%s is not a valid server name"), server);
+		gaim_notify_error(gc, _("Invalid Server Name"),
+				_("Invalid Server Name"), buf);
+		g_free(buf);
+		return;
+	} else if(!jabber_resourceprep_validate(handle)) {
+		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
+		gaim_notify_error(gc, _("Invalid Room Handle"),
+				_("Invalid Room Handle"), buf);
+	}
 
 	if(jabber_chat_find(js, room, server))
 		return;

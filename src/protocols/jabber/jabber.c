@@ -362,6 +362,11 @@ jabber_login(GaimAccount *account)
 			g_free, NULL);
 	js->user = jabber_id_new(gaim_account_get_username(account));
 
+	if(!js->user) {
+		gaim_connection_error(gc, _("Invalid Jabber ID"));
+		return;
+	}
+
 	if(!js->user->resource) {
 		char *me;
 		js->user->resource = g_strdup("Gaim");
@@ -649,6 +654,11 @@ static void jabber_register_account(GaimAccount *account)
 	js->callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, NULL);
 	js->user = jabber_id_new(gaim_account_get_username(account));
+
+	if(!js->user) {
+		gaim_connection_error(gc, _("Invalid Jabber ID"));
+		return;
+	}
 
 	if(!js->user->resource) {
 		char *me;

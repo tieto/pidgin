@@ -78,6 +78,9 @@ static void handle_chat(JabberMessage *jm)
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 
+	if(!jid)
+		return;
+
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
@@ -164,7 +167,12 @@ static void handle_headline(JabberMessage *jm)
 static void handle_groupchat(JabberMessage *jm)
 {
 	JabberID *jid = jabber_id_new(jm->from);
-	JabberChat *chat = jabber_chat_find(jm->js, jid->node, jid->domain);
+	JabberChat *chat;
+
+	if(!jid)
+		return;
+
+	chat = jabber_chat_find(jm->js, jid->node, jid->domain);
 
 	if(!chat)
 		return;
@@ -181,9 +189,13 @@ static void handle_groupchat(JabberMessage *jm)
 
 static void handle_groupchat_invite(JabberMessage *jm)
 {
-	GHashTable *components = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
+	GHashTable *components;
 	JabberID *jid = jabber_id_new(jm->to);
+
+	if(!jid)
+		return;
+
+	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
 	g_hash_table_replace(components, g_strdup("room"), jid->node);
 	g_hash_table_replace(components, g_strdup("server"), jid->node);
