@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 0.80cvs:
+version 0.80 (07/15/2004):
 	Gaim API:
 	* Removed: PRPL numbers : gaim_account_set_protocol(),
 	  gaim_account_get_protocol(), gaim_accounts_find_with_prpl_num,
