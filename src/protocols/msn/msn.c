@@ -389,7 +389,9 @@ static void handle_hotmail(struct gaim_connection *gc, char *data)
 			x = strstr(from, "\r\n"); *x = 0;
 			subject += strlen("Subject: ");
 			x = strstr(subject, "\r\n"); *x = 0;
+			from = utf8_to_str(from);
 			connection_has_mail(gc, -1, from, subject, login_url);
+			g_free(from);
 		}
 	}
 }
@@ -581,28 +583,6 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 	return 1;
 }
 
-static void msn_unescape(char *text) {
-	char *cpy = g_strdup(text);
-	char *cur = cpy;
-	int c = 0;
-
-
-	while (*cur) {
-		if (*cur == '%') {
-			if (sscanf (cur, "%%%x;", &c) == 1 && c != 0) {
-				*text = c;
-				cur = cur + 3;
-			} 
-		} else {
-			*text = *cur;
-			cur++;
-		}
-		text++;
-	}
-	*text = 0;
-	g_free(cpy);
-}
-
 static char *msn_parse_format(char *mime)
 {
 	char *cur;
@@ -638,8 +618,7 @@ static char *msn_parse_format(char *mime)
 		}
 	}
 	
-	msn_unescape(ret->str);
-	cur = ret->str;
+	cur = url_decode(ret->str);
 	g_string_free(ret, FALSE);
 	return cur;
 }
@@ -669,7 +648,7 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 		return;
 	if (!g_strncasecmp(content, "Content-Type: text/x-msmsgscontrol\r\n",
 			   strlen(  "Content-Type: text/x-msmsgscontrol\r\n"))) {
-		if (strstr(content,"TypingUser: ")) {
+		if (strstr(content,"TypingUser: ") && !ms->chat) {
 			serv_got_typing(ms->gc, ms->msguser, MSN_TYPING_RECV_TIMEOUT);
 			return;
 		} 
@@ -860,8 +839,12 @@ static void msn_accept_add(gpointer w, struct msn_add_permit *map)
 {
 	struct msn_data *md = map->gc->proto_data;
 	char buf[MSN_BUF_LEN];
-
-	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
+	char *srvfriend;
+	
+	srvfriend = str_to_utf8(url_encode(map->friend));
+	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, map->user, srvfriend);
+	g_free(srvfriend);
+	
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(map->gc, "Write error");
 		signoff(map->gc);
@@ -877,9 +860,10 @@ static void msn_cancel_add(gpointer w, struct msn_add_permit *map)
 {
 	struct msn_data *md = map->gc->proto_data;
 	char buf[MSN_BUF_LEN];
+	char *srvfriend = str_to_utf8(url_encode(map->friend));
 
 	if (*(map->user)) {
-		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, url_encode(map->friend));
+		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, srvfriend);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(map->gc, "Write error");
 			signoff(map->gc);
@@ -889,6 +873,7 @@ static void msn_cancel_add(gpointer w, struct msn_add_permit *map)
 		build_block_list();
 	}
 	
+	g_free(srvfriend);
 	g_free(map->user);
 	g_free(map->friend);
 	g_free(map);
@@ -914,7 +899,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		user = tmp;
 
 		GET_NEXT(tmp);
-		friend = tmp;
+		friend = url_decode(tmp);
 
 		if (g_strcasecmp(list, "RL"))
 			return 1;
@@ -927,11 +912,11 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 
 		ap = g_new0(struct msn_add_permit, 1);
 		ap->user = g_strdup(user);
-		ap->friend = g_strdup(url_decode(friend));
+		ap->friend = utf8_to_str(friend);
 		ap->gc = gc;
 
 		g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add %s to his or her buddy list."),
-				ap->user, url_decode(ap->friend), ap->gc->username);
+				ap->user, ap->friend, ap->gc->username);
 
 		do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
 	} else if (!g_strncasecmp(buf, "BLP", 3)) {
@@ -1011,7 +996,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		if ((b = find_buddy(gc, user)) != NULL) {
 			if (b->proto_data)
 				g_free(b->proto_data);
-			b->proto_data = g_strdup(friend);
+			b->proto_data = utf8_to_str(friend);
 		}
 
 		if (!g_strcasecmp(state, "BSY")) {
@@ -1056,7 +1041,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		if (!g_strcasecmp(which, "FL") && pos) {
 			struct msn_buddy *b = g_new0(struct msn_buddy, 1);
 			b->user = g_strdup(who);
-			b->friend = g_strdup(friend);
+			b->friend = utf8_to_str(friend);
 			md->fl = g_slist_append(md->fl, b);
 		} else if (!g_strcasecmp(which, "AL") && pos) {
 			char *dupl;
@@ -1084,10 +1069,10 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				debug_printf("Unresolved MSN RL entry\n");
 				ap = g_new0(struct msn_add_permit, 1);
 				ap->user = g_strdup(who);
-				ap->friend = g_strdup(friend);
+				ap->friend = utf8_to_str(friend);
 				ap->gc = gc;
                          
-		                g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list"),ap->user, url_decode(ap->friend));
+		                g_snprintf(msg, sizeof(msg), _("The user %s (%s) wants to add you to their buddy list"),ap->user, ap->friend);
 				do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
 			}
 		    }
@@ -1165,7 +1150,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		if ((b = find_buddy(gc, user)) != NULL) {
 			if (b->proto_data)
 				g_free(b->proto_data);
-			b->proto_data = g_strdup(friend);
+			b->proto_data = utf8_to_str(friend);
 		}
 
 		if (!g_strcasecmp(state, "BSY")) {
@@ -1203,9 +1188,10 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
-		friend = url_decode(tmp);
+		friend = utf8_to_str(tmp);
 
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
+		g_free(friend);
 	} else if (!g_strncasecmp(buf, "REM", 3)) {
 	} else if (!g_strncasecmp(buf, "RNG", 3)) {
 		struct msn_switchboard *ms;
@@ -1589,13 +1575,14 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		resp = tmp;
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
-		friend = tmp;
+		friend = url_decode(tmp);
 		GET_NEXT(tmp);
-		friend = url_decode(friend);
 
 		/* so here, we're either getting the challenge or the OK */
 		if (!g_strcasecmp(resp, "OK")) {
+			friend = utf8_to_str(friend);
 			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
+			g_free(friend);
 
 			g_snprintf(sendbuf, sizeof(sendbuf), "SYN %d 0\r\n", ++md->trId);
 			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
@@ -1613,7 +1600,9 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 			md5_byte_t di[16];
 			int i;
 
+			friend = utf8_to_str(friend);
 			g_snprintf(buf2, sizeof(buf2), "%s%s", friend, gc->password);
+			g_free(friend);
 
 			md5_init(&st);
 			md5_append(&st, (const md5_byte_t *)buf2, strlen(buf2));
@@ -2118,13 +2107,17 @@ static void msn_act_id(gpointer data, char *entry)
 	struct gaim_connection *gc = data;
 	struct msn_data *md = gc->proto_data;
 	char buf[MSN_BUF_LEN];
+	char *alias;
 
-	if (strlen(url_encode(entry)) >= BUDDY_ALIAS_MAXLEN) {
+	alias = str_to_utf8(url_encode(entry));
+	
+	if (strlen(alias) >= BUDDY_ALIAS_MAXLEN) {
 		do_error_dialog(_("Friendly name too long."), _("MSN Error"));
 		return;
 	}
 	
-	g_snprintf(buf, sizeof(buf), "REA %d %s %s\r\n", ++md->trId, gc->username, url_encode(entry));
+	g_snprintf(buf, sizeof(buf), "REA %d %s %s\r\n", ++md->trId, gc->username, alias);
+	g_free(alias);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);

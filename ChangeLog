@@ -45,6 +45,8 @@ version 0.59 (06/07/2002):
 	* Added Mozilla to browser options and changed KFM to 
 	  Konqueror.
 	* Can now set the server and port for MSN and Napster
+	* MSN Internationalization (Thanks Felipe Contreras and
+	  countless, countless others)
 
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
