@@ -68,8 +68,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(GAIM_SRC) \
 			-L$(IDLETRACK_TOP) \
 			-L$(PERL_LIB_DIR) \
-			-L$(ASPELL_TOP)/lib \
-			-L$(GTKSPELL_TOP)/gtkspell
+			-L$(ASPELL_TOP)/lib
 
 ##
 ##  SOURCES, OBJECTS
