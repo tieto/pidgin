@@ -750,18 +750,27 @@ gaim_conversation_chat_cleanup_for_rejoin(GaimConversation *conv)
 {
 	const char *disp;
 	GaimAccount *account;
+	GaimConnection *gc;
 
 	account = gaim_conversation_get_account(conv);
 
-	if ((disp = gaim_connection_get_display_name(gaim_account_get_connection(account)))) {
-		gaim_conv_chat_set_nick(conv->u.chat, disp);
-	} else {
-		gaim_conv_chat_set_nick(conv->u.chat, gaim_account_get_username(account));
+	gaim_log_free(conv->log);
+	conv->log = gaim_log_new(GAIM_LOG_CHAT, gaim_conversation_get_name(conv),
+							 account, time(NULL));
+
+	gc = gaim_account_get_connection(account);
+
+	if ((disp = gaim_connection_get_display_name(gc)) != NULL)
+		gaim_conv_chat_set_nick(GAIM_CONV_CHAT(conv), disp);
+	else
+	{
+		gaim_conv_chat_set_nick(GAIM_CONV_CHAT(conv),
+								gaim_account_get_username(account));
 	}
 
-	gaim_conv_chat_clear_users(conv->u.chat);
-	gaim_conv_chat_set_topic(conv->u.chat, NULL, NULL);
-	conv->u.chat->left = FALSE;
+	gaim_conv_chat_clear_users(GAIM_CONV_CHAT(conv));
+	gaim_conv_chat_set_topic(GAIM_CONV_CHAT(conv), NULL, NULL);
+	GAIM_CONV_CHAT(conv)->left = FALSE;
 
 	gaim_conversation_update(conv, GAIM_CONV_UPDATE_CHATLEFT);
 }
@@ -843,7 +852,8 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	 * Create a window if one does not exist. If it does, use the last
 	 * created window.
 	 */
-	if (windows == NULL) {
+	if (windows == NULL)
+	{
 		GaimConvWindow *win;
 
 		win = gaim_conv_window_new();
@@ -852,7 +862,8 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		/* Ensure the window is visible. */
 		gaim_conv_window_show(win);
 	}
-	else {
+	else
+	{
 		if (place_conv == NULL)
 		{
 			ensure_default_funcs();
@@ -890,18 +901,22 @@ gaim_conversation_destroy(GaimConversation *conv)
 	gc   = gaim_conversation_get_gc(conv);
 	name = gaim_conversation_get_name(conv);
 
-	if (gc != NULL) {
+	if (gc != NULL)
+	{
 		/* Still connected */
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		{
 			if (gaim_prefs_get_bool("/core/conversations/im/send_typing"))
 				serv_send_typing(gc, name, GAIM_NOT_TYPING);
 
 			if (gc && prpl_info->convo_closed != NULL)
 				prpl_info->convo_closed(gc, name);
 		}
-		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+		{
+			int chat_id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
 #if 0
 			/*
 			 * This is unfortunately necessary, because calling
@@ -922,16 +937,26 @@ gaim_conversation_destroy(GaimConversation *conv)
 			 */
 
 			if (gc && g_slist_find(gc->buddy_chats, conv) != NULL) {
-				serv_chat_leave(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
+				serv_chat_leave(gc, chat_id);
 
 				return;
 			}
 #endif
-		/*
-		 * Instead of all of that, lets just close the window when the user tells
-		 * us to, and let the prpl deal with the internals on it's own time.
-		 */
-			serv_chat_leave(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
+			/*
+			 * Instead of all of that, lets just close the window when
+			 * the user tells us to, and let the prpl deal with the
+			 * internals on it's own time. Don't do this if the prpl already
+			 * knows it left the chat.
+			 */
+			if (!gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)))
+				serv_chat_leave(gc, chat_id);
+
+			/*
+			 * If they didn't call serv_got_chat_left by now, it's too late.
+			 * So we better do it for them before we destroy the thing.
+			 */
+			if (!gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)))
+				serv_got_chat_left(gc, chat_id);
 		}
 	}
 
