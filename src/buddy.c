@@ -2651,7 +2651,7 @@ void make_buddy_list()
 	gaim_separator(menu);
 
 #ifndef NO_MULTI
-	gaim_new_item_from_stock(menu, _("_Accounts..."), NULL,
+	gaim_new_item_from_pixbuf(menu, _("_Accounts..."), "accounts-menu.png",
 				  GTK_SIGNAL_FUNC(account_editor), NULL, 'a', GDK_CONTROL_MASK, "Ctl+A");
 #endif
 	gaim_new_item_from_stock(menu, _("_Preferences..."), GTK_STOCK_PREFERENCES,

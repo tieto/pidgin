@@ -2,6 +2,7 @@ SUBDIRS = protocols
 EXTRA_DIST = 
 		about_menu.png \
 		accounts.png \
+		accounts-menu.png \
 		add.xpm				\
 		angel.xpm			\
 		arrow_down.xpm			\
