@@ -6,16 +6,17 @@ Epoch:      1
 License:    GPL
 Group:      Applications/Internet
 URL:        http://gaim.sourceforge.net/
-Packager:	%{packager}
+Packager:   %{packager}
 Source:     %{name}-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
-%if "%{_vendor}" != "MandrakeSoft"
-Requires:   gtk2 >= 2.0.0, mozilla-nss, gtkspell, audiofile, libao
-BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
-%else
+%if "%{_vendor}" == "MandrakeSoft"
 Requires:   gtk+2.0 >= 2.0.0, libnss3
 BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, libnss3-devel, perl-devel
+Provides:   libgaim-remote0
+%else
+Requires:   gtk2 >= 2.0.0, mozilla-nss, gtkspell, audiofile, libao
+BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
 %endif
 
 %package devel
