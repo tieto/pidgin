@@ -19,6 +19,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @signal displaying-im-msg
+ * @signal displayed-im-msg
+ * @signal sending-im-msg
+ * @signal sent-im-msg
+ * @signal received-im-msg
+ * @signal displaying-chat-msg
+ * @signal displayed-chat-msg
+ * @signal sending-chat-msg
+ * @signal sent-chat-msg
+ * @signal received-chat-msg
+ * @signal conversation-switching
+ * @signal conversation-switched
+ * @signal conversation-created
+ * @signal deleting-conversation
+ * @signal buddy-typing
+ * @signal chat-buddy-joining
+ * @signal chat-buddy-joined
+ * @signal chat-buddy-leaving
+ * @signal chat-buddy-left
+ * @signal chat-inviting-user
+ * @signal chat-invited-user
+ * @signal chat-invited
+ * @signal chat-joined
+ * @signal chat-left
  */
 #ifndef _GAIM_CONVERSATION_H_
 #define _GAIM_CONVERSATION_H_

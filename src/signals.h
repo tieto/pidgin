@@ -1,5 +1,5 @@
 /**
- * @file signal.h Signal API
+ * @file signals.h Signal API
  * @ingroup core
  *
  * gaim

@@ -19,6 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @signal signing-on (GaimConnection *gc)
+ * @signal signed-on (GaimConnection *gc)
+ * @signal signing-off (GaimConnection *gc)
+ * @signal signed-off (GaimConnection *gc)
  */
 #ifndef _GAIM_CONNECTION_H_
 #define _GAIM_CONNECTION_H_
@@ -94,6 +99,7 @@ extern "C" {
 /**************************************************************************/
 /** @name Connection API                                                  */
 /**************************************************************************/
+/*@{*/
 
 /**
  * Creates a connection to the specified account.
@@ -122,7 +128,7 @@ void gaim_connection_connect(GaimConnection *gc);
 
 /**
  * Signs a connection off.
- *
+ 
  * @param gc The connection to sign off.
  *
  * @see gaim_connection_connect()
@@ -233,23 +239,6 @@ GList *gaim_connections_get_all(void);
  */
 GList *gaim_connections_get_connecting(void);
 
-/**
- * Initializes the connections subsystem.
- */
-void gaim_connections_init(void);
-
-/**
- * Uninitializes the connections subsystem.
- */
-void gaim_connections_uninit(void);
-
-/**
- * Returns the handle to the connections subsystem.
- *
- * @return The connections subsystem handle.
- */
-void *gaim_connections_get_handle(void);
-
 /*@}*/
 
 /**************************************************************************/
@@ -272,6 +261,31 @@ void gaim_set_connection_ui_ops(GaimConnectionUiOps *ops);
 GaimConnectionUiOps *gaim_get_connection_ui_ops(void);
 
 /*@}*/
+
+/**************************************************************************/
+/** @name Connections Subsystem                                           */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Initializes the connections subsystem.
+ */
+void gaim_connections_init(void);
+
+/**
+ * Uninitializes the connections subsystem.
+ */
+void gaim_connections_uninit(void);
+
+/**
+ * Returns the handle to the connections subsystem.
+ *
+ * @return The connections subsystem handle.
+ */
+void *gaim_connections_get_handle(void);
+
+/*@}*/
+
 
 #ifdef __cplusplus
 }
