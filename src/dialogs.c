@@ -60,14 +60,6 @@
 #include "pixmaps/add.xpm"
 #include "pixmaps/close.xpm"
 
-#include "pixmaps/protocols/oscar/aol_icon.xpm"
-#include "pixmaps/protocols/oscar/free_icon.xpm"
-#include "pixmaps/protocols/oscar/dt_icon.xpm"
-#include "pixmaps/protocols/oscar/admin_icon.xpm"
-#include "pixmaps/protocols/oscar/ab.xpm"
-#include "pixmaps/protocols/oscar/wireless_icon.xpm"
-#include "pixmaps/protocols/oscar/gnomeicu-online.xpm"
-
 #define PATHSIZE 1024
 
 int smiley_array[FACE_TOTAL];
