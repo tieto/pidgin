@@ -3,22 +3,22 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 0.82:
 	New Features:
 	* Topics in the conversation window (not the topic field at the
-	  top) with urls will now have those urls linkified (Stu Tomlinson)
+	  top) with URLs will now appear as links (Stu Tomlinson)
+	* File transfers appear in the file transfer window when they
+	  are initiated rather than when they begin transferring (Dave West)
 
 	Bug Fixes:
 	* Joining a Jabber chat no longer causes a crash (Stu Tomlinson)
 	* Selecting a buddy icon for a brand new account no longer
 	  causes a crash
-	* Delayed messages and system messages no longer cause
-	  sound events to be triggered (Nathan Fredrickson)
+	* Better file transfer error messages (Dave West)
 	* Remotely canceled file transfers in MSN are now noticed, so that we
 	  don't accidentally cancel the file transfer and crash Gaim
 	  (Felipe Contreras)
+	* Delayed messages and system messages no longer cause
+	  sound events to be triggered (Nathan Fredrickson)
 	* The chat invite button has a correct label (Stu Tomlinson)
-	* The system log should leak fewer file descriptors now (Ka-Hing Cheung)
-	* File transfers appear in the file transfer window when they
-	  are initiated rather than when they begin transferring (Dave West)
-	* Better file transfer cancel messages for AIM (Dave West)
+	* The system log should leak fewer file descriptors (Ka-Hing Cheung)
 	* Buddy list tooltips display in more appropriate positions when
 	  using multiple monitors (Dave West)
 	* Better parsing of URLs containing special characters
