@@ -75,8 +75,7 @@ struct file_transfer {
 static int ft_choose_file(gpointer a, struct file_transfer *xfer);
 static void ft_cancel(gpointer w, struct file_transfer *xfer);
 static void ft_delete(struct file_transfer *xfer);
-static void ft_callback(gpointer data, gint source,
-		GaimInputCondition condition);
+static void ft_callback(gpointer data, gint source, GaimInputCondition condition);
 static void ft_nextfile(struct file_transfer *xfer);
 static int ft_mkdir(const char *name);
 static int ft_mkdir_help(char *dir);
