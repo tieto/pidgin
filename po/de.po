@@ -63,23 +63,23 @@ msgstr ""
 
 #: src/aim.c:369
 msgid "Screen Name: "
-msgstr ""
+msgstr "Benutzername: "
 
 #: src/aim.c:372
 msgid "Password: "
-msgstr ""
+msgstr "Passwort: "
 
 #: src/aim.c:375
 msgid "Remember Password"
-msgstr ""
+msgstr "Passwort Speichern"
 
 #: src/aim.c:422
 msgid "Gaim - Login"
-msgstr ""
+msgstr "Gaim - Anmeldung"
 
 #: src/aim.c:498 src/buddy.c:1782
 msgid "Preferences"
-msgstr ""
+msgstr "Einstellungen"
 
 #: src/away.c:101 src/away.c:223
 msgid "Back"
