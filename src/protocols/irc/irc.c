@@ -1320,7 +1320,7 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 	g_snprintf(buf, sizeof(buf), "USER %s %s %s :%s\r\n",
 		   g_get_user_name(), hostname, 
 		   gc->user->proto_opt[USEROPT_SERV], 
-		   gc->user->alias);
+		   gc->user->alias ? gc->user->alias : "gaim");
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
