@@ -17,6 +17,8 @@ version 0.76cvs:
 	* Improved accessibility in conversation windows (Nathan Fredrickson)
 	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
 	* Core/UI split event loop code. (Scott Lamb)
+	* Added improvements to the multi-field request code, including
+	  required fields and account fields.
 
 	Bug Fixes:
 	* Various buffer overflow fixes (Stefan Esser)

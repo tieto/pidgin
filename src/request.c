@@ -58,13 +58,18 @@ gaim_request_fields_destroy(GaimRequestFields *fields)
 
 	g_return_if_fail(fields != NULL);
 
-	for (l = fields->groups; l != NULL; l = l->next) {
+	for (l = fields->groups; l != NULL; l = l->next)
+	{
 		group = l->data;
 
 		gaim_request_field_group_destroy(group);
 	}
 
-	g_list_free(fields->groups);
+	if (fields->groups != NULL)
+		g_list_free(fields->groups);
+
+	if (fields->required_fields != NULL)
+		g_list_free(fields->required_fields);
 
 	g_hash_table_destroy(fields->fields);
 
@@ -102,6 +107,65 @@ gaim_request_fields_get_groups(const GaimRequestFields *fields)
 	g_return_val_if_fail(fields != NULL, NULL);
 
 	return fields->groups;
+}
+
+gboolean
+gaim_request_fields_exists(const GaimRequestFields *fields, const char *id)
+{
+	g_return_val_if_fail(fields != NULL, FALSE);
+	g_return_val_if_fail(id     != NULL, FALSE);
+
+	return (g_hash_table_lookup(fields->fields, id) != NULL);
+}
+
+const GList *
+gaim_request_fields_get_required(const GaimRequestFields *fields)
+{
+	g_return_val_if_fail(fields != NULL, NULL);
+
+	return fields->required_fields;
+}
+
+gboolean
+gaim_request_fields_is_field_required(const GaimRequestFields *fields,
+									  const char *id)
+{
+	GaimRequestField *field;
+
+	g_return_val_if_fail(fields != NULL, FALSE);
+	g_return_val_if_fail(id     != NULL, FALSE);
+
+	if ((field = gaim_request_fields_get_field(fields, id)) == NULL)
+		return FALSE;
+
+	return gaim_request_field_is_required(field);
+}
+
+gboolean
+gaim_request_fields_all_required_filled(const GaimRequestFields *fields)
+{
+	GList *l;
+
+	g_return_val_if_fail(fields != NULL, FALSE);
+
+	for (l = fields->required_fields; l != NULL; l = l->next)
+	{
+		GaimRequestField *field = (GaimRequestField *)l->data;
+
+		switch (gaim_request_field_get_type(field))
+		{
+			case GAIM_REQUEST_FIELD_STRING:
+				if (gaim_request_field_string_get_value(field) == NULL)
+					return FALSE;
+
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	return TRUE;
 }
 
 GaimRequestField *
@@ -176,6 +240,21 @@ gaim_request_fields_get_choice(const GaimRequestFields *fields, const char *id)
 	return gaim_request_field_choice_get_value(field);
 }
 
+GaimAccount *
+gaim_request_fields_get_account(const GaimRequestFields *fields,
+								const char *id)
+{
+	GaimRequestField *field;
+
+	g_return_val_if_fail(fields != NULL, NULL);
+	g_return_val_if_fail(id     != NULL, NULL);
+
+	if ((field = gaim_request_fields_get_field(fields, id)) == NULL)
+		return NULL;
+
+	return gaim_request_field_account_get_value(field);
+}
+
 GaimRequestFieldGroup *
 gaim_request_field_group_new(const char *title)
 {
@@ -220,9 +299,18 @@ gaim_request_field_group_add_field(GaimRequestFieldGroup *group,
 
 	group->fields = g_list_append(group->fields, field);
 
-	if (group->fields_list != NULL) {
+	if (group->fields_list != NULL)
+	{
 		g_hash_table_insert(group->fields_list->fields,
 							g_strdup(gaim_request_field_get_id(field)), field);
+	}
+
+	field->group = group;
+
+	if (gaim_request_field_is_required(field))
+	{
+		group->fields_list->required_fields =
+			g_list_append(group->fields_list->required_fields, field);
 	}
 }
 
@@ -344,6 +432,33 @@ gaim_request_field_set_type_hint(GaimRequestField *field,
 	field->type_hint = (type_hint == NULL ? NULL : g_strdup(type_hint));
 }
 
+void
+gaim_request_field_set_required(GaimRequestField *field, gboolean required)
+{
+	g_return_if_fail(field != NULL);
+
+	if (field->required == required)
+		return;
+
+	field->required = required;
+
+	if (field->group != NULL)
+	{
+		if (required)
+		{
+			field->group->fields_list->required_fields =
+				g_list_append(field->group->fields_list->required_fields,
+							  field);
+		}
+		else
+		{
+			field->group->fields_list->required_fields =
+				g_list_remove(field->group->fields_list->required_fields,
+							  field);
+		}
+	}
+}
+
 GaimRequestFieldType
 gaim_request_field_get_type(const GaimRequestField *field)
 {
@@ -382,6 +497,14 @@ gaim_request_field_get_type_hint(const GaimRequestField *field)
 	g_return_val_if_fail(field != NULL, NULL);
 
 	return field->type_hint;
+}
+
+gboolean
+gaim_request_field_is_required(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+
+	return field->required;
 }
 
 GaimRequestField *
@@ -853,6 +976,105 @@ gaim_request_field_label_new(const char *id, const char *text)
 	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_LABEL);
 
 	return field;
+}
+
+
+GaimRequestField *
+gaim_request_field_account_new(const char *id, const char *text,
+							   GaimAccount *account)
+{
+	GaimRequestField *field;
+
+	g_return_val_if_fail(id   != NULL, NULL);
+	g_return_val_if_fail(text != NULL, NULL);
+
+	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_ACCOUNT);
+
+	if (account == NULL && gaim_connections_get_all() != NULL)
+	{
+		account = gaim_connection_get_account(
+			(GaimConnection *)gaim_connections_get_all()->data);
+	}
+
+	gaim_request_field_account_set_default_value(field, account);
+	gaim_request_field_account_set_value(field, account);
+
+	return field;
+}
+
+void
+gaim_request_field_account_set_default_value(GaimRequestField *field,
+											 GaimAccount *default_value)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT);
+
+	field->u.account.default_account = default_value;
+}
+
+void
+gaim_request_field_account_set_value(GaimRequestField *field,
+									 GaimAccount *value)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT);
+
+	field->u.account.account = value;
+}
+
+void
+gaim_request_field_account_set_show_all(GaimRequestField *field,
+										gboolean show_all)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT);
+
+	if (field->u.account.show_all == show_all)
+		return;
+
+	field->u.account.show_all = show_all;
+
+	if (!show_all)
+	{
+		if (gaim_account_is_connected(field->u.account.default_account))
+		{
+			gaim_request_field_account_set_default_value(field,
+				(GaimAccount *)gaim_connections_get_all()->data);
+		}
+
+		if (gaim_account_is_connected(field->u.account.account))
+		{
+			gaim_request_field_account_set_value(field,
+				(GaimAccount *)gaim_connections_get_all()->data);
+		}
+	}
+}
+
+GaimAccount *
+gaim_request_field_account_get_default_value(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT, NULL);
+
+	return field->u.account.default_account;
+}
+
+GaimAccount *
+gaim_request_field_account_get_value(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT, NULL);
+
+	return field->u.account.account;
+}
+
+gboolean
+gaim_request_field_account_get_show_all(const GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, FALSE);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT, FALSE);
+
+	return field->u.account.show_all;
 }
 
 /* -- */

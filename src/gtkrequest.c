@@ -38,6 +38,8 @@ typedef struct
 	void *user_data;
 	GtkWidget *dialog;
 
+	GtkWidget *ok_button;
+
 	size_t cb_count;
 	GCallback *cbs;
 
@@ -108,7 +110,8 @@ field_string_focus_out_cb(GtkWidget *entry, GdkEventFocus *event,
 {
 	const char *value;
 
-	if (gaim_request_field_string_is_multiline(field)) {
+	if (gaim_request_field_string_is_multiline(field))
+	{
 		GtkTextBuffer *buffer;
 		GtkTextIter start_iter, end_iter;
 
@@ -158,6 +161,12 @@ field_choice_option_cb(GtkRadioButton *button, GaimRequestField *field)
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
 		gaim_request_field_choice_set_value(field,
 				g_slist_index(gtk_radio_button_get_group(button), button));
+}
+
+static void
+field_account_cb(GObject *w, GaimAccount *account, GaimRequestField *field)
+{
+	gaim_request_field_account_set_value(field, account);
 }
 
 static void
@@ -267,7 +276,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 								 "%s</span>%s%s" : "%s%s%s"),
 								 (primary ? primary : ""),
 								 ((primary && secondary) ? "\n\n" : ""),
- 								 (secondary ? secondary : ""));
+								 (secondary ? secondary : ""));
 
 	label = gtk_label_new(NULL);
 
@@ -437,6 +446,32 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	return data;
 }
 
+static void
+req_entry_field_changed_cb(GtkWidget *entry, GaimRequestField *field)
+{
+	GaimGtkRequestData *req_data;
+	const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
+
+	gaim_request_field_string_set_value(field, (*text == '\0' ? NULL : text));
+
+	req_data = (GaimGtkRequestData *)field->group->fields_list->ui_data;
+
+	gtk_widget_set_sensitive(req_data->ok_button,
+		gaim_request_fields_all_required_filled(field->group->fields_list));
+}
+
+static void
+setup_entry_field(GtkWidget *entry, GaimRequestField *field)
+{
+	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+
+	if (gaim_request_field_is_required(field))
+	{
+		g_signal_connect(G_OBJECT(entry), "changed",
+						 G_CALLBACK(req_entry_field_changed_cb), field);
+	}
+}
+
 static GtkWidget *
 create_string_field(GaimRequestField *field)
 {
@@ -488,6 +523,8 @@ create_string_field(GaimRequestField *field)
 	{
 		widget = gtk_entry_new();
 
+		setup_entry_field(widget, field);
+
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(widget), value);
 
@@ -511,6 +548,8 @@ create_int_field(GaimRequestField *field)
 	GtkWidget *widget;
 
 	widget = gtk_entry_new();
+
+	setup_entry_field(widget, field);
 
 	value = gaim_request_field_int_get_default_value(field);
 
@@ -608,6 +647,19 @@ create_choice_field(GaimRequestField *field)
 							 G_CALLBACK(field_choice_option_cb), field);
 		}
 	}
+
+	return widget;
+}
+
+static GtkWidget *
+create_account_field(GaimRequestField *field)
+{
+	GtkWidget *widget;
+
+	widget = gaim_gtk_account_option_menu_new(
+		gaim_request_field_account_get_default_value(field),
+		gaim_request_field_account_get_show_all(field),
+		G_CALLBACK(field_account_cb), NULL, field);
 
 	return widget;
 }
@@ -725,6 +777,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	data->user_data = user_data;
 	data->u.multifield.fields = fields;
 
+	fields->ui_data = data;
+
 	data->cb_count = 2;
 	data->cbs = g_new0(GCallback, 2);
 
@@ -813,7 +867,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		else
 			rows = field_count;
 
-		col_num=0;
+		col_num = 0;
+
 		for (fl = field_list; fl != NULL; fl = fl->next)
 		{
 			GaimRequestFieldType type;
@@ -822,19 +877,26 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 			type = gaim_request_field_get_type(field);
 
-			if (type == GAIM_REQUEST_FIELD_LABEL) {
-				if(col_num > 0)
+			if (type == GAIM_REQUEST_FIELD_LABEL)
+			{
+				if (col_num > 0)
 					rows++;
+
 				rows++;
-			} else if(type == GAIM_REQUEST_FIELD_STRING && gaim_request_field_string_is_multiline(field)){
-				if(col_num > 0)
+			}
+			else if (type == GAIM_REQUEST_FIELD_STRING &&
+					 gaim_request_field_string_is_multiline(field))
+			{
+				if (col_num > 0)
 					rows++;
+
 				rows += 2;
 			}
 
 			col_num++;
+
 			if(col_num >= cols)
-				col_num=0;
+				col_num = 0;
 		}
 
 		table = gtk_table_new(rows, 2 * cols, FALSE);
@@ -914,6 +976,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 					widget = create_choice_field(field);
 				else if (type == GAIM_REQUEST_FIELD_LIST)
 					widget = create_list_field(field);
+				else if (type == GAIM_REQUEST_FIELD_ACCOUNT)
+					widget = create_account_field(field);
 				else
 					continue;
 
@@ -970,13 +1034,23 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(multifield_cancel_cb), data);
 
+	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+
 	/* OK button */
 	button = gtk_button_new_from_stock(text_to_stock(ok_text));
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
+	data->ok_button = button;
+
+	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_window_set_default(GTK_WINDOW(win), button);
+
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(multifield_ok_cb), data);
+
+	if (!gaim_request_fields_all_required_filled(fields))
+		gtk_widget_set_sensitive(button, FALSE);
 
 	gtk_widget_show(win);
 
@@ -991,10 +1065,10 @@ gaim_gtk_close_request(GaimRequestType type, void *ui_handle)
 	if (data->cbs != NULL)
 		g_free(data->cbs);
 
+	gtk_widget_destroy(data->dialog);
+
 	if (type == GAIM_REQUEST_FIELDS)
 		gaim_request_fields_destroy(data->u.multifield.fields);
-
-	gtk_widget_destroy(data->dialog);
 
 	g_free(data);
 }

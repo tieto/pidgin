@@ -29,6 +29,8 @@
 #include <glib-object.h>
 #include <glib.h>
 
+#include "account.h"
+
 /**
  * Request types.
  */
@@ -52,9 +54,38 @@ typedef enum
 	GAIM_REQUEST_FIELD_BOOLEAN,
 	GAIM_REQUEST_FIELD_CHOICE,
 	GAIM_REQUEST_FIELD_LIST,
-	GAIM_REQUEST_FIELD_LABEL
+	GAIM_REQUEST_FIELD_LABEL,
+	GAIM_REQUEST_FIELD_ACCOUNT
 
 } GaimRequestFieldType;
+
+/**
+ * Multiple fields request data.
+ */
+typedef struct
+{
+	GList *groups;
+
+	GHashTable *fields;
+
+	GList *required_fields;
+
+	void *ui_data;
+
+} GaimRequestFields;
+
+/**
+ * A group of fields with a title.
+ */
+typedef struct
+{
+	GaimRequestFields *fields_list;
+
+	char *title;
+
+	GList *fields;
+
+} GaimRequestFieldGroup;
 
 /**
  * A request field.
@@ -62,12 +93,14 @@ typedef enum
 typedef struct
 {
 	GaimRequestFieldType type;
+	GaimRequestFieldGroup *group;
 
 	char *id;
 	char *label;
 	char *type_hint;
 
 	gboolean visible;
+	gboolean required;
 
 	union
 	{
@@ -115,35 +148,19 @@ typedef struct
 
 		} list;
 
+		struct
+		{
+			GaimAccount *default_account;
+			GaimAccount *account;
+			gboolean show_all;
+
+		} account;
+
 	} u;
 
 	void *ui_data;
 
 } GaimRequestField;
-
-/**
- * Multiple fields request data.
- */
-typedef struct
-{
-	GList *groups;
-
-	GHashTable *fields;
-
-} GaimRequestFields;
-
-/**
- * A group of fields with a title.
- */
-typedef struct
-{
-	GaimRequestFields *fields_list;
-
-	char *title;
-
-	GList *fields;
-
-} GaimRequestFieldGroup;
 
 /**
  * Request UI operations.
@@ -222,6 +239,47 @@ void gaim_request_fields_add_group(GaimRequestFields *fields,
 GList *gaim_request_fields_get_groups(const GaimRequestFields *fields);
 
 /**
+ * Returns whether or not the field with the specified ID exists.
+ *
+ * @param fields The fields list.
+ * @param id     The ID of the field.
+ *
+ * @return TRUE if the field exists, or FALSE.
+ */
+gboolean gaim_request_fields_exists(const GaimRequestFields *fields,
+									const char *id);
+
+/**
+ * Returns a list of all required fields.
+ *
+ * @param fields The fields list.
+ *
+ * @return The list of required fields.
+ */
+const GList *gaim_request_fields_get_required(const GaimRequestFields *fields);
+
+/**
+ * Returns whether or not a field with the specified ID is required.
+ *
+ * @param fields The fields list.
+ * @param id     The field ID.
+ *
+ * @return TRUE if the specified field is required, or FALSE.
+ */
+gboolean gaim_request_fields_is_field_required(const GaimRequestFields *fields,
+											   const char *id);
+
+/**
+ * Returns whether or not all required fields have values.
+ *
+ * @param fields The fields list.
+ *
+ * @return TRUE if all required fields have values, or FALSE.
+ */
+gboolean gaim_request_fields_all_required_filled(
+	const GaimRequestFields *fields);
+
+/**
  * Return the field with the specified ID.
  *
  * @param fields The fields list.
@@ -275,6 +333,17 @@ gboolean gaim_request_fields_get_bool(const GaimRequestFields *fields,
  */
 int gaim_request_fields_get_choice(const GaimRequestFields *fields,
 								   const char *id);
+
+/**
+ * Returns the account of a field with the specified ID.
+ *
+ * @param fields The fields list.
+ * @param id     The ID of the field.
+ *
+ * @return The account value, if found, or NULL otherwise.
+ */
+GaimAccount *gaim_request_fields_get_account(const GaimRequestFields *fields,
+											 const char *id);
 
 /*@}*/
 
@@ -383,6 +452,15 @@ void gaim_request_field_set_type_hint(GaimRequestField *field,
 									  const char *type_hint);
 
 /**
+ * Sets whether or not a field is required.
+ *
+ * @param field    The field.
+ * @param required TRUE if required, or FALSE.
+ */
+void gaim_request_field_set_required(GaimRequestField *field,
+									 gboolean required);
+
+/**
  * Returns the type of a field.
  *
  * @param field The field.
@@ -426,6 +504,15 @@ gboolean gaim_request_field_is_visible(const GaimRequestField *field);
  * @return The field's type hint.
  */
 const char *gaim_request_field_get_type_hint(const GaimRequestField *field);
+
+/**
+ * Returns whether or not a field is required.
+ *
+ * @param field The field.
+ *
+ * @return TRUE if the fiels is required, or FALSE.
+ */
+gboolean gaim_request_field_is_required(const GaimRequestField *field);
 
 /*@}*/
 
@@ -848,12 +935,96 @@ const GList *gaim_request_field_list_get_items(const GaimRequestField *field);
  * Creates a label field.
  *
  * @param id   The field ID.
- * @param text The optional label of the field.
+ * @param text The label of the field.
  *
  * @return The new field.
  */
 GaimRequestField *gaim_request_field_label_new(const char *id,
 											   const char *text);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Account Field API                                               */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates an account field.
+ *
+ * By default, this field will not show offline accounts.
+ *
+ * @param id      The field ID.
+ * @param text    The text label of the field.
+ * @param account The optional default account.
+ *
+ * @return The new field.
+ */
+GaimRequestField *gaim_request_field_account_new(const char *id,
+												 const char *text,
+												 GaimAccount *account);
+
+/**
+ * Sets the default account on an account field.
+ *
+ * @param field         The account field.
+ * @param default_value The default account.
+ */
+void gaim_request_field_account_set_default_value(GaimRequestField *field,
+												  GaimAccount *default_value);
+
+/**
+ * Sets the account in an account field.
+ *
+ * @param field The account field.
+ * @param value The account.
+ */
+void gaim_request_field_account_set_value(GaimRequestField *field,
+										  GaimAccount *value);
+
+/**
+ * Sets whether or not to show all accounts in an account field.
+ *
+ * If TRUE, all accounts, online or offline, will be shown. If FALSE,
+ * only online accounts will be shown.
+ *
+ * @param field    The account field.
+ * @param show_all Whether or not to show all accounts.
+ */
+void gaim_request_field_account_set_show_all(GaimRequestField *field,
+											 gboolean show_all);
+
+/**
+ * Returns the default account in an account field.
+ *
+ * @param field The field.
+ *
+ * @return The default account.
+ */
+GaimAccount *gaim_request_field_account_get_default_value(
+		const GaimRequestField *field);
+
+/**
+ * Returns the user-entered account in an account field.
+ *
+ * @param field The field.
+ *
+ * @return The user-entered account.
+ */
+GaimAccount *gaim_request_field_account_get_value(
+		const GaimRequestField *field);
+
+/**
+ * Returns whether or not to show all accounts in an account field.
+ *
+ * If TRUE, all accounts, online or offline, will be shown. If FALSE,
+ * only online accounts will be shown.
+ *
+ * @param field    The account field.
+ * @param show_all Whether or not to show all accounts.
+ */
+gboolean gaim_request_field_account_get_show_all(
+		const GaimRequestField *field);
 
 /*@}*/
 

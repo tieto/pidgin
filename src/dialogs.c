@@ -468,34 +468,6 @@ static gboolean show_ee_dialog(const char *ee)
 	return TRUE;
 }
 
-static void do_im(GtkWidget *dialog, int id, struct getuserinfo *info)
-{
-	const char *who;
-	GaimConversation *conv;
-	GaimAccount *account;
-
-	switch(id) {
-	case GTK_RESPONSE_OK:
-		who = gtk_entry_get_text(GTK_ENTRY(info->entry));
-
-		if (who && *who) {
-			account = (info->gc ? info->gc->account : NULL);
-
-			conv = gaim_find_conversation_with_account(who, account);
-
-			if (conv == NULL)
-				conv = gaim_conversation_new(GAIM_CONV_IM, account, who);
-			else
-				gaim_conv_window_raise(gaim_conversation_get_window(conv));
-		}
-
-		break;
-	}
-
-	gtk_widget_destroy(GTK_WIDGET(dialog));
-	g_free(info);
-}
-
 static void do_info(GtkWidget *dialog, int id, struct getuserinfo *info)
 {
 	char *who;
@@ -527,81 +499,56 @@ show_info_select_account(GObject *w, GaimAccount *account,
 	info->gc = gaim_account_get_connection(account);
 }
 
-void show_im_dialog()
+static void
+new_im_cb(gpointer data, GaimRequestFields *fields)
 {
-	GtkWidget *window, *hbox, *vbox;
-	GtkWidget *label;
-	GtkWidget *table;
-	GaimGtkBuddyList *gtkblist;
-	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
-	struct getuserinfo *info = g_new0(struct getuserinfo, 1);
+	const char *username;
+	GaimAccount *account;
+	GaimConversation *conv;
 
-	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+	username = gaim_request_fields_get_string(fields,  "screenname");
+	account  = gaim_request_fields_get_account(fields, "account");
 
-	info->gc = gaim_connections_get_all()->data;
+	conv = gaim_find_conversation_with_account(username, account);
 
-	window = gtk_dialog_new_with_buttons(_("New Instant Message"), gtkblist ? GTK_WINDOW(gtkblist->window) : NULL, 0,
-					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
-	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), 12);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), 6);
-	gtk_dialog_set_response_sensitive(GTK_DIALOG(window), GTK_RESPONSE_OK, FALSE);
+	if (conv == NULL)
+		conv = gaim_conversation_new(GAIM_CONV_IM, account, username);
+	else
+		gaim_conv_window_raise(gaim_conversation_get_window(conv));
+}
 
-	hbox = gtk_hbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+void
+show_im_dialog(void)
+{
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
 
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+	fields = gaim_request_fields_new();
 
-	label = gtk_label_new(_("Please enter the screen name of the person you would like to IM.\n"));
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
 
-	table = gtk_table_new(2, 2, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 12);
-	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
+	field = gaim_request_field_string_new("screenname", _("_Screen name"),
+										  NULL, FALSE);
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
 
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screen Name:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
+	field = gaim_request_field_account_new("account", _("_Account"), NULL);
+	gaim_request_field_set_visible(field,
+		(gaim_connections_get_all() != NULL &&
+		 gaim_connections_get_all()->next != NULL));
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
 
-	info->entry = gtk_entry_new();
-	gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
-	gtk_entry_set_activates_default (GTK_ENTRY(info->entry), TRUE);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->entry));
-	gaim_set_accessible_label (info->entry, label);
-
-	g_signal_connect(G_OBJECT(info->entry), "changed",
-			G_CALLBACK(gaim_gtk_set_sensitive_if_input), window);
-
-	if (gaim_connections_get_all()->next) {
-
-		label = gtk_label_new(NULL);
-		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
-		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-
-		info->account = gaim_gtk_account_option_menu_new(NULL, FALSE,
-				G_CALLBACK(show_info_select_account), NULL, info);
-
-		gtk_table_attach_defaults(GTK_TABLE(table), info->account, 1, 2, 1, 2);
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(info->account));
-		gaim_set_accessible_label (info->account, label);
-	}
-
-	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_im), info);
-
-	gtk_widget_show_all(window);
-	gtk_widget_grab_focus(GTK_WIDGET(info->entry));
+	gaim_request_fields(gaim_get_blist(), _("New Instant Message"),
+						NULL,
+						_("Please enter the screen name of the person you "
+						  "would like to IM."),
+						fields,
+						_("OK"), G_CALLBACK(new_im_cb),
+						_("Cancel"), NULL,
+						NULL);
 }
 
 void show_info_dialog()
