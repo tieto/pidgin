@@ -10,6 +10,12 @@
 	in here for you guys just check out the Change Log.  I hope you all
 	enjoy and take care! 
 
+	Eric: Wanna know what the Oscar problem was? You'll laugh. 2 bytes.
+	The fix was changing 0x07da to 0x0686. Anyway, aside from the fix
+	for that, there are a couple other good things. Beware of DSL nazis.
+	They won't give you service until 6 weeks after you order it. So um,
+	yeah.
+
 0.10.0 (09/11/2000):
 	Rob: Well peoples, I know that it's been a while since our
 	last release.  Here we go.  Some brand spankin' new interfaces

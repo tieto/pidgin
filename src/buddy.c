@@ -868,7 +868,7 @@ struct buddy *add_buddy(char *group, char *buddy, char *show)
 
 	b->idletime = gtk_label_new("");
 
-	gtk_tree_append(GTK_TREE(g->tree),b->item);
+/*	gtk_tree_append(GTK_TREE(g->tree),b->item);*/
 	gtk_container_add(GTK_CONTAINER(b->item), box);
 
 	gtk_box_pack_start(GTK_BOX(box), b->pix, FALSE, FALSE, 1);
@@ -885,7 +885,6 @@ struct buddy *add_buddy(char *group, char *buddy, char *show)
 
 	return b;
 }
-
 
 struct group *add_group(char *group)
 {
@@ -1316,8 +1315,12 @@ gint log_timeout(char *name)
 			
 	if (!b->present) {
 		int count = 0;
-		gtk_widget_hide(b->item);
 		g = find_group_by_buddy(name);
+		
+		if (g && g->tree && b->item->parent) {
+			gtk_widget_ref(b->item);
+			gtk_tree_remove_item(GTK_TREE(g->tree), b->item);
+		}
 		mem = g->members;
 		while (mem) {
 			b = (struct buddy *)mem->data;
@@ -1485,9 +1488,28 @@ void set_buddy(struct buddy *b)
 			}
 
 			
-			{ struct group *g = find_group_by_buddy(b->name);
-			  gtk_widget_show(g->item); }
-			gtk_widget_show(b->item);
+			{
+				struct group *g = find_group_by_buddy(b->name);
+				gtk_widget_show(g->item);
+				if (!b->item->parent) {
+					GList *mem = g->members; int cn = 0;
+					struct buddy *BB;
+					while (mem) {
+						BB = (struct buddy *)mem->data;
+						if (BB == b)
+							break;
+						if (BB->present) cn++;
+						mem = mem->next;
+					}
+					if (cn)
+						gtk_tree_insert(GTK_TREE(g->tree),
+								b->item, cn);
+					else
+						gtk_tree_prepend(GTK_TREE(g->tree),
+								b->item);
+				}
+				gtk_widget_show(b->item);
+			}
 			gtk_widget_show(b->label);
                         b->log_timer = gtk_timeout_add(10000, (GtkFunction) log_timeout, b->name);
         		if ( ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER )
