@@ -1,6 +1,20 @@
 -=[ Gaim ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
-0.56:
+0.56 (04/11/2002):
+	Rob: Well, what do you know. I have another headache. I always have
+	these damned headaches. I got pissed off with the way GtkTree looks.
+	I wanted to move to using GtkCTree. I think they're pretty.
+	Unfortunately, GtkCTree sucks. After a little digging through
+	the code, I managed to molest GtkTree into looking like
+	GtkCTree. Thanks to everyone that helped track down that one
+	annoying style problem.
+
+	Sean: Hello.  This is another minor release while Rob and I finish 
+	up on some bigger projects.  We're reworking a lot of the UI to make 
+	it easier to use, nicer looking, and more compatible with gtk2.  
+	I've also been trying to bring the Yahoo plugin up to date, so it 
+	will work for Indian users and avoid a potential problem in the near 
+	future.
 
 0.55 (03/29/2002):
 	Rob: 0.55 is here. I've been away for a few days on business. Sean
