@@ -134,6 +134,8 @@ static int yahoo_message(struct yahoo_session *sess, ...) {
 	struct gaim_connection *gc = sess->user_data;
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	char buf[BUF_LEN * 4];
+	char *tmp, *c, *e;
+	int at = 0;
 
 	va_list ap;
 	char *id, *nick, *msg;
@@ -144,7 +146,20 @@ static int yahoo_message(struct yahoo_session *sess, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	g_snprintf(buf, sizeof(buf), "%s", msg);
+	e = tmp = g_strdup(msg);
+
+	while ((c = strchr(e, '\033')) != NULL) {
+		*c++ = '\0';
+		at += g_snprintf(buf + at, sizeof(buf) - at, "%s", e);
+		e = ++c;
+		while (*e && (*e++ != 'm'));
+	}
+
+	if (*e)
+		g_snprintf(buf + at, sizeof(buf) - at, "%s", e);
+
+	g_free(tmp);
+
 	serv_got_im(gc, nick, buf, 0);
 
 	return 1;
