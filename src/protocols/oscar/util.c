@@ -162,6 +162,10 @@ faim_export int aim_sncmp(const char *sn1, const char *sn2)
 		}
 	}
 
+	/* Should both be NULL */
+	if (*curPtr1 != *curPtr2)
+		return 1;
+
 	return 0;
 }
 

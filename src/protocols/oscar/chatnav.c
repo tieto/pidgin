@@ -36,7 +36,17 @@ faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, co
 	/* exchange */
 	aimbs_put16(&fr->data, exchange);
 
-	/* action cookie */
+	/*
+	 * This looks to be a big hack.  You'll note that this entire
+	 * SNAC is just a room info structure, but the hard room name,
+	 * here, is set to "create".  
+	 *
+	 * Either this goes on the "list of questions concerning
+	 * why-the-hell-did-you-do-that", or this value is completly
+	 * ignored.  Without experimental evidence, but a good knowledge of
+	 * AOL style, I'm going to guess that it is the latter, and that
+	 * the value of the room name in create requests is ignored.
+	 */
 	aimbs_put8(&fr->data, strlen(ck));
 	aimbs_putraw(&fr->data, ck, strlen(ck));
 

@@ -1776,7 +1776,7 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			debug_printf("chat info: \tMax Concurrent Rooms: %d\n", maxrooms);
 			debug_printf("chat info: \tExchange List: (%d total)\n", exchangecount);
 			for (i = 0; i < exchangecount; i++)
-				debug_printf("chat info: \t\t%d\n", exchanges[i].number);
+				debug_printf("chat info: \t\t%d    %s\n", exchanges[i].number, exchanges[i].name ? exchanges[i].name : "");
 			while (odata->create_rooms) {
 				struct create_room *cr = odata->create_rooms->data;
 				debug_printf("creating room %s\n", cr->name);

@@ -431,8 +431,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 
 		/* read the payload */
 		if (aim_bstream_recv(&newrx->data, conn->fd, payloadlen) < payloadlen) {
-			free(payload);
-			aim_frame_destroy(newrx);
+			aim_frame_destroy(newrx); /* free's payload */
 			aim_conn_close(conn);
 			return -1;
 		}

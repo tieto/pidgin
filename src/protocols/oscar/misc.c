@@ -30,19 +30,16 @@ faim_export int aim_bos_setbuddylist(aim_session_t *sess, aim_conn_t *conn, cons
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
-	int i, len = 0;
+	int len = 0;
 	char *localcpy = NULL;
 	char *tmpptr = NULL;
 
 	if (!buddy_list || !(localcpy = strdup(buddy_list))) 
 		return -EINVAL;
 
-	i = 0;
-	tmpptr = strtok(localcpy, "&");
-	while ((tmpptr != NULL) && (i < 150)) {
-		faimdprintf(sess, 2, "---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
-		len += 1+strlen(tmpptr);
-		i++;
+	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
+		faimdprintf(sess, 2, "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
+		len += 1 + strlen(tmpptr);
 		tmpptr = strtok(NULL, "&");
 	}
 
@@ -50,18 +47,16 @@ faim_export int aim_bos_setbuddylist(aim_session_t *sess, aim_conn_t *conn, cons
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0003, 0x0004, 0x0000, NULL, 0);
-	
 	aim_putsnac(&fr->data, 0x0003, 0x0004, 0x0000, snacid);
 
-	strncpy(localcpy, buddy_list, strlen(buddy_list)+1);
-	i = 0;
-	tmpptr = strtok(localcpy, "&");
-	while ((tmpptr != NULL) & (i < 150)) {
-		faimdprintf(sess, 2, "---adding %d: %s (%d)\n", i, tmpptr, strlen(tmpptr));
-		
+	strncpy(localcpy, buddy_list, strlen(buddy_list) + 1);
+
+	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
+
+		faimdprintf(sess, 2, "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
+
 		aimbs_put8(&fr->data, strlen(tmpptr));
 		aimbs_putraw(&fr->data, tmpptr, strlen(tmpptr));
-		i++;
 		tmpptr = strtok(NULL, "&");
 	}
 
