@@ -51,13 +51,13 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 	if (!(fr = (aim_frame_t *)calloc(1, sizeof(aim_frame_t))))
 		return NULL;
 
-	fr->conn = conn; 
+	fr->conn = conn;
 	fr->hdrtype = framing;
 	if (fr->hdrtype == AIM_FRAMETYPE_FLAP)
 		fr->hdr.flap.channel = chan;
 	else if (fr->hdrtype == AIM_FRAMETYPE_OFT)
 		fr->hdr.rend.type = chan;
-	else 
+	else
 		faimdprintf(sess, 0, "tx_new: unknown framing\n");
 
 	if (datalen > 0) {
@@ -83,7 +83,7 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 static flap_seqnum_t aim_get_next_txseqnum(aim_conn_t *conn)
 {
 	flap_seqnum_t ret;
-	
+
 	ret = ++conn->seqnum;
 
 	return ret;
@@ -161,7 +161,7 @@ static int aim_tx_enqueue__immediate(aim_session_t *sess, aim_frame_t *fr)
 
 faim_export int aim_tx_setenqueue(aim_session_t *sess, int what, int (*func)(aim_session_t *, aim_frame_t *))
 {
-	
+
 	if (what == AIM_TX_QUEUED)
 		sess->tx_enqueue = &aim_tx_enqueue__queuebased;
 	else if (what == AIM_TX_IMMEDIATE) 
@@ -178,7 +178,7 @@ faim_export int aim_tx_setenqueue(aim_session_t *sess, int what, int (*func)(aim
 
 faim_internal int aim_tx_enqueue(aim_session_t *sess, aim_frame_t *fr)
 {
-	
+
 	/*
 	 * If we want to send on a connection that is in progress, we have to force
 	 * them to use the queue based version. Otherwise, use whatever they
@@ -231,7 +231,7 @@ static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 		 * up an actual txqueue and a GAIM_INPUT_WRITE callback and only write when we
 		 * can. Why is this file called txqueue anyway? Lets rename it to txblock.
 		 */
-		if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) && 
+		if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) &&
 		    (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)) {
 			const char *sn = aim_odc_getsn(conn);
 			aim_rxcallback_t userfunc;
@@ -286,7 +286,7 @@ static int sendframe_flap(aim_session_t *sess, aim_frame_t *fr)
 	aim_bstream_rewind(&bs);
 	if (aim_bstream_send(&bs, fr->conn, bslen) != bslen)
 		err = -errno;
-	
+
 	free(bs_raw); /* XXX aim_bstream_free */
 
 	fr->handled = 1;

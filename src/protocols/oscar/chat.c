@@ -107,7 +107,7 @@ faim_export int aim_chat_leaveroom(aim_session_t *sess, const char *name)
 	if (!(conn = aim_chat_getconn(sess, name)))
 		return -ENOENT;
 
-	aim_conn_close(conn);
+	aim_conn_close(sess, conn);
 
 	return 0;
 }

@@ -5,7 +5,7 @@
  */
 
 #define FAIM_INTERNAL
-#include <aim.h> 
+#include <aim.h>
 
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -16,11 +16,11 @@
  */
 faim_internal int aim_recv(int fd, void *buf, size_t count)
 {
-	int left, cur; 
+	int left, cur;
 
 	for (cur = 0, left = count; left; ) {
 		int ret;
-		
+
 		ret = recv(fd, ((unsigned char *)buf)+cur, left, 0);
 
 		/* Of course EOF is an error, only morons disagree with that. */
@@ -44,7 +44,7 @@ faim_internal int aim_bstream_recv(aim_bstream_t *bs, int fd, size_t count)
 
 	if (!bs || (fd < 0) || (count < 0))
 		return -1;
-	
+
 	if (count > (bs->len - bs->offset))
 		count = bs->len - bs->offset; /* truncate to remaining space */
 
@@ -86,7 +86,7 @@ static int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame
 {
 	fu8_t hdr_raw[6];
 	aim_bstream_t hdr;
-	
+
 	fr->hdrtype = AIM_FRAMETYPE_FLAP;
 
 	/*
@@ -102,7 +102,7 @@ static int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame
 	 */
 	aim_bstream_init(&hdr, hdr_raw, sizeof(hdr_raw));
 	if (aim_bstream_recv(&hdr, conn->fd, 6) < 6) {
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 		return -1;
 	}
 
@@ -114,9 +114,9 @@ static int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame
 	 */
 	if (aimbs_get8(&hdr) != 0x2a) {
 		faimdprintf(sess, 0, "Invalid FLAP frame received on FLAP connection!");
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 		return -1;
-	}	
+	}
 
 	fr->hdr.flap.channel = aimbs_get8(&hdr);
 	fr->hdr.flap.seqnum = aimbs_get16(&hdr);
@@ -142,7 +142,7 @@ static int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *conn, aim
 	 */
 	aim_bstream_init(&hdr, hdr_raw, sizeof(hdr_raw));
 	if (aim_bstream_recv(&hdr, conn->fd, 8) < 8) {
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 		return -1;
 	}
 
@@ -212,7 +212,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 		/* read the payload */
 		if (aim_bstream_recv(&fr->data, conn->fd, payloadlen) < payloadlen) {
 			aim_frame_destroy(fr); /* free's payload */
-			aim_conn_close(conn);
+			aim_conn_close(sess, conn);
 			return -1;
 		}
 	} else
@@ -234,7 +234,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 
 	fr->conn->lastactivity = time(NULL);
 
-	return 0;  
+	return 0;
 }
 
 /*
@@ -270,7 +270,7 @@ faim_internal void aim_rxqueue_cleanbyconn(aim_session_t *sess, aim_conn_t *conn
 	for (currx = sess->queue_incoming; currx; currx = currx->next) {
 		if ((!currx->handled) && (currx->conn == conn))
 			currx->handled = 1;
-	}	
+	}
 
 	return;
 }

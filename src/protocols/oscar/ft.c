@@ -196,7 +196,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 
 	if ((addr.sa_family != PF_INET) && (addr.sa_family != PF_INET6)) {
 		close(acceptfd);
-		aim_conn_close(cur);
+		aim_conn_close(sess, cur);
 		return -1;
 	}
 
@@ -205,7 +205,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 
 	if (!(newconn = aim_cloneconn(sess, cur))) {
 		close(acceptfd);
-		aim_conn_close(cur);
+		aim_conn_close(sess, cur);
 		return -ENOMEM;
 	}
 
@@ -232,7 +232,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 
 	} else {
 		faimdprintf(sess, 1,"Got a connection on a listener that's not rendezvous.  Closing connection.\n");
-		aim_conn_close(newconn);
+		aim_conn_close(sess, newconn);
 		ret = -1;
 	}
 
@@ -932,7 +932,7 @@ faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr
 	}
 
 	if (ret == -1)
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 
 	return ret;
 }

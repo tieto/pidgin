@@ -567,7 +567,7 @@ faim_export int aim_clearhandlers(aim_conn_t *conn);
 
 faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, fu16_t group);
 faim_export aim_session_t *aim_conn_getsess(aim_conn_t *conn);
-faim_export void aim_conn_close(aim_conn_t *deadconn);
+faim_export void aim_conn_close(aim_session_t *sess, aim_conn_t *deadconn);
 faim_export aim_conn_t *aim_newconn(aim_session_t *, int type, const char *dest);
 faim_export aim_conn_t *aim_select(aim_session_t *, struct timeval *, int *);
 faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn);

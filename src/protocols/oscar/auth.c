@@ -58,7 +58,7 @@ static int aim_encode_password_md5(const char *password, const char *key, fu8_t 
 {
 	md5_state_t state;
 
-	md5_init(&state);	
+	md5_init(&state);
 	md5_append(&state, (const md5_byte_t *)key, strlen(key));
 	md5_append(&state, (const md5_byte_t *)password, strlen(password));
 	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
@@ -76,7 +76,7 @@ static int aim_encode_password_md5(const char *password, const char *key, fu8_t 
 	md5_append(&state, (const md5_byte_t *)password, strlen(password));
 	md5_finish(&state, (md5_byte_t *)&passdigest);
 
-	md5_init(&state);	
+	md5_init(&state);
 	md5_append(&state, (const md5_byte_t *)key, strlen(key));
 	md5_append(&state, (const md5_byte_t *)&passdigest, 16);
 	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
@@ -118,7 +118,7 @@ faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const fu16
 	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x0001, 4+2+2+length)))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4+2+2+length)))
 		return -ENOMEM;
 
 	aimbs_put32(&fr->data, 0x00000001);
@@ -259,7 +259,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	aim_tlvlist_write(&fr->data, &tl);
 
 	aim_tlvlist_free(&tl);
-	
+
 	aim_tx_enqueue(sess, fr);
 
 	return 0;
@@ -302,7 +302,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 * Check for an error code.  If so, we should also
 	 * have an error url.
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x0008, 1)) 
+	if (aim_tlv_gettlv(tlvlist, 0x0008, 1))
 		info->errorcode = aim_tlv_get16(tlvlist, 0x0008, 1);
 	if (aim_tlv_gettlv(tlvlist, 0x0004, 1))
 		info->errorurl = aim_tlv_getstr(tlvlist, 0x0004, 1);
@@ -435,9 +435,9 @@ static int goddamnicq(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 {
 	aim_frame_t fr;
 	aim_rxcallback_t userfunc;
-	
+
 	fr.conn = conn;
-	
+
 	if ((userfunc = aim_callhandler(sess, conn, 0x0017, 0x0007)))
 		userfunc(sess, &fr, "");
 
@@ -459,7 +459,7 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
-	
+
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
@@ -510,7 +510,7 @@ static int keyparse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, keystr);
 
-	free(keystr); 
+	free(keystr);
 
 	return ret;
 }

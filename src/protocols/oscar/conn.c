@@ -158,8 +158,8 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 	aim_rxqueue_cleanbyconn(sess, *deadconn);
 	aim_tx_cleanqueue(sess, *deadconn);
 
-	if ((*deadconn)->fd != -1) 
-		aim_conn_close(*deadconn);
+	if ((*deadconn)->fd != -1)
+		aim_conn_close(sess, *deadconn);
 
 	/*
 	 * XXX ->priv should never be touched by the library. I know
@@ -203,7 +203,7 @@ static void aim_connrst(aim_session_t *sess)
 
 		while (cur) {
 			tmp = cur->next;
-			aim_conn_close(cur);
+			aim_conn_close(sess, cur);
 			connkill_real(sess, &cur);
 			cur = tmp;
 		}
@@ -248,7 +248,7 @@ static aim_conn_t *aim_conn_getnext(aim_session_t *sess)
 {
 	aim_conn_t *newconn;
 
-	if (!(newconn = malloc(sizeof(aim_conn_t)))) 	
+	if (!(newconn = malloc(sizeof(aim_conn_t))))
 		return NULL;
 	memset(newconn, 0, sizeof(aim_conn_t));
 
@@ -277,7 +277,7 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
 {
 	aim_conn_t *cur, **prev;
 
-	if (!deadconn || !*deadconn)	
+	if (!deadconn || !*deadconn)
 		return;
 
 	for (prev = &sess->connlist; (cur = *prev); ) {
@@ -297,6 +297,28 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
 }
 
 /**
+ * This sends an empty channel 4 SNAC.  This is sent to signify
+ * that we're logging off.  This shouldn't really be necessary--
+ * usually the AIM server will detect that the TCP connection has
+ * been destroyed.
+ */
+static int
+aim_flap_close(aim_session_t *sess, aim_conn_t *conn)
+{
+	aim_frame_t *fr;
+
+	if (!sess || !conn)
+		return -EINVAL;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x04, 0)))
+		return -ENOMEM;
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+/**
  * Close (but not free) a connection.
  *
  * This leaves everything untouched except for clearing the 
@@ -308,11 +330,13 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
  *
  * @param deadconn The connection to close.
  */
-faim_export void aim_conn_close(aim_conn_t *deadconn)
+faim_export void aim_conn_close(aim_session_t *sess, aim_conn_t *deadconn)
 {
 	aim_rxcallback_t userfunc;
 
-	if (deadconn->fd >= 3)
+	aim_flap_close(sess, deadconn);
+
+	if (deadconn->fd >= 0)
 		close(deadconn->fd);
 
 	deadconn->fd = -1;
@@ -343,7 +367,7 @@ faim_export aim_conn_t *aim_getconn_type(aim_session_t *sess, int type)
 	aim_conn_t *cur;
 
 	for (cur = sess->connlist; cur; cur = cur->next) {
-		if ((cur->type == type) && 
+		if ((cur->type == type) &&
 				!(cur->status & AIM_CONN_STATUS_INPROGRESS))
 			break;
 	}
@@ -687,7 +711,7 @@ faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn)
  * @param timeout How long to wait
  * @param status Return status
  * @return If @status is 2, returns connection with pending data, otherwise %NULL
- */ 
+ */
 faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout, int *status)
 {
 	aim_conn_t *cur;
@@ -734,7 +758,7 @@ faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout,
 	if (!haveconnecting && sess->queue_outgoing) {
 		*status = 1;
 		return NULL;
-	} 
+	}
 
 	if ((i = select(maxfd+1, &fds, &wfds, NULL, timeout))>=1) {
 		for (cur = sess->connlist; cur; cur = cur->next) {
@@ -805,7 +829,7 @@ faim_export void aim_setupproxy(aim_session_t *sess, const char *server, const c
 	}
 
 	strncpy(sess->socksproxy.server, server, sizeof(sess->socksproxy.server));
-	if (username && strlen(username)) 
+	if (username && strlen(username))
 		strncpy(sess->socksproxy.username, username, sizeof(sess->socksproxy.username));
 	if (password && strlen(password))
 		strncpy(sess->socksproxy.password, password, sizeof(sess->socksproxy.password));

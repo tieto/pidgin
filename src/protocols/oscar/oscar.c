@@ -880,7 +880,7 @@ static void oscar_direct_im_destroy(OscarData *od, struct oscar_direct_im *dim)
 	if (dim->watcher)
 	gaim_input_remove(dim->watcher);
 	if (dim->conn) {
-		aim_conn_close(dim->conn);
+		aim_conn_close(od->sess, dim->conn);
 		aim_conn_kill(od->sess, &dim->conn);
 	}
 	g_free(dim);
@@ -1100,7 +1100,7 @@ static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	listenerconn = va_arg(ap, aim_conn_t *);
 	va_end(ap);
 
-	aim_conn_close(listenerconn);
+	aim_conn_close(sess, listenerconn);
 	aim_conn_kill(sess, &listenerconn);
 
 	sn = g_strdup(aim_odc_getsn(newconn));
