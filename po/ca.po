@@ -1,0 +1,5590 @@
+# Catalan translation of Gaim
+# Copyright (C) 2003 Free Software Foundation, Inc.
+# This file is distributed under the same license as the gaim package.
+# JM Pérez Cáncer <jm@cocoloco.dyn.dhs.org>, April 2003
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Gaim\n"
+"POT-Creation-Date: 2003-04-08 14:06+0200\n"
+"PO-Revision-Date: 2003-04-08 23:59--100\n"
+"Last-Translator: JM Pérez Cáncer <jm@cocoloco.dyn.dhs.org>\n"
+"Language-Team:  <ca@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: plugins/docklet/docklet.c:95 src/multi.c:284 src/win32/systray.c:295
+msgid "Auto-login"
+msgstr "Connexió automàtica"
+
+#: plugins/docklet/docklet.c:98
+msgid "New Message.."
+msgstr "Nou Missatge..."
+
+#: plugins/docklet/docklet.c:99
+msgid "Join A Chat..."
+msgstr "Afegir-se a una Conversa..."
+
+#: plugins/docklet/docklet.c:130
+msgid "New..."
+msgstr "Nou..."
+
+#: plugins/docklet/docklet.c:134 src/protocols/gg/gg.c:71
+#: src/protocols/jabber/jabber.c:1157 src/protocols/jabber/jabber.c:3325
+#: src/protocols/jabber/jabber.c:3372 src/protocols/oscar/oscar.c:2713
+#: src/protocols/oscar/oscar.c:4394 src/protocols/oscar/oscar.c:5489
+#: src/buddy.c:1277 src/gtkpounce.c:500 src/prefs.c:1053
+#, fuzzy
+msgid "Away"
+msgstr "Ausent"
+
+#: plugins/docklet/docklet.c:140 src/away.c:511
+#, fuzzy
+msgid "Back"
+msgstr "De tornada"
+
+#: plugins/docklet/docklet.c:148
+msgid "Mute Sounds"
+msgstr "Desactivar Sons"
+
+#: plugins/docklet/docklet.c:153
+msgid "File Transfers..."
+msgstr "Transferència de fitxers..."
+
+#: plugins/docklet/docklet.c:154
+msgid "Accounts..."
+msgstr "Comptes..."
+
+#: plugins/docklet/docklet.c:155
+msgid "Preferences..."
+msgstr "Preferències..."
+
+#: plugins/docklet/docklet.c:164 src/win32/systray.c:118
+msgid "Signoff"
+msgstr "Acomiadar-se"
+
+#: plugins/docklet/docklet.c:168
+msgid "Quit"
+msgstr "Sortir"
+
+#: plugins/docklet/docklet.c:443
+msgid "Tray Icon Configuration"
+msgstr "Configuració de la icona d'estat"
+
+#. toggle = gtk_check_button_new_with_mnemonic(_("_Automatically show buddy list on sign on"));
+#. gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), blist_options & OPT_BLIST_APP_BUDDY_SHOW);
+#. g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_toggle_blist_show), NULL);
+#. gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+#: plugins/docklet/docklet.c:452
+msgid "_Hide new messages until tray icon is clicked"
+msgstr "_Ocultar els missatges nous fins que s'apreti l'icona d'estat"
+
+#: plugins/docklet/docklet.c:464 plugins/docklet/docklet.c:473
+msgid "System Tray Icon"
+msgstr "Icona d'estat"
+
+#: plugins/docklet/docklet.c:466 plugins/docklet/docklet.c:477
+msgid ""
+"Interacts with a Notification Area applet (in GNOME or KDE, for example) to "
+"display the current status of Gaim, allow fast access to commonly used "
+"functions, and to toggle display of the buddy list or login window. Also "
+"allows messages to be queued until the icon is clicked, similar to ICQ."
+msgstr ""
+
+#: plugins/autorecon.c:58
+msgid "Autoreconnect"
+msgstr "Reconnexió automàtica"
+
+#: plugins/autorecon.c:60 plugins/autorecon.c:71
+msgid "When you are kicked offline, this reconnects you."
+msgstr "Això et reconnect quan ets desconnectat."
+
+#: plugins/autorecon.c:67
+msgid "Auto Reconnect"
+msgstr "Reconnexió automàtica"
+
+#: plugins/chatlist.c:74 src/buddy_chat.c:268
+msgid "Buddy Chat"
+msgstr "Conversa entre Contactes"
+
+#: plugins/chatlist.c:162 plugins/chatlist.c:164 plugins/chatlist.c:347
+#: plugins/chatlist.c:349
+msgid "Gaim Chat"
+msgstr "Conversa de Gaim"
+
+#: plugins/chatlist.c:305
+msgid "Chat Rooms"
+msgstr "Sales de Conversa"
+
+#: plugins/chatlist.c:316
+msgid "Refresh"
+msgstr "Actualitzar"
+
+#: plugins/chatlist.c:317 src/protocols/icq/gaim_icq.c:277
+#: src/protocols/oscar/oscar.c:2556 src/dialogs.c:2163 src/gtkconv.c:778
+#: src/gtkconv.c:2607 src/gtkconv.c:3741 src/prpl.c:737
+msgid "Add"
+msgstr "Afegir"
+
+#: plugins/chatlist.c:318 src/gtkconv.c:776 src/gtkconv.c:2613
+#: src/gtkconv.c:3732
+msgid "Remove"
+msgstr "Eliminar"
+
+#: plugins/chatlist.c:330
+msgid "List of available chats"
+msgstr "Llistat de converses disponibles"
+
+#: plugins/chatlist.c:339
+msgid "List of subscribed chats"
+msgstr "Llistat de converses subscrites"
+
+#: plugins/chatlist.c:400 plugins/chatlist.c:410
+msgid "Chat List"
+msgstr "Llistat de Converses"
+
+#: plugins/chatlist.c:402
+msgid "Allows you to add chat rooms to your buddy list."
+msgstr "Permet afegir sales de conversa a la llista de contactes."
+
+#: plugins/chatlist.c:415
+msgid ""
+"Allows you to add chat rooms to your buddy list. Click the configure button "
+"to choose which rooms."
+msgstr "Permet afegir sales de conversa a la llista de contactes. Apreta el botó de configuració per a escollir les sales."
+
+#: plugins/gtik.c:719
+msgid "Gnome Stock Ticker Properties"
+msgstr ""
+
+#: plugins/gtik.c:731
+msgid "Update Frequency in min"
+msgstr "Freqüència d'actualització en minuts"
+
+#: plugins/gtik.c:747
+msgid "Enter symbols delimited with \"+\" in the box below."
+msgstr "Introdueixi símbols delimitats amb \"+\" a l'espai de sota."
+
+#. OUTPUT FORMAT and SCROLL DIRECTION
+#: plugins/gtik.c:757
+msgid "Check this box to display only symbols and price:"
+msgstr "Apreti aquesta caixa per a veure només els símbols i el preu:"
+
+#: plugins/gtik.c:758
+msgid "Check this box to scroll left to right:"
+msgstr "Apreti aquesta caixa per a realitzar el desplaçament d'esquerra a dreta:"
+
+#: plugins/gtik.c:994
+#, fuzzy
+msgid "(No"
+msgstr "(No"
+
+#: plugins/gtik.c:995
+#, fuzzy
+msgid "Change"
+msgstr "Canvi"
+
+#: plugins/history.c:76
+msgid "History"
+msgstr "Històric"
+
+#: plugins/history.c:78
+msgid "Shows recently logged conversations in new conversations "
+msgstr "Mostra converses registrades recentment i noves converses "
+
+#: plugins/iconaway.c:68 plugins/iconaway.c:77
+msgid "Iconify on away"
+msgstr "Iconificar al estar ausent"
+
+#: plugins/iconaway.c:70 plugins/iconaway.c:81
+msgid "Iconifies the away box and the buddy list when you go away."
+msgstr "Iconifica la finestra d'ausència i la llista de contactes quan s'està ausent."
+
+#: plugins/idle.c:19 plugins/idle.c:81
+msgid "I'dle Mak'er"
+msgstr ""
+
+#: plugins/idle.c:23 plugins/idle.c:83
+msgid "Allows you to hand-configure how long you've been idle for"
+msgstr "iPermet configurar a mà quant de temps s'ha estat inactiu"
+
+#: plugins/idle.c:99
+msgid "Idle Time"
+msgstr "Temps Inactiu"
+
+#: plugins/idle.c:107
+msgid "Set"
+msgstr "Establir"
+
+#: plugins/idle.c:112
+msgid "idle for"
+msgstr "inactiu durant"
+
+#: plugins/idle.c:119 plugins/timestamp.c:86
+msgid "minutes."
+msgstr "minuts."
+
+#: plugins/idle.c:125
+msgid "_Set"
+msgstr "_Guardar"
+
+#: plugins/notify.c:440
+msgid "Unable to write to config file"
+msgstr "No s'ha pogut escriure al fitxer de configuració"
+
+#: plugins/notify.c:440
+msgid "Notify plugin"
+msgstr "Mòdul de notificació"
+
+#: plugins/notify.c:598 plugins/notify.c:607
+msgid "Message Notification"
+msgstr "Notificació de Missatges"
+
+#: plugins/notify.c:600 plugins/notify.c:611
+msgid "Provides a variety of ways of notifying you of unread messages."
+msgstr "Permet notificar de diverses formes la presència de missatges sense llegir."
+
+#: plugins/notify.c:621
+msgid "Notify For"
+msgstr "Notificació de"
+
+#: plugins/notify.c:622
+msgid "_IM windows"
+msgstr "Finestres de Missatges _Instantanis"
+
+#: plugins/notify.c:627
+msgid "_Chat windows"
+msgstr "Finestres de _Conversa"
+
+#. --------------
+#: plugins/notify.c:633
+msgid "Notification Methods"
+msgstr "Mètodes de Notificació"
+
+#: plugins/notify.c:636
+msgid "Prepend _string into window title (hit enter to save):"
+msgstr "Afegir al títol de la finestra una _frase al principi (apreti intro per a gravar):"
+
+#: plugins/notify.c:647
+#, fuzzy
+msgid "_Quote window title"
+msgstr "_Esmentar el títol de la finestra"
+
+#: plugins/notify.c:652
+msgid "Set Window Manager \"_URGENT\" Hint"
+msgstr "Aplicar la opció d'_URGENT del Gestor de Finestres"
+
+#: plugins/notify.c:657
+msgid "Insert c_ount of new messages into window title"
+msgstr "Afegir el _nombre de missatges nous al títol de la finestra"
+
+#: plugins/notify.c:662
+msgid "_Notify even if conversation is in focus"
+msgstr "_Avisar encara que el focus estigui a la conversa"
+
+#. --------------
+#: plugins/notify.c:668
+msgid "Notification Removal"
+msgstr "Eliminar Notificació"
+
+#: plugins/notify.c:669
+msgid "Remove when conversation window gains _focus"
+msgstr "Eliminar quan la finestra de la conversa reb el focus"
+
+#: plugins/notify.c:674
+msgid "Remove when conversation window _receives click"
+msgstr "Eliminar quan s'apreta la finestra de conversa"
+
+#: plugins/notify.c:679
+msgid "Remove when _typing in conversation window"
+msgstr "Eliminar quan s'escriu a la finestra de conversa"
+
+#: plugins/notify.c:684
+msgid "Appl_y"
+msgstr "_Aplicar"
+
+#: plugins/spellchk.c:399 plugins/spellchk.c:408
+msgid "Text replacement"
+msgstr "Nou text"
+
+#: plugins/spellchk.c:401 plugins/spellchk.c:412
+msgid "Replaces text in outgoing messages according to user-defined rules."
+msgstr "Canvia text dels missatges sortints usant regles establides per l'usuari."
+
+#: plugins/spellchk.c:429
+msgid "Text Replacements"
+msgstr "Nou text"
+
+#: plugins/spellchk.c:453
+#, fuzzy
+msgid "You type"
+msgstr "S'escriu"
+
+#: plugins/spellchk.c:465
+#, fuzzy
+msgid "You send"
+msgstr "S'envia"
+
+#: plugins/spellchk.c:491
+msgid "Add a new text replacement"
+msgstr "Afegir un nou canvi de text"
+
+#: plugins/spellchk.c:498
+#, fuzzy
+msgid "You _type:"
+msgstr "S'_escriu:"
+
+#: plugins/spellchk.c:512
+#, fuzzy
+msgid "You _send:"
+msgstr "S'envia:"
+
+#: plugins/timestamp.c:72
+#, fuzzy
+msgid "iChat Timestamp"
+msgstr "Marca horària de l'iChat"
+
+#: plugins/timestamp.c:79
+msgid "Delay"
+msgstr "Retard"
+
+#: plugins/timestamp.c:92
+msgid "_Apply"
+msgstr "_Aplicar"
+
+#: plugins/timestamp.c:129
+msgid "Timestamp"
+msgstr "Marca Horària"
+
+#: plugins/timestamp.c:131
+msgid "Adds iChat-style timestamps to conversations every N minutes."
+msgstr "Afegeix registres horaris a les converses a l'estil iChat cada N minuts."
+
+#. Configuration frame
+#: plugins/gestures/gestures.c:213
+msgid "Mouse Gestures Configuration"
+msgstr "Configuració de les Gesticulacions amb Ratolí"
+
+#: plugins/gestures/gestures.c:220
+msgid "Middle mouse button"
+msgstr "Botó central del ratolí"
+
+#: plugins/gestures/gestures.c:225
+msgid "Right mouse button"
+msgstr "Botó dret del ratolí"
+
+#. "Visual gesture display" checkbox
+#: plugins/gestures/gestures.c:237
+msgid "_Visual gesture display"
+msgstr "Mostra de gesticulacions _visuals"
+
+#: plugins/gestures/gestures.c:253 plugins/gestures/gestures.c:272
+msgid "Mouse Gestures"
+msgstr "Gesticulacions amb el Ratolí"
+
+#: plugins/gestures/gestures.c:256 plugins/gestures/gestures.c:278
+msgid ""
+"Allows support for mouse gestures in conversation windows.\n"
+"Drag the middle mouse button to perform certain actions:\n"
+"\n"
+"Drag down and then to the right to close a conversation.\n"
+"Drag up and then to the left to switch to the previous conversation.\n"
+"Drag up and then to the right to switch to the next conversation."
+msgstr "Permet usar gesticulacions amb el ratolí a les finestres de conversa.\n Arrossegi el botó central del ratolí per a realitzar les següents accions:\n\nAbaix i després a la dreta per a tancar una conversa.\nAdalt i després a la esquerra per a canviar cap a la conversa anterior.\nAdalt i després a la dreta per a canviar a la següent conversa."
+
+#: plugins/ticker/ticker.c:95
+msgid "Gaim - Buddy Ticker"
+msgstr ""
+
+#: plugins/ticker/ticker.c:411 plugins/ticker/ticker.c:437
+msgid "Buddy Ticker"
+msgstr ""
+
+#: plugins/ticker/ticker.c:415 plugins/ticker/ticker.c:439
+msgid "A horizontal scrolling version of the buddy list."
+msgstr ""
+
+#: plugins/win32/transparency/win2ktrans.c:123
+#: plugins/win32/transparency/win2ktrans.c:432
+#: plugins/win32/transparency/win2ktrans.c:466
+msgid "Opacity:"
+msgstr "Opacitat:"
+
+#: plugins/win32/transparency/win2ktrans.c:385
+#: plugins/win32/transparency/win2ktrans.c:394
+msgid "Transparency"
+msgstr "Transparència"
+
+#: plugins/win32/transparency/win2ktrans.c:387
+#: plugins/win32/transparency/win2ktrans.c:398
+msgid ""
+"This plugin enables variable alpha transparency on conversation windows.\n"
+"\n"
+"* Note: This plugin requires Win2000 or WinXP."
+msgstr ""
+
+#. IM Convo trans options
+#: plugins/win32/transparency/win2ktrans.c:413
+msgid "IM Conversation Windows"
+msgstr "Finestres de Missatges Instantanis"
+
+#: plugins/win32/transparency/win2ktrans.c:414
+msgid "_IM window transparency"
+msgstr "Transparència de les finestres de Missatges _Instantanis"
+
+#: plugins/win32/transparency/win2ktrans.c:424
+msgid "_Show slider bar in IM window"
+msgstr "_Mostrar barra d'ajustament a la finestra de Missatges Instantanis"
+
+#. Buddy List trans options
+#: plugins/win32/transparency/win2ktrans.c:449 src/prefs.c:568
+msgid "Buddy List Window"
+msgstr "Finestra de Contactes"
+
+#: plugins/win32/transparency/win2ktrans.c:450
+msgid "_Keep Buddy List window on top"
+msgstr "_Mantenir la finestra de Contactes per sobre"
+
+#: plugins/win32/transparency/win2ktrans.c:453
+msgid "_Buddy List window transparency"
+msgstr "Transparència de la finestra de _Contactes"
+
+#: plugins/win32/winprefs/winprefs.c:144 plugins/win32/winprefs/winprefs.c:153
+msgid "WinGaim Options"
+msgstr "Opcions de WinGaim"
+
+#: plugins/win32/winprefs/winprefs.c:146 plugins/win32/winprefs/winprefs.c:157
+msgid "Options specific to Windows Gaim."
+msgstr "Opcions específiques de la versió de Gaim per a Windows"
+
+#. IM Convo trans options
+#: plugins/win32/winprefs/winprefs.c:170
+msgid "Startup"
+msgstr "Inici"
+
+#: plugins/win32/winprefs/winprefs.c:171
+msgid "_Start Gaim on Windows startup"
+msgstr "_Iniciar el Gaim al iniciar Windows"
+
+#: src/protocols/gg/gg.c:69 src/protocols/jabber/jabber.c:1165
+#: src/protocols/msn/msn.c:1515 src/protocols/msn/msn.c:1620
+#: src/protocols/yahoo/yahoo.c:1245 src/protocols/yahoo/yahoo.c:1324
+msgid "Available"
+msgstr "Disponible"
+
+#: src/protocols/gg/gg.c:70
+msgid "Available for friends only"
+msgstr "Només disponible per als amics"
+
+#: src/protocols/gg/gg.c:72
+msgid "Away for friends only"
+msgstr "Només ausent per als amics"
+
+#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:3328
+#: src/protocols/jabber/jabber.c:3384 src/protocols/oscar/oscar.c:2717
+#: src/protocols/oscar/oscar.c:4382 src/protocols/oscar/oscar.c:4409
+#: src/protocols/oscar/oscar.c:5494 src/protocols/yahoo/yahoo.c:1062
+#: src/protocols/yahoo/yahoo.c:1267 src/protocols/yahoo/yahoo.c:1334
+msgid "Invisible"
+msgstr "Invisible"
+
+#: src/protocols/gg/gg.c:74
+msgid "Invisible for friends only"
+msgstr "Només invisible per als amics"
+
+#: src/protocols/gg/gg.c:75
+msgid "Unavailable"
+msgstr "No disponbible"
+
+#: src/protocols/gg/gg.c:157
+msgid "Unable to resolve hostname."
+msgstr "Impossible resoldre el nom de màquina."
+
+#: src/protocols/gg/gg.c:160
+msgid "Unable to connect to server."
+msgstr "Impossible conectar al servidor"
+
+#: src/protocols/gg/gg.c:163
+msgid "Invalid response from server."
+msgstr "Resposta del servidor invàlida."
+
+#: src/protocols/gg/gg.c:166
+msgid "Error while reading from socket."
+msgstr "Error al llegir del socket"
+
+#: src/protocols/gg/gg.c:169
+msgid "Error while writing to socket."
+msgstr "Error al escriure al socket"
+
+#: src/protocols/gg/gg.c:172
+msgid "Authentication failed."
+msgstr "Autentificació fallida."
+
+#: src/protocols/gg/gg.c:175
+msgid "Unknown Error Code."
+msgstr "Codi d'Error Desconegut"
+
+#: src/protocols/gg/gg.c:280
+#, c-format
+msgid "Status: %s"
+msgstr "Estat: %s"
+
+#: src/protocols/gg/gg.c:301
+msgid "Could not connect"
+msgstr "No s'ha pogut connectar"
+
+#: src/protocols/gg/gg.c:308
+msgid "Unable to read socket"
+msgstr "Impossible llegir del socket"
+
+#: src/protocols/gg/gg.c:418
+msgid "Unable to connect."
+msgstr "Impossible connectar."
+
+#: src/protocols/gg/gg.c:434
+msgid "Reading data"
+msgstr "Gravant dades"
+
+#: src/protocols/gg/gg.c:437
+msgid "Balancer handshake"
+msgstr "Contacte amb el balancejador"
+
+#: src/protocols/gg/gg.c:440
+msgid "Reading server key"
+msgstr "Llegint la clau del servidor"
+
+#: src/protocols/gg/gg.c:443
+msgid "Exchanging key hash"
+msgstr "Intercanviant la clau de hash"
+
+#: src/protocols/gg/gg.c:452
+msgid "Critical error in GG library\n"
+msgstr "Error crític a la bilbioteca GG\n"
+
+#: src/protocols/gg/gg.c:471 src/protocols/gg/gg.c:567
+#, c-format
+msgid "Connect to %s failed"
+msgstr "Conexió a %s fallida"
+
+#: src/protocols/gg/gg.c:520
+msgid "Unable to ping server"
+msgstr "Impossible arribar al servidor"
+
+#: src/protocols/gg/gg.c:532
+msgid "Send as message"
+msgstr "Enviar com a missatge"
+
+#: src/protocols/gg/gg.c:540
+msgid "Looking up GG server"
+msgstr "Buscant el servidor de GG"
+
+#: src/protocols/gg/gg.c:543
+msgid "Invalid Gadu-Gadu UIN specified"
+msgstr "UIN de Gau-Gadu invàlid"
+
+#: src/protocols/gg/gg.c:591
+msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
+msgstr "Està intentant enviar un missatge a un UIN de Gadu-Gadu invàlid."
+
+#: src/protocols/gg/gg.c:654
+msgid "Couldn't get search results"
+msgstr "Impossible obtindre els resultats de la cerca"
+
+#: src/protocols/gg/gg.c:659
+msgid "Gadu-Gadu Search Engine"
+msgstr "Cercador de Gadu-Gadu"
+
+#: src/protocols/gg/gg.c:684
+msgid "Active"
+msgstr "Actiu"
+
+#: src/protocols/gg/gg.c:685 src/protocols/oscar/oscar.c:4886 src/gtkft.c:1004
+msgid "Yes"
+msgstr "Si"
+
+#: src/protocols/gg/gg.c:685 src/protocols/oscar/oscar.c:4886 src/gtkft.c:1005
+msgid "No"
+msgstr "No"
+
+#: src/protocols/gg/gg.c:689
+msgid "UIN"
+msgstr "UIN"
+
+#: src/protocols/gg/gg.c:693
+msgid "First name"
+msgstr "Nom"
+
+#: src/protocols/gg/gg.c:698
+msgid "Second Name"
+msgstr "Cognoms"
+
+#: src/protocols/gg/gg.c:702
+msgid "Nick"
+msgstr "Àlies"
+
+#: src/protocols/gg/gg.c:709 src/protocols/gg/gg.c:712
+msgid "Birth year"
+msgstr "Any de naixement"
+
+#: src/protocols/gg/gg.c:718 src/protocols/gg/gg.c:720
+#: src/protocols/gg/gg.c:722
+msgid "Sex"
+msgstr "Sexe"
+
+#. Line 5
+#: src/protocols/gg/gg.c:726 src/dialogs.c:1762 src/dialogs.c:2396
+msgid "City"
+msgstr "Ciutat"
+
+#: src/protocols/gg/gg.c:758
+msgid "There is no Buddy List stored on the Gadu-Gadu server."
+msgstr "No hi ha cap llista de contactes al servidor de Gadu-Gadu."
+
+#: src/protocols/gg/gg.c:764
+msgid "Couldn't Import Buddy List from Server"
+msgstr "No s'ha pogut importar la llista de contactes del servidor"
+
+#: src/protocols/gg/gg.c:824
+msgid "Buddy List successfully transferred to Gadu-Gadu server"
+msgstr "S'ha enviat satifactòriament la llista de contactes al servidor de Gadu-Gadu"
+
+#: src/protocols/gg/gg.c:829
+msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
+msgstr "No s'ha pogut transmetre la llista de contactes al servidor de Gadu-Gadu"
+
+#: src/protocols/gg/gg.c:835
+msgid "Buddy List successfully deleted from Gadu-Gadu server"
+msgstr "S'ha esborrat la llista de contactes del servidor de Gadu-Gadu"
+
+#: src/protocols/gg/gg.c:840
+msgid "Couldn't delete Buddy List from Gadu-Gadu server"
+msgstr "No s'ha pogut esborrar la llista de contactes del servidor Gadu-Gadu"
+
+#: src/protocols/gg/gg.c:846
+msgid "Password changed successfully"
+msgstr "S'ha canviat la clau satifactòriament"
+
+#: src/protocols/gg/gg.c:851
+msgid "Password couldn't be changed"
+msgstr "No s'ha pogut canviar la clau"
+
+#: src/protocols/gg/gg.c:962
+msgid "Error communicating with Gadu-Gadu server"
+msgstr "Error al communicar-se amb el servidor Gadu-Gadu"
+
+#: src/protocols/gg/gg.c:963
+msgid ""
+"Gaim was unable to complete your request due to a problem communicating with "
+"the Gadu-Gadu HTTP server.  Please try again later."
+msgstr "Gaim no ha pogut completar la seva petició perquè hi ha hagut un problema en la comunicació anb el servidor HTTP de Gadu-Gadu. Si us plau torni a intentar-ho més tard."
+
+#: src/protocols/gg/gg.c:990
+msgid "Unable to import Gadu-Gadu buddy list"
+msgstr "Impossible importar la llista de contactes de Gadu-Gadu"
+
+#: src/protocols/gg/gg.c:991
+msgid ""
+"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"again later."
+msgstr "Gaim no ha pogut connectar-se al servidor de llistes de contactes de Gadu-Gadu. Si us plau torni a intentar-ho més tard."
+
+#: src/protocols/gg/gg.c:1059
+msgid "Couldn't export buddy list"
+msgstr "No s'ha pogut exportar la llista de contactes"
+
+#: src/protocols/gg/gg.c:1060 src/protocols/gg/gg.c:1082
+msgid ""
+"Gaim was unable to connect to the buddy list server.  Please try again later."
+msgstr "Gaim no ha pogut connectar-se al servidor de llistes de contactes. Si us plau torni a intentar-ho més tard."
+
+#: src/protocols/gg/gg.c:1081
+msgid "Unable to delete Gadu-Gadu buddy list"
+msgstr "Impossible esborrar la llista de contactes de Gadu-Gadu"
+
+#: src/protocols/gg/gg.c:1129
+msgid "Unable to access directory"
+msgstr "Impossible accedir al directori"
+
+#: src/protocols/gg/gg.c:1130
+msgid ""
+"Gaim was unable to search the Directory because it was unable to connect to "
+"the directory server.  Please try again later."
+msgstr "Gaim no ha pogut cercar al Directori perquè no s'hi ha pogt connectar. Si us plau torni a intentar-ho més tard."
+
+#: src/protocols/gg/gg.c:1162
+msgid "Unable to change Gadu-Gadu password"
+msgstr "Impossible canviar la clau de Gadu-Gadu"
+
+#: src/protocols/gg/gg.c:1163
+msgid ""
+"Gaim was unable to change your password due to an error connecting to the "
+"Gadu-Gadu server.  Please try again later."
+msgstr "Gaim no ha pogut canviar la clau deguta a un error comunicat-se amb el servidor de Gadu-Gadu. Si us plau torni a intentar-ho més tard."
+
+#: src/protocols/gg/gg.c:1177
+msgid "Directory Search"
+msgstr "Cerca al Directori"
+
+#: src/protocols/gg/gg.c:1185 src/protocols/jabber/jabber.c:4200
+#: src/protocols/oscar/oscar.c:5682 src/protocols/toc/toc.c:1446
+#: src/dialogs.c:1869 src/dialogs.c:1878
+msgid "Change Password"
+msgstr "Canviar Clau"
+
+#: src/protocols/gg/gg.c:1193
+msgid "Import Buddy List from Server"
+msgstr "Importar la llista de contactes des del servidor"
+
+#: src/protocols/gg/gg.c:1199
+msgid "Export Buddy List to Server"
+msgstr "Exportar la llista de contactes cap al servidor"
+
+#: src/protocols/gg/gg.c:1205
+msgid "Delete Buddy List from Server"
+msgstr "Esborrar la llista de contactes del servidor"
+
+#: src/protocols/gg/gg.c:1237
+msgid "Unable to access user profile."
+msgstr "Impossible accedir al perfil de l'usuari."
+
+#: src/protocols/gg/gg.c:1238
+msgid ""
+"Gaim was unable to access this user's profile due to an error connecting to "
+"the directory server.  Please try again later."
+msgstr "Gaim no ha pogut accedir al perfil de l'usuari a causa d'un error al connectar al servidor de directori. Si us plau torni a intentar-ho més tard."
+
+#: src/protocols/gg/gg.c:1323 src/protocols/icq/gaim_icq.c:497
+#: src/protocols/oscar/oscar.c:3820
+msgid "Nick:"
+msgstr "Àlies:"
+
+#: src/protocols/gg/gg.c:1324
+msgid "Gadu-Gadu User"
+msgstr "Usuari Gadu-Gadu"
+
+#: src/protocols/icq/gaim_icq.c:224
+msgid "Gaim encountered an error communicating with the ICQ server."
+msgstr "Gaim ha trobat un error en la communicació amb el servidor ICQ"
+
+#. Cancel button.
+#: src/protocols/icq/gaim_icq.c:277 src/protocols/irc/irc.c:1362
+#: src/protocols/oscar/oscar.c:2322 src/protocols/oscar/oscar.c:2382
+#: src/protocols/oscar/oscar.c:5369 src/protocols/toc/toc.c:2041
+#: src/buddy_chat.c:307 src/dialogs.c:458 src/dialogs.c:466 src/dialogs.c:1819
+#: src/dialogs.c:1930 src/dialogs.c:1990 src/dialogs.c:2152 src/dialogs.c:2338
+#: src/dialogs.c:2487 src/dialogs.c:3130 src/dialogs.c:3529 src/dialogs.c:4033
+#: src/dialogs.c:4605 src/gtkft.c:1098 src/multi.c:1468 src/multi.c:1850
+#: src/prpl.c:320 src/prpl.c:737 src/server.c:1064
+msgid "Cancel"
+msgstr "Cancel·lar"
+
+#: src/protocols/icq/gaim_icq.c:294
+#, c-format
+msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
+msgstr "L'usuari %s (%s%s%s%s%s) vol que'ls autoritzi."
+
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1654
+#: src/protocols/msn/msn.c:514 src/protocols/oscar/oscar.c:2494
+#: src/protocols/oscar/oscar.c:4920
+msgid "Authorize"
+msgstr "Autoritzar"
+
+#: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1654
+#: src/protocols/msn/msn.c:514 src/protocols/oscar/oscar.c:2494
+#: src/protocols/oscar/oscar.c:4920 src/dialogs.c:2151
+msgid "Deny"
+msgstr "Denegar"
+
+#: src/protocols/icq/gaim_icq.c:310
+msgid "Send message through server"
+msgstr "Enviar missatge a través del servidor"
+
+#: src/protocols/icq/gaim_icq.c:344 src/protocols/jabber/jabber.c:2272
+#: src/protocols/jabber/jabber.c:2304 src/protocols/jabber/jabber.c:4118
+#: src/protocols/jabber/jabber.c:4164 src/protocols/msn/msn.c:1178
+#: src/protocols/msn/msn.c:1208
+msgid "Unable to connect"
+msgstr "Impossible connectar"
+
+#: src/protocols/icq/gaim_icq.c:352
+msgid "Connecting..."
+msgstr "Connectant..."
+
+#: src/protocols/icq/gaim_icq.c:498
+msgid "Gaim User"
+msgstr "Usuari Gaim"
+
+#: src/protocols/irc/irc.c:200
+msgid ""
+"(There was an error converting this message.  Check the 'Encoding' option in "
+"the Account Editor)"
+msgstr "(Hi ha hagut un missatge al convertir aquest missatge. Comprovi la opció de 'Codificació' a l'editor de comptes)"
+
+#: src/protocols/irc/irc.c:500 src/protocols/irc/irc.c:2504
+#, c-format
+msgid "DCC Chat with %s closed"
+msgstr "La conversa DCC amb %s s'ha tancat"
+
+#: src/protocols/irc/irc.c:553 src/protocols/irc/irc.c:2513
+#, c-format
+msgid "DCC Chat with %s established"
+msgstr "Conversa DCC amb %s establida"
+
+#: src/protocols/irc/irc.c:687
+msgid "No topic is set"
+msgstr "iNo hi ha cap tema establit"
+
+#: src/protocols/irc/irc.c:708 src/protocols/irc/irc.c:1645
+#, c-format
+msgid "<B>%s has changed the topic to: %s</B>"
+msgstr "<B>%s ha canviat el tema a: %s</B>"
+
+#: src/protocols/irc/irc.c:753
+#, c-format
+msgid "-:- mode/%s [%c%c %s] by %s"
+msgstr "-:- mode/%s [%c%c %s] per %s"
+
+#. RPL_REHASHING
+#: src/protocols/irc/irc.c:1086
+msgid "Rehashing server"
+msgstr ""
+
+#: src/protocols/irc/irc.c:1086 src/protocols/irc/irc.c:1538
+msgid "IRC Operator"
+msgstr "Operador d'IRC"
+
+#. ERR_NOSUCHNICK
+#: src/protocols/irc/irc.c:1089
+msgid "No such nick/channel"
+msgstr "Nom d'usuari o canal inexistent"
+
+#: src/protocols/irc/irc.c:1089 src/protocols/irc/irc.c:1092
+#: src/protocols/irc/irc.c:1097 src/protocols/irc/irc.c:1100
+#: src/protocols/irc/irc.c:1496
+msgid "IRC Error"
+msgstr "Error d'IRC"
+
+#. ERR_NOSUCHSERVER
+#: src/protocols/irc/irc.c:1092
+msgid "No such server"
+msgstr "Servidor inexistent"
+
+#. ERR_NOMOTD
+#. drop it - bringing up dialog for NOMOTD is annoying
+#. ERR_NONICKNAMEGIVEN
+#: src/protocols/irc/irc.c:1097
+msgid "No nickname given"
+msgstr "No s'ha donat cap nom d'usuari"
+
+#. ERR_NOPRIVILEGES
+#: src/protocols/irc/irc.c:1100
+msgid "You're not an IRC operator!"
+msgstr "Vosté no és un operador d'IRC!"
+
+#: src/protocols/irc/irc.c:1103
+msgid "That nick is already in use.  Please enter a new nick"
+msgstr "Aquest nom d'usuari ja està en ús. Si us plau, introdueixi un de nou"
+
+#: src/protocols/irc/irc.c:1325 src/protocols/irc/irc.c:1331
+#: src/protocols/irc/irc.c:1337 src/protocols/irc/irc.c:1351
+msgid "IRC CTCP info"
+msgstr "Informació CTCP de IRC"
+
+#: src/protocols/irc/irc.c:1361
+#, c-format
+msgid "%s would like to establish a DCC chat"
+msgstr "%s vol establir una conversa DCC"
+
+#: src/protocols/irc/irc.c:1362
+msgid ""
+"This requires a direct connection to be established between the two "
+"computers.  Messages sent will not pass through the IRC server"
+msgstr "Això requereix establir una connexió directa entre els dos ordenadors. Els missatges que s'enviin no passaran pel servidor d'IRC"
+
+#: src/protocols/irc/irc.c:1362 src/protocols/oscar/oscar.c:2322
+#: src/protocols/oscar/oscar.c:5369
+msgid "Connect"
+msgstr "Connectar"
+
+#: src/protocols/irc/irc.c:1435 src/protocols/msn/msn.c:151
+#: src/protocols/msn/msn.c:523 src/protocols/msn/msn.c:1029
+msgid "Unable to write"
+msgstr "Impossible escriure"
+
+#: src/protocols/irc/irc.c:1494
+#, c-format
+msgid "You have been kicked from %s: %s"
+msgstr "Ha estat fet fora de %s: %s"
+
+#: src/protocols/irc/irc.c:1499
+#, c-format
+msgid "Kicked by %s: %s"
+msgstr "Fet fora per %s: %s"
+
+#: src/protocols/irc/irc.c:1555 src/protocols/irc/irc.c:2810
+msgid "CTCP ClientInfo"
+msgstr "Informació del Client CTCP"
+
+#: src/protocols/irc/irc.c:1561 src/protocols/irc/irc.c:2816
+msgid "CTCP UserInfo"
+msgstr "Informació de l'Usuari CTCP"
+
+#: src/protocols/irc/irc.c:1567 src/protocols/irc/irc.c:2822
+msgid "CTCP Version"
+msgstr "Versió CTCP"
+
+#: src/protocols/irc/irc.c:1594 src/protocols/irc/irc.c:2828
+msgid "CTCP Ping"
+msgstr "Ping CTCP"
+
+#: src/protocols/irc/irc.c:1847 src/protocols/oscar/oscar.c:596
+#: src/protocols/toc/toc.c:255
+#, c-format
+msgid "Signon: %s"
+msgstr "Entrada: %s"
+
+#: src/protocols/irc/irc.c:2103
+#, c-format
+msgid "Topic for %s is %s"
+msgstr "El Tema de %s és %s"
+
+#: src/protocols/irc/irc.c:2200
+#, c-format, fuzzy
+msgid "You have left %s"
+msgstr "Resten %s"
+
+#: src/protocols/irc/irc.c:2201
+msgid "IRC Part"
+msgstr ""
+
+#: src/protocols/irc/irc.c:2256
+msgid "<I>Requesting DCC CHAT</I>"
+msgstr "<I>Demanant una conversa DCC</I>"
+
+#: src/protocols/irc/irc.c:2273
+msgid "<B>Operator commands:<BR>REHASH RESTART</B>"
+msgstr "<B>Comandes de l'operador:<BR>REHASH RESTART</B>"
+
+#: src/protocols/irc/irc.c:2278
+msgid ""
+"<B>CTCP commands:<BR>CLIENTINFO <nick><BR>USERINFO <nick><BR>VERSION "
+"<nick><BR>PING <nick></B><BR>"
+msgstr "Comandes CTCP:<BR>CLIENTINFO <nick><BR>USERINFO <nick><BR>VERSION "
+"<nick><BR>PING <nick></B><BR>"
+
+#: src/protocols/irc/irc.c:2286
+msgid "<B>DCC commands:<BR>CHAT <nick></B>"
+msgstr "<B>Comandes DCC:<BR>CHAT <nick></B>"
+
+#: src/protocols/irc/irc.c:2291
+msgid ""
+"<B>Currently supported commands:<BR>WHOIS INVITE NICK LIST<BR>JOIN PART "
+"TOPIC KICK<BR>OP DEOP VOICE DEVOICE<BR>ME MSG QUOTE SAY QUIT<BR>MODE VERSION "
+"W WHOWAS<BR>Type /HELP OPER for operator commands<BR>Type /HELP CTCP for "
+"CTCP commands<BR>Type /HELP DCC for DCC commands"
+msgstr "<B>Commendes suportaces actualment:<BR>WHOIS INVITE NICK LIST<BR>JOIN PART "
+"TOPIC KICK<BR>OP DEOP VOICE DEVOICE<BR>ME MSG QUOTE SAY QUIT<BR>MODE VERSION "
+"W WHOWAS<BR>Escrrigui /HELP OPER per a comandes d'operador<BR>Escrrigui /HELP CTCP per a comandes de CTCP<BR>Escrrigui /HELP DCC per a comandes de DCC"
+
+#: src/protocols/irc/irc.c:2314
+msgid "<B>Unknown command</B>"
+msgstr "<B>Comanda desconeguda</B>"
+
+#: src/protocols/irc/irc.c:2374
+msgid "Channel:"
+msgstr "Canal:"
+
+#: src/protocols/irc/irc.c:2378 src/main.c:340 src/multi.c:766
+msgid "Password:"
+msgstr "Clau:"
+
+#: src/protocols/irc/irc.c:2797
+msgid "DCC Chat"
+msgstr "Conversa DCC"
+
+#: src/protocols/irc/irc.c:2871 src/protocols/jabber/jabber.c:2871
+#: src/protocols/jabber/jabber.c:4262 src/protocols/msn/msn.c:2047
+#: src/protocols/napster/napster.c:617
+msgid "Server:"
+msgstr "Servidor:"
+
+#: src/protocols/irc/irc.c:2876 src/protocols/jabber/jabber.c:4273
+#: src/protocols/msn/msn.c:2059 src/protocols/napster/napster.c:623
+#: src/multi.c:1081
+msgid "Port:"
+msgstr "Port:"
+
+#: src/protocols/irc/irc.c:2882
+msgid "Encoding:"
+msgstr "Codificació:"
+
+#: src/protocols/jabber/jabber.c:985
+msgid "Unable to change password."
+msgstr "Impossible canviar la clau."
+
+#: src/protocols/jabber/jabber.c:986
+msgid ""
+"The current password you entered is incorrect.  Your password has not been "
+"changed."
+msgstr "iLa clau introduïda no és correcta. No s'ha canviat la seva clau."
+
+#: src/protocols/jabber/jabber.c:991
+msgid "Unable to change password"
+msgstr "Impossible canviar la clau"
+
+#: src/protocols/jabber/jabber.c:992
+msgid ""
+"The new password you entered is the same as your current password.  Your "
+"password remains the same."
+msgstr "La nova clau és la mateixa que la clau actual. La clau continua essent la mateixa."
+
+#: src/protocols/jabber/jabber.c:1150 src/gtkpounce.c:234 src/list.c:440
+msgid "Unknown"
+msgstr "Desconegut"
+
+#. once again, we don't have to put anything here
+#: src/protocols/jabber/jabber.c:1159 src/protocols/jabber/jabber.c:3324
+#: src/protocols/jabber/jabber.c:3368
+msgid "Chatty"
+msgstr "Parlador"
+
+#: src/protocols/jabber/jabber.c:1161 src/protocols/jabber/jabber.c:3326
+#: src/protocols/jabber/jabber.c:3376
+msgid "Extended Away"
+msgstr "Ausent durant una bona estona"
+
+#: src/protocols/jabber/jabber.c:1163 src/protocols/jabber/jabber.c:3327
+#: src/protocols/jabber/jabber.c:3380 src/protocols/oscar/oscar.c:2707
+#: src/protocols/oscar/oscar.c:4397 src/protocols/oscar/oscar.c:5490
+msgid "Do Not Disturb"
+msgstr "No destorbar"
+
+#: src/protocols/jabber/jabber.c:1360
+#, c-format
+msgid "Jabber Error %s"
+msgstr "Error de Jabber %s"
+
+#: src/protocols/jabber/jabber.c:1469
+#, c-format
+msgid "Error %s: %s"
+msgstr "Error %s: %s"
+
+#: src/protocols/jabber/jabber.c:1472
+msgid "Unknown Error in presence"
+msgstr "Error desconegut en la presència"
+
+#: src/protocols/jabber/jabber.c:1649
+#, c-format
+msgid "The user %s wants to add you to their buddy list."
+msgstr "L'usuari %s vol afegir-li a la seva llista de contactes."
+
+#: src/protocols/jabber/jabber.c:1674
+#, c-format
+msgid ""
+"The Jabber user %s does not exist and was therefore not added to your roster."
+msgstr "L'usuari de Jabber %s no existeix i per tant no s'ha afegit a la llista de contactes."
+
+#: src/protocols/jabber/jabber.c:1677
+msgid "No such user."
+msgstr "Usuari inexistent."
+
+#: src/protocols/jabber/jabber.c:1768 src/protocols/msn/msn.c:541
+#: src/protocols/msn/msn.c:543 src/dialogs.c:940 src/list.c:245
+msgid "Buddies"
+msgstr "Contactes"
+
+#: src/protocols/jabber/jabber.c:1845
+msgid "Authenticating"
+msgstr "Autentificant"
+
+#: src/protocols/jabber/jabber.c:1879
+msgid "Unknown login error"
+msgstr "Error de connexió desconegut"
+
+#: src/protocols/jabber/jabber.c:2226
+msgid "Password successfully changed."
+msgstr "La clau ha estat canviada."
+
+#: src/protocols/jabber/jabber.c:2270 src/protocols/jabber/jabber.c:4116
+msgid "Connection lost"
+msgstr "S'ha perdut la connexió"
+
+#: src/protocols/jabber/jabber.c:2278
+msgid "Connected"
+msgstr "Connectat"
+
+#: src/protocols/jabber/jabber.c:2281
+msgid "Requesting Authentication Method"
+msgstr "Demanant el mètode d'autentificació"
+
+#. we have no chats yet
+#: src/protocols/jabber/jabber.c:2299 src/protocols/msn/msn.c:1199
+#: src/protocols/yahoo/yahoo.c:965
+msgid "Connecting"
+msgstr "Connectant"
+
+#: src/protocols/jabber/jabber.c:2599
+#, c-format
+msgid "The user %s is an invalid Jabber I.D. and was therefore not added."
+msgstr "L'usuari %s té un identificadr de Jabber invàlid i per tant no s'ha afegit."
+
+#: src/protocols/jabber/jabber.c:2601
+msgid "Jabber Error"
+msgstr "Error de Jabber"
+
+#: src/protocols/jabber/jabber.c:2867
+msgid "Room:"
+msgstr "Sala:"
+
+#: src/protocols/jabber/jabber.c:2876
+msgid "Handle:"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:2900
+msgid "Unable to join chat"
+msgstr "Impossible entrar a la conversa"
+
+#: src/protocols/jabber/jabber.c:3243
+#, c-format
+msgid "<b>Status:</b> %s%s%s"
+msgstr "<b>Estat:</b> %s%s%s"
+
+#: src/protocols/jabber/jabber.c:3282
+msgid "View Error Msg"
+msgstr "Veure Missatge d'Error"
+
+#: src/protocols/jabber/jabber.c:3294 src/gtkconv.c:765
+msgid "Get Away Msg"
+msgstr "Obtenir el Missatge de Asència"
+
+#: src/protocols/jabber/jabber.c:3301
+msgid "Un-hide From"
+msgstr "Tornar a mostrar l'origen"
+
+#: src/protocols/jabber/jabber.c:3304
+msgid "Temporarily Hide From"
+msgstr "Ocultar temporalment l'origen"
+
+#: src/protocols/jabber/jabber.c:3311
+msgid "Cancel Presence Notification"
+msgstr "Cancel·lar la notificació de presència"
+
+#. state is one of our own strings. it won't be NULL.
+#: src/protocols/jabber/jabber.c:3323 src/protocols/jabber/jabber.c:3366
+#: src/protocols/oscar/oscar.c:2719 src/protocols/oscar/oscar.c:4392
+#: src/protocols/oscar/oscar.c:5488 src/protocols/yahoo/yahoo.c:1066
+#: src/multi.c:274
+msgid "Online"
+msgstr "Connectat"
+
+#: src/protocols/jabber/jabber.c:3505
+msgid "Full Name"
+msgstr "Nom"
+
+#: src/protocols/jabber/jabber.c:3506
+msgid "Family Name"
+msgstr "Cognoms"
+
+#: src/protocols/jabber/jabber.c:3507
+msgid "Given Name"
+msgstr "Nom d'usuari"
+
+#: src/protocols/jabber/jabber.c:3508
+msgid "Nickname"
+msgstr "Àlies"
+
+#: src/protocols/jabber/jabber.c:3509 src/dialogs.c:2608
+msgid "URL"
+msgstr "URL"
+
+#: src/protocols/jabber/jabber.c:3510
+msgid "Street Address"
+msgstr "Adreça"
+
+#: src/protocols/jabber/jabber.c:3511
+msgid "Extended Address"
+msgstr "Adreça (cont)"
+
+#: src/protocols/jabber/jabber.c:3512
+msgid "Locality"
+msgstr "Ciutat"
+
+#: src/protocols/jabber/jabber.c:3513
+msgid "Region"
+msgstr "Província"
+
+#: src/protocols/jabber/jabber.c:3514
+msgid "Postal Code"
+msgstr "Codi Postal"
+
+#. Line 7
+#: src/protocols/jabber/jabber.c:3515 src/dialogs.c:1784 src/dialogs.c:2414
+msgid "Country"
+msgstr "Païs"
+
+#: src/protocols/jabber/jabber.c:3516
+msgid "Telephone"
+msgstr "Telèfon"
+
+#: src/protocols/jabber/jabber.c:3517 src/dialogs.c:2472
+msgid "Email"
+msgstr "Correu electrònic"
+
+#: src/protocols/jabber/jabber.c:3518
+msgid "Organization Name"
+msgstr "Nom de l'Organització"
+
+#: src/protocols/jabber/jabber.c:3519
+msgid "Organization Unit"
+msgstr "Secció de la Organització"
+
+#: src/protocols/jabber/jabber.c:3520
+msgid "Title"
+msgstr "Títol"
+
+#: src/protocols/jabber/jabber.c:3521
+#, fuzzy
+msgid "Role"
+msgstr "Rol"
+
+#: src/protocols/jabber/jabber.c:3522
+msgid "Birthday"
+msgstr "Data de naixement"
+
+#: src/protocols/jabber/jabber.c:3523 src/dialogs.c:2618 src/prefs.c:410
+#: src/prefs.c:1308
+msgid "Description"
+msgstr "Descripció"
+
+#: src/protocols/jabber/jabber.c:3548
+msgid ""
+"All items below are optional. Enter only the information with which you feel "
+"comfortable"
+msgstr "Totes les dades a continuació són opcionals. Introdueixí només la informació que desitgi"
+
+#: src/protocols/jabber/jabber.c:3549
+msgid "User Identity"
+msgstr "Identificador"
+
+#: src/protocols/jabber/jabber.c:3973
+#, fuzzy
+msgid "Gaim - Edit Jabber vCard"
+msgstr "Gaim - Editar la vCard de Jaber"
+
+#: src/protocols/jabber/jabber.c:4046
+msgid "Server Registration successful!"
+msgstr "Registrat al Servidor amb èxit"
+
+#: src/protocols/jabber/jabber.c:4073
+msgid "Unknown registration error"
+msgstr "Error de registre desconegut"
+
+#: src/protocols/jabber/jabber.c:4186 src/protocols/oscar/oscar.c:5675
+#: src/protocols/toc/toc.c:1434 src/dialogs.c:1954
+msgid "Set User Info"
+msgstr "Establir dades de l'usuari"
+
+#: src/protocols/jabber/jabber.c:4268
+msgid "Resource:"
+msgstr "Recurs:"
+
+#: src/protocols/jabber/jabber.c:4279
+msgid "Connect Server:"
+msgstr "Connectar-se al servidor:"
+
+#: src/protocols/msn/msn.c:66
+msgid "Syntax Error (probably a Gaim bug)"
+msgstr "Error de sintaxi (probablement errada al Gaim)"
+
+#: src/protocols/msn/msn.c:69
+msgid "Invalid Parameter (probably a Gaim bug)"
+msgstr "Paràmetre invàlid (probablement errada al Gaim)"
+
+#: src/protocols/msn/msn.c:72
+msgid "Invalid User"
+msgstr "Usuari Invàlid"
+
+#: src/protocols/msn/msn.c:75
+msgid "Fully Qualified Domain Name missing"
+msgstr "Falta un nom complet de host d'Internet"
+
+#: src/protocols/msn/msn.c:78
+msgid "Already Login"
+msgstr "Ya està connectat"
+
+#: src/protocols/msn/msn.c:81
+msgid "Invalid Username"
+msgstr "Nom d'usuari invàlid"
+
+#: src/protocols/msn/msn.c:84
+msgid "Invalid Friendly Name"
+msgstr "Nom d'àlies invàlid"
+
+#: src/protocols/msn/msn.c:87
+#, fuzzy
+msgid "List Full"
+msgstr "Llista completa"
+
+#: src/protocols/msn/msn.c:90
+#, fuzzy
+msgid "Already there"
+msgstr "Ja hi és"
+
+#: src/protocols/msn/msn.c:93
+msgid "Not on list"
+msgstr "No hi és a la llista"
+
+#: src/protocols/msn/msn.c:96
+msgid "User is offline"
+msgstr "L'usuari no està connectat"
+
+#: src/protocols/msn/msn.c:99
+msgid "Already in the mode"
+msgstr "Ja hi és en aquest mode"
+
+#: src/protocols/msn/msn.c:102
+msgid "Already in opposite list"
+msgstr "Ja hi és a l'altra llista"
+
+#: src/protocols/msn/msn.c:105
+msgid "Switchboard failed"
+msgstr "Fallada del Switchboard (protocol)"
+
+#: src/protocols/msn/msn.c:108
+#, fuzzy
+msgid "Notify Transfer failed"
+msgstr "Ha fallat la transefència de la noificació"
+
+#: src/protocols/msn/msn.c:112
+msgid "Required fields missing"
+msgstr "Falten camps obligatoris"
+
+#: src/protocols/msn/msn.c:115 src/protocols/oscar/oscar.c:364
+msgid "Not logged in"
+msgstr "No està connectat"
+
+#: src/protocols/msn/msn.c:119
+msgid "Internal server error"
+msgstr "Error intern del servidor"
+
+#: src/protocols/msn/msn.c:122
+msgid "Database server error"
+msgstr "Error al servidor de bases de dades"
+
+#: src/protocols/msn/msn.c:125
+#, fuzzy
+msgid "File operation error"
+msgstr "Error en operació amb fitxers"
+
+#: src/protocols/msn/msn.c:128
+msgid "Memory allocation error"
+msgstr "Error reservant memòria"
+
+#: src/protocols/msn/msn.c:132
+msgid "Server busy"
+msgstr "El servidor està ocupat"
+
+#: src/protocols/msn/msn.c:135
+msgid "Server unavailable"
+msgstr "El servidor no està disponible"
+
+#: src/protocols/msn/msn.c:138
+msgid "Peer Notification server down"
+msgstr "Servidor de notificacións a contactes no disponible"
+
+#: src/protocols/msn/msn.c:141
+msgid "Database connect error"
+msgstr "Error en connexió a la base de dades"
+
+#: src/protocols/msn/msn.c:144
+msgid "Server is going down (abandon ship)"
+msgstr "El servidor passarà a no estar disponible (abandoni el vaixell)"
+
+#: src/protocols/msn/msn.c:148
+msgid "Error creating connection"
+msgstr "Error al crear la connexió"
+
+#: src/protocols/msn/msn.c:154
+msgid "Session overload"
+msgstr "Sobrecàrrega a la sessió"
+
+#: src/protocols/msn/msn.c:157
+msgid "User is too active"
+msgstr "L'usuari està massa actiu"
+
+#: src/protocols/msn/msn.c:160
+msgid "Too many sessions"
+msgstr "Massa sessions"
+
+#: src/protocols/msn/msn.c:163
+msgid "Not expected"
+msgstr "Inesperat"
+
+#: src/protocols/msn/msn.c:166
+msgid "Bad friend file"
+msgstr "Fitxer d'amics incorrecte"
+
+#: src/protocols/msn/msn.c:170
+msgid "Authentication failed"
+msgstr "Autentificació fallida"
+
+#: src/protocols/msn/msn.c:173
+msgid "Not allowed when offline"
+msgstr "No està permés mentre estigui desconnectat"
+
+#: src/protocols/msn/msn.c:176
+msgid "Not accepting new users"
+msgstr "No s'accepten nous usuaris"
+
+#: src/protocols/msn/msn.c:179
+msgid "User unverified"
+msgstr "Usuari sense verificar"
+
+#: src/protocols/msn/msn.c:182
+msgid "Unknown Error Code"
+msgstr "Codi d'Error Desconegut"
+
+#: src/protocols/msn/msn.c:291 src/protocols/msn/msn.c:313
+#: src/protocols/msn/msn.c:1445 src/protocols/msn/msn.c:1567
+#: src/protocols/msn/msn.c:1583 src/protocols/msn/msn.c:1701
+#: src/protocols/msn/msn.c:1714 src/protocols/msn/msn.c:1740
+#: src/protocols/msn/msn.c:1787 src/protocols/msn/msn.c:1805
+#: src/protocols/msn/msn.c:1839 src/protocols/msn/msn.c:1870
+#: src/protocols/msn/msn.c:1906 src/protocols/msn/msn.c:1913
+#: src/protocols/msn/msn.c:1926 src/protocols/msn/msn.c:1934
+#: src/protocols/msn/msn.c:1960 src/protocols/msn/msn.c:1969
+#: src/protocols/msn/msn.c:1982 src/protocols/msn/msn.c:1990
+msgid "Write error"
+msgstr "Error d'escriptura"
+
+#: src/protocols/msn/msn.c:362
+#, c-format
+msgid "The user %s (%s) wants to add %s to his or her buddy list."
+msgstr "L'usuari %s (%s) vol afegir a %s a la seva llista de contactes."
+
+#: src/protocols/msn/msn.c:412 src/protocols/msn/msn.c:1185
+msgid "Unable to write to server"
+msgstr "Impossible escriure al servidor"
+
+#: src/protocols/msn/msn.c:513
+#, c-format
+msgid "The user %s (%s) wants to add you to their buddy list"
+msgstr "L'usuari %s (%s) vol afegir-li a la seva llista de contactes"
+
+#: src/protocols/msn/msn.c:605
+msgid "You have been disconnected. You have signed on from another location."
+msgstr "S'ha desconnectat perquè s'està connectant des d'un altre lloc."
+
+#: src/protocols/msn/msn.c:757 src/protocols/msn/msn.c:1070
+msgid "Got invalid XFR\n"
+msgstr ""
+
+#: src/protocols/msn/msn.c:794
+msgid "Error transferring"
+msgstr "Error de transferència"
+
+#: src/protocols/msn/msn.c:878 src/protocols/msn/msn.c:1116
+msgid "Error reading from server"
+msgstr "Error al llegir del servidor"
+
+#: src/protocols/msn/msn.c:962
+msgid "Unable to connect to Notification Server"
+msgstr "Impossible connectar-se al Servidor de Notificacions"
+
+#: src/protocols/msn/msn.c:969
+msgid "Unable to talk to Notification Server"
+msgstr "Impossible parlar amb el Servidor de Notificacions"
+
+#: src/protocols/msn/msn.c:985
+msgid "Protocol not supported"
+msgstr "Protocol no compatible"
+
+#: src/protocols/msn/msn.c:992
+msgid "Unable to request INF\n"
+msgstr "Impossible demanar INF\n"
+
+#: src/protocols/msn/msn.c:999
+msgid "Unable to login using MD5"
+msgstr "Impossible entrar usant MD5"
+
+#: src/protocols/msn/msn.c:1006
+msgid "Unable to send USR\n"
+msgstr "Impossible enviar USR\n"
+
+#: src/protocols/msn/msn.c:1011
+msgid "Requesting to send password"
+msgstr "Demanant enviar la clau"
+
+#: src/protocols/msn/msn.c:1057
+msgid "Unable to send password"
+msgstr "Impossible enviar la clau"
+
+#: src/protocols/msn/msn.c:1062
+msgid "Password sent"
+msgstr "Clau enviada"
+
+#: src/protocols/msn/msn.c:1090
+msgid "Unable to transfer"
+msgstr "Impossible realitzar la transferència"
+
+#: src/protocols/msn/msn.c:1098
+msgid "Unable to parse message"
+msgstr "Impossible interpretar el missatge"
+
+#: src/protocols/msn/msn.c:1191
+msgid "Synching with server"
+msgstr "Sincronitzant amb el servidor"
+
+#: src/protocols/msn/msn.c:1516 src/protocols/msn/msn.c:1543
+#: src/protocols/msn/msn.c:1612
+msgid "Away From Computer"
+msgstr "Lluny de l'ordenador"
+
+#: src/protocols/msn/msn.c:1517 src/protocols/msn/msn.c:1545
+#: src/protocols/msn/msn.c:1610 src/protocols/yahoo/yahoo.c:1044
+#: src/protocols/yahoo/yahoo.c:1249 src/protocols/yahoo/yahoo.c:1325
+msgid "Be Right Back"
+msgstr "Tornaré"
+
+#: src/protocols/msn/msn.c:1518 src/protocols/msn/msn.c:1547
+#: src/protocols/msn/msn.c:1608 src/protocols/yahoo/yahoo.c:1046
+#: src/protocols/yahoo/yahoo.c:1251 src/protocols/yahoo/yahoo.c:1326
+msgid "Busy"
+msgstr "Ocupat"
+
+#: src/protocols/msn/msn.c:1519 src/protocols/msn/msn.c:1549
+#: src/protocols/msn/msn.c:1614 src/protocols/yahoo/yahoo.c:1054
+#: src/protocols/yahoo/yahoo.c:1259 src/protocols/yahoo/yahoo.c:1330
+msgid "On The Phone"
+msgstr "Al telèfon"
+
+#: src/protocols/msn/msn.c:1520 src/protocols/msn/msn.c:1551
+#: src/protocols/msn/msn.c:1616 src/protocols/yahoo/yahoo.c:1058
+#: src/protocols/yahoo/yahoo.c:1263 src/protocols/yahoo/yahoo.c:1332
+msgid "Out To Lunch"
+msgstr "Fora esmorzant"
+
+#: src/protocols/msn/msn.c:1521 src/protocols/msn/msn.c:1553
+msgid "Hidden"
+msgstr "Ocult"
+
+#: src/protocols/msn/msn.c:1618 src/protocols/yahoo/yahoo.c:1064
+#: src/gtkpounce.c:504 src/prefs.c:1069
+msgid "Idle"
+msgstr "Inactiu"
+
+#: src/protocols/msn/msn.c:1647 src/protocols/yahoo/yahoo.c:1117
+#, c-format
+msgid "<b>Status:</b> %s"
+msgstr "<b>Estat:</b> %s"
+
+#: src/protocols/msn/msn.c:1661 src/protocols/oscar/oscar.c:2964
+#: src/protocols/oscar/oscar.c:5523
+msgid "Send File"
+msgstr "Enviar Fitxer"
+
+#: src/protocols/msn/msn.c:1733
+msgid "New MSN friendly name too long."
+msgstr "Nou àlies de MSN massa llarg."
+
+#: src/protocols/msn/msn.c:1748
+msgid "Set Friendly Name:"
+msgstr "Establir un Àlies:"
+
+#: src/protocols/msn/msn.c:1757
+msgid "Set Friendly Name"
+msgstr "Establir un Àlies"
+
+#: src/protocols/msn/msn.c:1893
+#, c-format
+msgid ""
+"An MSN screenname must be in the form \"user@server.com\".  Perhaps you "
+"meant %s@hotmail.com.  No changes were made to your allow list."
+msgstr "Un nom d'usuari de MSN ha de ser de la forma \"usuari@servidor.com\". Potser volia dir %s@hotmail.com. No s'ha realitzat cap canvi a la seva llista de contactes."
+
+#: src/protocols/msn/msn.c:1896 src/protocols/msn/msn.c:1950
+msgid "Invalid MSN screenname"
+msgstr "Nom d'usuari MSN invàlid"
+
+#: src/protocols/msn/msn.c:1947
+#, c-format
+msgid ""
+"An MSN screenname must be in the form \"user@server.com\".  Perhaps you "
+"meant %s@hotmail.com.  No changes were made to your block list."
+msgstr "Un nom d'usuari de MSN ha de ser de la forma \"usuari@servidor.com\". Potser volia dir %s@hotmail.com. No s'ha realitzat cap canvi a la seva llista de usuaris bloquejats."
+
+#: src/protocols/msn/msn.c:2053
+msgid "Login Server:"
+msgstr "Servidor de Connexió:"
+
+#: src/protocols/msn/switchboard.c:104
+#, c-format
+msgid "%s has closed the conversation window"
+msgstr "%s ha tancat la finestra de conversa"
+
+#: src/protocols/msn/switchboard.c:181
+msgid "An MSN message may not have been received."
+msgstr "Un missatge de MSN pot no haver estat rebut."
+
+#: src/protocols/msn/switchboard.c:411
+msgid "Gaim was unable to send an MSN message"
+msgstr "Gaim no ha pogut enviar un missatge d'MSN"
+
+#: src/protocols/msn/switchboard.c:412
+msgid ""
+"Gaim encountered an error communicating with the MSN switchboard server.  "
+"Please try again later."
+msgstr "Ha hagut un erro de comunicació amb el servidor centraleta de MSN. Si us plau torni a intentar-ho més tard."
+
+#: src/protocols/napster/napster.c:459 src/protocols/oscar/oscar.c:4988
+#: src/protocols/toc/toc.c:1187
+msgid "Join what group:"
+msgstr "Unir-se al grup:"
+
+#: src/protocols/oscar/oscar.c:360
+msgid "Invalid error"
+msgstr "Error invàlid"
+
+#: src/protocols/oscar/oscar.c:361
+msgid "Invalid SNAC"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:362
+#, fuzzy
+msgid "Rate to host"
+msgstr "Velocitat cap al host"
+
+#: src/protocols/oscar/oscar.c:363
+#, fuzzy
+msgid "Rate to client"
+msgstr "Velocitat cap al client"
+
+#: src/protocols/oscar/oscar.c:365
+msgid "Service unavailable"
+msgstr "Servei no disponible"
+
+#: src/protocols/oscar/oscar.c:366
+msgid "Service not defined"
+msgstr "Servei no definit"
+
+#: src/protocols/oscar/oscar.c:367
+msgid "Obsolete SNAC"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:368
+msgid "Not supported by host"
+msgstr "No suportat pel host"
+
+#: src/protocols/oscar/oscar.c:369
+msgid "Not supported by client"
+msgstr "No suportat pel client"
+
+#: src/protocols/oscar/oscar.c:370
+msgid "Refused by client"
+msgstr "Rebutjat pel client"
+
+#: src/protocols/oscar/oscar.c:371
+msgid "Reply too big"
+msgstr "Resposta massa gran"
+
+#: src/protocols/oscar/oscar.c:372
+msgid "Responses lost"
+msgstr "S'han perdut respostes"
+
+#: src/protocols/oscar/oscar.c:373
+msgid "Request denied"
+msgstr "Petició denegada"
+
+#: src/protocols/oscar/oscar.c:374
+msgid "Busted SNAC payload"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:375
+msgid "Insufficient rights"
+msgstr "Insuficients drets"
+
+#: src/protocols/oscar/oscar.c:376
+msgid "In local permit/deny"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:377
+#, fuzzy
+msgid "Too evil (sender)"
+msgstr "Massa dolent (enviant)"
+
+#: src/protocols/oscar/oscar.c:378
+#, fuzzy
+msgid "Too evil (receiver)"
+msgstr "Massa dolent (receptor)"
+
+#: src/protocols/oscar/oscar.c:379
+msgid "User temporarily unavailable"
+msgstr "Usuari no disponible temporalment"
+
+#: src/protocols/oscar/oscar.c:380
+#, fuzzy
+msgid "No match"
+msgstr "No hi ha coincidència"
+
+#: src/protocols/oscar/oscar.c:381
+msgid "List overflow"
+msgstr "Límit de la llista superat"
+
+#: src/protocols/oscar/oscar.c:382
+msgid "Request ambiguous"
+msgstr "Petició ambigüa"
+
+#: src/protocols/oscar/oscar.c:383
+msgid "Queue full"
+msgstr "Cua plena"
+
+#: src/protocols/oscar/oscar.c:384
+#, fuzzy
+msgid "Not while on AOL"
+msgstr "No es pot fer mentre estigui a AOL"
+
+#: src/protocols/oscar/oscar.c:405
+#, c-format
+msgid "Direct IM with %s closed"
+msgstr "Conversa de Missatges Instantànis amb %s tancada"
+
+#: src/protocols/oscar/oscar.c:407
+#, c-format
+msgid "Direct IM with %s failed"
+msgstr "Conversa de Missatges Instantànis amb %s fallida"
+
+#: src/protocols/oscar/oscar.c:457 src/protocols/toc/toc.c:602
+#: src/protocols/toc/toc.c:615 src/protocols/toc/toc.c:678
+msgid "Disconnected."
+msgstr "Desconnectat."
+
+#: src/protocols/oscar/oscar.c:469 src/protocols/toc/toc.c:850
+#, c-format
+msgid "You have been disconnected from chat room %s."
+msgstr "Ha estat desconnectat de la conversa %s."
+
+#: src/protocols/oscar/oscar.c:482
+#, fuzzy
+msgid "Chat is currently unavailable"
+msgstr "La conversa no està disponible en aquests moments"
+
+#: src/protocols/oscar/oscar.c:551 src/protocols/oscar/oscar.c:609
+msgid "Couldn't connect to host"
+msgstr "No s'ha pogut connectar al host"
+
+#: src/protocols/oscar/oscar.c:591
+msgid "Unable to login to AIM"
+msgstr "No s'ha pogut connectar amb AIM"
+
+#: src/protocols/oscar/oscar.c:702 src/protocols/oscar/oscar.c:1156
+msgid "Could Not Connect"
+msgstr "No s'ha pogut connectar"
+
+#: src/protocols/oscar/oscar.c:709
+msgid "Connection established, cookie sent"
+msgstr "Connexió establerta, enviant secret"
+
+#: src/protocols/oscar/oscar.c:792 src/protocols/oscar/oscar.c:803
+#: src/protocols/oscar/oscar.c:807
+msgid "File Transfer Aborted"
+msgstr "Transferència de Fitxers Cancel·lada"
+
+#: src/protocols/oscar/oscar.c:792
+msgid "Unable to establish listener socket."
+msgstr "Impossible establir un socket d'escolta."
+
+#: src/protocols/oscar/oscar.c:803
+msgid "Unable to establish file descriptor."
+msgstr "Impossible establir un descriptor de fitxer."
+
+#: src/protocols/oscar/oscar.c:807
+msgid "Unable to create new connection."
+msgstr "Impossible crear una nova connexió."
+
+#. Incorrect nick/password
+#: src/protocols/oscar/oscar.c:1052 src/protocols/toc/toc.c:551
+msgid "Incorrect nickname or password."
+msgstr "Nom d'usuari o clau incorrectes."
+
+#. Suspended account
+#: src/protocols/oscar/oscar.c:1056
+msgid "Your account is currently suspended."
+msgstr "El seu compte està actualment suspés."
+
+#. service temporarily unavailable
+#: src/protocols/oscar/oscar.c:1060
+msgid "The AOL Instant Messenger service is temporarily unavailable."
+msgstr "El servei de Missatges Instantanis d'AOL no està disponible temporalment."
+
+#. connecting too frequently
+#: src/protocols/oscar/oscar.c:1064
+msgid ""
+"You have been connecting and disconnecting too frequently. Wait ten minutes "
+"and try again. If you continue to try, you will need to wait even longer."
+msgstr "S'ha estat connectant i desconnectat amb massa freqüència. Esperi deu minuts i intenti-ho de nou. Si continua intentant-ho, haurà d'esperar encara més temps."
+
+#. client too old
+#: src/protocols/oscar/oscar.c:1068
+#, c-format
+msgid "The client version you are using is too old. Please upgrade at %s"
+msgstr "La versió del client que està usant és massa antiga. Si us plau, actualitzi-la a %s"
+
+#: src/protocols/oscar/oscar.c:1072 src/protocols/toc/toc.c:633
+msgid "Authentication Failed"
+msgstr "Autentificació Fallida"
+
+#: src/protocols/oscar/oscar.c:1094
+msgid "Internal Error"
+msgstr "Error Intern"
+
+#: src/protocols/oscar/oscar.c:1195 src/protocols/oscar/oscar.c:1224
+#: src/protocols/oscar/oscar.c:1306
+#, c-format
+msgid ""
+"You may be disconnected shortly.  You may want to use TOC until this is "
+"fixed.  Check %s for updates."
+msgstr "Pot ser desconnectat dins de poc. Si vol, pot usar TOC fins que això es resolgui. Comprovi a %s si hi ha actualitzacions."
+
+#: src/protocols/oscar/oscar.c:1197 src/protocols/oscar/oscar.c:1226
+msgid "Gaim was Unable to get a valid AIM login hash."
+msgstr "Gaim no ha pogut obtenir un hash de connexió d'AIM vàlid."
+
+#: src/protocols/oscar/oscar.c:1308
+msgid "Gaim was Unable to get a valid login hash."
+msgstr "Gaim no ha pogut obtenir un hash de connexió vàlid."
+
+#: src/protocols/oscar/oscar.c:1842 src/protocols/oscar/oscar.c:5220
+#, c-format
+msgid "Direct IM with %s established"
+msgstr "Connexió directa de Missatges Instantanis amb %s establerta"
+
+#: src/protocols/oscar/oscar.c:2160 src/protocols/oscar/oscar.c:2180
+msgid "(There was an error receiving this message)"
+msgstr "(Hi ha hagut un error al rebre aquest missatge)"
+
+#: src/protocols/oscar/oscar.c:2321
+#, c-format
+msgid "%s has just asked to directly connect to %s"
+msgstr "%s demana connectar-se directament a %s"
+
+#: src/protocols/oscar/oscar.c:2322
+msgid ""
+"This requires a direct connection between the two computers and is necessary "
+"for IM Images.  Because your IP address will be revealed, this may be "
+"considered a privacy risk."
+msgstr "Es requereix la connexió directa entre els dos ordenadors, ja que és necessari per a poder enviar Imatges Instantànies. La seva adreça IP serà revelada, i això pot considerar-se com un risc de privacitat."
+
+#: src/protocols/oscar/oscar.c:2345
+msgid "Please authorize me so I can add you to my buddy list."
+msgstr "Si us plau, autoritzi-me per a que'l pugui afegir a la meva llista de contactes."
+
+#: src/protocols/oscar/oscar.c:2353
+msgid "Authorization Request Message:"
+msgstr "Missatge de petició d'autorització:"
+
+#: src/protocols/oscar/oscar.c:2353
+msgid "Please authorize me!"
+msgstr "Si us plau, autoritzi'm!"
+
+#: src/protocols/oscar/oscar.c:2378
+#, c-format
+msgid ""
+"The user %s requires authorization before being added to a buddy list.  Do "
+"you want to send an authorization request?"
+msgstr "L'usuari %s requereix autorització abans de ser afegit a una llista de contactes. Vol enviar una petició d'autorització?"
+
+#: src/protocols/oscar/oscar.c:2382
+msgid "Request Authorization"
+msgstr "Petició d'Autorització"
+
+#: src/protocols/oscar/oscar.c:2416 src/protocols/oscar/oscar.c:2418
+#: src/protocols/oscar/oscar.c:2424 src/protocols/oscar/oscar.c:2489
+#: src/protocols/oscar/oscar.c:2501 src/protocols/oscar/oscar.c:2866
+#: src/protocols/oscar/oscar.c:2917 src/protocols/oscar/oscar.c:4915
+#: src/protocols/oscar/oscar.c:4956
+msgid "No reason given."
+msgstr "No s'ha donat cap raó"
+
+#: src/protocols/oscar/oscar.c:2424
+msgid "Authorization Denied Message:"
+msgstr "iMissatge de denegació d'autorització:"
+
+#: src/protocols/oscar/oscar.c:2489
+#, c-format
+msgid ""
+"The user %lu wants to add you to their buddy list for the following reason:\n"
+"%s"
+msgstr "L'usuari %lu vol afegir-li a la seva llista de contactes per les següents raons:\n%s"
+
+#: src/protocols/oscar/oscar.c:2494 src/protocols/oscar/oscar.c:4920
+msgid "Authorization Request"
+msgstr "Petició d'autorització"
+
+#: src/protocols/oscar/oscar.c:2501
+#, c-format
+msgid ""
+"The user %lu has denied your request to add them to your contact list for "
+"the following reason:\n"
+"%s"
+msgstr "L'usuari %lu ha denegat la seva petició d'afegir-lo a la seva llista de contactes per la següent raó:\n%s"
+
+#: src/protocols/oscar/oscar.c:2502
+msgid "ICQ authorization denied."
+msgstr "Autorització ICQ denegada."
+
+#. Someone has granted you authorization
+#: src/protocols/oscar/oscar.c:2508
+#, c-format
+msgid "The user %lu has granted your request to add them to your contact list."
+msgstr "L'usuari %lu ha concedit la seva petició d'afegir-lo a la seva llista de contactes."
+
+#: src/protocols/oscar/oscar.c:2515
+#, c-format
+msgid ""
+"You have received a special message\n"
+"\n"
+"From: %s [%s]\n"
+"%s"
+msgstr "Ha rebut un missatge especial\n\nDe: %s [%s]\n%s"
+
+#: src/protocols/oscar/oscar.c:2523
+#, c-format
+msgid ""
+"You have received an ICQ page\n"
+"\n"
+"From: %s [%s]\n"
+"%s"
+msgstr "Ha rebut una pàgina d'ICQ\n\nDe: %s [%s]\n%s"
+
+#: src/protocols/oscar/oscar.c:2531
+#, c-format
+msgid ""
+"You have received an ICQ email from %s [%s]\n"
+"\n"
+"Message is:\n"
+"%s"
+msgstr "Ha rebut un missatge de correu electrònic d'ICQ de %s [%s]\n\nMissatge:\n%s"
+
+#: src/protocols/oscar/oscar.c:2552
+#, c-format
+msgid "ICQ user %lu has sent you a contact: %s (%s)"
+msgstr "L'usuari %lu d'ICQ li ha enviat un contacte: %s (%s)"
+
+#: src/protocols/oscar/oscar.c:2556
+msgid "Do you want to add this contact to your Buddy List?"
+msgstr "Vol afegir aquest contacte a la seva llista de contactes?"
+
+#: src/protocols/oscar/oscar.c:2556
+msgid "Decline"
+msgstr "Rebutjar"
+
+#: src/protocols/oscar/oscar.c:2636
+#, c-format
+msgid "You missed %hu message from %s because it was invalid."
+msgid_plural "You missed %hu messages from %s because they were invalid."
+msgstr[0] "S'ha perdut %hu missatge de %s perquè era invàlid."
+msgstr[1] "S'han perdut %hu missatges de %s perquè eren invàlids."
+
+#: src/protocols/oscar/oscar.c:2647
+#, c-format
+msgid "You missed %hu message from %s because it was too large."
+msgid_plural "You missed %hu messages from %s because they were too large."
+msgstr[0] "S'ha perdut %hu missatge de %s perquè era massa llarg."
+msgstr[1] "S'han perdut %hu missatges de %s perquè eren massa llargs."
+
+#: src/protocols/oscar/oscar.c:2658
+#, c-format
+msgid ""
+"You missed %hu message from %s because the rate limit has been exceeded."
+msgid_plural ""
+"You missed %hu messages from %s because the rate limit has been exceeded."
+msgstr[0] "S'ha perdut %hu missatge de %s perquè s'ha excedit el límit de velocitat."
+msgstr[1] "S'han perdut %hu missatges de %s perquè s'ha excedit el límit de velocitat."
+
+#: src/protocols/oscar/oscar.c:2669
+#, c-format
+msgid "You missed %hu message from %s because he/she was too evil."
+msgid_plural "You missed %hu messages from %s because he/she was too evil."
+msgstr[0] "S'ha perdut %hu missatge de %s perquè ell/ella eram massa dolent."
+msgstr[1] "S'han perdut %hu missatges de %s perquè ell/ella eram massa dolent."
+
+#: src/protocols/oscar/oscar.c:2680
+#, c-format
+msgid "You missed %hu message from %s because you are too evil."
+msgid_plural "You missed %hu messages from %s because you are too evil."
+msgstr[0] "S'ha perdut %hu missatge de %s perquè vosté és massa dolent."
+msgstr[1] "S'han perdut %hu missatges de %s perquè vosté és massa dolent."
+
+#: src/protocols/oscar/oscar.c:2690
+#, c-format
+msgid "You missed %hu message from %s for an unknown reason."
+msgid_plural "You missed %hu messages from %s for an unknown reason."
+msgstr[0] "S'ha perdut %hu missatge de %s per motius desconeguts."
+msgstr[1] "S'han perdut %hu missatges de %s per motius desconeguts."
+
+#: src/protocols/oscar/oscar.c:2705 src/protocols/oscar/oscar.c:4406
+#: src/protocols/oscar/oscar.c:5493
+msgid "Free For Chat"
+msgstr "Lliure per a conversar"
+
+#: src/protocols/oscar/oscar.c:2709 src/protocols/oscar/oscar.c:4400
+#: src/protocols/oscar/oscar.c:5491
+msgid "Not Available"
+msgstr "No Disponible"
+
+#: src/protocols/oscar/oscar.c:2711 src/protocols/oscar/oscar.c:4403
+#: src/protocols/oscar/oscar.c:5492
+msgid "Occupied"
+msgstr "Ocupat"
+
+#: src/protocols/oscar/oscar.c:2715
+msgid "Web Aware"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2772
+#, c-format
+msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
+msgstr "<B>UIN:</B> %s<BR><B>Estat:</B> %s<HR>%s"
+
+#: src/protocols/oscar/oscar.c:2774
+#, c-format
+msgid "<B>Status:</B> %s<HR>%s"
+msgstr "<B>Estat:</B> %s<HR>%s"
+
+#: src/protocols/oscar/oscar.c:2830
+#, c-format
+msgid "SNAC threw error: %s\n"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2831
+msgid "Unknown error"
+msgstr "Error desconegut"
+
+#. Data is assumed to be the destination sn
+#: src/protocols/oscar/oscar.c:2865
+#, c-format
+msgid "Your message to %s did not get sent:"
+msgstr "No s'ha enviat el missatge a %s:"
+
+#: src/protocols/oscar/oscar.c:2916
+#, c-format
+msgid "User information for %s unavailable:"
+msgstr "Dades de l'usuari %s no disponibles:"
+
+#: src/protocols/oscar/oscar.c:2949
+msgid "Buddy Icon"
+msgstr "Icona de Contacte"
+
+#: src/protocols/oscar/oscar.c:2952
+msgid "Voice"
+msgstr "Veu"
+
+#: src/protocols/oscar/oscar.c:2955 src/protocols/oscar/oscar.c:5517
+msgid "Direct IM"
+msgstr "Missatges Instantànis directes"
+
+#: src/protocols/oscar/oscar.c:2958 src/buddy.c:1269
+msgid "Chat"
+msgstr "Conversa"
+
+#: src/protocols/oscar/oscar.c:2961 src/protocols/oscar/oscar.c:5529
+msgid "Get File"
+msgstr "Obtenir Fitxer"
+
+#: src/protocols/oscar/oscar.c:2968
+msgid "Games"
+msgstr "Jocs"
+
+#: src/protocols/oscar/oscar.c:2971
+msgid "Add-Ins"
+msgstr "Afegits"
+
+#: src/protocols/oscar/oscar.c:2974
+msgid "Send Buddy List"
+msgstr "Enviar Llista de Contactes"
+
+#: src/protocols/oscar/oscar.c:2977
+msgid "EveryBuddy Bug"
+msgstr "Errada a EveryBuddy"
+
+#: src/protocols/oscar/oscar.c:2980
+msgid "AP User"
+msgstr "Usuari AP"
+
+#: src/protocols/oscar/oscar.c:2983
+msgid "ICQ RTF"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2986
+msgid "Nihilist"
+msgstr "Nihilista"
+
+#: src/protocols/oscar/oscar.c:2989
+#, fuzzy
+msgid "ICQ Server Relay"
+msgstr "Delegador del Servidor ICQ"
+
+#: src/protocols/oscar/oscar.c:2992
+#, fuzzy
+msgid "ICQ Unknown"
+msgstr "ICQ Desconegut"
+
+#: src/protocols/oscar/oscar.c:2995
+msgid "Trillian Encryption"
+msgstr "Encriptació Trillian"
+
+#: src/protocols/oscar/oscar.c:2998
+msgid "ICQ UTF8"
+msgstr "ICQ UTF8"
+
+#: src/protocols/oscar/oscar.c:3024
+#, c-format
+msgid "<b>Logged In:</b> %s%s%s"
+msgstr "<b>Connectat:</b> %s%s%s"
+
+#: src/protocols/oscar/oscar.c:3025
+msgid ""
+"\n"
+"<b>Capabilities:</b> "
+msgstr "\n<b>Capacitats:</b> "
+
+#: src/protocols/oscar/oscar.c:3031
+msgid ""
+"\n"
+"<b>Status:</b> "
+msgstr "\n<b>Estat:</b> "
+
+#: src/protocols/oscar/oscar.c:3077
+msgid ""
+"<i>Unable to display information because it was sent in an unknown encoding."
+"</i>"
+msgstr "<i>No es pot mostrat la informació perquè s'ha enviat en una codificació desconeguda.</i>"
+
+#: src/protocols/oscar/oscar.c:3083
+#, c-format
+msgid "Online Since : <b>%s</b><br>\n"
+msgstr "Connectat des de: <b>%s</b><br>\n"
+
+#: src/protocols/oscar/oscar.c:3088
+#, c-format
+msgid "Member Since : <b>%s</b><br>\n"
+msgstr "Membre des de: <b>%s</b><br>\n"
+
+#: src/protocols/oscar/oscar.c:3094
+#, c-format
+msgid "Idle : <b>%s</b>"
+msgstr "Inactiu: <b>%s</b>"
+
+#: src/protocols/oscar/oscar.c:3097
+msgid "Idle: <b>Active</b>"
+msgstr "Inactiu: <b>Actiu</b>"
+
+#: src/protocols/oscar/oscar.c:3100
+#, c-format
+msgid ""
+"Username : <b>%s</b>  %s <br>\n"
+"Warning Level : <b>%d %%</b><br>\n"
+"%s%s%s\n"
+"<hr>\n"
+msgstr "Nom d'usuari: <b>%s</b>  %s <br>\nNivell d'Advertència: <b>%d %%</b><br>\n%s%s%s\n"
+
+#: src/protocols/oscar/oscar.c:3132
+msgid "<i>User has no away message</i>"
+msgstr "<i>L'usuari no te missatges d'ausència</i>"
+
+#: src/protocols/oscar/oscar.c:3143
+msgid "Client Capabilities: "
+msgstr "Capacitats del Client: "
+
+#: src/protocols/oscar/oscar.c:3150
+msgid "<i>No Information Provided</i>"
+msgstr "<i>No s'ha donat informació</i>"
+
+#: src/protocols/oscar/oscar.c:3171
+#, fuzzy
+msgid "Your AIM connection may be lost."
+msgstr "La seca connexió d'AIM por haver-se tancat."
+
+#: src/protocols/oscar/oscar.c:3519
+msgid "Rate limiting error."
+msgstr "Error de limitació de velocitat."
+
+#: src/protocols/oscar/oscar.c:3520
+msgid ""
+"The last message was not sent because you are over the rate limit.  Please "
+"wait 10 seconds and try again."
+msgstr "L'últim missatge no ha estat enviat perquè vosté està per sobre del límit de velocitat. Si us plau esperi 10 segons i torni a provar."
+
+#: src/protocols/oscar/oscar.c:3578
+msgid ""
+"You have been disconnected because you have signed on with this screen name "
+"at another location."
+msgstr "Ha estat desconnectat perquè ha connectat amb el mateix nom des d'un altre lloc."
+
+#: src/protocols/oscar/oscar.c:3580
+msgid "You have been signed off for an unknown reason."
+msgstr "Ha estat desconnectat per motius desconeguts."
+
+#: src/protocols/oscar/oscar.c:3818
+msgid "UIN:"
+msgstr "UIN:"
+
+#: src/protocols/oscar/oscar.c:3823
+msgid "First Name:"
+msgstr "Nom"
+
+#: src/protocols/oscar/oscar.c:3826
+msgid "Last Name:"
+msgstr "Cognoms:"
+
+#: src/protocols/oscar/oscar.c:3829 src/protocols/oscar/oscar.c:3835
+msgid "Email Address:"
+msgstr "Adreça de correu electrònic:"
+
+#: src/protocols/oscar/oscar.c:3840
+msgid "Mobile Phone:"
+msgstr "Telèfon móbil:"
+
+#: src/protocols/oscar/oscar.c:3843
+msgid "Gender:"
+msgstr "Sexe:"
+
+#: src/protocols/oscar/oscar.c:3843
+msgid "Female"
+msgstr "Dona"
+
+#: src/protocols/oscar/oscar.c:3843
+msgid "Male"
+msgstr "Home"
+
+#: src/protocols/oscar/oscar.c:3852
+msgid "Birthday:"
+msgstr "Data de naixement:"
+
+#: src/protocols/oscar/oscar.c:3857
+msgid "Age:"
+msgstr "Edat:"
+
+#: src/protocols/oscar/oscar.c:3860
+msgid "Personal Web Page:"
+msgstr "Pàgina Web Personal:"
+
+#: src/protocols/oscar/oscar.c:3863
+msgid "Additional Information:"
+msgstr "Informació Addicional:"
+
+#: src/protocols/oscar/oscar.c:3867
+msgid "Home Address:"
+msgstr "Adreça de Casa:"
+
+#: src/protocols/oscar/oscar.c:3869 src/protocols/oscar/oscar.c:3885
+msgid "Address:"
+msgstr "Adreça:"
+
+#: src/protocols/oscar/oscar.c:3872 src/protocols/oscar/oscar.c:3888
+msgid "City:"
+msgstr "Ciutat:"
+
+#: src/protocols/oscar/oscar.c:3875 src/protocols/oscar/oscar.c:3891
+msgid "State:"
+msgstr "Estat:"
+
+#: src/protocols/oscar/oscar.c:3878 src/protocols/oscar/oscar.c:3894
+msgid "Zip Code:"
+msgstr "Codi Postal:"
+
+#: src/protocols/oscar/oscar.c:3883
+msgid "Work Address:"
+msgstr "Adreça de la Feina:"
+
+#: src/protocols/oscar/oscar.c:3899
+msgid "Work Information:"
+msgstr "Informació de la Feina:"
+
+#: src/protocols/oscar/oscar.c:3901
+msgid "Company:"
+msgstr "Companyia:"
+
+#: src/protocols/oscar/oscar.c:3904
+msgid "Division:"
+msgstr "Secció"
+
+#: src/protocols/oscar/oscar.c:3907
+msgid "Position:"
+msgstr "Càrrec:"
+
+#: src/protocols/oscar/oscar.c:3910
+msgid "Web Page:"
+msgstr "Pàgina Web:"
+
+#: src/protocols/oscar/oscar.c:4019
+#, fuzzy
+msgid "Account Confirmation Requested"
+msgstr "Confirmació del Compte Demanada"
+
+#: src/protocols/oscar/oscar.c:4046
+msgid "Error Changing Account Info"
+msgstr "Error al Canviar la Informació del Compte"
+
+#: src/protocols/oscar/oscar.c:4049
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"differs from the original."
+msgstr "Error 0x%04x: Impossible donar format al nom en pantalla perquè el nom demanat difereix de l'original."
+
+#: src/protocols/oscar/oscar.c:4052
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"ends in a space."
+msgstr "Error 0x%04x: Impossible donar format al nom en pantalla perquè el nom demanat acaba en espai."
+
+#: src/protocols/oscar/oscar.c:4055
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to format screen name because the requested screen name "
+"is too long."
+msgstr "Error 0x%04x: Impossible donar format al nom en pantalla perquè el nom demanat és massa llarg."
+
+#: src/protocols/oscar/oscar.c:4058
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to change email address because there is already a "
+"request pending for this screen name."
+msgstr "Error 0x%04x: Impossible canviar l'adreça de correu electrònic perquè ja hi ha una petició pendent per a aquest nom d'usuari."
+
+#: src/protocols/oscar/oscar.c:4061
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to change email address because the given address has "
+"too many screen names associated with it."
+msgstr "Error 0x%04x: Impossible canviar l'adreça de correu electrònic perquè l'adreça donada ja te massa noms d'usuari associats."
+
+#: src/protocols/oscar/oscar.c:4064
+#, c-format
+msgid ""
+"Error 0x%04x: Unable to change email address because the given address is "
+"invalid."
+msgstr "Error 0x%04x: Impossible canviar l'adreça de correu electrònic perquè l'adreça donada és invàlida."
+
+#: src/protocols/oscar/oscar.c:4067
+#, c-format
+msgid "Error 0x%04x: Unknown error."
+msgstr "Error 0x%04x: Error desconegut."
+
+#: src/protocols/oscar/oscar.c:4077
+#, c-format
+msgid ""
+"Your screen name is currently formatted as follows:\n"
+"%s"
+msgstr "El seu nom d'usuari té aquest format:\n%s"
+
+#: src/protocols/oscar/oscar.c:4078 src/protocols/oscar/oscar.c:4084
+#, fuzzy
+msgid "Account Info"
+msgstr "Informació del Compte"
+
+#: src/protocols/oscar/oscar.c:4083
+#, c-format
+msgid "The email address for %s is %s"
+msgstr "L'adreça de correu electrònic per a %s és %s"
+
+#: src/protocols/oscar/oscar.c:4291
+msgid "Unable to set AIM profile."
+msgstr "Impossible establir el perfil d'AIM."
+
+#: src/protocols/oscar/oscar.c:4292
+msgid ""
+"You have probably requested to set your profile before the login procedure "
+"completed.  Your profile remains unset; try setting it again when you are "
+"fully connected."
+msgstr "Probablement ha demanat posar el seu perfil abans d'acabar amb el procés de connexió. El seu perfil segueix sense estar posat; intenti posar-lo de nou quan el procés de connexió hagi finalitzat."
+
+#: src/protocols/oscar/oscar.c:4298
+#, c-format
+msgid ""
+"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"truncated and set it."
+msgstr "El límit màxim de tamany del perfil de %d bytes s'ha excedit. Gaim l'ha retallat."
+
+#: src/protocols/oscar/oscar.c:4335
+msgid "Unable to set AIM away message."
+msgstr "Impossible posar el missatge AIM d'ausséncia."
+
+#: src/protocols/oscar/oscar.c:4336
+msgid ""
+"You have probably requested to set your away message before the login "
+"procedure completed.  You remain in a \"present\" state; try setting it "
+"again when you are fully connected."
+msgstr "Probablement ha demanat canviar a estat aussent abans d'acabar amb el procés de connexió. El seu estat continua essent \"present\"; intenti tornar a posar-lo quan el procés de connexió hagi finalitzat."
+
+#: src/protocols/oscar/oscar.c:4352
+#, c-format
+msgid ""
+"The away message length of %d bytes has been exceeded.  Gaim has truncated "
+"it and set you away."
+msgstr "El límit del missatge d'ausència de %d bytes ha estat superat. Gaim l'ha retallat."
+
+#: src/protocols/oscar/oscar.c:4572
+msgid "Unable To Retrive Buddy List"
+msgstr "Impossible obtindre la llista de contactes"
+
+#: src/protocols/oscar/oscar.c:4572
+msgid ""
+"Gaim was temporarily unable to retrive your buddy list from the AIM "
+"servers.  Your buddy list is not lost, and will probably become available in "
+"a few hours."
+msgstr "Gaim no ha pogut obtenir la llista de contactes dels servidors d'AIM de forma temporal. La llista de contactes no s'ha perdut, i probablement tornarà a estar disponible en unes poques hores."
+
+#: src/protocols/oscar/oscar.c:4657 src/protocols/oscar/oscar.c:4658
+#, fuzzy
+msgid "Orphans"
+msgstr "Orfes"
+
+#: src/protocols/oscar/oscar.c:4797
+#, c-format
+msgid ""
+"The maximum number of buddies allowed in your buddy list is %d, and you have "
+"%d.  Until you are below the limit, some buddies will not show up as online."
+msgstr "El nombre màxim de contactes permesos en la llista de contactes és %d, i en té %d. Fins que no estigui per sota del límit, alguns contactes no apareixeran com a connectats."
+
+#: src/protocols/oscar/oscar.c:4800
+msgid "Maximum buddy list length exceeded."
+msgstr "Tamany màxim de la llista de contactes excedit."
+
+#: src/protocols/oscar/oscar.c:4838
+#, c-format
+msgid ""
+"Could not add the buddy %s because you have too many buddies in your buddy "
+"list.  Please remove one and try again."
+msgstr "No s'ha pogut afegir el contacte %s perque hi ha massa contactes a la llista de contactes. Si us plau elimini un i torni a intentar-ho."
+
+#: src/protocols/oscar/oscar.c:4838
+msgid "(no name)"
+msgstr "(sense nom)"
+
+#: src/protocols/oscar/oscar.c:4881
+#, c-format, fuzzy
+msgid ""
+"The user %s has given you permission to add you to their buddy list.  Do you "
+"want to add them?"
+msgstr "L'usuari %s li ha donat permis per afegir-li a la seva llista de contactes. Vol afegir-lo a ell/ella?"
+
+#: src/protocols/oscar/oscar.c:4886
+#, fuzzy
+msgid "Authorization Given"
+msgstr "S'ha donat Autorització"
+
+#: src/protocols/oscar/oscar.c:4915
+#, c-format
+msgid ""
+"The user %s wants to add you to their buddy list for the following reason:\n"
+"%s"
+msgstr "L'usuari %s vol afegir-lo a la seva llista de contactes per les següents raons:\n%s"
+
+#. Granted
+#: src/protocols/oscar/oscar.c:4952
+#, c-format
+msgid "The user %s has granted your request to add them to your contact list."
+msgstr "L'usuari %s li ha concedit la petició d'afegir-lo a la seva llista de contactes."
+
+#: src/protocols/oscar/oscar.c:4953
+msgid "Authorization Granted"
+msgstr "Autorització Concedida"
+
+#. Denied
+#: src/protocols/oscar/oscar.c:4956
+#, c-format
+msgid ""
+"The user %s has denied your request to add them to your contact list for the "
+"following reason:\n"
+"%s"
+msgstr "L'usuari %s ha denegat la petició d'afegir-lo a la seva llista de contactes per la següent raò:\n%s"
+
+#: src/protocols/oscar/oscar.c:4957
+msgid "Authorization Denied"
+msgstr "Autorització Rebutjada"
+
+#: src/protocols/oscar/oscar.c:4992 src/protocols/toc/toc.c:1191
+msgid "Exchange:"
+msgstr "Intercanvi:"
+
+#: src/protocols/oscar/oscar.c:5356
+msgid "Unable to open Direct IM"
+msgstr "Impossible obrir connexió directa de Missatges Instantanis"
+
+#: src/protocols/oscar/oscar.c:5368
+#, c-format
+msgid "You have selected to open a Direct IM connection with %s."
+msgstr "Ha escollit obrir una conexió directa de Missatges Instantanis amb %s."
+
+#: src/protocols/oscar/oscar.c:5369
+msgid ""
+"Because this reveals your IP address, it may be considered a privacy risk.  "
+"Do you wish to continue?"
+msgstr "Això revela la seva adreça IP, i podria ser considerat com un risc de privacitat. Vol continuar?"
+
+#: src/protocols/oscar/oscar.c:5507
+msgid "Get Status Msg"
+msgstr "Obtenir Missatge d'Estat"
+
+#: src/protocols/oscar/oscar.c:5540
+msgid "Re-request Authorization"
+msgstr "Tornar a Demanar Autorització"
+
+#: src/protocols/oscar/oscar.c:5563
+msgid "The new formatting is invalid."
+msgstr "El format és invàlid"
+
+#: src/protocols/oscar/oscar.c:5564
+msgid "Screenname formatting can change only capitalization and whitespace."
+msgstr "El format del nom d'usuari només pot canviar entre majúscules i minúscules y la quantitat d'espais."
+
+#: src/protocols/oscar/oscar.c:5570
+msgid "New screenname formatting:"
+msgstr "Nou format del nom d'usuari:"
+
+#: src/protocols/oscar/oscar.c:5615
+msgid "Change Address To: "
+msgstr "Canviar l'Adreça per: "
+
+#: src/protocols/oscar/oscar.c:5625
+msgid "You are awaiting authorization from the following buddies:<BR>"
+msgstr "Està esperant l'autorització dels degüents contactes:<BR>"
+
+#: src/protocols/oscar/oscar.c:5650
+msgid "<i>you are not waiting for authorization</i>"
+msgstr "<i>no està esperant autorització</i>"
+
+#: src/protocols/oscar/oscar.c:5655
+#, c-format
+msgid ""
+"%s<BR><BR>You can re-request authorization from these buddies by right-"
+"clicking on them and clicking \"Re-request authorization.\""
+msgstr "%s<BR><BR>Por tornar a demanar autorització d'aquells contactes apretant el botò dret del tatolí sobre ells i seleccionant \"Tornar a demanar autorització\"."
+
+#: src/protocols/oscar/oscar.c:5690
+msgid "Change Password (URL)"
+msgstr "Canviar Clau (URL)"
+
+#: src/protocols/oscar/oscar.c:5701
+msgid "Format Screenname"
+msgstr "Format del Nom d'Usuari"
+
+#: src/protocols/oscar/oscar.c:5707
+msgid "Confirm Account"
+msgstr "Confirmar el Compte"
+
+#: src/protocols/oscar/oscar.c:5713
+#, fuzzy
+msgid "Display Current Registered Address"
+msgstr "Mostrar l'Adreça Registrada"
+
+#: src/protocols/oscar/oscar.c:5719
+#, fuzzy
+msgid "Change Current Registered Address"
+msgstr "Canviar l'Adreça Registrada"
+
+#: src/protocols/oscar/oscar.c:5728
+msgid "Show Buddies Awaiting Authorization"
+msgstr "Mostrar Contactes esperant d'Autorització"
+
+#: src/protocols/oscar/oscar.c:5736
+msgid "Search for Buddy by Email"
+msgstr "Cercar Contacte per Adreça de correu electrònic"
+
+#: src/protocols/toc/toc.c:190
+#, c-format
+msgid "Looking up %s"
+msgstr "Cercant %s"
+
+#: src/protocols/toc/toc.c:490
+#, c-format
+msgid "Unable to write file %s."
+msgstr "Impossible escriure fitxer %s."
+
+#: src/protocols/toc/toc.c:493
+#, c-format
+msgid "Unable to read file %s."
+msgstr "Impossible llegir fitxer %s."
+
+#: src/protocols/toc/toc.c:496
+#, c-format
+msgid "Message too long, last %s bytes truncated."
+msgstr "Missatge massa llarg, s'han retallat els últims %s bytes."
+
+#: src/protocols/toc/toc.c:499
+#, c-format
+msgid "%s not currently logged in."
+msgstr "%s està desconnectat."
+
+#: src/protocols/toc/toc.c:502
+#, c-format
+msgid "Warning of %s not allowed."
+msgstr "Avís de %s no permés."
+
+#: src/protocols/toc/toc.c:505
+msgid "A message has been dropped, you are exceeding the server speed limit."
+msgstr "S'ha eliminat un missatge, està excedint el límit de velocitat del servidor."
+
+#: src/protocols/toc/toc.c:508
+#, c-format
+msgid "Chat in %s is not available."
+msgstr "La conversa a %s no està disponible."
+
+#: src/protocols/toc/toc.c:511
+#, c-format
+msgid "You are sending messages too fast to %s."
+msgstr "Està enviant missatges massa depressa a %s."
+
+#: src/protocols/toc/toc.c:514
+#, c-format
+msgid "You missed an IM from %s because it was too big."
+msgstr "No ha rebut un Missatge Instantani de %s perquè era massa gran."
+
+#: src/protocols/toc/toc.c:517
+#, c-format
+msgid "You missed an IM from %s because it was sent too fast."
+msgstr "No ha rebut un Missatge Instantani de %s perque ha estat enviat massa depressa."
+
+#: src/protocols/toc/toc.c:520
+#, fuzzy
+msgid "Failure."
+msgstr "Fallada."
+
+#: src/protocols/toc/toc.c:523
+msgid "Too many matches."
+msgstr "Massa coincidències."
+
+#: src/protocols/toc/toc.c:526
+msgid "Need more qualifiers."
+msgstr "Es necessiten més qualificadors."
+
+#: src/protocols/toc/toc.c:529
+msgid "Dir service temporarily unavailable."
+msgstr "Servei de directori no disponible temporalment."
+
+#: src/protocols/toc/toc.c:532
+msgid "Email lookup restricted."
+msgstr "Cerca per adreça de correu electrònic restringida."
+
+#: src/protocols/toc/toc.c:535
+msgid "Keyword ignored."
+msgstr "Paraula clau ignorada."
+
+#: src/protocols/toc/toc.c:538
+msgid "No keywords."
+msgstr "No hi ha paraules clau."
+
+#: src/protocols/toc/toc.c:541
+msgid "User has no directory information."
+msgstr "L'usuari no te informació al directori."
+
+#: src/protocols/toc/toc.c:545
+msgid "Country not supported."
+msgstr "País no suportat."
+
+#: src/protocols/toc/toc.c:548
+#, c-format
+msgid "Failure unknown: %s."
+msgstr "Error desconegut: %s."
+
+#: src/protocols/toc/toc.c:554
+msgid "The service is temporarily unavailable."
+msgstr "El servei està temporalment no disponible."
+
+#: src/protocols/toc/toc.c:557
+msgid "Your warning level is currently too high to log in."
+msgstr "El seu nivell d'avisos és massa alt per a conectar-se."
+
+#: src/protocols/toc/toc.c:560
+msgid ""
+"You have been connecting and disconnecting too frequently.  Wait ten minutes "
+"and try again.  If you continue to try, you will need to wait even longer."
+msgstr "Ha estat connectant'se i desconnectant'se amb massa freqüència. Esperi deu minuts i torni a probar-ho. Si continua intentant-ho, haurà d'esperar encara més."
+
+#: src/protocols/toc/toc.c:562
+#, c-format
+msgid "An unknown signon error has occurred: %s."
+msgstr "Hi ha hagut un error de connexió desconegut: %s."
+
+#: src/protocols/toc/toc.c:565
+#, c-format
+msgid "An unknown error, %d, has occurred.  Info: %s"
+msgstr "Un error desconegut, %s ha succeit. Informació: %s"
+
+#: src/protocols/toc/toc.c:582
+msgid "Connection Closed"
+msgstr "Connexió Tancada"
+
+#: src/protocols/toc/toc.c:620
+msgid "Waiting for reply..."
+msgstr "Esperant resposta..."
+
+#: src/protocols/toc/toc.c:684
+msgid "TOC has come back from its pause. You may now send messages again."
+msgstr "TOC ha tornat de la pausa. Ja pot enviar missatges de nou."
+
+#: src/protocols/toc/toc.c:869
+msgid "Password Change Successful"
+msgstr "S'ha canviat la clau amb èxit"
+
+#: src/protocols/toc/toc.c:872
+msgid "TOC has sent a PAUSE command."
+msgstr "TOC ha enviat una comanda de PAUSE."
+
+#: src/protocols/toc/toc.c:872
+msgid ""
+"When this happens, TOC ignores any messages sent to it, and may kick you off "
+"if you send a message. Gaim will prevent anything from going through. This "
+"is only temporary, please be patient."
+msgstr "Quan això succeeix, TOC ignora els missatges que se li envien, i el pot fer fora si envia un missatge. Gaim evitarà que passi res. Això és només temporalment, si us plau, tingui paciència."
+
+#: src/protocols/toc/toc.c:1316
+msgid "Get Dir Info"
+msgstr "Obtenir Informació del Directori"
+
+#: src/protocols/toc/toc.c:1440
+#, fuzzy
+msgid "Set Dir Info"
+msgstr "Posar Informació de Directori"
+
+#: src/protocols/toc/toc.c:1495
+#, fuzzy
+msgid "TOC Host:"
+msgstr "Host de TOC:"
+
+#: src/protocols/toc/toc.c:1501
+msgid "TOC Port:"
+msgstr "Port de TOC:"
+
+#: src/protocols/toc/toc.c:1628
+#, c-format
+msgid "Could not open %s for writing!"
+msgstr "No s'ha pogut obrir %s per a escriure!"
+
+#: src/protocols/toc/toc.c:1706 src/protocols/toc/toc.c:1745
+#: src/protocols/toc/toc.c:1953
+msgid "Could not connect for transfer."
+msgstr "No s'ha pogut connectar per a realitzar la transferència."
+
+#: src/protocols/toc/toc.c:1868
+msgid "Could not connect for transfer!"
+msgstr "No s'ha pogut connectar per a realitzar la transferència!"
+
+#: src/protocols/toc/toc.c:1900
+msgid "Could not write file header.  The file will not be transferred."
+msgstr "No s'ha pogut escriure la capçalera del fitxer. El fitxer no serà enviat."
+
+#: src/protocols/toc/toc.c:1998 src/gtkft.c:1044
+msgid "Gaim - Save As..."
+msgstr "Gaim - Gravar Com..."
+
+#: src/protocols/toc/toc.c:2032
+#, c-format
+msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
+msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
+msgstr[0] "%s demana %s per acceptar %d fitxer: %s (%.2f %s)%s%s"
+msgstr[1] "%s demana %s per acceptar %d fitxers: %s (%.2f %s)%s%s"
+
+#: src/protocols/toc/toc.c:2039
+#, c-format
+msgid "%s requests you to send them a file"
+msgstr "%s demana que li envii un fitxer"
+
+#: src/protocols/toc/toc.c:2041 src/gtkft.c:1097 src/server.c:1064
+#, fuzzy
+msgid "Accept"
+msgstr "Acceptar"
+
+#: src/protocols/yahoo/yahoo.c:586
+msgid "Your Yahoo! message did not get sent."
+msgstr "El seu missatge de Yahoo! no s'ha enviat."
+
+#: src/protocols/yahoo/yahoo.c:1048 src/protocols/yahoo/yahoo.c:1253
+#: src/protocols/yahoo/yahoo.c:1327
+msgid "Not At Home"
+msgstr "Fora de Casa"
+
+#: src/protocols/yahoo/yahoo.c:1050 src/protocols/yahoo/yahoo.c:1255
+#: src/protocols/yahoo/yahoo.c:1328
+msgid "Not At Desk"
+msgstr "Fora de l'Escriptori"
+
+#: src/protocols/yahoo/yahoo.c:1052 src/protocols/yahoo/yahoo.c:1257
+#: src/protocols/yahoo/yahoo.c:1329
+msgid "Not In Office"
+msgstr "Fora de l'Oficina"
+
+#: src/protocols/yahoo/yahoo.c:1056 src/protocols/yahoo/yahoo.c:1261
+#: src/protocols/yahoo/yahoo.c:1331
+msgid "On Vacation"
+msgstr "De Dia Lliure"
+
+#: src/protocols/yahoo/yahoo.c:1060 src/protocols/yahoo/yahoo.c:1265
+#: src/protocols/yahoo/yahoo.c:1333
+msgid "Stepped Out"
+msgstr "Ha Abandonat"
+
+#: src/protocols/yahoo/yahoo.c:1185
+msgid "Activate ID"
+msgstr "Acivar ID"
+
+# Mensàfon?
+#: src/protocols/yahoo/yahoo.c:1409
+#, fuzzy
+msgid "Pager Host:"
+msgstr "Host de Paginació:"
+
+#: src/protocols/yahoo/yahoo.c:1415
+#, fuzzy
+msgid "Pager Port:"
+msgstr "Port de Paginació:"
+
+#: src/protocols/zephyr/zephyr.c:574 src/protocols/zephyr/zephyr.c:575
+msgid "Anyone"
+msgstr "Qualsevol"
+
+#: src/protocols/zephyr/zephyr.c:846
+msgid "ZLocate"
+msgstr ""
+
+#: src/protocols/zephyr/zephyr.c:886
+msgid "Class:"
+msgstr "Classe:"
+
+#: src/protocols/zephyr/zephyr.c:890
+msgid "Instance:"
+msgstr "Instància:"
+
+#: src/protocols/zephyr/zephyr.c:894
+msgid "Recipient:"
+msgstr "Origen:"
+
+#: src/about.c:74
+#, c-format
+msgid "About Gaim v%s"
+msgstr "Sobre Gaim v%s"
+
+#: src/about.c:106
+msgid ""
+"Gaim is a modular Instant Messaging client capable of using AIM, ICQ, "
+"Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.  It is "
+"written using Gtk+ and is licensed under the GPL.<BR><BR>"
+msgstr "GAIM és un client de Missatges Instantanis capaç de usar AIM, ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr i Gadu-Gadu, tots alhora. Està escrit usant Gtk+ i està llicenciat segons la GPL.<BR><BR>"
+
+#: src/about.c:116
+msgid "<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"3\">IRC:</FONT> #gaim a irc.freenode.net<BR><BR>"
+
+#: src/about.c:120
+msgid "<FONT SIZE=\"3\">Active Developers:</FONT><BR>"
+msgstr "<FONT SIZE=\"3\">Desenvolupadors Actius:</FONT><BR>"
+
+#: src/about.c:122
+msgid ""
+"  Rob Flynn (maintainer) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</"
+"A>&gt;<BR>  Sean Egan (lead developer) &lt;<A HREF=\"mailto:"
+"bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian "
+"'ChipX86' Hammond (developer & webmaster)<BR>  Herman Bloggs (win32 port) "
+"&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">hermanator12002@yahoo.com</"
+"A>&gt;<BR>  Nathan 'faceprint' Walp (developer)<BR>  Mark 'KingAnt' Doliner "
+"(developer)<BR>  Luke 'LSchiere' Schierer (support)<BR><BR>"
+msgstr "  Rob Flynn (manteniment) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>  Sean Egan (desenvolupador principal) &lt;<A HREF=\"mailto:bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian 'ChipX86' Hammond (desenvolupador i webmaster)<BR>  Herman Bloggs (port win32) &lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">hermanator12002@yahoo.com</A>&gt;<BR>  Nathan 'faceprint' Walp (desenvolupador)<BR>  Mark 'KingAnt' Doliner (desenvolupador)<BR>  Luke 'LSchiere' Schierer (suport)<BR><BR>"
+
+#: src/about.c:137
+msgid "<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"
+msgstr "<FONT SIZE=\"3\">Esbojarrats Escriptors de Modificacions:</FONT><BR>"
+
+#: src/about.c:147
+msgid "<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"
+msgstr "<FONT SIZE=\"3\">Desenvolupadors Retirats:</FONT><BR>"
+
+#: src/about.c:149
+msgid ""
+"  Adam Fritzler (former libfaim maintainer)<BR>  Eric Warmenhoven (former "
+"lead developer)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
+"\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (former maintainer)<BR>  "
+"Jim Seymour (former Jabber developer)<BR>  Mark Spencer (original author) "
+"&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
+"Syd Logan (hacker and designated driver [lazy bum])<BR><BR>"
+msgstr "  Adam Fritzler (antic manteniment de libfaim)<BR>  Eric Warmenhoven (anterior desenvolupador principal)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (antic manteniment)<BR>  Jim Seymour (antic desenvolupador de Jabber)<BR>  Mark Spencer (Autor Original) &lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  Syd Logan (hacker i conductor designat)<BR><BR>"
+
+#: src/about.c:169 src/dialogs.c:3816 src/prpl.c:536 src/prpl.c:834
+#: src/server.c:1252
+msgid "Close"
+msgstr "Tancar"
+
+#: src/away.c:219
+msgid "Gaim - Away!"
+msgstr "Gaim - Ausent!"
+
+#: src/away.c:279
+msgid "I'm Back!"
+msgstr "He tornat!"
+
+#: src/away.c:378
+msgid "New Away Message"
+msgstr "Nou Missatge d'Ausència"
+
+#: src/away.c:398
+msgid "Remove Away Message"
+msgstr "Eliminar Missatge d'Ausència"
+
+#: src/away.c:587
+msgid "Set All Away"
+msgstr "Posar tots Ausents"
+
+#: src/browser.c:413 src/browser.c:439
+msgid ""
+"Communication with the browser failed.  Please close all windows and try "
+"again."
+msgstr "La communicació amb el navegador ha fallat. Si us plau, tanqui totes les finestres i torni a intentar-ho."
+
+#: src/browser.c:567
+msgid ""
+"Unable to launch your browser because the 'Manual' browser command has been "
+"chosen, but no command has been set."
+msgstr "Impossible llençar el navegador perquè s'ha establer el navegador manual, però no s'ha establert la comanda."
+
+#: src/browser.c:582
+#, c-format
+msgid "There was an error launching your chosen browser: %s"
+msgstr "Hi ha hagut un error al llençar el navegador escollit: %s"
+
+#: src/buddy.c:306
+msgid "_Add a Buddy"
+msgstr "_Afegir un Contacte"
+
+#: src/buddy.c:312
+msgid "_Delete Group"
+msgstr "_Esborar un Grup"
+
+#: src/buddy.c:318
+msgid "_Rename"
+msgstr "Canviar el _Nom"
+
+#: src/buddy.c:326
+msgid "_Get Info"
+msgstr "_Obtenir Informació"
+
+#: src/buddy.c:331
+msgid "_IM"
+msgstr "Enviar Missatges _Instantanis"
+
+#: src/buddy.c:337
+msgid "Add Buddy _Pounce"
+msgstr ""
+
+#: src/buddy.c:341
+msgid "View _Log"
+msgstr "Veure el _Registre"
+
+#: src/buddy.c:360
+msgid "_Alias"
+msgstr "À_lies"
+
+#: src/buddy.c:366
+msgid "_Remove"
+msgstr "_Esborrar"
+
+#. Buddies menu
+#: src/buddy.c:641
+msgid "/_Buddies"
+msgstr "/_Contactes"
+
+#: src/buddy.c:642
+msgid "/Buddies/New _Instant Message..."
+msgstr "/Contactes/Nou Missatge _Instantani..."
+
+#: src/buddy.c:643
+msgid "/Buddies/Join a _Chat..."
+msgstr "/Contactes/Entrar a una _Conversa..."
+
+#: src/buddy.c:644
+msgid "/Buddies/Get _User Info..."
+msgstr "/Contactes/Obtenir Informació de l'_Usuari..."
+
+#: src/buddy.c:646
+msgid "/Buddies/_Show Offline Buddies"
+msgstr "/Contactes/_Mostrar Contactes Desconnectats"
+
+#: src/buddy.c:647
+msgid "/Buddies/Show _Empty Groups"
+msgstr "/Contactes/Mostrar Grups _Buits"
+
+#: src/buddy.c:648
+msgid "/Buddies/_Add a Buddy..."
+msgstr "/Contactes/_Afegir un Contacte..."
+
+#: src/buddy.c:649
+msgid "/Buddies/Add a _Group..."
+msgstr "/Contactes/Afegir un _Grup..."
+
+#: src/buddy.c:651
+msgid "/Buddies/_Signoff"
+msgstr "/Contactes/_Acomiadar-se"
+
+#: src/buddy.c:652
+msgid "/Buddies/_Quit"
+msgstr "/Contactes/_Sortir"
+
+#. Tools
+#: src/buddy.c:655
+msgid "/_Tools"
+msgstr "/_Eines"
+
+#: src/buddy.c:656
+msgid "/Tools/_Away"
+msgstr "/Eines/_Ausent"
+
+#: src/buddy.c:657
+msgid "/Tools/Buddy _Pounce"
+msgstr ""
+
+#: src/buddy.c:658
+msgid "/Tools/P_rotocol Actions"
+msgstr "/Eines/Accions del _Protocol"
+
+#: src/buddy.c:660
+msgid "/Tools/A_ccounts..."
+msgstr "/Eines/_Comptes..."
+
+#: src/buddy.c:661
+msgid "/Tools/_File Transfers..."
+msgstr "/Eines/Transferència de _Fitxers..."
+
+#: src/buddy.c:662
+msgid "/Tools/Preferences..."
+msgstr "/Eines/Preferències..."
+
+#: src/buddy.c:663
+msgid "/Tools/Pr_ivacy..."
+msgstr "/Eines/_Privacitat..."
+
+#: src/buddy.c:665
+msgid "/Tools/View System _Log..."
+msgstr "/Eines/Veure _Registre del Sistema..."
+
+#. Help
+#: src/buddy.c:668
+msgid "/_Help"
+msgstr "/_Ajuda"
+
+#: src/buddy.c:669
+msgid "/Help/Online _Help"
+msgstr "/Ajuda/_Ajuda en Línia"
+
+#: src/buddy.c:670
+msgid "/Help/_Debug Window..."
+msgstr "/Ajuda/Finestra de _Depuració..."
+
+#: src/buddy.c:671
+msgid "/Help/_About..."
+msgstr "/Ajuda/_Sobre..."
+
+#: src/buddy.c:705
+#, c-format
+msgid "%dh%02dm"
+msgstr ""
+
+#: src/buddy.c:707
+#, c-format
+msgid "%dm"
+msgstr ""
+
+#: src/buddy.c:717
+#, c-format
+msgid "%d%%"
+msgstr ""
+
+#: src/buddy.c:728
+msgid ""
+"\n"
+"<b>Alias:</b>"
+msgstr "\n<b>Àlies:</b>"
+
+#: src/buddy.c:729
+msgid ""
+"\n"
+"<b>Nickname:</b>"
+msgstr "\n<b>Nom d'usuari:</b>"
+
+#: src/buddy.c:730
+#, fuzzy
+msgid ""
+"\n"
+"<b>Idle:</b>"
+msgstr "\n<b>Inactiu:</b>"
+
+#: src/buddy.c:731
+#, fuzzy
+msgid ""
+"\n"
+"<b>Warned:</b>"
+msgstr "\n<b>Avisat:</b>"
+
+#: src/buddy.c:732
+msgid ""
+"\n"
+"<b>Status:</b> Offline"
+msgstr "\n<b>Estat:</b> Desconnectat"
+
+#: src/buddy.c:997
+#, c-format
+msgid "Idle (%dh%02dm) "
+msgstr "Inactiu (%dh%02dm) "
+
+#: src/buddy.c:999
+#, c-format
+msgid "Idle (%dm) "
+msgstr "Inactiu (%dm) "
+
+#: src/buddy.c:1003
+#, c-format, fuzzy
+msgid "Warned (%d%%) "
+msgstr "Avisat (%d%%) "
+
+#: src/buddy.c:1012 src/buddy.c:1022
+msgid "Offline "
+msgstr "Desconnectat"
+
+#: src/buddy.c:1128 src/prefs.c:1711
+msgid "Buddy List"
+msgstr "Llista de Contactes"
+
+#: src/buddy.c:1147
+msgid "/Tools/Away"
+msgstr "/Eines/Ausent"
+
+#: src/buddy.c:1150
+msgid "/Tools/Buddy Pounce"
+msgstr ""
+
+#: src/buddy.c:1153
+msgid "/Tools/Protocol Actions"
+msgstr "/Eines/Accions del Protocol"
+
+#. set the Show Offline Buddies option. must be done
+#. * after the treeview or faceprint gets mad. -Robot101
+#.
+#: src/buddy.c:1231
+msgid "/Buddies/Show Offline Buddies"
+msgstr "/Contactes/Mostrar Contactes Desconnectats"
+
+#: src/buddy.c:1233
+msgid "/Buddies/Show Empty Groups"
+msgstr "/Contactes/Mostrar Grups Buits"
+
+#: src/buddy.c:1251 src/gtkconv.c:737
+#, fuzzy
+msgid "IM"
+msgstr "Missatge Instantani"
+
+#: src/buddy.c:1257
+msgid "Send a message to the selected buddy"
+msgstr "Enviar un missatge al contacte seleccionat"
+
+#: src/buddy.c:1260
+msgid "Get Info"
+msgstr "Obtenir Dades"
+
+#: src/buddy.c:1266
+msgid "Get information on the selected buddy"
+msgstr "Obtenir dades sobre el contacte seleccionat"
+
+#: src/buddy.c:1274
+msgid "Join a chat room"
+msgstr "Entrar a una converses"
+
+#: src/buddy.c:1282
+msgid "Set an away message"
+msgstr "Posar un missatge d'ausència"
+
+#: src/buddy_chat.c:249
+msgid ""
+"You are not currently signed on with any protocols that have the ability to "
+"chat."
+msgstr "No està connectat amb cap protocol que permeti conversar."
+
+#: src/buddy_chat.c:262
+msgid "Join Chat"
+msgstr "Entrar en una Conversa"
+
+#: src/buddy_chat.c:278
+msgid "Join Chat As:"
+msgstr "Entrar a una Conversa Com:"
+
+#. Join button.
+#: src/buddy_chat.c:301
+#, fuzzy
+msgid "Join"
+msgstr "Entrar-hi"
+
+#: src/conversation.c:399
+msgid "Unable to send message. The message is too large."
+msgstr "Impossible enviar el missatge, és massa llarg."
+
+#: src/conversation.c:405
+msgid "Unable to send message."
+msgstr "Impossible enviar el missatge."
+
+#: src/conversation.c:1958
+#, c-format
+msgid "%s entered the room."
+msgstr "%s ha entrat a la conversa."
+
+#: src/conversation.c:1961
+#, c-format
+msgid "%s [<I>%s</I>] entered the room."
+msgstr "%s [<I>%s</I>] ha entrat a la conversa."
+
+#: src/conversation.c:2010
+#, c-format
+msgid "%s is now known as %s"
+msgstr "%s ha canviat de nom i ara és %s"
+
+#: src/conversation.c:2053
+#, c-format
+msgid "%s left the room (%s)."
+msgstr "%s ha marxat de la conversa (%s)."
+
+#: src/conversation.c:2055
+#, c-format
+msgid "%s left the room."
+msgstr "%s ha abandonat la conversa."
+
+#: src/conversation.c:2239
+msgid "Last created window"
+msgstr "Finestra creada per últim cop"
+
+#: src/conversation.c:2241
+msgid "New window"
+msgstr "Nova finestra"
+
+#: src/conversation.c:2243
+msgid "By group"
+msgstr "Per grup"
+
+#: src/conversation.c:2245
+msgid "By account"
+msgstr "Per compte"
+
+#: src/dialogs.c:363
+msgid "Warn User"
+msgstr "Avisar Usuari"
+
+#: src/dialogs.c:363
+msgid "_Warn"
+msgstr "_Avisar"
+
+#: src/dialogs.c:379
+#, c-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
+"\n"
+"This will increase %s's warning level and he or she will be subject to "
+"harsher rate limiting.\n"
+msgstr "<span weight=\"bold\" size=\"larger\">Avisar %s?</span>\n\nAixò incrementarà el nivell d'avís de %s i estarà subjecte a una limitació de velocitat més estricta.\n"
+
+#: src/dialogs.c:388
+msgid "Warn _anonymously?"
+msgstr "Avisar anònimament?"
+
+#: src/dialogs.c:395
+msgid "<b>Anonymous warnings are less severe.</b>"
+msgstr "<b>Els avisos anònims són menys estrictes.</b>"
+
+#. b->name is null after remove_buddy
+#: src/dialogs.c:418
+#, c-format
+msgid "Removing '%s' from buddy list.\n"
+msgstr "Eliminant a '%s' de la llista de contactes.\n"
+
+#: src/dialogs.c:457
+#, c-format
+msgid ""
+"You are about to remove %s from your buddy list.  Do you want to continue?"
+msgstr "Està a punt d'eliminar a %s de la llista de contactes. Vol continuar?"
+
+#: src/dialogs.c:458
+msgid "Remove Buddy"
+msgstr "Eliminar Contacte"
+
+#: src/dialogs.c:464
+#, c-format
+msgid ""
+"You are about to remove the group %s and all its members from your buddy "
+"list.  Do you want to continue?"
+msgstr "Està a punt d'eliminar el grup %s i tots els seus membres a la llista de contactes. Vol continuar?"
+
+#: src/dialogs.c:466
+msgid "Remove Group"
+msgstr "Eliminar Grup"
+
+#: src/dialogs.c:676
+msgid "New Message"
+msgstr "Nou Missatge"
+
+#: src/dialogs.c:694
+msgid "Please enter the screenname of the person you would like to IM.\n"
+msgstr "Si us plau, introdueixi el nom de l'usuari de la persona a qui vol enviar un Missatge Instantani.\n"
+
+#: src/dialogs.c:710 src/dialogs.c:809 src/dialogs.c:3356
+msgid "_Screenname:"
+msgstr "_Nom d'Usuari:"
+
+#: src/dialogs.c:725 src/dialogs.c:825 src/gtkpounce.c:454
+msgid "_Account:"
+msgstr "_Compte:"
+
+#: src/dialogs.c:778
+msgid "Get User Info"
+msgstr "Obtenir les Dades de l'Usuari"
+
+#: src/dialogs.c:797
+msgid ""
+"Please enter the screenname of the person whose info you would like to "
+"view.\n"
+msgstr "Si us plau, introdueixi el nom de l'usuari de la persona de la que vol veure les dades.\n"
+
+#: src/dialogs.c:974
+msgid "Add Group"
+msgstr "Afegir un Grup"
+
+#: src/dialogs.c:991
+msgid "Please enter the name of the group to be added.\n"
+msgstr "Si us plau, introdueixi el nom del grup que vol afegir.\n"
+
+#: src/dialogs.c:1000 src/dialogs.c:3930
+msgid "_Group:"
+msgstr "_Grup:"
+
+#: src/dialogs.c:1082
+msgid "Add Buddy"
+msgstr "Afegir un Contacte"
+
+#: src/dialogs.c:1101
+msgid ""
+"Please enter the screen name of the person you would like to add to your "
+"buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
+"The alias will be displayed in place of the screen name whenever possible.\n"
+msgstr "Si us plau, introdueixi el nom de l'usuari de la persona a la qual vol afegir a la seva llista de contactes. Addicionalment pot introduïr un àlies al contacte. L'àlies es mostrarà en lloc del seu nom d'usuari quan sigui possible.\n"
+
+#: src/dialogs.c:1120
+msgid "Screen Name"
+msgstr "Nom d'Usuari"
+
+#: src/dialogs.c:1133
+msgid "Alias"
+msgstr "Àlies"
+
+#: src/dialogs.c:1143
+msgid "Group"
+msgstr "Grup"
+
+#. Set up stuff for the account box
+#: src/dialogs.c:1152
+msgid "Add To"
+msgstr "Afegir A"
+
+#: src/dialogs.c:1482
+msgid "Privacy"
+msgstr "Privacitat"
+
+#: src/dialogs.c:1493
+msgid "Changes to privacy settings take effect immediately."
+msgstr "Els canvis a les opcions de privacitat es realitzen immediatament."
+
+#: src/dialogs.c:1502
+#, fuzzy
+msgid "Set privacy for:"
+msgstr "Posar la privacitat a:"
+
+#: src/dialogs.c:1519
+msgid "Allow all users to contact me"
+msgstr "Permetre a tots els usuaris contactar-me"
+
+#: src/dialogs.c:1523
+msgid "Allow only users on my buddy list"
+msgstr "Només admetre a usuaris de la llista de contactes"
+
+#: src/dialogs.c:1527
+msgid "Allow only the users below"
+msgstr "Només permetre als usuaris indicats més abaix"
+
+#: src/dialogs.c:1565
+msgid "Deny all users"
+msgstr "Rebutjar a tots els usuaris"
+
+#: src/dialogs.c:1569
+msgid "Block the users below"
+msgstr "Bloquejar als usuaris indicats mes abaix"
+
+#: src/dialogs.c:1684
+msgid "Set Directory Info"
+msgstr "Posar Informació al Directori"
+
+#: src/dialogs.c:1692
+msgid "Directory Info"
+msgstr "Informació del Directori"
+
+#: src/dialogs.c:1702
+#, c-format
+msgid "Setting Dir Info for %s:"
+msgstr "Posant la Informació al directori per a %s:"
+
+#: src/dialogs.c:1714
+msgid "Allow Web Searches To Find Your Info"
+msgstr "Permetre que els buscadors web trobun la seva informació"
+
+#. Line 1
+#: src/dialogs.c:1717 src/dialogs.c:2356
+msgid "First Name"
+msgstr "Nom"
+
+#. Line 2
+#: src/dialogs.c:1728 src/dialogs.c:2366
+msgid "Middle Name"
+msgstr "Primer Cognom"
+
+#. Line 3
+#: src/dialogs.c:1740 src/dialogs.c:2376
+msgid "Segon Cognom"
+msgstr ""
+
+#. Line 4
+#: src/dialogs.c:1751 src/dialogs.c:2386
+msgid "Maiden Name"
+msgstr "Nom de la Mare"
+
+#. Line 6
+#: src/dialogs.c:1773 src/dialogs.c:2405
+msgid "State"
+msgstr "Estat"
+
+#: src/dialogs.c:1815 src/dialogs.c:1986 src/dialogs.c:3118 src/dialogs.c:3825
+#: src/dialogs.c:4600
+msgid "Save"
+msgstr "Gravar"
+
+#: src/dialogs.c:1837
+msgid "New Passwords Do Not Match"
+msgstr "Les noves claus no coincideixen"
+
+#: src/dialogs.c:1842
+msgid "Fill out all fields completely"
+msgstr "Ompli tots els camps per complet"
+
+#: src/dialogs.c:1885
+#, c-format
+msgid "Changing password for %s:"
+msgstr "Canviant la clau de %s:"
+
+#: src/dialogs.c:1893
+msgid "Original Password"
+msgstr "Clau Original"
+
+#: src/dialogs.c:1904
+msgid "New Password"
+msgstr "Nova Clau"
+
+#: src/dialogs.c:1915
+msgid "New Password (again)"
+msgstr "Nova Clau (un altre cop)"
+
+#. Build OK Button
+#: src/dialogs.c:1926 src/dialogs.c:2058 src/dialogs.c:2337 src/dialogs.c:2483
+#: src/dialogs.c:3522 src/dialogs.c:4027 src/prpl.c:316
+msgid "OK"
+msgstr "D'Acord"
+
+#: src/dialogs.c:1963
+#, c-format
+msgid "Changing info for %s:"
+msgstr "Canviant la informació de %s:"
+
+#: src/dialogs.c:2044
+msgid "Below are the results of your search: "
+msgstr "A continuació estan els resultats de la cerca: "
+
+#: src/dialogs.c:2149
+#, fuzzy
+msgid "Permit"
+msgstr "Permetre"
+
+#: src/dialogs.c:2181
+#, fuzzy
+msgid "Add Permit"
+msgstr "Afegir Permís"
+
+#: src/dialogs.c:2183
+#, fuzzy
+msgid "Add Deny"
+msgstr "Afegir Denegació"
+
+#: src/dialogs.c:2251
+#, fuzzy
+msgid "Log Conversation"
+msgstr "Registrar Conversa"
+
+#: src/dialogs.c:2332 src/dialogs.c:2465
+msgid "Search for Buddy"
+msgstr "Buscar Contacte"
+
+#: src/dialogs.c:2432
+msgid "Find Buddy By Info"
+msgstr "Trobar Contacte per Dades"
+
+#: src/dialogs.c:2459
+msgid "Find Buddy By Email"
+msgstr "Trobar Contacte per adreça de Correu Electrònic"
+
+#: src/dialogs.c:2563
+msgid "Insert Link"
+msgstr "Afegir Enllaç"
+
+#: src/dialogs.c:2565
+msgid "Insert"
+msgstr "Afegir"
+
+#: src/dialogs.c:2584
+msgid ""
+"Please enter the URL and description of the link that you want to insert.  "
+"The description is optional.\n"
+msgstr "Si us plau, introdueixi la URL i la descripció de 'enllaç que vol afegir. La descripció és opcional.\n"
+
+#: src/dialogs.c:2747 src/dialogs.c:2764
+msgid "Select Text Color"
+msgstr "Seleccionar Color del Text"
+
+#: src/dialogs.c:2795 src/dialogs.c:2812
+msgid "Select Background Color"
+msgstr "Seleccionar Color de Fons"
+
+#: src/dialogs.c:2896 src/dialogs.c:2919
+msgid "Select Font"
+msgstr "Seleccionar Tipus de Lletra"
+
+#. We shouldn't allow a blank title
+#: src/dialogs.c:2984
+msgid "You cannot save an away message with a blank title"
+msgstr "No es pot guardar un missatge d'ausència amb un títl en blanc"
+
+#: src/dialogs.c:2985
+msgid ""
+"Please give the message a title, or choose \"Make Away\" to use without "
+"saving."
+msgstr "Si us plau, doni un títol al missatge, o esculli \"Posar ausent\" per usar-lo sente gravar."
+
+#. We shouldn't allow a blank message
+#: src/dialogs.c:2994
+msgid "You cannot create an empty away message"
+msgstr "No pot crear un missatge d'ausència buit"
+
+#: src/dialogs.c:3059 src/dialogs.c:3067
+msgid "New away message"
+msgstr "Nou missatge d'ausència"
+
+#: src/dialogs.c:3077
+msgid "Away title: "
+msgstr "Títol d'ausència"
+
+#: src/dialogs.c:3122
+msgid "Save & Use"
+msgstr "Gravar i Usar"
+
+#: src/dialogs.c:3126
+msgid "Use"
+msgstr "Usar"
+
+#. show everything
+#: src/dialogs.c:3261
+msgid "Smile!"
+msgstr "Sonrigui!"
+
+#: src/dialogs.c:3305
+#, fuzzy
+msgid "Alias Buddy"
+msgstr "Posar un Àlies a un Contacte"
+
+#. Setup the label containing the description.
+#: src/dialogs.c:3335
+msgid ""
+"Please enter an aliased name for the person below, or rename this contact in "
+"your buddy list.\n"
+msgstr "Si us plau, introdueixi in nom d'àlies per a la persona a sota, o canvii el contacte a la llista de contactes.\n"
+
+#: src/dialogs.c:3370
+msgid "_Alias:"
+msgstr "À_lies:"
+
+#: src/dialogs.c:3424 src/dialogs.c:3431
+#, c-format
+msgid "Couldn't write to %s."
+msgstr "No s'ha pogut escriure a %s."
+
+#: src/dialogs.c:3455
+msgid "Save Log File"
+msgstr "Gravar Fitxer de Registre"
+
+#: src/dialogs.c:3485
+#, c-format
+msgid "Couldn't remove file %s."
+msgstr "No s'ha pogut eliminar el fitxer %s."
+
+#: src/dialogs.c:3504
+msgid "Clear Log"
+msgstr "Netejar el Registre"
+
+#: src/dialogs.c:3513
+msgid "Really clear log?"
+msgstr "Està segur que vol netejar el registre?"
+
+#: src/dialogs.c:3558
+#, c-format
+msgid "Couldn't open log file %s."
+msgstr "No s'ha pogut obrir el fitxer de registre %s."
+
+#: src/dialogs.c:3697
+#, c-format
+msgid "Conversations with %s"
+msgstr "Converses amb %s"
+
+#: src/dialogs.c:3699
+msgid "System Log"
+msgstr "Registre del Sistema"
+
+#: src/dialogs.c:3720
+#, c-format
+msgid "Couldn't open log file %s"
+msgstr "No s'ha pogut obrir el fitxer de registre %s"
+
+#: src/dialogs.c:3741
+msgid "Date"
+msgstr "Data"
+
+#: src/dialogs.c:3798
+msgid "Conversation"
+msgstr "Conversa"
+
+#: src/dialogs.c:3820
+msgid "Clear"
+msgstr "Netejar"
+
+#: src/dialogs.c:3904
+msgid "Rename Group"
+msgstr "Canviar Nom de Grup"
+
+#: src/dialogs.c:3921
+msgid "Please enter a new name for the selected group.\n"
+msgstr "Si us plau, introdueixi un nou nom per al grup seleccionat.\n"
+
+#: src/dialogs.c:3997 src/dialogs.c:4006
+msgid "Rename Buddy"
+msgstr "Canviar nom del Contacte"
+
+#: src/dialogs.c:4013
+msgid "New name:"
+msgstr "Nou Nom:"
+
+#: src/ft.c:126
+#, c-format
+msgid "%s is not a valid filename.\n"
+msgstr "%s no es un nom de fitxer vàlid.\n"
+
+#: src/ft.c:140
+#, c-format
+msgid "%s was not found.\n"
+msgstr "No s'ha trobat %s.\n"
+
+#: src/ft.c:732
+#, c-format
+msgid "File transfer to %s aborted.\n"
+msgstr "Transferència de fitxer cap a %s cancel·lada.\n"
+
+#: src/ft.c:734
+#, c-format
+msgid "File transfer from %s aborted.\n"
+msgstr "Transferència de fitxer des de %s cancel·lada.\n"
+
+#: src/gaim-disclosure.c:253
+msgid "Expander Size"
+msgstr "Tamany de l'Expansor"
+
+#: src/gaim-disclosure.c:254
+msgid "Size of the expander arrow"
+msgstr "Tamany de la fletxa d'expansió"
+
+#: src/gaim-remote.c:32
+#, c-format
+msgid ""
+"Usage: %s command [OPTIONS] [URI]\n"
+"\n"
+"    COMMANDS:\n"
+"       uri                      Handle AIM: URI\n"
+"       quit                     Close running copy of Gaim\n"
+"\n"
+"    OPTIONS:\n"
+"       -h, --help [commmand]    Show help for command\n"
+msgstr ""
+"Ús: %s comanda [OPCIONS] [URI]\n"
+"\n"
+"    COMMANDES:\n"
+"       uri                      Acceptar URI d'AIM\n"
+"       quit                     Tancar Gaim en execució\n"
+"\n"
+"    OPCIONS:\n"
+"       -h, --help [comanda]    Mostrar ajuda de la comanda\n"
+
+#. for people like myself, who are too lazy to add an away msg :)
+#: src/gaimrc.c:50
+msgid "sorry, i ran out for a while. bbl"
+msgstr "No hi soc. Tornaré tard."
+
+#: src/gaimrc.c:289 src/gaimrc.c:322 src/gaimrc.c:1443
+msgid "boring default"
+msgstr "opció aburrada per defecte"
+
+#: src/gaimrc.c:1536
+#, c-format
+msgid "Could not open config file %s."
+msgstr "No s'ha pogut obrir el fitxer de configuració %s."
+
+#: src/gtkconv.c:208
+msgid "Gaim - Insert Image"
+msgstr "Gaim - Insertar Imatge"
+
+#: src/gtkconv.c:745
+msgid "Un-Ignore"
+msgstr "Des-Ignorar"
+
+#: src/gtkconv.c:747 src/prefs.c:522
+msgid "Ignore"
+msgstr "Ignorar"
+
+#. Info button
+#: src/gtkconv.c:756 src/gtkconv.c:2630
+msgid "Info"
+msgstr "Informació"
+
+#: src/gtkconv.c:850
+msgid "Gaim - Invite Buddy Into Chat Room"
+msgstr "Gaim - Convidar a un contacte a una conversa"
+
+#. Put our happy label in it.
+#: src/gtkconv.c:878
+msgid ""
+"Please enter the name of the user you wish to invite, along with an optional "
+"invite message."
+msgstr "Si us plau, introdueixi el nom de l'usuari que desitja convidar, amb un missatge de convit opcional."
+
+#: src/gtkconv.c:899
+msgid "_Buddy:"
+msgstr "_Contacte:"
+
+#: src/gtkconv.c:919
+msgid "_Message:"
+msgstr "_Missatge:"
+
+#: src/gtkconv.c:1943
+msgid "User is typing..."
+msgstr "L'usuari està escrivint..."
+
+#: src/gtkconv.c:1951
+msgid "User has typed something and paused"
+msgstr "L'usuari ha escrit alguna cosa i s'ha parat"
+
+#. Build the Send As menu
+#: src/gtkconv.c:2058
+msgid "_Send As"
+msgstr "_Enviar Com"
+
+#. Conversation menu
+#: src/gtkconv.c:2508
+msgid "/_Conversation"
+msgstr "/_Conversa"
+
+#: src/gtkconv.c:2509
+msgid "/Conversation/_Save As..."
+msgstr "/Conversa/_Gravar Com..."
+
+#: src/gtkconv.c:2511
+msgid "/Conversation/View _History..."
+msgstr "/Conversa/Veure _Històric..."
+
+#: src/gtkconv.c:2513
+msgid "/Conversation/Insert _URL..."
+msgstr "/Conversa/Afegir _URL..."
+
+#: src/gtkconv.c:2515
+msgid "/Conversation/Insert _Image..."
+msgstr "/Conversa/Afegir _Imatge..."
+
+#: src/gtkconv.c:2518
+msgid "/Conversation/_Close"
+msgstr "/Conversa/_Tancar"
+
+#. Options
+#: src/gtkconv.c:2522
+msgid "/_Options"
+msgstr "/_Opcions"
+
+#: src/gtkconv.c:2523
+msgid "/Options/Enable _Logging"
+msgstr "/Opcions/Activar _Registre"
+
+#: src/gtkconv.c:2524
+msgid "/Options/Enable _Sounds"
+msgstr "/Opcions/Activar _Sons"
+
+#: src/gtkconv.c:2555
+msgid "/Conversation/View History..."
+msgstr "/Conversa/Veure Històric..."
+
+#: src/gtkconv.c:2557
+msgid "/Conversation/Insert URL..."
+msgstr "/Conversa/Afegir URL..."
+
+#: src/gtkconv.c:2559
+msgid "/Conversation/Insert Image..."
+msgstr "/Conversa/Afegir Imatge..."
+
+#: src/gtkconv.c:2561
+msgid "/Options/Enable Logging"
+msgstr "/Opcions/Activar Registre"
+
+#: src/gtkconv.c:2563
+msgid "/Options/Enable Sounds"
+msgstr "/Opcions/Activar Sons"
+
+#. From right to left...
+#. Send button
+#: src/gtkconv.c:2587 src/gtkconv.c:2589 src/gtkconv.c:2687 src/gtkconv.c:2689
+#: src/gtkconv.c:4965
+msgid "Send"
+msgstr "Enviar"
+
+#: src/gtkconv.c:2610 src/gtkconv.c:3744
+msgid "Add the user to your buddy list"
+msgstr "Afegir l'usuari a la llista de contactes"
+
+#: src/gtkconv.c:2616 src/gtkconv.c:3735
+msgid "Remove the user from your buddy list"
+msgstr "Eliminar l'usuari de la llista de contactes"
+
+#. Warn button
+#: src/gtkconv.c:2623
+#, fuzzy
+msgid "Warn"
+msgstr "Avisar"
+
+#: src/gtkconv.c:2627
+#, fuzzy
+msgid "Warn the user"
+msgstr "Avisar a l'usuari"
+
+#: src/gtkconv.c:2634 src/gtkconv.c:3061
+msgid "Get the user's information"
+msgstr "Obtenir les dades de l'usuari"
+
+#. Block button
+#: src/gtkconv.c:2637
+msgid "Block"
+msgstr "Bloquejar"
+
+#: src/gtkconv.c:2641
+msgid "Block the user"
+msgstr "Bloquejar a l'usuari"
+
+#. Invite
+#: src/gtkconv.c:2699 src/gtkconv.c:4968
+msgid "Invite"
+msgstr "Convidar"
+
+#: src/gtkconv.c:2702
+msgid "Invite a user"
+msgstr "Convidar a l'usuari"
+
+#: src/gtkconv.c:2741
+msgid "Bold"
+msgstr "Negreta"
+
+#: src/gtkconv.c:2752
+msgid "Italic"
+msgstr "Cursiva"
+
+#: src/gtkconv.c:2763
+msgid "Underline"
+msgstr "Subratllat"
+
+#: src/gtkconv.c:2779
+msgid "Larger font size"
+msgstr "Lletra més gran"
+
+#: src/gtkconv.c:2791
+msgid "Normal font size"
+msgstr "Lletra de tamany normal"
+
+#: src/gtkconv.c:2803
+msgid "Smaller font size"
+msgstr "Lletra més petita"
+
+#: src/gtkconv.c:2820
+msgid "Font Face"
+msgstr "Tipus de lletra"
+
+#: src/gtkconv.c:2832
+msgid "Foreground font color"
+msgstr "Color del text"
+
+#: src/gtkconv.c:2844
+msgid "Background color"
+msgstr "Color de fons"
+
+#: src/gtkconv.c:2859
+msgid "Insert image"
+msgstr "Afegir imatge"
+
+#: src/gtkconv.c:2870
+msgid "Insert link"
+msgstr "Afegir enllaç"
+
+#: src/gtkconv.c:2881
+msgid "Insert smiley"
+msgstr ""
+
+#: src/gtkconv.c:2934
+msgid "Topic:"
+msgstr "Tema:"
+
+#. Setup the label telling how many people are in the room.
+#: src/gtkconv.c:2981
+msgid "0 people in room"
+msgstr "0 persones a la conversa"
+
+#: src/gtkconv.c:3038
+msgid "IM the user"
+msgstr "Enviar un Misatge Instantani a l'usuari"
+
+#: src/gtkconv.c:3050
+msgid "Ignore the user"
+msgstr "Ignorar a l'usuari"
+
+#: src/gtkconv.c:3578
+msgid "Close conversation"
+msgstr "Tancar la conversa"
+
+#: src/gtkconv.c:4173 src/gtkconv.c:4295
+#, c-format
+msgid "%d person in room"
+msgid_plural "%d people in room"
+msgstr[0] "%d persona a la conversa"
+msgstr[1] "%d persones a la conversa"
+
+#: src/gtkconv.c:4654
+msgid "Disable Animation"
+msgstr "Desactivar Animacions"
+
+#: src/gtkconv.c:4663
+msgid "Enable Animation"
+msgstr "Activar Animacions"
+
+#: src/gtkconv.c:4670
+msgid "Hide Icon"
+msgstr "Ocultar Icona"
+
+#: src/gtkconv.c:4676
+msgid "Save Icon As..."
+msgstr "Gravar Icona Com..."
+
+#: src/gtkft.c:103
+msgid "Calculating..."
+msgstr "Calculant..."
+
+#: src/gtkft.c:106
+msgid "Unknown."
+msgstr "Desconegut."
+
+#: src/gtkft.c:143
+#, c-format
+msgid "%.2f KB/s"
+msgstr "%.2f KB/s"
+
+#: src/gtkft.c:218
+msgid "<b>Receiving From:</b>"
+msgstr "<b>Rebent De:</b>"
+
+#: src/gtkft.c:221
+msgid "<b>Sending To:</b>"
+msgstr "<b>Enviant A:</b>"
+
+#: src/gtkft.c:445
+msgid "Progress"
+msgstr "Progrés"
+
+#: src/gtkft.c:452
+msgid "Filename"
+msgstr "Nom del fitxer"
+
+#: src/gtkft.c:459
+msgid "Size"
+msgstr "Tamany"
+
+#: src/gtkft.c:466
+msgid "Remaining"
+msgstr "Restant"
+
+#: src/gtkft.c:496
+msgid "Filename:"
+msgstr "Nom del fitxer:"
+
+#: src/gtkft.c:497
+msgid "Status:"
+msgstr "Estat:"
+
+#: src/gtkft.c:498
+msgid "Speed:"
+msgstr "Velocitat:"
+
+#: src/gtkft.c:499
+msgid "Time Elapsed:"
+msgstr "Temps transcorregut:"
+
+#: src/gtkft.c:500
+msgid "Time Remaining:"
+msgstr "Temps Restant:"
+
+#: src/gtkft.c:566
+msgid "File Transfers"
+msgstr "Transferència de Fitxers"
+
+#: src/gtkft.c:595
+msgid "_Keep the dialog open"
+msgstr "_Mantenir el diàleg obert"
+
+#: src/gtkft.c:605
+msgid "_Clear finished transfers"
+msgstr "_Netejar les transferències acabades"
+
+#. "Download Details" arrow
+#: src/gtkft.c:614
+msgid "Show download details"
+msgstr "Mostrar detals de la transferència"
+
+#: src/gtkft.c:615
+msgid "Hide download details"
+msgstr "Ocultar detalls de la transferència"
+
+#. Pause button
+#: src/gtkft.c:657
+msgid "_Pause"
+msgstr "_Pausa"
+
+#. Resume button
+#: src/gtkft.c:667
+msgid "_Resume"
+msgstr "_Continuar"
+
+#: src/gtkft.c:1001
+msgid "That file already exists. Would you like to overwrite it?"
+msgstr "El fitxer ja existeix. Vol sobrescriure'l?"
+
+#: src/gtkft.c:1018
+msgid "That file does not exist."
+msgstr "Aquest fitxer no existeix."
+
+#: src/gtkft.c:1042
+msgid "Gaim - Open..."
+msgstr "Gaim - Obrir..."
+
+#: src/gtkft.c:1091
+#, c-format
+msgid "%s wants to send you %s (%s)"
+msgstr "%s vol enviar-li %s (%s)"
+
+#: src/gtkimhtml.c:327
+msgid "_Copy Link Location"
+msgstr "_Copiar Destí de l'Enllaç"
+
+#: src/gtkimhtml.c:334
+msgid "_Open Link in Browser"
+msgstr "_Obrir Enlaç en un Navegador"
+
+#: src/gtkimhtml.c:1587
+msgid ""
+"Gaim was unable to guess the image type base on the file extension "
+"supplied.  Defaulting to PNG."
+msgstr "Gaim no ha pogut descobrir el tipus d'imatge a partir de l'extensió del fitxer. Prenent PNG per defecte."
+
+#: src/gtkimhtml.c:1595
+#, c-format
+msgid "Error saving image: %s"
+msgstr "Error al gravar l'imatge: %s"
+
+#: src/gtkimhtml.c:1604
+msgid "Gaim - Save Image"
+msgstr "Gaim - Gravar Imatge"
+
+#: src/gtkimhtml.c:1626
+msgid "_Save Image..."
+msgstr "_Gravar Imatge..."
+
+#: src/gtkpounce.c:108
+msgid "Please enter a buddy to pounce."
+msgstr ""
+
+#: src/gtkpounce.c:280
+#, c-format
+msgid "%s has started typing to you"
+msgstr "%s ha començat a escriure un missatge per vosté"
+
+#: src/gtkpounce.c:281
+#, c-format
+msgid "%s has signed on"
+msgstr "%s ha entrat"
+
+#: src/gtkpounce.c:282
+#, c-format
+msgid "%s has returned from being idle"
+msgstr "%s ja no está inactiu"
+
+#: src/gtkpounce.c:283
+#, c-format
+msgid "%s has returned from being away"
+msgstr "%s ha tornat d'estar ausent"
+
+#: src/gtkpounce.c:284
+#, c-format
+msgid "%s has stopped typing to you"
+msgstr "%s ha deixat d'escriure-li"
+
+#: src/gtkpounce.c:285
+#, c-format
+msgid "%s has signed off"
+msgstr "%s se n'ha anat"
+
+#: src/gtkpounce.c:286
+#, c-format
+msgid "%s has become idle"
+msgstr "%s està inactiu"
+
+#: src/gtkpounce.c:287
+#, c-format
+msgid "%s has gone away."
+msgstr "%s està ausent"
+
+#: src/gtkpounce.c:288
+msgid "Unknown pounce event. Please report this!"
+msgstr ""
+
+#. "New Buddy Pounce"
+#: src/gtkpounce.c:429 src/gtkpounce.c:737
+msgid "New Buddy Pounce"
+msgstr ""
+
+#: src/gtkpounce.c:429
+msgid "Edit Buddy Pounce"
+msgstr ""
+
+#. Create the "Pounce Who" frame.
+#: src/gtkpounce.c:447
+msgid "Pounce Who"
+msgstr ""
+
+#: src/gtkpounce.c:469
+msgid "_Buddy Name:"
+msgstr "Nom del _Contacte:"
+
+#. Create the "Pounce When" frame.
+#: src/gtkpounce.c:488
+msgid "Pounce When"
+msgstr ""
+
+#: src/gtkpounce.c:496
+msgid "Sign on"
+msgstr "Entrar"
+
+#: src/gtkpounce.c:498
+msgid "Sign off"
+msgstr "Sortir"
+
+#: src/gtkpounce.c:502
+msgid "Return from away"
+msgstr "Tornar"
+
+#: src/gtkpounce.c:506
+msgid "Return from idle"
+msgstr "Tornar a estar actiu"
+
+#: src/gtkpounce.c:508
+msgid "Buddy starts typing"
+msgstr "Contacte comença a escriure"
+
+#: src/gtkpounce.c:510
+msgid "Buddy stops typing"
+msgstr "Contacte deixa d'escriure"
+
+#. Create the "Pounce Action" frame.
+#: src/gtkpounce.c:539
+msgid "Pounce Action"
+msgstr ""
+
+#: src/gtkpounce.c:546
+msgid "Open an IM window"
+msgstr "Obrir una finestra de Missatges Intantanis"
+
+#: src/gtkpounce.c:547
+msgid "Popup notification"
+msgstr "Notificació emergent"
+
+#: src/gtkpounce.c:548
+msgid "Send a message"
+msgstr "Enviar un missatge"
+
+#: src/gtkpounce.c:549
+msgid "Execute a command"
+msgstr "Executar una comanda"
+
+#: src/gtkpounce.c:550
+msgid "Play a sound"
+msgstr "Reproduïr un so"
+
+#: src/gtkpounce.c:605
+msgid "_Save this pounce after activation"
+msgstr ""
+
+#. "Remove Buddy Pounce"
+#: src/gtkpounce.c:744
+msgid "Remove Buddy Pounce"
+msgstr ""
+
+#: src/gtkutils.c:318
+msgid "Gaim - Save Icon"
+msgstr "Gaim - Gravar Icona"
+
+#: src/html.c:284
+#, c-format
+msgid "Received: '%s'\n"
+msgstr "Rebut: '%s'\n"
+
+#: src/html.c:322
+msgid "g003: Error opening connection.\n"
+msgstr "g003: Error obrint la connexió.\n"
+
+#: src/list.c:405
+#, c-format
+msgid ""
+"%d buddies from group %s were not removed because their accounts were not "
+"logged in.  These buddies, and the group were not removed.\n"
+msgstr "%d contactes del grup %s no han estat eliminats perquè els seus comptes no estaven connectats. Aquests contactes i el mateix grup no ha estat eliminats.\n"
+
+#: src/list.c:409
+msgid "Group Not Removed"
+msgstr "Grup No Eliminat"
+
+#: src/list.c:544
+msgid "Invalid Groupname"
+msgstr "Nom de Grup Invàlid"
+
+#: src/list.c:1173
+msgid ""
+"An error was encountered parsing your buddy list.  It has not been loaded."
+msgstr "S'ha trobat un error llegint la llista de contactes."
+
+#: src/list.c:1175
+msgid "Buddy List Error"
+msgstr "Error a la Llista de Contactes"
+
+#. rob wants to inform the user that their buddy lists are
+#. * being converted
+#: src/list.c:1181
+#, c-format
+msgid ""
+"Gaim is converting your old buddy lists to a new format, which will now be "
+"located at %s"
+msgstr "Gaim està convertint la llista de contactes a un nou format, que estarà a %s"
+
+#: src/list.c:1184
+msgid "Converting Buddy List"
+msgstr "Convertint Llista de Contactes"
+
+#: src/log.c:118
+msgid "Gaim - Save Conversation"
+msgstr "Gaim - gravar Conversa"
+
+#: src/log.c:159 src/log.c:180 src/log.c:193
+#, c-format
+msgid "Unable to make directory %s for logging"
+msgstr "Impossible crear el directori %s per al registre"
+
+#: src/log.c:247 src/log.c:263
+#, c-format
+msgid "IM Sessions with %s\n"
+msgstr "Sessions de Missatges Instantanis amb %s\n"
+
+#: src/log.c:250 src/log.c:266
+#, c-format
+msgid "IM Sessions with %s"
+msgstr "Sessions de Missatges Instantanis amb %s"
+
+#: src/log.c:297
+#, c-format
+msgid "+++ %s (%s) signed on @ %s"
+msgstr "+++ %s (%s) s'ha connectat a @ %s"
+
+#: src/log.c:302
+#, c-format
+msgid "+++ %s (%s) signed off @ %s"
+msgstr "+++ %s (%s) s'ha desconnectat a @ %s"
+
+#: src/log.c:307
+#, c-format
+msgid "+++ %s (%s) changed away state @ %s"
+msgstr "+++ %s (%s) ha canviat l'estat d'ausència @ %s"
+
+#: src/log.c:312
+#, c-format
+msgid "+++ %s (%s) came back @ %s"
+msgstr "+++ %s (%s) ha tornat @ %s"
+
+#: src/log.c:317
+#, c-format
+msgid "+++ %s (%s) became idle @ %s"
+msgstr "+++ %s (%s) passa a inactiu @ %s"
+
+#: src/log.c:322
+#, c-format
+msgid "+++ %s (%s) returned from idle @ %s"
+msgstr "+++ %s (%s) torna de l'inactivitat @ %s"
+
+#: src/log.c:327
+#, c-format
+msgid "+++ Program exit @ %s"
+msgstr "+++ Sortida del programa @ %s"
+
+#: src/log.c:334
+#, c-format
+msgid "%s (%s) reported that %s (%s) signed on @ %s"
+msgstr "%s (%s) informa que %s (%s) ha entrat a @ %s"
+
+#: src/log.c:339
+#, c-format
+msgid "%s (%s) reported that %s (%s) signed off @ %s"
+msgstr "%s (%s) informa que %s (%s) ha sortit @ %s"
+
+#: src/log.c:344
+#, c-format
+msgid "%s (%s) reported that %s (%s) went away @ %s"
+msgstr "%s (%s) informa que %s (%s) està ausent @ %s"
+
+#: src/log.c:349
+#, c-format
+msgid "%s (%s) reported that %s (%s) came back @ %s"
+msgstr "%s (%s) informa que %s (%s) ha tornat @ %s"
+
+#: src/log.c:354
+#, c-format
+msgid "%s (%s) reported that %s (%s) became idle @ %s"
+msgstr "%s (%s) informa que %s (%s) ha passat a estar inactiu @ %s"
+
+#: src/log.c:360
+#, c-format
+msgid "%s (%s) reported that %s (%s) returned from idle @ %s"
+msgstr "%s (%s) informa que %s (%s) ha tornat de la inactivitat @ %s"
+
+#: src/log.c:372
+#, c-format
+msgid "%s (%s) reported that %s signed on @ %s"
+msgstr "%s (%s) informa que %s (%s) s'ha connectat @ %s"
+
+#: src/log.c:377
+#, c-format
+msgid "%s (%s) reported that %s signed off @ %s"
+msgstr "%s (%s) informa que %s (%s) s'ha desconnectat @ %s"
+
+#: src/log.c:382
+#, c-format
+msgid "%s (%s) reported that %s went away @ %s"
+msgstr "%s (%s) informa que %s (%s) està ausent @ %s"
+
+#: src/log.c:387
+#, c-format
+msgid "%s (%s) reported that %s came back @ %s"
+msgstr "%s (%s) informa que %s (%s) ha tornat @ %s"
+
+#: src/log.c:392
+#, c-format
+msgid "%s (%s) reported that %s became idle @ %s"
+msgstr "%s (%s) informa que %s (%s) ha passat a estar inactiu @ %s"
+
+#: src/log.c:398
+#, c-format
+msgid "%s (%s) reported that %s returned from idle @ %s"
+msgstr "%s (%s) informa que %s (%s) ha tronat de la inactivitat @ %s"
+
+#: src/main.c:177
+msgid "Please enter your login."
+msgstr "Si us plau, introdueixi el seu codi d'usuari."
+
+#: src/main.c:264
+msgid "<New User>"
+msgstr "<Nou Usuari>"
+
+#: src/main.c:306
+msgid "Login"
+msgstr "Codi d'Usuari"
+
+#: src/main.c:322
+msgid "Screen Name:"
+msgstr "Nom de l'usuari"
+
+#. And now for the buttons
+#: src/main.c:356
+msgid "Accounts"
+msgstr "Comptes"
+
+#: src/main.c:366 src/prefs.c:1766 src/win32/systray.c:293
+msgid "Preferences"
+msgstr "Preferències"
+
+#: src/main.c:372 src/win32/systray.c:145
+msgid "Sign On"
+msgstr "Conectar-se"
+
+#: src/multi.c:264
+msgid "Screenname"
+msgstr "Nom d'usuari"
+
+#: src/multi.c:292
+msgid "Protocol"
+msgstr "Protocol"
+
+#: src/multi.c:618
+msgid "Load Buddy Icon"
+msgstr "Carregar Icones de Contactes"
+
+#: src/multi.c:661
+msgid "Buddy Icon File:"
+msgstr "Fitxer de Icones de Contactes:"
+
+#: src/multi.c:674
+msgid "Browse"
+msgstr "Navegar"
+
+#: src/multi.c:679 src/prefs.c:1542
+msgid "Reset"
+msgstr "Reiniciar"
+
+#: src/multi.c:705
+msgid "Login Options"
+msgstr "Opcions de connexió"
+
+#: src/multi.c:717
+msgid "Protocol:"
+msgstr "Protocol:"
+
+#: src/multi.c:731
+msgid "Screenname:"
+msgstr "Nom d'usuari"
+
+#: src/multi.c:778
+msgid "Alias:"
+msgstr "Àlies"
+
+#: src/multi.c:786
+msgid "Remember Password"
+msgstr "Recordar Clau"
+
+#: src/multi.c:787
+msgid "Auto-Login"
+msgstr "Connexió Automàtica"
+
+#: src/multi.c:843
+msgid "User Options"
+msgstr "Opcions d'Usuari"
+
+#: src/multi.c:853
+msgid "New Mail Notifications"
+msgstr "Notificacions de Nou Correu Electrònic"
+
+#: src/multi.c:905
+#, c-format, fuzzy
+msgid "%s Options"
+msgstr "%s Opcions"
+
+#: src/multi.c:948
+#, fuzzy
+msgid "Register with server"
+msgstr "Registrar-se a un servidor"
+
+#: src/multi.c:981
+msgid "Proxy Options"
+msgstr "Opcions del Proxy"
+
+#: src/multi.c:995
+msgid "Proxy _Type"
+msgstr "_Tipus de Proxy"
+
+#: src/multi.c:1004
+msgid "Use Global Proxy Settings"
+msgstr "Utilitzar les Opcions Globals del Proxy"
+
+#: src/multi.c:1013
+msgid "No Proxy"
+msgstr "Sense Proxy"
+
+#: src/multi.c:1065
+msgid "_Host:"
+msgstr "_Host:"
+
+#: src/multi.c:1101
+msgid "_User:"
+msgstr "_Usuari:"
+
+#: src/multi.c:1117
+msgid "Pa_ssword:"
+msgstr "_Clau:"
+
+#: src/multi.c:1188
+msgid "Modify Account"
+msgstr "Modificar Compte"
+
+#: src/multi.c:1206
+msgid "Show more options"
+msgstr "Mostrar més opcions"
+
+#: src/multi.c:1206
+msgid "Show fewer options"
+msgstr "Mostrar menys opcions"
+
+#: src/multi.c:1315
+msgid "_Login"
+msgstr "_Codi d'Usuari"
+
+#: src/multi.c:1333
+#, c-format
+msgid ""
+"Please enter your password for %s.\n"
+"\n"
+msgstr "Si us plau, introdueixi la clau de %s.\n\n"
+
+#: src/multi.c:1344
+msgid "_Password"
+msgstr "_Clau"
+
+#: src/multi.c:1383
+msgid "TOC not found."
+msgstr ""
+
+#: src/multi.c:1384
+msgid ""
+"You have attempted to login an IM account using the TOC protocol.  Because "
+"this protocol is inferior to OSCAR, it is now compiled as a plugin by "
+"default.  To login, edit this account to use OSCAR or load the TOC plugin."
+msgstr ""
+
+#: src/multi.c:1390
+msgid "Protocol not found."
+msgstr "No s'ha trobat el protocol."
+
+#: src/multi.c:1391
+msgid ""
+"You cannot log this account in; you do not have the protocol it uses loaded, "
+"or the protocol does not have a login function."
+msgstr "No pot connectar-se a aquest compte; no ha carregat el protocol que usa, o el protocol no té una funció per connectar-se."
+
+#: src/multi.c:1467
+#, c-format
+msgid "Are you sure you want to delete %s?"
+msgstr "Està segur que vol esborrar %s?"
+
+#: src/multi.c:1468
+msgid "Delete"
+msgstr "Esborrar"
+
+#: src/multi.c:1497
+msgid "Account Editor"
+msgstr "Editor de Comptes"
+
+#: src/multi.c:1562
+msgid "_Modify"
+msgstr "_Modificar"
+
+#: src/multi.c:1610
+msgid "Done."
+msgstr "Finalitzat."
+
+#: src/multi.c:1840
+#, fuzzy
+msgid "Signon: "
+msgstr "Connexió: "
+
+#: src/multi.c:1898
+msgid "Signon"
+msgstr "Connexió"
+
+#: src/multi.c:1910
+msgid "Cancel All"
+msgstr "Cancel·lar Tot"
+
+#: src/multi.c:1963
+#, c-format
+msgid ""
+"%s\n"
+"%s: %s"
+msgstr "%s\n%s: %s"
+
+#: src/multi.c:1984
+#, c-format
+msgid "%s was unable to sign on"
+msgstr "%s no ha pogut connectar-se"
+
+#: src/multi.c:1985
+msgid "Signon Error"
+msgstr "Error al Connectar-se"
+
+#: src/multi.c:1996
+#, fuzzy
+msgid "Notice"
+msgstr "Informació"
+
+#: src/multi.c:2008
+#, c-format
+msgid "%s has been signed off"
+msgstr "%s d'ha desconnectat"
+
+#: src/multi.c:2009
+msgid "Connection Error"
+msgstr "Error de Connexió"
+
+#: src/perl.c:386
+msgid "GAIM::register not called with proper arguments.  Consult PERL-HOWTO."
+msgstr ""
+
+#: src/prefs.c:191
+msgid "Interface Options"
+msgstr "Opcions de l'Interfície"
+
+#: src/prefs.c:193
+msgid "D_isplay remote nicknames if no alias is set"
+msgstr "Mostrar els noms d'usuari remots si no s'ha establert un àlies"
+
+#: src/prefs.c:370
+msgid ""
+"Select a smiley theme that you would like to use from the list below. New "
+"themes can be installed by dragging and dropping them onto the theme list."
+msgstr ""
+
+#: src/prefs.c:403
+msgid "Icon"
+msgstr "Icones"
+
+#: src/prefs.c:437
+msgid "Style"
+msgstr "Estil"
+
+#: src/prefs.c:438
+msgid "_Bold"
+msgstr "_Negreta"
+
+#: src/prefs.c:439
+msgid "_Italics"
+msgstr "_Cursiva"
+
+#: src/prefs.c:440
+msgid "_Underline"
+msgstr "_Subratllat"
+
+#: src/prefs.c:441
+msgid "_Strikethrough"
+msgstr "_Tachat"
+
+#: src/prefs.c:443
+msgid "Face"
+msgstr "Tipus de lletra"
+
+#: src/prefs.c:446
+msgid "Use custo_m face"
+msgstr "Usar un tipus de lletra específic"
+
+#: src/prefs.c:460
+msgid "Use custom si_ze"
+msgstr "Usar un tamany de lletra específic"
+
+#: src/prefs.c:468
+msgid "Color"
+msgstr "Color"
+
+#: src/prefs.c:473
+msgid "_Text color"
+msgstr "Color del _Text"
+
+#: src/prefs.c:490
+msgid "Bac_kground color"
+msgstr "Color del _Fons"
+
+#: src/prefs.c:515 src/prefs.c:658 src/prefs.c:699
+#, fuzzy
+msgid "Display"
+msgstr "Pantalla"
+
+#: src/prefs.c:516
+msgid "Show graphical _smileys"
+msgstr ""
+
+#: src/prefs.c:517
+msgid "Show _timestamp on messages"
+msgstr "Mostrar marca horària als missatges"
+
+#: src/prefs.c:518
+msgid "Show _URLs as links"
+msgstr "Mostrar les _URLs com a enllaços"
+
+#: src/prefs.c:520
+msgid "_Highlight misspelled words"
+msgstr "_Resaltar paraules mal escrites"
+
+#: src/prefs.c:523
+msgid "Ignore c_olors"
+msgstr "Ignorar _colors"
+
+#: src/prefs.c:524
+msgid "Ignore font _faces"
+msgstr "Ignorar _tipus de lletra"
+
+#: src/prefs.c:525
+msgid "Ignore font si_zes"
+msgstr "Ignorar _tamany de la lletra"
+
+#: src/prefs.c:538
+msgid "Send Message"
+msgstr "Enviar Missatge"
+
+#: src/prefs.c:539
+msgid "_Enter sends message"
+msgstr "La tecla _Intro envia el missatge"
+
+#: src/prefs.c:540
+msgid "C_ontrol-Enter sends message"
+msgstr "Control-Intro envia el missatge"
+
+#: src/prefs.c:542
+msgid "Window Closing"
+msgstr "Tancament de finestres"
+
+#: src/prefs.c:543
+msgid "E_scape closes window"
+msgstr "Escape tancla la finestra"
+
+#: src/prefs.c:544
+msgid "Control-_W closes window"
+msgstr "Control-_W tanca la finestra"
+
+#: src/prefs.c:547
+msgid "Control-{B/I/U/S} inserts _HTML tags"
+msgstr "Control-{B/I/U/S} inserta marques HTML"
+
+#: src/prefs.c:548
+msgid "Control-(number) inserts _smileys"
+msgstr ""
+
+#: src/prefs.c:561
+msgid "Buddy List Toolbar"
+msgstr "Barra d'eines de la llista de contactes"
+
+#: src/prefs.c:562 src/prefs.c:641 src/prefs.c:684
+msgid "Show _buttons as:"
+msgstr "Motrar els _botons com:"
+
+#: src/prefs.c:563 src/prefs.c:642 src/prefs.c:685
+msgid "Pictures"
+msgstr "Imatges"
+
+#: src/prefs.c:564 src/prefs.c:643 src/prefs.c:686
+msgid "Text"
+msgstr "Text"
+
+#: src/prefs.c:565 src/prefs.c:644 src/prefs.c:687
+msgid "Pictures and text"
+msgstr "Imatges i text"
+
+#: src/prefs.c:566 src/prefs.c:1071
+msgid "None"
+msgstr "Cap"
+
+#: src/prefs.c:569
+msgid "_Raise window on events"
+msgstr "_Aixecar les finestres al rebre esdeveniments"
+
+#: src/prefs.c:571
+msgid "Group Display"
+msgstr "Visualització de Grups"
+
+#. gaim_button(_("Hide _groups with no online buddies"), &blist_options, OPT_BLIST_NO_MT_GRP, vbox);
+#: src/prefs.c:573
+msgid "Show _numbers in groups"
+msgstr "Mostrar _números als grups"
+
+#: src/prefs.c:575
+msgid "Buddy Display"
+msgstr "Visualització de Contactes"
+
+#: src/prefs.c:576
+msgid "Show buddy _icons"
+msgstr "Mostrar _icones de contactes"
+
+#: src/prefs.c:577
+msgid "Show _warning levels"
+msgstr "Mostrar nivells d'_alerta"
+
+#: src/prefs.c:582
+msgid "Show idle _times"
+msgstr "Mostrar _temps inactiu"
+
+#: src/prefs.c:587
+msgid "Dim i_dle buddies"
+msgstr "Enfosquir contactes inactius"
+
+#: src/prefs.c:605 src/prefs.c:1712
+msgid "Conversations"
+msgstr "Converses"
+
+#: src/prefs.c:613
+msgid "_Placement:"
+msgstr "_Posicionament:"
+
+#: src/prefs.c:621
+msgid "Show IMs and chats in _same tabbed window."
+msgstr "Mostrar Misstages Instantanis i Converses a la _mateixa finestra en fiches."
+
+#: src/prefs.c:640 src/prefs.c:683
+msgid "Window"
+msgstr "Finestra"
+
+#: src/prefs.c:647 src/prefs.c:690
+msgid "New window _width:"
+msgstr "A_mple de nova finestra:"
+
+#: src/prefs.c:648 src/prefs.c:691
+msgid "New window _height:"
+msgstr "A_lt de nova finestra:"
+
+# NPI
+#: src/prefs.c:649 src/prefs.c:692
+msgid "_Entry widget height:"
+msgstr ""
+
+#: src/prefs.c:650 src/prefs.c:693
+msgid "_Raise windows on events"
+msgstr "_Alçar finestres al rebre esdeveniments"
+
+#: src/prefs.c:651
+msgid "Hide window on _send"
+msgstr "Ocultar finestra al _enviar"
+
+#: src/prefs.c:654
+msgid "Buddy Icons"
+msgstr "Icones de Contactes"
+
+#: src/prefs.c:655
+msgid "Hide buddy _icons"
+msgstr "Ocultar _icones de Contactes"
+
+#: src/prefs.c:656
+msgid "Disable buddy icon a_nimation"
+msgstr "Desactivar _animació de icones"
+
+#: src/prefs.c:659
+msgid "Show _logins in window"
+msgstr "Mostrar _codis d'usuari a la finestra"
+
+#: src/prefs.c:660
+msgid "Show a_liases in tabs/titles"
+msgstr "Mostrar àlies e les fiches/títols"
+
+#: src/prefs.c:662
+msgid "Typing Notification"
+msgstr "Notificació d'Escriptura"
+
+#: src/prefs.c:663
+msgid "Notify buddies that you are _typing to them"
+msgstr "Notificar als contactes que els hi està _escribint"
+
+#: src/prefs.c:695
+msgid "Tab Completion"
+msgstr "Completar amb el Tabulador"
+
+#: src/prefs.c:696
+msgid "_Tab-complete nicks"
+msgstr "El _Tabulador completa els noms d'usuari"
+
+#: src/prefs.c:697
+msgid "_Old-style tab completion"
+msgstr "Estic _antic de completar amb tabulador"
+
+#: src/prefs.c:700
+msgid "_Show people joining/leaving in window"
+msgstr ""
+
+#: src/prefs.c:701
+msgid "Co_lorize screennames"
+msgstr "Co_lorejar els noms d'usuari"
+
+#: src/prefs.c:718
+msgid "IM Tabs"
+msgstr "Fitxes de Missatges Instantanis"
+
+#: src/prefs.c:719 src/prefs.c:729
+msgid "Tab _placement:"
+msgstr "_Situació de les fitxes:"
+
+#: src/prefs.c:720 src/prefs.c:730
+msgid "Top"
+msgstr "A dalt"
+
+#: src/prefs.c:721 src/prefs.c:731
+msgid "Bottom"
+msgstr "A baix"
+
+#: src/prefs.c:722 src/prefs.c:732
+msgid "Left"
+msgstr "A la dreta"
+
+#: src/prefs.c:723 src/prefs.c:733
+msgid "Right"
+msgstr "A l'esquerra"
+
+#: src/prefs.c:725
+msgid ""
+"Show all _instant messages in one tabbed\n"
+"window"
+msgstr "Mostrar tots els Missatges _Instantanis a una sola finestra amb fiches"
+
+#: src/prefs.c:728
+msgid "Chat Tabs"
+msgstr "Fiches de Converses"
+
+#: src/prefs.c:735
+msgid "Show all c_hats in one tabbed window"
+msgstr "Mostrar totes les converses a una finestra amb fiches"
+
+#: src/prefs.c:738
+msgid "Tab Options"
+msgstr "Opcions de Fiches"
+
+#: src/prefs.c:739
+msgid "Show _close button on tabs."
+msgstr "Mostar el botó de _tancar a les fiches."
+
+#: src/prefs.c:759
+msgid "Proxy Type"
+msgstr "Tipus de PRoxy"
+
+#: src/prefs.c:760
+msgid "Proxy _type:"
+msgstr "_Tipus de Proxy"
+
+#: src/prefs.c:761
+msgid "No proxy"
+msgstr "Sense proxy"
+
+#: src/prefs.c:766
+msgid "Proxy Server"
+msgstr "Servidor de Proxy"
+
+#: src/prefs.c:779
+msgid "_Host"
+msgstr "_Host"
+
+#: src/prefs.c:793
+msgid "Port"
+msgstr "Port"
+
+#: src/prefs.c:809
+msgid "_User"
+msgstr "_Usuari"
+
+#: src/prefs.c:823
+msgid "Pa_ssword"
+msgstr "_Clau"
+
+#: src/prefs.c:844
+#, c-format
+msgid "The entered manual browser '%s' is not valid. Hyperlinks will not work."
+msgstr "El navegador manual '%s' no és vàlid. Els enllaços no funcionaran."
+
+#: src/prefs.c:865
+msgid "Konqueror"
+msgstr "Konqueror"
+
+#: src/prefs.c:866
+msgid "Opera"
+msgstr "Opera"
+
+#: src/prefs.c:867
+msgid "Galeon"
+msgstr "Galeon"
+
+#: src/prefs.c:868
+msgid "Netscape"
+msgstr "Netscape"
+
+#: src/prefs.c:869
+msgid "Mozilla"
+msgstr "Mozilla"
+
+#: src/prefs.c:877
+msgid "Manual"
+msgstr "Manual"
+
+#: src/prefs.c:901
+msgid "Browser Selection"
+msgstr "Selecció del Navegador"
+
+#: src/prefs.c:905
+msgid "_Browser"
+msgstr "_Navegador"
+
+#: src/prefs.c:913
+msgid "_Manual: "
+msgstr "_Manual:"
+
+#: src/prefs.c:928
+msgid "Browser Options"
+msgstr "Opcions del Navegador"
+
+#: src/prefs.c:929
+msgid "Open new _window by default"
+msgstr "Obrir una nova _finestra per defecte"
+
+#: src/prefs.c:943
+msgid "Message Logs"
+msgstr "Registe de Missatges"
+
+#: src/prefs.c:944
+msgid "_Log all instant messages"
+msgstr "_Registrar tots els missatges instantanis"
+
+#: src/prefs.c:945
+msgid "Log all c_hats"
+msgstr "Registrar totes les Converses"
+
+#: src/prefs.c:946
+msgid "Strip _HTML from logs"
+msgstr "Eliminar l'_HTML dels registres"
+
+#: src/prefs.c:948
+msgid "System Logs"
+msgstr "Registres del Sistema"
+
+#: src/prefs.c:949
+msgid "Log when buddies _sign on/sign off"
+msgstr "Registrar quan els contactes es _connecten/desconnecten"
+
+#: src/prefs.c:951
+msgid "Log when buddies become _idle/un-idle"
+msgstr "Registrar quan els contactes pasen a _inactiu/actiu"
+
+#: src/prefs.c:953
+msgid "Log when buddies go away/come _back"
+msgstr "Registrar quan els contactes se'n _van/tornen"
+
+#: src/prefs.c:954
+msgid "Log your _own signons/idleness/awayness"
+msgstr "Registrar la pròpia connexió/inactivitat/ausència"
+
+#: src/prefs.c:956
+msgid "I_ndividual log file for each buddy's signons"
+msgstr "Fitxer de registre individual per a cada connexió d'un contacte"
+
+#: src/prefs.c:989
+msgid "Sound Options"
+msgstr "Opcions de so"
+
+#: src/prefs.c:990
+msgid "_No sounds when you log in"
+msgstr "_Sense so al connectar-se"
+
+#: src/prefs.c:991
+msgid "_Sounds while away"
+msgstr "_Sons mentre s'està ausent"
+
+#: src/prefs.c:994
+msgid "Sound Method"
+msgstr "Mètodes de reproducció del so"
+
+#: src/prefs.c:995
+msgid "_Method"
+msgstr "_Mètode"
+
+#: src/prefs.c:998
+msgid "Console beep"
+msgstr "Xiulet de la consola"
+
+#: src/prefs.c:1000
+msgid "Automatic"
+msgstr "Automàtic"
+
+#: src/prefs.c:1007
+msgid "Command"
+msgstr "Comanda"
+
+#: src/prefs.c:1016
+#, c-format
+msgid ""
+"Sound c_ommand\n"
+"(%s for filename)"
+msgstr "Comanda del so\n(%s per al nom de fitxer)"
+
+#: src/prefs.c:1054
+msgid "_Sending messages removes away status"
+msgstr "Al _enviar els missatges s'elimina l'estat d'ausència"
+
+#: src/prefs.c:1055
+msgid "_Queue new messages when away"
+msgstr "Posar els missatges a una _cua mentre s'estigui ausent"
+
+#: src/prefs.c:1057
+msgid "Auto-response"
+msgstr "Resposta automàtica"
+
+#: src/prefs.c:1060
+msgid "Seconds before _resending:"
+msgstr "Segons abans de tornar a _enviar:"
+
+#: src/prefs.c:1062
+msgid "_Don't send auto-response"
+msgstr "_No enviar respostes automàtiques"
+
+#: src/prefs.c:1063
+msgid "_Only send auto-response when idle"
+msgstr "Enviar respostes automàtiques només quan s'estigui _inactiu"
+
+#: src/prefs.c:1064
+msgid "Do_n't send auto-response in active conversations"
+msgstr "No enviar respostes automàtiques en converses _actives"
+
+#: src/prefs.c:1070
+msgid "Idle _time reporting:"
+msgstr "Informe de _temps inactiu:"
+
+#: src/prefs.c:1072
+msgid "Gaim usage"
+msgstr "Ús del Gaim"
+
+#: src/prefs.c:1075
+msgid "X usage"
+msgstr "Ús de les X"
+
+#: src/prefs.c:1077
+msgid "Windows usage"
+msgstr "Ús de Windows"
+
+#: src/prefs.c:1084
+msgid "Auto-away"
+msgstr "Auto-ausència"
+
+#: src/prefs.c:1085
+msgid "Set away _when idle"
+msgstr "Passar a ausent quan estigui inactiu"
+
+#: src/prefs.c:1086
+msgid "_Minutes before setting away:"
+msgstr "_Minuts abans de posar-se ausent:"
+
+#: src/prefs.c:1092
+msgid "Away m_essage:"
+msgstr "Missatge d'ausència"
+
+#: src/prefs.c:1136
+#, c-format
+msgid ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Written by:</span>\t%s\n"
+"<span weight=\"bold\">Web site:</span>\t\t%s\n"
+"<span weight=\"bold\">File name:</span>\t%s"
+msgstr "<span size=\"larger\">%s %s</span>\n\n<span weight=\"bold\">Escrit per:</span>\t%s\n<span weight=\"bold\">Pàgina web:</span>\t\t%s\n<span weight=\"bold\">Nom de fitxer:</span>\t%s"
+
+#: src/prefs.c:1141
+#, c-format
+msgid ""
+"<span size=\"larger\">%s %s</span>\n"
+"\n"
+"<span weight=\"bold\">Written by:</span>  %s\n"
+"<span weight=\"bold\">URL:</span>  %s\n"
+"<span weight=\"bold\">File name:</span>  %s"
+msgstr "<span size=\"larger\">%s %s</span>\n\n<span weight=\"bold\">Escrit per:</span>  %s\n<span weight=\"bold\">URL:</span>  %s\n<span weight=\"bold\">Nom de fitxer:</span>  %s"
+
+#: src/prefs.c:1272
+msgid "Load"
+msgstr "Carregar"
+
+#: src/prefs.c:1279
+msgid "Name"
+msgstr "Nom"
+
+#: src/prefs.c:1326
+msgid "Details"
+msgstr "Detalls"
+
+#: src/prefs.c:1424
+msgid "Sound Selection"
+msgstr "Selecció de Sons"
+
+#: src/prefs.c:1515
+msgid "Play"
+msgstr "Reproduïr"
+
+#: src/prefs.c:1522
+msgid "Event"
+msgstr "Esdeveniment"
+
+#: src/prefs.c:1538
+msgid "Test"
+msgstr "Prova"
+
+#: src/prefs.c:1546
+msgid "Choose..."
+msgstr "Escollir..."
+
+#: src/prefs.c:1668
+msgid "_Edit"
+msgstr "_Edició"
+
+#: src/prefs.c:1706
+msgid "Interface"
+msgstr "Interfície"
+
+#: src/prefs.c:1707
+msgid "Smiley Themes"
+msgstr ""
+
+#: src/prefs.c:1708
+msgid "Fonts"
+msgstr "Fonts"
+
+#: src/prefs.c:1709
+msgid "Message Text"
+msgstr "Text dels Missatges"
+
+#: src/prefs.c:1710
+msgid "Shortcuts"
+msgstr "Curt-circuits"
+
+#: src/prefs.c:1713
+msgid "IMs"
+msgstr "Missatges Instantanis"
+
+#: src/prefs.c:1714
+msgid "Chats"
+msgstr "converses"
+
+#: src/prefs.c:1715
+msgid "Tabs"
+msgstr "Fiches"
+
+#: src/prefs.c:1716
+msgid "Proxy"
+msgstr "Proxy"
+
+#. We use the registered default browser in windows
+#: src/prefs.c:1719
+msgid "Browser"
+msgstr "Navegador"
+
+#: src/prefs.c:1721
+msgid "Logging"
+msgstr "Enregistrament"
+
+#: src/prefs.c:1722
+msgid "Sounds"
+msgstr "Sons"
+
+#: src/prefs.c:1723
+msgid "Sound Events"
+msgstr "Esdeveniments amb so"
+
+#: src/prefs.c:1724
+msgid "Away / Idle"
+msgstr "Ausent / Inactiu"
+
+#: src/prefs.c:1725
+msgid "Away Messages"
+msgstr "Missatges d'Ausència"
+
+#: src/prefs.c:1727
+msgid "Plugins"
+msgstr "Mòduls"
+
+#: src/prefs.c:1886
+msgid "Debug Window"
+msgstr "Finestra de Depuració"
+
+#: src/prpl.c:99
+msgid "ICQ Protocol detected."
+msgstr "Detectat Protocol ICQ"
+
+#: src/prpl.c:100
+msgid ""
+"Gaim has loaded the ICQ plugin.  This plugin has been deprecated. As such, "
+"it was probably not compiled from the same version of the source as this "
+"application was, and cannot be guaranteed to work.  It is recommended that "
+"you use the AIM/ICQ protocol to connect to ICQ"
+msgstr ""
+
+#: src/prpl.c:292
+msgid "Gaim - Prompt"
+msgstr ""
+
+#: src/prpl.c:366
+msgid "No actions available"
+msgstr ""
+
+#: src/prpl.c:491
+#, c-format
+msgid "%s has mail from %s: %s"
+msgstr ""
+
+#: src/prpl.c:491
+msgid "No Subject"
+msgstr ""
+
+#: src/prpl.c:493
+#, c-format
+msgid "%s has new mail."
+msgstr ""
+
+#: src/prpl.c:496
+#, c-format
+msgid "%s has %d new message."
+msgid_plural "%s has %d new messages."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/prpl.c:512
+msgid "Gaim - New Mail"
+msgstr ""
+
+#: src/prpl.c:530
+msgid "Open Mail"
+msgstr ""
+
+#: src/prpl.c:725
+#, c-format
+msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
+msgstr ""
+
+#: src/prpl.c:733
+msgid ""
+"\n"
+"\n"
+"Do you wish to add him or her to your buddy list?"
+msgstr ""
+
+#: src/prpl.c:735
+msgid "Gaim - Information"
+msgstr ""
+
+#: src/prpl.c:737
+msgid "Gaim - Confirm"
+msgstr ""
+
+#: src/prpl.c:776
+msgid ""
+"You do not currently have any protocols available that are able to register "
+"new accounts."
+msgstr ""
+
+#: src/prpl.c:813
+msgid "Gaim - Registration"
+msgstr ""
+
+#: src/prpl.c:825
+msgid "Registration Information"
+msgstr ""
+
+#: src/prpl.c:838
+msgid "Register"
+msgstr ""
+
+#: src/server.c:54
+msgid "Please enter your password"
+msgstr "Si us plau introdueixi la seva clau"
+
+#: src/server.c:704
+#, c-format
+msgid "(%d messages)"
+msgstr "(%d missatges)"
+
+#: src/server.c:716
+msgid "(1 message)"
+msgstr "(1 missatge)"
+
+#: src/server.c:895 src/server.c:902
+#, c-format
+msgid "%s logged in."
+msgstr "%s s'ha connectat"
+
+#: src/server.c:919 src/server.c:926
+#, c-format
+msgid "%s logged out."
+msgstr "%s s'ha desconnectat."
+
+#: src/server.c:960
+#, c-format
+msgid ""
+"%s has just been warned by %s.\n"
+"Your new warning level is %d%%"
+msgstr "%s acaba de ser avisat per %s.\nEl seu nivell d'aletra és ara %d%%"
+
+#: src/server.c:963
+msgid "an anonymous person"
+msgstr "una persona anònima"
+
+#: src/server.c:1054
+#, c-format
+msgid ""
+"User '%s' invites %s to buddy chat room: '%s'\n"
+"%s"
+msgstr "L'usuari '%s' convida a %s a una conversa: '%s'\n%s"
+
+#: src/server.c:1058
+#, c-format
+msgid "User '%s' invites %s to buddy chat room: '%s'\n"
+msgstr "L'usuari '%s' convida a %s a una conversa: '%s'\n"
+
+#: src/server.c:1064
+msgid "Buddy Chat Invite"
+msgstr "Convidar Contacte a Conversa"
+
+#: src/server.c:1256
+msgid "More Info"
+msgstr "Més Informació"
+
+#: src/sound.c:78
+msgid "Buddy logs in"
+msgstr "Contacte es conecta"
+
+#: src/sound.c:79
+msgid "Buddy logs out"
+msgstr "Contacte es desconnecta"
+
+#: src/sound.c:80
+msgid "Message received"
+msgstr "Missatge rebut"
+
+#: src/sound.c:81
+msgid "Message received begins conversation"
+msgstr "Missatge rebut inicia una conversa"
+
+#: src/sound.c:82
+msgid "Message sent"
+msgstr "Missatge enviat"
+
+#: src/sound.c:83
+msgid "Person enters chat"
+msgstr "Persona entra a la conversa"
+
+#: src/sound.c:84
+msgid "Person leaves chat"
+msgstr "Persona surt de la conversa"
+
+#: src/sound.c:85
+msgid "You talk in chat"
+msgstr "Parla a una conversa"
+
+#: src/sound.c:86
+msgid "Others talk in chat"
+msgstr "Els altres parlen a una conversa"
+
+#: src/sound.c:89
+msgid "Someone says your name in chat"
+msgstr "Algú diu el seu nom a una conversa"
+
+#: src/sound.c:180
+#, c-format
+msgid "Unable to play sound because the chosen filename (%s) does not exist."
+msgstr "Impossible reproduir el so perquè el fitxer seleccionat (%s) no existeix."
+
+#: src/sound.c:192
+msgid ""
+"Unable to play sound because the 'Command' sound method has been chosen, but "
+"no command has been set."
+msgstr "Impossible reprodïr el so perquè s'ha escolli el mètode de reproducció per comanda i no s'ha establert la comanda."
+
+#: src/sound.c:199
+#, c-format
+msgid ""
+"Unable to play sound because the configured sound command could not be "
+"launched: %s"
+msgstr "Impossible reproduïr el so perque no es pot llençar la comanda de so: %s"
+
+#: src/util.c:109 src/util.c:114 src/util.c:119 src/util.c:122
+msgid "day"
+msgid_plural "days"
+msgstr[0] "dia"
+msgstr[1] "dies"
+
+#: src/util.c:110 src/util.c:114 src/util.c:128 src/util.c:130
+msgid "hour"
+msgid_plural "hours"
+msgstr[0] "hora"
+msgstr[1] "hores"
+
+#: src/util.c:110 src/util.c:119 src/util.c:128 src/util.c:133
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] "minut"
+msgstr[1] "minuts"
+
+#: src/util.c:1007
+msgid "Not connected to AIM"
+msgstr "No està connectat a l'AIM"
+
+#: src/util.c:1016 src/util.c:1055
+msgid "No screenname given."
+msgstr "No s'ha donat un nom d'usuari."
+
+#: src/util.c:1091
+msgid "No roomname given."
+msgstr "No s'ha donat un nom de conversa."
+
+#: src/util.c:1107
+msgid "Invalid AIM URI"
+msgstr "URI d'AIM invàlida"
+
+#. 
+#. *  DEFINES, MACROS & DATA TYPES
+#.
+#: src/win32/systray.c:19
+msgid "Gaim Instant Messenger"
+msgstr "Missatger Instantani Gaim"
+
+#: src/win32/systray.c:20
+msgid "Gaim Instant Messenger - Signed off"
+msgstr "Missatger Instantani Gaim - Desconnectat"
+
+#: src/win32/systray.c:21
+msgid "Gaim Instant Messenger - Away"
+msgstr "Missatger Instantani Gaim - Ausent"
+
+#: src/win32/systray.c:103
+msgid "New"
+msgstr "Nou"
+
+#: src/win32/systray.c:127
+msgid "Set Away Message"
+msgstr "Establir el Missatge d'Ausència"
+
+#: src/win32/systray.c:134
+msgid "I'm Back"
+msgstr "He tornat"
+
+#: src/win32/systray.c:299
+msgid "Exit"
+msgstr "Sortir"
