@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <winuser.h>
-#include <shlobj.h>
 
 #include <gtk/gtk.h>
 #include <glib.h>
@@ -52,6 +51,8 @@
 #include "untar.h"
 
 #include <libintl.h>
+
+#include "win32dep.h"
 
 /*
  *  DEFINES & MACROS
@@ -83,7 +84,7 @@ typedef struct _WGAIM_FLASH_INFO WGAIM_FLASH_INFO;
 /*
  * LOCALS
  */
-static char app_data_dir[MAX_PATH + 1] = "C:";
+static char *app_data_dir;
 static char install_dir[MAXPATHLEN];
 static char lib_dir[MAXPATHLEN];
 static char locale_dir[MAXPATHLEN];
@@ -99,8 +100,6 @@ HINSTANCE gaimdll_hInstance = 0;
  *  PROTOS
  */
 LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
-LPFNSHGETFOLDERPATHA MySHGetFolderPathA = NULL;
-LPFNSHGETFOLDERPATHW MySHGetFolderPathW = NULL;
 
 FARPROC wgaim_find_and_loadproc(char*, char*);
 extern void wgaim_gtkspell_init();
@@ -233,6 +232,50 @@ FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
 
 /* Determine Gaim Paths during Runtime */
 
+/* Get paths to special Windows folders. */
+char *wgaim_get_special_folder(int folder_type) {
+	static LPFNSHGETFOLDERPATHA MySHGetFolderPathA = NULL;
+	char *retval = NULL;
+#if GLIB_CHECK_VERSION(2,6,0)
+	static LPFNSHGETFOLDERPATHW MySHGetFolderPathW = NULL;
+
+	if (!MySHGetFolderPathW) {
+		MySHGetFolderPathW = (LPFNSHGETFOLDERPATHW)
+			wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathW");
+	}
+
+	if (MySHGetFolderPathW) {
+		wchar_t utf_16_dir[MAX_PATH + 1];
+
+		if (SUCCEEDED(MySHGetFolderPathW(NULL, folder_type, NULL,
+						SHGFP_TYPE_CURRENT, utf_16_dir))) {
+			retval = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
+		}
+	}
+#endif
+
+	if (!retval) {
+		if (!MySHGetFolderPathA) {
+			MySHGetFolderPathA = (LPFNSHGETFOLDERPATHA)
+				wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA");
+		}
+		if (MySHGetFolderPathA) {
+			char locale_dir[MAX_PATH + 1];
+
+			if (SUCCEEDED(MySHGetFolderPathA(NULL, folder_type, NULL,
+							SHGFP_TYPE_CURRENT, locale_dir))) {
+#if GLIB_CHECK_VERSION(2,6,0)
+				retval = g_locale_to_utf8(locale_dir, -1, NULL, NULL, NULL);
+#else
+				retval = g_strdup(locale_dir);
+#endif
+			}
+		}
+	}
+
+	return retval;
+}
+
 char* wgaim_install_dir(void) {
 	HMODULE hmod;
 	char* buf;
@@ -270,7 +313,7 @@ char* wgaim_locale_dir(void) {
 }
 
 char* wgaim_data_dir(void) {
-        return (char*)&app_data_dir;
+        return app_data_dir;
 }
 
 /* Miscellaneous */
@@ -452,40 +495,17 @@ void wgaim_init(HINSTANCE hint) {
         g_free(newenv);
 
         /* Set app data dir, used by gaim_home_dir */
-        newenv = (char*)g_getenv("GAIMHOME");
-        if(!newenv) {
-#if GLIB_CHECK_VERSION(2,6,0)
-		if ((MySHGetFolderPathW = (LPFNSHGETFOLDERPATHW) wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathW"))) {
-			wchar_t utf_16_dir[MAX_PATH +1];
-			char *temp;
-			MySHGetFolderPathW(NULL, CSIDL_APPDATA, NULL,
-					SHGFP_TYPE_CURRENT, utf_16_dir);
-			temp = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
-			g_strlcpy(app_data_dir, temp, sizeof(app_data_dir));
-			g_free(temp);
-		} else if ((MySHGetFolderPathA = (LPFNSHGETFOLDERPATHA) wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA"))) {
-			char locale_dir[MAX_PATH + 1];
-			char *temp;
-			MySHGetFolderPathA(NULL, CSIDL_APPDATA, NULL,
-					SHGFP_TYPE_CURRENT, locale_dir);
-			temp = g_locale_to_utf8(locale_dir, -1, NULL, NULL, NULL);
-			g_strlcpy(app_data_dir, temp, sizeof(app_data_dir));
-			g_free(temp);
-		}
-#else
-		if ((MySHGetFolderPathA = (LPFNSHGETFOLDERPATHA) wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA"))) {
-			MySHGetFolderPathA(NULL, CSIDL_APPDATA, NULL,
-					SHGFP_TYPE_CURRENT, app_data_dir);
-		}
-#endif
-		else {
-			strcpy(app_data_dir, "C:");
+	newenv = (char*) g_getenv("GAIMHOME");
+	if (newenv) {
+		app_data_dir = g_strdup(newenv);
+	} else {
+		app_data_dir = wgaim_get_special_folder(CSIDL_APPDATA);
+		if (!app_data_dir) {
+			app_data_dir = g_strdup("C:");
 		}
         }
-        else {
-                g_strlcpy(app_data_dir, newenv, sizeof(app_data_dir));
-        }
-        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n", app_data_dir);
+
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n", app_data_dir);
 
 	/* IdleTracker Initialization */
 	if(!wgaim_set_idlehooks())
@@ -505,6 +525,8 @@ void wgaim_cleanup(void) {
 
 	/* Idle tracker cleanup */
 	wgaim_remove_idlehooks();
+
+	g_free(app_data_dir);
 }
 
 /* DLL initializer */

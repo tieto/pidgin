@@ -1654,6 +1654,9 @@ gaim_gtk_request_file(const char *title, const char *filename,
 	GaimGtkRequestData *data;
 	GtkWidget *filesel;
 	const gchar *current_folder;
+#if GTK_CHECK_VERSION(2,4,0)
+	gboolean folder_set = FALSE;
+#endif
 
 	data = g_new0(GaimGtkRequestData, 1);
 	data->type = GAIM_REQUEST_FILE;
@@ -1683,17 +1686,32 @@ gaim_gtk_request_file(const char *title, const char *filename,
 	} else {
 		current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_open_folder");
 	}
+
 	if (filename != NULL)
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(filesel), filename);
-	if ((current_folder != NULL) && (*current_folder != '\0'))
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(filesel), current_folder);
+	if ((current_folder != NULL) && (*current_folder != '\0')) {
+		folder_set = gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(filesel), current_folder);
+	}
 
+#ifdef _WIN32
+	if (!folder_set) {
+		char *my_documents = wgaim_get_special_folder(CSIDL_PERSONAL);
+
+		if (my_documents != NULL) {
+			gtk_file_chooser_set_current_folder(
+					GTK_FILE_CHOOSER(filesel), my_documents);
+
+			g_free(my_documents);
+		}
+	}
+
+#endif
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(filesel)), "response",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #else /* FILECHOOSER */
-	filesel = gtk_file_selection_new(title ? title
-										   : (savedialog ? _("Save File...")
-														 : _("Open File...")));
+	filesel = gtk_file_selection_new(
+			title ? title : (savedialog ? _("Save File...")
+				: _("Open File...")));
 	if (savedialog) {
 		current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_save_folder");
 	} else {
