@@ -44,6 +44,7 @@
 
 extern char *yahoo_crypt(const char *, const char *);
 
+#define YAHOO_ICON_CHECKSUM_KEY "icon_checksum"
 /* #define YAHOO_DEBUG */
 
 static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *, GaimGroup *);
@@ -384,7 +385,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				yahoo_update_status(gc, name, f);
 			}
 			break;
-		case 197: /* Avatars? */
+		case 197: /* Avatars */
 		{
 			char *decoded, *tmp;
 			guint len;
@@ -398,6 +399,28 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				}
 				g_free(decoded);
 			}
+			break;
+		}
+		case 192: /* Pictures, aka Buddy Icons, checksum */
+		{
+			int cksum = strtol(pair->value, NULL, 10);
+			GaimBuddy *b;
+
+			if (!name)
+				break;
+
+			if (!cksum || (cksum == -1)) {
+				gaim_buddy_icons_set_for_user(gc->account, name, NULL, 0);
+				break;
+			}
+
+			if (!f)
+				break;
+			b = gaim_find_buddy(gc->account, name);
+			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
+			if (cksum != gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY))
+				yahoo_send_buddy_icon_request(gc, name);
+
 			break;
 		}
 		case 16: /* Custom error message */
@@ -1857,9 +1880,13 @@ struct yahoo_fetch_picture_data {
 void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t len)
 {
 	struct yahoo_fetch_picture_data *d = user_data;
+	GaimBuddy *b;
 
 	if (GAIM_CONNECTION_IS_VALID(d->gc) && len) {
-		gaim_buddy_icons_set_for_user(gaim_connection_get_account(d->gc), d->who, pic_data, len);
+		gaim_buddy_icons_set_for_user(gaim_connection_get_account(d->gc), d->who, (void *)pic_data, len);
+		b = gaim_find_buddy(gaim_connection_get_account(d->gc), d->who);
+		if (b)
+			gaim_blist_node_set_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY, d->checksum);
 	}
 
 	g_free(d->who);
@@ -1872,7 +1899,7 @@ static void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *who = NULL, *us = NULL;
 	gboolean got_icon_info = FALSE;
 	char *url = NULL;
-	int checksum = 0; /* ?? */
+	int checksum = 0;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -1906,18 +1933,82 @@ static void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
-	if (got_icon_info && url) {
-		/* TODO: make this work p2p, try p2p before the url, check the checksum
-		 *       (if that's what it is) before fetching the icon.
-		 */
-		 struct yahoo_fetch_picture_data *data = g_new0(struct yahoo_fetch_picture_data, 1);
-		 data->gc = gc;
-		 data->who = g_strdup(who);
-		 data->checksum = checksum;
-		 gaim_url_fetch(url, FALSE, "Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
-		                yahoo_fetch_picture_cb, data);
+	if (who && got_icon_info && url) {
+		/* TODO: make this work p2p, try p2p before the url */
+		struct yahoo_fetch_picture_data *data;
+		GaimBuddy *b = gaim_find_buddy(gc->account, who);
+		if (b && (checksum == gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
+			return;
+
+		data = g_new0(struct yahoo_fetch_picture_data, 1);
+		data->gc = gc;
+		data->who = g_strdup(who);
+		data->checksum = checksum;
+		gaim_url_fetch(url, FALSE, "Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
+		               yahoo_fetch_picture_cb, data);
 	}
 
+}
+
+static void yahoo_process_picture_update(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	GSList *l = pkt->hash;
+	char *who = NULL;
+	int icon = 0;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		switch (pair->key) {
+		case 4:
+			who = pair->value;
+			break;
+		case 5:
+			/* us */
+			break;
+		case 206:
+			icon = strtol(pair->value, NULL, 10);
+			break;
+		}
+		l = l->next;
+	}
+
+	if (who) {
+		if (icon == 2)
+			yahoo_send_buddy_icon_request(gc, who);
+		else if (icon == 0)
+			gaim_buddy_icons_set_for_user(gc->account, who, NULL, 0);
+	}
+}
+
+static void yahoo_process_picture_checksum(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	GSList *l = pkt->hash;
+	char *who = NULL;
+	int checksum = 0;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		switch (pair->key) {
+		case 4:
+			who = pair->value;
+			break;
+		case 5:
+			/* us */
+			break;
+		case 192:
+			checksum = strtol(pair->value, NULL, 10);
+			break;
+		}
+		l = l->next;
+	}
+
+	if (who) {
+		GaimBuddy *b = gaim_find_buddy(gc->account, who);
+		if (b && (checksum != gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
+			yahoo_send_buddy_icon_request(gc, who);
+	}
 }
 
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -2013,6 +2104,12 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_PICTURE:
 		yahoo_process_picture(gc, pkt);
+		break;
+	case YAHOO_SERVICE_PICTURE_UPDATE:
+		yahoo_process_picture_update(gc, pkt);
+		break;
+	case YAHOO_SERVICE_PICTURE_CHECKSUM:
+		yahoo_process_picture_checksum(gc, pkt);
 		break;
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",

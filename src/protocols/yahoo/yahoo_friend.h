@@ -38,7 +38,6 @@ typedef struct _YahooFriend {
 	int away;
 	gboolean sms;
 	char *ip;
-	guint bicon_checksum;
 	gboolean bicon_sent_request;
 } YahooFriend;
 
