@@ -96,9 +96,6 @@ void gaim_base64_decode(const char *str, char **ret_str, int *ret_len);
 
 /*@}*/
 
-void gaim_quotedp_decode (const char *text, char **data, int *size);
-char *gaim_mime_decode_field (const char *str);
-
 
 /**************************************************************************/
 /** @name Date/Time Functions                                             */
