@@ -94,7 +94,12 @@ struct _GaimConnection
 	int evil;                    /**< Warning level for AIM (why is
 	                                  this here?)                        */
 
-	gboolean wants_to_die;	     /**< Wants to Die state.                */
+	gboolean wants_to_die;	     /**< Wants to Die state.  This is set
+	                                  when the user chooses to sign off,
+	                                  or when the protocol is
+	                                  disconnected and should not be
+	                                  automatically reconnected
+	                                  (incorrect password, etc.)         */
 	guint disconnect_timeout;    /**< Timer used for nasty stack tricks  */
 };
 

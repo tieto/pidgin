@@ -1874,13 +1874,13 @@ static void do_import(GaimAccount *account, const char *filename)
 		fgets(first, 64, f);
 
 #if 0
-	if (!g_strncasecmp(first, "<xml", strlen("<xml"))) {
+	if (!g_ascii_strncasecmp(first, "<xml", strlen("<xml"))) {
 		/* new gaim XML buddy list */
 		gaim_blist_read(path);
 		
 		/* We really don't need to bother doing stuf like translating AIM 3 buddy lists anymore */
 		
-	} else if (!g_strncasecmp(first, "Config {", strlen("Config {"))) {
+	} else if (!g_ascii_strncasecmp(first, "Config {", strlen("Config {"))) {
 		/* AIM 4 buddy list */
 		gaim_debug(GAIM_DEBUG_MISC, "blist import", "aim 4\n");
 		rewind(f);
@@ -1890,7 +1890,7 @@ static void do_import(GaimAccount *account, const char *filename)
 		gaim_debug(GAIM_DEBUG_MISC, "blist import", "aim 3\n");
 		rewind(f);
 		buf = translate_lst(f);
-	} else if (!g_strncasecmp(first, "[User]", strlen("[User]"))) {
+	} else if (!g_ascii_strncasecmp(first, "[User]", strlen("[User]"))) {
 		/* GnomeICU (hopefully) */
 		gaim_debug(GAIM_DEBUG_MISC, "blist import", "gnomeicu\n");
 		rewind(f);

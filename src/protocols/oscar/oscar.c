@@ -4977,7 +4977,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "ssi: syncing local list and server list\n");
 
 	if ((timestamp == 0) || (numitems == 0)) {
-		gaim_notify_error(gc, NULL, "Got AIM SSI with a 0 timestamp or 0 numitems, not syncing, tell KingAnt!  And tell him if your buddy list actually works or not.  Thanks!  Oh, IM him at markdoliner on AIM/ICQ.", NULL);
+		gaim_debug(GAIM_DEBUG_INFO, "oscar", "Got AIM SSI with a 0 timestamp or 0 numitems--not syncing.  This probably means your buddy list is empty.", NULL);
 		return 1;
 	}
 
