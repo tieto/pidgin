@@ -190,6 +190,50 @@ static struct yahoo_idlabel yahoo_status_append[] = {
 	{0, NULL}
 };
 
+static int readall(int fd, void *buf, size_t count)
+{
+  int left, ret, cur = 0;
+
+  left = count;
+
+  while (left) {
+    ret = read(fd, ((unsigned char *)buf)+cur, left);
+    if ((ret == -1) && (errno != EINTR)) {
+      return -1;
+    }
+    if (ret == 0)
+      return cur;
+
+    if (ret != -1) {
+      cur += ret;
+      left -= ret;
+    }
+  }
+  return cur;
+}
+
+static int writeall(int fd, void *buf, size_t count)
+{
+  int left, ret, cur = 0;
+
+  left = count;
+
+  while (left) {
+    ret = write(fd, ((unsigned char *)buf)+cur, left);
+    if ((ret == -1) && (errno != EINTR)) {
+      return -1;
+    }
+    if (ret == 0)
+      return cur;
+    if (ret != -1) {
+      cur += ret;
+      left -= ret;
+    }
+  }
+
+  return cur;
+}
+
 /* Take a 4-byte character string in little-endian format and return
    a unsigned integer */
 unsigned int yahoo_makeint(unsigned char *data)
@@ -208,14 +252,14 @@ static void yahoo_storeint(unsigned char *data, unsigned int val)
 	unsigned int tmp = val;
 	int i;
 
-	if (data)
-	{
-		for (i = 0; i < 4; i++)
-		{
-			data[i] = tmp % 256;
-			tmp >>= 8;
-		}
-	}
+	if (!data)
+                return;
+
+	for (i = 0; i < 4; i++)
+        {
+                data[i] = tmp % 256;
+                tmp >>= 8;
+        }
 }
 
 /*
@@ -242,8 +286,8 @@ char **yahoo_list2array(char *buff)
 	if (0 == buff)
 		return 0;
 
-	buffer = strdup(buff);		/* play with a copy */
-	ptr_buffer = buffer;
+	if (!(ptr_buffer = buffer = strdup(buff)))      /* play with a copy */
+                return NULL;
 
 	/* count the number of users (commas + 1) */
 	for (i = 0; i < strlen(buffer); i++)
@@ -264,14 +308,21 @@ char **yahoo_list2array(char *buff)
 
 	/* allocate the array to hold the list of buddys */
 	/* null terminated array of pointers */
-	tmp_array = (char **) malloc(sizeof(char *) * (cnt + 1));
+	if (!(tmp_array = (char **) malloc(sizeof(char *) * (cnt + 1)))) {
+                FREE(buffer);
+                return NULL;
+        }
 
 	memset(tmp_array, 0, (sizeof(char *) * (cnt + 1)));
 
 	/* Parse through the list and get all the entries */
 	while ((ptr_buffer[sublen] != ',') && (ptr_buffer[sublen] != '\0'))
 		sublen++;
-	tmp = (char *) malloc(sizeof(char) * (sublen + 1));
+	if (!(tmp = (char *) malloc(sizeof(char) * (sublen + 1)))) {
+                FREE(buffer);
+                FREE(tmp_array);
+                return NULL;
+        }
 
 	memcpy(tmp, ptr_buffer, sublen);
 	tmp[sublen] = '\0';
@@ -297,7 +348,11 @@ char **yahoo_list2array(char *buff)
 
 		while ((ptr_buffer[sublen] != ',') && (ptr_buffer[sublen] != '\0'))
 			sublen++;
-		tmp = (char *) malloc(sizeof(char) * (sublen + 1));
+		if (!(tmp = (char *) malloc(sizeof(char) * (sublen + 1)))) {
+                        FREE(buffer);
+                        FREE(tmp_array);
+                        return NULL;
+                }
 
 		memcpy(tmp, ptr_buffer, sublen);
 		tmp[sublen] = '\0';
@@ -329,10 +384,10 @@ void yahoo_arraykill(char **array)
 
 	while (array[nxtelem] != NULL)
 	{
-		free(array[nxtelem++]);
+		FREE(array[nxtelem++]);
 	}
 
-	free(array);
+	FREE(array);
 }								/* yahoo_arraykill() */
 
 /*
@@ -361,7 +416,8 @@ char *yahoo_array2list(char **array)
 	/* allocate at least one - for NULL list - and to
 	   allow my strcat to write past the end for the
 	   last comma which gets converted to NULL */
-	list = (char *) malloc(sizeof(char) * (arraylength + 1));
+	if (!(list = (char *) malloc(sizeof(char) * (arraylength + 1))))
+                return NULL;
 
 	memset(list, 0, (arraylength + 1));
 
@@ -446,7 +502,10 @@ static void yahoo_hexdump(char *label, unsigned char *data, int datalen)
 
 	/* Copy the packet so we can don't duplicate it next time. */
 	last_datalen = datalen;
-	last_data = (unsigned char *) malloc(datalen);
+	if (!(last_data = (unsigned char *) malloc(datalen))) {
+                FREE(last_data);
+                return;
+        }
 	memcpy(last_data, data, datalen);
 
 	/* Handle printing the full entry out */
@@ -537,23 +596,26 @@ static int yahoo_socket_connect(struct yahoo_context *ctx, char *host,
 	{
 		yahoo_dbg_Print("libyahoo",
 			"[libyahoo] yahoo_socket_connect - nulls\n");
-		return 0;
+		return -1;
 	}
 
-	server = gethostbyname(host);
-	if (!server)
+	if (!(server = gethostbyname(host)))
 	{
-		printf("[libyahoo] failed to look up server (%s:%d)\n", host, port);
-		return (0);
+		printf("[libyahoo] failed to look up server (%s:%d): %s\n", host, port, hstrerror(h_errno));
+		return -1;
 	}
 
-	servfd = socket(AF_INET, SOCK_STREAM, 0);
+	if ((servfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        {
+                return -1;
+        }
 
-	bzero(&serv_addr, sizeof(serv_addr));
+	memset(&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
-	bcopy(server->h_addr, &serv_addr.sin_addr.s_addr, server->h_length);
+	memcpy(&serv_addr.sin_addr.s_addr, server->h_addr, server->h_length);
 	serv_addr.sin_port = htons(port);
 
+        /* XXX should put timeouts on the connect()'s -mid */
 	res = -1;
 	if (ctx->connect_mode == YAHOO_CONNECT_SOCKS4)
 	{
@@ -580,16 +642,16 @@ static int yahoo_socket_connect(struct yahoo_context *ctx, char *host,
 	{
 		printf("[libyahoo] unhandled connect mode (%d).\n",
 			ctx->connect_mode);
-		return (0);
+                close(servfd);
+		return -1;
 	}
 
 	if (res < 0)
 	{
+		printf("[libyahoo] failed to connect to server (%s:%d): %s\n",
+                       host, port, strerror(errno));
 		close(servfd);
-		servfd = 0;
-		printf("[libyahoo] failed to connect to server (%s:%d)\n", host,
-			port);
-		return (0);
+		return -1;
 	}
 
 	yahoo_dbg_Print("libyahoo",
@@ -607,16 +669,16 @@ static char *yahoo_urlencode(char *data)
 
 	len = 3 * strlen(data) + 1;
 
-	FREE(tmp);
+        if (tmp)
+                FREE(tmp);
 
 	if (!data)
-	{
 		return NULL;
-	}
 
 	/* change this at some point to re-use the buffer, no sense
 	   allocating repeatedly */
-	tmp = (char *) malloc(len);
+	if (!(tmp = (char *) malloc(len)))
+                return NULL;
 	tmp[0] = 0;
 
 	for (i = 0; i < strlen(data); i++)
@@ -638,7 +700,7 @@ static char *yahoo_urlencode(char *data)
 	return tmp;
 }
 
-static void yahoo_addtobuffer(struct yahoo_context *ctx, char *data,
+static int yahoo_addtobuffer(struct yahoo_context *ctx, char *data,
 	int datalen)
 {
 	//yahoo_hexdump("yahoo_addtobuffer", data, datalen);
@@ -657,7 +719,8 @@ static void yahoo_addtobuffer(struct yahoo_context *ctx, char *data,
 		{
 			ctx->io_buf_maxlen += datalen;
 		}
-		new_io_buf = (char *) malloc(ctx->io_buf_maxlen);
+		if (!(new_io_buf = (char *) malloc(ctx->io_buf_maxlen)))
+                        return 0;
 
 		if (ctx->io_buf)
 		{
@@ -670,6 +733,8 @@ static void yahoo_addtobuffer(struct yahoo_context *ctx, char *data,
 
 	memcpy(ctx->io_buf + ctx->io_buf_curlen, data, datalen);
 	ctx->io_buf_curlen += datalen;
+
+        return 1;
 }
 
 static int yahoo_tcp_readline(char *ptr, int maxlen, int fd)
@@ -681,7 +746,7 @@ static int yahoo_tcp_readline(char *ptr, int maxlen, int fd)
 	{
 	  again:
 
-		if ((rc = read(fd, &c, 1)) == 1)
+		if ((rc = readall(fd, &c, 1)) == 1)
 		{
 			*ptr++ = c;
 			if (c == '\n')
@@ -699,8 +764,8 @@ static int yahoo_tcp_readline(char *ptr, int maxlen, int fd)
 			if (errno == EINTR)
 				goto again;
 			printf
-				("Yahoo: Error reading from socket in yahoo_tcp_readline.\n");
-			exit(1);
+				("Yahoo: Error reading from socket in yahoo_tcp_readline: %s.\n", strerror(errno));
+			return -1;
 		}
 	}
 
@@ -725,14 +790,24 @@ struct yahoo_context *yahoo_init(char *user, char *password,
 	}
 
 	/* Allocate a new context */
-	tmp = (struct yahoo_context *) calloc(1, sizeof(*tmp));
+	if (!(tmp = (struct yahoo_context *) calloc(1, sizeof(*tmp))))
+                return NULL;
 
 	/* Fill in any available info */
-	tmp->user = strdup(user);
-	tmp->password = strdup(password);
+	if (!(tmp->user = strdup(user))) {
+                yahoo_free_context(tmp);
+                return NULL;
+        }
+	if (!(tmp->password = strdup(password))) {
+                yahoo_free_context(tmp);
+                return NULL;
+        }
 	if (options->proxy_host)
 	{
-		tmp->proxy_host = strdup(options->proxy_host);
+		if (!(tmp->proxy_host = strdup(options->proxy_host))) {
+                        yahoo_free_context(tmp);
+                        return NULL;
+                }
 	}
 	tmp->proxy_port = options->proxy_port;
 	tmp->connect_mode = options->connect_mode;
@@ -861,10 +936,10 @@ int yahoo_fetchcookies(struct yahoo_context *ctx)
 	{
 		servfd = yahoo_socket_connect(ctx, YAHOO_AUTH_HOST, YAHOO_AUTH_PORT);
 	}
-	if (!servfd)
+	if (servfd < 0)
 	{
 		printf("[libyahoo] failed to connect to pager auth server.\n");
-		return (0);
+		return 0;
 	}
 
 	strcpy(buffer, "GET ");
@@ -888,7 +963,11 @@ int yahoo_fetchcookies(struct yahoo_context *ctx)
 	strcat(buffer, "Host: " YAHOO_AUTH_HOST "\r\n");
 	strcat(buffer, "\r\n");
 
-	write(servfd, buffer, strlen(buffer));
+	if (writeall(servfd, buffer, strlen(buffer)) < strlen(buffer)) 
+        {
+                close(servfd);
+                return 0;
+        }
 
 	yahoo_dbg_Print("libyahoo",
 		"[libyahoo] yahoo_fetchcookies: writing buffer '%s'\n", buffer);
@@ -986,7 +1065,7 @@ int yahoo_add_buddy(struct yahoo_context *ctx, char *addid,
 			"[libyahoo] yahoo_add_buddy - connecting\n");
 		servfd = yahoo_socket_connect(ctx, YAHOO_DATA_HOST, YAHOO_DATA_PORT);
 	}
-	if (!servfd)
+	if (servfd < 0)
 	{
 		yahoo_dbg_Print("libyahoo",
 			"[libyahoo] yahoo_add_buddy: failed to connect\n");
@@ -1017,7 +1096,12 @@ int yahoo_add_buddy(struct yahoo_context *ctx, char *addid,
 	strcat(buffer, "\r\n");
 	strcat(buffer, "\r\n");
 
-	write(servfd, buffer, strlen(buffer));
+	if (writeall(servfd, buffer, strlen(buffer)) < strlen(buffer))
+        {
+                close(servfd);
+                return 0;
+        }
+
 	while (yahoo_tcp_readline(buffer, 5000, servfd) > 0)
 	{
 		/* just dump the output, I don't care about errors at the moment */
@@ -1027,7 +1111,7 @@ int yahoo_add_buddy(struct yahoo_context *ctx, char *addid,
 
 	/* indicate success for now with 0 */
 	yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_add_buddy: finished\n");
-	return 0;
+	return 1;
 }
 
 /* Remove a buddy from your buddy list */
@@ -1053,7 +1137,7 @@ int yahoo_remove_buddy(struct yahoo_context *ctx, char *addid,
 		yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_add_buddy - connecting\n");
 		servfd = yahoo_socket_connect(ctx, YAHOO_DATA_HOST, YAHOO_DATA_PORT);
 	}
-	if (!servfd)
+	if (servfd < 0)
 	{
 		yahoo_dbg_Print("libyahoo",
 			"[libyahoo] yahoo_add_buddy: failed to connect\n");
@@ -1084,7 +1168,12 @@ int yahoo_remove_buddy(struct yahoo_context *ctx, char *addid,
 	strcat(buffer, "\r\n");
 	strcat(buffer, "\r\n");
 
-	write(servfd, buffer, strlen(buffer));
+	if (writeall(servfd, buffer, strlen(buffer)) < strlen(buffer))
+        {
+                close(servfd);
+                return 0;
+        }
+
 	while (yahoo_tcp_readline(buffer, 5000, servfd) > 0)
 	{
 		/* just dump the output, I don't care about errors at the moment */
@@ -1092,8 +1181,8 @@ int yahoo_remove_buddy(struct yahoo_context *ctx, char *addid,
 	close(servfd);
 	servfd = 0;
 
-	/* indicate success for now with 0 */
-	return 0;
+	/* indicate success for now with 1 */
+	return 1;
 }
 
 /* Retrieve the configuration from the server */
@@ -1124,7 +1213,7 @@ int yahoo_get_config(struct yahoo_context *ctx)
 	{
 		servfd = yahoo_socket_connect(ctx, YAHOO_DATA_HOST, YAHOO_DATA_PORT);
 	}
-	if (!servfd)
+	if (servfd < 0)
 	{
 		yahoo_dbg_Print("libyahoo",
 			"[libyahoo] yahoo_get_config: failed to connect\n");
@@ -1142,7 +1231,12 @@ int yahoo_get_config(struct yahoo_context *ctx)
 	strcat(buffer, "\r\n");
 	strcat(buffer, "\r\n");
 
-	write(servfd, buffer, strlen(buffer));
+	if (writeall(servfd, buffer, strlen(buffer)) < strlen(buffer))
+        {
+                close(servfd);
+                return 0;
+        }
+
 	yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_get_config: sending '%s'\n",
 		buffer);
 
@@ -1328,7 +1422,7 @@ int yahoo_cmd_logon(struct yahoo_context *ctx, unsigned int initial_status)
 		yahoo_dbg_Print("libyahoo",
 			"[libyahoo] yahoo_cmd_logon: logon called without "
 			"context and/or cookie.\n");
-		exit(1);
+                return 0;
 	}
 
 	strcpy(login_string, ctx->login_cookie);
@@ -1356,8 +1450,9 @@ int yahoo_cmd_logon(struct yahoo_context *ctx, unsigned int initial_status)
 		}
 	}
 
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_LOGON, ctx->user, login_string,
-		initial_status);
+	if(!yahoo_sendcmd(ctx, YAHOO_SERVICE_LOGON, ctx->user, login_string,
+                          initial_status))
+                return 0;
 
 	/* something that the windows one sends, not sure what it is */
 #if 0
@@ -1369,7 +1464,7 @@ int yahoo_cmd_logon(struct yahoo_context *ctx, unsigned int initial_status)
 		0);
 #endif
 
-	return 0;
+	return 1;
 }
 
 int yahoo_connect(struct yahoo_context *ctx)
@@ -1390,7 +1485,7 @@ int yahoo_connect(struct yahoo_context *ctx)
 				"[libyahoo] yahoo_connect - establishing socket connection\n");
 			ctx->sockfd =
 				yahoo_socket_connect(ctx, YAHOO_PAGER_HOST, YAHOO_PAGER_PORT);
-			if (!ctx->sockfd)
+			if (ctx->sockfd < 0)
 			{
 				printf("[libyahoo] couldn't connect to pager host\n");
 				return (0);
@@ -1440,7 +1535,7 @@ int yahoo_sendcmd_http(struct yahoo_context *ctx, struct yahoo_rawpacket *pkt)
 		sockfd = yahoo_socket_connect(ctx, YAHOO_PAGER_HTTP_HOST,
 			YAHOO_PAGER_HTTP_PORT);
 	}
-	if (!sockfd)
+	if (sockfd < 0)
 	{
 		printf("[libyahoo] failed to connect to pager http server.\n");
 		return (0);
@@ -1465,28 +1560,35 @@ int yahoo_sendcmd_http(struct yahoo_context *ctx, struct yahoo_rawpacket *pkt)
 	strcat(buffer, "\r\n");
 	strcat(buffer, "\r\n");
 
-	write(sockfd, buffer, strlen(buffer));
-	write(sockfd, pkt, size);
-	write(sockfd, "\r\n", 2);
+	if ((writeall(sockfd, buffer, strlen(buffer)) < strlen(buffer)) ||
+            (writeall(sockfd, pkt, size) < size) ||
+            (writeall(sockfd, "\r\n", 2) < 2))
+        {
+                close(sockfd);
+                return 0;
+        }
 
 	/* now we need to read the results */
 	/* I'm taking the cheat approach and just dumping them onto the
 	   buffer, headers and all, the _skip_to_YHOO_ code will handle it
 	   for now */
 
-	while ((res = read(sockfd, buffer, 5000)) > 0)
+	while ((res = readall(sockfd, buffer, sizeof(buffer))) > 0)
 	{
 		if (res == -1)
 		{
 			printf("[libyahoo] Error reading data from server.\n");
-			exit(1);
+                        return 0;
 		}
-		yahoo_addtobuffer(ctx, buffer, res);
+		if (!yahoo_addtobuffer(ctx, buffer, res))
+                {
+                        close(sockfd);
+                        return 0;
+                }
 	}
 	close(sockfd);
-	sockfd = 0;
 
-	return (0);
+	return (1);
 }
 
 /* Send a packet to the server, called by all routines that want to issue
@@ -1501,7 +1603,8 @@ int yahoo_sendcmd(struct yahoo_context *ctx, int service, char *active_nick,
 	/* why the )&*@#$( did they hardwire the packet size that gets sent
 	   when the size of the packet is included in what is sent, bizarre */
 	size = 4 * 256 + YAHOO_PACKET_HEADER_SIZE;
-	pkt = (struct yahoo_rawpacket *) calloc(1, size);
+	if (!(pkt = (struct yahoo_rawpacket *) calloc(1, size)))
+                return 0;
 
 	/* figure out max content length, including trailing null */
 	maxcontentsize = size - sizeof(struct yahoo_rawpacket);
@@ -1527,28 +1630,37 @@ int yahoo_sendcmd(struct yahoo_context *ctx, int service, char *active_nick,
 		case YAHOO_CONNECT_SOCKS4:
 		case YAHOO_CONNECT_SOCKS5:
 		case YAHOO_CONNECT_NORMAL:
-			write(ctx->sockfd, pkt, size);
+			if (writeall(ctx->sockfd, pkt, size) < size) 
+                        {
+                                printf("sendcmd: writeall failed\n");
+                                close(ctx->sockfd);
+                                FREE(pkt);
+                                return 0;
+                        }
 			break;
 		case YAHOO_CONNECT_HTTP:
 		case YAHOO_CONNECT_HTTPPROXY:
-			yahoo_sendcmd_http(ctx, pkt);
+			if (!yahoo_sendcmd_http(ctx, pkt)) 
+                        {
+                                printf("sendcmd_http failed\n");
+                                FREE(pkt);
+                                return 0;
+                        }
 			break;
 	}
 
 	FREE(pkt);
-	return (0);
+	return (1);
 }
 
 int yahoo_cmd_ping(struct yahoo_context *ctx)
 {
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_PING, ctx->user, "", 0);
-	return (0);
+	return yahoo_sendcmd(ctx, YAHOO_SERVICE_PING, ctx->user, "", 0);
 }
 
 int yahoo_cmd_idle(struct yahoo_context *ctx)
 {
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_IDLE, ctx->user, "", 0);
-	return (0);
+	return yahoo_sendcmd(ctx, YAHOO_SERVICE_IDLE, ctx->user, "", 0);
 }
 
 int yahoo_cmd_sendfile(struct yahoo_context *ctx, char *active_user,
@@ -1563,16 +1675,21 @@ int yahoo_cmd_msg(struct yahoo_context *ctx, char *active_user,
 {
 	char *content;
 
-	content = (char *) malloc(strlen(touser) + strlen(msg) + 5);
+	if (!(content = (char *) malloc(strlen(touser) + strlen(msg) + 5)))
+                return 0;
 
 	if (strlen(touser))
 	{
 		sprintf(content, "%s,%s", touser, msg);
-		yahoo_sendcmd(ctx, YAHOO_SERVICE_MESSAGE, active_user, content, 0);
+		if (!yahoo_sendcmd(ctx, YAHOO_SERVICE_MESSAGE, active_user, content, 0)) 
+                {
+                        FREE(content);
+                        return 0;
+                }
 	}
 
 	FREE(content);
-	return (0);
+	return (1);
 }
 
 int yahoo_cmd_msg_offline(struct yahoo_context *ctx, char *active_user,
@@ -1580,17 +1697,22 @@ int yahoo_cmd_msg_offline(struct yahoo_context *ctx, char *active_user,
 {
 	char *content;
 
-	content = (char *) malloc(strlen(touser) + strlen(msg) + 5);
+	if (!(content = (char *) malloc(strlen(touser) + strlen(msg) + 5)))
+                return 0;
 
 	if (strlen(touser))
 	{
 		sprintf(content, "%s,%s", touser, msg);
-		yahoo_sendcmd(ctx, YAHOO_SERVICE_MESSAGE, active_user, content,
-			YAHOO_MSGTYPE_KNOWN_USER);
+		if (!yahoo_sendcmd(ctx, YAHOO_SERVICE_MESSAGE, active_user, 
+                                   content, YAHOO_MSGTYPE_KNOWN_USER))
+                {
+                        FREE(content);
+                        return 0;
+                }
 	}
 
 	FREE(content);
-	return (0);
+	return (1);
 }
 
 /* appended the " " so that won't trigger yahoo bug - hack for the moment */
@@ -1617,9 +1739,7 @@ int yahoo_cmd_set_away_mode(struct yahoo_context *ctx, int status, char *msg)
 	{
 		snprintf(statusstring, 500, "%d", status);
 	}
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_ISAWAY, ctx->user, statusstring, 0);
-
-	return 0;
+	return yahoo_sendcmd(ctx, YAHOO_SERVICE_ISAWAY, ctx->user, statusstring, 0);
 }
 
 int yahoo_cmd_set_back_mode(struct yahoo_context *ctx, int status, char *msg)
@@ -1631,30 +1751,24 @@ int yahoo_cmd_set_back_mode(struct yahoo_context *ctx, int status, char *msg)
 		status, yahoo_dbg_NullCheck(msg));
 
 	snprintf(statusstring, 500, "%d%c%s ", status, 1, msg ? msg : "");
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_ISBACK, ctx->user, statusstring, 0);
-
-	return 0;
+	return yahoo_sendcmd(ctx, YAHOO_SERVICE_ISBACK, ctx->user, statusstring, 0);
 }
 
 int yahoo_cmd_activate_id(struct yahoo_context *ctx, char *newid)
 {
 	if (strlen(newid))
-	{
-		yahoo_sendcmd(ctx, YAHOO_SERVICE_IDACT, newid, newid, 0);
-	}
-	return (0);
+		return yahoo_sendcmd(ctx, YAHOO_SERVICE_IDACT, newid, newid, 0);
+	return 0;
 }
 
 int yahoo_cmd_user_status(struct yahoo_context *ctx)
 {
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_USERSTAT, ctx->user, "", 0);
-	return (0);
+	return yahoo_sendcmd(ctx, YAHOO_SERVICE_USERSTAT, ctx->user, "", 0);
 }
 
 int yahoo_cmd_logoff(struct yahoo_context *ctx)
 {
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_LOGOFF, ctx->user, ctx->user, 0);
-	return (0);
+	return yahoo_sendcmd(ctx, YAHOO_SERVICE_LOGOFF, ctx->user, ctx->user, 0);
 }
 
 /*
@@ -1689,7 +1803,8 @@ int yahoo_cmd_start_conf(struct yahoo_context *ctx, char *conf_id,
 
 	int size = strlen(conf_id) + strlen(msg) + 8 + strlen(new_userlist);
 
-	content = (char *) malloc(size);
+	if (!(content = (char *) malloc(size)))
+                return 0;
 	memset(content, 0, size);
 
 	cont_len = snprintf(content,
@@ -1698,16 +1813,23 @@ int yahoo_cmd_start_conf(struct yahoo_context *ctx, char *conf_id,
 		conf_id, ctrlb, new_userlist, ctrlb, msg, ctrlb, type);
 
 #ifdef ENABLE_LIBYAHOO_DEBUG
-	unraw_msg = yahoo_unraw_buffer(content, cont_len);
-	yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_cmd_start_conf: %s\n",
-		unraw_msg);
-	free(unraw_msg);
+	if ((unraw_msg = yahoo_unraw_buffer(content, cont_len)))
+        {
+                yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_cmd_start_conf: %s\n",
+                                unraw_msg);
+                FREE(unraw_msg);
+        }
 #endif /* def ENABLE_LIBYAHOO_DEBUG */
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFINVITE, ctx->user, content, 0);
+	if (!yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFINVITE, ctx->user, content, 0))
+        {
+                FREE(new_userlist);
+                FREE(content);
+                return 0;
+        }
 
 	FREE(new_userlist);
 	FREE(content);
-	return (0);
+	return 1;
 }
 
 /*
@@ -1741,23 +1863,31 @@ int yahoo_cmd_conf_logon(struct yahoo_context *ctx, char *conf_id,
 
 	int size = strlen(conf_id) + strlen(host) + 8 + strlen(new_userlist);
 
-	content = (char *) malloc(size);
+	if (!(content = (char *) malloc(size)))
+                return 0;
 	memset(content, 0, size);
 
 	cont_len =
 		sprintf(content, "%s%c%s,%s", conf_id, ctrlb, host, new_userlist);
 
 #ifdef ENABLE_LIBYAHOO_DEBUG
-	unraw_msg = yahoo_unraw_buffer(content, cont_len);
-	yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_cmd_conf_logon: %s\n",
-		unraw_msg);
-	free(unraw_msg);
+	if ((unraw_msg = yahoo_unraw_buffer(content, cont_len)))
+        {
+                yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_cmd_conf_logon: %s\n",
+                                unraw_msg);
+                FREE(unraw_msg);
+        }
 #endif /* def ENABLE_LIBYAHOO_DEBUG */
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFLOGON, ctx->user, content, 0);
+	if (!yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFLOGON, ctx->user, content, 0))
+        {
+                FREE(new_userlist);
+                FREE(content);
+                return 0;
+        }
 
 	FREE(new_userlist);
 	FREE(content);
-	return (0);
+	return 1;
 }
 
 /*
@@ -1788,11 +1918,11 @@ int yahoo_cmd_decline_conf(struct yahoo_context *ctx, char *conf_id,
 	char *new_userlist = yahoo_array2list(userlist);
 
 	int size =
-
 		strlen(conf_id) + strlen(host) + strlen(msg) + 8 +
 		strlen(new_userlist);
 
-	content = (char *) malloc(size);
+	if (!(content = (char *) malloc(size)))
+                return 0;
 	memset(content, 0, size);
 
 	sprintf(content, "%s%c%s,%s%c%s", conf_id, ctrlb, host, new_userlist,
@@ -1800,11 +1930,16 @@ int yahoo_cmd_decline_conf(struct yahoo_context *ctx, char *conf_id,
 
 	yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_cmd_decline_conf: %s\n",
 		content);
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFDECLINE, ctx->user, content, 0);
+	if (!yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFDECLINE, ctx->user, content, 0))
+        {
+                FREE(new_userlist);
+                FREE(content);
+                return 0;
+        }
 
 	FREE(new_userlist);
 	FREE(content);
-	return (0);
+	return 1;
 }
 
 /*
@@ -1839,22 +1974,30 @@ int yahoo_cmd_conf_logoff(struct yahoo_context *ctx, char *conf_id,
 
 	int size = strlen(conf_id) + strlen(new_userlist) + 8;
 
-	content = (char *) malloc(size);
+	if (!(content = (char *) malloc(size)))
+                return 0;
 	memset(content, 0, size);
 
 	cont_len =
 		snprintf(content, size, "%s%c%s", conf_id, ctrlb, new_userlist);
 #ifdef ENABLE_LIBYAHOO_DEBUG
-	unraw_msg = yahoo_unraw_buffer(content, cont_len);
-	yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_cmd_conf_logoff: %s\n",
-		unraw_msg);
-	free(unraw_msg);
+	if ((unraw_msg = yahoo_unraw_buffer(content, cont_len)))
+        {
+                yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_cmd_conf_logoff: %s\n",
+                                unraw_msg);
+                FREE(unraw_msg);
+        }
 #endif /* def ENABLE_LIBYAHOO_DEBUG */
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFLOGOFF, ctx->user, content, 0);
+	if (!yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFLOGOFF, ctx->user, content, 0)) 
+        {
+                FREE(new_userlist);
+                FREE(content);
+                return 0;
+        }
 
 	FREE(new_userlist);
 	FREE(content);
-	return (0);
+	return 1;
 }
 
 /*
@@ -1887,7 +2030,8 @@ int yahoo_cmd_conf_invite(struct yahoo_context *ctx, char *conf_id,
 	int size = strlen(conf_id) + strlen(invited_user)
 		+ (2 * strlen(new_userlist)) + strlen(msg) + 7;
 
-	content = (char *) malloc(size);
+	if (!(content = (char *) malloc(size)))
+                return 0;
 	memset(content, 0, size);
 
 	sprintf(content, "%s%c%s%c%s%c%s%c%s%c0", conf_id, ctrlb,
@@ -1895,11 +2039,16 @@ int yahoo_cmd_conf_invite(struct yahoo_context *ctx, char *conf_id,
 		new_userlist, ctrlb, msg, ctrlb);
 	yahoo_dbg_Print("libyahoo", "[libyahoo] yahoo_cmd_conf_invite: %s\n",
 		content);
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFADDINVITE, ctx->user, content, 0);
+	if (!yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFADDINVITE, ctx->user, content, 0))
+        {
+                FREE(new_userlist);
+                FREE(content);
+                return 0;
+        }
 
 	FREE(new_userlist);
 	FREE(content);
-	return (0);
+	return 1;
 }
 
 /*
@@ -1934,22 +2083,30 @@ int yahoo_cmd_conf_msg(struct yahoo_context *ctx, char *conf_id,
 
 	int size = strlen(conf_id) + strlen(new_userlist) + strlen(msg) + 8;
 
-	content = (char *) malloc(size);
+	if (!(content = (char *) malloc(size)))
+                return 0;
 	memset(content, 0, size);
 
 	cont_len =
 		snprintf(content, size, "%s%c%s%c%s", conf_id, ctrlb, new_userlist,
 		ctrlb, msg);
 #ifdef ENABLE_LIBYAHOO_DEBUG
-	unraw_msg = yahoo_unraw_buffer(content, cont_len);
-	yahoo_dbg_Print("libyahoo", "yahoo_cmd_conf_msg: %s\n", unraw_msg);
-	free(unraw_msg);
+	if ((unraw_msg = yahoo_unraw_buffer(content, cont_len)))
+        {
+                yahoo_dbg_Print("libyahoo", "yahoo_cmd_conf_msg: %s\n", unraw_msg);
+                FREE(unraw_msg);
+        }
 #endif /* def ENABLE_LIBYAHOO_DEBUG */
-	yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFMSG, ctx->user, content, 0);
+	if (!yahoo_sendcmd(ctx, YAHOO_SERVICE_CONFMSG, ctx->user, content, 0))
+        {
+                FREE(new_userlist);
+                FREE(content);
+                return 0;
+        }
 
 	FREE(new_userlist);
 	FREE(content);
-	return (0);
+	return 1;
 }
 
 /*
@@ -2005,9 +2162,7 @@ void yahoo_free_packet(struct yahoo_packet *pkt)
 void yahoo_free_idstatus(struct yahoo_idstatus *idstatus)
 {
 	if (!idstatus)
-	{
 		return;
-	}
 
 	FREE(idstatus->id);
 	FREE(idstatus->connection_id);
@@ -2022,12 +2177,11 @@ struct yahoo_packet *yahoo_parsepacket(struct yahoo_context *ctx,
 
 	/* If no valid inpkt passed, return */
 	if (!inpkt)
-	{
 		return NULL;
-	}
 
 	/* Allocate the packet structure, zeroed out */
-	pkt = (struct yahoo_packet *) calloc(sizeof(*pkt), 1);
+	if (!(pkt = (struct yahoo_packet *) calloc(sizeof(*pkt), 1)))
+                return NULL;
 
 	/* Pull out the standard data */
 	pkt->service = yahoo_makeint(inpkt->service);
@@ -2131,9 +2285,7 @@ int yahoo_parsepacket_ping(struct yahoo_context *ctx,
 
 	pkt->msg = NULL;
 	if (content)
-	{
 		pkt->msg = strdup(content);
-	}
 
 	return 0;
 }
@@ -3210,25 +3362,25 @@ int yahoo_getdata(struct yahoo_context *ctx)
 	if (ctx->connect_mode == YAHOO_CONNECT_HTTP ||
 		ctx->connect_mode == YAHOO_CONNECT_HTTPPROXY)
 	{
-		yahoo_sendcmd(ctx, YAHOO_SERVICE_PING, ctx->user, "", 0);
+		if (!yahoo_sendcmd(ctx, YAHOO_SERVICE_PING, ctx->user, "", 0))
+                        return 0;
 		return (1);
 	}
 
-	/* this assumes that data is ready */
-	/* Read from the connection to the server and get any new data */
-	res = read(ctx->sockfd, buf, 1000);
+        /* Read as much data as is available. */
+        /* XXX: doesnt the protocol contain header information with lengths? */
+	do {
+                res = read(ctx->sockfd, buf, sizeof(buf));
+                if ((res == -1) && (errno == EINTR))
+                        continue;
+                break;
+        } while (1);
+
 	if (res == -1)
 	{
-		yahoo_dbg_Print("io",
-			"yahoo_getdata: error reading data from server\n");
+		printf("yahoo_getdata: error reading data from server: %s\n",
+                       strerror(errno));
 		return (0);
-	}
-	if (res > 0)
-	{
-		yahoo_addtobuffer(ctx, buf, res);
-		yahoo_dbg_Print("io", "[libyahoo] yahoo_getdata: read (%d) bytes\n",
-			res);
-		return 1;
 	}
 	else if (res == 0)
 	{
@@ -3237,7 +3389,10 @@ int yahoo_getdata(struct yahoo_context *ctx)
 		return 0;
 	}
 
-	return (1);
+        yahoo_addtobuffer(ctx, buf, res);
+        yahoo_dbg_Print("io", "[libyahoo] yahoo_getdata: read (%d) bytes\n", res);
+
+	return 1;
 }
 
 struct yahoo_rawpacket *yahoo_getpacket(struct yahoo_context *ctx)
@@ -3295,12 +3450,14 @@ struct yahoo_rawpacket *yahoo_getpacket(struct yahoo_context *ctx)
 
 	/* Determine the content size specified by the header */
 	contentlen = yahoo_makeint(pkt->len) - YAHOO_PACKET_HEADER_SIZE;
-// printf("contentlen = %d\n", contentlen);
+#if 0
+        printf("contentlen = %d\n", contentlen);
+#endif
 
 	/* Don't continue if buffer doesn't have full content in it */
 	if (*buflen < (YAHOO_PACKET_HEADER_SIZE + contentlen))
 	{
-// printf("buffer not big enough for contentlen\n");
+                printf("buffer not big enough for contentlen\n");
 		return NULL;
 	}
 
@@ -3508,7 +3665,7 @@ int yahoo_fetchaddressbook(struct yahoo_context *ctx)
 		servfd = yahoo_socket_connect(ctx, YAHOO_ADDRESS_HOST, YAHOO_ADDRESS_PORT);
 	}
 
-	if (!servfd)
+	if (servfd < 0)
 	{
 		printf("[libyahoo] failed to connect to address book server.\n");
 		return (0);
@@ -3528,7 +3685,10 @@ int yahoo_fetchaddressbook(struct yahoo_context *ctx)
 	strcat(buffer, "\r\n");
 	strcat(buffer, "\r\n");
 
-	write(servfd, buffer, strlen(buffer));
+	if (writeall(servfd, buffer, strlen(buffer)) < strlen(buffer)) {
+                close(servfd);
+                return 0;
+        }
 
 	yahoo_dbg_Print("addressbook",
 		"[libyahoo] yahoo_fetchaddressbook: writing buffer '%s'\n", buffer);

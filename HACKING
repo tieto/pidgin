@@ -35,7 +35,7 @@ on in the preferences) whether or not --enable-debug was selected. Most
 of the information that's printed is useless anyway though; so the
 --enable-debug option really doesn't do a whole lot.
 
-This file was last modified by $Author: warmenhoven $ on $Date: 2000-11-03 22:08:54 -0500 (Fri, 03 Nov 2000) $.
+This file was last modified by $Author: warmenhoven $ on $Date: 2000-11-16 02:35:58 -0500 (Thu, 16 Nov 2000) $.
 
 
 PROGRAM FLOW
@@ -184,12 +184,6 @@ multi.c:
   reference to this function (there are only two - one in aim.c and one
   in buddy.c). Or you could just run ./configure --disable-multi.
 
-network.c:
-  This has two functions: get_address and connect_address, both of which
-  call proxy functions. If you want to see how these are used, look at
-  toc.c and/or rvous.c. These are really just front-ends to the proxy
-  stuff; use these instead of calling the proxy functions.
-
 oscar.c:
   One big hack of copied code. This is supposed to be the libfaim tie-in
   in gaim. Most of it is just copied straight from faimtest, the small
@@ -226,9 +220,11 @@ prpl.c:
   all of the protocols. It's a pretty simple file actually.
 
 proxy.c:
-  This is where the bulk of the actual networking code is done. The big
-  function here is proxy_connect, which will connect through the proxy
-  setup you've chosen (most of which don't work...) or just regularly.
+  Adam (of libfaim glory) got bored one day and rewrote this file, so now
+  everything actually works. The main function is proxy_connect, which
+  figures out which proxy you want to use (if you want to use one at all)
+  and passes off the data to the appropriate function. This file should be
+  pretty straight-forward.
 
 rvous.c:
   This was originally going to be the stuff for all of the Buddy Icon
