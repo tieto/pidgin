@@ -63,6 +63,7 @@
 #include <getopt.h>
 #endif
 
+static gchar *aspell_cmd[] = { "aspell", "--sug-mode=fast","-a", NULL };
 static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
 
 static GtkWidget *name;
@@ -795,9 +796,19 @@ int main(int argc, char *argv[])
 
 	if (misc_options & OPT_MISC_DEBUG)
 		show_debug();
-
-	if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_start(NULL, ispell_cmd);
+	/*If ispell fails to start, try using aspell in ispell compatibitity mode.
+	  Gabber does this the same way -- lorien420@myrealbox.com*/
+	if (convo_options & OPT_CONVO_CHECK_SPELLING){
+		if (gtkspell_start(NULL, ispell_cmd)<0){
+			debug_printf("gtkspell failed to start when using ispell\n");
+			if (gtkspell_start(NULL, aspell_cmd)<0){
+				debug_printf("gtkspell failed to start when using aspell\n");
+			} else
+				debug_printf("gtkspell started with aspell\n");
+		} else {
+			debug_printf("gtkspell started with ispell\n");
+		}
+	}
 #ifdef USE_PERL
 	perl_autoload();
 #endif

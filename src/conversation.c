@@ -65,6 +65,7 @@
 #include "pixmaps/farted.xpm"
 
 static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
+static gchar *aspell_cmd[] = { "aspell", "--sug-mode=fast","-a", NULL };
 
 int state_lock = 0;
 
@@ -2899,8 +2900,19 @@ void toggle_spellchk()
 	GSList *con = connections;
 	struct gaim_connection *gc;
 
-	if (convo_options & OPT_CONVO_CHECK_SPELLING)
-		gtkspell_start(NULL, ispell_cmd);
+	if (convo_options & OPT_CONVO_CHECK_SPELLING){
+		/*If ispell fails to start, start aspell. This is the way that
+		  Gabber does it. -- lorien420@myrealbox.com */
+		if (gtkspell_start(NULL, ispell_cmd)<0){
+			debug_printf("gtkspell failed to start when using ispell\n");
+			if (gtkspell_start(NULL, aspell_cmd)<0){
+				debug_printf("gtkspell failed to start when using aspell\n");
+			} else
+				debug_printf("gtkspell started with aspell\n");
+		} else {
+			debug_printf("gtkspell started with ispell\n");
+		}
+	}
 
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
