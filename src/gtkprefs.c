@@ -54,10 +54,6 @@
 #define PROXYUSER 2
 #define PROXYPASS 3
 
-/* XXX This needs to be made static after we solve the away.c mess. */
-GtkListStore *prefs_away_store = NULL;
-GtkWidget *prefs_away_menu = NULL;
-
 static int sound_row_sel = 0;
 static GtkWidget *prefsnotebook;
 
@@ -78,10 +74,6 @@ static GtkTreeIter *prefs_notebook_add_page(const char*, GdkPixbuf*,
 											GtkTreeIter*, int);
 static void delete_prefs(GtkWidget *, void *);
 static void update_plugin_list(void *data);
-
-/* XXX CORE/UI
-static void set_default_away(GtkWidget *, gpointer);
-*/
 
 static void
 update_spin_value(GtkWidget *w, GtkWidget *spin)
@@ -361,11 +353,8 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	prefs = NULL;
 	sound_entry = NULL;
 	debugbutton = NULL;
-	prefs_away_menu = NULL;
 	notebook_page = 0;
 	smiley_theme_store = NULL;
-	g_object_unref(G_OBJECT(prefs_away_store));
-	prefs_away_store = NULL;
 
 	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
 		plug = l->data;
@@ -398,7 +387,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 		}
 	}
 }
-
 
 /* These are the pages in the preferences notebook */
 GtkWidget *interface_page() {
@@ -1731,6 +1719,29 @@ GtkWidget *sound_page() {
 	return ret;
 }
 
+/* XXX CORE/UI */
+#if 0
+static void
+set_default_away(GtkWidget *w, gpointer data)
+{
+	struct away_message *default_away = NULL;
+	int length = g_slist_length(away_messages);
+	int i = GPOINTER_TO_INT(data);
+
+	if (away_messages == NULL)
+		default_away = NULL;
+	else if (i >= length)
+		default_away = g_slist_nth_data(away_messages, length - 1);
+	else
+		default_away = g_slist_nth_data(away_messages, i);
+
+	if(default_away)
+		gaim_prefs_set_string("/core/away/default_message", default_away->name);
+	else
+		gaim_prefs_set_string("/core/away/default_message", "");
+}
+#endif
+
 GtkWidget *away_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -1794,20 +1805,9 @@ GtkWidget *away_page() {
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-	prefs_away_menu = gtk_option_menu_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), prefs_away_menu);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), prefs_away_menu);
-	default_away_menu_init(prefs_away_menu);
-	gtk_widget_show(prefs_away_menu);
-	gtk_box_pack_start(GTK_BOX(hbox), prefs_away_menu, FALSE, FALSE, 0);
-	gaim_set_accessible_label (prefs_away_menu, label);
-
-
 	if (!gaim_prefs_get_bool("/core/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
-		gtk_widget_set_sensitive(GTK_WIDGET(prefs_away_menu), FALSE);
 	}
 
 	gtk_widget_show_all(ret);
@@ -2322,68 +2322,6 @@ gaim_gtk_prefs_checkbox(const char *text, const char *key, GtkWidget *page)
 
 	return button;
 }
-
-void default_away_menu_init(GtkWidget *omenu)
-{
-	GtkWidget *menu;
-/* XXX CORE/UI
-	GtkWidget *opt;
-	int index = 0, default_index = 0;
-	GSList *awy = away_messages;
-	struct away_message *a;
-*/
-	const char *default_name;
-
-	menu = gtk_menu_new();
-
-	default_name = gaim_prefs_get_string("/core/away/default_message");
-
-/* XXX CORE/UI
-	while (awy) {
-		a = (struct away_message *)awy->data;
-		opt = gtk_menu_item_new_with_label(a->name);
-		g_signal_connect(G_OBJECT(opt), "activate",
-						 G_CALLBACK(set_default_away), GINT_TO_POINTER(index));
-		gtk_widget_show(opt);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
-
-		if(!strcmp(default_name, a->name))
-			default_index = index;
-
-		awy = awy->next;
-		index++;
-	}
-*/
-
-	gtk_option_menu_remove_menu(GTK_OPTION_MENU(omenu));
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
-
-/* XXX CORE/UI
-	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), default_index);
-*/
-}
-
-/* XXX CORE/UI */
-#if 0
-void set_default_away(GtkWidget *w, gpointer data)
-{
-	struct away_message *default_away = NULL;
-	int length = g_slist_length(away_messages);
-	int i = GPOINTER_TO_INT(data);
-
-	if (away_messages == NULL)
-		default_away = NULL;
-	else if (i >= length)
-		default_away = g_slist_nth_data(away_messages, length - 1);
-	else
-		default_away = g_slist_nth_data(away_messages, i);
-
-	if(default_away)
-		gaim_prefs_set_string("/core/away/default_message", default_away->name);
-	else
-		gaim_prefs_set_string("/core/away/default_message", "");
-}
-#endif
 
 static void
 smiley_theme_pref_cb(const char *name, GaimPrefType type, gpointer value,
