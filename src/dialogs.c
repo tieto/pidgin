@@ -588,6 +588,17 @@ static void away_mess_destroy_ca(GtkWidget *widget, GdkEvent *event, struct crea
 	away_mess_destroy(NULL, ca);
 }
 
+static gint sort_awaymsg_list(gconstpointer a, gconstpointer b)
+{
+	struct away_message *msg_a;
+	struct away_message *msg_b;
+
+	msg_a = (struct away_message *)a;
+	msg_b = (struct away_message *)b;
+
+	return (strcmp(msg_a->name, msg_b->name));
+}
+
 static struct away_message *save_away_message(struct create_away *ca)
 {
 	struct away_message *am;

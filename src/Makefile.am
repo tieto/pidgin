@@ -143,7 +143,6 @@ gaim_SOURCES = \
 	dialogs.c \
 	dnd-hints.c \
 	gaim-disclosure.c \
-	gaimrc.c \
 	gtkaccount.c \
 	gtkcellrendererprogress.c \
 	gtkblist.c \

@@ -70,9 +70,6 @@
 # include <gdk/gdkx.h>
 #endif
 
-extern void load_prefs();
-extern void load_pounces();
-
 static GtkWidget *name;
 static GtkWidget *pass;
 
@@ -480,6 +477,7 @@ static void
 gaim_gtk_quit(void)
 {
 	/* XXX? */
+	/* YYY is there an XXX here? */
 
 	/* captain's log, stardate... */
 	/* LOG system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
@@ -611,6 +609,7 @@ int main(int argc, char *argv[])
 	int opt, opt_user = 0;
 	int i;
 	gboolean gui_check;
+	gchar *gaimrc, *accountsxml;
 
 	struct option long_options[] = {
 		{"acct", no_argument, NULL, 'a'},
@@ -839,12 +838,17 @@ int main(int argc, char *argv[])
 
 	gaim_plugins_probe(NULL);
 
-	/* we only read ~/.gaimrc (load_prefs()) if there is no accounts.xml
-	 * since prefs.xml existed alongside ~/.gaim in 0.64 */
-	if (!gaim_accounts_load()) {
-		load_prefs();
-		gaim_prefs_sync();
+	/* XXX - Remove this check.  Maybe in 2005.  --KingAnt, 25 Jul 2004 */
+	gaimrc = g_build_filename(gaim_home_dir(), ".gaimrc", NULL);
+	accountsxml = g_build_filename(gaim_user_dir(), "accounts.xml", NULL);
+	if (g_file_test(gaimrc, G_FILE_TEST_EXISTS) &&
+		!g_file_test(accountsxml, G_FILE_TEST_EXISTS)) {
+		gaim_notify_error(NULL, NULL, _("Unable to load preferences"), _("Gaim was not able to load your preferences because they are stored in an old format that is no longer used.  Please reconfigure your settings using the Preferences window."));
 	}
+	g_free(gaimrc);
+	g_free(accountsxml);
+
+	gaim_accounts_load();
 
 	gaim_set_blist(gaim_blist_new());
 	gaim_blist_load();
@@ -860,7 +864,6 @@ int main(int argc, char *argv[])
 	gaim_pounces_load();
 	gaim_status_load();
 
-	load_pounces();
 	ui_main();
 
 #ifdef USE_SM

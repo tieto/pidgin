@@ -260,6 +260,7 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	GaimConversation *c;
 	int val = -EINVAL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	const gchar *auto_reply_pref;
 
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
@@ -272,8 +273,13 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	if (!(imflags & GAIM_CONV_IM_AUTO_RESP))
 		serv_touch_idle(gc);
 
+	/*
+	 * XXX - If "only auto-reply when away & idle" is set, then shouldn't
+	 * this only reset lar->sent if we're away AND idle?
+	 */
+	auto_reply_pref = gaim_prefs_get_string("/core/away/auto_reply");
 	if (gc->away &&	(gc->flags & GAIM_CONNECTION_AUTO_RESP) &&
-		gaim_prefs_get_bool("/core/away/auto_response/enabled")) {
+		strcmp(auto_reply_pref, "never")) {
 
 		struct last_auto_response *lar;
 		lar = get_last_auto_response(gc, name);
@@ -897,6 +903,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		const char *alias = b ? gaim_get_buddy_alias(b) : name;
 		int row;
 		struct last_auto_response *lar;
+		const gchar *auto_reply_pref;
 
 		/*
 		 * Either we're going to queue it or not. Because of the way
@@ -972,16 +979,17 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * Don't autorespond if:
 		 *
 		 *  - it's not supported on this connection
-		 *  - or it's disabled
 		 *  - or the away message is empty
+		 *  - or it's disabled
 		 *  - or we're not idle and the 'only auto respond if idle' pref
 		 *    is set
 		 */
+		auto_reply_pref = gaim_prefs_get_string("/core/away/auto_reply");
 		if (!(gc->flags & GAIM_CONNECTION_AUTO_RESP) ||
-			!gaim_prefs_get_bool("/core/away/auto_response/enabled") ||
 			*gc->away == '\0' ||
+			!strcmp(auto_reply_pref, "never") ||
 			(!gc->is_idle &&
-			 gaim_prefs_get_bool("/core/away/auto_response/idle_only"))) {
+			 !strcmp(auto_reply_pref, "awayidle"))) {
 
 			g_free(name);
 			g_free(message);

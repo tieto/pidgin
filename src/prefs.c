@@ -112,10 +112,21 @@ void gaim_prefs_init() {
 	gaim_prefs_add_string("/core/away/default_message",
 			_("Slightly less boring default"));
 
-	/* Away -> Auto Response */
-	gaim_prefs_add_none("/core/away/auto_response");
-	gaim_prefs_add_bool("/core/away/auto_response/enabled", TRUE);
-	gaim_prefs_add_bool("/core/away/auto_response/idle_only", FALSE);
+	/* Away -> Auto-Reply */
+	if (!gaim_prefs_exists("/core/away/auto_response/enabled") ||
+		!gaim_prefs_exists("/core/away/auto_response/idle_only")) {
+		gaim_prefs_add_string("/core/away/auto_reply", "awayidle");
+	} else {
+		if (!gaim_prefs_get_bool("/core/away/auto_response/enabled")) {
+			gaim_prefs_add_string("/core/away/auto_reply", "never");
+		} else {
+			if (gaim_prefs_get_bool("/core/away/auto_response/idle_only")) {
+				gaim_prefs_add_string("/core/away/auto_reply", "awayidle");
+			} else {
+				gaim_prefs_add_string("/core/away/auto_reply", "away");
+			}
+		}
+	}
 
 	/* Buddies */
 	gaim_prefs_add_none("/core/buddies");
@@ -499,16 +510,13 @@ void gaim_prefs_set_string_list(const char *name, GList *value) {
 	}
 }
 
-gpointer gaim_prefs_get_generic(const char *name) {
+gboolean gaim_prefs_exists(const char *name) {
 	struct gaim_pref *pref = find_pref(name);
 
-	if(!pref) {
-		gaim_debug(GAIM_DEBUG_ERROR, "prefs",
-				"gaim_prefs_get_generic: Unknown pref %s\n", name);
-		return NULL;
-	}
+	if (pref != NULL)
+		return TRUE;
 
-	return pref->value.generic;
+	return FALSE;
 }
 
 GaimPrefType gaim_prefs_get_type(const char *name) {
@@ -983,8 +991,11 @@ gboolean gaim_prefs_load() {
 
 void gaim_prefs_update_old() {
 	/* Remove some no-longer-used prefs */
+	gaim_prefs_remove("/core/away/auto_response/enabled");
+	gaim_prefs_remove("/core/away/auto_response/idle_only");
 	gaim_prefs_remove("/core/away/auto_response/in_active_conv");
 	gaim_prefs_remove("/core/away/auto_response/sec_before_resend");
+	gaim_prefs_remove("/core/away/auto_response");
 	gaim_prefs_remove("/core/conversations/away_back_on_send");
 	gaim_prefs_remove("/core/conversations/send_urls_as_links");
 	gaim_prefs_remove("/core/conversations/im/show_login");

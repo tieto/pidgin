@@ -43,9 +43,6 @@ extern void show_confirm_del_group(GaimGroup *);
 extern void show_confirm_del_blist_chat(GaimChat *);
 extern void show_confirm_del_contact(GaimContact *);
 
-/* Functions in gaimrc.c */
-extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
-
 /* Functions in idle.c */
 extern gint check_idle(gpointer);
 
