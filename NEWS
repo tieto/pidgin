@@ -16,6 +16,28 @@
 	looking at Sean's NEWS entry for 0.64--that's talent.  Also, stay 
 	in school.  Just say no.  Only you can prevent forest fires.
 
+	Christian: This has been a great release. faceprint rocks, as he got
+	things moving in the core/UI split by redoing preferences, which forced
+	us to think about how things would be split. We now have XML
+	preferences, accounts, pounces, and away messages. No more .gaimrc
+	ugliness. The accounts and connection code now have new core/UI split
+	APIs, and there is very little to do before our split is ready to be
+	used. Rob and I are working off an experimental tarball of what will
+	eventually be libgaim. He's working on a MacOS X UI (don't ask him
+	about it, he'll ignore you) and I'm doing a Qtopia UI (you can ask
+	about that, it's usable!). We added a new protocol, Trepia.
+	Information about it can be found at http://www.trepia.com/. It's not
+	complete, so don't send in bug reports about it not finding people in
+	your local area, please. Oh, and lots of MSN bugs were fixed.
+	Practically all the known ones. I feared 0.65 would be unstable due to
+	our rewrites, I believe this is going to be one of the most stable
+	releases we've had in awhile (knock on wood), thanks to Megan (Cae),
+	who has done an amazing job at locating, categorizing and documenting
+	the various bugs she has run into, and kevin (SimGuy). Stay tuned for
+	upcoming releases. Neat things are coming, but if it has fangs and
+	claws, curl into a ball. Or yell at it. I can't remember which is
+	correct.
+
 0.64 (05/29/2003):
 	Rob: I didn't do anything this release either.  We're under a crunch
 	week at work.  Friday is the end of the crunch. Hooray!! Thanks for
