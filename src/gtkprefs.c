@@ -973,6 +973,25 @@ GtkWidget *conv_page() {
 
 	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
 
+	names = NULL;
+	names = g_list_append(names, _("Top"));
+	names = g_list_append(names, GINT_TO_POINTER(GTK_POS_TOP));
+	names = g_list_append(names, _("Bottom"));
+	names = g_list_append(names, GINT_TO_POINTER(GTK_POS_BOTTOM));
+	names = g_list_append(names, _("Left"));
+	names = g_list_append(names, GINT_TO_POINTER(GTK_POS_LEFT));
+	names = g_list_append(names, _("Right"));
+	names = g_list_append(names, GINT_TO_POINTER(GTK_POS_RIGHT));
+
+	label = prefs_dropdown_from_list(vbox, _("_Tab Placement:"), GAIM_PREF_INT,
+									 "/gaim/gtk/conversations/tab_side",
+									 names);
+
+	g_list_free(names);
+
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_size_group_add_widget(sg, label);
+
 	button = prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
 							"/gaim/gtk/conversations/tabs", vbox);
 

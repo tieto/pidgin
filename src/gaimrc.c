@@ -884,6 +884,11 @@ static void gaimrc_read_options(FILE *f)
 		} else if (!strcmp(p->option, "im_options")) {
 			im_options = atoi(p->value[0]);
 
+			gaim_prefs_set_int("/gaim/gtk/conversations/tab_side",
+					((im_options & OPT_IM_SIDE_TAB)
+					 ? ((im_options & OPT_IM_BR_TAB) ? GTK_POS_RIGHT : GTK_POS_LEFT)
+					 : ((im_options & OPT_IM_BR_TAB) ? GTK_POS_BOTTOM : GTK_POS_TOP)));
+
 			gaim_prefs_set_bool("/gaim/gtk/conversations/im/hide_on_send",
 								(im_options & OPT_IM_POPDOWN));
 
