@@ -1315,7 +1315,6 @@ gint log_timeout(char *name)
 {
 	struct buddy *b;
 	struct group *g;
-	GList *mem;
 	
 	b = find_buddy(name);
 
@@ -1328,17 +1327,6 @@ gint log_timeout(char *name)
 		int count = 0;
 		gtk_widget_hide(b->item);
 		g = find_group_by_buddy(name);
-		mem = g->members;
-		while (mem) {
-			b = (struct buddy *)mem->data;
-                        if (b->present || GTK_WIDGET_VISIBLE(b->item)) {
-				count++;
-				break;
-			}
-			mem = mem->next;
-		}
-		if (!count && (display_options & OPT_DISP_NO_MT_GRP))
-			gtk_widget_hide(g->item);
 		if (GTK_TREE_ITEM(g->item)->expanded) {
 			gtk_tree_item_collapse(GTK_TREE_ITEM(g->item));
 			gtk_tree_item_expand(GTK_TREE_ITEM(g->item));

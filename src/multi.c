@@ -164,7 +164,7 @@ static GtkWidget *generate_list()
 	while (u) {
 		a = (struct aim_user *)u->data;
 		titles[0] = a->username;
-		titles[1] = find_gaim_conn_by_name(a->username) ? "True" : "False";
+		titles[1] = find_gaim_conn_by_name(a->username) ? "Yes" : "No";
 		titles[2] = (a->options & OPT_USR_AUTO) ? "True" : "False";
 		titles[3] = proto_name(a->protocol);
 		i = gtk_clist_append(GTK_CLIST(list), titles);
@@ -245,7 +245,7 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 		u->protocol = tmpusr.protocol;
 		gtk_widget_destroy(newmod);
 		titles[0] = u->username;
-		titles[1] = find_gaim_conn_by_name(u->username) ? "True" : "False";
+		titles[1] = find_gaim_conn_by_name(u->username) ? "Yes" : "No";
 		titles[2] = (u->options & OPT_USR_AUTO) ? "True" : "False";
 		titles[3] = proto_name(u->protocol);
 		i = gtk_clist_append(GTK_CLIST(list), titles);
@@ -641,7 +641,7 @@ void account_online(struct gaim_connection *gc)
 	if (!acctedit) return;
 	u = find_user(gc->username);
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), u);
-	gtk_clist_set_text(GTK_CLIST(list), i, 1, "True");
+	gtk_clist_set_text(GTK_CLIST(list), i, 1, "Yes");
 	gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(gc->protocol));
 	redo_convo_menus();
 }
@@ -653,7 +653,7 @@ void account_offline(struct gaim_connection *gc)
 	if (!acctedit) return;
 	u = find_user(gc->username);
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), u);
-	gtk_clist_set_text(GTK_CLIST(list), i, 1, "False");
+	gtk_clist_set_text(GTK_CLIST(list), i, 1, "No");
 }
 
 void auto_login()
