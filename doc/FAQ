@@ -8,6 +8,7 @@ GAIM: The Pimpin' Penguin IM Clone Thats Good For The Soul
 	1.4  How do I load plugins/perl scripts?
 	1.5  I'm not a native English speaker and I would like a translated
 	     version of gaim.
+	1.6  Why can I import my buddylist but not export it?
 
 2  Multiple Connections
 	2.1  What do you mean by "multiple connections"?
@@ -111,6 +112,13 @@ Chinese); however, most of them are out of date. If you would like to update
 or add a translation of gaim, email or IM either Rob or Eric and they can tell
 you how to go about it.
 
+1.6  Why can I import my buddylist but not export it?
+
+Because you don't have to.  Gaim, out of the kindness of its sweet little 
+heart, automagically exports your buddylist for you.  You can find a copy
+of your list in ~/.gaim/YOURNAME.PROTO.BLIST.  For example, if you're
+using AIM, and your name is JoeUser, then your buddy list could be found
+in: ~/.gaim/JOEUSER.0.blist.
 
 2  Multiple Connections
 
