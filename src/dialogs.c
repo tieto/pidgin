@@ -1165,16 +1165,19 @@ static void set_deny_type()
 	GSList *bg = gtk_radio_button_group(GTK_RADIO_BUTTON(deny_type));
 
 	switch (current_deny_gc->permdeny) {
+	case 5:
+		bg = bg->next->next;
+		break;
 	case 4:
 		break;
 	case 3:
-		bg = bg->next->next;
+		bg = bg->next->next->next;
 		break;
 	case 2:
 		bg = bg->next;
 		break;
 	case 1:
-		bg = bg->next->next->next;
+		bg = bg->next->next->next->next;
 		break;
 	}
 

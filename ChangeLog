@@ -96,6 +96,7 @@ version 0.60:
 	* Fix first message in tab not displaying bug (Thanks Etan Reisner)
 	* Switch the .desktop file to the new KDE/GNOME common vfolder 
 	  format (Thanks Robert McQueen).
+	* Allow only people in buddy list privacy option added for AIM
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
