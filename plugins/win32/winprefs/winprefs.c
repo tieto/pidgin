@@ -23,6 +23,7 @@
 #include <winerror.h>
 #include "gaim.h"
 #include "gtkplugin.h"
+#include "prefs.h"
 #include "win32dep.h"
 
 /*
@@ -31,13 +32,10 @@
 #define WINPREFS_PLUGIN_ID             "gaim-winprefs"
 #define WINPREFS_VERSION                 1
 
-/* Plugin options */
-#define OPT_WGAIM_AUTOSTART               0x00000001
-
 /*
  *  LOCALS
  */
-guint winprefs_options=0;
+static const char *OPT_WINPREFS_AUTOSTART="/plugins/gtk/win32/winprefs/auto_start";
 
 /*
  *  PROTOS
@@ -47,73 +45,45 @@ guint winprefs_options=0;
  *  CODE
  */
 
-static GtkWidget *wgaim_button(const char *text, guint *options, int option, GtkWidget *page) {
-	GtkWidget *button;
+static GtkWidget *wgaim_button(const char *text, const char *pref, GtkWidget *page) {
+        GtkWidget *button;
 	button = gtk_check_button_new_with_mnemonic(text);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), (*options & option));
-	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
-	g_object_set_data(G_OBJECT(button), "options", options);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), gaim_prefs_get_bool(pref));
+        gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
-	return button;
-}
-
-static void write_options(FILE *f) {
-	fprintf(f, "options {\n");
-	fprintf(f, "\twinprefs_options { %u }\n", winprefs_options);
-	fprintf(f, "}\n");
-}
-
-static void save_winprefs_prefs() {
-	FILE *f;
-	char buf[1024];
-
-	if (gaim_home_dir()) {
-		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaim" G_DIR_SEPARATOR_S "winprefsrc", gaim_home_dir());
-	}
-	else
-		return;
-
-	if ((f = fopen(buf, "w"))) {
-		fprintf(f, "# winprefsrc v%d\n", WINPREFS_VERSION);
-		write_options(f);
-		fclose(f);
-	}
-	else
-		debug_printf("Error opening wintransrc\n");
+        return button;
 }
 
 static int open_run_key(PHKEY phKey, REGSAM samDesired) {
-	/* First try current user key (for WinNT & Win2k +), fall back to local machine */
-	if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER, 
+        /* First try current user key (for WinNT & Win2k +), fall back to local machine */
+        if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER, 
 					 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
 					 0,  samDesired,  phKey));
 	else if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_LOCAL_MACHINE, 
 					      "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 
 					      0,  samDesired,  phKey));
 	else {
-		debug_printf("open_run_key: Could not open key for writing value\n");
+		gaim_debug(3, WINPREFS_PLUGIN_ID, "open_run_key: Could not open key for writing value\n");
 		return 0;
 	}
 	return 1;
 }
 
-static void set_winprefs_option(GtkWidget *w, int option) {
-	winprefs_options ^= option;
-	save_winprefs_prefs();
-
-	if(option == OPT_WGAIM_AUTOSTART) {
+static void set_winprefs_option(GtkWidget *w, const char *key) {
+        gaim_prefs_set_bool(key, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
+	if(key == OPT_WINPREFS_AUTOSTART) {
 		HKEY hKey;
 
 		if(!open_run_key(&hKey, KEY_SET_VALUE))
 			return;
-		if(winprefs_options & OPT_WGAIM_AUTOSTART) {
+		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))) {
 			char buffer[1024];
 			DWORD size;
 
 			if((size = GetModuleFileName(wgaim_hinstance(),
 						     (LPBYTE)buffer,
 						     sizeof(buffer)))==0) {
-				debug_printf("GetModuleFileName Error.. Could not set Gaim autostart.\n");
+				gaim_debug(3, WINPREFS_PLUGIN_ID, "GetModuleFileName Error.. Could not set Gaim autostart.\n");
 				RegCloseKey(hKey);
 				return;
 			}
@@ -124,11 +94,11 @@ static void set_winprefs_option(GtkWidget *w, int option) {
 							  REG_SZ,
 							  buffer,
 							  size))
-				debug_printf("Could not set registry key value\n");
+				gaim_debug(3, WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
  		}
 		else {
 			if(ERROR_SUCCESS != RegDeleteValue(hKey, "Gaim"))
-				debug_printf("Could not delete registry key value\n");
+				gaim_debug(3, WINPREFS_PLUGIN_ID, "Could not delete registry key value\n");
 		}
 		RegCloseKey(hKey);
 	}
@@ -148,18 +118,26 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 
 	/* IM Convo trans options */
 	vbox = gaim_gtk_make_frame (ret, _("Startup"));
-	button = wgaim_button(_("_Start Gaim on Windows startup"), &winprefs_options, OPT_WGAIM_AUTOSTART, vbox);
+	button = wgaim_button(_("_Start Gaim on Windows startup"), OPT_WINPREFS_AUTOSTART, vbox);
 	/* Set initial value */
 	if(open_run_key(&hKey, KEY_QUERY_VALUE)) {
 		if(ERROR_SUCCESS == RegQueryValueEx(hKey, "Gaim", 0, NULL, NULL, NULL)) {
-			winprefs_options ^= OPT_WGAIM_AUTOSTART;
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 		}
 	}
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_winprefs_option), (int *)OPT_WGAIM_AUTOSTART);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_winprefs_option), (void *)OPT_WINPREFS_AUTOSTART);
 
 	gtk_widget_show_all(ret);
 	return ret;
+}
+
+static gboolean plugin_load(GaimPlugin *plugin)
+{
+  gaim_prefs_add_none("/plugins/gtk/win32");
+  gaim_prefs_add_none("/plugins/gtk/win32/winprefs");
+  gaim_prefs_add_bool("/plugins/gtk/win32/winprefs/auto_start", FALSE);
+
+  return TRUE;
 }
 
 static GaimGtkPluginUiInfo ui_info =
@@ -182,7 +160,7 @@ static GaimPluginInfo info =
 	N_("Options specific to Windows Gaim."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",
 	WEBSITE,
-	NULL,
+	plugin_load,
 	NULL,
 	NULL,
 	&ui_info,

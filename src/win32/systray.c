@@ -146,7 +146,7 @@ static void systray_show_menu(int x, int y, BOOL connected) {
 	/* in both connected and disconnected case delete away message menu */
 	if(systray_away_menu) {
 		if(!DeleteMenu(systray_menu, (UINT)systray_away_menu, MF_BYCOMMAND))
-			debug_printf("Error using DeleteMenu\n");
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_systray", "Error using DeleteMenu\n");
 	}
 
 
@@ -160,8 +160,8 @@ static void systray_show_menu(int x, int y, BOOL connected) {
 			pos = GetMenuItemPosition(systray_menu, SYSTRAY_CMND_MENU_EXIT) - 1;
 			if(!InsertMenu(systray_menu, pos, 
 				       MF_BYPOSITION | MF_STRING, SYSTRAY_CMND_SIGNOFF, locenc))
-				debug_printf("InsertMenu failed: %s\n", GetLastError());
-			debug_printf("Inserted Menu with ID: %d\n", SYSTRAY_CMND_SIGNOFF);
+				gaim_debug(GAIM_DEBUG_ERROR, "wgaim_systray", "InsertMenu failed: %s\n", GetLastError());
+			gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "Inserted Menu with ID: %d\n", SYSTRAY_CMND_SIGNOFF);
 			g_free(locenc);
 		}
 		locenc = g_locale_from_utf8(_("Set Away Message"), -1, NULL, NULL, NULL);
@@ -192,7 +192,7 @@ static void systray_show_menu(int x, int y, BOOL connected) {
 			pos = GetMenuItemPosition(systray_menu, SYSTRAY_CMND_MENU_EXIT) - 1;
 			if(!InsertMenu(systray_menu, pos, 
 				       MF_BYPOSITION | MF_STRING, SYSTRAY_CMND_SIGNON, locenc))
-				debug_printf("InsertMenu failed: %s\n", GetLastError());
+				gaim_debug(GAIM_DEBUG_ERROR, "wgaim_systray", "InsertMenu failed: %s\n", GetLastError());
 			g_free(locenc);
 		}
 		EnableMenuItem(systray_menu, SYSTRAY_CMND_AUTOLOGIN, MF_ENABLED);
@@ -232,53 +232,53 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 
 	switch(msg) {
 	case WM_CREATE:
-		debug_printf("WM_CREATE\n");
+		gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "WM_CREATE\n");
 		taskbarRestartMsg = RegisterWindowMessage("TaskbarCreated");
 		break;
 		
 	case WM_TIMER:
-		debug_printf("WM_TIMER\n");
+		gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "WM_TIMER\n");
 		break;
 
 	case WM_DESTROY:
-		debug_printf("WM_DESTROY\n");
+		gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "WM_DESTROY\n");
 		break;
 
 	case WM_COMMAND:
-		debug_printf("WM_COMMAND\n");
+		gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "WM_COMMAND\n");
 		switch(LOWORD(wparam)) {
 		case SYSTRAY_CMND_MENU_EXIT:
 			do_quit();
 			break;
 		case SYSTRAY_CMND_SIGNON:
-			debug_printf("signon\n");
+			gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "signon\n");
 			show_login();
 			break;
 		case SYSTRAY_CMND_SIGNOFF:
-			debug_printf("signoff\n");
+			gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "signoff\n");
 			gaim_connections_disconnect_all();
 			break;
 		case SYSTRAY_CMND_AUTOLOGIN:
-			debug_printf("autologin\n");
-			/*auto_login();*/
+			gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "autologin\n");
+			gaim_accounts_auto_login(GAIM_GTK_UI);
 			break;
 		case SYSTRAY_CMND_PREFS:
-			debug_printf("Prefs\n");
+			gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "Prefs\n");
 			gaim_gtk_prefs_show();
 			break;
 		case SYSTRAY_CMND_BACK:
-			debug_printf("I'm back\n");
+			gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "I'm back\n");
 			do_im_back(NULL, NULL);
 			break;
 		case SYSTRAY_CMND_SET_AWY_NEW:
-			debug_printf("New away item\n");
+			gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "New away item\n");
 			create_away_mess(NULL, NULL);
 			break;
 		default:
 			/* SYSTRAY_CMND_SET_AWY */
 			if((LOWORD(wparam) >= SYSTRAY_CMND_SET_AWY) &&
 			   (LOWORD(wparam) <= (SYSTRAY_CMND_SET_AWY + MAX_AWY_MESSAGES))) {
-				debug_printf("Set away message\n");
+				gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "Set away message\n");
 				systray_set_away(LOWORD(wparam)-SYSTRAY_CMND_SET_AWY);
 			}
 		}
@@ -289,7 +289,7 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 			/* Double Click */
 			/* Either hide or show current window (login or buddy) */
 			gaim_gtk_blist_docklet_toggle();
-			debug_printf("Systray got double click\n");
+			gaim_debug(GAIM_DEBUG_INFO, "wgaim_systray", "Systray got double click\n");
 		}
 		if( lparam == WM_RBUTTONUP ) {
 			/* Right Click */
@@ -353,20 +353,20 @@ static void systray_create_menu(void) {
 	if((systray_menu = CreatePopupMenu())) {
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_PREFS, 
 			       (locenc=g_locale_from_utf8(_("Preferences"), -1, NULL, NULL, NULL))))
-			debug_printf("AppendMenu error: %ld\n", GetLastError());
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_systray", "AppendMenu error: %ld\n", GetLastError());
 		g_free(locenc);
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_AUTOLOGIN, 
 			       (locenc=g_locale_from_utf8(_("Auto-login"), -1, NULL, NULL, NULL))))
-			debug_printf("AppendMenu error: %ld\n", GetLastError());
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_systray", "AppendMenu error: %ld\n", GetLastError());
 		g_free(locenc);
 		if(!AppendMenu(systray_menu, MF_SEPARATOR, 0, 0))
-			debug_printf("AppendMenu error: %ld\n", GetLastError());
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_systray", "AppendMenu error: %ld\n", GetLastError());
 		if(!AppendMenu(systray_menu, MF_STRING, SYSTRAY_CMND_MENU_EXIT,
 			       (locenc=g_locale_from_utf8(_("Exit"), -1, NULL, NULL, NULL))))
-			debug_printf("AppendMenu error: %ld\n", GetLastError());
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_systray", "AppendMenu error: %ld\n", GetLastError());
 		g_free(locenc);
 	} else
-		debug_printf("CreatePopupMenu error: %ld\n", GetLastError());
+		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_systray", "CreatePopupMenu error: %ld\n", GetLastError());
 }
 
 static void systray_init_icon(HWND hWnd, HICON icon) {
@@ -423,23 +423,17 @@ static void systray_update_status() {
 	if(gaim_connections_get_all()) {
 		if(awaymessage) {
 			st_state = SYSTRAY_STATE_AWAY;
-#if 0
 		} else if(gaim_connections_get_connecting()) {
 			st_state = SYSTRAY_STATE_ONLINE_CONNECTING;
-#endif
 		} else {
 			st_state = SYSTRAY_STATE_ONLINE;
 		}
 	} else {
-#if 0
 		if(gaim_connections_get_connecting()) {
 			st_state = SYSTRAY_STATE_OFFLINE_CONNECTING;
 		} else {
-#endif
 			st_state = SYSTRAY_STATE_OFFLINE;
-#if 0
 		}
-#endif
 	}
 	if(st_state != old_state) {
 		systray_update_icon();
