@@ -283,8 +283,10 @@ if test "$enable_perl" = yes ; then
 		AC_MSG_RESULT(no)
 	fi
 
-	prefix=`eval echo $prefix`
-	PERL_MM_PARAMS="INSTALLDIRS=perl PREFIX=$prefix"
+	if test "x$prefix" != "xNONE"; then
+		prefix=`eval echo $prefix`
+		PERL_MM_PARAMS="INSTALLDIRS=perl PREFIX=$prefix"
+	fi
 
 	AC_ARG_WITH(perl-lib,
 	[  --with-perl-lib=[site|vendor|DIR]  Specify where to install the
