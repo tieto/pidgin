@@ -881,6 +881,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		return;
 	}
 	name = angel;
+
 	message = buffy;
 
 	/*

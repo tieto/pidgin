@@ -299,7 +299,6 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 	prpl = GAIM_PLUGIN_PROTOCOL_INFO
 		(gaim_find_prpl(gaim_account_get_protocol_id(account)))->list_icon(account, NULL);
 	path = g_build_filename(gaim_user_dir(), "logs", prpl, me, gaim_normalize(account, screenname), NULL);
-
 	g_free(me);
 
 	if (!(dir = g_dir_open(path, 0, NULL))) {
