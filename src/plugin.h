@@ -250,6 +250,11 @@ void gaim_plugins_unload_all(void);
 void gaim_plugins_destroy_all(void);
 
 /**
+ * Attempts to load all the plugins that were loaded when gaim last quit
+ */
+void gaim_plugins_load_all(void);
+
+/**
  * Probes for plugins in the registered module paths.
  *
  * @param ext The extension type to probe for, or @c NULL for all.

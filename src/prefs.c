@@ -100,6 +100,7 @@ void gaim_prefs_init() {
 	gaim_prefs_add_none("/plugins/core");
 	gaim_prefs_add_none("/plugins/lopl");
 	gaim_prefs_add_none("/plugins/prpl");
+	gaim_prefs_add_string_list("/plugins/loaded", NULL);
 
 	/* XXX: this is where you would want to put prefs declarations */
 
@@ -763,43 +764,53 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 	}
 
 	if(!strcmp(element_name, "item")) {
-		struct gaim_pref *pref = find_pref(prefs_stack->data);
+		struct gaim_pref *pref;
+
+		pref_name_full = g_string_new("");
+
+		for(tmp = prefs_stack; tmp; tmp = tmp->next) {
+			pref_name_full = g_string_prepend(pref_name_full, tmp->data);
+			pref_name_full = g_string_prepend_c(pref_name_full, '/');
+		}
+
+		pref = find_pref(pref_name_full->str);
+
 		if(pref) {
 			pref->value.stringlist = g_list_append(pref->value.stringlist,
 					g_strdup(pref_value));
 		}
-		return;
-	} else if(!pref_name || !strcmp(pref_name, "/")) {
-		return;
-	}
+	} else {
+		if(!pref_name || !strcmp(pref_name, "/"))
+			return;
 
-	pref_name_full = g_string_new(pref_name);
+		pref_name_full = g_string_new(pref_name);
 
-	for(tmp = prefs_stack; tmp; tmp = tmp->next) {
+		for(tmp = prefs_stack; tmp; tmp = tmp->next) {
+			pref_name_full = g_string_prepend_c(pref_name_full, '/');
+			pref_name_full = g_string_prepend(pref_name_full, tmp->data);
+		}
+
 		pref_name_full = g_string_prepend_c(pref_name_full, '/');
-		pref_name_full = g_string_prepend(pref_name_full, tmp->data);
+
+		switch(pref_type) {
+			case GAIM_PREF_NONE:
+				break;
+			case GAIM_PREF_BOOLEAN:
+				gaim_prefs_set_bool(pref_name_full->str, atoi(pref_value));
+				break;
+			case GAIM_PREF_INT:
+				gaim_prefs_set_int(pref_name_full->str, atoi(pref_value));
+				break;
+			case GAIM_PREF_STRING:
+				gaim_prefs_set_string(pref_name_full->str, pref_value);
+				break;
+			case GAIM_PREF_STRING_LIST:
+				gaim_prefs_set_string_list(pref_name_full->str, NULL);
+				break;
+		}
+		prefs_stack = g_list_prepend(prefs_stack, g_strdup(pref_name));
+		g_string_free(pref_name_full, TRUE);
 	}
-
-	pref_name_full = g_string_prepend_c(pref_name_full, '/');
-
-	switch(pref_type) {
-		case GAIM_PREF_NONE:
-			break;
-		case GAIM_PREF_BOOLEAN:
-			gaim_prefs_set_bool(pref_name_full->str, atoi(pref_value));
-			break;
-		case GAIM_PREF_INT:
-			gaim_prefs_set_int(pref_name_full->str, atoi(pref_value));
-			break;
-		case GAIM_PREF_STRING:
-			gaim_prefs_set_string(pref_name_full->str, pref_value);
-			break;
-		case GAIM_PREF_STRING_LIST:
-			break;
-	}
-
-	prefs_stack = g_list_prepend(prefs_stack, g_strdup(pref_name));
-	g_string_free(pref_name_full, TRUE);
 }
 
 static void prefs_end_element_handler(GMarkupParseContext *context,

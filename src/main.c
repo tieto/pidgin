@@ -914,6 +914,8 @@ int main(int argc, char *argv[])
 		gaim_prefs_sync();
 	}
 
+	/* load plugins we had when we quit */
+	gaim_plugins_load_all();
 
 	gaim_accounts_load();
 
