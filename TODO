@@ -13,6 +13,8 @@
 	Make it so you can register new accounts via gaim
 	Jabber/ICQ/Napster user registration
 
+	ICQ through Oscar plugin (requires hacking libfaim :-/)
+
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies
 			like it is now, one for who just came online/offline
