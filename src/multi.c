@@ -369,8 +369,6 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 	GtkWidget *name;
 	GtkWidget *pass;
 	GtkWidget *rempass;
-	
-	struct prpl *p = NULL;
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -418,17 +416,11 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 		gtk_entry_set_text(GTK_ENTRY(name), u->username);
 		gtk_entry_set_text(GTK_ENTRY(pass), u->password);
 		gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
-		p = find_prpl(u->tmp_protocol);
 	} else {
 		tmpusr.name = name;
 		tmpusr.pwdbox = pwdbox;
 		tmpusr.pass = pass;
 		tmpusr.rempass = rempass;
-		p = find_prpl(tmpusr.tmp_protocol);
-	}
-	if (p->options & OPT_PROTO_NO_PASSWORD) {
-		gtk_widget_hide(pwdbox);
-		gtk_widget_hide(rempass);
 	}
 }
 
@@ -467,6 +459,8 @@ static void show_acct_mod(struct aim_user *u)
 	GtkWidget *book;
 	GtkWidget *hbox;
 	GtkWidget *button;
+
+	struct prpl *p;
 
 	if (!u && newmod) {
 		gtk_widget_show(newmod);
@@ -520,6 +514,20 @@ static void show_acct_mod(struct aim_user *u)
 	}
 
 	gtk_widget_show_all(mod);
+	
+	if (u) {
+		p = find_prpl(u->tmp_protocol);
+		if (p->options & OPT_PROTO_NO_PASSWORD) {
+			gtk_widget_hide(u->pwdbox);
+			gtk_widget_hide(u->rempass);
+		}
+	} else {
+		p = find_prpl(tmpusr.tmp_protocol);
+		if (p->options & OPT_PROTO_NO_PASSWORD) {
+			gtk_widget_hide(tmpusr.pwdbox);
+			gtk_widget_hide(tmpusr.rempass);
+		}
+	}
 }
 
 static void add_acct(GtkWidget *w, gpointer d)
@@ -636,7 +644,8 @@ static void acct_signin(GtkWidget *w, gpointer d)
 		row = (int)l->data;
 		u = g_list_nth_data(aim_users, row);
 		if (!u->gc) {
-			if (!u->password[0]) {
+			struct prpl *p = find_prpl(u->protocol);
+			if (p && !(p->options & OPT_PROTO_NO_PASSWORD) && !u->password[0]) {
 				do_pass_dlg(u);
 			} else {
 #ifdef USE_APPLET
