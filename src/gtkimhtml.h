@@ -298,7 +298,7 @@ void gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, const gchar *protocol_name)
  * @param imhtml  The GTK IM/HTML.
  * @param text    The formatted text to append.
  * @param options A GtkIMHtmlOptions object indicating insert behavior.
- * @param unused  Use NULL value.
+ * @param unused  Use @c NULL value.
  */
 void gtk_imhtml_append_text_with_images(GtkIMHtml *imhtml,
                                          const gchar *text,
@@ -466,19 +466,19 @@ void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable);
 void gtk_imhtml_set_whole_buffer_formatting_only(GtkIMHtml *imhtml, gboolean wbfo);
 
 /**
- * Indicates which formatting fuctions to enable and disable in a GTK IM/HTML.
+ * Indicates which formatting functions to enable and disable in a GTK IM/HTML.
  *
  * @param imhtml  The GTK IM/HTML.
- * @param buttons A GtkIMHtmlButtons bitmask indicating which fuctions to use.
+ * @param buttons A GtkIMHtmlButtons bitmask indicating which functions to use.
  */
 void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons);
 
 /**
- * Returns which formatting fuctions are enabled in a GTK IM/HTML.
+ * Returns which formatting functions are enabled in a GTK IM/HTML.
  *
  * @param imhtml The GTK IM/HTML.
  *
- * @return A GtkIMHtmlButtons bitmask indicating which fuctions to are enabled.
+ * @return A GtkIMHtmlButtons bitmask indicating which functions to are enabled.
  */
 GtkIMHtmlButtons gtk_imhtml_get_format_functions(GtkIMHtml *imhtml);
 
@@ -574,7 +574,7 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
  * IM/HTML.
  *
  * @param imhtml The GTK IM/HTML.
- * @param color  The HTML-style color, or NULL or "" to clear the color.
+ * @param color  The HTML-style color, or @c NULL or "" to clear the color.
  *
  * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
  */
@@ -585,7 +585,7 @@ gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color);
  * IM/HTML.
  *
  * @param imhtml The GTK IM/HTML.
- * @param color  The HTML-style color, or NULL or "" to clear the color.
+ * @param color  The HTML-style color, or @c NULL or "" to clear the color.
  *
  * @return @c TRUE if a color was set, or @c FALSE if it was cleared.
  */
@@ -595,7 +595,7 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color);
  * Toggles a font face at the current location or selection in a GTK IM/HTML.
  *
  * @param imhtml The GTK IM/HTML.
- * @param face   The font face name, or NULL or "" to clear the font.
+ * @param face   The font face name, or @c NULL or "" to clear the font.
  *
  * @return @c TRUE if a font name was set, or @c FALSE if it was cleared.
  */
@@ -606,7 +606,7 @@ gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face);
  * in a GTK IM/HTML.
  *
  * @param imhtml The GTK IM/HTML.
- * @param url    The URL for the link or NULL to terminate the link.
+ * @param url    The URL for the link or @c NULL to terminate the link.
  */
 void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url);
 
@@ -708,7 +708,7 @@ char **gtk_imhtml_get_markup_lines(GtkIMHtml *imhtml);
  *
  * @param imhtml The GTK IM/HTML.
  * @param start  The GtkTextIter indicating the start point in the IM/HTML.
- * @param end    The GtkTextIter indicating the end point in the IM/HTML.
+ * @param stop   The GtkTextIter indicating the end point in the IM/HTML.
  *
  * @return A string containing the unformatted text.
  */
