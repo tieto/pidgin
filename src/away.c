@@ -52,11 +52,6 @@ static void destroy_im_away()
 
 void do_im_back(GtkWidget *w, GtkWidget *x)
 {
-#ifdef USE_APPLET
-	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
-	set_user_state(online);
-	insert_applet_away();
-#endif /* USE_APPLET */
 	if (imaway) {
 		GtkWidget *tmp = imaway;
 		imaway = NULL;
@@ -66,6 +61,11 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 
 	serv_set_away(NULL);
 	awaymessage = NULL;
+#ifdef USE_APPLET
+	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
+	set_user_state(online);
+	insert_applet_away();
+#endif /* USE_APPLET */
 }
 
 
@@ -105,13 +105,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 	if (!a)
 		return;
-
-#ifdef USE_APPLET
-	remove_applet_away();
-	applet_widget_register_callback(APPLET_WIDGET(applet),
-					"away", _("Back"), (AppletCallbackFunc)do_im_back, NULL);
-	set_user_state(away);
-#endif
 
 	if (!imaway) {
 		imaway = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -165,6 +158,13 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		do_away_message(w, a);
 		return;
 	}
+
+#ifdef USE_APPLET
+	remove_applet_away();
+	applet_widget_register_callback(APPLET_WIDGET(applet),
+					"away", _("Back"), (AppletCallbackFunc)do_im_back, NULL);
+	set_user_state(away);
+#endif
 
 	/* New away message... Clear out the old sent_aways */
 	while (cnv) {
