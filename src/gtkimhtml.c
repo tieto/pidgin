@@ -54,6 +54,7 @@
 #define TOOLTIP_TIMEOUT 500
 
 static gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer user_data);
+static gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer user_data);
 
 static gboolean gtk_size_allocate_cb(GtkWidget *widget, GtkAllocation *alloc, gpointer user_data);
 static gint gtk_imhtml_tip (gpointer data);
@@ -230,8 +231,10 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 			g_free, (GDestroyNotify)gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
 
-	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "size-allocate", G_CALLBACK(gtk_size_allocate_cb), NULL);
+	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
+	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
+	gtk_widget_add_events(GTK_WIDGET(imhtml), GDK_LEAVE_NOTIFY_MASK);
 
 	imhtml->tip = NULL;
 	imhtml->tip_timer = 0;
@@ -390,6 +393,23 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 	
 	GTK_IMHTML(imhtml)->tip = tip;
 	g_slist_free(tags);
+	return FALSE;
+}
+
+gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data)
+{
+	/* when leaving the widget, clear any current & pending tooltips and restore the cursor */
+	if (GTK_IMHTML(imhtml)->tip_window) {
+		gtk_widget_destroy(GTK_IMHTML(imhtml)->tip_window);
+		GTK_IMHTML(imhtml)->tip_window = NULL;
+	}
+	if (GTK_IMHTML(imhtml)->tip_timer) {
+		g_source_remove(GTK_IMHTML(imhtml)->tip_timer);
+		GTK_IMHTML(imhtml)->tip_timer = 0;
+	}
+	gdk_window_set_cursor(event->window, GTK_IMHTML(imhtml)->arrow_cursor);
+
+	/* propogate the event normally */
 	return FALSE;
 }
 

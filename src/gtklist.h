@@ -51,12 +51,13 @@ struct gaim_gtk_buddy_list {
 
 	GtkWidget *treeview;            /**< It's a treeview... d'uh. */
 	GtkTreeStore *treemodel;        /**< This is the treemodel.  */
-		
 	GtkTreeViewColumn *idle_column, 
 		*warning_column, 
 		*buddy_icon_column;
-	
+
 	GtkWidget *bbox;                /**< A Button Box. */
+
+	guint refresh_timer;            /**< The timer for refreshing every 30 seconds */
 
 	guint      timeout;              /**< The timeout for the tooltip. */
 	GdkRectangle rect;               /**< This is the bounding rectangle of the

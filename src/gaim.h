@@ -157,13 +157,8 @@
 /*#define OPT_ACCT_KEEPALV	0x00000002 this shouldn't be optional */
 #define OPT_ACCT_REM_PASS	0x00000004
 #define OPT_ACCT_MAIL_CHECK      0x00000008
-/*do not use OPT_ACCT		0x00000010  talk to robot101 about automatic
- 						name stuff with this option
- */
 
 #define DEFAULT_INFO "Visit the Gaim website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
-
-
 
 enum log_event {
 	log_signon = 0,
@@ -232,7 +227,7 @@ extern guint blist_options;
 #define OPT_BLIST_SHOW_PIXMAPS		0x00000010
 #define OPT_BLIST_SHOW_IDLETIME		0x00000020
 #define OPT_BLIST_SHOW_BUTTON_XPM	0x00000040
-#define OPT_BLIST_NO_BUTTONS		0x00000080
+#define OPT_BLIST_NO_BUTTON_TEXT	0x00000080
 #define OPT_BLIST_NO_MT_GRP		0x00000100
 #define OPT_BLIST_SHOW_WARN		0x00000200
 #define OPT_BLIST_GREY_IDLERS		0x00000400

@@ -541,8 +541,11 @@ GtkWidget *list_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame (ret, _("Buttons"));
-	gaim_button(_("_Hide IM/Info/Chat buttons"), &blist_options, OPT_BLIST_NO_BUTTONS, vbox);
-	gaim_button(_("Show _pictures on buttons"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM, vbox);
+	gaim_dropdown(vbox, _("Show _buttons as:"), &blist_options, OPT_BLIST_SHOW_BUTTON_XPM | OPT_BLIST_NO_BUTTON_TEXT,
+		      _("Pictures"), OPT_BLIST_SHOW_BUTTON_XPM | OPT_BLIST_NO_BUTTON_TEXT, 
+		      _("Text"), 0,
+		      _("Pictures and text"), OPT_BLIST_SHOW_BUTTON_XPM,
+		      _("None"), OPT_BLIST_NO_BUTTON_TEXT, NULL);
 
 	vbox = make_frame (ret, _("Buddy List Window"));
 	gaim_button(_("_Save window size/position"), &blist_options, OPT_BLIST_SAVED_WINDOWS, vbox);
@@ -557,7 +560,7 @@ GtkWidget *list_page() {
 	/* gaim_button(_("Show buddy t_ype icons"), &blist_options, OPT_BLIST_SHOW_PIXMAPS, vbox); */
 	gaim_button(_("Show _warning levels"), &blist_options, OPT_BLIST_SHOW_WARN, vbox);
 	gaim_button(_("Show idle _times"), &blist_options, OPT_BLIST_SHOW_IDLETIME, vbox);
-	gaim_button(_("Grey i_dle buddies"), &blist_options, OPT_BLIST_GREY_IDLERS, vbox);
+	gaim_button(_("Dim i_dle buddies"), &blist_options, OPT_BLIST_GREY_IDLERS, vbox);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -1975,9 +1978,7 @@ static void set_blist_option(GtkWidget *w, int option)
 	if (!gtkblist)
 		return;
 	
-	if (option == OPT_BLIST_NO_BUTTONS || option == OPT_BLIST_NO_BUTTONS)
-		gaim_gtk_blist_update_toolbar();
-	else if (option == OPT_BLIST_SHOW_WARN ||
+	if (option == OPT_BLIST_SHOW_WARN ||
 		 option == OPT_BLIST_SHOW_IDLETIME)
 		gaim_gtk_blist_update_columns();
 	else if (option == OPT_BLIST_SHOW_ICONS) {
@@ -1985,9 +1986,6 @@ static void set_blist_option(GtkWidget *w, int option)
 		gaim_gtk_blist_update_columns();
 	} else
 		gaim_gtk_blist_refresh(gaim_get_blist());
-
-	
-
 }
 
 static void set_convo_option(GtkWidget *w, int option)
@@ -2303,6 +2301,8 @@ void dropdown_set(GObject *w, int *option)
 		else
 			gtk_widget_set_sensitive(sndcmd, FALSE);
 		gaim_sound_change_output_method();
+	} else if (option == (int*)&blist_options) {
+		gaim_gtk_blist_update_toolbar();
 	} else if (option == (int*)&im_options) { 
 		if (clear == (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB))
 			gaim_gtkconv_update_tabs();

@@ -377,17 +377,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 #endif
 }
 
-/* This is called 10 seconds after the buddy logs in.  It removes the "logged in" icon and replaces it with
- * the normal status icon */
-
-static gboolean gaim_reset_present_icon(GaimBlistNode *b)
-{
-	((struct buddy*)b)->present = 1;
-	gaim_gtk_blist_update(NULL, b);
-	return FALSE;
-}
-
-static void edit_mode_cb(gpointer callback_data, guint callback_action,
+static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_action,
 		GtkWidget *checkitem) {
 	GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
 	gdk_window_set_cursor(gtkblist->window->window, cursor);
@@ -405,16 +395,17 @@ static void edit_mode_cb(gpointer callback_data, guint callback_action,
 	gaim_gtk_blist_refresh(gaim_get_blist());
 }
 
+/* This is called 10 seconds after the buddy logs in.  It removes the "logged in" icon and replaces it with
+ * the normal status icon. Make sure they didn't sign off in the mean-time though. */
 
-static void gaim_gtk_blist_update_toolbar_icons (GtkWidget *widget, gpointer data) {
-	if (GTK_IS_IMAGE(widget)) {
-		if (blist_options & OPT_BLIST_SHOW_BUTTON_XPM)
-			gtk_widget_show(widget);
-		else
-			gtk_widget_hide(widget);
-	} else if (GTK_IS_CONTAINER(widget)) {
-		gtk_container_foreach(GTK_CONTAINER(widget), gaim_gtk_blist_update_toolbar_icons, NULL);
+static gboolean gaim_reset_present_icon (GaimBlistNode *b)
+{
+	if (((struct buddy *)b)->present == 2) {
+		((struct buddy *)b)->present = 1;
+		gaim_gtk_blist_update(NULL, b);
 	}
+
+	return FALSE;
 }
 
 static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
@@ -657,7 +648,7 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Edit menu */
 	{ N_("/_Edit"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Edit/_Show Offline Buddies"), NULL, edit_mode_cb, 1, "<CheckItem>"},
+	{ N_("/Edit/_Show Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Edit/_Add a Buddy..."), NULL, gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD }, 
 	{ N_("/Edit/Add a _Group..."), NULL, show_add_group, 0, NULL},
 	{ "/Edit/sep", NULL, NULL, 0, "<Separator>" },
@@ -665,7 +656,6 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Edit/Preferences"), "<CTL>P", show_prefs, 0,
 	  "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Edit/Pr_ivacy"), NULL, show_privacy_options, 0, NULL },
-	
 
 	/* Tools */ 
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
@@ -1073,6 +1063,24 @@ static void gaim_gtk_blist_restore_position()
 	}
 }
 
+static gboolean gaim_gtk_blist_refresh_timer(struct gaim_buddy_list *list)
+{
+	GaimBlistNode *group = list->root;
+	GaimBlistNode *buddy;
+
+	while (group) {
+		buddy = group->child;
+		while (buddy) {
+			if (((struct buddy *)buddy)->idle)
+				gaim_gtk_blist_update(list, buddy);
+			buddy = buddy->next;
+		}
+		group = group->next;
+	}
+
+	/* keep on going */
+	return TRUE;
+}
 
 /**********************************************************************************
  * Public API Functions                                                           *
@@ -1221,15 +1229,6 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
 
-	/* OK... let's show this bad boy. */
-	gaim_gtk_blist_refresh(list);
-	gaim_gtk_blist_restore_position();
-	gtk_widget_show_all(gtkblist->window);
-
-	/* the button box below is first added now, the reason is that if we
-	 * show() it immediately, the buddy list width will be dependent of
-	 * the button box even if the user turned the button box off. */
-
 	/**************************** Button Box **************************************/
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
@@ -1261,16 +1260,18 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(gtk_blist_button_away_cb), NULL);
 
+	gaim_gtk_blist_update_toolbar();
+
 	/* set the Show Offline Buddies option */
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (ift, N_("/Edit/Show Offline Buddies"))),
 			blist_options & OPT_BLIST_SHOW_OFFLINE);
 
 	/* OK... let's show this bad boy. */
-	gaim_gtk_blist_refresh(list);
 	gaim_gtk_blist_restore_position();
 	gtk_widget_show_all(gtkblist->window);
 
-	gaim_gtk_blist_update_toolbar();
+	gaim_gtk_blist_refresh(list);
+	gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)gaim_gtk_blist_refresh_timer, list);
 }
 
 void gaim_gtk_blist_refresh(struct gaim_buddy_list *list)
@@ -1322,16 +1323,42 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
 	return get_iter_from_node_helper(node, iter, &root);
 }
 
+/*
+ * These state assignments suck. I'm sorry. They're for historical reasons.
+ * Roll on new prefs. -Robot101
+ * 
+ * NO_BUTTON_TEXT && SHOW_BUTTON_XPM - image
+ * !NO_BUTTON_TEXT && !SHOW_BUTTON_XPM - text
+ * !NO_BUTTON_TEXT && SHOW_BUTTON_XPM - text & images
+ * NO_BUTTON_TEXT && !SHOW_BUTTON_XPM - none
+ */
+
+static void gaim_gtk_blist_update_toolbar_icons (GtkWidget *widget, gpointer data) {
+	if (GTK_IS_IMAGE(widget)) {
+		if (blist_options & OPT_BLIST_SHOW_BUTTON_XPM)
+			gtk_widget_show(widget);
+		else
+			gtk_widget_hide(widget);
+	} else if (GTK_IS_LABEL(widget)) {
+		if (blist_options & OPT_BLIST_NO_BUTTON_TEXT)
+			gtk_widget_hide(widget);
+		else
+			gtk_widget_show(widget);
+	} else if (GTK_IS_CONTAINER(widget)) {
+		gtk_container_foreach(GTK_CONTAINER(widget), gaim_gtk_blist_update_toolbar_icons, NULL);
+	}
+}
+
 void gaim_gtk_blist_update_toolbar() {
 	if (!gtkblist)
 		return;
 
-	gtk_container_foreach(GTK_CONTAINER(gtkblist->bbox), gaim_gtk_blist_update_toolbar_icons, NULL);
-
-	if (blist_options & OPT_BLIST_NO_BUTTONS)
+	if (blist_options & OPT_BLIST_NO_BUTTON_TEXT && !(blist_options & OPT_BLIST_SHOW_BUTTON_XPM))
 		gtk_widget_hide(gtkblist->bbox);
-	else
+	else {
 		gtk_widget_show_all(gtkblist->bbox);
+		gtk_container_foreach(GTK_CONTAINER(gtkblist->bbox), gaim_gtk_blist_update_toolbar_icons, NULL);
+	}
 }
 
 static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *node)
@@ -1572,8 +1599,16 @@ static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 {
 	if (!gtkblist)
 		return;
+
 	gtk_widget_destroy(gtkblist->window);
 
+	if (gtkblist->refresh_timer)
+		g_source_remove(gtkblist->refresh_timer);
+	if (gtkblist->timeout)
+		g_source_remove(gtkblist->timeout);
+
+	gtkblist->refresh_timer = 0;
+	gtkblist->timeout = 0;
 	gtkblist->window = gtkblist->vbox = gtkblist->treeview = NULL;
 	gtkblist->treemodel = NULL;
 	gtkblist->idle_column = NULL;
@@ -1582,8 +1617,6 @@ static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
 	protomenu = NULL;
 	awaymenu = NULL;
 	bpmenu = NULL;
-
-	gtkblist->timeout = 0;
 }
 
 static void gaim_gtk_blist_set_visible(struct gaim_buddy_list *list, gboolean show)
@@ -1655,13 +1688,12 @@ void gaim_gtk_blist_docklet_remove()
 {
 	docklet_count--;
 	if (!docklet_count) {
-		if (connections) {
+		if (connections)
 			gaim_blist_set_visible(TRUE);
-		} else if (mainwindow) {
+		else if (mainwindow)
 			gtk_window_present(GTK_WINDOW(mainwindow));
-		} else {
+		else
 			show_login();
-		}
 	}
 }
 
