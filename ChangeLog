@@ -7,11 +7,17 @@ version 2.0.0
 	  Dave West, and Daniel Atallah
 	* gaim-remote can send text (John B. Silvestri)
 	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
+	* Screenname colors in chats now come from GNOME color palette
 
 	Preference changes:
 	* Removed keyboard shortcut preferences for ctrl-b/i/u and made sure they
 	  won't interfere with bindings set by the GTK theme.
 	* Removed preference for buddy list button type, defaulted to "None"
+	* Removed "Enter" vs. "Ctrl-Enter" to send, defaulted to "Enter" to send,
+	  made it possible to change this binding in your GTK theme.
+	* Removed "Show multi-colored screennames in chats," defaulted to "Yes."
+	  Made screenname colors automatically adjust themselves to compensate for
+	  background color.
 
 version 1.0.1 (10/07/2004):
 	New Features:
