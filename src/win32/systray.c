@@ -1,9 +1,25 @@
 /*
- *  systray.c
+ * gaim - Windows Gaim systray module
  *
- *  Author: Herman Bloggs <hermanator12002@yahoo.com>
- *  Date: November, 2002
- *  Description: Gaim systray functionality
+ * File: systray.c
+ * Date: November, 2002
+ * 
+ * Copyright (C) 2002, Herman Bloggs <hermanator12002@yahoo.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
  */
 #include <windows.h>
 #include <gdk/gdkwin32.h>
@@ -34,7 +50,7 @@ enum _SYSTRAY_STATE {
 typedef enum _SYSTRAY_STATE SYSTRAY_STATE;
 
 enum _SYSTRAY_CMND {
-	SYSTRAY_CMND_MENU_EXIT,
+	SYSTRAY_CMND_MENU_EXIT=100,
 	SYSTRAY_CMND_SIGNON,
 	SYSTRAY_CMND_SIGNOFF,
 	SYSTRAY_CMND_AUTOLOGIN,
@@ -79,6 +95,17 @@ static int IsMenuItem( HMENU hMenu, UINT id ) {
 		return 1;
 }
 
+static int GetMenuItemPosition( HMENU hMenu, UINT id ) {
+	int count  = GetMenuItemCount(hMenu);
+	int i;
+
+	for(i=0;i<count;i++) {
+		if(GetMenuItemID(hMenu, i)==id)
+			return i;
+	}
+	return -1;
+}
+
 /*
  * WGAIM SYSTRAY GUI
  ********************/
@@ -116,20 +143,26 @@ static void systray_show_menu(int x, int y, BOOL connected) {
            of the menu scope */
 	SetForegroundWindow(systray_hwnd);
 
+	/* in both connected and disconnected case delete away message menu */
+	if(systray_away_menu) {
+		if(!DeleteMenu(systray_menu, (UINT)systray_away_menu, MF_BYCOMMAND))
+			debug_printf("Error using DeleteMenu\n");
+	}
+
+
 	/* Different menus depending on signed on/off state */
 	if(connected) {
 		/* If signoff item dosn't exist.. create it */
 		if(!IsMenuItem(systray_menu, SYSTRAY_CMND_SIGNOFF)) {
+			int pos;
 			DeleteMenu(systray_menu, SYSTRAY_CMND_SIGNON, MF_BYCOMMAND);
 			locenc = g_locale_from_utf8(_("Signoff"), -1, NULL, NULL, NULL);
-			InsertMenu(systray_menu, SYSTRAY_CMND_MENU_EXIT, 
-				   MF_BYCOMMAND | MF_STRING, SYSTRAY_CMND_SIGNOFF, locenc);
+			pos = GetMenuItemPosition(systray_menu, SYSTRAY_CMND_MENU_EXIT) - 1;
+			if(!InsertMenu(systray_menu, pos, 
+				       MF_BYPOSITION | MF_STRING, SYSTRAY_CMND_SIGNOFF, locenc))
+				debug_printf("InsertMenu failed: %s\n", GetLastError());
+			debug_printf("Inserted Menu with ID: %d\n", SYSTRAY_CMND_SIGNOFF);
 			g_free(locenc);
-		}
-		/* if away menu exists, remove and rebuild it */
-		if(systray_away_menu) {
-			if(!DeleteMenu(systray_menu, (UINT)systray_away_menu, MF_BYCOMMAND))
-				debug_printf("Error using DeleteMenu\n");
 		}
 		locenc = g_locale_from_utf8(_("Set Away Message"), -1, NULL, NULL, NULL);
 		InsertMenu(systray_menu, SYSTRAY_CMND_PREFS, 
@@ -153,10 +186,13 @@ static void systray_show_menu(int x, int y, BOOL connected) {
 	} else {
 		/* If signon item dosn't exist.. create it */
 		if(!IsMenuItem(systray_menu, SYSTRAY_CMND_SIGNON)) {
+			int pos;
 			DeleteMenu(systray_menu, SYSTRAY_CMND_SIGNOFF, MF_BYCOMMAND);
 			locenc = g_locale_from_utf8(_("Sign On"), -1, NULL, NULL, NULL);
-			InsertMenu(systray_menu, SYSTRAY_CMND_MENU_EXIT, 
-				   MF_BYCOMMAND | MF_STRING, SYSTRAY_CMND_SIGNON, locenc);
+			pos = GetMenuItemPosition(systray_menu, SYSTRAY_CMND_MENU_EXIT) - 1;
+			if(!InsertMenu(systray_menu, pos, 
+				       MF_BYPOSITION | MF_STRING, SYSTRAY_CMND_SIGNON, locenc))
+				debug_printf("InsertMenu failed: %s\n", GetLastError());
 			g_free(locenc);
 		}
 		EnableMenuItem(systray_menu, SYSTRAY_CMND_AUTOLOGIN, MF_ENABLED);
