@@ -6261,6 +6261,11 @@ static void oscar_show_chpassurl(GaimConnection *gc)
 	g_free(substituted);
 }
 
+static void oscar_show_imforwardingurl(GaimConnection *gc)
+{
+	gaim_notify_uri(gc, "http://mymobile.aol.com/dbreg/register?action=imf&clientID=1");
+}
+
 static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 {
 	struct oscar_data *od = gc->proto_data;
@@ -6324,6 +6329,14 @@ static GList *oscar_actions(GaimConnection *gc)
 		pam = g_new0(struct proto_actions_menu, 1);
 		pam->label = _("Change Password (URL)");
 		pam->callback = oscar_show_chpassurl;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+	}
+
+	if (od->sess->authinfo->chpassurl) {
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Configure IM Forwarding (URL)");
+		pam->callback = oscar_show_imforwardingurl;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
 	}
