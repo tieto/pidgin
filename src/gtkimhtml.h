@@ -117,6 +117,8 @@ void       gtk_imhtml_associate_smiley (GtkIMHtml        *imhtml,
 					gchar            *text,
 					gchar           **xpm);
 
+void       gtk_imhtml_remove_smileys   (GtkIMHtml        *imhtml);
+
 void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
 					gboolean          show);
 

@@ -143,11 +143,6 @@ gtk_smiley_tree_remove (GtkSmileyTree *tree,
 	while (*x) {
 		gchar *pos;
 
-		if (t->image) {
-			t->image = NULL;
-			return;
-		}
-
 		if (!t->values)
 			return;
 
@@ -238,6 +233,16 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 		}
 		g_free (t);
 	}
+}
+
+void
+gtk_imhtml_remove_smileys (GtkIMHtml *imhtml)
+{
+	g_return_if_fail (imhtml != NULL);
+	g_return_if_fail (GTK_IS_IMHTML (imhtml));
+
+	gtk_smiley_tree_destroy (imhtml->smiley_data);
+	imhtml->smiley_data = gtk_smiley_tree_new ();
 }
 
 struct _GtkIMHtmlBit {
