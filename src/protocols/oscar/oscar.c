@@ -368,7 +368,8 @@ static int gaim_memrequest       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_selfinfo         (aim_session_t *, aim_frame_t *, ...);
 static int gaim_offlinemsg       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_offlinemsgdone   (aim_session_t *, aim_frame_t *, ...);
-static int gaim_simpleinfo       (aim_session_t *, aim_frame_t *, ...);
+static int gaim_icqsimpleinfo    (aim_session_t *, aim_frame_t *, ...);
+static int gaim_icqallinfo       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_popup            (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parserights  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parselist    (aim_session_t *, aim_frame_t *, ...);
@@ -386,6 +387,9 @@ static void oscar_file_transfer_cancel(struct gaim_connection *,
 static int oscar_sendfile_request(aim_session_t *sess,
 		struct oscar_file_transfer *oft);
 static int oscar_sendfile_timeout(aim_session_t *sess, aim_frame_t *fr, ...);
+
+static fu32_t check_encoding(const char *utf8);
+static fu32_t parse_encoding(const char *enc);
 
 static char *msgerrreason[] = {
 	N_("Invalid error"),
@@ -884,7 +888,8 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG, gaim_offlinemsg, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSGCOMPLETE, gaim_offlinemsgdone, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_POP, 0x0002, gaim_popup, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_SIMPLEINFO, gaim_simpleinfo, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_SIMPLEINFO, gaim_icqsimpleinfo, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_ALLINFO, gaim_icqallinfo, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RIGHTSINFO, gaim_ssi_parserights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_LIST, gaim_ssi_parselist, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_NOLIST, gaim_ssi_parselist, 0);
@@ -2073,7 +2078,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	debug_printf("Received a channel 4 message of type %d.\n", args->type);
 
 	/* Split up the message at the delimeter character, then convert each string to UTF-8 */
-	msg1 = g_strsplit(args->msg, "þ", 0);
+	msg1 = g_strsplit(args->msg, "\177", 0);
 	msg2 = (gchar **)g_malloc(10*sizeof(gchar *)); /* AAA */
 	for (i=0; msg1[i]; i++) {
 		strip_linefeed(msg1[i]);
@@ -2156,7 +2161,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x0013: { /* Someone has sent you some ICQ contacts */
 			int i, num;
 			gchar **text;
-			text = g_strsplit(args->msg, "þ", 0);
+			text = g_strsplit(args->msg, "\177", 0);
 			if (text) {
 				num = 0;
 				for (i=0; i<strlen(text[0]); i++)
@@ -2276,8 +2281,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ?
-				   _("You missed %d message from %s because it was too evil.") : 
-				   _("You missed %d messages from %s because they are too evil."),
+				   _("You missed %d message from %s because he/she was too evil.") : 
+				   _("You missed %d messages from %s because he/she was too evil."),
 				   nummissed,
 				   userinfo->sn);
 			break;
@@ -2295,8 +2300,8 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_snprintf(buf,
 				   sizeof(buf),
 				   nummissed == 1 ? 
-				   _("You missed %d message from %s for unknown reasons.") :
-				   _("You missed %d messages from %s for unknown reasons."),
+				   _("You missed %d message from %s for an unknown reason.") :
+				   _("You missed %d messages from %s for an unknown reason."),
 				   nummissed,
 				   userinfo->sn);
 			break;
@@ -2326,34 +2331,78 @@ static char *gaim_icq_status(int state) {
 		return g_strdup_printf("Online");
 }
 
-static int gaim_parse_clientauto_rend(aim_session_t *sess,
-		const char *who, int reason, const char *cookie) {
+static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, int reason, const char *cookie) {
 	struct gaim_connection *gc = sess->aux_data;
-	struct oscar_file_transfer *oft;
-	char *buf;
 
 	switch (reason) {
-		case 3: /* Decline sendfile. */
-			oft = find_oft_by_cookie(gc, cookie);
+		case 3: { /* Decline sendfile. */
+			struct oscar_file_transfer *oft = find_oft_by_cookie(gc, cookie);
 
 			if (oft) {
-				buf = g_strdup_printf(_("%s has declined to receive a file from %s.\n"),
+				char *buf = g_strdup_printf(_("%s has declined to receive a file from %s.\n"),
 						who, gc->username);
 				transfer_abort(oft->xfer, buf);
 				g_free(buf);
 				oscar_file_transfer_disconnect(sess, oft->conn);
 			}
-			break;
-		default:
+		} break;
+
+		default: {
 			debug_printf("Received an unknown rendezvous client auto-response from %s.  Type 0x%04x\n", who, reason);
+		}
 
 	}
 
 	return 0;
 }
 
-static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, int reason, int state, char *msg) {
 	struct gaim_connection *gc = sess->aux_data;
+
+	switch(reason) {
+		case 0x0003: { /* Reply from an ICQ status message request */
+			char *status_msg = gaim_icq_status(state);
+			char *dialog_msg, **splitmsg;
+			struct oscar_data *od = gc->proto_data;
+			GSList *l = od->evilhack;
+			gboolean evilhack = FALSE;
+
+			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
+			splitmsg = g_strsplit(msg, "\r\n", 0);
+
+			/* If who is in od->evilhack, then we're just getting the away message, otherwise this 
+			 * will just get appended to the info box (which is already showing). */
+			while (l) {
+				char *x = l->data;
+				if (!strcmp(x, normalize(who))) {
+					evilhack = TRUE;
+					g_free(x);
+					od->evilhack = g_slist_remove(od->evilhack, x);
+					break;
+				}
+				l = l->next;
+			}
+
+			if (evilhack)
+				dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR>%s<BR>"), who, status_msg, g_strjoinv("<BR>", splitmsg));
+			else
+				dialog_msg = g_strdup_printf(_("<B>Status:</B> %s<BR><HR>%s<BR>"), status_msg, g_strjoinv("<BR>", splitmsg));
+			g_show_info_text(gc, who, 2, dialog_msg, NULL);
+
+			g_free(status_msg);
+			g_free(dialog_msg);
+			g_strfreev(splitmsg);
+		} break;
+
+		default: {
+			debug_printf("Received an unknown client auto-response from %s.  Type 0x%04x\n", who, reason);
+		} break;
+	} /* end of switch */
+
+	return 0;
+}
+
+static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t chan, reason;
 	char *who;
@@ -2365,51 +2414,16 @@ static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (chan == 0x0002) { /* File transfer declined */
 		char *cookie = va_arg(ap, char *);
-		return gaim_parse_clientauto_rend(sess, who, reason, cookie);
+		return gaim_parse_clientauto_ch2(sess, who, reason, cookie);
 	} else if (chan == 0x0004) { /* ICQ message */
-		switch(reason) {
-			case 0x0003: { /* Reply from an ICQ status message request */
-				int state = (int)va_arg(ap, fu32_t);
-				char *msg = va_arg(ap, char *);
-				char *status_msg = gaim_icq_status(state);
-				char *dialog_msg, **splitmsg;
-				struct oscar_data *od = gc->proto_data;
-				GSList *l = od->evilhack;
-				gboolean evilhack = FALSE;
-
-				/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
-				splitmsg = g_strsplit(msg, "\r\n", 0);
-
-				/* If who is in od->evilhack, then we're just getting the away message, otherwise this 
-				 * will just get appended to the info box (which is already showing). */
-				while (l) {
-					char *x = l->data;
-					if (!strcmp(x, normalize(who))) {
-						evilhack = TRUE;
-						g_free(x);
-						od->evilhack = g_slist_remove(od->evilhack, x);
-						break;
-					}
-					l = l->next;
-				}
-
-				if (evilhack)
-					dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR>%s<BR>"), who, status_msg, g_strjoinv("<BR>", splitmsg));
-				else
-					dialog_msg = g_strdup_printf(_("<B>Status:</B> %s<BR><HR>%s<BR>"), status_msg, g_strjoinv("<BR>", splitmsg));
-				g_show_info_text(gc, who, 2, dialog_msg, NULL);
-
-				g_free(status_msg);
-				g_free(dialog_msg);
-				g_strfreev(splitmsg);
-			} break;
-
-			default: {
-				debug_printf("Received an unknown client auto-response from %s.  Type 0x%04x\n", who, reason);
-			} break;
-		} /* end of switch */
-
-	} /* end of if */
+		int state = 0;
+		char *msg = NULL;
+		if (reason == 0x0003) {
+			state = (int)va_arg(ap, fu32_t);
+			msg = va_arg(ap, char *);
+		}
+		return gaim_parse_clientauto_ch4(sess, who, reason, state, msg);
+	}
 
 	va_end(ap);
 
@@ -2605,8 +2619,10 @@ static char *caps_string(guint caps)
 
 static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_userinfo_t *info;
-	char *prof_enc = NULL, *prof = NULL;
+	char *text_enc = NULL, *text = NULL, *utf8 = NULL;
+	int text_len;
 	fu16_t infotype;
+	fu32_t flags;
 	char header[BUF_LONG];
 	char legend[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
@@ -2619,9 +2635,24 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
 	infotype = (fu16_t)va_arg(ap, unsigned int);
-	prof_enc = va_arg(ap, char *);
-	prof = va_arg(ap, char *);
+	text_enc = va_arg(ap, char *);
+	text = va_arg(ap, char *);
+	text_len = va_arg(ap, int);
 	va_end(ap);
+
+	if (text_len > 0) {
+		flags = parse_encoding (text_enc);
+		switch (flags) {
+		case 0:
+			utf8 = g_strdup(text);
+			break;
+		case AIM_IMFLAGS_UNICODE:
+			utf8 = g_convert(text, text_len, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
+			break;
+		default:
+			debug_printf("Encountered an unknown encoding parsing userinfo\n");
+		}
+	}
 
 	if (!od->icq) {
 		g_snprintf(legend, sizeof legend,
@@ -2684,14 +2715,14 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (evilhack) {
 			g_show_info_text(gc, info->sn, 2,
 					 header,
-					 (prof && *prof) ? away_subs(prof, gc->username) :
-						_("<i>User has no away message</i>"),
+					 (utf8 && *utf8) ? away_subs(utf8, gc->username) :
+					 _("<i>User has no away message</i>"),
 					 legend, NULL);
 		} else {
 			g_show_info_text(gc, info->sn, 0,
 					 header,
-					 (prof && *prof) ? away_subs(prof, gc->username) : NULL,
-					 (prof && *prof) ? "<BR><HR>" : NULL,
+					 (utf8 && *utf8) ? away_subs(utf8, gc->username) : NULL,
+					 (utf8 && *utf8) ? "<BR><HR>" : NULL,
 					 NULL);
 		}
 	} else if (infotype == AIM_GETINFO_CAPABILITIES) {
@@ -2704,11 +2735,13 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 				NULL);
 	} else {
 		g_show_info_text(gc, info->sn, 1,
-				 (prof && *prof) ? away_subs(prof, gc->username) :
-					_("<i>No Information Provided</i>"),
+				 (utf8 && *utf8) ? away_subs(utf8, gc->username) :
+				 _("<i>No Information Provided</i>"),
 				 legend,
 				 NULL);
 	}
+
+	g_free(utf8);
 
 	return 1;
 }
@@ -3123,6 +3156,9 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	fu16_t maxsiglen;
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	char *unicode;
+	int unicode_len;
+	fu32_t flags;
 
 	va_start(ap, fr);
 	maxsiglen = va_arg(ap, int);
@@ -3133,9 +3169,21 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	odata->rights.maxsiglen = odata->rights.maxawaymsglen = (guint)maxsiglen;
 
 	if (odata->icq)
-		aim_bos_setprofile(sess, fr->conn, NULL, NULL, caps_icq);
-	else
-		aim_bos_setprofile(sess, fr->conn, gc->user->user_info, NULL, caps_aim);
+		aim_bos_setprofile(sess, fr->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
+	else {
+		flags = check_encoding (gc->user->user_info);
+
+		if (flags == 0) {
+			aim_bos_setprofile(sess, fr->conn, "us-ascii", gc->user->user_info, 
+					   strlen(gc->user->user_info), NULL, NULL, 0, caps_aim);
+		} else {
+			unicode = g_convert (gc->user->user_info, strlen(gc->user->user_info),
+					     "UCS-2BE", "UTF-8", NULL, &unicode_len, NULL);
+			aim_bos_setprofile(sess, fr->conn, "unicode-2-0", unicode, unicode_len,
+					   NULL, NULL, 0, caps_aim);
+			g_free(unicode);
+		}
+	}
 
 	return 1;
 }
@@ -3230,29 +3278,41 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
 	return 1;
 }
 
-static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
+static int gaim_icqsimpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	struct gaim_connection *gc = sess->aux_data;
 	struct buddy *budlight;
 	va_list ap;
-	struct aim_icq_simpleinfo *info;
-	char buf[16 * 1024];
-	char who[16];
+	struct aim_icq_info *info;
+	gchar *buf, *tmp;
+	gchar who[16];
 
 	va_start(ap, fr);
-	info = va_arg(ap, struct aim_icq_simpleinfo *);
+	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
 
-	g_snprintf(who, sizeof who, "%lu", info->uin);
-	g_snprintf(buf, sizeof buf,
-		   "<B>UIN:</B> %lu<BR>"
-		   "<B>Nick:</B> %s<BR>"
-		   "<B>Name:</B> %s %s<BR>"
-		   "<B>Email:</B> %s<BR>\n",
-		   info->uin,
-		   info->nick,
-		   info->first, info->last,
-		   info->email);
+	g_snprintf(who, sizeof(who), "%lu", info->uin);
+	buf = g_strdup_printf("<b>UIN:</b> %s<br>", who);
+	if (info->nick) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<b>Nick:</b> ", info->nick, "<br>\n", NULL);
+		g_free(tmp);
+	}
+	if (info->first) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<b>First Name:</b> ", info->first, "<br>\n", NULL);
+		g_free(tmp);
+	}
+	if (info->last) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<b>Last Name:</b> ", info->last, "<br>\n", NULL);
+		g_free(tmp);
+	}
+	if (info->email) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<b>Email Address:</b> ", info->email, "<br>\n", NULL);
+		g_free(tmp);
+	}
 
 	/* If the contact is away, then we also want to get their status message
 	 * and show it in the same window as info.  g_show_info_text gets the status 
@@ -3276,6 +3336,64 @@ static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		}
 	} else
 		g_show_info_text(gc, who, 2, buf, NULL);
+
+	g_free(buf);
+
+	return 1;
+}
+
+static int gaim_icqallinfo(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	struct gaim_connection *gc = sess->aux_data;
+	va_list ap;
+	struct aim_icq_info *info;
+	gchar *buf, *tmp;
+	gchar who[16];
+
+	va_start(ap, fr);
+	info = va_arg(ap, struct aim_icq_info *);
+	va_end(ap);
+
+	g_snprintf(who, sizeof(who), "%lu", info->uin);
+	buf = g_strdup_printf("<b>UIN:</b> %s<br>", who);
+	if (info->nick) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<b>Nick:</b> ", info->nick, "<br>\n", NULL);
+		g_free(tmp);
+	}
+	if (info->first) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<b>First Name:</b> ", info->first, "<br>\n", NULL);
+		g_free(tmp);
+	}
+	if (info->last) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<b>Last Name:</b> ", info->last, "<br>\n", NULL);
+		g_free(tmp);
+	}
+	if (info->email) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<b>Email Address:</b> ", info->email, "<br>\n", NULL);
+		g_free(tmp);
+	}
+	if (info->personalwebpage) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<b>Personal Webpage:</b> ", info->personalwebpage, "<br>\n", NULL);
+		g_free(tmp);
+	}
+	if (info->info) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<br><b>Additional Information:</b><br>", info->info, "<br><hr>\n", NULL);
+		g_free(tmp);
+	}
+	if (info->homecity && info->homestate && info->homeaddr && info->homezip) {
+		tmp = buf;
+		buf = g_strconcat(tmp, "<br><b>Home Address:</b><br>\n", info->homeaddr, "<br>\n", info->homecity, ", ", info->homestate, " ", info->homezip, "<hr>\n", NULL);
+		g_free(tmp);
+	}
+
+	g_show_info_text(gc, who, 2, buf, NULL);
+	g_free(buf);
 
 	return 1;
 }
@@ -3478,7 +3596,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		struct icon_req *ir = NULL;
 		char *who = normalize(name);
 		struct stat st;
-		int i, len;
+		int len;
 		
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
 		if (odata->icq)
@@ -3519,35 +3637,8 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 		
 		args.destsn = name;
 		
-		/* Determine how we can send this message.  Per the
-		 * warnings elsewhere in this file, these little
-		 * checks determine the simplest encoding we can use
-		 * for a given message send using it. */
 		len = strlen(message);
-		i = 0;
-		while (message[i]) {
-			if ((unsigned char)message[i] > 0x7f) {
-				/* not ASCII! */
-				args.flags |= AIM_IMFLAGS_ISO_8859_1;
-				break;
-			}
-			i++;
-		}
-		while (message[i]) {
-			/* ISO-8859-1 is 0x00-0xbf in the first byte
-			 * followed by 0xc0-0xc3 in the second */
-			if ((unsigned char)message[i] < 0x80) {
-				i++;
-				continue;
-			} else if (((unsigned char)message[i] & 0xfc) == 0xc0 &&
-				   ((unsigned char)message[i + 1] & 0xc0) == 0x80) {
-				i += 2;
-				continue;
-			}
-			args.flags ^= AIM_IMFLAGS_ISO_8859_1;
-			args.flags |= AIM_IMFLAGS_UNICODE;
-			break;
-		}
+		args.flags |= check_encoding(message);
 		if (args.flags & AIM_IMFLAGS_UNICODE) {
 			debug_printf ("Sending Unicode IM\n");
 			args.msg = g_convert(message, len, "UCS-2BE", "UTF-8", NULL, &len, &err);
@@ -3632,7 +3723,9 @@ static void oscar_set_idle(struct gaim_connection *g, int time) {
 
 static void oscar_set_info(struct gaim_connection *g, char *info) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	gchar *inforeal;
+	gchar *inforeal, *unicode;
+	fu32_t flags;
+	int unicode_len;
 
 	if (odata->rights.maxsiglen == 0)
 		do_error_dialog(_("Unable to set AIM profile."), 
@@ -3652,10 +3745,21 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 	inforeal = g_strndup(info, odata->rights.maxsiglen);
 
 	if (odata->icq)
-		aim_bos_setprofile(odata->sess, odata->conn, NULL, NULL, caps_icq);
-	else
-		aim_bos_setprofile(odata->sess, odata->conn, inforeal, NULL, caps_aim);
+		aim_bos_setprofile(odata->sess, odata->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
+	else {
+		flags = check_encoding(inforeal);
 
+		if (flags == 0) {
+			aim_bos_setprofile(odata->sess, odata->conn, "us-ascii", inforeal, strlen (inforeal),
+					   NULL, NULL, 0, caps_aim);
+		} else {
+			unicode = g_convert (inforeal, strlen(inforeal), "UCS-2BE", "UTF-8", NULL,
+					     &unicode_len, NULL);
+			aim_bos_setprofile(odata->sess, odata->conn, "unicode-2-0", unicode, unicode_len,
+					   NULL, NULL, 0, caps_aim);
+			g_free(unicode);
+		}
+	}
 	g_free(inforeal);
 
 	return;
@@ -3663,6 +3767,9 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 
 static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od, const char *message)
 {
+	fu32_t flags;
+	char *unicode;
+	int unicode_len;
 
 	if (od->rights.maxawaymsglen == 0)
 		do_error_dialog(_("Unable to set AIM away message."), 
@@ -3675,7 +3782,7 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 	}
 
 	if (!message) {
-		aim_bos_setprofile(od->sess, od->conn, NULL, "", caps_aim);
+		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, NULL, "", 0, caps_aim);
 		return;
 	}
 
@@ -3689,7 +3796,17 @@ static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od
 	}
 
 	gc->away = g_strndup(message, od->rights.maxawaymsglen);
-	aim_bos_setprofile(od->sess, od->conn, NULL, gc->away, caps_aim);
+	flags = check_encoding(message);
+	
+	if (flags == 0) {
+		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "us-ascii", gc->away, strlen(gc->away),
+				   caps_aim);
+	} else {
+		unicode = g_convert(message, strlen(message), "UCS-2BE", "UTF-8", NULL, &unicode_len, NULL);
+		aim_bos_setprofile(od->sess, od->conn, NULL, NULL, 0, "unicode-2-0", unicode, unicode_len,
+				   caps_aim);
+		g_free(unicode);
+	}
 
 	return;
 }
@@ -4646,11 +4763,11 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 			break;
 		case 5:
 			g = gc->groups;
-			at  = 0;
+			at = 0;
 			while (g) {
 			        list = ((struct group *)g->data)->members;
 				while (list) {
-					at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", (char *)list->data);
+					at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", ((struct buddy *)list->data)->name);
 					list = list->next;
 				}
 				g = g->next;
@@ -4840,7 +4957,61 @@ static void oscar_convo_closed(struct gaim_connection *gc, char *who)
 	g_free(dim);
 }
 
+static fu32_t check_encoding(const char *utf8)
+{
+	int i = 0;
+	fu32_t encodingflag = 0;
 
+	/* Determine how we can send this message.  Per the
+	 * warnings elsewhere in this file, these little
+	 * checks determine the simplest encoding we can use
+	 * for a given message send using it. */
+	while (utf8[i]) {
+		if ((unsigned char)utf8[i] > 0x7f) {
+			/* not ASCII! */
+			encodingflag = AIM_IMFLAGS_ISO_8859_1;
+			break;
+		}
+		i++;
+	}
+	while (utf8[i]) {
+		/* ISO-8859-1 is 0x00-0xbf in the first byte
+		 * followed by 0xc0-0xc3 in the second */
+		if ((unsigned char)utf8[i] < 0x80) {
+			i++;
+			continue;
+		} else if (((unsigned char)utf8[i] & 0xfc) == 0xc0 &&
+			   ((unsigned char)utf8[i + 1] & 0xc0) == 0x80) {
+			i += 2;
+			continue;
+		}
+		encodingflag = AIM_IMFLAGS_UNICODE;
+		break;
+	}
+
+	return encodingflag;
+}
+
+static fu32_t parse_encoding(const char *enc)
+{
+	char *charset;
+
+	/* If anything goes wrong, fall back on ASCII and print a message */
+	charset = strstr(enc, "charset=");
+	if (charset == NULL) {
+		debug_printf("No charset specified for info, assuming ASCII\n");
+		return 0;
+	}
+	charset += 8;
+	if (!strcmp(charset, "\"us-ascii\"")) {
+		return 0;
+	} else if (!strcmp(charset, "\"unicode-2-0\"")) {
+		return AIM_IMFLAGS_UNICODE;
+	} else {
+		debug_printf("Unrecognized character set '%s', using ASCII\n", charset);
+		return 0;
+	}
+}
 
 static struct prpl *my_protocol = NULL;
 

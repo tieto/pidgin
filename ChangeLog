@@ -1,33 +1,115 @@
-Gaim: The Pimpin' Penguin IM Clone that's good for the soul! 
+Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.60: 
-	* French translation updated (thanks, Stephane Wirtel,
-	  Sebastian Carpe, and David Odin)
-	* Polish translation updated (Thanks, Przemyslaw Sulek)
-	* Finnish translation updated (Thanks, Tero Kuusela)
-	* Spanish translation updated (Thanks, Lars Goldschlager) 
-	* Traditional Chinese translation updated (Thanks, Paladin Liu)
-	* Japanese translation updated (Thanks, Junichi Uekawa)
-	* Korean translation updated (Thanks, A Lee)
-	* Romanian translation added (Thanks, Misu Moldovan)
-	* Jabber invisibility and permanently cancel sending on-
-	  line status to Jabber buddies.
+	Core:
+	* Auto-loading protocol plugins.
+	* Plugins dialog and perl script menu merged into preferences.
+	* Login all auto-login accounts from login window. (Thanks, 
+	  Etan Reisner)
+	* Don't auto-login if an existing Gaim session is already
+	  running.
+	* Moved "privacy preferences" to Tools menu.
+	* -n, --loginwin option to disable autologins.
+	* Added support for gettext 0.11.x.
+	* Added support for automake 1.6.
+	* aim:// URI's supported with gaim-remote command.
+	* Quit Gaim remotely with gaim-remote. (Thanks, John Silvestri)
+
+	Plugins:
+	* Docklet plugin--replaces the old GNOME applet.  You'll need the
+	  Panel Notification Area applet for GNOME 2, or the kicker for
+	  KDE 3.1. (Thanks, Robert McQueen, Ari Pollak, Patrick Aussems)
+	* Added GAIM::remove_event_handler and made set_info short
+	  circuitable in perl. (Thanks, Ryan McCabe)
+	* event_del_conversation for plugins. (Thanks, Bill Tompkins)
+	* Notify.c plugin rewritten; check its configure dialog. (Thanks,
+	  Etan Reisner)
+	* Buddy Ticker made a plugin.
+	* I'dle Mak'er added to source.
+	* Fortune profile added to source.
+
+	AIM/ICQ:
+	* TOC no longer compiles statically by default--use OSCAR.
+	* ICQ plugin no longer gets built--use OSCAR.
+	* File send/receive support for Oscar (Thanks, William T. Mahan)
+	* Non-direct connect typing notification for AIM over oscar.
+	  (Thanks, Mark Doliner)
+	* Allow only people in buddy list privacy option added for AIM.
 	* Support for synchronizing group renames on server.  Group
 	  rename server synchronization for AIM.  Server-side
 	  synchronization for moving individual AIM buddy to new
-	  group improved.  (Thanks, Mark Doliner)
+	  group improved. (Thanks, Mark Doliner)
+	* Ability to add screenname@mac.com people to AIM buddy lists.
+	  (Thanks, Graham Booker)
+	* Option to have AIM notify you if you have 
+	  unread mail. (Thanks, Mark Doliner)
+	* Parse URL messages, Contact Sending and Pager Messages
+	  in ICQ. (Thanks, Mark Doliner)
+	* use snprintf instead of sprintf. (Thanks, William T. Mahan)
+	* Fixed crashbug on empty rvous requests. (Thanks Brandon Scott 
+	  (Xeon) for pointing this out, and Matt Pandina for the patch)
+	* Nice Oscar changes--mostly internal. (Thanks, Mark Doliner)
+
+	IRC:
+	* Added more IRC slash commands -- /W, /VERSION, /MODE, /CTCP stuff,
+	  -- and other cool IRC enhancments. (Thanks, Jonas Birmé)
+	* IRC's /topic with no argument displays the current topic (Thanks, 
+	  Mark Doliner)
+	* DCC File Receive support for IRC.
+	* Optional password on IRC accounts. (Thanks, Christian Hammond)
+
+	Jabber:
+	* Jabber invisibility and permanently cancel sending on-
+	  line status to Jabber buddies.
 	* Jabber roster updated on group renames.
-	* -n, --loginwin option to disable autologins.
-	* All new preferences dialog (best used in gtk2)
-	* Moved "privacy preferences" to Tools menu
-	* Now using libiconv for better i18n support (Thanks Junichi 
+	* Fixed a possible segfault when signing off Jabber. (Thanks,
+	  Craig Boston)
+	* Improved typing notification support for Jabber and 
+	  Yahoo! (Thanks, Nathan Walp)
+	* File receive support for Jabber. (Thanks, Nathan Walp)
+
+	MSN:
+	* MSN users are notified when the other party closes the conversation
+	  window. (Thanks, Christian Hammond)
+ 	* File receive support for MSN. (Thanks, Christian Hammond)
+
+	Translations:
+	* French translation updated. (Thanks, Stephane Wirtel,
+	  Sebastian Carpe, and David Odin)
+	* Polish translation updated. (Thanks, Przemyslaw Sulek)
+	* Finnish translation updated. (Thanks, Tero Kuusela)
+	* Spanish translation updated. (Thanks, Lars Goldschlager) 
+	* Traditional Chinese translation updated. (Thanks, Paladin Liu)
+	* Japanese translation updated. (Thanks, Junichi Uekawa)
+	* Korean translation updated. (Thanks, A Lee)
+	* Romanian translation added. (Thanks, Misu Moldovan)
+
+	Internationalization:
+	* Now using libiconv for better i18n support (Thanks, Junichi 
 	  Uekawa)
+	* Lots of i18n fixes (Thanks Matt Wilson, Ethan Blanton, A Lee)
+	* Correct i18n handling for many parts of AIM/ICQ, including
+	  instant messages, away messages, and profiles (Thanks, 
+	  Ethan Blanton)
+	* Improved MSN internationalization (Thanks, A Lee)
+
+	Other:
 	* Optionally uniquely colorize nicks in chats
+	* Add / Remove buddy menu item added to the chat users list
+	  (Thanks, Jonas Birmé)
+	* View log button in conversation toolbar (Thanks, Etan Reisner)
+	* Option to log IMs and Chats seperately. (Thanks, Etan
+	  Reisner)
+	* Removed Ctrl-C binding for color
+	* Fix first message in tab not displaying bug (Thanks, Etan Reisner)
 	* Changed some default options
-	* Updated desktop and window icons (Thanks Robert McQueen)
+	* Updated desktop and window icons (Thanks, Robert McQueen)
+	* Switch the .desktop file to the new KDE/GNOME common vfolder 
+	  format (Thanks, Robert McQueen)
 	* GTK2 Goodness:
-		- Preferences dialog
-		- SignOn Screen
+		- Account editor (rewritten by Christian Hammond)
+		- Preferences dialog (rewritten by Sean Egan)
+		- SignOn Screen (rewritten by Rob Flynn)
 		- Conversation Window (needs tooltips)
 		- Chat Window (sort of: needs menu bar, tooltips)
 		- GtkIMHtml (Ari Pollak, Christian Hammond)
@@ -36,77 +118,18 @@ version 0.60:
 		- Alert Dialogs
 		- GtkIMHtml tooltips Pangonated
 		- About Dialog (Nathan Walp)
-		- i18n capable text input widget (Thanks Ethan Blanton, David Odin, etc)
-	* Notify.c plugin rewritten; check its configure dialog (Thanks,
-	  Etan Reisner)
-	* TOC no longer compiles statically by default--use OSCAR
-	* ICQ plugin no longer gets built--use OSCAR
-	* Added support for gettext 0.11.x.
-	* Added support for automake 1.6.
-	* Buddy Ticker made a plugin.
-	* Read proxy environment variables.  (Thanks, Christian Hammond)
+		- i18n capable text input widget (Thanks Ethan Blanton, 
+		  David Odin, etc)
+	* Read proxy environment variables. (Thanks, Christian Hammond)
 	* Fixed security vulnerability with manual browser option (Thanks,
 	  Robert McQueen)
-	* Added more IRC slash commands -- /W, /VERSION, /MODE, /CTCP stuff,
-	  -- and other cool IRC enhancments (Thanks, Jonas Birmé)
-	* Add / Remove buddy menu item added to the chat users list
-	  (Thanks Jonas Birmé)
-	* Parse URL messages, Contact Sending and Pager Messages
-	  in ICQ (Thanks Mark Doliner)
-	* Added GAIM::remove_event_handler and made set_info short
-	  circuitable in perl.  (Thanks Ryan McCabe)
-	* Improved MSN internationalization (Thanks A Lee)
 	* Can get info for ICQ and Jabber users from the "Edit
-	  Buddies" tab (Thanks Brian Bernas)
-	* Option to log IMs and Chats seperately.  (Thanks Etan
-	  Reisner)
-	* Nice Oscar changes--mostly internal (Thanks Mark Doliner)
-	* event_del_conversation for plugins (Thanks Bill Tompkins)
-	* Code cleanups and fixes (Thanks: Federico Mena Quintero,
+	  Buddies" tab (Thanks, Brian Bernas)
+	* Code cleanups and fixes (Thanks, Federico Mena Quintero and 
 	  Ka-Hing Cheung)
-	* aim:// URI's supported with gaim-remote command
-	* Quit Gaim remotely with gaim-remote (Thanks John Silvestri)
-	* Don't auto-login if an existing Gaim session is already
-	  running.
-	* Login all auto-login accounts from login window (Thanks
-	  Etan Reisner)
-	* View log button in conversation toolbar (Thanks Etan Reisner)
-	* Fixed a possible segfault when signing off Jabber (Thanks
-	  Craig Boston)
 	* Word-wrapping on mail notification text (Thanks, Andrew Molloy)
-	* /topic with no argument displays the current topic (Thanks Mark 
-	  Doliner)
-	* Lots of i18n fixes (Thanks Matt Wilson, Ethan Blanton, A Lee)
-	* Removed Ctrl-C binding for color
-	* Docklet plugin--replaces the old GNOME applet.  You'll need the
-	  Panel Notification Area applet for GNOME 2, or the kicker for
-	  KDE 3.1. (Thanks Robert McQueen, Ari Pollak, Patrick Aussems)
-	* Plugins dialog and perl script menu merged into preferences.
-	* Auto-loading protocol plugins.
-	* use snprintf instead of sprintf (Thanks William T. Mahan).
-	* Non-direct connect typing notification for AIM over oscar 
-	  (Thanks Mark Doliner)
-	* Improved typing notification support for Jabber and 
-	  Yahoo! (Thanks Nathan Walp)
-	* Generic File Transfer PRPL interface (Thanks William T. Mahan)
-	* DCC File Receive support for IRC
-	* File receive support for Jabber (Thanks, Nathan Walp)
-	* File send/receive support for Oscar (Thanks, William T. Mahan)
-	* Option to have AIM over oscar notify you if you have 
-	  unread mail (Thanks, Mark Doliner)
-	* Fix first message in tab not displaying bug (Thanks Etan Reisner)
-	* Switch the .desktop file to the new KDE/GNOME common vfolder 
-	  format (Thanks Robert McQueen).
-	* Allow only people in buddy list privacy option added for AIM
-	* Optional password on IRC accounts (Thanks, Christian Hammond)
-	* Better supression of auto-responses (Thanks Joshua Blanton)
-	* MSN users are notified when the other party closes the conversation
-	  window (Thanks, Christian Hammond)
-	* Ability to add screenname@mac.com people to AIM buddy lists
-	  (Thanks, Graham Booker)
-	* Fixed crashbug on empty rvous requests, thanks Brandon Scott (Xeon) and
-  	  Matt Pandina for pointing this out (Brandon) and for the patch (Matt)
- 	* File receive support for MSN (Thanks, Christian Hammond)
+	* Generic File Transfer PRPL interface (Thanks, William T. Mahan)
+	* Better supression of auto-responses (Thanks, Joshua Blanton)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

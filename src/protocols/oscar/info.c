@@ -29,19 +29,48 @@ faim_export int aim_bos_reqlocaterights(aim_session_t *sess, aim_conn_t *conn)
  * Subtype 0x0004
  *
  * Gives BOS your profile.
+ *
+ * profile_encoding and awaymsg_encoding MUST be set if profile or
+ * away are set, respectively, and their value may or may not be
+ * restricted to a few choices.  I am currently aware of:
+ * 
+ * us-ascii		Just that
+ * unicode-2-0		UCS2-BE
+ * 
+ * profile_len and awaymsg_len MUST be set similarly, and they MUST
+ * be the length of their respective strings in bytes.
+ *
+ * To get the previous behavior of awaymsg == "" un-setting the away
+ * message, set awaymsg non-NULL and awaymsg_len to 0 (this is the
+ * obvious equivalent).
  * 
  */
-faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu32_t caps)
+faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, 
+				  const char *profile_encoding, const char *profile, const int profile_len,
+				  const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len,
+				  fu32_t caps)
 {
-	static const char defencoding[] = {"text/aolrtf; charset=\"us-ascii\""};
+	static const char defencoding[] = {"text/aolrtf; charset=\"%s\""};
 	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
 	aim_snacid_t snacid;
+	char *encoding;
+
+	if ((profile && profile_encoding == NULL) || (awaymsg && awaymsg_len && awaymsg_encoding == NULL)) {
+		return -EINVAL;
+	}
 
 	/* Build to packet first to get real length */
 	if (profile) {
-		aim_addtlvtochain_raw(&tl, 0x0001, strlen(defencoding), defencoding);
-		aim_addtlvtochain_raw(&tl, 0x0002, strlen(profile), profile);
+		/* no + 1 here because of %s */
+		encoding = malloc(strlen(defencoding) + strlen(profile_encoding));
+		if (encoding == NULL) {
+			return -ENOMEM;
+		}
+		snprintf(encoding, strlen(defencoding) + strlen(profile_encoding), defencoding, profile_encoding);
+		aim_addtlvtochain_raw(&tl, 0x0001, strlen(encoding), encoding);
+		aim_addtlvtochain_raw(&tl, 0x0002, profile_len, profile);
+		free(encoding);
 	}
 
 	/*
@@ -53,9 +82,15 @@ faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const 
 	 *       (that is, if you were away, you'll remain away).
 	 */
 	if (awaymsg) {
-		if (strlen(awaymsg)) {
-			aim_addtlvtochain_raw(&tl, 0x0003, strlen(defencoding), defencoding);
-			aim_addtlvtochain_raw(&tl, 0x0004, strlen(awaymsg), awaymsg);
+		if (awaymsg_len) {
+			encoding = malloc(strlen(defencoding) + strlen(awaymsg_encoding));
+			if (encoding == NULL) {
+				return -ENOMEM;
+			}
+			snprintf(encoding, strlen(defencoding) + strlen(awaymsg_encoding), defencoding, awaymsg_encoding);
+			aim_addtlvtochain_raw(&tl, 0x0003, strlen(encoding), encoding);
+			aim_addtlvtochain_raw(&tl, 0x0004, awaymsg_len, awaymsg);
+			free(encoding);
 		} else
 			aim_addtlvtochain_noval(&tl, 0x0004);
 	}
@@ -712,8 +747,10 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 {
 	aim_userinfo_t userinfo;
 	char *text_encoding = NULL, *text = NULL;
+	int textlen = 0;
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;
+	aim_tlv_t *text_tlv = NULL;
 	aim_snac_t *origsnac = NULL;
 	struct aim_priv_inforeq *inforeq;
 	int ret = 0;
@@ -747,10 +784,10 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	 */
 	if (inforeq->infotype == AIM_GETINFO_GENERALINFO) {
 		text_encoding = aim_gettlv_str(tlvlist, 0x0001, 1);
-		text = aim_gettlv_str(tlvlist, 0x0002, 1);
+		text_tlv = aim_gettlv(tlvlist, 0x0002, 1);
 	} else if (inforeq->infotype == AIM_GETINFO_AWAYMESSAGE) {
 		text_encoding = aim_gettlv_str(tlvlist, 0x0003, 1);
-		text = aim_gettlv_str(tlvlist, 0x0004, 1);
+		text_tlv = aim_gettlv(tlvlist, 0x0004, 1);
 	} else if (inforeq->infotype == AIM_GETINFO_CAPABILITIES) {
 		aim_tlv_t *ct;
 
@@ -764,11 +801,15 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		}
 	}
 
+	if (text_tlv) {
+		text = text_tlv->value;
+		textlen = text_tlv->length;
+	}
+
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, &userinfo, inforeq->infotype, text_encoding, text);
+		ret = userfunc(sess, rx, &userinfo, inforeq->infotype, text_encoding, text, textlen);
 
 	free(text_encoding);
-	free(text);
 
 	aim_freetlvchain(&tlvlist);
 

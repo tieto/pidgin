@@ -669,7 +669,7 @@ faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_bos_setidle(aim_session_t *, aim_conn_t *, fu32_t);
 faim_export int aim_bos_changevisibility(aim_session_t *, aim_conn_t *, int, const char *);
 faim_export int aim_bos_setbuddylist(aim_session_t *, aim_conn_t *, const char *);
-faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu32_t caps);
+faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile_encoding, const char *profile, const int profile_len, const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len, fu32_t caps);
 faim_export int aim_bos_setgroupperm(aim_session_t *, aim_conn_t *, fu32_t mask);
 faim_export int aim_bos_setprivacyflags(aim_session_t *, aim_conn_t *, fu32_t);
 faim_export int aim_reqpersonalinfo(aim_session_t *, aim_conn_t *);
@@ -1175,17 +1175,34 @@ struct aim_icq_offlinemsg {
 	int msglen;
 };
 
-struct aim_icq_simpleinfo {
+struct aim_icq_info {
 	fu32_t uin;
 	char *nick;
 	char *first;
 	char *last;
 	char *email;
+	char *personalwebpage;
+	char *info;
+	char *homecity;
+	char *homestate;
+	char *homeaddr;
+	char *homezip;
+	fu16_t homecountry;
+	char *workcity;
+	char *workstate;
+	char *workaddr;
+	char *workzip;
+	fu16_t workcountry;
+	char *workcompany;
+	char *workdivision;
+	char *workposition;
+	char *workwebpage;
 };
 
 faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess);
 faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess);
 faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin);
+faim_export int aim_icq_getallinfo(aim_session_t *sess, const char *uin);
 
 /* email.c */
 struct aim_emailinfo {
