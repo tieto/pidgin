@@ -633,7 +633,6 @@ int main(int argc, char *argv[])
 	} else if ((do_login_ret == -1) && !connections)
 		show_login();
 
-	new_conversation("nobody");
 	gtk_main();
 
 #endif /* USE_APPLET */
