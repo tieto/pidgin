@@ -1394,7 +1394,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 				  "Online Since : <B>%s</B><BR>\n"
 				  "Idle Minutes : <B>%d</B>\n<BR>\n<HR><BR>\n"
 				  "%s"
-				  "<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br>"
+				  "<br><BODY BGCOLOR=WHITE><br><hr><I>Legend:</I><br><br>"
 				  "<IMG SRC=\"free_icon.gif\"> : Normal AIM User<br>"
 				  "<IMG SRC=\"aol_icon.gif\"> : AOL User <br>"
 				  "<IMG SRC=\"dt_icon.gif\"> : Trial AIM User <br>"
