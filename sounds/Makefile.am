@@ -1,6 +1,5 @@
 EXTRA_DIST =	BuddyArrive.wav \
 		BuddyLeave.wav \
-		send.wav \
 		Receive.wav \
 		RedAlert.wav \
 		Send.wav
