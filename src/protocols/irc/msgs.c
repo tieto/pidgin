@@ -110,6 +110,27 @@ void irc_msg_banned(struct irc_conn *irc, const char *name, const char *from, ch
 	g_free(buf);
 }
 
+void irc_msg_banfull(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	GaimConversation *convo;
+	char *buf, *nick;
+
+	if (!args || !args[0] || !args[1] || !args[2])
+		return;
+
+	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[1], irc->account);
+	if (!convo)
+		return;
+
+	nick = g_markup_escape_text(args[2], -1);
+	buf = g_strdup_printf(_("Cannot ban %s: banlist is full"), nick);
+	g_free(nick);
+	gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", buf,
+			     GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG,
+			     time(NULL));
+	g_free(buf);
+}
+
 void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConversation *convo;
