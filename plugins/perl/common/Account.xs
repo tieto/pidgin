@@ -130,7 +130,7 @@ find(name, protocol_id)
 	const char *name
 	const char *protocol_id
 CODE:
-	RETVAL = gaim_accounts_find_with_prpl_id(name, protocol_id);
+	RETVAL = gaim_accounts_find(name, protocol_id);
 OUTPUT:
 	RETVAL
 
