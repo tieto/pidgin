@@ -209,7 +209,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 		if (Tcl_EvalEx(interp, "plugin_init", -1, TCL_EVAL_GLOBAL) == TCL_OK) {
 			result = Tcl_GetObjResult(interp);
 			if (Tcl_ListObjGetElements(interp, result, &nelems, &listitems) == TCL_OK) {
-				if (nelems == 5) {
+				if (nelems == 6) {
 					info = g_new0(GaimPluginInfo, 1);
 					
 					info->api_version = 2;
@@ -218,9 +218,10 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 					
 					info->name = g_strdup(Tcl_GetString(listitems[0]));
 					info->version = g_strdup(Tcl_GetString(listitems[1]));
-					info->description = g_strdup(Tcl_GetString(listitems[2]));;
-					info->author = g_strdup(Tcl_GetString(listitems[3]));
-					info->homepage = g_strdup(Tcl_GetString(listitems[4]));
+					info->summary = g_strdup(Tcl_GetString(listitems[2]));
+					info->description = g_strdup(Tcl_GetString(listitems[3]));;
+					info->author = g_strdup(Tcl_GetString(listitems[5]));
+					info->homepage = g_strdup(Tcl_GetString(listitems[5]));
 					
 					plugin->info = info;
 					

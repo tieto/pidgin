@@ -24,11 +24,14 @@ before the rest of the Tcl script, so it cannot reference any other
 variables or procedures declared in the script.  In practice this is
 not a problem, as the only thing this procedure should do is return a
 simple list containing five items: the name of the script, its version
-number, a short description, the author, and a web page.  For example:
+number, a summary (just a few words) of its function, a short (longer
+than the summary, but no more than a couple of sentences if possible)
+description, the author, and a web page.  For example:
 
 proc plugin_init { } {
   return [ list "Example Plugin" \
                 "1.0" \
+		"Example plugin registration" \
 		"Example of how to register a plugin for the Tcl HOWTO" \
 		"Ethan Blanton <eblanton@cs.purdue.edu>" \
 		"http://gaim.sf.net/" ]

@@ -99,6 +99,7 @@ gaim::signal connect update-idle {
 proc plugin_init { } {
 	list "Tcl Signal Test" \
              "$gaim::version" \
+	     "Tests Tcl signal handlers" \
              "Debugs a ridiculous amount of signal information." \
              "Ethan Blanton <eblanton@cs.purdue.edu>" \
              "http://gaim.sourceforge.net/"
