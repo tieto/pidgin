@@ -1808,7 +1808,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char buf2[BUF_LONG];
 	char mdate[64];
 	int unhighlight = 0;
-	
+
 	if (c->is_chat && (!c->gc || !g_slist_find(c->gc->buddy_chats, c)))
 		return;
 
@@ -2042,7 +2042,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		return;
 	if (!(flags & WFLAG_RECV) && !(flags & WFLAG_SYSTEM))
 		return;
-	if ((c->unseen == 2) || ((c->unseen == 1) && !(flags & WFLAG_NICK)))
+	if (im_options & OPT_IM_ONE_WINDOW && ((c->unseen == 2) || ((c->unseen == 1) && !(flags & WFLAG_NICK))))
 		return;
 
 	if (flags & WFLAG_RECV)
