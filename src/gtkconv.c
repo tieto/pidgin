@@ -2461,6 +2461,7 @@ remove_icon(GaimGtkConversation *gtkconv)
 	gtkconv->u.im->icon = NULL;
 	gtkconv->u.im->anim = NULL;
 	gtkconv->u.im->iter = NULL;
+	gtkconv->u.im->show_icon = FALSE;
 }
 
 static void
@@ -4331,6 +4332,7 @@ setup_im_pane(GaimConversation *conv)
 
 	setup_im_buttons(conv, gtkconv->bbox);
 	gtkconv->u.im->animate = gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons");
+	gtkconv->u.im->show_icon = TRUE;
 
 	/*
 	 * Focus for IM windows should be as follows:
@@ -5658,6 +5660,10 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	g_return_if_fail(gaim_conversation_get_type(conv) == GAIM_CONV_IM);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	
+	if (!gtkconv->u.im->show_icon)
+		return;
+
 	account = gaim_conversation_get_account(conv);
 	if(account && account->gc)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);

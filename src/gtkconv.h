@@ -114,6 +114,7 @@ struct _GaimGtkImPane
 
 	/* Buddy icon stuff */
 	GtkWidget *icon;
+	gboolean show_icon;
 	gboolean animate;
 	GdkPixbufAnimation *anim;
 	GdkPixbufAnimationIter *iter;
