@@ -1,371 +1,437 @@
 Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
-1  The Basics
-	1.1  What does 'gaim' stand for?
-	1.2  Where are my log files stored?
-	1.3  What are GtkHTML and GtkIMHtml, and why not just use GNOME's
-	     GtkHTML?
-	1.4  How do I load plugins/perl scripts?
-	1.5  I'm not a native English speaker and I would like a translated
-	     version of gaim.
-	1.6  Why can I import my buddylist but not export it?
-
-2  Multiple Connections
-	2.1  What do you mean by "multiple connections"?
-	2.2  How do I sign on more than one account?
-	2.3  How do buddy lists work for multiple connections?
-	2.4  What's a PRPL?
-	2.5  How do I use a different protocol?
-
-3  About the Protocols (what they support, and how to do things with them)
-	3.0  Introduction
-	3.1  TOC
-	3.2  Oscar
-	3.3  Yahoo!
-	3.4  IRC
-	3.5  ICQ
-	3.6  MSN
-	3.7  Jabber
-	3.8  Napster
-
-4  Problems
-	4.1  Sound doesn't work
-	4.2  Clicking on URLs doesn't open Netscape
-	4.3  I don't use Netscape
-	4.4  I have a bug not described here
-
-5  Programming
-	5.1  I have a patch for gaim!
-	5.2  I have a plugin/perl script for gaim!
-	5.3  Can you teach me how to program GTK?
-
-6  Miscellaneous
-	6.1  Can I talk to you on IM?
-	6.2  I want to write an IM client. Will you help me?
-	6.3  I have money. I need software written. Can you help?
-	6.4  I have hardware here that's not being used. Can you use it?
-	6.5  I would like to send you beer.
-	6.6  Are you going to port this to Windows?
-	6.7  Why no AOL logo?
-	6.8  Why the GPL?
-	6.9  What is a wagii?
-	6.10 What window manager/distribution/other crap do you use?
-	6.11 Is XX a good hard drive, YY a good monitor and ZZ a good CPU?
-	6.12 I want to contribute to the effort. Where can I send beer to?
-
----
-
-1  The Basics
-
-1.1  What does 'gaim' stand for?
-
-It's basically the letter 'g' tacked on to the beginning of 'AIM' (which is
-fairly obvious). G stands for all sorts of good things. Girls, Godzilla, GTK,
-graham crackers, whatever.
-
-1.2  Where are my log files stored?
-
-Your logs are stored in $HOME/.gaim/logs/. They had previously been stored in
-$HOME/.gaim/YourScreenName/ (e.g. $HOME/.gaim/EWarmenhoven).
-
-1.3  What are GtkHTML and GtkIMHtml, and why not just use GNOME's GtkHTML?
-
-The widget Gaim had previously used to display HTML was called GtkHTML, and
-was written by Mark and Jim specifically for Gaim. Over time, Rob and Eric
-hacked at it (read: broke it) and it's gotten to be very fragile and fairly
-buggy.
-
-One day Eric got pissed off at GtkHTML and decided to rewrite it, and called
-it GtkIMHtml (IM to indicate that it should be used in IM clients). He made
-it its own separate project, so that other IM clients (like Jabber clients)
-could use it. He based it somewhat off of the old GtkHTML and GNOME's GtkHTML.
-
-GNOME's GtkHTML is a very powerful HTML viewer. Because of this, it isn't
-well-suited for Gaim. It wouldn't be very good if we let you have IFrames in
-your conversation, for example. Also, GNOME's GtkHTML depends on a lot of
-GNOME libraries that we don't want to force people to use in Gaim. (There is
-a strip-down version, CSCHTML, which doesn't use the GNOME libraries; but the
-first objection (that it supports too many tags) still applies.)
-
-1.4  How do I load plugins/perl scripts?
-
-Plugins you had loaded when you quit gaim are loaded again when you start
-gaim. To load a new plugin, either click 'Plugins' on the login screen, or
-select 'Plugins' from the 'Tools' menu in the buddy list. From there, you
-can load and unload plugins, and configure certain ones. If you click on
-the 'Load Plugin' button, it will present you with a file dialog, asking
-which file you want to load; it will default to looking for a .so file in
-the directory plugins get installed to, though you don't have to load a .so
-file, and you don't have to load it from that directory.
-
-When you start gaim, all the .pl files in ~/.gaim will be loaded
-automatically. You can also load new scripts from the 'Perl' menu in 'Tools'.
-From that menu, you can load a new script (similarly to how you loaded a
-plugin above), unload all your loaded scripts, and list which scripts you have
-loaded.
+1  Compiling
+	1.1  Is there some way I can compile just Gaim, without all of
+	     these protocols?
+	1.2  I'm getting an error: ./au2h.c BuddyArrive.h open: No such
+	     file or directory
+	1.3  I compiled Gaim, but when I restart, it did not update.
+	1.4  I can't compile Gaim CVS.
+	1.5  I have a question about GTK2.
 
-1.5  I'm not a native English speaker and I would like a translated version of
-gaim.
+2  Using Gaim
+	2.1  How do I register for a new account?
+	2.2  Why is gaim crashing when somebody sends me an IM?
+
+3  Features
+	3.1  How do I use MSN, Yahoo, IRC, Gadu-Gadu, Napster, or Zephyr?
+	3.2  Can Gaim send files?
+	3.3  When will file transfer be supported? Is it being worked on?
+	3.4  How come there's no Export Buddy List?
+	3.5  Will Gaim save my buddy list to the server?
+	3.6  Can Gaim import my buddy list?
+	3.7  Can I set a buddy icon?
 
-Gaim currently has a few translations (French, Spanish, Korean, and Simplified
-Chinese); however, most of them are out of date. If you would like to update
-or add a translation of gaim, email or IM either Rob or Eric and they can tell
-you how to go about it.
+4  ICQ Protocol
+	4.1  How do I use ICQ?
+	4.2  ICQ doesn't work.
 
-1.6  Why can I import my buddylist but not export it?
+5  AIM/ICQ (Oscar) Protocol
+	5.1  Some of my buddies are not showing up as online, why is that?
+	5.2  IM Image doesn't work, why?
+	5.3  I sent an IM Image, but only a blank line shows up, why?
 
-Because you don't have to.  Gaim, out of the kindness of its sweet little 
-heart, automagically exports your buddylist for you.  You can find a copy
-of your list in ~/.gaim/YOURNAME.PROTO.BLIST.  For example, if you're
-using AIM, and your name is JoeUser, then your buddy list could be found
-in: ~/.gaim/JOEUSER.0.blist.
+6  IRC Protocol
+	6.1  Why am I getting disconnected when I try to connect to IRC?
 
-2  Multiple Connections
+7  Jabber Protocol
+	7.1  How do I choose which Jabber server to use?
+	7.2  How do I change my Jabber resource to be other than the
+	     default of "/GAIM"?
+	7.3  How do I register a new Jabber account?
 
-2.1  What do you mean by "multiple connections"?
+8  Scripts and Plugins
+	8.1  Where can I find documentation on writing plugins and
+	     Perl scripts?
+	8.2  How do I compile a plugin for Gaim?
 
-Multiple Connections means that it's possible to connect to the AOL servers
-using more than one screenname at a time. It's just a way of not having to run
-three copies of gaim for each of your screennames.
+9  Development
+	9.1  Where should I report bugs?
+	9.2  Did you guys reverse engineer it?
+	9.3  Will Gaim be ported to Windows 95/98/Me/2000/XP?
+	9.4  Will there be a QT dock app?
 
-2.2  How do I sign on more than one account?
+10  Misc. Questions
+	10.1  Does AOL's attempts at blocking Trillian affect Gaim?
+	10.2  Is Gaim affected by the vulnerability found in Windows
+	      AIM or Yahoo Instant Messenger clients?
+	10.3  Can I IM you guys?
+	10.4  Can I give you money/hardware/other expensive things that
+	      can be hocked for cash what with you all being
+	      students/full-time-workers and helping to produce this
+	      wonderful software instead of studying/sleeping?
 
-The Account Editor controls all of your accounts, and lets you add, delete,
-modify, and sign on/off accounts. It is accessible from the login window or
-from the 'Tools' menu in the buddy list as 'Accounts'. Simply highlight the
-account you want to sign on, and click the 'Sign On/Off' button. To sign on
-another account, highlight it and click the 'Sign On/Off' button. There is a
-column labeled 'Currently Online' to let you know if the account is online or
-not.
 
-2.3  How do buddy lists work for multiple connections?
++--------------------------------------------------------------------------
+| 1  Compiling
++--------------------------------------------------------------------------
 
-"The same as they did before" is the simple answer. Each account you have will
-have its own buddy list, which you can add buddies to and remove from. In the
-'Edit Buddies' tab of your buddy list, you'll see the name of each of your
-online accounts (unless if you only have one), with its buddy list nested
-underneath it.
+1.1  Is there some way I can compile just Gaim, without all of
+     these protocols?
 
-2.4  What's a PRPL?
+  Sort of, yeah. There's actually two ways to do it.
 
-PRPL stands for Protocol Plugin. It's a way to dynamically add new protocols
-to gaim. This allows you to use gaim as your AIM, ICQ, Yahoo, and even IRC
-client, all at the same time. Loading a PRPL is just like loading any other
-plugin - simply load the .so file from the plugins dialog.
+	1.  Use the --with-static-prpls option to ./configure along with
+	    --disable-plugins. This will let you choose which protocols are
+	    compiled in with Gaim, but you will not be able to use any other
+	    protocols or plugins.
 
-2.5  How do I use a different protocol?
+	    You'll need to compile any protocols that you specified in
+	    --with-static-prpls. Oscar and TOC are defaults.
 
-In the Account Editor,  click the 'Add' button to add a new account. Below the
-password entry, you should see a menu labeled 'Protocol', with a list of the
-protocols available for you to use. (If you don't see the protocol you want to
-use, make sure you have the proper PRPL loaded.) Enter in your username (for
-ICQ this should be your UIN) and password, and you're set. You can then sign
-the account on by clicking the 'Sign On/Off' button when the account is
-highlighted.
+	2.  Change to the directories for the protocols you
+	    want to compile (e.g. src/protocols/jabber), and
+	    run make from there. Then after you've compiled all
+	    of them, change back to src/ and run make gaim.
 
 
-3  About the Protocols (what they support, and how to do things with them)
+1.2  I'm getting an error:
 
-3.0  Introduction
+     ./au2h.c BuddyArrive.h
+     open: No such file or directory
 
-This really only describes the protocol, and how gaim is able to use it. For
-a listing of what gaim has implemented with each protocol, please read the
-STATUS file.
+  You're not using gmake, are you? You need to be using gmake
 
-3.1  TOC
 
-TOC is an open protocol (meaning that there's open documentation from the
-people who developed it), developed by AOL, for clients to use to connect to
-the AIM server. It has stopped being supported by AOL (though they do still
-make changes to the TOC server). It is a strip-down and simplified version of
-their "real" protocol, Oscar.
+1.3  I compiled Gaim, but when I restart, it did not update.
 
-TOC is a TCP protocol, and will only ever make one TCP connection (unless if
-you accept a file transfer request). Your buddy list is stored on the server,
-and gaim keeps a locally cached copy as well. When you sign on the server and
-local lists are merged.
+  If you previously had an rpm or a Debian package installed, you need to
+  remove that first. When you restart Gaim, it will give some errors about
+  your plugins. This is normal. Simply go into the Plugins dialog
+  (Tools->Plugins) and reload them. These errors will only happen once.
 
-3.2  Oscar
 
-Oscar is the protocol that the Windows version of AIM uses (and actually,
-ICQ2000 uses it too). It's a closed protocol, meaning that in order for gaim
-to use it, someone had to reverse-engineer it. For gaim, the libfaim authors
-did this, and wrote a library so that we could use it.
+1.4  I can't compile Gaim CVS.
 
-Oscar is a TCP protocol, but it makes several connections: the authorizor (the
-initial connection, who you send your screenname/password to), the BOS (which
-is the "main" connection, through which all your messages go), ChatNav (which
-lets you join chat rooms), as well as one for each chat room you join. Oscar
-does let you store your buddy list on the server, but libfaim hasn't added
-that functionality yet.
+  Make sure you have gettext <= 0.10.40, autoconf 2.11 or 2.53, and
+  automake 1.4px. If you are still having problems, make sure that your
+  gettext package includes the program gettextize. If it does not, look for
+  another package.
 
-3.3  Yahoo!
+  If you have Slackware, you need to get non-slack packages for autoconf,
+  automake, gettext, and libtool. You also have to copy the contents of
+  /usr/local/share/aclocal to /usr/share/aclocal. This is due to bugs in
+  Slackware and the auto* packages.
 
-Yahoo! uses a closed protocol; the authors of libyahoo reverse-engineered it
-and gaim uses that library. It is a TCP protocol, and makes several
-connections, though I'm not entirely sure at which points. It stores your
-buddy list on the server, and gaim keeps a locally cached copy. When you sign
-on the server and local lists are merged.
 
-3.4  IRC
+1.5  I have a question about GTK2.
 
-IRC is an open protocol (though I've heard that some servers deviate slightly
-from it). It's a TCP protocol, and will only ever make one connection (outside
-of DCC connections).
+  Don't ask untill the changelog says it works.
 
-3.5  ICQ
 
-ICQ is a closed protocol, though there have been several groups of people who
-have reverse-engineered it, and there are several libraries available. Gaim
-uses icqlib (which supports multiple connections, as opposed to libicq, which
-does not). It is a mix of UDP and TCP: the connection to the server is UDP,
-and conversations are TCP unless if they are sent through the server. This
-means you'll make one UDP connection, and possibly very many TCP connections.
++--------------------------------------------------------------------------
+| 2  Using Gaim
++--------------------------------------------------------------------------
 
-3.6  MSN
+2.1  How do I register for a new account?
 
-MSN is a weird TCP protocol written by Microsoft.  It requires multiple
-connections and is a real headache :).
+  This depends on the protocol.
 
-3.7  Jabber
+	AIM: Go to http://aim.AOL.com/aimnew/Aim/register.adp.
 
-Jabber is an open protocol, developed by the Jabber team, and is XML-encoded.
-It is a TCP protocol, and you will only ever make one TCP connection. Jabber
-has a feature it calls 'transports', where the server tells you which services
-it has available (such as AIM or ICQ), and you tell it which service you would
-like to use. This way you can have only one connection, but be connected to
-AIM and ICQ (among others) several times. Anyone who gives a damn about Open
-Source, especially open messaging, should use Jabber. They have the only Open
-Source IM server.
+	ICQ: Go to http://web.icq.com/register.
 
-3.8  Napster
+	Yahoo: Go to http://edit.yahoo.com/config/eval_register.
 
-Napster is, as you know, the protocol used by that wonderful little program
-called napster.  You know the one!  It's what millions of college kids across
-america are using to sastisfy their longing for music :-D.  Anyways, gaim supports
-it.  It's kind of fiunky, though. Napster is a TCP protocol and only requires one
-connection to the server.  All file transfers, however, are explicitly client to
-client.  The plugin currently only supports one way file transfer (downloading)
-from people who are _not_ firewalled.  You can also send private messages to each
-other, join chat rooms, browse a user's files, and search.  More implementation
-coming soon.
+	MSN: Go to http://registernet.passport.com.
 
-4  Problems
+	Gadu-Gadu: Use the official client to create an account.
 
-4.1  Sound doesn't work
+	Jabber: See the question "How do I register a new Jabber account?"
+	        below.
 
-./configure should autodetect whether or not you have ESD libraries. If you
-have them it will compile with them; if not it won't. If it compiles with them
-you don't need to be running the ESD daemon; it'll automatically fall back to
-using /dev/dsp. Make sure gaim has the proper permissions to talk to /dev/dsp
-and /dev/audio though!
 
-4.2  Clicking on URLs doesn't open Netscape
+2.2  Why is gaim crashing when somebody sends me an IM?
 
-Netscape either needs to be running on the current display (though gaim should
-handle remote netscape windows OK), or 'netscape' needs to be in your path.
+  If you're using a version older than 0.55 (or Ximian or Debian's 0.54
+  package), you can be crashed remotely through an IM using one of two
+  strings. The solution is to upgrade to the latest version, where both
+  exploits are fixed.
 
-4.3  I don't use Netscape
+  If you are using a version newer than 0.55 and gaim still crashes, please
+  let us know.
 
-There's the option to manually enter which browser you'd like to use. We're
-interested in supporting browsers other than Netscape though; send us some
-information about how to send a URL to your browser (source is nice :) ).
 
-4.4  I have a bug not described here
++--------------------------------------------------------------------------
+| 3  Features
++--------------------------------------------------------------------------
 
-We have a page at http://sourceforge.net/projects/gaim/, and from there you
-can report your bug.
+3.1  How do I use MSN, Yahoo, IRC, Gadu-Gadu, Napster, or Zephyr?
 
+  First load the plugin. Protocol plugins come with Gaim, so just go to the
+  Plugins dialog (Tools->Plugins, or the Plugins button on the start
+  screen) and then click "Load." The protocol plugins are named
+  lib<protocol>.so, so MSN for instance is provided by libmsn.so.
 
-5  Programming
+  After you have loaded the appropriate plugin, use the Account Editor
+  (Tools->Accounts, or the Accounts button on the start screen) to add the
+  account.
 
-5.1  I have a patch for gaim!
 
-Great! Send it over to the Patches section on our sourceforge page,
-http://sourceforge.net/projects/gaim/. From there we'll take a look at it (no
-promises that it'll get in, but we'll at least take a look at it).
+3.2  Can Gaim send files?
 
-5.2  I have a plugin/perl script for gaim!
+  TOC can, in a limited way. Most protocols are capable of it, but Gaim
+  hasn't implemented anything yet.
 
-Great! Post it to the Patches section on our sourceforge page, and mark it as
-a plugin. Then other people will be able to see it and use it. (Make sure that
-you understand that your plugin is necessarily GPL'd, and you must provide
-source to your plugin.)
 
-5.3  Can you teach me how to program GTK?
+3.3  When will file transfer be supported? Is it being worked on?
 
-Actually, I can't. I'm a very bad teacher. I'm much too impatient. There is a
-really great tutorial and API reference on the GTK website though,
-http://www.gtk.org/. That's how I learned, anyway.
+  File transfer is not currently being worked on. It will be supported if
+  someone writes a patch using a generic user interface and without adding
+  any GTK+ to the protocol plugins.
 
 
-6  Miscellaneous
+3.4  How come there's no Export Buddy List?
 
-6.1  Can I talk to you on IM?
+  It would be the same as the cp command. Gaim stores your buddy list in
+  the $HOME/.gaim directory. You can copy it out of there.
 
-Sure. Our IM names can be found in the AUTHORS file. Keep in mind though that
-we're busy people. We use those screennames as our main screen names, not just
-to talk to gaim users. So please, don't IM us for us to answer questions about
-Linux. We'd like to be able to answer everyone's questions, but we just don't
-have the time. We aren't paid to hack gaim; we do have other jobs.  Also,
-please don't waste our time with a simple "hi" or "hello."  Don't ask if
-you can ask a question, just ask it.  We'll usually respond.
 
-6.2  I want to write an IM client. Will you help me?
+3.5  Will Gaim save my buddy list to the server?
 
-I'll give you advice, but other than that, no (unless you'd like to pay me).
+  Gaim already does this in MSN, Yahoo, and TOC. As of version 0.53, this
+  support exists for Oscar as well. Improved Jabber support is being worked
+  on.
 
-6.3  I have money. I need software written. Can you help?
 
-Oh yes. Our email addresses are bj91704@binghamtom.edu (SeanEgn) and
-rob@marko.net (RobFlynn).
+3.6  Can Gaim import my buddy list?
 
-6.4  I have hardware here that's not being used. Can you use it?
+  This depends on the format of the buddy list. Gaim cannot import Licq
+  contact lists. Gaim has mixed success importing Windows AIM buddy lists.
+  If you want to try, click File->Import. This is accessible after you sign
+  on.
 
-Most certainly. IM me or email me and I'll tell you where you can ship it to
-(I might be able to scratch together shipping money even).
 
-6.5  I would like to send you beer.
+3.7  Can I set a buddy icon?
 
-OK.
+  Yes. Go to the Account Editor (Tools->Accounts from the buddy list), and
+  click to "Modify" the Oscar account you wish to have an icon. Type the
+  full path to the image you wish to use in the box labeled "Buddy Icon
+  File." The file must be below 4KB. It can have any dimensions, and can be
+  in any format. However, if you wish Windows users to see it, it must be
+  in a format Windows understands, such as .bmp, .gif, and .jpg.
 
-6.6  Are you going to port this to Windows?
 
-No. If you'd like to work on a port help yourself; but I really really dislike
-Windows (in all its closed-source evilness).
++--------------------------------------------------------------------------
+| 4  ICQ Protocol
++--------------------------------------------------------------------------
 
-6.7  Why no AOL logo?
+4.1  How do I use ICQ?
 
-AOL's legal staff told us no-no.
+  ICQ support is part of the OSCAR protocol, labeled AIM/ICQ in gaim (see
+  the question "ICQ doesn't" work for why). To use it, simply put your
+  account number in the ScreenName box and your password in the password
+  box. Leave the server settings alone. 
 
-6.8  Why the GPL?
 
-I like the GPL.
+4.2  ICQ doesn't work.
 
-6.9  What is a wagii?
+  Use AIM/ICQ for ICQ. AOL stopped supporting the older versions of the ICQ
+  protocol. The newer versions are extensions of Oscar, which is labled
+  AIM/ICQ in gaim. Currently, Oscar supports as much of ICQ as the ICQ
+  plugin used to. To use Oscar for ICQ, put your UIN in the Screenname box,
+  and leave the server information alone.
 
-Interesting question that you ask, there. 'Wagii' is the official celebratory
-cry of gaim. Anytime you are feeling happy or excited, just remember all of
-the hard work that we have done to provide you with this wonderful, free piece
-of software -- as the pure, raw, emotion flows through you, maybe you too will
-let out the cry of -- Wagii.
 
-It is also the sound a Penguin Samurai makes :)
++--------------------------------------------------------------------------
+| 5  AIM/ICQ (Oscar) Protocol
++--------------------------------------------------------------------------
 
-6.10 What window manager/distribution/other crap do you use?
+5.1  Some of my buddies are not showing up as online, why is that?
 
-Rob uses Red Hat, with Ximian GNOME on top.  I dont really like Ximian but I like
-Gnome.  On top of my Ximian Gnome is Sawfish.  Eric hates saw fish.  I kinda of
-like it even though it makes me mad. 
+  AOL has set a limit for the maximum number of people you can have in your
+  buddy list. This number is currently 200. Gaim 0.58 gives you a warning
+  if you are over the limit, but if you are using something prior to 0.58,
+  make sure you are not over the limit (and upgrade to something more
+  recent!).
 
-Eric uses debian woody. He uses Enlightenment as his window manager; though
-the only reason it would seem that Eric uses X at all is to support having
-his 20 Eterms and 4 Mozilla windows open. Oh yeah, and gaim_applet.
+  The other possibility is that your server-stored buddy list is corrupt.
+  Unfortunately, Gaim 0.53 had a bug that caused it to corrupt some
+  entries, especially group names. While this corruption doesn't show in
+  gaim unless you remove the SCREENNAME.0.blist file from ~/.gaim, it does
+  affect how long the server thinks your list is. The best way to fix this,
+  is to:
 
-6.11 Is XX a good hard drive, YY a good monitor and ZZ a good CPU?
+mv ~/.gaim/SCREENNAME.0.blist ~/
 
-You could send us one and we could tell you... :)
+  where SCREENNAME is your screenname, without spaces and in all caps. Then
+  signon, delete all groups, signoff, and signon again to verify that your
+  list is empty. Once it is empty, signoff, mv your SCREENNAME.0.blist file
+  back into ~/.gaim, then sign on again.
 
-6.12 I want to contribute to the effort. Where can I send beer to?
 
-IM RobFlynn or email him at rob@marko.net.
+5.2  IM Image doesn't work, why?
+
+  IM Image is very sensitive, even from windows. Gaim currently only
+  supports sending IM Images if the sender is not behind a firewall or nat
+  device.  Given that the windows version of AIM also has trouble in this
+  situation, we are not sure this is entirely fixable. A work around that
+  is sometimes effective is to have the reciever, not being behind a
+  firewall, request a direct connection, then send the immage.
+
+
+5.3  I sent an IM Image, but only a blank line shows up, why?
+
+  You need to have gdk-pixbuf installed to send IM Images, if the reciever
+  is also using gaim, [s]he also needs to have this installed.
+
+
++--------------------------------------------------------------------------
+| 6  IRC Protocol
++--------------------------------------------------------------------------
+
+6.1  Why am I getting disconnected when I try to connect to IRC?
+
+  You will be disconnected if the nickname you chose is already in use on
+  that IRC server. Try again with a different nickname.
+
+
++--------------------------------------------------------------------------
+| 7  Jabber Protocol
++--------------------------------------------------------------------------
+
+7.1  How do I choose which Jabber server to use?
+
+  The Jabber server name is part of your Jabber I.D., such as
+  somebody@server.name. So when entering your Jabber "screen name", the
+  server is specified as part of your JID.
+
+
+7.2  How do I change my Jabber resource to be other than the default of
+     "/GAIM"?
+
+  When you create your account in Gaim, simply append the desired resource
+  identifier to your Jabber I.D. For example: somebody@server.name/resource 
+
+
+7.3  How do I register a new Jabber account?
+
+  As of version 0.52 and up:
+
+	1. Click "Tools->Accounts->Add"
+	2. Select "Jabber" for the protocol.
+	3. Fill in screen name and password as you normally would.
+	4. Check the "Register with server" check-box
+	5. Click "OK".
+
+  A pop-up will tell you whether the registration succeeded or not.
+
+  Note: You are strongly recommended to check the "Remember
+        password" check-box as well, as Gaim presently does no password
+        verification. So if you don't type in what you thought you did,
+        you're hosed.
+
+
++--------------------------------------------------------------------------
+| 8  Scripts and Plugins
++--------------------------------------------------------------------------
+
+8.1  Where can I find documentation on writing plugins and Perl scripts?
+
+  If you look in the plugins/ directory in the Gaim source, you should see
+  a HOWTO file for C plugins and a PERL-HOWTO for Perl scripts.
+
+
+8.2  How do I compile a plugin for Gaim?
+
+  To compile a plugin for Gaim, you must have Gaim's source code. There are
+  two ways to get this: Tarballs, and CVS. To work with a tarball, follow
+  the instructions below. To use CVS, follow the instructions on the CVS
+  page.  Please note that normally, CVS is much more stable than the
+  tarballs!
+
+  To work with a tarball, download the latest source code from
+  http://gaim.sf.net/ and untar it with the command:
+
+	tar zxvf filename
+
+  where filename is the file you downloaded.
+
+  After you have a Gaim source code tree, either through tarballs or CVS:
+
+	1. Change to the resulting directory and run the command:
+
+	   ./configure
+
+	   This will create the necessary make files.
+
+	2. Move the plugin you wish to compile into the plugins/ directory in
+	   the Gaim source code tree.
+
+	3. Change to the plugins/ directory.
+	4. Type:
+
+	   make name.so
+
+	   where the name of the file you wish to compile is name.c.
+
+	   Note well the difference in the extensions. If you type make name.c
+	   nstead of name.so, it won't work.
+
+	5. After make finishes, you can move the plugin to a place that is more
+	   convenient. $prefix/lib/gaim is suggested. If you installed Gaim by
+	   compiling it yourself, $prefix is /usr/local by default. Otherwise,
+	   $prefix is /usr.
+
+
++--------------------------------------------------------------------------
+| 9  Development
++--------------------------------------------------------------------------
+
+9.1  Where should I report bugs?
+
+  http://gaim.sf.net/bug.php
+
+
+9.2  Did you guys reverse engineer it?
+
+  TOC, Jabber, MSN, Napster, and IRC are published protocols, so we didn't
+  have to reverse engineer those. Oscar, ICQ, and Yahoo are not published,
+  and were reverse engineered by other people.
+
+
+9.3  Will Gaim be ported to Windows 95/98/Me/2000/XP?
+
+  When GTK+ 2.0 comes out and compiles well against Cygwin, and Gaim has
+  been ported to it, Gaim should work. It will not happen before GTK+ 2.0
+  is ported to Windows, though.
+
+
+9.4  Will there be a QT dock app?
+
+  Right now Gaim, is done entirely in C and GTK+, so a QT dock app is not
+  in planned. You can either write a patch to do this yourself, or wait
+  until the core and UI of Gaim are split. A QT UI will probably be
+  considered at that time.
+
+
++--------------------------------------------------------------------------
+| 10  Misc. Questions
++--------------------------------------------------------------------------
+
+10.1  Does AOL's attempts at blocking Trillian affect Gaim?
+
+  No.
+
+
+10.2  Is Gaim affected by the vulnerability found in Windows AIM or Yahoo
+      Instant Messenger clients?
+
+  No.
+
+
+10.3  Can I IM you guys?
+
+  Sure! Look at the Contact Information
+  (http://gaim.sf.net/contactinfo.php) page!
+
+
+10.4  Can I give you money/hardware/other expensive things that can be
+      hocked for cash what with you all being students/full-time-workers
+      and helping to produce this wonderful software instead of
+      studying/sleeping?
+
+  No. We're completely fool-hardy and won't accept any gratuities with no
+  strings attached for just being good guys. That and we'd have to share
+  with everyone who has submitted patches. ;-)
+
