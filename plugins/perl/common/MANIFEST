@@ -1,0 +1,15 @@
+Account.xs
+BuddyList.xs
+BuddyList_Buddy.xs
+BuddyList_Chat.xs
+BuddyList_Group.xs
+Connection.xs
+ConvWindow.xs
+Conversation.xs
+Conversation_Chat.xs
+Conversation_IM.xs
+Gaim.pm
+Gaim.xs
+MANIFEST
+Makefile.PL
+typemap
