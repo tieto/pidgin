@@ -41,6 +41,11 @@
 
 #define PATHSIZE 1024
 
+/* This guy does its best to convert a string to UTF-8 from an unknown
+ * encoding by checking the locale and trying some sane defaults ...
+ * if everything fails it returns NULL. */
+static char *whatever_to_utf8(const char *str);
+
 void remove_buddy(struct buddy *rem_b)
 {
 	if(rem_b->user->gc) {
@@ -257,30 +262,43 @@ void parse_toc_buddy_list(struct aim_user *user, char *config)
 			if (c == NULL)
 				break;
 			if (*c == 'g') {
-				strncpy(current, c + 2, sizeof(current));
+				char *utf8 = NULL;
+				utf8 = whatever_to_utf8(c + 2);
+				if (utf8 == NULL) {
+					g_strlcpy(current, _("Invalid Groupname"), sizeof(current));
+				} else {
+					g_strlcpy(current, utf8, sizeof(current));
+					g_free(utf8);
+				}
 				if (!find_group(current)) {
 					add_group(current);
 				}
-			} else if (*c == 'b' && !find_buddy(user, c + 2)) {
-				char nm[80], sw[BUDDY_ALIAS_MAXLEN], *tmp = c + 2;
-				int i = 0;
-				while (*tmp != ':' && *tmp && i < sizeof(nm) - 1)
-					nm[i++] = *tmp++;
+			} else if (*c == 'b') { /*&& !find_buddy(user, c + 2)) {*/
+				char nm[80], sw[BUDDY_ALIAS_MAXLEN], *tmp = c + 2, *a, *utf8 = NULL;
+				
+				if ((a = strchr(c + 2, ':')) != NULL) {
+					*a++ = '\0';		/* nul the : */
+				}
 
-				while (*tmp != ':' && *tmp)
-					tmp++;
-
-				if (*tmp == ':')
-					*tmp++ = '\0';
-
-				nm[i] = '\0';
-				i = 0;
-				while (*tmp && i < sizeof(sw) - 1)
-					sw[i++] = *tmp++;
-				sw[i] = '\0';
+				g_strlcpy(nm, c + 2, sizeof(nm));
+				if (a) {
+					utf8 = whatever_to_utf8(a);
+					if (utf8 == NULL) {
+						debug_printf ("Failed to convert alias for '%s' to UTF-8\n", nm);
+					}
+				}
+				if (utf8 == NULL) {
+					sw[0] = '\0';
+				} else {
+					/* This can leave a partial sequence at the end, 
+					 * but who cares? */
+					g_strlcpy(sw, utf8, sizeof(sw));
+					g_free(utf8);
+				}
+				
 				if (!find_buddy(user, nm)) {
 					add_buddy(user, current, nm, sw);
-					bud = g_list_append(bud, c + 2);
+					bud = g_list_append(bud, nm);
 				}
 			} else if (*c == 'p') {
 				gaim_privacy_permit_add(user, c + 2);
@@ -1163,4 +1181,30 @@ char *gaim_buddy_get_setting(struct buddy *b, const char *key) {
 	if(!b)
 		return NULL;
 	return g_strdup(g_hash_table_lookup(b->settings, key));
+}
+
+static char *whatever_to_utf8(const char *str)
+{
+	int converted;
+	char *utf8;
+
+	if (g_utf8_validate(str, -1, NULL)) {
+		return g_strdup(str);
+	}
+
+	utf8 = g_locale_to_utf8(str, -1, &converted, NULL, NULL);
+	if (utf8 && converted == strlen (str)) {
+		return(utf8);
+	} else if (utf8) {
+		g_free(utf8);
+	}
+
+	utf8 = g_convert(str, -1, "UTF-8", "ISO-8859-15", &converted, NULL, NULL);
+	if (utf8 && converted == strlen (str)) {
+		return(utf8);
+	} else if (utf8) {
+		g_free(utf8);
+	}
+
+	return(NULL);
 }
