@@ -382,7 +382,9 @@ static void gaimrc_read_users(FILE *f)
                 } else if (strcmp(p->option, "user")) {
 			cur = 0;
                         continue;
-                }
+                } else {
+			cur = 0;
+		}
 
                 u = gaimrc_read_user(f);
 
