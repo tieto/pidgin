@@ -69,6 +69,16 @@
 	and lots of crazy bugfixes.  It was a team effort, I'd like to thank the
 	academy, our producer Rob Flynn, and of course all the fans. You rock.
 
+	Herman: I was told to write something.. so here it goes.  Windows users
+	will be happy to know that they can now rearrange their Buddy Lists.  
+	I finally got stuck into GTK+ code and fixed the bug in question (this 
+	release will include a patched version of GTK+ 2.2.1).  I integrated 
+	the WinGaim systray code into the docklet plugin bringing those nice 
+	docklet features (i.e. Message queuing) to WinGaim.  Another major
+	WinGaim change of note is that debug versions of all dlls can now be
+	built, providing useful backtraces not only for gaim.dll but for the
+	plugins as well.
+
 0.64 (05/29/2003):
 	Rob: I didn't do anything this release either.  We're under a crunch
 	week at work.  Friday is the end of the crunch. Hooray!! Thanks for
