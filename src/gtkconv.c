@@ -125,7 +125,6 @@ static void do_bold(GtkWidget *bold, GaimGtkConversation *gtkconv);
 static void do_italic(GtkWidget *italic, GaimGtkConversation *gtkconv);
 static void do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv);
 static void do_small(GtkWidget *smalltb, GaimGtkConversation *gtkconv);
-static void do_normal(GtkWidget *normal, GaimGtkConversation *gtkconv);
 static void do_big(GtkWidget *large, GaimGtkConversation *gtkconv);
 static void toggle_font(GtkWidget *font, GaimConversation *conv);
 static void toggle_fg_color(GtkWidget *color, GaimConversation *conv);
@@ -1424,12 +1423,12 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					break;
 
 				case '0':
-					set_toggle(gtkconv->toolbar.normal_size,
+					/*set_toggle(gtkconv->toolbar.normal_size,
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.normal_size)));
 
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
-												 "key_press_event");
+					"key_press_event"); */
 					break;
 
 				case 'f':
@@ -2205,33 +2204,14 @@ do_underline(GtkWidget *underline, GaimGtkConversation *gtkconv)
 static void
 do_small(GtkWidget *smalltb, GaimGtkConversation *gtkconv)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smalltb)))
-		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"1\">", "</FONT>");
-	else
-		gaim_gtk_advance_past(gtkconv, "<FONT SIZE=\"1\">", "</FONT>");
-
-	gtk_widget_grab_focus(gtkconv->entry);
-}
-
-static void
-do_normal(GtkWidget *normal, GaimGtkConversation *gtkconv)
-{
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(normal)))
-		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"3\">", "</FONT>");
-	else
-		gaim_gtk_advance_past(gtkconv, "<FONT SIZE=\"3\">", "</FONT>");
-
+	gtk_imhtml_font_shrink(GTK_IMHTML(gtkconv->entry));
 	gtk_widget_grab_focus(gtkconv->entry);
 }
 
 static void
 do_big(GtkWidget *large, GaimGtkConversation *gtkconv)
 {
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(large)))
-		gaim_gtk_surround(gtkconv, "<FONT SIZE=\"5\">", "</FONT>");
-	else
-		gaim_gtk_advance_past(gtkconv, "<FONT SIZE=\"5\">", "</FONT>");
-
+	gtk_imhtml_font_grow(GTK_IMHTML(gtkconv->entry));
 	gtk_widget_grab_focus(gtkconv->entry);
 }
 
@@ -3268,7 +3248,7 @@ build_conv_toolbar(GaimConversation *conv)
 
 	gtkconv->toolbar.larger_size = button;
 
-	/* Normal font size */
+	/* Normal font size 
 	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_TEXT_NORMAL);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
@@ -3279,6 +3259,7 @@ build_conv_toolbar(GaimConversation *conv)
 					 G_CALLBACK(do_normal), gtkconv);
 
 	gtkconv->toolbar.normal_size = button;
+	*/
 
 	/* Decrease font size */
 	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_TEXT_SMALLER);

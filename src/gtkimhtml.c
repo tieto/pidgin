@@ -523,6 +523,8 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->edit.forecolor = NULL;
 	imhtml->edit.backcolor = NULL;
 	imhtml->edit.fontface = NULL;
+	imhtml->edit.sizespan = NULL;
+	imhtml->edit.fontsize = 3;
 
 	imhtml->format_spans = NULL;
 	
@@ -1640,6 +1642,8 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	imhtml->edit.fontface = NULL;
 	imhtml->edit.forecolor = NULL;
 	imhtml->edit.backcolor = NULL;
+	imhtml->edit.sizespan = NULL;
+	imhtml->edit.fontsize = 3;
 }
 
 void gtk_imhtml_page_up (GtkIMHtml *imhtml)
@@ -2013,6 +2017,20 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &face, span->start);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer, span->tag, &face, iter);
 	}
+
+	if ((span = imhtml->edit.sizespan)) {
+		GtkTextIter size;
+		/* We create the tags here so that one can grow font or shrink font several times
+		 * in a row without creating unnecessary tags */
+		if (span->tag == NULL) {
+			span->tag = gtk_text_buffer_create_tag
+				(imhtml->text_buffer, NULL, "size-points", (double)_point_sizes [imhtml->edit.fontsize-1], NULL);
+			span->start_tag = g_strdup_printf("<font size='%d'>", imhtml->edit.fontsize);
+			span->end_tag = g_strdup("</font>");
+		}
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &size, span->start);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer, span->tag, &size, iter);
+	}
 }
 
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable) 
@@ -2097,6 +2115,64 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 		imhtml->edit.underline = NULL;
 	}
 	return imhtml->edit.underline != NULL;
+}
+
+void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
+{
+	GtkIMHtmlFormatSpan *span;
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	if (imhtml->edit.fontsize == 1)
+		return;
+	
+	imhtml->edit.fontsize--;
+
+	if (imhtml->edit.sizespan) {
+		GtkTextIter iter2;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter2, imhtml->edit.sizespan->start);
+		if (gtk_text_iter_equal(&iter2, &iter))
+			return;
+		span = imhtml->edit.sizespan;
+		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+	}
+	
+	span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+	span->end = NULL;
+	span->buffer = imhtml->text_buffer;
+	span->tag = NULL;
+	imhtml->edit.sizespan = span;
+	imhtml->format_spans = g_list_append(imhtml->format_spans, span);
+}
+
+void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
+{
+	GtkIMHtmlFormatSpan *span;
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	if (imhtml->edit.fontsize == MAX_FONT_SIZE)
+		return;
+	
+	imhtml->edit.fontsize++;
+
+	if (imhtml->edit.sizespan) {
+		GtkTextIter iter2;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter2, imhtml->edit.sizespan->start);
+		if (gtk_text_iter_equal(&iter2, &iter))
+			return;
+		span = imhtml->edit.sizespan;
+		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+	}
+	
+	span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+	span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+	span->end = NULL;
+	span->tag = NULL;
+	span->buffer = imhtml->text_buffer;
+	imhtml->edit.sizespan = span;
+	imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 }
 
 gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color)
