@@ -99,11 +99,12 @@ void show_about(GtkWidget *w, void *data)
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 				GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 		gtk_box_pack_start(GTK_BOX(fbox), sw, TRUE, TRUE, 0);
 
 		text = gtk_imhtml_new(NULL, NULL);
 		gtk_container_add(GTK_CONTAINER(sw), text);
-		gtk_widget_set_usize(sw, -1, 350);
+		gtk_widget_set_size_request(sw, -1, 350);
 		gaim_setup_imhtml(text);
 
 
@@ -187,6 +188,5 @@ void show_about(GtkWidget *w, void *data)
 	}
 
 	/* Let's give'em something to talk about -- woah woah woah */
-	gtk_widget_show(about);
 	gtk_window_present(GTK_WINDOW(about));
 }
