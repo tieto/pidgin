@@ -2012,6 +2012,10 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 void hide_buddy_list() {
 	if (blist) {
 		if (!connections || docklet_count) {
+#ifdef _WIN32
+			/* minimize to systray with effects */
+			wgaim_systray_minimize(blist);
+#endif
 			gtk_widget_hide(blist);
 		} else {
 			gtk_window_iconify(GTK_WINDOW(blist));
@@ -2082,6 +2086,9 @@ void docklet_toggle() {
 				hide_buddy_list();
 			}
 		} else {
+#if _WIN32
+			wgaim_systray_maximize(blist);
+#endif
 			unhide_buddy_list();
 		}
 	} else if (connections) {
@@ -2092,9 +2099,15 @@ void docklet_toggle() {
 			if (GAIM_WINDOW_ICONIFIED(mainwindow)) {
 				gtk_window_present(GTK_WINDOW(mainwindow));
 			} else {
+#if _WIN32
+				wgaim_systray_minimize(mainwindow);
+#endif
 				gtk_widget_hide(mainwindow);
 			}
 		} else {
+#if _WIN32
+			wgaim_systray_maximize(mainwindow);
+#endif
 			gtk_window_present(GTK_WINDOW(mainwindow));
 		}
 	}
