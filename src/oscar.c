@@ -1063,8 +1063,8 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 		aim_bos_setprofile(sess, command->conn, gc->user_info, NULL, gaim_caps);
 		aim_bos_reqbuddyrights(sess, command->conn);
 
-		serv_finish_login(gc);
 		account_online(gc);
+		serv_finish_login(gc);
 
 		if (bud_list_cache_exists(gc))
 			do_import(NULL, gc);

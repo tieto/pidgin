@@ -40,7 +40,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 1012 $"
+#define REVISION "gaim:$Revision: 1030 $"
 
 struct toc_data {
 	int toc_fd;
@@ -136,8 +136,8 @@ void toc_login(struct aim_user *user)
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
-	serv_finish_login(gc);
 	account_online(gc);
+	serv_finish_login(gc);
 
 	config = toc_wait_config(gc);
 	tdt->state = STATE_ONLINE;
