@@ -69,11 +69,11 @@ void serv_close(struct gaim_connection *gc)
 	}
 
 	if (gc->idle_timer > 0)
-		gtk_timeout_remove(gc->idle_timer);
+		g_source_remove(gc->idle_timer);
 	gc->idle_timer = 0;
 
 	if (gc->keepalive > 0)
-		gtk_timeout_remove(gc->keepalive);
+		g_source_remove(gc->keepalive);
 	gc->keepalive = 0;
 
 	if (gc->prpl && gc->prpl->close)
@@ -105,9 +105,9 @@ void serv_finish_login(struct gaim_connection *gc)
 	}
 
 	if (gc->idle_timer > 0)
-		gtk_timeout_remove(gc->idle_timer);
+		g_source_remove(gc->idle_timer);
 
-	gc->idle_timer = gtk_timeout_add(20000, (GtkFunction)check_idle, gc);
+	gc->idle_timer = g_timeout_add(20000, (GtkFunction)check_idle, gc);
 	serv_touch_idle(gc);
 
 	time(&gc->login_time);
@@ -651,7 +651,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 		system_log(log_idle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
 	if (b->idle && !idle) {
-		do_pounce(b->name, OPT_POUNCE_UNIDLE);
+		do_pounce(gc, b->name, OPT_POUNCE_UNIDLE);
 		plugin_event(event_buddy_unidle, gc, b->name, 0, 0);
 		system_log(log_unidle, gc, b, OPT_LOG_BUDDY_IDLE);
 	}
@@ -660,7 +660,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 	b->evil = evil;
 
 	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE)) {
-		do_pounce(b->name, OPT_POUNCE_UNAWAY);
+		do_pounce(gc, b->name, OPT_POUNCE_UNAWAY);
 		plugin_event(event_buddy_back, gc, b->name, 0, 0);
 		system_log(log_back, gc, b, OPT_LOG_BUDDY_AWAY);
 	} else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE)) {
@@ -677,7 +677,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 	if (loggedin) {
 		if (!b->present) {
 			b->present = 1;
-			do_pounce(b->name, OPT_POUNCE_SIGNON);
+			do_pounce(gc, b->name, OPT_POUNCE_SIGNON);
 			plugin_event(event_buddy_signon, gc, b->name, 0, 0);
 			system_log(log_signon, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
@@ -931,10 +931,10 @@ void update_keepalive(struct gaim_connection *gc, gboolean on)
 {
 	if (on && !gc->keepalive && blist) {
 		debug_printf("allowing NOP\n");
-		gc->keepalive = gtk_timeout_add(60000, (GtkFunction)send_keepalive, gc);
+		gc->keepalive = g_timeout_add(60000, (GtkFunction)send_keepalive, gc);
 	} else if (!on && gc->keepalive > 0) {
 		debug_printf("removing NOP\n");
-		gtk_timeout_remove(gc->keepalive);
+		g_source_remove(gc->keepalive);
 		gc->keepalive = 0;
 	}
 }

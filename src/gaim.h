@@ -750,7 +750,7 @@ extern void add_category(char *);
 extern void build_edit_tree();
 extern void remove_person(struct group *, struct buddy *);
 extern void remove_category(struct group *);
-extern void do_pounce(char *, int);
+extern void do_pounce(struct gaim_connection *, char *, int);
 extern void do_bp_menu();
 extern struct buddy *find_buddy(struct gaim_connection *, char *);
 extern struct group *find_group(struct gaim_connection *, char *);

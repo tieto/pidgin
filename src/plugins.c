@@ -477,7 +477,7 @@ static gint unload_timeout(GModule *handle)
 void gaim_plugin_unload(GModule *handle)
 {
 	unload_for_real(handle);
-	gtk_timeout_add(5000, (GtkFunction)unload_timeout, handle);
+	g_timeout_add(5000, unload_timeout, handle);
 }
 
 static void plugin_reload_cb(GtkWidget *w, gpointer data)

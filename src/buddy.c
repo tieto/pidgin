@@ -1695,7 +1695,7 @@ void rem_bp(GtkWidget *w, struct buddy_pounce *b)
 	save_prefs();
 }
 
-void do_pounce(char *name, int when)
+void do_pounce(struct gaim_connection *gc, char *name, int when)
 {
         char *who;
         
@@ -1717,7 +1717,7 @@ void do_pounce(char *name, int when)
 		if (u == NULL) continue;
 
 		/* check and see if we're signed on as the pouncer */
-		if (u->gc == NULL) continue;
+		if (u->gc != gc) continue;
 		
                 if (!g_strcasecmp(who, normalize(b->name))) { /* find someone to pounce */
 			if (b->options & OPT_POUNCE_POPUP) {

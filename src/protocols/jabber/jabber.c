@@ -1209,7 +1209,7 @@ static void jabber_close(struct gaim_connection *gc)
 	g_hash_table_destroy(jd->hash);
 	gaim_input_remove(gc->inpa);
 	close(jd->jc->fd);
-	gtk_timeout_add(50, jabber_free, jd->jc);
+	g_timeout_add(50, jabber_free, jd->jc);
 	jd->jc = NULL;
 	g_free(jd);
 	gc->proto_data = NULL;

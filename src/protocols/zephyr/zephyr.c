@@ -584,8 +584,8 @@ static void zephyr_login(struct aim_user *user)
 	process_anyone();
 	process_zsubs();
 
-	nottimer = gtk_timeout_add(100, check_notify, NULL);
-	loctimer = gtk_timeout_add(2000, check_loc, NULL);
+	nottimer = g_timeout_add(100, check_notify, NULL);
+	loctimer = g_timeout_add(2000, check_loc, NULL);
 }
 
 static void write_zsubs()
@@ -669,10 +669,10 @@ static void zephyr_close(struct gaim_connection *gc)
 	g_slist_free(subscrips);
 	
 	if (nottimer)
-		gtk_timeout_remove(nottimer);
+		g_source_remove(nottimer);
 	nottimer = 0;
 	if (loctimer)
-		gtk_timeout_remove(loctimer);
+		g_source_remove(loctimer);
 	loctimer = 0;
 	zgc = NULL;
 	z_call(ZCancelSubscriptions(0));

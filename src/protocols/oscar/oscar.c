@@ -522,7 +522,7 @@ static void oscar_close(struct gaim_connection *gc) {
 		if (n->unanim)
 			gdk_pixbuf_unref(n->unanim);
 		if (n->timer)
-			gtk_timeout_remove(n->timer);
+			g_source_remove(n->timer);
 		if (n->cnv && n->pix)
 			gtk_container_remove(GTK_CONTAINER(n->cnv->bbox), n->pix);
 		g_free(n->user);
@@ -1668,7 +1668,7 @@ static gboolean redraw_anim(gpointer data)
 	}
 	ir->curframe = (ir->curframe + 1) % g_list_length(frames);
 	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
-	ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
+	ir->timer = g_timeout_add(delay * 10, redraw_anim, ir);
 	return FALSE;
 }
 #endif
@@ -1822,7 +1822,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 				gdk_pixbuf_unref(ir->unanim);
 			ir->unanim = NULL;
 			if (ir->timer)
-				gtk_timeout_remove(ir->timer);
+				g_source_remove(ir->timer);
 			ir->timer = 0;
 
 			ir->length = args->info.icon.length;
@@ -1852,7 +1852,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					int delay =
 						MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
 					ir->curframe = 1;
-					ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
+					ir->timer = g_timeout_add(delay * 10, redraw_anim, ir);
 				}
 			} else {
 				ir->unanim = gdk_pixbuf_loader_get_pixbuf(load);
@@ -3221,7 +3221,7 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 		if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
 			int delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
 			ir->curframe = 1;
-			ir->timer = gtk_timeout_add(delay * 10, redraw_anim, ir);
+			ir->timer = g_timeout_add(delay * 10, redraw_anim, ir);
 		}
 	} else {
 		ir->unanim = gdk_pixbuf_loader_get_pixbuf(load);
@@ -3283,7 +3283,7 @@ static void oscar_remove_convo(struct gaim_connection *gc, struct conversation *
 	ir->curframe = 0;
 	
 	if (ir->timer)
-		gtk_timeout_remove(ir->timer);
+		g_source_remove(ir->timer);
 	ir->timer = 0;
 #endif
 }

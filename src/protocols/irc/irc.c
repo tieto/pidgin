@@ -109,7 +109,7 @@ static void irc_update_user(struct gaim_connection *gc, char *name, int status)
 	return;
 }
 
-static void irc_request_buddy_update(struct gaim_connection *gc)
+static gboolean irc_request_buddy_update(struct gaim_connection *gc)
 {
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	GSList *grp = gc->groups;
@@ -126,7 +126,7 @@ static void irc_request_buddy_update(struct gaim_connection *gc)
 
 	/* First, let's check to see if we have anyone on our buddylist */
 	if (!grp) {
-		return;
+		return TRUE;
 	}
 
 	/* Send the first part of our request */
@@ -159,6 +159,7 @@ static void irc_request_buddy_update(struct gaim_connection *gc)
 		grp = g_slist_next(grp);
 	}
 	write(idata->fd, "\n", 1);
+	return TRUE;
 }
 
 
@@ -1826,7 +1827,7 @@ static void irc_close(struct gaim_connection *gc)
 	g_free(buf);
 
 	if (idata->timer)
-		gtk_timeout_remove(idata->timer);
+		g_source_remove(idata->timer);
 
 	while (chats) {
 		cc = (struct irc_channel *)chats->data;
@@ -1905,7 +1906,7 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 		do_import(NULL, gc);
 
 	/* we don't call this now because otherwise some IRC servers might not like us */
-	idata->timer = gtk_timeout_add(20000, (GtkFunction) irc_request_buddy_update, gc);
+	idata->timer = g_timeout_add(20000, irc_request_buddy_update, gc);
 }
 
 static void irc_login(struct aim_user *user)
