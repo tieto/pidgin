@@ -13,6 +13,7 @@ version 0.80cvs:
 	* Parentheses are now displayed around the title and tabs of
 	  conversations from offline accounts or parted chats.
 	* Zephyr typing notification (Arun A Tharuvai)
+	* Account dialog's columns are resizable (Eduardo Pérez)
 
 	Bug Fixes:
 	* The firefox browser option now works with firefox 0.9

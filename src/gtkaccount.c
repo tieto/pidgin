@@ -2114,6 +2114,7 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Screen Name"));
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+	gtk_tree_view_column_set_resizable(column, TRUE);
 
 	/* Icon */
 	renderer = gtk_cell_renderer_pixbuf_new();
@@ -2139,6 +2140,8 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 						    renderer,
 						    "active", COLUMN_ONLINE,
 						    NULL);
+	column = gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), 1);
+	gtk_tree_view_column_set_resizable(column, TRUE);
 
 	/* Auto-login? */
 	renderer = gtk_cell_renderer_toggle_new();
@@ -2150,11 +2153,13 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 			renderer, "active", COLUMN_AUTOLOGIN, NULL);
 
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+	gtk_tree_view_column_set_resizable(column, TRUE);
 
 	/* Protocol name */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Protocol"));
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+	gtk_tree_view_column_set_resizable(column, TRUE);
 
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
