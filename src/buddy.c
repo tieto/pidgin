@@ -1727,7 +1727,7 @@ void do_bp_menu()
 		if (strlen(b->message))
 			mess = gtk_menu_item_new_with_label(b->message);
 		else
-			mess = gtk_menu_item_new_with_label("[no message]");
+			mess = gtk_menu_item_new_with_label(_("[no message]"));
 		gtk_menu_append(GTK_MENU(messmenu), mess);
 		gtk_tooltips_set_tip(bp_tooltip, GTK_WIDGET(mess), _("[Click to edit]"), NULL);
 		gtk_widget_show(mess);
