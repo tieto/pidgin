@@ -6,4 +6,3 @@
 .deps
 Makefile
 Makefile.in
-Makefile.mingw
