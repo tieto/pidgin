@@ -23,8 +23,16 @@ destroy_signal_handler(GaimPerlSignalHandler *handler)
 {
 	signal_handlers = g_list_remove(signal_handlers, handler);
 
+	if (handler->instance != NULL)
+		SvREFCNT_dec(handler->instance);
+
+	if (handler->callback != NULL)
+		SvREFCNT_dec(handler->callback);
+
+	if (handler->data != NULL)
+		SvREFCNT_dec(handler->data);
+
 	g_free(handler->signal);
-	g_free(handler->func);
 	g_free(handler);
 }
 
@@ -82,15 +90,21 @@ perl_signal_cb(va_list args, void *data)
 	XPUSHs((SV *)handler->data);
 
 	PUTBACK;
-	gaim_debug(GAIM_DEBUG_INFO, "perl", "Calling handler %s\n",
-			   handler->func);
-	count = call_pv(handler->func, G_EVAL | G_SCALAR);
-	SPAGAIN;
 
-	if (count > 1)
-		ret_val = POPp;
+	if (ret_value != NULL)
+	{
+		count = call_sv(handler->callback, G_SCALAR);
 
-	PUTBACK;
+		SPAGAIN;
+
+		if (count != 1)
+			croak("Uh oh! call_sv returned %i != 1", i);
+		else
+			ret_val = POPs;
+	}
+	else
+		call_sv(handler->callback, G_SCALAR);
+
 	FREETMPS;
 	LEAVE;
 
@@ -98,8 +112,7 @@ perl_signal_cb(va_list args, void *data)
 }
 
 static GaimPerlSignalHandler *
-find_signal_handler(GaimPlugin *plugin, void *instance,
-					const char *signal, const char *func)
+find_signal_handler(GaimPlugin *plugin, void *instance, const char *signal)
 {
 	GaimPerlSignalHandler *handler;
 	GList *l;
@@ -110,8 +123,7 @@ find_signal_handler(GaimPlugin *plugin, void *instance,
 
 		if (handler->plugin == plugin &&
 			handler->instance == instance &&
-			!strcmp(handler->signal, signal) &&
-			!strcmp(handler->func, func))
+			!strcmp(handler->signal, signal))
 		{
 			return handler;
 		}
@@ -168,7 +180,7 @@ gaim_perl_timeout_clear(void)
 
 void
 gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
-						 const char *signal, const char *func, void *data)
+						 const char *signal, SV *callback, SV *data)
 {
 	GaimPerlSignalHandler *handler;
 
@@ -176,23 +188,24 @@ gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
 	handler->plugin   = plugin;
 	handler->instance = instance;
 	handler->signal   = g_strdup(signal);
-	handler->func     = g_strdup(func);
-	handler->data     = data;
+	handler->callback = (callback != NULL && callback != &PL_sv_undef
+						 ? newSVsv(callback) : NULL);
+	handler->data     = (data != NULL && data != &PL_sv_undef
+						 ? newSVsv(data) : NULL);
 
 	signal_handlers = g_list_append(signal_handlers, handler);
 
-	gaim_debug(GAIM_DEBUG_MISC, "perl", "plugin = %p\n", plugin);
 	gaim_signal_connect_vargs(instance, signal,
 							  plugin, GAIM_CALLBACK(perl_signal_cb), handler);
 }
 
 void
 gaim_perl_signal_disconnect(GaimPlugin *plugin, void *instance,
-							const char *signal, const char *func)
+							const char *signal)
 {
 	GaimPerlSignalHandler *handler;
 
-	handler = find_signal_handler(plugin, instance, signal, func);
+	handler = find_signal_handler(plugin, instance, signal);
 
 	if (handler == NULL)
 	{

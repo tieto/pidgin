@@ -15,8 +15,8 @@ typedef struct
 typedef struct
 {
 	char *signal;
-	char *func;
-	void *data;
+	SV *callback;
+	SV *data;
 	void *instance;
 	GaimPlugin *plugin;
 
@@ -29,10 +29,10 @@ void gaim_perl_timeout_clear_for_plugin(GaimPlugin *plugin);
 void gaim_perl_timeout_clear(void);
 
 void gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
-							  const char *signal, const char *func,
-							  void *data);
+							  const char *signal, SV *callback,
+							  SV *data);
 void gaim_perl_signal_disconnect(GaimPlugin *plugin, void *instance,
-								 const char *signal, const char *func);
+								 const char *signal);
 void gaim_perl_signal_clear_for_plugin(GaimPlugin *plugin);
 void gaim_perl_signal_clear(void);
 

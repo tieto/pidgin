@@ -14,23 +14,22 @@ CODE:
 	gaim_perl_timeout_add(plugin, seconds, func, data);
 
 void
-signal_connect(instance, signal, plugin, func, data)
+signal_connect(instance, signal, plugin, callback, data)
 	void *instance
 	const char *signal
 	Gaim::Plugin plugin
-	const char *func
+	SV *callback
 	SV *data
 CODE:
-	gaim_perl_signal_connect(plugin, instance, signal, func, data);
+	gaim_perl_signal_connect(plugin, instance, signal, callback, data);
 
 void
-signal_disconnect(instance, signal, plugin, func)
+signal_disconnect(instance, signal, plugin)
 	void *instance
 	const char *signal
 	Gaim::Plugin plugin
-	const char *func
 CODE:
-	gaim_perl_signal_disconnect(plugin, instance, signal, func);
+	gaim_perl_signal_disconnect(plugin, instance, signal);
 
 void
 debug(level, category, string)
