@@ -425,7 +425,7 @@ static void cope_with_gdb_brokenness()
 static void
 gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboolean show_debug)
 {
-	const int zero = 0;
+	const size_t zero = 0;
 	int rc;
 #if HAVE_GETADDRINFO
 	struct addrinfo hints, *res, *tmp;
@@ -486,8 +486,8 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 		 */
 		hints.ai_socktype = SOCK_STREAM;
 		rc = getaddrinfo(dns_params->hostname, servname, &hints, &res);
+		write(child_out, &rc, sizeof(rc));
 		if (rc != 0) {
-			write(child_out, &rc, sizeof(rc));
 			close(child_out);
 			if (show_debug)
 				fprintf(stderr,"dns[%d] Error: getaddrinfo returned %d\n",
@@ -495,7 +495,6 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 			dns_params->hostname[0] = '\0';
 			continue;
 		}
-		write(child_out, &zero, sizeof(zero));
 		tmp = res;
 		while (res) {
 			size_t ai_addrlen = res->ai_addrlen;
@@ -522,7 +521,6 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 			sin.sin_family = AF_INET;
 
 		sin.sin_port = htons(dns_params->port);
-		write(child_out, &zero, sizeof(zero));
 		write(child_out, &addrlen, sizeof(addrlen));
 		write(child_out, &sin, addrlen);
 		write(child_out, &zero, sizeof(zero));
