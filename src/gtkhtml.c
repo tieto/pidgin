@@ -1400,14 +1400,21 @@ static gint gtk_html_tooltip_timeout(gpointer data)
 		else if (x < 0)
 			x = 0;
 
-		if ((y + h + 4) > scr_h)
-			y =
-				y - html->tooltip_hb->font->ascent +
-				html->tooltip_hb->font->descent;
-		else
-			y =
-				y + html->tooltip_hb->font->ascent +
-				html->tooltip_hb->font->descent;
+		if (html->tooltip_hb->font) {
+			if ((y + h + 4) > scr_h)
+				y =
+					y - html->tooltip_hb->font->ascent +
+					html->tooltip_hb->font->descent;
+			else
+				y =
+					y + html->tooltip_hb->font->ascent +
+					html->tooltip_hb->font->descent;
+		} else {
+			if ((y + h + 4) > scr_h)
+				y = y - 10 + 4;
+			else
+				y = y + 10 + 4;
+		}
 
 		gtk_widget_set_usize(html->tooltip_window, w, h);
 		gtk_widget_popup(html->tooltip_window, x, y);
