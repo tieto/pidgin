@@ -197,7 +197,7 @@ static GList *combo_user_names()
 	struct aim_user *u;
 
 	if (!usr)
-		return g_list_append(NULL, "<unknown>");
+		return g_list_append(NULL, "<New User>");
 
 	while (usr) {
 		u = (struct aim_user *)usr->data;

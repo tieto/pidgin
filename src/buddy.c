@@ -1640,11 +1640,6 @@ static struct group_show *new_group_show(char *group) {
 	gtk_container_add(GTK_CONTAINER(g->item), g->label);
 	gtk_widget_show(g->label);
 
-	g->tree = gtk_tree_new();
-	gtk_tree_item_set_subtree(GTK_TREE_ITEM(g->item), g->tree);
-	gtk_tree_item_expand(GTK_TREE_ITEM(g->item));
-	gtk_widget_show(g->tree);
-
 	shows = g_slist_insert(shows, g, pos);
 	update_num_groups(g);
 	return g;
@@ -1657,6 +1652,13 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 	GdkBitmap *bm;
 	int pos = buddy_number(gs->name, buddy->name);
 	b->sound = 0;
+
+	if (gs->members == NULL) {
+		gs->tree = gtk_tree_new();
+		gtk_tree_item_set_subtree(GTK_TREE_ITEM(gs->item), gs->tree);
+		gtk_tree_item_expand(GTK_TREE_ITEM(gs->item));
+		gtk_widget_show(gs->tree);
+	}
 
 	b->name = g_strdup(buddy->name);
 	b->show = g_strdup(buddy->show);
@@ -1703,12 +1705,6 @@ static void remove_buddy_show(struct group_show *gs, struct buddy_show *bs) {
 	 * and is a valid tree afterwards. Otherwise, Bad Things will happen. */
 	gtk_tree_remove_item(GTK_TREE(gs->tree), bs->item);
 	bs->item = NULL;
-	if (gs->members == NULL) {
-		gs->tree = gtk_tree_new();
-		gtk_tree_item_set_subtree(GTK_TREE_ITEM(gs->item), gs->tree);
-		gtk_tree_item_expand(GTK_TREE_ITEM(gs->item));
-		gtk_widget_show(gs->tree);
-	}
 }
 
 static struct group_show *find_gs_by_bs(struct buddy_show *b) {

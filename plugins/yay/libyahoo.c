@@ -269,7 +269,7 @@ static void yahoo_storeint(unsigned char *data, unsigned int val)
 
    allocates a string in here -- caller needs to free it
  */
-char **yahoo_list2array(char *buff)
+char **yahoo_list2array(const char *buff)
 {
 	char **tmp_array = NULL;
 	char *array_elem = NULL;
@@ -480,7 +480,7 @@ static void yahoo_free_identities(struct yahoo_context *ctx)
 }
 
 #if 0							/* not used at the moment */
-static void yahoo_hexdump(char *label, unsigned char *data, int datalen)
+static void yahoo_hexdump(const char *label, const unsigned char *data, int datalen)
 {
 	int i, j;
 	int val, skipped_last;
@@ -582,7 +582,7 @@ static void yahoo_hexdump(char *label, unsigned char *data, int datalen)
 }
 #endif
 
-static int yahoo_socket_connect(struct yahoo_context *ctx, char *host,
+static int yahoo_socket_connect(struct yahoo_context *ctx, const char *host,
 	int port)
 {
 	struct sockaddr_in serv_addr;
@@ -674,7 +674,7 @@ static int yahoo_socket_connect(struct yahoo_context *ctx, char *host,
  */
 
 
-static char *yahoo_urlencode(char *instr)
+static char *yahoo_urlencode(const char *instr)
 {
 	register int ipos, bpos; //input str pos., buffer pos.
 	static unsigned char *str=NULL;
@@ -728,7 +728,7 @@ static char *yahoo_urlencode(char *instr)
 }
 
 
-static int yahoo_addtobuffer(struct yahoo_context *ctx, char *data,
+static int yahoo_addtobuffer(struct yahoo_context *ctx, const char *data,
 	int datalen)
 {
 	//yahoo_hexdump("yahoo_addtobuffer", data, datalen);
@@ -807,7 +807,7 @@ static int yahoo_tcp_readline(char *ptr, int maxlen, int fd)
 
 /* Initialize interface to yahoo library, sortof like a class object
    creation routine. */
-struct yahoo_context *yahoo_init(char *user, char *password,
+struct yahoo_context *yahoo_init(const char *user, const char *password,
 	struct yahoo_options *options)
 {
 	struct yahoo_context *tmp;
@@ -1070,8 +1070,8 @@ int yahoo_fetchcookies(struct yahoo_context *ctx)
 }
 
 /* Add a buddy to your buddy list */
-int yahoo_add_buddy(struct yahoo_context *ctx, char *addid,
-	char *active_id, char *group, char *msg)
+int yahoo_add_buddy(struct yahoo_context *ctx, const char *addid,
+	const char *active_id, const char *group, const char *msg)
 {
 	char buffer[5000];
 	int servfd;
@@ -1143,8 +1143,8 @@ int yahoo_add_buddy(struct yahoo_context *ctx, char *addid,
 }
 
 /* Remove a buddy from your buddy list */
-int yahoo_remove_buddy(struct yahoo_context *ctx, char *addid,
-	char *active_id, char *group, char *msg)
+int yahoo_remove_buddy(struct yahoo_context *ctx, const char *addid,
+	const char *active_id, const char *group, const char *msg)
 {
 	char buffer[5000];
 	int servfd;
@@ -1621,8 +1621,8 @@ int yahoo_sendcmd_http(struct yahoo_context *ctx, struct yahoo_rawpacket *pkt)
 
 /* Send a packet to the server, called by all routines that want to issue
    a command. */
-int yahoo_sendcmd(struct yahoo_context *ctx, int service, char *active_nick,
-	char *content, unsigned int msgtype)
+int yahoo_sendcmd(struct yahoo_context *ctx, int service, const char *active_nick,
+	const char *content, unsigned int msgtype)
 {
 	int size;
 	struct yahoo_rawpacket *pkt;
@@ -1691,15 +1691,15 @@ int yahoo_cmd_idle(struct yahoo_context *ctx)
 	return yahoo_sendcmd(ctx, YAHOO_SERVICE_IDLE, ctx->user, "", 0);
 }
 
-int yahoo_cmd_sendfile(struct yahoo_context *ctx, char *active_user,
-	char *touser, char *msg, char *filename)
+int yahoo_cmd_sendfile(struct yahoo_context *ctx, const char *active_user,
+	const char *touser, const char *msg, const char *filename)
 {
 	yahoo_dbg_Print("libyahoo", "yahoo_cmd_sendfile not implemented yet!");
 	return (0);
 }
 
-int yahoo_cmd_msg(struct yahoo_context *ctx, char *active_user,
-	char *touser, char *msg)
+int yahoo_cmd_msg(struct yahoo_context *ctx, const char *active_user,
+	const char *touser, const char *msg)
 {
 	char *content;
 
@@ -1720,8 +1720,8 @@ int yahoo_cmd_msg(struct yahoo_context *ctx, char *active_user,
 	return (1);
 }
 
-int yahoo_cmd_msg_offline(struct yahoo_context *ctx, char *active_user,
-	char *touser, char *msg)
+int yahoo_cmd_msg_offline(struct yahoo_context *ctx, const char *active_user,
+	const char *touser, const char *msg)
 {
 	char *content;
 
@@ -1744,7 +1744,7 @@ int yahoo_cmd_msg_offline(struct yahoo_context *ctx, char *active_user,
 }
 
 /* appended the " " so that won't trigger yahoo bug - hack for the moment */
-int yahoo_cmd_set_away_mode(struct yahoo_context *ctx, int status, char *msg)
+int yahoo_cmd_set_away_mode(struct yahoo_context *ctx, int status, const char *msg)
 {
 	char statusstring[500];
 
@@ -1770,7 +1770,7 @@ int yahoo_cmd_set_away_mode(struct yahoo_context *ctx, int status, char *msg)
 	return yahoo_sendcmd(ctx, YAHOO_SERVICE_ISAWAY, ctx->user, statusstring, 0);
 }
 
-int yahoo_cmd_set_back_mode(struct yahoo_context *ctx, int status, char *msg)
+int yahoo_cmd_set_back_mode(struct yahoo_context *ctx, int status, const char *msg)
 {
 	char statusstring[500];
 
@@ -1782,7 +1782,7 @@ int yahoo_cmd_set_back_mode(struct yahoo_context *ctx, int status, char *msg)
 	return yahoo_sendcmd(ctx, YAHOO_SERVICE_ISBACK, ctx->user, statusstring, 0);
 }
 
-int yahoo_cmd_activate_id(struct yahoo_context *ctx, char *newid)
+int yahoo_cmd_activate_id(struct yahoo_context *ctx, const char *newid)
 {
 	if (strlen(newid))
 		return yahoo_sendcmd(ctx, YAHOO_SERVICE_IDACT, newid, newid, 0);
@@ -1817,8 +1817,8 @@ Arguments:
 Packet format:
    id^invited-users^msg^0or1
 */
-int yahoo_cmd_start_conf(struct yahoo_context *ctx, char *conf_id,
-	char **userlist, char *msg, int type)
+int yahoo_cmd_start_conf(struct yahoo_context *ctx, const char *conf_id,
+	char **userlist, const char *msg, int type)
 {
 	char ctrlb = 2;
 	char *content;
@@ -1877,8 +1877,8 @@ Packet format:
    id^all-invited-users-and-host
 
 */
-int yahoo_cmd_conf_logon(struct yahoo_context *ctx, char *conf_id,
-	char *host, char **userlist)
+int yahoo_cmd_conf_logon(struct yahoo_context *ctx, const char *conf_id,
+	const char *host, char **userlist)
 {
 	char ctrlb = 2;
 	char *content;
@@ -1938,8 +1938,8 @@ Packet format:
    id^all-invited-users-and-host^msg
 
 */
-int yahoo_cmd_decline_conf(struct yahoo_context *ctx, char *conf_id,
-	char *host, char **userlist, char *msg)
+int yahoo_cmd_decline_conf(struct yahoo_context *ctx, const char *conf_id,
+	const char *host, char **userlist, const char *msg)
 {
 	char ctrlb = 2;
 	char *content;
@@ -1988,7 +1988,7 @@ Packet format:
 
 */
 
-int yahoo_cmd_conf_logoff(struct yahoo_context *ctx, char *conf_id,
+int yahoo_cmd_conf_logoff(struct yahoo_context *ctx, const char *conf_id,
 	char **userlist)
 {
 	char ctrlb = 2;
@@ -2048,8 +2048,8 @@ Packet format:
 
 */
 
-int yahoo_cmd_conf_invite(struct yahoo_context *ctx, char *conf_id,
-	char **userlist, char *invited_user, char *msg)
+int yahoo_cmd_conf_invite(struct yahoo_context *ctx, const char *conf_id,
+	char **userlist, const char *invited_user, const char *msg)
 {
 	char ctrlb = 2;
 	char *content;
@@ -2097,8 +2097,8 @@ Packet format:
    id^all-invited-users^msg
 
 */
-int yahoo_cmd_conf_msg(struct yahoo_context *ctx, char *conf_id,
-	char **userlist, char *msg)
+int yahoo_cmd_conf_msg(struct yahoo_context *ctx, const char *conf_id,
+	char **userlist, const char *msg)
 {
 	char ctrlb = 2;
 	char *content;
@@ -2731,10 +2731,11 @@ int yahoo_parsepacket_conference_user(struct yahoo_context *ctx,
 	struct yahoo_packet *pkt, struct yahoo_rawpacket *inpkt)
 {
 	char *content;
-	char *tmp, delim[5];
+	char *tmp = NULL;
+        size_t found = 0, len = yahoo_makeint(inpkt->len);
 
 	/* Make working copy of content */
-	content = strdup(inpkt->content);
+	content = memdup(inpkt->content, len);
 
 	/* init elements to all null */
 	pkt->conf_id = NULL;
@@ -2744,25 +2745,32 @@ int yahoo_parsepacket_conference_user(struct yahoo_context *ctx,
 	pkt->conf_inviter = NULL;
 	pkt->conf_msg = NULL;
 
-	tmp = NULL;
-	delim[0] = 2;				/* control-b */
-	delim[1] = 0;
-
 	if (content)
 	{
-		tmp = strtok(content, delim);
+		tmp = memtok(content, len, "\002", 2, &found);
 	}
 
 	if (tmp)					/* got the conference id */
 	{
-		pkt->conf_id = strdup(tmp);
-		tmp = strtok(NULL, delim);
+		pkt->conf_id = memdupasstr(tmp, found);
+		tmp = memtok(0, 0, "\002", 2, &found);
 	}
 
-	if (tmp)					/* conference user */
+	if (tmp)					
 	{
-		pkt->conf_user = strdup(tmp);
-		tmp = strtok(NULL, delim);
+                if ( pkt->msgtype == 1 )                 /* conference user */
+                {
+                        pkt->conf_user = memdupasstr(tmp, found);
+                        tmp = memtok(0, 0, "\002", 2, &found);
+                }
+                else if ( pkt->msgtype == 0 )        /* conference userlist? */
+                {
+                        char *userlist = memdupasstr(tmp, found);
+                        
+                        pkt->conf_userlist = yahoo_list2array(userlist);
+                        tmp = memtok(0, 0, "\002", 2, &found);
+                        FREE(userlist);
+                }
 	}
 
 	FREE(content);
