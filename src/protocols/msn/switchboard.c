@@ -94,7 +94,7 @@ ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	send_clientcaps(swboard);
 
-	if (0 && session->protocol_ver >= 9)
+	if (session->protocol_ver >= 9)
 	{
 		MsnUser *local_user, *remote_user;
 
@@ -105,11 +105,14 @@ ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 								  gaim_account_get_username(session->account),
 								  NULL);
 
-		swboard->slp_session = msn_slp_session_new(swboard, TRUE);
+		if (msn_user_get_object(remote_user) != NULL)
+		{
+			swboard->slp_session = msn_slp_session_new(swboard, TRUE);
 
-		msn_slp_session_request_user_display(swboard->slp_session,
-											 local_user, remote_user,
-											 msn_user_get_object(remote_user));
+			msn_slp_session_request_user_display(swboard->slp_session,
+					local_user, remote_user,
+					msn_user_get_object(remote_user));
+		}
 	}
 
 	return TRUE;
@@ -214,7 +217,8 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (swboard->total_users == 2 && swboard->chat == NULL) {
 		GaimConversation *conv;
 
-		conv = gaim_find_conversation_with_account(msn_user_get_passport(swboard->user), account);
+		conv = gaim_find_conversation_with_account(
+			msn_user_get_passport(swboard->user), account);
 
 		swboard->chat = serv_got_joined_chat(gc, ++swboard->chat_id,
 											 "MSN Chat");

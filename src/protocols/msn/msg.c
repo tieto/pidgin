@@ -356,10 +356,8 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 	str = g_new0(char, len + 1);
 
 	g_strlcpy(str, buf, len);
-		gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
 
 	msg_start = str + strlen(str);
-		gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
 
 	/* Standard header. */
 	if (msg->charset == NULL) {
@@ -374,10 +372,8 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 				   "Content-Type: %s; charset=%s\r\n",
 				   msg->content_type, msg->charset);
 	}
-		gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
 
 	g_strlcat(str, buf, len);
-		gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
 
 	for (l = msg->attr_list; l != NULL; l = l->next) {
 		const char *key = (char *)l->data;
@@ -400,9 +396,6 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 
 		c = str + strlen(str);
 
-		gaim_debug_misc("msn", "cur size = %d\n", (c - msg_start));
-		gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
-
 		session_id      = htonl(msg->msnslp_header.session_id);
 		id              = htonl(msg->msnslp_header.id);
 		offset          = htonl(msg->msnslp_header.offset);
@@ -413,48 +406,30 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 		ack_unique_id   = htonl(msg->msnslp_header.ack_unique_id);
 		ack_length      = htonl(msg->msnslp_header.ack_length);
 
-		gaim_debug_misc("msn", "cur size = %d\n", (c - msg_start));
-		gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
-
-		c += msn_put32(c, session_id);     gaim_debug_misc("msn", "1\n");
-		c += msn_put32(c, id);             gaim_debug_misc("msn", "2\n");
-		c += msn_put32(c, offset);         gaim_debug_misc("msn", "3\n");
-		c += msn_put32(c, 0);              gaim_debug_misc("msn", "4\n");
-		c += msn_put32(c, total_size);     gaim_debug_misc("msn", "5\n");
-		c += msn_put32(c, 0);              gaim_debug_misc("msn", "6\n");
-		c += msn_put32(c, length);         gaim_debug_misc("msn", "7\n");
-		c += msn_put32(c, flags);          gaim_debug_misc("msn", "8\n");
-		c += msn_put32(c, ack_session_id); gaim_debug_misc("msn", "9\n");
-		c += msn_put32(c, ack_unique_id);  gaim_debug_misc("msn", "10\n");
-		c += msn_put32(c, ack_length);     gaim_debug_misc("msn", "11\n");
-		c += msn_put32(c, 0);              gaim_debug_misc("msn", "12\n");
-
-		gaim_debug_misc("msn", "cur size = %d\n", (c - msg_start));
-		gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
+		c += msn_put32(c, session_id);
+		c += msn_put32(c, id);
+		c += msn_put32(c, offset);
+		c += msn_put32(c, 0);
+		c += msn_put32(c, total_size);
+		c += msn_put32(c, 0);
+		c += msn_put32(c, length);
+		c += msn_put32(c, flags);
+		c += msn_put32(c, ack_session_id);
+		c += msn_put32(c, ack_unique_id);
+		c += msn_put32(c, ack_length);
+		c += msn_put32(c, 0);
 
 		if (body != NULL)
 		{
-			strncpy(c, body, len);
-
-			gaim_debug_misc("msn", "cur size = %d\n", (c - msg_start));
-			gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
+			g_strlcpy(c, body, c - msg_start);
 
 			c += strlen(body);
 
-			gaim_debug_misc("msn", "cur size = %d\n", (c - msg_start));
-			gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
-
 			if (strlen(body) > 0)
 				*c++ = '\0';
-
-			gaim_debug_misc("msn", "cur size = %d\n", (c - msg_start));
-			gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
 		}
 
 		c += msn_put32(c, msg->msnslp_footer.app_id);
-
-		gaim_debug_misc("msn", "cur size = %d\n", (c - msg_start));
-		gaim_debug_misc("msn", "msg->size = %d\n", msg->size);
 
 		if (msg->size != (c - msg_start))
 		{

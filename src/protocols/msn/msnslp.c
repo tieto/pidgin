@@ -211,8 +211,7 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 
 	gaim_debug_misc("msn", "Message = {%s}\n", body);
 
-	//invite_msg = msn_message_new_msnslp();
-	invite_msg = msn_message_new();
+	invite_msg = msn_message_new_msnslp();
 
 	msn_message_set_sender(invite_msg, local_user);
 	msn_message_set_receiver(invite_msg, remote_user);
