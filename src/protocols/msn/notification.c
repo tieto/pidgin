@@ -1360,7 +1360,7 @@ syn_cmd(MsnServConn *servconn, const char *command, const char **params,
 			snprintf(buf, sizeof(buf),
 				_("Your MSN buddy list for %s is temporarily unavailable. "
 				  "Please wait and try again."),
-				gaim_acocunt_get_username(session->account));
+				gaim_account_get_username(session->account));
 			gaim_connection_error(gc, buf);
 
 			return FALSE;
