@@ -1,8 +1,8 @@
 The Penguin
 
-by Jeramey Crawford <jacrawf@marko.net>
+by Rob Flynn <rob@marko.net>
    and
-   Rob Flynn <rob@marko.net>
+   Jeramey Crawford <jacrawf@marko.net>
 
 
 Once upon a term'nal dreary, while I hack'ed, weak and weary,

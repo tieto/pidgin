@@ -259,7 +259,7 @@ GtkTreePath *theme_refresh_theme_list()
 	return path;
 }
 
-void theme_install_theme(char *path) {
+void theme_install_theme(char *path, char *extn) {
 	gchar *command;
 	gchar *destdir;
 	gchar *tail;
@@ -268,7 +268,9 @@ void theme_install_theme(char *path) {
 	g_strchomp(path);
 
 	/* I dont know what you are, get out of here */
-	if ((tail = strrchr(path, '.')) == NULL)
+	if (extn != NULL)
+		tail = extn;
+	else if ((tail = strrchr(path, '.')) == NULL)
 		return;
 
 	destdir = g_strconcat(gaim_user_dir(), G_DIR_SEPARATOR_S "smileys", NULL);
@@ -291,6 +293,20 @@ void theme_install_theme(char *path) {
 	theme_refresh_theme_list();
 }
 
+static void theme_got_url(gpointer data, char *themedata, unsigned long len) {
+	FILE *f;
+	gchar *path;
+
+	f = gaim_mkstemp(&path);
+	fwrite(themedata, len, 1, f);
+	fclose(f);
+
+	theme_install_theme(path, data);
+
+	unlink(path);
+	g_free(path);
+}
+
 gint theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, 
 				guint info, guint t, gpointer data) {
 	GList *dcl = dc->targets;
@@ -303,7 +319,21 @@ gint theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 		if (!g_strncasecmp(name, "file://", 7)) {
 			/* It looks like we're dealing with a local file. Let's 
 			 * just untar it in the right place */
-			theme_install_theme(name + 7);
+			theme_install_theme(name + 7, NULL);
+		} else if (!g_strncasecmp(name, "http://", 7)) {
+			/* Oo, a web drag and drop. This is where things
+			 * will start to get interesting */
+			gchar *tail;
+			
+			if ((tail = strrchr(name, '.')) == NULL)
+				return;
+
+			/* We'll check this just to make sure. This also lets us do something different on
+			 * other platforms, if need be */
+			if (!g_strcasecmp(tail, ".gz") || !g_strcasecmp(tail, ".tgz"))
+				grab_url(name, FALSE, theme_got_url, ".tgz");
+
+			g_free(tail);
 		}
 
 		gtk_drag_finish(dc, TRUE, FALSE, t);
