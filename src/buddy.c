@@ -1523,6 +1523,11 @@ void do_pounce(char *name, int when)
                         	if (c == NULL)
                                 	c = new_conversation(name);
 
+				c->gc = u->gc;
+				gtk_option_menu_set_history(GTK_OPTION_MENU(c->menu),
+						g_slist_index(connections, u->gc));
+				update_buttons_by_protocol(c);
+
                         	write_to_conv(c, b->message, WFLAG_SEND, NULL);
                                 serv_send_im(u->gc, name, b->message, 0);
 			}
