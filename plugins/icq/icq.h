@@ -260,6 +260,8 @@ typedef struct icq_link
   /** Private data pointer. */
   struct icq_link_private *d;
   
+  /** Space for user data */
+  void* icq_UserData;
 } ICQLINK;
 
 extern int icq_Russian;

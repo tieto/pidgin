@@ -243,6 +243,7 @@ static GList* misspelled_suggest(char *word) {
 			return l;
 
 		case '#': /* misspelled, no suggestions */
+		case '?': /* ispell is guessing. */
 			/* # <orig> <ofs> */
 			strtok(buf, " "); /* & */
 			newword = strtok(NULL, " "); /* orig */
@@ -251,6 +252,8 @@ static GList* misspelled_suggest(char *word) {
 		default:
 			error_print("Unsupported spell command '%c'.\n"
 					"This is a bug; mail " BUGEMAIL " about it.\n", buf[0]);
+			error_print("Input [%s]\nOutput [%s]\n", word, buf);
+
 	}
 	return NULL;
 }
@@ -263,12 +266,13 @@ static int misspelled_test(char *word) {
 
 	if (buf[0] == 0) {
 		return 0;
-	} else if (buf[0] == '&' || buf[0] == '#') {
+	} else if (buf[0] == '&' || buf[0] == '#' || buf[0] == '?') {
 		return 1;
 	}
 	
 	error_print("Unsupported spell command '%c'.\n"
 			"This is a bug; mail " BUGEMAIL " about it.\n", buf[0]);
+	error_print("Input [%s]\nOutput [%s]\n", word, buf);
 	return -1;
 }
 

@@ -1,9 +1,12 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: icqlib.c 1442 2001-01-28 01:52:27Z warmenhoven $
+$Id: icqlib.c 1477 2001-02-04 07:34:46Z warmenhoven $
 $Log$
-Revision 1.3  2001/01/28 01:52:27  warmenhoven
-icqlib 1.1.5
+Revision 1.4  2001/02/04 07:34:46  warmenhoven
+updates to icqlib and gtkspell. also added catch case for when BYTE_ORDER wasn't defined.
+
+Revision 1.50  2001/02/03 17:04:16  mwh
+Add an icq_UserData field to the ICQLINK struct.
 
 Revision 1.49  2001/01/17 01:29:17  bills
 Rework chat and file session interfaces; implement socket notifications.
@@ -166,6 +169,7 @@ ICQLINK *icq_ICQLINKNew(DWORD uin, const char *password, const char *nick,
   link->icq_OurPort = 0;
   link->d->icq_ContactList = list_new();
   link->icq_Status = -1;
+  link->icq_UserData = 0L;
 
   /* UDP stuff */
   link->icq_UDPSok = -1;

@@ -1,5 +1,5 @@
 /*
- * $Id: icqbyteorder.h 1442 2001-01-28 01:52:27Z warmenhoven $
+ * $Id: icqbyteorder.h 1477 2001-02-04 07:34:46Z warmenhoven $
  *
  * This header defines macros to handle ICQ protocol byte order conversion.
  *
@@ -89,7 +89,13 @@ extern unsigned short bswap_16(unsigned short v);
 #else
 
 #ifndef BYTE_ORDER
-#   error "Unknown byte order!"
+/*#   error "Unknown byte order!"*/
+/* I probably shouldn't be doing this, but eh. -EWarmenhoven */
+#   warning "Unknown byte order! Using GLib defines"
+#   include <glib.h>
+#   define BYTE_ORDER G_BYTE_ORDER
+#   define BIG_ENDIAN G_BIG_ENDIAN
+#   define LITTLE_ENDIAN G_LITTLE_ENDIAN
 #endif
 
 #if BYTE_ORDER == BIG_ENDIAN
