@@ -524,7 +524,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			struct queued_message *qm;
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
-			qm->message = g_strdup(message);
+			qm->message = g_strdup(away_subs(tmpmsg, alias));
 			qm->gc = gc;
 			qm->tm = mtime;
 			qm->flags = WFLAG_SEND | WFLAG_AUTO;
@@ -781,7 +781,7 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, int id, char *w
 	gtk_widget_show(d);
 }
 
-void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
+struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 {
 	struct conversation *b;
 
@@ -821,6 +821,8 @@ void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 	}
 
 	show_new_buddy_chat(b);
+
+	return b;
 }
 
 void serv_got_chat_left(struct gaim_connection *g, int id)

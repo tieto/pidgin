@@ -652,7 +652,7 @@ extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, 
 extern void serv_got_im(struct gaim_connection *, char *, char *, int, time_t);
 extern void serv_got_eviled(struct gaim_connection *, char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, int, char *, char *);
-extern void serv_got_joined_chat(struct gaim_connection *, int, char *);
+extern struct conversation *serv_got_joined_chat(struct gaim_connection *, int, char *);
 extern void serv_got_chat_left(struct gaim_connection *, int);
 extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *, time_t);
 
