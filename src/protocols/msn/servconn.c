@@ -200,7 +200,7 @@ show_error(MsnServConn *servconn)
 
 	const char *names[] = { "Notification", "Switchboard" };
 	const char *name;
-	
+
 	gc = gaim_account_get_connection(servconn->session->account);
 	name = names[servconn->type];
 
@@ -223,8 +223,11 @@ show_error(MsnServConn *servconn)
 			break;
 	}
 
-	gaim_connection_error(gc, tmp);
-	
+	if (servconn->type != MSN_SERVER_SB)
+		gaim_connection_error(gc, tmp);
+	else
+		gaim_notify_error(gc, NULL, tmp, NULL);
+
 	g_free(tmp);
 }
 
