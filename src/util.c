@@ -251,12 +251,14 @@ void
 gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 {
 	char *p, *n, *new;
+	int i;
 
 	n = new = g_malloc(strlen (str) + 1);
 
 	for (p = (char *)str; *p; p++, n++) {
 		if (*p == '=') {
-			sscanf(p + 1, "%2x\n", (int *)n);
+			sscanf(p + 1, "%2x\n", &i);
+			*n = (char)i;
 			p += 2;
 		}
 		else if (*p == '_')
