@@ -121,6 +121,11 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 			gaim_xfer_request_accepted(xfer, filename);
 		}
 		else {
+			/*
+			 * XXX - I believe this will never happen when using
+			 * gaim_request_file() because filename is always an
+			 * existing file.  Someone verify that.  --Mark
+			 */
 			gaim_notify_error(NULL, NULL,
 							  _("That file does not exist."), NULL);
 
@@ -137,7 +142,9 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 	}
 	else {
 		if (S_ISDIR(st.st_mode)) {
-			/* XXX */
+			/*
+			 * XXX - Sending a directory should be valid for some protocols.
+			 */
 			gaim_xfer_request_denied(xfer);
 		}
 		else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
@@ -876,8 +883,16 @@ void
 gaim_xfer_cancel_remote(GaimXfer *xfer)
 {
 	GaimXferUiOps *ui_ops;
+	gchar *msg;
 
 	g_return_if_fail(xfer != NULL);
+
+	gaim_request_close_with_handle(xfer);
+
+	msg = g_strdup_printf(_("%s canceled the transfer of %s"),
+	xfer->who, gaim_xfer_get_filename(xfer));
+	gaim_xfer_error(gaim_xfer_get_type(xfer), xfer->who, msg);
+	g_free(msg);
 
 	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_REMOTE);
 

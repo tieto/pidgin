@@ -4,6 +4,7 @@ version 0.82:
 	New Features:
 	* Topics in the conversation window (not the topic field at the
 	  top) with urls will now have those urls linkified (Stu Tomlinson)
+
 	Bug Fixes:
 	* Joining a Jabber chat no longer causes a crash (Stu Tomlinson)
 	* Selecting a buddy icon for a brand new account no longer
@@ -15,6 +16,7 @@ version 0.82:
 	  (Felipe Contreras)
 	* The chat invite button has a correct label (Stu Tomlinson)
 	* The system log should leak fewer file descriptors now (Ka-Hing Cheung)
+	* Better file transfer cancel messages for AIM (Dave West)
 
 version 0.81 (08/05/2004):
 	New Features:

@@ -1808,7 +1808,8 @@ static void oscar_xfer_cancel_recv(GaimXfer *xfer)
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_cancel_recv\n");
 
-	aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
+	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE)
+		aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
 
 	aim_conn_kill(oft_info->sess, &oft_info->conn);
 	aim_oft_destroyinfo(oft_info);
@@ -1877,7 +1878,8 @@ static void oscar_xfer_cancel_send(GaimXfer *xfer)
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_cancel_send\n");
 
-	aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
+	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE)
+		aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
 
 	aim_conn_kill(oft_info->sess, &oft_info->conn);
 	aim_oft_destroyinfo(oft_info);
