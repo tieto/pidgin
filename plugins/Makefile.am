@@ -51,7 +51,6 @@ EXTRA_DIST = \
 	ChangeLog HOWTO \
 	filectl.c \
 	mailchk.c \
-	gtik.c \
 	raw.c \
 	signals-test.c \
 	simple.c \
