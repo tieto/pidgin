@@ -123,6 +123,7 @@ static struct buddy_show *new_buddy_show(struct group_show *gs, struct buddy *bu
 static void remove_buddy_show(struct group_show *gs, struct buddy_show *bs);
 static struct group_show *find_gs_by_bs(struct buddy_show *b);
 static void update_num_group(struct group_show *gs);
+static void update_idle_time(struct buddy_show *bs);
 
 void handle_group_rename(struct group *g, char *prevname)
 {
@@ -284,6 +285,7 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 		}
 	} else {
 		gtk_label_set_text(GTK_LABEL(bs->label), b->show);
+		update_idle_time(bs);
 	}
 }
 
