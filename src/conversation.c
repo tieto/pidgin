@@ -772,12 +772,12 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		return;
 	}
 
-	if (general_options & OPT_GEN_SEND_LINKS)
-		linkify_text(buf);
-
 	buf2 = g_malloc(limit);
 
 	if (c->gc->prpl->options & OPT_PROTO_HTML) {
+		if (general_options & OPT_GEN_SEND_LINKS)
+			linkify_text(buf);
+
 		if (font_options & OPT_FONT_BOLD) {
 			g_snprintf(buf2, limit, "<B>%s</B>", buf);
 			strcpy(buf, buf2);
