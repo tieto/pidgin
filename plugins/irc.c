@@ -733,10 +733,6 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 				strcpy(u_arg, u_message + 6);
 				u_arg[strlen(u_arg) - 1] = '\0';
 
-				/* FIXME: We should keep track of pings we send.  We should store
-				 * the serial # and the time so that we can accurately report which
-				 * pings are turning, etc */
-
 				tstart = atol(u_arg);
 
 				g_snprintf(u_buf, sizeof(u_buf), "Ping Reply From %s: [%ld seconds]", u_nick, tend-tstart);
