@@ -283,7 +283,7 @@ pounce_cb(struct gaim_pounce *pounce, GaimPounceEvent events, void *data)
 	}
 
 	if (pounce_data->actions & GAIM_GTKPOUNCE_SEND_MSG &&
-		*pounce_data->message != '\0') {
+		pounce_data->message != NULL) {
 
 		conv = gaim_find_conversation(pouncee);
 
@@ -297,7 +297,7 @@ pounce_cb(struct gaim_pounce *pounce, GaimPounceEvent events, void *data)
 	}
 
 	if (pounce_data->actions & GAIM_GTKPOUNCE_EXEC_CMD &&
-		*pounce_data->command != '\0') {
+		pounce_data->command != NULL) {
 #ifndef _WIN32
 		int pid = fork();
 
@@ -317,7 +317,7 @@ pounce_cb(struct gaim_pounce *pounce, GaimPounceEvent events, void *data)
 	}
 
 	if (pounce_data->actions & GAIM_GTKPOUNCE_PLAY_SOUND) {
-		if (*pounce_data->sound != '\0')
+		if (pounce_data->sound != NULL)
 			gaim_sound_play_file(pounce_data->sound);
 		else
 			gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
@@ -539,7 +539,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	dialog->popup = gtk_check_button_new_with_label(_("Popup notification"));
 	dialog->send_msg = gtk_check_button_new_with_label(_("Send a message"));
 	dialog->exec_cmd = gtk_check_button_new_with_label(_("Execute a command"));
-	dialog->play_sound = gtk_check_button_new_with_label(_("Play a Sound"));
+	dialog->play_sound = gtk_check_button_new_with_label(_("Play a sound"));
 
 	dialog->send_msg_entry   = gtk_entry_new();
 	dialog->exec_cmd_entry   = gtk_entry_new();
