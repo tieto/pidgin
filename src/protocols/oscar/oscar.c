@@ -19,6 +19,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
+/* No, he's right, real men do only communicate by cvs commits.
+ * Also, it's father's day, go do something with your father, Luke.
+ */
+
 #include "internal.h"
 
 #include "account.h"
