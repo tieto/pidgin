@@ -61,6 +61,10 @@ typedef struct
 
 	GString *rxqueue;
 
+	GList *pending_users;
+	GHashTable *user_profiles;
+	GHashTable *user_ids;
+
 } TrepiaSession;
 
 typedef struct
@@ -107,10 +111,10 @@ __clear_user_list(GaimAccount *account)
 	}
 }
 
+#if 0
 static char *
 __get_mac_address(const char *ip)
 {
-#if 0
 	char *mac = NULL;
 #ifndef _WIN32
 	struct sockaddr_in sin = { 0 };
@@ -148,10 +152,10 @@ __get_mac_address(const char *ip)
 #endif
 
 	return mac;
-#endif
 
 	return NULL;
 }
+#endif
 
 /**************************************************************************
  * Protocol Plugin ops
@@ -181,10 +185,6 @@ trepia_status_text(struct buddy *b)
 	TrepiaProfile *profile = (TrepiaProfile *)b->proto_data;
 	const char *value;
 	char *text = NULL;
-
-	gaim_debug(GAIM_DEBUG_INFO, "trepia", "trepia_status_text\n");
-	gaim_debug(GAIM_DEBUG_MISC, "trepia", "profile = '%s'\n",
-			   trepia_profile_get_profile(profile));
 
 	if ((value = trepia_profile_get_profile(profile)) != NULL)
 		text = g_markup_escape_text(value, -1);
@@ -406,12 +406,14 @@ __parse_data(TrepiaSession *session, char *buf)
 	GHashTable *info;
 	GaimAccount *account;
 	TrepiaMessageType type = 0;
-	TrepiaProfile *profile;
+	TrepiaProfile *profile = NULL;
 	int ret;
 	char *buffer;
 	struct buddy *b;
-	const char *id = NULL;
+	int id = 0;
 	const char *value;
+	char *username;
+	int *int_p;
 
 	account = gaim_connection_get_account(session->gc);
 
@@ -420,69 +422,68 @@ __parse_data(TrepiaSession *session, char *buf)
 	if (ret == 1)
 		return TRUE;
 
-	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Successful parse.\n");
-	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Message type: %c\n",
-			   type);
-
 	if (info != NULL) {
 		switch (type) {
 			case TREPIA_USER_LIST:
-				gaim_debug(GAIM_DEBUG_INFO, "trepia",
-						   "Signon complete. Showing buddy list.\n");
 				gaim_connection_set_state(session->gc, GAIM_CONNECTED);
 				serv_finish_login(session->gc);
 				break;
 
 			case TREPIA_MSG_INCOMING: /* Incoming Message */
-				gaim_debug(GAIM_DEBUG_INFO, "trepia", "Receiving message\n");
+				id = atoi(g_hash_table_lookup(info, "a"));
+
+				profile = g_hash_table_lookup(session->user_profiles, &id);
 				serv_got_im(session->gc,
-						(char *)g_hash_table_lookup(info, "a"),
-						(char *)g_hash_table_lookup(info, "b"),
-						0, time(NULL), -1);
+							trepia_profile_get_login(profile),
+							(char *)g_hash_table_lookup(info, "b"),
+							0, time(NULL), -1);
 				break;
 
 			case TREPIA_MEMBER_UPDATE:
-				id  = g_hash_table_lookup(info, "a");
-				b = gaim_find_buddy(account, id);
+				profile = trepia_profile_new();
 
-				if (b == NULL) {
-					struct group *g;
-
-					g = gaim_find_group(_("Local Users"));
-
-					if (g == NULL) {
-						g = gaim_group_new(_("Local Users"));
-						gaim_blist_add_group(g, NULL);
-					}
-
-					b = gaim_buddy_new(account, id, NULL);
-
-					gaim_blist_add_buddy(b, g, NULL);
+				if ((value = g_hash_table_lookup(info, "a")) != NULL) {
+					id = atoi(value);
+					trepia_profile_set_id(profile, id);
 				}
 
-				b->proto_data = trepia_profile_new();
+				if ((value = g_hash_table_lookup(info, "b")) != NULL)
+					trepia_profile_set_login_time(profile, atoi(value));
 
-				serv_got_update(session->gc, id, 1, 0, 0, 0, 0);
+				if ((value = g_hash_table_lookup(info, "c")) != NULL)
+					trepia_profile_set_type(profile, atoi(value));
+				else
+					trepia_profile_set_type(profile, 2);
 
-				buffer = g_strdup_printf(
-					"<D>\n"
-					"<a>%s</a>\n"
-					"<b>1</b>\n"
-					"</D>",
-					id);
+				session->pending_users = g_list_append(session->pending_users,
+													   profile);
 
-				if (trepia_write(session->fd, buffer, strlen(buffer)) < 0) {
-					gaim_connection_error(session->gc, _("Write error"));
-					g_free(buffer);
-					return 1;
+
+#if 0
+				if (trepia_profile_get_type(profile) == 1) {
+					buffer = g_strdup_printf(
+						"<D>"
+						"<a>%d</a>"
+						"<b>1</b>"
+						"</D>",
+						id);
 				}
-
-				buffer = g_strdup_printf(
-					"<D>\n"
-					"<a>%s</a>\n"
-					"<b>2</b>\n"
-					"</D>",
-					id);
+				else {
+#endif
+					buffer = g_strdup_printf(
+						"<D>"
+						"<a>%d</a>"
+						"<b>1</b>"
+						"</D>"
+						"<D>"
+						"<a>%d</a>"
+						"<b>2</b>"
+						"</D>",
+						id,
+						id);
+#if 0
+				}
+#endif
 
 				if (trepia_write(session->fd, buffer, strlen(buffer)) < 0) {
 					gaim_connection_error(session->gc, _("Write error"));
@@ -494,20 +495,29 @@ __parse_data(TrepiaSession *session, char *buf)
 				break;
 
 			case TREPIA_MEMBER_PROFILE:
-				id = g_hash_table_lookup(info, "a");
-				b = gaim_find_buddy(account, id);
+				if ((value = g_hash_table_lookup(info, "a")) != NULL) {
+					GList *l;
 
-				if (b == NULL)
+					id = atoi(value);
+
+					for (l = session->pending_users; l != NULL; l = l->next) {
+						profile = l->data;
+
+						if (trepia_profile_get_id(profile) == id)
+							break;
+
+						profile = NULL;
+					}
+				}
+				else
 					break;
 
-				profile = b->proto_data;
+				if (profile == NULL) {
+					profile = g_hash_table_lookup(session->user_profiles, &id);
 
-				/* ID */
-				trepia_profile_set_id(profile, atoi(id));
-
-				/* Login Time */
-				if ((value = g_hash_table_lookup(info, "b")) != NULL)
-					trepia_profile_set_login_time(profile, atoi(value));
+					if (profile == NULL)
+						break;
+				}
 
 				/* Age */
 				if ((value = g_hash_table_lookup(info, "m")) != NULL)
@@ -583,9 +593,46 @@ __parse_data(TrepiaSession *session, char *buf)
 
 				/* Login Name */
 				if ((value = g_hash_table_lookup(info, "d")) != NULL) {
-					serv_got_alias(session->gc, id, value);
-					trepia_profile_set_location(profile, value);
+					trepia_profile_set_login(profile, value);
+					username = g_strdup(value);
 				}
+				else if ((value = trepia_profile_get_login(profile)) != NULL) {
+					username = g_strdup(value);
+				}
+				else {
+					username = g_strdup_printf("%d", id);
+					trepia_profile_set_login(profile, username);
+				}
+
+				b = gaim_find_buddy(account, username);
+
+				if (b == NULL) {
+					struct group *g;
+
+					g = gaim_find_group(_("Local Users"));
+
+					if (g == NULL) {
+						g = gaim_group_new(_("Local Users"));
+						gaim_blist_add_group(g, NULL);
+					}
+
+					b = gaim_buddy_new(account, username, NULL);
+
+					gaim_blist_add_buddy(b, g, NULL);
+				}
+
+				b->proto_data = profile;
+
+				session->pending_users = g_list_remove(session->pending_users,
+													   profile);
+
+				int_p = g_new0(int, 1);
+				*int_p = id;
+				g_hash_table_insert(session->user_profiles, int_p, profile);
+
+				serv_got_update(session->gc,
+								username, 1, 0,
+								trepia_profile_get_login_time(profile), 0, 0);
 
 				/* Buddy Icon */
 				if ((value = g_hash_table_lookup(info, "q")) != NULL) {
@@ -594,23 +641,35 @@ __parse_data(TrepiaSession *session, char *buf)
 
 					frombase64(value, &icon, &icon_len);
 
-					set_icon_data(session->gc, id, icon, icon_len);
+					set_icon_data(session->gc, username, icon, icon_len);
 
 					g_free(icon);
+
+					serv_got_update(session->gc, username, 1, 0, 0, 0, 0);
 				}
 
-				gaim_debug(GAIM_DEBUG_INFO, "trepia", "Calling serv_got_update\n");
-				serv_got_update(session->gc, id, 1, 0,
-								trepia_profile_get_login_time(profile), 0, 0);
+				g_free(username);
+
 				break;
 
 			case TREPIA_MEMBER_OFFLINE:
-				id = g_hash_table_lookup(info, "a");
+				if ((value = g_hash_table_lookup(info, "a")) != NULL)
+					id = atoi(value);
+				else
+					break;
 
-				b = gaim_find_buddy(account, id);
+				profile = g_hash_table_lookup(session->user_profiles, &id);
+
+				if (profile == NULL)
+					break;
+
+				g_hash_table_remove(session->user_profiles, &id);
+				b = gaim_find_buddy(account, trepia_profile_get_login(profile));
 
 				if (b != NULL)
-					serv_got_update(session->gc, id, 0, 0, 0, 0, 0);
+					serv_got_update(session->gc,
+									trepia_profile_get_login(profile),
+									0, 0, 0, 0, 0);
 
 				gaim_blist_remove_buddy(b);
 
@@ -646,8 +705,6 @@ __data_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	buf[i] = '\0';
-
-	gaim_debug(GAIM_DEBUG_MISC, "trepia", "__data_cb\n");
 
 	if (session->rxqueue == NULL)
 		session->rxqueue = g_string_new(buf);
@@ -711,15 +768,10 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	mac = g_strdup("01:02:03:04:05:06");
 
-	gaim_debug(GAIM_DEBUG_INFO, "trepia", "__login_cb\n");
-
 	if (source < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "trepia", "Write error.\n");
 		gaim_connection_error(session->gc, _("Write error"));
 		return;
 	}
-
-	gaim_debug(GAIM_DEBUG_ERROR, "trepia", "Past the first stage.\n");
 
 	session->fd = source;
 
@@ -771,8 +823,6 @@ trepia_login(GaimAccount *account)
 	int port;
 	int i;
 
-	gaim_debug(GAIM_DEBUG_INFO, "trepia", "trepia_login\n");
-
 	server = gaim_account_get_string(account, "server", TREPIA_SERVER);
 	port   = gaim_account_get_int(account,    "port",   TREPIA_PORT);
 
@@ -782,10 +832,10 @@ trepia_login(GaimAccount *account)
 	gc->proto_data = session;
 	session->gc = gc;
 	session->fd = -1;
+	session->user_profiles = g_hash_table_new_full(g_int_hash, g_int_equal,
+												   g_free, NULL);
 
 	__clear_user_list(account);
-
-	gaim_debug(GAIM_DEBUG_INFO, "trepia", "connecting to proxy\n");
 
 	i = gaim_proxy_connect(account, server, port, __login_cb, session);
 
@@ -806,6 +856,9 @@ trepia_close(GaimConnection *gc)
 	if (session->inpa)
 		gaim_input_remove(session->inpa);
 
+	g_hash_table_destroy(session->user_profiles);
+	g_list_free(session->pending_users);
+
 	close(session->fd);
 
 	g_free(session);
@@ -818,17 +871,29 @@ trepia_send_im(GaimConnection *gc, const char *who, const char *message,
 			int len, int flags)
 {
 	TrepiaSession *session = gc->proto_data;
+	TrepiaProfile *profile;
+	struct buddy *b;
 	char *escaped_msg;
 	char *buffer;
+
+	b = gaim_find_buddy(gaim_connection_get_account(gc), who);
+
+	if (b == NULL) {
+		gaim_debug(GAIM_DEBUG_ERROR, "trepia",
+				   "Unable to send to buddy not on your list!\n");
+		return 0;
+	}
+
+	profile = b->proto_data;
 
 	escaped_msg = g_markup_escape_text(message, -1);
 
 	buffer = g_strdup_printf(
 		"<F>\n"
-		"<a>%s</a>\n"
+		"<a>%d</a>\n"
 		"<b>%s</b>\n"
 		"</F>",
-		who, escaped_msg);
+		trepia_profile_get_id(profile), escaped_msg);
 
 	g_free(escaped_msg);
 

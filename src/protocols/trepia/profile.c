@@ -49,6 +49,14 @@ trepia_profile_destroy(TrepiaProfile *profile)
 }
 
 void
+trepia_profile_set_type(TrepiaProfile *profile, int value)
+{
+	g_return_if_fail(profile != NULL);
+
+	profile->type = value;
+}
+
+void
 trepia_profile_set_id(TrepiaProfile *profile, int value)
 {
 	g_return_if_fail(profile != NULL);
@@ -263,6 +271,14 @@ trepia_profile_set_company(TrepiaProfile *profile, const char *value)
 		g_free(profile->company);
 
 	profile->company = (value == NULL ? NULL : g_strdup(value));
+}
+
+int
+trepia_profile_get_type(const TrepiaProfile *profile)
+{
+	g_return_val_if_fail(profile != NULL, 0);
+
+	return profile->type;
 }
 
 int

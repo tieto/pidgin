@@ -27,6 +27,8 @@
 
 typedef struct
 {
+	int type;           /* c */
+
 	int id;             /* a */
 	char *location;     /* p */
 	time_t login_time;  /* b */
@@ -54,6 +56,7 @@ typedef struct
 TrepiaProfile *trepia_profile_new(void);
 void trepia_profile_destroy(TrepiaProfile *profile);
 
+void trepia_profile_set_type(TrepiaProfile *profile, int value);
 void trepia_profile_set_id(TrepiaProfile *profile, int value);
 void trepia_profile_set_location(TrepiaProfile *profile, const char *value);
 void trepia_profile_set_login_time(TrepiaProfile *profile, time_t value);
@@ -76,6 +79,7 @@ void trepia_profile_set_languages(TrepiaProfile *profile, const char *value);
 void trepia_profile_set_school(TrepiaProfile *profile, const char *value);
 void trepia_profile_set_company(TrepiaProfile *profile, const char *value);
 
+int trepia_profile_get_type(const TrepiaProfile *profile);
 int trepia_profile_get_id(const TrepiaProfile *profile);
 const char *trepia_profile_get_location(const TrepiaProfile *profile);
 time_t trepia_profile_get_login_time(const TrepiaProfile *profile);
