@@ -607,11 +607,12 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 	if (!cnv) {
 		resources = b->proto_data;
 		res = who->resource;
-		while (resources) {
-			if (!strcmp(res, resources->data))
-				break;
-			resources = resources->next;
-		}
+		if (res)
+			while (resources) {
+				if (!strcmp(res, resources->data))
+					break;
+				resources = resources->next;
+			}
 
 		if (type && (strcasecmp(type, "unavailable") == 0)) {
 			g_free(resources->data);
