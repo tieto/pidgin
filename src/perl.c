@@ -612,7 +612,7 @@ XS (XS_GAIM_print_to_conv)
 	if (!c)
 		c = new_conversation(nick);
 	set_convo_gc(c, gc);
-	write_to_conv(c, what, WFLAG_SEND, NULL, time((time_t)NULL));
+	write_to_conv(c, what, WFLAG_SEND | (isauto ? WFLAG_AUTO : 0), NULL, time((time_t)NULL));
 	serv_send_im(c->gc, nick, what, isauto ? IM_FLAG_AWAY : 0);
 	XSRETURN(0);
 }
