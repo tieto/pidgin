@@ -1224,6 +1224,9 @@ __initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 		return TRUE;
 	}
 
+	if (!GAIM_ACCOUNT_CHECK_MAIL(session->account))
+		return TRUE;
+
 	if (session->passport_info.file == NULL) {
 		msn_servconn_send_command(servconn, "URL", "INBOX");
 
@@ -1236,9 +1239,13 @@ __initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 
 	unread = g_hash_table_lookup(table, "Inbox-Unread");
 
-	if (unread != NULL)
-		connection_has_mail(gc, atoi(unread), NULL, NULL,
-							session->passport_info.file);
+	if (unread != NULL) {
+		const char *passport = msn_user_get_passport(session->user);
+		const char *url = session->passport_info.file;
+
+		gaim_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+						   &passport, &url, NULL, NULL);
+	}
 
 	g_hash_table_destroy(table);
 
@@ -1258,6 +1265,9 @@ __email_msg(MsnServConn *servconn, MsnMessage *msg)
 		return TRUE;
 	}
 
+	if (!GAIM_ACCOUNT_CHECK_MAIL(session->account))
+		return TRUE;
+
 	if (session->passport_info.file == NULL) {
 		msn_servconn_send_command(servconn, "URL", "INBOX");
 
@@ -1271,13 +1281,8 @@ __email_msg(MsnServConn *servconn, MsnMessage *msg)
 	from    = g_hash_table_lookup(table, "From");
 	subject = g_hash_table_lookup(table, "Subject");
 
-	if (from == NULL || subject == NULL) {
-		connection_has_mail(gc, 1, NULL, NULL, session->passport_info.file);
-	}
-	else {
-		connection_has_mail(gc, -1, from, subject,
-							session->passport_info.file);
-	}
+	gaim_notify_email(gc, subject, from, msn_user_get_passport(session->user),
+					  session->passport_info.file, NULL, NULL);
 
 	g_hash_table_destroy(table);
 
