@@ -38,6 +38,8 @@
 #include "gaim.h"
 #include "md5.h"
 
+#include "pixmaps/msn_online.xpm"
+
 #define MSN_BUF_LEN 4096
 
 #define MSN_OPT_SERVER   0
@@ -807,13 +809,18 @@ static void msn_set_idle(struct gaim_connection *gc, int idle)
 
 }
 
+static char **msn_list_icon(int status)
+{
+	return msn_online_xpm;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void msn_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_MSN;
 	ret->name = msn_name;
-	ret->list_icon = NULL;
+	ret->list_icon = msn_list_icon;
 	ret->action_menu = NULL;
 	ret->user_opts = NULL;
 	ret->login = msn_login;
