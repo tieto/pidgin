@@ -44,7 +44,7 @@ msgstr "Sons Muets"
 
 #: plugins/docklet/docklet.c:143
 msgid "Accounts"
-msgstr "Accomptes"
+msgstr "Comptes"
 
 #: plugins/docklet/docklet.c:154
 msgid "About"
@@ -1421,7 +1421,7 @@ msgstr "Pseudonyme ou Mot de Passe incorrect."
 #. Suspended account
 #: src/protocols/oscar/oscar.c:806
 msgid "Your account is currently suspended."
-msgstr "Votre accompte est actuellement suspendu"
+msgstr "Votre compte est actuellement suspendu"
 
 #. service temporarily unavailable
 #: src/protocols/oscar/oscar.c:810
@@ -2390,7 +2390,7 @@ msgstr "Alerte"
 
 #: src/buddy.c:2660
 msgid "_Accounts..."
-msgstr "_Accomptes"
+msgstr "_Comptes"
 
 #: src/buddy.c:2663
 msgid "_Preferences..."
