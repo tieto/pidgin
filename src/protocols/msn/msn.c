@@ -2113,9 +2113,9 @@ static void msn_act_id(gpointer data, char *entry)
 	char *alias;
 
 	if (!entry || *entry == NULL) 
-		entry = gc->username;
-	
-	alias = str_to_utf8(url_encode(entry));
+		alias = g_strdup("");
+	else
+		alias = str_to_utf8(url_encode(entry));
 	
 	if (strlen(alias) >= BUDDY_ALIAS_MAXLEN) {
 		do_error_dialog(_("New MSN friendly name too long."), NULL, GAIM_ERROR);
