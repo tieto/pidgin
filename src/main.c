@@ -621,6 +621,7 @@ int main(int argc, char *argv[])
 #endif
 	int opt, opt_user = 0;
 	int i;
+	gboolean gui_check;
 
 	struct option long_options[] = {
 		{"acct", no_argument, NULL, 'a'},
@@ -759,7 +760,7 @@ int main(int argc, char *argv[])
 	 */
 
 	gtk_set_locale();
-	gtk_init(&argc, &argv);
+	gui_check=gtk_init_check(&argc, &argv);
 
 	/* scan command-line options */
 	opterr = 1;
@@ -813,6 +814,12 @@ int main(int argc, char *argv[])
 	if (opt_version) {
 		printf("Gaim %s\n",VERSION);
 		return 0;
+	}
+
+	if(! gui_check) {
+	    const char *display_name_arg = gdk_get_display_arg_name ();
+	    g_warning ("cannot open display: %s", display_name_arg ? display_name_arg : " ");
+	    return 1;
 	}
 
 	gaim_gtk_stock_init();
