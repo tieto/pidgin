@@ -149,6 +149,8 @@ gaim_SOURCES = \
 	gtkrequest.h \
 	gtksound.c \
 	gtksound.h \
+	gtksourceiter.c \
+	gtksourceiter.h \
 	gtkutils.c \
 	gtkutils.h \
 	idle.c \
