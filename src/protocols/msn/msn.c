@@ -927,6 +927,8 @@ msn_chat_leave(GaimConnection *gc, int id)
 
 	if (!msn_servconn_write(swboard->servconn, buf, strlen(buf)))
 		msn_switchboard_destroy(swboard);
+
+	serv_chat_leave(gc, id);
 }
 
 static int
