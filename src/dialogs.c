@@ -3287,7 +3287,7 @@ int check_away_mess(struct create_away *ca, int type)
 	if ((strlen(gtk_entry_get_text(GTK_ENTRY(ca->entry))) == 0) && (type == 1)) {
 		/* We shouldn't allow a blank title */
 		do_error_dialog(_("You cannot save an away message with a blank title"), 
-				_("Please give the message a title, or choose \"Make Away\" to use "
+				_("Please give the message a title, or choose \"Use\" to use "
 				  "without saving."), GAIM_ERROR);
 		return 0;
 	}
