@@ -2795,6 +2795,7 @@ void show_conv(struct conversation *c)
 	GtkWidget *label;
 	GtkWidget *menubar;
 	GtkWidget *tabby;
+	int dispstyle = set_dispstyle(0);
 
 	c->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -3005,7 +3006,10 @@ void show_conv(struct conversation *c)
 */	
 
 	/* Put the send button on the right */
-	send = gaim_pixbuf_button_from_stock(_("Send"), "gtk-convert", GAIM_BUTTON_VERTICAL);
+	send = gaim_pixbuf_button_from_stock(
+				(dispstyle == 0 ? NULL : _("Send")),
+				(dispstyle == 1 ? NULL : "gtk-convert"),
+				GAIM_BUTTON_VERTICAL);
 	c->send = send;
 	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
 	gtk_box_pack_end(GTK_BOX(bbox), send, FALSE, FALSE, 0);
@@ -3018,30 +3022,45 @@ void show_conv(struct conversation *c)
 	/* And put the other buttons on the left */
 
 	if (c->gc && find_buddy(c->gc, c->name) != NULL) {
-		add = gaim_pixbuf_button_from_stock(_("Remove"), "gtk-remove", GAIM_BUTTON_VERTICAL);
+		add = gaim_pixbuf_button_from_stock(
+				(dispstyle == 0 ? NULL : _("Remove")),
+				(dispstyle == 1 ? NULL : "gtk-remove"),
+				GAIM_BUTTON_VERTICAL);
 		gtk_object_set_user_data(GTK_OBJECT(add), c);
 	} else
-		add = gaim_pixbuf_button_from_stock(_("Add"), "gtk-add", GAIM_BUTTON_VERTICAL);
+		add = gaim_pixbuf_button_from_stock(
+				(dispstyle == 0 ? NULL : _("Add")),
+				(dispstyle == 1 ? NULL : "gtk-add"),
+				GAIM_BUTTON_VERTICAL);
 
 	c->add = add;
 	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
 	gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 0);
 	gtk_widget_show(add);
 
-	warn = gaim_pixbuf_button_from_stock(_("Warn"), "gtk-dialog-warning", GAIM_BUTTON_VERTICAL);
+	warn = gaim_pixbuf_button_from_stock(
+				(dispstyle == 0 ? NULL : _("Warn")),
+				(dispstyle == 1 ? NULL : "gtk-dialog-warning"),
+				GAIM_BUTTON_VERTICAL);
 	c->warn = warn;
 	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
 	gtk_box_pack_start(GTK_BOX(bbox), warn, FALSE, FALSE, 0);
 	gtk_widget_show(warn);
 
-	info = gaim_pixbuf_button_from_stock(_("Info"), "gtk-find", GAIM_BUTTON_VERTICAL);
+	info = gaim_pixbuf_button_from_stock(
+				(dispstyle == 0 ? NULL : _("Info")),
+				(dispstyle == 1 ? NULL : "gtk-find"),
+				GAIM_BUTTON_VERTICAL);
 	c->info = info;
 	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
 	gtk_box_pack_start(GTK_BOX(bbox), info, FALSE, FALSE, 0);
 	gtk_widget_show(info);
 
 
-	block = gaim_pixbuf_button_from_stock(_("Block"), "gtk-stop", GAIM_BUTTON_VERTICAL);
+	block = gaim_pixbuf_button_from_stock(
+				(dispstyle == 0 ? NULL : _("Block")),
+				(dispstyle == 1 ? NULL : "gtk-stop"),
+				GAIM_BUTTON_VERTICAL);
 	c->block = block;
 	gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
 	gtk_box_pack_start(GTK_BOX(bbox), block, FALSE, FALSE, 0);

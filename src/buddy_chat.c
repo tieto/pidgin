@@ -1194,7 +1194,7 @@ void show_new_buddy_chat(struct conversation *b)
 
 	char buf[BUF_LONG];
 
-	/*int dispstyle = set_dispstyle(1);*/
+	int dispstyle = set_dispstyle(1);
 
 	if (chat_options & OPT_CHAT_ONE_WINDOW) {
 		if (!all_chats) {
@@ -1432,7 +1432,11 @@ void show_new_buddy_chat(struct conversation *b)
 	*/
 
 	/* Send */
-	button = gaim_pixbuf_button_from_stock(_("Send"), "gtk-convert", GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(
+				(dispstyle == 0 ? NULL : _("Send")),
+				(dispstyle == 1 ? NULL : "gtk-convert"),
+				GAIM_BUTTON_VERTICAL);
+
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(send_callback), b);
 	gtk_widget_show(button);
@@ -1444,7 +1448,11 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_box_pack_start(GTK_BOX(bbox), sep, FALSE, FALSE, 0);
 
 	/* Invite */
-	button = gaim_pixbuf_button_from_stock(_("Invite"), "gtk-jump-to", GAIM_BUTTON_VERTICAL);
+	button = gaim_pixbuf_button_from_stock(
+				(dispstyle == 0 ? NULL : _("Invite")),
+				(dispstyle == 1 ? NULL : "gtk-jump-to"),
+				GAIM_BUTTON_VERTICAL);
+
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(invite_callback), b);
 	gtk_widget_show(button);
 	gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
