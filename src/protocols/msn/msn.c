@@ -101,9 +101,11 @@ static char *url_decode(const char *msg)
 			buf[j++] = msg[i];
 			continue;
 		}
-		g_snprintf(hex, sizeof(hex), "%s", msg + ++i);
-		i++;
-		sscanf(hex, "%%x", (unsigned int *)&buf[j++]);
+		strncpy(hex, msg + ++i, 2); hex[2] = 0;
+		/* i is pointing to the start of the number */
+		i++; /* now it's at the end and at the start of the for loop
+			will be at the next character */
+		buf[j++] = strtol(hex, NULL, 16);
 	}
 	buf[j] = 0;
 
