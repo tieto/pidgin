@@ -7318,7 +7318,6 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/recent_buddies", _("Use recent buddies group"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
-	/* XXX - Why doesn't the following show up? */
 	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/show_idle", _("Show how long you have been idle"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
@@ -7445,6 +7444,7 @@ init_plugin(GaimPlugin *plugin)
 
 	gaim_prefs_add_none("/plugins/prpl/oscar");
 	gaim_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
+	gaim_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);
 }
 
 GAIM_INIT_PLUGIN(oscar, init_plugin, info);
