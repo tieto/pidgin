@@ -3,6 +3,8 @@ Gaim: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.57
 	* New authorization method for Yahoo!
 	* Polish translation updated (Thanks Przemyslaw Sulek)
+	* Jabber will tell you when your buddies signed on (Thanks
+	  Nathan Walp)
 
 version 0.56 (04/11/2002):
 	* German translation update (Thanks Karsten Weiss)

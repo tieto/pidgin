@@ -22,3 +22,4 @@
 #ifndef STATIC_PROTO_INIT
 #undef STATIC_PROTO_INIT
 #endif
+#undef socklen_t

@@ -894,17 +894,33 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	struct buddy *b = NULL;
 	jid who;
 	char *buddy;
-	xmlnode y;
+	xmlnode y,z;
 	char *show;
 	int state = 0;
 	GSList *resources;
 	char *res;
 	struct conversation *cnv = NULL;
 	struct jabber_chat *jc = NULL;
+	time_t signon = time(NULL);
+	
 
 	to = xmlnode_get_attrib(p->x, "to");
 	from = xmlnode_get_attrib(p->x, "from");
 	type = xmlnode_get_attrib(p->x, "type");
+	
+	z = xmlnode_get_tag(p->x, "x");
+	
+	if(NSCHECK(z,NS_DELAY))
+	{
+	   struct tm t;
+	   char *timestamp = xmlnode_get_attrib(z,"stamp");
+	   if(sscanf(timestamp,"%04d%02d%02dT%02d:%02d:%02d", &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec))
+	   {
+	      t.tm_year -= 1900;
+	      t.tm_mon -= 1;
+	      signon = mktime(&t) - timezone;
+	   }
+	}
 
 	if ((y = xmlnode_get_tag(p->x, "show"))) {
 		show = xmlnode_get_data(y);
@@ -972,7 +988,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 				b->proto_data = g_slist_append(b->proto_data, g_strdup(res));
 			}
 
-			serv_got_update(GJ_GC(gjc), buddy, 1, 0, 0, 0, state, 0);
+			serv_got_update(GJ_GC(gjc), buddy, 1, 0, b->signon ? b->signon : signon, b->idle, state, 0);
 
 		}
 	} else {
@@ -1133,6 +1149,8 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 			if(groupname && c_grp && strcmp(c_grp->name, groupname)) {
 				int present = b->present;	/* save presence state */
 				int uc = b->uc;			/* and away state (?) */
+				int idle = b->idle;
+				int signon = b->signon;
 
 				/*
 				 * seems rude, but it seems to be the only way...
@@ -1142,7 +1160,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 					name ? name : buddyname);
 				do_export(GJ_GC(gjc));
 				if(present) {
-					serv_got_update(GJ_GC(gjc), buddyname, 1, 0, 0, 0, uc, 0);
+					serv_got_update(GJ_GC(gjc), buddyname, 1, 0, signon, idle, uc, 0);
 				}
 			} else if(name != NULL && strcmp(b->show, name)) {
 				strncpy(b->show, name, BUDDY_ALIAS_MAXLEN);

@@ -561,7 +561,7 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 	ga->who = g_strdup(who);
 	ga->alias = alias ? g_strdup(alias) : NULL;
 
-	g_snprintf(buf, sizeof(buf), _("%s%s%s%s has made %s their buddy%s%s%s"),
+	g_snprintf(buf, sizeof(buf), _("%s%s%s%s has made %s his or her buddy%s%s%s"),
 		   who,
 		   alias ? " (" : "",
 		   alias ? alias : "",
@@ -569,7 +569,7 @@ void show_got_added(struct gaim_connection *gc, const char *id,
 		   id ? id : gc->displayname[0] ? gc->displayname : gc->username,
 		   msg ? ": " : ".",
 		   msg ? msg : "",
-		   find_buddy(gc, ga->who) ? "" : _("\n\nDo you wish to add them to your buddy list?"));
+		   find_buddy(gc, ga->who) ? "" : _("\n\nDo you wish to add him or her to your buddy list?"));
 	if (find_buddy(gc, ga->who))
 		do_error_dialog(buf, "Added to List");
 	else

@@ -41,6 +41,21 @@ dnl Check for inet_aton
 AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, , 
 				         [AC_ERROR(inet_aton not found)])])
 
+dnl Check for socklen_t (in Unix98)
+AC_MSG_CHECKING(for socklen_t)
+AC_TRY_COMPILE([#include <sys/types.h>
+#include <sys/socket.h>
+socklen_t x;
+], [], [AC_MSG_RESULT(yes)], [
+AC_TRY_COMPILE([#include <sys/types>
+#include <sys/socket.h>
+int accept(int, struct sockaddr *, size_t *);
+], [], [
+AC_MSG_RESULT(size_t)
+AC_DEFINE(socklen_t, size_t)]. [
+AC_MSG_RESULT(int)
+AC_DEFINE(socklen_t, int)])])
+
 dnl This is a bad, bad hack.  I am a bad, bad man.
 CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include -I\$(top_srcdir)"
 
