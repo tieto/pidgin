@@ -4,16 +4,18 @@
 ;;  German language strings for the Windows Gaim NSIS installer.
 ;;  Windows Code page: 1252
 ;;
-;;  Author: Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2003.
-;;  Version 2
+;;  Author: Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2005.
+;;  Version 3
 ;;
  
-; Startup GTK+ check
+; Startup checks
+!define INSTALLER_IS_RUNNING			"Der Installer läuft schon."
+!define GAIM_IS_RUNNING				"Eine Instanz von Gaim läuft momentan schon. Beenden Sie Gaim und versuchen Sie es nochmal."
 !define GTK_INSTALLER_NEEDED			"Die GTK+ Runtime Umgebung fehlt entweder oder muß aktualisiert werden.$\rBitte installieren Sie v${GTK_VERSION} oder höher der GTK+ Runtime"
  
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Weiter >"
-!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) wird unter der GPL Lizenz veröffentlicht. Die Lizenz hier dient nur der Information. $_CLICK"
+!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) wird unter der GNU General Public License (GPL) veröffentlicht. Die Lizenz dient hier nur der Information. $_CLICK"
  
 ; Components Page
 !define GAIM_SECTION_TITLE			"Gaim Instant Messaging Client (erforderlich)"
@@ -50,5 +52,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Sie haben keine Berechtigung, um ein GTK+ Theme zu installieren."
  
 ; Uninstall Section Prompts
-!define un.GAIM_UNINSTALL_ERROR_1		"Der Deinstaller konnte keine Registrierungsshlüssel für Gaim finden.$\rEs ist wahrscheinlich, daß ein anderer Benutzer diese Anwendunng installiert hat."
+!define un.GAIM_UNINSTALL_ERROR_1		"Der Deinstaller konnte keine Registrierungsschlüssel für Gaim finden.$\rEs ist wahrscheinlich, daß ein anderer Benutzer diese Anwendunng installiert hat."
 !define un.GAIM_UNINSTALL_ERROR_2		"Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
