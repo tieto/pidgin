@@ -118,43 +118,43 @@ void show_about(GtkWidget *w, void *null)
 				  _("Gaim is a modular Instant Messaging client capable of "
 					  "using AIM, ICQ, Yahoo!, MSN, IRC, Jabber, Napster, "
 					  "Zephyr, and Gadu-Gadu all at once.  It is written using "
-					  "Gtk+ and is licensed under the GPL.<BR><BR>"), -1, 0);
+					  "Gtk+ and is licensed under the GPL.<BR><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				"<FONT SIZE=\"3\">URL:</FONT> <A HREF=\"" WEBSITE "\">"
-				WEBSITE "</A><BR><BR>", -1, 0);
+				WEBSITE "</A><BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				"<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net"
-				"<BR><BR>", -1, 0);
+				"<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-			_("<FONT SIZE=\"3\">Active Developers:</FONT><BR>"), -1, 0);
+			_("<FONT SIZE=\"3\">Active Developers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 			"  Rob Flynn (maintainer) "
 			"&lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>"
 			"  Sean Egan (coder) "
 			"&lt;<A HREF=\"mailto:bj91704@binghamton.edu\">"
 			"bj91704@binghamton.edu</A>&gt;"
-			"<BR><BR>", -1, 0);
+			"<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-			_("<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"), -1, 0);
+			_("<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 			"  Benjamin Miller<BR>"
 			"  Decklin Foster<BR>"
 			"  Nathan Walp<BR>"
-			"  Mark Doliner<BR><BR>", -1, 0);
+			"  Mark Doliner<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_("<FONT SIZE=\"3\">Win32 Port:</FONT><BR>"), -1, 0);
+				_("<FONT SIZE=\"3\">Win32 Port:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				"  Herman Bloggs "
 				"&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">"
-				"hermanator12002@yahoo.com</A>&gt;<BR><BR>", -1, 0);
+				"hermanator12002@yahoo.com</A>&gt;<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-				_("<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"), -1, 0);
+				_("<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"), -1, GTK_IMHTML_NO_SCROLL);
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 				"  Jim Duchek<BR>"
 				"  Eric Warmenhoven "
@@ -163,7 +163,7 @@ void show_about(GtkWidget *w, void *null)
 				"  Mark Spencer (original author) "
 				"&lt;<A HREF=\"mailto:markster@marko.net\">"
 				"markster@marko.net</A>&gt;"
-				"<BR><BR>", -1, 0);
+				"<BR><BR>", -1, GTK_IMHTML_NO_SCROLL);
 
 		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
 
