@@ -32,6 +32,9 @@
 
 #ifdef USE_GTKSPELL
 # include <gtkspell/gtkspell.h>
+# ifdef _WIN32
+#  include "wspell.h"
+# endif
 #endif
 
 typedef struct
