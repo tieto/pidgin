@@ -51,6 +51,9 @@ extern void wgaim_gtk_window_move(GtkWindow *window, gint x, gint y);
 /* Utility */
 extern int wgaim_gz_decompress(const char* in, const char* out);
 extern int wgaim_gz_untar(const char* filename, const char* destdir);
+/* Docklet */
+extern void wgaim_systray_minimize( GtkWidget* );
+extern void wgaim_systray_maximize( GtkWidget* );
 /* init / cleanup */
 extern void wgaim_init(void);
 extern void wgaim_cleanup(void);

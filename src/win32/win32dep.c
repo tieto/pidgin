@@ -37,7 +37,6 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "MinimizeToTray.h"
-#include "systray.h"
 #include "winuser_extra.h"
 #include "idletrack.h"
 #include "zlib.h"
@@ -322,6 +321,16 @@ int wgaim_gz_untar(const char* filename, const char* destdir) {
 	}
 }
 
+/* Moved over from old systray.c */
+void wgaim_systray_minimize( GtkWidget *window ) {
+	MinimizeWndToTray(GDK_WINDOW_HWND(window->window));
+}
+
+void wgaim_systray_maximize( GtkWidget *window ) {
+	RestoreWndFromTray(GDK_WINDOW_HWND(window->window));
+}
+
+
 /* Windows Initializations */
 
 void wgaim_init(void) {
@@ -339,9 +348,6 @@ void wgaim_init(void) {
 	g_free(drmingw);
 
 	load_winver_specific_procs();
-
-	/* Initialize Wingaim systray icon */
-	wgaim_systray_init();
 
 	/*
 	 *  Winsock init
@@ -399,9 +405,6 @@ void wgaim_cleanup(void) {
 
 	/* Idle tracker cleanup */
 	wgaim_remove_idlehooks();
-	
-	/* Remove systray icon */
-	wgaim_systray_cleanup();
 }
 
 /* DLL initializer */
