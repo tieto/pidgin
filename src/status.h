@@ -25,6 +25,49 @@
 #ifndef _GAIM_STATUS_H_
 #define _GAIM_STATUS_H_
 
+/**
+ * TODO: Someone figure out if we need to do something to get
+ *       this in the Doxygen generated docs.
+ *
+ * A brief explanation of the status API:
+ *
+ * GaimStatusType's are created by each PRPL.  They outline the
+ * available statuses of the protocol.  AIM, for example, supports
+ * and available state with an optional available message, an away
+ * state with a mandatory message, and an invisible state (which is
+ * technically "independant" of the other two, but we'll get into
+ * that later).  GaimStatusTypes are very permanent.  They are
+ * hardcoded in each PRPL and will not change often.  And because
+ * they are hardcoded, they do not need to be saved to any XML file.
+ *
+ * A GaimStatus can be thought of as an "instance" of a GaimStatusType.
+ * If you've familiar with object-oriented programming languages
+ * then this should be immediately clear.  Say, for example, that
+ * one of your AIM buddies has set himself as "away."  You have a
+ * GaimBuddy node for this person in your buddy list.  Gaim wants
+ * to mark this buddy as "away," so it creates a new GaimStatus.
+ * The GaimStatus has its GaimStatusType set to the "away" state
+ * for the oscar PRPL.  The GaimStatus also contains the buddy's
+ * away message.  GaimStatuses are sometimes saved, depending on
+ * the context.  The current GaimStatuses associated with each of
+ * your accounts is saved so that the next time you start Gaim,
+ * your accounts will be set to their last know statuses.  There
+ * is also a list of saved statuses that are written to the
+ * status.xml file.
+ *
+ * A GaimPresence is like a collection of GaimStatuses (plus some
+ * other random info).  For any buddy, or for any one of your accounts,
+ * or for any person you're chatting with, you may know various
+ * amounts of information.  This information is all contained in
+ * one GaimPresence.  If one of your buddies is away and idle,
+ * then the presence contains the GaimStatus for their awayness,
+ * and it contains their current idle time.  GaimPresences are
+ * never saved to disk.  The information they contain is only relevent
+ * for the current GaimSession.
+ *
+ * TODO: Talk about independant statuses.
+ */
+
 typedef struct _GaimStatusType      GaimStatusType;
 typedef struct _GaimStatusAttr      GaimStatusAttr;
 typedef struct _GaimPresence        GaimPresence;

@@ -4766,6 +4766,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
 	}
 
+	/* TODO: These colors should not be hardcoded so log.c can use them */
 	if (flags & GAIM_MESSAGE_SYSTEM) {
 		g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s)</FONT> <B>%s</B>",
 				   mdate, message);

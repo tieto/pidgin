@@ -209,6 +209,13 @@ gaim_plugin_probe(const char *filename)
 
 	if (plugin->native_plugin) {
 		const char *error;
+		/*
+		 * TODO: Should pass the G_MODULE_BIND_LOCAL parameter to
+		 *       g_module_open().  It enforces plugin separation so that
+		 *       symbols from plugins are not added to the global name
+		 *       space.  However, it caused problems with using a
+		 *       perl script for me.  If it works for you then go for it.
+		 */
 		plugin->handle = g_module_open(filename, 0);
 
 		if (plugin->handle == NULL)
