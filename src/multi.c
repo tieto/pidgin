@@ -397,8 +397,11 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 	} else {
 		if(p->register_user != NULL &&
 		   gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(u->register_user)) == TRUE) {
-
+			ref_protocol(p);
 			p->register_user(a);
+			/* we don't unref the protocol because register user has callbacks
+			 * that need to get called first, then they will unref the protocol
+			 * appropriately */
 		}
 	}
 

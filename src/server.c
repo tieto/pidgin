@@ -43,21 +43,12 @@
 void serv_login(struct aim_user *user)
 {
 	struct prpl *p = find_prpl(user->protocol);
-	
+
 	if (user->gc != NULL || p == NULL)
 		return;
 
-#ifdef GAIM_PLUGINS
-	if (p->plug) { /* This protocol is a plugin */
-		prpl_accounts[p->protocol]++;
-		debug_printf("Protocol %s is now being used by %d connections.\n", p->name, prpl_accounts[p->protocol]);
-		if (!p->plug->handle) { /* But the protocol isn't yet loaded. */
-			unload_protocol(p); /* Unload it to free the old name and options */
-			if (load_prpl(p)) /* And load the plugin */
-				return;
-		}
-	}
-#endif
+	if(!ref_protocol(p))
+		return;
 
 	if (p->login) {
 		if (!strlen(user->password) && !(p->options & OPT_PROTO_NO_PASSWORD) &&
@@ -95,11 +86,6 @@ static void update_keepalive(struct gaim_connection *gc, gboolean on)
 	}
 }
 
-static gboolean delayed_unload(void *handle) {
-	g_module_close(handle);
-	return FALSE;
-}
-
 void serv_close(struct gaim_connection *gc)
 {
 	struct prpl *prpl;
@@ -118,23 +104,12 @@ void serv_close(struct gaim_connection *gc)
 
 	if (gc->prpl && gc->prpl->close)
 		gc->prpl->close(gc);
-	
+
 	prpl = gc->prpl;
 	account_offline(gc);
 	destroy_gaim_conn(gc);
 
-#ifdef GAIM_PLUGINS
-	if (prpl->plug) { /* This is a plugin */
-		prpl_accounts[prpl->protocol]--;
-		debug_printf("Prpl %s is now being used by %d accounts\n", prpl->name, prpl_accounts[prpl->protocol]);
-		if (prpl_accounts[prpl->protocol] == 0) { /* We don't need this protocol anymore */
-			debug_printf("Throwing out prpl %s\n", prpl->name);
-			g_timeout_add(0,delayed_unload, prpl->plug->handle);
-			prpl->plug->handle = NULL;
-		}
-	}
-#endif
-		
+	unref_protocol(prpl);
 }
 
 void serv_touch_idle(struct gaim_connection *gc)

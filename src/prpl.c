@@ -756,7 +756,7 @@ GSList *add_smiley(GSList *list, char *key, char **xpm, int show)
 {
 	struct _prpl_smiley *smiley;
 
- 	smiley = (struct _prpl_smiley *)g_new0(struct _prpl_smiley, 1);
+	smiley = (struct _prpl_smiley *)g_new0(struct _prpl_smiley, 1);
 	smiley->key = g_strdup(key);
 	smiley->xpm = xpm;
 	smiley->show = show;
@@ -764,3 +764,38 @@ GSList *add_smiley(GSList *list, char *key, char **xpm, int show)
 
 	return list;
 }
+
+static gboolean delayed_unload(void *handle) {
+	g_module_close(handle);
+	return FALSE;
+}
+
+gboolean ref_protocol(struct prpl *p) {
+#ifdef GAIM_PLUGINS
+	if(p->plug) { /* This protocol is a plugin */
+		prpl_accounts[p->protocol]++;
+		debug_printf("Protocol %s now in use by %d connections.\n", p->name, prpl_accounts[p->protocol]);
+		if(!p->plug->handle) { /*But the protocol isn't yet loaded */
+			unload_protocol(p);
+			if (load_prpl(p))
+				return FALSE;
+		}
+	}
+#endif /* GAIM_PLUGINS */
+	return TRUE;
+}
+
+void unref_protocol(struct prpl *p) {
+#ifdef GAIM_PLUGINS
+	if(p->plug) { /* This protocol is a plugin */
+		prpl_accounts[p->protocol]--;
+		debug_printf("Protocol %s now in use by %d connections.\n", p->name, prpl_accounts[p->protocol]);
+		if(prpl_accounts[p->protocol] == 0) { /* No longer needed */
+			debug_printf("Throwing out %s protocol plugin\n", p->name);
+			g_timeout_add(0, delayed_unload, p->plug->handle);
+			p->plug->handle = NULL;
+		}
+	}
+#endif /* GAIM_PLUGINS */
+}
+

@@ -237,4 +237,8 @@ extern int transfer_in_do(struct file_transfer *xfer, int fd,
 int transfer_get_file_info(struct file_transfer *xfer, int *size,
 		char **name);
 
+/* stuff to load/unload PRPLs as necessary */
+extern gboolean ref_protocol(struct prpl *p);
+extern void unref_protocol(struct prpl *p);
+
 #endif /* _PRPL_H_ */
