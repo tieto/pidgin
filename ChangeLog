@@ -7,7 +7,7 @@ version 0.9.12 (03/25/2000):
 	* GNOME Applet support works better
 	  (thanks to Eric Warmenhoven for the patch)
 	* Support for displaying true type fonts
-	* Fixed the Lag-Meter Option
+	* Lag-O-Meter does not send lag-test if not selected 
 	* Fixed problem with saving away messages which contain spaces
 	  and numbers.
 	* Various GNOME Applet Enhancements (thanks AGAIN to 
