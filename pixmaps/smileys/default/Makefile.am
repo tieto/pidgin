@@ -31,11 +31,13 @@ MSN_SMILEYS = \
 	msn_beer.png		\
 	msn_bowl.png		\
 	msn_boy.png			\
+	msn_brb.png			\
 	msn_brheart.png		\
 	msn_cake.gif		\
 	msn_car.png			\
 	msn_cat.png			\
 	msn_cellphone.png	\
+	msn_cigarette.gif	\
 	msn_clock.png		\
 	msn_coffee.png		\
 	msn_coins.png		\
@@ -51,6 +53,7 @@ MSN_SMILEYS = \
 	msn_embarrassed.png	\
 	msn_eyeroll.gif		\
 	msn_film.png		\
+	msn_fingerscrossed.png \
 	msn_flower.png		\
 	msn_gift.png		\
 	msn_girl.png		\
@@ -98,9 +101,11 @@ MSN_SMILEYS = \
 	msn_thumbdown.png	\
 	msn_thumbup.png		\
 	msn_tongue.png		\
+	msn_turtle.png		\
 	msn_umbrella.png	\
 	msn_weird.png		\
-	msn_wink.gif
+	msn_wink.gif		\
+	msn_xbox.png
 
 YAHOO_SMILEYS = \
 	yahoo_alien.gif			\
