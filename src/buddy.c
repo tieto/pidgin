@@ -65,6 +65,8 @@
 #include "pixmaps/daemon-permadd.xpm"
 #include "pixmaps/daemon-permdel.xpm"
 
+#include "pixmaps/add_small.xpm"
+
 static GtkTooltips *tips;
 static GtkWidget *editpane;
 static GtkWidget *buddypane;
@@ -1708,6 +1710,49 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str, GtkSignalFunc sf)
 	return menuitem;
 }
 
+GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xpm, GtkSignalFunc sf)
+{
+	GtkWidget *menuitem;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *pixmap;
+	GdkPixmap *pm;
+	GdkBitmap *mask;
+
+	menuitem = gtk_menu_item_new();
+	gtk_widget_show(menuitem);
+
+	/* Create our container */
+	hbox = gtk_hbox_new(FALSE, 5);
+
+	/* Create our label and pack it */
+	label = gtk_label_new(str);
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+
+
+	/* Create our pixmap and pack it */
+	pm = gdk_pixmap_create_from_xpm_d(menu->parent->window, &mask, NULL, xpm);
+
+	pixmap = gtk_pixmap_new(pm, mask);
+	gtk_widget_show(pixmap);
+
+	gtk_box_pack_end(GTK_BOX(hbox), pixmap, FALSE, FALSE, 5);
+
+	
+	/* And finally, pack our box within our menu item */
+
+	gtk_container_add(GTK_CONTAINER(menuitem), hbox);
+	gtk_widget_show(hbox);
+	
+        if (menu)
+		gtk_menu_append(GTK_MENU(menu), menuitem);
+
+	if (sf)
+		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, NULL);
+	return menuitem;
+}
+
 
 
 void build_imchat_box(gboolean on)
@@ -1797,7 +1842,8 @@ void show_buddy_list()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
 	gtk_menu_bar_append(GTK_MENU_BAR(menubar), menuitem);
 
-	gaim_new_item(menu, _("Add A Buddy"), GTK_SIGNAL_FUNC(add_buddy_callback));
+	// gaim_new_item(menu, _("Add A Buddy"), GTK_SIGNAL_FUNC(add_buddy_callback));
+	gaim_new_item_with_pixmap(menu, _("Add A Buddy"), add_small_xpm, GTK_SIGNAL_FUNC(add_buddy_callback));
 	gaim_new_item(menu, _("Join A Chat"), GTK_SIGNAL_FUNC(chat_callback));
         gaim_seperator(menu);
         gaim_new_item(menu, _("Import Buddy List"), GTK_SIGNAL_FUNC(import_callback));
