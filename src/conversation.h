@@ -79,7 +79,6 @@ typedef enum
 	GAIM_CONV_UPDATE_LOGGING, /**< Logging for this conversation was
 	                               enabled or disabled. */
 	GAIM_CONV_UPDATE_TOPIC,   /**< The topic for a chat was updated. */
-
 	/*
 	 * XXX These need to go when we implement a more generic core/UI event
 	 * system.
@@ -89,7 +88,9 @@ typedef enum
 	GAIM_CONV_UPDATE_AWAY,     /**< The other user went away.                */
 	GAIM_CONV_UPDATE_ICON,     /**< The other user's buddy icon changed.     */
 	GAIM_CONV_UPDATE_TITLE,
-	GAIM_CONV_UPDATE_CHATLEFT
+	GAIM_CONV_UPDATE_CHATLEFT,
+
+	GAIM_CONV_UPDATE_FEATURES, /**< The features for a chat have changed */
 
 } GaimConvUpdateType;
 
@@ -132,7 +133,9 @@ typedef enum
 	GAIM_CBFLAGS_VOICE         = 0x0001, /**< Voiced user or "Participant" */
 	GAIM_CBFLAGS_HALFOP        = 0x0002, /**< Half-op                      */
 	GAIM_CBFLAGS_OP            = 0x0004, /**< Channel Op or Moderator      */
-	GAIM_CBFLAGS_FOUNDER       = 0x0008  /**< Channel Founder              */
+	GAIM_CBFLAGS_FOUNDER       = 0x0008, /**< Channel Founder              */
+	GAIM_CBFLAGS_TYPING        = 0x0010, /**< Currently typing             */
+	
 
 } GaimConvChatBuddyFlags;
 
@@ -164,6 +167,7 @@ struct _GaimConvWindowUiOps
 	void (*remove_conversation)(GaimConvWindow *win, GaimConversation *conv);
 	void (*move_conversation)(GaimConvWindow *win, GaimConversation *conv,
 	                          unsigned int newIndex);
+
 	int (*get_active_index)(const GaimConvWindow *win);
 	gboolean (*has_focus)(GaimConvWindow *win);
 };
@@ -305,6 +309,9 @@ struct _GaimConversation
 	void *ui_data;                           /**< UI-specific data.       */
 
 	GHashTable *data;                        /**< Plugin-specific data.   */
+  
+	GaimConnectionFlags features; /**< The supported features */
+
 };
 
 typedef void (*GaimConvPlacementFunc)(GaimConversation *);
@@ -495,7 +502,6 @@ GList *gaim_get_windows(void);
  * @return The window if found, or @c NULL if not found.
  */
 GaimConvWindow *gaim_get_first_window_with_type(GaimConversationType type);
-
 /**
  * Returns the last window containing a conversation of the specified type.
  *
@@ -839,8 +845,25 @@ GaimConversation *gaim_find_conversation_with_account(
  * @see gaim_conv_chat_write()
  */
 void gaim_conversation_write(GaimConversation *conv, const char *who,
-							 const char *message, GaimMessageFlags flags,
-							 time_t mtime);
+		const char *message, GaimMessageFlags flags,
+		time_t mtime);
+
+
+/**
+	Set the features as supported for the given conversation.
+	@param conv      The conversation
+	@param features  Bitset defining supported features
+*/
+void gaim_conversation_set_features(GaimConversation *conv,
+		GaimConnectionFlags features);
+
+
+/**
+	Get the features supported by the given conversation.
+	@param conv  The conversation
+*/
+GaimConnectionFlags gaim_conversation_get_features(GaimConversation *conv);		    
+
 
 /**
  * Updates the progress bar on a conversation window
@@ -1521,6 +1544,7 @@ void gaim_conversations_set_win_ui_ops(GaimConvWindowUiOps *ops);
  * @return A filled-out GaimConvWindowUiOps structure.
  */
 GaimConvWindowUiOps *gaim_conversations_get_win_ui_ops(void);
+
 
 /*@}*/
 

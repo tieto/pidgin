@@ -138,7 +138,7 @@ common_send(GaimConversation *conv, const char *message)
 	type = gaim_conversation_get_type(conv);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
-	if (gc->flags & GAIM_CONNECTION_HTML)
+	if (conv->features & GAIM_CONNECTION_HTML)
 		displayed = gaim_markup_linkify(message);
 	else
 		displayed = g_strdup(message);
@@ -188,7 +188,7 @@ common_send(GaimConversation *conv, const char *message)
 		if (sent != NULL && sent[0] != '\0') {
 			GaimMessageFlags msgflags = GAIM_MESSAGE_SEND;
 
-			if (gc && gc->flags & GAIM_CONNECTION_HTML) {
+			if (conv->features & GAIM_CONNECTION_HTML) {
 				err = serv_send_im(gc, gaim_conversation_get_name(conv),
 				                   sent, 0);
 			} else {
@@ -212,7 +212,7 @@ common_send(GaimConversation *conv, const char *message)
 						 gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
 
 		if (sent != NULL && sent[0] != '\0') {
-			if (gc && gc->flags & GAIM_CONNECTION_HTML) {
+			if (conv->features & GAIM_CONNECTION_HTML) {
 				err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), sent);
 			} else {
 				gchar *tmp = gaim_unescape_html(sent);
@@ -748,6 +748,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 					  const char *name)
 {
 	GaimConversation *conv;
+	GaimConnection *gc;
 
 	g_return_val_if_fail(type    != GAIM_CONV_UNKNOWN, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
@@ -766,6 +767,9 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		}
 	}
 
+	gc = gaim_account_get_connection(account);
+	g_return_val_if_fail(gc != NULL, NULL);
+
 	conv = g_new0(GaimConversation, 1);
 
 	conv->type         = type;
@@ -779,7 +783,9 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	conv->log          = gaim_log_new(type == GAIM_CONV_CHAT ? GAIM_LOG_CHAT :
 									  GAIM_LOG_IM, conv->name, account,
 									  time(NULL));
-
+	/* copy features from the connection. */
+	conv->features = gc->flags;
+	
 
 	if (type == GAIM_CONV_IM)
 	{
@@ -1024,6 +1030,30 @@ gaim_conversation_destroy(GaimConversation *conv)
 	g_free(conv);
 	conv = NULL;
 }
+
+
+void
+gaim_conversation_set_features(GaimConversation *conv, GaimConnectionFlags features)
+{
+	GaimConversationUiOps *ops;
+
+	g_return_if_fail(conv != NULL);
+
+	conv->features = features;
+
+	ops = conv->ui_ops;
+	if(ops && ops->updated)
+		ops->updated(conv, GAIM_CONV_UPDATE_FEATURES);	
+}
+
+
+GaimConnectionFlags
+gaim_conversation_get_features(GaimConversation *conv)
+{
+	g_return_val_if_fail(conv != NULL, 0);
+	return conv->features;
+}
+
 
 GaimConversationType
 gaim_conversation_get_type(const GaimConversation *conv)

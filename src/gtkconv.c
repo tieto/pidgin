@@ -199,9 +199,8 @@ static void
 default_formatize(GaimConversation *conv)
 {
 	GaimGtkConversation *c = GAIM_GTK_CONVERSATION(conv);
-	GaimConnection *gc = gaim_conversation_get_gc(conv);
 
-	if (gc && gc->flags & GAIM_CONNECTION_HTML)
+	if (conv->features & GAIM_CONNECTION_HTML)
 	{
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_formatting"))
 		{
@@ -220,7 +219,7 @@ default_formatize(GaimConversation *conv)
 			gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry),
 				gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
 
-			if (!(gc->flags & GAIM_CONNECTION_NO_FONTSIZE))
+			if (!(conv->features & GAIM_CONNECTION_NO_FONTSIZE))
 				gtk_imhtml_font_set_size(GTK_IMHTML(c->entry),
 					gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
 
@@ -239,7 +238,7 @@ default_formatize(GaimConversation *conv)
 			gtk_imhtml_toggle_forecolor(GTK_IMHTML(c->entry), color);
 			g_free(color);
 
-			if(!(gc->flags & GAIM_CONNECTION_NO_BGCOLOR) &&
+			if(!(conv->features & GAIM_CONNECTION_NO_BGCOLOR) &&
 			   strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"), "") != 0)
 			{
 				gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
@@ -257,7 +256,7 @@ default_formatize(GaimConversation *conv)
 		}
 
 
-		if (gc->flags & GAIM_CONNECTION_FORMATTING_WBFO)
+		if (conv->features & GAIM_CONNECTION_FORMATTING_WBFO)
 			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), TRUE);
 		else
 			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), FALSE);
@@ -486,7 +485,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 	}
 
 	gc = gaim_account_get_connection(account);
-	if (gc && (gc->flags & GAIM_CONNECTION_NO_NEWLINES)) {
+	if (gc && (conv->features & GAIM_CONNECTION_NO_NEWLINES)) {
 		char **bufs;
 		int i;
 
@@ -2633,6 +2632,7 @@ menu_buddyicon_cb(gpointer data, guint action, GtkWidget *widget)
  * End of the bunch of buddy icon functions
  **************************************************************************/
 
+
 /*
  * Makes sure all the menu items and all the buttons are hidden/shown and
  * sensitive/insensitive.  This is called after changing tabs and when an
@@ -2731,17 +2731,17 @@ gray_stuff_out(GaimConversation *conv)
 	    !gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)) )) {
 		/* Account is online */
 		/* Deal with the toolbar */
-		if (gc->flags & GAIM_CONNECTION_HTML) {
+		if (conv->features & GAIM_CONNECTION_HTML) {
 			buttons = GTK_IMHTML_ALL;    /* Everything on */
 			if (!(prpl_info->options & OPT_PROTO_IM_IMAGE))
 				buttons &= ~GTK_IMHTML_IMAGE;
-			if (gc->flags & GAIM_CONNECTION_NO_BGCOLOR)
+			if (conv->features & GAIM_CONNECTION_NO_BGCOLOR)
 				buttons &= ~GTK_IMHTML_BACKCOLOR;
-			if (gc->flags & GAIM_CONNECTION_NO_FONTSIZE) {
+			if (conv->features & GAIM_CONNECTION_NO_FONTSIZE) {
 				buttons &= ~GTK_IMHTML_GROW;
 				buttons &= ~GTK_IMHTML_SHRINK;
 			}
-			if (gc->flags & GAIM_CONNECTION_NO_URLDESC)
+			if (conv->features & GAIM_CONNECTION_NO_URLDESC)
 				buttons &= ~GTK_IMHTML_LINKDESC;
 		} else {
 			buttons = GTK_IMHTML_SMILEY;
@@ -2756,7 +2756,7 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_set_sensitive(gtkwin->menu.warn, (prpl_info->warn != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.invite, (prpl_info->chat_invite != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.block, (prpl_info->add_deny != NULL));
-		gtk_widget_set_sensitive(gtkwin->menu.insert_link, (gc->flags & GAIM_CONNECTION_HTML));
+		gtk_widget_set_sensitive(gtkwin->menu.insert_link, (conv->features & GAIM_CONNECTION_HTML));
 		gtk_widget_set_sensitive(gtkwin->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE));
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
@@ -5409,6 +5409,10 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	else if (type == GAIM_CONV_UPDATE_ICON)
 	{
 		gaim_gtkconv_update_buddy_icon(conv);
+	}
+	else if (type == GAIM_CONV_UPDATE_FEATURES)
+	{
+		gray_stuff_out(conv);
 	}
 }
 
