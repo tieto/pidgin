@@ -364,7 +364,7 @@ gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
 	else
 		gdk_window_set_cursor(event->window, GTK_IMHTML(imhtml)->arrow_cursor);
 
-	/* propogate the event normally */
+	/* propagate the event normally */
 	return FALSE;
 }
 
@@ -1316,9 +1316,8 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	}
 
 	g_free(val);
-	val = ret->str;
-	g_string_free(ret, FALSE);
-	return val;
+
+	return g_string_free(ret, FALSE);
 }
 
 /* Inline CSS Support - Douglas Thrift */
@@ -2670,7 +2669,8 @@ gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 		span = imhtml->edit.bold;
 		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, span->start);
-		if (gtk_text_iter_equal(&start, &iter)) { /* Format turned off before any text was entered, so remove the tag */
+		if (gtk_text_iter_equal(&start, &iter)) {
+			/* Format turned off before any text was entered, so remove the tag */
 			imhtml->format_spans = g_list_remove(imhtml->format_spans, span);
 			if (span->start_tag)
 				g_free(span->start_tag);

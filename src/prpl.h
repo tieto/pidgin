@@ -254,7 +254,6 @@ struct _GaimPluginProtocolInfo
 	int  (*send_typing)(GaimConnection *, const char *name, int typing);
 	void (*get_info)(GaimConnection *, const char *who);
 	void (*set_away)(GaimConnection *, const char *state, const char *message);
-	void (*get_away)(GaimConnection *, const char *who);
 	void (*set_dir)(GaimConnection *, const char *first,
 					const char *middle, const char *last,
 					const char *maiden, const char *city,

@@ -1619,7 +1619,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
 	msn_set_idle,
 	NULL,
 	msn_add_buddy,

@@ -1281,7 +1281,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
 	trepia_add_buddy,
 	NULL,
 	trepia_rem_buddy,

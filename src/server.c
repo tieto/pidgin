@@ -306,17 +306,6 @@ void serv_get_info(GaimConnection *g, const char *name)
 		prpl_info->get_info(g, name);
 }
 
-void serv_get_away(GaimConnection *g, const char *name)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
-
-	if (g && prpl_info && prpl_info->get_away)
-		prpl_info->get_away(g, name);
-}
-
 void serv_get_dir(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;

@@ -127,15 +127,15 @@ static void free_triple(zephyr_triple *zt)
 }
 
 static const char* gaim_zephyr_get_sender() {
-        /* will be useful once this plugin can use a backend other
-           than libzephyr */
-        return ZGetSender();
+	/* will be useful once this plugin can use a backend other
+	   than libzephyr */
+	return ZGetSender();
 }
 
 static const char* gaim_zephyr_get_realm() {
-        /* will be useful once this plugin can use a backend other
-           than libzephyr */
-        return ZGetRealm();
+	/* will be useful once this plugin can use a backend other
+	   than libzephyr */
+	return ZGetRealm();
 }
 
 /* returns true if zt1 is a subset of zt2, i.e. zt2 has the same thing or
@@ -188,18 +188,18 @@ static gchar *zephyr_recv_convert(char *string, int len)
 	gchar *utf8;
 	GError *err = NULL;
 	if (g_utf8_validate(string,len,NULL)) {
-                return g_strdup(string);
-        } else {
-                utf8 = g_convert(string, len, "UTF-8",
-                                 gaim_account_get_string(zgc->account, "encoding", ZEPHYR_FALLBACK_CHARSET),
-                                 NULL, NULL, &err);
-                if (err) {
-                        gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "recv conversion error: %s\n", err->message);
-                        utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
-                }
-                
-                return utf8;
-        }
+		return g_strdup(string);
+	} else {
+		utf8 = g_convert(string, len, "UTF-8",
+					gaim_account_get_string(zgc->account, "encoding", ZEPHYR_FALLBACK_CHARSET),
+					NULL, NULL, &err);
+		if (err) {
+			gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "recv conversion error: %s\n", err->message);
+			utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
+		}
+
+		return utf8;
+	}
 }
 
 /* utility macros that are useful for zephyr_to_html */
@@ -418,8 +418,7 @@ static char *zephyr_to_html(char *message)
 				new_f->closing = "</font>";
 				new_f->has_closer = FALSE;
 				frames = new_f;
-                                
-                        } else if (!g_ascii_strcasecmp(buf, "color")) {
+			} else if (!g_ascii_strcasecmp(buf, "color")) {
 				cnt += end+1;
 				new_f = g_new(zframe, 1);
 				new_f->enclosing = frames;
@@ -1348,7 +1347,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
 	zephyr_add_buddy,
 	zephyr_add_buddies,
 	zephyr_remove_buddy,
@@ -1360,7 +1358,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	zephyr_join_chat,
-        NULL, /* reject chat invite */
+	NULL, /* reject chat invite */
 	NULL,
 	zephyr_chat_leave,
 	NULL,
@@ -1373,12 +1371,12 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-        NULL,
+	NULL,
 	zephyr_normalize,
-        NULL,
-        NULL,
-        NULL,
-        zephyr_chat_set_topic
+	NULL,
+	NULL,
+	NULL,
+	zephyr_chat_set_topic
 };
 
 static GaimPluginInfo info =
@@ -1419,11 +1417,11 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_bool_new(_("Export to .zephyr.subs"),"write_zsubs",FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
 
-        option = gaim_account_option_string_new(_("Exposure"),"exposure_level",tmp?tmp:EXPOSE_REALMVIS);
-        prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
+	option = gaim_account_option_string_new(_("Exposure"),"exposure_level",tmp?tmp:EXPOSE_REALMVIS);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
 
-        option = gaim_account_option_string_new(_("Encoding"),"encoding",ZEPHYR_FALLBACK_CHARSET);
-        prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
+	option = gaim_account_option_string_new(_("Encoding"),"encoding",ZEPHYR_FALLBACK_CHARSET);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
 
 	my_protocol = plugin;
 }

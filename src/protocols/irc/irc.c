@@ -559,7 +559,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
 	irc_add_buddy,
 	NULL,
 	irc_remove_buddy,

@@ -73,7 +73,6 @@ void serv_chat_invite(GaimConnection *, int, const char *, const char *);
 void serv_chat_leave(GaimConnection *, int);
 void serv_chat_whisper(GaimConnection *, int, const char *, const char *);
 int  serv_chat_send(GaimConnection *, int, const char *);
-void serv_get_away(GaimConnection *, const char *);
 void serv_alias_buddy(GaimBuddy *);
 void serv_got_alias(GaimConnection *gc, const char *who, const char *alias);
 void serv_move_buddy(GaimBuddy *, GaimGroup *, GaimGroup *);

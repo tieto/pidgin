@@ -1294,7 +1294,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
 	jabber_idle_set,
 	NULL,
 	jabber_roster_add_buddy,

@@ -2110,7 +2110,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	toc_get_info,
 	toc_set_away,
-	NULL,
 	toc_set_dir,
 	toc_get_dir,
 	toc_dir_search,

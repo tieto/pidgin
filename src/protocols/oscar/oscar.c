@@ -4589,23 +4589,6 @@ static void oscar_get_info(GaimConnection *gc, const char *name) {
 		aim_locate_getinfoshort(od->sess, name, 0x00000003);
 }
 
-static void oscar_get_away(GaimConnection *gc, const char *who) {
-	OscarData *od = (OscarData *)gc->proto_data;
-	if (od->icq) {
-		GaimBuddy *budlight = gaim_find_buddy(gc->account, who);
-		if (budlight)
-			if ((budlight->uc & 0xffff0000) >> 16)
-				aim_im_sendch2_geticqaway(od->sess, who, (budlight->uc & 0xffff0000) >> 16);
-			else
-				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-						   "Error: The user %s has no status message, therefore not requesting.\n", who);
-		else
-			gaim_debug(GAIM_DEBUG_ERROR, "oscar",
-					   "Error: Could not find %s in local buddy list, therefore unable to request status message.\n", who);
-	} else
-		aim_locate_getinfoshort(od->sess, who, 0x00000002);
-}
-
 static void oscar_set_dir(GaimConnection *gc, const char *first, const char *middle, const char *last,
 			  const char *maiden, const char *city, const char *state, const char *country, int web) {
 	/* XXX - some of these things are wrong, but i'm lazy */
@@ -6930,7 +6913,6 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_send_typing,
 	oscar_get_info,
 	oscar_set_away,
-	oscar_get_away,
 	oscar_set_dir,
 	NULL,
 	oscar_dir_search,
