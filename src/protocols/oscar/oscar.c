@@ -2029,7 +2029,7 @@ int gaim_parse_motd(struct aim_session_t *sess,
 
 	debug_printf("MOTD: %s (%d)\n", msg ? msg : "Unknown", id);
 	debug_printf("Gaim %s / Libfaim %s\n", VERSION, buildbuf);
-	if (id != 4)
+	if (id < 4)
 		do_error_dialog(_("Your connection may be lost."),
 				_("AOL error"));
 
