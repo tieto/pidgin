@@ -1,3 +1,7 @@
+EXTRA_DIST = \
+		Makefile.mingw \
+		trayicon-win32.c
+
 plugindir = $(libdir)/gaim
 
 docklet_la_LDFLAGS = -module -avoid-version

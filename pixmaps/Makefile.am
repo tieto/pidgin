@@ -23,7 +23,7 @@ EXTRA_DIST = \
 		msgunread.png			\
 		offline.png			\
 		online.png			\
-		pause.png                   \
+		pause.png			\
 		send-im.png			\
 		tb_drag_arrow_down.xpm		\
 		tb_drag_arrow_left.xpm		\
@@ -33,7 +33,22 @@ EXTRA_DIST = \
 		text_normal.png			\
 		text_smaller.png		\
 		typed.png			\
-		typing.png
+		typing.png			\
+		Makefile.mingw			\
+		smileys/Makefile.mingw		\
+		smileys/default/Makefile.mingw	\
+		status/default/Makefile.mingw	\
+		status/Makefile.mingw		\
+                gaim-install.ico		\
+                gaim.ico			\
+                gaim_4bit_16.ico		\
+                gaim_away.ico			\
+                gaim_away_4bit_16.ico		\
+                gaim_msgpend_4bit_16.ico	\
+                gaim_msgunread_4bit_16.ico	\
+                gaim_offline.ico		\
+                gaim_offline_4bit_16.ico
+
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
 gaimbuttonpix_DATA = about_menu.png accounts.png change-bgcolor-small.png change-fgcolor-small.png edit.png insert-image-small.png insert-link-small.png insert-smiley-small.png pause.png text_bigger.png text_normal.png text_smaller.png send-im.png

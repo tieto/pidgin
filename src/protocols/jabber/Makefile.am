@@ -1,4 +1,9 @@
-EXTRA_DIST = xmltok_impl.c xmltok_ns.c
+EXTRA_DIST = \
+		xmltok_impl.c \
+		xmltok_ns.c \
+		Makefile.mingw \
+		win32/posix.uname.c \
+		win32/utsname.h
 
 pkgdir = $(libdir)/gaim
 

@@ -1,9 +1,22 @@
 EXTRA_DIST = \
-	gaim.spec.in gaim.desktop \
-	Doxyfile.in \
-	HACKING \
-	gaim2blt.pl licq2gaim.pl setup-gettext \
-	Makefile.mingw README.mingw config.h.mingw
+		Doxyfile.in \
+		gaim.spec.in \
+		gaim.desktop \
+		gaim2blt.pl \
+		HACKING \
+		licq2gaim.pl \
+		setup-gettext \
+		ChangeLog.win32 \
+		config.h.mingw \
+		Makefile.mingw \
+		README.mingw \
+		VERSION \
+		plugins/Makefile.mingw \
+		plugins/win32/transparency/Makefile.mingw \
+		plugins/win32/transparency/win2ktrans.c \
+		plugins/win32/winprefs/Makefile.mingw \
+		plugins/win32/winprefs/winprefs.c \
+		po/Makefile.mingw
 
 dist-hook: gaim.spec
 	cp gaim.spec $(distdir)

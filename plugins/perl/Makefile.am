@@ -1,3 +1,6 @@
+EXTRA_DIST = \
+		Makefile.mingw
+
 plugindir = $(libdir)/gaim
 
 perl_la_LDFLAGS = -module -avoid-version $(PERL_LIBS)

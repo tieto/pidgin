@@ -1,4 +1,6 @@
-EXTRA_DIST = PROTOCOL
+EXTRA_DIST = \
+		PROTOCOL \
+		Makefile.mingw
 
 pkgdir = $(libdir)/gaim
 

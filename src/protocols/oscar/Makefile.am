@@ -1,4 +1,10 @@
-EXTRA_DIST = README CHANGES COPYING BUGS AUTHORS
+EXTRA_DIST = \
+		README \
+		CHANGES \
+		COPYING \
+		BUGS \
+		AUTHORS \
+		Makefile.mingw
 
 pkgdir = $(libdir)/gaim
 
