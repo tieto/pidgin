@@ -14,7 +14,7 @@ version 0.11.0-pre15 (08/28/2001):
 	  they're displayed (e.g. encrypt sent messages, or send
 	  auto-responses and have them display locally properly)
 	* Updated French Translation (thanks sebfrance)
-	* Can use Arts for sound (thanks Tom Days)
+	* Can use Arts for sound (thanks Tom Dyas)
 
 version 0.11.0-pre14 (06/17/2001):
 	* Fixed a segfault with Oscar's account confirmation
