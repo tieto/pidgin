@@ -92,8 +92,7 @@ static gboolean load_applet_icon(const char *name, int height, int width,
 		
 	} else {
 		result = FALSE;
-		sprintf(debug_buff,_("file not found: %s\n"),path);
-		debug_print(debug_buff);
+		debug_printf(_("file not found: %s\n"),path);
 	}
 	
 	free(path);
@@ -408,8 +407,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
 		label_style->font = label_font; 
 		gtk_widget_set_style( status_label, label_style );
 	} else {
-		sprintf(debug_buff, _("Font does not exist") );
-		debug_print(debug_buff);
+		debug_printf(_("Font does not exist") );
 	}
 	
 	gtk_box_pack_start(GTK_BOX(vbox), status_label, FALSE, TRUE, 0);
