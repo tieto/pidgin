@@ -582,7 +582,7 @@ gaim_gtkxfer_dialog_new(void)
 	sw = setup_tree(dialog);
 	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
 	gtk_widget_set_size_request(sw,-1, 140);
-	
+
 	/* "Keep the dialog open" */
 	checkbox = gtk_check_button_new_with_mnemonic(
 			_("_Keep the dialog open"));
@@ -655,7 +655,7 @@ gaim_gtkxfer_dialog_new(void)
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(pause_button_cb), dialog);
-	
+
 	/* Resume button */
 	button = gtk_button_new_with_mnemonic(_("_Resume"));
 	gtk_widget_set_sensitive(button, FALSE);
@@ -956,7 +956,7 @@ static int
 do_overwrite_cb(GaimXfer *xfer)
 {
 	GaimGtkXferUiData *data;
-	
+
 	data = GAIM_GTKXFER(xfer);
 
 	gaim_xfer_request_accepted(xfer, data->name);
@@ -974,7 +974,7 @@ static int
 dont_overwrite_cb(GaimXfer *xfer)
 {
 	GaimGtkXferUiData *data;
-	
+
 	data = GAIM_GTKXFER(xfer);
 
 	g_free(data->name);

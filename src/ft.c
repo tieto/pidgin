@@ -658,7 +658,7 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 	{
 		if (xfer->ops.cancel_recv != NULL)
 			xfer->ops.cancel_recv(xfer);
-	}	
+	}
 
 	if (xfer->watcher != 0) {
 		gaim_input_remove(xfer->watcher);
