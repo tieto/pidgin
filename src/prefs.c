@@ -662,7 +662,7 @@ GtkWidget *im_page() {
 	gtk_misc_set_alignment(GTK_MISC(widge), 0, 0);
 	gaim_labeled_spin_button(vbox, _("New window _width:"), &conv_size.width, 25, 9999, sg);
 	gaim_labeled_spin_button(vbox, _("New window _height:"), &conv_size.height, 25, 9999, sg);
-	gaim_labeled_spin_button(vbox, _("_Entry widget height:"), &conv_size.entry_height, 25, 9999, sg);
+	gaim_labeled_spin_button(vbox, _("_Entry field height:"), &conv_size.entry_height, 25, 9999, sg);
 	gaim_button(_("_Raise windows on events"), &im_options, OPT_IM_POPUP, vbox);
 	gaim_button(_("Hide window on _send"), &im_options, OPT_IM_POPDOWN, vbox);
 	gtk_widget_show (vbox);
@@ -705,7 +705,7 @@ GtkWidget *chat_page() {
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
 	gaim_labeled_spin_button(vbox, _("New window _width:"), &buddy_chat_size.width, 25, 9999, sg);
 	gaim_labeled_spin_button(vbox, _("New window _height:"), &buddy_chat_size.height, 25, 9999, sg);
-	gaim_labeled_spin_button(vbox, _("_Entry widget height:"), &buddy_chat_size.entry_height, 25, 9999, sg);
+	gaim_labeled_spin_button(vbox, _("_Entry field height:"), &buddy_chat_size.entry_height, 25, 9999, sg);
 	gaim_button(_("_Raise windows on events"), &chat_options, OPT_CHAT_POPUP, vbox);
 
 	vbox = make_frame (ret, _("Tab Completion"));

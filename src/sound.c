@@ -180,7 +180,7 @@ void gaim_sound_play_file(char *filename)
 	}
 
 	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		char *tmp = g_strdup_printf(_("Unable to play sound because the chosen filename (%s) does not exist."), filename);
+		char *tmp = g_strdup_printf(_("Unable to play sound because the chosen file (%s) does not exist."), filename);
 		do_error_dialog(tmp, NULL, GAIM_ERROR);
 		g_free(tmp);
 		return;
