@@ -365,7 +365,7 @@ void serv_got_alias(struct gaim_connection *gc, char *who, char *alias) {
 	else
 	       b->server_alias = NULL;
 
-	//gaim_blist_rename_buddy(b, b->name);
+	gaim_blist_update_buddy_status(b, b->uc);
 }
 
 /*
