@@ -183,6 +183,14 @@ static void irc_send_im(struct gaim_connection *gc, char *who, char *message, in
         struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 
+	if (who[0] == '@' || who[0] == '+') {
+
+	  /* If the user trys to msg an op or a voice from the channel, the convo will try
+           * to send it to @nick or +nick... needless to say, this is undesirable.
+	   */
+	        who++;
+	}
+
 	/* Before we actually send this, we should check to see if they're trying
 	 * To issue a command and handle it properly. */
 
@@ -295,6 +303,7 @@ static struct irc_channel *find_channel_by_id(struct gaim_connection *gc, int id
 	return NULL;
 }
 
+static void irc_chat_leave(struct gaim_connection *gc, int id);
 static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 {
 
@@ -381,9 +390,39 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 	      strcpy(temp, message + 7);
 	      irc_get_info(gc, temp);
 	      g_free(temp);
-	      
+	      is_command = TRUE;
 	      
 	    }	
+	    
+	    else if (!g_strncasecmp(message, "/part", 5) && (strlen(message) == 5)) {
+
+	      /* If I'm not mistaken, the chat_leave command was coded under the
+	       * pretense that it would only occur when someone closed the window.
+	       * For this reason, the /part command will not close the window.  Nor
+	       * will the window close when the user is /kicked.  I'll let you decide
+	       * the best way to fix it--I'd imagine it'd just be a little line like
+	       * if (convo) close (convo), but I'll let you decide where to put it.
+	       */
+
+	      irc_chat_leave(gc, id);
+	      is_command = TRUE;
+	      return;
+
+
+	    }
+
+	    else if (!g_strncasecmp(message, "/join ", 6) && (strlen(message) > 6)) {
+	      
+	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
+	      
+	      strcpy(temp, message + 6);
+
+	    
+	      irc_join_chat(gc, 0, temp);
+	      g_free(temp);
+	      is_command = TRUE;
+	      return;
+	    }
 	    
 	    else if (!g_strncasecmp(message, "/raw ", 5) && (strlen(message) > 5)){
 	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
@@ -392,7 +431,7 @@ static void irc_chat_send(struct gaim_connection *gc, int id, char *message)
 	      g_free(temp);
 	      is_command = TRUE;
 	    }
-
+	    
 	    else if (!g_strncasecmp(message, "/quote ", 7) && (strlen(message) >7)) {
 	      gchar *temp = (gchar *) g_malloc(IRC_BUF_LEN + 1);
 	      strcpy(temp, message + 7);
@@ -561,6 +600,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 
 		/* And our necessary garbage collection */
 		g_free(u_errormsg);
+		return;
 	}
 
 	/* This should be a whois response. I only care about the first (311) one.  I might do
@@ -583,6 +623,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		}
 
 		g_strfreev(res);
+		return;
 	}
 
 	/* Autoresponse to an away message */
@@ -595,6 +636,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			serv_got_im(gc, res[3], res[4] + 1, 1, time((time_t)NULL));
 
 		g_strfreev(res);
+		return;
 	}
 
 	/* Parse the list of names that we receive when we first sign on to
@@ -751,6 +793,200 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	}
 
 
+	if ((strstr(buf, " MODE ")) && (strstr(buf, "!")) && (strstr(buf, "+v") || strstr(buf, "-v") || strstr(buf, "-o") || strstr(buf, "+o")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+	  
+	  gchar u_channel[128];
+	  gchar u_nick[128];
+	   
+	  gchar u_mode[5];
+	  char **people;
+	  gchar *temp, *temp_new;
+	 
+	  
+	  struct irc_channel *channel;
+	  int j;
+	  temp = NULL;
+	  temp_new = NULL;
+
+
+	  for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+	    u_nick[j] = buf[i];
+	  }
+	  u_nick[j] = '\0';
+	  i++;
+
+	  for (j = 0; buf[i] != '#'; j++, i++) {
+	  }
+	  i++;
+
+	  for (j = 0; buf[i] != ' '; j++, i++) {
+	    u_channel[j] = buf[i];
+	  }
+	  
+	  u_channel[j] = '\0';
+	  i++;
+	  
+	  for (j = 0; buf[i] != ' '; j++, i++) {
+	    u_mode[j] = buf[i];
+	  }
+	  u_mode[j] = '\0';
+	  i++;
+	  
+
+	  
+	  
+	  people = g_strsplit(buf + i, " ", 3);
+	  
+	  
+	  
+	  channel = find_channel_by_name(gc, u_channel);
+	  	  	  
+	  if (!channel) {
+	    return;
+	  }
+	  
+	  for (j = 0; j < strlen(u_mode) - 1 ; j++) 
+	    {
+	      
+	      	
+		  struct conversation *convo = NULL;
+		  convo = find_conversation_by_id(gc, channel->id);
+		  
+		  
+		  
+		  temp = (gchar *)g_malloc(strlen(people[j]) + 1);
+		  temp_new = (gchar *)g_malloc(strlen(people[j]) + 1);
+		  g_snprintf(temp, strlen(people[j]) + 2, "@%s", people[j]);
+		  
+		  if (u_mode[1] == 'v' && u_mode[0] == '+') {
+		    g_snprintf(temp_new, strlen(people[j]) + 2, "+%s", people[j]);
+		  }
+		  else if (u_mode[1] == 'o' && u_mode[0] == '+') {
+		    g_snprintf(temp_new, strlen(people[j]) + 2, "@%s", people[j]);
+		  }
+
+		  else if (u_mode[0] == '-') {
+		    g_snprintf(temp_new, strlen(people[j]) + 1, "%s", people[j]);
+	       		  }
+		  
+
+		  
+		  rename_chat_buddy(convo, temp, temp_new);
+		  g_snprintf(temp, strlen(people[j]) + 2, "+%s", people[j]);
+		  rename_chat_buddy(convo, temp, temp_new);
+		  
+		  rename_chat_buddy(convo, people[j], temp_new);
+		  
+		  
+		  
+		    
+		
+	    }
+	  if (temp)
+	    g_free(temp);
+	  if (temp_new)
+	    g_free(temp_new);
+	  
+	  return;
+	}
+	
+
+	if ((strstr(buf, " KICK ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
+	  gchar u_channel[128];
+	  gchar u_nick[128];
+	  gchar u_comment[128];
+	  gchar u_who[128];
+	  
+	  int id;
+	  
+	  gchar *temp;
+
+	
+
+	  struct irc_channel *channel;
+	  int j;
+
+	  temp = NULL;
+
+	  for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+	    u_nick[j] = buf[i];
+	  }
+	  u_nick[j] = '\0';
+	  i++;
+
+	  for (j = 0; buf[i] != '#'; j++, i++) {
+	  }
+	  i++;
+
+	  for (j = 0; buf[i] != ' '; j++, i++) {
+	    u_channel[j] = buf[i];
+	  }
+	  
+	  u_channel[j] = '\0';
+	  i++;
+
+	  for (j = 0; buf[i] != ' '; j++, i++) {
+	    u_who[j] = buf[i];
+	  }
+	  u_who[j] = '\0';
+	  i++;
+	  i++;
+	  strcpy(u_comment, buf + i);
+	  g_strchomp(u_comment);
+
+	  channel = find_channel_by_name(gc, u_channel);
+	  
+	  if (!channel) {
+	    return;
+	  }
+	 
+
+	  id = find_id_by_name(gc, u_channel);
+	  
+	
+		if (g_strcasecmp(u_nick, gc->username) == 0) {
+
+		  /* It looks like you've been naughty! */
+	
+			serv_got_chat_left(gc, channel->id);
+
+			idata->channels = g_list_remove(idata->channels, channel);
+		} 
+		else {
+		        struct conversation *convo = NULL;
+
+			/* Find their conversation window */
+		convo = find_conversation_by_id(gc, channel->id);
+
+			if (!convo) {
+				/* Some how the window doesn't exist. 
+				 * Let's get out of here */
+			  		return;
+			}
+
+			/* And remove their name */
+			/* If the person is an op or voice, this won't work.
+			 * so we'll just do a nice hack and remove nick and
+			 * @nick and +nick.  Truly wasteful.
+			 */
+			  
+			temp = (gchar *) g_malloc(strlen(u_who) + 1);
+			g_snprintf(temp, strlen(u_who) + 2, "@%s", u_who);
+			remove_chat_buddy(convo, temp);
+			g_snprintf(temp, strlen(u_who) + 2, "+%s", u_who);
+			remove_chat_buddy(convo, temp);
+ 			remove_chat_buddy(convo, u_who);
+			
+			if (temp)
+			  g_free(temp);
+			
+		}
+
+		/* Go Home! */
+		return;
+	}
+
+	
 	if ((strstr(buf, " JOIN ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
 		gchar u_channel[128];
@@ -815,10 +1051,10 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		gchar new[128];
 
 		GList *templist;
-
+		gchar *temp, *temp_new;
 		struct irc_channel *channel;
 		int j;
-
+		temp = temp_new = NULL;
 		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
 			old[j] = buf[i];
 		}
@@ -841,24 +1077,45 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			channel = templist->data;
 
 			convo = find_conversation_by_id(gc, channel->id);
-
-			rename_chat_buddy(convo, old, new);
-
+			
+			/* If the person is an op or voice, this won't work.
+			 * so we'll just do a nice hack and rename nick and
+			 * @nick and +nick.  Truly wasteful.
+			 */
+			
+			temp = (gchar *)g_malloc(strlen(old) + 5);
+			temp_new = (gchar *)g_malloc(strlen(new) + 5);
+			g_snprintf(temp_new, strlen(new) + 2, "@%s", new);
+			g_snprintf(temp, strlen(old) + 2, "@%s", old);
+			rename_chat_buddy(convo, temp, temp_new);
+			g_snprintf(temp, strlen(old) + 2, "+%s", old);
+			g_snprintf(temp_new, strlen(new) + 2, "+%s", new);
+			rename_chat_buddy(convo, temp, temp_new);
+ 			rename_chat_buddy(convo, old, new);
+			if (temp)
+			  g_free(temp);
+			if (temp_new)
+			  g_free(temp_new);
+			
 			templist = templist->next;
 		}
+		return;
 	}
 
+
 	if ((strstr(buf, "QUIT ")) && (buf[0] == ':') && (strstr(buf, "!")) && (!strstr(buf, " NOTICE "))) {
-
+	      
 		gchar u_nick[128];
-
+		gchar *temp;
 		GList *templist;
 
 		struct irc_channel *channel;
 		int j;
+		
 
-		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
-			u_nick[j] = buf[i];
+		temp  = NULL;
+		for (j = 0, i = 1 ; buf[i] != '!'; j++, i++) {
+		    u_nick[j] = buf[i];
 		}
 
 		u_nick[j] = '\0';
@@ -870,21 +1127,40 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			channel = templist->data;
 
 			convo = find_conversation_by_id(gc, channel->id);
-
-			remove_chat_buddy(convo, u_nick);
-
+			
+			/* If the person is an op or voice, this won't work.
+			 * so we'll just do a nice hack and remove nick and
+			 * @nick and +nick.  Truly wasteful.
+			 */
+			
+			temp = (gchar *) g_malloc(strlen(u_nick) + 2);
+			g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick);
+			remove_chat_buddy(convo, temp);
+			g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
+			remove_chat_buddy(convo, temp);
+ 			remove_chat_buddy(convo, u_nick);
+			
+			
+			
 			templist = templist->next;
 		}
+
+		if (temp)
+		  g_free(temp);
+		
+		return;
 	}
+	
+	  
 
 	if ((strstr(buf, " PART ")) && (strstr(buf, "!")) && (buf[0] == ':') && (!strstr(buf, " NOTICE "))) {
 
-		gchar u_channel[128];
+	        gchar u_channel[128];
 		gchar u_nick[128];
-
+		gchar *temp;
 		struct irc_channel *channel;
 		int j;
-
+		temp = NULL;
 		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
 			u_nick[j] = buf[i];
 		}
@@ -897,10 +1173,15 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 
 		i++;
 
-		strcpy(u_channel, buf + i);
-
-
-		/* Now, lets check to see if it was US that was leaving.  
+		for (j = 0;  buf[i] != ' '; j++, i++) {
+		  if (buf[i] == '\0') {
+		    break;
+		  }
+		  u_channel[j] = buf[i];
+		}
+		u_channel[j] = '\0';
+		
+		 /* Now, lets check to see if it was US that was leaving.  
 		 * If so, do the correct thing by closing up all of our 
 		 * old channel stuff. Otherwise,
 		 * we should just print that someone left */
@@ -908,9 +1189,9 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		channel = find_channel_by_name(gc, u_channel);
 
 		if (!channel) {
-			return;
+		  	return;
 		}
-
+		
 		if (g_strcasecmp(u_nick, gc->username) == 0) {
 
 			/* Looks like we're going to leave the channel for 
@@ -918,7 +1199,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			 * and add it to our list */
 
 			serv_got_chat_left(gc, channel->id);
-
+			
 			idata->channels = g_list_remove(idata->channels, channel);
 		} else {
 			struct conversation *convo = NULL;
@@ -933,7 +1214,20 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			}
 
 			/* And remove their name */
-			remove_chat_buddy(convo, u_nick);
+			/* If the person is an op or voice, this won't work.
+			 * so we'll just do a nice hack and remove nick and
+			 * @nick and +nick.  Truly wasteful.
+			 */
+			
+			temp = (gchar *) g_malloc(strlen(u_nick) + 2);
+			g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick);
+			remove_chat_buddy(convo, temp);
+			g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
+			remove_chat_buddy(convo, temp);
+ 			remove_chat_buddy(convo, u_nick);
+	
+			if (temp)
+			  g_free(temp);
 
 		}
 
@@ -1009,107 +1303,236 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 
 
 	if ((strstr(buf, " PRIVMSG ")) && (buf[0] == ':')) {
-		gchar u_nick[128];
-		gchar u_host[255];
-		gchar u_command[32];
-		gchar u_channel[128];
-		gchar u_message[IRC_BUF_LEN];
-		int j;
-
-		for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
-			u_nick[j] = buf[i];
-		}
-
-		u_nick[j] = '\0';
-		i++;
-
-		for (j = 0; buf[i] != ' '; j++, i++) {
-			u_host[j] = buf[i];
-		}
-
-		u_host[j] = '\0';
-		i++;
-
-		for (j = 0; buf[i] != ' '; j++, i++) {
-			u_command[j] = buf[i];
-		}
-
-		u_command[j] = '\0';
-		i++;
-
-		for (j = 0; buf[i] != ':'; j++, i++) {
-			u_channel[j] = buf[i];
-		}
-
-		u_channel[j - 1] = '\0';
-		i++;
-
-
-		/* Now that everything is parsed, the rest of this baby must be our message */
-		strncpy(u_message, buf + i, IRC_BUF_LEN);
-
-		/* Now, lets check the message to see if there's anything special in it */
-		if (u_message[0] == '\001') {
-			if (g_strncasecmp(u_message, "\001VERSION", 8) == 0) {
+	  gchar u_nick[128];
+	  gchar u_host[255];
+	  gchar u_command[32];
+	  gchar u_channel[128];
+	  gchar u_message[IRC_BUF_LEN];
+	  int j;
+	  
+	  
+	  for (j = 0, i = 1; buf[i] != '!'; j++, i++) {
+	    u_nick[j] = buf[i];
+	  }
+	  
+	  u_nick[j] = '\0';
+	  i++;
+	  
+	  for (j = 0; buf[i] != ' '; j++, i++) {
+	    u_host[j] = buf[i];
+	  }
+	  
+	  u_host[j] = '\0';
+	  i++;
+	  
+	  for (j = 0; buf[i] != ' '; j++, i++) {
+	    u_command[j] = buf[i];
+	  }
+	  
+	  u_command[j] = '\0';
+	  i++;
+	  
+	  for (j = 0; buf[i] != ':'; j++, i++) {
+	    u_channel[j] = buf[i];
+	  }
+	  
+	  u_channel[j - 1] = '\0';
+	  i++;
+	  
+	  
+	  /* Now that everything is parsed, the rest of this baby must be our message */
+	  strncpy(u_message, buf + i, IRC_BUF_LEN);
+	  
+	  /* Now, lets check the message to see if there's anything special in it */
+	  if (u_message[0] == '\001') {
+	    if (g_strncasecmp(u_message, "\001VERSION", 8) == 0) {
 				/* Looks like we have a version request.  Let
 				 * us handle it thusly */
-
-				g_snprintf(buf, IRC_BUF_LEN,
-					   "NOTICE %s :%cVERSION GAIM %s:The Pimpin Penguin AIM Clone:www.marko.net/gaim%c\n",
-					   u_nick, '\001', VERSION, '\001');
-
-				write(idata->fd, buf, strlen(buf));
-
+	      
+	      g_snprintf(buf, IRC_BUF_LEN,
+			 "NOTICE %s :%cVERSION GAIM %s:The Pimpin Penguin AIM Clone:%s%c\n",
+			 u_nick, '\001', VERSION, WEBSITE, '\001');
+	      
+	      write(idata->fd, buf, strlen(buf));
+	      
 				/* And get the heck out of dodge */
-				return;
-			}
-
-			if ((g_strncasecmp(u_message, "\001PING ", 6) == 0) && (strlen(u_message) > 6)) {
+	      return;
+	    }
+	    
+	    if ((g_strncasecmp(u_message, "\001PING ", 6) == 0) && (strlen(u_message) > 6)) {
 				/* Someone's triyng to ping us.  Let's respond */
-				gchar u_arg[24];
-
-				strcpy(u_arg, u_message + 6);
-				u_arg[strlen(u_arg) - 1] = '\0';
-
-				g_snprintf(buf, IRC_BUF_LEN, "NOTICE %s :%cPING %s%c\n", u_nick, '\001',
-					   u_arg, '\001');
-
-				write(idata->fd, buf, strlen(buf));
-
+	      gchar u_arg[24];
+	      
+	      strcpy(u_arg, u_message + 6);
+	      u_arg[strlen(u_arg) - 1] = '\0';
+	      
+	      g_snprintf(buf, IRC_BUF_LEN, "NOTICE %s :%cPING %s%c\n", u_nick, '\001',
+			 u_arg, '\001');
+	      
+	      write(idata->fd, buf, strlen(buf));
+	      
 				/* And get the heck out of dodge */
-				return;
-			}
-
-			if (g_strncasecmp(u_message, "\001ACTION ", 8) == 0) {
+	      return;
+	    }
+	    
+	    if (g_strncasecmp(u_message, "\001ACTION ", 8) == 0) {
 				/* Looks like we have an action. Let's parse it a little */
-				strcpy(buf, u_message);
+	      strcpy(buf, u_message);
+	      
+	      strcpy(u_message, "/me ");
+	      for (j = 4, i = 8; buf[i] != '\001'; i++, j++) {
+		u_message[j] = buf[i];
+	      }
+	      u_message[j] = '\0';
+	    }
+	  }
 
-				strcpy(u_message, "/me ");
-				for (j = 4, i = 8; buf[i] != '\001'; i++, j++) {
-					u_message[j] = buf[i];
-				}
-				u_message[j] = '\0';
-			}
-		}
 
+	  /* OK, It is a chat or IM message.  Here, let's translate the IRC formatting into
+	   * good ol' fashioned gtkimhtml style hypertext markup. */
 
-		/* Let's check to see if we have a channel on our hands */
-		if (u_channel[0] == '#') {
-			/* Yup.  We have a channel */
-			int id;
+	  while(strchr(u_message, '\002')) {         // \002 = ^B
+	    gchar *current;
+	    gchar *temp, *free_here;
+	    
+	    
+	    temp =  g_strdup(strchr(u_message, '\002'));
+	    free_here = temp; 
+	    temp++;
+	    
+	    current = strchr(u_message, '\002');
+	    *current = '<';
+	    current++;
+	    *current = 'b';
+	    current++;
+	    *current = '>';
+	    current++;
+	    
+	    
+	    while (*temp != '\0') {
+	      *current = *temp;
+	      current++;
+	      temp++;
+	    }
+	    *current = '\0';
+	    g_free(free_here);
 
-			id = find_id_by_name(gc, u_channel);
-			if (id != -1) {
-				serv_got_chat_in(gc, id, u_nick, 0, u_message, time((time_t)NULL));
-			}
-		} else {
-			/* Nope. Let's treat it as a private message */
-			serv_got_im(gc, u_nick, u_message, 0, time((time_t)NULL));
-		}
+	  }
+ 
+	  while(strchr(u_message, '\037')) {         // \037 = ^_
+	    gchar *current;
+	    gchar *temp, *free_here;
+	         
+	          
+	    temp =  g_strdup(strchr(u_message, '\037'));
+	    free_here = temp;
+	    temp++;
+	    
+	    current = strchr(u_message, '\037');
+	    *current = '<';
+	    current++;
+	    *current = 'u';
+	    current++;
+	    *current = '>';
+	    current++;
+	    
+	    
+	    while (*temp != '\0') {
+	      *current = *temp;
+	      current++;
+	      temp++;
+	    }
+	    *current = '\0';
+	    g_free(free_here);
+	  }
 
-		return;
+	    while(strchr(u_message, '\017')) {         // \017 = ^O
+	    gchar *current;
+	    gchar *temp, *free_here;
+	         
+	          
+	    temp =  g_strdup(strchr(u_message, '\017'));
+	    free_here = temp;
+	    temp++;
+	    
+	    current = strchr(u_message, '\017');
+	    *current = '<';
+	    current++;
+	    *current = '/';
+	    current++;
+	    *current = 'b';
+	    current++;
+	    *current = '>';
+	    current++;
+	    *current = '<';
+	    current++;
+	    *current = '/';
+	    current++;
+	    *current = 'u';
+	    current++;
+	    *current = '>';
+	    current++;
+	       
+	    while (*temp != '\0') {
+	      *current = *temp;
+	      current++;
+	      temp++;
+	    }
+	    *current = '\0';
+	    g_free(free_here);
+	  }
+		  
+	  /* Let's check to see if we have a channel on our hands */
+	  if (u_channel[0] == '#') {
+	    /* Yup.  We have a channel */
+	    int id;
+	    
+	    id = find_id_by_name(gc, u_channel);
+	    if (id != -1) {
+	      serv_got_chat_in(gc, id, u_nick, 0, u_message, time((time_t)NULL));
+	      
+	    } 
+	    
+	  } else {
+	    /* Nope. Let's treat it as a private message */
+	    
+	    gchar *temp;
+	    temp = NULL;
+	    	    
+	    temp = (gchar *) g_malloc(strlen(u_nick) + 5);
+	    g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick); 
+	    
+	    
+	    /* If I get a message from SeanEgn, and I already have a window
+	     * open for him as @SeanEgn or +SeanEgn, this will keep it in the
+	     * same window.  Unfortunately, if SeanEgn loses his op status
+	     * (a sad thing indeed), the messages will still appear to come from
+	     * @SeanEgn, until that convo is closed.
+	     */
+	    
+	    if (find_conversation(temp)){ 
+	      serv_got_im(gc, temp, u_message, 0, time((time_t)NULL));
+	      if (temp)
+		g_free(temp); 
+	    }
+	    else {
+	      g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
+	      if (find_conversation(temp)) { 
+		serv_got_im(gc, temp, u_message, 0, time((time_t)NULL));
+		if (temp)
+		  g_free(temp); 
+	      }
+	      else {
+		g_free(temp);
+		serv_got_im(gc, u_nick, u_message, 0, time((time_t)NULL));
+		 
+	      }
+	    }
+	  }
+ 
+	  return;
 	}
-
+	
 	/* Let's parse PING requests so that we wont get booted for inactivity */
 
 	if (strncmp(buf, "PING :", 6) == 0) {
@@ -1135,7 +1558,7 @@ static void irc_close(struct gaim_connection *gc)
 
 	gchar *buf = (gchar *) g_malloc(IRC_BUF_LEN);
 
-	g_snprintf(buf, IRC_BUF_LEN, "QUIT :Download GAIM [www.marko.net/gaim]\n");
+	g_snprintf(buf, IRC_BUF_LEN, "QUIT :Download GAIM [%s]\n", WEBSITE);
 	write(idata->fd, buf, strlen(buf));
 
 	g_free(buf);
@@ -1193,8 +1616,8 @@ static void irc_login_callback(gpointer data, gint source, GdkInputCondition con
 	if (idata->fd == 0)
 		idata->fd = source;
 
-	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (www.marko.net/gaim)\n",
-		   gc->username, g_get_user_name(), gc->user->proto_opt[USEROPT_SERV]);
+ 	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (%s)\n",
+ 		   gc->username, g_get_user_name(), gc->user->proto_opt[USEROPT_SERV], WEBSITE);
 
 	if (write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
