@@ -91,7 +91,7 @@ Returns a list of all accounts, online or offline.
 
 Returns a list of all chats currently open.
 
-=item @connections = Gaim:connections
+=item @connections = Gaim::connections
 
 Returns a list of all active connections.
 
