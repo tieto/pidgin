@@ -125,6 +125,7 @@ debug_window_new(void)
 	GtkWidget *toolbar;
 	GtkWidget *sw;
 	GtkWidget *button;
+	GtkWidget *image;
 	int width, height;
 
 	win = g_new0(DebugWindow, 1);
@@ -175,8 +176,11 @@ debug_window_new(void)
 		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
 
 		/* Pause */
-		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GAIM_STOCK_PAUSE,
-								 NULL, NULL, G_CALLBACK(pause_cb), win, -1);
+		image = gtk_image_new_from_stock(GAIM_STOCK_PAUSE, GTK_ICON_SIZE_MENU);
+		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+											GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+											NULL, _("Pause"), NULL, NULL,
+											image, G_CALLBACK(pause_cb), win);
 
 		/* Timestamps */
 		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
