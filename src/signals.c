@@ -213,6 +213,7 @@ signal_connect_common(void *instance, const char *signal, void *handle,
 
 	return handler_data->id;
 }
+
 gulong
 gaim_signal_connect(void *instance, const char *signal, void *handle,
 					GaimCallback func, void *data)
