@@ -805,6 +805,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	ca->text = gtk_imhtml_new(NULL, NULL);
 	gtk_imhtml_set_editable(GTK_IMHTML(ca->text), TRUE);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(ca->text), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD_CHAR);
 
 	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(ca->text),

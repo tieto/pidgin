@@ -238,6 +238,7 @@ void gtk_imhtml_search_clear(GtkIMHtml *imhtml);
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable);
 void gtk_imhtml_set_whole_buffer_formatting_only(GtkIMHtml *imhtml, gboolean wbfo);
 void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons);
+GtkIMHtmlButtons gtk_imhtml_get_format_functions(GtkIMHtml *imhtml);
 void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold, gboolean *italic, gboolean *underline);
 gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml);

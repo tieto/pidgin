@@ -3096,6 +3096,10 @@ void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons
 	g_object_unref(object);
 }
 
+GtkIMHtmlButtons gtk_imhtml_get_format_functions(GtkIMHtml *imhtml)
+{
+	return imhtml->format_functions;
+}
 
 void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold,
 								   gboolean *italic, gboolean *underline)
