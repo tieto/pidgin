@@ -187,7 +187,7 @@ trepia_status_text(struct buddy *b)
 			   trepia_profile_get_profile(profile));
 
 	if ((value = trepia_profile_get_profile(profile)) != NULL)
-		text = g_strdup(value);
+		text = g_markup_escape_text(value, -1);
 
 	return text;
 }
@@ -264,7 +264,11 @@ trepia_tooltip_text(struct buddy *b)
 	}
 
 	if ((value = trepia_profile_get_profile(profile)) != NULL) {
-		tmp = g_strdup_printf("<b>Profile:</b> %s\n", value);
+		char *escaped_val = g_markup_escape_text(value, -1);
+
+		tmp = g_strdup_printf("<b>Profile:</b> %s\n", escaped_val);
+
+		g_free(escaped_val);
 
 		tmp2 = g_strconcat(text, tmp, NULL);
 		g_free(tmp);
