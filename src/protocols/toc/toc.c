@@ -423,7 +423,7 @@ static unsigned char *roast_password(char *pass)
 	return rp;
 }
 
-static void toc_got_info(gpointer data, char *url_text)
+static void toc_got_info(gpointer data, char *url_text, unsigned long len)
 {
 	if (!url_text)
 		return;

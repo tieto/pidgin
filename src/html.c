@@ -115,7 +115,7 @@ struct g_url *parse_url(char *url)
 }
 
 struct grab_url_data {
-	void (* callback)(gpointer, char *);
+	void (* callback)(gpointer, char *, unsigned long);
 	gpointer data;
 	struct g_url *website;
 	char *url;
@@ -127,7 +127,7 @@ struct grab_url_data {
 	gboolean newline;
 	gboolean startsaving;
 	char *webdata;
-	int len;
+	unsigned long len;
 };
 
 static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
@@ -136,7 +136,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 	char data;
 
 	if (sock == -1) {
-		gunk->callback(gunk->data, NULL);
+		gunk->callback(gunk->data, NULL, 0);
 		g_free(gunk->website);
 		g_free(gunk->url);
 		g_free(gunk);
@@ -186,7 +186,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 
 		gaim_input_remove(gunk->inpa);
 		close(sock);
-		gunk->callback(gunk->data, gunk->webdata);
+		gunk->callback(gunk->data, gunk->webdata, gunk->len);
 		if (gunk->webdata)
 			g_free(gunk->webdata);
 		g_free(gunk->website);
@@ -195,7 +195,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 	} else {
 		gaim_input_remove(gunk->inpa);
 		close(sock);
-		gunk->callback(gunk->data, NULL);
+		gunk->callback(gunk->data, NULL, 0);
 		if (gunk->webdata)
 			g_free(gunk->webdata);
 		g_free(gunk->website);
@@ -204,7 +204,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 	}
 }
 
-void grab_url(char *url, gboolean full, void callback(gpointer, char *), gpointer data)
+void grab_url(char *url, gboolean full, void callback(gpointer, char *, unsigned long), gpointer data)
 {
 	int sock;
 	struct grab_url_data *gunk = g_new0(struct grab_url_data, 1);
@@ -220,6 +220,6 @@ void grab_url(char *url, gboolean full, void callback(gpointer, char *), gpointe
 		g_free(gunk->website);
 		g_free(gunk->url);
 		g_free(gunk);
-		callback(data, g_strdup(_("g003: Error opening connection.\n")));
+		callback(data, g_strdup(_("g003: Error opening connection.\n")), 0);
 	}
 }

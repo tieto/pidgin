@@ -401,7 +401,7 @@ struct g_url {
 	char page[255];
 };
 
-extern void grab_url(char *, gboolean, void (*callback)(gpointer, char *), gpointer);
+extern void grab_url(char *, gboolean, void (*callback)(gpointer, char *, unsigned long), gpointer);
 extern gchar *strip_html(gchar *);
 struct g_url *parse_url(char *url);
 
