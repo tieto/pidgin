@@ -1267,8 +1267,9 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 				rows++;
 			}
-			else if (type == GAIM_REQUEST_FIELD_STRING &&
-					 gaim_request_field_string_is_multiline(field))
+			else if ((type == GAIM_REQUEST_FIELD_LIST) ||
+				 (type == GAIM_REQUEST_FIELD_STRING &&
+				  gaim_request_field_string_is_multiline(field)))
 			{
 				if (col_num > 0)
 					rows++;
@@ -1327,6 +1328,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 					gtk_size_group_add_widget(sg, label);
 
 					if (type == GAIM_REQUEST_FIELD_LABEL ||
+					    type == GAIM_REQUEST_FIELD_LIST ||
 						(type == GAIM_REQUEST_FIELD_STRING &&
 						 gaim_request_field_string_is_multiline(field)))
 					{
@@ -1375,10 +1377,19 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 									 GTK_FILL | GTK_EXPAND,
 									 5, 0);
 				}
-				else if (type != GAIM_REQUEST_FIELD_BOOLEAN)
+				else if (type == GAIM_REQUEST_FIELD_LIST)
+				{
+									gtk_table_attach(GTK_TABLE(table), widget,
+									0, 2 * cols,
+									row_num, row_num + 1,
+									GTK_FILL | GTK_EXPAND,
+									GTK_FILL | GTK_EXPAND,
+									5, 0);
+				}
+				else if (type == GAIM_REQUEST_FIELD_BOOLEAN)
 				{
 					gtk_table_attach(GTK_TABLE(table), widget,
-									 col_offset + 1, col_offset + 2,
+									 col_offset, col_offset + 1,
 									 row_num, row_num + 1,
 									 GTK_FILL | GTK_EXPAND,
 									 GTK_FILL | GTK_EXPAND,
@@ -1387,7 +1398,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 				else
 				{
 					gtk_table_attach(GTK_TABLE(table), widget,
-									 col_offset, col_offset + 1,
+							 		 1, 2 * cols,
 									 row_num, row_num + 1,
 									 GTK_FILL | GTK_EXPAND,
 									 GTK_FILL | GTK_EXPAND,
