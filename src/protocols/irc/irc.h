@@ -129,6 +129,7 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char **args);
+void irc_msg_time(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, char **args);
@@ -156,6 +157,7 @@ int irc_cmd_quit(struct irc_conn *irc, const char *cmd, const char *target, cons
 int irc_cmd_quote(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_remove(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
+int irc_cmd_time(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_wallops(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_whois(struct irc_conn *irc, const char *cmd, const char *target, const char **args);

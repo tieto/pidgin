@@ -71,6 +71,7 @@ static struct _irc_msg {
 	{ "372", "n:", irc_msg_motd },		/* MOTD				*/
 	{ "375", "n:", irc_msg_motd },		/* Start MOTD			*/
 	{ "376", "n:", irc_msg_endmotd },	/* End of MOTD			*/
+	{ "391", "nv:", irc_msg_time },		/* Time reply			*/
 	{ "401", "nt:", irc_msg_nonick },	/* No such nick/chan		*/
 	{ "403", "nc:", irc_msg_nochan },	/* No such channel		*/
 	{ "404", "nt:", irc_msg_nosend },	/* Cannot send to chan		*/
@@ -129,6 +130,7 @@ static struct _irc_user_cmd {
 	{ "quit", ":", irc_cmd_quit, N_("quit [message]:  Disconnect from the server, with an optional message.") },
 	{ "quote", "*", irc_cmd_quote, N_("quote [...]:  Send a raw command to the server.") },
 	{ "remove", "n:", irc_cmd_remove, N_("remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a channel operator to do this.") },
+	{ "time", "", irc_cmd_time, N_("time: Displays the current local time at the IRC server.") },
 	{ "topic", ":", irc_cmd_topic, N_("topic [new topic]:  View or change the channel topic.") },
 	{ "umode", ":", irc_cmd_mode, N_("umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode.") },
 	{ "voice", ":", irc_cmd_op, N_("voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You must be a channel operator to do this.") },

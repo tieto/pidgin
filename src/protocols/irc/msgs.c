@@ -417,6 +417,19 @@ void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, c
 		irc->timer = gaim_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 }
 
+void irc_msg_time(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	GaimConnection *gc;
+
+	gc = gaim_account_get_connection(irc->account);
+	if (gc == NULL || args == NULL || args[2] == NULL)
+		return;
+
+	gaim_notify_message(gc, GAIM_NOTIFY_MSG_INFO, _("Time Response"),
+			    _("The IRC server's local time is:"),
+			    args[2], NULL, NULL);
+}
+
 void irc_msg_nochan(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);

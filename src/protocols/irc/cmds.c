@@ -427,6 +427,17 @@ int irc_cmd_remove(struct irc_conn *irc, const char *cmd, const char *target, co
 	return 0;
 }
 
+int irc_cmd_time(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	buf = irc_format(irc, "v", "TIME");
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
 int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	char *buf;
