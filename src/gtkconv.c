@@ -4181,10 +4181,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 						 G_CALLBACK(conv_dnd_recv), conv);
 		g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
 						 G_CALLBACK(conv_dnd_recv), conv);
-#if 0
-		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
-						 G_CALLBACK(conv_dnd_recv), conv);
-#endif
+/*		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
+						 G_CALLBACK(conv_dnd_recv), conv);*/
 
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 5);

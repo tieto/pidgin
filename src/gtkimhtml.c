@@ -24,6 +24,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include "util.h"
 #include "gtkimhtml.h"
 #include "gtksourceiter.h"
 #include <gtk/gtk.h>
@@ -63,6 +64,7 @@
 
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
 void gtk_imhtml_close_tags(GtkIMHtml *imhtml);
+static void gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, guint info, guint t, GtkIMHtml *imhtml);
 
 /* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
@@ -78,12 +80,22 @@ enum {
 	TARGET_TEXT
 };
 
+enum {
+	DRAG_URL
+};
+
 GtkTargetEntry selection_targets[] = {
 	{ "text/html", 0, TARGET_HTML },
 	{ "UTF8_STRING", 0, TARGET_UTF8_STRING },
 	{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT },
 	{ "STRING", 0, TARGET_STRING },
 	{ "TEXT", 0, TARGET_TEXT}};
+
+GtkTargetEntry link_drag_drop_targets[] = {
+	{"x-url/ftp", 0, DRAG_URL},
+	{"x-url/http", 0, DRAG_URL},
+	{"text/uri-list", 0, DRAG_URL},
+	{"_NETSCAPE_URL", 0, DRAG_URL}};
 
 static GtkSmileyTree*
 gtk_smiley_tree_new ()
@@ -561,6 +573,12 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "key_press_event", G_CALLBACK(gtk_key_pressed_cb), NULL);
 	g_signal_connect_after(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(insert_cb), imhtml);
+
+	gtk_drag_dest_set(GTK_WIDGET(imhtml), 0,
+			  link_drag_drop_targets, sizeof(link_drag_drop_targets) / sizeof(GtkTargetEntry),
+			  GDK_ACTION_COPY);
+	g_signal_connect(G_OBJECT(imhtml), "drag_data_received", G_CALLBACK(gtk_imhtml_link_drag_rcv_cb), imhtml);
+
 #if GTK_CHECK_VERSION(2,2,0)
 	g_signal_connect(G_OBJECT(imhtml), "copy-clipboard", G_CALLBACK(copy_clipboard_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "paste-clipboard", G_CALLBACK(paste_clipboard_cb), NULL);
@@ -732,6 +750,35 @@ gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIte
 						be caught by the regular GtkTextView menu */
 	else
 		return FALSE; /* Let clicks go through if we didn't catch anything */
+}
+
+static void
+gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
+ 			    GtkSelectionData *sd, guint info, guint t, GtkIMHtml *imhtml)
+{
+	if(gtk_imhtml_get_editable(imhtml) && sd->data){
+		gchar **links;
+		gchar *link;
+
+		gaim_str_strip_cr(sd->data);
+
+		links = g_strsplit(sd->data, "\n", 0);
+		while((link = *links++) != NULL){
+			if(gaim_str_has_prefix(link, "http://") ||
+			   gaim_str_has_prefix(link, "https://") ||
+			   gaim_str_has_prefix(link, "ftp://")){
+				gtk_imhtml_insert_link(imhtml, link, link);
+			} else if (link=='\0') {
+				//Ignore blank lines
+			} else {
+				//Special reasons, aka images being put in via other tag, etc.
+			}
+		}
+
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+	} else {
+		gtk_drag_finish(dc, FALSE, FALSE, t);
+	}
 }
 
 /* this isn't used yet
