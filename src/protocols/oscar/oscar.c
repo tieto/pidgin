@@ -16,7 +16,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -56,14 +56,6 @@
 #define OSCAR_STATUS_ID_OCCUPIED	"occupied"
 #define OSCAR_STATUS_ID_FREE4CHAT	"free4chat"
 #define OSCAR_STATUS_ID_CUSTOM		"custom"
-
-#define UC_UNAVAILABLE	0x01
-#define UC_AOL			0x02
-#define UC_ADMIN		0x04
-#define UC_UNCONFIRMED	0x08
-#define UC_NORMAL		0x10
-#define UC_AB			0x20
-#define UC_WIRELESS		0x40
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -701,20 +693,27 @@ oscar_string_append(GString *str, const char *newline, const char *name, const c
 
 static void oscar_string_append_info(GaimConnection *gc, GString *str, const char *newline, GaimBuddy *b, aim_userinfo_t *userinfo)
 {
-	OscarData *od = gc->proto_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	OscarData *od;
+	GaimAccount *account;
+	GaimPresence *presence;
+	GaimPresence *buddy_presence;
 	GaimGroup *g = NULL;
 	struct buddyinfo *bi = NULL;
 	char *tmp;
 
-	if ((str == NULL) || (str == NULL) || (newline == NULL) || ((b == NULL) && (userinfo == NULL)))
+	od = gc->proto_data;
+	account = gaim_connection_get_account(gc);
+	presence = gaim_account_get_presence(account);
+	buddy_presence = gaim_buddy_get_presence(b);
+
+	if ((str == NULL) || (newline == NULL) || ((b == NULL) && (userinfo == NULL)))
 		return;
 
 	if (userinfo == NULL)
 		userinfo = aim_locate_finduserinfo(od->sess, b->name);
 
 	if (b == NULL)
-		b = gaim_find_buddy(gc->account, userinfo->sn);
+		b = gaim_find_buddy(account, userinfo->sn);
 
 	if (b != NULL)
 		g = gaim_find_buddys_group(b);
@@ -723,7 +722,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
 
 	if (b != NULL) {
-		if (GAIM_BUDDY_IS_ONLINE(b)) {
+		if (gaim_presence_is_online(buddy_presence)) {
 			if (aim_sn_is_icq(b->name)) {
 				tmp = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
 				oscar_string_append(str, newline, _("Status"), tmp);
@@ -764,7 +763,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		}
 	}
 
-	if ((bi != NULL) && (bi->availmsg != NULL) && !(b->uc & UC_UNAVAILABLE)) {
+	if ((bi != NULL) && (bi->availmsg != NULL) && gaim_presence_is_available(presence)) {
 		tmp = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
 		oscar_string_append(str, newline, _("Available"), tmp);
 		g_free(tmp);
@@ -777,7 +776,7 @@ static char *extract_name(const char *name) {
 
 	if (!name)
 		return NULL;
-	
+
 	x = strchr(name, '-');
 
 	if (!x) return NULL;
@@ -2206,7 +2205,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} else {
 		gaim_debug_misc("oscar", "Email is NULL\n");
 	}
-	
+
 	gaim_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
 	gaim_debug_info("oscar",
 			   "Closing auth connection...\n");
@@ -2858,16 +2857,22 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
-	GaimConnection *gc = sess->aux_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
-	OscarData *od = gc->proto_data;
+static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	GaimConnection *gc;
+	GaimAccount *account;
+	OscarData *od;
 	struct buddyinfo *bi;
 	time_t time_idle = 0, signon = 0;
 	int type = 0;
 	int caps = 0;
 	va_list ap;
 	aim_userinfo_t *info;
+	gboolean buddy_is_away = FALSE;
+
+	gc = sess->aux_data;
+	account = gaim_connection_get_account(gc);
+	od = gc->proto_data;
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
@@ -2875,28 +2880,17 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
 		caps = info->capabilities;
-	if (info->flags & AIM_FLAG_ACTIVEBUDDY)
-		type |= UC_AB;
 
 	if (info->present & AIM_USERINFO_PRESENT_FLAGS) {
-		if (info->flags & AIM_FLAG_UNCONFIRMED)
-			type |= UC_UNCONFIRMED;
-		if (info->flags & AIM_FLAG_ADMINISTRATOR)
-			type |= UC_ADMIN;
-		if (info->flags & AIM_FLAG_AOL)
-			type |= UC_AOL;
-		if (info->flags & AIM_FLAG_FREE)
-			type |= UC_NORMAL;
 		if (info->flags & AIM_FLAG_AWAY)
-			type |= UC_UNAVAILABLE;
-		if (info->flags & AIM_FLAG_WIRELESS)
-			type |= UC_WIRELESS;
+		  buddy_is_away = TRUE;
 	}
+
 	if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS) {
 		type = (info->icqinfo.status << 16);
 		if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT) &&
 		      (info->icqinfo.status != AIM_ICQ_STATE_NORMAL)) {
-			type |= UC_UNAVAILABLE;
+			buddy_is_away = TRUE;
 		}
 	}
 
@@ -2975,9 +2969,11 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		g_free(b16);
 	}
 
-	gaim_debug_info("oscar", "Signaling got online status for buddy '%s'\n", info->sn);
-
-	gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_ONLINE, NULL);
+	/* XXX - Represent other ICQ statuses */
+	if (buddy_is_away == TRUE)
+		gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_AWAY, NULL);
+	else
+		gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_AVAILABLE, NULL);
 	gaim_prpl_got_user_login_time(account, info->sn, signon);
 	gaim_prpl_got_user_warning_level(account, info->sn, info->warnlevel/10.0 + 0.5);
 
@@ -6518,7 +6514,8 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
 	return 0;
 }
 
-static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b) {
+static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b)
+{
 	if (!b || (b && b->name && b->name[0] == '+')) {
 		if (a != NULL && aim_sn_is_icq(gaim_account_get_username(a)))
 			return "icq";
@@ -6533,9 +6530,12 @@ static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b) {
 
 static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
 {
-	GaimAccount *account = NULL;
 	GaimConnection *gc = NULL;
 	OscarData *od = NULL;
+	GaimAccount *account = NULL;
+	GaimPresence *presence;
+	GaimStatus *status;
+	const char *status_id;
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
 	aim_userinfo_t *userinfo = NULL;
@@ -6549,7 +6549,11 @@ static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 	if (od != NULL)
 		userinfo = aim_locate_finduserinfo(od->sess, b->name);
 
-	if (!GAIM_BUDDY_IS_ONLINE(b)) {
+	presence = gaim_buddy_get_presence(b);
+	status = gaim_presence_get_active_status(presence);
+	status_id = gaim_status_get_id(status);
+
+	if (gaim_presence_is_online(presence) == FALSE) {
 		char *gname;
 		if ((b->name) && (od) && (od->sess->ssi.received_data) && 
 			(gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name)) && 
@@ -6560,40 +6564,41 @@ static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 		}
 	}
 
-	if (b->name && (b->uc & 0xffff0000) && aim_sn_is_icq(b->name)) {
-		int uc = b->uc >> 16;
-		if (uc & AIM_ICQ_STATE_INVISIBLE)
-			emblems[i++] = "invisible";
-		else if (uc & AIM_ICQ_STATE_CHAT)
+	if (b->name && aim_sn_is_icq(b->name)) {
+		if (!strcmp(status_id, OSCAR_STATUS_ID_INVISIBLE))
+				emblems[i++] = "invisible";
+		else if (!strcmp(status_id, OSCAR_STATUS_ID_FREE4CHAT))
 			emblems[i++] = "freeforchat";
-		else if (uc & AIM_ICQ_STATE_DND)
+		else if (!strcmp(status_id, OSCAR_STATUS_ID_DND))
 			emblems[i++] = "dnd";
-		else if (uc & AIM_ICQ_STATE_OUT)
+		else if (!strcmp(status_id, OSCAR_STATUS_ID_NA))
 			emblems[i++] = "na";
-		else if (uc & AIM_ICQ_STATE_BUSY)
+		else if (!strcmp(status_id, OSCAR_STATUS_ID_OCCUPIED))
 			emblems[i++] = "occupied";
-		else if (uc & AIM_ICQ_STATE_AWAY)
+		else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
 			emblems[i++] = "away";
-	} else {
-		if (b->uc & UC_UNAVAILABLE) 
-			emblems[i++] = "away";
+	} else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY)) {
+		emblems[i++] = "away";
 	}
-	if (b->uc & UC_WIRELESS)
-		emblems[i++] = "wireless";
-	if (b->uc & UC_AOL)
-		emblems[i++] = "aol";
-	if (b->uc & UC_ADMIN)
-		emblems[i++] = "admin";
-	if (b->uc & UC_AB && i < 4)
-		emblems[i++] = "activebuddy";
-/*	if (b->uc & UC_UNCONFIRMED && i < 4)
-		emblems[i++] = "unconfirmed"; */
 
-	if ((i < 4) && (userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_HIPTOP))
+	if (userinfo != NULL ) {
+	/*  if (userinfo->flags & AIM_FLAG_UNCONFIRMED)
+			emblems[i++] = "unconfirmed"; */
+		if (userinfo->flags & AIM_FLAG_ADMINISTRATOR)
+			emblems[i++] = "admin";
+		if (userinfo->flags & AIM_FLAG_AOL)
+			emblems[i++] = "aol";
+		if (userinfo->flags & AIM_FLAG_WIRELESS)
+			emblems[i++] = "wireless";
+		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
+			emblems[i++] = "activebuddy";
+
+		if ((i < 4) && (userinfo->capabilities & AIM_CAPS_HIPTOP))
 			emblems[i++] = "hiptop";
 
-	if ((i < 4) && (userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_SECUREIM))
+		if ((i < 4) && (userinfo->capabilities & AIM_CAPS_SECUREIM))
 			emblems[i++] = "secure";
+	}
 
 	*se = emblems[0];
 	*sw = emblems[1];
@@ -6631,12 +6636,18 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 	return g_string_free(str, FALSE);
 }
 
-static char *oscar_status_text(GaimBuddy *b) {
-	GaimConnection *gc = b->account->gc;
-	OscarData *od = gc->proto_data;
+static char *oscar_status_text(GaimBuddy *b)
+{
+	GaimConnection *gc;
+	OscarData *od;
+	GaimStatus *status;
 	gchar *ret = NULL;
 
-	if ((b->uc & UC_UNAVAILABLE) || (((b->uc & 0xffff0000) >> 16) & AIM_ICQ_STATE_CHAT)) {
+	gc = gaim_account_get_connection(gaim_buddy_get_account(b));
+	od = gc->proto_data;
+	status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
+
+	if (gaim_status_is_available(status) == FALSE || (((b->uc & 0xffff0000) >> 16) & AIM_ICQ_STATE_CHAT)) {
 		if (aim_sn_is_icq(b->name))
 			ret = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
 		else
@@ -6694,15 +6705,15 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 							fread(buf, 1, st.st_size, file);
 							fclose(file);
 							gaim_debug_info("oscar",
-								   "Uploading icon to icon server\n");
+											"Uploading icon to icon server\n");
 							aim_bart_upload(od->sess, buf, st.st_size);
 						} else
 							gaim_debug_error("oscar",
-								   "Can't open buddy icon file!\n");
+											 "Can't open buddy icon file!\n");
 						g_free(buf);
 					} else {
 						gaim_debug_error("oscar",
-							   "Can't stat buddy icon file!\n");
+										 "Can't stat buddy icon file!\n");
 					}
 				}
 			} else if (flags == 0x81) {
@@ -6838,12 +6849,10 @@ oscar_status_types(GaimAccount *account)
 {
 	GList *status_types = NULL;
 	GaimStatusType *type;
-	gboolean is_icq;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	is_icq = aim_sn_is_icq(gaim_account_get_username(account));
-
+	/* Oscar-common status types */
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 									 OSCAR_STATUS_ID_OFFLINE,
 									 _("Offline"), FALSE, FALSE, FALSE);
@@ -6859,6 +6868,21 @@ oscar_status_types(GaimAccount *account)
 									 _("Available"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
+	type = gaim_status_type_new_full(GAIM_STATUS_AWAY,
+									 OSCAR_STATUS_ID_AWAY,
+									 _("Away"), TRUE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN,
+									 OSCAR_STATUS_ID_INVISIBLE,
+									 _("Invisible"), TRUE, TRUE, TRUE);
+	status_types = g_list_append(status_types, type);
+
+	if (aim_sn_is_icq(gaim_account_get_username(account)) == FALSE )
+		return status_types;
+
+	/* ICQ-specific status types */
+
 	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
 									 OSCAR_STATUS_ID_FREE4CHAT,
 									 _("Free For Chat"), TRUE, TRUE, FALSE);
@@ -6867,16 +6891,6 @@ oscar_status_types(GaimAccount *account)
 	type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
 									 OSCAR_STATUS_ID_OCCUPIED,
 									 _("Occupied"), TRUE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
-
-	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN,
-									 OSCAR_STATUS_ID_INVISIBLE,
-									 _("Invisible"), TRUE, TRUE, TRUE);
-	status_types = g_list_append(status_types, type);
-
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY,
-									 OSCAR_STATUS_ID_AWAY,
-									 _("Away"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
