@@ -115,8 +115,8 @@ void irc_update_user (struct gaim_connection *gc, char *name, int status) {
 
 void irc_request_buddy_update ( struct gaim_connection *gc ) {
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
-	GSList *grp = groups;
-	GList *person;
+	GSList *grp = gc->groups;
+	GSList *person;
 	struct group *g;
 	struct buddy *b;
 	struct irc_channel *u;
@@ -506,7 +506,7 @@ void irc_callback ( struct gaim_connection * gc ) {
 				u = temp->data;		
 			
 				/* Tell Gaim to bring the person on or off line */
-				serv_got_update(u->name, u->id, 0, 0, 0, 0, 0);	
+				serv_got_update(gc, u->name, u->id, 0, 0, 0, 0, 0);	
 			
 				/* Grab the next entry */
 				temp = g_slist_next(temp);
@@ -876,16 +876,8 @@ void irc_login(struct aim_user *user) {
 
 
 	/* Now lets sign ourselves on */
-        account_online(gc);
-
-	if (mainwindow)
-		gtk_widget_hide(mainwindow);
-	
-	show_buddy_list();
-	refresh_buddy_window();
-	
+        account_online(user, gc);
 	serv_finish_login(gc);
-	gaim_setup(gc);
 
 	if (bud_list_cache_exists(gc))
 		do_import(NULL, gc);
@@ -935,6 +927,6 @@ struct prpl *irc_init() {
 }
 
 int gaim_plugin_init(void *handle) {
-	protocols = g_slist_append(protocols, irc_init());
+	load_protocl(irc_init);
 	return 0;
 }
