@@ -399,7 +399,10 @@ gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textle
 
 	switch (flags) {
 	case 0:
-		utf8 = g_convert(text, textlen, "UTF-8", "UTF-8", NULL, NULL, NULL);
+		if (!g_utf8_validate(text, textlen, NULL))
+			utf8 = g_strdup(_("(There was an error converting this message.  The buddy you are speaking to most likely has a buggy client.)"));
+		else
+			utf8 = g_strdup(text);
 		break;
 	case AIM_IMFLAGS_ISO_8859_1:
 		utf8 = g_convert(text, textlen, "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
