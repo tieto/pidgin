@@ -1,20 +1,37 @@
-#include "config.h"
-#include "gaim.h"
+/*
+** Send commands to gaim via ~/.gaim/control
+**
+** By Eric Warmenhoven <eric@warmenhoven.org>
+** compile fixes/mini hacks Alex Bennee <alex@bennee.com>
+*/
 
+/* system includes */
 #include <gtk/gtk.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <ctype.h>
 
+/* gaim includes */
+#include "internal.h"
+
+#include "config.h"
+#include "gaim.h"
+#include "debug.h"
+#include "account.h"
+#include "conversation.h"
+
+
+
 #define FILECTL_PLUGIN_ID "core-filectl"
 static int check;
 static time_t mtime;
 
 static void init_file();
-static void check_file();
+static gboolean check_file();
 
 /* parse char * as if were word array */
 char *getarg(char *, int, int);
@@ -36,12 +53,12 @@ void run_commands() {
 		gaim_debug(GAIM_DEBUG_MISC, "filectl", "read: %s\n", buffer);
 		command = getarg(buffer, 0, 0);
 		if (!strncasecmp(command, "signon", 6)) {
-			struct gaim_account *account = NULL;
-			GSList *accts = gaim_accounts;
+			GaimAccount *account = NULL;
+			GList *accts = gaim_accounts_get_all();
 			arg1 = getarg(buffer, 1, 1);
 			if (arg1) {
 				while (accts) {
-					struct gaim_account *a = accts->data;
+					GaimAccount *a = accts->data;
 					if (!strcmp(a->username, arg1)) {
 						account = a;
 						break;
@@ -53,47 +70,48 @@ void run_commands() {
 			if (account) /* username found */
 				gaim_account_connect(account);
 		} else if (!strncasecmp(command, "signoff", 7)) {
-			struct gaim_connection *gc = NULL;
-			GSList *c = connections;
+			GaimConnection *gc = NULL;
+			GList *c = gaim_connections_get_all();
 			arg1 = getarg(buffer, 1, 1);
 			while (arg1 && c) {
 				gc = c->data;
-				if (!strcmp(gc->username, arg1)) {
+				if (!strcmp(gc->account->username, arg1)) {
 					break;
 				}
 				gc = NULL;
 				c = c->next;
 			}
 			if (gc)
-				signoff(gc);
+				gaim_connection_disconnect(gc);
 			else if (!arg1)
-				signoff_all(NULL, NULL);
+				gaim_connections_disconnect_all();
 			free(arg1);
 		} else if (!strncasecmp(command, "send", 4)) {
 			GaimConversation *c;
 			arg1 = getarg(buffer, 1, 0);
 			arg2 = getarg(buffer, 2, 1);
-			c = find_conversation(arg1);
-			if (!c) c = gaim_conversation_new(GAIM_CONV_IM, arg1);
-			write_to_conv(c, arg2, WFLAG_SEND, NULL, time(NULL), -1);
-			serv_send_im(c->gc, arg1, arg2, 0);
+			c = gaim_find_conversation(arg1);
+			if (c)
+			{
+			    /* disable for now
+			    gaim_conversation_write(c, arg2, WFLAG_SEND, NULL, time(NULL), -1);
+			    serv_send_im(c->gc, arg1, arg2, 0);
+			    */
+			}
 			free(arg1);
 			free(arg2);
 		} else if (!strncasecmp(command, "away", 4)) {
-			struct away_message a;
 			arg1 = getarg(buffer, 1, 1);
-			snprintf(a.message, 2048, "%s", arg1);
-			a.name[0] = 0;
-			do_away_message(NULL, &a);
+			serv_set_away_all(arg1);
 			free(arg1);
 		} else if (!strncasecmp(command, "hide", 4)) {
-			hide_buddy_list();
+		    //hide_buddy_list();
 		} else if (!strncasecmp(command, "unhide", 6)) {
-			unhide_buddy_list();
+		    //unhide_buddy_list();
 		} else if (!strncasecmp(command, "back", 4)) {
-			do_im_back();
+		    //do_im_back();
 		} else if (!strncasecmp(command, "quit", 4)) {
-			gaim_core_quit();
+		    //gaim_core_quit();
 		}
 		free(command);
 	}
@@ -118,7 +136,7 @@ void init_file() {
 }
 
 /* check to see if we need to run commands from the file */
-void check_file() {
+gboolean check_file() {
 	/* most of this was taken from Bash v2.04 by the FSF */
 	struct stat finfo;
 	char file[256];
@@ -126,11 +144,15 @@ void check_file() {
 	sprintf(file, "%s/.gaim/control", getenv("HOME"));
 
 	if ((stat (file, &finfo) == 0) && (finfo.st_size > 0))
+	{
 		if (mtime != finfo.st_mtime) {
 			gaim_debug(GAIM_DEBUG_INFO, "filectl",
 					   "control changed, checking\n");
 			run_commands();
 		}
+	}
+
+	return TRUE;
 }
 
 char *getarg(char *line, int which, int remain) {
@@ -175,7 +197,7 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	init_file();
-	check = g_timeout_add(5000, check_file, NULL);
+	check = g_timeout_add(5000, (GSourceFunc) check_file, NULL);
 
 	return TRUE;
 }
