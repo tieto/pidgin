@@ -741,7 +741,7 @@ int gaim_parse_misses(struct aim_session_t *sess,
 	char buf[1024];
 
 	va_start(ap, command);
-	chan = va_arg(ap, unsigned short);
+	chan = (u_short)va_arg(ap, u_int);
 	userinfo = va_arg(ap, struct aim_userinfo_s *);
 	nummissed = (u_short)va_arg(ap, u_int);
 	reason = (u_short)va_arg(ap, u_int);
