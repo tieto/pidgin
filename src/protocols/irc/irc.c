@@ -425,8 +425,9 @@ static int irc_im_send(GaimConnection *gc, const char *who, const char *what, Ga
 static void irc_get_info(GaimConnection *gc, const char *who)
 {
 	struct irc_conn *irc = gc->proto_data;
-	const char *args[1];
+	const char *args[2];
 	args[0] = who;
+	args[1] = '\0';
 	irc_cmd_whois(irc, "whois", NULL, args);
 }
 
