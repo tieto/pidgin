@@ -4,7 +4,7 @@ version 0.69
 	* Yahoo now shows people using the java chat client (Tim Ringenbach)
 	* Offline messages work for yahoo (Nandan Dixit)
 	* Proper support for buddy list	(lists greater than 1024 chars) (Nandan Dixit)
-	* SMS and away embles on custom status (Nandan Dixit)
+	* SMS and away enbles on custom status (Nandan Dixit)
 	
 version 0.68 (09/01/2003):
 	* Removed the old event system and replaced it with a much better
