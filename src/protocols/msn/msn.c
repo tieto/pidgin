@@ -20,7 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <glib.h>
+#include "internal.h"
 
+#include "blist.h"
 #include "msn.h"
 #include "accountopt.h"
 #include "msg.h"
@@ -30,7 +32,6 @@
 #include "session.h"
 #include "state.h"
 #include "utils.h"
-#include "multi.h"
 #include "util.h"
 
 #include "notification.h"
@@ -234,53 +235,67 @@ msn_show_set_mobile_pages(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_action(gc, NULL, _("Allow MSN Mobile pages?"),
-						_("Do you want to allow or disallow people on "
-						  "your buddy list to send you MSN Mobile pages "
-						  "to your cell phone or other mobile device?"),
-						-1, gc, 3,
-						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
-						_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
-						_("Cancel"), NULL);
+			_("Do you want to allow or disallow people on "
+			  "your buddy list to send you MSN Mobile pages "
+			  "to your cell phone or other mobile device?"),
+			-1, gc, 3,
+			_("Allow"), G_CALLBACK(enable_msn_pages_cb),
+			_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
+			_("Cancel"), NULL);
 }
 
 static void
-show_send_to_mobile_cb(GaimConnection *gc, const char *passport)
+show_send_to_mobile_cb(GaimBlistNode *node, gpointer ignored)
 {
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
 	MsnUser *user;
 	MsnSession *session;
 	MsnMobileData *data;
 
 	session = gc->proto_data;
-	user = msn_users_find_with_passport(session->users, passport);
+	user = msn_users_find_with_passport(session->users, buddy->name);
 
 	data = g_new0(MsnMobileData, 1);
 	data->gc = gc;
-	data->passport = passport;
+	data->passport = buddy->name;
 
 	gaim_request_input(gc, NULL, _("Send a mobile message."), NULL,
-					   NULL, TRUE, FALSE, NULL,
-					   _("Page"), G_CALLBACK(send_to_mobile_cb),
-					   _("Close"), G_CALLBACK(close_mobile_page_cb),
-					   data);
+			NULL, TRUE, FALSE, NULL,
+			_("Page"), G_CALLBACK(send_to_mobile_cb),
+			_("Close"), G_CALLBACK(close_mobile_page_cb),
+			data);
 }
 
 static void
-initiate_chat_cb(GaimConnection *gc, const char *passport)
+initiate_chat_cb(GaimBlistNode *node, gpointer data)
 {
-	GaimAccount *account;
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
 	MsnSwitchBoard *swboard;
 	MsnUser *user;
+	
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
-	account = gaim_connection_get_account(gc);
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
 	session = gc->proto_data;
 	cmdproc = session->notification_conn->cmdproc;
 
 	if ((swboard = msn_session_open_switchboard(session)) == NULL)
 		return;
 
-	user = msn_user_new(session, passport, NULL);
+	user = msn_user_new(session, buddy->name, NULL);
 
 	msn_switchboard_set_user(swboard, user);
 
@@ -291,7 +306,7 @@ initiate_chat_cb(GaimConnection *gc, const char *passport)
 	swboard->chat = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 
 	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->chat),
-							gaim_account_get_username(account), NULL);
+			gaim_account_get_username(buddy->account), NULL);
 }
 
 /**************************************************************************
@@ -410,44 +425,45 @@ msn_actions(GaimPlugin *plugin, gpointer context)
 }
 
 static GList *
-msn_buddy_menu(GaimConnection *gc, const char *who)
+msn_buddy_menu(GaimBuddy *buddy)
 {
-	GaimAccount *account;
 	MsnUser *user;
-	struct proto_buddy_menu *pbm;
-	GaimBuddy *b;
+
 	GList *m = NULL;
+	GaimBlistNodeAction *act;
 
-	account = gaim_connection_get_account(gc);
-	b = gaim_find_buddy(account, who);
-
-	g_return_val_if_fail(b != NULL, NULL);
-
-	user = b->proto_data;
-
+	user = buddy->proto_data;
 	if (user != NULL)
 	{
 		if (user->mobile)
 		{
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label    = _("Send to Mobile");
-			pbm->callback = show_send_to_mobile_cb;
-			pbm->gc       = gc;
-			m = g_list_append(m, pbm);
+			act = gaim_blist_node_action_new(_("Send to Mobile"),
+					show_send_to_mobile_cb, NULL);
+			m = g_list_append(m, act);
 		}
 	}
 
-	if (g_ascii_strcasecmp(who, gaim_account_get_username(account)))
+	if (g_ascii_strcasecmp(buddy->name, gaim_account_get_username(buddy->account)))
 	{
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label    = _("Initiate Chat");
-		pbm->callback = initiate_chat_cb;
-		pbm->gc       = gc;
-		m = g_list_append(m, pbm);
+		act = gaim_blist_node_action_new(_("Initiate Chat"),
+				initiate_chat_cb, NULL);
+		m = g_list_append(m, act);
 	}
 
 	return m;
 }
+
+
+static GList *
+msn_blist_node_menu(GaimBlistNode *node)
+{
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		return msn_buddy_menu((GaimBuddy *) node);
+	} else {
+		return NULL;
+	}
+}
+
 
 static void
 msn_login(GaimAccount *account)
@@ -1626,7 +1642,7 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_status_text,
 	msn_tooltip_text,
 	msn_away_states,
-	msn_buddy_menu,
+	msn_blist_node_menu,
 	NULL,
 	msn_login,
 	msn_close,
@@ -1665,7 +1681,6 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_normalize,
 	msn_set_buddy_icon,
 	msn_remove_group,
-	NULL,
 	NULL,
 	NULL,
 	NULL,

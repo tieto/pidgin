@@ -34,6 +34,8 @@ typedef struct _GaimBuddyList GaimBuddyList;
 typedef struct _GaimBlistUiOps GaimBlistUiOps;
 typedef struct _GaimBlistNode GaimBlistNode;
 
+typedef struct _GaimBlistNodeAction GaimBlistNodeAction;
+
 typedef struct _GaimChat GaimChat;
 typedef struct _GaimGroup GaimGroup;
 typedef struct _GaimContact GaimContact;
@@ -182,6 +184,14 @@ struct _GaimBlistUiOps
 							 const char *alias);
 	void (*request_add_group)(void);
 };
+
+
+struct _GaimBlistNodeAction {
+	char *label;
+	void (*callback)(GaimBlistNode *, gpointer);
+	gpointer data;
+};
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -857,22 +867,23 @@ const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key);
 
 
 /**
- * Retrieves the extended menu items for a buddy.
- * @param b      The buddy to obtain the extended menu items for
-*/
-GList *gaim_buddy_get_extended_menu(GaimBuddy *b);
+ * Retrieves the extended menu items for a buddy list node.
+ * @param n	The blist node for which to obtain the extended menu items.
+ * @return	list of GaimBlistNodeAction items, as harvested by the
+ *		blist-node-extended-menu signal.
+ */
+GList *gaim_blist_node_get_extended_menu(GaimBlistNode *n);
+
 
 /**
- * Retrieves the extended menu items for a chat.
- * @param c      The chat to obtain the extended menu items for
-*/
-GList *gaim_chat_get_extended_menu(GaimChat *c);
-
-/**
- * Retrieves the extended menu items for a group.
- * @param g      The group to obtain the extended menu items for
-*/
-GList *gaim_group_get_extended_menu(GaimGroup *g);
+ * Creates a new GaimBlistNodeAction.
+ * @param label		The text label to display for this action.
+ * @param callback	The function to be called when the action is used on
+ *			a selected GaimBlistNode.
+ * @param data		Additional data, to be passed to the callback
+ */
+GaimBlistNodeAction  *gaim_blist_node_action_new(char *label,
+		void (*callback)(GaimBlistNode *, gpointer), gpointer data);
 
 
 /**************************************************************************/

@@ -43,7 +43,7 @@ GList *silcgaim_chat_info(GaimConnection *gc)
 }
 
 static void
-silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components);
+silcgaim_chat_getinfo(GaimBlistNode *node, gpointer data);
 
 static void
 silcgaim_chat_getinfo_res(SilcClient client,
@@ -73,9 +73,12 @@ silcgaim_chat_getinfo_res(SilcClient client,
 }
 
 static void
-silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_getinfo(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
 	const char *chname;
 	char *buf, tmp[256];
 	GString *s;
@@ -83,10 +86,13 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	SilcHashTableList htl;
 	SilcChannelUser chu;
 
-	if (!components)
-		return;
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
 
-	chname = g_hash_table_lookup(components, "channel");
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
+	chname = g_hash_table_lookup(chat->components, "channel");
 	if (!chname)
 		return;
 	channel = silc_client_get_channel(sg->client, sg->conn,
@@ -95,7 +101,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 		silc_client_get_channel_resolve(sg->client, sg->conn,
 						(char *)chname,
 						silcgaim_chat_getinfo_res,
-						components);
+						chat->components);
 		return;
 	}
 
@@ -162,7 +168,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 /************************** Channel Invite List ******************************/
 
 static void
-silcgaim_chat_invitelist(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_invitelist(GaimBlistNode *node, gpointer data);
 {
 
 }
@@ -171,7 +177,7 @@ silcgaim_chat_invitelist(GaimConnection *gc, GHashTable *components)
 /**************************** Channel Ban List *******************************/
 
 static void
-silcgaim_chat_banlist(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_banlist(GaimBlistNode *node, gpointer data);
 {
 
 }
@@ -440,11 +446,20 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 }
 
 static void
-silcgaim_chat_chauth(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_chauth(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(components, "channel"),
+				 g_hash_table_lookup(chat->components, "channel"),
 				 "+C", NULL);
 }
 
@@ -513,21 +528,30 @@ silcgaim_chat_prv_cancel(SilcGaimCharPrv p, GaimRequestFields *fields)
 }
 
 static void
-silcgaim_chat_prv(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_prv(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
 	SilcGaimCharPrv p;
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *g;
 	GaimRequestField *f;
 	char tmp[512];
 
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	p = silc_calloc(1, sizeof(*p));
 	if (!p)
 		return;
 	p->sg = sg;
 
-	p->channel = g_hash_table_lookup(components, "channel");
+	p->channel = g_hash_table_lookup(chat->components, "channel");
 	p->c = gaim_blist_find_chat(sg->account, p->channel);
 
 	fields = gaim_request_fields_new();
@@ -559,19 +583,36 @@ silcgaim_chat_prv(GaimConnection *gc, GHashTable *components)
 /****************************** Channel Modes ********************************/
 
 static void
-silcgaim_chat_permanent_reset(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_permanent_reset(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(components, "channel"),
+				 g_hash_table_lookup(chat->components, "channel"),
 				 "-f", NULL);
 }
 
 static void
-silcgaim_chat_permanent(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_permanent(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
 	const char *channel;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
 
 	if (!sg->conn)
 		return;
@@ -581,7 +622,7 @@ silcgaim_chat_permanent(GaimConnection *gc, GHashTable *components)
 	   (default key). */
 
 	/* Call CMODE */
-	channel = g_hash_table_lookup(components, "channel");
+	channel = g_hash_table_lookup(chat->components, "channel");
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE", channel,
 				 "+f", NULL);
 }
@@ -629,18 +670,27 @@ silcgaim_chat_ulimit_cb(SilcGaimChatInput s, const char *limit)
 }
 
 static void
-silcgaim_chat_ulimit(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_ulimit(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
 	SilcGaimChatInput s;
 	SilcChannelEntry channel;
 	const char *ch;
 	char tmp[32];
 
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	if (!sg->conn)
 		return;
 
-	ch = g_strdup(g_hash_table_lookup(components, "channel"));
+	ch = g_strdup(g_hash_table_lookup(chat->components, "channel"));
 	channel = silc_client_get_channel(sg->client, sg->conn, (char *)ch);
 	if (!channel)
 		return;
@@ -659,69 +709,126 @@ silcgaim_chat_ulimit(GaimConnection *gc, GHashTable *components)
 }
 
 static void
-silcgaim_chat_resettopic(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_resettopic(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(components, "channel"),
+				 g_hash_table_lookup(chat->components, "channel"),
 				 "-t", NULL);
 }
 
 static void
-silcgaim_chat_settopic(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_settopic(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(components, "channel"),
+				 g_hash_table_lookup(chat->components, "channel"),
 				 "+t", NULL);
 }
 
 static void
-silcgaim_chat_resetprivate(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_resetprivate(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(components, "channel"),
+				 g_hash_table_lookup(chat->components, "channel"),
 				 "-p", NULL);
 }
 
 static void
-silcgaim_chat_setprivate(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_setprivate(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(components, "channel"),
+				 g_hash_table_lookup(chat->components, "channel"),
 				 "+p", NULL);
 }
 
 static void
-silcgaim_chat_resetsecret(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_resetsecret(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(components, "channel"),
+				 g_hash_table_lookup(chat->components, "channel"),
 				 "-s", NULL);
 }
 
 static void
-silcgaim_chat_setsecret(GaimConnection *gc, GHashTable *components)
+silcgaim_chat_setsecret(GaimBlistNode *node, gpointer data)
 {
-	SilcGaim sg = gc->proto_data;
+	GaimChat *chat;
+	GaimConnection *gc;
+	SilcGaim sg;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+
+	chat = (GaimChat *) node;
+	gc = gaim_account_get_connection(chat->account);
+	sg = gc->proto_data;
+
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
-				 g_hash_table_lookup(components, "channel"),
+				 g_hash_table_lookup(chat->components, "channel"),
 				 "+s", NULL);
 }
 
-GList *silcgaim_chat_menu(GaimConnection *gc, GHashTable *components)
+GList *silcgaim_chat_menu(GaimChat *chat)
 {
+	GHashTable components = chat->components;
+	GaimConnection *gc = gaim_account_get_connection(chat->account);
 	SilcGaim sg = gc->proto_data;
 	SilcClientConnection conn = sg->conn;
-	GList *m = NULL;
-	struct proto_chat_menu *pcm;
 	const char *chname = NULL;
 	SilcChannelEntry channel = NULL;
 	SilcChannelUser chu = NULL;
 	SilcUInt32 mode = 0;
+
+	GList *m;
+	GaimBlistNodeAction *act;
 
 	if (components)
 		chname = g_hash_table_lookup(components, "channel");
@@ -737,106 +844,78 @@ GList *silcgaim_chat_menu(GaimConnection *gc, GHashTable *components)
 	if (strstr(chname, "[Private Group]"))
 		return NULL;
 
-	pcm = g_new0(struct proto_chat_menu, 1);
-	pcm->label = _("Get Info");
-	pcm->callback = silcgaim_chat_getinfo;
-	pcm->gc = gc;
-	m = g_list_append(m, pcm);
+	act = gaim_blist_node_action_new(_("Get Info"),
+			silcgaim_chat_getinfo, NULL);
+	m = g_list_append(m, act);
 
 #if 0   /* XXX For now these are not implemented.  We need better
 	   listview dialog from Gaim for these. */
 	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
-		pcm = g_new0(struct proto_chat_menu, 1);
-		pcm->label = _("Invite List");
-		pcm->callback = silcgaim_chat_invitelist;
-		pcm->gc = gc;
-		m = g_list_append(m, pcm);
+		act = gaim_blist_node_action_new(_("Invite List"),
+				silcgaim_chat_invitelist, NULL);
+		m = g_list_append(m, act);
 
-		pcm = g_new0(struct proto_chat_menu, 1);
-		pcm->label = _("Ban List");
-		pcm->callback = silcgaim_chat_banlist;
-		pcm->gc = gc;
-		m = g_list_append(m, pcm);
+		act = gaim_blist_node_action_new(_("Ban List"),
+				silcgaim_chat_banlist, NULL);
+		m = g_list_append(m, act);
 	}
 #endif
 
 	if (chu) {
-		pcm = g_new0(struct proto_chat_menu, 1);
-		pcm->label = _("Add Private Group");
-		pcm->callback = silcgaim_chat_prv;
-		pcm->gc = gc;
-		m = g_list_append(m, pcm);
+		act = gaim_blist_node_action_new(_("Add Private Group"),
+				silcgaim_chat_prv, NULL);
+		m = g_list_append(m, act);
 	}
 
 	if (mode & SILC_CHANNEL_UMODE_CHANFO) {
-		pcm = g_new0(struct proto_chat_menu, 1);
-		pcm->label = _("Channel Authentication");
-		pcm->callback = silcgaim_chat_chauth;
-		pcm->gc = gc;
-		m = g_list_append(m, pcm);
+		act = gaim_blist_node_action_new(_("Channel Authentication"),
+				silcgaim_chat_chauth, NULL);
+		m = g_list_append(m, act);
 
 		if (channel->mode & SILC_CHANNEL_MODE_FOUNDER_AUTH) {
-			pcm = g_new0(struct proto_chat_menu, 1);
-			pcm->label = _("Reset Permanent");
-			pcm->callback = silcgaim_chat_permanent_reset;
-			pcm->gc = gc;
-			m = g_list_append(m, pcm);
+			act = gaim_blist_node_action_new(_("Reset Permanent"),
+					silcgaim_chat_permanent_reset, NULL);
+			m = g_list_append(m, act);
 		} else {
-			pcm = g_new0(struct proto_chat_menu, 1);
-			pcm->label = _("Set Permanent");
-			pcm->callback = silcgaim_chat_permanent;
-			pcm->gc = gc;
-			m = g_list_append(m, pcm);
+			act = gaim_blist_node_action_new(_("Set Permanent"),
+					silcgaim_chat_permanent, NULL);
+			m = g_list_append(m, act);
 		}
 	}
 
 	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
-		pcm = g_new0(struct proto_chat_menu, 1);
-		pcm->label = _("Set User Limit");
-		pcm->callback = silcgaim_chat_ulimit;
-		pcm->gc = gc;
-		m = g_list_append(m, pcm);
+		act = gaim_blist_node_action_new(_("Set User Limit"),
+				silcgaim_chat_ulimit, NULL);
+		m = g_list_append(m, act);
 
 		if (channel->mode & SILC_CHANNEL_MODE_TOPIC) {
-			pcm = g_new0(struct proto_chat_menu, 1);
-			pcm->label = _("Reset Topic Restriction");
-			pcm->callback = silcgaim_chat_resettopic;
-			pcm->gc = gc;
-			m = g_list_append(m, pcm);
+			act = gaim_blist_node_action_new(_("Reset Topic Restriction"),
+					silcgaim_chat_resettopic, NULL);
+			m = g_list_append(m, act);
 		} else {
-			pcm = g_new0(struct proto_chat_menu, 1);
-			pcm->label = _("Set Topic Restriction");
-			pcm->callback = silcgaim_chat_settopic;
-			pcm->gc = gc;
-			m = g_list_append(m, pcm);
+			act = gaim_blist_node_action_new(_("Set Topic Restriction"),
+					silcgaim_chat_settopic, NULL);
+			m = g_list_append(m, act);
 		}
 
 		if (channel->mode & SILC_CHANNEL_MODE_PRIVATE) {
-			pcm = g_new0(struct proto_chat_menu, 1);
-			pcm->label = _("Reset Private Channel");
-			pcm->callback = silcgaim_chat_resetprivate;
-			pcm->gc = gc;
-			m = g_list_append(m, pcm);
+			act = gaim_blist_node_action_new(_("Reset Private Channel"),
+					silcgaim_chat_resetprivate, NULL);
+			m = g_list_append(m, act);
 		} else {
-			pcm = g_new0(struct proto_chat_menu, 1);
-			pcm->label = _("Set Private Channel");
-			pcm->callback = silcgaim_chat_setprivate;
-			pcm->gc = gc;
-			m = g_list_append(m, pcm);
+			act = gaim_blist_node_action_new(_("Set Private Channel"),
+					silcgaim_chat_setprivate, NULL);
+			m = g_list_append(m, act);
 		}
 
 		if (channel->mode & SILC_CHANNEL_MODE_SECRET) {
-			pcm = g_new0(struct proto_chat_menu, 1);
-			pcm->label = _("Reset Secret Channel");
-			pcm->callback = silcgaim_chat_resetsecret;
-			pcm->gc = gc;
-			m = g_list_append(m, pcm);
+			act = gaim_blist_node_action_new(_("Reset Secret Channel"),
+					silcgaim_chat_resetsecret, NULL);
+			m = g_list_append(m, act);
 		} else {
-			pcm = g_new0(struct proto_chat_menu, 1);
-			pcm->label = _("Set Secret Channel");
-			pcm->callback = silcgaim_chat_setsecret;
-			pcm->gc = gc;
-			m = g_list_append(m, pcm);
+			act = gaim_blist_node_action_new(_("Set Secret Channel"),
+					silcgaim_chat_setsecret, NULL);
+			m = g_list_append(m, act);
 		}
 	}
 

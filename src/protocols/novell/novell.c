@@ -1519,20 +1519,28 @@ _reject_conference_cb(GSList * parms)
 }
 
 static void
-_initiate_conference_cb(GaimConnection *gc, const char *who)
+_initiate_conference_cb(GaimBlistNode *node, gpointer ignored)
 {
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
 	NMUser *user;
 	const char *conf_name;
 	GaimConversation *chat = NULL;
 	NMUserRecord *user_record;
 	NMConference *conference;
 
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
 	user = gc->proto_data;
 	if (user == NULL)
 		return;
 
 	/* We should already have a userrecord for the buddy */
-	user_record = nm_find_user_record(user, who);
+	user_record = nm_find_user_record(user, buddy->name);
 	if (user_record == NULL)
 		return;
 
@@ -3274,16 +3282,16 @@ novell_set_permit_deny(GaimConnection *gc)
 }
 
 static GList *
-novell_buddy_menu(GaimConnection *gc, const char *who)
+novell_blist_node_menu(GaimBlistNode *node)
 {
 	GList *list = NULL;
-	struct proto_buddy_menu *pbm;
+	GaimBlistNodeAction *act;	
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Initiate _Chat");
-	pbm->callback = _initiate_conference_cb;
-	pbm->gc = gc;
-	list = g_list_append(list, pbm);
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		act = gaim_blist_node_action_new(_("Initiate _Chat"),
+				_initiate_conference_cb, NULL);
+		list = g_list_append(list, act);
+	}
 
 	return list;
 }
@@ -3298,7 +3306,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_status_text,
 	novell_tooltip_text,
 	novell_away_states,
-	novell_buddy_menu,
+	novell_blist_node_menu,
 	NULL,						/* chat_info */
 	novell_login,
 	novell_close,
@@ -3337,6 +3345,11 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,						/* normalize */
 	NULL,						/* set_buddy_icon */
 	novell_remove_group,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 

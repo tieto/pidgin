@@ -26,7 +26,6 @@
 #include "accountopt.h"
 #include "blist.h"
 #include "debug.h"
-#include "multi.h"
 #include "notify.h"
 #include "privacy.h"
 #include "prpl.h"
@@ -2303,12 +2302,19 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 	}
 }
 
-static void yahoo_initiate_conference(GaimConnection *gc, const char *name)
-{
+static void yahoo_initiate_conference(GaimBlistNode *node, gpointer data) {
+
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
 	GHashTable *components;
 	struct yahoo_data *yd;
 	int id;
 
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
 	yd = gc->proto_data;
 	id = yd->conf_id;
 
@@ -2320,17 +2326,27 @@ static void yahoo_initiate_conference(GaimConnection *gc, const char *name)
 	yahoo_c_join(gc, components);
 	g_hash_table_destroy(components);
 
-	yahoo_c_invite(gc, id, "Join my conference...", name);
+	yahoo_c_invite(gc, id, "Join my conference...", buddy->name);
 }
 
-static void yahoo_game(GaimConnection *gc, const char *name) {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+static void yahoo_game(GaimBlistNode *node, gpointer data) {
+
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	struct yahoo_data *yd;
 	char *game = NULL;
 	char *t;
 	char url[256];
 	struct yahoo_friend *f;
 
-	f = g_hash_table_lookup(yd->friends, name);
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	yd = (struct yahoo_data *) gc->proto_data;
+
+	f = g_hash_table_lookup(yd->friends, buddy->name);
 	if (!f)
 		return;
 
@@ -2414,52 +2430,83 @@ static char *yahoo_tooltip_text(GaimBuddy *b)
 	return ret;
 }
 
-static void yahoo_addbuddyfrommenu_cb(GaimConnection *gc, const char *who)
+static void yahoo_addbuddyfrommenu_cb(GaimBlistNode *node, gpointer data)
 {
-	yahoo_add_buddy(gc, who, NULL);
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
+	yahoo_add_buddy(gc, buddy->name, NULL);
 }
 
-static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
+
+static void yahoo_chat_goto_menu(GaimBlistNode *node, gpointer data)
+{
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
+	yahoo_chat_goto(gc, buddy->name);
+}
+
+
+static void yahoo_ask_send_file_menu(GaimBlistNode *node, gpointer data)
+{
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
+	yahoo_ask_send_file(gc, buddy->name);
+}
+
+
+static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 {
 	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
+	GaimBlistNodeAction *act;
+
+	GaimConnection *gc = gaim_account_get_connection(buddy->account);
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	static char buf2[1024];
 	struct yahoo_friend *f;
 
-	f = g_hash_table_lookup(yd->friends, who);
+	f = g_hash_table_lookup(yd->friends, buddy->name);
 
 	if (!f) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Add Buddy");
-		pbm->callback = yahoo_addbuddyfrommenu_cb;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
+		act = gaim_blist_node_action_new(_("Add Buddy"),
+				yahoo_addbuddyfrommenu_cb, NULL);
+		m = g_list_append(m, act);
 
 		return m;
+
+	} else if (f->status == YAHOO_STATUS_OFFLINE) {
+		return NULL;
 	}
 
-	if (f->status == YAHOO_STATUS_OFFLINE)
-		return NULL;
+	act = gaim_blist_node_action_new(_("Join in Chat"),
+			yahoo_chat_goto_menu, NULL);
+	m = g_list_append(m, act);
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Join in Chat");
-	pbm->callback = yahoo_chat_goto;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Initiate Conference");
-	pbm->callback = yahoo_initiate_conference;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
+	act = gaim_blist_node_action_new(_("Initiate Conference"),
+			yahoo_initiate_conference, NULL);
+	m = g_list_append(m, act);
 
 	/* FIXME: remove this when the ui does it for us. */
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Send File");
-	pbm->callback = yahoo_ask_send_file;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
+	act = gaim_blist_node_action_new(_("Send File"),
+			yahoo_ask_send_file_menu, NULL);
+	m = g_list_append(m, act);
 
 	if (f->game) {
 		char *game = f->game;
@@ -2469,7 +2516,6 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 		if (!game)
 			return m;
 
-		pbm = g_new0(struct proto_buddy_menu, 1);
 		if (!(room = strstr(game, "&follow="))) /* skip ahead to the url */
 			return m;
 		while (*room && *room != '\t')          /* skip to the tab */
@@ -2479,14 +2525,24 @@ static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 			t++;                            /* replace the \n with a space */
 		*t = ' ';
 		g_snprintf(buf2, sizeof buf2, "%s", room);
-		pbm->label = buf2;
-		pbm->callback = yahoo_game;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
+
+		act = gaim_blist_node_action_new(buf2, yahoo_game, NULL);
+		m = g_list_append(m, act);
 	}
 
 	return m;
 }
+
+
+static GList *yahoo_blist_node_menu(GaimBlistNode *node)
+{
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		return yahoo_buddy_menu((GaimBuddy *) node);
+	} else {
+		return NULL;
+	}
+}
+
 
 static void yahoo_act_id(GaimConnection *gc, const char *entry)
 {
@@ -3223,7 +3279,7 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_status_text,
 	yahoo_tooltip_text,
 	yahoo_away_states,
-	yahoo_buddy_menu,
+	yahoo_blist_node_menu,
 	yahoo_c_info,
 	yahoo_login,
 	yahoo_close,
@@ -3272,8 +3328,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	yahoo_roomlist_get_list,
 	yahoo_roomlist_cancel,
-	yahoo_roomlist_expand_category,
-	NULL
+	yahoo_roomlist_expand_category
 };
 
 static GaimPluginInfo info =

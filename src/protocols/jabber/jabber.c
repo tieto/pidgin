@@ -22,9 +22,9 @@
 
 #include "account.h"
 #include "accountopt.h"
+#include "blist.h"
 #include "debug.h"
 #include "message.h"
-#include "multi.h"
 #include "notify.h"
 #include "pluginpref.h"
 #include "prpl.h"
@@ -1297,7 +1297,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_status_text,
 	jabber_tooltip_text,
 	jabber_away_states,
-	jabber_buddy_menu,
+	jabber_blist_node_menu,
 	jabber_chat_info,
 	jabber_login,
 	jabber_close,
@@ -1341,7 +1341,6 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_find_blist_chat,
 	jabber_roomlist_get_list,
 	jabber_roomlist_cancel,
-	NULL,
 	NULL
 };
 

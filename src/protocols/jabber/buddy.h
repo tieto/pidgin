@@ -66,7 +66,7 @@ void jabber_buddy_get_info(GaimConnection *gc, const char *who);
 void jabber_buddy_get_info_chat(GaimConnection *gc, int id,
 		const char *resource);
 
-GList *jabber_buddy_menu(GaimConnection *gc, const char *name);
+GList *jabber_blist_node_menu(GaimBlistNode *node);
 
 void jabber_set_info(GaimConnection *gc, const char *info);
 void jabber_setup_set_info(GaimPluginAction *action);

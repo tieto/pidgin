@@ -239,7 +239,7 @@ struct _GaimPluginProtocolInfo
 
 	GList *(*away_states)(GaimConnection *gc);
 
-	GList *(*buddy_menu)(GaimConnection *, const char *);
+	GList *(*blist_node_menu)(GaimBlistNode *node);
 	GList *(*chat_info)(GaimConnection *);
 
 	/* All the server-related functions */
@@ -316,9 +316,6 @@ struct _GaimPluginProtocolInfo
 	struct _GaimRoomlist *(*roomlist_get_list)(GaimConnection *gc);
 	void (*roomlist_cancel)(struct _GaimRoomlist *list);
 	void (*roomlist_expand_category)(struct _GaimRoomlist *list, struct _GaimRoomlistRoom *category);
-
-	/* Chat specific menu in the buddy list */
-	GList *(*chat_menu)(GaimConnection *, GHashTable *);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \
@@ -327,6 +324,9 @@ struct _GaimPluginProtocolInfo
 #define GAIM_PLUGIN_PROTOCOL_INFO(plugin) \
 	((GaimPluginProtocolInfo *)(plugin)->info->extra_info)
 
+/* It's not like we're going to run out of integers for this version
+   number, but we only want to really change it once per release. */
+/* GAIM_PRPL_API_VERSION last changed for version: 0.78 */
 #define GAIM_PRPL_API_VERSION 4
 
 #ifdef __cplusplus

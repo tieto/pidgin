@@ -1344,20 +1344,31 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 }
 
 /* this is the right click menu cb thingy */
-static void oscar_ask_direct_im(GaimConnection *gc, const char *who) {
+static void oscar_ask_direct_im(GaimBlistNode *node, gpointer ignored) {
+
+	GaimBuddy *buddy;
+	GaimConnection *gc;
 	gchar *buf;
-	struct ask_do_dir_im *data = g_new0(struct ask_do_dir_im, 1);
-	data->who = g_strdup(who);
+	struct ask_do_dir_im *data;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
+	data = g_new0(struct ask_do_dir_im, 1);
+	data->who = g_strdup(buddy->name);
 	data->gc = gc;
-	buf = g_strdup_printf(_("You have selected to open a Direct IM connection with %s."), who);
+	buf = g_strdup_printf(_("You have selected to open a Direct IM connection with %s."),
+			buddy->name);
 
 	gaim_request_action(gc, NULL, buf,
-						_("Because this reveals your IP address, it "
-						  "may be considered a privacy risk.  Do you "
-						  "wish to continue?"),
-						0, data, 2,
-						_("Connect"), G_CALLBACK(oscar_direct_im),
-						_("Cancel"), G_CALLBACK(oscar_cancel_direct_im));
+			_("Because this reveals your IP address, it "
+			  "may be considered a privacy risk.  Do you "
+			  "wish to continue?"),
+			0, data, 2,
+			_("Connect"), G_CALLBACK(oscar_direct_im),
+			_("Cancel"), G_CALLBACK(oscar_cancel_direct_im));
 	g_free(buf);
 }
 
@@ -1908,20 +1919,30 @@ static void oscar_xfer_ack_send(GaimXfer *xfer, const char *buffer, size_t size)
 	}
 }
 
-static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
-	OscarData *od = (OscarData *)gc->proto_data;
+static void oscar_ask_sendfile(GaimBlistNode *node, gpointer data) {
+
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	OscarData *od;
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	const char *ip;
 
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	od = (OscarData *)gc->proto_data;
+
 	/* You want to send a file to someone else, you're so generous */
 
 	/* Build the file transfer handle */
-	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, destsn);
+	xfer = gaim_xfer_new(buddy->account, GAIM_XFER_SEND, buddy->name);
 
 	/* Create the oscar-specific data */
 	ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
-	oft_info = aim_oft_createinfo(od->sess, NULL, destsn, ip, 0, 0, 0, NULL);
+	oft_info = aim_oft_createinfo(od->sess, NULL, buddy->name, ip, 0, 0, 0, NULL);
 	xfer->data = oft_info;
 
 	 /* Setup our I/O op functions */
@@ -3324,7 +3345,8 @@ static void gaim_auth_dontrequest(struct name_data *data) {
 	oscar_free_name_data(data);
 }
 
-static void gaim_auth_sendrequest(GaimConnection *gc, const char *name) {
+
+static void gaim_auth_sendrequest(GaimConnection *gc, char *name) {
 	struct name_data *data = g_new(struct name_data, 1);
 	GaimBuddy *buddy;
 	gchar *dialog_msg, *nombre;
@@ -3348,6 +3370,18 @@ static void gaim_auth_sendrequest(GaimConnection *gc, const char *name) {
 
 	g_free(dialog_msg);
 	g_free(nombre);
+}
+
+
+static void gaim_auth_sendrequest_menu(GaimBlistNode *node, gpointer ignored) {
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	gaim_auth_sendrequest(gc, buddy->name);
 }
 
 /* When other people ask you for authorization */
@@ -5068,7 +5102,7 @@ static int oscar_send_typing(GaimConnection *gc, const char *name, int typing) {
 	}
 	return 0;
 }
-static void oscar_ask_direct_im(GaimConnection *gc, const char *name);
+
 static int gaim_odc_send_im(aim_session_t *, aim_conn_t *, const char *, GaimConvImFlags);
 
 static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimConvImFlags imflags) {
@@ -6624,23 +6658,31 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	oscar_free_name_data(data);
 }
 
-static void oscar_buddycb_edit_comment(GaimConnection *gc, const char *name) {
-	OscarData *od = gc->proto_data;
-	struct name_data *data = g_new(struct name_data, 1);
-	GaimBuddy *b;
+static void oscar_buddycb_edit_comment(GaimBlistNode *node, gpointer ignore) {
+
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	OscarData *od;
+	struct name_data *data;
 	GaimGroup *g;
 	char *comment;
 	gchar *comment_utf8;
 
-	if (!(b = gaim_find_buddy(gaim_connection_get_account(gc), name)))
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	od = gc->proto_data;
+
+	data = g_new(struct name_data, 1);
+
+	if (!(g = gaim_find_buddys_group(buddy)))
 		return;
-	if (!(g = gaim_find_buddys_group(b)))
-		return;
-	comment = aim_ssi_getcomment(od->sess->ssi.local, g->name, name);
+	comment = aim_ssi_getcomment(od->sess->ssi.local, g->name, buddy->name);
 	comment_utf8 = comment ? gaim_utf8_try_convert(comment) : NULL;
 
 	data->gc = gc;
-	data->name = g_strdup(name);
+	data->name = g_strdup(buddy->name);
 	data->nick = NULL;
 
 	gaim_request_input(gc, NULL, _("Buddy Comment:"), NULL,
@@ -6653,73 +6695,73 @@ static void oscar_buddycb_edit_comment(GaimConnection *gc, const char *name) {
 	g_free(comment_utf8);
 }
 
-static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
-	OscarData *od = gc->proto_data;
-	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
+static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Edit Buddy Comment");
-	pbm->callback = oscar_buddycb_edit_comment;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
+	GaimConnection *gc = gaim_account_get_connection(buddy->account);
+	OscarData *od = gc->proto_data;
+
+	GList *m = NULL;
+	GaimBlistNodeAction *act;
+
+	act = gaim_blist_node_action_new(_("Edit Buddy Comment"),
+			oscar_buddycb_edit_comment, NULL);
+	m = g_list_append(m, act);
 
 	if (od->icq) {
 #if 0
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Get Status Msg");
-		pbm->callback = oscar_get_icqstatusmsg;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
+		act = gaim_blist_node_action_new(_("Get Status Msg"),
+				oscar_get_icqstatusmsg, NULL);
+		m = g_list_append(m, act);
 #endif
 	} else {
-		GaimBuddy *b = gaim_find_buddy(gc->account, who);
 		aim_userinfo_t *userinfo;
+		userinfo = aim_locate_finduserinfo(od->sess, buddy->name);
 
-		if (b)
-			userinfo = aim_locate_finduserinfo(od->sess, b->name);
+		if (userinfo && aim_sncmp(gaim_account_get_username(buddy->account), buddy->name) &&
+				GAIM_BUDDY_IS_ONLINE(buddy)) {
 
-		if (b && userinfo && aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), who) && GAIM_BUDDY_IS_ONLINE(b)) {
 			if (userinfo->capabilities & AIM_CAPS_DIRECTIM) {
-				pbm = g_new0(struct proto_buddy_menu, 1);
-				pbm->label = _("Direct IM");
-				pbm->callback = oscar_ask_direct_im;
-				pbm->gc = gc;
-				m = g_list_append(m, pbm);
+				act = gaim_blist_node_action_new(_("Direct IM"),
+						oscar_ask_direct_im, NULL);
+				m = g_list_append(m, act);
 			}
 
 			if (userinfo->capabilities & AIM_CAPS_SENDFILE) {
-				pbm = g_new0(struct proto_buddy_menu, 1);
-				pbm->label = _("Send File");
-				pbm->callback = oscar_ask_sendfile;
-				pbm->gc = gc;
-				m = g_list_append(m, pbm);
+				act = gaim_blist_node_action_new(_("Send File"),
+						oscar_ask_sendfile, NULL);
+				m = g_list_append(m, act);
 			}
 #if 0
 			if (userinfo->capabilities & AIM_CAPS_GETFILE) {
-				pbm = g_new0(struct proto_buddy_menu, 1);
-				pbm->label = _("Get File");
-				pbm->callback = oscar_ask_getfile;
-				pbm->gc = gc;
-				m = g_list_append(m, pbm);
+				act = gaim_blist_node_action_new(_("Get File"),
+						oscar_ask_getfile, NULL);
+				m = g_list_append(m, act);
 			}
 #endif
 		}
 	}
 
 	if (od->sess->ssi.received_data) {
-		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, who);
-		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, who)) {
-			pbm = g_new0(struct proto_buddy_menu, 1);
-			pbm->label = _("Re-request Authorization");
-			pbm->callback = gaim_auth_sendrequest;
-			pbm->gc = gc;
-			m = g_list_append(m, pbm);
+		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, buddy->name);
+		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, buddy->name)) {
+			act = gaim_blist_node_action_new(_("Re-request Authorization"),
+					gaim_auth_sendrequest_menu, NULL);
+			m = g_list_append(m, act);
 		}
 	}
 	
 	return m;
 }
+
+
+static GList *oscar_blist_node_menu(GaimBlistNode *node) {
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		return oscar_buddy_menu((GaimBuddy *) node);
+	} else {
+		return NULL;
+	}
+}
+
 
 static void oscar_format_screenname(GaimConnection *gc, const char *nick) {
 	OscarData *od = gc->proto_data;
@@ -7072,7 +7114,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_status_text,
 	oscar_tooltip_text,
 	oscar_away_states,
-	oscar_buddy_menu,
+	oscar_blist_node_menu,
 	oscar_chat_info,
 	oscar_login,
 	oscar_close,
@@ -7116,7 +7158,6 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_convo_closed,
 	NULL,
 	oscar_set_icon,
-	NULL,
 	NULL,
 	NULL,
 	NULL,

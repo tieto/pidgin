@@ -880,6 +880,20 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *msg,
 }
 
 
+GList *silcgaim_blist_node_menu(GaimBlistNode *node) {
+	/* split this single menu building function back into the two
+	   original: one for buddies and one for chats */
+
+	if(GAIM_BLIST_NODE_IS_CHAT(node)) {
+		return silcgaim_chat_menu((GaimChar *) node);
+	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		return silcgaim_buddy_menu((GaimBuddy *) node);
+	} else {
+		return_val_if_reached(NULL);
+	}	
+}
+
+
 /************************** Plugin Initialization ****************************/
 
 static GaimPluginPrefFrame *
@@ -949,7 +963,7 @@ static GaimPluginProtocolInfo prpl_info =
 	silcgaim_status_text,
 	silcgaim_tooltip_text,
 	silcgaim_away_states,
-	silcgaim_buddy_menu,
+	silcgaim_blist_node_menu,
 	silcgaim_chat_info,
 	silcgaim_login,
 	silcgaim_close,
@@ -993,8 +1007,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	silcgaim_roomlist_get_list,
 	silcgaim_roomlist_cancel,
-	NULL,
-	silcgaim_chat_menu
+	NULL
 };
 
 static GaimPluginInfo info =

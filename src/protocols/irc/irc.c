@@ -25,15 +25,16 @@
 
 #include "internal.h"
 
-#include "plugin.h"
 #include "accountopt.h"
-#include "multi.h"
-#include "prpl.h"
-#include "conversation.h"
-#include "notify.h"
-#include "debug.h"
 #include "blist.h"
+#include "conversation.h"
+#include "debug.h"
+#include "multi.h"
+#include "notify.h"
+#include "prpl.h"
+#include "plugin.h"
 #include "util.h"
+
 #include "irc.h"
 
 static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
@@ -143,16 +144,31 @@ static GList *irc_actions(GaimPlugin *plugin, gpointer context)
 	return list;
 }
 
-static GList *irc_buddy_menu(GaimConnection *gc, const char *who)
+
+static void irc_dccsend_send_ask_menu(GaimBlistNode *node, gpointer data)
+{
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc =gaim_account_get_connection(buddy->account);
+
+	irc_dccsend_send_ask(gc, buddy->name);
+}
+
+
+static GList *irc_blist_node_menu(GaimBlistNode *node)
 {
 	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-	
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Send File");
-	pbm->callback = irc_dccsend_send_ask;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
+	GaimBlistNodeAction *act;
+
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		act = gaim_blist_node_action_new(_("Send File"),
+				irc_dccsend_send_ask_menu, NULL);
+		m = g_list_append(m, act);
+	}
 	
 	return m;
 }
@@ -545,7 +561,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	irc_away_states,
-	irc_buddy_menu,
+	irc_blist_node_menu,
 	irc_chat_join_info,
 	irc_login,
 	irc_close,
@@ -589,7 +605,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	irc_roomlist_get_list,
 	irc_roomlist_cancel,
-	NULL,
 	NULL
 };
 

@@ -18,6 +18,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
+#include "blist.h"
+
 #include "internal.h"
 #include "debug.h"
 #include "ft.h"
@@ -641,16 +644,25 @@ static void jabber_si_xfer_init(GaimXfer *xfer)
 	}
 }
 
-void jabber_si_xfer_ask_send(GaimConnection *gc, const char *name)
+void jabber_si_xfer_ask_send(GaimBlistNode *node, gpointer data)
 {
-	JabberStream *js = gc->proto_data;
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	JabberStream *js;
+
 	GaimXfer *xfer;
 	JabberSIXfer *jsx;
 
-	if(!gaim_find_buddy(gc->account, name) || !jabber_buddy_find(js, name, FALSE))
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	js = gc->proto_data;
+
+	if(!gaim_find_buddy(gc->account, buddy->name) || !jabber_buddy_find(js, buddy->name, FALSE))
 		return;
 
-	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, name);
+	xfer = gaim_xfer_new(buddy->account, GAIM_XFER_SEND, buddy->name);
 
 	xfer->data = jsx = g_new0(JabberSIXfer, 1);
 	jsx->js = js;

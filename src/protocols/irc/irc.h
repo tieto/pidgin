@@ -25,7 +25,6 @@
 
 #include <glib.h>
 
-#include "multi.h"
 #include "roomlist.h"
 
 #define IRC_DEFAULT_SERVER "irc.freenode.net"

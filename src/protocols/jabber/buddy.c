@@ -835,93 +835,145 @@ static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 	xmlnode_free(presence);
 }
 
-static void jabber_buddy_make_invisible(GaimConnection *gc, const char *name)
+static void jabber_buddy_make_invisible(GaimBlistNode *node, gpointer data)
 {
-	JabberStream *js = gc->proto_data;
-	jabber_buddy_set_invisibility(js, name, TRUE);
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	JabberStream *js;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	js = gc->proto_data;
+
+	jabber_buddy_set_invisibility(js, buddy->name, TRUE);
 }
 
-static void jabber_buddy_make_visible(GaimConnection *gc, const char *name)
+static void jabber_buddy_make_visible(GaimBlistNode *node, gpointer data)
 {
-	JabberStream *js = gc->proto_data;
-	jabber_buddy_set_invisibility(js, name, FALSE);
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	JabberStream *js;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	js = gc->proto_data;
+
+	jabber_buddy_set_invisibility(js, buddy->name, FALSE);
 }
 
-static void jabber_buddy_cancel_presence_notification(GaimConnection *gc,
-		const char *name)
+static void jabber_buddy_cancel_presence_notification(GaimBlistNode *node,
+		gpointer data)
 {
-	JabberStream *js = gc->proto_data;
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	JabberStream *js;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	js = gc->proto_data;
 
 	/* I wonder if we should prompt the user before doing this */
-	jabber_presence_subscription_set(js, name, "unsubscribed");
+	jabber_presence_subscription_set(js, buddy->name, "unsubscribed");
 }
 
-static void jabber_buddy_rerequest_auth(GaimConnection *gc, const char *name)
+static void jabber_buddy_rerequest_auth(GaimBlistNode *node, gpointer data)
 {
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	JabberStream *js;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	js = gc->proto_data;
+
+	jabber_presence_subscription_set(js, buddy->name, "subscribe");
+}
+
+
+static void jabber_buddy_unsubscribe(GaimBlistNode *node, gpointer data)
+{
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	JabberStream *js;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	js = gc->proto_data;
+
+	jabber_presence_subscription_set(js, buddy->name, "unsubscribe");
+}
+
+
+GList *jabber_buddy_menu(GaimBuddy *buddy)
+{
+	GaimConnection *gc = gaim_account_get_connection(buddy->account);
 	JabberStream *js = gc->proto_data;
+	JabberBuddy *jb = jabber_buddy_find(js, buddy->name, TRUE);
 
-	jabber_presence_subscription_set(js, name, "subscribe");
-}
-
-static void jabber_buddy_unsubscribe(GaimConnection *gc, const char *name)
-{
-	JabberStream *js = gc->proto_data;
-
-	jabber_presence_subscription_set(js, name, "unsubscribe");
-}
-
-GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
-{
 	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-	JabberStream *js = gc->proto_data;
-	JabberBuddy *jb = jabber_buddy_find(js, name, TRUE);
+	GaimBlistNodeAction *act;
 
 	if(!jb)
 		return m;
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Send File");
-	pbm->callback = jabber_si_xfer_ask_send;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
+	act = gaim_blist_node_action_new(_("Send File"),
+			jabber_si_xfer_ask_send, NULL);
+	m = g_list_append(m, act);
 
 	/* XXX: fix the NOT ME below */
 
 	if(js->protocol_version == JABBER_PROTO_0_9 /* && NOT ME */) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
 		if(jb->invisible & JABBER_INVIS_BUDDY) {
-			pbm->label = _("Un-hide From");
-			pbm->callback = jabber_buddy_make_visible;
+			act = gaim_blist_node_action_new(_("Un-hide From"),
+					jabber_buddy_make_visible, NULL);
 		} else {
-			pbm->label = _("Temporarily Hide From");
-			pbm->callback = jabber_buddy_make_invisible;
+			act = gaim_blist_node_action_new(_("Temporarily Hide From"),
+					jabber_buddy_make_invisible, NULL);
 		}
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
+		m = g_list_append(m, act);
 	}
 
 	if(jb->subscription & JABBER_SUB_FROM /* && NOT ME */) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Cancel Presence Notification");
-		pbm->callback = jabber_buddy_cancel_presence_notification;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
+		act = gaim_blist_node_action_new(_("Cancel Presence Notification"),
+				jabber_buddy_cancel_presence_notification, NULL);
+		m = g_list_append(m, act);
 	}
 
 	if(!(jb->subscription & JABBER_SUB_TO)) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("(Re-)Request authorization");
-		pbm->callback = jabber_buddy_rerequest_auth;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
+		act = gaim_blist_node_action_new(_("(Re-)Request authorization"),
+				jabber_buddy_rerequest_auth, NULL);
+		m = g_list_append(m, act);
+
 	} else /* if(NOT ME) */{
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Unsubscribe");
-		pbm->callback = jabber_buddy_unsubscribe;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
+
+		/* shouldn't this just happen automatically when the buddy is
+		   removed? */
+		act = gaim_blist_node_action_new(_("Unsubscribe"),
+				jabber_buddy_unsubscribe, NULL);
+		m = g_list_append(m, act);
 	}
 
 	return m;
 }
+
+GList *
+jabber_blist_node_menu(GaimBlistNode *node)
+{
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		return jabber_buddy_menu((GaimBuddy *) node);
+	} else {
+		return NULL;
+	}
+}
+
+

@@ -1144,30 +1144,14 @@ static const char *local_zephyr_normalize(const char *orig)
 	return buf;
 }
 
-static void zephyr_zloc(GaimConnection * gc, const char *who)
+static void zephyr_zloc(GaimConnection *gc, const char *who)
 {
 	ZAsyncLocateData_t ald;
 
-	if (ZRequestLocations(local_zephyr_normalize(who), &ald, UNACKED, ZAUTH)
-		!= ZERR_NONE) {
-		return;
+	if (ZRequestLocations(local_zephyr_normalize(who), &ald, UNACKED, ZAUTH) == ZERR_NONE) {
+		pending_zloc_names = g_list_append(pending_zloc_names,
+				g_strdup(local_zephyr_normalize(who)));
 	}
-	pending_zloc_names = g_list_append(pending_zloc_names, g_strdup(local_zephyr_normalize(who)));
-}
-
-static GList *zephyr_buddy_menu(GaimConnection * gc, const char *who)
-{
-	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-
-	pbm->label = _("ZLocate");
-	pbm->callback = zephyr_zloc;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
-	return m;
 }
 
 static void zephyr_set_away(GaimConnection * gc, const char *state, const char *msg)
@@ -1307,7 +1291,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,
 	NULL,
 	zephyr_away_states,
-	zephyr_buddy_menu,
+	NULL,
 	zephyr_chat_info,
 	zephyr_login,
 	zephyr_close,
@@ -1348,7 +1332,6 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,
 	NULL,
 	zephyr_chat_set_topic,
-	NULL,
 	NULL,
 	NULL,
 	NULL,

@@ -25,7 +25,6 @@
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
-#include "multi.h"
 #include "notify.h"
 #include "proxy.h"
 #include "request.h"
@@ -1119,10 +1118,19 @@ static void toc_get_info(GaimConnection *gc, const char *name)
 }
 
 /* Should be implemented as an Account Action? */
-static void toc_get_dir(GaimConnection *gc, const char *name)
+static void toc_get_dir(GaimBlistNode *node, gpointer data)
 {
+	GaimBuddy *buddy;
+	GaimConnection *gc;
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, MSG_LEN, "toc_get_dir %s", gaim_normalize(gc->account, name));
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_acount_get_connection(buddy->account);
+
+	g_snprintf(buf, MSG_LEN, "toc_get_dir %s",
+			gaim_normalize(buddy->account, buddy->name));
 	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
@@ -1400,16 +1408,16 @@ static void toc_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char
 	*ne = emblems[3];
 }
 
-static GList *toc_buddy_menu(GaimConnection *gc, const char *who)
+static GList *toc_blist_node_menu(GaimBlistNode *node)
 {
 	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
+	GaimBlistNodeAction *act;
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Dir Info");
-	pbm->callback = toc_get_dir;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		act = gaim_blist_node_action_new(_("Get Dir Info"),
+				toc_get_dir, NULL);
+		m = g_list_append(m, act);
+	}
 
 	return m;
 }
@@ -2103,7 +2111,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	toc_away_states,
-	toc_buddy_menu,
+	toc_blist_node_menu,
 	toc_chat_info,
 	toc_login,
 	toc_close,
@@ -2131,7 +2139,6 @@ static GaimPluginProtocolInfo prpl_info =
 	toc_chat_whisper,
 	toc_chat_send,
 	toc_keepalive,
-	NULL,
 	NULL,
 	NULL,
 	NULL,

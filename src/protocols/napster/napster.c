@@ -21,6 +21,7 @@
 
 #include "account.h"
 #include "accountopt.h"
+#include "blist.h"
 #include "conversation.h"
 #include "debug.h"
 #include "multi.h"
@@ -532,20 +533,6 @@ static void nap_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char
 		*se = "offline";
 }
 
-static GList *nap_buddy_menu(GaimConnection *gc, const char *who)
-{
-	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Info");
-	pbm->callback = nap_get_info;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
-	return m;
-}
-
 static GList *nap_chat_info(GaimConnection *gc)
 {
 	GList *m = NULL;
@@ -572,7 +559,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	nap_buddy_menu,
+	NULL,
 	nap_chat_info,
 	nap_login,
 	nap_close,
@@ -599,7 +586,6 @@ static GaimPluginProtocolInfo prpl_info =
 	nap_chat_leave,
 	NULL,
 	nap_chat_send,
-	NULL,
 	NULL,
 	NULL,
 	NULL,

@@ -2720,25 +2720,28 @@ const char *gaim_buddy_get_setting(GaimBuddy *b, const char *key)
 /* XXX: end compat crap */
 
 
-GList *gaim_buddy_get_extended_menu(GaimBuddy *b) {
+GList *gaim_blist_node_get_extended_menu(GaimBlistNode *n) {
 	GList *menu = NULL;
-	gaim_signal_emit(gaim_blist_get_handle(), "buddy-extended-menu",
-		b, &menu);
+
+	g_return_val_if_fail(n, NULL);
+
+	gaim_signal_emit(gaim_blist_get_handle(),
+			"blist-node-extended-menu",
+			n, &menu);
 	return menu;
 }
 
-GList *gaim_chat_get_extended_menu(GaimChat *c) {
-	GList *menu = NULL;
-	gaim_signal_emit(gaim_blist_get_handle(), "chat-extended-menu",
-		c, &menu);
-	return menu;
-}
 
-GList *gaim_group_get_extended_menu(GaimGroup *g) {
-	GList *menu = NULL;
-	gaim_signal_emit(gaim_blist_get_handle(), "group-extended-menu",
-		g, &menu);
-	return menu;
+GaimBlistNodeAction *
+gaim_blist_node_action_new(char *label,
+			   void (*callback)(GaimBlistNode *, gpointer),
+			   gpointer data)
+{
+	GaimBlistNodeAction *act = g_new0(GaimBlistNodeAction, 1);
+	act->label = label;
+	act->callback = callback;
+	act->data = data;
+	return act;
 }
 
 
@@ -2812,20 +2815,11 @@ gaim_blist_init(void)
 										GAIM_SUBTYPE_BLIST_BUDDY));
 
 	gaim_signal_register(handle, "update-idle", gaim_marshal_VOID, NULL, 0);
-	gaim_signal_register(handle, "buddy-extended-menu",
+
+	gaim_signal_register(handle, "blist-node-extended-menu",
 			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
 			     gaim_value_new(GAIM_TYPE_SUBTYPE,
-					    GAIM_SUBTYPE_BLIST_BUDDY),
-			     gaim_value_new(GAIM_TYPE_BOXED, "GList **"));
-	gaim_signal_register(handle, "chat-extended-menu",
-			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     gaim_value_new(GAIM_TYPE_SUBTYPE,
-					    GAIM_SUBTYPE_BLIST_CHAT),
-			     gaim_value_new(GAIM_TYPE_BOXED, "GList **"));
-	gaim_signal_register(handle, "group-extended-menu",
-			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     gaim_value_new(GAIM_TYPE_SUBTYPE,
-					    GAIM_SUBTYPE_BLIST_GROUP),
+					    GAIM_SUBTYPE_BLIST_NODE),
 			     gaim_value_new(GAIM_TYPE_BOXED, "GList **"));
 }
 
@@ -2834,3 +2828,4 @@ gaim_blist_uninit(void)
 {
 	gaim_signals_unregister_by_instance(gaim_blist_get_handle());
 }
+

@@ -34,7 +34,6 @@
 
 /* XXX */
 #include "gaim.h"
-#include "multi.h"
 
 #ifndef _WIN32
 # include <sys/socket.h>
@@ -444,37 +443,38 @@ trepia_actions(GaimPlugin *plugin, gpointer context)
 }
 
 static void
-trepia_visit_homepage(GaimConnection *gc, const char *who)
+trepia_visit_homepage(GaimBlistNode *node, gpointer data)
 {
+	GaimBuddy *buddy;
+	GaimConnection *gc;
 	TrepiaProfile *profile;
-	GaimBuddy *b;
 	const char *value;
 
-	b = gaim_find_buddy(gaim_connection_get_account(gc), who);
-	profile = b->proto_data;
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
-	if ((value = trepia_profile_get_homepage(profile)) != NULL)
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+	profile = b->proto_data;
+	value = trepia_profile_get_homepage(profile);
+
+	if (value != NULL)
 		gaim_notify_uri(gc, value);
 }
 
 static GList *
-trepia_buddy_menu(GaimConnection *gc, const char *who)
+trepia_blist_node_menu(GaimBlistNode *node)
 {
-	TrepiaProfile *profile;
-	GaimBuddy *b;
-	const char *value = NULL;
 	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
+	GaimBlistNodeACtion *act;
 
-	b = gaim_find_buddy(gaim_connection_get_account(gc), who);
-	profile = b->proto_data;
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		TrepiaProfile *profile = buddy->proto_data;
 
-	if ((value = trepia_profile_get_homepage(profile)) != NULL) {
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Visit Homepage");
-		pbm->callback = trepia_visit_homepage;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
+		if (trepia_profile_get_homepage(profile) != NULL) {
+			act = gaim_blist_node_action_new(_("Visit Homepage"),
+					trepia_visit_homepage, NULL);
+			m = g_list_append(m, act);
+		}
 	}
 
 	return m;
@@ -1214,7 +1214,7 @@ static GaimPluginProtocolInfo prpl_info =
 	trepia_status_text,
 	trepia_tooltip_text,
 	NULL,
-	trepia_buddy_menu,
+	trepia_blist_node_menu,
 	NULL,
 	trepia_login,
 	trepia_close,

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9791 2004-05-22 17:33:38Z lschiere $
+ * $Id: gg.c 9806 2004-05-23 17:27:45Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -26,8 +26,8 @@
 
 #include "account.h"
 #include "accountopt.h"
+#include "blist.h"
 #include "debug.h"
-#include "multi.h"
 #include "notify.h"
 #include "proxy.h"
 #include "prpl.h"
@@ -244,26 +244,34 @@ static GList *agg_away_states(GaimConnection *gc)
 }
 
 /* Enhance these functions, more options and such stuff */
-static GList *agg_buddy_menu(GaimConnection *gc, const char *who)
+static GList *agg_buddy_menu(GaimBuddy *buddy)
 {
 	GList *m = NULL;
-	struct proto_buddy_menu *pbm;
-	GaimBuddy *b = gaim_find_buddy(gc->account, who);
+	GaimBlistNodeAction *act;
+
 	static char buf[AGG_BUF_LEN];
+	g_snprintf(buf, sizeof(buf), _("Status: %s"), get_away_text(buddy->uc));
 
-	if (!b) {
-		return m;
-	}
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	g_snprintf(buf, sizeof(buf), _("Status: %s"), get_away_text(b->uc));
-	pbm->label = buf;
-	pbm->callback = NULL;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
+	/* um... this seems silly. since in this pass, I'm only converting
+	   over the menu building, I'm not going to mess with it though */
+	/* XXX: shouldn't this be in the tooltip instead? */
+	act = gaim_blist_node_action_new(buf, NULL, NULL);
+	m = g_list_append(m, act);
 
 	return m;
 }
+
+
+static GList *
+agg_blist_node_menu(GaimBlistNode *node)
+{
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		return agg_buddy_menu((GaimBuddy *) node);
+	} else {
+		return NULL;
+	}
+}
+
 
 static void agg_load_buddy_list(GaimConnection *gc, char *buddylist)
 {
@@ -1530,7 +1538,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	agg_away_states,
-	agg_buddy_menu,
+	agg_blist_node_menu,
 	NULL,
 	agg_login,
 	agg_close,
@@ -1575,7 +1583,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL
 };
 
 static GaimPluginInfo info =
@@ -1587,7 +1594,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
 
-	"prpl-gg",		                                  /**< id             */
+	"prpl-gg",		                          /**< id             */
 	"Gadu-Gadu",                                      /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
@@ -1613,9 +1620,9 @@ init_plugin(GaimPlugin *plugin)
 	GaimAccountOption *option;
 
 	option = gaim_account_option_string_new(_("Nick"), "nick",
-											"Gadu-Gadu User");
+			"Gadu-Gadu User");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
+			option);
 
 	my_protocol = plugin;
 }
