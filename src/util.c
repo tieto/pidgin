@@ -1652,36 +1652,33 @@ gaim_markup_linkify(const char *text)
 
 char *
 gaim_escape_html(const char *html) {
-	char *escaped = NULL;
+	const char *c = html;
+	GString *ret = g_string_new("");
 
-	if (html != NULL) {
-		const char *c = html;
-		GString *ret = g_string_new("");
-		while (*c) {
-			switch(*c) {
-				case '&':
-					ret = g_string_append(ret, "&amp;");
-					break;
-				case '<':
-					ret = g_string_append(ret, "&lt;");
-					break;
-				case '>':
-					ret = g_string_append(ret, "&gt;");
-					break;
-				case '"':
-					ret = g_string_append(ret, "&quot;");
-					break;
-				default:
-					ret = g_string_append_c(ret, *c);
-			}
-			c++;
+	if (html == NULL)
+		return NULL;
+
+	while (*c) {
+		switch (*c) {
+			case '&':
+				ret = g_string_append(ret, "&amp;");
+				break;
+			case '<':
+				ret = g_string_append(ret, "&lt;");
+				break;
+			case '>':
+				ret = g_string_append(ret, "&gt;");
+				break;
+			case '"':
+				ret = g_string_append(ret, "&quot;");
+				break;
+			default:
+				ret = g_string_append_c(ret, *c);
 		}
-
-		escaped = ret->str;
-		g_string_free(ret, FALSE);
+		c++;
 	}
 
-	return escaped;
+	return g_string_free(ret, FALSE);
 }
 
 char *

@@ -407,20 +407,18 @@ gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 static gint
 uri_command(const char *command, gboolean sync)
 {
+	gchar *escaped, *tmp;
 	GError *error = NULL;
 	gint ret = 0;
 
-	gaim_debug_misc("gtknotify", "Executing %s\n", command);
+	escaped = gaim_escape_html(command);
+	gaim_debug_misc("gtknotify", "Executing %s\n", escaped);
 
 	if (!gaim_program_is_valid(command))
 	{
-		gchar *tmp;
-
-		tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."),
-							  command ? command : "(none)");
-
+		tmp = g_strdup_printf(_("The browser command <b>%s</b> is invalid."),
+							  escaped ? escaped : "(none)");
 		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
-
 		g_free(tmp);
 
 	}
@@ -430,11 +428,9 @@ uri_command(const char *command, gboolean sync)
 
 		if (!g_spawn_command_line_sync(command, NULL, NULL, &status, &error))
 		{
-			char *tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
-										command, error->message);
-
+			tmp = g_strdup_printf(_("Error launching <b>%s</b>: %s"),
+										escaped, error->message);
 			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
-
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -445,15 +441,15 @@ uri_command(const char *command, gboolean sync)
 	{
 		if (!g_spawn_command_line_async(command, &error))
 		{
-			char *tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
-										command, error->message);
-
+			tmp = g_strdup_printf(_("Error launching <b>%s</b>: %s"),
+										escaped, error->message);
 			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
-
 			g_free(tmp);
 			g_error_free(error);
 		}
 	}
+
+	g_free(escaped);
 
 	return ret;
 }
@@ -515,15 +511,15 @@ gaim_gtk_notify_uri(const char *uri)
 
 		if (place == GAIM_BROWSER_NEW_WINDOW)
 			remote_command = g_strdup_printf("%s %s -remote "
-											 "\"openURL(\"%s\",new-window)\"",
+											 "\"openURL(%s,new-window)\"",
 											 web_browser, args, uri);
 		else if (place == GAIM_BROWSER_NEW_TAB)
 			remote_command = g_strdup_printf("%s %s -remote "
-											 "\"openURL(\"%s\",new-tab)\"",
+											 "\"openURL(%s,new-tab)\"",
 											 web_browser, args, uri);
 		else if (place == GAIM_BROWSER_CURRENT)
 			remote_command = g_strdup_printf("%s %s -remote "
-											 "\"openURL(\"%s\")\"",
+											 "\"openURL(%s)\"",
 											 web_browser, args, uri);
 	}
 	else if (!strcmp(web_browser, "netscape"))
@@ -533,13 +529,13 @@ gaim_gtk_notify_uri(const char *uri)
 		if (place == GAIM_BROWSER_NEW_WINDOW)
 		{
 			remote_command = g_strdup_printf("netscape -remote "
-											 "\"openURL(\"%s\",new-window)\"",
+											 "\"openURL(%s,new-window)\"",
 											 uri);
 		}
 		else if (place == GAIM_BROWSER_CURRENT)
 		{
 			remote_command = g_strdup_printf("netscape -remote "
-											 "\"openURL(\"%s\")\"", uri);
+											 "\"openURL(%s)\"", uri);
 		}
 	}
 	else if (!strcmp(web_browser, "opera"))
@@ -551,7 +547,7 @@ gaim_gtk_notify_uri(const char *uri)
 		else if (place == GAIM_BROWSER_CURRENT)
 		{
 			remote_command = g_strdup_printf("opera -remote "
-											 "\"openURL(\"%s\")\"", uri);
+											 "\"openURL(%s)\"", uri);
 			command = g_strdup_printf("opera \"%s\"", uri);
 		}
 		else

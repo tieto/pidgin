@@ -21,6 +21,7 @@ version 0.82:
 	* Better file transfer cancel messages for AIM (Dave West)
 	* Buddy list tooltips display in more appropriate positions when
 	  using multiple monitors (Dave West)
+	* Better parsing of URLs containing special characters
 
 version 0.81 (08/05/2004):
 	New Features:
