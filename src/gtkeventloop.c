@@ -97,7 +97,7 @@ static GaimEventLoopUiOps eventloop_ops =
 	g_timeout_add,
 	(guint (*)(guint))g_source_remove,
 	gaim_gtk_input_add,
-	(void (*)(guint))g_source_remove
+	(guint (*)(guint))g_source_remove
 };
 
 GaimEventLoopUiOps *

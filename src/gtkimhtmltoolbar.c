@@ -1033,7 +1033,7 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set", G_CALLBACK(mark_set_cb), toolbar);
 
 	buttons = gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml));
-	update_buttons_cb(imhtml, buttons, toolbar);
+	update_buttons_cb(GTK_IMHTML(imhtml), buttons, toolbar);
 
 	bold = italic = underline = FALSE;
 

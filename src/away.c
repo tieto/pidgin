@@ -29,6 +29,7 @@
 #include "prpl.h"
 #include "status.h"
 #include "util.h"
+#include "request.h"
 
 /* XXX CORE/UI: Until we can get rid of the message queue stuff... */
 #include "gaim.h"
@@ -284,11 +285,25 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	serv_set_away_all(awaymessage->message);
 }
 
-void rem_away_mess(GtkWidget *w, struct away_message *a)
+void do_rem_away_mess(gchar *name)
 {
+	struct away_message *a;
 	struct away_message *default_away = NULL;
 	const char *default_away_name;
 	GSList *l;
+
+	/* Lookup the away message based on the title */
+	for (l = away_messages; l != NULL; l = l->next) {
+		a = l->data;
+		if (!strcmp(a->name, name))
+			break;
+	}
+	g_free(name);
+
+	if (l == NULL) {
+		/* Could not find away message! */
+		return;
+	}
 
 	default_away_name = gaim_prefs_get_string("/core/away/default_message");
 
@@ -306,6 +321,19 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
 	g_free(a);
 	do_away_menu();
 	gaim_status_sync();
+}
+
+void rem_away_mess(GtkWidget *w, struct away_message *a)
+{
+	gchar *text;
+
+	text = g_strdup_printf(_("Are you sure you want to remove the away message \"%s\"?"), a->name);
+
+	gaim_request_action(NULL, NULL, _("Remove Away Message"), text, -1, g_strdup(a->name), 2,
+						_("Remove"), G_CALLBACK(do_rem_away_mess),
+						_("Cancel"), G_CALLBACK(g_free));
+
+	g_free(text);
 }
 
 static void set_gc_away(GObject *obj, GaimConnection *gc)
