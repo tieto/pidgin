@@ -75,11 +75,13 @@ gaim_chat_get_id(chat)
 	Gaim::Conversation::Chat chat
 
 void
-gaim_chat_write(chat, who, message, flags)
+write(chat, who, message, flags)
 	Gaim::Conversation::Chat chat
 	const char *who
 	const char *message
 	int flags
+CODE:
+	gaim_chat_write(chat, who, message, flag, time(NULL);
 
 void
 gaim_chat_send(chat, message)
