@@ -3,6 +3,7 @@ EXTRA_DIST = AUTHORS
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
+LIBS = @LIBS@ -lcrypt
 libyahoo_la_LDFLAGS = -avoid-version
 
 if STATIC_YAHOO
