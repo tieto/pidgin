@@ -128,6 +128,7 @@ __process_single_line(MsnServConn *servconn, char *str)
 			g_free(servconn->msg_friendly);
 
 			msn_message_destroy(msg);
+			entry->msg = NULL;
 		}
 	}
 
@@ -213,10 +214,10 @@ msn_servconn_disconnect(MsnServConn *servconn)
 	g_return_if_fail(servconn != NULL);
 	g_return_if_fail(servconn->connected);
 
-	close(servconn->fd);
-
 	if (servconn->inpa)
 		gaim_input_remove(servconn->inpa);
+
+	close(servconn->fd);
 
 	g_free(servconn->rxqueue);
 
