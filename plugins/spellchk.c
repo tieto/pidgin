@@ -212,7 +212,7 @@ int get_word(char *m, int word) {
 }
 
 char *have_word(char *m, int pos) {
-	char *tmp = strpbrk(&m[pos], "' \t\f\r\n.?!-,");
+	char *tmp = strpbrk(&m[pos], "' \t\f\r\n\".?!-,");
 	int len = (int)(tmp - &m[pos]);
 
 	if (tmp == NULL) {
