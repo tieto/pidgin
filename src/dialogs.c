@@ -1603,16 +1603,17 @@ void show_set_info()
 
 	gtk_widget_show(bot);
 
-
 	info_user_menu(b, top);
 
 	b->text = gtk_text_new(NULL, NULL);
 	gtk_text_set_word_wrap(GTK_TEXT(b->text), TRUE);
 	gtk_text_set_editable(GTK_TEXT(b->text), TRUE);
 	gtk_widget_set_usize(b->text, 350, 100);
-	if (aim_users)
+	if (aim_users) {
 		gtk_text_insert(GTK_TEXT(b->text), NULL, NULL, NULL,
 				((struct aim_user *)aim_users->data)->user_info, -1);
+		b->user = (struct aim_user *)aim_users->data;
+	}
 
 	gtk_widget_show(b->text);
 
