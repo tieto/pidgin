@@ -1088,6 +1088,8 @@ static char *msn_get_away_text(int s)
 			return "On the phone";
 		case MSN_LUNCH :
 			return "Out to lunch";
+		case MSN_IDLE :
+			return "Idle";
 		default:
 			return NULL;
 	}
