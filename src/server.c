@@ -469,7 +469,7 @@ void serv_set_permit_deny()
 			/* if deny is empty this is the same as PERMIT_ALL */
 			if (deny) {
 				at = 0;
-				list = permit;
+				list = deny;
 				while (list) {
 					at += g_snprintf(&buf[at], sizeof(buf) - at, "%s", list->data);
 					list = list->next;
