@@ -49,7 +49,6 @@ static GaimConnection *importgc;
 static GtkWidget *icondlg;
 static GtkWidget *alias_dialog = NULL;
 static GtkWidget *rename_dialog = NULL;
-static GtkWidget *rename_bud_dialog = NULL;
 static GtkWidget *fontseld = NULL;
 
 
@@ -289,8 +288,6 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 		icondlg = NULL;
 	else if (dest == rename_dialog)
 		rename_dialog = NULL;
-	else if (dest == rename_bud_dialog)
-		rename_bud_dialog = NULL;
 
 	dialogwindows = g_list_remove(dialogwindows, dest);
 	gtk_widget_destroy(dest);
@@ -4327,98 +4324,6 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 	gtk_widget_show_all(rename_dialog);
 	if(name_entry)
 		gtk_widget_grab_focus(GTK_WIDGET(name_entry));
-}
-
-
-/*------------------------------------------------------------------------*/
-/*  The dialog for renaming buddies                                       */
-/*------------------------------------------------------------------------*/
-
-static void do_rename_buddy(GObject *obj, GtkWidget *entry)
-{
-	const char *new_name;
-	struct buddy *b;
-
-	new_name = gtk_entry_get_text(GTK_ENTRY(entry));
-	b = g_object_get_data(obj, "buddy");
-
-	if (!g_list_find(gaim_connections_get_all(), b->account->gc)) {
-		destroy_dialog(rename_bud_dialog, rename_bud_dialog);
-		return;
-	}
-
-	if (new_name && (strlen(new_name) != 0) && strcmp(new_name, b->name)) {
-		struct group *g = gaim_find_buddys_group(b);
-		char *prevname = b->name;
-		if (g)
-			serv_remove_buddy(b->account->gc, b->name, g->name);
-		b->name = g_strdup(new_name);
-		serv_add_buddy(b->account->gc, b->name);
-		gaim_blist_rename_buddy(b, prevname);
-		gaim_blist_save();
-		g_free(prevname);
-	}
-
-	destroy_dialog(rename_bud_dialog, rename_bud_dialog);
-}
-
-void show_rename_buddy(GtkWidget *unused, struct buddy *b)
-{
-	GtkWidget *mainbox;
-	GtkWidget *frame;
-	GtkWidget *fbox;
-	GtkWidget *bbox;
-	GtkWidget *button;
-	GtkWidget *name_entry;
-	GtkWidget *label;
-
-	if (!rename_bud_dialog) {
-		GAIM_DIALOG(rename_bud_dialog);
-		gtk_window_set_role(GTK_WINDOW(rename_bud_dialog), "rename_bud_dialog");
-		gtk_window_set_resizable(GTK_WINDOW(rename_bud_dialog), TRUE);
-		gtk_window_set_title(GTK_WINDOW(rename_bud_dialog), _("Rename Buddy"));
-		g_signal_connect(G_OBJECT(rename_bud_dialog), "destroy",
-				   G_CALLBACK(destroy_dialog), rename_bud_dialog);
-		gtk_widget_realize(rename_bud_dialog);
-
-		mainbox = gtk_vbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
-		gtk_container_add(GTK_CONTAINER(rename_bud_dialog), mainbox);
-
-		frame = gtk_frame_new(_("Rename Buddy"));
-		gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
-
-		fbox = gtk_hbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-		gtk_container_add(GTK_CONTAINER(frame), fbox);
-
-		label = gtk_label_new(_("New name:"));
-		gtk_box_pack_start(GTK_BOX(fbox), label, FALSE, FALSE, 0);
-
-		name_entry = gtk_entry_new();
-		gtk_box_pack_start(GTK_BOX(fbox), name_entry, TRUE, TRUE, 0);
-		g_object_set_data(G_OBJECT(name_entry), "buddy", b);
-		gtk_entry_set_text(GTK_ENTRY(name_entry), b->name);
-		g_signal_connect(G_OBJECT(name_entry), "activate",
-				   G_CALLBACK(do_rename_buddy), name_entry);
-		gtk_widget_grab_focus(name_entry);
-
-		bbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
-
-		button = gaim_pixbuf_button_from_stock(_("OK"), GTK_STOCK_OK, GAIM_BUTTON_HORIZONTAL);
-		g_object_set_data(G_OBJECT(button), "buddy", b);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		g_signal_connect(G_OBJECT(button), "clicked",
-				   G_CALLBACK(do_rename_buddy), name_entry);
-
-		button = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
-		gtk_box_pack_end(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		g_signal_connect(G_OBJECT(button), "clicked",
-				   G_CALLBACK(destroy_dialog), rename_bud_dialog);
-	}
-
-	gtk_widget_show_all(rename_bud_dialog);
 }
 
 

@@ -265,6 +265,14 @@ void gaim_blist_rename_buddy(struct buddy *buddy, const char *name);
 void gaim_blist_alias_buddy(struct buddy *buddy, const char *alias);
 
 /**
+ * Sets the server-sent aliase of a buddy in the buddy list.
+ *
+ * @param buddy  The buddy whose alias will be changed.
+ * @param alias  The buddy's "official" alias.
+ */
+void gaim_blist_server_alias_buddy(struct buddy *buddy, const char *alias);
+
+/**
  * Aliases a chat in the buddy list.
  *
  * @param chat  The chat whose alias will be changed.

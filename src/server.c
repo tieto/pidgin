@@ -453,18 +453,11 @@ void serv_alias_buddy(struct buddy *b)
 
 void serv_got_alias(GaimConnection *gc, const char *who, const char *alias) {
 	struct buddy *b = gaim_find_buddy(gc->account, who);
+
 	if(!b)
 		return;
 
-	if (b->server_alias)
-		g_free(b->server_alias);
-
-	if (alias && g_utf8_validate(alias, -1, NULL))
-		b->server_alias = g_strdup(alias);
-	else
-		b->server_alias = NULL;
-
-	gaim_blist_update_buddy_status(b, b->uc);
+	gaim_blist_server_alias_buddy(b, alias);
 }
 
 /*

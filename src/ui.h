@@ -224,7 +224,6 @@ extern void show_font_dialog(GaimConversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, GaimConversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 extern void show_rename_group(GtkWidget *, struct group *);
-extern void show_rename_buddy(GtkWidget *, struct buddy *);
 extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonOrientation);
 extern GtkWidget *gaim_pixbuf_button_from_stock(const char *, const char *, GaimButtonOrientation);
 extern GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *);

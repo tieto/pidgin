@@ -274,6 +274,27 @@ void  gaim_blist_alias_buddy (struct buddy *buddy, const char *alias)
 		gaim_conversation_autoset_title(conv);
 }
 
+void  gaim_blist_server_alias_buddy (struct buddy *buddy, const char *alias)
+{
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	GaimConversation *conv;
+
+	g_free(buddy->server_alias);
+
+	if(alias && strlen(alias) && g_utf8_validate(alias, -1, NULL))
+		buddy->server_alias = g_strdup(alias);
+	else
+		buddy->server_alias = NULL;
+
+	if (ops)
+		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
+
+	conv = gaim_find_conversation_with_account(buddy->name, buddy->account);
+
+	if (conv)
+		gaim_conversation_autoset_title(conv);
+}
+
 void gaim_blist_rename_group(struct group *group, const char *name)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
