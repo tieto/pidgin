@@ -1016,7 +1016,8 @@ void translate_blt(FILE *src_fp, char *dest)
 				buddy = remove_spaces(line);
 				strcat(dest, "b ");
 				if (strchr(buddy, '\"') != NULL) {
-					strncat(dest, &buddy[1], strlen(buddy) - 3);
+					buddy++;
+					strncat(dest, buddy, strchr(buddy, '\"') - buddy);
 					strcat(dest, "\n");
 				} else
 					strcat(dest, buddy);

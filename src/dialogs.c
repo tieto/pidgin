@@ -2945,7 +2945,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
         fgets(first, 64, f);
 
 	/* AIM 4 buddy list */
-	if (!g_strcasecmp(first, "Config {\n")) {
+	if (!g_strncasecmp(first, "Config {", strlen("Config {"))) {
 		debug_printf("aim 4\n");
 		rewind(f);
 		translate_blt (f, buf);
