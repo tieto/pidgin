@@ -89,7 +89,7 @@ CODE:
 
 
 ###########################################################################
-MODULE = Gaim::GroupList::Group  PACKAGE = Gaim::GroupList::Group  PREFIX = gaim_group_
+MODULE = Gaim::BuddyList::Group  PACKAGE = Gaim::BuddyList::Group  PREFIX = gaim_group_
 PROTOTYPES: ENABLE
 ###########################################################################
 
