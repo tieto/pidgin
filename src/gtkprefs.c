@@ -2529,6 +2529,7 @@ void gaim_gtk_prefs_show(void)
 	GtkWidget *hbox;
 	GtkWidget *bbox;
 	GtkWidget *frame;
+	GtkWidget *scrolled_window;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *cell;
 	GtkTreeSelection *sel;
@@ -2570,10 +2571,16 @@ void gaim_gtk_prefs_show(void)
 	gtk_box_pack_start (GTK_BOX (hbox), frame, FALSE, FALSE, 0);
 	gtk_widget_show (frame);
 
+	scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+								   GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	gtk_container_add(GTK_CONTAINER(frame), scrolled_window);
+	gtk_widget_show(scrolled_window);
+								
 	/* The tree -- much inspired by the Gimp */
 	prefstree = gtk_tree_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_INT);
 	tree_v = gtk_tree_view_new_with_model (GTK_TREE_MODEL (prefstree));
-	gtk_container_add (GTK_CONTAINER (frame), tree_v);
+	gtk_container_add(GTK_CONTAINER(scrolled_window), tree_v);
 
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tree_v), FALSE);
 	gtk_widget_show(tree_v);
