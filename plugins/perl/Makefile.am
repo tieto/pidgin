@@ -106,6 +106,7 @@ distclean-generic:
 		cd $$dir; \
 		$(MAKE) realclean; \
 		rm -f Makefile.PL; \
+		rm -f Makefile.old; \
 		rm -f Makefile; \
 		cd ..; \
 	done
