@@ -115,11 +115,6 @@ struct queued_message {
 extern GList *log_conversations; /* this should be moved to conversations.c */
 extern GSList *away_messages; /* this should be moved to away.c */
 
-/* Globals in applet.c */
-#ifdef USE_APPLET
-extern GtkWidget *applet;
-#endif /* USE_APPLET */
-
 /* Globals in away.c */
 extern struct away_message *awaymessage;
 extern struct away_message *default_away;

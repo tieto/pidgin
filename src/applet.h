@@ -67,6 +67,8 @@ enum gaim_user_states {
 #define GAIM_GNOME_CONNECT_ICON "gnome-battery.png"
 #define GAIM_GNOME_ONLINE_ICON "apple-green.png"
 
+extern GtkWidget *applet;
+
 extern gint init_applet_mgr();
 extern void applet_do_signon(AppletWidget *, gpointer);
 extern void make_buddy();
