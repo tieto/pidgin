@@ -73,6 +73,8 @@ int yahoo_delete(struct yahoo_session *session);
 int yahoo_activate_id(struct yahoo_session *session, char *id);
 int yahoo_deactivate_id(struct yahoo_session *session, char *id);
 int yahoo_send_message(struct yahoo_session *session, const char *id, const char *user, const char *msg);
+int yahoo_send_message_offline(struct yahoo_session *session, const char *id,
+		const char *user, const char *msg);
 int yahoo_away(struct yahoo_session *session, enum yahoo_status stats, char *msg);
 int yahoo_back(struct yahoo_session *session, enum yahoo_status stats, char *msg);
 int yahoo_ping(struct yahoo_session *session);

@@ -115,6 +115,29 @@ int yahoo_send_message(struct yahoo_session *session, const char *active_id,
 		return 0;
 
 	ret = yahoo_write_cmd(session, conn, YAHOO_SERVICE_MESSAGE,
+			active_id ? active_id : session->name, buf, 0);
+	g_free(buf);
+
+	return ret;
+}
+
+int yahoo_send_message_offline(struct yahoo_session *session, const char *active_id,
+		const char *user, const char *msg)
+{
+	struct yahoo_conn *conn;
+	char *buf;
+	int ret;
+
+	if (!session || !user || !msg)
+		return 0;
+
+	if (!(conn = yahoo_getconn_type(session, YAHOO_CONN_TYPE_MAIN)))
+		return 0;
+
+	if (!(buf = g_strconcat(user, ",", msg, NULL)))
+		return 0;
+
+	ret = yahoo_write_cmd(session, conn, YAHOO_SERVICE_MESSAGE,
 			active_id ? active_id : session->name, buf, YAHOO_MESSAGE_SEND);
 	g_free(buf);
 
