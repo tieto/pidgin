@@ -201,6 +201,7 @@ void load_smiley_theme(const char *file, gboolean load)
 	}
 
 	g_free(dirname);
+	fclose(f);
 }
 
 void smiley_theme_probe()
