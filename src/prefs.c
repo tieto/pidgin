@@ -1244,6 +1244,7 @@ void show_prefs()
 	GtkWidget *notebook;
 	GtkWidget *sep;
 	GtkWidget *button;
+	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
 	int r;
 
@@ -1367,19 +1368,23 @@ void show_prefs()
 	gtk_widget_show (hbox);
 
 	button = gtk_button_new_from_stock (GTK_STOCK_OK);
+	gtk_size_group_add_widget(sg, button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_cb), prefs);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
+	button = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
+	gtk_size_group_add_widget(sg, button);
+	gtk_signal_connect_object(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), prefs);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
 	button = gtk_button_new_from_stock (GTK_STOCK_APPLY);
+	gtk_size_group_add_widget(sg, button);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(apply_cb), prefs);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
-	button = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
-	gtk_signal_connect_object(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gtk_widget_destroy), prefs);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
 
 	prefs_notebook_init();
 
