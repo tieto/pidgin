@@ -269,7 +269,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 35 $"
+#define REVISION "gaim:$Revision: 80 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -411,7 +411,7 @@ extern void set_state(int);
 extern FILE *open_log_file (struct conversation *c);
 extern char *sec_to_text(int);
 extern struct aim_user *find_user(const char *);
-
+extern char *full_date();
 
 /* Functions in server.c */
 /* input to serv */

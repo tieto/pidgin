@@ -36,6 +36,16 @@ static GdkPixmap *icon_pm = NULL;
 static GdkBitmap *icon_bm = NULL;
 static int state;
 
+char *full_date() {
+	char * date;
+	time_t tme;
+
+	time(&tme);
+	date = ctime(&tme);
+	date[strlen(date)-1] = '\0';
+	return date;
+}
+
 gint badchar(char c)
 {
         if (c == ' ')

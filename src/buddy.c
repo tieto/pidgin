@@ -1303,6 +1303,7 @@ void set_buddy(struct buddy *b)
 	char infotip[256];
         char idlet[16];
         char warn[256];
+	char *who;
         int i;
         int ihrs, imin;
         time_t t;
@@ -1357,6 +1358,11 @@ void set_buddy(struct buddy *b)
                 if (!GTK_WIDGET_VISIBLE(b->item)) {
 			
 			play_sound(BUDDY_ARRIVE);
+
+			who = g_malloc(sizeof(b->name) + 10);
+			strcpy(who, b->name);
+			gtk_label_set(GTK_LABEL(b->label), who);
+			g_free(who);
 
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 				NULL, (gchar **)login_icon_xpm);

@@ -71,7 +71,6 @@ void set_state_lock(int i)
         state_lock = i;
 }
 
-
 struct conversation *new_conversation(char *name)
 {
         struct conversation *c;
@@ -86,11 +85,13 @@ struct conversation *new_conversation(char *name)
 
 	if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
 		FILE *fd;
+
 		fd = open_log_file(c);
 		if (!(general_options & OPT_GEN_STRIP_HTML))
-			fprintf(fd, "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n", date());
+			fprintf(fd, "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n", full_date()); 
 		else
-			fprintf(fd, " ---- New Conversation @ %s ----\n", date());
+			fprintf(fd, " ---- New Conversation @ %s ----\n", full_date()); 
+
 		fclose(fd);
 	}
 
