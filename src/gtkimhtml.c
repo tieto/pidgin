@@ -965,7 +965,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
                                             gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
                                  } \
                                  if (fd->face) { \
-                                            texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "font", fd->face, NULL); \
+                                            texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "family", fd->face, NULL); \
                                             gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
                                  } \
                                  if (fd->size) { \
