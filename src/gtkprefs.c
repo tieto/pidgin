@@ -823,10 +823,6 @@ GtkWidget *messages_page() {
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
 
-	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(imhtml),
-			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
-	gtk_imhtml_html_shortcuts(GTK_IMHTML(imhtml),
-			gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
 	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(toolbar), imhtml);
 	gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(toolbar), "default");
 	gaim_setup_imhtml(imhtml);
@@ -2470,9 +2466,11 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/blist/button_style");
 	gaim_prefs_remove("/gaim/gtk/blist/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
+	gaim_prefs_remove("/gaim/gtk/conversations/html_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
+	gaim_prefs_remove("/gaim/gtk/conversations/smiley_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");

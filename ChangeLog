@@ -20,6 +20,8 @@ version 2.0.0
 	* Removed "Dim idle buddies" buddy list preference, default to "Yes."
 	* Removed keyboard shortcut preferences for ctrl-b/i/u and made sure they
 	  won't interfere with bindings set by the GTK theme.
+	* Removed keyboard shortcuts preferences for ctrl-# to insert a smiley,
+	  default to "No"
 	* Removed preference for buddy list button type, defaulted to "None"
 	* Removed "Enter" vs. "Ctrl-Enter" to send, defaulted to "Enter" to send,
 	  made it possible to change this binding in your GTK theme.

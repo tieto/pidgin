@@ -4204,10 +4204,6 @@ setup_chat_pane(GaimConversation *conv)
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
 	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
-	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry),
-			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
-	gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
-			gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
 
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 								 gaim_account_get_protocol_name(conv->account));
@@ -4336,7 +4332,7 @@ setup_im_pane(GaimConversation *conv)
 	/* Build the toolbar. */
 	gtkconv->toolbar = gtk_imhtmltoolbar_new();
 	gtk_box_pack_start(GTK_BOX(vbox3), gtkconv->toolbar, FALSE, FALSE, 0);
-	
+
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(vbox3), sep, FALSE, FALSE, 0);
 	gtk_widget_show(sep);
@@ -4351,11 +4347,6 @@ setup_im_pane(GaimConversation *conv)
 
 	gtkconv->entry = gtk_imhtml_new(NULL, NULL);
 	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
-
-	gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry),
-			gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts"));
-	gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
-			gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts"));
 
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 								 gaim_account_get_protocol_name(conv->account));
@@ -6157,48 +6148,6 @@ tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-html_shortcuts_pref_cb(const char *name, GaimPrefType type,
-					   gpointer value, gpointer data)
-{
-	GList *l;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	for(l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (GaimConversation *)l->data;
-
-		if(!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		gtk_imhtml_html_shortcuts(GTK_IMHTML(gtkconv->entry),
-								  (gboolean)GPOINTER_TO_INT(value));
-	}
-}
-
-static void
-smiley_shortcuts_pref_cb(const char *name, GaimPrefType type,
-						 gpointer value, gpointer data)
-{
-	GList *l;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	for(l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (GaimConversation *)l->data;
-
-		if(!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		gtk_imhtml_smiley_shortcuts(GTK_IMHTML(gtkconv->entry),
-									(gboolean)GPOINTER_TO_INT(value));
-	}
-}
-
-static void
 show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
 								gpointer value, gpointer data)
 {
@@ -6384,10 +6333,6 @@ gaim_gtk_conversations_init(void)
 								close_on_tabs_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/show_timestamps",
 								show_timestamps_pref_cb, NULL);
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/html_shortcuts",
-								html_shortcuts_pref_cb, NULL);
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/smiley_shortcuts",
-								smiley_shortcuts_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/show_formatting_toolbar",
 								show_formatting_toolbar_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/spellcheck",
