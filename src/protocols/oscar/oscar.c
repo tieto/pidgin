@@ -143,6 +143,7 @@ struct oscar_direct_im {
 	gboolean connected;
 	gboolean gpc_pend;
 	gboolean killme;
+	gboolean donttryagain;
 };
 
 struct ask_direct {
@@ -150,6 +151,7 @@ struct ask_direct {
 	char *sn;
 	char ip[64];
 	fu8_t cookie[8];
+	gboolean donttryagain;
 };
 
 /*
@@ -796,16 +798,21 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 	}
 
 	if (source < 0) {
-		fu8_t cookie[8];
-		char *who = g_strdup(dim->name);
-		const char *tmp = aim_odc_getcookie(dim->conn);
+		if (dim->donttryagain) {
+			oscar_direct_im_disconnect(od, dim);
+			return;
+		} else {
+			fu8_t cookie[8];
+			char *who = g_strdup(dim->name);
+			const char *tmp = aim_odc_getcookie(dim->conn);
 
-		memcpy(cookie, tmp, 8);
-		oscar_direct_im_destroy(od, dim);
-		oscar_direct_im_initiate(gc, who, cookie);
-		gaim_debug_info("oscar", "asking direct im initiator to connect to us\n");
-		g_free(who);
-		return;
+			memcpy(cookie, tmp, 8);
+			oscar_direct_im_destroy(od, dim);
+			oscar_direct_im_initiate(gc, who, cookie);
+			gaim_debug_info("oscar", "asking direct im initiator to connect to us\n");
+			g_free(who);
+			return;
+		}
 	}
 
 	dim->conn->fd = source;
@@ -820,16 +827,21 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 		dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ, oscar_callback, dim->conn);
 	} else {
-		fu8_t cookie[8];
-		char *who = g_strdup(dim->name);
-		const char *tmp = aim_odc_getcookie(dim->conn);
+		if (dim->donttryagain) {
+			oscar_direct_im_disconnect(od, dim);
+			return;
+		} else {
+			fu8_t cookie[8];
+			char *who = g_strdup(dim->name);
+			const char *tmp = aim_odc_getcookie(dim->conn);
 
-		memcpy(cookie, tmp, 8);
-		oscar_direct_im_destroy(od, dim);
-		oscar_direct_im_initiate(gc, who, cookie);
-		gaim_debug_info("oscar", "asking direct im initiator to connect to us\n");
-		g_free(who);
-		return;
+			memcpy(cookie, tmp, 8);
+			oscar_direct_im_destroy(od, dim);
+			oscar_direct_im_initiate(gc, who, cookie);
+			gaim_debug_info("oscar", "asking direct im initiator to connect to us\n");
+			g_free(who);
+			return;
+		}
 	}
 
 
@@ -860,6 +872,7 @@ static void accept_direct_im_request(struct ask_direct *d) {
 	}
 	dim = g_new0(struct oscar_direct_im, 1);
 	dim->gc = d->gc;
+	dim->donttryagain = d->donttryagain;
 	g_snprintf(dim->name, sizeof dim->name, "%s", d->sn);
 
 	dim->conn = aim_odc_connect(od->sess, d->sn, NULL, d->cookie);
@@ -3237,6 +3250,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		memcpy(d->cookie, args->cookie, 8);
 		if (dim && !dim->connected && (!memcmp(aim_odc_getcookie(dim->conn), args->cookie, 8))) {
 			oscar_direct_im_destroy(od, dim);
+			d->donttryagain = TRUE;
 			accept_direct_im_request(d);
 		} else {
 			if (dim && !dim->connected)
