@@ -87,6 +87,29 @@ PIXMAPS_BUTTONS =	$(GAIM_PIXMAPS)/edit.png \
 			$(GAIM_PIXMAPS)/text_normal.png \
 			$(GAIM_PIXMAPS)/text_smaller.png 
 
+PIXMAPS_SMILEYS =	$(GAIM_PIXMAPS)/angel.png \
+ 			$(GAIM_PIXMAPS)/bigsmile.png \
+ 			$(GAIM_PIXMAPS)/burp.png \
+			$(GAIM_PIXMAPS)/cool.png \
+ 			$(GAIM_PIXMAPS)/crossedlips.png \
+ 			$(GAIM_PIXMAPS)/cry.png \
+ 			$(GAIM_PIXMAPS)/embarrassed.png \
+ 			$(GAIM_PIXMAPS)/kiss.png \
+ 			$(GAIM_PIXMAPS)/moneymouth.png \
+ 			$(GAIM_PIXMAPS)/sad.png \
+ 			$(GAIM_PIXMAPS)/scream.png \
+ 			$(GAIM_PIXMAPS)/smile.png \
+ 			$(GAIM_PIXMAPS)/think.png \
+ 			$(GAIM_PIXMAPS)/tongue.png \
+ 			$(GAIM_PIXMAPS)/wink.png \
+ 			$(GAIM_PIXMAPS)/yell.png \
+ 			$(GAIM_PIXMAPS)/luke.png \
+ 			$(GAIM_PIXMAPS)/oneeye.png \
+			$(GAIM_PIXMAPS)/crazy.png \
+ 			$(GAIM_PIXMAPS)/mrt.png \
+ 			$(GAIM_PIXMAPS)/download.png \
+ 			$(GAIM_PIXMAPS)/farted.png
+
 PIXMAPS =		$(GAIM_PIXMAPS)/away.png \
 			$(GAIM_PIXMAPS)/connect.png \
 			$(GAIM_PIXMAPS)/msgpend.png \
@@ -94,6 +117,7 @@ PIXMAPS =		$(GAIM_PIXMAPS)/away.png \
 			$(GAIM_PIXMAPS)/offline.png \
 			$(GAIM_PIXMAPS)/online.png \
 			$(GAIM_PIXMAPS)/logo.png
+			
 
 SOUNDS =		$(GAIM_SOUNDS)/leave.wav \
 			$(GAIM_SOUNDS)/redalert.wav \
@@ -134,6 +158,7 @@ install: all
 	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/dialogs
 	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/buttons
 	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/menus
+	mkdir -p $(GAIM_INSTALL_DIR)/pixmaps/gaim/smileys/default
 	mkdir -p $(GAIM_INSTALL_DIR)/sounds/gaim
 	$(MAKE) -C $(PO) -f Makefile.mingw install
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw install
@@ -148,6 +173,7 @@ install: all
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 	cp $(PIXMAPS_DIALOGS) $(GAIM_INSTALL_DIR)/pixmaps/gaim/dialogs
 	cp $(PIXMAPS_BUTTONS) $(GAIM_INSTALL_DIR)/pixmaps/gaim/buttons
+	cp $(PIXMAPS_SMILEYS) $(GAIM_INSTALL_DIR)/pixmaps/gaim/smileys/default
 	cp $(PIXMAPS_MENUS) $(GAIM_INSTALL_DIR)/pixmaps/gaim/menus
 	cp $(PIXMAPS) $(GAIM_INSTALL_DIR)/pixmaps/gaim
 	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
