@@ -76,6 +76,14 @@ delete_win_cb(GtkWidget *w, GdkEventAny *e,
 }
 
 static void
+delete_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
+{
+	gaim_pounce_destroy(dialog->pounce);
+
+	delete_win_cb(NULL, NULL, dialog);
+}
+
+static void
 cancel_cb(GtkWidget *w, struct gaim_gtkpounce_dialog *dialog)
 {
 	delete_win_cb(NULL, NULL, dialog);
@@ -609,6 +617,14 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox1), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);
+
+	/* Delete button */
+	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(delete_cb), dialog);
 
 	/* Cancel button */
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
