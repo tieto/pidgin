@@ -2527,6 +2527,7 @@ void gaim_gtk_prefs_show(void)
 {
 	GtkWidget *vbox, *vbox2;
 	GtkWidget *hbox;
+	GtkWidget *bbox;
 	GtkWidget *frame;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *cell;
@@ -2534,7 +2535,6 @@ void gaim_gtk_prefs_show(void)
 	GtkWidget *notebook;
 	GtkWidget *sep;
 	GtkWidget *button;
-	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
 	if (prefs) {
 		gtk_window_present(GTK_WINDOW(prefs));
@@ -2553,16 +2553,15 @@ void gaim_gtk_prefs_show(void)
 	gtk_widget_realize(prefs);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
 	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
+	gtk_container_set_border_width(GTK_CONTAINER(prefs), 12);
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	vbox = gtk_vbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(prefs), vbox);
 	gtk_widget_show(vbox);
 
 	hbox = gtk_hbox_new (FALSE, 6);
-	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
 	gtk_container_add (GTK_CONTAINER(vbox), hbox);
 	gtk_widget_show (hbox);
 
@@ -2630,16 +2629,16 @@ void gaim_gtk_prefs_show(void)
 	gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
 
 	/* The buttons^H to press! */
-	hbox = gtk_hbox_new (FALSE, 6);
-	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
-	gtk_container_add (GTK_CONTAINER(vbox), hbox);
-	gtk_widget_show (hbox);
+	bbox = gtk_hbutton_box_new();
+	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
+	gtk_widget_show (bbox);
 
 	button = gtk_button_new_from_stock (GTK_STOCK_CLOSE);
-	gtk_size_group_add_widget(sg, button);
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
 							 G_CALLBACK(gtk_widget_destroy), prefs);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
 	prefs_notebook_init();
