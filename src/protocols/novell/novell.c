@@ -1013,8 +1013,7 @@ _show_info(GaimConnection * gc, NMUserRecord * user_record)
 		}
 	}
 
-	/* XXX - Um, we're using "Title" as the title? */
-	gaim_notify_formatted(NULL, "Title", _("User Properties"),
+	gaim_notify_formatted(NULL, NULL, _("User Properties"),
 						  NULL, info_text->str, NULL, NULL);
 
 	g_string_free(info_text, TRUE);
@@ -1849,6 +1848,9 @@ novell_chat_send(GaimConnection * gc, int id, const char *text)
 		gaim_conversation_write(chat, NULL, str, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(str);
 	}
+
+	if (message)
+		nm_release_message(message);
 
 	return -1;
 }

@@ -1274,11 +1274,17 @@ nm_find_user_record(NMUser * user, const char *name)
 const char *
 nm_lookup_dn(NMUser * user, const char *display_id)
 {
+	const char *dn;
+	char *lower;
+
 	if (user == NULL || display_id == NULL)
 		return NULL;
 
-	return (const char *) g_hash_table_lookup(user->display_id_to_dn,
-											  g_utf8_strdown(display_id, -1));
+	lower = g_utf8_strdown(display_id, -1);
+	dn = g_hash_table_lookup(user->display_id_to_dn, lower);
+	g_free(lower);
+
+	return dn;
 }
 
 NMFolder *
@@ -1407,7 +1413,7 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 			user->user_record = nm_create_user_record_from_fields(fields);
 
 			/* Save the users fields */
-			user->fields = fields;
+			user->fields = nm_copy_field_array(fields);
 
 		} else if (strcmp("setstatus", cmd) == 0) {
 
@@ -1436,8 +1442,6 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 
 		} else if (strcmp("joinconf", cmd) == 0) {
 			GSList *list = NULL, *node;
-
-			nm_print_fields(fields);
 
 			conf = nm_request_get_data(request);
 
@@ -1607,6 +1611,9 @@ nm_process_response(NMUser * user)
 			}
 		}
 	}
+
+	if (fields)
+		nm_free_fields(&fields);
 
 	return rc;
 }
