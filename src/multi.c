@@ -481,7 +481,7 @@ static void reset_icon(GtkWidget *w, struct aim_user *u)
 {
 	if (u) {
 		u->tmp_iconfile[0] = 0;
-		gtk_entry_set_text(GTK_ENTRY(u->iconentry), u->iconfile);
+		gtk_entry_set_text(GTK_ENTRY(u->iconentry), "");
 	} else {
 		tmpusr.tmp_iconfile[0] = 0;
 		gtk_entry_set_text(GTK_ENTRY(tmpusr.iconentry), "");
@@ -495,6 +495,11 @@ static GtkWidget *build_icon_selection(struct aim_user *u, GtkWidget *box)
 	GtkWidget *name;
 	GtkWidget *browse;
 	GtkWidget *reset;
+
+	if (u)
+		g_snprintf(u->tmp_iconfile, sizeof(u->tmp_iconfile), "%s", u->iconfile);
+	else
+		g_snprintf(tmpusr.tmp_iconfile, sizeof(tmpusr.tmp_iconfile), "%s", tmpusr.iconfile);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
