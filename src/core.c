@@ -32,6 +32,7 @@
 #include "privacy.h"
 #include "proxy.h"
 #include "signals.h"
+#include "sslconn.h"
 #include "sound.h"
 
 struct GaimCore
@@ -87,6 +88,7 @@ gaim_core_init(const char *ui)
 	gaim_pounces_init();
 	gaim_proxy_init();
 	gaim_sound_init();
+	gaim_ssl_init();
 	gaim_xfers_init();
 
 	if (ops != NULL && ops->ui_init != NULL)
@@ -121,6 +123,7 @@ gaim_core_quit(void)
 	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
 	gaim_plugins_destroy_all();
 
+	gaim_ssl_uninit();
 	gaim_blist_uninit();
 	gaim_conversations_uninit();
 	gaim_connections_uninit();

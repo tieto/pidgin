@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -42,64 +42,81 @@ static gboolean
 add_buddy(MsnServConn *servconn, MsnUser *user)
 {
 	MsnSession *session = servconn->session;
-	GaimConnection *gc = session->account->gc;
+	GaimAccount *account = session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
 	GaimBuddy *b;
 	MsnGroup *group = NULL;
 	GaimGroup *g = NULL;
-	int group_id;
+	GList *l, *l2;
+	GSList *buddies;
 
-	group_id = msn_user_get_group_id(user);
+	buddies = gaim_find_buddies(account, msn_user_get_passport(user));
 
-	if (group_id > -1)
-		group = msn_groups_find_with_id(session->groups, group_id);
+	for (l = msn_user_get_group_ids(user); l != NULL; l = l->next)
+	{
+		int group_id = GPOINTER_TO_INT(l->data);
+		GSList *l3;
 
-	if (group == NULL) {
-		GList *l;
-		gaim_debug(GAIM_DEBUG_WARNING, "msn",
-				   "Group ID %d for user %s was not defined.\n",
-				   group_id, msn_user_get_passport(user));
+		if (group_id > -1)
+			group = msn_groups_find_with_id(session->groups, group_id);
 
-		/* Find a group that we can stick this guy into. Lamer. */
-		l = msn_groups_get_list(session->groups);
+		if (group == NULL)
+		{
+			gaim_debug(GAIM_DEBUG_WARNING, "msn",
+					   "Group ID %d for user %s was not defined.\n",
+					   group_id, msn_user_get_passport(user));
 
-		if (l != NULL) {
-			group = l->data;
+			/* Find a group that we can stick this guy into. Lamer. */
+			l2 = msn_groups_get_list(session->groups);
 
-			msn_user_set_group_id(user, msn_group_get_id(group));
+			if (l2 != NULL)
+			{
+				group = l2->data;
+
+				msn_user_add_group_id(user, msn_group_get_id(group));
+			}
 		}
-	}
 
-	if (group == NULL ||
-		(g = gaim_find_group(msn_group_get_name(group))) == NULL) {
-
-		gaim_debug(GAIM_DEBUG_ERROR, "msn",
-				   "Group '%s' appears in server-side "
-				   "buddy list, but not here!",
-				   msn_group_get_name(group));
-	}
-
-	if (group != NULL)
-		msn_group_add_user(group, user);
-
-	if (g == NULL) {
-		/* Should never happen. */
-
-		if ((g = gaim_find_group(_("Buddies"))) == NULL) {
-			g = gaim_group_new(_("Buddies"));
-			gaim_blist_add_group(g, NULL);
+		if (group == NULL ||
+			(g = gaim_find_group(msn_group_get_name(group))) == NULL)
+		{
+			gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					   "Group '%s' appears in server-side "
+					   "buddy list, but not here!",
+					   msn_group_get_name(group));
 		}
+
+		if (group != NULL)
+			msn_group_add_user(group, user);
+
+		b = NULL;
+
+		for (l3 = buddies; l3 != NULL; l3 = l3->next)
+		{
+			b = (GaimBuddy *)l3->data;
+
+			if (gaim_find_buddys_group(b) == g)
+				break;
+
+			b = NULL;
+		}
+
+		if (b == NULL)
+		{
+			b = gaim_buddy_new(account,
+							   msn_user_get_passport(user), NULL);
+
+			gaim_blist_add_buddy(b, NULL, g, NULL);
+		}
+
+		gaim_debug(GAIM_DEBUG_INFO, "msn",
+				   "Adding MsnUser to %s's proto_data (group %d, %s)\n",
+				   b->name, group_id, (g == NULL ? "(null)" : g->name));
+
+		b->proto_data = user;
 	}
 
-	b = gaim_find_buddy(gc->account, msn_user_get_passport(user));
-
-	if (b == NULL) {
-		b = gaim_buddy_new(gc->account,
-						   msn_user_get_passport(user), NULL);
-
-		gaim_blist_add_buddy(b, NULL, g, NULL);
-	}
-
-	b->proto_data = user;
+	g_slist_free(buddies);
 
 	serv_got_alias(gc, (char *)msn_user_get_passport(user),
 				   (char *)msn_user_get_name(user));
@@ -107,6 +124,34 @@ add_buddy(MsnServConn *servconn, MsnUser *user)
 	return TRUE;
 }
 
+static size_t
+msn_ssl_read(GaimSslConnection *gsc, char **dest_buffer)
+{
+	size_t size = 0, s;
+	char *buffer = NULL;
+	char temp_buf[4096];
+
+	while ((s = gaim_ssl_read(gsc, temp_buf, sizeof(temp_buf))) > 0)
+	{
+		char *new_buffer = g_new(char, size + s + 1);
+
+		if (buffer != NULL)
+			strncpy(new_buffer, buffer, size);
+
+		g_free(buffer);
+		buffer = new_buffer;
+
+		strncpy(buffer + size, temp_buf, s);
+
+		buffer[size + s] = '\0';
+
+		size += s;
+	}
+
+	*dest_buffer = buffer;
+
+	return size;
+}
 
 /**************************************************************************
  * Callbacks
@@ -207,29 +252,22 @@ unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 /**************************************************************************
  * Login
  **************************************************************************/
+
+
 static gboolean
-ver_cmd(MsnServConn *servconn, const char *command, const char **params,
+cvr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
-	GaimConnection *gc = servconn->session->account->gc;
-	size_t i;
-	gboolean msnp5_found = FALSE;
+	GaimAccount *account = servconn->session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
+	char outparams[MSN_BUF_LEN];
 
-	for (i = 1; i < param_count; i++) {
-		if (!strcmp(params[i], "MSNP5")) {
-			msnp5_found = TRUE;
-			break;
-		}
-	}
+	g_snprintf(outparams, sizeof(outparams),
+			   "TWN I %s", gaim_account_get_username(account));
 
-	if (!msnp5_found) {
-		gaim_connection_error(gc, _("Protocol not supported"));
-
-		return FALSE;
-	}
-
-	if (!msn_servconn_send_command(servconn, "INF", NULL)) {
-		gaim_connection_error(gc, _("Unable to request INF"));
+	if (!msn_servconn_send_command(servconn, "USR", outparams))
+	{
+		gaim_connection_error(gc, _("Unable to request USR\n"));
 
 		return FALSE;
 	}
@@ -248,7 +286,7 @@ inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (strcmp(params[1], "MD5")) {
 		gaim_connection_error(gc, _("Unable to login using MD5"));
 
-		return FALSE;
+	return FALSE;
 	}
 
 	g_snprintf(outparams, sizeof(outparams), "MD5 I %s",
@@ -266,6 +304,268 @@ inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 	return TRUE;
 }
 
+static void
+login_connect_cb(gpointer data, GaimSslConnection *gsc,
+				 GaimInputCondition cond)
+{
+	MsnServConn *servconn = (MsnServConn *)data;
+	MsnSession *session = servconn->session;
+	GaimConnection *gc = gaim_account_get_connection(session->account);
+	char *username, *password;
+	char *request_str;
+	char *buffer = NULL;
+	size_t s;
+
+	username =
+		g_strdup(msn_url_encode(gaim_account_get_username(session->account)));
+	password =
+		g_strdup(msn_url_encode(gaim_account_get_password(session->account)));
+
+	request_str = g_strdup_printf(
+		"GET %s HTTP/1.1\r\n"
+		"Authorization: Passport1.4 OrgVerb=GET,OrgURL=%s,sign-in=%s,pwd=%s,"
+		"lc=%s,id=%s,tw=%s,fs=%s,ct=%s,kpp=%s,kv=%s,ver=%s,tpf=%s\r\n"
+		"User-Agent: MSMSGS\r\n"
+		"Host: %s\r\n"
+		"Connection: Keep-Alive\r\n"
+		"Cache-Control: no-cache\r\n"
+		"\r\n",
+		session->ssl_login_path,
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "ru"),
+		username, password,
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "lc"),
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "id"),
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "tw"),
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "fs"),
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "ct"),
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "kpp"),
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "kv"),
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "ver"),
+		(char *)g_hash_table_lookup(session->ssl_challenge_data, "tpf"),
+		session->ssl_login_host);
+
+	gaim_debug(GAIM_DEBUG_MISC, "msn", "Sending: {%s}\n", request_str);
+
+	g_free(username);
+	g_free(password);
+
+	if ((s = gaim_ssl_write(gsc, request_str, strlen(request_str))) <= 0)
+	{
+		gaim_connection_error(gc, _("Unable to write to MSN Nexus server."));
+
+		return;
+	}
+
+	if ((s = msn_ssl_read(gsc, &buffer)) <= 0)
+	{
+		gaim_connection_error(gc, _("Unable to read from MSN Nexus server."));
+
+		if (buffer != NULL)
+			g_free(buffer);
+
+		return;
+	}
+
+	gaim_ssl_close(gsc);
+
+	gaim_debug(GAIM_DEBUG_MISC, "msn", "ssl buffer: {%s}", buffer);
+
+	if (strstr(buffer, "HTTP/1.1 302") != NULL)
+	{
+		/* Redirect. */
+		char *location, *c;
+
+		if ((location = strstr(buffer, "Location: ")) == NULL)
+		{
+			gaim_connection_error(gc,
+				_("MSN Nexus server returned invalid redirect information."));
+
+			g_free(buffer);
+
+			return;
+		}
+
+		location = strchr(location, ' ') + 1;
+
+		if ((c = strchr(location, '\r')) != NULL)
+			*c = '\0';
+
+		/* Skip the http:// */
+		if ((c = strchr(location, '/')) != NULL)
+			location = c + 2;
+
+		if ((c = strchr(location, '/')) != NULL)
+		{
+			session->ssl_login_path = g_strdup(c);
+
+			*c = '\0';
+		}
+
+		session->ssl_login_host = g_strdup(location);
+
+		session->ssl_conn = gaim_ssl_connect(session->account,
+											 session->ssl_login_host,
+											 GAIM_SSL_DEFAULT_PORT,
+											 login_connect_cb, servconn);
+	}
+	else if (strstr(buffer, "HTTP/1.1 401 Unauthorized") != NULL)
+	{
+		char *error;
+
+		if ((error = strstr(buffer, "WWW-Authenticate")) != NULL)
+		{
+			if ((error = strstr(buffer, "cbtxt=")) != NULL)
+				error += strlen("cbtxt=");
+
+			error = msn_url_decode(error);
+		}
+
+
+		if (error == NULL)
+		{
+			gaim_connection_error(gc,
+				_("Unknown error when attempting to authorize with "
+				  "MSN login server."));
+		}
+		else
+			gaim_connection_error(gc, error);
+	}
+	else
+	{
+		char *base, *c;
+		char outparams[MSN_BUF_LEN];
+
+		g_free(session->ssl_login_host);
+		g_free(session->ssl_login_path);
+		g_hash_table_destroy(session->ssl_challenge_data);
+
+		session->ssl_login_host = NULL;
+		session->ssl_login_path = NULL;
+		session->ssl_challenge_data = NULL;
+
+#if 0
+		/* All your base are belong to us. */
+		base = buffer;
+
+		/* For great cookie! */
+		while ((base = strstr(base, "Set-Cookie: ")) != NULL)
+		{
+			base += strlen("Set-Cookie: ");
+
+			c = strchr(base, ';');
+
+			session->login_cookies =
+				g_list_append(session->login_cookies,
+							  g_strndup(base, c - base));
+		}
+#endif
+
+		if ((base = strstr(buffer, "Authentication-Info: ")) == NULL)
+		{
+			gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					   "Authentication information was not found. This did "
+					   "not just happen, but if it did, you're screwed. "
+					   "Report this.\n");
+
+			return;
+		}
+
+		base  = strstr(base, "from-PP='");
+		base += strlen("from-PP='");
+		c     = strchr(base, '\'');
+
+		session->ssl_login_params = g_strndup(base, c - base);
+
+		g_snprintf(outparams, sizeof(outparams),
+				   "TWN S %s", session->ssl_login_params);
+
+		g_free(session->ssl_login_params);
+		session->ssl_login_params = NULL;
+
+		if (!msn_servconn_send_command(session->notification_conn, "USR",
+									   outparams))
+		{
+			gaim_connection_error(gc, _("Unable to request USR\n"));
+		}
+	}
+
+	g_free(buffer);
+}
+
+static void
+nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
+				 GaimInputCondition cond)
+{
+	MsnServConn *servconn = (MsnServConn *)data;
+	MsnSession *session = servconn->session;
+	GaimConnection *gc = gaim_account_get_connection(session->account);
+	char *request_str;
+	char *da_login;
+	char *base, *c;
+	char *buffer = NULL;
+	size_t s;
+
+	request_str = g_strdup_printf("GET /rdr/pprdr.asp\r\n\r\n");
+
+	if ((s = gaim_ssl_write(gsc, request_str, strlen(request_str))) <= 0)
+	{
+		gaim_connection_error(gc, _("Unable to write to MSN Nexus server."));
+		return;
+	}
+
+	g_free(session->ssl_url);
+	session->ssl_url = NULL;
+
+	/* Get the PassportURLs line. */
+	if ((s = msn_ssl_read(gsc, &buffer)) <= 0)
+	{
+		gaim_connection_error(gc, _("Unable to read from MSN Nexus server."));
+
+		if (buffer != NULL)
+			g_free(buffer);
+
+		return;
+	}
+
+	if ((base = strstr(buffer, "PassportURLs")) == NULL)
+	{
+		gaim_connection_error(gc,
+				_("MSN Nexus server returned invalid information."));
+
+		g_free(buffer);
+
+		return;
+	}
+
+	if ((da_login = strstr(base, "DALogin=")) != NULL)
+	{
+		if ((da_login = strchr(da_login, '=')) != NULL)
+			da_login++;
+
+		if ((c = strchr(da_login, ',')) != NULL)
+			*c = '\0';
+
+		if ((c = strchr(da_login, '/')) != NULL)
+		{
+			session->ssl_login_path = g_strdup(c);
+
+			*c = '\0';
+		}
+
+		session->ssl_login_host = g_strdup(da_login);
+	}
+
+	g_free(buffer);
+
+	gaim_ssl_close(gsc);
+
+	/* Now begin the connection to the login server. */
+	session->ssl_conn = gaim_ssl_connect(session->account,
+										 session->ssl_login_host,
+										 GAIM_SSL_DEFAULT_PORT,
+										 login_connect_cb, servconn);
+}
+
 static gboolean
 usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
@@ -275,8 +575,14 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	GaimConnection *gc = gaim_account_get_connection(account);
 	char outparams[MSN_BUF_LEN];
 
-	/* We're either getting the challenge or the OK. Let's find out. */
-	if (!g_ascii_strcasecmp(params[1], "OK")) {
+	/*
+	 * We're either getting the passport connect info (if we're on
+	 * MSNP8 or higher), or a challenge request (MSNP7 and lower).
+	 *
+	 * Let's find out.
+	 */
+	if (!g_ascii_strcasecmp(params[1], "OK"))
+	{
 		const char *friendly = msn_url_decode(params[3]);
 
 		/* OK */
@@ -285,7 +591,8 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 		session->syncing_lists = TRUE;
 
-		if (!msn_servconn_send_command(servconn, "SYN", "0")) {
+		if (!msn_servconn_send_command(servconn, "SYN", "0"))
+		{
 			gaim_connection_error(gc, _("Unable to write"));
 
 			return FALSE;
@@ -294,7 +601,73 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		gaim_connection_update_progress(gc, _("Retrieving buddy list"),
 										7, MSN_CONNECT_STEPS);
 	}
-	else {
+	else if (!g_ascii_strcasecmp(params[1], "TWN"))
+	{
+		/* Passport authentication */
+		char *challenge_data;
+		char *key, *value = NULL;
+		char *c;
+
+		if (session->ssl_challenge_data != NULL)
+			g_hash_table_destroy(session->ssl_challenge_data);
+
+		session->ssl_challenge_data =
+			g_hash_table_new_full(g_str_hash, g_str_equal,
+								  g_free, g_free);
+
+		/* Parse the challenge data. */
+
+		challenge_data = g_strdup(params[3]);
+
+		for (c = challenge_data, key = challenge_data; *c != '\0'; c++)
+		{
+			if (*c == '=')
+			{
+				*c = '\0';
+
+				value = c + 1;
+			}
+			else if (*c == ',')
+			{
+				*c = '\0';
+
+				g_hash_table_insert(session->ssl_challenge_data,
+									g_strdup(key), g_strdup(value));
+
+				key = c + 1;
+			}
+		}
+
+#if 0
+		passport_str = g_strdup(msn_url_decode(params[3]));
+
+		for (c = passport_str; *c != '\0'; c++)
+		{
+			if (*c == ',')
+				*c = '&';
+		}
+
+		session->ssl_url = passport_str;
+#endif
+
+		session->ssl_conn = gaim_ssl_connect(session->account,
+											 "nexus.passport.com",
+											 GAIM_SSL_DEFAULT_PORT,
+											 nexus_connect_cb, servconn);
+
+		if (session->ssl_conn == NULL)
+		{
+			gaim_connection_error(gc,
+				_("Unable to connect to passport server"));
+
+			return FALSE;
+		}
+
+		gaim_connection_update_progress(gc, _("Password sent"),
+										6, MSN_CONNECT_STEPS);
+	}
+	else if (!g_ascii_strcasecmp(params[1], "MD5"))
+	{
 		/* Challenge */
 		const char *challenge = params[3];
 		char buf[MSN_BUF_LEN];
@@ -324,6 +697,61 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 		gaim_connection_update_progress(gc, _("Password sent"),
 										6, MSN_CONNECT_STEPS);
+	}
+
+	return TRUE;
+}
+
+static gboolean
+ver_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
+{
+	MsnSession *session = servconn->session;
+	GaimAccount *account = session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
+	gboolean protocol_supported = FALSE;
+	char outparams[MSN_BUF_LEN];
+	char proto_str[8];
+	size_t i;
+
+	g_snprintf(proto_str, sizeof(proto_str), "MSNP%d", session->protocol_ver);
+
+	for (i = 1; i < param_count; i++)
+	{
+		if (!strcmp(params[i], proto_str))
+		{
+			protocol_supported = TRUE;
+			break;
+		}
+	}
+
+	if (!protocol_supported) {
+		gaim_connection_error(gc, _("Protocol not supported"));
+
+		return FALSE;
+	}
+
+	if (session->protocol_ver >= 8)
+	{
+		g_snprintf(outparams, sizeof(outparams),
+				   "0x0409 winnt 5.1 i386 MSNMSGR 6.0.0602 MSMSGS %s",
+				   gaim_account_get_username(account));
+
+		if (!msn_servconn_send_command(servconn, "CVR", outparams))
+		{
+			gaim_connection_error(gc, _("Unable to request CVR\n"));
+
+			return FALSE;
+		}
+	}
+	else
+	{
+		if (!msn_servconn_send_command(servconn, "INF", NULL))
+		{
+			gaim_connection_error(gc, _("Unable to request INF\n"));
+
+			return FALSE;
+		}
 	}
 
 	return TRUE;
@@ -378,22 +806,37 @@ static gboolean
 chl_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
-	GaimConnection *gc = servconn->session->account->gc;
+	MsnSession *session = servconn->session;
+	GaimConnection *gc = session->account->gc;
 	char buf[MSN_BUF_LEN];
 	char buf2[3];
+	const char *challenge_resp;
 	md5_state_t st;
 	md5_byte_t di[16];
 	int i;
 
 	md5_init(&st);
 	md5_append(&st, (const md5_byte_t *)params[1], strlen(params[1]));
-	md5_append(&st, (const md5_byte_t *)"Q1P7W2E4J9R8U3S5",
-			   strlen("Q1P7W2E4J9R8U3S5"));
+
+	if (session->protocol_ver >= 8)
+	{
+		challenge_resp = "VT6PX?UQTM4WM%YR";
+	}
+	else
+	{
+		challenge_resp = "Q1P7W2E4J9R8U3S5";
+	}
+
+	md5_append(&st, (const md5_byte_t *)challenge_resp,
+			   strlen(challenge_resp));
 	md5_finish(&st, di);
 
 	g_snprintf(buf, sizeof(buf),
-			   "QRY %u msmsgs@msnmsgr.com 32\r\n",
-			   servconn->session->trId++);
+			   "QRY %u %s 32\r\n",
+			   servconn->session->trId++,
+			   (session->protocol_ver >= 8
+				? "PROD0038W!61ZTF9"
+				: "msmsgs@msnmsgr.com"));
 
 	for (i = 0; i < 16; i++) {
 		g_snprintf(buf2, sizeof(buf2), "%02x", di[i]);
@@ -435,7 +878,7 @@ add_cmd(MsnServConn *servconn, const char *command, const char **params,
 		user = msn_user_new(session, passport, NULL);
 
 		if (group_id != NULL)
-			msn_user_set_group_id(user, atoi(group_id));
+			msn_user_add_group_id(user, atoi(group_id));
 
 		add_buddy(servconn, user);
 
@@ -491,8 +934,14 @@ blp_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
 	GaimConnection *gc = servconn->session->account->gc;
+	const char *list_name;
 
-	if (!g_ascii_strcasecmp(params[2], "AL")) {
+	if (servconn->session->protocol_ver >= 8)
+		list_name = params[0];
+	else
+		list_name = params[2];
+
+	if (!g_ascii_strcasecmp(list_name, "AL")) {
 		/*
 		 * If the current setting is AL, messages from users who
 		 * are not in BL will be delivered.
@@ -523,12 +972,20 @@ bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	GaimBuddy *b;
 	MsnUser *user;
 
-	if (param_count < 4)
+	if (param_count == 4)
+	{
+		passport = params[1];
+		type     = params[2];
+		value    = params[3];
+	}
+	else if (param_count == 2)
+	{
+		passport = msn_user_get_passport(session->last_user_added);
+		type     = params[0];
+		value    = params[1];
+	}
+	else
 		return TRUE;
-
-	passport = params[1];
-	type     = params[2];
-	value    = params[3];
 
 	user = msn_users_find_with_passport(session->users, passport);
 
@@ -627,18 +1084,25 @@ lsg_cmd(MsnServConn *servconn, const char *command, const char **params,
 	MsnGroup *group;
 	GaimGroup *g;
 	const char *name;
-	int group_num, num_groups, group_id;
+	int num_groups, group_id;
 
-	group_num  = atoi(params[2]);
-	num_groups = atoi(params[3]);
-	group_id   = atoi(params[4]);
-	name       = msn_url_decode(params[5]);
+	if (session->protocol_ver >= 8)
+	{
+		group_id = atoi(params[0]);
+		name = msn_url_decode(params[1]);
+	}
+	else
+	{
+		num_groups = atoi(params[3]);
+		group_id   = atoi(params[4]);
+		name       = msn_url_decode(params[5]);
 
-	if (num_groups == 0)
-		return TRUE;
+		if (num_groups == 0)
+			return TRUE;
 
-	if (!strcmp(name, "~"))
-		name = _("Buddies");
+		if (!strcmp(name, "~"))
+			name = _("Buddies");
+	}
 
 	group = msn_group_new(session, group_id, name);
 
@@ -657,78 +1121,85 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
 	MsnSession *session = servconn->session;
-	GaimConnection *gc = session->account->gc;
-	int user_num;
-	int num_users;
-	const char *type;
+	GaimAccount *account = session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
 	const char *passport = NULL;
 	const char *friend = NULL;
 
-	type      = params[1];
-	user_num  = atoi(params[3]);
-	num_users = atoi(params[4]);
+	if (session->protocol_ver >= 8)
+	{
+		const char *group_nums;
+		int list_op;
 
-	if (g_ascii_strcasecmp(type, "RL") && user_num == 0 && num_users == 0)
-		return TRUE; /* There are no users on this list. */
+		passport   = params[0];
+		friend     = msn_url_decode(params[1]);
+		list_op    = atoi(params[2]);
+		group_nums = params[3];
 
-	if (num_users > 0) {
-		passport  = params[5];
-		friend    = msn_url_decode(params[6]);
-	}
+		if (list_op & MSN_LIST_FL_OP)
+		{
+			MsnUser *user;
+			char **c;
+			char **tokens;
 
-	if (session->syncing_lists && session->lists_synced)
-		return TRUE;
+			user = msn_user_new(session, passport, friend);
 
-	if (!g_ascii_strcasecmp(type, "FL") && user_num != 0) {
-		/* These are users on our contact list. */
-		MsnUser *user;
+			tokens = g_strsplit(group_nums, ",", -1);
 
-		user = msn_user_new(session, passport, friend);
+			gaim_debug(GAIM_DEBUG_MISC, "msn",
+					   "Fetching group IDs from '%s'\n", group_nums);
+			for (c = tokens; *c != NULL; c++)
+			{
+				gaim_debug(GAIM_DEBUG_MISC, "msn",
+						   "Appending group ID %d\n", atoi(*c));
+				msn_user_add_group_id(user, atoi(*c));
+			}
 
-		if (param_count == 8)
-			msn_user_set_group_id(user, atoi(params[7]));
+			g_strfreev(tokens);
 
-		session->lists.forward = g_slist_append(session->lists.forward, user);
-	}
-	else if (!g_ascii_strcasecmp(type, "AL") && user_num != 0) {
-		/* These are users who are allowed to see our status. */
-		if (g_slist_find_custom(gc->account->deny, passport,
-								(GCompareFunc)strcmp)) {
+			session->lists.forward =
+				g_slist_append(session->lists.forward, user);
 
-			gaim_debug(GAIM_DEBUG_INFO, "msn",
-					   "Moving user from deny list to permit: %s (%s)\n",
-					   passport, friend);
-
-			gaim_privacy_deny_remove(gc->account, passport, TRUE);
+			session->last_user_added = user;
 		}
 
-		gaim_privacy_permit_add(gc->account, passport, TRUE);
-	}
-	else if (!g_ascii_strcasecmp(type, "BL") && user_num != 0) {
-		/* These are users who are not allowed to see our status. */
-		gaim_privacy_deny_add(gc->account, passport, TRUE);
-	}
-	else if (!g_ascii_strcasecmp(type, "RL")) {
-		/* These are users who have us on their contact list. */
-		if (user_num > 0) {
+		if (list_op & MSN_LIST_AL_OP)
+		{
+			/* These are users who are allowed to see our status. */
+
+			if (g_slist_find_custom(account->deny, passport,
+									(GCompareFunc)strcmp))
+			{
+				gaim_privacy_deny_remove(gc->account, passport, TRUE);
+			}
+
+			gaim_privacy_permit_add(account, passport, TRUE);
+		}
+
+		if (list_op & MSN_LIST_BL_OP)
+		{
+			/* These are users who are not allowed to see our status. */
+			gaim_privacy_deny_add(account, passport, TRUE);
+		}
+
+		if (list_op & MSN_LIST_RL_OP)
+		{
+			/* These are users who have us on their contact list. */
+
 			gboolean new_entry = TRUE;
 
-			if (g_slist_find_custom(gc->account->permit, passport,
-									(GCompareFunc)g_ascii_strcasecmp)) {
-				new_entry = FALSE;
-			}
-			
-			if (g_slist_find_custom(gc->account->deny, passport,
-									(GCompareFunc)g_ascii_strcasecmp)) {
+			if (g_slist_find_custom(account->permit, passport,
+									(GCompareFunc)g_ascii_strcasecmp) ||
+				g_slist_find_custom(account->deny, passport,
+									(GCompareFunc)g_ascii_strcasecmp))
+			{
 				new_entry = FALSE;
 			}
 
-			if (new_entry) {
+			if (new_entry)
+			{
 				MsnPermitAdd *pa;
 				char msg[MSN_BUF_LEN];
-
-				gaim_debug(GAIM_DEBUG_WARNING, "msn",
-						   "Unresolved MSN RL entry: %s\n", passport);
 
 				pa       = g_new0(MsnPermitAdd, 1);
 				pa->user = msn_user_new(session, passport, friend);
@@ -748,12 +1219,12 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 			}
 		}
 
-		if (user_num != num_users)
-			return TRUE; /* This isn't the last one in the RL. */
+		session->num_users++;
 
-		/* Now we're at the last one, so we can do final work. */
-		if (!session->lists_synced) {
-			if (!msn_servconn_send_command(servconn, "CHG", "NLN")) {
+		if (session->num_users == session->total_users)
+		{
+			if (!msn_servconn_send_command(servconn, "CHG", "NLN"))
+			{
 				gaim_connection_error(gc, _("Unable to write"));
 
 				return FALSE;
@@ -761,31 +1232,178 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 			gaim_connection_set_state(gc, GAIM_CONNECTED);
 			serv_finish_login(gc);
+
+			if (session->lists.allow == NULL)
+				session->lists.allow = g_slist_copy(account->permit);
+			else
+				session->lists.allow = g_slist_concat(session->lists.allow,
+													  account->permit);
+
+			if (session->lists.block == NULL)
+				session->lists.block = g_slist_copy(account->permit);
+			else
+				session->lists.block = g_slist_concat(session->lists.block,
+													  account->deny);
+
+			while (session->lists.forward != NULL)
+			{
+				MsnUser *user = session->lists.forward->data;
+
+				session->lists.forward =
+					g_slist_remove(session->lists.forward, user);
+
+				add_buddy(servconn, user);
+			}
+
+			session->syncing_lists = FALSE;
+			session->lists_synced  = TRUE;
+		}
+	}
+	else
+	{
+		const char *list_name;
+		int user_num;
+		int num_users;
+
+		list_name = params[1];
+		user_num  = atoi(params[3]);
+		num_users = atoi(params[4]);
+
+		if (g_ascii_strcasecmp(list_name, "RL") &&
+			user_num == 0 && num_users == 0)
+		{
+			return TRUE; /* There are no users on this list. */
 		}
 
-		if (session->lists.allow == NULL)
-			session->lists.allow = g_slist_copy(gc->account->permit);
-		else
-			session->lists.allow = g_slist_concat(session->lists.allow,
-												  gc->account->permit);
-
-		if (session->lists.block == NULL)
-			session->lists.block = g_slist_copy(gc->account->deny);
-		else
-			session->lists.block = g_slist_concat(session->lists.block,
-												  gc->account->deny);
-
-		while (session->lists.forward != NULL) {
-			MsnUser *user = session->lists.forward->data;
-
-			session->lists.forward = g_slist_remove(session->lists.forward,
-													user);
-
-			add_buddy(servconn, user);
+		if (num_users > 0)
+		{
+			passport  = params[5];
+			friend    = msn_url_decode(params[6]);
 		}
 
-		session->syncing_lists = FALSE;
-		session->lists_synced  = TRUE;
+		if (session->syncing_lists && session->lists_synced)
+			return TRUE;
+
+		if (!g_ascii_strcasecmp(list_name, "FL") && user_num != 0)
+		{
+			/* These are users on our contact list. */
+			MsnUser *user;
+
+			user = msn_user_new(session, passport, friend);
+
+			if (param_count == 8)
+				msn_user_add_group_id(user, atoi(params[7]));
+
+			session->lists.forward =
+				g_slist_append(session->lists.forward, user);
+		}
+		else if (!g_ascii_strcasecmp(list_name, "AL") && user_num != 0)
+		{
+			/* These are users who are allowed to see our status. */
+			if (g_slist_find_custom(gc->account->deny, passport,
+									(GCompareFunc)strcmp))
+			{
+				gaim_debug(GAIM_DEBUG_INFO, "msn",
+						   "Moving user from deny list to permit: %s (%s)\n",
+						   passport, friend);
+
+				gaim_privacy_deny_remove(gc->account, passport, TRUE);
+			}
+
+			gaim_privacy_permit_add(gc->account, passport, TRUE);
+		}
+		else if (!g_ascii_strcasecmp(list_name, "BL") && user_num != 0)
+		{
+			/* These are users who are not allowed to see our status. */
+			gaim_privacy_deny_add(gc->account, passport, TRUE);
+		}
+		else if (!g_ascii_strcasecmp(list_name, "RL"))
+		{
+			/* These are users who have us on their contact list. */
+			if (user_num > 0)
+			{
+				gboolean new_entry = TRUE;
+
+				if (g_slist_find_custom(gc->account->permit, passport,
+										(GCompareFunc)g_ascii_strcasecmp))
+				{
+					new_entry = FALSE;
+				}
+
+				if (g_slist_find_custom(gc->account->deny, passport,
+										(GCompareFunc)g_ascii_strcasecmp))
+				{
+					new_entry = FALSE;
+				}
+
+				if (new_entry)
+				{
+					MsnPermitAdd *pa;
+					char msg[MSN_BUF_LEN];
+
+					gaim_debug(GAIM_DEBUG_WARNING, "msn",
+							   "Unresolved MSN RL entry: %s\n", passport);
+
+					pa       = g_new0(MsnPermitAdd, 1);
+					pa->user = msn_user_new(session, passport, friend);
+					pa->gc   = gc;
+
+					g_snprintf(msg, sizeof(msg),
+							   _("The user %s (%s) wants to add you to their "
+								 "buddy list."),
+							   msn_user_get_passport(pa->user),
+							   msn_user_get_name(pa->user));
+
+					gaim_request_action(gc, NULL, msg, NULL, 0, pa, 2,
+										_("Authorize"),
+										G_CALLBACK(msn_accept_add_cb),
+										_("Deny"),
+										G_CALLBACK(msn_cancel_add_cb));
+				}
+			}
+
+			if (user_num != num_users)
+				return TRUE; /* This isn't the last one in the RL. */
+
+			/* Now we're at the last one, so we can do final work. */
+			if (!session->lists_synced)
+			{
+				if (!msn_servconn_send_command(servconn, "CHG", "NLN"))
+				{
+					gaim_connection_error(gc, _("Unable to write"));
+
+					return FALSE;
+				}
+
+				gaim_connection_set_state(gc, GAIM_CONNECTED);
+				serv_finish_login(gc);
+			}
+
+			if (session->lists.allow == NULL)
+				session->lists.allow = g_slist_copy(gc->account->permit);
+			else
+				session->lists.allow = g_slist_concat(session->lists.allow,
+													  gc->account->permit);
+
+			if (session->lists.block == NULL)
+				session->lists.block = g_slist_copy(gc->account->deny);
+			else
+				session->lists.block = g_slist_concat(session->lists.block,
+													  gc->account->deny);
+
+			while (session->lists.forward != NULL)
+			{
+				MsnUser *user = session->lists.forward->data;
+
+				session->lists.forward =
+					g_slist_remove(session->lists.forward, user);
+
+				add_buddy(servconn, user);
+			}
+
+			session->syncing_lists = FALSE;
+			session->lists_synced  = TRUE;
+		}
 	}
 
 	return TRUE;
@@ -983,6 +1601,21 @@ rmg_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (group != NULL)
 		msn_groups_remove(session->groups, group);
+
+	return TRUE;
+}
+
+static gboolean
+syn_cmd(MsnServConn *servconn, const char *command, const char **params,
+		size_t param_count)
+{
+	MsnSession *session = servconn->session;
+
+	if (session->protocol_ver >= 8)
+	{
+		session->total_users  = atoi(params[2]);
+		session->total_groups = atoi(params[3]);
+	}
 
 	return TRUE;
 }
@@ -1239,6 +1872,12 @@ profile_msg(MsnServConn *servconn, MsnMessage *msg)
 	if ((value = msn_message_get_attr(msg, "MSPAuth")) != NULL)
 		session->passport_info.mspauth = g_strdup(value);
 
+	if ((value = msn_message_get_attr(msg, "ClientIP")) != NULL)
+		session->passport_info.client_ip = g_strdup(value);
+
+	if ((value = msn_message_get_attr(msg, "ClientPort")) != NULL)
+		session->passport_info.client_port = ntohs(atoi(value));
+
 	return TRUE;
 }
 
@@ -1347,7 +1986,7 @@ system_msg(MsnServConn *servconn, MsnMessage *msg)
 						   "signed out at that time.  Please finish any "
 						   "conversations in progress.\n\nAfter the "
 						   "maintenance has been completed, you will be "
-						   "able to successfully sign in.", 
+						   "able to successfully sign in.",
 						   "The MSN server will shut down for maintenance "
 						   "in %d minutes. You will automatically be "
 						   "signed out at that time.  Please finish any "
@@ -1375,6 +2014,8 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	MsnSession *session = notification->session;
 	GaimAccount *account = session->account;
 	GaimConnection *gc = gaim_account_get_connection(account);
+	char proto_vers[256];
+	size_t i;
 
 	if (source == -1) {
 		gaim_connection_error(session->account->gc, _("Unable to connect"));
@@ -1384,8 +2025,21 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (notification->fd != source)
 		notification->fd = source;
 
-	if (!msn_servconn_send_command(notification, "VER",
-								   "MSNP7 MSNP6 MSNP5 MSNP4 CVR0")) {
+	proto_vers[0] = '\0';
+
+	for (i = session->protocol_ver; i >= 7; i--)
+	{
+		char old_buf[256];
+
+		strcpy(old_buf, proto_vers);
+
+		g_snprintf(proto_vers, sizeof(proto_vers), "MSNP%d %s", i, old_buf);
+	}
+
+	strncat(proto_vers, "CVR0", sizeof(proto_vers));
+
+	if (!msn_servconn_send_command(notification, "VER", proto_vers))
+	{
 		gaim_connection_error(gc, _("Unable to write to server"));
 		return FALSE;
 	}
@@ -1429,6 +2083,7 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(notification, "BPR",       bpr_cmd);
 		msn_servconn_register_command(notification, "CHG",       blank_cmd);
 		msn_servconn_register_command(notification, "CHL",       chl_cmd);
+		msn_servconn_register_command(notification, "CVR",       cvr_cmd);
 		msn_servconn_register_command(notification, "FLN",       fln_cmd);
 		msn_servconn_register_command(notification, "GTC",       blank_cmd);
 		msn_servconn_register_command(notification, "ILN",       iln_cmd);
@@ -1448,7 +2103,7 @@ msn_notification_new(MsnSession *session, const char *server, int port)
 		msn_servconn_register_command(notification, "REM",       rem_cmd);
 		msn_servconn_register_command(notification, "RMG",       rmg_cmd);
 		msn_servconn_register_command(notification, "RNG",       rng_cmd);
-		msn_servconn_register_command(notification, "SYN",       blank_cmd);
+		msn_servconn_register_command(notification, "SYN",       syn_cmd);
 		msn_servconn_register_command(notification, "URL",       url_cmd);
 		msn_servconn_register_command(notification, "USR",       usr_cmd);
 		msn_servconn_register_command(notification, "VER",       ver_cmd);

@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,6 +24,7 @@
 
 typedef struct _MsnMessage MsnMessage;
 
+#include "msnslp.h"
 #include "session.h"
 #include "user.h"
 
@@ -33,6 +34,8 @@ typedef struct _MsnMessage MsnMessage;
 struct _MsnMessage
 {
 	size_t ref_count;           /**< The reference count.       */
+
+	gboolean msnslp_message;
 
 	MsnUser *sender;
 	MsnUser *receiver;
@@ -48,9 +51,14 @@ struct _MsnMessage
 	char *charset;
 	char *body;
 
+	MsnSlpHeader msnslp_header;
+	MsnSlpFooter msnslp_footer;
+
 	GHashTable *attr_table;
 	GList *attr_list;
 };
+
+#define MSN_MESSAGE(msg) ((MsnMessage *)(msg))
 
 /**
  * Creates a new, empty message.
@@ -71,6 +79,8 @@ MsnMessage *msn_message_new_from_str(MsnSession *session, const char *str);
 
 /**
  * Destroys a message.
+ *
+ * @param msg The message to destroy.
  */
 void msn_message_destroy(MsnMessage *msg);
 

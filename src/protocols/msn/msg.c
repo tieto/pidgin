@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -72,7 +72,7 @@ MsnMessage *
 msn_message_new_from_str(MsnSession *session, const char *str)
 {
 	MsnMessage *msg;
-	char *tmp_base, *tmp, *field1, *field2, *c;
+	char *tmp_base, *msg_base, *tmp, *field1, *field2, *c;
 
 	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(!g_ascii_strncasecmp(str, "MSG", 3), NULL);
@@ -127,6 +127,8 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 		msg->flag = *field2;
 	}
 
+	msg_base = tmp;
+
 	/* Back to the parsination. */
 	while (*tmp != '\r') {
 		char *key, *value;
@@ -164,7 +166,49 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 	tmp += 2;
 
 	/* Now we *should* be at the body. */
-	msn_message_set_body(msg, tmp);
+	if (!strcmp(msn_message_get_content_type(msg), "application/x-msnmsgrp2p"))
+	{
+		msn_message_set_body(msg, tmp);
+	}
+	else
+	{
+		char header[48];
+		char footer[4];
+
+		msg->msnslp_message = TRUE;
+
+		memcpy(header, tmp, 48);
+
+		tmp += 48;
+
+		msg->body = g_memdup(tmp, msg->size - (tmp - msg_base) + 1);
+
+		tmp++;
+
+		memcpy(footer, tmp, 4);
+
+		/* Import the header. */
+		memcpy(&msg->msnslp_header.session_id,      tmp, 4); tmp += 4;
+		memcpy(&msg->msnslp_header.id,              tmp, 4); tmp += 4;
+		memcpy(&msg->msnslp_header.offset,          tmp, 4); tmp += 8;
+		memcpy(&msg->msnslp_header.total_size,      tmp, 4); tmp += 8;
+		memcpy(&msg->msnslp_header.length,          tmp, 4); tmp += 4;
+		memcpy(&msg->msnslp_header.flags,           tmp, 4); tmp += 4;
+		memcpy(&msg->msnslp_header.prev_id,         tmp, 4); tmp += 4;
+		memcpy(&msg->msnslp_header.prev_f9,         tmp, 4); tmp += 4;
+		memcpy(&msg->msnslp_header.prev_total_size, tmp, 4); tmp += 8;
+
+		/* Convert to the right endianness */
+		msg->msnslp_header.session_id = ntohs(msg->msnslp_header.session_id);
+		msg->msnslp_header.id         = ntohs(msg->msnslp_header.id);
+		msg->msnslp_header.length     = ntohs(msg->msnslp_header.length);
+		msg->msnslp_header.flags      = ntohs(msg->msnslp_header.flags);
+		msg->msnslp_header.prev_id    = ntohs(msg->msnslp_header.prev_id);
+		msg->msnslp_header.prev_f9    = ntohs(msg->msnslp_header.prev_f9);
+
+		/* Import the footer. */
+		msg->msnslp_footer.app_id = (long)footer;
+	}
 
 	g_free(tmp_base);
 
@@ -303,9 +347,53 @@ msn_message_build_string(const MsnMessage *msg)
 		g_strlcat(str, buf, len);
 	}
 
-	g_snprintf(buf, sizeof(buf), "\r\n%s", msn_message_get_body(msg));
+	if (msg->msnslp_message)
+	{
+		char *c;
+		char blank[4];
+		int session_id, id, offset, total_size, length, flags;
+		int prev_id, prev_f9, prev_total_size;
 
-	g_strlcat(str, buf, len);
+		memcpy(blank, 0, 4);
+
+		c = str + strlen(str);
+
+		session_id      = htons(msg->msnslp_header.session_id);
+		id              = htons(msg->msnslp_header.id);
+		offset          = htons(msg->msnslp_header.offset);
+		total_size      = htons(msg->msnslp_header.total_size);
+		length          = htons(msg->msnslp_header.length);
+		flags           = htons(msg->msnslp_header.flags);
+		prev_id         = htons(msg->msnslp_header.prev_id);
+		prev_f9         = htons(msg->msnslp_header.prev_f9);
+		prev_total_size = htons(msg->msnslp_header.prev_total_size);
+
+		memcpy(c, &session_id,      4); c += 4;
+		memcpy(c, &id,              4); c += 4;
+		memcpy(c, &offset,          4); c += 4;
+		memcpy(c, blank,            4); c += 4;
+		memcpy(c, &total_size,      4); c += 4;
+		memcpy(c, blank,            4); c += 4;
+		memcpy(c, &length,          4); c += 4;
+		memcpy(c, &flags,           4); c += 4;
+		memcpy(c, &prev_id,         4); c += 4;
+		memcpy(c, &prev_f9,         4); c += 4;
+		memcpy(c, &prev_total_size, 4); c += 4;
+		memcpy(c, blank,            4); c += 4;
+
+		strncpy(c, msn_message_get_body(msg), len);
+
+		c += strlen(msn_message_get_body(msg));
+
+		memcpy(c, blank,                      1); c++;
+		memcpy(c, &msg->msnslp_footer.app_id, 4); c += 4;
+	}
+	else
+	{
+		g_snprintf(buf, sizeof(buf), "\r\n%s", msn_message_get_body(msg));
+
+		g_strlcat(str, buf, len);
+	}
 
 	if (msg->size != strlen(msg_start)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "msn",

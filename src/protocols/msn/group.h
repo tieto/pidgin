@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,6 +24,8 @@
 
 typedef struct _MsnGroup  MsnGroup;
 typedef struct _MsnGroups MsnGroups;
+
+#include <stdio.h>
 
 #include "session.h"
 #include "user.h"
@@ -196,7 +198,7 @@ void msn_groups_remove(MsnGroups *groups, MsnGroup *group);
  * Returns the number of groups in a groups list.
  *
  * @param groups The groups list.
- * 
+ *
  * @return The number of groups.
  */
 size_t msn_groups_get_count(const MsnGroups *groups);

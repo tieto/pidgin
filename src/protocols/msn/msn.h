@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,14 +37,15 @@
 #include "prpl.h"
 #include "request.h"
 #include "server.h"
+#include "sslconn.h"
 #include "util.h"
 
 /* XXX */
 #include "gaim.h"
 
 #ifdef _WIN32
-#include "win32dep.h"
-#include "stdint.h"
+# include "win32dep.h"
+# include "stdint.h"
 #endif
 
 #define MSN_BUF_LEN 8192
@@ -72,5 +73,15 @@
 	"Client-Name: Gaim/" VERSION "\r\n" \
 	"Chat-Logging: Y\r\n" \
 	"Buddy-Icons: 1\r\n"
+
+
+typedef enum
+{
+	MSN_LIST_FL_OP = 0x01,
+	MSN_LIST_AL_OP = 0x02,
+	MSN_LIST_BL_OP = 0x04,
+	MSN_LIST_RL_OP = 0x08
+
+} MsnListOp;
 
 #endif /* _MSN_H_ */

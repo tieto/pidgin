@@ -24,6 +24,9 @@ EXTRA_DIST = \
 dist-hook: gaim.spec
 	cp gaim.spec $(distdir)
 
+distcheck-hook: plugins/perl/common/Gaim.pm
+#	cp plugins/perl/common/Gaim.pm $(distdir)/plugins/perl/common
+
 appsdir = $(datadir)/applications
 apps_DATA = gaim.desktop
 

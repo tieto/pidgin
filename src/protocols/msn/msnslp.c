@@ -1,5 +1,5 @@
 /**
- * @file state.c State functions and definitions
+ * @file msnslp.c MSNSLP support
  *
  * gaim
  *
@@ -19,27 +19,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "msn.h"
-#include "state.h"
+#include "msnslp.h"
 
-static const char *away_text[] =
+MsnSlpSession *
+msn_slp_session_new(MsnSwitchBoard *swboard, gboolean local_initiated)
 {
-	N_("Available"),
-	N_("Available"),
-	N_("Busy"),
-	N_("Idle"),
-	N_("Be Right Back"),
-	N_("Away From Computer"),
-	N_("On The Phone"),
-	N_("Out To Lunch"),
-	N_("Available"),
-	N_("Available")
-};
+	MsnSlpSession *slpsession;
 
-const char *
-msn_away_get_text(MsnAwayType type)
+	g_return_val_if_fail(swboard != NULL, NULL);
+
+	slpsession = g_new0(MsnSlpSession, 1);
+
+	slpsession->swboard = swboard;
+	slpsession->local_initiated = local_initiated;
+
+	return slpsession;
+}
+
+void
+msn_slp_session_destroy(MsnSlpSession *session)
 {
-	g_return_val_if_fail(type >= 0 && type <= MSN_HIDDEN, NULL);
+	g_return_if_fail(session != NULL);
 
-	return _(away_text[type]);
+	g_free(session);
+}
+
+void
+msn_slp_session_send_msg(MsnSlpSession *session, MsnMessage *msg)
+{
+	g_return_if_fail(session != NULL);
+	g_return_if_fail(msg != NULL);
+
 }

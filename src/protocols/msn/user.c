@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -35,7 +35,6 @@ msn_user_new(MsnSession *session, const char *passport, const char *name)
 		user->session = session;
 
 		msn_user_set_passport(user, passport);
-		msn_user_set_group_id(user, -1);
 
 		msn_users_add(session->users, user);
 	}
@@ -64,6 +63,9 @@ msn_user_destroy(MsnUser *user)
 
 	if (user->clientcaps != NULL)
 		g_hash_table_destroy(user->clientcaps);
+
+	if (user->group_ids != NULL)
+		g_list_free(user->group_ids);
 
 	if (user->passport != NULL) g_free(user->passport);
 	if (user->name     != NULL) g_free(user->name);
@@ -127,13 +129,31 @@ msn_user_set_name(MsnUser *user, const char *name)
 }
 
 void
-msn_user_set_group_id(MsnUser *user, int id)
+msn_user_set_group_ids(MsnUser *user, GList *ids)
 {
 	g_return_if_fail(user != NULL);
 
-	user->group_id = id;
+	user->group_ids = ids;
 }
 
+void
+msn_user_add_group_id(MsnUser *user, int id)
+{
+	g_return_if_fail(user != NULL);
+	g_return_if_fail(id > -1);
+
+	if (!g_list_find(user->group_ids, GINT_TO_POINTER(id)))
+		user->group_ids = g_list_append(user->group_ids, GINT_TO_POINTER(id));
+}
+
+void
+msn_user_remove_group_id(MsnUser *user, int id)
+{
+	g_return_if_fail(user != NULL);
+	g_return_if_fail(id > -1);
+
+	user->group_ids = g_list_remove(user->group_ids, GINT_TO_POINTER(id));
+}
 void
 msn_user_set_home_phone(MsnUser *user, const char *number)
 {
@@ -184,12 +204,12 @@ msn_user_get_name(const MsnUser *user)
 	return user->name;
 }
 
-int
-msn_user_get_group_id(const MsnUser *user)
+GList *
+msn_user_get_group_ids(const MsnUser *user)
 {
-	g_return_val_if_fail(user != NULL, -1);
+	g_return_val_if_fail(user != NULL, NULL);
 
-	return user->group_id;
+	return user->group_ids;
 }
 
 const char *

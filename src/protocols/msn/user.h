@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -47,7 +47,7 @@ struct _MsnUser
 
 	gboolean mobile;        /**< Signed up with MSN Mobile. */
 
-	int group_id;           /**< The group ID.              */
+	GList *group_ids;       /**< The group IDs.             */
 
 	size_t ref_count;       /**< The reference count.       */
 
@@ -71,7 +71,7 @@ struct _MsnUsers
 
 /**
  * Creates a new user structure.
- * 
+ *
  * @param session  The MSN session.
  * @param passport The initial passport.
  * @param name     The initial friendly name.
@@ -125,12 +125,28 @@ void msn_user_set_passport(MsnUser *user, const char *passport);
 void msn_user_set_name(MsnUser *user, const char *name);
 
 /**
- * Sets the group ID for a user.
+ * Sets the group ID list for a user.
+ *
+ * @param user The user.
+ * @param ids  The group ID list.
+ */
+void msn_user_set_group_ids(MsnUser *user, GList *ids);
+
+/**
+ * Adds the group ID for a user.
  *
  * @param user The user.
  * @param id   The group ID.
  */
-void msn_user_set_group_id(MsnUser *user, int id);
+void msn_user_add_group_id(MsnUser *user, int id);
+
+/**
+ * Removes the group ID from a user.
+ *
+ * @param user The user.
+ * @param id   The group ID.
+ */
+void msn_user_remove_group_id(MsnUser *user, int id);
 
 /**
  * Sets the home phone number for a user.
@@ -175,13 +191,13 @@ const char *msn_user_get_passport(const MsnUser *user);
 const char *msn_user_get_name(const MsnUser *user);
 
 /**
- * Returns the group ID for a user.
+ * Returns the group IDs for a user.
  *
  * @param user The user.
  *
- * @return The group ID.
+ * @return The group IDs.
  */
-int msn_user_get_group_id(const MsnUser *user);
+GList *msn_user_get_group_ids(const MsnUser *user);
 
 /**
  * Returns the home phone number for a user.
@@ -268,7 +284,7 @@ void msn_users_remove(MsnUsers *users, MsnUser *user);
  * Returns the number of users in a users list.
  *
  * @param users The users list.
- * 
+ *
  * @return The number of users.
  */
 size_t msn_users_get_count(const MsnUsers *users);

@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -51,7 +51,7 @@ msn_act_id(GaimConnection *gc, const char *entry)
 	char outparams[MSN_BUF_LEN];
 	char *alias;
 
-	if (entry == NULL || *entry == '\0') 
+	if (entry == NULL || *entry == '\0')
 		alias = g_strdup("");
 	else
 		alias = g_strdup(entry);
@@ -694,7 +694,7 @@ msn_add_permit(GaimConnection *gc, const char *who)
 	char buf[MSN_BUF_LEN];
 
 	if (!strchr(who, '@')) {
-		g_snprintf(buf, sizeof(buf), 
+		g_snprintf(buf, sizeof(buf),
 			   _("An MSN screenname must be in the form \"user@server.com\". "
 			     "Perhaps you meant %s@hotmail.com. No changes were made "
 				 "to your allow list."), who);
@@ -734,7 +734,7 @@ msn_add_deny(GaimConnection *gc, const char *who)
 	char buf[MSN_BUF_LEN];
 
 	if (!strchr(who, '@')) {
-		g_snprintf(buf, sizeof(buf), 
+		g_snprintf(buf, sizeof(buf),
 			   _("An MSN screenname must be in the form \"user@server.com\". "
 			     "Perhaps you meant %s@hotmail.com. No changes were made "
 				 "to your block list."), who);
@@ -1295,7 +1295,6 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 static void
 msn_get_info(GaimConnection *gc, const char *name)
 {
-	/* MsnSession *session = (MsnSession *)gc->proto_data; */
 	char url[256];
 	g_snprintf(url, sizeof url, "%s%s", PROFILE_URL, name);
 	grab_url(url, FALSE, msn_got_info, NULL,"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",1);

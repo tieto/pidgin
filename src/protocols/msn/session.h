@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,6 +24,8 @@
 
 typedef struct _MsnSession MsnSession;
 
+#include "sslconn.h"
+
 #include "servconn.h"
 #include "switchboard.h"
 #include "user.h"
@@ -34,6 +36,8 @@ struct _MsnSession
 	GaimAccount *account;
 	MsnUser *user;
 
+	int protocol_ver;
+
 	char *dispatch_server;
 	int dispatch_port;
 
@@ -43,6 +47,13 @@ struct _MsnSession
 	MsnServConn *notification_conn;
 
 	unsigned int trId;
+
+	char *ssl_url;
+	char *ssl_login_host;
+	char *ssl_login_path;
+	char *ssl_login_params;
+	GHashTable *ssl_challenge_data;
+	GaimSslConnection *ssl_conn;
 
 	MsnUsers *users;
 	MsnGroups *groups;
@@ -66,12 +77,22 @@ struct _MsnSession
 		char *mspauth;
 		unsigned long sl;
 		char *file;
+		char *client_ip;
+		int client_port;
 
 	} passport_info;
 
 	/* You have no idea how much I hate all that is below. */
 	GaimPlugin *prpl;
 
+	/* For MSNP8 and MSNP9. */
+	int num_users;
+	int total_users;
+	int num_groups;
+	int total_groups;
+	MsnUser *last_user_added;
+
+	/* For MSNP7 and lower. */
 	gboolean syncing_lists;
 	gboolean lists_synced;
 

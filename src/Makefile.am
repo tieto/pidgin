@@ -89,6 +89,8 @@ CORESOURCES = \
 	status.h \
 	sound.c \
 	sound.h \
+	sslconn.c \
+	sslconn.h \
 	util.c \
 	util.h \
 	value.c \
@@ -162,7 +164,8 @@ gaim_LDADD = \
 	$(XSS_LIBS) \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
-	$(GTKSPELL_LIBS)
+	$(GTKSPELL_LIBS) \
+	$(NSS_LIBS)
 
 gaim_remote_SOURCES = \
 	gaim-remote.c
@@ -181,4 +184,5 @@ AM_CPPFLAGS = \
 	$(AO_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
-	$(GTKSPELL_CFLAGS)
+	$(GTKSPELL_CFLAGS) \
+	$(NSS_CFLAGS)

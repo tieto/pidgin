@@ -19,6 +19,10 @@ MSNSOURCES = \
 	msg.h \
 	msn.c \
 	msn.h \
+	msnobject.c \
+	msnobject.h \
+	msnslp.c \
+	msnslp.h \
 	notification.c \
 	notification.h \
 	page.c \
