@@ -498,6 +498,15 @@ static gboolean pending_zloc(char *who)
 	return FALSE;
 }
 
+static void message_failed(ZNotice_t notice, struct sockaddr_in from)
+{
+        if (g_ascii_strcasecmp(notice.z_class,"message")) {
+                /* message to chat failed ignore for now */
+        } else {
+                gaim_notify_error(zgc,notice.z_recipient,_("User is offline"),NULL);
+        }
+}
+
 static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 {
 	if (!g_ascii_strcasecmp(notice.z_class, LOGIN_CLASS)) {
@@ -643,6 +652,11 @@ static gint check_notify(gpointer data)
 		case ACKED:
 			handle_message(notice, from);
 			break;
+               case SERVACK:
+                        if(!(g_ascii_strcasecmp(notice.z_message,ZSRVACK_NOTSENT))){
+                                message_failed(notice,from);
+                        }
+                        break;
 		default:
 			/* we'll just ignore things for now */
 			gaim_debug(GAIM_DEBUG_WARNING, "zephyr", "Unhandled notice.\n");
