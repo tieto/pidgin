@@ -106,7 +106,9 @@ struct _GtkIMHtml {
 		int fontsize;
 		GtkTextTag *link;
 	} edit;
-	char *clipboard_string;
+	
+	char *clipboard_text_string;
+	char *clipboard_html_string;
 };
 
 struct _GtkIMHtmlClass {

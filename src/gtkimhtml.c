@@ -489,19 +489,23 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 
 #if GTK_CHECK_VERSION(2,2,0)
 static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *selection_data, guint info, GtkIMHtml *imhtml) {
+	char *text;
 	GtkTextIter start, end;
 	GtkTextMark *sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
-	char *text;
+	
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &end, ins);
-
+	gboolean primary = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY) == clipboard;
 
 	if (info == TARGET_HTML) {
 		int len;
 		char *selection;
 		GString *str = g_string_new(NULL);
-		text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+		if (primary) {
+			text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+		} else 
+			text = imhtml->clipboard_html_string;
 
 		/* Mozilla asks that we start our text/html with the Unicode byte order mark */
 		str = g_string_append_unichar(str, 0xfeff);
@@ -512,11 +516,15 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		g_string_free(str, TRUE);
 		g_free(selection);
 	} else {
-		text = gtk_imhtml_get_text(imhtml, &start, &end);
+		if (primary) {
+			text = gtk_imhtml_get_text(imhtml, &start, &end);
+		} else
+			text = imhtml->clipboard_text_string;
 		gtk_selection_data_set_text(selection_data, text, strlen(text));
 	}
-	g_free(text);
-}
+	if (primary) /* This was allocated here */
+		g_free(text);
+ }
 
 static void gtk_imhtml_primary_clipboard_clear(GtkClipboard *clipboard, GtkIMHtml *imhtml)
 {
@@ -536,10 +544,25 @@ static void gtk_imhtml_primary_clipboard_clear(GtkClipboard *clipboard, GtkIMHtm
 
 static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 {
+	GtkTextIter start, end;
+	GtkTextMark *sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &end, ins);
+
 	gtk_clipboard_set_with_owner(gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD),
 				     selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry),
 				     (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
 				     (GtkClipboardClearFunc)NULL, G_OBJECT(imhtml));
+
+	if (imhtml->clipboard_html_string) {
+		g_free(imhtml->clipboard_html_string);
+		g_free(imhtml->clipboard_text_string);
+	}
+
+	imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+	imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
 
 	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
 }
@@ -577,6 +600,9 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, gtk_text_buffer_get_insert(imhtml->text_buffer));
 	gtk_imhtml_insert_html_at_iter(imhtml, text, GTK_IMHTML_NO_NEWLINE, &iter);
 	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
+
+	g_free(text);
+
 }
 
 
@@ -662,6 +688,12 @@ gtk_imhtml_finalize (GObject *object)
 		GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(scalables->data);
 		scale->free(scale);
 	}
+
+	if (imhtml->clipboard_text_string) {
+		g_free(imhtml->clipboard_text_string);
+		g_free(imhtml->clipboard_html_string);
+	}
+  
 
 	g_list_free(imhtml->scalables);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
@@ -782,6 +814,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 		               G_CALLBACK(mark_set_so_update_selection_cb), imhtml);
 
 	gtk_widget_add_events(GTK_WIDGET(imhtml), GDK_LEAVE_NOTIFY_MASK);
+
+	imhtml->clipboard_text_string = NULL;
+	imhtml->clipboard_html_string = NULL;
 
 	imhtml->tip = NULL;
 	imhtml->tip_timer = 0;
