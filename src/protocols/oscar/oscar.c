@@ -1150,22 +1150,22 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
 		caps = info->capabilities;
+	if (info->flags & AIM_FLAG_ACTIVEBUDDY)
+		type |= UC_AB;
 
-	if (!od->icq && (info->present & AIM_USERINFO_PRESENT_FLAGS)) {
-		if (info->flags & AIM_FLAG_ACTIVEBUDDY)
-			type |= UC_AB;
-		if (info->flags & AIM_FLAG_UNCONFIRMED)
-			type |= UC_UNCONFIRMED;
-		if (info->flags & AIM_FLAG_ADMINISTRATOR)
-			type |= UC_ADMIN;
-		if (info->flags & AIM_FLAG_AOL)
-			type |= UC_AOL;
-		if (info->flags & AIM_FLAG_FREE)
-			type |= UC_NORMAL;
-		if (info->flags & AIM_FLAG_AWAY)
-			type |= UC_UNAVAILABLE;
-		if (info->flags & AIM_FLAG_WIRELESS)
-			type |= UC_WIRELESS;
+	if ((!od->icq) && (info->present & AIM_USERINFO_PRESENT_FLAGS)) {
+			if (info->flags & AIM_FLAG_UNCONFIRMED)
+				type |= UC_UNCONFIRMED;
+			if (info->flags & AIM_FLAG_ADMINISTRATOR)
+				type |= UC_ADMIN;
+			if (info->flags & AIM_FLAG_AOL)
+				type |= UC_AOL;
+			if (info->flags & AIM_FLAG_FREE)
+				type |= UC_NORMAL;
+			if (info->flags & AIM_FLAG_AWAY)
+				type |= UC_UNAVAILABLE;
+			if (info->flags & AIM_FLAG_WIRELESS)
+				type |= UC_WIRELESS;
 	}
 	if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS) {
 		type = (info->icqinfo.status << 7);
