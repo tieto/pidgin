@@ -62,6 +62,7 @@ typedef enum
 	GAIM_PROTO_ELVIN,       /**< Elvin Protocol            */
 	GAIM_PROTO_TREPIA,      /**< Trepia IM protocol        */
 	GAIM_PROTO_BATTLENET,   /**< Battle.NET protocol       */
+	GAIM_PROTO_SSCP,	/**< SSCP (ConfMgr) protocol   */
 	GAIM_PROTO_UNTAKEN      /**< Untaken protocol number   */
 
 } GaimProtocol;
