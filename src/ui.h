@@ -492,8 +492,10 @@ extern void play_file(char *);
 /* Fucntions in ticker.c */
 void SetTickerPrefs();
 void BuddyTickerSignOff();
-void BuddyTickerAddUser(char *, GdkPixmap *, GdkBitmap *);
+void BuddyTickerAddUser(char *, char *, GdkPixmap *, GdkBitmap *);
 void BuddyTickerSetPixmap(char *, GdkPixmap *, GdkBitmap *);
+void BuddyTickerSetAlias(char *, char *);
+void BuddyTickerSetNames();
 void BuddyTickerSignoff();
 
 #endif /* _UI_H_ */

@@ -300,6 +300,8 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 		}
 		update_num_group(gs);
 	} else {
+		if (misc_options & OPT_MISC_BUDDY_TICKER)
+			BuddyTickerSetAlias(b->name, b->show);
 		gtk_label_set_text(GTK_LABEL(bs->label), b->show);
 		update_idle_time(bs);
 	}
@@ -2313,7 +2315,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 			gtk_widget_show(bs->pix);
 			if (misc_options & OPT_MISC_BUDDY_TICKER) {
-				BuddyTickerAddUser(b->name, pm, bm);
+				BuddyTickerAddUser(b->name, b->show, pm, bm);
 				gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogonTimeout, b->name);
 			}
 			gdk_pixmap_unref(pm);

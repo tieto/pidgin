@@ -34,6 +34,7 @@ GtkWidget *ticker;
 
 typedef struct {
 	char buddy[ 128 ];
+	char alias[ 388 ];
 	GtkWidget *hbox;
 	GtkWidget *ebox;
 	GtkWidget *label;
@@ -46,7 +47,7 @@ static GtkWidget *msgw;
 
 void BuddyTickerDestroyWindow( GtkWidget *window );
 void BuddyTickerCreateWindow( void );
-void BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm );
+void BuddyTickerAddUser( char *name, char *alias, GdkPixmap *pm, GdkBitmap *bm );
 void BuddyTickerRemoveUser( char *name );
 void BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm );
 void BuddyTickerClearList( void );
@@ -66,7 +67,7 @@ BuddyTickerDestroyWindow( GtkWidget *window )
 	userclose = TRUE;
 }
 
-static char *msg = "Welcome to Gaim " VERSION ", brought to you by Rob Flynn (maintainer), Eric Warmenhoven, Mark Spencer, Jeramey Crawford, Jim Duchek, and Syd Logan"; 
+static char *msg = "Welcome to Gaim " VERSION ", brought to you by Rob Flynn (maintainer), Eric Warmenhoven, Mark Spencer, Jeramey Crawford, Jim Duchek, Syd Logan, and Sean Egan"; 
 
 void
 BuddyTickerCreateWindow()
@@ -109,7 +110,7 @@ ButtonPressCallback( GtkWidget *widget, GdkEvent *event, gpointer callback_data 
 }
 
 void
-BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm )
+BuddyTickerAddUser( char *name, char *alias, GdkPixmap *pm, GdkBitmap *bm )
 {
 	TickerData *p;
 	GList *q;
@@ -128,6 +129,7 @@ BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm )
 	p->label = (GtkWidget *) NULL;
 	p->pix = (GtkWidget *) NULL;
 	strcpy( p->buddy, name );
+	strcpy( p->alias, alias);
 	tickerbuds = g_list_append( tickerbuds, p );
 
 	p->hbox = gtk_hbox_new( FALSE, 0 );
@@ -147,7 +149,10 @@ BuddyTickerAddUser( char *name, GdkPixmap *pm, GdkBitmap *bm )
 	gtk_box_pack_start_defaults( GTK_BOX( p->hbox ), p->ebox );
 	gtk_widget_show( p->ebox );
 
-	p->label = gtk_label_new( name );
+	if (im_options & OPT_IM_ALIAS_TAB)
+		p->label = gtk_label_new( alias );
+	else
+		p->label = gtk_label_new( name );
 	gtk_container_add( GTK_CONTAINER(p->ebox), p->label ); 
 
 	gtk_widget_show( p->label );
@@ -198,6 +203,26 @@ BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm )
 	gtk_widget_show( data->pix );
 }
 
+void
+BuddyTickerSetAlias( char *name, char *alias) {
+	GList *p;
+	TickerData *data;
+
+	if ( userclose == TRUE )
+		return;
+	p = (GList *) BuddyTickerFindUser( name );
+	if ( p )
+		data = (TickerData *) p->data;
+	else
+		return;
+	if (alias) {
+		g_snprintf(data->alias, sizeof(data->alias), alias);
+		
+		if (im_options & OPT_IM_ALIAS_TAB) 
+			gtk_label_set_text(GTK_LABEL(data->label), alias);
+	}
+}
+
 GList *
 BuddyTickerFindUser( char *name )
 {
@@ -210,6 +235,20 @@ BuddyTickerFindUser( char *name )
 		p = p->next;		
 	}
 	return (GList *) NULL;
+}
+
+void
+BuddyTickerSetNames()
+{
+	GList *p = tickerbuds;
+	while ( p ) {
+		TickerData *q = (TickerData *) p->data;
+		if (im_options & OPT_IM_ALIAS_TAB)
+			gtk_label_set_text(GTK_LABEL(q->label), q->alias);
+		else
+			gtk_label_set_text(GTK_LABEL(q->label), q->buddy);
+	p = p->next;
+	}
 }
 
 int
@@ -297,7 +336,7 @@ void BuddyTickerShow()
 					if (xpm == NULL)
 						xpm = (char **)no_icon_xpm;
 					pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
-					BuddyTickerAddUser( b->name, pm, bm );
+					BuddyTickerAddUser( b->name, b->show, pm, bm );
 				}
 			}
 		}
