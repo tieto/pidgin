@@ -52,6 +52,10 @@ gint font_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
 #define MIN_HEIGHT 20
 #define HR_HEIGHT 2
 
+#define DIFF(a, b) (((a) > (b)) ? ((a) - (b)) : ((b) - (a)))
+#define COLOR_MOD  0x8000
+#define COLOR_DIFF (COLOR_MOD >> 8)
+
 #define TYPE_TEXT     0
 #define TYPE_SMILEY   1
 #define TYPE_IMG      2
@@ -176,6 +180,7 @@ gtk_imhtml_destroy (GtkObject *object)
 
 	gdk_font_unref (imhtml->default_font);
 	gdk_color_free (imhtml->default_fg_color);
+	gdk_color_free (imhtml->default_bg_color);
 
 	gdk_cursor_destroy (imhtml->hand_cursor);
 	gdk_cursor_destroy (imhtml->arrow_cursor);
@@ -207,7 +212,29 @@ gtk_imhtml_realize (GtkWidget *widget)
 
 	gdk_window_set_cursor (widget->window, imhtml->arrow_cursor);
 
-	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window, &GTK_WIDGET (imhtml)->style->white);
+	gdk_color_alloc (widget->style->colormap, imhtml->default_bg_color);
+	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window, imhtml->default_bg_color);
+}
+
+static gboolean
+similar_colors (GdkColor  bg,
+		GdkColor *fg)
+{
+	bg.red = bg.pixel >> 16; fg->red = fg->pixel >> 16;
+	bg.green = (bg.pixel >> 8) & 0xff; fg->green = (fg->pixel >> 8) & 0xff;
+	bg.blue = bg.pixel & 0xff; fg->blue = fg->pixel & 0xff;
+	if ((DIFF (bg.red, fg->red) < COLOR_DIFF) &&
+	    (DIFF (bg.green, fg->green) < COLOR_DIFF) &&
+	    (DIFF (bg.blue, fg->blue) < COLOR_DIFF)) {
+		fg->red = (0xff00 - COLOR_MOD > bg.red) ?
+			bg.red + COLOR_MOD : bg.red - COLOR_MOD;
+		fg->green = (0xff00 - COLOR_MOD > bg.green) ?
+			bg.green + COLOR_MOD : bg.green - COLOR_MOD;
+		fg->blue = (0xff00 - COLOR_MOD > bg.blue) ?
+			bg.blue + COLOR_MOD : bg.blue - COLOR_MOD;
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static void
@@ -219,6 +246,7 @@ draw_text (GtkIMHtml        *imhtml,
 	GdkColormap *cmap;
 	GdkWindow *window = GTK_LAYOUT (imhtml)->bin_window;
 	gfloat xoff, yoff;
+	GdkGCValues bgv, fgv;
 
 	bit = line->bit;
 	gc = gdk_gc_new (window);
@@ -229,8 +257,10 @@ draw_text (GtkIMHtml        *imhtml,
 	if (bit->bg != NULL) {
 		gdk_color_alloc (cmap, bit->bg);
 		gdk_gc_set_foreground (gc, bit->bg);
-	} else
-		gdk_gc_copy (gc, GTK_WIDGET (imhtml)->style->white_gc);
+	} else {
+		gdk_color_alloc (cmap, imhtml->default_bg_color);
+		gdk_gc_set_foreground (gc, imhtml->default_bg_color);
+	}
 
 	gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff, line->width, line->height);
 
@@ -246,6 +276,8 @@ draw_text (GtkIMHtml        *imhtml,
 		gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff,
 				    gdk_string_width (bit->font, line->text), line->height);
 	}
+
+	gdk_gc_get_values (gc, &bgv);
 
 	if (line->selected) {
 		gint width, x;
@@ -286,8 +318,16 @@ draw_text (GtkIMHtml        *imhtml,
 	} else if (bit->fore) {
 		gdk_color_alloc (cmap, bit->fore);
 		gdk_gc_set_foreground (gc, bit->fore);
-	} else
-		gdk_gc_copy (gc, GTK_WIDGET (imhtml)->style->black_gc);
+	} else {
+		gdk_color_alloc (cmap, imhtml->default_fg_color);
+		gdk_gc_set_foreground (gc, imhtml->default_fg_color);
+	}
+
+	gdk_gc_get_values (gc, &fgv);
+	if (similar_colors (bgv.foreground, &fgv.foreground)) {
+		gdk_color_alloc (cmap, &fgv.foreground);
+		gdk_gc_set_foreground (gc, &fgv.foreground);
+	}
 
 	gdk_draw_string (window, bit->font, gc, line->x - xoff,
 			 line->y - yoff + line->ascent, line->text);
@@ -326,8 +366,10 @@ draw_img (GtkIMHtml        *imhtml,
 	if (bit->bg != NULL) {
 		gdk_color_alloc (cmap, bit->bg);
 		gdk_gc_set_foreground (gc, bit->bg);
-	} else
-		gdk_gc_copy (gc, GTK_WIDGET (imhtml)->style->white_gc);
+	} else {
+		gdk_color_alloc (cmap, imhtml->default_bg_color);
+		gdk_gc_set_foreground (gc, imhtml->default_bg_color);
+	}
 
 	gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff, line->width, line->height);
 
@@ -372,7 +414,8 @@ draw_line (GtkIMHtml        *imhtml,
 				    line->width, line->height);
 	}
 
-	gdk_gc_copy (gc, GTK_WIDGET (imhtml)->style->black_gc);
+	gdk_color_alloc (cmap, imhtml->default_fg_color);
+	gdk_gc_set_foreground (gc, imhtml->default_fg_color);
 
 	line_height = line->height / 2;
 
@@ -459,12 +502,15 @@ gtk_imhtml_style_set (GtkWidget *widget,
 
 	g_return_if_fail (widget != NULL);
 	g_return_if_fail (GTK_IS_IMHTML (widget));
+
+	if (GTK_WIDGET_CLASS (parent_class)->style_set)
+		(* GTK_WIDGET_CLASS (parent_class)->style_set) (widget, style);
+
 	if (!GTK_WIDGET_REALIZED (widget))
 		return;
 
 	imhtml = GTK_IMHTML (widget);
-
-	gdk_window_set_background (GTK_LAYOUT (imhtml)->bin_window, &GTK_WIDGET (imhtml)->style->white);
+	gtk_imhtml_draw_exposed (imhtml);
 }
 
 static gint
@@ -550,8 +596,16 @@ gtk_imhtml_size_allocate (GtkWidget     *widget,
 	if (GTK_WIDGET_CLASS (parent_class)->size_allocate)
 		( *GTK_WIDGET_CLASS (parent_class)->size_allocate) (widget, allocation);
 
-	if (allocation->width == imhtml->xsize)
+	if (allocation->width == imhtml->xsize) {
+		if ((GTK_LAYOUT (imhtml)->vadjustment->value > imhtml->y + 5 - allocation->height)) {
+			if (imhtml->y + 5 > allocation->height)
+				gtk_adjustment_set_value (GTK_LAYOUT (imhtml)->vadjustment,
+							  imhtml->y + 5 - allocation->height);
+			else
+				gtk_adjustment_set_value (GTK_LAYOUT (imhtml)->vadjustment, 0);
+		}
 		return;
+	}
 
 	imhtml->x = BORDER_SIZE;
 	imhtml->y = BORDER_SIZE + 10;
@@ -1208,6 +1262,7 @@ gtk_imhtml_init (GtkIMHtml *imhtml)
 	if (imhtml->default_font == NULL)
 		g_warning ("GtkIMHtml: Could not load default font!");
 	imhtml->default_fg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->black);
+	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->white);
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	imhtml->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
@@ -1319,7 +1374,8 @@ gtk_imhtml_set_adjustments (GtkIMHtml     *imhtml,
 void
 gtk_imhtml_set_defaults (GtkIMHtml *imhtml,
 			 GdkFont   *font,
-			 GdkColor  *fg_color)
+			 GdkColor  *fg_color,
+			 GdkColor  *bg_color)
 {
 	g_return_if_fail (imhtml != NULL);
 	g_return_if_fail (GTK_IS_IMHTML (imhtml));
@@ -1334,6 +1390,12 @@ gtk_imhtml_set_defaults (GtkIMHtml *imhtml,
 		if (imhtml->default_fg_color)
 			gdk_color_free (imhtml->default_fg_color);
 		imhtml->default_fg_color = gdk_color_copy (fg_color);
+	}
+
+	if (bg_color) {
+		if (imhtml->default_bg_color)
+			gdk_color_free (imhtml->default_bg_color);
+		imhtml->default_bg_color = gdk_color_copy (bg_color);
 	}
 }
 
@@ -1523,15 +1585,10 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		     GtkIMHtmlBit *bit)
 {
 	gint width, height;
-	GdkWindow *window;
-	GdkGC *gc;
 
 	g_return_if_fail (imhtml != NULL);
 	g_return_if_fail (GTK_IS_IMHTML (imhtml));
 	g_return_if_fail (bit != NULL);
-
-	window = GTK_LAYOUT (imhtml)->bin_window;
-	gc = gdk_gc_new (window);
 
 	if ( (bit->type == TYPE_TEXT) ||
 	    ((bit->type == TYPE_SMILEY) && !imhtml->smileys) ||
@@ -1649,8 +1706,6 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 	}
 
 	gtk_layout_set_size (GTK_LAYOUT (imhtml), imhtml->xsize, imhtml->y + 5);
-
-	gdk_gc_destroy (gc);
 }
 
 void
@@ -1780,7 +1835,7 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 		if ((font != NULL) && (font->back != NULL))
 			clr = font->back;
 		else
-			clr = (bg != NULL) ? bg : &GTK_WIDGET (imhtml)->style->white;
+			clr = (bg != NULL) ? bg : imhtml->default_bg_color;
 
 		bit->pm = gdk_pixmap_create_from_xpm_d (GTK_WIDGET (imhtml)->window,
 							&bit->bm,
@@ -1888,11 +1943,22 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 	while (*c) {
 		if (*c == '<') {
 			if (intag) {
-				ws [wpos] = 0;
+				char *d;
 				tag [tpos] = 0;
+				d = tag;
+				while (*d) {
+					if ((smilelen = gtk_imhtml_is_smiley (imhtml, d)) != 0) {
+						ws [wpos] = 0;
+						wpos = 0;
+						NEW_BIT (NEW_TEXT_BIT);
+						g_snprintf (ws, smilelen + 1, "%s", d);
+						NEW_BIT (NEW_SMILEY_BIT);
+						d += smilelen;
+					} else {
+						ws [wpos++] = *d++;
+					}
+				}
 				tpos = 0;
-				strcat (ws, tag);
-				wpos = strlen (ws);
 			}
 
 			if (incomment) {
@@ -2376,7 +2442,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				g_free (copy);
 
 				if (!fonts || ((clr = ((FontDetail *)fonts->data)->back) == NULL))
-					clr = (bg != NULL) ? bg : &GTK_WIDGET (imhtml)->style->white;
+					clr = (bg != NULL) ? bg : imhtml->default_bg_color;
 
 				if (!GTK_WIDGET_REALIZED (imhtml))
 					gtk_widget_realize (GTK_WIDGET (imhtml));

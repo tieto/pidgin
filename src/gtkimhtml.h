@@ -45,6 +45,7 @@ struct _GtkIMHtml {
 
 	GdkFont *default_font;
 	GdkColor *default_fg_color;
+	GdkColor *default_bg_color;
 
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
@@ -101,7 +102,8 @@ void       gtk_imhtml_set_adjustments  (GtkIMHtml        *imhtml,
 
 void       gtk_imhtml_set_defaults     (GtkIMHtml        *imhtml,
 					GdkFont          *font,
-					GdkColor         *fg_color);
+					GdkColor         *fg_color,
+					GdkColor         *bg_color);
 
 void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
 					GtkIMHtmlImage    handler);
