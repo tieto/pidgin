@@ -156,6 +156,7 @@ EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 ##
 
 DLL_LIBS =		-lgtk-win32-2.0 \
+			-latk-1.0 \
 			-lpango-1.0 \
 			-lglib-2.0 \
 			-lgdk-win32-2.0 \

@@ -1434,9 +1434,9 @@ GtkWidget *sound_page() {
 	sound_pref_id = gaim_prefs_connect_callback("/gaim/gtk/sound/method",
 												  sound_changed_cb, hbox);
 
+	gaim_set_accessible_label (entry, label);
 #endif /* _WIN32 */
 	gtk_widget_show_all(ret);
-	gaim_set_accessible_label (entry, label);
 
 	return ret;
 }
