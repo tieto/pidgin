@@ -936,6 +936,9 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)))
 		return -EINVAL;
 
+	if (!profile && !awaymsg)
+		return -EINVAL;
+
 	if ((profile && profile_encoding == NULL) || (awaymsg && awaymsg_len && awaymsg_encoding == NULL)) {
 		return -EINVAL;
 	}
