@@ -374,7 +374,7 @@ void insert_smiley(GtkWidget *smiley, struct conversation *c)
 
 int close_callback(GtkWidget *widget, struct conversation *c)
 {
-	if (c->is_chat && (widget == c->close)) {
+	if (c->is_chat && (widget == c->close) && !(display_options & OPT_DISP_ONE_CHAT_WINDOW)) {
 		GtkWidget *tmp = c->window;
 		debug_printf("chat clicked close button\n");
 		c->window = NULL;
@@ -387,20 +387,38 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	if (general_options & OPT_GEN_CHECK_SPELLING)
 		gtkspell_detach(GTK_TEXT(c->entry));
 
-	if ((display_options & OPT_DISP_ONE_WINDOW) && (!c->is_chat)) {
-		if (g_list_length(conversations) > 1) {
-			gtk_notebook_remove_page(GTK_NOTEBOOK(convo_notebook),
-					g_list_index(conversations, c));
+	if (!c->is_chat) {
+		if (display_options & OPT_DISP_ONE_WINDOW) {
+			if (g_list_length(conversations) > 1) {
+				gtk_notebook_remove_page(GTK_NOTEBOOK(convo_notebook),
+						g_list_index(conversations, c));
+			} else {
+				if (c->window)
+					gtk_widget_destroy(c->window);
+				c->window = NULL;
+				all_convos = NULL;
+			}
 		} else {
 			if (c->window)
 				gtk_widget_destroy(c->window);
 			c->window = NULL;
-			all_convos = NULL;
 		}
 	} else {
-		if (c->window)
-			gtk_widget_destroy(c->window);
-		c->window = NULL;
+		if (display_options & OPT_DISP_ONE_CHAT_WINDOW) {
+			if (g_list_length(chats) > 1) {
+				gtk_notebook_remove_page(GTK_NOTEBOOK(chat_notebook),
+						g_list_index(chats, c));
+			} else {
+				if (c->window)
+					gtk_widget_destroy(c->window);
+				c->window = NULL;
+				all_chats = NULL;
+			}
+		} else {
+			if (c->window)
+				gtk_widget_destroy(c->window);
+			c->window = NULL;
+		}
 	}
 
 	if (c->fg_color_dialog)
@@ -423,6 +441,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	c->log_dialog = NULL;
 
 	if (c->is_chat) {
+		chats = g_list_remove(chats, c);
 		if (c->gc)
 			serv_chat_leave(c->gc, c->id);
 		else {
@@ -648,17 +667,20 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
-		if (!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW)) {
+		if ((!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW)) ||
+		    ( c->is_chat && (display_options & OPT_DISP_ONE_CHAT_WINDOW))) {
+			GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
 			if (event->keyval == '[') {
-				gtk_notebook_prev_page(GTK_NOTEBOOK(convo_notebook));
+				gtk_notebook_prev_page(GTK_NOTEBOOK(notebook));
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			} else if (event->keyval == ']') {
-				gtk_notebook_next_page(GTK_NOTEBOOK(convo_notebook));
+				gtk_notebook_next_page(GTK_NOTEBOOK(notebook));
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			} else if (event->keyval == GDK_Tab) {
-				GList *cnv = g_list_nth(conversations,
+				GList *ws = (c->is_chat ? chats : conversations);
+				GList *cnv = g_list_nth(ws,
 						gtk_notebook_get_current_page(
-							GTK_NOTEBOOK(convo_notebook)));
+							GTK_NOTEBOOK(notebook)));
 				struct conversation *d;
 				while (cnv) {
 					d = cnv->data;
@@ -668,10 +690,10 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 					d = NULL;
 				}
 				if (d) {
-					gtk_notebook_set_page(GTK_NOTEBOOK(convo_notebook),
-							g_list_index(conversations, d));
+					gtk_notebook_set_page(GTK_NOTEBOOK(notebook),
+							g_list_index(ws, d));
 				} else {
-					cnv = conversations;
+					cnv = ws;
 					while (cnv) {
 						d = cnv->data;
 						if (d->unseen)
@@ -681,25 +703,27 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 					}
 					if (d) {
 						gtk_notebook_set_page(
-								GTK_NOTEBOOK(convo_notebook),
-								g_list_index(conversations, d));
+								GTK_NOTEBOOK(notebook),
+								g_list_index(chats, d));
 					} else {
-						cnv = g_list_last(conversations);
+						cnv = g_list_last(chats);
 						if (c == cnv->data)
 							gtk_notebook_set_page(
-								GTK_NOTEBOOK(convo_notebook), 0);
+								GTK_NOTEBOOK(notebook), 0);
 						else
 							gtk_notebook_next_page(
-								GTK_NOTEBOOK(convo_notebook));
+								GTK_NOTEBOOK(notebook));
 					}
 				}
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
-	} else if (!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW) &&
+	} else if (((!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW)) ||
+		    ( c->is_chat && (display_options & OPT_DISP_ONE_CHAT_WINDOW))) &&
 			(event->state & GDK_MOD1_MASK) && isdigit(event->keyval) &&
 			(event->keyval > '0')) {
-		gtk_notebook_set_page(GTK_NOTEBOOK(convo_notebook), event->keyval - '1');
+		GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
+		gtk_notebook_set_page(GTK_NOTEBOOK(notebook), event->keyval - '1');
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 	}
 
@@ -1449,13 +1473,17 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	    (!c->is_chat && (general_options & OPT_GEN_POPUP_WINDOWS)))
 		    gdk_window_show(c->window->window);
 
-	if (((flags & WFLAG_RECV) || (flags & WFLAG_SYSTEM)) && !c->is_chat &&
-	    (display_options & OPT_DISP_ONE_WINDOW) &&
-	    (gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook))
-			 != g_list_index(conversations, c))) {
-		GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(convo_notebook),
-				gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook),
-					g_list_index(conversations, c)));
+	if (((flags & WFLAG_RECV) || (flags & WFLAG_SYSTEM)) &&
+	    ((!c->is_chat && (display_options & OPT_DISP_ONE_WINDOW) &&
+	      (gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook))
+			!= g_list_index(conversations, c))) ||
+	     ( c->is_chat && (display_options & OPT_DISP_ONE_CHAT_WINDOW) &&
+	      (gtk_notebook_get_current_page(GTK_NOTEBOOK(chat_notebook))
+			!= g_list_index(chats, c))))) {
+		GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
+		GList *ws = (c->is_chat ? chats : conversations);
+		GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(notebook),
+				gtk_notebook_get_nth_page(GTK_NOTEBOOK(notebook), g_list_index(ws, c)));
 		GtkStyle *style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);

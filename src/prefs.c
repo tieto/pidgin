@@ -583,8 +583,8 @@ static void chat_page()
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
 	gtk_widget_show(label);
 
-	gaim_button(_("Show people joining/leaving in window"), &display_options, OPT_DISP_CHAT_LOGON,
-		    box);
+	gaim_button(_("Show all chats in one tabbed window"), &display_options, OPT_DISP_ONE_CHAT_WINDOW, box);
+	gaim_button(_("Show people joining/leaving in window"), &display_options, OPT_DISP_CHAT_LOGON, box);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
@@ -2118,6 +2118,9 @@ void set_display_option(GtkWidget *w, int *option)
 
 	if ((int)option == OPT_DISP_ONE_WINDOW)
 		tabize();
+
+	if ((int)option == OPT_DISP_ONE_CHAT_WINDOW)
+		chat_tabize();
 
 #ifdef USE_APPLET
 	update_pixmaps();

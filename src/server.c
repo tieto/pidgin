@@ -638,6 +638,7 @@ void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 
 	b = (struct conversation *)g_new0(struct conversation, 1);
 	gc->buddy_chats = g_slist_append(gc->buddy_chats, b);
+	chats = g_list_append(chats, b);
 
 	b->is_chat = TRUE;
 	b->ignored = NULL;

@@ -51,6 +51,10 @@ static GtkWidget *invitemess;
 static int community;
 extern int state_lock;
 
+GList *chats = NULL;
+GtkWidget *all_chats = NULL;
+GtkWidget *chat_notebook = NULL;
+
 static void destroy_join_chat()
 {
 	if (joinchat)
@@ -709,11 +713,37 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 	gtk_widget_show(list_item);
 }
 
+static gint delete_all_chats(GtkWidget *w, GdkEventAny *e, gpointer d)
+{
+	while (chats) {
+		struct conversation *c = chats->data;
+		close_callback(c->close, c);
+	}
+	return FALSE;
+}
 
+static void chat_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointer data)
+{
+	GtkWidget *label = gtk_notebook_get_tab_label(GTK_NOTEBOOK(chat_notebook),
+			gtk_notebook_get_nth_page(GTK_NOTEBOOK(chat_notebook), page_num));
+	GtkStyle *style;
+	struct conversation *b = g_list_nth_data(chats, page_num);
+	if (b && b->window && b->entry)
+		gtk_window_set_focus(GTK_WINDOW(b->window), b->entry);
+	if (!GTK_WIDGET_REALIZED(label))
+		return;
+	style = gtk_style_new();
+	gdk_font_unref(style->font);
+	style->font = gdk_font_ref(label->style->font);
+	gtk_widget_set_style(label, style);
+	gtk_style_unref(style);
+	b->unseen = FALSE;
+}
 
 void show_new_buddy_chat(struct conversation *b)
 {
 	GtkWidget *win;
+	GtkWidget *cont;
 	GtkWidget *text;
 	GtkWidget *send;
 	GtkWidget *list;
@@ -735,21 +765,49 @@ void show_new_buddy_chat(struct conversation *b)
 
 	int dispstyle = set_dispstyle(1);
 
-	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	b->window = win;
-	gtk_object_set_user_data(GTK_OBJECT(win), b);
-	gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
-	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
-	gtk_container_border_width(GTK_CONTAINER(win), 10);
-	g_snprintf(buf, sizeof(buf), "Gaim - %s (chat)", b->name);
-	gtk_window_set_title(GTK_WINDOW(win), buf);
-	gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback), b);
-	gtk_widget_realize(win);
-	aol_icon(win->window);
+	if (display_options & OPT_DISP_ONE_CHAT_WINDOW) {
+		if (!all_chats) {
+			win = all_chats = b->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+			gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
+			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+			gtk_container_border_width(GTK_CONTAINER(win), 0);
+			gtk_widget_realize(win);
+			aol_icon(win->window);
+			gtk_window_set_title(GTK_WINDOW(win), _("Gaim - Group Chats"));
+			gtk_signal_connect(GTK_OBJECT(win), "delete_event",
+					   GTK_SIGNAL_FUNC(delete_all_chats), NULL);
+
+			chat_notebook = gtk_notebook_new();
+			gtk_notebook_set_scrollable(GTK_NOTEBOOK(chat_notebook), TRUE);
+			gtk_notebook_popup_enable(GTK_NOTEBOOK(chat_notebook));
+			gtk_container_add(GTK_CONTAINER(win), chat_notebook);
+			gtk_signal_connect(GTK_OBJECT(chat_notebook), "switch-page",
+					   GTK_SIGNAL_FUNC(chat_switch), NULL);
+			gtk_widget_show(chat_notebook);
+		} else
+			win = b->window = all_chats;
+
+		cont = gtk_vbox_new(FALSE, 5);
+		gtk_container_set_border_width(GTK_CONTAINER(cont), 5);
+		gtk_notebook_append_page(GTK_NOTEBOOK(chat_notebook), cont, gtk_label_new(b->name));
+		gtk_widget_show(cont);
+	} else {
+		cont = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		b->window = win;
+		gtk_object_set_user_data(GTK_OBJECT(win), b);
+		gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
+		gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
+		gtk_container_border_width(GTK_CONTAINER(win), 10);
+		gtk_widget_realize(win);
+		aol_icon(win->window);
+		g_snprintf(buf, sizeof(buf), "Gaim - %s (chat)", b->name);
+		gtk_window_set_title(GTK_WINDOW(win), buf);
+		gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback), b);
+	}
 
 	vpaned = gtk_vpaned_new();
 	gtk_paned_set_gutter_size(GTK_PANED(vpaned), 15);
-	gtk_container_add(GTK_CONTAINER(win), vpaned);
+	gtk_container_add(GTK_CONTAINER(cont), vpaned);
 	gtk_widget_show(vpaned);
 
 	hpaned = gtk_hpaned_new();
@@ -758,6 +816,7 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_widget_show(hpaned);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
+	b->sw = sw;
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 	gtk_paned_pack1(GTK_PANED(hpaned), sw, TRUE, TRUE);
 	gtk_widget_set_usize(sw, 320, 160);
@@ -820,6 +879,8 @@ void show_new_buddy_chat(struct conversation *b)
 
 	chatentry = gtk_text_new(NULL, NULL);
 	b->entry = chatentry;
+	if (!(display_options & OPT_DISP_ONE_CHAT_WINDOW))
+		gtk_window_set_focus(GTK_WINDOW(b->window), b->entry);
 
 	toolbar = build_conv_toolbar(b);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
@@ -1036,5 +1097,49 @@ void update_im_button_pix()
 		gtk_signal_connect(GTK_OBJECT(c->warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
 		gtk_signal_connect(GTK_OBJECT(c->block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
 		bcs = bcs->next;
+	}
+}
+
+void chat_tabize()
+{
+	/* evil, evil i tell you! evil! */
+	if (display_options & OPT_DISP_ONE_CHAT_WINDOW) {
+		GList *x = chats;
+		while (x) {
+			struct conversation *c = x->data;
+			GtkWidget *imhtml, *win;
+
+			imhtml = c->text;
+			win = c->window;
+			show_new_buddy_chat(c);
+			gtk_widget_destroy(c->text);
+			gtk_widget_reparent(imhtml, c->sw);
+			c->text = imhtml;
+			gtk_signal_disconnect_by_func(GTK_OBJECT(win),
+					GTK_SIGNAL_FUNC(close_callback), c);
+			gtk_widget_destroy(win);
+
+			x = x->next;
+		}
+	} else {
+		GList *x, *m;
+		x = m = chats;
+		chats = NULL;
+		while (x) {
+			struct conversation *c = x->data;
+			GtkWidget *imhtml;
+
+			imhtml = c->text;
+			show_new_buddy_chat(c);
+			gtk_widget_destroy(c->text);
+			gtk_widget_reparent(imhtml, c->sw);
+			c->text = imhtml;
+
+			x = x->next;
+		}
+		if (all_chats)
+			gtk_widget_destroy(all_chats);
+		all_chats = NULL;
+		chats = m;
 	}
 }

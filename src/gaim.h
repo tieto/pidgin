@@ -417,6 +417,13 @@ extern int opt_away;
 extern char *opt_away_arg;
 extern char *opt_rcfile_arg;
 
+/* Globals in buddy_chat.c */
+/* it is very important that you don't use this for anything.
+ * its sole purpose is to allow all group chats to be in one
+ * window. use struct gaim_connection's buddy_chats instead. */
+extern GList *chats;
+extern GtkWidget *all_chats;
+extern GtkWidget *chat_notebook;
 
 /* Globals in away.c */
 extern struct away_message *awaymessage;
@@ -487,6 +494,7 @@ extern int display_options;
 #define OPT_DISP_IGNORE_FONTS     0x00400000
 #define OPT_DISP_IGNORE_SIZES     0x00800000
 #define OPT_DISP_ONE_WINDOW       0x01000000
+#define OPT_DISP_ONE_CHAT_WINDOW  0x02000000
 
 extern int sound_options;
 #define OPT_SOUND_LOGIN          0x00000001
