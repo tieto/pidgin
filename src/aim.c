@@ -408,7 +408,7 @@ void sighandler(int sig)
 
 int main(int argc, char *argv[])
 {
-	char opt;
+	int opt;
 	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_user = 0, opt_login = 0, do_login_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
 
@@ -545,10 +545,8 @@ int main(int argc, char *argv[])
 			break;
 		case '?':
 		default:
-			/*
 			show_usage(1, argv[0]);
 			return 0;
-			*/
 			break;
 		}
 	}

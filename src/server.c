@@ -389,7 +389,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 
 
-	if (gc->away) {
+	if (gc->away && strlen(gc->away)) {
 		time_t t;
 		char *tmpmsg;
 		struct buddy *b = find_buddy(gc, name);
