@@ -461,13 +461,13 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	gtk_widget_show(table);
 
 	dialog->signon =
-		gtk_check_button_new_with_mnemonic(_("_Sign on"));
+		gtk_check_button_new_with_mnemonic(_("Si_gn on"));
 	dialog->signoff =
 		gtk_check_button_new_with_mnemonic(_("Sign _off"));
 	dialog->away =
 		gtk_check_button_new_with_mnemonic(_("A_way"));
 	dialog->away_return =
-		gtk_check_button_new_with_mnemonic(_("Re_turn from away"));
+		gtk_check_button_new_with_mnemonic(_("_Return from away"));
 	dialog->idle =
 		gtk_check_button_new_with_mnemonic(_("_Idle"));
 	dialog->idle_return =
