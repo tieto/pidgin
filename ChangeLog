@@ -26,6 +26,7 @@ version 0.76cvs:
 	  (Send Message, Get User Info, and Insert Link dialogs)
 
 	Bug Fixes:
+	* You can now use :/ as a smiley safely (Nathan Owens)
 	* Various buffer overflow fixes (Stefan Esser)
 	* Tabs now stay green when they are supposed to (Etan Reisner)
 	* Fixed a bug where only the first user in a chat room list was removed

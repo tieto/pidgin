@@ -1315,6 +1315,28 @@ gtk_imhtml_get_css_opt (gchar       *style,
 	return val;
 }
 
+static const char *accepted_protocols[] = {
+	"http://",
+	"https://",
+	"ftp://"
+};
+                                                                                                              
+static const int accepted_protocols_size = 3;
+
+/* returns if the beginning of the text is a protocol. If it is the protocol, returns the length so
+   the caller knows how long the protocol string is. */
+int gtk_imhtml_is_protocol(const char *text)
+{
+	gint i;
+
+	for(i=0; i<accepted_protocols_size; i++){
+		if( strncasecmp(text, accepted_protocols[i], strlen(accepted_protocols[i])) == 0  ){
+			return strlen(accepted_protocols[i]);
+		}
+	}
+	return 0;
+}
+
 GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 					     const gchar      *text,
 					     GtkIMHtmlOptions  options,
@@ -1336,6 +1358,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	gint type;
 	const gchar *c;
 	gchar *amp;
+	gint len_protocol;
 
 	guint	bold = 0,
 		italics = 0,
@@ -1871,6 +1894,14 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 			}
 			c++;
 			pos++;
+		} else if ((len_protocol = gtk_imhtml_is_protocol(c)) > 0){
+			while(len_protocol--){
+				/* Skip the next len_protocol characters, but make sure they're 
+				   copied into the ws array.
+				*/
+				 ws [wpos++] = *c++;
+				 pos++;
+			}
 		} else if (imhtml->show_smileys && (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen))) {
 			GtkIMHtmlFontDetail *fd;
 
