@@ -51,6 +51,9 @@ static void destroy_im_away()
 {
 	if (imaway)
 		gtk_widget_destroy(imaway);
+
+	clistqueue = NULL;
+	clistqueuesw = NULL;
 	imaway = NULL;
 }
 
@@ -60,7 +63,6 @@ void purge_away_queue()
 	GSList *templist = message_queue;
 
 	gtk_clist_freeze(GTK_CLIST(clistqueue));
-
 	gtk_clist_clear(GTK_CLIST(clistqueue));
 
 	while (templist)
@@ -80,12 +82,23 @@ void purge_away_queue()
 
 		templist = g_slist_remove(templist, qm);
 
-		free(qm);
+		g_free(qm);
+	}
+
+	templist = away_time_queue;
+	
+	while (templist)
+	{
+		struct queued_away_response *qar = (struct queued_away_response *)templist->data;
+		
+		templist = g_slist_remove(templist, qar);
+		g_free(qar);
 	}
 
 	gtk_clist_thaw(GTK_CLIST(clistqueue));
 	
 	message_queue = NULL;
+	away_time_queue = NULL;
 }
 
 void toggle_away_queue()

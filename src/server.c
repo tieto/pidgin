@@ -347,6 +347,26 @@ int find_queue_total_by_name(char *name)
 	return i;
 }
 
+struct queued_away_response *find_queued_away_response_by_name(char *name)
+{
+	GSList *templist;
+	struct queued_away_response *qar;
+
+	templist = away_time_queue;
+
+	while (templist)
+	{
+		qar = (struct queued_away_response *)templist->data;
+		
+		if (!strcmp(name, qar->name))
+			return qar;
+
+		templist = templist->next;
+	}
+
+	return NULL;
+}
+
 void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away, time_t mtime)
 {
 	struct conversation *cnv;
@@ -395,10 +415,11 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		if (general_options & OPT_GEN_QUEUE_WHEN_AWAY)
 		{
 			struct queued_message *qm;
+			struct queued_away_response *qar;
 			int row;
 
 			qm = (struct queued_message *)g_new0(struct queued_message, 1);
-			snprintf(qm->name, sizeof(qm->name), "%s", name);
+			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = strdup(message);
 			qm->gc = gc;
 			qm->tm = mtime;
@@ -412,7 +433,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 				qtotal = find_queue_total_by_name(qm->name);
 
-				snprintf(number, 32, _("(%d messages)"), ++qtotal);
+				g_snprintf(number, 32, _("(%d messages)"), ++qtotal);
 
 				gtk_clist_set_text(GTK_CLIST(clistqueue), row, 1, number);
 			}
@@ -420,10 +441,13 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 			{
 
 				gchar *heh[2];
+				int tmp = 0;
 
-				heh[0] = strdup(qm->name);
-				heh[1] = strdup(_("(1 message)"));
+				heh[0] = g_strdup(qm->name);
+				heh[1] = g_strdup(_("(1 message)"));
 				gtk_clist_append(GTK_CLIST(clistqueue), heh);
+
+				row = find_queue_row_by_name(qm->name);
 
 				g_free(heh[0]);
 				g_free(heh[1]);
@@ -481,17 +505,42 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 		char *tmpmsg;
 		struct buddy *b = find_buddy(gc, name);
 		char *alias = b ? b->show : name;
+		int sawy;
+		int row;
+		struct queued_away_response *qar = NULL;
 
 		time(&t);
+
+		if (cnv)
+			sawy = cnv->sent_away;
+		else
+		{
+			qar = find_queued_away_response_by_name(name);
+
+			if (!qar)
+			{
+				qar = (struct queued_away_response *)g_new0(struct queued_away_response, 1);
+
+				g_snprintf(qar->name, sizeof(qar->name), "%s", name);
+				qar->sent_away = 0;
+
+				away_time_queue = g_slist_append(away_time_queue, qar);
+			}
+
+			sawy = qar->sent_away;
+		}
+
+		if ((t - sawy) < 120)
+			return;
 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
 		serv_send_im(gc, name, away_subs(tmpmsg, alias), 1);
 
-		if ((cnv == NULL) || (t - cnv->sent_away) < 120)
-			return;
-
-		cnv->sent_away = t;
+		if (cnv)
+			cnv->sent_away = t;
+		else if (qar)
+			qar->sent_away = t;
 
 		if (cnv != NULL)
 			write_to_conv(cnv, away_subs(tmpmsg, alias), WFLAG_SEND | WFLAG_AUTO, NULL, mtime);

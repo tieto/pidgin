@@ -273,6 +273,12 @@ struct queued_message {
 	char *message;
 	time_t tm;
 	struct gaim_connection *gc;
+	time_t sent_away;
+};
+
+struct queued_away_response {
+	char name[80];
+	time_t sent_away;
 };
 
 struct away_message {
@@ -543,6 +549,7 @@ extern int report_idle;
 extern int web_browser;
 extern GList *aim_users;
 extern GSList *message_queue;
+extern GSList *away_time_queue;
 extern char sound_cmd[2048];
 extern char web_command[2048];
 extern struct save_pos blist_pos;

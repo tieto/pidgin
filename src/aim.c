@@ -69,6 +69,7 @@ GSList *away_messages = NULL;
 GList *conversations = NULL;
 GList *chat_rooms = NULL;
 GSList *message_queue = NULL;
+GSList *away_time_queue = NULL;
 
 GtkWidget *mainwindow = NULL;
 
