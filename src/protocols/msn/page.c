@@ -56,24 +56,10 @@ msn_page_new(void)
 	return page;
 }
 
-MsnPage *
-msn_page_new_from_str(MsnSession *session, const char *str)
-{
-	g_return_val_if_fail(str != NULL, NULL);
-
-	return NULL;
-}
-
 void
 msn_page_destroy(MsnPage *page)
 {
 	g_return_if_fail(page != NULL);
-
-	if (page->sender != NULL)
-		msn_user_unref(page->sender);
-
-	if (page->receiver != NULL)
-		msn_user_unref(page->receiver);
 
 	if (page->body != NULL)
 		g_free(page->body);
@@ -88,129 +74,27 @@ msn_page_destroy(MsnPage *page)
 }
 
 char *
-msn_page_build_string(const MsnPage *page)
+msn_page_gen_payload(const MsnPage *page, size_t *ret_size)
 {
-	char *page_start;
 	char *str;
-	char buf[MSN_BUF_LEN];
-	int len;
 
-	/*
-	 * Okay, how we do things here is just bad. I don't like writing to
-	 * a static buffer and then copying to the string. Unfortunately,
-	 * just trying to append to the string is causing issues.. Such as
-	 * the string you're appending to being erased. Ugh. So, this is
-	 * good enough for now.
-	 *
-	 *     -- ChipX86
-	 */
 	g_return_val_if_fail(page != NULL, NULL);
 
-	if (msn_page_is_incoming(page)) {
-		/* We don't know this yet :) */
-		return NULL;
-	}
-	else {
-		MsnUser *receiver = msn_page_get_receiver(page);
+	str =
+		g_strdup_printf("<TEXT xml:space=\"preserve\" enc=\"utf-8\">%s</TEXT>",
+						msn_page_get_body(page));
 
-		g_snprintf(buf, sizeof(buf), "PGD %d %s 1 %d\r\n",
-				   msn_page_get_transaction_id(page),
-				   msn_user_get_passport(receiver),
-				   (int)page->size);
-	}
-
-	len = strlen(buf) + page->size + 1;
-
-	str = g_new0(char, len);
-
-	g_strlcpy(str, buf, len);
-
-	page_start = str + strlen(str);
-
-	g_snprintf(buf, sizeof(buf),
-			   "<TEXT xml:space=\"preserve\" enc=\"utf-8\">%s</TEXT>",
-			   msn_page_get_body(page));
-
-	g_strlcat(str, buf, len);
-
-	if (page->size != strlen(page_start)) {
+	if (page->size != strlen(str))
+	{
 		gaim_debug(GAIM_DEBUG_ERROR, "msn",
 				   "Outgoing page size (%d) and string length (%d) "
-				   "do not match!\n", page->size, strlen(page_start));
+				   "do not match!\n", page->size, strlen(str));
 	}
 
+	if (ret_size != NULL)
+		*ret_size = page->size - 1;
+
 	return str;
-}
-
-gboolean
-msn_page_is_outgoing(const MsnPage *page)
-{
-	g_return_val_if_fail(page != NULL, FALSE);
-
-	return !page->incoming;
-}
-
-gboolean
-msn_page_is_incoming(const MsnPage *page)
-{
-	g_return_val_if_fail(page != NULL, FALSE);
-
-	return page->incoming;
-}
-
-void
-msn_page_set_sender(MsnPage *page, MsnUser *user)
-{
-	g_return_if_fail(page != NULL);
-	g_return_if_fail(user != NULL);
-
-	page->sender = user;
-
-	msn_user_ref(page->sender);
-}
-
-MsnUser *
-msn_page_get_sender(const MsnPage *page)
-{
-	g_return_val_if_fail(page != NULL, NULL);
-
-	return page->sender;
-}
-
-void
-msn_page_set_receiver(MsnPage *page, MsnUser *user)
-{
-	g_return_if_fail(page != NULL);
-	g_return_if_fail(user != NULL);
-
-	page->receiver = user;
-
-	msn_user_ref(page->receiver);
-}
-
-MsnUser *
-msn_page_get_receiver(const MsnPage *page)
-{
-	g_return_val_if_fail(page != NULL, NULL);
-
-	return page->receiver;
-}
-
-void
-msn_page_set_transaction_id(MsnPage *page, unsigned int tid)
-{
-	g_return_if_fail(page != NULL);
-	g_return_if_fail(tid > 0);
-
-	page->trId = tid;
-}
-
-unsigned int
-msn_page_get_transaction_id(const MsnPage *page)
-{
-	g_return_val_if_fail(page != NULL, 0);
-
-	return page->trId;
 }
 
 void
@@ -219,7 +103,8 @@ msn_page_set_body(MsnPage *page, const char *body)
 	g_return_if_fail(page != NULL);
 	g_return_if_fail(body != NULL);
 
-	if (page->body != NULL) {
+	if (page->body != NULL)
+	{
 		page->size -= strlen(page->body);
 		g_free(page->body);
 	}

@@ -60,13 +60,10 @@ struct _MsnMessage
 	gboolean msnslp_message;
 	gboolean msnslp_ack_message;
 
-	MsnUser *sender;
-	MsnUser *receiver;
+	char *passport;
 
 	unsigned int tid;
 	char flag;
-
-	gboolean incoming;
 
 	size_t size;
 
@@ -112,14 +109,15 @@ MsnMessage *msn_message_new_msnslp(void);
 MsnMessage *msn_message_new_msnslp_ack(MsnMessage *acked_msg);
 
 /**
- * Creates a new message based off a string.
+ * Parse the payload of a message.
  *
- * @param session The MSN session.
- * @param str     The string.
- *
- * @return The new message.
+ * @param msg         The message.
+ * @param payload     The payload.
+ * @param payload_len The length payload.
  */
-MsnMessage *msn_message_new_from_str(MsnSession *session, const char *str);
+void msn_message_parse_payload(MsnMessage *msg,
+							   const char *payload,
+							   size_t payload_len);
 
 /**
  * Destroys a message.
@@ -149,83 +147,14 @@ MsnMessage *msn_message_ref(MsnMessage *msg);
 MsnMessage *msn_message_unref(MsnMessage *msg);
 
 /**
- * Converts a message to a string.
+ * Generates the payload data of a message.
  *
  * @param msg      The message.
- * @param ret_size The returned size of the string.
+ * @param ret_size The returned size of the payload.
  *
- * @return The string representation of a message.
+ * @return The payload data of the message.
  */
-char *msn_message_to_string(const MsnMessage *msg, size_t *ret_size);
-
-/**
- * Returns TRUE if the message is outgoing.
- *
- * @param msg The message.
- *
- * @return @c TRUE if the message is outgoing, or @c FALSE otherwise.
- */
-gboolean msn_message_is_outgoing(const MsnMessage *msg);
-
-/**
- * Returns TRUE if the message is incoming.
- *
- * @param msg The message.
- *
- * @return @c TRUE if the message is incoming, or @c FALSE otherwise.
- */
-gboolean msn_message_is_incoming(const MsnMessage *msg);
-
-/**
- * Sets the message's sender.
- *
- * @param msg  The message.
- * @param user The sender.
- */
-void msn_message_set_sender(MsnMessage *msg, MsnUser *user);
-
-/**
- * Returns the message's sender.
- *
- * @param msg The message.
- *
- * @return The sender.
- */
-MsnUser *msn_message_get_sender(const MsnMessage *msg);
-
-/**
- * Sets the message's receiver.
- *
- * @param msg  The message.
- * @param user The receiver.
- */
-void msn_message_set_receiver(MsnMessage *msg, MsnUser *user);
-
-/**
- * Returns the message's receiver.
- *
- * @param msg The message.
- *
- * @return The receiver.
- */
-MsnUser *msn_message_get_receiver(const MsnMessage *msg);
-
-/**
- * Sets the message transaction ID.
- *
- * @param msg The message.
- * @param tid The transaction ID.
- */
-void msn_message_set_transaction_id(MsnMessage *msg, unsigned int tid);
-
-/**
- * Returns the message transaction ID.
- *
- * @param msg The message.
- *
- * @return The transaction ID.
- */
-unsigned int msn_message_get_transaction_id(const MsnMessage *msg);
+char *msn_message_gen_payload(const MsnMessage *msg, size_t *ret_size);
 
 /**
  * Sets the flag for an outgoing message.

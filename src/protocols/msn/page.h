@@ -32,15 +32,8 @@ typedef struct _MsnPage MsnPage;
  */
 struct _MsnPage
 {
-	MsnUser *sender;
-	MsnUser *receiver;
-
 	char *from_location;
 	char *from_phone;
-
-	gboolean incoming;
-
-	unsigned int trId;
 
 	size_t size;
 
@@ -55,98 +48,19 @@ struct _MsnPage
 MsnPage *msn_page_new(void);
 
 /**
- * Creates a new page based off a string.
- *
- * @param session The MSN session.
- * @param str     The string.
- *
- * @return The new page.
- */
-MsnPage *msn_page_new_from_str(MsnSession *session, const char *str);
-
-/**
  * Destroys a page.
  */
 void msn_page_destroy(MsnPage *page);
 
 /**
- * Converts a page to a string.
+ * Converts a page to a payload string.
  *
- * @param page The page.
+ * @param page     The page.
+ * @param ret_size The returned size of the payload.
  *
- * @return The string representation of a page.
+ * @return The payload string of a page.
  */
-char *msn_page_build_string(const MsnPage *page);
-
-/**
- * Returns TRUE if the page is outgoing.
- *
- * @param page The page.
- *
- * @return @c TRUE if the page is outgoing, or @c FALSE otherwise.
- */
-gboolean msn_page_is_outgoing(const MsnPage *page);
-
-/**
- * Returns TRUE if the page is incoming.
- *
- * @param page The page.
- *
- * @return @c TRUE if the page is incoming, or @c FALSE otherwise.
- */
-gboolean msn_page_is_incoming(const MsnPage *page);
-
-/**
- * Sets the page's sender.
- *
- * @param page  The page.
- * @param user The sender.
- */
-void msn_page_set_sender(MsnPage *page, MsnUser *user);
-
-/**
- * Returns the page's sender.
- *
- * @param page The page.
- *
- * @return The sender.
- */
-MsnUser *msn_page_get_sender(const MsnPage *page);
-
-/**
- * Sets the page's receiver.
- *
- * @param page  The page.
- * @param user The receiver.
- */
-void msn_page_set_receiver(MsnPage *page, MsnUser *user);
-
-/**
- * Returns the page's receiver.
- *
- * @param page The page.
- *
- * @return The receiver.
- */
-MsnUser *msn_page_get_receiver(const MsnPage *page);
-
-/**
- * Sets the page transaction ID.
- *
- * @param page The page.
- * @param tid  The transaction ID.
- */
-void msn_page_set_transaction_id(MsnPage *page, unsigned int tid);
-
-/**
- * Returns the page transaction ID.
- *
- * @param page The page.
- *
- * @return The transaction ID.
- */
-unsigned int msn_page_get_transaction_id(const MsnPage *page);
-
+char *msn_page_gen_payload(const MsnPage *page, size_t *ret_size);
 
 /**
  * Sets the body of a page.

@@ -130,86 +130,22 @@ msn_message_new_msnslp_ack(MsnMessage *acked_msg)
 	return msg;
 }
 
-MsnMessage *
-msn_message_new_from_str(MsnSession *session, const char *str)
+void
+msn_message_parse_payload(MsnMessage *msg, const char *payload,
+						  size_t payload_len)
 {
-	MsnMessage *msg;
-	char *command_header;
-	char *tmp_base, *msg_base, *tmp, *field1, *field2, *c;
+	char *tmp_base, *tmp, *c;
 	const char *content_type;
-	const char *c2;
 
-	g_return_val_if_fail(str != NULL, NULL);
-	g_return_val_if_fail(!g_ascii_strncasecmp(str, "MSG", 3), NULL);
-
-	msg = msn_message_new();
-
-	/* Clear out the old stuff. */
-	msn_message_set_attr(msg, "User-Agent", NULL);
-	msn_message_set_content_type(msg, NULL);
-	msn_message_set_charset(msg, NULL);
-
-	/*
-	 * We need to grab the header and then the size, since this might have
-	 * binary data.
-	 */
-	if ((c2 = strchr(str, '\r')) != NULL)
-	{
-		tmp = command_header = g_strndup(str, (c2 - str));
-
-		GET_NEXT(tmp); /* Skip MSG */
-		field1 = tmp;
-
-		GET_NEXT(tmp); /* Skip the passport or TID */
-		field2 = tmp;
-
-		GET_NEXT(tmp); /* Skip the username or flag */
-		msg->size = atoi(tmp);
-	}
-	else
-	{
-		/* Kind of screwed :) This won't happen. */
-		msn_message_destroy(msg);
-
-		return NULL;
-	}
-
-	tmp_base = g_malloc(msg->size + 1);
-	memcpy(tmp_base, c2 + 2, msg->size);
-	tmp_base[msg->size] = '\0';
+	tmp_base = g_malloc(payload_len + 1);
+	memcpy(tmp_base, payload, payload_len);
+	tmp_base[payload_len] = '\0';
 
 	tmp = tmp_base;
 
-	/*
-	 * We're going to make sure this is incoming by checking field1.
-	 * If it has any non-numbers in it, it's incoming. Otherwise, outgoing.
-	 */
-	msg->incoming = FALSE;
-
-	for (c = field1; *c != '\0'; c++) {
-		if (*c < '0' || *c > '9') {
-			msg->incoming = TRUE;
-			break;
-		}
-	}
-
-	if (msg->incoming) {
-		msg->sender = msn_users_find_with_passport(session->users, field1);
-
-		if (msg->sender == NULL)
-			msg->sender = msn_user_new(session, field1, field2);
-		else
-			msn_user_ref(msg->sender);
-	}
-	else {
-		msg->tid  = atoi(field1);
-		msg->flag = *field2;
-	}
-
-	msg_base = tmp;
-
 	/* Back to the parsination. */
-	while (*tmp != '\r') {
+	while (*tmp != '\r')
+	{
 		char *key, *value;
 
 		key = tmp;
@@ -223,11 +159,14 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 		if ((c = strchr(key, ':')) != NULL)
 			*c = '\0';
 
-		if (!g_ascii_strcasecmp(key, "Content-Type")) {
+		if (!g_ascii_strcasecmp(key, "Content-Type"))
+		{
 			char *charset;
 
-			if ((c = strchr(value, ';')) != NULL) {
-				if ((charset = strchr(c, '=')) != NULL) {
+			if ((c = strchr(value, ';')) != NULL)
+			{
+				if ((charset = strchr(c, '=')) != NULL)
+				{
 					charset++;
 					msn_message_set_charset(msg, charset);
 				}
@@ -261,15 +200,18 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 
 		tmp += 48;
 
-		body_len = msg->size - (tmp - tmp_base) - 5;
-		msg->body = g_malloc(body_len + 1);
+		body_len = payload_len - (tmp - tmp_base) - 5;
 
 		if (body_len > 0)
+		{
+			msg->body = g_malloc(body_len + 1);
 			memcpy(msg->body, tmp, body_len);
+			msg->body[body_len] = '\0';
 
-		msg->body[body_len] = '\0';
-
-		tmp++;
+			tmp++;
+		}
+		else
+			msg->body = NULL;
 
 		memcpy(footer, tmp, 4);
 
@@ -312,7 +254,7 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 		char *tmp2;
 		size_t body_len;
 
-		body_len = msg->size - (tmp - tmp_base);
+		body_len = payload_len - (tmp - tmp_base);
 
 		tmp2 = g_malloc(body_len + 1);
 
@@ -326,12 +268,9 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 		g_free(tmp2);
 	}
 
-	g_free(command_header);
 	g_free(tmp_base);
 
 	/* Done! */
-
-	return msg;
 }
 
 void
@@ -339,17 +278,12 @@ msn_message_destroy(MsnMessage *msg)
 {
 	g_return_if_fail(msg != NULL);
 
-	if (msg->ref_count > 0) {
+	if (msg->ref_count > 0)
+	{
 		msn_message_unref(msg);
 
 		return;
 	}
-
-	if (msg->sender != NULL)
-		msn_user_unref(msg->sender);
-
-	if (msg->receiver != NULL)
-		msn_user_unref(msg->receiver);
 
 	if (msg->body != NULL)
 		g_free(msg->body);
@@ -400,10 +334,9 @@ msn_message_unref(MsnMessage *msg)
 }
 
 char *
-msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
+msn_message_gen_payload(const MsnMessage *msg, size_t *ret_size)
 {
 	GList *l;
-	char *msg_start;
 	char *str;
 	char buf[MSN_BUF_LEN];
 	int len;
@@ -419,35 +352,20 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 	 */
 	g_return_val_if_fail(msg != NULL, NULL);
 
-	if (msn_message_is_incoming(msg)) {
-		MsnUser *sender = msn_message_get_sender(msg);
-
-		g_snprintf(buf, sizeof(buf), "MSG %s %s %d\r\n",
-				   msn_user_get_passport(sender), msn_user_get_name(sender),
-				   (int)msg->size);
-	}
-	else {
-		g_snprintf(buf, sizeof(buf), "MSG %d %c %d\r\n",
-				   msn_message_get_transaction_id(msg),
-				   msn_message_get_flag(msg), (int)msg->size);
-	}
-
-	len = strlen(buf) + msg->size + 1;
+	len = msg->size + 1;
 
 	str = g_new0(char, len + 1);
 
-	g_strlcpy(str, buf, len);
-
-	msg_start = str + strlen(str);
-
 	/* Standard header. */
-	if (msg->charset == NULL) {
+	if (msg->charset == NULL)
+	{
 		g_snprintf(buf, sizeof(buf),
 				   "MIME-Version: 1.0\r\n"
 				   "Content-Type: %s\r\n",
 				   msg->content_type);
 	}
-	else {
+	else
+	{
 		g_snprintf(buf, sizeof(buf),
 				   "MIME-Version: 1.0\r\n"
 				   "Content-Type: %s; charset=%s\r\n",
@@ -456,7 +374,8 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 
 	g_strlcat(str, buf, len);
 
-	for (l = msg->attr_list; l != NULL; l = l->next) {
+	for (l = msg->attr_list; l != NULL; l = l->next)
+	{
 		const char *key = (char *)l->data;
 		const char *value;
 
@@ -522,7 +441,7 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 
 			if (body != NULL)
 			{
-				g_strlcpy(c, body, msg->size - (c - msg_start));
+				g_strlcpy(c, body, msg->size - (c - str));
 
 				c += strlen(body);
 
@@ -533,11 +452,11 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 
 		c += msn_put32(c, msg->msnslp_footer.app_id);
 
-		if (msg->size != (c - msg_start))
+		if (msg->size != (c - str))
 		{
 			gaim_debug(GAIM_DEBUG_ERROR, "msn",
 					   "Outgoing message size (%d) and data length (%d) "
-					   "do not match!\n", msg->size, (c - msg_start));
+					   "do not match!\n", msg->size, (c - str));
 		}
 	}
 	else
@@ -546,10 +465,11 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 
 		g_strlcat(str, body, len);
 
-		if (msg->size != strlen(msg_start)) {
+		if (msg->size != strlen(str))
+		{
 			gaim_debug(GAIM_DEBUG_ERROR, "msn",
 					   "Outgoing message size (%d) and string length (%d) "
-					   "do not match!\n", msg->size, strlen(msg_start));
+					   "do not match!\n", msg->size, strlen(str));
 		}
 	}
 
@@ -557,80 +477,6 @@ msn_message_to_string(const MsnMessage *msg, size_t *ret_size)
 		*ret_size = len - 1;
 
 	return str;
-}
-
-gboolean
-msn_message_is_outgoing(const MsnMessage *msg)
-{
-	g_return_val_if_fail(msg != NULL, FALSE);
-
-	return !msg->incoming;
-}
-
-gboolean
-msn_message_is_incoming(const MsnMessage *msg)
-{
-	g_return_val_if_fail(msg != NULL, FALSE);
-
-	return msg->incoming;
-}
-
-void
-msn_message_set_sender(MsnMessage *msg, MsnUser *user)
-{
-	g_return_if_fail(msg != NULL);
-	g_return_if_fail(user != NULL);
-
-	msg->sender = user;
-
-	msn_user_ref(msg->sender);
-}
-
-MsnUser *
-msn_message_get_sender(const MsnMessage *msg)
-{
-	g_return_val_if_fail(msg != NULL, NULL);
-
-	return msg->sender;
-}
-
-void
-msn_message_set_receiver(MsnMessage *msg, MsnUser *user)
-{
-	g_return_if_fail(msg != NULL);
-	g_return_if_fail(user != NULL);
-
-	msg->receiver = user;
-
-	if (msg->msnslp_message)
-		msn_message_set_attr(msg, "P2P-Dest", msn_user_get_passport(user));
-
-	msn_user_ref(msg->receiver);
-}
-
-MsnUser *
-msn_message_get_receiver(const MsnMessage *msg)
-{
-	g_return_val_if_fail(msg != NULL, NULL);
-
-	return msg->receiver;
-}
-
-void
-msn_message_set_transaction_id(MsnMessage *msg, unsigned int tid)
-{
-	g_return_if_fail(msg != NULL);
-	g_return_if_fail(tid > 0);
-
-	msg->tid = tid;
-}
-
-unsigned int
-msn_message_get_transaction_id(const MsnMessage *msg)
-{
-	g_return_val_if_fail(msg != NULL, 0);
-
-	return msg->tid;
 }
 
 void

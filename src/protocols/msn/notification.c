@@ -199,7 +199,7 @@ unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 			size_t param_count)
 {
 	int errnum = 0;
-	
+
 	if (isdigit(*command)) {
 		errnum = atoi(command);
 
@@ -212,7 +212,7 @@ unknown_cmd(MsnServConn *servconn, const char *command, const char **params,
 			return TRUE;
 		}
 	}
-	
+
 	msn_error_handle(servconn->session, errnum);
 
 	return TRUE;
@@ -451,18 +451,30 @@ out_cmd(MsnServConn *servconn, const char *command, const char **params,
 /**************************************************************************
  * Messages
  **************************************************************************/
+static void
+msg_cmd_post(MsnServConn *servconn, char *payload, size_t len)
+{
+	MsnMessage *msg = msn_message_new();
+
+	msg->passport = servconn->msg_passport;
+
+	msn_message_parse_payload(msg, payload, len);
+
+	msn_servconn_process_message(servconn, msg);
+
+	msn_message_destroy(msg);
+}
+
 static gboolean
 msg_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Found message. Parsing.\n");
 
-	servconn->parsing_multiline = TRUE;
-	servconn->multiline_type    = MSN_MULTILINE_MSG;
-	servconn->multiline_len     = atoi(params[2]);
+	servconn->payload_cb  = msg_cmd_post;
+	servconn->payload_len = atoi(params[2]);
 
 	servconn->msg_passport = g_strdup(params[0]);
-	servconn->msg_friendly = g_strdup(params[1]);
 
 	return TRUE;
 }
@@ -746,14 +758,8 @@ static gboolean
 ipg_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
-	/* GaimConnection *gc = servconn->session->account->gc; */
-
-	servconn->parsing_multiline = TRUE;
-	servconn->multiline_type    = MSN_MULTILINE_IPG;
-	servconn->multiline_len     = atoi(params[0]);
-
-	servconn->msg_passport = NULL;
-	servconn->msg_friendly = NULL;
+	servconn->payload_cb  = NULL;
+	servconn->payload_len = atoi(params[2]);
 
 	return TRUE;
 }
@@ -1167,14 +1173,8 @@ static gboolean
 not_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
-	/* GaimConnection *gc = servconn->session->account->gc; */
-
-	servconn->parsing_multiline = TRUE;
-	servconn->multiline_type    = MSN_MULTILINE_NOT;
-	servconn->multiline_len     = atoi(params[0]);
-
-	servconn->msg_passport = NULL;
-	servconn->msg_friendly = NULL;
+	servconn->payload_cb  = NULL;
+	servconn->payload_len = atoi(params[2]);
 
 	return TRUE;
 }
@@ -1604,7 +1604,9 @@ xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 									  port))
 		{
 			gaim_connection_error(gc, _("Unable to transfer to "
-									  "notification server"));
+										"notification server"));
+
+			g_free(host);
 
 			return FALSE;
 		}
@@ -1624,7 +1626,7 @@ profile_msg(MsnServConn *servconn, MsnMessage *msg)
 	MsnSession *session = servconn->session;
 	const char *value;
 
-	if (strcmp(servconn->msg_passport, "Hotmail")) {
+	if (strcmp(msg->passport, "Hotmail")) {
 		/* This isn't an official message. */
 		return TRUE;
 	}
@@ -1655,7 +1657,7 @@ initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 	GHashTable *table;
 	const char *unread;
 
-	if (strcmp(servconn->msg_passport, "Hotmail")) {
+	if (strcmp(msg->passport, "Hotmail")) {
 		/* This isn't an official message. */
 		return TRUE;
 	}
@@ -1705,7 +1707,7 @@ email_msg(MsnServConn *servconn, MsnMessage *msg)
 	GHashTable *table;
 	char *from, *subject;
 
-	if (strcmp(servconn->msg_passport, "Hotmail")) {
+	if (strcmp(msg->passport, "Hotmail")) {
 		/* This isn't an official message. */
 		return TRUE;
 	}
@@ -1743,7 +1745,7 @@ system_msg(MsnServConn *servconn, MsnMessage *msg)
 	GHashTable *table;
 	const char *type_s;
 
-	if (strcmp(servconn->msg_passport, "Hotmail")) {
+	if (strcmp(msg->passport, "Hotmail")) {
 		/* This isn't an official message. */
 		return TRUE;
 	}

@@ -32,15 +32,16 @@ typedef struct
 
 } MsnQueueEntry;
 
-static gboolean
-process_message(MsnServConn *servconn, MsnMessage *msg)
+gboolean
+msn_servconn_process_message(MsnServConn *servconn, MsnMessage *msg)
 {
 	MsnServConnMsgCb cb;
 
 	cb = g_hash_table_lookup(servconn->msg_types,
 							 msn_message_get_content_type(msg));
 
-	if (cb == NULL) {
+	if (cb == NULL)
+	{
 		gaim_debug(GAIM_DEBUG_WARNING, "msn",
 				   "Unhandled content-type '%s': %s\n",
 				   msn_message_get_content_type(msg),
@@ -52,144 +53,6 @@ process_message(MsnServConn *servconn, MsnMessage *msg)
 	cb(servconn, msg);
 
 	return TRUE;
-}
-
-static gboolean
-process_single_line(MsnServConn *servconn, char *str)
-{
-	MsnSession *session = servconn->session;
-	MsnServConnCommandCb cb;
-	GSList *l, *l_next = NULL;
-	gboolean result;
-	size_t param_count = 0;
-	char *command, *param_start;
-	char **params = NULL;
-
-	command = str;
-
-	/**
-	 * See how many spaces we have in this.
-	 */
-	param_start = strchr(command, ' ');
-
-	if (param_start != NULL) {
-		params = g_strsplit(param_start + 1, " ", 0);
-
-		for (param_count = 0; params[param_count] != NULL; param_count++)
-			;
-
-		*param_start = '\0';
-	}
-
-	cb = g_hash_table_lookup(servconn->commands, command);
-
-	if (cb == NULL) {
-		cb = g_hash_table_lookup(servconn->commands, "_unknown_");
-
-		if (cb == NULL) {
-			if (isdigit(*str))
-				msn_error_handle(session, atoi(str));
-			else
-				gaim_debug(GAIM_DEBUG_WARNING, "msn",
-					   "Unhandled command '%s'\n", str);
-
-			if (params != NULL)
-				g_strfreev(params);
-
-			return TRUE;
-		}
-	}
-
-	result = cb(servconn, command, (const char **)params, param_count);
-
-	if (params != NULL)
-		g_strfreev(params);
-
-	if (g_list_find(session->servconns, servconn) == NULL)
-		return result;
-
-	/* Process all queued messages that are waiting on this command. */
-	for (l = servconn->msg_queue; l != NULL; l = l_next) {
-		MsnQueueEntry *entry = l->data;
-		MsnMessage *msg;
-
-		l_next = l->next;
-
-		if (entry->command == NULL ||
-			!g_ascii_strcasecmp(entry->command, command)) {
-
-			MsnUser *sender;
-
-			msg = entry->msg;
-
-			msn_message_ref(msg);
-
-			sender = msn_message_get_sender(msg);
-
-			servconn->msg_passport = g_strdup(msn_user_get_passport(sender));
-			servconn->msg_friendly = g_strdup(msn_user_get_name(sender));
-
-			process_message(servconn, msg);
-
-			g_free(servconn->msg_passport);
-			g_free(servconn->msg_friendly);
-
-			msn_servconn_unqueue_message(servconn, entry->msg);
-
-			msn_message_destroy(msg);
-			entry->msg = NULL;
-		}
-	}
-
-	return result;
-}
-
-static gboolean
-process_multi_line(MsnServConn *servconn, char *buffer)
-{
-	char msg_str[MSN_BUF_LEN];
-	gboolean result = TRUE;
-
-	if (servconn->multiline_type == MSN_MULTILINE_MSG) {
-		MsnMessage *msg;
-		size_t header_len;
-
-		g_snprintf(msg_str, sizeof(msg_str),
-				   "MSG %s %s %d\r\n",
-				   servconn->msg_passport, servconn->msg_friendly,
-				   servconn->multiline_len);
-
-		header_len = strlen(msg_str);
-
-		memcpy(msg_str + header_len, buffer, servconn->multiline_len);
-
-		gaim_debug(GAIM_DEBUG_MISC, "msn",
-				   "Message: {%s}\n", buffer);
-
-		msg = msn_message_new_from_str(servconn->session, msg_str);
-
-		result = process_message(servconn, msg);
-
-		msn_message_destroy(msg);
-	}
-	else if (servconn->multiline_type == MSN_MULTILINE_IPG) {
-		g_snprintf(msg_str, sizeof(msg_str),
-				   "IPG %d\r\n%s",
-				   servconn->multiline_len, buffer);
-
-		gaim_debug(GAIM_DEBUG_MISC, "msn",
-				   "Incoming Page: {%s}\n", buffer);
-	}
-	else if (servconn->multiline_type == MSN_MULTILINE_NOT) {
-		g_snprintf(msg_str, sizeof(msg_str),
-				   "NOT %d\r\n%s",
-				   servconn->multiline_len, buffer);
-
-		gaim_debug(GAIM_DEBUG_MISC, "msn",
-				   "Notification: {%s}\n", buffer);
-	}
-
-	return result;
 }
 
 static void
@@ -284,12 +147,13 @@ msn_servconn_disconnect(MsnServConn *servconn)
 
 	session = servconn->session;
 
-	if (servconn->inpa)
+	if (servconn->inpa > 0)
+	{
 		gaim_input_remove(servconn->inpa);
+		servconn->inpa = 0;
+	}
 
 	close(servconn->fd);
-
-	servconn->connected = FALSE;
 
 	if (servconn->http_data != NULL)
 	{
@@ -308,8 +172,8 @@ msn_servconn_disconnect(MsnServConn *servconn)
 		g_free(servconn->http_data);
 	}
 
-	if (servconn->rxqueue != NULL)
-		g_free(servconn->rxqueue);
+	servconn->rx_len = 0;
+	servconn->payload_len = 0;
 
 	while (servconn->txqueue != NULL) {
 		g_free(servconn->txqueue->data);
@@ -324,8 +188,10 @@ msn_servconn_disconnect(MsnServConn *servconn)
 		msn_servconn_unqueue_message(servconn, entry->msg);
 	}
 
-	if (servconn->disconnect_cb)
+	if (servconn->disconnect_cb != NULL)
 		servconn->disconnect_cb(servconn);
+
+	servconn->connected = FALSE;
 }
 
 void
@@ -526,15 +392,103 @@ failed_io(MsnServConn *servconn)
 }
 
 static void
+process_payload(MsnServConn *servconn, char *payload, int payload_len)
+{
+	g_return_if_fail(servconn             != NULL);
+	g_return_if_fail(servconn->payload_cb != NULL);
+
+	servconn->payload_cb(servconn, payload, payload_len);
+}
+
+static int
+process_cmd_text(MsnServConn *servconn, const char *command)
+{
+	MsnSession *session = servconn->session;
+	MsnServConnCommandCb cb;
+	GSList *l, *l_next = NULL;
+	gboolean result;
+	size_t param_count = 0;
+	char *param_start;
+	char **params = NULL;
+
+#if 0
+	if (servconn->last_cmd != NULL)
+		gfree(servconn->last_cmd);
+
+	servconn->last_cmd = gstrdup(command);
+#endif
+
+	/**
+	 * See how many spaces we have in this.
+	 */
+	param_start = strchr(command, ' ');
+
+	if (param_start != NULL) {
+		params = g_strsplit(param_start + 1, " ", 0);
+
+		for (param_count = 0; params[param_count] != NULL; param_count++)
+			;
+
+		*param_start = '\0';
+	}
+
+	cb = g_hash_table_lookup(servconn->commands, command);
+
+	if (cb == NULL) {
+		cb = g_hash_table_lookup(servconn->commands, "_unknown_");
+
+		if (cb == NULL) {
+			gaim_debug(GAIM_DEBUG_WARNING, "msn",
+					   "Unhandled command '%s'\n", command);
+
+			if (params != NULL)
+				g_strfreev(params);
+
+			return TRUE;
+		}
+	}
+
+	result = cb(servconn, command, (const char **)params, param_count);
+
+	if (params != NULL)
+		g_strfreev(params);
+
+	if (g_list_find(session->servconns, servconn) == NULL)
+		return result;
+
+	/* Process all queued messages that are waiting on this command. */
+	for (l = servconn->msg_queue; l != NULL; l = l_next) {
+		MsnQueueEntry *entry = l->data;
+		MsnMessage *msg;
+
+		l_next = l->next;
+
+		if (entry->command == NULL ||
+			!g_ascii_strcasecmp(entry->command, command)) {
+
+			msg = entry->msg;
+
+			msn_servconn_process_message(servconn, msg);
+
+			msn_servconn_unqueue_message(servconn, msg);
+
+			entry->msg = NULL;
+		}
+	}
+
+	return result;
+}
+
+static void
 read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *servconn = (MsnServConn *)data;
 	MsnSession *session = servconn->session;
 	char buf[MSN_BUF_LEN];
-	gboolean cont = TRUE;
-	int len;
+	char *cur, *end, *old_rx_buf;
+	int len, cur_len;
 
-	len = read(servconn->fd, buf, sizeof(buf));
+	len = read(servconn->fd, buf, sizeof(buf) - 1);
 
 	if (len <= 0)
 	{
@@ -543,9 +497,9 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	servconn->rxqueue = g_realloc(servconn->rxqueue, len + servconn->rxlen);
-	memcpy(servconn->rxqueue + servconn->rxlen, buf, len);
-	servconn->rxlen += len;
+	servconn->rx_buf = g_realloc(servconn->rx_buf, len + servconn->rx_len);
+	memcpy(servconn->rx_buf + servconn->rx_len, buf, len);
+	servconn->rx_len += len;
 
 	if (session->http_method)
 	{
@@ -554,10 +508,10 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		gboolean error;
 		char *tmp;
 
-		tmp = g_strndup(servconn->rxqueue, servconn->rxlen);
+		tmp = g_strndup(servconn->rx_buf, servconn->rx_len);
 
 		if (!msn_http_servconn_parse_data(servconn, tmp,
-										  servconn->rxlen, &result_msg,
+										  servconn->rx_len, &result_msg,
 										  &result_len, &error))
 		{
 			g_free(tmp);
@@ -607,90 +561,63 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		}
 #endif
 
-		g_free(servconn->rxqueue);
-		servconn->rxqueue = result_msg;
-		servconn->rxlen   = result_len;
+		g_free(servconn->rx_buf);
+		servconn->rx_buf = result_msg;
+		servconn->rx_len = result_len;
 	}
 
-	while (cont)
+	end = old_rx_buf = servconn->rx_buf;
+
+	do
 	{
-		if (servconn->parsing_multiline)
+		cur = end;
+
+		if (servconn->payload_len)
 		{
-			char *msg;
-
-			if (servconn->rxlen == 0)
+			if (servconn->payload_len > servconn->rx_len)
+				/* The payload is still not complete. */
 				break;
 
-			if (servconn->multiline_len > servconn->rxlen)
+			cur_len = servconn->payload_len;
+			end += cur_len;
+		}
+		else
+		{
+			end = strstr(cur, "\r\n");
+
+			if (!end)
+				/* The command is still not complete. */
 				break;
 
-			msg = servconn->rxqueue;
-			servconn->rxlen -= servconn->multiline_len;
-
-			if (servconn->rxlen) {
-				servconn->rxqueue = g_memdup(msg + servconn->multiline_len,
-											 servconn->rxlen);
-			}
-			else {
-				servconn->rxqueue = NULL;
-				msg = g_realloc(msg, servconn->multiline_len + 1);
-			}
-
-			msg[servconn->multiline_len] = '\0';
-			servconn->parsing_multiline = FALSE;
-
-			process_multi_line(servconn, msg);
-
-			if (g_list_find(session->servconns, servconn) != NULL) {
-				servconn->multiline_len = 0;
-
-				if (servconn->msg_passport != NULL)
-					g_free(servconn->msg_passport);
-
-				if (servconn->msg_friendly != NULL)
-					g_free(servconn->msg_friendly);
-			}
-			else
-				cont = 0;
-
-			g_free(msg);
+			*end = '\0';
+			cur_len = end - cur + 2;
+			end += 2;
 		}
-		else {
-			char *end = servconn->rxqueue;
-			char *cmd;
-			int cmdlen, i;
 
-			if (!servconn->rxlen)
-				return;
+		servconn->rx_len -= cur_len;
 
-			for (i = 0; i < servconn->rxlen - 1; end++, i++) {
-				if (*end == '\r' && end[1] == '\n')
-					break;
-			}
-
-			if (i == servconn->rxlen - 1)
-				return;
-
-			cmdlen = end - servconn->rxqueue + 2;
-			cmd = servconn->rxqueue;
-			servconn->rxlen -= cmdlen;
-
-			if (servconn->rxlen)
-				servconn->rxqueue = g_memdup(cmd + cmdlen, servconn->rxlen);
-			else {
-				servconn->rxqueue = NULL;
-				cmd = g_realloc(cmd, cmdlen + 1);
-			}
-
-			cmd[cmdlen] = '\0';
-
-			gaim_debug(GAIM_DEBUG_MISC, "msn", "S: %s", cmd);
-
-			g_strchomp(cmd);
-
-			cont = process_single_line(servconn, cmd);
-
-			g_free(cmd);
+		if (servconn->payload_len)
+		{
+			process_payload(servconn, cur, cur_len);
+			servconn->payload_len = 0;
 		}
+		else
+		{
+			gaim_debug(GAIM_DEBUG_MISC, "msn", "S: %s\n", cur);
+			process_cmd_text(servconn, cur);
+		}
+	} while (servconn->connected && servconn->rx_len);
+
+	if (servconn->connected)
+	{
+		if (servconn->rx_len)
+			servconn->rx_buf = g_memdup(cur, servconn->rx_len);
+		else
+			servconn->rx_buf = NULL;
 	}
+
+	if (servconn->wasted)
+		msn_servconn_destroy(servconn);
+
+	g_free(old_rx_buf);
 }

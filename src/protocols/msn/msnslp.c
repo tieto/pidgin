@@ -59,8 +59,7 @@ msn_slp_session_destroy(MsnSlpSession *session)
 
 static void
 msn_slp_session_send_message(MsnSlpSession *slpsession,
-							 MsnMessage *source_msg,
-							 MsnUser *local_user, MsnUser *remote_user,
+							 const char *local_user, const char *remote_user,
 							 const char *header, const char *branch,
 							 int cseq, const char *call_id,
 							 const char *content)
@@ -72,16 +71,6 @@ msn_slp_session_send_message(MsnSlpSession *slpsession,
 	g_return_if_fail(header     != NULL);
 	g_return_if_fail(branch     != NULL);
 	g_return_if_fail(call_id    != NULL);
-
-	if (source_msg != NULL)
-	{
-		if (msn_message_is_incoming(source_msg))
-			remote_user = msn_message_get_sender(source_msg);
-		else
-			remote_user = msn_message_get_receiver(source_msg);
-
-		local_user = slpsession->swboard->servconn->session->user;
-	}
 
 	if (branch == NULL)
 		branch = "null";
@@ -100,8 +89,8 @@ msn_slp_session_send_message(MsnSlpSession *slpsession,
 		"%s"
 		"\r\n\r\n",
 		header,
-		msn_user_get_passport(remote_user),
-		msn_user_get_passport(local_user),
+		remote_user,
+		local_user,
 		branch, cseq, call_id,
 		(content == NULL ? 0  : (int)strlen(content) + 5),
 		(content == NULL ? "" : content));
@@ -109,9 +98,6 @@ msn_slp_session_send_message(MsnSlpSession *slpsession,
 	gaim_debug_misc("msn", "Message = {%s}\n", body);
 
 	invite_msg = msn_message_new_msnslp();
-
-	msn_message_set_sender(invite_msg, local_user);
-	msn_message_set_receiver(invite_msg, remote_user);
 
 	msn_message_set_body(invite_msg, body);
 
@@ -123,10 +109,15 @@ msn_slp_session_send_message(MsnSlpSession *slpsession,
 static gboolean
 send_error_500(MsnSlpSession *slpsession, const char *call_id, MsnMessage *msg)
 {
+	MsnUser *local_user;
+
 	g_return_val_if_fail(slpsession != NULL, TRUE);
 	g_return_val_if_fail(msg        != NULL, TRUE);
 
-	msn_slp_session_send_message(slpsession, msg, NULL, NULL,
+	local_user = slpsession->swboard->servconn->session->user;
+
+	msn_slp_session_send_message(slpsession, msg->passport,
+								 msn_user_get_passport(local_user),
 								 "MSNSLP/1.0 500 Internal Error",
 								 slpsession->branch, 1, call_id, NULL);
 
@@ -146,8 +137,6 @@ send_cb(gpointer user_data)
 	slpsession->remaining_size -= len;
 
 	msg = msn_message_new_msnslp();
-	msn_message_set_sender(msg,   slpsession->receiver);
-	msn_message_set_receiver(msg, slpsession->sender);
 	msn_message_set_bin_data(msg, data, len);
 
 	msn_slp_session_send_msg(slpsession, msg);
@@ -197,15 +186,20 @@ msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 		 *
 		 * Say BYE-BYE.
 		 */
+		MsnUser *local_user;
 		char *header;
 
 		fclose(slpsession->send_fp);
 		slpsession->send_fp = NULL;
 
 		header = g_strdup_printf("BYE MSNMSGR:%s MSNSLP/1.0",
-			msn_user_get_passport(msn_message_get_sender(msg)));
+			msg->passport);
 
-		msn_slp_session_send_message(slpsession, msg, NULL, NULL, header,
+		local_user = slpsession->swboard->servconn->session->user;
+
+		msn_slp_session_send_message(slpsession, msg->passport,
+									 msn_user_get_passport(local_user),
+									 header,
 									 "A0D624A6-6C0C-4283-A9E0-BC97B4B46D32",
 									 0, slpsession->call_id, "");
 
@@ -300,7 +294,10 @@ msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 
 		if (app_id == 1)
 		{
+			MsnSession *session;
 			MsnMessage *new_msg;
+			MsnUser *local_user;
+			MsnUser *remote_user;
 			char *content;
 			char nil_body[4];
 			struct stat st;
@@ -309,7 +306,12 @@ msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 			content = g_strdup_printf("SessionID: %d", session_id);
 			msn_slp_session_send_ack(slpsession, msg);
 
-			msn_slp_session_send_message(slpsession, msg, NULL, NULL,
+			session = slpsession->swboard->servconn->session;
+
+			local_user = session->user;
+
+			msn_slp_session_send_message(slpsession, msg->passport,
+										 msn_user_get_passport(local_user),
 										 "MSNSLP/1.0 200 OK",
 										 branch, 1, call_id, content);
 
@@ -319,12 +321,13 @@ msn_slp_session_msg_received(MsnSlpSession *slpsession, MsnMessage *msg)
 			memset(nil_body, 0, sizeof(nil_body));
 
 			slpsession->session_id = session_id;
-			slpsession->receiver = msn_message_get_sender(msg);
-			slpsession->sender = slpsession->swboard->servconn->session->user;
+
+			remote_user = msn_user_new(session, msg->passport, NULL);
+
+			slpsession->receiver = remote_user;
+			slpsession->sender = session->user;
 
 			new_msg = msn_message_new_msnslp();
-			msn_message_set_sender(new_msg, slpsession->sender);
-			msn_message_set_receiver(new_msg, slpsession->receiver);
 			msn_message_set_bin_data(new_msg, nil_body, 4);
 			new_msg->msnslp_footer.app_id = 1;
 
@@ -532,7 +535,9 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 	header = g_strdup_printf("INVITE MSNMSGR:%s MSNSLP/1.0",
 							 msn_user_get_passport(remote_user));
 
-	msn_slp_session_send_message(slpsession, NULL, local_user, remote_user,
+	msn_slp_session_send_message(slpsession,
+								 msn_user_get_passport(local_user),
+								 msn_user_get_passport(remote_user),
 								 header, slpsession->branch, 0,
 								 slpsession->call_id, content);
 

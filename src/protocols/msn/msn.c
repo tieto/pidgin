@@ -138,30 +138,42 @@ disable_msn_pages_cb(GaimConnection *gc)
 static void
 send_to_mobile_cb(MsnMobileData *data, const char *entry)
 {
-	MsnSession *session = data->gc->proto_data;
-	MsnServConn *servconn = session->notification_conn;
-	MsnUser *user;
+	MsnSession *session;
+	MsnServConn *servconn;
 	MsnPage *page;
-	char *page_str;
+	char *buf;
+	char *payload;
+	size_t len;
+	size_t payload_len;
 
-	user = msn_user_new(session, data->passport, NULL);
+	session = data->gc->proto_data;
+	servconn = session->notification_conn;
 
 	page = msn_page_new();
-	msn_page_set_receiver(page, user);
-	msn_page_set_transaction_id(page, ++session->trId);
 	msn_page_set_body(page, entry);
+	buf = g_strdup_printf("PGD %d %s 1 %d\r\n", ++session->trId,
+						  data->passport, page->size);
 
-	page_str = msn_page_build_string(page);
+	len = strlen(buf);
 
-	msn_user_destroy(user);
+	payload = msn_page_gen_payload(page, &payload_len);
+
+	if (payload != NULL)
+	{
+		buf = g_realloc(buf, len + payload_len + 1);
+		memcpy(buf + len, payload, payload_len);
+		len += payload_len;
+		buf[len] = 0;
+	}
+
 	msn_page_destroy(page);
 
-	if (!msn_servconn_write(servconn, page_str, strlen(page_str))) {
-
+	if (!msn_servconn_write(servconn, buf, len))
+	{
 		gaim_connection_error(data->gc, _("Write error"));
 	}
 
-	g_free(page_str);
+	g_free(buf);
 }
 
 static void
@@ -541,7 +553,6 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		msn_import_html(message, &msgformat, &msgtext);
 
 		msg = msn_message_new();
-		msn_message_set_receiver(msg, user);
 		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
 		msn_message_set_body(msg, msgtext);
 
@@ -611,7 +622,6 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 
 	msg = msn_message_new();
 	msn_message_set_content_type(msg, "text/x-msmsgscontrol");
-	msn_message_set_receiver(msg, user);
 	msn_message_set_charset(msg, NULL);
 	msn_message_set_flag(msg, 'U');
 	msn_message_set_attr(msg, "TypingUser",

@@ -260,18 +260,30 @@ joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 	return send_clientcaps(swboard);
 }
 
+static void
+msg_cmd_post(MsnServConn *servconn, char *payload, size_t len)
+{
+	MsnMessage *msg = msn_message_new();
+
+	msg->passport = servconn->msg_passport;
+
+	msn_message_parse_payload(msg, payload, len);
+
+	msn_servconn_process_message(servconn, msg);
+
+	msn_message_destroy(msg);
+}
+
 static gboolean
 msg_cmd(MsnServConn *servconn, const char *command, const char **params,
-		 size_t param_count)
+		size_t param_count)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Found message. Parsing.\n");
 
-	servconn->parsing_multiline = TRUE;
-	servconn->multiline_type    = MSN_MULTILINE_MSG;
-	servconn->multiline_len     = atoi(params[2]);
+	servconn->payload_cb  = msg_cmd_post;
+	servconn->payload_len = atoi(params[2]);
 
 	servconn->msg_passport = g_strdup(params[0]);
-	servconn->msg_friendly = g_strdup(params[1]);
 
 	return TRUE;
 }
@@ -338,7 +350,7 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 
 	body = gaim_escape_html(msn_message_get_body(msg));
 
-	if (!strcmp(servconn->msg_passport, "messenger@microsoft.com") &&
+	if (!strcmp(msg->passport, "messenger@microsoft.com") &&
 		strstr(body, "immediate security update"))
 	{
 		g_free(body);
@@ -346,11 +358,13 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 		return TRUE;
 	}
 
+#if 0
 	gaim_debug(GAIM_DEBUG_INFO, "msn", "Checking User-Agent...\n");
 
 	if ((value = msn_message_get_attr(msg, "User-Agent")) != NULL) {
 		gaim_debug(GAIM_DEBUG_MISC, "msn", "value = '%s'\n", value);
 	}
+#endif
 
 	if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL) {
 		char *pre_format, *post_format;
@@ -367,10 +381,10 @@ plain_msg(MsnServConn *servconn, MsnMessage *msg)
 	{
 		serv_got_chat_in(gc,
 						 gaim_conv_chat_get_id(GAIM_CONV_CHAT(swboard->chat)),
-						 servconn->msg_passport, 0, body, time(NULL));
+						 msg->passport, 0, body, time(NULL));
 	}
 	else
-		serv_got_im(gc, servconn->msg_passport, body, 0, time(NULL));
+		serv_got_im(gc, msg->passport, body, 0, time(NULL));
 
 	g_free(body);
 
@@ -387,7 +401,7 @@ control_msg(MsnServConn *servconn, MsnMessage *msg)
 	if (swboard->chat == NULL &&
 		(value = msn_message_get_attr(msg, "TypingUser")) != NULL) {
 
-		serv_got_typing(gc, servconn->msg_passport, MSN_TYPING_RECV_TIMEOUT,
+		serv_got_typing(gc, msg->passport, MSN_TYPING_RECV_TIMEOUT,
 						GAIM_TYPING);
 	}
 
@@ -404,7 +418,7 @@ clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
 	GHashTable *clientcaps;
 	const char *value;
 
-	user = msn_user_new(session, servconn->msg_passport, NULL);
+	user = msn_user_new(session, msg->passport, NULL);
 
 	clientcaps = msn_message_get_hashtable_from_body(msg);
 #endif
@@ -500,11 +514,11 @@ msn_switchboard_new(MsnSession *session)
 		/* Register the message type callbacks. */
 		msn_servconn_register_msg_type(servconn, "text/plain",plain_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-msmsgscontrol",
-									  control_msg);
+									   control_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-clientcaps",
-									  clientcaps_msg);
+									   clientcaps_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-clientinfo",
-									  clientcaps_msg);
+									   clientcaps_msg);
 #if 0
 		msn_servconn_register_msg_type(servconn, "application/x-msnmsgrp2p",
 									   msn_p2p_msg);
@@ -652,7 +666,9 @@ gboolean
 msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 {
 	char *buf;
+	char *payload;
 	size_t len;
+	size_t payload_len;
 	int ret;
 #if 0
 	FILE *fp;
@@ -661,12 +677,23 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	g_return_val_if_fail(swboard != NULL, FALSE);
 	g_return_val_if_fail(msg     != NULL, FALSE);
 
-	msn_message_set_transaction_id(msg, ++swboard->trId);
-	buf = msn_message_to_string(msg, &len);
+	buf = g_strdup_printf("MSG %d %c %d\r\n", ++swboard->trId,
+						  msn_message_get_flag(msg), (int)msg->size);
 
-	g_return_val_if_fail(buf != NULL, FALSE);
+	len = strlen(buf);
 
-	if (swboard->servconn->txqueue != NULL || !swboard->in_use) {
+	payload = msn_message_gen_payload(msg, &payload_len);
+
+	if (payload != NULL)
+	{
+		buf = g_realloc(buf, len + payload_len + 1);
+		memcpy(buf + len, payload, payload_len);
+		len += payload_len;
+		buf[len] = 0;
+	}
+
+	if (swboard->servconn->txqueue != NULL || !swboard->in_use)
+	{
 		gaim_debug(GAIM_DEBUG_INFO, "msn", "Appending message to queue.\n");
 
 		swboard->servconn->txqueue =

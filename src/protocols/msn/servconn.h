@@ -35,21 +35,17 @@ typedef gboolean (*MsnServConnCommandCb)(MsnServConn *servconn,
 
 typedef gboolean (*MsnServConnMsgCb)(MsnServConn *servconn, MsnMessage *msg);
 
+typedef void (*MsnPayloadCb)(MsnServConn *servconn, char *payload,
+							 size_t len);
+
 #include "session.h"
-
-typedef enum
-{
-	MSN_MULTILINE_MSG,
-	MSN_MULTILINE_IPG,
-	MSN_MULTILINE_NOT
-
-} MsnMultilineType;
 
 struct _MsnServConn
 {
 	MsnSession *session;
 
 	gboolean connected;
+	gboolean wasted;
 
 	MsnHttpMethodData *http_data;
 
@@ -62,18 +58,17 @@ struct _MsnServConn
 	int fd;
 	int inpa;
 
-	char *rxqueue;
-	int rxlen;
+	char *rx_buf;
+	int rx_len;
+
+	MsnPayloadCb payload_cb;
+	int payload_len;
 
 	GSList *msg_queue;
 
 	GSList *txqueue;
 
-	gboolean parsing_multiline;
-	MsnMultilineType multiline_type;
 	char *msg_passport;
-	char *msg_friendly;
-	int multiline_len;
 
 	GHashTable *commands;
 	GHashTable *msg_types;
@@ -126,7 +121,7 @@ void msn_servconn_register_msg_type(MsnServConn *servconn,
 									const char *content_type,
 									MsnServConnMsgCb cb);
 
-void msn_servconn_parse_data(gpointer data, gint source,
-							 GaimInputCondition cond);
+gboolean msn_servconn_process_message(MsnServConn *servconn,
+									  MsnMessage *msg);
 
 #endif /* _MSN_SERVCONN_H_ */
