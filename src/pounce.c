@@ -64,7 +64,7 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 		if (account->gc != gc)
 			continue;
 
-		if (!g_strcasecmp(who, normalize (b->name))) {	/* find someone to pounce */
+		if (!gaim_utf8_strcasecmp(who, normalize (b->name))) {	/* find someone to pounce */
 			if (b->options & OPT_POUNCE_POPUP) {
 				c = gaim_find_conversation(name);
 

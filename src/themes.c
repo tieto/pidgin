@@ -136,16 +136,16 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 			else
 				theme->list = child;
 			list = child;
-		} else if (!g_strncasecmp(i, "Name=", strlen("Name="))) {
+		} else if (!g_ascii_strncasecmp(i, "Name=", strlen("Name="))) {
 			theme->name = g_strdup(i+ strlen("Name="));
 			theme->name[strlen(theme->name)-1] = 0;
-		} else if (!g_strncasecmp(i, "Description=", strlen("Description="))) {
+		} else if (!g_ascii_strncasecmp(i, "Description=", strlen("Description="))) {
 			theme->desc = g_strdup(i + strlen("Description="));
 			theme->desc[strlen(theme->desc)-1] = 0;
-		} else if (!g_strncasecmp(i, "Icon=", strlen("Icon="))) {
+		} else if (!g_ascii_strncasecmp(i, "Icon=", strlen("Icon="))) {
 			theme->icon = g_build_filename(dirname, i + strlen("Icon="), NULL);
 			theme->icon[strlen(theme->icon)-1] = 0;
-		} else if (!g_strncasecmp(i, "Author=", strlen("Author="))) {
+		} else if (!g_ascii_strncasecmp(i, "Author=", strlen("Author="))) {
 			theme->author = g_strdup(i + strlen("Author="));
 			theme->author[strlen(theme->author)-1] = 0;
 		} else if (load && list) {

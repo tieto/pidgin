@@ -296,7 +296,7 @@ void count_add(GtkWidget *widget, int number) {
 		g_snprintf(buf, sizeof(buf), "[%d] %s", number, win->title);
 	} else if (!c) {
 		g_snprintf(buf, sizeof(buf), "[1] %s", win->title);
-	} else if (!g_strncasecmp(buf, "[", 1)) {
+	} else if (buf[0]== '[' ) {
 		g_snprintf(buf, sizeof(buf), "[%d] %s", c+1, &win->title[3+length]);
 	}
 	gtk_window_set_title(win, buf);
@@ -308,7 +308,7 @@ gboolean count_remove(GtkWidget *widget) {
 	int length;
 
 	strncpy(buf, win->title, sizeof(buf));
-	if (!g_strncasecmp(buf, "[", 1)) {
+	if (buf[0] == '[') {
 		Number = counter(buf, &length);
 		g_snprintf(buf, sizeof(buf), "%s", &win->title[3+length]);
 		gtk_window_set_title(win, buf);
@@ -322,7 +322,7 @@ void quote_add(GtkWidget *widget) {
 	GtkWindow *win = GTK_WINDOW(widget);
 
 	strncpy(buf, win->title, sizeof(buf));
-	if (g_strncasecmp(buf, "\"", 1)) {
+	if (buf[0] != '\"') {
 		g_snprintf(buf, sizeof(buf), "\"%s\"", win->title);
 		gtk_window_set_title(win, buf);
 	}
@@ -333,7 +333,7 @@ gboolean quote_remove(GtkWidget *widget) {
 	GtkWindow *win = GTK_WINDOW(widget);
 
 	strncpy(buf, win->title, sizeof(buf));
-	if (!g_strncasecmp(buf, "\"", 1)) {
+	if (buf[0] == '\"') {
 		g_snprintf(buf, strlen(buf) - 1, "%s", &win->title[1]);
 		gtk_window_set_title(win, buf);
 		return TRUE;

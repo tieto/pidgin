@@ -316,7 +316,7 @@ void show_login()
 	icon = gaim_pixbuf(NULL, "gaim.png");
 	if (icon) {
 			gtk_window_set_icon(GTK_WINDOW(mainwindow), icon);
-			gdk_pixbuf_unref(icon);
+			g_object_unref(G_OBJECT(icon));
 	}
 
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -470,36 +470,53 @@ static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer 
 	guint32 len;
 	guchar *data;
 	guint32 x;
+	GError *error;
 
 	debug_printf("Core says: ");
-	g_io_channel_read(source, &type, sizeof(type), &x);
+	g_io_channel_read_chars(source, &type, sizeof(type), &x, &error);
+	if(error)
+		g_free(error);
 	if (x == 0) {
 		debug_printf("CORE IS GONE!\n");
-		g_io_channel_close(source);
+		g_io_channel_shutdown(source, TRUE, &error);
+		if(error)
+			g_free(error);
 		return FALSE;
 	}
 	debug_printf("%d ", type);
-	g_io_channel_read(source, &subtype, sizeof(subtype), &x);
+	g_io_channel_read_chars(source, &subtype, sizeof(subtype), &x, &error);
+	if(error)
+		g_free(error);
 	if (x == 0) {
 		debug_printf("CORE IS GONE!\n");
-		g_io_channel_close(source);
+		g_io_channel_shutdown(source, TRUE, &error);
+		if(error)
+			g_free(error);
 		return FALSE;
 	}
 	debug_printf("%d ", subtype);
-	g_io_channel_read(source, (guchar *)&len, sizeof(len), &x);
+	g_io_channel_read_chars(source, (guchar *)&len, sizeof(len), &x, &error);
+	if(error)
+		g_free(error);
 	if (x == 0) {
 		debug_printf("CORE IS GONE!\n");
-		g_io_channel_close(source);
+		g_io_channel_shutdown(source, TRUE, &error);
+		if(error)
+			g_free(error);
 		return FALSE;
 	}
 	debug_printf("(%d bytes)\n", len);
 
 	data = g_malloc(len);
-	g_io_channel_read(source, data, len, &x);
+	g_io_channel_read_chars(source, data, len, &x, &error);
+	if(error)
+		g_free(error);
 	if (x != len) {
 		debug_printf("CORE IS GONE! (read %d/%d bytes)\n", x, len);
 		g_free(data);
-		g_io_channel_close(source);
+		g_io_channel_shutdown(source, TRUE, &error);
+		if(error)
+			g_free(error);
 		return FALSE;
 	}
 

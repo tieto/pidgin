@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5105 2003-03-15 03:23:30Z faceprint $
+ * $Id: gg.c 5113 2003-03-16 00:01:49Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -116,10 +116,7 @@ static gboolean invalid_uin(const char *uin)
 
 static gint args_compare(gconstpointer a, gconstpointer b)
 {
-	gchar *arg_a = (gchar *)a;
-	gchar *arg_b = (gchar *)b;
-
-	return g_strcasecmp(arg_a, arg_b);
+	return g_ascii_strcasecmp((const gchar *)a,(const gchar *)b);
 }
 
 static gboolean allowed_uin(struct gaim_connection *gc, char *uin)
@@ -194,27 +191,27 @@ static void agg_set_away(struct gaim_connection *gc, char *state, char *msg)
 		gc->away = NULL;
 	}
 
-	if (!g_strcasecmp(state, AGG_STATUS_AVAIL))
+	if (!gaim_utf8_strcasecmp(state, AGG_STATUS_AVAIL))
 		status = GG_STATUS_AVAIL;
-	else if (!g_strcasecmp(state, AGG_STATUS_AVAIL_FRIENDS)) {
+	else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_AVAIL_FRIENDS)) {
 		status = GG_STATUS_AVAIL | GG_STATUS_FRIENDS_MASK;
 		gc->away = g_strdup("");
-	} else if (!g_strcasecmp(state, AGG_STATUS_BUSY)) {
+	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_BUSY)) {
 		status = GG_STATUS_BUSY;
 		gc->away = g_strdup("");
-	} else if (!g_strcasecmp(state, AGG_STATUS_BUSY_FRIENDS)) {
+	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_BUSY_FRIENDS)) {
 		status =  GG_STATUS_BUSY | GG_STATUS_FRIENDS_MASK;
 		gc->away = g_strdup("");
-	} else if (!g_strcasecmp(state, AGG_STATUS_INVISIBLE)) {
+	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_INVISIBLE)) {
 		status = GG_STATUS_INVISIBLE;
 		gc->away = g_strdup("");
-	} else if (!g_strcasecmp(state, AGG_STATUS_INVISIBLE_FRIENDS)) {
+	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_INVISIBLE_FRIENDS)) {
 		status = GG_STATUS_INVISIBLE | GG_STATUS_FRIENDS_MASK;
 		gc->away = g_strdup("");
-	} else if (!g_strcasecmp(state, AGG_STATUS_NOT_AVAIL)) {
+	} else if (!gaim_utf8_strcasecmp(state, AGG_STATUS_NOT_AVAIL)) {
 		status = GG_STATUS_NOT_AVAIL;
 		gc->away = g_strdup("");
-	} else if (!g_strcasecmp(state, GAIM_AWAY_CUSTOM)) {
+	} else if (!gaim_utf8_strcasecmp(state, GAIM_AWAY_CUSTOM)) {
 		if (msg) {
 			status = GG_STATUS_BUSY;
 			gc->away = g_strdup("");

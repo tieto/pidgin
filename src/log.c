@@ -46,7 +46,7 @@ struct log_conversation *find_log_info(const char *name)
 
 	while (lc) {
 		l = (struct log_conversation *)lc->data;
-		if (!g_strcasecmp(pname, normalize(l->name))) {
+		if (!gaim_utf8_strcasecmp(pname, normalize(l->name))) {
 			g_free(pname);
 			return l;
 		}

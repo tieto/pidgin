@@ -328,7 +328,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 	struct msn_data *md = gc->proto_data;
 	char sendbuf[MSN_BUF_LEN];
 
-	if (!g_strncasecmp(buf, "ADD", 3)) {
+	if (!g_ascii_strncasecmp(buf, "ADD", 3)) {
 		char *list, *user, *friend, *tmp = buf;
 		struct msn_add_permit *ap;
 		GSList *perm = gc->account->permit;
@@ -345,11 +345,11 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 		friend = url_decode(tmp);
 
-		if (g_strcasecmp(list, "RL"))
+		if (g_ascii_strcasecmp(list, "RL"))
 			return 1;
 
 		while (perm) {
-			if (!g_strcasecmp(perm->data, user))
+			if (!gaim_utf8_strcasecmp(perm->data, user))
 				return 1;
 			perm = perm->next;
 		}
@@ -363,7 +363,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				ap->user, ap->friend, ap->gc->username);
 
 		//	do_ask_dialog(msg, NULL, ap, _("Authorize"), msn_accept_add, _("Deny"), msn_cancel_add, my_protocol->plug ? my_protocol->plug->handle : NULL, FALSE);
-	} else if (!g_strncasecmp(buf, "BLP", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "BLP", 3)) {
 		char *type, *tmp = buf;
 
 		GET_NEXT(tmp);
@@ -371,7 +371,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 		type = tmp;
 
-		if (!g_strcasecmp(type, "AL")) {
+		if (!g_ascii_strcasecmp(type, "AL")) {
 			/* If the current setting is AL, messages
 			 * from users who are not in BL will be delivered
 			 *
@@ -385,9 +385,9 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			 * In other words, permit some */
 			gc->account->permdeny = PERMIT_SOME;
 		}
-	} else if (!g_strncasecmp(buf, "BPR", 3)) {
-	} else if (!g_strncasecmp(buf, "CHG", 3)) {
-	} else if (!g_strncasecmp(buf, "CHL", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "BPR", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "CHG", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "CHL", 3)) {
 		char *hash = buf;
 		char buf2[MSN_BUF_LEN];
 		md5_state_t st;
@@ -414,14 +414,14 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		}
 
 		debug_printf("\n");
-	} else if (!g_strncasecmp(buf, "FLN", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "FLN", 3)) {
 		char *usr = buf;
 
 		GET_NEXT(usr);
 		serv_got_update(gc, usr, 0, 0, 0, 0, 0);
-	} else if (!g_strncasecmp(buf, "GTC", 3)) {
-	} else if (!g_strncasecmp(buf, "INF", 3)) {
-	} else if (!g_strncasecmp(buf, "ILN", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "GTC", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "INF", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "ILN", 3)) {
 		char *state, *user, *friend, *tmp = buf;
 		int status = 0;
 
@@ -438,22 +438,22 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 
 		serv_got_alias(gc, user, friend);
 
-		if (!g_strcasecmp(state, "BSY")) {
+		if (!g_ascii_strcasecmp(state, "BSY")) {
 			status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
-		} else if (!g_strcasecmp(state, "IDL")) {
+		} else if (!g_ascii_strcasecmp(state, "IDL")) {
 			status |= UC_UNAVAILABLE | (MSN_IDLE << 1);
-		} else if (!g_strcasecmp(state, "BRB")) {
+		} else if (!g_ascii_strcasecmp(state, "BRB")) {
 			status |= UC_UNAVAILABLE | (MSN_BRB << 1);
-		} else if (!g_strcasecmp(state, "AWY")) {
+		} else if (!g_ascii_strcasecmp(state, "AWY")) {
 			status |= UC_UNAVAILABLE | (MSN_AWAY << 1);
-		} else if (!g_strcasecmp(state, "PHN")) {
+		} else if (!g_ascii_strcasecmp(state, "PHN")) {
 			status |= UC_UNAVAILABLE | (MSN_PHONE << 1);
-		} else if (!g_strcasecmp(state, "LUN")) {
+		} else if (!g_ascii_strcasecmp(state, "LUN")) {
 			status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 		}
 
 		serv_got_update(gc, user, 1, 0, 0, 0, status);
-	} else if (!g_strncasecmp(buf, "LST", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "LST", 3)) {
 		char *which, *who, *friend, *tmp = buf;
 		struct msn_add_permit *ap; /* for any as yet undealt with buddies who've added you to their buddy list when you were off-line.  How dare they! */
 		GSList *perm = gc->account->permit; /* current permit list */
@@ -477,29 +477,29 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 		friend = url_decode(tmp);
 
-		if (!g_strcasecmp(which, "FL") && pos) {
+		if (!g_ascii_strcasecmp(which, "FL") && pos) {
 			struct msn_buddy *b = g_new0(struct msn_buddy, 1);
 			b->user = g_strdup(who);
 			b->friend = g_strdup(friend);
 			md->fl = g_slist_append(md->fl, b);
-		} else if (!g_strcasecmp(which, "AL") && pos) {
+		} else if (!g_ascii_strcasecmp(which, "AL") && pos) {
 			if (g_slist_find_custom(gc->account->deny, who,
 							(GCompareFunc)strcmp)) {
 				debug_printf("moving from deny to permit: %s", who);
 				gaim_privacy_deny_remove(gc->account, who);
 			}
 			gaim_privacy_permit_add(gc->account, who);
-		} else if (!g_strcasecmp(which, "BL") && pos) {
+		} else if (!g_ascii_strcasecmp(which, "BL") && pos) {
 			gaim_privacy_deny_add(gc->account, who);
-		} else if (!g_strcasecmp(which, "RL")) {
+		} else if (!g_ascii_strcasecmp(which, "RL")) {
 		    if (pos) {
 			while(perm) {
-				if(!g_strcasecmp(perm->data, who))
+				if(!g_ascii_strcasecmp(perm->data, who))
 					new = 0;
 				perm = perm->next;
 			}
 			while(denyl) {
-			  if(!g_strcasecmp(denyl->data, who))
+			  if(!g_ascii_strcasecmp(denyl->data, who))
 			    new = 0;
 			  denyl = denyl->next;
 			}
@@ -552,7 +552,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				g_free(mb);
 			}
 		}
-	} else if (!g_strncasecmp(buf, "MSG", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
 		int length;
 
@@ -567,7 +567,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		md->msg = TRUE;
 		md->msguser = g_strdup(user);
 		md->msglen = length;
-	} else if (!g_strncasecmp(buf, "NLN", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "NLN", 3)) {
 		char *state, *user, *friend, *tmp = buf;
 		int status = 0;
 
@@ -582,35 +582,35 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 
 		serv_got_alias(gc, user, friend);
 
-		if (!g_strcasecmp(state, "BSY")) {
+		if (!g_ascii_strcasecmp(state, "BSY")) {
 			status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
-		} else if (!g_strcasecmp(state, "IDL")) {
+		} else if (!g_ascii_strcasecmp(state, "IDL")) {
 			status |= UC_UNAVAILABLE | (MSN_IDLE << 1);
-		} else if (!g_strcasecmp(state, "BRB")) {
+		} else if (!g_ascii_strcasecmp(state, "BRB")) {
 			status |= UC_UNAVAILABLE | (MSN_BRB << 1);
-		} else if (!g_strcasecmp(state, "AWY")) {
+		} else if (!g_ascii_strcasecmp(state, "AWY")) {
 			status |= UC_UNAVAILABLE | (MSN_AWAY << 1);
-		} else if (!g_strcasecmp(state, "PHN")) {
+		} else if (!g_ascii_strcasecmp(state, "PHN")) {
 			status |= UC_UNAVAILABLE | (MSN_PHONE << 1);
-		} else if (!g_strcasecmp(state, "LUN")) {
+		} else if (!g_ascii_strcasecmp(state, "LUN")) {
 			status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
 		}
 
 		serv_got_update(gc, user, 1, 0, 0, 0, status);
-	} else if (!g_strncasecmp(buf, "OUT", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "OUT", 3)) {
 		char *tmp = buf;
 
 		GET_NEXT(tmp);
-		if (!g_strncasecmp(tmp, "OTH", 3)) {
+		if (!g_ascii_strncasecmp(tmp, "OTH", 3)) {
 			hide_login_progress(gc, _("You have been disconnected. You have "
 						  "signed on from another location."));
 			signoff(gc);
 			return 0;
 		}
-	} else if (!g_strncasecmp(buf, "PRP", 3)) {
-	} else if (!g_strncasecmp(buf, "QNG", 3)) {
-	} else if (!g_strncasecmp(buf, "QRY", 3)) {
-	} else if (!g_strncasecmp(buf, "REA", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "PRP", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "QNG", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "QRY", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "REA", 3)) {
 		char *friend, *tmp = buf;
 
 		GET_NEXT(tmp);
@@ -621,8 +621,8 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		friend = url_decode(tmp);
 
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
-	} else if (!g_strncasecmp(buf, "REM", 3)) {
-	} else if (!g_strncasecmp(buf, "RNG", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "REM", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "RNG", 3)) {
 		struct msn_switchboard *ms;
 		char *sessid, *ssaddr, *auth, *user;
 		int port, i = 0;
@@ -660,7 +660,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		ms->sessid = g_strdup(sessid);
 		ms->auth = g_strdup(auth);
 		ms->gc = gc;
-	} else if (!g_strncasecmp(buf, "URL", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "URL", 3)) {
 		char *tmp = buf;
 		FILE *fd;
 		md5_state_t st;
@@ -742,9 +742,9 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 				}
 			}
 		}
-	} else if (!g_strncasecmp(buf, "SYN", 3)) {
-	} else if (!g_strncasecmp(buf, "USR", 3)) {
-	} else if (!g_strncasecmp(buf, "XFR", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "SYN", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "USR", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "XFR", 3)) {
 		char *host = strstr(buf, "SB");
 		int port;
 		int i = 0;
@@ -813,7 +813,7 @@ static void msn_process_main_msg(struct gaim_connection *gc, char *msg)
 
 	content = strstr(msg, "Content-Type: ");
 
-	if ((content) && (!g_strncasecmp(content, "Content-Type: text/x-msmsgsprofile",
+	if ((content) && (!g_ascii_strncasecmp(content, "Content-Type: text/x-msmsgsprofile",
 				strlen("Content-Type: text/x-msmsgsprofile")))) {
 
 		char *kv,*sid,*mspauth;
@@ -850,7 +850,7 @@ static void msn_process_main_msg(struct gaim_connection *gc, char *msg)
 
 
 
-	if (!g_strcasecmp(md->msguser, "hotmail")) {
+	if (!g_ascii_strcasecmp(md->msguser, "hotmail")) {
 		handle_hotmail(gc, msg);
 		return;
 	}
@@ -979,7 +979,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 	struct msn_data *md = gc->proto_data;
 	char sendbuf[MSN_BUF_LEN];
 
-	if (!g_strncasecmp(buf, "VER", 3)) {
+	if (!g_ascii_strncasecmp(buf, "VER", 3)) {
 		/* we got VER, check to see that MSNP5 is in the list, then send INF */
 		if (!strstr(buf, "MSNP5")) {
 			hide_login_progress(gc, _("Protocol not supported"));
@@ -993,7 +993,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 			signoff(gc);
 			return 0;
 		}
-	} else if (!g_strncasecmp(buf, "INF", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "INF", 3)) {
 		/* check to make sure we can use md5 */
 		if (!strstr(buf, "MD5")) {
 			hide_login_progress(gc, _("Unable to login using MD5"));
@@ -1009,7 +1009,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		}
 
 		set_login_progress(gc, 3, _("Requesting to send password"));
-	} else if (!g_strncasecmp(buf, "USR", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "USR", 3)) {
 		char *resp, *friend, *tmp = buf;
 
 		GET_NEXT(tmp);
@@ -1021,7 +1021,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 
 		/* so here, we're either getting the challenge or the OK */
-		if (!g_strcasecmp(resp, "OK")) {
+		if (!g_ascii_strcasecmp(resp, "OK")) {
 			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
 
 			g_snprintf(sendbuf, sizeof(sendbuf), "SYN %u 0\r\n", ++md->trId);
@@ -1034,7 +1034,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 			gaim_input_remove(md->inpa);
 			md->inpa = gaim_input_add(md->fd, GAIM_INPUT_READ, msn_callback, gc);
 			return 0;
-		} else if (!g_strcasecmp(resp, "MD5")) {
+		} else if (!g_ascii_strcasecmp(resp, "MD5")) {
 			char buf2[MSN_BUF_LEN];
 			md5_state_t st;
 			md5_byte_t di[16];
@@ -1061,7 +1061,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 
 			set_login_progress(gc, 4, _("Password sent"));
 		}
-	} else if (!g_strncasecmp(buf, "XFR", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "XFR", 3)) {
 		char *host = strstr(buf, "NS");
 		int port;
 		int i = 0;
@@ -1687,7 +1687,7 @@ static void msn_add_buddy(struct gaim_connection *gc, const char *name)
 
 	while (l) {
 		struct msn_buddy *b = l->data;
-		if (!g_strcasecmp(who, b->user))
+		if (!gaim_utf8_strcasecmp(who, b->user))
 			break;
 		l = l->next;
 	}

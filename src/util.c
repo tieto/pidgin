@@ -149,9 +149,9 @@ gint linkify_text(char *text)
 	cpy[strlen(text)] = 0;
 	c = cpy;
 	while (*c) {
-		if (!g_strncasecmp(c, "<A", 2)) {
+		if (!g_ascii_strncasecmp(c, "<A", 2)) {
 			while (1) {
-				if (!g_strncasecmp(c, "/A>", 3)) {
+				if (!g_ascii_strncasecmp(c, "/A>", 3)) {
 					break;
 				}
 				text[cnt++] = *c;
@@ -159,7 +159,7 @@ gint linkify_text(char *text)
 				if (!(*c))
 					break;
 			}
-		} else if ((*c=='h') && (!g_strncasecmp(c, "http://", 7) || (!g_strncasecmp(c, "https://", 8)))) {
+		} else if ((*c=='h') && (!g_ascii_strncasecmp(c, "http://", 7) || (!g_ascii_strncasecmp(c, "https://", 8)))) {
 			t = c;
 			while (1) {
 				if (badchar(*t)) {
@@ -183,7 +183,7 @@ gint linkify_text(char *text)
 				t++;
 
 			}
-		} else if (!g_strncasecmp(c, "www.", 4)) {
+		} else if (!g_ascii_strncasecmp(c, "www.", 4)) {
 			if (c[4] != '.') {
 				t = c;
 				while (1) {
@@ -212,7 +212,7 @@ gint linkify_text(char *text)
 					t++;
 				}
 			}
-		} else if (!g_strncasecmp(c, "ftp://", 6)) {
+		} else if (!g_ascii_strncasecmp(c, "ftp://", 6)) {
 			t = c;
 			while (1) {
 				if (badchar(*t)) {
@@ -230,7 +230,7 @@ gint linkify_text(char *text)
 				t++;
 
 			}
-		} else if (!g_strncasecmp(c, "ftp.", 4)) {
+		} else if (!g_ascii_strncasecmp(c, "ftp.", 4)) {
 			if (c[4] != '.') {
 				t = c;
 				while (1) {
@@ -253,7 +253,7 @@ gint linkify_text(char *text)
 					t++;
 				}
 			}
-		} else if (!g_strncasecmp(c, "mailto:", 7)) {
+		} else if (!g_ascii_strncasecmp(c, "mailto:", 7)) {
 			t = c;
 			while (1) {
 				if (badchar(*t)) {
@@ -470,6 +470,7 @@ void frombase64(const char *text, char **data, int *size)
 char *normalize(const char *s)
 {
 	static char buf[BUF_LEN];
+	char *tmp;
 	int i, j;
 
 	g_return_val_if_fail((s != NULL), NULL);
@@ -481,7 +482,10 @@ char *normalize(const char *s)
 		buf[i] = buf[j];
 	}
 	buf[i] = '\0';
-	g_strdown(buf);
+
+	tmp = g_utf8_strdown(buf, -1);
+	g_snprintf(buf, sizeof(buf), tmp);
+	g_free(tmp);
 
 	return buf;
 }
@@ -980,7 +984,7 @@ const char *handle_uri(char *uri) {
 		return _("Not connected to AIM");
 
  	/* aim:goim?screenname=screenname&message=message */
-	if (!g_strncasecmp(uri, "aim:goim?", strlen("aim:goim?"))) {
+	if (!g_ascii_strncasecmp(uri, "aim:goim?", strlen("aim:goim?"))) {
 		char *who, *what;
 		struct gaim_conversation *c;
 		uri = uri + strlen("aim:goim?");
@@ -1002,7 +1006,7 @@ const char *handle_uri(char *uri) {
 		if (what) {
 			what = what + strlen("message=");
 			str = g_string_new(NULL);
-			while (*what && (*what != '&' || !g_strncasecmp(what, "&amp;", 5))) {
+			while (*what && (*what != '&' || !g_ascii_strncasecmp(what, "&amp;", 5))) {
 				g_string_append_c(str, *what == '+' ? ' ' : *what);
 				what++;
 			}
@@ -1019,7 +1023,7 @@ const char *handle_uri(char *uri) {
 			gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, what, -1);
 			g_free(what);
 		}
-	} else if (!g_strncasecmp(uri, "aim:addbuddy?", strlen("aim:addbuddy?"))) {
+	} else if (!g_ascii_strncasecmp(uri, "aim:addbuddy?", strlen("aim:addbuddy?"))) {
 		char *who, *group;
 		uri = uri + strlen("aim:addbuddy?");
 		/* spaces are encoded as +'s */
@@ -1040,7 +1044,7 @@ const char *handle_uri(char *uri) {
 		if (group) {
 			group = group + strlen("group=");
 			str = g_string_new(NULL);
-			while (*group && (*group != '&' || !g_strncasecmp(group, "&amp;", 5))) {
+			while (*group && (*group != '&' || !g_ascii_strncasecmp(group, "&amp;", 5))) {
 				g_string_append_c(str, *group == '+' ? ' ' : *group);
 				group++;
 			}
@@ -1052,7 +1056,7 @@ const char *handle_uri(char *uri) {
 		g_free(who);
 		if (group)
 			g_free(group);
-	} else if (!g_strncasecmp(uri, "aim:gochat?", strlen("aim:gochat?"))) {
+	} else if (!g_ascii_strncasecmp(uri, "aim:gochat?", strlen("aim:gochat?"))) {
 		char *room;
 		GList *chat=NULL;
 		int exch = 5;
@@ -1244,8 +1248,8 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 	pm = gdk_pixmap_create_from_xpm_d(menu->parent->window, &mask, NULL, xpm);
 	pixmap = gtk_image_new_from_pixmap(pm, mask);
 	gtk_widget_show(pixmap);
-	gdk_pixmap_unref(pm);
-	gdk_bitmap_unref(mask);
+	g_object_unref(G_OBJECT(pm));
+	g_object_unref(G_OBJECT(mask));
 	gtk_box_pack_start(GTK_BOX(hbox), pixmap, FALSE, FALSE, 2);
 
 	/* Create our label and pack it */
@@ -1327,4 +1331,13 @@ char *gaim_getip_from_fd(int fd)
 		return NULL;
 
 	return g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
+}
+
+gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b) {
+	gchar *a_norm = g_utf8_casefold(a, -1);
+	gchar *b_norm = g_utf8_casefold(b, -1);
+	gint ret = g_utf8_collate(a_norm, b_norm);
+	g_free(a_norm);
+	g_free(b_norm);
+	return ret;
 }

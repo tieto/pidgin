@@ -515,12 +515,12 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 	if (!msg)
 		return;
 	
-	if (!g_strncasecmp(msg, "TYPING", strlen("TYPING"))) {
+	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))) {
 		if (*stat == '1')
 			serv_got_typing(gc, from, 0, TYPING);
 		else
 			serv_got_typing_stopped(gc, from);
-	} else if (!g_strncasecmp(msg, "GAME", strlen("GAME"))) {
+	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
 		struct buddy *bud = gaim_find_buddy(gc->account, from);
 		void *free1=NULL, *free2=NULL;
 		if (!bud)
@@ -967,7 +967,7 @@ static void yahoo_login(struct gaim_account *account) {
 	yd->games = g_hash_table_new(g_str_hash, g_str_equal);
 
 
-	if (!g_strncasecmp(account->proto_opt[USEROPT_PAGERHOST], "cs.yahoo.com", strlen("cs.yahoo.com"))) {
+	if (!g_ascii_strncasecmp(account->proto_opt[USEROPT_PAGERHOST], "cs.yahoo.com", strlen("cs.yahoo.com"))) {
 		/* Figured out the new auth method -- cs.yahoo.com likes to disconnect on buddy remove and add now */
 		debug_printf("Setting new Yahoo! server.\n");
 		g_snprintf(account->proto_opt[USEROPT_PAGERHOST], strlen("scs.yahoo.com") + 1, "scs.yahoo.com");

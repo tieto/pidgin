@@ -126,16 +126,16 @@ static void free_triple(zephyr_triple *zt)
  * wildcards in each field of zt1. */
 static gboolean triple_subset(zephyr_triple *zt1, zephyr_triple *zt2)
 {
-	if (g_strcasecmp(zt2->class, zt1->class) &&
-			g_strcasecmp(zt2->class, "*")) {
+	if (g_ascii_strcasecmp(zt2->class, zt1->class) &&
+			g_ascii_strcasecmp(zt2->class, "*")) {
 		return FALSE;
 	}
-	if (g_strcasecmp(zt2->instance, zt1->instance) &&
-			g_strcasecmp(zt2->instance, "*")) {
+	if (g_ascii_strcasecmp(zt2->instance, zt1->instance) &&
+			g_ascii_strcasecmp(zt2->instance, "*")) {
 		return FALSE;
 	}
-	if (g_strcasecmp(zt2->recipient, zt1->recipient) &&
-			g_strcasecmp(zt2->recipient, "*")) {
+	if (g_ascii_strcasecmp(zt2->recipient, zt1->recipient) &&
+			g_ascii_strcasecmp(zt2->recipient, "*")) {
 		return FALSE;
 	}
 	return TRUE;
@@ -200,8 +200,8 @@ static char *zephyr_to_html(char *message)
 			if (end) {
 				g_snprintf(buf, end, "%s", message+cnt+1);
 			}
-			if (!g_strcasecmp(buf, "italic") ||
-					!g_strcasecmp(buf, "i")) {
+			if (!g_ascii_strcasecmp(buf, "italic") ||
+					!g_ascii_strcasecmp(buf, "i")) {
 				new_f = g_new(zframe, 1);
 				new_f->enclosing = frames;
 				new_f->text = g_string_new("<i>");
@@ -209,8 +209,8 @@ static char *zephyr_to_html(char *message)
 				new_f->has_closer = TRUE;
 				frames = new_f;
 				cnt += end+1; /* cnt points to char after opener */
-			} else if (!g_strcasecmp(buf, "bold")
-					|| !g_strcasecmp(buf, "b")) {
+			} else if (!g_ascii_strcasecmp(buf, "bold")
+					|| !g_ascii_strcasecmp(buf, "b")) {
 				new_f = g_new(zframe, 1);
 				new_f->enclosing = frames;
 				new_f->text = g_string_new("<b>");
@@ -218,7 +218,7 @@ static char *zephyr_to_html(char *message)
 				new_f->has_closer = TRUE;
 				frames = new_f;
 				cnt += end+1;
-			} else if (!g_strcasecmp(buf, "color")) {
+			} else if (!g_ascii_strcasecmp(buf, "color")) {
 				cnt += end+1;
 				new_f = g_new(zframe, 1);
 				new_f->enclosing = frames;
@@ -231,7 +231,7 @@ static char *zephyr_to_html(char *message)
 				new_f->closing = "</font>";
 				new_f->has_closer = FALSE;
 				frames = new_f;
-			} else if (!g_strcasecmp(buf, "")) {
+			} else if (!g_ascii_strcasecmp(buf, "")) {
 				new_f = g_new(zframe, 1);
 				new_f->enclosing = frames;
 				new_f->text = g_string_new("");
@@ -299,7 +299,7 @@ static gboolean pending_zloc(char *who)
 {
 	GList *curr;
 	for (curr = pending_zloc_names; curr != NULL; curr = curr->next) {
-		if (!g_strcasecmp(who, (char*)curr->data)) {
+		if (!g_ascii_strcasecmp(who, (char*)curr->data)) {
 			g_free((char*)curr->data);
 			pending_zloc_names = g_list_remove(pending_zloc_names, curr->data);
 			return TRUE;
@@ -310,10 +310,10 @@ static gboolean pending_zloc(char *who)
 
 static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 {
-	if (!g_strcasecmp(notice.z_class, LOGIN_CLASS)) {
+	if (!g_ascii_strcasecmp(notice.z_class, LOGIN_CLASS)) {
 		/* well, we'll be updating in 20 seconds anyway, might as well ignore this. */
-	} else if (!g_strcasecmp(notice.z_class, LOCATE_CLASS)) {
-		if (!g_strcasecmp(notice.z_opcode, LOCATE_LOCATE)) {
+	} else if (!g_ascii_strcasecmp(notice.z_class, LOCATE_CLASS)) {
+		if (!g_ascii_strcasecmp(notice.z_opcode, LOCATE_LOCATE)) {
 			int nlocs;
 			char *user;
 			struct buddy *b;
@@ -333,15 +333,15 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				ZLocations_t locs;
 				int one = 1;
 				GString *str = g_string_new("");
-				g_string_sprintfa(str, "<b>User:</b> %s<br>"
+				g_string_append_printf(str, "<b>User:</b> %s<br>"
 								"<b>Alias:</b> %s<br>",
 								b->name, b->alias);
 				if (!nlocs) {
-					g_string_sprintfa(str, "<br>Hidden or not logged-in");
+					g_string_append_printf(str, "<br>Hidden or not logged-in");
 				}
 				for (; nlocs > 0; nlocs--) {
 					ZGetLocations(&locs, &one);
-					g_string_sprintfa(str, "<br>At %s since %s", locs.host,
+					g_string_append_printf(str, "<br>At %s since %s", locs.host,
 									locs.time);
 				}
 				g_show_info_text(NULL, NULL, 2, str->str, NULL);
@@ -365,9 +365,9 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 			g_strchomp(buf);
 			buf2 = zephyr_to_html(buf);
 			g_free(buf);
-			if (!g_strcasecmp(notice.z_class, "MESSAGE") &&
-                            !g_strcasecmp(notice.z_class_inst, "PERSONAL")) {
-				if (!g_strcasecmp(notice.z_message, "Automated reply:"))
+			if (!g_ascii_strcasecmp(notice.z_class, "MESSAGE") &&
+                            !g_ascii_strcasecmp(notice.z_class_inst, "PERSONAL")) {
+				if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
 					away = TRUE;
 				else
 					away = FALSE;
@@ -389,7 +389,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					sendertmp = g_strdup_printf("%s",notice.z_sender);
 					if ((realmptr = strchr(sendertmp,'@')) != NULL) {
 						realmptr++;
-						if (!g_strcasecmp(realmptr,ZGetRealm())) {
+						if (!g_ascii_strcasecmp(realmptr,ZGetRealm())) {
 							realmptr--;
 							sprintf(realmptr,"%c",'\0');
 							send_inst = g_strdup_printf("%s %s",sendertmp,
@@ -474,15 +474,15 @@ static char *get_exposure_level()
 
 	if (!exposure)
 		return EXPOSE_REALMVIS;
-	if (!g_strcasecmp(exposure, EXPOSE_NONE))
+	if (!g_ascii_strcasecmp(exposure, EXPOSE_NONE))
 		return EXPOSE_NONE;
-	if (!g_strcasecmp(exposure, EXPOSE_OPSTAFF))
+	if (!g_ascii_strcasecmp(exposure, EXPOSE_OPSTAFF))
 		return EXPOSE_OPSTAFF;
-	if (!g_strcasecmp(exposure, EXPOSE_REALMANN))
+	if (!g_ascii_strcasecmp(exposure, EXPOSE_REALMANN))
 		return EXPOSE_REALMANN;
-	if (!g_strcasecmp(exposure, EXPOSE_NETVIS))
+	if (!g_ascii_strcasecmp(exposure, EXPOSE_NETVIS))
 		return EXPOSE_NETVIS;
-	if (!g_strcasecmp(exposure, EXPOSE_NETANN))
+	if (!g_ascii_strcasecmp(exposure, EXPOSE_NETANN))
 		return EXPOSE_NETANN;
 	return EXPOSE_REALMVIS;
 }
@@ -521,13 +521,13 @@ static void process_zsubs()
 					sub.zsub_classinst = triple[1];
 					if(triple[2] == NULL) {
 						recip = g_malloc0(1);
-					} else if (!g_strcasecmp(triple[2], "%me%")) {
+					} else if (!g_ascii_strcasecmp(triple[2], "%me%")) {
 						recip = g_strdup_printf("%s",ZGetSender());
-					} else if (!g_strcasecmp(triple[2], "*")) {
+					} else if (!g_ascii_strcasecmp(triple[2], "*")) {
 						/* wildcard
 						 * form of class,instance,* */
 						recip = g_malloc0(1);
-					} else if (!g_strcasecmp(triple[2], tmp)) {
+					} else if (!g_ascii_strcasecmp(triple[2], tmp)) {
 						/* form of class,instance,aatharuv@ATHENA.MIT.EDU */
 						recip = g_strdup(triple[2]);
 					} else if ((atptr = strchr(triple[2], '@')) != NULL) {
@@ -537,7 +537,7 @@ static void process_zsubs()
 						 * @REALM-NAME
 						 */
 						char *realmat = g_strdup_printf("@%s", ZGetRealm());
-						if (!g_strcasecmp(atptr, realmat))
+						if (!g_ascii_strcasecmp(atptr, realmat))
 							recip = g_malloc0(1);
 						else
 							recip = g_strdup(atptr);
@@ -645,9 +645,9 @@ static void write_zsubs()
 		zt = s->data;
 		triple = g_strsplit(zt->name,",",3);
 		if (triple[2] != NULL) {
-			if (!g_strcasecmp(triple[2], "")) {
+			if (!g_ascii_strcasecmp(triple[2], "")) {
 				fprintf(fd, "%s,%s,*\n", triple[0], triple[1]);
-			} else if (!g_strcasecmp(triple[2], ZGetSender())) {
+			} else if (!g_ascii_strcasecmp(triple[2], ZGetSender())) {
 				fprintf(fd, "%s,%s,%%me%%\n",triple[0],triple[1]);
 			} else {
 				fprintf(fd, "%s\n", zt->name);
@@ -689,7 +689,7 @@ static void write_anyone()
 					/* We should only strip the realm name if the principal
 					   is in the user's realm
 					   */
-					if (!g_strcasecmp(ptr2,ZGetRealm())) {
+					if (!g_ascii_strcasecmp(ptr2,ZGetRealm())) {
 						*ptr = '\0';
 					}
 				}
@@ -764,7 +764,7 @@ static int zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
 	notice.z_opcode = "";
 	notice.z_class = zt->class;
 	notice.z_class_inst = zt->instance;
-	if (!g_strcasecmp(zt->recipient, "*"))
+	if (!g_ascii_strcasecmp(zt->recipient, "*"))
 		notice.z_recipient = zephyr_normalize("");
 	else
 		notice.z_recipient = zephyr_normalize(zt->recipient);
@@ -858,10 +858,10 @@ static void zephyr_set_away(struct gaim_connection *gc, char *state, char *msg)
 		gc->away = NULL;
 	}
 
-	if (!g_strcasecmp(state, "Hidden")) {
+	if (!g_ascii_strcasecmp(state, "Hidden")) {
 		ZSetLocation(EXPOSE_OPSTAFF);
 		gc->away = g_strdup("");
-	} else if (!g_strcasecmp(state, "Online"))
+	} else if (!g_ascii_strcasecmp(state, "Online"))
 		ZSetLocation(get_exposure_level());
 	else /* state is GAIM_AWAY_CUSTOM */ if (msg)
 		gc->away = g_strdup(msg);
@@ -911,7 +911,7 @@ static void zephyr_join_chat(struct gaim_connection *gc, GList *data)
 	classname = data->data;
 	instname = data->next->data;
 	recip = data->next->next->data;
-	if (!g_strcasecmp(recip, "%me%"))
+	if (!g_ascii_strcasecmp(recip, "%me%"))
 		recip = ZGetSender();
 
 	zt1 = new_triple(classname, instname, recip);

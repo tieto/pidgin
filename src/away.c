@@ -72,7 +72,7 @@ static void dequeue_message(GtkTreeIter *iter)
 	while (templist) {
 		struct queued_message *qm = templist->data;
 		if (templist->data) {
-			if (!g_strcasecmp(qm->name, name)) {
+			if (!gaim_utf8_strcasecmp(qm->name, name)) {
 				struct gaim_account *account = NULL;
 
 				if (g_slist_index(gaim_accounts, qm->account) >= 0)

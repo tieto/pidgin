@@ -550,7 +550,7 @@ static gint find_icon_data(gconstpointer a, gconstpointer b)
 	const struct icon_data *x = a;
 	const struct icon_data *y = b;
 
-	return ((x->gc != y->gc) || g_strcasecmp(x->who, y->who));
+	return ((x->gc != y->gc) || gaim_utf8_strcasecmp(x->who, y->who));
 }
 
 void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int len)

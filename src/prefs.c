@@ -274,7 +274,7 @@ void theme_install_theme(char *path, char *extn) {
 
 	/* We'll check this just to make sure. This also lets us do something different on
 	 * other platforms, if need be */
-	if (!g_strcasecmp(tail, ".gz") || !g_strcasecmp(tail, ".tgz"))
+	if (!g_ascii_strcasecmp(tail, ".gz") || !g_ascii_strcasecmp(tail, ".tgz"))
 		command = g_strdup_printf("tar > /dev/null xzf \"%s\" -C %s", path, destdir);
 	else {
 		g_free(destdir);
@@ -312,11 +312,11 @@ void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 		/* Well, it looks like the drag event was cool. 
 		 * Let's do something with it */
 
-		if (!g_strncasecmp(name, "file://", 7)) {
+		if (!g_ascii_strncasecmp(name, "file://", 7)) {
 			/* It looks like we're dealing with a local file. Let's 
 			 * just untar it in the right place */
 			theme_install_theme(name + 7, NULL);
-		} else if (!g_strncasecmp(name, "http://", 7)) {
+		} else if (!g_ascii_strncasecmp(name, "http://", 7)) {
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
 			gchar *tail;
@@ -1405,7 +1405,7 @@ void do_select_sound(GtkWidget *w, int snd)
 
 	if (last_sound_dir)
 		g_free(last_sound_dir);
-	last_sound_dir = g_dirname(file);
+	last_sound_dir = g_path_get_dirname(file);
 }
 
 static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)

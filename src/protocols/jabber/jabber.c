@@ -2970,7 +2970,7 @@ static int jabber_chat_send(struct gaim_connection *gc, int id, char *message)
 	xmlnode_put_attrib(x, "type", "groupchat");
 
 	if (message && strlen(message) > strlen("/topic ") &&
-			!g_strncasecmp(message, "/topic ", strlen("/topic "))) {
+			!g_ascii_strncasecmp(message, "/topic ", strlen("/topic "))) {
 		char buf[8192];
 		y = xmlnode_insert_tag(x, "subject");
 		xmlnode_insert_cdata(y, message + strlen("/topic "), -1);
@@ -3025,9 +3025,7 @@ static char *jabber_normalize(const char *s)
 	if(s == NULL) {
 		return(NULL);
 	} else {
-		u = t = g_strdup(s);
-
-		g_strdown(t);
+		u = t = g_utf8_strdown(s, -1);
 
 		while (*t && (x < BUF_LEN - 1)) {
 			if (*t != ' ')
@@ -3787,7 +3785,7 @@ static void jabber_set_info(struct gaim_connection *gc, char *info)
 	 * Send only if there's actually any *information* to send
 	 */
 	if((vc_node = xmlstr2xmlnode(info)) != NULL && xmlnode_get_name(vc_node) != NULL &&
-			g_strncasecmp(xmlnode_get_name(vc_node), "vcard", 5) == 0) {
+			g_ascii_strncasecmp(xmlnode_get_name(vc_node), "vcard", 5) == 0) {
 		xmlnode_insert_tag_node(x, vc_node);
 		debug_printf("jabber: vCard packet: %s\n", xmlnode2str(x));
 		gjab_send(gjc, x);

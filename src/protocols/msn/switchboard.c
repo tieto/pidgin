@@ -78,11 +78,11 @@ msn_process_switch(struct msn_switchboard *ms, char *buf)
 	char sendbuf[MSN_BUF_LEN];
 	static int id = 0;
 
-	if (!g_strncasecmp(buf, "ACK", 3)) {
-	} else if (!g_strncasecmp(buf, "ANS", 3)) {
+	if (!g_ascii_strncasecmp(buf, "ACK", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "ANS", 3)) {
 		if (ms->chat)
 			gaim_chat_add_user(GAIM_CHAT(ms->chat), gc->username, NULL);
-	} else if (!g_strncasecmp(buf, "BYE", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "BYE", 3)) {
 		char *user, *tmp = buf;
 		GET_NEXT(tmp);
 		user = tmp;
@@ -110,8 +110,8 @@ msn_process_switch(struct msn_switchboard *ms, char *buf)
 			msn_kill_switch(ms);
 			return 0;
 		}
-	} else if (!g_strncasecmp(buf, "CAL", 3)) {
-	} else if (!g_strncasecmp(buf, "IRO", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "CAL", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "IRO", 3)) {
 		char *tot, *user, *tmp = buf;
 
 		GET_NEXT(tmp);
@@ -129,7 +129,7 @@ msn_process_switch(struct msn_switchboard *ms, char *buf)
 
 			gaim_chat_add_user(GAIM_CHAT(ms->chat), user, NULL);
 		} 
-	} else if (!g_strncasecmp(buf, "JOI", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "JOI", 3)) {
 		char *user, *tmp = buf;
 		GET_NEXT(tmp);
 		user = tmp;
@@ -162,7 +162,7 @@ msn_process_switch(struct msn_switchboard *ms, char *buf)
 
 			debug_printf("\n");
 		}
-	} else if (!g_strncasecmp(buf, "MSG", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
 		int length;
 
@@ -177,15 +177,15 @@ msn_process_switch(struct msn_switchboard *ms, char *buf)
 		ms->msg = TRUE;
 		ms->msguser = g_strdup(user);
 		ms->msglen = length;
-	} else if (!g_strncasecmp(buf, "NAK", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "NAK", 3)) {
 		do_error_dialog(_("An MSN message may not have been received."), NULL, GAIM_ERROR);
-	} else if (!g_strncasecmp(buf, "NLN", 3)) {
-	} else if (!g_strncasecmp(buf, "OUT", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "NLN", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "OUT", 3)) {
 		if (ms->chat)
 			serv_got_chat_left(gc, gaim_chat_get_id(GAIM_CHAT(ms->chat)));
 		msn_kill_switch(ms);
 		return 0;
-	} else if (!g_strncasecmp(buf, "USR", 3)) {
+	} else if (!g_ascii_strncasecmp(buf, "USR", 3)) {
 		/* good, we got USR, now we need to find out who we want to talk to */
 		struct msn_switchboard *ms = msn_find_writable_switch(gc);
 
@@ -221,7 +221,7 @@ msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 
 	agent = strstr(msg, "User-Agent: ");
 	if (agent) {
-		if (!g_strncasecmp(agent, "User-Agent: Gaim",
+		if (!g_ascii_strncasecmp(agent, "User-Agent: Gaim",
 						   strlen("User-Agent: Gaim")))
 			flags |= IM_FLAG_GAIMUSER;
 	}
@@ -236,7 +236,7 @@ msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 	content = strstr(msg, "Content-Type: ");
 	if (!content)
 		return;
-	if (!g_strncasecmp(content, "Content-Type: text/x-msmsgscontrol\r\n",
+	if (!g_ascii_strncasecmp(content, "Content-Type: text/x-msmsgscontrol\r\n",
 			   strlen(  "Content-Type: text/x-msmsgscontrol\r\n"))) {
 		if (strstr(content,"TypingUser: ") && !ms->chat) {
 			serv_got_typing(ms->gc, ms->msguser,
@@ -244,7 +244,7 @@ msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 			return;
 		} 
 
-	} else if (!g_strncasecmp(content, "Content-Type: text/x-msmsgsinvite;",
+	} else if (!g_ascii_strncasecmp(content, "Content-Type: text/x-msmsgsinvite;",
 							  strlen("Content-Type: text/x-msmsgsinvite;"))) {
 
 		/*
@@ -257,7 +257,7 @@ msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 		 */
 		msn_process_ft_msg(ms, content);
 
-	} else if (!g_strncasecmp(content, "Content-Type: text/plain",
+	} else if (!g_ascii_strncasecmp(content, "Content-Type: text/plain",
 				  strlen("Content-Type: text/plain"))) {
 
 		char *skiphead = strstr(msg, "\r\n\r\n");
@@ -442,7 +442,7 @@ msn_find_switch(struct gaim_connection *gc, const char *username)
 	for (m = md->switches; m != NULL; m = m->next) {
 		struct msn_switchboard *ms = (struct msn_switchboard *)m->data;
 
-		if (ms->total <= 1 && !g_strcasecmp(ms->user, username))
+		if (ms->total <= 1 && !gaim_utf8_strcasecmp(ms->user, username))
 			return ms;
 	}
 

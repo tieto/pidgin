@@ -165,8 +165,8 @@ invert_tags(GtkTextBuffer *buffer, const char *s1, const char *s2,
 		b1 = gtk_text_buffer_get_text(buffer, &start1, &start2, FALSE);
 		b2 = gtk_text_buffer_get_text(buffer, &end1, &end2, FALSE);
 
-		if (!g_strncasecmp(b1, s1, strlen(s1)) &&
-		    !g_strncasecmp(b2, s2, strlen(s2))) {
+		if (!g_ascii_strncasecmp(b1, s1, strlen(s1)) &&
+		    !g_ascii_strncasecmp(b2, s2, strlen(s2))) {
 
 			if (really) {
 				GtkTextMark *m_end1, *m_end2;

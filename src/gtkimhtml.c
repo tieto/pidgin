@@ -532,14 +532,14 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 
 	return t->image->icon;
 }
-#define VALID_TAG(x)	if (!g_strncasecmp (string, x ">", strlen (x ">"))) {	\
+#define VALID_TAG(x)	if (!g_ascii_strncasecmp (string, x ">", strlen (x ">"))) {	\
 				*tag = g_strndup (string, strlen (x));		\
 				*len = strlen (x) + 1;				\
 				return TRUE;					\
 			}							\
 			(*type)++
 
-#define VALID_OPT_TAG(x)	if (!g_strncasecmp (string, x " ", strlen (x " "))) {	\
+#define VALID_OPT_TAG(x)	if (!g_ascii_strncasecmp (string, x " ", strlen (x " "))) {	\
 					const gchar *c = string + strlen (x " ");	\
 					gchar e = '"';					\
 					gboolean quote = FALSE;				\
@@ -573,25 +573,25 @@ gtk_imhtml_is_amp_escape (const gchar *string,
 	g_return_val_if_fail (replace != NULL, FALSE);
 	g_return_val_if_fail (length != NULL, FALSE);
 
-	if (!g_strncasecmp (string, "&amp;", 5)) {
+	if (!g_ascii_strncasecmp (string, "&amp;", 5)) {
 		*replace = '&';
 		*length = 5;
-	} else if (!g_strncasecmp (string, "&lt;", 4)) {
+	} else if (!g_ascii_strncasecmp (string, "&lt;", 4)) {
 		*replace = '<';
 		*length = 4;
-	} else if (!g_strncasecmp (string, "&gt;", 4)) {
+	} else if (!g_ascii_strncasecmp (string, "&gt;", 4)) {
 		*replace = '>';
 		*length = 4;
-	} else if (!g_strncasecmp (string, "&nbsp;", 6)) {
+	} else if (!g_ascii_strncasecmp (string, "&nbsp;", 6)) {
 		*replace = ' ';
 		*length = 6;
-	} else if (!g_strncasecmp (string, "&copy;", 6)) {
+	} else if (!g_ascii_strncasecmp (string, "&copy;", 6)) {
 		*replace = '©'; /* was: 'Â©' */
 		*length = 6;
-	} else if (!g_strncasecmp (string, "&quot;", 6)) {
+	} else if (!g_ascii_strncasecmp (string, "&quot;", 6)) {
 		*replace = '\"';
 		*length = 6;
-	} else if (!g_strncasecmp (string, "&reg;", 5)) {
+	} else if (!g_ascii_strncasecmp (string, "&reg;", 5)) {
 		*replace = '®'; /* was: 'Â®' */
 		*length = 5;
 	} else if (*(string + 1) == '#') {
@@ -674,7 +674,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	VALID_OPT_TAG ("P");
 	VALID_OPT_TAG ("H3");
 
-	if (!g_strncasecmp(string, "!--", strlen ("!--"))) {
+	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
 			*len = e - string + strlen ("-->");
@@ -693,7 +693,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	gchar *t = tag;
 	gchar *e, *a;
 
-	while (g_strncasecmp (t, opt, strlen (opt))) {
+	while (g_ascii_strncasecmp (t, opt, strlen (opt))) {
 		gboolean quote = FALSE;
 		if (*t == '\0') break;
 		while (*t && !((*t == ' ') && !quote)) {
@@ -704,7 +704,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 		while (*t && (*t == ' ')) t++;
 	}
 
-	if (!g_strncasecmp (t, opt, strlen (opt))) {
+	if (!g_ascii_strncasecmp (t, opt, strlen (opt))) {
 		t += strlen (opt);
 	} else {
 		return NULL;

@@ -96,9 +96,11 @@ static guchar *UI_build(guint32 *len, guchar type, guchar subtype, va_list args)
 
 gint UI_write(struct UI *ui, guchar *data, gint len)
 {
+	GError *error;
 	gint sent;
 	/* we'll let the write silently fail because the read will pick it up as dead */
-	g_io_channel_write(ui->channel, data, len, &sent);
+	g_io_channel_write_chars(ui->channel, data, len, &sent, &error);
+	g_free(error);
 	return sent;
 }
 
@@ -149,6 +151,7 @@ void UI_build_broadcast(guchar type, guchar subtype, ...)
 static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 {
 	struct gaim_cui_packet *p;
+	GError *error = NULL;
 	switch (subtype) {
 	case CUI_META_LIST:
 		break;
@@ -156,7 +159,7 @@ static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 		while (uis) {
 			ui = uis->data;
 			uis = g_slist_remove(uis, ui);
-			g_io_channel_close(ui->channel);
+			g_io_channel_shutdown(ui->channel, TRUE, &error);
 			g_source_remove(ui->inpa);
 			g_free(ui);
 		}
@@ -164,7 +167,7 @@ static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 		break;
 	case CUI_META_DETACH:
 		uis = g_slist_remove(uis, ui);
-		g_io_channel_close(ui->channel);
+		g_io_channel_shutdown(ui->channel, TRUE, &error);
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		break;
@@ -177,6 +180,9 @@ static void meta_handler(struct UI *ui, guchar subtype, guchar *data)
 		debug_printf("unhandled meta subtype %d\n", subtype);
 		break;
 	}
+
+	if(error)
+		g_free(error);
 }
 
 static void plugin_handler(struct UI *ui, guchar subtype, guchar *data)
@@ -292,9 +298,13 @@ static gint gaim_recv(GIOChannel *source, guchar *buf, gint len)
 	gint total = 0;
 	gint cur;
 
+	GError *error;
+
 	while (total < len) {
-		if (g_io_channel_read(source, buf + total, len - total, &cur) != G_IO_ERROR_NONE)
+		if (g_io_channel_read_chars(source, buf + total, len - total, &cur, &error) != G_IO_STATUS_NORMAL) {
+			g_free(error);
 			return -1;
+		}
 		if (cur == 0)
 			return total;
 		total += cur;
@@ -332,13 +342,17 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 	guchar subtype;
 	guint32 len;
 
+	GError *error;
+
 	guchar *in;
 
 	/* no byte order worries! this'll change if we go to TCP */
 	if (gaim_recv(source, &type, sizeof(type)) != sizeof(type)) {
 		debug_printf("UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
-		g_io_channel_close(ui->channel);
+		g_io_channel_shutdown(ui->channel, TRUE, &error);
+		if(error)
+			g_free(error);
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		return FALSE;
@@ -347,7 +361,9 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 	if (gaim_recv(source, &subtype, sizeof(subtype)) != sizeof(subtype)) {
 		debug_printf("UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
-		g_io_channel_close(ui->channel);
+		g_io_channel_shutdown(ui->channel, TRUE, &error);
+		if(error)
+			g_free(error);
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		return FALSE;
@@ -356,7 +372,9 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 	if (gaim_recv(source, (guchar *)&len, sizeof(len)) != sizeof(len)) {
 		debug_printf("UI has abandoned us!\n");
 		uis = g_slist_remove(uis, ui);
-		g_io_channel_close(ui->channel);
+		g_io_channel_shutdown(ui->channel, TRUE, &error);
+		if(error)
+			g_free(error);
 		g_source_remove(ui->inpa);
 		g_free(ui);
 		return FALSE;
@@ -367,7 +385,9 @@ static gboolean UI_readable(GIOChannel *source, GIOCondition cond, gpointer data
 		if (gaim_recv(source, in, len) != len) {
 			debug_printf("UI has abandoned us!\n");
 			uis = g_slist_remove(uis, ui);
-			g_io_channel_close(ui->channel);
+			g_io_channel_shutdown(ui->channel, TRUE, &error);
+			if(error)
+				g_free(error);
 			g_source_remove(ui->inpa);
 			g_free(ui);
 			return FALSE;

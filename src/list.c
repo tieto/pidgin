@@ -377,7 +377,7 @@ struct buddy *gaim_find_buddy(struct gaim_account *account, const char *name)
 	while (group) {
 		buddy = group->child;
 		while (buddy) {
-			if (!g_strcasecmp(normalize(((struct buddy*)buddy)->name), norm_name) && account == ((struct buddy*)buddy)->account) {
+			if (!gaim_utf8_strcasecmp(normalize(((struct buddy*)buddy)->name), norm_name) && account == ((struct buddy*)buddy)->account) {
 				g_free(norm_name);
 				return (struct buddy*)buddy;
 			}
@@ -684,14 +684,17 @@ static gchar *get_screenname_filename(const char *name)
 {
 	gchar **split;
 	gchar *good;
+	gchar *ret;
 
 	split = g_strsplit(name, G_DIR_SEPARATOR_S, -1);
 	good = g_strjoinv(NULL, split);
 	g_strfreev(split);
 
-	g_strup(good);
+	ret = g_utf8_strup(good, -1);
 
-	return good;
+	g_free(good);
+
+	return ret;
 }
 
 static gboolean gaim_blist_read(const char *filename);
@@ -1232,7 +1235,7 @@ gboolean gaim_privacy_permit_add(struct gaim_account *account, const char *who) 
 	GSList *d = account->permit;
 	char *n = g_strdup(normalize(who));
 	while(d) {
-		if(!g_strcasecmp(n, normalize(d->data)))
+		if(!gaim_utf8_strcasecmp(n, normalize(d->data)))
 			break;
 		d = d->next;
 	}
@@ -1249,7 +1252,7 @@ gboolean gaim_privacy_permit_remove(struct gaim_account *account, const char *wh
 	GSList *d = account->permit;
 	char *n = g_strdup(normalize(who));
 	while(d) {
-		if(!g_strcasecmp(n, normalize(d->data)))
+		if(!gaim_utf8_strcasecmp(n, normalize(d->data)))
 			break;
 		d = d->next;
 	}
@@ -1266,7 +1269,7 @@ gboolean gaim_privacy_deny_add(struct gaim_account *account, const char *who) {
 	GSList *d = account->deny;
 	char *n = g_strdup(normalize(who));
 	while(d) {
-		if(!g_strcasecmp(n, normalize(d->data)))
+		if(!gaim_utf8_strcasecmp(n, normalize(d->data)))
 			break;
 		d = d->next;
 	}
@@ -1283,7 +1286,7 @@ gboolean gaim_privacy_deny_remove(struct gaim_account *account, const char *who)
 	GSList *d = account->deny;
 	char *n = g_strdup(normalize(who));
 	while(d) {
-		if(!g_strcasecmp(n, normalize(d->data)))
+		if(!gaim_utf8_strcasecmp(n, normalize(d->data)))
 			break;
 		d = d->next;
 	}

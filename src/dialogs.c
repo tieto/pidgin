@@ -163,7 +163,7 @@ static struct info_dlg *find_info_dlg(struct gaim_connection *gc, char *who)
 			continue;
 		if (!who)
 			continue;
-		if (!g_strcasecmp(normalize(who), d->who))
+		if (!gaim_utf8_strcasecmp(normalize(who), d->who))
 			return d;
 	}
 	return NULL;
@@ -271,11 +271,11 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct gaim_conver
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(gtkconv->toolbar.font), FALSE);
 		gtkconv->dialogs.font = NULL;
-	} else if (!g_strcasecmp(object_data, "smiley dialog")) {
+	} else if (!g_ascii_strcasecmp(object_data, "smiley dialog")) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.smiley),
 									FALSE);
 		gtkconv->dialogs.smiley = NULL;
-	} else if (!g_strcasecmp(object_data, "log dialog")) {
+	} else if (!g_ascii_strcasecmp(object_data, "log dialog")) {
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->toolbar.log),
 									   FALSE);
 		gtkconv->dialogs.log = NULL;
@@ -566,7 +566,7 @@ static void do_info(GtkWidget *widget, int resp, struct getuserinfo *info)
 	if (resp == GTK_RESPONSE_OK) {
 		who = g_strdup(normalize(gtk_entry_get_text(GTK_ENTRY(info->entry))));
 
-		if (!g_strcasecmp(who, "")) {
+		if (!g_ascii_strcasecmp(who, "")) {
 			g_free(who);
 			return;
 		}
@@ -1844,7 +1844,7 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 	new1 = gtk_entry_get_text(GTK_ENTRY(b->new1));
 	new2 = gtk_entry_get_text(GTK_ENTRY(b->new2));
 
-	if (g_strcasecmp(new1, new2)) {
+	if (g_utf8_collate(new1, new2)) {
 		do_error_dialog(_("New Passwords Do Not Match"), NULL, GAIM_ERROR);
 		return;
 	}
@@ -3902,7 +3902,7 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 		if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
 			char *prevname;
 	
-			if ((orig = gaim_find_group(new_name)) != NULL && g_strcasecmp(new_name, g->name)) {
+			if ((orig = gaim_find_group(new_name)) != NULL && gaim_utf8_strcasecmp(new_name, g->name)) {
 				gaim_blist_rename_group(orig, g->name);
 				accts = gaim_group_get_accounts(g);
 				while(accts) {
@@ -4225,8 +4225,8 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 /* this causes clipping on lots of buttons with long text */
 /*  gtk_widget_set_size_request(button, 75, 30);*/
 	gtk_widget_show(button);
-	gdk_pixmap_unref(pm);
-	gdk_bitmap_unref(mask);
+	g_object_unref(G_OBJECT(pm));
+	g_object_unref(G_OBJECT(mask));
 
 	return button;
 }
@@ -4261,8 +4261,8 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 
 		gtk_widget_show(pixmap);
 
-		gdk_pixmap_unref(pm);
-		gdk_bitmap_unref(mask);
+		g_object_unref(G_OBJECT(pm));
+		g_object_unref(G_OBJECT(mask));
 	}
 
 	if (dispstyle == 2 || dispstyle == 1) {

@@ -799,7 +799,7 @@ do_invite(GtkWidget *w, int resp, struct InviteBuddyInfo *info)
 		buddy   = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(info->entry)->entry));
 		message = gtk_entry_get_text(GTK_ENTRY(info->message));
 
-		if (!g_strcasecmp(buddy, "")) {
+		if (!g_ascii_strcasecmp(buddy, "")) {
 			g_free(info);
 
 			return;
@@ -2085,7 +2085,7 @@ generate_send_as_items(struct gaim_window *win,
 
 		/* Make our menu item */
 		menuitem = gtk_radio_menu_item_new_with_label(group, gc->username);
-		group = gtk_radio_menu_item_group(GTK_RADIO_MENU_ITEM(menuitem));
+		group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
 
 		/* Do some evil, see some evil, speak some evil. */
 		box = gtk_hbox_new(FALSE, 0);
@@ -2167,7 +2167,7 @@ generate_send_as_items(struct gaim_window *win,
 			/* Make our menu item */
 			menuitem = gtk_radio_menu_item_new_with_label(group,
 														  account->username);
-			group = gtk_radio_menu_item_group(GTK_RADIO_MENU_ITEM(menuitem));
+			group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
 
 			/* Do some evil, see some evil, speak some evil. */
 			box = gtk_hbox_new(FALSE, 0);
@@ -2326,15 +2326,15 @@ tab_complete(struct gaim_conversation *conv)
 
 		char *nick = nicks->data;
 		/* this checks to see if the current nick could be a completion */
-		if (g_strncasecmp(nick, entered, strlen(entered))) {
+		if (g_ascii_strncasecmp(nick, entered, strlen(entered))) {
 			if (*nick != '+' && *nick != '@' && *nick != '%')
 				continue;
 
-			if (g_strncasecmp(nick + 1, entered, strlen(entered))) {
+			if (g_ascii_strncasecmp(nick + 1, entered, strlen(entered))) {
 				if (nick[0] != '@' || nick[1] != '+')
 					continue;
 
-				if (g_strncasecmp(nick + 2, entered, strlen(entered)))
+				if (g_ascii_strncasecmp(nick + 2, entered, strlen(entered)))
 					continue;
 				else
 					nick += 2;
@@ -2392,7 +2392,7 @@ tab_complete(struct gaim_conversation *conv)
 			partial = g_strdup(nick);
 		}
 		else if (most_matched) {
-			while (g_strncasecmp(nick, partial, most_matched))
+			while (g_ascii_strncasecmp(nick, partial, most_matched))
 				most_matched--;
 
 			partial[most_matched] = 0;
@@ -2482,7 +2482,7 @@ meify(char *message, size_t len)
 		}
 	}
 
-	if (*c != '\0' && !g_strncasecmp(c, "/me ", 4)) {
+	if (*c != '\0' && !g_ascii_strncasecmp(c, "/me ", 4)) {
 		memmove(c, c + 4, len - 3);
 
 		return TRUE;
@@ -3757,7 +3757,7 @@ gaim_gtkconv_destroy(struct gaim_conversation *conv)
 			gtk_widget_destroy(gtkconv->u.im->save_icon);
 
 		if (gtkconv->u.im->anim != NULL)
-			gdk_pixbuf_animation_unref(gtkconv->u.im->anim);
+			g_object_unref(G_OBJECT(gtkconv->u.im->anim));
 
 		g_free(gtkconv->u.im);
 	}
@@ -4142,7 +4142,7 @@ gaim_gtkconv_chat_rename_user(struct gaim_conversation *conv,
 
 		char *u = (char *)names->data;
 
-		if (!g_strcasecmp(u, old_name)) {
+		if (!gaim_utf8_strcasecmp(u, old_name)) {
 			model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
 			if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
@@ -4153,7 +4153,7 @@ gaim_gtkconv_chat_rename_user(struct gaim_conversation *conv,
 
 				gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &val, -1);
 
-				if (!g_strcasecmp(old_name, val)) {
+				if (!gaim_utf8_strcasecmp(old_name, val)) {
 					gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 					break;
 				}
@@ -4200,7 +4200,7 @@ gaim_gtkconv_chat_remove_user(struct gaim_conversation *conv, const char *user)
 
 		char *u = (char *)names->data;
 
-		if (!g_strcasecmp(u, user)) {
+		if (!gaim_utf8_strcasecmp(u, user)) {
 			model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
 			if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
@@ -4211,7 +4211,7 @@ gaim_gtkconv_chat_remove_user(struct gaim_conversation *conv, const char *user)
 
 				gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &val, -1);
 
-				if (!g_strcasecmp(user, val))
+				if (!gaim_utf8_strcasecmp(user, val))
 					gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 
 				f = gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
@@ -4471,7 +4471,7 @@ remove_icon(struct gaim_gtk_conversation *gtkconv)
 							 gtkconv->u.im->icon->parent->parent);
 
 	if (gtkconv->u.im->anim != NULL)
-		gdk_pixbuf_animation_unref(gtkconv->u.im->anim);
+		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
 
 	if (gtkconv->u.im->icon_timer != 0)
 		g_source_remove(gtkconv->u.im->icon_timer);
@@ -4515,13 +4515,13 @@ redraw_icon(gpointer data)
 		GDK_INTERP_NEAREST);
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
-	gdk_pixbuf_unref(scale);
+	g_object_unref(G_OBJECT(scale));
 	gtk_image_set_from_pixmap(GTK_IMAGE(gtkconv->u.im->icon), pm, bm);
-	gdk_pixmap_unref(pm);
+	g_object_unref(G_OBJECT(pm));
 	gtk_widget_queue_draw(gtkconv->u.im->icon);
 
 	if (bm)
-		gdk_bitmap_unref(bm);
+		g_object_unref(G_OBJECT(bm));
 
 	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter) / 10;
 
@@ -4658,6 +4658,9 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	if (gaim_conversation_get_gc(conv) == NULL)
 		return;
 
+	if(gtkconv->u.im->anim)
+		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
+
 	if((buddy = gaim_find_buddy(gaim_conversation_get_account(conv),
 					gaim_conversation_get_name(conv))) != NULL) {
 		char *file = gaim_buddy_get_setting(buddy, "buddy_icon");
@@ -4699,6 +4702,9 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	if (!gtkconv->u.im->anim)
 		return;
 
+	if(gtkconv->u.im->iter)
+		g_object_unref(G_OBJECT(gtkconv->u.im->iter));
+
 	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)) {
 		gtkconv->u.im->iter = NULL;
 		delay = 0;
@@ -4724,7 +4730,7 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 												  conv);
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
-	gdk_pixbuf_unref(scale);
+	g_object_unref(G_OBJECT(scale));
 
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame),
@@ -4747,10 +4753,10 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	if(im_options & OPT_IM_NO_ANIMATION)
 		stop_anim(NULL, conv);
 
-	gdk_pixmap_unref(pm);
+	g_object_unref(G_OBJECT(pm));
 
 	if (bm)
-		gdk_bitmap_unref(bm);
+		g_object_unref(G_OBJECT(bm));
 }
 
 void

@@ -623,10 +623,10 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	if (tdt->state == STATE_SIGNON_REQUEST) {
 		debug_printf("* TOC sends client SIGN_ON reply\n");
-		if (g_strncasecmp(buf + sizeof(struct sflap_hdr), "SIGN_ON", strlen("SIGN_ON"))) {
+		if (g_ascii_strncasecmp(buf + sizeof(struct sflap_hdr), "SIGN_ON", strlen("SIGN_ON"))) {
 			debug_printf("Didn't get SIGN_ON! buf was: %s\n",
 				     buf + sizeof(struct sflap_hdr));
-			if (!g_strncasecmp(buf + sizeof(struct sflap_hdr), "ERROR", 5)) {
+			if (!g_ascii_strncasecmp(buf + sizeof(struct sflap_hdr), "ERROR", 5)) {
 				strtok(buf + sizeof(struct sflap_hdr), ":");
 				hide_login_progress(gc, show_error_message());
 			} else
@@ -665,7 +665,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	c = strtok(buf + sizeof(struct sflap_hdr), ":");	/* Ditch the first part */
 
-	if (!g_strcasecmp(c, "SIGN_ON")) {
+	if (!g_ascii_strcasecmp(c, "SIGN_ON")) {
 		/* we should only get here after a PAUSE */
 		if (tdt->state != STATE_PAUSE)
 			debug_printf("got SIGN_ON but not PAUSE!\n");
@@ -684,15 +684,15 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			do_error_dialog(_("TOC has come back from its pause. You may now send"
 					  " messages again."), NULL, GAIM_INFO);
 		}
-	} else if (!strcasecmp(c, "CONFIG")) {
+	} else if (!g_ascii_strcasecmp(c, "CONFIG")) {
 		c = strtok(NULL, ":");
 		parse_toc_buddy_list(gc->account, c);
-	} else if (!strcasecmp(c, "NICK")) {
+	} else if (!g_ascii_strcasecmp(c, "NICK")) {
 		/* ignore NICK so that things get imported/exported properly
 		c = strtok(NULL, ":");
 		g_snprintf(gc->username, sizeof(gc->username), "%s", c);
 		*/
-	} else if (!strcasecmp(c, "IM_IN")) {
+	} else if (!g_ascii_strcasecmp(c, "IM_IN")) {
 		char *away, *message;
 		int a = 0;
 
@@ -707,7 +707,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		a = (away && (*away == 'T')) ? IM_FLAG_AWAY : 0;
 
 		serv_got_im(gc, c, message, a, time(NULL), -1);
-	} else if (!strcasecmp(c, "UPDATE_BUDDY")) {
+	} else if (!g_ascii_strcasecmp(c, "UPDATE_BUDDY")) {
 		char *l, *uc, *tmp;
 		int logged, evil, idle, type = 0;
 		time_t signon, time_idle;
@@ -754,9 +754,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		g_free(tmp);
 
 		serv_got_update(gc, c, logged, evil, signon, time_idle, type);
-	} else if (!strcasecmp(c, "ERROR")) {
+	} else if (!g_ascii_strcasecmp(c, "ERROR")) {
 		do_error_dialog(show_error_message(), NULL, GAIM_ERROR);
-	} else if (!strcasecmp(c, "EVILED")) {
+	} else if (!g_ascii_strcasecmp(c, "EVILED")) {
 		int lev;
 		char *name;
 
@@ -764,7 +764,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		name = strtok(NULL, ":");
 
 		serv_got_eviled(gc, name, lev);
-	} else if (!strcasecmp(c, "CHAT_JOIN")) {
+	} else if (!g_ascii_strcasecmp(c, "CHAT_JOIN")) {
 		char *name;
 		int id;
 
@@ -772,7 +772,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		name = strtok(NULL, ":");
 
 		serv_got_joined_chat(gc, id, name);
-	} else if (!strcasecmp(c, "CHAT_IN")) {
+	} else if (!g_ascii_strcasecmp(c, "CHAT_IN")) {
 		int id, w;
 		char *m, *who, *whisper;
 
@@ -787,7 +787,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		w = (whisper && (*whisper == 'T')) ? 1 : 0;
 
 		serv_got_chat_in(gc, id, who, w, m, time((time_t)NULL));
-	} else if (!strcasecmp(c, "CHAT_UPDATE_BUDDY")) {
+	} else if (!g_ascii_strcasecmp(c, "CHAT_UPDATE_BUDDY")) {
 		int id;
 		char *in, *buddy;
 		GSList *bcs = gc->buddy_chats;
@@ -816,7 +816,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		else
 			while ((buddy = strtok(NULL, ":")) != NULL)
 				gaim_chat_remove_user(chat, buddy, NULL);
-	} else if (!strcasecmp(c, "CHAT_INVITE")) {
+	} else if (!g_ascii_strcasecmp(c, "CHAT_INVITE")) {
 		char *name, *who, *message;
 		int *id = g_new0(int, 1);
 
@@ -826,7 +826,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		message = strtok(NULL, ":");
 
 		serv_got_chat_invite(gc, name, who, message, g_list_append(NULL, id));
-	} else if (!strcasecmp(c, "CHAT_LEFT")) {
+	} else if (!g_ascii_strcasecmp(c, "CHAT_LEFT")) {
 		GSList *bcs = gc->buddy_chats;
 		struct gaim_conversation *b = NULL;
 		int id;
@@ -852,7 +852,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			do_error_dialog(error_buf, NULL, GAIM_ERROR);
 		} else
 			serv_got_chat_left(gc, id);
-	} else if (!strcasecmp(c, "GOTO_URL")) {
+	} else if (!g_ascii_strcasecmp(c, "GOTO_URL")) {
 		char *name, *url, tmp[256];
 
 		name = strtok(NULL, ":");
@@ -863,17 +863,17 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 					atoi(gc->account->proto_opt[USEROPT_AUTHPORT]) : TOC_PORT,
 				url);
 		grab_url(tmp, FALSE, toc_got_info, NULL);
-	} else if (!strcasecmp(c, "DIR_STATUS")) {
-	} else if (!strcasecmp(c, "ADMIN_NICK_STATUS")) {
-	} else if (!strcasecmp(c, "ADMIN_PASSWD_STATUS")) {
+	} else if (!g_ascii_strcasecmp(c, "DIR_STATUS")) {
+	} else if (!g_ascii_strcasecmp(c, "ADMIN_NICK_STATUS")) {
+	} else if (!g_ascii_strcasecmp(c, "ADMIN_PASSWD_STATUS")) {
 		do_error_dialog(_("Password Change Successful"), NULL, GAIM_INFO);
-	} else if (!strcasecmp(c, "PAUSE")) {
+	} else if (!g_ascii_strcasecmp(c, "PAUSE")) {
 		tdt->state = STATE_PAUSE;
 		do_error_dialog(_("TOC has sent a PAUSE command."), _("When this happens, TOC ignores"
 				  " any messages sent to it, and may kick you off if you send a"
 				  " message. Gaim will prevent anything from going through. This"
 				  " is only temporary, please be patient."), GAIM_WARNING);
-	} else if (!strcasecmp(c, "RVOUS_PROPOSE")) {
+	} else if (!g_ascii_strcasecmp(c, "RVOUS_PROPOSE")) {
 		char *user, *uuid, *cookie;
 		int seq;
 		char *rip, *pip, *vip, *trillian = NULL;
@@ -1718,7 +1718,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	if (old_ft->files == 1)
 		ft->filename = g_strdup(dirname);
 	else
-		ft->filename = g_dirname(dirname);
+		ft->filename = g_path_get_dirname(dirname);
 	ft->cookie = g_strdup(old_ft->cookie);
 	ft->user = g_strdup(old_ft->user);
 	ft->ip = g_strdup(old_ft->ip);
@@ -1766,6 +1766,7 @@ static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition
 	if (ft->hdr.hdrtype == htons(0x1108)) {
 		struct tm *fortime;
 		struct stat st;
+		char *basename;
 
 		toc_read(source, ft, 8);
 		toc_read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
@@ -1773,11 +1774,13 @@ static void toc_get_file_callback(gpointer data, gint source, GaimInputCondition
 
 		stat(ft->filename, &st);
 		fortime = localtime(&st.st_mtime);
+		basename = g_path_get_basename(ft->filename);
 		g_snprintf(buf, sizeof(buf), "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
 				fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
 				fortime->tm_hour + 1, fortime->tm_min + 1, (long)st.st_size,
-				g_basename(ft->filename));
+				basename);
 		toc_write(source, buf, ntohl(ft->hdr.size));
+		g_free(basename);
 		return;
 	}
 
@@ -1849,6 +1852,7 @@ static void toc_get_file_connect(gpointer data, gint src, GaimInputCondition con
 	struct file_transfer *ft = data;
 	struct file_header *hdr;
 	char *buf;
+	char *basename;
 
 	if (src == -1) {
 		do_error_dialog(_("Could not connect for transfer!"), NULL, GAIM_ERROR);
@@ -1872,7 +1876,9 @@ static void toc_get_file_connect(gpointer data, gint src, GaimInputCondition con
 	hdr->totparts = htons(1); hdr->partsleft = htons(1);
 	hdr->totsize = htonl((long)ft->st.st_size); /* combined size of all files */
 	/* size = strlen("mm/dd/yyyy hh:mm sizesize 'name'\r\n") */
-	hdr->size = htonl(28 + strlen(g_basename(ft->filename))); /* size of listing.txt */
+	basename = g_path_get_basename(ft->filename);
+	hdr->size = htonl(28 + strlen(basename)); /* size of listing.txt */
+	g_free(basename);
 	hdr->modtime = htonl(ft->st.st_mtime);
 	hdr->checksum = htonl(0x89f70000); /* uh... */
 	g_snprintf(hdr->idstring, 32, "OFT_Windows ICBMFT V1.1 32");

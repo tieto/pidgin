@@ -109,7 +109,7 @@ static struct nap_channel *find_channel_by_name(struct gaim_connection *gc, char
 		channel = (struct nap_channel *)channels->data;
 
 		if (channel) {
-			if (!g_strcasecmp(name, channel->name)) {
+			if (!gaim_utf8_strcasecmp(name, channel->name)) {
 				return channel;
 			}
 		}

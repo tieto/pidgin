@@ -88,11 +88,9 @@ find_nick(struct gaim_connection *gc, const char *message)
 	char *msg, *who, *p;
 	int n;
 
-	msg = g_strdup(message);
-	g_strdown(msg);
+	msg = g_utf8_strdown(message, -1);
 
-	who = g_strdup(gc->username);
-	g_strdown(who);
+	who = g_utf8_strdown(gc->username, -1);
 	n = strlen(who);
 
 	if ((p = strstr(msg, who)) != NULL) {
@@ -106,14 +104,13 @@ find_nick(struct gaim_connection *gc, const char *message)
 
 	g_free(who);
 
-	if (!g_strcasecmp(gc->username, gc->displayname)) {
+	if (!gaim_utf8_strcasecmp(gc->username, gc->displayname)) {
 		g_free(msg);
 
 		return FALSE;
 	}
 
-	who = g_strdup(gc->displayname);
-	g_strdown(who);
+	who = g_utf8_strdown(gc->displayname, -1);
 	n = strlen(who);
 
 	if (n > 0 && (p = strstr(msg, who)) != NULL) {
@@ -1342,7 +1339,7 @@ gaim_find_conversation(const char *name)
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 		c = (struct gaim_conversation *)cnv->data;
 
-		if (!g_strcasecmp(cuser, normalize(gaim_conversation_get_name(c))))
+		if (!gaim_utf8_strcasecmp(cuser, normalize(gaim_conversation_get_name(c))))
 			break;
 
 		c = NULL;
@@ -1368,7 +1365,7 @@ gaim_find_conversation_with_account(const char *name, const struct gaim_account 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 		c = (struct gaim_conversation *)cnv->data;
 
-		if (!g_strcasecmp(cuser, normalize(gaim_conversation_get_name(c))) &&
+		if (!gaim_utf8_strcasecmp(cuser, normalize(gaim_conversation_get_name(c))) &&
 			account == gaim_conversation_get_account(c)) {
 
 			break;
@@ -1780,15 +1777,15 @@ gaim_chat_get_ignored_user(const struct gaim_chat *chat, const char *user)
 
 		const char *ign = (const char *)ignored->data;
 
-		if (!g_strcasecmp(user, ign) ||
-			((*ign == '+' || *ign == '%') && !g_strcasecmp(user, ign + 1)))
+		if (!gaim_utf8_strcasecmp(user, ign) ||
+			((*ign == '+' || *ign == '%') && !gaim_utf8_strcasecmp(user, ign + 1)))
 			return ign;
 
 		if (*ign == '@') {
 			ign++;
 
-			if ((*ign == '+' && !g_strcasecmp(user, ign + 1)) ||
-				(*ign != '+' && !g_strcasecmp(user, ign)))
+			if ((*ign == '+' && !gaim_utf8_strcasecmp(user, ign + 1)) ||
+				(*ign != '+' && !gaim_utf8_strcasecmp(user, ign)))
 				return ign;
 		}
 	}
@@ -1874,8 +1871,8 @@ gaim_chat_write(struct gaim_chat *chat, const char *who,
 
 		str = g_strdup(normalize(who));
 
-		if (!g_strcasecmp(str, normalize(gc->username)) ||
-			!g_strcasecmp(str, normalize(gc->displayname))) {
+		if (!gaim_utf8_strcasecmp(str, normalize(gc->username)) ||
+			!gaim_utf8_strcasecmp(str, normalize(gc->displayname))) {
 
 			flags |= WFLAG_SEND;
 		}
@@ -1968,7 +1965,7 @@ gaim_chat_rename_user(struct gaim_chat *chat, const char *old_user,
 		 names != NULL;
 		 names = names->next) {
 
-		if (!g_strcasecmp((char *)names->data, old_user)) {
+		if (!gaim_utf8_strcasecmp((char *)names->data, old_user)) {
 			gaim_chat_set_users(chat,
 					g_list_remove(gaim_chat_get_users(chat), names->data));
 			break;
@@ -2015,7 +2012,7 @@ gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
 		 names != NULL;
 		 names = names->next) {
 
-		if (!g_strcasecmp((char *)names->data, user)) {
+		if (!gaim_utf8_strcasecmp((char *)names->data, user)) {
 			gaim_chat_set_users(chat,
 					g_list_remove(gaim_chat_get_users(chat), names->data));
 			break;

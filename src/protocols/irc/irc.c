@@ -206,7 +206,7 @@ irc_find_chat(struct gaim_connection *gc, char *name)
 
 	while (bcs) {
 		struct gaim_conversation *b = bcs->data;
-		if (!g_strcasecmp(b->name, name))
+		if (!gaim_utf8_strcasecmp(b->name, name))
 			return b;
 		bcs = bcs->next;
 	}
@@ -309,42 +309,42 @@ encode_html(char *msg)
 	GString *str = g_string_new("");
 	char *cur = msg, *end = msg;
 	gboolean bold = FALSE, underline = FALSE, italics = FALSE;
-	
+
 	while ((end = strchr(cur, '<'))) {
 		*end = 0;
 		str = g_string_append(str, cur);
 		cur = ++end;
-		if (!g_strncasecmp(cur, "B>", 2)) {
+		if (!g_ascii_strncasecmp(cur, "B>", 2)) {
 			if (!bold) {
 				bold = TRUE;
 				str = g_string_append_c(str, '\2');
 			}
 			cur = cur + 2;
-		} else if (!g_strncasecmp(cur, "I>", 2)) { /* use bold for italics too */
+		} else if (!g_ascii_strncasecmp(cur, "I>", 2)) { /* use bold for italics too */
 			if (!italics) {
 				italics = TRUE;
 				str = g_string_append_c(str, '\2');
 			}
 			cur = cur + 2;
-		} else if (!g_strncasecmp(cur, "U>", 2)) {
+		} else if (!g_ascii_strncasecmp(cur, "U>", 2)) {
 			if (!underline) {
 				underline = TRUE;
 				str = g_string_append_c(str, '\37');
 			}
 			cur = cur + 2;
-		}  else if (!g_strncasecmp(cur, "/B>", 3)) { 
+		}  else if (!g_ascii_strncasecmp(cur, "/B>", 3)) {
 			if (bold) {
 				bold = FALSE;
 				str = g_string_append_c(str, '\2');
 			}
 			cur = cur + 3;
-		}  else if (!g_strncasecmp(cur, "/I>", 3)) { 
+		}  else if (!g_ascii_strncasecmp(cur, "/I>", 3)) {
 			if (italics) {
 				italics = FALSE;
 				str = g_string_append_c(str, '\2');
 			}
 			cur = cur + 3;
-		}  else if (!g_strncasecmp(cur, "/U>", 3)) { 
+		}  else if (!g_ascii_strncasecmp(cur, "/U>", 3)) {
 			if (underline) {
 				underline = FALSE;
 				str = g_string_append_c(str, '\37');
@@ -353,7 +353,7 @@ encode_html(char *msg)
 		}  else {
 			str = g_string_append_c(str, '<');
 		}
-		
+
 	}
 	str = g_string_append(str, cur);
 	return str;
@@ -569,15 +569,18 @@ static void
 handle_list(struct gaim_connection *gc, char *list)
 {
 	struct irc_data *id = gc->proto_data;
+	char *tmp;
 	GaimBlistNode *gnode, *bnode;
 
+	tmp = g_utf8_strdown(list, -1);
+
 	id->str = g_string_append_c(id->str, ' ');
-	id->str = g_string_append(id->str, list);
+	id->str = g_string_append(id->str, tmp);
 	id->bc--;
+	g_free(tmp);
 	if (id->bc)
 		return;
 
-	g_strdown(id->str->str);
 
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
@@ -587,9 +590,8 @@ handle_list(struct gaim_connection *gc, char *list)
 			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 				continue;
 			if(b->account->gc == gc) {
-				char *tmp = g_strdup(b->name);
+				char *tmp = g_utf8_strdown(b->name, -1);
 				char *x, *l;
-				g_strdown(tmp);
 				x = strstr(id->str->str, tmp);
 				l = x + strlen(b->name);
 				if (x && (*l != ' ' && *l != 0))
@@ -999,7 +1001,7 @@ process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 	char *text = word_eol[3];
 	int n = atoi(word[2]);
 
-	if (!g_strncasecmp(gc->displayname, text, strlen(gc->displayname)))
+	if (!g_ascii_strncasecmp(gc->displayname, text, strlen(gc->displayname)))
 		text += strlen(gc->displayname) + 1;
 	if (*text == ':')
 		text++;
@@ -1136,7 +1138,7 @@ irc_rem_chat_bud(struct gaim_connection *gc, char *nick, struct gaim_conversatio
 				who++;
 			if (*who == '+')
 				who++;
-			if (!g_strcasecmp(who, nick)) {
+			if (!gaim_utf8_strcasecmp(who, nick)) {
 				char *tmp = g_strdup(r->data);
 				gaim_chat_remove_user(chat, tmp, reason);
 				g_free(tmp);
@@ -1308,26 +1310,26 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 	char buf[IRC_BUF_LEN];
 	char out[IRC_BUF_LEN];
 
-	if (!g_strncasecmp(msg, "VERSION", 7)) {
+	if (!g_ascii_strncasecmp(msg, "VERSION", 7)) {
 		g_snprintf(buf, sizeof(buf), "\001VERSION Gaim " VERSION ": The Penguin Pimpin' "
 			   "Multi-protocol Messaging Client: " WEBSITE "\001");
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP VERSION requested from %s", nick);
 		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
 	}
-	if (!g_strncasecmp(msg, "CLIENTINFO", 10)) {
+	if (!g_ascii_strncasecmp(msg, "CLIENTINFO", 10)) {
 		g_snprintf(buf, sizeof(buf), "\001CLIENTINFO USERINFO CLIENTINFO VERSION\001");
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP CLIENTINFO requested from %s", nick);
 		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
 	}
-	if (!g_strncasecmp(msg, "USERINFO", 8)) {
+	if (!g_ascii_strncasecmp(msg, "USERINFO", 8)) {
 		g_snprintf(buf, sizeof(buf), "\001USERINFO Alias: %s\001", gc->account->alias);
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP USERINFO requested from %s", nick);
 		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
 	}
-	if (!g_strncasecmp(msg, "ACTION", 6)) {
+	if (!g_ascii_strncasecmp(msg, "ACTION", 6)) {
 		char *po = strchr(msg + 6, 1);
 		char *tmp;
 		if (po) *po = 0;
@@ -1335,13 +1337,13 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		handle_privmsg(gc, to, nick, tmp);
 		g_free(tmp);
 	}
-	if (!g_strncasecmp(msg, "PING", 4)) {
-		g_snprintf(buf, sizeof(buf), "\001%s\001", msg);	
+	if (!g_ascii_strncasecmp(msg, "PING", 4)) {
+		g_snprintf(buf, sizeof(buf), "\001%s\001", msg);
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP PING requested from %s", nick);
-		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);		
+		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
 	}
-	if (!g_strncasecmp(msg, "DCC CHAT", 8)) {
+	if (!g_ascii_strncasecmp(msg, "DCC CHAT", 8)) {
 		char **chat_args = g_strsplit(msg, " ", 5);
 		char ask[1024];
 		struct dcc_chat *dccchat = g_new0(struct dcc_chat, 1);
@@ -1354,7 +1356,7 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 	}
 
 
-	if (!g_strncasecmp(msg, "DCC SEND", 8)) {
+	if (!g_ascii_strncasecmp(msg, "DCC SEND", 8)) {
 		struct gaim_xfer *xfer;
 		char **send_args;
 		char *ip, *filename;
@@ -1512,7 +1514,7 @@ irc_parse(struct gaim_connection *gc, char *buf)
 		to = word[3];
 		msg = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];
 		if (msg[0] == 1 && msg[strlen (msg) - 1] == 1) { /* ctcp */
-			if (!g_strncasecmp(msg + 1, "DCC ", 4))
+			if (!g_ascii_strncasecmp(msg + 1, "DCC ", 4))
 				process_data_init(pdibuf, buf, word, word_eol, TRUE);
 			handle_ctcp(gc, to, nick, msg + 1, word, word_eol);
 		} else {
@@ -1539,25 +1541,25 @@ irc_parse_notice(struct gaim_connection *gc, char *nick, char *ex,
 {
 	char buf[IRC_BUF_LEN];
 
-	if (!g_strcasecmp(word[4], ":\001CLIENTINFO")) {
+	if (!g_ascii_strcasecmp(word[4], ":\001CLIENTINFO")) {
 		char *p = g_strrstr(word_eol[5], "\001");
 		*p = 0;
 		g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", word_eol[5]);
 		do_error_dialog(buf, _("CTCP ClientInfo"), GAIM_INFO);
 
-	} else if (!g_strcasecmp(word[4], ":\001USERINFO")) {
+	} else if (!g_ascii_strcasecmp(word[4], ":\001USERINFO")) {
 		char *p = g_strrstr(word_eol[5], "\001");
 		*p = 0;
 		g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", word_eol[5]);
 		do_error_dialog(buf, _("CTCP UserInfo"), GAIM_INFO);
 
-	} else if (!g_strcasecmp(word[4], ":\001VERSION")) {
+	} else if (!g_ascii_strcasecmp(word[4], ":\001VERSION")) {
 		char *p = g_strrstr(word_eol[5], "\001");
 		*p = 0;
 		g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", word_eol[5]);
 		do_error_dialog(buf, _("CTCP Version"), GAIM_INFO);
 
-	} else if (!g_strcasecmp(word[4], ":\001PING")) {
+	} else if (!g_ascii_strcasecmp(word[4], ":\001PING")) {
 		char *p = g_strrstr(word_eol[5], "\001");
 		struct timeval ping_time;
 		struct timeval now;
@@ -1601,7 +1603,7 @@ irc_parse_join(struct gaim_connection *gc, char *nick,
 	struct gaim_conversation *c;
 	char *hostmask, *p;
 
-	if (!g_strcasecmp(gc->displayname, nick)) {
+	if (!gaim_utf8_strcasecmp(gc->displayname, nick)) {
 		serv_got_joined_chat(gc, id++, chan);
 	} else {
 		c = irc_find_chat(gc, chan);
@@ -1672,7 +1674,7 @@ irc_parse_part(struct gaim_connection *gc, char *nick, char *cmd,
 			who++;
 		if (*who == '+')
 			who++;
-		if (!g_strcasecmp(who, nick)) {
+		if (!gaim_utf8_strcasecmp(who, nick)) {
 			char *tmp = g_strdup(r->data);
 			gaim_chat_remove_user(chat, tmp, reason);
 			g_free(tmp);
@@ -2050,7 +2052,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 	
 	process_data_init(pdibuf, what + 1, word, word_eol, TRUE);
 	g_string_free(str, FALSE);
-	if (!g_strcasecmp(pdibuf, "ME")) {
+	if (!g_ascii_strcasecmp(pdibuf, "ME")) {
 		if (dccchat) {
 			intl = irc_send_convert(gc, word_eol[2], sizeof(buf), &len);
 			g_snprintf(buf, sizeof(buf), "\001ACTION %s\001\r\n", intl);
@@ -2063,11 +2065,11 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 		irc_send_privmsg (gc, who, buf, FALSE);
 		g_free(what);
 		return 1;
-	} else if (!g_strcasecmp(pdibuf, "INVITE")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "INVITE")) {
 		char buf[IRC_BUF_LEN];
 		g_snprintf(buf, sizeof(buf), "INVITE %s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "TOPIC")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "TOPIC")) {
 		if (!*word_eol[2]) {
 			struct gaim_conversation *c;
 			struct gaim_chat *chat;
@@ -2089,39 +2091,39 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_free(intl);
 			irc_write(id->fd, buf, strlen(buf));
 		}
-	} else if (!g_strcasecmp(pdibuf, "NICK")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "NICK")) {
 		if (!*word_eol[2]) {
 			g_free(what);
 			return -EINVAL;
 		}
 		g_snprintf(buf, sizeof(buf), "NICK %s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "OP")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "OP")) {
 		set_mode(gc, who, '+', 'o', word);
-	} else if (!g_strcasecmp(pdibuf, "DEOP")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "DEOP")) {
 		set_mode(gc, who, '-', 'o', word);
-	} else if (!g_strcasecmp(pdibuf, "VOICE")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "VOICE")) {
 		set_mode(gc, who, '+', 'v', word);
-	} else if (!g_strcasecmp(pdibuf, "DEVOICE")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "DEVOICE")) {
 		set_mode(gc, who, '-', 'v', word);
-	} else if (!g_strcasecmp(pdibuf, "MODE")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "MODE")) {
 		char *chan = who;
 		set_chan_mode(gc, chan, word_eol[2]);
-	} else if (!g_strcasecmp(pdibuf, "QUOTE")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "QUOTE")) {
 		if (!*word_eol[2]) {
 			g_free(what);
 			return -EINVAL;
 		}
 		g_snprintf(buf, sizeof(buf), "%s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "SAY")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "SAY")) {
 		if (!*word_eol[2]) {
 			g_free(what);
 			return -EINVAL;
 		}
 		irc_send_privmsg (gc, who, word_eol[2], TRUE);
 		return 1;
-	} else if (!g_strcasecmp(pdibuf, "MSG")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "MSG")) {
 		if (!*word[2]) {
 			g_free(what);
 			return -EINVAL;
@@ -2131,7 +2133,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 			return -EINVAL;
 		}
 		irc_send_privmsg (gc, word[2], word_eol[3], TRUE);
-	} else if (!g_strcasecmp(pdibuf, "KICK")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "KICK")) {
 		if (!*word[2]) {
 			g_free(what);
 			return -EINVAL;
@@ -2143,7 +2145,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 		} else
 			g_snprintf(buf, sizeof(buf), "KICK %s %s\r\n", who, word[2]);
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "JOIN") || !g_strcasecmp(pdibuf, "J")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "JOIN") || !g_ascii_strcasecmp(pdibuf, "J")) {
 		if (!*word[2]) {
 			g_free(what);
 			return -EINVAL;
@@ -2153,7 +2155,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 		else
 			g_snprintf(buf, sizeof(buf), "JOIN %s\r\n", word[2]);
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "PART")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "PART")) {
 		char *chan = *word[2] ? word[2] : who;
 		char *reason = word_eol[3];
 		struct gaim_conversation *c;
@@ -2175,49 +2177,49 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_snprintf(buf, sizeof(buf), _("You have left %s"), chan);
 			do_error_dialog(buf, _("IRC Part"), GAIM_INFO);
 		}
-	} else if (!g_strcasecmp(pdibuf, "WHOIS")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "WHOIS")) {
 		g_snprintf(buf, sizeof(buf), "WHOIS %s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "WHOWAS")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "WHOWAS")) {
 		g_snprintf(buf, sizeof(buf), "WHOWAS %s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "LIST")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "LIST")) {
 		g_snprintf(buf, sizeof(buf), "LIST\r\n");
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "QUIT")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "QUIT")) {
 		char *reason = word_eol[2];
 		id->str = g_string_insert(id->str, 0, reason);
 		do_quit();
-	} else if (!g_strcasecmp(pdibuf, "VERSION")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "VERSION")) {
 		g_snprintf(buf, sizeof(buf), "VERSION\r\n");
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "W")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "W")) {
 		g_snprintf(buf, sizeof(buf), "WHO *\r\n");
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "REHASH")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "REHASH")) {
 		g_snprintf(buf, sizeof(buf), "REHASH\r\n");
-		irc_write(id->fd, buf, strlen(buf));		
-	} else if (!g_strcasecmp(pdibuf, "RESTART")) {
+		irc_write(id->fd, buf, strlen(buf));
+	} else if (!g_ascii_strcasecmp(pdibuf, "RESTART")) {
 		g_snprintf(buf, sizeof(buf), "RESTART\r\n");
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "CTCP")) {
-		if (!g_strcasecmp(word[2], "CLIENTINFO")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "CTCP")) {
+		if (!g_ascii_strcasecmp(word[2], "CLIENTINFO")) {
 			if (word[3])
 				irc_ctcp_clientinfo(gc, word[3]);
-		} else if (!g_strcasecmp(word[2], "USERINFO")) {
+		} else if (!g_ascii_strcasecmp(word[2], "USERINFO")) {
 			if (word[3])
 				irc_ctcp_userinfo(gc, word[3]);
-		} else if (!g_strcasecmp(word[2], "VERSION")) {
+		} else if (!g_ascii_strcasecmp(word[2], "VERSION")) {
 			if (word[3])
 				irc_ctcp_version(gc, word[3]);
-		
-		} else if (!g_strcasecmp(word[2], "PING")) {		
+
+		} else if (!g_ascii_strcasecmp(word[2], "PING")) {
 			if (word[3])
 				irc_ctcp_ping(gc, word[3]);
 		}
-	} else if (!g_strcasecmp(pdibuf, "DCC")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "DCC")) {
 		struct gaim_conversation *c = NULL;
-		if (!g_strcasecmp(word[2], "CHAT")) {
+		if (!g_ascii_strcasecmp(word[2], "CHAT")) {
 			if (word[3])
 				irc_start_chat(gc, word[3]);
 			
@@ -2232,7 +2234,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 										-1, WFLAG_SYSTEM, time(NULL));
 			}
 		}
-	} else if (!g_strcasecmp(pdibuf, "HELP")) {
+	} else if (!g_ascii_strcasecmp(pdibuf, "HELP")) {
 		struct gaim_conversation *c = NULL;
 		if (is_channel(gc, who)) {
 			c = irc_find_chat(gc, who);
@@ -2243,12 +2245,12 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_free(what);
 			return -EINVAL;
 		}
-		if (!g_strcasecmp(word[2], "OPER")) {
+		if (!g_ascii_strcasecmp(word[2], "OPER")) {
 			gaim_conversation_write(c, NULL,
 				_("<B>Operator commands:<BR>"
 				  "REHASH RESTART</B>"),
 				-1, WFLAG_NOLOG, time(NULL));
-		} else if (!g_strcasecmp(word[2], "CTCP")) {
+		} else if (!g_ascii_strcasecmp(word[2], "CTCP")) {
 			gaim_conversation_write(c, NULL,
 			_("<B>CTCP commands:<BR>"
 			  "CLIENTINFO <nick><BR>"
@@ -2256,7 +2258,7 @@ handle_command(struct gaim_connection *gc, char *who, char *what)
 			  "VERSION <nick><BR>"
 			  "PING <nick></B><BR>"),
 			-1, WFLAG_NOLOG, time(NULL));
-		} else if (!g_strcasecmp(word[2], "DCC")) {
+		} else if (!g_ascii_strcasecmp(word[2], "DCC")) {
 			gaim_conversation_write(c, NULL,
 				_("<B>DCC commands:<BR>"
 				  "CHAT <nick></B>"),

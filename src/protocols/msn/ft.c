@@ -259,7 +259,7 @@ msn_process_msnftp(struct gaim_xfer *xfer, gint source, const char *buf)
 	xfer_data = (struct msn_xfer_data *)xfer->data;
 	account = gaim_xfer_get_account(xfer);
 
-	if (!g_strncasecmp(buf, "VER MSNFTP", 10)) {
+	if (!g_ascii_strncasecmp(buf, "VER MSNFTP", 10)) {
 		/* Send the USR string */
 		g_snprintf(sendbuf, sizeof(sendbuf), "USR %s %lu\r\n",
 				   account->gc->username,
@@ -271,7 +271,7 @@ msn_process_msnftp(struct gaim_xfer *xfer, gint source, const char *buf)
 			return 0;
 		}
 	}
-	else if (!g_strncasecmp(buf, "FIL", 3)) {
+	else if (!g_ascii_strncasecmp(buf, "FIL", 3)) {
 		gaim_input_remove(xfer_data->inpa);
 		xfer_data->inpa = 0;
 

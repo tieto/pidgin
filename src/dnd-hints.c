@@ -61,9 +61,9 @@ dnd_hints_init_window(const gchar *fname)
 	g_return_val_if_fail(pixbuf, NULL);
 
 	gdk_pixbuf_render_pixmap_and_mask(pixbuf, &pixmap, &bitmap, 128);
-	gdk_pixbuf_unref(pixbuf);
+	g_object_unref(G_OBJECT(pixbuf));
 
-	gtk_widget_push_colormap(gdk_rgb_get_cmap());
+	gtk_widget_push_colormap(gdk_rgb_get_colormap());
 	win = gtk_window_new(GTK_WINDOW_POPUP);
 	pix = gtk_image_new_from_pixmap(pixmap, bitmap);
 	gtk_widget_realize(win);
@@ -71,8 +71,8 @@ dnd_hints_init_window(const gchar *fname)
 	gtk_widget_shape_combine_mask(win, bitmap, 0, 0);
 	gtk_widget_pop_colormap();
 
-	gdk_pixmap_unref(pixmap);
-	gdk_bitmap_unref(bitmap);
+	g_object_unref(G_OBJECT(pixmap));
+	g_object_unref(G_OBJECT(bitmap));
 
 	gtk_widget_show_all(pix);
 
@@ -95,7 +95,7 @@ get_widget_coords(GtkWidget *w, gint *x1, gint *y1, gint *x2, gint *y2)
 	else
 	{
 		gdk_window_get_origin(w->window, &ox, &oy);
-		gdk_window_get_size(w->window, &width, &height);
+		gdk_drawable_get_size(w->window, &width, &height);
 	}
 
 	if (x1) *x1 = ox;
