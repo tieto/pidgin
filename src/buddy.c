@@ -115,7 +115,7 @@ struct group_show {
 static GSList *shows = NULL;
 
 /* Predefine some functions */
-static void new_bp_callback(GtkWidget *w, struct buddy_show *bs);
+static void new_bp_callback(GtkWidget *w, struct buddy *bs);
 static struct group_show *find_group_show(char *group);
 static struct buddy_show *find_buddy_show(struct group_show *gs, char *name);
 static int group_number(char *group);
@@ -622,7 +622,8 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(new_bp_callback), b);
+				   GTK_SIGNAL_FUNC(new_bp_callback),
+				   cn ? find_buddy(cn->data, b->name) : NULL);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
@@ -1507,27 +1508,12 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 	g_free(who);
 }
 
-static void new_bp_callback(GtkWidget *w, struct buddy_show *bs)
+static void new_bp_callback(GtkWidget *w, struct buddy *b)
 {
-	struct gaim_connection *c = NULL;
-	struct buddy *b = NULL;
-	
-	if (bs) {
-		/* I really only care about the first account. If they've got multiple
-		 * accounts in here then, as eric would say, butt fuck them. */
-		c = (struct gaim_connection *)bs->connlist->data;
-
-		b = find_buddy(c, bs->name);
-		
-		if (!b) {
-			/* What the hell? */
-			return;
-		}
-
-		show_new_bp(bs->name, c, b->idle, b->uc & UC_UNAVAILABLE);
-	} else {
+	if (b)
+		show_new_bp(b->name, b->gc, b->idle, b->uc & UC_UNAVAILABLE);
+	else
 		show_new_bp(NULL, NULL, 0, 0);
-	}
 }
 
 void do_bp_menu()
