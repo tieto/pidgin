@@ -912,6 +912,33 @@ void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
 }
 
 
+/*
+ * Like strncpy_withhtml (above), but malloc()'s the necessary space
+ *
+ * The caller is responsible for freeing the space pointed to by the
+ * return value.
+ */
+
+gchar *strdup_withhtml(const gchar *src)
+{
+	char *sp, *dest;
+	gulong destsize;
+
+	/*
+	 * All we need do is multiply the number of newlines by 3 (the
+	 * additional length of "<BR>" over "\n"), account for the
+	 * terminator, malloc the space and call strncpy_withhtml.
+	 */
+	for(destsize = 0, sp = src; (sp = strchr(sp, '\n')) != NULL; ++sp, ++destsize)
+		;
+	destsize *= 3;
+	destsize += strlen(src) + 1;
+	dest = g_malloc(destsize);
+	strncpy_withhtml(dest, src, destsize);
+
+	return(dest);
+}
+
 void away_on_login(char *mesg)
 {
 	GSList *awy = away_messages;

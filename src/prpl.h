@@ -144,7 +144,11 @@ struct prpl {
 	void (* keepalive)	(struct gaim_connection *);
 
 	/* new user registration */
-	void (* register_user)	(struct gaim_connection *);
+	void (* register_user)	(struct aim_user *);
+
+	/* get "chat buddy" info and away message */
+	void (* get_cb_info)	(struct gaim_connection *, int, char *who);
+	void (* get_cb_away)	(struct gaim_connection *, int, char *who);
 
 	void (* buddy_free)	(struct buddy *);
 

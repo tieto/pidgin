@@ -238,6 +238,7 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 	const char *txt;
 	int i;
 	struct aim_user *a;
+	struct prpl *p;
 
 	if (!u->user) {
 		txt = gtk_entry_get_text(GTK_ENTRY(u->name));
@@ -278,9 +279,24 @@ static void ok_mod(GtkWidget *w, struct mod_user *u)
 		gtk_widget_destroy(u->icondlg);
 	u->icondlg = NULL;
 
-	gtk_widget_destroy(u->mod);
+	/*
+	 * See if user registration is supported/required
+	 */
+	if((p = find_prpl(u->protocol)) == NULL) {
+		/* TBD: error dialog here! (This should never happen, you know...) */
+		fprintf(stderr, "dbg: couldn't find protocol for protocol number %d!\n", u->protocol);
+		fflush(stderr);
+	} else {
+		if(p->register_user != NULL &&
+		   gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(u->register_user)) == TRUE) {
+
+			p->register_user(a);
+		}
+	}
 
 	save_prefs();
+
+	gtk_widget_destroy(u->mod);
 }
 
 static void cancel_mod(GtkWidget *w, struct mod_user *u)
@@ -648,6 +664,14 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 		g_free(puo);
 		op = op->next;
 	}
+
+	if(p->register_user != NULL) {
+		u->register_user = gtk_check_button_new_with_label("Register with server");
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(u->register_user), FALSE);
+		gtk_box_pack_start(GTK_BOX(vbox), u->register_user, FALSE, FALSE, 0);
+		gtk_widget_show(u->register_user);
+	}
+
 	g_list_free(tmp);
 }
 
@@ -1218,17 +1242,23 @@ static void set_kick_null(GtkObject *obj, struct kick_dlg *k)
 	g_free(k);
 }
 
-void hide_login_progress(struct gaim_connection *gc, char *why)
+/*
+ * Common code for hide_login_progress(), and hide_login_progress_info()
+ */
+static void hide_login_progress_common(struct gaim_connection *gc,
+				       char *details,
+				       char *title,
+				       char *prologue)
 {
 	char buf[2048];
 	struct kick_dlg *k = find_kick_dlg(gc->user);
 	struct signon_meter *meter = find_signon_meter(gc);
-	sprintf(buf, _("%s\n%s was unable to sign on: %s"), full_date(), gc->username, why);
+	sprintf(buf, _("%s\n%s: %s"), full_date(), prologue, details);
 	if (k)
 		gtk_widget_destroy(k->dlg);
 	k = g_new0(struct kick_dlg, 1);
 	k->user = gc->user;
-	k->dlg = do_error_dialog(buf, _("Signon Error"));
+	k->dlg = do_error_dialog(buf, title);
 	kicks = g_slist_append(kicks, k);
 	gtk_signal_connect(GTK_OBJECT(k->dlg), "destroy", GTK_SIGNAL_FUNC(set_kick_null), k);
 	if (meter) {
@@ -1236,6 +1266,24 @@ void hide_login_progress(struct gaim_connection *gc, char *why)
 		meters = g_slist_remove(meters, meter);
 		g_free(meter);
 	}
+}
+
+void hide_login_progress(struct gaim_connection *gc, char *why)
+{
+	char buf[2048];
+
+	sprintf(buf, _("%s was unable to sign on"), gc->username);
+	hide_login_progress_common(gc, why, _("Signon Error"), buf);
+}
+
+/*
+ * Like hide_login_progress(), but for informational, not error/warning,
+ * messages.
+ *
+ */
+void hide_login_progress_notice(struct gaim_connection *gc, char *why)
+{
+	hide_login_progress_common(gc, why, _("Notice"), gc->username);
 }
 
 void signoff_all()

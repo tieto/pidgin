@@ -111,5 +111,6 @@ void auto_login();
 
 void set_login_progress(struct gaim_connection *, float, char *);
 void hide_login_progress(struct gaim_connection *, char *);
+void hide_login_progress_notice(struct gaim_connection *, char *);
 
 #endif /* _MULTI_H_ */

@@ -232,6 +232,9 @@ struct mod_user {
 
 	/* stuff for mail check prompt */
 	GtkWidget *checkmail;
+
+	/* stuff for register with server */
+	GtkWidget *register_user;
 };
 
 #define EDIT_GC    0

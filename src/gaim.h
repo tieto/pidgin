@@ -411,6 +411,7 @@ extern int do_auto_login (char *);
 extern char *gaim_user_dir();
 extern void strncpy_nohtml(gchar *, const gchar *, size_t);
 extern void strncpy_withhtml(gchar *, const gchar *, size_t);
+extern gchar *strdup_withhtml(const gchar *);
 extern void away_on_login(char *);
 extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
 extern unsigned char *utf8_to_str(unsigned char *);
@@ -418,5 +419,84 @@ extern char *str_to_utf8(unsigned char *);
 extern char *add_cr(char *);
 extern void strip_linefeed(char *);
 extern time_t get_time(int, int, int, int, int, int);
+
+/*------------------------------------------------------------------------*/
+/*  Multi-Entry dialog and vCard dialog support                           */
+/*------------------------------------------------------------------------*/
+
+/*
+ * Struct for "instructions" dialog data
+ */
+typedef struct multi_instr_dlg {
+	GtkWidget *label;		/* dialog instructions widget */
+	gchar *text;			/* dialog instructions */
+} MultiInstrData;
+
+/*
+ * Struct for multiple-entry dialog data
+ */
+typedef struct multi_entry_data {
+	GtkWidget *widget;		/* entry widget object */
+	char *label;			/* label text pointer */
+	char *text;			/* entry text pointer */
+	int  visible;			/* should entry field be "visible?" */
+	int  editable;			/* should entry field be editable? */
+} MultiEntryData;
+
+/*
+ * Struct for multiple-textbox dialog data
+ */
+typedef struct multi_text_data {
+	char *label;			/* frame label */
+	GtkWidget *textbox;		/* text entry widget object */
+	char *text;			/* textbox text pointer */
+} MultiTextData;
+
+/*
+ * Struct to create a multi-entry dialog
+ */
+typedef struct multi_entry_dlg {
+	GtkWidget *window;			/* dialog main window */
+	gchar *wmclass_name;			/* window name */
+	gchar *wmclass_class;			/* window class */
+	char *title;				/* window title */
+
+	struct aim_user *user;			/* user info - needed for most everything */
+
+	MultiInstrData *instructions;		/* instructions (what else?) */
+
+	GtkWidget *entries_table;		/* table widget containing m-e lables & entries */
+	GtkWidget *entries_frame;		/* frame widget containing the table widget */
+	GSList *multi_entry_items;		/* entry dialogs parameters */
+
+	GtkWidget *texts_ibox;			/* inner vbox containing multi-text frames */
+	GtkWidget *texts_obox;			/* outer vbox containing multi-text frames */
+	GSList *multi_text_items;		/* text dialogs parameters */
+
+	void * (*custom)(struct multi_entry_dlg *);	/* Custom function that may be used by */
+							/* multi-entry dialog "wrapper" functions */
+							/* (Not used by multi-entry dialog routines) */
+
+	void (*ok)(GtkWidget *, gpointer);	/* "Save/OK" action */
+	void (*cancel)(GtkWidget *, gpointer);	/* "Cancel" action */
+} MultiEntryDlg;
+
+extern MultiTextData *multi_text_list_update(GSList **, const char *, const char *, int);
+extern void multi_text_items_free_all(GSList **);
+extern MultiEntryData *multi_entry_list_update(GSList **, const char *, const char *, int);
+extern void multi_entry_items_free_all(GSList **);
+
+extern void re_show_multi_entry_instr(MultiInstrData *);
+extern void re_show_multi_entry_entries(GtkWidget **, GtkWidget *, GSList *);
+extern void re_show_multi_entry_textboxes(GtkWidget **, GtkWidget *, GSList *);
+
+extern MultiEntryDlg *multi_entry_dialog_new(void);
+extern void show_multi_entry_dialog(gpointer);
+
+extern void show_set_vcard(MultiEntryDlg *);
+
+/*------------------------------------------------------------------------*/
+/*  End Multi-Entry dialog and vCard dialog support                       */
+/*------------------------------------------------------------------------*/
 
 #endif /* _GAIM_H_ */

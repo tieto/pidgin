@@ -4209,3 +4209,523 @@ int file_is_dir(const char *path, GtkWidget *w)
 
 	return 0;
 }
+
+/*------------------------------------------------------------------------*/
+/*  The dialog for setting V-Card info                                    */
+/*------------------------------------------------------------------------*/
+/*
+ * There are actually two "chunks" of code following:  generic "multi-entry dialog"
+ * support and V-Card dialog specific support.
+ *
+ * At first blush, this may seem like an unnecessary duplication of effort given
+ * that a "set dir info" dialog already exists.  However, this is not so because:
+ *
+ *	1. V-Cards can have a lot more data in them than what the current
+ *	   "set dir" dialog supports.
+ *
+ *	2. V-Card data, at least with respect to Jabber, is currently in a
+ *	   state of flux.  As the data and format changes, all that need be
+ *	   changed with the V-Card support I've written is the "template"
+ *	   data.
+ *
+ *	3. The "multi entry dialog" support itself was originally written
+ *	   to support Jabber server user registration (TBD).  A "dynamically
+ *	   configurable" multi-entry dialog is needed for that, as different
+ *	   servers may require different registration information.  It just
+ *	   turned out to be well-suited to adding V-Card setting support, as
+ *	   well :-).
+ *
+ * TBD: Add check-box support to the generic multi-entry dialog support so that
+ *      it can be used to "replace" the "set dir info" support?
+ *
+ *      Multiple-language support.  Currently Not In There.  I think this should
+ *      be easy.  Note that when it's added: if anybody saved their data in
+ *      English, it'll be lost when MLS is added and they'll have to re-enter it.
+ *
+ * More "TBDs" noted in the code.
+ */
+
+
+/*------------------------------------*/
+/* generic multi-entry dialog support */
+/*------------------------------------*/
+
+/*
+ * Print all multi-entry items
+ *
+ * Note: Simply a debug helper
+ */
+void multi_entry_item_print_all(const GSList *list) {
+
+	int cnt = 0;
+
+	/* While there's something to print... */
+	while(list != NULL) {
+		fprintf(stderr, "label %2d: \"%s\"", ++cnt, ((MultiEntryData *) (list->data))->label);
+		if(((MultiEntryData *) (list->data))->text != NULL) {
+			fprintf(stderr, ", text: \"%s\"", ((MultiEntryData *) (list->data))->text);
+		}
+		fputs("\n", stderr);
+		list = list->next;
+	}
+}
+
+/*
+ * Print all multi-text items
+ *
+ * Note: Simply a debug helper
+ */
+void multi_text_item_print_all(const GSList *list) {
+
+	int cnt = 0;
+
+	/* While there's something to print... */
+	while(list != NULL) {
+		fprintf(stderr, "label %2d: \"%s\"", ++cnt, ((MultiTextData *) (list->data))->label);
+		if(((MultiTextData *) (list->data))->text != NULL) {
+			fprintf(stderr, ", text: \"%s\"", ((MultiTextData *) (list->data))->text);
+		}
+		fputs("\n", stderr);
+		list = list->next;
+	}
+}
+
+
+/*
+ * Free all multi-entry item allocs and NULL the list pointer
+ */
+void multi_entry_items_free_all(GSList **list)
+{
+
+	GSList *next = *list;
+	MultiEntryData *data;
+
+	/* While there's something to free() ... */
+	while(next != NULL) {
+		data = (MultiEntryData *) next->data;
+		g_free(data->label);
+		g_free(data->text);
+		g_free(data);
+		next = next->next;
+	}
+	g_slist_free(*list);
+	*list = NULL;
+}
+
+/*
+ * Free all multi-text item allocs and NULL the list pointer
+ */
+void multi_text_items_free_all(GSList **list)
+{
+
+	GSList *next = *list;
+	MultiTextData *data;
+
+	/* While there's something to free() ... */
+	while(next != NULL) {
+		data = (MultiTextData *) next->data;
+		g_free(data->label);
+		g_free(data->text);
+		g_free(data);
+		next = next->next;
+	}
+	g_slist_free(*list);
+	*list = NULL;
+}
+
+/*
+ * See if a MultiEntryData item contains a given label
+ *
+ * See: glib docs for g_slist_compare_custom() for details
+ */
+static gint multi_entry_data_label_compare(gconstpointer data, gconstpointer label)
+{
+	return(strcmp(((MultiEntryData *) (data))->label, (char *) label));
+}
+
+/*
+ * Add a new multi-entry item to list
+ *
+ * If adding to existing list: will search the list for existence of 
+ * "label" and change/create "text" entry if necessary.
+ */
+
+MultiEntryData *multi_entry_list_update(GSList **list, const char *label, const char *text, int add_it)
+{
+	GSList *found;
+	MultiEntryData *data;
+
+	if((found = g_slist_find_custom(*list, label, multi_entry_data_label_compare)) == NULL) {
+		if(add_it) {
+			data = (MultiEntryData *) g_slist_last(*list =
+				g_slist_append(*list, g_malloc(sizeof(MultiEntryData))))->data;
+			data->label = strcpy(g_malloc(strlen(label) +1), label);
+			data->text = NULL;
+			/*
+			 * default to setting "visible" and editable to TRUE - they can be
+			 * overridden later, of course.
+			 */
+			data->visible  = TRUE;
+			data->editable = TRUE;
+		} else {
+			data = NULL;
+		}
+	} else {
+		data = found->data;
+	}
+
+	if(data != NULL && text != NULL && text[0] != '\0') {
+		if(data->text == NULL) {
+			data->text = g_malloc(strlen(text) + 1);
+		} else {
+			data->text = g_realloc(data->text, strlen(text) + 1);
+		}
+		strcpy(data->text, text);
+	}
+
+	return(data);
+}
+
+/*
+ * See if a MultiTextData item contains a given label
+ *
+ * See: glib docs for g_slist_compare_custom() for details
+ */
+static gint multi_text_data_label_compare(gconstpointer data, gconstpointer label)
+{
+	return(strcmp(((MultiTextData *) (data))->label, (char *) label));
+}
+
+/*
+ * Add a new multi-text item to list
+ *
+ * If adding to existing list: will search the list for existence of 
+ * "label" and change/create "text" text if necessary.
+ */
+
+MultiTextData *multi_text_list_update(GSList **list, const char *label, const char *text, int add_it)
+{
+	GSList *found;
+	MultiTextData *data;
+
+	if((found = g_slist_find_custom(*list, label, multi_text_data_label_compare)) == NULL) {
+		if(add_it) {
+			data = (MultiTextData *) g_slist_last(*list =
+				g_slist_append(*list, g_malloc(sizeof(MultiTextData))))->data;
+			data->label = strcpy(g_malloc(strlen(label) +1), label);
+			data->text = NULL;
+		} else {
+			data = NULL;
+		}
+	} else {
+		data = found->data;
+	}
+
+	if(data != NULL && text != NULL && text[0] != '\0') {
+		if(data->text == NULL) {
+			data->text = g_malloc(strlen(text) + 1);
+		} else {
+			data->text = g_realloc(data->text, strlen(text) + 1);
+		}
+		strcpy(data->text, text);
+	}
+
+	return(data);
+}
+
+/*
+ * Free-up the multi-entry item list and the MultiEntryDlg
+ * struct alloc.
+ */
+void multi_entry_free(struct multi_entry_dlg *b)
+{
+	multi_entry_items_free_all(&(b->multi_entry_items));
+	multi_text_items_free_all(&(b->multi_text_items));
+	g_free(b->instructions->text);
+	g_free(b->instructions);
+	g_free(b);
+}
+
+/*
+ * Multi-Entry dialog "destroyed" catcher
+ *
+ * Free-up the multi-entry item list, destroy the dialog widget
+ * and free the MultiEntryDlg struct alloc.
+ *
+ */
+void multi_entry_dialog_destroy(GtkWidget *widget, gpointer  data)
+{
+	MultiEntryDlg *b = data;
+
+	multi_entry_free(b);
+}
+
+/*
+ * Show/Re-show instructions
+ */
+void re_show_multi_entry_instr(MultiInstrData *instructions)
+{
+	if(instructions->label != NULL) {
+		if(instructions->text == NULL) {
+			gtk_widget_hide(instructions->label);
+		} else {
+			gtk_label_set_text(GTK_LABEL (instructions->label), instructions->text);
+			gtk_widget_show(instructions->label);
+		}
+	}
+}
+
+/*
+ * Show/Re-show entry boxes
+ */
+void re_show_multi_entry_entries(GtkWidget **entries_table,
+				 GtkWidget *entries_frame,
+				 GSList *multi_entry_items)
+{
+	GtkWidget *label;
+	GSList *multi_entry;
+	MultiEntryData *med;
+	int rows = 0;
+	int rowNum;
+
+	/* Figure-out number of rows needed for table */
+	rows = g_slist_length(multi_entry_items);
+
+	if(*entries_table != NULL) {
+		gtk_widget_destroy(GTK_WIDGET (*entries_table));
+	}
+	*entries_table = gtk_table_new(rows, 3, FALSE);
+	gtk_container_add(GTK_CONTAINER (entries_frame), *entries_table);
+
+	for(rowNum = 0, multi_entry = multi_entry_items;
+		multi_entry != NULL; ++rowNum, multi_entry = multi_entry->next) {
+
+		med = (MultiEntryData *) multi_entry->data;
+
+		label = gtk_label_new(med->label);
+		gtk_misc_set_alignment(GTK_MISC(label), (gfloat) 1.0, (gfloat) 0.5);
+		gtk_table_attach_defaults(GTK_TABLE (*entries_table), label, 0, 1, rowNum, rowNum +1);
+		gtk_widget_show(label);
+
+		label = gtk_label_new(": ");
+		gtk_misc_set_alignment(GTK_MISC(label), (gfloat) 0.0, (gfloat) 0.5);
+		gtk_table_attach_defaults(GTK_TABLE (*entries_table), label, 1, 2, rowNum, rowNum +1);
+		gtk_widget_show(label);
+
+		med->widget = gtk_entry_new_with_max_length(50);
+		if(med->text != NULL) {
+			gtk_entry_set_text(GTK_ENTRY (med->widget), med->text);
+		}
+		gtk_entry_set_visibility(GTK_ENTRY (med->widget), med->visible);
+		gtk_entry_set_editable(GTK_ENTRY (med->widget), med->editable);
+		gtk_table_attach_defaults(GTK_TABLE (*entries_table),
+			med->widget, 2, 3, rowNum, rowNum +1);
+		gtk_widget_show(med->widget);
+	}
+
+	gtk_widget_show(*entries_table);
+}
+
+/*
+ * Show/Re-show textboxes
+ */
+void re_show_multi_entry_textboxes(GtkWidget **texts_ibox,
+				   GtkWidget *texts_obox,
+				   GSList *multi_text_items)
+{
+	GSList *multi_text;
+	MultiTextData *mtd;
+        GtkWidget *frame;
+	GtkWidget *hbox;
+	GtkWidget *vscrollbar;
+
+	if(*texts_ibox != NULL) {
+		gtk_widget_destroy(GTK_WIDGET (*texts_ibox));
+	}
+	*texts_ibox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER (texts_obox), *texts_ibox);
+
+	for(multi_text = multi_text_items; multi_text != NULL; multi_text = multi_text->next) {
+		mtd = (MultiTextData *) multi_text->data;
+		frame = gtk_frame_new(mtd->label);
+		gtk_container_add(GTK_CONTAINER (*texts_ibox), frame);
+		hbox = gtk_hbox_new(FALSE, 0);
+		gtk_container_add(GTK_CONTAINER (frame), hbox);
+		mtd->textbox = gtk_text_new(NULL, NULL);
+		gtk_text_set_editable(GTK_TEXT(mtd->textbox), TRUE);
+		gtk_text_set_word_wrap(GTK_TEXT(mtd->textbox), TRUE);
+		gtk_widget_set_usize(mtd->textbox, 300, 100);
+		gtk_text_insert(GTK_TEXT(mtd->textbox), NULL, NULL, NULL, mtd->text, -1);
+		gtk_box_pack_start(GTK_BOX (hbox), mtd->textbox, FALSE, FALSE, 0);
+		vscrollbar = gtk_vscrollbar_new (GTK_TEXT(mtd->textbox)->vadj);
+		gtk_box_pack_start(GTK_BOX (hbox), vscrollbar, FALSE, FALSE, 0);
+		gtk_widget_show(mtd->textbox);
+		gtk_widget_show (vscrollbar);
+		gtk_widget_show(hbox);
+		gtk_widget_show(frame);
+	}
+
+	gtk_widget_show(*texts_ibox);
+}
+
+/*
+ *  Create and initialize a new Multi-Entry Dialog struct
+ */
+MultiEntryDlg *multi_entry_dialog_new()
+{
+	MultiEntryDlg *b = g_new0(MultiEntryDlg, 1);
+	b->instructions = g_new0(MultiInstrData, 1);
+	b->multi_entry_items = NULL;
+	b->multi_text_items = NULL;
+	return(b);
+}
+
+/*
+ * Instantiate a new multi-entry dialog
+ *
+ * data == pointer to MultiEntryDlg with the following
+ *         initialized:
+ *
+ *           wmclass_name
+ *           wmclass_class
+ *           title
+ *	     user
+ *           multi_entry_items - pointers to MultiEntryData list
+ *	       and MultiTextData list
+ *           instructions (optional)
+ *           ok function pointer
+ *           cancel function pointer (actually used to set
+ *             window destroy signal--cancel asserts destroy)
+ *
+ *         sets the following in the MultiEntryDialog struct:
+ *
+ *           window
+ */
+void show_multi_entry_dialog(gpointer data)
+{
+	GtkWidget *vbox, *hbox;
+	GtkWidget *button;
+	MultiEntryDlg *b = data;
+
+	GAIM_DIALOG(b->window);
+	gtk_window_set_wmclass(GTK_WINDOW(b->window), b->wmclass_name, b->wmclass_class);
+	gtk_window_set_title(GTK_WINDOW (b->window), b->title);
+	/* Clean up if user dismisses window via window manager! */
+	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(b->cancel), (gpointer) b);
+	gtk_widget_realize(b->window);
+	aol_icon(b->window->window);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER (b->window), vbox);
+
+	b->instructions->label = gtk_label_new(NULL);
+	gtk_label_set_line_wrap(GTK_LABEL (b->instructions->label), TRUE);
+	gtk_box_pack_start(GTK_BOX (vbox), b->instructions->label, TRUE, TRUE, 5);
+	re_show_multi_entry_instr(b->instructions);
+
+	b->entries_frame = gtk_frame_new(NULL);
+	gtk_box_pack_start(GTK_BOX (vbox), b->entries_frame, TRUE, TRUE, 5);
+	gtk_widget_show(b->entries_frame);
+	b->entries_table = NULL;
+	re_show_multi_entry_entries(&(b->entries_table), b->entries_frame, b->multi_entry_items);
+
+	b->texts_obox = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX (vbox), b->texts_obox, TRUE, TRUE, 0);
+	gtk_widget_show(b->texts_obox);
+	b->texts_ibox = NULL;
+	re_show_multi_entry_textboxes(&(b->texts_ibox), b->texts_obox, b->multi_text_items);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	button = picture_button(b->window, _("Cancel"), cancel_xpm);
+	/* Let "destroy handling" (set above) handle cleanup */
+	gtk_signal_connect_object(GTK_OBJECT (button), "clicked",
+		GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT (b->window));
+	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	button = picture_button(b->window, _("Save"), save_xpm);
+	gtk_signal_connect(GTK_OBJECT (button), "clicked",
+		GTK_SIGNAL_FUNC (b->ok), (gpointer) b);
+	gtk_box_pack_end(GTK_BOX (hbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	gtk_widget_show(vbox);
+	gtk_widget_show(b->window);
+}
+
+
+/*------------------------------------*/
+/* V-Card dialog specific support     */
+/*------------------------------------*/
+
+/*
+ * V-Card "set info" dialog "Save" clicked
+ *
+ * Copy data from GTK+ dialogs into GSLists, call protocol-specific
+ * formatter and save the user info data.
+ */
+void set_vcard_dialog_ok_clicked(GtkWidget *widget, gpointer  data)
+{
+	MultiEntryDlg *b = (MultiEntryDlg *) data;
+	struct gaim_connection *gc;
+	gchar *tmp;
+	GSList *list;
+
+	for(list = b->multi_entry_items; list != NULL; list = list->next) {
+		if(((MultiEntryData *) list->data)->text != NULL) {
+			g_free(((MultiEntryData *) list->data)->text);
+		}
+		((MultiEntryData *) list->data)->text =
+			g_strdup(gtk_entry_get_text(GTK_ENTRY(((MultiEntryData *) list->data)->widget)));
+	}
+
+	for(list = b->multi_text_items; list != NULL; list = list->next) {
+		if(((MultiTextData *) list->data)->text != NULL) {
+			g_free(((MultiTextData *) list->data)->text);
+		}
+		((MultiTextData *) list->data)->text =
+			gtk_editable_get_chars((GtkEditable *) (((MultiTextData *) list->data)->textbox),
+				0, -1);
+	}
+
+
+	tmp = b->custom(b);
+
+	/*
+	 * Set the user info and (possibly) send to the server
+	 */
+        if (b->user) {
+                strncpy(b->user->user_info, tmp, sizeof b->user->user_info);
+                gc = b->user->gc;
+
+                save_prefs();
+
+                if (gc)
+                        serv_set_info(gc, b->user->user_info);
+        }
+
+	g_free(tmp);
+
+	/* Let multi-edit dialog window "destroy" event catching handle remaining cleanup */
+	gtk_widget_destroy(GTK_WIDGET (b->window));
+}
+
+/*
+ * Instantiate a v-card dialog
+ */
+void show_set_vcard(MultiEntryDlg *b)
+{
+	b->ok = set_vcard_dialog_ok_clicked;
+	b->cancel = multi_entry_dialog_destroy;
+
+	show_multi_entry_dialog(b);
+}
+
+
+/*------------------------------------------------------------------------*/
+/*  End dialog for setting v-card info                                    */
+/*------------------------------------------------------------------------*/
+

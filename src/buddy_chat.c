@@ -808,8 +808,30 @@ static void chat_press_ign(GtkWidget *obj, struct conversation *b)
 
 static void chat_press_info(GtkObject *obj, struct conversation *b)
 {
-	if (b->gc)
-		b->gc->prpl->get_info(b->gc, gtk_object_get_user_data(obj));
+	if (b->gc) {
+		/*
+		 * If there are special needs for getting info on users in
+		 * buddy chat "rooms"...
+		 */
+		if(b->gc->prpl->get_cb_info != NULL) {
+			b->gc->prpl->get_cb_info(b->gc, b->id, gtk_object_get_user_data(obj));
+		} else {
+			b->gc->prpl->get_info(b->gc, gtk_object_get_user_data(obj));
+		}
+	}
+}
+
+
+static void chat_press_away(GtkObject *obj, struct conversation *b)
+{
+	if (b->gc) {
+		/*
+		 * May want to expand this to work similarly to chat_press_info?
+		 */
+		if(b->gc->prpl->get_cb_away != NULL) {
+			b->gc->prpl->get_cb_away(b->gc, b->id, gtk_object_get_user_data(obj));
+		}
+	}
 }
 
 static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conversation *b)
@@ -849,34 +871,53 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 			gtk_widget_show(button);
 		}
 
+		if (b->gc && b->gc->prpl->get_cb_away) {
+			button = gtk_menu_item_new_with_label(_("Get Away Msg"));
+			gtk_signal_connect(GTK_OBJECT(button), "activate",
+					   GTK_SIGNAL_FUNC(chat_press_away), b);
+			gtk_object_set_user_data(GTK_OBJECT(button), gtk_object_get_user_data(obj));
+			gtk_menu_append(GTK_MENU(menu), button);
+			gtk_widget_show(button);
+		}
+
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
 		return TRUE;
 	}
 	return TRUE;
 }
 
+/*
+ * Common code for adding a chat buddy to the list
+ */
+static void add_chat_buddy_common(struct conversation *b, char *name, int pos)
+{
+        char tmp[BUF_LONG];
+        GtkWidget *list_item;
+
+        if (ignored(b, name)) {
+                g_snprintf(tmp, sizeof(tmp), "X %s", name);
+                list_item = gtk_list_item_new_with_label(tmp);
+        } else
+                list_item = gtk_list_item_new_with_label(name);
+
+        gtk_object_set_user_data(GTK_OBJECT(list_item), name);
+        gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
+                           GTK_SIGNAL_FUNC(right_click_chat), b);
+        gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
+        gtk_widget_show(list_item);
+}
+
 void add_chat_buddy(struct conversation *b, char *buddy)
 {
 	char *name = g_strdup(buddy);
 	char tmp[BUF_LONG];
-	GtkWidget *list_item;
 	int pos;
 
 	plugin_event(event_chat_buddy_join, b->gc, (void *)b->id, name, 0);
 	b->in_room = g_list_insert_sorted(b->in_room, name, insertname);
 	pos = g_list_index(b->in_room, name);
 
-	if (ignored(b, buddy)) {
-		g_snprintf(tmp, sizeof(tmp), "X %s", name);
-		list_item = gtk_list_item_new_with_label(tmp);
-	} else
-		list_item = gtk_list_item_new_with_label(name);
-
-	gtk_object_set_user_data(GTK_OBJECT(list_item), name);
-	gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
-			   GTK_SIGNAL_FUNC(right_click_chat), b);
-	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
-	gtk_widget_show(list_item);
+	add_chat_buddy_common(b, name, pos);
 
 	g_snprintf(tmp, sizeof(tmp), _("%d %s in room"), g_list_length(b->in_room),
 		   g_list_length(b->in_room) == 1 ? "person" : "people");
@@ -898,7 +939,6 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 	GList *items = GTK_LIST(b->list)->children;
 
 	char *name = g_strdup(new);
-	GtkWidget *list_item;
 	char *ign;
 	int pos;
 
@@ -940,8 +980,6 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 		if (!ignored(b, new))
 			b->ignored = g_list_append(b->ignored, g_strdup(name));
 
-		g_snprintf(tmp, sizeof(tmp), "X %s", name);
-		list_item = gtk_list_item_new_with_label(tmp);
 	} else {
 		if ((ign = ignored(b, new)) != NULL) {
 			/* if they weren't ignored and change to someone who is ignored,
@@ -950,14 +988,9 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 			g_free(ign);
 			b->ignored = g_list_remove(b->ignored, ign);
 		}
-		list_item = gtk_list_item_new_with_label(name);
 	}
 
-	gtk_object_set_user_data(GTK_OBJECT(list_item), name);
-	gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
-			   GTK_SIGNAL_FUNC(right_click_chat), b);
-	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
-	gtk_widget_show(list_item);
+	add_chat_buddy_common(b, name, pos);
 
 	if (chat_options & OPT_CHAT_LOGON) {
 		g_snprintf(tmp, sizeof(tmp), _("%s is now known as %s"), old, new);
@@ -1050,8 +1083,6 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 	GList *i;
 	char *ign;
 	int pos;
-	GtkWidget *list_item;
-	char tmp[80];
 
 	i = GTK_LIST(b->list)->selection;
 	if (i) {
@@ -1067,19 +1098,12 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 	if (ign) {
 		g_free(ign);
 		b->ignored = g_list_remove(b->ignored, ign);
-		g_snprintf(tmp, sizeof tmp, "%s", name);
 	} else {
 		b->ignored = g_list_append(b->ignored, g_strdup(name));
-		g_snprintf(tmp, sizeof tmp, "X %s", name);
 	}
 
-	list_item = gtk_list_item_new_with_label(tmp);
-	gtk_object_set_user_data(GTK_OBJECT(list_item), name);
-	gtk_list_insert_items(GTK_LIST(b->list), g_list_append(NULL, list_item), pos);
 	gtk_widget_destroy(i->data);
-	gtk_widget_show(list_item);
-	gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
-			   GTK_SIGNAL_FUNC(right_click_chat), b);
+	add_chat_buddy_common(b, name, pos);
 }
 
 void show_new_buddy_chat(struct conversation *b)
@@ -1476,21 +1500,8 @@ void chat_tabize()
 
 			while (r) {
 				char *name = r->data;
-				GtkWidget *list_item;
-				char tmp[BUF_LONG];
 
-				if (ignored(c, name)) {
-					g_snprintf(tmp, sizeof(tmp), "X %s", name);
-					list_item = gtk_list_item_new_with_label(tmp);
-				} else
-					list_item = gtk_list_item_new_with_label(name);
-
-				gtk_object_set_user_data(GTK_OBJECT(list_item), name);
-				gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
-						   GTK_SIGNAL_FUNC(right_click_chat), c);
-				gtk_list_insert_items(GTK_LIST(c->list),
-						      g_list_append(NULL, list_item), pos);
-				gtk_widget_show(list_item);
+				add_chat_buddy_common(c, name, pos);
 
 				r = r->next;
 				pos++;
@@ -1522,21 +1533,8 @@ void chat_tabize()
 
 			while (r) {
 				char *name = r->data;
-				GtkWidget *list_item;
-				char tmp[BUF_LONG];
 
-				if (ignored(c, name)) {
-					g_snprintf(tmp, sizeof(tmp), "X %s", name);
-					list_item = gtk_list_item_new_with_label(tmp);
-				} else
-					list_item = gtk_list_item_new_with_label(name);
-
-				gtk_object_set_user_data(GTK_OBJECT(list_item), name);
-				gtk_signal_connect(GTK_OBJECT(list_item), "button_press_event",
-						   GTK_SIGNAL_FUNC(right_click_chat), c);
-				gtk_list_insert_items(GTK_LIST(c->list),
-						      g_list_append(NULL, list_item), pos);
-				gtk_widget_show(list_item);
+				add_chat_buddy_common(c, name, pos);
 
 				r = r->next;
 				pos++;
