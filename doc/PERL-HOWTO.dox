@@ -34,7 +34,7 @@ use Gaim;
     version          => "0.1",
     summary          => "Brief summary of your plugin.",
     description      => "Detailed description of what your plugin does.",
-    author           => "Your Name <email@address>",
+    author           => "Your Name <email\@address>",
     url              => "http://yoursite.com/",
 
     load             => "plugin_load",
