@@ -87,8 +87,7 @@ static void oscar_callback(gpointer data, gint source,
 			aim_logoff(sess);
 			gdk_input_remove(inpa);
 		} else {
-			if (aim_rxdispatch(sess))
-				debug_print("I hate GDK!\n");
+			aim_rxdispatch(sess);
 		}
 	}
 }
