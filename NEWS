@@ -8,6 +8,12 @@
 	professional look to GAIM.  As always, we will stay true to our
 	pimpin' penguin atittude. 
 
+	Eric: While Rob's been busy making things pretty, I've been busy
+	making things work :). The chat and IM windows got merged, which
+	means that they both have the same features (notably, IM has /me
+	and chat has font/color dialogs and smileys). Also smileys should
+	work better in general now (thanks fflew).
+
 
 0.9.19 (06/09/2000):
 	Rob: PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA 
