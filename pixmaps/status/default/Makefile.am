@@ -27,6 +27,7 @@ EXTRA_DIST = \
 	offline.png \
 	rendezvous.png \
 	secure.png \
+	silc.png \
 	trepia.png \
 	wireless.png \
 	yahoo.png \
