@@ -102,7 +102,9 @@ typedef struct
 } GaimGtkJoinChatData;
 
 
-static GtkWidget *protomenu = NULL, *pluginmenu = NULL;
+static GtkWidget *protomenu = NULL;
+static GtkWidget *awaymenu = NULL;
+static GtkWidget *pluginmenu = NULL;
 
 GSList *gaim_gtk_blist_sort_methods = NULL;
 static struct gaim_gtk_blist_sort_method *current_sort_method = NULL;
@@ -2514,14 +2516,20 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			}
 		}
 
+		presence = gaim_buddy_get_presence(b);
+
+		idle = gaim_presence_is_idle(presence);
+		idle_secs = gaim_presence_get_idle_time(presence);
+		warning_level = gaim_presence_get_warning_level(presence);
+
 		if (!statustext && !GAIM_BUDDY_IS_ONLINE(b))
 			statustext = g_strdup(_("\n<b>Status:</b> Offline"));
 
 		if (b->signon > 0)
 			loggedin = gaim_str_seconds_to_string(time(NULL) - b->signon);
 
-		if (b->idle > 0)
-			idletime = gaim_str_seconds_to_string(time(NULL) - b->idle);
+ 		if (idle && idle_secs > 0)
+ 			idletime = gaim_str_seconds_to_string(time(NULL) - idle_secs);
 
 		if(b->alias && b->alias[0])
 			aliastext = g_markup_escape_text(b->alias, -1);
@@ -2551,8 +2559,9 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 					aliastext ? _("\n<b>Alias:</b>") : "", aliastext ? aliastext : "",
 					nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
 					loggedin ? _("\n<b>Logged In:</b>") : "", loggedin ? loggedin : "",
-					idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
-					b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
+					idle ? (idle_secs > 0 ? _("\n<b>Idle:</b>") : _("\n<b>Idle</b>")) : "",
+					idletime ? idletime : "",
+					warning_level ? _("\n<b>Warned:</b>") : "", warning_level ? warning : "",
 					statustext ? statustext : "",
 					!g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") :
 					!g_ascii_strcasecmp(b->name, "seanegn") ? _("\n<b>Status</b>: Awesome") :

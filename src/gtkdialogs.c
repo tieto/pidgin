@@ -863,7 +863,6 @@ gaim_gtkdialogs_remove_buddy(GaimBuddy *buddy)
 
 	g_free(text);
 }
-#endif /* 0 */
 
 static void
 gaim_gtkdialogs_remove_chat_cb(GaimChat *chat)

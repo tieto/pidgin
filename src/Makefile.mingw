@@ -201,7 +201,7 @@ EXE_LIBS =
 
 all: $(TARGET).exe $(TARGET).dll
 
-install:
+install: all
 	cp $(GAIM_SRC)/gaim.exe $(GAIM_SRC)/gaim.dll $(GAIM_INSTALL_DIR)
 
 $(IDLETRACK_TOP)/idletrack.dll:

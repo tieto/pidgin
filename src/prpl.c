@@ -28,6 +28,322 @@
 #include "request.h"
 #include "util.h"
 
+/**************************************************************************/
+/** @name Protocol Plugin API  */
+/**************************************************************************/
+void
+gaim_prpl_got_account_idle(GaimAccount *account, gboolean idle,
+						   time_t idle_time)
+{
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(gaim_account_is_connected(account));
+
+	gaim_presence_set_idle(gaim_account_get_presence(account),
+						   idle, idle_time);
+}
+
+void
+gaim_prpl_got_account_login_time(GaimAccount *account, const char *name,
+		time_t login_time)
+{
+	GaimPresence *presence;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(name != NULL && *name != '\0');
+	g_return_if_fail(gaim_account_is_connected(account));
+
+	if (login_time == 0)
+		login_time = time(NULL);
+
+	presence = gaim_account_get_presence(account);
+
+	/*
+	 * TODO: Set a presence's sign-on time. We don't support this yet.
+	 */
+	gaim_debug_warning("prpl",
+					   "Attempting to set an account's sign-on time, but we "
+					   "don't support this yet! FIX IT!\n");
+}
+
+static gboolean
+set_value_from_arg(GaimStatus *status, const char *id, va_list *args)
+{
+	GaimValue *value;
+
+	value = gaim_status_get_attr_value(status, id);
+
+	if (value == NULL)
+	{
+		gaim_debug_error("prpl",
+						 "Attempted to set an unknown attribute %s on "
+						 "status %s\n",
+						 id, gaim_status_get_id(status));
+		return FALSE;
+	}
+
+	switch (gaim_value_get_type(value))
+	{
+		case GAIM_TYPE_CHAR:
+			gaim_value_set_char(value, (char)va_arg(*args, int));
+			break;
+
+		case GAIM_TYPE_UCHAR:
+			gaim_value_set_uchar(value,
+								 (unsigned char)va_arg(*args, unsigned int));
+			break;
+
+		case GAIM_TYPE_BOOLEAN:
+			gaim_value_set_boolean(value, va_arg(*args, gboolean));
+			break;
+
+		case GAIM_TYPE_SHORT:
+			gaim_value_set_short(value, (short)va_arg(*args, int));
+			break;
+
+		case GAIM_TYPE_USHORT:
+			gaim_value_set_ushort(value,
+					(unsigned short)va_arg(*args, unsigned int));
+			break;
+
+		case GAIM_TYPE_INT:
+			gaim_value_set_int(value, va_arg(*args, int));
+			break;
+
+		case GAIM_TYPE_UINT:
+			gaim_value_set_uint(value, va_arg(*args, unsigned int));
+			break;
+
+		case GAIM_TYPE_LONG:
+			gaim_value_set_long(value, va_arg(*args, long));
+			break;
+
+		case GAIM_TYPE_ULONG:
+			gaim_value_set_ulong(value, va_arg(*args, unsigned long));
+			break;
+
+		case GAIM_TYPE_INT64:
+			gaim_value_set_int64(value, va_arg(*args, gint64));
+			break;
+
+		case GAIM_TYPE_UINT64:
+			gaim_value_set_uint64(value, va_arg(*args, guint64));
+			break;
+
+		case GAIM_TYPE_STRING:
+			gaim_value_set_string(value, va_arg(*args, char *));
+			break;
+
+		case GAIM_TYPE_OBJECT:
+			gaim_value_set_object(value, va_arg(*args, void *));
+			break;
+
+		case GAIM_TYPE_POINTER:
+			gaim_value_set_pointer(value, va_arg(*args, void *));
+			break;
+
+		case GAIM_TYPE_ENUM:
+			gaim_value_set_enum(value, va_arg(*args, int));
+			break;
+
+		case GAIM_TYPE_BOXED:
+			gaim_value_set_boxed(value, va_arg(*args, void *));
+			break;
+
+		default:
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
+void
+gaim_prpl_got_account_status(GaimAccount *account, const char *status_id,
+		const char *attr_id, ...)
+{
+	GaimPresence *presence;
+	GaimStatus *status;
+
+	g_return_if_fail(account   != NULL);
+	g_return_if_fail(status_id != NULL);
+	g_return_if_fail(gaim_account_is_connected(account));
+
+	presence = gaim_account_get_presence(account);
+	status   = gaim_presence_get_status(presence, status_id);
+
+	g_return_if_fail(status != NULL);
+
+	if (attr_id != NULL)
+	{
+		va_list args;
+
+		va_start(args, attr_id);
+
+		while (attr_id != NULL)
+		{
+			set_value_from_arg(status, attr_id, &args);
+
+			attr_id = va_arg(args, char *);
+		}
+
+		va_end(args);
+	}
+
+	gaim_presence_set_status_active(presence, status_id, TRUE);
+}
+
+void
+gaim_prpl_got_account_warning_level(GaimAccount *account, const char *username,
+		unsigned int level)
+{
+	GaimPresence *presence;
+	unsigned int old_level;
+	char buf2[1024];
+
+	g_return_if_fail(account != NULL);
+
+	presence = gaim_account_get_presence(account);
+
+	gaim_signal_emit(gaim_accounts_get_handle(), "account-warned",
+					 account, username, level);
+
+	old_level = gaim_presence_get_warning_level(presence);
+	gaim_presence_set_warning_level(presence, level);
+
+	if (old_level >= level)
+		return;
+
+	g_snprintf(buf2, sizeof(buf2),
+			   _("%s has just been warned by %s.\n"
+				 "Your new warning level is %d%%"),
+			   gaim_account_get_username(account),
+			   (username == NULL ? _("an anonymous person") : username),
+			   level);
+
+	gaim_notify_info(NULL, NULL, buf2, NULL);
+}
+
+void
+gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
+		gboolean idle, time_t idle_time)
+{
+	GaimBuddy *buddy;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(name    != NULL);
+	g_return_if_fail(gaim_account_is_connected(account));
+
+	if ((buddy = gaim_find_buddy(account, name)) == NULL)
+		return;
+
+	gaim_presence_set_idle(gaim_buddy_get_presence(buddy), idle, idle_time);
+}
+
+void
+gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
+		time_t login_time)
+{
+	GaimBuddy *buddy;
+	GaimPresence *presence;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(name    != NULL);
+
+	if ((buddy = gaim_find_buddy(account, name)) == NULL)
+		return;
+
+	if (login_time == 0)
+		login_time = time(NULL);
+
+	presence = gaim_buddy_get_presence(buddy);
+
+	/*
+	 * TODO: Set a presence's sign-on time. We don't support this yet.
+	 */
+	gaim_debug_warning("prpl",
+					   "Attempting to set a user's sign-on time, but we "
+					   "don't support this yet! FIX IT!\n");
+}
+
+void
+gaim_prpl_got_user_status(GaimAccount *account, const char *name,
+		const char *status_id, const char *attr_id, ...)
+{
+	GaimBuddy *buddy;
+	GaimPresence *presence;
+	GaimStatus *status;
+
+	g_return_if_fail(account   != NULL);
+	g_return_if_fail(name      != NULL);
+	g_return_if_fail(status_id != NULL);
+	g_return_if_fail(gaim_account_is_connected(account));
+
+	if ((buddy = gaim_find_buddy(account, name)) == NULL)
+		return;
+
+	presence = gaim_buddy_get_presence(buddy);
+	status   = gaim_presence_get_status(presence, status_id);
+
+	g_return_if_fail(status != NULL);
+
+	if (attr_id != NULL)
+	{
+		va_list args;
+
+		va_start(args, attr_id);
+
+		while (attr_id != NULL)
+		{
+			set_value_from_arg(status, attr_id, &args);
+
+			attr_id = va_arg(args, char *);
+		}
+
+		va_end(args);
+	}
+
+	gaim_presence_set_status_active(presence, status_id, TRUE);
+}
+
+void
+gaim_prpl_got_user_warning_level(GaimAccount *account, const char *name,
+		unsigned int level)
+{
+	GaimBuddy *buddy;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(name    != NULL);
+
+	if ((buddy = gaim_find_buddy(account, name)) == NULL)
+		return;
+
+	gaim_presence_set_warning_level(gaim_buddy_get_presence(buddy), level);
+}
+
+void
+gaim_prpl_set_account_status(GaimAccount *account, GaimStatus *status)
+{
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(status  != NULL);
+
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+
+	if (prpl == NULL)
+		return;
+
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info->set_status != NULL)
+		prpl_info->set_status(account, status);
+}
+
+
+/**************************************************************************
+ * Protocol Plugin Subsystem API
+ **************************************************************************/
+
 GaimPlugin *
 gaim_find_prpl(const char *id)
 {

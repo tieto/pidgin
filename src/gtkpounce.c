@@ -758,8 +758,9 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 			else
 			{
 				gboolean default_set = FALSE;
+				GaimPresence *presence = gaim_buddy_get_presence(buddy);
 
-				if (buddy->idle)
+				if (gaim_presence_is_idle(presence))
 				{
 					gtk_toggle_button_set_active(
 						GTK_TOGGLE_BUTTON(dialog->idle_return), TRUE);
@@ -767,7 +768,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 					default_set = TRUE;
 				}
 
-				if (buddy->uc & UC_UNAVAILABLE)
+				if (!gaim_presence_is_available(presence))
 				{
 					gtk_toggle_button_set_active(
 						GTK_TOGGLE_BUTTON(dialog->away_return), TRUE);

@@ -261,15 +261,20 @@ void flush_last_auto_responses(GaimConnection *gc)
 int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 				 GaimConvImFlags imflags)
 {
-	GaimConversation *c;
-	int val = -EINVAL;
+	GaimConversation *conv;
+	GaimAccount *account;
+	GaimPresence *presence;
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	int val = -EINVAL;
 	const gchar *auto_reply_pref;
 
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	c = gaim_find_conversation_with_account(name, gc->account);
+	account  = gaim_connection_get_account(gc);
+	presence = gaim_account_get_presence(account);
+
+	conv = gaim_find_conversation_with_account(name, gc->account);
 
 	if (prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, imflags);
@@ -282,16 +287,17 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	 * this only reset lar->sent if we're away AND idle?
 	 */
 	auto_reply_pref = gaim_prefs_get_string("/core/away/auto_reply");
-	if (gc->away &&	(gc->flags & GAIM_CONNECTION_AUTO_RESP) &&
-		strcmp(auto_reply_pref, "never")) {
+	if ((gc->flags & GAIM_CONNECTION_AUTO_RESP) &&
+			!gaim_presence_is_available(presence) &&
+			strcmp(auto_reply_pref, "never")) {
 
 		struct last_auto_response *lar;
 		lar = get_last_auto_response(gc, name);
 		lar->sent = time(NULL);
 	}
 
-	if (c && gaim_conv_im_get_type_again_timeout(GAIM_CONV_IM(c)))
-		gaim_conv_im_stop_type_again_timeout(GAIM_CONV_IM(c));
+	if (conv && gaim_conv_im_get_type_again_timeout(GAIM_CONV_IM(conv)))
+		gaim_conv_im_stop_type_again_timeout(GAIM_CONV_IM(conv));
 
 	return val;
 }
@@ -305,63 +311,6 @@ void serv_get_info(GaimConnection *gc, const char *name)
 
 	if (gc && prpl_info && prpl_info->get_info)
 		prpl_info->get_info(gc, name);
-}
-
-void serv_set_away(GaimConnection *gc, const char *state, const char *message)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimAccount *account;
-
-	if (gc->away_state == NULL && state == NULL &&
-		gc->away == NULL && message == NULL) {
-
-		return;
-	}
-
-	if ((gc->away_state != NULL && state != NULL &&
-		 !strcmp(gc->away_state, state) &&
-		 !strcmp(gc->away_state, GAIM_AWAY_CUSTOM)) &&
-		(gc->away != NULL && message != NULL && !strcmp(gc->away, message))) {
-
-		return;
-	}
-
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	account = gaim_connection_get_account(gc);
-
-	if (prpl_info && prpl_info->set_away) {
-		if (gc->away_state) {
-			g_free(gc->away_state);
-			gc->away_state = NULL;
-		}
-
-		prpl_info->set_away(gc, state, message);
-
-		if (gc->away && state) {
-			gc->away_state = g_strdup(state);
-		}
-
-		gaim_signal_emit(gaim_accounts_get_handle(), "account-away",
-						 account, state, message);
-	}
-
-	/* LOG system_log(log_away, gc, NULL, OPT_LOG_BUDDY_AWAY | OPT_LOG_MY_SIGNON); */
-	/* New away message... Clear out the record of sent autoresponses */
-	flush_last_auto_responses(gc);
-}
-
-void serv_set_away_all(const char *message)
-{
-	GList *c;
-	GaimConnection *g;
-
-	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
-		g = (GaimConnection *)c->data;
-
-		serv_set_away(g, GAIM_AWAY_CUSTOM, message);
-	}
 }
 
 void serv_set_info(GaimConnection *gc, const char *info)
@@ -447,7 +396,7 @@ void serv_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (buddy->idle > 0)
+	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
 		remove_idle_buddy(buddy);
 
 	if (gc != NULL && gc->prpl != NULL)
@@ -472,7 +421,7 @@ void serv_remove_buddies(GaimConnection *gc, GList *buddies, GList *groups)
 			GList *curb;
 			for (curb = buddies; curb != NULL; curb = curb->next) {
 				GaimBuddy *buddy = curb->data;
-				if (buddy->idle > 0)
+				if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
 					remove_idle_buddy(buddy);
 			}
 			prpl_info->remove_buddies(gc, buddies, groups);
@@ -908,14 +857,18 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * are three or four different ways of handling it and different
 	 * things we have to do for each.
 	 */
-	if (gc->away) {
+	if (!gaim_presence_is_available(presence))
+	{
 		time_t t = time(NULL);
 		char *tmpmsg;
 		GaimBuddy *b = gaim_find_buddy(gc->account, name);
 		const char *alias = b ? gaim_buddy_get_alias(b) : name;
-		int row;
 		struct last_auto_response *lar;
 		const gchar *auto_reply_pref;
+		const char *away_msg;
+#if 0
+		int row;
+#endif
 
 		/*
 		 * Either we're going to queue it or not. Because of the way
@@ -1001,11 +954,15 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 *    is set
 		 */
 		auto_reply_pref = gaim_prefs_get_string("/core/away/auto_reply");
+		status = gaim_presence_get_active_status(presence);
+		away_msg = gaim_value_get_string(
+			gaim_status_get_attr_value(status, "message"));
+		
 		if (!(gc->flags & GAIM_CONNECTION_AUTO_RESP) ||
-			*gc->away == '\0' ||
-			!strcmp(auto_reply_pref, "never") ||
-			(!gc->is_idle &&
-			 !strcmp(auto_reply_pref, "awayidle"))) {
+				away_msg == NULL || *away_msg == '\0' ||
+				!strcmp(auto_reply_pref, "never") ||
+				(!gaim_presence_is_idle(presence) &&
+				!strcmp(auto_reply_pref, "awayidle"))) {
 
 			g_free(name);
 			g_free(message);
@@ -1128,7 +1085,8 @@ idle_timeout_cb(void)
 
 		l_next = l->next;
 
-		if (!GAIM_BUDDY_IS_ONLINE(buddy) || buddy->idle <= 0)
+		if (!GAIM_BUDDY_IS_ONLINE(buddy) ||
+				gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
 		{
 			remove_idle_buddy(buddy);
 		}
@@ -1171,14 +1129,14 @@ remove_idle_buddy(GaimBuddy *buddy)
  *             since the epoch.
  */
 void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
-					 int evil, time_t signon, time_t idle, int type)
+					 time_t signon)
 {
+	GaimPresence *presence;
 	GaimAccount *account;
 	GaimConversation *c;
 	GaimBuddy *b;
 	char *alias;
 	GSList *buddies;
-	int old_idle;
 	time_t current_time = time(NULL);
 	int signing_on = 0;
 	int signing_off = 0;
@@ -1221,6 +1179,7 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 									time(NULL));
 			g_free(tmp);
 		}
+#if 0
 		else if (awayqueue && find_queue_total_by_name(b->name)) {
 			struct queued_message *qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
@@ -1230,6 +1189,7 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 			qm->flags = GAIM_MESSAGE_SYSTEM;
 			message_queue = g_slist_append(message_queue, qm);
 		}
+#endif
 		gaim_sound_play_event(GAIM_SOUND_BUDDY_ARRIVE);
 
 		if(gaim_prefs_get_bool("/core/logging/log_system") &&
@@ -1244,55 +1204,15 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 		}
 	}
 
-	if(gaim_prefs_get_bool("/core/logging/log_system") &&
-	   gaim_prefs_get_bool("/core/logging/log_away_state")) {
-		GaimAccount *account = gaim_connection_get_account(gc);
-		GaimLog *log = gaim_account_get_log(account);
-		char *tmp = NULL;
-
-		if((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE))
-			tmp = g_strdup_printf(_("%s came back"), alias);
-		else if(!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE))
-			tmp = g_strdup_printf(_("%s went away"), alias);
-
-		if(tmp){
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name),
-						   current_time, tmp);
-			g_free(tmp);
-		}
-	}
-
-	if (!old_idle && idle) {
-		if(gaim_prefs_get_bool("/core/logging/log_system") &&
-		   gaim_prefs_get_bool("/core/logging/log_idle_state")) {
-			GaimAccount *account = gaim_connection_get_account(gc);
-			GaimLog *log = gaim_account_get_log(account);
-			char *tmp = g_strdup_printf(_("%s became idle"), alias);
-
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name),
-						   current_time, tmp);
-			g_free(tmp);
-		}
-	} else if (old_idle && !idle) {
-		if(gaim_prefs_get_bool("/core/logging/log_system") &&
-		   gaim_prefs_get_bool("/core/logging/log_idle_state")) {
-			GaimAccount *account = gaim_connection_get_account(gc);
-			GaimLog *log = gaim_account_get_log(account);
-			char *tmp = g_strdup_printf(_("%s became unidle"), alias);
-
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name),
-						   current_time, tmp);
-			g_free(tmp);
-		}
-	}
-
 	if (signing_off) {
 		if (c != NULL) {
 			char *tmp = g_strdup_printf(_("%s logged out."), alias);
 			gaim_conversation_write(c, NULL, tmp,
 									GAIM_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
-		} else if (awayqueue && find_queue_total_by_name(b->name)) {
+		}
+#if 0
+		else if (awayqueue && find_queue_total_by_name(b->name)) {
 			struct queued_message *qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
 			qm->message = g_strdup_printf(_("%s logged out."), alias);
@@ -1301,6 +1221,7 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 			qm->flags = GAIM_MESSAGE_SYSTEM;
 			message_queue = g_slist_append(message_queue, qm);
 		}
+#endif
 		serv_got_typing_stopped(gc, name); /* obviously not typing */
 		gaim_sound_play_event(GAIM_SOUND_BUDDY_LEAVE);
 
@@ -1318,23 +1239,8 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 
 	if (gc->login_time_official && gc->login_time && signon > 0)
 		signon += gc->login_time_official - gc->login_time;
+
 	gaim_blist_update_buddy_signon(b, signon);
-	gaim_blist_update_buddy_idle(b, idle);
-	gaim_blist_update_buddy_evil(b, evil);
-	gaim_blist_update_buddy_status(b, type);
-
-	if (!old_idle && idle)
-	{
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
-
-		add_idle_buddy(b);
-	}
-	else if (old_idle && !idle)
-	{
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
-
-		remove_idle_buddy(b);
-	}
 
 	if (c != NULL)
 		gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);
@@ -1344,38 +1250,8 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 	for (buddies = gaim_find_buddies(account, name); buddies; buddies = g_slist_remove(buddies, buddies->data)) {
 		b = buddies->data;
 		gaim_blist_update_buddy_presence(b, loggedin);
-		gaim_blist_update_buddy_idle(b, idle);
-		gaim_blist_update_buddy_evil(b, evil);
-		gaim_blist_update_buddy_status(b, type);
 	}
 	g_free(alias);
-}
-
-
-void serv_got_eviled(GaimConnection *gc, const char *name, int lev)
-{
-	char buf2[1024];
-	GaimAccount *account;
-
-	account = gaim_connection_get_account(gc);
-
-	gaim_signal_emit(gaim_accounts_get_handle(), "account-warned",
-					 account, name, lev);
-
-	if (gc->evil >= lev) {
-		gc->evil = lev;
-		return;
-	}
-
-	gc->evil = lev;
-
-	g_snprintf(buf2, sizeof(buf2),
-			   _("%s has just been warned by %s.\n"
-				 "Your new warning level is %d%%"),
-			   gaim_account_get_username(gaim_connection_get_account(gc)),
-			   ((name == NULL) ? _("an anonymous person") : name), lev);
-
-	gaim_notify_info(NULL, NULL, buf2, NULL);
 }
 
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,

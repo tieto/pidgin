@@ -638,7 +638,7 @@ gint gaim_sort_smileys (GtkTreeModel	*model,
 						gpointer		userdata)
 {
 	gint ret = 0;
-	gchar *name1, *name2;
+	gchar *name1 = NULL, *name2 = NULL;
 
 	gtk_tree_model_get(model, a, 3, &name1, -1);
 	gtk_tree_model_get(model, b, 3, &name2, -1);
@@ -2284,7 +2284,9 @@ static void away_edit_sel (GtkWidget *dummy, void *tv)
 		return;
 	gtk_tree_model_get_value (GTK_TREE_MODEL(ls), &iter, 1, &val);
 	amt = g_value_get_pointer (&val);
+/* XXX CORE/UI
 	create_away_mess(NULL, amt);
+*/
 }
 
 static gboolean away_message_click_cb(GtkWidget *tv, GdkEventButton *event, gpointer null)
@@ -2299,7 +2301,9 @@ static gboolean away_message_click_cb(GtkWidget *tv, GdkEventButton *event, gpoi
 }
 
 void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
+/* XXX CORE/UI
 	struct away_message *am;
+*/
 	GtkTreeIter iter;
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(tv);
 	GtkTreeModel *model = GTK_TREE_MODEL(prefs_away_store);
@@ -2389,17 +2393,24 @@ GtkWidget *away_message_page() {
 	button = gtk_button_new_from_stock (GTK_STOCK_ADD);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, button);
+
+/* XXX CORE/UI
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(create_away_mess), NULL);
+*/
 
 	button = gtk_button_new_from_stock (GTK_STOCK_REMOVE);
 	gtk_size_group_add_widget(sg, button);
+
+/* XXX CORE/UI
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(remove_away_message), event_view);
+*/
 
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button_from_stock(_("_Edit"), GAIM_STOCK_EDIT, GAIM_BUTTON_HORIZONTAL);
+	button = gaim_pixbuf_button_from_stock(_("_Edit"), GAIM_STOCK_EDIT,
+			GAIM_BUTTON_HORIZONTAL);
 	gtk_size_group_add_widget(sg, button);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(away_edit_sel), event_view);

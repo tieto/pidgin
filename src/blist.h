@@ -112,14 +112,13 @@ struct _GaimBuddy {
 	char *server_alias;                     /**< The server-specified alias of the buddy.  (i.e. MSN "Friendly Names") */
 	GaimBuddyPresenceState present;         /**< This is 0 if the buddy appears offline, 1 if he appears online, and 2 if
 						    he has recently signed on */
-	int evil;                               /**< The warning level */
 	time_t signon;                          /**< The time the buddy signed on. */
-	int idle;                               /**< The time the buddy has been idle in minutes. */
 	int uc;                                 /**< This is a cryptic bitmask that makes sense only to the prpl.  This will get changed */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
 	GaimBuddyIcon *icon;                    /**< The buddy icon. */
 	GaimAccount *account;           	/**< the account this buddy belongs to */
 	guint timer;				/**< The timer handle. */
+	GaimPresence *presence;
 };
 
 /**
@@ -192,6 +191,7 @@ struct _GaimBlistUiOps
 	void (*request_add_chat)(GaimAccount *account, GaimGroup *group, 
 							 const char *alias, const char *name);
 	void (*request_add_group)(void);
+	void (*status_changed)(GaimBuddy *buddy, GaimStatus *status);
 };
 
 

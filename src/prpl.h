@@ -220,7 +220,7 @@ struct _GaimPluginProtocolInfo
 	 */
 	char *(*tooltip_text)(GaimBuddy *buddy);
 
-	GList *(*away_states)(GaimConnection *gc);
+	GList *(*status_types)(GaimConnection *gc);
 
 	GList *(*blist_node_menu)(GaimBlistNode *node);
 	GList *(*chat_info)(GaimConnection *);
@@ -235,7 +235,8 @@ struct _GaimPluginProtocolInfo
 	void (*set_info)(GaimConnection *, const char *info);
 	int  (*send_typing)(GaimConnection *, const char *name, int typing);
 	void (*get_info)(GaimConnection *, const char *who);
-	void (*set_away)(GaimConnection *, const char *state, const char *message);
+	void (*set_status)(GaimAccount *account, GaimStatus *status);
+
 	void (*set_idle)(GaimConnection *, int idletime);
 	void (*change_passwd)(GaimConnection *, const char *old_pass,
 						  const char *new_pass);

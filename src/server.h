@@ -25,12 +25,6 @@
 #ifndef _GAIM_SERVER_H_
 #define _GAIM_SERVER_H_
 
-/*
- * Really user states are controlled by the PRPLs now. We just
- * use this for event_away
- */
-#define UC_UNAVAILABLE  1
-
 #include "account.h"
 #include "conversation.h"
 #include "prpl.h"
@@ -47,8 +41,6 @@ void serv_get_info(GaimConnection *, const char *);
 void serv_get_dir(GaimConnection *, const char *);
 void serv_set_idle(GaimConnection *, int);
 void serv_set_info(GaimConnection *, const char *);
-void serv_set_away(GaimConnection *, const char *, const char *);
-void serv_set_away_all(const char *);
 int  serv_send_typing(GaimConnection *, const char *, int);
 void serv_change_passwd(GaimConnection *, const char *, const char *);
 void serv_add_buddy(GaimConnection *, GaimBuddy *);
@@ -78,7 +70,6 @@ void serv_chat_whisper(GaimConnection *, int, const char *, const char *);
 int  serv_chat_send(GaimConnection *, int, const char *);
 void serv_alias_buddy(GaimBuddy *);
 void serv_got_alias(GaimConnection *gc, const char *who, const char *alias);
-void serv_got_eviled(GaimConnection *gc, const char *name, int lev);
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 GaimTypingState state);
 void serv_set_buddyicon(GaimConnection *gc, const char *filename);
@@ -86,7 +77,7 @@ void serv_got_typing_stopped(GaimConnection *gc, const char *name);
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				 GaimConvImFlags imflags, time_t mtime);
 void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
-					 int evil, time_t signon, time_t idle, int type);
+					 time_t signon);
 void serv_finish_login(GaimConnection *gc);
 void serv_got_chat_invite(GaimConnection *gc, const char *name,
 						  const char *who, const char *message,

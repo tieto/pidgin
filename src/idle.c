@@ -89,16 +89,22 @@ gint check_idle(gpointer data)
 
 	if (gaim_prefs_get_bool("/core/away/away_when_idle") &&
 		(idle_time > (60 * gaim_prefs_get_int("/core/away/mins_before_away")))
-		&& (!gc->is_auto_away)) {
+		&& (!gc->is_auto_away))
+	{
+		GaimPresence *presence;
 
-		if (!gc->away || (!*gc->away && (!gc->away_state ||
-						!strcmp(gc->away_state, GAIM_AWAY_CUSTOM)))) {
+		presence = gaim_account_get_presence(account);
+
+		if (gaim_presence_is_available(presence))
+		{
+/* XXX CORE/UI
 			struct away_message *default_away = NULL;
-			const char *default_name;
 			GSList *l;
+*/
+			const char *default_name;
 
 			default_name = gaim_prefs_get_string("/core/away/default_message");
-
+/* XXX CORE/UI
 			for(l = away_messages; l; l = l->next) {
 				if(!strcmp(default_name, ((struct away_message *)l->data)->name)) {
 					default_away = l->data;

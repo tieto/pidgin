@@ -121,41 +121,48 @@ static void blist_pref_cb(const char *name, GaimPrefType type, gpointer value, g
 	}
 }
 
-static void gaim_contact_compute_priority_buddy(GaimContact *contact)
+void gaim_contact_compute_priority_buddy(GaimContact *contact)
 {
 	GaimBlistNode *bnode;
-	int contact_score = INT_MAX;
+	GaimBuddy *new_priority = NULL;
 
 	g_return_if_fail(contact != NULL);
 
 	contact->priority = NULL;
-	for (bnode = ((GaimBlistNode*)contact)->child; bnode; bnode = bnode->next) {
+	for (bnode = ((GaimBlistNode*)contact)->child;
+			bnode != NULL;
+			bnode = bnode->next)
+	{
 		GaimBuddy *buddy;
-		int score = 0;
+		GaimPresence *presence;
 
 		if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 			continue;
+
 		buddy = (GaimBuddy*)bnode;
+
 		if (!gaim_account_is_connected(buddy->account))
 			continue;
+ 		if (new_priority == NULL)
+ 			new_priority = buddy;
+ 		else
+ 		{
+ 			int cmp;
+ 
+ 			presence = gaim_buddy_get_presence(buddy);
+ 
+ 			cmp = gaim_presence_compare(gaim_buddy_get_presence(new_priority),
+					gaim_buddy_get_presence(buddy));
 
-		if (!GAIM_BUDDY_IS_ONLINE(buddy))
-			score += gaim_prefs_get_int("/core/contact/offline_score");
-		if (buddy->uc & UC_UNAVAILABLE)
-			score += gaim_prefs_get_int("/core/contact/away_score");
-		if (buddy->idle)
-			score += gaim_prefs_get_int("/core/contact/idle_score");
-
-		score += gaim_account_get_int(buddy->account, "score", 0);
-
-		if (score < contact_score) {
-			contact->priority = buddy;
-			contact_score = score;
-		}
-		if (gaim_prefs_get_bool("/core/contact/last_match"))
-			if (score == contact_score)
-				contact->priority = buddy;
+ 			if (cmp > 0 || (cmp == 0 &&
+						gaim_prefs_get_bool("/core/contact/last_match")))
+ 			{
+ 				new_priority = buddy;
+ 			}
+ 		}
 	}
+
+	contact->priority = new_priority;
 }
 
 static gboolean blist_save_callback(gpointer data)
@@ -236,6 +243,7 @@ void gaim_blist_set_visible(gboolean show)
 
 void gaim_blist_update_buddy_status(GaimBuddy *buddy, int status)
 {
+#if 0
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	int old_status;
 
@@ -256,6 +264,7 @@ void gaim_blist_update_buddy_status(GaimBuddy *buddy, int status)
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
+#endif
 }
 
 static gboolean presence_update_timeout_cb(GaimBuddy *buddy)
@@ -340,6 +349,7 @@ void gaim_blist_update_buddy_signon(GaimBuddy *buddy, time_t signon)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 }
 
+#if 0
 void gaim_blist_update_buddy_idle(GaimBuddy *buddy, int idle)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
@@ -355,21 +365,7 @@ void gaim_blist_update_buddy_idle(GaimBuddy *buddy, int idle)
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 }
-
-void gaim_blist_update_buddy_evil(GaimBuddy *buddy, int warning)
-{
-	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
-
-	g_return_if_fail(buddy != NULL);
-
-	if (buddy->evil == warning)
-		return;
-
-	buddy->evil = warning;
-
-	if (ops && ops->update)
-		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
-}
+#endif
 
 void gaim_blist_update_buddy_icon(GaimBuddy *buddy)
 {
@@ -624,9 +620,11 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
 	g_return_val_if_fail(screenname != NULL, FALSE);
 
 	buddy = g_new0(GaimBuddy, 1);
-	buddy->account = account;
-	buddy->name  = g_strdup(screenname);
-	buddy->alias = g_strdup(alias);
+	buddy->account  = account;
+	buddy->name     = g_strdup(screenname);
+	buddy->alias    = g_strdup(alias);
+	buddy->presence = gaim_presence_new_for_buddy(buddy);
+
 	gaim_blist_node_initialize_settings((GaimBlistNode *)buddy);
 	((GaimBlistNode *)buddy)->type = GAIM_BLIST_BUDDY_NODE;
 
@@ -1170,6 +1168,7 @@ void gaim_blist_add_group(GaimGroup *group, GaimBlistNode *node)
 		for (node = gnode->child; node; node = node->next)
 			ops->update(gaimbuddylist, node);
 	}
+#endif
 }
 
 void gaim_blist_remove_contact(GaimContact *contact)
@@ -1623,6 +1622,13 @@ GaimContact *gaim_buddy_get_contact(GaimBuddy *buddy)
 
 	return (GaimContact*)((GaimBlistNode*)buddy)->parent;
 }
+
+GaimPresence *gaim_buddy_get_presence(const GaimBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+ 	return buddy->presence;
+}
+
 
 GaimGroup *gaim_find_buddys_group(GaimBuddy *buddy)
 {
