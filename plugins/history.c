@@ -18,6 +18,14 @@
 
 #define HISTORY_SIZE (4 * 1024)
 
+static gboolean _scroll_imhtml_to_end(gpointer data)
+{
+	GtkIMHtml *imhtml = data;
+	gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml));
+	g_object_unref(G_OBJECT(imhtml));
+	return FALSE;
+}
+
 static void historize(GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
@@ -44,7 +52,8 @@ static void historize(GaimConversation *c)
 		options |= GTK_IMHTML_NO_NEWLINE;
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), history, options);
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
-	gtk_imhtml_scroll_to_end(GTK_IMHTML(gtkconv->imhtml));
+	g_object_ref(G_OBJECT(gtkconv->imhtml));
+	g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
 	g_free(history);
 
 	while (logs) {

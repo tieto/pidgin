@@ -56,10 +56,18 @@
 
 guint accels_save_timer = 0;
 
+static gboolean
+url_clicked_idle_cb(gpointer data)
+{
+	gaim_notify_uri(NULL, data);
+	g_free(data);
+	return FALSE;
+}
+
 static void
 url_clicked_cb(GtkWidget *w, const char *uri)
 {
-	gaim_notify_uri(NULL, uri);
+	g_idle_add(url_clicked_idle_cb, g_strdup(uri));
 }
 
 void

@@ -27,6 +27,7 @@ version 0.78cvs
 	* Novell prpl works on big endian machines (Novell)
 	* Zephyr works on 64 bit machines (Arun A Tharuvai)
 	* Print Gadu-Gadu messages to the debug window instead of the console
+	* New tabs should scroll correctly again (Tim Ringenbach)
 
 	Preference Changes:
 	* Added a "none" smiley theme to replace the "Show graphical
