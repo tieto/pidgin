@@ -97,6 +97,104 @@ gaim_value_destroy(GaimValue *value)
 	g_free(value);
 }
 
+GaimValue *
+gaim_value_dup(const GaimValue *value)
+{
+	GaimValue *new_value;
+	GaimType type;
+
+	g_return_val_if_fail(value != NULL, NULL);
+
+	type = gaim_value_get_type(value);
+
+	if (type == GAIM_TYPE_SUBTYPE)
+	{
+		new_value = gaim_value_new(GAIM_TYPE_SUBTYPE,
+								   gaim_value_get_subtype(value));
+	}
+	else if (type == GAIM_TYPE_BOXED)
+	{
+		new_value = gaim_value_new(GAIM_TYPE_BOXED,
+								   gaim_value_get_specific_type(value));
+	}
+	else
+		new_value = gaim_value_new(type);
+
+	new_value->flags = value->flags;
+
+	switch (type)
+	{
+		case GAIM_TYPE_CHAR:
+			gaim_value_set_char(new_value, gaim_value_get_char(value));
+			break;
+
+		case GAIM_TYPE_UCHAR:
+			gaim_value_set_uchar(new_value, gaim_value_get_uchar(value));
+			break;
+
+		case GAIM_TYPE_BOOLEAN:
+			gaim_value_set_boolean(new_value, gaim_value_get_boolean(value));
+			break;
+
+		case GAIM_TYPE_SHORT:
+			gaim_value_set_short(new_value, gaim_value_get_short(value));
+			break;
+
+		case GAIM_TYPE_USHORT:
+			gaim_value_set_ushort(new_value, gaim_value_get_ushort(value));
+			break;
+
+		case GAIM_TYPE_INT:
+			gaim_value_set_int(new_value, gaim_value_get_int(value));
+			break;
+
+		case GAIM_TYPE_UINT:
+			gaim_value_set_uint(new_value, gaim_value_get_uint(value));
+			break;
+
+		case GAIM_TYPE_LONG:
+			gaim_value_set_long(new_value, gaim_value_get_long(value));
+			break;
+
+		case GAIM_TYPE_ULONG:
+			gaim_value_set_ulong(new_value, gaim_value_get_ulong(value));
+			break;
+
+		case GAIM_TYPE_INT64:
+			gaim_value_set_int64(new_value, gaim_value_get_int64(value));
+			break;
+
+		case GAIM_TYPE_UINT64:
+			gaim_value_set_uint64(new_value, gaim_value_get_uint64(value));
+			break;
+
+		case GAIM_TYPE_STRING:
+			gaim_value_set_string(new_value, gaim_value_get_string(value));
+			break;
+
+		case GAIM_TYPE_OBJECT:
+			gaim_value_set_object(new_value, gaim_value_get_object(value));
+			break;
+
+		case GAIM_TYPE_POINTER:
+			gaim_value_set_pointer(new_value, gaim_value_get_pointer(value));
+			break;
+
+		case GAIM_TYPE_ENUM:
+			gaim_value_set_enum(new_value, gaim_value_get_enum(value));
+			break;
+
+		case GAIM_TYPE_BOXED:
+			gaim_value_set_boxed(new_value, gaim_value_get_boxed(value));
+			break;
+
+		default:
+			break;
+	}
+
+	return new_value;
+}
+
 GaimType
 gaim_value_get_type(const GaimValue *value)
 {

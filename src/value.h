@@ -163,6 +163,15 @@ GaimValue *gaim_value_new_outgoing(GaimType type, ...);
 void gaim_value_destroy(GaimValue *value);
 
 /**
+ * Duplicated a GaimValue.
+ *
+ * @param value The value to duplicate.
+ *
+ * @return The duplicate value.
+ */
+GaimValue *gaim_value_dup(const GaimValue *value);
+
+/**
  * Returns a value's type.
  *
  * @return The value's type.
