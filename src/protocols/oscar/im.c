@@ -1995,10 +1995,10 @@ static int clientautoresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 			fu32_t state;
 
 			len = aimbs_getle16(bs); /* Should be 0x001b */
-			free(aimbs_getraw(bs, len)); /* Unknown */
+			aim_bstream_advance(bs, len); /* Unknown */
 
 			len = aimbs_getle16(bs); /* Should be 0x000e */
-			free(aimbs_getraw(bs, len)); /* Unknown */
+			aim_bstream_advance(bs, len); /* Unknown */
 
 			statusmsgtype = aimbs_getle8(bs);
 			switch (statusmsgtype) {
