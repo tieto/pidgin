@@ -150,3 +150,129 @@ encode_spaces(const char *str)
 	return buf;
 }
 
+/*
+ * Taken from the zephyr plugin.
+ * This parses HTML formatting (put out by one of the gtkimhtml widgets
+ * and converts it to msn formatting. It doesn't deal with the tag closing,
+ * but gtkimhtml widgets give valid html.
+ * It currently deals properly with <b>, <u>, <i>, <font face=...>,
+ * <font color=...>.
+ * It ignores <font back=...> and <font size=...>
+ */
+void
+msn_import_html(const char *html, char **attributes, char **message)
+{
+	int len, retcount = 0;
+	const char *c;
+	char *msg;
+	char *fontface = NULL;
+	char fonteffect[4];
+	char fontcolor[7];
+
+	g_return_if_fail(html       != NULL);
+	g_return_if_fail(attributes != NULL);
+	g_return_if_fail(message    != NULL);
+
+	len = strlen(html);
+	msg = g_malloc0(len + 1);
+
+	memset(fontcolor, 0, sizeof(fontcolor));
+	memset(fonteffect, 0, sizeof(fontcolor));
+
+	for (c = html; *c != '\0';)
+	{
+		if (*c == '<')
+		{
+			if (!g_ascii_strncasecmp(c + 1, "i>", 2))
+			{
+				strcat(fonteffect, "I");
+				c += 3;
+			}
+			else if (!g_ascii_strncasecmp(c + 1, "b>", 2))
+			{
+				strcat(fonteffect, "B");
+				c += 3;
+			}
+			else if (!g_ascii_strncasecmp(c + 1, "u>", 2))
+			{
+				strcat(fonteffect, "U");
+				c += 3;
+			}
+			else if (!g_ascii_strncasecmp(c + 1, "a href=\"", 8))
+			{
+				c += 9;
+
+				while (g_ascii_strncasecmp(c, "\">", 2))
+					msg[retcount++] = *c++;
+
+				c += 2;
+
+				/* ignore descriptive string */
+				while (g_ascii_strncasecmp(c, "</a>", 4))
+					c++;
+
+				c += 4;
+			}
+			else if (!g_ascii_strncasecmp(c + 1, "font", 4))
+			{
+				c += 5;
+
+				while (!g_ascii_strncasecmp(c, " ", 1))
+					c++;
+
+				if (!g_ascii_strncasecmp(c, "color=\"#", 7))
+				{
+					c += 8;
+
+					fontcolor[0] = *(c + 4);
+					fontcolor[1] = *(c + 5);
+					fontcolor[2] = *(c + 2);
+					fontcolor[3] = *(c + 3);
+					fontcolor[4] = *c;
+					fontcolor[5] = *(c + 1);
+
+					c += 8;
+				}
+				else if (!g_ascii_strncasecmp(c, "face=\"", 6))
+				{
+					const char *end = NULL;
+					unsigned int namelen = 0;
+
+					c += 6;
+					end = strchr(c, '\"');
+					namelen = (unsigned int)(end - c);
+					fontface = g_strndup(c, namelen);
+					c = end + 2;
+				}
+				else
+				{
+					/* Drop all unrecognized/misparsed font tags */
+					while (g_ascii_strncasecmp(c, "\">", 2))
+						c++;
+
+					c += 2;
+				}
+			}
+			else
+			{
+				while (g_ascii_strncasecmp(c, ">", 1))
+					c++;
+
+				c++;
+			}
+		}
+		else
+			msg[retcount++] = *c++;
+	}
+
+	if (fontface == NULL)
+		fontface = g_strdup("MS Sans Serif");
+
+	*attributes = g_strdup_printf("FN=%s; EF=%s; CO=%s; PF=0",
+								  encode_spaces(fontface),
+								  fonteffect, fontcolor);
+	*message = g_strdup(msg);
+
+	g_free(fontface);
+	g_free(msg);
+}

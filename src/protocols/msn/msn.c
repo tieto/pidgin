@@ -487,6 +487,7 @@ msn_login(GaimAccount *account)
 		msn_http_session_init(session);
 
 	gc->proto_data = session;
+	gc->flags |= GAIM_CONNECTION_HTML;
 
 	gaim_connection_update_progress(gc, _("Connecting"), 0, MSN_CONNECT_STEPS);
 
@@ -532,16 +533,20 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 	if (g_ascii_strcasecmp(who, gaim_account_get_username(account))) {
 		MsnMessage *msg;
 		MsnUser *user;
-		/*char *msgformat;*/
-		
+		char *msgformat;
+		char *msgtext;
+
 		user = msn_user_new(session, who, NULL);
+
+		msn_import_html(message, &msgformat, &msgtext);
 
 		msg = msn_message_new();
 		msn_message_set_receiver(msg, user);
-		/*msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);*/
-		msn_message_set_body(msg, message);
+		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+		msn_message_set_body(msg, msgtext);
 
-		/*g_free(msgformat);*/
+		g_free(msgformat);
+		g_free(msgtext);
 
 		if (swboard != NULL) {
 			if (!msn_switchboard_send_msg(swboard, msg))
