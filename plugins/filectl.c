@@ -64,7 +64,7 @@ run_commands()
 
 			account = gaim_accounts_find(arg1, arg2);
 			if (account != NULL) /* username found */
-				gaim_account_connect(account);
+				gaim_account_connect(account, gaim_account_get_status(account, "online"));
 
 			free(arg1);
 			free(arg2);
