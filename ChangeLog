@@ -26,6 +26,10 @@ version 0.79cvs:
 	  format for the protocol. (GTK 2.2 and higher only)
 	* Dragging an image file into the Modify Account dialog will set that
 	  as a buddy icon.
+	* Development headers for compiling third-party plugins are now
+	  installed. (Stu Tomlinson)
+	* Headers for gaim-remote now reside in gaim/ instead of
+	  gaim-include/.
 
 	Bug Fixes:
 	* Non-looping animated icons no longer cause Gaim to freeze
