@@ -141,8 +141,11 @@ static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b)
 
 static void irc_blist_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
 {
-	if (b->present == GAIM_BUDDY_OFFLINE)
+	GaimPresence *presence = gaim_buddy_get_presence(b);
+
+	if (gaim_presence_is_online(presence) == FALSE) {
 		*se = "offline";
+	}
 }
 
 static GList *irc_status_types(GaimAccount *account)
