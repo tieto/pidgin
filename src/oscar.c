@@ -308,7 +308,7 @@ void oscar_login(struct aim_user *user) {
 	struct aim_conn_t *conn;
 	char buf[256];
 	char *finalauth = NULL;
-	struct gaim_connection *gc = new_gaim_conn(PROTO_OSCAR, user->username, user->password);
+	struct gaim_connection *gc = new_gaim_conn(user);
 	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
 	gc->user = user;
 
@@ -343,11 +343,6 @@ void oscar_login(struct aim_user *user) {
 	sess->tx_enqueue = &aim_tx_enqueue__immediate;
 	odata->sess = sess;
 
-	sprintf(buf, _("Looking up %s"), finalauth ? finalauth : FAIM_LOGIN_SERVER);
-	set_login_progress(gc, 1, buf);
-	/* this creates a possible race condition, but hey, what can you do */
-	while (gtk_events_pending())
-		gtk_main_iteration();
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, finalauth ? finalauth : FAIM_LOGIN_SERVER);
 
         if (finalauth)
@@ -356,7 +351,7 @@ void oscar_login(struct aim_user *user) {
 	if (conn == NULL) {
 		debug_print(_("internal connection error\n"));
 		hide_login_progress(gc, _("Unable to login to AIM"));
-		destroy_gaim_conn(gc);
+		serv_close(gc);
 		return;
 	} else if (conn->fd == -1) {
 		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
@@ -368,7 +363,7 @@ void oscar_login(struct aim_user *user) {
 			debug_print(debug_buff); debug_print("\n");
 			hide_login_progress(gc, debug_buff);
 		}
-		destroy_gaim_conn(gc);
+		serv_close(gc);
 		return;
 	}
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gc->username);
@@ -472,14 +467,14 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		set_user_state(offline);
 #endif
 		hide_login_progress(gc, _("Internal Error"));
-		destroy_gaim_conn(gc);
+		serv_close(gc);
 		return -1;
 	} else if (bosconn->status & AIM_CONN_STATUS_CONNERR) {
 #ifdef USE_APPLET
 		set_user_state(offline);
 #endif
 		hide_login_progress(gc, _("Could Not Connect"));
-		destroy_gaim_conn(gc);
+		serv_close(gc);
 		return -1;
 	}
 
@@ -1260,7 +1255,7 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 		aim_bos_setprofile(sess, command->conn, gc->user->user_info, NULL, gaim_caps);
 		aim_bos_reqbuddyrights(sess, command->conn);
 
-		account_online(gc->user, gc); /* this is an awkward hack */
+		account_online(gc);
 		serv_finish_login(gc);
 
 		if (bud_list_cache_exists(gc))

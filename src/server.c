@@ -47,6 +47,7 @@ extern int gaim_caps;
 void serv_login(struct aim_user *user)
 {
 	struct prpl *p = find_prpl(user->protocol);
+	if (user->gc != NULL) return;
 	if (p && p->login) {
 		debug_printf("Logging in using %s\n", (*p->name)());
 		(*p->login)(user);

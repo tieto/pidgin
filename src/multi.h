@@ -71,14 +71,14 @@ struct gaim_connection {
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */
 extern GSList *connections;
 
-struct gaim_connection *new_gaim_conn(int, char *, char *);
+struct gaim_connection *new_gaim_conn(struct aim_user *);
 void destroy_gaim_conn(struct gaim_connection *);
 
 struct gaim_connection *find_gaim_conn_by_name(char *);
 
 void account_editor(GtkWidget *, GtkWidget *);
 
-void account_online(struct aim_user *, struct gaim_connection *);
+void account_online(struct gaim_connection *);
 void account_offline(struct gaim_connection *);
 
 void auto_login();

@@ -820,7 +820,7 @@ void irc_login(struct aim_user *user) {
 	struct sockaddr_in site;
 	char buf[4096];
 	
-	struct gaim_connection *gc = new_gaim_conn(PROTO_IRC, user->username, user->password);
+	struct gaim_connection *gc = new_gaim_conn(user);
 	struct irc_data *idata = gc->proto_data = g_new0(struct irc_data, 1);
 	char c;
 	int i;
@@ -869,7 +869,7 @@ void irc_login(struct aim_user *user) {
 
 
 	/* Now lets sign ourselves on */
-        account_online(user, gc);
+        account_online(gc);
 	serv_finish_login(gc);
 
 	if (bud_list_cache_exists(gc))

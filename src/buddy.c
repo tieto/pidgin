@@ -1535,7 +1535,7 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b) {
 	return g;
 }
 
-static int log_timeout(struct buddy_show *b) {
+static gint log_timeout(struct buddy_show *b) {
 	if (!b->connlist) {
 		struct group_show *g = find_gs_by_bs(b);
 		g->members = g_slist_remove(g->members, b);
@@ -1545,8 +1545,7 @@ static int log_timeout(struct buddy_show *b) {
 			gtk_container_remove(GTK_CONTAINER(buddies), g->item);
 			g_free(g->name);
 			g_free(g);
-		} else
-			update_num_group(g);
+		}
 		g_free(b->name);
 		g_free(b->show);
 		g_free(b);

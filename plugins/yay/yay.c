@@ -196,7 +196,7 @@ static void yahoo_callback(gpointer data, gint source, GdkInputCondition conditi
 }
 
 static void yahoo_login(struct aim_user *user) {
-	struct gaim_connection *gc = new_gaim_conn(PROTO_YAHOO, user->username, user->password);
+	struct gaim_connection *gc = new_gaim_conn(user);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 	int i;
 
@@ -247,7 +247,7 @@ static void yahoo_login(struct aim_user *user) {
 	}
 
 	debug_printf("Yahoo: logged in %s\n", gc->username);
-	account_online(user, gc);
+	account_online(gc);
 	serv_finish_login(gc);
 
 	gc->inpa = gdk_input_add(ctxt->sockfd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,

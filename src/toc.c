@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1098 $"
+#define REVISION "gaim:$Revision: 1099 $"
 
 struct toc_data {
 	int toc_fd;
@@ -81,7 +81,7 @@ void toc_login(struct aim_user *user)
 	char buf[80];
 	char buf2[2048];
 
-	gc = new_gaim_conn(PROTO_TOC, user->username, user->password);
+	gc = new_gaim_conn(user);
 	gc->proto_data = tdt = g_new0(struct toc_data, 1);
 	
 	g_snprintf(buf, sizeof(buf), "Looking up %s", 
@@ -89,6 +89,8 @@ void toc_login(struct aim_user *user)
 	set_login_progress(gc, 1, buf);
 	while (gtk_events_pending())
 		gtk_main_iteration();
+	if (!g_slist_find(connections, gc))
+		return;
 
 	tdt->toc_fd = proxy_connect(
 		user->proto_opt[USEROPT_AUTH][0] ? user->proto_opt[USEROPT_AUTH] : TOC_HOST,
@@ -100,7 +102,7 @@ void toc_login(struct aim_user *user)
 		g_snprintf(buf, sizeof(buf), "Connect to %s failed",
 			 user->proto_opt[USEROPT_AUTH]);
 		hide_login_progress(gc, buf);
-		destroy_gaim_conn(gc);
+		serv_close(gc);
 		return;
         }
 
@@ -108,10 +110,12 @@ void toc_login(struct aim_user *user)
 	set_login_progress(gc, 3, buf);
 	while (gtk_events_pending())
 		gtk_main_iteration();
+	if (!g_slist_find(connections, gc))
+		return;
 	
 	if (toc_signon(gc) < 0) {
 		hide_login_progress(gc, "Disconnected.");
-		destroy_gaim_conn(gc);
+		serv_close(gc);
 		return;
 	}
 
@@ -119,9 +123,11 @@ void toc_login(struct aim_user *user)
 	set_login_progress(gc, 4, buf);
 	while (gtk_events_pending())
 		gtk_main_iteration();
+	if (!g_slist_find(connections, gc))
+		return;
 	if (toc_wait_signon(gc) < 0) {
 		hide_login_progress(gc, "Authentication Failed");
-		destroy_gaim_conn(gc);
+		serv_close(gc);
 		return;
 	}
 
@@ -132,8 +138,10 @@ void toc_login(struct aim_user *user)
 	set_login_progress(gc, 5, buf);
 	while (gtk_events_pending())
 		gtk_main_iteration();
+	if (!g_slist_find(connections, gc))
+		return;
 
-	account_online(user, gc);
+	account_online(gc);
 	serv_finish_login(gc);
 
 	config = toc_wait_config(gc);
