@@ -1435,7 +1435,7 @@ static void jabber_register_commands(void)
 	gaim_cmd_register("msg", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-jabber",
-			jabber_cmd_chat_msg, _("msg &lt;user&gt; [room]:  Send a private message to another user.")); /* XXX is this right? */
+			jabber_cmd_chat_msg, _("msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."));
 }
 
 static GaimPluginPrefFrame *
