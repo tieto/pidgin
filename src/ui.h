@@ -138,6 +138,7 @@ struct conversation {
 	GdkColor fgcol;
 	int hasfg;
 
+	GList *send_history;
 	GString *history;
 
 	GtkWidget *send;

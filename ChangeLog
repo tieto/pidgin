@@ -2,7 +2,7 @@ Gaim: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.56:
 	* German translation update (Thanks Karsten Weiss)
-
+	* Shell-like send history binded to Ctrl-Up and Ctrl-Down
 version 0.55 (03/29/2002):
 	* Jabber improvements (Thanks Jim Seymour)
 	* Various sound cleanups (Thanks Robert McQueen)

@@ -183,6 +183,7 @@ struct conversation *new_conversation(char *name)
 	if (connections)
 		c->gc = (struct gaim_connection *)connections->data;
 	c->history = g_string_new("");
+	c->send_history = g_list_append(NULL, NULL);
 	conversations = g_list_append(conversations, c);
 	show_conv(c);
 	update_icon(c);
@@ -270,6 +271,13 @@ void delete_conversation(struct conversation *c)
 	if (c->save_icon)
 		gtk_widget_destroy(c->save_icon);
 #endif
+	c->send_history = g_list_first(c->send_history);
+	while (c->send_history) {
+		if (c->send_history->data)
+			g_free(c->send_history->data);
+		c->send_history = c->send_history->next;
+	}
+	g_list_free(c->send_history);
 	if (c->typing_timeout)
 		gtk_timeout_remove(c->typing_timeout);
 	g_string_free(c->history, TRUE);
@@ -841,6 +849,44 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		if (oldpos == pos)
 			gtk_editable_set_position(GTK_EDITABLE(entry), pos + 1);
 	} else if (event->state & GDK_CONTROL_MASK) {
+		int pos = 0;
+		switch (event->keyval) {
+		case GDK_Up:
+			debug_printf("YOU HIT UP!\n");
+			if (!c->send_history)
+				break;
+			debug_printf("history exists\n");
+			if (!c->send_history->prev) {
+				debug_printf("at curent\n");
+				if (c->send_history->data)
+					g_free(c->send_history->data);
+				c->send_history->data = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
+			} 
+			if (c->send_history->next && c->send_history->next->data) {
+				debug_printf("going to ->next\n");
+				c->send_history = c->send_history->next;
+				gtk_editable_delete_text (GTK_EDITABLE(entry),0,-1);
+				gtk_editable_insert_text(GTK_EDITABLE(entry), 
+							 c->send_history->data, 
+							 strlen(c->send_history->data),
+							 &pos);
+			}
+			
+			break;
+		case GDK_Down:
+		  if (!c->send_history) 
+				break;
+			if (c->send_history->prev) {
+			  c->send_history = c->send_history->prev;
+				if (c->send_history->data) {
+					gtk_editable_delete_text (GTK_EDITABLE(entry),0,-1);
+					gtk_editable_insert_text (GTK_EDITABLE(entry), c->send_history->data, 
+								  strlen(c->send_history->data), &pos);
+				
+				}
+			}
+			break;
+		}
 		if (convo_options & OPT_CONVO_CTL_CHARS) {
 			switch (event->keyval) {
 			case 'i':
@@ -1003,6 +1049,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	int limit;
 	gulong length=0;
 	int err = 0;
+	GList *first;
 
 	if (!c->gc)
 		return;
@@ -1018,6 +1065,12 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		return;
 	}
 
+	first = g_list_first(c->send_history);
+	if (first->data)
+		g_free(first->data);
+	first->data = g_strdup(buf);
+	c->send_history = g_list_prepend(first, NULL);
+	
 	buf2 = g_malloc(limit);
 
 	if (c->gc->flags & OPT_CONN_HTML) {
