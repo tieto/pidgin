@@ -57,6 +57,8 @@ void gaim_plugin_remove();
 static EggTrayIcon *docklet = NULL;
 static GtkWidget *icon;
 static enum docklet_status status;
+static GtkIconFactory *icon_factory = NULL;
+static GtkIconSize icon_size;
 
 static void docklet_toggle_mute(GtkWidget *toggle, void *data) {
 	mute_sounds = GTK_CHECK_MENU_ITEM(toggle)->active;
@@ -186,48 +188,35 @@ static void docklet_clicked(GtkWidget *button, GdkEventButton *event, void *data
 	}
 }
 
-static void docklet_update_icon() {
-	gchar *filename = NULL;
-	GdkPixbuf *unscaled;
+static void docklet_update_icon()
+{
+	const gchar *icon_name = NULL;
 
 	switch (status) {
 		case offline:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "offline.png", NULL);
+			icon_name = "gaim-docklet-offline";
 			break;
 		case offline_connecting:
 		case online_connecting:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "connect.png", NULL);
+			icon_name = "gaim-docklet-connect";
 			break;
 		case online:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "online.png", NULL);
+			icon_name = "gaim-docklet-online";
 			break;
 		case online_pending:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "msgunread.png", NULL);
+			icon_name = "gaim-docklet-msgunread";
 			break;
 		case away:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "away.png", NULL);
+			icon_name = "gaim-docklet-away";
 			break;
 		case away_pending:
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "msgpend.png", NULL);
+			icon_name = "gaim-docklet-msgpend";
 			break;
 	}
 
-	unscaled = gdk_pixbuf_new_from_file(filename, NULL);
+	gtk_image_set_from_stock(GTK_IMAGE(icon), icon_name, icon_size);
 
-	if (unscaled) {
-		GdkPixbuf *scaled;
-
-		scaled = gdk_pixbuf_scale_simple(unscaled, 24, 24, GDK_INTERP_BILINEAR);
-		gtk_image_set_from_pixbuf(GTK_IMAGE(icon), scaled);
-		g_object_unref(unscaled);
-		g_object_unref(scaled);
-
-		debug_printf("Tray Icon: updated icon to %s\n",filename);
-	} else {
-		debug_printf("Tray Icon: failed to load icon from %s\n",filename);
-	}
-
-	g_free(filename);
+	debug_printf("Tray Icon: updated icon to '%s'\n",icon_name);
 }
 
 static gboolean docklet_update_status() {
@@ -356,7 +345,39 @@ static void gaim_buddy_back(struct gaim_connection *gc, char *who, void *data) {
 static void gaim_new_conversation(char *who, void *data) {
 } */
 
+static void docklet_register_icon(const char *name, char *fn) {
+	gchar *filename;
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", fn, NULL);
+	gtk_icon_factory_add(icon_factory, name,
+		gtk_icon_set_new_from_pixbuf(gdk_pixbuf_new_from_file(filename, NULL)));
+	g_free(filename);
+}
+
+static void docklet_register_icon_factory() {
+	icon_factory = gtk_icon_factory_new();
+	
+	docklet_register_icon("gaim-docklet-offline", "offline.png");
+	docklet_register_icon("gaim-docklet-connect", "connect.png");
+	docklet_register_icon("gaim-docklet-online", "online.png");
+	docklet_register_icon("gaim-docklet-msgunread", "msgunread.png");
+	docklet_register_icon("gaim-docklet-away", "away.png");
+	docklet_register_icon("gaim-docklet-msgpend", "msgpend.png");
+
+	gtk_icon_factory_add_default(icon_factory);
+	
+	icon_size = gtk_icon_size_register("gaim-docklet-size", 24, 24);
+}
+
+static void docklet_unregister_icon_factory() {
+	/* does this actually free anything? it's a moot point seeing as
+	   unloading the docklet crashes gaim, but it needs to be checked */
+	gtk_icon_factory_remove_default(icon_factory);
+}
+
 char *gaim_plugin_init(GModule *handle) {
+	docklet_register_icon_factory();
+
 	docklet_create(NULL);
 
 	gaim_signal_connect(handle, event_signon, gaim_signon, NULL);
@@ -385,6 +406,8 @@ void gaim_plugin_remove() {
 
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
+	
+	docklet_unregister_icon_factory();
 
 	debug_printf("Tray Icon: removed\n");
 }
