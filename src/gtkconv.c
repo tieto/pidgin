@@ -396,19 +396,7 @@ static void default_formatize(GaimConversation *conv) {
 		}
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size")) {
-			int i = 3;
-			if (gaim_prefs_get_int("/gaim/gtk/conversations/font_size") < 3) {
-				while (gaim_prefs_get_int("/gaim/gtk/conversations/font_size") < i) {
-					gtk_imhtml_font_shrink(GTK_IMHTML(c->entry));
-					i--;
-				}
-			}
-
-			while (gaim_prefs_get_int("/gaim/gtk/conversations/font_size") > i) {
-				gtk_imhtml_font_grow(GTK_IMHTML(c->entry));
-				i++;
-			}
-			
+		        gtk_imhtml_font_set_size(GTK_IMHTML(c->entry), gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
 		}
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_fgcolor")) {
