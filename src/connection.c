@@ -509,22 +509,22 @@ gaim_connections_init(void)
 	gaim_signal_register(handle, "signing-on",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT));
+										GAIM_SUBTYPE_CONNECTION));
 
 	gaim_signal_register(handle, "signed-on",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT));
+										GAIM_SUBTYPE_CONNECTION));
 
 	gaim_signal_register(handle, "signing-off",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT));
+										GAIM_SUBTYPE_CONNECTION));
 
 	gaim_signal_register(handle, "signed-off",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT));
+										GAIM_SUBTYPE_CONNECTION));
 }
 
 void
