@@ -9,6 +9,7 @@ version 0.9.16:
           essentially implements recovery from a server crash at AOL
 	  (AOL does not back up machines that contain TOC-based buddy
 	  lists, unfortunately).  (Thanks Syd)
+	* Font selection dialog 
 
 version 0.9.15: (05/06/2000)
 	* Plugin support enabled by default (oops)
