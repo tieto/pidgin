@@ -99,6 +99,7 @@ DLL_C_SRC =		about.c \
 			gtkplugin.c \
 			gtkpounce.c \
 			gtkprefs.c \
+			gtkprivacy.c \
 			gtkrequest.c \
 			gtksound.c \
 			gtkutils.c \
@@ -111,6 +112,7 @@ DLL_C_SRC =		about.c \
 			plugin.c \
 			pounce.c \
 			prefs.c \
+			privacy.c \
 			proxy.c \
 			prpl.c \
 			request.c \
