@@ -1,8 +1,5 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.73cvs:
-	* Russian translation updated (Alexandre Prokoudine)
-
 version 0.72 (10/31/2003):
 	* Added a search feature to conversations.
 	* Added an option to remove the formatting toolbar, both globally and
@@ -31,6 +28,7 @@ version 0.72 (10/31/2003):
 	* Korean translation updated (Kyung-uk)
 	* Portuguese (Portugal) updated (Duarte Henriques)
 	* Romanian translation updated (Misu Moldovan)
+	* Russian translation updated (Alexandre Prokoudine)
 	* Serbian translation updated (Danilo Segan)
 	* Serbian Latin translation updated (Danilo Segan)
 	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
