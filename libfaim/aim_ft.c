@@ -7,6 +7,9 @@
 #include <sys/utsname.h> /* for aim_directim_initiate */
 #include <arpa/inet.h> /* for inet_ntoa */
 #endif
+#ifdef NEED_SOCKLEN_T
+typedef unsigned int socklen_t;
+#endif
 
 /* aim_msgcookies.c is mostly new. just look at the diff and replace yours, easiest. */
 

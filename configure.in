@@ -8,6 +8,7 @@ AM_PROG_LIBTOOL
 AC_PROG_CC
 AC_PROG_INSTALL
 
+
 ALL_LINGUAS="de fr es zh_CN ko"
 AM_GNU_GETTEXT
 
@@ -28,6 +29,7 @@ dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(socket strdup strstr atexit getaddrinfo)
+AC_TRY_COMPILE(sys/socket.h, typedef unsigned int socklen_t;, AC_DEFINE(NEED_SOCKLEN_T),)
 
 dnl This is a bad, bad hack.  I am a bad, bad man.
 CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include -I../"

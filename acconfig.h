@@ -13,6 +13,7 @@
 #undef ESD_SOUND
 #undef _REENTRANT
 #undef NEED_GNOMESUPPORT_H
+#undef NEED_SOCKLEN_T
 
 
 
