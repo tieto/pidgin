@@ -12,18 +12,6 @@
 #include "win32dep.h"
 #endif
 
-struct node {
-	char *sn;
-	struct node *next;
-};
-
-/**
- * Keep an aim_userinfo_t for each user we are aware of.
- */
-static aim_userinfo_t *infos = NULL;
-static struct node *request_queue = NULL;
-static int waiting_for_response = FALSE;
-
 /*
  * Capability blocks. 
  *
@@ -193,16 +181,16 @@ static const struct {
  * for this buddy, then just overwrite parts of the old data.
  * @param userinfo Contains the new information for the buddy.
  */
-static void aim_locate_adduserinfo(aim_userinfo_t *userinfo) {
+static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo) {
 	aim_userinfo_t *cur;
 
-	cur = aim_locate_finduserinfo(userinfo->sn);
+	cur = aim_locate_finduserinfo(sess, userinfo->sn);
 
 	if (cur == NULL) {
 		cur = (aim_userinfo_t *)calloc(1, sizeof(aim_userinfo_t));
 		cur->sn = strdup(userinfo->sn);
-		cur->next = infos;
-		infos = cur;
+		cur->next = sess->locate.userinfo;
+		sess->locate.userinfo = cur;
 	}
 
 	cur->warnlevel = userinfo->warnlevel;
@@ -241,31 +229,31 @@ static void aim_locate_adduserinfo(aim_userinfo_t *userinfo) {
 }
 
 static void aim_locate_dorequest(aim_session_t *sess) {
-	struct node *cur = request_queue;
+	struct userinfo_node *cur = sess->locate.request_queue;
 
 	if (cur == NULL)
 		return;
 
-	if (waiting_for_response == TRUE)
+	if (sess->locate.waiting_for_response == TRUE)
 		return;
 
-	waiting_for_response = TRUE;
+	sess->locate.waiting_for_response = TRUE;
 	aim_locate_getinfoshort(sess, cur->sn, 0x00000007);
 }
 
 faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *sn) {
-	struct node *cur;
+	struct userinfo_node *cur;
 
-	cur = (struct node *)malloc(sizeof(struct node));
+	cur = (struct userinfo_node *)malloc(sizeof(struct userinfo_node));
 	cur->sn = strdup(sn);
-	cur->next = request_queue;
-	request_queue = cur;
+	cur->next = sess->locate.request_queue;
+	sess->locate.request_queue = cur;
 
 	aim_locate_dorequest(sess);
 }
 
-faim_export aim_userinfo_t *aim_locate_finduserinfo(const char *sn) {
-	aim_userinfo_t *cur = infos;
+faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const char *sn) {
+	aim_userinfo_t *cur = sess->locate.userinfo;
 
 	while (cur != NULL) {
 		if (aim_sncmp(cur->sn, sn) == 0)
@@ -663,7 +651,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 		aim_bstream_setpos(bs, endpos);
 	}
 
-	aim_locate_adduserinfo(outinfo);
+	aim_locate_adduserinfo(sess, outinfo);
 
 	return 0;
 }
@@ -892,7 +880,7 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	aim_tlvlist_t *tlvlist;
 	aim_tlv_t *tlv = NULL;
 	int was_explicit;
-	struct node *cur, *del;
+	struct userinfo_node *cur, *del;
 
 	userinfo = (aim_userinfo_t *)malloc(sizeof(aim_userinfo_t));
 	aim_info_extract(sess, bs, userinfo);
@@ -923,8 +911,8 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	}
 	aim_freetlvchain(&tlvlist);
 
-	aim_locate_adduserinfo(userinfo);
-	userinfo2 = aim_locate_finduserinfo(userinfo->sn);
+	aim_locate_adduserinfo(sess, userinfo);
+	userinfo2 = aim_locate_finduserinfo(sess, userinfo->sn);
 	aim_info_free(userinfo);
 	free(userinfo);
 
@@ -934,14 +922,14 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	 * for this buddy.
 	 */
 	was_explicit = TRUE;
-	while ((request_queue != NULL) && (aim_sncmp(userinfo2->sn, request_queue->sn) == 0)) {
-		del = request_queue;
-		request_queue = del->next;
+	while ((sess->locate.request_queue != NULL) && (aim_sncmp(userinfo2->sn, sess->locate.request_queue->sn) == 0)) {
+		del = sess->locate.request_queue;
+		sess->locate.request_queue = del->next;
 		was_explicit = FALSE;
 		free(del->sn);
 		free(del);
 	}
-	cur = request_queue;
+	cur = sess->locate.request_queue;
 	while ((cur != NULL) && (cur->next != NULL)) {
 		if (aim_sncmp(userinfo2->sn, cur->next->sn) == 0) {
 			del = cur->next;
@@ -957,7 +945,7 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 			ret = userfunc(sess, rx, userinfo2);
 	} else {
-		waiting_for_response = FALSE;
+		sess->locate.waiting_for_response = FALSE;
 		aim_locate_dorequest(sess);
 	}
 
@@ -1142,9 +1130,9 @@ static void locate_shutdown(aim_session_t *sess, aim_module_t *mod)
 {
 	aim_userinfo_t *del;
 
-	while (infos) {
-		del = infos;
-		infos = infos->next;
+	while (sess->locate.userinfo) {
+		del = sess->locate.userinfo;
+		sess->locate.userinfo = sess->locate.userinfo->next;
 		free(del->sn);
 		free(del->info);
 		free(del->avail);

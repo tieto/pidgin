@@ -874,6 +874,10 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	sess->msgcookies = NULL;
 	sess->icq_info = NULL;
 	sess->oft_info = NULL;
+	sess->emailinfo = NULL;
+	sess->locate.userinfo = NULL;
+	sess->locate.request_queue = NULL;
+	sess->locate.waiting_for_response = FALSE;
 	sess->snacid_next = 0x00000001;
 
 	sess->flags = 0;

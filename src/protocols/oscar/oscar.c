@@ -3169,8 +3169,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	}
 
-	/* gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, text->str, NULL, NULL); */
-	gaim_notify_formatted(gc, NULL, _("Below are the results of your search:"), NULL, text->str, NULL, NULL);
+	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, text->str, NULL, NULL);
 	g_string_free(text, TRUE);
 
 	return 1;
@@ -3506,7 +3505,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 		return FALSE;
 	}
 
-	userinfo = aim_locate_finduserinfo((char *)od->requesticon->data);
+	userinfo = aim_locate_finduserinfo(od->sess, (char *)od->requesticon->data);
 	if ((userinfo != NULL) && (userinfo->iconcsumlen > 0)) {
 		aim_bart_request(od->sess, od->requesticon->data, userinfo->iconcsum, userinfo->iconcsumlen);
 		return FALSE;
@@ -5356,7 +5355,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 	GaimConnection *gc = b->account->gc;
 	struct oscar_data *od = gc->proto_data;
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
-	aim_userinfo_t *userinfo = aim_locate_finduserinfo(b->name);
+	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od->sess, b->name);
 	gchar *tmp = NULL, *ret = g_strdup("");
 
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
@@ -6076,7 +6075,7 @@ static GList *oscar_buddy_menu(GaimConnection *gc, const char *who) {
 		aim_userinfo_t *userinfo;
 
 		if (b)
-			userinfo = aim_locate_finduserinfo(b->name);
+			userinfo = aim_locate_finduserinfo(od->sess, b->name);
 
 		if (b && userinfo && aim_sncmp(gaim_account_get_username(gaim_connection_get_account(gc)), who) && GAIM_BUDDY_IS_ONLINE(b)) {
 			if (userinfo->capabilities & AIM_CAPS_DIRECTIM) {

@@ -443,6 +443,13 @@ typedef struct aim_session_s {
 	struct aim_icq_info *icq_info;
 	struct aim_oft_info *oft_info;
 	struct aim_authresp_info *authinfo;
+	struct aim_emailinfo *emailinfo;
+
+	struct {
+		struct aim_userinfo_s *userinfo;
+		struct userinfo_node *request_queue;
+		int waiting_for_response;
+	} locate;
 
 	/* Server-stored information (ssi) */
 	struct {
@@ -961,6 +968,11 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_
 #define AIM_USERINFO_PRESENT_SESSIONLEN   0x00000100
 #define AIM_USERINFO_PRESENT_CREATETIME   0x00000200
 
+struct userinfo_node {
+	char *sn;
+	struct userinfo_node *next;
+};
+
 typedef struct aim_userinfo_s {
 	char *sn;
 	fu16_t warnlevel; /* evil percent * 10 (999 = 99.9%) */
@@ -1053,7 +1065,7 @@ struct aim_invite_priv {
 #define AIM_COOKIETYPE_OFTIMAGE 0x14
 #define AIM_COOKIETYPE_OFTICON  0x15
 
-faim_export aim_userinfo_t *aim_locate_finduserinfo(const char *sn);
+faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const char *sn);
 
 /* 0x0002 */ faim_export int aim_locate_reqrights(aim_session_t *sess);
 /* 0x0004 */ faim_export int aim_locate_setprofile(aim_session_t *sess, const char *profile_encoding, const char *profile, const int profile_len, const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len, fu32_t caps);
