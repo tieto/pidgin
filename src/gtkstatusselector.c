@@ -384,7 +384,7 @@ rebuild_list(GaimGtkStatusSelector *selector)
 			first_prpl_type = basename;
 			first_account = account;
 		}
-		else if (!strcmp(first_prpl_type, basename))
+		else if (strcmp(first_prpl_type, basename))
 			single_prpl = FALSE;
 	}
 
