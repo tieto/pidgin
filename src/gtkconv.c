@@ -2190,9 +2190,6 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkconv->u.im->warn);
 		gtk_widget_show(gtkconv->u.im->block);
 
-		/* Deal with the toolbar */
-		//gtk_widget_show(gtkconv->toolbar.image);
-
 		/* Deal with menu items */
 		gtk_widget_show(gtkwin->menu.view_log);
 		gtk_widget_show(gtkwin->menu.add_pounce);
@@ -2224,9 +2221,6 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkconv->info);
 		gtk_widget_show(gtkconv->send);
 		gtk_widget_show(gtkconv->u.chat->invite);
-
-		/* Deal with the toolbar */
-		//		gtk_widget_hide(gtkconv->toolbar.image);
 
 		/* Deal with menu items */
 		gtk_widget_hide(gtkwin->menu.view_log);
@@ -2332,10 +2326,6 @@ gray_stuff_out(GaimConversation *conv)
 		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			gtk_widget_set_sensitive(gtkconv->u.chat->invite, FALSE);
 		}
-
-		/* Deal with the toolbar */
-		//gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
-		//gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
 
 		/* Then deal with menu items */
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
@@ -3075,9 +3065,9 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>" },
 
-	{ N_("/Conversation/Insert Lin_k..."), NULL, NULL, 0, //menu_insert_link_cb, 0,
+	{ N_("/Conversation/Insert Lin_k..."), NULL, NULL, 0, /* menu_insert_link_cb, 0, */
 	  "<StockItem>", GAIM_STOCK_LINK },
-	{ N_("/Conversation/Insert Imag_e..."), NULL, NULL, 0, //menu_insert_image_cb, 0,
+	{ N_("/Conversation/Insert Imag_e..."), NULL, NULL, 0, /* menu_insert_image_cb, 0, */
 	  "<StockItem>", GAIM_STOCK_IMAGE },
 
 	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>" },
@@ -4259,24 +4249,6 @@ static void
 gaim_gtkconv_destroy(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	/*	if (gtkconv->dialogs.fg_color != NULL)
-		gtk_widget_destroy(gtkconv->dialogs.fg_color);
-
-	if (gtkconv->dialogs.bg_color != NULL)
-		gtk_widget_destroy(gtkconv->dialogs.bg_color);
-
-	if (gtkconv->dialogs.font != NULL)
-		gtk_widget_destroy(gtkconv->dialogs.font);
-
-	if (gtkconv->dialogs.image != NULL)
-		gtk_widget_destroy(gtkconv->dialogs.image);
-
-	if (gtkconv->dialogs.smiley != NULL)
-		gtk_widget_destroy(gtkconv->dialogs.smiley);
-	*/
-	//if (gtkconv->dialogs.link != NULL)
-	//	close_link_dialog(conv);
 
 	if (gtkconv->dialogs.log != NULL)
 		gtk_widget_destroy(gtkconv->dialogs.log);
