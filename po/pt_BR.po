@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-15 15:28-0300\n"
-"PO-Revision-Date: 2003-07-15 14:51-0300\n"
+"POT-Creation-Date: 2003-07-16 10:47-0300\n"
+"PO-Revision-Date: 2003-07-16 10:48-0300\n"
 "Last-Translator: Maurício de Lemos Rodrigues Collares Neto "
 "<mauricioc@myrealbox.com>\n"
 "Language-Team: pt_BR <pt_BR@li.org>\n"
@@ -2190,7 +2190,7 @@ msgstr "Inativo"
 
 #: src/protocols/msn/switchboard.c:121
 msgid "The conversation has become inactive and timed out."
-msgstr "A conversa tornou-se inativa a esgotou o limite de tempo."
+msgstr "A conversa tornou-se inativa e esgotou o limite de tempo."
 
 #: src/protocols/msn/switchboard.c:128
 #, c-format
