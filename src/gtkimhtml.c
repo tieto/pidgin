@@ -382,8 +382,8 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 
 
 	if (info == TARGET_HTML) {
-		char *selection;
 		int len;
+		char *selection;
 		GString *str = g_string_new(NULL);
 		text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
 
