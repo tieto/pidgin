@@ -81,15 +81,19 @@ DLL_C_SRC =		about.c \
 			buddy_chat.c \
 			conversation.c \
 			core.c \
+			debug.c \
 			dialogs.c \
 			dnd-hints.c \
+			event.c \
 			ft.c \
 			gaim-disclosure.c \
 			gaimrc.c \
 			gtkconv.c \
 			gtkcellrendererprogress.c \
+			gtkdebug.c \
 			gtkft.c \
 			gtkimhtml.c \
+			gtkplugin.c \
 			gtkpounce.c \
 			gtkutils.c \
 			html.c \
@@ -98,9 +102,8 @@ DLL_C_SRC =		about.c \
 			log.c \
 			main.c \
 			md5.c \
-			module.c \
 			multi.c \
-			perl.c \
+			plugin.c \
 			pounce.c \
 			prefs.c \
 			proxy.c \

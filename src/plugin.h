@@ -22,6 +22,7 @@
  */
 #ifndef _GAIM_PLUGIN_H_
 #define _GAIM_PLUGIN_H_
+#include <gmodule.h>
 
 typedef enum   _GaimPluginType GaimPluginType;     /**< GaimPluginType   */
 typedef struct _GaimPlugin     GaimPlugin;         /**< GaimPlugin       */
@@ -126,7 +127,7 @@ struct _GaimPlugin
 	}
 #else /* if !STATIC_MODULE */
 # define GAIM_INIT_PLUGIN(pluginname, initfunc, plugininfo) \
-	gboolean gaim_init_plugin(GaimPlugin *plugin) { \
+	G_MODULE_EXPORT gboolean gaim_init_plugin(GaimPlugin *plugin) { \
 		plugin->info = &(plugininfo); \
 		initfunc((plugin)); \
 		return gaim_plugin_register(plugin); \

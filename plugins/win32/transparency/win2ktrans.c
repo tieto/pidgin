@@ -20,26 +20,26 @@
  * foundation, inc., 59 temple place, suite 330, boston, ma  02111-1307  usa
  *
  */
-#define GAIM_PLUGINS
-
-#include <gtk/gtk.h>
 #include <gdk/gdkwin32.h>
+#include <gmodule.h>
 #include "gaim.h"
+#include "gtkplugin.h"
 #include "gtklist.h"
 #include "win32dep.h"
 
 /*
  *  MACROS & DEFINES
  */
-#define WINTRANS_VERSION 1
+#define WINTRANS_PLUGIN_ID              "win-gaim-trans"
+#define WINTRANS_VERSION                1
 
 /* These defines aren't found in mingw's winuser.h */
 #ifndef LWA_ALPHA
-#define LWA_ALPHA               0x00000002
+#define LWA_ALPHA                       0x00000002
 #endif
 
 #ifndef WS_EX_LAYERED
-#define WS_EX_LAYERED           0x00080000
+#define WS_EX_LAYERED                   0x00080000
 #endif
 
 /* Transparency plugin configuration */
@@ -346,17 +346,16 @@ static void set_trans_option(GtkWidget *w, int option) {
 /*
  *  EXPORTED FUNCTIONS
  */
-
-G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
-	gaim_signal_connect(handle, event_new_conversation, gaim_new_conversation, NULL); 
-	gaim_signal_connect(handle, event_signon, blist_created, NULL);
+G_MODULE_EXPORT gboolean plugin_load(GaimPlugin *plugin) {
+	gaim_signal_connect(plugin, event_new_conversation, gaim_new_conversation, NULL); 
+	gaim_signal_connect(plugin, event_signon, blist_created, NULL);
 	MySetLayeredWindowAttributes = (void*)wgaim_find_and_loadproc("user32.dll", "SetLayeredWindowAttributes" );
 	load_trans_prefs();
 
-	return NULL;
+	return TRUE;
 }
 
-G_MODULE_EXPORT void gaim_plugin_remove() {
+G_MODULE_EXPORT gboolean plugin_unload(GaimPlugin *plugin) {
 	debug_printf("Removing win2ktrans.dll plugin\n");
 
 	/* Remove slider bars */
@@ -376,29 +375,10 @@ G_MODULE_EXPORT void gaim_plugin_remove() {
 		SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 		set_wintrans_off(blist);
 	}
+	return TRUE;
 }
 
-struct gaim_plugin_description desc; 
-
-G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("Transparency"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("This plugin enables variable alpha transparency on conversation windows.\n\n* Note: This plugin requires Win2000 or WinXP.")); 
-	desc.authors = g_strdup("Rob Flynn &lt;rob@marko.net&gt;");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
-
-G_MODULE_EXPORT char *name() {
-	return _("Transparency");
-}
-
-G_MODULE_EXPORT char *description() {
-	return _("This plugin enables variable alpha transparency on conversation windows.\n\n* Note: This plugin requires Win2000 or WinXP.");
-}
-
-G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
+G_MODULE_EXPORT GtkWidget *get_config_frame(GaimPlugin *plugin) {
 	GtkWidget *ret;
 	GtkWidget *imtransbox, *bltransbox;
 	GtkWidget *hbox;
@@ -490,3 +470,42 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
 	gtk_widget_show_all(ret);
 	return ret;
 }
+
+static GaimGtkPluginUiInfo ui_info =
+{
+	get_config_frame
+};
+
+static GaimPluginInfo info =
+{
+	2,                                                /**< api_version    */
+	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+
+	WINTRANS_PLUGIN_ID,                               /**< id             */
+	N_("Transparency"),                               /**< name           */
+	VERSION,                                          /**< version        */
+	                                                  /**  summary        */
+	N_("This plugin enables variable alpha transparency on conversation windows.\n\n* Note: This plugin requires Win2000 or WinXP."),
+	                                                  /**  description    */
+	N_("This plugin enables variable alpha transparency on conversation windows.\n\n* Note: This plugin requires Win2000 or WinXP."),
+	"Herman Bloggs <hermanator12002@yahoo.com>",      /**< author         */
+	WEBSITE,                                          /**< homepage       */
+
+	plugin_load,                                      /**< load           */
+	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< destroy        */
+
+	&ui_info,                                         /**< ui_info        */
+	NULL                                              /**< extra_info     */
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+}
+
+GAIM_INIT_PLUGIN(wintrans, __init_plugin, info);

@@ -18,19 +18,18 @@
  * foundation, inc., 59 temple place, suite 330, boston, ma  02111-1307  usa
  *
  */
-#define GAIM_PLUGINS
 #include <windows.h>
 #include <winreg.h>
 #include <winerror.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkwin32.h>
 #include "gaim.h"
+#include "gtkplugin.h"
 #include "win32dep.h"
 
 /*
  *  MACROS & DEFINES
  */
-#define WINPREFS_VERSION 1
+#define WINPREFS_PLUGIN_ID             "gaim-winprefs"
+#define WINPREFS_VERSION                 1
 
 /* Plugin options */
 #define OPT_WGAIM_AUTOSTART               0x00000001
@@ -129,35 +128,7 @@ static void set_winprefs_option(GtkWidget *w, int option) {
 /*
  *  EXPORTED FUNCTIONS
  */
-
-G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
-	return NULL;
-}
-
-G_MODULE_EXPORT void gaim_plugin_remove() {
-}
-
-struct gaim_plugin_description desc; 
-
-G_MODULE_EXPORT struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup(_("WinGaim Options"));
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup(_("Options specific to Windows Gaim.")); 
-	desc.authors = g_strdup("Herman Bloggs &lt;hermanator12002@yahoo.com&gt;");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
-
-G_MODULE_EXPORT char *name() {
-	return _("WinGaim Options");
-}
-
-G_MODULE_EXPORT char *description() {
-	return _("Options specific to Windows Gaim.");
-}
-
-G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
+static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	GtkWidget *ret;
 	GtkWidget *button;
 	GtkWidget *vbox;
@@ -181,3 +152,37 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
 	gtk_widget_show_all(ret);
 	return ret;
 }
+
+static GaimGtkPluginUiInfo ui_info =
+{
+	get_config_frame
+};
+
+static GaimPluginInfo info =
+{
+	2,
+	GAIM_PLUGIN_STANDARD,
+	GAIM_GTK_PLUGIN_TYPE,
+	0,
+	NULL,
+	GAIM_PRIORITY_DEFAULT,
+	WINPREFS_PLUGIN_ID,
+	N_("WinGaim Options"),
+	VERSION,
+	N_("Options specific to Windows Gaim."),
+	N_("Options specific to Windows Gaim."),
+	"Herman Bloggs <hermanator12002@yahoo.com>",
+	WEBSITE,
+	NULL,
+	NULL,
+	NULL,
+	&ui_info,
+	NULL
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+}
+
+GAIM_INIT_PLUGIN(winprefs, __init_plugin, info);
