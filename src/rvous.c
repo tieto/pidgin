@@ -180,7 +180,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	
 	ft->fd = socket(AF_INET, SOCK_STREAM, 0);
 	
-	if (ft->fd <= -1 || connect(ft->fd, (struct sockaddr_in *)&sin, sizeof(sin))) {
+	if (ft->fd <= -1 || connect(ft->fd, (struct sockaddr *)&sin, sizeof(sin))) {
 		return;
 	}
 
@@ -366,7 +366,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 
 	ft->fd = socket(AF_INET, SOCK_STREAM, 0);
 
-	if (ft->fd <= -1 || connect(ft->fd, (struct sockaddr_in *)&sin, sizeof(sin))) {
+	if (ft->fd <= -1 || connect(ft->fd, (struct sockaddr *)&sin, sizeof(sin))) {
 		return;
 	}
 
