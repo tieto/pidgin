@@ -949,12 +949,13 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
 	} else if (!g_strncasecmp(buf, "OUT", 3)) {
 		char *tmp = buf;
-		static char msg[MSN_BUF_LEN];
 
 		GET_NEXT(tmp);
 		if (!g_strncasecmp(tmp, "OTH", 3)) {
-			g_snprintf(msg, sizeof(msg), _("You have been disconnected. You have signed on from another location."));
-			do_error_dialog(msg, _("MSN Error"));
+			hide_login_progress(gc, _("You have been disconnected. You have "
+						  "signed on from another location."));
+			signoff(gc);
+			return 0;
 		}
 	} else if (!g_strncasecmp(buf, "PRP", 3)) {
 	} else if (!g_strncasecmp(buf, "QNG", 3)) {
