@@ -59,6 +59,11 @@ struct msn_xfr {
 	char *what;
 };
 
+struct msn_buddy {
+	char *user;
+	char *friend;
+};
+
 static void msn_login_callback(gpointer, gint, GdkInputCondition);
 static void msn_login_xfr_connect(gpointer, gint, GdkInputCondition);
 
@@ -593,7 +598,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 
 		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
 	} else if (!g_strncasecmp(buf, "LST", 3)) {
-		char *which, *who, *tmp = buf;
+		char *which, *who, *friend, *tmp = buf;
 
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
@@ -606,12 +611,26 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 		who = tmp;
 
 		GET_NEXT(tmp);
+		friend = tmp;
 
-		if (!g_strcasecmp(which, "FL"))
-			md->fl = g_slist_append(md->fl, g_strdup(who));
-		else if (!md->imported && bud_list_cache_exists(gc)) {
-			do_import(NULL, gc);
+		if (!g_strcasecmp(which, "FL")) {
+			struct msn_buddy *b = g_new0(struct msn_buddy, 1);
+			b->user = g_strdup(who);
+			b->friend = g_strdup(friend);
+			md->fl = g_slist_append(md->fl, b);
+		} else if (!md->imported) {
+			if (bud_list_cache_exists(gc))
+				do_import(NULL, gc);
 			md->imported = TRUE;
+			while (md->fl) {
+				struct msn_buddy *b = md->fl->data;
+				md->fl = g_slist_remove(md->fl, b);
+				if (!find_buddy(gc, b->user))
+					add_buddy(gc, "Buddies", b->user, b->friend);
+				g_free(b->user);
+				g_free(b->friend);
+				g_free(b);
+			}
 		}
 	} else if (!g_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
@@ -1020,8 +1039,10 @@ static void msn_close(struct gaim_connection *gc)
 		g_free(mx);
 	}
 	while (md->fl) {
-		char *tmp = md->fl->data;
+		struct msn_buddy *tmp = md->fl->data;
 		md->fl = g_slist_remove(md->fl, tmp);
+		g_free(tmp->user);
+		g_free(tmp->friend);
 		g_free(tmp);
 	}
 	g_free(md);
@@ -1229,7 +1250,8 @@ static void msn_add_buddy(struct gaim_connection *gc, char *who)
 	GSList *l = md->fl;
 
 	while (l) {
-		if (!g_strcasecmp(who, l->data))
+		struct msn_buddy *b = l->data;
+		if (!g_strcasecmp(who, b->user))
 			break;
 		l = l->next;
 	}
