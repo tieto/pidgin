@@ -43,6 +43,7 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/save.xpm"
 #include "pixmaps/ok.xpm"
+#include "pixmaps/add.xpm"
 
 #define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 
@@ -824,14 +825,20 @@ void show_add_buddy(char *buddy, char *group)
 	GtkWidget *vbox;
         GtkWidget *topbox;
 	GtkWidget *frame;
+	GtkWidget *icon_i;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
+	GtkWidget *button_box;
 
         struct addbuddy *a = g_new0(struct addbuddy, 1);
         
         a->window = gtk_window_new(GTK_WINDOW_DIALOG);
-        dialogwindows = g_list_prepend(dialogwindows, a->window);
-        cancel = gtk_button_new_with_label(_("Cancel"));
-        add = gtk_button_new_with_label(_("Add"));
-        bbox = gtk_hbox_new(TRUE, 10);
+	gtk_widget_set_usize(a->window, 480, 105);
+	gtk_window_set_policy(GTK_WINDOW(a->window), FALSE, FALSE, TRUE);
+	gtk_widget_show(a->window);
+	dialogwindows = g_list_prepend(dialogwindows, a->window);
+
+	bbox = gtk_hbox_new(TRUE, 10);
         topbox = gtk_hbox_new(FALSE, 5);
         vbox = gtk_vbox_new(FALSE, 5);
 
@@ -841,8 +848,52 @@ void show_add_buddy(char *buddy, char *group)
         gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree());
         /* Put the buttons in the box */
 
-        gtk_box_pack_start(GTK_BOX(bbox), add, TRUE, TRUE, 10);
-        gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
+	/* Build Add Button */
+
+	add = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, add_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Add"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(add), button_box);
+
+	/* End of OK Button */
+	
+	/* Build Cancel Button */
+
+	cancel = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, cancel_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(cancel), button_box);
+	
+	/* End of Cancel Button */
+	
+        gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
 
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_label(GTK_FRAME(frame), _("Add Buddy"));
@@ -864,7 +915,7 @@ void show_add_buddy(char *buddy, char *group)
 
         /* And the boxes in the box */
         gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
 
         /* Handle closes right */
         gtk_signal_connect(GTK_OBJECT(a->window), "destroy",
