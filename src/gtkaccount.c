@@ -1693,7 +1693,7 @@ online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
 					(GSourceFunc)account_pulse_update, pulse_data);
 
 			gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-							   COLUMN_PULSE_DATA, pulse_data);
+							   COLUMN_PULSE_DATA, pulse_data, -1);
 		}
 
 		gaim_account_connect(account);
