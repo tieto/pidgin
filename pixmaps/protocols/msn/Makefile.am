@@ -1,5 +1,6 @@
 EXTRA_DIST = 	msn_angel.xpm \
 	msn_angry.xpm \
+	msn_away.xpm \
 	msn_bat.xpm \
 	msn_beer.xpm \
 	msn_boy.xpm \
@@ -28,6 +29,8 @@ EXTRA_DIST = 	msn_angel.xpm \
 	msn_laugh.xpm \
 	msn_neutral.xpm \
 	msn_note.xpm \
+	msn_occ.xpm \
+	msn_online.xpm \
 	msn_ooooh.xpm \
 	msn_phone.xpm \
 	msn_photo.xpm \
