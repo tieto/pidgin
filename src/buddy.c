@@ -1481,6 +1481,8 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 	GdkBitmap *bm;
 	char **xpm = NULL;
 
+	if (!blist) return;
+
 	if (b->present) {
 		if ((gs = find_group_show(g->name)) == NULL)
 			gs = new_group_show(g->name);

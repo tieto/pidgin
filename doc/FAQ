@@ -30,7 +30,14 @@ II. The Client
 	   version of gaim.
         8. I've got a proxy, and I'd like to use GAIM.
 
-III. Problems
+III. Multiple Connections
+	1. What do you mean by "multiple connections"?
+	2. What's a PRPL?
+	3. What happens when I load a new protocol?
+	4. So how do I add accounts?
+	5. This sucks. I want my old gaim back.
+
+IV. Problems
 	1. WAAAAAH!  My sound doesn't work!
 	2. My buddy list disappeared!
 	3. I click on URLs, but Netscape doesn't popup!
@@ -39,12 +46,12 @@ III. Problems
 	6. I have a bug not described here.
 	7. I have Mandrake 6.0 and GAIM doesnt work!
 
-IV. Programming
+V. Programming
 	1. I have a patch for gaim!
 	2. I have a plugin for gaim!
 	3. Can you teach me how to program GTK?
 
-V. Miscellaneous
+VI. Miscellaneous
 	1. Can I talk to you on IM?
 	2. I want to write an IM client.  Will you help me?
 	3. I have money.  I need some software written.  Can you help?
@@ -135,7 +142,45 @@ give you detailed instructions on how to do it.
 None of them support authentication yet though.
 
 
-III. Problems
+III. Multiple Connections
+	1. What do you mean by "multiple connections"?
+		Multiple Connections means that it's possible to connect to
+the AOL servers using more than one screenname at a time. When you connect
+using more than one screenname, each name will have their own buddy list. Each
+will be able to send messages and do all the normal things. It's just a way of
+not having to run 3 copies of gaim for each of your screennames.
+
+	2. What's a PRPL?
+		PRPL stands for PRotocol PLugin. It's a way to dynamically add
+new protocols to gaim. This allows you to use gaim as your AIM client, ICQ
+client, Yahoo, client, and even IRC client, all at the same time. Loading a
+PRPL is like loading any other plugin - simply load the file from the plugins
+dialog.  Then simply add an account using the Account Editor and have it use
+that protocol.
+
+	3. What happens when I load a new protocol?
+		Gaim keeps track of all the protocols that it knows about.
+When you load a new protocol, it lets you add a new account that uses that
+protocol. If you loaded the protocol as a plugin, and remove that plugin, gaim
+then signs off any connections that were using that protocol, and forgets
+about it. If you load a protocol that has already been loaded, it will unload
+the original one and load the new one.
+
+	4. So how do I add accounts?
+		There is an Account Editor that is accessible from the main
+signon window, and also from the Buddy List Tools menu. This brings up a
+window that lets you add and remove accounts, modify them, and sign them on
+independently of each other.
+
+	5. This sucks. I want my old gaim back.
+		Relax, there's a configure option, --disable-multi, that will
+remove any way of having multiple connections from the UI. This gives gaim the
+old familiar UI, and allow only one connection at a time. It will also benefit
+from all of the features added that are not related to multiple connections
+(like reporting idle times based on X usage).
+
+
+IV. Problems
 	1. WAAAAAH!  My sound doesn't work!
 		./configure should autodetect whether or not you have ESD
 libraries.  If you have them it _WILL_ compile with them, if not it won't. 
@@ -185,7 +230,7 @@ Don't use EVIL 'updates' tool.  It's broke.. really bad.
 
 	Mandrake 6.1, with its newer libraries, appears to fix this problem.
 
-IV. Programming
+V. Programming
 	1. I have a patch for gaim!
 		Nice.  Think about your patch though.  First, does it have
 to do with AIM?  I won't apply patches for stock tickers, search engines,
@@ -224,7 +269,7 @@ trouble making a button widget do anything when you click it, buy a book on
 C and read the damn GTK tutorial, I'm a busy person.
 
 
-V. Miscellaneous
+VI. Miscellaneous
 	1. Can I talk to you on IM?
 		Sure.  My IM name is RobFlynn.  The rest of the crew's IM names
 can be found in various places.  Keep in mind though, I'm a very busy person. 

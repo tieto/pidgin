@@ -66,7 +66,22 @@ struct gaim_connection *new_gaim_conn(int proto, char *username, char *password)
 
 void destroy_gaim_conn(struct gaim_connection *gc)
 {
+	GSList *g = gc->groups;
+	GSList *h;
+	struct group *m;
+	struct buddy *n;
 	connections = g_slist_remove(connections, gc);
+	while (g) {
+		m = (struct group *)g->data;
+		g = g_slist_remove(g, m);
+		h = m->members;
+		while (h) {
+			n = (struct buddy *)h->data;
+			h = g_slist_remove(h, n);
+			g_free(n);
+		}
+		g_free(m);
+	}
 	g_free(gc);
 	redo_convo_menus();
 	if (!connections && mainwindow)

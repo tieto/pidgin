@@ -369,7 +369,17 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	c->log_dialog = NULL;
 
 	if (c->is_chat) {
-		serv_chat_leave(c->gc, c->id);
+		if (c->gc)
+			serv_chat_leave(c->gc, c->id);
+		else {
+			/* bah */
+			while (c->in_room) {
+				char *tmp = c->in_room->data;
+				c->in_room = g_list_remove(c->in_room, tmp);
+				g_free(tmp);
+			}
+			g_free(c);
+		}
 	} else {
 	        delete_conversation(c);
 	}

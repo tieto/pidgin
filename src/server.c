@@ -57,6 +57,15 @@ void serv_login(struct aim_user *user)
 
 void serv_close(struct gaim_connection *gc)
 {
+	GSList *bcs = gc->buddy_chats;
+	struct conversation *b;
+	while (bcs) {
+		b = (struct conversation *)bcs->data;
+		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
+		b->gc = NULL;
+		bcs = gc->buddy_chats;
+	}
+
 	if (gc->idle_timer > 0)
 		gtk_timeout_remove(gc->idle_timer);
         gc->idle_timer = -1;

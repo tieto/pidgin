@@ -2,8 +2,9 @@ A lot of people have tried to hack gaim, but haven't been able to because
 the code is just so horrid. Well, the code isn't getting better anytime
 soon, so to help all you would-be hackers help out gaim, here's a brief
 tutorial on how gaim works. I'll quickly describe the logical flow of
-things, then what you'll find in each of the source files. Hopefully
-that's enough to get most of you going.
+things, then what you'll find in each of the source files. As an added
+bonus, I'll try and describe as best I can how multiple connections and
+multiple protocols work. Hopefully that's enough to get most of you going.
 
 If you're going to hack gaim, PLEASE, PLEASE PLEASE PLEASE send patches
 against the absolute latest CVS. I get really annoyed when I get patches
@@ -34,7 +35,7 @@ on in the preferences) whether or not --enable-debug was selected. Most
 of the information that's printed is useless anyway though; so the
 --enable-debug option really doesn't do a whole lot.
 
-This file was last modified by $Author: warmenhoven $ on $Date: 2000-10-31 05:49:53 -0500 (Tue, 31 Oct 2000) $.
+This file was last modified by $Author: warmenhoven $ on $Date: 2000-11-03 22:08:54 -0500 (Fri, 03 Nov 2000) $.
 
 
 PROGRAM FLOW
@@ -268,6 +269,56 @@ util.c:
   like the name says.
 
 
-So that's our little tour of the internals of Gaim. It's really not
-difficult to figure out if you've spent any time with GTK. I'm looking
-forward to getting all of your patches :)
+MULTIPLE CONNECTIONS AND PRPLS
+==============================
+
+OK, let's start with the basics. There are users. Each user is contained
+in an aim_user struct, and kept track of in the aim_users GList (GSList?).
+Each aim_user has certain features: a username, a password, and user_info.
+It also has certain options, and the protocol it uses to sign on (kept as
+an int which is #define'd in prpl.h). The way the management of the users
+works is, there will (hopefully) only be one user for a given screenname/
+protocol pair (i.e. you may have two user warmenhoven's, but they'll both
+have a different protocol number).
+
+Now then, there are protocols that gaim knows about. Each protocol is in
+a prpl struct and kept track of in the protocols GSList. The way the
+management of the protocols is, there will only ever be one prpl per numeric
+protocol. Each prpl defines a basic set of functions: login, logout, send_im,
+etc. The prpl is responsible not only for handling these functions, but also
+for calling the appropriate serv_got functions (e.g. serv_got_update when a
+buddy comes online/goes offline/goes idle/etc). It handles each of these on
+a per-connection basis.
+
+So why's it called a PRPL? It stands for PRotocol PLugin. That means that
+it's possible to dynamically add new protocols to gaim. However, all protocols
+must be implemented the same way: by using a prpl struct and being loaded,
+regardless of whether they are static or dynamic.
+
+Here's how struct gaim_connection fits into all of this. At some point the
+User (capitalized to indicate a person and not a name) will try to sign on
+one of Their users. serv_login is then called for that user. It searches for
+the prpl that is assigned to that user, and calls that prpl's login function,
+passing it the aim_user struct that is attempting to sign on. The prpl is then
+responsible for seeing that the gaim_connection is created (by calling
+new_gaim_connection), and registering it as being online (by calling
+account_online and passing it the aim_user and gaim_connection structs). At
+that point, the aim_user and gaim_connection structs have pointers to each
+other, and the gaim_connection struct has a pointer to the prpl struct that
+it is using. The gaim_connections are stored in the connections GSList.
+The way connection management works is, there will always only be one
+gaim_connection per user, and the prpl that the gaim_connection uses will be
+constant for the gaim_connection's life.
+
+So at certain points the User is going to want to do certain things, like
+send a message. They must send the message on a connection. So the UI figures
+out which gaim_connection the User want to send a message on (for our example),
+and calls serv_send_im, telling it which gaim_connection to use, and the
+necessary information (who to send it to, etc). The serv_ function then
+calls the handler of the prpl of the connection for that event (that was way
+too many prepositions). OK, each prpl has a send_im function. Each connection
+has a prpl. so you call gc->prpl->send_im and pass it the connection and all
+the necessary info. And that's how things get done.
+
+I hope some of that made sense. Looking back at it it makes absolutely no
+sense to me. Thank god I wrote the code; otherwise I'm sure I'd be lost.
