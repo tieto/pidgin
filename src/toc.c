@@ -283,7 +283,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 	struct sflap_hdr *hdr;
 	struct signon so;
 	char buf[8 * 1024], *c;
-	char snd[MSG_LEN];
+	char snd[BUF_LEN * 2];
 
 	if (condition & GDK_INPUT_EXCEPTION) {
 		debug_printf("gdk_input exception! check internet connection\n");
@@ -687,7 +687,7 @@ static char *toc_name()
 
 static void toc_send_im(struct gaim_connection *gc, char *name, char *message, int away)
 {
-	char buf[MSG_LEN - 7];
+	char buf[BUF_LEN * 2];
 
 	escape_text(message);
 	g_snprintf(buf, MSG_LEN - 8, "toc_send_im %s \"%s\"%s", normalize(name),
@@ -697,7 +697,7 @@ static void toc_send_im(struct gaim_connection *gc, char *name, char *message, i
 
 static void toc_set_config(struct gaim_connection *gc)
 {
-	char buf[MSG_LEN], snd[MSG_LEN];
+	char buf[MSG_LEN], snd[BUF_LEN * 2];
 	toc_build_config(gc, buf, MSG_LEN, FALSE);
 	g_snprintf(snd, MSG_LEN, "toc_set_config {%s}", buf);
 	sflap_send(gc, snd, -1, TYPE_DATA);
@@ -705,14 +705,14 @@ static void toc_set_config(struct gaim_connection *gc)
 
 static void toc_get_info(struct gaim_connection *g, char *name)
 {
-	char buf[MSG_LEN];
+	char buf[BUF_LEN * 2];
 	g_snprintf(buf, MSG_LEN, "toc_get_info %s", normalize(name));
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
 static void toc_get_dir(struct gaim_connection *g, char *name)
 {
-	char buf[MSG_LEN];
+	char buf[BUF_LEN * 2];
 	g_snprintf(buf, MSG_LEN, "toc_get_dir %s", normalize(name));
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
@@ -741,7 +741,7 @@ static void toc_dir_search(struct gaim_connection *g, char *first, char *middle,
 
 static void toc_set_away(struct gaim_connection *g, char *state, char *message)
 {
-	char buf[MSG_LEN];
+	char buf[BUF_LEN * 2];
 	if (g->away)
 		g_free (g->away);
 	g->away = NULL;
@@ -756,7 +756,7 @@ static void toc_set_away(struct gaim_connection *g, char *state, char *message)
 
 static void toc_set_info(struct gaim_connection *g, char *info)
 {
-	char buf[MSG_LEN], buf2[MSG_LEN];
+	char buf[BUF_LEN * 2], buf2[BUF_LEN * 2];
 	g_snprintf(buf2, sizeof buf2, "%s", info);
 	escape_text(buf2);
 	g_snprintf(buf, sizeof(buf), "toc_set_info \"%s\n\"", buf2);
@@ -765,14 +765,14 @@ static void toc_set_info(struct gaim_connection *g, char *info)
 
 static void toc_change_passwd(struct gaim_connection *g, char *orig, char *new)
 {
-	char buf[MSG_LEN];
+	char buf[BUF_LEN * 2];
 	g_snprintf(buf, BUF_LONG, "toc_change_passwd %s %s", orig, new);
 	sflap_send(g, buf, strlen(buf), TYPE_DATA);
 }
 
 static void toc_add_buddy(struct gaim_connection *g, char *name)
 {
-	char buf[1024];
+	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));
 	sflap_send(g, buf, -1, TYPE_DATA);
 	toc_set_config(g);
@@ -780,7 +780,7 @@ static void toc_add_buddy(struct gaim_connection *g, char *name)
 
 static void toc_add_buddies(struct gaim_connection *g, GList * buddies)
 {
-	char buf[MSG_LEN];
+	char buf[BUF_LEN * 2];
 	int n;
 
 	n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
@@ -797,7 +797,7 @@ static void toc_add_buddies(struct gaim_connection *g, GList * buddies)
 
 static void toc_remove_buddy(struct gaim_connection *g, char *name)
 {
-	char buf[1024];
+	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", normalize(name));
 	sflap_send(g, buf, -1, TYPE_DATA);
 	toc_set_config(g);
@@ -805,21 +805,21 @@ static void toc_remove_buddy(struct gaim_connection *g, char *name)
 
 static void toc_set_idle(struct gaim_connection *g, int time)
 {
-	char buf[256];
+	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_set_idle %d", time);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
 static void toc_warn(struct gaim_connection *g, char *name, int anon)
 {
-	char send[256];
+	char send[BUF_LEN * 2];
 	g_snprintf(send, 255, "toc_evil %s %s", name, ((anon) ? "anon" : "norm"));
 	sflap_send(g, send, -1, TYPE_DATA);
 }
 
 static void toc_accept_chat(struct gaim_connection *g, int i)
 {
-	char buf[256];
+	char buf[BUF_LEN * 2];
 	g_snprintf(buf, 255, "toc_chat_accept %d", i);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
@@ -842,7 +842,7 @@ static void toc_chat_leave(struct gaim_connection *g, int id)
 {
 	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
-	char buf[256];
+	char buf[BUF_LEN * 2];
 
 	while (bcs) {
 		b = (struct conversation *)bcs->data;
@@ -865,14 +865,14 @@ static void toc_chat_leave(struct gaim_connection *g, int id)
 
 static void toc_chat_whisper(struct gaim_connection *g, int id, char *who, char *message)
 {
-	char buf2[MSG_LEN];
+	char buf2[BUF_LEN * 2];
 	g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
 	sflap_send(g, buf2, -1, TYPE_DATA);
 }
 
 static void toc_chat_send(struct gaim_connection *g, int id, char *message)
 {
-	char buf[MSG_LEN];
+	char buf[BUF_LEN * 2];
 	escape_text(message);
 	g_snprintf(buf, sizeof(buf), "toc_chat_send %d \"%s\"", id, message);
 	sflap_send(g, buf, -1, TYPE_DATA);
@@ -1089,7 +1089,7 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user)
 
 static void toc_add_permit(struct gaim_connection *gc, char *who)
 {
-	char buf2[MSG_LEN];
+	char buf2[BUF_LEN * 2];
 	if (gc->permdeny != 3)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", normalize(who));
@@ -1098,7 +1098,7 @@ static void toc_add_permit(struct gaim_connection *gc, char *who)
 
 static void toc_add_deny(struct gaim_connection *gc, char *who)
 {
-	char buf2[MSG_LEN];
+	char buf2[BUF_LEN * 2];
 	if (gc->permdeny != 4)
 		return;
 	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", normalize(who));
@@ -1107,7 +1107,7 @@ static void toc_add_deny(struct gaim_connection *gc, char *who)
 
 static void toc_set_permit_deny(struct gaim_connection *gc)
 {
-	char buf2[MSG_LEN];
+	char buf2[BUF_LEN * 2];
 	GSList *list;
 	int at;
 
@@ -1469,7 +1469,7 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
 	int fd;
 	struct aim_user *user;
-	char *buf;
+	char buf[BUF_LEN * 2];
 
 	if (file_is_dir(dirname, old_ft->window))
 		return;
@@ -1487,9 +1487,8 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	user = ft->gc->user;
 	gtk_widget_destroy(old_ft->window);
 
-	buf = g_strdup_printf("toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
+	g_snprintf(buf, sizeof(buf), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
 	sflap_send(ft->gc, buf, -1, TYPE_DATA);
-	g_free(buf);
 
 	fd =
 	    proxy_connect(ft->ip, ft->port,
@@ -1633,7 +1632,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
 	int fd;
 	struct aim_user *user;
-	char *buf;
+	char *buf, buf2[BUF_LEN * 2];
 	struct stat st;
 
 	if (file_is_dir(dirname, old_ft->window))
@@ -1665,9 +1664,8 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	user = ft->gc->user;
 	gtk_widget_destroy(old_ft->window);
 
-	buf = g_strdup_printf("toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
-	sflap_send(ft->gc, buf, -1, TYPE_DATA);
-	g_free(buf);
+	g_snprintf(buf2, sizeof(buf2), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
+	sflap_send(ft->gc, buf2, -1, TYPE_DATA);
 
 	fd =
 	    proxy_connect(ft->ip, ft->port,
