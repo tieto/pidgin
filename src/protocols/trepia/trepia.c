@@ -44,7 +44,7 @@
 # include <net/if_arp.h>
 #endif
 
-#define TREPIA_VERSION "2.50"
+#define TREPIA_VERSION "2.52"
 
 static GaimPlugin *my_protocol = NULL;
 
@@ -1030,10 +1030,10 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 		"<b1></b1>\n"
 		"<c>%s</c>\n"
 		"<d>%s</d>\n"
-		"<e>2.50</e>\n"
+		"<e>%d</e>\n"
 		"</C>",
 		mac, gaim_account_get_username(account),
-		md5_password);
+		md5_password, TREPIA_VERSION);
 
 #if 0
 	g_free(mac);
