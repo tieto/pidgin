@@ -25,7 +25,7 @@
 #ifndef _GAIM_EVENTLOOP_H_
 #define _GAIM_EVENTLOOP_H_
 
-#include <glib.h>
+#include "internal.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -118,6 +118,7 @@ typedef enum
 	GAIM_MESSAGE_WHISPER   = 0x0080, /**< Whispered message.       */
 	GAIM_MESSAGE_ERROR     = 0x0200, /**< Error message.           */
 	GAIM_MESSAGE_DELAYED   = 0x0400  /**< Delayed message.         */
+
 } GaimMessageFlags;
 
 /**
@@ -130,6 +131,7 @@ typedef enum
 	GAIM_CBFLAGS_HALFOP        = 0x0002, /**< Half-op                      */
 	GAIM_CBFLAGS_OP            = 0x0004, /**< Channel Op or Moderator      */
 	GAIM_CBFLAGS_FOUNDER       = 0x0008  /**< Channel Founder              */
+
 } GaimConvChatBuddyFlags;
 
 #include "account.h"

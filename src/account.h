@@ -27,7 +27,7 @@
 #ifndef _GAIM_ACCOUNT_H_
 #define _GAIM_ACCOUNT_H_
 
-#include <glib.h>
+#include "internal.h"
 
 typedef struct _GaimAccountUiOps GaimAccountUiOps;
 typedef struct _GaimAccount      GaimAccount;

@@ -27,9 +27,6 @@
 #ifndef _GAIM_CONNECTION_H_
 #define _GAIM_CONNECTION_H_
 
-#include <stdlib.h>
-#include <time.h>
-
 typedef struct _GaimConnection GaimConnection;
 
 /**
@@ -45,6 +42,7 @@ typedef enum
 	GAIM_CONNECTION_NO_NEWLINES = 0x0010, /**< No new lines are allowed in outgoing messages */
 	GAIM_CONNECTION_NO_FONTSIZE = 0x0020, /**< Connection does not send/receive font sizes */
 	GAIM_CONNECTION_NO_URLDESC = 0x0040  /**< Connection does not support descriptions with links */
+
 } GaimConnectionFlags;
 
 typedef enum
@@ -56,6 +54,7 @@ typedef enum
 } GaimConnectionState;
 
 #include "account.h"
+#include "internal.h"
 #include "plugin.h"
 
 typedef struct

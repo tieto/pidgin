@@ -25,8 +25,7 @@
 #ifndef _GAIM_GTKBLIST_H_
 #define _GAIM_GTKBLIST_H_
 
-#include "gtkgaim.h"
-#include "blist.h"
+typedef struct _GaimGtkBuddyList GaimGtkBuddyList;
 
 enum {
 	STATUS_ICON_COLUMN,
@@ -37,7 +36,8 @@ enum {
 	BUDDY_ICON_COLUMN,
 	NODE_COLUMN,
 	BLIST_COLUMNS
-	};
+
+};
 
 typedef enum {
 	GAIM_STATUS_ICON_LARGE,
@@ -45,13 +45,16 @@ typedef enum {
 
 } GaimStatusIconSize;
 
+#include "gtkgaim.h"
+#include "blist.h"
+
 /**************************************************************************
  * @name Structures
  **************************************************************************/
 /**
  * Like, everything you need to know about the gtk buddy list
  */
-typedef struct {
+struct _GaimGtkBuddyList {
 	GtkWidget *window;
 	GtkWidget *vbox;                /**< This is the vbox that everything gets packed into.  Your plugin might
 					   want to pack something in it itself.  Go, plugins! */
@@ -86,7 +89,7 @@ typedef struct {
 	GdkPixbuf *east, *south;                 /**< Drop shadow stuff */
 	GdkWindow *east_shadow, *south_shadow;   /**< Drop shadow stuff */
 
-} GaimGtkBuddyList;
+};
 
 #define GAIM_GTK_BLIST(list) ((GaimGtkBuddyList *)(list)->ui_data)
 #define GAIM_IS_GTK_BLIST(list) \

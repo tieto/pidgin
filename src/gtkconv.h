@@ -25,9 +25,10 @@
 #ifndef _GAIM_GTKCONVERSATION_H_
 #define _GAIM_GTKCONVERSATION_H_
 
-#include "gtkgaim.h"
-
-#include "conversation.h"
+typedef struct _GaimGtkWindow       GaimGtkWindow;
+typedef struct _GaimGtkImPane       GaimGtkImPane;
+typedef struct _GaimGtkChatPane     GaimGtkChatPane;
+typedef struct _GaimGtkConversation GaimGtkConversation;
 
 enum {
 	CHAT_USERS_ICON_COLUMN,
@@ -36,15 +37,26 @@ enum {
 	CHAT_USERS_COLUMNS
 };
 
+#define GAIM_GTK_WINDOW(win) \
+	((GaimGtkWindow *)(win)->ui_data)
+
+#define GAIM_GTK_CONVERSATION(conv) \
+	((GaimGtkConversation *)(conv)->ui_data)
+
+#define GAIM_IS_GTK_WINDOW(win) \
+	(gaim_conv_window_get_ui_ops(win) == gaim_gtk_conversations_get_win_ui_ops())
+
+#define GAIM_IS_GTK_CONVERSATION(conv) \
+	(gaim_conversation_get_ui_ops(conv) == \
+	 gaim_gtk_conversations_get_conv_ui_ops())
+
+#include "gtkgaim.h"
+#include "conversation.h"
+
 /**************************************************************************
  * @name Structures
  **************************************************************************/
 /*@{*/
-
-typedef struct _GaimGtkWindow       GaimGtkWindow;
-typedef struct _GaimGtkImPane       GaimGtkImPane;
-typedef struct _GaimGtkChatPane     GaimGtkChatPane;
-typedef struct _GaimGtkConversation GaimGtkConversation;
 
 /**
  * A GTK+ representation of a graphical window containing one or more
@@ -185,19 +197,6 @@ struct _GaimGtkConversation
 
 	} u;
 };
-
-#define GAIM_GTK_WINDOW(win) \
-	((GaimGtkWindow *)(win)->ui_data)
-
-#define GAIM_GTK_CONVERSATION(conv) \
-	((GaimGtkConversation *)(conv)->ui_data)
-
-#define GAIM_IS_GTK_WINDOW(win) \
-	(gaim_conv_window_get_ui_ops(win) == gaim_gtk_conversations_get_win_ui_ops())
-
-#define GAIM_IS_GTK_CONVERSATION(conv) \
-	(gaim_conversation_get_ui_ops(conv) == \
-	 gaim_gtk_conversations_get_conv_ui_ops())
 
 /*@}*/
 

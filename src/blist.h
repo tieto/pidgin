@@ -40,10 +40,6 @@ typedef struct _GaimGroup GaimGroup;
 typedef struct _GaimContact GaimContact;
 typedef struct _GaimBuddy GaimBuddy;
 
-#include "account.h"
-#include "buddyicon.h"
-#include "status.h"
-
 /**************************************************************************/
 /* Enumerations                                                           */
 /**************************************************************************/
@@ -77,12 +73,16 @@ typedef enum
 
 typedef enum
 {
-	GAIM_BLIST_NODE_FLAG_NO_SAVE = 1,	/**< node should not be saved with the buddy list */
+	GAIM_BLIST_NODE_FLAG_NO_SAVE = 1 /**< node should not be saved with the buddy list */
+
 } GaimBlistNodeFlags;
 
 #define GAIM_BLIST_NODE_HAS_FLAG(b, f) ((b)->flags & (f))
 #define GAIM_BLIST_NODE_SHOULD_SAVE(b) (! GAIM_BLIST_NODE_HAS_FLAG(b, GAIM_BLIST_NODE_FLAG_NO_SAVE))
 
+#include "account.h"
+#include "buddyicon.h"
+#include "status.h"
 
 /**************************************************************************/
 /* Data Structures                                                        */
