@@ -1032,7 +1032,12 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
-		serv_send_im(gc, name, gaim_str_sub_away_formatters(tmpmsg, alias), GAIM_CONV_IM_AUTO_RESP);
+
+		/* Move this to oscar.c! */
+		buffy = gaim_str_sub_away_formatters(tmpmsg, alias);
+		serv_send_im(gc, name, buffy, GAIM_CONV_IM_AUTO_RESP);
+		g_free(buffy);
+
 		if (!cnv && awayqueue &&
 			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
 

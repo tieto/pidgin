@@ -410,6 +410,16 @@ gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textle
 	return utf8;
 }
 
+static void oscar_string_append(GString *str, char *name, char *value)
+{
+	gchar *utf8;
+
+	if (value && value[0] && (utf8 = gaim_utf8_try_convert(value))) {
+		g_string_append_printf(str, "\n<br><b>%s:</b> %s", name, utf8);
+		g_free(utf8);
+	}
+}
+
 static struct direct_im *find_direct_im(OscarData *od, const char *who) {
 	GSList *d = od->direct_ims;
 	struct direct_im *m = NULL;
@@ -3261,9 +3271,13 @@ static char *caps_string(guint caps)
 
 static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	GString *text;
-	gchar *info_utf8 = NULL, *away_utf8 = NULL;
-	const char *final = NULL;
+	OscarData *od = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GString *str;
+	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL;
+	struct buddyinfo *bi;
+	GaimBuddy *b = NULL;
+	GaimGroup *g = NULL;
 	va_list ap;
 	aim_userinfo_t *userinfo;
 
@@ -3271,48 +3285,80 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	text = g_string_new("");
-	g_string_append_printf(text, _("Username: <b>%s</b><br>\n"), userinfo->sn);
-	g_string_append_printf(text, _("Warning Level: <b>%d%%</b><br>\n"), (int)((userinfo->warnlevel/10.0) + 0.5));
+	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, userinfo->sn));
+
+	str = g_string_new("");
+	g_string_append_printf(str, "<b>%s:</b> %s", _("Screen Name"), userinfo->sn);
+	g_string_append_printf(str, "\n<br><b>%s</b>: %d%%", _("Warning Level"), (int)((userinfo->warnlevel/10.0) + 0.5));
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE)
-		g_string_append_printf(text, _("Online Since: <b>%s</b><br>\n"),
-					asctime(localtime((time_t *)&userinfo->onlinesince)));
+		oscar_string_append(str, _("Online Since"),
+							asctime(localtime((time_t *)&userinfo->onlinesince)));
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE)
-		g_string_append_printf(text, _("Member Since: <b>%s</b><br>\n"),
-					asctime(localtime((time_t *)&userinfo->membersince)));
+		oscar_string_append(str, _("Member Since"),
+							asctime(localtime((time_t *)&userinfo->membersince)));
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
-		gchar *itime = gaim_str_seconds_to_string(userinfo->idletime*60);
-		g_string_append_printf(text, _("Idle: <b>%s</b>"), itime);
-		g_free(itime);
+		tmp = gaim_str_seconds_to_string(userinfo->idletime*60);
+		oscar_string_append(str, _("Idle"), tmp);
+		g_free(tmp);
 	} else
-		g_string_append_printf(text, _("Idle: <b>Active</b>"));
+		oscar_string_append(str, _("Idle"), _("Active"));
+
+	if ((bi != NULL) && (bi->ipaddr != 0)) {
+		tmp =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
+							(bi->ipaddr & 0xff000000) >> 24,
+							(bi->ipaddr & 0x00ff0000) >> 16,
+							(bi->ipaddr & 0x0000ff00) >> 8,
+							(bi->ipaddr & 0x000000ff));
+		g_string_append_printf(str, "\n<b>%s:</b> %s", _("IP Address"), tmp);
+		g_free(tmp);
+	}
+
+	if (userinfo->capabilities != 0) {
+		tmp = caps_string(userinfo->capabilities);
+		oscar_string_append(str, _("Capabilities"), tmp);
+	}
+
+	if ((g != NULL) && (g->name != NULL)) {
+		tmp = aim_ssi_getcomment(od->sess->ssi.local, g->name, b->name);
+		if (tmp != NULL) {
+			oscar_string_append(str, _("Buddy Comment"), tmp);
+			g_free(tmp);
+		}
+	}
+
+	if ((bi != NULL) && (bi->availmsg != NULL) && !(b->uc & UC_UNAVAILABLE)) {
+		tmp = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
+		oscar_string_append(str, _("Available"), tmp);
+		g_free(tmp);
+	}
 
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-		gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
-		away_utf8 = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
-		g_free(charset);
+		tmp = oscar_encoding_extract(userinfo->away_encoding);
+		away_utf8 = oscar_encoding_to_utf8(tmp, userinfo->away, userinfo->away_len);
+		g_free(tmp);
 		if (away_utf8 != NULL) {
-			g_string_append_printf(text, "<hr>%s", away_utf8);
+			g_string_append_printf(str, "\n<hr>%s", away_utf8);
 			g_free(away_utf8);
 		}
 	}
 
 	if ((userinfo->info_len > 0) && (userinfo->info != NULL) && (userinfo->info_encoding != NULL)) {
-		gchar *charset = oscar_encoding_extract(userinfo->info_encoding);
-		info_utf8 = oscar_encoding_to_utf8(charset, userinfo->info, userinfo->info_len);
-		g_free(charset);
+		tmp = oscar_encoding_extract(userinfo->info_encoding);
+		info_utf8 = oscar_encoding_to_utf8(tmp, userinfo->info, userinfo->info_len);
+		g_free(tmp);
 		if (info_utf8 != NULL) {
-			g_string_append_printf(text, "<hr>%s", info_utf8);
+			g_string_append_printf(str, "\n<hr>%s", info_utf8);
 			g_free(info_utf8);
 		}
 	}
 
-	final = gaim_str_sub_away_formatters(text->str, gaim_account_get_username(gaim_connection_get_account(gc)));
-	g_string_free(text, TRUE);
-	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, final, NULL, NULL);
+	tmp = gaim_str_sub_away_formatters(str->str, gaim_account_get_username(gaim_connection_get_account(gc)));
+	g_string_free(str, TRUE);
+	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, tmp, NULL, NULL);
+	g_free(tmp);
 
 	return 1;
 }
@@ -4091,16 +4137,6 @@ static size_t my_strftime(char *s, size_t max, const char  *fmt,
 	return strftime(s, max, fmt, tm);
 }
 #endif
-
-static void oscar_string_append(GString *str, char *name, char *value)
-{
-	gchar *utf8;
-
-	if (value && value[0] && (utf8 = gaim_utf8_try_convert(value))) {
-		g_string_append_printf(str, "\n<br><b>%s:</b> %s", name, utf8);
-		g_free(utf8);
-	}
-}
 
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
@@ -5734,16 +5770,16 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			g_free(charset);
 			if (away_utf8 != NULL) {
 				gchar *tmp1, *tmp2;
-				const gchar *tmp3;
 				tmp1 = gaim_strcasereplace(away_utf8, "<BR>", "\n");
 				g_free(away_utf8);
 				tmp2 = gaim_markup_strip_html(tmp1);
 				g_free(tmp1);
 				tmp1 = gaim_escape_html(tmp2);
 				g_free(tmp2);
-				tmp3 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
+				tmp2 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp1);
-				g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Away Message"), tmp3);
+				g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Away Message"), tmp2);
+				g_free(tmp2);
 			}
 		}
 	} else {

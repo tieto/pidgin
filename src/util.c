@@ -1771,26 +1771,26 @@ gaim_normalize(const GaimAccount *account, const char *s)
 	return ret;
 }
 
-/* Look for %n, %d, or %t in msg, and replace with the sender's name, date,
-   or time */
-const char *
-gaim_str_sub_away_formatters(const char *msg, const char *name)
+gchar *
+gaim_str_sub_away_formatters(const char *str, const char *name)
 {
 	char *c;
-	static char cpy[BUF_LONG];
+	gchar *cpy;
 	int cnt = 0;
 	time_t t;
 	struct tm *tme;
 	char tmp[20];
 
-	g_return_val_if_fail(msg  != NULL, NULL);
+	g_return_val_if_fail(str  != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
+
+	cpy = g_malloc(BUF_LONG);
 
 	t = time(NULL);
 	tme = localtime(&t);
 
 	cpy[0] = '\0';
-	c = (char *)msg;
+	c = (char *)str;
 	while (*c) {
 		switch (*c) {
 		case '%':
@@ -1827,7 +1827,8 @@ gaim_str_sub_away_formatters(const char *msg, const char *name)
 		c++;
 	}
 	cpy[cnt] = '\0';
-	return (cpy);
+
+	return cpy;
 }
 
 gchar *
