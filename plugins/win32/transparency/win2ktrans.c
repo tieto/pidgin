@@ -50,17 +50,15 @@
 /*
  *  GLOBALS
  */
-G_MODULE_IMPORT guint im_options;
-G_MODULE_IMPORT GtkWidget *all_convos;
 G_MODULE_IMPORT GtkWidget *blist;
 
 /*
  *  LOCALS
  */
-static GtkWidget *slider_box=NULL;
 static int imalpha = 255;
 static int blalpha = 255;
-guint trans_options=0;
+guint trans_options = 0;
+GList *window_list = NULL;
 
 /*
  *  PROTOS
@@ -132,68 +130,60 @@ GtkWidget *wintrans_slider(GtkWidget *win) {
 	return frame;
 }
 
-static void gaim_del_conversation(char *who) {
-	if(!all_convos)
-		slider_box = NULL;
+gboolean win_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
+	/* Remove window from the window list */
+	debug_printf("win2ktrans.dll: Conv window destoyed.. removing from list\n");
+	window_list = g_list_remove(window_list, (gpointer)widget);
+	return FALSE;
 }
 
 static void gaim_new_conversation(char *who) {
 	GList *wl, *wl1;
 	GtkWidget *vbox=NULL;
+	GtkWidget *win=NULL;
+	struct gaim_gtk_window *gaimwin;
+	struct gaim_conversation *c;
 
-	struct conversation *c = find_conversation(who);
+	c = gaim_find_conversation(who);
+	gaimwin = GAIM_GTK_WINDOW(c->window);
+	win = gaimwin->window;
 
-	/* Single convo window */
-	if((im_options & OPT_IM_ONE_WINDOW)) {
-		/* check prefs to see if we want trans */
-		if ((trans_options & OPT_WGAIM_IMTRANS) &&
-		    (trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
-			if(!slider_box) {
-				/* Get vbox which to add slider to.. */
-				for ( wl1 = wl = gtk_container_children(GTK_CONTAINER(c->window));
-				      wl != NULL;
-				      wl = wl->next ) {
-					if ( GTK_IS_VBOX(GTK_OBJECT(wl->data)) )
-						vbox = GTK_WIDGET(wl->data);
-					else
-						debug_printf("no vbox found\n");
+	/* check prefs to see if we want trans */
+	if ((trans_options & OPT_WGAIM_IMTRANS) &&
+	    (trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
+		/* Look up this window to see if it already has a scroller */
+		if(!g_list_find(window_list, (gpointer)win)) {
+			GtkWidget *slider_box=NULL;
+		
+			/* Get top vbox */
+			for ( wl1 = wl = gtk_container_get_children(GTK_CONTAINER(win));
+			      wl != NULL;
+			      wl = wl->next ) {
+				if ( GTK_IS_VBOX(GTK_OBJECT(wl->data)) )
+					vbox = GTK_WIDGET(wl->data);
+				else {
+					debug_printf("no vbox found\n");
+					return;
 				}
-				g_list_free(wl1);
-				
-				slider_box = wintrans_slider(c->window);
-				gtk_box_pack_start(GTK_BOX(vbox),
-						   slider_box,
-						   FALSE, FALSE, 0);
 			}
-		}
-	}
-	/* One window per convo */
-	else {
-		if ((trans_options & OPT_WGAIM_IMTRANS) &&
-		    (trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
-			GtkWidget *paned;
+			g_list_free(wl1);
 
-			/* Get container which to add slider to.. */
-			wl = gtk_container_children(GTK_CONTAINER(c->window));
-			paned = GTK_WIDGET(wl->data);
-			g_list_free(wl);
-			wl = gtk_container_children(GTK_CONTAINER(paned));
-			/* 2nd child */
-			vbox = GTK_WIDGET((wl->next)->data);
-			g_list_free(wl);
-			
-			if(!GTK_IS_VBOX(vbox))
-				debug_printf("vbox isn't a vbox widget\n");
-			
+			slider_box = wintrans_slider(win);
 			gtk_box_pack_start(GTK_BOX(vbox),
-					   wintrans_slider(c->window),
+					   slider_box,
 					   FALSE, FALSE, 0);
+			/* Add window to list, to track that it has a scroller */
+			window_list = g_list_append(window_list, (gpointer)win);
+			/* Set callback to remove window from the list, if the window is destroyed */
+			g_signal_connect(GTK_OBJECT(win), "destroy_event", G_CALLBACK(win_destroy_cb), NULL);
 		}
+		else
+			return;
 	}
-
+	
 	if((trans_options & OPT_WGAIM_IMTRANS) &&
 	   !(trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
-		set_wintrans(c->window, imalpha);
+		set_wintrans(win, imalpha);
 	}
 }
 
@@ -328,7 +318,6 @@ static void set_trans_option(GtkWidget *w, int option) {
 
 G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
 	gaim_signal_connect(handle, event_new_conversation, gaim_new_conversation, NULL); 
-	gaim_signal_connect(handle, event_del_conversation, gaim_del_conversation, NULL); 
 	gaim_signal_connect(handle, event_signon, blist_created, NULL);
 	MySetLayeredWindowAttributes = (void*)wgaim_find_and_loadproc("user32.dll", "SetLayeredWindowAttributes" );
 	load_trans_prefs();
@@ -337,6 +326,11 @@ G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
 }
 
 G_MODULE_EXPORT void gaim_plugin_remove() {
+	debug_printf("Removing win2ktrans.dll plugin\n");
+	if(window_list) {
+		g_list_free(window_list);
+		window_list = NULL;
+	}
 }
 
 struct gaim_plugin_description desc; 
@@ -380,7 +374,7 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
 	gtk_widget_show(trans_box);
 
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),  trans_box);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gaim_gtk_toggle_sensitive),  trans_box);
 	
 	button = gaim_button(_("_Show slider bar in IM window"), &trans_options, OPT_WGAIM_SHOW_IMTRANS, trans_box);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_SHOW_IMTRANS);
@@ -418,7 +412,7 @@ G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
 	if (!(trans_options & OPT_WGAIM_BLTRANS))
 		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
 	gtk_widget_show(trans_box);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),  trans_box);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(gaim_gtk_toggle_sensitive),  trans_box);
 	gtk_box_pack_start(GTK_BOX(bltransbox), trans_box, FALSE, FALSE, 5);
 
 	/* IM transparency slider */
