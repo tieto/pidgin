@@ -269,14 +269,20 @@ void wgaim_init(void) {
 	locale = g_win32_getlocale();
 	debug_printf("Language profile used: %s\n", locale);
 
-	/*
-	 *  Aspell config
-	 */
-	/* Set LANG env var */
+	/* Aspell config */
 	sprintf(newenv, "LANG=%s", locale);
 	if(putenv(newenv)<0)
 		debug_printf("putenv failed\n");
 	g_free(locale);
+
+	/* Disable PANGO UNISCRIBE (for GTK 2.2.0). This may not be necessary in the
+	   future because there will most likely be a check to see if we need this,
+	   but for now we need to set this in order to avoid poor performance for some 
+	   windows machines.
+	*/
+	sprintf(newenv, "PANGO_WIN32_NO_UNISCRIBE=1");
+	if(putenv(newenv)<0)
+		debug_printf("putenv failed\n");
 
 	/*
 	 *  IdleTracker Initialization
