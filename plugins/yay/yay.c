@@ -339,6 +339,14 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg) {
 		} else if (!strcmp(state, "Invisible")) {
 			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_INVISIBLE, msg);
 			yd->current_status = YAHOO_STATUS_INVISIBLE;
+		} else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
+			if (gc->is_idle) {
+				yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_IDLE, NULL);
+				yd->current_status = YAHOO_STATUS_IDLE;
+			} else {
+				yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_AVAILABLE, NULL);
+				yd->current_status = YAHOO_STATUS_AVAILABLE;
+			}
 		}
 	} else if (gc->is_idle) {
 		yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_IDLE, NULL);

@@ -331,9 +331,12 @@ static void icq_set_away(struct gaim_connection *gc, char *state, char *msg) {
 		icq_ChangeStatus(id->link, STATUS_FREE_CHAT);
 	else if (!strcmp(state, "Invisible"))
 		icq_ChangeStatus(id->link, STATUS_INVISIBLE);
-	else if (!strcmp(state, GAIM_AWAY_CUSTOM))
-		/* we have to do this even though we don't have a custom state */
-		icq_ChangeStatus(id->link, STATUS_NA);
+	else if (!strcmp(state, GAIM_AWAY_CUSTOM)) {
+		if (msg)
+			icq_ChangeStatus(id->link, STATUS_NA);
+		else
+			icq_ChangeStatus(id->link, STATUS_ONLINE);
+	}
 }
 
 static char **icq_list_icon(int uc) {
