@@ -129,5 +129,6 @@ void set_login_progress(struct gaim_connection *, float, char *);
 void hide_login_progress(struct gaim_connection *, char *);
 void hide_login_progress_notice(struct gaim_connection *, char *);
 void hide_login_progress_error(struct gaim_connection *, char *);
+GSList *gaim_get_connections();
 
 #endif /* _MULTI_H_ */

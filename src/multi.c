@@ -2163,3 +2163,8 @@ struct gaim_account *gaim_account_new(const char *name, int proto, int opts)
 
 	return account;
 }
+
+GSList *gaim_get_connections()
+{
+	return connections;
+}
