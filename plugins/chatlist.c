@@ -104,6 +104,7 @@ static void save_chat_prefs()
 		crs = crs->next;
 		fprintf(f, "%s\n%d\n", cr->name, cr->exchange);
 	}
+	g_free(x);
 	fclose(f);
 }
 
@@ -130,6 +131,7 @@ static void restore_chat_prefs()
 		cr->exchange = atoi(buf);
 		chat_rooms = g_list_append(chat_rooms, cr);
 	}
+	g_free(x);
 	fclose(f);
 	setup_buddy_chats();
 }
