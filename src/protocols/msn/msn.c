@@ -379,15 +379,16 @@ msn_send_file(GaimConnection *gc, const char *who, const char *file)
 static void
 update_buddy_icon_cb(GaimBlistNode *node, gpointer ignored)
 {
-	GaimBuddy *buddy;
-	GaimConnection *gc;
-
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
-
-	msn_request_buddy_icon(gc, buddy->name);
+/*	GaimBuddy *buddy;
+ *	GaimConnection *gc;
+ *
+ *	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+ *
+ *	buddy = (GaimBuddy *) node;
+ *	gc = gaim_account_get_connection(buddy->account);
+ *
+ *	msn_request_buddy_icon(gc, buddy->name);
+ */
 }
 
 /**************************************************************************
