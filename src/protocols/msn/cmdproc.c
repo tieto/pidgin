@@ -221,6 +221,12 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnMsgCb cb;
 
+	if (msn_message_get_content_type(msg) == NULL)
+	{
+		gaim_debug_misc("msn", "failed to find message content\n");
+		return;
+	}
+
 	cb = g_hash_table_lookup(cmdproc->cbs_table->msgs,
 							 msn_message_get_content_type(msg));
 
