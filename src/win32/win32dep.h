@@ -7,7 +7,7 @@
 #include <winsock.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkevents.h>
-#include "winerror.h"
+#include "wgaimerror.h"
 #include "libc_interface.h"
 #include "systray.h"
 
