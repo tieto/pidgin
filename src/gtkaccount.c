@@ -46,9 +46,9 @@ enum
 {
 	COLUMN_ICON,
 	COLUMN_SCREENNAME,
-	COLUMN_PROTOCOL,
 	COLUMN_ONLINE,
 	COLUMN_AUTOLOGIN,
+	COLUMN_PROTOCOL,
 	COLUMN_DATA,
 	NUM_COLUMNS
 };
@@ -1424,16 +1424,6 @@ add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 	dialog->screenname_col = column;
 	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 
-	/* Protocol name */
-	column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(column, _("Protocol"));
-	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
-
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(column, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(column, renderer,
-					   "text", COLUMN_PROTOCOL);
-
 	/* Online? */
 	renderer = gtk_cell_renderer_toggle_new();
 	
@@ -1456,7 +1446,16 @@ add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 			renderer, "active", COLUMN_AUTOLOGIN, NULL);
 
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
-	g_object_set(renderer, "xalign", 0.0, "xpad", 10, NULL);
+
+	/* Protocol name */
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Protocol"));
+	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(column, renderer,
+					   "text", COLUMN_PROTOCOL);
 }
 
 static void
@@ -1535,10 +1534,10 @@ create_accounts_list(AccountsDialog *dialog)
 	gtk_widget_show(sw);
 
 	/* Create the list model. */
-	dialog->model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF,
-									   G_TYPE_STRING, G_TYPE_STRING,
+	dialog->model = gtk_list_store_new(NUM_COLUMNS,
+									   GDK_TYPE_PIXBUF, G_TYPE_STRING,
 									   G_TYPE_BOOLEAN, G_TYPE_BOOLEAN,
-									   G_TYPE_POINTER);
+									   G_TYPE_STRING, G_TYPE_POINTER);
 
 	/* And now the actual treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
