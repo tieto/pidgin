@@ -1,4 +1,10 @@
 
+Sat Oct 21 10:18:30 UTC 2000 EWarmenhoven
+	- After signing off chat room structs and input watchers weren't
+	  being removed. This definitely caused leaks (though small ones)
+	  and may have caused a lot of CPU usage. This got modified, and
+	  hopefully fixed.
+
 Wed Oct 18 02:29:38 UTC 2000 EWarmenhoven
 	- removed Direct IM temporarily while I figure out the UI for how
 	  to do stuff

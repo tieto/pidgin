@@ -322,8 +322,8 @@ void oscar_close(struct gaim_connection *gc) {
 		n = (struct chat_connection *)c->data;
 		gdk_input_remove(n->inpa);
 		g_free(n->name);
+		c = g_slist_remove(c, n);
 		g_free(n);
-		c = c->next;
 	}
 	if (gc->inpa > 0)
 		gdk_input_remove(gc->inpa);
