@@ -1,49 +1,23 @@
-#define GAIM_PLUGINS
 #include "gaim.h"
 #include "prpl.h"
+#include "gtkplugin.h"
 #ifdef MAX
 #undef MAX
 #undef MIN
 #endif
 #include "protocols/jabber/jabber.h"
+#include "protocols/msn/session.h"
+
+#define RAW_PLUGIN_ID "raw"
 
 static GtkWidget *window = NULL;
 static GtkWidget *optmenu = NULL;
 static struct gaim_connection *gc = NULL;
-static GModule *me = NULL;
-
-/* this is an evil hack.
- * gc->proto_data for Jabber connections can be cast to a jconn *.
- * gc->proto_data for MSN, TOC, and IRC connections can be cast to an int *.
- */
-
-struct gaim_plugin_description desc; 
-struct gaim_plugin_description *gaim_plugin_desc() {
-	desc.api_version = GAIM_PLUGIN_API_VERSION;
-	desc.name = g_strdup("Raw Input");
-	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Lets you send raw input to text-vased protocols (Jabber, MSN, IRC, TOC).  Hit 'Enter' in the entry box to send.  Watch the debug window.");
-	desc.authors = g_strdup("Eric Warmehoven &lt;eric@warmenhoven.org>");
-	desc.url = g_strdup(WEBSITE);
-	return &desc;
-}
-
-
-char *name()
-{
-	return "Raw";
-}
-
-char *description()
-{
-	return "Lets you send raw XML to Jabber, or raw commands to MSN, IRC, and TOC."
-		" Not very useful except for debugging. Hit 'enter' in the entry to send."
-		" Watch the debug window.";
-}
+static GaimPlugin *me = NULL;
 
 static int goodbye()
 {
-	gaim_plugin_unload_self(me);
+	gaim_plugin_unload(me);
 	return FALSE;
 }
 
@@ -53,7 +27,7 @@ static void send_it(GtkEntry *entry)
 	if (!gc) return;
 	txt = gtk_entry_get_text(entry);
 	switch (gc->protocol) {
-		case PROTO_TOC:
+		case GAIM_PROTO_TOC:
 			{
 				int *a = (int *)gc->proto_data;
 				unsigned short seqno = htons(a[1]++ & 0xffff);
@@ -65,17 +39,21 @@ static void send_it(GtkEntry *entry)
 				gaim_debug(GAIM_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
 			}
 			break;
-		case PROTO_MSN:
-			write(*(int *)gc->proto_data, txt, strlen(txt));
-			write(*(int *)gc->proto_data, "\r\n", 2);
-			gaim_debug(GAIM_DEBUG_MISC, "raw", "MSN C: %s\n", txt);
+		case GAIM_PROTO_MSN:
+			{
+				MsnSession *session = gc->proto_data;
+				char buf[strlen(txt) + 3];
+
+				g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
+				msn_servconn_write(session->notification_conn, buf, strlen(buf));
+			}
 			break;
-		case PROTO_IRC:
+		case GAIM_PROTO_IRC:
 			write(*(int *)gc->proto_data, txt, strlen(txt));
 			write(*(int *)gc->proto_data, "\r\n", 2);
 			gaim_debug(GAIM_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
 			break;
-		case PROTO_JABBER:
+		case GAIM_PROTO_JABBER:
 			jab_send_raw(*(jconn *)gc->proto_data, txt);
 			break;
 	}
@@ -103,12 +81,13 @@ static void redo_optmenu(struct gaim_connection *arg, gpointer x)
 		g = g->next;
 		if (x && c == arg)
 			continue;
-		if (c->protocol != PROTO_TOC && c->protocol != PROTO_MSN &&
-		    c->protocol != PROTO_IRC && c->protocol != PROTO_JABBER)
+		if (c->protocol != GAIM_PROTO_TOC && c->protocol != GAIM_PROTO_MSN &&
+		    c->protocol != GAIM_PROTO_IRC && c->protocol != GAIM_PROTO_JABBER)
 			continue;
 		if (!gc)
 			gc = c;
-		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name);
+		g_snprintf(buf, sizeof buf, "%s (%s)", c->username,
+				   c->prpl->info->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		g_signal_connect(G_OBJECT(opt), "activate", G_CALLBACK(set_gc), c);
 		gtk_widget_show(opt);
@@ -120,18 +99,18 @@ static void redo_optmenu(struct gaim_connection *arg, gpointer x)
 	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
 }
 
-char *gaim_plugin_init(GModule *h)
+static gboolean
+plugin_load(GaimPlugin *plugin)
 {
 	GtkWidget *hbox;
 	GtkWidget *entry;
 
-	me = h;
-
-	gaim_signal_connect(h, event_signon, redo_optmenu, NULL);
-	gaim_signal_connect(h, event_signoff, redo_optmenu, me);
+	gaim_signal_connect(plugin, event_signon, redo_optmenu, NULL);
+	gaim_signal_connect(plugin, event_signoff, redo_optmenu, me);
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(goodbye), NULL);
+	g_signal_connect(G_OBJECT(window), "delete_event",
+					 G_CALLBACK(goodbye), NULL);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(window), hbox);
@@ -147,13 +126,47 @@ char *gaim_plugin_init(GModule *h)
 
 	gtk_widget_show_all(window);
 
-	return NULL;
+	return TRUE;
 }
 
-void gaim_plugin_remove()
+static gboolean
+plugin_unload(GaimPlugin *plugin)
 {
 	if (window)
 		gtk_widget_destroy(window);
+
 	window = NULL;
-	me = NULL;
+
+	return TRUE;
 }
+
+static GaimPluginInfo info =
+{
+	2,
+	GAIM_PLUGIN_STANDARD,
+	GAIM_GTK_PLUGIN_TYPE,
+	0,
+	NULL,
+	GAIM_PRIORITY_DEFAULT,
+	RAW_PLUGIN_ID,
+	N_("Raw"),
+	VERSION,
+	N_("Lets you send raw input to text-vased protocols."),
+	N_("Lets you send raw input to text-vased protocols (Jabber, MSN, IRC, "
+	   "TOC). Hit 'Enter' in the entry box to send. Watch the debug window."),
+	"Eric Warmenhoven <eric@warmenhoven.org>",
+	WEBSITE,
+	plugin_load,
+	plugin_unload,
+	NULL,
+	NULL,
+	NULL
+};
+
+static void
+__init_plugin(GaimPlugin *plugin)
+{
+	me = plugin;
+}
+
+GAIM_INIT_PLUGIN(raw, __init_plugin, info);
