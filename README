@@ -41,7 +41,6 @@ whatever.
 
 The panel (if you made an applet) requires certain things to be in certain
 places, but the Makefile/configure script should figure things out for you.
-Make sure to enable GNOME sounds if you want gaim sounds for the applet.
 
 Send me bug reports.  The web page is http://www.marko.net/gaim and the ftp
 site is ftp://ftp.marko.net/pub/gaim. We also have a sourceforge page at

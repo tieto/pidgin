@@ -43,6 +43,7 @@
 #include "aim.h"
 #include "gnome_applet_mgr.h"
 
+#include "pixmaps/cancel.xpm"
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/aol_icon.xpm"
 #include "pixmaps/away_icon.xpm"
@@ -103,10 +104,19 @@ struct ask_getfile {
 
 struct getfile_transfer {
 	struct gaim_connection *gc;
+	char *receiver;
 	char *filename;
 	struct aim_conn_t *conn;
+	struct aim_fileheader_t *fh;
 	int gip;
+	int gop;
+	FILE *listing;
 	FILE *file;
+	GtkWidget *window;
+	GtkWidget *meter;
+	GtkWidget *label;
+	long pos;
+	long size;
 };
 
 static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
@@ -801,7 +811,30 @@ static void cancel_getfile_file(GtkObject *obj, struct ask_getfile *g) {
 	cancel_getfile(w, g);
 }
 
+static void interrupt_getfile(GtkObject *obj, struct getfile_transfer *gt) {
+	struct gaim_connection *gc = gt->gc;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+
+	gtk_widget_destroy(gt->window);
+	gdk_input_remove(gt->gip);
+	if (gt->gop > 0)
+		gdk_input_remove(gt->gop);
+	aim_conn_kill(od->sess, &gt->conn);
+	od->getfiles = g_slist_remove(od->getfiles, gt);
+	g_free(gt->receiver);
+	g_free(gt->filename);
+	fclose(gt->listing);
+	g_free(gt);
+}
+
 static int gaim_getfile_filereq(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct getfile_transfer *gt;
+	char buf[2048];
+	GtkWidget *label;
+	GtkWidget *button;
+
 	va_list ap;
 	struct aim_conn_t *oftconn;
 	struct aim_fileheader_t *fh;
@@ -813,12 +846,53 @@ static int gaim_getfile_filereq(struct aim_session_t *sess, struct command_rx_st
 	cookie = va_arg(ap, char *);
 	va_end(ap);
 
-	debug_printf("faimtest: request for file %s.\n", fh->name);
+	gt = find_getfile_transfer(od, oftconn);
+
+	if (gt->window)
+		return;
+
+	gt->window = gtk_dialog_new();
+	gtk_window_set_title(GTK_WINDOW(gt->window), _("Gaim - File Transfer"));
+	gtk_widget_realize(gt->window);
+	aol_icon(gt->window->window);
+
+	g_snprintf(buf, sizeof buf, _("Sending %s to %s"), fh->name, gt->receiver);
+	label = gtk_label_new(buf);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gt->window)->vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	gt->meter = gtk_progress_bar_new();
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gt->window)->action_area), gt->meter, FALSE, FALSE, 5);
+	gtk_widget_show(gt->meter);
+
+	gt->label = gtk_label_new("0 %");
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gt->window)->action_area), gt->label, FALSE, FALSE, 5);
+	gtk_widget_show(gt->label);
+
+	button = picture_button(gt->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gt->window)->action_area), button, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(interrupt_getfile), gt);
+
+	gtk_widget_show(gt->window);
 
 	return 1;
 }
 
+/*
+static void getfile_send_callback(gpointer data, gint source, GdkInputCondition condition) {
+	struct getfile_transfer *gt = (struct getfile_transfer *)data;
+	char buf[1024];
+
+	debug_printf("getfile_send_callback for file %s to %s\n", gt->filename, gt->receiver);
+	gt->pos += aim_getfile_send_chunk(gt->conn, gt->file, gt->fh, gt->pos, 1024);
+}
+*/
+
 static int gaim_getfile_filesend(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct getfile_transfer *gt;
+
 	va_list ap;
 	struct aim_conn_t *oftconn;
 	struct aim_fileheader_t *fh;
@@ -830,21 +904,58 @@ static int gaim_getfile_filesend(struct aim_session_t *sess, struct command_rx_s
 	cookie = va_arg(ap, char *);
 	va_end(ap);
 
-	debug_printf("faimtest: sending file %s.\n", fh->name);
+	gt = find_getfile_transfer(od, oftconn);
+
+	if (gt->gop > 0) {
+		debug_printf("already have output watcher?\n");
+		return;
+	}
+
+	if ((gt->file = fopen(gt->filename, "r")) == NULL) {
+		interrupt_getfile(NULL, gt);
+		return 1;
+	}
+	gt->pos = 0;
+	gt->fh = fh;
+
+	/* gt->gop = gdk_input_add(gt->conn->fd, GDK_INPUT_WRITE, getfile_send_callback, gt); */
+	/* yes, this is bad. but i don't think aim_getfile_send_chunk works. */
+	aim_getfile_send(oftconn, gt->file, fh);
 
 	return 1;
 }
 
 static int gaim_getfile_complete(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct getfile_transfer *gt;
+
+	va_list ap;
+	struct aim_conn_t *conn;
+	struct aim_fileheader_t *fh;
+
+	va_start(ap, command);
+	conn = va_arg(ap, struct aim_conn_t *);
+	fh = va_arg(ap, struct aim_fileheader_t *);
+	va_end(ap);
+
+	gt = find_getfile_transfer(od, conn);
+
+	gtk_widget_destroy(gt->window);
+	gt->window = NULL;
+	do_error_dialog(_("Transfer complete."), "Gaim");
+
+	return 1;
 }
 
 static int gaim_getfile_disconnect(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct getfile_transfer *gt;
+
 	va_list ap;
 	struct aim_conn_t *conn;
 	char *sn;
-	struct getfile_transfer *gt;
 
 	va_start(ap, command);
 	conn = va_arg(ap, struct aim_conn_t *);
@@ -854,8 +965,12 @@ static int gaim_getfile_disconnect(struct aim_session_t *sess, struct command_rx
 	gt = find_getfile_transfer(od, conn);
 	od->getfiles = g_slist_remove(od->getfiles, gt);
 	gdk_input_remove(gt->gip);
+	if (gt->gop > 0)
+		gdk_input_remove(gt->gop);
+	g_free(gt->receiver);
 	g_free(gt->filename);
 	aim_conn_kill(sess, &conn);
+	fclose(gt->listing);
 	g_free(gt);
 
 	debug_printf("getfile disconnect\n");
@@ -895,30 +1010,37 @@ static void do_getfile(GtkObject *obj, struct ask_getfile *g) {
 	}
 
 	gf = g_new0(struct getfile_transfer, 1);
-	od->getfiles = g_slist_append(od->getfiles, gf);
 	gf->gc = gc;
 	gf->filename = g_strdup(filename);
+	gf->listing = file;
+	gf->receiver = g_strdup(g->sn);
+	gf->size = st.st_size;
 
 	ft = localtime(&st.st_ctime);
-	fprintf(file, "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
+	fprintf(file, "%2d/%2d/%4d %2d:%2d %8ld ",
 			ft->tm_mon + 1, ft->tm_mday, ft->tm_year + 1900,
-			ft->tm_hour + 1, ft->tm_min + 1, st.st_size, g_basename(filename));
+			ft->tm_hour + 1, ft->tm_min + 1, st.st_size);
+	fprintf(file, "%s\r\n", g_basename(filename));
 	rewind(file);
 
-
-	debug_printf("cookie: %s ip: %s\n", g->cookie, g->ip);
+	aim_oft_registerlisting(od->sess, file, "");
+	od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 	if ((newconn = aim_accepttransfer(od->sess, od->conn, g->sn, g->cookie, g->ip, file, AIM_CAPS_GETFILE)) == NULL) {
+		od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 		do_error_dialog(_("Error connecting for transfer"), _("GetFile Error"));
 		g_free(gf->filename);
 		fclose(file);
 		g_free(gf);
+		gtk_widget_destroy(w);
 		return;
 	}
+	od->sess->flags ^= AIM_SESS_FLAGS_NONBLOCKCONNECT;
 
 	gtk_widget_destroy(w);
-	fclose(file); /* can we do this? */
 
 	gf->gip = gdk_input_add(newconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, oscar_callback, newconn);
+	od->getfiles = g_slist_append(od->getfiles, gf);
+	gf->conn = newconn;
 	aim_conn_addhandler(od->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILEREQ, gaim_getfile_filereq, 0);
 	aim_conn_addhandler(od->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILEFILESEND, gaim_getfile_filesend, 0);
 	aim_conn_addhandler(od->sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILECOMPLETE, gaim_getfile_complete, 0);
