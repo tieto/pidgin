@@ -37,6 +37,7 @@ version 2.0.0cvs:
 	* Removed: serv_close
 	* Removed: serv_finish_login
 	* Changed: keep_alive in GaimConnection is renamed to keepalive
+	* Removed: gaim_chat_get_display_name
 
 	Signals:
 	* Changed: "received-im-msg and "received-chat-msg" to match, both

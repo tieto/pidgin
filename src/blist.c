@@ -1019,34 +1019,6 @@ GaimChat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *com
 	return chat;
 }
 
-char *gaim_chat_get_display_name(GaimChat *chat)
-{
-	char *name;
-
-	g_return_val_if_fail(chat != NULL, FALSE);
-
-	if (chat->alias != NULL) {
-		 name = g_strdup(chat->alias);
-	} else {
-		 GList *parts;
-		 GaimPlugin *prpl;
-		 GaimPluginProtocolInfo *prpl_info;
-		 struct proto_chat_entry *pce;
-
-		 prpl = gaim_find_prpl(gaim_account_get_protocol_id(chat->account));
-		 prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
-
-		 parts = prpl_info->chat_info(chat->account->gc);
-
-		 pce = parts->data;
-		 name = g_markup_escape_text(g_hash_table_lookup(chat->components,
-														 pce->identifier), -1);
-		 g_list_free(parts);
-	}
-
-	return name;
-}
-
 GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const char *alias)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;

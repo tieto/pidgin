@@ -117,8 +117,8 @@ static void
 gaim_xfer_conversation_write(GaimXfer *xfer, char *message, gboolean is_error)
 {
 	GaimConversation *conv = NULL;
-	GString *gs_message = NULL;
 	GaimMessageFlags flags = GAIM_MESSAGE_SYSTEM;
+	char *escaped;
 
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(message != NULL);
@@ -129,13 +129,13 @@ gaim_xfer_conversation_write(GaimXfer *xfer, char *message, gboolean is_error)
 	if (conv == NULL)
 		return;
 
-	gs_message = g_string_new(message);
+	escaped = g_markup_escape_text(message, -1);
 
 	if (is_error)
 		flags = GAIM_MESSAGE_ERROR;
 
-	gaim_conversation_write(conv, NULL, gs_message->str, flags, time(NULL));
-	g_string_free(gs_message, TRUE);
+	gaim_conversation_write(conv, NULL, escaped, flags, time(NULL));
+	g_free(escaped);
 }
 
 static void gaim_xfer_show_file_error(GaimXfer *xfer, const char *filename)
@@ -248,7 +248,7 @@ cancel_recv_cb(GaimXfer *xfer)
 static void
 gaim_xfer_ask_recv(GaimXfer *xfer)
 {
-	char *buf, *size_buf, *escaped;
+	char *buf, *size_buf;
 	size_t size;
 
 	/* If we have already accepted the request, ask the destination file
@@ -260,12 +260,10 @@ gaim_xfer_ask_recv(GaimXfer *xfer)
 		{
 			size = gaim_xfer_get_size(xfer);
 			size_buf = gaim_str_size_to_units(size);
-			escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
 			buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
 					      buddy ? gaim_buddy_get_alias(buddy) : xfer->who,
-					      escaped, size_buf);
+					      gaim_xfer_get_filename(xfer), size_buf);
 			g_free(size_buf);
-			g_free(escaped);
 		}
 		else
 		{
@@ -931,7 +929,7 @@ void
 gaim_xfer_cancel_local(GaimXfer *xfer)
 {
 	GaimXferUiOps *ui_ops;
-	char *msg = NULL, *escaped;
+	char *msg = NULL;
 
 	g_return_if_fail(xfer != NULL);
 
@@ -939,10 +937,8 @@ gaim_xfer_cancel_local(GaimXfer *xfer)
 
 	if (gaim_xfer_get_filename(xfer) != NULL)
 	{
-		escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
 		msg = g_strdup_printf(_("You canceled the transfer of %s"),
-							  escaped);
-		g_free(escaped);
+							  gaim_xfer_get_filename(xfer));
 	}
 	else
 	{
@@ -989,7 +985,7 @@ void
 gaim_xfer_cancel_remote(GaimXfer *xfer)
 {
 	GaimXferUiOps *ui_ops;
-	gchar *msg, *escaped;
+	gchar *msg;
 	GaimAccount *account;
 	GaimBuddy *buddy;
 
@@ -1003,10 +999,8 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 
 	if (gaim_xfer_get_filename(xfer) != NULL)
 	{
-		escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
 		msg = g_strdup_printf(_("%s canceled the transfer of %s"),
-				buddy ? gaim_buddy_get_alias(buddy) : xfer->who, escaped);
-		g_free(escaped);
+				buddy ? gaim_buddy_get_alias(buddy) : xfer->who, gaim_xfer_get_filename(xfer));
 	}
 	else
 	{

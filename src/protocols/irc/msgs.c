@@ -76,6 +76,7 @@ void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, c
 void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc;
+	char *msg;
 
 	if (!args || !args[1])
 		return;
@@ -87,8 +88,11 @@ void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	gc = gaim_account_get_connection(irc->account);
-	if (gc)
-		serv_got_im(gc, args[1], args[2], GAIM_CONV_IM_AUTO_RESP, time(NULL));
+	if (gc) {
+		msg = g_markup_escape_text(args[2], -1);
+		serv_got_im(gc, args[1], msg, GAIM_CONV_IM_AUTO_RESP, time(NULL));
+		g_free(msg);
+	}
 }
 
 void irc_msg_badmode(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -138,7 +142,7 @@ void irc_msg_banfull(struct irc_conn *irc, const char *name, const char *from, c
 void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConversation *convo;
-	char *buf;
+	char *buf, *escaped;
 
 	if (!args || !args[1] || !args[2])
 		return;
@@ -147,8 +151,10 @@ void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, 
 	if (!convo)	/* XXX punt on channels we are not in for now */
 		return;
 
-	buf = g_strdup_printf("mode for %s: %s %s", args[1], args[2], args[3] ? args[3] : "");
+	escaped = (args[3] != NULL) ? g_markup_escape_text(args[3], -1) : NULL;
+	buf = g_strdup_printf("mode for %s: %s %s", args[1], args[2], escaped ? escaped : "");
 	gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+	g_free(escaped);
 	g_free(buf);
 
 	return;
@@ -416,6 +422,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc;
+	char *escaped;
 	if (!strcmp(name, "375")) {
 		gc = gaim_account_get_connection(irc->account);
 		if (gc)
@@ -425,7 +432,9 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 	if (!irc->motd)
 		irc->motd = g_string_new("");
 
-	g_string_append_printf(irc->motd, "%s<br>", args[1]);
+	escaped = g_markup_escape_text(args[1], -1);
+	g_string_append_printf(irc->motd, "%s<br>", escaped);
+	g_free(escaped);
 }
 
 void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -470,7 +479,6 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 {
 	GaimConnection *gc;
 	GaimConversation *convo;
-	char *nick;
 
 	convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, args[1], irc->account);
 	if (convo) {
@@ -483,9 +491,7 @@ void irc_msg_nonick(struct irc_conn *irc, const char *name, const char *from, ch
 	} else {
 		if ((gc = gaim_account_get_connection(irc->account)) == NULL)
 			return;
-		nick = g_markup_escape_text(args[1], -1);
-		gaim_notify_error(gc, NULL, _("No such nick or channel"), nick);
-		g_free(nick);
+		gaim_notify_error(gc, NULL, _("No such nick or channel"), args[1]);
 	}
 
 	if (irc->whois.nick && !gaim_utf8_strcasecmp(irc->whois.nick, args[1])) {
@@ -649,7 +655,7 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
 	GaimConversation *convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[0], irc->account);
-	char *nick = irc_mask_nick(from), *buf;
+	char *nick = irc_mask_nick(from), *buf, *reason;
 
 	if (!gc) {
 		g_free(nick);
@@ -662,17 +668,19 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 	}
 
+	reason = g_markup_escape_text(args[2], -1);
 	if (!gaim_utf8_strcasecmp(gaim_connection_get_display_name(gc), args[1])) {
-		buf = g_strdup_printf(_("You have been kicked by %s: (%s)"), nick, args[2]);
+		buf = g_strdup_printf(_("You have been kicked by %s: (%s)"), nick, reason);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(buf);
 		serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)));
 	} else {
-		buf = g_strdup_printf(_("Kicked by %s (%s)"), nick, args[2]);
+		buf = g_strdup_printf(_("Kicked by %s (%s)"), nick, reason);
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), args[1], buf);
 		g_free(buf);
 	}
 
+	g_free(reason);
 	g_free(nick);
 	return;
 }
@@ -683,14 +691,17 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 	char *nick = irc_mask_nick(from), *buf;
 
 	if (*args[0] == '#' || *args[0] == '&') {	/* Channel	*/
+		char *escaped;
 		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[0], irc->account);
 		if (!convo) {
 			gaim_debug(GAIM_DEBUG_ERROR, "irc", "MODE received for %s, which we are not in\n", args[0]);
 			g_free(nick);
 			return;
 		}
-		buf = g_strdup_printf(_("mode (%s %s) by %s"), args[1], args[2] ? args[2] : "", nick);
+		escaped = (args[2] != NULL) ? g_markup_escape_text(args[2], -1) : NULL;
+		buf = g_strdup_printf(_("mode (%s %s) by %s"), args[1], escaped ? escaped : "", nick);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		g_free(escaped);
 		g_free(buf);
 		if(args[2]) {
 			GaimConvChatBuddyFlags newflag, flags;
@@ -807,14 +818,11 @@ void irc_msg_notice(struct irc_conn *irc, const char *name, const char *from, ch
 void irc_msg_nochangenick(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
-	char *msg;
 
 	if (!args || !args[2] || !gc)
 		return;
 
-	msg = g_strdup_printf(_("Could not change nick"));
-	gaim_notify_error(gc, _("Cannot change nick"), msg, args[2]);
-	g_free(msg);
+	gaim_notify_error(gc, _("Cannot change nick"), _("Could not change nick"), args[2]);
 }
 
 void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -995,7 +1003,7 @@ void irc_msg_unavailable(struct irc_conn *irc, const char *name, const char *fro
 void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
-	char *nick, *msg, *wallop;
+	char *nick, *msg;
 
 	if (!args || !args[0] || !gc)
 		return;
@@ -1003,10 +1011,8 @@ void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, c
 	nick = irc_mask_nick(from);
 	msg = g_strdup_printf (_("Wallops from %s"), nick);
 	g_free(nick);
-	wallop = g_markup_escape_text(args[0], strlen(args[0]));
-	gaim_notify_info(gc, NULL, msg, wallop);
+	gaim_notify_info(gc, NULL, msg, args[0]);
 	g_free(msg);
-	g_free(wallop);
 }
 
 void irc_msg_ignore(struct irc_conn *irc, const char *name, const char *from, char **args)

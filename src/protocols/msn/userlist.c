@@ -73,7 +73,7 @@ static void
 got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 {
 	MsnPermitAdd *pa;
-	char *msg, *escaped;
+	char *msg;
 
 	pa      = g_new0(MsnPermitAdd, 1);
 	pa->who = g_strdup(passport);
@@ -81,13 +81,11 @@ got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 
 	if (friendly != NULL)
 	{
-		escaped = g_markup_escape_text(friendly, -1);
 		msg = g_strdup_printf(
 				   _("The user %s (%s) wants to add %s to his or her "
 					 "buddy list."),
-				   passport, escaped,
+				   passport, friendly,
 				   gaim_account_get_username(gc->account));
-		g_free(escaped);
 	}
 	else
 	{

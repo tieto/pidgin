@@ -128,6 +128,7 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	GtkWidget *img = NULL;
 	char label_text[2048];
 	const char *icon_name = NULL;
+	char *primary_esc, *secondary_esc;
 
 	switch (type)
 	{
@@ -175,9 +176,13 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	if (img != NULL)
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
+	primary_esc = g_markup_escape_text(primary, -1);
+	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
 	g_snprintf(label_text, sizeof(label_text),
 			   "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s",
-			   primary, (secondary ? secondary : ""));
+			   primary_esc, (secondary ? secondary_esc : ""));
+	g_free(primary_esc);
+	g_free(secondary_esc);
 
 	label = gtk_label_new(NULL);
 
@@ -350,7 +355,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	GtkWidget *frame;
 	int options = 0;
 	char label_text[2048];
-	char *linked_text;
+	char *linked_text, *primary_esc, *secondary_esc;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), title);
@@ -366,11 +371,15 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(vbox);
 
 	/* Setup the descriptive label */
+	primary_esc = g_markup_escape_text(primary, -1);
+	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
 	g_snprintf(label_text, sizeof(label_text),
 			   "<span weight=\"bold\" size=\"larger\">%s</span>%s%s",
-			   primary,
+			   primary_esc,
 			   (secondary ? "\n" : ""),
-			   (secondary ? secondary : ""));
+			   (secondary ? secondary_esc : ""));
+	g_free(primary_esc);
+	g_free(secondary_esc);
 
 	label = gtk_label_new(NULL);
 
@@ -438,6 +447,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	GtkTreeIter iter;
 	int i;
 	char *label_text;
+	char *primary_esc, *secondary_esc;
 
 	data = g_malloc(sizeof(GaimNotifySearchResultsData));
 
@@ -456,11 +466,15 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	gtk_widget_show(vbox);
 
 	/* Setup the descriptive label */
+	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
+	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
 	label_text = g_strdup_printf(
 			"<span weight=\"bold\" size=\"larger\">%s</span>%s%s",
-			(primary ? primary : ""),
+			(primary ? primary_esc : ""),
 			(primary && secondary ? "\n" : ""),
-			(secondary ? secondary : ""));
+			(secondary ? secondary_esc : ""));
+	g_free(primary_esc);
+	g_free(secondary_esc);
 	label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
@@ -528,11 +542,13 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 
 	for (i = 0; results[i] != NULL; i++)
 	{
+		char *escaped = g_markup_escape_text(results[i], -1);
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter,
 						   COLUMN_ICON, scaled,
-						   COLUMN_SCREENNAME, results[i],
+						   COLUMN_SCREENNAME, escaped,
 						   -1);
+		g_free(escaped);
 	}
 
 	data->account = gc->account;

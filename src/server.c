@@ -1050,8 +1050,6 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 	GaimAccount *account;
 	char buf2[BUF_LONG];
 	struct chat_invite_data *cid = g_new0(struct chat_invite_data, 1);
-	char *name_escaped = g_markup_escape_text(name, -1);
-	char *who_escaped = g_markup_escape_text(who, -1);
 
 	account = gaim_connection_get_account(gc);
 
@@ -1060,19 +1058,14 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 
 	if (message != NULL)
 	{
-		char *message_escaped = g_markup_escape_text(message, -1);
 		g_snprintf(buf2, sizeof(buf2),
-				   _("%s has invited %s to the chat room %s:\n<b>%s</b>"),
-				   who_escaped, gaim_account_get_username(account), name_escaped, message_escaped);
-		g_free(message_escaped);
+				   _("%s has invited %s to the chat room %s:\n%s"),
+				   who, gaim_account_get_username(account), name, message);
 	}
 	else
 		g_snprintf(buf2, sizeof(buf2),
 				   _("%s has invited %s to the chat room %s\n"),
-				   who_escaped, gaim_account_get_username(account), name_escaped);
-
-	g_free(name_escaped);
-	g_free(who_escaped);
+				   who, gaim_account_get_username(account), name);
 
 	cid->gc = gc;
 	cid->components = data;

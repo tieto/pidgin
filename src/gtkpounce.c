@@ -954,9 +954,6 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	{
 		char tmp[1024];
 		const char *name_shown;
-		char *escaped;
-
-		escaped = g_markup_escape_text(alias, -1);
 
 		/*
 		 * Here we place the protocol name in the pounce dialog to lessen
@@ -980,9 +977,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 				   (events & GAIM_POUNCE_AWAY) ?
 				   _("%s has gone away. (%s)") :
 				   _("Unknown pounce event. Please report this!"),
-				   escaped, gaim_account_get_protocol_name(account));
-
-		g_free(escaped);
+				   alias, gaim_account_get_protocol_name(account));
 
 		/*
 		 * Ok here is where I change the second argument, title, from

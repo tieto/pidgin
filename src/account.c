@@ -775,22 +775,19 @@ static void
 request_password(GaimAccount *account)
 {
 	gchar *primary;
-	gchar *escaped;
 	const gchar *username;
 
 	/* Close any previous password request windows */
 	gaim_request_close_with_handle(account);
 
 	username = gaim_account_get_username(account);
-	escaped = g_markup_escape_text(username, strlen(username));
-	primary = g_strdup_printf(_("Enter password for %s (%s)"), escaped,
+	primary = g_strdup_printf(_("Enter password for %s (%s)"), username,
 								  gaim_account_get_protocol_name(account));
 	gaim_request_input(account, _("Enter Password"), primary, NULL, NULL,
 					   FALSE, TRUE, NULL,
 					   _("OK"), G_CALLBACK(request_password_ok_cb),
 					   _("Cancel"), NULL, account);
 	g_free(primary);
-	g_free(escaped);
 }
 
 void

@@ -1294,7 +1294,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			SilcServerEntry server_entry;
 			char *server_name;
 			char *server_info;
-			char tmp[256], *msg;
+			char tmp[256];
 
 			if (!success) {
 				gaim_notify_error(gc, _("Server Information"),
@@ -1310,9 +1310,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (server_name && server_info) {
 				g_snprintf(tmp, sizeof(tmp), "Server: %s\n%s",
 					   server_name, server_info);
-				msg = g_markup_escape_text(tmp, strlen(tmp));
-				gaim_notify_info(gc, NULL, _("Server Information"), msg);
-				g_free(msg);
+				gaim_notify_info(gc, NULL, _("Server Information"), tmp);
 			}
 		}
 		break;

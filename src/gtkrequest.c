@@ -286,6 +286,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	GtkWidget *img;
 	GtkWidget *toolbar;
 	char *label_text;
+	char *primary_esc, *secondary_esc;
 
 	data            = g_new0(GaimGtkRequestData, 1);
 	data->type      = GAIM_REQUEST_INPUT;
@@ -332,11 +333,15 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
+	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
+	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 								 "%s</span>%s%s" : "%s%s%s"),
-								 (primary ? primary : ""),
+								 (primary ? primary_esc : ""),
 								 ((primary && secondary) ? "\n\n" : ""),
-								 (secondary ? secondary : ""));
+								 (secondary ? secondary_esc : ""));
+	g_free(primary_esc);
+	g_free(secondary_esc);
 
 	label = gtk_label_new(NULL);
 
@@ -435,6 +440,7 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 	GtkWidget *radio = NULL;
 	char *label_text;
 	char *radio_text;
+	char *primary_esc, *secondary_esc;
 
 	data            = g_new0(GaimGtkRequestData, 1);
 	data->type      = GAIM_REQUEST_ACTION;
@@ -483,11 +489,15 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
+	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
+	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 				      "%s</span>%s%s" : "%s%s%s"),
-				     (primary ? primary : ""),
+				     (primary ? primary_esc : ""),
 				     ((primary && secondary) ? "\n\n" : ""),
-				     (secondary ? secondary : ""));
+				     (secondary ? secondary_esc : ""));
+	g_free(primary_esc);
+	g_free(secondary_esc);
 
 	label = gtk_label_new(NULL);
 
@@ -530,6 +540,7 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	GtkWidget *img;
 	void **buttons;
 	char *label_text;
+	char *primary_esc, *secondary_esc;
 	int i;
 
 	data            = g_new0(GaimGtkRequestData, 1);
@@ -587,11 +598,15 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
+	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
+	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
 	label_text = g_strdup_printf((primary ? "<span weight=\"bold\" size=\"larger\">"
 								 "%s</span>%s%s" : "%s%s%s"),
-								 (primary ? primary : ""),
+								 (primary ? primary_esc : ""),
 								 ((primary && secondary) ? "\n\n" : ""),
- 								 (secondary ? secondary : ""));
+								 (secondary ? secondary_esc : ""));
+	g_free(primary_esc);
+	g_free(secondary_esc);
 
 	label = gtk_label_new(NULL);
 
@@ -1234,6 +1249,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
 	char *label_text;
+	char *primary_esc, *secondary_esc;
 	int total_fields = 0;
 
 	data            = g_new0(GaimGtkRequestData, 1);
@@ -1281,8 +1297,10 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if(primary) {
+		primary_esc = g_markup_escape_text(primary, -1);
 		label_text = g_strdup_printf(
-				"<span weight=\"bold\" size=\"larger\">%s</span>", primary);
+				"<span weight=\"bold\" size=\"larger\">%s</span>", primary_esc);
+		g_free(primary_esc);
 		label = gtk_label_new(NULL);
 
 		gtk_label_set_markup(GTK_LABEL(label), label_text);
@@ -1315,9 +1333,11 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	}
 
 	if (secondary) {
+		secondary_esc = g_markup_escape_text(secondary, -1);
 		label = gtk_label_new(NULL);
 
-		gtk_label_set_markup(GTK_LABEL(label), secondary);
+		gtk_label_set_markup(GTK_LABEL(label), secondary_esc);
+		g_free(secondary_esc);
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_box_pack_start(GTK_BOX(vbox2), label, TRUE, TRUE, 0);
