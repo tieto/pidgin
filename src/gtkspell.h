@@ -22,8 +22,6 @@
 /* PLEASE NOTE that this API is unstable and subject to change. */
 #define GTKSPELL_VERSION "0.3.2"
 
-static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
-
 extern int gtkspell_start(char *path, char *args[]);
 /* Spawns the spell checking program.
  *

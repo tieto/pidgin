@@ -58,6 +58,8 @@
 #include <getopt.h>
 #endif
 
+static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
+
 static GtkWidget *name;
 static GtkWidget *pass;
 
