@@ -1856,7 +1856,7 @@ gchar **info_img_handler(gchar *url)
 	if (!g_strcasecmp(url, "wireless_icon.gif"))
 		return wireless_icon_xpm;
 	if (!g_strcasecmp(url, "icq_icon.gif"))
-		return icon_online_xpm
+		return icon_online_xpm;
 	return NULL;
 }
 
