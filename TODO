@@ -1,7 +1,7 @@
 WINGAIM:
 	compiling plugins for win32 not possible (makefile is currently for .so)
 	font issues?
-	resizing windows doesn't work right.
+	resizing windows does not work correctly [what's the problem here?]
 	Gtk windows that appear when you hover over a button, and just stay there and never close until you click on them once
 	sounds while away?	
 
