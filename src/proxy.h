@@ -1,4 +1,7 @@
-/*
+/**
+ * @file proxy.h Proxy functions
+ * @ingroup core
+ *
  * gaim
  *
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
@@ -16,7 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 
 /* this is the export part of the proxy.c file. it does a little

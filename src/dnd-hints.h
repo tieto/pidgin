@@ -1,5 +1,6 @@
 /**
  * @file dnd-hints.h Drag-and-Drop arrow hints
+ * @ingroup gtkui
  *
  * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
  *

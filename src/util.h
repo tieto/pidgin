@@ -1,5 +1,6 @@
 /**
  * @file util.h Utility Functions
+ * @ingroup core
  *
  * gaim
  *

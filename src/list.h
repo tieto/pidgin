@@ -1,5 +1,6 @@
 /**
  * @file list.h Buddy List API
+ * @ingroup core
  *
  * gaim
  *
@@ -18,7 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 
 /* I can't believe I let ChipX86 inspire me to write good code. -Sean */
@@ -346,8 +346,8 @@ GSList *gaim_group_get_accounts(struct group *g);
 /**
  * Determines whether an account owns any buddies in a given group
  *
- * @param g  The group to search through.
- * @account  The account.
+ * @param g       The group to search through.
+ * @param account The account.
  */
 gboolean gaim_group_on_account(struct group *g, struct gaim_account *account);
 
