@@ -251,13 +251,6 @@ load_timeout(gpointer data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	if (!bonobo_init_full(NULL, NULL, bonobo_activation_orb_get(),
-						  CORBA_OBJECT_NIL, CORBA_OBJECT_NIL))
-	{
-		gaim_debug_error("evolution", "Unable to initialize bonobo.\n");
-		return FALSE;
-	}
-
 	bonobo_activate();
 
 	backup_blist_ui_ops = gaim_blist_get_ui_ops();
@@ -298,14 +291,13 @@ plugin_unload(GaimPlugin *plugin)
 		book = NULL;
 	}
 
-	bonobo_debug_shutdown();
-
 	return TRUE;
 }
 
 static void
 plugin_destroy(GaimPlugin *plugin)
 {
+	bonobo_debug_shutdown();
 }
 
 static void
@@ -505,6 +497,12 @@ init_plugin(GaimPlugin *plugin)
 	 * and it works.
 	 */
 	g_module_make_resident(plugin->handle);
+
+	if (!bonobo_init_full(NULL, NULL, bonobo_activation_orb_get(),
+						  CORBA_OBJECT_NIL, CORBA_OBJECT_NIL))
+	{
+		gaim_debug_error("evolution", "Unable to initialize bonobo.\n");
+	}
 }
 
 GAIM_INIT_PLUGIN(gevolution, init_plugin, info)
