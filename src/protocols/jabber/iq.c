@@ -23,6 +23,7 @@
 #include "prefs.h"
 
 #include "iq.h"
+#include "oob.h"
 #include "roster.h"
 
 #ifdef _WIN32
@@ -230,7 +231,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	} else if(!strcmp(xmlns, "jabber:iq:register")) {
 		jabber_register_parse(js, packet);
 	} else if(!strcmp(xmlns, "jabber:iq:oob")) {
-		/* XXX: need to re-implement file receive for the old-skool way */
+		jabber_oob_parse(js, packet);
 	} else {
 		gaim_debug(GAIM_DEBUG_WARNING, "jabber", "Unknown query: %s\n", xmlns);
 	}

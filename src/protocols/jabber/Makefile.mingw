@@ -76,6 +76,7 @@ C_SRC =			auth.c \
 			jabber.c \
 			jutil.c \
 			message.c \
+			oob.c \
 			parser.c \
 			presence.c \
 			roster.c \

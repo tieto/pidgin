@@ -17,6 +17,8 @@ JABBERSOURCES = auth.c \
 			  jutil.h \
 			  message.c \
 			  message.h \
+			  oob.c \
+			  oob.h \
 			  parser.c \
 			  parser.h \
 			  presence.c \

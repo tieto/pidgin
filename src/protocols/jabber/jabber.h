@@ -63,6 +63,8 @@ typedef struct _JabberStream
 	GHashTable *callbacks;
 	int next_id;
 
+	GList *file_transfers;
+
 	time_t idle;
 
 	JabberID *user;
