@@ -998,11 +998,7 @@ static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], tongue_xpm);
 	}
 
-	if (face || strlen(m) < 3) {
-		gdk_bitmap_unref(mask);
-		return face;
-	}
-
+	if (face || strlen(m) < 3) return face;
 	*len = 3;
 	if (	   !strncmp(m, ":-)", 3)) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], smile_xpm);
@@ -1042,11 +1038,7 @@ static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], bigsmile_xpm);
 	}
 
-	if (face || strlen(m) < 4) {
-		gdk_bitmap_unref(mask);
-		return face;
-	}
-
+	if (face || strlen(m) < 4) return face;
 	*len = 4;
 	if (	   !strncmp(m, "O:-)", 4)) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], angel_xpm);
@@ -1055,17 +1047,12 @@ static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], luke03_xpm);
 	}
 
-	if (face || strlen(m) < 6) {
-		gdk_bitmap_unref(mask);
-		return face;
-	}
-
+	if (face || strlen(m) < 6) return face;
 	*len = 6;
 	if (	   !strncmp(m, "&gt;:o", 6)) {
 		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], yell_xpm);
 	}
 
-	if (face) gdk_bitmap_unref(mask);
 	return face;
 }
 
