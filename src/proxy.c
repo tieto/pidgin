@@ -1349,21 +1349,21 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 	/* Skip past BND.ADDR */
 	switch(buf[3]) {
 		case 0x01: /* the address is a version-4 IP address, with a length of 4 octets */
-			lseek(source, 4, SEEK_CUR);
+			read(source, buf, 4);
 			break;
 		case 0x03: /* the address field contains a fully-qualified domain name.  The first
 					  octet of the address field contains the number of octets of name that
 					  follow, there is no terminating NUL octet. */
-			read(source, buf+4, 1);
-			lseek(source, buf[4], SEEK_CUR);
+			read(source, buf, 1);
+			read(source, buf, buf[0]);
 			break;
 		case 0x04: /* the address is a version-6 IP address, with a length of 16 octets */
-			lseek(source, 16, SEEK_CUR);
+			read(source, buf, 16);
 			break;
 	}
 
 	/* Skip past BND.PORT */
-	lseek(source, 2, SEEK_CUR);
+	read(source, buf, 2);
 
 	if (phb->account == NULL ||
 		gaim_account_get_connection(phb->account) != NULL) {
