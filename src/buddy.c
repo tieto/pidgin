@@ -1744,7 +1744,9 @@ void show_buddy_list()
 
         gaim_new_item(menu, "Preferences", GTK_SIGNAL_FUNC(show_prefs));
 
+#ifdef GAIM_PLUGINS
         gaim_new_item(menu, "Plugins", GTK_SIGNAL_FUNC(show_plugins));
+#endif
 
 	menu = gtk_menu_new();
 
