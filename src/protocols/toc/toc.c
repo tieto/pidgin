@@ -1940,8 +1940,11 @@ static void accept_file_dialog(struct ft_request *ft) {
 			size /= 1024;
 			index++;
 		}
-	        g_snprintf(buf, sizeof(buf), _("%s requests %s to accept %d file%s: %s (%.2f %s)%s%s"),
-				ft->user, ft->gc->username, ft->files, (ft->files == 1) ? "" : "s",
+	        g_snprintf(buf, sizeof(buf), 
+				ft->files == 1 ? 
+				_("%s requests %s to accept %d file: %s (%.2f %s)%s%s") :
+				_("%s requests %s to accept %d files: %s (%.2f %s)%s%s"),
+				ft->user, ft->gc->username, ft->files, 
 				ft->filename, size, sizes[index], (ft->message) ? "\n" : "",
 				(ft->message) ? ft->message : "");
 	} else {

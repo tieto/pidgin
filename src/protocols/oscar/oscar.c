@@ -1421,6 +1421,10 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 		args = va_arg(ap, struct aim_incomingim_ch2_args *);
 
 		ret = incomingim_chan2(sess, fr->conn, userinfo, args);
+	} else if (channel == 3) {
+		printf("Chan 3\n");
+	} else if (channel == 4) {
+		printf("Chan 4\n");
 	}
 
 	va_end(ap);
@@ -1456,45 +1460,49 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 			/* Message too large */
 			g_snprintf(buf,
 				   sizeof(buf),
-				   _("You missed %d message%s from %s because %s too large."),
+				   nummissed == 1 ?
+				   _("You missed %d message from %s because it was too large.") :
+				   _("You missed %s messages from %s because they were too large."),
 				   nummissed,
-				   nummissed == 1 ? "" : "s",
-				   userinfo->sn,
-				   nummissed == 1 ? "it was" : "they were");
+				   userinfo->sn);
 			break;
 		case 2:
 			/* Rate exceeded */
 			g_snprintf(buf,
 				   sizeof(buf),
-				   _("You missed %d message%s from %s because the rate limit has been exceeded."),
+				   nummissed == 1 ? 
+				   _("You missed %d message from %s because the rate limit has been exceeded.") :
+				   _("You missed %d messages from %s because the rate limit has been exceeded."),
 				   nummissed,
-				   nummissed == 1 ? "" : "s",
 				   userinfo->sn);
 			break;
 		case 3:
 			/* Evil Sender */
 			g_snprintf(buf,
 				   sizeof(buf),
-				   _("You missed %d message%s from %s because they are too evil."),
+				   nummissed == 1 ?
+				   _("You missed %d message from %s because they are too evil.") : 
+				   _("You missed %d messages from %s because they are too evil."),
 				   nummissed,
-				   nummissed == 1 ? "" : "s",
 				   userinfo->sn);
 			break;
 		case 4:
 			/* Evil Receiver */
 			g_snprintf(buf,
 				   sizeof(buf),
-				   _("You missed %d message%s from %s because you are too evil."),
+				   nummissed == 1 ? 
+				   _("You missed %d message from %s because you are too evil.") :
+				   _("You missed %d messages from %s because you are too evil."),
 				   nummissed,
-				   nummissed == 1 ? "" : "s",
 				   userinfo->sn);
 			break;
 		default:
 			g_snprintf(buf,
 				   sizeof(buf),
-				   _("You missed %d message%s from %s for unknown reasons."),
+				   nummissed == 1 ? 
+				   _("You missed %d message from %s for unknown reasons.") :
+				   _("You missed %d messages from %s for unknown reasons."),
 				   nummissed,
-				   nummissed == 1 ? "" : "s",
 				   userinfo->sn);
 			break;
 	}
