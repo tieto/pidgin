@@ -407,6 +407,11 @@ msn_message_get_flag(const MsnMessage *msg)
 void
 msn_message_set_body(MsnMessage *msg, const char *body)
 {
+	const char *c;
+	char *buf, *d;
+	int newline_count = 0;
+	size_t new_len;
+
 	g_return_if_fail(msg != NULL);
 	g_return_if_fail(body != NULL);
 
@@ -415,9 +420,27 @@ msn_message_set_body(MsnMessage *msg, const char *body)
 		g_free(msg->body);
 	}
 
-	msg->body = g_strdup(body);
+	for (c = body; *c != '\0'; c++) {
+		if (*c == '\n' && (c == body || *(c - 1) != '\r'))
+			newline_count++;
+	}
 
-	msg->size += strlen(body);
+	new_len = strlen(body) + newline_count;
+
+	buf = g_new0(char, new_len + 1);
+
+	for (c = body, d = buf; *c != '\0'; c++) {
+		if (*c == '\n' && (c == body || *(c - 1) != '\r')) {
+			*d++ = '\r';
+			*d++ = '\n';
+		}
+		else
+			*d++ = *c;
+	}
+
+	msg->body = buf;
+
+	msg->size += new_len;
 }
 
 const char *
