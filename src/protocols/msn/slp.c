@@ -319,7 +319,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 							 slpcall->slplink->remote_user);
 
 		gaim_base64_decode(context, &bin, &bin_len);
-		file_size = *((gsize *)bin + 2);
+		file_size = GUINT32_FROM_LE(*((gsize *)bin + 2));
 		file_name = g_utf16_to_utf8((const gunichar2 *)(bin + 20), -1,
 									NULL, NULL, NULL);
 
