@@ -566,7 +566,7 @@ static void do_im(GtkWidget *widget, GtkWidget *imentry)
 	destroy_dialog(NULL, imdialog);
 	imdialog = NULL;
         
-	if (!strcasecmp(who, "")) {
+	if (!g_strcasecmp(who, "")) {
 		g_free(who);
 		return;
 	}
@@ -589,7 +589,7 @@ static void do_info(GtkWidget *widget, GtkWidget *infoentry)
 	destroy_dialog(NULL, infodialog);
 	infodialog = NULL;
         
-	if (!strcasecmp(who, "")) {
+	if (!g_strcasecmp(who, "")) {
 		g_free(who);
 		return;
 	}
@@ -1510,7 +1510,7 @@ void do_change_password(GtkWidget *widget, struct passwddlg *b)
 	new1 = gtk_entry_get_text(GTK_ENTRY(b->new1));
 	new2 = gtk_entry_get_text(GTK_ENTRY(b->new2));
 
-	if (strcasecmp(new1, new2)) {
+	if (g_strcasecmp(new1, new2)) {
 		do_error_dialog(_("New Passwords Do Not Match"), _("Gaim - Change Password Error"));
 		return ;
 	}
@@ -1806,7 +1806,7 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 		char *n;
 		n = g_strdup(normalize(name));
 		while (d) {
-			if (!strcasecmp(n, normalize(d->data)))
+			if (!g_strcasecmp(n, normalize(d->data)))
 				break;
 			d = d->next;
 		}
@@ -1823,7 +1823,7 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 		char *n;
 		n = g_strdup(normalize(name));
 		while (d) {
-			if (!strcasecmp(n, normalize(d->data)))
+			if (!g_strcasecmp(n, normalize(d->data)))
 				break;
 			d = d->next;
 		}
@@ -2936,7 +2936,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
         fgets(first, 64, f);
 
 	/* AIM 4 buddy list */
-	if (!strcasecmp(first, "Config {\n")) {
+	if (!g_strcasecmp(first, "Config {\n")) {
 		debug_printf("aim 4\n");
 		rewind(f);
 		translate_blt (f, buf);

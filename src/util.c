@@ -134,7 +134,7 @@ gint linkify_text(char *text)
 	cpy[strlen(text)] = 0;
 	c = cpy;
 	while (*c) {
-		if (!strncasecmp(c, "<A", 2)) {
+		if (!g_strncasecmp(c, "<A", 2)) {
 			while (1) {
 				if (!strncasecmp(c, "/A>", 3)) {
 					break;
@@ -144,7 +144,7 @@ gint linkify_text(char *text)
 				if (!(*c))
 					break;
 			}
-		} else if ((!strncasecmp(c, "http://", 7) || (!strncasecmp(c, "https://", 8)))) {
+		} else if ((!g_strncasecmp(c, "http://", 7) || (!g_strncasecmp(c, "https://", 8)))) {
 			t = c;
 			while (1) {
 				if (badchar(*t)) {
@@ -170,8 +170,8 @@ gint linkify_text(char *text)
 				t++;
 
 			}
-		} else if (!strncasecmp(c, "www.", 4)) {
-			if (strncasecmp(c, "www..", 5)) {
+		} else if (!g_strncasecmp(c, "www.", 4)) {
+			if (g_strncasecmp(c, "www..", 5)) {
 				t = c;
 				while (1) {
 					if (badchar(*t)) {
@@ -201,7 +201,7 @@ gint linkify_text(char *text)
 					t++;
 				}
 			}
-		} else if (!strncasecmp(c, "ftp://", 6)) {
+		} else if (!g_strncasecmp(c, "ftp://", 6)) {
 			t = c;
 			while (1) {
 				if (badchar(*t)) {
@@ -221,8 +221,8 @@ gint linkify_text(char *text)
 				t++;
 
 			}
-		} else if (!strncasecmp(c, "ftp.", 4)) {
-			if (strncasecmp(c, "ftp..", 5)) {
+		} else if (!g_strncasecmp(c, "ftp.", 4)) {
+			if (g_strncasecmp(c, "ftp..", 5)) {
 				t = c;
 				while (1) {
 					if (badchar(*t)) {
@@ -246,7 +246,7 @@ gint linkify_text(char *text)
 					t++;
 				}
 			}
-		} else if (!strncasecmp(c, "mailto:", 7)) {
+		} else if (!g_strncasecmp(c, "mailto:", 7)) {
 			t = c;
 			while (1) {
 				if (badchar(*t)) {
@@ -266,7 +266,7 @@ gint linkify_text(char *text)
 				t++;
 
 			}
-		} else if (c != cpy && !strncasecmp(c, "@", 1)) {
+		} else if (c != cpy && !g_strncasecmp(c, "@", 1)) {
 			char *tmp;
 			int flag;
 			int len = 0;

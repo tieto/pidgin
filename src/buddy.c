@@ -698,13 +698,13 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 			       event->button, event->time);
 
 	} else if (event->type == GDK_3BUTTON_PRESS && event->button == 2) {
-		if (!strcasecmp("zilding", normalize(b->name)))
+		if (!g_strcasecmp("zilding", normalize(b->name)))
 			show_ee_dialog(0);
-		else if (!strcasecmp("robflynn", normalize(b->name)))
+		else if (!g_strcasecmp("robflynn", normalize(b->name)))
 			show_ee_dialog(1);
-		else if (!strcasecmp("flynorange", normalize(b->name)))
+		else if (!g_strcasecmp("flynorange", normalize(b->name)))
 			show_ee_dialog(2);
-		else if (!strcasecmp("ewarmenhoven", normalize(b->name)))
+		else if (!g_strcasecmp("ewarmenhoven", normalize(b->name)))
 			show_ee_dialog(3);
 
 	} else {
@@ -1541,7 +1541,7 @@ struct group *find_group(struct gaim_connection *gc, char *group)
 		grp = gc->groups;
 		while (grp) {
 			g = (struct group *)grp->data;
-			if (!strcasecmp(normalize(g->name), grpname)) {
+			if (!g_strcasecmp(normalize(g->name), grpname)) {
 					g_free(grpname);
 					return g;
 			}
@@ -1556,7 +1556,7 @@ struct group *find_group(struct gaim_connection *gc, char *group)
 			grp = z->groups;
 			while (grp) {
 				g = (struct group *)grp->data;
-				if (!strcasecmp(normalize(g->name), grpname)) {
+				if (!g_strcasecmp(normalize(g->name), grpname)) {
 						g_free(grpname);
 						return g;
 				}
@@ -1733,7 +1733,7 @@ void do_pounce(char *name, int when)
 		/* check and see if we're signed on as the pouncer */
 		if (u->gc == NULL) continue;
 		
-                if (!strcasecmp(who, normalize(b->name))) { /* find someone to pounce */
+                if (!g_strcasecmp(who, normalize(b->name))) { /* find someone to pounce */
 			if (b->options & OPT_POUNCE_POPUP) {
 				c = find_conversation(name);
 				if (c == NULL)
@@ -1867,7 +1867,7 @@ static struct group_show *find_group_show(char *group) {
 
 	while (m) {
 		g = (struct group_show *)m->data;
-		if (!strcasecmp(normalize(g->name), who))
+		if (!g_strcasecmp(normalize(g->name), who))
 			break;
 		g = NULL;
 		m = m->next;
@@ -1884,7 +1884,7 @@ static struct buddy_show *find_buddy_show(struct group_show *gs, char *name) {
 
 	while (m) {
 		b = (struct buddy_show *)m->data;
-		if (!strcasecmp(normalize(b->name), who))
+		if (!g_strcasecmp(normalize(b->name), who))
 			break;
 		b = NULL;
 		m = m->next;
@@ -2910,7 +2910,7 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				g_snprintf(name, strlen(c + 2) + 1, "%s", c + 2);
 				n = g_strdup(normalize(name));
 				while (d) {
-					if (!strcasecmp(n, normalize(d->data)))
+					if (!g_strcasecmp(n, normalize(d->data)))
 						break;
 					d = d->next;
 				}
@@ -2926,7 +2926,7 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 				g_snprintf(name, strlen(c + 2) + 1, "%s", c + 2);
 				n = g_strdup(normalize(name));
 				while (d) {
-					if (!strcasecmp(n, normalize(d->data)))
+					if (!g_strcasecmp(n, normalize(d->data)))
 						break;
 					d = d->next;
 				}

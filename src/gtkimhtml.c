@@ -510,7 +510,7 @@ gtk_imhtml_draw_exposed (GtkIMHtml *imhtml)
 	GList *chunks;
 	struct line_info *line;
 	gfloat x, y;
-	guint32 width, height;
+	gint width, height;
 
 	x = GTK_LAYOUT (imhtml)->hadjustment->value;
 	y = GTK_LAYOUT (imhtml)->vadjustment->value;
@@ -1591,7 +1591,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 
 		for (i = 0; choices [i]; i++) {
 			for (j = 0; fontnames [j]; j++)
-				if (!strcasecmp (fontnames [j], choices [i]))
+				if (!g_strcasecmp (fontnames [j], choices [i]))
 					break;
 			if (fontnames [j])
 				break;
@@ -1606,7 +1606,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 
 	if (!choice) {
 		for (i = 0; fontnames [i]; i++)
-			if (!strcasecmp (fontnames [i], DEFAULT_FONT_NAME))
+			if (!g_strcasecmp (fontnames [i], DEFAULT_FONT_NAME))
 				break;
 		if (fontnames [i])
 			choice = g_strdup (DEFAULT_FONT_NAME);

@@ -361,7 +361,7 @@ gboolean meify(char *message)
 	/* k, so now we've gotten past all the HTML crap. */
 	if (!*c)
 		return FALSE;
-	if (!strncasecmp(c, "/me ", 4)) {
+	if (!g_strncasecmp(c, "/me ", 4)) {
 		sprintf(c, "%s", c + 4);
 		return TRUE;
 	} else
@@ -379,7 +379,7 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 	}
 
 	while (ignore) {
-		if (!strcasecmp(who, ignore->data))
+		if (!g_strcasecmp(who, ignore->data))
 			return;
 		ignore = ignore->next;
 	}
@@ -387,7 +387,7 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 
 	if (!(flag & WFLAG_WHISPER)) {
 		str = g_strdup(normalize(who));
-		if (!strcasecmp(str, normalize(b->gc->username))) {
+		if (!g_strcasecmp(str, normalize(b->gc->username))) {
 			debug_printf("%s %s\n", normalize(who), normalize(b->gc->username));
 			if (b->makesound && (sound_options & OPT_SOUND_CHAT_YOU_SAY))
 				play_sound(CHAT_YOU_SAY);
@@ -545,7 +545,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 
 	ignored = b->ignored;
 	while (ignored) {
-		if (!strcasecmp(name, ignored->data))
+		if (!g_strcasecmp(name, ignored->data))
 			break;
 		ignored = ignored->next;
 	}
@@ -588,7 +588,7 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 	char tmp[BUF_LONG];
 
 	while (names) {
-		if (!strcasecmp((char *)names->data, old)) {
+		if (!g_strcasecmp((char *)names->data, old)) {
 			char *tmp2 = names->data;
 			b->in_room = g_list_remove(b->in_room, names->data);
 			while (items) {
@@ -612,7 +612,7 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 	pos = g_list_index(b->in_room, name);
 
 	while (ignored) {
-		if (!strcasecmp(old, ignored->data))
+		if (!g_strcasecmp(old, ignored->data))
 			break;
 		ignored = ignored->next;
 	}
@@ -648,7 +648,7 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 	plugin_event(event_chat_buddy_leave, b->gc, b->name, buddy, 0);
 
 	while (names) {
-		if (!strcasecmp((char *)names->data, buddy)) {
+		if (!g_strcasecmp((char *)names->data, buddy)) {
 			char *tmp = names->data;
 			b->in_room = g_list_remove(b->in_room, names->data);
 			while (items) {
@@ -722,7 +722,7 @@ void ignore_callback(GtkWidget *w, struct conversation *b)
 
 	ignored = b->ignored;
 	while (ignored) {
-		if (!strcasecmp(name, ignored->data))
+		if (!g_strcasecmp(name, ignored->data))
 			break;
 		ignored = ignored->next;
 	}

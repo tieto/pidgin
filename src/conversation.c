@@ -170,7 +170,7 @@ struct conversation *find_conversation(char *name)
 
 	while (cnv) {
 		c = (struct conversation *)cnv->data;
-		if (!strcasecmp(cuser, normalize(c->name))) {
+		if (!g_strcasecmp(cuser, normalize(c->name))) {
 			g_free(cuser);
 			return c;
 		}
@@ -215,7 +215,7 @@ struct log_conversation *find_log_info(char *name)
 
 	while (lc) {
 		l = (struct log_conversation *)lc->data;
-		if (!strcasecmp(pname, normalize(l->name))) {
+		if (!g_strcasecmp(pname, normalize(l->name))) {
 			g_free(pname);
 			return l;
 		}
@@ -930,8 +930,8 @@ int invert_tags(GtkWidget *entry, char *s1, char *s2, int really)
 	char *s;
 
 	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
-	if (!strncasecmp(&s[start], s1, strlen(s1)) &&
-	    !strncasecmp(&s[finish - strlen(s2)], s2, strlen(s2))) {
+	if (!g_strncasecmp(&s[start], s1, strlen(s1)) &&
+	    !g_strncasecmp(&s[finish - strlen(s2)], s2, strlen(s2))) {
 		if (really) {
 			gtk_editable_delete_text(GTK_EDITABLE(entry), start, start + strlen(s1));
 			gtk_editable_delete_text(GTK_EDITABLE(entry), finish - strlen(s2) - strlen(s1),

@@ -291,7 +291,7 @@ static int wait_reply(struct gaim_connection *gc, char *buffer, size_t buflen)
 static unsigned char *roast_password(char *pass)
 {
 	/* Trivial "encryption" */
-	static char rp[256];
+	static unsigned char rp[256];
 	static char *roast = ROAST;
 	int pos = 2;
 	int x;
@@ -369,7 +369,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 
 	if (tdt->state == STATE_SIGNON_REQUEST) {
 		debug_printf("* TOC sends client SIGN_ON reply\n");
-		if (strncasecmp(buf + sizeof(struct sflap_hdr), "SIGN_ON", strlen("SIGN_ON"))) {
+		if (g_strncasecmp(buf + sizeof(struct sflap_hdr), "SIGN_ON", strlen("SIGN_ON"))) {
 			debug_printf("Didn't get SIGN_ON! buf was: %s\n",
 				     buf + sizeof(struct sflap_hdr));
 			hide_login_progress(gc, _("Authentication Failed"));
@@ -409,7 +409,7 @@ static void toc_callback(gpointer data, gint source, GdkInputCondition condition
 
 	c = strtok(buf + sizeof(struct sflap_hdr), ":");	/* Ditch the first part */
 
-	if (!strcasecmp(c, "SIGN_ON")) {
+	if (!g_strcasecmp(c, "SIGN_ON")) {
 		/* we should only get here after a PAUSE */
 		if (tdt->state != STATE_PAUSE)
 			debug_printf("got SIGN_ON but not PAUSE!\n");

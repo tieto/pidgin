@@ -76,7 +76,7 @@ static int check_dev(char *dev)
 }
 
 
-static void play_audio(char *data, int size)
+static void play_audio(unsigned char *data, int size)
 {
 	int fd;
 

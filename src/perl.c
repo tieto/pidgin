@@ -272,7 +272,7 @@ void perl_end()
 XS (XS_GAIM_register)
 {
 	char *name, *ver, *callback, *unused; /* exactly like X-Chat, eh? :) */
-	int junk;
+	unsigned int junk;
 	struct perlscript *scp;
 	dXSARGS;
 	items = 0;
@@ -295,7 +295,7 @@ XS (XS_GAIM_register)
 XS (XS_GAIM_get_info)
 {
 	int i = 0;
-	int junk;
+	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
@@ -343,7 +343,7 @@ XS (XS_GAIM_print)
 {
 	char *title;
 	char *message;
-	int junk;
+	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
@@ -362,7 +362,7 @@ XS (XS_GAIM_buddy_list)
 	GSList *list = NULL;
 	GSList *mem;
 	int i = 0;
-	int junk;
+	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
@@ -392,7 +392,7 @@ XS (XS_GAIM_online_list)
 	GSList *list = NULL;
 	GSList *mem;
 	int i = 0;
-	int junk;
+	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
@@ -415,7 +415,7 @@ XS (XS_GAIM_online_list)
 
 XS (XS_GAIM_command)
 {
-	int junk;
+	unsigned int junk;
 	char *command = NULL;
 	dXSARGS;
 	items = 0;
@@ -474,7 +474,7 @@ XS (XS_GAIM_user_info)
 {
 	GSList *c = connections;
 	struct gaim_connection *gc;
-	int junk;
+	unsigned int junk;
 	struct buddy *buddy = NULL;
 	char *nick;
 	dXSARGS;
@@ -506,7 +506,7 @@ XS (XS_GAIM_print_to_conv)
 {
 	char *nick, *what, *isauto;
 	struct conversation *c;
-	int junk;
+	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
@@ -527,7 +527,7 @@ XS (XS_GAIM_print_to_chat)
 	struct gaim_connection *gc;
 	struct conversation *b = NULL;
 	GSList *bcs;
-	int junk;
+	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
@@ -570,7 +570,7 @@ int perl_event(char *event, char *args)
 
 XS (XS_GAIM_add_event_handler)
 {
-	int junk;
+	unsigned int junk;
 	struct _perl_event_handlers *handler;
 	dXSARGS;
 	items = 0;
@@ -595,7 +595,7 @@ static int perl_timeout(struct _perl_timeout_handlers *handler)
 
 XS (XS_GAIM_add_timeout_handler)
 {
-	int junk;
+	unsigned int junk;
 	long timeout;
 	struct _perl_timeout_handlers *handler;
 	dXSARGS;

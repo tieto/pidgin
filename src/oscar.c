@@ -730,7 +730,7 @@ static void damn_you(gpointer data, gint source, GdkInputCondition c)
 	struct oscar_data *od = pos->gc->proto_data;
 	char in = '\0';
 	int x = 0;
-	char m[17];
+	unsigned char m[17];
 
 	while (read(pos->fd, &in, 1) == 1) {
 		if (in == '\n')
@@ -1851,15 +1851,15 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 int gaim_parse_misses(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	va_list ap;
-	u_short chan, nummissed, reason;
+	unsigned short chan, nummissed, reason;
 	struct aim_userinfo_s *userinfo;
 	char buf[1024];
 
 	va_start(ap, command);
-	chan = (u_short)va_arg(ap, u_int);
+	chan = (unsigned short)va_arg(ap, unsigned int);
 	userinfo = va_arg(ap, struct aim_userinfo_s *);
-	nummissed = (u_short)va_arg(ap, u_int);
-	reason = (u_short)va_arg(ap, u_int);
+	nummissed = (unsigned short)va_arg(ap, unsigned int);
+	reason = (unsigned short)va_arg(ap, unsigned int);
 	va_end(ap);
 
 	switch(reason) {
@@ -1897,11 +1897,11 @@ int gaim_parse_msgerr(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	va_list ap;
 	char *destn;
-	u_short reason;
+	unsigned short reason;
 	char buf[1024];
 
 	va_start(ap, command);
-	reason = (u_short)va_arg(ap, u_int);
+	reason = (unsigned short)va_arg(ap, unsigned int);
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
@@ -1916,11 +1916,11 @@ int gaim_parse_locerr(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	va_list ap;
 	char *destn;
-	u_short reason;
+	unsigned short reason;
 	char buf[1024];
 
 	va_start(ap, command);
-	reason = (u_short)va_arg(ap, u_int);
+	reason = (unsigned short)va_arg(ap, unsigned int);
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
@@ -1945,7 +1945,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 			 struct command_rx_struct *command, ...) {
 	struct aim_userinfo_s *info;
 	char *prof_enc = NULL, *prof = NULL;
-	u_short infotype;
+	unsigned short infotype;
 	char buf[BUF_LONG];
 	struct gaim_connection *gc = sess->aux_data;
 	va_list ap;
@@ -1955,7 +1955,7 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 	info = va_arg(ap, struct aim_userinfo_s *);
 	prof_enc = va_arg(ap, char *);
 	prof = va_arg(ap, char *);
-	infotype = (u_short)va_arg(ap, u_int);
+	infotype = (unsigned short)va_arg(ap, unsigned int);
 	va_end(ap);
 
 	if (info->membersince)
@@ -2000,12 +2000,12 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 int gaim_parse_motd(struct aim_session_t *sess,
 		    struct command_rx_struct *command, ...) {
 	char *msg;
-	u_short id;
+	unsigned short id;
 	va_list ap;
 	char buildbuf[150];
 
 	va_start(ap, command);
-	id  = (u_short)va_arg(ap, u_int);
+	id  = (unsigned short)va_arg(ap, unsigned int);
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2023,12 +2023,12 @@ int gaim_parse_motd(struct aim_session_t *sess,
 int gaim_chatnav_info(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	va_list ap;
-	u_short type;
+	unsigned short type;
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, command);
-	type = (u_short)va_arg(ap, u_int);
+	type = (unsigned short)va_arg(ap, unsigned int);
 
 	switch(type) {
 		case 0x0002: {
@@ -2036,7 +2036,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			struct aim_chat_exchangeinfo *exchanges;
 			int exchangecount, i = 0;
 
-			maxrooms = (u_char)va_arg(ap, u_int);
+			maxrooms = (unsigned char)va_arg(ap, unsigned int);
 			exchangecount = va_arg(ap, int);
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
 			va_end(ap);
@@ -2058,19 +2058,19 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			break;
 		case 0x0008: {
 			char *fqcn, *name, *ck;
-			u_short instance, flags, maxmsglen, maxoccupancy, unknown, exchange;
+			unsigned short instance, flags, maxmsglen, maxoccupancy, unknown, exchange;
 			unsigned char createperms;
 			unsigned long createtime;
 
 			fqcn = va_arg(ap, char *);
-			instance = (u_short)va_arg(ap, u_int);
-			exchange = (u_short)va_arg(ap, u_int);
-			flags = (u_short)va_arg(ap, u_int);
+			instance = (unsigned short)va_arg(ap, unsigned int);
+			exchange = (unsigned short)va_arg(ap, unsigned int);
+			flags = (unsigned short)va_arg(ap, unsigned int);
 			createtime = va_arg(ap, unsigned long);
-			maxmsglen = (u_short)va_arg(ap, u_int);
-			maxoccupancy = (u_short)va_arg(ap, u_int);
+			maxmsglen = (unsigned short)va_arg(ap, unsigned int);
+			maxoccupancy = (unsigned short)va_arg(ap, unsigned int);
 			createperms = (unsigned char)va_arg(ap, int);
-			unknown = (u_short)va_arg(ap, u_int);
+			unknown = (unsigned short)va_arg(ap, unsigned int);
 			name = va_arg(ap, char *);
 			ck = va_arg(ap, char *);
 			va_end(ap);
@@ -2172,11 +2172,11 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
   */
 int gaim_parse_msgack(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;
-	u_short type;
+	unsigned short type;
 	char *sn = NULL;
 
 	va_start(ap, command);
-	type = (u_short)va_arg(ap, u_int);
+	type = (unsigned short)va_arg(ap, unsigned int);
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2298,11 +2298,11 @@ int gaim_reportinterval(struct aim_session_t *sess, struct command_rx_struct *co
 
 int gaim_parse_buddyrights(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;
-	u_short maxbuddies, maxwatchers;
+	unsigned short maxbuddies, maxwatchers;
 
 	va_start(ap, command);
-	maxbuddies = (u_short)va_arg(ap, u_int);
-	maxwatchers = (u_short)va_arg(ap, u_int);
+	maxbuddies = (unsigned short)va_arg(ap, unsigned int);
+	maxwatchers = (unsigned short)va_arg(ap, unsigned int);
 	va_end(ap);
 
 	debug_printf("buddy list rights: Max buddies = %d / Max watchers = %d\n", maxbuddies, maxwatchers);
@@ -2311,12 +2311,12 @@ int gaim_parse_buddyrights(struct aim_session_t *sess, struct command_rx_struct 
 }
 
 int gaim_bosrights(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
-	u_short maxpermits, maxdenies;
+	unsigned short maxpermits, maxdenies;
 	va_list ap;
 
 	va_start(ap, command);
-	maxpermits = (u_short)va_arg(ap, u_int);
-	maxdenies = (u_short)va_arg(ap, u_int);
+	maxpermits = (unsigned short)va_arg(ap, unsigned int);
+	maxdenies = (unsigned short)va_arg(ap, unsigned int);
 	va_end(ap);
 
 	debug_printf("BOS rights: Max permit = %d / Max deny = %d\n", maxpermits, maxdenies);

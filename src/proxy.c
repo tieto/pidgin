@@ -57,7 +57,8 @@ struct PHB {
 static void no_one_calls(gpointer data, gint source, GdkInputCondition cond)
 {
 	struct PHB *phb = data;
-	int len, error = ETIMEDOUT;
+	unsigned int len;
+	int error = ETIMEDOUT;
 	debug_printf("Connected\n");
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
@@ -118,7 +119,8 @@ static int proxy_connect_none(char *host, unsigned short port, struct PHB *phb)
 			return -1;
 		}
 	} else {
-		int len, error = ETIMEDOUT;
+		unsigned int len;
+		int error = ETIMEDOUT;
 		debug_printf("Connect didn't block\n");
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
@@ -177,7 +179,8 @@ static void http_canwrite(gpointer data, gint source, GdkInputCondition cond)
 {
 	char cmd[384];
 	struct PHB *phb = data;
-	int len, error = ETIMEDOUT;
+	unsigned int len;
+	int error = ETIMEDOUT;
 	debug_printf("Connected\n");
 	if (phb->inpa > 0)
 		gdk_input_remove(phb->inpa);
@@ -266,7 +269,8 @@ static int proxy_connect_http(char *host, unsigned short port, struct PHB *phb)
 			return -1;
 		}
 	} else {
-		int len, error = ETIMEDOUT;
+		unsigned int len;
+		int error = ETIMEDOUT;
 		debug_printf("Connect didn't block\n");
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
@@ -308,7 +312,8 @@ static void s4_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	unsigned char packet[12];
 	struct hostent *hp;
 	struct PHB *phb = data;
-	int len, error = ETIMEDOUT;
+	unsigned int len;
+	int error = ETIMEDOUT;
 	debug_printf("Connected\n");
 	if (phb->inpa > 0)
 		gdk_input_remove(phb->inpa);
@@ -389,7 +394,8 @@ static int proxy_connect_socks4(char *host, unsigned short port, struct PHB *phb
 			return -1;
 		}
 	} else {
-		int len, error = ETIMEDOUT;
+		unsigned int len;
+		int error = ETIMEDOUT;
 		debug_printf("Connect didn't block\n");
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
@@ -539,7 +545,8 @@ static void s5_canwrite(gpointer data, gint source, GdkInputCondition cond)
 	unsigned char buf[512];
 	int i;
 	struct PHB *phb = data;
-	int len, error = ETIMEDOUT;
+	unsigned int len;
+	int error = ETIMEDOUT;
 	debug_printf("Connected\n");
 	if (phb->inpa > 0)
 		gdk_input_remove(phb->inpa);
@@ -616,7 +623,8 @@ static int proxy_connect_socks5(char *host, unsigned short port, struct PHB *phb
 			return -1;
 		}
 	} else {
-		int len, error = ETIMEDOUT;
+		unsigned int len;
+		int error = ETIMEDOUT;
 		debug_printf("Connect didn't block\n");
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {

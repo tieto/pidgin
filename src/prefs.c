@@ -1040,7 +1040,7 @@ static void ref_list_callback(gpointer data, char *text) {
 	while (c) {
 		if (c - text > len - 30)
 			break;	/* assume no chat rooms 30 from end, padding */
-		if (!strncasecmp(AOL_SRCHSTR, c, strlen(AOL_SRCHSTR))) {
+		if (!g_strncasecmp(AOL_SRCHSTR, c, strlen(AOL_SRCHSTR))) {
 			char *t;
 			int len = 0;
 			int exchange;
@@ -1096,7 +1096,7 @@ static void add_chat(GtkWidget *w, gpointer *m)
 
 	while (crs) {
 		cr2 = (struct chat_room *)crs->data;
-		if (!strcasecmp(cr->name, cr2->name))
+		if (!g_strcasecmp(cr->name, cr2->name))
 			 return;
 		crs = crs->next;
 	}
@@ -1706,7 +1706,7 @@ static void sound_page()
 
 static struct away_message *cur_message;
 static GtkWidget *away_text;
-static GtkWidget *make_away_button = NULL;;
+static GtkWidget *make_away_button = NULL;
 
 void away_list_clicked(GtkWidget *widget, struct away_message *a)
 {

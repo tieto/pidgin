@@ -603,7 +603,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 
 		while (cnv) {
 			cv = (struct conversation *)cnv->data;
-			if (!strcasecmp(who, normalize(cv->name))) {
+			if (!g_strcasecmp(who, normalize(cv->name))) {
 				if (display_options & OPT_DISP_ONE_WINDOW) {
 					set_convo_tab_label(cv, b->name);
 				} else {
