@@ -15,7 +15,7 @@ GTK_TOP = ../win32-dev/gtk_2_0
 GTK_LIBS = $(GTK_TOP)/lib
 GTK_BIN = $(GTK_TOP)/bin
 PERL_TOP = ../win32-dev/perl56
-IDLETRACKER_TOP = $(GAIM_SRC)/win32/IdleTracker
+IDLETRACK_TOP = $(GAIM_SRC)/win32/IdleTracker
 GTKRC_TOP = ../win32-dev/gtkrc
 OSCAR = $(GAIM_PROTOS)/oscar
 YAHOO = $(GAIM_PROTOS)/yahoo
@@ -47,7 +47,7 @@ NEEDED_DLLS = 		$(GTK_BIN)/libgdk-win32-2.0-0.dll \
 			$(GTK_BIN)/libpangowin32-1.0-0.dll \
 			$(GTK_BIN)/libatk-1.0-0.dll \
 			$(PERL_TOP)/perl56.dll \
-			$(IDLETRACKER_TOP)/IdleTrac.dll
+			$(IDLETRACK_TOP)/idletrack.dll
 
 # For Gtk 2.0.3
 #			$(GTK_BIN)/libjpeg6b.dll \
