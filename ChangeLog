@@ -1,6 +1,7 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.71
+	* Plugins must be updated again (Christian)
 	* Display AIM away messages in the tooltip for buddies when
 	  they are away.
 	* Re-write of Jabber protocol plugin
