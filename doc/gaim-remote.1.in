@@ -32,7 +32,7 @@ Sends the given AIM-style URI to the currently running instance of \fBGaim\fR (s
 The following URIs are currently valid. These default to acting on the first AIM account you have in your list:
 .TP
 .B aim:goim?screenname=[SCREENNAME]
-Opens a new conversation window to the given screenname.
+Begins a new conversation with the given screenname.
 .TP
 .B aim:goim?screenname=[SCREENNAME]&message=[MESSAGE]
 Sends the given message to the screenname. Spaces in the message must be replaced with +.
@@ -41,7 +41,7 @@ Sends the given message to the screenname. Spaces in the message must be replace
 Opens a chat window in the given room.
 .TP
 .B aim:addbuddy?screenname=[SCREENNAME]
-Opens a dialog to adds the specified buddy to your buddy list.
+Opens a dialog to add the specified buddy to your buddy list.
 
 .SH "FILES"
 .TP
