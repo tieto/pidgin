@@ -33,16 +33,16 @@ static gboolean draw_strokes = FALSE;
 #define GSTROKE_SIGNALS "gstroke_signals"
 
 struct gstroke_func_and_data {
-  void (*func)(GtkWidget *, void *);
-  gpointer data;
+	void (*func)(GtkWidget *, void *);
+	gpointer data;
 };
 
 
 /*FIXME: maybe it's better to just make 2 static variables, not a
   structure */
 struct mouse_position {
-  struct s_point last_point;
-  gboolean invalid;
+	struct s_point last_point;
+	gboolean invalid;
 };
 
 
@@ -97,11 +97,14 @@ record_stroke_segment (GtkWidget *widget)
 static gint
 gstroke_timeout (gpointer data)
 {
-  g_return_val_if_fail(data != NULL, FALSE);
-  GtkWidget *widget = GTK_WIDGET (data);
-  record_stroke_segment (widget);
+	GtkWidget *widget;
 
-  return TRUE;
+	g_return_val_if_fail(data != NULL, FALSE);
+
+	widget = GTK_WIDGET (data);
+	record_stroke_segment (widget);
+
+	return TRUE;
 }
 
 static void gstroke_cancel(GdkEvent *event) 
