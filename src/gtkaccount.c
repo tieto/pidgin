@@ -53,13 +53,6 @@ enum
 	NUM_COLUMNS
 };
 
-typedef enum
-{
-	ADD_ACCOUNT_DIALOG,
-	MODIFY_ACCOUNT_DIALOG
-
-} AccountPrefsDialogType;
-
 typedef struct
 {
 	GtkWidget *window;
@@ -73,13 +66,13 @@ typedef struct
 
 	GtkTreeViewColumn *screenname_col;
 
-} AccountsDialog;
+} AccountsWindow;
 
 typedef struct
 {
-	AccountPrefsDialogType type;
+	GaimGtkAccountDialogType type;
 
-	AccountsDialog *accounts_dialog;
+	AccountsWindow *accounts_window;
 
 	GaimAccount *account;
 	GaimProtocol protocol;
@@ -134,9 +127,9 @@ typedef struct
 } AccountPrefsDialog;
 
 
-static AccountsDialog *accounts_dialog = NULL;
+static AccountsWindow *accounts_window = NULL;
 
-static void add_account(AccountsDialog *dialog, GaimAccount *account);
+static void add_account(AccountsWindow *dialog, GaimAccount *account);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  GaimAccount *account);
 
@@ -1066,18 +1059,21 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	}
 
 	/* Adds the account to the list, or modify the existing entry. */
-	index = g_list_index(gaim_accounts_get_all(), dialog->account);
+	if (dialog->accounts_window != NULL) {
+		index = g_list_index(gaim_accounts_get_all(), dialog->account);
 
-	if (index != -1 &&
-		(gtk_tree_model_iter_nth_child(
-				GTK_TREE_MODEL(dialog->accounts_dialog->model), &iter,
-				NULL, index))) {
+		if (index != -1 &&
+			(gtk_tree_model_iter_nth_child(
+					GTK_TREE_MODEL(dialog->accounts_window->model), &iter,
+					NULL, index))) {
 
-		set_account(dialog->accounts_dialog->model, &iter, dialog->account);
-	}
-	else {
-		add_account(dialog->accounts_dialog, dialog->account);
-		gaim_accounts_add(dialog->account);
+			set_account(dialog->accounts_window->model, &iter,
+						dialog->account);
+		}
+		else {
+			add_account(dialog->accounts_window, dialog->account);
+			gaim_accounts_add(dialog->account);
+		}
 	}
 
 	gtk_widget_destroy(dialog->window);
@@ -1098,10 +1094,9 @@ register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	prpl_info->register_user(account);
 }
 
-static void
-show_account_prefs(AccountPrefsDialogType type,
-				   AccountsDialog *accounts_dialog,
-				   GaimAccount *account)
+void
+gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
+							 GaimAccount *account)
 {
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
@@ -1115,7 +1110,7 @@ show_account_prefs(AccountPrefsDialogType type,
 
 	dialog = g_new0(AccountPrefsDialog, 1);
 
-	dialog->accounts_dialog = accounts_dialog;
+	dialog->accounts_window = accounts_window;
 	dialog->account = account;
 	dialog->type    = type;
 	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -1137,7 +1132,7 @@ show_account_prefs(AccountPrefsDialogType type,
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(win), "account");
 
-	if (type == ADD_ACCOUNT_DIALOG)
+	if (type == GAIM_GTK_ADD_ACCOUNT_DIALOG)
 		gtk_window_set_title(GTK_WINDOW(win), _("Add Account"));
 	else
 		gtk_window_set_title(GTK_WINDOW(win), _("Modify Account"));
@@ -1232,7 +1227,7 @@ show_account_prefs(AccountPrefsDialogType type,
  **************************************************************************/
 
 static void
-signed_on_off_cb(GaimConnection *gc, AccountsDialog *dialog)
+signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
@@ -1249,7 +1244,7 @@ signed_on_off_cb(GaimConnection *gc, AccountsDialog *dialog)
 static void
 drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 				   GtkSelectionData *data, guint info, guint time,
-				   AccountsDialog *dialog)
+				   AccountsWindow *dialog)
 {
 	if (data->target == gdk_atom_intern("GAIM_ACCOUNT", FALSE)) {
 		GtkTreeRowReference *ref;
@@ -1319,7 +1314,7 @@ move_account_before(GtkListStore *store, GtkTreeIter *iter,
 static void
 drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 						guint x, guint y, GtkSelectionData *sd,
-						guint info, guint t, AccountsDialog *dialog)
+						guint info, guint t, AccountsWindow *dialog)
 {
 	if (sd->target == gdk_atom_intern("GAIM_ACCOUNT", FALSE) && sd->data) {
 		size_t dest_index;
@@ -1370,26 +1365,13 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 }
 
 static gint
-accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsDialog *dialog)
+accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsWindow *dialog)
 {
-	gaim_signals_disconnect_by_handle(dialog);
-
-	g_free(accounts_dialog);
-	accounts_dialog = NULL;
-
-
-	/* See if we're the main window here. */
-	if (GAIM_GTK_BLIST(gaim_get_blist())->window == NULL &&
-		mainwindow == NULL && gaim_connections_get_all() == NULL) {
-
-		do_quit();
-	}
-
-	return FALSE;
+	gaim_gtk_accounts_window_hide();
 }
 
 static gboolean
-configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsDialog *dialog)
+configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsWindow *dialog)
 {
 	if (GTK_WIDGET_VISIBLE(w)) {
 		int old_width = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/width");
@@ -1422,9 +1404,9 @@ configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsDialog *dialog)
 }
 
 static void
-add_account_cb(GtkWidget *w, AccountsDialog *dialog)
+add_account_cb(GtkWidget *w, AccountsWindow *dialog)
 {
-	show_account_prefs(ADD_ACCOUNT_DIALOG, dialog, NULL);
+	gaim_gtk_account_dialog_show(GAIM_GTK_ADD_ACCOUNT_DIALOG, NULL);
 }
 
 static void
@@ -1436,11 +1418,11 @@ modify_account_sel(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(model, iter, COLUMN_DATA, &account, -1);
 
 	if (account != NULL)
-		show_account_prefs(MODIFY_ACCOUNT_DIALOG, data, account);
+		gaim_gtk_account_dialog_show(GAIM_GTK_MODIFY_ACCOUNT_DIALOG, account);
 }
 
 static void
-modify_account_cb(GtkWidget *w, AccountsDialog *dialog)
+modify_account_cb(GtkWidget *w, AccountsWindow *dialog)
 {
 	GtkTreeSelection *selection;
 
@@ -1458,10 +1440,10 @@ delete_account_cb(GaimAccount *account)
 
 	index = g_list_index(gaim_accounts_get_all(), account);
 
-	if (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(accounts_dialog->model),
+	if (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(accounts_window->model),
 									  &iter, NULL, index)) {
 
-		gtk_list_store_remove(accounts_dialog->model, &iter);
+		gtk_list_store_remove(accounts_window->model, &iter);
 	}
 
 	gaim_accounts_remove(account);
@@ -1490,7 +1472,7 @@ ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 }
 
 static void
-ask_delete_account_cb(GtkWidget *w, AccountsDialog *dialog)
+ask_delete_account_cb(GtkWidget *w, AccountsWindow *dialog)
 {
 	GtkTreeSelection *selection;
 
@@ -1501,7 +1483,7 @@ ask_delete_account_cb(GtkWidget *w, AccountsDialog *dialog)
 }
 
 static void
-close_accounts_cb(GtkWidget *w, AccountsDialog *dialog)
+close_accounts_cb(GtkWidget *w, AccountsWindow *dialog)
 {
 	gtk_widget_destroy(dialog->window);
 
@@ -1511,7 +1493,7 @@ close_accounts_cb(GtkWidget *w, AccountsDialog *dialog)
 static void
 online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
 {
-	AccountsDialog *dialog = (AccountsDialog *)data;
+	AccountsWindow *dialog = (AccountsWindow *)data;
 	GaimAccount *account;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
@@ -1535,7 +1517,7 @@ static void
 autologin_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 			   gpointer data)
 {
-	AccountsDialog *dialog = (AccountsDialog *)data;
+	AccountsWindow *dialog = (AccountsWindow *)data;
 	GaimAccount *account;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
@@ -1555,7 +1537,7 @@ autologin_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 }
 
 static void
-add_columns(GtkWidget *treeview, AccountsDialog *dialog)
+add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
@@ -1639,7 +1621,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 }
 
 static void
-add_account(AccountsDialog *dialog, GaimAccount *account)
+add_account(AccountsWindow *dialog, GaimAccount *account)
 {
 	GtkTreeIter iter;
 
@@ -1649,7 +1631,7 @@ add_account(AccountsDialog *dialog, GaimAccount *account)
 }
 
 static void
-populate_accounts_list(AccountsDialog *dialog)
+populate_accounts_list(AccountsWindow *dialog)
 {
 	GList *l;
 
@@ -1660,14 +1642,14 @@ populate_accounts_list(AccountsDialog *dialog)
 }
 
 static void
-account_selected_cb(GtkTreeSelection *sel, AccountsDialog *dialog)
+account_selected_cb(GtkTreeSelection *sel, AccountsWindow *dialog)
 {
 	gtk_widget_set_sensitive(dialog->modify_button, TRUE);
 	gtk_widget_set_sensitive(dialog->delete_button, TRUE);
 }
 
 static GtkWidget *
-create_accounts_list(AccountsDialog *dialog)
+create_accounts_list(AccountsWindow *dialog)
 {
 	GtkWidget *sw;
 	GtkWidget *treeview;
@@ -1725,9 +1707,9 @@ create_accounts_list(AccountsDialog *dialog)
 }
 
 void
-gaim_gtk_account_dialog_show(void)
+gaim_gtk_accounts_window_show(void)
 {
-	AccountsDialog *dialog;
+	AccountsWindow *dialog;
 	GtkWidget *win;
 	GtkWidget *vbox;
 	GtkWidget *bbox;
@@ -1736,10 +1718,10 @@ gaim_gtk_account_dialog_show(void)
 	GtkWidget *button;
 	int width, height;
 
-	if (accounts_dialog != NULL)
+	if (accounts_window != NULL)
 		return;
 
-	accounts_dialog = dialog = g_new0(AccountsDialog, 1);
+	accounts_window = dialog = g_new0(AccountsWindow, 1);
 
 	width  = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/width");
 	height = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/height");
@@ -1751,9 +1733,9 @@ gaim_gtk_account_dialog_show(void)
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
-					 G_CALLBACK(accedit_win_destroy_cb), accounts_dialog);
+					 G_CALLBACK(accedit_win_destroy_cb), accounts_window);
 	g_signal_connect(G_OBJECT(win), "configure_event",
-					 G_CALLBACK(configure_cb), accounts_dialog);
+					 G_CALLBACK(configure_cb), accounts_window);
 
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, 12);
@@ -1820,3 +1802,21 @@ gaim_gtk_account_dialog_show(void)
 	gtk_widget_show(win);
 }
 
+void
+gaim_gtk_accounts_window_hide(void)
+{
+	if (accounts_window == NULL)
+		return;
+
+	gaim_signals_disconnect_by_handle(accounts_window);
+
+	g_free(accounts_window);
+	accounts_window = NULL;
+
+	/* See if we're the main window here. */
+	if (GAIM_GTK_BLIST(gaim_get_blist())->window == NULL &&
+		mainwindow == NULL && gaim_connections_get_all() == NULL) {
+
+		do_quit();
+	}
+}

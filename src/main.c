@@ -415,7 +415,7 @@ void show_login()
 	button = gaim_pixbuf_button_from_stock(_("Accounts"), GAIM_STOCK_ACCOUNTS, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(gaim_gtk_account_dialog_show), mainwindow);
+					 G_CALLBACK(gaim_gtk_accounts_window_show), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 #ifdef NO_MULTI
@@ -934,7 +934,7 @@ int main(int argc, char *argv[])
 		gaim_accounts_auto_login(GAIM_GTK_UI);
 
 	if (opt_acct) {
-		gaim_gtk_account_dialog_show();
+		gaim_gtk_accounts_window_show();
 	} else if ((dologin_ret == -1) && !gaim_connections_get_all())
 		show_login();
 

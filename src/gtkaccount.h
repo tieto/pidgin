@@ -23,15 +23,32 @@
 #ifndef _GAIM_GTK_ACCOUNT_H_
 #define _GAIM_GTK_ACCOUNT_H_
 
-/**
- * Shows the account editor dialog.
- */
-void gaim_gtk_account_dialog_show(void);
+typedef enum
+{
+	GAIM_GTK_ADD_ACCOUNT_DIALOG,
+	GAIM_GTK_MODIFY_ACCOUNT_DIALOG
+
+} GaimGtkAccountDialogType;
+
 
 /**
- * Hides the account editor dialog.
+ * Shows the accounts window.
  */
-void gaim_gtk_account_dialog_hide(void);
+void gaim_gtk_accounts_window_show(void);
+
+/**
+ * Hides the accounts window.
+ */
+void gaim_gtk_accounts_window_hide(void);
+
+/**
+ * Shows an add/modify account dialog.
+ *
+ * @param type    The type of dialog.
+ * @param account The associated account, or @c NULL for an Add dialog.
+ */
+void gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
+								  GaimAccount *account);
 
 #endif /* _GAIM_GTK_ACCOUNT_H_ */
 
