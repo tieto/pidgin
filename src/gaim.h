@@ -625,6 +625,9 @@ extern void translate_lst (FILE *, char *);
 extern void translate_blt (FILE *, char *);
 extern char *stylize(gchar *, int);
 extern int set_dispstyle (int);
+extern void show_usage (int, char *);
+extern void set_first_user (char *);
+extern int do_auto_login (char *);
 
 /* Functions in server.c */
 /* input to serv */

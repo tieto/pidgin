@@ -1180,3 +1180,87 @@ int set_dispstyle (int chat)
 	}
 	return dispstyle;
 }
+
+
+void show_usage (int mode, char *name)
+{
+	switch (mode) {
+	case 0: /* full help text */
+	  printf ("Usage: %s [OPTION]...\n\n"
+		  "  -a, --acct          display account editor window\n"
+		  "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
+		  "                      account(s) to use)\n"
+		  "  -u, --user=NAME     use account NAME\n"
+		  "  -v, --version       display version information window\n"
+		  "  -h, --help          display this help and exit\n", name);
+	  break;
+	case 1: /* short message */
+	  printf ("Try `%s -h' for more information.\n", name);
+	  break;
+	}
+}
+
+
+void set_first_user (char *name)
+{
+	struct aim_user *u;
+
+	u = find_user (name);
+
+	if (!u) { /* new user */
+		u = g_new0(struct aim_user, 1);
+		g_snprintf(u->username, sizeof(u->username), "%s", name);
+		u->protocol = 0 /* PROTO_TOC */;
+		aim_users = g_list_prepend (aim_users, u);
+	} else { /* user already exists */
+		aim_users = g_list_remove (aim_users, u);
+		aim_users = g_list_prepend (aim_users, u);
+	}
+	save_prefs();
+}
+
+
+/* <name> is a comma-separated list of names, or NULL
+   if NULL and there is at least one user defined in .gaimrc, try to login.
+   if not NULL, parse <name> into separate strings, look up each one in 
+   .gaimrc and, if it's there, try to login.
+   returns:  0 if successful
+            -1 if no user was found that had a saved password
+*/
+int do_auto_login (char *name)
+{
+	struct aim_user *u;
+	char **names, **n, *first = NULL;
+	int retval = -1;
+
+	if (name != NULL) { /* list of names given */
+		names = g_strsplit (name, ",", 32);
+		for (n = names; *n != NULL; n++) {
+			printf ("user %s...\n", *n);
+			u = find_user(*n);
+			if (u) { /* found a user */
+				if (first == NULL)
+					first = g_strdup (*n);
+				if (u->options & OPT_USR_REM_PASS) {
+					printf ("got user %s\n", *n);
+					retval = 0;
+					serv_login(u);
+				}
+			}
+		}
+		/* make the first user listed the default */
+		if (first != NULL)
+			set_first_user (first);
+		g_strfreev (names);
+		g_free (first);
+	} else { /* no name given, use default */
+		u = (struct aim_user *)aim_users->data;
+		if (u->options & OPT_USR_REM_PASS) {
+			retval = 0;
+			serv_login(u);
+		}
+	}
+
+	return retval;
+}
+		

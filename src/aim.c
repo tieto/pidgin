@@ -53,6 +53,9 @@
 #endif
 #include "locale.h"
 #include "gtkticker.h"
+#ifndef USE_GNOME
+#include <getopt.h>
+#endif
 
 static GtkWidget *name;
 static GtkWidget *pass;
@@ -72,6 +75,7 @@ void BuddyTickerCreateWindow( void );
 
 char toc_addy[16];
 char *quad_addr = NULL;
+
 
 void cancel_logon(void)
 {
@@ -430,8 +434,39 @@ void sighandler(int sig)
 }
 #endif
 
+
 int main(int argc, char *argv[])
 {
+	char opt, i;
+	int opt_acct = 0, opt_help = 0, opt_version = 0,
+	    opt_user = 0, opt_login = 0, do_login_ret = -1;
+	char *opt_user_arg = NULL, *opt_login_arg = NULL;
+
+#ifdef USE_GNOME
+	poptContext popt_context;
+	struct poptOption popt_options[] =
+	{
+		{"acct",    'a', POPT_ARG_NONE,   &opt_acct,     'a', 
+		 "Display account editor window", NULL},
+		{"login",   'l', POPT_ARG_STRING,   NULL,        'l',
+		 "Automatically login (optional argument NAME specifies account(s) to use)", "[NAME]"},
+		{"user",    'u', POPT_ARG_STRING, &opt_user_arg, 'u',
+		 "Use account NAME", "NAME"},
+		{0, 0, 0, 0, 0, 0, 0}
+	};
+#else
+	struct option long_options[] = 
+	{
+		{"acct",    no_argument,	 NULL, 'a'},
+		{"help",    no_argument,	 NULL, 'h'},
+		{"login",   optional_argument, NULL, 'l'},
+		{"user",    required_argument, NULL, 'u'}, 
+		{"version", no_argument,	 NULL, 'v'},
+		{0, 0, 0, 0}
+	};
+#endif /* USE_GNOME */
+
+
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -442,7 +477,84 @@ int main(int argc, char *argv[])
 	/* signal(SIGSEGV, sighandler); */
 #endif
 
-	if (argc > 1 && !strcmp(argv[1], "--version")) {
+
+#ifdef USE_APPLET
+        init_applet_mgr(argc, argv);
+#elif defined USE_GNOME
+	for (i = 0; i < argc; i++) {
+		/* --login option */
+		if (strstr (argv[i], "--l") == argv[i]) { 
+			char *equals;
+			opt_login = 1;
+			if ((equals = strchr(argv[i], '=')) != NULL) {
+				/* --login=NAME */
+				opt_login_arg = g_strdup (equals+1);
+			} else if (i+1 < argc && argv[i+1][0] != '-') { 
+				/* --login NAME */
+				opt_login_arg = g_strdup (argv[i+1]);
+				strcpy (argv[i+1], " ");
+			}
+			strcpy (argv[i], " ");
+		}
+		/* -l option */
+		else if (strstr (argv[i], "-l") == argv[i]) {
+			opt_login = 1;
+			if (strlen (argv[i]) > 2) {
+				/* -lNAME */
+				opt_login_arg = g_strdup (argv[i]+2);
+			} else if (i+1 < argc && argv[i+1][0] != '-') {
+				/* -l NAME */
+				opt_login_arg = g_strdup (argv[i+1]);
+				strcpy (argv[i+1], " ");
+			}
+			strcpy (argv[i], " ");
+		}
+	}	
+
+        gnome_init_with_popt_table(PACKAGE,VERSION,argc,argv,
+				   popt_options,0,NULL);
+#else
+        gtk_init(&argc, &argv);
+
+	/* scan command-line options */
+	opterr = 1;
+	while ((opt = getopt_long (argc, argv, /*"ahl::u:v"*/"ahl::u:v",
+				   long_options, NULL)) != -1) {
+		switch (opt) {
+		case 'u': /* set user */
+			opt_user = 1;
+			opt_user_arg = g_strdup (optarg);
+			break;
+		case 'l':
+			opt_login = 1;
+			opt_login_arg = g_strdup (optarg);
+			break;
+		case 'a': /* account editor */
+			opt_acct = 1;
+			break;
+		case 'v': /* version */
+			opt_version = 1;
+			break;
+		case 'h': /* help */
+			opt_help = 1;
+			break;
+		case '?':
+		default:
+			show_usage(1, argv[0]);
+			return 0;
+			break;
+		}
+	}
+
+#endif /* USE_GNOME */
+
+	/* show help message */
+	if (opt_help) {
+		show_usage(0, argv[0]);
+		return 0;
+	}
+	/* show version window */
+	if (opt_version) {
 		gtk_init(&argc, &argv);
 		set_defaults(FALSE); /* needed for open_url_nw */
 		load_prefs();
@@ -451,16 +563,18 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-#ifdef USE_APPLET
-        init_applet_mgr(argc, argv);
-#elif defined USE_GNOME
-        gnome_init(PACKAGE,VERSION,argc,argv);
-#else
-        gtk_init(&argc, &argv);
-#endif /* USE_GNOME */
 
         set_defaults(FALSE);
         load_prefs();
+
+	/* set the default username */
+	if (opt_user_arg != NULL) {
+		set_first_user (opt_user_arg);
+#ifndef USE_GNOME
+		g_free (opt_user_arg);
+		opt_user_arg = NULL;
+#endif /* USE_GNOME */
+	}
 
 	if (general_options & OPT_GEN_DEBUG)
 		show_debug(NULL);
@@ -471,9 +585,19 @@ int main(int argc, char *argv[])
 	perl_init();
 	perl_autoload();
 #endif
-
 	static_proto_init();
-	auto_login();
+
+	/* deal with --login */
+	if (opt_login) {
+		do_login_ret = do_auto_login (opt_login_arg);
+		if (opt_login_arg != NULL) {
+			g_free (opt_login_arg);
+			opt_login_arg = NULL;
+		}
+	}
+
+	if (!opt_acct)
+		auto_login();
 
 #ifdef USE_APPLET
 	applet_widget_register_callback(APPLET_WIDGET(applet),
@@ -499,7 +623,10 @@ int main(int argc, char *argv[])
 	applet_widget_gtk_main();
 #else
 
-        show_login();
+	if (opt_acct) {
+		account_editor (NULL, NULL);
+	} else if (do_login_ret == -1)
+		show_login();
         gtk_main();
         
 #endif /* USE_APPLET */

@@ -96,11 +96,15 @@ static void delete_acctedit(GtkWidget *w, gpointer d)
 		gtk_widget_destroy(acctedit);
 	}
 	acctedit = NULL;
+	if (d == NULL && blist == NULL)
+		exit(0);
 }
 
 static gint acctedit_close(GtkWidget *w, gpointer d)
 {
 	gtk_widget_destroy(acctedit);
+	if (d == NULL && blist == NULL)
+		exit(0);
 	return FALSE;
 }
 
@@ -559,7 +563,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_container_border_width(GTK_CONTAINER(acctedit), 10);
 	gtk_widget_set_usize(acctedit, -1, 200);
 	gtk_signal_connect(GTK_OBJECT(acctedit), "destroy",
-			   GTK_SIGNAL_FUNC(delete_acctedit), NULL);
+			   GTK_SIGNAL_FUNC(delete_acctedit), W);
 
 	frame = gtk_frame_new(_("Account Editor"));
 	gtk_container_add(GTK_CONTAINER(acctedit), frame);
@@ -594,7 +598,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 
 	button = picture_button(acctedit, _("Close"), gnome_close_xpm);
 	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acctedit_close), NULL);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acctedit_close), W);
 
 	gtk_widget_show(acctedit);
 }

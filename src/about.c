@@ -121,14 +121,17 @@ void show_about(GtkWidget *w, void *null)
 	
 		button = gtk_button_new_with_label("Close");
 
-		if (null == NULL) /* there's a mindtrip */
+		if (null == NULL) {/* there's a mindtrip */
 			gtk_signal_connect_object(GTK_OBJECT(button), "clicked",
         	                                  GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
-		else
+			gtk_signal_connect(GTK_OBJECT(about), "destroy",
+					   GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
+		} else {
 			gtk_signal_connect(GTK_OBJECT(button), "clicked",
 					   GTK_SIGNAL_FUNC(version_exit), NULL);
-                gtk_signal_connect(GTK_OBJECT(about), "destroy",
-                                   GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
+			gtk_signal_connect(GTK_OBJECT(about), "destroy",
+					   GTK_SIGNAL_FUNC(version_exit), NULL);
+		}
  		
  		if (display_options & OPT_DISP_COOL_LOOK)
  			gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
