@@ -20,6 +20,8 @@ version 0.82cvs:
 	* Renamed: show_confirm_del_blist_chat to gaim_gtkdialogs_remove_chat
 	* Renamed: show_confirm_del_contact to gaim_gtkdialogs_remove_contact
 	* Renamed: show_about to gaim_gtkdialogs_about
+	* Added: gaim_notify_userinfo() and the associated notify_userinfo() UI op
+			 (someone who knows just why we have this can edit here)
 
 	Buddy List API:
 	* Changed: gaim_blist_request_add_chat(), added name parameter
