@@ -135,6 +135,7 @@ void show_about(GtkWidget *w, void *data)
 		"  Kevin 'SimGuy' Stange<br>"
 		"  Stu 'nosnilmot' Tomlinson<br>"
 		"  Gary 'xgrimx' Kramlich<br>"
+		"  Ka-Hing 'javabsp' Cheung<br>"
 		"<BR>", NULL);
 	gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 	g_free(str);
