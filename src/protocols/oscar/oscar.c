@@ -5288,11 +5288,11 @@ static GList *oscar_actions(struct gaim_connection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
-	pam = g_new0(struct proto_actions_menu, 1);
+/*	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Search for Buddy by Information");
 	pam->callback = show_find_info;
 	pam->gc = gc;
-	m = g_list_append(m, pam);
+	m = g_list_append(m, pam); */
 
 	return m;
 }
