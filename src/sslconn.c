@@ -109,6 +109,38 @@ gaim_ssl_connect(GaimAccount *account, const char *host, int port,
 	return (GaimSslConnection *)gsc;
 }
 
+GaimSslConnection *
+gaim_ssl_connect_fd(GaimAccount *account, int fd,
+					GaimSslInputFunction func, void *data)
+{
+	GaimSslConnection *gsc;
+	GaimSslOps *ops;
+
+	g_return_val_if_fail(fd > 0,                  NULL);
+	g_return_val_if_fail(func != NULL,            NULL);
+	g_return_val_if_fail(gaim_ssl_is_supported(), NULL);
+
+	ops = gaim_ssl_get_ops();
+
+	g_return_val_if_fail(ops != NULL, NULL);
+	g_return_val_if_fail(ops->connect_cb != NULL, NULL);
+
+	if (!_ssl_initialized)
+	{
+		if (!ssl_init())
+			return NULL;
+	}
+
+	gsc = g_new0(GaimSslConnection, 1);
+
+	gsc->user_data  = data;
+	gsc->input_func = func;
+
+	ops->connect_cb(gsc, fd, GAIM_INPUT_READ);
+
+	return (GaimSslConnection *)gsc;
+}
+
 void
 gaim_ssl_close(GaimSslConnection *gsc)
 {

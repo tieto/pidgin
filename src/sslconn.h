@@ -93,6 +93,19 @@ GaimSslConnection *gaim_ssl_connect(GaimAccount *account, const char *host,
 									void *data);
 
 /**
+ * Makes a SSL connection using an already open file descriptor.
+ *
+ * @param account The account making the connection.
+ * @param fd      The file descriptor.
+ * @param func    The SSL input handler function.
+ * @param data    User-defined data.
+ *
+ * @return The SSL connection handle.
+ */
+GaimSslConnection *gaim_ssl_connect_fd(GaimAccount *account, int fd,
+									   GaimSslInputFunction func, void *data);
+
+/**
  * Closes a SSL connection.
  *
  * @param gsc The SSL connection to close.
