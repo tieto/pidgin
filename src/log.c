@@ -28,6 +28,7 @@
 #include "prefs.h"
 #include "util.h"
 
+static GaimLogLogger html_logger;
 static GaimLogLogger txt_logger;
 static GaimLogLogger old_logger;
 
@@ -187,6 +188,7 @@ void gaim_log_init(void)
 {
 	gaim_prefs_add_none("/core/logging");
 	gaim_prefs_add_string("/core/logging/format", "txt");
+	gaim_log_logger_add(&html_logger);
 	gaim_log_logger_add(&txt_logger);
 	gaim_log_logger_add(&old_logger);
 	gaim_prefs_connect_callback("/core/logging/format",
@@ -371,6 +373,113 @@ static GaimLogLogger xml_logger =  {
 #endif
 
 /****************************
+ ** HTML LOGGER *************
+ ****************************/
+
+static void html_logger_write(GaimLog *log, GaimMessageFlags type,
+		const char *from, time_t time, const char *message)
+{
+	char date[64];
+	if(!log->logger_data) {
+		/* This log is new */
+		char *ud = gaim_user_dir();
+		char *guy = g_strdup(gaim_normalize(log->account, gaim_account_get_username(log->account)));
+		const char *prpl = GAIM_PLUGIN_PROTOCOL_INFO
+			(gaim_find_prpl(gaim_account_get_protocol(log->account)))->list_icon(log->account, NULL);
+		char *dir;
+		char *filename;
+		FILE *file;
+
+		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S.html", localtime(&log->time));
+
+		dir = g_build_filename(ud, "logs", NULL);
+		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_free(dir);
+		dir = g_build_filename(ud, "logs",
+				       prpl, NULL);
+		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_free(dir);
+		dir = g_build_filename(ud, "logs",
+				       prpl, guy, NULL);
+		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_free(dir);
+		dir = g_build_filename(ud, "logs",
+				       prpl, guy, gaim_normalize(log->account, log->name), NULL);
+		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_free(guy);
+
+		filename = g_build_filename(dir, date, NULL);
+		g_free(dir);
+
+		file = fopen(dir, "r");
+		if(!file)
+			mkdir(dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		else
+			fclose(file);
+
+		log->logger_data = fopen(filename, "a");
+		if (!log->logger_data) {
+			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
+			return;
+		}
+		g_free(filename);
+		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&log->time));
+		fprintf(log->logger_data, "<html><head><title>");
+		fprintf(log->logger_data, "Conversation with %s at %s on %s (%s)",
+			log->name, date, gaim_account_get_username(log->account), prpl);
+		fprintf(log->logger_data, "</title></head><body>");
+		fprintf(log->logger_data,
+			"<h3>Conversation with %s at %s on %s (%s)</h3>\n",
+			log->name, date, gaim_account_get_username(log->account), prpl);
+	}
+	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
+	fprintf(log->logger_data, "(%s) %s%s %s<br/>\n", date, from ? from : "", from ? ":" : "", message);
+	fflush(log->logger_data);
+}
+
+static void html_logger_finalize(GaimLog *log)
+{
+	fprintf(log->logger_data, "</body></html>");
+	if (log->logger_data)
+		fclose(log->logger_data);
+}
+
+static GList *html_logger_list(const char *sn, GaimAccount *account)
+{
+	return log_lister_common(sn, account, ".html", &html_logger);
+}
+
+static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
+{
+	char *read, *minus_header;
+	*flags = GAIM_LOG_READ_NO_NEWLINE;
+	if (!log->logger_data)
+		return g_strdup("<font color='red'><b>log->logger_data was NULL!</b></font>");
+	if (g_file_get_contents((char *)log->logger_data, &read, NULL, NULL)) {
+		minus_header = strchr(read, '\n');
+		if (!minus_header)
+			minus_header = g_strdup(read);
+		else
+			minus_header = g_strdup(minus_header + 1);
+		g_free(read);
+		return minus_header;
+	}
+	return g_strdup(_("<font color='red'><b>Could not read file: %s</b></font>"));
+}
+
+static GaimLogLogger html_logger = {
+	N_("HTML"), "html",
+	NULL,
+	html_logger_write,
+	html_logger_finalize,
+	html_logger_list,
+	html_logger_read
+};
+
+
+
+
+/****************************
  ** PLAIN TEXT LOGGER *******
  ****************************/
 
@@ -451,6 +560,7 @@ static GList *txt_logger_list(const char *sn, GaimAccount *account)
 static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 {
 	char *read, *minus_header;
+	*flags = 0;
 	if (!log->logger_data)
 		return g_strdup("<font color='red'><b>log->logger_data was NULL!</b></font>");
 	if (g_file_get_contents((char *)log->logger_data, &read, NULL, NULL)) {
