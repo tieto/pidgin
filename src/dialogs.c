@@ -4276,38 +4276,13 @@ static void do_rename_group(GtkObject *obj, int resp, GtkWidget *entry)
 	const char *new_name;
 	struct group *g;
 	struct group *orig;
-	GSList *accts;
 
 	if (resp == GTK_RESPONSE_OK) {
-
 		new_name = gtk_entry_get_text(GTK_ENTRY(entry));
 		g = g_object_get_data(G_OBJECT(entry), "group");
 
-		if (new_name && (strlen(new_name) != 0) && strcmp(new_name, g->name)) {
-			char *prevname;
-	
-			if ((orig = gaim_find_group(new_name)) != NULL && gaim_utf8_strcasecmp(new_name, g->name)) {
-				gaim_blist_rename_group(orig, g->name);
-				accts = gaim_group_get_accounts(g);
-				while(accts) {
-					struct gaim_account *account = accts->data;
-					serv_rename_group(account->gc, g, new_name);
-					accts = g_slist_remove(accts, accts->data);
-				}
-				g_free(g);
-			} else {
-				prevname = g_strdup(g->name);
-				accts = gaim_group_get_accounts(g);
-				while(accts) {
-					struct gaim_account *account = accts->data;
-					serv_rename_group(account->gc, g, new_name);
-					accts = g_slist_remove(accts, accts->data);
-				}
-				gaim_blist_rename_group(g, new_name);
-				g_free(prevname);
-			}
-			gaim_blist_save();
-		}
+		gaim_blist_rename_group(g, new_name);
+		gaim_blist_save();
 	}
 	destroy_dialog(rename_dialog, rename_dialog);
 }

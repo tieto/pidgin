@@ -265,10 +265,49 @@ void  gaim_blist_alias_buddy (struct buddy *buddy, const char *alias)
 void gaim_blist_rename_group(struct group *group, const char *name)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
-	g_free(group->name);
-	group->name = g_strdup(name);
-	if (ops)
-		ops->update(gaimbuddylist, (GaimBlistNode*)group);
+	struct group *dest_group;
+	GaimBlistNode *prev, *child, *next;
+	GSList *accts;
+
+	if(!name || !strlen(name) || !strcmp(name, group->name)) {
+		/* nothing to do here */
+		return;
+	} else if((dest_group = gaim_find_group(name))) {
+		/* here we're merging two groups */
+		prev = gaim_blist_get_last_child((GaimBlistNode*)dest_group);
+		child = ((GaimBlistNode*)group)->child;
+
+		while(child)
+		{
+			next = child->next;
+			if(GAIM_BLIST_NODE_IS_BUDDY(child)) {
+				gaim_blist_add_buddy((struct buddy *)child, dest_group, prev);
+				prev = child;
+			} else if(GAIM_BLIST_NODE_IS_CHAT(child)) {
+				gaim_blist_add_chat((struct chat *)child, dest_group, prev);
+				prev = child;
+			} else {
+				gaim_debug(GAIM_DEBUG_ERROR, "blist",
+						"Unknown child type in group %s\n", group->name);
+			}
+			child = next;
+		}
+		for (accts = gaim_group_get_accounts(group); accts; accts = g_slist_remove(accts, accts->data)) {
+			struct gaim_account *account = accts->data;
+			serv_rename_group(account->gc, group, name);
+		}
+		gaim_blist_remove_group(group);
+	} else {
+		/* a simple rename */
+		for (accts = gaim_group_get_accounts(group); accts; accts = g_slist_remove(accts, accts->data)) {
+			struct gaim_account *account = accts->data;
+			serv_rename_group(account->gc, group, name);
+		}
+		g_free(group->name);
+		group->name = g_strdup(name);
+		if (ops)
+			ops->update(gaimbuddylist, (GaimBlistNode*)group);
+	}
 }
 
 struct chat *gaim_chat_new(struct gaim_account *account, const char *alias, GHashTable *components)
