@@ -63,7 +63,8 @@ gaim_ssl_is_supported(void)
 
 GaimSslConnection *
 gaim_ssl_connect(GaimAccount *account, const char *host, int port,
-				 GaimSslInputFunction func, void *data)
+				 GaimSslInputFunction func, GaimSslErrorFunction error_func,
+				 void *data)
 {
 	GaimSslConnection *gsc;
 	GaimSslOps *ops;
@@ -87,10 +88,11 @@ gaim_ssl_connect(GaimAccount *account, const char *host, int port,
 
 	gsc = g_new0(GaimSslConnection, 1);
 
-	gsc->host       = g_strdup(host);
-	gsc->port       = port;
-	gsc->connect_cb_data  = data;
-	gsc->connect_cb = func;
+	gsc->host            = g_strdup(host);
+	gsc->port            = port;
+	gsc->connect_cb_data = data;
+	gsc->connect_cb      = func;
+	gsc->error_cb        = error_func;
 
 	i = gaim_proxy_connect(account, host, port, ops->connect_cb, gsc);
 
@@ -114,7 +116,8 @@ recv_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 void
-gaim_ssl_input_add(GaimSslConnection *gsc, GaimSslInputFunction func, void *data)
+gaim_ssl_input_add(GaimSslConnection *gsc, GaimSslInputFunction func,
+				   void *data)
 {
 	GaimSslOps *ops;
 
@@ -124,13 +127,15 @@ gaim_ssl_input_add(GaimSslConnection *gsc, GaimSslInputFunction func, void *data
 	ops = gaim_ssl_get_ops();
 
 	gsc->recv_cb_data = data;
-	gsc->recv_cb = func;
+	gsc->recv_cb      = func;
+
 	gsc->inpa = gaim_input_add(gsc->fd, GAIM_INPUT_READ, recv_cb, gsc);
 }
 
 GaimSslConnection *
 gaim_ssl_connect_fd(GaimAccount *account, int fd,
-					GaimSslInputFunction func, void *data)
+					GaimSslInputFunction func,
+					GaimSslErrorFunction error_func, void *data)
 {
 	GaimSslConnection *gsc;
 	GaimSslOps *ops;
@@ -152,8 +157,9 @@ gaim_ssl_connect_fd(GaimAccount *account, int fd,
 
 	gsc = g_new0(GaimSslConnection, 1);
 
-	gsc->connect_cb_data  = data;
-	gsc->connect_cb = func;
+	gsc->connect_cb_data = data;
+	gsc->connect_cb      = func;
+	gsc->error_cb        = error_func;
 
 	ops->connect_cb(gsc, fd, GAIM_INPUT_READ);
 

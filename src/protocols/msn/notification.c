@@ -313,6 +313,16 @@ inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 }
 
 static void
+login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
+{
+	MsnServConn *servconn = (MsnServConn *)data;
+	GaimAccount *account = servconn->session->account;
+	GaimConnection *gc = gaim_account_get_connection(account);
+
+	gaim_connection_error(gc, _("Unable to connect to server"));
+}
+
+static void
 login_connect_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
 {
@@ -420,7 +430,8 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		session->ssl_conn = gaim_ssl_connect(session->account,
 											 session->ssl_login_host,
 											 GAIM_SSL_DEFAULT_PORT,
-											 login_connect_cb, servconn);
+											 login_connect_cb, login_error_cb,
+											 servconn);
 	}
 	else if (strstr(buffer, "HTTP/1.1 401 Unauthorized") != NULL)
 	{
@@ -590,7 +601,8 @@ nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 	session->ssl_conn = gaim_ssl_connect(session->account,
 										 session->ssl_login_host,
 										 GAIM_SSL_DEFAULT_PORT,
-										 login_connect_cb, servconn);
+										 login_connect_cb, login_error_cb,
+										 servconn);
 }
 
 static gboolean
@@ -682,7 +694,8 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		session->ssl_conn = gaim_ssl_connect(session->account,
 											 "nexus.passport.com",
 											 GAIM_SSL_DEFAULT_PORT,
-											 nexus_connect_cb, servconn);
+											 nexus_connect_cb, login_error_cb,
+											 servconn);
 
 		if (session->ssl_conn == NULL)
 		{

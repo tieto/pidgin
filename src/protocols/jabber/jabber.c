@@ -337,7 +337,7 @@ static void tls_init(JabberStream *js)
 	gaim_input_remove(js->gc->inpa);
 	js->gc->inpa = 0;
 	js->gsc = gaim_ssl_connect_fd(js->gc->account, js->fd,
-			jabber_login_callback_ssl, js->gc);
+			jabber_login_callback_ssl, NULL, js->gc);
 }
 
 static void
@@ -382,7 +382,7 @@ jabber_login(GaimAccount *account)
 			&& gaim_ssl_is_supported()) {
 		js->gsc = gaim_ssl_connect(account, server,
 				gaim_account_get_int(account, "port", 5222),
-				jabber_login_callback_ssl, gc);
+				jabber_login_callback_ssl, NULL, gc);
 	}
 
 	if(!js->gsc) {
@@ -670,7 +670,7 @@ static void jabber_register_account(GaimAccount *account)
 			&& gaim_ssl_is_supported()) {
 		js->gsc = gaim_ssl_connect(account, server,
 				gaim_account_get_int(account, "port", 5222),
-				jabber_login_callback_ssl, gc);
+				jabber_login_callback_ssl, NULL, gc);
 	}
 
 	if(!js->gsc) {
