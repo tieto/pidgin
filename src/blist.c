@@ -1315,6 +1315,10 @@ void gaim_blist_remove_account(GaimAccount *account)
 
 						((GaimBuddy*)bnode)->present = GAIM_BUDDY_OFFLINE;
 
+						((GaimBuddy*)bnode)->uc = 0;
+						((GaimBuddy*)bnode)->idle = 0;
+						((GaimBuddy*)bnode)->evil = 0;
+
 						if(ops)
 							ops->remove(gaimbuddylist, bnode);
 					}
@@ -1783,7 +1787,7 @@ static void blist_start_element_handler (GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "blist")) {
 		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_BLIST));
 	} else if(!strcmp(element_name, "group")) {
-		char *name = NULL;
+		const char *name = NULL;
 		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_GROUP));
 		for(i=0; attribute_names[i]; i++) {
 			if(!strcmp(attribute_names[i], "name")) {
