@@ -207,20 +207,21 @@ void  gaim_blist_update_buddy_status (GaimBuddy *buddy, int status)
 {
 	GaimBlistUiOps *ops;
 
-	if (buddy->uc == status)
-		return;
 
 	ops = gaimbuddylist->ui_ops;
 
-	if((status & UC_UNAVAILABLE) != (buddy->uc & UC_UNAVAILABLE)) {
-		if(status & UC_UNAVAILABLE)
-			gaim_signal_emit(gaim_blist_get_handle(), "buddy-away", buddy);
-		else
-			gaim_signal_emit(gaim_blist_get_handle(), "buddy-back", buddy);
-	}
+	if (buddy->uc != status) {
+		if ((status & UC_UNAVAILABLE) != (buddy->uc & UC_UNAVAILABLE)) {
+			if (status & UC_UNAVAILABLE)
+				gaim_signal_emit(gaim_blist_get_handle(), "buddy-away", buddy);
+			else
+				gaim_signal_emit(gaim_blist_get_handle(), "buddy-back", buddy);
+		}
 
-	buddy->uc = status;
-	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
+		buddy->uc = status;
+		gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
+	}
+	
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
