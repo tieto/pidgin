@@ -22,7 +22,7 @@
 #include "internal.h"
 #include "plugin.h"
 
-#define SSL_GNUTLS_PLUGIN_ID "ssl-gnutls"
+#define SSL_GNUTLS_PLUGIN_ID "ssl-nss"
 
 #ifdef HAVE_NSS
 
