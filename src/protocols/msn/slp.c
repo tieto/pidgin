@@ -732,6 +732,13 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	session = cmdproc->servconn->session;
 	slplink = msn_session_get_slplink(session, msg->remote_user);
 
+	if (slplink->swboard == NULL)
+	{
+		/* We will need this in order to change it's flags. */
+		slplink->swboard = (MsnSwitchBoard *)cmdproc->data;
+		slplink->swboard->slplink = slplink;
+	}
+
 	msn_slplink_process_msg(slplink, msg);
 }
 

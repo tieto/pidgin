@@ -144,7 +144,8 @@ msn_session_disconnect(MsnSession *session)
 
 /* TODO: This must go away when conversation is redesigned */
 MsnSwitchBoard *
-msn_session_find_swboard(MsnSession *session, const char *username)
+msn_session_find_swboard(MsnSession *session, const char *username,
+						 MsnSBFlag flag)
 {
 	GList *l;
 
@@ -157,16 +158,17 @@ msn_session_find_swboard(MsnSession *session, const char *username)
 
 		swboard = l->data;
 
-		if (swboard->im_user != NULL)
-			if (!strcmp(username, swboard->im_user))
-				return swboard;
+		if ((swboard->im_user != NULL) &&
+			!strcmp(username, swboard->im_user) && (swboard->flag & flag))
+			return swboard;
 	}
 
 	return NULL;
 }
 
 MsnSwitchBoard *
-msn_session_find_switch_with_id(const MsnSession *session, int chat_id)
+msn_session_find_swboard_with_id(const MsnSession *session, int chat_id,
+								 MsnSBFlag flag)
 {
 	GList *l;
 
@@ -179,7 +181,7 @@ msn_session_find_switch_with_id(const MsnSession *session, int chat_id)
 
 		swboard = l->data;
 
-		if (swboard->chat_id == chat_id)
+		if ((swboard->chat_id == chat_id) && (swboard->flag & flag))
 			return swboard;
 	}
 
@@ -187,16 +189,18 @@ msn_session_find_switch_with_id(const MsnSession *session, int chat_id)
 }
 
 MsnSwitchBoard *
-msn_session_get_swboard(MsnSession *session, const char *username)
+msn_session_get_swboard(MsnSession *session, const char *username,
+						MsnSBFlag flag)
 {
 	MsnSwitchBoard *swboard;
 
-	swboard = msn_session_find_swboard(session, username);
+	swboard = msn_session_find_swboard(session, username, flag);
 
 	if (swboard == NULL)
 	{
 		swboard = msn_switchboard_new(session);
 		swboard->im_user = g_strdup(username);
+		swboard->flag = flag;
 		msn_switchboard_request(swboard);
 		msn_switchboard_request_add_user(swboard, username);
 	}

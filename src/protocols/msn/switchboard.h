@@ -50,6 +50,16 @@ typedef enum
 } MsnSBErrorType;
 
 /**
+ * A switchboard flag.
+ */
+typedef enum
+{
+	MSN_SB_FLAG_IM = 0x01, /**< This switchboard is used for instant messaging. */
+	MSN_SB_FLAG_FT = 0x02, /**< This switchboard is used for file transfer. */
+
+} MsnSBFlag;
+
+/**
  * A switchboard.
  *
  * A place where a bunch of users send messages to the rest of the users.
@@ -61,6 +71,7 @@ struct _MsnSwitchBoard
 	MsnCmdProc *cmdproc;
 	char *im_user;
 
+	MsnSBFlag flag;
 	char *auth_key;
 	char *session_id;
 

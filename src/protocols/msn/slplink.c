@@ -54,6 +54,10 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 }
 #endif
 
+/**************************************************************************
+ * Main
+ **************************************************************************/
+
 MsnSlpLink *
 msn_slplink_new(MsnSession *session, const char *username)
 {
@@ -155,6 +159,31 @@ msn_slplink_find_slp_session(MsnSlpLink *slplink, long session_id)
 	return NULL;
 }
 
+void
+msn_slplink_add_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
+{
+	if (slplink->slp_calls == NULL)
+	{
+		if (slplink->swboard != NULL)
+			slplink->swboard->flag |= MSN_SB_FLAG_FT;
+	}
+
+	slplink->slp_calls = g_list_append(slplink->slp_calls, slpcall);
+}
+
+void
+msn_slplink_remove_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
+{
+	slplink->slp_calls = g_list_remove(slplink->slp_calls, slpcall);
+
+	/* The slplink has no slpcalls in it, maybe we should destroy it. */
+	if (slplink->slp_calls == NULL)
+	{
+		if (slplink->swboard != NULL)
+			slplink->swboard->flag &= ~MSN_SB_FLAG_FT;
+	}
+}
+
 MsnSlpCall *
 msn_slplink_find_slp_call(MsnSlpLink *slplink, const char *id)
 {
@@ -204,7 +233,8 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		if (slplink->swboard == NULL)
 		{
 			slplink->swboard = msn_session_get_swboard(slplink->session,
-													   slplink->remote_user);
+													   slplink->remote_user,
+													   MSN_SB_FLAG_FT);
 
 			if (slplink->swboard == NULL)
 				return;

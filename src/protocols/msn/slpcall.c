@@ -46,7 +46,7 @@ rand_guid()
 }
 
 /**************************************************************************
- * SLP Call
+ * Main
  **************************************************************************/
 
 MsnSlpCall *
@@ -59,8 +59,8 @@ msn_slp_call_new(MsnSlpLink *slplink)
 	slpcall = g_new0(MsnSlpCall, 1);
 
 	slpcall->slplink = slplink;
-	slplink->slp_calls =
-		g_list_append(slplink->slp_calls, slpcall);
+
+	msn_slplink_add_slpcall(slplink, slpcall);
 
 	slpcall->timer = gaim_timeout_add(MSN_SLPCALL_TIMEOUT, msn_slp_call_timeout, slpcall);
 
@@ -86,8 +86,7 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 	if (slpcall->data_info != NULL)
 		g_free(slpcall->data_info);
 
-	slpcall->slplink->slp_calls =
-		g_list_remove(slpcall->slplink->slp_calls, slpcall);
+	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
 
 	for (e = slpcall->slplink->slp_msgs; e != NULL; )
 	{
