@@ -188,8 +188,8 @@ struct buddyinfo {
 	time_t ico_me_time;
 	gboolean ico_informed;
 
-	fu16_t iconstrlen;
-	fu8_t iconstr[30];
+	fu16_t iconcsumlen;
+	fu8_t iconcsum[30];
 };
 
 struct name_data {
@@ -1759,17 +1759,31 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	bi->ico_informed = FALSE;
 
 	/* Server stored icon stuff */
-	if (info->iconstrlen) {
-		od->requesticon = g_slist_append(od->requesticon, strdup(normalize(info->sn)));
-		if (od->icontimer)
-			g_source_remove(od->icontimer);
-		od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
-		memcpy(bi->iconstr, info->iconstr, info->iconstrlen);
-		bi->iconstrlen = info->iconstrlen;
+	if (info->iconcsumlen) {
+		char *b16, *saved_b16;
+		struct buddy *b;
+
+		memcpy(bi->iconcsum, info->iconcsum, info->iconcsumlen);
+		bi->iconcsumlen = info->iconcsumlen;
+		b16 = tobase16(bi->iconcsum, bi->iconcsumlen);
+		b = gaim_find_buddy(gc->account, info->sn);
+		saved_b16 = gaim_buddy_get_setting(b, "icon_checksum");
+		if (!b16 || !saved_b16 || strcmp(b16, saved_b16)) {
+			GSList *cur = od->requesticon;
+			while (cur && aim_sncmp((char *)cur->data, info->sn))
+				cur = cur->next;
+			if (!cur) {
+				od->requesticon = g_slist_append(od->requesticon, strdup(normalize(info->sn)));
+				if (od->icontimer)
+					g_source_remove(od->icontimer);
+				od->icontimer = g_timeout_add(500, gaim_icon_timerfunc, gc);
+			}
+		}
+		free(saved_b16);
+		free(b16);
 	}
 
-	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon,
-			time_idle, type);
+	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon, time_idle, type);
 
 	return 1;
 }
@@ -2899,6 +2913,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
+/* CCC */
 static char *images(int flags) {
 	static char buf[1024];
 	g_snprintf(buf, sizeof(buf), "%s%s%s%s%s%s%s",
@@ -3357,19 +3372,26 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GSList *cur;
 	va_list ap;
 	char *sn;
-	fu8_t *iconstr, *icon;
-	fu16_t iconstrlen, iconlen;
+	fu8_t *iconcsum, *icon;
+	fu16_t iconcsumlen, iconlen;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
-	iconstr = va_arg(ap, fu8_t *);
-	iconstrlen = va_arg(ap, int);
+	iconcsum = va_arg(ap, fu8_t *);
+	iconcsumlen = va_arg(ap, int);
 	icon = va_arg(ap, fu8_t *);
 	iconlen = va_arg(ap, int);
 	va_end(ap);
 
-	if (iconlen > 0)
+	if (iconlen > 0) {
+		char *b16;
+		struct buddy *b;
 		set_icon_data(gc, sn, icon, iconlen);
+		b16 = tobase16(iconcsum, iconcsumlen);
+		b = gaim_find_buddy(gc->account, sn);
+		gaim_buddy_set_setting(b, "icon_checksum", b16);
+		free(b16);
+	}
 
 	cur = od->requesticon;
 	while (cur) {
@@ -3392,10 +3414,8 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 static gboolean gaim_icon_timerfunc(gpointer data) {
 	struct gaim_connection *gc = data;
 	struct oscar_data *od = gc->proto_data;
-	struct buddy *b;
 	struct buddyinfo *bi;
 	aim_conn_t *conn;
-	char *buddy_icon;
 
 	if (!od->requesticon) {
 		debug_printf("no more icons to request\n");
@@ -3410,17 +3430,14 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 	}
 
 	bi = g_hash_table_lookup(od->buddyinfo, (char *)od->requesticon->data);
-	b = gaim_find_buddy(gc->account, (char *)od->requesticon->data);
-	buddy_icon = gaim_buddy_get_setting(b, "buddy_icon");
-	if (bi && (bi->iconstrlen > 0) && !buddy_icon) {
-		aim_icon_requesticon(od->sess, od->requesticon->data, bi->iconstr, bi->iconstrlen);
+	if (bi && (bi->iconcsumlen > 0)) {
+		aim_icon_requesticon(od->sess, od->requesticon->data, bi->iconcsum, bi->iconcsumlen);
 		return FALSE;
 	} else {
 		char *sn = od->requesticon->data;
 		od->requesticon = g_slist_remove(od->requesticon, sn);
 		free(sn);
 	}
-	free(buddy_icon);
 
 	return TRUE;
 }

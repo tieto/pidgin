@@ -478,8 +478,8 @@ typedef struct {
 		fu8_t crap[0x25]; /* until we figure it out... */
 	} icqinfo;
 	fu32_t present;
-	fu16_t iconstrlen;
-	fu8_t iconstr[30];
+	fu16_t iconcsumlen;
+	fu8_t iconcsum[30];
 } aim_userinfo_t;
 
 #define AIM_USERINFO_PRESENT_FLAGS        0x00000001

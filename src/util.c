@@ -466,6 +466,59 @@ void frombase64(const char *text, char **data, int *size)
 		*size = len;
 }
 
+/*
+ * Converts raw data to a pretty, null-terminated base16 string.
+ */
+char *tobase16(const char *data, int length)
+{
+	int i;
+	char *ascii = NULL;
+
+	if (!data || !length)
+		return NULL;
+
+	ascii = (char *)malloc(length*2 + 1);
+
+	for (i=0; i<length; i++)
+		snprintf(&ascii[i*2], 3, "%02hhx", data[i]);
+
+	return ascii;
+}
+
+/*
+ * Converts a null-terminated string of hexidecimal to raw data.
+ */
+int frombase16(const char *ascii, char **raw)
+{
+	int len, i, accumulator;
+	char *data;
+
+	if (!ascii || !(len = strlen(ascii)) || (len % 2))
+		return 0;
+
+	data = (char *)malloc((len/2)*sizeof(char));
+	for (i=0; i<len; i++) {
+		if (!(i % 2))
+			accumulator = 0;
+		else
+			accumulator = accumulator << 4;
+		if (isdigit(ascii[i]))
+			accumulator |= ascii[i]-48;
+		else switch(ascii[i]) {
+			case 'a':  case 'A':  accumulator|=10;  break;
+			case 'b':  case 'B':  accumulator|=11;  break;
+			case 'c':  case 'C':  accumulator|=12;  break;
+			case 'd':  case 'D':  accumulator|=13;  break;
+			case 'e':  case 'E':  accumulator|=14;  break;
+			case 'f':  case 'F':  accumulator|=15;  break;
+		}
+		if (i % 2)
+			data[(i-1)/2] = accumulator;
+	}
+
+	*raw = data;
+	return len/2;
+}
 
 char *normalize(const char *s)
 {
