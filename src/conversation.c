@@ -74,6 +74,7 @@
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/warn.xpm"
 #include "pixmaps/tb_search.xpm"
+#include "pixmaps/block.xpm"
 
 int state_lock=0;
 
@@ -1518,7 +1519,7 @@ void show_conv(struct conversation *c)
 		add = picture_button2(win, _("Remove"), gnome_remove_xpm);
 	else
 		add = picture_button2(win, _("Add"), gnome_add_xpm);
-	block = picture_button2(win, _("Block"), tmp_send_xpm);
+	block = picture_button2(win, _("Block"), block_xpm);
 
 	/* use a slicker look if the user wants to */
 	if (display_options & OPT_DISP_COOL_LOOK)
