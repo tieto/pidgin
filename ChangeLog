@@ -15,6 +15,7 @@ version 2.0.0
 	* If Gaim is exited with the buddy list hidden in the docklet, it will
 	  remain hidden when Gaim is started again (Scott Shedden)
 	* Contacts will auto-expand when dragging into the buddy list.
+	* SSL support for IRC connections (Daniel Atallah)
 
 	Bug fixes:
 	* Some memory leaks plugged (Miah Gregory, Felipe Contreras)

@@ -26,9 +26,11 @@
 #include <glib.h>
 
 #include "roomlist.h"
+#include "sslconn.h"
 
 #define IRC_DEFAULT_SERVER "irc.freenode.net"
 #define IRC_DEFAULT_PORT 6667
+#define IRC_DEFAULT_SSL_PORT 994
 
 #define IRC_DEFAULT_CHARSET "UTF-8"
 #define IRC_DEFAULT_ALIAS "gaim"
@@ -69,6 +71,7 @@ struct irc_conn {
 		time_t signon;
 	} whois;
 	GaimRoomlist *roomlist;
+	GaimSslConnection *gsc;
 
 	gboolean quitting;
 };

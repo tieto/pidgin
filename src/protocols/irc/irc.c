@@ -45,12 +45,15 @@ static GList *irc_status_types(GaimAccount *account);
 static GList *irc_actions(GaimPlugin *plugin, gpointer context);
 /* static GList *irc_chat_info(GaimConnection *gc); */
 static void irc_login(GaimAccount *account);
+static void irc_login_cb_ssl(gpointer data, GaimSslConnection *gsc, GaimInputCondition cond);
 static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond);
+static void irc_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error, gpointer data);
 static void irc_close(GaimConnection *gc);
 static int irc_im_send(GaimConnection *gc, const char *who, const char *what, GaimConvImFlags flags);
 static int irc_chat_send(GaimConnection *gc, int id, const char *what);
 static void irc_chat_join (GaimConnection *gc, GHashTable *data);
 static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond);
+static void irc_input_cb_ssl(gpointer data, GaimSslConnection *gsc, GaimInputCondition cond);
 
 static guint irc_nick_hash(const char *nick);
 static gboolean irc_nick_equal(const char *nick1, const char *nick2);
@@ -84,13 +87,20 @@ int irc_send(struct irc_conn *irc, const char *buf)
 {
 	int ret;
 
-	if (irc->fd < 0)
-		return -1;
+	if (irc->gsc) {
+		ret = gaim_ssl_write(irc->gsc, buf, strlen(buf));
+	} else {
+		if (irc->fd < 0)
+			return -1;
+		ret = write(irc->fd, buf, strlen(buf));
+	}
 
-	/* gaim_debug(GAIM_DEBUG_MISC, "irc", "sent: %s", buf); */
-	if ((ret = write(irc->fd, buf, strlen(buf))) < 0)
+	/* gaim_debug(GAIM_DEBUG_MISC, "irc", "sent%s: %s",
+		irc->gsc ? " (ssl)" : "", buf); */
+	if (ret < 0) {
 		gaim_connection_error(gaim_account_get_connection(irc->account),
 				      _("Server has disconnected"));
+	}
 
 	return ret;
 }
@@ -250,13 +260,80 @@ static void irc_login(GaimAccount *account)
 	gaim_connection_update_progress(gc, buf, 1, 2);
 	g_free(buf);
 
-	err = gaim_proxy_connect(account, irc->server,
+	if (gaim_account_get_bool(account, "ssl", FALSE)) {
+		if (gaim_ssl_is_supported()) {
+			irc->gsc = gaim_ssl_connect(account, irc->server,
+					gaim_account_get_int(account, "port", IRC_DEFAULT_SSL_PORT),
+					irc_login_cb_ssl, irc_ssl_connect_failure, gc);
+		} else {
+			gaim_connection_error(gc, _("SSL support unavailable"));
+		}
+	}
+
+	if (!irc->gsc) {
+
+		err = gaim_proxy_connect(account, irc->server,
 				 gaim_account_get_int(account, "port", IRC_DEFAULT_PORT),
 				 irc_login_cb, gc);
 
-	if (err || !account->gc) {
-		gaim_connection_error(gc, _("Couldn't create socket"));
+		if (err || !account->gc) {
+			gaim_connection_error(gc, _("Couldn't create socket"));
+			return;
+		}
+	}
+}
+
+static gboolean do_login(GaimConnection *gc) {
+	char *buf;
+	char hostname[256];
+	const char *username, *realname;
+	struct irc_conn *irc = gc->proto_data;
+
+	if (gc->account->password && *gc->account->password) {
+		buf = irc_format(irc, "vv", "PASS", gc->account->password);
+		if (irc_send(irc, buf) < 0) {
+			gaim_connection_error(gc, "Error sending password");
+			return FALSE;
+		}
+		g_free(buf);
+	}
+
+	gethostname(hostname, sizeof(hostname));
+	hostname[sizeof(hostname) - 1] = '\0';
+	username = gaim_account_get_string(irc->account, "username", "");
+	realname = gaim_account_get_string(irc->account, "realname", "");
+	buf = irc_format(irc, "vvvv:", "USER", strlen(username) ? username : g_get_user_name(), hostname, irc->server,
+			      strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
+	if (irc_send(irc, buf) < 0) {
+		gaim_connection_error(gc, "Error registering with server");
+		return FALSE;
+	}
+	g_free(buf);
+	buf = irc_format(irc, "vn", "NICK", gaim_connection_get_display_name(gc));
+	if (irc_send(irc, buf) < 0) {
+		gaim_connection_error(gc, "Error sending nickname");
+		return FALSE;
+	}
+	g_free(buf);
+
+	return TRUE;
+}
+
+static void irc_login_cb_ssl(gpointer data, GaimSslConnection *gsc,
+	GaimInputCondition cond)
+{
+	GaimConnection *gc = data;
+	struct irc_conn *irc = gc->proto_data;
+
+	if(!g_list_find(gaim_connections_get_all(), gc)) {
+		gaim_ssl_close(gsc);
 		return;
+	}
+
+	irc->gsc = gsc;
+
+	if (do_login(gc)) {
+		gaim_ssl_input_add(gsc, irc_input_cb_ssl, gc);
 	}
 }
 
@@ -264,9 +341,6 @@ static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
 	struct irc_conn *irc = gc->proto_data;
-	char hostname[256];
-	char *buf;
-	const char *username, *realname;
 	GList *connections = gaim_connections_get_all();
 
 	if (source < 0) {
@@ -281,34 +355,28 @@ static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	irc->fd = source;
 
-	if (gc->account->password && *gc->account->password) {
-		buf = irc_format(irc, "vv", "PASS", gc->account->password);
-		if (irc_send(irc, buf) < 0) {
-			gaim_connection_error(gc, "Error sending password");
-			return;
-		}
-		g_free(buf);
+	if (do_login(gc)) {
+		gc->inpa = gaim_input_add(irc->fd, GAIM_INPUT_READ, irc_input_cb, gc);
+	}
+}
+
+static void
+irc_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
+		gpointer data)
+{
+	GaimConnection *gc = data;
+	struct irc_conn *irc = gc->proto_data;
+
+	switch(error) {
+		case GAIM_SSL_CONNECT_FAILED:
+			gaim_connection_error(gc, _("Connection Failed"));
+			break;
+		case GAIM_SSL_HANDSHAKE_FAILED:
+			gaim_connection_error(gc, _("SSL Handshake Failed"));
+			break;
 	}
 
-	gethostname(hostname, sizeof(hostname));
-	hostname[sizeof(hostname) - 1] = '\0';
-	username = gaim_account_get_string(irc->account, "username", "");
-	realname = gaim_account_get_string(irc->account, "realname", "");
-	buf = irc_format(irc, "vvvv:", "USER", strlen(username) ? username : g_get_user_name(), hostname, irc->server,
-			      strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
-	if (irc_send(irc, buf) < 0) {
-		gaim_connection_error(gc, "Error registering with server");
-		return;
-	}
-	g_free(buf);
-	buf = irc_format(irc, "vn", "NICK", gaim_connection_get_display_name(gc));
-	if (irc_send(irc, buf) < 0) {
-		gaim_connection_error(gc, "Error sending nickname");
-		return;
-	}
-	g_free(buf);
-
-	gc->inpa = gaim_input_add(irc->fd, GAIM_INPUT_READ, irc_input_cb, gc);
+	irc->gsc = NULL;
 }
 
 static void irc_close(GaimConnection *gc)
@@ -324,7 +392,11 @@ static void irc_close(GaimConnection *gc)
 		gaim_input_remove(gc->inpa);
 
 	g_free(irc->inbuf);
-	close(irc->fd);
+	if (irc->gsc) {
+		gaim_ssl_close(irc->gsc);
+	} else if (irc->fd > 0) {
+		close(irc->fd);
+	}
 	if (irc->timer)
 		gaim_timeout_remove(irc->timer);
 	g_hash_table_destroy(irc->cmds);
@@ -393,25 +465,9 @@ static void irc_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gr
 	g_hash_table_remove(irc->buddies, buddy->name);
 }
 
-static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond)
+static void read_input(struct irc_conn *irc, int len)
 {
-	GaimConnection *gc = data;
-	struct irc_conn *irc = gc->proto_data;
 	char *cur, *end;
-	int len;
-
-	if (irc->inbuflen < irc->inbufused + IRC_INITIAL_BUFSIZE) {
-		irc->inbuflen += IRC_INITIAL_BUFSIZE;
-		irc->inbuf = g_realloc(irc->inbuf, irc->inbuflen);
-	}
-
-	if ((len = read(irc->fd, irc->inbuf + irc->inbufused, IRC_INITIAL_BUFSIZE - 1)) < 0) {
-		gaim_connection_error(gc, _("Read error"));
-		return;
-	} else if (len == 0) {
-		gaim_connection_error(gc, _("Server has disconnected"));
-		return;
-	}
 
 	irc->inbufused += len;
 	irc->inbuf[irc->inbufused] = '\0';
@@ -430,6 +486,57 @@ static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond)
 	} else {
 		irc->inbufused = 0;
 	}
+}
+
+static void irc_input_cb_ssl(gpointer data, GaimSslConnection *gsc,
+		GaimInputCondition cond)
+{
+
+	GaimConnection *gc = data;
+	struct irc_conn *irc = gc->proto_data;
+	int len;
+
+	if(!g_list_find(gaim_connections_get_all(), gc)) {
+		gaim_ssl_close(gsc);
+		return;
+	}
+
+	if (irc->inbuflen < irc->inbufused + IRC_INITIAL_BUFSIZE) {
+		irc->inbuflen += IRC_INITIAL_BUFSIZE;
+		irc->inbuf = g_realloc(irc->inbuf, irc->inbuflen);
+	}
+	
+	if ((len = gaim_ssl_read(gsc, irc->inbuf + irc->inbufused, IRC_INITIAL_BUFSIZE - 1)) < 0) {
+		gaim_connection_error(gc, _("Read error"));
+		return;
+	} else if (len == 0) {
+		gaim_connection_error(gc, _("Server has disconnected"));
+		return;
+	}
+
+	read_input(irc, len);
+}
+
+static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	GaimConnection *gc = data;
+	struct irc_conn *irc = gc->proto_data;
+	int len;
+
+	if (irc->inbuflen < irc->inbufused + IRC_INITIAL_BUFSIZE) {
+		irc->inbuflen += IRC_INITIAL_BUFSIZE;
+		irc->inbuf = g_realloc(irc->inbuf, irc->inbuflen);
+	}
+
+	if ((len = read(irc->fd, irc->inbuf + irc->inbufused, IRC_INITIAL_BUFSIZE - 1)) < 0) {
+		gaim_connection_error(gc, _("Read error"));
+		return;
+	} else if (len == 0) {
+		gaim_connection_error(gc, _("Server has disconnected"));
+		return;
+	}
+
+	read_input(irc, len);
 }
 
 static void irc_chat_join (GaimConnection *gc, GHashTable *data)
@@ -704,6 +811,9 @@ static void _init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Real name"), "realname", "");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_bool_new(_("Use SSL"), "ssl", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	_irc_plugin = plugin;
