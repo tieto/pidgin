@@ -331,7 +331,8 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 	struct gaim_connection *gc = ms->gc;
 	struct msn_data *md = gc->proto_data;
 
-	gdk_input_remove(ms->inpa);
+	if (ms->inpa)
+		gdk_input_remove(ms->inpa);
 	close(ms->fd);
 	if (ms->sessid)
 		g_free(ms->sessid);
