@@ -401,18 +401,22 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 		return;
 
 	if(gaim_prefs_get_bool("/gaim/gtk/conversations/enable_commands")) {
+		GtkTextIter start;
 		cmd = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
-		if(cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)) {
+		gtk_text_buffer_get_start_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &start);
+
+		if(cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)
+		   && !gtk_text_iter_get_child_anchor(&start)) {
 			GaimCmdStatus status;
 			char *error, *cmdline, *markup, *send_history;
-			GtkTextIter start, end;
+			GtkTextIter end;
 
 			send_history = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 			send_history_add(conv, send_history);
 			g_free(send_history);
 
 			cmdline = cmd + strlen(prefix);
-			gtk_text_buffer_get_start_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &start);
+
 			gtk_text_iter_forward_chars(&start, g_utf8_strlen(prefix, -1));
 			gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &end);
 			markup = gtk_imhtml_get_markup_range(GTK_IMHTML(gtkconv->entry), &start, &end);
