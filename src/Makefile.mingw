@@ -109,7 +109,6 @@ DLL_C_SRC =		about.c \
 			gtkrequest.c \
 			gtksound.c \
 			gtkutils.c \
-			html.c \
 			idle.c \
 			imgstore.c \
 			log.c \
