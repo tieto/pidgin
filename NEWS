@@ -24,6 +24,12 @@
 	box spiffy. Yay frequent releases! Erm, I can't think of anything else
 	cool to say here. Have fun, everyone!
 
+	Luke: Okay, i'm probly the least cool, so I'll go last. I committed a few 
+	patches from other people here, nothing earth shattering though. The biggest
+	thing in this release is the group re-ordering bug fix, having that fixed 
+	will make for fewwer questions. Get used to using releases people, we want to
+	use cvs for actual development :-).
+
 0.60 (04/04/2003):
 	Rob: Wow. So, it has been a really long time since we started the
 	gtk2 fork. It's finally ready for public consumption. Sean is about
