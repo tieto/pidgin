@@ -36,8 +36,9 @@
 GtkWidget *imaway = NULL;
 
 GtkWidget *awaymenu = NULL;
-GtkWidget *clistqueue = NULL;
-GtkWidget *clistqueuesw;
+GtkWidget *awayqueue = NULL;
+GtkListStore *awayqueuestore;
+GtkWidget *awayqueuesw;
 
 struct away_message *awaymessage = NULL;
 struct away_message *default_away;
@@ -48,53 +49,24 @@ static void destroy_im_away()
 	if (imaway)
 		gtk_widget_destroy(imaway);
 
-	clistqueue = NULL;
-	clistqueuesw = NULL;
+	awayqueue = NULL;
+	awayqueuestore = NULL;
+	awayqueuesw = NULL;
 	imaway = NULL;
 }
 
-void purge_away_queue(GSList *queue)
+void dequeue_message(GtkTreeIter *iter)
 {
-	struct conversation *cnv;
-
-	gtk_clist_freeze(GTK_CLIST(clistqueue));
-	gtk_clist_clear(GTK_CLIST(clistqueue));
-
-	while (queue) {
-		struct queued_message *qm = queue->data;
-
-		cnv = find_conversation(qm->name);
-		if (!cnv)
-			cnv = new_conversation(qm->name);
-		if (g_slist_index(connections, qm->gc) >= 0)
-			set_convo_gc(cnv, qm->gc);
-		write_to_conv(cnv, qm->message, qm->flags, NULL, qm->tm, qm->len);
-
-		queue = g_slist_remove(queue, qm);
-
-		g_free(qm->message);
-		g_free(qm);
-	}
-
-	gtk_clist_thaw(GTK_CLIST(clistqueue));
-}
-
-void dequeue_by_buddy(GtkWidget *clist, gint row, gint column, GdkEventButton *event, gpointer data) {
-	char *temp;
-	char *name;
+	gchar *name;
 	GSList *templist;
 	struct conversation *cnv;
-	
-	if(!(event->type == GDK_2BUTTON_PRESS && event->button == 1))
-		return; /* Double clicking on the clist will unqueue that users messages. */
-	
-	gtk_clist_get_text(GTK_CLIST(clist), row, 0, &temp);
-	name = g_strdup(temp);
 
-	if (!name)
-		return;
+	gtk_tree_model_get(GTK_TREE_MODEL(awayqueuestore), iter, 0, &name, -1);
+	
 	debug_printf("Unqueueing messages from %s.\n", name);
+	
 	templist = message_queue;
+	
 	while (templist) {
 		struct queued_message *qm = templist->data;
 		if (templist->data) {
@@ -115,25 +87,55 @@ void dequeue_by_buddy(GtkWidget *clist, gint row, gint column, GdkEventButton *e
 			}
 		}
 	}
-	g_free(name);
-	gtk_clist_remove(GTK_CLIST(clist), row);
-
-}
 	
+	g_free(name);
+	/* In GTK 2.2, _store_remove actually returns whether iter is valid or not
+	 * after the remove, but in GTK 2.0 it is a void function. */
+	gtk_list_store_remove(awayqueuestore, iter);
+}
+
+void purge_away_queue(GSList *queue)
+{
+	gboolean valid;
+	GtkTreeIter iter;
+
+	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore), &iter);
+	while(valid) {
+		dequeue_message(&iter);
+		valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore),
+				&iter);
+	}	
+	
+	g_object_unref(G_OBJECT(awayqueuestore));
+}
+
+gint dequeue_cb(GtkWidget *treeview, GdkEventButton *event, gpointer data) {
+	GtkTreeIter iter;
+	GtkTreeSelection *select;
+	
+	if(!(event->type == GDK_2BUTTON_PRESS && event->button == 1))
+		return FALSE; /* Double clicking on the list will unqueue that user's messages. */
+	
+	select = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	if(gtk_tree_selection_get_selected(select, NULL, &iter))
+			dequeue_message(&iter);
+
+	return FALSE;
+}
 	
 
 
 void toggle_away_queue()
 {
-	if (!clistqueue || !clistqueuesw)
+	if (!awayqueue || !awayqueuesw)
 		return;
 
 	if (away_options & OPT_AWAY_QUEUE) {
-		gtk_widget_show(clistqueue);
-		gtk_widget_show(clistqueuesw);
+		gtk_widget_show(awayqueue);
+		gtk_widget_show(awayqueuesw);
 	} else {
-		gtk_widget_hide(clistqueue);
-		gtk_widget_hide(clistqueuesw);
+		gtk_widget_hide(awayqueue);
+		gtk_widget_hide(awayqueuesw);
 		purge_away_queue(message_queue);
 	}
 }
@@ -158,8 +160,8 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 	}
 
 	awaymessage = NULL;
-	clistqueue = NULL;
-	clistqueuesw = NULL;
+	awayqueue = NULL;
+	awayqueuesw = NULL;
 	serv_set_away_all(NULL);
 }
 
@@ -170,6 +172,8 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 	GtkWidget *awaytext;
 	GtkWidget *sw;
 	GtkWidget *vbox;
+	GtkTreeViewColumn *column;
+	GtkCellRenderer *renderer;
 	char *buf2;
 	char *buf;
 
@@ -213,22 +217,35 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_imhtml_append_text(GTK_IMHTML(awaytext), "<BR>", -1, GTK_IMHTML_NO_TITLE |
 				       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_SCROLL);
 
-		clistqueuesw = gtk_scrolled_window_new(NULL, NULL);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(clistqueuesw), GTK_POLICY_NEVER,
+		awayqueuesw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(awayqueuesw), GTK_POLICY_NEVER,
 					       GTK_POLICY_AUTOMATIC);
-		gtk_box_pack_start(GTK_BOX(vbox), clistqueuesw, TRUE, TRUE, 0);
+		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(awayqueuesw),
+							GTK_SHADOW_IN);
+		gtk_box_pack_start(GTK_BOX(vbox), awayqueuesw, TRUE, TRUE, 0);
 
-		clistqueue = gtk_clist_new(2);
-		gtk_clist_set_column_width(GTK_CLIST(clistqueue), 0, 100);
-		gtk_widget_set_usize(GTK_WIDGET(clistqueue), -1, 50);
-		gtk_container_add(GTK_CONTAINER(clistqueuesw), clistqueue);
-		gtk_signal_connect(GTK_OBJECT(clistqueue), "select_row", GTK_SIGNAL_FUNC(dequeue_by_buddy), NULL);
-
+		awayqueuestore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+		awayqueue = gtk_tree_view_new_with_model(GTK_TREE_MODEL(awayqueuestore));
+		renderer = gtk_cell_renderer_text_new();
+		
+		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(awayqueue), FALSE);
+		column = gtk_tree_view_column_new_with_attributes (NULL, renderer,
+										"text", 0,
+										NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(awayqueue), column);
+		column = gtk_tree_view_column_new_with_attributes(NULL, renderer,
+										"text", 1, 
+										NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(awayqueue), column);
+			
+		gtk_container_add(GTK_CONTAINER(awayqueuesw), awayqueue);
+		
+		g_signal_connect(G_OBJECT(awayqueue), "button_press_event", G_CALLBACK(dequeue_cb), NULL);
 
 
 		if (away_options & OPT_AWAY_QUEUE) {
-			gtk_widget_show(clistqueuesw);
-			gtk_widget_show(clistqueue);
+			gtk_widget_show(awayqueuesw);
+			gtk_widget_show(awayqueue);
 		}
 
 		back = picture_button(imaway, _("I'm Back!"), join_xpm);

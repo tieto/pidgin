@@ -473,17 +473,20 @@ int serv_chat_send(struct gaim_connection *g, int id, char *message)
 
 int find_queue_row_by_name(char *name)
 {
-	GSList *templist;
-	char *temp;
-	int i;
+	gchar *temp;
+	gint i = 0;
+	gboolean valid;
+	GtkTreeIter iter;
 
-	templist = message_queue;
-
-	for (i = 0; i < GTK_CLIST(clistqueue)->rows; i++) {
-		gtk_clist_get_text(GTK_CLIST(clistqueue), i, 0, &temp);
-
-		if (!strcmp(name, temp))
+	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore), &iter);
+	while(valid) {
+		gtk_tree_model_get(GTK_TREE_MODEL(awayqueuestore), &iter, 0, &temp, -1);
+		if(!strcmp(name, temp))
 			return i;
+		g_free(temp);
+		
+		i++;
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(awayqueuestore), &iter);
 	}
 
 	return -1;
@@ -623,13 +626,14 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		 * imaway dialog being shown. in fact, it's possible for *all* the accounts to be
 		 * away without the imaway dialog being shown. so in order for this to be queued
 		 * properly, we have to make sure that the imaway dialog actually exists, first. */
-		if (!cnv && clistqueue && (away_options & OPT_AWAY_QUEUE)) {
+		if (!cnv && awayqueue && (away_options & OPT_AWAY_QUEUE)) {
 			/* alright, so we're going to queue it. neat, eh? :) so first we create
 			 * something to store the message, and add it to our queue. Then we update
 			 * the away dialog to indicate that we've queued something. */
 			struct queued_message *qm;
-			struct buddy *b;
-
+			GtkTreeIter iter;
+			gchar path[10];
+			
 			qm = g_new0(struct queued_message, 1);
 				g_snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = g_memdup(message, len == -1 ? strlen(message) + 1 : len);
@@ -640,20 +644,25 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 			message_queue = g_slist_append(message_queue, qm);
 
 			row = find_queue_row_by_name(qm->name);
-
 			if (row >= 0) {
 				char number[32];
 				int qtotal;
 
 				qtotal = find_queue_total_by_name(qm->name);
 				g_snprintf(number, 32, _("(%d messages)"), qtotal);
-				gtk_clist_set_text(GTK_CLIST(clistqueue), row, 1, number);
+				g_snprintf(path, 10, "%d", row);
+				gtk_tree_model_get_iter_from_string(
+								GTK_TREE_MODEL(awayqueuestore), &iter, path);
+				gtk_list_store_set(awayqueuestore, &iter,
+								1, number, -1);
 			} else {
-				gchar *heh[2];
-
-				heh[0] = qm->name;
-				heh[1] = _("(1 message)");
-				gtk_clist_append(GTK_CLIST(clistqueue), heh);
+				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore), 
+								&iter);
+				gtk_list_store_append(awayqueuestore, &iter);
+				gtk_list_store_set(awayqueuestore, &iter,
+								0, qm->name,
+								1, _("(1 message)"),
+								-1);
 			}
 		} else {
 			/* ok, so we're not queuing it. well then, we'll try to handle it normally.
@@ -717,7 +726,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		/* apply default fonts and colors */
 		tmpmsg = stylize(gc->away, MSG_LEN);
 		serv_send_im(gc, name, away_subs(tmpmsg, alias), -1, IM_FLAG_AWAY);
-		if (!cnv && clistqueue && (away_options & OPT_AWAY_QUEUE)) {
+		if (!cnv && awayqueue && (away_options & OPT_AWAY_QUEUE)) {
 			struct queued_message *qm;
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
