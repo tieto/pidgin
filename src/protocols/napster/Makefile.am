@@ -1,31 +1,25 @@
-EXTRA_DIST = \
-		Makefile.mingw
-
 pkgdir = $(libdir)/gaim
 
-RENDEZVOUSSOURCES = \
-	mdns.c \
-	rendezvous.c
+NAPSTERSOURCES = napster.c
 
 AM_CFLAGS = $(st)
 
-librendezvous_la_LDFLAGS = -module -avoid-version
+libnapster_la_LDFLAGS = -module -avoid-version
 
-if STATIC_RENDEZVOUS
+if STATIC_NAPSTER
 
 st = -DGAIM_STATIC_PRPL
-noinst_LIBRARIES     = librendezvous.a
-librendezvous_a_SOURCES = $(RENDEZVOUSSOURCES)
-librendezvous_a_CFLAGS  = $(AM_CFLAGS)
+noinst_LIBRARIES     = libnapster.a
+libnapster_a_SOURCES = $(NAPSTERSOURCES)
+libnapster_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
-pkg_LTLIBRARIES       = librendezvous.la
-librendezvous_la_SOURCES = $(RENDEZVOUSSOURCES)
+pkg_LTLIBRARIES       = libnapster.la
+libnapster_la_SOURCES = $(NAPSTERSOURCES)
 
 endif
-
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
