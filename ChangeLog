@@ -12,9 +12,11 @@ version 0.65:
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
 	* Massive internal core/ui splitting
 	* New account dialog.
-	* preferences moved to ~/.gaim/prefs.xml
-	* account information moved to ~/.gaim/accounts.xml
-	* Added Trepia support.
+	* Preferences moved to ~/.gaim/prefs.xml
+	* Account information moved to ~/.gaim/accounts.xml
+	* Pounces moved to ~/.gaim/pounces.xml
+	* Added support for the Trepia protocol.
+	* Added protocol icons to various drop-down boxes.
 	* New Send IM buddy icon merged from Ximian Desktop 2
 	* Fixed "Sort by Status" crash
 	* Ability to view iChat "Available" messages
