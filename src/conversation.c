@@ -53,6 +53,7 @@
 #include "pixmaps/link.xpm"
 #include "pixmaps/smile_icon.xpm"
 #include "pixmaps/wood.xpm"
+#include "pixmaps/search_small.xpm"
 #include "pixmaps/save_small.xpm"
 #include "pixmaps/speaker.xpm"
 #include "pixmaps/speaker_mute.xpm"
@@ -390,8 +391,9 @@ void toggle_loggle(GtkWidget *loggle, struct conversation *c)
 {
 	if (state_lock)
 		return;
+
 	if (find_log_info(c->name))
-		 rm_log(find_log_info(c->name));
+		rm_log(find_log_info(c->name));
 	else if (GTK_TOGGLE_BUTTON(loggle)->active)
 		show_log_dialog(c);
 	else
@@ -2112,10 +2114,10 @@ void update_progress(struct conversation *c, float percent) {
 GtkWidget *build_conv_toolbar(struct conversation *c)
 {
 	GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i,
-	    *wood_i, *fgcolor_i, *bgcolor_i, *link_i, *font_i, *smiley_i, *save_i, *image_i;
+	    *wood_i, *viewer_i, *fgcolor_i, *bgcolor_i, *link_i, *font_i, *smiley_i, *save_i, *image_i;
 	GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p,
-	    *wood_p, *fgcolor_p, *bgcolor_p, *link_p, *font_p, *smiley_p, *save_p, *image_p;
-	GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood,
+	    *wood_p, *viewer_p, *fgcolor_p, *bgcolor_p, *link_p, *font_p, *smiley_p, *save_p, *image_p;
+	GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood, *viewer,
 	    *fgcolorbtn, *bgcolorbtn, *link, *font, *smiley, *save, *image;
 	GdkBitmap *mask;
 	GtkWidget *toolbar;
@@ -2195,6 +2197,11 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	wood_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, wood_xpm);
 	wood_p = gtk_pixmap_new(wood_i, mask);
 	gtk_widget_show(wood_p);
+	gdk_bitmap_unref(mask);
+
+	viewer_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, search_small_xpm);
+	viewer_p = gtk_pixmap_new(viewer_i, mask);
+	gtk_widget_show(viewer_p);
 	gdk_bitmap_unref(mask);
 
 	save_i = gdk_pixmap_create_from_xpm_d(win->window, &mask, &win->style->white, save_small_xpm);
@@ -2281,6 +2288,10 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(wood), FALSE);
 	state_lock = 0;
 
+	viewer = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
+							NULL, _("Show Log Viewer"), _("Viewer"),
+              viewer_p, GTK_SIGNAL_FUNC(conv_show_log), GINT_TO_POINTER(c->name));
+
 	save = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar),
 				       NULL, _("Save Conversation"),
 				       _("Save"), save_p, GTK_SIGNAL_FUNC(save_convo), c);
@@ -2307,6 +2318,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 		gtk_button_set_relief(GTK_BUTTON(smiley), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(image), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(wood), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(viewer), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(save), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(speaker), GTK_RELIEF_NONE);
 	}
@@ -2326,6 +2338,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	gdk_pixmap_unref(link_i);
 	gdk_pixmap_unref(smiley_i);
 	gdk_pixmap_unref(wood_i);
+	gdk_pixmap_unref(viewer_i);
 	gdk_pixmap_unref(save_i);
 	gdk_pixmap_unref(speaker_i);
 	gdk_pixmap_unref(image_i);
@@ -2336,6 +2349,7 @@ GtkWidget *build_conv_toolbar(struct conversation *c)
 	c->italic = italic;
 	c->underline = underline;
 	c->log_button = wood;
+	c->viewer_button = viewer;
 	c->fgcolorbtn = fgcolorbtn;
 	c->bgcolorbtn = bgcolorbtn;
 	c->link = link;

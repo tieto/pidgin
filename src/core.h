@@ -148,7 +148,7 @@ struct group {
 
 /* Globals in core.c */
 extern GSList *uis;
-extern gaim_session;
+extern int gaim_session;
 
 /* Globals in plugins.c */
 extern GList *plugins;

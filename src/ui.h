@@ -109,6 +109,7 @@ struct conversation {
 	GtkWidget *bgcolorbtn;
 	GtkWidget *link;
 	GtkWidget *wood;
+	GtkWidget *viewer_button;
 	GtkWidget *log_button;
 	GtkWidget *strike;
 	GtkWidget *font;
@@ -426,6 +427,7 @@ extern void destroy_all_dialogs();
 extern void show_import_dialog();
 extern void show_export_dialog();
 extern void show_new_bp(char *, struct gaim_connection *, int, int, struct buddy_pounce *);
+extern void conv_show_log(GtkWidget *, gpointer);
 extern void show_log(char *);
 extern void show_log_dialog(struct conversation *);
 extern void show_fgcolor_dialog(struct conversation *c, GtkWidget *color);

@@ -63,6 +63,7 @@ version 0.60:
 	  running.
 	* Login all auto-login accounts from login window (Thanks
 	  Etan Reisner)
+	* View log button in conversation toolbar (Thanks Etan Reisner)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)

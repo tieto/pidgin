@@ -4080,6 +4080,13 @@ static void des_log_win(GtkObject *win, gpointer data)
 		g_free(x);
 }
 
+void conv_show_log(GtkWidget *w, gpointer data)
+{
+	char *name = g_strdup(data);
+	show_log(name);
+	g_free(name);
+}
+
 void show_log(char *nm)
 {
 	gchar filename[256];
