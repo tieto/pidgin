@@ -2466,8 +2466,8 @@ remove_icon(GaimGtkConversation *gtkconv)
 {
 	g_return_if_fail(gtkconv != NULL);
 
-	if (gtkconv->u.im->icon != NULL)
-		gtk_widget_destroy(gtkconv->u.im->icon->parent->parent->parent);
+	if (gtkconv->u.im->icon_container != NULL)
+		gtk_widget_destroy(gtkconv->u.im->icon_container);
 
 	if (gtkconv->u.im->anim != NULL)
 		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
@@ -5656,6 +5656,8 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	if (gtkconv->u.im->anim != NULL)
 		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
+
+	gtkconv->u.im->anim = NULL;
 
 	if (gtkconv->u.im->icon_timer != 0)
 		g_source_remove(gtkconv->u.im->icon_timer);
