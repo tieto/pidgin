@@ -73,6 +73,8 @@ typedef struct
 {
 	AccountPrefsDialogType type;
 
+	AccountsDialog *accounts_dialog;
+
 	GaimAccount *account;
 	GaimProtocol protocol;
 	GaimPlugin *plugin;
@@ -124,6 +126,9 @@ typedef struct
 
 static AccountsDialog *accounts_dialog = NULL;
 
+static void __add_account(AccountsDialog *dialog, GaimAccount *account);
+static void __set_account(GtkListStore *store, GtkTreeIter *iter,
+						  GaimAccount *account);
 
 static char *
 proto_name(int proto)
@@ -697,7 +702,7 @@ __add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 				g_snprintf(buf, sizeof(buf), "%d", int_val);
 
-				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_host_entry), buf);
+				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_port_entry), buf);
 			}
 
 			if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
@@ -744,6 +749,8 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	const char *value;
 	char *username;
 	char *tmp;
+	size_t index;
+	GtkTreeIter iter;
 
 	if (dialog->account == NULL) {
 		const char *screenname;
@@ -890,13 +897,28 @@ __ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 				gtk_entry_get_text(GTK_ENTRY(dialog->proxy_pass_entry)));
 	}
 
+	/* Adds the account to the list, or modify the existing entry. */
+	index = g_list_index(gaim_accounts_get_all(), dialog->account);
+
+	if (index != -1 &&
+		(gtk_tree_model_iter_nth_child(
+				GTK_TREE_MODEL(dialog->accounts_dialog->model), &iter,
+				NULL, index))) {
+
+		__set_account(dialog->accounts_dialog->model, &iter, dialog->account);
+	}
+	else
+		__add_account(dialog->accounts_dialog, dialog->account);
+
 	gtk_widget_destroy(dialog->window);
 
 	__account_win_destroy_cb(NULL, NULL, dialog);
 }
 
 static void
-__show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
+__show_account_prefs(AccountPrefsDialogType type,
+					 AccountsDialog *accounts_dialog,
+					 GaimAccount *account)
 {
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
@@ -910,6 +932,7 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 
 	dialog = g_new0(AccountPrefsDialog, 1);
 
+	dialog->accounts_dialog = accounts_dialog;
 	dialog->account = account;
 	dialog->type    = type;
 	dialog->sg      = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -1181,7 +1204,7 @@ __configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsDialog *dialog)
 static void
 __add_account_cb(GtkWidget *w, AccountsDialog *dialog)
 {
-	__show_account_prefs(ADD_ACCOUNT_DIALOG, NULL);
+	__show_account_prefs(ADD_ACCOUNT_DIALOG, dialog, NULL);
 }
 
 static void
@@ -1193,7 +1216,7 @@ __modify_account_sel(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(model, iter, COLUMN_DATA, &account, -1);
 
 	if (account != NULL)
-		__show_account_prefs(MODIFY_ACCOUNT_DIALOG, account);
+		__show_account_prefs(MODIFY_ACCOUNT_DIALOG, data, account);
 }
 
 static void
@@ -1203,7 +1226,8 @@ __modify_account_cb(GtkWidget *w, AccountsDialog *dialog)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 
-	gtk_tree_selection_selected_foreach(selection, __modify_account_sel, NULL);
+	gtk_tree_selection_selected_foreach(selection, __modify_account_sel,
+										dialog);
 }
 
 static void
@@ -1231,7 +1255,7 @@ __online_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
 	gtk_tree_model_get(model, &iter, COLUMN_DATA, &account,
-			COLUMN_ONLINE, &online, -1);
+					   COLUMN_ONLINE, &online, -1);
 
 	if (online)
 		gaim_account_disconnect(account);
@@ -1306,41 +1330,51 @@ __add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 }
 
 static void
-__populate_accounts_list(AccountsDialog *dialog)
+__set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 {
-	GList *l;
-	GaimAccount *account;
-	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
 	GdkPixbuf *scale;
 
+	scale = NULL;
+
+	pixbuf = create_prpl_icon(account);
+
+	if (pixbuf != NULL)
+		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
+
+	gtk_list_store_set(store, iter,
+			COLUMN_ICON, scale,
+			COLUMN_SCREENNAME, gaim_account_get_username(account),
+			COLUMN_ONLINE, gaim_account_is_connected(account),
+			COLUMN_AUTOLOGIN, FALSE,
+			COLUMN_PROTOCOL, proto_name(gaim_account_get_protocol(account)),
+			COLUMN_DATA, account,
+			COLUMN_FILLER, FALSE,
+			-1);
+
+	if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
+	if (scale  != NULL) g_object_unref(G_OBJECT(scale));
+}
+
+static void
+__add_account(AccountsDialog *dialog, GaimAccount *account)
+{
+	GtkTreeIter iter;
+
+	gtk_list_store_append(dialog->model, &iter);
+
+	__set_account(dialog->model, &iter, account);
+}
+
+static void
+__populate_accounts_list(AccountsDialog *dialog)
+{
+	GList *l;
+
 	gtk_list_store_clear(dialog->model);
 
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
-		account = l->data;
-
-		scale = NULL;
-
-		pixbuf = create_prpl_icon(account);
-
-		if (pixbuf != NULL)
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-											GDK_INTERP_BILINEAR);
-
-		gtk_list_store_append(dialog->model, &iter);
-		gtk_list_store_set(dialog->model, &iter,
-				COLUMN_ICON, scale,
-				COLUMN_SCREENNAME, gaim_account_get_username(account),
-				COLUMN_ONLINE, gaim_account_is_connected(account),
-				COLUMN_AUTOLOGIN, FALSE,
-				COLUMN_PROTOCOL, proto_name(gaim_account_get_protocol(account)),
-				COLUMN_DATA, account,
-				COLUMN_FILLER, FALSE,
-				-1);
-
-		if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
-		if (scale  != NULL) g_object_unref(G_OBJECT(scale));
-	}
+	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
+		__add_account(dialog, (GaimAccount *)l->data);
 }
 
 static GtkWidget *
