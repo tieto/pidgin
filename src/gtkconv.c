@@ -4261,11 +4261,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(menu_tabby), gtkconv->menu_icon,
 					   FALSE, FALSE, 0);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
-	{
-		gtk_widget_show_all(gtkconv->icon);
-		gtk_widget_show_all(gtkconv->menu_icon);
-	}
+	gtk_widget_show_all(gtkconv->icon);
+	gtk_widget_show_all(gtkconv->menu_icon);
 
 	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->tab_label, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(menu_tabby), gtkconv->menu_label, TRUE, TRUE, 0);
@@ -5109,13 +5106,11 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	{
 		gray_stuff_out(gaim_conv_window_get_active_conversation(win));
 		generate_send_as_items(win, NULL);
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
-			update_tab_icon(conv);
+		update_tab_icon(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_AWAY)
 	{
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
-			update_tab_icon(conv);
+		update_tab_icon(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_ADD || type == GAIM_CONV_UPDATE_REMOVE ||
 	         type == GAIM_CONV_UPDATE_CHATLEFT)
@@ -5536,34 +5531,6 @@ escape_closes_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-icons_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
-					  gpointer data)
-{
-	GList *l;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (GaimConversation *)l->data;
-
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
-			continue;
-
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		if (value) {
-			update_tab_icon(conv);
-			gtk_widget_show(gtkconv->icon);
-			gtk_widget_show(gtkconv->menu_icon);
-		}
-		else {
-			gtk_widget_hide(gtkconv->icon);
-			gtk_widget_hide(gtkconv->menu_icon);
-		}
-	}
-}
-
-static void
 close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
 						gpointer data)
 {
@@ -5839,7 +5806,6 @@ gaim_gtk_conversations_init(void)
 
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
-	gaim_prefs_add_bool("/gaim/gtk/conversations/icons_on_tabs", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/close_on_tabs", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ctrl_enter_sends", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/enter_sends", TRUE);
@@ -5889,8 +5855,6 @@ gaim_gtk_conversations_init(void)
 	/* Connect callbacks. */
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/escape_closes",
 								escape_closes_pref_cb, NULL);
-	gaim_prefs_connect_callback("/gaim/gtk/conversations/icons_on_tabs",
-								icons_on_tabs_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/close_on_tabs",
 								close_on_tabs_pref_cb, NULL);
 	gaim_prefs_connect_callback("/gaim/gtk/conversations/show_timestamps",

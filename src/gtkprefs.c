@@ -951,18 +951,6 @@ GtkWidget *conv_page() {
 
 	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), close_checkbox);
-#if 0 /* PREFSLASH04 */
-	icons_checkbox = gaim_gtk_prefs_checkbox(_("Show status _icons on tabs"),
-									"/gaim/gtk/conversations/icons_on_tabs",
-									vbox);
-
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
-		gtk_widget_set_sensitive(GTK_WIDGET(icons_checkbox), FALSE);
-		}
-
-	g_signal_connect(G_OBJECT(tabs_checkbox), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), icons_checkbox);
-#endif /* PREFSLASH04 */
 
 	gtk_widget_show_all(ret);
 
@@ -2936,6 +2924,7 @@ void gaim_gtk_prefs_update_old() {
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
+	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_colors");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");
