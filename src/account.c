@@ -1,4 +1,4 @@
-/**
+/*if*
  * @file account.c Account API
  * @ingroup core
  *
@@ -20,8 +20,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <glib.h>
+
 #include "account.h"
 #include "prefs.h"
+
+typedef enum
+{
+	TAG_PROTOCOL,
+	TAG_NAME,
+	TAG_PASSWORD,
+	TAG_ALIAS,
+	TAG_USERINFO,
+	TAG_BUDDYICON,
+	TAG_SETTING
+
+} AccountParserTag;
 
 typedef struct
 {
@@ -37,7 +60,23 @@ typedef struct
 
 } GaimAccountSetting;
 
-static GList *accounts = NULL;
+typedef struct
+{
+	AccountParserTag tag;
+
+	GaimAccount *account;
+	GaimProtocol protocol;
+
+	GString *buffer;
+
+	GaimPrefType setting_type;
+	char *setting_name;
+
+} AccountParserData;
+
+static GList   *accounts = NULL;
+static guint    accounts_save_timer = 0;
+static gboolean accounts_loaded = FALSE;
 
 static void
 __delete_setting(void *data)
@@ -48,6 +87,22 @@ __delete_setting(void *data)
 		g_free(setting->value.string);
 
 	g_free(setting);
+}
+
+static gboolean
+__accounts_save_cb(gpointer unused)
+{
+	gaim_accounts_sync();
+	accounts_save_timer = 0;
+
+	return FALSE;
+}
+
+static void
+schedule_accounts_save()
+{
+	if (!accounts_save_timer)
+		accounts_save_timer = g_timeout_add(5000, __accounts_save_cb, NULL);
 }
 
 GaimAccount *
@@ -127,6 +182,8 @@ gaim_account_set_username(GaimAccount *account, const char *username)
 		g_free(account->username);
 
 	account->username = (username == NULL ? NULL : g_strdup(username));
+
+	schedule_accounts_save();
 }
 
 void
@@ -139,6 +196,8 @@ gaim_account_set_password(GaimAccount *account, const char *password)
 		g_free(account->password);
 
 	account->password = (password == NULL ? NULL : g_strdup(password));
+
+	schedule_accounts_save();
 }
 
 void
@@ -151,6 +210,8 @@ gaim_account_set_alias(GaimAccount *account, const char *alias)
 		g_free(account->alias);
 
 	account->alias = (alias == NULL ? NULL : g_strdup(alias));
+
+	schedule_accounts_save();
 }
 
 void
@@ -163,6 +224,8 @@ gaim_account_set_user_info(GaimAccount *account, const char *user_info)
 		g_free(account->user_info);
 
 	account->user_info = (user_info == NULL ? NULL : g_strdup(user_info));
+
+	schedule_accounts_save();
 }
 
 void
@@ -175,6 +238,8 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 		g_free(account->buddy_icon);
 
 	account->buddy_icon = (icon == NULL ? NULL : g_strdup(icon));
+
+	schedule_accounts_save();
 }
 
 void
@@ -183,6 +248,8 @@ gaim_account_set_protocol(GaimAccount *account, GaimProtocol protocol)
 	g_return_if_fail(account != NULL);
 
 	account->protocol = protocol;
+
+	schedule_accounts_save();
 }
 
 void
@@ -192,6 +259,8 @@ gaim_account_set_connection(GaimAccount *account, GaimConnection *gc)
 	g_return_if_fail(gc      != NULL);
 
 	account->gc = gc;
+
+	schedule_accounts_save();
 }
 
 void
@@ -200,6 +269,8 @@ gaim_account_set_remember_password(GaimAccount *account, gboolean value)
 	g_return_if_fail(account != NULL);
 
 	account->remember_pass = value;
+
+	schedule_accounts_save();
 }
 
 void
@@ -216,6 +287,8 @@ gaim_account_set_int(GaimAccount *account, const char *name, int value)
 	setting->value.integer = value;
 
 	g_hash_table_insert(account->settings, g_strdup(name), setting);
+
+	schedule_accounts_save();
 }
 
 void
@@ -233,6 +306,8 @@ gaim_account_set_string(GaimAccount *account, const char *name,
 	setting->value.string = g_strdup(value);
 
 	g_hash_table_insert(account->settings, g_strdup(name), setting);
+
+	schedule_accounts_save();
 }
 
 void
@@ -249,6 +324,8 @@ gaim_account_set_bool(GaimAccount *account, const char *name, gboolean value)
 	setting->value.bool = value;
 
 	g_hash_table_insert(account->settings, g_strdup(name), setting);
+
+	schedule_accounts_save();
 }
 
 gboolean
@@ -388,6 +465,334 @@ gaim_account_get_bool(const GaimAccount *account, const char *name,
 
 	return setting->value.bool;
 }
+
+/* XML Stuff */
+static void
+__free_parser_data(gpointer user_data)
+{
+	AccountParserData *data = user_data;
+
+	if (data->buffer != NULL)
+		g_free(data->buffer);
+
+	if (data->setting_name != NULL)
+		g_free(data->setting_name);
+
+	g_free(data);
+}
+
+static void
+__start_element_handler(GMarkupParseContext *context,
+						const gchar *element_name,
+						const gchar **attribute_names,
+						const gchar **attribute_values,
+						gpointer user_data, GError **error)
+{
+	AccountParserData *data = user_data;
+	int i;
+
+	if (data->buffer != NULL) {
+		g_string_free(data->buffer, TRUE);
+		data->buffer = NULL;
+	}
+
+	if (!strcmp(element_name, "protocol"))
+		data->tag = TAG_PROTOCOL;
+	else if (!strcmp(element_name, "name"))
+		data->tag = TAG_NAME;
+	else if (!strcmp(element_name, "password"))
+		data->tag = TAG_PASSWORD;
+	else if (!strcmp(element_name, "alias"))
+		data->tag = TAG_ALIAS;
+	else if (!strcmp(element_name, "userinfo"))
+		data->tag = TAG_USERINFO;
+	else if (!strcmp(element_name, "buddyicon"))
+		data->tag = TAG_BUDDYICON;
+	else if (!strcmp(element_name, "setting")) {
+		data->tag = TAG_SETTING;
+
+		for (i = 0; attribute_names[i] != NULL; i++) {
+
+			if (!strcmp(attribute_names[i], "name"))
+				data->setting_name = g_strdup(attribute_values[i]);
+			else if (!strcmp(attribute_names[i], "type")) {
+
+				if (!strcmp(attribute_values[i], "string"))
+					data->setting_type = GAIM_PREF_STRING;
+				else if (!strcmp(attribute_values[i], "int"))
+					data->setting_type = GAIM_PREF_INT;
+				else if (!strcmp(attribute_values[i], "bool"))
+					data->setting_type = GAIM_PREF_BOOLEAN;
+			}
+		}
+	}
+}
+
+static void
+__end_element_handler(GMarkupParseContext *context, const gchar *element_name,
+					  gpointer user_data,  GError **error)
+{
+	AccountParserData *data = user_data;
+	gchar *buffer;
+
+	if (data->buffer == NULL)
+		return;
+
+	buffer = g_string_free(data->buffer, FALSE);
+	data->buffer = NULL;
+
+	if (data->tag == TAG_PROTOCOL) {
+		GList *l;
+		GaimPlugin *plugin;
+
+		data->protocol = -1;
+
+		for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
+			plugin = (GaimPlugin *)l->data;
+
+			if (GAIM_IS_PROTOCOL_PLUGIN(plugin)) {
+				if (!strcmp(plugin->info->name, buffer)) {
+					data->protocol =
+						GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol;
+
+					break;
+				}
+			}
+		}
+	}
+	else if (data->tag == TAG_NAME)
+		data->account = gaim_account_new(buffer, data->protocol);
+	else if (data->tag == TAG_PASSWORD)
+		gaim_account_set_password(data->account, buffer);
+	else if (data->tag == TAG_ALIAS)
+		gaim_account_set_alias(data->account, buffer);
+	else if (data->tag == TAG_USERINFO)
+		gaim_account_set_user_info(data->account, buffer);
+	else if (data->tag == TAG_BUDDYICON)
+		gaim_account_set_buddy_icon(data->account, buffer);
+	else if (data->tag == TAG_SETTING) {
+		if (data->setting_type == GAIM_PREF_STRING)
+			gaim_account_set_string(data->account, data->setting_name,
+									buffer);
+		else if (data->setting_type == GAIM_PREF_INT)
+			gaim_account_set_int(data->account, data->setting_name,
+								 atoi(buffer));
+		else if (data->setting_type == GAIM_PREF_BOOLEAN)
+			gaim_account_set_bool(data->account, data->setting_name,
+				(*buffer == '0' ? FALSE : TRUE));
+
+		g_free(data->setting_name);
+		data->setting_name = NULL;
+	}
+
+	g_free(buffer);
+}
+
+static void
+__text_handler(GMarkupParseContext *context, const gchar *text,
+			   gsize text_len, gpointer user_data, GError **error)
+{
+	AccountParserData *data = user_data;
+
+	if (data->buffer == NULL)
+		data->buffer = g_string_new_len(text, text_len);
+	else
+		g_string_append_len(data->buffer, text, text_len);
+}
+
+static GMarkupParser accounts_parser =
+{
+	__start_element_handler,
+	__end_element_handler,
+	__text_handler,
+	NULL,
+	NULL
+};
+
+gboolean
+gaim_accounts_load()
+{
+	gchar *filename = g_build_filename(gaim_user_dir(), "accounts.xml", NULL);
+	gchar *contents = NULL;
+	gsize length;
+	GMarkupParseContext *context;
+	GError *error = NULL;
+	AccountParserData *parser_data;
+
+	if (filename == NULL) {
+		accounts_loaded = TRUE;
+		return FALSE;
+	}
+
+	gaim_debug(GAIM_DEBUG_INFO, "accounts", "Reading %s\n", filename);
+
+	if (!g_file_get_contents(filename, &contents, &length, &error)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
+				   "Error reading accounts: %s\n", error->message);
+		
+		g_error_free(error);
+
+		accounts_loaded = TRUE;
+		return FALSE;
+	}
+
+	parser_data = g_new0(AccountParserData, 1);
+
+	context = g_markup_parse_context_new(&accounts_parser, 0,
+										 parser_data, __free_parser_data);
+
+	if (!g_markup_parse_context_parse(context, contents, length, NULL)) {
+		g_markup_parse_context_free(context);
+		g_free(contents);
+
+		accounts_loaded = TRUE;
+
+		return FALSE;
+	}
+
+	if (!g_markup_parse_context_end_parse(context, NULL)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "accounts", "Error parsing %s\n",
+				   filename);
+
+		g_markup_parse_context_free(context);
+		g_free(contents);
+		accounts_loaded = TRUE;
+
+		return FALSE;
+	}
+
+	g_markup_parse_context_free(context);
+	g_free(contents);
+
+	gaim_debug(GAIM_DEBUG_INFO, "accounts", "Finished reading %s\n",
+			   filename);
+	g_free(filename);
+
+	accounts_loaded = TRUE;
+
+	return TRUE;
+}
+
+static void
+__write_setting(gpointer key, gpointer value, gpointer user_data)
+{
+	GaimAccountSetting *setting;
+	const char *name;
+	FILE *fp;
+
+	setting = (GaimAccountSetting *)value;
+	name    = (const char *)key;
+	fp      = (FILE *)user_data;
+
+	if (setting->type == GAIM_PREF_INT) {
+		fprintf(fp, "   <setting name='%s' type='int'>%d</setting>\n",
+				name, setting->value.integer);
+	}
+	else if (setting->type == GAIM_PREF_STRING) {
+		fprintf(fp, "   <setting name='%s' type='string'>%s</setting>\n",
+				name, setting->value.string);
+	}
+	else if (setting->type == GAIM_PREF_BOOLEAN) {
+		fprintf(fp, "   <setting name='%s' type='bool'>%d</setting>\n",
+				name, setting->value.bool);
+	}
+}
+
+static void
+gaim_accounts_write(FILE *fp, GaimAccount *account)
+{
+	GaimPlugin *plugin;
+	const char *password, *alias, *user_info, *buddy_icon;
+
+	plugin = gaim_find_prpl(gaim_account_get_protocol(account));
+
+	fprintf(fp, " <account>\n");
+	fprintf(fp, "  <protocol>%s</protocol>\n",
+			(plugin != NULL && plugin->info != NULL && plugin->info->id != NULL
+			 ? plugin->info->id : "unknown"));
+	fprintf(fp, "  <name>%s</name>\n", gaim_account_get_username(account));
+
+	if (gaim_account_get_remember_password(account) &&
+		(password = gaim_account_get_password(account)) != NULL) {
+
+		fprintf(fp, "  <password>%s</password>\n", password);
+	}
+
+	if ((alias = gaim_account_get_alias(account)) != NULL)
+		fprintf(fp, "  <alias>%s</alias>\n", alias);
+
+	if ((user_info = gaim_account_get_user_info(account)) != NULL)
+		fprintf(fp, "  <userinfo>%s</userinfo>\n", user_info);
+
+	if ((buddy_icon = gaim_account_get_buddy_icon(account)) != NULL)
+		fprintf(fp, "  <buddyicon>%s</buddyicon>\n", buddy_icon);
+
+	fprintf(fp, "  <settings>\n");
+	g_hash_table_foreach(account->settings, __write_setting, fp);
+	fprintf(fp, "  </settings>\n");
+
+	fprintf(fp, " </account>\n");
+}
+
+void
+gaim_accounts_sync(void)
+{
+	FILE *fp;
+	const char *user_dir = gaim_user_dir();
+	char *filename;
+	char *filename_real;
+
+	if (!accounts_loaded) {
+		gaim_debug(GAIM_DEBUG_WARNING, "accounts",
+				   "Writing accounts to disk.\n");
+		schedule_accounts_save();
+		return;
+	}
+
+	if (user_dir == NULL)
+		return;
+
+	gaim_debug(GAIM_DEBUG_INFO, "accounts", "Writing accounts to disk.\n");
+
+	fp = fopen(user_dir, "r");
+
+	if (fp == NULL)
+		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+	else
+		fclose(fp);
+
+	filename = g_build_filename(user_dir, "accounts.xml.save", NULL);
+
+	if ((fp = fopen(filename, "w")) != NULL) {
+		GList *l;
+
+		fprintf(fp, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
+		fprintf(fp, "<accounts>\n");
+
+		for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
+			gaim_accounts_write(fp, l->data);
+
+		fprintf(fp, "</accounts>\n");
+
+		fclose(fp);
+		chmod(filename, S_IRUSR | S_IWUSR);
+	}
+	else {
+		gaim_debug(GAIM_DEBUG_ERROR, "accounts", "Unable to write %s\n",
+				   filename);
+	}
+
+	filename_real = g_build_filename(user_dir, "accounts.xml", NULL);
+
+	if (rename(filename, filename_real) < 0) {
+		gaim_debug(GAIM_DEBUG_ERROR, "accounts", "Error renaming %s to %s\n",
+				   filename, filename_real);
+	}
+
+	g_free(filename);
+	g_free(filename_real);
+}
+
 
 GList *
 gaim_accounts_get_all(void)

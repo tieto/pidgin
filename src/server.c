@@ -857,7 +857,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * imaway dialog actually exists, first.
 		 */
 		if (!cnv && awayqueue &&
-			gaim_prefs_get_bool("/core/away/queue_messages")) {
+			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
 			/* 
 			 * Alright, so we're going to queue it. Neat, eh? :)
 			 * So first we create something to store the message, and add
@@ -963,7 +963,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		tmpmsg = stylize(gc->away, MSG_LEN);
 		serv_send_im(gc, name, away_subs(tmpmsg, alias), -1, IM_FLAG_AWAY);
 		if (!cnv && awayqueue &&
-			gaim_prefs_get_bool("/core/away/queue_messages")) {
+			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
 
 			struct queued_message *qm;
 
@@ -992,7 +992,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * Robot101 will fix this after his exams. honest.
 		 */
 		if (docklet_count &&
-		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_unread") &&
+		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages") &&
 		    !gaim_find_conversation(name)) {
 			/*
 			 * We're gonna queue it up and wait for the user to ask for

@@ -316,6 +316,16 @@ gboolean gaim_account_get_bool(const GaimAccount *account, const char *name,
 							   gboolean default_value);
 
 /**
+ * Loads the accounts.
+ */
+gboolean gaim_accounts_load();
+
+/**
+ * Force an immediate write of accounts.
+ */
+void gaim_accounts_sync();
+
+/**
  * Returns a list of all accounts.
  *
  * @return A list of all accounts.

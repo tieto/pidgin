@@ -301,9 +301,6 @@ struct _GaimPluginProtocolInfo
 #define GAIM_PLUGIN_PROTOCOL_INFO(plugin) \
 	((GaimPluginProtocolInfo *)(plugin)->info->extra_info)
 
-/** A list of all loaded protocol plugins. */
-extern GSList *protocols;
-
 /**
  * Compares two protocol plugins, based off their protocol plugin number.
  *

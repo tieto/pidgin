@@ -1442,7 +1442,7 @@ GtkWidget *away_page() {
 	prefs_checkbox(_("_Sending messages removes away status"),
 				  "/core/conversations/away_back_on_send", vbox);
 	prefs_checkbox(_("_Queue new messages when away"),
-				  "/plugins/gtk/docklet/queue_messages", vbox);
+				   "/gaim/gtk/away/queue_messages", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Auto-response"));
 	hbox = gtk_hbox_new(FALSE, 0);
@@ -2698,6 +2698,10 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  550);
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 250);
+
+	/* Away Queueing */
+	gaim_prefs_add_none("/gaim/gtk/away");
+	gaim_prefs_add_bool("/gaim/gtk/away/queue_messages", FALSE);
 
 	/* Browsers */
 	gaim_prefs_add_none("/gaim/gtk/browsers");

@@ -343,9 +343,16 @@ GaimPlugin *gaim_plugins_find_with_id(const char *id);
 /**
  * Returns a list of all loaded plugins.
  *
- * @return A list of all plugins.
+ * @return A list of all loaded plugins.
  */
 GList *gaim_plugins_get_loaded(void);
+
+/**
+ * Returns a list of all protocol plugins.
+ *
+ * @return A list of all protocol plugins.
+ */
+GList *gaim_plugins_get_protocols(void);
 
 /**
  * Returns a list of all plugins, whether loaded or not.

@@ -66,6 +66,7 @@
 static GList *loaded_plugins = NULL;
 static GList *plugins = NULL;
 static GList *plugin_loaders = NULL;
+static GList *protocol_plugins = NULL;
 
 static size_t search_path_count = 0;
 static char **search_paths = NULL;
@@ -618,8 +619,8 @@ gaim_plugin_register(GaimPlugin *plugin)
 			return FALSE;
 		}
 
-		protocols = g_slist_insert_sorted(protocols, plugin,
-										  (GCompareFunc)compare_prpl);
+		protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
+												(GCompareFunc)compare_prpl);
 	}
 
 	plugins = g_list_append(plugins, plugin);
@@ -741,6 +742,12 @@ GList *
 gaim_plugins_get_loaded(void)
 {
 	return loaded_plugins;
+}
+
+GList *
+gaim_plugins_get_protocols(void)
+{
+	return protocol_plugins;
 }
 
 GList *

@@ -142,7 +142,7 @@ __add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
 												-1, _("Online"),
 												renderer,
-												"text", COLUMN_ONLINE,
+												"active", COLUMN_ONLINE,
 												NULL);
 
 
@@ -155,7 +155,7 @@ __add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
 												-1, _("Auto-login"),
 												renderer,
-												"text", COLUMN_AUTOLOGIN,
+												"active", COLUMN_AUTOLOGIN,
 												NULL);
 
 
@@ -182,8 +182,13 @@ __populate_accounts_list(AccountsDialog *dialog)
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		account = l->data;
 
+		scale = NULL;
+
 		pixbuf = create_prpl_icon(account);
-		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
+
+		if (pixbuf != NULL)
+			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+											GDK_INTERP_BILINEAR);
 
 		gtk_list_store_append(dialog->model, &iter);
 		gtk_list_store_set(dialog->model, &iter,
@@ -195,8 +200,8 @@ __populate_accounts_list(AccountsDialog *dialog)
 				COLUMN_DATA, account,
 				-1);
 
-		g_object_unref(G_OBJECT(pixbuf));
-		g_object_unref(G_OBJECT(scale));
+		if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
+		if (scale  != NULL) g_object_unref(G_OBJECT(scale));
 	}
 }
 
@@ -216,7 +221,7 @@ __create_accounts_list(AccountsDialog *dialog)
 	gtk_widget_show(sw);
 
 	/* Create the list model. */
-	dialog->model = gtk_list_store_new(NUM_COLUMNS, G_TYPE_POINTER,
+	dialog->model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF,
 									   G_TYPE_STRING, G_TYPE_BOOLEAN,
 									   G_TYPE_BOOLEAN, G_TYPE_STRING,
 									   G_TYPE_POINTER);

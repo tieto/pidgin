@@ -124,8 +124,8 @@ void do_quit()
 	gaim_connections_disconnect_all();
 
 	/* record what we have before we blow it away... */
-	save_prefs();
 	gaim_prefs_sync();
+	gaim_accounts_sync();
 
 	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
 	gaim_plugins_destroy_all();
@@ -891,6 +891,7 @@ int main(int argc, char *argv[])
 
 	gaim_prefs_init();
 	gaim_gtk_prefs_init();
+	gaim_accounts_load();
 
 	if (!gaim_prefs_load())
 		load_prefs();

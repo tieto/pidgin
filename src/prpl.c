@@ -34,8 +34,6 @@
 #include "win32dep.h"
 #endif
 
-GSList *protocols = NULL;
-
 GtkWidget *protomenu = NULL;
 
 struct _prompt {
@@ -49,10 +47,10 @@ struct _prompt {
 GaimPlugin *
 gaim_find_prpl(GaimProtocol type)
 {
-	GSList *l;
+	GList *l;
 	GaimPlugin *plugin;
 
-	for (l = protocols; l != NULL; l = l->next) {
+	for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
 		plugin = (GaimPlugin *)l->data;
 
 		/* Just In Case (TM) */
@@ -432,7 +430,7 @@ static void delete_regdlg()
 
 static void reset_reg_dlg()
 {
-	GSList *P = protocols;
+	GList *P = gaim_plugins_get_protocols();
 
 	if (!regdlg)
 		return;

@@ -544,7 +544,8 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	if ((i = strlen(user_info)))
 		user_info[i - 1] = '\0';
 
-	gaim_account_set_user_info(account, user_info);
+	if (*user_info != '.')
+		gaim_account_set_user_info(account, user_info);
 
 	if (!fgets(buf, sizeof(buf), f)) {
 		return account;
@@ -599,7 +600,8 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "iconfile"))
 		return account;
 
-	gaim_account_set_buddy_icon(account, p->value[0]);
+	if (*p->value[0] != '\n' && *p->value[0] != '\0')
+		gaim_account_set_buddy_icon(account, p->value[0]);
 
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
@@ -612,7 +614,8 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "alias"))
 		return account;
 
-	gaim_account_set_alias(account, p->value[0]);
+	if (*p->value[0] != '\n' && *p->value[0] != '\0')
+		gaim_account_set_alias(account, p->value[0]);
 
 	if (!fgets(buf, sizeof(buf), f))
 		return account;
