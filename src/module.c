@@ -174,6 +174,29 @@ static gboolean unload_timeout(gpointer handle)
 
 void gaim_plugin_unload(GModule *handle)
 {
+	GList *pl = plugins;
+	struct gaim_plugin *p;
+	void (*gaim_plugin_remove)();
+
+	while (pl) {
+		p = pl->data;
+		if (p->handle == handle)
+			break;
+		pl = pl->next;
+	}
+	if (!pl)
+		return;
+
+	debug_printf("Unloading %s\n", g_module_name(p->handle));
+
+	if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
+		(*gaim_plugin_remove)();
+	plugin_remove_callbacks(p->handle);
+	plugins = g_list_remove(plugins, p);
+	g_free(p);
+	/* XXX CUI need to tell UI what happened, but not like this */
+	update_show_plugins();
+
 	g_timeout_add(5000, unload_timeout, handle);
 }
 

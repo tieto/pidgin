@@ -401,6 +401,7 @@ extern void account_editor(GtkWidget *, GtkWidget *);
 /* Functions in plugins.c */
 #ifdef GAIM_PLUGINS
 extern void show_plugins(GtkWidget *, gpointer);
+extern void update_show_plugins(); /* this is a hack and will be removed */
 #endif
 
 /* Functions in prefs.c */

@@ -88,7 +88,7 @@ static void destroy_plugins(GtkWidget *, gpointer);
 static void load_file(GtkWidget *, gpointer);
 static void load_which_plugin(GtkWidget *, gpointer);
 static void list_clicked(GtkWidget *, struct gaim_plugin *);
-static void update_show_plugins();
+void update_show_plugins();
 static void hide_plugins(GtkWidget *, gpointer);
 
 /* ------------------ Code Below ---------------------------- */
@@ -283,7 +283,7 @@ void show_plugins(GtkWidget *w, gpointer data)
 	gtk_widget_show(plugwindow);
 }
 
-static void update_show_plugins()
+void update_show_plugins()
 {
 	GList *plugs = plugins;
 	struct gaim_plugin *p;

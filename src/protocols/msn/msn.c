@@ -619,7 +619,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		signoff(gc);
 		return;
 	}
-	debug_printf("S: %s", buf);
+	debug_printf("MSN S: %s", buf);
 	g_strchomp(buf);
 
 	if (!g_strncasecmp(buf, "ADD", 3)) {
@@ -982,7 +982,7 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 		signoff(gc);
 		return;
 	}
-	debug_printf("S: %s", buf);
+	debug_printf("MSN S: %s", buf);
 	g_strchomp(buf);
 
 	if (!g_strncasecmp(buf, "VER", 3)) {
