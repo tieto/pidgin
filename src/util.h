@@ -271,7 +271,7 @@ FILE *gaim_mkstemp(char **path);
 /**
  * Checks if the given program name is valid and executable.
  *
- * @parm program The file name of the application.
+ * @param program The file name of the application.
  *
  * @return True if the program is runable.
  */
