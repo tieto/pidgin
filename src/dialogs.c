@@ -2156,6 +2156,8 @@ void show_find_email()
 
         struct findbyemail *b = g_new0(struct findbyemail, 1);
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_widget_set_usize(b->window, 240, 110);
+	gtk_widget_set_policy(GTK_WINDOW(b->window), FALSE, FALSE, TRUE);
 	gtk_widget_show(b->window);
         dialogwindows = g_list_prepend(dialogwindows, b->window); 
 
