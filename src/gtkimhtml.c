@@ -3061,18 +3061,18 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			}
 				break;
 			case 42:	/* BODY (opt) */
-			{
-				gchar *bgcolor = gtk_imhtml_get_html_opt (tag, "BGCOLOR=");
-				if (bgcolor) {
-					GdkColor *tmp = gtk_imhtml_get_color (bgcolor);
-					g_free (bgcolor);
-					if (tmp) {
-						NEW_BIT (NEW_TEXT_BIT);
-						bg = tmp;
-						UPDATE_BG_COLORS;
+				if (!(options & GTK_IMHTML_NO_COLOURS)) {
+					gchar *bgcolor = gtk_imhtml_get_html_opt (tag, "BGCOLOR=");
+					if (bgcolor) {
+						GdkColor *tmp = gtk_imhtml_get_color (bgcolor);
+						g_free (bgcolor);
+						if (tmp) {
+							NEW_BIT (NEW_TEXT_BIT);
+							bg = tmp;
+							UPDATE_BG_COLORS;
+						}
 					}
 				}
-			}
 				break;
 			case 43:	/* A (opt) */
 			{
