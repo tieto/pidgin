@@ -178,9 +178,19 @@ static void handle_groupchat(JabberMessage *jm)
 	if(!chat)
 		return;
 
-	if(jm->subject)
+	if(jm->subject) {
 		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(chat->conv), jid->resource,
 				jm->subject);
+		if(!jm->xhtml && !jm->body) {
+			char *msg;
+			if(jid->resource)
+				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, jm->subject);
+			else
+				msg = g_strdup_printf(_("The topic is: %s"), jm->subject);
+			gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "", msg, GAIM_MESSAGE_SYSTEM, jm->sent);
+			g_free(msg);
+		}
+	}
 
 	if(jm->xhtml || jm->body) {
 		if(jid->resource)
@@ -394,7 +404,7 @@ void jabber_message_send(JabberMessage *jm)
 
 	xmlnode_set_attrib(message, "to", jm->to);
 
-	if(jm->events || (!jm->body && !jm->xhtml)) {
+	if(jm->events || (!jm->body && !jm->xhtml && !jm->subject)) {
 		child = xmlnode_new_child(message, "x");
 		xmlnode_set_attrib(child, "xmlns", "jabber:x:event");
 		if(jm->events & JABBER_MESSAGE_EVENT_COMPOSING)
@@ -485,6 +495,10 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
 		return 1;
 	} else if(!strcmp(msg, "/register")) {
 		jabber_chat_register(chat);
+		return 1;
+	} else if(!strncmp(msg, "/topic", 6)) {
+		jabber_chat_change_topic(chat, strlen(msg) > 7 ? msg+7 : NULL);
+		return 1;
 	}
 
 	jm = g_new0(JabberMessage, 1);

@@ -50,6 +50,9 @@ typedef struct _JabberMessage {
 	GList *etc;
 } JabberMessage;
 
+void jabber_message_free(JabberMessage *jm);
+
+void jabber_message_send(JabberMessage *jm);
 
 void jabber_message_parse(JabberStream *js, xmlnode *packet);
 int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
@@ -57,5 +60,6 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 int jabber_message_send_chat(GaimConnection *gc, int id, const char *message);
 
 int jabber_send_typing(GaimConnection *gc, const char *who, int typing);
+
 
 #endif /* _GAIM_JABBER_MESSAGE_H_ */

@@ -3477,6 +3477,32 @@ build_conv_toolbar(GaimConversation *conv)
 	return vbox;
 }
 
+static void topic_callback(GtkWidget *w, GaimConversation *conv)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConnection *gc;
+	GaimGtkConversation *gtkconv;
+	GaimGtkChatPane *gtkchat;
+	const char *topic;
+
+	gc      = gaim_conversation_get_gc(conv);
+
+	if(!gc || !(prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)))
+		return;
+
+	if(prpl_info->set_chat_topic == NULL)
+		return;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkchat = gtkconv->u.chat;
+	topic = gtk_entry_get_text(GTK_ENTRY(gtkchat->topic_text));
+
+	if(!g_utf8_collate(topic, gaim_conv_chat_get_topic(GAIM_CONV_CHAT(conv))))
+		return;
+
+	prpl_info->set_chat_topic(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), topic);
+}
+
 static GtkWidget *
 setup_chat_pane(GaimConversation *conv)
 {
@@ -3522,7 +3548,13 @@ setup_chat_pane(GaimConversation *conv)
 		gtk_widget_show(label);
 
 		gtkchat->topic_text = gtk_entry_new();
-		gtk_editable_set_editable(GTK_EDITABLE(gtkchat->topic_text), FALSE);
+		if(prpl_info->set_chat_topic == NULL) {
+			gtk_editable_set_editable(GTK_EDITABLE(gtkchat->topic_text), FALSE);
+		} else {
+			g_signal_connect(GTK_OBJECT(gtkchat->topic_text), "activate",
+					G_CALLBACK(topic_callback), conv);
+		}
+
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 5);
 		gtk_widget_show(gtkchat->topic_text);
 	}

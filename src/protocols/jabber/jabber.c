@@ -1134,7 +1134,8 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_normalize,
 	NULL, /* set_buddy_icon */
 	NULL, /* remove_group */
-	jabber_chat_buddy_real_name
+	jabber_chat_buddy_real_name,
+	jabber_chat_set_topic
 };
 
 static GaimPluginInfo info =

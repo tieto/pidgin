@@ -53,6 +53,9 @@ void jabber_chat_leave(GaimConnection *gc, int id);
 char *jabber_chat_buddy_real_name(GaimConnection *gc, int id, const char *who);
 void jabber_chat_request_room_configure(JabberChat *chat);
 void jabber_chat_create_instant_room(JabberChat *chat);
+void jabber_chat_register(JabberChat *chat);
+void jabber_chat_change_topic(JabberChat *chat, const char *topic);
+void jabber_chat_set_topic(GaimConnection *gc, int id, const char *topic);
 
 
 #endif /* _GAIM_JABBER_CHAT_H_ */

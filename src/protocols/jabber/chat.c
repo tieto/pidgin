@@ -22,6 +22,7 @@
 #include "debug.h"
 #include "multi.h" /* for proto_chat_entry */
 #include "notify.h"
+#include "util.h"
 
 #include "chat.h"
 #include "iq.h"
@@ -529,6 +530,44 @@ void jabber_chat_register(JabberChat *chat)
 	jabber_iq_set_callback(iq, jabber_chat_register_cb, NULL);
 
 	jabber_iq_send(iq);
+}
+
+/* merge this with the function below when we get everyone on the same page wrt /commands */
+void jabber_chat_change_topic(JabberChat *chat, const char *topic)
+{
+	if(topic && *topic) {
+		JabberMessage *jm;
+		jm = g_new0(JabberMessage, 1);
+		jm->js = chat->js;
+		jm->type = JABBER_MESSAGE_GROUPCHAT;
+		jm->subject = gaim_markup_strip_html(topic);
+		jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
+		jabber_message_send(jm);
+		jabber_message_free(jm);
+	} else {
+		const char *cur = gaim_conv_chat_get_topic(GAIM_CONV_CHAT(chat->conv));
+		char *buf;
+
+		if(cur)
+			buf = g_strdup_printf(_("current topic is: %s"), topic);
+		else
+			buf = g_strdup(_("No topic is set"));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "", buf,
+				GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_NO_LOG, time(NULL));
+		g_free(buf);
+	}
+
+}
+
+void jabber_chat_set_topic(GaimConnection *gc, int id, const char *topic)
+{
+	JabberStream *js = gc->proto_data;
+	JabberChat *chat = jabber_chat_find_by_id(js, id);
+
+	if(!chat)
+		return;
+
+	jabber_chat_change_topic(chat, topic);
 }
 
 
