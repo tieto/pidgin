@@ -312,15 +312,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					jbr->state);
 		else
 			serv_got_update(js->gc, buddy_name, 0, 0, 0, 0, 0);
-#if 0
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET,
-				"http://jabber.org/protocol/disco#items");
-		query = xmlnode_get_child(iq->node, "query");
-		xmlnode_set_attrib(query, "node",
-				"http://jabber.org/protocol/avatar");
-		xmlnode_set_attrib(iq->node, "to", buddy_name);
-		jabber_iq_send(iq);
-#endif
 
 		g_free(buddy_name);
 	}
