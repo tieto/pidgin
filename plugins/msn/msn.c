@@ -39,6 +39,7 @@
 #include "md5.h"
 
 #include "pixmaps/msn_online.xpm"
+#include "pixmaps/msn_away.xpm"
 
 #define MSN_BUF_LEN 4096
 
@@ -338,44 +339,40 @@ void msn_callback(gpointer data, gint fd, GdkInputCondition condition)
 	}
 
 	if (strcasecmp(resps[0], "FLN") == 0) {
-		serv_got_update(gc, resps[1], 0, 0, 0, 0, MSN_OFFLINE, 0);
-	}
-
-	if (strcasecmp(resps[0], "ILN") == 0) {
-		int status;
-
-		if (!strcasecmp(resps[2], "NLN"))
-			status = MSN_ONLINE;
-		else if (!strcasecmp(resps[2], "BSY"))
-			status = MSN_BUSY;
-		else if (!strcasecmp(resps[2], "IDL"))
-			status = MSN_IDLE;
-		else if (!strcasecmp(resps[2], "BRB"))
-			status = MSN_BRB;
-		else if (!strcasecmp(resps[2], "AWY"))
-			status = MSN_AWAY;
-		else if (!strcasecmp(resps[2], "PHN"))
-			status = MSN_PHONE;
-		else if (!strcasecmp(resps[2], "LUN"))
-			status = MSN_LUNCH;
-		else
-			status = MSN_ONLINE;
-
-		serv_got_update(gc, resps[3], 1, 0, 0, 0, status, 0);
-
-		g_strfreev(resps);
-		return;
-
+		serv_got_update(gc, resps[1], 0, 0, 0, 0, 0, 0);
 	}
 
 	/* Check buddy update status */
-	if (strcasecmp(resps[0], "NLN") == 0) {
-		/* FIXME: We currently dont care if they are busy,
-		 * idle, brb, away, phone, our out to lunch. This will
-		 * be supported eventually (BSY,IDL,BRB,AWY,PHN,LUN) 
-		 * respectively */
+	if ( (strcasecmp(resps[0], "NLN") == 0) || (strcasecmp(resps[0], "ILN") == 0)) {
+		int status;
+		int query;
 
-		serv_got_update(gc, resps[2], 1, 0, 0, 0, MSN_ONLINE, 0);
+		if (strcasecmp(resps[0], "NLN") == 0) 
+			query = 1;
+		else
+			query = 2;
+		
+		if (!strcasecmp(resps[query], "NLN"))
+			status = UC_NORMAL;
+		else if (!strcasecmp(resps[query], "BSY"))
+			status = UC_NORMAL | (MSN_BUSY << 5);
+		else if (!strcasecmp(resps[query], "IDL"))
+			status = UC_NORMAL | (MSN_IDLE << 5);
+		else if (!strcasecmp(resps[query], "BRB"))
+			status = UC_NORMAL | (MSN_BRB << 5);
+		else if (!strcasecmp(resps[query], "AWY"))
+			status = UC_UNAVAILABLE;
+		else if (!strcasecmp(resps[query], "PHN"))
+			status = UC_NORMAL | (MSN_PHONE << 5);
+		else if (!strcasecmp(resps[query], "LUN"))
+			status = UC_NORMAL | (MSN_LUNCH << 5);
+		else
+			status = UC_NORMAL;
+
+		serv_got_update(gc, resps[query+1], 1, 0, 0, 0, status, 0);
+
+		g_strfreev(resps);
+		return;
 	}
 
 	/* Check to see if we have an incoming buddylist */
@@ -809,8 +806,14 @@ static void msn_set_idle(struct gaim_connection *gc, int idle)
 
 }
 
-static char **msn_list_icon(int status)
+static char **msn_list_icon(int uc)
 {
+	if (uc == UC_UNAVAILABLE)
+		return msn_away_xpm;
+	else if (uc == UC_NORMAL)
+		return msn_online_xpm;
+
+	/* Our default online icon */
 	return msn_online_xpm;
 }
 
