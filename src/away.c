@@ -124,7 +124,10 @@ void dequeue_by_buddy(GtkWidget *clist, gint row, gint column, GdkEventButton *e
 	g_free(name);
 	gtk_clist_remove(GTK_CLIST(clist), row);
 
-
+#ifdef USE_APPLET
+	set_user_state(away);
+#endif
+	
 }
 	
 	
