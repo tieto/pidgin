@@ -36,9 +36,16 @@
 #include "convo.h"
 #include "prpl.h"
 
-#include "pixmaps/tb_forward.xpm"
+/*#include "pixmaps/tb_forward.xpm"*/
 #include "pixmaps/join.xpm"
-#include "pixmaps/close.xpm"
+/*#include "pixmaps/close.xpm"*/
+#include "pixmaps/cancel.xpm"
+#include "pixmaps/tmp_send.xpm"
+#include "pixmaps/gnome_add.xpm"
+#include "pixmaps/gnome_remove.xpm"
+#include "pixmaps/block.xpm"
+#include "pixmaps/warn.xpm"
+#include "pixmaps/tb_search.xpm"
 
 GtkWidget *joinchat;
 static struct gaim_connection *joinchatgc;
@@ -1122,12 +1129,12 @@ void show_new_buddy_chat(struct conversation *b)
 	GtkWidget *cont;
 	GtkWidget *text;
 	GtkWidget *list;
-	GtkWidget *close;
+	/*GtkWidget *close;*/
 	GtkWidget *chatentry;
 	GtkWidget *lbox;
 	GtkWidget *bbox;
 	GtkWidget *bbox2;
-	GtkWidget *button, *im;
+	GtkWidget *button;
 	GtkWidget *sw;
 	GtkWidget *sw2;
 	GtkWidget *vbox;
@@ -1138,7 +1145,7 @@ void show_new_buddy_chat(struct conversation *b)
 
 	char buf[BUF_LONG];
 
-	int dispstyle = set_dispstyle(1);
+	/*int dispstyle = set_dispstyle(1);*/
 
 	if (chat_options & OPT_CHAT_ONE_WINDOW) {
 		if (!all_chats) {

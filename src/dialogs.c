@@ -3561,9 +3561,9 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 		GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(dummy));
 		GValue val = { 0, };
 
-		if (! gtk_tree_selection_get_selected (sel, &ls, &iter))
+		if (! gtk_tree_selection_get_selected (sel, (GtkTreeModel**)&ls, &iter))
 			return;
-		gtk_tree_model_get_value (ls, &iter, 1, &val);
+		gtk_tree_model_get_value (GTK_TREE_MODEL(ls), &iter, 1, &val);
 		amt = g_value_get_pointer (&val);
 		gtk_entry_set_text(GTK_ENTRY(ca->entry), amt->name);
 		gtk_editable_insert_text(GTK_EDITABLE(ca->text), amt->message,
@@ -3884,7 +3884,7 @@ static gboolean dont_destroy(gpointer a, gpointer b, gpointer c)
 
 static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 {
-	char *file;
+	const char *file;
 	char path[PATHSIZE];
 	char buf[BUF_LONG];
 	char error[BUF_LEN];
@@ -3898,7 +3898,7 @@ static void do_save_log(GtkWidget *w, GtkWidget *filesel)
 	g_snprintf(filename, PATHSIZE, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s%s", tmp,
 		   name ? normalize(name) : "system", name ? ".log" : "");
 
-	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
+	file = (const char*)gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
 	strncpy(path, file, PATHSIZE - 1);
 	if (file_is_dir(path, filesel))
 		return;
@@ -4113,7 +4113,7 @@ void conv_show_log(GtkWidget *w, gpointer data)
 
 void chat_show_log(GtkWidget *w, gpointer data)
 {
-	char *name = g_strdup_printf("%s.chat", data);
+	char *name = g_strdup_printf("%s.chat", (char*)data);
 	show_log(name);
 	g_free(name);
 }

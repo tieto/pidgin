@@ -47,10 +47,12 @@
 #include "prpl.h"
 
 #ifdef _WIN32
+#include <process.h> /* fog getpid() */
+#include <io.h>
 #include "win32dep.h"
 #endif
 
-#include "pixmaps/save_small.xpm"
+/*#include "pixmaps/save_small.xpm"*/
 
 #include "pixmaps/luke03.xpm"
 #include "pixmaps/oneeye.xpm"
@@ -1339,15 +1341,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	if (err < 0) {
 		if (err == -E2BIG)
 			do_error_dialog(_("Unable to send message.  The message is too large"), NULL, GAIM_ERROR);
-#ifndef _WIN32
 		else if (err == -ENOTCONN)
 			debug_printf("Not yet connected\n");
-#else
-		else if (err == SOCKET_ERROR) {
-			if (WSAENOTCONN == WSAGetLastError())
-				debug_printf("Not yet connected\n");
-		}
-#endif
 		else
 			do_error_dialog(_("Unable to send message"), NULL, GAIM_ERROR);
 	} else {
@@ -2409,7 +2404,7 @@ int set_dispstyle(int chat)
 
 void update_convo_add_button(struct conversation *c)
 {
-	int dispstyle = set_dispstyle(0);
+	/*int dispstyle = set_dispstyle(0);*/
 	GtkWidget *parent = c->add->parent;
 	gboolean rebuild = FALSE;
 
@@ -2767,7 +2762,7 @@ void show_conv(struct conversation *c)
 	GtkWidget *info;
 	GtkWidget *warn;
 	GtkWidget *block;
-	GtkWidget *close;
+	/*GtkWidget *close;*/
 	GtkWidget *entry;
 	GtkWidget *bbox;
 	GtkWidget *vbox;

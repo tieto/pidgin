@@ -35,6 +35,10 @@
 #include "proxy.h"
 #include "prpl.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 /* Completely describes a file transfer.  Opaque to callers. */
 struct file_transfer {
 	enum { FILE_TRANSFER_TYPE_SEND, FILE_TRANSFER_TYPE_RECEIVE } type;
@@ -461,11 +465,9 @@ static int ft_mkdir(const char *name) {
 /* Two functions, one recursive, just to make a directory.  Yuck. */
 static int ft_mkdir_help(char *dir) {
 	int ret;
-#ifndef _WIN32
+
 	ret = mkdir(dir, 0775);
-#else
-	ret = _mkdir(dir);
-#endif
+
 	if (ret) {
 		char *index = strrchr(dir, G_DIR_SEPARATOR);
 		if (!index)
@@ -474,11 +476,7 @@ static int ft_mkdir_help(char *dir) {
 		ret = ft_mkdir_help(dir);
 		*index = G_DIR_SEPARATOR;
 		if (!ret)
-#ifndef _WIN32
 			ret = mkdir(dir, 0775);
-#else
-			ret = _mkdir(dir);
-#endif
 	}
 
 	return ret;

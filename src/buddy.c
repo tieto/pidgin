@@ -64,8 +64,10 @@
 #include "pixmaps/add_small.xpm"
 #include "pixmaps/import_small.xpm"
 /*#include "pixmaps/export_small.xpm"*/
+#if 0
 #if defined(GAIM_PLUGINS) || defined(USE_PERL)
 #include "pixmaps/plugins_small.xpm"
+#endif
 #endif
 #include "pixmaps/prefs_small.xpm"
 #include "pixmaps/search_small.xpm"
@@ -2572,9 +2574,6 @@ void make_buddy_list()
 
 	GtkWidget *sw;
 	GtkWidget *menu;
-#ifdef USE_PERL
-	GtkWidget *perlmenu;
-#endif
 #ifdef NO_MULTI
 	GtkWidget *setmenu;
 	GtkWidget *findmenu;

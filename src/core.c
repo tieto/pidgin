@@ -51,7 +51,9 @@
 #include "win32dep.h"
 #endif
 
+#ifndef _WIN32
 static gint UI_fd = -1;
+#endif
 int gaim_session = 0;
 GSList *uis = NULL;
 

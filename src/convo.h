@@ -25,6 +25,7 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 
+#if 0
 #include "pixmaps/tmp_send.xpm"
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/gnome_add.xpm"
@@ -32,6 +33,7 @@
 #include "pixmaps/warn.xpm"
 #include "pixmaps/tb_search.xpm"
 #include "pixmaps/block.xpm"
+#endif
 
 extern GtkWidget *convo_notebook;
 extern GtkWidget *chat_notebook;

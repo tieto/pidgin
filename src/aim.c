@@ -28,9 +28,7 @@
 #endif
 #endif /* GAIM_PLUGINS */
 #include <gtk/gtk.h>
-#ifdef _WIN32
-#include <winsock.h>
-#else
+#ifndef _WIN32
 #include <gdk/gdkx.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -38,7 +36,7 @@
 #include <arpa/inet.h>
 #include <sys/un.h>
 #include <sys/wait.h>
-#endif /* _WIN32 */
+#endif /* !_WIN32 */
 #include <gdk/gdk.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -50,19 +48,21 @@
 #include <ctype.h>
 #include "prpl.h"
 #include "gaim.h"
-#include "pixmaps/logo.xpm"
 #if HAVE_SIGNAL_H
 #include <signal.h>
 #endif
 #include "locale.h"
 #include "gtkspell.h"
 #include <getopt.h>
+
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
 
+#ifndef _WIN32
 static gchar *aspell_cmd[] = { "aspell", "--sug-mode=fast","-a", NULL };
 static gchar *ispell_cmd[] = { "ispell", "-a", NULL };
+#endif
 
 static GtkWidget *name;
 static GtkWidget *pass;
@@ -165,7 +165,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	save_prefs();
 	serv_login(u);
 }
-
+#if 0
 static void dologin_all(GtkWidget *widget, GtkWidget *w)
 {
 	struct aim_user *u;
@@ -178,7 +178,7 @@ static void dologin_all(GtkWidget *widget, GtkWidget *w)
 		users = users->next;
 	}
 }
-
+#endif
 static void doenter(GtkWidget *widget, GtkWidget *w)
 {
 	if (widget == name) {
@@ -507,7 +507,7 @@ static void gaim_log_handler (const gchar    *domain,
         debug_printf("%s - %s\n", domain, msg);
 	g_log_default_handler(domain, flags, msg, user_data);
 }
-#endif
+#endif /* _WIN32 */
 
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
