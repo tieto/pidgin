@@ -1724,7 +1724,7 @@ update_plugin_list(void *data)
 		plug = probes->data;
 
 		if (plug->info->type != GAIM_PLUGIN_STANDARD ||
-			(plug->info->flags & GAIM_PLUGIN_INVISIBLE))
+			(plug->info->flags & GAIM_PLUGIN_FLAG_INVISIBLE))
 		{
 			continue;
 		}
