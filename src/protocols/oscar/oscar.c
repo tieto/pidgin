@@ -5446,18 +5446,8 @@ static char *oscar_status_text(GaimBuddy *b) {
 	if ((b->uc & UC_UNAVAILABLE) || (((b->uc & 0xffff0000) >> 16) & AIM_ICQ_STATE_CHAT)) {
 		if (isdigit(b->name[0]))
 			ret = gaim_icq_status((b->uc & 0xffff0000) >> 16);
-		else {
-			aim_userinfo_t *userinfo = aim_locate_finduserinfo(b->name);
-			if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-				gchar *away_utf8 = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
-				if (away_utf8 != NULL) {
-					ret = strip_html(away_utf8);
-					g_free(away_utf8);
-				} else
-					ret = g_strdup(_("Away"));
-			} else
-				ret = g_strdup(_("Away"));
-		}
+		else
+			ret = g_strdup(_("Away"));
 	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
 		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 		if (bi->availmsg)
