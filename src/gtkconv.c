@@ -2927,6 +2927,7 @@ tab_complete(GaimConversation *conv)
 		char *nick = nicks->data;
 
 		strncpy(nick_partial, nick, strlen(entered));
+		nick_partial[strlen(entered)] = '\0';
 		if(gaim_utf8_strcasecmp(nick_partial, entered))
 			continue;
 
