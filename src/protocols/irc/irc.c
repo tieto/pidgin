@@ -954,7 +954,7 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 
 	if (!g_strncasecmp(msg, "VERSION", 7)) {
 		g_snprintf(buf, sizeof(buf), "NOTICE %s :\001VERSION Gaim " VERSION ": The Pimpin "
-					     "Penguin AIM Clone: " WEBSITE "\001\r\n", nick);
+					     "Linux Messaging Client: " WEBSITE "\001\r\n", nick);
 		irc_write(id->fd, buf, strlen(buf));
 	}
 	if (!g_strncasecmp(msg, "ACTION", 6)) {
