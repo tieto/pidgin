@@ -21,7 +21,7 @@
 # MA  02111-1307  USA
 #
 
-VERSION=0.1.3
+VERSION=0.1.4
 
 VERBOSE=0
 
@@ -65,6 +65,8 @@ AM_GNU_GETTEXT_VERSION(0.10.40)/' < .tmp-configure.ac > configure.ac
 		rm .tmp-autogen.sh
 	}
 
+	echo 'dnl Added by setup-gettext. Do not remove this' >> acinclude.m4
+	echo 'dnl unless you know what you are doing.' >> acinclude.m4
 	echo 'AC_DEFUN([AM_GNU_GETTEXT_VERSION], [])' >> acinclude.m4
 }
 

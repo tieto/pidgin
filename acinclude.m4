@@ -389,7 +389,10 @@ main ()
   rm -f conf.gtktest
 ])
 
+dnl Added by setup-gettext. Do not remove this
+dnl unless you know what you are doing.
 AC_DEFUN([AM_GNU_GETTEXT_VERSION], [])
+
 # Configure paths for GLIB
 # Owen Taylor     1997-2001
 
