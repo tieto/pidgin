@@ -632,7 +632,7 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 	return 0;
 }
 
-elif defined _WIN32 /* end __unix__ */
+#elif defined _WIN32 /* end __unix__ */
 
 /* Note: The below win32 implementation is actually platform independent.
    Perhaps this can be used in place of the above platform dependent code.
