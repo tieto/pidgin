@@ -75,25 +75,34 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 	auth = xmlnode_new("auth");
 	xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
+
 	if(digest_md5) {
 		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 		js->auth_type = JABBER_AUTH_DIGEST_MD5;
-		/*
 	} else if(plain) {
+		GString *response = g_string_new("");
+		char *enc_out;
+
+		response = g_string_append_len(response, "\0", 1);
+		response = g_string_append(response, js->user->node);
+		response = g_string_append_len(response, "\0", 1);
+		response = g_string_append(response,
+				gaim_account_get_password(js->gc->account));
+
+		enc_out = gaim_base64_encode(response->str, response->len);
+
 		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
-		xmlnode_insert_data(auth, "\0", 1);
-		xmlnode_insert_data(auth, js->user->node, -1);
-		xmlnode_insert_data(auth, "\0", 1);
-		xmlnode_insert_data(auth, gaim_account_get_password(js->gc->account),
-				-1);
+		xmlnode_insert_data(auth, enc_out, -1);
+		g_free(enc_out);
+
 		js->auth_type = JABBER_AUTH_PLAIN;
-		*/
 	} else {
 		gaim_connection_error(js->gc,
 				_("Server does not use any supported authentication method"));
 		xmlnode_free(auth);
 		return;
 	}
+
 	jabber_send(js, auth);
 	xmlnode_free(auth);
 }
@@ -289,9 +298,7 @@ void
 jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 {
 
-	if(js->auth_type == JABBER_AUTH_PLAIN) {
-		/* XXX: implement me! */
-	} else if(js->auth_type == JABBER_AUTH_DIGEST_MD5) {
+	if(js->auth_type == JABBER_AUTH_DIGEST_MD5) {
 		char *enc_in = xmlnode_get_data(packet);
 		char *dec_in;
 		char *enc_out;
