@@ -198,6 +198,7 @@ gaim_gtk_status_selector_destroy(GtkObject *obj)
 	selector = GAIM_GTK_STATUS_SELECTOR(obj);
 
 	gaim_signals_disconnect_by_handle(selector);
+	gaim_timeout_remove(selector->priv->entry_timer);
 
 	if (GTK_OBJECT_CLASS(parent_class)->destroy)
 		GTK_OBJECT_CLASS(parent_class)->destroy(obj);
