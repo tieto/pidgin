@@ -156,7 +156,6 @@ struct _GaimGtkConversation
 
 	GtkWidget *bbox;
 	GtkWidget *sw;
-	GtkWidget *entrybox;
 	GtkWidget *lower_hbox;
 
 	GtkWidget *toolbar;

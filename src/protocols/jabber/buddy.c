@@ -410,11 +410,12 @@ jabber_format_info(GaimConnection *gc, GaimRequestFields *fields)
 		field = gaim_request_fields_get_field(fields, vc_tp->tag);
 		text  = gaim_request_field_string_get_value(field);
 
-		gaim_debug(GAIM_DEBUG_INFO, "jabber",
-				   "Setting %s to '%s'\n", vc_tp->tag, text);
 
 		if (text != NULL && *text != '\0') {
 			xmlnode *xp;
+
+			gaim_debug(GAIM_DEBUG_INFO, "jabber",
+					"Setting %s to '%s'\n", vc_tp->tag, text);
 
 			if ((xp = insert_tag_to_parent_tag(vc_node,
 											   NULL, vc_tp->tag)) != NULL) {
