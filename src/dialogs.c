@@ -3428,7 +3428,8 @@ static void log_show_convo(GtkWidget *w, GtkWidget *layout)
 
 	gtk_widget_set_sensitive(bbox, FALSE);
 	gtk_signal_disconnect_by_func(GTK_OBJECT(window), GTK_SIGNAL_FUNC(destroy_dialog), window);
-	block = gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(dont_destroy), window);
+	block = gtk_signal_connect(GTK_OBJECT(window), "delete_event",
+				   GTK_SIGNAL_FUNC(dont_destroy), window);
 
 	fseek(fp, offset, SEEK_SET);
 	gtk_imhtml_clear(GTK_IMHTML(layout));
@@ -3489,7 +3490,6 @@ void show_log(char *name)
 	long offset = 0;
 	unsigned int i = 0;
 
-
 	options = GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL;
 	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
 		options ^= GTK_IMHTML_NO_COLOURS;
@@ -3516,7 +3516,6 @@ void show_log(char *name)
 	layout = gtk_imhtml_new(NULL, NULL);
 	bbox = gtk_hbox_new(FALSE, 0);
 
-
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(window), box);
 
@@ -3541,7 +3540,8 @@ void show_log(char *name)
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
 		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), list);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+					       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 		gtk_widget_set_usize(sw, 220, 220);
 		gtk_container_add(GTK_CONTAINER(frame), sw);
 		gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
@@ -3554,13 +3554,10 @@ void show_log(char *name)
 				if (temp == NULL || strlen(temp) < 2)
 					continue;
 
-				if (i == 1) {
-					if (item_list) {
-						item_list = g_list_remove(item_list, last);
-						last = NULL;
-					}
+				if (i == 1 && item_list) {
+					item_list = g_list_remove(item_list, last);
+					last = NULL;
 				}
-					
 
 				i = 0;
 
@@ -3576,23 +3573,22 @@ void show_log(char *name)
 				gtk_object_set_data(GTK_OBJECT(item), "name", (gpointer)name);
 				gtk_object_set_data(GTK_OBJECT(item), "box", (gpointer)bbox);
 				gtk_object_set_data(GTK_OBJECT(item), "window", (gpointer)window);
-				gtk_signal_connect(GTK_OBJECT(item), "select", GTK_SIGNAL_FUNC(log_show_convo), layout);
+				gtk_signal_connect(GTK_OBJECT(item), "select",
+						   GTK_SIGNAL_FUNC(log_show_convo), layout);
 				last = item;
 				item_list = g_list_append(item_list, item);
-				
+
 				gtk_widget_show(item);
 			}
 			i++;
 		}
 		fclose(fp);
-	}
-
-	if (i == 1) {
-		if (item_list)
+		if (i == 1 && item_list)
 			item_list = g_list_remove(item_list, item);
+		
+		if (item_list)
+			gtk_list_insert_items(GTK_LIST(list), item_list, 0 );
 	}
-	
-	gtk_list_insert_items(GTK_LIST(list), item_list, 0 );
 
 	gtk_signal_disconnect(GTK_OBJECT(window), block);
 	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);

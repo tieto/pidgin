@@ -1953,16 +1953,14 @@ static void update_idle_time(struct buddy_show *bs)
 	if (blist_options & OPT_BLIST_SHOW_IDLETIME)
 		gtk_widget_show(bs->idle);
 
-	style = gtk_style_new();
-	gdk_font_unref(style->font);
-	style->font = gdk_font_ref(GTK_WIDGET(bs->label)->style->font);
+	style = gtk_style_copy(bs->idle->style);
 	if ((blist_options & OPT_BLIST_GREY_IDLERS) && (b->idle)) {
 		style->fg[GTK_STATE_NORMAL].red =
-		  (style->fg[GTK_STATE_NORMAL].red / 2) + (style->bg[GTK_STATE_NORMAL].red / 2);
+		  (style->fg[GTK_STATE_NORMAL].red / 2) + (style->base[GTK_STATE_NORMAL].red / 2);
 		style->fg[GTK_STATE_NORMAL].green = 
-		  (style->fg[GTK_STATE_NORMAL].green / 2) + (style->bg[GTK_STATE_NORMAL].green / 2);
+		  (style->fg[GTK_STATE_NORMAL].green / 2) + (style->base[GTK_STATE_NORMAL].green / 2);
 		style->fg[GTK_STATE_NORMAL].blue = 
-		  (style->fg[GTK_STATE_NORMAL].blue / 2) + (style->bg[GTK_STATE_NORMAL].blue / 2);
+		  (style->fg[GTK_STATE_NORMAL].blue / 2) + (style->base[GTK_STATE_NORMAL].blue / 2);
 	}
 	gtk_widget_set_style(bs->label, style);
 	gtk_style_unref(style);
