@@ -446,11 +446,12 @@ __bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	if (value != NULL) {
 		if (!strcmp(type, "MOB")) {
-			if (!strcmp(value, "Y")) {
-				gaim_debug(GAIM_DEBUG_MISC, "msn",
-						   "%s has a pager\n", passport);
-				if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
-					status = b->uc | (1 << 5);
+			if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
+				if (GAIM_BUDDY_IS_ONLINE(b)) {
+					if (!strcmp(value, "Y"))
+						status = (b->uc | (1 << 5));
+					else if (!strcmp(value, "N"))
+						status = (b->uc ^ (1 << 5));
 
 					serv_got_update(gc, (char *)passport, 1, 0, 0, 0, status);
 				}

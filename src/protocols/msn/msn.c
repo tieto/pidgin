@@ -67,7 +67,7 @@ msn_act_id(gpointer data, char *entry)
 }
 
 static void
-msn_set_phone_number(gpointer data, const char *type, const char *entry)
+msn_set_prp(gpointer data, const char *type, const char *entry)
 {
 	struct gaim_connection *gc = data;
 	MsnSession *session = gc->proto_data;
@@ -89,20 +89,34 @@ msn_set_phone_number(gpointer data, const char *type, const char *entry)
 static void
 msn_set_home_phone_cb(gpointer data, char *entry)
 {
-	msn_set_phone_number(data, "PHH", entry);
+	msn_set_prp(data, "PHH", entry);
 }
 
 static void
 msn_set_work_phone_cb(gpointer data, char *entry)
 {
-	msn_set_phone_number(data, "PHW", entry);
+	msn_set_prp(data, "PHW", entry);
 }
 
 static void
 msn_set_mobile_phone_cb(gpointer data, char *entry)
 {
-	msn_set_phone_number(data, "PHM", entry);
+	msn_set_prp(data, "PHM", entry);
 }
+
+static void
+__enable_msn_pages_cb(struct gaim_connection *gc)
+{
+	msn_set_prp(gc, "MOB", "Y");
+}
+
+static void
+__disable_msn_pages_cb(struct gaim_connection *gc)
+{
+	msn_set_prp(gc, "MOB", "N");
+}
+
+/* -- */
 
 static void
 msn_show_set_friendly_name(struct gaim_connection *gc)
@@ -139,6 +153,36 @@ msn_show_set_mobile_phone(struct gaim_connection *gc)
 	do_prompt_dialog(_("Set Mobile Phone Number:"),
 					 msn_user_get_mobile_phone(session->user),
 					 gc, msn_set_mobile_phone_cb, NULL);
+}
+
+#if 0
+static void
+msn_show_set_mobile_support(struct gaim_connection *gc)
+{
+	MsnSession *session = gc->proto_data;
+
+	do_ask_dialog(_("MSN Mobile Support"),
+				  _("Do you want to enable or disable MSN Mobile "
+					"device support?"),
+				  gc,
+				  _("Enable"), __enable_msn_mobile_cb,
+				  _("Disable"), __disable_msn_mobile_cb,
+				  session->prpl->handle, FALSE);
+}
+#endif
+
+static void
+msn_show_set_mobile_pages(struct gaim_connection *gc)
+{
+	MsnSession *session = gc->proto_data;
+
+	do_ask_dialog(_("MSN Mobile Pages"),
+				  _("Do you want to allow or disallow people on your buddy "
+					"list to send you mobile pages?"),
+				  gc,
+				  _("Allow"), __enable_msn_pages_cb,
+				  _("Disallow"), __disable_msn_pages_cb,
+				  session->prpl->handle, FALSE);
 }
 
 /**************************************************************************
@@ -226,6 +270,8 @@ msn_actions(struct gaim_connection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
+	m = g_list_append(m, NULL);
+
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Set Home Phone Number");
 	pam->callback = msn_show_set_home_phone;
@@ -241,6 +287,22 @@ msn_actions(struct gaim_connection *gc)
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Set Mobile Phone Number");
 	pam->callback = msn_show_set_mobile_phone;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+
+	m = g_list_append(m, NULL);
+
+#if 0
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Enable/Disable Mobile Devices");
+	pam->callback = msn_show_set_mobile_support;
+	pam->gc = gc;
+	m = g_list_append(m, pam);
+#endif
+
+	pam = g_new0(struct proto_actions_menu, 1);
+	pam->label = _("Allow/Disallow Mobile Pages");
+	pam->callback = msn_show_set_mobile_pages;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
