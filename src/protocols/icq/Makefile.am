@@ -62,10 +62,10 @@ libicq_a_SOURCES = 	chatsession.c \
 else
 
 st =
-pkg_LTLIBRARIES = libgaimicq.la
+pkg_LTLIBRARIES = libicq.la
 noinst_LIBRARIES =
 
-libgaimicq_la_SOURCES =	chatsession.c \
+libicq_la_SOURCES =	chatsession.c \
 			chatsession.h \
 			contacts.c \
 			contacts.h \
