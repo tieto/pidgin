@@ -306,11 +306,11 @@ static void send_callback(GtkWidget *widget, struct buddy_chat *b)
 {
 	char buf[BUF_LEN*4];
 
-	strncpy(buf, gtk_entry_get_text(GTK_ENTRY(b->entry)), sizeof(buf)/2);
+	strncpy(buf, gtk_editable_get_chars(GTK_EDITABLE(b->entry), 0, -1), sizeof(buf)/2);
 	if (!strlen(buf))
 		return;
 
-	gtk_entry_set_text(GTK_ENTRY(b->entry), "");
+	gtk_editable_delete_text(GTK_EDITABLE(b->entry), 0, -1);
 
 	if (general_options & OPT_GEN_SEND_LINKS) {
 		linkify_text(buf);
@@ -452,7 +452,6 @@ void show_new_buddy_chat(struct buddy_chat *b)
 	GtkWidget *whisper;
 	GtkWidget *close;
 	GtkWidget *chatentry;
-        GtkWidget *tbox;
         GtkWidget *lbox;
         GtkWidget *bbox;
         GtkWidget *bbox2;
@@ -460,10 +459,14 @@ void show_new_buddy_chat(struct buddy_chat *b)
         GtkWidget *sw;
         GtkWidget *sw2;
 	GtkWidget *vbox;
-
+	GtkWidget *vpaned;
+	GtkWidget *hpaned;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	b->window = win;
+
+	vpaned = gtk_vpaned_new();
+	hpaned = gtk_hpaned_new();
 
 	gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 
@@ -485,10 +488,12 @@ void show_new_buddy_chat(struct buddy_chat *b)
 
         bbox = gtk_hbox_new(TRUE, 0);
         bbox2 = gtk_hbox_new(TRUE, 0);
-	tbox = gtk_hbox_new(FALSE, 0);
         vbox = gtk_vbox_new(FALSE, 0);
         lbox = gtk_vbox_new(FALSE, 4);
-	chatentry = gtk_entry_new();
+	chatentry = gtk_text_new( NULL, NULL );
+	gtk_text_set_editable(GTK_TEXT(chatentry), TRUE);
+
+	gtk_text_set_word_wrap(GTK_TEXT(chatentry), TRUE);
 
 	gtk_widget_realize(win);
 
@@ -516,8 +521,7 @@ void show_new_buddy_chat(struct buddy_chat *b)
         GTK_HTML (text)->vadj->step_increment = 10.0;
         gtk_widget_set_usize(sw, 320, 150);
 
-        gtk_box_pack_start(GTK_BOX(tbox), sw, TRUE, TRUE, 0);
-
+	gtk_paned_pack1(GTK_PANED(hpaned), sw, TRUE, TRUE);
 
         sw2 = gtk_scrolled_window_new(NULL, NULL);
         gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
@@ -530,7 +534,7 @@ void show_new_buddy_chat(struct buddy_chat *b)
         gtk_box_pack_start(GTK_BOX(lbox), bbox2, FALSE, FALSE, 0);
                                        
         
-	gtk_box_pack_start(GTK_BOX(tbox), lbox, TRUE, TRUE, 0);
+	gtk_paned_pack2(GTK_PANED(hpaned), lbox, TRUE, TRUE);
 	gtk_widget_show(list);
 
 
@@ -561,9 +565,10 @@ void show_new_buddy_chat(struct buddy_chat *b)
 	/* pack and fill the rest */
 	
 	
-	gtk_box_pack_start(GTK_BOX(vbox), tbox, TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), chatentry, FALSE, FALSE, 5);
+	gtk_paned_pack1(GTK_PANED(vpaned), hpaned, TRUE, FALSE);
+	gtk_box_pack_start(GTK_BOX(vbox), chatentry, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_paned_pack2(GTK_PANED(vpaned), vbox, TRUE, FALSE);
 
 	gtk_widget_show(send);
 	gtk_widget_show(invite_btn);
@@ -576,11 +581,12 @@ void show_new_buddy_chat(struct buddy_chat *b)
         gtk_widget_show(lbox);
         gtk_widget_show(bbox2);
 	gtk_widget_show(vbox);
-	gtk_widget_show(tbox);
+	gtk_widget_show( vpaned );
+	gtk_widget_show( hpaned );
 	gtk_widget_show(chatentry);
-
+       	gtk_widget_set_usize(chatentry, 320, 25);
 	
-	gtk_container_add(GTK_CONTAINER(win),vbox);
+	gtk_container_add(GTK_CONTAINER(win),vpaned);
 	gtk_container_border_width(GTK_CONTAINER(win), 10);
 
 	gtk_window_set_title(GTK_WINDOW(win), b->name);
