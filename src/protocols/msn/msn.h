@@ -67,7 +67,7 @@
 
 #define MSN_FT_GUID "{5D3E02AB-6190-11d3-BBBB-00C04F795683}"
 
-#define MSN_CONNECT_STEPS 7
+#define MSN_CONNECT_STEPS 8
 
 #define MSN_CLIENTINFO \
 	"Client-Name: Gaim/" VERSION "\r\n" \
