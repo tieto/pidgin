@@ -2657,7 +2657,7 @@ void update_buttons_by_protocol(struct conversation *c)
 void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointer data)
 {
 	GtkWidget *label = NULL;
-	GdkColor color;
+	GtkStyle *style;
 	struct conversation *c;
 	
 	if ((convo_options & OPT_CONVO_COMBINE) &&
@@ -2687,11 +2687,6 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 	gtk_widget_set_style(label, style);
 	gtk_style_unref(style);
-/*	color.red = 0x0000;
-	color.green = 0x0000;
-	color.blue = 0x0000;
-	gtk_widget_modify_fg(label, GTK_STATE_NORMAL, &color);
-*/
 	if (c)
 		c->unseen = 0;
 
@@ -2725,37 +2720,32 @@ void update_convo_status(struct conversation *c) {
 		return;
 	debug_printf("update_convo_status called for %s\n", c->name);
 	if (im_options & OPT_IM_ONE_WINDOW) { /* We'll make the tab green */
+		GtkStyle *style;
 		GtkWidget *label = c->tab_label;
-		GdkColor color;
+		style = gtk_style_new();
+		if (!GTK_WIDGET_REALIZED(label))
+			gtk_widget_realize(label);
+		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
 		if(c->typing_state == TYPING) {
-			color.red = 0x0000;
-			color.green = 0x9999;
-			color.blue = 0x0000;
+			style->fg[0].red = 0x0000;
+			style->fg[0].green = 0x9999;
+			style->fg[0].blue = 0x0000;
 		} else if(c->typing_state == TYPED) {
-			color.red = 0xffff;
-			color.green = 0xbbbb;
-			color.blue = 0x2222;
+			style->fg[0].red = 0xffff;
+			style->fg[0].green = 0xbbbb;
+			style->fg[0].blue = 0x2222;
 		} else if(c->unseen == 2) {
-			color.red = 0x0000;
-			color.green = 0x0000;
-			color.blue = 0xcccc;
+			style->fg[0].red = 0x0000;
+			style->fg[0].green = 0x0000;
+			style->fg[0].blue = 0xcccc;
 		} else if(c->unseen == 1) {
-			color.red = 0xcccc;
-			color.green = 0x0000;
-			color.blue = 0x0000;
-		} else {
-			style = gtk_style_new();
-			gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
-			gtk_widget_set_style(label, style);
-			gtk_style_unref(style);
-			/*
-				color.red = 0x0000;
-				color.green = 0x0000;
-				color.blue = 0x0000;
-			*/
+			style->fg[0].red = 0xcccc;
+			style->fg[0].green = 0x0000;
+			style->fg[0].blue = 0x0000;
 		}
-		gtk_widget_modify_fg(label, GTK_STATE_NORMAL, &color);
+		gtk_widget_set_style(label, style);
 			debug_printf("setting style\n");
+		gtk_style_unref(style);
 	} else {
 		GtkWindow *win = (GtkWindow *)c->window;
 		char *buf, *buf2;
