@@ -40,6 +40,8 @@ version 0.59 (06/07/2002):
 	* Added capability for protocol-specific edit buddy menu entries
 	* Can now remove a Jabber buddy roster item from the server
 	  entirely
+	* Gaim can now handle messages from Mac ICQ and Miranda ICQ
+	  (Thanks, Mark Doliner)
 
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
