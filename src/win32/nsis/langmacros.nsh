@@ -25,11 +25,13 @@
   !include "${GAIM_DEFAULT_LANGFILE}"
   !undef INSERT_DEFAULT
 
-  ; GAIM Language file Version 2
+  ; GAIM Language file Version 3
   ; String labels should match those from the default language file.
 
-  ; Startup GTK+ check
-  !insertmacro GAIM_MACRO_LANGSTRING_INSERT GTK_INSTALLER_NEEDED		${CUR_LANG}
+  ; Startup checks
+  !insertmacro GAIM_MACRO_LANGSTRING_INSERT INSTALLER_IS_RUNNING			${CUR_LANG}
+  !insertmacro GAIM_MACRO_LANGSTRING_INSERT GAIM_IS_RUNNING				${CUR_LANG}
+  !insertmacro GAIM_MACRO_LANGSTRING_INSERT GTK_INSTALLER_NEEDED			${CUR_LANG}
 
   ; License Page
   !insertmacro GAIM_MACRO_LANGSTRING_INSERT GAIM_LICENSE_BUTTON			${CUR_LANG}
@@ -64,7 +66,7 @@
 
   ; GTK+ Section Prompts
   !insertmacro GAIM_MACRO_LANGSTRING_INSERT GTK_INSTALL_ERROR			${CUR_LANG}
-  !insertmacro GAIM_MACRO_LANGSTRING_INSERT GTK_BAD_INSTALL_PATH		${CUR_LANG}
+  !insertmacro GAIM_MACRO_LANGSTRING_INSERT GTK_BAD_INSTALL_PATH			${CUR_LANG}
 
   ; GTK+ Themes section
   !insertmacro GAIM_MACRO_LANGSTRING_INSERT GTK_NO_THEME_INSTALL_RIGHTS		${CUR_LANG}

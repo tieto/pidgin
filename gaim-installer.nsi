@@ -1004,7 +1004,29 @@ Function DoWeNeedGtk
   done:
 FunctionEnd
 
+Function RunCheck
+  System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
+  IntCmp $R0 0 done
+  MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) IDOK
+    Abort
+  done:
+FunctionEnd
+
+Function un.RunCheck
+  System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
+  IntCmp $R0 0 done
+  MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) IDOK
+    Abort
+  done:
+FunctionEnd
+
 Function .onInit
+  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "gaim_installer_running") i .r1 ?e'
+  Pop $R0
+  StrCmp $R0 0 +3
+    MessageBox MB_OK|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING)
+    Abort
+  Call RunCheck
   StrCpy $name "Gaim ${GAIM_VERSION}"
   StrCpy $GTK_THEME_SEL ${SecGtkWimp}
   StrCpy $ISSILENT "/NOUI"
@@ -1045,6 +1067,7 @@ Function .onInit
 FunctionEnd
 
 Function un.onInit
+  Call un.RunCheck
   StrCpy $name "Gaim ${GAIM_VERSION}"
 
   ; Get stored language prefrence
@@ -1278,3 +1301,4 @@ Function ParseParameters
     IntOp $LANG_IS_SET 0 + 1
   next:
 FunctionEnd
+

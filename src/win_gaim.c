@@ -245,6 +245,17 @@ static void wgaim_set_locale() {
         putenv(envstr);
 }
 
+static BOOL wgaim_set_running() {
+	HANDLE h;
+
+	if((h=CreateMutex(NULL, FALSE, "gaim_is_running"))) {
+		if(GetLastError() == ERROR_ALREADY_EXISTS) {
+			MessageBox(NULL, "An instance of Gaim is already running", NULL, MB_OK | MB_TOPMOST);
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
 
 #ifdef __GNUC__
 #  ifndef _stdcall
@@ -293,6 +304,8 @@ WinMain (struct HINSTANCE__ *hInstance,
                 dll_prep();
 
         wgaim_set_locale();
+		if(!wgaim_set_running())
+			return 0;
 
         /* Now we are ready for Gaim .. */
         if((hmod=LoadLibrary("gaim.dll"))) {

@@ -4,14 +4,16 @@
 ;;  Default language strings for the Windows Gaim NSIS installer.
 ;;  Windows Code page: 1252
 ;;
-;;  Version 2
+;;  Version 3
 ;;  Note: If translating this file, replace "!insertmacro GAIM_MACRO_DEFAULT_STRING"
 ;;  with "!define".
 
 ; Make sure to update the GAIM_MACRO_LANGUAGEFILE_END macro in
 ; langmacros.nsh when updating this file
 
-; Startup GTK+ check
+; Startup Checks
+!insertmacro GAIM_MACRO_DEFAULT_STRING INSTALLER_IS_RUNNING			"The installer is already running."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_IS_RUNNING			"An instance of Gaim is currently running. Exit Gaim then try again."
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_INSTALLER_NEEDED			"The GTK+ runtime environment is either missing or needs to be upgraded.$\rPlease install v${GTK_VERSION} or higher of the GTK+ runtime"
 
 ; License Page
