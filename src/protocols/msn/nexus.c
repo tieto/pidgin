@@ -9,7 +9,7 @@
 static size_t
 msn_ssl_read(GaimSslConnection *gsc, char **dest_buffer)
 {
-	size_t size = 0, s;
+	gssize size = 0, s;
 	char *buffer = NULL;
 	char temp_buf[4096];
 
