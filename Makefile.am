@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+		COPYRIGHT \
 		Doxyfile.in \
 		gaim.spec.in \
 		gaim.desktop \
