@@ -1,4 +1,4 @@
-# Simplified Chinese translation for Gaim.
+# Traditional Chinese translation for Gaim.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # Hashao <hashao@china.com>, 2000.
 #
