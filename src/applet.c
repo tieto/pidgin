@@ -84,10 +84,16 @@ static GdkPixmap *get_applet_icon(const char *name)
 	}
 
 	art_affine_identity(affine);
-	art_rgb_rgba_affine(dst, 0, 0, sizehint, sizehint, sizehint * 3,
-			gdk_pixbuf_get_pixels(pb),
-			gdk_pixbuf_get_width(pb), gdk_pixbuf_get_height(pb),
-			gdk_pixbuf_get_rowstride(pb), affine, ART_FILTER_NEAREST, NULL);
+	if (gdk_pixbuf_get_has_alpha(pb))
+		art_rgb_rgba_affine(dst, 0, 0, sizehint, sizehint, sizehint * 3,
+				gdk_pixbuf_get_pixels(pb), gdk_pixbuf_get_width(pb),
+				gdk_pixbuf_get_height(pb), gdk_pixbuf_get_rowstride(pb),
+				affine, ART_FILTER_NEAREST, NULL);
+	else
+		art_rgb_affine(dst, 0, 0, sizehint, sizehint, sizehint * 3,
+				gdk_pixbuf_get_pixels(pb), gdk_pixbuf_get_width(pb),
+				gdk_pixbuf_get_height(pb), gdk_pixbuf_get_rowstride(pb),
+				affine, ART_FILTER_NEAREST, NULL);
 
 	gdk_pixbuf_unref(pb);
 	gdk_draw_rgb_image(cache, gc, 0, 0, sizehint, sizehint,
