@@ -124,7 +124,7 @@ static void stringref_free(GaimStringref *stringref)
 {
 #ifdef DEBUG
 	if (REFCOUNT(stringref->ref) != 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "stringref", "Free of nonzero (%d) ref stringref!\n", stringref->ref);
+		gaim_debug(GAIM_DEBUG_ERROR, "stringref", "Free of nonzero (%d) ref stringref!\n", REFCOUNT(stringref->ref));
 		return;
 	}
 #endif /* DEBUG */
