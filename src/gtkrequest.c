@@ -232,7 +232,8 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	data->cbs[1] = cancel_cb;
 
 	/* Create the dialog. */
-	dialog = gtk_dialog_new_with_buttons(title, NULL, 0,
+	dialog = gtk_dialog_new_with_buttons(title ? title : GAIM_ALERT_TITLE,
+					     NULL, 0,
 					     text_to_stock(cancel_text), 1,
 					     text_to_stock(ok_text),     0,
 					     NULL);

@@ -416,7 +416,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		GtkCellRenderer *rend, *rend2;
 
 		disconnect_window = g_new0(struct disconnect_window, 1);
-		disconnect_window->window = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_NO_SEPARATOR,
+		disconnect_window->window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, NULL, GTK_DIALOG_NO_SEPARATOR,
 									_("Reconnect"), GTK_RESPONSE_ACCEPT,
 									GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 		g_signal_connect(G_OBJECT(disconnect_window->window), "response", G_CALLBACK(disconnect_response_cb), disconnect_window);

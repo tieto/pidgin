@@ -758,7 +758,7 @@ menu_search_cb(gpointer data, guint action, GtkWidget *widget)
 	if (gtkconv->dialogs.search)
 		return;
 
-	gtkconv->dialogs.search = gtk_dialog_new_with_buttons("", GTK_WINDOW(gtkwin->window),
+	gtkconv->dialogs.search = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, GTK_WINDOW(gtkwin->window),
 							      GTK_DIALOG_DESTROY_WITH_PARENT,
 							      GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 							      GTK_STOCK_FIND, GTK_RESPONSE_OK, NULL);

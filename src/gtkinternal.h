@@ -31,4 +31,10 @@
 
 #include <gtk/gtk.h>
 
+#ifndef _WIN32
+# define GAIM_ALERT_TITLE ""
+#else
+# define GAIM_ALERT_TITLE "Gaim"
+#endif
+
 #endif /* _GAIM_GTK_INTERNAL_H_ */

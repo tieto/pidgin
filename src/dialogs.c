@@ -601,7 +601,7 @@ void show_ee_dialog(int ee)
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"gray\">I'm not anything.</span>");
 
-	window = gtk_dialog_new_with_buttons("", GTK_WINDOW(gtkblist->window), 0, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, GTK_WINDOW(gtkblist->window), 0, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(gtk_widget_destroy), NULL);
 
