@@ -34,8 +34,6 @@
 #include "gnome_applet_mgr.h"
 
 enum gaim_user_states MRI_user_status; 
-gint total_num_of_buddies;  /* how many buddies I have in my list */ 
-gint num_of_buddies_online; /* how many of them are online */
 
 gboolean buddy_created = FALSE;
 gboolean applet_draw_open = FALSE;
@@ -136,15 +134,6 @@ gboolean load_applet_icon( const char *name, int height, int width, GdkPixmap **
 gboolean update_applet( gpointer *ap ){
      char temp_string[25];
      static enum gaim_user_states old_user_status = offline;
-     static gint old_total_num_of_buddies = -1;
-     static gint old_num_of_buddies_online = -1;
-     if( applet_draw_open ){
-     	sprintf(debug_buff, "Drawer is open\n");
-		debug_print(debug_buff);
-     } else {
-     	sprintf(debug_buff, "Drawer is closed\n");
-		debug_print(debug_buff);
-     }
      
      if( MRI_user_status != old_user_status || ap){
 
@@ -160,8 +149,6 @@ gboolean update_applet( gpointer *ap ){
                            icon_connect_pm,
                            icon_connect_bm );   
       			gtk_label_set( GTK_LABEL(status_label), _MSG_CONNECT_ );
-      			old_total_num_of_buddies = -1;
-     			old_num_of_buddies_online = -1;
       		break;
       		case online:
       			gtk_pixmap_set( GTK_PIXMAP(icon),
@@ -186,28 +173,6 @@ gboolean update_applet( gpointer *ap ){
       	}
       	old_user_status = MRI_user_status;
       }
-#ifdef _USE_BUDDY_COUNT_
-      if( (( old_total_num_of_buddies != total_num_of_buddies ) || 
-      		( old_num_of_buddies_online != num_of_buddies_online )) && 
-      		( MRI_user_status == online ) ){
-      			/*make user buffer can not overflow*/
-      			if(total_num_of_buddies<1000){
-      				sprintf(temp_string, "%i/%i", num_of_buddies_online, total_num_of_buddies);
-      		    } else {
-      		    	if(num_of_buddies_online<100000){
-      		    		sprintf(temp_string, "%i", num_of_buddies_online);
-      		    	} else {
-      		    		/*we most likely will never get to here but
-      		    		  hey, people also thought computer wouldn't
-      		    		  be around by the year 2000 :-) */
-      		    		sprintf(temp_string, _MSG_ONLINE_ );
-      		    	}
-      		    }
-      			gtk_label_set( GTK_LABEL(status_label), temp_string );
-      			old_total_num_of_buddies = total_num_of_buddies;
-      			old_num_of_buddies_online = num_of_buddies_online;
-      		} 
-#endif /*_USE_BUDDY_COUNT_*/
       return TRUE;
 
 }
@@ -355,6 +320,7 @@ void applet_show_about(AppletWidget *widget, gpointer data) {
                             "Jim Duchek <jimduchek@ou.edu>",
                             "Rob Flynn <rflynn@blueridge.net>",
 			    "Eric Warmenhoven <warmenhoven@yahoo.com>",
+			    "Syd Logan",
                             NULL};
 
   GtkWidget *about=gnome_about_new(_("GAIM"),
@@ -717,24 +683,8 @@ void setUserState( enum gaim_user_states state ){
 	update_applet(NULL);
 }
 
-void setTotalBuddies( gint num ){
-	total_num_of_buddies = num;
-}
-
-void setNumBuddiesOnline( gint num ){
-	num_of_buddies_online=num;
-}
-
 enum gaim_user_states getUserState(){
 	return MRI_user_status;
-}
-
-gint getTotalBuddies(){
-	return total_num_of_buddies;
-}
-
-gint getNumBuddiesOnline(){
-	return num_of_buddies_online;
 }
 
 void set_applet_draw_open(){

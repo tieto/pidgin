@@ -116,7 +116,7 @@ static int play_esd(unsigned char *data, int size)
         guint16 *lineardata;
 	
 	
-        fd = esd_play_stream(format, 8012, NULL, "gaim");
+        fd = esd_play_stream_fallback(format, 8012, NULL, "gaim");
 
         if (fd < 0) {
                 return 0;

@@ -273,22 +273,7 @@ void update_button_pix()
 
 #ifdef USE_APPLET
 gint applet_destroy_buddy( GtkWidget *widget, GdkEvent *event,gpointer *data ) {
-	GList *mem;
 	set_applet_draw_closed();
-	
-	/****NO LONGER NEEDED
-        while(groups) {
-		mem = ((struct group *)groups->data)->members;
-		while(mem) {
-			g_free(mem->data);
-                        mem = g_list_remove(mem, mem->data);
-		}
-		g_free(groups->data);
-                groups = g_list_remove(groups, groups->data);
-	}
-	
-	destroy_buddy();
-	*/
 	gnome_buddy_hide();
 	applet_widget_register_callback(APPLET_WIDGET(applet),
 			"buddy",
