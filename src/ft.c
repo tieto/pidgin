@@ -131,9 +131,14 @@ static void gaim_xfer_show_file_error(const char *filename)
 		case ENOTDIR: 
 			msg = g_strdup_printf( _("A component of %s is not a directory.\n"), filename);
 			break;
+#ifndef _WIN32
 		case ELOOP: 
 			msg = g_strdup_printf( _("Too many symbolic links in path for %s\n"), filename);
 			break;
+		case ETXTBSY:
+			msg = g_strdup_printf(_("Cannot write %s: File is in use\n"), filename);
+			break;
+#endif
 		case EACCES: 
 			msg = g_strdup_printf( _("Permission denied accessing %s\n"), filename);
 			break;
@@ -145,9 +150,6 @@ static void gaim_xfer_show_file_error(const char *filename)
 			break;
 		case ENOSPC:
 			msg = g_strdup_printf(_("Cannot write %s: No space on filesystem\n"), filename);
-			break;
-		case ETXTBSY:
-			msg = g_strdup_printf(_("Cannot write %s: File is in use\n"), filename);
 			break;
 		case EMFILE:
 			msg = g_strdup_printf(_("Cannot open %s: Gaim has too many files open\n"), filename);

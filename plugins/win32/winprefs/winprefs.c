@@ -24,7 +24,6 @@
 #include <gdk/gdkwin32.h>
 
 #include "internal.h"
-#include "gtkinternal.h"
 
 #include "core.h"
 #include "prefs.h"

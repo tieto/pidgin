@@ -399,7 +399,6 @@ static GdkFilterReturn gtk_appbar_event_filter(GdkXEvent *xevent, GdkEvent *even
                 return wnd_size(data, xevent);
         case APPBAR_CALLBACK:
                 return gtk_appbar_callback(data, xevent);
-        default:
         }
         return GDK_FILTER_CONTINUE;
 }
