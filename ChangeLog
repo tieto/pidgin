@@ -5,9 +5,12 @@ version 0.67
 	  You'll need to reconfigure your settings for this plugin
 	* Various bug fixes (larne from irc, Tim Ringenbach, Bjoern 
 	  Voigt, Paul A (darkrain))
+	* Shows "hiptop" icon for AIM buddies using hiptop
+	  devices (Robey Pointer)
 	* British English "translation" updated (Sam Halliday)
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Danish translation updated (Morten Brix Pedersen)
 	* Dutch translation updated (Vincent van Adrighem)
 	* German translation updated (Bjoern Voigt)
 	* Hungarian translation updated (Zoltan Sutto)
@@ -16,7 +19,6 @@ version 0.67
 	  Neto)
 	* Serbian translation updated (Danilo Segan)
 	* Spanish translation updated (Javier Fernandez-Sanguino Pena)
-	* Danish translation updated (Morten Brix Pedersen)
 
 version 0.66 (07/18/2003):
 	* Freebsd compile fix (Matthew Luckie)

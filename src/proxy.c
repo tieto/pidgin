@@ -937,8 +937,8 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		char *t1, *t2;
 		t1 = g_strdup_printf("%s:%s",
 							 gaim_proxy_info_get_username(phb->gpi),
-							 gaim_proxy_info_get_password(phb->gpi));
-
+							 gaim_proxy_info_get_password(phb->gpi) ? 
+							 gaim_proxy_info_get_password(phb->gpi) : "");
 		t2 = tobase64(t1, strlen(t1));
 		g_free(t1);
 		g_return_if_fail(request_len < sizeof(request));
