@@ -3141,10 +3141,10 @@ move_next_tab(struct gaim_conversation *conv)
 /**************************************************************************
  * GTK+ window ops
  **************************************************************************/
-static struct gaim_conversation_ops *
-gaim_gtk_get_conversation_ops(void)
+static struct gaim_conversation_ui_ops *
+gaim_gtk_get_conversation_ui_ops(void)
 {
-	return gaim_get_gtk_conversation_ops();
+	return gaim_get_gtk_conversation_ui_ops();
 }
 
 static void
@@ -3490,9 +3490,9 @@ gaim_gtk_get_active_index(const struct gaim_window *win)
 	return gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook));
 }
 
-static struct gaim_window_ops window_ops =
+static struct gaim_window_ui_ops window_ui_ops =
 {
-	gaim_gtk_get_conversation_ops,
+	gaim_gtk_get_conversation_ui_ops,
 	gaim_gtk_new_window,
 	gaim_gtk_destroy_window,
 	gaim_gtk_show,
@@ -3549,14 +3549,14 @@ update_convo_add_button(struct gaim_conversation *conv)
 	gtk_size_group_add_widget(gtkconv->sg, gtkconv->u.im->add);
 }
 
-struct gaim_window_ops *
-gaim_get_gtk_window_ops(void)
+struct gaim_window_ui_ops *
+gaim_get_gtk_window_ui_ops(void)
 {
-	return &window_ops;
+	return &window_ui_ops;
 }
 
 /**************************************************************************
- * Conversation ops
+ * Conversation UI operations
  **************************************************************************/
 static void
 gaim_gtkconv_destroy(struct gaim_conversation *conv)
@@ -4166,7 +4166,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 	}
 }
 
-static struct gaim_conversation_ops conversation_ops =
+static struct gaim_conversation_ui_ops conversation_ui_ops =
 {
 	gaim_gtkconv_destroy,            /* destroy_conversation */
 	gaim_gtkconv_write_chat,         /* write_chat           */
@@ -4180,10 +4180,10 @@ static struct gaim_conversation_ops conversation_ops =
 	gaim_gtkconv_updated             /* updated              */
 };
 
-struct gaim_conversation_ops *
-gaim_get_gtk_conversation_ops(void)
+struct gaim_conversation_ui_ops *
+gaim_get_gtk_conversation_ui_ops(void)
 {
-	return &conversation_ops;;
+	return &conversation_ui_ops;
 }
 
 /**************************************************************************

@@ -175,10 +175,10 @@ struct gaim_gtk_conversation
 	((struct gaim_gtk_conversation *)(conv)->ui_data)
 
 #define GAIM_IS_GTK_WINDOW(win) \
-	(gaim_window_get_ops(win) == gaim_get_gtk_window_ops())
+	(gaim_window_get_ui_ops(win) == gaim_get_gtk_window_ui_ops())
 
 #define GAIM_IS_GTK_CONVERSATION(conv) \
-	(gaim_conversation_get_ops(conv) == gaim_get_gtk_conversation_ops())
+	(gaim_conversation_get_ui_ops(conv) == gaim_get_gtk_conversation_ui_ops())
 
 /**************************************************************************
  * @name GTK+ Conversation API
@@ -188,14 +188,14 @@ struct gaim_gtk_conversation
  *
  * @return The GTK window operations structure.
  */
-struct gaim_window_ops *gaim_get_gtk_window_ops(void);
+struct gaim_window_ui_ops *gaim_get_gtk_window_ui_ops(void);
 
 /**
  * Returns the UI operations structure for GTK conversations.
  *
  * @return The GTK conversation operations structure.
  */
-struct gaim_conversation_ops *gaim_get_gtk_conversation_ops(void);
+struct gaim_conversation_ui_ops *gaim_get_gtk_conversation_ui_ops(void);
 
 /**
  * Sets a lock on the update state.

@@ -31,7 +31,7 @@
 typedef enum _GaimConversationType GaimConversationType;
 typedef enum _GaimUnseenState      GaimUnseenState;
 typedef enum _GaimConvUpdateType   GaimConvUpdateType;
-struct gaim_window_ops;
+struct gaim_window_ui_ops;
 struct gaim_window;
 struct gaim_conversation;
 struct gaim_im;
@@ -92,9 +92,9 @@ enum _GaimConvUpdateType
  * Any UI representing a window must assign a filled-out gaim_window_ops
  * structure to the gaim_window.
  */
-struct gaim_window_ops
+struct gaim_window_ui_ops
 {
-	struct gaim_conversation_ops *(*get_conversation_ops)(void);
+	struct gaim_conversation_ui_ops *(*get_conversation_ui_ops)(void);
 
 	void (*new_window)(struct gaim_window *win);
 	void (*destroy_window)(struct gaim_window *win);
@@ -119,9 +119,9 @@ struct gaim_window_ops
  * Conversation operations and events.
  *
  * Any UI representing a conversation must assign a filled-out
- * gaim_conversation_ops structure to the gaim_conversation.
+ * gaim_conversation_ui_ops structure to the gaim_conversation.
  */
-struct gaim_conversation_ops
+struct gaim_conversation_ui_ops
 {
 	void (*destroy_conversation)(struct gaim_conversation *conv);
 	void (*write_chat)(struct gaim_conversation *conv, const char *who,
@@ -151,12 +151,11 @@ struct gaim_conversation_ops
  */
 struct gaim_window
 {
-	GList *conversations;        /**< The conversations in the window. */
-	size_t conversation_count;   /**< The number of conversations.     */
+	GList *conversations;              /**< The conversations in the window. */
+	size_t conversation_count;         /**< The number of conversations.     */
 
-	struct gaim_window_ops *ops; /**< UI-specific window operations.   */
-
-	void *ui_data;               /**< UI-specific data.                */
+	struct gaim_window_ui_ops *ui_ops; /**< UI-specific window operations.   */
+	void *ui_data;                     /**< UI-specific data.                */
 };
 
 /**
@@ -164,14 +163,14 @@ struct gaim_window
  */
 struct gaim_im
 {
-	struct gaim_conversation *conv;
+	struct gaim_conversation *conv;    /**< The parent conversation.     */
 
-	int    typing_state;
-	guint  typing_timeout;
-	time_t type_again;
-	guint  type_again_timeout;
+	int    typing_state;               /**< The current typing state.    */
+	guint  typing_timeout;             /**< The typing timer handle.     */
+	time_t type_again;                 /**< The type again time.         */
+	guint  type_again_timeout;         /**< The type again timer handle. */
 
-	GSList *images;
+	GSList *images;                    /**< A list of images in the IM.  */
 };
 
 /**
@@ -179,13 +178,13 @@ struct gaim_im
  */
 struct gaim_chat
 {
-	struct gaim_conversation *conv;
+	struct gaim_conversation *conv;  /**< The parent conversation.      */
 
-	GList *in_room;
-	GList *ignored;
-	char  *who;
-	char  *topic;
-	int    id;
+	GList *in_room;                  /**< The users in the room.        */
+	GList *ignored;                  /**< Ignored users.                */
+	char  *who;                      /**< The person who set the topic. */
+	char  *topic;                    /**< The topic.                    */
+	int    id;                       /**< The chat ID.                  */
 };
 
 /**
@@ -201,9 +200,6 @@ struct gaim_conversation
 	struct aim_user *user;      /**< The user using this conversation.  */
 	struct gaim_window *window; /**< The parent window.                 */
 
-	/** UI-specific conversation operations.*/
-	struct gaim_conversation_ops *ops; 
-
 	int conversation_pos;       /**< The position in the window's list. */
 
 	char *name;                 /**< The name of the conversation.      */
@@ -216,8 +212,6 @@ struct gaim_conversation
 
 	GaimUnseenState unseen;     /**< The unseen tab state.              */
 
-	void *ui_data;              /**< UI-specific data.                  */
-
 	union
 	{
 		struct gaim_im   *im;   /**< IM-specific data.                  */
@@ -225,6 +219,9 @@ struct gaim_conversation
 		void *misc;             /**< Misc. data.                        */
 
 	} u;
+
+	struct gaim_conversation_ui_ops *ui_ops; /**< UI-specific operations. */
+	void *ui_data;                           /**< UI-specific data.       */
 };
 
 
@@ -284,8 +281,8 @@ void gaim_window_flash(struct gaim_window *win);
  * @param win The window.
  * @param ops The UI window operations structure.
  */
-void gaim_window_set_ops(struct gaim_window *win,
-						 struct gaim_window_ops *ops);
+void gaim_window_set_ui_ops(struct gaim_window *win,
+							struct gaim_window_ui_ops *ops);
 
 /**
  * Returns the specified window's UI window operations structure.
@@ -294,7 +291,8 @@ void gaim_window_set_ops(struct gaim_window *win,
  *
  * @return The UI window operations structure.
  */
-struct gaim_window_ops *gaim_window_get_ops(const struct gaim_window *win);
+struct gaim_window_ui_ops *gaim_window_get_ui_ops(
+		const struct gaim_window *win);
 
 /**
  * Adds a conversation to this window.
@@ -436,8 +434,8 @@ GaimConversationType gaim_conversation_get_type(
  * @param conv The conversation.
  * @param ops  The UI conversation operations structure.
  */
-void gaim_conversation_set_ops(struct gaim_conversation *conv,
-							   struct gaim_conversation_ops *ops);
+void gaim_conversation_set_ui_ops(struct gaim_conversation *conv,
+								  struct gaim_conversation_ui_ops *ops);
 
 /**
  * Returns the specified conversation's UI operations structure.
@@ -446,7 +444,7 @@ void gaim_conversation_set_ops(struct gaim_conversation *conv,
  *
  * @return The operations structure.
  */
-struct gaim_conversation_ops *gaim_conversation_get_ops(
+struct gaim_conversation_ui_ops *gaim_conversation_get_ui_ops(
 		struct gaim_conversation *conv);
 
 /**

@@ -161,7 +161,7 @@ common_send(struct gaim_conversation *conv, const char *message)
 {
 	GaimConversationType type;
 	struct gaim_connection *gc;
-	struct gaim_conversation_ops *ops;
+	struct gaim_conversation_ui_ops *ops;
 	char *buf, *buf2, *buffy;
 	gulong length = 0;
 	gboolean binary = FALSE;
@@ -174,7 +174,7 @@ common_send(struct gaim_conversation *conv, const char *message)
 		return;
 
 	type = gaim_conversation_get_type(conv);
-	ops  = gaim_conversation_get_ops(conv);
+	ops  = gaim_conversation_get_ui_ops(conv);
 
 	limit = 32 * 1024; /* You shouldn't be sending more than 32K in your
 						  messages. That's a book. */
@@ -427,10 +427,10 @@ gaim_window_new(void)
 	win = g_malloc0(sizeof(struct gaim_window));
 
 	/* CONV XXX */
-	win->ops = gaim_get_gtk_window_ops();
+	win->ui_ops = gaim_get_gtk_window_ui_ops();
 
-	if (win->ops != NULL && win->ops->new_window != NULL)
-		win->ops->new_window(win);
+	if (win->ui_ops != NULL && win->ui_ops->new_window != NULL)
+		win->ui_ops->new_window(win);
 
 	windows = g_list_append(windows, win);
 
@@ -440,13 +440,13 @@ gaim_window_new(void)
 void
 gaim_window_destroy(struct gaim_window *win)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 	GList *node;
 
 	if (win == NULL)
 		return;
 
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	for (node = g_list_first(gaim_window_get_conversations(win));
 		 node != NULL;
@@ -475,12 +475,12 @@ gaim_window_destroy(struct gaim_window *win)
 void
 gaim_window_show(struct gaim_window *win)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 
 	if (win == NULL)
 		return;
 
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	if (ops == NULL || ops->show == NULL)
 		return;
@@ -491,12 +491,12 @@ gaim_window_show(struct gaim_window *win)
 void
 gaim_window_hide(struct gaim_window *win)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 
 	if (win == NULL)
 		return;
 
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	if (ops == NULL || ops->hide == NULL)
 		return;
@@ -507,12 +507,12 @@ gaim_window_hide(struct gaim_window *win)
 void
 gaim_window_raise(struct gaim_window *win)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 
 	if (win == NULL)
 		return;
 
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	if (ops == NULL || ops->raise == NULL)
 		return;
@@ -523,12 +523,12 @@ gaim_window_raise(struct gaim_window *win)
 void
 gaim_window_flash(struct gaim_window *win)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 
 	if (win == NULL)
 		return;
 
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	if (ops == NULL || ops->flash == NULL)
 		return;
@@ -537,29 +537,29 @@ gaim_window_flash(struct gaim_window *win)
 }
 
 void
-gaim_window_set_ops(struct gaim_window *win, struct gaim_window_ops *ops)
+gaim_window_set_ui_ops(struct gaim_window *win, struct gaim_window_ui_ops *ops)
 {
-	struct gaim_conversation_ops *convops = NULL;
+	struct gaim_conversation_ui_ops *conv_ops = NULL;
 	GList *l;
 
-	if (win == NULL || win->ops == ops)
+	if (win == NULL || win->ui_ops == ops)
 		return;
 
 	if (ops != NULL) {
-		if (ops->get_conversation_ops != NULL)
-			convops = ops->get_conversation_ops();
+		if (ops->get_conversation_ui_ops != NULL)
+			conv_ops = ops->get_conversation_ui_ops();
 	}
 
-	if (win->ops != NULL) {
-		if (win->ops->destroy_window != NULL)
-			win->ops->destroy_window(win);
+	if (win->ui_ops != NULL) {
+		if (win->ui_ops->destroy_window != NULL)
+			win->ui_ops->destroy_window(win);
 	}
 
-	win->ops = ops;
+	win->ui_ops = ops;
 
-	if (win->ops != NULL) {
-		if (win->ops->new_window != NULL)
-			win->ops->new_window(win);
+	if (win->ui_ops != NULL) {
+		if (win->ui_ops->new_window != NULL)
+			win->ui_ops->new_window(win);
 	}
 
 	for (l = gaim_window_get_conversations(win);
@@ -568,27 +568,27 @@ gaim_window_set_ops(struct gaim_window *win, struct gaim_window_ops *ops)
 
 		struct gaim_conversation *conv = (struct gaim_conversation *)l;
 
-		gaim_conversation_set_ops(conv, convops);
+		gaim_conversation_set_ui_ops(conv, conv_ops);
 
-		if (win->ops != NULL && win->ops->add_conversation != NULL)
-			win->ops->add_conversation(win, conv);
+		if (win->ui_ops != NULL && win->ui_ops->add_conversation != NULL)
+			win->ui_ops->add_conversation(win, conv);
 	}
 }
 
-struct gaim_window_ops *
-gaim_window_get_ops(const struct gaim_window *win)
+struct gaim_window_ui_ops *
+gaim_window_get_ui_ops(const struct gaim_window *win)
 {
 	if (win == NULL)
 		return NULL;
 
-	return win->ops;
+	return win->ui_ops;
 }
 
 int
 gaim_window_add_conversation(struct gaim_window *win,
 							 struct gaim_conversation *conv)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 
 	if (win == NULL || conv == NULL)
 		return -1;
@@ -599,7 +599,7 @@ gaim_window_add_conversation(struct gaim_window *win,
 			gaim_conversation_get_index(conv));
 	}
 
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	win->conversations = g_list_append(win->conversations, conv);
 	win->conversation_count++;
@@ -609,8 +609,8 @@ gaim_window_add_conversation(struct gaim_window *win,
 	if (ops != NULL) {
 		conv->window = win;
 
-		if (ops->get_conversation_ops != NULL)
-			gaim_conversation_set_ops(conv, ops->get_conversation_ops());
+		if (ops->get_conversation_ui_ops != NULL)
+			gaim_conversation_set_ui_ops(conv, ops->get_conversation_ui_ops());
 
 		if (ops->add_conversation != NULL)
 			ops->add_conversation(win, conv);
@@ -622,14 +622,14 @@ gaim_window_add_conversation(struct gaim_window *win,
 struct gaim_conversation *
 gaim_window_remove_conversation(struct gaim_window *win, unsigned int index)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 	struct gaim_conversation *conv;
 	GList *node;
 
 	if (win == NULL || index >= gaim_window_get_conversation_count(win))
 		return NULL;
 
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	node = g_list_nth(gaim_window_get_conversations(win), index);
 	conv = (struct gaim_conversation *)node->data;
@@ -659,7 +659,7 @@ void
 gaim_window_move_conversation(struct gaim_window *win, unsigned int index,
 							  unsigned int new_index)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 	struct gaim_conversation *conv;
 	GList *l;
 
@@ -684,7 +684,7 @@ gaim_window_move_conversation(struct gaim_window *win, unsigned int index,
 	conv = (struct gaim_conversation *)l->data;
 
 	/* Update the UI part of this. */
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	if (ops != NULL && ops->move_conversation != NULL)
 		ops->move_conversation(win, conv, new_index);
@@ -724,13 +724,13 @@ gaim_window_get_conversation_count(const struct gaim_window *win)
 void
 gaim_window_switch_conversation(struct gaim_window *win, unsigned int index)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 
 	if (win == NULL || index < 0 ||
 		index >= gaim_window_get_conversation_count(win))
 		return;
 
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	if (ops != NULL && ops->switch_conversation != NULL)
 		ops->switch_conversation(win, index);
@@ -742,12 +742,12 @@ gaim_window_switch_conversation(struct gaim_window *win, unsigned int index)
 struct gaim_conversation *
 gaim_window_get_active_conversation(const struct gaim_window *win)
 {
-	struct gaim_window_ops *ops;
+	struct gaim_window_ui_ops *ops;
 
 	if (win == NULL)
 		return NULL;
 
-	ops = gaim_window_get_ops(win);
+	ops = gaim_window_get_ui_ops(win);
 
 	if (ops != NULL && ops->get_active_index != NULL)
 		return gaim_window_get_conversation_at(win, ops->get_active_index(win));
@@ -853,7 +853,7 @@ void
 gaim_conversation_destroy(struct gaim_conversation *conv)
 {
 	struct gaim_window *win;
-	struct gaim_conversation_ops *ops;
+	struct gaim_conversation_ui_ops *ops;
 	struct gaim_connection *gc;
 	const char *name;
 	GList *node;
@@ -862,7 +862,7 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		return;
 
 	win  = gaim_conversation_get_window(conv);
-	ops  = gaim_conversation_get_ops(conv);
+	ops  = gaim_conversation_get_ui_ops(conv);
 	gc   = gaim_conversation_get_gc(conv);
 	name = gaim_conversation_get_name(conv);
 
@@ -963,27 +963,27 @@ gaim_conversation_get_type(const struct gaim_conversation *conv)
 }
 
 void
-gaim_conversation_set_ops(struct gaim_conversation *conv,
-						  struct gaim_conversation_ops *ops)
+gaim_conversation_set_ui_ops(struct gaim_conversation *conv,
+							 struct gaim_conversation_ui_ops *ops)
 {
-	if (conv == NULL || conv->ops == ops)
+	if (conv == NULL || conv->ui_ops == ops)
 		return;
 
-	if (conv->ops != NULL && conv->ops->destroy_conversation != NULL)
-		conv->ops->destroy_conversation(conv);
+	if (conv->ui_ops != NULL && conv->ui_ops->destroy_conversation != NULL)
+		conv->ui_ops->destroy_conversation(conv);
 
 	conv->ui_data = NULL;
 
-	conv->ops = ops;
+	conv->ui_ops = ops;
 }
 
-struct gaim_conversation_ops *
-gaim_conversation_get_ops(struct gaim_conversation *conv)
+struct gaim_conversation_ui_ops *
+gaim_conversation_get_ui_ops(struct gaim_conversation *conv)
 {
 	if (conv == NULL)
 		return NULL;
 
-	return conv->ops;
+	return conv->ui_ops;
 }
 
 void
@@ -1026,7 +1026,7 @@ gaim_conversation_get_gc(const struct gaim_conversation *conv)
 void
 gaim_conversation_set_title(struct gaim_conversation *conv, const char *title)
 {
-	struct gaim_conversation_ops *ops;
+	struct gaim_conversation_ui_ops *ops;
 
 	if (conv == NULL || title == NULL)
 		return;
@@ -1036,7 +1036,7 @@ gaim_conversation_set_title(struct gaim_conversation *conv, const char *title)
 
 	conv->title = g_strdup(title);
 
-	ops = gaim_conversation_get_ops(conv);
+	ops = gaim_conversation_get_ui_ops(conv);
 
 	if (ops != NULL && ops->set_title != NULL)
 		ops->set_title(conv, conv->title);
@@ -1290,7 +1290,7 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 						time_t mtime)
 {
 	struct gaim_connection *gc;
-	struct gaim_conversation_ops *ops;
+	struct gaim_conversation_ui_ops *ops;
 	struct gaim_window *win;
 	struct buddy *b;
 	GaimUnseenState unseen;
@@ -1299,7 +1299,7 @@ gaim_conversation_write(struct gaim_conversation *conv, const char *who,
 	if (conv == NULL || message == NULL)
 		return;
 
-	ops = gaim_conversation_get_ops(conv);
+	ops = gaim_conversation_get_ui_ops(conv);
 
 	if (ops == NULL || ops->write_conv == NULL)
 		return;
@@ -1387,7 +1387,7 @@ void
 gaim_conversation_update_progress(struct gaim_conversation *conv,
 								  float percent)
 {
-	struct gaim_conversation_ops *ops;
+	struct gaim_conversation_ui_ops *ops;
 
 	if (conv == NULL)
 		return;
@@ -1399,7 +1399,7 @@ gaim_conversation_update_progress(struct gaim_conversation *conv,
 	 * NOTE: A percent >= 1 indicates that the progress bar should be
 	 *       closed.
 	 */
-	ops = gaim_conversation_get_ops(conv);
+	ops = gaim_conversation_get_ui_ops(conv);
 
 	if (ops != NULL && ops->update_progress != NULL)
 		ops->update_progress(conv, percent);
@@ -1409,12 +1409,12 @@ void
 gaim_conversation_update(struct gaim_conversation *conv,
 						 GaimConvUpdateType type)
 {
-	struct gaim_conversation_ops *ops;
+	struct gaim_conversation_ui_ops *ops;
 
 	if (conv == NULL)
 		return;
 
-	ops = gaim_conversation_get_ops(conv);
+	ops = gaim_conversation_get_ui_ops(conv);
 
 	if (ops != NULL && ops->updated != NULL)
 		ops->updated(conv, type);
@@ -1566,8 +1566,8 @@ gaim_im_write(struct gaim_im *im, const char *who, const char *message,
 	if (!(flags & WFLAG_NOLOG) & (im_options & OPT_IM_POPUP))
 		gaim_window_raise(gaim_conversation_get_window(c));
 
-	if (c->ops != NULL && c->ops->write_im != NULL)
-		c->ops->write_im(c, who, message, len, flags, mtime);
+	if (c->ui_ops != NULL && c->ui_ops->write_im != NULL)
+		c->ui_ops->write_im(c, who, message, len, flags, mtime);
 	else
 		gaim_conversation_write(c, who, message, -1, flags, mtime);
 }
@@ -1794,8 +1794,8 @@ gaim_chat_write(struct gaim_chat *chat, const char *who,
 	}
 
 	/* Pass this on to either the ops structure or the default write func. */
-	if (conv->ops != NULL && conv->ops->write_chat != NULL)
-		conv->ops->write_chat(conv, who, message, flags, mtime);
+	if (conv->ui_ops != NULL && conv->ui_ops->write_chat != NULL)
+		conv->ui_ops->write_chat(conv, who, message, flags, mtime);
 	else
 		gaim_conversation_write(conv, who, message, -1, flags, mtime);
 }
@@ -1814,14 +1814,14 @@ gaim_chat_add_user(struct gaim_chat *chat, const char *user,
 				   const char *extra_msg)
 {
 	struct gaim_conversation *conv;
-	struct gaim_conversation_ops *ops;
+	struct gaim_conversation_ui_ops *ops;
 	char tmp[BUF_LONG];
 
 	if (chat == NULL || user == NULL)
 		return;
 
 	conv = gaim_chat_get_conversation(chat);
-	ops  = gaim_conversation_get_ops(conv);
+	ops  = gaim_conversation_get_ui_ops(conv);
 
 	gaim_chat_set_users(chat,
 		g_list_insert_sorted(gaim_chat_get_users(chat), g_strdup(user),
@@ -1851,14 +1851,14 @@ gaim_chat_rename_user(struct gaim_chat *chat, const char *old_user,
 					  const char *new_user)
 {
 	struct gaim_conversation *conv;
-	struct gaim_conversation_ops *ops;
+	struct gaim_conversation_ui_ops *ops;
 	char tmp[BUF_LONG];
 
 	if (chat == NULL || old_user == NULL || new_user == NULL)
 		return;
 
 	conv = gaim_chat_get_conversation(chat);
-	ops  = gaim_conversation_get_ops(conv);
+	ops  = gaim_conversation_get_ui_ops(conv);
 
 	gaim_chat_set_users(chat,
 		g_list_insert_sorted(gaim_chat_get_users(chat), g_strdup(new_user),
@@ -1890,7 +1890,7 @@ gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
 					  const char *reason)
 {
 	struct gaim_conversation *conv;
-	struct gaim_conversation_ops *ops;
+	struct gaim_conversation_ui_ops *ops;
 	char tmp[BUF_LONG];
 	GList *names;
 
@@ -1898,7 +1898,7 @@ gaim_chat_remove_user(struct gaim_chat *chat, const char *user,
 		return;
 
 	conv = gaim_chat_get_conversation(chat);
-	ops  = gaim_conversation_get_ops(conv);
+	ops  = gaim_conversation_get_ui_ops(conv);
 
 	plugin_event(event_chat_buddy_leave, gaim_conversation_get_gc(conv),
 				 gaim_chat_get_id(chat), user);
