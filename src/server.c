@@ -473,6 +473,22 @@ void serv_chat_invite(int id, char *message, char *name)
 #ifndef USE_OSCAR
         g_snprintf(buf, sizeof(buf)/2, "toc_chat_invite %d \"%s\" %s", id, message, normalize(name));
         sflap_send(buf, -1, TYPE_DATA);
+#else
+	GList *bcs = buddy_chats;
+	struct buddy_chat *b = NULL;
+
+	while (bcs) {
+		b = (struct buddy_chat *)bcs->data;
+		if (id == b->id)
+			break;
+		bcs = bcs->next;
+		b = NULL;
+	}
+
+	if (!b)
+		return;
+		
+	aim_chat_invite(gaim_sess, gaim_conn, name, message, 0x4, b->name, 0x1);
 #endif
 }
 
@@ -509,8 +525,8 @@ void serv_chat_whisper(int id, char *who, char *message)
         g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
         sflap_send(buf2, -1, TYPE_DATA);
 #else
-	/* FIXME : libfaim doesn't whisper */
-	serv_chat_send(id, message);
+	do_error_dialog("Sorry, Oscar doesn't whisper. Send an IM.",
+			"Gaim - Chat");
 #endif
 }
 

@@ -1,4 +1,11 @@
 
+Wed May 24 05:20:31 UTC 2000 EWarmenhoven
+	- Inviting someone is possible now (I hope - I haven't been able to get
+	  into a chat room using libfaim (any client) for a couple days now).
+	- I found out from Adam that whispering (which is kind of a stupid idea
+	  anyway) isn't in Oscar, and hasn't been for quite some time, so I
+	  put a nice little error message when you try to whisper.
+
 Tue May 23 18:07:00 UTC 2000 EWarmenhoven
 	- I fixed the code to tell the server who's on your permit/deny list.
 	  I still don't think it works right in all cases, but it does in most.

@@ -24,20 +24,21 @@ working better soon (please help!).
 CURRENTLY SUPPORTED FEATURES
 ============================
 Signing on
-Sending IMs
 Receiving IMs
-Being away/coming back
+Sending IMs
 Being idle
+Being away/coming back
 Setting your info
 Getting users' info
-Getting users' away messages (PLEASE do not use oscar/libfaim just because of
-	this, gaim with libfaim is still really buggy, none of you will listen
-	to me anyway)
 Chat:
  - joining rooms
  - leaving rooms
- - getting invited
  - talking
+ - getting invited
+ - inviting someone
+Getting users' away messages (PLEASE do not use oscar/libfaim just because of
+	this, gaim with libfaim is still really buggy, none of you will listen
+	to me anyway)
 Telling the server who's on your permit/deny lists
 
 CURRENTLY UNSUPPORTED FEATURES
@@ -46,7 +47,6 @@ Warning users/getting warned
 Chat:
  - whispering
  - refreshing the chatlist in the preferences dialog
- - inviting someone
 Getting/setting dir info
 Changing your password
 File transfer/IM images/voice chat/etc.
@@ -65,6 +65,9 @@ marked in aim.c)
 
 - There are a lot of problems with panel support (funny that I'm supporting the
 panel code, and the oscar code I wrote doesn't work well with it).
+
+- Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
+while, evidently). So if you want to "whisper" to someone, just IM them.
 
 - Oh, yeah, by the way, it'll eat up all your CPU. (Someone please fix this,
 there's a nice FIXME near the top of oscar.c that says what the problem is.)

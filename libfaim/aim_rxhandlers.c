@@ -5,6 +5,9 @@
  * with aim_rxdispatch(), the Rx dispatcher.  Queue/list management is
  * actually done in aim_rxqueue.c.
  *
+ * Changes by Eric Warmenhoven, Wed May 24 09:33:38 UTC 2000:
+ * - there were some "bleck" printf's i changed to faimdprintf's.
+ *
  */
 
 #include <aim.h>
@@ -174,9 +177,9 @@ int bleck(struct aim_session_t *sess,struct command_rx_struct *workingPtr, ...)
   subtype= aimutil_get16(workingPtr->data+2);
 
   if((family < maxf) && (subtype+1 < maxs) && (literals[family][subtype] != NULL))
-    printf("bleck: null handler for %04x/%04x (%s)\n", family, subtype, literals[family][subtype+1]);
+    faimdprintf(1, "bleck: null handler for %04x/%04x (%s)\n", family, subtype, literals[family][subtype+1]);
   else
-    printf("bleck: null handler for %04x/%04x (no literal)\n",family,subtype);
+    faimdprintf(1, "bleck: null handler for %04x/%04x (no literal)\n",family,subtype);
 
   return 1;
 }
