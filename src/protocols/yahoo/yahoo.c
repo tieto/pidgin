@@ -1722,10 +1722,10 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 		msg = g_strdup(_("Incorrect password."));
 		break;
 	case 14:
-		msg = g_strdup(_("Your account is locked, please log in to the yahoo website."));
+		msg = g_strdup(_("Your account is locked, please log in to the Yahoo! website."));
 		break;
 	default:
-		msg = g_strdup_printf(_("Unknown error number %d."), err);
+		msg = g_strdup_printf(_("Unknown error number %d. Logging into the Yahoo! website may fix this."), err);
 	}
 
 	if (url)
@@ -1733,6 +1733,7 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 	else
 		fullmsg = g_strdup(msg);
 
+	gc->wants_to_die = TRUE;
 	gaim_connection_error(gc, fullmsg);
 	g_free(msg);
 	g_free(fullmsg);
@@ -2665,10 +2666,10 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 		yahoo_packet_hash(pkt, 97, "1");
 	yahoo_packet_hash(pkt, 14, msg2);
 
-	yahoo_packet_hash(pkt, 63, ";0"); /* IMvironment */
-	yahoo_packet_hash(pkt, 64, "0"); /* no idea */
+	yahoo_packet_hash(pkt,   63, ";0"); /* IMvironment */
+	yahoo_packet_hash(pkt,   64, "0"); /* no idea */
 	yahoo_packet_hash(pkt, 1002, "1"); /* no idea, Yahoo 6 or later only it seems */
-	yahoo_packet_hash(pkt, 206, "0"); /* 0 = no picture, 2 = picture, maybe 1 = avatar? */
+	yahoo_packet_hash(pkt,  206, "0"); /* 0 = no picture, 2 = picture, maybe 1 = avatar? */
 
 	yahoo_send_packet(yd, pkt);
 
