@@ -40,7 +40,8 @@ struct msn_data {
 	int inpa;
 	GSList *switches;
 	GSList *fl;
-	gboolean imported;
+	GSList *permit;
+	GSList *deny;
 };
 
 struct msn_switchboard {
@@ -599,6 +600,7 @@ static void msn_accept_add(gpointer w, struct msn_add_permit *map)
 		signoff(map->gc);
 		return;
 	}
+	build_allow_list(); /* er. right. we'll need to have a thing for this in CUI too */
 
 	show_got_added(map->gc, NULL, map->user, map->friend, NULL);
 }
@@ -632,7 +634,8 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 
 	if (!g_strncasecmp(buf, "ADD", 3)) {
 		char *list, *user, *friend, *tmp = buf;
-		struct msn_add_permit *ap = g_new0(struct msn_add_permit, 1);
+		struct msn_add_permit *ap;
+		GSList *perm = gc->permit;
 		char msg[MSN_BUF_LEN];
 
 		GET_NEXT(tmp);
@@ -649,6 +652,13 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		if (g_strcasecmp(list, "RL"))
 			return;
 
+		while (perm) {
+			if (!g_strcasecmp(perm->data, user))
+				return;
+			perm = perm->next;
+		}
+
+		ap = g_new0(struct msn_add_permit, 1);
 		ap->user = g_strdup(user);
 		ap->friend = g_strdup(friend);
 		ap->gc = gc;
@@ -658,6 +668,27 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 
 		do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
 	} else if (!g_strncasecmp(buf, "BLP", 3)) {
+		char *type, *tmp = buf;
+
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		type = tmp;
+
+		if (!g_strcasecmp(type, "AL")) {
+			/* If the current setting is AL, messages
+			 * from users who are not in BL will be delivered
+			 *
+			 * In other words, deny some */
+			gc->permdeny = DENY_SOME;
+		} else {
+			/* If the current
+			 * setting is BL, only messages from people who are in the AL will be
+			 * delivered.
+			 * 
+			 * In other words, permit some */
+			gc->permdeny = PERMIT_SOME;
+		}
 	} else if (!g_strncasecmp(buf, "BPR", 3)) {
 	} else if (!g_strncasecmp(buf, "CHG", 3)) {
 	} else if (!g_strncasecmp(buf, "CHL", 3)) {
@@ -725,6 +756,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		serv_got_update(gc, user, 1, 0, 0, 0, status, 0);
 	} else if (!g_strncasecmp(buf, "LST", 3)) {
 		char *which, *who, *friend, *tmp = buf;
+		int pos, tot;
 
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
@@ -732,22 +764,51 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
+		pos = strtol(tmp, NULL, 10);
 		GET_NEXT(tmp);
+		tot = strtol(tmp, NULL, 10);
 		GET_NEXT(tmp);
 		who = tmp;
 
 		GET_NEXT(tmp);
 		friend = url_decode(tmp);
 
-		if (!g_strcasecmp(which, "FL")) {
+		if (!g_strcasecmp(which, "FL") && pos) {
 			struct msn_buddy *b = g_new0(struct msn_buddy, 1);
 			b->user = g_strdup(who);
 			b->friend = g_strdup(friend);
 			md->fl = g_slist_append(md->fl, b);
-		} else if (!md->imported) {
+		} else if (!g_strcasecmp(which, "AL") && pos) {
+			gc->permit = g_slist_append(gc->permit, g_strdup(who));
+		} else if (!g_strcasecmp(which, "BL") && pos) {
+			gc->deny = g_slist_append(gc->deny, g_strdup(who));
+		} else if (!g_strcasecmp(which, "RL")) {
+			if (pos != tot)
+				return;
+
+			g_snprintf(buf, sizeof(buf), "CHG %d NLN\n", ++md->trId);
+			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+				hide_login_progress(gc, "Unable to write");
+				signoff(gc);
+				return;
+			}
+
+			account_online(gc);
+			serv_finish_login(gc);
+
+			md->permit = g_slist_copy(gc->permit);
+			md->deny = g_slist_copy(gc->deny);
+
 			if (bud_list_cache_exists(gc))
 				do_import(gc, NULL);
-			md->imported = TRUE;
+			else {
+				g_snprintf(buf, sizeof(buf), "BLP %d AL\n", ++md->trId);
+				if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+					hide_login_progress(gc, "Unable to write");
+					signoff(gc);
+					return;
+				}
+			}
 			while (md->fl) {
 				struct msn_buddy *mb = md->fl->data;
 				struct buddy *b;
@@ -1047,23 +1108,6 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 				return;
 			}
 
-			g_snprintf(buf, sizeof(buf), "CHG %d NLN\n", ++md->trId);
-			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-				hide_login_progress(gc, "Unable to write");
-				signoff(gc);
-				return;
-			}
-
-			g_snprintf(buf, sizeof(buf), "BLP %d AL\n", ++md->trId);
-			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
-				hide_login_progress(gc, "Unable to write");
-				signoff(gc);
-				return;
-			}
-
-			account_online(gc);
-			serv_finish_login(gc);
-
 			gaim_input_remove(md->inpa);
 			md->inpa = gaim_input_add(md->fd, GAIM_INPUT_READ, msn_callback, gc);
 		} else if (!g_strcasecmp(resp, "MD5")) {
@@ -1188,6 +1232,8 @@ static void msn_close(struct gaim_connection *gc)
 		g_free(tmp->friend);
 		g_free(tmp);
 	}
+	g_slist_free(md->permit);
+	g_slist_free(md->deny);
 	g_free(md);
 }
 
@@ -1479,6 +1525,131 @@ static void msn_convo_closed(struct gaim_connection *gc, char *who)
 		msn_kill_switch(ms);
 }
 
+static void msn_keepalive(struct gaim_connection *gc)
+{
+	struct msn_data *md = gc->proto_data;
+	char buf[MSN_BUF_LEN];
+
+	g_snprintf(buf, sizeof(buf), "PNG\n");
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+}
+
+static void msn_set_permit_deny(struct gaim_connection *gc)
+{
+	struct msn_data *md = gc->proto_data;
+	char buf[MSN_BUF_LEN];
+	GSList *s;
+
+	if (gc->permdeny == PERMIT_ALL || gc->permdeny == DENY_SOME)
+		g_snprintf(buf, sizeof(buf), "BLP %d AL\n", ++md->trId);
+	else
+		g_snprintf(buf, sizeof(buf), "BLP %d BL\n", ++md->trId);
+
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+
+	/* this is safe because we'll always come here after we've gotten the list off the server,
+	 * and data is never removed. So if the lengths are equal we don't know about anyone locally
+	 * and so there's no sense in going through them all. */
+	if (g_slist_length(gc->permit) == g_slist_length(md->permit)) {
+		g_slist_free(md->permit);
+		md->permit = NULL;
+	}
+	if (g_slist_length(gc->deny) == g_slist_length(md->deny)) {
+		g_slist_free(md->deny);
+		md->deny = NULL;
+	}
+	if (!md->permit && !md->deny)
+		return;
+
+	s = g_slist_nth(gc->permit, g_slist_length(md->permit));
+	while (s) {
+		char *who = s->data;
+		g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\n", ++md->trId, who, who);
+		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			hide_login_progress(gc, "Write error");
+			signoff(gc);
+			return;
+		}
+		s = s->next;
+	}
+	g_slist_free(md->permit);
+	md->permit = NULL;
+
+	s = g_slist_nth(gc->deny, g_slist_length(md->deny));
+	while (s) {
+		char *who = s->data;
+		g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\n", ++md->trId, who, who);
+		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			hide_login_progress(gc, "Write error");
+			signoff(gc);
+			return;
+		}
+		s = s->next;
+	}
+	g_slist_free(md->deny);
+	md->deny = NULL;
+}
+
+static void msn_add_permit(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = gc->proto_data;
+	char buf[MSN_BUF_LEN];
+
+	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\n", ++md->trId, who, who);
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+}
+
+static void msn_rem_permit(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = gc->proto_data;
+	char buf[MSN_BUF_LEN];
+
+	g_snprintf(buf, sizeof(buf), "REM %d AL %s\n", ++md->trId, who);
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+}
+
+static void msn_add_deny(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = gc->proto_data;
+	char buf[MSN_BUF_LEN];
+
+	g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\n", ++md->trId, who, who);
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+}
+
+static void msn_rem_deny(struct gaim_connection *gc, char *who)
+{
+	struct msn_data *md = gc->proto_data;
+	char buf[MSN_BUF_LEN];
+
+	g_snprintf(buf, sizeof(buf), "REM %d BL %s\n", ++md->trId, who);
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(gc, "Write error");
+		signoff(gc);
+		return;
+	}
+}
+
 static struct prpl *my_protocol = NULL;
 
 void msn_init(struct prpl *ret)
@@ -1503,6 +1674,12 @@ void msn_init(struct prpl *ret)
 	ret->do_action = msn_do_action;
 	ret->actions = msn_actions;
 	ret->convo_closed = msn_convo_closed;
+	ret->keepalive = msn_keepalive;
+	ret->set_permit_deny = msn_set_permit_deny;
+	ret->add_permit = msn_add_permit;
+	ret->rem_permit = msn_rem_permit;
+	ret->add_deny = msn_add_deny;
+	ret->rem_deny = msn_rem_deny;
 
 	my_protocol = ret;
 }

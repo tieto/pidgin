@@ -2697,6 +2697,7 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	default:
 		break;
 	}
+	signoff_blocked(gc);
 }
 
 static void oscar_add_permit(struct gaim_connection *gc, char *who) {

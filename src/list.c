@@ -775,3 +775,63 @@ void do_export(struct gaim_connection *g)
 	g_free(g_screenname);
 	g_free(file);
 }
+
+static gboolean is_blocked(struct buddy *b)
+{
+	struct gaim_connection *gc = b->gc;
+
+	if (gc->permdeny == PERMIT_ALL)
+		return FALSE;
+
+	if (gc->permdeny == PERMIT_NONE) {
+		if (g_strcasecmp(b->name, gc->displayname))
+			return TRUE;
+		else
+			return FALSE;
+	}
+
+	if (gc->permdeny == PERMIT_SOME) {
+		char *x = g_strdup(normalize(b->name));
+		GSList *s = gc->permit;
+		while (s) {
+			if (!g_strcasecmp(x, normalize(s->data)))
+				break;
+			s = s->next;
+		}
+		g_free(x);
+		if (s)
+			return FALSE;
+		return TRUE;
+	}
+
+	if (gc->permdeny == DENY_SOME) {
+		char *x = g_strdup(normalize(b->name));
+		GSList *s = gc->deny;
+		while (s) {
+			if (!g_strcasecmp(x, normalize(s->data)))
+				break;
+			s = s->next;
+		}
+		g_free(x);
+		if (s)
+			return TRUE;
+		return FALSE;
+	}
+
+	return FALSE;
+}
+
+void signoff_blocked(struct gaim_connection *gc)
+{
+	GSList *g = gc->groups;
+	while (g) {
+		GSList *m = ((struct group *)g->data)->members;
+		while (m) {
+			struct buddy *b = m->data;
+			if (is_blocked(b))
+				serv_got_update(gc, b->name, 0, 0, 0, 0, 0, 0);
+			m = m->next;
+		}
+		g = g->next;
+	}
+}

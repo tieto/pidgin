@@ -150,6 +150,7 @@ extern void do_import(struct gaim_connection *, char *);
 extern int bud_list_cache_exists(struct gaim_connection *);
 extern void toc_build_config(struct gaim_connection *, char *, int len, gboolean);
 extern void parse_toc_buddy_list(struct gaim_connection *, char *);
+extern void signoff_blocked(struct gaim_connection *);
 
 /* Functions in core.c */
 extern gint UI_write(struct UI *, guchar *, int);

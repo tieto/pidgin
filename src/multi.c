@@ -107,6 +107,16 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 		}
 		g_free(m);
 	}
+	g = gc->permit;
+	while (g) {
+		g_free(g->data);
+		g = g_slist_remove(g, g->data);
+	}
+	g = gc->deny;
+	while (g) {
+		g_free(g->data);
+		g = g_slist_remove(g, g->data);
+	}
 	g_free(gc);
 #ifndef USE_APPLET
 	if (!connections && mainwindow)
