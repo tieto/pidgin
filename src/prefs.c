@@ -40,6 +40,7 @@
 #include "pixmaps/refresh.xpm"
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
+#include "pixmaps/gnome_preferences.xpm"
 #include "pixmaps/palette.xpm"
 #include "pixmaps/save.xpm"
 
@@ -1150,19 +1151,7 @@ void away_list_clicked(GtkWidget *widget, struct away_message *a)
 	strcpy(buffer, a->message);
 	gtk_text_insert(GTK_TEXT(away_text), NULL, NULL, NULL, buffer, -1);
 }
-/*
-void away_list_unclicked(GtkWidget *widget, struct away_message *a)
-{
-	if (prefs_away_list == NULL)
-		return;
 
-	strcpy(a->message, edited_message);
-	save_prefs();
-	
-	/* point edited_message to the new text */
-/*	edited_message = gtk_editable_get_chars(GTK_EDITABLE(away_text), 0, -1);
-}
-*/
 void save_away_message(GtkWidget *widget, void *dummy)
 {
 	/* grab the current message */
@@ -1178,9 +1167,13 @@ void remove_away_message(GtkWidget *widget, void *dummy)
 
         i = GTK_LIST(prefs_away_list)->selection;
 
-        a = gtk_object_get_user_data(GTK_OBJECT(i->data));
-
-        rem_away_mess(NULL, a);
+	if (!i->next) {
+		int text_len = gtk_text_get_length(GTK_TEXT(away_text));
+		gtk_text_set_point(GTK_TEXT(away_text), 0 );
+		gtk_text_forward_delete (GTK_TEXT(away_text), text_len);
+	}
+	a = gtk_object_get_user_data(GTK_OBJECT(i->data));
+	rem_away_mess(NULL, a);
 }
 
 static void paldest(GtkWidget *m, gpointer n)
@@ -1189,10 +1182,18 @@ static void paldest(GtkWidget *m, gpointer n)
 	prefs_away_list = NULL;
 }
 
+static void do_away_mess(GtkWidget *m, gpointer n)
+{
+	GList *i = GTK_LIST(prefs_away_list)->selection;
+	if (i)
+		do_away_message(NULL, gtk_object_get_user_data(GTK_OBJECT(i->data)));
+}
+
 static void away_page()
 {
 	GtkWidget *parent;
 	GtkWidget *box;
+	GtkWidget *hbox;
 	GtkWidget *top;
 	GtkWidget *bot;
 	GtkWidget *sw;
@@ -1200,6 +1201,7 @@ static void away_page()
 	GtkWidget *button;
 	GtkWidget *label;
 	GtkWidget *list_item;
+	GtkWidget *sep;
 	GList *awy = away_messages;
 	struct away_message *a;
 	char buffer[BUF_LONG];
@@ -1214,14 +1216,32 @@ static void away_page()
 	gtk_container_add(GTK_CONTAINER(prefdialog), box);
 	gtk_widget_show(box);
 
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_set_usize(hbox, -1, 30);
+	gtk_widget_show(hbox);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Title"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	label = gtk_label_new(_("Message"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
 	top = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), top, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), top, FALSE, TRUE, 0);
 	gtk_widget_show(top);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start(GTK_BOX(top), sw, TRUE, TRUE, 0);
+	gtk_widget_set_usize(sw, -1, 225);
 	gtk_widget_show(sw);
 
 	prefs_away_list = gtk_list_new();
@@ -1238,25 +1258,29 @@ static void away_page()
 	away_text = gtk_text_new(NULL, NULL);
 	gtk_container_add(GTK_CONTAINER(sw2), away_text);
 	gtk_text_set_word_wrap(GTK_TEXT(away_text), TRUE);
-	gtk_text_set_editable(GTK_TEXT(away_text), TRUE);
+	gtk_text_set_editable(GTK_TEXT(away_text), FALSE);
 	gtk_widget_show(away_text);
 
 	bot = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), bot, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), bot, FALSE, FALSE, 5);
 	gtk_widget_show(bot);
 
 	button = picture_button(prefs, _("Add"), gnome_add_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), NULL);
+	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
+
+	button = picture_button(prefs, _("Edit"), save_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_away_mess), button);
+	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
+	
+	button = picture_button(prefs, _("Make Away"), gnome_preferences_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(do_away_mess), NULL);
 	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
 
 	button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(remove_away_message), NULL);
 	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
 
-	button = picture_button(prefs, _("Save"), save_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(save_away_message), NULL);
-	gtk_box_pack_start(GTK_BOX(bot), button, TRUE, FALSE, 5);
-	
 	if (awy != NULL) {
 		a = (struct away_message *)awy->data;
 		g_snprintf(buffer, sizeof(buffer), "%s", a->message);
@@ -1278,6 +1302,17 @@ static void away_page()
 
                 awy = awy->next;
         }
+
+	sep = gtk_hseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
+	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	gaim_button(_("Ignore new conversations when away"), &general_options, OPT_GEN_DISCARD_WHEN_AWAY, hbox);
+	gaim_button(_("Sounds while away"), &sound_options, OPT_SOUND_WHEN_AWAY, hbox);
 
 	gtk_widget_show(prefdialog);
 }
