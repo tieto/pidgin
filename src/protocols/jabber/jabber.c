@@ -1234,9 +1234,10 @@ static time_t iso8601_to_time(char *timestamp)
 	struct tm t;
 	time_t retval = 0;
 	localtime_r(NULL, &t);
+	char tz[6] = "";
 
-	if(sscanf(timestamp, "%04d%02d%02dT%02d:%02d:%02d",
-		&t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec))
+	if(sscanf(timestamp, "%04d%02d%02dT%02d:%02d:%02d%5s",
+		&t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec, tz))
 	{
 		t.tm_year -= 1900;
 		t.tm_mon -= 1;
@@ -1249,6 +1250,16 @@ static time_t iso8601_to_time(char *timestamp)
 				retval -= timezone;
 #		        endif
 #		endif
+
+		if(tz[0] == '+' || tz[0] == '-') {
+			int hr, min;
+			if(sscanf(tz+1, "%2d%2d", &hr, &min)) {
+				if(tz[0] == '+')
+					retval -= (hr*60 + min)*60;
+				else
+					retval += (hr*60 + min)*60;
+			}
+		}
 	}
 
 	return retval;
