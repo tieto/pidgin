@@ -5754,7 +5754,8 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 		g_object_unref(G_OBJECT(bm));
 
 	button_type = gaim_prefs_get_int("/gaim/gtk/conversations/button_type");
-	gtk_widget_size_request(gtkconv->bbox, &requisition);
+	/* the button seems to get its size before the box, so... */
+	gtk_widget_size_request(gtkconv->send, &requisition);
 	if (button_type == GAIM_BUTTON_NONE || requisition.height * 1.5 < scale_height) {
 		gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox), vbox, FALSE, FALSE, 0);
 /*		gtk_box_reorder_child(GTK_BOX(gtkconv->lower_hbox), vbox, 0); */
