@@ -435,7 +435,8 @@ add_cmd(MsnServConn *servconn, const char *command, const char **params,
 	if (!g_ascii_strcasecmp(list, "FL")) {
 		user = msn_user_new(session, passport, NULL);
 
-		msn_user_set_group_id(user, atoi(group_id));
+		if (group_id != NULL)
+			msn_user_set_group_id(user, atoi(group_id));
 
 		add_buddy(servconn, user);
 
