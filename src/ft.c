@@ -112,63 +112,29 @@ gaim_xfer_set_status(GaimXfer *xfer, GaimXferStatusType status)
 	xfer->status = status;
 }
 
-/*
- * XXX - I REALLY feel like this should be using strerror.
- * Also, should this use gaim_xfer_error?
- */
-static void gaim_xfer_show_file_error(const char *filename)
+static void gaim_xfer_show_file_error(GaimXfer *xfer, const char *filename)
 {
 	gchar *msg = NULL;
+	GaimXferType xfer_type = gaim_xfer_get_type(xfer);
 
-	switch (errno) 
-	{
-		case ENOENT: 
-			msg = g_strdup_printf(_("%s does not exist.\n"), filename);
+	switch(xfer_type) {
+		case GAIM_XFER_SEND:
+			msg = g_strdup_printf(_("Error reading %s: \n%s.\n"),
+								  filename, strerror(errno));
 			break;
-		case EISDIR: 
-			msg = g_strdup_printf(_("%s is a directory, not a file.\n"), filename);
-			break;
-		case ENOTDIR: 
-			msg = g_strdup_printf( _("A component of %s is not a directory.\n"), filename);
-			break;
-#ifndef _WIN32
-		case ELOOP: 
-			msg = g_strdup_printf( _("Too many symbolic links in path for %s\n"), filename);
-			break;
-		case ETXTBSY:
-			msg = g_strdup_printf(_("Cannot write %s: File is in use\n"), filename);
-			break;
-#endif
-		case EACCES: 
-			msg = g_strdup_printf( _("Permission denied accessing %s\n"), filename);
-			break;
-		case ENAMETOOLONG: 
-			msg = g_strdup_printf(_("File name too long: %s\n"), filename);
-			break;
-		case EROFS: 
-			msg = g_strdup_printf(_("Cannot write %s: Read only filesystem\n"), filename);
-			break;
-		case ENOSPC:
-			msg = g_strdup_printf(_("Cannot write %s: No space on filesystem\n"), filename);
-			break;
-		case EMFILE:
-			msg = g_strdup_printf(_("Cannot open %s: Gaim has too many files open\n"), filename);
-			break;
-		case ENFILE:
-			msg = g_strdup_printf(_("Cannot open %s: Your user or system has too many files open\n"), filename);
-			break;
-		case ENOMEM:
-			msg = g_strdup_printf(_("Cannot open %s: Not enough memory\n"), filename);
+		case GAIM_XFER_RECEIVE:
+			msg = g_strdup_printf(_("Error writing %s: \n%s.\n"),
+								  filename, strerror(errno));
 			break;
 		default:
 			msg = NULL;
+			msg = g_strdup_printf(_("Error accessing %s: \n%s.\n"),
+								  filename, strerror(errno));
 			break;
-	}
+		}
 
-	if (msg != NULL) {
-		gaim_notify_error(NULL, NULL, msg, NULL);
-		g_free(msg);
-	}
+	gaim_xfer_error(xfer_type, xfer->who, msg);
+	g_free(msg);
 }
 
 static void
@@ -185,7 +151,7 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 			gaim_xfer_request_accepted(xfer, filename);
 		}
 		else {
-		  	gaim_xfer_show_file_error(filename);
+		  	gaim_xfer_show_file_error(xfer, filename);
 			gaim_xfer_request_denied(xfer);
 		}
 	}
@@ -365,7 +331,7 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 		}
 
 		if (stat(filename, &st) == -1) {
-		  	gaim_xfer_show_file_error(filename);
+		  	gaim_xfer_show_file_error(xfer, filename);
 			gaim_xfer_unref(xfer);
 			return;
 		}
@@ -769,7 +735,7 @@ begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 						  type == GAIM_XFER_RECEIVE ? "wb" : "rb");
 
 	if (xfer->dest_fp == NULL) {
-		gaim_xfer_show_file_error(gaim_xfer_get_local_filename(xfer));
+		gaim_xfer_show_file_error(xfer, gaim_xfer_get_local_filename(xfer));
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
