@@ -38,6 +38,7 @@
 #    define N_(String) (String)
 #  endif
 #else
+#  include <locale.h>
 #  define N_(String) (String)
 #  define _(x) (x)
 #  define ngettext(Singular, Plural, Number) ((Number == 1) ? (Singular) : (Plural))

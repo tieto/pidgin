@@ -62,7 +62,6 @@
 # include <signal.h>
 #endif
 
-#include "locale.h"
 #include <getopt.h>
 
 #ifdef HAVE_STARTUP_NOTIFICATION

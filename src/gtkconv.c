@@ -35,7 +35,6 @@
 #endif
 
 #include <gdk/gdkkeysyms.h>
-#include <locale.h>
 
 #include "debug.h"
 #include "imgstore.h"

@@ -24,7 +24,6 @@
 #include "internal.h"
 
 #include <getopt.h>
-#include <locale.h>
 
 #include <gaim-remote/remote.h>
 
