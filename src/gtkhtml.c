@@ -2096,8 +2096,7 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	{
 		gdk_gc_set_background(gc, &widget->style->base[GTK_STATE_NORMAL]);
 		gdk_draw_pixmap(html->html_area, gc, hb->pm, 0, 0, hb->x,
-						hb->y - html->yoffset - (hb->height) + 4, hb->width,
-						hb->height - 2);
+						hb->y - html->yoffset - (hb->height) + 4, -1, -1);
 	}
 }
 
@@ -2938,7 +2937,8 @@ static void gtk_html_add_text(GtkHtml * html,
 				hb = (GtkHtmlBit *) hbits->data;
 				if (hb->y != y)
 					break;
-				hb->height = height;
+				if (hb->type != HTML_BIT_PIXMAP)
+					hb->height = height;
 				hb->y += diff;  ////////////my thing here /////////////////
 				gtk_html_draw_bit(html, hb, FALSE);
 
