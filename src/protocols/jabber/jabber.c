@@ -2152,8 +2152,8 @@ static gboolean jabber_free(gpointer data)
 	struct jabber_data *jd = data;
 
 	if(jd->gjc != NULL) {
-		gjab_delete(jd->gjc);
 		g_free(jd->gjc->sid);
+		gjab_delete(jd->gjc);
 		jd->gjc = NULL;
 	}
 	g_free(jd);
