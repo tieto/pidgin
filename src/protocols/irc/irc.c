@@ -1216,7 +1216,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		}
 		if (!c)
 			return -EINVAL;
-		write_to_conv(c, "<B>Unsupported command</B>", WFLAG_SYSTEM, NULL, time(NULL));
+		write_to_conv(c, "<B>Unknown command</B>", WFLAG_SYSTEM, NULL, time(NULL));
 	}
 
 	return 0;
