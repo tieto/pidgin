@@ -962,7 +962,7 @@ gaim_pounces_init(void)
 						GINT_TO_POINTER(GAIM_POUNCE_IDLE));
 	gaim_signal_connect(blist_handle, "buddy-unidle",
 						handle, GAIM_CALLBACK(buddy_state_cb),
-						GINT_TO_POINTER(GAIM_POUNCE_IDLE));
+						GINT_TO_POINTER(GAIM_POUNCE_IDLE_RETURN));
 	gaim_signal_connect(blist_handle, "buddy-away",
 						handle, GAIM_CALLBACK(buddy_state_cb),
 						GINT_TO_POINTER(GAIM_POUNCE_AWAY));
