@@ -340,6 +340,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	GtkWidget *frame;
 	GtkWidget *label;
 	GtkWidget *table;
+	GtkSizeGroup *sg;
 	GList *gl, *fl;
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
@@ -365,6 +366,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	vbox = gtk_vbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
 	gtk_widget_show(vbox);
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if (primary != NULL || secondary != NULL) {
 		label_text = g_strdup_printf("<span weight=\"bold\" size=\"larger\">"
@@ -438,6 +441,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 					g_free(text);
 
 					gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+
+					gtk_size_group_add_widget(sg, label);
 
 					gtk_table_attach_defaults(GTK_TABLE(table), label,
 											  col_offset, col_offset + 1,
@@ -553,6 +558,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 			}
 		}
 	}
+
+	g_object_unref(sg);
 
 	gtk_widget_show(win);
 
