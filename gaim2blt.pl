@@ -29,7 +29,7 @@ while (<>) {
 
     if ($type eq 'g') {
         print "    }\n" if ($in_group);
-        print "    $args {\n";
+        print qq(    "$args" {\n)";
         $in_group = 1;
     } elsif ($type eq 'b') {
         my ($buddy, $alias) = split /:/, $args;
