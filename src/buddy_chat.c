@@ -1302,6 +1302,9 @@ void show_new_buddy_chat(struct conversation *b)
 	if (!(chat_options & OPT_CHAT_ONE_WINDOW))
 		gtk_window_set_focus(GTK_WINDOW(b->window), b->entry);
 
+
+	b->makesound = 1; /* Need to do this until we get a menu */
+
 	toolbar = build_conv_toolbar(b);
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 

@@ -82,6 +82,7 @@ C_SRC =			admin.c		\
 			chat.c		\
 			chatnav.c	\
 			conn.c		\
+			email.c		\
 			ft.c		\
 			icq.c		\
 			im.c		\
