@@ -43,6 +43,14 @@
 			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
 #define GAIM_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
 
+/* This is backwards-compatibility code for old versions of GTK+ (2.2.1 and
+ * earlier).  It defines the new wrap behavior (unknown in earlier versions)
+ * as the old (slightly buggy) wrap behavior.
+ */
+#ifndef GTK_WRAP_WORD_CHAR
+#define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
+#endif
+
 #define DEFAULT_FONT_FACE "Helvetica"
 
 #define BROWSER_NETSCAPE              0

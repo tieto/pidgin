@@ -1898,7 +1898,7 @@ static void build_debug()
 	dw->entry = gtk_text_view_new();
 	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(dw->entry), FALSE);
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(dw->entry), FALSE);
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(dw->entry), GTK_WRAP_WORD);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(dw->entry), GTK_WRAP_WORD_CHAR);
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(dw->entry));
 	gtk_text_buffer_get_end_iter(buffer, &end);

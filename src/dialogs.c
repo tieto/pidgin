@@ -1970,7 +1970,7 @@ void show_set_info(struct gaim_connection *gc)
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
 	b->text = gtk_text_view_new();
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(b->text), GTK_WRAP_WORD);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(b->text), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(b->text, 300, 200);
 	buf = g_malloc(strlen(account->user_info) + 1);
 	strncpy_nohtml(buf, account->user_info, strlen(account->user_info) + 1);
@@ -3086,7 +3086,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_box_pack_start(GTK_BOX(fbox), frame, TRUE, TRUE, 0);
 
 	ca->text = gtk_text_view_new();
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(ca->text), GTK_WRAP_WORD_CHAR);
 
 	gtk_container_add(GTK_CONTAINER(frame), ca->text);
 
@@ -4516,7 +4516,7 @@ void re_show_multi_entry_textboxes(GtkWidget **texts_ibox,
 		gtk_container_add(GTK_CONTAINER (*texts_ibox), frame);
 		mtd->textbox = gtk_text_view_new();
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(mtd->textbox), TRUE);
-		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(mtd->textbox), GTK_WRAP_WORD);
+		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(mtd->textbox), GTK_WRAP_WORD_CHAR);
 		gtk_text_buffer_set_text(
 				gtk_text_view_get_buffer(GTK_TEXT_VIEW(mtd->textbox)),
 					mtd->text?mtd->text:"", -1);

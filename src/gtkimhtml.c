@@ -51,6 +51,11 @@
 
 #include <pango/pango-font.h>
 
+/* GTK+ < 2.2.2 hack, see ui.h for details. */
+#ifndef GTK_WRAP_WORD_CHAR
+#define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
+#endif
+
 #define TOOLTIP_TIMEOUT 500
 
 static gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer user_data);
@@ -207,7 +212,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_get_end_iter (imhtml->text_buffer, &iter);
 	imhtml->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, FALSE);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(imhtml), FALSE);
 	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(imhtml), 5);
 	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(imhtml), FALSE);

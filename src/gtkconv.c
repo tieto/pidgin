@@ -3085,7 +3085,7 @@ setup_chat_pane(struct gaim_conversation *conv)
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
 
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 								MAX(buddy_chat_size.entry_height, 25));
 
@@ -3181,7 +3181,7 @@ setup_im_pane(struct gaim_conversation *conv)
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
 
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD_CHAR);
 	gtk_widget_set_size_request(gtkconv->entry, -1,
 								MAX(conv_size.entry_height, 25));
 
