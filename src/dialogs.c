@@ -2050,18 +2050,72 @@ void show_find_info()
         GtkWidget *label;
         GtkWidget *bbox;
         GtkWidget *vbox;
-        GtkWidget *topbox;
+	GtkWidget *hbox;
+	GtkWidget *icon_i;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
+	GtkWidget *button_box;
+	GtkWidget *fbox;
+	GtkWidget *frame;
 
 	struct findbyinfo *b = g_new0(struct findbyinfo, 1);
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
-        dialogwindows = g_list_prepend(dialogwindows, b->window);
+	gtk_widget_set_usize(b->window, 350, 340);
+	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, FALSE, TRUE);
+	gtk_widget_show(b->window);
 
-        cancel = gtk_button_new_with_label(_("Cancel"));
-        ok = gtk_button_new_with_label(_("OK"));
+	dialogwindows = g_list_prepend(dialogwindows, b->window);
+
+
+	frame = gtk_frame_new(_("Search for Buddy"));
+	fbox = gtk_vbox_new(FALSE, 5);
+
+	/* Build OK Button */
+
+	ok = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, ok_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("OK"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(ok), button_box);
+
+	/* End of OK Button */
+	
+	/* Build Cancel Button */
+
+	cancel = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(cancel), button_box);
+	
+	/* End of Cancel Button */
 
         bbox = gtk_hbox_new(TRUE, 10);
-        topbox = gtk_table_new(7, 2, TRUE);
-        vbox = gtk_vbox_new(FALSE, 5);
+        vbox = gtk_vbox_new(FALSE, 2);
 
         b->firstentry = gtk_entry_new();
 	b->middleentry = gtk_entry_new();
@@ -2074,43 +2128,92 @@ void show_find_info()
         gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, TRUE, 10);
         gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
 
+	/* Line 1 */
         label = gtk_label_new(_("First Name"));
 	gtk_widget_show(label);
-	gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(topbox), b->firstentry, 1, 2, 0, 1);
+	
+	hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), b->firstentry, FALSE, FALSE, 5);
+
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+	/* Line 2 */
 
         label = gtk_label_new(_("Middle Name"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 1, 2);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), b->middleentry, 1, 2, 1, 2);
+	
+	hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), b->middleentry, FALSE, FALSE, 5);
 
-        label = gtk_label_new(_("Last Name"));
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+	/* Line 3 */
+
+	label = gtk_label_new(_("Last Name"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 2, 3);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), b->lastentry, 1, 2, 2, 3);
+	
+	hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), b->lastentry, FALSE, FALSE, 5);
 
-        label = gtk_label_new(_("Maiden Name"));
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+	/* Line 4 */
+
+	label = gtk_label_new(_("Maiden Name"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 3, 4);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), b->maidenentry, 1, 2, 3, 4);
+	
+	hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), b->maidenentry, FALSE, FALSE, 5);
 
-        label = gtk_label_new(_("City"));
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+	/* Line 5 */
+	
+	label = gtk_label_new(_("City"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 4, 5);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), b->cityentry, 1, 2, 4, 5);
+	
+	hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), b->cityentry, FALSE, FALSE, 5);
 
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+	/* Line 6 */
         label = gtk_label_new(_("State"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 5, 6);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), b->stateentry, 1, 2, 5, 6);
+	
+	hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), b->stateentry, FALSE, FALSE, 5);
 
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+	/* Line 7 */
         label = gtk_label_new(_("Country"));
         gtk_widget_show(label);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), label, 0, 1, 6, 7);
-        gtk_table_attach_defaults(GTK_TABLE(topbox), b->countryentry, 1, 2, 6, 7);
+	
+	hbox = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), b->countryentry, FALSE, FALSE, 5);
 
-	gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+
+	/* Merge The Boxes */	
+
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(fbox), bbox, FALSE, FALSE, 5);
 
         gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
                            GTK_SIGNAL_FUNC(destroy_dialog), b->window);
@@ -2128,13 +2231,15 @@ void show_find_info()
 	gtk_widget_show(b->cityentry);
 	gtk_widget_show(b->stateentry);
 	gtk_widget_show(b->countryentry);
-        gtk_widget_show(topbox);
         gtk_widget_show(bbox);                      
         gtk_widget_show(vbox);
+	gtk_widget_show(frame);
+	gtk_widget_show(fbox);
+
         gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Info"));
         gtk_window_set_focus(GTK_WINDOW(b->window), b->firstentry);
-        gtk_container_add(GTK_CONTAINER(b->window), vbox);
-        gtk_container_border_width(GTK_CONTAINER(b->window), 10);
+        gtk_container_add(GTK_CONTAINER(b->window), fbox);
+        gtk_container_border_width(GTK_CONTAINER(b->window), 5);
         gtk_widget_realize(b->window);
         aol_icon(b->window->window);
 
