@@ -179,7 +179,10 @@ debug_window_new(void)
 											NULL, _("Timestamps"), NULL, NULL,
 											NULL, G_CALLBACK(timestamps_cb),
 											win);
-
+		
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), 
+						gaim_prefs_get_bool("/gaim/gtk/debug/timestamps"));
+						
 		win->timestamps_handle =
 			gaim_prefs_connect_callback("/gaim/gtk/debug/timestamps",
 										timestamps_pref_cb, button);
@@ -417,4 +420,3 @@ gaim_gtk_debug_get_ui_ops(void)
 {
 	return &ops;
 }
-
