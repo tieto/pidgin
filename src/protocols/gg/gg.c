@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 9558 2004-04-24 12:19:43Z thekingant $
+ * $Id: gg.c 9665 2004-05-06 22:38:01Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -606,16 +606,16 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 	gaim_debug(GAIM_DEBUG_INFO, "gg", "Checking State.\n");
 	switch (gd->sess->state) {
 	case GG_STATE_READING_DATA:
-		gaim_connection_update_progress(gc, _("Reading data"), 2, GG_CONNECT_STEPS);
+		gaim_connection_update_progress(gc, _("Reading data"), 1, GG_CONNECT_STEPS);
 		break;
 	case GG_STATE_CONNECTING_GG:
-		gaim_connection_update_progress(gc, _("Balancer handshake"), 3, GG_CONNECT_STEPS);
+		gaim_connection_update_progress(gc, _("Balancer handshake"), 2, GG_CONNECT_STEPS);
 		break;
 	case GG_STATE_READING_KEY:
-		gaim_connection_update_progress(gc, _("Reading server key"), 4, GG_CONNECT_STEPS);
+		gaim_connection_update_progress(gc, _("Reading server key"), 3, GG_CONNECT_STEPS);
 		break;
 	case GG_STATE_READING_REPLY:
-		gaim_connection_update_progress(gc, _("Exchanging key hash"), 5, GG_CONNECT_STEPS);
+		gaim_connection_update_progress(gc, _("Exchanging key hash"), 4, GG_CONNECT_STEPS);
 		break;
 	default:
 		gaim_debug(GAIM_DEBUG_INFO, "gg", "No State found\n");
@@ -708,7 +708,7 @@ static void agg_login(GaimAccount *account)
 
 	gd->sess = g_new0(struct gg_session, 1);
 
-	gaim_connection_update_progress(gc, _("Looking up GG server"), 1, GG_CONNECT_STEPS);
+	gaim_connection_update_progress(gc, _("Looking up GG server"), 0, GG_CONNECT_STEPS);
 
 	if (invalid_uin(account->username)) {
 		gaim_connection_error(gc, _("Invalid Gadu-Gadu UIN specified"));

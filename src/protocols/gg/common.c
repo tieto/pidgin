@@ -1,4 +1,4 @@
-/* $Id: common.c 3850 2002-10-16 19:57:03Z hermanator $ */
+/* $Id: common.c 9665 2004-05-06 22:38:01Z thekingant $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -17,6 +17,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+#include "debug.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,7 +66,8 @@ void gg_debug(int level, char *format, ...)
 	
 	if ((gg_debug_level & level)) {
 		va_start(ap, format);
-		vprintf(format, ap);
+		/* vprintf(format, ap); */
+		gaim_debug_vargs(GAIM_DEBUG_INFO, "gg", format, ap);
 		va_end(ap);
 	}
 }
