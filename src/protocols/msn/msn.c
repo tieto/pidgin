@@ -953,7 +953,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 
 		GET_NEXT(tmp);
 		if (!g_strncasecmp(tmp, "OTH", 3)) {
-			g_snprintf(msg, sizeof(mg), _("You have been disconnected. You have signed on from another location."));
+			g_snprintf(msg, sizeof(msg), _("You have been disconnected. You have signed on from another location."));
 			do_error_dialog(msg, _("MSN Error"));
 		}
 	} else if (!g_strncasecmp(buf, "PRP", 3)) {
