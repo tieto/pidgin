@@ -1963,6 +1963,7 @@ update_send_as_selection(struct gaim_window *win)
 
 	conv = gaim_window_get_active_conversation(win);
 
+
 	if (conv == NULL)
 		return FALSE;
 
@@ -2108,7 +2109,7 @@ generate_send_as_items(struct gaim_window *win,
 		g_object_set_data(G_OBJECT(menuitem), "user_data", win);
 		g_object_set_data(G_OBJECT(menuitem), "gaim_account", gc->account);
 
-		g_signal_connect_after(G_OBJECT(menuitem), "activate",
+		g_signal_connect(G_OBJECT(menuitem), "activate",
 						 G_CALLBACK(menu_conv_sel_send_cb), NULL);
 
 		gtk_widget_show(menuitem);
@@ -2136,6 +2137,7 @@ generate_send_as_items(struct gaim_window *win,
 			continue;
 
 		account = gaim_conversation_get_account(conv);
+
 
 		if (account->gc == NULL) {
 			if (first_offline && found_online) {
@@ -2186,7 +2188,11 @@ generate_send_as_items(struct gaim_window *win,
 			gtk_widget_show(box);
 
 			gtk_widget_set_sensitive(menuitem, FALSE);
+			g_object_set_data(G_OBJECT(menuitem), "user_data", win);
 			g_object_set_data(G_OBJECT(menuitem), "gaim_account", account);
+
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+					G_CALLBACK(menu_conv_sel_send_cb), NULL);
 
 			gtk_widget_show(menuitem);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);

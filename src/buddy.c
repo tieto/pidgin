@@ -1248,6 +1248,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 			afsad = afsad->next;
 		}
 	}
+	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
 }
 
 static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
