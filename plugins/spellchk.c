@@ -386,9 +386,9 @@ plugin_load(GaimPlugin *plugin)
 
 	load_conf();
 
-	gaim_signal_connect(conv_handle, "displaying-im-msg",
+	gaim_signal_connect(conv_handle, "writing-im-msg",
 						plugin, GAIM_CALLBACK(substitute_words), NULL);
-	gaim_signal_connect(conv_handle, "displaying-chat-msg",
+	gaim_signal_connect(conv_handle, "writing-chat-msg",
 						plugin, GAIM_CALLBACK(substitute_words), NULL);
 
 	return TRUE;
