@@ -5995,7 +5995,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 			case 0x000c: { /* you are over the limit, the cheat is to the limit, come on fhqwhgads */
 				gchar *buf;
 				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
-				if (!gaim_conv_present_error(retval->name, gaim_connection_get_account(gc), buf))
+				if ((retval->name != NULL) && !gaim_conv_present_error(retval->name, gaim_connection_get_account(gc), buf))
 					gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
 			}
@@ -6009,7 +6009,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 				gchar *buf;
 				gaim_debug_error("oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
 				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
-				if (!gaim_conv_present_error(retval->name, gaim_connection_get_account(gc), buf))
+				if ((retval->name != NULL) && !gaim_conv_present_error(retval->name, gaim_connection_get_account(gc), buf))
 					gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
 			} break;
