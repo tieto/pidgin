@@ -23,6 +23,8 @@
 #ifndef _GAIM_GTK_ACCOUNT_H_
 #define _GAIM_GTK_ACCOUNT_H_
 
+#include "account.h"
+
 typedef enum
 {
 	GAIM_GTK_ADD_ACCOUNT_DIALOG,
