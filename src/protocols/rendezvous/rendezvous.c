@@ -145,6 +145,7 @@ static void rendezvous_removefromlocal(GaimConnection *gc, const char *name, con
 	serv_got_update(gc, b->name, 0, 0, 0, 0, 0);
 	gaim_blist_remove_buddy(b);
 	/* XXX - This results in incorrect group counts--needs to be fixed in the core */
+	/* XXX - We also need to call remove_idle_buddy() in server.c for idle buddies */ 
 
 	/*
 	 * XXX - Instead of removing immediately, wait 10 seconds and THEN remove
@@ -252,15 +253,16 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 			/* Idle */
 			node2 = mdns_txt_find(rdata, "away");
 			if ((node2 != NULL) && (node2->value)) {
+				/* Time is seconds since January 1st 2001 GMT */
 				rb->idle = atoi(node2->value);
-				gaim_debug_error("XXX", "User has been idle since %d\n", rb->idle);
+				rb->idle += 978307200; /* convert to seconds-since-epoch */
 			}
 			rb->status = UC_IDLE;
 		} else if (!strcmp(node1->value, "dnd")) {
 			/* Away */
 			rb->status = UC_UNAVAILABLE;
 		}
-		serv_got_update(gc, name, 1, 0, 0, 0, rb->status);
+		serv_got_update(gc, name, 1, 0, 0, rb->idle, rb->status);
 	}
 
 	node1 = mdns_txt_find(rdata, "msg");
