@@ -174,6 +174,7 @@ mdns_free(DNSPacket *dns)
 /* Functions for duplicating a DNS structure  */
 /**********************************************/
 
+#if 0
 static Question *
 mdns_copy_q(const Question *q)
 {
@@ -204,6 +205,7 @@ mdns_copy_qs(const GSList *qs)
 
 	return ret;
 }
+#endif
 
 static void *
 mdns_copy_rr_rdata_txt(const ResourceRecordRDataTXT *rdata)
@@ -275,6 +277,7 @@ mdns_copy_rr_rdata(unsigned short type, const void *rdata, unsigned int rdlength
 	return ret;
 }
 
+#if 0
 ResourceRecord *
 mdns_copy_rr(const ResourceRecord *rr)
 {
@@ -331,6 +334,7 @@ mdns_copy(const DNSPacket *dns)
 
 	return ret;
 }
+#endif
 
 /******************************************/
 /* Functions for connection establishment */
@@ -1383,7 +1387,6 @@ mdns_read_rrs(int numrecords, const char *data, unsigned int datalen, int *offse
 /**
  * If invalid data is encountered at any point when parsing data
  * then the entire packet is discarded and NULL is returned.
- *
  */
 DNSPacket *
 mdns_read(int fd)
