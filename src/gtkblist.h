@@ -135,8 +135,9 @@ GdkPixbuf *create_prpl_icon(GaimAccount *account);
  *
  * @param menu  The menu to populate
  * @param buddy The buddy who's menu to get
+ * @param sub   TRUE if this is a sub-menu, FALSE otherwise
  */
-void gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy);
+void gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub);
 
 /**
  * Refreshes all the nodes of the buddy list.

@@ -1132,7 +1132,7 @@ gaim_gtk_append_blist_node_extended_menu (GtkWidget *menu, GaimBlistNode *node)
 
 
 void
-gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy) {
+gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 	GaimPluginProtocolInfo *prpl_info;
 
 	g_return_if_fail(menu);
@@ -1167,7 +1167,7 @@ gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy) {
 
 	gaim_separator(menu);
 
-	if(((GaimBlistNode*)buddy)->parent->child->next) {
+	if(((GaimBlistNode*)buddy)->parent->child->next && !sub) {
 		gaim_new_item_from_stock(menu, _("_Alias Buddy..."), GAIM_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("_Remove Buddy"), GTK_STOCK_REMOVE,
@@ -1298,7 +1298,7 @@ create_buddy_menu(GaimBlistNode *node, GaimBuddy *b) {
 	gboolean show_offline = gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies");
 
 	menu = gtk_menu_new();
-	gaim_gtk_blist_make_buddy_menu(menu, b);
+	gaim_gtk_blist_make_buddy_menu(menu, b, FALSE);
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		gaim_separator(menu);
@@ -1345,7 +1345,7 @@ create_buddy_menu(GaimBlistNode *node, GaimBuddy *b) {
 				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 				gtk_widget_show(submenu);
 
-				gaim_gtk_blist_make_buddy_menu(submenu, buddy);
+				gaim_gtk_blist_make_buddy_menu(submenu, buddy, TRUE);
 			}
 		}
 	}
