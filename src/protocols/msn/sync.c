@@ -181,6 +181,8 @@ lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_change_status(session, MSN_ONLINE);
 
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
+		session->logged_in = TRUE;
+
 		serv_finish_login(gc);
 
 		msn_sync_destroy(session->sync);

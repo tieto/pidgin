@@ -51,6 +51,7 @@ struct _MsnSession
 	int dispatch_port;
 
 	gboolean connected;
+	gboolean logged_in; /* temporal flag to ignore local blist adds */
 
 	MsnNotification *notification;
 	MsnNexus *nexus;

@@ -294,7 +294,6 @@ show_send_to_mobile_cb(GaimBlistNode *node, gpointer ignored)
 {
 	GaimBuddy *buddy;
 	GaimConnection *gc;
-	MsnUser *user;
 	MsnSession *session;
 	MsnMobileData *data;
 
@@ -304,7 +303,6 @@ show_send_to_mobile_cb(GaimBlistNode *node, gpointer ignored)
 	gc = gaim_account_get_connection(buddy->account);
 
 	session = gc->proto_data;
-	user = msn_userlist_find_user(session->userlist, buddy->name);
 
 	data = g_new0(MsnMobileData, 1);
 	data->gc = gc;
@@ -340,6 +338,9 @@ initiate_chat_cb(GaimBlistNode *node, gpointer data)
 	/* TODO: This might move somewhere else, after USR might be */
 	swboard->chat_id = session->conv_seq++;
 	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
+
+	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
+							gaim_account_get_username(buddy->account), NULL);	
 }
 
 static void
@@ -812,6 +813,9 @@ msn_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
+	if (!session->logged_in)
+		return;
+
 	if (group != NULL && group->name != NULL)
 		gaim_debug_info("msn", "msn_add_buddy: %s, %s\n", who, group->name);
 	else
@@ -842,6 +846,9 @@ msn_rem_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	session = gc->proto_data;
 	userlist = session->userlist;
 
+	if (!session->logged_in)
+		return;
+
 	/* XXX - Does buddy->name need to be msn_normalize'd here?  --KingAnt */
 	msn_userlist_rem_buddy(userlist, buddy->name, MSN_LIST_FL, group->name);
 }
@@ -857,7 +864,10 @@ msn_add_permit(GaimConnection *gc, const char *who)
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, who);
 
-	if (user->list_op & MSN_LIST_BL_OP)
+	if (!session->logged_in)
+		return;
+
+	if (user != NULL && user->list_op & MSN_LIST_BL_OP)
 		msn_userlist_rem_buddy(userlist, who, MSN_LIST_BL, NULL);
 
 	msn_userlist_add_buddy(userlist, who, MSN_LIST_AL, NULL);
@@ -874,7 +884,10 @@ msn_add_deny(GaimConnection *gc, const char *who)
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, who);
 
-	if (user->list_op & MSN_LIST_AL_OP)
+	if (!session->logged_in)
+		return;
+
+	if (user != NULL && user->list_op & MSN_LIST_AL_OP)
 		msn_userlist_rem_buddy(userlist, who, MSN_LIST_AL, NULL);
 
 	msn_userlist_add_buddy(userlist, who, MSN_LIST_BL, NULL);
@@ -890,11 +903,14 @@ msn_rem_permit(GaimConnection *gc, const char *who)
 	session = gc->proto_data;
 	userlist = session->userlist;
 
+	if (!session->logged_in)
+		return;
+
 	user = msn_userlist_find_user(userlist, who);
 
 	msn_userlist_rem_buddy(userlist, who, MSN_LIST_AL, NULL);
 
-	if (user->list_op & MSN_LIST_RL_OP)
+	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy(userlist, who, MSN_LIST_BL, NULL);
 }
 
@@ -908,11 +924,14 @@ msn_rem_deny(GaimConnection *gc, const char *who)
 	session = gc->proto_data;
 	userlist = session->userlist;
 
+	if (!session->logged_in)
+		return;
+
 	user = msn_userlist_find_user(userlist, who);
 
 	msn_userlist_rem_buddy(userlist, who, MSN_LIST_BL, NULL);
 
-	if (user->list_op & MSN_LIST_RL_OP)
+	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy(userlist, who, MSN_LIST_AL, NULL);
 }
 

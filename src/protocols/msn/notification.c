@@ -689,6 +689,8 @@ syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (total_users == 0)
 	{
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
+		session->logged_in = TRUE;
+		
 		serv_finish_login(gc);
 	}
 	else

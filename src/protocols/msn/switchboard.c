@@ -66,7 +66,11 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	/* gaim_debug_info("msn", "user=[%s], total=%d\n", user,
 	 * swboard->current_users); */
 
-	if (swboard->current_users > 1 || swboard->total_users > 1)
+	if (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT)
+	{
+		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv), user, NULL);
+	}
+	else if (swboard->current_users > 1 || swboard->total_users > 1)
 	{
 		if (swboard->conv == NULL ||
 			gaim_conversation_get_type(swboard->conv) != GAIM_CONV_CHAT)
@@ -98,16 +102,6 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 										tmp_user, NULL);
 			}
 
-			if (!swboard->invited)
-			{
-				/* gaim_debug_info("msn", "[chat] "
-								"Not invited, so we add im_user [%s].\n",
-								swboard->im_user); */
-
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
-										swboard->im_user, NULL);
-			}
-
 			/* gaim_debug_info("msn", "[chat] We add ourselves.\n"); */
 
 			gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
@@ -117,10 +111,6 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 			g_free(swboard->im_user);
 			swboard->im_user = NULL;
 		}
-		else if (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT)
-		{
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv), user, NULL);
-		}
 	}
 	else if (swboard->conv == NULL)
 	{
@@ -128,7 +118,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 	else
 	{
-		gaim_debug_warning("msn", "This should happen!"
+		gaim_debug_warning("msn", "This should not happen!"
 						   "(msn_switchboard_add_user)\n");
 	}
 }
