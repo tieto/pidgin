@@ -9,7 +9,9 @@ void *handle;
 extern GtkWidget *imaway;
 extern GtkWidget *blist;
 
-extern void set_applet_draw_closed();
+#ifdef USE_APPLET
+extern void applet_destroy_buddy();
+#endif
 
 void iconify_windows(void *data) {
 	XIconifyWindow(GDK_DISPLAY(),
