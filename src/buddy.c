@@ -162,7 +162,8 @@ void update_all_buddies()
                 while(mem) {
 			b = (struct buddy *)mem->data;
 
-                        set_buddy(b);
+                        if (b->present || !GTK_WIDGET_VISIBLE(b->item))
+				set_buddy(b);
                         
                         mem = mem->next;
                 }
@@ -1426,9 +1427,7 @@ void set_buddy(struct buddy *b)
 
 
 	} else {
-		static struct buddy *last = NULL;
-		if (GTK_WIDGET_VISIBLE(b->item) && last != b) {
-			last = b;
+		if (GTK_WIDGET_VISIBLE(b->item)) {
 			play_sound(BUDDY_LEAVE);
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
 				NULL, (gchar **)logout_icon_xpm);
