@@ -1824,10 +1824,19 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (info->iconcsumlen) {
 		char *b16, *saved_b16;
 		GaimBuddy *b;
+                FILE *file;
 
 		b16 = tobase16(info->iconcsum, info->iconcsumlen);
 		b = gaim_find_buddy(gc->account, info->sn);
-		saved_b16 = gaim_buddy_get_setting(b, "icon_checksum");
+                /* If for some reason the checksum is valid, but cached file is not..
+                   we want to know. */
+                if((file = fopen(gaim_buddy_get_setting(b, "buddy_icon"), "rb"))) {
+                        fclose(file);
+                        saved_b16 = gaim_buddy_get_setting(b, "icon_checksum");
+                }
+                else
+                        saved_b16 = NULL;
+
 		if (!b16 || !saved_b16 || strcmp(b16, saved_b16)) {
 			GSList *cur = od->requesticon;
 			while (cur && aim_sncmp((char *)cur->data, info->sn))

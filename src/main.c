@@ -799,17 +799,17 @@ int main(int argc, char *argv[])
 
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
 
+#ifdef _WIN32
+        wgaim_set_hinstance(hint);
+        wgaim_pre_plugin_init();
+#endif
+
 	if (!gaim_core_init(GAIM_GTK_UI)) {
 		fprintf(stderr,
 				"Initialization of the Gaim core failed. Dumping core.\n"
 				"Please report this!\n");
 		abort();
 	}
-
-#ifdef _WIN32
-        wgaim_set_hinstance(hint);
-        wgaim_pre_plugin_init();
-#endif
 
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();
