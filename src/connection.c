@@ -273,13 +273,12 @@ gboolean
 gaim_connection_disconnect_cb(gpointer data)
 {
 	GaimAccount *account = data;
+	GaimConnection *gc = gaim_account_get_connection(account);
 
 	if (!gaim_account_get_remember_password(account))
 		gaim_account_set_password(account,NULL);
 
-	GaimConnection *gc = gaim_account_get_connection(account);
-
-	if(gc)
+	if (gc)
 		gaim_connection_disconnect(gc);
 
 	return FALSE;
