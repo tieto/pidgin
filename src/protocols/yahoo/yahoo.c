@@ -373,7 +373,10 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 7: /* the current buddy */
 			name = pair->value;
-			f = yahoo_friend_find_or_new(gc, name);
+			if (name && g_utf8_validate(name, -1, NULL))
+				f = yahoo_friend_find_or_new(gc, name);
+			else
+				f = name = NULL;
 			break;
 		case 10: /* state */
 			if (!f)
