@@ -32,4 +32,4 @@ EXTRA_DIST = yahoo_alien.xpm \
 	yahoo_sst.xpm \
 	yahoo_sunglas.xpm \
 	yahoo_tongue.xpm \
-	yahoo_wink.xpm \
+	yahoo_wink.xpm 
