@@ -68,7 +68,7 @@ common/Makefile: common/Makefile.PL
 	fi
 	@cd common && $(perlpath) Makefile.PL $(PERL_MM_PARAMS)
 
-common/Makefile.PL: common/Makefile.PL.in $(top_srcdir)/config.status
+common/Makefile.PL: common/Makefile.PL.in $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 
 all-local: common/Makefile
