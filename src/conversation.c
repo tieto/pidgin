@@ -2723,7 +2723,7 @@ void show_conv(struct conversation *c)
 			convo_menubar = menubar;
 
 			gtk_container_add(GTK_CONTAINER(win), testidea);
-			g_signal_connect(GTK_OBJECT(convo_notebook), "switch-page",
+			g_signal_connect_after(GTK_OBJECT(convo_notebook), "switch-page",
 					   G_CALLBACK(convo_switch), NULL);
 		} else
 			win = c->window = all_convos;
@@ -2745,7 +2745,9 @@ void show_conv(struct conversation *c)
 		gtk_box_pack_start(GTK_BOX(tabby), c->close, FALSE, FALSE, 0);
 		gtk_widget_show_all(tabby);
 		gtk_notebook_insert_page(GTK_NOTEBOOK(convo_notebook), cont, tabby,
-					 g_list_index(conversations, c));
+				g_list_index(conversations, c));
+		gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(convo_notebook), cont,
+				c->name);
 
 		gtk_widget_show(cont);
 	} else {
@@ -2953,7 +2955,6 @@ void show_conv(struct conversation *c)
 	update_buttons_by_protocol(c);
 
 	gtk_widget_show(win);
-
 	if (!(im_options & OPT_IM_ONE_WINDOW)
 			|| ((gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook)) == 0)
 				&& (c == g_list_nth_data(conversations, 0))))
