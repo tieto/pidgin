@@ -1,12 +1,32 @@
-/* iChat-like timestamps by Sean Egan.
+/*
+ * Gaim - iChat-like timestamps
  *
- * Modified by: Chris J. Friesen <Darth_Sebulba04@yahoo.com> Jan 05, 2003.
- * <INSERT GPL HERE> */
+ * Copyright (C) 2002-2003, Sean Egan
+ * Copyright (C) 2003, Chris J. Friesen <Darth_Sebulba04@yahoo.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
+
 
 #include "internal.h"
 
 #include "conversation.h"
 #include "debug.h"
+#include "prefs.h"
 #include "signals.h"
 
 #include "gtkimhtml.h"
@@ -16,7 +36,7 @@
 #define TIMESTAMP_PLUGIN_ID "gtk-timestamp"
 
 /* Set the default to 5 minutes. */
-static int timestamp = 5 * 60 * 1000;
+static int interval = 5 * 60 * 1000;
 
 static GSList *timestamp_timeouts;
 
@@ -42,7 +62,7 @@ static void timestamp_new_convo(GaimConversation *conv)
 	do_timestamp(conv);
 
 	timestamp_timeouts = g_slist_append(timestamp_timeouts,
-			GINT_TO_POINTER(g_timeout_add(timestamp, do_timestamp, conv)));
+			GINT_TO_POINTER(g_timeout_add(interval, do_timestamp, conv)));
 
 }
 
@@ -52,11 +72,12 @@ static void set_timestamp(GtkWidget *button, GtkWidget *spinner) {
 	tm = 0;
 
 	tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 1, G_MAXINT);
-	gaim_debug(GAIM_DEBUG_MISC, "timestamp", "setting  time to %d mins\n", tm);
+	gaim_debug(GAIM_DEBUG_MISC, "timestamp", "setting time to %d mins\n", tm);
 
 	tm = tm * 60 * 1000;
 
-	timestamp = tm;
+	interval = tm;
+	gaim_prefs_set_int("/plugins/gtk/timestamp/interval", interval);
 }
 
 static GtkWidget *
@@ -81,7 +102,7 @@ get_config_frame(GaimPlugin *plugin)
 	label = gtk_label_new(_("Delay"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
-	adj = (GtkAdjustment *)gtk_adjustment_new(timestamp/(60*1000), 1, G_MAXINT, 1, 0, 0);
+	adj = (GtkAdjustment *)gtk_adjustment_new(interval/(60*1000), 1, G_MAXINT, 1, 0, 0);
 	spinner = gtk_spin_button_new(adj, 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), spinner, TRUE, TRUE, 0);
 
@@ -115,6 +136,9 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(gaim_conversations_get_handle(),
 						"conversation-created",
 						plugin, GAIM_CALLBACK(timestamp_new_convo), NULL);
+
+	interval = gaim_prefs_get_int("/plugins/gtk/timestamp/interval");
+	gaim_debug(GAIM_DEBUG_ERROR, "XXX", "Got interval from prefs: %d\n", interval);
 
 	return TRUE;
 }
@@ -167,6 +191,8 @@ static GaimPluginInfo info =
 static void
 init_plugin(GaimPlugin *plugin)
 {
+	gaim_prefs_add_none("/plugins/gtk/timestamp");
+	gaim_prefs_add_int("/plugins/gtk/timestamp/interval", interval);
 }
 
-GAIM_INIT_PLUGIN(timestamp, init_plugin, info)
+GAIM_INIT_PLUGIN(interval, init_plugin, info)
