@@ -300,18 +300,20 @@ GtkWidget *
 gaim_pixbuf_button_from_stock(const char *text, const char *icon,
 							  GaimButtonOrientation style)
 {
-	GtkWidget *button, *image, *label, *bbox, *ibox, *lbox;
+	GtkWidget *button, *image, *label, *bbox, *ibox, *lbox = NULL;
 
 	button = gtk_button_new();
 
 	if (style == GAIM_BUTTON_HORIZONTAL) {
 		bbox = gtk_hbox_new(FALSE, 0);
 		ibox = gtk_hbox_new(FALSE, 0);
-		lbox = gtk_hbox_new(FALSE, 0);
+		if (text)
+			lbox = gtk_hbox_new(FALSE, 0);
 	} else {
 		bbox = gtk_vbox_new(FALSE, 0);
 		ibox = gtk_vbox_new(FALSE, 0);
-		lbox = gtk_vbox_new(FALSE, 0);
+		if (text)
+			lbox = gtk_vbox_new(FALSE, 0);
 	}
 
 	gtk_container_add(GTK_CONTAINER(button), bbox);

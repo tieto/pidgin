@@ -1251,7 +1251,8 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		/* for each valid image tag... */
 		while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs)) {
 			const char *id, *src, *datasize;
-			const char *tag = NULL, *data = NULL;
+			const char *data = NULL;
+			char *tag = NULL;
 			size_t size;
 			int imgid = 0;
 
@@ -1270,6 +1271,8 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			/* if we have a tag, find the start of the data */
 			if (tag && (data = gaim_strcasestr(binary, tag)))
 				data += strlen(tag);
+
+			g_free(tag);
 
 			/* check the data is here and store it */
 			if (data + (size = atoi(datasize)) <= msgend)

@@ -1300,7 +1300,7 @@ ignore_cb(GtkWidget *w, GaimConversation *conv)
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *sel;
-	const char *name;
+	char *name;
 
 	chat    = GAIM_CONV_CHAT(conv);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -1322,6 +1322,7 @@ ignore_cb(GtkWidget *w, GaimConversation *conv)
 		gaim_conv_chat_ignore(chat, name);
 
 	add_chat_buddy_common(conv, name);
+	g_free(name);
 }
 
 static void
@@ -1396,7 +1397,7 @@ menu_chat_add_remove_cb(GtkWidget *w, GaimConversation *conv)
 }
 
 static GtkWidget *
-create_chat_menu(GaimConversation *conv, gchar *who,
+create_chat_menu(GaimConversation *conv, const char *who,
 				 GaimPluginProtocolInfo *prpl_info, GaimConnection *gc)
 {
 	static GtkWidget *menu = NULL;
@@ -1413,14 +1414,14 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 
 	button = gaim_new_item_from_stock(menu, _("IM"), GAIM_STOCK_IM,
 				G_CALLBACK(menu_chat_im_cb), conv, 0, 0, NULL);
-	g_object_set_data(G_OBJECT(button), "user_data", who);
+	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 
 	if (gc && prpl_info && prpl_info->send_file
 			&& (!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, who))) {
 		button = gaim_new_item_from_stock(menu, _("Send File"), 
 			GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(menu_chat_send_file_cb),
 			conv, 0, 0, NULL);
-		g_object_set_data(G_OBJECT(button), "user_data", who);
+		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
 	if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), who))
@@ -1429,18 +1430,18 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 	else
 		button = gaim_new_item_from_stock(menu, _("Ignore"), GAIM_STOCK_IGNORE,
 						G_CALLBACK(ignore_cb), conv, 0, 0, NULL);
-	g_object_set_data(G_OBJECT(button), "user_data", who);
+	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 
 	if (gc && (prpl_info->get_info || prpl_info->get_cb_info)) {
 		button = gaim_new_item_from_stock(menu, _("Info"), GAIM_STOCK_INFO,
 						G_CALLBACK(menu_chat_info_cb), conv, 0, 0, NULL);
-		g_object_set_data(G_OBJECT(button), "user_data", who);
+		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
 	if (gc && prpl_info->get_cb_away) {
 		button = gaim_new_item_from_stock(menu, _("Get Away Message"), GAIM_STOCK_AWAY,
 					G_CALLBACK(menu_chat_get_away_cb), conv, 0, 0, NULL);
-		g_object_set_data(G_OBJECT(button), "user_data", who);
+		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
 	/* XXX: jabber can only add buddies from here in certain circumstances */
@@ -1452,6 +1453,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 		else
 			button = gaim_new_item_from_stock(menu, _("Add"), GTK_STOCK_ADD,
 						G_CALLBACK(menu_chat_add_remove_cb), conv, 0, 0, NULL);
+		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 	/* End Jonas */
 
@@ -1492,6 +1494,7 @@ gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimConversation *conv)
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
 				   gaim_gtk_treeview_popup_menu_position_func, widget,
 				   0, GDK_CURRENT_TIME);
+	g_free(who);
 
 	return TRUE;
 }
@@ -1537,12 +1540,14 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		chat_do_im(conv, who);
-		g_free(who);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GtkWidget *menu = create_chat_menu (conv, who, prpl_info, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 					   event->button, event->time);
 	}
+
+	g_free(who);
+	gtk_tree_path_free(path);
 
 	return TRUE;
 }
@@ -2342,7 +2347,8 @@ update_tab_icon(GaimConversation *conv)
 		g_object_unref(status);
 
 	if (gaim_conv_window_get_active_conversation(win) == conv &&
-		gtkconv->u.im->anim == NULL)
+		(gaim_conversation_get_type(conv) != GAIM_CONV_IM ||
+		 gtkconv->u.im->anim == NULL))
 	{
 		status = get_tab_icon(conv, FALSE);
 
@@ -4798,7 +4804,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			str = g_malloc(1024);
 
 			/* If we're whispering, it's not an autoresponse. */
-			if (gaim_message_meify(new_message, length)) {
+			if (gaim_message_meify(new_message, -1 )) {
 				g_snprintf(str, 1024, "***%s", who_escaped);
 				strcpy(color, "#6C2585");
 			}
@@ -4808,7 +4814,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			}
 		}
 		else {
-			if (gaim_message_meify(new_message, length)) {
+			if (gaim_message_meify(new_message, -1)) {
 				str = g_malloc(1024);
 
 				if (flags & GAIM_MESSAGE_AUTO_RESP)
@@ -4857,7 +4863,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\">(%s)</FONT> "
 				   "<B>%s</B></FONT> ", color,
 				   sml_attrib ? sml_attrib : "", mdate, str);
-		
+
 		g_snprintf(buf2, BUF_LONG,
 			   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
 			   "<B>%s</B></FONT> ",

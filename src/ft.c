@@ -987,12 +987,12 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 		escaped = g_markup_escape_text(gaim_xfer_get_filename(xfer), -1);
 		msg = g_strdup_printf(_("%s canceled the transfer of %s"),
 							  xfer->who, escaped);
+		g_free(escaped);
 	}
 	else
 	{
 		msg = g_strdup_printf(_("%s canceled the file transfer"), xfer->who);
 	}
-	g_free(escaped);
 	gaim_xfer_conversation_write(xfer, msg, TRUE);
 	gaim_xfer_error(gaim_xfer_get_type(xfer), xfer->who, msg);
 	g_free(msg);

@@ -976,7 +976,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 		for (node = conv->u.chat->in_room; node != NULL; node = node->next) {
 			if (node->data != NULL)
-				g_free(node->data);
+				gaim_conv_chat_cb_destroy((GaimConvChatBuddy *)node->data);
 			node->data = NULL;
 		}
 
@@ -999,6 +999,9 @@ gaim_conversation_destroy(GaimConversation *conv)
 		if (conv->u.chat->topic != NULL)
 			g_free(conv->u.chat->topic);
 		conv->u.chat->topic = NULL;
+
+		if(conv->u.chat->nick)
+			g_free(conv->u.chat->nick);
 
 		g_free(conv->u.chat);
 		conv->u.chat = NULL;

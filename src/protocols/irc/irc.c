@@ -399,6 +399,7 @@ static void irc_close(GaimConnection *gc)
 		gaim_timeout_remove(irc->timer);
 	g_hash_table_destroy(irc->cmds);
 	g_hash_table_destroy(irc->msgs);
+	g_hash_table_destroy(irc->buddies);
 	if (irc->motd)
 		g_string_free(irc->motd, TRUE);
 	g_free(irc->server);
@@ -435,10 +436,13 @@ static void irc_set_status(GaimAccount *account, GaimStatus *status)
 	const char *args[1];
 	const char *status_id = gaim_status_get_id(status);
 
+	if (!gaim_status_is_active(status))
+		return;
+
+	args[0] = NULL;
+
 	if (!strcmp(status_id, "away"))
 		args[0] = gaim_status_get_attr_string(status, "message");
-	else if (!strcmp(status_id, "available"))
-		args[0] = NULL;
 
 	irc_cmd_away(irc, "away", NULL, args);
 }

@@ -68,6 +68,15 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 	if (httpconn->connected)
 		msn_httpconn_disconnect(httpconn);
 
+	if (httpconn->full_session_id != NULL)
+		g_free(httpconn->full_session_id);
+
+	if (httpconn->session_id != NULL)
+		g_free(httpconn->session_id);
+
+	if (httpconn->host != NULL)
+		g_free(httpconn->host);
+
 	g_free(httpconn);
 }
 
@@ -669,17 +678,17 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		if (!wasted)
 		{
-			if (httpconn->full_session_id != NULL);
+			if (httpconn->full_session_id != NULL)
 				g_free(httpconn->full_session_id);
 
 			httpconn->full_session_id = full_session_id;
 
-			if (httpconn->session_id != NULL);
+			if (httpconn->session_id != NULL)
 				g_free(httpconn->session_id);
 
 			httpconn->session_id = session_id;
 
-			if (httpconn->host != NULL);
+			if (httpconn->host != NULL)
 				g_free(httpconn->host);
 
 			httpconn->host = gw_ip;
@@ -689,6 +698,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			MsnServConn *servconn;
 
 			/* It's going to die. */
+			/* poor thing */
 
 			servconn = httpconn->servconn;
 
@@ -696,6 +706,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 				servconn->wasted = TRUE;
 
 			g_free(full_session_id);
+			g_free(session_id);
 			g_free(gw_ip);
 		}
 	}

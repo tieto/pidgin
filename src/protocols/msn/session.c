@@ -364,6 +364,9 @@ msn_session_finish_login(MsnSession *session)
 	account = session->account;
 	gc = gaim_account_get_connection(account);
 
+	if (session->logged_in)
+		return;
+
 	msn_user_set_buddy_icon(session->user,
 							gaim_account_get_buddy_icon(session->account));
 

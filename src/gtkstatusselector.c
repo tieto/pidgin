@@ -234,7 +234,7 @@ gaim_gtk_status_selector_destroy(GtkObject *obj)
 }
 
 static gboolean
-get_selected_data(GaimGtkStatusSelector *selector, const char **text, const char **status_type_id)
+get_selected_data(GaimGtkStatusSelector *selector, char **text, const char **status_type_id)
 {
 #if GTK_CHECK_VERSION(2,4,0)
 	GtkTreeIter iter;
@@ -256,7 +256,7 @@ get_selected_data(GaimGtkStatusSelector *selector, const char **text, const char
 	i = gtk_option_menu_get_history(GTK_OPTION_MENU(selector->priv->optmenu));
 	l = GTK_MENU_SHELL(selector->priv->menu)->children;
 	item = g_list_nth_data(l, i);
-	*text = g_object_get_data(G_OBJECT(item), GAIM_SELECTOR_TEXT);
+	*text = g_strdup(g_object_get_data(G_OBJECT(item), GAIM_SELECTOR_TEXT));
 	*status_type_id = g_object_get_data(G_OBJECT(item), GAIM_SELECTOR_STATUS_TYPE_ID);
 	return TRUE;
 #endif
@@ -270,7 +270,7 @@ static void
 status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 {
 	const char *status_type_id = NULL;
-	const char *text = NULL;
+	char *text = NULL;
 
 	/* Reset the status selector */
 	if (selector->priv->entry_timer != 0)
@@ -334,6 +334,7 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 			key_press_cb(NULL, NULL, selector);
 		}
 	}
+	g_free(text);
 }
 
 /**
@@ -348,7 +349,7 @@ insert_text_timeout_cb(gpointer data)
 {
 	GaimGtkStatusSelector *selector = (GaimGtkStatusSelector *)data;
 	const char *status_type_id;
-	const char *text;
+	char *text;
 	gchar *message;
 	GList *l;
 
@@ -358,7 +359,10 @@ insert_text_timeout_cb(gpointer data)
 		return FALSE;
 
 	if (status_type_id == NULL)
+	{
+		g_free(text);
 		return FALSE;
+	}
 
 	message = gtk_imhtml_get_markup(GTK_IMHTML(selector->priv->entry));
 
@@ -384,6 +388,9 @@ insert_text_timeout_cb(gpointer data)
 			                        NULL);
 		}
 	}
+
+	g_free(text);
+	g_free(message);
 
 	return FALSE;
 }

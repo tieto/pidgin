@@ -53,6 +53,7 @@ extern void docklet_clicked(int);
 extern void docklet_embedded();
 extern void docklet_remove(gboolean);
 extern void docklet_set_ui_ops(struct docklet_ui_ops *);
+extern void docklet_unload();
 
 /* function in docklet-{x11,win32}.c */
 extern void docklet_ui_init();

@@ -111,7 +111,8 @@ connect_cb(MsnServConn *servconn)
 
 	vers = g_strjoinv(" ", a);
 
-	msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE);
+	if (!session->logged_in)
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE);
 	msn_cmdproc_send(cmdproc, "VER", "%s", vers);
 
 	g_strfreev(a);
@@ -199,7 +200,8 @@ msn_got_login_params(MsnSession *session, const char *login_params)
 
 	cmdproc = session->notification->cmdproc;
 
-	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
+	if (!session->logged_in)
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
 
 	msn_cmdproc_send(cmdproc, "USR", "TWN S %s", login_params);
 }
@@ -233,7 +235,8 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		gaim_connection_set_display_name(gc, friendly);
 
-		msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
+		if (!session->logged_in)
+			msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
 
 		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
 	}
@@ -258,7 +261,8 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		g_strfreev(elems);
 
-		msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_START);
+		if (!session->logged_in)
+			msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_START);
 
 		msn_nexus_connect(session->nexus);
 	}

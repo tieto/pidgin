@@ -30,16 +30,6 @@
 #include "signals.h"
 #include "version.h"
 
-#ifdef _WIN32
-# define PLUGIN_EXT ".dll"
-#else
-# ifdef __hpux
-#  define PLUGIN_EXT ".sl"
-# else
-#  define PLUGIN_EXT ".so"
-# endif
-#endif
-
 typedef struct
 {
 	GHashTable *commands;
@@ -182,7 +172,7 @@ gaim_plugin_probe(const char *filename)
 	if (plugin != NULL)
 		return plugin;
 
-	plugin = gaim_plugin_new(has_file_extension(filename, PLUGIN_EXT), filename);
+	plugin = gaim_plugin_new(has_file_extension(filename, GAIM_PLUGIN_EXT), filename);
 
 	if (plugin->native_plugin) {
 		const char *error;

@@ -1031,7 +1031,7 @@ gaim_status_get_attr_string(const GaimStatus *status, const char *id)
 	g_return_val_if_fail(id     != NULL, FALSE);
 
 	if ((value = gaim_status_get_attr_value(status, id)) == NULL)
-		return FALSE;
+		return NULL;
 
 	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_STRING, NULL);
 

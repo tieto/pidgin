@@ -402,6 +402,12 @@ docklet_remove(gboolean visible)
 }
 
 void
+docklet_unload()
+{
+	gaim_plugin_unload(handle);
+}
+
+void
 docklet_set_ui_ops(struct docklet_ui_ops *ops)
 {
 	ui_ops = ops;

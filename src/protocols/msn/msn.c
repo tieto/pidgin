@@ -47,8 +47,6 @@
 #include "imgstore.h"
 #endif
 
-#define BUDDY_ALIAS_MAXLEN 387
-
 typedef struct
 {
 	GaimConnection *gc;

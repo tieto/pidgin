@@ -235,8 +235,10 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	enclist = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
 	encodings = g_strsplit(enclist, ",", -1);
 
-	if (encodings[0] == NULL)
+	if (encodings[0] == NULL) {
+		g_strfreev(encodings);
 		return gaim_utf8_salvage(string);
+	}
 
 	for (i = 0; encodings[i] != NULL; i++) {
 		charset = encodings[i];
@@ -255,6 +257,7 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 			return utf8;
 		}
 	}
+	g_strfreev(encodings);
 
 	return gaim_utf8_salvage(string);
 }

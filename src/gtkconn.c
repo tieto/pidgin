@@ -112,7 +112,7 @@ static void disconnect_window_update_buttons(GtkTreeModel *model)
 {
 	GtkTreeIter iter;
 	GtkTreeSelection *sel;
-	const char *label_text;
+	char *label_text;
 	GaimAccount *account = NULL;
 
 	if ((disconnect_window == NULL) || (model == NULL))
@@ -161,6 +161,7 @@ static void disconnect_window_update_buttons(GtkTreeModel *model)
 		gtk_widget_hide(disconnect_window->reconnect_btn);
 	else
 		gtk_widget_show(disconnect_window->reconnect_btn);
+	g_free(label_text);
 }
 
 static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)

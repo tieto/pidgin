@@ -49,6 +49,10 @@ msn_cmdproc_destroy(MsnCmdProc *cmdproc)
 	g_queue_free(cmdproc->txqueue);
 
 	msn_history_destroy(cmdproc->history);
+
+	if (cmdproc->last_cmd != NULL)
+		msn_command_destroy(cmdproc->last_cmd);
+
 	g_free(cmdproc);
 }
 

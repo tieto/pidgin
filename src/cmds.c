@@ -44,9 +44,9 @@ typedef struct _GaimCmd {
 
 static gint cmds_compare_func(const GaimCmd *a, const GaimCmd *b)
 {
-	if (a->id > b->id)
+	if (a->priority > b->priority)
 		return -1;
-	else if (a->id < b->id)
+	else if (a->priority < b->priority)
 		return 1;
 	else return 0;
 }

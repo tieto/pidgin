@@ -302,6 +302,8 @@ void jabber_chat_free(JabberChat *chat)
 
 	g_free(chat->room);
 	g_free(chat->server);
+	g_free(chat->handle);
+	g_hash_table_destroy(chat->members);
 	g_free(chat);
 }
 

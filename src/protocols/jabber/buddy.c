@@ -402,7 +402,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 				xmlnode_insert_data(photo, enc, -1);
 				g_free(enc);
 				g_free(avatar_data);
-			} else {
+			} else if (error != NULL) {
 				g_error_free(error);
 			}
 

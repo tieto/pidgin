@@ -2227,8 +2227,10 @@ static gboolean gaim_gtk_blist_expand_timeout(GtkWidget *tv)
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
 
-	if(!GAIM_BLIST_NODE_IS_CONTACT(node))
+	if(!GAIM_BLIST_NODE_IS_CONTACT(node)) {
+		gtk_tree_path_free(path);
 		return FALSE;
+	}
 
 	gtknode = node->ui_data;
 
@@ -2278,13 +2280,13 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
 
+	gtk_tree_path_free(path);
+
 	if(!GAIM_BLIST_NODE_IS_CONTACT(node) && !GAIM_BLIST_NODE_IS_BUDDY(node)
 			&& !GAIM_BLIST_NODE_IS_CHAT(node))
 		return FALSE;
 
 	gtknode = node->ui_data;
-
-	gtk_tree_path_free(path);
 
 	tooltiptext = gaim_get_tooltip_text(node);
 
@@ -3634,9 +3636,13 @@ static void gaim_gtk_blist_remove(GaimBuddyList *list, GaimBlistNode *node)
 	if(node->parent)
 		gaim_gtk_blist_update(list, node->parent);
 
-	/* There's something I don't understand here */
-	/* g_free(node->ui_data);
-	node->ui_data = NULL; */
+	/* There's something I don't understand here - Ethan */
+	/* Ethan said that back in 2003, but this g_free has been left commented
+	 * out ever since. I can't find any reason at all why this is bad and
+	 * valgrind found several reasons why it's good. If this causes problems
+	 * comment it out again. Stu */
+	g_free(node->ui_data);
+	node->ui_data = NULL;
 }
 
 static gboolean do_selection_changed(GaimBlistNode *new_selection)

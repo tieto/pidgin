@@ -310,7 +310,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	}
 
 	g_string_free(name, TRUE);
-	g_string_free(val, FALSE);
+	g_string_free(val, TRUE);
 	g_free(vars);
 
 	return retval;

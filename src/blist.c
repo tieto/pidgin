@@ -1686,6 +1686,7 @@ void gaim_blist_remove_contact(GaimContact *contact)
 			ops->remove(gaimbuddylist, node);
 
 		/* Delete the node */
+		g_hash_table_destroy(contact->node.settings);
 		g_free(contact);
 	}
 }
@@ -1757,6 +1758,7 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	gaim_presence_destroy(buddy->presence);
 	g_free(buddy->name);
 	g_free(buddy->alias);
+	g_free(buddy->server_alias);
 	g_free(buddy);
 
 	/* If the contact is empty then remove it */
@@ -1799,6 +1801,7 @@ void gaim_blist_remove_chat(GaimChat *chat)
 
 	/* Delete the node */
 	g_hash_table_destroy(chat->components);
+	g_hash_table_destroy(chat->node.settings);
 	g_free(chat->alias);
 	g_free(chat);
 }
@@ -1860,6 +1863,7 @@ void gaim_blist_remove_group(GaimGroup *group)
 	}
 
 	/* Delete the node */
+	g_hash_table_destroy(group->node.settings);
 	g_free(group->name);
 	g_free(group);
 }

@@ -30,6 +30,16 @@
 #include "signals.h"
 #include "value.h"
 
+#ifdef _WIN32
+# define GAIM_PLUGIN_EXT ".dll"
+#else
+# ifdef __hpux
+#  define GAIM_PLUGIN_EXT ".sl"
+# else
+#  define GAIM_PLUGIN_EXT ".so"
+# endif
+#endif
+
 typedef struct _GaimPlugin           GaimPlugin;
 typedef struct _GaimPluginInfo       GaimPluginInfo;
 typedef struct _GaimPluginUiInfo     GaimPluginUiInfo;

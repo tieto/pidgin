@@ -354,9 +354,8 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 
 	if (msg->type == MSN_MSG_TEXT)
 	{
-		const char *format;
+		const char *format, *str_reason;
 		char *body_str, *body_enc, *pre, *post;
-		char *str_reason;
 
 #if 0
 		if (swboard->conv == NULL)
@@ -622,21 +621,9 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		/* This is a switchboard used for a im session */
 
-		char *str = NULL;
-
-		if (cmd->param_count == 2 && atoi(cmd->params[1]) == 1)
+		if (cmd->param_count == 1)
 		{
-#if 0
-			if (gaim_prefs_get_bool("/plugins/prpl/msn/conv_timeout_notice"))
-			{
-				str = g_strdup_printf(_("The conversation has become "
-										"inactive and timed out."));
-			}
-#endif
-		}
-		else
-		{
-			char *username;
+			char *username, *str;
 			GaimAccount *account;
 			GaimBuddy *b;
 
@@ -647,15 +634,13 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			else
 				username = gaim_escape_html(user);
 
-			str = g_strdup_printf(_("%s has closed the conversation "
-						"window."), username);
-		      
-			g_free(username);
-			
-		}
+			str = g_strdup_printf(_("%s has closed the conversation window."),
+								  username);
 
-		if (str != NULL)
+			g_free(username);
 			msn_switchboard_report_user(swboard, GAIM_MESSAGE_SYSTEM, str);
+			g_free(str);
+		}
 
 		msn_switchboard_destroy(swboard);
 	}

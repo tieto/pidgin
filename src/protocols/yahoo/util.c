@@ -48,7 +48,7 @@ char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	char *ret;
-	char *to_codeset;
+	const char *to_codeset;
 
 	if (yd->jp && utf8 && *utf8)
 		*utf8 = FALSE;

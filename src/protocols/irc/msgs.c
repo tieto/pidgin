@@ -224,6 +224,7 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 			   _("Buddy Information for %s"), irc->whois.nick);
 	gaim_notify_userinfo(gc, irc->whois.nick, NULL, buffer, NULL, str, NULL, NULL);
 
+	g_free(irc->whois.nick);
 	g_free(str);
 	memset(&irc->whois, 0, sizeof(irc->whois));
 }
@@ -736,6 +737,7 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 	buf = irc_format(irc, "vn", "NICK", newnick);
 	irc_send(irc, buf);
 	g_free(buf);
+	g_free(newnick);
 }
 
 void irc_msg_notice(struct irc_conn *irc, const char *name, const char *from, char **args)

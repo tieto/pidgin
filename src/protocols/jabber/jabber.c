@@ -109,6 +109,7 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 			}
 			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
 				my_jb->subscription |= JABBER_SUB_BOTH;
+			g_free(full_jid);
 		}
 	} else {
 		char *msg = jabber_parse_error(js, packet);

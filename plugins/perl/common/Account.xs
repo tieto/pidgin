@@ -59,6 +59,12 @@ gaim_account_set_check_mail(account, value)
 	Gaim::Account account
 	gboolean value
 
+void
+gaim_account_set_enabled(account, ui, value)
+	Gaim::Account account
+	const char *ui
+	gboolean value
+
 gboolean
 gaim_account_is_connected(account)
 	Gaim::Account account
@@ -98,6 +104,11 @@ gaim_account_get_remember_password(account)
 gboolean
 gaim_account_get_check_mail(account)
 	Gaim::Account account
+
+gboolean
+gaim_account_get_enabled(account, ui)
+	Gaim::Account account
+	const char *ui
 
 
 MODULE = Gaim::Account  PACKAGE = Gaim::Accounts  PREFIX = gaim_accounts_

@@ -1065,6 +1065,7 @@ static void yahoo_roomlist_destroy(struct yahoo_roomlist *yrl)
 		g_free(yrl->host);
 	if (yrl->parse)
 		g_markup_parse_context_free(yrl->parse);
+	g_free(yrl);
 }
 
 enum yahoo_room_type {

@@ -144,7 +144,7 @@ faim_internal int aim_dumpcookie(aim_session_t *sess, aim_msgcookie_t *cookie)
 /**
  * aim_cookie_free - free an aim_msgcookie_t struct
  *
- * this function removes the cookie *cookie from teh list of cookies
+ * this function removes the cookie *cookie from the list of cookies
  * in sess, and then frees all memory associated with it. including
  * its data! if you want to use the private data after calling this,
  * make sure you copy it first.

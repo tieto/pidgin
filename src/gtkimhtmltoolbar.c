@@ -170,7 +170,7 @@ static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 static void
 toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 {
-	const char *fontname;
+	char *fontname;
 
 	g_return_if_fail(toolbar);
 
@@ -186,6 +186,7 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 			g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontname);
 			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
 													fonttif);
+			g_free(fontname);
 		} else {
 			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
 													DEFAULT_FONT_FACE);
@@ -251,7 +252,7 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
 		GdkColor fgcolor;
-		const char *color = gtk_imhtml_get_current_forecolor(GTK_IMHTML(toolbar->imhtml));
+		char *color = gtk_imhtml_get_current_forecolor(GTK_IMHTML(toolbar->imhtml));
 
 		if (!toolbar->fgcolor_dialog) {
 
@@ -260,6 +261,7 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 			if (color) {
 				gdk_color_parse(color, &fgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &fgcolor);
+				g_free(color);
 			}
 
 			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);
@@ -325,7 +327,7 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(color))) {
 		GtkWidget *colorsel;
 		GdkColor bgcolor;
-		const char *color = gtk_imhtml_get_current_backcolor(GTK_IMHTML(toolbar->imhtml));
+		char *color = gtk_imhtml_get_current_backcolor(GTK_IMHTML(toolbar->imhtml));
 
 		if (!toolbar->bgcolor_dialog) {
 
@@ -334,6 +336,7 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 			if (color) {
 				gdk_color_parse(color, &bgcolor);
 				gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(colorsel), &bgcolor);
+				g_free(color);
 			}
 
 			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);

@@ -88,6 +88,8 @@ docklet_x11_update_icon(enum docklet_status icon)
 {
 	const gchar *icon_name = NULL;
 
+	g_return_if_fail(image != NULL);
+
 	switch (icon) {
 		case offline:
 			icon_name = GAIM_STOCK_ICON_OFFLINE;
@@ -152,9 +154,11 @@ docklet_x11_position_menu(GtkMenu *menu, int *x, int *y, gboolean *push_in,
 	*push_in = TRUE;
 }
 
-static gboolean
+static void
 docklet_x11_destroy()
 {
+	g_return_if_fail(docklet != NULL);
+
 	docklet_remove(GTK_WIDGET_VISIBLE(docklet));
 
 	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_x11_destroyed_cb), NULL);
@@ -167,7 +171,18 @@ docklet_x11_destroy()
 		g_object_unref(G_OBJECT(blank_icon));
 	blank_icon = NULL;
 
+	if (image)
+		gtk_widget_destroy(image);
+	image = NULL;
+
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "destroyed\n");
+}
+
+static gboolean
+docklet_x11_embed_timeout_cb()
+{
+	docklet_unload();
+
 	return FALSE;
 }
 
@@ -203,7 +218,7 @@ docklet_x11_create()
 	/* ref the docklet before we bandy it about the place */
 	g_object_ref(G_OBJECT(docklet));
 	docklet_embedded();
-	embed_timeout = g_timeout_add(EMBED_TIMEOUT, docklet_x11_destroy, NULL);
+	embed_timeout = g_timeout_add(EMBED_TIMEOUT, docklet_x11_embed_timeout_cb, NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "created\n");
 }

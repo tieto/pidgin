@@ -192,9 +192,9 @@ msn_slp_call_timeout(gpointer data)
 {
 	MsnSlpCall *slpcall;
 
-	gaim_debug_info("msn", "slpcall timeout (%p)\n", slpcall);
-
 	slpcall = data;
+
+	gaim_debug_info("msn", "slpcall timeout (%p)\n", slpcall);
 
 	if (!slpcall->pending && !slpcall->progress)
 	{

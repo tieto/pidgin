@@ -466,6 +466,7 @@ void
 msn_userlist_remove_group(MsnUserList *userlist, MsnGroup *group)
 {
 	userlist->groups = g_list_remove(userlist->groups, group);
+	msn_group_destroy(group);
 }
 
 MsnGroup *
@@ -628,6 +629,13 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	}
 
 	store_name = (user != NULL) ? get_store_name(user) : who;
+
+	/* this might be a bit of a hack, but it should prevent notification server
+	 * disconnections for people who have buddies with insane friendly names
+	 * who added you to their buddy list from being disconnected. Stu. */
+	/* ... No, that sentence didn't parse for me either. Stu. */
+	if (strlen(store_name) > BUDDY_ALIAS_MAXLEN)
+		store_name = who;
 
 	/* Then request the add to the server. */
 	list = lists[list_id];

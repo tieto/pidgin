@@ -132,7 +132,8 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
-	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
+	if (!session->logged_in)
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	username =
 		g_strdup(gaim_url_encode(gaim_account_get_username(session->account)));
@@ -312,7 +313,8 @@ nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
-	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH);
+	if (!session->logged_in)
+		msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH);
 
 	request_str = g_strdup_printf("GET /rdr/pprdr.asp\r\n\r\n");
 
