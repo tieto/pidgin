@@ -713,6 +713,8 @@ int proxy_connect(char *host, int port, GaimInputFunction func, gpointer data)
 		return -1;
 	}
 
+	sethostent(1);
+
 	if ((proxytype == PROXY_NONE) ||
 		 !proxyhost || !proxyhost[0] ||
 		 !proxyport || (proxyport == -1))
