@@ -800,7 +800,7 @@ savelog_writefile_cb(GaimConversation *conv, gint id)
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(gtkconv->dialogs.savelog));
 #else /* FILECHOOSER */
-	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(gtkconv->dialogs.save));
+	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(gtkconv->dialogs.savelog));
 #endif /* FILECHOOSER */
 
 	gaim_notify_close_with_handle(gtkconv->dialogs.savelog);
@@ -870,9 +870,9 @@ savelog_checkfile_cb(GtkWidget *widget, GaimConversation *conv)
 
 #if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
-savelog_destroy_cb(GtkWidget *widget, GtkConversation *gtkconv)
+savelog_destroy_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
-	if (gtkconv->save != NULL) {
+	if (gtkconv->dialogs.savelog != NULL) {
 		gaim_notify_close_with_handle(gtkconv->dialogs.savelog);
 		gaim_request_close_with_handle(gtkconv->dialogs.savelog);
 		gtk_widget_destroy(gtkconv->dialogs.savelog);
@@ -905,7 +905,7 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 					 G_CALLBACK(savelog_checkfile_cb), conv);
 #else /* FILECHOOSER */
 	buf = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s.html", gaim_home_dir(),
-						  gaim_normalize(c->account, c->name));
+						  gaim_normalize(conv->account, conv->name));
 	gtkconv->dialogs.savelog = gtk_file_selection_new(_("Save Conversation"));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(gtkconv->dialogs.savelog), buf);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(gtkconv->dialogs.savelog)->ok_button),
