@@ -2873,6 +2873,7 @@ tab_complete(GaimConversation *conv)
 					tmp[most_matched] = '\0';
 				most_matched--;
 			}
+			most_matched++;
 
 			g_free(tmp);
 		}
