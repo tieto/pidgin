@@ -64,6 +64,7 @@ struct PHB {
 	int port;
 	gint inpa;
 	struct gaim_proxy_info *gpi;
+	struct gaim_account *account;
 };
 
 typedef struct _GaimIOClosure {
@@ -88,8 +89,7 @@ static gboolean gaim_io_invoke(GIOChannel *source, GIOCondition condition, gpoin
 		gaim_cond |= GAIM_INPUT_WRITE;
 
 	/*
-	debug_printf("CLOSURE: callback for %d, fd is %d\n",
-		     closure->result, g_io_channel_unix_get_fd(source));
+	debug_printf("CLOSURE: callback for %d, fd is %d\n", closure->result, g_io_channel_unix_get_fd(source));
 	*/
 
 	closure->function(closure->data, g_io_channel_unix_get_fd(source), gaim_cond);
@@ -114,7 +114,6 @@ gint gaim_input_add(gint source, GaimInputCondition condition, GaimInputFunction
 	channel = g_io_channel_unix_new(source);
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 					      gaim_io_invoke, closure, gaim_io_destroy);
-
 	/* debug_printf("CLOSURE: adding input watcher %d for fd %d\n", closure->result, source); */
 
 	g_io_channel_unref(channel);
@@ -599,7 +598,8 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 	if (ret < 0 || error != 0) {
 		close(source);
 		gaim_input_remove(phb->inpa);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
                 debug_printf("getsockopt SO_ERROR check: %s\n", 
@@ -608,7 +608,8 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 	}
 	fcntl(source, F_SETFL, 0);
 	gaim_input_remove(phb->inpa);
-	phb->func(phb->data, source, GAIM_INPUT_READ);
+	if(!phb->account || phb->account->gc)
+		phb->func(phb->data, source, GAIM_INPUT_READ);
 	g_free(phb->host);
 	g_free(phb);
 }
@@ -617,7 +618,8 @@ static gboolean clean_connect(gpointer data)
 {
 	struct PHB *phb = data;
 
-	phb->func(phb->data, phb->port, GAIM_INPUT_READ);
+	if(!phb->account || phb->account->gc)
+		phb->func(phb->data, phb->port, GAIM_INPUT_READ);
 	g_free(phb->host);
 	g_free(phb);
 
@@ -714,7 +716,8 @@ static void http_canread(gpointer data, gint source, GaimInputCondition cond)
 		source=-1;
 	}
 
-	phb->func(phb->data, source, GAIM_INPUT_READ);
+	if(!phb->account || phb->account->gc)
+		phb->func(phb->data, source, GAIM_INPUT_READ);
 	g_free(phb->host);
 	g_free(phb);
 	return;
@@ -734,7 +737,8 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -758,7 +762,8 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 	if (write(source, request, request_len) < 0) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -814,14 +819,16 @@ static void s4_canread(gpointer data, gint source, GaimInputCondition cond)
 	memset(packet, 0, sizeof(packet));
 
 	if (read(source, packet, 9) >= 4 && packet[1] == 90) {
-		phb->func(phb->data, source, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, source, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
 	}
 
 	close(source);
-	phb->func(phb->data, -1, GAIM_INPUT_READ);
+	if(!phb->account || phb->account->gc)
+		phb->func(phb->data, -1, GAIM_INPUT_READ);
 	g_free(phb->host);
 	g_free(phb);
 }
@@ -840,7 +847,8 @@ static void s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -850,7 +858,8 @@ static void s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	/* XXX does socks4 not support host name lookups by the proxy? */
 	if (!(hp = gethostbyname(phb->host))) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -868,7 +877,8 @@ static void s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 	if (write(source, packet, 9) != 9) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -924,7 +934,8 @@ static void s5_canread_again(gpointer data, gint source, GaimInputCondition cond
 	if (read(source, buf, 10) < 10) {
 		debug_printf("or not...\n");
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -932,13 +943,15 @@ static void s5_canread_again(gpointer data, gint source, GaimInputCondition cond
 	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
 		debug_printf("bad data\n");
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
 	}
 
-	phb->func(phb->data, source, GAIM_INPUT_READ);
+	if(!phb->account || phb->account->gc)
+		phb->func(phb->data, source, GAIM_INPUT_READ);
 	g_free(phb->host);
 	g_free(phb);
 	return;
@@ -961,7 +974,8 @@ static void s5_sendconnect(gpointer data, gint source)
 
 	if (write(source, buf, (5 + strlen(phb->host) + 2)) < (5 + strlen(phb->host) + 2)) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -980,7 +994,8 @@ static void s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 
 	if (read(source, buf, 2) < 2) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -988,7 +1003,8 @@ static void s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 
 	if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -1007,7 +1023,8 @@ static void s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	if (read(source, buf, 2) < 2) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -1015,7 +1032,8 @@ static void s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -1031,7 +1049,8 @@ static void s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 		if (write(source, buf, 3 + i + j) < 3 + i + j) {
 			close(source);
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			if(!phb->account || phb->account->gc)
+				phb->func(phb->data, -1, GAIM_INPUT_READ);
 			g_free(phb->host);
 			g_free(phb);
 			return;
@@ -1057,7 +1076,8 @@ static void s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -1080,7 +1100,8 @@ static void s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	if (write(source, buf, i) < i) {
 		debug_printf("unable to write\n");
 		close(source);
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 		return;
@@ -1157,7 +1178,8 @@ static void connection_host_resolved(GSList *hosts, gpointer data, const char *e
 			break;
 	}
 	if(ret < 0) {
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
+		if(!phb->account || phb->account->gc)
+			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
 	}
@@ -1177,6 +1199,7 @@ proxy_connect(struct gaim_account *account, char *host, int port, GaimInputFunct
 	phb->data = data;
 	phb->host = g_strdup(host);
 	phb->port = port;
+	phb->account = account;
 
 	if (!host || !port || (port == -1) || !func) {
 		if(host)
