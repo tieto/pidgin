@@ -558,7 +558,6 @@ void show_im_dialog()
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
 	label = gtk_label_new(_("Please enter the screenname of the person you would like to IM.\n"));
-	gtk_widget_set_size_request(GTK_WIDGET(label), 350, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
@@ -781,8 +780,6 @@ void show_insert_link(GtkWidget *linky, GaimConversation *c)
 		label = gtk_label_new(_("Please enter the URL and description of "
 								"the link that you want to insert.  The "
 								"description is optional.\n"));
-
-		gtk_widget_set_size_request(GTK_WIDGET(label), 335, -1);
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
