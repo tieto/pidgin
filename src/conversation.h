@@ -222,6 +222,8 @@ struct gaim_conversation
 
 	struct gaim_conversation_ui_ops *ui_ops; /**< UI-specific operations. */
 	void *ui_data;                           /**< UI-specific data.       */
+
+	GHashTable *plugin_data;                 /**< Plugin-specific data.   */
 };
 
 typedef void (*gaim_conv_placement_fnc)(struct gaim_conversation *);
@@ -651,6 +653,30 @@ struct gaim_chat *gaim_conversation_get_chat_data(
 		const struct gaim_conversation *conv);
 
 #define GAIM_CHAT(c) (gaim_conversation_get_chat_data(c))
+
+/**
+ * Sets a conversation's plugin-specific data.
+ * 
+ * To minimize key conflicts, the key should be in the form of
+ * @c pluginname/keyname.
+ *
+ * @param conv The conversation.
+ * @param key  The unique key.
+ * @param data The data to assign.
+ */
+void gaim_conversation_set_plugin_data(struct gaim_conversation *conv,
+									   const char *key, gpointer data);
+
+/**
+ * Returns a conversation's plugin-specific data.
+ *
+ * @param conv The conversation.
+ * @param key  The unqiue key.
+ *
+ * @return The data associated with the key.
+ */
+gpointer gaim_conversation_get_plugin_data(struct gaim_conversation *conv,
+										   const char *key);
 
 /**
  * Returns a list of all conversations.
