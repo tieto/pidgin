@@ -978,6 +978,64 @@ static void msn_add_deny(struct gaim_connection *gc, char *who)
 	msn_write(md->fd, buf);
 }
 
+static void msn_set_away(struct gaim_connection *gc, char *state, char *msg)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+
+	if (msg)
+		snprintf(buf, MSN_BUF_LEN, "CHG %d AWY\n", trId(md));
+	else if (gc->is_idle)
+		snprintf(buf, MSN_BUF_LEN, "CHG %d IDL\n", trId(md));
+	else
+		snprintf(buf, MSN_BUF_LEN, "CHG %d NLN\n", trId(md));
+
+	msn_write(md->fd, buf);
+}
+
+
+static void msn_set_idle(struct gaim_connection *gc, int idle)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+
+	if (idle)
+		snprintf(buf, MSN_BUF_LEN, "CHG %d IDL\n", trId(md));
+	else
+		snprintf(buf, MSN_BUF_LEN, "CHG %d NLN\n", trId(md));
+
+	msn_write(md->fd, buf);
+}
+
+static void msn_close(struct gaim_connection *gc)
+{
+	struct msn_data *md = (struct msn_data *)gc->proto_data;
+	char buf[MSN_BUF_LEN - 1];
+	struct msn_conn *mc = NULL;
+
+	while (msn_connections)
+	{
+		mc = (struct msn_conn *)msn_connections->data;
+
+		free_msn_conn(mc);
+	}	
+
+	if (md->fd)
+	{
+		snprintf(buf, MSN_BUF_LEN, "OUT\n");
+		msn_write(md->fd, buf);
+		close(md->fd);
+	}
+
+	if (gc->inpa)
+		gdk_input_remove(gc->inpa);
+
+	if (md->friendly)
+		free(md->friendly);
+
+	g_free(gc->proto_data);
+}
+
 static char **msn_list_icon(int uc)
 {
 	if (uc == UC_UNAVAILABLE)
@@ -998,16 +1056,16 @@ void msn_init(struct prpl *ret)
 	ret->buddy_menu = NULL;
 	ret->user_opts = NULL;
 	ret->login = msn_login;
-	ret->close = NULL;
+	ret->close = msn_close;
 	ret->send_im = msn_send_im;
 	ret->set_info = NULL;
 	ret->get_info = NULL;
-	ret->set_away = NULL;
+	ret->set_away = msn_set_away;
 	ret->get_away_msg = NULL;
 	ret->set_dir = NULL;
 	ret->get_dir = NULL;
 	ret->dir_search = NULL;
-	ret->set_idle = NULL;
+	ret->set_idle = msn_set_idle;
 	ret->change_passwd = NULL;
 	ret->add_buddy = msn_add_buddy;
 	ret->add_buddies = NULL;
