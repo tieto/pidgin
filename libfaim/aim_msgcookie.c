@@ -24,13 +24,13 @@
  * - newcook->addtime is updated accordingly;
  * - cookie->type is just passed across.
  * 
- * returns -1 on error, 0 on success.  */
-
+ * returns -1 on error, 0 on success.  
+ */
 faim_internal int aim_cachecookie(struct aim_session_t *sess,
 				  struct aim_msgcookie_t *cookie)
 {
-  struct aim_msgcookie_t *newcook = NULL, *cur = NULL;
-  
+  struct aim_msgcookie_t *newcook;
+
   if (!cookie)
     return -1;
 
@@ -46,30 +46,18 @@ faim_internal int aim_cachecookie(struct aim_session_t *sess,
       
       free(cookie->data);
     }
-    return(0);
+
+    return 0;
   }
   
   if (!(newcook = malloc(sizeof(struct aim_msgcookie_t))))
     return -1;
   memcpy(newcook, cookie, sizeof(struct aim_msgcookie_t));
   newcook->addtime = time(NULL);
-
-  if(newcook->next)
-    printf("faim: cachecookie: newcook->next isn't NULL ???\n");
-
-  newcook->next = NULL;
   
-  cur = sess->msgcookies;
-  
-  if (cur == NULL) {
-    sess->msgcookies = newcook;
-    return 0;
-  }
+  newcook->next = sess->msgcookies;
+  sess->msgcookies = newcook;
 
-  while (cur->next != NULL)
-    cur = cur->next;
-  cur->next = newcook;
-  
   return 0;
 }
 
@@ -79,7 +67,6 @@ faim_internal int aim_cachecookie(struct aim_session_t *sess,
  * it. removes struct from chain.  returns the struct if found, or
  * NULL on not found.
  */
-
 faim_internal struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, unsigned char *cookie, int type)
 {
   struct aim_msgcookie_t *cur;
@@ -87,23 +74,28 @@ faim_internal struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *se
   if (!cookie || !sess->msgcookies)
     return NULL;
 
-  cur = sess->msgcookies;
+  if ((sess->msgcookies->type == type) && 
+      (memcmp(sess->msgcookies->cookie, cookie, 8) == 0)) {
+    struct aim_msgcookie_t *tmp;
 
-  if ( (memcmp(cur->cookie, cookie, 8) == 0) && (cur->type == type) ) {
-    sess->msgcookies = cur->next;
-    return cur;
+    tmp = sess->msgcookies;
+    sess->msgcookies = sess->msgcookies->next;
+
+    return tmp;
   } 
 
-  while (cur->next) {
-    if ( (memcmp(cur->next->cookie, cookie, 8) == 0) && (cur->next->type == type) ) {
+  for (cur = sess->msgcookies; cur->next; cur = cur->next) {
+    if ((cur->next->type == type) &&
+	(memcmp(cur->next->cookie, cookie, 8) == 0)) {
       struct aim_msgcookie_t *tmp;
       
       tmp = cur->next;
       cur->next = cur->next->next;
+
       return tmp;
     }
-    cur = cur->next;
   }
+
   return NULL;
 }
 
@@ -123,15 +115,14 @@ faim_internal struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *se
 faim_export int aim_purgecookies(struct aim_session_t *sess, int maxage)
 {
   struct aim_msgcookie_t *cur;
-  struct aim_msgcookie_t *remed = NULL;
   time_t curtime;
  
-  cur = sess->msgcookies;
-  
-  curtime = time(&curtime);
- 
-  while (cur) {
-    if ( (cur->addtime) > (curtime - maxage) ) {
+  curtime = time(NULL);
+
+  for (cur = sess->msgcookies; cur; cur = cur->next) {
+    if (cur->addtime > (time(NULL) - maxage)) {
+      struct aim_msgcookie_t *remed = NULL;
+
 #if DEBUG > 1
       printf("aimmsgcookie: WARNING purged obsolete message cookie %x%x%x%x %x%x%x%x\n",
 	     cur->cookie[0], cur->cookie[1], cur->cookie[2], cur->cookie[3],
@@ -145,9 +136,6 @@ faim_export int aim_purgecookies(struct aim_session_t *sess, int maxage)
 	free(remed);
       }
     }
-
-    cur = cur->next;
-
   }
   
   return 0;
@@ -157,42 +145,34 @@ faim_internal struct aim_msgcookie_t *aim_mkcookie(unsigned char *c, int type, v
 {
   struct aim_msgcookie_t *cookie;
 
-  if(!c)
-    return(NULL);
+  if (!c)
+    return NULL;
 
-  if( (cookie = calloc(1, sizeof(struct aim_msgcookie_t))) == NULL)
-    return(NULL);
+  if (!(cookie = calloc(1, sizeof(struct aim_msgcookie_t))))
+    return NULL;
   
   cookie->data = data;
-
   cookie->type = type;
-  
   memcpy(cookie->cookie, c, 8);
   
-  return(cookie);
+  return cookie;
 }
   
 faim_internal struct aim_msgcookie_t *aim_checkcookie(struct aim_session_t *sess, unsigned char *cookie, int type)
 {
   struct aim_msgcookie_t *cur;
   
-  if(!sess->msgcookies)
-    return NULL;
+  for (cur = sess->msgcookies; cur; cur = cur->next) {
+    if ((cur->type == type) && 
+	(memcmp(cur->cookie, cookie, 8) == 0))
+      return cur;
+  }
 
-  cur = sess->msgcookies;
-
-  if( (memcmp(cur->cookie, cookie, 8) == 0) && (cur->type == type))
-    return(cur);
-
-  while( (cur = cur->next) )
-    if( (memcmp(cur->cookie, cookie, 8) == 0) && (cur->type == type))
-      return(cur);
-
-  return(NULL);
+  return NULL;
 }
 
 static int aim_freecookie(struct aim_msgcookie_t *cookie) {
-  return(0);
+  return 0;
 } 
 
 faim_internal int aim_msgcookie_gettype(int reqclass) {

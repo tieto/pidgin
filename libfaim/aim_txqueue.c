@@ -306,7 +306,7 @@ faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx
   if (send(cur->conn->fd, curPacket, buflen, 0) != buflen) {
     faim_mutex_unlock(&cur->conn->active);
     cur->sent = 1;
-    aim_conn_kill(sess, &cur->conn);
+    aim_conn_close(cur->conn);
     return 0; /* bail out */
   }
 

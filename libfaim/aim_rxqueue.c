@@ -57,6 +57,9 @@ faim_export int aim_get_command(struct aim_session_t *sess, struct aim_conn_t *c
   if (!sess || !conn)
     return 0;
 
+  if (conn->fd == -1)
+    return -1; /* its a aim_conn_close()'d connection */
+
   if (conn->fd < 3)  /* can happen when people abuse the interface */
     return 0;
 

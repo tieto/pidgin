@@ -39,37 +39,6 @@ faim_internal void aim_connrst(struct aim_session_t *sess)
 }
 
 /**
- * aim_conn_getnext - Gets a new connection structure.
- * @sess: Session
- *
- * Allocate a new empty connection structure.
- *
- */
-faim_internal struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
-{
-  struct aim_conn_t *newconn, *cur;
-
-  if (!(newconn = malloc(sizeof(struct aim_conn_t)))) 	
-    return NULL;
-
-  memset(newconn, 0, sizeof(struct aim_conn_t));
-  aim_conn_close(newconn);
-  newconn->next = NULL;
-
-  faim_mutex_lock(&sess->connlistlock);
-  if (sess->connlist == NULL)
-    sess->connlist = newconn;
-  else {
-    for (cur = sess->connlist; cur->next; cur = cur->next)
-      ;
-    cur->next = newconn;
-  }
-  faim_mutex_unlock(&sess->connlistlock);
-
-  return newconn;
-}
-
-/**
  * aim_conn_init - Reset a connection to default values.
  * @deadconn: Connection to be reset
  *
@@ -93,6 +62,37 @@ static void aim_conn_init(struct aim_conn_t *deadconn)
   faim_mutex_init(&deadconn->seqnum_lock);
   
   return;
+}
+
+/**
+ * aim_conn_getnext - Gets a new connection structure.
+ * @sess: Session
+ *
+ * Allocate a new empty connection structure.
+ *
+ */
+faim_internal struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
+{
+  struct aim_conn_t *newconn, *cur;
+
+  if (!(newconn = malloc(sizeof(struct aim_conn_t)))) 	
+    return NULL;
+
+  memset(newconn, 0, sizeof(struct aim_conn_t));
+  aim_conn_init(newconn);
+  newconn->next = NULL;
+
+  faim_mutex_lock(&sess->connlistlock);
+  if (sess->connlist == NULL)
+    sess->connlist = newconn;
+  else {
+    for (cur = sess->connlist; cur->next; cur = cur->next)
+      ;
+    cur->next = newconn;
+  }
+  faim_mutex_unlock(&sess->connlistlock);
+
+  return newconn;
 }
 
 /**
@@ -131,7 +131,8 @@ faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **d
   /* XXX: do we need this for txqueue too? */
   aim_rxqueue_cleanbyconn(sess, *deadconn);
 
-  aim_conn_close(*deadconn);
+  if ((*deadconn)->fd != -1) 
+    aim_conn_close(*deadconn);
   if ((*deadconn)->priv)
     free((*deadconn)->priv);
   free(*deadconn);
@@ -146,33 +147,21 @@ faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **d
  *
  * Close (but not free) a connection.
  *
+ * This leaves everything untouched except for clearing the 
+ * handler list and setting the fd to -1 (used to recognize
+ * dead connections).
+ *
  */
 faim_export void aim_conn_close(struct aim_conn_t *deadconn)
 {
-  int typesav = -1, subtypesav = -1;
-  void *privsav = NULL;
 
   faim_mutex_destroy(&deadconn->active);
   faim_mutex_destroy(&deadconn->seqnum_lock);
   if (deadconn->fd >= 3)
     close(deadconn->fd);
+  deadconn->fd = -1;
   if (deadconn->handlerlist)
     aim_clearhandlers(deadconn);
-
-  typesav = deadconn->type;
-  subtypesav = deadconn->subtype;
-
-  if (deadconn->priv && (deadconn->type != AIM_CONN_TYPE_RENDEZVOUS)) {
-    free(deadconn->priv);
-    deadconn->priv = NULL;
-  }
-  privsav = deadconn->priv;
-
-  aim_conn_init(deadconn);
-
-  deadconn->type = typesav;
-  deadconn->subtype = subtypesav;
-  deadconn->priv = privsav;
 
   return;
 }
@@ -547,7 +536,12 @@ faim_export struct aim_conn_t *aim_select(struct aim_session_t *sess,
 
   faim_mutex_lock(&sess->connlistlock);
   for (cur = sess->connlist; cur; cur = cur->next) {
-    if (cur->status & AIM_CONN_STATUS_INPROGRESS) {
+    if (cur->fd == -1) {
+      /* don't let invalid/dead connections sit around */
+      *status = 2;
+      faim_mutex_unlock(&sess->connlistlock);
+      return cur;
+    } else if (cur->status & AIM_CONN_STATUS_INPROGRESS) {
       FD_SET(cur->fd, &wfds);
       haveconnecting++;
     }

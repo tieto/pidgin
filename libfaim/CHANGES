@@ -1,6 +1,17 @@
 
 No release numbers
 ------------------
+ - Fri Dec  1 22:25:56 UTC 2000
+  - Fix numerous tiny (but sometimes catastrophic) bugs dealing
+      with connection death (particularly with chat connections)
+  - *** Any connection with a -1 fd will get returned by aim_select
+      immediatly now... your code probably already handles this implicitly.
+
+ - Wed Nov 29 17:31:23 UTC 2000
+  - Rewrote some of the msgcookie stuff
+  - Changed cachecookies to uncachecookies where it makes sense (arg!)
+  - Minor other stuff
+ 
  - Fri Nov 10 08:24:34 UTC 2000
   - Add sess->flags (replaces sess->snaclogin)
   - Remove odd setstatus call in chat parser
