@@ -255,7 +255,7 @@ msg_cmd(MsnServConn *servconn, const char *command, const char **params,
 	servconn->parsing_multiline = TRUE;
 	servconn->multiline_type    = MSN_MULTILINE_MSG;
 	servconn->multiline_len     = atoi(params[2]);
-	
+
 	servconn->msg_passport = g_strdup(params[0]);
 	servconn->msg_friendly = g_strdup(params[1]);
 
@@ -653,7 +653,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 		return TRUE;
 	}
 
-	ret = msn_servconn_write(swboard->servconn, buf, msg->size);
+	ret = msn_servconn_write(swboard->servconn, buf, strlen(buf));
 
 	g_free(buf);
 
