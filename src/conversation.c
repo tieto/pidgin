@@ -1593,7 +1593,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf, -1, 0);
 	} else {
 		if (c->gc->flags & OPT_CONN_HTML)
-			what = g_memdup(what, length);
+			what = g_memdup(what, length == -1 ? strlen(what) + 1 : length);
 		else
 			what = escape_html(what, &length);
 		if (flags & WFLAG_WHISPER) {
