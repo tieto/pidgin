@@ -953,7 +953,7 @@ void gaim_blist_load() {
 			do_error_dialog(_("Buddy List Error"), msg, GAIM_ERROR);
 			g_free(msg);
 		}
-	} else {
+	} else if(g_slist_length(aim_users)) {
 		/* rob wants to inform the user that their buddy lists are
 		 * being converted */
 		msg = g_strdup_printf(_("Gaim is converting your old buddy lists "
