@@ -29,6 +29,9 @@
 #ifdef USE_APPLET
 #include <applet-widget.h>
 #endif /* USE_APPLET */
+#ifdef USE_GNOME
+#include <gnome.h>
+#endif
 
 
 /*
@@ -95,7 +98,7 @@
 #define FACE_YELL 15
 #define FACE_TOTAL 16
 
-#ifndef USE_APPLET
+#ifndef USE_GNOME
 #ifdef ENABLE_NLS
 #  include <libintl.h>
 #  define _(x) gettext(x)
@@ -402,7 +405,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 602 $"
+#define REVISION "gaim:$Revision: 609 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
